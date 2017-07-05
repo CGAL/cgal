@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Nico Kruithof <Nico@cs.rug.nl>
 
@@ -36,12 +36,12 @@ public:
   typedef RegularTriangulation_3                       Regular_triangulation;
   typedef typename Regular_triangulation::Geom_traits  Geom_traits;
   typedef typename Geom_traits::Weighted_point_3       Weighted_point;
-  
+
   typedef typename RegularTriangulation_3::Vertex_handle Vertex_handle;
   typedef typename RegularTriangulation_3::Cell_handle   Cell_handle;
   typedef typename RegularTriangulation_3::Facet         Facet;
   typedef typename RegularTriangulation_3::Edge          Edge;
-  
+
   typedef typename RegularTriangulation_3::Finite_vertices_iterator Finite_vertices_iterator;
   typedef typename RegularTriangulation_3::Finite_edges_iterator    Finite_edges_iterator;
   typedef typename RegularTriangulation_3::Finite_facets_iterator   Finite_facets_iterator;
@@ -51,23 +51,28 @@ public:
 
   typedef typename std::list<Simplex>::iterator                     Simplex_iterator;
 
-  Compute_anchor_3(const RegularTriangulation_3 &reg) : reg(reg) {
-  }
+  Compute_anchor_3(const RegularTriangulation_3 &reg) : reg(reg) { }
 
-  Simplex anchor_del( const Vertex_handle v ) {
+  Simplex anchor_del( const Vertex_handle v )
+  {
     equiv_anchors.clear();
     return v;
   }
+
   Simplex anchor_del( const Edge &e ) {
     return compute_anchor_del(e);
   }
+
   Simplex anchor_del( const Facet &f ) {
     return compute_anchor_del(f);
   }
+
   Simplex anchor_del( const Cell_handle ch ) {
     return compute_anchor_del(ch);
   }
-  Simplex anchor_del( const Simplex &s ) {
+
+  Simplex anchor_del( const Simplex &s )
+  {
     int dim = s.dimension();
     if (dim == 0) {
       Vertex_handle vh = s;
@@ -85,16 +90,21 @@ public:
     CGAL_error();
     return Simplex();
   }
+
   Simplex anchor_vor( const Vertex_handle v ) {
     return compute_anchor_vor(v);
   }
+
   Simplex anchor_vor( const Edge &e ) {
     return compute_anchor_vor(e);
   }
+
   Simplex anchor_vor( const Facet &f ) {
     return compute_anchor_vor(f);
   }
-  Simplex anchor_vor( const Cell_handle ch ) {
+
+  Simplex anchor_vor( const Cell_handle ch )
+  {
     equiv_anchors.clear();
     for (int i=0; i<4; i++) {
       Cell_handle ch2 = ch->neighbor(i);
@@ -110,7 +120,9 @@ public:
     }
     return ch;
   }
-  Simplex anchor_vor( const Simplex &s ) {
+
+  Simplex anchor_vor( const Simplex &s )
+  {
     int dim = s.dimension();
     if (dim == 0) {
       return anchor_vor(Vertex_handle(s));
@@ -127,12 +139,15 @@ public:
   bool is_degenerate() {
     return !equiv_anchors.empty();
   }
+
   Simplex_iterator equivalent_anchors_begin() {
     return equiv_anchors.begin();
   }
+
   Simplex_iterator equivalent_anchors_end() {
     return equiv_anchors.end();
   }
+
 private:
   ///////////////////////////////
   // Anchor functions
@@ -140,28 +155,35 @@ private:
   Simplex compute_anchor_del( Edge const &e );
   Simplex compute_anchor_del( Facet const &f );
   Simplex compute_anchor_del( Cell_handle const ch );
-  
+
   Simplex compute_anchor_vor( Vertex_handle const v );
   Simplex compute_anchor_vor( Edge const &e );
   Simplex compute_anchor_vor( Facet const &f );
 
   // Test whether the anchor of edge (wp1,wp2) and wp2 are equal
-  Sign test_anchor(Weighted_point &wp1, Weighted_point &wp2) {
+  Sign test_anchor(Weighted_point &wp1, Weighted_point &wp2)
+  {
     return enum_cast<Sign>(
-        -reg.geom_traits().power_side_of_bounded_power_sphere_3_object()(wp1, wp2));
+      -reg.geom_traits().power_side_of_bounded_power_sphere_3_object()(wp1, wp2));
   }
-  Sign test_anchor(Weighted_point const& wp1, Weighted_point const& wp2, 
-                   Weighted_point const& wp3) {
+
+  Sign test_anchor(Weighted_point const& wp1, Weighted_point const& wp2,
+                   Weighted_point const& wp3)
+  {
     return enum_cast<Sign>(
-        -reg.geom_traits().power_side_of_bounded_power_sphere_3_object()(wp1, wp2, wp3));
+      - reg.geom_traits().power_side_of_bounded_power_sphere_3_object()(wp1, wp2, wp3));
   }
-  Sign test_anchor(Weighted_point const& wp1, Weighted_point const& wp2, 
-                   Weighted_point const& wp3, Weighted_point const& wp4) {
+
+  Sign test_anchor(Weighted_point const& wp1, Weighted_point const& wp2,
+                   Weighted_point const& wp3, Weighted_point const& wp4)
+  {
     return enum_cast<Sign>(
-        -reg.geom_traits().power_side_of_bounded_power_sphere_3_object()(wp1, wp2, wp3, wp4));
+      -reg.geom_traits().power_side_of_bounded_power_sphere_3_object()(wp1, wp2, wp3, wp4));
   }
+
   // Test whether the anchor of e and anchor of e.first->vertex(i) are equal
-  Sign test_anchor(Edge e, int i) {
+  Sign test_anchor(Edge e, int i)
+  {
     CGAL_assertion(!reg.is_infinite(e));
     CGAL_assertion(e.second == i || e.third == i);
     Weighted_point wp1, wp2;
@@ -170,9 +192,11 @@ private:
       ch->vertex(e.second+e.third-i)->point(),
       ch->vertex(i)->point());
   }
+
   // Test whether the anchor of f and anchor of the edge f - f.first->vertex(i)
   // are equal
-  Sign test_anchor(Facet f, int i){
+  Sign test_anchor(Facet f, int i)
+  {
     CGAL_assertion(!reg.is_infinite(f));
     CGAL_assertion(f.second != i);
     CGAL_assertion(0<=f.second && f.second<4);
@@ -198,12 +222,12 @@ private:
         CGAL_error();
     }
     return enum_cast<Sign>(
-       -reg.geom_traits().power_side_of_bounded_power_sphere_3_object()(wp1, wp2, wp3));
+      -reg.geom_traits().power_side_of_bounded_power_sphere_3_object()(wp1, wp2, wp3));
   }
 
-
   // Test whether the anchor of ch and anchor of the facet (ch,i) are equal
-  Sign test_anchor(Cell_handle ch, int i) {
+  Sign test_anchor(Cell_handle ch, int i)
+  {
     CGAL_assertion(!reg.is_infinite(ch));
 
     return enum_cast<Sign>(
@@ -213,7 +237,9 @@ private:
       ch->vertex((i+3)&3)->point(),
       ch->vertex(i)->point()));
   }
-  Sign test_anchor(Cell_handle ch, Cell_handle ch2) {
+
+  Sign test_anchor(Cell_handle ch, Cell_handle ch2)
+  {
     CGAL_assertion(!reg.is_infinite(ch));
     CGAL_assertion(!reg.is_infinite(ch2));
 
@@ -224,27 +250,28 @@ private:
       ch->vertex(1)->point(),
       ch->vertex(2)->point(),
       ch->vertex(3)->point(),
-      ch2->vertex(index)->point()));                
+      ch2->vertex(index)->point()));
   }
-  Sign test_anchor(
-    Weighted_point const& wp1, Weighted_point const& wp2,
-    Weighted_point const& wp3, Weighted_point const& wp4,
-    Weighted_point const& wp5) {
+
+  Sign test_anchor(Weighted_point const& wp1, Weighted_point const& wp2,
+                   Weighted_point const& wp3, Weighted_point const& wp4,
+                   Weighted_point const& wp5)
+  {
     return enum_cast<Sign>(
-             -reg.geom_traits().power_side_of_bounded_power_sphere_3_object()(wp1, wp2, wp3, wp4, wp5));
+      -reg.geom_traits().power_side_of_bounded_power_sphere_3_object()(wp1, wp2, wp3, wp4, wp5));
   }
 
   const Regular_triangulation &reg;
   std::list<Simplex> equiv_anchors;
 };
 
-
 // compute_anchor_del
 
 template < class RegularTriangulation3 >
 typename Compute_anchor_3<RegularTriangulation3>::Simplex
 Compute_anchor_3<RegularTriangulation3>::
-compute_anchor_del(Edge const &e) {
+compute_anchor_del(Edge const &e)
+{
   CGAL_assertion(!reg.is_infinite(e));
   equiv_anchors.clear();
   Sign result = test_anchor(e, e.second);
@@ -259,14 +286,15 @@ compute_anchor_del(Edge const &e) {
     return Simplex(e.first->vertex(e.second));
   } else if (result==ZERO) {
     equiv_anchors.push_back(Simplex(e.first->vertex(e.third)));
-  } 
+  }
   return Simplex(e);
 }
 
 template < class RegularTriangulation3 >
 typename Compute_anchor_3<RegularTriangulation3>::Simplex
 Compute_anchor_3<RegularTriangulation3>::
-compute_anchor_del(Facet const &f) {
+compute_anchor_del(Facet const &f)
+{
   CGAL_assertion(!reg.is_infinite(f));
   equiv_anchors.clear();
 
@@ -282,15 +310,15 @@ compute_anchor_del(Facet const &f) {
         Edge(f.first, (f.second+(i==1?2:1))&3, (f.second+(i==3?2:3))&3));
     }
   }
-  
+
   if (contains_center) {
     return Simplex(f);
   } else {
     i--;
-    Edge e; e.first = f.first; 
-    if (i==1) e.second = ((f.second+2)&3); 
+    Edge e; e.first = f.first;
+    if (i==1) e.second = ((f.second+2)&3);
     else e.second = ((f.second+1)&3);
-    if (i==3) e.third = ((f.second+2)&3); 
+    if (i==3) e.third = ((f.second+2)&3);
     else e.third = ((f.second+3)&3);
 
     Simplex s = anchor_del(e);
@@ -314,10 +342,11 @@ compute_anchor_del(Facet const &f) {
 template < class RegularTriangulation3 >
 typename Compute_anchor_3<RegularTriangulation3>::Simplex
 Compute_anchor_3<RegularTriangulation3>::
-compute_anchor_del(Cell_handle const ch) {
+compute_anchor_del(Cell_handle const ch)
+{
   CGAL_assertion(!reg.is_infinite(ch));
   equiv_anchors.clear();
-  
+
   Simplex s;
   bool contains_center = true;
   Sign result;
@@ -364,7 +393,7 @@ compute_anchor_del(Cell_handle const ch) {
       }
       if (found) {
         equiv_anchors.clear();
-  return s;
+        return s;
       }
       found = true;
       s = tmp;
@@ -375,7 +404,8 @@ compute_anchor_del(Cell_handle const ch) {
 template < class RegularTriangulation3 >
 typename Compute_anchor_3<RegularTriangulation3>::Simplex
 Compute_anchor_3<RegularTriangulation3>::
-compute_anchor_vor (Vertex_handle const v) {
+compute_anchor_vor (Vertex_handle const v)
+{
   CGAL_assertion(!reg.is_infinite(v));
   CGAL_assertion(reg.is_vertex(v));
 
@@ -388,13 +418,13 @@ compute_anchor_vor (Vertex_handle const v) {
   std::list<Vertex_handle> adj_vertices;
   typename std::list<Vertex_handle>::iterator adj_vertex;
   reg.incident_vertices(v, std::back_inserter(adj_vertices));
-  
-  for (adj_vertex = adj_vertices.begin(); 
+
+  for (adj_vertex = adj_vertices.begin();
        (adj_vertex != adj_vertices.end()) && contains_center;
        adj_vertex++) {
     if (!reg.is_infinite(*adj_vertex)) {
       side = test_anchor(v->point(),(*adj_vertex)->point());
-      if (side == NEGATIVE) { 
+      if (side == NEGATIVE) {
         contains_center = false;
       } else if (side == ZERO) {
         Edge e;
@@ -445,7 +475,7 @@ compute_anchor_vor (Vertex_handle const v) {
         if (s.dimension() == 1) {
           Edge e = s;
           Vertex_handle v_other = e.first->vertex(e.second+e.third-e.first->index(v));
-          for (adj_vertex = adj_vertices.begin(); 
+          for (adj_vertex = adj_vertices.begin();
                adj_vertex != adj_vertices.end();
                adj_vertex++) {
             if ((v_other != (*adj_vertex)) && (!reg.is_infinite(*adj_vertex))) {
@@ -462,7 +492,7 @@ compute_anchor_vor (Vertex_handle const v) {
                 equiv_anchors.push_back(e2);
               }
             }
-          }          
+          }
         }
         return s;
       }
@@ -473,7 +503,8 @@ compute_anchor_vor (Vertex_handle const v) {
 
 template < class RegularTriangulation3 >
 typename Compute_anchor_3<RegularTriangulation3>::Simplex
-Compute_anchor_3<RegularTriangulation3>::compute_anchor_vor (Edge const &e) {
+Compute_anchor_3<RegularTriangulation3>::compute_anchor_vor (Edge const &e)
+{
   CGAL_assertion(!reg.is_infinite(e));
 
   equiv_anchors.clear();
@@ -484,14 +515,14 @@ Compute_anchor_3<RegularTriangulation3>::compute_anchor_vor (Edge const &e) {
   bool contains_center = true;
   Sign side;
   Simplex s;
-  
+
   Facet_circulator fcir, fstart;
   fstart = fcir = reg.incident_facets(e);
 
   do {
     if (!reg.is_infinite(*fcir)) {
       int i = 6 - (*fcir).second -
-        (*fcir).first->index(v0) - (*fcir).first->index(v1);
+              (*fcir).first->index(v0) - (*fcir).first->index(v1);
       side = test_anchor(*fcir, i);
       if (side == NEGATIVE) {
         contains_center = false;
@@ -501,7 +532,7 @@ Compute_anchor_3<RegularTriangulation3>::compute_anchor_vor (Edge const &e) {
       }
     }
   } while (++fcir != fstart);
-  
+
   if (contains_center) {
     s = Simplex(e);
     return s;
@@ -538,11 +569,11 @@ Compute_anchor_3<RegularTriangulation3>::compute_anchor_vor (Edge const &e) {
           do {
             if (!reg.is_infinite(*fcir)) {
               int index2 = 6 - (*fcir).second
-                             - (*fcir).first->index(v0) 
+                             - (*fcir).first->index(v0)
                              - (*fcir).first->index(v1);
-            if (!(f.first->vertex(index) == (*fcir).first->vertex(index2))) {
+              if (!(f.first->vertex(index) == (*fcir).first->vertex(index2))) {
                 side = test_anchor(v0->point(), v1->point(),
-                                   f.first->vertex(index)->point(), 
+                                   f.first->vertex(index)->point(),
                                    (*fcir).first->vertex(index2)->point());
                 if (side == ZERO) {
                   equiv_anchors.push_back(Facet(*fcir));
@@ -560,12 +591,13 @@ Compute_anchor_3<RegularTriangulation3>::compute_anchor_vor (Edge const &e) {
 
 template < class RegularTriangulation3 >
 typename Compute_anchor_3<RegularTriangulation3>::Simplex
-Compute_anchor_3<RegularTriangulation3>::compute_anchor_vor (Facet const &f) {
+Compute_anchor_3<RegularTriangulation3>::compute_anchor_vor (Facet const &f)
+{
   CGAL_assertion(!reg.is_infinite(f));
   equiv_anchors.clear();
-  
+
   Sign side;
-  
+
   CGAL_assertion(f.first != Cell_handle());
   if (!reg.is_infinite(f.first)) {
     side = test_anchor(f.first, f.second);
@@ -591,7 +623,6 @@ Compute_anchor_3<RegularTriangulation3>::compute_anchor_vor (Facet const &f) {
 
   return Simplex(f);
 }
-
 
 } //namespace CGAL
 

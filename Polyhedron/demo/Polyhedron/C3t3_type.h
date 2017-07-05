@@ -6,6 +6,7 @@
 #include <CGAL/Mesh_3/global_parameters.h>
 
 #include "Polyhedron_type.h"
+#include "SMesh_type.h"
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
 #include "Image_type.h"
 #include <CGAL/Labeled_image_mesh_domain_3.h>
@@ -18,6 +19,7 @@
 #endif
 
 #include <CGAL/Mesh_triangulation_3.h>
+#include "Scene_surface_mesh_item.h"
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 
 #include <CGAL/Mesh_3/Robust_intersection_traits_3.h>
@@ -27,6 +29,7 @@
 
 #include <CGAL/tags.h>
 
+typedef CGAL::Graph_with_descriptor_with_graph<SMesh> SMwgd;
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
 template <typename K>
 struct Wrapper
@@ -46,9 +49,12 @@ private:
 #endif
 
 typedef CGAL::Triangle_accessor_3<Polyhedron, Kernel> T_accessor;
+typedef CGAL::Triangle_accessor_3<SMwgd, Kernel> T_sm_accessor;
 
 typedef CGAL::Polyhedral_mesh_domain_with_features_3<
           Kernel, Polyhedron, T_accessor, CGAL::Tag_true> Polyhedral_mesh_domain;
+typedef CGAL::Polyhedral_mesh_domain_with_features_3<
+          Kernel, SMwgd, T_sm_accessor, int> Polyhedral_mesh_domain_sm;
 // The last `Tag_true` says the Patch_id type will be int, and not pair<int, int>
 
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES

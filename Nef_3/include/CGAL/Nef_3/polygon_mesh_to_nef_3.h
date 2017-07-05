@@ -257,11 +257,11 @@ void polygon_mesh_to_nef_3(PolygonMesh& P, SNC_structure& S, FaceIndexMap fimap,
       if(is_border(pe_prev,P))
 	with_border = true;
       else {
-	Plane ss_plane( CGAL::ORIGIN, normals[get(fimap,face(pe_prev,P))] );
+  Plane ss_plane( CGAL::ORIGIN, normals[get(fimap,face(pe_prev,P))] );
 	Sphere_circle ss_circle(ss_plane);
 	
-	CGAL_assertion(ss_circle.has_on(sp));
-	CGAL_assertion(ss_circle.has_on(sv_prev->point()));
+  CGAL_assertion(ss_circle.has_on(sp));
+  CGAL_assertion(ss_circle.has_on(sv_prev->point()));
 	
 	SHalfedge_handle e = SM.new_shalfedge_pair(sv_prev, sv);
 	e->circle() = ss_circle;

@@ -75,6 +75,8 @@ create_single_source_cgal_program( "graph_concept_Triangulation_2.cpp" )
 
 create_single_source_cgal_program( "graph_concept_Surface_mesh.cpp" )
 
+create_single_source_cgal_program( "graph_concept_Seam_mesh_Surface_mesh.cpp" )
+
 create_single_source_cgal_program( "graph_concept_Gwdwg_Surface_mesh.cpp" )
 
 create_single_source_cgal_program( "test_clear.cpp" )
@@ -87,27 +89,21 @@ create_single_source_cgal_program( "test_Has_member_id.cpp" )
 
 create_single_source_cgal_program( "test_cgal_bgl_named_params.cpp" )
 
+create_single_source_cgal_program( "graph_concept_Face_filtered_graph.cpp" )
 
-
-
-if(OpenMesh_FOUND)
-  target_link_libraries( test_clear ${OPENMESH_LIBRARIES})
-endif()
+create_single_source_cgal_program( "test_Face_filtered_graph.cpp" )
 
 create_single_source_cgal_program( "test_Euler_operations.cpp" )
-if(OpenMesh_FOUND)
-  target_link_libraries( test_Euler_operations ${OPENMESH_LIBRARIES})
-endif()
 
 create_single_source_cgal_program( "test_graph_traits.cpp" )
 
-if(OpenMesh_FOUND)
-  target_link_libraries( test_graph_traits ${OPENMESH_LIBRARIES} )
-endif()
-
-
 create_single_source_cgal_program( "test_Properties.cpp" )
+
 if(OpenMesh_FOUND)
+  target_link_libraries( test_clear ${OPENMESH_LIBRARIES})
+  target_link_libraries( test_Euler_operations ${OPENMESH_LIBRARIES})
+  target_link_libraries( test_Face_filtered_graph ${OPENMESH_LIBRARIES})
+  target_link_libraries( test_graph_traits ${OPENMESH_LIBRARIES} )
   target_link_libraries( test_Properties ${OPENMESH_LIBRARIES})
 endif()
 

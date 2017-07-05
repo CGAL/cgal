@@ -27,6 +27,11 @@
 #include <CGAL/jet_estimate_normals.h>
 #include <CGAL/mst_orient_normals.h>
 #include <CGAL/Scale_space_surface_reconstruction_3.h>
+#include <CGAL/Scale_space_reconstruction_3/Advancing_front_mesher.h>
+#include <CGAL/Scale_space_reconstruction_3/Jet_smoother.h>
+#include <CGAL/Scale_space_reconstruction_3/Alpha_shape_mesher.h>
+#include <CGAL/Scale_space_reconstruction_3/Weighted_PCA_smoother.h>
+
 #include <CGAL/Advancing_front_surface_reconstruction.h>
 #include <CGAL/Shape_detection_3.h>
 #include <CGAL/structure_point_set.h>
@@ -49,6 +54,11 @@ typedef Neighbor_search::Tree Tree;
 typedef Neighbor_search::iterator Search_iterator;
 
 typedef CGAL::Scale_space_surface_reconstruction_3<Kernel> ScaleSpace;
+typedef CGAL::Scale_space_reconstruction_3::Advancing_front_mesher<Kernel> ScaleSpaceAFM;
+typedef CGAL::Scale_space_reconstruction_3::Alpha_shape_mesher<Kernel> ScaleSpaceASM;
+typedef CGAL::Scale_space_reconstruction_3::Jet_smoother<Kernel> ScaleSpaceJS;
+typedef CGAL::Scale_space_reconstruction_3::Weighted_PCA_smoother<Kernel> ScaleSpaceWPS;
+
 typedef CGAL::cpp11::array<std::size_t,3> Facet;
 
 
@@ -170,8 +180,6 @@ namespace SurfaceReconstruction
   typedef Neighbor_search::Distance Distance;
   typedef Neighbor_search::iterator Search_iterator;
 
-  typedef CGAL::Scale_space_surface_reconstruction_3<Kernel> ScaleSpace;
-  
   template <typename OutputIterator>
   void generate_scales (OutputIterator out,
 			const unsigned int scale_min = 6,
@@ -344,72 +352,151 @@ namespace SurfaceReconstruction
 
   template <typename ItemsInserter>
   void scale_space (const Point_set& points, ItemsInserter items,
-		    unsigned int scale, bool generate_smooth = false,
-                    bool separate_shells = false, bool force_manifold = true,
-                    unsigned int samples = 300, unsigned int iterations = 4)
+                    bool jet_smoother, 
+                    unsigned int iterations,
+                    unsigned int neighbors, unsigned int fitting, unsigned int monge,
+                    unsigned int neighborhood_size, unsigned int samples,
+                    bool advancing_front_mesher,
+                    bool generate_smooth,
+                    double longest_edge, double radius_ratio_bound, double beta_angle,
+                    bool separate_shells, bool force_manifold)
   {
-    ScaleSpace reconstruct (scale, samples);
-    reconstruct.reconstruct_surface(points.points().begin(), points.points().end(),
-                                    iterations,
-                                    separate_shells, force_manifold);
+    ScaleSpace reconstruct (points.points().begin(), points.points().end());
 
-    for( unsigned int sh = 0; sh < reconstruct.number_of_shells(); ++sh )
+    double squared_radius = 0.;
+    if (jet_smoother)
+    {
+      ScaleSpaceJS smoother(neighbors, fitting, monge);
+      reconstruct.increase_scale(iterations, smoother);
+      if (!advancing_front_mesher)
+        squared_radius = CGAL::compute_average_spacing<Concurrency_tag> (points.points().begin(),
+                                                                         points.points().end(), neighbors);
+    }
+    else
+    {
+      ScaleSpaceWPS smoother(neighborhood_size, samples);
+      reconstruct.increase_scale(iterations, smoother);
+      squared_radius = smoother.squared_radius();
+      
+    }
+
+    if (advancing_front_mesher)
+    {
+      ScaleSpaceAFM mesher (longest_edge, radius_ratio_bound, beta_angle);
+      reconstruct.reconstruct_surface (mesher);
+
+      Scene_polygon_soup_item* new_item
+        = new Scene_polygon_soup_item ();
+      new_item->setColor(Qt::lightGray);
+      new_item->setRenderingMode(FlatPlusEdges);
+      new_item->init_polygon_soup(points.size(), reconstruct.number_of_facets ());
+
+      Scene_polygon_soup_item* smooth_item = NULL;
+      if (generate_smooth)
+      {
+        smooth_item = new Scene_polygon_soup_item ();
+        smooth_item->setColor(Qt::lightGray);
+        smooth_item->setRenderingMode(FlatPlusEdges);
+        smooth_item->init_polygon_soup(points.size(), reconstruct.number_of_facets ());
+      }
+
+      std::map<unsigned int, unsigned int> map_i2i;
+      unsigned int current_index = 0;
+    
+      for (ScaleSpace::Facet_iterator it = reconstruct.facets_begin();
+           it != reconstruct.facets_end(); ++ it)
+      {
+        for (unsigned int ind = 0; ind < 3; ++ ind)
+        {
+          if (map_i2i.find ((*it)[ind]) == map_i2i.end ())
+          {
+            map_i2i.insert (std::make_pair ((*it)[ind], current_index ++));
+            Point p = points.point(*(points.begin_or_selection_begin() + (*it)[ind]));
+            new_item->new_vertex (p.x (), p.y (), p.z ());
+            
+            if (generate_smooth)
+            {
+              p = *(reconstruct.points_begin() + (*it)[ind]);
+              smooth_item->new_vertex (p.x (), p.y (), p.z ());
+            }
+          }
+        }
+        new_item->new_triangle( map_i2i[(*it)[0]],
+                                map_i2i[(*it)[1]],
+                                map_i2i[(*it)[2]] );
+        if (generate_smooth)
+          smooth_item->new_triangle( map_i2i[(*it)[0]],
+                                     map_i2i[(*it)[1]],
+                                     map_i2i[(*it)[2]] );
+              
+      }
+
+      *(items ++) = new_item;
+      if (generate_smooth)
+        *(items ++) = smooth_item;
+    }
+    else
+    {
+      ScaleSpaceASM mesher (squared_radius, separate_shells, force_manifold);
+      reconstruct.reconstruct_surface (mesher);
+
+      for( unsigned int sh = 0; sh < mesher.number_of_shells(); ++sh )
       {
         Scene_polygon_soup_item* new_item
           = new Scene_polygon_soup_item ();
         new_item->setColor(Qt::lightGray);
         new_item->setRenderingMode(FlatPlusEdges);
-        new_item->init_polygon_soup(points.size(), reconstruct.number_of_triangles ());
+        new_item->init_polygon_soup(points.size(), mesher.number_of_triangles ());
 
         Scene_polygon_soup_item* smooth_item = NULL;
         if (generate_smooth)
-          {
-            smooth_item = new Scene_polygon_soup_item ();
-            smooth_item->setColor(Qt::lightGray);
-            smooth_item->setRenderingMode(FlatPlusEdges);
-            smooth_item->init_polygon_soup(points.size(), reconstruct.number_of_triangles ());
-          }
+        {
+          smooth_item = new Scene_polygon_soup_item ();
+          smooth_item->setColor(Qt::lightGray);
+          smooth_item->setRenderingMode(FlatPlusEdges);
+          smooth_item->init_polygon_soup(points.size(), mesher.number_of_triangles ());
+        }
 
         std::map<unsigned int, unsigned int> map_i2i;
         unsigned int current_index = 0;
     
-        for (ScaleSpace::Triple_iterator it = reconstruct.shell_begin (sh);
-             it != reconstruct.shell_end (sh); ++ it)
+        for (ScaleSpaceASM::Facet_iterator it = mesher.shell_begin (sh);
+             it != mesher.shell_end (sh); ++ it)
+        {
+          for (unsigned int ind = 0; ind < 3; ++ ind)
           {
-            for (unsigned int ind = 0; ind < 3; ++ ind)
-              {
-                if (map_i2i.find ((*it)[ind]) == map_i2i.end ())
-                  {
-                    map_i2i.insert (std::make_pair ((*it)[ind], current_index ++));
-                    Point p = points.point(*(points.begin_or_selection_begin() + (*it)[ind]));
-                    new_item->new_vertex (p.x (), p.y (), p.z ());
+            if (map_i2i.find ((*it)[ind]) == map_i2i.end ())
+            {
+              map_i2i.insert (std::make_pair ((*it)[ind], current_index ++));
+              Point p = points.point(*(points.begin_or_selection_begin() + (*it)[ind]));
+              new_item->new_vertex (p.x (), p.y (), p.z ());
                     
-                    if (generate_smooth)
-                      {
-                        p = *(reconstruct.points_begin() + (*it)[ind]);
-                        smooth_item->new_vertex (p.x (), p.y (), p.z ());
-                      }
-                  }
+              if (generate_smooth)
+              {
+                p = *(reconstruct.points_begin() + (*it)[ind]);
+                smooth_item->new_vertex (p.x (), p.y (), p.z ());
               }
-            new_item->new_triangle( map_i2i[(*it)[0]],
-                                    map_i2i[(*it)[1]],
-                                    map_i2i[(*it)[2]] );
-            if (generate_smooth)
-              smooth_item->new_triangle( map_i2i[(*it)[0]],
-                                         map_i2i[(*it)[1]],
-                                         map_i2i[(*it)[2]] );
-              
+            }
           }
+          new_item->new_triangle( map_i2i[(*it)[0]],
+                                  map_i2i[(*it)[1]],
+                                  map_i2i[(*it)[2]] );
+          if (generate_smooth)
+            smooth_item->new_triangle( map_i2i[(*it)[0]],
+                                       map_i2i[(*it)[1]],
+                                       map_i2i[(*it)[2]] );
+              
+        }
 
         *(items ++) = new_item;
         if (generate_smooth)
           *(items ++) = smooth_item;
       }
 
-    if (force_manifold)
+      if (force_manifold)
       {
-        std::ptrdiff_t num = std::distance( reconstruct.garbage_begin(  ),
-                                            reconstruct.garbage_end(  ) );
+        std::ptrdiff_t num = std::distance( mesher.garbage_begin(  ),
+                                            mesher.garbage_end(  ) );
 
         Scene_polygon_soup_item* new_item
           = new Scene_polygon_soup_item ();
@@ -419,49 +506,50 @@ namespace SurfaceReconstruction
 
         Scene_polygon_soup_item* smooth_item = NULL;
         if (generate_smooth)
-          {
-            smooth_item = new Scene_polygon_soup_item ();
-            smooth_item->setColor(Qt::blue);
-            smooth_item->setRenderingMode(FlatPlusEdges);
-            smooth_item->init_polygon_soup(points.size(), num);
-          }
+        {
+          smooth_item = new Scene_polygon_soup_item ();
+          smooth_item->setColor(Qt::blue);
+          smooth_item->setRenderingMode(FlatPlusEdges);
+          smooth_item->init_polygon_soup(points.size(), num);
+        }
 
         std::map<unsigned int, unsigned int> map_i2i;
 
         unsigned int current_index = 0;
-        for (ScaleSpace::Triple_iterator it=reconstruct.garbage_begin(),
-               end=reconstruct.garbage_end();it!=end;++it)
+        for (ScaleSpaceASM::Facet_iterator it=mesher.garbage_begin(),
+               end=mesher.garbage_end();it!=end;++it)
+        {
+          for (unsigned int ind = 0; ind < 3; ++ ind)
           {
-            for (unsigned int ind = 0; ind < 3; ++ ind)
-              {
-                if (map_i2i.find ((*it)[ind]) == map_i2i.end ())
-                  {
-                    map_i2i.insert (std::make_pair ((*it)[ind], current_index ++));
-                    Point p = points.point(*(points.begin_or_selection_begin() + (*it)[ind]));
-                    new_item->new_vertex (p.x (), p.y (), p.z ());
+            if (map_i2i.find ((*it)[ind]) == map_i2i.end ())
+            {
+              map_i2i.insert (std::make_pair ((*it)[ind], current_index ++));
+              Point p = points.point(*(points.begin_or_selection_begin() + (*it)[ind]));
+              new_item->new_vertex (p.x (), p.y (), p.z ());
                     
-                    if (generate_smooth)
-                      {
-                        p = *(reconstruct.points_begin() + (*it)[ind]);
-                        smooth_item->new_vertex (p.x (), p.y (), p.z ());
-                      }
-                  }
-
+              if (generate_smooth)
+              {
+                p = *(reconstruct.points_begin() + (*it)[ind]);
+                smooth_item->new_vertex (p.x (), p.y (), p.z ());
               }
-            new_item->new_triangle( map_i2i[(*it)[0]],
-                                    map_i2i[(*it)[1]],
-                                    map_i2i[(*it)[2]] );
-            if (generate_smooth)
-              smooth_item->new_triangle( map_i2i[(*it)[0]],
-                                         map_i2i[(*it)[1]],
-                                         map_i2i[(*it)[2]] );
+            }
+
           }
+          new_item->new_triangle( map_i2i[(*it)[0]],
+                                  map_i2i[(*it)[1]],
+                                  map_i2i[(*it)[2]] );
+          if (generate_smooth)
+            smooth_item->new_triangle( map_i2i[(*it)[0]],
+                                       map_i2i[(*it)[1]],
+                                       map_i2i[(*it)[2]] );
+        }
 
         *(items ++) = new_item;
         if (generate_smooth)
           *(items ++) = smooth_item;
 
       }
+    }
   }
 
   struct Point_set_make_pair_point_index
@@ -548,29 +636,43 @@ public:
 
   unsigned int method () const
   {
-    if (buttonAuto->isChecked ())       return 0;
-    if (buttonAdvancing->isChecked ())  return 1;
-    if (buttonScaleSpace->isChecked ()) return 2;
-    if (buttonPoisson->isChecked ())    return 3;
-    if (buttonRANSAC->isChecked ())     return 4;
-    return -1;
+    return tabWidget->currentIndex();
   }
+  
+  // Auto
   bool boundaries () const { return m_boundaries->isChecked (); }
   bool interpolate () const { return m_interpolate->isChecked (); }
+
+  // Advancing front
   double longest_edge () const { return m_longestEdge->value (); }
   double radius_ratio_bound () const { return m_radiusRatioBound->value (); }
   double beta_angle () const { return m_betaAngle->value (); }
-  unsigned int neighbors () const { return m_neighbors->value (); }
-  unsigned int samples () const { return m_samples->value (); }
+
+  // Scale Space
+  bool scalespace_js() const { return m_scalespace_jet->isChecked(); }
   unsigned int iterations () const { return m_iterations->value (); }
+  unsigned int neighbors () const { return m_neighbors->value(); }
+  unsigned int fitting () const { return m_fitting->value(); }
+  unsigned int monge () const { return m_monge->value(); }
+  unsigned int neighborhood_size () const { return m_neighborhood_size->value (); }
+  unsigned int samples () const { return m_samples->value (); }
+  bool scalespace_af() const { return m_scalespace_af->isChecked(); }
+  bool generate_smoothed () const { return m_genSmooth->isChecked (); }
+  double longest_edge_2 () const { return m_longestEdge_2->value (); }
+  double radius_ratio_bound_2 () const { return m_radiusRatioBound_2->value (); }
+  double beta_angle_2 () const { return m_betaAngle_2->value (); }
   bool separate_shells () const { return m_genShells->isChecked (); }
   bool force_manifold () const { return m_forceManifold->isChecked (); }
-  bool generate_smoothed () const { return m_genSmooth->isChecked (); }
+
+
+  // Poisson
   double angle () const { return m_inputAngle->value (); }
   double radius () const { return m_inputRadius->value (); }
   double distance () const { return m_inputDistance->value (); }
   bool two_passes () const { return m_inputTwoPasses->isChecked (); }
   bool do_not_fill_holes () const { return m_doNotFillHoles->isChecked (); }
+
+  // RANSAC
   double connectivity_tolerance () const { return m_connectivityTolerance->value (); }
   double noise_tolerance () const { return m_noiseTolerance->value (); }
   unsigned int min_size_subset () const { return m_minSizeSubset->value (); }
@@ -639,19 +741,19 @@ void Polyhedron_demo_surface_reconstruction_plugin::on_actionSurfaceReconstructi
       switch (method)
         {
         case 0:
-          automatic_reconstruction (dialog);
+          advancing_front_reconstruction (dialog);
           break;
         case 1:
-          advancing_front_reconstruction (dialog);
+          poisson_reconstruction (dialog);
           break;
         case 2:
           scale_space_reconstruction (dialog);
           break;
         case 3:
-          poisson_reconstruction (dialog);
+          ransac_reconstruction (dialog);
           break;
         case 4:
-          ransac_reconstruction (dialog);
+          automatic_reconstruction (dialog);
           break;
         default:
           std::cerr << "Error: unkown method." << std::endl;
@@ -746,7 +848,14 @@ void Polyhedron_demo_surface_reconstruction_plugin::automatic_reconstruction
               std::vector<Scene_polygon_soup_item*> reco_items;
 
 	      SurfaceReconstruction::scale_space (*points, std::back_inserter (reco_items),
-                                                  (std::max)(noise_scale, aniso_scale));
+                                                  true,
+                                                  4,
+                                                  (std::max)(noise_scale, aniso_scale), 2, 2,
+                                                  0, 0,
+                                                  true,
+                                                  false,
+                                                  10. * (std::max)(noise_size, aniso_size), 5., 0.52,
+                                                  false, false);
 	      
               for (std::size_t i = 0; i < reco_items.size (); ++ i)
                 {
@@ -895,23 +1004,27 @@ void Polyhedron_demo_surface_reconstruction_plugin::scale_space_reconstruction
       std::vector<Scene_polygon_soup_item*> reco_items;
 
       SurfaceReconstruction::scale_space (*points, std::back_inserter (reco_items),
-                                          dialog.neighbors (),
+                                          dialog.scalespace_js(),
+                                          dialog.iterations(),
+                                          dialog.neighbors(), dialog.fitting(), dialog.monge(),
+                                          dialog.neighborhood_size (), dialog.samples(),
+                                          dialog.scalespace_af(),
                                           dialog.generate_smoothed (),
-                                          dialog.separate_shells (),
-                                          dialog.force_manifold (),
-                                          dialog.samples (),
-                                          dialog.iterations ());
+                                          dialog.longest_edge_2(), dialog.radius_ratio_bound_2(), dialog.beta_angle_2(),
+                                          dialog.separate_shells (), dialog.force_manifold ());
 
       for (std::size_t i = 0; i < reco_items.size (); ++ i)
         {
-          if (dialog.force_manifold () && i > reco_items.size () - 3)
+          if (!(dialog.scalespace_af()))
+          {
+            if (dialog.force_manifold () && i > reco_items.size () - 3)
             {
               if (dialog.generate_smoothed () && i % 2)
                 reco_items[i]->setName(tr("%1 (scale space smooth garbage)").arg(scene->item(index)->name()));
               else
                 reco_items[i]->setName(tr("%1 (scale space garbage)").arg(scene->item(index)->name()));
             }
-          else
+            else
             {
               if (dialog.generate_smoothed ())
                 {
@@ -923,6 +1036,19 @@ void Polyhedron_demo_surface_reconstruction_plugin::scale_space_reconstruction
               else
                 reco_items[i]->setName(tr("%1 (scale space shell %2)").arg(scene->item(index)->name()).arg(i+1));
             }
+          }
+          else
+          {
+            if (dialog.generate_smoothed ())
+            {
+              if (i % 2)
+                reco_items[i]->setName(tr("%1 (scale space smooth)").arg(scene->item(index)->name()));
+              else
+                reco_items[i]->setName(tr("%1 (scale space)").arg(scene->item(index)->name()));
+            }
+            else
+              reco_items[i]->setName(tr("%1 (scale space)").arg(scene->item(index)->name()));
+          }
           scene->addItem (reco_items[i]);
         }
 

@@ -10,7 +10,7 @@
 
 #include <CGAL/Timer.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
-#include <CGAL/Subdivision_method_3.h>
+#include <CGAL/subdivision_method_3.h>
 
 #include <CGAL/centroid.h>
 #include <CGAL/linear_least_squares_fitting_3.h>

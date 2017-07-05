@@ -6,15 +6,12 @@
 #include <string>
 #include <CGAL/Modifier_base.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
-
 #include <boost/tuple/tuple.hpp>
 #include <iostream>
 
-
-template <class HDS, class P>
-class Build_from_gocad : public CGAL::Modifier_base<HDS> {
-
-
+template <class Facegraph, class P>
+class Build_from_gocad_BGL
+{
   typedef P Point_3;
   typedef std::deque<Point_3> Points_3;
   typedef boost::tuple<int,int,int> Facet;
@@ -30,34 +27,24 @@ public:
   std::string name, color;
 
 
-  Build_from_gocad(std::istream& is_)
+  Build_from_gocad_BGL(std::istream& is_)
     : is(is_), counter(0)
   {}
 
-  void operator()( HDS& hds) {
+  void operator()( Facegraph& graph) {
     read(is, meshPoints, mesh);
 
-    CGAL::Polyhedron_incremental_builder_3<Polyhedron::HalfedgeDS> B(hds, true);
-    B.begin_surface( meshPoints.size(), mesh.size());
+//    graph.begin_surface( meshPoints.size(), mesh.size());
     typedef typename Points_3::size_type size_type;
-    
-    for(size_type i=0; i < meshPoints.size(); i++){
-      B.add_vertex( meshPoints[i]);
-    }
+
     for(size_type i=0; i < mesh.size(); i++){
-      B.begin_facet(); 
-      B.add_vertex_to_facet( mesh[i].template get<0>());
-      B.add_vertex_to_facet( mesh[i].template get<1>());
-      B.add_vertex_to_facet( mesh[i].template get<2>());
-      B.end_facet();
+      CGAL::cpp11::array<typename boost::graph_traits<Facegraph>::vertex_descriptor, 3> face;
+      face[0] = add_vertex( meshPoints[mesh[i].template get<0>()],graph);
+      face[1] = add_vertex( meshPoints[mesh[i].template get<1>()],graph);
+      face[2] = add_vertex( meshPoints[mesh[i].template get<2>()],graph);
+
+      CGAL::Euler::add_face(face, graph);
     }
-    if(B.error())
-      {
-        std::cerr << "An error occured while creating a Polyhedron" << std::endl;
-        B.rollback();
-      }
-    
-    B.end_surface();
   }
 
   void
@@ -102,30 +89,29 @@ public:
         break;
       }
       std::getline(input, s);
-    }  
+    }
   }
 
 };
 
-
-template <typename Polyhedron>
+template <typename FaceGraph>
 bool
-read_gocad(Polyhedron& polyhedron, std::istream& in, std::string& name, std::string& color)
+read_gocad(FaceGraph& polyhedron, std::istream& in, std::string& name, std::string& color)
 {
-  typedef typename Polyhedron::HalfedgeDS HDS;
-  typedef typename Polyhedron::Point_3 Point_3;
-  Build_from_gocad<HDS,Point_3> builder(in);
+  //typedef typename Polyhedron::HalfedgeDS HDS;
+  typedef typename boost::property_traits<typename boost::property_map<FaceGraph, CGAL::vertex_point_t>::type>::value_type Point_3;
 
-  polyhedron.delegate(builder);
+  Build_from_gocad_BGL<FaceGraph, Point_3> builder(in);
+  builder(polyhedron);
   name=builder.name;
   color=builder.color;
 
   return in.good() && polyhedron.is_valid();
 }
 
-template <typename Polyhedron>
+template <typename FaceGraph>
 bool
-write_gocad(Polyhedron& polyhedron, std::ostream& os, const std::string& name)
+write_gocad(FaceGraph& polyhedron, std::ostream& os, const std::string& name)
 {
   os << "GOCAD TSurf 1\n"
     "HEADER {\n"
@@ -143,26 +129,29 @@ write_gocad(Polyhedron& polyhedron, std::ostream& os, const std::string& name)
     "TFACE\n";
 
   os.precision(16);
+  typedef typename boost::property_map<FaceGraph, CGAL::vertex_point_t>::type VPMap;
+  VPMap vpmap = get(CGAL::vertex_point, polyhedron);
+  std::map<typename boost::graph_traits<FaceGraph>::vertex_descriptor, int> id_map;
   {
-    typename Polyhedron::Vertex_iterator it, end;
-    it = polyhedron.vertices_begin();
-    end = polyhedron.vertices_end();
-    int i = 0;
+    typename boost::graph_traits<FaceGraph>::vertex_iterator it, end;
+    it = vertices(polyhedron).begin();
+    end = vertices(polyhedron).end();
+    int i=0;
     for(; it != end; ++it){
-      it->id() = i;
-      os << "VRTX " << i << " " << it->point() << "\n";
+      id_map[*it] = i;
+      os << "VRTX " << i << " " << get(vpmap, *it) << "\n";
       ++i;
     }
   }
 
   {
-    typename Polyhedron::Facet_iterator it, end;
-    it = polyhedron.facets_begin();
-    end = polyhedron.facets_end();
+    typename boost::graph_traits<FaceGraph>::face_iterator it, end;
+    it = faces(polyhedron).begin();
+    end = faces(polyhedron).end();
     for(; it != end; ++it){
-      os << "TRGL " << it->halfedge()->prev()->vertex()->id() << " " 
-         << it->halfedge()->vertex()->id() << " "
-         << it->halfedge()->next()->vertex()->id()<< "\n";
+      os << "TRGL " << id_map[target(prev(halfedge(*it, polyhedron), polyhedron), polyhedron)] << " "
+         << id_map[target(halfedge(*it, polyhedron), polyhedron)] << " "
+         << id_map[target(next(halfedge(*it, polyhedron), polyhedron), polyhedron)] << "\n";
     }
   }
 

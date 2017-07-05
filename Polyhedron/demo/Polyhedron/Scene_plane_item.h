@@ -28,7 +28,31 @@ public:
   ~Scene_plane_item();
 
   double scene_diag() const {
-    const Scene_item::Bbox& bbox = scene->bbox();
+    /*If no item is visible, scene->bbox is 0,0,0,0,0,0 and the texture is empty.
+    To avoid that, we need to compute the scene's bbox if the items were visible.
+    {
+*/
+    Scene_item::Bbox bbox = scene->bbox();
+    if(bbox == Scene_item::Bbox(std::numeric_limits<double>::infinity(),
+                                std::numeric_limits<double>::infinity(),
+                                std::numeric_limits<double>::infinity(),
+                                -std::numeric_limits<double>::infinity(),
+                                -std::numeric_limits<double>::infinity(),
+                                -std::numeric_limits<double>::infinity()))
+      bbox = Scene_item::Bbox(0,0,0,0,0,0);
+    if(bbox == Scene_item::Bbox(0,0,0,0,0,0))
+    {
+      for(int id = 0; id< scene->numberOfEntries(); ++id)
+      {
+        if(scene->item(id)->isFinite() && !scene->item(id)->isEmpty())
+          bbox = bbox + scene->item(id)->bbox();
+      }
+    }
+    else
+    {
+      bbox = scene->bbox();
+    }
+    //}
     const double& xdelta = bbox.xmax()-bbox.xmin();
     const double& ydelta = bbox.ymax()-bbox.ymin();
     const double& zdelta = bbox.zmax()-bbox.zmin();

@@ -32,7 +32,7 @@
 typedef CGAL::Exact_predicates_exact_constructions_kernel K;
 
 // Explicit instantiation of the whole class :
-template class CGAL::Regular_triangulation_euclidean_traits_3<K>;
+template class CGAL::Regular_triangulation_euclidean_traits_3<K, K::FT>;
 
 int main()
 {

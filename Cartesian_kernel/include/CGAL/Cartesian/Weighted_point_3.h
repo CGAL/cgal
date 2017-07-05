@@ -53,6 +53,7 @@ public:
   Weighted_pointC3(const Origin &o)
     : base(o,0) {}
 
+  explicit
   Weighted_pointC3 (const Point_3 &p)
     : base(p,0)
   {}

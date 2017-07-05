@@ -519,8 +519,4 @@ bool is_valid(const CGAL::Surface_mesh<P>& sm, bool verbose = false)
 
 } // namespace CGAL
 
-
-
-
-
 #endif // CGAL_BOOST_GRAPH_TRAITS_SURFACE_MESH_H

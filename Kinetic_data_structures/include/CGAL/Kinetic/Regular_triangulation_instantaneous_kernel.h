@@ -20,62 +20,24 @@
 
 #ifndef CGAL_CARTESIAN_REGULAR_INSTANTANEOUS_KERNEL_H
 #define CGAL_CARTESIAN_REGULAR_INSTANTANEOUS_KERNEL_H
+
 #include <CGAL/Kinetic/basic.h>
 #include <CGAL/Kinetic/Default_instantaneous_kernel.h>
-#include <CGAL/Simple_cartesian.h>
-#include <CGAL/Filtered_kernel.h>
-#include <map>
-#include <iostream>
-#include <CGAL/Kinetic/Ref_counted.h>
-#include <CGAL/Kinetic/internal/To_static.h>
-
-
-/*#define CGAL_MSA(Pred, pred, Arg, d) typedef Instantaneous_adaptor<typename Static_kernel::Pred##_##d, Current_coordinates, Arg> Pred##_##d; \
-  Pred##_##d pred##_##d##_object() const				\
-  {									\
-    typename Static_kernel::Pred##_##d sp= rep_->static_kernel().pred##_##d##_object();	\
-    return Pred##_##d(current_coordinates_object(), sp);		\
-    }*/
-
-/*#define CGAL_TSO(name) typedef typename Static_kernel::name name*/
-
-#define CGAL_MSA(Pred, pred, Arg, d) typedef Instantaneous_adaptor<typename P::Static_kernel::Pred##_##d, typename P::Kinetic_kernel::Pred##_##d, typename P::Rep, Arg> Pred##_##d; \
-  Pred##_##d pred##_##d##_object() const				\
-  {									\
-    typename P::Static_kernel::Pred##_##d sp= P::rep_->static_kernel().pred##_##d##_object(); \
-    typename P::Kinetic_kernel::Pred##_##d kp= P::rep_->kinetic_kernel().pred##_##d##_object(); \
-    return Pred##_##d(P::rep_, sp, kp);					\
-  }
-
+#include <CGAL/Kinetic/Default_instantaneous_mapped_kernel.h>
 
 namespace CGAL { namespace Kinetic {
 
-
 template <class Traitst >
-class Regular_triangulation_instantaneous_kernel: public Default_instantaneous_kernel<Traitst>
+class Regular_triangulation_instantaneous_kernel
+  : public Default_instantaneous_mapped_kernel<Traitst>
 {
   typedef Regular_triangulation_instantaneous_kernel<Traitst> This;
 public:
   typedef Traitst Traits;
-  typedef Default_instantaneous_kernel<Traitst> P;
+  typedef Default_instantaneous_mapped_kernel<Traitst> P;
 
-  //using P::Time;
-  //using P::NT;
-
-  Regular_triangulation_instantaneous_kernel(const Traits &tr): P(tr) {
-  }
-
-  /*using typename P::Point_1;
-  using typename P::Point_2;
-  using typename P::Point_3;*/
-  typedef typename P::Point_3 Bare_point;
-  typedef typename P::Point_3 Weighted_point_3;
-  //typedef P::Static_kernel Static_kernel;
-
-  CGAL_MSA(Power_side_of_oriented_power_sphere,power_side_of_oriented_power_sphere, Weighted_point_3, 3);
-  CGAL_MSA(Equal, equal, Weighted_point_3, 3);
+  Regular_triangulation_instantaneous_kernel(const Traits &tr): P(tr) { }
 };
-#undef CGAL_MSA
 
-} } //namespace CGAL::Kinetic
-#endif
+} } // namespace CGAL::Kinetic
+#endif // CGAL_CARTESIAN_REGULAR_INSTANTANEOUS_KERNEL_H

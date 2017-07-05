@@ -47,8 +47,11 @@ public:
 
   /*!
   introduces a weighted point from point `p` and weight `0`.
+
+  \warning The `explicit` keyword is used to avoid accidental implicit conversions
+           between Point_2 and Weighted_point_2.
   */
-  Weighted_point_2(const Point_2<Kernel>& p);
+  explicit Weighted_point_2(const Point_2<Kernel>& p);
 
   /*!
   introduces a weighted point from point `p` and weight `w`.

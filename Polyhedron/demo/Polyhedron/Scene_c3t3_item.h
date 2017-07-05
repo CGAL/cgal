@@ -83,7 +83,7 @@ public:
 
   void setNormal(float x, float y, float z) ;
 
-  Kernel::Plane_3 plane(qglviewer::Vec offset = qglviewer::Vec(0,0,0)) const;
+  Geom_traits::Plane_3 plane(qglviewer::Vec offset = qglviewer::Vec(0,0,0)) const;
 
   bool isFinite() const Q_DECL_OVERRIDE { return true; }
   bool isEmpty() const Q_DECL_OVERRIDE {
@@ -125,6 +125,8 @@ public:
     float getShrinkFactor() const;
     bool keyPressEvent(QKeyEvent *) Q_DECL_OVERRIDE;
   public Q_SLOTS:
+
+  void on_spheres_color_changed();
   void export_facets_in_complex();
 
   void data_item_destroyed();

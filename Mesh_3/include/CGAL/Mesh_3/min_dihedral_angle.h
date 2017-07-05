@@ -100,14 +100,11 @@ minimum_dihedral_angle(
     k.compute_determinant_3_object();
   typename K::Construct_cross_product_vector_3 cp =
     k.construct_cross_product_vector_3_object();
-
   typename K::Compute_scalar_product_3 sp =
     k.compute_scalar_product_3_object();
-
   typename K::Construct_vector_3 cv =
     k.construct_vector_3_object();
 
-  
   typename K::Vector_3 v01 = cv(p0,p1);
   typename K::Vector_3 v02 = cv(p0,p2);
   typename K::Vector_3 v03 = cv(p0,p3);

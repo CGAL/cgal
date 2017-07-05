@@ -79,7 +79,7 @@ bool selfIntersect(Mesh* mesh, std::vector<std::pair<typename boost::graph_trait
 
 void Polyhedron_demo_self_intersection_plugin::on_actionSelfIntersection_triggered()
 {
-  typedef Scene_surface_mesh_item::SMesh Surface_mesh;
+  typedef SMesh Surface_mesh;
   typedef boost::graph_traits<Surface_mesh>::face_descriptor Face_descriptor;
   typedef boost::graph_traits<Surface_mesh>::halfedge_descriptor halfedge_descriptor;
   typedef Surface_mesh::Vertex_index Vertex_index;
@@ -183,10 +183,10 @@ void Polyhedron_demo_self_intersection_plugin::on_actionSelfIntersection_trigger
       found = true;
     }
   }
+  QApplication::restoreOverrideCursor();
   if(!found)
     QMessageBox::information(mw, tr("No self intersection"),
                              tr("None of the selected surfaces self-intersect."));
-  QApplication::restoreOverrideCursor();
 }
 
 #include "Self_intersection_plugin.moc"

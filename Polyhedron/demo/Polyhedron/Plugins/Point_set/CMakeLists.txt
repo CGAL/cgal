@@ -61,3 +61,7 @@ endif()
 
   polyhedron_demo_plugin(point_set_interference_plugin Point_set_interference_plugin)
   target_link_libraries(point_set_interference_plugin scene_points_with_normal_item)
+
+  qt5_wrap_ui( alpha_shapeUI_FILES Alpha_shape_widget.ui )
+  polyhedron_demo_plugin(alpha_shape_plugin Alpha_shape_plugin ${alpha_shapeUI_FILES})
+  target_link_libraries(alpha_shape_plugin scene_points_with_normal_item scene_c3t3_item)

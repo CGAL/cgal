@@ -1,7 +1,7 @@
 include( polyhedron_demo_macros )
 
 polyhedron_demo_plugin(gocad_plugin GOCAD_io_plugin)
-target_link_libraries(gocad_plugin scene_polyhedron_item)
+target_link_libraries(gocad_plugin scene_polyhedron_item scene_surface_mesh_item)
 
 qt5_wrap_ui( funcUI_FILES Function_dialog.ui )
 polyhedron_demo_plugin(io_implicit_function_plugin Implicit_function_io_plugin ${funcUI_FILES})
@@ -24,8 +24,11 @@ target_link_libraries(polylines_io_plugin scene_polylines_item)
 polyhedron_demo_plugin(selection_io_plugin Selection_io_plugin)
 target_link_libraries(selection_io_plugin scene_polyhedron_selection_item)
 
+polyhedron_demo_plugin(selection_io_sm_plugin Selection_io_plugin)
+target_link_libraries(selection_io_sm_plugin scene_surface_mesh_selection_item)
+
 polyhedron_demo_plugin(stl_plugin STL_io_plugin)
-target_link_libraries(stl_plugin scene_polyhedron_item scene_polygon_soup_item)
+target_link_libraries(stl_plugin scene_polyhedron_item scene_surface_mesh_item scene_polygon_soup_item)
 
 polyhedron_demo_plugin(surface_mesh_io_plugin Surface_mesh_io_plugin)
 target_link_libraries(surface_mesh_io_plugin scene_surface_mesh_item scene_polygon_soup_item)
@@ -35,6 +38,7 @@ target_link_libraries(surf_io_plugin scene_polyhedron_item)
 
 polyhedron_demo_plugin(surf_to_sm_io_plugin Surf_to_sm_io_plugin)
 target_link_libraries(surf_to_sm_io_plugin scene_surface_mesh_item)
+
 
 
 find_package(VTK QUIET COMPONENTS
@@ -47,6 +51,13 @@ if (VTK_FOUND)
       target_link_libraries(vtk_plugin scene_polyhedron_item scene_polylines_item scene_c3t3_item
                                        vtkCommonCore vtkIOCore vtkIOLegacy vtkIOXML
                                        vtkFiltersCore vtkFiltersSources)
+
+      polyhedron_demo_plugin(vtk_sm_plugin VTK_io_plugin)
+      target_link_libraries(vtk_sm_plugin scene_surface_mesh_item scene_polylines_item scene_c3t3_item
+                                       vtkCommonCore vtkIOCore vtkIOLegacy vtkIOXML
+                                       vtkFiltersCore vtkFiltersSources)
+      target_compile_definitions(vtk_sm_plugin PUBLIC "-DUSE_SURFACE_MESH" )
+
     else()
       message(STATUS "NOTICE : the vtk IO plugin needs VTK libraries and will not be compiled.")
     endif()

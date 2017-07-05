@@ -197,7 +197,7 @@ public:
   // \}
 
 
-  /// Tag to distinguish Regular triangulations from others;
+  /// Tag to distinguish regular triangulations from others;
   typedef Tag_false Weighted_tag;
 
 protected:

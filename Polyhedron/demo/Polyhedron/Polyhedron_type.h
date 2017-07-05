@@ -4,6 +4,7 @@
 // CGAL
 // kernel
 #include "Kernel_type.h"
+#include "properties.h"
 
 // surface mesh
 #include <CGAL/Polyhedron_3.h>
@@ -14,10 +15,12 @@
 #include <CGAL/Has_timestamp.h>
 #include <CGAL/tags.h>
 
+#include <CGAL/boost/graph/properties_Polyhedron_3.h>
+
 #include <set>
 
 template <typename Refs, typename Tag, typename Point, typename Patch_id>
-class Polyhedron_demo_vertex : 
+class Polyhedron_demo_vertex :
   public CGAL::HalfedgeDS_vertex_base<Refs, Tag, Point>
 {
 public:
@@ -64,13 +67,13 @@ public:
 
   std::size_t& id()       { return mID; }
   std::size_t  id() const { return mID; }
-  
+
   Polyhedron_demo_vertex() : Pdv_base(), mID(-1), nb_of_feature_edges(0) {}
   Polyhedron_demo_vertex(const Point& p) : Pdv_base(p), mID(-1), nb_of_feature_edges(0) {}
 };
 
 template <class Refs, class Tprev, class Tvertex, class Tface>
-class Polyhedron_demo_halfedge : 
+class Polyhedron_demo_halfedge :
   public CGAL::HalfedgeDS_halfedge_base<Refs,Tprev,Tvertex,Tface>
 {
 private:
@@ -80,7 +83,7 @@ private:
 
 public:
 
-  Polyhedron_demo_halfedge() 
+  Polyhedron_demo_halfedge()
     : feature_edge(false), mID(-1) {};
 
   bool is_feature_edge() const {
@@ -91,7 +94,7 @@ public:
     feature_edge = b;
     this->opposite()->feature_edge = b;
   }
-  
+
   std::size_t& id()       { return mID; }
   std::size_t  id() const { return mID; }
 
@@ -122,7 +125,7 @@ inline Integral patch_id_default_value(Integral)
 }
 
 template <class Refs, class T_, class Pln_, class Patch_id_>
-class Polyhedron_demo_face : 
+class Polyhedron_demo_face :
   public CGAL::HalfedgeDS_face_base<Refs,T_,Pln_>
 {
 private:
@@ -132,18 +135,18 @@ private:
 
 public:
   typedef Patch_id_ Patch_id;
-  
+
   Polyhedron_demo_face()
     : patch_id_(patch_id_default_value(Patch_id())), mID(-1) {}
-  
+
   const Patch_id& patch_id() const {
     return patch_id_;
   }
-  
+
   void set_patch_id(const Patch_id& i) {
     patch_id_ = i;
   }
-  
+
   std::size_t& id()       { return mID; }
   std::size_t  id() const { return mID; }
 
@@ -194,9 +197,37 @@ public:
 
 #include "Polyhedron_type_fwd.h"
 
+inline
+boost::property_map<Polyhedron, boost::vertex_index_t>::type
+get(CGAL::vertex_selection_t, const Polyhedron& p)
+{
+  return get(boost::vertex_index,p);
+}
+inline
+boost::property_map<Polyhedron, boost::face_index_t>::type
+get(CGAL::face_selection_t, const Polyhedron& p)
+{
+  return get(boost::face_index,p);
+}
+
+namespace boost
+{
+template <>
+struct property_map<Polyhedron, CGAL::vertex_selection_t>
+{
+  typedef boost::property_map<Polyhedron,boost::vertex_index_t>::type type;
+  typedef boost::property_map<Polyhedron,boost::vertex_index_t>::const_type const_type;
+};
+template <>
+struct property_map<Polyhedron, CGAL::face_selection_t>
+{
+  typedef boost::property_map<Polyhedron,boost::face_index_t>::type type;
+  typedef boost::property_map<Polyhedron,boost::face_index_t>::const_type const_type;
+};
+}//boost
+
 // surface mesh
 typedef Polyhedron_demo_items<Patch_id>              Polyhedron_items;
 typedef CGAL::Polyhedron_3<Kernel, Polyhedron_items> Polyhedron;
-
 
 #endif // POLYHEDRON_TYPE_H

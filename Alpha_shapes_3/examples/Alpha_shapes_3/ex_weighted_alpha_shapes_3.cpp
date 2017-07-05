@@ -5,20 +5,22 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
-typedef CGAL::Regular_triangulation_vertex_base_3<K> Vbb;
+typedef CGAL::Regular_triangulation_vertex_base_3<K>        Rvb;
+typedef CGAL::Alpha_shape_vertex_base_3<K,Rvb>              Vb;
 
-typedef CGAL::Alpha_shape_vertex_base_3<K,Vbb>         Vb;
-typedef CGAL::Alpha_shape_cell_base_3<K>           Fb;
-typedef CGAL::Triangulation_data_structure_3<Vb,Fb> Tds;
-typedef CGAL::Regular_triangulation_3<K,Tds>       Triangulation_3;
-typedef CGAL::Alpha_shape_3<Triangulation_3>        Alpha_shape_3;
+typedef CGAL::Regular_triangulation_cell_base_3<K>          Rcb;
+typedef CGAL::Alpha_shape_cell_base_3<K,Rcb>                Cb;
 
-typedef Alpha_shape_3::Cell_handle          Cell_handle;
-typedef Alpha_shape_3::Vertex_handle        Vertex_handle;
-typedef Alpha_shape_3::Facet                Facet;
-typedef Alpha_shape_3::Edge                 Edge;
-typedef K::Weighted_point_3                 Weighted_point;
-typedef K::Point_3                          Bare_point;
+typedef CGAL::Triangulation_data_structure_3<Vb,Cb>         Tds;
+typedef CGAL::Regular_triangulation_3<K,Tds>                Triangulation_3;
+typedef CGAL::Alpha_shape_3<Triangulation_3>                Alpha_shape_3;
+
+typedef Alpha_shape_3::Cell_handle                          Cell_handle;
+typedef Alpha_shape_3::Vertex_handle                        Vertex_handle;
+typedef Alpha_shape_3::Facet                                Facet;
+typedef Alpha_shape_3::Edge                                 Edge;
+typedef Triangulation_3::Weighted_point                     Weighted_point;
+typedef Triangulation_3::Bare_point                         Bare_point;
 
 int main()
 {

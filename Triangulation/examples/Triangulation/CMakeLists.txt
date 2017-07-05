@@ -22,6 +22,8 @@ if ( CGAL_FOUND )
 
     create_single_source_cgal_program( "barycentric_subdivision.cpp" )
     create_single_source_cgal_program( "delaunay_triangulation.cpp" )
+    create_single_source_cgal_program( "convex_hull.cpp" )
+    create_single_source_cgal_program( "regular_triangulation.cpp" )
     create_single_source_cgal_program( "triangulation.cpp" )
     create_single_source_cgal_program( "triangulation_data_structure_dynamic.cpp" )
     create_single_source_cgal_program( "triangulation_data_structure_static.cpp" )

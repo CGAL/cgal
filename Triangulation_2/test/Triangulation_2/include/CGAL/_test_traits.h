@@ -143,6 +143,8 @@ class Triangulation_test_triangle {
 class Triangulation_test_Less_x_2{
 public:
   typedef Triangulation_test_point  Point;
+  typedef bool                      result_type;
+
   bool operator()( const Point& p, const Point&  q) const 
     {
       return (p.test_x() < q.test_x());
@@ -152,7 +154,9 @@ public:
 class Triangulation_test_Less_y_2{
 public:
   typedef Triangulation_test_point  Point;
-  bool operator()( const Point& p, const Point&  q) const 
+  typedef bool                      result_type;
+
+  bool operator()( const Point& p, const Point&  q) const
     {
       return (p.test_y() < q.test_y());
     }
@@ -162,6 +166,8 @@ public:
 class Triangulation_test_Compare_x_2{
 public:
   typedef Triangulation_test_point  Point;
+  typedef CGAL::Comparison_result   result_type;
+
   CGAL::Comparison_result operator()( const Point& p, const Point&  q) const 
     {
       if (p.test_x() < q.test_x()) return CGAL::SMALLER;
@@ -174,6 +180,8 @@ public:
 class Triangulation_test_Compare_y_2{
 public:
   typedef Triangulation_test_point  Point;
+  typedef CGAL::Comparison_result   result_type;
+
   CGAL::Comparison_result operator()( const Point& p, const Point&  q) const 
     {
       if (p.test_y() < q.test_y()) return CGAL::SMALLER;
@@ -186,6 +194,8 @@ class Triangulation_test_Orientation_2
 {
 public:
   typedef Triangulation_test_point  Point;
+  typedef CGAL::Orientation   result_type;
+
   CGAL::Orientation
   operator()( const Point& p, const Point&  q, const Point& r) const 
      {
@@ -203,6 +213,8 @@ class Triangulation_test_Side_of_oriented_circle_2
 {
 public:
   typedef Triangulation_test_point     Point;
+  typedef CGAL::Orientation            result_type;
+
   CGAL::Oriented_side operator() (const Point &p, 
 				  const Point &q,
 				  const Point &r, 
@@ -236,6 +248,8 @@ class Triangulation_test_Construct_circumcenter_2
 {
 public:
   typedef Triangulation_test_point     Point;
+  typedef Point                        result_type;
+
   Point  operator() (const Point &p, 
 		     const Point &q,
 		     const Point &r) const
@@ -272,7 +286,10 @@ public:
 class Triangulation_test_Construct_midpoint
 {
 public:
-   typedef Triangulation_test_point     Point;
+  typedef Triangulation_test_point     Point;
+  typedef Point                        result_type;
+
+
   Point operator()(const Point &p, const Point &q)
     {
       return Point((p.test_x() + q.test_x())/2. ,
@@ -285,6 +302,8 @@ class Triangulation_test_Construct_bisector_2
 public:
   typedef Triangulation_test_point     Point;
   typedef Triangulation_test_line      Line;
+  typedef Line                         result_type;
+
   Line operator()(const Point &p, const Point &q)
     {
       Triangulation_test_Construct_midpoint construct_midpoint;
@@ -295,11 +314,25 @@ public:
     }
 };
 
+class Triangulation_test_Construct_point_2
+{
+public:
+  typedef Triangulation_test_point     Point;
+  typedef const Point&                 result_type;
+
+  const Point& operator()(const Point &p) const
+    {
+      return p;
+    }
+};
+
 class Triangulation_test_Construct_segment_2
 {
 public:
   typedef Triangulation_test_point     Point;
   typedef Triangulation_test_segment   Segment;
+  typedef Segment                      result_type;
+
   Segment operator()(const Point &p, const Point &q)
     {
       return Segment(p,q);
@@ -311,6 +344,8 @@ class Triangulation_test_Construct_triangle_2
  public:
   typedef Triangulation_test_point     Point;
   typedef Triangulation_test_triangle  Triangle;
+  typedef Triangle                     result_type;
+
   Triangle  operator()(const Point &p, const Point &q, const Point& r)
     {
       return Triangle(p,q,r);
@@ -320,8 +355,10 @@ class Triangulation_test_Construct_triangle_2
 class Triangulation_test_Construct_direction_2
 {
  public:
-  typedef Triangulation_test_line     Line;
+  typedef Triangulation_test_line       Line;
   typedef Triangulation_test_direction  Direction;
+  typedef Direction                     result_type;
+
   Direction operator()(const Line &l) { return Direction(l);}
 };
 
@@ -331,6 +368,8 @@ class Triangulation_test_Construct_ray_2
   typedef Triangulation_test_point     Point;
   typedef Triangulation_test_ray       Ray;
   typedef Triangulation_test_direction Direction;
+  typedef Ray                          result_type;
+
   Ray  operator()(const Point &p, const Direction& d) {return Ray(p,d);}
 };
 
@@ -338,10 +377,10 @@ class Triangulation_test_Construct_ray_2
 class Triangulation_test_Compare_distance_2
 {
 public:
-  typedef Triangulation_test_point     Point;
+  typedef Triangulation_test_point              Point;
   typedef Triangulation_test_Compare_distance_2 Compare_distance_2;
+  typedef CGAL::Comparison_result               result_type;
 
-public:
   Triangulation_test_Compare_distance_2() {}
 
   Point::TESTFT sqr(const Point::TESTFT x) const { return x*x; }
@@ -390,6 +429,7 @@ public:
                                              Construct_midpoint;
   typedef Triangulation_test_Compare_distance_2 
                                              Compare_distance_2;
+  typedef Triangulation_test_Construct_point_2     Construct_point_2;
   typedef Triangulation_test_Construct_segment_2   Construct_segment_2;
   typedef Triangulation_test_Construct_triangle_2  Construct_triangle_2;
   typedef Triangulation_test_Construct_direction_2 Construct_direction_2;
@@ -440,6 +480,10 @@ public:
   Compare_distance_2
   compare_distance_2_object() const
     {return Compare_distance_2();}
+
+  Construct_point_2
+  construct_point_2_object() const
+    { return Construct_point_2();}
 
   Construct_segment_2
   construct_segment_2_object() const

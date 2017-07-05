@@ -6,11 +6,12 @@
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 
+#include "Messages_interface.h"
 #include "Scene_polyhedron_item.h"
 #include "Polyhedron_type.h"
-#include <CGAL/Subdivision_method_3.h>
+#include <CGAL/subdivision_method_3.h>
 using namespace CGAL::Three;
-class Polyhedron_demo_subdivision_methods_plugin : 
+class Polyhedron_demo_subdivision_methods_plugin :
   public QObject,
   public Polyhedron_demo_plugin_helper
 {
@@ -25,50 +26,56 @@ public:
 
   void init(QMainWindow* mw,
             Scene_interface* scene_interface,
-            Messages_interface*)
+            Messages_interface* m)
   {
+      messages = m;
       scene = scene_interface;
       QAction *actionLoop = new QAction("Loop", mw);
       QAction *actionCatmullClark = new QAction("Catmull Clark", mw);
       QAction *actionSqrt3 = new QAction("Sqrt3", mw);
+      QAction *actionDooSabin = new QAction("Doo Sabin", mw);
       actionLoop->setObjectName("actionLoop");
       actionCatmullClark->setObjectName("actionCatmullClark");
       actionSqrt3->setObjectName("actionSqrt3");
+      actionDooSabin->setObjectName("actionDooSabin");
       _actions << actionLoop
                << actionCatmullClark
-               << actionSqrt3;
+               << actionSqrt3
+               << actionDooSabin;
       Q_FOREACH(QAction* action, _actions)
         action->setProperty("subMenuName", "3D Surface Subdivision Methods");
       autoConnectActions();
 
   }
 
-  bool applicable(QAction*) const { 
+  bool applicable(QAction*) const {
     return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex()));
   }
 public Q_SLOTS:
   void on_actionLoop_triggered();
   void on_actionCatmullClark_triggered();
   void on_actionSqrt3_triggered();
+  void on_actionDooSabin_triggered();
 private :
+  Messages_interface* messages;
   QList<QAction*> _actions;
 }; // end Polyhedron_demo_subdivision_methods_plugin
 
 void Polyhedron_demo_subdivision_methods_plugin::on_actionLoop_triggered()
 {
   CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
-  
-  Scene_polyhedron_item* item = 
+
+  Scene_polyhedron_item* item =
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
 
   if(!item) return;
   Polyhedron* poly = item->polyhedron();
   QTime time;
   time.start();
-  std::cout << "Loop subdivision...";
+  messages->information("Loop subdivision...");
   QApplication::setOverrideCursor(Qt::WaitCursor);
   CGAL::Subdivision_method_3::Loop_subdivision(*poly, 1);
-  std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
+  messages->information(QString("ok (%1 ms)").arg(time.elapsed()));
   QApplication::restoreOverrideCursor();
   item->invalidateOpenGLBuffers();
   scene->itemChanged(item);
@@ -77,8 +84,8 @@ void Polyhedron_demo_subdivision_methods_plugin::on_actionLoop_triggered()
 void Polyhedron_demo_subdivision_methods_plugin::on_actionCatmullClark_triggered()
 {
   CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
-  
-  Scene_polyhedron_item* item = 
+
+  Scene_polyhedron_item* item =
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
 
   if(!item) return;
@@ -86,10 +93,10 @@ void Polyhedron_demo_subdivision_methods_plugin::on_actionCatmullClark_triggered
   if(!poly) return;
   QTime time;
   time.start();
-  std::cout << "Catmull-Clark subdivision...";
+  messages->information("Catmull-Clark subdivision...");
   QApplication::setOverrideCursor(Qt::WaitCursor);
   CGAL::Subdivision_method_3::CatmullClark_subdivision(*poly, 1);
-  std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
+  messages->information(QString("ok (%1 ms)").arg(time.elapsed()));
   QApplication::restoreOverrideCursor();
   item->invalidateOpenGLBuffers();
   scene->itemChanged(item);
@@ -98,8 +105,8 @@ void Polyhedron_demo_subdivision_methods_plugin::on_actionCatmullClark_triggered
 void Polyhedron_demo_subdivision_methods_plugin::on_actionSqrt3_triggered()
 {
   CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
-  
-  Scene_polyhedron_item* item = 
+
+  Scene_polyhedron_item* item =
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
 
   if(!item) return;
@@ -107,10 +114,31 @@ void Polyhedron_demo_subdivision_methods_plugin::on_actionSqrt3_triggered()
   if(!poly) return;
   QTime time;
   time.start();
-  std::cout << "Sqrt3 subdivision...";
+  messages->information("Sqrt3 subdivision...");
   QApplication::setOverrideCursor(Qt::WaitCursor);
   CGAL::Subdivision_method_3::Sqrt3_subdivision(*poly, 1);
-  std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
+  messages->information(QString("ok (%1 ms)").arg(time.elapsed()));
+  QApplication::restoreOverrideCursor();
+  item->invalidateOpenGLBuffers();
+  scene->itemChanged(item);
+}
+
+void Polyhedron_demo_subdivision_methods_plugin::on_actionDooSabin_triggered()
+{
+  CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
+
+  Scene_polyhedron_item* item =
+    qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+
+  if(!item) return;
+  Polyhedron* poly = item->polyhedron();
+  if(!poly) return;
+  QTime time;
+  time.start();
+  messages->information("Doo Sabin subdivision...");
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+  CGAL::Subdivision_method_3::DooSabin_subdivision(*poly, 1);
+  messages->information(QString("ok (%1 ms)").arg(time.elapsed()));
   QApplication::restoreOverrideCursor();
   item->invalidateOpenGLBuffers();
   scene->itemChanged(item);

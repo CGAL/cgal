@@ -53,6 +53,7 @@ public:
   Weighted_pointH2(const Origin &o)
     : base(o, 0) {}
 
+  explicit
   Weighted_pointH2 (const Point_2 &p)
     : base(p,0)
   {}

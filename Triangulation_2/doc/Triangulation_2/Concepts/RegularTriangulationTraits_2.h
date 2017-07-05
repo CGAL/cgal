@@ -18,13 +18,11 @@ of Delaunay triangulations.
 
 \cgalRefines `TriangulationTraits_2` 
 
-\cgalHasModel All CGAL Kernels
-\cgalHasModel `CGAL::Regular_triangulation_euclidean_traits_2`
+\cgalHasModel All models of `Kernel`.
 
-\sa `TriangulationTraits_2`
+\sa `CGAL::Regular_triangulation_2`
 
 */
-
 class RegularTriangulationTraits_2 {
 public:
 
@@ -32,14 +30,11 @@ public:
 /// @{
 
 /*!
-The (unweighted) point type.
-It has to be a model of the concept `Kernel::Point_2`.
-*/ 
-  typedef unspecified_type Point_2; 
-
-/*!
 The weighted point type. It has to be a model of the concept `Kernel::WeightedPoint_2`.
-*/ 
+
+\note The unweighted point type `Point_2` is requested by the concept
+`TriangulationTraits_2`, which this concept refines.
+*/
   typedef unspecified_type Weighted_point_2; 
 
 /*!
@@ -66,6 +61,15 @@ which is the degenerate power test for weighted points
 */ 
 typedef unspecified_type Power_side_of_oriented_power_circle_2; 
 
+/*!
+A constructor type,
+model of `Kernel::ConstructPoint_2`.
+The `operator()` extracts the bare point from a weighted point.
+
+`Point_2 operator() ( Weighted_point_2 p);`
+*/
+typedef unspecified_type Construct_point_2;
+
 /// @}
 
 /// \name Optional Types
@@ -83,6 +87,12 @@ which compares the power distance between `p` and `q` to the
 power distance between `p` and `r`. 
 */ 
 typedef unspecified_type Compare_power_distance_2; 
+
+/// @}
+
+/// \name
+/// The following types/predicates are required to compute duals:
+/// @{
 
 /*!
 A function object,
@@ -108,7 +118,7 @@ Must provide the operator:
 */ 
 typedef unspecified_type Construct_radical_axis_2; 
 
-/// @} 
+/// @}
 
 /// \name Creation 
 /// @{
@@ -144,6 +154,11 @@ Power_side_of_oriented_power_circle_2 power_side_of_oriented_power_circle_2_obje
 
 */ 
 Compare_power_distance_2 compare_power_distance_2_object(); 
+
+/*!
+
+*/
+Construct_point_2 construct_point_2_object();
 
 /*!
 

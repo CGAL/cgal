@@ -3,8 +3,7 @@
 \ingroup PkgTriangulation3Concepts
 \cgalConcept
 
-The base cell of a Delaunay triangulation 
-has to be a model 
+The base cell of a Delaunay triangulation must be a model
 of the concept `DelaunayTriangulationCellBase_3`, which refines 
 the concept `TriangulationCellBase_3` by adding 
 in the cell an operator that computes its circumcenter. 
@@ -22,6 +21,11 @@ in the cell an operator that computes its circumcenter.
 class DelaunayTriangulationCellBase_3 {
 public:
 
+/// \name Types
+/// @{
+typedef DelaunayTriangulationTraits_3::Point_3 Point;
+/// @}
+
 /// \name Access functions
 /// @{
 /*!
@@ -30,8 +34,7 @@ Returns the circumcenter of the cell.
 
 This operator is required only when the dual functions are called.
 */ 
-const DelaunayTriangulationTraits_3::Point_3& circumcenter( 
-const DelaunayTriangulationTraits_3&gt = DelaunayTriangulationTraits_3()) const; 
+const Point& circumcenter(DelaunayTriangulationTraits_3&gt = DelaunayTriangulationTraits_3()) const;
 /// @} 
 
 

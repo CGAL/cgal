@@ -1284,6 +1284,13 @@ namespace Eigen {
       MulCost = 10
     };
   };
+
+  namespace internal {
+    template<class> struct significant_decimals_impl;
+    template<bool b>
+      struct significant_decimals_impl<CGAL::Interval_nt<b> >
+      : significant_decimals_impl<typename CGAL::Interval_nt<b>::value_type> { };
+  }
 }
 
 #endif // CGAL_INTERVAL_NT_H

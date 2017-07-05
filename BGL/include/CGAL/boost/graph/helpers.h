@@ -22,6 +22,7 @@
 
 
 #include <boost/foreach.hpp>
+#include <boost/range/empty.hpp>
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/boost/graph/internal/Has_member_clear.h>
@@ -697,6 +698,32 @@ make_tetrahedron(const P& p0, const P& p1, const P& p2, const P& p3, Graph& g)
   return opposite(h2,g);
 }
 
+/// \cond SKIP_IN_DOC
+template <class Traits, class TriangleMesh, class VertexPointMap>
+bool is_degenerate_triangle_face(
+  typename boost::graph_traits<TriangleMesh>::halfedge_descriptor hd,
+  TriangleMesh& tmesh,
+  const VertexPointMap& vpmap,
+  const Traits& traits)
+{
+  CGAL_assertion(!is_border(hd, tmesh));
+
+  const typename Traits::Point_3& p1 = get(vpmap, target( hd, tmesh) );
+  const typename Traits::Point_3& p2 = get(vpmap, target(next(hd, tmesh), tmesh) );
+  const typename Traits::Point_3& p3 = get(vpmap, source( hd, tmesh) );
+  return traits.collinear_3_object()(p1, p2, p3);
+}
+
+template <class Traits, class TriangleMesh, class VertexPointMap>
+bool is_degenerate_triangle_face(
+  typename boost::graph_traits<TriangleMesh>::face_descriptor fd,
+  TriangleMesh& tmesh,
+  const VertexPointMap& vpmap,
+  const Traits& traits)
+{
+  return is_degenerate_triangle_face(halfedge(fd,tmesh), tmesh, vpmap, traits);
+}
+/// \endcond
 
 namespace internal {
 
@@ -725,7 +752,7 @@ clear_impl(FaceGraph& g)
   }
 }
 
-}
+} //end of internal namespace
 
 /**
  * \ingroup PkgBGLHelperFct
@@ -750,6 +777,23 @@ void clear(FaceGraph& g)
   CGAL_postcondition(num_vertices(g) == 0);
   CGAL_postcondition(num_faces(g) == 0);
 }
+
+/**
+* \ingroup PkgBGLHelperFct
+*
+* checks whether the graph is empty, by checking that it does not contain any vertex.
+*
+* @tparam FaceGraph model of `FaceGraph`
+*
+* @param g the graph to test
+*
+**/
+template<typename FaceGraph>
+bool is_empty(const FaceGraph& g)
+{
+  return boost::empty(vertices(g));
+}
+
 
 } // namespace CGAL
 

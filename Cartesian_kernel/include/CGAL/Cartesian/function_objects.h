@@ -1730,7 +1730,6 @@ namespace CartesianKernelFunctors {
     
   };
 
-
   template <typename K>
   class Construct_base_vector_3
   {
@@ -1764,8 +1763,21 @@ namespace CartesianKernelFunctors {
 	
 	if ( CGAL_NTS is_zero(h.c()) )  // parallel to z-axis
 	  return Vector_3(FT(0), FT(0), FT(1));
-	
-	return Vector_3(-h.b(), h.a(), FT(0));
+
+        FT a = CGAL::abs(h.a()),
+          b = CGAL::abs(h.b()),
+          c = CGAL::abs(h.c());
+
+        // to avoid badly defined vectors with coordinates all close
+        // to 0 when the plane is almost horizontal, we ignore the
+        // smallest coordinate instead of always ignoring Z
+        if (CGAL::possibly(a <= b && a <= c))
+          return Vector_3(FT(0), -h.c(), h.b());
+
+        if (CGAL::possibly(b <= a && b <= c))
+          return Vector_3(-h.c(), FT(0), h.a());
+
+        return Vector_3(-h.b(), h.a(), FT(0));
       } else {
 	return cp(co(h), this->operator()(h,1));
       }

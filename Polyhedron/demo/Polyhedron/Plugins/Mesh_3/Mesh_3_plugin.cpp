@@ -104,11 +104,23 @@ public:
 #endif  
     Q_FOREACH(int ind, scene->selectionIndices()){
       Scene_polyhedron_item* poly_item
-        = qobject_cast<Scene_polyhedron_item*>(scene->item(ind));
+          = qobject_cast<Scene_polyhedron_item*>(scene->item(ind));
+      Scene_surface_mesh_item* sm_item
+          = qobject_cast<Scene_surface_mesh_item*>(scene->item(ind));
       if (NULL == poly_item)
-        continue;
-      if (a == actionMesh_3) return poly_item->polyhedron()->is_closed();
-      else                   return true;
+      {
+        if(NULL == sm_item)
+          continue;
+      }
+      if (a == actionMesh_3)
+      {
+        if(poly_item)
+          return poly_item->polyhedron()->is_closed();
+        if(sm_item)
+          return is_closed(*sm_item->polyhedron());
+      }
+      else
+        return true;
     }
     return false;
   }
@@ -177,14 +189,57 @@ void Mesh_3_plugin::mesh_3_volume()
 void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
 {
   Scene_polyhedron_item* poly_item = NULL;
+  Scene_polyhedron_item* bounding_poly_item = NULL;
+  Scene_surface_mesh_item* sm_item = NULL;
+  Scene_surface_mesh_item* bounding_sm_item = NULL;
   Scene_implicit_function_item* function_item = NULL;
   Scene_image_item* image_item = NULL;
   Scene_polylines_item* polylines_item = NULL;
 
   Q_FOREACH(int ind, scene->selectionIndices()) {
 
-    if(poly_item == NULL){
+    if(poly_item == NULL)
+    {
       poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(ind));
+      if (poly_item != NULL
+          && scene->selectionIndices().size() == 2
+          && bounding_poly_item == NULL)
+      {
+        bounding_poly_item = qobject_cast<Scene_polyhedron_item*>(
+            scene->item(scene->selectionIndices().back()));
+        if (bounding_poly_item != NULL)
+        {
+          //if poly is bounding, and bounding_poly is a non-closed surface
+          if (is_closed(*poly_item->polyhedron())
+            && !is_closed(*bounding_poly_item->polyhedron()))
+          {
+            //todo : check poly_item is inside bounding_poly_item
+            std::swap(poly_item, bounding_poly_item);
+            //now bounding_poly_item is the bounding one
+          }
+        }
+      }
+    }
+    if(sm_item == NULL)
+    {
+      sm_item = qobject_cast<Scene_surface_mesh_item*>(scene->item(ind));
+      if (sm_item != NULL
+          && scene->selectionIndices().size() == 2
+          && bounding_sm_item == NULL)
+      {
+        bounding_sm_item = qobject_cast<Scene_surface_mesh_item*>(
+            scene->item(scene->selectionIndices().back()));
+        if (bounding_sm_item != NULL)
+        {
+          if (is_closed(*sm_item->polyhedron())
+            && !is_closed(*bounding_sm_item->polyhedron()))
+          {
+            //todo : check sm_item is inside bounding_sm_item
+            std::swap(sm_item, bounding_sm_item);
+            //now bounding_sm_item is the bounding one
+          }
+        }
+      }
     }
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
     if(function_item == NULL){
@@ -210,7 +265,25 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
                            tr("Selected Scene_polyhedron_item is not triangulated."));
       return;
     }
+    if (NULL != bounding_poly_item
+      && !bounding_poly_item->polyhedron()->is_pure_triangle())
+    {
+      QMessageBox::warning(mw, tr(""),
+        tr("Selected Scene_polyhedron_item is not triangulated."));
+      return;
+    }
     item = poly_item;
+    features_protection_available = true;
+  }
+  if(NULL != sm_item)
+  {
+    if (!is_triangle_mesh(*sm_item->polyhedron()))
+    {
+      QMessageBox::warning(mw, tr(""),
+                           tr("Selected Scene_surface_mesh__item is not triangulated."));
+      return;
+    }
+    item = sm_item;
     features_protection_available = true;
   }
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
@@ -351,16 +424,18 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
   ui.grayImgGroup->setVisible(image_item != NULL && image_item->isGray());
   if (poly_item != NULL)
     ui.volumeGroup->setVisible(!surface_only && poly_item->polyhedron()->is_closed());
+  else if (sm_item != NULL)
+      ui.volumeGroup->setVisible(!surface_only && is_closed(*sm_item->polyhedron()));
   else
     ui.volumeGroup->setVisible(!surface_only);
-  if (poly_item == NULL || polylines_item != NULL) {
+  if ((poly_item == NULL && sm_item == NULL)|| polylines_item != NULL) {
     ui.sharpEdgesAngleLabel->setVisible(false);
     ui.sharpEdgesAngle->setVisible(false);
 
     ui.facetTopology->setEnabled(false);
     ui.facetTopology->setToolTip(tr("<b>Notice:</b> "
                                     "This option is only available with a"
-                                    " polyhedron, when features are detected"
+                                    " polyhedron or a surface mesh, when features are detected"
                                     " automatically"));
   }
   ui.noEdgeSizing->setChecked(ui.protect->isChecked());
@@ -438,6 +513,7 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
 
     thread =    cgal_code_mesh_3(pMesh,
                                  (polylines_item == NULL)?plc:polylines_item->polylines,
+                                 (bounding_poly_item == NULL)?NULL:bounding_poly_item->polyhedron(),
                                  item->name(),
                                  angle,
                                  facet_sizing,
@@ -451,6 +527,39 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
                                  manifold,
                                  surface_only,
                                  scene);
+  }
+  // Surface_mesh
+  if ( NULL != sm_item )
+  {
+    SMesh* psMesh = sm_item->polyhedron();
+    if (NULL == psMesh)
+    {
+      QMessageBox::critical(mw, tr(""), tr("ERROR: no data in selected item"));
+      return;
+    }
+    typedef CGAL::Graph_with_descriptor_with_graph<SMesh> SMwgd;
+    SMwgd *pMesh = new SMwgd(*psMesh);
+    Scene_polylines_item::Polylines_container plc;
+    SMwgd *pBMesh = (bounding_sm_item == NULL) ? NULL
+                    : new SMwgd(*bounding_sm_item->polyhedron());
+
+    thread =    cgal_code_mesh_3(pMesh,
+                                 (polylines_item == NULL)?plc:polylines_item->polylines,
+                                 pBMesh,
+                                 item->name(),
+                                 angle,
+                                 facet_sizing,
+                                 approx,
+                                 tet_sizing,
+                                 edge_size,
+                                 radius_edge,
+                                 protect_features,
+                                 protect_borders,
+                                 sharp_edges_angle,
+                                 manifold,
+                                 surface_only,
+                                 scene);
+    delete pMesh;
   }
   // Image
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
@@ -623,8 +732,9 @@ treat_result(Scene_item& source_item,
   result_item.setRenderingMode(source_item.renderingMode());
   result_item.set_data_item(&source_item);
 
-  source_item.setVisible(false);
-
+  Q_FOREACH(int ind, scene->selectionIndices()) {
+    scene->item(ind)->setVisible(false);
+  }
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
   scene->itemChanged(index);
   scene->setSelectedItem(-1);

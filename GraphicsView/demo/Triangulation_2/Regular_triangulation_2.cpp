@@ -2,7 +2,6 @@
 
 // CGAL headers
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Regular_triangulation_euclidean_traits_2.h>
 #include <CGAL/Regular_triangulation_2.h>
 
 #include <CGAL/point_generators_2.h>
@@ -28,13 +27,12 @@
 #include <CGAL/Qt/DemosMainWindow.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef K::Point_2 Point_2;
-typedef K::Point_2 Circle_2;
-typedef K::Iso_rectangle_2 Iso_rectangle_2;
+typedef K::Point_2                                          Point_2;
+typedef K::Weighted_point_2                                 Weighted_point_2;
+typedef K::Point_2                                          Circle_2;
+typedef K::Iso_rectangle_2                                  Iso_rectangle_2;
 
-typedef double Weight;
-typedef CGAL::Regular_triangulation_euclidean_traits_2<K,Weight>  Gt;
-typedef CGAL::Regular_triangulation_2<Gt> Regular;
+typedef CGAL::Regular_triangulation_2<K>                    Regular;
 
 class MainWindow :
   public CGAL::Qt::DemosMainWindow,
@@ -85,7 +83,7 @@ MainWindow::MainWindow()
 {
   setupUi(this);
 
-  // Add a GraphicItem for the Regular triangulation
+  // Add a GraphicItem for the regular triangulation
   dgi = new CGAL::Qt::RegularTriangulationGraphicsItem<Regular>(&dt);
 
   QObject::connect(this, SIGNAL(changed()),
@@ -215,7 +213,8 @@ MainWindow::on_actionInsertRandomPoints_triggered()
   QRectF rect = CGAL::Qt::viewportsBbox(&scene);
   CGAL::Qt::Converter<K> convert;
   Iso_rectangle_2 isor = convert(rect);
-  CGAL::Random_points_in_iso_rectangle_2<Point_2> pg((isor.min)(), (isor.max)()); 
+  CGAL::Random_points_in_iso_rectangle_2<Point_2> pg((isor.min)(), (isor.max)());
+  CGAL::Random rnd(CGAL::get_default_random());
 
   const int number_of_points = 
     QInputDialog::getInt(this, 
@@ -224,10 +223,11 @@ MainWindow::on_actionInsertRandomPoints_triggered()
 
   // wait cursor
   QApplication::setOverrideCursor(Qt::WaitCursor);
-  std::vector<Point_2> points;
+  std::vector<Weighted_point_2> points;
   points.reserve(number_of_points);
   for(int i = 0; i < number_of_points; ++i){
-    points.push_back(*pg++);
+    Weighted_point_2 wp(*pg++, rnd.get_double(0, 500));
+    points.push_back(wp);
   }
   dt.insert(points.begin(), points.end());
   // default cursor
@@ -245,8 +245,8 @@ MainWindow::on_actionLoadPoints_triggered()
   if(! fileName.isEmpty()){
     std::ifstream ifs(qPrintable(fileName));
 
-    Gt::Weighted_point_2 p;
-    std::vector<Gt::Weighted_point_2> points;
+    Weighted_point_2 p;
+    std::vector<Weighted_point_2> points;
     while(ifs >> p) {
       points.push_back(p);
     }

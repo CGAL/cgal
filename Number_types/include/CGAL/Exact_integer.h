@@ -23,7 +23,9 @@
 // Author(s)     : Laurent Rineau
 
 #include <CGAL/config.h>
-#if CGAL_USE_GMP
+#if CGAL_USE_GMPXX
+#  include <CGAL/gmpxx.h>
+#elif CGAL_USE_GMP
 #  include <CGAL/Gmpz.h>
 #elif CGAL_USE_LEDA
 #  include <CGAL/leda_integer.h>
@@ -54,7 +56,11 @@ typedef unspecified_type Exact_integer;
 
 #else // not DOXYGEN_RUNNING
 
-#if CGAL_USE_GMP
+#if CGAL_USE_GMPXX
+
+typedef mpz_class Exact_integer;
+
+#elif CGAL_USE_GMP
 
 typedef Gmpz Exact_integer;
 
