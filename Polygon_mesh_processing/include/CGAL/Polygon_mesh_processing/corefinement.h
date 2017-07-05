@@ -669,6 +669,71 @@ corefine_and_compute_difference(      TriangleMesh& tm1,
   functor(CGAL::Emptyset_iterator(), throw_on_self_intersection, true);
 }
 
+/**
+ * \ingroup PMP_corefinement_grp
+ * \link coref_def_subsec autorefines \endlink `tm`. Refines a triangle mesh
+ * so that no triangles intersects in their interior.
+ * Self-intersection edges will be marked as constrained. If an edge that was marked as
+ * constrained is split, its sub-edges will be marked as constrained as well.
+ *
+ * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`
+ * @tparam NamedParameters a sequence of \ref namedparameters
+ *
+ * @param tm input triangulated surface mesh
+ * @param np optional sequence of \ref namedparameters among the ones listed below
+
+ * \cgalNamedParamsBegin
+ *   \cgalParamBegin{vertex_point_map}
+ *     the property map with the points associated to the vertices of `tm`.
+ *     If this parameter is omitted, an internal property map for
+ *     `CGAL::vertex_point_t` should be available in `TriangleMesh`
+ *   \cgalParamEnd
+ *   \cgalParamBegin{edge_is_constrained_map} a property map containing the
+ *     constrained-or-not status of each edge of `tm`
+ *   \cgalParamEnd
+ * \cgalNamedParamsEnd
+ *
+ */
+ template <class TriangleMesh,
+           class NamedParameters>
+ void
+ autorefine(      TriangleMesh& tm,
+            const NamedParameters& np)
+{
+// Vertex point maps
+  typedef typename GetVertexPointMap<TriangleMesh,
+                                     NamedParameters>::type Vpm;
+
+  Vpm vpm = boost::choose_param(get_param(np, internal_np::vertex_point),
+                                get_property_map(boost::vertex_point, tm));
+
+// Edge is-constrained maps
+  typedef typename boost::lookup_named_param_def <
+    internal_np::edge_is_constrained_t,
+    NamedParameters,
+    Corefinement::No_mark<TriangleMesh>//default
+  > ::type Ecm;
+
+
+  Ecm ecm = boost::choose_param( get_param(np, internal_np::edge_is_constrained),
+                                 Corefinement::No_mark<TriangleMesh>() );
+
+// surface intersection algorithm call
+  typedef Corefinement::Default_node_visitor<TriangleMesh> Dnv;
+  typedef Corefinement::Default_face_visitor<TriangleMesh> Dfv;
+  typedef Corefinement::No_extra_output_from_corefinement<TriangleMesh> Ob;
+  typedef Default D;
+  typedef Corefinement::Visitor<TriangleMesh,Vpm,Ob,Ecm,D,D,true> Visitor;
+  Dnv dnv;
+  Dfv dfv;
+  Ob ob;
+
+  Corefinement::Intersection_of_triangle_meshes<TriangleMesh,Vpm,Visitor >
+    functor(tm, vpm, Visitor(dnv,dfv,ob,ecm) );
+
+  functor(CGAL::Emptyset_iterator(), true);
+}
+
 // overload with default named parameters
 ///// corefine_and_compute_union /////
 template <class TriangleMesh,
@@ -810,6 +875,15 @@ corefine(           TriangleMesh& tm1,
 {
   using namespace CGAL::Polygon_mesh_processing::parameters;
   corefine(tm1, tm2, all_default(), all_default(), throw_on_self_intersection);
+}
+
+///// autorefine /////
+template <class TriangleMesh>
+void
+autorefine(TriangleMesh& tm)
+{
+  using namespace CGAL::Polygon_mesh_processing::parameters;
+  autorefine(tm, all_default());
 }
 
 } }  // end of namespace CGAL::Polygon_mesh_processing

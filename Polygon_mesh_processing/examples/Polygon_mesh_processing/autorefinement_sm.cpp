@@ -2,6 +2,7 @@
 #include <CGAL/Surface_mesh.h>
 
 #include <CGAL/Polygon_mesh_processing/intersection.h>
+#include <CGAL/Polygon_mesh_processing/corefinement.h>
 
 #include <fstream>
 
@@ -36,6 +37,14 @@ int main(int argc, char* argv[])
     std::copy(polyline.begin(), polyline.end(),std::ostream_iterator<K::Point_3>(output," "));
     output << "\n";
   }
+  output.close();
+
+  std::cout << "Number of vertices before autorefinement " << num_vertices(mesh) << "\n";
+  PMP::autorefine(mesh);
+  std::cout << "Number of vertices after autorefinement " << num_vertices(mesh) << "\n";
+
+  output.open("mesh_autorefined.off");
+  output << mesh;
   output.close();
 
   return 0;
