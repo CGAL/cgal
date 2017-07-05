@@ -409,7 +409,8 @@ private:
       seg_pmap[f] = i;
 
       BOOST_FOREACH(face_descriptor fadj, faces_around_face(halfedge(f, mesh), mesh)) {
-        if (fadj != boost::graph_traits<Polyhedron>::null_face()) {
+        if (fadj != boost::graph_traits<Polyhedron>::null_face()
+            && seg_pmap[fadj] == CGAL_NOT_TAGGED_ID) {
           FacetToIntegrate cand;
           cand.f = fadj;
           cand.fit_error = fit_error(fadj, proxies[i]);
