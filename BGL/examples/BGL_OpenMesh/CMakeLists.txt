@@ -51,10 +51,6 @@ include_directories( BEFORE ../../include )
 include( CGAL_CreateSingleSourceCGALProgram )
 
 if(OpenMesh_FOUND)
-create_single_source_cgal_program( "om_generic_properties.cpp")
-
-  target_link_libraries( om_generic_properties ${OPENMESH_LIBRARIES} )
-
 create_single_source_cgal_program( "TriMesh.cpp" )
   target_link_libraries( TriMesh ${OPENMESH_LIBRARIES} )
 endif()
