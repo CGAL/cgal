@@ -295,10 +295,10 @@ namespace internal {
                        , VertexIsConstrainedMap vcmap
                        , FacePatchMap fpmap
                        , FaceIndexMap fimap
-                       , const bool own_tree = true)//built by the remesher
+                       , const bool build_tree = true)//built by the remesher
       : mesh_(pmesh)
       , vpmap_(vpmap)
-      , own_tree_(own_tree)
+      , build_tree_(build_tree)
       , has_border_(false)
       , input_triangles_()
       , input_patch_ids_()
@@ -322,7 +322,7 @@ namespace internal {
 
       remove(halfedge_status_pmap_, mesh_);
 
-      if (own_tree_){
+      if (build_tree_){
         for(int i=0; i < trees.size();++i){
           delete trees[i];
         }
@@ -358,6 +358,8 @@ namespace internal {
       }
       CGAL_assertion(input_triangles_.size() == input_patch_ids_.size());
 
+      if (!build_tree_)
+        return;
       trees.resize(patch_id_to_index_map.size());
       for(int i=0; i < trees.size(); ++i){
         trees[i] = new AABB_tree();
@@ -1903,7 +1905,7 @@ private:
   private:
     PolygonMesh& mesh_;
     VertexPointMap& vpmap_;
-    bool own_tree_;
+    bool build_tree_;
     bool has_border_;
     std::vector<AABB_tree*> trees;
     Patch_id_to_index_map patch_id_to_index_map;
