@@ -122,11 +122,9 @@ struct No_extra_output_from_corefinement
   void set_edge_per_polyline(G& /*tm*/,
                              Node_id_pair /*indices*/,
                              halfedge_descriptor /*hedge*/){}
-  template <class Mesh_to_intersection_edge_map,
-            class Node_vector,
+  template <class Node_vector,
             class Mesh_to_map_node>
   void operator()(
-    const std::map<const G*,Mesh_to_intersection_edge_map>& /*mesh_to_intersection_edges*/,
     const Node_vector& /*nodes*/,
     bool /*input_have_coplanar_faces*/,
     const boost::dynamic_bitset<>& /* is_node_of_degree_one */,
@@ -622,14 +620,6 @@ public:
     mesh_to_node_id_to_vertex[tm1_ptr].resize(nb_nodes+3, null_vertex);
     mesh_to_node_id_to_vertex[tm2_ptr].resize(nb_nodes+3, null_vertex);
 
-    ///TODO check these comments
-    //mark halfedge that are on the intersection
-    //SL: I needed to use a map because to get the orientation around the edge,
-    //    I need to know in the case the third vertex is a node its index (for exact construction)
-    typedef boost::unordered_map<edge_descriptor,
-                                 std::pair<Node_id,Node_id> > Intersection_edge_map;
-    std::map<const TriangleMesh*,Intersection_edge_map> mesh_to_intersection_edges;
-
     //store for each triangle face which boundary is intersected by the other surface,
     //original vertices (and halfedges in the refined mesh pointing on these vertices)
     typedef boost::unordered_map<face_descriptor,Face_boundary> Face_boundaries;
@@ -646,7 +636,6 @@ public:
           ++it)
     {
       TriangleMesh& tm=*it->first;
-      Intersection_edge_map& intersection_edges = mesh_to_intersection_edges[&tm];
     //   Face_boundaries& face_boundaries=mesh_to_face_boundaries[&tm];
 
       std::set<std::pair<Node_id,Node_id> > already_done;
@@ -680,8 +669,7 @@ public:
                 CGAL_assertion(hedge!=start);
               }
               std::pair<Node_id,Node_id> edge_pair(node_id,node_id_of_first);
-              if ( intersection_edges.insert( std::make_pair(edge(hedge,tm),edge_pair) ).second)
-                call_put(marks_on_edges,tm,edge(hedge,tm),true);
+              call_put(marks_on_edges,tm,edge(hedge,tm),true);
               output_builder.set_edge_per_polyline(tm,edge_pair,hedge);
             }
           }
@@ -799,7 +787,6 @@ public:
       Face_boundaries& face_boundaries=mesh_to_face_boundaries[&tm];
       Node_id_to_vertex& node_id_to_vertex=mesh_to_node_id_to_vertex[&tm];
       Vertex_to_node_id& vertex_to_node_id=mesh_to_vertex_to_node_id[&tm];
-      Intersection_edge_map& intersection_edges = mesh_to_intersection_edges[&tm];
 
       for (typename On_face_map::iterator it=on_face_map.begin();
             it!=on_face_map.end();++it)
@@ -1020,9 +1007,7 @@ public:
           //is defined as one of them defines an adjacent face
           //CGAL_assertion(it_poly_hedge!=edge_to_hedge.end());
           if( it_poly_hedge!=edge_to_hedge.end() ){
-            if ( intersection_edges.insert(
-                    std::make_pair(edge(it_poly_hedge->second,tm),node_id_pair) ).second)
-              call_put(marks_on_edges,tm,edge(it_poly_hedge->second,tm),true);
+            call_put(marks_on_edges,tm,edge(it_poly_hedge->second,tm),true);
             output_builder.set_edge_per_polyline(tm,node_id_pair,it_poly_hedge->second);
           }
           else{
@@ -1032,9 +1017,7 @@ public:
             it_poly_hedge=edge_to_hedge.find(opposite_pair);
             CGAL_assertion( it_poly_hedge!=edge_to_hedge.end() );
 
-            if ( intersection_edges.insert(
-                std::make_pair(edge(it_poly_hedge->second,tm),opposite_pair) ).second )
-              call_put(marks_on_edges,tm,edge(it_poly_hedge->second,tm),true);
+            call_put(marks_on_edges,tm,edge(it_poly_hedge->second,tm),true);
             output_builder.set_edge_per_polyline(tm,opposite_pair,it_poly_hedge->second);
           }
         }
@@ -1044,8 +1027,7 @@ public:
     nodes.finalize();
 
     // additional operations
-    output_builder(mesh_to_intersection_edges,
-                   nodes,
+    output_builder(nodes,
                    input_with_coplanar_faces,
                    is_node_of_degree_one,
                    mesh_to_node_id_to_vertex);

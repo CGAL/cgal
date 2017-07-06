@@ -129,6 +129,9 @@ class Face_graph_output_builder
   std::bitset<4> impossible_operation;
   // for mapping an edge per polyline per triangle mesh
   An_edge_per_polyline_map an_edge_per_polyline;
+  // To collect all intersection edges
+  std::map<const TriangleMesh*,Intersection_edge_map> mesh_to_intersection_edges;
+
   typename An_edge_per_polyline_map::iterator last_polyline;
 
   Node_id get_node_id(vertex_descriptor v,
@@ -380,6 +383,12 @@ public:
                              Node_id_pair indices,
                              halfedge_descriptor hedge)
   {
+    //register an intersection halfedge
+    // It is important here not to use operator[] since a two edges might be
+    // equals while the indices are reversed
+    mesh_to_intersection_edges[&tm].
+      insert(std::make_pair(edge(hedge, tm), indices));
+
     if (indices.first>indices.second)
     {
       std::swap(indices.first,indices.second);
@@ -397,8 +406,6 @@ public:
 
   template <class Nodes_vector, class Mesh_to_map_node>
   void operator()(
-    std::map<const TriangleMesh*,
-             Intersection_edge_map>& mesh_to_intersection_edges,
     const Nodes_vector& nodes,
     bool input_have_coplanar_faces,
     const boost::dynamic_bitset<>& is_node_of_degree_one,
