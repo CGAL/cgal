@@ -276,7 +276,7 @@ public:
 
       Scene_face_graph_item* contracted_item = new Scene_face_graph_item( meso_skeleton );
       contracted_item->setName(QString("contracted mesh of %1").arg(item->name()));
-
+      contracted_item->setItemIsMulticolor(false); //avoids segfault if item was a multicolor surface_mesh
       InputMeshItemIndex = scene->mainSelectionIndex();
 
       contractedItemIndex = scene->addItem(contracted_item);
@@ -310,6 +310,7 @@ public:
 
         Scene_face_graph_item* contracted_item = new Scene_face_graph_item(meso_skeleton);
         contracted_item->setName(QString("contracted mesh of %1").arg(item->name()));
+        contracted_item->setItemIsMulticolor(false); //avoids segfault if item was a multicolor surface_mesh
 
         InputMeshItemIndex = scene->mainSelectionIndex();
 
@@ -552,7 +553,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionContract()
   Scene_face_graph_item* item =
     qobject_cast<Scene_face_graph_item*>(scene->item(index));
 
-  if (!check_mesh(item))
+  if (!item || !check_mesh(item))
   {
     return;
   }
@@ -582,7 +583,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionCollapse()
   Scene_face_graph_item* item =
     qobject_cast<Scene_face_graph_item*>(scene->item(index));
 
-  if (!check_mesh(item))
+  if (!item || !check_mesh(item))
   {
     return;
   }
@@ -613,7 +614,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSplit()
   Scene_face_graph_item* item =
     qobject_cast<Scene_face_graph_item*>(scene->item(index));
 
-  if (!check_mesh(item))
+  if (!item || !check_mesh(item))
   {
     return;
   }
@@ -644,7 +645,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionDegeneracy()
   Scene_face_graph_item* item =
     qobject_cast<Scene_face_graph_item*>(scene->item(index));
 
-  if (!check_mesh(item))
+  if (!item || !check_mesh(item))
   {
     return;
   }
@@ -701,7 +702,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionRun()
   Scene_face_graph_item* item =
     qobject_cast<Scene_face_graph_item*>(scene->item(index));
 
-  if (!check_mesh(item))
+  if (!item || !check_mesh(item))
   {
     return;
   }
@@ -821,7 +822,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
   Scene_face_graph_item* item =
     qobject_cast<Scene_face_graph_item*>(scene->item(index));
 
-  if (!check_mesh(item))
+  if (!item || !check_mesh(item))
   {
     return;
   }
@@ -882,7 +883,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConverge()
   Scene_face_graph_item* item =
     qobject_cast<Scene_face_graph_item*>(scene->item(index));
 
-  if (!check_mesh(item))
+  if (!item || !check_mesh(item))
   {
     return;
   }
