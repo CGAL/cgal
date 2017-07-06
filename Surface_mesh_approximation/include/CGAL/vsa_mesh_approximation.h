@@ -6,6 +6,10 @@
 
 namespace CGAL
 {
+/*!
+\ingroup PkgTSMA
+Main function
+*/
 template <typename TriangleMesh,
   typename SegmentPropertyMap,
   typename FittingPropertyMap,

@@ -1,0 +1,33 @@
+/// \defgroup PkgTSMA Triangulated Surface Mesh Approximation
+
+/// \defgroup PkgTSMAConcepts Concepts
+/// \ingroup PkgTSMA
+
+/*!
+\addtogroup PkgTSMA
+\cgalPkgDescriptionBegin{Triangulated Surface Mesh Approximation,PkgTSMASummary}
+\cgalPkgPicture{sma-pkg-small.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Pierre Alliez, Lingjie Zhu}
+\cgalPkgDesc{Blabla.}
+\cgalPkgManuals{Chapter_Triangulated_Surface_Mesh_Approximation,PkgTSMA}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{4.13}
+\cgalPkgBib{cgal:az-tsma}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+## Concepts ##
+- `Proxy`
+- `DistanceProxy`
+
+## Classes and Functions##
+- `CGAL::vsa_mesh_approximation()`
+
+
+*/

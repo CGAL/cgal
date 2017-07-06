@@ -1,0 +1,32 @@
+namespace CGAL {
+
+/*!
+
+\mainpage User Manual
+\anchor Chapter_Triangulated_Surface_Mesh_Approximation
+\cgalAutoToc
+
+\authors Pierre Alliez, Lingjie Zhu
+
+\section sma_introduction Introduction
+
+Blabla.
+
+\section sma_interface Interface
+
+blabla
+
+\section sma_examples Examples
+
+\section sma_perf Performances
+
+\section sma_history Design and Implementation History
+
+This package is the result of the work of Lingjie Zhu during the 2017 season
+of the Google Summer of Code. He has been mentored by Pierre Alliez.
+The code is based on an initial research code written by Pierre Alliez in XXXX,
+for a paper published at XXXX.
+
+*/
+
+}
