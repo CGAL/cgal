@@ -41,7 +41,7 @@ if ( Boost_VERSION GREATER 103400 )
   polyhedron_demo_plugin(mesh_3_optimization_plugin Optimization_plugin
     Optimization_plugin_cgal_code.cpp Optimizer_thread.cpp
     ${meshingUI_FILES})
-  target_link_libraries(mesh_3_optimization_plugin scene_c3t3_item scene_polyhedron_item scene_image_item scene_implicit_function_item )
+  target_link_libraries(mesh_3_optimization_plugin scene_c3t3_item scene_polyhedron_item scene_surface_mesh_item scene_image_item scene_implicit_function_item )
 
 
 
