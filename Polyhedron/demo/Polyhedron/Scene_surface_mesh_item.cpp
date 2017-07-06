@@ -11,6 +11,7 @@
 
 //#include <CGAL/boost/graph/properties_Surface_mesh.h>
 #include <CGAL/Surface_mesh.h>
+#include <CGAL/Surface_mesh/IO.h>
 #include <CGAL/intersections.h>
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
