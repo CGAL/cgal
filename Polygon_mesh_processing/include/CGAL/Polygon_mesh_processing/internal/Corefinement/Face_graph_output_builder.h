@@ -130,7 +130,17 @@ class Face_graph_output_builder
   // for mapping an edge per polyline per triangle mesh
   An_edge_per_polyline_map an_edge_per_polyline;
   // To collect all intersection edges
-  std::map<const TriangleMesh*,Intersection_edge_map> mesh_to_intersection_edges;
+  class Mesh_to_intersection_edges{
+    TriangleMesh& m_tm;
+    Intersection_edge_map tm_map;
+    Intersection_edge_map other_map;
+  public:
+    Mesh_to_intersection_edges(TriangleMesh& tm1, TriangleMesh) : m_tm(tm1) {}
+    Intersection_edge_map& operator[](TriangleMesh* tm_ptr) {
+      return &m_tm==tm_ptr?tm_map:other_map;
+    }
+  };
+  Mesh_to_intersection_edges mesh_to_intersection_edges;
 
   typename An_edge_per_polyline_map::iterator last_polyline;
 
@@ -342,6 +352,7 @@ public:
     , is_tm1_inside_out( is_tm1_closed && !PMP::is_outward_oriented(tm1) )
     , is_tm2_inside_out( is_tm2_closed && !PMP::is_outward_oriented(tm2) )
     , NID(-1)
+    , mesh_to_intersection_edges(tm1, tm2)
   {}
 
   bool union_is_valid() const
