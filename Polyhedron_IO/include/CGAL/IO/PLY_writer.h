@@ -28,8 +28,8 @@ namespace CGAL{
   template <class Point_3, class Polygon_3>
   bool
   write_PLY(std::ostream& out,
-            std::vector< Point_3 >& points,
-            std::vector< Polygon_3 >& polygons,
+            const std::vector< Point_3 >& points,
+            const std::vector< Polygon_3 >& polygons,
             bool /* verbose */ = false)
   {
 
@@ -52,7 +52,7 @@ namespace CGAL{
   
     internal::PLY::output_property_header (out,
                                            std::make_pair (CGAL::Identity_property_map<Polygon_3>(),
-                                                           PLY_property<std::vector<int> >("vertex_index")));
+                                                           PLY_property<std::vector<int> >("vertex_indices")));
     
     out << "end_header" << std::endl;
   
@@ -63,7 +63,7 @@ namespace CGAL{
     for (std::size_t i = 0; i < polygons.size(); ++ i)
       internal::PLY::output_properties (out, polygons.begin() + i,
                                         std::make_pair (CGAL::Identity_property_map<Polygon_3>(),
-                                                        PLY_property<std::vector<int> >("vertex_index")));
+                                                        PLY_property<std::vector<int> >("vertex_indices")));
 
     return out.good();
   }
