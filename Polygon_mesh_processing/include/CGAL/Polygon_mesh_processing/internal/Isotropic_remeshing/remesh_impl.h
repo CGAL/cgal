@@ -323,7 +323,7 @@ namespace internal {
       remove(halfedge_status_pmap_, mesh_);
 
       if (build_tree_){
-        for(int i=0; i < trees.size();++i){
+        for(std::size_t i=0; i < trees.size();++i){
           delete trees[i];
         }
       }
@@ -361,7 +361,7 @@ namespace internal {
       if (!build_tree_)
         return;
       trees.resize(patch_id_to_index_map.size());
-      for(int i=0; i < trees.size(); ++i){
+      for(std::size_t i=0; i < trees.size(); ++i){
         trees[i] = new AABB_tree();
       }
       typename Triangle_list::iterator it;
@@ -371,7 +371,7 @@ namespace internal {
           ++it, ++pit){
         trees[patch_id_to_index_map[*pit]]->insert(it);
       }
-      for(int i=0; i < trees.size(); ++i){
+      for(std::size_t i=0; i < trees.size(); ++i){
         trees[i]->build();
         trees[i]->accelerate_distance_queries();
       }

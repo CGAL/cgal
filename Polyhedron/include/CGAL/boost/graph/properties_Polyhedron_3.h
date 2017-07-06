@@ -80,9 +80,9 @@ struct Dynamic_polyhedron_property_map {
   }
 
 
-  V default_value_;
   typedef boost::unordered_map<K,V> Map;
   boost::shared_ptr<Map> map_;
+  V default_value_;
 };
 
 template<class Handle>
@@ -594,7 +594,7 @@ add(boost::edge_property_t<V> vprop, Polyhedron_3<Gt, I, HDS, A>& poly)
 
 template<class Gt, class I, CGAL_HDS_PARAM_, class A, class V>
 typename boost::property_map<Polyhedron_3<Gt, I, HDS, A>, boost::halfedge_property_t<V> >::const_type
-add(boost::halfedge_property_t<V> vprop, Polyhedron_3<Gt, I, HDS, A>& poly)
+add(boost::halfedge_property_t<V> vprop, Polyhedron_3<Gt, I, HDS, A>&)
 {
   typedef CGAL::Polyhedron_3<Gt, I, HDS, A> SM;
   typedef typename boost::graph_traits<SM>::halfedge_descriptor halfedge_descriptor;
@@ -603,7 +603,7 @@ add(boost::halfedge_property_t<V> vprop, Polyhedron_3<Gt, I, HDS, A>& poly)
 
 template<class Gt, class I, CGAL_HDS_PARAM_, class A, class V>
 typename boost::property_map<Polyhedron_3<Gt, I, HDS, A>, boost::face_property_t<V> >::const_type
-add(boost::face_property_t<V> vprop, Polyhedron_3<Gt, I, HDS, A>& poly)
+add(boost::face_property_t<V> vprop, Polyhedron_3<Gt, I, HDS, A>&)
 {
   typedef CGAL::Polyhedron_3<Gt, I, HDS, A> SM;
   typedef typename boost::graph_traits<SM>::face_descriptor face_descriptor;
