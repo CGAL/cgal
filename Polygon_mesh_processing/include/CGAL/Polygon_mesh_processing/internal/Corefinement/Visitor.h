@@ -116,14 +116,18 @@ struct Ecm_bind<G, No_mark<G>, No_mark<G> >
 template<class G>
 struct No_extra_output_from_corefinement
 {
+  void start_new_polyline(std::size_t, std::size_t) {}
+  void add_node_to_polyline(std::size_t){}
+  template<class Node_id_pair, class halfedge_descriptor>
+  void set_edge_per_polyline(G& /*tm*/,
+                             Node_id_pair /*indices*/,
+                             halfedge_descriptor /*hedge*/){}
   template <class Mesh_to_intersection_edge_map,
             class Node_vector,
-            class An_edge_per_polyline_map,
             class Mesh_to_map_node>
   void operator()(
     const std::map<const G*,Mesh_to_intersection_edge_map>& /*mesh_to_intersection_edges*/,
     const Node_vector& /*nodes*/,
-    const An_edge_per_polyline_map& /*an_edge_per_polyline*/,
     bool /*input_have_coplanar_faces*/,
     const boost::dynamic_bitset<>& /* is_node_of_degree_one */,
     const Mesh_to_map_node& /*mesh_to_node_id_to_vertex*/) const
@@ -162,15 +166,6 @@ private:
   typedef typename Graph_traits::face_descriptor                face_descriptor;
   typedef typename Graph_traits::vertex_descriptor            vertex_descriptor;
   typedef typename Graph_traits::halfedge_descriptor        halfedge_descriptor;
-  // to maintain a halfedge on each polyline per TriangleMesh + pair<bool,size_t>
-  // with first = "is the key (pair<Node_id,Node_id>) was reversed?" and
-  // second is the number of edges +1 in the polyline
-  /// \todo this is not needed here, it should be moved in the output builder
-  typedef std::map< std::pair<Node_id,Node_id>,
-                    std::pair< std::map<TriangleMesh*,halfedge_descriptor>,
-                               std::pair<bool,std::size_t> > >
-                                                       An_edge_per_polyline_map;
-
    typedef std::vector<Node_id>                                        Node_ids;
    typedef boost::unordered_map<face_descriptor,Node_ids>           On_face_map;
    typedef boost::unordered_map<edge_descriptor,Node_ids>           On_edge_map;
@@ -197,10 +192,8 @@ private:
   // boost::dynamic_bitset<> non_manifold_nodes;
   std::vector< std::vector<Node_id> > graph_of_constraints;
   boost::dynamic_bitset<> is_node_of_degree_one;
-  An_edge_per_polyline_map an_edge_per_polyline;
   //nb of intersection points between coplanar faces, see fixes XSL_TAG_CPL_VERT
   std::size_t number_coplanar_vertices;
-  typename An_edge_per_polyline_map::iterator last_polyline;
   std::map<TriangleMesh*,On_face_map> on_face;
   std::map<TriangleMesh*,On_edge_map> on_edge;
   Mesh_to_vertices_on_intersection_map mesh_to_vertices_on_inter;
@@ -273,7 +266,7 @@ public:
     }
   }
 
-  void start_new_polyline(std::size_t i, std::size_t j)
+  void start_new_polyline(Node_id i, Node_id j)
   {
     if ( i==j ) //case of a single point
     {
@@ -282,20 +275,12 @@ public:
       //nothing is done
       return;
     }
-    std::pair<typename An_edge_per_polyline_map::iterator,bool> res=
-      an_edge_per_polyline.insert(
-        std::make_pair( make_sorted_pair(i,j),
-          std::make_pair( std::map<TriangleMesh*,halfedge_descriptor>(),std::make_pair(false,0))  )
-      );
-    CGAL_assertion(res.second);
-    last_polyline=res.first;
-    if ( i !=last_polyline->first.first )
-      last_polyline->second.second.first=true;
+    output_builder.start_new_polyline(i,j);
   }
 
-  void add_node_to_polyline(std::size_t)
+  void add_node_to_polyline(Node_id i)
   {
-    ++(last_polyline->second.second.second);
+    output_builder.add_node_to_polyline(i);
   }
 
   void set_number_of_intersection_points_from_coplanar_faces(std::size_t n)
@@ -441,26 +426,6 @@ public:
               Less_along_a_halfedge<TriangleMesh,VertexPointMap,Node_vector>
                 (hedge, tm, vpm, nodes)
     );
-  }
-
-  void set_edge_per_polyline(TriangleMesh& tm,
-                             std::pair<std::size_t,std::size_t> indices,
-                             halfedge_descriptor hedge)
-  {
-    if (indices.first>indices.second)
-    {
-      std::swap(indices.first,indices.second);
-      hedge=opposite(hedge,tm);
-    }
-    typename An_edge_per_polyline_map::iterator it =
-      an_edge_per_polyline.find(indices);
-
-    if (it!=an_edge_per_polyline.end()){
-      CGAL_assertion(doing_autorefinement ||
-                     it->second.first.count(&tm) == 0 ||
-                     it->second.first[&tm]==hedge);
-      it->second.first.insert( std::make_pair( &tm,hedge) );
-    }
   }
 
   struct Face_boundary{
@@ -717,7 +682,7 @@ public:
               std::pair<Node_id,Node_id> edge_pair(node_id,node_id_of_first);
               if ( intersection_edges.insert( std::make_pair(edge(hedge,tm),edge_pair) ).second)
                 call_put(marks_on_edges,tm,edge(hedge,tm),true);
-              set_edge_per_polyline(tm,edge_pair,hedge);
+              output_builder.set_edge_per_polyline(tm,edge_pair,hedge);
             }
           }
         }
@@ -1058,7 +1023,7 @@ public:
             if ( intersection_edges.insert(
                     std::make_pair(edge(it_poly_hedge->second,tm),node_id_pair) ).second)
               call_put(marks_on_edges,tm,edge(it_poly_hedge->second,tm),true);
-            set_edge_per_polyline(tm,node_id_pair,it_poly_hedge->second);
+            output_builder.set_edge_per_polyline(tm,node_id_pair,it_poly_hedge->second);
           }
           else{
             //WARNING: in few case this is needed if the marked edge is on the border
@@ -1070,7 +1035,7 @@ public:
             if ( intersection_edges.insert(
                 std::make_pair(edge(it_poly_hedge->second,tm),opposite_pair) ).second )
               call_put(marks_on_edges,tm,edge(it_poly_hedge->second,tm),true);
-            set_edge_per_polyline(tm,opposite_pair,it_poly_hedge->second);
+            output_builder.set_edge_per_polyline(tm,opposite_pair,it_poly_hedge->second);
           }
         }
       }
@@ -1081,7 +1046,6 @@ public:
     // additional operations
     output_builder(mesh_to_intersection_edges,
                    nodes,
-                   an_edge_per_polyline,
                    input_with_coplanar_faces,
                    is_node_of_degree_one,
                    mesh_to_node_id_to_vertex);
