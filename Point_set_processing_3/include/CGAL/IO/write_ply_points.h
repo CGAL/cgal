@@ -216,7 +216,7 @@ namespace internal {
         stream.write (reinterpret_cast<char*>(&size), sizeof(size));
         for (std::size_t i = 0; i < value.size(); ++ i)
         {
-          T t = value[i];
+          T t = T(value[i]);
           stream.write (reinterpret_cast<char*>(&t), sizeof(t));
         }
       }
