@@ -15,6 +15,7 @@
 #include <cmath>
 #include <map>
 #include <set>
+#include <queue>
 #include <iostream>
 #include <iterator>
 
@@ -83,17 +84,6 @@ public:
   struct PlaneProxy {
     Vector normal;
     face_descriptor seed;
-  };
-
-  // The facet candidate to be queued.
-  struct FacetToIntegrate {
-    face_descriptor f;
-    std::size_t i;
-    FT fit_error;
-
-    bool operator<(const FacetToIntegrate &rhs) const {
-      return this->fit_error < rhs.fit_error;
-    }
   };
 
   // The l21 metric, compute the fitting error from a facet to a plane proxy.
@@ -413,14 +403,21 @@ private:
    */
   template<typename FacetSegmentMap>
   void flooding(FacetSegmentMap &seg_pmap) {
-    typedef std::multiset<FacetToIntegrate> CandidateSet;
+    // The facet candidate to be queued.
+    struct FacetToIntegrate {
+      face_descriptor f;
+      std::size_t i;
+      FT fit_error;
+      bool operator<(const FacetToIntegrate &rhs) const {
+        return fit_error > rhs.fit_error;
+      }
+    };
 
     BOOST_FOREACH(face_descriptor f, faces(mesh))
       seg_pmap[f] = CGAL_NOT_TAGGED_ID;
 
-    const std::size_t num_proxies = proxies.size();
-    CandidateSet facet_candidates;
-    for (std::size_t i = 0; i < num_proxies; ++i) {
+    std::priority_queue<FacetToIntegrate> facet_pqueue;
+    for (std::size_t i = 0; i < proxies.size(); ++i) {
       face_descriptor f = proxies[i].seed;
       seg_pmap[f] = i;
 
@@ -431,14 +428,14 @@ private:
           cand.f = fadj;
           cand.fit_error = fit_error(fadj, proxies[i]);
           cand.i = i;
-          facet_candidates.insert(cand);
+          facet_pqueue.push(cand);
         }
       }
     }
 
-    while (!facet_candidates.empty()) {
-      const FacetToIntegrate &c = *(facet_candidates.begin());
-      facet_candidates.erase(facet_candidates.begin());
+    while (!facet_pqueue.empty()) {
+      const FacetToIntegrate c = facet_pqueue.top();
+      facet_pqueue.pop();
       if (seg_pmap[c.f] == CGAL_NOT_TAGGED_ID) {
         seg_pmap[c.f] = c.i;
         BOOST_FOREACH(face_descriptor fadj, faces_around_face(halfedge(c.f, mesh), mesh)) {
@@ -448,7 +445,7 @@ private:
             cand.f = fadj;
             cand.fit_error = fit_error(fadj, proxies[c.i]);
             cand.i = c.i;
-            facet_candidates.insert(cand);
+            facet_pqueue.push(cand);
           }
         }
       }
