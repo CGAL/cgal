@@ -847,6 +847,7 @@ template SCENE_POLYGON_SOUP_ITEM_EXPORT void Scene_polygon_soup_item::load<CGAL:
 // End:
 
 const Scene_polygon_soup_item::Points& Scene_polygon_soup_item::points() const { return d->soup->points; }
+const Scene_polygon_soup_item::Polygons& Scene_polygon_soup_item::polygons() const { return d->soup->polygons; }
 bool Scene_polygon_soup_item::isDataColored() { return d->soup->fcolors.size()>0 || d->soup->vcolors.size()>0;}
 std::vector<CGAL::Color> Scene_polygon_soup_item::getVColors() const{return d->soup->vcolors;}
 std::vector<CGAL::Color> Scene_polygon_soup_item::getFColors() const{return d->soup->fcolors;}
