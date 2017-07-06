@@ -6,6 +6,7 @@
 #include <fstream>
 
 #include <CGAL/IO/PLY_reader.h>
+#include <CGAL/IO/PLY_writer.h>
 #include <QMessageBox>
 
 class Polyhedron_demo_ply_plugin :
@@ -102,8 +103,9 @@ Polyhedron_demo_ply_plugin::load(QFileInfo fileinfo) {
 
 bool Polyhedron_demo_ply_plugin::canSave(const CGAL::Three::Scene_item* item)
 {
-  // This plugin supports point sets
-  return qobject_cast<const Scene_points_with_normal_item*>(item);
+  // This plugin supports point sets and polygon soups
+  return (qobject_cast<const Scene_points_with_normal_item*>(item)
+          || qobject_cast<const Scene_polygon_soup_item*>(item));
 }
 
 bool Polyhedron_demo_ply_plugin::save(const CGAL::Three::Scene_item* item, QFileInfo fileinfo)
@@ -126,12 +128,26 @@ bool Polyhedron_demo_ply_plugin::save(const CGAL::Three::Scene_item* item, QFile
   // This plugin supports point sets
   const Scene_points_with_normal_item* point_set_item =
     qobject_cast<const Scene_points_with_normal_item*>(item);
-  if(!point_set_item)
-    return false;
+  if (point_set_item)
+  {
+    std::ofstream out(fileinfo.filePath().toUtf8().data());
+    out.precision (std::numeric_limits<double>::digits10 + 2);
+    return point_set_item->write_ply_point_set(out, (choice == tr("Binary")));
+  }
 
-  std::ofstream out(fileinfo.filePath().toUtf8().data());
-  out.precision (std::numeric_limits<double>::digits10 + 2);
-  return point_set_item->write_ply_point_set(out, (choice == tr("Binary")));
+  // This plugin supports polygon soups
+  const Scene_polygon_soup_item* soup_item =
+    qobject_cast<const Scene_polygon_soup_item*>(item);
+  if (soup_item)
+  {
+    std::ofstream out(fileinfo.filePath().toUtf8().data());
+    out.precision (std::numeric_limits<double>::digits10 + 2);
+    if (choice == tr("Binary"))
+      CGAL::set_binary_mode(out);
+    return CGAL::write_PLY (out, soup_item->points(), soup_item->polygons());
+  }
+
+  return false;
 }
 
 
