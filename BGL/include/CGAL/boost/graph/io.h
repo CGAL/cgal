@@ -93,7 +93,7 @@ bool write_off(const char* fname,
   
   bool is_whitespace(const std::string& s)
   {
-    for(int i=0; i < s.size(); i++){
+    for(unsigned int i=0; i < s.size(); i++){
       if(s[i] != ' ' && s[i] != '\t'){
         return false;
       }
