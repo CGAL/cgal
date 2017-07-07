@@ -804,8 +804,8 @@ detect_features(FT angle_in_degree,
   {
     initialize_ts(p);
 
-    std::size_t poly_id = &p-&poly[0];
 #if CGAL_MESH_3_VERBOSE
+    std::size_t poly_id = &p-&poly[0];
     std::cerr << "Polyhedron #" << poly_id << " :\n";
     std::cerr << "  material #" << patch_indices[poly_id].first << "\n";
     std::cerr << "  material #" << patch_indices[poly_id].second << "\n";
