@@ -455,7 +455,7 @@ public:
     boost::dynamic_bitset<> tm1_coplanar_faces(num_faces(tm1), 0);
     boost::dynamic_bitset<> tm2_coplanar_faces(num_faces(tm2), 0);
 
-    // In the following loop we filter intersection edge that are strictly inside a patch
+    // In the following loop we filter intersection edges that are strictly inside a patch
     // of coplanar facets so that we keep only the edges on the border of the patch.
     // This is not optimal and in an ideal world being able to find the outside edges
     // directly would avoid to compute the intersection of edge/facets inside the patch

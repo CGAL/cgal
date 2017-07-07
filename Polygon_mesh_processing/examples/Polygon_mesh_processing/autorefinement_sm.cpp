@@ -22,8 +22,8 @@ int main(int argc, char* argv[])
     std::cerr << "Input mesh is not a valid off file." << std::endl;
     return 1;
   }
+  input.close();
 
-  
   std::cout << "Test surface_autointersection\n";
   std::vector< std::vector<K::Point_3> >polylines;
 
@@ -44,6 +44,17 @@ int main(int argc, char* argv[])
   std::cout << "Number of vertices after autorefinement " << num_vertices(mesh) << "\n";
 
   output.open("mesh_autorefined.off");
+  output << mesh;
+  output.close();
+
+  input.open(filename);
+  input >> mesh;
+  std::cout << "Number of vertices before self-intersection removal " << num_vertices(mesh) << "\n";
+  if (!PMP::autorefine_and_remove_self_intersections(mesh))
+    std::cout << "Cannot remove self-intersections\n";
+  std::cout << "Number of vertices before self-intersection removal " << num_vertices(mesh) << "\n";
+
+  output.open("mesh_fixed.off");
   output << mesh;
   output.close();
 
