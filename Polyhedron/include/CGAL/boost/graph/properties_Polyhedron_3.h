@@ -576,7 +576,7 @@ namespace CGAL {
 
 template<class Gt, class I, CGAL_HDS_PARAM_, class A, class V>
 typename boost::property_map<Polyhedron_3<Gt, I, HDS, A>, boost::vertex_property_t<V> >::const_type
-add(boost::vertex_property_t<V> vprop, Polyhedron_3<Gt, I, HDS, A>& poly)
+add(boost::vertex_property_t<V> vprop, Polyhedron_3<Gt, I, HDS, A>&)
 {
   typedef CGAL::Polyhedron_3<Gt, I, HDS, A> SM;
   typedef typename boost::graph_traits<SM>::vertex_descriptor vertex_descriptor;
@@ -585,7 +585,7 @@ add(boost::vertex_property_t<V> vprop, Polyhedron_3<Gt, I, HDS, A>& poly)
 
 template<class Gt, class I, CGAL_HDS_PARAM_, class A, class V>
 typename boost::property_map<Polyhedron_3<Gt, I, HDS, A>, boost::edge_property_t<V> >::const_type
-add(boost::edge_property_t<V> vprop, Polyhedron_3<Gt, I, HDS, A>& poly)
+add(boost::edge_property_t<V> vprop, Polyhedron_3<Gt, I, HDS, A>&)
 {
   typedef CGAL::Polyhedron_3<Gt, I, HDS, A> SM;
   typedef typename boost::graph_traits<SM>::edge_descriptor edge_descriptor;
