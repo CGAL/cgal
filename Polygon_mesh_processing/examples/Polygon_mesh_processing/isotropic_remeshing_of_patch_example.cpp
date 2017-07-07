@@ -41,7 +41,7 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  double target_edge_length = 0.005;
+  double target_edge_length = 0.1;
   unsigned int nb_iter = 3;
 
   std::cout << "Split border...";
