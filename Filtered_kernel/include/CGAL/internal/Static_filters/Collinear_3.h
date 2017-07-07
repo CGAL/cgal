@@ -1,4 +1,4 @@
-// Copyright (c) 2001,2004  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2017 GeometryFactory
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
@@ -16,7 +16,7 @@
 // $Id$
 // 
 //
-// Author(s)     : Sylvain Pion
+// Author(s)     : Simon Giraudot
 
 #ifndef CGAL_INTERNAL_STATIC_FILTERS_COLLINEAR_3_H
 #define CGAL_INTERNAL_STATIC_FILTERS_COLLINEAR_3_H
