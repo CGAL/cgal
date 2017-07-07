@@ -57,7 +57,7 @@ public:
     Combination_enumerator(const int k, const T & first, const T & beyond)
     : combi_(k), k_(k), first_(first), beyond_(beyond), max_at_pos_0_(beyond - k)
     {
-        CGAL_assertion_msg( (1 <= k) && (k <= beyond - first), "wrong value of k");
+        CGAL_assertion_msg( (1 <= k) && (k <= static_cast<int>(beyond - first)), "wrong value of k");
         reset();
     }
 

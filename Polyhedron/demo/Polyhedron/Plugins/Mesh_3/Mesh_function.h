@@ -43,11 +43,27 @@
 #include <CGAL/use.h>
 
 #include <boost/any.hpp>
+#include <CGAL/Mesh_3/experimental/Get_facet_patch_id.h>
 
 namespace CGAL {
   class Image_3;
 }
-
+namespace internal{
+//general case for polyhedron
+template<class Domain>
+struct Get_facet_patch_id_selector {
+  Get_facet_patch_id_selector(const Domain&)
+  {}
+  typedef CGAL::Default type;
+};
+//specialization for surface_mesh
+template<>
+struct Get_facet_patch_id_selector<Polyhedral_mesh_domain_sm> {
+  Get_facet_patch_id_selector(const Polyhedral_mesh_domain_sm&)
+  {}
+  typedef CGAL::Mesh_3::Get_facet_patch_id_sm<Polyhedral_mesh_domain_sm> type;
+};
+}//end internal
 struct Mesh_parameters
 {
   double facet_angle;
@@ -120,7 +136,6 @@ private:
 
   void tweak_criteria(Mesh_criteria&, Mesh_fnt::Domain_tag) {}
   void tweak_criteria(Mesh_criteria&, Mesh_fnt::Polyhedral_domain_tag);
-
 private:
   boost::any object_to_destroy;
   C3t3& c3t3_;
@@ -262,6 +277,9 @@ edge_criteria(double edge_size, Mesh_fnt::Polyhedral_domain_tag)
       Kernel
       , Domain
       , Set_of_patch_ids
+      , typename Domain::AABB_tree
+      , CGAL::Default
+      , typename internal::Get_facet_patch_id_selector<Domain>::type
       > Mesh_sizing_field; // type of sizing field for 0D and 1D features
     typedef std::vector<Set_of_patch_ids> Patches_ids_vector;
     typedef typename Domain::Curve_segment_index Curve_segment_index;

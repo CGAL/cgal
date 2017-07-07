@@ -10,7 +10,12 @@ class Polyhedron_demo_selection_io_plugin :
     Q_INTERFACES(CGAL::Three::Polyhedron_demo_io_plugin_interface)
     Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 public:
+#ifdef USE_SURFACE_MESH
+    QString name() const { return "selection_io_sm_plugin"; }
+#else
     QString name() const { return "selection_io_plugin"; }
+#endif
+
     QString nameFilters() const { return "Selection files (*.selection.txt)"; }
 
     bool canLoad() const { return true; }
@@ -38,5 +43,4 @@ public:
 };
 
 #include <QtPlugin>
-//Q_EXPORT_PLUGIN2(Polyhedron_demo_selection_io_plugin, Polyhedron_demo_selection_io_plugin)
 #include "Selection_io_plugin.moc"

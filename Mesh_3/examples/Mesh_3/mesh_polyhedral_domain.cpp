@@ -9,9 +9,6 @@
 #include <CGAL/make_mesh_3.h>
 #include <CGAL/refine_mesh_3.h>
 
-// IO
-#include <CGAL/IO/Polyhedron_iostream.h>
-
 // Domain
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Polyhedron_3<K> Polyhedron;

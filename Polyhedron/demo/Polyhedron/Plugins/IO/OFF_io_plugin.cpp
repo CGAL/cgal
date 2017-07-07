@@ -116,6 +116,7 @@ Polyhedron_demo_off_plugin::load_off(QFileInfo fileinfo) {
   if(fileinfo.size() > 100000000)//100 MB
   {
     item->set_flat_disabled(true);
+    QApplication::restoreOverrideCursor();
     QMessageBox::warning((QWidget*)NULL,
                    tr("The file seems to be very big."),
                    tr("Flat shading has been disabled to gain memory. You can force it in the context menu of the item."));

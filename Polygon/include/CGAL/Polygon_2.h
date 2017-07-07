@@ -313,7 +313,7 @@ class Polygon_2 {
       return orientation_2(d_container.begin(), d_container.end(), traits);
     }
 
-    /// Returns `POSITIVE_SIDE`, or `NEGATIVE_SIDE`,
+    /// Returns `ON_POSITIVE_SIDE`, or `ON_NEGATIVE_SIDE`,
     /// or `ON_ORIENTED_BOUNDARY`, depending on where point
     /// `q` is. 
     /// \pre `p.is_simple()`.

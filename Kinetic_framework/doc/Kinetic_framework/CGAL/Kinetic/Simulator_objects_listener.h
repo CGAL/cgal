@@ -8,8 +8,7 @@ namespace Kinetic {
 The class `Kinetic::Simulator_objects_listener` is a helper for classes which wish to react to 
 `Simulator::Listener::DIRECTION_OF_TIME` notifications. The helper 
 object translates such notifications `reverse_time` function calls 
-on the responder. See `Kinetic::Qt_moving_points_2` for a 
-simple example of using this helper function. 
+on the responder.
 
 \sa `Kinetic::Listener`
 

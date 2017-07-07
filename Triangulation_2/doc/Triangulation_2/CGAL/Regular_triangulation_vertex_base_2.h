@@ -26,7 +26,15 @@ template< typename Traits, typename Vb >
 class Regular_triangulation_vertex_base_2 : public Vb {
 public:
 
-/// @}
+  /// \name Types
+  /// @{
+
+  /*!
+
+  */
+  typedef Traits::Weighted_point_2 Point;
+
+  /// @}
 
 }; /* end Regular_triangulation_vertex_base_2 */
 } /* end namespace CGAL */

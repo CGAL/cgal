@@ -5,12 +5,20 @@
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
 #  include "implicit_functions/Implicit_function_interface.h"
 #endif
-
 #include "Kernel_type.h"
 #include "Meshing_thread.h"
+#include "Scene_surface_mesh_item.h"
+
+namespace CGAL
+{
+template<typename Graph_>
+struct Graph_with_descriptor_with_graph;
+}
+class Scene_surface_mesh_item;
+
+typedef CGAL::Graph_with_descriptor_with_graph<SMesh> SMwgd;
 
 struct Mesh_parameters;
-
 namespace CGAL { namespace Three {
   class Scene_item;
   class Scene_interface;
@@ -19,11 +27,12 @@ namespace CGAL { namespace Three {
 typedef std::list<std::vector<CGAL::Exact_predicates_inexact_constructions_kernel::Point_3> > Polylines_container;
 
 Meshing_thread* cgal_code_mesh_3(const Polyhedron* pMesh,
-                                 const Polylines_container&,
+                                 const Polylines_container& polylines,
+                                 const Polyhedron* pBoundingMesh,
                                  QString filename,
-                                 const double angle,
+                                 const double facet_angle,
                                  const double facet_sizing,
-                                 const double approx,
+                                 const double facet_approx,
                                  const double tet_sizing,
                                  const double edge_size,
                                  const double tet_shape,
@@ -34,6 +43,22 @@ Meshing_thread* cgal_code_mesh_3(const Polyhedron* pMesh,
                                  const bool surface_only,
                                  CGAL::Three::Scene_interface* scene);
 
+Meshing_thread* cgal_code_mesh_3(const SMwgd* pMesh,
+                                 const Polylines_container& polylines,
+                                 const SMwgd* pBoundingMesh,
+                                 QString filename,
+                                 const double facet_angle,
+                                 const double facet_sizing,
+                                 const double facet_approx,
+                                 const double tet_sizing,
+                                 const double edge_size,
+                                 const double tet_shape,
+                                 bool protect_features,
+                                 bool protect_border,
+                                 const double sharp_edges_angle,
+                                 const int manifold,
+                                 const bool surface_only,
+                                 CGAL::Three::Scene_interface* scene);
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
 Meshing_thread* cgal_code_mesh_3(const Implicit_function_interface* pfunction,
                                  const double facet_angle,

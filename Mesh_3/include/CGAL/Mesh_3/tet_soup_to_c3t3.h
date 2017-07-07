@@ -105,6 +105,11 @@ void build_finite_cells(Tr& tr,
   typedef typename Tr::Vertex_handle                            Vertex_handle;
   typedef typename Tr::Cell_handle                              Cell_handle;
 
+  CGAL_assertion_code(
+    typename Tr::Geom_traits::Construct_point_3 wp2p =
+      tr.geom_traits().construct_point_3_object();
+  )
+
   // build the finite cells
   for(std::size_t i=0; i<finite_cells.size(); ++i)
   {
@@ -121,8 +126,9 @@ void build_finite_cells(Tr& tr,
     }
 
     // this assertion also tests for degeneracy
-    CGAL_assertion(CGAL::orientation(vs[0]->point().point(), vs[1]->point().point(),
-        vs[2]->point().point(), vs[3]->point().point()) == POSITIVE);
+    CGAL_assertion(CGAL::orientation(wp2p(vs[0]->point()), wp2p(vs[1]->point()),
+                                     wp2p(vs[2]->point()), wp2p(vs[3]->point()))
+                     == POSITIVE);
 
     Cell_handle c = tr.tds().create_cell(vs[0], vs[1], vs[2], vs[3]);
     c->info() = tet[4]; // the cell's info keeps the reference of the tetrahedron

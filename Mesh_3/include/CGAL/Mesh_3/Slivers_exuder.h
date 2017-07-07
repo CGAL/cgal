@@ -104,13 +104,13 @@ namespace Mesh_3 {
     public std::unary_function<Vertex_handle, void>
     {
       const Vertex_handle * v;
-      Gt gt;
+      const Gt& gt;
       double & dist;
 
     public:
       Min_distance_from_v(const Vertex_handle& vh,
                           double& dist,
-                          Gt geom_traits = Gt())
+                          const Gt& geom_traits = Gt())
         : v(&vh), gt(geom_traits), dist(dist)
       {
       }
@@ -118,12 +118,14 @@ namespace Mesh_3 {
       void
       operator()(const Vertex_handle& vh) const
       {
-        typedef typename Gt::Compute_squared_distance_3
-        Compute_squared_distance_3;
-        Compute_squared_distance_3 distance =
-        gt.compute_squared_distance_3_object();
+        typedef typename Gt::Compute_squared_distance_3 Compute_squared_distance_3;
+        Compute_squared_distance_3 distance = gt.compute_squared_distance_3_object();
 
-        const double d = CGAL::to_double(distance((*v)->point(), vh->point()));
+        typedef typename Gt::Construct_point_3 Construct_point_3;
+        Construct_point_3 wp2p = gt.construct_point_3_object();
+
+        const double d = CGAL::to_double(distance(wp2p((*v)->point()),
+                                                  wp2p(vh->point())));
         if(d < dist){
           dist = d;
         }
@@ -377,33 +379,33 @@ class Slivers_exuder
 
 public: // Types
 
-  typedef typename C3T3::Concurrency_tag Concurrency_tag;
+  typedef typename C3T3::Concurrency_tag                    Concurrency_tag;
   typedef Slivers_exuder_base<
-    typename C3T3::Triangulation, Concurrency_tag> Base;
+    typename C3T3::Triangulation, Concurrency_tag>          Base;
 
 private: // Types
 
   typedef Slivers_exuder<C3T3, SliverCriteria, Visitor_, FT> Self;
 
-  typedef typename C3T3::Triangulation Tr;
-  typedef typename Tr::Weighted_point Weighted_point;
-  typedef typename Tr::Bare_point Bare_point;
-  typedef typename Tr::Cell_handle Cell_handle;
-  typedef typename Tr::Facet Facet;
-  typedef typename Tr::Vertex_handle Vertex_handle;
-  typedef typename Weighted_point::Weight Weight;
-  typedef typename Base::Queue_value_type Queue_value_type;
-  typedef typename Base::Cell_vector Cell_vector;
+  typedef typename C3T3::Triangulation                       Tr;
+  typedef typename Tr::Weighted_point                        Weighted_point;
+  typedef typename Tr::Bare_point                            Bare_point;
+  typedef typename Tr::Cell_handle                           Cell_handle;
+  typedef typename Tr::Facet                                 Facet;
+  typedef typename Tr::Vertex_handle                         Vertex_handle;
+  typedef typename Weighted_point::Weight                    Weight;
+  typedef typename Base::Queue_value_type                    Queue_value_type;
+  typedef typename Base::Cell_vector                         Cell_vector;
 
-  typedef typename Tr::Geom_traits Geom_traits;
-  typedef typename Geom_traits::Tetrahedron_3 Tetrahedron_3;
+  typedef typename Tr::Geom_traits                           Gt;
+  typedef typename Gt::Tetrahedron_3                         Tetrahedron_3;
 
-  typedef typename C3T3::Cells_in_complex_iterator Cell_iterator;
-  typedef std::vector<Facet> Facet_vector;
+  typedef typename C3T3::Cells_in_complex_iterator           Cell_iterator;
+  typedef std::vector<Facet>                                 Facet_vector;
 
-  typedef typename C3T3::Surface_patch_index Surface_patch_index;
-  typedef typename C3T3::Subdomain_index Subdomain_index;
-  typedef typename C3T3::Index Index;
+  typedef typename C3T3::Surface_patch_index                 Surface_patch_index;
+  typedef typename C3T3::Subdomain_index                     Subdomain_index;
+  typedef typename C3T3::Index                               Index;
 
   // Umbrella will store the surface_index of internal facets of a new
   // weighted point conflict zone. Such facets are represented by their edge
@@ -622,7 +624,7 @@ private:
   double compute_critical_radius(const Vertex_handle& v,
                                  const Cell_handle& c) const
   {
-    typedef typename Geom_traits::Compute_power_distance_to_power_sphere_3
+    typedef typename Gt::Compute_power_distance_to_power_sphere_3
       Critical_radius;
 
     Critical_radius critical_radius =
@@ -642,8 +644,7 @@ private:
   {
 
     double dist = (std::numeric_limits<double>::max)();
-    details::Min_distance_from_v<Geom_traits, Vertex_handle>
-      min_distance_from_v(vh, dist);
+    details::Min_distance_from_v<Gt, Vertex_handle> min_distance_from_v(vh, dist, tr_.geom_traits());
 
     tr_.adjacent_vertices(vh, boost::make_function_output_iterator(min_distance_from_v));
 
@@ -1124,7 +1125,8 @@ pump_vertex(const Vertex_handle& pumped_vertex,
   // If best_weight < pumped_vertex weight, nothing to do
   if ( best_weight > pumped_vertex->point().weight() )
   {
-    Weighted_point wp(pumped_vertex->point(), best_weight);
+    typename Gt::Construct_point_3 wp2p = tr_.geom_traits().construct_point_3_object();
+    Weighted_point wp(wp2p(pumped_vertex->point()), best_weight);
 
     // Insert weighted point into mesh
     // note it can fail if the mesh is non-manifold at pumped_vertex
@@ -1272,10 +1274,11 @@ expand_prestar(const Cell_handle& cell_to_add,
       // Update ratio (ratio is needed for cells of complex only)
       if ( c3t3_.is_in_complex(cell_to_add) )
       {
-        Tetrahedron_3 tet(pumped_vertex->point(),
-                          cell_to_add->vertex((i+1)&3)->point(),
-                          cell_to_add->vertex((i+2)&3)->point(),
-                          cell_to_add->vertex((i+3)&3)->point());
+        typename Gt::Construct_point_3 wp2p = tr_.geom_traits().construct_point_3_object();
+        Tetrahedron_3 tet(wp2p(pumped_vertex->point()),
+                          wp2p(cell_to_add->vertex((i+1)&3)->point()),
+                          wp2p(cell_to_add->vertex((i+2)&3)->point()),
+                          wp2p(cell_to_add->vertex((i+3)&3)->point()));
 
         double new_value = sliver_criteria_(tet);
         criterion_values.insert(std::make_pair(current_facet,new_value));
@@ -1460,7 +1463,7 @@ restore_cells_and_boundary_facets(
       cit != new_cells.end();
       ++cit)
   {
-    (*cit)->invalidate_circumcenter();
+    (*cit)->invalidate_weighted_circumcenter_cache();
     const int index = (*cit)->index(new_vertex);
     const Facet new_facet = std::make_pair(*cit, index);
     const Facet new_facet_from_outside = tr_.mirror_facet(new_facet);
@@ -1787,6 +1790,8 @@ check_ratios(const Sliver_values& criterion_values,
   Facet_vector internal_facets;
   Facet_vector boundary_facets;
 
+  typename Gt::Construct_point_3 wp2p = tr_.geom_traits().construct_point_3_object();
+
   tr_.find_conflicts(wp,
                      vh->cell(),
                      std::back_inserter(boundary_facets),
@@ -1812,10 +1817,10 @@ check_ratios(const Sliver_values& criterion_values,
       continue;
 
     int k = it->second;
-    Tetrahedron_3 tet(vh->point(),
-                      it->first->vertex((k+1)&3)->point(),
-                      it->first->vertex((k+2)&3)->point(),
-                      it->first->vertex((k+3)&3)->point());
+    Tetrahedron_3 tet(wp2p(vh->point()),
+                      wp2p(it->first->vertex((k+1)&3)->point()),
+                      wp2p(it->first->vertex((k+2)&3)->point()),
+                      wp2p(it->first->vertex((k+3)&3)->point()));
 
     double ratio = sliver_criteria_(tet);
     expected_ratios.push_back(ratio);

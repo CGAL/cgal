@@ -12,10 +12,6 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-// 
-//
 // Author(s)     : Tran Kai Frank DA <Frank.Da@sophia.inria.fr>
 
 #ifndef CGAL_WEIGHTED_ALPHA_SHAPE_EUCLIDEAN_TRAITS_3_H
@@ -23,26 +19,23 @@
 
 #include <CGAL/license/Alpha_shapes_3.h>
 
-// temporarily silenced
-/*
 #define CGAL_DEPRECATED_HEADER "<CGAL/Weighted_alpha_shape_euclidean_traits_3.h>"
-#define CGAL_REPLACEMENT_HEADER "<CGAL/Regular_triangulation_euclidean_traits_3.h>"
 #define CGAL_DEPRECATED_MESSAGE_DETAILS \
-  "The class Weighted_alpha_shape_euclidean_traits_3<K> is deprecated in favor of "\
-  "Regular_triangulation_euclidean_traits_3<K>."
+  "The kernel K can be used directly as traits since weighted points and "\
+  "the associated function objects are now part of the concept Kernel."
 #include <CGAL/internal/deprecation_warning.h>
-*/
-
-#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 
 namespace CGAL {
 
-template <class K>
-class Weighted_alpha_shape_euclidean_traits_3 : public 
-Regular_triangulation_euclidean_traits_3<K>
-{};
-  
-  
-} //namespace CGAL
-  
-#endif //CGAL_WEIGHTED_ALPHA_SHAPE_EUCLIDEAN_TRAITS_3_H 
+template < class K_ >
+class Weighted_alpha_shape_euclidean_traits_3
+  : public K_
+{
+public:
+  Weighted_alpha_shape_euclidean_traits_3() { }
+  Weighted_alpha_shape_euclidean_traits_3(const K_& k) : K_(k) { }
+};
+
+} // namespace CGAL
+
+#endif // CGAL_WEIGHTED_ALPHA_SHAPE_EUCLIDEAN_TRAITS_3_H

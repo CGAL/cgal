@@ -51,8 +51,6 @@ public:
 
 CGAL::Three::Scene_item* Surf_io_plugin::load(QFileInfo fileinfo)
 {
-  typedef Scene_surface_mesh_item::SMesh SMesh;
-  typedef Scene_surface_mesh_item::Point Point;
   // Open file
   std::ifstream in(fileinfo.filePath().toUtf8());
   if(!in) {
@@ -64,7 +62,7 @@ CGAL::Three::Scene_item* Surf_io_plugin::load(QFileInfo fileinfo)
   std::vector<MaterialData> material_data;
   CGAL::Bbox_3 grid_box;
   CGAL::cpp11::array<unsigned int, 3> grid_size = {{1, 1, 1}};
-  boost::container::flat_set<Point> duplicated_points;
+  boost::container::flat_set<Point_3> duplicated_points;
   read_surf(in, patches, material_data, grid_box, grid_size
     , std::inserter(duplicated_points, duplicated_points.end()));
 

@@ -106,6 +106,7 @@ private:
   mutable CGAL_MUTEX building_mutex;//mutex used to protect const calls inducing build()
   #endif
   bool built_;
+  bool removed_;
 
   // protected copy constructor
   Kd_tree(const Tree& tree)
@@ -239,13 +240,13 @@ private:
 public:
 
   Kd_tree(Splitter s = Splitter(),const SearchTraits traits=SearchTraits())
-    : traits_(traits),split(s), built_(false)
+    : traits_(traits),split(s), built_(false), removed_(false)
   {}
 
   template <class InputIterator>
   Kd_tree(InputIterator first, InputIterator beyond,
 	  Splitter s = Splitter(),const SearchTraits traits=SearchTraits())
-    : traits_(traits),split(s), built_(false)
+    : traits_(traits),split(s), built_(false), removed_(false)
   {
     pts.insert(pts.end(), first, beyond);
   }
@@ -257,6 +258,11 @@ public:
   void
   build()
   {
+    // This function is not ready to be called when a tree already exists, one
+    // must call invalidate_build() first.
+    CGAL_assertion(!is_built());
+    CGAL_assertion(!pts.empty());
+    CGAL_assertion(!removed_);
     const Point_d& p = *pts.begin();
     typename SearchTraits::Construct_cartesian_const_iterator_d ccci=traits_.construct_cartesian_const_iterator_d_object();
     int dim = static_cast<int>(std::distance(ccci(p), ccci(p,0)));
@@ -307,8 +313,18 @@ public:
     return built_;
   }
 
-  void invalidate_built()
+  void invalidate_build()
   {
+    if(removed_){
+      // Walk the tree to collect the remaining points.
+      // Writing directly to pts would likely work, but better be safe.
+      std::vector<Point_d> ptstmp;
+      //ptstmp.resize(root()->num_items());
+      root()->tree_items(std::back_inserter(ptstmp));
+      pts.swap(ptstmp);
+      removed_=false;
+      CGAL_assertion(is_built()); // the rest of the cleanup must happen
+    }
     if(is_built()){
       internal_nodes.clear();
       leaf_nodes.clear();
@@ -320,14 +336,15 @@ public:
 
   void clear()
   {
-    invalidate_built();
+    invalidate_build();
     pts.clear();
+    removed_ = false;
   }
 
   void
   insert(const Point_d& p)
   {
-    invalidate_built();
+    invalidate_build();
     pts.push_back(p);
   }
 
@@ -335,10 +352,102 @@ public:
   void
   insert(InputIterator first, InputIterator beyond)
   {
-    invalidate_built();
+    invalidate_build();
     pts.insert(pts.end(),first, beyond);
   }
 
+private:
+  struct Equal_by_coordinates {
+    SearchTraits const* traits;
+    Point_d const* pp;
+    bool operator()(Point_d const&q) const {
+      typename SearchTraits::Construct_cartesian_const_iterator_d ccci=traits->construct_cartesian_const_iterator_d_object();
+      return std::equal(ccci(*pp), ccci(*pp,0), ccci(q));
+    }
+  };
+  Equal_by_coordinates equal_by_coordinates(Point_d const&p){
+    Equal_by_coordinates ret = { &traits(), &p };
+    return ret;
+  }
+
+public:
+  void
+  remove(const Point_d& p)
+  {
+    remove(p, equal_by_coordinates(p));
+  }
+
+  template<class Equal>
+  void
+  remove(const Point_d& p, Equal const& equal_to_p)
+  {
+#if 0
+    // This code could have quadratic runtime.
+    if (!is_built()) {
+      std::vector<Point_d>::iterator pi = std::find_if(pts.begin(), pts.end(), equal_to_p);
+      // Precondition: the point must be there.
+      CGAL_assertion (pi != pts.end());
+      pts.erase(pi);
+      return;
+    }
+#endif
+    bool success = remove_(p, 0, false, 0, false, root(), equal_to_p);
+    CGAL_assertion(success);
+
+    // Do not set the flag is the tree has been cleared.
+    if(is_built())
+      removed_ |= success;
+  }
+private:
+  template<class Equal>
+  bool remove_(const Point_d& p,
+      Internal_node_handle grandparent, bool parent_islower,
+      Internal_node_handle parent, bool islower,
+      Node_handle node, Equal const& equal_to_p) {
+    // Recurse to locate the point
+    if (!node->is_leaf()) {
+      Internal_node_handle newparent = static_cast<Internal_node_handle>(node);
+      // FIXME: This should be if(x<y) remove low; else remove up;
+      if (traits().construct_cartesian_const_iterator_d_object()(p)[newparent->cutting_dimension()] <= newparent->cutting_value()) {
+	if (remove_(p, parent, islower, newparent, true, newparent->lower(), equal_to_p))
+	  return true;
+      }
+      //if (traits().construct_cartesian_const_iterator_d_object()(p)[newparent->cutting_dimension()] >= newparent->cutting_value())
+	return remove_(p, parent, islower, newparent, false, newparent->upper(), equal_to_p);
+
+      CGAL_assertion(false); // Point was not found
+    }
+
+    // Actual removal
+    Leaf_node_handle lnode = static_cast<Leaf_node_handle>(node);
+    if (lnode->size() > 1) {
+      iterator pi = std::find_if(lnode->begin(), lnode->end(), equal_to_p);
+      // FIXME: we should ensure this never happens
+      if (pi == lnode->end()) return false;
+      iterator lasti = lnode->end() - 1;
+      if (pi != lasti) {
+	// Hack to get a non-const iterator
+	std::iter_swap(pts.begin()+(pi-pts.begin()), pts.begin()+(lasti-pts.begin()));
+      }
+      lnode->drop_last_point();
+    } else if (!equal_to_p(*lnode->begin())) {
+      // FIXME: we should ensure this never happens
+      return false;
+    } else if (grandparent) {
+      Node_handle brother = islower ? parent->upper() : parent->lower();
+      if (parent_islower)
+	grandparent->set_lower(brother);
+      else
+	grandparent->set_upper(brother);
+    } else if (parent) {
+      tree_root = islower ? parent->upper() : parent->lower();
+    } else {
+      clear();
+    }
+    return true;
+  }
+
+public:
   //For efficiency; reserve the size of the points vectors in advance (if the number of points is already known).
   void reserve(size_t size)
   {
@@ -418,10 +527,14 @@ public:
   void
   print() const
   {
-    if(! is_built()){
-      const_build();
+    if(! pts.empty()){
+      if(! is_built()){
+	const_build();
+      }
+      root()->print();
+    }else{
+      std::cout << "empty tree\n";
     }
-    root()->print();
   }
 
   const Kd_tree_rectangle<FT,D>&

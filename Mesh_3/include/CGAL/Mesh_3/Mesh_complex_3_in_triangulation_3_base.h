@@ -479,9 +479,12 @@ public:
   template <typename InputIterator>
   void insert_surface_points(InputIterator first, InputIterator last)
   {
+    typename Tr::Geom_traits::Construct_weighted_point_3 cwp =
+      tr_.geom_traits().construct_weighted_point_3_object();
+
     while ( first != last )
     {
-      Vertex_handle vertex = tr_.insert((*first).first);
+      Vertex_handle vertex = tr_.insert(cwp((*first).first));
       vertex->set_index((*first).second);
       vertex->set_dimension(2);
       ++first;
@@ -502,9 +505,12 @@ public:
                              InputIterator last,
                              const Index& default_index)
   {
+    typename Tr::Geom_traits::Construct_weighted_point_3 cwp =
+      tr_.geom_traits().construct_weighted_point_3_object();
+
     while ( first != last )
     {
-      Vertex_handle vertex = tr_.insert(*first);
+      Vertex_handle vertex = tr_.insert(cwp(*first));
       vertex->set_index(default_index);
       vertex->set_dimension(2);
       ++first;

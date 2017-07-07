@@ -38,7 +38,6 @@
 #include <CGAL/Bbox_3.h>
 
 #include <CGAL/point_generators_3.h>
-#include <CGAL/Mesh_3/Creator_weighted_point_3.h>
 
 #include <boost/variant.hpp>
 #include <boost/format.hpp>

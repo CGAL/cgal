@@ -269,3 +269,9 @@ void Scene_spheres_item::setToolTip(QString s)
 {
   d->tooltip = s;
 }
+
+void Scene_spheres_item::setColor(QColor c)
+{
+  CGAL::Three::Scene_item::setColor(c);
+  this->on_color_changed();
+}

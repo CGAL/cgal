@@ -17,4 +17,6 @@
 \example BGL_surface_mesh/prim.cpp
 \example BGL_surface_mesh/surface_mesh_dual.cpp
 \example Surface_mesh_skeletonization/simple_mcfskel_example.cpp
+\example Surface_mesh_segmentation/extract_segmentation_into_mesh_example.cpp
+\example Polygon_mesh_processing/face_filtered_graph_example.cpp
 */

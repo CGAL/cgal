@@ -51,7 +51,7 @@ struct Time_stamper
   static std::size_t time_stamp(const T* pt)
   {
     if(pt == NULL){
-      return 0;
+      return std::size_t(-1);
     }
     return pt->time_stamp();
   }

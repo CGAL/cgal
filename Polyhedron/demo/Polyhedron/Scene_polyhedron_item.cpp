@@ -32,6 +32,8 @@
 
 #include <boost/foreach.hpp>
 #include "triangulate_primitive.h"
+#include "Color_map.h"
+
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 typedef Polyhedron::Traits Traits;
@@ -250,6 +252,8 @@ void* Scene_polyhedron_item_priv::get_aabb_tree()
       int index =0;
       BOOST_FOREACH( Polyhedron::Facet_iterator f, faces(*poly))
       {
+        if (CGAL::is_degenerate_triangle_face(f, *poly, get(CGAL::vertex_point, *poly), Kernel()))
+          continue;
         if(!f->is_triangle())
         {
           Traits::Vector_3 normal = f->plane().orthogonal_vector(); //initialized in compute_normals_and_vertices
@@ -859,11 +863,11 @@ Scene_polyhedron_item::~Scene_polyhedron_item()
 
       //Clears the targeted Id
       if(d)
-        v->textRenderer->removeText(d->targeted_id);
+        v->textRenderer()->removeText(d->targeted_id);
       //Remove textitems
       if(textItems)
       {
-        v->textRenderer->removeTextList(textItems);
+        v->textRenderer()->removeTextList(textItems);
         delete textItems;
         textItems=NULL;
       }
@@ -875,7 +879,6 @@ Scene_polyhedron_item::~Scene_polyhedron_item()
     }
 }
 
-#include "Color_map.h"
 
 void
 Scene_polyhedron_item_priv::
@@ -915,6 +918,19 @@ invalidate_stats()
   area = -std::numeric_limits<double>::infinity();
   self_intersect = false;
   genus = -1;
+}
+
+//vertex_index is the storage for selection
+Scene_polyhedron_item::Vertex_selection_map 
+Scene_polyhedron_item::vertex_selection_map()
+{
+  return get(boost::vertex_index,*d->poly);
+}
+//face_index is the storage for selection
+Scene_polyhedron_item::Face_selection_map 
+Scene_polyhedron_item::face_selection_map()
+{
+  return get(boost::face_index,*d->poly);
 }
 
 Scene_polyhedron_item*
@@ -959,8 +975,10 @@ Scene_polyhedron_item::load_obj(std::istream& in)
 bool
 Scene_polyhedron_item::save(std::ostream& out) const
 {
+  QApplication::setOverrideCursor(Qt::WaitCursor);
   out.precision(17);
     out << *(d->poly);
+    QApplication::restoreOverrideCursor();
     return (bool) out;
 }
 
@@ -1664,7 +1682,7 @@ CGAL::Three::Scene_item::Header_data Scene_polyhedron_item::header() const
 
 void Scene_polyhedron_item::printPrimitiveId(QPoint point, CGAL::Three::Viewer_interface *viewer)
 {
-  TextRenderer *renderer = viewer->textRenderer;
+  TextRenderer *renderer = viewer->textRenderer();
   renderer->getLocalTextItems().removeAll(d->targeted_id);
   renderer->removeTextList(textItems);
   textItems->clear();
@@ -1786,7 +1804,7 @@ void Scene_polyhedron_item::printPrimitiveId(QPoint point, CGAL::Three::Viewer_i
 
 void Scene_polyhedron_item::printPrimitiveIds(CGAL::Three::Viewer_interface *viewer) const 
 {
-  TextRenderer *renderer = viewer->textRenderer;
+  TextRenderer *renderer = viewer->textRenderer();
 
 
   if(!d->all_ids_displayed)
@@ -1852,7 +1870,7 @@ void Scene_polyhedron_item::printPrimitiveIds(CGAL::Three::Viewer_interface *vie
   d->all_ids_displayed = !d->all_ids_displayed;
 }
 
-bool Scene_polyhedron_item::testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer)
+bool Scene_polyhedron_item::testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer)const
 {
   const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
   Kernel::Point_3 src(x - offset.x,

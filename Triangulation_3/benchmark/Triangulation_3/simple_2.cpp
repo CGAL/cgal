@@ -6,10 +6,10 @@
 #include <iostream>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel  K;
-typedef CGAL::Delaunay_triangulation_3<K> DT;
-typedef K::Point_3 Point_3;
-typedef CGAL::Timer Timer;
-typedef CGAL::Creator_uniform_3<double,Point_3>  Creator;
+typedef CGAL::Delaunay_triangulation_3<K>                    DT;
+typedef DT::Point                                            Point_3;
+typedef CGAL::Timer                                          Timer;
+typedef CGAL::Creator_uniform_3<double,Point_3>              Creator;
 
 int main(int,char** argv)
 {

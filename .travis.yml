@@ -62,6 +62,7 @@ addons:
     sources:
       - sourceline: 'ppa:ppsspp/cmake'
     packages:
+      - clang-3.6
       - zsh
       - cmake
       - libboost1.55-dev

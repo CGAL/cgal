@@ -1180,7 +1180,6 @@ public:
 \cgalConcept
 
 \cgalRefines `AdaptableFunctor`
-\cgalHasModel `Compare_weighted_squared_radius_3`
 
 \sa `ComputePowerProduct_3` for the definition of of orthogonality for power distances.
 

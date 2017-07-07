@@ -49,20 +49,20 @@ public:
 /// @{
 
 /*!
-Construction from a bouding polyhedral surface which should be closed, and free of intersections.
+Construction from a bouding polyhedral surface which must be closed, and free of intersections.
 The inside of `bounding_polyhedron` will be meshed.
 */ 
 Polyhedral_mesh_domain_3(Polyhedron bounding_polyhedron); 
 
 /*!
 Construction from a polyhedral surface, and a bounding polyhedral surface,.
-The first polyhedron should be entirely included inside `bounding_polyhedron`, which has to be closed 
+The first polyhedron must be entirely included inside `bounding_polyhedron`, which must be closed 
 and free of intersections. 
 Using this constructor allows to mesh a polyhedral surface which is not closed, or has holes.
 The inside of `bounding_polyhedron` will be meshed.
 */
 Polyhedral_mesh_domain_3(Polyhedron polyhedron,
-				     Polyhedron bounding_polyhedron);
+			 Polyhedron bounding_polyhedron);
 			   
 
 /// @}

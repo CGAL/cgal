@@ -3,7 +3,8 @@
 #include "Scene_polygon_soup_item_config.h"
 #include  <CGAL/Three/Scene_item.h>
 #include "Polyhedron_type.h"
-#include "CGAL/Surface_mesh/Surface_mesh.h"
+
+#include "SMesh_type.h"
 
 #include <boost/foreach.hpp>
 #include <boost/array.hpp>
@@ -146,7 +147,7 @@ public Q_SLOTS:
     void shuffle_orientations();
     bool orient();
     bool exportAsPolyhedron(Polyhedron*);
-    bool exportAsSurfaceMesh(CGAL::Surface_mesh<Point_3>*);
+    bool exportAsSurfaceMesh(SMesh*);
     void inside_out();
 
     void setDisplayNonManifoldEdges(const bool);

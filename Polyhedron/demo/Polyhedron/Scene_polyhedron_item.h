@@ -2,8 +2,9 @@
 #define SCENE_POLYHEDRON_ITEM_H
 
 #include "Scene_polyhedron_item_config.h"
-#include  <CGAL/Three/Scene_item.h>
-#include  <CGAL/Three/TextRenderer.h>
+#include <CGAL/Three/Scene_print_item_interface.h>
+#include <CGAL/Three/Scene_item.h>
+#include <CGAL/Three/TextRenderer.h>
 #include "Polyhedron_type_fwd.h"
 #include "Polyhedron_type.h"
 #include <iostream>
@@ -23,11 +24,18 @@ struct Scene_polyhedron_item_priv;
 // This class represents a polyhedron in the OpenGL scene
 class SCENE_POLYHEDRON_ITEM_EXPORT Scene_polyhedron_item
         : public CGAL::Three::Scene_item,
-          public CGAL::Three::Scene_zoomable_item_interface{
+          public CGAL::Three::Scene_zoomable_item_interface,
+          public CGAL::Three::Scene_print_item_interface{
+    Q_INTERFACES(CGAL::Three::Scene_print_item_interface)
+    Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PrintInterface/1.0")
     Q_OBJECT
     Q_INTERFACES(CGAL::Three::Scene_zoomable_item_interface)
     Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.ZoomInterface/1.0")
 public:
+    typedef Polyhedron Face_graph;
+    typedef boost::property_map<Face_graph, boost::vertex_index_t>::type Vertex_selection_map;
+    typedef boost::property_map<Face_graph, boost::face_index_t>::type Face_selection_map;
+
     enum STATS {
       NB_VERTICES = 0,
       NB_CONNECTED_COMPOS,
@@ -96,13 +104,21 @@ public:
     Polyhedron*       polyhedron();
     const Polyhedron* polyhedron() const;
 
+    Face_graph*       face_graph() { return polyhedron(); }
+    const Face_graph* face_graph() const { return polyhedron(); }
+
     // Get dimensions
     bool isFinite() const Q_DECL_OVERRIDE { return true; }
     bool isEmpty() const Q_DECL_OVERRIDE;
     void compute_bbox() const Q_DECL_OVERRIDE;
+    
+    Vertex_selection_map vertex_selection_map();
+    Face_selection_map face_selection_map();
+ 
     std::vector<QColor>& color_vector();
     void set_color_vector_read_only(bool on_off);
     bool is_color_vector_read_only();
+
     int getNumberOfNullLengthEdges();
     int getNumberOfDegeneratedFaces();
     bool triangulated();
@@ -114,9 +130,10 @@ public:
     //! @returns `true` if the item has multiple colors at the same time.
     bool isItemMulticolor();
 
-    void printPrimitiveId(QPoint point, CGAL::Three::Viewer_interface*viewer) Q_DECL_OVERRIDE;
+    void printPrimitiveId(QPoint point, CGAL::Three::Viewer_interface*viewer)Q_DECL_OVERRIDE;
     void printPrimitiveIds(CGAL::Three::Viewer_interface*viewer) const Q_DECL_OVERRIDE;
-    bool testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface*) Q_DECL_OVERRIDE;
+    bool testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface*)const Q_DECL_OVERRIDE;
+
 
     //! @returns `true` if `f` is the first facet intersected by a raytracing
     bool intersect_face(double orig_x,

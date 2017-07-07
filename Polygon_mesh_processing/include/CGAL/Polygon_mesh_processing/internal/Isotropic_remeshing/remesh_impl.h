@@ -308,7 +308,9 @@ namespace internal {
 
       BOOST_FOREACH(face_descriptor f, face_range)
       {
-        input_triangles_.push_back(triangle(f));
+        Triangle_3 t = triangle(f);
+        if (t.is_degenerate()) continue;
+        input_triangles_.push_back(t);
         input_patch_ids_.push_back(get_patch_id(f));
       }
       CGAL_assertion(input_triangles_.size() == input_patch_ids_.size());
@@ -1510,7 +1512,7 @@ private:
       {
         if (is_border(h, mesh_))
           continue;
-        if (PMP::is_degenerated(h, mesh_, vpmap_, GeomTraits()))
+        if (is_degenerate_triangle_face(h, mesh_, vpmap_, GeomTraits()))
           degenerate_faces.insert(h);
       }
       while(!degenerate_faces.empty())
@@ -1518,7 +1520,7 @@ private:
         halfedge_descriptor h = *(degenerate_faces.begin());
         degenerate_faces.erase(degenerate_faces.begin());
 
-        if (!PMP::is_degenerated(h, mesh_, vpmap_, GeomTraits()))
+        if (!is_degenerate_triangle_face(h, mesh_, vpmap_, GeomTraits()))
           //this can happen when flipping h has consequences further in the mesh
           continue;
 
@@ -1570,10 +1572,10 @@ private:
             }
 
             if (!is_border(hf, mesh_)
-              && PMP::is_degenerated(hf, mesh_, vpmap_, GeomTraits()))
+              && is_degenerate_triangle_face(hf, mesh_, vpmap_, GeomTraits()))
               degenerate_faces.insert(hf);
             if (!is_border(hfo, mesh_)
-              && PMP::is_degenerated(hfo, mesh_, vpmap_, GeomTraits()))
+              && is_degenerate_triangle_face(hfo, mesh_, vpmap_, GeomTraits()))
               degenerate_faces.insert(hfo);
 
             break;
@@ -1592,7 +1594,7 @@ private:
       {
         if (is_border(h, mesh_))
           continue;
-        if (PMP::is_degenerated(h, mesh_, vpmap_, GeomTraits()))
+        if (is_degenerate_triangle_face(h, mesh_, vpmap_, GeomTraits()))
           return true;
       }
       return false;

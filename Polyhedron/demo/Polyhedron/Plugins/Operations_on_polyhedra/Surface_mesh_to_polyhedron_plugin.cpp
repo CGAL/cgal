@@ -74,7 +74,6 @@ public Q_SLOTS:
 
   void on_actionToSM_triggered()
   {
-    typedef Scene_surface_mesh_item::SMesh SMesh;
     Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex()));
     if(!poly_item)
       return;

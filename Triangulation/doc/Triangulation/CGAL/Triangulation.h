@@ -4,7 +4,7 @@ namespace CGAL {
 /*!
 \ingroup PkgTriangulationsTriangulationClasses
 
-This class implements triangulations of point sets in dimensions \f$ d \f$.
+This class implements triangulations of point sets in dimension \f$ d \f$.
 The triangulation covers the convex hull of the input points 
 (the embedded vertices of the triangulation).
 
@@ -17,25 +17,25 @@ incident to the infinite vertex and to an \f$ (i-1)\f$-simplex of the
 convex hull boundary.
 
 
-\tparam TriangulationTraits is the geometric traits class that provides the geometric types
-and predicates needed by triangulations. `TriangulationTraits` must be a model of the
+\tparam TriangulationTraits_ is the geometric traits class that provides the geometric types
+and predicates needed by triangulations. `TriangulationTraits_` must be a model of the
 concept `TriangulationTraits`.
 
-\tparam TriangulationDataStructure must be a model of the concept
+\tparam TriangulationDataStructure_ must be a model of the concept
 `TriangulationDataStructure`. This model is used to store 
-the faces of the triangulation. The parameter `TriangulationDataStructure` defaults to
+the faces of the triangulation. The parameter `TriangulationDataStructure_` defaults to
 `Triangulation_data_structure` whose template parameters are instantiated as
 follows:
 <UL>
-<LI>`DelaunayTriangulationTraits::Dimension`</LI>
-<LI>`Triangulation_vertex<DelaunayTriangulationTraits>`</LI>
-<LI>`Triangulation_full_cell<DelaunayTriangulationTraits>`.</LI>
+<LI>`TriangulationTraits_::Dimension`</LI>
+<LI>`Triangulation_vertex<TriangulationTraits_>`</LI>
+<LI>`Triangulation_full_cell<TriangulationTraits_>`.</LI>
 </UL>
 
 The triangulation deduces its maximal dimension from the type
-`TriangulationTraits::Dimension`. This dimension has to match
+`TriangulationTraits_::Dimension`. This dimension has to match
 the dimension returned by
-`TriangulationDataStructure::maximal_dimension()`.
+`TriangulationDataStructure_::maximal_dimension()`.
 
 Input/Output
 --------------
@@ -47,62 +47,64 @@ full cell, plus the non-combinatorial information about each full cell, then the
 indices of the neighbors of each full cell, where the index corresponds to the
 preceding list of full cells.
 
-\sa `Triangulation_data_structure<Dimensionality, TriangulationDSVertex, TriangulationDSFullCell>`
-\sa `Delaunay_triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>`
+\sa `Triangulation_data_structure<Dimensionality, TriangulationDSVertex_, TriangulationDSFullCell_>`
+\sa `Delaunay_triangulation<DelaunayTriangulationTraits_, TriangulationDataStructure_>`
 
 */
-template< typename TriangulationTraits, typename TriangulationDataStructure >
+template< typename TriangulationTraits_, typename TriangulationDataStructure_>
 class Triangulation {
 public:
 /// \name Types
 /// @{
 
 /*!
-Type for the model of the `TriangulationTraits` concept.
+Type for the model of the `TriangulationTraits_` concept.
 */
-typedef TriangulationTraits Geom_traits;
+typedef TriangulationTraits_ Geom_traits;
 
 /*!
-A point in Euclidean space.
+A point in Euclidean space. Note that in the context of a 
+`Regular_triangulation` class (which derives from this class), 
+`TriangulationTraits_::Point_d` is a weighted point.
 */
-typedef TriangulationTraits::Point_d Point;
+typedef TriangulationTraits_::Point_d Point;
 
 /*!
 This indicates whether the maximal dimension is static
 (i.e.\ if the type of `Maximal_dimension` is `CGAL::Dimension_tag<int dim>`)
 or dynamic (i.e.\ if the type of `Maximal_dimension` is 
 `CGAL::Dynamic_dimension_tag`).
-In the latter case, the `dim` parameter passed to the class's constructor
-is used.
+In the latter case, the `dim` parameter passed to the constructor
+of the class is used.
 */
-typedef TriangulationTraits::Dimension Maximal_dimension;
+typedef TriangulationTraits_::Dimension Maximal_dimension;
 
 /*!
 The second template parameter: the triangulation data structure.
 */
-typedef TriangulationDataStructure Triangulation_ds;
+typedef TriangulationDataStructure_ Triangulation_ds;
 
 /*!
 A model of the concept `TriangulationVertex`.
 */
-typedef TriangulationDataStructure::Vertex Vertex;
+typedef TriangulationDataStructure_::Vertex Vertex;
 
 /*!
 A model of the concept
 `TriangulationFullCell`.
 */
-typedef TriangulationDataStructure::Full_cell Full_cell;
+typedef TriangulationDataStructure_::Full_cell Full_cell;
 
 /*!
 The facet
 class
 */
-typedef TriangulationDataStructure::Facet Facet;
+typedef TriangulationDataStructure_::Facet Facet;
 
 /*!
 A model of the concept `TriangulationDSFace`.
 */
-typedef TriangulationDataStructure::Face Face;
+typedef TriangulationDataStructure_::Face Face;
 
 /// @}
 
@@ -122,25 +124,25 @@ typedef TriangulationDataStructure::Face Face;
 /*!
 handle to a a vertex
 */
-typedef TriangulationDataStructure::Vertex_handle
+typedef TriangulationDataStructure_::Vertex_handle
 Vertex_handle;
 
 /*!
 const handle to a a vertex
 */
-typedef TriangulationDataStructure::Vertex_const_handle
+typedef TriangulationDataStructure_::Vertex_const_handle
 Vertex_const_handle;
 
 /*!
 iterator over all vertices (including the infinite one)
 */
-typedef TriangulationDataStructure::Vertex_iterator
+typedef TriangulationDataStructure_::Vertex_iterator
 Vertex_iterator;
 
 /*!
 const iterator over all vertices (including the infinite one)
 */
-typedef TriangulationDataStructure::Vertex_const_iterator
+typedef TriangulationDataStructure_::Vertex_const_iterator
 Vertex_const_iterator;
 
 /*!
@@ -156,27 +158,27 @@ typedef unspecified_type Finite_vertex_const_iterator;
 /*!
 handle to a full cell
 */
-typedef TriangulationDataStructure::Full_cell_handle
+typedef TriangulationDataStructure_::Full_cell_handle
 Full_cell_handle;
 
 /*!
 const handle to a full cell
 */
-typedef TriangulationDataStructure::Full_cell_const_handle
+typedef TriangulationDataStructure_::Full_cell_const_handle
 Full_cell_const_handle;
 
 /*!
 iterator over all full cells (including the infinite ones)
 */
 typedef
-TriangulationDataStructure::Full_cell_iterator
+TriangulationDataStructure_::Full_cell_iterator
 Full_cell_iterator;
 
 /*!
 const iterator over all full cells (including the infinite ones)
 */
 typedef
-TriangulationDataStructure::Full_cell_const_iterator
+TriangulationDataStructure_::Full_cell_const_iterator
 Full_cell_const_iterator;
 
 /*!
@@ -192,7 +194,7 @@ typedef unspecified_type Finite_full_cell_const_iterator;
 /*!
 iterator over all facets (including the infinite ones)
 */
-typedef TriangulationDataStructure::Facet_iterator
+typedef TriangulationDataStructure_::Facet_iterator
 Facet_iterator;
 
 /*!
@@ -201,19 +203,19 @@ iterator over finite facets
 typedef unspecified_type Finite_facet_iterator;
 
 /*!
-Size type (an unsigned integral
-type).
+size type (an unsigned integral type)
 */
-typedef TriangulationDataStructure::size_type size_type;
+typedef TriangulationDataStructure_::size_type size_type;
 
 /*!
-Difference
-type (a signed integral type).
+difference
+type (a signed integral type)
 */
-typedef TriangulationDataStructure::difference_type difference_type;
+typedef TriangulationDataStructure_::difference_type difference_type;
 
 /*!
-specifies which case occurs when locating a point in the triangulation. 
+\enum Locate_type 
+\brief Used by `Triangulation` to specify which case occurs when locating a point in the triangulation.
 */
 enum Locate_type { ON_VERTEX=0, /*!< when the located point coincides with a vertex of the triangulation */
                    IN_FACE, /*!< when the point is in the interior of a face of dimension equal or less than `maximal_dimension()` - 2 */
@@ -234,8 +236,7 @@ description of the nested type `Maximal_dimension` above for an
 explanation of the use of the parameter `dim`. The triangulation stores a copy
 of the geometric traits `gt`.
 */
-Triangulation(const int dim, const Geom_traits & gt =
-Geom_traits());
+Triangulation(int dim, const Geom_traits & gt = Geom_traits());
 
 /*!
 The copy constructor.
@@ -248,15 +249,15 @@ Triangulation(const Triangulation & t2);
 /// @{
 
 /*!
-\cgalAdvancedBegin
 Returns a const reference to the underlying triangulation data structure.
-\cgalAdvancedEnd
 */
 const Triangulation_ds & tds() const;
 
 /*!
+\cgalAdvancedBegin
 Returns a non-const
 reference to the underlying triangulation data structure.
+\cgalAdvancedEnd
 */
 Triangulation_ds & tds();
 
@@ -322,13 +323,13 @@ size_type number_of_finite_full_cells() const;
 /*!
 Returns `true` if and only if the vertex `v` is the infinite vertex.
 */
-bool is_infinite(const Vertex_handle v) const;
+bool is_infinite(Vertex_handle v) const;
 
 /*!
 Returns `true` if and only if `c` is incident to the infinite vertex.
 
 */
-bool is_infinite(const Full_cell_handle c) const;
+bool is_infinite(Full_cell_handle c) const;
 
 /*!
 Returns `true` if and only if facet `ft` is incident to the infinite
@@ -454,7 +455,7 @@ p_1, p_2, \ldots, p_d, \infty\}\f$ is returned such that the full cell \f$ (p_1,
 on the other side of facet \f$ (p_1, p_2, \ldots, p_d)\f$).
 */
 Full_cell_handle locate(const Point & query,
-Full_cell_handle hint = Full_cell_handle()) const;
+  Full_cell_const_handle hint = Full_cell_handle()) const;
 
 /*!
 Same as above but `hint` is a vertex and not a full cell.
@@ -505,7 +506,7 @@ The parameter `hint` is ignored if it is a default constructed
 */
 Full_cell_handle
 locate(const Point & query, Locate_type & loc_type,
-Face & f, Vertex_handle hint) const;
+  Face & f, Vertex_handle hint) const;
 
 /// @}
 
@@ -513,13 +514,11 @@ Face & f, Vertex_handle hint) const;
 /// @{
 
 /*!
-\cgalAdvancedBegin
 Contracts the `Face f` to a single vertex at
 position `p`. Returns a handle to that vertex. 
 
 \pre The boundary of the union of full cells incident to `f` must be a triangulation of a
 sphere of dimension `tr`.`current_dimension()`).
-\cgalAdvancedEnd
 */
 Vertex_handle collapse_face(const Point & p, const Face & f);
 
@@ -544,16 +543,15 @@ Inserts point `p` in the triangulation. Returns a
 Prior to the actual insertion, `p` is located in the triangulation;
 `hint` is used as a starting place for locating `p`.
 */
-Vertex_handle insert(const Point p, Full_cell_handle hint =
+Vertex_handle insert(const Point &p, Full_cell_handle hint =
 Full_cell_handle());
 
 /*!
 Same as above but uses a vertex `hint` as the starting place for the search.
 */
-Vertex_handle insert(const Point p, Vertex_handle hint);
+Vertex_handle insert(const Point &p, Vertex_handle hint);
 
 /*!
-\cgalAdvancedBegin
 Inserts point `p` into the triangulation and returns a handle to the
 `Vertex` at that position. The action taken depends on the value of
 `loc_type`:
@@ -567,12 +565,10 @@ of `loc_type`, using the full cell `c`.
 </DL>
 
 This method is used internally by the other `insert()` methods.
-\cgalAdvancedEnd
 */
-Vertex_handle insert(const Point p, Locate_type loc_type, Face & f, Facet & ft, Full_cell_handle c);
+Vertex_handle insert(const Point &p, Locate_type loc_type, Face & f, Facet & ft, Full_cell_handle c);
 
 /*!
-\cgalAdvancedBegin
 Removes the full cells in the range \f$ C=\f$`[s, e)`, inserts a vertex 
 at position `p` and fills the hole by connecting
 each face of the boundary to `p`.
@@ -582,62 +578,49 @@ defining full cell, `tr`.`full_cell(ft)` must lie inside \f$ C\f$. Handles
 to the newly created full cells are output in the `out` output iterator.
 \pre \f$C\f$ must be a topological ball, must contain `p` in its
 interior and must not contain any vertex of the triangulation.
-\cgalAdvancedEnd
 */
 template < typename ForwardIterator, typename OutputIterator >
 Vertex_handle insert_in_hole(const Point & p, ForwardIterator s,
 ForwardIterator e, const Facet & ft, OutputIterator out);
 
 /*!
-\cgalAdvancedBegin
 Same as above, but the newly created full cells are not
 retrieved.
-\cgalAdvancedEnd
 */
 template < typename ForwardIterator > Vertex_handle
 insert_in_hole(const Point & p, ForwardIterator s, ForwardIterator e, const
 Facet & ft);
 
 /*!
-\cgalAdvancedBegin
 Inserts point `p` in the triangulation.
 \pre `p` must lie in the relative interior of `f`.
-\cgalAdvancedEnd
 */
 Vertex_handle insert_in_face(const Point & p, const Face & f);
 
 /*!
-\cgalAdvancedBegin
 Inserts point `p` in the triangulation.
 \pre `p` must lie in the relative interior of `ft`.
-\cgalAdvancedEnd
 */
 Vertex_handle insert_in_facet(const Point & p, const Facet & ft);
 
 /*!
-\cgalAdvancedBegin
 Inserts point `p` in the triangulation. \pre `p` must lie in the
 interior of `c`.
-\cgalAdvancedEnd
 */
 Vertex_handle insert_in_full_cell(const Point & p, Full_cell_handle
 c);
 
 /*!
-\cgalAdvancedBegin
 Inserts point `p` in the triangulation.
 \pre `p` must lie outside the convex hull of `tr`. The half-space
 defined by the infinite full cell `c` must contain `p`.
-\cgalAdvancedEnd
 */
 Vertex_handle insert_outside_convex_hull(const Point &,
 Full_cell_handle c);
 
 /*!
-\cgalAdvancedBegin
 Inserts point `p` in the triangulation.
 \pre `p` must lie outside the affine hull of `tr`.
-\cgalAdvancedEnd
 */
 Vertex_handle insert_outside_affine_hull(const Point &);
 
