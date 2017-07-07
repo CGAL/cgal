@@ -129,6 +129,23 @@ and <code>src/</code> directories).
 </table>
 
 <HR>
+<h2 id="release4.12">Release 4.12 </h2>
+<div>
+<h3>Point Set Shape Detection</h3>
+<ul>
+  <li>New algorithm: <code>CGAL::Region_growing</code>. This is a
+    deterministic alternative to RANSAC for plane detection.</li>
+  <li><b>Breaking change</b>: the API
+  of <code>CGAL::regularize_planes()</code> is generalized to accept
+  other types of input than the RANSAC output.</li>
+</ul>
+<h3>Point Set Processing</h3>
+<ul>
+  <li><b>Breaking change</b>: the API
+  of <code>CGAL::structure_point_set()</code> is generalized to accept
+  other types of input than the RANSAC output.</li>
+</ul>
+</div>
 <h2 id="release4.11">Release 4.11 </h2>
 <div>
   <p>Release date: September 2017 </p>
