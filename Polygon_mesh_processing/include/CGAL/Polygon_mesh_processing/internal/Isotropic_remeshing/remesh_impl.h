@@ -318,7 +318,7 @@ namespace internal {
       remove_connected_components_pmap
         (CGAL::Boolean_tag<boost::is_same<FacePatchMap, CCPmap>::value>());
 
-      remove(halfedge_status_pmap_, mesh_);
+      CGAL::internal::remove(halfedge_status_pmap_, mesh_);
 
       if (build_tree_){
         for(std::size_t i=0; i < trees.size();++i){

@@ -47,73 +47,83 @@ public:
   
   typedef value_type& reference;
   
+  OM_pmap()
+  {}
+
   OM_pmap(Mesh& m)
-    : mesh(m)
+    : mesh(&m)
   {
-    mesh.add_property(h);
+    mesh->add_property(h);
   }
   
-  OM_pmap(Mesh& m, H h)
-    : mesh(m), h(h)
+  OM_pmap& operator=(const OM_pmap& other)
   {
-    mesh.add_property(h);
+    mesh = other.mesh;
+    h = other.h;
+    return *this;
+  }
+
+  OM_pmap(Mesh& m, H h)
+    : mesh(&m), h(h)
+  {
+    mesh->add_property(h);
   }
   
   inline friend reference get(const OM_pmap<Mesh,Descriptor,Value>& pm, 
                               typename boost::graph_traits<Mesh>::vertex_descriptor k)
   {
-    return pm.mesh.property(pm.h,k);
+    return pm.mesh->property(pm.h,k);
   }
 
   inline friend reference get(const OM_pmap<Mesh,Descriptor,Value>& pm, 
                          typename boost::graph_traits<Mesh>::face_descriptor k)
   {
-    return pm.mesh.property(pm.h,k);
+    return pm.mesh->property(pm.h,k);
   }
 
   inline friend reference get(const OM_pmap<Mesh,Descriptor,Value>& pm, 
                          typename boost::graph_traits<Mesh>::halfedge_descriptor k)
   {
-    return pm.mesh.property(pm.h,k);
+    return pm.mesh->property(pm.h,k);
   }
 
   inline friend reference get(const OM_pmap<Mesh,Descriptor,Value>& pm, 
                          typename boost::graph_traits<Mesh>::edge_descriptor k)
   {
     Mesh::EdgeHandle eh(k.idx());
-    return pm.mesh.property(pm.h,eh);
+    return pm.mesh->property(pm.h,eh);
   }
   inline friend void put(const OM_pmap<Mesh,Descriptor,Value>& pm, 
                          typename boost::graph_traits<Mesh>::vertex_descriptor k,
                          const value_type& v)
   {
-    pm.mesh.property(pm.h,k) = v;
+    pm.mesh->property(pm.h,k) = v;
   }
 
   inline friend void put(const OM_pmap<Mesh,Descriptor,Value>& pm, 
                          typename boost::graph_traits<Mesh>::face_descriptor k,
                          const value_type& v)
   {
-    pm.mesh.property(pm.h,k) = v;
+    pm.mesh->property(pm.h,k) = v;
   }
 
   inline friend void put(const OM_pmap<Mesh,Descriptor,Value>& pm, 
                          typename boost::graph_traits<Mesh>::halfedge_descriptor k,
                          const value_type& v)
   {
-    pm.mesh.property(pm.h,k) = v;
+    pm.mesh->property(pm.h,k) = v;
   }
   inline friend void put(const OM_pmap<Mesh,Descriptor,Value>& pm, 
                          typename boost::graph_traits<Mesh>::edge_descriptor k,
                          const value_type& v)
   {
     Mesh::EdgeHandle eh(k.idx());
-    pm.mesh.property(pm.h,eh) = v;
+    pm.mesh->property(pm.h,eh) = v;
   }
 
   reference operator[](key_type k)
   {
-    return mesh.property(h,k);
+    return mesh->property(h,k);
   }
 
   H handle() const
@@ -126,7 +136,7 @@ public:
     return h;
   }
 
-  Mesh& mesh;
+  Mesh* mesh;
   H h;
 };
 
@@ -162,6 +172,9 @@ public:
   typedef unsigned int                      value_type;
   typedef unsigned int                      reference;
   typedef VEF                              key_type;
+
+  OM_index_pmap()
+  {}
 
   value_type operator[](const key_type& vd) const
   {
