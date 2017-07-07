@@ -514,6 +514,8 @@ public:
     typedef typename C3t3::Triangulation Tr;
     Tr& tr = c3t3.triangulation();
     typedef typename Polyhedron::Vertex_const_handle Vertex_const_handle;
+    typename Tr::Geom_traits::Construct_weighted_point_3 cwp
+      = tr.geom_traits().construct_weighted_point_3_object();
 
     const std::size_t nb_of_patch_plus_one = this->nb_of_patch_plus_one();
     const std::size_t nb_of_extra_vertices_per_patch = 20;
@@ -571,7 +573,7 @@ public:
               sq_dist_v = sq_dist_other_v;
             }
           }
-          tr_v = tr.insert(v->point());
+          tr_v = tr.insert(cwp(v->point()));
           c3t3.set_dimension(tr_v, 2);
           c3t3.set_index(tr_v, patch_id);
         } // end if several_vertices_on_patch is empty for patch_id
@@ -580,7 +582,7 @@ public:
         BOOST_FOREACH(Vertex_const_handle v,
           several_vertices_on_patch[patch_id])
         {
-          typename Tr::Vertex_handle tv = tr.insert(v->point());
+          typename Tr::Vertex_handle tv = tr.insert(cwp(v->point()));
           c3t3.set_dimension(tv, 2);
           c3t3.set_index(tv, patch_id);
         }
