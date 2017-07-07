@@ -872,7 +872,6 @@ reindex_patches(const std::vector<Surf_p_index>& map,
         it = patch_index_set.begin(), end = patch_index_set.end();
         it != end; ++it)
     {
-      CGAL_assertion(*it < map.size());
       new_index_set.insert(map[*it]);
     }
     pair.second = new_index_set;
