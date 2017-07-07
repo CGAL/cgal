@@ -1,5 +1,5 @@
 //! \file examples/Arrangement_on_surface_2/plane_sweep.cpp
-// Computing intersection points among curves using the sweep line.
+// Computing intersection points among curves using the surface-sweep alg.
 
 #include <list>
 
@@ -28,8 +28,8 @@ int main()
 
   // Print the result.
   std::cout << "Found " << pts.size() << " intersection points: " << std::endl;
-  std::copy (pts.begin(), pts.end(),
-             std::ostream_iterator<Point_2>(std::cout, "\n"));
+  std::copy(pts.begin(), pts.end(),
+            std::ostream_iterator<Point_2>(std::cout, "\n"));
 
   // Compute the non-intersecting sub-segments induced by the input segments.
   std::list<Segment_2> sub_segs;

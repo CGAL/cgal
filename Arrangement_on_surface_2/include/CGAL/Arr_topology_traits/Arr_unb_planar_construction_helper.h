@@ -66,6 +66,20 @@ public:
   typedef Unique_hash_map<Halfedge_handle, Indices_list>
                                                         Halfedge_indices_map;
 
+  /*! \struct rebind
+   * An auxiliary structure for rebinding the helper with a new types.
+   * Mainly used to rebind the geometry-traits type and a new type that derives
+   * from the old one.
+   */
+  template <typename OtherGeometryTraits_2, typename OtherArrangement,
+            typename OtherEvent, typename OtherSubcurve>
+  struct rebind {
+    typedef Arr_unb_planar_construction_helper<OtherGeometryTraits_2,
+                                               OtherArrangement,
+                                               OtherEvent, OtherSubcurve>
+                                                        other;
+  };
+
 protected:
   typedef typename Arrangement_2::Topology_traits       Topology_traits;
   typedef typename Arrangement_2::Vertex_handle         Vertex_handle;

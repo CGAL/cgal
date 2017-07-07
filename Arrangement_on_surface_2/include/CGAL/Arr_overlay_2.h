@@ -171,7 +171,7 @@ overlay(const Arrangement_on_surface_2<GeometryTraitsA_2, TopologyTraitsA>& arr1
     ex_traits(*traits_adaptor);
 
   Ovl_visitor visitor(&arr1, &arr2, &arr, &ovl_tr);
-  Ss2::Surface_sweep_2<Ovl_visitor> sweep_line(&ex_traits, &visitor);
+  Ss2::Surface_sweep_2<Ovl_visitor> surface_sweep(&ex_traits, &visitor);
 
   // In case both arrangement do not contain isolated vertices, go on and
   // overlay them.
@@ -181,7 +181,7 @@ overlay(const Arrangement_on_surface_2<GeometryTraitsA_2, TopologyTraitsA>& arr1
   if (total_iso_verts == 0) {
     // Clear the result arrangement and perform the sweep to construct it.
     arr.clear();
-    sweep_line.sweep(xcvs_vec.begin(), xcvs_vec.end());
+    surface_sweep.sweep(xcvs_vec.begin(), xcvs_vec.end());
     xcvs_vec.clear();
     return;
   }
@@ -213,8 +213,8 @@ overlay(const Arrangement_on_surface_2<GeometryTraitsA_2, TopologyTraitsA>& arr1
 
   // Clear the result arrangement and perform the sweep to construct it.
   arr.clear();
-  sweep_line.sweep(xcvs_vec.begin(), xcvs_vec.end(),
-                   pts_vec.begin(), pts_vec.end());
+  surface_sweep.sweep(xcvs_vec.begin(), xcvs_vec.end(),
+                      pts_vec.begin(), pts_vec.end());
   xcvs_vec.clear();
   pts_vec.clear();
 }

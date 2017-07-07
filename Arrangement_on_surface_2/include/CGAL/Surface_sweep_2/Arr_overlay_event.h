@@ -31,8 +31,6 @@
 
 namespace CGAL {
 
-namespace Ss2 = Surface_sweep_2;
-
 /* \class Arr_overlay_event
  *
  * This template represents an event used by the surface-sweep framework, where

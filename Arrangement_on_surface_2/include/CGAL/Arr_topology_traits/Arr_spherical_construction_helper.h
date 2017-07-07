@@ -61,6 +61,20 @@ public:
   typedef Unique_hash_map<Halfedge_handle, Indices_list>
     Halfedge_indices_map;
 
+  /*! \struct rebind
+   * An auxiliary structure for rebinding the helper with a new types.
+   * Mainly used to rebind the geometry-traits type and a new type that derives
+   * from the old one.
+   */
+  template <typename OtherGeometryTraits_2, typename OtherArrangement,
+            typename OtherEvent, typename OtherSubcurve>
+  struct rebind {
+    typedef Arr_spherical_construction_helper<OtherGeometryTraits_2,
+                                              OtherArrangement,
+                                              OtherEvent, OtherSubcurve>
+                                                        other;
+  };
+
   // The following should be private. It is declared 'protected' as a
   // workaround to a problem with VC. (At least VC 14 exhibits this problem).
   // When declared private, VC claims that Gt2 is private (within

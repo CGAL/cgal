@@ -115,7 +115,7 @@ void Surface_sweep_2<Vis>::_handle_left_curves()
 
       // Obtain the subcurve that contains the current event, and add it to
       // the left curves incident to the event.
-      Subcurve* sc = static_cast<Subcurve*>(*(this->m_status_line_insert_hint));
+      Subcurve* sc = *(this->m_status_line_insert_hint);
       const X_monotone_curve_2& last_curve = sc->last_curve();
 
       this->m_currentEvent->set_weak_intersection();
@@ -136,7 +136,6 @@ void Surface_sweep_2<Vis>::_handle_left_curves()
       if (is_overlap) {
         // Handle overlaps.
         this->m_visitor->before_handle_event(this->m_currentEvent);
-        std::cout << "X1" << std::endl;
         this->m_visitor->add_subcurve(sub_cv1, sc);
         CGAL_SL_PRINT_ERASE(*sl_pos);
         this->m_statusLine.erase(sl_pos);
@@ -240,15 +239,15 @@ void Surface_sweep_2<Vis>::_handle_right_curves()
   if (slIter != this->m_statusLine.begin()) {
     //  get the previous curve in the y-str
     Status_line_iterator prev = slIter; --prev;
-    _intersect(static_cast<Subcurve*>(*prev), static_cast<Subcurve*>(*slIter));
+    _intersect(*prev, *slIter);
   }
 
   Event_subcurve_iterator prevOne = currentOne;
   ++currentOne;
   while (currentOne != rightCurveEnd) {
     CGAL_SL_PRINT_INSERT(*currentOne);
-    slIter = this->m_statusLine.insert_before
-      (this->m_status_line_insert_hint, *currentOne);
+    slIter = this->m_statusLine.insert_before(this->m_status_line_insert_hint,
+                                              *currentOne);
 
     Subcurve* sc = *currentOne;
     sc->set_hint(slIter);
@@ -257,11 +256,8 @@ void Surface_sweep_2<Vis>::_handle_right_curves()
 
     // If the two curves used to be neighbours before, we do not need to
     // intersect them again.
-    if (!this->m_currentEvent->are_left_neighbours
-        (static_cast<Subcurve*>(*currentOne), static_cast<Subcurve*>(*prevOne)))
-    {
+    if (!this->m_currentEvent->are_left_neighbours(*currentOne, *prevOne))
       _intersect(*prevOne, *currentOne);
-    }
 
     prevOne = currentOne;
     ++currentOne;
@@ -271,9 +267,7 @@ void Surface_sweep_2<Vis>::_handle_right_curves()
 
   //the next Subcurve at the status line
   ++slIter;
-  if (slIter != this->m_statusLine.end())
-    _intersect(static_cast<Subcurve*>(*prevOne),
-               static_cast<Subcurve*>(*slIter));
+  if (slIter != this->m_statusLine.end()) _intersect(*prevOne, *slIter);
 
   CGAL_SL_PRINT_END_EOL("handling right curves");
 }
@@ -335,7 +329,7 @@ _add_curve_to_right(Event* event, Subcurve* curve, bool overlap_exist)
 
       typename std::list<Subcurve*>::iterator  sc_iter;
       for (sc_iter = list_of_sc.begin(); sc_iter != list_of_sc.end(); ++sc_iter)
-        _add_curve_to_right(event, static_cast<Subcurve*>(*sc_iter));
+        _add_curve_to_right(event, *sc_iter);
 
       CGAL_SL_PRINT_END_EOL("adding a Curve to the right (common leaf)");
       return true;
@@ -395,8 +389,7 @@ void Surface_sweep_2<Vis>::_remove_curve_from_status_line(Subcurve* leftCurve,
     Status_line_iterator next = sliter; ++next;
 
     // intersect *next with  *prev
-    _intersect(static_cast<Subcurve*>(*prev),
-               static_cast<Subcurve*>(*next));
+    _intersect(*prev, *next);
   }
   CGAL_SL_PRINT_ERASE(*sliter);
   this->m_statusLine.erase(sliter);
