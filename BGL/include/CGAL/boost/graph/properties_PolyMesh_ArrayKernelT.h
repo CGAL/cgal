@@ -90,7 +90,7 @@ public:
   inline friend reference get(const OM_pmap<Mesh,Descriptor,Value>& pm, 
                          typename boost::graph_traits<Mesh>::edge_descriptor k)
   {
-    Mesh::EdgeHandle eh(k.idx());
+    typename Mesh::EdgeHandle eh(k.idx());
     return pm.mesh->property(pm.h,eh);
   }
   inline friend void put(const OM_pmap<Mesh,Descriptor,Value>& pm, 
@@ -117,7 +117,7 @@ public:
                          typename boost::graph_traits<Mesh>::edge_descriptor k,
                          const value_type& v)
   {
-    Mesh::EdgeHandle eh(k.idx());
+    typename Mesh::EdgeHandle eh(k.idx());
     pm.mesh->property(pm.h,eh) = v;
   }
 
