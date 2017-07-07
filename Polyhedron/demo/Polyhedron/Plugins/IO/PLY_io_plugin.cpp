@@ -1,4 +1,6 @@
 #include "Scene_polygon_soup_item.h"
+#include "Scene_surface_mesh_item.h"
+#include "Scene_polyhedron_item.h"
 #include "Scene_points_with_normal_item.h"
 
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
@@ -7,6 +9,7 @@
 
 #include <CGAL/IO/PLY_reader.h>
 #include <CGAL/IO/PLY_writer.h>
+#include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <QMessageBox>
 
 class Polyhedron_demo_ply_plugin :
@@ -66,23 +69,30 @@ Polyhedron_demo_ply_plugin::load(QFileInfo fileinfo) {
 
   in.seekg(0);
 
-  if (input_is_mesh) // Open polygon soup
+  if (input_is_mesh) // Open mesh or polygon soup
   {
-    Scene_polygon_soup_item* soup_item = new Scene_polygon_soup_item;
-    soup_item->setName(fileinfo.completeBaseName());
-
     std::vector<Kernel::Point_3> points;
     std::vector<std::vector<std::size_t> > polygons;
 
     if (!(CGAL::read_PLY (in, points, polygons)))
-    {
-      delete soup_item;
       return NULL;
-    }
 
-    soup_item->load (points, polygons);
-    
-    return soup_item;
+    if (CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh (polygons))
+    {
+      SMesh *surface_mesh = new SMesh();
+      CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh (points, polygons,
+                                                                   *surface_mesh);
+      Scene_surface_mesh_item* sm_item = new Scene_surface_mesh_item(surface_mesh);
+      sm_item->setName(fileinfo.completeBaseName());
+      return sm_item;
+    }
+    else
+    {
+      Scene_polygon_soup_item* soup_item = new Scene_polygon_soup_item;
+      soup_item->setName(fileinfo.completeBaseName());
+      soup_item->load (points, polygons);
+      return soup_item;
+    }
   }
   else // Open point set
   {
@@ -103,9 +113,11 @@ Polyhedron_demo_ply_plugin::load(QFileInfo fileinfo) {
 
 bool Polyhedron_demo_ply_plugin::canSave(const CGAL::Three::Scene_item* item)
 {
-  // This plugin supports point sets and polygon soups
+  // This plugin supports point sets and any type of surface
   return (qobject_cast<const Scene_points_with_normal_item*>(item)
-          || qobject_cast<const Scene_polygon_soup_item*>(item));
+          || qobject_cast<const Scene_polygon_soup_item*>(item)
+          || qobject_cast<const Scene_surface_mesh_item*>(item)
+          || qobject_cast<const Scene_polyhedron_item*>(item));
 }
 
 bool Polyhedron_demo_ply_plugin::save(const CGAL::Three::Scene_item* item, QFileInfo fileinfo)
@@ -125,27 +137,32 @@ bool Polyhedron_demo_ply_plugin::save(const CGAL::Three::Scene_item* item, QFile
   if (!ok)
     return false;
   
+  std::ofstream out(fileinfo.filePath().toUtf8().data());
+  out.precision (std::numeric_limits<double>::digits10 + 2);
+  
   // This plugin supports point sets
   const Scene_points_with_normal_item* point_set_item =
     qobject_cast<const Scene_points_with_normal_item*>(item);
   if (point_set_item)
-  {
-    std::ofstream out(fileinfo.filePath().toUtf8().data());
-    out.precision (std::numeric_limits<double>::digits10 + 2);
     return point_set_item->write_ply_point_set(out, (choice == tr("Binary")));
-  }
 
   // This plugin supports polygon soups
   const Scene_polygon_soup_item* soup_item =
     qobject_cast<const Scene_polygon_soup_item*>(item);
   if (soup_item)
-  {
-    std::ofstream out(fileinfo.filePath().toUtf8().data());
-    out.precision (std::numeric_limits<double>::digits10 + 2);
-    if (choice == tr("Binary"))
-      CGAL::set_binary_mode(out);
     return CGAL::write_PLY (out, soup_item->points(), soup_item->polygons());
-  }
+
+  // This plugin supports surface meshes
+  const Scene_surface_mesh_item* sm_item =
+    qobject_cast<const Scene_surface_mesh_item*>(item);
+  if (sm_item)
+    return CGAL::write_PLY (out, *(sm_item->polyhedron()));
+
+  // This plugin supports polyhedrons
+  const Scene_polyhedron_item* poly_item =
+    qobject_cast<const Scene_polyhedron_item*>(item);
+  if (poly_item)
+    return CGAL::write_PLY (out, *(poly_item->polyhedron()));
 
   return false;
 }
