@@ -574,6 +574,7 @@ struct property_map<CGAL::Polyhedron_3<Gt, I, HDS, A>, boost::face_property_t<T>
 
 namespace CGAL {
 
+  namespace internal {
 template<class Gt, class I, CGAL_HDS_PARAM_, class A, class V>
 typename boost::property_map<Polyhedron_3<Gt, I, HDS, A>, boost::vertex_property_t<V> >::const_type
 add(boost::vertex_property_t<V> vprop, Polyhedron_3<Gt, I, HDS, A>&)
@@ -617,6 +618,8 @@ void remove(
 {
   pm.clear();
 }
+
+  } // namespace internal
 
 } // namespace CGAL
 

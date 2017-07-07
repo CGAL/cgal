@@ -468,51 +468,51 @@ struct property_map<OpenMesh::PolyMesh_ArrayKernelT<K>, boost::face_property_t<V
 };
 } // namespace boost
 
-namespace OpenMesh {
-
+namespace CGAL {
+  namespace internal {
 template <typename K, typename V>
-typename boost::property_map<PolyMesh_ArrayKernelT<K>, boost::vertex_property_t<V> >::const_type
-add(boost::vertex_property_t<V> vprop, PolyMesh_ArrayKernelT<K>& om)
+typename boost::property_map<OpenMesh::PolyMesh_ArrayKernelT<K>, boost::vertex_property_t<V> >::const_type
+add(boost::vertex_property_t<V> vprop, OpenMesh::PolyMesh_ArrayKernelT<K>& om)
 {
-  typedef PolyMesh_ArrayKernelT<K> OM;
+  typedef OpenMesh::PolyMesh_ArrayKernelT<K> OM;
   typedef typename boost::graph_traits<OM>::vertex_descriptor vertex_descriptor;
   return CGAL::OM_pmap<OM,vertex_descriptor, V>(om);
 }
 
 template <typename K, typename V>
-typename boost::property_map<PolyMesh_ArrayKernelT<K>, boost::halfedge_property_t<V> >::const_type
-add(boost::halfedge_property_t<V> vprop, PolyMesh_ArrayKernelT<K>& om)
+typename boost::property_map<OpenMesh::PolyMesh_ArrayKernelT<K>, boost::halfedge_property_t<V> >::const_type
+add(boost::halfedge_property_t<V> vprop, OpenMesh::PolyMesh_ArrayKernelT<K>& om)
 {
-  typedef PolyMesh_ArrayKernelT<K> OM;
+  typedef OpenMesh::PolyMesh_ArrayKernelT<K> OM;
   typedef typename boost::graph_traits<OM>::halfedge_descriptor halfedge_descriptor;
   return CGAL::OM_pmap<OM,halfedge_descriptor, V>(om);
 }
 
 template <typename K, typename V>
-typename boost::property_map<PolyMesh_ArrayKernelT<K>, boost::edge_property_t<V> >::const_type
-add(boost::edge_property_t<V> vprop, PolyMesh_ArrayKernelT<K>& om)
+typename boost::property_map<OpenMesh::PolyMesh_ArrayKernelT<K>, boost::edge_property_t<V> >::const_type
+add(boost::edge_property_t<V> vprop, OpenMesh::PolyMesh_ArrayKernelT<K>& om)
 {
-  typedef PolyMesh_ArrayKernelT<K> OM;
+  typedef OpenMesh::PolyMesh_ArrayKernelT<K> OM;
   typedef typename boost::graph_traits<OM>::edge_descriptor edge_descriptor;
   return CGAL::OM_pmap<OM,edge_descriptor, V>(om);
 }
 
 template <typename K, typename V>
-typename boost::property_map<PolyMesh_ArrayKernelT<K>, boost::face_property_t<V> >::const_type
-add(boost::face_property_t<V> vprop, PolyMesh_ArrayKernelT<K>& om)
+typename boost::property_map<OpenMesh::PolyMesh_ArrayKernelT<K>, boost::face_property_t<V> >::const_type
+add(boost::face_property_t<V> vprop, OpenMesh::PolyMesh_ArrayKernelT<K>& om)
 {
-  typedef PolyMesh_ArrayKernelT<K> OM;
+  typedef OpenMesh::PolyMesh_ArrayKernelT<K> OM;
   typedef typename boost::graph_traits<OM>::face_descriptor face_descriptor;
   return CGAL::OM_pmap<OM,face_descriptor, V>(om);
 }
 
 template <typename Pmap, typename K>
-void remove(Pmap pm, PolyMesh_ArrayKernelT<K>& om)
+void remove(Pmap pm, OpenMesh::PolyMesh_ArrayKernelT<K>& om)
 {
   om.remove_property(pm.handle());
 }
-
-} // namespace OpenMesh
+} // namespace internal
+} // namespace CGAL
 
 
 #endif /* CGAL_PROPERTIES_POLYMESH_ARRAYKERNELT_H */

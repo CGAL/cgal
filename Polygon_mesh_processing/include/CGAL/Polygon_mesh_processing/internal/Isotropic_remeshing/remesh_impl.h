@@ -30,8 +30,6 @@
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 
-#include <CGAL/Surface_mesh/Surface_mesh_fwd.h>
-
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_triangle_primitive.h>
@@ -187,7 +185,7 @@ namespace internal {
                             , FIMap fimap
                             , const bool do_init = true)
     {
-      patch_ids_map = add(boost::face_property_t<Patch_id>("PMP_patch_id"), pmesh);
+      patch_ids_map = CGAL::internal::add(boost::face_property_t<Patch_id>("PMP_patch_id"), pmesh);
       if (do_init)
       {
         nb_cc
@@ -196,13 +194,13 @@ namespace internal {
                                       PMP::parameters::edge_is_constrained_map(ecmap)
                                      .face_index_map(fimap));
         if(nb_cc == 1)
-          remove(patch_ids_map, pmesh);
+          CGAL::internal::remove(patch_ids_map, pmesh);
       }
     }
 
     friend void remove(CCMap m, PM& pmesh)
     {
-      remove(m.patch_ids_map, pmesh);
+      CGAL::internal::remove(m.patch_ids_map, pmesh);
     }
 
     friend value_type get(const CCMap& m, const key_type& f)
@@ -308,7 +306,7 @@ namespace internal {
       , vcmap_(vcmap)
       , fimap_(fimap)
     {
-      halfedge_status_pmap_ = add(
+      halfedge_status_pmap_ = CGAL::internal::add(
         boost::halfedge_property_t<Halfedge_status>("PMP_halfedge_status", MESH),
         pmesh);
       CGAL_assertion(CGAL::is_triangle_mesh(mesh_));

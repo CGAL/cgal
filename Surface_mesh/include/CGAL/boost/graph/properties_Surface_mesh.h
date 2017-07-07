@@ -344,6 +344,8 @@ namespace boost
 
 namespace CGAL {
 
+namespace internal {
+
 template <typename Point, typename T>
 typename boost::property_map<CGAL::Surface_mesh<Point>, boost::vertex_property_t<T> >::const_type
 get(boost::vertex_property_t<T> vprop, const CGAL::Surface_mesh<Point>& sm)
@@ -385,6 +387,8 @@ remove(Pmap pm, CGAL::Surface_mesh<P>& sm)
 {
   return sm.remove_property_map(pm);
 }
+
+} // namespace internal
 
 } // namespace CGAL
 
