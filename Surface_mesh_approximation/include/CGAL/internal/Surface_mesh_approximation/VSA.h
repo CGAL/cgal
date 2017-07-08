@@ -4,6 +4,8 @@
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/Kernel/global_functions.h>
 #include <CGAL/squared_distance_3.h>
+#include <CGAL/Polyhedron_incremental_builder_3.h>
+#include <CGAL/Polyhedron_3.h>
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/adjacency_list.hpp>
@@ -284,7 +286,7 @@ public:
    * Extracts the approximated triangle mesh from a partition @a seg_pmap, and stores the triangles in @a tris.
    * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<Polyhedron>::face_handle` as key and `std::size_t` as value type
    * @param seg_map facet partition index
-   * @tris[out] indexed triangles
+   * @param[out] tris indexed triangles
    */
   template<typename FacetSegmentMap>
   void extract_mesh(const FacetSegmentMap &seg_pmap, std::vector<int> &tris) {
@@ -296,6 +298,66 @@ public:
     add_anchors(seg_pmap);
 
     pseudo_CDT(seg_pmap, tris);
+
+    std::vector<Point> vtx;
+    BOOST_FOREACH(const Anchor &a, anchors)
+      vtx.push_back(a.pos);
+    if (is_manifold_surface(tris, vtx))
+      std::cout << "Manifold surface." << std::endl;
+    else
+      std::cout << "Non-manifold surface." << std::endl;
+  }
+
+  /**
+   * Use a incremental builder to test if the indexed triangle surface is manifold
+   * @param tris indexed triangles
+   * @param vtx vertex positions
+   * @return true if build successfully
+   */
+  bool is_manifold_surface(const std::vector<int> &tris, const std::vector<Point> &vtx) {
+    typedef CGAL::Polyhedron_3<GeomTraits> PolyhedronSurface;
+    typedef typename PolyhedronSurface::HalfedgeDS HDS;
+    // typedef typename HDS::Vertex   Vertex;
+    // typedef typename Vertex::Point Point;
+    class Build_triangle : public CGAL::Modifier_base<HDS> {
+    public:
+      Build_triangle(const std::vector<int> &tris_, const std::vector<Point> &vtx_)
+        : m_tris_ref(tris_), m_vtx_ref(vtx_), m_is_manifold(true) {};
+      bool is_manifold() { return m_is_manifold; }
+      void operator()(HDS &hds) {
+        // Postcondition: hds is a valid polyhedral surface.
+        CGAL::Polyhedron_incremental_builder_3<HDS> builder(hds, true);
+        builder.begin_surface(m_vtx_ref.size(), m_tris_ref.size() / 3);
+        BOOST_FOREACH(const Point &v, m_vtx_ref)
+          builder.add_vertex(v);
+        for (std::vector<int>::const_iterator itr = m_tris_ref.begin(); itr != m_tris_ref.end(); itr += 3) {
+          if (m_is_manifold = builder.test_facet(itr, itr + 3)) {
+            builder.begin_facet();
+            builder.add_vertex_to_facet(*itr);
+            builder.add_vertex_to_facet(*(itr + 1));
+            builder.add_vertex_to_facet(*(itr + 2));
+            builder.end_facet();
+          }
+          else {
+            // std::cerr << "test_facet failed" << std::endl;
+            builder.end_surface();
+            return;
+          }
+        }
+        builder.end_surface();
+        m_is_manifold = !builder.error();
+      }
+    private:
+      const std::vector<int> &m_tris_ref;
+      const std::vector<Point> &m_vtx_ref;
+      bool m_is_manifold;
+    };
+
+    PolyhedronSurface p;
+    Build_triangle tri_builder(tris, vtx);
+    p.delegate(tri_builder);
+
+    return tri_builder.is_manifold();
   }
 
   /**
