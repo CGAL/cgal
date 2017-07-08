@@ -167,27 +167,6 @@ void insert(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
   Arrangement_zone_2<Arr, Zone_visitor> arr_zone(arr, &visitor);
 
   // Initialize the zone-computation object with the given curve.
-
-/*  Needs to be deleted!!!
-    {
-    std::cout << std::endl;
-    std::cout << "xxxxxxxxxxxx" << std::endl;
-    std::cout << "c: " << c << std::endl;
-    std::cout << std::endl;
-    typename Arr::Vertex_const_iterator  vit;
-    std::cout << arr.number_of_vertices() << " vertices:" << std::endl;
-    for (vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit)
-    {
-      std::cout << "(" << vit->point() << ")";
-      if (vit->is_isolated())
-        std::cout << " - Isolated." << std::endl;
-      else
-        std::cout << " - degree " << vit->degree() << std::endl;
-    }
-    std::cout << std::endl;
-    std::cout << "xxxxxxxxxxxx" << std::endl;
-  }
-*/
   arr_zone.init(c, pl);
 
   // Notify the arrangement observers that a global operation is about to
