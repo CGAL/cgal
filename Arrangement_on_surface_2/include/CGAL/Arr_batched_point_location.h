@@ -89,7 +89,7 @@ locate(const Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
   // left.
   std::vector<Bpl_x_monotone_curve_2> xcurves_vec(arr.number_of_edges());
   Edge_const_iterator eit;
-  size_t i(0);
+  std::size_t i(0);
   for (eit = arr.edges_begin(); eit != arr.edges_end(); ++eit) {
     // Associate each x-monotone curve with the halfedge that represent it
     // that is directed from right to left.
