@@ -86,7 +86,7 @@ public:
   typedef Event*                                        Event_ptr;
   typedef std::list<unsigned int>                       Halfedge_indices_list;
 
-  /*! Construct deafult. */
+  /*! Construct default. */
   Arr_construction_subcurve_base() :
     Base(),
     m_last_event(0),
