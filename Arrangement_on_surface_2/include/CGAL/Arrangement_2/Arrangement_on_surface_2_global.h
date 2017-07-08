@@ -20,6 +20,8 @@
 #ifndef CGAL_ARRANGEMENT_ON_SURFACE_2_GLOBAL_H
 #define CGAL_ARRANGEMENT_ON_SURFACE_2_GLOBAL_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 /*! \file
  * Global insertion functions for the Arrangement_2 class.
  */
@@ -29,7 +31,6 @@
 #include <boost/type_traits.hpp>
 #include <list>
 
-#include <CGAL/license/Arrangement_on_surface_2.h>
 #include <CGAL/Arrangement_on_surface_2.h>
 #include <CGAL/Arr_accessor.h>
 #include <CGAL/Arrangement_zone_2.h>
