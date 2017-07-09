@@ -47,10 +47,15 @@ int main()
     typedef OpenMesh::PolyMesh_ArrayKernelT</* MyTraits*/> OM;
 
     OM om;
-    OpenMesh::IO::read_mesh(om, "om.off");
+    OpenMesh::IO::read_mesh(om, "data/elephant.off");
+    om.request_face_status();
+    om.request_edge_status();
+    om.request_vertex_status();
     PMP::isotropic_remeshing(faces(om),
                              0.02,
                              om);
+    
+    om.garbage_collection();
     OpenMesh::IO::write_mesh(om, "om.off");
   }
 
