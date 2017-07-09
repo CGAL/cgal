@@ -8,8 +8,8 @@ namespace CGAL
 {
 /*!
  * \ingroup PkgTSMA
- * @brief variational shape approximation a triangular mesh.
- * This function approximate the input triangulaer mesh by fitting it with proxies.
+ * @brief variational shape approximation a triangulated mesh.
+ * This function approximate the input triangulated mesh by fitting it with proxies.
  *
  * @tparam TriangleMesh model of `FaceGraph`.
  * @tparam SegmentPropertyMap a property map containing the approximated facet patch id,
