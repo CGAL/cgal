@@ -44,9 +44,9 @@ void compatible_remeshing(PolygonMesh& pmesh,  const FaceRange& faces, const Edg
     typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GeomTraits;
 
     //vpmap
-    typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type VertexPointMap;
+    typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type VertexPointMap;
     VertexPointMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
-                                 get_const_property_map(CGAL::vertex_point, pmesh));
+                                 get_property_map(CGAL::vertex_point, pmesh));
 
     //vcmap
     typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;

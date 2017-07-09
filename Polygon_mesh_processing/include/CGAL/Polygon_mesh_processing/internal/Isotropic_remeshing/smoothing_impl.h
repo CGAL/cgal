@@ -12,7 +12,6 @@
 #include <CGAL/AABB_triangle_primitive.h>
 
 
-
 namespace CGAL {
 
 namespace Polygon_mesh_processing {
@@ -121,7 +120,8 @@ public:
     {
 
         std::map<vertex_descriptor, Point> barycenters;
-        boost::vector_property_map<Vector> n_map;
+        //boost::vector_property_map<Vector> n_map;
+        std::map<vertex_descriptor, Vector> n_map;
 
         for(vertex_descriptor v : vertices(mesh_))
         {
