@@ -84,3 +84,7 @@ target_link_libraries(isotropic_remeshing_plugin  scene_polyhedron_item scene_po
 
 polyhedron_demo_plugin(distance_plugin Distance_plugin)
 target_link_libraries(distance_plugin scene_polyhedron_item scene_color_ramp)
+
+qt5_wrap_ui( smoothingUI_FILES Smoothing_plugin.ui)
+polyhedron_demo_plugin(smoothing_plugin Smoothing_plugin ${smoothingUI_FILES})
+target_link_libraries(smoothing_plugin scene_polyhedron_item scene_polyhedron_selection_item)
