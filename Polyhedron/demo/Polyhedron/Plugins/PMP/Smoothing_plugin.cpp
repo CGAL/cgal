@@ -1,5 +1,13 @@
 
 #include <QtCore/qglobal.h>
+#include <QTime>
+#include <QAction>
+#include <QMainWindow>
+#include <QApplication>
+#include <QString>
+#include <QInputDialog>
+#include <QtPlugin>
+#include <QMessageBox>
 
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 
@@ -11,23 +19,12 @@
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/utility.h>
+#include <boost/graph/graph_traits.hpp>
+#include <CGAL/property_map.h>
 
 #include <CGAL/Polygon_mesh_processing/smoothing.h>
 #include <CGAL/Polygon_mesh_processing/random_pertubation.h>
 #include <CGAL/Polygon_mesh_processing/remesh.h>
-
-
-#include <boost/graph/graph_traits.hpp>
-#include <CGAL/property_map.h>
-
-#include <QTime>
-#include <QAction>
-#include <QMainWindow>
-#include <QApplication>
-#include <QString>
-#include <QInputDialog>
-#include <QtPlugin>
-#include <QMessageBox>
 
 #include "ui_Smoothing_plugin.h"
 
@@ -97,6 +94,10 @@ public Q_SLOTS:
           return;
         }
 
+        bool weights_flag = ui.angle_weights_checkBox->isChecked();
+        double gd_precision = ui.gradient_descent_doubleSpinBox->value();
+        unsigned int nb_iterations = ui.iterations_spinBox->value();
+
         // wait cursor
         QApplication::setOverrideCursor(Qt::WaitCursor);
         QTime time;
@@ -107,13 +108,29 @@ public Q_SLOTS:
         if(poly_item || selection_item)
         {
             Polyhedron& pmesh = *poly_item->polyhedron();
-            CGAL::Polygon_mesh_processing::compatible_remeshing(pmesh, faces(pmesh), edges(pmesh),
-                                                                CGAL::Polygon_mesh_processing::parameters::all_default());
+            CGAL::Polygon_mesh_processing::compatible_remeshing(pmesh,
+                                                                faces(pmesh),
+                                                                edges(pmesh),
+                                                                CGAL::Polygon_mesh_processing::parameters::use_weights(weights_flag)
+                                                                .number_of_iterations(nb_iterations)
+                                                                .gradient_descent_precision(gd_precision));
+
+            // to fix
+            if(poly_item)
+            {
+                poly_item->invalidateOpenGLBuffers();
+                Q_EMIT poly_item->itemChanged();
+            }
+            else
+            {
+                std::cerr<<"selection_item!"<<std::endl;
+            }
+            //
 
         }
         else
         {
-            std::cerr << "No smooth!" << std::endl;
+            std::cerr << "No smoothing!" << std::endl;
         }
 
         std::cout << " ok (" << time.elapsed() << " ms)" << std::endl;
@@ -122,12 +139,8 @@ public Q_SLOTS:
          QApplication::restoreOverrideCursor();
     }
 
-
-
-
     Ui::Smoothing_dialog smooth_dialog(QDialog* dialog, Scene_polyhedron_item* poly_item, Scene_polyhedron_selection_item* selection_item)
     {
-
         Ui::Smoothing_dialog ui;
         ui.setupUi(dialog);
         connect(ui.buttonBox, SIGNAL(accepted()), dialog, SLOT(accept()));
@@ -135,11 +148,9 @@ public Q_SLOTS:
 
         //Set default parameters
         Scene_interface::Bbox bbox = poly_item != NULL ? poly_item->bbox()
-          : (selection_item != NULL ? selection_item->bbox()
-          : scene->bbox());
+          : (selection_item != NULL ? selection_item->bbox() : scene->bbox());
         ui.objectName->setText(poly_item != NULL ? poly_item->name()
-          : (selection_item != NULL ? selection_item->name()
-          : QString("Remeshing parameters")));
+          : (selection_item != NULL ? selection_item->name() : QString("Smoothing parameters")));
 
         ui.objectNameSize->setText(
           tr("Object bbox size (w,h,d):  <b>%1</b>,  <b>%2</b>,  <b>%3</b>")
@@ -151,8 +162,17 @@ public Q_SLOTS:
           + (bbox.ymax() - bbox.ymin())*(bbox.ymax() - bbox.ymin())
           + (bbox.zmax() - bbox.zmin())*(bbox.zmax() - bbox.zmin()));
         double log = std::log10(diago_length);
-        unsigned int nb_decimals = (log > 0) ? 5 : (std::ceil(-log) + 3);
+        unsigned int nb_decimals = (log > 0) ? 3 : (std::ceil(-log) + 3);
 
+        // default values
+        ui.angle_weights_checkBox->setChecked(false);
+
+        ui.gradient_descent_doubleSpinBox->setDecimals(nb_decimals);
+        ui.gradient_descent_doubleSpinBox->setSingleStep(1e-3);
+        ui.gradient_descent_doubleSpinBox->setValue(0.001);
+
+        ui.iterations_spinBox->setValue(1);
+        ui.iterations_spinBox->setMinimum(1);
 
         return ui;
     }
