@@ -74,7 +74,7 @@ void compatible_remeshing(PolygonMesh& pmesh,  const FaceRange& faces, const Edg
     //nb_iterations
     unsigned int nb_iterations = choose_param(get_param(np, internal_np::number_of_iterations), 1);
 
-    //gradient descente precision
+    //gradient descent precision
     double gd_precision = choose_param(get_param(np, internal_np::gradient_descent_precision), 0.001);
 
     //use weighted angles
@@ -130,7 +130,7 @@ void compatible_remeshing(PolygonMesh& pmesh,  const FaceRange& faces, const Edg
 
 
 template<typename PolygonMesh, typename NamedParameters>
-void curvature_flow(PolygonMesh& pmesh, NamedParameters& np)
+void curvature_flow(PolygonMesh& pmesh, const NamedParameters& np)
 {
     using boost::choose_param;
     using boost::get_param;
@@ -144,6 +144,7 @@ void curvature_flow(PolygonMesh& pmesh, NamedParameters& np)
 
 }
 
+template<typename PolygonMesh>
 void curvature_flow(PolygonMesh& pmesh)
 {
     curvature_flow(pmesh, parameters::all_default());
