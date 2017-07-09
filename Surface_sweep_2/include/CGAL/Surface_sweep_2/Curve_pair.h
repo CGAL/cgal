@@ -20,6 +20,8 @@
 
 #include <CGAL/license/Surface_sweep_2.h>
 
+#include <CGAL/utility.h>
+
 /*! \file
  *
  * Definition of the Curve_pair<Subcurve> class template and related functors.
@@ -42,22 +44,19 @@ private:
   std::pair<Subcurve*, Subcurve*> m_pair;
 
 public:
-  /*! Default constructor. */
-  Curve_pair(){}
+  /*! Construct default. */
+  Curve_pair() {}
 
-  /*! Constructor from two subcurves. */
-  Curve_pair (Subcurve* sc1, Subcurve* sc2)
-  {
-    // The smallest pointer will be the first.
-    if (sc1 < sc2) m_pair = std::make_pair (sc1,sc2);
-    else m_pair = std::make_pair (sc2,sc1);
-  }
+  /*! Construct from two subcurves.
+   */
+  Curve_pair(Subcurve* sc1, Subcurve* sc2)
+  { m_pair = CGAL::make_sorted_pair(sc1, sc2); }
 
-  /*! Get the first subcurve. */
-  Subcurve* first() const { return (m_pair.first); }
+  /*! Obtain the first subcurve. */
+  Subcurve* first() const { return m_pair.first; }
 
-  /*! Get the second subcurve. */
-  Subcurve* second() const { return (m_pair.second); }
+  /*! Obtain the second subcurve. */
+  Subcurve* second() const { return m_pair.second; }
 };
 
 /*! \struct
@@ -65,10 +64,10 @@ public:
  */
 template <typename Subcurve_>
 struct Less_curve_pair {
-  typedef Subcurve_               Subcurve;
-  typedef class Curve_pair<Subcurve> Curve_pair;
+  typedef Subcurve_                             Subcurve;
+  typedef class Curve_pair<Subcurve>            Curve_pair;
 
-  bool operator() (const Curve_pair& pair1, const Curve_pair& pair2) const
+  bool operator()(const Curve_pair& pair1, const Curve_pair& pair2) const
   {
     if (pair1.first() < pair2.first()) return true;
     if (pair1.first() > pair2.first()) return false;
@@ -85,12 +84,11 @@ struct Curve_pair_hasher {
   typedef Subcurve_ Subcurve;
   typedef class Curve_pair<Subcurve> Curve_pair;
 
-  size_t operator() (const Curve_pair& pair) const
+  size_t operator()(const Curve_pair& pair) const
   {
     const size_t half_n_bits = sizeof(size_t) * 8 / 2;
-    const size_t val1 = reinterpret_cast<size_t> (pair.first());
-    const size_t val2 = reinterpret_cast<size_t> (pair.second());
-
+    const size_t val1 = reinterpret_cast<size_t>(pair.first());
+    const size_t val2 = reinterpret_cast<size_t>(pair.second());
     return (((val1 << half_n_bits) | (val1 >> half_n_bits)) ^ val2);
   }
 };
@@ -100,13 +98,13 @@ struct Curve_pair_hasher {
  */
 template <typename Subcurve_>
 struct Equal_curve_pair {
-  typedef Subcurve_               Subcurve;
-  typedef class Curve_pair<Subcurve> Curve_pair;
+  typedef Subcurve_                             Subcurve;
+  typedef class Curve_pair<Subcurve>            Curve_pair;
 
-  bool operator() (const Curve_pair& pair1, const Curve_pair& pair2) const
+  bool operator()(const Curve_pair& pair1, const Curve_pair& pair2) const
   {
-    return (pair1.first() == pair2.first() &&
-            pair1.second() == pair2.second());
+    return ((pair1.first() == pair2.first()) &&
+            (pair1.second() == pair2.second()));
   }
 };
 
@@ -128,8 +126,7 @@ private:
 public:
   random_access_input_iterator() {}
 
-  random_access_input_iterator(Container& _container,
-                               unsigned int _index = 0) :
+  random_access_input_iterator(Container& _container, unsigned int _index = 0) :
     m_container(&_container),
     m_index(_index)
   {}
@@ -173,7 +170,7 @@ public:
 
   bool operator==(const Self& other)
   {
-    CGAL_precondition (m_container == other.m_container);
+    CGAL_precondition(m_container == other.m_container);
     return (m_index == other.m_index);
   }
 
