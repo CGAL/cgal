@@ -32,7 +32,11 @@
 \cgalPkgPicture{Casting_2.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Shahar Shamai, Efi Fogel}
-\cgalPkgDesc{This package consists of the implementations of various predicates and operations related to castings of polygonal objects. In particular, it can be used to determine whether a mold for a polygonal object does exist. If a mold exists, the package can also be used to compute all possible orientations of the feasible molds and the corresponding motions needed to remove the casted object from the mold.}
+\cgalPkgDesc{<em>Movable Separability of Sets</em> \cgalCite{t-mss-85} is a
+class of problems that deal with moving sets of objects, such as polygons in
+the plane; the challenge is to avoid collisions between the objects
+while considering different kinds of motions and various definitions
+of separation.}
 \cgalPkgManuals{Chapter_SetMovableSeparability2,PkgSetMovableSeparability2}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
@@ -43,7 +47,7 @@
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
-This package consists of the implementations of various predicates and operations related to castings of polygonal objects. In particular, it can be used to determine whether a mold for a polygonal object does exist. If a mold exists, the package can also used to compute all possible orientations of the feasible molds and the corresponding motions needed to remove the casted object from the mold.
+At this point this package consists of the implementations of various predicates and constructions related to castings of polygonal objects. In particular, it can be used to determine whether a feasible mold for a polygonal object does exist. If a mold exists, the package can also be used to compute all possible orientations of the feasible molds and the corresponding motions needed to remove the casted object from the mold.
 
 \cgalClassifedRefPages
 

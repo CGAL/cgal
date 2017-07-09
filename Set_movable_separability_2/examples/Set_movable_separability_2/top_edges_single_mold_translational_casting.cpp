@@ -38,7 +38,7 @@ int main(int  argc, char* argv[])
 
   std::list<Top_edge> top_edges;
 
-  //example for top_edges_single_mold_translational_casting_2
+  // Example for top_edges_single_mold_translational_casting_2
   casting::top_edges(polygon, std::back_inserter(top_edges));
   if (top_edges.empty())
     std::cout << "The polygon is not castable!" << std::endl;
@@ -46,13 +46,12 @@ int main(int  argc, char* argv[])
     std::cout << "There are " << top_edges.size() << " top edges:" << std::endl;
     for (const auto& top_edge : top_edges) {
       std::cout
-        << "\tEdge: "<< *top_edge.first<< std::endl
-        << "\tPullout directions from: "<< top_edge.second.first
+        << "\tEdge: " << *top_edge.first<< std::endl
+        << "\tPullout directions from: " << top_edge.second.first
         << " to " << top_edge.second.second
-        << std::endl<< std::endl;
+        << std::endl << std::endl;
     }
   }
-  std::cout << "-----------------------------------"<< std::endl;
 
   return 0;
 }

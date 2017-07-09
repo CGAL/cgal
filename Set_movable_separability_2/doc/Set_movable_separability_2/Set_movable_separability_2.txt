@@ -41,25 +41,28 @@ polygon, and considers a single translation of the moving polygon.
 
 Casting is a manufacturing process where liquid material is poured
 into a cavity inside a mold, which has the shape of a desired
-product. After the material solidifies, the product is pulled out of
-the mold. Typically a mold is used to manufacture numerous copies of a
-product. The challenge is designing a proper mold, such that the
-solidified product can be separated from its mold without breaking it.
+product. (The mold can take any shape and form as long as it has a
+cavity of the desired shape.) After the material solidifies, the
+product is pulled out of the mold. Typically a mold is used to
+manufacture numerous copies of a product. The challenge is designing a
+proper mold, such that the solidified product can be separated from
+its mold without breaking it.
 
 This package provides a function called
-`top_edges_single_mold_translational_casting_2()` that, given a simple
-closed polygon \f$P\f$, it determines whether a cavity (of a mold in
-the plane) that has the shape of \f$P\f$ can be used so that the
-polygon \f$P\f$ could be pulled out of the mold without colliding into
-the mold (but possibly sliding along the mold surface); see
-\cgalFigureRef{sms_2_fig_polygons} for an illustration. In reality,
-the mold of a <em>castable</em> polygon must be rotated before the
-polygon is casted, such that one edge becomes parallel to the
-\f$y\f$-axis and is located above all other edges; such an edge is
-referred to as a <em>top edge</em>. A polygon may have up to 4 top
-edges. If the polygon is <em>castable</em>, the function computes the
-set of top edges of such cavities and the corresponding closed ranges
-of pullout directions in the plane.
+`CGAL::Set_movable_separability_2::Single_mold_translational_casting::top_edges()`
+that, given a simple closed polygon \f$P\f$, it determines whether a
+cavity (of a mold in the plane) that has the shape of \f$P\f$ can be
+used so that the polygon \f$P\f$ could be pulled out of the mold
+without colliding into the mold (but possibly sliding along the mold
+surface); see \cgalFigureRef{sms_2_fig_polygons} for an
+illustration. In reality, the mold of a <em>castable</em> polygon must
+be rotated before the polygon is casted, such that one edge becomes
+parallel to the \f$x\f$-axis and is located above all other edges;
+such an edge is referred to as a <em>top edge</em>. A polygon may have
+up to four edges that can serve as top edges. If the polygon is
+<em>castable</em>, the function computes the set of top edges of such
+cavities and the corresponding closed ranges of pullout directions in
+the plane.
 
 \cgalFigureBegin{sms_2_fig_polygons,polygons.png}
 Two castable polygons (light grey) in their molds (darker grey) and
@@ -81,7 +84,7 @@ The implementation is based on an algorithm developed by Shamai and
 Halperin; see \cgalCite{cgal:ss-spfis-16} for the generalization of
 the algorithm to 3D. The time and space complexities are in \f$O(n)\f$
 and \f$O(1)\f$, respectively. In order to ensure robustness and
-correctness you are adviced to use a kernel that guarantees exact
+correctness you must use a kernel that guarantees exact
 constructions as well as exact predicates, e,g,.
 `Exact_predicates_exact_constructions_kernel`.
 
@@ -99,7 +102,7 @@ the polygon \f$P\f$; it determines whether \f$e\f$ is a top edge of
 \f$P\f$, and if so, it computes the range of pullout directions of
 \f$e\f$. The latter is overloaded with two versions: The first version
 accepts a simple closed polygon \f$P\f$ and a direction \f$d\f$; it
-determines whether \f$d\f$ is a pullout direction of of some top edge
+determines whether \f$d\f$ is a pullout direction of some top edge
 of \f$P\f$. The other version accepts, in addition, an edge \f$e\f$ of
 the polygon \f$P\f$; it determines whether \f$d\f$ is a pullout
 direction of \f$e\f$.
