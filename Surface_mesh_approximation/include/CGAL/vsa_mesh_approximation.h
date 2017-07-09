@@ -24,6 +24,7 @@ namespace CGAL
  * @tparam BoundaryContainer a container of proxy patch boundary
  * @tparam GeomTraits geometric kernel
 
+ * @param init select seed initialization
  * @param triangle_mesh a triangle mesh
  * @param number_of_segments target number of approximation patches
  * @param number_of_iterations number of fitting iterations
@@ -43,7 +44,9 @@ template<typename TriangleMesh,
   typename AnchorVertexContainer,
   typename BoundaryContainer,
   typename GeomTraits>
-  void vsa_mesh_approximation(const TriangleMesh &triangle_mesh,
+  void vsa_mesh_approximation(
+    const int init,
+    const TriangleMesh &triangle_mesh,
     const std::size_t number_of_segments,
     const std::size_t number_of_iterations,
     SegmentPropertyMap segment_ids,
@@ -57,7 +60,17 @@ template<typename TriangleMesh,
 
   VSA algorithm(triangle_mesh, ppmap, traits);
 
-  algorithm.partition(number_of_segments, number_of_iterations, segment_ids);
+  switch (init) {
+    case VSA::RandomInit:
+      algorithm.partition(number_of_segments, number_of_iterations, segment_ids);
+      break;
+    case VSA::IncrementalInit:
+      algorithm.partition_incre(number_of_segments, number_of_iterations, segment_ids);
+      break;
+    case VSA::HierarchicalInit:
+      algorithm.partition_hierarchical(number_of_segments, number_of_iterations, segment_ids);
+      break;
+  }
 
   algorithm.extract_mesh(segment_ids, tris);
   BOOST_FOREACH(const typename VSA::Anchor &a, algorithm.collect_anchors()) {

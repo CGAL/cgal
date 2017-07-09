@@ -82,6 +82,12 @@ private:
   };
 
 public:
+  enum Initialization {
+    RandomInit,
+    IncrementalInit,
+    HierarchicalInit
+  };
+  
   // The approximated plane proxy.
   struct PlaneProxy {
     Vector normal;
