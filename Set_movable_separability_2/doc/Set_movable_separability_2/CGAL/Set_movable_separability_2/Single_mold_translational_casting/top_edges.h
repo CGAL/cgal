@@ -29,8 +29,8 @@ namespace Single_mold_translational_casting {
  *                  range of type `Kernel::Direction_2`.
  * \param traits the traits to use.
  * \return the past-the-end iterator of the output container.
- * \pre `png` must be non-degenerate (has at least 3 vertices), simple, and
- * does not have three consecutive collinear vertices.
+ * \pre `polygon` must be non-degenerate (has at least 3 vertices) and simple,
+ * and it does not have three consecutive collinear vertices.
  */
 template <typename CastingTraits_2, typename OutputIterator>
 OutputIterator top_edges(const CGAL::Polygon_2<CastingTraits>& polygon,
@@ -55,8 +55,8 @@ OutputIterator top_edges(const CGAL::Polygon_2<CastingTraits>& polygon,
  * \param orientation the orientation of `polygon`.
  * \param traits the traits to use.
  * \return the past-the-end iterator of the output container.
- * \pre `png` must be non-degenerate (has at least 3 vertices), simple, and
- * does not have three consecutive collinear vertices.
+ * \pre `polygon` must be non-degenerate (has at least 3 vertices) and simple,
+ * and it does not have three consecutive collinear vertices.
  */
 template <typename CastingTraits_2, typename OutputIterator>
 OutputIterator top_edges(const CGAL::Polygon_2<CastingTraits>& polygon,

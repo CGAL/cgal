@@ -24,8 +24,8 @@ namespace Single_mold_translational_casting {
  *         of the extreme directions in the range. If the input edge is not
  *         a valid top edge, the range is nondeterministic.
  *
- * \pre `png` must be non-degenerate (has at least 3 vertices), simple, and
- * does not have three consecutive collinear vertices.
+ * \pre `polygon` must be non-degenerate (has at least 3 vertices) and simple,
+ * and it does not have three consecutive collinear vertices.
  */
 template <typename CastingTraits_2>
 std::pair<bool, std::pair<typename CastingTraits_2::Direction_2,
@@ -52,8 +52,8 @@ pullout_directions
  *         of the extreme directions in the range. If the input edge is not
  *         a valid top edge, the range is nondeterministic.
  *
- * \pre `png` must be non-degenerate (has at least 3 vertices), simple, and
- * does not have three consecutive collinear vertices.
+ * \pre `polygon` must be non-degenerate (has at least 3 vertices) and simple,
+ * and it does not have three consecutive collinear vertices.
  */
 template <typename CastingTraits_2>
 std::pair<bool, std::pair<typename CastingTraits_2::Direction_2,

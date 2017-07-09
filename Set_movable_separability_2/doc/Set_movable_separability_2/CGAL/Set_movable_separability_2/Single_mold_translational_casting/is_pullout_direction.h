@@ -19,8 +19,8 @@ namespace Single_mold_translational_casting {
  * \param traits the traits to use.
  * \return if `polygon` can be pullout in the `d` direction the iterator of the
  *         corresponding top edge, otherwise, `polygon.edges_end()`.
- * \pre `png` must be non-degenerate (has at least 3 vertices), simple, and
- * does not have three consecutive collinear vertices.
+ * \pre `polygon` must be non-degenerate (has at least 3 vertices) and simple,
+ * and it does not have three consecutive collinear vertices.
  */
 template <typename CastingTraits_2>
 typename CGAL::Polygon_2<CastingTraits_2>::Edge_const_iterator
@@ -41,8 +41,8 @@ is_pullout_direction(const CGAL::Polygon_2<CastingTraits_2>& polygon,
  * \param traits the traits to use.
  * \return if `polygon` can be pullout in the `d` direction the iterator of the
  *         corresponding top edge, otherwise, `polygon.edges_end()`.
- * \pre `png` must be non-degenerate (has at least 3 vertices), simple, and
- * does not have three consecutive collinear vertices.
+ * \pre `polygon` must be non-degenerate (has at least 3 vertices) and simple,
+ * and it does not have three consecutive collinear vertices.
  */
 template <typename CastingTraits_2>
 typename CGAL::Polygon_2<CastingTraits_2>::Edge_const_iterator
@@ -71,8 +71,8 @@ is_pullout_direction(const CGAL::Polygon_2<CastingTraits_2>& polygon,
  * \param traits the traits to use.
  * \return true if `polygon` can be pulled out in the `d` direction with the
  *         edge identified by `i` being the top edge, and `false` otherwise.
- * \pre `png` must be non-degenerate (has at least 3 vertices), simple, and
- * does not have three consecutive collinear vertices.
+ * \pre `polygon` must be non-degenerate (has at least 3 vertices) and simple,
+ * and it does not have three consecutive collinear vertices.
  */
 template <typename CastingTraits_2>
 bool is_pullout_direction
@@ -95,8 +95,8 @@ bool is_pullout_direction
  * \param traits the traits to use.
  * \return true if `polygon` can be pulled out in the `d` direction with the
  *         edge identified by `i` being the top edge, and `false` otherwise.
- * \pre `png` must be non-degenerate (has at least 3 vertices), simple, and
- * does not have three consecutive collinear vertices.
+ * \pre `polygon` must be non-degenerate (has at least 3 vertices) and simple,
+ * and it does not have three consecutive collinear vertices.
  */
 template <typename CastingTraits_2>
 bool is_pullout_direction
