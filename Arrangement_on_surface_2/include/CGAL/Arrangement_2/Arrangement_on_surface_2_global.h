@@ -15,7 +15,6 @@
 // Author(s)     : Ron Wein <wein@post.tau.ac.il>
 //                 Baruch Zukerman <baruchzu@post.tau.ac.il>
 //                 Efi Fogel <efif@post.tau.ac.il>
-//
 
 #ifndef CGAL_ARRANGEMENT_ON_SURFACE_2_GLOBAL_H
 #define CGAL_ARRANGEMENT_ON_SURFACE_2_GLOBAL_H
@@ -38,13 +37,13 @@
 #include <CGAL/Arrangement_2/Arr_do_intersect_zone_visitor.h>
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
 #include <CGAL/No_intersection_surface_sweep_2.h>
-#include <CGAL/Surface_sweep_2/Arr_insertion_sl_visitor.h>
-#include <CGAL/Surface_sweep_2/Arr_no_intersection_insertion_sl_visitor.h>
+#include <CGAL/Surface_sweep_2/Arr_insertion_ss_visitor.h>
+#include <CGAL/Surface_sweep_2/Arr_no_intersection_insertion_ss_visitor.h>
 #include <CGAL/Surface_sweep_2.h>
 #include <CGAL/Surface_sweep_2/Surface_sweep_2_utils.h>
 #include <CGAL/Surface_sweep_2/Do_interior_intersect_visitor.h>
-#include <CGAL/Surface_sweep_2/Arr_construction_sl_visitor.h>
-#include <CGAL/Surface_sweep_2/Arr_insertion_sl_visitor.h>
+#include <CGAL/Surface_sweep_2/Arr_construction_ss_visitor.h>
+#include <CGAL/Surface_sweep_2/Arr_insertion_ss_visitor.h>
 #include <CGAL/Surface_sweep_2/Arr_construction_event.h>
 #include <CGAL/Surface_sweep_2/Arr_construction_subcurve.h>
 #include <CGAL/Surface_sweep_2/Arr_insertion_traits_2.h>
@@ -259,7 +258,7 @@ insert_empty(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
                                                         C_curve;
   typedef typename Tt::template Construction_helper<C_event, C_curve>
                                                         C_helper;
-  typedef Arr_construction_sl_visitor<C_helper>         C_visitor;
+  typedef Arr_construction_ss_visitor<C_helper>         C_visitor;
 
   typedef typename C_visitor::Geometry_traits_2         Cgt2;
 
@@ -314,7 +313,7 @@ void insert_empty(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>&
                                                         C_curve;
   typedef typename Tt::template Construction_helper<C_event, C_curve>
                                                         C_helper;
-  typedef Arr_construction_sl_visitor<C_helper>         C_visitor;
+  typedef Arr_construction_ss_visitor<C_helper>         C_visitor;
 
   typedef typename C_visitor::Geometry_traits_2         Cgt2;
 
@@ -367,7 +366,7 @@ void insert_non_empty(Arrangement_on_surface_2<GeometryTraits_2,
                                                         I_curve;
   typedef typename Tt::template Insertion_helper<I_event, I_curve>
                                                         I_helper;
-  typedef Arr_insertion_sl_visitor<I_helper>            I_visitor;
+  typedef Arr_insertion_ss_visitor<I_helper>            I_visitor;
   typedef typename Igt2::X_monotone_curve_2             Ex_x_monotone_curve_2;
   typedef typename Igt2::Point_2                        Ex_point_2;
 
@@ -869,7 +868,7 @@ void non_intersecting_insert_empty(Arrangement_on_surface_2<GeometryTraits_2,
   typedef typename Tt::template No_intersection_construction_helper<Nxc_event,
                                                                     Nxc_curve>
                                                         Nxc_helper;
-  typedef Arr_construction_sl_visitor<Nxc_helper>       Nxc_visitor;
+  typedef Arr_construction_ss_visitor<Nxc_helper>       Nxc_visitor;
 
   const Gt2* traits = arr.geometry_traits();
   Nxc_visitor visitor(&arr);
@@ -920,7 +919,7 @@ void non_intersecting_insert_empty(Arrangement_on_surface_2<GeometryTraits_2,
   typedef typename Tt::template No_intersection_construction_helper<Nxc_event,
                                                                     Nxc_curve>
                                                         Nxc_helper;
-  typedef Arr_construction_sl_visitor<Nxc_helper>       Nxc_visitor;
+  typedef Arr_construction_ss_visitor<Nxc_helper>       Nxc_visitor;
 
   const Gt2* traits = arr.geometry_traits();
   Nxc_visitor visitor(&arr);
@@ -977,7 +976,7 @@ non_intersecting_insert_non_empty(Arrangement_on_surface_2<GeometryTraits_2,
   typedef typename Tt::template No_intersection_insertion_helper<Nxi_event,
                                                                  Nxi_curve>
                                                         Nxi_Helper;
-  typedef Arr_no_intersection_insertion_sl_visitor<Nxi_Helper>
+  typedef Arr_no_intersection_insertion_ss_visitor<Nxi_Helper>
                                                         Nxi_visitor;
   typedef typename Igt2::X_monotone_curve_2             Ex_x_monotone_curve_2;
   typedef typename Igt2::Point_2                        Ex_point_2;

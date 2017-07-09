@@ -16,14 +16,14 @@
 //                 Ron Wein <wein@post.tau.ac.il>
 //                 Efi Fogel <efif@post.tau.ac.il>
 
-#ifndef CGAL_ARR_BATCHED_PL_SL_VISITOR_H
-#define CGAL_ARR_BATCHED_PL_SL_VISITOR_H
+#ifndef CGAL_ARR_BATCHED_PL_SS_VISITOR_H
+#define CGAL_ARR_BATCHED_PL_SS_VISITOR_H
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
 /*! \file
  *
- * Definition of the Arr_batched_pl_sl_visitor class-template.
+ * Definition of the Arr_batched_pl_ss_visitor class-template.
  */
 
 #include <CGAL/Arr_point_location_result.h>
@@ -35,20 +35,20 @@ namespace CGAL {
 
 namespace Ss2 = Surface_sweep_2;
 
-/*! \class Arr_batched_pl_sl_visitor
+/*! \class Arr_batched_pl_ss_visitor
  *
  * A surface-sweep visitor for performing batched point-location queries on an
  * arrangement embedded on a surface.
  */
 template <typename Helper_, typename OutputIterator, typename Visitor_ = Default>
-class Arr_batched_pl_sl_visitor :
+class Arr_batched_pl_ss_visitor :
   public Ss2::Default_visitor_base<typename Helper_::Geometry_traits_2,
                                    typename Helper_::Event,
                                    typename Helper_::Subcurve,
                                    typename Helper_::Allocator,
                                    typename Default::Get<
                                      Visitor_,
-                                     Arr_batched_pl_sl_visitor<
+                                     Arr_batched_pl_ss_visitor<
                                        Helper_, OutputIterator,
                                        Visitor_> >::type>
 {
@@ -63,7 +63,7 @@ public:
 
 private:
   typedef Geometry_traits_2                             Gt2;
-  typedef Arr_batched_pl_sl_visitor<Helper, Output_iterator, Visitor_>
+  typedef Arr_batched_pl_ss_visitor<Helper, Output_iterator, Visitor_>
                                                         Self;
   typedef typename Default::Get<Visitor_, Self>::type   Visitor;
   typedef typename Ss2::Default_visitor_base<Gt2, Event, Subcurve, Allocator,
@@ -96,7 +96,7 @@ public:
    * \param arr The arrangement.
    * \param oi A pointer to the output iterator that will store the result.
    */
-  Arr_batched_pl_sl_visitor(const Arrangement_2* arr, Output_iterator& oi) :
+  Arr_batched_pl_ss_visitor(const Arrangement_2* arr, Output_iterator& oi) :
     m_helper(arr),
     m_out(oi)
   {}
@@ -124,7 +124,7 @@ public:
 // A notification issued before the sweep process starts.
 //
   template <typename Hlpr, typename OutIt, typename Vis>
-  void Arr_batched_pl_sl_visitor<Hlpr, OutIt, Vis>::before_sweep()
+  void Arr_batched_pl_ss_visitor<Hlpr, OutIt, Vis>::before_sweep()
 {
   // We just have to notify the helper that the sweep process now starts.
   m_helper.before_sweep();
@@ -135,7 +135,7 @@ public:
 // event.
 //
 template <typename Hlpr, typename OutIt, typename Vis>
-bool Arr_batched_pl_sl_visitor<Hlpr, OutIt, Vis>::
+bool Arr_batched_pl_ss_visitor<Hlpr, OutIt, Vis>::
 after_handle_event(Event* event, Status_line_iterator above, bool on_above)
 {
   // Notify the helper on the event.

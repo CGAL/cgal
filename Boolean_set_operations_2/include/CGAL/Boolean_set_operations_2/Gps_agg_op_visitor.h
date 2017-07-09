@@ -22,7 +22,7 @@
 #include <CGAL/license/Boolean_set_operations_2.h>
 
 #include <CGAL/Unique_hash_map.h>
-#include <CGAL/Surface_sweep_2/Arr_construction_sl_visitor.h>
+#include <CGAL/Surface_sweep_2/Arr_construction_ss_visitor.h>
 #include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_topology_traits/Arr_bounded_planar_construction_helper.h>
 #include <CGAL/Arr_topology_traits/Arr_unb_planar_construction_helper.h>
@@ -32,7 +32,7 @@ namespace CGAL {
 
 template <typename Helper_, typename Arrangement_, typename Visitor_ = Default>
 class Gps_agg_op_base_visitor :
-  public Arr_construction_sl_visitor<
+  public Arr_construction_ss_visitor<
     Helper_,
     typename Default::Get<Visitor_, Gps_agg_op_base_visitor<Helper_,
                                                             Arrangement_,
@@ -53,7 +53,7 @@ private:
   typedef Gps_agg_op_base_visitor<Helper, Arr, Visitor_>
                                                         Self;
   typedef typename Default::Get<Visitor_, Self>::type   Visitor;
-  typedef Arr_construction_sl_visitor<Helper, Visitor>  Base;
+  typedef Arr_construction_ss_visitor<Helper, Visitor>  Base;
 
 public:
   typedef typename Arr::Halfedge_handle                 Halfedge_handle;

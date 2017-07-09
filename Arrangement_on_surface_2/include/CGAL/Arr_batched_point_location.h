@@ -26,7 +26,7 @@
 #include <CGAL/Arr_point_location/Arr_batched_point_location_traits_2.h>
 #include <CGAL/Surface_sweep_2/No_overlap_event.h>
 #include <CGAL/Surface_sweep_2/No_overlap_subcurve.h>
-#include <CGAL/Surface_sweep_2/Arr_batched_pl_sl_visitor.h>
+#include <CGAL/Surface_sweep_2/Arr_batched_pl_ss_visitor.h>
 
 #include <vector>
 #include <boost/mpl/if.hpp>
@@ -79,7 +79,7 @@ locate(const Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
   typedef typename Tt::template Batched_point_location_helper<Bpl_event,
                                                               Bpl_curve>
                                                         Bpl_helper;
-  typedef Arr_batched_pl_sl_visitor<Bpl_helper, Output_iterator>
+  typedef Arr_batched_pl_ss_visitor<Bpl_helper, Output_iterator>
                                                         Bpl_visitor;
   typedef typename Bgt2::X_monotone_curve_2             Bpl_x_monotone_curve_2;
   typedef typename Bgt2::Point_2                        Bpl_point_2;

@@ -16,14 +16,14 @@
 //                 Ron Wein <wein@post.tau.ac.il>
 //                 Efi Fogel <efif@post.tau.ac.il>
 
-#ifndef CGAL_ARR_OVERLAY_SL_VISITOR_H
-#define CGAL_ARR_OVERLAY_SL_VISITOR_H
+#ifndef CGAL_ARR_OVERLAY_SS_VISITOR_H
+#define CGAL_ARR_OVERLAY_SS_VISITOR_H
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
 /*! \file
  *
- * Definition of the Arr_overlay_sl_visitor class-template.
+ * Definition of the Arr_overlay_ss_visitor class-template.
  */
 
 #include <boost/variant.hpp>
@@ -32,13 +32,13 @@
 #include <boost/variant/apply_visitor.hpp>
 
 #include <CGAL/Arr_tags.h>
-#include <CGAL/Surface_sweep_2/Arr_construction_sl_visitor.h>
+#include <CGAL/Surface_sweep_2/Arr_construction_ss_visitor.h>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/Default.h>
 
 namespace CGAL {
 
-/*! \class Arr_overlay_sl_visitor
+/*! \class Arr_overlay_ss_visitor
  *
  * A sweep-line visitor for overlaying a "red" arrangement and a "blue"
  * arrangement, creating a result arrangement. All three arrangements are
@@ -46,11 +46,11 @@ namespace CGAL {
  */
 template <typename OverlayHelper, typename OverlayTraits,
           typename Visitor_ = Default>
-class Arr_overlay_sl_visitor :
-  public Arr_construction_sl_visitor<
+class Arr_overlay_ss_visitor :
+  public Arr_construction_ss_visitor<
     typename OverlayHelper::Construction_helper,
     typename Default::Get<Visitor_,
-                          Arr_overlay_sl_visitor<OverlayHelper, OverlayTraits,
+                          Arr_overlay_ss_visitor<OverlayHelper, OverlayTraits,
                                                  Visitor_> >::type>
 {
 public:
@@ -72,10 +72,10 @@ private:
   typedef Arrangement_red_2                             Ar2;
   typedef Arrangement_blue_2                            Ab2;
 
-  typedef Arr_overlay_sl_visitor<Overlay_helper, Overlay_traits, Visitor_>
+  typedef Arr_overlay_ss_visitor<Overlay_helper, Overlay_traits, Visitor_>
                                                         Self;
   typedef typename Default::Get<Visitor_, Self>::type   Visitor;
-  typedef Arr_construction_sl_visitor<Construction_helper, Visitor>
+  typedef Arr_construction_ss_visitor<Construction_helper, Visitor>
                                                         Base;
 
 public:
@@ -148,7 +148,7 @@ protected:
                                         // and blue halfedges that induce it.
 public:
   /*! Constructor */
-  Arr_overlay_sl_visitor(const Ar2* red_arr,
+  Arr_overlay_ss_visitor(const Ar2* red_arr,
                          const Ab2* blue_arr,
                          Arrangement_2* res_arr,
                          Overlay_traits* overlay_traits):
@@ -162,7 +162,7 @@ public:
   {}
 
   /*! Destructor */
-  virtual ~Arr_overlay_sl_visitor() {}
+  virtual ~Arr_overlay_ss_visitor() {}
 
   /// \name Sweep-line notifications.
   //@{
@@ -410,7 +410,7 @@ protected:
 // A notification issued before the sweep process starts.
 //
   template <typename OvlHlpr, typename OvlTr, typename Vis>
-  void Arr_overlay_sl_visitor<OvlHlpr, OvlTr, Vis>::before_sweep()
+  void Arr_overlay_ss_visitor<OvlHlpr, OvlTr, Vis>::before_sweep()
 {
   // Initialize the necessary fields in the base construction visitor.
   // Note that the construction visitor also informs its helper class that
@@ -427,7 +427,7 @@ protected:
 //
 template <typename OvlHlpr, typename OvlTr, typename Vis>
 void
-Arr_overlay_sl_visitor<OvlHlpr, OvlTr, Vis>::before_handle_event(Event* event)
+Arr_overlay_ss_visitor<OvlHlpr, OvlTr, Vis>::before_handle_event(Event* event)
 {
   // Let the base construction visitor do the work (and also inform its helper
   // class on the event).
@@ -442,7 +442,7 @@ Arr_overlay_sl_visitor<OvlHlpr, OvlTr, Vis>::before_handle_event(Event* event)
 // event.
 //
 template <typename OvlHlpr, typename OvlTr, typename Vis>
-bool Arr_overlay_sl_visitor<OvlHlpr, OvlTr, Vis>::
+bool Arr_overlay_ss_visitor<OvlHlpr, OvlTr, Vis>::
 after_handle_event(Event* event, Status_line_iterator iter, bool flag)
 {
   // Let the base construction visitor handle the event.
@@ -494,7 +494,7 @@ after_handle_event(Event* event, Status_line_iterator iter, bool flag)
 // Update an event that corresponds to a curve endpoint.
 //
 template <typename OvlHlpr, typename OvlTr, typename Vis>
-void Arr_overlay_sl_visitor<OvlHlpr, OvlTr, Vis>::
+void Arr_overlay_ss_visitor<OvlHlpr, OvlTr, Vis>::
 update_event(Event* e,
              const Point_2& end_point,
              const X_monotone_curve_2& /* cv */,
@@ -514,7 +514,7 @@ update_event(Event* e,
 // Update an event.
 //
 template <typename OvlHlpr, typename OvlTr, typename Vis>
-void Arr_overlay_sl_visitor<OvlHlpr, OvlTr, Vis>::update_event(Event* e,
+void Arr_overlay_ss_visitor<OvlHlpr, OvlTr, Vis>::update_event(Event* e,
                                                                Subcurve* sc)
 {
   // Update the red and blue halfedges associated with the point as necessary.
@@ -538,7 +538,7 @@ void Arr_overlay_sl_visitor<OvlHlpr, OvlTr, Vis>::update_event(Event* e,
 //
 template <typename OvlHlpr, typename OvlTr, typename Vis>
 void
-Arr_overlay_sl_visitor<OvlHlpr, OvlTr, Vis>::update_event(Event* e,
+Arr_overlay_ss_visitor<OvlHlpr, OvlTr, Vis>::update_event(Event* e,
                                                           const Point_2& p,
                                                           bool /* is_new */)
 {
@@ -552,7 +552,7 @@ Arr_overlay_sl_visitor<OvlHlpr, OvlTr, Vis>::update_event(Event* e,
 // A notification issued when the sweep process has ended.
 //
 template <typename OvlHlpr, typename OvlTr, typename Vis>
-void Arr_overlay_sl_visitor<OvlHlpr, OvlTr, Vis>::after_sweep()
+void Arr_overlay_ss_visitor<OvlHlpr, OvlTr, Vis>::after_sweep()
 {
   // Notify boundary vertices:
   typename Vertex_map::iterator it;
@@ -578,8 +578,8 @@ void Arr_overlay_sl_visitor<OvlHlpr, OvlTr, Vis>::after_sweep()
 // Insert the given subcurve in the interior of an arrangement face.
 //
 template <typename OvlHlpr, typename OvlTr, typename Vis>
-typename Arr_overlay_sl_visitor<OvlHlpr, OvlTr, Vis>::Halfedge_handle
-Arr_overlay_sl_visitor<OvlHlpr, OvlTr, Vis>::
+typename Arr_overlay_ss_visitor<OvlHlpr, OvlTr, Vis>::Halfedge_handle
+Arr_overlay_ss_visitor<OvlHlpr, OvlTr, Vis>::
 insert_in_face_interior(const X_monotone_curve_2& cv, Subcurve* sc)
 {
   // Insert the halfedge using the base construction visitor.
@@ -611,8 +611,8 @@ insert_in_face_interior(const X_monotone_curve_2& cv, Subcurve* sc)
 // Insert the given subcurve given its left end-vertex.
 //
 template <typename OvlHlpr, typename OvlTr, typename Vis>
-typename Arr_overlay_sl_visitor<OvlHlpr, OvlTr, Vis>::Halfedge_handle
-Arr_overlay_sl_visitor<OvlHlpr, OvlTr, Vis>::
+typename Arr_overlay_ss_visitor<OvlHlpr, OvlTr, Vis>::Halfedge_handle
+Arr_overlay_ss_visitor<OvlHlpr, OvlTr, Vis>::
 insert_from_left_vertex(const X_monotone_curve_2& cv,
                         Halfedge_handle prev,
                         Subcurve* sc)
@@ -643,8 +643,8 @@ insert_from_left_vertex(const X_monotone_curve_2& cv,
 // Insert the given subcurve given its right end-vertex.
 //
 template <typename OvlHlpr, typename OvlTr, typename Vis>
-typename Arr_overlay_sl_visitor<OvlHlpr, OvlTr, Vis>::Halfedge_handle
-Arr_overlay_sl_visitor<OvlHlpr, OvlTr, Vis>::
+typename Arr_overlay_ss_visitor<OvlHlpr, OvlTr, Vis>::Halfedge_handle
+Arr_overlay_ss_visitor<OvlHlpr, OvlTr, Vis>::
 insert_from_right_vertex(const X_monotone_curve_2& cv,
                          Halfedge_handle prev,
                          Subcurve* sc)
@@ -674,8 +674,8 @@ insert_from_right_vertex(const X_monotone_curve_2& cv,
 // Insert the given subcurve given its two end-vertices.
 //
 template <typename OvlHlpr, typename OvlTr, typename Vis>
-typename Arr_overlay_sl_visitor<OvlHlpr, OvlTr, Vis>::Halfedge_handle
-Arr_overlay_sl_visitor<OvlHlpr, OvlTr, Vis>::
+typename Arr_overlay_ss_visitor<OvlHlpr, OvlTr, Vis>::Halfedge_handle
+Arr_overlay_ss_visitor<OvlHlpr, OvlTr, Vis>::
 insert_at_vertices(const X_monotone_curve_2& cv,
                    Halfedge_handle prev1,
                    Halfedge_handle prev2,
@@ -792,8 +792,8 @@ insert_at_vertices(const X_monotone_curve_2& cv,
 // Insert an isolated vertex into the arrangement.
 //
 template <typename OvlHlpr, typename OvlTr, typename Vis>
-typename Arr_overlay_sl_visitor<OvlHlpr, OvlTr, Vis>::Vertex_handle
-Arr_overlay_sl_visitor<OvlHlpr, OvlTr, Vis>::
+typename Arr_overlay_ss_visitor<OvlHlpr, OvlTr, Vis>::Vertex_handle
+Arr_overlay_ss_visitor<OvlHlpr, OvlTr, Vis>::
 insert_isolated_vertex(const Point_2& pt,
                        Status_line_iterator iter)
 {
@@ -894,7 +894,7 @@ insert_isolated_vertex(const Point_2& pt,
 // red and blue halfedges.
 //
 template <typename OvlHlpr, typename OvlTr, typename Vis>
-void Arr_overlay_sl_visitor<OvlHlpr, OvlTr, Vis>::
+void Arr_overlay_ss_visitor<OvlHlpr, OvlTr, Vis>::
 _map_halfedge_and_twin(Halfedge_handle he,
                        Halfedge_handle_red red_he,
                        Halfedge_handle_blue blue_he)
@@ -921,7 +921,7 @@ _map_halfedge_and_twin(Halfedge_handle he,
 // Update the boundary vertices map.
 //
 template <typename OvlHlpr, typename OvlTr, typename Vis>
-void Arr_overlay_sl_visitor<OvlHlpr, OvlTr, Vis>::
+void Arr_overlay_ss_visitor<OvlHlpr, OvlTr, Vis>::
 _map_boundary_vertices(Event* event, Vertex_handle v, boost::mpl::bool_<true>)
 {
   // Update the red and blue object if the last event on sc is on the boundary.
@@ -958,7 +958,7 @@ _map_boundary_vertices(Event* event, Vertex_handle v, boost::mpl::bool_<true>)
 // Update the boundary vertices map.
 //
 template <typename OvlHlpr, typename OvlTr, typename Vis>
-void Arr_overlay_sl_visitor<OvlHlpr, OvlTr, Vis>::
+void Arr_overlay_ss_visitor<OvlHlpr, OvlTr, Vis>::
 _map_boundary_vertices(Event* /* event */, Vertex_handle /* v */,
                        boost::mpl::bool_<false>)
 {}
@@ -970,7 +970,7 @@ _map_boundary_vertices(Event* /* event */, Vertex_handle /* v */,
  * boundary side vertices to the end of the sweep.
  */
 template <typename OvlHlpr, typename OvlTr, typename Vis>
-void Arr_overlay_sl_visitor<OvlHlpr, OvlTr, Vis>::
+void Arr_overlay_ss_visitor<OvlHlpr, OvlTr, Vis>::
 _create_vertex(Event* event,
                Vertex_handle new_v,
                Subcurve* sc,
@@ -1016,7 +1016,7 @@ _create_vertex(Event* event,
 
 /* Notify the overlay traits about a newly created vertex. */
 template <typename OvlHlpr, typename OvlTr, typename Vis>
-void Arr_overlay_sl_visitor<OvlHlpr, OvlTr, Vis>::
+void Arr_overlay_ss_visitor<OvlHlpr, OvlTr, Vis>::
 _create_vertex(Event* event,
                Vertex_handle new_v,
                Subcurve* sc,
@@ -1061,7 +1061,7 @@ _create_vertex(Event* event,
 // Update a newly created result edge using the overlay traits.
 //
 template <typename OvlHlpr, typename OvlTr, typename Vis>
-void Arr_overlay_sl_visitor<OvlHlpr, OvlTr, Vis>::
+void Arr_overlay_ss_visitor<OvlHlpr, OvlTr, Vis>::
 _create_edge(Subcurve* sc,
              Halfedge_handle new_he)
 {

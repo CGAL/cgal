@@ -13,7 +13,7 @@
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
-//                 Efi Fogel <efif@post.tau.ac.il>
+//                 Efi Fogel <efifogel@gmail.com>
 
 #ifndef CGAL_ARR_OVERLAY_2_H
 #define CGAL_ARR_OVERLAY_2_H
@@ -35,7 +35,7 @@
 #include <CGAL/Surface_sweep_2.h>
 #include <CGAL/Surface_sweep_2/Arr_default_overlay_traits_base.h>
 #include <CGAL/Surface_sweep_2/Arr_overlay_traits_2.h>
-#include <CGAL/Surface_sweep_2/Arr_overlay_sl_visitor.h>
+#include <CGAL/Surface_sweep_2/Arr_overlay_ss_visitor.h>
 #include <CGAL/Surface_sweep_2/Arr_overlay_event.h>
 #include <CGAL/Surface_sweep_2/Arr_overlay_subcurve.h>
 #include <CGAL/assertions.h>
@@ -110,7 +110,7 @@ overlay(const Arrangement_on_surface_2<GeometryTraitsA_2, TopologyTraitsA>& arr1
   typedef typename TopologyTraitsRes::template
     Overlay_helper<Ovl_gt2, Ovl_event, Ovl_curve, Arr_a, Arr_b>
                                                         Ovl_helper;
-  typedef Arr_overlay_sl_visitor<Ovl_helper, Overlay_traits>
+  typedef Arr_overlay_ss_visitor<Ovl_helper, Overlay_traits>
                                                         Ovl_visitor;
 
   typedef typename Ovl_gt2::X_monotone_curve_2          Ovl_x_monotone_curve_2;

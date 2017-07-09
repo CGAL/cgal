@@ -15,14 +15,14 @@
 // Author(s)     : Ron Wein <wein@post.tau.ac.il>
 //                 Efi Fogel <efifogel@gmail.com>
 
-#ifndef CGAL_ARR_VERT_DECOMP_SL_VISITOR_H
-#define CGAL_ARR_VERT_DECOMP_SL_VISITOR_H
+#ifndef CGAL_ARR_VERT_DECOMP_SS_VISITOR_H
+#define CGAL_ARR_VERT_DECOMP_SS_VISITOR_H
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
 /*! \file
  *
- * Definition of the Arr_vert_decomp_sl_visitor class-template.
+ * Definition of the Arr_vert_decomp_ss_visitor class-template.
  */
 
 namespace CGAL {
@@ -31,19 +31,20 @@ namespace CGAL {
 #include <CGAL/Object.h>
 #include <CGAL/Default.h>
 
-/*! \class Arr_vert_decomp_sl_visitor
+/*! \class Arr_vert_decomp_ss_visitor
+ *
  * A sweep-line visitor for performing vertical decomposition on an
  * arrangement embedded on a surface.
  */
 template <typename Helper_, typename OutputIterator, typename Visitor_ = Default>
-class Arr_vert_decomp_sl_visitor :
+class Arr_vert_decomp_ss_visitor :
   public Ss2::Default_visitor_base<typename Helper_::Geometry_traits_2,
                                    typename Helper_::Event,
                                    typename Helper_::Subcurve,
                                    typename Helper_::Allocator,
                                    typename Default::Get<
                                      Visitor_,
-                                     Arr_vert_decomp_sl_visitor<
+                                     Arr_vert_decomp_ss_visitor<
                                        Helper_, OutputIterator,
                                        Visitor_> >::type>
 {
@@ -58,7 +59,7 @@ public:
 
 private:
   typedef Geometry_traits_2                             Gt2;
-  typedef Arr_vert_decomp_sl_visitor<Helper, Output_iterator, Visitor_>
+  typedef Arr_vert_decomp_ss_visitor<Helper, Output_iterator, Visitor_>
                                                         Self;
   typedef typename Default::Get<Visitor_, Self>::type   Visitor;
   typedef typename Ss2::Default_visitor_base<Gt2, Event, Subcurve, Allocator,
@@ -97,7 +98,7 @@ public:
    * \param arr The arrangement.
    * \param oi A pointer to the output iterator that will store the result.
    */
-  Arr_vert_decomp_sl_visitor(const Arrangement_2* arr, OutputIterator* oi) :
+  Arr_vert_decomp_ss_visitor(const Arrangement_2* arr, OutputIterator* oi) :
     m_helper(arr),
     m_traits(arr->geometry_traits()),
     invalid_vh(),
@@ -131,7 +132,7 @@ public:
 // A notification issued before the sweep process starts.
 //
 template <typename Hlpr, typename OutIt, typename Vis>
-void Arr_vert_decomp_sl_visitor<Hlpr, OutIt, Vis>::before_sweep()
+void Arr_vert_decomp_ss_visitor<Hlpr, OutIt, Vis>::before_sweep()
 {
   // Notify the helper that the sweep process now starts.
   m_helper.before_sweep();
@@ -145,7 +146,7 @@ void Arr_vert_decomp_sl_visitor<Hlpr, OutIt, Vis>::before_sweep()
 // event.
 //
 template <class Hlpr, class OutIt, typename Vis>
-bool Arr_vert_decomp_sl_visitor<Hlpr, OutIt, Vis>::
+bool Arr_vert_decomp_ss_visitor<Hlpr, OutIt, Vis>::
 after_handle_event(Event* event,
                    Status_line_iterator above, bool /* on_above */)
 {
@@ -301,7 +302,7 @@ after_handle_event(Event* event,
 // A notification issued when the sweep process is over.
 //
 template <typename Hlpr, typename OutIt, typename Vis>
-void Arr_vert_decomp_sl_visitor<Hlpr, OutIt, Vis>::after_sweep()
+void Arr_vert_decomp_ss_visitor<Hlpr, OutIt, Vis>::after_sweep()
 {
   // Create an entry for the last vertex (the xy-largest one).
   if (m_prev_vh != invalid_vh) {

@@ -24,7 +24,7 @@
 #include <CGAL/Arr_point_location/Arr_batched_point_location_traits_2.h>
 #include <CGAL/Surface_sweep_2/No_overlap_event.h>
 #include <CGAL/Surface_sweep_2/No_overlap_subcurve.h>
-#include <CGAL/Surface_sweep_2/Arr_vert_decomp_sl_visitor.h>
+#include <CGAL/Surface_sweep_2/Arr_vert_decomp_ss_visitor.h>
 
 #include <vector>
 #include <boost/mpl/if.hpp>
@@ -73,7 +73,7 @@ decompose(const Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
                                                         Vd_curve;
   typedef typename Tt::template
     Vertical_decomposition_helper<Vd_event, Vd_curve>   Vd_helper;
-  typedef Arr_vert_decomp_sl_visitor<Vd_helper, Output_iterator>
+  typedef Arr_vert_decomp_ss_visitor<Vd_helper, Output_iterator>
                                                         Vd_visitor;
   typedef typename Vgt2::X_monotone_curve_2             Vd_x_monotone_curve_2;
   typedef typename Vgt2::Point_2                        Vd_point_2;

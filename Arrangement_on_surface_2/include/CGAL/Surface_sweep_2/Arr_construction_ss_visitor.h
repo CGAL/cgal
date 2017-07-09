@@ -16,8 +16,8 @@
 //                 Ron Wein <wein@post.tau.ac.il>
 //                 Efi Fogel <efifogel@gmail.com>
 
-#ifndef CGAL_ARR_CONSTRUCTION_SL_VISITOR_H
-#define CGAL_ARR_CONSTRUCTION_SL_VISITOR_H
+#ifndef CGAL_ARR_CONSTRUCTION_SS_VISITOR_H
+#define CGAL_ARR_CONSTRUCTION_SS_VISITOR_H
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
@@ -27,7 +27,7 @@
 
 /*! \file
  *
- * Definition of the Arr_construction_sl_visitor class-template.
+ * Definition of the Arr_construction_ss_visitor class-template.
  */
 
 #include <vector>
@@ -50,18 +50,18 @@ struct Integer_hash_function {
   std::size_t operator()(unsigned int i) const { return i; }
 };
 
-/*! \class Arr_construction_sl_visitor
+/*! \class Arr_construction_ss_visitor
  * A sweep-line visitor for constructing an arrangement embedded on a surface.
  */
 template <typename Helper_, typename Visitor_ = Default>
-class Arr_construction_sl_visitor :
+class Arr_construction_ss_visitor :
   public Ss2::Default_visitor_base<typename Helper_::Geometry_traits_2,
                                    typename Helper_::Event,
                                    typename Helper_::Subcurve,
                                    typename Helper_::Allocator,
                                    typename Default::Get<
                                      Visitor_,
-                                     Arr_construction_sl_visitor<
+                                     Arr_construction_ss_visitor<
                                        Helper_, Visitor_> >::type>
 {
 public:
@@ -74,7 +74,7 @@ public:
 
 private:
   typedef Geometry_traits_2                             Gt2;
-  typedef Arr_construction_sl_visitor<Helper, Visitor_> Self;
+  typedef Arr_construction_ss_visitor<Helper, Visitor_> Self;
   typedef typename Default::Get<Visitor_, Self>::type   Visitor;
   typedef Ss2::Default_visitor_base<Gt2, Event, Subcurve, Allocator, Visitor>
                                                         Base;
@@ -127,7 +127,7 @@ protected:
 
 public:
   /*! Constructor. */
-  Arr_construction_sl_visitor(Arrangement_2* arr) :
+  Arr_construction_ss_visitor(Arrangement_2* arr) :
     m_helper(arr),
     m_arr(arr),
     m_top_traits(arr->topology_traits()),
@@ -138,7 +138,7 @@ public:
   { m_helper.set_halfedge_indices_map(m_he_indices_table); }
 
   /*! Destructor. */
-  virtual ~Arr_construction_sl_visitor() {}
+  virtual ~Arr_construction_ss_visitor() {}
 
   /// \name Sweep-line notifications.
   //@{
@@ -270,7 +270,7 @@ private:
 // A notification issued before the sweep process starts.
 // Notifies the helper that the sweep process now starts.
 template <typename Hlpr, typename Vis>
-void Arr_construction_sl_visitor<Hlpr, Vis>::before_sweep()
+void Arr_construction_ss_visitor<Hlpr, Vis>::before_sweep()
 { m_helper.before_sweep(); }
 
 //-----------------------------------------------------------------------------
@@ -278,7 +278,7 @@ void Arr_construction_sl_visitor<Hlpr, Vis>::before_sweep()
 // event.
 //
 template <class Hlpr, typename Vis>
-void Arr_construction_sl_visitor<Hlpr, Vis>::before_handle_event(Event* event)
+void Arr_construction_ss_visitor<Hlpr, Vis>::before_handle_event(Event* event)
 {
 #if CGAL_ARR_CONSTRUCTION_SL_VISITOR_VERBOSE
   std::cout << "CGAL_CSLV before_handle_event" << std::endl;
@@ -292,7 +292,7 @@ void Arr_construction_sl_visitor<Hlpr, Vis>::before_handle_event(Event* event)
 // event.
 //
 template <typename Hlpr, typename Vis>
-bool Arr_construction_sl_visitor<Hlpr, Vis>::
+bool Arr_construction_ss_visitor<Hlpr, Vis>::
 after_handle_event(Event* event, Status_line_iterator iter, bool /* flag */)
 {
 #if CGAL_ARR_CONSTRUCTION_SL_VISITOR_VERBOSE
@@ -406,7 +406,7 @@ after_handle_event(Event* event, Status_line_iterator iter, bool /* flag */)
 // A notification invoked when a new subcurve is created.
 //
 template <typename Hlpr, typename Vis>
-void Arr_construction_sl_visitor<Hlpr, Vis>::
+void Arr_construction_ss_visitor<Hlpr, Vis>::
 add_subcurve(const X_monotone_curve_2& cv, Subcurve* sc)
 {
 #if CGAL_ARR_CONSTRUCTION_SL_VISITOR_VERBOSE
@@ -565,8 +565,8 @@ add_subcurve(const X_monotone_curve_2& cv, Subcurve* sc)
 // Insert the given subcurve in the interior of an arrangement face.
 //
 template <typename Hlpr, typename Vis>
-typename Arr_construction_sl_visitor<Hlpr, Vis>::Halfedge_handle
-Arr_construction_sl_visitor<Hlpr, Vis>::
+typename Arr_construction_ss_visitor<Hlpr, Vis>::Halfedge_handle
+Arr_construction_ss_visitor<Hlpr, Vis>::
 insert_in_face_interior(const X_monotone_curve_2& cv, Subcurve* sc)
 {
 #if CGAL_ARR_CONSTRUCTION_SL_VISITOR_VERBOSE
@@ -614,8 +614,8 @@ insert_in_face_interior(const X_monotone_curve_2& cv, Subcurve* sc)
 // Insert the given subcurve using its two end-vertices.
 //
 template <typename Hlpr, typename Vis>
-typename Arr_construction_sl_visitor<Hlpr, Vis>::Halfedge_handle
-Arr_construction_sl_visitor<Hlpr, Vis>::
+typename Arr_construction_ss_visitor<Hlpr, Vis>::Halfedge_handle
+Arr_construction_ss_visitor<Hlpr, Vis>::
 insert_at_vertices(const X_monotone_curve_2& cv,
                    Halfedge_handle prev1,
                    Halfedge_handle prev2,
@@ -712,8 +712,8 @@ insert_at_vertices(const X_monotone_curve_2& cv,
 // Insert the given subcurve from a vertex that corresponds to its right end.
 //
 template <typename Hlpr, typename Vis>
-typename Arr_construction_sl_visitor<Hlpr, Vis>::Halfedge_handle
-Arr_construction_sl_visitor<Hlpr, Vis>::
+typename Arr_construction_ss_visitor<Hlpr, Vis>::Halfedge_handle
+Arr_construction_ss_visitor<Hlpr, Vis>::
 insert_from_right_vertex(const X_monotone_curve_2& cv,
                          Halfedge_handle prev,
                          Subcurve* sc)
@@ -760,8 +760,8 @@ insert_from_right_vertex(const X_monotone_curve_2& cv,
 // Insert the given subcurve from a vertex that corresponds to its left end.
 //
 template <typename Hlpr, typename Vis>
-typename Arr_construction_sl_visitor<Hlpr, Vis>::Halfedge_handle
-Arr_construction_sl_visitor<Hlpr, Vis>::
+typename Arr_construction_ss_visitor<Hlpr, Vis>::Halfedge_handle
+Arr_construction_ss_visitor<Hlpr, Vis>::
 insert_from_left_vertex(const X_monotone_curve_2& cv,
                         Halfedge_handle prev,
                         Subcurve* sc)
@@ -806,8 +806,8 @@ insert_from_left_vertex(const X_monotone_curve_2& cv,
 // Insert an isolated vertex into the arrangement.
 //
 template <typename Hlpr, typename Vis>
-typename Arr_construction_sl_visitor<Hlpr, Vis>::Vertex_handle
-Arr_construction_sl_visitor<Hlpr, Vis>::
+typename Arr_construction_ss_visitor<Hlpr, Vis>::Vertex_handle
+Arr_construction_ss_visitor<Hlpr, Vis>::
 insert_isolated_vertex(const Point_2& pt, Status_line_iterator /* iter */)
 {
 #if CGAL_ARR_CONSTRUCTION_SL_VISITOR_VERBOSE
@@ -823,7 +823,7 @@ insert_isolated_vertex(const Point_2& pt, Status_line_iterator /* iter */)
 // Reloacte holes and isolated vertices inside a newly created face.
 //
 template <typename Hlpr, typename Vis>
-void Arr_construction_sl_visitor<Hlpr, Vis>::
+void Arr_construction_ss_visitor<Hlpr, Vis>::
 relocate_in_new_face(Halfedge_handle he)
 {
 #if CGAL_ARR_CONSTRUCTION_SL_VISITOR_VERBOSE
@@ -904,7 +904,7 @@ relocate_in_new_face(Halfedge_handle he)
 // Map the given subcurve index to the given halfedge handle.
 //
 template <typename Hlpr, typename Vis>
-void Arr_construction_sl_visitor<Hlpr, Vis>::
+void Arr_construction_ss_visitor<Hlpr, Vis>::
 _map_new_halfedge(unsigned int i, Halfedge_handle he)
 {
 #if CGAL_ARR_CONSTRUCTION_SL_VISITOR_VERBOSE

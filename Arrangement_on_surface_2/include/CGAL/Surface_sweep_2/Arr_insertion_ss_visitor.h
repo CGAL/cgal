@@ -16,36 +16,36 @@
 //                 Ron Wein <wein@post.tau.ac.il>
 //                 Efi Fogel <efif@post.tau.ac.il>
 
-#ifndef CGAL_ARR_INSERTION_SL_VISITOR_H
-#define CGAL_ARR_INSERTION_SL_VISITOR_H
+#ifndef CGAL_ARR_INSERTION_SS_VISITOR_H
+#define CGAL_ARR_INSERTION_SS_VISITOR_H
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
 /*! \file
  *
- * Definition of the Arr_insertion_sl_visitor class-template. This class can be
+ * Definition of the Arr_insertion_ss_visitor class-template. This class can be
  * further split into two, where one derives from the other, such that the
  * derived class handles the case of inserting curves into a non-empty
  * arrangement, and the base class handles the case of inserting curves into a
  * empty arrangement.
  */
 
-#include <CGAL/Surface_sweep_2/Arr_no_intersection_insertion_sl_visitor.h>
+#include <CGAL/Surface_sweep_2/Arr_no_intersection_insertion_ss_visitor.h>
 #include <CGAL/Default.h>
 
 namespace CGAL {
 
-/*! \class Arr_insertion_sl_visitor
+/*! \class Arr_insertion_ss_visitor
  *
  * A sweep-line visitor for inserting new curves into an existing arrangement
  * embedded on a surface.
  */
 template <typename Helper_, typename Visitor_ = Default>
-class Arr_insertion_sl_visitor :
-  public Arr_no_intersection_insertion_sl_visitor<
+class Arr_insertion_ss_visitor :
+  public Arr_no_intersection_insertion_ss_visitor<
     Helper_,
     typename Default::Get<Visitor_,
-                          Arr_insertion_sl_visitor<Helper_, Visitor_> >::type>
+                          Arr_insertion_ss_visitor<Helper_, Visitor_> >::type>
 {
 public:
   typedef Helper_                                       Helper;
@@ -56,9 +56,9 @@ public:
 
 private:
   typedef Geometry_traits_2                             Gt2;
-  typedef Arr_insertion_sl_visitor<Helper, Visitor_>    Self;
+  typedef Arr_insertion_ss_visitor<Helper, Visitor_>    Self;
   typedef typename Default::Get<Visitor_, Self>::type   Visitor;
-  typedef Arr_no_intersection_insertion_sl_visitor<Helper, Visitor>
+  typedef Arr_no_intersection_insertion_ss_visitor<Helper, Visitor>
                                                         Base;
 
 public:
@@ -77,7 +77,7 @@ public:
   void add_subcurve(const X_monotone_curve_2& cv, Subcurve* sc);
 
   /*! Constructor. */
-  Arr_insertion_sl_visitor(Arrangement_2* arr) : Base(arr) {}
+  Arr_insertion_ss_visitor(Arrangement_2* arr) : Base(arr) {}
 
   /// \name Edge-split functions (to be overridden by the child visitor).
   //@{
@@ -109,7 +109,7 @@ public:
 // at the given event.
 //
 template <typename Hlpr, typename Vis>
-bool Arr_insertion_sl_visitor<Hlpr, Vis>::
+bool Arr_insertion_ss_visitor<Hlpr, Vis>::
 is_split_event(Subcurve* sc, Event* event)
 {
   if (sc->last_curve().halfedge_handle() == Halfedge_handle(NULL)) return false;
@@ -124,8 +124,8 @@ is_split_event(Subcurve* sc, Event* event)
 // Split an edge.
 //
 template <typename Hlpr, typename Vis>
-typename Arr_insertion_sl_visitor<Hlpr, Vis>::Halfedge_handle
-Arr_insertion_sl_visitor<Hlpr, Vis>::split_edge(Halfedge_handle he, Subcurve* sc,
+typename Arr_insertion_ss_visitor<Hlpr, Vis>::Halfedge_handle
+Arr_insertion_ss_visitor<Hlpr, Vis>::split_edge(Halfedge_handle he, Subcurve* sc,
                                                 const Point_2& pt)
 {
   // Make sure that the halfedge associated with sc is the directed from
@@ -148,7 +148,7 @@ Arr_insertion_sl_visitor<Hlpr, Vis>::split_edge(Halfedge_handle he, Subcurve* sc
 // A notification invoked when a new subcurve is created.
 //
 template <typename Hlpr, typename Vis>
-void Arr_insertion_sl_visitor<Hlpr, Vis>::
+void Arr_insertion_ss_visitor<Hlpr, Vis>::
 add_subcurve(const X_monotone_curve_2& cv, Subcurve* sc)
 {
   if (Base::add_subcurve_(cv, sc)) return;
