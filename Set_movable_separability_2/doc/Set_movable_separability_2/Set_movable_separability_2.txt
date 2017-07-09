@@ -95,20 +95,22 @@ directions of an input polygon read from a file and reports the results.
 \cgalExample{Set_movable_separability_2/top_edges_single_mold_translational_casting.cpp}
 
 This package provides two additional functions, namely,
-`pullout_directions_single_mold_translational_casting_2()` and
-`is_pullout_direction_single_mold_translational_casting_2()`.  The
-former accepts a simple closed polygon \f$P\f$ and an edge \f$e\f$ of
-the polygon \f$P\f$; it determines whether \f$e\f$ is a top edge of
+`CGAL::Set_movable_separability_2::Single_mold_translational_casting::pullout_directions()`
+and
+`CGAL::Set_movable_separability_2::Single_mold_translational_casting::is_pullout_direction()`.
+The former accepts a simple closed polygon \f$P\f$ and an edge \f$e\f$
+of the polygon \f$P\f$; it determines whether \f$e\f$ is a top edge of
 \f$P\f$, and if so, it computes the range of pullout directions of
 \f$e\f$. The latter is overloaded with two versions: The first version
 accepts a simple closed polygon \f$P\f$ and a direction \f$d\f$; it
-determines whether \f$d\f$ is a pullout direction of some top edge
-of \f$P\f$. The other version accepts, in addition, an edge \f$e\f$ of
+determines whether \f$d\f$ is a pullout direction of some top edge of
+\f$P\f$. The other version accepts, in addition, an edge \f$e\f$ of
 the polygon \f$P\f$; it determines whether \f$d\f$ is a pullout
 direction of \f$e\f$.
 
-An overload of each of the functions above that accepts an
-additional traits argument is also provided by the package.
+Overloads of each of the functions above that accept (i) an additional
+argument that indicates the orientation of the input polygon or (ii) an
+additional traits argument, or (iii) both, are also provided by the package.
 
 */
 
