@@ -70,10 +70,10 @@ right.
 The input polygon must satisfy two conditions as follows. First, it
 has to be simple. Essentially, a simple polygon is topologically
 equivalent to a disk; see Chapter \ref
-Chapter_2D_Regularized_Boolean_Set-Operations
-"2D Regularized Boolean Set-Operations" for the precise definition of
-simple polygons. Secondly, any consecuitive three vertices cannot be
-linear. If you suspect that the input polygon may not satisfy the
+Chapter_2D_Regularized_Boolean_Set-Operations "2D Regularized Boolean
+Set-Operations" for the precise definition of simple
+polygons. Secondly, any consecutive three vertices cannot be
+collinear. If you suspect that the input polygon may not satisfy the
 latter condition, pre-process the polygon to elliminate this
 ill-condition.
 
