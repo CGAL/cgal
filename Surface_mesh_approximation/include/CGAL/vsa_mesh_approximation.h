@@ -7,9 +7,34 @@
 namespace CGAL
 {
 /*!
-\ingroup PkgTSMA
-Main function
-*/
+ * \ingroup PkgTSMA
+ * @brief variational shape approximation a triangular mesh.
+ * This function approximate the input triangulaer mesh by fitting it with proxies.
+ *
+ * @tparam TriangleMesh model of `FaceGraph`.
+ * @tparam SegmentPropertyMap a property map containing the approximated facet patch id,
+           and `boost::graph_traits<TriangleMesh>::%face_descriptor` as key type,
+           std::size_t as value type
+ * @tparam PointPropertyMap a property map containing the input mesh vertex point map,
+           and `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type,
+           `TriangleMesh::Point_3` as value type
+ * @tparam AnchorIndexContainer a container of approximated indexed triangle soup
+ * @tparam AnchorPositionContainer a container of extracted anchor position
+ * @tparam AnchorVertexContainer a container of extracted anchor vertex
+ * @tparam BoundaryContainer a container of proxy patch boundary
+ * @tparam GeomTraits geometric kernel
+
+ * @param triangle_mesh a triangle mesh
+ * @param number_of_segments target number of approximation patches
+ * @param number_of_iterations number of fitting iterations
+ * @param segment_ids facet proxy patch id property map
+ * @param ppmap mesh vertex point property map
+ * @param tris approximation indexed triangle soup
+ * @param pos anchor position container
+ * @param vtx anchor vertex container
+ * @param bdrs proxy patch boundary container
+ * @param traits kernel traits
+ */
 template<typename TriangleMesh,
   typename SegmentPropertyMap,
   typename PointPropertyMap,
