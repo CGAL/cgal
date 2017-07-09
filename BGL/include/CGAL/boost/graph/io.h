@@ -129,7 +129,6 @@ bool read_off(std::istream& is,
   using namespace internal::read_off_tools;
 
   typedef typename boost::graph_traits<FaceGraph>::vertex_descriptor vertex_descriptor;
-  typedef typename boost::graph_traits<FaceGraph>::face_descriptor face_descriptor;
   typedef typename boost::graph_traits<FaceGraph>::vertices_size_type vertices_size_type;
   typedef typename boost::graph_traits<FaceGraph>::faces_size_type faces_size_type;
 
