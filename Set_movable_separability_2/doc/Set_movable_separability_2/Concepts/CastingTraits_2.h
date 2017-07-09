@@ -15,11 +15,16 @@
 class CastingTraits_2 {
 public:
 
-  /// \name Functor Types
+  /// \name Types
   /// @{
 
   //! The direction type. Models the concept `Kernel::Direction_2`.
   typedef unspecified_type Direction_2;
+
+  /// @}
+
+  /// \name Functor Types
+  /// @{
 
   //! Models the concept `Kernel::Counterclockwise_in_between_2`.
   typedef unspecified_type Counterclockwise_in_between_2;
