@@ -9,6 +9,7 @@ the requirement for operations to add faces and to modify face-halfedge relation
 \cgalRefines `MutableHalfedgeGraph`
 \cgalHasModel `CGAL::Polyhedron_3`
 \cgalHasModel `CGAL::Surface_mesh`
+\cgalHasModel `CGAL::Linear_cell_complex_for_combinatorial_map`
 
 */
 class MutableFaceGraph{};

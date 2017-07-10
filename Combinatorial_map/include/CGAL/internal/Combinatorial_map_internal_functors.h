@@ -55,6 +55,10 @@
  * internal::Decrease_attribute_functor<CMap> to decrease by one the ref
  *    counting of a given i-attribute.
  *
+ * internal::Restricted_decrease_attribute_functor<CMap> to decrease by one the
+ *    ref counting of a given i-attribute, but without deleting attribute
+ *    having nomore dart associated with.
+ *
  * internal::Beta_functor<Dart, i...> to call several beta on the given dart.
  *   Indices are given as parameter of the run function.
  *
@@ -86,6 +90,9 @@
  *
  * internal::Cleanup_useless_attributes to erase all attributes having
  *   no more associated dart
+ *
+ * internal::Init_id initialize the id of an new element created in a compact
+ *   container, when the underlying type defines id (TODO Move in Compact container ?)
  */
 
 namespace CGAL
@@ -458,6 +465,37 @@ struct Decrease_attribute_functor
   template <unsigned int i>
   static void run(CMap& amap, typename CMap::Dart_handle adart)
   { CGAL::internal::Decrease_attribute_functor_run<CMap,i>::run(amap, adart); }
+};
+// ****************************************************************************
+template<typename CMap, unsigned int i, typename T=
+         typename CMap::template Attribute_type<i>::type>
+struct Restricted_decrease_attribute_functor_run
+{
+  static void run(CMap& amap, typename CMap::Dart_handle adart)
+  {
+    if ( amap.template attribute<i>(adart)!=CMap::null_handle )
+    {
+      amap.template dec_attribute_ref_counting<i>(amap.template attribute<i>(adart));
+    }
+  }
+};
+/// Specialization for void attributes.
+template<typename CMap, unsigned int i>
+struct Restricted_decrease_attribute_functor_run<CMap, i, CGAL::Void>
+{
+  static void run(CMap&, typename CMap::Dart_handle)
+  {}
+};
+// ****************************************************************************
+/// Functor used to call restricted_decrease_attribute_ref_counting<i>
+/// on each i-cell attribute enabled
+template<typename CMap>
+struct Restricted_decrease_attribute_functor
+{
+  template <unsigned int i>
+  static void run(CMap& amap, typename CMap::Dart_handle adart)
+  { CGAL::internal::Restricted_decrease_attribute_functor_run<CMap,i>::
+        run(amap, adart); }
 };
 // ****************************************************************************
 /// Functor used to initialize all attributes to NULL.
@@ -998,6 +1036,22 @@ struct Beta_functor_static<CMap, Dart_handle, B, Betas...>
         run(AMap, AMap.template get_beta<B>(ADart)); }
 };
 #endif //CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
+// ****************************************************************************
+template<typename Container, class WitdId=
+         typename Container::value_type::Has_id>
+struct Init_id
+{
+  static void run(Container& c, typename Container::iterator e)
+  {
+    e->set_id(c.index(e));
+  }
+};
+template<typename Container>
+struct Init_id<Container, Tag_false>
+{
+  static void run(Container&, typename Container::iterator)
+  {}
+};
 // ****************************************************************************
 } // namespace internal
 } // namespace CGAL

@@ -57,10 +57,11 @@ namespace CGAL {
   /// Attribute associated with a point and an info.
   template < class LCC, class Info_=void, class Tag=Tag_true,
              class Functor_on_merge_=Null_functor,
-             class Functor_on_split_=Null_functor >
+             class Functor_on_split_=Null_functor,
+             class WithID=Tag_false >
   class Cell_attribute_with_point :
     public Cell_attribute<LCC, Info_, Tag,
-                          Functor_on_merge_, Functor_on_split_>,
+                          Functor_on_merge_, Functor_on_split_, WithID>,
     public Point_for_cell<typename LCC::Point>
   {
     template <class, class, class, class>
@@ -112,10 +113,13 @@ namespace CGAL {
   /// Attribute associated with a point and without info.
   template < class LCC, class Tag,
              class Functor_on_merge_,
-             class Functor_on_split_ >
+             class Functor_on_split_,
+             class WithID>
   class Cell_attribute_with_point<LCC, void, Tag,
-                                  Functor_on_merge_, Functor_on_split_> :
-    public Cell_attribute<LCC, void, Tag, Functor_on_merge_, Functor_on_split_>,
+                                  Functor_on_merge_, Functor_on_split_,
+                                  WithID>:
+    public Cell_attribute<LCC, void,
+                          Tag, Functor_on_merge_, Functor_on_split_, WithID>,
     public Point_for_cell<typename LCC::Point>
   {
     template <class, class, class, class>
@@ -126,7 +130,7 @@ namespace CGAL {
 
   public:
     typedef Cell_attribute<LCC, void, Tag,
-                           Functor_on_merge_, Functor_on_split_> Base1;
+                           Functor_on_merge_, Functor_on_split_, WithID> Base1;
     typedef Point_for_cell<typename LCC::Point> Base2;
 
     typedef void                            Info;
@@ -156,6 +160,7 @@ namespace CGAL {
     Cell_attribute_with_point(const Point& apoint) : Base2(apoint)
     {}
   };
+
 } // namespace CGAL
 
 #endif // CGAL_CELL_ATTRIBUTE_WITH_POINT_H //
