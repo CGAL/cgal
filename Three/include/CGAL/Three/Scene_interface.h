@@ -138,13 +138,14 @@ public:
   virtual double len_diagonal() const = 0;
 
 public:
-  //! Updates the information about the item `i`th in the
+  //! Updates the information about the `i`th item in the
   //! Geometric Objects list and redraws the scene.
   virtual void itemChanged(Item_id i) = 0;
   //! Updates the information about `item` in the
   //! Geometric Objects list and redraws the scene.
-  virtual void itemChanged(CGAL::Three::Scene_item* itme) = 0;
-
+  virtual void itemChanged(CGAL::Three::Scene_item* item) = 0;
+  //! Re computes the scene Bbox without recentering it.
+  virtual void itemVisibilityChanged(CGAL::Three::Scene_item*) = 0;
   //! Clears the current selection then sets the selected item to the target index.
   //! Used to update the selection in the Geometric Objects view.
   virtual void setSelectedItem(Item_id) = 0;  

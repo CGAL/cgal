@@ -160,6 +160,8 @@ void CGAL::Three::Scene_item::selection_changed(bool) {}
 void CGAL::Three::Scene_item::setVisible(bool b)
 {
   visible_ = b;
+  if(b)
+    itemVisibilityChanged();
 }
 
 

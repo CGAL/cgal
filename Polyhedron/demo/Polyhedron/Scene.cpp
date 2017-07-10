@@ -61,6 +61,8 @@ Scene::addItem(CGAL::Three::Scene_item* item)
     m_entries.push_back(item);
     connect(item, SIGNAL(itemChanged()),
             this, SLOT(itemChanged()));
+    connect(item, SIGNAL(itemVisibilityChanged()),
+            this, SLOT(itemVisibilityChanged()));
     connect(item, SIGNAL(redraw()),
             this, SLOT(callDraw()));
     if(item->isFinite()
@@ -68,7 +70,7 @@ Scene::addItem(CGAL::Three::Scene_item* item)
             && bbox_before + item->bbox() != bbox_before
             )
     {
-        Q_EMIT updated_bbox();
+        Q_EMIT updated_bbox(true);
     }
     QList<QStandardItem*> list;
     for(int i=0; i<5; i++)
@@ -98,6 +100,8 @@ Scene::replaceItem(Scene::Item_id index, CGAL::Three::Scene_item* item, bool emi
 
     connect(item, SIGNAL(itemChanged()),
             this, SLOT(itemChanged()));
+    connect(item, SIGNAL(itemVisibilityChanged()),
+            this, SLOT(itemVisibilityChanged()));
     CGAL::Three::Scene_group_item* group =
             qobject_cast<CGAL::Three::Scene_group_item*>(m_entries[index]);
     if(group)
@@ -116,7 +120,7 @@ Scene::replaceItem(Scene::Item_id index, CGAL::Three::Scene_item* item, bool emi
          m_entries[index]->isFinite() && !m_entries[index]->isEmpty() &&
          item->bbox()!=m_entries[index]->bbox() )
     {
-    Q_EMIT updated_bbox();
+    Q_EMIT updated_bbox(true);
     }
 
     if(emit_item_about_to_be_destroyed) {
@@ -909,6 +913,24 @@ void Scene::itemChanged(CGAL::Three::Scene_item*)
   Q_EMIT dataChanged(this->createIndex(0, 0),
                      this->createIndex(m_entries.size() - 1, LastColumn));
 }
+
+void Scene::itemVisibilityChanged()
+{
+    CGAL::Three::Scene_item* item = qobject_cast<CGAL::Three::Scene_item*>(sender());
+    if(item)
+        itemVisibilityChanged(item);
+}
+
+void Scene::itemVisibilityChanged(CGAL::Three::Scene_item* item)
+{
+  if(item->isFinite()
+     && !item->isEmpty())
+  {
+    //does not recenter
+    Q_EMIT updated_bbox(false);
+  }
+}
+
 
 bool SceneDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
                                 const QStyleOptionViewItem &option,

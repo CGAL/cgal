@@ -95,7 +95,8 @@ public Q_SLOTS:
   //!Creates a new group and adds it to the scene.
   void makeNewGroup();
   //! Re-computes the viewer's Bbox
-  void updateViewerBBox();
+  //! If `b` is true, recenters the scene.
+  void updateViewerBBox(bool b);
   //! Opens a script or a file with the default loader if there is.
   void open(QString);
   //! Is called when the up button is pressed.
@@ -346,7 +347,6 @@ protected Q_SLOTS:
   void filterOperations();
   //!Updates the bounding box and moves the camera to fits the scene.
   void on_actionRecenterScene_triggered();
-
   //!Resizes the header of the scene view
   void resetHeader();
 

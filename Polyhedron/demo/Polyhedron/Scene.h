@@ -142,6 +142,9 @@ public Q_SLOTS:
   void itemChanged();
   void itemChanged(int i) Q_DECL_OVERRIDE;
   void itemChanged(CGAL::Three::Scene_item*) Q_DECL_OVERRIDE;
+  //!Transmits a CGAL::Three::Scene_item::itemVisibilityChanged() signal to the scene.
+  void itemVisibilityChanged();
+  void itemVisibilityChanged(CGAL::Three::Scene_item*) Q_DECL_OVERRIDE;
   //!Removes `item` from all the groups of the scene.
   void remove_item_from_groups(CGAL::Three::Scene_item* item);
   //!Re-organizes the sceneView.
@@ -209,7 +212,8 @@ Q_SIGNALS:
   //! Is emitted when a new item is added to the scene.
   void newItem(int);
   //! Emit this to re-compute the viewer's Bbox;
-  void updated_bbox();
+  //! If `b` is true, the scene will be recentered
+  void updated_bbox(bool b);
   //! Emit this to redraw the scene.
   void updated();
   //! Is emitted when `item` is erased.
