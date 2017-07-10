@@ -1124,7 +1124,10 @@ bool Scene_surface_mesh_item::intersect_face(double orig_x,
 void Scene_surface_mesh_item::setItemIsMulticolor(bool b)
 {
   if(b)
+  {
     d->fpatch_id_map = d->smesh_->add_property_map<face_descriptor,int>("f:patch_id").first;
+    d->has_fcolors = true;
+  }
   else if(d->smesh_->property_map<face_descriptor,int>("f:patch_id").second)
   {
     d->fpatch_id_map = d->smesh_->property_map<face_descriptor,int>("f:patch_id").first;
@@ -1141,6 +1144,11 @@ void Scene_surface_mesh_item::show_feature_edges(bool b)
     itemChanged();
   }
   d->has_feature_edges = b;
+}
+
+bool Scene_surface_mesh_item::isItemMulticolor()
+{
+  return d->has_fcolors;
 }
 
 bool
