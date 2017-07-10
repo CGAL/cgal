@@ -41,8 +41,8 @@ polygon, and considers a single translation of the moving polygon.
 
 Casting is a manufacturing process where liquid material is poured
 into a cavity inside a mold, which has the shape of a desired
-product. (The mold can take any shape and form as long as it has a
-cavity of the desired shape.) After the material solidifies, the
+product (The mold can take any shape and form as long as it has a
+cavity of the desired shape). After the material solidifies, the
 product is pulled out of the mold. Typically a mold is used to
 manufacture numerous copies of a product. The challenge is designing a
 proper mold, such that the solidified product can be separated from
@@ -50,7 +50,7 @@ its mold without breaking it.
 
 This package provides a function called
 `CGAL::Set_movable_separability_2::Single_mold_translational_casting::top_edges()`
-that, given a simple closed polygon \f$P\f$, it determines whether a
+that, given a simple closed polygon \f$P\f$, determines whether a
 cavity (of a mold in the plane) that has the shape of \f$P\f$ can be
 used so that the polygon \f$P\f$ could be pulled out of the mold
 without colliding into the mold (but possibly sliding along the mold
