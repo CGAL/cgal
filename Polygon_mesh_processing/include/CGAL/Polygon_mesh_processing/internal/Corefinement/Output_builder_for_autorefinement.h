@@ -344,7 +344,7 @@ public:
           ++patch_sizes[i];
 
     // (2-a) Use the orientation around an edge to classify a patch
-    boost::dynamic_bitset<> patches_to_keep(nb_patches, false);
+    boost::dynamic_bitset<> patches_to_keep(nb_patches, true);
     boost::dynamic_bitset<> patch_status_not_set(nb_patches,true);
     boost::dynamic_bitset<> coplanar_patches(nb_patches,false);
 
@@ -372,23 +372,7 @@ public:
       if ( is_border_edge(h1, tm) ){
         if ( is_border_edge(h2,tm) )
         {
-          if ( is_border(h1,tm) != is_border(h2,tm) )
-          {
-            //No restriction at this level
-            std::size_t patch_id1 =
-              patch_ids[ get( fids, is_border(h1,tm)
-                                            ? face(opposite(h1,tm),tm)
-                                            : face(h1,tm)) ];
-            std::size_t patch_id2 =
-              patch_ids[ get( fids, is_border(h2,tm)
-                                            ? face(opposite(h2,tm),tm)
-                                            : face(h2,tm)) ];
-            patch_status_not_set.reset(patch_id1);
-            patch_status_not_set.reset(patch_id2);
-            patches_to_keep.set(patch_id1);
-            patches_to_keep.set(patch_id2);
-          }
-          else
+          if ( is_border(h1,tm) == is_border(h2,tm) )
           {
             //Nothing allowed
             m_impossible_operation = true;
@@ -476,13 +460,13 @@ public:
               nodes);
             if ( q2_is_between_p1p2 ){
              //case 1
-             patches_to_keep.set(patch_id_p2);
-             patches_to_keep.set(patch_id_p1);
+             patches_to_keep.reset(patch_id_q2);
+             patches_to_keep.reset(patch_id_q1);
             }
             else{
               //case 2
-              patches_to_keep.set(patch_id_q1);
-              patches_to_keep.set(patch_id_q2);
+              patches_to_keep.reset(patch_id_p1);
+              patches_to_keep.reset(patch_id_p2);
             }
             continue;
           }
@@ -505,13 +489,13 @@ public:
                 nodes);
               if ( q1_is_between_p1p2 ){
                 // case 3
-                patches_to_keep.set(patch_id_q1);
-                patches_to_keep.set(patch_id_q2);
+                patches_to_keep.reset(patch_id_p1);
+                patches_to_keep.reset(patch_id_p2);
               }
               else{
                 // case 4
-                patches_to_keep.set(patch_id_q1);
-                patches_to_keep.set(patch_id_p2);
+                patches_to_keep.reset(patch_id_q2);
+                patches_to_keep.reset(patch_id_p1);
               }
               continue;
             }
@@ -534,12 +518,12 @@ public:
                   nodes);
                 if ( q2_is_between_p1p2 )
                 {  //case 5
-                  patches_to_keep.set(patch_id_p1);
-                  patches_to_keep.set(patch_id_p2);
+                  patches_to_keep.reset(patch_id_q1);
+                  patches_to_keep.reset(patch_id_q2);
                 }else{
                   //case 6
-                  patches_to_keep.set(patch_id_p1);
-                  patches_to_keep.set(patch_id_q2);
+                  patches_to_keep.reset(patch_id_p2);
+                  patches_to_keep.reset(patch_id_q1);
                 }
                 continue;
               }
@@ -561,13 +545,13 @@ public:
                     nodes);
                   if ( q1_is_between_p1p2 ){
                     //case 7
-                    patches_to_keep.set(patch_id_p1);
-                    patches_to_keep.set(patch_id_p2);
+                    patches_to_keep.reset(patch_id_q1);
+                    patches_to_keep.reset(patch_id_q2);
                   }
                   else{
                     //case 8
-                    patches_to_keep.set(patch_id_p1);
-                    patches_to_keep.set(patch_id_q1);
+                    patches_to_keep.reset(patch_id_p2);
+                    patches_to_keep.reset(patch_id_q2);
                   }
                   continue;
                 }
@@ -616,10 +600,16 @@ public:
                 nodes);
               if (!p1_is_between_q1q2){
                 // case (a4)
-                patches_to_keep.set(patch_id_p1);
-                patches_to_keep.set(patch_id_p2);
+                patches_to_keep.reset(patch_id_q1);
+                patches_to_keep.reset(patch_id_q2);
               }
-              // else case (b4)
+             else{
+               // case (b4)
+               patches_to_keep.reset(patch_id_p1);
+               patches_to_keep.reset(patch_id_p2);
+               patches_to_keep.reset(patch_id_q1);
+               patches_to_keep.reset(patch_id_q2);
+             }
             }
             else
             {
@@ -630,8 +620,8 @@ public:
                 m_impossible_operation = true;
                 return;
               }
-              patches_to_keep.set(patch_id_p1);
-              patches_to_keep.set(patch_id_q2);
+              patches_to_keep.reset(patch_id_p2);
+              patches_to_keep.reset(patch_id_q1);
             }
           }
           else
@@ -645,8 +635,8 @@ public:
                 m_impossible_operation = true;
                 return;
               }
-              patches_to_keep.set(patch_id_q1);
-              patches_to_keep.set(patch_id_p2);
+              patches_to_keep.reset(patch_id_q2);
+              patches_to_keep.reset(patch_id_p1);
             }
             else
             {
@@ -663,84 +653,22 @@ public:
               }
               else{
                 //case (f4)
-                patches_to_keep.set(patch_id_q1);
-                patches_to_keep.set(patch_id_q2);
+                patches_to_keep.reset(patch_id_p1);
+                patches_to_keep.reset(patch_id_p2);
               }
             }
           }
         }
     }
 
-/// TODO HANDLE ME
-
-/*
-    // (2-b) Classify isolated surface patches wrt the other mesh
-    // in case a mesh is not closed, any cc of the second mesh that is
-    // free from intersection is considered as outside/inside
-    // (depending on is_tmi_inside_out)
-    if (!is_tm_closed)
-      patch_status_not_set_tm2.reset();
-
-    typedef Side_of_triangle_mesh<TriangleMesh,
-                                  Kernel,
-                                  VertexPointMap> Inside_poly_test;
-
-#ifdef CGAL_COREFINEMENT_POLYHEDRA_DEBUG
-    #warning stop using next_marked_halfedge_around_target_vertex and create lists of halfedges instead?
-#endif
-
-    if ( patch_status_not_set.any() )
-    {
-      CGAL::Bounded_side in_tm2 = is_tm2_inside_out
-                                ? ON_UNBOUNDED_SIDE : ON_BOUNDED_SIDE;
-
-      Inside_poly_test inside_tm2(tm2, vpm2);
-
-      BOOST_FOREACH(face_descriptor f, faces(tm))
-      {
-        std::size_t patch_id=patch_ids[ get(fids1, f) ];
-        if ( patch_status_not_set_tm1.test( patch_id ) )
-        {
-          patch_status_not_set_tm1.reset( patch_id );
-          vertex_descriptor v = target(halfedge(f, tm1), tm1);
-          Bounded_side position = inside_tm2( get(vpm1, v));
-          if ( position == in_tm2 )
-            is_patch_inside_tm2.set(patch_id);
-          else
-            if( position == ON_BOUNDARY)
-            {
-              if (tm1_coplanar_faces.test(get(fids1, f)))
-              {
-                coplanar_patches_of_tm1.set(patch_id);
-                coplanar_patches_of_tm1_for_union_and_intersection.set(patch_id);
-              }
-              else
-              {
-                vertex_descriptor vn = source(halfedge(f, tm1), tm1);
-                Bounded_side other_position = inside_tm2( get(vpm1, vn) );
-                if (other_position==ON_BOUNDARY)
-                {
-                  // \todo improve this part which is not robust with a kernel
-                  // with inexact constructions.
-                  other_position = inside_tm2(midpoint(get(vpm1, vn),
-                                                     get(vpm1, v) ));
-                }
-                if ( other_position == in_tm2 )
-                 is_patch_inside_tm2.set(patch_id);
-              }
-            }
-          if ( patch_status_not_set_tm1.none() ) break;
-        }
-      }
-    }
-*/
-
-
-    CGAL_assertion(patch_status_not_set.none());
+    // the goal here is to remove surface self-intersections. If there are
+    // some nested surfaces, they will not be fixed by this function.
+    // As a consequence, patch_status_not_set.none() might not be true.
 
 #ifdef CGAL_COREFINEMENT_DEBUG
     std::cout << "patches_to_keep " <<  patches_to_keep << "\n";
     std::cout << "coplanar_patches " << coplanar_patches << "\n";
+    std::cout << "patch_status_not_set " << patch_status_not_set << "\n";
     std::cout << "Size of patches: ";
     std::cout << "Size of patches of: ";
     std::copy(patch_sizes.rbegin(), patch_sizes.rend(),
