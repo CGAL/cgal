@@ -69,7 +69,7 @@ public:
    * nothing.
    * \param p the point which coordinates are to be normalized
    */ 
-  void operator()(Point_2 & p) {}
+  void operator()(Point_2 &) {}
 };
 
 #if defined(CGAL_USE_LEDA)
@@ -355,7 +355,7 @@ public:
 
   /*! Copy Constructor */
   Arr_spherical_gaussian_map_3
-  (const Arr_spherical_gaussian_map_3 & gaussian_map)
+  (const Arr_spherical_gaussian_map_3 &)
   {
     // Not implemented yet!
     CGAL_error();

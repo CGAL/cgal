@@ -1,15 +1,7 @@
-#! /bin/bash
+# This CMake script is a translation of the bash script `./cgal_test_base`
+# to the CMake language. It defines the targets to compile, as well as the
+# tests to run with CTest.
 
-# This is a script for the CGAL test suite. Such a script must obey
-# the following rules:
-#
-# - the name of the script is cgal_test
-# - for every target two one line messages are written to the file 'error.txt'
-#     the first one indicates if the compilation was successful
-#     the second one indicates if the execution was successful
-#   if one of the two was not successful, the line should start with 'ERROR:'
-# - running the script should not require any user interaction
-# - the script should clean up object files and executables
 
 # SET PARAMETERS FOR cgal_test
 
