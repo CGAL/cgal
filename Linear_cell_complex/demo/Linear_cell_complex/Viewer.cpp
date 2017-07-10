@@ -663,7 +663,11 @@ void Viewer::sceneChanged()
   if (m_previous_scene_empty)
     this->showEntireScene();
   else
+#if QGLVIEWER_VERSION >= 0x020700
+    this->update();
+#else
     this->updateGL();
+#endif
 
   m_previous_scene_empty = scene->lcc->is_empty(); // for the next call to sceneChanged
 }
@@ -783,7 +787,11 @@ void Viewer::keyPressEvent(QKeyEvent *e)
       glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
       displayMessage("Filled faces.");
     }
+#if QGLVIEWER_VERSION >= 0x020700
+    update();
+#else
     updateGL();
+#endif
   }
   else if ((e->key()==Qt::Key_F) && (modifiers==Qt::NoButton))
   {
@@ -792,19 +800,31 @@ void Viewer::keyPressEvent(QKeyEvent *e)
       displayMessage("Flat shading.");
     else
       displayMessage("Gouraud shading.");
+#if QGLVIEWER_VERSION >= 0x020700
+    update();
+#else
     updateGL();
+#endif
   }
   else if ((e->key()==Qt::Key_E) && (modifiers==Qt::NoButton))
   {
     edges = !edges;
     displayMessage(QString("Draw edges=%1.").arg(edges?"true":"false"));
+#if QGLVIEWER_VERSION >= 0x020700
+    update();
+#else
     updateGL();
+#endif
   }
   else if ((e->key()==Qt::Key_V) && (modifiers==Qt::NoButton))
   {
     vertices = !vertices;
     displayMessage(QString("Draw vertices=%1.").arg(vertices?"true":"false"));
+#if QGLVIEWER_VERSION >= 0x020700
+    update();
+#else
     updateGL();
+#endif
   }
   else if ((e->key()==Qt::Key_N) && (modifiers==Qt::NoButton))
   {
@@ -816,25 +836,41 @@ void Viewer::keyPressEvent(QKeyEvent *e)
   {
     size_edges+=.5;
     displayMessage(QString("Size of edges=%1.").arg(size_edges));
+#if QGLVIEWER_VERSION >= 0x020700
+    update();
+#else
     updateGL();
+#endif
   }
   else if ((e->key()==Qt::Key_Minus) && (modifiers==Qt::KeypadModifier))
   {
     if (size_edges>.5) size_edges-=.5;
     displayMessage(QString("Size of edges=%1.").arg(size_edges));
+#if QGLVIEWER_VERSION >= 0x020700
+    update();
+#else
     updateGL();
+#endif
   }
   else if ((e->key()==Qt::Key_Plus) && (modifiers==(Qt::ShiftModifier|Qt::KeypadModifier)))
   {
     size_points+=.5;
     displayMessage(QString("Size of points=%1.").arg(size_points));
+#if QGLVIEWER_VERSION >= 0x020700
+    update();
+#else
     updateGL();
+#endif
   }
   else if ((e->key()==Qt::Key_Minus) && (modifiers==(Qt::ShiftModifier|Qt::KeypadModifier)))
   {
     if (size_points>.5) size_points-=.5;
     displayMessage(QString("Size of points=%1.").arg(size_points));
+#if QGLVIEWER_VERSION >= 0x020700
+    update();
+#else
     updateGL();
+#endif
   }
   else if ((e->key()==Qt::Key_PageUp) && (modifiers==Qt::NoButton))
   {
@@ -846,7 +882,11 @@ void Viewer::keyPressEvent(QKeyEvent *e)
     if (ambient.z()>1.) ambient.setZ(1.);
     displayMessage(QString("Light color=(%1 %2 %3).").
         arg(ambient.x()).arg(ambient.y()).arg(ambient.z()));
+#if QGLVIEWER_VERSION >= 0x020700
+    update();
+#else
     updateGL();
+#endif
   }
   else if ((e->key()==Qt::Key_PageDown) && (modifiers==Qt::NoButton))
   {
@@ -858,7 +898,11 @@ void Viewer::keyPressEvent(QKeyEvent *e)
     if (ambient.z()<0.) ambient.setZ(0.);
     displayMessage(QString("Light color=(%1 %2 %3).").
         arg(ambient.x()).arg(ambient.y()).arg(ambient.z()));
+#if QGLVIEWER_VERSION >= 0x020700
+    update();
+#else
     updateGL();
+#endif
   }
   else if ((e->key()==Qt::Key_PageUp) && (modifiers==Qt::ShiftModifier))
   {
@@ -866,7 +910,11 @@ void Viewer::keyPressEvent(QKeyEvent *e)
     if (ambient.x()>1.) ambient.setX(1.);
     displayMessage(QString("Light color=(%1 %2 %3).").
         arg(ambient.x()).arg(ambient.y()).arg(ambient.z()));
+#if QGLVIEWER_VERSION >= 0x020700
+    update();
+#else
     updateGL();
+#endif
   }
   else if ((e->key()==Qt::Key_PageUp) && (modifiers==Qt::AltModifier))
   {
@@ -874,7 +922,11 @@ void Viewer::keyPressEvent(QKeyEvent *e)
     if (ambient.y()>1.) ambient.setY(1.);
     displayMessage(QString("Light color=(%1 %2 %3).").
         arg(ambient.x()).arg(ambient.y()).arg(ambient.z()));
+#if QGLVIEWER_VERSION >= 0x020700
+    update();
+#else
     updateGL();
+#endif
   }
   else if ((e->key()==Qt::Key_PageUp) && (modifiers==Qt::ControlModifier))
   {
@@ -882,7 +934,11 @@ void Viewer::keyPressEvent(QKeyEvent *e)
     if (ambient.z()>1.) ambient.setZ(1.);
     displayMessage(QString("Light color=(%1 %2 %3).").
         arg(ambient.x()).arg(ambient.y()).arg(ambient.z()));
+#if QGLVIEWER_VERSION >= 0x020700
+    update();
+#else
     updateGL();
+#endif
   }
   else if ((e->key()==Qt::Key_PageDown) && (modifiers==Qt::ShiftModifier))
   {
@@ -890,7 +946,11 @@ void Viewer::keyPressEvent(QKeyEvent *e)
     if (ambient.x()<0.) ambient.setX(0.);
     displayMessage(QString("Light color=(%1 %2 %3).").
         arg(ambient.x()).arg(ambient.y()).arg(ambient.z()));
+#if QGLVIEWER_VERSION >= 0x020700
+    update();
+#else
     updateGL();
+#endif
   }
   else if ((e->key()==Qt::Key_PageDown) && (modifiers==Qt::AltModifier))
   {
@@ -898,7 +958,11 @@ void Viewer::keyPressEvent(QKeyEvent *e)
     if (ambient.y()<0.) ambient.setY(0.);
     displayMessage(QString("Light color=(%1 %2 %3).").
         arg(ambient.x()).arg(ambient.y()).arg(ambient.z()));
+#if QGLVIEWER_VERSION >= 0x020700
+    update();
+#else
     updateGL();
+#endif
   }
   else if ((e->key()==Qt::Key_PageDown) && (modifiers==Qt::ControlModifier))
   {
@@ -906,7 +970,11 @@ void Viewer::keyPressEvent(QKeyEvent *e)
     if (ambient.z()<0.) ambient.setZ(0.);
     displayMessage(QString("Light color=(%1 %2 %3).").
         arg(ambient.x()).arg(ambient.y()).arg(ambient.z()));
+#if QGLVIEWER_VERSION >= 0x020700
+    update();
+#else
     updateGL();
+#endif
   }
   else
     QGLViewer::keyPressEvent(e);

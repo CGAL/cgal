@@ -24,6 +24,7 @@
 #include "typedefs.h"
 
 #include <vector>
+#include <QMap>
 #include <QGLViewer/qglviewer.h>
 #include <QKeyEvent>
 #include <QOpenGLFunctions_2_1>
