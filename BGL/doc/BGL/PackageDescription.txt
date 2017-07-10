@@ -338,6 +338,10 @@ user might encounter.
 - `CGAL::make_tetrahedron()`
 - `CGAL::make_quad()`
 - `CGAL::make_hexahedron()`
+- `CGAL::make_icosahedron()`
+- `CGAL::make_regular_prism()`
+- `CGAL::make_pyramid()`
+- `CGAL::make_grid()`
 
 - `CGAL::clear()`
 - `CGAL::copy_face_graph()`
