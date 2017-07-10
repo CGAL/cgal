@@ -950,7 +950,8 @@ void Viewer::drawVisualHints()
     if(d->axis_are_displayed)
     {
       d->rendering_program.bind();
-      SetOrthoProjection(true);
+      qglviewer::Camera::Type camera_type = camera()->type();
+      camera()->setType(qglviewer::Camera::ORTHOGRAPHIC);
         QMatrix4x4 mvpMatrix;
         QMatrix4x4 mvMatrix;
         for(int i=0; i < 16; i++)
@@ -959,7 +960,7 @@ void Viewer::drawVisualHints()
         }
         mvpMatrix.ortho(-1,1,-1,1,-1,1);
         mvpMatrix = mvpMatrix*mvMatrix;
-        SetOrthoProjection(false);
+        camera()->setType(camera_type);
         QVector4D	position(0.0f,0.0f,1.0f,1.0f );
         // define material
         QVector4D	ambient;
@@ -1547,9 +1548,7 @@ void Viewer::SetOrthoProjection(bool b)
     camera()->setType(qglviewer::Camera::ORTHOGRAPHIC);
   else
     camera()->setType(qglviewer::Camera::PERSPECTIVE);
-
-
-
+  update();
 }
 
 void Viewer::setOffset(qglviewer::Vec offset){ d->offset = offset; }
