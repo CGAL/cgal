@@ -87,11 +87,11 @@ body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
       suffix=''
       if args.doxygen_version:
         suffix = ""+args.doxygen_version
-      link="\Documentation built with  <a href=output/Manual/index.html>our fork of Doxygen {_suffix}</a>\n".format(_suffix=suffix)
+      link="<a href=\"output/Manual/index.html\">Documentation built</a> with <a href=\"https://github.com/CGAL/doxygen\">our fork of Doxygen {_suffix}</a>\n".format(_suffix=suffix)
       suffix = ''
       if args.master_describe:
         suffix=args.master_describe
-      link_master="\n<br>Documentation built with the <a href=master/Manual/index.html> master version of Doxygen {_suffix}</a>(buggy), so that we see progress/regression of doxygen development as far as CGAL is concerned.\n".format(_suffix=suffix)
+      link_master="\n<br><a href=\"master/Manual/index.html\">Documentation built</a> with <a href=\"https://github.com/doxygen/doxygen\">the master version of Doxygen {_suffix}</a> (buggy), so that we see progress/regression of doxygen development as far as CGAL is concerned.\n".format(_suffix=suffix)
       d = pq(page_header+link+"   "+link_master+page_footer)
     else:
       d = pq(page_header+page_footer)
