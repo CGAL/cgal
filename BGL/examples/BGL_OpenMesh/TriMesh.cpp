@@ -31,7 +31,8 @@ int main(int argc, char** argv )
   Mesh mesh;
 
   std::vector<vertex_descriptor> V;
-  CGAL::read_off(std::ifstream((argc>1)?argv[1]:"in.off"), mesh);
+  std::ifstream in((argc>1)?argv[1]:"in.off");
+  CGAL::read_off(in, mesh);
   BOOST_FOREACH(vertex_descriptor vd, vertices(mesh)){
     BOOST_FOREACH(halfedge_descriptor hd, CGAL::halfedges_around_target(vd,mesh)){
       if(! CGAL::is_border(edge(hd,mesh),mesh)){
