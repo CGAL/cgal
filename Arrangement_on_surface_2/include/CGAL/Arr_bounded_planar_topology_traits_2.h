@@ -200,50 +200,8 @@ public:
   // alias template. This feature can be mimiked by non C++11 support simply by
   // defining a type that inherits from the template we need to alias.  However,
   // the non-C++11 code requires the (re)definition of all constructors of the
-  // derived class. The non-C++11 code follows the commented out C++11 code.
-  // When we move to C++11 we can use the more elgant code.
-#if 0
-  // Type definition for the construction surface-sweep visitor.
-  template <typename Evt, typename Crv>
-  using Construction_helper =
-    Arr_bounded_planar_construction_helper<Gt2, Arr, Evt, Crv>;
-
-  // Type definition for the no-intersection construction surface-sweep visitor.
-  template <typename Evt, typename Crv>
-  using No_intersection_construction_helper =
-    Arr_bounded_planar_construction_helper<Gt2, Arr, Evt, Crv>;
-
-  // Type definition for the insertion surface-sweep visitor.
-  typedef Arr_insertion_traits_2<Gt2, Arr>                      I_traits;
-  template <typename Evt, typename Crv>
-  using Insertion_helper =
-    Arr_bounded_planar_insertion_helper<I_traits, Arr, Evt, Crv>;
-
-  // Type definition for the no-intersection insertion surface-sweep visitor.
-  typedef Arr_basic_insertion_traits_2<Gt2, Arr>                Nxi_traits;
-  template <typename Evt, typename Crv>
-  using No_intersection_insertion_helper =
-    Arr_bounded_planar_insertion_helper<Nxi_traits, Arr, Evt, Crv>;
-
-  // Type definition for the batched point-location surface-sweep visitor.
-  typedef Arr_batched_point_location_traits_2<Arr>              Bpl_traits;
-  template <typename Evt, typename Crv>
-  using Batched_point_location_helper =
-    Arr_bounded_planar_batched_pl_helper<Bpl_traits, Arr, Evt, Crv>;
-
-  // Type definition for the vertical decomposition sweep-line visitor.
-  typedef Arr_batched_point_location_traits_2<Arr>              Vd_traits;
-  template <typename Evt, typename Crv>
-  using Vertical_decomposition_helper =
-    Arr_bounded_planar_vert_decomp_helper<Vd_traits, Arr, Evt, Crv>;
-
-  // Type definition for the overlay surface-sweep visitor.
-  template <typename Gt, typename Evt, typename Crv,
-            typename ArrA, typename ArrB>
-  using Overlay_helper =
-    Arr_bounded_planar_overlay_helper<Gt, ArrA, ArrB, Arr, Evt, Crv>;
-
-#else
+  // derived class.
+#if defined(CGAL_CFG_NO_CPP0X_TEMPLATE_ALIASES)
   // Type definition for the construction surface-sweep visitor.
   template <typename Evt, typename Crv>
   struct Construction_helper :
@@ -318,6 +276,46 @@ public:
                                                                 Base;
     Overlay_helper(const ArrA* arr_a, const ArrB* arr_b) : Base(arr_a, arr_b) {}
   };
+#else
+  // Type definition for the construction surface-sweep visitor.
+  template <typename Evt, typename Crv>
+  using Construction_helper =
+    Arr_bounded_planar_construction_helper<Gt2, Arr, Evt, Crv>;
+
+  // Type definition for the no-intersection construction surface-sweep visitor.
+  template <typename Evt, typename Crv>
+  using No_intersection_construction_helper =
+    Arr_bounded_planar_construction_helper<Gt2, Arr, Evt, Crv>;
+
+  // Type definition for the insertion surface-sweep visitor.
+  typedef Arr_insertion_traits_2<Gt2, Arr>                      I_traits;
+  template <typename Evt, typename Crv>
+  using Insertion_helper =
+    Arr_bounded_planar_insertion_helper<I_traits, Arr, Evt, Crv>;
+
+  // Type definition for the no-intersection insertion surface-sweep visitor.
+  typedef Arr_basic_insertion_traits_2<Gt2, Arr>                Nxi_traits;
+  template <typename Evt, typename Crv>
+  using No_intersection_insertion_helper =
+    Arr_bounded_planar_insertion_helper<Nxi_traits, Arr, Evt, Crv>;
+
+  // Type definition for the batched point-location surface-sweep visitor.
+  typedef Arr_batched_point_location_traits_2<Arr>              Bpl_traits;
+  template <typename Evt, typename Crv>
+  using Batched_point_location_helper =
+    Arr_bounded_planar_batched_pl_helper<Bpl_traits, Arr, Evt, Crv>;
+
+  // Type definition for the vertical decomposition sweep-line visitor.
+  typedef Arr_batched_point_location_traits_2<Arr>              Vd_traits;
+  template <typename Evt, typename Crv>
+  using Vertical_decomposition_helper =
+    Arr_bounded_planar_vert_decomp_helper<Vd_traits, Arr, Evt, Crv>;
+
+  // Type definition for the overlay surface-sweep visitor.
+  template <typename Gt, typename Evt, typename Crv,
+            typename ArrA, typename ArrB>
+  using Overlay_helper =
+    Arr_bounded_planar_overlay_helper<Gt, ArrA, ArrB, Arr, Evt, Crv>;
 #endif
   //@}
 
