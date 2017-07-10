@@ -527,7 +527,7 @@ private:
 
 
         // check degenerate cases
-        double tolerance = 1e-5; // to think about it
+        double tolerance = 1e-3; // to think about it
 
         if ( edge1.squared_length()          < tolerance ||
              edge2.squared_length()          < tolerance ||

@@ -49,7 +49,9 @@ int main(int argc, char* argv[]){
         "data/tetra3",
         "data/tetra4",
         "data/two_tris_collinear",
-        "data/U"
+        "data/U",
+        "data/elephant-invalid",
+        "data/mech-holes-shark-invalid"
     };
 
 
