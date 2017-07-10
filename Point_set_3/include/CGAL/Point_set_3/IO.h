@@ -622,6 +622,31 @@ write_las_point_set(
 }
   
 #endif // LAS
+#else // CXX11
+template <typename Point, typename Vector>
+bool
+read_ply_point_set(std::istream&, CGAL::Point_set_3<Point, Vector>&)
+{
+  CGAL_static_assertion_msg (false, "CGAL PLY reader requires a C++11 compiler");
+}
+template <typename Point, typename Vector>
+bool
+write_ply_point_set(std::ostream&, const CGAL::Point_set_3<Point, Vector>&)
+{
+  CGAL_static_assertion_msg (false, "CGAL PLY writer requires a C++11 compiler");
+}
+template <typename Point, typename Vector>
+bool
+read_las_point_set(std::istream&, CGAL::Point_set_3<Point, Vector>&)
+{
+  CGAL_static_assertion_msg (false, "CGAL LAS reader requires a C++11 compiler");
+}
+template <typename Point, typename Vector>
+bool
+write_las_point_set(std::ostream&, const CGAL::Point_set_3<Point, Vector>&)
+{
+  CGAL_static_assertion_msg (false, "CGAL LAS writer requires a C++11 compiler");
+}
 #endif // CXX11
   
 /*!
