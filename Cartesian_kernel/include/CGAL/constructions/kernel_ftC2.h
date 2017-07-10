@@ -455,7 +455,7 @@ weighted_circumcenterC2( const RT &px, const RT &py, const We &pw,
   RT dqw = RT(qw-pw);
   RT drw = RT(rw-pw);
 
-  weighted_circumcenter_translateC2(qx-px, qy-py, dqw,rx-px, ry-py,drw,x, y);
+  weighted_circumcenter_translateC2<RT>(qx-px, qy-py, dqw,rx-px, ry-py,drw,x, y);
   x += px;
   y += py;
 }
