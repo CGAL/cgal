@@ -873,6 +873,10 @@ endfunction()
 #---------------------------------------------------------------------#
 function(test_polycurve_conic_traits)
 #  echo polycurve test starting
+  if($ENV{CGAL_DISABLE_GMP})
+    MESSAGE(STATUS "test_polycurve_conic_traits requires CORE and will not be executed")
+    return()
+  endif()
   set(nt ${CORE_EXPR_NT})
   set(kernel ${CARTESIAN_KERNEL})
   set(geom_traits ${POLYCURVE_CONIC_GEOM_TRAITS})
@@ -940,6 +944,10 @@ endfunction()
 # polycurve bezier traits
 #---------------------------------------------------------------------#
 function(test_polycurve_bezier_traits)
+  if($ENV{CGAL_DISABLE_GMP})
+    MESSAGE(STATUS "test_polycurve_bezier_traits requires CORE and will not be executed")
+    return()
+  endif()
   set(nt ${CORE_EXPR_NT})
   set(kernel ${CARTESIAN_KERNEL})
   set(geom_traits ${POLYCURVE_BEZIER_GEOM_TRAITS})
@@ -1045,6 +1053,10 @@ endfunction()
 # conic traits
 #---------------------------------------------------------------------#
 function(test_conic_traits)
+  if($ENV{CGAL_DISABLE_GMP})
+    MESSAGE(STATUS "test_conic_traits requires CORE and will not be executed")
+    return()
+  endif()
   set(nt ${CORE_EXPR_NT})
   set(kernel ${CARTESIAN_KERNEL})
   set(geom_traits ${CORE_CONIC_GEOM_TRAITS})
@@ -1172,6 +1184,10 @@ endfunction()
 # bezier traits
 #---------------------------------------------------------------------#
 function(test_bezier_traits)
+  if($ENV{CGAL_DISABLE_GMP})
+    MESSAGE(STATUS "test_bezier_traits requires CORE and will not be executed")
+    return()
+  endif()
   set(nt ${CORE_EXPR_NT})
   set(kernel ${CARTESIAN_KERNEL})
   set(geom_traits ${BEZIER_GEOM_TRAITS})
@@ -1215,6 +1231,10 @@ endfunction()
 # rational arc traits
 #---------------------------------------------------------------------#
 function(test_rational_arc_traits)
+  if($ENV{CGAL_DISABLE_GMP})
+    MESSAGE(STATUS "test_rational_arc_traits requires CORE and will not be executed")
+    return()
+  endif()
   set(nt ${CORE_INT_NT})
   set(kernel ${UNIVARIATE_ALGEBRAIC_KERNEL})
   set(geom_traits ${RATIONAL_ARC_GEOM_TRAITS})
@@ -1275,7 +1295,10 @@ endfunction()
 #---------------------------------------------------------------------#
 function(test_algebraic_traits_core)
   #TODO: Adapt
-
+  if($ENV{CGAL_DISABLE_GMP})
+    MESSAGE(STATUS "test_algebraic_traits_core requires CORE and will not be executed")
+    return()
+  endif()
   set(nt ${CORE_INT_NT})
   set(kernel ${UNIVARIATE_ALGEBRAIC_KERNEL})
   set(geom_traits ${ALGEBRAIC_GEOM_TRAITS})

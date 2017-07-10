@@ -1101,6 +1101,10 @@ test_non_caching_segment_traits()
 #---------------------------------------------------------------------#
 test_polycurve_conic_traits()
 {
+  if [ -n "${CGAL_DISABLE_GMP}" ]; then
+    echo "CORE is not available, test_polycurve_conic_traits not ran"
+    return
+  fi
   echo polycurve test starting
   local nt=$CORE_EXPR_NT;
   local kernel=$CARTESIAN_KERNEL;
@@ -1181,6 +1185,10 @@ test_polycurve_circular_arc_traits()
 #---------------------------------------------------------------------#
 test_polycurve_bezier_traits()
 {
+  if [ -n "${CGAL_DISABLE_GMP}" ]; then
+    echo "CORE is not available, test_polycurve_bezier_traits not ran"
+    return
+  fi
   local nt=$CORE_EXPR_NT;
   local kernel=$CARTESIAN_KERNEL;
   local geom_traits=$POLYCURVE_BEZIER_GEOM_TRAITS;
@@ -1306,6 +1314,10 @@ test_linear_traits()
 #---------------------------------------------------------------------#
 test_conic_traits()
 {
+  if [ -n "${CGAL_DISABLE_GMP}" ]; then
+    echo "CORE is not available, test_conic_traits not ran"
+    return
+  fi
   local nt=$CORE_EXPR_NT;
   local kernel=$CARTESIAN_KERNEL;
   local geom_traits=$CORE_CONIC_GEOM_TRAITS;
@@ -1458,6 +1470,10 @@ test_circle_segments_traits()
 #---------------------------------------------------------------------#
 test_bezier_traits()
 {
+  if [ -n "${CGAL_DISABLE_GMP}" ]; then
+    echo "CORE is not available, test_bezier_traits not ran"
+    return
+  fi
   local nt=$CORE_EXPR_NT;
   local kernel=$CARTESIAN_KERNEL;
   local geom_traits=$BEZIER_GEOM_TRAITS;
@@ -1511,6 +1527,10 @@ test_spherical_arc_traits()
 #---------------------------------------------------------------------#
 test_rational_arc_traits()
 {
+  if [ -n "${CGAL_DISABLE_GMP}" ]; then
+    echo "CORE is not available, test_rational_arc_traits not ran"
+    return
+  fi
   local nt=$CORE_INT_NT;
   local kernel=$UNIVARIATE_ALGEBRAIC_KERNEL;
   local geom_traits=$RATIONAL_ARC_GEOM_TRAITS;
@@ -1586,7 +1606,10 @@ test_algebraic_traits_leda()
 test_algebraic_traits_core()
 {
   #TODO: Adapt
-
+  if [ -n "${CGAL_DISABLE_GMP}" ]; then
+    echo "CORE is not available, test_algebraic_traits_core not ran"
+    return
+  fi
   local nt=$CORE_INT_NT;
   local kernel=$UNIVARIATE_ALGEBRAIC_KERNEL;
   local geom_traits=$ALGEBRAIC_GEOM_TRAITS;
