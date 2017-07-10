@@ -482,7 +482,7 @@ public:
      *  \sa `estimate_neighborhood_squared_radius()`.
      */
     bool has_neighborhood_squared_radius() const {
-        return sign( _squared_radius ) == POSITIVE;
+        return CGAL::sign( _squared_radius ) == POSITIVE;
     }
     
     /// \cond internal_doc
