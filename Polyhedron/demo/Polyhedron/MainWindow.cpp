@@ -184,8 +184,8 @@ MainWindow::MainWindow(QWidget* parent)
   connect(scene, SIGNAL(itemAboutToBeDestroyed(CGAL::Three::Scene_item*)),
           this, SLOT(removeManipulatedFrame(CGAL::Three::Scene_item*)));
 
-  connect(scene, SIGNAL(updated_bbox()),
-          this, SLOT(updateViewerBBox()));
+  connect(scene, SIGNAL(updated_bbox(bool)),
+          this, SLOT(updateViewerBBox(bool)));
 
   connect(scene, SIGNAL(selectionChanged(int)),
           this, SLOT(selectSceneItem(int)));
@@ -241,10 +241,8 @@ MainWindow::MainWindow(QWidget* parent)
   // can easily copy-paste its text.
   // connect(ui->infoLabel, SIGNAL(customContextMenuRequested(const QPoint & )),
   //         this, SLOT(showSceneContextMenu(const QPoint &)));
-
   connect(ui->actionRecenterScene, SIGNAL(triggered()),
           viewer, SLOT(update()));
-
   connect(ui->actionAntiAliasing, SIGNAL(toggled(bool)),
           viewer, SLOT(setAntiAliasing(bool)));
 
@@ -813,9 +811,14 @@ void MainWindow::error(QString text) {
   this->message("ERROR: " + text, "red");
 }
 
-void MainWindow::updateViewerBBox()
+void MainWindow::updateViewerBBox(bool recenter = true)
 {
   const Scene::Bbox bbox = scene->bbox();
+#if QGLVIEWER_VERSION >= 0x020502
+    qglviewer::Vec center = viewer->camera()->pivotPoint();
+#else
+    qglviewer::Vec center = viewer->camera()->revolveAroundPoint();
+#endif
   const double xmin = bbox.xmin();
   const double ymin = bbox.ymin();
   const double zmin = bbox.zmin();
@@ -851,7 +854,18 @@ void MainWindow::updateViewerBBox()
 
   viewer->setSceneBoundingBox(vec_min,
                               vec_max);
-  viewer->camera()->showEntireScene();
+  if(recenter)
+  {
+    viewer->camera()->showEntireScene();
+  }
+  else
+  {
+#if QGLVIEWER_VERSION >= 0x020502
+    viewer->camera()->setPivotPoint(center);
+#else
+    viewer->camera()->setRevolveAroundPoint(center);
+#endif
+  }
 }
 
 void MainWindow::reloadItem() {
@@ -1009,7 +1023,8 @@ void MainWindow::open(QString filename)
     default:
       load_pair = File_loader_dialog::getItem(fileinfo.fileName(), selected_items, &ok);
   }
-  viewer->context()->makeCurrent();
+
+  viewer->makeCurrent();
   if(!ok || load_pair.first.isEmpty()) { return; }
   
   if (load_pair.second)

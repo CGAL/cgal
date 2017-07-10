@@ -2,6 +2,7 @@
 
 #include "Messages_interface.h"
 #include "Scene_polyhedron_item.h"
+#include "Scene_surface_mesh_item.h"
 #include "Scene_polylines_item.h"
 #include <CGAL/Three/Scene_interface.h>
 
@@ -11,9 +12,9 @@
 #include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
 #include <CGAL/Polygon_mesh_processing/refine.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
-#include <CGAL/Polyhedron_incremental_builder_3.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
+#include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/Timer.h>
+#include <CGAL/array.h>
 
 #include <QAction>
 #include <QMainWindow>
@@ -27,41 +28,18 @@
 #include <boost/function_output_iterator.hpp>
 #include <boost/iterator/transform_iterator.hpp>
 
+
+struct Face : public CGAL::cpp11::array<int,3>
+{
+  Face(int i, int j, int k)
+  {
+    (*this)[0] = i;
+    (*this)[1] = j;
+    (*this)[2] = k;
+  } 
+};
 namespace PMP = CGAL::Polygon_mesh_processing;
 
-template<class HDS>
-class Polyhedron_builder : public CGAL::Modifier_base<HDS> {
-public:
-  Polyhedron_builder(std::vector<CGAL::Triple<int, int, int> >* triangles, 
-    Scene_polylines_item::Polyline* polyline) 
-    : triangles(triangles), polyline(polyline) 
-  { }
-
-  void operator()(HDS& hds) {
-    CGAL::Polyhedron_incremental_builder_3<HDS> B(hds, true);
-    B.begin_surface(polyline->size() -1, triangles->size());
-
-    for(Scene_polylines_item::Polyline::iterator it = polyline->begin();
-      it != --polyline->end(); ++it) {
-      B.add_vertex(*it);
-    }
-
-    for(std::vector<CGAL::Triple<int, int, int> >::iterator it = triangles->begin();
-      it != triangles->end(); ++it) {
-      B.begin_facet();
-      B.add_vertex_to_facet(it->first);
-      B.add_vertex_to_facet(it->second);
-      B.add_vertex_to_facet(it->third);
-      B.end_facet();
-    }
-
-    B.end_surface();
-  }
-
-private:
-  std::vector<CGAL::Triple<int, int, int> >* triangles;
-  Scene_polylines_item::Polyline* polyline;
-};
 using namespace CGAL::Three;
 class Polyhedron_demo_hole_filling_polyline_plugin :
   public QObject,
@@ -129,7 +107,7 @@ public Q_SLOTS:
       }
 
       CGAL::Timer timer; timer.start();
-      std::vector<CGAL::Triple<int, int, int> > patch;
+      std::vector<Face> patch;
       CGAL::Polygon_mesh_processing::triangulate_hole_polyline(*it,
         std::back_inserter(patch),
         PMP::parameters::use_delaunay_triangulation(use_DT));
@@ -139,25 +117,47 @@ public Q_SLOTS:
         print_message("Warning: generating patch is not successful, please try it without 'Delaunay Triangulation'!");
         continue;
       }
-      Polyhedron* poly = new Polyhedron;
-      Polyhedron_builder<Polyhedron::HalfedgeDS> patch_builder(&patch, &(*it));
-      poly->delegate(patch_builder);
 
-      if(also_refine) {
-        timer.reset();
-        CGAL::Polygon_mesh_processing::refine(*poly, faces(*poly),
-          Nop_out(), Nop_out(),
-          CGAL::Polygon_mesh_processing::parameters::density_control_factor(density_control_factor));
-        print_message(QString("Refined in %1 sec.").arg(timer.time()));
+      if(mw->property("is_polyhedron_mode").toBool()){
+        Polyhedron* poly = new Polyhedron;
+        CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(*it,
+                                                                    patch,
+                                                                    *poly);
+
+        if(also_refine) {
+          timer.reset();
+          CGAL::Polygon_mesh_processing::refine(*poly, faces(*poly),
+                                                Nop_out(), Nop_out(),
+                                                CGAL::Polygon_mesh_processing::parameters::density_control_factor(density_control_factor));
+          print_message(QString("Refined in %1 sec.").arg(timer.time()));
+        }
+
+        Scene_polyhedron_item* poly_item = new Scene_polyhedron_item(poly);
+        poly_item->setName(tr("%1-filled-%2").arg(polylines_item->name()).arg(counter));
+        poly_item->setRenderingMode(FlatPlusEdges);
+        scene->setSelectedItem(scene->addItem(poly_item));
+      } else {
+        SMesh* poly = new SMesh;
+        CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(*it,
+                                                                    patch,
+                                                                    *poly);
+
+        if(also_refine) {
+          timer.reset();
+          CGAL::Polygon_mesh_processing::refine(*poly, faces(*poly),
+                                                Nop_out(), Nop_out(),
+                                                CGAL::Polygon_mesh_processing::parameters::density_control_factor(density_control_factor));
+          print_message(QString("Refined in %1 sec.").arg(timer.time()));
+        }
+
+        Scene_surface_mesh_item* poly_item = new Scene_surface_mesh_item(poly);
+        poly_item->setName(tr("%1-filled-%2").arg(polylines_item->name()).arg(counter));
+        poly_item->setRenderingMode(FlatPlusEdges);
+        scene->setSelectedItem(scene->addItem(poly_item));
       }
-
-      Scene_polyhedron_item* poly_item = new Scene_polyhedron_item(poly);
-      poly_item->setName(tr("%1-filled-%2").arg(polylines_item->name()).arg(counter));
-      poly_item->setRenderingMode(FlatPlusEdges);
-      scene->setSelectedItem(scene->addItem(poly_item));
     }
     QApplication::restoreOverrideCursor();
-  }
+    }
 
 private:
   QMainWindow* mw;

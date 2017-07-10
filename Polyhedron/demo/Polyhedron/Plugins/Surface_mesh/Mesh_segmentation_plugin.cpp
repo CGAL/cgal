@@ -61,7 +61,7 @@ private:
 };
 
 using namespace CGAL::Three;
-class Polyhedron_demo_mesh_segmentation_plugin : 
+class Polyhedron_demo_mesh_segmentation_plugin :
     public QObject,
     public Polyhedron_demo_plugin_helper
 {
@@ -79,11 +79,11 @@ public:
     }
 
     bool applicable(QAction*) const {
-      return 
+      return
         qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex()))
           || qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex()));
-    }    
-    
+    }
+
     void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*) {
         this->scene = scene_interface;
         this->mw = mainWindow;
@@ -92,7 +92,7 @@ public:
         actionSegmentation->setObjectName("actionSegmentation");
 
         // adding slot for itemAboutToBeDestroyed signal, aim is removing item from item-functor map.
-        
+
         if( Scene* scene = dynamic_cast<Scene*>(scene_interface) ) {
             connect(scene, SIGNAL(itemAboutToBeDestroyed(CGAL::Three::Scene_item*)), this, SLOT(itemAboutToBeDestroyed(CGAL::Three::Scene_item*)));
         }
@@ -104,7 +104,7 @@ public:
         dock_widget->setVisible(false); // do not show at the beginning
         ui_widget.setupUi(dock_widget);
         mw->addDockWidget(Qt::LeftDockWidgetArea, dock_widget);
-    
+
         connect(ui_widget.Partition_button,  SIGNAL(clicked()), this, SLOT(on_Partition_button_clicked()));
         connect(ui_widget.SDF_button,  SIGNAL(clicked()), this, SLOT(on_SDF_button_clicked()));
     }
@@ -141,7 +141,7 @@ public:
     void apply_SDF_button_clicked(FacegraphItem* item);
     template<class FacegraphItem>
     void apply_Partition_button_clicked(FacegraphItem* item);
-    
+
     public Q_SLOTS:
         void on_actionSegmentation_triggered();
         void on_Partition_button_clicked();
@@ -151,7 +151,7 @@ private:
     QAction*                      actionSegmentation;
     QDockWidget*                  dock_widget;
     Ui::Mesh_segmentation         ui_widget;
-    
+
     std::vector<QColor>  color_map_sdf;
     std::vector<QColor>  color_map_segmentation;
     Item_sdf_map         item_sdf_map;
@@ -175,32 +175,32 @@ void Polyhedron_demo_mesh_segmentation_plugin::init_color_map_sdf()
     int r = 0, g = 0, b = 255;
     for(int i = 0; i <= 255; ++i)
     {
-        if(i > 128 && i <= 192) { r = static_cast<int>( ((i - 128) / (192.0 - 128)) * 255 ); }        
+        if(i > 128 && i <= 192) { r = static_cast<int>( ((i - 128) / (192.0 - 128)) * 255 ); }
         if(i > 0 && i <= 98)    { g = static_cast<int>( ((i) / (98.0)) * 255 ); }
         if(i > 191 && i <=255)  { g = 255 - static_cast<int>( ((i - 191) / (255.0 - 191)) * 255 ); }
         if(i > 64 && i <= 127)  { b = 255 - static_cast<int>( ((i - 64) / (127.0 - 64)) * 255 ); }
-        color_map_sdf[i] = QColor(r, g, b);        
+        color_map_sdf[i] = QColor(r, g, b);
     }
 }
 
 void Polyhedron_demo_mesh_segmentation_plugin::init_color_map_segmentation()
 {
 
-    color_map_segmentation.push_back(QColor( 173, 35, 35)); 
-    color_map_segmentation.push_back(QColor( 87, 87, 87));    
-    color_map_segmentation.push_back(QColor( 42, 75, 215)); 
-    color_map_segmentation.push_back(QColor( 29, 105, 20)); 
-    color_map_segmentation.push_back(QColor( 129, 74, 25)); 
-    color_map_segmentation.push_back(QColor( 129, 38, 192)); 
-    color_map_segmentation.push_back(QColor( 160, 160, 160)); 
-    color_map_segmentation.push_back(QColor( 129, 197, 122)); 
-    color_map_segmentation.push_back(QColor( 157, 175, 255)); 
-    color_map_segmentation.push_back(QColor( 41, 208, 208)); 
-    color_map_segmentation.push_back(QColor( 255, 146, 51)); 
-    color_map_segmentation.push_back(QColor( 255, 238, 51)); 
-    color_map_segmentation.push_back(QColor( 233, 222, 187)); 
-    color_map_segmentation.push_back(QColor( 255, 205, 243)); 
-    
+    color_map_segmentation.push_back(QColor( 173, 35, 35));
+    color_map_segmentation.push_back(QColor( 87, 87, 87));
+    color_map_segmentation.push_back(QColor( 42, 75, 215));
+    color_map_segmentation.push_back(QColor( 29, 105, 20));
+    color_map_segmentation.push_back(QColor( 129, 74, 25));
+    color_map_segmentation.push_back(QColor( 129, 38, 192));
+    color_map_segmentation.push_back(QColor( 160, 160, 160));
+    color_map_segmentation.push_back(QColor( 129, 197, 122));
+    color_map_segmentation.push_back(QColor( 157, 175, 255));
+    color_map_segmentation.push_back(QColor( 41, 208, 208));
+    color_map_segmentation.push_back(QColor( 255, 146, 51));
+    color_map_segmentation.push_back(QColor( 255, 238, 51));
+    color_map_segmentation.push_back(QColor( 233, 222, 187));
+    color_map_segmentation.push_back(QColor( 255, 205, 243));
+
 }
 
 void Polyhedron_demo_mesh_segmentation_plugin::itemAboutToBeDestroyed(CGAL::Three::Scene_item* scene_item)
@@ -356,7 +356,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::apply_Partition_button_clicked(Fa
   QApplication::restoreOverrideCursor();
 }
 void Polyhedron_demo_mesh_segmentation_plugin::on_Partition_button_clicked()
-{    
+{
   CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
   Scene_polyhedron_item* item = qobject_cast<Scene_polyhedron_item*>(scene->item(index));
   if(item) {
@@ -371,7 +371,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_Partition_button_clicked()
 template<class SDFPropertyMap, class SceneFacegraphItem>
 void Polyhedron_demo_mesh_segmentation_plugin::colorize_sdf(
      SceneFacegraphItem* item,
-     SDFPropertyMap sdf_values,  
+     SDFPropertyMap sdf_values,
      std::vector<QColor>& color_vector)
 {
     typedef typename SceneFacegraphItem::Face_graph Facegraph;
@@ -419,11 +419,11 @@ void Polyhedron_demo_mesh_segmentation_plugin::colorize_segmentation(
         put(pidmap, *facet_it, static_cast<int>(segment_id));
         max_segment = (std::max)(max_segment, segment_id);
     }
-    for(std::size_t i = 0; i <= max_segment; ++i)   
+    for(std::size_t i = 0; i <= max_segment; ++i)
     {
-        QColor aColor = color_map_segmentation[(max_segment - i) % color_map_segmentation.size()]; 
-        color_vector.push_back(aColor);     
-    }    
+        QColor aColor = color_map_segmentation[(max_segment - i) % color_map_segmentation.size()];
+        color_vector.push_back(aColor);
+    }
 }
 
 #include "Mesh_segmentation_plugin.moc"

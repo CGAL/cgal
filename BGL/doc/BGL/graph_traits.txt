@@ -81,12 +81,68 @@ The traits class `boost::graph_traits< CGAL::Polyhedron_3<T> >` provides the fol
 For convenience, the type `edge_descriptor` is hashable using the functor `CGAL::Handle_hash_function`,
 which is the default hash functor of `CGAL::Unique_hash_map`.
 
+\section BGLLCCGT Specialization for the Linear_cell_complex_for_combinatorial_map Class
+
+Defined in `<CGAL/boost/graph/graph_traits_Linear_cell_complex_for_combinatorial_map.h>`
+
+We provide partial specialization for the class `CGAL::Linear_cell_complex_for_combinatorial_map` so that it is a model of the graph concepts
+<A HREF="http://www.boost.org/libs/graph/doc/BidirectionalGraph.html">`BidirectionalGraph`</A> and
+<A HREF="http://www.boost.org/libs/graph/doc/EdgeAndVertexListGraph.html">`EdgeAndVertexListGraph`</A>
+and of the concept `MutableFaceGraph`.
+
+The const specialization is also defined, using the constant handles in the linear cell complex.
+
+Let us denote by LCC an instantiation of CGAL::Linear_cell_complex_for_combinatorial_map<...> class.
+The traits class `boost::graph_traits<LCC>` provides the following types:
+
+| Member                   | Value  | Description |
+| :----------------------- | :----: | :---------- |
+| `vertex_descriptor`      | `LCC::Vertex_attribute_handle`                 | The vertex descriptor |
+| `edge_descriptor`        | `unspecified_type`                             | The edge descriptor |
+| `halfedge_descriptor`    | `LCC::Dart_handle`   | The halfedge descriptor |
+| `face_descriptor`        | `unspecified_type`                             | The face descriptor |
+| `adjacency_iterator`     | `CGAL::Vertex_around_target_iterator<LCC>`     | Iterates through adjacent vertices|
+| `out_edge_iterator`      | `CGAL::Out_edge_iterator<LCC>`                 | Iterate through the out-edges of a vertex. |
+| `in_edge_iterator`       | `CGAL::Out_edge_iterator<LCC>`                 | Iterate through the in-edges of a vertex. |
+| `vertex_iterator`        | `unspecified_type`         | Iterate through the vertices of LCC.|
+| `edge_iterator`          | `unspecified_type`         | Iterate through the edges of LCC.|
+| `halfedge_iterator`      | `unspecified_type`         | Iterate through the halfedges of LCC.|
+| `face_iterator`          | `unspecified_type`         | Iterate through the faces of LCC.|
+| `directed_category`      | Inherits from `boost::bidirectional_graph_tag`, `boost::vertex_list_graph_tag` and `boost::edge_list_graph_tag` | |
+| `edge_parallel_category` | `boost::disallow_parallel_edge_tag`   | Indicates that this graph does not support multiedges |
+| `traversal_category`     | `boost::bidirectional_graph_tag`      | Indicates that this graph is bidirectional |
+| `vertices_size_type`     | `LCC::size_type` | The size type of the vertex list |
+| `edges_size_type`        | `LCC::size_type` | The size type of the edge list |
+| `degree_size_type`       | `LCC::size_type` | The size type of the adjacency list |
+
+For convenience, the type `edge_descriptor` is hashable using the functor `CGAL::Handle_hash_function` that is the default hash functor of `CGAL::Unique_hash_map`.
+
+\subsection Requirements
+
+<ul>
+<li> The item class used by `CGAL::Linear_cell_complex_for_combinatorial_map` must have both 0-attributes and 2-attributes enabled.</li>
+
+<li> No dart is 1-free, nor 2-free. Holes in a mesh are represented by using the same convention than for `CGAL::Polyhedron_3` and `CGAL::Surface_mesh`: a dart <code>d</code> belongs to a border if the 2-attribute of <code>beta<2>(d)</code> is NULL.</li>
+
+<li> All darts of the linear cell complexes must be associated with a 2-attribute, except darts that represent holes.</li>
+
+<li> In order to use property maps, darts and types associated with of 0- and 2-attributes must define the two fonctions:
+\code
+int id() const; // Returns the index. 
+int& id();      // Returns a reference to the index stored in the attribute. 
+\endcode
+</ul>
+
+For darts, this can be done by defining `Darts_with_id` as `CGAL::Tag_true` in the `Dart_wrapper` struct of the item class. <br>
+For attributes, it is possible to use `CGAL::Cell_attribute_with_id` and `CGAL::Cell_attribute_with_point_and_id` classes to define your item class using attributes with id.
+
+You can also use the `CGAL::Linear_cell_complex_bgl_min_items` item class, or you can use directly the `CGAL::Linear_cell_complex_for_bgl_combinatorial_map_helper` class.
+
 \section BGLSeam_meshGT Specialization for the Seam_mesh Class
 
 Defined in `<CGAL/boost/graph/graph_traits_Seam_mesh.h>`
 
-We provide partial specialization for the class `CGAL::Seam_mesh` so that it is a model
-of the graph concepts
+We provide partial specialization for the class `CGAL::Seam_mesh` so that it is a model of the graph concepts
 <A HREF="http://www.boost.org/libs/graph/doc/BidirectionalGraph.html">`BidirectionalGraph`</A> and
 <A HREF="http://www.boost.org/libs/graph/doc/VertexAndEdgeListGraph.html">`VertexAndEdgeListGraph`</A>.
 

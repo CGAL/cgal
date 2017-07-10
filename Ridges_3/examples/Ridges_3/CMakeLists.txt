@@ -38,6 +38,7 @@ if ( CGAL_FOUND )
 
    create_single_source_cgal_program( Compute_Ridges_Umbilics.cpp)
    create_single_source_cgal_program( Ridges_Umbilics_SM.cpp)
+   create_single_source_cgal_program( Ridges_Umbilics_LCC.cpp)
 
   else(EIGEN3_FOUND OR LAPACK_FOUND)
 

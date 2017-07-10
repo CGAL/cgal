@@ -130,7 +130,7 @@ typename boost::lazy_disable_if<
 inline get(CGAL::face_patch_id_t<I>, Surface_mesh<P> & smesh)
 {
  typedef typename boost::graph_traits<Surface_mesh<P> >::face_descriptor face_descriptor;
-  return smesh. template add_property_map<face_descriptor,I>("f:patch_id").first;
+  return smesh. template add_property_map<face_descriptor,I>("f:patch_id", 1).first;
 }
 
 

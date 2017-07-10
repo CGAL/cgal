@@ -1243,7 +1243,9 @@ void Volume::draw()
   if(!m_view_mc && m_draw_triangulation)
   {
     // draw the triangualtion
-    mw->viewer->qglColor(m_triangulation_color);
+    ::glColor3d(m_triangulation_color.redF(),
+                m_triangulation_color.greenF(),
+                m_triangulation_color.blueF());
     ::glLineWidth(1.0);
     ::glBegin(GL_LINES);
     for(Tr::Finite_edges_iterator 
@@ -1362,7 +1364,9 @@ void Volume::gl_draw_surface()
 	} else {
 	  ::glNormal3d(n.x(),n.y(),n.z());
 	}
-	mw->viewer->qglColor(values_list->color(values_list->search(facet_cell->info())));
+        ::glColor3d(values_list->color(values_list->search(facet_cell->info())).redF(),
+                    values_list->color(values_list->search(facet_cell->info())).greenF(),
+                    values_list->color(values_list->search(facet_cell->info())).blueF());
 	::glVertex3d(a.x(),a.y(),a.z());
 	::glVertex3d(b.x(),b.y(),b.z());
 	::glVertex3d(c.x(),c.y(),c.z());
@@ -1378,7 +1382,9 @@ void Volume::gl_draw_surface()
     {
       if(values_list->enabled(i))
       {
-        mw->viewer->qglColor(values_list->color(i));
+        ::glColor3d(values_list->color(i).redF(),
+                  values_list->color(i).greenF(),
+                  values_list->color(i).blueF());
         ::glCallList(lists_draw_surface[i]);
       }
     }
@@ -1398,7 +1404,9 @@ void Volume::gl_draw_surface()
         % lists_draw_surface[i]
         % i;
         
-      mw->viewer->qglColor(values_list->color(i));
+      ::glColor3d(values_list->color(i).redF(),
+                values_list->color(i).greenF(),
+                values_list->color(i).blueF());
 
       if(!direct_draw && lists_draw_surface[i]) // If
         ::glNewList(lists_draw_surface[i],      // lists_draw_surface[i]==0

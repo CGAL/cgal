@@ -57,16 +57,18 @@ namespace CGAL {
     typedef typename Dart_wrapper::Dart                   Dart;
 #else
     typedef typename internal::template Get_dart_info<Dart_wrapper>::type
-                                                          Dart_info;
-    typedef CGAL::Dart<d_, Self, Dart_info>               Dart;
+                                                           Dart_info;
+    typedef typename internal::template Get_darts_with_id<Dart_wrapper>::type
+                                                           Darts_with_id;
+    typedef CGAL::Dart<d_, Self, Dart_info, Darts_with_id> Dart;
 #endif
-    typedef typename Alloc_::template rebind<Dart>::other Dart_allocator;
+    typedef typename Alloc_::template rebind<Dart>::other  Dart_allocator;
 
-    typedef Compact_container<Dart, Dart_allocator>       Dart_container;
+    typedef Compact_container<Dart, Dart_allocator>        Dart_container;
 
-    typedef typename Dart_container::iterator             Dart_handle;
-    typedef typename Dart_container::const_iterator       Dart_const_handle;
-    typedef typename Dart_container::size_type            size_type;
+    typedef typename Dart_container::iterator              Dart_handle;
+    typedef typename Dart_container::const_iterator        Dart_const_handle;
+    typedef typename Dart_container::size_type             size_type;
 
     typedef CGAL::Void* Null_handle_type;
     static const Null_handle_type null_handle;

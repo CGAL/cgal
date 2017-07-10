@@ -517,6 +517,10 @@ bool is_valid(const CGAL::Surface_mesh<P>& sm, bool verbose = false)
   return sm.is_valid(verbose);
 }
 
+template<typename P>
+void normalize_border(const CGAL::Surface_mesh<P>&)
+{}
+
 } // namespace CGAL
 
 #endif // CGAL_BOOST_GRAPH_TRAITS_SURFACE_MESH_H

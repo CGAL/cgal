@@ -400,8 +400,8 @@ namespace SurfaceReconstruction
         smooth_item->init_polygon_soup(points.size(), reconstruct.number_of_facets ());
       }
 
-      std::map<unsigned int, unsigned int> map_i2i;
-      unsigned int current_index = 0;
+      std::map<std::size_t, std::size_t> map_i2i;
+      std::size_t current_index = 0;
     
       for (ScaleSpace::Facet_iterator it = reconstruct.facets_begin();
            it != reconstruct.facets_end(); ++ it)
@@ -513,9 +513,9 @@ namespace SurfaceReconstruction
           smooth_item->init_polygon_soup(points.size(), num);
         }
 
-        std::map<unsigned int, unsigned int> map_i2i;
+        std::map<std::size_t, std::size_t> map_i2i;
 
-        unsigned int current_index = 0;
+        std::size_t current_index = 0;
         for (ScaleSpaceASM::Facet_iterator it=mesher.garbage_begin(),
                end=mesher.garbage_end();it!=end;++it)
         {

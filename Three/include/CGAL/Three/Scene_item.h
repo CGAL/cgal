@@ -374,6 +374,9 @@ public Q_SLOTS:
 Q_SIGNALS:
   //! Is emitted to notify a change in the item's data.
   void itemChanged();
+  //! Is emitted when the item is shown to notify a change in the item's visibility.
+  //! Typically used to update the scene's bbox;
+  void itemVisibilityChanged();
   //! Is emitted to notify that the item is about to be deleted.
   void aboutToBeDestroyed();
   //! Is emitted to require a new display.

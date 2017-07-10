@@ -1,6 +1,7 @@
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include "Polyhedron_type.h"
 #include "Scene_polyhedron_item.h"
+#include "Scene_surface_mesh_item.h"
 #include "Scene_polylines_item.h"
 
 #include <limits>
@@ -39,7 +40,8 @@ public:
   }
 
   bool applicable(QAction*) const { 
-    return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex()));
+    return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex())) ||
+      qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex()));
   }
 
 public Q_SLOTS:
@@ -49,42 +51,26 @@ private :
   QList<QAction*> _actions;
 }; // end Polyhedron_demo_jet_fitting_plugin
 
-void Polyhedron_demo_jet_fitting_plugin::on_actionEstimateCurvature_triggered()
+
+template <typename Poly>
+void compute(Poly* pMesh,
+             Scene_polylines_item* min_curv,
+             Scene_polylines_item* max_curv)
 {
-  // get active polyhedron
-  const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
-  Scene_polyhedron_item* poly_item = 
-    qobject_cast<Scene_polyhedron_item*>(scene->item(index));
-  if(!poly_item)
-    return;
 
-  // wait cursor
-  QApplication::setOverrideCursor(Qt::WaitCursor);
-
-  Polyhedron* pMesh = poly_item->polyhedron();
-
-  // types
   typedef CGAL::Monge_via_jet_fitting<Kernel> Fitting;
   typedef Fitting::Monge_form Monge_form;
 
   typedef Kernel::Point_3 Point;
 
-  Scene_polylines_item* max_curv = new Scene_polylines_item;
-  max_curv->setColor(Qt::red);
-  max_curv->setName(tr("%1 (max curvatures)").arg(poly_item->name()));
-  Scene_polylines_item* min_curv = new Scene_polylines_item;
-  min_curv->setColor(Qt::green);
-  min_curv->setName(tr("%1 (min curvatures)").arg(poly_item->name()));
+  typename boost::property_map<Poly, CGAL::vertex_point_t>::type vpmap = get(CGAL::vertex_point, *pMesh);
 
-  Polyhedron::Vertex_iterator v;
-  for(v = pMesh->vertices_begin();
-      v != pMesh->vertices_end();
-      v++)
+  BOOST_FOREACH(typename boost::graph_traits<Poly>::vertex_descriptor v, vertices(*pMesh))
   {
     std::vector<Point> points;
 
     // pick central point
-    const Point& central_point = v->point();
+    const Point& central_point = get(vpmap,v);
     points.push_back(central_point);
 
     // compute min edge len around central vertex
@@ -93,11 +79,9 @@ void Polyhedron_demo_jet_fitting_plugin::on_actionEstimateCurvature_triggered()
     typedef Kernel::FT FT;
 
     FT min_edge_len = std::numeric_limits<FT>::infinity();
-    Polyhedron::Halfedge_around_vertex_circulator he = v->vertex_begin();
-    Polyhedron::Halfedge_around_vertex_circulator end = he;
-    CGAL_For_all(he,end)
+    BOOST_FOREACH(typename boost::graph_traits<Poly>::halfedge_descriptor he, halfedges_around_target(v, *pMesh))
     {
-      const Point& p = he->opposite()->vertex()->point();
+      const Point& p = get( vpmap, target(opposite(he, *pMesh ), *pMesh));
       points.push_back(p);
       FT edge_len = std::sqrt(CGAL::squared_distance(central_point,p));
       min_edge_len = edge_len < min_edge_len ? edge_len : min_edge_len; // avoids #undef min
@@ -134,6 +118,39 @@ void Polyhedron_demo_jet_fitting_plugin::on_actionEstimateCurvature_triggered()
     }
   }
 
+}
+
+void Polyhedron_demo_jet_fitting_plugin::on_actionEstimateCurvature_triggered()
+{
+  // get active polyhedron
+  const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
+  QString name = scene->item(index)->name();
+  Scene_polyhedron_item* poly_item = 
+    qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+  Scene_surface_mesh_item* sm_item = 
+    qobject_cast<Scene_surface_mesh_item*>(scene->item(index));
+  if((!poly_item) && (! sm_item)){
+    return;
+  }
+  // wait cursor
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+
+  // types
+  Scene_polylines_item* max_curv = new Scene_polylines_item;
+  max_curv->setColor(Qt::red);
+  max_curv->setName(tr("%1 (max curvatures)").arg(name));
+  Scene_polylines_item* min_curv = new Scene_polylines_item;
+  min_curv->setColor(Qt::green);
+  min_curv->setName(tr("%1 (min curvatures)").arg(name));
+
+  if(poly_item){
+    Polyhedron* pMesh = poly_item->polyhedron();
+    compute(pMesh, min_curv, max_curv);
+  } else {
+    
+    SMesh* pMesh = sm_item->polyhedron();
+    compute(pMesh, min_curv, max_curv);
+  }
   scene->addItem(max_curv);
   scene->addItem(min_curv);
   max_curv->invalidateOpenGLBuffers();
