@@ -23,8 +23,6 @@
 #include <CGAL/property_map.h>
 
 #include <CGAL/Polygon_mesh_processing/smoothing.h>
-#include <CGAL/Polygon_mesh_processing/random_pertubation.h>
-#include <CGAL/Polygon_mesh_processing/remesh.h>
 
 #include "ui_Smoothing_plugin.h"
 
