@@ -737,17 +737,18 @@ corefine_and_compute_difference(      TriangleMesh& tm1,
 
 /**
  * \ingroup PMP_corefinement_grp
- * Remove self-intersections in `tm` by \link autoref_def_subsec autorefining \endlink `tm`,
+ * Removes self-intersections in `tm` by \link autoref_def_subsec autorefining \endlink `tm`,
  * removing extra patches, and stitching autointersection edges.
  * Self-intersection edges will be marked as constrained. If an edge that was marked as
  * constrained is split, its sub-edges will be marked as constrained as well.
+ * \return `true` if all self-intersections were fixed and `false` otherwise.
  *
  * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`
  * @tparam NamedParameters a sequence of \ref namedparameters
  *
  * @param tm input triangulated surface mesh
  * @param np optional sequence of \ref namedparameters among the ones listed below
-
+ *
  * \cgalNamedParamsBegin
  *   \cgalParamBegin{vertex_point_map}
  *     the property map with the points associated to the vertices of `tm`.
@@ -806,7 +807,7 @@ corefine_and_compute_difference(      TriangleMesh& tm1,
 
   functor(CGAL::Emptyset_iterator(), true);
 
-  return !ob.impossible_operation();
+  return ob.all_self_intersection_fixed();
 }
 
 // overload with default named parameters

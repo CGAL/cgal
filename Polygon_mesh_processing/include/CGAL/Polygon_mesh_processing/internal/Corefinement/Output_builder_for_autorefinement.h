@@ -113,7 +113,7 @@ class Output_builder_for_autorefinement
   // constant
   const Node_id NID;
   // boolean indicating if there is an ambiguous or non-manifold situation
-  bool m_impossible_operation;
+  bool all_fixed;
   // for mapping an edge per polyline per triangle mesh
   An_edge_per_polyline_map an_edge_per_polyline;
   // To collect all intersection edges
@@ -167,10 +167,10 @@ public:
     , is_tm_closed( is_closed(tm))
     , is_tm_inside_out( is_tm_closed && !PMP::is_outward_oriented(tm) )
     , NID(-1)
-    , m_impossible_operation(false)
+    , all_fixed(true)
   {}
 
-  bool impossible_operation() const  { return m_impossible_operation; }
+  bool all_self_intersection_fixed() const  { return all_fixed; }
 
 // functions called by the intersection visitor
   void start_new_polyline(Node_id i, Node_id j)
@@ -375,23 +375,23 @@ public:
           if ( is_border(h1,tm) == is_border(h2,tm) )
           {
             //Nothing allowed
-            m_impossible_operation = true;
-            return;
+            all_fixed = false;
+            continue;
           }
         }
         else
         {
           //Ambiguous, we can do nothing
-          m_impossible_operation = true;
-          return;
+          all_fixed = false;
+          continue;
         }
       }
       else
         if ( is_border_edge(h2,tm) )
         {
           //Ambiguous, we do nothing
-          m_impossible_operation = true;
-          return;
+          all_fixed = false;
+          continue;
         }
         else
         {
@@ -617,8 +617,8 @@ public:
               if ( is_dangling_edge(ids.first, ids.second, h1, tm, is_node_of_degree_one) ||
                    is_dangling_edge(ids.first, ids.second, h2, tm, is_node_of_degree_one) )
               {
-                m_impossible_operation = true;
-                return;
+                all_fixed = false;
+                continue;
               }
               patches_to_keep.reset(patch_id_p2);
               patches_to_keep.reset(patch_id_q1);
@@ -632,8 +632,8 @@ public:
               if ( is_dangling_edge(ids.first, ids.second, h1, tm, is_node_of_degree_one) ||
                    is_dangling_edge(ids.first, ids.second, h2, tm, is_node_of_degree_one) )
               {
-                m_impossible_operation = true;
-                return;
+                all_fixed = false;
+                continue;
               }
               patches_to_keep.reset(patch_id_q2);
               patches_to_keep.reset(patch_id_p1);
@@ -648,8 +648,8 @@ public:
                 nodes);
               if (!p1_is_between_q1q2){
                 //case (e4)
-                m_impossible_operation = true;
-                return;
+                all_fixed = false;
+                continue;
               }
               else{
                 //case (f4)
