@@ -72,7 +72,6 @@ namespace internal {
   {
     typedef typename boost::graph_traits<PM>::vertex_descriptor vertex_descriptor;
     typedef typename GT::Point_3    Point_3;
-    typedef typename GT::FT         FT;
 
     typedef CGAL::AABB_face_graph_triangle_primitive<PM> Primitive;
     typedef CGAL::AABB_traits<GT, Primitive> Traits;
@@ -180,7 +179,7 @@ void random_perturbation(VertexRange vertices
   unsigned int seed = choose_param(get_param(np, internal_np::random_seed), -1);
   bool do_project = choose_param(get_param(np, internal_np::do_project), true);
 
-  CGAL::Random rng = (seed == -1) ? CGAL::Random() : CGAL::Random(seed);
+  CGAL::Random rng = (seed == unsigned(-1)) ? CGAL::Random() : CGAL::Random(seed);
 
   internal::random_perturbation_impl(vertices,
           tmesh,
