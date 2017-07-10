@@ -93,21 +93,9 @@ class Output_builder_for_autorefinement
       }
     }
   };
-  struct Shared_halfedges_enriched : public Shared_halfedges
-  {
-    bool id_pair_reversed; //"is the key (pair<Node_id,Node_id>) was reversed?"
-    /// \todo check the +1
-    std::size_t nb_edges_plus_1; //the number of edges +1 in the polyline
-    Shared_halfedges_enriched()
-      : Shared_halfedges()
-      , id_pair_reversed(false)
-      , nb_edges_plus_1(0)
-    {}
-  };
 
   // to maintain the two halfedges on each polyline
-  typedef std::map< Node_id_pair, Shared_halfedges_enriched >
-                                              An_edge_per_polyline_map;
+  typedef std::map< Node_id_pair, Shared_halfedges >   An_edge_per_polyline_map;
   typedef boost::unordered_map<vertex_descriptor, Node_id> Node_id_map;
   // typedef boost::unordered_map<edge_descriptor,
   //                              edge_descriptor>               Edge_map;
@@ -119,7 +107,6 @@ class Output_builder_for_autorefinement
   const FaceIdMap &fids;
   Ecm& ecm;
   // input meshes closed ?
-  /// \todo do we really need this?
   bool is_tm_closed;
   // orientation of input surface mesh
   bool is_tm_inside_out;
@@ -131,8 +118,6 @@ class Output_builder_for_autorefinement
   An_edge_per_polyline_map an_edge_per_polyline;
   // To collect all intersection edges
   All_intersection_edges_map all_intersection_edges_map;
-
-  typename An_edge_per_polyline_map::iterator last_polyline;
 
   Node_id get_node_id(vertex_descriptor v,
                       const Node_id_map& node_ids)
@@ -192,18 +177,13 @@ public:
   {
     std::pair<typename An_edge_per_polyline_map::iterator,bool> res=
       an_edge_per_polyline.insert(std::make_pair(make_sorted_pair(i,j),
-                                                 Shared_halfedges_enriched() ) );
+                                                 Shared_halfedges() ) );
 
     CGAL_assertion(res.second);
-    last_polyline=res.first;
-    if ( i !=last_polyline->first.first )
-      last_polyline->second.id_pair_reversed=true;
   }
 
   void add_node_to_polyline(Node_id)
-  {
-    ++(last_polyline->second.nb_edges_plus_1);
-  }
+  {}
 
   void set_edge_per_polyline(TriangleMesh& tm,
                              Node_id_pair indices,
@@ -364,7 +344,7 @@ public:
           ++patch_sizes[i];
 
     // (2-a) Use the orientation around an edge to classify a patch
-    boost::dynamic_bitset<> patch_to_keep(nb_patches, false);
+    boost::dynamic_bitset<> patches_to_keep(nb_patches, false);
     boost::dynamic_bitset<> patch_status_not_set(nb_patches,true);
     boost::dynamic_bitset<> coplanar_patches(nb_patches,false);
 
@@ -405,8 +385,8 @@ public:
                                             : face(h2,tm)) ];
             patch_status_not_set.reset(patch_id1);
             patch_status_not_set.reset(patch_id2);
-            patch_to_keep.set(patch_id1);
-            patch_to_keep.set(patch_id2);
+            patches_to_keep.set(patch_id1);
+            patches_to_keep.set(patch_id2);
           }
           else
           {
@@ -496,13 +476,13 @@ public:
               nodes);
             if ( q2_is_between_p1p2 ){
              //case 1
-             patch_to_keep.set(patch_id_p2);
-             patch_to_keep.set(patch_id_p1);
+             patches_to_keep.set(patch_id_p2);
+             patches_to_keep.set(patch_id_p1);
             }
             else{
               //case 2
-              patch_to_keep.set(patch_id_q1);
-              patch_to_keep.set(patch_id_q2);
+              patches_to_keep.set(patch_id_q1);
+              patches_to_keep.set(patch_id_q2);
             }
             continue;
           }
@@ -525,13 +505,13 @@ public:
                 nodes);
               if ( q1_is_between_p1p2 ){
                 // case 3
-                patch_to_keep.set(patch_id_q1);
-                patch_to_keep.set(patch_id_q2);
+                patches_to_keep.set(patch_id_q1);
+                patches_to_keep.set(patch_id_q2);
               }
               else{
                 // case 4
-                patch_to_keep.set(patch_id_q1);
-                patch_to_keep.set(patch_id_p2);
+                patches_to_keep.set(patch_id_q1);
+                patches_to_keep.set(patch_id_p2);
               }
               continue;
             }
@@ -554,12 +534,12 @@ public:
                   nodes);
                 if ( q2_is_between_p1p2 )
                 {  //case 5
-                  patch_to_keep.set(patch_id_p1);
-                  patch_to_keep.set(patch_id_p2);
+                  patches_to_keep.set(patch_id_p1);
+                  patches_to_keep.set(patch_id_p2);
                 }else{
                   //case 6
-                  patch_to_keep.set(patch_id_p1);
-                  patch_to_keep.set(patch_id_q2);
+                  patches_to_keep.set(patch_id_p1);
+                  patches_to_keep.set(patch_id_q2);
                 }
                 continue;
               }
@@ -581,13 +561,13 @@ public:
                     nodes);
                   if ( q1_is_between_p1p2 ){
                     //case 7
-                    patch_to_keep.set(patch_id_p1);
-                    patch_to_keep.set(patch_id_p2);
+                    patches_to_keep.set(patch_id_p1);
+                    patches_to_keep.set(patch_id_p2);
                   }
                   else{
                     //case 8
-                    patch_to_keep.set(patch_id_p1);
-                    patch_to_keep.set(patch_id_q1);
+                    patches_to_keep.set(patch_id_p1);
+                    patches_to_keep.set(patch_id_q1);
                   }
                   continue;
                 }
@@ -636,8 +616,8 @@ public:
                 nodes);
               if (!p1_is_between_q1q2){
                 // case (a4)
-                patch_to_keep.set(patch_id_p1);
-                patch_to_keep.set(patch_id_p2);
+                patches_to_keep.set(patch_id_p1);
+                patches_to_keep.set(patch_id_p2);
               }
               // else case (b4)
             }
@@ -650,8 +630,8 @@ public:
                 m_impossible_operation = true;
                 return;
               }
-              patch_to_keep.set(patch_id_p1);
-              patch_to_keep.set(patch_id_q2);
+              patches_to_keep.set(patch_id_p1);
+              patches_to_keep.set(patch_id_q2);
             }
           }
           else
@@ -665,8 +645,8 @@ public:
                 m_impossible_operation = true;
                 return;
               }
-              patch_to_keep.set(patch_id_q1);
-              patch_to_keep.set(patch_id_p2);
+              patches_to_keep.set(patch_id_q1);
+              patches_to_keep.set(patch_id_p2);
             }
             else
             {
@@ -683,8 +663,8 @@ public:
               }
               else{
                 //case (f4)
-                patch_to_keep.set(patch_id_q1);
-                patch_to_keep.set(patch_id_q2);
+                patches_to_keep.set(patch_id_q1);
+                patches_to_keep.set(patch_id_q2);
               }
             }
           }
@@ -759,7 +739,7 @@ public:
     CGAL_assertion(patch_status_not_set.none());
 
 #ifdef CGAL_COREFINEMENT_DEBUG
-    std::cout << "patch_to_keep " <<  patch_to_keep << "\n";
+    std::cout << "patches_to_keep " <<  patches_to_keep << "\n";
     std::cout << "coplanar_patches " << coplanar_patches << "\n";
     std::cout << "Size of patches: ";
     std::cout << "Size of patches of: ";
@@ -773,7 +753,8 @@ public:
                             Intersection_edge_map> Patches;
 
     //collect edges to stitch before removing patches
-    /// \todo USE and edge_per_polyline that way there is only one test per polyline!
+    // we could use an_edge_per_polyline but the current version should be cheaper
+    // since we don't do any query in intersection_edge_map
     std::vector< std::pair<halfedge_descriptor, halfedge_descriptor> > hedge_pairs_to_stitch;
     hedge_pairs_to_stitch.reserve(all_intersection_edges_map.size());
     BOOST_FOREACH(const Pair_type& p, all_intersection_edges_map)
@@ -797,7 +778,7 @@ public:
         CGAL_assertion(is_border(h2_opp, tm));
         std::size_t patch_id_h1_opp = patch_ids[get(fids,face(h1_opp,tm))];
         std::size_t patch_id_h2 = patch_ids[get(fids,face(h2,tm))];
-        if (!patch_to_keep.test(patch_id_h1_opp) || !patch_to_keep.test(patch_id_h2))
+        if (!patches_to_keep.test(patch_id_h1_opp) || !patches_to_keep.test(patch_id_h2))
           continue;
       }
       else
@@ -807,23 +788,23 @@ public:
         std::size_t patch_id_h2 = patch_ids[get(fids,face(h2,tm))];
         std::size_t patch_id_h2_opp = patch_ids[get(fids,face(h2_opp,tm))];
 
-        if (patch_to_keep.test(patch_id_h1)==patch_to_keep.test(patch_id_h1_opp))
+        if (patches_to_keep.test(patch_id_h1)==patches_to_keep.test(patch_id_h1_opp))
         {
-          CGAL_assertion(patch_to_keep.test(patch_id_h2) ==
-                         patch_to_keep.test(patch_id_h2_opp));
+          CGAL_assertion(patches_to_keep.test(patch_id_h2) ==
+                         patches_to_keep.test(patch_id_h2_opp));
           continue;
         }
-        CGAL_assertion(patch_to_keep.test(patch_id_h2) !=
-                       patch_to_keep.test(patch_id_h2_opp));
-        if (patch_to_keep.test(patch_id_h1))
+        CGAL_assertion(patches_to_keep.test(patch_id_h2) !=
+                       patches_to_keep.test(patch_id_h2_opp));
+        if (patches_to_keep.test(patch_id_h1))
         {
           std::swap(h1, h1_opp);
           std::swap(h2, h2_opp);
-          CGAL_assertion(patch_to_keep.test(patch_id_h2_opp));
+          CGAL_assertion(patches_to_keep.test(patch_id_h2_opp));
         }
         else
         {
-          CGAL_assertion(patch_to_keep.test(patch_id_h2));
+          CGAL_assertion(patches_to_keep.test(patch_id_h2));
         }
       }
 
@@ -837,7 +818,7 @@ public:
 
     //store the patch description in a container to avoid recomputing it several times
     Patches patches(tm, patch_ids, fids, intersection_edges, nb_patches);
-    remove_patches(tm, ~patch_to_keep,patches, ecm);
+    remove_patches(tm, ~patches_to_keep,patches, ecm);
 
     PMP::stitch_borders(tm, hedge_pairs_to_stitch, params::vertex_point_map(vpm));
   }
