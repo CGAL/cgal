@@ -90,7 +90,7 @@ class Face_graph_output_builder
                                Node_id_pair >    Intersection_edge_map;
   // to maintain a halfedge on each polyline per TriangleMesh + pair<bool,size_t>
   // with first = "is the key (pair<Node_id,Node_id>) was reversed?" and
-  // second is the number of edges +1 in the polyline
+  // second is the number of edges -1 in the polyline
   typedef std::map< Node_id_pair,
                     std::pair< std::map<TriangleMesh*,
                                         halfedge_descriptor>,
@@ -1029,7 +1029,7 @@ public:
 
     //to maintain a halfedge on each polyline + pair<bool,int>
     //with first = "is the key (pair<Node_id,Node_id>) was reversed?"
-    // and second is the number of edges +1 in the polyline
+    // and second is the number of edges -1 in the polyline
     //typedef std::map< std::pair<Node_id,Node_id>,
     //                  std::pair< std::map<TriangleMesh*,
     //                                      halfedge_descriptor>,
