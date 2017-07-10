@@ -462,6 +462,13 @@ bool is_valid(const CGAL::Polyhedron_3<Gt,I,HDS,A>& p, bool verbose = false)
 {
   return p.is_valid(verbose);
 }
+
+template<class Gt, class I, CGAL_HDS_PARAM_, class A>
+void normalize_border(CGAL::Polyhedron_3<Gt,I,HDS,A>& p)
+{
+  p.normalize_border();
+}
+  
 } // namespace CGAL
 
 

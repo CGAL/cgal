@@ -4,6 +4,7 @@
 #include <CGAL/Three/Scene_interface.h>
 #include "Scene_edit_box_item.h"
 #include "Scene_polyhedron_item.h"
+#include "Scene_surface_mesh_item.h"
 #include <CGAL/Three/Viewer_interface.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <QAction>
@@ -52,6 +53,7 @@ public Q_SLOTS:
 
 private:
   CGAL::Three::Scene_interface* scene;
+  QMainWindow* mw;
   QAction* actionBbox;
   QAction* actionExport;
 
@@ -61,10 +63,11 @@ private:
 void Edit_box_plugin::init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*)
 {
   scene = scene_interface;
+  mw = mainWindow;
   actionBbox = new QAction(tr("Create Bbox"), mainWindow);
   connect(actionBbox, SIGNAL(triggered()),
           this, SLOT(bbox()));
-  actionExport = new QAction(tr("Export to Polyhedron item"), mainWindow);
+  actionExport = new QAction(tr("Export to Face_graph item"), mainWindow);
   connect(actionExport, SIGNAL(triggered()),
           this, SLOT(exportToPoly()));
 }
@@ -115,24 +118,43 @@ void Edit_box_plugin::exportToPoly()
   Polyhedron::Point_3 points[8];
   for(int i=0; i<8; ++i)
   {
-    points[i] = Polyhedron::Point_3(item->point(i,0),item->point(i,1), item->point(i,2))-offset;
+    points[i] = Polyhedron::Point_3(item->point(i,0),item->point(i,2), item->point(i,1))-offset;
   }
-  Scene_polyhedron_item* poly_item = new Scene_polyhedron_item();
-  CGAL::make_hexahedron(
-        points[0],
-      points[1],
-      points[2],
-      points[3],
-      points[4],
-      points[5],
-      points[6],
-      points[7],
-      *poly_item->polyhedron());
-  CGAL::Polygon_mesh_processing::triangulate_faces(*poly_item->polyhedron());
-  item->setName("Edit box");
-  item->setRenderingMode(FlatPlusEdges);
-  scene->replaceItem(id, poly_item, true);
-  item->deleteLater();
-  actionBbox->setEnabled(true);
+
+  if(mw->property("is_polyhedron_mode").toBool()){
+    Scene_polyhedron_item* poly_item = new Scene_polyhedron_item();
+    CGAL::make_hexahedron(points[0],
+                          points[1],
+                          points[2],
+                          points[3],
+                          points[4],
+                          points[5],
+                          points[6],
+                          points[7],
+                          *poly_item->polyhedron());
+    CGAL::Polygon_mesh_processing::triangulate_faces(*poly_item->polyhedron());
+    item->setName("Edit box");
+    item->setRenderingMode(FlatPlusEdges);
+    scene->replaceItem(id, poly_item, true);
+    item->deleteLater();
+    actionBbox->setEnabled(true);
+  }else{
+ Scene_surface_mesh_item* poly_item = new Scene_surface_mesh_item();
+    CGAL::make_hexahedron(points[0],
+                          points[1],
+                          points[2],
+                          points[3],
+                          points[4],
+                          points[5],
+                          points[6],
+                          points[7],
+                          *poly_item->polyhedron());
+    CGAL::Polygon_mesh_processing::triangulate_faces(*poly_item->polyhedron());
+    item->setName("Edit box");
+    item->setRenderingMode(FlatPlusEdges);
+    scene->replaceItem(id, poly_item, true);
+    item->deleteLater();
+    actionBbox->setEnabled(true);
+  }
 }
 #include "Edit_box_plugin.moc"

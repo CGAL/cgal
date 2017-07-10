@@ -353,9 +353,6 @@ void Scene_surface_mesh_item_priv::compute_elements()
   SMesh::Property_map<face_descriptor, CGAL::Color> fcolors =
       smesh_->property_map<face_descriptor, CGAL::Color >("f:color").first;
 
-  assert(positions.data() != NULL);
-  assert(vnormals.data() != NULL);
-
   if(smesh_->property_map<vertex_descriptor, CGAL::Color >("v:color").second)
     has_vcolors = true;
 
