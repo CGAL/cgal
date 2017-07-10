@@ -70,7 +70,9 @@ public:
 
   void compute_bbox()const Q_DECL_OVERRIDE;
   void standard_constructor(SMesh *sm);
-
+  bool save(std::ostream& out) const;
+  bool save_obj(std::ostream& out) const;
+  bool load_obj(std::istream& in);
 Q_SIGNALS:
   void item_is_about_to_be_changed();
   void selection_done();
