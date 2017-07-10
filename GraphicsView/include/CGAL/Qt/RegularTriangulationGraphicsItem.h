@@ -224,11 +224,12 @@ void
 RegularTriangulationGraphicsItem<T>::paintOneVertex(const typename T::Point& point)
 {
   Converter<K> convert;
+  typename T::Bare_point p = t->geom_traits().construct_point_2_object()(point);
 
   m_painter->setPen(this->verticesPen());
   QMatrix matrix = m_painter->matrix();
   m_painter->resetMatrix();
-  m_painter->drawPoint(matrix.map(convert(point)));
+  m_painter->drawPoint(matrix.map(convert(p)));
   m_painter->setMatrix(matrix);
 }
 

@@ -7,22 +7,16 @@ The concept `AlphaShapeTraits_3` describes the requirements
 for the geometric traits class 
 of the underlying Delaunay triangulation of a basic alpha shape. 
 
-\cgalRefines `DelaunayTriangulationTraits_3` 
+\cgalRefines `DelaunayTriangulationTraits_3`
 
 In addition to the requirements described in the concept
 ::DelaunayTriangulationTraits_3, the geometric traits class of a
 Delaunay triangulation plugged in a basic alpha shapes provides the
 following.
 
-\cgalHasModel All %CGAL kernels. 
-\cgalHasModel `CGAL::Exact_predicates_inexact_constructions_kernel` (recommended) 
-\cgalHasModel `CGAL::Exact_predicates_exact_constructions_kernel` 
-\cgalHasModel `CGAL::Filtered_kernel` 
-\cgalHasModel `CGAL::Cartesian` 
-\cgalHasModel `CGAL::Simple_cartesian` 
-\cgalHasModel `CGAL::Homogeneous` 
-\cgalHasModel `CGAL::Simple_homogeneous`
+\cgalHasModel All models of `Kernel`.
 
+\sa `CGAL::Exact_predicates_inexact_constructions_kernel` (recommended kernel)
 */
 
 class AlphaShapeTraits_3 {

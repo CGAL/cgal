@@ -2009,7 +2009,7 @@ public:
 					std::make_pair(x_pair.first,
 						       x_pair.second));
                 CGAL::Sign s_lower = CGAL::sign(iv.first);
-                if(s_lower == sign(iv.second)) {
+                if(s_lower == CGAL::sign(iv.second)) {
 		  return s_lower;
 		} else {
 		  prec*=2;
@@ -2111,7 +2111,7 @@ public:
 							 y_pair.first,
 							 y_pair.second));
                 CGAL::Sign s_lower = CGAL::sign(iv.first);
-                if(s_lower == sign(iv.second)) {
+                if(s_lower == CGAL::sign(iv.second)) {
 		  return s_lower;
 		} else {
 		  prec*=2;

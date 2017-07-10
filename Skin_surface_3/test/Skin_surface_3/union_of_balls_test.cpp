@@ -2,7 +2,8 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Union_of_balls_3.h>
 
-int main(int, char *[]) {
+int main(int, char *[])
+{
   double pts[][3]={{3.3874, 3.3577, 2.86547},
                    {4.20832, 3.04325, 3.05838},
                    {3.63033, 2.62921, 2.50657},
@@ -20,13 +21,15 @@ int main(int, char *[]) {
   std::vector<Weighted_point> l(size);
   for (size_t i=0; i< size; ++i) {
     l[i]= Weighted_point(Bare_point(pts[i][0], pts[i][1], pts[i][2]),
-                         .9*.9);
+        .9*.9);
     std::cout << ".color " << i << std::endl;
     std::cout << ".sphere " << pts[i][0] << " " << pts[i][1] << " " << pts[i][2] << " "
               << .9 << std::endl;
   }
+
   CGAL::Polyhedron_3<IKernel> p;
   CGAL::Union_of_balls_3<CGAL::Skin_surface_traits_3<IKernel> >
-    skin_surface(l.begin(), l.end());
+      skin_surface(l.begin(), l.end());
+
   return 0;
 }

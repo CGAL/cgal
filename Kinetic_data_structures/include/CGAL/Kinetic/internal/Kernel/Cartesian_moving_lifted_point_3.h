@@ -92,7 +92,7 @@ class Cartesian_moving_lifted_point_3
         template <class SK>
             struct Static_traits
         {
-            typedef typename SK::Weighted_point Static_type;
+            typedef typename SK::Weighted_point_3 Static_type;
             static Static_type to_static(const This &o, const typename Coordinate_t::NT &t, const SK&) {
                 typename Coordinate_t::NT x=o.point().x()(t),
                     y= o.point().y()(t),

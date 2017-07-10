@@ -19,8 +19,7 @@
 
 using namespace CGAL::Three;
 
-typedef Tr::Point Tr_Point_3;
-typedef Kernel::Point_3 Bare_point_3;
+typedef Tr::Bare_point Bare_point;
 
 template<typename Mesh>
 struct Polyhedral_mesh_domain_selector
@@ -42,6 +41,7 @@ struct Polyhedral_mesh_domain_selector<SMwgd>
 template<class Mesh>
 Meshing_thread* cgal_code_mesh_3_templated(const Mesh* pMesh,
                                  const Polylines_container& polylines,
+                                 const Mesh* pBoundingMesh,
                                  QString filename,
                                  const double facet_angle,
                                  const double facet_sizing,
@@ -75,6 +75,8 @@ Meshing_thread* cgal_code_mesh_3_templated(const Mesh* pMesh,
   Polyhedral_mesh_domain* p_domain = NULL;
   if (!surface_only && is_closed(*pMesh))
     p_domain = new Polyhedral_mesh_domain(*pMesh);
+  else if (!surface_only && pBoundingMesh != NULL && is_closed(*pBoundingMesh))
+    p_domain = new Polyhedral_mesh_domain(*pMesh, *pBoundingMesh);
   else
   {
     std::vector<const Mesh*> poly_ptrs_vector(1, pMesh);
@@ -138,6 +140,7 @@ Meshing_thread* cgal_code_mesh_3_templated(const Mesh* pMesh,
 
 Meshing_thread* cgal_code_mesh_3(const Polyhedron* pMesh,
                                  const Polylines_container& polylines,
+                                 const Polyhedron* pBoundingMesh,
                                  QString filename,
                                  const double facet_angle,
                                  const double facet_sizing,
@@ -154,6 +157,7 @@ Meshing_thread* cgal_code_mesh_3(const Polyhedron* pMesh,
 {
   return cgal_code_mesh_3_templated(pMesh,
                           polylines,
+                          pBoundingMesh,
                           filename,
                           facet_angle,
                           facet_sizing,
@@ -171,6 +175,7 @@ Meshing_thread* cgal_code_mesh_3(const Polyhedron* pMesh,
 
 Meshing_thread* cgal_code_mesh_3(const SMwgd* pMesh,
                                  const Polylines_container& polylines,
+                                 const SMwgd* pBoundingMesh,
                                  QString filename,
                                  const double facet_angle,
                                  const double facet_sizing,
@@ -187,6 +192,7 @@ Meshing_thread* cgal_code_mesh_3(const SMwgd* pMesh,
 {
   return cgal_code_mesh_3_templated(pMesh,
                           polylines,
+                          pBoundingMesh,
                           filename,
                           facet_angle,
                           facet_sizing,
@@ -277,11 +283,11 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
 
   if(protect_features && polylines.empty())
   {
-    std::vector<std::vector<Bare_point_3> > polylines_on_bbox;
+    std::vector<std::vector<Bare_point> > polylines_on_bbox;
     if(pImage->image()->wordKind == WK_FLOAT)
-      CGAL::polylines_to_protect<Bare_point_3, float>(*pImage, polylines_on_bbox);
+      CGAL::polylines_to_protect<Bare_point, float>(*pImage, polylines_on_bbox);
     else //WK_FIXED
-      CGAL::polylines_to_protect<Bare_point_3, unsigned char>(*pImage, polylines_on_bbox);
+      CGAL::polylines_to_protect<Bare_point, unsigned char>(*pImage, polylines_on_bbox);
 
     p_domain->add_features(polylines_on_bbox.begin(), polylines_on_bbox.end());
   }
@@ -308,9 +314,9 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
     Image_mesh_domain* p_domain = new Image_mesh_domain(*pImage, 1e-6);
 
     if(protect_features && polylines.empty()){
-      std::vector<std::vector<Tr_Point_3> > polylines_on_bbox;
+      std::vector<std::vector<Bare_point> > polylines_on_bbox;
       CGAL::polylines_to_protect<
-        Tr_Point_3,
+        Bare_point,
         Image_mesh_domain::Image_word_type>(*pImage, polylines_on_bbox);
       p_domain->add_features(polylines_on_bbox.begin(), polylines_on_bbox.end());
     }
@@ -337,8 +343,8 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
     {
       std::cerr << "Warning : Automatic detection of features"
                 << " in Gray images is not implemented yet" << std::endl;
-      //std::vector<std::vector<Tr_Point_3> > polylines_on_bbox;
-      //CGAL::polylines_to_protect<Tr_Point_3>(*pImage, polylines_on_bbox);
+      //std::vector<std::vector<Bare_point> > polylines_on_bbox;
+      //CGAL::polylines_to_protect<Bare_point>(*pImage, polylines_on_bbox);
       //p_domain->add_features(polylines_on_bbox.begin(), polylines_on_bbox.end());
     }
     if(! polylines.empty()){

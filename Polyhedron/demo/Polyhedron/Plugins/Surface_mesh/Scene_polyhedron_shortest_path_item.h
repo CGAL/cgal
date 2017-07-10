@@ -6,7 +6,7 @@
 #include <CGAL/Three/Scene_interface.h>
 #include "Messages_interface.h"
 
-#include "Polyhedron_type.h"
+//#include "Polyhedron_type.h"
 #include "Kernel_type.h"
 
 #include "opengl_tools.h"
@@ -41,16 +41,16 @@ class SCENE_POLYHEDRON_SHORTEST_PATH_ITEM_EXPORT Scene_polyhedron_shortest_path_
 public:
   typedef CGAL::Three::Scene_interface::Bbox Bbox;
   
-  typedef boost::property_map<Polyhedron, CGAL::vertex_point_t>::type VertexPointMap;
+  typedef boost::property_map<Face_graph, CGAL::vertex_point_t>::type VertexPointMap;
   
-  typedef boost::graph_traits<Polyhedron> GraphTraits;
+  typedef boost::graph_traits<Face_graph> GraphTraits;
   typedef GraphTraits::face_descriptor face_descriptor;
   typedef GraphTraits::face_iterator face_iterator;
   
-  typedef CGAL::Surface_mesh_shortest_path_traits<Kernel, Polyhedron> Surface_mesh_shortest_path_traits;
+  typedef CGAL::Surface_mesh_shortest_path_traits<Kernel, Face_graph> Surface_mesh_shortest_path_traits;
   typedef CGAL::Surface_mesh_shortest_path<Surface_mesh_shortest_path_traits> Surface_mesh_shortest_path;
   typedef Surface_mesh_shortest_path::Face_location Face_location;
-  typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron, VertexPointMap> AABB_face_graph_primitive;
+  typedef CGAL::AABB_face_graph_triangle_primitive<Face_graph, VertexPointMap> AABB_face_graph_primitive;
   typedef CGAL::AABB_traits<Kernel, AABB_face_graph_primitive> AABB_face_graph_traits;
   typedef CGAL::AABB_tree<AABB_face_graph_traits> AABB_face_graph_tree;
   
@@ -77,7 +77,7 @@ public:
 public:
 
   Scene_polyhedron_shortest_path_item();
-  Scene_polyhedron_shortest_path_item(Scene_polyhedron_item* polyhedronItem, CGAL::Three::Scene_interface* sceneInterface, Messages_interface* messages, QMainWindow* mainWindow);
+  Scene_polyhedron_shortest_path_item(Scene_face_graph_item* polyhedronItem, CGAL::Three::Scene_interface* sceneInterface, Messages_interface* messages, QMainWindow* mainWindow);
   ~Scene_polyhedron_shortest_path_item();
   
   void set_selection_mode(Selection_mode mode);
@@ -93,12 +93,12 @@ public:
   
   virtual Scene_polyhedron_shortest_path_item* clone() const;
   
-  bool deferred_load(Scene_polyhedron_item* polyhedronItem, CGAL::Three::Scene_interface* sceneInterface, Messages_interface* messages, QMainWindow* mainWindow);
+  bool deferred_load(Scene_face_graph_item* polyhedronItem, CGAL::Three::Scene_interface* sceneInterface, Messages_interface* messages, QMainWindow* mainWindow);
   virtual bool load(const std::string& file_name);
   virtual bool save(const std::string& file_name) const;
   
 protected:
-  void initialize(Scene_polyhedron_item* polyhedronItem, CGAL::Three::Scene_interface* sceneInterface, Messages_interface* messages, QMainWindow* mainWindow);
+  void initialize(Scene_face_graph_item* polyhedronItem, CGAL::Three::Scene_interface* sceneInterface, Messages_interface* messages, QMainWindow* mainWindow);
   void deinitialize();
   
   virtual bool isFinite() const;

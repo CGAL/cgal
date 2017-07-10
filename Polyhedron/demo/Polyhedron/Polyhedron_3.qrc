@@ -20,6 +20,8 @@
         <file>resources/right.png</file>
         <file>resources/up.png</file>
         <file>resources/down.png</file>
+        <file>resources/left_arrow.png</file>
+        <file>resources/right_arrow.png</file>
     </qresource>
     <qresource prefix="/cgal/Polyhedron_3">
         <file alias="about.html">resources/about.html</file>
@@ -49,6 +51,14 @@
         <file>javascript/lib.js</file>
         <file>resources/shader_c3t3_tets.v</file>
         <file>resources/shader_flat.f</file>
+        <file>resources/hexahedron.png</file>
+        <file>resources/icosphere.png</file>
+        <file>resources/tetrahedron.png</file>
+        <file>resources/grid.png</file>
+        <file>resources/prism.png</file>
+        <file>resources/prism-open.png</file>
+        <file>resources/pyramid.png</file>
+        <file>resources/pyramid-open.png</file>
     </qresource>
     <qresource prefix="/cgal/cursors">
         <file>resources/rotate_around_cursor.png</file>

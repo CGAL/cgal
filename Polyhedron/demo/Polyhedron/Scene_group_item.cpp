@@ -121,7 +121,7 @@ void Scene_group_item::moveUp(int i)
     children.move(i, i-1);
 }
 
-void Scene_group_item::draw(CGAL::Three::Viewer_interface* viewer) const {
+void Scene_group_item::draw(CGAL::Three::Viewer_interface* viewer) const  {
   if(viewer->inDrawWithNames() || already_drawn ) return;
   Q_FOREACH(Scene_item* child, children) {
     if(!child->visible()) continue;
@@ -141,10 +141,13 @@ void Scene_group_item::draw(CGAL::Three::Viewer_interface* viewer) const {
     }
     switch(child->renderingMode()) {
     case Points:
+    case ShadedPoints:
     case PointsPlusNormals:
       child->drawPoints(viewer); break;
     default: break;
     }
+    if(child->renderingMode() == Splatting)
+      child->drawSplats(viewer);
   }
   already_drawn = true;
 }
@@ -170,6 +173,7 @@ void Scene_group_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const
     }
     switch(child->renderingMode()) {
     case Points:
+    case ShadedPoints:
     case PointsPlusNormals:
       child->drawPoints(viewer); break;
     default: break;
@@ -185,6 +189,7 @@ void Scene_group_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const
     if(!child->visible()) continue;
     switch(child->renderingMode()) {
     case Points:
+    case ShadedPoints:
     case PointsPlusNormals:
       child->drawPoints(viewer); break;
     default: break;

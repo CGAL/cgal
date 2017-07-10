@@ -235,9 +235,9 @@ class Compact_container
   typedef Allocator_                                Al;
   typedef typename Default::Get< Al, CGAL_ALLOCATOR(T) >::type Allocator;
   typedef Increment_policy_                         Ip;
-  typedef typename Default::Get< Ip, 
+  typedef typename Default::Get< Ip,
             Addition_size_policy<CGAL_INIT_COMPACT_CONTAINER_BLOCK_SIZE,
-                             CGAL_INCREMENT_COMPACT_CONTAINER_BLOCK_SIZE> 
+                             CGAL_INCREMENT_COMPACT_CONTAINER_BLOCK_SIZE>
           >::type                                   Increment_policy;
   typedef TimeStamper_                              Ts;
   typedef Compact_container <T, Al, Ip, Ts>         Self;
@@ -815,6 +815,12 @@ private:
     Traits::pointer(*ptr) = (void *) ((clean_pointer((char *) p)) + (int) t);
   }
 
+public:
+  // @return true iff pts is on the beginning or on the end of its block.
+  static bool is_begin_or_end(const_pointer ptr)
+  { return type(ptr)==START_END; }
+
+
   // We store a vector of pointers to all allocated blocks and their sizes.
   // Knowing all pointers, we don't have to walk to the end of a block to reach
   // the pointer to the next block.
@@ -1000,6 +1006,7 @@ namespace internal {
     typedef typename DSC::iterator                    iterator;
     typedef CC_iterator<DSC, Const>                   Self;
   public:
+    typedef DSC                                       CC;
     typedef typename DSC::value_type                  value_type;
     typedef typename DSC::size_type                   size_type;
     typedef typename DSC::difference_type             difference_type;
@@ -1276,11 +1283,11 @@ namespace std {
 
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
-#  pragma warning(disable:4099) // For VC10 it is class hash 
+#  pragma warning(disable:4099) // For VC10 it is class hash
 #endif
 
 #ifndef CGAL_CFG_NO_STD_HASH
-  
+
   template < class DSC, bool Const >
   struct hash<CGAL::internal::CC_iterator<DSC, Const> >
     : public std::unary_function<CGAL::internal::CC_iterator<DSC, Const>, std::size_t> {

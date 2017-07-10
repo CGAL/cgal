@@ -12,9 +12,10 @@ with some additional attributes (a color for example) tuned for a specific
 application. 
 
 
-\tparam TriangulationTraits_3 is the geometric traits class. It is actually not used by this class. 
+\tparam Traits is the geometric traits class and must be a model of `TriangulationTraits_3`.
+It is actually not used by this class.
 
-\tparam TriangulationDSCellBase_3_ is a combinatorial cell base class from which 
+\tparam TDSCb is a combinatorial cell base class from which
 `Triangulation_cell_base_3` derives.
 It must be a model of the `TriangulationDSCellBase_3` concept.
 It has the default value `Triangulation_ds_cell_base_3`. 
@@ -23,11 +24,12 @@ It has the default value `Triangulation_ds_cell_base_3`.
 
 \sa `CGAL::Triangulation_ds_cell_base_3` 
 \sa `CGAL::Triangulation_cell_base_with_info_3` 
+\sa `CGAL::Triangulation_cell_base_with_circumcenter_3`
 \sa `CGAL::Triangulation_vertex_base_3` 
 
 */
-template< typename TriangulationTraits_3, typename TriangulationDSCellBase_3_ >
-class Triangulation_cell_base_3 : public TriangulationDSCellBase_3_ {
+template< typename Traits, typename TDSCb >
+class Triangulation_cell_base_3 : public TDSCb {
 public:
 
 /// @}

@@ -13,38 +13,36 @@
 #include <CGAL/Alpha_shape_cell_base_3.h>
 #include <CGAL/Alpha_shape_vertex_base_3.h>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel                                     Kernel;
-typedef Kernel                                                                                  EPIC_traits;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel                               EPICK;
+typedef CGAL::Exact_predicates_exact_constructions_kernel                                 EPECK;
 
-typedef Kernel::Weighted_point_3                                                                Weighted_point;
-typedef CGAL::Regular_triangulation_vertex_base_3<Kernel>                                       Vbb;
-typedef CGAL::Fixed_alpha_shape_vertex_base_3<Kernel,Vbb>                                       WFixed_Vb;
-typedef CGAL::Fixed_alpha_shape_cell_base_3<EPIC_traits>                                        WFixed_Cb;
-typedef CGAL::Triangulation_data_structure_3<WFixed_Vb,WFixed_Cb>                               WFixed_TDS;
-typedef CGAL::Regular_triangulation_3<EPIC_traits,WFixed_TDS>                                   WFixed_DT;
-typedef CGAL::Fixed_alpha_shape_3< WFixed_DT >                                                  WFixed_AS;
+typedef CGAL::Regular_triangulation_vertex_base_3<EPICK>                                  Rvb;
+typedef CGAL::Fixed_alpha_shape_vertex_base_3<EPICK,Rvb>                                  WFixed_Vb;
+typedef CGAL::Regular_triangulation_cell_base_3<EPICK>                                    Rcb;
+typedef CGAL::Fixed_alpha_shape_cell_base_3<EPICK,Rcb>                                    WFixed_Cb;
+typedef CGAL::Triangulation_data_structure_3<WFixed_Vb,WFixed_Cb>                         WFixed_TDS;
+typedef CGAL::Regular_triangulation_3<EPICK,WFixed_TDS>                                   WFixed_DT;
+typedef CGAL::Fixed_alpha_shape_3<WFixed_DT>                                              WFixed_AS;
 
+typedef CGAL::Alpha_shape_vertex_base_3<EPICK,Rvb>                                        WVb;
+typedef CGAL::Alpha_shape_cell_base_3<EPICK,Rcb>                                          WCb;
+typedef CGAL::Triangulation_data_structure_3<WVb,WCb>                                     WTDS;
+typedef CGAL::Regular_triangulation_3<EPICK,WTDS>                                         WDT;
+typedef CGAL::Alpha_shape_3< WDT >                                                        WAS;
 
-typedef CGAL::Alpha_shape_vertex_base_3<EPIC_traits,Vbb>                                        WVb;
-typedef CGAL::Alpha_shape_cell_base_3<EPIC_traits>                                              WCb;
-typedef CGAL::Triangulation_data_structure_3<WVb,WCb>                                           WTDS;
-typedef CGAL::Regular_triangulation_3<EPIC_traits,WTDS>                                         WDT;
-typedef CGAL::Alpha_shape_3< WDT >                                                              WAS;
+typedef CGAL::Alpha_shape_vertex_base_3<EPICK,Rvb,CGAL::Tag_true,CGAL::Tag_true>          WVb_f;
+typedef CGAL::Alpha_shape_cell_base_3<EPICK,Rcb,CGAL::Tag_true,CGAL::Tag_true>            WCb_f;
+typedef CGAL::Triangulation_data_structure_3<WVb_f,WCb_f>                                 WTDS_f;
+typedef CGAL::Regular_triangulation_3<EPICK,WTDS_f>                                       WDT_f;
+typedef CGAL::Alpha_shape_3< WDT_f,CGAL::Tag_true >                                       WAS_f;
 
-typedef CGAL::Alpha_shape_vertex_base_3<EPIC_traits,Vbb,CGAL::Tag_true,CGAL::Tag_true> WVb_f;
-typedef CGAL::Alpha_shape_cell_base_3<EPIC_traits,CGAL::Default,CGAL::Tag_true,CGAL::Tag_true>  WCb_f;
-typedef CGAL::Triangulation_data_structure_3<WVb_f,WCb_f>                                       WTDS_f;
-typedef CGAL::Regular_triangulation_3<EPIC_traits,WTDS_f>                                       WDT_f;
-typedef CGAL::Alpha_shape_3< WDT_f,CGAL::Tag_true >                                             WAS_f;
-
-typedef CGAL::Exact_predicates_exact_constructions_kernel                                       EKernel;
-typedef CGAL::Regular_triangulation_vertex_base_3<EKernel>                                      EVbb;
-typedef EKernel                                                                                 EPEC_traits;
-typedef CGAL::Alpha_shape_vertex_base_3<EPEC_traits,EVbb>                                       EVb;
-typedef CGAL::Alpha_shape_cell_base_3<EPEC_traits>                                              ECb;
-typedef CGAL::Triangulation_data_structure_3<EVb,ECb>                                           ETDS;
-typedef CGAL::Regular_triangulation_3<EPEC_traits,ETDS>                                         EDT;
-typedef CGAL::Alpha_shape_3< EDT >                                                              EAS;
+typedef CGAL::Regular_triangulation_vertex_base_3<EPECK>                                  ERvb;
+typedef CGAL::Alpha_shape_vertex_base_3<EPECK,ERvb>                                       EVb;
+typedef CGAL::Regular_triangulation_cell_base_3<EPECK>                                    ERcb;
+typedef CGAL::Alpha_shape_cell_base_3<EPECK,ERcb>                                         ECb;
+typedef CGAL::Triangulation_data_structure_3<EVb,ECb>                                     ETDS;
+typedef CGAL::Regular_triangulation_3<EPECK,ETDS>                                         EDT;
+typedef CGAL::Alpha_shape_3< EDT >                                                        EAS;
 
 template <class Object>
 void fill_wp_lists(const char* file_path,std::list<Object>& Ls,double rw=0){
@@ -64,7 +62,7 @@ void fill_wp_lists(const char* file_path,std::list<Object>& Ls,double rw=0){
 void make_one_run(const char* filename){
   std::cout << "== testing with "  << filename << " ==\n";
 //read weighted points
-  std::list<Weighted_point > lst;
+  std::list<EPICK::Weighted_point_3> lst;
   fill_wp_lists(filename,lst,1.4);
   CGAL::Timer time;
   
@@ -112,7 +110,7 @@ void make_one_run(const char* filename){
   
   time.reset();
 
-  std::list<EPEC_traits::Weighted_point_3 > elst;
+  std::list<EPECK::Weighted_point_3> elst;
   fill_wp_lists(filename,elst,1.4);
   //recreate the triangulation
   time.start();

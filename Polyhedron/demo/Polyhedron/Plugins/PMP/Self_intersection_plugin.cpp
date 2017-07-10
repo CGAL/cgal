@@ -183,10 +183,10 @@ void Polyhedron_demo_self_intersection_plugin::on_actionSelfIntersection_trigger
       found = true;
     }
   }
+  QApplication::restoreOverrideCursor();
   if(!found)
     QMessageBox::information(mw, tr("No self intersection"),
                              tr("None of the selected surfaces self-intersect."));
-  QApplication::restoreOverrideCursor();
 }
 
 #include "Self_intersection_plugin.moc"

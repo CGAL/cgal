@@ -366,6 +366,8 @@ public:
   typedef TriangulationProjectionTraitsCartesianFunctors::
   Projected_intersect_3<Self>                                Intersect_2;
 
+  typedef typename K::Construct_point_3   Construct_point_2;
+  typedef typename K::Construct_weighted_point_3  Construct_weighted_point_2;
   typedef typename K::Construct_segment_3  Construct_segment_2;
   typedef typename K::Construct_vector_3   Construct_vector_2;
   typedef typename K::Construct_line_3     Construct_line_2;
@@ -428,6 +430,12 @@ public:
 
   Angle_2  angle_2_object() const
     {return Angle_2();}
+
+  Construct_point_2  construct_point_2_object() const
+    {return Construct_point_2();}
+
+  Construct_weighted_point_2  construct_weighted_point_2_object() const
+    {return Construct_weighted_point_2();}
 
   Construct_segment_2  construct_segment_2_object() const
     {return Construct_segment_2();}

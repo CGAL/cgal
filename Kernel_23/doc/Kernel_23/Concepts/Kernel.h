@@ -1469,11 +1469,6 @@ public:
   typedef unspecified_type Compare_power_distance_3; 
 
   /*!
-    a model of `Kernel::ComparePowerDistanceToPowerSphere_3` 
-  */ 
-  typedef unspecified_type Compare_power_distance_to_power_sphere_3; 
-
-  /*!
     a model of `Kernel::Collinear_3` 
   */ 
   typedef unspecified_type Collinear_3; 

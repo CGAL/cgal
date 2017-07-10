@@ -4,9 +4,13 @@
 
 #include "config.h"
 #include "Scene.h"
+
 #include <CGAL/Three/Scene_item.h>
-#include <CGAL/Three/Scene_print_interface_item.h>
 #include <CGAL/Three/Scene_zoomable_item_interface.h>
+
+#include  <CGAL/Three/Scene_item.h>
+#include <CGAL/Three/Scene_print_item_interface.h>
+
 
 #include <QObject>
 #include <QMetaObject>
@@ -57,6 +61,8 @@ Scene::addItem(CGAL::Three::Scene_item* item)
     m_entries.push_back(item);
     connect(item, SIGNAL(itemChanged()),
             this, SLOT(itemChanged()));
+    connect(item, SIGNAL(itemVisibilityChanged()),
+            this, SLOT(itemVisibilityChanged()));
     connect(item, SIGNAL(redraw()),
             this, SLOT(callDraw()));
     if(item->isFinite()
@@ -64,7 +70,7 @@ Scene::addItem(CGAL::Three::Scene_item* item)
             && bbox_before + item->bbox() != bbox_before
             )
     {
-        Q_EMIT updated_bbox();
+        Q_EMIT updated_bbox(true);
     }
     QList<QStandardItem*> list;
     for(int i=0; i<5; i++)
@@ -94,6 +100,8 @@ Scene::replaceItem(Scene::Item_id index, CGAL::Three::Scene_item* item, bool emi
 
     connect(item, SIGNAL(itemChanged()),
             this, SLOT(itemChanged()));
+    connect(item, SIGNAL(itemVisibilityChanged()),
+            this, SLOT(itemVisibilityChanged()));
     CGAL::Three::Scene_group_item* group =
             qobject_cast<CGAL::Three::Scene_group_item*>(m_entries[index]);
     if(group)
@@ -107,11 +115,12 @@ Scene::replaceItem(Scene::Item_id index, CGAL::Three::Scene_item* item, bool emi
       erase(children);
     }
     std::swap(m_entries[index], item);
+    Q_EMIT newItem(index);
     if ( item->isFinite() && !item->isEmpty() &&
          m_entries[index]->isFinite() && !m_entries[index]->isEmpty() &&
          item->bbox()!=m_entries[index]->bbox() )
     {
-    Q_EMIT updated_bbox();
+    Q_EMIT updated_bbox(true);
     }
 
     if(emit_item_about_to_be_destroyed) {
@@ -148,9 +157,9 @@ Scene::erase(Scene::Item_id index)
     item->parentGroup()->removeChild(item);
 
   //removes the item from all groups that contain it
+  m_entries.removeAll(item);
   Q_EMIT itemAboutToBeDestroyed(item);
     item->deleteLater();
-    m_entries.removeAll(item);
     selected_item = -1;
     //re-creates the Scene_view
     Q_FOREACH(Scene_item* item, m_entries)
@@ -193,9 +202,9 @@ Scene::erase(QList<int> indices)
   Q_FOREACH(Scene_item* item, to_be_removed) {
       if(item->parentGroup())
         item->parentGroup()->removeChild(item);
+      m_entries.removeAll(item);
     Q_EMIT itemAboutToBeDestroyed(item);
     item->deleteLater();
-    m_entries.removeAll(item);
   }
   clear();
   index_map.clear();
@@ -855,7 +864,7 @@ void Scene::moveRowDown()
     }
 }
 Scene::Item_id Scene::mainSelectionIndex() const {
-    return selected_item;
+    return (selectionIndices().size() == 1) ? selected_item : -1;
 }
 
 QList<int> Scene::selectionIndices() const {
@@ -897,14 +906,31 @@ void Scene::itemChanged(Item_id i)
 
   Q_EMIT dataChanged(this->createIndex(i, 0),
                      this->createIndex(i, LastColumn));
-  //  Q_EMIT restoreCollapsedState();
 }
 
-void Scene::itemChanged(CGAL::Three::Scene_item* /* item */)
+void Scene::itemChanged(CGAL::Three::Scene_item*)
 {
   Q_EMIT dataChanged(this->createIndex(0, 0),
                      this->createIndex(m_entries.size() - 1, LastColumn));
 }
+
+void Scene::itemVisibilityChanged()
+{
+    CGAL::Three::Scene_item* item = qobject_cast<CGAL::Three::Scene_item*>(sender());
+    if(item)
+        itemVisibilityChanged(item);
+}
+
+void Scene::itemVisibilityChanged(CGAL::Three::Scene_item* item)
+{
+  if(item->isFinite()
+     && !item->isEmpty())
+  {
+    //does not recenter
+    Q_EMIT updated_bbox(false);
+  }
+}
+
 
 bool SceneDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
                                 const QStyleOptionViewItem &option,
@@ -1133,18 +1159,13 @@ void Scene::changeGroup(Scene_item *item, CGAL::Three::Scene_group_item *target_
     Q_EMIT updated();
 }
 
-float Scene::get_bbox_length() const
-{
-    return bbox().ymax()-bbox().ymin();
-}
-
 void Scene::printPrimitiveId(QPoint point, CGAL::Three::Viewer_interface* viewer)
 {
   Scene_item *it = item(mainSelectionIndex());
   if(it)
   {
-    //Only call printPrimitiveId if the item is a Scene_print_interface_item
-    Scene_print_interface_item* item= dynamic_cast<Scene_print_interface_item*>(it);
+    //Only call printPrimitiveId if the item is a Scene_print_item_interface
+    Scene_print_item_interface* item= qobject_cast<Scene_print_item_interface*>(it);
     if(item)
       item->printPrimitiveId(point, viewer);
   }
@@ -1154,8 +1175,8 @@ void Scene::printPrimitiveIds(CGAL::Three::Viewer_interface* viewer)
   Scene_item *it = item(mainSelectionIndex());
   if(it)
   {
-    //Only call printPrimitiveIds if the item is a Scene_print_interface_item
-    Scene_print_interface_item* item= dynamic_cast<Scene_print_interface_item*>(it);
+    //Only call printPrimitiveIds if the item is a Scene_print_item_interface
+    Scene_print_item_interface* item= qobject_cast<Scene_print_item_interface*>(it);
     if(item)
       item->printPrimitiveIds(viewer);
   }
@@ -1164,8 +1185,8 @@ void Scene::updatePrimitiveIds(CGAL::Three::Viewer_interface* viewer, CGAL::Thre
 {
   if(it)
   {
-    //Only call printPrimitiveIds if the item is a Scene_print_interface_item
-    Scene_print_interface_item* item= dynamic_cast<Scene_print_interface_item*>(it);
+    //Only call printPrimitiveIds if the item is a Scene_print_item_interface
+    Scene_print_item_interface* item= qobject_cast<Scene_print_item_interface*>(it);
     if(item)
     {
       //As this function works as a toggle, the first call hides the ids and the second one  shows them again,
@@ -1178,9 +1199,12 @@ void Scene::updatePrimitiveIds(CGAL::Three::Viewer_interface* viewer, CGAL::Thre
 bool Scene::testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer)
 {
     CGAL::Three::Scene_item *i = item(mainSelectionIndex());
-    if(i && i->visible())
+    if(!i)
+      return false;
+    Scene_print_item_interface* spit= qobject_cast<Scene_print_item_interface*>(i);
+    if(spit && i->visible())
     {
-        bool res = i->testDisplayId(x,y,z, viewer);
+        bool res = spit->testDisplayId(x,y,z, viewer);
         return res;
     }
     else

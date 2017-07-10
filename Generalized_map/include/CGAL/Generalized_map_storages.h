@@ -56,7 +56,9 @@ namespace CGAL {
 
     typedef typename internal::template Get_dart_info<Dart_wrapper>::type
                                                           Dart_info;
-    typedef CGAL::Dart<d_, Self, Dart_info>               Dart;
+    typedef typename internal::template Get_darts_with_id<Dart_wrapper>::type
+                                                           Darts_with_id;
+    typedef CGAL::Dart<d_, Self, Dart_info, Darts_with_id> Dart;
 
     typedef typename Alloc_::template rebind<Dart>::other Dart_allocator;
 

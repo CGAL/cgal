@@ -64,13 +64,13 @@ int main(int argc, char* argv[])
   std::cout << "Number of edges of the skeleton: " << boost::num_edges(skeleton) << "\n";
 
   // Output all the edges of the skeleton.
-  std::ofstream output("skel.cgal");
+  std::ofstream output("skel-poly.cgal");
   Display_polylines display(skeleton,output);
   CGAL::split_graph_into_polylines(skeleton, display);
   output.close();
 
   // Output skeleton points and the corresponding surface points
-  output.open("correspondance.cgal");
+  output.open("correspondance-poly.cgal");
   BOOST_FOREACH(Skeleton_vertex v, vertices(skeleton))
     BOOST_FOREACH(vertex_descriptor vd, skeleton[v].vertices)
       output << "2 " << skeleton[v].point << " "

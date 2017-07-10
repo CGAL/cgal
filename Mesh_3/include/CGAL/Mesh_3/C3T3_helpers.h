@@ -386,7 +386,8 @@ class C3T3_helpers_base
 {
 protected:
   typedef typename Tr::Geom_traits          Gt;
-  typedef typename Gt::Point_3              Point_3;
+  typedef typename Tr::Bare_point           Bare_point;
+  typedef typename Tr::Weighted_point       Weighted_point;
   typedef typename Gt::FT                   FT;
   typedef typename Tr::Vertex_handle        Vertex_handle;
   typedef typename Tr::Cell_handle          Cell_handle;
@@ -402,7 +403,7 @@ protected:
 
 public:
   // Dummy locks/unlocks
-  bool try_lock_point(const Point_3 &, int = 0) const
+  bool try_lock_point(const Weighted_point &, int = 0) const
   {
     return true;
   }
@@ -412,7 +413,7 @@ public:
     return true;
   }
 
-  bool try_lock_point_no_spin(const Point_3 &, int = 0) const
+  bool try_lock_point_no_spin(const Weighted_point &, int = 0) const
   {
     return true;
   }
@@ -433,7 +434,7 @@ public:
   }
 
 
-  bool is_point_locked_by_this_thread(const Point_3 &) const
+  bool is_point_locked_by_this_thread(const Weighted_point &) const
   { return false; }
 
   bool is_cell_locked_by_this_thread(const Cell_handle &) const
@@ -457,7 +458,8 @@ class C3T3_helpers_base<Tr, Parallel_tag>
 {
 protected:
   typedef typename Tr::Geom_traits          Gt;
-  typedef typename Gt::Point_3              Point_3;
+  typedef typename Tr::Bare_point           Bare_point;
+  typedef typename Tr::Weighted_point       Weighted_point;
   typedef typename Tr::Vertex_handle        Vertex_handle;
   typedef typename Tr::Cell_handle          Cell_handle;
   typedef typename Tr::Facet                Facet;
@@ -475,7 +477,7 @@ public:
     return m_lock_ds;
   }*/
 
-  bool try_lock_point(const Point_3 &p, int lock_radius = 0) const
+  bool try_lock_point(const Weighted_point &p, int lock_radius = 0) const
   {
     if (m_lock_ds)
     {
@@ -493,7 +495,7 @@ public:
     return true;
   }
 
-  bool try_lock_point_no_spin(const Point_3 &p, int lock_radius = 0) const
+  bool try_lock_point_no_spin(const Weighted_point &p, int lock_radius = 0) const
   {
     if (m_lock_ds)
     {
@@ -537,7 +539,7 @@ public:
     return success;
   }
 
-  bool is_point_locked_by_this_thread(const Point_3 &p) const
+  bool is_point_locked_by_this_thread(const Weighted_point &p) const
   {
     bool locked = true;
     if (m_lock_ds)
@@ -631,12 +633,16 @@ class C3T3_helpers
   typedef typename C3T3::Triangulation        Tr;
   typedef Tr                                  Triangulation;
   typedef typename Tr::Geom_traits            Gt;
+  typedef typename Tr::Bare_point             Bare_point;
+  typedef typename Tr::Weighted_point         Weighted_point;
 
-  typedef typename Gt::Vector_3         Vector_3;
-  typedef typename Gt::Point_3          Point_3;
-  typedef typename Gt::Plane_3          Plane_3;
-  typedef typename Gt::FT               FT;
-  typedef typename Gt::Tetrahedron_3    Tetrahedron;
+  typedef typename Gt::Vector_3               Vector_3;
+  typedef typename Gt::Plane_3                Plane_3;
+  typedef typename Gt::FT                     FT;
+  typedef typename Gt::Tetrahedron_3          Tetrahedron;
+
+  typedef typename Gt::Construct_point_3             Construct_point_3;
+  typedef typename Gt::Construct_weighted_point_3    Construct_weighted_point_3;
 
   typedef typename Tr::Vertex_handle    Vertex_handle;
   typedef typename Tr::Cell_handle      Cell_handle;
@@ -711,7 +717,10 @@ public:
     : Base(lock_ds)
     , c3t3_(c3t3)
     , tr_(c3t3.triangulation())
-    , domain_(domain) { }
+    , domain_(domain)
+    , wp2p_(tr_.geom_traits().construct_point_3_object())
+    , p2wp_(tr_.geom_traits().construct_weighted_point_3_object())
+  { }
 
   /**
    * @brief tries to move \c old_vertex to \c new_position in the mesh
@@ -729,7 +738,7 @@ public:
    */
   template <typename SliverCriterion, typename OutputIterator>
   std::pair<bool,Vertex_handle>
-  update_mesh(const Point_3& new_position,
+  update_mesh(const Weighted_point& new_position,
               const Vertex_handle& old_vertex,
               const SliverCriterion& criterion,
               OutputIterator modified_vertices,
@@ -743,7 +752,7 @@ public:
    */
   template <typename SliverCriterion, typename OutputIterator>
   std::pair<bool,Vertex_handle>
-  update_mesh_topo_change(const Point_3& new_position,
+  update_mesh_topo_change(const Weighted_point& new_position,
                           const Vertex_handle& old_vertex,
                           const SliverCriterion& criterion,
                           OutputIterator modified_vertices,
@@ -756,7 +765,7 @@ public:
    * Insert into modified vertices the vertices which are impacted by to move.
    */
   template <typename OutputIterator>
-  Vertex_handle update_mesh(const Point_3& new_position,
+  Vertex_handle update_mesh(const Weighted_point& new_position,
                             const Vertex_handle& old_vertex,
                             OutputIterator modified_vertices,
                             bool fill_modified_vertices = true);
@@ -765,7 +774,7 @@ public:
    * Updates mesh moving vertex \c old_vertex to \c new_position. Returns the
    * new vertex of the triangulation.
    */
-  Vertex_handle update_mesh(const Point_3& new_position,
+  Vertex_handle update_mesh(const Weighted_point& new_position,
                             const Vertex_handle& old_vertex)
   {
     return update_mesh(new_position, old_vertex, Emptyset_iterator(), false);
@@ -799,8 +808,8 @@ public:
    * surface points that are on the same surface patch are used to compute
    * the fitting plane.
    */
-  Point_3
-  project_on_surface(const Point_3& p, const Vertex_handle& v,
+  Bare_point
+  project_on_surface(const Bare_point& p, const Vertex_handle& v,
                      Surface_patch_index index = Surface_patch_index()) const;
 
   /**
@@ -817,11 +826,11 @@ public:
    * The second one (with the could_lock_zone param) is for the parallel version
    */
   Vertex_handle move_point(const Vertex_handle& old_vertex,
-                           const Point_3& new_position,
+                           const Weighted_point& new_position,
                            Outdated_cell_set& outdated_cells_set,
                            Moving_vertices_set& moving_vertices) const;
   Vertex_handle move_point(const Vertex_handle& old_vertex,
-                           const Point_3& new_position,
+                           const Weighted_point& new_position,
                            Outdated_cell_set& outdated_cells_set,
                            Moving_vertices_set& moving_vertices,
                            bool *could_lock_zone) const;
@@ -1126,7 +1135,7 @@ private:
 
       // Functors
       typename Gt::Is_degenerate_3 is_degenerate =
-        Gt().is_degenerate_3_object();
+        c3t3_.triangulation().geom_traits().is_degenerate_3_object();
 
       // Get dual of facet
       Object dual = c3t3_.triangulation().dual(facet);
@@ -1237,14 +1246,14 @@ private:
 #endif // NOT CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
 
           // Update facet surface center
-          Point_3 surface_center = CGAL::cpp0x::get<0>(intersection);
+          Bare_point surface_center = CGAL::cpp0x::get<0>(intersection);
           facet.first->set_facet_surface_center(facet.second,surface_center);
           facet_m.first->set_facet_surface_center(facet_m.second,surface_center);
         }
         else
         {
-          facet.first->set_facet_surface_center(facet.second,Point_3());
-          facet_m.first->set_facet_surface_center(facet_m.second,Point_3());
+          facet.first->set_facet_surface_center(facet.second,Bare_point());
+          facet_m.first->set_facet_surface_center(facet_m.second,Bare_point());
         }
       }
 
@@ -1548,7 +1557,7 @@ private:
     FT sliver_value_;
     Subdomain_index subdomain_index_;
     CGAL::cpp11::array<Surface_patch_index, 4> surface_index_table_;
-    CGAL::cpp11::array<Point_3, 4> facet_surface_center_;
+    CGAL::cpp11::array<Bare_point, 4> facet_surface_center_;
     CGAL::cpp11::array<Index, 4> surface_center_index_table_;
   };
 
@@ -1627,7 +1636,7 @@ private:
    */
   template <typename SliverCriterion, typename OutputIterator>
   std::pair<bool,Vertex_handle>
-  update_mesh_no_topo_change(const Point_3& new_position,
+  update_mesh_no_topo_change(const Weighted_point& new_position,
                              const Vertex_handle& old_vertex,
                              const SliverCriterion& criterion,
                              OutputIterator modified_vertices,
@@ -1640,13 +1649,13 @@ private:
   template < typename OutdatedCellsOutputIterator,
              typename DeletedCellsOutputIterator >
   Vertex_handle move_point(const Vertex_handle& old_vertex,
-                           const Point_3& new_position,
+                           const Weighted_point& new_position,
                            OutdatedCellsOutputIterator outdated_cells,
                            DeletedCellsOutputIterator deleted_cells) const;
 
   Vertex_handle
   move_point_topo_change(const Vertex_handle& old_vertex,
-                         const Point_3& new_position,
+                         const Weighted_point& new_position,
                          Outdated_cell_set& outdated_cells_set,
                          bool *could_lock_zone = NULL) const;
 
@@ -1654,37 +1663,37 @@ private:
              typename DeletedCellsOutputIterator >
   Vertex_handle
   move_point_topo_change(const Vertex_handle& old_vertex,
-                         const Point_3& new_position,
+                         const Weighted_point& new_position,
                          OutdatedCellsOutputIterator outdated_cells,
                          DeletedCellsOutputIterator deleted_cells) const;
 
   Vertex_handle move_point_topo_change(const Vertex_handle& old_vertex,
-                                       const Point_3& new_position) const;
+                                       const Weighted_point& new_position) const;
 
   template < typename OutdatedCellsOutputIterator >
   Vertex_handle
   move_point_no_topo_change(const Vertex_handle& old_vertex,
-                            const Point_3& new_position,
+                            const Weighted_point& new_position,
                             OutdatedCellsOutputIterator outdated_cells) const;
 
   Vertex_handle
   move_point_no_topo_change(const Vertex_handle& old_vertex,
-                            const Point_3& new_position) const;
+                            const Weighted_point& new_position) const;
 
   /**
    * Returns the least square plane from v, using adjacent surface points
    */
   Plane_3 get_least_square_surface_plane(const Vertex_handle& v,
-                                         Point_3& ref_point,
+                                         Bare_point& ref_point,
                                          Surface_patch_index index = Surface_patch_index()) const;
 
   /**
    * @brief Returns the projection of \c p, using direction of
    * \c projection_vector
    */
-  Point_3
-  project_on_surface_aux(const Point_3& p,
-                         const Point_3& ref_point,
+  Bare_point
+  project_on_surface_aux(const Bare_point& p,
+                         const Bare_point& ref_point,
                          const Vector_3& projection_vector) const;
 
   /**
@@ -1694,7 +1703,7 @@ private:
    */
   template<typename OutputIterator>
   Vertex_handle revert_move(const Vertex_handle& new_vertex,
-                            const Point_3& old_point,
+                            const Weighted_point& old_point,
                             OutputIterator outdated_cells)
   {
     // Move vertex
@@ -1749,14 +1758,14 @@ private:
   template <typename OutputIterator>
   OutputIterator
   get_conflict_zone_topo_change(const Vertex_handle& vertex,
-                                const Point_3& conflict_point,
+                                const Weighted_point& conflict_point,
                                 OutputIterator conflict_cells) const;
 
   template <typename CellsOutputIterator,
             typename FacetsOutputIterator>
   void
   get_conflict_zone_topo_change(const Vertex_handle& v,
-                                const Point_3& conflict_point,
+                                const Weighted_point& conflict_point,
                                 CellsOutputIterator insertion_conflict_cells,
                                 FacetsOutputIterator insertion_conflict_boundary,
                                 CellsOutputIterator removal_conflict_cells,
@@ -1768,7 +1777,7 @@ private:
              typename DeletedCellsOutputIterator >
   Vertex_handle
   move_point_topo_change_conflict_zone_known(const Vertex_handle& old_vertex,
-                                             const Point_3& new_position,
+                                             const Weighted_point& new_position,
                                              const Facet& insertion_boundary_facet,
                                              ConflictCellsInputIterator insertion_conflict_cells_begin,
                                              ConflictCellsInputIterator insertion_conflict_cells_end,
@@ -2134,7 +2143,7 @@ private:
                             CellForwardIterator cells_end) const
   {
     while(cells_begin != cells_end) {
-      (*cells_begin)->invalidate_circumcenter();
+      (*cells_begin)->invalidate_weighted_circumcenter_cache();
       ++cells_begin;
     }
   }
@@ -2393,6 +2402,8 @@ private:
   C3T3& c3t3_;
   Tr& tr_;
   const MeshDomain& domain_;
+  Construct_point_3 wp2p_;
+  Construct_weighted_point_3 p2wp_;
 }; // class C3T3_helpers
 
 
@@ -2400,7 +2411,7 @@ template <typename C3T3, typename MD>
 template <typename SliverCriterion, typename OutputIterator>
 std::pair<bool,typename C3T3_helpers<C3T3,MD>::Vertex_handle>
 C3T3_helpers<C3T3,MD>::
-update_mesh(const Point_3& new_position,
+update_mesh(const Weighted_point& new_position,
             const Vertex_handle& old_vertex,
             const SliverCriterion& criterion,
             OutputIterator modified_vertices,
@@ -2439,7 +2450,7 @@ template <typename C3T3, typename MD>
 template <typename SliverCriterion, typename OutputIterator>
 std::pair<bool,typename C3T3_helpers<C3T3,MD>::Vertex_handle>
 C3T3_helpers<C3T3,MD>::
-update_mesh_no_topo_change(const Point_3& new_position,
+update_mesh_no_topo_change(const Weighted_point& new_position,
                            const Vertex_handle& old_vertex,
                            const SliverCriterion& criterion,
                            OutputIterator modified_vertices,
@@ -2449,7 +2460,6 @@ update_mesh_no_topo_change(const Point_3& new_position,
   //           << new_position << ",\n"
   //           << "                " << (void*)(&*old_vertex) << "=" << old_vertex->point()
   //           << ")\n";
-
     //backup metadata
   std::set<Cell_data_backup> cells_backup;
   fill_cells_backup(conflict_cells, cells_backup);
@@ -2457,7 +2467,7 @@ update_mesh_no_topo_change(const Point_3& new_position,
   // Get old values
   criterion.before_move(c3t3_cells(conflict_cells));
   // std::cerr << "old_sliver_value=" << old_sliver_value << std::endl;
-  Point_3 old_position = old_vertex->point();
+  Weighted_point old_position = old_vertex->point();
 
   // Move point
   reset_circumcenter_cache(conflict_cells);
@@ -2499,7 +2509,7 @@ template <typename C3T3, typename MD>
 template <typename SliverCriterion, typename OutputIterator>
 std::pair<bool,typename C3T3_helpers<C3T3,MD>::Vertex_handle>
 C3T3_helpers<C3T3,MD>::
-update_mesh_topo_change(const Point_3& new_position,
+update_mesh_topo_change(const Weighted_point& new_position,
                         const Vertex_handle& old_vertex,
                         const SliverCriterion& criterion,
                         OutputIterator modified_vertices,
@@ -2510,6 +2520,8 @@ update_mesh_topo_change(const Point_3& new_position,
   //           << "                " << (void*)(&*old_vertex) << "=" << old_vertex->point()
   //           << ")\n";
   // check_c3t3(c3t3_);
+
+
   Cell_set insertion_conflict_cells;
   Cell_set removal_conflict_cells;
   Facet_vector insertion_conflict_boundary;
@@ -2539,7 +2551,7 @@ update_mesh_topo_change(const Point_3& new_position,
 
   criterion.before_move(c3t3_cells(conflict_cells));
   // std::cerr << "old_sliver_value=" << old_sliver_value << std::endl;
-  Point_3 old_position = old_vertex->point();
+  Weighted_point old_position = old_vertex->point();
 
   // Keep old boundary
   Vertex_set old_incident_surface_vertices;
@@ -2615,7 +2627,7 @@ template <typename C3T3, typename MD>
 template <typename OutputIterator>
 typename C3T3_helpers<C3T3,MD>::Vertex_handle
 C3T3_helpers<C3T3,MD>::
-update_mesh(const Point_3& new_position,
+update_mesh(const Weighted_point& new_position,
             const Vertex_handle& old_vertex,
             OutputIterator modified_vertices,
             bool fill_vertices)
@@ -2651,7 +2663,7 @@ C3T3_helpers<C3T3,MD>::
 rebuild_restricted_delaunay(OutdatedCells& outdated_cells,
                             Moving_vertices_set& moving_vertices)
 {
-  typename Gt::Equal_3 equal = Gt().equal_3_object();
+  typename Gt::Equal_3 equal = tr_.geom_traits().equal_3_object();
   typename OutdatedCells::iterator first_cell = outdated_cells.begin();
   typename OutdatedCells::iterator last_cell = outdated_cells.end();
   Update_c3t3 updater(domain_,c3t3_);
@@ -2740,6 +2752,8 @@ rebuild_restricted_delaunay(OutdatedCells& outdated_cells,
 
     CGAL_HISTOGRAM_PROFILER("|vertex_to_proj|=", 
                             static_cast<unsigned int>(vertex_to_proj.size()));
+
+
   // Project interior vertices
   // Note: ~0% of rebuild_restricted_delaunay time
   // TODO : iterate to be sure no interior vertice become on the surface
@@ -2748,15 +2762,15 @@ rebuild_restricted_delaunay(OutdatedCells& outdated_cells,
        it != vertex_to_proj.end() ;
        ++it )
   {
-    Point_3 new_pos = project_on_surface((*it)->point(),*it);
+    Bare_point new_pos = project_on_surface(wp2p_((*it)->point()),*it);
 
-    if ( ! equal(new_pos, Point_3()) )
+    if ( ! equal(new_pos, Bare_point()) )
     {
       //freezing needs 'erase' to be done before the vertex is actually destroyed
       // Update moving vertices (it becomes new_vertex)
       moving_vertices.erase(*it);
 
-      Vertex_handle new_vertex = update_mesh(new_pos,*it);
+      Vertex_handle new_vertex = update_mesh(p2wp_(new_pos),*it);
       c3t3_.set_dimension(new_vertex,2);
 
       moving_vertices.insert(new_vertex);
@@ -2777,7 +2791,7 @@ rebuild_restricted_delaunay(ForwardIterator first_cell,
                             ForwardIterator last_cell,
                             Moving_vertices_set& moving_vertices)
 {
-  typename Gt::Equal_3 equal = Gt().equal_3_object();
+  typename Gt::Equal_3 equal = tr_.geom_traits().equal_3_object();
   Update_c3t3 updater(domain_,c3t3_);
 
   // Get facets (returns each canonical facet only once)
@@ -2855,15 +2869,15 @@ rebuild_restricted_delaunay(ForwardIterator first_cell,
         it != vertex_to_proj.end() ;
         ++it )
   {
-    Point_3 new_pos = project_on_surface((it->first)->point(),it->first,it->second);
+    Bare_point new_pos = project_on_surface(wp2p_((it->first)->point()),it->first,it->second);
 
-    if ( ! equal(new_pos, Point_3()) )
+    if ( ! equal(new_pos, Bare_point()) )
     {
       //freezing needs 'erase' to be done before the vertex is actually destroyed
       // Update moving vertices (it becomes new_vertex)
       moving_vertices.erase(it->first);
 
-      Vertex_handle new_vertex = update_mesh(new_pos,it->first);
+      Vertex_handle new_vertex = update_mesh(p2wp_(new_pos), it->first);
       c3t3_.set_dimension(new_vertex,2);
 
       moving_vertices.insert(new_vertex);
@@ -2889,7 +2903,7 @@ template <typename OutdatedCellsOutputIterator,
 typename C3T3_helpers<C3T3,MD>::Vertex_handle
 C3T3_helpers<C3T3,MD>::
 move_point(const Vertex_handle& old_vertex,
-           const Point_3& new_position,
+           const Weighted_point& new_position,
            OutdatedCellsOutputIterator outdated_cells,
            DeletedCellsOutputIterator deleted_cells) const
 {
@@ -2921,7 +2935,7 @@ template <typename C3T3, typename MD>
 typename C3T3_helpers<C3T3,MD>::Vertex_handle
 C3T3_helpers<C3T3,MD>::
 move_point(const Vertex_handle& old_vertex,
-           const Point_3& new_position,
+           const Weighted_point& new_position,
            Outdated_cell_set& outdated_cells_set,
            Moving_vertices_set& moving_vertices) const
 {
@@ -2955,7 +2969,7 @@ template <typename C3T3, typename MD>
 typename C3T3_helpers<C3T3,MD>::Vertex_handle
 C3T3_helpers<C3T3,MD>::
 move_point(const Vertex_handle& old_vertex,
-           const Point_3& new_position,
+           const Weighted_point& new_position,
            Outdated_cell_set& outdated_cells_set,
            Moving_vertices_set& moving_vertices,
            bool *could_lock_zone) const
@@ -3031,7 +3045,7 @@ template <typename C3T3, typename MD>
 typename C3T3_helpers<C3T3,MD>::Vertex_handle
 C3T3_helpers<C3T3,MD>::
 move_point_topo_change(const Vertex_handle& old_vertex,
-                       const Point_3& new_position,
+                       const Weighted_point& new_position,
                        Outdated_cell_set& outdated_cells_set,
                        bool *could_lock_zone) const
 {
@@ -3090,7 +3104,7 @@ template <typename OutdatedCellsOutputIterator,
 typename C3T3_helpers<C3T3,MD>::Vertex_handle
 C3T3_helpers<C3T3,MD>::
 move_point_topo_change(const Vertex_handle& old_vertex,
-                       const Point_3& new_position,
+                       const Weighted_point& new_position,
                        OutdatedCellsOutputIterator outdated_cells,
                        DeletedCellsOutputIterator deleted_cells) const
 {
@@ -3129,7 +3143,7 @@ typename C3T3_helpers<C3T3,MD>::Vertex_handle
 C3T3_helpers<C3T3,MD>::
 move_point_topo_change_conflict_zone_known(
     const Vertex_handle& old_vertex,
-    const Point_3& new_position,
+    const Weighted_point& new_position,
     const Facet& insertion_boundary_facet,
     ConflictCellsInputIterator insertion_conflict_cells_begin,//ordered
     ConflictCellsInputIterator insertion_conflict_cells_end,
@@ -3140,7 +3154,7 @@ move_point_topo_change_conflict_zone_known(
                                              //o.w. deleted_cells will point to null pointer or so and crash
                                              const
 {
-  Point_3 old_position = old_vertex->point();
+  Weighted_point old_position = old_vertex->point();
   // make one set with conflict zone
   Cell_set conflict_zone;
   std::set_union(insertion_conflict_cells_begin, insertion_conflict_cells_end,
@@ -3195,7 +3209,7 @@ template <typename C3T3, typename MD>
 typename C3T3_helpers<C3T3,MD>::Vertex_handle
 C3T3_helpers<C3T3,MD>::
 move_point_topo_change(const Vertex_handle& old_vertex,
-                       const Point_3& new_position) const
+                       const Weighted_point& new_position) const
 {
   // Insert new_vertex, remove old_vertex
   int dimension = c3t3_.in_dimension(old_vertex);
@@ -3222,7 +3236,7 @@ template <typename OutdatedCellsOutputIterator>
 typename C3T3_helpers<C3T3,MD>::Vertex_handle
 C3T3_helpers<C3T3,MD>::
 move_point_no_topo_change(const Vertex_handle& old_vertex,
-                          const Point_3& new_position,
+                          const Weighted_point& new_position,
                           OutdatedCellsOutputIterator outdated_cells) const
 {
 
@@ -3238,7 +3252,7 @@ template <typename C3T3, typename MD>
 typename C3T3_helpers<C3T3,MD>::Vertex_handle
 C3T3_helpers<C3T3,MD>::
 move_point_no_topo_change(const Vertex_handle& old_vertex,
-                          const Point_3& new_position) const
+                          const Weighted_point& new_position) const
 {
   // Change vertex position
   old_vertex->set_point(new_position);
@@ -3251,29 +3265,25 @@ move_point_no_topo_change(const Vertex_handle& old_vertex,
  * \c projection_vector
  */
 template <typename C3T3, typename MD>
-typename C3T3_helpers<C3T3,MD>::Point_3
+typename C3T3_helpers<C3T3,MD>::Bare_point
 C3T3_helpers<C3T3,MD>::
-project_on_surface_aux(const Point_3& p,
-                       const Point_3& ref_point,
+project_on_surface_aux(const Bare_point& p,
+                       const Bare_point& ref_point,
                        const Vector_3& projection_vector) const
 {
   typedef typename Gt::Segment_3 Segment_3;
 
   // Build a segment directed as projection_direction,
   typename Gt::Compute_squared_distance_3 sq_distance =
-    Gt().compute_squared_distance_3_object();
-
+    tr_.geom_traits().compute_squared_distance_3_object();
   typename Gt::Compute_squared_length_3 sq_length =
-    Gt().compute_squared_length_3_object();
-
+    tr_.geom_traits().compute_squared_length_3_object();
   typename Gt::Construct_scaled_vector_3 scale =
-    Gt().construct_scaled_vector_3_object();
-
+    tr_.geom_traits().construct_scaled_vector_3_object();
   typename Gt::Is_degenerate_3 is_degenerate =
-    Gt().is_degenerate_3_object();
-
+    tr_.geom_traits().is_degenerate_3_object();
   typename Gt::Construct_translated_point_3 translate =
-    Gt().construct_translated_point_3_object();
+    tr_.geom_traits().construct_translated_point_3_object();
 
   typename MD::Construct_intersection construct_intersection =
     domain_.construct_intersection_object();
@@ -3287,8 +3297,8 @@ project_on_surface_aux(const Point_3& p,
   const Vector_3 projection_scaled_vector =
     scale(projection_vector, CGAL::sqrt(sq_dist/sq_proj_length));
 
-  const Point_3 source = translate(p, projection_scaled_vector);
-  const Point_3 target = translate(p, - projection_scaled_vector);
+  const Bare_point source = translate(p, projection_scaled_vector);
+  const Bare_point target = translate(p, - projection_scaled_vector);
 
   const Segment_3 proj_segment(source,target);
 
@@ -3322,7 +3332,7 @@ template <typename C3T3, typename MD>
 typename C3T3_helpers<C3T3,MD>::Plane_3
 C3T3_helpers<C3T3,MD>::
 get_least_square_surface_plane(const Vertex_handle& v,
-                               Point_3& reference_point,
+                               Bare_point& reference_point,
                                Surface_patch_index patch_index) const
 {
   // Get incident facets
@@ -3341,7 +3351,7 @@ get_least_square_surface_plane(const Vertex_handle& v,
   }
 
   // Get adjacent surface points
-  std::vector<Point_3> surface_point_vector;
+  std::vector<Bare_point> surface_point_vector;
   for ( typename Facet_vector::iterator fit = facets.begin() ;
        fit != facets.end() ;
        ++fit )
@@ -3353,7 +3363,7 @@ get_least_square_surface_plane(const Vertex_handle& v,
       const Cell_handle& cell = fit->first;
       const int& i = fit->second;
 
-      surface_point_vector.push_back(cell->get_facet_surface_center(i));
+      surface_point_vector.push_back(wp2p_(cell->get_facet_surface_center(i)));
     }
   }
 
@@ -3363,7 +3373,7 @@ get_least_square_surface_plane(const Vertex_handle& v,
 
   // Compute least square fitting plane
   Plane_3 plane;
-  Point_3 point;
+  Bare_point point;
   CGAL::linear_least_squares_fitting_3(surface_point_vector.begin(),
                                        surface_point_vector.end(),
                                        plane,
@@ -3380,25 +3390,25 @@ get_least_square_surface_plane(const Vertex_handle& v,
 
 
 template <typename C3T3, typename MD>
-typename C3T3_helpers<C3T3,MD>::Point_3
+typename C3T3_helpers<C3T3,MD>::Bare_point
 C3T3_helpers<C3T3,MD>::
-project_on_surface(const Point_3& p,
+project_on_surface(const Bare_point& p,
                    const Vertex_handle& v,
                    Surface_patch_index index) const
 {
-  typename Gt::Equal_3 equal = Gt().equal_3_object();
+  typename Gt::Equal_3 equal = tr_.geom_traits().equal_3_object();
   // return domain_.project_on_surface(p);
   // Get plane
-  Point_3 reference_point(CGAL::ORIGIN);
+  Bare_point reference_point(CGAL::ORIGIN);
   Plane_3 plane = get_least_square_surface_plane(v,reference_point, index);
 
   if ( equal(reference_point, CGAL::ORIGIN) )
     return p;
 
   // Project
-  if ( ! equal(p, v->point()) )
+  if ( ! equal(p, wp2p_(v->point())) )
     return project_on_surface_aux(p,
-                                  v->point(),
+                                  wp2p_(v->point()),
                                   plane.orthogonal_vector());
   else
     return project_on_surface_aux(p,
@@ -3760,7 +3770,7 @@ template <typename CellsOutputIterator,
 void
 C3T3_helpers<C3T3,MD>::
 get_conflict_zone_topo_change(const Vertex_handle& v,
-                              const Point_3& conflict_point,
+                              const Weighted_point& conflict_point,
                               CellsOutputIterator insertion_conflict_cells,
                               FacetsOutputIterator insertion_conflict_boundary,
                               CellsOutputIterator removal_conflict_cells,
@@ -3797,7 +3807,7 @@ template <typename OutputIterator>
 OutputIterator
 C3T3_helpers<C3T3,MD>::
 get_conflict_zone_topo_change(const Vertex_handle& vertex,
-                              const Point_3& conflict_point,
+                              const Weighted_point& conflict_point,
                               OutputIterator conflict_cells) const
 {
   // Get triangulation_vertex incident cells

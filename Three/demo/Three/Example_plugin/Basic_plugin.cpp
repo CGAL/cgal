@@ -4,8 +4,8 @@ Change the value of EXAMPLE_COMPLEXITY in the first line to change the behavior 
   - 1 : pops-up a simple dialog asking to enter an integer , then prints it in the Info and console widgets
   - 2 : pops-up a little more elaborated dialog asking to enter an integer , then prints it in the Info and console widgets if it was indeed an integer, else pops-up an error message box.
   */
-#define EXAMPLE_COMPLEXITY 2
-#include "ui_Basic_dialog_plugin.h"
+#define EXAMPLE_COMPLEXITY 0
+#include "ui_Basic_dialog.h"
 //! [headers_plugin]
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <QApplication>
@@ -33,7 +33,7 @@ public:
 //! [dialog_plugin]
 //! [opening_plugin]
 
-//This plugin crates an action in Operations that displays "Hello World" in the 'console' dockwidet.
+//This plugin creates an action in Operations depending on EXAMPLE_COMPLEXITY.
 class BasicPlugin :
     public QObject,
     public CGAL::Three::Polyhedron_demo_plugin_interface
@@ -43,17 +43,17 @@ class BasicPlugin :
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 public:
   //decides if the plugin's actions will be displayed or not.
-  bool applicable(QAction*) const
+  bool applicable(QAction*) const Q_DECL_OVERRIDE
   {
     return true;
   }
   //the list of the actions of the plugin.
-  QList<QAction*> actions() const
+  QList<QAction*> actions() const Q_DECL_OVERRIDE
   {
     return _actions;
   }
   //this acts like a constructor for the plugin. It gets the references to the main window and the scene, and connects the action.
-  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* sc, Messages_interface* mi)
+  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* sc, Messages_interface* mi) Q_DECL_OVERRIDE
   {
     //gets the reference to the message interface, to display text in the console widget
     this->messageInterface = mi;

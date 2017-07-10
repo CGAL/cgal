@@ -281,6 +281,7 @@ public:
     boost::optional<CGAL::Bbox_3> item_bbox
       = boost::make_optional(false, CGAL::Bbox_3());
 
+
     for(Selection_set_vertex::const_iterator v_it = selected_vertices.begin(); 
         v_it != selected_vertices.end(); ++v_it) {
 
@@ -306,7 +307,11 @@ public:
       }
     }
 
-    if(!item_bbox) { _bbox = this->poly_item->bbox(); return;}
+    if(!item_bbox)
+    {
+      _bbox = this->poly_item->bbox();
+      return;
+    }
     _bbox = Bbox(item_bbox->xmin(),item_bbox->ymin(),item_bbox->zmin(),
                 item_bbox->xmax(),item_bbox->ymax(),item_bbox->zmax());
   }

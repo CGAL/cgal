@@ -60,7 +60,7 @@ bool  sorted_around_edge(
   CGAL_precondition( !coplanar(O_prime,O,P2,Q)
                      || coplanar_orientation(O,O_prime,P2,Q)==NEGATIVE );
 
-  Sign s0 = sign( determinant(O-O_prime,P1-O,P2-O) );
+  Sign s0 = CGAL::sign( determinant(O-O_prime,P1-O,P2-O) );
 
   if ( s0==ZERO ) {
     //O, O_prime, P1 and P2 are coplanar
@@ -70,8 +70,8 @@ bool  sorted_around_edge(
   }
 
   //O, O_prime, P1 and P2 are not coplanar
-  Sign s1 = sign( determinant(O-O_prime,P1-O,Q -O) );
-  Sign s2 = sign( determinant(O-O_prime,Q -O,P2-O) );
+  Sign s1 = CGAL::sign( determinant(O-O_prime,P1-O,Q -O) );
+  Sign s2 = CGAL::sign( determinant(O-O_prime,Q -O,P2-O) );
 
   if (s0 == POSITIVE) // the angle P1,O,P2 is smaller that Pi.
     return ( s1 == POSITIVE )

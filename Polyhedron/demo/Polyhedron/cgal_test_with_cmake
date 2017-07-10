@@ -125,6 +125,7 @@ scene_polyhedron_transform_item \
 scene_polylines_item \
 scene_surface_mesh_item \
 scene_textured_polyhedron_item \
+basic_generator_plugin \
 c3t3_io_plugin \
 camera_positions_plugin \
 clip_polyhedron_plugin \

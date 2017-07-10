@@ -4,7 +4,8 @@
 
 The concept `MeshCellBase_3` describes the requirements 
 for the `Cell` type of the triangulation 
-used in the 3D mesh generation process. The type `MeshCellBase_3` refines the concept `RegularTriangulationCellBase_3`
+used in the 3D mesh generation process. The type `MeshCellBase_3`
+refines the concept `RegularTriangulationCellBaseWithWeightedCircumcenter_3`
 and must be copy constructible. 
 The concept `MeshCellBase_3` 
 includes a way to store and retrieve 
@@ -39,7 +40,7 @@ and `is_facet_visited(1)` in parallel must be safe)
 Moreover, the parallel algorithms require an erase counter in 
 each cell (see below).
 
-\cgalRefines `RegularTriangulationCellBase_3`
+\cgalRefines `RegularTriangulationCellBaseWithWeightedCircumcenter_3`
 \cgalRefines `CopyConstructible`
 
 \cgalHasModel `CGAL::Compact_mesh_cell_base_3<Gt,MD,Tds>`
@@ -58,7 +59,13 @@ public:
 /// @{
 
 /*!
-Point type, required to match the point type 
+The bare point type, required to match the `Point_3` type
+of the 3D triangulation traits in which the mesh is embedded.
+*/
+typedef unspecified_type Point_3;
+
+/*!
+The point type, required to match the `Point` type
 of the 3D triangulation in which the mesh is embedded. 
 */ 
 typedef unspecified_type Point; 
@@ -66,12 +73,12 @@ typedef unspecified_type Point;
 /*!
 Type of indices for cells of the input complex. Must match the type `MeshDomain_3::Subdomain_index`. 
 */ 
-typedef unspecified_type Subdomain_index;; 
+typedef unspecified_type Subdomain_index;
 
 /*!
 Type of indices for surface patches of the input complex. Must match the type `MeshDomain_3::Surface_patch_index`. 
 */ 
-typedef unspecified_type Surface_patch_index;; 
+typedef unspecified_type Surface_patch_index;
 
 /*!
  Type of indices to be stored at mesh vertices to characterize the lowest dimensional face 
@@ -86,15 +93,13 @@ typedef unspecified_type Index;
 /// @{
 
 /*!
-Returns the 
-index of the input subdomain that contains the cell `cell` 
+Returns the index of the input subdomain that contains the cell `cell` 
 of the triangulation. 
 */ 
 Subdomain_index subdomain_index(); 
 
 /*!
-Sets 
-the subdomain index of the cell. 
+Sets the subdomain index of the cell. 
 */ 
 void set_subdomain_index(Subdomain_index index); 
 
@@ -131,29 +136,22 @@ void reset_visited (int i);
 /*!
 Returns a const reference to the surface center of `facet(i)`. 
 */ 
-const Point& get_facet_surface_center(int i); 
+const Point_3& get_facet_surface_center(int i);
 
 /*!
-Sets point `p` as the surface center of `facet(i)`.
+Sets the point `p` as the surface center of `facet(i)`.
 */ 
-void set_facet_surface_center (int i, Point p); 
+void set_facet_surface_center (int i, Point_3 p);
 
 /*!
-Sets surface center index of `facet(i)` to `index`.
+Sets the surface center index of `facet(i)` to `index`.
 */
 void set_facet_surface_center_index(int i, Index index);
 
 /*!
-Returns surface center of `facet(i)`.
+Returns the surface center index of `facet(i)`.
 */
 Index get_facet_surface_center_index(int i);
-
-/*!
-Invalidates the circumcenter value stored in the cell.
-This value is usually stored in the cell, but the optimizers need to be able to 
-invalidate this cache value.
-*/
-void invalidate_circumcenter();
 
 /// Get the erase counter. 
 /// Only required by the parallel algorithms.

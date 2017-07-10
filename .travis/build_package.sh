@@ -19,7 +19,7 @@ function build_demo {
   cd build-travis
   if [ $NEED_3D = 1 ]; then
     #install libqglviewer
-    git clone --depth=1 https://github.com/GillesDebunne/libQGLViewer.git ./qglviewer
+    git clone --depth=4 -b v2.6.3 --single-branch https://github.com/GillesDebunne/libQGLViewer.git ./qglviewer
     pushd ./qglviewer/QGLViewer
     #use qt5 instead of qt4
     export QT_SELECT=5
@@ -35,9 +35,11 @@ function build_demo {
     popd
   fi
   EXTRA_CXX_FLAGS=
-  if [ "$CC" = "clang" ]; then
-    EXTRA_CXX_FLAGS="-Werror=inconsistent-missing-override"
-  fi
+  case "$CC" in
+    clang*)
+      EXTRA_CXX_FLAGS="-Werror=inconsistent-missing-override"
+      ;;
+  esac
   if [ $NEED_3D = 1 ]; then
     QGLVIEWERROOT=$PWD/qglviewer
     export QGLVIEWERROOT

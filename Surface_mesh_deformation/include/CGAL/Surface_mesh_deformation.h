@@ -823,8 +823,6 @@ public:
    */
   void reset()
   {
-    if(roi.empty()) { return; } // no ROI to reset
-
     region_of_solution(); // since we are using original vector
 
     //restore the current positions to be the original positions

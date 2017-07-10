@@ -78,6 +78,9 @@ public:
   qglviewer::Vec BPoint;
   qglviewer::Vec offset;
   bool is_d_pressed;
+  bool extension_is_found;
+
+  TextRenderer *textRenderer;
   /*!
    * \brief makeArrow creates an arrow and stores it in a struct of vectors.
    * \param R the radius of the arrow.
@@ -112,8 +115,8 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
   d->inDrawWithNames = false;
   d->shader_programs.resize(NB_OF_PROGRAMS);
   d->offset = qglviewer::Vec(0,0,0);
-  textRenderer = new TextRenderer();
-  connect( textRenderer, SIGNAL(sendMessage(QString,int)),
+  d->textRenderer = new TextRenderer();
+  connect( d->textRenderer, SIGNAL(sendMessage(QString,int)),
            this, SLOT(printMessage(QString,int)) );
   connect(&d->messageTimer, SIGNAL(timeout()), SLOT(hideMessage()));
   setShortcut(EXIT_VIEWER, 0);
@@ -233,19 +236,19 @@ void Viewer::initializeGL()
   if(!glDrawArraysInstanced)
   {
       qDebug()<<"glDrawArraysInstancedARB : extension not found. Spheres will be displayed as points.";
-      extension_is_found = false;
+      d->extension_is_found = false;
   }
   else
-      extension_is_found = true;
+      d->extension_is_found = true;
 
   glVertexAttribDivisor = (PFNGLVERTEXATTRIBDIVISORARBPROC)this->context()->getProcAddress("glVertexAttribDivisorARB");
   if(!glDrawArraysInstanced)
   {
       qDebug()<<"glVertexAttribDivisorARB : extension not found. Spheres will be displayed as points.";
-      extension_is_found = false;
+      d->extension_is_found = false;
   }
   else
-      extension_is_found = true;
+      d->extension_is_found = true;
 
 
   setBackgroundColor(::Qt::white);
@@ -261,10 +264,7 @@ void Viewer::initializeGL()
       "attribute highp vec3 normal;\n"
       "attribute highp vec4 colors;\n"
       "uniform highp mat4 mvp_matrix;\n"
-      "uniform highp mat4 ortho_mat;\n"
       "uniform highp mat4 mv_matrix; \n"
-      "uniform highp float width; \n"
-      "uniform highp float height; \n"
       "varying highp vec4 fP; \n"
       "varying highp vec3 fN; \n"
       "varying highp vec4 color; \n"
@@ -273,10 +273,7 @@ void Viewer::initializeGL()
       "   color = colors; \n"
       "   fP = mv_matrix * vertex; \n"
       "   fN = mat3(mv_matrix)* normal; \n"
-      "   vec4 temp = vec4(mvp_matrix * vertex); \n"
-      "   vec4 ort = ortho_mat * vec4(width-150, height-150, 0,0); \n"
-      "   float ratio = width/height; \n"
-      "   gl_Position =  ort +vec4(temp.x, temp.y, temp.z, 1.0); \n"
+      "   gl_Position = vec4(mvp_matrix * vertex); \n"
       "} \n"
       "\n"
   };
@@ -333,6 +330,7 @@ void Viewer::initializeGL()
       {
           std::cerr<<"adding fragment shader FAILED"<<std::endl;
       }
+      d->rendering_program.bindAttributeLocation("colors", 1);
       if(!d->rendering_program.link())
       {
           //std::cerr<<"linking Program FAILED"<<std::endl;
@@ -388,6 +386,41 @@ void Viewer::initializeGL()
              qDebug() << d->rendering_program_dist.log();
          }
      }
+
+      Viewer_impl::AxisData data;
+      d->v_Axis.resize(0);
+      d->n_Axis.resize(0);
+      d->c_Axis.resize(0);
+      data.vertices = &d->v_Axis;
+      data.normals =  &d->n_Axis;
+      data.colors =   &d->c_Axis;
+      GLdouble l = 1.0;
+      d->makeArrow(0.06,10, qglviewer::Vec(0,0,0),qglviewer::Vec(l,0,0),qglviewer::Vec(1,0,0), data);
+      d->makeArrow(0.06,10, qglviewer::Vec(0,0,0),qglviewer::Vec(0,l,0),qglviewer::Vec(0,1,0), data);
+      d->makeArrow(0.06,10, qglviewer::Vec(0,0,0),qglviewer::Vec(0,0,l),qglviewer::Vec(0,0,1), data);
+
+      d->rendering_program.bind();
+      d->vao[0].bind();
+      d->buffers[0].bind();
+      d->buffers[0].allocate(d->v_Axis.data(), static_cast<int>(d->v_Axis.size()) * sizeof(float));
+      d->rendering_program.enableAttributeArray("vertex");
+      d->rendering_program.setAttributeBuffer("vertex",GL_FLOAT,0,3);
+      d->buffers[0].release();
+
+      d->buffers[1].bind();
+      d->buffers[1].allocate(d->n_Axis.data(), static_cast<int>(d->n_Axis.size() * sizeof(float)));
+      d->rendering_program.enableAttributeArray("normal");
+      d->rendering_program.setAttributeBuffer("normal",GL_FLOAT,0,3);
+      d->buffers[1].release();
+
+      d->buffers[2].bind();
+      d->buffers[2].allocate(d->c_Axis.data(), static_cast<int>(d->c_Axis.size() * sizeof(float)));
+      d->rendering_program.enableAttributeArray("colors");
+      d->rendering_program.setAttributeBuffer("colors",GL_FLOAT,0,3);
+      d->buffers[2].release();
+      d->vao[0].release();
+
+      d->rendering_program.release();
 
   d->painter = new QPainter(this);
 }
@@ -937,24 +970,17 @@ void Viewer::drawVisualHints()
     QGLViewer::drawVisualHints();
     if(d->axis_are_displayed)
     {
+      d->rendering_program.bind();
+      SetOrthoProjection(true);
         QMatrix4x4 mvpMatrix;
-        double mat[16];
         QMatrix4x4 mvMatrix;
-        camera()->getModelViewProjectionMatrix(mat);
-        //nullifies the translation
-        mat[12]=0;
-        mat[13]=0;
-        mat[14]=0;
         for(int i=0; i < 16; i++)
         {
-            mvpMatrix.data()[i] = (float)mat[i];
+            mvMatrix.data()[i] = camera()->orientation().inverse().matrix()[i];
         }
-        camera()->getModelViewMatrix(mat);
-        for(int i=0; i < 16; i++)
-        {
-            mvMatrix.data()[i] = (float)mat[i];
-        }
-
+        mvpMatrix.ortho(-1,1,-1,1,-1,1);
+        mvpMatrix = mvpMatrix*mvMatrix;
+        SetOrthoProjection(false);
         QVector4D	position(0.0f,0.0f,1.0f,1.0f );
         // define material
         QVector4D	ambient;
@@ -979,7 +1005,6 @@ void Viewer::drawVisualHints()
         // Shininess
         shininess = 51.2f;
 
-        d->rendering_program.bind();
         d->rendering_program.setUniformValue("light_pos", position);
         d->rendering_program.setUniformValue("mvp_matrix", mvpMatrix);
         d->rendering_program.setUniformValue("mv_matrix", mvMatrix);
@@ -987,13 +1012,26 @@ void Viewer::drawVisualHints()
         d->rendering_program.setUniformValue("light_spec", specular);
         d->rendering_program.setUniformValue("light_amb", ambient);
         d->rendering_program.setUniformValue("spec_power", shininess);
-        d->rendering_program.release();
 
         d->vao[0].bind();
-        d->rendering_program.bind();
+        int viewport[4];
+        int scissor[4];
+
+        // The viewport and the scissor are changed to fit the upper right
+        // corner. Original values are saved.
+        glGetIntegerv(GL_VIEWPORT, viewport);
+        glGetIntegerv(GL_SCISSOR_BOX, scissor);
+
+        // Axis viewport size, in pixels
+        const int size = 100;
+        glViewport(width()*devicePixelRatio()-size, height()*devicePixelRatio()-size, size, size);
+        glScissor (width()*devicePixelRatio()-size, height()*devicePixelRatio()-size, size, size);
         glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(d->v_Axis.size() / 3));
-        d->rendering_program.release();
+        // The viewport and the scissor are restored.
+        glScissor(scissor[0],scissor[1],scissor[2],scissor[3]);
+        glViewport(viewport[0],viewport[1],viewport[2],viewport[3]);
         d->vao[0].release();
+        d->rendering_program.release();
     }
 
     if(d->distance_is_displayed)
@@ -1034,7 +1072,7 @@ void Viewer::drawVisualHints()
     TextItem *fps_text = new TextItem(20, int(1.5*((QApplication::font().pixelSize()>0)?QApplication::font().pixelSize():QApplication::font().pointSize())),0,d->fpsString,false, QFont(), Qt::gray);
     if(FPSIsDisplayed())
     {
-      textRenderer->addText(fps_text);
+      d->textRenderer->addText(fps_text);
     }
     //Prints the displayMessage
     QFont font = QFont();
@@ -1042,75 +1080,18 @@ void Viewer::drawVisualHints()
     TextItem *message_text = new TextItem(10 + fm.width(d->message)/2, height()-20, 0, d->message, false, QFont(), Qt::gray );
     if (d->_displayMessage)
     {
-      textRenderer->addText(message_text);
+      d->textRenderer->addText(message_text);
     }
-    textRenderer->draw(this);
+    d->textRenderer->draw(this);
     if(FPSIsDisplayed())
-      textRenderer->removeText(fps_text);
+      d->textRenderer->removeText(fps_text);
     if (d->_displayMessage)
-      textRenderer->removeText(message_text);
+      d->textRenderer->removeText(message_text);
 }
 
 void Viewer::resizeGL(int w, int h)
 {
     QGLViewer::resizeGL(w,h);
-    qglviewer::Vec dim = qglviewer::Vec(w,h, 0) ;
-    GLdouble ortho[16];
-    QMatrix4x4 orthoMatrix;
-    ortho[0]  = 1.0/width(); ortho[1]  = 0; ortho[2]  = 0; ortho[3]  = -0.0;
-    ortho[4]  = 0; ortho[5]  = 1.0/height(); ortho[6]  = 0; ortho[7]  = -0.0;
-    ortho[8]  = 0; ortho[9]  = 0; ortho[10] = 2.0/(camera()->zNear()-camera()->zFar()); ortho[11] = -(camera()->zNear()+camera()->zFar())/(-camera()->zNear()+camera()->zFar());
-    ortho[12] = 0; ortho[13] = 0; ortho[14] = 0; ortho[15] = 1;
-    for(int i=0; i < 16; i++)
-    {
-        orthoMatrix.data()[i] = (float)ortho[i];
-    }
-
-    QVector4D length(60,60,60, 1.0);
-    length = orthoMatrix * length;
-    Viewer_impl::AxisData data;
-    d->v_Axis.resize(0);
-    d->n_Axis.resize(0);
-    d->c_Axis.resize(0);
-    data.vertices = &d->v_Axis;
-    data.normals =  &d->n_Axis;
-    data.colors =   &d->c_Axis;
-    double l = length.x()*w/h;
-    d->makeArrow(0.06,10, qglviewer::Vec(0,0,0),qglviewer::Vec(l,0,0),qglviewer::Vec(1,0,0), data);
-    d->makeArrow(0.06,10, qglviewer::Vec(0,0,0),qglviewer::Vec(0,l,0),qglviewer::Vec(0,1,0), data);
-    d->makeArrow(0.06,10, qglviewer::Vec(0,0,0),qglviewer::Vec(0,0,l),qglviewer::Vec(0,0,1), data);
-
-
-    d->vao[0].bind();
-    d->buffers[0].bind();
-    d->buffers[0].allocate(d->v_Axis.data(), static_cast<int>(d->v_Axis.size()) * sizeof(float));
-    d->rendering_program.enableAttributeArray("vertex");
-    d->rendering_program.setAttributeBuffer("vertex",GL_FLOAT,0,3);
-    d->buffers[0].release();
-
-    d->buffers[1].bind();
-    d->buffers[1].allocate(d->n_Axis.data(), static_cast<int>(d->n_Axis.size() * sizeof(float)));
-    d->rendering_program.enableAttributeArray("normal");
-    d->rendering_program.setAttributeBuffer("normal",GL_FLOAT,0,3);
-    d->buffers[1].release();
-
-    d->buffers[2].bind();
-    d->buffers[2].allocate(d->c_Axis.data(), static_cast<int>(d->c_Axis.size() * sizeof(float)));
-    d->rendering_program.enableAttributeArray("colors");
-    d->rendering_program.setAttributeBuffer("colors",GL_FLOAT,0,3);
-    d->buffers[2].release();
-
-    d->rendering_program.release();
-    d->vao[0].release();
-
-
-
-    d->rendering_program.bind();
-    d->rendering_program.setUniformValue("width", (float)dim.x);
-    d->rendering_program.setUniformValue("height", (float)dim.y);
-    d->rendering_program.setUniformValue("ortho_mat", orthoMatrix);
-    d->rendering_program.release();
-
 }
 QOpenGLShaderProgram* Viewer::declare_program(int name,
                                       const char* v_shader,
@@ -1336,7 +1317,7 @@ void Viewer_impl::showDistance(QPoint pixel)
 
         distance_text.append(centerCoord);
         Q_FOREACH(TextItem* ti, distance_text)
-          viewer->textRenderer->addText(ti);
+          textRenderer->addText(ti);
         Q_EMIT(viewer->sendMessage(QString("First point : A(%1,%2,%3), second point : B(%4,%5,%6), distance between them : %7")
                   .arg(APoint.x-offset.x)
                   .arg(APoint.y-offset.y)
@@ -1354,7 +1335,7 @@ void Viewer_impl::clearDistancedisplay()
   distance_is_displayed = false;
   Q_FOREACH(TextItem* ti, distance_text)
   {
-    viewer->textRenderer->removeText(ti);
+    textRenderer->removeText(ti);
     delete ti;
   }
   distance_text.clear();
@@ -1606,5 +1587,15 @@ void Viewer::updateIds(CGAL::Three::Scene_item * item)
 
   d->scene->updatePrimitiveIds(this, item);
   d->scene->updatePrimitiveIds(this, item);
+}
+
+TextRenderer* Viewer::textRenderer()
+{
+  return d->textRenderer;
+}
+
+bool Viewer::isExtensionFound()
+{
+  return d->extension_is_found;
 }
  #include "Viewer.moc"

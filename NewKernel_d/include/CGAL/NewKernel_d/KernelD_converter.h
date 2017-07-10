@@ -97,7 +97,7 @@ class KernelD_converter_
 	//typedef typename KOC::argument_type K1_Obj;
 	//typedef typename KOC::result_type K2_Obj;
 	public:
-	using Base::operator(); // don't use directly, just make it accessible to the next level
+  using Base::operator(); // don't use directly, just make it accessible to the next level
 	K2_Obj helper(K1_Obj const& o,CGAL_BOOSTD true_type)const{
 		return KOC()(this->myself().kernel(),this->myself().kernel2(),this->myself(),o);
 	}

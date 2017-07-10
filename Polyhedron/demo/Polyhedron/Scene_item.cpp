@@ -160,6 +160,8 @@ void CGAL::Three::Scene_item::selection_changed(bool) {}
 void CGAL::Three::Scene_item::setVisible(bool b)
 {
   visible_ = b;
+  if(b)
+    itemVisibilityChanged();
 }
 
 
@@ -219,18 +221,6 @@ CGAL::Three::Scene_item::Header_data CGAL::Three::Scene_item::header() const
 QString CGAL::Three::Scene_item::computeStats(int )
 {
   return QString();
-}
-
-void CGAL::Three::Scene_item::printPrimitiveId(QPoint, CGAL::Three::Viewer_interface*)
-{
-}
-
-void CGAL::Three::Scene_item::printPrimitiveIds(CGAL::Three::Viewer_interface*)const
-{
-}
-bool CGAL::Three::Scene_item::testDisplayId(double, double, double, CGAL::Three::Viewer_interface*)
-{
-    return false;
 }
 
 #include <CGAL/double.h>

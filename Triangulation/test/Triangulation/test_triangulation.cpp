@@ -53,7 +53,6 @@ void test(const int d, const string & type, int N)
     Finite_full_cell_const_iterator fsit = tri.finite_full_cells_begin();
     while( fsit != tri.finite_full_cells_end() )
     {
-        fsit->circumcenter();
         ++fsit, ++nbfs;
     }
     cerr << nbfs << " + ";
@@ -124,10 +123,11 @@ int main(int argc, char **argv)
     int N = 1000;
     if( argc > 1 )
         N = atoi(argv[1]);
-     go<5>(N);
-     go<3>(N);
-     go<2>(N);
-     go<1>(N);
+    //go<5>(N);
+    go<4>(N);
+    go<3>(N);
+    go<2>(N);
+    go<1>(N);
 
     cerr << std::endl;
     return 0;

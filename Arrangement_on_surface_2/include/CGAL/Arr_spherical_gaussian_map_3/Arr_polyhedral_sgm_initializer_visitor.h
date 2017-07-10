@@ -47,25 +47,25 @@ public:
   virtual ~Arr_polyhedral_sgm_initializer_visitor() {}
   
   /*! Pass information from a polyhedron vertex to its dual - a sgm-face */
-  virtual void update_dual_vertex(Polyhedron_vertex_const_handle src,
-                                  Sgm_face_handle trg)
+  virtual void update_dual_vertex(Polyhedron_vertex_const_handle /*src*/,
+                                  Sgm_face_handle /*trg*/)
   {}
 
   /*! Pass information from a dual vertex (face) to another dual vertex (face)
    * of the same vertex
    */
-  virtual void update_dual_vertex(Sgm_face_const_handle src,
-                                  Sgm_face_handle trg)
+  virtual void update_dual_vertex(Sgm_face_const_handle /*src*/,
+                                  Sgm_face_handle /*trg*/)
   {}
 
   /*! Pass information from a polyhedron facet to its dual a sgm-vertex */
-  virtual void update_dual_face(Polyhedron_facet_const_handle src,
-                                Sgm_vertex_handle trg)
+  virtual void update_dual_face(Polyhedron_facet_const_handle /*src*/,
+                                Sgm_vertex_handle /*trg*/)
   {}
 
   /*! Pass information from a polyhedron facet to its dual a sgm-vertex */
-  virtual void update_dual_halfedge(Polyhedron_halfedge_const_handle src,
-                                    Sgm_halfedge_handle trg)
+  virtual void update_dual_halfedge(Polyhedron_halfedge_const_handle /*src*/,
+                                    Sgm_halfedge_handle /*trg*/)
   {}
 };
 
