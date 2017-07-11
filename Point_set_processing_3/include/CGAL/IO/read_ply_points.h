@@ -478,17 +478,17 @@ namespace internal {
     template <typename Type>
     bool does_tag_exist (const char* tag, Type)
     {
-      for (std::size_t i = 0; i < m_point_properties.size (); ++ i)
-        if (m_point_properties[i]->name () == tag)
-          return (dynamic_cast<PLY_read_typed_number<Type>*>(m_point_properties[i]) != NULL);
+      for (std::size_t i = 0; i < m_properties->size (); ++ i)
+        if ((*m_properties)[i]->name () == tag)
+          return (dynamic_cast<PLY_read_typed_number<Type>*>((*m_properties)[i]) != NULL);
       return false;
     }
     bool does_tag_exist (const char* tag, double)
     {
-      for (std::size_t i = 0; i < m_point_properties.size (); ++ i)
-        if (m_point_properties[i]->name () == tag)
-          return (dynamic_cast<PLY_read_typed_number<double>*>(m_point_properties[i]) != NULL
-                  || dynamic_cast<PLY_read_typed_number<float>*>(m_point_properties[i]) != NULL);
+      for (std::size_t i = 0; i < m_properties->size (); ++ i)
+        if ((*m_properties)[i]->name () == tag)
+          return (dynamic_cast<PLY_read_typed_number<double>*>((*m_properties)[i]) != NULL
+                  || dynamic_cast<PLY_read_typed_number<float>*>((*m_properties)[i]) != NULL);
 
       return false;
     }
@@ -586,7 +586,7 @@ namespace internal {
             typename NextPropertyBinder,
             typename ... PropertyMapBinders>
   void process_properties (PLY_reader& reader, OutputValueType& new_element,
-                           std::tuple<PropertyMap, Constructor, PLY_property<T>...>& current,
+                           std::tuple<PropertyMap, Constructor, PLY_property<T>...>&& current,
                            NextPropertyBinder&& next,
                            PropertyMapBinders&& ... properties)
   {
@@ -596,7 +596,8 @@ namespace internal {
     PmapValueType new_value = call_functor<PmapValueType>(std::get<1>(current), values);
     put (std::get<0>(current), new_element, new_value);
   
-    process_properties (reader, new_element, next, properties...);
+    process_properties (reader, new_element, std::forward<NextPropertyBinder>(next),
+                        std::forward<PropertyMapBinders>(properties)...);
   }
 
 
@@ -612,14 +613,15 @@ namespace internal {
   template <typename OutputValueType, typename PropertyMap, typename T,
             typename NextPropertyBinder, typename ... PropertyMapBinders>
   void process_properties (PLY_reader& reader, OutputValueType& new_element,
-                           std::pair<PropertyMap, PLY_property<T> >& current,
+                           std::pair<PropertyMap, PLY_property<T> >&& current,
                            NextPropertyBinder&& next,
                            PropertyMapBinders&& ... properties)
   {
     T new_value = T();
     reader.assign (new_value, current.second.name);
     put (current.first, new_element, new_value);
-    process_properties (reader, new_element, next, properties...);
+    process_properties (reader, new_element, std::forward<NextPropertyBinder>(next),
+                        std::forward<PropertyMapBinders>(properties)...);
   }
 
   } // namespace PLY
