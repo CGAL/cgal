@@ -28,6 +28,8 @@
 
 #include <boost/iterator/transform_iterator.hpp>
 
+#include <OpenMesh/Core/IO/MeshIO.hh>
+
 #include <CGAL/boost/graph/properties_PolyMesh_ArrayKernelT.h>
 #include <CGAL/boost/graph/internal/OM_iterator_from_circulator.h>
 #include <CGAL/boost/graph/iterator.h>
