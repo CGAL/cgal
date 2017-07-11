@@ -183,6 +183,8 @@ template <typename Polyhedron,
   typename ErrorMetric,
   typename ProxyFitting,
   typename GeomTraits,
+  typename FacetNormalMap,
+  typename FacetAreaMap,
   typename VertexPointPmap>
   class VSA
 {
@@ -208,8 +210,6 @@ private:
   typedef typename boost::graph_traits<Polyhedron>::edge_descriptor edge_descriptor;
   typedef typename boost::graph_traits<Polyhedron>::edge_iterator edge_iterator;
 
-  typedef boost::associative_property_map<std::map<face_descriptor, Vector> > FacetNormalMap;
-  typedef boost::associative_property_map<std::map<face_descriptor, FT> > FacetAreaMap;
   typedef boost::associative_property_map<std::map<vertex_descriptor, int> > VertexStatusPMap;
   typedef boost::associative_property_map<std::map<halfedge_descriptor, int> > HalfedgeStatusPMap;
 
@@ -272,10 +272,8 @@ private:
   std::vector<FT> proxies_area; // The proxy area.
   
   // Mesh facet normal and area map.
-  std::map<face_descriptor, Vector> facet_normals;
-  FacetNormalMap normal_pmap;
-  std::map<face_descriptor, FT> facet_areas;
-  FacetAreaMap area_pmap;
+  const FacetNormalMap normal_pmap;
+  const FacetAreaMap area_pmap;
 
   // Mesh vertex anchor map and halfedge status map.
   std::map<vertex_descriptor, int> vertex_status_map;
@@ -305,7 +303,9 @@ public:
    * @param _traits geometric trait object.
    */
   VSA(const Polyhedron &_mesh,
-    VertexPointPmap _vertex_point_map,
+    const VertexPointPmap &_vertex_point_map,
+    const FacetNormalMap &_facet_normal_map,
+    const FacetAreaMap &_facet_area_map,
     GeomTraits _traits)
     : mesh(_mesh),
     vertex_point_pmap(_vertex_point_map),
@@ -316,29 +316,12 @@ public:
     sum_functor(traits.construct_sum_of_vectors_3_object()),
     scalar_product_functor(traits.compute_scalar_product_3_object()),
     area_functor(traits.compute_squared_area_3_object()),
-    normal_pmap(facet_normals),
-    area_pmap(facet_areas),
+    normal_pmap(_facet_normal_map),
+    area_pmap(_facet_area_map),
     vertex_status_pmap(vertex_status_map),
     halfedge_status_pmap(halfedge_status_map),
     fit_error(normal_pmap, area_pmap),
     proxy_fitting(normal_pmap, area_pmap) {
-    // CGAL_precondition(is_pure_triangle(mesh));
-    // construct facet normal & area map
-    BOOST_FOREACH(face_descriptor f, faces(mesh)) {
-      const halfedge_descriptor he = halfedge(f, mesh);
-      const Point p1 = get(vertex_point_pmap, source(he, mesh));
-      const Point p2 = get(vertex_point_pmap, target(he, mesh));
-      const Point p3 = get(vertex_point_pmap, target(next(he, mesh), mesh));
-      //const Point center = centroid_functor(p1, p2, p3);
-      Vector normal = normal_functor(p1, p2, p3);
-      normal = scale_functor(normal,
-        FT(1.0 / std::sqrt(CGAL::to_double(normal.squared_length()))));
-      facet_normals.insert(std::pair<face_descriptor, Vector>(f, normal));
-
-      FT area(std::sqrt(CGAL::to_double(area_functor(p1, p2, p3))));
-      facet_areas.insert(std::pair<face_descriptor, FT>(f, area));
-    }
-
     // initialize all vertex anchor status
     BOOST_FOREACH(vertex_descriptor v, vertices(mesh)) {
       vertex_status_map.insert(std::pair<vertex_descriptor, int>(v, static_cast<int>(NO_ANCHOR)));

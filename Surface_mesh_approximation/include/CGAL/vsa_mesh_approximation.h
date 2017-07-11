@@ -25,7 +25,7 @@ namespace CGAL
  * @tparam GeomTraits geometric kernel
 
  * @param init select seed initialization
- * @param triangle_mesh a triangle mesh
+ * @param mesh a triangle mesh
  * @param number_of_segments target number of approximation patches
  * @param number_of_iterations number of fitting iterations
  * @param segment_ids facet proxy patch id property map
@@ -46,7 +46,7 @@ template<typename TriangleMesh,
   typename GeomTraits>
   void vsa_mesh_approximation(
     const int init,
-    const TriangleMesh &triangle_mesh,
+    const TriangleMesh &mesh,
     const std::size_t number_of_segments,
     const std::size_t number_of_iterations,
     SegmentPropertyMap segment_ids,
@@ -56,19 +56,49 @@ template<typename TriangleMesh,
     AnchorVertexContainer &vtx,
     BoundaryContainer &bdrs,
     GeomTraits traits) {
+  // CGAL_precondition(is_pure_triangle(mesh));
+
   typedef typename GeomTraits::FT FT;
   typedef typename GeomTraits::Vector_3 Vector;
-
   typedef typename boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
+  typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor halfedge_descriptor;
   typedef boost::associative_property_map<std::map<face_descriptor, Vector> > FacetNormalMap;
   typedef boost::associative_property_map<std::map<face_descriptor, FT> > FacetAreaMap;
+
+  // construct facet normal & area map
+  std::map<face_descriptor, Vector> facet_normals;
+  std::map<face_descriptor, FT> facet_areas;
+  BOOST_FOREACH(face_descriptor f, faces(mesh)) {
+    const halfedge_descriptor he = halfedge(f, mesh);
+    const Point p1 = get(ppmap, source(he, mesh));
+    const Point p2 = get(ppmap, target(he, mesh));
+    const Point p3 = get(ppmap, target(next(he, mesh), mesh));
+    Vector normal = CGAL::unit_normal(p1, p2, p3);
+    // normal = scale_functor(normal,
+    //   FT(1.0 / std::sqrt(CGAL::to_double(normal.squared_length()))));
+    facet_normals.insert(std::pair<face_descriptor, Vector>(f, normal));
+
+    FT area(std::sqrt(CGAL::to_double(CGAL::squared_area(p1, p2, p3))));
+    // FT area(std::sqrt(CGAL::to_double(area_functor(p1, p2, p3))));
+    facet_areas.insert(std::pair<face_descriptor, FT>(f, area));
+  }
+  FacetNormalMap normal_pmap(facet_normals);
+  FacetAreaMap area_pmap(facet_areas);
 
   typedef CGAL::PlaneProxy<TriangleMesh, GeomTraits> PlaneProxy;
   typedef CGAL::L21Metric<PlaneProxy, GeomTraits, FacetNormalMap, FacetAreaMap> L21Metric;
   typedef CGAL::ProxyFitting<PlaneProxy, GeomTraits, L21Metric, FacetNormalMap, FacetAreaMap> ProxyFitting;
-  typedef CGAL::internal::VSA<TriangleMesh, PlaneProxy, L21Metric, ProxyFitting, GeomTraits, PointPropertyMap> VSA;
+  typedef CGAL::internal::VSA<
+    TriangleMesh,
+    PlaneProxy,
+    L21Metric,
+    ProxyFitting,
+    GeomTraits,
+    FacetNormalMap,
+    FacetAreaMap,
+    PointPropertyMap> VSA;
 
-  VSA algorithm(triangle_mesh, ppmap, traits);
+  VSA algorithm(mesh, ppmap, normal_pmap, area_pmap, traits);
 
   switch (init) {
     case VSA::RandomInit:
