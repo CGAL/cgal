@@ -116,6 +116,11 @@ public:
 
     template <class Point, class Polygon>
     void load(const std::vector<Point>& points, const std::vector<Polygon>& polygons);
+    
+    template <class Point, class Polygon>
+    void load(const std::vector<Point>& points, const std::vector<Polygon>& polygons,
+              const std::vector<CGAL::Color>& fcolors,
+              const std::vector<CGAL::Color>& vcolors);
 
     bool load(std::istream& in);
     void load(Scene_polyhedron_item*);
