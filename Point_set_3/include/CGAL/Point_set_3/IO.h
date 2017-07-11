@@ -289,8 +289,7 @@ read_off_point_set(
 }
 
 
-//#if (!defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE) && !defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES)) || defined(DOXYGEN_RUNNING)
-#if 0
+#if (!defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE) && !defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES)) || defined(DOXYGEN_RUNNING)
 /*!
   \ingroup PkgPointSet3IO
  */
@@ -624,32 +623,36 @@ write_las_point_set(
   
 #endif // LAS
 #else // CXX11
+template<typename T>
+struct template_tag_false : public CGAL::Tag_false
+{ };
+  
 template <typename Point, typename Vector>
 bool
 read_ply_point_set(std::istream&, CGAL::Point_set_3<Point, Vector>&)
 {
-  CGAL_static_assertion_msg (false, "CGAL PLY reader requires a C++11 compiler");
+  CGAL_static_assertion_msg (template_tag_false<Point>::value, "CGAL PLY reader requires a C++11 compiler");
   return false;
 }
 template <typename Point, typename Vector>
 bool
 write_ply_point_set(std::ostream&, const CGAL::Point_set_3<Point, Vector>&)
 {
-  CGAL_static_assertion_msg (false, "CGAL PLY writer requires a C++11 compiler");
+  CGAL_static_assertion_msg (template_tag_false<Point>::value, "CGAL PLY writer requires a C++11 compiler");
   return false;
 }
 template <typename Point, typename Vector>
 bool
 read_las_point_set(std::istream&, CGAL::Point_set_3<Point, Vector>&)
 {
-  CGAL_static_assertion_msg (false, "CGAL LAS reader requires a C++11 compiler");
+  CGAL_static_assertion_msg (template_tag_false<Point>::value, "CGAL LAS reader requires a C++11 compiler");
   return false;
 }
 template <typename Point, typename Vector>
 bool
 write_las_point_set(std::ostream&, const CGAL::Point_set_3<Point, Vector>&)
 {
-  CGAL_static_assertion_msg (false, "CGAL LAS writer requires a C++11 compiler");
+  CGAL_static_assertion_msg (template_tag_false<Point>::value, "CGAL LAS writer requires a C++11 compiler");
   return false;
 }
 #endif // CXX11
