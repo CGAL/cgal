@@ -344,9 +344,11 @@ public:
           ++patch_sizes[i];
 
     // (2-a) Use the orientation around an edge to classify a patch
-    boost::dynamic_bitset<> patches_to_keep(nb_patches, true);
-    boost::dynamic_bitset<> patch_status_not_set(nb_patches,true);
+    boost::dynamic_bitset<> patches_to_keep(nb_patches);
+    boost::dynamic_bitset<> patch_status_not_set(nb_patches);
     boost::dynamic_bitset<> coplanar_patches(nb_patches,false);
+    patches_to_keep.set();
+    patch_status_not_set.set();
 
     for (typename An_edge_per_polyline_map::iterator
             it=an_edge_per_polyline.begin(),

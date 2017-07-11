@@ -581,12 +581,14 @@ public:
     // (2-a) Use the orientation around an edge to classify a patch
     boost::dynamic_bitset<> is_patch_inside_tm2(nb_patches_tm1, false);
     boost::dynamic_bitset<> is_patch_inside_tm1(nb_patches_tm2, false);
-    boost::dynamic_bitset<> patch_status_not_set_tm1(nb_patches_tm1,true);
-    boost::dynamic_bitset<> patch_status_not_set_tm2(nb_patches_tm2,true);
+    boost::dynamic_bitset<> patch_status_not_set_tm1(nb_patches_tm1);
+    boost::dynamic_bitset<> patch_status_not_set_tm2(nb_patches_tm2);
     boost::dynamic_bitset<> coplanar_patches_of_tm1(nb_patches_tm1,false);
     boost::dynamic_bitset<> coplanar_patches_of_tm2(nb_patches_tm2,false);
     boost::dynamic_bitset<> coplanar_patches_of_tm1_for_union_and_intersection(nb_patches_tm1,false);
     boost::dynamic_bitset<> coplanar_patches_of_tm2_for_union_and_intersection(nb_patches_tm2,false);
+    patch_status_not_set_tm1.set();
+    patch_status_not_set_tm2.set();
 
     for (typename An_edge_per_polyline_map::iterator
             it=an_edge_per_polyline.begin(),
