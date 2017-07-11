@@ -76,22 +76,13 @@ template<typename PlaneProxy,
   typename FacetAreaMap>
   struct L21Metric
 {
-  // L21Metric(const FacetNormalMap &normal_pmap, const FacetAreaMap &area_pmap)
-  //   : normal_pmap(normal_pmap),
-  //   area_pmap(area_pmap) {
-  //   GeomTraits traits;
-  //   scalar_product_functor = traits.compute_scalar_product_3_object();
-  //   sum_functor = traits.construct_sum_of_vectors_3_object();
-  //   scale_functor = traits.construct_scaled_vector_3_object();
-  // }
-  L21Metric(GeomTraits traits,
-    const FacetNormalMap &normal_pmap,
-    const FacetAreaMap &area_pmap)
-    : scalar_product_functor(traits.compute_scalar_product_3_object()),
-    sum_functor(traits.construct_sum_of_vectors_3_object()),
-    scale_functor(traits.construct_scaled_vector_3_object()),
-    normal_pmap(normal_pmap),
+  L21Metric(const FacetNormalMap &normal_pmap, const FacetAreaMap &area_pmap)
+    : normal_pmap(normal_pmap),
     area_pmap(area_pmap) {
+    GeomTraits traits;
+    scalar_product_functor = traits.compute_scalar_product_3_object();
+    sum_functor = traits.construct_sum_of_vectors_3_object();
+    scale_functor = traits.construct_scaled_vector_3_object();
   }
 
   typedef typename GeomTraits::FT FT;
@@ -137,20 +128,23 @@ template<typename PlaneProxy,
 
   template<typename FacetIterator>
   FT operator()(FacetIterator beg, FacetIterator end, PlaneProxy &px) {
+    CGAL_assertion(beg != end);
+    
     // update proxy normal
-    // FT area(0);
+    FT area(0);
     Vector norm = CGAL::NULL_VECTOR;
     for (FacetIterator fitr = beg; fitr != end; ++fitr) {
-      // area += area_pmap[*fitr];
+      area += area_pmap[*fitr];
       norm = sum_functor(norm,
-        scale_functor(normal_pmap[*fitr]), area_pmap[*fitr]);
+        scale_functor(normal_pmap[*fitr], area_pmap[*fitr]));
     }
-    // norm = scale_functor(norm, FT(1) / area);
+    norm = scale_functor(norm, FT(1.0 / CGAL::to_double(area)));
     norm = scale_functor(norm, FT(1.0 / std::sqrt(CGAL::to_double(norm.squared_length()))));
     px.normal = norm;
 
     // update seed
     FT err_min = error_functor(*beg, px);
+    px.seed = *beg;
     FT sum(0);
     for (FacetIterator fitr = beg; fitr != end; ++fitr) {
       FT err = error_functor(*fitr, px);
@@ -298,6 +292,9 @@ private:
   // The error metric.
   ErrorMetric fit_error;
 
+  // The proxy fitting functor.
+  ProxyFitting proxy_fitting;
+
   //member functions
 public:
   /**
@@ -323,7 +320,8 @@ public:
     area_pmap(facet_areas),
     vertex_status_pmap(vertex_status_map),
     halfedge_status_pmap(halfedge_status_map),
-    fit_error(traits, normal_pmap, area_pmap) {
+    fit_error(normal_pmap, area_pmap),
+    proxy_fitting(normal_pmap, area_pmap) {
     // CGAL_precondition(is_pure_triangle(mesh));
     // construct facet normal & area map
     BOOST_FOREACH(face_descriptor f, faces(mesh)) {
@@ -632,47 +630,13 @@ private:
    */
   template <typename FacetSegmentMap>
   void fitting(const FacetSegmentMap &seg_pmap) {
-    // update normal
-    std::vector<Vector> px_normals(proxies.size(), CGAL::NULL_VECTOR);
-    std::vector<FT> px_areas(proxies.size(), FT(0));
-    BOOST_FOREACH(face_descriptor f, faces(mesh)) {
-      std::size_t px_idx = seg_pmap[f];
-      px_normals[px_idx] = sum_functor(px_normals[px_idx],
-        scale_functor(normal_pmap[f], area_pmap[f]));
-      px_areas[px_idx] += area_pmap[f];
-    }
-    
-    for (std::size_t i = 0; i < proxies.size(); ++i) {
-      Vector norm = scale_functor(px_normals[i], FT(1.0 / CGAL::to_double(px_areas[i]))); // redundant
-      norm = scale_functor(norm, FT(1.0 / std::sqrt(CGAL::to_double(norm.squared_length()))));
-      proxies[i].normal = norm;
-    }
+    std::vector<std::list<face_descriptor> > px_facets(proxies.size());
+    BOOST_FOREACH(face_descriptor f, faces(mesh))
+      px_facets[seg_pmap[f]].push_back(f);
 
-    // update seed
-    std::vector<std::size_t> facet_px_idx;
-    facet_px_idx.reserve(num_faces(mesh));
-    std::vector<FT> facet_px_err;
-    facet_px_err.reserve(num_faces(mesh));
-    BOOST_FOREACH(face_descriptor f, faces(mesh)) {
-      std::size_t px_idx = seg_pmap[f];
-      facet_px_idx.push_back(px_idx);
-      facet_px_err.push_back(fit_error(f, proxies[px_idx]));
-    }
-    FT max_facet_error = facet_px_err.front();
-    for (std::size_t i = 0; i < facet_px_err.size(); ++i) {
-      if (max_facet_error < facet_px_err[i])
-        max_facet_error = facet_px_err[i];
-    }
-    std::vector<FT> distance_min(proxies.size(), max_facet_error);
-    std::size_t fidx = 0;
-    BOOST_FOREACH(face_descriptor f, faces(mesh)) {
-      std::size_t px_idx = facet_px_idx[fidx];
-      FT err = facet_px_err[fidx];
-      if (err < distance_min[px_idx]) {
-        proxies[px_idx].seed = f;
-        distance_min[px_idx] = err;
-      }
-      ++fidx;
+    // TODO: add update()/fitting() requirement to Proxy concept maybe better
+    for (std::size_t i = 0; i < proxies.size(); ++i) {
+      proxy_fitting(px_facets[i].begin(), px_facets[i].end(), proxies[i]);
     }
   }
 
