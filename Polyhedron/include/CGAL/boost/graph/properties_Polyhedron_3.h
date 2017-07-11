@@ -23,6 +23,7 @@
 #include <CGAL/license/Polyhedron.h>
 
 
+#include <CGAL/Dynamic_property_map.h>
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/Unique_hash_map.h>
@@ -30,60 +31,12 @@
 #include <CGAL/number_utils.h>
 #include <boost/shared_ptr.hpp>
 #include <CGAL/boost/graph/internal/Has_member_id.h>
-#include <boost/unordered_map.hpp>
 
 #define CGAL_HDS_PARAM_ template < class Traits, class Items, class Alloc> class HDS
 
 namespace CGAL {
 
 namespace internal {
-
-template <typename Poly, typename K, typename V>
-struct Dynamic_polyhedron_property_map {
-
-  typedef K key_type;
-  typedef V value_type;
-  typedef value_type& reference;
-  typedef boost::read_write_property_map_tag  category;
-
-  Dynamic_polyhedron_property_map(const V& default_value = V())
-    : map_(new Map()), default_value_(default_value)
-  {}
-
-  void clear()
-  {
-    map_ = boost::shared_ptr<Map>(0);
-  }
-
-
-  friend value_type get(const Dynamic_polyhedron_property_map& m, const key_type& k)
-  {
-    typename Map::const_iterator it = m.map_->find(k);
-    if(it == m.map_->end()){
-      return m.default_value();
-    }
-    return it->second;
-  }
-
-
-  friend void put(Dynamic_polyhedron_property_map& m, const key_type& k, const value_type& v)
-  {
-    if(v != m.default_value()){
-      (*(m.map_))[k] = v;
-    }
-  }
-
-  
-  const V& default_value() const
-  {
-    return default_value_;
-  }
-
-
-  typedef boost::unordered_map<K,V> Map;
-  boost::shared_ptr<Map> map_;
-  V default_value_;
-};
 
 template<class Handle>
 class Polyhedron_index_map_external
@@ -532,96 +485,46 @@ struct graph_has_property<CGAL::Polyhedron_3<Gt, I, HDS, A>, vertex_index_t>
     >
 {};
 
-
+#if 0
 template <class Gt, class I, CGAL_HDS_PARAM_, class A, typename T>
-struct property_map<CGAL::Polyhedron_3<Gt, I, HDS, A>, boost::vertex_property_t<T> >
+struct dynamic_property_map<CGAL::Polyhedron_3<Gt, I, HDS, A>, boost::vertex_property_t<T> >
 {
   typedef CGAL::Polyhedron_3<Gt, I, HDS, A> SM;
   typedef typename boost::graph_traits<SM>::vertex_descriptor vertex_descriptor;
-  typedef CGAL::internal::Dynamic_polyhedron_property_map<SM,vertex_descriptor,T> type;
+  typedef CGAL::internal::Dynamic_property_map<vertex_descriptor,T> type;
   typedef type const_type;
 };
 
 template <class Gt, class I, CGAL_HDS_PARAM_, class A, typename T>
-struct property_map<CGAL::Polyhedron_3<Gt, I, HDS, A>, boost::halfedge_property_t<T> >
+struct dynamic_property_map<CGAL::Polyhedron_3<Gt, I, HDS, A>, boost::halfedge_property_t<T> >
 {
   typedef CGAL::Polyhedron_3<Gt, I, HDS, A> SM;
   typedef typename boost::graph_traits<SM>::halfedge_descriptor halfedge_descriptor;
-  typedef CGAL::internal::Dynamic_polyhedron_property_map<SM,halfedge_descriptor,T> type;
+  typedef CGAL::internal::Dynamic_property_map<halfedge_descriptor,T> type;
   typedef type const_type;
 };
 
 template <class Gt, class I, CGAL_HDS_PARAM_, class A, typename T>
-struct property_map<CGAL::Polyhedron_3<Gt, I, HDS, A>, boost::edge_property_t<T> >
+struct dynamic_property_map<CGAL::Polyhedron_3<Gt, I, HDS, A>, boost::edge_property_t<T> >
 {
   typedef CGAL::Polyhedron_3<Gt, I, HDS, A> SM;
   typedef typename boost::graph_traits<SM>::edge_descriptor edge_descriptor;
-  typedef CGAL::internal::Dynamic_polyhedron_property_map<SM,edge_descriptor,T> type;
+  typedef CGAL::internal::Dynamic_property_map<edge_descriptor,T> type;
   typedef type const_type;
 };
 
 template <class Gt, class I, CGAL_HDS_PARAM_, class A, typename T>
-struct property_map<CGAL::Polyhedron_3<Gt, I, HDS, A>, boost::face_property_t<T> >
+struct dynamic_property_map<CGAL::Polyhedron_3<Gt, I, HDS, A>, boost::face_property_t<T> >
 {
   typedef CGAL::Polyhedron_3<Gt, I, HDS, A> SM;
   typedef typename boost::graph_traits<SM>::face_descriptor face_descriptor;
-  typedef CGAL::internal::Dynamic_polyhedron_property_map<SM,face_descriptor,T> type;
+  typedef CGAL::internal::Dynamic_property_map<face_descriptor,T> type;
   typedef type const_type;
 };
-
+#endif
 
 } // namespace boost
 
-namespace CGAL {
-
-  namespace internal {
-template<class Gt, class I, CGAL_HDS_PARAM_, class A, class V>
-typename boost::property_map<Polyhedron_3<Gt, I, HDS, A>, boost::vertex_property_t<V> >::const_type
-add(boost::vertex_property_t<V> vprop, Polyhedron_3<Gt, I, HDS, A>&)
-{
-  typedef CGAL::Polyhedron_3<Gt, I, HDS, A> SM;
-  typedef typename boost::graph_traits<SM>::vertex_descriptor vertex_descriptor;
-  return internal::Dynamic_polyhedron_property_map<SM,vertex_descriptor,V>(vprop.t);
-}
-
-template<class Gt, class I, CGAL_HDS_PARAM_, class A, class V>
-typename boost::property_map<Polyhedron_3<Gt, I, HDS, A>, boost::edge_property_t<V> >::const_type
-add(boost::edge_property_t<V> vprop, Polyhedron_3<Gt, I, HDS, A>&)
-{
-  typedef CGAL::Polyhedron_3<Gt, I, HDS, A> SM;
-  typedef typename boost::graph_traits<SM>::edge_descriptor edge_descriptor;
-  return internal::Dynamic_polyhedron_property_map<SM,edge_descriptor,V>(vprop.t);
-}
-
-template<class Gt, class I, CGAL_HDS_PARAM_, class A, class V>
-typename boost::property_map<Polyhedron_3<Gt, I, HDS, A>, boost::halfedge_property_t<V> >::const_type
-add(boost::halfedge_property_t<V> vprop, Polyhedron_3<Gt, I, HDS, A>&)
-{
-  typedef CGAL::Polyhedron_3<Gt, I, HDS, A> SM;
-  typedef typename boost::graph_traits<SM>::halfedge_descriptor halfedge_descriptor;
-  return internal::Dynamic_polyhedron_property_map<SM,halfedge_descriptor,V>(vprop.t);
-}
-
-template<class Gt, class I, CGAL_HDS_PARAM_, class A, class V>
-typename boost::property_map<Polyhedron_3<Gt, I, HDS, A>, boost::face_property_t<V> >::const_type
-add(boost::face_property_t<V> vprop, Polyhedron_3<Gt, I, HDS, A>&)
-{
-  typedef CGAL::Polyhedron_3<Gt, I, HDS, A> SM;
-  typedef typename boost::graph_traits<SM>::face_descriptor face_descriptor;
-  return internal::Dynamic_polyhedron_property_map<SM,face_descriptor,V>(vprop.t);
-}
-
-template<class Gt, class I, CGAL_HDS_PARAM_, class A, class V, typename Descriptor>
-void remove(
-  internal::Dynamic_polyhedron_property_map<Polyhedron_3<Gt, I, HDS, A>, Descriptor, V> pm,
-  Polyhedron_3<Gt, I, HDS, A>&)
-{
-  pm.clear();
-}
-
-  } // namespace internal
-
-} // namespace CGAL
 
 #undef CGAL_HDS_PARAM_
 

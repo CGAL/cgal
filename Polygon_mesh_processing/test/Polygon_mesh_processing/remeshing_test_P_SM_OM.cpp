@@ -17,9 +17,11 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic;
 
 int main()
 {
+#if 1
   {
     typedef CGAL::Surface_mesh<typename Epic::Point_3> SM;
     SM sm;
+
     std::ifstream in("data/elephant.off");
     in >> sm;
     PMP::isotropic_remeshing(faces(sm),
@@ -28,7 +30,7 @@ int main()
     std::ofstream out("sm.off");
     out << sm << std::endl;
   }
-
+#endif
   {
   typedef CGAL::Polyhedron_3<Epic> P;
   std::map<boost::graph_traits<P>::face_descriptor, std::size_t> fim;
@@ -43,6 +45,7 @@ int main()
     out << p << std::endl;
   }
 
+#if 0
   {
     typedef OpenMesh::PolyMesh_ArrayKernelT</* MyTraits*/> OM;
 
@@ -58,6 +61,6 @@ int main()
     om.garbage_collection();
     OpenMesh::IO::write_mesh(om, "om.off");
   }
-
+#endif
   return 0;
 }

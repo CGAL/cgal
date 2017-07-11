@@ -169,7 +169,7 @@ namespace internal {
     typedef EdgeIsConstrainedMap                                ECMap;
     typedef Connected_components_pmap<PM, ECMap, FIMap>         CCMap;
 
-    typename boost::property_map<PM, boost::face_property_t<Patch_id> >::type patch_ids_map;
+    typename boost::dynamic_property_map<PM, boost::face_property_t<Patch_id> >::type patch_ids_map;
     std::size_t nb_cc;
 
   public:
@@ -282,7 +282,7 @@ namespace internal {
     typedef CGAL::AABB_traits<GeomTraits, AABB_primitive> AABB_traits;
     typedef CGAL::AABB_tree<AABB_traits>                  AABB_tree;
 
-    typedef typename boost::property_map<
+    typedef typename boost::dynamic_property_map<
       PM, boost::halfedge_property_t<Halfedge_status> >::type Halfedge_status_pmap;
 
   public:

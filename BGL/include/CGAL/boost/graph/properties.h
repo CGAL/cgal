@@ -22,13 +22,22 @@
 #define CGAL_BOOST_GRAPH_BGL_PROPERTIES_H
 
 #include <CGAL/property_map.h>
+//#include <CGAL/Dynamic_property_map.h>
 #include <boost/graph/properties.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/foreach.hpp>
 
 #include <CGAL/basic.h>
 #include <string>
+namespace CGAL {
 
+namespace internal {
+
+template <typename K, typename V>
+struct Dynamic_property_map;
+}
+}
+ 
 /// Boost Namespace
 namespace boost {
 
@@ -95,6 +104,42 @@ enum face_external_index_t   { face_external_index   } ;
     std::string s;
     T t;
   };
+
+template <typename G, typename Tag>
+struct dynamic_property_map{};
+
+template <typename G, typename T>
+struct dynamic_property_map<G,boost::vertex_property_t<T> >
+{
+  typedef typename boost::graph_traits<G>::vertex_descriptor vertex_descriptor;
+  typedef CGAL::internal::Dynamic_property_map<vertex_descriptor,T> type;
+  typedef type const_type;
+};
+
+template <typename G, typename T>
+struct dynamic_property_map<G,boost::halfedge_property_t<T> >
+{
+  typedef typename boost::graph_traits<G>::halfedge_descriptor halfedge_descriptor;
+  typedef CGAL::internal::Dynamic_property_map<halfedge_descriptor,T> type;
+  typedef type const_type;
+};
+
+
+template <typename G, typename T>
+struct dynamic_property_map<G,boost::edge_property_t<T> >
+{
+  typedef typename boost::graph_traits<G>::edge_descriptor edge_descriptor;
+  typedef CGAL::internal::Dynamic_property_map<edge_descriptor,T> type;
+  typedef type const_type;
+};
+
+template <typename G, typename T>
+struct dynamic_property_map<G,boost::face_property_t<T> >
+{
+  typedef typename boost::graph_traits<G>::face_descriptor face_descriptor;
+  typedef CGAL::internal::Dynamic_property_map<face_descriptor,T> type;
+  typedef type const_type;
+};
 
 
 template<typename Graph, typename PropertyTag>
@@ -260,7 +305,54 @@ void init_halfedge_indices(PolygonMesh& pm, HalfedgeIndexMap hid)
                               >::type >::type() );
 }
 
-} } //end of namespace CGAL::helpers
+} //namespace helpers
+
+
+namespace internal {
+
+template <typename T, typename G>
+typename boost::dynamic_property_map<G,boost::vertex_property_t<T> >::const_type
+add(boost::vertex_property_t<T> prop, const G& g)
+{
+  typedef typename boost::graph_traits<G>::vertex_descriptor vertex_descriptor;
+  return internal::Dynamic_property_map<vertex_descriptor,T>(prop.t);
+}
+
+template <typename T, typename G>
+typename boost::dynamic_property_map<G,boost::halfedge_property_t<T> >::const_type
+add(boost::halfedge_property_t<T> prop, const G& g)
+{
+  typedef typename boost::graph_traits<G>::halfedge_descriptor halfedge_descriptor;
+  return internal::Dynamic_property_map<halfedge_descriptor,T>(prop.t);
+}
+
+template <typename T, typename G>
+typename boost::dynamic_property_map<G,boost::edge_property_t<T> >::const_type
+add(boost::edge_property_t<T> prop, const G& g)
+{
+  typedef typename boost::graph_traits<G>::edge_descriptor edge_descriptor;
+  return internal::Dynamic_property_map<edge_descriptor,T>(prop.t);
+}
+
+template <typename T, typename G>
+typename boost::dynamic_property_map<G,boost::face_property_t<T> >::const_type
+add(boost::face_property_t<T> prop, const G& g)
+{
+  typedef typename boost::graph_traits<G>::face_descriptor face_descriptor;
+  return internal::Dynamic_property_map<face_descriptor,T>(prop.t);
+}
+
+  template<class G, class T, typename Descriptor>
+void remove(
+  internal::Dynamic_property_map<Descriptor, T>& pm,
+  const G&)
+{
+  pm.clear();
+}
+
+} // namespace internal
+
+} // namespace CGAL
 
 
 #endif // CGAL_BOOST_GRAPH_BGL_PROPERTIES_H

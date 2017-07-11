@@ -89,7 +89,7 @@ public:
 namespace boost {
 
 template <typename Point, typename T>
-struct property_map<CGAL::Surface_mesh<Point>, boost::vertex_property_t<T> >
+struct dynamic_property_map<CGAL::Surface_mesh<Point>, boost::vertex_property_t<T> >
 {
   typedef CGAL::Surface_mesh<Point> SM;
   typedef typename SM:: template Property_map<typename SM::Vertex_index,T> type;
@@ -97,7 +97,7 @@ struct property_map<CGAL::Surface_mesh<Point>, boost::vertex_property_t<T> >
 };
 
 template <typename Point, typename T>
-struct property_map<CGAL::Surface_mesh<Point>, boost::face_property_t<T> >
+struct dynamic_property_map<CGAL::Surface_mesh<Point>, boost::face_property_t<T> >
 {
   typedef CGAL::Surface_mesh<Point> SM;
   typedef typename SM:: template Property_map<typename SM::Face_index,T> type;
@@ -105,7 +105,7 @@ struct property_map<CGAL::Surface_mesh<Point>, boost::face_property_t<T> >
 };
 
 template <typename Point, typename T>
-struct property_map<CGAL::Surface_mesh<Point>, boost::halfedge_property_t<T> >
+struct dynamic_property_map<CGAL::Surface_mesh<Point>, boost::halfedge_property_t<T> >
 {
   typedef CGAL::Surface_mesh<Point> SM;
   typedef typename SM:: template Property_map<typename SM::Halfedge_index,T> type;
@@ -113,7 +113,7 @@ struct property_map<CGAL::Surface_mesh<Point>, boost::halfedge_property_t<T> >
 };
 
 template <typename Point, typename T>
-struct property_map<CGAL::Surface_mesh<Point>, boost::edge_property_t<T> >
+struct dynamic_property_map<CGAL::Surface_mesh<Point>, boost::edge_property_t<T> >
 {
   typedef CGAL::Surface_mesh<Point> SM;
   typedef typename SM:: template Property_map<typename SM::Edge_index,T> type;
@@ -354,28 +354,28 @@ get(boost::vertex_property_t<T> vprop, const CGAL::Surface_mesh<Point>& sm)
 }
 
 template <typename Point, typename T>
-typename boost::property_map<CGAL::Surface_mesh<Point>, boost::vertex_property_t<T> >::const_type
+typename boost::dynamic_property_map<CGAL::Surface_mesh<Point>, boost::vertex_property_t<T> >::const_type
 add(boost::vertex_property_t<T> vprop, CGAL::Surface_mesh<Point>& sm)
 {
   return sm.template add_property_map<typename CGAL::Surface_mesh<Point>::Vertex_index, T>(vprop.s, vprop.t).first;
 }
 
 template <typename Point, typename T>
-typename boost::property_map<CGAL::Surface_mesh<Point>, boost::face_property_t<T> >::const_type
+typename boost::dynamic_property_map<CGAL::Surface_mesh<Point>, boost::face_property_t<T> >::const_type
 add(boost::face_property_t<T> vprop, CGAL::Surface_mesh<Point>& sm)
 {
   return sm.template add_property_map<typename CGAL::Surface_mesh<Point>::Face_index, T>(vprop.s, vprop.t).first;
 }
 
 template <typename Point, typename T>
-typename boost::property_map<CGAL::Surface_mesh<Point>, boost::edge_property_t<T> >::const_type
+typename boost::dynamic_property_map<CGAL::Surface_mesh<Point>, boost::edge_property_t<T> >::const_type
 add(boost::edge_property_t<T> vprop, CGAL::Surface_mesh<Point>& sm)
 {
   return sm.template add_property_map<typename CGAL::Surface_mesh<Point>::Edge_index, T>(vprop.s, vprop.t).first;
 }
 
 template <typename Point, typename T>
-typename boost::property_map<CGAL::Surface_mesh<Point>, boost::halfedge_property_t<T> >::const_type
+typename boost::dynamic_property_map<CGAL::Surface_mesh<Point>, boost::halfedge_property_t<T> >::const_type
 add(boost::halfedge_property_t<T> vprop, CGAL::Surface_mesh<Point>& sm)
 {
   return sm.template add_property_map<typename CGAL::Surface_mesh<Point>::Halfedge_index, T>(vprop.s, vprop.t).first;
