@@ -171,7 +171,7 @@ private:
    typedef std::vector<vertex_descriptor>                     Node_id_to_vertex;
    typedef std::map<TriangleMesh*, Node_id_to_vertex >         Mesh_to_map_node;
    //to handle coplanar halfedge of polyhedra that are full in the intersection
-   typedef std::map<Node_id,halfedge_descriptor>    Node_to_target_of_hedge_map;
+   typedef std::multimap<Node_id,halfedge_descriptor>    Node_to_target_of_hedge_map;
    typedef std::map<TriangleMesh*,Node_to_target_of_hedge_map>
                                            Mesh_to_vertices_on_intersection_map;
    typedef boost::unordered_map<vertex_descriptor,Node_id>    Vertex_to_node_id;
@@ -638,7 +638,6 @@ public:
       TriangleMesh& tm=*it->first;
     //   Face_boundaries& face_boundaries=mesh_to_face_boundaries[&tm];
 
-      std::set<std::pair<Node_id,Node_id> > already_done;
       Node_to_target_of_hedge_map& nodes_to_hedge=it->second;
       for(typename Node_to_target_of_hedge_map::iterator
             it_node_2_hedge=nodes_to_hedge.begin();
@@ -652,8 +651,7 @@ public:
           BOOST_FOREACH(Node_id node_id, neighbors)
           {
             //if already done for the opposite
-            if ( !already_done.insert(
-              make_sorted_pair(node_id,node_id_of_first)).second ) continue;
+            if (node_id >= node_id_of_first) continue;
 
             typename Node_to_target_of_hedge_map::iterator
               it_node_2_hedge_two = nodes_to_hedge.find(node_id);
@@ -666,7 +664,16 @@ public:
                       target(it_node_2_hedge_two->second,tm) )
               {
                 hedge=opposite(next(hedge,tm),tm);
-                CGAL_assertion(hedge!=start);
+                if (tm1_ptr==tm2_ptr && hedge==start)
+                {
+                  ++it_node_2_hedge_two;
+                  CGAL_assertion(it_node_2_hedge_two!=nodes_to_hedge.end());
+                  CGAL_assertion(it_node_2_hedge->first==node_id_of_first);
+                }
+                else
+                {
+                  CGAL_assertion(hedge!=start);
+                }
               }
               std::pair<Node_id,Node_id> edge_pair(node_id,node_id_of_first);
               call_put(marks_on_edges,tm,edge(hedge,tm),true);
