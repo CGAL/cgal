@@ -485,44 +485,6 @@ struct graph_has_property<CGAL::Polyhedron_3<Gt, I, HDS, A>, vertex_index_t>
     >
 {};
 
-#if 0
-template <class Gt, class I, CGAL_HDS_PARAM_, class A, typename T>
-struct dynamic_property_map<CGAL::Polyhedron_3<Gt, I, HDS, A>, boost::vertex_property_t<T> >
-{
-  typedef CGAL::Polyhedron_3<Gt, I, HDS, A> SM;
-  typedef typename boost::graph_traits<SM>::vertex_descriptor vertex_descriptor;
-  typedef CGAL::internal::Dynamic_property_map<vertex_descriptor,T> type;
-  typedef type const_type;
-};
-
-template <class Gt, class I, CGAL_HDS_PARAM_, class A, typename T>
-struct dynamic_property_map<CGAL::Polyhedron_3<Gt, I, HDS, A>, boost::halfedge_property_t<T> >
-{
-  typedef CGAL::Polyhedron_3<Gt, I, HDS, A> SM;
-  typedef typename boost::graph_traits<SM>::halfedge_descriptor halfedge_descriptor;
-  typedef CGAL::internal::Dynamic_property_map<halfedge_descriptor,T> type;
-  typedef type const_type;
-};
-
-template <class Gt, class I, CGAL_HDS_PARAM_, class A, typename T>
-struct dynamic_property_map<CGAL::Polyhedron_3<Gt, I, HDS, A>, boost::edge_property_t<T> >
-{
-  typedef CGAL::Polyhedron_3<Gt, I, HDS, A> SM;
-  typedef typename boost::graph_traits<SM>::edge_descriptor edge_descriptor;
-  typedef CGAL::internal::Dynamic_property_map<edge_descriptor,T> type;
-  typedef type const_type;
-};
-
-template <class Gt, class I, CGAL_HDS_PARAM_, class A, typename T>
-struct dynamic_property_map<CGAL::Polyhedron_3<Gt, I, HDS, A>, boost::face_property_t<T> >
-{
-  typedef CGAL::Polyhedron_3<Gt, I, HDS, A> SM;
-  typedef typename boost::graph_traits<SM>::face_descriptor face_descriptor;
-  typedef CGAL::internal::Dynamic_property_map<face_descriptor,T> type;
-  typedef type const_type;
-};
-#endif
-
 } // namespace boost
 
 

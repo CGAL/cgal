@@ -443,7 +443,7 @@ put(boost::vertex_point_t p, OpenMesh::PolyMesh_ArrayKernelT<K>& g,
 
 
 namespace boost {
-#if 1
+
 template <typename K, typename V>
 struct dynamic_property_map<OpenMesh::PolyMesh_ArrayKernelT<K>, boost::vertex_property_t<V> >
 {
@@ -479,10 +479,10 @@ struct dynamic_property_map<OpenMesh::PolyMesh_ArrayKernelT<K>, boost::face_prop
   typedef CGAL::OM_pmap<SM,face_descriptor, V> type;
   typedef type const_type;
 };
-#endif
+
 } // namespace boost
 
-#if 1
+
 namespace CGAL {
   namespace internal {
 template <typename K, typename V>
@@ -528,6 +528,6 @@ void remove(Pmap pm, OpenMesh::PolyMesh_ArrayKernelT<K>& om)
 }
 } // namespace internal
 } // namespace CGAL
-#endif
+
 
 #endif /* CGAL_PROPERTIES_POLYMESH_ARRAYKERNELT_H */
