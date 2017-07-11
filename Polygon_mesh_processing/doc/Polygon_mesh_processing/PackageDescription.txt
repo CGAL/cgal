@@ -131,12 +131,15 @@ and provides a list of the parameters that are used in this package.
 - \link keep_connected_components_grp `CGAL::Polygon_mesh_processing::keep_connected_components()` \endlink
 - \link keep_connected_components_grp `CGAL::Polygon_mesh_processing::remove_connected_components()` \endlink
 
-## Corefinement and Boolean Operation Functions ##
+## Autorefinement, Corefinement, and Boolean Operation Functions ##
+- `CGAL::Polygon_mesh_processing::autorefine()`
+- `CGAL::Polygon_mesh_processing::autorefine_and_remove_self_intersections()`
 - `CGAL::Polygon_mesh_processing::corefine_and_compute_union()`
 - `CGAL::Polygon_mesh_processing::corefine_and_compute_difference()`
 - `CGAL::Polygon_mesh_processing::corefine_and_compute_intersection()`
 - `CGAL::Polygon_mesh_processing::corefine()`
 - `CGAL::Polygon_mesh_processing::surface_intersection()`
+- `CGAL::Polygon_mesh_processing::surface_self_intersection()`
 - `CGAL::Polygon_mesh_processing::does_bound_a_volume()`
 
 ## Geometric Measure Functions ##

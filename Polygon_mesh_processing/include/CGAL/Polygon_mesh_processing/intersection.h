@@ -127,7 +127,7 @@ template <class OutputIterator,
           class TriangleMesh,
           class NamedParameters >
 OutputIterator
-surface_autointersection(const TriangleMesh& tm,
+surface_self_intersection(const TriangleMesh& tm,
                          OutputIterator polyline_output,
                          const NamedParameters& np)
 {
@@ -165,10 +165,10 @@ surface_intersection(const TriangleMesh& tm1,
 template <class OutputIterator,
           class TriangleMesh >
 OutputIterator
-surface_autointersection(const TriangleMesh& tm,
+surface_self_intersection(const TriangleMesh& tm,
                          OutputIterator polyline_output)
 {
-  return surface_autointersection(tm, polyline_output,
+  return surface_self_intersection(tm, polyline_output,
     CGAL::Polygon_mesh_processing::parameters::all_default()
   );
 }

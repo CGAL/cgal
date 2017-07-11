@@ -672,7 +672,7 @@ corefine_and_compute_difference(      TriangleMesh& tm1,
 
 /**
  * \ingroup PMP_corefinement_grp
- * \link autoef_def_subsec autorefines \endlink `tm`. Refines a triangle mesh
+ * \link coref_def_subsec autorefines \endlink `tm`. Refines a triangle mesh
  * so that no triangles intersects in their interior.
  * Self-intersection edges will be marked as constrained. If an edge that was marked as
  * constrained is split, its sub-edges will be marked as constrained as well.
@@ -682,7 +682,7 @@ corefine_and_compute_difference(      TriangleMesh& tm1,
  *
  * @param tm input triangulated surface mesh
  * @param np optional sequence of \ref namedparameters among the ones listed below
-
+ *
  * \cgalNamedParamsBegin
  *   \cgalParamBegin{vertex_point_map}
  *     the property map with the points associated to the vertices of `tm`.
@@ -737,8 +737,8 @@ corefine_and_compute_difference(      TriangleMesh& tm1,
 
 /**
  * \ingroup PMP_corefinement_grp
- * Removes self-intersections in `tm` by \link autoref_def_subsec autorefining \endlink `tm`,
- * removing extra patches, and stitching autointersection edges.
+ * Removes self-intersections in `tm` by \link coref_def_subsec autorefining \endlink `tm`,
+ * removing extra patches, and stitching self-intersection edges.
  * Self-intersection edges will be marked as constrained. If an edge that was marked as
  * constrained is split, its sub-edges will be marked as constrained as well.
  * \return `true` if all self-intersections were fixed and `false` otherwise.
@@ -758,7 +758,7 @@ corefine_and_compute_difference(      TriangleMesh& tm1,
  *   \cgalParamBegin{edge_is_constrained_map} a property map containing the
  *     constrained-or-not status of each edge of `tm`
  *   \cgalParamEnd
-*   \cgalParamBegin{face_index_map} a property map containing the index of each face of `tm1` (`tm2`) \cgalParamEnd
+*   \cgalParamBegin{face_index_map} a property map containing the index of each face of `tm` \cgalParamEnd
  * \cgalNamedParamsEnd
  *
  */

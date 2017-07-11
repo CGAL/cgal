@@ -24,10 +24,10 @@ int main(int argc, char* argv[])
   }
   input.close();
 
-  std::cout << "Test surface_autointersection\n";
+  std::cout << "Test surface_self_intersection\n";
   std::vector< std::vector<K::Point_3> >polylines;
 
-  PMP::surface_autointersection(mesh, std::back_inserter(polylines));
+  PMP::surface_self_intersection(mesh, std::back_inserter(polylines));
   
   //dump polylines
   std::ofstream output("intersection_polylines.cgal");
