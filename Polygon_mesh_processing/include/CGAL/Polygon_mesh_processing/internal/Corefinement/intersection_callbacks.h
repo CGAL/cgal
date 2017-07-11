@@ -260,13 +260,13 @@ public:
         {
           if (orientation(a,b,c,get(vpmap, target( next(eh, tm), tm)))==COPLANAR)
           {
-            coplanar_faces.insert(std::make_pair(face(eh, tm), face(fh, tm)));
+            coplanar_faces.insert(make_sorted_pair(face(eh, tm), face(fh, tm)));
           }
 
           if (!is_border(eh_opp, tm) &&
               orientation(a,b,c,get(vpmap, target(next(eh_opp, tm),tm)))==COPLANAR)
           {
-            coplanar_faces.insert(std::make_pair(face(eh_opp, tm), face(fh, tm)));
+            coplanar_faces.insert(make_sorted_pair(face(eh_opp, tm), face(fh, tm)));
           }
         }
         else
@@ -281,14 +281,14 @@ public:
         if (!is_edge_target_incident_to_face(next(eh, tm), fh) &&
             orientation(a,b,c,get(vpmap, target( next(eh, tm), tm)))==COPLANAR)
         {
-          coplanar_faces.insert(std::make_pair(face(eh, tm), face(fh, tm)));
+          coplanar_faces.insert(make_sorted_pair(face(eh, tm), face(fh, tm)));
         }
 
         if (!is_border(eh_opp, tm) &&
             !is_edge_target_incident_to_face(next(eh_opp, tm), fh) &&
             orientation(a,b,c,get(vpmap, target(next(eh_opp, tm),tm)))==COPLANAR)
         {
-          coplanar_faces.insert(std::make_pair(face(eh_opp, tm), face(fh, tm)));
+          coplanar_faces.insert(make_sorted_pair(face(eh_opp, tm), face(fh, tm)));
         }
       }
 

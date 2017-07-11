@@ -533,14 +533,10 @@ class Intersection_of_triangle_meshes
     typedef std::map<Key,Node_id> Coplanar_node_map;
     Coplanar_node_map coplanar_node_map;
 
-    BOOST_FOREACH(const Face_pair& face_pair_in, coplanar_faces)
+    BOOST_FOREACH(const Face_pair& face_pair, coplanar_faces)
     {
-      Face_pair face_pair(face_pair_in);
       face_descriptor f1=face_pair.first;
       face_descriptor f2=face_pair.second;
-      if (&tm1 == &tm2)
-        face_pair=make_sorted_pair(face_pair.first, face_pair.second);
-
 
       typedef CGAL::Exact_predicates_exact_constructions_kernel EK;
       typedef Coplanar_intersection<TriangleMesh, EK> Cpl_inter_pt;
