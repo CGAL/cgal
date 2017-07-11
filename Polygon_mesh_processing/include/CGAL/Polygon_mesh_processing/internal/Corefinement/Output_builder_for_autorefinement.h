@@ -224,6 +224,8 @@ public:
     typedef std::pair<const Node_id_pair, Shared_halfedges> Pair_type;
     BOOST_FOREACH(const Pair_type& p, all_intersection_edges_map)
     {
+      CGAL_assertion(p.second.h1!=boost::graph_traits<TriangleMesh>::null_halfedge());
+      CGAL_assertion(p.second.h2!=boost::graph_traits<TriangleMesh>::null_halfedge());
       vertex_to_node_id[source(p.second.h1, tm)] = p.first.first;
       vertex_to_node_id[target(p.second.h1, tm)] = p.first.second;
       vertex_to_node_id[source(p.second.h2, tm)] = p.first.first;
@@ -376,24 +378,112 @@ public:
         {
           if ( is_border(h1,tm) == is_border(h2,tm) )
           {
-            //Nothing allowed
+            //Orientation issue, nothing done
             all_fixed = false;
-            continue;
+          }
+          else
+          {
+            if ( is_border(h1,tm) )
+            {
+              patch_status_not_set.reset(patch_ids[ get(fids, face(opposite(h1,tm),tm)) ]);
+              patch_status_not_set.reset(patch_ids[ get(fids, face(h2,tm)) ]);
+            }
+            else
+            {
+              patch_status_not_set.reset(patch_ids[ get(fids, face(h1,tm)) ]);
+              patch_status_not_set.reset(patch_ids[ get(fids, face(opposite(h2,tm),tm)) ]);
+            }
           }
         }
         else
         {
-          //Ambiguous, we can do nothing
-          all_fixed = false;
-          continue;
+          halfedge_descriptor h = is_border(h1, tm) ? opposite(h1, tm) : h1;
+
+          //Sort the three triangle faces around their common edge
+          //See the full description in the general case with 4 triangle faces.
+          vertex_descriptor p=target(next(h,tm),tm);
+          vertex_descriptor q1=target(next(opposite(h2,tm),tm),tm);
+          vertex_descriptor q2=target(next(h2,tm),tm);
+
+          Node_id index_p = get_node_id(p, vertex_to_node_id);
+          Node_id index_q1 = get_node_id(q1, vertex_to_node_id);
+          Node_id index_q2 = get_node_id(q2, vertex_to_node_id);
+
+          std::size_t patch_id_p=patch_ids[ get(fids, face(h,tm)) ];
+          std::size_t patch_id_q1=patch_ids[ get(fids, face(opposite(h2,tm),tm)) ];
+          std::size_t patch_id_q2=patch_ids[ get(fids, face(h2,tm)) ];
+
+          //indicates that patch status will be updated
+          patch_status_not_set.reset(patch_id_p);
+          patch_status_not_set.reset(patch_id_q1);
+          patch_status_not_set.reset(patch_id_q2);          
+
+          bool p_is_between_q1q2 = sorted_around_edge(
+            ids.first, ids.second,
+            index_q1, index_q2, index_p,
+            q1, q2, p,
+            vpm, vpm,
+            nodes);
+
+          if (p_is_between_q1q2)
+            patches_to_keep.reset(patch_id_p); // even if badly oriented we can
+                                               // simply discard the patch
+          else
+          {
+            if (h==h1)
+            {
+              //Orientation issue, nothing done for the incident patches
+              all_fixed = false;
+            }
+            else
+              patches_to_keep.reset(patch_id_q1);
+          }
         }
       }
       else
         if ( is_border_edge(h2,tm) )
         {
-          //Ambiguous, we do nothing
-          all_fixed = false;
-          continue;
+          halfedge_descriptor h = is_border(h2, tm) ? opposite(h2, tm) : h2;
+
+          //Sort the three triangle faces around their common edge
+          //See the full description in the general case with 4 triangle faces.
+          vertex_descriptor p1=target(next(opposite(h1,tm),tm),tm);
+          vertex_descriptor p2=target(next(h1,tm),tm);
+          vertex_descriptor q=target(next(h,tm),tm);
+
+          Node_id index_p1 = get_node_id(p1, vertex_to_node_id);
+          Node_id index_p2 = get_node_id(p2, vertex_to_node_id);
+          Node_id index_q = get_node_id(q, vertex_to_node_id);
+
+          std::size_t patch_id_p1=patch_ids[ get(fids, face(opposite(h1,tm),tm)) ];
+          std::size_t patch_id_p2=patch_ids[ get(fids, face(h1,tm)) ];
+          std::size_t patch_id_q=patch_ids[ get(fids, face(h,tm)) ];
+
+          //indicates that patch status will be updated
+          patch_status_not_set.reset(patch_id_p1);
+          patch_status_not_set.reset(patch_id_p2);          
+          patch_status_not_set.reset(patch_id_q);
+
+          bool q_is_between_p1p2 = sorted_around_edge(
+            ids.first, ids.second,
+            index_p1, index_p2, index_q,
+            p1, p2, q,
+            vpm, vpm,
+            nodes);
+
+          if (q_is_between_p1p2)
+            patches_to_keep.reset(patch_id_q); // even if badly oriented we can
+                                               // simply discard the patch
+          else
+          {
+            if (h==h2)
+            {
+              //Orientation issue, nothing done for the incident patches
+              all_fixed = false;
+            }
+            else
+              patches_to_keep.reset(patch_id_p1);
+          }
         }
         else
         {
@@ -694,48 +784,53 @@ public:
       halfedge_descriptor h1_opp = opposite(h1, tm);
       halfedge_descriptor h2_opp = opposite(h2, tm);
 
-      if (is_border(h1_opp, tm))
+      if (is_border_edge(h1, tm))
       {
-        std::swap(h1, h1_opp);
-        CGAL_assertion(is_border(h2_opp, tm));
-        std::swap(h2, h2_opp);
-      }
-
-      CGAL_assertion(!is_border(h1_opp, tm) && !is_border(h2_opp, tm));
-
-      if (is_border(h1, tm))
-      {
-        CGAL_assertion(is_border(h2_opp, tm));
-        std::size_t patch_id_h1_opp = patch_ids[get(fids,face(h1_opp,tm))];
-        std::size_t patch_id_h2 = patch_ids[get(fids,face(h2,tm))];
-        if (!patches_to_keep.test(patch_id_h1_opp) || !patches_to_keep.test(patch_id_h2))
-          continue;
+        if (is_border(h1, tm))
+        {
+          std::size_t patch_id = patch_ids[get(fids,face(opposite(h1,tm),tm))];
+          if ( !patches_to_keep.test(patch_id) ) continue;
+        }
+        else
+        {
+          std::size_t patch_id = patch_ids[get(fids,face(h1,tm))];
+          if ( !patches_to_keep.test(patch_id) ) continue;
+          std::swap(h1, h1_opp);
+          std::swap(h2, h2_opp);
+        }
       }
       else
       {
         std::size_t patch_id_h1 = patch_ids[get(fids,face(h1,tm))];
         std::size_t patch_id_h1_opp = patch_ids[get(fids,face(h1_opp,tm))];
-        std::size_t patch_id_h2 = patch_ids[get(fids,face(h2,tm))];
-        std::size_t patch_id_h2_opp = patch_ids[get(fids,face(h2_opp,tm))];
-
-        if (patches_to_keep.test(patch_id_h1)==patches_to_keep.test(patch_id_h1_opp))
-        {
-          CGAL_assertion(patches_to_keep.test(patch_id_h2) ==
-                         patches_to_keep.test(patch_id_h2_opp));
-          continue;
-        }
-        CGAL_assertion(patches_to_keep.test(patch_id_h2) !=
-                       patches_to_keep.test(patch_id_h2_opp));
+        if ( patches_to_keep.test(patch_id_h1) ==
+             patches_to_keep.test(patch_id_h1_opp)) continue;
         if (patches_to_keep.test(patch_id_h1))
         {
           std::swap(h1, h1_opp);
           std::swap(h2, h2_opp);
-          CGAL_assertion(patches_to_keep.test(patch_id_h2_opp));
+        }
+      }
+
+      if (is_border_edge(h2, tm))
+      {
+        if (is_border(h2, tm))
+        {
+          std::size_t patch_id = patch_ids[get(fids,face(opposite(h2,tm),tm))];
+          if ( !patches_to_keep.test(patch_id) ) continue;
         }
         else
-        {
-          CGAL_assertion(patches_to_keep.test(patch_id_h2));
+        {       
+          std::size_t patch_id = patch_ids[get(fids,face(h2,tm))];
+          if ( !patches_to_keep.test(patch_id) ) continue;
         }
+      }
+      else
+      {
+        std::size_t patch_id_h2 = patch_ids[get(fids,face(h2,tm))];
+        std::size_t patch_id_h2_opp = patch_ids[get(fids,face(h2_opp,tm))];
+        if ( patches_to_keep.test(patch_id_h2) ==
+             patches_to_keep.test(patch_id_h2_opp)) continue;
       }
 
       hedge_pairs_to_stitch.push_back( std::make_pair(h1,h2_opp) );
