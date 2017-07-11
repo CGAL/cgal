@@ -98,7 +98,7 @@ template<typename TriangleMesh,
     FacetAreaMap,
     PointPropertyMap> VSA;
 
-  VSA algorithm(mesh, ppmap, normal_pmap, area_pmap, traits);
+  VSA algorithm(mesh, ppmap, normal_pmap, area_pmap);
 
   switch (init) {
     case VSA::RandomInit:

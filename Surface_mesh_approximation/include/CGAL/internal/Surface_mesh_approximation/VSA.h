@@ -258,13 +258,10 @@ public:
 private:
   const Polyhedron &mesh;
   const VertexPointPmap &vertex_point_pmap;
-  GeomTraits traits;
   Construct_vector_3 vector_functor;
-  Construct_normal_3 normal_functor;
   Construct_scaled_vector_3 scale_functor;
   Construct_sum_of_vectors_3 sum_functor;
   Compute_scalar_product_3 scalar_product_functor;
-  Compute_squared_area_3 area_functor;
 
   // Proxy and its auxiliary information.
   std::vector<PlaneProxy> proxies;
@@ -305,32 +302,29 @@ public:
   VSA(const Polyhedron &_mesh,
     const VertexPointPmap &_vertex_point_map,
     const FacetNormalMap &_facet_normal_map,
-    const FacetAreaMap &_facet_area_map,
-    GeomTraits _traits)
+    const FacetAreaMap &_facet_area_map)
     : mesh(_mesh),
     vertex_point_pmap(_vertex_point_map),
-    traits(_traits),
-    vector_functor(traits.construct_vector_3_object()),
-    normal_functor(traits.construct_normal_3_object()),
-    scale_functor(traits.construct_scaled_vector_3_object()),
-    sum_functor(traits.construct_sum_of_vectors_3_object()),
-    scalar_product_functor(traits.compute_scalar_product_3_object()),
-    area_functor(traits.compute_squared_area_3_object()),
     normal_pmap(_facet_normal_map),
     area_pmap(_facet_area_map),
     vertex_status_pmap(vertex_status_map),
     halfedge_status_pmap(halfedge_status_map),
     fit_error(normal_pmap, area_pmap),
     proxy_fitting(normal_pmap, area_pmap) {
+
+    GeomTraits traits;
+    vector_functor = traits.construct_vector_3_object();
+    scale_functor = traits.construct_scaled_vector_3_object();
+    sum_functor = traits.construct_sum_of_vectors_3_object();
+    scalar_product_functor = traits.compute_scalar_product_3_object();
+
     // initialize all vertex anchor status
-    BOOST_FOREACH(vertex_descriptor v, vertices(mesh)) {
+    BOOST_FOREACH(vertex_descriptor v, vertices(mesh))
       vertex_status_map.insert(std::pair<vertex_descriptor, int>(v, static_cast<int>(NO_ANCHOR)));
-    }
 
     // tag all halfedge off proxy border
-    BOOST_FOREACH(halfedge_descriptor h, halfedges(mesh)) {
+    BOOST_FOREACH(halfedge_descriptor h, halfedges(mesh))
       halfedge_status_map.insert(std::pair<halfedge_descriptor, int>(h, static_cast<int>(OFF_BORDER)));
-    }
   }
 
   /**
