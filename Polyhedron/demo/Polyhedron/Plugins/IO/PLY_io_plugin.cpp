@@ -28,6 +28,35 @@ public:
 
   bool canSave(const CGAL::Three::Scene_item*);
   bool save(const CGAL::Three::Scene_item*, QFileInfo fileinfo);
+
+private:
+  void set_vcolors(SMesh* smesh, const std::vector<CGAL::Color>& colors)
+  {
+    typedef SMesh SMesh;
+    typedef boost::graph_traits<SMesh>::vertex_descriptor vertex_descriptor;
+    SMesh::Property_map<vertex_descriptor, CGAL::Color> vcolors =
+      smesh->property_map<vertex_descriptor, CGAL::Color >("v:color").first;
+    bool created;
+    boost::tie(vcolors, created) = smesh->add_property_map<SMesh::Vertex_index,CGAL::Color>("v:color",CGAL::Color(0,0,0));
+    assert(colors.size()==smesh->number_of_vertices());
+    int color_id = 0;
+    BOOST_FOREACH(vertex_descriptor vd, vertices(*smesh))
+      vcolors[vd] = colors[color_id++];
+  }
+
+  void set_fcolors(SMesh* smesh, const std::vector<CGAL::Color>& colors)
+  {
+    typedef SMesh SMesh;
+    typedef boost::graph_traits<SMesh>::face_descriptor face_descriptor;
+    SMesh::Property_map<face_descriptor, CGAL::Color> fcolors =
+      smesh->property_map<face_descriptor, CGAL::Color >("f:color").first;
+    bool created;
+    boost::tie(fcolors, created) = smesh->add_property_map<SMesh::Face_index,CGAL::Color>("f:color",CGAL::Color(0,0,0));
+    assert(colors.size()==smesh->number_of_faces());
+    int color_id = 0;
+    BOOST_FOREACH(face_descriptor fd, faces(*smesh))
+      fcolors[fd] = colors[color_id++];
+  }
 };
 
 bool Polyhedron_demo_ply_plugin::canLoad() const {
@@ -73,8 +102,10 @@ Polyhedron_demo_ply_plugin::load(QFileInfo fileinfo) {
   {
     std::vector<Kernel::Point_3> points;
     std::vector<std::vector<std::size_t> > polygons;
+    std::vector<CGAL::Color> fcolors;
+    std::vector<CGAL::Color> vcolors;
 
-    if (!(CGAL::read_PLY (in, points, polygons)))
+    if (!(CGAL::read_PLY (in, points, polygons, fcolors, vcolors)))
       return NULL;
 
     if (CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh (polygons))
@@ -82,6 +113,11 @@ Polyhedron_demo_ply_plugin::load(QFileInfo fileinfo) {
       SMesh *surface_mesh = new SMesh();
       CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh (points, polygons,
                                                                    *surface_mesh);
+      if(!(vcolors.empty()))
+        set_vcolors(surface_mesh, vcolors);
+      if(!(fcolors.empty()))
+        set_fcolors(surface_mesh, fcolors);
+      
       Scene_surface_mesh_item* sm_item = new Scene_surface_mesh_item(surface_mesh);
       sm_item->setName(fileinfo.completeBaseName());
       return sm_item;
@@ -90,7 +126,7 @@ Polyhedron_demo_ply_plugin::load(QFileInfo fileinfo) {
     {
       Scene_polygon_soup_item* soup_item = new Scene_polygon_soup_item;
       soup_item->setName(fileinfo.completeBaseName());
-      soup_item->load (points, polygons);
+      soup_item->load (points, polygons, fcolors, vcolors);
       return soup_item;
     }
   }
