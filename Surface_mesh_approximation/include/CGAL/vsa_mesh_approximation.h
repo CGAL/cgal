@@ -88,17 +88,15 @@ template<typename TriangleMesh,
   typedef CGAL::PlaneProxy<TriangleMesh, GeomTraits> PlaneProxy;
   typedef CGAL::L21Metric<PlaneProxy, GeomTraits, FacetNormalMap, FacetAreaMap> L21Metric;
   typedef CGAL::ProxyFitting<PlaneProxy, GeomTraits, L21Metric, FacetNormalMap, FacetAreaMap> ProxyFitting;
+  typedef CGAL::ApproximationTrait<GeomTraits, PlaneProxy, L21Metric, ProxyFitting, FacetNormalMap, FacetAreaMap> ApproximationTrait;
+
   typedef CGAL::internal::VSA<
     TriangleMesh,
-    PlaneProxy,
-    L21Metric,
-    ProxyFitting,
-    GeomTraits,
-    FacetNormalMap,
+    ApproximationTrait,
     FacetAreaMap,
     PointPropertyMap> VSA;
 
-  VSA algorithm(mesh, ppmap, normal_pmap, area_pmap);
+  VSA algorithm(mesh, ApproximationTrait(normal_pmap, area_pmap), ppmap, area_pmap);
 
   switch (init) {
     case VSA::RandomInit:

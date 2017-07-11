@@ -169,6 +169,82 @@ template<typename PlaneProxy,
   ErrorMetric error_functor;
 };
 
+// Bundled approximation traits
+template<typename GeomTraits,
+  typename PlaneProxy,
+  typename ErrorMetric,
+  typename ProxyFitting,
+  typename FacetNormalMap,
+  typename FacetAreaMap>
+  struct ApproximationTrait
+{
+private:
+  typedef typename GeomTraits::FT FT;
+  typedef typename GeomTraits::Vector_3 Vector;
+  typedef typename GeomTraits::Construct_scaled_vector_3 Construct_scaled_vector_3;
+  typedef typename GeomTraits::Construct_sum_of_vectors_3 Construct_sum_of_vectors_3;
+  typedef typename GeomTraits::Compute_scalar_product_3 Compute_scalar_product_3;
+  typedef typename FacetNormalMap::key_type face_descriptor;
+
+public:
+  typedef GeomTraits GeomTraits;
+  typedef PlaneProxy Proxy;
+  typedef ErrorMetric ErrorMetric;
+  typedef ProxyFitting ProxyFitting;
+
+  ApproximationTrait(
+    const FacetNormalMap &_facet_normal_map,
+    const FacetAreaMap &_facet_area_map)
+    : normal_pmap(_facet_normal_map),
+    area_pmap(_facet_area_map) {
+    GeomTraits traits;
+    scalar_product_functor = traits.compute_scalar_product_3_object();
+    sum_functor = traits.construct_sum_of_vectors_3_object();
+    scale_functor = traits.construct_scaled_vector_3_object();
+  }
+
+  // construct proxy from a facet
+  Proxy construct_proxy(const face_descriptor &f) {
+    Proxy px;
+    px.seed = f;
+    px.normal = normal_pmap[f];
+
+    // return Proxy(f);
+    return px;
+  }
+
+  // traits function object form
+  // construct error functor
+  ErrorMetric construct_fit_error_functor() {
+    return ErrorMetric(normal_pmap, area_pmap);
+  }
+
+  // construct proxy fitting functor
+  ProxyFitting construct_proxy_fitting_functor() {
+    return ProxyFitting(normal_pmap, area_pmap);
+  }
+
+  // traits function form
+  // FT fit_error(const face_descriptor &f, const Proxy &p) {
+  //   Vector v = sum_functor(normal_pmap[f], scale_functor(px.normal, FT(-1)));
+  //   return area_pmap[f] * scalar_product_functor(v, v);
+  // }
+
+  // template<typename FacetIterator>
+  // Proxy proxy_fitting(const FacetIterator beg, const FacetIterator end) {
+  //   // Fitting facets goes here
+  //   Proxy px
+  //   return px;
+  // }
+
+private:
+  const FacetNormalMap normal_pmap;
+  const FacetAreaMap area_pmap;
+  Construct_scaled_vector_3 scale_functor;
+  Compute_scalar_product_3 scalar_product_functor;
+  Construct_sum_of_vectors_3 sum_functor;
+};
+
 /// @cond CGAL_DOCUMENT_INTERNAL
 namespace internal
 {
@@ -179,17 +255,18 @@ namespace internal
  * @tparam GeomTraits a model of ApproximationGeomTraits
  */
 template <typename Polyhedron,
-  typename PlaneProxy,
-  typename ErrorMetric,
-  typename ProxyFitting,
-  typename GeomTraits,
-  typename FacetNormalMap,
+  typename ApproximationTrait,
   typename FacetAreaMap,
   typename VertexPointPmap>
   class VSA
 {
   // type definitions
 private:
+  typedef typename ApproximationTrait::GeomTraits GeomTraits;
+  typedef typename ApproximationTrait::Proxy PlaneProxy;
+  typedef typename ApproximationTrait::ErrorMetric ErrorMetric;
+  typedef typename ApproximationTrait::ProxyFitting ProxyFitting;
+
   typedef typename GeomTraits::FT FT;
   typedef typename GeomTraits::Point_3 Point;
   typedef typename GeomTraits::Vector_3 Vector;
@@ -261,8 +338,7 @@ private:
   std::vector<Point> proxies_center; // The proxy center.
   std::vector<FT> proxies_area; // The proxy area.
   
-  // Mesh facet normal and area map.
-  const FacetNormalMap normal_pmap;
+  // Mesh facet area map, for anchor position average.
   const FacetAreaMap area_pmap;
 
   // Mesh vertex anchor map and halfedge status map.
@@ -277,6 +353,9 @@ private:
 
   // All borders cycles.
   std::vector<Border> borders;
+
+  // The approximation trait.
+  ApproximationTrait appx_trait;
 
   // The error metric.
   ErrorMetric fit_error;
@@ -294,17 +373,17 @@ public:
    * @param _traits geometric trait object.
    */
   VSA(const Polyhedron &_mesh,
+    const ApproximationTrait &_appx_trait,
     const VertexPointPmap &_vertex_point_map,
-    const FacetNormalMap &_facet_normal_map,
     const FacetAreaMap &_facet_area_map)
     : mesh(_mesh),
+    appx_trait(_appx_trait),
     vertex_point_pmap(_vertex_point_map),
-    normal_pmap(_facet_normal_map),
     area_pmap(_facet_area_map),
     vertex_status_pmap(vertex_status_map),
     halfedge_status_pmap(halfedge_status_map),
-    fit_error(normal_pmap, area_pmap),
-    proxy_fitting(normal_pmap, area_pmap) {
+    fit_error(appx_trait.construct_fit_error_functor()),
+    proxy_fitting(appx_trait.construct_proxy_fitting_functor()) {
 
     GeomTraits traits;
     vector_functor = traits.construct_vector_3_object();
@@ -491,10 +570,7 @@ private:
       if (index % interval == 0) {
         // a proxy is created
         // PlaneProxy(face_descriptor)
-        PlaneProxy px;
-        px.normal = normal_pmap[*fitr];
-        px.seed = *fitr;
-        proxies.push_back(px);
+        proxies.push_back(appx_trait.construct_proxy(*fitr));
       }
     }
     std::cerr << initial_px << ' ' << proxies.size() << std::endl;
@@ -516,13 +592,8 @@ private:
     proxies.clear();
     // generate 2 seeds
     face_iterator f0 = faces(mesh).first, f1 = ++f0;
-    PlaneProxy px0, px1;
-    px0.normal = normal_pmap[*f0];
-    px0.seed = *f0;
-    px1.normal = normal_pmap[*f1];
-    px1.seed = *f1;
-    proxies.push_back(px0);
-    proxies.push_back(px1);
+    proxies.push_back(appx_trait.construct_proxy(*f0));
+    proxies.push_back(appx_trait.construct_proxy(*f1));
 
     const std::size_t num_steps = 5;
     while (proxies.size() < initial_px) {
@@ -644,10 +715,7 @@ private:
     }
 
     // create new proxy
-    PlaneProxy new_px;
-    new_px.normal = normal_pmap[max_facet[max_px_idx]];
-    new_px.seed = max_facet[max_px_idx];
-    proxies.push_back(new_px);
+    proxies.push_back(appx_trait.construct_proxy(max_facet[max_px_idx]));
   }
 
   /**
@@ -710,10 +778,7 @@ private:
         continue;
 
       if (num_to_add[px_id] > 0) {
-        PlaneProxy px;
-        px.normal = normal_pmap[f];
-        px.seed = f;
-        proxies.push_back(px);
+        proxies.push_back(appx_trait.construct_proxy(f));
         --num_to_add[px_id];
         ++num_inserted;
       }
