@@ -29,7 +29,7 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "efficient_RANSAC_point_access.cpp" )
   create_single_source_cgal_program( "plane_regularization.cpp" )
 
-  find_package( TBB REQUIRED )
+  find_package( TBB  )
   if( TBB_FOUND )
     include(${TBB_USE_FILE})
     list(APPEND CGAL_3RD_PARTY_LIBRARIES ${TBB_LIBRARIES})
