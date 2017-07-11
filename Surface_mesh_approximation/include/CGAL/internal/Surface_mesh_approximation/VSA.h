@@ -129,7 +129,7 @@ template<typename PlaneProxy,
   template<typename FacetIterator>
   FT operator()(FacetIterator beg, FacetIterator end, PlaneProxy &px) {
     CGAL_assertion(beg != end);
-    
+
     // update proxy normal
     FT area(0);
     Vector norm = CGAL::NULL_VECTOR;
@@ -195,10 +195,8 @@ private:
   typedef typename GeomTraits::Vector_3 Vector;
   typedef typename GeomTraits::Plane_3 Plane;
   typedef typename GeomTraits::Construct_vector_3 Construct_vector_3;
-  typedef typename GeomTraits::Construct_normal_3 Construct_normal_3;
   typedef typename GeomTraits::Construct_scaled_vector_3 Construct_scaled_vector_3;
   typedef typename GeomTraits::Construct_sum_of_vectors_3 Construct_sum_of_vectors_3;
-  typedef typename GeomTraits::Compute_squared_area_3 Compute_squared_area_3;
   typedef typename GeomTraits::Compute_scalar_product_3 Compute_scalar_product_3;
 
   typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor halfedge_descriptor;
@@ -215,11 +213,6 @@ private:
 
   typedef std::vector<halfedge_descriptor> ChordVector;
   typedef typename ChordVector::iterator ChordVectorIterator;
-
-  // The attached anchor index of a vertex.
-  enum Vertex_status {
-    NO_ANCHOR = -1 // No anchor attached
-  };
 
   // Halfedge status.
   enum Halfedge_status {
@@ -273,6 +266,7 @@ private:
   const FacetAreaMap area_pmap;
 
   // Mesh vertex anchor map and halfedge status map.
+  // The attached anchor index of a vertex.
   std::map<vertex_descriptor, int> vertex_status_map;
   VertexStatusPMap vertex_status_pmap;
   std::map<halfedge_descriptor, int> halfedge_status_map;
@@ -319,6 +313,7 @@ public:
     scalar_product_functor = traits.compute_scalar_product_3_object();
 
     // initialize all vertex anchor status
+    enum Vertex_status { NO_ANCHOR = -1 };
     BOOST_FOREACH(vertex_descriptor v, vertices(mesh))
       vertex_status_map.insert(std::pair<vertex_descriptor, int>(v, static_cast<int>(NO_ANCHOR)));
 
