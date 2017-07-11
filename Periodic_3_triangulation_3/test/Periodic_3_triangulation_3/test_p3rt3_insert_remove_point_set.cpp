@@ -35,17 +35,8 @@
 #include <string>
 
 typedef CGAL::Periodic_3_regular_triangulation_traits_3<CGAL::Epeck> Traits_Epeck;
-/* Explicit instantiation.
- * It allows us to test if the template class, instantiated with given template parameters, compiles.
- */
-template class CGAL::Periodic_3_regular_triangulation_3<Traits_Epeck>;
-
 
 typedef CGAL::Periodic_3_regular_triangulation_traits_3<CGAL::Epick> Traits_Epick;
-/* Explicit instantiation.
- * It allows us to test if the template class, instantiated with given template parameters, compiles.
- */
-template class CGAL::Periodic_3_regular_triangulation_3<Traits_Epick>;
 
 template <class Kernel>
 class Tests

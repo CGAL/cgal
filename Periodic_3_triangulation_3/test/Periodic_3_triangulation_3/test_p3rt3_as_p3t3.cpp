@@ -30,13 +30,9 @@
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel         Epeck;
 typedef CGAL::Periodic_3_regular_triangulation_traits_3<Epeck>    PRTT_Exact;
-// Explicit instantiation of the whole class:
-template class CGAL::Periodic_3_regular_triangulation_3<PRTT_Exact>;
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel       Epick;
 typedef CGAL::Periodic_3_regular_triangulation_traits_3<Epick>    PRTT_Inexact;
-// Explicit instantiation of the whole class:
-template class CGAL::Periodic_3_regular_triangulation_3<PRTT_Inexact>;
 
 int main(int, char**)
 {
