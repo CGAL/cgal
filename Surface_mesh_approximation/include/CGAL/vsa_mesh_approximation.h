@@ -56,7 +56,17 @@ template<typename TriangleMesh,
     AnchorVertexContainer &vtx,
     BoundaryContainer &bdrs,
     GeomTraits traits) {
-  typedef CGAL::internal::VSA<TriangleMesh, GeomTraits, PointPropertyMap> VSA;
+  typedef typename GeomTraits::FT FT;
+  typedef typename GeomTraits::Vector_3 Vector;
+
+  typedef typename boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
+  typedef boost::associative_property_map<std::map<face_descriptor, Vector> > FacetNormalMap;
+  typedef boost::associative_property_map<std::map<face_descriptor, FT> > FacetAreaMap;
+
+  typedef CGAL::PlaneProxy<TriangleMesh, GeomTraits> PlaneProxy;
+  typedef CGAL::L21Metric<PlaneProxy, GeomTraits, FacetNormalMap, FacetAreaMap> L21Metric;
+  typedef CGAL::ProxyFitting<PlaneProxy, GeomTraits, L21Metric, FacetNormalMap, FacetAreaMap> ProxyFitting;
+  typedef CGAL::internal::VSA<TriangleMesh, PlaneProxy, L21Metric, ProxyFitting, GeomTraits, PointPropertyMap> VSA;
 
   VSA algorithm(triangle_mesh, ppmap, traits);
 

@@ -25,6 +25,156 @@
 
 namespace CGAL
 {
+
+template<typename Polyhedron,
+  typename GeomTraits>
+  struct PlaneProxy
+{
+  typedef typename GeomTraits::FT FT;
+  typedef typename GeomTraits::Point_3 Point;
+  typedef typename GeomTraits::Vector_3 Vector;
+  typedef typename GeomTraits::Plane_3 Plane;
+  typedef typename boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
+
+  // constructor
+  // PlaneProxy(const face_descriptor &f)
+  //   : seed(f) {
+  //   // normal = CGAL::unit_normal(); // needs normal map, vertex point map
+  //   // let normal and fit_plane default construct
+  // }
+
+  // copy constructable
+  // PlaneProxy(const PlaneProxy &other)
+  //   : seed(other.seed), normal(other.normal), fit_plane(other.fit_plane) {
+  // }
+
+  // const face_descriptor &seed() const {
+  //   return seed;
+  // }
+  // const Vector &normal() const {
+  //   return normal;
+  // }
+  // const Plane &plane() const {
+  //   return fit_plane;
+  // }
+
+  // assignable
+  // PlaneProxy &operator=(const PlaneProxy &other) {
+  //   seed = other.seed;
+  //   normal = fit_plane.normal;
+  //   fit_plane = other.fit_plane;
+  // }
+
+  face_descriptor seed;
+  Vector normal;
+  Plane fit_plane;
+};
+
+template<typename PlaneProxy,
+  typename GeomTraits,
+  typename FacetNormalMap,
+  typename FacetAreaMap>
+  struct L21Metric
+{
+  // L21Metric(const FacetNormalMap &normal_pmap, const FacetAreaMap &area_pmap)
+  //   : normal_pmap(normal_pmap),
+  //   area_pmap(area_pmap) {
+  //   GeomTraits traits;
+  //   scalar_product_functor = traits.compute_scalar_product_3_object();
+  //   sum_functor = traits.construct_sum_of_vectors_3_object();
+  //   scale_functor = traits.construct_scaled_vector_3_object();
+  // }
+  L21Metric(GeomTraits traits,
+    const FacetNormalMap &normal_pmap,
+    const FacetAreaMap &area_pmap)
+    : scalar_product_functor(traits.compute_scalar_product_3_object()),
+    sum_functor(traits.construct_sum_of_vectors_3_object()),
+    scale_functor(traits.construct_scaled_vector_3_object()),
+    normal_pmap(normal_pmap),
+    area_pmap(area_pmap) {
+  }
+
+  typedef typename GeomTraits::FT FT;
+  typedef typename GeomTraits::Construct_scaled_vector_3 Construct_scaled_vector_3;
+  typedef typename GeomTraits::Construct_sum_of_vectors_3 Construct_sum_of_vectors_3;
+  typedef typename GeomTraits::Compute_scalar_product_3 Compute_scalar_product_3;
+  typedef typename FacetAreaMap::key_type face_descriptor;
+
+  FT operator()(const face_descriptor &f, const PlaneProxy &px) {
+    Vector v = sum_functor(normal_pmap[f], scale_functor(px.normal, FT(-1)));
+    return area_pmap[f] * scalar_product_functor(v, v);
+  }
+
+  const FacetNormalMap normal_pmap;
+  const FacetAreaMap area_pmap;
+  Construct_scaled_vector_3 scale_functor;
+  Compute_scalar_product_3 scalar_product_functor;
+  Construct_sum_of_vectors_3 sum_functor;
+};
+
+template<typename PlaneProxy,
+  typename GeomTraits,
+  typename ErrorMetric,
+  typename FacetNormalMap,
+  typename FacetAreaMap>
+  struct ProxyFitting
+{
+  ProxyFitting(const FacetNormalMap &normal_pmap, const FacetAreaMap &area_pmap)
+    : normal_pmap(normal_pmap),
+    area_pmap(area_pmap),
+    error_functor(normal_pmap, area_pmap) {
+    GeomTraits traits;
+    scalar_product_functor = traits.compute_scalar_product_3_object();
+    sum_functor = traits.construct_sum_of_vectors_3_object();
+    scale_functor = traits.construct_scaled_vector_3_object();
+  }
+
+  typedef typename GeomTraits::FT FT;
+  typedef typename GeomTraits::Vector_3 Vector;
+  typedef typename GeomTraits::Construct_scaled_vector_3 Construct_scaled_vector_3;
+  typedef typename GeomTraits::Construct_sum_of_vectors_3 Construct_sum_of_vectors_3;
+  typedef typename GeomTraits::Compute_scalar_product_3 Compute_scalar_product_3;
+
+  template<typename FacetIterator>
+  FT operator()(FacetIterator beg, FacetIterator end, PlaneProxy &px) {
+    // update proxy normal
+    // FT area(0);
+    Vector norm = CGAL::NULL_VECTOR;
+    for (FacetIterator fitr = beg; fitr != end; ++fitr) {
+      // area += area_pmap[*fitr];
+      norm = sum_functor(norm,
+        scale_functor(normal_pmap[*fitr]), area_pmap[*fitr]);
+    }
+    // norm = scale_functor(norm, FT(1) / area);
+    norm = scale_functor(norm, FT(1.0 / std::sqrt(CGAL::to_double(norm.squared_length()))));
+    px.normal = norm;
+
+    // update seed
+    FT err_min = error_functor(*beg, px);
+    FT sum(0);
+    for (FacetIterator fitr = beg; fitr != end; ++fitr) {
+      FT err = error_functor(*fitr, px);
+      if (err < err_min) {
+        err_min = err;
+        px.seed = *fitr;
+      }
+      sum += err;
+    }
+
+    return sum;
+
+    // more update? this is gonna be less and less generic
+    // fit is specific to each kind of proxy
+  }
+
+  const FacetNormalMap normal_pmap;
+  const FacetAreaMap area_pmap;
+  Construct_scaled_vector_3 scale_functor;
+  Compute_scalar_product_3 scalar_product_functor;
+  Construct_sum_of_vectors_3 sum_functor;
+  ErrorMetric error_functor;
+};
+
 /// @cond CGAL_DOCUMENT_INTERNAL
 namespace internal
 {
@@ -35,6 +185,9 @@ namespace internal
  * @tparam GeomTraits a model of ApproximationGeomTraits
  */
 template <typename Polyhedron,
+  typename PlaneProxy,
+  typename ErrorMetric,
+  typename ProxyFitting,
   typename GeomTraits,
   typename VertexPointPmap>
   class VSA
@@ -88,36 +241,6 @@ public:
     HierarchicalInit
   };
   
-  // The approximated plane proxy.
-  struct PlaneProxy {
-    Vector normal;
-    face_descriptor seed;
-  };
-
-  // The l21 metric, compute the fitting error from a facet to a plane proxy.
-  struct L21Metric {
-    L21Metric(GeomTraits traits,
-      const FacetNormalMap &normal_pmap,
-      const FacetAreaMap &area_pmap)
-      : scalar_product_functor(traits.compute_scalar_product_3_object()),
-      sum_functor(traits.construct_sum_of_vectors_3_object()),
-      scale_functor(traits.construct_scaled_vector_3_object()),
-      normal_pmap(normal_pmap),
-      area_pmap(area_pmap)
-      {}
-
-    FT operator()(const face_descriptor &f, const PlaneProxy &px) {
-      Vector v = sum_functor(normal_pmap[f], scale_functor(px.normal, FT(-1)));
-      return area_pmap[f] * scalar_product_functor(v, v);
-    }
-
-    const FacetNormalMap &normal_pmap;
-    const FacetAreaMap &area_pmap;
-    Construct_scaled_vector_3 scale_functor;
-    Compute_scalar_product_3 scalar_product_functor;
-    Construct_sum_of_vectors_3 sum_functor;
-  };
-
   // The average positioned anchor attached to a vertex.
   struct Anchor {
     Anchor(const vertex_descriptor &vtx_, const Point &pos_)
@@ -173,7 +296,7 @@ private:
   std::vector<Border> borders;
 
   // The error metric.
-  L21Metric fit_error;
+  ErrorMetric fit_error;
 
   //member functions
 public:
