@@ -303,6 +303,15 @@ and <code>src/</code> directories).
   </li>
 </ul>
 
+  <h3>CGAL and the Boost Graph Library (BGL)</h3>
+  <ul>
+    <li>
+      Add a partial specialization for the class <code>CGAL::Linear_cell_complex_for_combinatorial_map</code> so 
+      that it is a model of the graph concepts BidirectionalGraph and EdgeAndVertexListGraph 
+      and of the concept MutableFaceGraph. This class can thus now be used in all BGL functions and algorithms.
+    </li>
+  </ul>
+	
 <!-- Spatial Searching and Sorting -->
 <h3>Spatial Searching</h3>
   <ul>
