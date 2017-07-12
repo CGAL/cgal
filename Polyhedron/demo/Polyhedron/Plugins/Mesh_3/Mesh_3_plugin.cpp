@@ -444,7 +444,7 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
 
   if (features_protection_available)
   {
-    if (NULL != poly_item)
+    if (NULL != poly_item || NULL != sm_item)
     {
       if (surface_only)
       {
