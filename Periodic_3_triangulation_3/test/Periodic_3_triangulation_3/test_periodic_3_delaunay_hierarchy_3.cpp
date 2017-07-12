@@ -77,8 +77,10 @@ int main(int, char**)
   typedef CGAL::Periodic_3_triangulation_hierarchy_3< PDT1 > P3T3_1;
   _test_cls_periodic_3_delaunay_3( P3T3_1() );
 
+#if ! (defined(_MSC_VER) && defined(_DEBUG))
   typedef CGAL::Periodic_3_triangulation_hierarchy_3< PDT2 > P3T3_2;
   _test_cls_periodic_3_delaunay_3( P3T3_2() );
+#endif
 
   // typedef CGAL::Periodic_3_triangulation_hierarchy_3< PDT3 > P3T3_3;
   // this takes too much time for the test suite.

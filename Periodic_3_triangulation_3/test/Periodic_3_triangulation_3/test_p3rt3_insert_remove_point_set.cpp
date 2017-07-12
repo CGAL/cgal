@@ -1,3 +1,6 @@
+
+//#define REALLY_VERBOSE
+
 // Copyright (c) 1998  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
@@ -106,8 +109,9 @@ public:
         hidden_point_count_2 += std::distance(iter->hidden_points_begin(), iter->hidden_points_end());
       assert(hidden_point_count <= hidden_point_count_2);
       assert(hidden_point_count_2 + p3rt3.number_of_vertices() == cnt);
-
+#ifdef REALLY_VERBOSE
       std::cout << cnt << " - p3rt3.number_of_vertices() : " << p3rt3.number_of_vertices() << "  .number_of_stored_vertices : " << p3rt3.number_of_stored_vertices() << std::endl;
+#endif
       if (vh == Vertex_handle())
       {
         if (find(insert_set.begin(), insert_set.end(), p) == insert_set.end())
@@ -128,14 +132,14 @@ public:
       Vertex_iterator iter = p3rt3.vertices_begin();
       for (int j = random.get_int(0, static_cast<int>(p3rt3.number_of_vertices())); j; --j)
         ++iter;
-
+#ifdef REALLY_VERBOSE
       std::cout << cnt << " : " << iter->point() << std::endl;
-
+#endif
       remove_set.push_back(iter->point());
       p3rt3.remove(iter);
-
+#ifdef REALLY_VERBOSE
       std::cout << "    p3rt3.number_of_vertices() : " << p3rt3.number_of_vertices() << "  .number_of_stored_vertices : " << p3rt3.number_of_stored_vertices() << std::endl;
-
+#endif
       std::size_t hidden_point_count = 0;
       for (Cell_iterator iter = p3rt3.cells_begin(), end_iter = p3rt3.cells_end(); iter != end_iter; ++iter)
         hidden_point_count += std::distance(iter->hidden_points_begin(), iter->hidden_points_end());
