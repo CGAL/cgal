@@ -32,8 +32,8 @@ namespace CGAL {
   template <class P>
   struct Is_weighted : public Tag_false {} ;
   
-  template <typename FT>
-  struct Is_weighted< ::CGAL::Weighted_point_3<FT> > :
+  template <typename K>
+  struct Is_weighted< ::CGAL::Weighted_point_3<K> > :
     public Tag_true {} ;
   
   namespace details {
@@ -49,7 +49,8 @@ namespace CGAL {
     {
       typedef P Point;
       typedef P Bare_point;
-      typedef typename ::CGAL::Weighted_point_3<FT> Weighted_point;
+      typedef typename Kernel_traits<P>::type K;
+      typedef typename ::CGAL::Weighted_point_3<K> Weighted_point;
       typedef Tag_false Is_weighted;
      
       const Bare_point& bare_point(const Point& bp)
