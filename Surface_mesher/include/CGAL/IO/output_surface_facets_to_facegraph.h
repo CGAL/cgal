@@ -23,6 +23,8 @@
 #define CGAL_OUTPUT_SURFACE_FACETS_TO_FACEGRAPH_H
 
 #include <CGAL/license/Surface_mesher.h>
+#include <CGAL/boost/graph/Euler_operations.h>
+#include <map>
 
 //! Gets reconstructed surface out of a SurfaceMeshComplex_2InTriangulation_3 object.
 //!
@@ -39,6 +41,7 @@ template<class C2T3, class FaceGraph>
 void c2t3_to_facegraph(const C2T3& c2t3, FaceGraph& graph)
 {
   typedef typename boost::property_map<FaceGraph, boost::vertex_point_t>::type VertexPointMap;
+  typedef typename boost::property_traits<VertexPointMap>::value_type Point_3;
   typedef typename C2T3::Triangulation Tr;
   typedef typename Tr::Vertex_handle Vertex_handle;
   typedef typename Tr::Vertex_iterator Vertex_iterator;
@@ -115,7 +118,8 @@ void c2t3_to_facegraph(const C2T3& c2t3, FaceGraph& graph)
 
     //used to set indices of vertices
     std::map<Vertex_handle, int> V;
-    //int inum = 0;
+    int inum = 0;
+
 
     //add vertices
     std::vector<typename boost::graph_traits<FaceGraph>::vertex_descriptor> vertices;
@@ -128,11 +132,12 @@ void c2t3_to_facegraph(const C2T3& c2t3, FaceGraph& graph)
       vertices.push_back(v);
       put(vpmap,
           v,
-          typename Tr::Point_3(
+           Point_3(
             vit->point().x(),
             vit->point().y(),
             vit->point().z())
           );
+      V.insert(std::make_pair(vit, inum++));
     }
     //add faces
     for(typename std::set<Facet>::const_iterator fit =

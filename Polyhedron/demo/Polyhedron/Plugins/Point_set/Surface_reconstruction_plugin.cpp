@@ -925,12 +925,21 @@ void Polyhedron_demo_surface_reconstruction_plugin::automatic_reconstruction
 		}
 	      
 	      std::cerr << "Poisson reconstruction... ";
-	      time.restart();
-
-              Polyhedron* pRemesh = poisson_reconstruct_polyhedron(*points, 20,
-                                                                   100 * (std::max)(noise_size, aniso_size),
-                                                                   (std::max)(noise_size, aniso_size),
-                                                                   QString ("Eigen - built-in CG"), false, false);
+              time.restart();
+              Polyhedron* pRemesh = NULL;
+              SMesh* smRemesh = NULL;
+              if(mw->property("is_polyhedron_mode").toBool())
+                pRemesh = poisson_reconstruct_polyhedron(*points,
+                                                         20,
+                                                         100 * (std::max)(noise_size, aniso_size),
+                                                         (std::max)(noise_size, aniso_size),
+                                                         QString ("Eigen - built-in CG"), false, false);
+              else
+                smRemesh = poisson_reconstruct_sm(*points,
+                                                  20,
+                                                  100 * (std::max)(noise_size, aniso_size),
+                                                  (std::max)(noise_size, aniso_size),
+                                                  QString ("Eigen - built-in CG"), false, false);
               if(pRemesh)
               {
                 // Add polyhedron to scene
@@ -939,6 +948,15 @@ void Polyhedron_demo_surface_reconstruction_plugin::automatic_reconstruction
                 reco_item->setColor(Qt::lightGray);
                 scene->addItem(reco_item);
               }
+              else if(smRemesh)
+              {
+                // Add polyhedron to scene
+                Scene_surface_mesh_item* reco_item = new Scene_surface_mesh_item(smRemesh);
+                reco_item->setName(tr("%1 (poisson)").arg(pts_item->name()));
+                reco_item->setColor(Qt::lightGray);
+                scene->addItem(reco_item);
+              }
+
 
 	      std::cerr << "ok (" << time.elapsed() << " ms)" << std::endl;
 	    }
