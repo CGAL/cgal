@@ -9,8 +9,10 @@
 
 #include "Scene_polygon_soup_item.h"
 #include "Scene_polyhedron_item.h"
+#include "Scene_surface_mesh_item.h"
 #include "Scene_points_with_normal_item.h"
 #include "Polyhedron_type.h"
+#include "SMesh_type.h"
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 
@@ -65,13 +67,21 @@ typedef CGAL::cpp11::array<std::size_t,3> Facet;
 
 // Poisson reconstruction method:
 // Reconstructs a surface mesh from a point set and returns it as a polyhedron.
-Polyhedron* poisson_reconstruct(Point_set& points,
-                                Kernel::FT sm_angle, // Min triangle angle (degrees). 
-                                Kernel::FT sm_radius, // Max triangle size w.r.t. point set average spacing. 
+Polyhedron* poisson_reconstruct_polyhedron(Point_set& points,
+                                Kernel::FT sm_angle, // Min triangle angle (degrees).
+                                Kernel::FT sm_radius, // Max triangle size w.r.t. point set average spacing.
                                 Kernel::FT sm_distance, // Approximation error w.r.t. point set average spacing.
-                                const QString& solver, // solver name
+                                const QString& solver_name, // solver name
                                 bool use_two_passes,
-				bool do_not_fill_holes);
+                                bool do_not_fill_holes);
+
+SMesh* poisson_reconstruct_sm(Point_set& points,
+                                Kernel::FT sm_angle, // Min triangle angle (degrees).
+                                Kernel::FT sm_radius, // Max triangle size w.r.t. point set average spacing.
+                                Kernel::FT sm_distance, // Approximation error w.r.t. point set average spacing.
+                                const QString& solver_name, // solver name
+                                bool use_two_passes,
+                                bool do_not_fill_holes);
 
 
 struct Radius {
@@ -917,19 +927,18 @@ void Polyhedron_demo_surface_reconstruction_plugin::automatic_reconstruction
 	      std::cerr << "Poisson reconstruction... ";
 	      time.restart();
 
-	      Polyhedron* pRemesh = poisson_reconstruct(*points, 20,
-							100 * (std::max)(noise_size, aniso_size),
-							(std::max)(noise_size, aniso_size),
-							QString ("Eigen - built-in CG"), false, false);
-	      if(pRemesh)
-
-		{
-		  // Add polyhedron to scene
-		  Scene_polyhedron_item* reco_item = new Scene_polyhedron_item(pRemesh);
-		  reco_item->setName(tr("%1 (poisson)").arg(pts_item->name()));
-		  reco_item->setColor(Qt::lightGray);
-		  scene->addItem(reco_item);
-		}
+              Polyhedron* pRemesh = poisson_reconstruct_polyhedron(*points, 20,
+                                                                   100 * (std::max)(noise_size, aniso_size),
+                                                                   (std::max)(noise_size, aniso_size),
+                                                                   QString ("Eigen - built-in CG"), false, false);
+              if(pRemesh)
+              {
+                // Add polyhedron to scene
+                Scene_polyhedron_item* reco_item = new Scene_polyhedron_item(pRemesh);
+                reco_item->setName(tr("%1 (poisson)").arg(pts_item->name()));
+                reco_item->setColor(Qt::lightGray);
+                scene->addItem(reco_item);
+              }
 
 	      std::cerr << "ok (" << time.elapsed() << " ms)" << std::endl;
 	    }
@@ -1093,7 +1102,7 @@ void Polyhedron_demo_surface_reconstruction_plugin::poisson_reconstruction
 
 
       // Reconstruct point set as a polyhedron
-      Polyhedron* pRemesh = poisson_reconstruct(*points, sm_angle, sm_radius, sm_distance, sm_solver, use_two_passes,
+      Polyhedron* pRemesh = poisson_reconstruct_polyhedron(*points, sm_angle, sm_radius, sm_distance, sm_solver, use_two_passes,
                                                 do_not_fill_holes);
       if(pRemesh)
         {

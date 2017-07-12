@@ -2,7 +2,7 @@ include( polyhedron_demo_macros )
 if(EIGEN3_FOUND)
   qt5_wrap_ui( surface_reconstructionUI_FILES Surface_reconstruction_plugin.ui)
   polyhedron_demo_plugin(surface_reconstruction_plugin Surface_reconstruction_plugin Surface_reconstruction_plugin_impl ${surface_reconstructionUI_FILES})
-  target_link_libraries(surface_reconstruction_plugin scene_polygon_soup_item scene_polyhedron_item scene_points_with_normal_item)
+  target_link_libraries(surface_reconstruction_plugin scene_polygon_soup_item scene_polyhedron_item scene_surface_mesh_item scene_points_with_normal_item)
 
   qt5_wrap_ui( point_set_normal_estimationUI_FILES Point_set_normal_estimation_plugin.ui)
   polyhedron_demo_plugin(point_set_normal_estimation_plugin Point_set_normal_estimation_plugin ${point_set_normal_estimationUI_FILES})
