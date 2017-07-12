@@ -159,7 +159,7 @@ struct dynamic_property_map<G,face_property_t<T> >
 
 template <typename T, typename G>
 typename dynamic_property_map<G,vertex_property_t<T> >::const_type
-add_property(vertex_property_t<T> prop, const G& g)
+add_property(vertex_property_t<T> prop, const G&)
 {
   typedef typename boost::graph_traits<G>::vertex_descriptor vertex_descriptor;
   return internal::Dynamic_property_map<vertex_descriptor,T>(prop.t);
@@ -167,7 +167,7 @@ add_property(vertex_property_t<T> prop, const G& g)
 
 template <typename T, typename G>
 typename dynamic_property_map<G,halfedge_property_t<T> >::const_type
-add_property(halfedge_property_t<T> prop, const G& g)
+add_property(halfedge_property_t<T> prop, const G&)
 {
   typedef typename boost::graph_traits<G>::halfedge_descriptor halfedge_descriptor;
   return internal::Dynamic_property_map<halfedge_descriptor,T>(prop.t);
@@ -175,7 +175,7 @@ add_property(halfedge_property_t<T> prop, const G& g)
 
 template <typename T, typename G>
 typename dynamic_property_map<G,edge_property_t<T> >::const_type
-add_property(edge_property_t<T> prop, const G& g)
+add_property(edge_property_t<T> prop, const G&)
 {
   typedef typename boost::graph_traits<G>::edge_descriptor edge_descriptor;
   return internal::Dynamic_property_map<edge_descriptor,T>(prop.t);
@@ -183,7 +183,7 @@ add_property(edge_property_t<T> prop, const G& g)
 
 template <typename T, typename G>
 typename dynamic_property_map<G,face_property_t<T> >::const_type
-add_property(face_property_t<T> prop, const G& g)
+add_property(face_property_t<T> prop, const G&)
 {
   typedef typename boost::graph_traits<G>::face_descriptor face_descriptor;
   return internal::Dynamic_property_map<face_descriptor,T>(prop.t);

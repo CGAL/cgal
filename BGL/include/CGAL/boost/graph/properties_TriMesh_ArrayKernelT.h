@@ -255,7 +255,7 @@ struct dynamic_property_map<OpenMesh::TriMesh_ArrayKernelT<K>, face_property_t<V
 
 template <typename K, typename V>
 typename dynamic_property_map<OpenMesh::TriMesh_ArrayKernelT<K>, vertex_property_t<V> >::const_type
-add_property(vertex_property_t<V> vprop, OpenMesh::TriMesh_ArrayKernelT<K>& om)
+add_property(vertex_property_t<V>, OpenMesh::TriMesh_ArrayKernelT<K>& om)
 {
   typedef OpenMesh::TriMesh_ArrayKernelT<K> OM;
   typedef typename boost::graph_traits<OM>::vertex_descriptor vertex_descriptor;
@@ -264,7 +264,7 @@ add_property(vertex_property_t<V> vprop, OpenMesh::TriMesh_ArrayKernelT<K>& om)
 
 template <typename K, typename V>
 typename dynamic_property_map<OpenMesh::TriMesh_ArrayKernelT<K>, halfedge_property_t<V> >::const_type
-add_property(halfedge_property_t<V> vprop, OpenMesh::TriMesh_ArrayKernelT<K>& om)
+add_property(halfedge_property_t<V>, OpenMesh::TriMesh_ArrayKernelT<K>& om)
 {
   typedef OpenMesh::TriMesh_ArrayKernelT<K> OM;
   typedef typename boost::graph_traits<OM>::halfedge_descriptor halfedge_descriptor;
@@ -273,7 +273,7 @@ add_property(halfedge_property_t<V> vprop, OpenMesh::TriMesh_ArrayKernelT<K>& om
 
 template <typename K, typename V>
 typename dynamic_property_map<OpenMesh::TriMesh_ArrayKernelT<K>, edge_property_t<V> >::const_type
-add_property(edge_property_t<V> vprop, OpenMesh::TriMesh_ArrayKernelT<K>& om)
+add_property(edge_property_t<V>, OpenMesh::TriMesh_ArrayKernelT<K>& om)
 {
   typedef OpenMesh::TriMesh_ArrayKernelT<K> OM;
   typedef typename boost::graph_traits<OM>::edge_descriptor edge_descriptor;
@@ -282,7 +282,7 @@ add_property(edge_property_t<V> vprop, OpenMesh::TriMesh_ArrayKernelT<K>& om)
 
 template <typename K, typename V>
 typename dynamic_property_map<OpenMesh::TriMesh_ArrayKernelT<K>, face_property_t<V> >::const_type
-add_property(face_property_t<V> vprop, OpenMesh::TriMesh_ArrayKernelT<K>& om)
+add_property(face_property_t<V>, OpenMesh::TriMesh_ArrayKernelT<K>& om)
 {
   typedef OpenMesh::TriMesh_ArrayKernelT<K> OM;
   typedef typename boost::graph_traits<OM>::face_descriptor face_descriptor;
