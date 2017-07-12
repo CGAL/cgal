@@ -56,13 +56,6 @@ public:
     mesh->add_property(h);
   }
   
-  OM_pmap& operator=(const OM_pmap& other)
-  {
-    mesh = other.mesh;
-    h = other.h;
-    return *this;
-  }
-
   OM_pmap(Mesh& m, H h)
     : mesh(&m), h(h)
   {
