@@ -757,7 +757,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
   QString new_item_name;
   //determine the different connected_components
   boost::container::flat_map<boost::graph_traits<Base_face_graph>::face_descriptor, int> face_component_map;
-  boost::associative_property_map< boost::container::flat_map<face_descriptor, int> >
+  boost::associative_property_map< boost::container::flat_map<s_face_descriptor, int> >
       fccmap(face_component_map);
 
   Is_selected_property_map edge_pmap(mark, &tMesh);
