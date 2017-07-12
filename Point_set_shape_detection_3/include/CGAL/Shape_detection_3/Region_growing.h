@@ -1,3 +1,4 @@
+// Copyright (c) 2015 INRIA Sophia-Antipolis (France).
 // Copyright (c) 2017 GeometryFactory Sarl (France).
 // All rights reserved.
 //

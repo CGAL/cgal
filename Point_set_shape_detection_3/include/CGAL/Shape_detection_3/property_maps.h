@@ -19,7 +19,7 @@
 // Author(s)     : Simon Giraudot
 //
 
-
+#include <CGAL/license/Point_set_shape_detection_3.h>
 
 #ifndef CGAL_SHAPE_DETECTION_3_PROPERTY_MAPS_H
 #define CGAL_SHAPE_DETECTION_3_PROPERTY_MAPS_H
