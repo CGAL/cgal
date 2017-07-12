@@ -169,7 +169,7 @@ namespace internal {
     typedef EdgeIsConstrainedMap                                ECMap;
     typedef Connected_components_pmap<PM, ECMap, FIMap>         CCMap;
 
-    typename boost::dynamic_property_map<PM, boost::face_property_t<Patch_id> >::type patch_ids_map;
+    typename CGAL::internal::dynamic_property_map<PM, CGAL::internal::face_property_t<Patch_id> >::type patch_ids_map;
     std::size_t nb_cc;
 
   public:
@@ -178,14 +178,14 @@ namespace internal {
     typedef Patch_id&                           reference;
     typedef boost::read_write_property_map_tag  category;
 
-    //note pmesh is a non-const ref because add() and remove()
+    //note pmesh is a non-const ref because add_property() and remove_property()
     //modify the mesh data structure, but not the mesh itself
     Connected_components_pmap(PM& pmesh
                             , EdgeIsConstrainedMap ecmap
                             , FIMap fimap
                             , const bool do_init = true)
     {
-      patch_ids_map = CGAL::internal::add(boost::face_property_t<Patch_id>("PMP_patch_id"), pmesh);
+      patch_ids_map = CGAL::internal::add_property(CGAL::internal::face_property_t<Patch_id>("PMP_patch_id"), pmesh);
       if (do_init)
       {
         nb_cc
@@ -193,14 +193,15 @@ namespace internal {
                                       patch_ids_map,
                                       PMP::parameters::edge_is_constrained_map(ecmap)
                                      .face_index_map(fimap));
-        if(nb_cc == 1)
-          CGAL::internal::remove(patch_ids_map, pmesh);
+        if(nb_cc == 1){
+          CGAL::internal::remove_property(patch_ids_map, pmesh);
+        }
       }
     }
 
     friend void remove(CCMap m, PM& pmesh)
     {
-      CGAL::internal::remove(m.patch_ids_map, pmesh);
+      CGAL::internal::remove_property(m.patch_ids_map, pmesh);
     }
 
     friend value_type get(const CCMap& m, const key_type& f)
@@ -282,8 +283,8 @@ namespace internal {
     typedef CGAL::AABB_traits<GeomTraits, AABB_primitive> AABB_traits;
     typedef CGAL::AABB_tree<AABB_traits>                  AABB_tree;
 
-    typedef typename boost::dynamic_property_map<
-      PM, boost::halfedge_property_t<Halfedge_status> >::type Halfedge_status_pmap;
+    typedef typename CGAL::internal::dynamic_property_map<
+      PM, CGAL::internal::halfedge_property_t<Halfedge_status> >::type Halfedge_status_pmap;
 
   public:
     Incremental_remesher(PolygonMesh& pmesh
@@ -306,8 +307,8 @@ namespace internal {
       , vcmap_(vcmap)
       , fimap_(fimap)
     {
-      halfedge_status_pmap_ = CGAL::internal::add(
-        boost::halfedge_property_t<Halfedge_status>("PMP_halfedge_status", MESH),
+      halfedge_status_pmap_ = CGAL::internal::add_property(
+        CGAL::internal::halfedge_property_t<Halfedge_status>("PMP_halfedge_status", MESH),
         pmesh);
       CGAL_assertion(CGAL::is_triangle_mesh(mesh_));
     }
@@ -318,7 +319,7 @@ namespace internal {
       remove_connected_components_pmap
         (CGAL::Boolean_tag<boost::is_same<FacePatchMap, CCPmap>::value>());
 
-      CGAL::internal::remove(halfedge_status_pmap_, mesh_);
+      CGAL::internal::remove_property(halfedge_status_pmap_, mesh_);
 
       if (build_tree_){
         for(std::size_t i=0; i < trees.size();++i){

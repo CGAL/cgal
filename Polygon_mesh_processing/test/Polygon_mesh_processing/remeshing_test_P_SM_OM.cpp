@@ -5,10 +5,11 @@
 #include <CGAL/Polygon_mesh_processing/remesh.h>
 #include <fstream>
 #include <map>
-#include <OpenMesh/Core/Mesh/PolyMesh_ArrayKernelT.hh>
 #include <OpenMesh/Core/IO/MeshIO.hh>
-
+#include <OpenMesh/Core/Mesh/PolyMesh_ArrayKernelT.hh>
+#include <OpenMesh/Core/Mesh/TriMesh_ArrayKernelT.hh>
 #include <CGAL/boost/graph/graph_traits_PolyMesh_ArrayKernelT.h>
+#include <CGAL/boost/graph/graph_traits_TriMesh_ArrayKernelT.h>
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
@@ -57,7 +58,23 @@ int main()
                              om);
     
     om.garbage_collection();
-    OpenMesh::IO::write_mesh(om, "om.off");
+    OpenMesh::IO::write_mesh(om, "pm.off");
+  }
+
+  {
+    typedef OpenMesh::TriMesh_ArrayKernelT</* MyTraits*/> OM;
+
+    OM om;
+    OpenMesh::IO::read_mesh(om, "data/elephant.off");
+    om.request_face_status();
+    om.request_edge_status();
+    om.request_vertex_status();
+    PMP::isotropic_remeshing(faces(om),
+                             0.02,
+                             om);
+    
+    om.garbage_collection();
+    OpenMesh::IO::write_mesh(om, "tm.off");
   }
 
   return 0;

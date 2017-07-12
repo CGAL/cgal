@@ -22,8 +22,6 @@
 
 #include <CGAL/license/Polyhedron.h>
 
-
-#include <CGAL/Dynamic_property_map.h>
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/Unique_hash_map.h>
