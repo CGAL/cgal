@@ -42,6 +42,7 @@ void c2t3_to_facegraph(const C2T3& c2t3, FaceGraph& graph)
 {
   typedef typename boost::property_map<FaceGraph, boost::vertex_point_t>::type VertexPointMap;
   typedef typename boost::property_traits<VertexPointMap>::value_type Point_3;
+
   typedef typename C2T3::Triangulation Tr;
   typedef typename Tr::Vertex_handle Vertex_handle;
   typedef typename Tr::Vertex_iterator Vertex_iterator;
@@ -119,8 +120,6 @@ void c2t3_to_facegraph(const C2T3& c2t3, FaceGraph& graph)
     //used to set indices of vertices
     std::map<Vertex_handle, int> V;
     int inum = 0;
-
-
     //add vertices
     std::vector<typename boost::graph_traits<FaceGraph>::vertex_descriptor> vertices;
     for(Vertex_iterator vit = tr.vertices_begin();
