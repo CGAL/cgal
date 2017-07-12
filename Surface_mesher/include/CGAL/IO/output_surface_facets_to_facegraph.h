@@ -42,7 +42,6 @@ void c2t3_to_facegraph(const C2T3& c2t3, FaceGraph& graph)
 {
   typedef typename boost::property_map<FaceGraph, boost::vertex_point_t>::type VertexPointMap;
   typedef typename boost::property_traits<VertexPointMap>::value_type Point_3;
-
   typedef typename C2T3::Triangulation Tr;
   typedef typename Tr::Vertex_handle Vertex_handle;
   typedef typename Tr::Vertex_iterator Vertex_iterator;
