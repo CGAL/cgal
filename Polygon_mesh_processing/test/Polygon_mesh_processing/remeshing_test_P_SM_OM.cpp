@@ -1,8 +1,6 @@
-
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/Polygon_mesh_processing/remesh.h>
 #include <fstream>
 #include <map>
 #include <OpenMesh/Core/IO/MeshIO.hh>
@@ -10,6 +8,7 @@
 #include <OpenMesh/Core/Mesh/TriMesh_ArrayKernelT.hh>
 #include <CGAL/boost/graph/graph_traits_PolyMesh_ArrayKernelT.h>
 #include <CGAL/boost/graph/graph_traits_TriMesh_ArrayKernelT.h>
+#include <CGAL/Polygon_mesh_processing/remesh.h>
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
