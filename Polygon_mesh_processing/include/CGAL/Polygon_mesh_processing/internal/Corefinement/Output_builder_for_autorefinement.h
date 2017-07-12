@@ -225,7 +225,11 @@ public:
     BOOST_FOREACH(const Pair_type& p, all_intersection_edges_map)
     {
       CGAL_assertion(p.second.h1!=boost::graph_traits<TriangleMesh>::null_halfedge());
-      CGAL_assertion(p.second.h2!=boost::graph_traits<TriangleMesh>::null_halfedge());
+    // p.second.h2 might be the null halfedge in case two faces sharing an edge
+    // intersect (and are obviously coplanar). It is not considered as an intersection
+    // and will be discarded later
+      if (p.second.h2==boost::graph_traits<TriangleMesh>::null_halfedge())
+        continue;
       vertex_to_node_id[source(p.second.h1, tm)] = p.first.first;
       vertex_to_node_id[target(p.second.h1, tm)] = p.first.second;
       vertex_to_node_id[source(p.second.h2, tm)] = p.first.first;
@@ -256,69 +260,84 @@ public:
       halfedge_descriptor h1  = epp_it->second.h1;
       halfedge_descriptor h1_opp = opposite(h1, tm);
       halfedge_descriptor h2 = epp_it->second.h2;
-      halfedge_descriptor h2_opp = opposite(h2, tm);
 
-      if (is_border_edge(h1,tm) || is_border_edge(h2,tm)){
-        ++epp_it;
-        continue;
-      }
+      bool to_remove = false;
 
-      //vertices from tm1
-      vertex_descriptor p1 = target(next(h1_opp, tm), tm);
-      vertex_descriptor p2 = target(next(h1, tm), tm);
-      Node_id index_p1 = get_node_id(p1, vertex_to_node_id);
-      Node_id index_p2 = get_node_id(p2, vertex_to_node_id);
-      //vertices from tm2
-      vertex_descriptor q1 = target(next(h2_opp, tm), tm);
-      vertex_descriptor q2 = target(next(h2, tm), tm);
-      Node_id index_q1 = get_node_id(q1, vertex_to_node_id);
-      Node_id index_q2 = get_node_id(q2, vertex_to_node_id);
-
-      // set boolean for the position of p1 wrt to q1 and q2
-      bool p1_eq_q1=false, p1_eq_q2=false;
-      if (!is_border(h1_opp, tm) && index_p1!=NID)
+      if (h2==boost::graph_traits<TriangleMesh>::null_halfedge())
       {
-        if (!is_border(h2_opp, tm))
-          p1_eq_q1 = index_p1 == index_q1;
-        if (!is_border(h2, tm))
-          p1_eq_q2 = index_p1 == index_q2;
+        // we are in the case of two faces sharing an edge and intersecting
+        // (coplanar faces)
+        CGAL_assertion(get_node_id(target(next(h1, tm), tm), vertex_to_node_id) ==
+          get_node_id(target(next(opposite(h1, tm), tm), tm), vertex_to_node_id));
+        to_remove=true;
       }
+      else{
+        halfedge_descriptor h2_opp = opposite(h2, tm);
 
-      // set boolean for the position of p2 wrt to q1 and q2
-      bool p2_eq_q1=false, p2_eq_q2=false;
-      if (!is_border(h1, tm) && index_p2!=NID)
-      {
-        if (!is_border(h2_opp, tm))
-          p2_eq_q1 = index_p2 == index_q1;
-        if (!is_border(h2, tm))
-          p2_eq_q2 = index_p2 == index_q2;
-      }
+        if (is_border_edge(h1,tm) || is_border_edge(h2,tm)){
+          ++epp_it;
+          continue;
+        }
 
-      //mark coplanar facets if any
-      if (p1_eq_q1){
-        tm_coplanar_faces.set(get(fids, face(h1_opp, tm)));
-        tm_coplanar_faces.set(get(fids, face(h2_opp, tm)));
-      }
-      if (p1_eq_q2){
-        tm_coplanar_faces.set(get(fids, face(h1_opp, tm)));
-        tm_coplanar_faces.set(get(fids, face(h2, tm)));
-      }
-      if (p2_eq_q1){
-        tm_coplanar_faces.set(get(fids, face(h1, tm)));
-        tm_coplanar_faces.set(get(fids, face(h2_opp, tm)));
-      }
-      if (p2_eq_q2){
-        tm_coplanar_faces.set(get(fids, face(h1, tm)));
-        tm_coplanar_faces.set(get(fids, face(h2, tm)));
-      }
+        //vertices from tm1
+        vertex_descriptor p1 = target(next(h1_opp, tm), tm);
+        vertex_descriptor p2 = target(next(h1, tm), tm);
+        Node_id index_p1 = get_node_id(p1, vertex_to_node_id);
+        Node_id index_p2 = get_node_id(p2, vertex_to_node_id);
+        //vertices from tm2
+        vertex_descriptor q1 = target(next(h2_opp, tm), tm);
+        vertex_descriptor q2 = target(next(h2, tm), tm);
+        Node_id index_q1 = get_node_id(q1, vertex_to_node_id);
+        Node_id index_q2 = get_node_id(q2, vertex_to_node_id);
 
-      if ( (p1_eq_q1 || p1_eq_q2) && (p2_eq_q1 || p2_eq_q2) )
+        // set boolean for the position of p1 wrt to q1 and q2
+        bool p1_eq_q1=false, p1_eq_q2=false;
+        if (!is_border(h1_opp, tm) && index_p1!=NID)
+        {
+          if (!is_border(h2_opp, tm))
+            p1_eq_q1 = index_p1 == index_q1;
+          if (!is_border(h2, tm))
+            p1_eq_q2 = index_p1 == index_q2;
+        }
+
+        // set boolean for the position of p2 wrt to q1 and q2
+        bool p2_eq_q1=false, p2_eq_q2=false;
+        if (!is_border(h1, tm) && index_p2!=NID)
+        {
+          if (!is_border(h2_opp, tm))
+            p2_eq_q1 = index_p2 == index_q1;
+          if (!is_border(h2, tm))
+            p2_eq_q2 = index_p2 == index_q2;
+        }
+
+        //mark coplanar facets if any
+        if (p1_eq_q1){
+          tm_coplanar_faces.set(get(fids, face(h1_opp, tm)));
+          tm_coplanar_faces.set(get(fids, face(h2_opp, tm)));
+        }
+        if (p1_eq_q2){
+          tm_coplanar_faces.set(get(fids, face(h1_opp, tm)));
+          tm_coplanar_faces.set(get(fids, face(h2, tm)));
+        }
+        if (p2_eq_q1){
+          tm_coplanar_faces.set(get(fids, face(h1, tm)));
+          tm_coplanar_faces.set(get(fids, face(h2_opp, tm)));
+        }
+        if (p2_eq_q2){
+          tm_coplanar_faces.set(get(fids, face(h1, tm)));
+          tm_coplanar_faces.set(get(fids, face(h2, tm)));
+        }
+        if ( (p1_eq_q1 || p1_eq_q2) && (p2_eq_q1 || p2_eq_q2) )
+          to_remove = true;
+      }
+      if (to_remove)
       {
         typename An_edge_per_polyline_map::iterator it_to_rm=epp_it;
         ++epp_it;
         an_edge_per_polyline.erase(it_to_rm);
         inter_edges_to_remove.insert(edge(h1,tm));
-        inter_edges_to_remove.insert(edge(h2,tm));
+        if (h2!=boost::graph_traits<TriangleMesh>::null_halfedge())
+          inter_edges_to_remove.insert(edge(h2,tm));
       }
       else
         ++epp_it;
@@ -416,7 +435,7 @@ public:
           //indicates that patch status will be updated
           patch_status_not_set.reset(patch_id_p);
           patch_status_not_set.reset(patch_id_q1);
-          patch_status_not_set.reset(patch_id_q2);          
+          patch_status_not_set.reset(patch_id_q2);
 
           bool p_is_between_q1q2 = sorted_around_edge(
             ids.first, ids.second,
@@ -461,7 +480,7 @@ public:
 
           //indicates that patch status will be updated
           patch_status_not_set.reset(patch_id_p1);
-          patch_status_not_set.reset(patch_id_p2);          
+          patch_status_not_set.reset(patch_id_p2);
           patch_status_not_set.reset(patch_id_q);
 
           bool q_is_between_p1p2 = sorted_around_edge(
@@ -820,7 +839,7 @@ public:
           if ( !patches_to_keep.test(patch_id) ) continue;
         }
         else
-        {       
+        {
           std::size_t patch_id = patch_ids[get(fids,face(h2,tm))];
           if ( !patches_to_keep.test(patch_id) ) continue;
         }
