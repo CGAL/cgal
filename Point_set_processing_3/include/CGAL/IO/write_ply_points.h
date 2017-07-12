@@ -158,7 +158,8 @@ namespace internal {
                                PropertyHandler&& ... properties)
   {
     property_header (stream, current.second);
-    output_property_header (stream, next, properties...);
+    output_property_header (stream, std::forward<NextPropertyHandler>(next),
+                            std::forward<PropertyHandler>(properties)...);
   }
   template <typename PropertyMap,
             typename ... T,
@@ -263,7 +264,8 @@ namespace internal {
     simple_property_write (stream, it, current);
     if (get_mode(stream) == IO::ASCII)
       stream << " ";
-    output_properties (stream, it, next, properties...);
+    output_properties (stream, it, std::forward<NextPropertyHandler>(next),
+                       std::forward<PropertyHandler>(properties)...);
   }
   
   template <typename ForwardIterator,
