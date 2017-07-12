@@ -37,10 +37,28 @@
 #include <boost/version.hpp>
 #include <boost/cstdint.hpp>
 
-#include <lasdefinitions.hpp>
+#ifdef BOOST_MSVC
+#  pragma warning(push)
+#  pragma warning(disable:4251) // DLL warning from LASlib
+#endif
+
+#ifdef __GNUC__
+#  pragma GCC diagnostic push
+#  pragma GCC diagnostic ignored "-Wstrict-aliasing"
+#endif
+
 #define USE_AS_DLL
-#include <laswriter_las.hpp>
+#include <lasdefinitions.hpp>
+#include <lasreader_las.hpp>
 #undef USE_AS_DLL
+
+#ifdef __GNUC__
+#  pragma GCC diagnostic pop
+#endif
+
+#ifdef BOOST_MSVC
+#  pragma warning(pop)
+#endif
 
 #include <iostream>
 #include <sstream>

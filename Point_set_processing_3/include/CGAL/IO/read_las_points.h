@@ -41,9 +41,14 @@
 #include <sstream>
 #include <string>
 
+#ifdef BOOST_MSVC
+#  pragma warning(push)
+#  pragma warning(disable:4251) // DLL warning from LASlib
+#endif
+
 #ifdef __GNUC__
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wstrict-aliasing"
+#  pragma GCC diagnostic push
+#  pragma GCC diagnostic ignored "-Wstrict-aliasing"
 #endif
 
 #define USE_AS_DLL
@@ -51,8 +56,13 @@
 #undef USE_AS_DLL
 
 #ifdef __GNUC__
-#pragma GCC diagnostic pop
+#  pragma GCC diagnostic pop
 #endif
+
+#ifdef BOOST_MSVC
+#  pragma warning(pop)
+#endif
+
 
 namespace CGAL {
 
