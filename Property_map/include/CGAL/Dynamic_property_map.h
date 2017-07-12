@@ -77,47 +77,47 @@ struct Dynamic_property_map {
   V default_value_;
 };
 
- template <typename T>
-  struct vertex_property_t
-  {
-    vertex_property_t(const std::string s, const T& t = T())
-      : s(s), t(t)
-    {}
-    std::string s;
-    T t;
-  };
+template <typename T>
+struct vertex_property_t
+{
+  vertex_property_t(const std::string s, const T& t = T())
+    : s(s), t(t)
+  {}
+  std::string s;
+  T t;
+};
 
 
-  template <typename T>
-  struct halfedge_property_t
-  {
-    halfedge_property_t(const std::string s, const T& t = T())
-      : s(s), t(t)
-    {}
-    std::string s;
-    T t;
-  };
+template <typename T>
+struct halfedge_property_t
+{
+  halfedge_property_t(const std::string s, const T& t = T())
+    : s(s), t(t)
+  {}
+  std::string s;
+  T t;
+};
 
-  template <typename T>
-  struct edge_property_t
-  {
-    edge_property_t(const std::string s, const T& t = T())
-      : s(s), t(t)
-    {}
-    std::string s;
-    T t;
-  };
+template <typename T>
+struct edge_property_t
+{
+  edge_property_t(const std::string s, const T& t = T())
+    : s(s), t(t)
+  {}
+  std::string s;
+  T t;
+};
 
 
-  template <typename T>
-  struct face_property_t
-  {
-    face_property_t(const std::string s, const T& t = T())
-      : s(s), t(t)
-    {}
-    std::string s;
-    T t;
-  };
+template <typename T>
+struct face_property_t
+{
+  face_property_t(const std::string s, const T& t = T())
+    : s(s), t(t)
+  {}
+  std::string s;
+  T t;
+};
 
 template <typename G, typename Tag>
 struct dynamic_property_map{};
@@ -189,13 +189,14 @@ add_property(face_property_t<T> prop, const G& g)
   return internal::Dynamic_property_map<face_descriptor,T>(prop.t);
 }
 
-  template<class G, class T, typename Descriptor>
+template<class G, class T, typename Descriptor>
 void remove_property(
   internal::Dynamic_property_map<Descriptor, T> pm,
   const G&)
 {
   pm.clear();
 }
+
 
 
 } // namespace internal
