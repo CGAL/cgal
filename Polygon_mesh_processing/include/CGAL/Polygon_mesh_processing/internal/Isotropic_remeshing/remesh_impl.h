@@ -169,7 +169,8 @@ namespace internal {
     typedef EdgeIsConstrainedMap                                ECMap;
     typedef Connected_components_pmap<PM, ECMap, FIMap>         CCMap;
 
-    typename CGAL::internal::dynamic_property_map<PM, CGAL::internal::face_property_t<Patch_id> >::type patch_ids_map;
+    typedef CGAL::internal::face_property_t<Patch_id> Face_property_tag;
+    typename CGAL::internal::dynamic_property_map<PM, Face_property_tag >::type patch_ids_map;
     std::size_t nb_cc;
 
   public:
@@ -185,7 +186,7 @@ namespace internal {
                             , FIMap fimap
                             , const bool do_init = true)
     {
-      patch_ids_map = CGAL::internal::add_property(CGAL::internal::face_property_t<Patch_id>("PMP_patch_id"), pmesh);
+      patch_ids_map = CGAL::internal::add_property(Face_property_tag("PMP_patch_id"), pmesh);
       if (do_init)
       {
         nb_cc
