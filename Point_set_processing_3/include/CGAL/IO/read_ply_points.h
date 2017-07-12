@@ -697,7 +697,7 @@ bool read_ply_points_with_properties (std::istream& stream,
 
       OutputValueType new_element;
 
-      internal::PLY::process_properties (reader, new_element, properties...);
+      internal::PLY::process_properties (reader, new_element, std::forward<PropertyHandler>(properties)...);
 
       *(output ++) = new_element;
       
@@ -716,9 +716,9 @@ bool read_ply_points_with_properties (std::istream& stream,
                                       PropertyHandler&& ... properties)
 {
   typedef typename value_type_traits<OutputIterator>::type OutputValueType;
-
+ 
   return read_ply_points_with_properties<OutputValueType>
-    (stream, output, properties...);
+    (stream, output, std::forward<PropertyHandler>(properties)...);
 }
 /// \endcond
   
