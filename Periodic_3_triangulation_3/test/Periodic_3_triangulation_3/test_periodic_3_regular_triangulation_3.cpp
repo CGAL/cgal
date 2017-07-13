@@ -767,7 +767,7 @@ int main (int, char**)
 {
   std::cout << "TESTING ..." << std::endl;
 
-  CGAL::force_ieee_double_precision();
+  CGAL::Set_ieee_double_precision pfr;
 
   std::cout << "Epeck ..." << std::endl;
   Tests<CGAL::Epeck>::test();
