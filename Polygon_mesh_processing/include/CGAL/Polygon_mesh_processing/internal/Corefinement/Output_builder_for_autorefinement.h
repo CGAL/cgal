@@ -780,6 +780,7 @@ public:
     //collect edges to stitch before removing patches
     // we could use an_edge_per_polyline but the current version should be cheaper
     // since we don't do any query in intersection_edge_map
+    std::vector<edge_descriptor> edges_no_longer_on_intersection;
     std::vector< std::pair<halfedge_descriptor, halfedge_descriptor> > hedge_pairs_to_stitch;
     hedge_pairs_to_stitch.reserve(all_intersection_edges_map.size());
     BOOST_FOREACH(const Pair_type& p, all_intersection_edges_map)
@@ -794,12 +795,22 @@ public:
         if (is_border(h1, tm))
         {
           std::size_t patch_id = patch_ids[get(fids,face(opposite(h1,tm),tm))];
-          if ( !patches_to_keep.test(patch_id) ) continue;
+          if ( !patches_to_keep.test(patch_id) )
+          {
+            edges_no_longer_on_intersection.push_back(edge(h1, tm));
+            edges_no_longer_on_intersection.push_back(edge(h2, tm));
+            continue;
+          }
         }
         else
         {
           std::size_t patch_id = patch_ids[get(fids,face(h1,tm))];
-          if ( !patches_to_keep.test(patch_id) ) continue;
+          if ( !patches_to_keep.test(patch_id) )
+          {
+            edges_no_longer_on_intersection.push_back(edge(h1, tm));
+            edges_no_longer_on_intersection.push_back(edge(h2, tm));
+            continue;
+          }
           std::swap(h1, h1_opp);
           std::swap(h2, h2_opp);
         }
@@ -809,7 +820,12 @@ public:
         std::size_t patch_id_h1 = patch_ids[get(fids,face(h1,tm))];
         std::size_t patch_id_h1_opp = patch_ids[get(fids,face(h1_opp,tm))];
         if ( patches_to_keep.test(patch_id_h1) ==
-             patches_to_keep.test(patch_id_h1_opp)) continue;
+             patches_to_keep.test(patch_id_h1_opp))
+        {
+          edges_no_longer_on_intersection.push_back(edge(h1, tm));
+          edges_no_longer_on_intersection.push_back(edge(h2, tm));
+          continue;
+        }
         if (patches_to_keep.test(patch_id_h1))
         {
           std::swap(h1, h1_opp);
@@ -822,12 +838,22 @@ public:
         if (is_border(h2, tm))
         {
           std::size_t patch_id = patch_ids[get(fids,face(opposite(h2,tm),tm))];
-          if ( !patches_to_keep.test(patch_id) ) continue;
+          if ( !patches_to_keep.test(patch_id) )
+          {
+            edges_no_longer_on_intersection.push_back(edge(h1, tm));
+            edges_no_longer_on_intersection.push_back(edge(h2, tm));
+            continue;
+          }
         }
         else
         {
           std::size_t patch_id = patch_ids[get(fids,face(h2,tm))];
-          if ( !patches_to_keep.test(patch_id) ) continue;
+          if ( !patches_to_keep.test(patch_id) )
+          {
+            edges_no_longer_on_intersection.push_back(edge(h1, tm));
+            edges_no_longer_on_intersection.push_back(edge(h2, tm));
+            continue;
+          }
         }
       }
       else
@@ -835,7 +861,12 @@ public:
         std::size_t patch_id_h2 = patch_ids[get(fids,face(h2,tm))];
         std::size_t patch_id_h2_opp = patch_ids[get(fids,face(h2_opp,tm))];
         if ( patches_to_keep.test(patch_id_h2) ==
-             patches_to_keep.test(patch_id_h2_opp)) continue;
+             patches_to_keep.test(patch_id_h2_opp))
+        {
+          edges_no_longer_on_intersection.push_back(edge(h1, tm));
+          edges_no_longer_on_intersection.push_back(edge(h2, tm));
+          continue;
+        }
       }
 
       hedge_pairs_to_stitch.push_back( std::make_pair(h1,h2_opp) );
@@ -856,26 +887,6 @@ public:
 
     // remove from the set of intersection edges if the patches on both side have
     // the same status.
-    std::vector<edge_descriptor> edges_no_longer_on_intersection;
-    BOOST_FOREACH(edge_descriptor e, intersection_edges)
-    {
-      halfedge_descriptor h = halfedge(e, tm);
-      bool patch_kept=false;
-      if (!is_border(h, tm))
-        if (patch_ids[get(fids, face(h, tm))]==PATCH_ID_KEPT)
-          patch_kept=true;
-
-      h=opposite(h,tm);
-      if (!is_border(h, tm))
-      {
-        if ( (patch_ids[get(fids, face(h, tm))]==PATCH_ID_KEPT) == patch_kept)
-          edges_no_longer_on_intersection.push_back(e);
-        continue;
-      }
-
-      if (!patch_kept)
-        edges_no_longer_on_intersection.push_back(e);
-    }
     BOOST_FOREACH(edge_descriptor e, edges_no_longer_on_intersection)
       intersection_edges.erase(e);
 
