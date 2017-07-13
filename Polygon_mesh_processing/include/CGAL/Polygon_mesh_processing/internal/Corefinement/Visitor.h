@@ -659,7 +659,7 @@ public:
             {
               //get the corresponding halfedge with vertex corresponding to node_id_of_first
               halfedge_descriptor hedge=it_node_2_hedge->second;
-              CGAL_assertion_code(halfedge_descriptor start=hedge;)
+              halfedge_descriptor start=hedge;
               while ( source(hedge,tm) !=
                       target(it_node_2_hedge_two->second,tm) )
               {

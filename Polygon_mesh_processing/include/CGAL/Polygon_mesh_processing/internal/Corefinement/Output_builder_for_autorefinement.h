@@ -178,7 +178,7 @@ public:
     std::pair<typename An_edge_per_polyline_map::iterator,bool> res=
       an_edge_per_polyline.insert(std::make_pair(make_sorted_pair(i,j),
                                                  Shared_halfedges() ) );
-
+    CGAL_USE(res);
     CGAL_assertion(res.second);
   }
 
