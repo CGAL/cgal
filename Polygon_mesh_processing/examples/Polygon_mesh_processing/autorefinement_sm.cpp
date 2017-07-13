@@ -52,7 +52,7 @@ int main(int argc, char* argv[])
   std::cout << "Number of vertices before self-intersection removal " << num_vertices(mesh) << "\n";
   if (!PMP::autorefine_and_remove_self_intersections(mesh))
     std::cout << "WARNING: Cannot remove all self-intersections\n";
-  std::cout << "Number of vertices before self-intersection removal " << num_vertices(mesh) << "\n";
+  std::cout << "Number of vertices after self-intersection removal " << num_vertices(mesh) << "\n";
 
   output.open("mesh_fixed.off");
   output << mesh;
