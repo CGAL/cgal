@@ -50,6 +50,7 @@
 #define USE_AS_DLL
 #include <lasdefinitions.hpp>
 #include <lasreader_las.hpp>
+#include <laswriter_las.hpp>
 #undef USE_AS_DLL
 
 #ifdef __GNUC__
@@ -64,12 +65,6 @@
 #include <sstream>
 #include <string>
 
-#ifdef __GNUC__
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wstrict-aliasing"
-#include <laswriter_las.hpp>
-#pragma GCC diagnostic pop
-#endif
 
 namespace CGAL {
 
