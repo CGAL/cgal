@@ -308,9 +308,9 @@ uv = graph->add_property_map<halfedge_descriptor,std::pair<float, float> >("h:uv
       points[2] = QPointF(get(uv, h).first, get(uv, h).second);
 #else
       QPointF points[3];
-      points[0] = QPointF(f->halfedge()->u(), f->halfedge()->v());
-      points[1] = QPointF(f->halfedge()->next()->u(), f->halfedge()->next()->v());
-      points[2] = QPointF(f->halfedge()->next()->next()->u(), f->halfedge()->next()->next()->v());
+      points[0] = QPointF(halfedge(f, *graph)->u(), f->halfedge()->v());
+      points[1] = QPointF(halfedge(f, *graph)->next()->u(), f->halfedge()->next()->v());
+      points[2] = QPointF(halfedge(f, *graph)->next()->next()->u(), f->halfedge()->next()->next()->v());
 #endif
 
       painter->drawPolygon(points,3);
