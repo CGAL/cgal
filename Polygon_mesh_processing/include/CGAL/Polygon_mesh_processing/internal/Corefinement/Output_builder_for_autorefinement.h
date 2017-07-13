@@ -359,11 +359,6 @@ public:
                                     is_intersection)
                                 .face_index_map(fids));
 
-    std::vector <std::size_t> patch_sizes(nb_patches, 0);
-      BOOST_FOREACH(std::size_t i, patch_ids)
-        if(i!=NID)
-          ++patch_sizes[i];
-
     // (2-a) Use the orientation around an edge to classify a patch
     boost::dynamic_bitset<> patches_to_keep(nb_patches);
     boost::dynamic_bitset<> patch_status_not_set(nb_patches);
@@ -780,16 +775,7 @@ public:
     std::cout << "patches_to_keep " <<  patches_to_keep << "\n";
     std::cout << "coplanar_patches " << coplanar_patches << "\n";
     std::cout << "patch_status_not_set " << patch_status_not_set << "\n";
-    std::cout << "Size of patches: ";
-    std::cout << "Size of patches of: ";
-    std::copy(patch_sizes.rbegin(), patch_sizes.rend(),
-              std::ostream_iterator<std::size_t>(std::cout," ") );
-    std::cout << "\n";
 #endif
-
-    typedef Patch_container<TriangleMesh,
-                            FaceIdMap,
-                            Intersection_edge_map> Patches;
 
     //collect edges to stitch before removing patches
     // we could use an_edge_per_polyline but the current version should be cheaper
@@ -860,8 +846,45 @@ public:
       put(vpm, source(h2_opp,tm), get(vpm, target(h1,tm)));
     }
 
+    // Merge patches to keep only 2: one we keep (1) and one we remove (0)
+    const std::size_t PATCH_ID_KEPT = 1;
+    BOOST_FOREACH(std::size_t& patch_id, patch_ids)
+      patch_id = patches_to_keep.test(patch_id) ? 1 : 0;
+    nb_patches=2;
+    patches_to_keep=boost::dynamic_bitset<>(2,0);
+    patches_to_keep.set(PATCH_ID_KEPT);
+
+    // remove from the set of intersection edges if the patches on both side have
+    // the same status.
+    std::vector<edge_descriptor> edges_no_longer_on_intersection;
+    BOOST_FOREACH(edge_descriptor e, intersection_edges)
+    {
+      halfedge_descriptor h = halfedge(e, tm);
+      bool patch_kept=false;
+      if (!is_border(h, tm))
+        if (patch_ids[get(fids, face(h, tm))]==PATCH_ID_KEPT)
+          patch_kept=true;
+
+      h=opposite(h,tm);
+      if (!is_border(h, tm))
+      {
+        if ( (patch_ids[get(fids, face(h, tm))]==PATCH_ID_KEPT) == patch_kept)
+          edges_no_longer_on_intersection.push_back(e);
+        continue;
+      }
+
+      if (!patch_kept)
+        edges_no_longer_on_intersection.push_back(e);
+    }
+    BOOST_FOREACH(edge_descriptor e, edges_no_longer_on_intersection)
+      intersection_edges.erase(e);
+
     //store the patch description in a container to avoid recomputing it several times
+    typedef Patch_container<TriangleMesh,
+                            FaceIdMap,
+                            Intersection_edge_map> Patches;
     Patches patches(tm, patch_ids, fids, intersection_edges, nb_patches);
+    //remove the extra patch
     remove_patches(tm, ~patches_to_keep,patches, ecm);
 
     PMP::stitch_borders(tm, hedge_pairs_to_stitch, params::vertex_point_map(vpm));
