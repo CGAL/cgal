@@ -204,16 +204,6 @@ public:
     scale_functor = traits.construct_scaled_vector_3_object();
   }
 
-  // construct proxy from a facet
-  Proxy construct_proxy(const face_descriptor &f) {
-    Proxy px;
-    px.seed = f;
-    px.normal = normal_pmap[f];
-
-    // return Proxy(f);
-    return px;
-  }
-
   // traits function object form
   // construct error functor
   ErrorMetric construct_fit_error_functor() {
@@ -569,9 +559,9 @@ private:
       (fitr != fend) && (proxies.size() < initial_px);
       ++fitr, ++index) {
       if (index % interval == 0) {
-        // a proxy is created
-        // PlaneProxy(face_descriptor)
-        proxies.push_back(appx_trait.construct_proxy(*fitr));
+        // Use proxy_fitting functor to create a proxy
+        std::vector<face_descriptor> fvec(1, *fitr);
+        proxies.push_back(proxy_fitting(fvec.begin(), fvec.end()));
       }
     }
     std::cerr << initial_px << ' ' << proxies.size() << std::endl;
@@ -593,8 +583,10 @@ private:
     proxies.clear();
     // generate 2 seeds
     face_iterator f0 = faces(mesh).first, f1 = ++f0;
-    proxies.push_back(appx_trait.construct_proxy(*f0));
-    proxies.push_back(appx_trait.construct_proxy(*f1));
+    std::vector<face_descriptor> fvec(1, *f0);
+    proxies.push_back(proxy_fitting(fvec.begin(), fvec.end()));
+    std::vector<face_descriptor> fvec2(1, *f1);
+    proxies.push_back(proxy_fitting(fvec2.begin(), fvec2.end()));
 
     const std::size_t num_steps = 5;
     while (proxies.size() < initial_px) {
@@ -714,7 +706,8 @@ private:
     }
 
     // create new proxy
-    proxies.push_back(appx_trait.construct_proxy(max_facet[max_px_idx]));
+    std::vector<face_descriptor> fvec(1, max_facet[max_px_idx]);
+    proxies.push_back(proxy_fitting(fvec.begin(), fvec.end()));
   }
 
   /**
@@ -777,7 +770,8 @@ private:
         continue;
 
       if (num_to_add[px_id] > 0) {
-        proxies.push_back(appx_trait.construct_proxy(f));
+        std::vector<face_descriptor> fvec(1, f);
+        proxies.push_back(proxy_fitting(fvec.begin(), fvec.end()));
         --num_to_add[px_id];
         ++num_inserted;
       }
