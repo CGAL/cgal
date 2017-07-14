@@ -263,13 +263,6 @@ private:
   typedef std::vector<halfedge_descriptor> ChordVector;
   typedef typename ChordVector::iterator ChordVectorIterator;
 
-  // Halfedge status.
-  enum Halfedge_status {
-    OFF_BORDER, // In the inside of a region.
-    CANDIDATE, // On the region border, waiting to be visited.
-    ON_BORDER // On proxy border, already visited.
-  };
-
 public:
   enum Initialization {
     RandomInit,
@@ -310,15 +303,12 @@ private:
   std::vector<Point> proxies_center; // The proxy center.
   std::vector<FT> proxies_area; // The proxy area.
   
-  // Mesh facet area map, for anchor position average.
-  const FacetAreaMap area_pmap;
-
-  // Mesh vertex anchor map and halfedge status map.
   // The attached anchor index of a vertex.
   std::map<vertex_descriptor, int> vertex_status_map;
   VertexStatusPMap vertex_status_pmap;
-  std::map<halfedge_descriptor, int> halfedge_status_map;
-  HalfedgeStatusPMap halfedge_status_pmap;
+
+  // Mesh facet area map, for anchor position average.
+  const FacetAreaMap area_pmap;
 
   // All anchors.
   std::vector<Anchor> anchors;
@@ -349,7 +339,6 @@ public:
     vertex_point_pmap(_vertex_point_map),
     area_pmap(_facet_area_map),
     vertex_status_pmap(vertex_status_map),
-    halfedge_status_pmap(halfedge_status_map),
     fit_error(_appx_trait.construct_fit_error_functor()),
     proxy_fitting(_appx_trait.construct_proxy_fitting_functor()) {
 
@@ -363,10 +352,6 @@ public:
     enum Vertex_status { NO_ANCHOR = -1 };
     BOOST_FOREACH(vertex_descriptor v, vertices(mesh))
       vertex_status_map.insert(std::pair<vertex_descriptor, int>(v, static_cast<int>(NO_ANCHOR)));
-
-    // tag all halfedge off proxy border
-    BOOST_FOREACH(halfedge_descriptor h, halfedges(mesh))
-      halfedge_status_map.insert(std::pair<halfedge_descriptor, int>(h, static_cast<int>(OFF_BORDER)));
   }
 
   /**
@@ -791,13 +776,12 @@ private:
    */
   template<typename FacetSegmentMap>
   void find_edges(const FacetSegmentMap &seg_pmap) {
-    // tag all proxy border halfedges as candidate
-    tag_halfedges_status(seg_pmap);
-
     // collect candidate halfedges in a set
     std::set<halfedge_descriptor> he_candidates;
     BOOST_FOREACH(halfedge_descriptor h, halfedges(mesh)) {
-      if (halfedge_status_pmap[h] == static_cast<int>(CANDIDATE))
+      if (!CGAL::is_border(h, mesh)
+        && (CGAL::is_border(opposite(h, mesh), mesh)
+          || seg_pmap[face(h, mesh)] != seg_pmap[face(opposite(h, mesh), mesh)]))
         he_candidates.insert(h);
     }
 
@@ -1117,23 +1101,6 @@ private:
       areas[seg_pmap[f]] += area_pmap[f];
     }
     proxies_area.swap(areas);
-  }
-
-  /**
-   * Tags all the region border halfedges of a given partition @a seg_pmap to CANDIDATE states.
-   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<TriangleMesh>::face_handle` as key and `std::size_t` as value type
-   * @param seg_map facet partition index
-   */
-  template<typename FacetSegmentMap>
-  void tag_halfedges_status(const FacetSegmentMap &seg_pmap) {
-    BOOST_FOREACH(halfedge_descriptor h, halfedges(mesh)) {
-      halfedge_status_pmap[h] = static_cast<int>(OFF_BORDER);
-      if (!CGAL::is_border(h, mesh)
-        && (CGAL::is_border(opposite(h, mesh), mesh)
-          || seg_pmap[face(h, mesh)] != seg_pmap[face(opposite(h, mesh), mesh)])) {
-        halfedge_status_pmap[h] = static_cast<int>(CANDIDATE);
-      }
-    }
   }
 
   /**
