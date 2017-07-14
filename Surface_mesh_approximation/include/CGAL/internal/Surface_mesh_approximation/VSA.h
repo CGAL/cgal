@@ -272,9 +272,6 @@ public:
   
   // The average positioned anchor attached to a vertex.
   struct Anchor {
-    Anchor(const vertex_descriptor &vtx_, const Point &pos_)
-    : vtx(vtx_), pos(pos_) {}
-
     vertex_descriptor vtx; // The associated vertex.
     Point pos; // The position of the anchor.
   };
@@ -311,6 +308,7 @@ private:
   const FacetAreaMap area_pmap;
 
   // All anchors.
+  std::size_t anchor_index;
   std::vector<Anchor> anchors;
 
   // All borders cycles.
@@ -421,15 +419,14 @@ public:
    */
   template<typename FacetSegmentMap>
   void extract_mesh(const FacetSegmentMap &seg_pmap, std::vector<int> &tris) {
-    compute_proxy_area(seg_pmap);
-    compute_proxy_center(seg_pmap);
-
+    anchor_index = 0;
     find_anchors(seg_pmap);
     find_edges(seg_pmap);
     add_anchors(seg_pmap);
 
     pseudo_CDT(seg_pmap, tris);
 
+    compute_anchor_position(seg_pmap);
     std::vector<Point> vtx;
     BOOST_FOREACH(const Anchor &a, anchors)
       vtx.push_back(a.pos);
@@ -752,22 +749,16 @@ private:
     anchors.clear();
 
     BOOST_FOREACH(vertex_descriptor vtx, vertices(mesh)) {
-      std::set<std::size_t> px_set;
       std::size_t border_count = 0;
 
       BOOST_FOREACH(halfedge_descriptor h, halfedges_around_target(vtx, mesh)) {
-        if (CGAL::is_border_edge(h, mesh)) {
+        if (CGAL::is_border_edge(h, mesh))
           ++border_count;
-          if (!CGAL::is_border(h, mesh))
-            px_set.insert(seg_pmap[face(h, mesh)]);
-        }
-        else if (seg_pmap[face(h, mesh)] != seg_pmap[face(opposite(h, mesh), mesh)]) {
+        else if (seg_pmap[face(h, mesh)] != seg_pmap[face(opposite(h, mesh), mesh)])
           ++border_count;
-          px_set.insert(seg_pmap[face(h, mesh)]);
-        }
       }
       if (border_count >= 3)
-        attach_anchor(vtx, px_set);
+        attach_anchor(vtx);
     }
   }
 
@@ -792,15 +783,9 @@ private:
     while (!he_candidates.empty()) {
       halfedge_descriptor he_start = *he_candidates.begin();
       walk_to_first_anchor(he_start, seg_pmap);
-      if (!is_anchor_attached(he_start)) {
-        // no anchor in this connected border, make a new anchor
-        std::set<std::size_t> px_set;
-        px_set.insert(seg_pmap[face(he_start, mesh)]);
-        halfedge_descriptor he_oppo = opposite(he_start, mesh);
-        if (!CGAL::is_border(he_oppo, mesh))
-          px_set.insert(seg_pmap[face(he_oppo, mesh)]);
-        attach_anchor(he_start, px_set);
-      }
+      // no anchor in this connected border, make a new anchor
+      if (!is_anchor_attached(he_start))
+        attach_anchor(he_start);
 
       // a new connected border
       borders.push_back(Border(he_start));
@@ -872,14 +857,7 @@ private:
           he_max = *citr;
         }
       }
-
-      std::set<std::size_t> px_set;
-      halfedge_descriptor he_oppo = opposite(he_max, mesh);
-      px_set.insert(seg_pmap[face(he_max, mesh)]);
-      if (!CGAL::is_border(he_oppo, mesh))
-        px_set.insert(seg_pmap[face(he_oppo, mesh)]);
-      attach_anchor(he_max, px_set);
-
+      attach_anchor(he_max);
       // increase border anchors by one
       bitr->num_anchors++;
     }
@@ -1233,10 +1211,7 @@ private:
 
     if (criterion > thre) {
       // subdivide at the most remote vertex
-      std::set<std::size_t> px_set;
-      px_set.insert(px_left);
-      px_set.insert(px_right);
-      attach_anchor(*he_max, px_set);
+      attach_anchor(*he_max);
 
       std::size_t num0 = subdivide_chord(chord_begin, he_max + 1, seg_pmap);
       std::size_t num1 = subdivide_chord(he_max + 1, chord_end, seg_pmap);
@@ -1269,38 +1244,75 @@ private:
   }
 
   /**
-   * Attachs an anchor to the vertex, the position is area weighted average.
+   * Attachs an anchor to the vertex.
    * @param vtx vertex
-   * @param px_set proxies around the vertex
    */
-  void attach_anchor(const vertex_descriptor &vtx, const std::set<std::size_t> &px_set) {
-    // construct an anchor from vertex and the incident proxies
-    FT avgx(0), avgy(0), avgz(0), sum_area(0);
-    const Point vtx_pt = vertex_point_pmap[vtx];
-    for (std::set<std::size_t>::iterator pxitr = px_set.begin();
-      pxitr != px_set.end(); ++pxitr) {
-      std::size_t px_idx = *pxitr;
-      Plane px_plane(proxies_center[px_idx], proxies[px_idx].normal);
-      Point proj = px_plane.projection(vtx_pt);
-      FT area = proxies_area[px_idx];
-      avgx += proj.x() * area;
-      avgy += proj.y() * area;
-      avgz += proj.z() * area;
-      sum_area += area;
-    }
-    Point pos = Point(avgx / sum_area, avgy / sum_area, avgz / sum_area);
-    vertex_status_pmap[vtx] = static_cast<int>(anchors.size());
-    anchors.push_back(Anchor(vtx, pos));
+  void attach_anchor(const vertex_descriptor &vtx) {
+    vertex_status_pmap[vtx] = static_cast<int>(anchor_index++);
   }
 
   /**
    * Attachs an anchor to the target vertex of the halfedge.
    * @param he halfedge
-   * @param px_set proxies around the target vertex
    */
-  void attach_anchor(const halfedge_descriptor &he, const std::set<std::size_t> &px_set) {
+  void attach_anchor(const halfedge_descriptor &he) {
     vertex_descriptor vtx = target(he, mesh);
-    attach_anchor(vtx, px_set);
+    attach_anchor(vtx);
+  }
+
+  /**
+   * Calculate the anchor positions.
+   * @param 
+   */
+  template<typename FacetSegmentMap>
+  void compute_anchor_position(const FacetSegmentMap &seg_pmap) {
+    compute_proxy_area(seg_pmap);
+    compute_proxy_center(seg_pmap);
+
+    anchors = std::vector<Anchor>(anchor_index);
+    BOOST_FOREACH(vertex_descriptor v, vertices(mesh)) {
+      if (is_anchor_attached(v, vertex_status_pmap)) {
+        // construct an anchor from vertex and the incident proxies
+        std::set<std::size_t> px_set;
+        BOOST_FOREACH(halfedge_descriptor h, halfedges_around_target(v, mesh)) {
+          if (!CGAL::is_border(h, mesh))
+            px_set.insert(seg_pmap[face(h, mesh)]);
+        }
+
+        // construct an anchor from vertex and the incident proxies
+        FT avgx(0), avgy(0), avgz(0), sum_area(0);
+        const Point vtx_pt = vertex_point_pmap[v];
+        for (std::set<std::size_t>::iterator pxitr = px_set.begin();
+          pxitr != px_set.end(); ++pxitr) {
+          std::size_t px_idx = *pxitr;
+          Plane px_plane(proxies_center[px_idx], proxies[px_idx].normal);
+          Point proj = px_plane.projection(vtx_pt);
+          FT area = proxies_area[px_idx];
+          avgx += proj.x() * area;
+          avgy += proj.y() * area;
+          avgz += proj.z() * area;
+          sum_area += area;
+        }
+        Point pos = Point(avgx / sum_area, avgy / sum_area, avgz / sum_area);
+        std::size_t aidx = vertex_status_pmap[v];
+        anchors[aidx].vtx = v;
+        anchors[aidx].pos = pos;
+
+        // FT sum_area(0);
+        // Vector pos = CGAL::NULL_VECTOR;
+        // const Point vtx_pt = vertex_point_pmap[v];
+        // BOOST_FOREACH(const std::size_t &px_idx, px_set) {
+        //   Vector proj = vector_functor(CGAL::ORIGIN, proxies[px_idx].fit_plane.projection(vtx_pt));
+        //   FT area = proxies_area[px_idx];
+        //   pos = sum_functor(pos, scale_functor(proj, area));
+        //   sum_area += area;
+        // }
+        // pos = scale_functor(pos, FT(1) / sum_area);
+        // std::size_t aidx = vertex_status_pmap[v];
+        // anchors[aidx].vtx = v;
+        // anchors[aidx].pos = Point(CGAL::ORIGIN) + pos;
+      }
+    }
   }
 }; // end class VSA
 } // end namespace internal
