@@ -26,7 +26,7 @@
 namespace CGAL
 {
 
-template<typename Polyhedron,
+template<typename TriangleMesh,
   typename GeomTraits>
   struct PlaneProxy
 {
@@ -34,7 +34,7 @@ template<typename Polyhedron,
   typedef typename GeomTraits::Point_3 Point;
   typedef typename GeomTraits::Vector_3 Vector;
   typedef typename GeomTraits::Plane_3 Plane;
-  typedef typename boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
 
   // constructor
   // PlaneProxy(const face_descriptor &f)
@@ -251,10 +251,10 @@ namespace internal
 /**
  * @brief Main class for Variational Shape Approximation algorithm.
  *
- * @tparam Polyhedron a CGAL polyhedron
+ * @tparam TriangleMesh a CGAL TriangleMesh
  * @tparam GeomTraits a model of ApproximationGeomTraits
  */
-template <typename Polyhedron,
+template <typename TriangleMesh,
   typename ApproximationTrait,
   typename FacetAreaMap,
   typename VertexPointPmap>
@@ -276,14 +276,14 @@ private:
   typedef typename GeomTraits::Construct_sum_of_vectors_3 Construct_sum_of_vectors_3;
   typedef typename GeomTraits::Compute_scalar_product_3 Compute_scalar_product_3;
 
-  typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor halfedge_descriptor;
-  typedef typename boost::graph_traits<Polyhedron>::halfedge_iterator halfedge_iterator;
-  typedef typename boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
-  typedef typename boost::graph_traits<Polyhedron>::face_iterator face_iterator;
-  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
-  typedef typename boost::graph_traits<Polyhedron>::vertex_iterator vertex_iterator;
-  typedef typename boost::graph_traits<Polyhedron>::edge_descriptor edge_descriptor;
-  typedef typename boost::graph_traits<Polyhedron>::edge_iterator edge_iterator;
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_iterator halfedge_iterator;
+  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::face_iterator face_iterator;
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_iterator vertex_iterator;
+  typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor edge_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::edge_iterator edge_iterator;
 
   typedef boost::associative_property_map<std::map<vertex_descriptor, int> > VertexStatusPMap;
   typedef boost::associative_property_map<std::map<halfedge_descriptor, int> > HalfedgeStatusPMap;
@@ -326,7 +326,7 @@ public:
 
   // member variables
 private:
-  const Polyhedron &mesh;
+  const TriangleMesh &mesh;
   const VertexPointPmap &vertex_point_pmap;
   Construct_vector_3 vector_functor;
   Construct_scaled_vector_3 scale_functor;
@@ -367,12 +367,12 @@ private:
 public:
   /**
    * Initialize and prepare for the approximation.
-   * @pre @a polyhedron.is_pure_triangle()
-   * @param _mesh `CGAL Polyhedron` on which approximation operate.
+   * @pre @a TriangleMesh.is_pure_triangle()
+   * @param _mesh `CGAL TriangleMesh` on which approximation operate.
    * @param _vertex_point_map vertex point map of the input mesh.
    * @param _traits geometric trait object.
    */
-  VSA(const Polyhedron &_mesh,
+  VSA(const TriangleMesh &_mesh,
     const ApproximationTrait &_appx_trait,
     const VertexPointPmap &_vertex_point_map,
     const FacetAreaMap &_facet_area_map)
@@ -403,7 +403,7 @@ public:
 
   /**
    * Partitions the mesh into the designated number of regions, and stores them in @a seg_map.
-   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<Polyhedron>::face_handle` as key and `std::size_t` as value type
+   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<TriangleMesh>::face_handle` as key and `std::size_t` as value type
    * @param number_of_segments number of designated proxies
    * @param number_of_iterations number of iterations when fitting the proxy
    * @param[out] seg_map facet partition index
@@ -420,7 +420,7 @@ public:
 
   /**
    * Partitions the mesh incrementally into the designated number of regions, and stores them in @a seg_map.
-   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<Polyhedron>::face_handle` as key and `std::size_t` as value type
+   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<TriangleMesh>::face_handle` as key and `std::size_t` as value type
    * @param number_of_segments number of designated proxies
    * @param number_of_iterations number of iterations when fitting the proxy
    * @param[out] seg_map facet partition index
@@ -446,7 +446,7 @@ public:
 
   /**
    * Partitions the mesh into the designated number of regions, and stores them in @a seg_map.
-   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<Polyhedron>::face_handle` as key and `std::size_t` as value type
+   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<TriangleMesh>::face_handle` as key and `std::size_t` as value type
    * @param number_of_segments number of designated proxies
    * @param number_of_iterations number of iterations when fitting the proxy
    * @param[out] seg_map facet partition index
@@ -462,7 +462,7 @@ public:
 
   /**
    * Extracts the approximated triangle mesh from a partition @a seg_pmap, and stores the triangles in @a tris.
-   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<Polyhedron>::face_handle` as key and `std::size_t` as value type
+   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<TriangleMesh>::face_handle` as key and `std::size_t` as value type
    * @param seg_map facet partition index
    * @param[out] tris indexed triangles
    */
@@ -530,7 +530,7 @@ public:
 
   /**
    * Collect the partition @a seg_pmap approximated borders.
-   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<Polyhedron>::face_handle` as key and `std::size_t` as value type
+   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<TriangleMesh>::face_handle` as key and `std::size_t` as value type
    * @param seg_map facet partition index
    * @return anchor indexes of each border
    */
@@ -578,7 +578,7 @@ private:
 
   /**
    * Hierarchical initialize proxies.
-   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<Polyhedron>::face_handle` as key and `std::size_t` as value type
+   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<TriangleMesh>::face_handle` as key and `std::size_t` as value type
    * @param initial_px number of proxies
    * @param[out] seg_map facet partition index
    */
@@ -612,7 +612,7 @@ private:
 
   /**
    * Propagates the proxy seed facets and floods the whole mesh to minimize the fitting error.
-   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<Polyhedron>::face_handle` as key and `std::size_t` as value type
+   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<TriangleMesh>::face_handle` as key and `std::size_t` as value type
    * @param[out] seg_map facet partition index
    */
   template<typename FacetSegmentMap>
@@ -636,7 +636,7 @@ private:
       seg_pmap[f] = i;
 
       BOOST_FOREACH(face_descriptor fadj, faces_around_face(halfedge(f, mesh), mesh)) {
-        if (fadj != boost::graph_traits<Polyhedron>::null_face()
+        if (fadj != boost::graph_traits<TriangleMesh>::null_face()
             && seg_pmap[fadj] == CGAL_NOT_TAGGED_ID) {
           FacetToIntegrate cand;
           cand.f = fadj;
@@ -653,7 +653,7 @@ private:
       if (seg_pmap[c.f] == CGAL_NOT_TAGGED_ID) {
         seg_pmap[c.f] = c.i;
         BOOST_FOREACH(face_descriptor fadj, faces_around_face(halfedge(c.f, mesh), mesh)) {
-          if (fadj != boost::graph_traits<Polyhedron>::null_face()
+          if (fadj != boost::graph_traits<TriangleMesh>::null_face()
             && seg_pmap[fadj] == CGAL_NOT_TAGGED_ID) {
             FacetToIntegrate cand;
             cand.f = fadj;
@@ -668,7 +668,7 @@ private:
 
   /**
    * Calculates and updates the best fitting proxies of a given partition @a seg_pmap.
-   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<Polyhedron>::face_handle` as key and `std::size_t` as value type
+   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<TriangleMesh>::face_handle` as key and `std::size_t` as value type
    * @param seg_map facet partition index
    */
   template <typename FacetSegmentMap>
@@ -685,7 +685,7 @@ private:
 
   /**
    * Inserts a proxy of a given partition @a seg_pmap at the furthest facet of the region with the maximum fitting error.
-   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<Polyhedron>::face_handle` as key and `std::size_t` as value type
+   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<TriangleMesh>::face_handle` as key and `std::size_t` as value type
    * @param seg_map facet partition index
    */
   template <typename FacetSegmentMap>
@@ -722,7 +722,7 @@ private:
    * Add proxies by diffusing fitting error into current partitions.
    * Each partition is added with the number of proxies in proportional to its fitting error.
    * Note that the number of inserted proxies doesn't necessarily equal the requested number.
-   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<Polyhedron>::face_handle` as key and `std::size_t` as value type
+   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<TriangleMesh>::face_handle` as key and `std::size_t` as value type
    * @param num_proxies_to_be_added added number of proxies
    * @param seg_map facet partition index
    * @return inserted number of proxies
@@ -791,7 +791,7 @@ private:
 
   /**
    * Finds the anchors of a given partition @a seg_pmap.
-   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<Polyhedron>::face_handle` as key and `std::size_t` as value type
+   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<TriangleMesh>::face_handle` as key and `std::size_t` as value type
    * @param seg_map facet partition index
    */
   template<typename FacetSegmentMap>
@@ -820,7 +820,7 @@ private:
 
   /**
    * Finds and approximates the edges connecting the anchors of a given partition @a seg_pmap.
-   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<Polyhedron>::face_handle` as key and `std::size_t` as value type
+   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<TriangleMesh>::face_handle` as key and `std::size_t` as value type
    * @param seg_map facet partition index
    */
   template<typename FacetSegmentMap>
@@ -868,7 +868,7 @@ private:
 
   /**
    * Adds anchors to the border cycles with only 2 anchors of a given partition @a seg_pmap.
-   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<Polyhedron>::face_handle` as key and `std::size_t` as value type
+   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<TriangleMesh>::face_handle` as key and `std::size_t` as value type
    * @param seg_map facet partition index
    */
   template<typename FacetSegmentMap>
@@ -935,7 +935,7 @@ private:
 
   /**
    * Runs the pseudo Constrained Delaunay Triangulation at each region of a given partition @a seg_pmap, and stores the extracted indexed triangles in @a tris.
-   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<Polyhedron>::face_handle` as key and `std::size_t` as value type
+   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<TriangleMesh>::face_handle` as key and `std::size_t` as value type
    * @param seg_map facet partition index
    * @param tris extracted tirangles, index of anchors
    */
@@ -963,7 +963,7 @@ private:
     VertexMap vmap;
     ToSGVertexMap to_sgv_map(vmap);
 
-    // mapping the Polyhedron mesh into a SubGraph
+    // mapping the TriangleMesh mesh into a SubGraph
     SubGraph gmain;
     VertexIndex1Map global_vanchor_map = get(boost::vertex_index1, gmain);
     VertexIndex2Map global_vtag_map = get(boost::vertex_index2, gmain);
@@ -986,7 +986,7 @@ private:
     BOOST_FOREACH(vertex_descriptor v, vertices(mesh)) {
       std::set<std::size_t> px_set;
       BOOST_FOREACH(face_descriptor f, faces_around_target(halfedge(v, mesh), mesh)) {
-        if (f != boost::graph_traits<Polyhedron>::null_face())
+        if (f != boost::graph_traits<TriangleMesh>::null_face())
           px_set.insert(seg_pmap[f]);
       }
       BOOST_FOREACH(std::size_t p, px_set)
@@ -1078,7 +1078,7 @@ private:
 
   /**
    * Computes fitting error of a given partition @a seg_pmap.
-   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<Polyhedron>::face_handle` as key and `std::size_t` as value type
+   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<TriangleMesh>::face_handle` as key and `std::size_t` as value type
    * @param seg_map facet partition index
    * @return total fitting error
    */
@@ -1092,7 +1092,7 @@ private:
 
   /**
    * Computes fitting error of a given partition @a seg_pmap.
-   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<Polyhedron>::face_handle` as key and `std::size_t` as value type
+   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<TriangleMesh>::face_handle` as key and `std::size_t` as value type
    * @param seg_map facet partition index
    * @param px_error vector of error of each proxy
    * @return total fitting error
@@ -1111,7 +1111,7 @@ private:
 
   /**
    * Computes and updates the proxy centers of a given partition @a seg_pmap.
-   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<Polyhedron>::face_handle` as key and `std::size_t` as value type
+   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<TriangleMesh>::face_handle` as key and `std::size_t` as value type
    * @param seg_map facet partition index
    */
   template<typename FacetSegmentMap>
@@ -1141,7 +1141,7 @@ private:
 
   /**
    * Computes and updates the proxy areas of a given partition @a seg_pmap.
-   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<Polyhedron>::face_handle` as key and `std::size_t` as value type
+   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<TriangleMesh>::face_handle` as key and `std::size_t` as value type
    * @param seg_map facet partition index
    */
   template<typename FacetSegmentMap>
@@ -1155,7 +1155,7 @@ private:
 
   /**
    * Tags all the region border halfedges of a given partition @a seg_pmap to CANDIDATE states.
-   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<Polyhedron>::face_handle` as key and `std::size_t` as value type
+   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<TriangleMesh>::face_handle` as key and `std::size_t` as value type
    * @param seg_map facet partition index
    */
   template<typename FacetSegmentMap>
@@ -1172,7 +1172,7 @@ private:
 
   /**
    * Walks along the region border to the first halfedge pointing to a vertex associated with an anchor of a given partition @a seg_pmap.
-   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<Polyhedron>::face_handle` as key and `std::size_t` as value type
+   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<TriangleMesh>::face_handle` as key and `std::size_t` as value type
    * @param[in/out] he_start region border halfedge
    * @param seg_map facet partition index
    */
@@ -1189,7 +1189,7 @@ private:
 
   /**
    * Walks along the region border to the next anchor and records the path as @a chord of a given partition @a seg_pmap.
-   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<Polyhedron>::face_handle` as key and `std::size_t` as value type
+   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<TriangleMesh>::face_handle` as key and `std::size_t` as value type
    * @param[in/out] he_start starting region border halfedge pointing to a vertex associated with an anchor
    * @param[out] chord recorded path chord
    * @param seg_map facet partition index
@@ -1207,7 +1207,7 @@ private:
 
   /**
    * Walks to next border halfedge of a given partition @a seg_pmap.
-   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<Polyhedron>::face_handle` as key and `std::size_t` as value type
+   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<TriangleMesh>::face_handle` as key and `std::size_t` as value type
    * @param[in/out] he_start region border halfedge
    * @param seg_map facet partition index
    */
@@ -1224,7 +1224,7 @@ private:
 
   /**
    * Subdivides a chord recursively in range [@a chord_begin, @a chord_end) of a given partition @a seg_pmap.
-   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<Polyhedron>::face_handle` as key and `std::size_t` as value type
+   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<TriangleMesh>::face_handle` as key and `std::size_t` as value type
    * @param chord_begin begin iterator of the chord
    * @param chord_end end iterator of the chord
    * @param seg_map facet partition index
@@ -1322,7 +1322,7 @@ private:
 
   /**
    * Check if a vertex is attached with an anchor.
-   * @tparam VertexAnchorIndexMap `WritablePropertyMap` with `boost::graph_traights<Polyhedron>::vertex_descriptor` as key and `std::size_t` as value type
+   * @tparam VertexAnchorIndexMap `WritablePropertyMap` with `boost::graph_traights<TriangleMesh>::vertex_descriptor` as key and `std::size_t` as value type
    * @param v vertex
    * @param vertex_anchor_map vertex anchor index map
    */

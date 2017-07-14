@@ -25,7 +25,7 @@ namespace CGAL
  * @tparam GeomTraits geometric kernel
 
  * @param init select seed initialization
- * @param mesh a triangle mesh
+ * @param tm a triangle mesh
  * @param number_of_segments target number of approximation patches
  * @param number_of_iterations number of fitting iterations
  * @param segment_ids facet proxy patch id property map
@@ -46,7 +46,7 @@ template<typename TriangleMesh,
   typename GeomTraits>
   void vsa_mesh_approximation(
     const int init,
-    const TriangleMesh &mesh,
+    const TriangleMesh &tm,
     const std::size_t number_of_segments,
     const std::size_t number_of_iterations,
     SegmentPropertyMap segment_ids,
@@ -56,23 +56,23 @@ template<typename TriangleMesh,
     AnchorVertexContainer &vtx,
     BoundaryContainer &bdrs,
     GeomTraits traits) {
-  // CGAL_precondition(is_pure_triangle(mesh));
+  // CGAL_precondition(is_pure_triangle(tm));
 
   typedef typename GeomTraits::FT FT;
   typedef typename GeomTraits::Vector_3 Vector;
-  typedef typename boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
-  typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor halfedge_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
   typedef boost::associative_property_map<std::map<face_descriptor, Vector> > FacetNormalMap;
   typedef boost::associative_property_map<std::map<face_descriptor, FT> > FacetAreaMap;
 
   // construct facet normal & area map
   std::map<face_descriptor, Vector> facet_normals;
   std::map<face_descriptor, FT> facet_areas;
-  BOOST_FOREACH(face_descriptor f, faces(mesh)) {
-    const halfedge_descriptor he = halfedge(f, mesh);
-    const Point p1 = get(ppmap, source(he, mesh));
-    const Point p2 = get(ppmap, target(he, mesh));
-    const Point p3 = get(ppmap, target(next(he, mesh), mesh));
+  BOOST_FOREACH(face_descriptor f, faces(tm)) {
+    const halfedge_descriptor he = halfedge(f, tm);
+    const Point p1 = get(ppmap, source(he, tm));
+    const Point p2 = get(ppmap, target(he, tm));
+    const Point p3 = get(ppmap, target(next(he, tm), tm));
     Vector normal = CGAL::unit_normal(p1, p2, p3);
     // normal = scale_functor(normal,
     //   FT(1.0 / std::sqrt(CGAL::to_double(normal.squared_length()))));
@@ -96,7 +96,7 @@ template<typename TriangleMesh,
     FacetAreaMap,
     PointPropertyMap> VSA;
 
-  VSA algorithm(mesh, ApproximationTrait(normal_pmap, area_pmap), ppmap, area_pmap);
+  VSA algorithm(tm, ApproximationTrait(normal_pmap, area_pmap), ppmap, area_pmap);
 
   switch (init) {
     case VSA::RandomInit:
