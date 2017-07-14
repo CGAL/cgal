@@ -36,16 +36,17 @@ template<typename TriangleMesh,
   typedef typename GeomTraits::Plane_3 Plane;
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
 
-  // constructor
-  // PlaneProxy(const face_descriptor &f)
-  //   : seed(f) {
-  //   // normal = CGAL::unit_normal(); // needs normal map, vertex point map
-  //   // let normal and fit_plane default construct
-  // }
+  // DefaultConstructible
 
-  // copy constructable
-  // PlaneProxy(const PlaneProxy &other)
-  //   : seed(other.seed), normal(other.normal), fit_plane(other.fit_plane) {
+  // Destructible
+
+  // CopyConstructible
+
+  // CopyAssignable
+  // PlaneProxy &operator=(const PlaneProxy &other) {
+  //   seed = other.seed;
+  //   normal = fit_plane.normal;
+  //   fit_plane = other.fit_plane;
   // }
 
   // const face_descriptor &seed() const {
@@ -56,13 +57,6 @@ template<typename TriangleMesh,
   // }
   // const Plane &plane() const {
   //   return fit_plane;
-  // }
-
-  // assignable
-  // PlaneProxy &operator=(const PlaneProxy &other) {
-  //   seed = other.seed;
-  //   normal = fit_plane.normal;
-  //   fit_plane = other.fit_plane;
   // }
 
   face_descriptor seed;
@@ -214,19 +208,6 @@ public:
   ProxyFitting construct_proxy_fitting_functor() {
     return ProxyFitting(normal_pmap, area_pmap);
   }
-
-  // traits function form
-  // FT fit_error(const face_descriptor &f, const Proxy &p) {
-  //   Vector v = sum_functor(normal_pmap[f], scale_functor(px.normal, FT(-1)));
-  //   return area_pmap[f] * scalar_product_functor(v, v);
-  // }
-
-  // template<typename FacetIterator>
-  // Proxy proxy_fitting(const FacetIterator beg, const FacetIterator end) {
-  //   // Fitting facets goes here
-  //   Proxy px
-  //   return px;
-  // }
 
 private:
   const FacetNormalMap normal_pmap;
