@@ -122,7 +122,7 @@ template<typename PlaneProxy,
 
   // Fit and construct a proxy
   template<typename FacetIterator>
-  PlaneProxy operator()(FacetIterator beg, FacetIterator end) {
+  PlaneProxy operator()(const FacetIterator beg, const FacetIterator end) {
     CGAL_assertion(beg != end);
 
     // fitting normal
@@ -200,12 +200,12 @@ public:
 
   // traits function object form
   // construct error functor
-  ErrorMetric construct_fit_error_functor() {
+  ErrorMetric construct_fit_error_functor() const {
     return ErrorMetric(normal_pmap, area_pmap);
   }
 
   // construct proxy fitting functor
-  ProxyFitting construct_proxy_fitting_functor() {
+  ProxyFitting construct_proxy_fitting_functor() const {
     return ProxyFitting(normal_pmap, area_pmap);
   }
 
@@ -235,7 +235,7 @@ template <typename TriangleMesh,
   // type definitions
 private:
   typedef typename ApproximationTrait::GeomTraits GeomTraits;
-  typedef typename ApproximationTrait::Proxy PlaneProxy;
+  typedef typename ApproximationTrait::Proxy Proxy;
   typedef typename ApproximationTrait::ErrorMetric ErrorMetric;
   typedef typename ApproximationTrait::ProxyFitting ProxyFitting;
 
@@ -306,7 +306,7 @@ private:
   Compute_scalar_product_3 scalar_product_functor;
 
   // Proxy and its auxiliary information.
-  std::vector<PlaneProxy> proxies;
+  std::vector<Proxy> proxies;
   std::vector<Point> proxies_center; // The proxy center.
   std::vector<FT> proxies_area; // The proxy area.
   
@@ -325,9 +325,6 @@ private:
 
   // All borders cycles.
   std::vector<Border> borders;
-
-  // The approximation trait.
-  ApproximationTrait appx_trait;
 
   // The error metric.
   ErrorMetric fit_error;
@@ -349,13 +346,12 @@ public:
     const VertexPointPmap &_vertex_point_map,
     const FacetAreaMap &_facet_area_map)
     : mesh(_mesh),
-    appx_trait(_appx_trait),
     vertex_point_pmap(_vertex_point_map),
     area_pmap(_facet_area_map),
     vertex_status_pmap(vertex_status_map),
     halfedge_status_pmap(halfedge_status_map),
-    fit_error(appx_trait.construct_fit_error_functor()),
-    proxy_fitting(appx_trait.construct_proxy_fitting_functor()) {
+    fit_error(_appx_trait.construct_fit_error_functor()),
+    proxy_fitting(_appx_trait.construct_proxy_fitting_functor()) {
 
     GeomTraits traits;
     vector_functor = traits.construct_vector_3_object();
