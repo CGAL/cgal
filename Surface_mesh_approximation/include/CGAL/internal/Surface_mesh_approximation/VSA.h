@@ -516,11 +516,13 @@ private:
     const std::size_t interval = num_faces(mesh) / initial_px;
     std::size_t index = 0;
     BOOST_FOREACH(face_descriptor f, faces(mesh)) {
-      if ((++index) % interval == 0) {
+      if ((index++) % interval == 0) {
         // Use proxy_fitting functor to create a proxy
         std::vector<face_descriptor> fvec(1, f);
         proxies.push_back(proxy_fitting(fvec.begin(), fvec.end()));
       }
+      if (proxies.size() >= initial_px)
+        break;
     }
     std::cerr << initial_px << ' ' << proxies.size() << std::endl;
   }
