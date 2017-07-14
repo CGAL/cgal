@@ -295,10 +295,8 @@ private:
   Construct_sum_of_vectors_3 sum_functor;
   Compute_scalar_product_3 scalar_product_functor;
 
-  // Proxy and its auxiliary information.
+  // Proxy.
   std::vector<Proxy> proxies;
-  std::vector<Point> proxies_center; // The proxy center.
-  std::vector<FT> proxies_area; // The proxy area.
   
   // The attached anchor index of a vertex.
   std::map<vertex_descriptor, int> vertex_status_map;
@@ -1043,9 +1041,10 @@ private:
    * Computes and updates the proxy centers of a given partition @a seg_pmap.
    * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<TriangleMesh>::face_handle` as key and `std::size_t` as value type
    * @param seg_map facet partition index
+   * @param proxies_center proxy centers
    */
   template<typename FacetSegmentMap>
-  void compute_proxy_center(const FacetSegmentMap &seg_pmap) {
+  void compute_proxy_center(const FacetSegmentMap &seg_pmap, std::vector<Point> &proxies_center) {
     proxies_center = std::vector<Point>(proxies.size());
 
     std::vector<Vector> centers(proxies.size(), CGAL::NULL_VECTOR);
@@ -1073,9 +1072,10 @@ private:
    * Computes and updates the proxy areas of a given partition @a seg_pmap.
    * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<TriangleMesh>::face_handle` as key and `std::size_t` as value type
    * @param seg_map facet partition index
+   * @param proxies_area proxy areas
    */
   template<typename FacetSegmentMap>
-  void compute_proxy_area(const FacetSegmentMap &seg_pmap) {
+  void compute_proxy_area(const FacetSegmentMap &seg_pmap, std::vector<FT> &proxies_area) {
     std::vector<FT> areas(proxies.size(), FT(0));
     BOOST_FOREACH(face_descriptor f, faces(mesh)) {
       areas[seg_pmap[f]] += area_pmap[f];
@@ -1266,8 +1266,10 @@ private:
    */
   template<typename FacetSegmentMap>
   void compute_anchor_position(const FacetSegmentMap &seg_pmap) {
-    compute_proxy_area(seg_pmap);
-    compute_proxy_center(seg_pmap);
+    std::vector<Point> proxies_center; // The proxy center.
+    std::vector<FT> proxies_area; // The proxy area.
+    compute_proxy_area(seg_pmap, proxies_area);
+    compute_proxy_center(seg_pmap, proxies_center);
 
     anchors = std::vector<Anchor>(anchor_index);
     BOOST_FOREACH(vertex_descriptor v, vertices(mesh)) {
