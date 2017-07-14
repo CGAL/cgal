@@ -126,11 +126,12 @@ template<typename PlaneProxy,
   typedef typename GeomTraits::Construct_sum_of_vectors_3 Construct_sum_of_vectors_3;
   typedef typename GeomTraits::Compute_scalar_product_3 Compute_scalar_product_3;
 
+  // Fit and construct a proxy
   template<typename FacetIterator>
-  FT operator()(FacetIterator beg, FacetIterator end, PlaneProxy &px) {
+  PlaneProxy operator()(FacetIterator beg, FacetIterator end) {
     CGAL_assertion(beg != end);
 
-    // update proxy normal
+    // fitting normal
     FT area(0);
     Vector norm = CGAL::NULL_VECTOR;
     for (FacetIterator fitr = beg; fitr != end; ++fitr) {
@@ -140,25 +141,25 @@ template<typename PlaneProxy,
     }
     norm = scale_functor(norm, FT(1.0 / CGAL::to_double(area)));
     norm = scale_functor(norm, FT(1.0 / std::sqrt(CGAL::to_double(norm.squared_length()))));
+
+    // construct proxy
+    PlaneProxy px;
     px.normal = norm;
 
     // update seed
-    FT err_min = error_functor(*beg, px);
     px.seed = *beg;
-    FT sum(0);
+    FT err_min = error_functor(*beg, px);
     for (FacetIterator fitr = beg; fitr != end; ++fitr) {
       FT err = error_functor(*fitr, px);
       if (err < err_min) {
         err_min = err;
         px.seed = *fitr;
       }
-      sum += err;
     }
-
-    return sum;
-
     // more update? this is gonna be less and less generic
     // fit is specific to each kind of proxy
+
+    return px;
   }
 
   const FacetNormalMap normal_pmap;
@@ -677,10 +678,8 @@ private:
     BOOST_FOREACH(face_descriptor f, faces(mesh))
       px_facets[seg_pmap[f]].push_back(f);
 
-    // TODO: add update()/fitting() requirement to Proxy concept maybe better
-    for (std::size_t i = 0; i < proxies.size(); ++i) {
-      proxy_fitting(px_facets[i].begin(), px_facets[i].end(), proxies[i]);
-    }
+    for (std::size_t i = 0; i < proxies.size(); ++i)
+      proxies[i] = proxy_fitting(px_facets[i].begin(), px_facets[i].end());
   }
 
   /**
