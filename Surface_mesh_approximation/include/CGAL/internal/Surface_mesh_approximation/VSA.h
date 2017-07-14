@@ -133,7 +133,7 @@ template<typename PlaneProxy,
       norm = sum_functor(norm,
         scale_functor(normal_pmap[*fitr], area_pmap[*fitr]));
     }
-    norm = scale_functor(norm, FT(1.0 / CGAL::to_double(area)));
+    // norm = scale_functor(norm, FT(1.0 / CGAL::to_double(area)));
     norm = scale_functor(norm, FT(1.0 / std::sqrt(CGAL::to_double(norm.squared_length()))));
 
     // construct proxy
@@ -528,16 +528,12 @@ private:
    */
   void random_seed(const std::size_t initial_px) {
     proxies.clear();
-    std::size_t number_of_faces = num_faces(mesh);
-    std::size_t interval = number_of_faces / initial_px;
-    face_iterator fitr, fend;
+    const std::size_t interval = num_faces(mesh) / initial_px;
     std::size_t index = 0;
-    for (boost::tie(fitr, fend) = faces(mesh);
-      (fitr != fend) && (proxies.size() < initial_px);
-      ++fitr, ++index) {
-      if (index % interval == 0) {
+    BOOST_FOREACH(face_descriptor f, faces(mesh)) {
+      if ((++index) % interval == 0) {
         // Use proxy_fitting functor to create a proxy
-        std::vector<face_descriptor> fvec(1, *fitr);
+        std::vector<face_descriptor> fvec(1, f);
         proxies.push_back(proxy_fitting(fvec.begin(), fvec.end()));
       }
     }
