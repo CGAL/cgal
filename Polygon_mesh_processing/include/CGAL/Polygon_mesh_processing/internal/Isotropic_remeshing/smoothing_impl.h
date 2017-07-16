@@ -5,6 +5,7 @@
 #include <fstream>
 #include <math.h>
 
+#include <CGAL/Kernel/global_functions_3.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 
 #include <CGAL/AABB_tree.h>

@@ -140,7 +140,12 @@ void curvature_flow(PolygonMesh& pmesh, const NamedParameters& np)
     VertexPointMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
                                  get_const_property_map(CGAL::vertex_point, pmesh));
 
-    internal::Curvature_flow<PolygonMesh, VertexPointMap> curvature_remesher(pmesh, vpmap);
+    // GeomTraits
+    typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GeomTraits;
+
+    internal::Curvature_flow<PolygonMesh, VertexPointMap, GeomTraits> curvature_remesher(pmesh, vpmap);
+    curvature_remesher.curvature_smoothing();
+
 
 }
 
