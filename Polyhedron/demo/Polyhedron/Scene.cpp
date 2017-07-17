@@ -45,8 +45,8 @@ Scene::Scene(QObject* parent)
                                       double, double, double)),
             this, SLOT(setSelectionRay(double, double, double,
                                        double, double, double)));
-    connect(this, SIGNAL(itemAboutToBeDestroyed(CGAL::Three::Scene_item*)),
-            this, SLOT(s_itemAboutToBeDestroyed(CGAL::Three::Scene_item*)));
+    //connect(this, SIGNAL(itemAboutToBeDestroyed(CGAL::Three::Scene_item*)),
+    //        this, SLOT(s_itemAboutToBeDestroyed(CGAL::Three::Scene_item*)));
     if(ms_splatting==0)
         ms_splatting  = new GlSplat::SplatRenderer();
     ms_splattingCounter++;
@@ -149,33 +149,33 @@ Scene::erase(Scene::Item_id index)
      && item->parentGroup()->isChildLocked(item))
     return -1;
   //clears the Scene_view
-    clear();
-    index_map.clear();
-    if(index < 0 || index >= m_entries.size())
-        return -1;
+  clear();
+  index_map.clear();
+  if(index < 0 || index >= m_entries.size())
+    return -1;
   if(item->parentGroup())
     item->parentGroup()->removeChild(item);
 
   //removes the item from all groups that contain it
   m_entries.removeAll(item);
   Q_EMIT itemAboutToBeDestroyed(item);
-    item->deleteLater();
-    selected_item = -1;
-    //re-creates the Scene_view
-    Q_FOREACH(Scene_item* item, m_entries)
-    {
-        organize_items(item, invisibleRootItem(), 0);
-    }
-    QStandardItemModel::beginResetModel();
-    Q_EMIT updated();
-    QStandardItemModel::endResetModel();
-    Q_EMIT restoreCollapsedState();
-    if(--index >= 0)
-      return index;
-    if(!m_entries.isEmpty())
-      return 0;
-    return -1;
-
+  item->aboutToBeDestroyed();
+  item->deleteLater();
+  selected_item = -1;
+  //re-creates the Scene_view
+  Q_FOREACH(Scene_item* item, m_entries)
+  {
+    organize_items(item, invisibleRootItem(), 0);
+  }
+  QStandardItemModel::beginResetModel();
+  Q_EMIT updated();
+  QStandardItemModel::endResetModel();
+  Q_EMIT restoreCollapsedState();
+  if(--index >= 0)
+    return index;
+  if(!m_entries.isEmpty())
+    return 0;
+  return -1;
 }
 
 int
@@ -200,10 +200,11 @@ Scene::erase(QList<int> indices)
   }
 
   Q_FOREACH(Scene_item* item, to_be_removed) {
-      if(item->parentGroup())
-        item->parentGroup()->removeChild(item);
-      m_entries.removeAll(item);
+    if(item->parentGroup())
+      item->parentGroup()->removeChild(item);
+    m_entries.removeAll(item);
     Q_EMIT itemAboutToBeDestroyed(item);
+    item->aboutToBeDestroyed();
     item->deleteLater();
   }
   clear();
