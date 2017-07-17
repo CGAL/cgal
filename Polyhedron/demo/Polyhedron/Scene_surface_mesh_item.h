@@ -6,6 +6,7 @@
 #define CGAL_IS_FLOAT 1
 
 #include "Scene_surface_mesh_item_config.h"
+#include <CGAL/Three/Scene_zoomable_item_interface.h>
 #include "SMesh_type.h"
 #include <CGAL/Three/Scene_item.h>
 #include <CGAL/Three/Viewer_interface.h>
@@ -21,9 +22,12 @@
 struct Scene_surface_mesh_item_priv;
 
 class SCENE_SURFACE_MESH_ITEM_EXPORT Scene_surface_mesh_item
-  : public CGAL::Three::Scene_item
+  : public CGAL::Three::Scene_item,
+    public CGAL::Three::Scene_zoomable_item_interface
 {
   Q_OBJECT
+  Q_INTERFACES(CGAL::Three::Scene_zoomable_item_interface)
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.ZoomInterface/1.0")
 public:
   typedef SMesh Face_graph;
   typedef SMesh::Property_map<vertex_descriptor,int> Vertex_selection_map;
@@ -74,6 +78,43 @@ public:
   bool save(std::ostream& out) const;
   bool save_obj(std::ostream& out) const;
   bool load_obj(std::istream& in);
+
+  enum STATS {
+    NB_VERTICES = 0,
+    NB_CONNECTED_COMPOS,
+    NB_BORDER_EDGES,
+    IS_PURE_TRIANGLE,
+    NB_DEGENERATED_FACES,
+    HOLES,
+    AREA,
+    VOLUME,
+    SELFINTER,
+    NB_FACETS,
+    MIN_AREA,
+    MAX_AREA,
+    MED_AREA,
+    MEAN_AREA,
+    MIN_ALTITUDE,
+    MIN_ASPECT_RATIO,
+    MAX_ASPECT_RATIO,
+    MEAN_ASPECT_RATIO,
+    GENUS,
+    NB_EDGES,
+    MIN_LENGTH,
+    MAX_LENGTH,
+    MID_LENGTH,
+    MEAN_LENGTH,
+    NB_NULL_LENGTH,
+    MIN_ANGLE,
+    MAX_ANGLE,
+    MEAN_ANGLE
+  };
+
+  bool has_stats()const Q_DECL_OVERRIDE{return true;}
+  QString computeStats(int type)Q_DECL_OVERRIDE;
+  CGAL::Three::Scene_item::Header_data header() const Q_DECL_OVERRIDE;
+  void zoomToPosition(const QPoint &point, CGAL::Three::Viewer_interface *)const Q_DECL_OVERRIDE;
+
 Q_SIGNALS:
   void item_is_about_to_be_changed();
   void selection_done();
