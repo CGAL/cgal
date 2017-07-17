@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>461</width>
-    <height>248</height>
+    <width>490</width>
+    <height>262</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -31,7 +31,7 @@
           <item>
            <widget class="QLabel" name="label_omega_H">
             <property name="text">
-             <string>quality_speed_tradeoff</string>
+             <string>Quality Speed Tradeoff</string>
             </property>
            </widget>
           </item>
@@ -45,7 +45,7 @@
           <item>
            <widget class="QLabel" name="label_omega_P">
             <property name="text">
-             <string>medially_centered_speed_tradeoff</string>
+             <string>Medially Centered Speed Tradeoff</string>
             </property>
            </widget>
           </item>
@@ -59,7 +59,7 @@
           <item>
            <widget class="QLabel" name="label_min_edge_length">
             <property name="text">
-             <string>min_edge_length</string>
+             <string>Minimum Edge Length</string>
             </property>
            </widget>
           </item>
@@ -73,7 +73,7 @@
           <item>
            <widget class="QLabel" name="label_delta_area">
             <property name="text">
-             <string>area_variation_factor </string>
+             <string>Area Variation Factor </string>
             </property>
            </widget>
           </item>
