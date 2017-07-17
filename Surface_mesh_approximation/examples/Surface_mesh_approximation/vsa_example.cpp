@@ -14,6 +14,8 @@ typedef Kernel::FT FT;
 typedef Kernel::Vector_3 Vector;
 typedef Kernel::Point_3 Point;
 typedef Polyhedron::Facet_const_handle Facet_const_handle;
+typedef Polyhedron::Halfedge_const_handle Halfedge_const_handle;
+typedef Polyhedron::Facet_const_iterator Facet_const_iterator;
 typedef boost::associative_property_map<std::map<Facet_const_handle, Vector> > FacetNormalMap;
 typedef boost::associative_property_map<std::map<Facet_const_handle, FT> > FacetAreaMap;
 
@@ -38,19 +40,15 @@ int main(int argc, char *argv[])
   // construct facet normal & area map
   std::map<Facet_const_handle, Vector> facet_normals;
   std::map<Facet_const_handle, FT> facet_areas;
-  BOOST_FOREACH(Facet_const_handle f, faces(tm)) {
-    const halfedge_descriptor he = halfedge(f, tm);
-    const Point p1 = get(ppmap, source(he, tm));
-    const Point p2 = get(ppmap, target(he, tm));
-    const Point p3 = get(ppmap, target(next(he, tm), tm));
+  for(Facet_const_iterator fitr = mesh.facets_begin(); fitr != mesh.facets_end(); ++fitr) {
+    const Halfedge_const_handle he = fitr->halfedge();
+    const Point p1 = he->opposite()->vertex()->point();
+    const Point p2 = he->vertex()->point();
+    const Point p3 = he->next()->vertex()->point();
     Vector normal = CGAL::unit_normal(p1, p2, p3);
-    // normal = scale_functor(normal,
-    //   FT(1.0 / std::sqrt(CGAL::to_double(normal.squared_length()))));
-    facet_normals.insert(std::pair<Facet_const_handle, Vector>(f, normal));
-
+    facet_normals.insert(std::pair<Facet_const_handle, Vector>(fitr, normal));
     FT area(std::sqrt(CGAL::to_double(CGAL::squared_area(p1, p2, p3))));
-    // FT area(std::sqrt(CGAL::to_double(area_functor(p1, p2, p3))));
-    facet_areas.insert(std::pair<Facet_const_handle, FT>(f, area));
+    facet_areas.insert(std::pair<Facet_const_handle, FT>(fitr, area));
   }
   FacetNormalMap normal_pmap(facet_normals);
   FacetAreaMap area_pmap(facet_areas);
@@ -59,14 +57,14 @@ int main(int argc, char *argv[])
   typedef std::map<Facet_const_handle, std::size_t> Facet_id_map;
   Facet_id_map internal_facet_id_map;
   for (Facet_const_iterator fitr = mesh.facets_begin(); fitr != mesh.facets_end(); ++fitr)
-    internal_facet_id_map.insert(std::pair<Face_const_handle, std::size_t>(fitr, 0));
+    internal_facet_id_map.insert(std::pair<Facet_const_handle, std::size_t>(fitr, 0));
   boost::associative_property_map<Facet_id_map> proxy_patch_map(internal_facet_id_map);
 
   const std::size_t num_proxies = std::atoi(argv[3]);
   const std::size_t num_iterations = std::atoi(argv[4]);
   std::vector<int> tris;
   std::vector<Kernel::Point_3> anchor_pos;
-  std::vector<Vertex_handle> anchor_vtx;
+  std::vector<Polyhedron::Vertex_handle> anchor_vtx;
   std::vector<std::vector<std::size_t> > bdrs;
   int init = std::atoi(argv[2]);
   if (init < 0 || init > 3)
