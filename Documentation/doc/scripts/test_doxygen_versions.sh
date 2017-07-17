@@ -1,4 +1,7 @@
 #!/bin/bash
+
+set -e
+
 if [ "$1" == '--help' ]; then
   echo "Usage: $0 <doxygen_1> [doxygen_2] [publish_dir]"
   echo "Compares the output of doxygen_1 and doxygen_2 of this CGAL version, "
