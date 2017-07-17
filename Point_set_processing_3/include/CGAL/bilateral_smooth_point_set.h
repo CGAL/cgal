@@ -362,7 +362,7 @@ public:
 // ----------------------------------------------------------------------------
 
 //=============================================================================
-/// \ingroup PkgPointSetProcessing
+/// \ingroup PkgPointSetProcessingAlgorithms
 /// 
 /// This function smooths an input point set by iteratively projecting each 
 ///  point onto the implicit surface patch fitted over its k nearest neighbors.

@@ -47,7 +47,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgPointSetProcessing
+\ingroup PkgPointSetProcessingAlgorithms
 
 \brief A 3D point set with structure information based on a set of
 detected planes.
@@ -1445,7 +1445,7 @@ private:
 // Public section
 // ----------------------------------------------------------------------------
 
-/// \ingroup PkgPointSetProcessing
+/// \ingroup PkgPointSetProcessingAlgorithms
   
 /// This is an implementation of the Point Set Structuring algorithm. This
 /// algorithm takes advantage of a set of detected planes: it detects adjacency

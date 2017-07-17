@@ -1,8 +1,31 @@
-/// \defgroup PkgPointSetProcessing Point Set Processing Reference
-/// \defgroup PkgPointSetProcessingConcepts Concepts
-/// \ingroup PkgPointSetProcessing
-
 /*!
+
+\defgroup PkgPointSetProcessing Point Set Processing Reference
+
+\defgroup PkgPointSetProcessingAlgorithms Algorithms
+\ingroup PkgPointSetProcessing
+
+Collection of algorithms of point set processing (smoothing,
+simplification, etc.).
+
+\defgroup PkgPointSetProcessingIO IO (XYZ/OFF Formats)
+\ingroup PkgPointSetProcessing
+
+Read and write points (with or without normal vectors) in XYZ and OFF
+formats.
+
+\defgroup PkgPointSetProcessingIOPly IO (PLY Format)
+\ingroup PkgPointSetProcessing
+
+Read and write points (with or without additional properties) in PLY
+format.
+
+\defgroup PkgPointSetProcessingIOLas IO (LAS Format)
+\ingroup PkgPointSetProcessing
+
+Read and write points (with or without additional properties) in LAS
+format.
+
 \addtogroup PkgPointSetProcessing
 \cgalPkgDescriptionBegin{Point Set Processing,PkgPointSetProcessingSummary}
 \cgalPkgPicture{point_set_processing_detail.png}
@@ -22,19 +45,8 @@
 
 \cgalClassifedRefPages
 
-## Concept ##
-- `PlyInterpreter`
+## Algorithms ##
 
-## Classes ##
-- `CGAL::Ply_reader`
-- `CGAL::Ply_interpreter_points_and_normals_3`
-
-## Functions ##
-
-- `CGAL::read_off_points()`
-- `CGAL::read_ply_points()`
-- `CGAL::read_ply_custom_points()`
-- `CGAL::read_xyz_points()`
 - `CGAL::compute_average_spacing()`
 - `CGAL::estimate_global_k_neighbor_scale()`
 - `CGAL::estimate_global_range_scale()`
@@ -55,8 +67,40 @@
 - `CGAL::vcm_estimate_normals()`
 - `CGAL::vcm_is_on_feature_edge()`
 - `CGAL::structure_point_set()`
+
+## IO (XYZ/OFF Formats) ##
+
+- `CGAL::read_off_points()`
+- `CGAL::read_off_points_and_normals()`
+- `CGAL::read_xyz_points()`
+- `CGAL::read_xyz_points_and_normals()`
 - `CGAL::write_off_points()`
-- `CGAL::write_ply_points()`
+- `CGAL::write_off_points_and_normals()`
 - `CGAL::write_xyz_points()`
+- `CGAL::write_xyz_points_and_normals()`
+
+## IO (PLY Format) ##
+
+- `CGAL::read_ply_points()`
+- `CGAL::read_ply_points_and_normals()`
+- `CGAL::read_ply_points_with_properties()`
+- `CGAL::write_ply_points()`
+- `CGAL::write_ply_points_and_normals()`
+- `CGAL::write_ply_points_with_properties()`
+- `CGAL::PLY_property<T>`
+- `CGAL::make_ply_point_reader()`
+- `CGAL::make_ply_point_writer()`
+- `CGAL::make_ply_normal_reader()`
+- `CGAL::make_ply_normal_writer()`
+
+## IO (LAS Format) ##
+
+- `CGAL::read_las_points()`
+- `CGAL::read_las_points_with_properties()`
+- `CGAL::write_las_points()`
+- `CGAL::write_las_points_with_properties()`
+- `CGAL::make_las_point_reader()`
+- `CGAL::make_las_point_writer()`
+
 */
 

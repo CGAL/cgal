@@ -11,7 +11,8 @@ property double nz
 property uchar red
 property uchar green
 property uchar blue
+property int intensity
 end_header
-0.0 0.0 0.0 0.0 0.0 1.0 255 0 0
-0.0 0.0 1.0 0.0 0.0 1.0 0 255 0
-0.0 1.0 0.0 0.0 0.0 1.0 0 0 255
+0.0 0.0 0.0 0.0 0.0 1.0 255 0 0 10
+0.0 0.0 1.0 0.0 0.0 1.0 0 255 0 20
+0.0 1.0 0.0 0.0 0.0 1.0 0 0 255 30

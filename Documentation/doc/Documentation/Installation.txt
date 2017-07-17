@@ -559,6 +559,20 @@ In \cgal, \sc{Tbb} is used by the packages that offer parallel code.
 
 The \sc{Tbb} web site is <A HREF="http://www.threadingbuildingblocks.org">`http://www.threadingbuildingblocks.org`</A>.
 
+\subsection thirdpartyLASlib LASlib
+
+\sc{LASlib} is a `C++` library for handling LIDAR data sets stored in
+the LAS format (or the compressed LAZ format).
+
+In \cgal, \sc{LASlib} is used to provide input and output functions in
+the \ref PkgPointSetProcessing package.
+
+The \sc{LASlib} web site is <a
+href="https://rapidlasso.com/lastools/">`https://rapidlasso.com/lastools/`</a>. \sc{LASlib}
+is usually distributed along with LAStools: for simplicity, \cgal
+provides <a href="https://github.com/CGAL/LAStools">a fork with a
+CMake based install procedure</a>.
+
 \section secbuilding Building CGAL 
 
 The results of a successful configuration are build files that control the build step.

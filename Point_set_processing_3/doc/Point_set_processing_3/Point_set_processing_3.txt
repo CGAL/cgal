@@ -75,54 +75,94 @@ a property map.
 
 \section Point_set_processing_3InputOutput Input/Output
 
-\subsection Point_set_processing_3Streams Streams
+\subsection Point_set_processing_3Points_io Points And Normals
 
-We provide functions to read and write sets of points or sets of
-points with normals from the following ASCII file formats: XYZ (three
-point coordinates `x y z` per line or three point coordinates and
-three normal vector coordinates `x y z nx ny nz` per line), OFF
-(%Object File Format) \cgalCite{cgal:p-gmgv16-96} and PLY (Polygon
-File Format).
+\cgal provides functions to read and write sets of points or sets of
+points with normals from the following file formats:
+
+- XYZ (ASCII file three point coordinates `x y z` per line or three
+point coordinates and three normal vector coordinates `x y z nx ny nz`
+per line)
+- OFF (%Object File Format) \cgalCite{cgal:p-gmgv16-96}
+- %PLY (Polygon File Format) \cgalCite{cgal:b-ply-11}
+- %LAS (Lidar Format). \cgalCite{cgal:asprs-lasf-13} This format does
+not handle normals and requires the \ref thirdpartyLASlib library.
+
+The following functions are available:
 
 - `read_xyz_points()` and `read_xyz_points_and_normals()` 
 - `read_off_points()` and `read_off_points_and_normals()` 
-- `read_ply_points()`, `read_ply_points_and_normals()` and `read_ply_custom_points()`
+- `read_ply_points()` and `read_ply_points_and_normals()`
+- `read_las_points()`
 - `write_xyz_points()` and `write_xyz_points_and_normals()`
 - `write_off_points()` and `write_off_points_and_normals()`
-- `write_ply_points()` and `write_ply_points_and_normals()` 
+- `write_ply_points()` and `write_ply_points_and_normals()`
+- `write_las_points()`
 
-Note that PLY reading functions accepts binary PLY format in addition
-of ASCII. `read_ply_custom_points()` provides the user with a means to
-read any point property from a PLY file (for example, colors), see
-\ref Point_set_processing_3Example_ply.
+Note that the %PLY format handles both ASCII and binary formats. In
+addition, %PLY and %LAS are extensible formats that can embed additional
+properties. These can also be read by \cgal (see section \ref
+Point_set_processing_3Properties_io).
 
-\subsection Point_set_processing_3Example_io Example
+\subsubsection Point_set_processing_3Example_io Example
 
 The following example reads a point set from an input file and writes
 it to a file, both in the XYZ format. Positions and normals are stored
 in pairs and accessed through property maps.
 \cgalExample{Point_set_processing_3/read_write_xyz_point_set_example.cpp}
 
-\subsection Point_set_processing_3Example_ply Example of custom PLY reader
+\subsection Point_set_processing_3Properties_io Points With Properties
 
-PLY files are designed to embed an arbitrary number of additional
-attributes. More specifically, point sets may contain normal vectors,
-visibility vectors, RGB colors, intensity, etc. As it is not possible
-to provide dedicated functions to every possible combination of PLY
-properties, \cgal provides a simple way to write custom PLY readers so
-that the user can adapt its programs to its PLY input.
+%PLY files are designed to embed an arbitrary number of additional
+attributes. More specifically, point sets may contain visibility
+vectors, RGB colors, intensity, etc. As it is not possible to provide
+dedicated functions to every possible combination of %PLY properties,
+\cgal provides a simple way to read %PLY properties and store them in
+any structure the user needs. Handling of %LAS files works similarly
+with the difference that the property names and types are fixed and
+defined by the %LAS standard.
 
-The function `read_ply_custom_points()` uses the concept `PlyInterpreter`
-to read specific properties defined by the user. \cgal provides, for this
-concept, the model `CGAL::Ply_interpreter_points_and_normals_3`: it is
-the standard interpreter that is used internally by `read_ply_points()`
-and `read_ply_points_and_normals()`.
+Functions `read_ply_points_with_properties()` and
+`read_las_points_with_properties()` allow the user to read any
+property needed. The user must provide a set of property handlers that
+are used to instantiate number types and complex objects from %PLY/%LAS
+properties. This handlers are either:
 
-The following example shows how to define a custom interpreter that
-reads a point set with points, normals and RGB colors, and stores
-these attributes in user-defined containers.
+- a pair consisting of a property map and of a single %PLY/%LAS property
+descriptor
+
+- a tuple consisting of a property map, a functor to construct the
+objects wanted and multiple %PLY/%LAS property descriptors
+
+Output functions `write_ply_points_with_properties()` and
+`write_las_points_with_properties()` work similarly.
+
+\subsubsection Point_set_processing_3Example_ply_write PLY Writing Example
+
+The following example shows how to call
+`write_ply_points_with_properties()` to write a point set with points,
+RGB colors and intensity. Notice that in order to write a complex
+object, users need to provide an overload of `CGAL::Output_rep`.
+
+\cgalExample{Point_set_processing_3/write_ply_points_example.cpp}
+
+\subsubsection Point_set_processing_3Example_ply_read PLY Reading Example
+
+The following example shows how to call
+`read_ply_points_with_properties()` to read a point set with points,
+normals, RGB colors and intensity and stores these attributes in a
+user-defined container.
 
 \cgalExample{Point_set_processing_3/read_ply_points_with_colors_example.cpp}
+
+\subsubsection Point_set_processing_3Example_las_read LAS Reading Example
+
+The following example shows how to call
+`read_las_points_with_properties()` to read a point set with points
+and RGBI colors and stores these attributes in a user-defined
+container.
+
+\cgalExample{Point_set_processing_3/read_las_example.cpp}
 
 \section Point_set_processing_3Spacing Average Spacing
 

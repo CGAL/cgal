@@ -123,6 +123,16 @@
 #  include <boost/container/flat_map.hpp>
 #endif
 
+// Hack: Boost<1.55 does not detect correctly the C++11 features of ICC.
+// We declare by hand two features that we need (variadic templates and
+// rvalue references).
+#if defined(__INTEL_COMPILER) && defined(__GXX_EXPERIMENTAL_CXX0X__)
+#  undef BOOST_NO_VARIADIC_TEMPLATES
+#  undef BOOST_NO_CXX11_VARIADIC_TEMPLATES
+#  undef BOOST_NO_RVALUE_REFERENCES
+#  undef BOOST_NO_CXX11_RVALUE_REFERENCES
+#endif
+
 #include <CGAL/version.h>
 
 //----------------------------------------------------------------------//

@@ -138,7 +138,7 @@ pca_estimate_normal(const typename Kernel::Point_3& query, ///< point to compute
 // Public section
 // ----------------------------------------------------------------------------
 
-/// \ingroup PkgPointSetProcessing
+/// \ingroup PkgPointSetProcessingAlgorithms
 /// Estimates normal directions of the `[first, beyond)` range of points
 /// by linear least squares fitting of a plane over the k nearest neighbors.
 /// The output normals are randomly oriented.

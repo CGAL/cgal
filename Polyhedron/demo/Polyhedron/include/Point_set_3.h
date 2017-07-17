@@ -176,7 +176,7 @@ public:
       {
         boost::tie (m_fred, found) = this->template property_map<double>("r");
         if (!found)
-          return false;
+          return get_las_colors();
       }
 
     boost::tie (m_fgreen, found) = this->template property_map<double>("green");
@@ -194,6 +194,51 @@ public:
         if (!found)
           return false;
       }
+    return true;
+  }
+
+  bool get_las_colors()
+  {
+    bool found = false;
+    
+    typedef typename Base::template Property_map<unsigned short> Ushort_map;
+    Ushort_map red, green, blue;
+    
+    boost::tie (red, found) = this->template property_map<unsigned short>("R");
+    if (!found)
+      return false;
+
+    boost::tie (green, found) = this->template property_map<unsigned short>("G");
+    if (!found)
+      return false;
+
+    boost::tie (blue, found) = this->template property_map<unsigned short>("B");
+    if (!found)
+      return false;
+
+    unsigned int bit_short_to_char = 0;
+    for (iterator it = begin(); it != end(); ++ it)
+      if (get(red, *it) > 255
+          || get(green, *it) > 255
+          || get(blue, *it) > 255)
+        {
+          bit_short_to_char = 8;
+          break;
+        }
+
+    m_red = this->template add_property_map<unsigned char>("r").first;
+    m_green = this->template add_property_map<unsigned char>("g").first;
+    m_blue = this->template add_property_map<unsigned char>("b").first;
+    for (iterator it = begin(); it != end(); ++ it)
+      {
+        put (m_red, *it, (unsigned char)((get(red, *it) >> bit_short_to_char)));
+        put (m_green, *it, (unsigned char)((get(green, *it) >> bit_short_to_char)));
+        put (m_blue, *it, (unsigned char)((get(blue, *it) >> bit_short_to_char)));
+      }
+    this->remove_property_map(red);
+    this->remove_property_map(green);
+    this->remove_property_map(blue);
+    
     return true;
   }
 

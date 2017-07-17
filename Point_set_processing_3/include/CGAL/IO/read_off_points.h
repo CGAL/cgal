@@ -38,7 +38,7 @@ namespace CGAL {
 
 
 //===================================================================================
-/// \ingroup PkgPointSetProcessing
+/// \ingroup PkgPointSetProcessingIO
 /// Reads points (positions + normals, if available) from a .off ASCII stream.
 /// The function expects for each point a line with the x y z position,
 /// optionally followed by the nx ny nz normal.
@@ -275,7 +275,7 @@ read_off_points_and_normals(
 
 
 //===================================================================================
-/// \ingroup PkgPointSetProcessing
+/// \ingroup PkgPointSetProcessingIO
 /// Reads points (position only) from a .off ASCII stream.
 /// The function expects for each point a line with the x y z position.
 /// If the position is followed by the nx ny nz normal, then the normal will be ignored.

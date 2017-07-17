@@ -537,6 +537,41 @@ void Scene_points_with_normal_item::selectDuplicates()
   Q_EMIT itemChanged();
 }
 
+#if !defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE) && !defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES)
+#ifdef CGAL_LINKED_WITH_LASLIB
+// Loads point set from .LAS file
+bool Scene_points_with_normal_item::read_las_point_set(std::istream& stream)
+{
+  Q_ASSERT(d->m_points != NULL);
+
+  d->m_points->clear();
+
+  bool ok = stream &&
+    CGAL::read_las_point_set (stream, *(d->m_points)) &&
+            !isEmpty();
+
+  std::cerr << d->m_points->info();
+
+  if (d->m_points->has_normal_map())
+    setRenderingMode(PointsPlusNormals);
+  if (d->m_points->check_colors())
+    std::cerr << "-> Point set has colors" << std::endl;
+  
+  invalidateOpenGLBuffers();
+  return ok;
+}
+
+// Write point set to .LAS file
+bool Scene_points_with_normal_item::write_las_point_set(std::ostream& stream) const
+{
+  Q_ASSERT(d->m_points != NULL);
+
+  return stream &&
+    CGAL::write_las_point_set (stream, *(d->m_points));
+}
+
+#endif // LAS
+
 // Loads point set from .PLY file
 bool Scene_points_with_normal_item::read_ply_point_set(std::istream& stream)
 {
@@ -560,17 +595,21 @@ bool Scene_points_with_normal_item::read_ply_point_set(std::istream& stream)
 }
 
 // Write point set to .PLY file
-bool Scene_points_with_normal_item::write_ply_point_set(std::ostream& stream) const
+bool Scene_points_with_normal_item::write_ply_point_set(std::ostream& stream, bool binary) const
 {
   Q_ASSERT(d->m_points != NULL);
 
   if (!stream)
     return false;
 
+  if (binary)
+    CGAL::set_binary_mode (stream);
   stream << *(d->m_points);
 
   return true;
 }
+
+#endif // CXX11
 
 // Loads point set from .OFF file
 bool Scene_points_with_normal_item::read_off_point_set(std::istream& stream)

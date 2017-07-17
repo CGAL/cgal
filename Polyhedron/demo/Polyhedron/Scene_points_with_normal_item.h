@@ -9,6 +9,7 @@
 #include "Kernel_type.h"
 #include "Point_set_3.h"
 #include <iostream>
+#include <CGAL/config.h>
 
 struct Scene_points_with_normal_item_priv;
 // point set
@@ -45,8 +46,14 @@ public:
   QMenu* contextMenu() Q_DECL_OVERRIDE;
 
   // IO
+#if !defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE) && !defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES)
+#ifdef CGAL_LINKED_WITH_LASLIB
+  bool read_las_point_set(std::istream& in);
+  bool write_las_point_set(std::ostream& out) const;
+#endif // LAS
   bool read_ply_point_set(std::istream& in);
-  bool write_ply_point_set(std::ostream& out) const;
+  bool write_ply_point_set(std::ostream& out, bool binary) const;
+#endif // CXX11
   bool read_off_point_set(std::istream& in);
   bool write_off_point_set(std::ostream& out) const;
   bool read_xyz_point_set(std::istream& in);
