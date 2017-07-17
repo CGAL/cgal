@@ -44,7 +44,9 @@ struct Dynamic_property_map {
 
   void clear()
   {
-    map_ = boost::shared_ptr<Map>(0);
+    if(map_){
+      map_->clear();
+    }
   }
 
 
