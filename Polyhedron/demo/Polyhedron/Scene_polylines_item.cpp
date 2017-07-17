@@ -340,6 +340,12 @@ Scene_polylines_item::toolTip() const {
             .arg(this->renderingModeName())
             .arg(this->color().name())
             .arg(polylines.size());
+    if(polylines.size() == 1 )
+    {
+      QString vertices_info = tr("<p>Number of vertices: %1</p>")
+                              .arg(polylines.front().size());
+     s.append(vertices_info);
+    }
     return s;
 }
 
