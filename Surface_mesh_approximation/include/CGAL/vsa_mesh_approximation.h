@@ -18,10 +18,14 @@ namespace CGAL
  * @tparam PointPropertyMap a property map containing the input mesh vertex point map,
            and `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type,
            `TriangleMesh::Point_3` as value type
+ * @tparam FacetAreaMap a property map containing the input mesh area map,
+           and `boost::graph_traits<TriangleMesh>::%face_descriptor` as key type,
+           `GeomTraits::FT` as value type
  * @tparam AnchorIndexContainer a container of approximated indexed triangle soup
  * @tparam AnchorPositionContainer a container of extracted anchor position
  * @tparam AnchorVertexContainer a container of extracted anchor vertex
  * @tparam BoundaryContainer a container of proxy patch boundary
+ * @tparam ApproximationTrait an approximation trait
  * @tparam GeomTraits geometric kernel
 
  * @param init select seed initialization
@@ -30,19 +34,23 @@ namespace CGAL
  * @param number_of_iterations number of fitting iterations
  * @param segment_ids facet proxy patch id property map
  * @param ppmap mesh vertex point property map
+ * @param area_pmap facet area property map
  * @param tris approximation indexed triangle soup
  * @param pos anchor position container
  * @param vtx anchor vertex container
  * @param bdrs proxy patch boundary container
+ * @param app_trait shape approximation trait
  * @param traits kernel traits
  */
 template<typename TriangleMesh,
   typename SegmentPropertyMap,
   typename PointPropertyMap,
+  typename FacetAreaMap,
   typename AnchorIndexContainer,
   typename AnchorPositionContainer,
   typename AnchorVertexContainer,
   typename BoundaryContainer,
+  typename ApproximationTrait,
   typename GeomTraits>
   void vsa_mesh_approximation(
     const int init,
@@ -50,46 +58,15 @@ template<typename TriangleMesh,
     const std::size_t number_of_segments,
     const std::size_t number_of_iterations,
     SegmentPropertyMap segment_ids,
-    PointPropertyMap ppmap,
+    const PointPropertyMap &ppmap,
+    const FacetAreaMap &area_pmap,
     AnchorIndexContainer &tris,
     AnchorPositionContainer &pos,
     AnchorVertexContainer &vtx,
     BoundaryContainer &bdrs,
+    const ApproximationTrait &app_trait,
     GeomTraits traits) {
   // CGAL_precondition(is_pure_triangle(tm));
-
-  typedef typename GeomTraits::FT FT;
-  typedef typename GeomTraits::Vector_3 Vector;
-  typedef typename GeomTraits::Point_3 Point;
-  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
-  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
-  typedef boost::associative_property_map<std::map<face_descriptor, Vector> > FacetNormalMap;
-  typedef boost::associative_property_map<std::map<face_descriptor, FT> > FacetAreaMap;
-
-  // construct facet normal & area map
-  std::map<face_descriptor, Vector> facet_normals;
-  std::map<face_descriptor, FT> facet_areas;
-  BOOST_FOREACH(face_descriptor f, faces(tm)) {
-    const halfedge_descriptor he = halfedge(f, tm);
-    const Point p1 = get(ppmap, source(he, tm));
-    const Point p2 = get(ppmap, target(he, tm));
-    const Point p3 = get(ppmap, target(next(he, tm), tm));
-    Vector normal = CGAL::unit_normal(p1, p2, p3);
-    // normal = scale_functor(normal,
-    //   FT(1.0 / std::sqrt(CGAL::to_double(normal.squared_length()))));
-    facet_normals.insert(std::pair<face_descriptor, Vector>(f, normal));
-
-    FT area(std::sqrt(CGAL::to_double(CGAL::squared_area(p1, p2, p3))));
-    // FT area(std::sqrt(CGAL::to_double(area_functor(p1, p2, p3))));
-    facet_areas.insert(std::pair<face_descriptor, FT>(f, area));
-  }
-  FacetNormalMap normal_pmap(facet_normals);
-  FacetAreaMap area_pmap(facet_areas);
-
-  typedef CGAL::PlaneProxy<TriangleMesh, GeomTraits> PlaneProxy;
-  typedef CGAL::L21Metric<PlaneProxy, GeomTraits, FacetNormalMap, FacetAreaMap> L21Metric;
-  typedef CGAL::ProxyFitting<PlaneProxy, GeomTraits, L21Metric, FacetNormalMap, FacetAreaMap> ProxyFitting;
-  typedef CGAL::ApproximationTrait<GeomTraits, PlaneProxy, L21Metric, ProxyFitting, FacetNormalMap, FacetAreaMap> ApproximationTrait;
 
   typedef CGAL::internal::VSA<
     TriangleMesh,
@@ -97,7 +74,7 @@ template<typename TriangleMesh,
     FacetAreaMap,
     PointPropertyMap> VSA;
 
-  VSA algorithm(tm, ApproximationTrait(normal_pmap, area_pmap), ppmap, area_pmap);
+  VSA algorithm(tm, app_trait, ppmap, area_pmap);
 
   switch (init) {
     case VSA::RandomInit:
