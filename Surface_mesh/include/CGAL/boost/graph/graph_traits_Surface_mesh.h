@@ -127,6 +127,15 @@ degree(typename boost::graph_traits<CGAL::Surface_mesh<P> >::vertex_descriptor v
   return sm.degree(v);
 }
 
+
+template <typename P>
+typename boost::graph_traits<CGAL::Surface_mesh<P> >::degree_size_type
+degree(typename boost::graph_traits<CGAL::Surface_mesh<P> >::face_descriptor f,
+       const CGAL::Surface_mesh<P>& sm)
+{
+  return sm.degree(f);
+}
+
          
 template <typename P>
 typename boost::graph_traits<CGAL::Surface_mesh<P> >::degree_size_type

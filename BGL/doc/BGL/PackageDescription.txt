@@ -215,6 +215,9 @@ for conversion between models of different `FaceGraph` concepts, etc.
 Most functions are in the header file `<CGAL/boost/graph/helpers.h>`
 */
 
+/// \defgroup PkgBGLIOFct I/O Functions
+/// \ingroup PkgBGL
+
 /*!
 \addtogroup PkgBGLIterators
 
@@ -412,12 +415,18 @@ user might encounter.
 - `CGAL::convert_nef_polyhedron_to_polygon_mesh()`
 - `CGAL::split_graph_into_polylines()`
 
+
 ## Graph Adaptors ##
 - `CGAL::Dual`
 - `CGAL::Face_filtered_graph`
 - `CGAL::Graph_with_descriptor_with_graph`
 - `CGAL::Graph_with_descriptor_with_graph_property_map`
 - `CGAL::Seam_mesh`
+
+## I/O Functions ##
+- `CGAL::read_off()`
+- `CGAL::write_off()`
+
 */
 
 /*!

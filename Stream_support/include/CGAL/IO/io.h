@@ -41,17 +41,26 @@
 
 namespace CGAL {
 
-class IO {
+
+
+namespace IO {
+
+class Static {
 public:
 
-  static int get_static_mode()
+  static int get_mode()
   {
     static const int mode = std::ios::xalloc();
     return mode;
   }
 
-  enum Mode {ASCII = 0, PRETTY, BINARY};
 };
+
+  enum Mode {ASCII = 0, PRETTY, BINARY};
+
+}
+
+
 
 template <typename Dummy>
 struct IO_rep_is_specialized_aux

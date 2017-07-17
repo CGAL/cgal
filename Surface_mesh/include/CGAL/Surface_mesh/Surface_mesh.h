@@ -42,9 +42,9 @@
 #include <CGAL/circulator.h>
 #include <CGAL/assertions.h>
 #include <CGAL/Surface_mesh/Surface_mesh_fwd.h>
-#include <CGAL/Surface_mesh/IO.h>
 #include <CGAL/Surface_mesh/Properties.h>
 #include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
+#include <CGAL/boost/graph/copy_face_graph.h>
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/IO/File_scanner_OFF.h>
@@ -1958,13 +1958,14 @@ private: //------------------------------------------------------- private data
     return sm;
   }
 
+
   /// \relates Surface_mesh
   /// Inserts the surface mesh in an output stream in Ascii OFF format. 
   /// Only the \em point property is inserted in the stream.
   /// \pre `operator<<(std::ostream&,const P&)` must be defined.
+ 
   template <typename P>
-  std::ostream& operator<<(std::ostream& os, const Surface_mesh<P>& sm)
-  {
+  bool write_off(std::ostream& os, const Surface_mesh<P>& sm) {
     typedef Surface_mesh<P> Mesh;
     typedef typename Mesh::Vertex_index Vertex_index;
     typedef typename Mesh::Face_index Face_index;
@@ -2006,8 +2007,19 @@ private: //------------------------------------------------------- private data
       }
       os << '\n';
     }
+    return os.good();
+  }
+
+  /// \relates Surface_mesh
+  /// 
+  /// This operator calls `write_off(std::istream& , CGAL::Surface_mesh)`.
+   template <typename P>
+  std::ostream& operator<<(std::ostream& os, const Surface_mesh<P>& sm)
+  {
+    write_off(os, sm);
     return os;
   }
+
 
 /// @cond CGAL_DOCUMENT_INTERNALS
 
@@ -2022,18 +2034,20 @@ private: //------------------------------------------------------- private data
       in.putback(c);
       return in;
   }
+
+
+
 /// @endcond
 
-
   /// \relates Surface_mesh
-
-  /// \relates Surface_mesh
-  /// Extracts the surface mesh from an input stream in Ascii OFF, COFF, NOFF, CNOFF format.
+  /// Extracts the surface mesh from an input stream in Ascii OFF, COFF, NOFF, CNOFF 
+  /// format and appends it to the surface mesh `sm`.
   /// The operator reads the point property as well as "v:normal", "v:color", and "f:color".
   /// Vertex texture coordinates are ignored.
   /// \pre `operator>>(std::istream&,const P&)` must be defined.
+
   template <typename P>
-  std::istream& operator>>(std::istream& is, Surface_mesh<P>& sm)
+  bool read_off(std::istream& is, Surface_mesh<P>& sm)
   {
    typedef Surface_mesh<P> Mesh;
    typedef typename Kernel_traits<P>::Kernel K;
@@ -2041,7 +2055,6 @@ private: //------------------------------------------------------- private data
    typedef typename Mesh::Face_index Face_index;
    typedef typename Mesh::Vertex_index Vertex_index;
    typedef typename Mesh::size_type size_type;
-    sm.clear();
     int n, f, e;
     std::string off;
     is >> sm_skip_comments;
@@ -2050,7 +2063,8 @@ private: //------------------------------------------------------- private data
 
     is >> n >> f >> e;
 
-    sm.reserve(n,2*f,e);
+    sm.reserve(sm.num_vertices()+n, sm.num_faces()+2*f, sm.num_edges()+e);
+    std::vector<Vertex_index> vertexmap(n);
     P p;
     Vector_3 v;
     typename Mesh::template Property_map<Vertex_index,CGAL::Color> vcolor;
@@ -2068,6 +2082,7 @@ private: //------------------------------------------------------- private data
       is >> sm_skip_comments;
       is >> p;
       Vertex_index vi= sm.add_vertex(p);
+      vertexmap[i] = vi;
       if(v_has_normals){
         is >> v;
         vnormal[vi] = v;
@@ -2092,9 +2107,8 @@ private: //------------------------------------------------------- private data
          }
        }
     }
-    std::vector<size_type> vr;
-    std::size_t d;
-
+    std::vector<Vertex_index> vr;
+    size_type d, vi;
     bool fcolored = false;
     typename Mesh::template Property_map<Face_index,CGAL::Color> fcolor;
 
@@ -2103,14 +2117,15 @@ private: //------------------------------------------------------- private data
       is >> d;
       vr.resize(d);
       for(std::size_t j=0; j<d; j++){
-        is >> vr[j];
+        is >> vi;
+        vr[j] = vertexmap[vi];
       }
       Face_index fi = sm.add_face(vr);
       if(fi == sm.null_face())
       {
        std::cout<< "Warning: Facets don't seem to be oriented. Loading a Soup of polygons instead."<<std::endl;
        sm.clear();
-       return is;
+       return false;
       }
 
       // the first face will tell us if faces have a color map
@@ -2132,10 +2147,20 @@ private: //------------------------------------------------------- private data
           }
         }
     }
+    return is.good();
+  }
+
+
+ 
+  /// \relates Surface_mesh
+  /// This operator calls `read_off(std::istream& , CGAL::Surface_mesh)`.
+  template <typename P>
+  std::istream& operator>>(std::istream& is, Surface_mesh<P>& sm)
+  {
+    read_off(is, sm);
     return is;
   }
 
- 
  /*! @} */
 
 template <typename P>
