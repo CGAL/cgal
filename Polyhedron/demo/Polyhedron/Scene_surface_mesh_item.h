@@ -78,7 +78,6 @@ public:
   bool save(std::ostream& out) const;
   bool save_obj(std::ostream& out) const;
   bool load_obj(std::istream& in);
-
   enum STATS {
     NB_VERTICES = 0,
     NB_CONNECTED_COMPOS,
@@ -114,7 +113,7 @@ public:
   QString computeStats(int type)Q_DECL_OVERRIDE;
   CGAL::Three::Scene_item::Header_data header() const Q_DECL_OVERRIDE;
   void zoomToPosition(const QPoint &point, CGAL::Three::Viewer_interface *)const Q_DECL_OVERRIDE;
-
+  QMenu* contextMenu() Q_DECL_OVERRIDE;
 Q_SIGNALS:
   void item_is_about_to_be_changed();
   void selection_done();
@@ -140,6 +139,7 @@ public Q_SLOTS:
                       double dir_y,
                       double dir_z,
                       const face_descriptor &f);
+  void resetColors();
 protected:
   friend struct Scene_surface_mesh_item_priv;
   Scene_surface_mesh_item_priv* d;

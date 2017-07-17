@@ -1018,6 +1018,26 @@ QMenu* Scene_polyhedron_item::contextMenu()
 
   QMenu* menu = Scene_item::contextMenu();
 
+  QAction* actionResetColor=
+      menu->findChild<QAction*>(tr("actionResetColor"));
+
+  if(isItemMulticolor())
+  {
+    if(!actionResetColor)
+    {
+      actionResetColor = menu->addAction(tr("Reset Colors"));
+      actionResetColor->setObjectName("actionResetColor");
+    }
+    connect(actionResetColor, SIGNAL(triggered()),
+            this, SLOT(resetColors()));
+  }
+  else if(actionResetColor)
+  {
+    menu->removeAction(actionResetColor);
+    actionResetColor->deleteLater();
+  }
+
+
   // Use dynamic properties:
   // http://doc.qt.io/qt-5/qobject.html#property
   bool menuChanged = menu->property(prop_name).toBool();
@@ -2089,4 +2109,11 @@ void Scene_polyhedron_item::zoomToPosition(const QPoint &point, CGAL::Three::Vie
     }
   }
 
+}
+
+void Scene_polyhedron_item::resetColors()
+{
+  setItemIsMulticolor(false);
+  invalidateOpenGLBuffers();
+  itemChanged();
 }
