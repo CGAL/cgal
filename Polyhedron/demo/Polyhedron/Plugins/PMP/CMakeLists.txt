@@ -131,3 +131,6 @@ polyhedron_demo_plugin(distance_sm_plugin Distance_plugin)
 target_link_libraries(distance_sm_plugin scene_surface_mesh_item  scene_color_ramp)
 target_compile_definitions(distance_sm_plugin PUBLIC "-DUSE_SURFACE_MESH" )
 
+qt5_wrap_ui( randomPerturbationUI_FILES Random_perturbation_dialog.ui)
+polyhedron_demo_plugin(random_perturbation_plugin Random_perturbation_plugin ${randomPerturbationUI_FILES})
+target_link_libraries(random_perturbation_plugin scene_polyhedron_item scene_polyhedron_selection_item)

@@ -102,6 +102,7 @@ create_single_source_cgal_program( "corefinement_consecutive_bool_op.cpp" )
 create_single_source_cgal_program( "corefinement_difference_remeshed.cpp" )
 create_single_source_cgal_program( "corefinement_mesh_union.cpp" )
 create_single_source_cgal_program( "corefinement_polyhedron_union.cpp" )
+create_single_source_cgal_program( "random_perturbation_SM_example.cpp" )
 create_single_source_cgal_program( "corefinement_LCC.cpp")
 create_single_source_cgal_program( "hole_filling_example_LCC.cpp" )
 

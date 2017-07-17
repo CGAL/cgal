@@ -642,7 +642,7 @@ which enables to treat one or several connected components as a face graph.
 
 This package provides methods to compute (approximate) distances between meshes and point sets.
 
-The function \link CGAL::Polygon_mesh_processing::approximate_Hausdorff_distance() `approximate_Hausdorff_distance()`\endlink
+The function \link approximate_Hausdorff_distance() `approximate_Hausdorff_distance()`\endlink
 computes an approximation of the Hausdorff distance from a mesh `tm1` to a mesh `tm2`. Given a
 a sampling of `tm1`, it computes the distance to `tm2` of the farthest sample point to `tm2` \cgalCite{cignoni1998metro}.
 The symmetric version (\link CGAL::Polygon_mesh_processing::approximate_symmetric_Hausdorff_distance() `approximate_symmetric_Hausdorff_distance()`\endlink)
