@@ -1,4 +1,4 @@
-﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- $Id$
      $URL$
 -->
@@ -297,6 +297,18 @@ and <code>src/</code> directories).
     function <code>CGAL::poisson_surface_reconstruction_delaunay()</code>
     is provided in addition to the current class-based API in order to
     make it easier to use.</li>
+</ul>
+<h3>Scale-Space Surface Reconstruction</h3>
+<ul>
+  <li><b>Breaking change</b>: the API was rewritten to separate the
+  smoothing and meshing algorithm and making it possible for the user
+  to use different ones. The default algorithms used are the same as
+  before this API change, but methods are moved to the
+  classes <code>Weighted_PCA_smoother</code>
+  and <code>Alpha_shape_mesher</code>.</li>
+  <li>Alternative smoothing and meshing methods are
+  provided: <code>Jet_smoother</code>
+  and <code>Advancing_front_mesher</code>.</li>
 </ul>
 <!-- Geometry Processing -->
 <h3> 3D Surface Subdivision Methods </h3>
