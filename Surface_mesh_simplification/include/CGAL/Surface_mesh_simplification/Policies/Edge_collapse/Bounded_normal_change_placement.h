@@ -27,8 +27,8 @@ namespace CGAL {
 namespace Surface_mesh_simplification  
 {
 
-  template<class Placement>
-  class Bounded_normal_change_placement
+template<class Placement>
+class Bounded_normal_change_placement
 {
 public:
     

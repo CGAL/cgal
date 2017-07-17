@@ -6,7 +6,7 @@ namespace Surface_mesh_simplification {
 \ingroup PkgSurfaceMeshSimplification
 
 The class `Bounded_normal_change_placement` is a model for the `GetPlacement` concept
-which serves as a filter for another placement. It rejects the placement, if any 
+which serves as a filter for another placement. It rejects the placement if any
 triangle in the profile changes the normal by more than 90 degree.
 
 \tparam Placement must be a model of the concept `GetPlacement`. 

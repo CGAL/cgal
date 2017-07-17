@@ -317,7 +317,7 @@ results in a self intersection when one edge is collapsed using the Lindstrom-Tu
 
 
 \cgalFigureBegin{SMS-selfintersection, SMS-selfintersection.png}
-Simple mesh before and after the collapse of edge `v-w` into vertex `w`. While the normals of `f1`and `f2` are almost equal, they are opposed after the edge collapse.
+Simple mesh before and after the collapse of edge `v-w` into vertex `w`. While the normals of `f1` and `f2` are almost equal, they are opposed after the edge collapse.
 \cgalFigureEnd
 
 The class `Surface_mesh_simplification::Bounded_normal_change_placement` is a placement that checks if
