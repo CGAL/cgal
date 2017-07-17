@@ -31,9 +31,11 @@ typedef Graph_traits::halfedge_iterator halfedge_iterator;
 typedef Graph_traits::face_iterator face_iterator;
 
 
+
 int main(int argc, char** argv)
 {
   Triangle_mesh tmesh;
+
   std::ifstream input((argc>1)?argv[1]:"data/elephant.off");
   input >> tmesh;
   input.close();
@@ -73,6 +75,5 @@ int main(int argc, char** argv)
       output << " " << points[i];
     output << std::endl;
   }
-
   return 0;
 }

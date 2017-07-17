@@ -1997,13 +1997,13 @@ public:
 
   Equivalent to `Surface_mesh_shortest_path(tm, get(boost::vertex_index, tm), get(boost::halfedge_index, tm), get(boost::face_index, tm), get(CGAL::vertex_point, tm), traits)`.
   */
-  Surface_mesh_shortest_path(Triangle_mesh& tm, const Traits& traits = Traits())
+  Surface_mesh_shortest_path(const Triangle_mesh& tm, const Traits& traits = Traits())
     : m_traits(traits)
-    , m_graph(tm)
+    , m_graph(const_cast<Triangle_mesh&>(tm))
     , m_vertexIndexMap(get(boost::vertex_index, tm))
     , m_halfedgeIndexMap(get(boost::halfedge_index, tm))
     , m_faceIndexMap(get(boost::face_index, tm))
-    , m_vertexPointMap(get(CGAL::vertex_point, tm))
+    , m_vertexPointMap(get(CGAL::vertex_point, m_graph))
     , m_debugOutput(false)
   {
     reset_algorithm();
@@ -2026,9 +2026,9 @@ public:
 
   \param traits Optional instance of the traits class to use.
   */
-  Surface_mesh_shortest_path(Triangle_mesh& tm, Vertex_index_map vertexIndexMap, Halfedge_index_map halfedgeIndexMap, Face_index_map faceIndexMap, Vertex_point_map vertexPointMap, const Traits& traits = Traits())
+  Surface_mesh_shortest_path(const Triangle_mesh& tm, Vertex_index_map vertexIndexMap, Halfedge_index_map halfedgeIndexMap, Face_index_map faceIndexMap, Vertex_point_map vertexPointMap, const Traits& traits = Traits())
     : m_traits(traits)
-    , m_graph(tm)
+    , m_graph(const_cast<Triangle_mesh&>(tm))
     , m_vertexIndexMap(vertexIndexMap)
     , m_halfedgeIndexMap(halfedgeIndexMap)
     , m_faceIndexMap(faceIndexMap)
