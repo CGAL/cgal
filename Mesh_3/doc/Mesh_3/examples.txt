@@ -15,6 +15,7 @@
 \example Mesh_3/mesh_optimization_example.cpp
 \example Mesh_3/mesh_optimization_lloyd_example.cpp
 \example Mesh_3/mesh_polyhedral_domain.cpp
+\example Mesh_3/mesh_polyhedral_complex.cpp
 \example Mesh_3/remesh_polyhedral_surface.cpp
 \example Mesh_3/mesh_polyhedral_domain_with_features.cpp
 \example Mesh_3/mesh_polyhedral_domain_with_surface_inside.cpp

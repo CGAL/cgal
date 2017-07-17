@@ -1,5 +1,7 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 
+INPUT += ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Polyhedral_complex_mesh_domain_3.h
+
 PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - 3D Mesh Generation"
 HTML_EXTRA_FILES           =  ${CGAL_PACKAGE_DOC_DIR}/fig/implicit_domain_3.jpg \
                               ${CGAL_PACKAGE_DOC_DIR}/fig/implicit_domain_4.jpg \
@@ -11,6 +13,8 @@ HTML_EXTRA_FILES           =  ${CGAL_PACKAGE_DOC_DIR}/fig/implicit_domain_3.jpg 
                               ${CGAL_PACKAGE_DOC_DIR}/fig/with-custom-init.png \
                               ${CGAL_PACKAGE_DOC_DIR}/fig/hybrid_domain.jpg \
                               ${CGAL_PACKAGE_DOC_DIR}/fig/hybrid_domain_mesh_no_protection.jpg \
-                              ${CGAL_PACKAGE_DOC_DIR}/fig/hybrid_domain_mesh_protection.jpg
+                              ${CGAL_PACKAGE_DOC_DIR}/fig/hybrid_domain_mesh_protection.jpg \
+                              ${CGAL_PACKAGE_DOC_DIR}/fig/protection-complex.png \
+                              ${CGAL_PACKAGE_DOC_DIR}/fig/no-protection-complex.png
 
 EXAMPLE_PATH += ${CGAL_PACKAGE_INCLUDE_DIR}

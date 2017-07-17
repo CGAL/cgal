@@ -143,6 +143,10 @@ Release date: September 2017
     as traits class in the the Mesh_3 package to efficiently yet robustly
     generate 3D meshes.
 
+  - Add a new type of polyhedral domain with features,
+    Polyhedral_complex_mesh_domain_3. The domain is defined by a collection of
+    triangulated surfaces, forming a complex.
+
 
 * 3D Periodic Triangulations
 

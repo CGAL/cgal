@@ -908,16 +908,16 @@ the edges of the 1D-mesh corresponding to the 1D-features.
 
 The rest of the example is similar to \ref Mesh_3/mesh_3D_image.cpp.
 
-\cgalFigureRef{mesh3protectionimage3D} shows the results with or with the
+\cgalFigureRef{mesh3protectionimage3D} shows the results without or with the
 protection of the 1D-features.
 
 \cgalFigureAnchor{mesh3protectionimage3D}
 <center>
 <table border=0>
 <tr>
-  <td><img border="0" src="./no-protection.png"></td>
-  <td><img border="0" src="./protection-box.png"></td>
-  <td><img border="0" src="./protection-all.png"></td>
+<td><img border="0" src="./no-protection.png"></td>
+<td><img border="0" src="./protection-box.png"></td>
+<td><img border="0" src="./protection-all.png"></td>
 </tr>
 </table>
 </center>
@@ -930,6 +930,42 @@ Middle: the mesh with only the 1D-features computed by
 Right: the mesh with added 1D-features in the interior of the bounding box
 of the image.
 \cgalFigureCaptionEnd
+
+\subsubsection Mesh_3PolyhedralComplex Polyhedral complex
+
+The following example shows how to generate a mesh from a polyhedral complex
+that forms a bounded domain.
+The domain is defined by a group of polyhedral surfaces that are conformal.
+For each facet of the input polyhedral surfaces,
+the ids of incident subdomains are known.
+The input surfaces intersect along polylines that are considered as sharp features,
+and protected as for all domain types in this Section. 
+
+\cgalExample{Mesh_3/mesh_polyhedral_complex.cpp}
+
+\cgalFigureRef{mesh3protectionComplex} shows the results without or with the
+protection of the 1D-features.
+
+\cgalFigureAnchor{mesh3protectionComplex}
+<center>
+<table border=0>
+<tr>
+  <td><img border="0" src="./no-protection-complex.png"></td>
+  <td><img border="0" src="./protection-complex.png"></td>
+</tr>
+</table>
+</center>
+\cgalFigureCaptionBegin{mesh3protectionComplex}
+Left: the mesh without any call to `%detect_features()`.
+The mesh is overrefined next to sharp features, because the mesher tries to
+reach the target `facet_distance`, by inserting centers of surface Delaunay
+balls, that are not likely to be on sharp edges.
+
+Right: the mesh with added 1D-features along sharp edges and edges shared
+by at least two of the input polyhedral surfaces forming the complex.
+\cgalFigureCaptionEnd
+
+
 
 \subsection Mesh_3TuningMeshOptimization Tuning Mesh Optimization
 

@@ -40,6 +40,8 @@
 #include <vector>
 #include <set>
 #include <map>
+#include <algorithm>
+
 #include <boost/next_prior.hpp> // for boost::prior and boost::next
 #include <boost/variant.hpp>
 #include <boost/foreach.hpp>
@@ -580,6 +582,12 @@ public:
   add_features_with_context(InputIterator first, InputIterator last)
   { add_features_with_context(first, last, CGAL::Emptyset_iterator()); }
 
+  template <typename Surf_p_index, typename IncidenceMap>
+  void reindex_patches(const std::vector<Surf_p_index>& map, IncidenceMap& incidence_map);
+
+  template <typename Surf_p_index>
+  void reindex_patches(const std::vector<Surf_p_index>& map);
+
   template <typename IndicesOutputIterator>
   IndicesOutputIterator
   get_incidences(Curve_segment_index id, IndicesOutputIterator out) const;
@@ -846,6 +854,38 @@ add_features_with_context(InputIterator first, InputIterator last,
   }
   compute_corners_incidences();
   return indices_out;
+}
+
+template <class MD_>
+template <typename Surf_p_index, typename IncidenceMap>
+void
+Mesh_domain_with_polyline_features_3<MD_>::
+reindex_patches(const std::vector<Surf_p_index>& map,
+                IncidenceMap& incidence_map)
+{
+  BOOST_FOREACH(typename IncidenceMap::value_type& pair,
+                incidence_map)
+  {
+    Surface_patch_index_set& patch_index_set = pair.second;
+    Surface_patch_index_set new_index_set;
+    for(typename Surface_patch_index_set::const_iterator
+        it = patch_index_set.begin(), end = patch_index_set.end();
+        it != end; ++it)
+    {
+      new_index_set.insert(map[*it]);
+    }
+    pair.second = new_index_set;
+  }
+}
+
+template <class MD_>
+template <typename Surf_p_index>
+void
+Mesh_domain_with_polyline_features_3<MD_>::
+reindex_patches(const std::vector<Surf_p_index>& map)
+{
+  reindex_patches(map, edges_incidences_);
+  reindex_patches(map, corners_incidences_);
 }
 
 template <class MD_>
