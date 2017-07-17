@@ -194,7 +194,7 @@ public Q_SLOTS:
                                               plane->plane(),
                                               ui_widget.close_checkBox->isChecked());
           poly->invalidateOpenGLBuffers();
-          viewer->updateGL();
+
         }
         else
         {
@@ -223,10 +223,9 @@ public Q_SLOTS:
           new_item->setVisible(poly->visible());
           scene->addItem(new_item);
           new_item->invalidateOpenGLBuffers();
-
-          viewer->updateGL();
         }
       }
+      viewer->update();
     }
     QApplication::restoreOverrideCursor();
   }
