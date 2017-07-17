@@ -581,8 +581,7 @@ public:
   */
   void remove (const Index& index)
   {
-    std::swap (index, *(end() - 1));
-    ++ m_nb_removed;
+    remove (m_indices.begin() + index);
   }
 
 
