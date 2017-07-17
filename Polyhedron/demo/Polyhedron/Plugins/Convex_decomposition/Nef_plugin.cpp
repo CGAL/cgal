@@ -127,14 +127,14 @@ Polyhedron_demo_nef_plugin::on_actionToNef_triggered()
   if(item)
   {
     new_nef_item = Scene_nef_polyhedron_item::from_polygon_mesh(item);
-    new_nef_item->setName(tr("%1 (to nef)").arg(item->name()));
+    new_nef_item->setName(tr("%1 (Nef_polyhedron_3)").arg(item->name()));
     new_nef_item->setRenderingMode(item->renderingMode());
     item->setVisible(false);
   }
   else
   {
     new_nef_item = Scene_nef_polyhedron_item::from_polygon_mesh(sm_item);
-    new_nef_item->setName(tr("%1 (to nef)").arg(sm_item->name()));
+    new_nef_item->setName(tr("%1 (Nesf_polyhedron_3)").arg(sm_item->name()));
     new_nef_item->setRenderingMode(sm_item->renderingMode());
     sm_item->setVisible(false);
   }
