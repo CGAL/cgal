@@ -284,7 +284,7 @@ public:
     stored_polyhedra[1] = bounding_p;
     this->add_primitives(stored_polyhedra[0]);
     this->add_primitives(stored_polyhedra[1]);
-    if(is_empty(bounding_p)) {
+    if(CGAL::is_empty(bounding_p)) {
       this->set_surface_only();
     } else {
       this->add_primitives_to_bounding_tree(stored_polyhedra[1]);
