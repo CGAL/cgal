@@ -856,7 +856,6 @@ power_test(const Weighted_point &p0,
   // We sort the points lexicographically.
   const Weighted_point * points[4] = {&p0, &p1, &p2, &p};
   std::sort(points, points + 4, typename Base::Perturbation_order(this));
-
   // We successively look whether the leading monomial, then 2nd monomial
   // of the determinant has non null coefficient.
   // 2 iterations are enough(cf paper)

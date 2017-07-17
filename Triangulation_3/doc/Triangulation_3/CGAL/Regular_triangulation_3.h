@@ -35,7 +35,6 @@ Any custom type can be used instead of `Regular_triangulation_vertex_base_3`
 and `Regular_triangulation_cell_base_3`, provided that they are models of the
 concepts `RegularTriangulationVertexBase_3` and `RegularTriangulationCellBase_3`,
 respectively.
-`Default` may be used.
 
 \tparam SLDS is an optional parameter to specify the type of the spatial lock data structure.
         It must be a model of the `SurjectiveLockDataStructure` concept,
@@ -90,7 +89,7 @@ Creates an empty regular triangulation, possibly specifying a traits class
 `traits`. 
 `lock_ds` is an optional pointer to the lock data structure for parallel operations. It
 must be provided if concurrency is enabled.
-*/ 
+*/
 Regular_triangulation_3(const Traits & traits = Traits(),
                         Lock_data_structure *lock_ds = NULL);
 

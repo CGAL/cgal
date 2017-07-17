@@ -1,4 +1,4 @@
-// Copyright (c) 2004,2006-2009   INRIA Sophia-Antipolis (France).
+// Copyright (c) 2004,2006-2009,2017  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -12,10 +12,6 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-// 
-//
 // Author(s)     : Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
 //                 Nico Kruithof <Nico.Kruithof@sophia.inria.fr>
 //                 Manuel Caroli <Manuel.Caroli@sophia.inria.fr>
@@ -26,8 +22,6 @@
 
 #include <CGAL/license/Periodic_3_triangulation_3.h>
 
-
-#include <string>
 #include <CGAL/basic.h>
 #include <CGAL/config.h>
 #include <CGAL/Interval_nt.h>
@@ -35,42 +29,6 @@
 #include <CGAL/Profile_counter.h>
 #include <CGAL/Filtered_predicate.h>
 #include <CGAL/internal/Has_boolean_tags.h>
-
-namespace CGAL {
-
-// This template class is a wrapper that implements the filtering for any
-// predicate (dynamic filters with IA).
-
-// TODO :
-// - each predicate in the default kernel should define a tag that says if it
-//   wants to be filtered or not (=> all homogeneous predicate define this
-//   tag).  We could even test-suite that automatically.  It makes a strong
-//   new requirement on the kernel though...
-//   Could be done with a traits mechanism ?
-//   A default template could use the current IA, but other tags or whatever
-//   could specify no filtering at all, or static filtering...
-// - same thing for constructions => virtual operator() ?
-// - similarly, constructions should have a tag saying if they can throw or
-//   not, or we let all this up to the compiler optimizer to figure out ?
-// - Some caching could be done at the Point_2 level.
-
-template <class EP, class AP, class C2E, class C2A, bool Protection = true>
-class Filtered_periodic_predicate
-  : public Filtered_predicate<EP, AP, C2E, C2A, Protection>
-{
-  typedef Filtered_predicate<EP, AP, C2E, C2A, Protection> Base;
-public:
-  Filtered_periodic_predicate() : Base() {}
-
-  // These constructors are used for constructive predicates.
-  // You should try to avoid constructive predicates, as they will construct
-  // the exact values systematically (in the ctor), rather than lazily.
-  template <class OE, class OA> 
-  Filtered_periodic_predicate(const OE * oe, const OA * oa) 
-    : Base( EP(oe), AP(oa) )
-  {}
-};
-}
 
 #include <CGAL/Periodic_3_triangulation_traits_3.h>
 
@@ -95,7 +53,6 @@ struct Offset_converter_3
   typedef typename Periodic_3_triangulation_traits_base_3<Target_kernel>
                    ::Point_3  Target_pt;
 
-
   using Converter::operator();
 
   Target_off
@@ -105,91 +62,94 @@ struct Offset_converter_3
   }
 };
 
-// The argument is supposed to be a Filtered_kernel like kernel.
+// The first template item is supposed to be a Filtered_kernel-like kernel.
 template < typename K, typename Off >
 class Periodic_3_triangulation_filtered_traits_base_3
   : public Periodic_3_triangulation_traits_base_3<K, Off>
 {
-  typedef Periodic_3_triangulation_traits_base_3<K, Off> Base;
+  typedef Periodic_3_triangulation_traits_base_3<K, Off>   Base;
+
+  typedef typename K::Exact_kernel                         EKernel;
+  typedef typename K::Approximate_kernel                   AKernel;
+  typedef typename K::C2E                                  C2E;
+  typedef typename K::C2F                                  C2F;
 
   // Exact traits is based on the exact kernel.
-  typedef Periodic_3_triangulation_traits_3<typename K::Exact_kernel,
-                                            Off>
-                                                   Exact_traits;
+  typedef Periodic_3_triangulation_traits_3<EKernel, Off>  Exact_traits;
   // Filtering traits is based on the filtering kernel.
-  typedef Periodic_3_triangulation_traits_3<typename K::Approximate_kernel,
-                                            Off>
-                                                   Filtering_traits;
-private:
-  typedef typename K::C2E C2E;
-  typedef typename K::C2F C2F;
+  typedef Periodic_3_triangulation_traits_3<AKernel, Off>  Filtering_traits;
 
-  typedef typename C2E::Target_kernel::Iso_cuboid_3 Exact_iso_cuboid_3;
-  typedef typename C2F::Target_kernel::Iso_cuboid_3 Approximate_iso_cuboid_3;
- 
 public:
-  typedef typename K::Iso_cuboid_3 Iso_cuboid_3;
+  typedef typename K::Iso_cuboid_3                         Iso_cuboid_3;
 
-  void set_domain(const Iso_cuboid_3& domain) {
-    C2E c2e;
-    C2F c2f;
-    this->_domain = domain;
-    this->_domain_e = c2e(this->_domain);
-    this->_domain_f = c2f(this->_domain);
+  virtual ~Periodic_3_triangulation_filtered_traits_base_3() { }
+
+  Periodic_3_triangulation_filtered_traits_base_3(const Iso_cuboid_3& domain,
+                                                  const K& k)
+    :
+      Base(domain, k),
+      traits_e(C2E()(domain)),
+      traits_f(C2F()(domain))
+  {
+    // Problem: below is a default initialization of the kernel in the traits.
+    // Hence, if the kernel has members and we use filtered traits, then
+    // the members will be default constructed here...
   }
 
-  typedef Filtered_periodic_predicate<
+  virtual void set_domain(const Iso_cuboid_3& domain)
+  {
+    this->_domain = domain;
+    set_filtrating_traits(domain);
+  }
+
+  void set_filtrating_traits(const Iso_cuboid_3& domain)
+  {
+    traits_e.set_domain(C2E()(domain));
+    traits_f.set_domain(C2F()(domain));
+  }
+
+  typedef Filtered_predicate<
             typename Exact_traits::Compare_xyz_3,
             typename Filtering_traits::Compare_xyz_3,
             Offset_converter_3<C2E>,
             Offset_converter_3<C2F> >  Compare_xyz_3;
 
-  typedef Filtered_periodic_predicate<
-            typename Exact_traits::Coplanar_orientation_3,
-            typename Filtering_traits::Coplanar_orientation_3,
-            Offset_converter_3<C2E>,
-            Offset_converter_3<C2F> >  Coplanar_orientation_3;
-
-  typedef Filtered_periodic_predicate<
+  typedef Filtered_predicate<
             typename Exact_traits::Orientation_3,
             typename Filtering_traits::Orientation_3,
             Offset_converter_3<C2E>,
             Offset_converter_3<C2F> >  Orientation_3;
 
-  typedef Filtered_periodic_predicate<
-            typename Exact_traits::Coplanar_side_of_bounded_circle_3,
-            typename Filtering_traits::Coplanar_side_of_bounded_circle_3,
-            Offset_converter_3<C2E>,
-            Offset_converter_3<C2F> >  Coplanar_side_of_bounded_circle_3;
-
-  typedef Filtered_periodic_predicate<
-            typename Exact_traits::Compare_distance_3,
-            typename Filtering_traits::Compare_distance_3,
-            Offset_converter_3<C2E>,
-            Offset_converter_3<C2F> >  Compare_distance_3;
-
   Compare_xyz_3 compare_xyz_3_object() const
-  { return Compare_xyz_3(&_domain_e,&_domain_f);}
+  {
+    typename Exact_traits::Compare_xyz_3 pe = traits_e.compare_xyz_3_object();
+    typename Filtering_traits::Compare_xyz_3 pf = traits_f.compare_xyz_3_object();
 
-  Coplanar_orientation_3 coplanar_orientation_3_object() const
-  { return Coplanar_orientation_3(&_domain_e,&_domain_f); }
+    return Compare_xyz_3(pe, pf);
+  }
 
   Orientation_3 orientation_3_object() const
-  { return Orientation_3(&_domain_e,&_domain_f);}
+  {
+    typename Exact_traits::Orientation_3 pe = traits_e.orientation_3_object();
+    typename Filtering_traits::Orientation_3 pf = traits_f.orientation_3_object();
 
-  Coplanar_side_of_bounded_circle_3
-  coplanar_side_of_bounded_circle_3_object() const 
-  { return Coplanar_side_of_bounded_circle_3(&_domain_e,&_domain_f); }
+    return Orientation_3(pe, pf);
+  }
 
   // The following are inherited since they are constructions :
   // Construct_segment_3
   // Construct_triangle_3
   // Construct_tetrahedron_3
 
- protected:
-  Exact_iso_cuboid_3 _domain_e;
-  Approximate_iso_cuboid_3 _domain_f;
+protected:
+  Exact_traits traits_e;
+  Filtering_traits traits_f;
 };
+
+template < typename K,
+           typename Off = typename CGAL::Periodic_3_offset_3,
+           bool Has_static_filters = internal::Has_static_filters<K>::value >
+class Periodic_3_triangulation_filtered_traits_3;
 
 } //namespace CGAL
 
@@ -197,16 +157,35 @@ public:
 
 namespace CGAL {
 
-template < typename K, typename Off = typename CGAL::Periodic_3_offset_3, bool Has_static_filters = internal::Has_static_filters<K>::value >
-class Periodic_3_triangulation_filtered_traits_3
-  : public Periodic_3_triangulation_statically_filtered_traits_3<
-  Periodic_3_triangulation_filtered_traits_base_3<K, Off> > {
-};
-
-template < typename K, typename Off >
+template<class K, class Off >
 class Periodic_3_triangulation_filtered_traits_3<K, Off, false>
   : public Periodic_3_triangulation_filtered_traits_base_3<K, Off>
-{};
+{
+  typedef Periodic_3_triangulation_filtered_traits_base_3<K, Off> Base;
+
+public:
+  typedef typename K::Iso_cuboid_3 Iso_cuboid_3;
+
+  Periodic_3_triangulation_filtered_traits_3(const Iso_cuboid_3& domain,
+                                             const K& k)
+    : Base(domain, k)
+  { }
+};
+
+template<class K, class Off>
+class Periodic_3_triangulation_filtered_traits_3<K, Off, true>
+  : public Periodic_3_triangulation_statically_filtered_traits_3<K, Off>
+{
+  typedef Periodic_3_triangulation_statically_filtered_traits_3<K, Off> Base;
+
+public:
+  typedef typename K::Iso_cuboid_3 Iso_cuboid_3;
+
+  Periodic_3_triangulation_filtered_traits_3(const Iso_cuboid_3& domain,
+                                             const K& k)
+    : Base(domain, k)
+  { }
+};
 
 } //namespace CGAL
 

@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Manuel Caroli <Manuel.Caroli@sophia.inria.fr>
 
@@ -23,15 +23,19 @@
 
 #include <CGAL/license/Periodic_3_triangulation_3.h>
 
-
 #include <CGAL/array.h>
+
 #include <iostream>
+#include <utility>
 
 template <class Stream, class Triangulation>
 Stream &write_triangulation_to_off(Stream &out, Triangulation &t) {
   typedef typename Triangulation::Point Point;
   typedef typename Triangulation::Iso_cuboid Iso_cuboid;
-  int number_of_cells = t.tds().number_of_cells();
+  typedef typename Triangulation::Triangulation_data_structure::size_type size_type;
+
+  size_type number_of_cells = t.tds().number_of_cells();
+
   out << "OFF "
       << "\n" << 4*number_of_cells + 8
       << " "  << 4*number_of_cells + 6
@@ -51,26 +55,26 @@ Stream &write_triangulation_to_off(Stream &out, Triangulation &t) {
 
   if (t.number_of_sheets() == CGAL::make_array(1,1,1)) {
     for (typename Triangulation::Cell_iterator it = t.cells_begin();
-	 it != t.cells_end(); it++) {
+         it != t.cells_end(); it++) {
       for (int i=0; i<4; i++) {
-	Point p = t.point(t.periodic_point(it,i));
-	out << p.x() << " " 
-	    << p.y() << " " 
-	    << p.z() << std::endl;
+        Point p = t.point(t.periodic_point(it,i));
+        out << p.x() << " "
+            << p.y() << " "
+            << p.z() << std::endl;
       }
     }
   } else {
     for (typename Triangulation::Cell_iterator it = t.cells_begin();
-	 it != t.cells_end(); it++) {
+         it != t.cells_end(); it++) {
       for (int i=0; i<4; i++) {
-	typename Triangulation::Vertex_handle vh; 
-	typename Triangulation::Offset off;
-	t.get_vertex(it, i, vh, off);
-	Point p = t.point(t.periodic_point(it, i));
-  
-	out << p.x() << " " 
-	    << p.y() << " " 
-	    << p.z() << std::endl;
+        typename Triangulation::Vertex_handle vh;
+        typename Triangulation::Offset off;
+        t.get_vertex(it, i, vh, off);
+        Point p = t.point(t.periodic_point(it, i));
+
+        out << p.x() << " "
+            << p.y() << " "
+            << p.z() << std::endl;
       }
     }
   }
@@ -81,7 +85,7 @@ Stream &write_triangulation_to_off(Stream &out, Triangulation &t) {
   out << "4 1 7 5 3" << std::endl;
   out << "4 6 0 2 4" << std::endl;
 
-  for (int i=0; i<number_of_cells; i++) {
+  for (size_type i=0; i<number_of_cells; i++) {
     out << "3 " << i*4  +8 << " " << i*4+1+8 << " " << i*4+2+8 << std::endl;
     out << "3 " << i*4  +8 << " " << i*4+1+8 << " " << i*4+3+8 << std::endl;
     out << "3 " << i*4  +8 << " " << i*4+2+8 << " " << i*4+3+8 << std::endl;
@@ -93,7 +97,7 @@ Stream &write_triangulation_to_off(Stream &out, Triangulation &t) {
 
 template<class Stream, class Triangulation, class Cell_iterator>
 Stream &write_cells_to_off(Stream &out, Triangulation &t, int number_of_cells,
-			   Cell_iterator cit, Cell_iterator cells_end) {
+                           Cell_iterator cit, Cell_iterator cells_end) {
   typedef typename Triangulation::Point Point;
   out << "OFF "
       << "\n" << 4*number_of_cells
@@ -119,26 +123,18 @@ Stream &write_cells_to_off(Stream &out, Triangulation &t, int number_of_cells,
   return out;
 }
 
-#if 0 
-//TODO: rewrite this to wrap the stream coming from draw_dual
-template <class Stream>
-Stream& draw_dual_to_off(Stream &os) {
-  os << "OFF " << "\n" 
-     << 2*number_of_facets() << " " 
-     << number_of_facets() << " 0" << std::endl;
-    for (Facet_iterator fit = facets_begin(), end = facets_end();
-	 fit != end; ++fit) {
-      if (!is_canonical(*fit)) continue;
-	std::pair<Segment,Offset> pso = dual(*fit);
-      os << pso.first.source() << std::endl
-	 << pso.first.target() - pso.second<< std::endl;
-    }
-  CGAL_triangulation_assertion( i==number_of_facets());
-  for(unsigned int i=0 ; i < number_of_facets() ; i++) {
-    os << "2 " << i*2 << " " << i*2+1 << std::endl;
+template <class Stream, class Triangulation>
+Stream& draw_dual_to_off(Stream &os, Triangulation &t) {
+  os << "OFF " << "\n"
+     << 2*t.number_of_facets() << " "
+     << t.number_of_facets() << " 0" << std::endl;
+
+  t.draw_dual(os);
+
+  for(unsigned int i=0; i < t.number_of_facets(); i++) {
+    os << "3 " << i*2 << " " << i*2+1 << " " << i*2 << std::endl;
   }
   return os;
 }
-#endif
 
 #endif //CGAL_PERIODIC_3_TRIANGULATION_3_IO_H

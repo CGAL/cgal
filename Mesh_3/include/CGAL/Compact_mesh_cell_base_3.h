@@ -41,6 +41,7 @@
 
 #include <boost/type_traits/is_same.hpp>
 
+
 #ifdef CGAL_LINKED_WITH_TBB
 # include <tbb/atomic.h>
 #endif
