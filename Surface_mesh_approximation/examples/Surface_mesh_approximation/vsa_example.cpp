@@ -6,14 +6,14 @@
 
 #include <iostream>
 #include <fstream>
-#include <CGAL/internal/Surface_mesh_approximation/VSA.h>
+#include <CGAL/vsa_mesh_approximation.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 
 int main(int argc, char *argv[])
 {
-  if (argc < 4)
+  if (argc < 5)
     return 0;
 
   // create and read Polyhedron
@@ -26,28 +26,32 @@ int main(int argc, char *argv[])
 
   // create a property-map for segment-ids
   typedef std::map<Polyhedron::Facet_const_handle, std::size_t> Facet_id_map;
-  Facet_id_map internal_segment_map;
+  Facet_id_map internal_facet_id_map;
   for (Polyhedron::Facet_const_iterator fitr = mesh.facets_begin(); fitr != mesh.facets_end(); ++fitr) {
-    internal_segment_map.insert(std::pair<Polyhedron::Face_const_handle, std::size_t>(fitr, std::numeric_limits<std::size_t>::max()));
+    internal_facet_id_map.insert(std::pair<Polyhedron::Face_const_handle, std::size_t>(fitr, std::numeric_limits<std::size_t>::max()));
   }
-  boost::associative_property_map<Facet_id_map> segment_property_map(internal_segment_map);
+  boost::associative_property_map<Facet_id_map> proxy_patch_map(internal_facet_id_map);
 
-  typedef boost::property_map<Polyhedron, boost::vertex_point_t>::type PointPropertyMap;
-  PointPropertyMap ppmap = get(boost::vertex_point, const_cast<Polyhedron &>(mesh));
+  const std::size_t num_proxies = std::atoi(argv[3]);
+  const std::size_t num_iterations = std::atoi(argv[4]);
+  std::vector<int> tris;
+  std::vector<Kernel::Point_3> anchor_pos;
+  std::vector<Polyhedron::Vertex_handle> anchor_vtx;
+  std::vector<std::vector<std::size_t> > bdrs;
+  int init = std::atoi(argv[2]);
+  if (init < 0 || init > 3)
+    return EXIT_FAILURE;
+  CGAL::vsa_mesh_approximation(init, mesh,
+    num_proxies,
+    num_iterations,
+    proxy_patch_map,
+    get(boost::vertex_point, const_cast<Polyhedron &>(mesh)),
+    tris,
+    anchor_pos,
+    anchor_vtx,
+    bdrs,
+    Kernel());
 
-  CGAL::internal::VSA<Polyhedron, Kernel, PointPropertyMap> vsa_seg(mesh, ppmap, Kernel());
-
-  /*for (Polyhedron::Facet_const_iterator fitr = mesh.facets_begin(); fitr != mesh.facets_end(); ++fitr) {
-    std::cout << segment_property_map[fitr] << '\n';
-  }*/
-
-  vsa_seg.partition(std::atoi(argv[2]), std::atoi(argv[3]), segment_property_map);
-
-  int count = 0;
-  for (Polyhedron::Facet_const_iterator fitr = mesh.facets_begin(); fitr != mesh.facets_end(); ++fitr) {
-    //std::cout << segment_property_map[fitr] << '\n';
-    ++count;
-  }
-  std::cout << count << std::endl;
+  return EXIT_SUCCESS;
 }
 

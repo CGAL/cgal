@@ -80,6 +80,7 @@ template<typename PlaneProxy,
   }
 
   typedef typename GeomTraits::FT FT;
+  typedef typename GeomTraits::Vector_3 Vector;
   typedef typename GeomTraits::Construct_scaled_vector_3 Construct_scaled_vector_3;
   typedef typename GeomTraits::Construct_sum_of_vectors_3 Construct_sum_of_vectors_3;
   typedef typename GeomTraits::Compute_scalar_product_3 Compute_scalar_product_3;

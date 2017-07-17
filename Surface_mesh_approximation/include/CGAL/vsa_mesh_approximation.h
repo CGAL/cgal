@@ -60,6 +60,7 @@ template<typename TriangleMesh,
 
   typedef typename GeomTraits::FT FT;
   typedef typename GeomTraits::Vector_3 Vector;
+  typedef typename GeomTraits::Point_3 Point;
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
   typedef boost::associative_property_map<std::map<face_descriptor, Vector> > FacetNormalMap;
