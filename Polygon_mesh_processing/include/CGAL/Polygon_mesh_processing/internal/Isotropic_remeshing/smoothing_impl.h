@@ -4,6 +4,7 @@
 
 #include <fstream>
 #include <math.h>
+#include <utility>
 
 #include <CGAL/Kernel/global_functions_3.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
