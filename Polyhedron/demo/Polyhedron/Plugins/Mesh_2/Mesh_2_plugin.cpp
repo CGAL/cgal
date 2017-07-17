@@ -16,6 +16,7 @@
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 
 #include "Scene_polyhedron_item.h"
+#include "Scene_surface_mesh_item.h"
 #include "Scene_polylines_item.h"
 #include "Scene_points_with_normal_item.h"
 #include "Polyhedron_type.h"
@@ -111,7 +112,7 @@ mark_nested_domains(CDT& cdt)
 template <class CDT, class TriangleMesh>
 void cdt2_to_face_graph(const CDT& cdt, TriangleMesh& tm, int constant_coordinate_index, double constant_coordinate)
 {
-  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
 
   typedef std::map<typename CDT::Vertex_handle, vertex_descriptor> Map;
   Map descriptors;
@@ -340,15 +341,26 @@ private:
       QString("2dmesh_");
     iname+=QString::number(target_length);
     if (runLloyd) iname+=QString("_Lloyd_")+QString::number(nb_iter);
-    Scene_polyhedron_item* poly_item = new Scene_polyhedron_item();
-    poly_item->setName(iname);
-    cdt2_to_face_graph(cdt,
-                       *poly_item->polyhedron(),
-                       constant_coordinate_index,
-                       constant_coordinate);
-    scene->addItem(poly_item);
-    poly_item->invalidateOpenGLBuffers();
-
+    
+    if(mw->property("is_polyhedron_mode").toBool()){
+      Scene_polyhedron_item* poly_item = new Scene_polyhedron_item();
+      poly_item->setName(iname);
+      cdt2_to_face_graph(cdt,
+                         *poly_item->polyhedron(),
+                         constant_coordinate_index,
+                         constant_coordinate);
+      scene->addItem(poly_item);
+      poly_item->invalidateOpenGLBuffers();
+    }else{
+      Scene_surface_mesh_item* poly_item = new Scene_surface_mesh_item();
+      poly_item->setName(iname);
+      cdt2_to_face_graph(cdt,
+                         *poly_item->polyhedron(),
+                         constant_coordinate_index,
+                         constant_coordinate);
+      scene->addItem(poly_item);
+      poly_item->invalidateOpenGLBuffers();
+    }
     std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
     // default cursor
     QApplication::restoreOverrideCursor();

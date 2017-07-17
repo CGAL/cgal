@@ -8,7 +8,7 @@
 const QColor CGAL::Three::Scene_item::defaultColor = QColor(100, 100, 255);
 
 CGAL::Three::Scene_item::Scene_item(int buffers_size, int vaos_size)
-  : name_("unamed"),
+  : name_("unnamed"),
     color_(defaultColor),
     visible_(true),
     are_buffers_filled(false),

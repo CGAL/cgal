@@ -2,6 +2,7 @@
 #include "Scene_points_with_normal_item.h"
 #include "Scene_polygon_soup_item.h"
 #include "Scene_polyhedron_item.h"
+#include "Scene_surface_mesh_item.h"
 #include <CGAL/Three/Scene_group_item.h>
 
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
@@ -69,6 +70,7 @@ class Polyhedron_demo_point_set_shape_detection_plugin :
 public:
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*) {
     scene = scene_interface;
+    mw = mainWindow;
     actionDetect = new QAction(tr("Point Set Shape Detection"), mainWindow);
     actionDetect->setObjectName("actionDetect");
     autoConnectActions();
@@ -94,7 +96,7 @@ private:
   typedef Kernel::Plane_3 Plane_3;
   
   void build_alpha_shape (Point_set& points, boost::shared_ptr<CGAL::Shape_detection_3::Plane<Traits> > plane,
-                          Scene_polyhedron_item* item, double epsilon);
+                          Scene_polyhedron_item* item, Scene_surface_mesh_item* sm_item, double epsilon);
 
 }; // end Polyhedron_demo_point_set_shape_detection_plugin
 
@@ -279,20 +281,39 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
           if (dialog.generate_alpha ())
             {
               // If plane, build alpha shape
-              Scene_polyhedron_item* poly_item = new Scene_polyhedron_item;
+              Scene_polyhedron_item* poly_item = NULL;
+              Scene_surface_mesh_item* sm_item = NULL;
+              if(mw->property("is_polyhedron_mode").toBool()){
+                poly_item = new Scene_polyhedron_item;
+              } else {
+                sm_item = new Scene_surface_mesh_item;
+              }
 
               build_alpha_shape (*(point_item->point_set()), pshape,
-                                 poly_item, dialog.cluster_epsilon());
+                                 poly_item, sm_item, dialog.cluster_epsilon());
           
-              poly_item->setColor(point_item->color ());
-              poly_item->setName(QString("%1%2_alpha_shape").arg(QString::fromStdString(ss.str()))
-                                 .arg (QString::number (shape->indices_of_assigned_points().size())));
-              poly_item->setRenderingMode (Flat);
-
-              scene->addItem(poly_item);
-              if(scene->item_id(groups[0]) == -1)
-                scene->addItem(groups[0]);
-              scene->changeGroup(poly_item, groups[0]);
+              if(poly_item){
+                poly_item->setColor(point_item->color ());
+                poly_item->setName(QString("%1%2_alpha_shape").arg(QString::fromStdString(ss.str()))
+                                   .arg (QString::number (shape->indices_of_assigned_points().size())));
+                poly_item->setRenderingMode (Flat);
+                
+                scene->addItem(poly_item);
+                if(scene->item_id(groups[0]) == -1)
+                  scene->addItem(groups[0]);
+                scene->changeGroup(poly_item, groups[0]);
+              }
+              if(sm_item){
+                sm_item->setColor(point_item->color ());
+                sm_item->setName(QString("%1%2_alpha_shape").arg(QString::fromStdString(ss.str()))
+                                   .arg (QString::number (shape->indices_of_assigned_points().size())));
+                sm_item->setRenderingMode (Flat);
+                
+                scene->addItem(sm_item);
+                if(scene->item_id(groups[0]) == -1)
+                  scene->addItem(groups[0]);
+                scene->changeGroup(sm_item, groups[0]);
+              }
             }
         }
       else if (dynamic_cast<CGAL::Shape_detection_3::Cone<Traits> *>(shape.get()))
@@ -411,7 +432,7 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
 
 void Polyhedron_demo_point_set_shape_detection_plugin::build_alpha_shape
 (Point_set& points,  boost::shared_ptr<CGAL::Shape_detection_3::Plane<Traits> > plane,
- Scene_polyhedron_item* item, double epsilon)
+ Scene_polyhedron_item* item, Scene_surface_mesh_item* sm_item, double epsilon)
 {
   typedef Kernel::Point_2  Point_2;
   typedef CGAL::Alpha_shape_vertex_base_2<Kernel> Vb;
@@ -457,7 +478,12 @@ void Polyhedron_demo_point_set_shape_detection_plugin::build_alpha_shape
     }
 
   soup_item->orient();
-  soup_item->exportAsPolyhedron (item->polyhedron());
+  if(item){
+    soup_item->exportAsPolyhedron (item->polyhedron());
+  }
+  if(sm_item){
+    soup_item->exportAsSurfaceMesh (sm_item->polyhedron());
+  }
 
   if (soup_item->isEmpty ())
     {

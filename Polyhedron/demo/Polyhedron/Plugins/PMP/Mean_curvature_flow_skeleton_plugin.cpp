@@ -1,13 +1,21 @@
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include "ui_Mean_curvature_flow_skeleton_plugin.h"
+#include <CGAL/Mesh_3/properties.h>
+#ifdef USE_SURFACE_MESH
+#include "Kernel_type.h"
+#include "Scene_surface_mesh_item.h"
+#include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
+#include <CGAL/Mesh_3/properties_Surface_mesh.h>
+#else
 #include "Scene_polyhedron_item.h"
+#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
+#include <CGAL/Mesh_3/properties_Polyhedron_3.h>
+#endif
+
 #include "Scene_points_with_normal_item.h"
 #include "Scene_polylines_item.h"
 #include "Scene.h"
-
-#include "Polyhedron_type.h"
-
 #include <QApplication>
 #include <QMainWindow>
 #include <QInputDialog>
@@ -23,25 +31,40 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Eigen_solver_traits.h>
 #include <CGAL/extract_mean_curvature_flow_skeleton.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/iterator.h>
-#include <CGAL/internal/corefinement/connected_components.h>
+#include <CGAL/Polygon_mesh_processing/connected_components.h>
 
 #include <CGAL/boost/graph/split_graph_into_polylines.h>
 #include <CGAL/mesh_segmentation.h>
-#include <CGAL/Polyhedron_copy_3.h>
+#include <CGAL/boost/graph/copy_face_graph.h>
+#include <CGAL/Facet_with_id_pmap.h>
 #include <queue>
 
+namespace PMP = CGAL::Polygon_mesh_processing;
 
-typedef boost::graph_traits<Polyhedron>::vertex_descriptor          vertex_descriptor;
-typedef boost::graph_traits<Polyhedron>::vertex_iterator            vertex_iterator;
-typedef boost::graph_traits<Polyhedron>::halfedge_descriptor        halfedge_descriptor;
-typedef Polyhedron::Facet_iterator                                  Facet_iterator;
+#ifdef USE_SURFACE_MESH
+typedef Scene_surface_mesh_item Scene_face_graph_item;
+namespace CGAL {
 
-typedef CGAL::Mean_curvature_flow_skeletonization<Polyhedron>      Mean_curvature_skeleton;
+template<>
+void set_halfedgeds_items_id (Scene_face_graph_item::Face_graph&)
+{}
+
+} // namespace CGAL
+
+#else
+typedef Scene_polyhedron_item Scene_face_graph_item;
+#endif
+
+typedef Scene_face_graph_item::Face_graph Face_graph;
+
+typedef boost::graph_traits<Face_graph>::vertex_descriptor          vertex_descriptor;
+typedef boost::graph_traits<Face_graph>::vertex_iterator            vertex_iterator;
+typedef boost::graph_traits<Face_graph>::halfedge_descriptor        halfedge_descriptor;
+
+typedef CGAL::Mean_curvature_flow_skeletonization<Face_graph>      Mean_curvature_skeleton;
 typedef Mean_curvature_skeleton::Skeleton Skeleton;
 
-typedef Polyhedron::Traits         Kernel;
 typedef Kernel::Point_3            Point;
 
 struct Polyline_visitor
@@ -72,25 +95,7 @@ struct Polyline_visitor
   void end_polyline(){}
 };
 
-template<class ValueType>
-struct Facet_with_id_pmap
-    : public boost::put_get_helper<ValueType&,
-             Facet_with_id_pmap<ValueType> >
-{
-    typedef Polyhedron::Face_handle key_type;
-    typedef ValueType value_type;
-    typedef value_type& reference;
-    typedef boost::lvalue_property_map_tag category;
 
-    Facet_with_id_pmap(
-      std::vector<ValueType>& internal_vector
-    ) : internal_vector(internal_vector) { }
-
-    reference operator[](key_type key) const
-    { return internal_vector[key->id()]; }
-private:
-    std::vector<ValueType>& internal_vector;
-};
 using namespace CGAL::Three;
 class Polyhedron_demo_mean_curvature_flow_skeleton_plugin :
   public QObject,
@@ -165,7 +170,7 @@ public:
   }
 
   bool applicable(QAction*) const {
-    return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex()));
+    return qobject_cast<Scene_face_graph_item*>(scene->item(scene->mainSelectionIndex()));
   }
 
   void init_ui(double diag) {
@@ -206,15 +211,15 @@ public:
   }
 
   /// \todo move this function into an include
-  bool is_mesh_valid(Polyhedron *pMesh) {
-    if (!pMesh->is_closed())
+  bool is_mesh_valid(Face_graph *pMesh) {
+    if (! CGAL::is_closed(*pMesh))
     {
       QMessageBox msgBox;
       msgBox.setText("The mesh is not closed.");
       msgBox.exec();
       return false;
     }
-    if (!pMesh->is_pure_triangle())
+    if (! CGAL::is_triangle_mesh(*pMesh))
     {
       QMessageBox msgBox;
       msgBox.setText("The mesh is not a pure triangle mesh.");
@@ -224,10 +229,10 @@ public:
 
     // the algorithm is only applicable on a mesh
     // that has only one connected component
-    std::size_t num_component;
-    CGAL::Counting_output_iterator output_it(&num_component);
-    CGAL::internal::corefinement::extract_connected_components(*pMesh, output_it);
-    ++output_it;
+    
+    boost::unordered_map<boost::graph_traits<Face_graph>::face_descriptor,int> cc(num_faces(*pMesh));
+    std::size_t num_component = PMP::connected_components(*pMesh, boost::make_assoc_property_map(cc));
+
     if (num_component != 1)
     {
       QMessageBox msgBox;
@@ -243,14 +248,14 @@ public:
   // check if the Mean_curvature_skeleton exists
   // or has the same polyheron item
   // check if the mesh is a watertight triangle mesh
-  bool check_mesh(Scene_polyhedron_item* item) {
+  bool check_mesh(Scene_face_graph_item* item) {
     double omega_H = ui->omega_H->value();
     double omega_P = ui->omega_P->value();
     double min_edge_length = ui->min_edge_length->value();
     double delta_area = ui->delta_area->value();
     bool is_medially_centered = ui->is_medially_centered->isChecked();
 
-    Polyhedron *pMesh = item->polyhedron();
+    Face_graph *pMesh = item->polyhedron();
 
     if (mcs == NULL)
     {
@@ -260,7 +265,7 @@ public:
       }
 
       mcs = new Mean_curvature_skeleton(*pMesh);
-      meso_skeleton = new Polyhedron(*pMesh);
+      meso_skeleton = new Face_graph(*pMesh);
       input_triangle_mesh = pMesh;
       //set algorithm parameters
       mcs->set_quality_speed_tradeoff(omega_H);
@@ -269,9 +274,9 @@ public:
       mcs->set_is_medially_centered(is_medially_centered);
       mcs->set_area_variation_factor(delta_area);
 
-      Scene_polyhedron_item* contracted_item = new Scene_polyhedron_item( meso_skeleton );
+      Scene_face_graph_item* contracted_item = new Scene_face_graph_item( meso_skeleton );
       contracted_item->setName(QString("contracted mesh of %1").arg(item->name()));
-
+      contracted_item->setItemIsMulticolor(false); //avoids segfault if item was a multicolor surface_mesh
       InputMeshItemIndex = scene->mainSelectionIndex();
 
       contractedItemIndex = scene->addItem(contracted_item);
@@ -294,7 +299,7 @@ public:
         delete mcs;
 
         mcs = new Mean_curvature_skeleton(*pMesh);
-        meso_skeleton = new Polyhedron(*pMesh);
+        meso_skeleton = new Face_graph(*pMesh);
         input_triangle_mesh = pMesh;
         //set algorithm parameters
         mcs->set_quality_speed_tradeoff(omega_H);
@@ -303,8 +308,9 @@ public:
         mcs->set_is_medially_centered(is_medially_centered);
         mcs->set_area_variation_factor(delta_area);
 
-        Scene_polyhedron_item* contracted_item = new Scene_polyhedron_item(meso_skeleton);
+        Scene_face_graph_item* contracted_item = new Scene_face_graph_item(meso_skeleton);
         contracted_item->setName(QString("contracted mesh of %1").arg(item->name()));
+        contracted_item->setItemIsMulticolor(false); //avoids segfault if item was a multicolor surface_mesh
 
         InputMeshItemIndex = scene->mainSelectionIndex();
 
@@ -330,8 +336,8 @@ public:
 
   void update_meso_skeleton()
   {
-    CGAL::Polyhedron_copy_3<Mean_curvature_skeleton::Meso_skeleton, Polyhedron::HalfedgeDS> modifier(mcs->meso_skeleton());
-    meso_skeleton->delegate(modifier);
+    clear(*meso_skeleton);
+    copy_face_graph(mcs->meso_skeleton(), *meso_skeleton);
     scene->item(contractedItemIndex)->invalidateOpenGLBuffers();
     scene->itemChanged(contractedItemIndex);
   }
@@ -367,8 +373,8 @@ public Q_SLOTS:
 
 private:
   Mean_curvature_skeleton* mcs;
-  Polyhedron* meso_skeleton; // a copy of the meso_skeleton that is displayed
-  Polyhedron* input_triangle_mesh;
+  Face_graph* meso_skeleton; // a copy of the meso_skeleton that is displayed
+  Face_graph* input_triangle_mesh;
   QDockWidget* dockWidget;
   Ui::Mean_curvature_flow_skeleton_plugin* ui;
 
@@ -388,12 +394,12 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionMCFSkeleton_t
 
   const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
 
-  Scene_polyhedron_item* item =
-    qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+  Scene_face_graph_item* item =
+    qobject_cast<Scene_face_graph_item*>(scene->item(index));
 
   if(item)
   {
-    Polyhedron* pMesh = item->polyhedron();
+    Face_graph* pMesh = item->polyhedron();
 
     if(!pMesh) return;
 
@@ -422,32 +428,45 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
   QTime time;
   time.start();
   QApplication::setOverrideCursor(Qt::WaitCursor);
+ 
+  const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
+
+  Scene_face_graph_item* item =
+    qobject_cast<Scene_face_graph_item*>(scene->item(index));
 
     // init the polyhedron simplex indices
   CGAL::set_halfedgeds_items_id(*input_triangle_mesh);
+  boost::property_map<Face_graph, boost::vertex_index_t>::type 
+    vimap = get(boost::vertex_index, *input_triangle_mesh);
 
   //for each input vertex compute its distance to the skeleton
   std::vector<double> distances(num_vertices(*input_triangle_mesh));
+  
+  Face_graph *smesh = item->polyhedron();
+
+  boost::property_map<Face_graph,CGAL::vertex_point_t>::type vpm
+    = get(CGAL::vertex_point,*smesh);
+
   BOOST_FOREACH(boost::graph_traits<Skeleton>::vertex_descriptor v, vertices(skeleton_curve) )
   {
     const Point& skel_pt = skeleton_curve[v].point;
     BOOST_FOREACH(vertex_descriptor mesh_v, skeleton_curve[v].vertices)
     {
-      const Point& mesh_pt = mesh_v->point();
-      distances[mesh_v->id()] = std::sqrt(CGAL::squared_distance(skel_pt, mesh_pt));
+      const Point& mesh_pt = get(vpm,mesh_v);
+      distances[get(vimap,mesh_v)] = std::sqrt(CGAL::squared_distance(skel_pt, mesh_pt));
     }
   }
 
   // create a property-map for sdf values
   std::vector<double> sdf_values( num_faces(*input_triangle_mesh) );
-  Facet_with_id_pmap<double> sdf_property_map(sdf_values);
+  Facet_with_id_pmap<Face_graph,double> sdf_property_map(*input_triangle_mesh, sdf_values);
 
   // compute sdf values with skeleton
-  BOOST_FOREACH(Polyhedron::Face_handle f, faces(*input_triangle_mesh))
+  BOOST_FOREACH(boost::graph_traits<Face_graph>::face_descriptor f, faces(*input_triangle_mesh))
   {
     double dist = 0;
-    BOOST_FOREACH(Polyhedron::Halfedge_handle hd, halfedges_around_face(halfedge(f, *input_triangle_mesh), *input_triangle_mesh))
-      dist+=distances[target(hd, *input_triangle_mesh)->id()];
+    BOOST_FOREACH(boost::graph_traits<Face_graph>::halfedge_descriptor hd, halfedges_around_face(halfedge(f, *input_triangle_mesh), *input_triangle_mesh))
+      dist+=distances[get(vimap,target(hd, *input_triangle_mesh))];
     sdf_property_map[f] = dist / 3.;
   }
 
@@ -456,22 +475,23 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
 
   // create a property-map for segment-ids (it is an adaptor for this case)
   std::vector<std::size_t> segment_ids( num_faces(*input_triangle_mesh) );
-  Facet_with_id_pmap<std::size_t> segment_property_map(segment_ids);
+  Facet_with_id_pmap<Face_graph,std::size_t> segment_property_map(*input_triangle_mesh, segment_ids);
 
   // segment the mesh using default parameters
   std::cout << "Number of segments: "
             << CGAL::segmentation_from_sdf_values(*input_triangle_mesh, sdf_property_map, segment_property_map) <<"\n";
 
-  Polyhedron* segmented_polyhedron = new Polyhedron(*input_triangle_mesh);
+  Face_graph* segmented_polyhedron = new Face_graph(*input_triangle_mesh);
 
+  Scene_face_graph_item* item_segmentation = new Scene_face_graph_item(segmented_polyhedron);
   int i=0;
-  BOOST_FOREACH(Polyhedron::Face_handle fd, faces(*segmented_polyhedron))
+  typedef boost::property_map<Face_graph, CGAL::face_patch_id_t<int> >::type Fpim;
+  Fpim fpim = get(CGAL::face_patch_id_t<int>(), *segmented_polyhedron);
+  BOOST_FOREACH(boost::graph_traits<Face_graph>::face_descriptor fd, faces(*segmented_polyhedron))
   {
-    fd->set_patch_id( static_cast<int>(segment_ids[i++] ));
+    put(fpim, fd, static_cast<int>(segment_ids[i++] ));
   }
-
   scene->item(InputMeshItemIndex)->setVisible(false);
-  Scene_polyhedron_item* item_segmentation = new Scene_polyhedron_item(segmented_polyhedron);
   item_segmentation->setItemIsMulticolor(true);
   item_segmentation->invalidateOpenGLBuffers();
   scene->addItem(item_segmentation);
@@ -484,12 +504,12 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_me
 {
   const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
 
-  Scene_polyhedron_item* item =
-    qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+  Scene_face_graph_item* item =
+    qobject_cast<Scene_face_graph_item*>(scene->item(index));
 
   if(item)
   {
-    Polyhedron* pMesh = item->polyhedron();
+    Face_graph* pMesh = item->polyhedron();
 
     if ( !is_mesh_valid(pMesh) ) return;
 
@@ -530,10 +550,10 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionContract()
     return;
   }
 
-  Scene_polyhedron_item* item =
-    qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+  Scene_face_graph_item* item =
+    qobject_cast<Scene_face_graph_item*>(scene->item(index));
 
-  if (!check_mesh(item))
+  if (!item || !check_mesh(item))
   {
     return;
   }
@@ -560,10 +580,10 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionCollapse()
     return;
   }
 
-  Scene_polyhedron_item* item =
-    qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+  Scene_face_graph_item* item =
+    qobject_cast<Scene_face_graph_item*>(scene->item(index));
 
-  if (!check_mesh(item))
+  if (!item || !check_mesh(item))
   {
     return;
   }
@@ -591,10 +611,10 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSplit()
     return;
   }
 
-  Scene_polyhedron_item* item =
-    qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+  Scene_face_graph_item* item =
+    qobject_cast<Scene_face_graph_item*>(scene->item(index));
 
-  if (!check_mesh(item))
+  if (!item || !check_mesh(item))
   {
     return;
   }
@@ -622,10 +642,10 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionDegeneracy()
     return;
   }
 
-  Scene_polyhedron_item* item =
-    qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+  Scene_face_graph_item* item =
+    qobject_cast<Scene_face_graph_item*>(scene->item(index));
 
-  if (!check_mesh(item))
+  if (!item || !check_mesh(item))
   {
     return;
   }
@@ -679,10 +699,10 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionRun()
     return;
   }
 
-  Scene_polyhedron_item* item =
-    qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+  Scene_face_graph_item* item =
+    qobject_cast<Scene_face_graph_item*>(scene->item(index));
 
-  if (!check_mesh(item))
+  if (!item || !check_mesh(item))
   {
     return;
   }
@@ -699,8 +719,8 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionRun()
   std::cout << "ok (" << time.elapsed() << " ms, " << ")" << std::endl;
 
   CGAL::Three::Scene_interface::Item_id contracted_item_index = scene->mainSelectionIndex();
-  Scene_polyhedron_item* contracted_item =
-    qobject_cast<Scene_polyhedron_item*>(scene->item(contracted_item_index));
+  Scene_face_graph_item* contracted_item =
+    qobject_cast<Scene_face_graph_item*>(scene->item(contracted_item_index));
 
   // update scene
   Scene_points_with_normal_item* fixedPointsItem = new Scene_points_with_normal_item;
@@ -757,7 +777,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionRun()
   // draw lines connecting surface points and their correspondent poles
   Scene_polylines_item* poleLinesItem = new Scene_polylines_item();
 
-  Polyhedron* pMesh = item->polyhedron();
+  Face_graph* pMesh = item->polyhedron();
   std::vector<Point> pole_points;
   mcs->poles(pole_points);
   vertex_iterator vb, ve;
@@ -799,10 +819,10 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
     return;
   }
 
-  Scene_polyhedron_item* item =
-    qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+  Scene_face_graph_item* item =
+    qobject_cast<Scene_face_graph_item*>(scene->item(index));
 
-  if (!check_mesh(item))
+  if (!item || !check_mesh(item))
   {
     return;
   }
@@ -860,10 +880,10 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConverge()
     return;
   }
 
-  Scene_polyhedron_item* item =
-    qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+  Scene_face_graph_item* item =
+    qobject_cast<Scene_face_graph_item*>(scene->item(index));
 
-  if (!check_mesh(item))
+  if (!item || !check_mesh(item))
   {
     return;
   }

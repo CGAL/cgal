@@ -19,7 +19,7 @@ endif(EIGEN3_FOUND)
 
 qt5_wrap_ui( segmentationUI_FILES Mesh_segmentation_widget.ui)
 polyhedron_demo_plugin(mesh_segmentation_plugin Mesh_segmentation_plugin ${segmentationUI_FILES})
-target_link_libraries(mesh_segmentation_plugin scene_polyhedron_item)
+target_link_libraries(mesh_segmentation_plugin scene_polyhedron_item scene_surface_mesh_item)
 
 qt5_wrap_ui( mesh_simplificationUI_FILES  Mesh_simplification_dialog.ui)
 polyhedron_demo_plugin(mesh_simplification_plugin Mesh_simplification_plugin ${mesh_simplificationUI_FILES})
