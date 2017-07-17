@@ -343,7 +343,7 @@ Scene_textured_polyhedron_item::toolTip() const
     if(!d->poly)
         return QString();
 
-    return QObject::tr("<p>Textured polyhedron <b>%1</b> (mode: %5, color: %6)</p>"
+    return QObject::tr("<p>Textured Polyhedron_3 <b>%1</b> (mode: %5, color: %6)</p>"
                        "<p>Number of vertices: %2<br />"
                        "Number of edges: %3<br />"
                        "Number of facets: %4</p>")

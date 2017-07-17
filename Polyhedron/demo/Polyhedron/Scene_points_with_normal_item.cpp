@@ -663,7 +663,7 @@ Scene_points_with_normal_item::toolTip() const
   Q_ASSERT(d->m_points != NULL);
 
   return QObject::tr("<p><b>%1</b> (color: %4)<br />"
-                     "<i>Point set</i></p>"
+                     "<i>Point_set_3</i></p>"
                      "<p>Number of points: %2</p>")
     .arg(name())
     .arg(d->m_points->size())

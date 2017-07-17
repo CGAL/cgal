@@ -998,7 +998,7 @@ Scene_polyhedron_item::toolTip() const
         return QString();
 
   QString str =
-         QObject::tr("<p>Polyhedron <b>%1</b> (mode: %5, color: %6)</p>"
+         QObject::tr("<p>Polyhedron_3 <b>%1</b> (mode: %5, color: %6)</p>"
                        "<p>Number of vertices: %2<br />"
                        "Number of edges: %3<br />"
                      "Number of facets: %4")
