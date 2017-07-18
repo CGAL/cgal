@@ -100,7 +100,9 @@ public:
     }
   };
 
-  typedef boost::filter_iterator<Is_constrained,All_edges_iterator> Constrained_edges_iterator;
+  typedef boost::filter_iterator<Is_constrained,
+                                 typename Triangulation::All_edges_iterator>
+                                                     Constrained_edges_iterator;
 
 
 #ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
@@ -180,13 +182,17 @@ public:
   Constrained_edges_iterator constrained_edges_begin() const
   {
     Is_constrained pred(*this);
-    return Constrained_edges_iterator(pred, all_edges_begin(), all_edges_end());
+    return Constrained_edges_iterator(pred,
+                                      this->all_edges_begin(),
+                                      this->all_edges_end());
   }
 
   Constrained_edges_iterator constrained_edges_end() const
   {
     Is_constrained pred(*this);
-    return Constrained_edges_iterator(pred, all_edges_end(), all_edges_end());
+    return Constrained_edges_iterator(pred,
+                                      this->all_edges_end(),
+                                      this->all_edges_end());
   }
 
   // INSERTION
