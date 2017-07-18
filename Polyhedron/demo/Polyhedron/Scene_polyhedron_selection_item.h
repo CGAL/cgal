@@ -77,7 +77,7 @@ struct Selection_traits<typename SelectionItem::fg_vertex_descriptor, SelectionI
   void update_indices() { item->polyhedron_item()->update_vertex_indices(); }
   std::size_t id(typename SelectionItem::fg_vertex_descriptor  vh)
   {
-    return get(get(CGAL::vertex_selection, *item->polyhedron()), vh);
+    return get(get(boost::vertex_index, *item->polyhedron()), vh);
   }
 
   template <class VertexRange, class HalfedgeGraph, class IsVertexSelectedPMap, class OutputIterator>
@@ -122,7 +122,7 @@ struct Selection_traits<typename SelectionItem::fg_face_descriptor, SelectionIte
   void update_indices() { item->polyhedron_item()->update_facet_indices(); }
   std::size_t id(typename SelectionItem::fg_face_descriptor fh)
 {
-  return get(get(CGAL::face_selection, *item->polyhedron()), fh);
+  return get(get(boost::face_index, *item->polyhedron()), fh);
 }
 
   template <class FaceRange, class HalfedgeGraph, class IsFaceSelectedPMap, class OutputIterator>
@@ -634,7 +634,10 @@ public:
     std::vector<bool> mark(tr.size(),false);
 
     BOOST_FOREACH(Handle h,tr.container())
-      mark[tr.id(h)]=true;
+    {
+      int id = tr.id(h);
+      mark[id]=true;
+    }
 
     typedef typename boost::property_map<Face_graph,Tag>::type PM;
     Tr::expand_selection(
