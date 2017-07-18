@@ -17,7 +17,6 @@ namespace Polygon_mesh_processing {
 namespace internal {
 
 
-
 template<typename PolygonMesh, typename VertexPointMap, typename GeomTraits>
 class Curvature_flow
 {
@@ -47,11 +46,12 @@ class Curvature_flow
     typedef CGAL::AABB_tree<AABB_Traits> Tree;
 
 
+
+
 public:
 
 
-    Curvature_flow(PolygonMesh& pmesh, VertexPointMap& vpmap) : mesh_(pmesh), vpmap_(vpmap),
-                                                                cot_calculator_(mesh_, vpmap_)
+    Curvature_flow(PolygonMesh& pmesh, VertexPointMap& vpmap) : mesh_(pmesh), vpmap_(vpmap), cot_calculator_(pmesh, vpmap)
     {
 
         //std::vector<vertex_descriptor> points
@@ -276,8 +276,7 @@ private:
     VertexPointMap& vpmap_;
     // Cotagent calculator class
     CGAL::internal::Cotangent_value_Meyer<
-        PolygonMesh,
-        typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::type > cot_calculator_;
+        PolygonMesh, VertexPointMap> cot_calculator_;
     Triangle_list input_triangles_;
     Tree* tree_ptr_;
 

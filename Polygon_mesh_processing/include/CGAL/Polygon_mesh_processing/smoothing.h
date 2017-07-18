@@ -149,9 +149,9 @@ void curvature_flow(PolygonMesh& pmesh, const NamedParameters& np)
 #endif
 
     //vpmap
-    typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type VertexPointMap;
+    typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type VertexPointMap;
     VertexPointMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
-                                 get_const_property_map(CGAL::vertex_point, pmesh));
+                                 get_property_map(CGAL::vertex_point, pmesh));
 
     // GeomTraits
     typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GeomTraits;
