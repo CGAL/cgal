@@ -32,11 +32,14 @@
 #include <QApplication>
 #include <QInputDialog>
 #include <QMessageBox>
+#include <QObject>
+#include <QMenu>
+#include <QAction>
 
 #include <boost/foreach.hpp>
 #include "triangulate_primitive.h"
 #include "Color_map.h"
-
+#include "id_printing.h"
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 typedef Polyhedron::Traits Traits;
@@ -200,6 +203,9 @@ struct Scene_polyhedron_item_priv{
     Facets_normals_flat,
     NbOfVbos
   };
+  TextListItem* textVItems;
+  TextListItem* textEItems;
+  TextListItem* textFItems;
   // Initialization
 };
 
@@ -507,10 +513,6 @@ Scene_polyhedron_item_priv::triangulate_facet(Scene_polyhedron_item::Facet_itera
   }
 }
 
-
-#include <QObject>
-#include <QMenu>
-#include <QAction>
 
 
 void
@@ -843,9 +845,9 @@ Scene_polyhedron_item::Scene_polyhedron_item()
 {
     cur_shading=FlatPlusEdges;
     is_selected = true;
-    textVItems = new TextListItem(this);
-    textEItems = new TextListItem(this);
-    textFItems = new TextListItem(this);
+    d->textVItems = new TextListItem(this);
+    d->textEItems = new TextListItem(this);
+    d->textFItems = new TextListItem(this);
 
 }
 
@@ -855,9 +857,9 @@ Scene_polyhedron_item::Scene_polyhedron_item(Polyhedron* const p)
 {
     cur_shading=FlatPlusEdges;
     is_selected = true;
-    textVItems = new TextListItem(this);
-    textEItems = new TextListItem(this);
-    textFItems = new TextListItem(this);
+    d->textVItems = new TextListItem(this);
+    d->textEItems = new TextListItem(this);
+    d->textFItems = new TextListItem(this);
 }
 
 Scene_polyhedron_item::Scene_polyhedron_item(const Polyhedron& p)
@@ -866,9 +868,9 @@ Scene_polyhedron_item::Scene_polyhedron_item(const Polyhedron& p)
 {
     cur_shading=FlatPlusEdges;
     is_selected=true;
-    textVItems = new TextListItem(this);
-    textEItems = new TextListItem(this);
-    textFItems = new TextListItem(this);
+    d->textVItems = new TextListItem(this);
+    d->textEItems = new TextListItem(this);
+    d->textFItems = new TextListItem(this);
 }
 
 Scene_polyhedron_item::~Scene_polyhedron_item()
@@ -886,25 +888,25 @@ Scene_polyhedron_item::~Scene_polyhedron_item()
             v->textRenderer()->removeText(item);
       }
       //Remove vertices textitems
-      if(textVItems)
+      if(d->textVItems)
       {
-        v->textRenderer()->removeTextList(textVItems);
-        delete textVItems;
-        textVItems=NULL;
+        v->textRenderer()->removeTextList(d->textVItems);
+        delete d->textVItems;
+        d->textVItems=NULL;
       }
       //Remove edges textitems
-      if(textEItems)
+      if(d->textEItems)
       {
-        v->textRenderer()->removeTextList(textEItems);
-        delete textEItems;
-        textEItems=NULL;
+        v->textRenderer()->removeTextList(d->textEItems);
+        delete d->textEItems;
+        d->textEItems=NULL;
       }
       //Remove faces textitems
-      if(textFItems)
+      if(d->textFItems)
       {
-        v->textRenderer()->removeTextList(textFItems);
-        delete textFItems;
-        textFItems=NULL;
+        v->textRenderer()->removeTextList(d->textFItems);
+        delete d->textFItems;
+        d->textFItems=NULL;
       }
     }
     if(d)
@@ -1778,7 +1780,6 @@ CGAL::Three::Scene_item::Header_data Scene_polyhedron_item::header() const
   return data;
 }
 
-#include "id_printing.h"
 void Scene_polyhedron_item::printPrimitiveId(QPoint point, CGAL::Three::Viewer_interface *viewer)
 {
   if(d->all_primitives_displayed)
@@ -1790,8 +1791,8 @@ void Scene_polyhedron_item::printPrimitiveId(QPoint point, CGAL::Three::Viewer_i
   Polyhedron::Facet_handle selected_fh;
   Kernel::Point_3 pt_under;
   const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
-  find_primitive_id(point, aabb_tree, viewer, selected_fh, pt_under);
-  d->fillTargetedIds(selected_fh, pt_under, viewer, offset);
+  if(find_primitive_id(point, aabb_tree, viewer, selected_fh, pt_under))
+    d->fillTargetedIds(selected_fh, pt_under, viewer, offset);
 
 }
 void Scene_polyhedron_item_priv::fillTargetedIds(const Polyhedron::Facet_handle& selected_fh,
@@ -1804,18 +1805,21 @@ void Scene_polyhedron_item_priv::fillTargetedIds(const Polyhedron::Facet_handle&
                         selected_fh,
                         pt_under,
                         offset,
-                        item->textVItems,
-                        item->textEItems,
-                        item->textFItems,
+                        textVItems,
+                        textEItems,
+                        textFItems,
                         &targeted_id,
                         &all_primitives_displayed);
 
 
-  if(vertices_displayed)
+  if(vertices_displayed
+     && !textVItems->isEmpty())
     item->showVertices(true);
-  if(edges_displayed)
+  if(edges_displayed
+    && !textEItems->isEmpty())
     item->showEdges(true);
-  if(faces_displayed)
+  if(faces_displayed
+     && !textFItems->isEmpty())
     item->showFaces(true);
 
 }
@@ -1825,7 +1829,7 @@ bool Scene_polyhedron_item::printVertexIds(CGAL::Three::Viewer_interface *viewer
   if(d->vertices_displayed)
   {
     return ::printVertexIds(*d->poly,
-                            textVItems,
+                            d->textVItems,
                             viewer);
   }
   return true;
@@ -1836,7 +1840,7 @@ bool Scene_polyhedron_item::printEdgeIds(CGAL::Three::Viewer_interface *viewer) 
   if(d->edges_displayed)
   {
     return ::printEdgeIds(*d->poly,
-                            textEItems,
+                            d->textEItems,
                             viewer);
   }
   return true;
@@ -1847,7 +1851,7 @@ bool Scene_polyhedron_item::printFaceIds(CGAL::Three::Viewer_interface *viewer) 
   if(d->faces_displayed)
   {
     return ::printFaceIds(*d->poly,
-                            textFItems,
+                            d->textFItems,
                             viewer);
   }
   return true;
@@ -1858,9 +1862,9 @@ void Scene_polyhedron_item_priv::killIds()
   CGAL::Three::Viewer_interface* viewer =
       qobject_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first());
   deleteIds(viewer,
-            item->textVItems,
-            item->textEItems,
-            item->textFItems,
+            textVItems,
+            textEItems,
+            textFItems,
             &targeted_id,
             &all_primitives_displayed);
 }
@@ -2118,9 +2122,15 @@ void Scene_polyhedron_item::showVertices(bool b)
       qobject_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first());
   TextRenderer *renderer = viewer->textRenderer();
   if(b)
-    renderer->addTextList(textVItems);
+    if(d->textVItems->isEmpty())
+    {
+      d->vertices_displayed = b;
+      printVertexIds(viewer);
+    }
+    else
+      renderer->addTextList(d->textVItems);
   else
-    renderer->removeTextList(textVItems);
+    renderer->removeTextList(d->textVItems);
   viewer->update();
   d->vertices_displayed = b;
 }
@@ -2131,9 +2141,15 @@ void Scene_polyhedron_item::showEdges(bool b)
       qobject_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first());
   TextRenderer *renderer = viewer->textRenderer();
   if(b)
-    renderer->addTextList(textEItems);
+    if(d->textEItems->isEmpty())
+    {
+      d->edges_displayed = b;
+      printEdgeIds(viewer);
+    }
+    else
+      renderer->addTextList(d->textEItems);
   else
-    renderer->removeTextList(textEItems);
+    renderer->removeTextList(d->textEItems);
   viewer->update();
   d->edges_displayed = b;
 }
@@ -2144,9 +2160,17 @@ void Scene_polyhedron_item::showFaces(bool b)
       qobject_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first());
   TextRenderer *renderer = viewer->textRenderer();
   if(b)
-    renderer->addTextList(textFItems);
+  {
+    if(d->textFItems->isEmpty())
+    {
+      d->faces_displayed = b;
+      printFaceIds(viewer);
+    }
+    else
+      renderer->addTextList(d->textFItems);
+  }
   else
-    renderer->removeTextList(textFItems);
+    renderer->removeTextList(d->textFItems);
   viewer->update();
   d->faces_displayed = b;
 }

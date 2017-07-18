@@ -109,7 +109,7 @@ void deleteIds(CGAL::Three::Viewer_interface* viewer,
 
 
 template<typename Handle, typename Point, typename Tree>
-void find_primitive_id(const QPoint& point,
+bool find_primitive_id(const QPoint& point,
                        Tree* aabb_tree,
                        CGAL::Three::Viewer_interface *viewer,
                        Handle& selected_fh,
@@ -135,7 +135,7 @@ void find_primitive_id(const QPoint& point,
   aabb_tree->all_intersections(ray, std::back_inserter(intersections));
 
   if(intersections.empty())
-    return;
+    return false;
   typename Intersections::iterator closest = intersections.begin();
   const Point* closest_point =
       boost::get<Point>(&closest->first);
@@ -159,9 +159,10 @@ void find_primitive_id(const QPoint& point,
     }
   }
   if(!closest_point)
-    return;
+    return false;
   pt_under = Point(point_under.x, point_under.y, point_under.z);
   selected_fh = closest->second;
+  return true;
 }
 
 template<typename Mesh, typename Point >
@@ -183,6 +184,16 @@ void compute_displayed_ids(Mesh& mesh,
 
   typedef typename boost::property_map<Mesh, boost::vertex_point_t>::type Ppmap;
   Ppmap ppmap = get(boost::vertex_point, mesh);
+
+  typedef typename boost::property_map<Mesh, boost::vertex_index_t>::type VIDmap;
+  VIDmap vidmap = get(boost::vertex_index, mesh);
+
+  typedef typename boost::property_map<Mesh, boost::halfedge_index_t>::type HIDmap;
+  HIDmap hidmap = get(boost::halfedge_index, mesh);
+
+  typedef typename boost::property_map<Mesh, boost::face_index_t>::type FIDmap;
+  FIDmap fidmap = get(boost::face_index, mesh);
+
   QFont font;
   font.setBold(true);
   std::vector<vertex_descriptor> displayed_vertices;
@@ -221,9 +232,9 @@ void compute_displayed_ids(Mesh& mesh,
   }
   deleteIds(viewer, vitems, eitems, fitems, targeted_ids, all_primitives_displayed);
   // test the midpoint of edges of the closest face
-  BOOST_FOREACH(halfedge_descriptor e, halfedges_around_face(selected_fh->halfedge(), mesh))
+  BOOST_FOREACH(halfedge_descriptor e, halfedges_around_face(halfedge(selected_fh, mesh), mesh))
   {
-    Point test=CGAL::midpoint(source(e, mesh)->point(),target(e, mesh)->point());
+    Point test=CGAL::midpoint(get(ppmap, source(e, mesh)),get(ppmap, target(e, mesh)));
     test = Point(test.x()+offset.x,
                  test.y()+offset.y,
                  test.z()+offset.z);
@@ -238,7 +249,7 @@ void compute_displayed_ids(Mesh& mesh,
   // test the centroid of the closest face
   double x(0), y(0), z(0);
   int total(0);
-  BOOST_FOREACH(vertex_descriptor vh, vertices_around_face(selected_fh->halfedge(), mesh))
+  BOOST_FOREACH(vertex_descriptor vh, vertices_around_face(halfedge(selected_fh, mesh), mesh))
   {
     x+=get(ppmap, vh).x();
     y+=get(ppmap, vh).y();
@@ -272,10 +283,10 @@ void compute_displayed_ids(Mesh& mesh,
   else if(!displayed_edges.empty())
   {
     displayed_vertices.push_back(target(halfedge(displayed_edges[0], mesh), mesh));
-    displayed_vertices.push_back(target(halfedge(displayed_edges[0], mesh)->opposite(),mesh));
+    displayed_vertices.push_back(target(opposite(halfedge(displayed_edges[0], mesh), mesh),mesh));
 
     displayed_faces.push_back(face(halfedge(displayed_edges[0], mesh),mesh));
-    displayed_faces.push_back(face(halfedge(displayed_edges[0], mesh)->opposite(),mesh));
+    displayed_faces.push_back(face(opposite(halfedge(displayed_edges[0], mesh), mesh),mesh));
   }
 
   else if(!displayed_faces.empty())
@@ -325,19 +336,19 @@ void compute_displayed_ids(Mesh& mesh,
     Point pos=Point(get(ppmap, vh).x()+offset.x,
                     get(ppmap, vh).y()+offset.y,
                     get(ppmap, vh).z()+offset.z);
-    TextItem* text_item = new TextItem(pos.x(), pos.y(), pos.z(), QString("%1").arg(vh->id()), true, font, Qt::red);
+    TextItem* text_item = new TextItem(pos.x(), pos.y(), pos.z(), QString("%1").arg(get(vidmap, vh)), true, font, Qt::red);
     vitems->append(text_item);
     targeted_ids->push_back(text_item);
   }
   BOOST_FOREACH(edge_descriptor e, displayed_edges)
   {
     halfedge_descriptor  h(halfedge(e, mesh));
-    Point pos=CGAL::midpoint(source(h, mesh)->point(),target(h, mesh)->point());
+    Point pos=CGAL::midpoint(get(ppmap, source(h, mesh)),get(ppmap, target(h, mesh)));
     pos = Point(pos.x()+offset.x,
                 pos.y()+offset.y,
                 pos.z()+offset.z);
 
-    TextItem* text_item = new TextItem(pos.x(), pos.y(), pos.z(), QString("%1").arg(h->id()/2), true, font, Qt::green);
+    TextItem* text_item = new TextItem(pos.x(), pos.y(), pos.z(), QString("%1").arg(get(hidmap, h)/2), true, font, Qt::green);
     eitems->append(text_item);
   }
 
@@ -356,7 +367,7 @@ void compute_displayed_ids(Mesh& mesh,
     Point pos(x/total+offset.x,
               y/total+offset.y,
               z/total+offset.z);
-    TextItem* text_item = new TextItem(pos.x(), pos.y(), pos.z(), QString("%1").arg(f->id()), true, font, Qt::blue);
+    TextItem* text_item = new TextItem(pos.x(), pos.y(), pos.z(), QString("%1").arg(get(fidmap,f)), true, font, Qt::blue);
     fitems->append(text_item);
   }
 }
@@ -448,7 +459,7 @@ bool printFaceIds(const Mesh& mesh,
   {
     double x(0), y(0), z(0);
     int total(0);
-    BOOST_FOREACH(typename boost::graph_traits<Mesh>::vertex_descriptor vh, vertices_around_face(fh->halfedge(), mesh))
+    BOOST_FOREACH(typename boost::graph_traits<Mesh>::vertex_descriptor vh, vertices_around_face(halfedge(fh, mesh), mesh))
     {
       x += get(ppmap, vh).x();
       y += get(ppmap, vh).y();

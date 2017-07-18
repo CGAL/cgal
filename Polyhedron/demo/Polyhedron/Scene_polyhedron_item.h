@@ -70,9 +70,6 @@ public:
     bool has_stats()const Q_DECL_OVERRIDE{return true;}
     QString computeStats(int type)Q_DECL_OVERRIDE;
     CGAL::Three::Scene_item::Header_data header() const Q_DECL_OVERRIDE;
-    TextListItem* textVItems;
-    TextListItem* textEItems;
-    TextListItem* textFItems;
     Scene_polyhedron_item();
     //   Scene_polyhedron_item(const Scene_polyhedron_item&);
     Scene_polyhedron_item(const Polyhedron& p);

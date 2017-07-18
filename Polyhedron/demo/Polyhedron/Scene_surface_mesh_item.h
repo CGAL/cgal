@@ -7,6 +7,7 @@
 
 #include "Scene_surface_mesh_item_config.h"
 #include <CGAL/Three/Scene_zoomable_item_interface.h>
+#include <CGAL/Three/Scene_print_item_interface.h>
 #include "SMesh_type.h"
 #include <CGAL/Three/Scene_item.h>
 #include <CGAL/Three/Viewer_interface.h>
@@ -23,8 +24,10 @@ struct Scene_surface_mesh_item_priv;
 
 class SCENE_SURFACE_MESH_ITEM_EXPORT Scene_surface_mesh_item
   : public CGAL::Three::Scene_item,
-    public CGAL::Three::Scene_zoomable_item_interface
-{
+    public CGAL::Three::Scene_zoomable_item_interface,
+    public CGAL::Three::Scene_print_item_interface{
+  Q_INTERFACES(CGAL::Three::Scene_print_item_interface)
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PrintInterface/1.0")
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Scene_zoomable_item_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.ZoomInterface/1.0")
@@ -52,6 +55,8 @@ public:
   Bbox bbox() const Q_DECL_OVERRIDE;
   QString toolTip() const Q_DECL_OVERRIDE;
 
+  QMenu* contextMenu() Q_DECL_OVERRIDE;
+
   // Only needed for Scene_polyhedron_item
   void setItemIsMulticolor(bool);
   void update_vertex_indices(){}
@@ -78,6 +83,7 @@ public:
   bool save(std::ostream& out) const;
   bool save_obj(std::ostream& out) const;
   bool load_obj(std::istream& in);
+  //statistics
   enum STATS {
     NB_VERTICES = 0,
     NB_CONNECTED_COMPOS,
@@ -112,8 +118,18 @@ public:
   bool has_stats()const Q_DECL_OVERRIDE{return true;}
   QString computeStats(int type)Q_DECL_OVERRIDE;
   CGAL::Three::Scene_item::Header_data header() const Q_DECL_OVERRIDE;
+  //zoomable interface
   void zoomToPosition(const QPoint &point, CGAL::Three::Viewer_interface *)const Q_DECL_OVERRIDE;
   QMenu* contextMenu() Q_DECL_OVERRIDE;
+ //print_interface
+  void printPrimitiveId(QPoint point, CGAL::Three::Viewer_interface*viewer)Q_DECL_OVERRIDE;
+  bool printVertexIds(CGAL::Three::Viewer_interface*)const Q_DECL_OVERRIDE;
+  bool printEdgeIds(CGAL::Three::Viewer_interface*)const Q_DECL_OVERRIDE;
+  bool printFaceIds(CGAL::Three::Viewer_interface*)const Q_DECL_OVERRIDE;
+  void printAllIds(CGAL::Three::Viewer_interface*) Q_DECL_OVERRIDE;
+  bool shouldDisplayIds(CGAL::Three::Scene_item *current_item) const Q_DECL_OVERRIDE;
+  bool testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface*)const Q_DECL_OVERRIDE;
+
 Q_SIGNALS:
   void item_is_about_to_be_changed();
   void selection_done();
@@ -140,6 +156,11 @@ public Q_SLOTS:
                       double dir_z,
                       const face_descriptor &f);
   void resetColors();
+  void showVertices(bool);
+  void showEdges(bool);
+  void showFaces(bool);
+  void showPrimitives(bool);
+  void zoomToId();
 protected:
   friend struct Scene_surface_mesh_item_priv;
   Scene_surface_mesh_item_priv* d;
