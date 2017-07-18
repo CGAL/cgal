@@ -48,7 +48,7 @@ Bbox_3 bbox(boost::graph_traits<Surface_mesh>::face_descriptor fd,
 }
 
 
-void surface_mesh_cache_bbox(char* fname)
+void surface_mesh_cache_bbox(const char* fname)
 {
   typedef boost::graph_traits<Surface_mesh>::face_descriptor face_descriptor;
   typedef Surface_mesh::Property_map<face_descriptor,Bbox_3> Bbox_pmap;
