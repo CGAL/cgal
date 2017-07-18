@@ -47,7 +47,7 @@ make -j$NB_CORES doc  &> /dev/null
 echo "done."
 cd ../ #scripts
 echo "Creating text files for diff...."
-bash compare_testsuites.sh $PWD/build_doc/doc_output 1> /dev/null
+bash -$- compare_testsuites.sh $PWD/build_doc/doc_output 1> /dev/null
 mv ./doc_data ./doc_ref
 echo "done."
 
@@ -82,7 +82,7 @@ cd ../ #scripts
 DOXYGEN_1=$($PATH_TO_1 --version)
 DOXYGEN_2=$($PATH_TO_2 --version)
 echo "Comparing results..."
-bash ./compare_testsuites.sh $PWD/build_doc/doc_output $PWD/doc_ref 1> /dev/null
+bash -$- ./compare_testsuites.sh $PWD/build_doc/doc_output $PWD/doc_ref 1> /dev/null
 echo "done."
 #add post-processing
 cd ./build_doc
