@@ -126,6 +126,12 @@ void compatible_remeshing(PolygonMesh& pmesh,  const FaceRange& faces, const Edg
 
 }
 
+template<typename PolygonMesh>
+void compatible_remeshing(PolygonMesh& pmesh)
+{
+    compatible_remeshing(pmesh, faces(pmesh), edges(pmesh), parameters::all_default());
+}
+
 
 
 
@@ -135,6 +141,13 @@ void curvature_flow(PolygonMesh& pmesh, const NamedParameters& np)
     using boost::choose_param;
     using boost::get_param;
 
+#ifdef CGAL_PMP_REMESHING_VERBOSE
+  CGAL::Timer t;
+  std::cout << "Remeshing parameters...";
+  std::cout.flush();
+  t.start();
+#endif
+
     //vpmap
     typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type VertexPointMap;
     VertexPointMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
@@ -143,8 +156,36 @@ void curvature_flow(PolygonMesh& pmesh, const NamedParameters& np)
     // GeomTraits
     typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GeomTraits;
 
+
+#ifdef CGAL_PMP_REMESHING_VERBOSE
+  t.stop();
+  std::cout << "\rRemeshing parameters done ("<< t.time() <<" sec)" << std::endl;
+  std::cout << "Remesher construction...";
+  std::cout.flush();
+  t.reset(); t.start();
+#endif
+
+
     internal::Curvature_flow<PolygonMesh, VertexPointMap, GeomTraits> curvature_remesher(pmesh, vpmap);
+    curvature_remesher.init_remeshing(faces(pmesh));
+
+#ifdef CGAL_PMP_REMESHING_VERBOSE
+  t.stop();
+  std::cout << " done ("<< t.time() <<" sec)." << std::endl;
+  std::cout << "Remeshing ..." << std::endl;
+  t.reset(); t.start();
+#endif
+
     curvature_remesher.curvature_smoothing();
+    curvature_remesher.project_to_surface();
+
+
+#ifdef CGAL_PMP_REMESHING_VERBOSE
+  t.stop();
+  std::cout << "Remeshing done in ";
+  std::cout << t.time() << " sec." << std::endl;
+  std::cout<<std::endl;
+#endif
 
 
 }
