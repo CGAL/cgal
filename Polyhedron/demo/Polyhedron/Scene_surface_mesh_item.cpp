@@ -1556,6 +1556,7 @@ void Scene_surface_mesh_item::zoomToPosition(const QPoint &point, CGAL::Three::V
       }
     }
   }
+}
 
 void Scene_surface_mesh_item::resetColors()
 {
