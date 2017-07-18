@@ -27,12 +27,10 @@
 #include <CGAL/IO/File_writer_wavefront.h>
 #include <CGAL/IO/generic_copy_OFF.h>
 #include <CGAL/IO/OBJ_reader.h>
-<<<<<<< HEAD
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/statistics_helpers.h>
-=======
+
 #include <QMenu>
->>>>>>> Add an action in the context menu of polyhedron and SM items to reset colors.
 
 //Used to triangulate the AABB_Tree
 class Primitive
