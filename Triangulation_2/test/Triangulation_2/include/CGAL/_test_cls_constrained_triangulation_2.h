@@ -53,6 +53,7 @@ _test_cls_constrained_triangulation(const Triang &)
   CGAL_USE_TYPE(Gt);
   CGAL_USE_TYPE(Segment);
   CGAL_USE_TYPE(Triangle);
+  CGAL_USE_TYPE(Constrained_edges_iterator);
 
   /***********************/
   /***** SUBCLASSE ******/
