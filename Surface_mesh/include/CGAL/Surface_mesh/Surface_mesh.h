@@ -2043,7 +2043,7 @@ private: //------------------------------------------------------- private data
   /// Extracts the surface mesh from an input stream in Ascii OFF, COFF, NOFF, CNOFF 
   /// format and appends it to the surface mesh `sm`.
   /// The operator reads the point property as well as "v:normal", "v:color", and "f:color".
-  /// Vertex texture coordinates are ignored. The surface mesh `sm` is initially cleared.
+  /// Vertex texture coordinates are ignored.
   /// \pre `operator>>(std::istream&,const P&)` must be defined.
   /// \pre The data in the stream must represent a two-manifold. If this is not the case
   ///      the `failbit` of `is` is set and the mesh cleared.
