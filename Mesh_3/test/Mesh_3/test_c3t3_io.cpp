@@ -5,6 +5,8 @@
 
 #include <boost/variant.hpp>
 
+#include <string>
+
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
 //
@@ -28,6 +30,11 @@ struct MD_homogeneous_types {
   static Curve_segment_index get_curve_segment_index_2() { return 6; }
   static Corner_index get_corner_index_1() { return 7; }
   static Corner_index get_corner_index_2() { return 8; }
+
+  static std::string reference_format_string()
+  {
+    return "Triangulation_3(Weighted_point<Point_3>,Vb(Tvb_3+i+i),Cb(i+RTcb_3+(i)[4]))";
+  }
 };
 
 // One with heterogeneous index types
@@ -50,6 +57,11 @@ struct MD_heterogeneous_types {
   static Curve_segment_index get_curve_segment_index_2() { return 6; }
   static Corner_index get_corner_index_1() { return 7.; }
   static Corner_index get_corner_index_2() { return 8.; }
+
+  static std::string reference_format_string()
+  {
+    return "Triangulation_3(Weighted_point<Point_3>,Vb(Tvb_3+i+boost::variant<enum,std::pair<i,i>,i,d>),Cb(enum+RTcb_3+(std::pair<i,i>)[4]))";
+  }
 };
 
 //
@@ -340,6 +352,8 @@ struct Test_c3t3_io {
   }
 
   bool operator()() const {
+    assert(CGAL::Get_io_signature<C3t3>()() ==
+           Mesh_domain::reference_format_string());
     // Create a C3t3
     C3t3 c3t3;
     Tr& tr = c3t3.triangulation();
