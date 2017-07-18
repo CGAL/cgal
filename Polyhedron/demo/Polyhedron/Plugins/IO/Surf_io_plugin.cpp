@@ -1,5 +1,6 @@
 #include "Scene_polyhedron_item.h"
 #include "Polyhedron_type.h"
+#include "Scene_surface_mesh_item.h"
 
 #include <QMainWindow>
 #include <QObject>
@@ -43,6 +44,8 @@ public:
   QString name() const { return "surf_io_plugin"; }
   QString nameFilters() const { return "Amira files (*.surf)"; }
   bool canLoad() const{ return true; }
+  template<class FaceGraphItem>
+  CGAL::Three::Scene_item* actual_load(QFileInfo fileinfo);
   CGAL::Three::Scene_item* load(QFileInfo fileinfo);
 
   bool canSave(const CGAL::Three::Scene_item*) { return false; }
@@ -52,6 +55,18 @@ public:
 
 CGAL::Three::Scene_item* Surf_io_plugin::load(QFileInfo fileinfo)
 {
+  if(mw->property("is_polyhedron_mode").toBool())
+    return actual_load<Scene_polyhedron_item>(fileinfo);
+  else
+    return actual_load<Scene_surface_mesh_item>(fileinfo);
+}
+template< class FaceGraphItem>
+CGAL::Three::Scene_item* Surf_io_plugin::actual_load(QFileInfo fileinfo)
+{
+  typedef typename FaceGraphItem::Face_graph FaceGraph;
+  typedef typename boost::property_traits<
+      typename boost::property_map<FaceGraph, boost::vertex_point_t>::type
+      >::value_type Point_3;
   // Open file
   std::ifstream in(fileinfo.filePath().toUtf8());
   if(!in) {
@@ -59,11 +74,11 @@ CGAL::Three::Scene_item* Surf_io_plugin::load(QFileInfo fileinfo)
     return NULL;
   }
 
-  std::vector<Polyhedron> patches;
+  std::vector<FaceGraph> patches;
   std::vector<MaterialData> material_data;
   CGAL::Bbox_3 grid_box;
   CGAL::cpp11::array<unsigned int, 3> grid_size = {{1, 1, 1}};
-  boost::container::flat_set<Polyhedron::Point_3> duplicated_points;
+  boost::container::flat_set<Point_3> duplicated_points;
   read_surf(in, patches, material_data, grid_box, grid_size
           , std::inserter(duplicated_points, duplicated_points.end()));
 
@@ -82,7 +97,7 @@ CGAL::Three::Scene_item* Surf_io_plugin::load(QFileInfo fileinfo)
   Scene_group_item* group = new Scene_group_item(fileinfo.completeBaseName());
   for(std::size_t i=0; i<patches.size(); ++i)
   {
-    Scene_polyhedron_item *patch = new Scene_polyhedron_item(patches[i]);
+    FaceGraphItem *patch = new FaceGraphItem(patches[i]);
     patch->setName(QString("Patch #%1").arg(i));
     patch->setColor(colors_[i]);
     scene->addItem(patch);

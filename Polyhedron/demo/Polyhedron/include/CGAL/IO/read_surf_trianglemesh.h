@@ -29,14 +29,15 @@ std::string to_lower_case(const std::string& str)
 
 bool get_material_metadata(std::istream& input,
                            std::string& line,
-                           material& _material)
+                           material& _material,
+                           int material_id)
 {
   std::istringstream iss;
   iss.str(line);
 
   iss >> _material.second;//name
 
-  static int material_id = 0;
+  //static int material_id = 0;
   while (std::getline(input, line))
   {
     std::string prop; //property
@@ -94,6 +95,7 @@ bool read_surf(std::istream& input, std::vector<Mesh>& output,
   std::size_t nb_vertices(0);
   std::vector<material> materials;
   //ignore header
+  int material_id = 0;
   while(std::getline(input, line))
   {
     if (line_starts_with(line, "Materials"))
@@ -105,7 +107,7 @@ bool read_surf(std::istream& input, std::vector<Mesh>& output,
         else
         {
           material _material;
-          if (!get_material_metadata(input, line, _material))
+          if (!get_material_metadata(input, line, _material, material_id++))
             return false;
           materials.push_back(_material);
         }
