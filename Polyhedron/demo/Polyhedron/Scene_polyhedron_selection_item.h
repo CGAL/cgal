@@ -635,7 +635,7 @@ public:
 
     BOOST_FOREACH(Handle h,tr.container())
     {
-      int id = tr.id(h);
+      std::size_t id = tr.id(h);
       mark[id]=true;
     }
 
