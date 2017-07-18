@@ -43,6 +43,8 @@ _test_cls_constrained_triangulation(const Triang &)
   typedef typename Triang::Locate_type          Locate_type;
   typedef typename Triang::All_faces_iterator   All_faces_iterator;
 
+  typedef typename Triang::Constrained_edges_iterator Constrained_edges_iterator;
+
   typedef std::pair<Point,Point>                Constraint ;
   typedef std::list<Edge>                       List_edges;
   typedef std::list<Constraint>                 list_constraints;
@@ -276,5 +278,15 @@ _test_cls_constrained_triangulation(const Triang &)
   assert(ic_edges.size() == 2);
   T2_2.remove(vha);
   assert(T2_2.is_valid());
-  
+
+  // test Constained_edges_iterator
+  Triang T2_6;
+
+  T2_6.insert(Point(0,0));
+  T2_6.insert(Point(10,0));
+  T2_6.insert(Point(10,10));
+  assert(T2_6.constrained_edges_begin() == T2_6.constrained_edges_end());
+
+  T2_6.insert_constraint(Point(1,0.1), Point(2,0.2));
+  assert(std::distance(T2_6.constrained_edges_begin(),  T2_6.constrained_edges_end()) == 1);
 }

@@ -36,7 +36,7 @@
 #include <CGAL/squared_distance_2.h>
 
 #include <boost/mpl/if.hpp>
-
+#include <boost/iterator/filter_iterator.hpp>
 namespace CGAL {
 
 struct No_intersection_tag{};
@@ -85,6 +85,23 @@ public:
   typedef typename Triangulation::Edge_circulator Edge_circulator;
   typedef typename Triangulation::Vertex_circulator Vertex_circulator;
   typedef typename Triangulation::Line_face_circulator Line_face_circulator;
+
+  struct Is_constrained {
+    const Constrained_triangulation& ct;
+
+    Is_constrained(const Constrained_triangulation& ct)
+      : ct(ct)
+    {}
+
+    template <typename E>
+    bool operator()(const E& e) const
+    {
+      return ct.is_constrained(e);
+    }
+  };
+
+  typedef boost::filter_iterator<Is_constrained,All_edges_iterator> Constrained_edges_iterator;
+
 
 #ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
   using Triangulation::number_of_vertices;
@@ -158,6 +175,19 @@ public:
 
   //TODO Is that destructor correct ?
   virtual ~Constrained_triangulation_2() {}
+
+
+  Constrained_edges_iterator constrained_edges_begin() const
+  {
+    Is_constrained pred(*this);
+    return Constrained_edges_iterator(pred, all_edges_begin(), all_edges_end());
+  }
+
+  Constrained_edges_iterator constrained_edges_end() const
+  {
+    Is_constrained pred(*this);
+    return Constrained_edges_iterator(pred, all_edges_end(), all_edges_end());
+  }
 
   // INSERTION
   Vertex_handle insert(const Point& p, 

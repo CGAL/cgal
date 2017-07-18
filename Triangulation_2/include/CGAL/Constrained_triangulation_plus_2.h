@@ -155,6 +155,7 @@ public:
   typedef typename Triangulation::List_faces       List_faces;
   typedef typename Triangulation::List_vertices    List_vertices;
   typedef typename Triangulation::List_constraints List_constraints;
+  typedef typename Triangulation::Constrained_edges_iterator Constrained_edges_iterator;
 
   typedef Pct2_vertex_handle_less_xy<Self>         Vh_less_xy;
   typedef Polyline_constraint_hierarchy_2<Vertex_handle, Vh_less_xy, Point>
