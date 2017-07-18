@@ -4,6 +4,10 @@
 #include <CGAL/Polygon_mesh_processing/Weights.h>
 #include <CGAL/Monge_via_jet_fitting.h>
 
+#include <CGAL/AABB_tree.h>
+#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_triangle_primitive.h>
+
 #include <utility>
 
 namespace CGAL {
@@ -20,6 +24,7 @@ class Curvature_flow
 
     typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
     typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
+    typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
 
 
     typedef typename CGAL::Monge_via_jet_fitting<GeomTraits> Monge_via_jet_fitting;
@@ -28,11 +33,18 @@ class Curvature_flow
     typedef typename GeomTraits::Point_3  Point;
     typedef typename GeomTraits::Vector_3 Vector;
     typedef typename GeomTraits::FT       FT;
+    typedef typename GeomTraits::Triangle_3 Triangle;
+    typedef std::vector<Triangle> Triangle_list;
 
 
     // <one halfedge around v, pair of incident halfedges to this halfedge around v>
     typedef std::pair<halfedge_descriptor, halfedge_descriptor> He_pair;
     typedef std::map<halfedge_descriptor, He_pair> Edges_around_map;
+
+
+    typedef CGAL::AABB_triangle_primitive<GeomTraits, typename Triangle_list::iterator> AABB_Primitive;
+    typedef CGAL::AABB_traits<GeomTraits, AABB_Primitive> AABB_Traits;
+    typedef CGAL::AABB_tree<AABB_Traits> Tree;
 
 
 public:
@@ -50,8 +62,24 @@ public:
             CGAL_error_msg("Not enough points in the mesh.");
         }
 
+
     }
 
+
+    template<typename FaceRange>
+    void init_remeshing(const FaceRange& face_range)
+    {
+        for (face_descriptor f : face_range)
+        {
+            input_triangles_.push_back(triangle(f));
+        }
+
+        tree_ptr_ = new Tree(input_triangles_.begin(), input_triangles_.end());
+        tree_ptr_->accelerate_distance_queries();
+
+        //TODO: update constrained edges
+        //check_constrained_edges();
+    }
 
 
 
@@ -79,11 +107,13 @@ public:
                 n_map[v] = vn;
 
 
+
                 // find incident halfedges
                 Edges_around_map he_map;
                 typename Edges_around_map::iterator it;
                 for(halfedge_descriptor hi : halfedges_around_source(v, mesh_))
                     he_map[hi] = He_pair( next(hi, mesh_), prev(opposite(hi, mesh_), mesh_) );
+
 
 
                 /*
@@ -96,6 +126,8 @@ public:
                 barycenters[v] = get(vpmap_, v) + (displacement / halfedges_around_source(v, mesh_).size()) ;
                 Point new_location = barycenters[v] + k_mean * n_map[v]; // point + vector
                 */
+
+
 
 
                 // with cotangent weights
@@ -121,6 +153,7 @@ public:
                 Point new_location = barycenters[v] + k_mean * n_map[v]; // point + vector
 
 
+
                 // update location
                 put(vpmap_, v, new_location);
 
@@ -137,6 +170,19 @@ public:
 
     }
 
+
+    void project_to_surface()
+    {
+        for( vertex_descriptor v : vertices(mesh_))
+        {
+            if(!is_border(v, mesh_) ) // todo: && !is_constrained(v)
+            {
+                Point p_query = get(vpmap_, v);
+                Point projected = tree_ptr_->closest_point(p_query);
+                put(vpmap_, v, projected);
+            }
+        }
+    }
 
 
 
@@ -205,7 +251,7 @@ private:
 
     std::vector<Point> gather_all_points()
     {
-        std::vector<Point> points; // todo: preallocate it and fill it with pointing
+        std::vector<Point> points; // todo: preallocate it and fill it by pointing
         for(vertex_descriptor v : vertices(mesh_))
         {
             points.push_back(get(vpmap_, v));
@@ -214,6 +260,14 @@ private:
         return points;
     }
 
+    Triangle triangle(face_descriptor f) const
+    {
+        halfedge_descriptor h = halfedge(f, mesh_);
+        vertex_descriptor v1 = target(h, mesh_);
+        vertex_descriptor v2 = target(next(h, mesh_), mesh_);
+        vertex_descriptor v3 = target(next(next(h, mesh_), mesh_), mesh_);
+        return Triangle(get(vpmap_, v1), get(vpmap_, v2), get(vpmap_, v3));
+    }
 
 
     // data members
@@ -223,7 +277,10 @@ private:
     // Cotagent calculator class
     CGAL::internal::Cotangent_value_Meyer<
         PolygonMesh,
-        typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::type >   cot_calculator_;
+        typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::type > cot_calculator_;
+    Triangle_list input_triangles_;
+    Tree* tree_ptr_;
+
 
 };
 

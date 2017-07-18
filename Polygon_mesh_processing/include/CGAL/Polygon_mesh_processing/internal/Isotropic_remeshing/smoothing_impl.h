@@ -264,19 +264,13 @@ std::cout<<" moved at: "<< vp.second << std::endl;
     {
         for( vertex_descriptor v : vertices(mesh_))
         {
-
-            // to check if is constrained
-
             if(!is_border(v, mesh_) && !is_constrained(v))
             {
                 Point p_query = get(vpmap_, v);
                 Point projected = tree_ptr_->closest_point(p_query);
                 put(vpmap_, v, projected);
-
             }
-
         }
-
     }
 
 
