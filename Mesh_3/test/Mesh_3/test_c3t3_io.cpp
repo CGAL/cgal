@@ -2,6 +2,7 @@
 #include <CGAL/Mesh_3/io_signature.h>
 #include <CGAL/Mesh_triangulation_3.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
+#include <CGAL/IO/File_binary_mesh_3.h>
 
 #include <boost/variant.hpp>
 
@@ -315,13 +316,16 @@ struct Test_c3t3_io {
     return true;
   }
 
-  static bool test_io(const C3t3& c3t3, bool binary) {
+  static bool test_io(const C3t3& c3t3, const char* prefix, bool binary) {
+    std::string filename(prefix);
     std::cout << "test_io";
     std::ios_base::openmode mode = std::ios_base::in | std::ios_base::out;
     if(binary) {
+      filename += ".binary";
       std::cout << " in binary mode";
       mode |= std::ios_base::binary;
     }
+    filename += ".cgal";
     std::cout << std::endl;
     std::cout << "IO format: " << CGAL::Get_io_signature<C3t3>()() << std::endl;
     std::stringstream stream(mode);
@@ -344,14 +348,42 @@ struct Test_c3t3_io {
               << c3t3_bis
               << "\n******end******" << std::endl;
     assert(stream);
-    std::ostringstream ss_c3t3, ss_c3t3_bis;
-    ss_c3t3 << c3t3;
-    ss_c3t3_bis << c3t3_bis;
-    assert(ss_c3t3.str() == ss_c3t3_bis.str());
-    return check_equality(c3t3, c3t3_bis);
+    {
+      std::ostringstream ss_c3t3, ss_c3t3_bis;
+      ss_c3t3 << c3t3;
+      ss_c3t3_bis << c3t3_bis;
+      assert(ss_c3t3.str() == ss_c3t3_bis.str());
+      if(!check_equality(c3t3, c3t3_bis)) return false;
+    }
+    c3t3_bis.clear();
+    {
+      std::ifstream input(filename.c_str(),
+                          binary ? (std::ios_base::in | std::ios_base::binary)
+                          : std::ios_base::in);
+      CGAL::Mesh_3::load_binary_file(input, c3t3_bis);
+    }
+    if(!check_equality(c3t3, c3t3_bis)) return false;
+    {
+      std::ostringstream ss_c3t3, ss_c3t3_bis;
+      ss_c3t3 << c3t3;
+      ss_c3t3_bis << c3t3_bis;
+      assert(ss_c3t3.str() == ss_c3t3_bis.str());
+      if(!check_equality(c3t3, c3t3_bis)) return false;
+    }
+    c3t3_bis.clear();
+    {
+      std::stringstream ss(std::ios_base::out |
+                           ( binary ?
+                             (std::ios_base::in | std::ios_base::binary)
+                             : std::ios_base::in));
+      CGAL::Mesh_3::save_binary_file(ss, c3t3, binary);
+      CGAL::Mesh_3::load_binary_file(ss, c3t3_bis);
+      if(!check_equality(c3t3, c3t3_bis)) return false;
+    }
+    return true;
   }
 
-  bool operator()() const {
+  bool operator()(const char* prefix) const {
     assert(CGAL::Get_io_signature<C3t3>()() ==
            Mesh_domain::reference_format_string());
     // Create a C3t3
@@ -397,20 +429,20 @@ struct Test_c3t3_io {
     v6->set_index(Mesh_domain::get_sub_domain_index_1());
 
     // then test I/O
-    return test_io(c3t3, false) && test_io(c3t3, true);
+    return test_io(c3t3, prefix, false) && test_io(c3t3, prefix, true);
   }
 };
 
 int main()
 {
   std::cout << "First test I/O when all indices are integers" << std::endl;
-  bool ok = Test_c3t3_io<MD_homogeneous_types>()();
+  bool ok = Test_c3t3_io<MD_homogeneous_types>()("data/c3t3_io-homo");
   if(!ok) {
     std::cerr << "Error\n";
     return -1;
   }
   std::cout << "Then test I/O when all indices are different types" << std::endl;
-  ok = Test_c3t3_io<MD_heterogeneous_types>()();
+  ok = Test_c3t3_io<MD_heterogeneous_types>()("data/c3t3_io-hetero");
   if(!ok) {
     std::cerr << "Error\n";
     return -1;
