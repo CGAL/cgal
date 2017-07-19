@@ -13,15 +13,16 @@ typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 typedef Kernel::FT FT;
 typedef Kernel::Vector_3 Vector;
 typedef Kernel::Point_3 Point;
+typedef Polyhedron::Facet_handle Facet_handle;
 typedef Polyhedron::Facet_const_handle Facet_const_handle;
 typedef Polyhedron::Halfedge_const_handle Halfedge_const_handle;
 typedef Polyhedron::Facet_const_iterator Facet_const_iterator;
 typedef boost::associative_property_map<std::map<Facet_const_handle, Vector> > FacetNormalMap;
 typedef boost::associative_property_map<std::map<Facet_const_handle, FT> > FacetAreaMap;
-
 typedef boost::associative_property_map<std::map<Facet_const_handle, Point> > FacetCenterMap;
+
 struct PointProxy {
-  Facet_const_handle seed;
+  Facet_handle seed;
   Point center;
   Vector normal;
 };
@@ -36,10 +37,86 @@ struct CompactMetric {
   }
 
   const FacetCenterMap center_pmap;
+  const FacetAreaMap area_pmap;
 };
 
-typedef CGAL::ProxyFitting<PointProxy, Kernel, CompactMetric, FacetNormalMap, FacetAreaMap> ProxyFitting;
-typedef CGAL::ApproximationTrait<Kernel, PointProxy, CompactMetric, ProxyFitting, FacetNormalMap, FacetAreaMap> ApproximationTrait;
+struct PointProxyFitting {
+  PointProxyFitting(const FacetCenterMap &_center_pmap,
+    const FacetAreaMap &_area_pmap,
+    const FacetNormalMap &_normal_pmap)
+    : center_pmap(_center_pmap),
+    area_pmap(_area_pmap),
+    normal_pmap(_normal_pmap),
+    error_functor(center_pmap) {}
+
+  template<typename FacetIterator>
+  PointProxy operator()(const FacetIterator beg, const FacetIterator end) {
+    CGAL_assertion(beg != end);
+
+    // fitting normal
+    Vector norm = CGAL::NULL_VECTOR;
+    for (FacetIterator fitr = beg; fitr != end; ++fitr) {
+      norm = norm + normal_pmap[*fitr] * area_pmap[*fitr];
+    }
+    norm = norm / std::sqrt(CGAL::to_double(norm.squared_length()));
+
+    // fitting center
+    Vector center = CGAL::NULL_VECTOR;
+    FT area(0);
+    for (FacetIterator fitr = beg; fitr != end; ++fitr) {
+      center = center + (center_pmap[*fitr] - CGAL::ORIGIN) * area_pmap[*fitr];
+      area += area_pmap[*fitr];
+    }
+    center = center / area;
+
+    // construct proxy
+    PointProxy px;
+    px.normal = norm;
+    px.center = CGAL::ORIGIN + center;
+
+    // update seed
+    px.seed = *beg;
+    FT err_min = error_functor(*beg, px);
+    for (FacetIterator fitr = beg; fitr != end; ++fitr) {
+      FT err = error_functor(*fitr, px);
+      if (err < err_min) {
+        err_min = err;
+        px.seed = *fitr;
+      }
+    }
+
+    return px;
+  }
+
+  const FacetCenterMap center_pmap;
+  const FacetAreaMap area_pmap;
+  const FacetNormalMap normal_pmap;
+  CompactMetric error_functor;
+};
+
+struct ApproxTrait {
+  typedef Kernel GeomTraits;
+  typedef PointProxy Proxy;
+  typedef CompactMetric ErrorMetric;
+  typedef PointProxyFitting ProxyFitting;
+
+  ApproxTrait(const FacetCenterMap _center_pmap,
+    const FacetAreaMap &_area_pmap,
+    const FacetNormalMap &_normal_pmap)
+    : center_pmap(_center_pmap), area_pmap(_area_pmap), normal_pmap(_normal_pmap) {}
+
+  ErrorMetric construct_fit_error_functor() const {
+    return ErrorMetric(center_pmap);
+  }
+
+  ProxyFitting construct_proxy_fitting_functor() const {
+    return ProxyFitting(center_pmap, area_pmap, normal_pmap);
+  }
+
+  const FacetCenterMap center_pmap;
+  const FacetAreaMap area_pmap;
+  const FacetNormalMap normal_pmap;
+};
 
 int main(int argc, char *argv[])
 {
@@ -57,6 +134,7 @@ int main(int argc, char *argv[])
   // construct facet normal & area map
   std::map<Facet_const_handle, Vector> facet_normals;
   std::map<Facet_const_handle, FT> facet_areas;
+  std::map<Facet_const_handle, Point> facet_centers;
   for(Facet_const_iterator fitr = mesh.facets_begin(); fitr != mesh.facets_end(); ++fitr) {
     const Halfedge_const_handle he = fitr->halfedge();
     const Point p1 = he->opposite()->vertex()->point();
@@ -66,9 +144,11 @@ int main(int argc, char *argv[])
     facet_normals.insert(std::pair<Facet_const_handle, Vector>(fitr, normal));
     FT area(std::sqrt(CGAL::to_double(CGAL::squared_area(p1, p2, p3))));
     facet_areas.insert(std::pair<Facet_const_handle, FT>(fitr, area));
+    facet_centers.insert(std::pair<Facet_const_handle, Point>(fitr, CGAL::centroid(p1, p2, p3)));
   }
   FacetNormalMap normal_pmap(facet_normals);
   FacetAreaMap area_pmap(facet_areas);
+  FacetCenterMap center_pmap(facet_centers);
 
   // create a property-map for segment-ids
   typedef std::map<Facet_const_handle, std::size_t> Facet_id_map;
@@ -96,7 +176,7 @@ int main(int argc, char *argv[])
     anchor_pos,
     anchor_vtx,
     bdrs,
-    ApproximationTrait(normal_pmap, area_pmap),
+    ApproxTrait(center_pmap, area_pmap, normal_pmap),
     Kernel());
 
   return EXIT_SUCCESS;
