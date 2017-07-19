@@ -3690,7 +3690,7 @@ is_valid(Cell_handle c, bool verbose, int level) const
             return false;
           }
         
-          int j1n,j2n,j3n;
+          int j1n=4,j2n=4,j3n=4;
           if ( ! n->has_vertex(c->vertex((i+1)&3),j1n) ) {
             if (verbose) { std::cerr << "vertex " << ((i+1)&3)
                                      << " not vertex of neighbor "
