@@ -348,28 +348,17 @@ struct Test_c3t3_io {
               << c3t3_bis
               << "\n******end******" << std::endl;
     assert(stream);
+
     {
       std::ostringstream ss_c3t3, ss_c3t3_bis;
       ss_c3t3 << c3t3;
       ss_c3t3_bis << c3t3_bis;
+      assert(ss_c3t3);
+      assert(ss_c3t3_bis);
       assert(ss_c3t3.str() == ss_c3t3_bis.str());
       if(!check_equality(c3t3, c3t3_bis)) return false;
     }
-    c3t3_bis.clear();
-    {
-      std::ifstream input(filename.c_str(),
-                          binary ? (std::ios_base::in | std::ios_base::binary)
-                          : std::ios_base::in);
-      CGAL::Mesh_3::load_binary_file(input, c3t3_bis);
-    }
-    if(!check_equality(c3t3, c3t3_bis)) return false;
-    {
-      std::ostringstream ss_c3t3, ss_c3t3_bis;
-      ss_c3t3 << c3t3;
-      ss_c3t3_bis << c3t3_bis;
-      assert(ss_c3t3.str() == ss_c3t3_bis.str());
-      if(!check_equality(c3t3, c3t3_bis)) return false;
-    }
+
     c3t3_bis.clear();
     {
       std::stringstream ss(std::ios_base::out |
@@ -377,9 +366,33 @@ struct Test_c3t3_io {
                              (std::ios_base::in | std::ios_base::binary)
                              : std::ios_base::in));
       CGAL::Mesh_3::save_binary_file(ss, c3t3, binary);
+      assert(ss);
       CGAL::Mesh_3::load_binary_file(ss, c3t3_bis);
-      if(!check_equality(c3t3, c3t3_bis)) return false;
+      assert(ss);
     }
+    if(!check_equality(c3t3, c3t3_bis)) return false;
+
+#ifndef CGAL_LITTLE_ENDIAN
+    // skip binary I/O with the existing file for big endian
+    return true;
+#endif
+
+    if (sizeof(void*) != 8) {
+      // skip 32bits architectures as well
+      return true;
+    }
+
+    c3t3_bis.clear();
+    {
+      std::ifstream input(filename.c_str(),
+                          binary ? (std::ios_base::in | std::ios_base::binary)
+                          : std::ios_base::in);
+      assert(input);
+      CGAL::Mesh_3::load_binary_file(input, c3t3_bis);
+      assert(input);
+    }
+    if(!check_equality(c3t3, c3t3_bis)) return false;
+
     return true;
   }
 
