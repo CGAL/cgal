@@ -313,10 +313,13 @@ void coplanar_3_hull(InputIterator first, InputIterator beyond,
     }
   }
 
+  typename boost::property_map<Polyhedron_3, CGAL::vertex_point_t>::type vpm
+    = get(CGAL::vertex_point, P);
   std::vector<typename boost::graph_traits<Polyhedron_3>::vertex_descriptor> vertices;
   vertices.reserve(CH_2.size());
   BOOST_FOREACH(const Point_3& p, CH_2){
-    vertices.push_back(add_vertex(p,P));
+    vertices.push_back(add_vertex(P));
+    put(vpm, vertices.back(),p);
   }
   Euler::add_face(vertices, P);
 }
