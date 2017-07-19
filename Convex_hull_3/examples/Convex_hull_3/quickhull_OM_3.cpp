@@ -33,7 +33,7 @@ int main(int argc, char* argv[])
   
   CGAL::convex_hull_3(points.begin(), points.end(), sm);
 
-        CGAL::write_off((argc>2)?argv[2]:"out.off", sm);
+  CGAL::write_off((argc>2)?argv[2]:"out.off", sm);
 
   return 0;
 }
