@@ -384,8 +384,8 @@ struct Test_c3t3_io {
   }
 
   bool operator()(const char* prefix) const {
-    assert(CGAL::Get_io_signature<C3t3>()() ==
-           Mesh_domain::reference_format_string());
+    CGAL::Get_io_signature<C3t3> get_io_signature; CGAL_USE(get_io_signature);
+    assert(get_io_signature() == Mesh_domain::reference_format_string());
     // Create a C3t3
     C3t3 c3t3;
     Tr& tr = c3t3.triangulation();
