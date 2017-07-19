@@ -786,6 +786,7 @@ public:
     // no need to update indices
     poly_item->invalidateOpenGLBuffers();
     Q_EMIT poly_item->itemChanged();
+    compute_normal_maps();
     Q_EMIT itemChanged();
   }
 

@@ -45,8 +45,6 @@ Scene::Scene(QObject* parent)
                                       double, double, double)),
             this, SLOT(setSelectionRay(double, double, double,
                                        double, double, double)));
-    //connect(this, SIGNAL(itemAboutToBeDestroyed(CGAL::Three::Scene_item*)),
-    //        this, SLOT(s_itemAboutToBeDestroyed(CGAL::Three::Scene_item*)));
     if(ms_splatting==0)
         ms_splatting  = new GlSplat::SplatRenderer();
     ms_splattingCounter++;
