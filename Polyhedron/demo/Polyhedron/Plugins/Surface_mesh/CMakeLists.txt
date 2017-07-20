@@ -33,8 +33,6 @@ target_link_libraries(mesh_simplification_sm_plugin PUBLIC scene_surface_mesh_it
 target_compile_definitions(mesh_simplification_sm_plugin PUBLIC "-DUSE_SURFACE_MESH" )
 
 qt5_wrap_ui( remeshingUI_FILES  Remeshing_dialog.ui)
-polyhedron_demo_plugin(remeshing_plugin Remeshing_plugin Remeshing_plugin_cgal_code.cpp Mesher_base.cpp ${remeshingUI_FILES})
-target_link_libraries(remeshing_plugin PUBLIC scene_polyhedron_item scene_polygon_soup_item scene_c2t3_item)
 polyhedron_demo_plugin(offset_meshing_plugin Offset_meshing_plugin ${remeshingUI_FILES})
 target_link_libraries(offset_meshing_plugin PUBLIC scene_polyhedron_item scene_polygon_soup_item scene_c2t3_item)
 
