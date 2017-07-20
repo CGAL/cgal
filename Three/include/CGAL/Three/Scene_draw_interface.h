@@ -53,7 +53,7 @@ public:
   virtual void setPickedPixel(const QPoint &e) = 0;
   //! \brief Manages the key events.
   //! Override this function to perform actions when keys are pressed.
-  //! @returns `true` if the `e` executed well.
+  //! @returns `true` if `e` executed well.
   virtual bool keyPressEvent(QKeyEvent* e) = 0;
   //!\brief print theTextItems.
   virtual void printPrimitiveId(QPoint point, CGAL::Three::Viewer_interface*) = 0;
