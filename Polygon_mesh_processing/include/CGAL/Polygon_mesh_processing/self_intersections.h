@@ -291,7 +291,7 @@ self_intersections(const TriangleMesh& tmesh, OutputIterator out)
  *
  * @pre `CGAL::is_triangle_mesh(tmesh)`
  *
- * @tparam FaceRange range of `boost::graph_traits<PolygonMesh>::%face_descriptor`,
+ * @tparam FaceRange range of `boost::graph_traits<TriangleMesh>::%face_descriptor`,
  *  model of `Range`.
  * Its iterator type is `RandomAccessIterator`.
  * @tparam TriangleMesh a model of `FaceListGraph`
