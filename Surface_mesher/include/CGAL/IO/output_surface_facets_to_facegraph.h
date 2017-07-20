@@ -38,7 +38,7 @@ namespace CGAL{
  `Manifold_with_boundary_tag` parameter.
 
  @tparam C2T3 model of the `SurfaceMeshComplex_2InTriangulation_3` concept.
- @tparam FaceGraph a model of `FaceGraph`.
+ @tparam FaceGraph a model of `MutableFaceGraph`.
 
  @param c2t3 an instance of a manifold `C2T3`.
  @param graph an instance of `FaceGraph`.

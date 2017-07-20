@@ -26,6 +26,7 @@
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
+#include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <map>
 #include <boost/unordered_set.hpp>
 
@@ -34,18 +35,18 @@ namespace CGAL {
 //!
 //! Gets reconstructed surface out of a `MeshComplexWithFeatures_3InTriangulation_3` object.
 //!
-//! This variant exports the surface as a `FaceGraph` and appends it to `graph`, using
+//! This variant exports the surface as a `TriangleMesh` and appends it to `graph`, using
 //! `orient_polygon_soup()`.
 //!
 //! @tparam C3T3 model of the `MeshComplexWithFeatures_3InTriangulation_3` concept.
-//! @tparam FaceGraph a model of `FaceGraph`.
+//! @tparam TriangleMesh a model of `MutableFaceGraph` with an internal point property map
 //!
 //! @param c3t3 an instance of a `C3T3`.
-//! @param graph an instance of `FaceGraph`.
-template<class C3T3, class FaceGraph>
-void output_c3t3_to_facegraph(const C3T3& c3t3, FaceGraph& graph) //complexity nlogn(number of facets on surface)
+//! @param graph an instance of `TriangleMesh`.
+template<class C3T3, class TriangleMesh>
+void output_c3t3_to_facegraph(const C3T3& c3t3, TriangleMesh& graph) //complexity nlogn(number of facets on surface)
 {
-  typedef typename boost::property_map<FaceGraph, boost::vertex_point_t>::type VertexPointMap;
+  typedef typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type VertexPointMap;
   typedef typename boost::property_traits<VertexPointMap>::value_type Point_3;
   typedef typename C3T3::Triangulation Tr;
   typedef typename Tr::Vertex_handle Vertex_handle;
@@ -132,26 +133,8 @@ void output_c3t3_to_facegraph(const C3T3& c3t3, FaceGraph& graph) //complexity n
   CGAL::Polygon_mesh_processing::
       orient_polygon_soup(points, polygons);
 
-  //add vertices
-  typedef typename boost::property_map<FaceGraph, boost::vertex_point_t>::type VPMap;
-  typedef typename boost::property_traits<VPMap>::key_type vertex_descriptor;
-  VPMap vpmap = get(boost::vertex_point, graph);
-  std::vector<vertex_descriptor> vertices;
-  vertices.reserve(points.size());
-  BOOST_FOREACH(Point_3 point, points)
-  {
-    vertex_descriptor v = add_vertex(graph);
-    put(vpmap, v, point);
-    vertices.push_back(v);
-  }
-  //add faces
-  BOOST_FOREACH(Polygon_3 polygon, polygons)
-  {
-    std::vector<vertex_descriptor> face(polygon.size());
-    for(std::size_t id=0; id<polygon.size(); ++id)
-      face[id]=vertices[polygon[id]];
-    CGAL_assertion(CGAL::Euler::add_face(face, graph) != boost::graph_traits<FaceGraph>::null_face());
-  }
+  CGAL_assertion(CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh(polygons));
+  CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(points, polygons, graph);
 }//end c3t3_to_face_graph
 }//end CGAL
 #endif // CGAL_COMPLEX_3_IN_TRIANGULATION_3_TO_FACEGRAPH_H
