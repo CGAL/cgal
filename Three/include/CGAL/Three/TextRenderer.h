@@ -49,8 +49,8 @@ public :
      * \param p_x, p_y, p_z the coordinates of the TextItem.
      * \param p_text the text to render.
      * \param p_3D
-     * If true : the TextRenderer will convert the coordinates into world coordinates.
-     * If false : the TextRenderer will display the text in screen coordinates, and ignore p_z
+     * If `true` : the TextRenderer will convert the coordinates into world coordinates.
+     * If `false` : the TextRenderer will display the text in screen coordinates, and ignore p_z
      * \param font the font used for the rendering.
      * \param p_color the color of the text.
      * \param always_visible overrides Viewer_interface::testDisplayId() if true;
@@ -79,12 +79,17 @@ public :
     //!Accessor for the text's color
     QColor color() {return m_color;}
     //!Specifies if the item's coordinates are World or Screen coordinates
-    //! @returns true if they are World coordinates
-    //! @returns false if they are Screen coordinates
+    //! World coordinates are used for example to display Indices, that must
+    //! fit their primitive and follow the camera,
+    //! and Screen coordinates are used for temporary informative text that must
+    //! be displayed for example in the left lower corner of the screen,
+    //! independently of the camera.
+    //! @returns `true` if they are World coordinates
+    //! @returns `false` if they are Screen coordinates
     bool is_3D()const{return _3D;}
     //!Specifies if the item may be hidden
-    //! @returns true if it may not
-    //! @returns false if it may
+    //! @returns `true` if it may not
+    //! @returns `false` if it may
     bool is_always_visible(){return _is_always_visible;}
 private:
     float x;
@@ -100,30 +105,28 @@ private:
 
 };//end class TextItem
 
-//! This is a list of TextItems associated with a CGAL::Three::Scene_item.
+//! This is a list of `TextItems` associated with a `CGAL::Three::Scene_item`.
 class  VIEWER_EXPORT TextListItem{
 public:
   //!\brief The Constructor
-  //! \param pItem the CGAL::Three::Scene_item associated to the list.
+  //! \param pItem the `CGAL::Three::Scene_item` associated to the list.
     TextListItem(CGAL::Three::Scene_item* pItem)
     {
       _list = QList<TextItem*>();
       _item = pItem;
     }
 
-    //!The associated CGAL::Three::Scene_item.
+    //!The associated `CGAL::Three::Scene_item`.
     CGAL::Three::Scene_item* item()const {return _item;}
-    //!The list of TextItems
+    //!The list of `TextItems`
     QList<TextItem*> textList()const {return _list;}
-    //!Adds a `ti` to the list.
+    //!Adds `ti` to the list.
     void append(TextItem* ti) {_list.append(ti);}
-    //!Clears the list of all the TextItems.
+    //!Clears the list of all its `TextItem`s.
     void clear(){_list.clear();}
-    //!Tells if the list there is any TextItem in the list.
-    //! \returns true if there is no TextItem in the list
-    //! \returns false if there is any TextItem in the list
+    //!Returns `true` if there is no `TextItem` in the list.
     bool isEmpty()const {return _list.empty();}
-    //!The size of the list
+    //!Returns the size of the list
     std::size_t size()const{return _list.size();}
 private:
     CGAL::Three::Scene_item* _item;
@@ -131,7 +134,7 @@ private:
 
 };
 /*!
-  * The TextRender projects each TextItem from the world coordinates to the Screen coordinates
+  * The `TextRender` projects each `TextItem` from the world coordinates to the Screen coordinates
   * and draws it.
  */
 class VIEWER_EXPORT TextRenderer : public QObject{
@@ -142,32 +145,30 @@ public:
     }
     //!Draws all the `TextItem`s
     void draw(CGAL::Three::Viewer_interface* viewer);
-    //!\brief Adds a single TextItem to TextRenderer::local_textItems
+    //!\brief Adds `ti` to `TextRenderer::local_textItems`
     //!
     //! @see addText(float p_x, float p_y, float p_z, QString p_text, bool p_3D = true,  QFont font = QFont(), QColor p_color = Qt::black)
-    void addText(TextItem*);
-    //!\brief Creates a new TextItem in TextRenderer::local_textItems
+    void addText(TextItem* ti);
+    //!\brief Creates a new `TextItem` in `TextRenderer::local_textItems`
     //!
-    //!This is a version of addText(TextItem*) that creates the TextItem on the fly.
+    //!This is a version of `addText(TextItem*)` that creates the `TextItem` on the fly.
     //! @see addText(TextItem*)
     void addText(float p_x, float p_y, float p_z, QString p_text, bool p_3D = true,  QFont font = QFont(), QColor p_color = Qt::black);
-    //!\brief Adds a TextListItem to TextRenderer::textItems
+    //!\brief Adds `list` to `TextRenderer::textItems`
     //!
-    void addTextList(TextListItem*);
-    //!Removes a `textItem` from TextRenderer::local_textItems
-    //! @attention the memory of the TextItem is not de-allocated.
+    void addTextList(TextListItem* list);
+    //!Removes `textItem` from `TextRenderer::local_textItems`
     //! @see addText(TextItem*)
     void removeText(TextItem* textItem);
-    //!Removes a TextItemList from TextRenderer::textItems
-    //! //! @attention the memory of the TextItems is not de-allocated.
-    void removeTextList(TextListItem*);
-    //!The local TextListItem.
+    //!Removes `list` from TextRenderer::textItems
+    void removeTextList(TextListItem* list);
+    //!The local `TextListItem`.
     QList<TextItem*> getLocalTextItems(){return local_textItems;}
     //!The global list of `TextListItem`s.
     QList<TextListItem*> items() const{return textItems;}
     //!Gives the renderer a Scene.
     void setScene(CGAL::Three::Scene_interface* p_scene){scene = p_scene;}
-    //! The maximum `TextItem`s that can be displayed at once.
+    //! The maximum number of `TextItem`s that can be displayed at once.
     //! @see setMax()
     int getMax_textItems()const{return max_textItems;}
     //!Sets the maximum `TextItem`s that can be displayed at once.
@@ -175,17 +176,17 @@ public:
     void setMax(int max){max_textItems = max;}
 
 Q_SIGNALS:
-    //!Emit this to print `message` on the viewer for `ms_delay` ms.
+    //!Emits this to print `message` on the viewer for `ms_delay` ms.
     void sendMessage(QString message, int ms_delay =2000);
 protected:
     //!\brief list of `TextListItem`s
     //!
     //! It holds lists of correlated `TextItem`s that are associated to a
-    //! CGAL::Three::Scene_item, like primitiveIds.
+    //! `CGAL::Three::Scene_item`, like primitiveIds.
     QList<TextListItem*> textItems;
     //!\brief List of `TextItem`s
     //!
-    //! Usually fed by the viewer, it holds the text informations from the
+    //! Usually fed by the viewer, it holds the text information from the
     //! viewer that are displayed directly on the screen, like the fps,
     //! the distances, etc.
     QList<TextItem*> local_textItems;

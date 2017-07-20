@@ -37,8 +37,8 @@ using namespace CGAL::Three;
 #endif
 namespace CGAL {
 namespace Three {
-//!A Scene_group_item is a special Scene_item that does not draw anything,
-//! but regroups other items as its children. It allows the
+//!A Scene_group_item is a special Scene_item taht
+//! regroups other items as its children. It allows the
 //! user to apply several actions to multiple items at the same time.
 //! A custom Scene_item can derive from it to have children. They appear
 //! hierarchically in the Geometric Objects list.
@@ -46,19 +46,23 @@ class DEMO_FRAMEWORK_EXPORT Scene_group_item : public Scene_item
 {
     Q_OBJECT
 public :
+  //! \brief The constructor.
+  //!
+  //! Use `nb_vbos` and `nb_vaos` to communicate those values to the Scene_item constructor
+  //! when you derive from Scene_group_itme.
     Scene_group_item(QString name = QString("New group"), int nb_vbos = 0, int nb_vaos = 0);
     ~Scene_group_item() {}
     //!Sets the scene;
     void setScene(Scene_interface* s) { scene = s; }
-    //!Returns false to avoid disturbing the BBox of the scene.
+    //!Returns `false` to avoid disturbing the BBox of the scene.
     bool isFinite() const;
-    //!Returns true to avoid disturbing the BBox of the scene.
+    //!Returns `true` to avoid disturbing the BBox of the scene.
     bool isEmpty() const ;
     /*!
      * \brief Locks a child
      *
      * A locked child cannot be moved out of the group nor can it be deleted.
-     * Use it to prevent a child to be destroyed without its parent.
+     * Use it to prevent a child to be destroyed without its parent group.
      */
     void lockChild(CGAL::Three::Scene_item*);
     /*!
@@ -68,25 +72,24 @@ public :
      */
     void unlockChild(CGAL::Three::Scene_item*);
     /*!
-     * \brief Tells if a child is locked.
-     * \return true if the child is locked.
+     * Returns `true` if `child` is locked, `false` otherwise.
      * @see lockChild()
      */
-    bool isChildLocked(CGAL::Three::Scene_item*);
-    //!Returns if the group_item is currently expanded or collapsed in the Geometric Objects list.
-    //! True means expanded, false means collapsed.
-    //! @see isExpanded().
+    bool isChildLocked(CGAL::Three::Scene_item* child);
+    //! Returns `true` if the group_item is currently expanded in the Geometric Objects list.
+    //! Returns `false` if the group_item is currently collapsed in the Geometric Objects list.
+    //! @see setExpanded().
     bool isExpanded() const;
-    //!Makes the group_item expanded or collapsed in the view.
-    //! True means expanded, false means collapsed.
+    //!If `b` is `true`, expands the `Scene_group_item` in the view.
+    //!If `b` is `false`, collapses the `Scene_group_item` in the view.
     //! @see isExpanded().
-    void setExpanded(bool);
+    void setExpanded(bool b);
     //!Returns an empty Bbox to avoid disturbing the Bbox of the scene.
     Bbox bbox() const;
-    //!Not supported.
+    //!Not supported by default.
     Scene_item* clone() const {return 0;}
     //! Indicates if the rendering mode is supported.
-    //! \returns true for all rendering modes that are shared by
+    //! \returns `true` for all rendering modes that are shared by
     //! all of the children.
     bool supportsRenderingMode(RenderingMode m) const;
     //!\returns a string containing the number of children.
@@ -99,21 +102,21 @@ public :
     //!
     //! Calls `Scene_item::draw()`, then calls `Scene_item::drawEdges()`
     //! and `Scene_item::drawPoints` for each child if its current
-    //! rendering mode is adequat.
+    //! rendering mode is suitable.
     //! @see #RenderingMode
     virtual void draw(CGAL::Three::Viewer_interface*) const;
     //!\brief draws all the children
     //!
     //! Calls `Scene_item::drawEdges()`, then calls `Scene_item::draw()`
     //! and `Scene_item::drawPoints` for each child if its current
-    //! rendering mode is adequat.
+    //! rendering mode is suitable.
     //! @see #RenderingMode
     virtual void drawEdges(CGAL::Three::Viewer_interface*) const;
     //!\brief draws all the children
     //!
     //! Calls `Scene_item::drawPoints()`, then calls `Scene_item::draw()`
     //! and `Scene_item::drawEdges()` for each child if its current
-    //! rendering mode is adequat.
+    //! rendering mode is suitable.
     //! @see #RenderingMode
     virtual void drawPoints(CGAL::Three::Viewer_interface*) const;
     //!\brief draws all the children
@@ -124,16 +127,17 @@ public :
     virtual void drawSplats(CGAL::Three::Viewer_interface*) const;
     ///@}
 
-    //!Adds a CGAL::Three::Scene_item* to the list of children.
+    //!Adds a `new_item` to the list of children.
     //!@see getChildren() @see removeChild()
     void addChild(Scene_item* new_item);
-    //!Sets all the children to the specified color.
+    //!Sets the color of all the children to `c`.
     void setColor(QColor c);
-    //!Sets all the children in the specified rendering mode.
+    //!Sets the `RenderingMode` of all the children to `m`.
     void setRenderingMode(RenderingMode m);
-    //!Sets all the children to the specified visibility.
+    //!If `b` is `true`, shows all the children.
+    //! If `b` is `false`, hides all the children.
     void setVisible(bool b);
-    //!Sets all the children in points mode.
+    //!Sets all the children in points rendering.
     void setPointsMode() {
       setRenderingMode(Points);
     }
@@ -171,10 +175,10 @@ public :
     }
     //! \brief Returns a list of all the direct children.
     //!
-    //! Only returns children that have this item as a parent.
-    //! Children of these children are not returned.
+    //! Only children that have this item as a parent are returned.
+    //! Children of these children are not.
     QList<Scene_item*> getChildren() const {return children;}
-    //!Removes a Scene_item from the list of children.
+    //!Removes `item` from the list of children.
     //!@see getChildren() @see addChild()
     void removeChild( Scene_item* item)
     {
@@ -183,9 +187,9 @@ public :
      update_group_number(item,0);
      children.removeOne(item);
     }
-    //!Moves a child up in the list.
+    //!Moves the `i`'th child up in the list.
     void moveUp(int);
-    //!Moves a child down in the list.
+    //!Moves the `i`'th child down in the list.
     void moveDown(int);
 
 public Q_SLOTS:

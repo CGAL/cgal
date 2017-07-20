@@ -50,9 +50,9 @@ class VIEWER_EXPORT Viewer_interface : public QGLViewer, public QOpenGLFunctions
 
 public:
   /*!
-    * \brief The OpenGL_program_IDs enum
+    * \brief The `OpenGL_program_IDs` enum
     *
-    * This enum holds the OpenGL programs IDs that are given to getShaderProgram() and attribBuffers().
+    * This enum holds the OpenGL programs IDs that are given to `getShaderProgram()` and `attribBuffers()`.
     * @see getShaderProgram
     * @see attribBuffers
     */
@@ -75,7 +75,7 @@ public:
    NB_OF_PROGRAMS               //! Holds the number of different programs in this enum.
   };
 
- //! \brief The viewer's QPainter
+ //! \brief The viewer's `QPainter`
  //!
  //! The painter is the element that draws everything on screen,
  //! but you should only need this if you want to draw 2D things
@@ -87,20 +87,20 @@ public:
 
   //! \brief Tests if an id should be displayed or not.
   //! \param x, y, z the coordinates of the id's position.
-  //! \return true if the ID should be displayed.
+  //! \returns `true` if the ID should be displayed.
   virtual bool testDisplayId(double x, double y, double z) = 0;
   //! \brief Updates the item's displayed ids.
   //!
-  //! Call this after the mesh or its ids have changed.
-  virtual void updateIds(CGAL::Three::Scene_item *) = 0;
+  //! Call this after `item` or its ids have changed.
+  virtual void updateIds(CGAL::Three::Scene_item *item) = 0;
   //! \brief Specifies if the items ids are being displayed.
   //!
-  //! \returns true if the primitive ids are currently displayed
+  //! \returns `true` if the primitive ids are currently displayed
   virtual bool hasText() const { return false; }
   //! \brief Constructor
   //!
   //! Creates a valid context for OpenGL 2.1.
-  //! \param parent the parent widget. It usually is the MainWindow.
+  //! \param parent the parent widget. It usually is the `MainWindow`.
   Viewer_interface(QWidget* parent) : QGLViewer(CGAL::Qt::createOpenGLContext(), parent) {}
   virtual ~Viewer_interface() {}
 
@@ -108,24 +108,24 @@ public:
   virtual void setScene(CGAL::Three::Scene_draw_interface* scene) = 0;
   //! \brief The antialiasing state.
   //!
-  //! @returns true if the antialiasing is activated.
+  //! @returns `true` if the antialiasing is activated.
   virtual bool antiAliasing() const = 0;
   
   // Those two functions are defined in Viewer.cpp
-  //! \brief Sets the position and orientation of a frame using a QString.
-  //! \param s is usually gotten by dumpFrame() and is of the form "Px Py Pz O1 O2 O3 O4 ", with
-  //! - Px to Py : the new position coordinates,
-  //! - O1 to O3 : axis coordinate *sin(angle/2)
-  //! - O4 cos(angle/2).
-  //! \param frame is the frame that will be moved
-  //! @returns true if it worked.
+  //! \brief Sets the position and orientation of `frame` using a `QString`.
+  //! \param s is usually gotten by `dumpFrame()` and is of the form "Px Py Pz O1 O2 O3 O4 ", with
+  //! - `Px` to `Py` : the new position coordinates,
+  //! - `O1` to `O3` : axis coordinate *sin(angle/2)
+  //! - `O4` cos(angle/2).
+  //! \param frame is the `qglviewer::Frame` that will be moved
+  //! @returns `true` if it worked.
   //! @see moveCameraToCoordinates()
   static bool readFrame(QString s, qglviewer::Frame& frame);
-  //! \brief Gives information about a frame.
+  //! \brief Gives information about `frame`.
   //! @see readFrame
   //! @see dumpCameraCoordinates()
-  //!@returns a QString containing the position and orientation of a frame.
-  static QString dumpFrame(const qglviewer::Frame&);
+  //!@returns a `QString` containing the position and orientation of `frame`.
+  static QString dumpFrame(const qglviewer::Frame& frame);
   //! \brief The fastDrawing state.
   //!
   //! In fast drawing mode, some items will be simplified while the camera is moving
@@ -136,20 +136,20 @@ public:
   //!
   //! In draw with name mode, the scene is not displayed, but a
   //! \a name is given to each Scene_item. It is used for picking.
-  //! @returns true if the viewer is drawing with names.
+  //! @returns `true` if the viewer is drawing with names.
   virtual bool inDrawWithNames() const = 0;
 
   //! \brief Passes all the uniform data to the shaders.
   //!
-  //! According to program_name, this data may change.
-  //! This should be called in every Scene_item::draw() call.
+  //! According to `program_name`, this data may change.
+  //! This should be called in every `Scene_item::draw()` call.
   //! @see OpenGL_program_IDs
   //!
   virtual void attribBuffers(int program_name) const = 0;
 
-  //! \brief Returns a program according to name.
+  //! \brief Returns a program according to `name`.
   //!
-  //! If the program does not exist yet, it is created and stored in shader_programs.
+  //! If the program does not exist yet, it is created and stored in `shader_programs`.
   //! @see OpenGL_program_IDs
   //! @returns a pointer to the corresponding program.
   virtual QOpenGLShaderProgram* getShaderProgram(int name) const = 0;
@@ -171,9 +171,12 @@ public:
   PFNGLFRAMEBUFFERTEXTURE2DEXTPROC glFramebufferTexture2D;
 
   //! \brief Used by the items to avoid SEGFAULT.
-  //!@returns true if glVertexAttribDivisor, and glDrawArraysInstanced are found.
+  //!@returns `true` if glVertexAttribDivisor, and glDrawArraysInstanced are found.
   virtual bool isExtensionFound() = 0;
-  //!Returns the scene's offset
+  //!\brief Returns the scene's offset.
+  //!
+  //! If this offset is significant enough, every item will be translated to match it
+  //! to gain precision.
   virtual qglviewer::Vec offset()const = 0;
   //!\brief Allows to perform picking from the keyboard and mouse
   //!
@@ -193,20 +196,20 @@ Q_SIGNALS:
   void requestContextMenu(QPoint global_pos);
   //!Emit this to signal that the point at (`x`, `y`, `z`) has been picked.
   void selectedPoint(double x, double y, double z);
-  //!Emit this to request the currently selected item to perform a selection based on an AABB_Tree and a raycasting.
+  //!Emit this to request the currently selected item to perform a selection based on an `AABB_Tree` and a raycasting.
   void selectionRay(double sx, double sy, double sz, double tx, double ty, double tz);
 
 public Q_SLOTS:
-  //! Sets the antialiasing to true or false.
+  //! Sets the antialiasing to `true` or `false`.
   //! @see antiAliasing()
   virtual void setAntiAliasing(bool b) = 0;
-  //! If b is true, faces will be ligted from both internal and external side.
-  //! If b is false, only the side that is exposed to the light source will be lighted.
+  //! If `b` is `true`, faces will be ligted from both internal and external side.
+  //! If `b` is `false`, only the side that is exposed to the light source will be lighted.
   virtual void setTwoSides(bool b) = 0;
   //! \brief Sets the fast drawing mode
   //! @see inFastDrawing()
   virtual void setFastDrawing(bool b) = 0;
-  //! Makes the camera turn around.
+  //! Makes the camera perform a U-turn.
   virtual void turnCameraBy180Degres() = 0;
   //! @returns a QString containing the position and orientation of the camera.
   //! @see dumpFrame()

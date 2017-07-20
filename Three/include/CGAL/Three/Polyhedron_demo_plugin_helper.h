@@ -87,9 +87,9 @@ public:
    */
   void autoConnectActions();
 protected:
-  //!The reference to the scene
+  //The reference to the scene
   CGAL::Three::Scene_interface* scene;
-  //!The reference to the main window
+  //The reference to the main window
   QMainWindow* mw;
 };
 }

@@ -33,7 +33,7 @@ namespace Three {
 class Scene_zoomable_item_interface {
 public:
   virtual ~Scene_zoomable_item_interface(){}
- //! Move the camera orthogonaly to the region defined by `point`
+ //! Moves the camera orthogonaly to the region defined by `point`
  virtual void zoomToPosition(const QPoint& point, CGAL::Three::Viewer_interface*)const = 0;
 };
 }

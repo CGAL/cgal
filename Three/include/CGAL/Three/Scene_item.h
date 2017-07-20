@@ -96,6 +96,8 @@ public:
   //!\brief The Constructor.
   //!
   //! This is where the vectors of VBOs and VAOs are initialized.
+  //! \param buffers_size the number of VBOs needed by this item
+  //! \param vaos_size the number of VAOs needed by this item
   Scene_item(int buffers_size = 20, int vaos_size = 10);
 
   //! \brief Sets the number of isolated vertices.
@@ -109,14 +111,14 @@ public:
   virtual ~Scene_item();
   //! \brief Duplicates the item.
   //!
-  //! Creates a new item as a copy of this one.
+  //! Creates a new item as a copy of this one and returns it.
   virtual Scene_item* clone() const = 0;
 
   //! \brief Indicates if `m` is supported
   //!
   //! If it is, it will be displayed in the context menu of the item.
   virtual bool supportsRenderingMode(RenderingMode m) const = 0;
-  //! Deprecated. Does nothing.
+
   virtual void draw() const {}
   /*! \brief The drawing function for faces.
    *
@@ -127,7 +129,7 @@ public:
    * @see initializeBuffers()
    */
   virtual void draw(CGAL::Three::Viewer_interface*) const  { draw(); }
-  //! Deprecated. Does nothing.
+
   virtual void drawEdges() const { draw(); }
   /*! \brief The drawing function for the edges.
    *
@@ -138,7 +140,7 @@ public:
    * @see initializeBuffers()
    */
   virtual void drawEdges(CGAL::Three::Viewer_interface* viewer) const { draw(viewer); }
-  //! Deprecated. Does nothing.
+
   virtual void drawPoints() const { draw(); }
   /*! \brief The drawing function for the points.
    *
@@ -150,22 +152,26 @@ public:
    */
   virtual void drawPoints(CGAL::Three::Viewer_interface*) const { drawPoints(); }
 
-  //! Draws the splats of the item in the viewer using GLSplat functions.
   virtual void drawSplats() const {}
   //! Draws the splats of the item in the viewer using the GLSplat library.
   virtual void drawSplats(CGAL::Three::Viewer_interface*) const {drawSplats();}
 
-  //! Called by the scene. If b is true, then this item is currently selected.
+  //! \brief Sets the selection status to `b`.
+  //!
+  //! Called by the scene and mainly used for displaying purpose.
   virtual void selection_changed(bool b);
 
   // Functions for displaying meta-data of the item
   //!\brief Contains meta-data about the item.
+  //!
   //! @returns a QString containing meta-data about the item.
   virtual QString toolTip() const = 0;
   //! \brief Contains graphical meta-data about the item.
+  //!
   //! @returns a QPixmap containing graphical meta-data about the item.
   virtual QPixmap graphicalToolTip() const { return QPixmap(); }
   //! \brief Contains the font used for the data of the item.
+  //!
   //! @returns a QFont containing the font used for the data of the item.
   virtual QFont font() const { return QFont(); }
 
@@ -173,27 +179,27 @@ public:
   //! \brief Determines if the item is finite or not.
   //!
   //! For example, a plane is not finite.
-  //! If false, the BBox is not computed.
+  //! If `false`, the BBox is not computed.
   virtual bool isFinite() const { return true; }
   //! Specifies if the item is empty or null.
-  //! If true, the BBox is not computed.
+  //! If `true`, the BBox is not computed.
   virtual bool isEmpty() const { return true; }
-  //! \brief The item's bounding box.
+  //! \brief The item bounding box.
   //!
   //! If the Bbox has never been computed, computes it and
   //! saves the result for further calls.
-  //! @returns the item's bounding box.
+  //! @returns the item bounding box.
   virtual Bbox bbox() const {
       if(!is_bbox_computed)
           compute_bbox();
       is_bbox_computed = true;
       return _bbox;
   }
-  //! \brief the item's bounding box's diagonal length.
+  //! \brief the item bounding box diagonal length.
   //!
-  //! If the diagonal's length has never been computed, computes it and
+  //! If the diagonal length has never been computed, computes it and
   //! saves the result for further calls.
-  //! @returns the item's bounding box's diagonal length.
+  //! @returns the item bounding box diagonal length.
   virtual double diagonalBbox() const {
    if(!is_diag_bbox_computed)
        compute_diag_bbox();
@@ -202,7 +208,7 @@ public:
   }
 
   // Function about manipulation
-  //! Returns true if the item has a ManipulatedFrame.
+  //! Returns `true` if the item has a ManipulatedFrame.
   //! @see manipulatedFrame()
   virtual bool manipulatable() const { return false; }
   //!\brief The manipulatedFrame of the item.
@@ -213,21 +219,21 @@ public:
   virtual ManipulatedFrame* manipulatedFrame() { return 0; }
 
   // Getters for the four basic properties
-  //!Getter for the item's color.
+  //!Getter for the item color.
   //! @returns the current color of the item.
   virtual QColor color() const { return color_; }
-  //!Getter for the item's name.
+  //!Getter for the item name.
   //! @returns the current name of the item.
   virtual QString name() const { return name_; }
   //! If the item is not visible, it is not drawn and its Bbox
-  //! is ignored in the computation of the scene's.
+  //! is ignored in the computation of the scene Bbox.
   //! @returns the current visibility of the item.
   virtual bool visible() const { return visible_; }
-  //!Getter for the item's rendering mode.
+  //!Getter for the item rendering mode.
   //! @returns the current rendering mode of the item.
   //!@see RenderingMode
   virtual RenderingMode renderingMode() const { return rendering_mode; }
-  //!The renderingMode's name.
+  //!The renderingMode name.
   //! @returns the current rendering mode of the item as a human readable string.
   virtual QString renderingModeName() const;
 
@@ -274,7 +280,7 @@ public:
   };
   //!Returns a Header_data struct containing the header information.
   virtual Header_data header()const;
-  //!Returns true if the item has statistics.
+  //!Returns `true` if the item has statistics.
   virtual bool has_stats()const{return false;}
   //!Returns a QString containing the requested value for the the table in the statistics dialog
   /*! \verbatim
@@ -308,7 +314,7 @@ public Q_SLOTS:
   void setRbgColor(int r, int g, int b) { setColor(QColor(r, g, b)); }
   //!Sets the name of the item.
   virtual void setName(QString n) { name_ = n; }
-    //!Sets the visibility of the item.
+  //!Sets the visibility of the item.
   virtual void setVisible(bool b);
   //!Set the parent group. If `group==0`, then the item has no parent.
   //!This function is called by `Scene::changeGroup` and should not be
@@ -357,8 +363,8 @@ public Q_SLOTS:
   
   //!Emits an aboutToBeDestroyed() signal.
   //!Override this function to delete what needs to be deleted on destruction.
-  //!This might be needed as items are not always deleted right away by Qt and this behaviour may cause a simily
-  //!memory leak, for example when multiple items are created at the same time.
+  //!This might be needed as items are not always deleted right away by Qt and this behavior may cause a simily
+  //!memory leak, for example when multiple items are created and deleted at the same time.
   virtual void itemAboutToBeDestroyed(Scene_item*);
 
   //!Selects a point through raycasting.
@@ -372,10 +378,10 @@ public Q_SLOTS:
 
 
 Q_SIGNALS:
-  //! Is emitted to notify a change in the item's data.
+  //! Is emitted to notify a change in the item data. Will redraw the Scene.
   void itemChanged();
-  //! Is emitted when the item is shown to notify a change in the item's visibility.
-  //! Typically used to update the scene's bbox;
+  //! Is emitted when the item is shown to notify a change in the item visibility.
+  //! Mainly used to update the scene bbox;
   void itemVisibilityChanged();
   //! Is emitted to notify that the item is about to be deleted.
   void aboutToBeDestroyed();
@@ -383,7 +389,7 @@ Q_SIGNALS:
   void redraw();
 
 protected:
-  //!Holds the BBox of the item
+
   mutable Bbox _bbox;
   mutable double _diag_bbox;
   mutable bool is_bbox_computed;
@@ -405,7 +411,7 @@ protected:
   //! file.
   std::size_t nb_isolated_vertices;
   /*! Decides if the draw function must call initializeBuffers() or not. It is set
-   * to true in the end of initializeBuffers() and to false in invalidateOpenGLBuffers(). The need of
+   * to `true` in the end of initializeBuffers() and to `false` in invalidateOpenGLBuffers(). The need of
    * this boolean comes from the need of a context from the OpenGLFunctions used in
    * initializeBuffers().
    * @see initializeBuffers()

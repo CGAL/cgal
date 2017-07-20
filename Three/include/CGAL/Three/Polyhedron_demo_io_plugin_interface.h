@@ -64,7 +64,7 @@ public:
   //!This must be overriden.
   virtual bool canSave(const Scene_item*) = 0;
   //!Saves the item in the file corresponding to the path
-  //!contained in fileinfo. Returns false if error.
+  //!contained in fileinfo. Returns `false` if error.
   //! This must be overriden.
   virtual bool save(const Scene_item*, QFileInfo fileinfo) = 0;
 };

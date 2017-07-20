@@ -75,32 +75,33 @@ public:
   //! An item's index is its position in the Geometric Objects list.
   typedef int Item_id;
   virtual ~Scene_interface() {};
-  //!Adds an item to the Geometric Objects list.
-  //!@returns the index of the new item.
+  //!Adds `item` to the Geometric Objects list.
+  //!@returns the index of the `item` in the list of items.
   virtual Item_id addItem(CGAL::Three::Scene_item* item) = 0;
   //! \brief Replaces an item by a new one in the scene.
   //! The item which id is `id` is replaced by `item`.
-  //! The first one is deleted and gives its index to the second one.
-  //! If emit_item_about_to_be_destroyed is true, emits
+  //! The first one is removed from the list and gives its index to the second one.
+  //! If emit_item_about_to_be_destroyed is `true`, emits
   //! an itemAboutToBeDestroyed signal.
-  //!@returns a pointer to the old item.
+  //! @attention This does not delete the old item, but it does its children.
+  //! @returns a pointer to the old item.
   virtual Scene_item* replaceItem(Item_id id, CGAL::Three::Scene_item* item, bool emit_item_about_to_be_destroyed = false) = 0;
-  //!Moves item to the targeted group.
+  //!Moves `item` to the targeted group.
   virtual void changeGroup(CGAL::Three::Scene_item* item, CGAL::Three::Scene_group_item* target_group) = 0;
 
-  /*! Erases an item in the list.
+  /*! Removes the item with index `id` from the list. It is deleted.
    * @returns the index of the item just before the one that is erased,
    * or just after.
    * @returns -1 if the list is empty.*/
-  virtual Item_id erase(Item_id) = 0;
-  /*! Deletes the items with the target indices.
-   * @returns the index of the polyhedron just before the
+  virtual Item_id erase(Item_id id) = 0;
+  /*! Removes the items with the target indices from the list and deletes them.
+   * @returns the index of the item just before the
    * one that is erased, or just after. Returns -1 if
    * the list is empty.
    */
   virtual int erase(QList<int>) = 0;
 
-  /*! Creates a copy of the item whith the id `id`.
+  /*! Creates a copy of the item whith the index `id`.
    * @returns the index of the new item (-1 on error).
    */
     virtual Item_id duplicate(Item_id id) = 0;
@@ -113,13 +114,13 @@ public:
   //! @returns the item with the specified index.
   virtual CGAL::Three::Scene_item* item(Item_id id) const = 0;
   //!\brief The id of `item`
-  //! @returns the id of the specified item.
+  //! @returns the index of the specified item.
   virtual Item_id item_id(CGAL::Three::Scene_item* item) const = 0;
   //!\brief The currently selected item's index.
   //!@returns the currently selected item's index.
   //!@returns -1 if none or several items are selected
   virtual Item_id mainSelectionIndex() const = 0;
-  //!The id of the currently selected item.
+  //!The indices of the currently selected items.
   //!@returns the list of currently selected items indices.
   virtual QList<Item_id> selectionIndices() const = 0;
   //!Item_A is designated with the column A/B in the Geometric Objetcts widget.
@@ -144,7 +145,7 @@ public:
   //! Updates the information about `item` in the
   //! Geometric Objects list and redraws the scene.
   virtual void itemChanged(CGAL::Three::Scene_item* item) = 0;
-  //! Re computes the scene Bbox without recentering it.
+  //! Re-computes the scene Bbox without recentering it.
   virtual void itemVisibilityChanged(CGAL::Three::Scene_item*) = 0;
   //! Clears the current selection then sets the selected item to the target index.
   //! Used to update the selection in the Geometric Objects view.

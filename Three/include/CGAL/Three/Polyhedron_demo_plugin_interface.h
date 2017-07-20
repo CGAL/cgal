@@ -44,27 +44,25 @@ class Polyhedron_demo_plugin_interface
 public:
   //! \brief Initializes the plugin
   //! This function acts like a constructor. This is where the attributes must be initialized.
-  //! The Message_interface allows to print warnings or errors on the screen and the `Console` widget.
+  //! The `Messages_interface` allows to print warnings or errors on the screen and the Console widget.
   virtual void init(QMainWindow* , CGAL::Three::Scene_interface* , Messages_interface*) = 0;
 
   //! \brief Indicates if an action is usable or not.
   //! This function usually tests the type of the selected item to determine if `action` can be applied to it,
   //! but not necessarly.
-  //! @returns \c true if `action` can be called in the current state, \c false
+  //! @returns  `true` if `action` can be called in the current state, `false`
   //! otherwise
   virtual bool applicable(QAction* action) const = 0;
-  //!Contains all the plugin's actions.
+  //!Contains all the actions of the plugin.
   virtual QList<QAction*> actions() const = 0;
   //!\brief Is called when the application is closed.
   //! Override this function if you need to perform a specific action
-  //! when the application is closed, like hide the widgets if you don't want
-  //! their visibility to be saved.
+  //! when the application is closed, like hiding the widgets if you don't want
+  //! their visibility state to be saved.
   virtual void closure() {
  }
-protected :
 };
-}
-}
+}}
 Q_DECLARE_INTERFACE(CGAL::Three::Polyhedron_demo_plugin_interface,
                     "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 

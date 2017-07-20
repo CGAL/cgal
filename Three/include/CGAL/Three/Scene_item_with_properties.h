@@ -33,10 +33,10 @@ namespace Three {
 class Scene_item_with_properties {
 public:
   virtual ~Scene_item_with_properties(){}
- //!\brief Copies properties from another Scene_item.
+ //!\brief Copies properties from `'item`.
  //!
  //! Override this function to specify what must be copied.
- virtual void copyProperties(Scene_item*)=0; //pure virtual method
+ virtual void copyProperties(Scene_item* item)=0; //pure virtual method
 };
 }
 }
