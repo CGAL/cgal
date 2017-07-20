@@ -113,6 +113,7 @@ and their associated classes:
 - `CGAL::perturb_mesh_3`
 - `CGAL::lloyd_optimize_mesh_3`
 - `CGAL::odt_optimize_mesh_3`
+- `CGAL::output_c3t3_to_facegraph()`
 
 ## CGAL::parameters Functions ##
 

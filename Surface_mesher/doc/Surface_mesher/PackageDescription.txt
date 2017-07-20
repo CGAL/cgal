@@ -106,6 +106,7 @@ of  the output mesh  while avoiding an over-refinement of the mesh.
 ## Function Templates ##
 - `CGAL::make_surface_mesh()`
 - `CGAL::output_surface_facets_to_polyhedron()`
+- `CGAL::output_surface_facets_to_facegraph()`
 
 */
 

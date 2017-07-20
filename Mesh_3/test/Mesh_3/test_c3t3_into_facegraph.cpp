@@ -86,7 +86,7 @@ int main (int argc, char** argv){
   }
 
   CGAL::Polyhedron_3<K> poly;
-  CGAL::c3t3_to_facegraph(c3t3, poly);
+  CGAL::output_c3t3_to_facegraph(c3t3, poly);
 
   CGAL_assertion(is_valid(poly));
   return EXIT_SUCCESS;

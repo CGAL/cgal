@@ -1,5 +1,26 @@
+// Copyright (c) 2009-2017 GeometryFactory (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+//
+//
+// Author(s)     : Maxime Gimeno
+
 #ifndef CGAL_COMPLEX_3_IN_TRIANGULATION_3_TO_FACEGRAPH_H
 #define CGAL_COMPLEX_3_IN_TRIANGULATION_3_TO_FACEGRAPH_H
+
 
 #include <CGAL/license/Mesh_3.h>
 #include <CGAL/boost/graph/Euler_operations.h>
@@ -9,18 +30,20 @@
 #include <boost/unordered_set.hpp>
 
 namespace CGAL {
-//! Gets reconstructed surface out of a MeshComplexWithFeatures_3InTriangulation_3 object.
+//! \ingroup PkgMesh_3Functions
 //!
-//! This variant exports the surface as a FaceGraph and appends it to `graph`, using
+//! Gets reconstructed surface out of a `MeshComplexWithFeatures_3InTriangulation_3` object.
+//!
+//! This variant exports the surface as a `FaceGraph` and appends it to `graph`, using
 //! `orient_polygon_soup()`.
 //!
-//! @tparam C3T3 model of the MeshComplexWithFeatures_3InTriangulation_3 concept.
-//! @tparam FaceGraph a model of FaceGraph.
+//! @tparam C3T3 model of the `MeshComplexWithFeatures_3InTriangulation_3` concept.
+//! @tparam FaceGraph a model of `FaceGraph`.
 //!
-//! @param C3T3 an instance of a C3T3.
-//! @param graph an instance of FaceGraph.
+//! @param c3t3 an instance of a `C3T3`.
+//! @param graph an instance of `FaceGraph`.
 template<class C3T3, class FaceGraph>
-void c3t3_to_facegraph(const C3T3& c3t3, FaceGraph& graph) //complexity nlogn(number of facets on surface)
+void output_c3t3_to_facegraph(const C3T3& c3t3, FaceGraph& graph) //complexity nlogn(number of facets on surface)
 {
   typedef typename boost::property_map<FaceGraph, boost::vertex_point_t>::type VertexPointMap;
   typedef typename boost::property_traits<VertexPointMap>::value_type Point_3;
@@ -106,8 +129,8 @@ void c3t3_to_facegraph(const C3T3& c3t3, FaceGraph& graph) //complexity nlogn(nu
     polygons.swap(valid_polygons);
 
 
-  CGAL_assertion(CGAL::Polygon_mesh_processing::
-                 orient_polygon_soup(points, polygons));
+  CGAL::Polygon_mesh_processing::
+      orient_polygon_soup(points, polygons);
 
   //add vertices
   typedef typename boost::property_map<FaceGraph, boost::vertex_point_t>::type VPMap;
