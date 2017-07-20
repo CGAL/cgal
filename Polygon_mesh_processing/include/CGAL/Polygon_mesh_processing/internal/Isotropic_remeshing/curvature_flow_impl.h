@@ -124,7 +124,7 @@ public:
 
 
 
-
+                /*
                 // find barycenter - without cot weights
                 Vector displacement = CGAL::NULL_VECTOR;
                 for(halfedge_descriptor hi : halfedges_around_source(v, mesh_))
@@ -133,9 +133,38 @@ public:
                 }
                 barycenters[v] = get(vpmap_, v) + (displacement / halfedges_around_source(v, mesh_).size()) ;
                 Point new_location = barycenters[v] + n_map[v]; // point + vector
+                */
 
 
 
+                // with cot weights
+                Vector weighted_barycenter = CGAL::NULL_VECTOR;
+                double sum_c = 0;
+                for(it = he_map.begin(); it!= he_map.end(); ++it)
+                {
+                    halfedge_descriptor hi = it->first;
+
+                    //weight
+                    std::pair<double, double> a1a2 = cot_angles(hi, it->second); //check if correct
+                    double weight = a1a2.first + a1a2.second;
+                    sum_c += weight;
+
+                    // displacement vector
+                    Vector vec(get(vpmap_, target(hi, mesh_)) - get(vpmap_, source(hi, mesh_)));
+                    // add weight
+                    vec *= weight;
+                    // sum vecs
+                    weighted_barycenter += vec;
+
+                }
+
+                // divide with total weight
+                weighted_barycenter /= sum_c;
+
+
+
+
+                Point new_location = get(vpmap_, v) + weighted_barycenter; // + kn ?
 
 
 
