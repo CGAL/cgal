@@ -3,12 +3,13 @@
 \ingroup PkgTSMAConcepts
 \cgalConcept
 
-The Euclidean distance proxy.
+The parameterized plane shape that is fitted.
 
 \cgalRefines `Proxy`
-\cgalHasModel `TBD`
+\cgalHasModel `PlaneProxy`
+
 */
-class DistanceProxy {
+class PlaneProxy {
 public:
   /*! 3D point type
    * It must be default constructible, and can be constructed from 3 objects of type `FT`.
@@ -43,3 +44,4 @@ public:
 
   /// }
 };
+

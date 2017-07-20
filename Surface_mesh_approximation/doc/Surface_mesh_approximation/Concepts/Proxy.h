@@ -3,11 +3,23 @@
 \ingroup PkgTSMAConcepts
 \cgalConcept
 
-Description for the `DistanceProxy` concept
-\cgalHasModel `TBD`
+The parameterized shape that is fitted.
+
+\cgalHasModel `PlaneProxy`
+\cgalHasModel `DistanceProxy`
 
 */
 class Proxy {
+public:
+  /// Triangle mesh facet descriptor.
+  typedef unspecified_type facet_descriptor;
 
+  /// @name Data members
+  /// @{
+
+  /// data member to describe the proxy seed.
+  facet_descriptor seed;
+
+  /// }
 };
 

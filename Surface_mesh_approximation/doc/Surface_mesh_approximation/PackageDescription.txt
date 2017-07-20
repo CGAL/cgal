@@ -25,6 +25,9 @@
 ## Concepts ##
 - `Proxy`
 - `DistanceProxy`
+- `PlaneProxy`
+- `ErrorMetric`
+- `L21ErrorMetric`
 
 ## Classes and Functions##
 - `CGAL::vsa_mesh_approximation()`

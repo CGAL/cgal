@@ -10,7 +10,7 @@ namespace CGAL {
 
 \section sma_introduction Introduction
 
-Blabla.
+This package implement the shape fitting algorithm Variational Shape Approximation (VSA). It is a good complement to current Mesh Segmentation Package and even to the mesh decimation one.
 
 \section sma_interface Interface
 
