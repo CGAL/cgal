@@ -14,9 +14,25 @@ This package implement the shape fitting algorithm Variational Shape Approximati
 
 \section sma_interface Interface
 
-blabla
+This package can thus be used either with `Polyhedron_3`, `Surface_mesh`, or
+any class model of the concept `FaceGraph` described in \ref chapterBGL.
+
+Approximate a triangle mesh and extract the approximated triangle surface, using:
+- `CGAL::vsa_mesh_approximation()` : given a triangle mesh, approximate the geometry and extract the approximated triangle surface.
 
 \section sma_examples Examples
+
+\subsection ApproximationExample_1 Approximate a Mesh
+
+The following example calls the functions `CGAL::vsa_mesh_approximation()` on the input triangle mesh.
+
+\cgalExample{Surface_mesh_approximation/vsa_example.cpp}
+
+\subsection ApproximationExample_2 User-defined Proxy
+
+We could use self-defined proxy and error for the approximation algorithm. In the following example, we define a simple point proxy to achieve a compact patch approximation of the shape:
+
+\cgalExample{Surface_mesh_approximation/vsa_metric_example.cpp}
 
 \section sma_perf Performances
 
