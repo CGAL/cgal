@@ -2,6 +2,8 @@
 #define CURVATURE_FLOW_IMPL_H
 
 #include <CGAL/Polygon_mesh_processing/Weights.h>
+#include <CGAL/Polygon_mesh_processing/compute_normal.h>
+
 #include <CGAL/Monge_via_jet_fitting.h>
 
 #include <CGAL/AABB_tree.h>
@@ -104,7 +106,13 @@ public:
                 Vector vn = compute_vertex_normal(v, mesh_,
                                                   Polygon_mesh_processing::parameters::vertex_point_map(vpmap_)
                                                   .geom_traits(GeomTraits()));
-                n_map[v] = vn;
+
+
+                // normalize (kn)
+                Vector kn = k_mean * vn;
+                normalize(kn, GeomTraits());
+
+                n_map[v] = kn;
 
 
 
@@ -116,7 +124,7 @@ public:
 
 
 
-                /*
+
                 // find barycenter - without cot weights
                 Vector displacement = CGAL::NULL_VECTOR;
                 for(halfedge_descriptor hi : halfedges_around_source(v, mesh_))
@@ -124,33 +132,13 @@ public:
                     displacement += Vector(get(vpmap_, target(hi, mesh_)) - get(vpmap_, source(hi, mesh_)));
                 }
                 barycenters[v] = get(vpmap_, v) + (displacement / halfedges_around_source(v, mesh_).size()) ;
-                Point new_location = barycenters[v] + k_mean * n_map[v]; // point + vector
-                */
+                Point new_location = barycenters[v] + n_map[v]; // point + vector
 
 
 
 
-                // with cotangent weights
-                Vector displacement = CGAL::NULL_VECTOR;
-                double sum_c = 0;
 
-                for(it = he_map.begin(); it != he_map.end(); ++it)
-                {
-                    halfedge_descriptor main_he = it->first;
-                    He_pair inc_pair = it->second;
 
-                    std::pair<double, double> a1a2 = cot_angles(main_he, inc_pair);
-                    double weight = a1a2.first + a1a2.second;
-                    sum_c += weight;
-
-                    displacement += Vector(get(vpmap_, source(main_he, mesh_)) - get(vpmap_, target(main_he, mesh_)));
-                    displacement *= weight;
-                }
-
-                displacement /= sum_c;
-
-                barycenters[v] = get(vpmap_, v) + (displacement / halfedges_around_source(v, mesh_).size()) ;
-                Point new_location = barycenters[v] + k_mean * n_map[v]; // point + vector
 
 
 
