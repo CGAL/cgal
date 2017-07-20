@@ -8,6 +8,7 @@
 #include "Kernel_type.h"
 #include "Meshing_thread.h"
 #include "Scene_surface_mesh_item.h"
+#include <CGAL/IO/Complex_3_in_triangulation_3_to_facegraph.h>
 
 class Scene_surface_mesh_item;
 
