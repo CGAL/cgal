@@ -22,7 +22,7 @@ Scene_polyhedron_item_decorator::toolTip() const
   if(!poly_item->polyhedron())
     return QString();
 
-  return QObject::tr("<p>Polyhedron <b>%1</b> (mode: %5, color: %6)</p>"
+  return QObject::tr("<p>Selection <b>%1</b> (mode: %5, color: %6)</p>"
                      "<p>Number of vertices: %2<br />"
                      "Number of edges: %3<br />"
                      "Number of faces: %4</p>")

@@ -177,6 +177,7 @@ public Q_SLOTS:
     Scene_face_graph_item* poly_item = getSelectedItem<Scene_face_graph_item>();
     if(!poly_item || selection_item_map.find(poly_item) != selection_item_map.end()) { return; }
     Scene_polyhedron_selection_item* new_item = new Scene_polyhedron_selection_item(poly_item, mw);
+    new_item->setName(QString("%1 (selection)").arg(poly_item->name()));
     connectItem(new_item);
   }
 
@@ -185,6 +186,7 @@ public Q_SLOTS:
     if(!poly_item)
       return NULL;
     Scene_polyhedron_selection_item* new_item = new Scene_polyhedron_selection_item(poly_item, mw);
+    new_item->setName(QString("%1 (selection)").arg(poly_item->name()));
     connectItem(new_item);
     return new_item;
 
@@ -294,6 +296,7 @@ public Q_SLOTS:
     // all other arrangements (putting inside selection_item_map), setting names etc,
     // other params (e.g. k_ring) will be set inside new_item_created
     Scene_polyhedron_selection_item* new_item = new Scene_polyhedron_selection_item(poly_item, mw);
+    new_item->setName(QString("%1 (selection)").arg(poly_item->name()));
     ui_widget.selectionOrEuler->setCurrentIndex(last_mode);
     connectItem(new_item);
   }
