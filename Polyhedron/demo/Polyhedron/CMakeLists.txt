@@ -314,8 +314,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   target_link_libraries( demo_framework gl_splat)
 
-
-
   foreach( lib 
       demo_framework
       scene_basic_objects
