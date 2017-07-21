@@ -214,6 +214,7 @@ public:
     if (rtree != NULL)
       delete rtree;
     rtree = new CvRTrees;
+    rtree->load(filename);
 #else
     rtree = cv::ml::StatModel::load<cv::ml::RTrees> (filename);
 #endif
