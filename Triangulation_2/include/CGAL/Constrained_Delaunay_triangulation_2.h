@@ -78,6 +78,7 @@ public:
   typedef typename Ctr::Face_handle   Face_handle;
   typedef typename Ctr::Edge          Edge;
   typedef typename Ctr::Finite_faces_iterator Finite_faces_iterator;
+  typedef typename Ctr::Constrained_edges_iterator Constrained_edges_iterator;
   typedef typename Ctr::Face_circulator       Face_circulator;
   typedef typename Ctr::size_type             size_type;
   typedef typename Ctr::Locate_type           Locate_type;
