@@ -9,38 +9,15 @@
 
 namespace CGAL
 {
-  template<typename TriangleMesh,
-  typename GeomTraits>
+template<typename TriangleMesh,
+  typename Traits = typename TriangleMesh::Traits>
   struct PlaneProxy
 {
-  typedef typename GeomTraits::FT FT;
+  typedef Traits GeomTraits;
   typedef typename GeomTraits::Point_3 Point;
   typedef typename GeomTraits::Vector_3 Vector;
   typedef typename GeomTraits::Plane_3 Plane;
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
-
-  // DefaultConstructible
-
-  // Destructible
-
-  // CopyConstructible
-
-  // CopyAssignable
-  // PlaneProxy &operator=(const PlaneProxy &other) {
-  //   seed = other.seed;
-  //   normal = fit_plane.normal;
-  //   fit_plane = other.fit_plane;
-  // }
-
-  // const face_descriptor &seed() const {
-  //   return seed;
-  // }
-  // const Vector &normal() const {
-  //   return normal;
-  // }
-  // const Plane &plane() const {
-  //   return fit_plane;
-  // }
 
   face_descriptor seed;
   Vector normal;
@@ -48,7 +25,6 @@ namespace CGAL
 };
 
 template<typename PlaneProxy,
-  typename GeomTraits,
   typename FacetNormalMap,
   typename FacetAreaMap>
   struct L21Metric
@@ -62,6 +38,7 @@ template<typename PlaneProxy,
     scale_functor = traits.construct_scaled_vector_3_object();
   }
 
+  typedef typename PlaneProxy::GeomTraits GeomTraits;
   typedef typename GeomTraits::FT FT;
   typedef typename GeomTraits::Vector_3 Vector;
   typedef typename GeomTraits::Construct_scaled_vector_3 Construct_scaled_vector_3;
@@ -82,7 +59,6 @@ template<typename PlaneProxy,
 };
 
 template<typename PlaneProxy,
-  typename GeomTraits,
   typename FacetAreaMap,
   typename VertexPointMap,
   typename TriangleMesh>
@@ -93,6 +69,7 @@ template<typename PlaneProxy,
     const VertexPointMap &_point_pmap)
     : mesh(_mesh), area_pmap(_area_pmap), point_pmap(_point_pmap) {}
 
+  typedef typename PlaneProxy::GeomTraits GeomTraits;
   typedef typename GeomTraits::FT FT;
   typedef typename GeomTraits::Point_3 Point;
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
@@ -119,7 +96,6 @@ template<typename PlaneProxy,
 };
 
 template<typename PlaneProxy,
-  typename GeomTraits,
   typename ErrorMetric,
   typename FacetNormalMap,
   typename FacetAreaMap>
@@ -135,6 +111,7 @@ template<typename PlaneProxy,
     scale_functor = traits.construct_scaled_vector_3_object();
   }
 
+  typedef typename PlaneProxy::GeomTraits GeomTraits;
   typedef typename GeomTraits::FT FT;
   typedef typename GeomTraits::Vector_3 Vector;
   typedef typename GeomTraits::Construct_scaled_vector_3 Construct_scaled_vector_3;
@@ -186,13 +163,13 @@ template<typename PlaneProxy,
 };
 
 template<typename PlaneProxy,
-  typename GeomTraits,
   typename ErrorMetric,
   typename TriangleMesh,
   typename VertexPointMap,
   typename FacetAreaMap>
   struct PCAPlaneFitting
 {
+  typedef typename PlaneProxy::GeomTraits GeomTraits;
   typedef typename GeomTraits::FT FT;
   typedef typename GeomTraits::Point_3 Point_3;
   typedef typename GeomTraits::Triangle_3 Triangle_3;
@@ -255,18 +232,17 @@ template<typename PlaneProxy,
 };
 
 // Bundled l21 approximation traits
-template<typename GeomTraits,
-  typename PlaneProxy,
-  typename ErrorMetric,
-  typename ProxyFitting,
+template<typename PlaneProxy,
+  typename L21ErrorMetric,
+  typename L21ProxyFitting,
   typename FacetNormalMap,
   typename FacetAreaMap>
   struct L21ApproximationTrait
 {
-  typedef GeomTraits GeomTraits;
+  typedef typename PlaneProxy::GeomTraits GeomTraits;
   typedef PlaneProxy Proxy;
-  typedef ErrorMetric ErrorMetric;
-  typedef ProxyFitting ProxyFitting;
+  typedef L21ErrorMetric ErrorMetric;
+  typedef L21ProxyFitting ProxyFitting;
 
   L21ApproximationTrait(
     const FacetNormalMap &_facet_normal_map,
@@ -291,8 +267,7 @@ private:
 };
 
 // Bundled l2 approximation traits
-template<typename GeomTraits,
-  typename TriangleMesh,
+template<typename TriangleMesh,
   typename PlaneProxy,
   typename L2ErrorMetric,
   typename PCAPlaneFitting,
@@ -301,7 +276,7 @@ template<typename GeomTraits,
   struct L2ApproximationTrait
 {
 public:
-  typedef GeomTraits GeomTraits;
+  typedef typename PlaneProxy::GeomTraits GeomTraits;
   typedef PlaneProxy Proxy;
   typedef L2ErrorMetric ErrorMetric;
   typedef PCAPlaneFitting ProxyFitting;

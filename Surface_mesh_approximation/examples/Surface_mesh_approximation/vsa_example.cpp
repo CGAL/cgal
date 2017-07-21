@@ -20,10 +20,10 @@ typedef Polyhedron::Facet_const_iterator Facet_const_iterator;
 typedef boost::associative_property_map<std::map<Facet_const_handle, Vector> > FacetNormalMap;
 typedef boost::associative_property_map<std::map<Facet_const_handle, FT> > FacetAreaMap;
 
-typedef CGAL::PlaneProxy<Polyhedron, Kernel> PlaneProxy;
-typedef CGAL::L21Metric<PlaneProxy, Kernel, FacetNormalMap, FacetAreaMap> L21Metric;
-typedef CGAL::ProxyFitting<PlaneProxy, Kernel, L21Metric, FacetNormalMap, FacetAreaMap> ProxyFitting;
-typedef CGAL::L21ApproximationTrait<Kernel, PlaneProxy, L21Metric, ProxyFitting, FacetNormalMap, FacetAreaMap> L21ApproximationTrait;
+typedef CGAL::PlaneProxy<Polyhedron> PlaneProxy;
+typedef CGAL::L21Metric<PlaneProxy, FacetNormalMap, FacetAreaMap> L21Metric;
+typedef CGAL::ProxyFitting<PlaneProxy, L21Metric, FacetNormalMap, FacetAreaMap> ProxyFitting;
+typedef CGAL::L21ApproximationTrait<PlaneProxy, L21Metric, ProxyFitting, FacetNormalMap, FacetAreaMap> L21ApproximationTrait;
 
 int main(int argc, char *argv[])
 {
