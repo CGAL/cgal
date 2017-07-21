@@ -7,6 +7,7 @@
 #include <iostream>
 #include <fstream>
 #include <CGAL/vsa_mesh_approximation.h>
+#include <CGAL/vsa_mesh_approximation_traits.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
