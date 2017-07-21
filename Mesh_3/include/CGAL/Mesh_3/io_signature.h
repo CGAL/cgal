@@ -188,7 +188,7 @@ Get_io_signature<Triangulation_3<Gt, Triangulation_data_structure_3<Vb, Cb, C_ta
 
   std::string operator()() {
     return std::string("Triangulation_3(") +
-      Get_io_signature<typename Gt::Point_3>()() +
+      Get_io_signature<typename Tds::Vertex::Point>()() +
       ",Vb(" + Get_io_signature<typename Tds::Vertex>()() +
       "),Cb(" + Get_io_signature<typename Tds::Cell>()() +
       "))";
@@ -222,6 +222,17 @@ Get_io_signature<Regular_triangulation_3<Gt, Tds> >
 template <class Gt, class Vb>
 struct Get_io_signature<Triangulation_vertex_base_3<Gt, Vb> >
 {
+  std::string operator()() {
+    return "Tvb_3";
+  }
+};
+#endif
+
+#ifdef CGAL_REGULAR_TRIANGULATION_VERTEX_BASE_3_H
+template <class Gt, class Vb>
+struct Get_io_signature<Regular_triangulation_vertex_base_3<Gt, Vb> >
+{
+  // identical to Triangulation_vertex_base_3
   std::string operator()() {
     return "Tvb_3";
   }
