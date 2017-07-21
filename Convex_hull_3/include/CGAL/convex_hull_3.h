@@ -239,7 +239,7 @@ public:
         ck_plane=new typename CK::Plane_3(to_CK(p),to_CK(q),to_CK(r));
       return ck_plane->has_on_positive_side(to_CK(s));
     }
-    catch (Uncertain_conversion_exception){
+    catch (Uncertain_conversion_exception&){
       if (pk_plane==NULL)
         pk_plane=new typename PK::Plane_3(to_PK(p),to_PK(q),to_PK(r));
       return pk_plane->has_on_positive_side(to_PK(s));
