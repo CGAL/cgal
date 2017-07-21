@@ -40,8 +40,8 @@ cd ..
 echo "Output generated"
 if ! [ -d "$DOC_REF" ]; then
   echo "No reference given. Script is finished."
-  exit 2
+  exit 0
 fi
 
 #diff the output and the reference output, ignoring the differences in whitespaces
-diff -u -N -w ./doc_data $DOC_REF > ./diff.txt
+diff -u -N -w ./doc_data $DOC_REF > ./diff.txt || true
