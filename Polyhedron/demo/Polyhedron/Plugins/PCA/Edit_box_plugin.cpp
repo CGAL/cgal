@@ -64,7 +64,7 @@ void Edit_box_plugin::init(QMainWindow* mainWindow, CGAL::Three::Scene_interface
 {
   scene = scene_interface;
   mw = mainWindow;
-  actionBbox = new QAction(tr("Create Bbox"), mainWindow);
+  actionBbox = new QAction(tr("Create Editable Bbox"), mainWindow);
   connect(actionBbox, SIGNAL(triggered()),
           this, SLOT(bbox()));
   actionExport = new QAction(tr("Export to Face_graph item"), mainWindow);

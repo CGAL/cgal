@@ -137,7 +137,7 @@ public :
   template<typename Mesh, typename Item>
   void apply(Item *item)
   {
-    Mesh* neg_side = new Mesh(*item->polyhedron());
+    Mesh* neg_side = new Mesh(*item->face_graph());
 
     CGAL::Polygon_mesh_processing::clip(*neg_side,
                                         plane->plane(),
@@ -147,10 +147,10 @@ public :
     new_item->setColor(item->color());
     new_item->setRenderingMode(item->renderingMode());
     new_item->setVisible(item->visible());
-    scene->addItem(item);
+    scene->addItem(new_item);
     new_item->invalidateOpenGLBuffers();
     // part on the positive side
-    Mesh* pos_side = new Mesh(*item->polyhedron());
+    Mesh* pos_side = new Mesh(*item->face_graph());
     CGAL::Polygon_mesh_processing::clip(*pos_side,
                                         plane->plane().opposite(),
                                         ui_widget.close_checkBox->isChecked());

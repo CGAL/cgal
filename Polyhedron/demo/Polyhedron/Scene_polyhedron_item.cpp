@@ -998,7 +998,7 @@ Scene_polyhedron_item::toolTip() const
         return QString();
 
   QString str =
-         QObject::tr("<p>Polyhedron <b>%1</b> (mode: %5, color: %6)</p>"
+         QObject::tr("<p>Polyhedron_3 <b>%1</b> (mode: %5, color: %6)</p>"
                        "<p>Number of vertices: %2<br />"
                        "Number of edges: %3<br />"
                      "Number of facets: %4")
@@ -1017,6 +1017,26 @@ QMenu* Scene_polyhedron_item::contextMenu()
   const char* prop_name = "Menu modified by Scene_polyhedron_item.";
 
   QMenu* menu = Scene_item::contextMenu();
+
+  QAction* actionResetColor=
+      menu->findChild<QAction*>(tr("actionResetColor"));
+
+  if(isItemMulticolor())
+  {
+    if(!actionResetColor)
+    {
+      actionResetColor = menu->addAction(tr("Reset Colors"));
+      actionResetColor->setObjectName("actionResetColor");
+    }
+    connect(actionResetColor, SIGNAL(triggered()),
+            this, SLOT(resetColors()));
+  }
+  else if(actionResetColor)
+  {
+    menu->removeAction(actionResetColor);
+    actionResetColor->deleteLater();
+  }
+
 
   // Use dynamic properties:
   // http://doc.qt.io/qt-5/qobject.html#property
@@ -2089,4 +2109,11 @@ void Scene_polyhedron_item::zoomToPosition(const QPoint &point, CGAL::Three::Vie
     }
   }
 
+}
+
+void Scene_polyhedron_item::resetColors()
+{
+  setItemIsMulticolor(false);
+  invalidateOpenGLBuffers();
+  itemChanged();
 }

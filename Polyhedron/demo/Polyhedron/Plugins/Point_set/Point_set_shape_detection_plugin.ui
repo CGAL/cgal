@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>444</width>
-    <height>347</height>
+    <height>366</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -224,7 +224,7 @@
    <item>
     <widget class="QCheckBox" name="m_generate_structured">
      <property name="text">
-      <string>Generate structured point cloud</string>
+      <string>Generate Structured Point Cloud</string>
      </property>
     </widget>
    </item>

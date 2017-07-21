@@ -408,10 +408,10 @@ bool Scene_polyhedron_shortest_path_item_priv::run_point_select(const Ray_3& ray
     boost::property_map<Face_graph, CGAL::face_index_t>::type fimap
         = get(CGAL::face_index, *item->polyhedron());
     m_messages->information(QObject::tr("Shortest Paths: Selected Face: %1; Barycentric coordinates: %2 %3 %4")
-      .arg(get(fimap, faceLocation.first))
-      .arg(double(faceLocation.second[0]))
-      .arg(double(faceLocation.second[1]))
-      .arg(double(faceLocation.second[2])));
+                            .arg(get(fimap, faceLocation.first))
+                            .arg(double(faceLocation.second[0]))
+        .arg(double(faceLocation.second[1]))
+        .arg(double(faceLocation.second[2])));
     switch (m_selectionMode)
     {
     case INSERT_POINTS_MODE:
@@ -451,9 +451,9 @@ bool Scene_polyhedron_shortest_path_item_priv::run_point_select(const Ray_3& ray
         ensure_shortest_paths_tree();
         
         Scene_polylines_item* polylines = new Scene_polylines_item();
-            
+
         polylines->polylines.push_back(Scene_polylines_item::Polyline());
-            
+
         m_messages->information(QObject::tr("Computing shortest path polyline..."));
 
         QTime time;
@@ -461,12 +461,16 @@ bool Scene_polyhedron_shortest_path_item_priv::run_point_select(const Ray_3& ray
         //~ m_shortestPaths->m_debugOutput=true;
         m_shortestPaths->shortest_path_points_to_source_points(faceLocation.first, faceLocation.second, std::back_inserter(polylines->polylines.back()));
         std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
-        
-        polylines->setName(QObject::tr("%1 (shortest path)").arg(item->polyhedron_item()->name()));
-        polylines->setColor(Qt::red);
-        this->m_sceneInterface->setSelectedItem(-1);
-        this->m_sceneInterface->addItem(polylines);
-        this->m_sceneInterface->changeGroup(polylines, item->parentGroup());
+        if(!polylines->polylines.front().empty())
+        {
+          polylines->setName(QObject::tr("%1 (shortest path)").arg(item->polyhedron_item()->name()));
+          polylines->setColor(Qt::red);
+          this->m_sceneInterface->setSelectedItem(-1);
+          this->m_sceneInterface->addItem(polylines);
+          this->m_sceneInterface->changeGroup(polylines, item->parentGroup());
+        }
+        else
+          delete polylines;
       }
       else
       {
@@ -601,7 +605,7 @@ bool Scene_polyhedron_shortest_path_item::isFinite() const
   return true;
 }
 
-bool Scene_polyhedron_shortest_path_item::isEmpty() const 
+bool Scene_polyhedron_shortest_path_item::isEmpty() const
 {
   return false;
 }

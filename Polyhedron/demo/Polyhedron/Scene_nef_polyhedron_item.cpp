@@ -487,7 +487,7 @@ Scene_nef_polyhedron_item::toolTip() const
         return QString();
 
     return QObject::tr("<p><b>%1</b> (mode: %5, color: %6)<br />"
-                       "<i>Nef_3 polyhedron</i></p>"
+                       "<i>Nef_polyhedron_3</i></p>"
                        "<p>Number of vertices: %2<br />"
                        "Number of edges: %3<br />"
                        "Number of facets: %4<br />"

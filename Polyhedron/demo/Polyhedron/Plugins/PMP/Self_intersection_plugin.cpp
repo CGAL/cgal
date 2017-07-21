@@ -40,7 +40,7 @@ public:
   {
       mw = mainWindow;
       scene = scene_interface;
-      QAction *actionSelfIntersection = new QAction(tr("Self-&intersection"), mw);
+      QAction *actionSelfIntersection = new QAction(tr("Self-&Intersection Test"), mw);
       actionSelfIntersection->setProperty("subMenuName", "Polygon Mesh Processing");
       connect(actionSelfIntersection, SIGNAL(triggered()), this, SLOT(on_actionSelfIntersection_triggered()));
       _actions <<actionSelfIntersection;

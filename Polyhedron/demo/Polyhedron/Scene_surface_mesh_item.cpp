@@ -30,6 +30,8 @@
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/statistics_helpers.h>
 
+#include <QMenu>
+
 //Used to triangulate the AABB_Tree
 class Primitive
 {
@@ -377,6 +379,7 @@ void Scene_surface_mesh_item_priv::compute_elements()
 //compute the Flat data
   flat_vertices.clear();
   flat_normals.clear();
+  f_colors.clear();
 
   BOOST_FOREACH(face_descriptor fd, faces(*smesh_))
   {
@@ -534,6 +537,8 @@ void Scene_surface_mesh_item_priv::initializeBuffers(CGAL::Three::Viewer_interfa
     program->setAttributeBuffer("colors",CGAL_GL_DATA,0,3);
     item->buffers[Scene_surface_mesh_item_priv::FColors].release();
   }
+  else
+    program->disableAttributeArray("colors");
   item->vaos[Scene_surface_mesh_item_priv::Flat_facets]->release();
 
   //vao containing the data for the smooth facets
@@ -632,7 +637,6 @@ void Scene_surface_mesh_item::draw(CGAL::Three::Viewer_interface *viewer) const
   else
   {
     vaos[Scene_surface_mesh_item_priv::Flat_facets]->bind();
-    d->program->setAttributeValue("colors", this->color());
     if(is_selected)
       d->program->setAttributeValue("is_selected", true);
     else
@@ -1141,6 +1145,7 @@ void Scene_surface_mesh_item::setItemIsMulticolor(bool b)
   {
     d->fpatch_id_map = d->smesh_->property_map<face_descriptor,int>("f:patch_id").first;
     d->smesh_->remove_property_map(d->fpatch_id_map);
+    d->has_fcolors = false;
   }
 }
 
@@ -1551,5 +1556,36 @@ void Scene_surface_mesh_item::zoomToPosition(const QPoint &point, CGAL::Three::V
       }
     }
   }
+}
 
+void Scene_surface_mesh_item::resetColors()
+{
+  setItemIsMulticolor(false);
+  invalidateOpenGLBuffers();
+  itemChanged();
+}
+
+QMenu* Scene_surface_mesh_item::contextMenu()
+{
+  QMenu* menu = Scene_item::contextMenu();
+
+  QAction* actionResetColor=
+      menu->findChild<QAction*>(tr("actionResetColor"));
+
+  if(isItemMulticolor())
+  {
+    if(!actionResetColor)
+    {
+      actionResetColor = menu->addAction(tr("Reset Colors"));
+      actionResetColor->setObjectName("actionResetColor");
+    }
+    connect(actionResetColor, SIGNAL(triggered()),
+            this, SLOT(resetColors()));
+  }
+  else if(actionResetColor)
+  {
+    menu->removeAction(actionResetColor);
+    actionResetColor->deleteLater();
+  }
+  return menu;
 }

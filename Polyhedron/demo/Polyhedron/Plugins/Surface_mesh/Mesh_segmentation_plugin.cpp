@@ -233,7 +233,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::apply_SDF_button_clicked(Facegrap
 
   if(create_new_item) {
       active_item = new FacegraphItem(*item->face_graph());
-      active_item->setFlatMode();
+      active_item->setFlatPlusEdgesMode();
   }
 
   check_and_set_ids(active_item->face_graph());
@@ -242,7 +242,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::apply_SDF_button_clicked(Facegrap
 
   pair->second.resize(num_faces(*item->face_graph()), 0.0);
   typename boost::property_map<Facegraph, CGAL::face_index_t>::type fidmap =
-      get(CGAL::face_index, *active_item->face_graph());
+      get(CGAL::face_index, *pair->first->face_graph());
   FaceGraph_with_id_to_vector_property_map<Facegraph, double> sdf_pmap(&pair->second, fidmap);
   QTime time;
   time.start();
@@ -260,6 +260,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::apply_SDF_button_clicked(Facegrap
       Scene::Item_id index = scene->addItem(pair->first);
       item->setVisible(false);
       scene->itemChanged(item);
+      pair->first->invalidateOpenGLBuffers();
       scene->itemChanged(pair->first);
       scene->setSelectedItem(index);
   }
@@ -302,7 +303,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::apply_Partition_button_clicked(Fa
   {
       // create new item
       FacegraphItem* new_item = new FacegraphItem(*item->face_graph());
-      new_item->setFlatMode();
+      new_item->setFlatPlusEdgesMode();
 
       // copy SDF values of existing poly to new poly
       typename std::map<FacegraphItem*, std::vector<double> >::iterator it = get_sdf_map(item).find(item);
@@ -345,6 +346,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::apply_Partition_button_clicked(Fa
       Scene::Item_id index = scene->addItem(pair->first);
       item->setVisible(false);
       scene->itemChanged(item);
+      pair->first->invalidateOpenGLBuffers();
       scene->itemChanged(pair->first);
       scene->setSelectedItem(index);
   }
@@ -378,7 +380,6 @@ void Polyhedron_demo_mesh_segmentation_plugin::colorize_sdf(
     typedef typename boost::graph_traits<Facegraph>::face_iterator face_iterator;
     typedef typename boost::property_map<Facegraph, CGAL::face_patch_id_t<int> >::type Patch_id_pmap;
     typename SceneFacegraphItem::Face_graph* face_graph = item->face_graph();
-    item->setItemIsMulticolor(true);
     color_vector.clear();
     std::size_t patch_id = 0;
     Patch_id_pmap pidmap = get(CGAL::face_patch_id_t<int>(), *item->face_graph());
@@ -396,7 +397,9 @@ void Polyhedron_demo_mesh_segmentation_plugin::colorize_sdf(
         }
         put(pidmap, *facet_it, static_cast<int>(patch_id));
     }
+    item->setItemIsMulticolor(true);
 }
+
 
 template<class SegmentPropertyMap, class SceneFacegraphItem>
 void Polyhedron_demo_mesh_segmentation_plugin::colorize_segmentation(
@@ -407,7 +410,6 @@ void Polyhedron_demo_mesh_segmentation_plugin::colorize_segmentation(
     typedef typename SceneFacegraphItem::Face_graph Facegraph;
     typedef typename boost::graph_traits<Facegraph>::face_iterator face_iterator;
     typedef typename boost::property_map<Facegraph, CGAL::face_patch_id_t<int> >::type Patch_id_pmap;
-    item->setItemIsMulticolor(true);
     Facegraph* face_graph = item->face_graph();
     color_vector.clear();
     std::size_t max_segment = 0;
@@ -424,6 +426,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::colorize_segmentation(
         QColor aColor = color_map_segmentation[(max_segment - i) % color_map_segmentation.size()];
         color_vector.push_back(aColor);
     }
+    item->setItemIsMulticolor(true);
 }
 
 #include "Mesh_segmentation_plugin.moc"

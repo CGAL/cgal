@@ -44,19 +44,16 @@ class Polyhedron_demo_point_inside_polyhedron_plugin :
 public:
   bool applicable(QAction*) const 
   {
-    bool poly_item_exists = false;
-    bool point_item_exists = false;
-
     for(CGAL::Three::Scene_interface::Item_id i = 0, end = scene->numberOfEntries();
-      i < end && (!poly_item_exists || !point_item_exists); ++i)
+        i < end; ++i)
     {
-      poly_item_exists |= qobject_cast<Scene_polyhedron_item*>(scene->item(i)) != NULL;
-      poly_item_exists |= qobject_cast<Scene_surface_mesh_item*>(scene->item(i)) != NULL;
-      point_item_exists |= qobject_cast<Scene_points_with_normal_item*>(scene->item(i)) != NULL;
+      if(qobject_cast<Scene_polyhedron_item*>(scene->item(i)) != NULL
+         || qobject_cast<Scene_surface_mesh_item*>(scene->item(i)) != NULL)
+        return true;
     }
 
-    //return poly_item_exists && point_item_exists;
-    return poly_item_exists || point_item_exists;
+    //if the loop ends without returning true, return false
+    return false;
   }
   void print_message(QString message) { messages->information(message); }
   QList<QAction*> actions() const { return QList<QAction*>() << actionPointInsidePolyhedron; }
