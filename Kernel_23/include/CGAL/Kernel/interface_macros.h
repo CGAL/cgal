@@ -108,10 +108,10 @@ CGAL_Kernel_pred(Collinear_are_strictly_ordered_along_line_3,
 		 collinear_are_strictly_ordered_along_line_3_object)
 CGAL_Kernel_pred(Collinear_has_on_2,
 		 collinear_has_on_2_object)
-CGAL_Kernel_pred(Collinear_2,
-		 collinear_2_object)
-CGAL_Kernel_pred(Collinear_3,
-		 collinear_3_object)
+CGAL_Kernel_pred_RT(Collinear_2,
+                    collinear_2_object)
+CGAL_Kernel_pred_RT(Collinear_3,
+                    collinear_3_object)
 CGAL_Kernel_pred(Compare_angle_with_x_axis_2,
 		 compare_angle_with_x_axis_2_object)
 CGAL_Kernel_pred(Compare_dihedral_angle_3,
@@ -548,8 +548,8 @@ CGAL_Kernel_cons(Intersect_3,
 		 intersect_3_object)
 CGAL_Kernel_pred(Is_degenerate_2,
 		 is_degenerate_2_object)
-CGAL_Kernel_pred(Is_degenerate_3,
-		 is_degenerate_3_object)
+CGAL_Kernel_pred_RT(Is_degenerate_3,
+                    is_degenerate_3_object)
 CGAL_Kernel_pred(Is_horizontal_2,
 		 is_horizontal_2_object)
 CGAL_Kernel_pred(Is_vertical_2,

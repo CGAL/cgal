@@ -70,6 +70,14 @@ if (EIGEN3_FOUND)
   create_single_source_cgal_program("triangulate_hole_Polyhedron_3_test.cpp")
 endif(EIGEN3_FOUND)
 
+find_package( OpenMesh QUIET )
+
+if ( OpenMesh_FOUND )
+  include( UseOpenMesh )
+else()
+  message(STATUS "Examples that use OpenMesh will not be compiled.")
+endif()
+
   create_single_source_cgal_program("connected_component_polyhedron.cpp")
   create_single_source_cgal_program("connected_component_surface_mesh.cpp")
   create_single_source_cgal_program("pmp_compute_normals_test.cpp")
@@ -96,3 +104,9 @@ endif(EIGEN3_FOUND)
   create_single_source_cgal_program("test_pmp_clip.cpp")
   create_single_source_cgal_program("triangulate_hole_polyline_test.cpp")
   create_single_source_cgal_program("surface_intersection_sm_poly.cpp" )
+
+if(OpenMesh_FOUND)
+  create_single_source_cgal_program("remeshing_test_P_SM_OM.cpp" )
+  target_link_libraries( remeshing_test_P_SM_OM ${OPENMESH_LIBRARIES} )
+endif()
+

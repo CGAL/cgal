@@ -18,6 +18,7 @@
 //
 // Author(s)     : Jane Tournois
 
+
 #ifndef CGAL_POLYGON_MESH_PROCESSING_REMESH_IMPL_H
 #define CGAL_POLYGON_MESH_PROCESSING_REMESH_IMPL_H
 
@@ -33,18 +34,19 @@
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_triangle_primitive.h>
 
-#include <CGAL/Polygon_mesh_processing/internal/Isotropic_remeshing/AABB_filtered_projection_traits.h>
-
 #include <CGAL/property_map.h>
 #include <CGAL/iterator.h>
 #include <CGAL/boost/graph/Euler_operations.h>
+#include <CGAL/boost/graph/properties.h>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/foreach.hpp>
+#include <CGAL/tags.h>
 
 #include <boost/bimap.hpp>
 #include <boost/bimap/multiset_of.hpp>
 #include <boost/bimap/set_of.hpp>
 #include <boost/range.hpp>
+#include <boost/range/join.hpp>
 #include <boost/unordered_map.hpp>
 #include <boost/unordered_set.hpp>
 #include <boost/shared_ptr.hpp>
@@ -155,6 +157,7 @@ namespace internal {
     }
   };
 
+
   template <typename PM,
             typename EdgeIsConstrainedMap,
             typename FaceIndexMap>
@@ -166,7 +169,9 @@ namespace internal {
     typedef EdgeIsConstrainedMap                                ECMap;
     typedef Connected_components_pmap<PM, ECMap, FIMap>         CCMap;
 
-    boost::unordered_map<face_descriptor, Patch_id> patch_ids_map;
+    typedef CGAL::internal::face_property_t<Patch_id> Face_property_tag;
+    typename CGAL::internal::dynamic_property_map<PM, Face_property_tag >::type patch_ids_map;
+    std::size_t nb_cc;
 
   public:
     typedef face_descriptor                     key_type;
@@ -174,33 +179,42 @@ namespace internal {
     typedef Patch_id&                           reference;
     typedef boost::read_write_property_map_tag  category;
 
-    Connected_components_pmap()
-      : patch_ids_map()
-    {}
-    Connected_components_pmap(const PM& pmesh
+    //note pmesh is a non-const ref because add_property() and remove_property()
+    //modify the mesh data structure, but not the mesh itself
+    Connected_components_pmap(PM& pmesh
                             , EdgeIsConstrainedMap ecmap
-                            , FIMap fimap)
-      : patch_ids_map()
+                            , FIMap fimap
+                            , const bool do_init = true)
     {
-      PMP::connected_components(pmesh,
-        boost::make_assoc_property_map(patch_ids_map),
-        PMP::parameters::edge_is_constrained_map(ecmap)
-        .face_index_map(fimap));
+      patch_ids_map = CGAL::internal::add_property(Face_property_tag("PMP_patch_id"), pmesh);
+      if (do_init)
+      {
+        nb_cc
+          = PMP::connected_components(pmesh,
+                                      patch_ids_map,
+                                      PMP::parameters::edge_is_constrained_map(ecmap)
+                                     .face_index_map(fimap));
+        if(nb_cc == 1){
+          CGAL::internal::remove_property(patch_ids_map, pmesh);
+        }
+      }
+    }
+
+    friend void remove(CCMap m, PM& pmesh)
+    {
+      CGAL::internal::remove_property(m.patch_ids_map, pmesh);
     }
 
     friend value_type get(const CCMap& m, const key_type& f)
     {
-      CGAL_assertion(!m.patch_ids_map.empty());
-      CGAL_assertion(m.patch_ids_map.find(f) != m.patch_ids_map.end());
-
-      return m.patch_ids_map.at(f);
+      if (m.nb_cc == 1)
+        return 0;
+      return get(m.patch_ids_map, f);
     }
     friend void put(CCMap& m, const key_type& f, const value_type i)
     {
-      if (m.patch_ids_map.find(f) == m.patch_ids_map.end())
-        m.patch_ids_map.insert(std::make_pair(f, i));
-      else
-        m.patch_ids_map[f] = i;
+      if (m.nb_cc != 1)
+        put(m.patch_ids_map, f, i);
     }
   };
 
@@ -263,11 +277,15 @@ namespace internal {
     typedef typename boost::property_traits<FacePatchMap>::value_type Patch_id;
     typedef std::vector<Triangle_3>                      Triangle_list;
     typedef std::vector<Patch_id>                        Patch_id_list;
+    typedef std::map<Patch_id,std::size_t>               Patch_id_to_index_map;
 
     typedef CGAL::AABB_triangle_primitive<GeomTraits,
                      typename Triangle_list::iterator>    AABB_primitive;
     typedef CGAL::AABB_traits<GeomTraits, AABB_primitive> AABB_traits;
     typedef CGAL::AABB_tree<AABB_traits>                  AABB_tree;
+
+    typedef typename CGAL::internal::dynamic_property_map<
+      PM, CGAL::internal::halfedge_property_t<Halfedge_status> >::type Halfedge_status_pmap;
 
   public:
     Incremental_remesher(PolygonMesh& pmesh
@@ -277,28 +295,46 @@ namespace internal {
                        , VertexIsConstrainedMap vcmap
                        , FacePatchMap fpmap
                        , FaceIndexMap fimap
-                       , const bool own_tree = true)//built by the remesher
+                       , const bool build_tree = true)//built by the remesher
       : mesh_(pmesh)
       , vpmap_(vpmap)
-      , own_tree_(own_tree)
+      , build_tree_(build_tree)
+      , has_border_(false)
       , input_triangles_()
       , input_patch_ids_()
-      , halfedge_status_map_()
       , protect_constraints_(protect_constraints)
       , patch_ids_map_(fpmap)
       , ecmap_(ecmap)
       , vcmap_(vcmap)
       , fimap_(fimap)
     {
+      halfedge_status_pmap_ = CGAL::internal::add_property(
+        CGAL::internal::halfedge_property_t<Halfedge_status>("PMP_halfedge_status", MESH),
+        pmesh);
       CGAL_assertion(CGAL::is_triangle_mesh(mesh_));
     }
 
     ~Incremental_remesher()
     {
-      if (own_tree_)
-        delete tree_ptr_;
+      typedef Connected_components_pmap<PM, EdgeIsConstrainedMap, FaceIndexMap> CCPmap;
+      remove_connected_components_pmap
+        (CGAL::Boolean_tag<boost::is_same<FacePatchMap, CCPmap>::value>());
+
+      CGAL::internal::remove_property(halfedge_status_pmap_, mesh_);
+
+      if (build_tree_){
+        for(std::size_t i=0; i < trees.size();++i){
+          delete trees[i];
+        }
+      }
     }
-    
+
+    void remove_connected_components_pmap(CGAL::Tag_false) {}
+    void remove_connected_components_pmap(CGAL::Tag_true)
+    {
+      remove(patch_ids_map_, mesh_);
+    }
+
     template<typename FaceRange>
     void init_remeshing(const FaceRange& face_range)
     {
@@ -308,17 +344,39 @@ namespace internal {
 
       BOOST_FOREACH(face_descriptor f, face_range)
       {
-        Triangle_3 t = triangle(f);
-        if (t.is_degenerate()) continue;
-        input_triangles_.push_back(t);
-        input_patch_ids_.push_back(get_patch_id(f));
+        if (is_degenerate_triangle_face(halfedge(f,mesh_),mesh_,vpmap_,GeomTraits())){
+          continue;
+        }
+        Patch_id pid = get_patch_id(f);
+        input_triangles_.push_back(triangle(f));
+        input_patch_ids_.push_back(pid);
+        std::pair<typename Patch_id_to_index_map::iterator, bool> 
+          res = patch_id_to_index_map.insert(std::make_pair(pid,0));
+        if(res.second){
+          res.first->second =  patch_id_to_index_map.size()-1;
+        }
       }
       CGAL_assertion(input_triangles_.size() == input_patch_ids_.size());
 
-      tree_ptr_ = new AABB_tree(input_triangles_.begin(),
-                                input_triangles_.end());
-      tree_ptr_->accelerate_distance_queries();
+      if (!build_tree_)
+        return;
+      trees.resize(patch_id_to_index_map.size());
+      for(std::size_t i=0; i < trees.size(); ++i){
+        trees[i] = new AABB_tree();
+      }
+      typename Triangle_list::iterator it;
+      typename Patch_id_list::iterator pit;
+      for(it = input_triangles_.begin(), pit = input_patch_ids_.begin();
+          it != input_triangles_.end();
+          ++it, ++pit){
+        trees[patch_id_to_index_map[*pit]]->insert(it);
+      }
+      for(std::size_t i=0; i < trees.size(); ++i){
+        trees[i]->build();
+        trees[i]->accelerate_distance_queries();
+      }
     }
+
 
     // split edges of edge_range that have their length > high
     template<typename EdgeRange>
@@ -565,10 +623,8 @@ namespace internal {
       Boost_bimap short_edges;
       BOOST_FOREACH(edge_descriptor e, edges(mesh_))
       {
-        if (!is_collapse_allowed(e))
-          continue;
         double sqlen = sqlength(e);
-        if (sqlen < sq_low)
+        if( (sqlen < sq_low) && is_collapse_allowed(e) )
           short_edges.insert(short_edge(halfedge(e, mesh_), sqlen));
       }
 
@@ -725,10 +781,8 @@ namespace internal {
           //insert new/remaining short edges
           BOOST_FOREACH(halfedge_descriptor ht, halfedges_around_target(vkept, mesh_))
           {
-            if (!is_collapse_allowed(edge(ht, mesh_)))
-              continue;
             double sqlen = sqlength(ht);
-            if (sqlen < sq_low)
+            if( (sqlen < sq_low) && is_collapse_allowed(edge(ht, mesh_)) )
               short_edges.insert(short_edge(ht, sqlen));
           }
         }//end if(collapse_ok)
@@ -774,10 +828,14 @@ namespace internal {
         vertex_descriptor vc = target(next(he, mesh_), mesh_);
         vertex_descriptor vd = target(next(opposite(he, mesh_), mesh_), mesh_);
 
-        int deviation_pre = CGAL::abs(valence(va) - target_valence(va))
-                          + CGAL::abs(valence(vb) - target_valence(vb))
-                          + CGAL::abs(valence(vc) - target_valence(vc))
-                          + CGAL::abs(valence(vd) - target_valence(vd));
+        int vva = valence(va), tvva = target_valence(va);
+        int vvb = valence(vb), tvvb = target_valence(vb);
+        int vvc = valence(vc), tvvc = target_valence(vc);
+        int vvd = valence(vd), tvvd = target_valence(vd);
+        int deviation_pre = CGAL::abs(vva - tvva)
+                          + CGAL::abs(vvb - tvvb)
+                          + CGAL::abs(vvc - tvvc)
+                          + CGAL::abs(vvd - tvvd);
 
         CGAL_assertion_code(Halfedge_status s1 = status(he));
         CGAL_assertion_code(Halfedge_status s1o = status(opposite(he, mesh_)));
@@ -785,6 +843,10 @@ namespace internal {
         Patch_id pid = get_patch_id(face(he, mesh_));
 
         CGAL::Euler::flip_edge(he, mesh_);
+        vva -= 1;
+        vvb -= 1;
+        vvc += 1;
+        vvd += 1;
         ++nb_flips;
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE_PROGRESS
@@ -801,10 +863,10 @@ namespace internal {
              (vc == target(he, mesh_) && vd == source(he, mesh_))
           || (vd == target(he, mesh_) && vc == source(he, mesh_)));
 
-        int deviation_post = CGAL::abs(valence(va) - target_valence(va))
-                          + CGAL::abs(valence(vb) - target_valence(vb))
-                          + CGAL::abs(valence(vc) - target_valence(vc))
-                          + CGAL::abs(valence(vd) - target_valence(vd));
+        int deviation_post = CGAL::abs(vva - tvva)
+                           + CGAL::abs(vvb - tvvb)
+                           + CGAL::abs(vvc - tvvc)
+                           + CGAL::abs(vvd - tvvd);
 
         //check that mesh does not become non-triangle,
         //nor has inverted faces
@@ -988,18 +1050,7 @@ namespace internal {
           continue;
         //note if v is constrained, it has not moved
 
-        Patch_id_property_map pid_pmap(*this);
-        internal::Filtered_projection_traits<typename AABB_tree::AABB_traits,
-                                             Patch_id_property_map,
-                                             true> /* keep primitives with matching IDs */
-        projection_traits(
-          get_patch_id(face(halfedge(v, mesh_), mesh_)),
-          tree_ptr_->traits(),
-          pid_pmap
-          );
-        tree_ptr_->traversal(get(vpmap_, v), projection_traits);
-        CGAL_assertion(projection_traits.found());
-        Point proj = projection_traits.closest_point();
+        Point proj = trees[patch_id_to_index_map[get_patch_id(face(halfedge(v, mesh_), mesh_))]]->closest_point(get(vpmap_, v));
         put(vpmap_, v, proj);
       }
       CGAL_assertion(is_valid(mesh_));
@@ -1105,7 +1156,7 @@ private:
 
     int target_valence(const vertex_descriptor& v) const
     {
-      return (is_border(v, mesh_)) ? 4 : 6;
+      return (has_border_ && is_border(v, mesh_)) ? 4 : 6;
     }
 
     bool is_on_triangle(const halfedge_descriptor& h) const
@@ -1157,6 +1208,9 @@ private:
     {
       halfedge_descriptor he = halfedge(e, mesh_);
       halfedge_descriptor hopp = opposite(he, mesh_);
+
+      if (is_on_mesh(he) && is_on_mesh(hopp))
+        return false;
 
       if (protect_constraints_ && is_constrained(e))
         return false;
@@ -1296,22 +1350,17 @@ private:
       //move source at target
       put(vpmap_, vs, get(vpmap_, vt));
 
-      //collect halfedges around vs and vt
-      std::vector<halfedge_descriptor> hedges;
-      BOOST_FOREACH(halfedge_descriptor hd,
-        halfedges_around_target(h, mesh_))
-          hedges.push_back(hd);
-      BOOST_FOREACH(halfedge_descriptor hd,
-        halfedges_around_target(opposite(h, mesh_), mesh_))
-          hedges.push_back(hd);
-
       //collect normals to faces around vs AND vt
       //vertices are at the same location, but connectivity is still be same,
       //with plenty of degenerate triangles (which are common to both stars)
       std::vector<Vector_3> normals_patch1;
       std::vector<Vector_3> normals_patch2;
+      normals_patch1.reserve(8);
+      normals_patch2.reserve(8);
       Patch_id patch1 = -1, patch2 = -1;
-      BOOST_FOREACH(halfedge_descriptor hd, hedges)
+      BOOST_FOREACH(halfedge_descriptor hd,
+                    boost::range::join(halfedges_around_target(h, mesh_),
+                                       halfedges_around_target(opposite(h, mesh_), mesh_)))
       {
         Vector_3 n = compute_normal(face(hd, mesh_));
         if (n == CGAL::NULL_VECTOR) //for degenerate faces
@@ -1349,6 +1398,9 @@ private:
 
     bool is_corner(const vertex_descriptor& v) const
     {
+      if(! has_border_){
+        return false;
+      }
       unsigned int nb_incident_features = 0;
       BOOST_FOREACH(halfedge_descriptor h, halfedges_around_target(v, mesh_))
       {
@@ -1366,12 +1418,16 @@ private:
         return CGAL::NULL_VECTOR;
 
       halfedge_descriptor hd = halfedge(f, mesh_);
-      typename GeomTraits::Triangle_3
-        tr(get(vpmap_, target(hd, mesh_)),
-           get(vpmap_, target(next(hd, mesh_), mesh_)),
-           get(vpmap_, target(next(next(hd, mesh_), mesh_), mesh_)));
-
-      if (tr.is_degenerate())
+      typename boost::property_traits<VertexPointMap>::reference
+        p = get(vpmap_, target(hd, mesh_));
+      hd = next(hd,mesh_);
+      typename boost::property_traits<VertexPointMap>::reference
+        q = get(vpmap_, target(hd, mesh_));
+      hd = next(hd,mesh_);
+      typename boost::property_traits<VertexPointMap>::reference
+        r =get(vpmap_, target(hd, mesh_));
+      
+      if (GeomTraits().collinear_3_object()(p,q,r))
         return CGAL::NULL_VECTOR;
       else
         return PMP::compute_face_normal(f, mesh_);
@@ -1422,8 +1478,10 @@ private:
       BOOST_FOREACH(halfedge_descriptor h, halfedges(mesh_))
       {
         //being part of the border of the mesh is predominant
-        if (is_border(h, mesh_))
+        if (is_border(h, mesh_)){
           set_status(h, MESH_BORDER); //erase previous value if exists
+          has_border_ = true;
+        }
       }
 
       //tag PATCH,       //h and hopp belong to the patch to be remeshed
@@ -1449,33 +1507,31 @@ private:
         {
           //deal with h and hopp for borders that are sharp edges to be preserved
           halfedge_descriptor h = halfedge(e, mesh_);
-          if (status(h) == PATCH)
+          if (status(h) == PATCH){
             set_status(h, PATCH_BORDER);
+            has_border_ = true;
+          }
 
           halfedge_descriptor hopp = opposite(h, mesh_);
-          if (status(hopp) == PATCH)
+          if (status(hopp) == PATCH){
             set_status(hopp, PATCH_BORDER);
+            has_border_ = true;
+          }
         }
       }
     }
 
+
+    // for a Surface_mesh::Property_map we make MESH the default value
     Halfedge_status status(const halfedge_descriptor& h) const
     {
-      typename boost::unordered_map <
-        halfedge_descriptor, Halfedge_status >::const_iterator
-          it = halfedge_status_map_.find(h);
-      if (it == halfedge_status_map_.end())
-        return MESH;
-      return it->second;
+      return get(halfedge_status_pmap_,h);
     }
 
     void set_status(const halfedge_descriptor& h,
                     const Halfedge_status& s)
     {
-      if (s == MESH)
-        halfedge_status_map_.erase(h);
-      else
-        halfedge_status_map_[h] = s;
+      put(halfedge_status_pmap_,h,s);
     }
 
     void merge_status(const halfedge_descriptor& en,
@@ -1551,7 +1607,7 @@ private:
             CGAL::Euler::flip_edge(hf, mesh_);
             CGAL_assertion_code(++nb_done);
 
-            //update halfedge_status_map_
+            //update status
             set_status(h_ab, merge_status(h_ab, hf, hfo));
             set_status(h_ca, merge_status(h_ca, hf, hfo));
             if (is_on_patch(h_ca) || is_on_patch_border(h_ca))
@@ -1638,6 +1694,9 @@ private:
 
     bool is_on_patch(const vertex_descriptor& v) const
     {
+      if(! has_border_){
+        return true;
+      }
       BOOST_FOREACH(halfedge_descriptor h,
                     halfedges_around_target(v, mesh_))
       {
@@ -1667,6 +1726,9 @@ public:
     }
     bool is_on_patch_border(const vertex_descriptor& v) const
     {
+      if(! has_border_){
+        return false;
+      }
       BOOST_FOREACH(halfedge_descriptor h, halfedges_around_target(v, mesh_))
       {
         if (is_on_patch_border(h) || is_on_patch_border(opposite(h, mesh_)))
@@ -1698,13 +1760,16 @@ private:
     void halfedge_added(const halfedge_descriptor& h,
                         const Halfedge_status& s)
     {
-      halfedge_status_map_.insert(std::make_pair(h, s));
+      // AF: Can s be MESH?
+      if(s != MESH){
+        set_status(h, s);
+      }
     }
 
     void halfedge_and_opp_removed(const halfedge_descriptor& h)
     {
-      halfedge_status_map_.erase(h);
-      halfedge_status_map_.erase(opposite(h, mesh_));
+      set_status(h,MESH);
+      set_status(opposite(h, mesh_),MESH);
     }
 
     std::size_t nb_valid_halfedges() const
@@ -1720,15 +1785,12 @@ private:
       unsigned int nb_patch = 0;
       unsigned int nb_patch_border = 0;
 
-      typedef typename boost::unordered_map <
-        halfedge_descriptor, Halfedge_status>::value_type
-          HD_pair;
-      BOOST_FOREACH(const HD_pair& hs, halfedge_status_map_)
+      BOOST_FOREACH(halfedge_descriptor h, halfedges(mesh_))
       {
-        if(is_on_patch(hs.first))              nb_patch++;
-        else if(is_on_patch_border(hs.first))  nb_patch_border++;
-        else if(is_on_mesh(hs.first))          nb_mesh++;
-        else if(is_on_border(hs.first))        nb_border++;
+        if(is_on_patch(h))              nb_patch++;
+        else if(is_on_patch_border(h))  nb_patch_border++;
+        else if(is_on_mesh(h))          nb_mesh++;
+        else if(is_on_border(h))        nb_border++;
         else CGAL_assertion(false);
       }
     }
@@ -1770,6 +1832,8 @@ private:
 
       std::vector<Vector_3> normals_patch1;
       std::vector<Vector_3> normals_patch2;
+      normals_patch1.reserve(8);
+      normals_patch2.reserve(8);
       Patch_id patch1 = -1, patch2 = -1;
       BOOST_FOREACH(halfedge_descriptor hd,
                     halfedges_around_target(halfedge(v, mesh_), mesh_))
@@ -1841,11 +1905,14 @@ private:
   private:
     PolygonMesh& mesh_;
     VertexPointMap& vpmap_;
-    const AABB_tree* tree_ptr_;
-    bool own_tree_;
+    bool build_tree_;
+    bool has_border_;
+    std::vector<AABB_tree*> trees;
+    Patch_id_to_index_map patch_id_to_index_map;
     Triangle_list input_triangles_;
     Patch_id_list input_patch_ids_;
-    boost::unordered_map<halfedge_descriptor, Halfedge_status> halfedge_status_map_;
+    Patch_id_to_index_map patch_id_to_index_map_;
+    Halfedge_status_pmap halfedge_status_pmap_;
     bool protect_constraints_;
     FacePatchMap patch_ids_map_;
     EdgeIsConstrainedMap ecmap_;

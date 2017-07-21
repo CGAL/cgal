@@ -2401,16 +2401,17 @@ typename Surface_mesh<P>::size_type
 Surface_mesh<P>::
 degree(Vertex_index v) const
 {
-    size_type count(0);
-    if(halfedge(v) == null_halfedge()){
+    Halfedge_index h = halfedge(v);
+
+    if(h == null_halfedge()){
       return 0;
     }
-    Vertex_around_target_circulator vvit(halfedge(v), *this);
-    Vertex_around_target_circulator vvend = vvit;
-    if(vvit) do
-    {
-        ++count;
-    } while (++vvit != vvend);
+    size_type count(0);
+    Halfedge_index done = h;
+    do {
+      ++count;
+      h = opposite(next(h));
+    }while(h != done);
 
     return count;
 }

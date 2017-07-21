@@ -37,6 +37,7 @@
 #include <CGAL/internal/Static_filters/tools.h>
 #include <CGAL/internal/Static_filters/Orientation_2.h>
 #include <CGAL/internal/Static_filters/Orientation_3.h>
+#include <CGAL/internal/Static_filters/Collinear_3.h>
 
 // for static filters added nov./dec. 2011
 #ifdef CGAL_DISABLE_STATIC_FILTERS_ADDED_2011
@@ -133,6 +134,9 @@ public:
   typedef Static_filters_predicates::Orientation_2<K_base>                  Orientation_2;
   typedef Static_filters_predicates::Orientation_3<K_base>                  Orientation_3;
 #ifndef CGAL_NO_ANGLE_3_STATIC_FILTERS
+
+  typedef Static_filters_predicates::Collinear_3<K_base>                    Collinear_3;
+
   typedef Static_filters_predicates::Angle_3<K_base>                        Angle_3;
 #endif // NOT CGAL_NO_ANGLE_3_STATIC_FILTERS
 #ifndef CGAL_NO_DO_INTERSECT_3_STATIC_FILTERS
@@ -152,6 +156,10 @@ public:
   Orientation_3
   orientation_3_object() const
   { return Orientation_3(); }
+
+  Collinear_3
+  collinear_3_object() const
+  { return Collinear_3(); }
 
 #ifndef CGAL_NO_EQUAL_3_STATIC_FILTERS
  Equal_2
