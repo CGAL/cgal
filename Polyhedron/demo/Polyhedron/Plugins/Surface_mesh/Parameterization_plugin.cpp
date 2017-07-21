@@ -1029,7 +1029,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
     Seam_mesh::halfedge_descriptor hd(*it);
     FT u = uv_pm[target(hd, sMesh)].x();
     FT v = uv_pm[target(hd, sMesh)].y();
-    put(uv, *it, std::make_pair(u,v));
+    put(uv, *it, std::make_pair(static_cast<float>(u),static_cast<float>(v)));
     if(u<min.x())
       min.setX(u);
     if(u>max.x())
