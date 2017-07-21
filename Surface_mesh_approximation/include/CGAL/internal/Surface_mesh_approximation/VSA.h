@@ -6,6 +6,7 @@
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 #include <CGAL/Polyhedron_3.h>
+#include <CGAL/linear_least_squares_fitting_3.h>
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/adjacency_list.hpp>
@@ -100,6 +101,43 @@ template<typename PlaneProxy,
 
 template<typename PlaneProxy,
   typename GeomTraits,
+  typename FacetAreaMap,
+  typename VertexPointMap,
+  typename TriangleMesh>
+  struct L2Metric
+{
+  L2Metric(const TriangleMesh _mesh,
+    const FacetAreaMap _area_pmap,
+    const VertexPointMap _point_pmap)
+    : mesh(_mesh), area_pmap(_area_pmap), point_pmap(_point_pmap) {}
+
+  typedef typename GeomTraits::FT FT;
+  typedef typename GeomTraits::Point_3 Point;
+  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
+
+  FT operator()(const face_descriptor &f, const PlaneProxy &px) {
+    halfedge_descriptor he = halfedge(f, mesh);
+    const Point &p0 = point_pmap[source(he, mesh)];
+    const Point &p1 = point_pmap[target(he, mesh)];
+    const Point &p2 = point_pmap[target(next(he, mesh), mesh)];
+    FT sq_d0 = CGAL::squared_distance(p0, px.fit_plane);
+    FT sq_d1 = CGAL::squared_distance(p0, px.fit_plane);
+    FT sq_d2 = CGAL::squared_distance(p0, px.fit_plane);
+    FT d0(std::sqrt(CGAL::to_double(sq_d0)));
+    FT d1(std::sqrt(CGAL::to_double(sq_d1)));
+    FT d2(std::sqrt(CGAL::to_double(sq_d2)));
+
+    return (sq_d0 + sq_d1 + sq_d2 + d0 * d1 + d1 * d2 + d2 * d0) * area_pmap[f] / FT(6);
+  }
+
+  const FacetAreaMap area_pmap;
+  const VertexPointMap point_pmap;
+  const TriangleMesh &mesh;
+};
+
+template<typename PlaneProxy,
+  typename GeomTraits,
   typename ErrorMetric,
   typename FacetNormalMap,
   typename FacetAreaMap>
@@ -165,6 +203,75 @@ template<typename PlaneProxy,
   ErrorMetric error_functor;
 };
 
+template<typename PlaneProxy,
+  typename GeomTraits,
+  typename ErrorMetric,
+  typename TriangleMesh,
+  typename VertexPointMap,
+  typename FacetAreaMap>
+  struct PCAPlaneFitting
+{
+  typedef typename GeomTraits::FT FT;
+  typedef typename GeomTraits::Point_3 Point_3;
+  typedef typename GeomTraits::Triangle_3 Triangle_3;
+  typedef typename GeomTraits::Construct_scaled_vector_3 Construct_scaled_vector_3;
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
+
+  PCAPlaneFitting(const TriangleMesh &_mesh,
+    const VertexPointMap &_point_pmap,
+    const FacetAreaMap &_area_pmap)
+    : mesh(_mesh),
+    point_pmap(_point_pmap),
+    error_functor(_mesh, _area_pmap, _point_pmap) {
+      GeomTraits traits;
+      scale_functor = traits.construct_scaled_vector_3_object();
+    }
+
+  template<typename FacetIterator>
+  PlaneProxy operator()(const FacetIterator beg, const FacetIterator end) {
+    CGAL_assertion(beg != end);
+
+    std::list<Triangle_3> tris;
+    for (FacetIterator fitr = beg; fitr != end; ++fitr) {
+      halfedge_descriptor he = halfedge(*fitr, mesh);
+      const Point_3 &p0 = point_pmap[source(he, mesh)];
+      const Point_3 &p1 = point_pmap[target(he, mesh)];
+      const Point_3 &p2 = point_pmap[target(next(he, mesh), mesh)];
+      tris.push_back(Triangle_3(p0, p1, p2));
+    }
+
+    // construct and fit proxy plane
+    PlaneProxy px;
+    CGAL::linear_least_squares_fitting_3(
+      tris.begin(),
+      tris.end(),
+      px.fit_plane,
+      CGAL::Dimension_tag<2>());
+    typename GeomTraits::Vector_3 normal = px.fit_plane.orthogonal_vector();
+    normal = scale_functor(normal, FT(1.0 / std::sqrt(CGAL::to_double(normal.squared_length()))));
+    px.normal = normal;
+    // l2 metric doesn't care about the normal as much as l21 do
+
+    // update seed
+    px.seed = *beg;
+    FT err_min = error_functor(*beg, px);
+    for (FacetIterator fitr = beg; fitr != end; ++fitr) {
+      FT err = error_functor(*fitr, px);
+      if (err < err_min) {
+        err_min = err;
+        px.seed = *fitr;
+      }
+    }
+
+    return px;
+  }
+
+  const TriangleMesh &mesh;
+  const VertexPointMap point_pmap;
+  Construct_scaled_vector_3 scale_functor;
+  ErrorMetric error_functor;
+};
+
 // Bundled approximation traits
 template<typename GeomTraits,
   typename PlaneProxy,
@@ -217,6 +324,49 @@ private:
   Compute_scalar_product_3 scalar_product_functor;
   Construct_sum_of_vectors_3 sum_functor;
 };
+
+// Bundled approximation traits
+template<typename GeomTraits,
+  typename TriangleMesh,
+  typename PlaneProxy,
+  typename L2ErrorMetric,
+  typename PCAPlaneFitting,
+  typename VertexPointMap,
+  typename FacetAreaMap>
+  struct L2ApproximationTrait
+{
+public:
+  typedef GeomTraits GeomTraits;
+  typedef PlaneProxy Proxy;
+  typedef L2ErrorMetric ErrorMetric;
+  typedef PCAPlaneFitting ProxyFitting;
+
+  L2ApproximationTrait(
+    const TriangleMesh _mesh,
+    const VertexPointMap &_point_pmap,
+    const FacetAreaMap &_facet_area_map)
+    : mesh(_mesh),
+    point_pmap(_point_pmap),
+    area_pmap(_facet_area_map) {
+  }
+
+  // traits function object form
+  // construct error functor
+  ErrorMetric construct_fit_error_functor() const {
+    return ErrorMetric(mesh, area_pmap, point_pmap);
+  }
+
+  // construct proxy fitting functor
+  ProxyFitting construct_proxy_fitting_functor() const {
+    return ProxyFitting(mesh, point_pmap, area_pmap);
+  }
+
+private:
+  const TriangleMesh &mesh;
+  const VertexPointMap point_pmap;
+  const FacetAreaMap area_pmap;
+};
+
 
 /// @cond CGAL_DOCUMENT_INTERNAL
 namespace internal
