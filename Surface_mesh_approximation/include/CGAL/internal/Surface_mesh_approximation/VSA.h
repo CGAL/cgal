@@ -272,39 +272,25 @@ template<typename PlaneProxy,
   ErrorMetric error_functor;
 };
 
-// Bundled approximation traits
+// Bundled l21 approximation traits
 template<typename GeomTraits,
   typename PlaneProxy,
   typename ErrorMetric,
   typename ProxyFitting,
   typename FacetNormalMap,
   typename FacetAreaMap>
-  struct ApproximationTrait
+  struct L21ApproximationTrait
 {
-private:
-  typedef typename GeomTraits::FT FT;
-  typedef typename GeomTraits::Vector_3 Vector;
-  typedef typename GeomTraits::Construct_scaled_vector_3 Construct_scaled_vector_3;
-  typedef typename GeomTraits::Construct_sum_of_vectors_3 Construct_sum_of_vectors_3;
-  typedef typename GeomTraits::Compute_scalar_product_3 Compute_scalar_product_3;
-  typedef typename FacetNormalMap::key_type face_descriptor;
-
-public:
   typedef GeomTraits GeomTraits;
   typedef PlaneProxy Proxy;
   typedef ErrorMetric ErrorMetric;
   typedef ProxyFitting ProxyFitting;
 
-  ApproximationTrait(
+  L21ApproximationTrait(
     const FacetNormalMap &_facet_normal_map,
     const FacetAreaMap &_facet_area_map)
     : normal_pmap(_facet_normal_map),
-    area_pmap(_facet_area_map) {
-    GeomTraits traits;
-    scalar_product_functor = traits.compute_scalar_product_3_object();
-    sum_functor = traits.construct_sum_of_vectors_3_object();
-    scale_functor = traits.construct_scaled_vector_3_object();
-  }
+    area_pmap(_facet_area_map) {}
 
   // traits function object form
   // construct error functor
@@ -320,12 +306,9 @@ public:
 private:
   const FacetNormalMap normal_pmap;
   const FacetAreaMap area_pmap;
-  Construct_scaled_vector_3 scale_functor;
-  Compute_scalar_product_3 scalar_product_functor;
-  Construct_sum_of_vectors_3 sum_functor;
 };
 
-// Bundled approximation traits
+// Bundled l2 approximation traits
 template<typename GeomTraits,
   typename TriangleMesh,
   typename PlaneProxy,
