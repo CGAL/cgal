@@ -2045,6 +2045,8 @@ private: //------------------------------------------------------- private data
   /// The operator reads the point property as well as "v:normal", "v:color", and "f:color".
   /// Vertex texture coordinates are ignored.
   /// \pre `operator>>(std::istream&,const P&)` must be defined.
+  /// \pre The data in the stream must represent a two-manifold. If this is not the case
+  ///      the `failbit` of `is` is set and the mesh cleared.
 
   template <typename P>
   bool read_off(std::istream& is, Surface_mesh<P>& sm)
@@ -2123,9 +2125,9 @@ private: //------------------------------------------------------- private data
       Face_index fi = sm.add_face(vr);
       if(fi == sm.null_face())
       {
-       std::cout<< "Warning: Facets don't seem to be oriented. Loading a Soup of polygons instead."<<std::endl;
-       sm.clear();
-       return false;
+        is.setstate(std::ios::failbit);
+        sm.clear();
+        return false;
       }
 
       // the first face will tell us if faces have a color map
