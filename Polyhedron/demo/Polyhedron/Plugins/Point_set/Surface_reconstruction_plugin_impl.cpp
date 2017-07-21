@@ -12,7 +12,7 @@
 #include <CGAL/Surface_mesh_default_triangulation_3.h>
 #include <CGAL/make_surface_mesh.h>
 #include <CGAL/Implicit_surface_3.h>
-#include <CGAL/IO/output_surface_facets_to_polyhedron.h>
+#include <CGAL/IO/output_surface_facets_to_facegraph.h>
 #include <CGAL/Poisson_reconstruction_function.h>
 #include <CGAL/compute_average_spacing.h>
 
@@ -24,21 +24,10 @@
 
 #include "Kernel_type.h"
 #include "Polyhedron_type.h"
+#include "SMesh_type.h"
 #include "Scene_points_with_normal_item.h"
 
 
-// Poisson implicit function
-typedef CGAL::Poisson_reconstruction_function<Kernel> Poisson_reconstruction_function;
-
-// Surface mesher
-typedef CGAL::Surface_mesh_default_triangulation_3 STr;
-typedef CGAL::Surface_mesh_complex_2_in_triangulation_3<STr> C2t3;
-typedef CGAL::Implicit_surface_3<Kernel, Poisson_reconstruction_function> Surface_3;
-
-// AABB tree
-typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron> Primitive;
-typedef CGAL::AABB_traits<Kernel, Primitive> AABB_traits;
-typedef CGAL::AABB_tree<AABB_traits> AABB_tree;
 
 // Concurrency
 #ifdef CGAL_LINKED_WITH_TBB
@@ -48,17 +37,30 @@ typedef CGAL::Sequential_tag Concurrency_tag;
 #endif
 
 
-
 // Poisson reconstruction method:
 // Reconstructs a surface mesh from a point set and returns it as a polyhedron.
-Polyhedron* poisson_reconstruct(Point_set& points,
-                                Kernel::FT sm_angle, // Min triangle angle (degrees).
-                                Kernel::FT sm_radius, // Max triangle size w.r.t. point set average spacing.
-                                Kernel::FT sm_distance, // Approximation error w.r.t. point set average spacing.
-                                const QString& solver_name, // solver name
-                                bool use_two_passes,
-				bool do_not_fill_holes)
+template<class FaceGraph, typename Traits>
+bool poisson_reconstruct(FaceGraph* graph,
+                         Point_set& points,
+                         typename Traits::FT sm_angle, // Min triangle angle (degrees).
+                         typename Traits::FT sm_radius, // Max triangle size w.r.t. point set average spacing.
+                         typename Traits::FT sm_distance, // Approximation error w.r.t. point set average spacing.
+                         const QString& solver_name, // solver name
+                         bool use_two_passes,
+                         bool do_not_fill_holes)
 {
+  // Poisson implicit function
+  typedef CGAL::Poisson_reconstruction_function<Traits> Poisson_reconstruction_function;
+
+  // Surface mesher
+  typedef CGAL::Surface_mesh_default_triangulation_3 STr;
+  typedef CGAL::Surface_mesh_complex_2_in_triangulation_3<STr> C2t3;
+  typedef CGAL::Implicit_surface_3<Traits, Poisson_reconstruction_function> Surface_3;
+
+  // AABB tree
+  typedef CGAL::AABB_face_graph_triangle_primitive<FaceGraph> Primitive;
+  typedef CGAL::AABB_traits<Traits, Primitive> AABB_traits;
+  typedef CGAL::AABB_tree<AABB_traits> AABB_tree;
     CGAL::Timer task_timer; task_timer.start();
 
     //***************************************
@@ -68,14 +70,14 @@ Polyhedron* poisson_reconstruct(Point_set& points,
     if (points.size() == 0)
     {
       std::cerr << "Error: empty point set" << std::endl;
-      return NULL;
+     return false;
     }
 
     bool points_have_normals = points.has_normal_map();
     if ( ! points_have_normals )
     {
       std::cerr << "Input point set not supported: this reconstruction method requires oriented normals" << std::endl;
-      return NULL;
+     return false;
     }
 
     CGAL::Timer reconstruction_timer; reconstruction_timer.start();
@@ -116,7 +118,7 @@ Polyhedron* poisson_reconstruct(Point_set& points,
     if ( ! ok )
     {
       std::cerr << "Error: cannot compute implicit function" << std::endl;
-      return NULL;
+     return false;
     }
 
     // Prints status
@@ -140,7 +142,7 @@ Polyhedron* poisson_reconstruct(Point_set& points,
     if(inner_point_value >= 0.0)
     {
       std::cerr << "Error: unable to seed (" << inner_point_value << " at inner_point)" << std::endl;
-      return NULL;
+     return false;
     }
 
     // Gets implicit function's radius
@@ -183,11 +185,10 @@ Polyhedron* poisson_reconstruct(Point_set& points,
     task_timer.reset();
 
     if(tr.number_of_vertices() == 0)
-      return NULL;
+     return false;
 
     // Converts to polyhedron
-    Polyhedron* output_mesh = new Polyhedron;
-    CGAL::output_surface_facets_to_polyhedron(c2t3, *output_mesh);
+    c2t3_to_facegraph(c2t3, *graph);
 
     // Prints total reconstruction duration
     std::cerr << "Total reconstruction (implicit function + meshing): " << reconstruction_timer.time() << " seconds\n";
@@ -198,24 +199,24 @@ Polyhedron* poisson_reconstruct(Point_set& points,
 
     // Constructs AABB tree and computes internal KD-tree
     // data structure to accelerate distance queries
-    AABB_tree tree(faces(*output_mesh).first, faces(*output_mesh).second, *output_mesh);
+    AABB_tree tree(faces(*graph).first, faces(*graph).second, *graph);
     tree.accelerate_distance_queries();
 
     // Computes distance from each input point to reconstructed mesh
     double max_distance = DBL_MIN;
     double avg_distance = 0;
 
-    std::set<Polyhedron::Face_handle> faces_to_keep;
+    std::set<typename boost::graph_traits<FaceGraph>::face_descriptor> faces_to_keep;
     
     for (Point_set::const_iterator p=points.begin_or_selection_begin(); p!=points.end(); p++)
     {
-      AABB_traits::Point_and_primitive_id pap = tree.closest_point_and_primitive (points.point (*p));
+      typename AABB_traits::Point_and_primitive_id pap = tree.closest_point_and_primitive (points.point (*p));
       double distance = std::sqrt(CGAL::squared_distance (pap.first, points.point(*p)));
       
       max_distance = (std::max)(max_distance, distance);
       avg_distance += distance;
 
-      Polyhedron::Face_handle f = pap.second;
+      typename boost::graph_traits<FaceGraph>::face_descriptor f = pap.second;
       faces_to_keep.insert (f);  
     }
     avg_distance /= double(points.size());
@@ -226,17 +227,57 @@ Polyhedron* poisson_reconstruct(Point_set& points,
 
     if (do_not_fill_holes)
       {
-	Polyhedron::Facet_iterator it = output_mesh->facets_begin ();
-	while (it != output_mesh->facets_end ())
+        typename boost::graph_traits<FaceGraph>::face_iterator it = faces(*graph).begin ();
+        while (it != faces(*graph).end ())
 	  {
-	    Polyhedron::Facet_iterator current = it ++;
+            typename boost::graph_traits<FaceGraph>::face_iterator current = it ++;
 
-	    if (faces_to_keep.find (current) == faces_to_keep.end ())
-	      output_mesh->erase_facet (current->halfedge ());
+            if (faces_to_keep.find (*current) == faces_to_keep.end ())
+            {
+              CGAL::Euler::remove_face(halfedge (*current, *graph), *graph);
+            }
 
 	  }
 
       }
-    return output_mesh;
+    return true;
 }
 
+Polyhedron* poisson_reconstruct_polyhedron(Point_set& points,
+                                           Kernel::FT sm_angle, // Min triangle angle (degrees).
+                                           Kernel::FT sm_radius, // Max triangle size w.r.t. point set average spacing.
+                                           Kernel::FT sm_distance, // Approximation error w.r.t. point set average spacing.
+                                           const QString& solver_name, // solver name
+                                           bool use_two_passes,
+                                           bool do_not_fill_holes)
+{
+  Polyhedron* res = new Polyhedron;
+
+  if(poisson_reconstruct<Polyhedron, Kernel>(res, points, sm_angle, sm_radius, sm_distance,
+                         solver_name, use_two_passes, do_not_fill_holes))
+    return res;
+  else
+  {
+    delete res;
+    return NULL;
+  }
+}
+
+SMesh* poisson_reconstruct_sm(Point_set& points,
+                              Kernel::FT sm_angle, // Min triangle angle (degrees).
+                              Kernel::FT sm_radius, // Max triangle size w.r.t. point set average spacing.
+                              Kernel::FT sm_distance, // Approximation error w.r.t. point set average spacing.
+                              const QString& solver_name, // solver name
+                              bool use_two_passes,
+                              bool do_not_fill_holes)
+{
+  SMesh* res = new SMesh;
+  if(poisson_reconstruct<SMesh, Kernel>(res, points, sm_angle, sm_radius, sm_distance,
+                         solver_name, use_two_passes, do_not_fill_holes))
+    return res;
+  else
+  {
+    delete res;
+    return NULL;
+  }
+}
