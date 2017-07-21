@@ -106,9 +106,9 @@ template<typename PlaneProxy,
   typename TriangleMesh>
   struct L2Metric
 {
-  L2Metric(const TriangleMesh _mesh,
-    const FacetAreaMap _area_pmap,
-    const VertexPointMap _point_pmap)
+  L2Metric(const TriangleMesh &_mesh,
+    const FacetAreaMap &_area_pmap,
+    const VertexPointMap &_point_pmap)
     : mesh(_mesh), area_pmap(_area_pmap), point_pmap(_point_pmap) {}
 
   typedef typename GeomTraits::FT FT;
@@ -122,8 +122,8 @@ template<typename PlaneProxy,
     const Point &p1 = point_pmap[target(he, mesh)];
     const Point &p2 = point_pmap[target(next(he, mesh), mesh)];
     FT sq_d0 = CGAL::squared_distance(p0, px.fit_plane);
-    FT sq_d1 = CGAL::squared_distance(p0, px.fit_plane);
-    FT sq_d2 = CGAL::squared_distance(p0, px.fit_plane);
+    FT sq_d1 = CGAL::squared_distance(p1, px.fit_plane);
+    FT sq_d2 = CGAL::squared_distance(p2, px.fit_plane);
     FT d0(std::sqrt(CGAL::to_double(sq_d0)));
     FT d1(std::sqrt(CGAL::to_double(sq_d1)));
     FT d2(std::sqrt(CGAL::to_double(sq_d2)));
@@ -342,7 +342,7 @@ public:
   typedef PCAPlaneFitting ProxyFitting;
 
   L2ApproximationTrait(
-    const TriangleMesh _mesh,
+    const TriangleMesh &_mesh,
     const VertexPointMap &_point_pmap,
     const FacetAreaMap &_facet_area_map)
     : mesh(_mesh),
