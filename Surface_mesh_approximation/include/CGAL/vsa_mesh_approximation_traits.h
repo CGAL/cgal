@@ -162,6 +162,61 @@ template<typename PlaneProxy,
   L21Metric error_functor;
 };
 
+template<typename TriangleMesh,
+  typename FacetAreaMap,
+  typename VertexPointMap,
+  typename GeomTraits = typename TriangleMesh::Traits>
+  struct PlaneFitting
+{
+  PlaneFitting(const TriangleMesh &_mesh,
+    const FacetAreaMap &_area_pmap,
+    const VertexPointMap &_point_pmap)
+    : mesh(_mesh),
+    area_pmap(_area_pmap),
+    point_pmap(_point_pmap) {}
+
+  typedef typename GeomTraits::FT FT;
+  typedef typename GeomTraits::Point_3 Point_3;
+  typedef typename GeomTraits::Vector_3 Vector_3;
+  typedef typename GeomTraits::Plane_3 Plane_3;
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
+
+  template<typename FacetIterator>
+  Plane_3 operator()(const FacetIterator &beg, const FacetIterator &end) {
+    CGAL_assertion(beg != end);
+    // area average normal
+    Vector_3 norm = CGAL::NULL_VECTOR;
+    for (FacetIterator fitr = beg; fitr != end; ++fitr) {
+      norm = sum_functor(norm, scale_functor(
+        normal_pmap[*fitr], area_pmap[*fitr]));
+    }
+    norm = scale_functor(norm,
+      FT(1.0 / std::sqrt(CGAL::to_double(norm.squared_length()))));
+
+    // area averaged centroid
+    FT sum_area(0);
+    Vector_3 centroid = CGAL::NULL_VECTOR;
+    for (FacetIterator fitr = beg; fitr != end; ++fitr) {
+      const halfedge_descriptor he = halfedge(f, mesh);
+      Point_3 pt = CGAL::centroid(
+        point_pmap[source(he, mesh)],
+        point_pmap[target(he, mesh)],
+        point_pmap[target(next(he, mesh), mesh)]);
+      Vector_3 vec = vector_functor(CGAL::ORIGIN, pt);
+      FT area = area_pmap[f];
+      centroid = sum_functor(centroid, scale_functor(vec, area));
+      sum_area += area;
+    }
+    centroid = scale_functor(centroid, FT(1) / sum_area);
+
+    return Plane_3(CGAL::ORIGIN + centroid, normal);
+  }
+
+  const TriangleMesh &mesh;
+  const FacetAreaMap area_pmap;
+  const VertexPointMap point_pmap;
+};
+
 template<typename PlaneProxy,
   typename ErrorMetric,
   typename TriangleMesh,
