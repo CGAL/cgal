@@ -22,8 +22,8 @@ typedef boost::associative_property_map<std::map<Facet_const_handle, FT> > Facet
 
 typedef CGAL::PlaneProxy<Polyhedron> PlaneProxy;
 typedef CGAL::L21Metric<PlaneProxy, FacetNormalMap, FacetAreaMap> L21Metric;
-typedef CGAL::ProxyFitting<PlaneProxy, L21Metric, FacetNormalMap, FacetAreaMap> ProxyFitting;
-typedef CGAL::L21ApproximationTrait<PlaneProxy, L21Metric, ProxyFitting, FacetNormalMap, FacetAreaMap> L21ApproximationTrait;
+typedef CGAL::L21ProxyFitting<PlaneProxy, L21Metric, FacetNormalMap, FacetAreaMap> L21ProxyFitting;
+typedef CGAL::L21ApproximationTrait<PlaneProxy, L21Metric, L21ProxyFitting, FacetNormalMap, FacetAreaMap> L21ApproximationTrait;
 
 int main(int argc, char *argv[])
 {

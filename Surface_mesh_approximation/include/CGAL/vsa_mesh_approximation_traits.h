@@ -96,12 +96,12 @@ template<typename PlaneProxy,
 };
 
 template<typename PlaneProxy,
-  typename ErrorMetric,
+  typename L21Metric,
   typename FacetNormalMap,
   typename FacetAreaMap>
-  struct ProxyFitting
+  struct L21ProxyFitting
 {
-  ProxyFitting(const FacetNormalMap &normal_pmap, const FacetAreaMap &area_pmap)
+  L21ProxyFitting(const FacetNormalMap &normal_pmap, const FacetAreaMap &area_pmap)
     : normal_pmap(normal_pmap),
     area_pmap(area_pmap),
     error_functor(normal_pmap, area_pmap) {
@@ -159,7 +159,7 @@ template<typename PlaneProxy,
   Construct_scaled_vector_3 scale_functor;
   Compute_scalar_product_3 scalar_product_functor;
   Construct_sum_of_vectors_3 sum_functor;
-  ErrorMetric error_functor;
+  L21Metric error_functor;
 };
 
 template<typename PlaneProxy,
