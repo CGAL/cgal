@@ -45,6 +45,7 @@
 #include <CGAL/Surface_mesh_shortest_path/internal/Cone_tree.h>
 #include <CGAL/Surface_mesh_shortest_path/internal/misc_functions.h>
 
+#include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/iterator.h>
 #include <boost/variant/get.hpp>
 
@@ -1741,7 +1742,7 @@ private:
           std::pair<Node_distance_pair,Barycentric_coordinates> mainFace = nearest_on_face(f, location);
 
           halfedge_descriptor oppositeHalfedge = opposite(he, m_graph);
-          if(!oppositeHalfedge->is_border())
+          if(!CGAL::is_border(oppositeHalfedge, m_graph))
           {
               std::size_t oppositeIndex = internal::edge_index(oppositeHalfedge, m_graph);
 
