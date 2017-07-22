@@ -238,7 +238,7 @@ template<typename PlaneProxy,
   typename TriangleMesh,
   typename VertexPointMap,
   typename FacetAreaMap>
-  struct PCAPlaneFitting
+  struct L2ProxyFitting
 {
   typedef typename PlaneProxy::GeomTraits GeomTraits;
   typedef typename GeomTraits::FT FT;
@@ -247,7 +247,7 @@ template<typename PlaneProxy,
   typedef typename GeomTraits::Construct_scaled_vector_3 Construct_scaled_vector_3;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
 
-  PCAPlaneFitting(const TriangleMesh &_mesh,
+  L2ProxyFitting(const TriangleMesh &_mesh,
     const VertexPointMap &_point_pmap,
     const FacetAreaMap &_area_pmap)
     : mesh(_mesh),
@@ -277,10 +277,6 @@ template<typename PlaneProxy,
       tris.end(),
       px.fit_plane,
       CGAL::Dimension_tag<2>());
-    typename GeomTraits::Vector_3 normal = px.fit_plane.orthogonal_vector();
-    normal = scale_functor(normal, FT(1.0 / std::sqrt(CGAL::to_double(normal.squared_length()))));
-    px.normal = normal;
-    // l2 metric doesn't care about the normal as much as l21 do
 
     // update seed
     px.seed = *beg;
@@ -300,6 +296,63 @@ template<typename PlaneProxy,
   const VertexPointMap point_pmap;
   Construct_scaled_vector_3 scale_functor;
   ErrorMetric error_functor;
+};
+
+template<typename TriangleMesh,
+  typename VertexPointMap,
+  typename FacetAreaMap,
+  typename GeomTraits = typename TriangleMesh::Traits>
+  struct PCAPlaneFitting
+{
+  typedef typename GeomTraits::FT FT;
+  typedef typename GeomTraits::Point_3 Point_3;
+  typedef typename GeomTraits::Plane_3 Plane_3;
+  typedef typename GeomTraits::Triangle_3 Triangle_3;
+  typedef typename GeomTraits::Construct_scaled_vector_3 Construct_scaled_vector_3;
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
+
+  PCAPlaneFitting(const TriangleMesh &_mesh,
+    const VertexPointMap &_point_pmap,
+    const FacetAreaMap &_area_pmap)
+    : mesh(_mesh),
+    point_pmap(_point_pmap) {
+      GeomTraits traits;
+      scale_functor = traits.construct_scaled_vector_3_object();
+    }
+
+  template<typename FacetIterator>
+  Plane_3 operator()(const FacetIterator beg, const FacetIterator end) {
+    CGAL_assertion(beg != end);
+
+    std::list<Triangle_3> tris;
+    for (FacetIterator fitr = beg; fitr != end; ++fitr) {
+      halfedge_descriptor he = halfedge(*fitr, mesh);
+      const Point_3 &p0 = point_pmap[source(he, mesh)];
+      const Point_3 &p1 = point_pmap[target(he, mesh)];
+      const Point_3 &p2 = point_pmap[target(next(he, mesh), mesh)];
+      tris.push_back(Triangle_3(p0, p1, p2));
+    }
+
+    // construct and fit proxy plane
+    Plane_3 fit_plane;
+    CGAL::linear_least_squares_fitting_3(
+      tris.begin(),
+      tris.end(),
+      fit_plane,
+      CGAL::Dimension_tag<2>());
+    typename GeomTraits::Vector_3 normal = fit_plane.orthogonal_vector();
+    normal = scale_functor(normal, FT(1.0 / std::sqrt(CGAL::to_double(normal.squared_length()))));
+
+    // px.normal = normal; how could we access a proxy here
+    // TODO: average normal to reverse proxy plane direction
+    // or seperate plane and normal requirements: plane just for distance, normal for Steiner points
+
+    return fit_plane;
+  }
+
+  const TriangleMesh &mesh;
+  const VertexPointMap point_pmap;
+  Construct_scaled_vector_3 scale_functor;
 };
 
 // Bundled l21 approximation traits
@@ -356,6 +409,7 @@ private:
 template<typename TriangleMesh,
   typename PlaneProxy,
   typename L2ErrorMetric,
+  typename L2ProxyFitting,
   typename PCAPlaneFitting,
   typename VertexPointMap,
   typename FacetAreaMap>
@@ -365,7 +419,8 @@ public:
   typedef typename PlaneProxy::GeomTraits GeomTraits;
   typedef PlaneProxy Proxy;
   typedef L2ErrorMetric ErrorMetric;
-  typedef PCAPlaneFitting ProxyFitting;
+  typedef L2ProxyFitting ProxyFitting;
+  typedef PCAPlaneFitting PlaneFitting;
 
   L2ApproximationTrait(
     const TriangleMesh &_mesh,
@@ -385,6 +440,11 @@ public:
   // construct proxy fitting functor
   ProxyFitting construct_proxy_fitting_functor() const {
     return ProxyFitting(mesh, point_pmap, area_pmap);
+  }
+
+  // construct plane fitting functor
+  PlaneFitting construct_plane_fitting_functor() const {
+    return PlaneFitting(mesh, point_pmap, area_pmap);
   }
 
 private:
