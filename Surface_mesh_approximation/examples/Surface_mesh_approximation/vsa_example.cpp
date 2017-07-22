@@ -19,11 +19,13 @@ typedef Polyhedron::Halfedge_const_handle Halfedge_const_handle;
 typedef Polyhedron::Facet_const_iterator Facet_const_iterator;
 typedef boost::associative_property_map<std::map<Facet_const_handle, Vector> > FacetNormalMap;
 typedef boost::associative_property_map<std::map<Facet_const_handle, FT> > FacetAreaMap;
+typedef boost::property_map<Polyhedron, boost::vertex_point_t>::type VertexPointMap;
 
 typedef CGAL::PlaneProxy<Polyhedron> PlaneProxy;
 typedef CGAL::L21Metric<PlaneProxy, FacetNormalMap, FacetAreaMap> L21Metric;
 typedef CGAL::L21ProxyFitting<PlaneProxy, L21Metric, FacetNormalMap, FacetAreaMap> L21ProxyFitting;
-typedef CGAL::L21ApproximationTrait<PlaneProxy, L21Metric, L21ProxyFitting, FacetNormalMap, FacetAreaMap> L21ApproximationTrait;
+typedef CGAL::PlaneFitting<Polyhedron, FacetAreaMap, FacetNormalMap, VertexPointMap> PlaneFitting;
+typedef CGAL::L21ApproximationTrait<PlaneProxy, Polyhedron, L21Metric, L21ProxyFitting, PlaneFitting, VertexPointMap, FacetNormalMap, FacetAreaMap> L21ApproximationTrait;
 
 int main(int argc, char *argv[])
 {
@@ -53,6 +55,7 @@ int main(int argc, char *argv[])
   }
   FacetNormalMap normal_pmap(facet_normals);
   FacetAreaMap area_pmap(facet_areas);
+  VertexPointMap point_pmap = get(boost::vertex_point, const_cast<Polyhedron &>(mesh));
 
   // create a property-map for segment-ids
   typedef std::map<Facet_const_handle, std::size_t> Facet_id_map;
@@ -74,13 +77,13 @@ int main(int argc, char *argv[])
     num_proxies,
     num_iterations,
     proxy_patch_map,
-    get(boost::vertex_point, const_cast<Polyhedron &>(mesh)),
+    point_pmap,
     area_pmap,
     tris,
     anchor_pos,
     anchor_vtx,
     bdrs,
-    L21ApproximationTrait(normal_pmap, area_pmap),
+    L21ApproximationTrait(mesh, point_pmap, normal_pmap, area_pmap),
     Kernel());
 
   return EXIT_SUCCESS;

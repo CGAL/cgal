@@ -21,6 +21,7 @@ typedef Polyhedron::Facet_const_iterator Facet_const_iterator;
 typedef boost::associative_property_map<std::map<Facet_const_handle, Vector> > FacetNormalMap;
 typedef boost::associative_property_map<std::map<Facet_const_handle, FT> > FacetAreaMap;
 typedef boost::associative_property_map<std::map<Facet_const_handle, Point> > FacetCenterMap;
+typedef boost::property_map<Polyhedron, boost::vertex_point_t>::type VertexPointMap;
 
 struct PointProxy {
   Facet_handle seed;
@@ -100,11 +101,14 @@ struct ApproxTrait {
   typedef PointProxy Proxy;
   typedef CompactMetric ErrorMetric;
   typedef PointProxyFitting ProxyFitting;
+  typedef CGAL::PlaneFitting<Polyhedron, FacetAreaMap, FacetNormalMap, VertexPointMap> PlaneFitting;
 
-  ApproxTrait(const FacetCenterMap _center_pmap,
+  ApproxTrait(const Polyhedron &_mesh,
+    const VertexPointMap &_point_pmap,
+    const FacetCenterMap &_center_pmap,
     const FacetAreaMap &_area_pmap,
     const FacetNormalMap &_normal_pmap)
-    : center_pmap(_center_pmap), area_pmap(_area_pmap), normal_pmap(_normal_pmap) {}
+    : mesh(_mesh), point_pmap(_point_pmap), center_pmap(_center_pmap), area_pmap(_area_pmap), normal_pmap(_normal_pmap) {}
 
   ErrorMetric construct_fit_error_functor() const {
     return ErrorMetric(center_pmap);
@@ -114,6 +118,12 @@ struct ApproxTrait {
     return ProxyFitting(center_pmap, area_pmap, normal_pmap);
   }
 
+  PlaneFitting construct_plane_fitting_functor() const {
+    return PlaneFitting(mesh, area_pmap, normal_pmap, point_pmap);
+  }
+
+  const Polyhedron &mesh;
+  const VertexPointMap point_pmap;
   const FacetCenterMap center_pmap;
   const FacetAreaMap area_pmap;
   const FacetNormalMap normal_pmap;
@@ -150,6 +160,7 @@ int main(int argc, char *argv[])
   FacetNormalMap normal_pmap(facet_normals);
   FacetAreaMap area_pmap(facet_areas);
   FacetCenterMap center_pmap(facet_centers);
+  VertexPointMap point_pmap = get(boost::vertex_point, const_cast<Polyhedron &>(mesh));
 
   // create a property-map for segment-ids
   typedef std::map<Facet_const_handle, std::size_t> Facet_id_map;
@@ -171,13 +182,13 @@ int main(int argc, char *argv[])
     num_proxies,
     num_iterations,
     proxy_patch_map,
-    get(boost::vertex_point, const_cast<Polyhedron &>(mesh)),
+    point_pmap,
     area_pmap,
     tris,
     anchor_pos,
     anchor_vtx,
     bdrs,
-    ApproxTrait(center_pmap, area_pmap, normal_pmap),
+    ApproxTrait(mesh, point_pmap, center_pmap, area_pmap, normal_pmap),
     Kernel());
 
   return EXIT_SUCCESS;

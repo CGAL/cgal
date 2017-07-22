@@ -46,6 +46,7 @@ private:
   typedef typename ApproximationTrait::Proxy Proxy;
   typedef typename ApproximationTrait::ErrorMetric ErrorMetric;
   typedef typename ApproximationTrait::ProxyFitting ProxyFitting;
+  typedef typename ApproximationTrait::PlaneFitting PlaneFitting;
 
   typedef typename GeomTraits::FT FT;
   typedef typename GeomTraits::Point_3 Point;
@@ -126,6 +127,9 @@ private:
   // The proxy fitting functor.
   ProxyFitting proxy_fitting;
 
+  // The proxy plane fitting functor.
+  PlaneFitting plane_fitting;
+
   //member functions
 public:
   /**
@@ -144,7 +148,8 @@ public:
     area_pmap(_facet_area_map),
     vertex_status_pmap(vertex_status_map),
     fit_error(_appx_trait.construct_fit_error_functor()),
-    proxy_fitting(_appx_trait.construct_proxy_fitting_functor()) {
+    proxy_fitting(_appx_trait.construct_proxy_fitting_functor()),
+    plane_fitting(_appx_trait.construct_plane_fitting_functor()) {
 
     GeomTraits traits;
     vector_functor = traits.construct_vector_3_object();
@@ -232,7 +237,13 @@ public:
 
     pseudo_CDT(seg_pmap, tris);
 
-    compute_anchor_position(seg_pmap);
+    std::vector<Plane> px_planes(proxies.size());
+    std::vector<std::list<face_descriptor> > px_facets(proxies.size());
+    BOOST_FOREACH(face_descriptor f, faces(mesh))
+      px_facets[seg_pmap[f]].push_back(f);
+    for (std::size_t i = 0; i < proxies.size(); ++i)
+      px_planes[i] = plane_fitting(px_facets[i].begin(), px_facets[i].end());
+    compute_anchor_position(seg_pmap, px_planes);
     std::vector<Point> vtx;
     BOOST_FOREACH(const Anchor &a, anchors)
       vtx.push_back(a.pos);
@@ -1073,11 +1084,11 @@ private:
    * @param 
    */
   template<typename FacetSegmentMap>
-  void compute_anchor_position(const FacetSegmentMap &seg_pmap) {
-    std::vector<Point> proxies_center; // The proxy center.
+  void compute_anchor_position(
+    const FacetSegmentMap &seg_pmap,
+    const std::vector<Plane> &px_planes) {
     std::vector<FT> proxies_area; // The proxy area.
     compute_proxy_area(seg_pmap, proxies_area);
-    compute_proxy_center(seg_pmap, proxies_center);
 
     anchors = std::vector<Anchor>(anchor_index);
     BOOST_FOREACH(vertex_descriptor v, vertices(mesh)) {
@@ -1095,8 +1106,7 @@ private:
         for (std::set<std::size_t>::iterator pxitr = px_set.begin();
           pxitr != px_set.end(); ++pxitr) {
           std::size_t px_idx = *pxitr;
-          Plane px_plane(proxies_center[px_idx], proxies[px_idx].normal);
-          Point proj = px_plane.projection(vtx_pt);
+          Point proj = px_planes[px_idx].projection(vtx_pt);
           FT area = proxies_area[px_idx];
           avgx += proj.x() * area;
           avgy += proj.y() * area;
