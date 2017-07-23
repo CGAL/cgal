@@ -26,7 +26,6 @@ namespace CGAL
  * @tparam AnchorVertexContainer a container of extracted anchor vertex
  * @tparam BoundaryContainer a container of proxy patch boundary
  * @tparam ApproximationTrait an approximation trait
- * @tparam GeomTraits geometric kernel
 
  * @param init select seed initialization
  * @param tm a triangle mesh
@@ -40,7 +39,6 @@ namespace CGAL
  * @param vtx anchor vertex container
  * @param bdrs proxy patch boundary container
  * @param app_trait shape approximation trait
- * @param traits kernel traits
  */
 template<typename TriangleMesh,
   typename FacetProxyMap,
@@ -50,8 +48,7 @@ template<typename TriangleMesh,
   typename AnchorPositionContainer,
   typename AnchorVertexContainer,
   typename BoundaryContainer,
-  typename ApproximationTrait,
-  typename GeomTraits>
+  typename ApproximationTrait>
   void vsa_mesh_approximation(
     const int init,
     const TriangleMesh &tm,
@@ -64,8 +61,7 @@ template<typename TriangleMesh,
     AnchorPositionContainer &pos,
     AnchorVertexContainer &vtx,
     BoundaryContainer &bdrs,
-    const ApproximationTrait &app_trait,
-    GeomTraits traits) {
+    const ApproximationTrait &app_trait) {
   // CGAL_precondition(is_pure_triangle(tm));
 
   typedef CGAL::internal::VSA_approximation<

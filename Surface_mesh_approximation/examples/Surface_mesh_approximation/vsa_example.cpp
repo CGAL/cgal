@@ -83,8 +83,7 @@ int main(int argc, char *argv[])
     anchor_pos,
     anchor_vtx,
     bdrs,
-    L21ApproximationTrait(mesh, point_pmap, normal_pmap, area_pmap),
-    Kernel());
+    L21ApproximationTrait(mesh, point_pmap, normal_pmap, area_pmap));
 
   return EXIT_SUCCESS;
 }

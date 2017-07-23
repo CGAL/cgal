@@ -188,8 +188,7 @@ int main(int argc, char *argv[])
     anchor_pos,
     anchor_vtx,
     bdrs,
-    ApproxTrait(mesh, point_pmap, center_pmap, area_pmap, normal_pmap),
-    Kernel());
+    ApproxTrait(mesh, point_pmap, center_pmap, area_pmap, normal_pmap));
 
   return EXIT_SUCCESS;
 }
