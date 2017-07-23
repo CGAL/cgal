@@ -14,14 +14,14 @@ template<typename TriangleMesh,
   struct PlaneProxy
 {
   typedef Traits GeomTraits;
-  typedef typename GeomTraits::Point_3 Point;
-  typedef typename GeomTraits::Vector_3 Vector;
-  typedef typename GeomTraits::Plane_3 Plane;
+  typedef typename GeomTraits::Point_3 Point_3;
+  typedef typename GeomTraits::Vector_3 Vector_3;
+  typedef typename GeomTraits::Plane_3 Plane_3;
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
 
   face_descriptor seed;
-  Vector normal;
-  Plane fit_plane;
+  Vector_3 normal;
+  Plane_3 fit_plane;
 };
 
 template<typename PlaneProxy,
@@ -40,14 +40,14 @@ template<typename PlaneProxy,
 
   typedef typename PlaneProxy::GeomTraits GeomTraits;
   typedef typename GeomTraits::FT FT;
-  typedef typename GeomTraits::Vector_3 Vector;
+  typedef typename GeomTraits::Vector_3 Vector_3;
   typedef typename GeomTraits::Construct_scaled_vector_3 Construct_scaled_vector_3;
   typedef typename GeomTraits::Construct_sum_of_vectors_3 Construct_sum_of_vectors_3;
   typedef typename GeomTraits::Compute_scalar_product_3 Compute_scalar_product_3;
   typedef typename FacetAreaMap::key_type face_descriptor;
 
   FT operator()(const face_descriptor &f, const PlaneProxy &px) {
-    Vector v = sum_functor(normal_pmap[f], scale_functor(px.normal, FT(-1)));
+    Vector_3 v = sum_functor(normal_pmap[f], scale_functor(px.normal, FT(-1)));
     return area_pmap[f] * scalar_product_functor(v, v);
   }
 
@@ -56,43 +56,6 @@ template<typename PlaneProxy,
   Construct_scaled_vector_3 scale_functor;
   Compute_scalar_product_3 scalar_product_functor;
   Construct_sum_of_vectors_3 sum_functor;
-};
-
-template<typename PlaneProxy,
-  typename FacetAreaMap,
-  typename VertexPointMap,
-  typename TriangleMesh>
-  struct L2Metric
-{
-  L2Metric(const TriangleMesh &_mesh,
-    const FacetAreaMap &_area_pmap,
-    const VertexPointMap &_point_pmap)
-    : mesh(_mesh), area_pmap(_area_pmap), point_pmap(_point_pmap) {}
-
-  typedef typename PlaneProxy::GeomTraits GeomTraits;
-  typedef typename GeomTraits::FT FT;
-  typedef typename GeomTraits::Point_3 Point;
-  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
-  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
-
-  FT operator()(const face_descriptor &f, const PlaneProxy &px) {
-    halfedge_descriptor he = halfedge(f, mesh);
-    const Point &p0 = point_pmap[source(he, mesh)];
-    const Point &p1 = point_pmap[target(he, mesh)];
-    const Point &p2 = point_pmap[target(next(he, mesh), mesh)];
-    FT sq_d0 = CGAL::squared_distance(p0, px.fit_plane);
-    FT sq_d1 = CGAL::squared_distance(p1, px.fit_plane);
-    FT sq_d2 = CGAL::squared_distance(p2, px.fit_plane);
-    FT d0(std::sqrt(CGAL::to_double(sq_d0)));
-    FT d1(std::sqrt(CGAL::to_double(sq_d1)));
-    FT d2(std::sqrt(CGAL::to_double(sq_d2)));
-
-    return (sq_d0 + sq_d1 + sq_d2 + d0 * d1 + d1 * d2 + d2 * d0) * area_pmap[f] / FT(6);
-  }
-
-  const FacetAreaMap area_pmap;
-  const VertexPointMap point_pmap;
-  const TriangleMesh &mesh;
 };
 
 template<typename PlaneProxy,
@@ -106,17 +69,15 @@ template<typename PlaneProxy,
     area_pmap(area_pmap),
     error_functor(normal_pmap, area_pmap) {
     GeomTraits traits;
-    scalar_product_functor = traits.compute_scalar_product_3_object();
     sum_functor = traits.construct_sum_of_vectors_3_object();
     scale_functor = traits.construct_scaled_vector_3_object();
   }
 
   typedef typename PlaneProxy::GeomTraits GeomTraits;
   typedef typename GeomTraits::FT FT;
-  typedef typename GeomTraits::Vector_3 Vector;
+  typedef typename GeomTraits::Vector_3 Vector_3;
   typedef typename GeomTraits::Construct_scaled_vector_3 Construct_scaled_vector_3;
   typedef typename GeomTraits::Construct_sum_of_vectors_3 Construct_sum_of_vectors_3;
-  typedef typename GeomTraits::Compute_scalar_product_3 Compute_scalar_product_3;
 
   // Fit and construct a proxy
   template<typename FacetIterator>
@@ -124,10 +85,10 @@ template<typename PlaneProxy,
     CGAL_assertion(beg != end);
 
     // fitting normal
-    FT area(0);
-    Vector norm = CGAL::NULL_VECTOR;
+    // FT area(0);
+    Vector_3 norm = CGAL::NULL_VECTOR;
     for (FacetIterator fitr = beg; fitr != end; ++fitr) {
-      area += area_pmap[*fitr];
+      // area += area_pmap[*fitr];
       norm = sum_functor(norm,
         scale_functor(normal_pmap[*fitr], area_pmap[*fitr]));
     }
@@ -148,8 +109,6 @@ template<typename PlaneProxy,
         px.seed = *fitr;
       }
     }
-    // more update? this is gonna be less and less generic
-    // fit is specific to each kind of proxy
 
     return px;
   }
@@ -157,7 +116,6 @@ template<typename PlaneProxy,
   const FacetNormalMap normal_pmap;
   const FacetAreaMap area_pmap;
   Construct_scaled_vector_3 scale_functor;
-  Compute_scalar_product_3 scalar_product_functor;
   Construct_sum_of_vectors_3 sum_functor;
   L21Metric error_functor;
 };
@@ -230,7 +188,93 @@ template<typename TriangleMesh,
   Construct_vector_3 vector_functor;
   Construct_scaled_vector_3 scale_functor;
   Construct_sum_of_vectors_3 sum_functor;
+};
 
+// Bundled l21 approximation traits
+template<typename PlaneProxy,
+  typename TriangleMesh,
+  typename L21ErrorMetric,
+  typename L21ProxyFitting,
+  typename L21PlaneFitting,
+  typename VertexPointMap,
+  typename FacetNormalMap,
+  typename FacetAreaMap>
+  struct L21ApproximationTrait
+{
+  typedef typename PlaneProxy::GeomTraits GeomTraits;
+  typedef PlaneProxy Proxy;
+  typedef L21ErrorMetric ErrorMetric;
+  typedef L21ProxyFitting ProxyFitting;
+  typedef L21PlaneFitting PlaneFitting;
+
+  L21ApproximationTrait(
+    const TriangleMesh &_mesh,
+    const VertexPointMap &_point_pmap,
+    const FacetNormalMap &_facet_normal_map,
+    const FacetAreaMap &_facet_area_map)
+    : mesh(_mesh),
+    point_pmap(_point_pmap),
+    normal_pmap(_facet_normal_map),
+    area_pmap(_facet_area_map) {}
+
+  // traits function object form
+  // construct error functor
+  ErrorMetric construct_fit_error_functor() const {
+    return ErrorMetric(normal_pmap, area_pmap);
+  }
+
+  // construct proxy fitting functor
+  ProxyFitting construct_proxy_fitting_functor() const {
+    return ProxyFitting(normal_pmap, area_pmap);
+  }
+
+  // construct plane fitting functor
+  L21PlaneFitting construct_plane_fitting_functor() const {
+    return L21PlaneFitting(mesh, area_pmap, normal_pmap, point_pmap);
+  }
+
+private:
+  const TriangleMesh &mesh;
+  const VertexPointMap point_pmap;
+  const FacetNormalMap normal_pmap;
+  const FacetAreaMap area_pmap;
+};
+
+template<typename PlaneProxy,
+  typename FacetAreaMap,
+  typename VertexPointMap,
+  typename TriangleMesh>
+  struct L2Metric
+{
+  L2Metric(const TriangleMesh &_mesh,
+    const FacetAreaMap &_area_pmap,
+    const VertexPointMap &_point_pmap)
+    : mesh(_mesh), area_pmap(_area_pmap), point_pmap(_point_pmap) {}
+
+  typedef typename PlaneProxy::GeomTraits GeomTraits;
+  typedef typename GeomTraits::FT FT;
+  typedef typename GeomTraits::Point_3 Point_3;
+  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
+
+  FT operator()(const face_descriptor &f, const PlaneProxy &px) {
+    halfedge_descriptor he = halfedge(f, mesh);
+    const Point_3 &p0 = point_pmap[source(he, mesh)];
+    const Point_3 &p1 = point_pmap[target(he, mesh)];
+    const Point_3 &p2 = point_pmap[target(next(he, mesh), mesh)];
+    FT sq_d0 = CGAL::squared_distance(p0, px.fit_plane);
+    FT sq_d1 = CGAL::squared_distance(p1, px.fit_plane);
+    FT sq_d2 = CGAL::squared_distance(p2, px.fit_plane);
+    FT d0(std::sqrt(CGAL::to_double(sq_d0)));
+    FT d1(std::sqrt(CGAL::to_double(sq_d1)));
+    FT d2(std::sqrt(CGAL::to_double(sq_d2)));
+
+    return (sq_d0 + sq_d1 + sq_d2 + d0 * d1 + d1 * d2 + d2 * d0) * area_pmap[f] / FT(6);
+  }
+
+  const FacetAreaMap area_pmap;
+  const VertexPointMap point_pmap;
+  const TriangleMesh &mesh;
 };
 
 template<typename PlaneProxy,
@@ -252,10 +296,7 @@ template<typename PlaneProxy,
     const FacetAreaMap &_area_pmap)
     : mesh(_mesh),
     point_pmap(_point_pmap),
-    error_functor(_mesh, _area_pmap, _point_pmap) {
-      GeomTraits traits;
-      scale_functor = traits.construct_scaled_vector_3_object();
-    }
+    error_functor(_mesh, _area_pmap, _point_pmap) {}
 
   template<typename FacetIterator>
   PlaneProxy operator()(const FacetIterator beg, const FacetIterator end) {
@@ -294,7 +335,6 @@ template<typename PlaneProxy,
 
   const TriangleMesh &mesh;
   const VertexPointMap point_pmap;
-  Construct_scaled_vector_3 scale_functor;
   ErrorMetric error_functor;
 };
 
@@ -353,56 +393,6 @@ template<typename TriangleMesh,
   const TriangleMesh &mesh;
   const VertexPointMap point_pmap;
   Construct_scaled_vector_3 scale_functor;
-};
-
-// Bundled l21 approximation traits
-template<typename PlaneProxy,
-  typename TriangleMesh,
-  typename L21ErrorMetric,
-  typename L21ProxyFitting,
-  typename L21PlaneFitting,
-  typename VertexPointMap,
-  typename FacetNormalMap,
-  typename FacetAreaMap>
-  struct L21ApproximationTrait
-{
-  typedef typename PlaneProxy::GeomTraits GeomTraits;
-  typedef PlaneProxy Proxy;
-  typedef L21ErrorMetric ErrorMetric;
-  typedef L21ProxyFitting ProxyFitting;
-  typedef L21PlaneFitting PlaneFitting;
-
-  L21ApproximationTrait(
-    const TriangleMesh &_mesh,
-    const VertexPointMap &_point_pmap,
-    const FacetNormalMap &_facet_normal_map,
-    const FacetAreaMap &_facet_area_map)
-    : mesh(_mesh),
-    point_pmap(_point_pmap),
-    normal_pmap(_facet_normal_map),
-    area_pmap(_facet_area_map) {}
-
-  // traits function object form
-  // construct error functor
-  ErrorMetric construct_fit_error_functor() const {
-    return ErrorMetric(normal_pmap, area_pmap);
-  }
-
-  // construct proxy fitting functor
-  ProxyFitting construct_proxy_fitting_functor() const {
-    return ProxyFitting(normal_pmap, area_pmap);
-  }
-
-  // construct plane fitting functor
-  L21PlaneFitting construct_plane_fitting_functor() const {
-    return L21PlaneFitting(mesh, area_pmap, normal_pmap, point_pmap);
-  }
-
-private:
-  const TriangleMesh &mesh;
-  const VertexPointMap point_pmap;
-  const FacetNormalMap normal_pmap;
-  const FacetAreaMap area_pmap;
 };
 
 // Bundled l2 approximation traits
