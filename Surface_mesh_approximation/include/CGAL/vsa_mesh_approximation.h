@@ -70,11 +70,10 @@ template<typename TriangleMesh,
 
   typedef CGAL::internal::VSA<
     TriangleMesh,
-    ApproximationTrait,
-    FacetAreaMap,
-    PointPropertyMap> VSA;
+    SegmentPropertyMap,
+    ApproximationTrait> VSA;
 
-  VSA algorithm(tm, app_trait, ppmap, area_pmap);
+  VSA algorithm(tm, app_trait);
 
   switch (init) {
     case VSA::RandomInit:
@@ -88,13 +87,22 @@ template<typename TriangleMesh,
       break;
   }
 
-  algorithm.extract_mesh(segment_ids, tris);
-  BOOST_FOREACH(const typename VSA::Anchor &a, algorithm.collect_anchors()) {
+  typedef CGAL::internal::VSA_mesh_extraction<
+    TriangleMesh,
+    ApproximationTrait,
+    PointPropertyMap,
+    SegmentPropertyMap,
+    FacetAreaMap> VSA_mesh_extraction;
+
+  VSA_mesh_extraction extractor(tm, app_trait, ppmap, segment_ids, area_pmap);
+
+  extractor.extract_mesh(tris);
+  BOOST_FOREACH(const typename VSA_mesh_extraction::Anchor &a, extractor.collect_anchors()) {
     vtx.push_back(a.vtx);
     pos.push_back(a.pos);
   }
 
-  bdrs = algorithm.collect_borders(segment_ids);
+  bdrs = extractor.collect_borders();
 }
 }
 
