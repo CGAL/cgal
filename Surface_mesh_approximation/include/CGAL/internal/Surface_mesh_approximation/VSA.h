@@ -49,9 +49,9 @@ private:
   typedef typename ApproximationTrait::PlaneFitting PlaneFitting;
 
   typedef typename GeomTraits::FT FT;
-  typedef typename GeomTraits::Point_3 Point;
-  typedef typename GeomTraits::Vector_3 Vector;
-  typedef typename GeomTraits::Plane_3 Plane;
+  typedef typename GeomTraits::Point_3 Point_3;
+  typedef typename GeomTraits::Vector_3 Vector_3;
+  typedef typename GeomTraits::Plane_3 Plane_3;
   typedef typename GeomTraits::Construct_vector_3 Construct_vector_3;
   typedef typename GeomTraits::Construct_scaled_vector_3 Construct_scaled_vector_3;
   typedef typename GeomTraits::Construct_sum_of_vectors_3 Construct_sum_of_vectors_3;
@@ -82,7 +82,7 @@ public:
   // The average positioned anchor attached to a vertex.
   struct Anchor {
     vertex_descriptor vtx; // The associated vertex.
-    Point pos; // The position of the anchor.
+    Point_3 pos; // The position of the anchor.
   };
 
   // The border cycle of a region.
@@ -237,14 +237,14 @@ public:
 
     pseudo_CDT(seg_pmap, tris);
 
-    std::vector<Plane> px_planes(proxies.size());
+    std::vector<Plane_3> px_planes(proxies.size());
     std::vector<std::list<face_descriptor> > px_facets(proxies.size());
     BOOST_FOREACH(face_descriptor f, faces(mesh))
       px_facets[seg_pmap[f]].push_back(f);
     for (std::size_t i = 0; i < proxies.size(); ++i)
       px_planes[i] = plane_fitting(px_facets[i].begin(), px_facets[i].end());
     compute_anchor_position(seg_pmap, px_planes);
-    std::vector<Point> vtx;
+    std::vector<Point_3> vtx;
     BOOST_FOREACH(const Anchor &a, anchors)
       vtx.push_back(a.pos);
     if (is_manifold_surface(tris, vtx))
@@ -259,14 +259,14 @@ public:
    * @param vtx vertex positions
    * @return true if build successfully
    */
-  bool is_manifold_surface(const std::vector<int> &tris, const std::vector<Point> &vtx) {
+  bool is_manifold_surface(const std::vector<int> &tris, const std::vector<Point_3> &vtx) {
     typedef CGAL::Polyhedron_3<GeomTraits> PolyhedronSurface;
     typedef typename PolyhedronSurface::HalfedgeDS HDS;
     
     HDS hds;
     CGAL::Polyhedron_incremental_builder_3<HDS> builder(hds, true);
     builder.begin_surface(vtx.size(), tris.size() / 3);
-    BOOST_FOREACH(const Point &v, vtx)
+    BOOST_FOREACH(const Point_3 &v, vtx)
       builder.add_vertex(v);
     for (std::vector<int>::const_iterator itr = tris.begin(); itr != tris.end(); itr += 3) {
       if (builder.test_facet(itr, itr + 3)) {
@@ -636,8 +636,8 @@ private:
       CGAL_assertion(bitr->num_anchors == 2);
       // borders with only 2 initial anchors
       const halfedge_descriptor he_mark = bitr->he_head;
-      Point pt_begin = vertex_point_pmap[target(he_mark, mesh)];
-      Point pt_end = pt_begin;
+      Point_3 pt_begin = vertex_point_pmap[target(he_mark, mesh)];
+      Point_3 pt_end = pt_begin;
 
       halfedge_descriptor he = he_mark;
       ChordVector chord;
@@ -662,11 +662,11 @@ private:
 
       FT dist_max(0.0);
       halfedge_descriptor he_max;
-      Vector chord_vec = vector_functor(pt_begin, pt_end);
+      Vector_3 chord_vec = vector_functor(pt_begin, pt_end);
       chord_vec = scale_functor(chord_vec,
         FT(1.0 / std::sqrt(CGAL::to_double(chord_vec.squared_length()))));
       for (ChordVectorIterator citr = chord.begin(); citr != chord.end(); ++citr) {
-        Vector vec = vector_functor(pt_begin, vertex_point_pmap[target(*citr, mesh)]);
+        Vector_3 vec = vector_functor(pt_begin, vertex_point_pmap[target(*citr, mesh)]);
         vec = CGAL::cross_product(chord_vec, vec);
         FT dist(std::sqrt(CGAL::to_double(vec.squared_length())));
         if (dist > dist_max) {
@@ -857,37 +857,6 @@ private:
   }
 
   /**
-   * Computes and updates the proxy centers of a given partition @a seg_pmap.
-   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<TriangleMesh>::face_handle` as key and `std::size_t` as value type
-   * @param seg_map facet partition index
-   * @param proxies_center proxy centers
-   */
-  template<typename FacetSegmentMap>
-  void compute_proxy_center(const FacetSegmentMap &seg_pmap, std::vector<Point> &proxies_center) {
-    proxies_center = std::vector<Point>(proxies.size());
-
-    std::vector<Vector> centers(proxies.size(), CGAL::NULL_VECTOR);
-    std::vector<FT> areas(proxies.size(), FT(0.0));
-    BOOST_FOREACH(face_descriptor f, faces(mesh)) {
-      const std::size_t px_idx = seg_pmap[f];
-      const halfedge_descriptor he = halfedge(f, mesh);
-      Point pt = CGAL::centroid(
-        vertex_point_pmap[source(he, mesh)],
-        vertex_point_pmap[target(he, mesh)],
-        vertex_point_pmap[target(next(he, mesh), mesh)]);
-      Vector vec = vector_functor(CGAL::ORIGIN, pt);
-      FT area = area_pmap[f];
-      areas[px_idx] += area;
-      centers[px_idx] = sum_functor(centers[px_idx], scale_functor(vec, area));
-    }
-
-    for (std::size_t i = 0; i < proxies.size(); ++i) {
-      Vector vec = scale_functor(centers[i], FT(1.0) / areas[i]);
-      proxies_center[i] = Point(vec.x(), vec.y(), vec.z());
-    }
-  }
-
-  /**
    * Computes and updates the proxy areas of a given partition @a seg_pmap.
    * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<TriangleMesh>::face_handle` as key and `std::size_t` as value type
    * @param seg_map facet partition index
@@ -982,7 +951,7 @@ private:
     // suppose the proxy normal angle is acute
     FT norm_sin(1.0);
     if (!CGAL::is_border(opposite(he_start, mesh), mesh)) {
-      Vector vec = CGAL::cross_product(proxies[px_left].normal, proxies[px_right].normal);
+      Vector_3 vec = CGAL::cross_product(proxies[px_left].normal, proxies[px_right].normal);
       norm_sin = FT(std::sqrt(CGAL::to_double(scalar_product_functor(vec, vec))));
     }
     FT criterion = thre + FT(1.0);
@@ -991,8 +960,8 @@ private:
     const ChordVectorIterator chord_last = chord_end - 1;
     std::size_t anchor_begin = vertex_status_pmap[source(he_start, mesh)];
     std::size_t anchor_end = vertex_status_pmap[target(*chord_last, mesh)];
-    const Point &pt_begin = vertex_point_pmap[source(he_start, mesh)];
-    const Point &pt_end = vertex_point_pmap[target(*chord_last, mesh)];
+    const Point_3 &pt_begin = vertex_point_pmap[source(he_start, mesh)];
+    const Point_3 &pt_end = vertex_point_pmap[target(*chord_last, mesh)];
     if (anchor_begin == anchor_end) {
       // circular chord
       CGAL_assertion(chord_size > 2);
@@ -1011,12 +980,12 @@ private:
     }
     else {
       FT dist_max(0.0);
-      Vector chord_vec = vector_functor(pt_begin, pt_end);
+      Vector_3 chord_vec = vector_functor(pt_begin, pt_end);
       FT chord_len(std::sqrt(CGAL::to_double(chord_vec.squared_length())));
       chord_vec = scale_functor(chord_vec, FT(1.0) / chord_len);
 
       for (ChordVectorIterator citr = chord_begin; citr != chord_last; ++citr) {
-        Vector vec = vector_functor(pt_begin, vertex_point_pmap[target(*citr, mesh)]);
+        Vector_3 vec = vector_functor(pt_begin, vertex_point_pmap[target(*citr, mesh)]);
         vec = CGAL::cross_product(chord_vec, vec);
         FT dist(std::sqrt(CGAL::to_double(vec.squared_length())));
         if (dist > dist_max) {
@@ -1086,7 +1055,7 @@ private:
   template<typename FacetSegmentMap>
   void compute_anchor_position(
     const FacetSegmentMap &seg_pmap,
-    const std::vector<Plane> &px_planes) {
+    const std::vector<Plane_3> &px_planes) {
     std::vector<FT> proxies_area; // The proxy area.
     compute_proxy_area(seg_pmap, proxies_area);
 
@@ -1102,35 +1071,21 @@ private:
 
         // construct an anchor from vertex and the incident proxies
         FT avgx(0), avgy(0), avgz(0), sum_area(0);
-        const Point vtx_pt = vertex_point_pmap[v];
+        const Point_3 vtx_pt = vertex_point_pmap[v];
         for (std::set<std::size_t>::iterator pxitr = px_set.begin();
           pxitr != px_set.end(); ++pxitr) {
           std::size_t px_idx = *pxitr;
-          Point proj = px_planes[px_idx].projection(vtx_pt);
+          Point_3 proj = px_planes[px_idx].projection(vtx_pt);
           FT area = proxies_area[px_idx];
           avgx += proj.x() * area;
           avgy += proj.y() * area;
           avgz += proj.z() * area;
           sum_area += area;
         }
-        Point pos = Point(avgx / sum_area, avgy / sum_area, avgz / sum_area);
+        Point_3 pos = Point_3(avgx / sum_area, avgy / sum_area, avgz / sum_area);
         std::size_t aidx = vertex_status_pmap[v];
         anchors[aidx].vtx = v;
         anchors[aidx].pos = pos;
-
-        // FT sum_area(0);
-        // Vector pos = CGAL::NULL_VECTOR;
-        // const Point vtx_pt = vertex_point_pmap[v];
-        // BOOST_FOREACH(const std::size_t &px_idx, px_set) {
-        //   Vector proj = vector_functor(CGAL::ORIGIN, proxies[px_idx].fit_plane.projection(vtx_pt));
-        //   FT area = proxies_area[px_idx];
-        //   pos = sum_functor(pos, scale_functor(proj, area));
-        //   sum_area += area;
-        // }
-        // pos = scale_functor(pos, FT(1) / sum_area);
-        // std::size_t aidx = vertex_status_pmap[v];
-        // anchors[aidx].vtx = v;
-        // anchors[aidx].pos = Point(CGAL::ORIGIN) + pos;
       }
     }
   }
