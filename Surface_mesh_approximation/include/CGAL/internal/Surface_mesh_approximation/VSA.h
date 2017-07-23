@@ -37,7 +37,7 @@ namespace internal
 template <typename TriangleMesh,
   typename FacetSegmentMap,
   typename ApproximationTraits>
-  class VSA
+  class VSA_approximation
 {
   // type definitions
 private:
@@ -96,7 +96,7 @@ public:
    * @param _mesh `CGAL TriangleMesh` on which approximation operate.
    * @param _appx_trait approximation traits object.
    */
-  VSA(const TriangleMesh &_mesh, const ApproximationTraits &_appx_trait)
+  VSA_approximation(const TriangleMesh &_mesh, const ApproximationTraits &_appx_trait)
     : mesh(_mesh),
     fit_error(_appx_trait.construct_fit_error_functor()),
     proxy_fitting(_appx_trait.construct_proxy_fitting_functor()) {
@@ -417,7 +417,7 @@ private:
     }
     return sum_error;
   }
-}; // end class VSA
+}; // end class VSA_approximation
 
 /**
  * @brief Main class for Variational Shape Approximation mesh extraction algorithm.

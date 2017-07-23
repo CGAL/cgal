@@ -12,10 +12,10 @@ namespace CGAL
  * This function approximate the input triangulated mesh by fitting it with proxies.
  *
  * @tparam TriangleMesh model of `FaceGraph`.
- * @tparam SegmentPropertyMap a property map containing the approximated facet patch id,
+ * @tparam FacetProxyMap a property map containing the approximated facet patch id,
            and `boost::graph_traits<TriangleMesh>::%face_descriptor` as key type,
            std::size_t as value type
- * @tparam PointPropertyMap a property map containing the input mesh vertex point map,
+ * @tparam VertexPointMap a property map containing the input mesh vertex point map,
            and `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type,
            `TriangleMesh::Point_3` as value type
  * @tparam FacetAreaMap a property map containing the input mesh area map,
@@ -32,9 +32,9 @@ namespace CGAL
  * @param tm a triangle mesh
  * @param number_of_segments target number of approximation patches
  * @param number_of_iterations number of fitting iterations
- * @param segment_ids facet proxy patch id property map
- * @param ppmap mesh vertex point property map
- * @param area_pmap facet area property map
+ * @param f_proxy_pmap facet proxy patch id property map
+ * @param v_point_pmap mesh vertex point property map
+ * @param f_area_pmap facet area property map
  * @param tris approximation indexed triangle soup
  * @param pos anchor position container
  * @param vtx anchor vertex container
@@ -43,8 +43,8 @@ namespace CGAL
  * @param traits kernel traits
  */
 template<typename TriangleMesh,
-  typename SegmentPropertyMap,
-  typename PointPropertyMap,
+  typename FacetProxyMap,
+  typename VertexPointMap,
   typename FacetAreaMap,
   typename AnchorIndexContainer,
   typename AnchorPositionContainer,
@@ -57,9 +57,9 @@ template<typename TriangleMesh,
     const TriangleMesh &tm,
     const std::size_t number_of_segments,
     const std::size_t number_of_iterations,
-    SegmentPropertyMap segment_ids,
-    const PointPropertyMap &ppmap,
-    const FacetAreaMap &area_pmap,
+    FacetProxyMap f_proxy_pmap,
+    const VertexPointMap &v_point_pmap,
+    const FacetAreaMap &f_area_pmap,
     AnchorIndexContainer &tris,
     AnchorPositionContainer &pos,
     AnchorVertexContainer &vtx,
@@ -68,33 +68,33 @@ template<typename TriangleMesh,
     GeomTraits traits) {
   // CGAL_precondition(is_pure_triangle(tm));
 
-  typedef CGAL::internal::VSA<
+  typedef CGAL::internal::VSA_approximation<
     TriangleMesh,
-    SegmentPropertyMap,
-    ApproximationTrait> VSA;
+    FacetProxyMap,
+    ApproximationTrait> VSA_approximation;
 
-  VSA algorithm(tm, app_trait);
+  VSA_approximation algorithm(tm, app_trait);
 
   switch (init) {
-    case VSA::RandomInit:
-      algorithm.partition(number_of_segments, number_of_iterations, segment_ids);
+    case VSA_approximation::RandomInit:
+      algorithm.partition(number_of_segments, number_of_iterations, f_proxy_pmap);
       break;
-    case VSA::IncrementalInit:
-      algorithm.partition_incre(number_of_segments, number_of_iterations, segment_ids);
+    case VSA_approximation::IncrementalInit:
+      algorithm.partition_incre(number_of_segments, number_of_iterations, f_proxy_pmap);
       break;
-    case VSA::HierarchicalInit:
-      algorithm.partition_hierarchical(number_of_segments, number_of_iterations, segment_ids);
+    case VSA_approximation::HierarchicalInit:
+      algorithm.partition_hierarchical(number_of_segments, number_of_iterations, f_proxy_pmap);
       break;
   }
 
   typedef CGAL::internal::VSA_mesh_extraction<
     TriangleMesh,
     ApproximationTrait,
-    PointPropertyMap,
-    SegmentPropertyMap,
+    VertexPointMap,
+    FacetProxyMap,
     FacetAreaMap> VSA_mesh_extraction;
 
-  VSA_mesh_extraction extractor(tm, app_trait, ppmap, segment_ids, area_pmap);
+  VSA_mesh_extraction extractor(tm, app_trait, v_point_pmap, f_proxy_pmap, f_area_pmap);
 
   extractor.extract_mesh(tris);
   BOOST_FOREACH(const typename VSA_mesh_extraction::Anchor &a, extractor.collect_anchors()) {
