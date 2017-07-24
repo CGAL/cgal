@@ -18,9 +18,6 @@ namespace CGAL
  * @tparam VertexPointMap a property map containing the input mesh vertex point map,
            and `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type,
            `TriangleMesh::Point_3` as value type
- * @tparam FacetAreaMap a property map containing the input mesh area map,
-           and `boost::graph_traits<TriangleMesh>::%face_descriptor` as key type,
-           `GeomTraits::FT` as value type
  * @tparam AnchorIndexContainer a container of approximated indexed triangle soup
  * @tparam AnchorPositionContainer a container of extracted anchor position
  * @tparam AnchorVertexContainer a container of extracted anchor vertex
@@ -33,7 +30,6 @@ namespace CGAL
  * @param number_of_iterations number of fitting iterations
  * @param f_proxy_pmap facet proxy patch id property map
  * @param v_point_pmap mesh vertex point property map
- * @param f_area_pmap facet area property map
  * @param tris approximation indexed triangle soup
  * @param pos anchor position container
  * @param vtx anchor vertex container
@@ -43,7 +39,6 @@ namespace CGAL
 template<typename TriangleMesh,
   typename FacetProxyMap,
   typename VertexPointMap,
-  typename FacetAreaMap,
   typename AnchorIndexContainer,
   typename AnchorPositionContainer,
   typename AnchorVertexContainer,
@@ -56,7 +51,6 @@ template<typename TriangleMesh,
     const std::size_t number_of_iterations,
     FacetProxyMap f_proxy_pmap,
     const VertexPointMap &v_point_pmap,
-    const FacetAreaMap &f_area_pmap,
     AnchorIndexContainer &tris,
     AnchorPositionContainer &pos,
     AnchorVertexContainer &vtx,

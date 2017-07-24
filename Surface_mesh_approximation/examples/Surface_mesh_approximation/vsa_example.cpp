@@ -78,7 +78,6 @@ int main(int argc, char *argv[])
     num_iterations,
     proxy_patch_map,
     point_pmap,
-    area_pmap,
     tris,
     anchor_pos,
     anchor_vtx,
