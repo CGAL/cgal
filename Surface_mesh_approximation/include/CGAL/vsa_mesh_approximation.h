@@ -60,24 +60,12 @@ void vsa_mesh_approximation(
     const ApproximationTrait &app_trait) {
   // CGAL_precondition(is_pure_triangle(tm));
 
-  typedef CGAL::internal::VSA_approximation<
-    TriangleMesh,
-    FacetProxyMap,
-    ApproximationTrait> VSA_approximation;
-
-  VSA_approximation algorithm(tm, app_trait);
-
-  switch (init) {
-    case VSA_approximation::RandomInit:
-      algorithm.partition(number_of_segments, number_of_iterations, f_proxy_pmap);
-      break;
-    case VSA_approximation::IncrementalInit:
-      algorithm.partition_incre(number_of_segments, number_of_iterations, f_proxy_pmap);
-      break;
-    case VSA_approximation::HierarchicalInit:
-      algorithm.partition_hierarchical(number_of_segments, number_of_iterations, f_proxy_pmap);
-      break;
-  }
+  vsa_mesh_approximation(tm,
+    f_proxy_pmap,
+    app_trait,
+    init,
+    number_of_segments,
+    number_of_iterations);
 
   typedef CGAL::internal::VSA_mesh_extraction<
     TriangleMesh,
@@ -188,24 +176,12 @@ void vsa_mesh_approximation(
     facet_proxy_map.insert(std::pair<face_descriptor, std::size_t>(f, 0));
   FacetProxyMap f_proxy_pmap(facet_proxy_map);
 
-  typedef CGAL::internal::VSA_approximation<
-    TriangleMesh,
-    FacetProxyMap,
-    ApproximationTrait> VSA_approximation;
-
-  VSA_approximation algorithm(tm, app_trait);
-
-  switch (init) {
-    case VSA_approximation::RandomInit:
-      algorithm.partition(number_of_segments, number_of_iterations, f_proxy_pmap);
-      break;
-    case VSA_approximation::IncrementalInit:
-      algorithm.partition_incre(number_of_segments, number_of_iterations, f_proxy_pmap);
-      break;
-    case VSA_approximation::HierarchicalInit:
-      algorithm.partition_hierarchical(number_of_segments, number_of_iterations, f_proxy_pmap);
-      break;
-  }
+  vsa_mesh_approximation(tm,
+    f_proxy_pmap,
+    app_trait,
+    init,
+    number_of_segments,
+    number_of_iterations);
 
   typedef typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type VertexPointMap;
   typedef CGAL::internal::VSA_mesh_extraction<
@@ -263,24 +239,12 @@ void vsa_mesh_approximation(
     const std::size_t number_of_iterations) {
   // CGAL_precondition(is_pure_triangle(tm));
 
-  typedef CGAL::internal::VSA_approximation<
-    TriangleMesh,
-    FacetProxyMap,
-    ApproximationTrait> VSA_approximation;
-
-  VSA_approximation algorithm(tm, app_trait);
-
-  switch (init) {
-    case VSA_approximation::RandomInit:
-      algorithm.partition(number_of_segments, number_of_iterations, f_proxy_pmap);
-      break;
-    case VSA_approximation::IncrementalInit:
-      algorithm.partition_incre(number_of_segments, number_of_iterations, f_proxy_pmap);
-      break;
-    case VSA_approximation::HierarchicalInit:
-      algorithm.partition_hierarchical(number_of_segments, number_of_iterations, f_proxy_pmap);
-      break;
-  }
+  vsa_mesh_approximation(tm,
+    f_proxy_pmap,
+    app_trait,
+    init,
+    number_of_segments,
+    number_of_iterations);
 
   typedef typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type VertexPointMap;
   typedef CGAL::internal::VSA_mesh_extraction<
