@@ -174,7 +174,8 @@ int main(int argc, char *argv[])
   int init = std::atoi(argv[2]);
   if (init < 0 || init > 3)
     return EXIT_FAILURE;
-  CGAL::vsa_mesh_approximation(mesh,
+
+  CGAL::vsa_approximate(mesh,
     proxy_patch_map,
     ApproxTrait(mesh, point_pmap, center_pmap, area_pmap, normal_pmap),
     init,

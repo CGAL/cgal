@@ -60,7 +60,7 @@ void vsa_mesh_approximation(
     const ApproximationTrait &app_trait) {
   // CGAL_precondition(is_pure_triangle(tm));
 
-  vsa_mesh_approximation(tm,
+  vsa_approximate(tm,
     f_proxy_pmap,
     app_trait,
     init,
@@ -107,7 +107,7 @@ void vsa_mesh_approximation(
 template<typename TriangleMesh,
   typename FacetProxyMap,
   typename ApproximationTrait>
-void vsa_mesh_approximation(
+void vsa_approximate(
     const TriangleMesh &tm,
     FacetProxyMap f_proxy_pmap,
     const ApproximationTrait &app_trait,
@@ -159,7 +159,7 @@ template<typename TriangleMesh,
   typename AnchorIndexContainer,
   typename AnchorPositionContainer,
   typename ApproximationTrait>
-void vsa_mesh_approximation(
+void vsa_extract(
     const TriangleMesh &tm,
     AnchorIndexContainer &tris,
     AnchorPositionContainer &pos,
@@ -176,7 +176,7 @@ void vsa_mesh_approximation(
     facet_proxy_map.insert(std::pair<face_descriptor, std::size_t>(f, 0));
   FacetProxyMap f_proxy_pmap(facet_proxy_map);
 
-  vsa_mesh_approximation(tm,
+  vsa_approximate(tm,
     f_proxy_pmap,
     app_trait,
     init,
@@ -228,7 +228,7 @@ template<typename TriangleMesh,
   typename AnchorIndexContainer,
   typename AnchorPositionContainer,
   typename ApproximationTrait>
-void vsa_mesh_approximation(
+void vsa_approximate_and_extract(
     const TriangleMesh &tm,
     FacetProxyMap f_proxy_pmap,
     AnchorIndexContainer &tris,
@@ -239,7 +239,7 @@ void vsa_mesh_approximation(
     const std::size_t number_of_iterations) {
   // CGAL_precondition(is_pure_triangle(tm));
 
-  vsa_mesh_approximation(tm,
+  vsa_approximate(tm,
     f_proxy_pmap,
     app_trait,
     init,

@@ -71,7 +71,8 @@ int main(int argc, char *argv[])
   int init = std::atoi(argv[2]);
   if (init < 0 || init > 3)
     return EXIT_FAILURE;
-  CGAL::vsa_mesh_approximation(mesh,
+
+  CGAL::vsa_approximate_and_extract(mesh,
     proxy_patch_map,
     tris,
     anchor_pos,
