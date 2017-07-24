@@ -3,6 +3,7 @@
 
 #include <CGAL/Polygon_mesh_processing/Weights.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
+#include <CGAL/Polygon_mesh_processing/repair.h>
 
 #include <CGAL/Monge_via_jet_fitting.h>
 #include <CGAL/AABB_tree.h>
@@ -101,7 +102,10 @@ public:
 
     std::size_t remove_degenerate_faces()
     {
+
         std::size_t nb_removed_faces = 0;
+
+        /*
         for(face_descriptor f : faces(mesh_))
         {
             Triangle tr = triangle(f);
@@ -112,6 +116,11 @@ public:
                 nb_removed_faces++;
             }
         }
+        */
+
+        // repair.h
+        nb_removed_faces = CGAL::Polygon_mesh_processing::remove_degenerate_faces(mesh_);
+
 
         return nb_removed_faces;
     }
@@ -140,38 +149,55 @@ public:
         // collapse
         while(!edges_to_collapse.empty())
         {
-            edge_descriptor e = *edges_to_collapse.begin();
-            edges_to_collapse.erase(edges_to_collapse.begin());
-
-            // link condition
-            if(!Euler::does_satisfy_link_condition(e, mesh_))
+            while(!edges_to_collapse.empty())
             {
-                non_topologically_valid_collapses.insert(e);
-                CGAL_assertion(non_topologically_valid_collapses.empty());
-                continue;
-            }
+                edge_descriptor e = *edges_to_collapse.begin();
+                edges_to_collapse.erase(edges_to_collapse.begin());
 
-            halfedge_descriptor he = halfedge(e, mesh_);
-            vertex_descriptor vs = source(he, mesh_);
-            vertex_descriptor vt = target(he, mesh_);
-
-            vertex_descriptor v = Euler::collapse_edge(e, mesh_);
-
-
-            for (edge_descriptor out_e : out_edges(v, mesh_))
-            {
-                if(edge_should_collapse(out_e))
+                // link condition
+                if(!Euler::does_satisfy_link_condition(e, mesh_))
                 {
-                    edges_to_collapse.insert(out_e);
+                    non_topologically_valid_collapses.insert(e);
+                    continue;
                 }
+
+
+                // take out from short_edges prev and prev(opposite), which will be collapsed
+                halfedge_descriptor he = halfedge(e, mesh_);
+
+                //
+                vertex_descriptor vs = source(he, mesh_);
+                vertex_descriptor vt = target(he, mesh_);
+                //
+
+                edges_to_collapse.erase(edge(prev(he, mesh_), mesh_));
+                edges_to_collapse.erase(edge(prev(opposite(he, mesh_), mesh_), mesh_));
+
+                // shoot out edge to be collapsed from topologically_non_valid
+                non_topologically_valid_collapses.erase(e);
+                non_topologically_valid_collapses.erase(edge(prev(he, mesh_), mesh_));
+                non_topologically_valid_collapses.erase(edge(prev(opposite(he, mesh_), mesh_), mesh_));
+
+
+
+                vertex_descriptor v = Euler::collapse_edge(e, mesh_);
+
+
+                // check if an out_edge now is too short
+                for (edge_descriptor out_e : out_edges(v, mesh_))
+                {
+                    if(edge_should_collapse(out_e))
+                        edges_to_collapse.insert(out_e);
+                }
+
+
+                nb_collapsed_edges++;
             }
 
-
-            nb_collapsed_edges++;
-
-
+            edges_to_collapse.swap(non_topologically_valid_collapses);
 
         }
+
 
 
         std::cout<<"nb_collapsed_edges: "<<nb_collapsed_edges<<std::endl;
