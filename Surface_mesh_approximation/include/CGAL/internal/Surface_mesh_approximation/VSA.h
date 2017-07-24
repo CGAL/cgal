@@ -402,12 +402,10 @@ private:
 template <typename TriangleMesh,
   typename ApproximationTraits,
   typename VertexPointMap,
-  typename FacetSegmentMap,
-  typename FacetAreaMap>
+  typename FacetSegmentMap>
   class VSA_mesh_extraction
 {
   typedef typename ApproximationTraits::GeomTraits GeomTraits;
-  typedef typename ApproximationTraits::Proxy Proxy;
   typedef typename ApproximationTraits::PlaneFitting PlaneFitting;
 
   typedef typename GeomTraits::FT FT;
@@ -452,18 +450,16 @@ public:
    * @param _appx_trait approximation traits object.
    * @param _point_pmap vertex point map of the input mesh.
    * @param _seg_pmap approximation partition.
-   * @param _area_pmap facet area map of the input mesh.
    */
   VSA_mesh_extraction(const TriangleMesh &_mesh,
     const ApproximationTraits &_appx_trait,
     const VertexPointMap &_point_pmap,
-    const FacetSegmentMap &_seg_pmap,
-    const FacetAreaMap &_area_pmap)
+    const FacetSegmentMap &_seg_pmap)
     : mesh(_mesh),
     point_pmap(_point_pmap),
     seg_pmap(_seg_pmap),
-    area_pmap(_area_pmap),
     vanchor_map(vertex_int_map),
+    num_proxies(0),
     plane_fitting(_appx_trait.construct_plane_fitting_functor()) {
     GeomTraits traits;
     vector_functor = traits.construct_vector_3_object();
@@ -476,19 +472,38 @@ public:
     BOOST_FOREACH(vertex_descriptor v, vertices(mesh))
       vertex_int_map.insert(std::pair<vertex_descriptor, int>(v, static_cast<int>(NO_ANCHOR)));
 
-    std::size_t num_proxies = 0;
+    // count number of proxies
     BOOST_FOREACH(face_descriptor f, faces(mesh))
       num_proxies = num_proxies < seg_pmap[f] ? seg_pmap[f] : num_proxies;
-    num_proxies++;
+    ++num_proxies;
+
+    // fit proxy planes, areas, normals
     std::vector<std::list<face_descriptor> > px_facets(num_proxies);
     BOOST_FOREACH(face_descriptor f, faces(mesh))
       px_facets[seg_pmap[f]].push_back(f);
+    BOOST_FOREACH(const std::list<face_descriptor> &px_patch, px_facets) {
+      px_planes.push_back(plane_fitting(px_patch.begin(), px_patch.end()));
 
-    typename ApproximationTraits::ProxyFitting proxy_fitting = _appx_trait.construct_proxy_fitting_functor();
-    for (std::size_t i = 0; i < num_proxies; ++i)
-      proxies.push_back(proxy_fitting(px_facets[i].begin(), px_facets[i].end()));
+      Vector_3 norm = CGAL::NULL_VECTOR;
+      FT area(0);
+      BOOST_FOREACH(face_descriptor f, px_patch) {
+        halfedge_descriptor he = halfedge(f, mesh);
+        const Point_3 p0 = point_pmap[source(he, mesh)];
+        const Point_3 p1 = point_pmap[target(he, mesh)];
+        const Point_3 p2 = point_pmap[target(next(he, mesh), mesh)];
+        FT farea(std::sqrt(CGAL::to_double(CGAL::squared_area(p0, p1, p2))));
+        Vector_3 fnorm = CGAL::unit_normal(p0, p1, p2);
 
-    std::cerr << "#proxies " << num_proxies << ", " << proxies.size() << std::endl;
+        norm = sum_functor(norm, scale_functor(fnorm, farea));
+        area += farea;
+      }
+      norm = scale_functor(norm, FT(1.0 / std::sqrt(CGAL::to_double(norm.squared_length()))));
+
+      px_normals.push_back(norm);
+      px_areas.push_back(area);
+    }
+
+    std::cerr << "#proxies " << num_proxies << std::endl;
   }
 
   /**
@@ -738,7 +753,7 @@ private:
       add_edge(to_sgv_map[vs], to_sgv_map[vt], len, gmain);
     }
 
-    std::vector<VertexVector> vertex_patches(proxies.size());
+    std::vector<VertexVector> vertex_patches(num_proxies);
     BOOST_FOREACH(vertex_descriptor v, vertices(mesh)) {
       std::set<std::size_t> px_set;
       BOOST_FOREACH(face_descriptor f, faces_around_target(halfedge(v, mesh), mesh)) {
@@ -896,7 +911,7 @@ private:
     // suppose the proxy normal angle is acute
     FT norm_sin(1.0);
     if (!CGAL::is_border(opposite(he_start, mesh), mesh)) {
-      Vector_3 vec = CGAL::cross_product(proxies[px_left].normal, proxies[px_right].normal);
+      Vector_3 vec = CGAL::cross_product(px_normals[px_left], px_normals[px_right]);
       norm_sin = FT(std::sqrt(CGAL::to_double(scalar_product_functor(vec, vec))));
     }
     FT criterion = thre + FT(1.0);
@@ -994,38 +1009,9 @@ private:
   }
 
   /**
-   * Computes and the proxy fitting planes.
-   * @param px_planes proxy planes.
-   */
-  void compute_proxy_planes(std::vector<Plane_3> &px_planes) {
-    std::vector<std::list<face_descriptor> > px_facets(proxies.size());
-    BOOST_FOREACH(face_descriptor f, faces(mesh))
-      px_facets[seg_pmap[f]].push_back(f);
-    for (std::size_t i = 0; i < proxies.size(); ++i)
-      px_planes[i] = plane_fitting(px_facets[i].begin(), px_facets[i].end());
-  }
-
-  /**
-   * Computes and the proxy areas.
-   * @param proxies_area proxy areas
-   */
-  void compute_proxy_area(std::vector<FT> &proxies_area) {
-    BOOST_FOREACH(face_descriptor f, faces(mesh))
-      proxies_area[seg_pmap[f]] += area_pmap[f];
-  }
-
-  /**
    * Calculate the anchor positions.
    */
   void compute_anchor_position() {
-    // proxy fit plane
-    std::vector<Plane_3> px_planes(proxies.size());
-    compute_proxy_planes(px_planes);
-
-    // proxy area
-    std::vector<FT> proxies_area(proxies.size(), FT(0));
-    compute_proxy_area(proxies_area);
-
     anchors = std::vector<Anchor>(anchor_index);
     BOOST_FOREACH(vertex_descriptor v, vertices(mesh)) {
       if (is_anchor_attached(v, vanchor_map)) {
@@ -1043,7 +1029,7 @@ private:
           pxitr != px_set.end(); ++pxitr) {
           std::size_t px_idx = *pxitr;
           Point_3 proj = px_planes[px_idx].projection(vtx_pt);
-          FT area = proxies_area[px_idx];
+          FT area = px_areas[px_idx];
           avgx += proj.x() * area;
           avgy += proj.y() * area;
           avgz += proj.z() * area;
@@ -1061,14 +1047,16 @@ private:
   const TriangleMesh &mesh;
   const VertexPointMap point_pmap;
   const FacetSegmentMap seg_pmap;
-  const FacetAreaMap area_pmap;
   Construct_vector_3 vector_functor;
   Construct_scaled_vector_3 scale_functor;
   Construct_sum_of_vectors_3 sum_functor;
   Compute_scalar_product_3 scalar_product_functor;
 
-  // proxy
-  std::vector<Proxy> proxies;
+  // proxy fitting planes
+  std::size_t num_proxies;
+  std::vector<Plane_3> px_planes;
+  std::vector<Vector_3> px_normals;
+  std::vector<FT> px_areas;
 
   // The attached anchor index of a vertex.
   std::map<vertex_descriptor, int> vertex_int_map;

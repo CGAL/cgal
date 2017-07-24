@@ -87,10 +87,9 @@ template<typename TriangleMesh,
     TriangleMesh,
     ApproximationTrait,
     VertexPointMap,
-    FacetProxyMap,
-    FacetAreaMap> VSA_mesh_extraction;
+    FacetProxyMap> VSA_mesh_extraction;
 
-  VSA_mesh_extraction extractor(tm, app_trait, v_point_pmap, f_proxy_pmap, f_area_pmap);
+  VSA_mesh_extraction extractor(tm, app_trait, v_point_pmap, f_proxy_pmap);
 
   extractor.extract_mesh(tris);
   BOOST_FOREACH(const typename VSA_mesh_extraction::Anchor &a, extractor.collect_anchors()) {
