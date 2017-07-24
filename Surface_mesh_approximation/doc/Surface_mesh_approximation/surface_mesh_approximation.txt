@@ -26,7 +26,7 @@ Approximate a triangle mesh and extract the approximated triangle surface, using
 
 The following example calls the functions `CGAL::vsa_mesh_approximation()` on the input triangle mesh.
 
-\cgalExample{Surface_mesh_approximation/vsa_example.cpp}
+\cgalExample{Surface_mesh_approximation/vsa_extraction_example.cpp}
 
 \subsection ApproximationExample_2 User-defined Proxy
 

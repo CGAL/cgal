@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
   Polyhedron mesh;
   std::ifstream input(argv[1]);
   if (!input || !(input >> mesh) || mesh.empty()) {
-    std::cerr << "Not a valid off file." << std::endl;
+    std::cerr << "Invalid off file." << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -57,33 +57,20 @@ int main(int argc, char *argv[])
   FacetAreaMap area_pmap(facet_areas);
   VertexPointMap point_pmap = get(boost::vertex_point, const_cast<Polyhedron &>(mesh));
 
-  // create a property-map for segment-ids
-  typedef std::map<Facet_const_handle, std::size_t> Facet_id_map;
-  Facet_id_map internal_facet_id_map;
-  for (Facet_const_iterator fitr = mesh.facets_begin(); fitr != mesh.facets_end(); ++fitr)
-    internal_facet_id_map.insert(std::pair<Facet_const_handle, std::size_t>(fitr, 0));
-  boost::associative_property_map<Facet_id_map> proxy_patch_map(internal_facet_id_map);
-
   const std::size_t num_proxies = std::atoi(argv[3]);
   const std::size_t num_iterations = std::atoi(argv[4]);
   std::vector<int> tris;
   std::vector<Kernel::Point_3> anchor_pos;
-  std::vector<Polyhedron::Vertex_handle> anchor_vtx;
-  std::vector<std::vector<std::size_t> > bdrs;
   int init = std::atoi(argv[2]);
   if (init < 0 || init > 3)
     return EXIT_FAILURE;
-  CGAL::vsa_mesh_approximation(init, mesh,
-    num_proxies,
-    num_iterations,
-    proxy_patch_map,
-    point_pmap,
+  CGAL::vsa_mesh_approximation(mesh,
     tris,
     anchor_pos,
-    anchor_vtx,
-    bdrs,
-    L21ApproximationTrait(mesh, point_pmap, normal_pmap, area_pmap));
+    L21ApproximationTrait(mesh, point_pmap, normal_pmap, area_pmap),
+    init,
+    num_proxies,
+    num_iterations);
 
   return EXIT_SUCCESS;
 }
-

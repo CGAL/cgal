@@ -138,7 +138,7 @@ int main(int argc, char *argv[])
   Polyhedron mesh;
   std::ifstream input(argv[1]);
   if (!input || !(input >> mesh) || mesh.empty()) {
-    std::cerr << "Not a valid off file." << std::endl;
+    std::cerr << "Invalid off file." << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -171,23 +171,15 @@ int main(int argc, char *argv[])
 
   const std::size_t num_proxies = std::atoi(argv[3]);
   const std::size_t num_iterations = std::atoi(argv[4]);
-  std::vector<int> tris;
-  std::vector<Kernel::Point_3> anchor_pos;
-  std::vector<Polyhedron::Vertex_handle> anchor_vtx;
-  std::vector<std::vector<std::size_t> > bdrs;
   int init = std::atoi(argv[2]);
   if (init < 0 || init > 3)
     return EXIT_FAILURE;
-  CGAL::vsa_mesh_approximation(init, mesh,
-    num_proxies,
-    num_iterations,
+  CGAL::vsa_mesh_approximation(mesh,
     proxy_patch_map,
-    point_pmap,
-    tris,
-    anchor_pos,
-    anchor_vtx,
-    bdrs,
-    ApproxTrait(mesh, point_pmap, center_pmap, area_pmap, normal_pmap));
+    ApproxTrait(mesh, point_pmap, center_pmap, area_pmap, normal_pmap),
+    init,
+    num_proxies,
+    num_iterations);
 
   return EXIT_SUCCESS;
 }

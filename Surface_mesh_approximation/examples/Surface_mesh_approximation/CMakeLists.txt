@@ -41,5 +41,5 @@ include_directories( BEFORE ../../include )
 
 include( CGAL_CreateSingleSourceCGALProgram )
 
-create_single_source_cgal_program( "vsa_example.cpp" )
+create_single_source_cgal_program( "vsa_extraction_example.cpp" )
 create_single_source_cgal_program( "vsa_metric_example.cpp")
