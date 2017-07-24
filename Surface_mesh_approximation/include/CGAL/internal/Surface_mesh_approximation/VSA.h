@@ -31,7 +31,7 @@ namespace internal
 /**
  * @brief Main class for Variational Shape Approximation algorithm.
  * @tparam TriangleMesh a CGAL TriangleMesh
- * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<TriangleMesh>::face_handle` as key and `std::size_t` as value type
+ * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<TriangleMesh>::face_descriptor` as key and `std::size_t` as value type
  * @tparam ApproximationTraits a model of ApproximationGeomTraits
  */
 template <typename TriangleMesh,
@@ -47,22 +47,7 @@ private:
   typedef typename ApproximationTraits::ProxyFitting ProxyFitting;
 
   typedef typename GeomTraits::FT FT;
-  typedef typename GeomTraits::Point_3 Point_3;
-  typedef typename GeomTraits::Vector_3 Vector_3;
-  typedef typename GeomTraits::Plane_3 Plane_3;
-  typedef typename GeomTraits::Construct_vector_3 Construct_vector_3;
-  typedef typename GeomTraits::Construct_scaled_vector_3 Construct_scaled_vector_3;
-  typedef typename GeomTraits::Construct_sum_of_vectors_3 Construct_sum_of_vectors_3;
-  typedef typename GeomTraits::Compute_scalar_product_3 Compute_scalar_product_3;
-
-  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
-  typedef typename boost::graph_traits<TriangleMesh>::halfedge_iterator halfedge_iterator;
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
-  typedef typename boost::graph_traits<TriangleMesh>::face_iterator face_iterator;
-  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
-  typedef typename boost::graph_traits<TriangleMesh>::vertex_iterator vertex_iterator;
-  typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor edge_descriptor;
-  typedef typename boost::graph_traits<TriangleMesh>::edge_iterator edge_iterator;
 
 public:
   enum Initialization {
@@ -74,10 +59,6 @@ public:
   // member variables
 private:
   const TriangleMesh &mesh;
-  Construct_vector_3 vector_functor;
-  Construct_scaled_vector_3 scale_functor;
-  Construct_sum_of_vectors_3 sum_functor;
-  Compute_scalar_product_3 scalar_product_functor;
 
   // Proxy.
   std::vector<Proxy> proxies;
@@ -99,14 +80,7 @@ public:
   VSA_approximation(const TriangleMesh &_mesh, const ApproximationTraits &_appx_trait)
     : mesh(_mesh),
     fit_error(_appx_trait.construct_fit_error_functor()),
-    proxy_fitting(_appx_trait.construct_proxy_fitting_functor()) {
-
-    GeomTraits traits;
-    vector_functor = traits.construct_vector_3_object();
-    scale_functor = traits.construct_scaled_vector_3_object();
-    sum_functor = traits.construct_sum_of_vectors_3_object();
-    scalar_product_functor = traits.compute_scalar_product_3_object();
-  }
+    proxy_fitting(_appx_trait.construct_proxy_fitting_functor()) {}
 
   /**
    * Partitions the mesh into the designated number of regions, and stores them in @a seg_map.
@@ -195,7 +169,8 @@ private:
 
     proxies.clear();
     // generate 2 seeds
-    face_iterator f0 = faces(mesh).first, f1 = ++f0;
+    typename boost::graph_traits<TriangleMesh>::face_iterator
+      f0 = faces(mesh).first, f1 = ++f0;
     std::vector<face_descriptor> fvec(1, *f0);
     proxies.push_back(proxy_fitting(fvec.begin(), fvec.end()));
     std::vector<face_descriptor> fvec2(1, *f1);
