@@ -37,7 +37,7 @@ namespace internal
 template <typename TriangleMesh,
   typename FacetSegmentMap,
   typename ApproximationTraits>
-  class VSA_approximation
+class VSA_approximation
 {
   // type definitions
 private:
@@ -403,7 +403,7 @@ template <typename TriangleMesh,
   typename ApproximationTraits,
   typename VertexPointMap,
   typename FacetSegmentMap>
-  class VSA_mesh_extraction
+class VSA_mesh_extraction
 {
   typedef typename ApproximationTraits::GeomTraits GeomTraits;
   typedef typename ApproximationTraits::PlaneFitting PlaneFitting;

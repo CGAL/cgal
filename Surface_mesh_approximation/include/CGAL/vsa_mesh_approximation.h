@@ -46,7 +46,7 @@ template<typename TriangleMesh,
   typename AnchorVertexContainer,
   typename BoundaryContainer,
   typename ApproximationTrait>
-  void vsa_mesh_approximation(
+void vsa_mesh_approximation(
     const int init,
     const TriangleMesh &tm,
     const std::size_t number_of_segments,
@@ -119,7 +119,7 @@ template<typename TriangleMesh,
 template<typename TriangleMesh,
   typename FacetProxyMap,
   typename ApproximationTrait>
-  void vsa_mesh_approximation(
+void vsa_mesh_approximation(
     const TriangleMesh &tm,
     FacetProxyMap f_proxy_pmap,
     const ApproximationTrait &app_trait,
@@ -171,7 +171,7 @@ template<typename TriangleMesh,
   typename AnchorIndexContainer,
   typename AnchorPositionContainer,
   typename ApproximationTrait>
-  void vsa_mesh_approximation(
+void vsa_mesh_approximation(
     const TriangleMesh &tm,
     AnchorIndexContainer &tris,
     AnchorPositionContainer &pos,
@@ -252,7 +252,7 @@ template<typename TriangleMesh,
   typename AnchorIndexContainer,
   typename AnchorPositionContainer,
   typename ApproximationTrait>
-  void vsa_mesh_approximation(
+void vsa_mesh_approximation(
     const TriangleMesh &tm,
     FacetProxyMap f_proxy_pmap,
     AnchorIndexContainer &tris,
