@@ -653,7 +653,7 @@ std::size_t remove_null_edges(
 /// @param np optional \ref namedparameters described below
 ///
 /// \cgalNamedParamsBegin
-///    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`. The type of this map is model of `ReadWritePropertyMap`. 
+///    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`. The type of this map is model of `ReadWritePropertyMap`.
 /// If this parameter is omitted, an internal property map for
 /// `CGAL::vertex_point_t` should be available in `TriangleMesh`
 /// \cgalParamEnd
@@ -1147,7 +1147,7 @@ bool remove_self_intersections(TriangleMesh& tm, const int max_steps = 7, bool v
         boundary_hedges.resize(boundary_hedges_initial_size);
         BOOST_FOREACH(face_descriptor fh, faces_to_remove)
         {
-          halfedge_descriptor h = fh->halfedge();
+          halfedge_descriptor h = halfedge(fh,tm);
           for (int i=0;i<3; ++i)
           {
             if ( is_border( opposite(h, tm), tm) ){
@@ -1175,7 +1175,7 @@ bool remove_self_intersections(TriangleMesh& tm, const int max_steps = 7, bool v
         std::set<vertex_descriptor> border_vertices;
         BOOST_FOREACH(halfedge_descriptor h, boundary_hedges)
         {
-          if (!border_vertices.insert(h->vertex()).second){
+          if (!border_vertices.insert(target(h,tm)).second){
             BOOST_FOREACH(halfedge_descriptor hh, halfedges_around_target(h,tm)){
               if (!is_border(hh, tm))
                 faces_to_remove.insert(face(hh, tm));
@@ -1197,7 +1197,7 @@ bool remove_self_intersections(TriangleMesh& tm, const int max_steps = 7, bool v
         std::set<edge_descriptor>  edges_to_remove;
         BOOST_FOREACH(face_descriptor fh, faces_to_remove)
         {
-          BOOST_FOREACH(halfedge_descriptor h, halfedges_around_face(fh->halfedge(),tm))
+          BOOST_FOREACH(halfedge_descriptor h, halfedges_around_face(halfedge(fh,tm),tm))
           {
             if (halfedge(target(h, tm), tm)==h) // limit the number of insertions
               vertices_to_remove.insert(target(h, tm));
