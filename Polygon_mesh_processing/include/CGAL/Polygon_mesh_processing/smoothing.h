@@ -169,6 +169,17 @@ void curvature_flow(PolygonMesh& pmesh, const NamedParameters& np)
     internal::Curvature_flow<PolygonMesh, VertexPointMap, GeomTraits> curvature_remesher(pmesh, vpmap);
     curvature_remesher.init_remeshing(faces(pmesh));
 
+
+#ifdef CGAL_PMP_REMESHING_VERBOSE
+  t.stop();
+  std::cout << " done ("<< t.time() <<" sec)." << std::endl;
+  std::cout << "Removing degenerate edges..." << std::endl;
+  t.reset(); t.start();
+#endif
+
+    curvature_remesher.collapse_short_edges();
+    curvature_remesher.remove_degenerate_faces();
+
 #ifdef CGAL_PMP_REMESHING_VERBOSE
   t.stop();
   std::cout << " done ("<< t.time() <<" sec)." << std::endl;
