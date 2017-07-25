@@ -425,9 +425,10 @@ private:
  * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<TriangleMesh>::face_handle` as key and `std::size_t` as value type
  */
 template <typename TriangleMesh,
-  typename VertexPointMap,
   typename FacetSegmentMap,
-  typename PlaneFitting = typename CGAL::PlaneFitting<TriangleMesh>,
+  typename PlaneFitting,
+  typename VertexPointMap
+    = typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type,
   typename GeomTraits = typename TriangleMesh::Traits>
 class VSA_mesh_extraction
 {
@@ -475,12 +476,12 @@ public:
    * @param _seg_pmap approximation partition.
    */
   VSA_mesh_extraction(const TriangleMesh &_mesh,
+    const FacetSegmentMap &_seg_pmap,
     const PlaneFitting &_plane_fitting,
-    const VertexPointMap &_point_pmap,
-    const FacetSegmentMap &_seg_pmap)
+    const VertexPointMap &_point_pmap)
     : mesh(_mesh),
-    point_pmap(_point_pmap),
     seg_pmap(_seg_pmap),
+    point_pmap(_point_pmap),
     vanchor_map(vertex_int_map),
     num_proxies(0) {
     GeomTraits traits;
@@ -489,43 +490,30 @@ public:
     sum_functor = traits.construct_sum_of_vectors_3_object();
     scalar_product_functor = traits.compute_scalar_product_3_object();
 
-    // initialize all vertex anchor status
-    enum Vertex_status { NO_ANCHOR = -1 };
-    BOOST_FOREACH(vertex_descriptor v, vertices(mesh))
-      vertex_int_map.insert(std::pair<vertex_descriptor, int>(v, static_cast<int>(NO_ANCHOR)));
+    init(_plane_fitting);
+  }
 
-    // count number of proxies
-    BOOST_FOREACH(face_descriptor f, faces(mesh))
-      num_proxies = num_proxies < seg_pmap[f] ? seg_pmap[f] : num_proxies;
-    ++num_proxies;
+  /**
+   * Extracts the surface mesh from an approximation partition @a _seg_pmap of mesh @a _mesh.
+   * @param _mesh the approximated triangle mesh.
+   * @param _plane_fitting plane fitting function object.
+   * @param _seg_pmap approximation partition.
+   */
+  VSA_mesh_extraction(const TriangleMesh &_mesh,
+    const FacetSegmentMap &_seg_pmap,
+    const PlaneFitting &_plane_fitting)
+    : mesh(_mesh),
+    seg_pmap(_seg_pmap),
+    point_pmap(get(boost::vertex_point, const_cast<TriangleMesh &>(_mesh))),
+    vanchor_map(vertex_int_map),
+    num_proxies(0) {
+    GeomTraits traits;
+    vector_functor = traits.construct_vector_3_object();
+    scale_functor = traits.construct_scaled_vector_3_object();
+    sum_functor = traits.construct_sum_of_vectors_3_object();
+    scalar_product_functor = traits.compute_scalar_product_3_object();
 
-    // fit proxy planes, areas, normals
-    std::vector<std::list<face_descriptor> > px_facets(num_proxies);
-    BOOST_FOREACH(face_descriptor f, faces(mesh))
-      px_facets[seg_pmap[f]].push_back(f);
-    BOOST_FOREACH(const std::list<face_descriptor> &px_patch, px_facets) {
-      px_planes.push_back(_plane_fitting(px_patch.begin(), px_patch.end()));
-
-      Vector_3 norm = CGAL::NULL_VECTOR;
-      FT area(0);
-      BOOST_FOREACH(face_descriptor f, px_patch) {
-        halfedge_descriptor he = halfedge(f, mesh);
-        const Point_3 p0 = point_pmap[source(he, mesh)];
-        const Point_3 p1 = point_pmap[target(he, mesh)];
-        const Point_3 p2 = point_pmap[target(next(he, mesh), mesh)];
-        FT farea(std::sqrt(CGAL::to_double(CGAL::squared_area(p0, p1, p2))));
-        Vector_3 fnorm = CGAL::unit_normal(p0, p1, p2);
-
-        norm = sum_functor(norm, scale_functor(fnorm, farea));
-        area += farea;
-      }
-      norm = scale_functor(norm, FT(1.0 / std::sqrt(CGAL::to_double(norm.squared_length()))));
-
-      px_normals.push_back(norm);
-      px_areas.push_back(area);
-    }
-
-    std::cerr << "#proxies " << num_proxies << std::endl;
+    init(_plane_fitting);
   }
 
   /**
@@ -615,6 +603,50 @@ public:
   }
 
 private:
+  /**
+   * Initialization
+   */
+  void init(const PlaneFitting &_plane_fitting) {
+    // initialize all vertex anchor status
+    enum Vertex_status { NO_ANCHOR = -1 };
+    BOOST_FOREACH(vertex_descriptor v, vertices(mesh))
+      vertex_int_map.insert(std::pair<vertex_descriptor, int>(v, static_cast<int>(NO_ANCHOR)));
+
+    // count number of proxies
+    BOOST_FOREACH(face_descriptor f, faces(mesh))
+      num_proxies = num_proxies < seg_pmap[f] ? seg_pmap[f] : num_proxies;
+    ++num_proxies;
+
+    // fit proxy planes, areas, normals
+    std::vector<std::list<face_descriptor> > px_facets(num_proxies);
+    BOOST_FOREACH(face_descriptor f, faces(mesh))
+      px_facets[seg_pmap[f]].push_back(f);
+
+    BOOST_FOREACH(const std::list<face_descriptor> &px_patch, px_facets) {
+      px_planes.push_back(_plane_fitting(px_patch.begin(), px_patch.end()));
+
+      Vector_3 norm = CGAL::NULL_VECTOR;
+      FT area(0);
+      BOOST_FOREACH(face_descriptor f, px_patch) {
+        halfedge_descriptor he = halfedge(f, mesh);
+        const Point_3 p0 = point_pmap[source(he, mesh)];
+        const Point_3 p1 = point_pmap[target(he, mesh)];
+        const Point_3 p2 = point_pmap[target(next(he, mesh), mesh)];
+        FT farea(std::sqrt(CGAL::to_double(CGAL::squared_area(p0, p1, p2))));
+        Vector_3 fnorm = CGAL::unit_normal(p0, p1, p2);
+
+        norm = sum_functor(norm, scale_functor(fnorm, farea));
+        area += farea;
+      }
+      norm = scale_functor(norm, FT(1.0 / std::sqrt(CGAL::to_double(norm.squared_length()))));
+
+      px_normals.push_back(norm);
+      px_areas.push_back(area);
+    }
+
+    std::cerr << "#proxies " << num_proxies << std::endl;
+  }
+
   /**
    * Finds the anchors.
    */

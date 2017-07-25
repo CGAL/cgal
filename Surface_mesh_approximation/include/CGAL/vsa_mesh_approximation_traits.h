@@ -82,15 +82,13 @@ struct L21ProxyFitting
     CGAL_assertion(beg != end);
 
     // fitting normal
-    // FT area(0);
     Vector_3 norm = CGAL::NULL_VECTOR;
     for (FacetIterator fitr = beg; fitr != end; ++fitr) {
-      // area += area_pmap[*fitr];
       norm = sum_functor(norm,
         scale_functor(normal_pmap[*fitr], area_pmap[*fitr]));
     }
-    // norm = scale_functor(norm, FT(1.0 / CGAL::to_double(area)));
-    norm = scale_functor(norm, FT(1.0 / std::sqrt(CGAL::to_double(norm.squared_length()))));
+    norm = scale_functor(norm,
+      FT(1.0 / std::sqrt(CGAL::to_double(norm.squared_length()))));
 
     // construct proxy
     PlaneProxy px;
@@ -174,7 +172,6 @@ struct PlaneFitting
 
 // Bundled l21 approximation traits
 template<typename PlaneProxy,
-  typename TriangleMesh,
   typename L21ErrorMetric,
   typename L21ProxyFitting,
   typename FacetNormalMap,
@@ -187,11 +184,9 @@ struct L21ApproximationTrait
   typedef L21ProxyFitting ProxyFitting;
 
   L21ApproximationTrait(
-    const TriangleMesh &_mesh,
     const FacetNormalMap &_facet_normal_map,
     const FacetAreaMap &_facet_area_map)
-    : mesh(_mesh),
-    normal_pmap(_facet_normal_map),
+    : normal_pmap(_facet_normal_map),
     area_pmap(_facet_area_map) {}
 
   // traits function object form
@@ -206,7 +201,6 @@ struct L21ApproximationTrait
   }
 
 private:
-  const TriangleMesh &mesh;
   const FacetNormalMap normal_pmap;
   const FacetAreaMap area_pmap;
 };
