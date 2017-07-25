@@ -317,7 +317,7 @@ void vsa_approximate(
 
   typedef CGAL::PlaneProxy<TriangleMesh> PlaneProxy;
   typedef CGAL::L21Metric<PlaneProxy, FacetNormalMap, FacetAreaMap> L21Metric;
-  typedef CGAL::L21ProxyFitting<PlaneProxy, L21Metric, FacetNormalMap, FacetAreaMap> L21ProxyFitting;
+  typedef CGAL::L21ProxyFitting<PlaneProxy, FacetNormalMap, FacetAreaMap> L21ProxyFitting;
   typedef CGAL::L21ApproximationTrait<PlaneProxy, TriangleMesh, L21Metric, L21ProxyFitting, VertexPointMap, FacetNormalMap, FacetAreaMap> L21ApproximationTrait;
 
   VertexPointMap point_pmap = get(boost::vertex_point, const_cast<TriangleMesh &>(tm));
@@ -387,7 +387,7 @@ void vsa_extract(
 
   typedef CGAL::PlaneProxy<TriangleMesh> PlaneProxy;
   typedef CGAL::L21Metric<PlaneProxy, FacetNormalMap, FacetAreaMap> L21Metric;
-  typedef CGAL::L21ProxyFitting<PlaneProxy, L21Metric, FacetNormalMap, FacetAreaMap> L21ProxyFitting;
+  typedef CGAL::L21ProxyFitting<PlaneProxy, FacetNormalMap, FacetAreaMap> L21ProxyFitting;
   typedef CGAL::PlaneFitting<TriangleMesh> PlaneFitting;
   typedef CGAL::L21ApproximationTrait<PlaneProxy, TriangleMesh, L21Metric, L21ProxyFitting, VertexPointMap, FacetNormalMap, FacetAreaMap> L21ApproximationTrait;
 
@@ -472,7 +472,7 @@ void vsa_approximate_and_extract(
 
   typedef CGAL::PlaneProxy<TriangleMesh> PlaneProxy;
   typedef CGAL::L21Metric<PlaneProxy, FacetNormalMap, FacetAreaMap> L21Metric;
-  typedef CGAL::L21ProxyFitting<PlaneProxy, L21Metric, FacetNormalMap, FacetAreaMap> L21ProxyFitting;
+  typedef CGAL::L21ProxyFitting<PlaneProxy, FacetNormalMap, FacetAreaMap> L21ProxyFitting;
   typedef CGAL::PlaneFitting<TriangleMesh> PlaneFitting;
   typedef CGAL::L21ApproximationTrait<PlaneProxy, TriangleMesh, L21Metric, L21ProxyFitting, VertexPointMap, FacetNormalMap, FacetAreaMap> L21ApproximationTrait;
 
