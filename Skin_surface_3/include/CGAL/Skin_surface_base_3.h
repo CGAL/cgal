@@ -317,7 +317,7 @@ sign(TMC_Vertex_handle vit) const
       if (is_certain(result))
         return result;
     }
-    catch (Uncertain_conversion_exception) {}
+    catch (Uncertain_conversion_exception&) {}
   }
   CGAL_BRANCH_PROFILER_BRANCH(tmp);
   Protect_FPU_rounding<false> P(CGAL_FE_TONEAREST);
@@ -359,7 +359,7 @@ sign(const Bare_point &p, const Cell_info &info) const
       if (is_certain(result))
         return result;
     }
-    catch (Uncertain_conversion_exception) {}
+    catch (Uncertain_conversion_exception&) {}
   }
   CGAL_BRANCH_PROFILER_BRANCH(tmp);
   Protect_FPU_rounding<false> P(CGAL_FE_TONEAREST);
@@ -634,7 +634,7 @@ compare(Cell_info &info1, const Bare_point &p1,
       if (is_certain(result))
         return result;
     }
-    catch (Uncertain_conversion_exception) {}
+    catch (Uncertain_conversion_exception&) {}
   }
   CGAL_BRANCH_PROFILER_BRANCH(tmp);
   Protect_FPU_rounding<false> P(CGAL_FE_TONEAREST);
@@ -702,7 +702,7 @@ locate_in_tmc(const Bare_point &p0, TMC_Cell_handle start) const
       try {
         o = TMC_Geom_traits().orientation_3_object()(*pts[0], *pts[1],
                                                      *pts[2], *pts[3]);
-      } catch (Uncertain_conversion_exception) {
+      } catch (Uncertain_conversion_exception&) {
         Protect_FPU_rounding<false> P(CGAL_FE_TONEAREST);
         typedef Exact_predicates_exact_constructions_kernel EK;
         Cartesian_converter<typename Bare_point::R, EK> converter_ek;
