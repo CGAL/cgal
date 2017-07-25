@@ -177,7 +177,6 @@ template<typename PlaneProxy,
   typename TriangleMesh,
   typename L21ErrorMetric,
   typename L21ProxyFitting,
-  typename VertexPointMap,
   typename FacetNormalMap,
   typename FacetAreaMap>
 struct L21ApproximationTrait
@@ -189,11 +188,9 @@ struct L21ApproximationTrait
 
   L21ApproximationTrait(
     const TriangleMesh &_mesh,
-    const VertexPointMap &_point_pmap,
     const FacetNormalMap &_facet_normal_map,
     const FacetAreaMap &_facet_area_map)
     : mesh(_mesh),
-    point_pmap(_point_pmap),
     normal_pmap(_facet_normal_map),
     area_pmap(_facet_area_map) {}
 
@@ -210,7 +207,6 @@ struct L21ApproximationTrait
 
 private:
   const TriangleMesh &mesh;
-  const VertexPointMap point_pmap;
   const FacetNormalMap normal_pmap;
   const FacetAreaMap area_pmap;
 };
