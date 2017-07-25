@@ -400,14 +400,12 @@ private:
  * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<TriangleMesh>::face_handle` as key and `std::size_t` as value type
  */
 template <typename TriangleMesh,
-  typename ApproximationTraits,
   typename VertexPointMap,
-  typename FacetSegmentMap>
+  typename FacetSegmentMap,
+  typename PlaneFitting = typename CGAL::PlaneFitting<TriangleMesh>,
+  typename GeomTraits = typename TriangleMesh::Traits>
 class VSA_mesh_extraction
 {
-  typedef typename ApproximationTraits::GeomTraits GeomTraits;
-  typedef typename ApproximationTraits::PlaneFitting PlaneFitting;
-
   typedef typename GeomTraits::FT FT;
   typedef typename GeomTraits::Point_3 Point_3;
   typedef typename GeomTraits::Vector_3 Vector_3;
@@ -447,20 +445,19 @@ public:
   /**
    * Extracts the surface mesh from an approximation partition @a _seg_pmap of mesh @a _mesh.
    * @param _mesh the approximated triangle mesh.
-   * @param _appx_trait approximation traits object.
+   * @param _plane_fitting plane fitting function object.
    * @param _point_pmap vertex point map of the input mesh.
    * @param _seg_pmap approximation partition.
    */
   VSA_mesh_extraction(const TriangleMesh &_mesh,
-    const ApproximationTraits &_appx_trait,
+    const PlaneFitting &_plane_fitting,
     const VertexPointMap &_point_pmap,
     const FacetSegmentMap &_seg_pmap)
     : mesh(_mesh),
     point_pmap(_point_pmap),
     seg_pmap(_seg_pmap),
     vanchor_map(vertex_int_map),
-    num_proxies(0),
-    plane_fitting(_appx_trait.construct_plane_fitting_functor()) {
+    num_proxies(0) {
     GeomTraits traits;
     vector_functor = traits.construct_vector_3_object();
     scale_functor = traits.construct_scaled_vector_3_object();
@@ -482,7 +479,7 @@ public:
     BOOST_FOREACH(face_descriptor f, faces(mesh))
       px_facets[seg_pmap[f]].push_back(f);
     BOOST_FOREACH(const std::list<face_descriptor> &px_patch, px_facets) {
-      px_planes.push_back(plane_fitting(px_patch.begin(), px_patch.end()));
+      px_planes.push_back(_plane_fitting(px_patch.begin(), px_patch.end()));
 
       Vector_3 norm = CGAL::NULL_VECTOR;
       FT area(0);
@@ -1068,9 +1065,6 @@ private:
 
   // All borders cycles.
   std::vector<Border> borders;
-
-  // The proxy plane fitting functor.
-  PlaneFitting plane_fitting;
 }; // end class VSA_mesh_extraction
 
 } // end namespace internal

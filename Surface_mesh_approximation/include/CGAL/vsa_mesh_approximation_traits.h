@@ -153,11 +153,11 @@ template<typename TriangleMesh,
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
 
   template<typename FacetIterator>
-  Plane_3 operator()(const FacetIterator &beg, const FacetIterator &end) {
+  Plane_3 operator()(const FacetIterator &beg, const FacetIterator &end) const {
     CGAL_assertion(beg != end);
     // area average normal and centroid
     Vector_3 norm = CGAL::NULL_VECTOR;
-    Vector_3 centroid = CGAL::NULL_VECTOR;
+    Vector_3 cent = CGAL::NULL_VECTOR;
     FT sum_area(0);
     for (FacetIterator fitr = beg; fitr != end; ++fitr) {
       const halfedge_descriptor he = halfedge(*fitr, mesh);
@@ -170,14 +170,14 @@ template<typename TriangleMesh,
       Vector_3 fnorm = CGAL::unit_normal(p0, p1, p2);
 
       norm = sum_functor(norm, scale_functor(fnorm, farea));
-      centroid = sum_functor(centroid, scale_functor(vec, farea));
+      cent = sum_functor(cent, scale_functor(vec, farea));
       sum_area += farea;
     }
     norm = scale_functor(norm,
       FT(1.0 / std::sqrt(CGAL::to_double(norm.squared_length()))));
-    centroid = scale_functor(centroid, FT(1) / sum_area);
+    cent = scale_functor(cent, FT(1) / sum_area);
 
-    return Plane_3(CGAL::ORIGIN + centroid, norm);
+    return Plane_3(CGAL::ORIGIN + cent, norm);
   }
 
   const TriangleMesh &mesh;
@@ -192,7 +192,6 @@ template<typename PlaneProxy,
   typename TriangleMesh,
   typename L21ErrorMetric,
   typename L21ProxyFitting,
-  typename L21PlaneFitting,
   typename VertexPointMap,
   typename FacetNormalMap,
   typename FacetAreaMap>
@@ -202,7 +201,6 @@ template<typename PlaneProxy,
   typedef PlaneProxy Proxy;
   typedef L21ErrorMetric ErrorMetric;
   typedef L21ProxyFitting ProxyFitting;
-  typedef L21PlaneFitting PlaneFitting;
 
   L21ApproximationTrait(
     const TriangleMesh &_mesh,
@@ -223,11 +221,6 @@ template<typename PlaneProxy,
   // construct proxy fitting functor
   ProxyFitting construct_proxy_fitting_functor() const {
     return ProxyFitting(normal_pmap, area_pmap);
-  }
-
-  // construct plane fitting functor
-  L21PlaneFitting construct_plane_fitting_functor() const {
-    return L21PlaneFitting(mesh, point_pmap);
   }
 
 private:
@@ -362,7 +355,7 @@ template<typename TriangleMesh,
   }
 
   template<typename FacetIterator>
-  Plane_3 operator()(const FacetIterator beg, const FacetIterator end) {
+  Plane_3 operator()(const FacetIterator beg, const FacetIterator end) const {
     CGAL_assertion(beg != end);
 
     std::list<Triangle_3> tris;
@@ -401,7 +394,6 @@ template<typename TriangleMesh,
   typename PlaneProxy,
   typename L2ErrorMetric,
   typename L2ProxyFitting,
-  typename PCAPlaneFitting,
   typename VertexPointMap,
   typename FacetAreaMap>
   struct L2ApproximationTrait
@@ -411,7 +403,6 @@ public:
   typedef PlaneProxy Proxy;
   typedef L2ErrorMetric ErrorMetric;
   typedef L2ProxyFitting ProxyFitting;
-  typedef PCAPlaneFitting PlaneFitting;
 
   L2ApproximationTrait(
     const TriangleMesh &_mesh,
@@ -431,11 +422,6 @@ public:
   // construct proxy fitting functor
   ProxyFitting construct_proxy_fitting_functor() const {
     return ProxyFitting(mesh, point_pmap, area_pmap);
-  }
-
-  // construct plane fitting functor
-  PlaneFitting construct_plane_fitting_functor() const {
-    return PlaneFitting(mesh, point_pmap);
   }
 
 private:

@@ -100,7 +100,6 @@ struct ApproxTrait {
   typedef PointProxy Proxy;
   typedef CompactMetric ErrorMetric;
   typedef PointProxyFitting ProxyFitting;
-  typedef CGAL::PlaneFitting<Polyhedron> PlaneFitting;
 
   ApproxTrait(const Polyhedron &_mesh,
     const VertexPointMap &_point_pmap,
@@ -115,10 +114,6 @@ struct ApproxTrait {
 
   ProxyFitting construct_proxy_fitting_functor() const {
     return ProxyFitting(center_pmap, area_pmap, normal_pmap);
-  }
-
-  PlaneFitting construct_plane_fitting_functor() const {
-    return PlaneFitting(mesh);
   }
 
   const Polyhedron &mesh;
