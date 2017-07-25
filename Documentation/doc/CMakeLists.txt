@@ -32,6 +32,11 @@ if(NOT DOXYGEN_FOUND)
   return()
 endif()
 
+#starting from cmake 3.9 the usage of DOXYGEN_EXECUTABLE is deprecated
+if(TARGET Doxygen::doxygen)
+  get_property(DOXYGEN_EXECUTABLE TARGET Doxygen::doxygen PROPERTY IMPORTED_LOCATION)
+endif()
+
 # Visual Studio users might appreciate this
 # set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
