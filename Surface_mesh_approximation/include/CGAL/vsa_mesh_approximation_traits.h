@@ -336,8 +336,8 @@ template<typename PlaneProxy,
 };
 
 template<typename TriangleMesh,
-  typename VertexPointMap,
-  typename FacetAreaMap,
+  typename VertexPointMap
+    = typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type,
   typename GeomTraits = typename TriangleMesh::Traits>
   struct PCAPlaneFitting
 {
@@ -348,14 +348,18 @@ template<typename TriangleMesh,
   typedef typename GeomTraits::Construct_scaled_vector_3 Construct_scaled_vector_3;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
 
-  PCAPlaneFitting(const TriangleMesh &_mesh,
-    const VertexPointMap &_point_pmap,
-    const FacetAreaMap &_area_pmap)
+  PCAPlaneFitting(const TriangleMesh &_mesh,  const VertexPointMap &_point_pmap)
+    : mesh(_mesh), point_pmap(_point_pmap) {
+    GeomTraits traits;
+    scale_functor = traits.construct_scaled_vector_3_object();
+  }
+
+  PCAPlaneFitting(const TriangleMesh &_mesh)
     : mesh(_mesh),
-    point_pmap(_point_pmap) {
-      GeomTraits traits;
-      scale_functor = traits.construct_scaled_vector_3_object();
-    }
+    point_pmap(get(boost::vertex_point, const_cast<TriangleMesh &>(_mesh))) {
+    GeomTraits traits;
+    scale_functor = traits.construct_scaled_vector_3_object();
+  }
 
   template<typename FacetIterator>
   Plane_3 operator()(const FacetIterator beg, const FacetIterator end) {
@@ -431,7 +435,7 @@ public:
 
   // construct plane fitting functor
   PlaneFitting construct_plane_fitting_functor() const {
-    return PlaneFitting(mesh, point_pmap, area_pmap);
+    return PlaneFitting(mesh, point_pmap);
   }
 
 private:
