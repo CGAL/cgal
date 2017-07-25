@@ -21,6 +21,7 @@
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_length_stop_predicate.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Constrained_placement.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk_placement.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Bounded_normal_change_placement.h>
 
 #include "ui_Mesh_simplification_dialog.h"
 
@@ -164,8 +165,9 @@ void Polyhedron_demo_mesh_simplification_plugin::on_actionSimplify_triggered()
     if (selection_item)
       {
         CGAL::Surface_mesh_simplification::Constrained_placement
-          <CGAL::Surface_mesh_simplification::LindstromTurk_placement
-           <FaceGraph>,
+          <CGAL::Surface_mesh_simplification::Bounded_normal_change_placement
+           <CGAL::Surface_mesh_simplification::LindstromTurk_placement
+            <FaceGraph> >,
            Scene_polyhedron_selection_item::Is_constrained_map
            <Scene_polyhedron_selection_item::Selection_set_edge> >
           placement (selection_item->constrained_edges_pmap());
@@ -177,9 +179,13 @@ void Polyhedron_demo_mesh_simplification_plugin::on_actionSimplify_triggered()
       }
     else
       {
+        CGAL::Surface_mesh_simplification::Bounded_normal_change_placement
+          <CGAL::Surface_mesh_simplification::LindstromTurk_placement
+           <FaceGraph> > placement;
+        
         CGAL::Surface_mesh_simplification::edge_collapse
           (pmesh, stop,
-           CGAL::parameters::vertex_index_map(get(boost::vertex_index, pmesh)));
+           CGAL::parameters::vertex_index_map(get(boost::vertex_index, pmesh)).get_placement(placement));
       }
     
     std::cout << "ok (" << time.elapsed() << " ms, " 
