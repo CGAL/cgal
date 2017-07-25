@@ -363,6 +363,15 @@ struct Sizing_field_with_aabb_tree
             std::cout << " gdist = " << gdist;
 #endif
 
+            if (new_sqd * 1e10 < CGAL::squared_distance(curr_segment.source(),
+                                                        curr_segment.target()))
+            {
+#ifdef CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
+              std::cerr << "  too close, compared to possible rounding errors, "
+                        << "SKIPPED\n";
+#endif
+              continue;
+            }
             if (CGAL_NTS sqrt(new_sqd) > 0.9 * gdist)
               continue;
             if (sqd_intersection == -1 || new_sqd < sqd_intersection)
