@@ -56,6 +56,9 @@ link_to_face_graph(const Triangulation_3& t,
   t.incident_cells(t.infinite_vertex(),std::back_inserter(cells));
   CGAL::cpp11::array<vertex_descriptor,3> face;
 
+  typename boost::property_map<FG, CGAL::vertex_point_t>::type vpm
+    = get(CGAL::vertex_point, fg);
+
   BOOST_FOREACH(Cell_handle ch, cells){
     bool infinite_face = false;
     int vhi = ch->index(vh);
@@ -68,7 +71,8 @@ link_to_face_graph(const Triangulation_3& t,
         std::pair<typename Vertex_map::iterator,bool> res 
           = vertex_map.insert(std::make_pair(vhj,nullvertex));
         if(res.second){
-          res.first->second = add_vertex(vhj->point(), fg);
+          res.first->second = add_vertex(fg);
+          put(vpm, res.first->second, vhj->point());
           if(t.is_infinite(vhj)){
             inf = res.first->second;
           }
