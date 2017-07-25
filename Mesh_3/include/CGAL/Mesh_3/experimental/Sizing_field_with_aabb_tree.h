@@ -191,7 +191,8 @@ struct Sizing_field_with_aabb_tree
                                "Ids are { ")
               % group(setprecision(17),result)
               % group(setprecision(17),p)
-              % projection_traits.closest_point_and_primitive().second->patch_id()
+              % get(get_facet_patch_id,
+                    projection_traits.closest_point_and_primitive().second)
               % group(setprecision(17),
                       projection_traits.closest_point_and_primitive().first);
             BOOST_FOREACH(int i, ids) {
@@ -259,7 +260,8 @@ struct Sizing_field_with_aabb_tree
                            "Closest face id: %4%\n"
                            "Ids are { ")
           % result % p % curve_id
-          % projection_traits.closest_point_and_primitive().second->patch_id();
+          % get(get_facet_patch_id,
+                projection_traits.closest_point_and_primitive().second);
         BOOST_FOREACH(int i, ids) {
           s << i << " ";
         }
@@ -293,7 +295,8 @@ struct Sizing_field_with_aabb_tree
                            "Closest face id: %4%\n"
                            "Ids are { ")
           % result % p % curve_id
-          % projection_traits.closest_point_and_primitive().second->patch_id();
+          % get(get_facet_patch_id,
+                projection_traits.closest_point_and_primitive().second);
         BOOST_FOREACH(int i, ids) {
           s << i << " ";
         }
@@ -360,7 +363,7 @@ struct Sizing_field_with_aabb_tree
 #ifdef CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
             std::cout << "Intersection point : Point_3(" << *pp << ") ";
             std::cout << " new_sqd = " << new_sqd ;
-            std::cout << " gdist = " << gdist;
+            std::cout << " gdist = " << gdist << std::endl;;
 #endif
 
             if (new_sqd * 1e10 < CGAL::squared_distance(curr_segment.source(),
@@ -401,8 +404,10 @@ struct Sizing_field_with_aabb_tree
         }
       }
 #ifdef CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
-      std::cout << "curve_id = " << curve_id
-                << " proj_cid = " << closest_primitive.id().first->first << std::endl;
+      std::cout << " curve_id = " << curve_id
+                << " proj_cid = " << closest_primitive.id().first->first
+                << " (" << get(get_curve_index, closest_primitive.id()) << ")"
+                << std::endl;
       std::cerr << " --- domain.curves_aabb_tree().traversal \n";
 #endif // CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
       if (sqd_intersection > 0)
