@@ -8,6 +8,7 @@
 
 #include <CGAL/Kernel/global_functions_3.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
+#include <CGAL/Polygon_mesh_processing/repair.h>
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
@@ -75,6 +76,7 @@ class Compatible_remesher
 
     typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
     typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
+    typedef typename boost::graph_traits<PolygonMesh>::vertex_iterator vertex_iterator;
     typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
     typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor edge_descriptor;
 
@@ -118,9 +120,97 @@ public:
         check_constrained_edges();
     }
 
+    std::size_t remove_degenerate_faces()
+    {
+        std::size_t nb_removed_faces = 0;
+
+        /*
+        for(face_descriptor f : faces(mesh_))
+        {
+            Triangle tr = triangle(f);
+            if(tr.is_degenerate())
+            {
+                halfedge_descriptor he = halfedge(f, mesh_);
+                Euler::remove_face(he, mesh_);
+                nb_removed_faces++;
+            }
+        }
+        */
+
+        // from repair.h
+        nb_removed_faces = CGAL::Polygon_mesh_processing::remove_degenerate_faces(mesh_);
+
+        std::cout<<"nb_collapsed_faces: "<<nb_removed_faces<<std::endl;
+
+        return nb_removed_faces;
+    }
+
+    std::size_t collapse_short_edges()
+    {
+        std::size_t nb_collapsed_edges = 0;
+        std::set<edge_descriptor> edges_to_collapse, non_topologically_valid_collapses;
+
+        // collect short edges
+        for(edge_descriptor e : edges(mesh_))
+        {
+            if(edge_should_collapse(e))
+                edges_to_collapse.insert(e);
+        }
+
+        // collapse
+        while(!edges_to_collapse.empty())
+        {
+            while(!edges_to_collapse.empty())
+            {
+                edge_descriptor e = *edges_to_collapse.begin();
+                edges_to_collapse.erase(edges_to_collapse.begin());
+
+                // link condition
+                if(!Euler::does_satisfy_link_condition(e, mesh_))
+                {
+                    non_topologically_valid_collapses.insert(e);
+                    continue;
+                }
+
+                // take out from short_edges prev and prev(opposite), which will be collapsed
+                halfedge_descriptor he = halfedge(e, mesh_);
+
+                // verbose - todo
+                vertex_descriptor vs = source(he, mesh_);
+                vertex_descriptor vt = target(he, mesh_);
+                //
+
+                edges_to_collapse.erase(edge(prev(he, mesh_), mesh_));
+                edges_to_collapse.erase(edge(prev(opposite(he, mesh_), mesh_), mesh_));
+
+                // shoot out edge to be collapsed from topologically_non_valid
+                non_topologically_valid_collapses.erase(e);
+                non_topologically_valid_collapses.erase(edge(prev(he, mesh_), mesh_));
+                non_topologically_valid_collapses.erase(edge(prev(opposite(he, mesh_), mesh_), mesh_));
+
+                vertex_descriptor v = Euler::collapse_edge(e, mesh_);
+
+                // check if an out_edge now is too short
+                for (edge_descriptor out_e : out_edges(v, mesh_))
+                {
+                    if(edge_should_collapse(out_e))
+                        edges_to_collapse.insert(out_e);
+                }
+
+                nb_collapsed_edges++;
+            }
+
+            edges_to_collapse.swap(non_topologically_valid_collapses);
+        }
+
+        // debug
+        std::cout<<"nb_collapsed_edges: "<<nb_collapsed_edges<<std::endl;
+
+        return nb_collapsed_edges;
+    }
+
     void angle_relaxation(bool use_weights)
     {
-
         std::map<vertex_descriptor, Point> barycenters;
         //boost::vector_property_map<Vector> n_map;
         std::map<vertex_descriptor, Vector> n_map;
@@ -138,7 +228,7 @@ std::cout<<"processing vertex: "<< v << std::endl;
                 // compute normal to v
                 Vector vn = compute_vertex_normal(v, mesh_,
                                                   Polygon_mesh_processing::parameters::vertex_point_map(vpmap_)
-                                                  .geom_traits(GeomTraits()));
+                                                  .geom_traits(traits_));
                 n_map[v] = vn;
 
                 Edges_around_map he_map;
@@ -307,7 +397,7 @@ private:
                         const vertex_descriptor& p3) const
     {
         return to_double(CGAL::approximate_sqrt(
-                             GeomTraits().compute_squared_area_3_object()(
+                             traits_.compute_squared_area_3_object()(
                                    get(vpmap_, p1),
                                    get(vpmap_, p2),
                                    get(vpmap_, p3))));
@@ -318,7 +408,7 @@ private:
                         const vertex_descriptor& p3) const
     {
         return to_double(CGAL::approximate_sqrt(
-                             GeomTraits().compute_squared_area_3_object()(
+                             traits_.compute_squared_area_3_object()(
                                    P,
                                    get(vpmap_, p2),
                                    get(vpmap_, p3))));
@@ -326,7 +416,6 @@ private:
 
     double compute_average_area_around(const vertex_descriptor& v)
     {
-
         double sum_areas = 0;
         unsigned int number_of_edges = 0;
 
@@ -342,7 +431,6 @@ private:
         }
 
         return sum_areas / number_of_edges;
-
     }
 
     double measure_energy(const vertex_descriptor& v, const double& S_av)
@@ -358,7 +446,6 @@ private:
 
             energy += (S - S_av)*(S - S_av);
             number_of_edges++;
-
         }
 
         return to_double( energy / number_of_edges );
@@ -377,7 +464,6 @@ private:
 
             energy += (S - S_av)*(S - S_av);
             number_of_edges++;
-
         }
 
         return to_double( energy / (2 * number_of_edges) );
@@ -521,7 +607,6 @@ private:
         Vector edge2(s, equidistant_p2);
         Vector s_pv(s, pv);
 
-
         // check degenerate cases
         double tolerance = 1e-3; // to think about it
 
@@ -538,8 +623,8 @@ private:
 
         // get bisector
         Vector bisector = CGAL::NULL_VECTOR;
-        internal::normalize(edge1, GeomTraits());
-        internal::normalize(edge2, GeomTraits());
+        internal::normalize(edge1, traits_);
+        internal::normalize(edge2, traits_);
         bisector = edge1 + edge2;
 
 
@@ -562,9 +647,7 @@ private:
             }
 
             bisector = Vector(b_segment);
-
         }
-
 
         correct_bisector(bisector, main_he);
 
@@ -579,8 +662,6 @@ private:
 
 
         return bisector;
-
-
     }
 
     double get_angle(const He_pair& incd_edges, const Vector& vn)
@@ -611,7 +692,6 @@ private:
         Vector aux_normal = CGAL::cross_product(input_vec, s_pv);
 
         return CGAL::cross_product(aux_normal, input_vec);
-
     }
 
     Vector max_vector(const Vector& vec1, const Vector& vec2)
@@ -624,7 +704,6 @@ private:
 
     void correct_bisector(Vector& bisector_vec, const halfedge_descriptor& main_he)
     {
-
         // get common vertex around which the edge is rotated
         Point s = get(vpmap_, target(main_he, mesh_));
 
@@ -643,7 +722,6 @@ private:
 
         // take the opposite so that their sum is the overall displacement
         bisector_vec = -Vector(bisector);
-
     }
 
     bool is_constrained(const edge_descriptor& e)
@@ -670,6 +748,59 @@ private:
         }
     }
 
+    // degenerate fixing functions
+
+    bool edge_should_collapse(edge_descriptor e)
+    {
+        halfedge_descriptor he = halfedge(e, mesh_);
+        Point s = get(vpmap_, source(he, mesh_));
+        Point t = get(vpmap_, target(he, mesh_));
+
+        double sq_length = traits_.compute_squared_distance_3_object()(s, t);
+
+        if(sq_length < min_edge_len_)
+            return true;
+        else
+            return false;
+    }
+
+    struct Vertex_to_point
+    {
+        Vertex_to_point(VertexPointMap vpmap) : vpmap(vpmap){}
+
+        typedef typename boost::property_traits<VertexPointMap>::reference output_type;
+
+        output_type operator()(vertex_descriptor vd) const
+        {
+            return get(vpmap, vd);
+        }
+
+        VertexPointMap vpmap;
+    };
+
+    double init_min_edge_length()
+    {
+        vertex_iterator vi, ve;
+        boost::tie(vi, ve) = vertices(mesh_);
+        Vertex_to_point v_to_p(vpmap_);
+
+        Bbox_3 bbox= CGAL::bbox_3(
+                    boost::make_transform_iterator(vi, v_to_p),
+                    boost::make_transform_iterator(ve, v_to_p));
+
+        return 0.01 * diagonal_length(bbox);
+    }
+
+    double diagonal_length(const Bbox_3& bbox)
+    {
+      double dx = bbox.xmax() - bbox.xmin();
+      double dy = bbox.ymax() - bbox.ymin();
+      double dz = bbox.zmax() - bbox.zmin();
+
+      double diag = dx * dx + dy * dy + dz * dz;
+      return std::sqrt(diag);
+    }
+
 
 
 private:
@@ -680,6 +811,8 @@ private:
     Triangle_list input_triangles_;
     Tree* tree_ptr_;
     unsigned int count_non_convex_energy_;
+    GeomTraits traits_;
+    double min_edge_len_;
 
 
 
