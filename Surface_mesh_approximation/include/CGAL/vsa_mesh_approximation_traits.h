@@ -121,25 +121,27 @@ template<typename PlaneProxy,
 };
 
 template<typename TriangleMesh,
-  typename FacetAreaMap,
-  typename FacetNormalMap,
-  typename VertexPointMap,
+  typename VertexPointMap
+    = typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type,
   typename GeomTraits = typename TriangleMesh::Traits>
   struct PlaneFitting
 {
-  PlaneFitting(const TriangleMesh &_mesh,
-    const FacetAreaMap &_area_pmap,
-    const FacetNormalMap &_facet_normal_map,
-    const VertexPointMap &_point_pmap)
+  PlaneFitting(const TriangleMesh &_mesh, const VertexPointMap &_point_pmap)
+    : mesh(_mesh), point_pmap(_point_pmap) {
+    GeomTraits traits;
+    vector_functor = traits.construct_vector_3_object();
+    sum_functor = traits.construct_sum_of_vectors_3_object();
+    scale_functor = traits.construct_scaled_vector_3_object();
+  }
+
+  PlaneFitting(const TriangleMesh &_mesh)
     : mesh(_mesh),
-    area_pmap(_area_pmap),
-    normal_pmap(_facet_normal_map),
-    point_pmap(_point_pmap) {
-      GeomTraits traits;
-      vector_functor = traits.construct_vector_3_object();
-      sum_functor = traits.construct_sum_of_vectors_3_object();
-      scale_functor = traits.construct_scaled_vector_3_object();
-    }
+    point_pmap(get(boost::vertex_point, const_cast<TriangleMesh &>(_mesh))) {
+    GeomTraits traits;
+    vector_functor = traits.construct_vector_3_object();
+    sum_functor = traits.construct_sum_of_vectors_3_object();
+    scale_functor = traits.construct_scaled_vector_3_object();
+  }
 
   typedef typename GeomTraits::FT FT;
   typedef typename GeomTraits::Point_3 Point_3;
@@ -153,37 +155,32 @@ template<typename TriangleMesh,
   template<typename FacetIterator>
   Plane_3 operator()(const FacetIterator &beg, const FacetIterator &end) {
     CGAL_assertion(beg != end);
-    // area average normal
+    // area average normal and centroid
     Vector_3 norm = CGAL::NULL_VECTOR;
+    Vector_3 centroid = CGAL::NULL_VECTOR;
+    FT sum_area(0);
     for (FacetIterator fitr = beg; fitr != end; ++fitr) {
-      norm = sum_functor(norm, scale_functor(
-        normal_pmap[*fitr], area_pmap[*fitr]));
+      const halfedge_descriptor he = halfedge(*fitr, mesh);
+      const Point_3 p0 = point_pmap[source(he, mesh)];
+      const Point_3 p1 = point_pmap[target(he, mesh)];
+      const Point_3 p2 = point_pmap[target(next(he, mesh), mesh)];
+
+      Vector_3 vec = vector_functor(CGAL::ORIGIN, CGAL::centroid(p0, p1, p2));
+      FT farea(std::sqrt(CGAL::to_double(CGAL::squared_area(p0, p1, p2))));
+      Vector_3 fnorm = CGAL::unit_normal(p0, p1, p2);
+
+      norm = sum_functor(norm, scale_functor(fnorm, farea));
+      centroid = sum_functor(centroid, scale_functor(vec, farea));
+      sum_area += farea;
     }
     norm = scale_functor(norm,
       FT(1.0 / std::sqrt(CGAL::to_double(norm.squared_length()))));
-
-    // area averaged centroid
-    FT sum_area(0);
-    Vector_3 centroid = CGAL::NULL_VECTOR;
-    for (FacetIterator fitr = beg; fitr != end; ++fitr) {
-      const halfedge_descriptor he = halfedge(*fitr, mesh);
-      Point_3 pt = CGAL::centroid(
-        point_pmap[source(he, mesh)],
-        point_pmap[target(he, mesh)],
-        point_pmap[target(next(he, mesh), mesh)]);
-      Vector_3 vec = vector_functor(CGAL::ORIGIN, pt);
-      FT area = area_pmap[*fitr];
-      centroid = sum_functor(centroid, scale_functor(vec, area));
-      sum_area += area;
-    }
     centroid = scale_functor(centroid, FT(1) / sum_area);
 
     return Plane_3(CGAL::ORIGIN + centroid, norm);
   }
 
   const TriangleMesh &mesh;
-  const FacetAreaMap area_pmap;
-  const FacetNormalMap normal_pmap;
   const VertexPointMap point_pmap;
   Construct_vector_3 vector_functor;
   Construct_scaled_vector_3 scale_functor;
@@ -230,7 +227,7 @@ template<typename PlaneProxy,
 
   // construct plane fitting functor
   L21PlaneFitting construct_plane_fitting_functor() const {
-    return L21PlaneFitting(mesh, area_pmap, normal_pmap, point_pmap);
+    return L21PlaneFitting(mesh, point_pmap);
   }
 
 private:
