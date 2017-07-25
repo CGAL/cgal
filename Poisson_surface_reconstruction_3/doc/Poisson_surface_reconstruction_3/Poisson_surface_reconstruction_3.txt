@@ -230,7 +230,7 @@ contouring parameters:
 - Approximation distance: at least 0.25 times the average spacing.
 
 \cgalFigureBegin{Poisson_surface_reconstruction_3figcontouring_bad,contouring_bad.jpg}
-Left: surface reconstructed with approximation distance = 0.25 * average spacing. Right: surface reconstructed with approximation distance = 0.15 * average spacing. Notice the spurious cluster on the chick.
+Left: surface reconstructed with approximation distance = 0.25 * average spacing. Right: surface reconstructed with approximation distance = 0.15 * average spacing. Notice the spurious cluster on the cheek.
 \cgalFigureEnd
 
 \subsection Poisson_surface_reconstruction_3DegradedConditions Degraded Conditions
