@@ -65,9 +65,7 @@ template<typename PlaneProxy,
   struct L21ProxyFitting
 {
   L21ProxyFitting(const FacetNormalMap &normal_pmap, const FacetAreaMap &area_pmap)
-    : normal_pmap(normal_pmap),
-    area_pmap(area_pmap),
-    error_functor(normal_pmap, area_pmap) {
+    : normal_pmap(normal_pmap), area_pmap(area_pmap) {
     GeomTraits traits;
     sum_functor = traits.construct_sum_of_vectors_3_object();
     scale_functor = traits.construct_scaled_vector_3_object();
@@ -99,17 +97,6 @@ template<typename PlaneProxy,
     PlaneProxy px;
     px.normal = norm;
 
-    // update seed
-    px.seed = *beg;
-    FT err_min = error_functor(*beg, px);
-    for (FacetIterator fitr = beg; fitr != end; ++fitr) {
-      FT err = error_functor(*fitr, px);
-      if (err < err_min) {
-        err_min = err;
-        px.seed = *fitr;
-      }
-    }
-
     return px;
   }
 
@@ -117,7 +104,6 @@ template<typename PlaneProxy,
   const FacetAreaMap area_pmap;
   Construct_scaled_vector_3 scale_functor;
   Construct_sum_of_vectors_3 sum_functor;
-  L21Metric error_functor;
 };
 
 template<typename TriangleMesh,
@@ -281,12 +267,8 @@ template<typename PlaneProxy,
   typedef typename GeomTraits::Construct_scaled_vector_3 Construct_scaled_vector_3;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
 
-  L2ProxyFitting(const TriangleMesh &_mesh,
-    const VertexPointMap &_point_pmap,
-    const FacetAreaMap &_area_pmap)
-    : mesh(_mesh),
-    point_pmap(_point_pmap),
-    error_functor(_mesh, _area_pmap, _point_pmap) {}
+  L2ProxyFitting(const TriangleMesh &_mesh, const VertexPointMap &_point_pmap)
+    : mesh(_mesh), point_pmap(_point_pmap) {}
 
   template<typename FacetIterator>
   PlaneProxy operator()(const FacetIterator beg, const FacetIterator end) {
@@ -309,23 +291,11 @@ template<typename PlaneProxy,
       px.fit_plane,
       CGAL::Dimension_tag<2>());
 
-    // update seed
-    px.seed = *beg;
-    FT err_min = error_functor(*beg, px);
-    for (FacetIterator fitr = beg; fitr != end; ++fitr) {
-      FT err = error_functor(*fitr, px);
-      if (err < err_min) {
-        err_min = err;
-        px.seed = *fitr;
-      }
-    }
-
     return px;
   }
 
   const TriangleMesh &mesh;
   const VertexPointMap point_pmap;
-  ErrorMetric error_functor;
 };
 
 template<typename TriangleMesh,
@@ -406,7 +376,7 @@ public:
 
   // construct proxy fitting functor
   ProxyFitting construct_proxy_fitting_functor() const {
-    return ProxyFitting(mesh, point_pmap, area_pmap);
+    return ProxyFitting(mesh, point_pmap);
   }
 
 private:

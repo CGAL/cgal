@@ -148,7 +148,9 @@ private:
       if ((index++) % interval == 0) {
         // Use proxy_fitting functor to create a proxy
         std::vector<face_descriptor> fvec(1, f);
-        proxies.push_back(proxy_fitting(fvec.begin(), fvec.end()));
+        Proxy px = proxy_fitting(fvec.begin(), fvec.end());
+        px.seed = f;
+        proxies.push_back(px);
       }
       if (proxies.size() >= initial_px)
         break;
@@ -171,10 +173,14 @@ private:
     // generate 2 seeds
     typename boost::graph_traits<TriangleMesh>::face_iterator
       f0 = faces(mesh).first, f1 = ++f0;
-    std::vector<face_descriptor> fvec(1, *f0);
-    proxies.push_back(proxy_fitting(fvec.begin(), fvec.end()));
-    std::vector<face_descriptor> fvec2(1, *f1);
-    proxies.push_back(proxy_fitting(fvec2.begin(), fvec2.end()));
+    std::vector<face_descriptor> fvec0(1, *f0);
+    Proxy px0 = proxy_fitting(fvec0.begin(), fvec0.end());
+    px0.seed = *f0;
+    proxies.push_back(px0);
+    std::vector<face_descriptor> fvec1(1, *f1);
+    Proxy px1 = proxy_fitting(fvec1.begin(), fvec1.end());
+    px1.seed = *f1;
+    proxies.push_back(px1);
 
     const std::size_t num_steps = 5;
     while (proxies.size() < initial_px) {
@@ -256,8 +262,23 @@ private:
     BOOST_FOREACH(face_descriptor f, faces(mesh))
       px_facets[seg_pmap[f]].push_back(f);
 
+    // fit proxy parameter
     for (std::size_t i = 0; i < proxies.size(); ++i)
       proxies[i] = proxy_fitting(px_facets[i].begin(), px_facets[i].end());
+
+    // update proxy seed
+    for (std::size_t i = 0; i < proxies.size(); ++i) {
+      Proxy &px = proxies[i];
+      px.seed = px_facets[i].front();
+      FT err_min = fit_error(px_facets[i].front(), px);
+      BOOST_FOREACH(face_descriptor f, px_facets[i]) {
+        FT err = fit_error(f, px);
+        if (err < err_min) {
+          err_min = err;
+          px.seed = f;
+        }
+      }
+    }
   }
 
   /**
@@ -291,7 +312,9 @@ private:
 
     // create new proxy
     std::vector<face_descriptor> fvec(1, max_facet[max_px_idx]);
-    proxies.push_back(proxy_fitting(fvec.begin(), fvec.end()));
+    Proxy px = proxy_fitting(fvec.begin(), fvec.end());
+    px.seed = max_facet[max_px_idx];
+    proxies.push_back(px);
   }
 
   /**
@@ -353,7 +376,9 @@ private:
 
       if (num_to_add[px_id] > 0) {
         std::vector<face_descriptor> fvec(1, f);
-        proxies.push_back(proxy_fitting(fvec.begin(), fvec.end()));
+        Proxy px = proxy_fitting(fvec.begin(), fvec.end());
+        px.seed = f;
+        proxies.push_back(px);
         --num_to_add[px_id];
         ++num_inserted;
       }

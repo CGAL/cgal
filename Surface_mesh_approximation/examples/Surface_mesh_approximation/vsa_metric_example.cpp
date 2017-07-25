@@ -42,8 +42,7 @@ struct PointProxyFitting {
   PointProxyFitting(const FacetCenterMap &_center_pmap,
     const FacetAreaMap &_area_pmap)
     : center_pmap(_center_pmap),
-    area_pmap(_area_pmap),
-    error_functor(center_pmap) {}
+    area_pmap(_area_pmap) {}
 
   template<typename FacetIterator>
   PointProxy operator()(const FacetIterator beg, const FacetIterator end) {
@@ -62,23 +61,11 @@ struct PointProxyFitting {
     PointProxy px;
     px.center = CGAL::ORIGIN + center;
 
-    // update seed
-    px.seed = *beg;
-    FT err_min = error_functor(*beg, px);
-    for (FacetIterator fitr = beg; fitr != end; ++fitr) {
-      FT err = error_functor(*fitr, px);
-      if (err < err_min) {
-        err_min = err;
-        px.seed = *fitr;
-      }
-    }
-
     return px;
   }
 
   const FacetCenterMap center_pmap;
   const FacetAreaMap area_pmap;
-  CompactMetric error_functor;
 };
 
 struct ApproxTrait {
