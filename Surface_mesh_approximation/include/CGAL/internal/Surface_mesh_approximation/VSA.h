@@ -199,10 +199,8 @@ private:
 
   /**
    * Propagates the proxy seed facets and floods the whole mesh to minimize the fitting error.
-   * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<TriangleMesh>::face_handle` as key and `std::size_t` as value type
    * @param[out] seg_map facet partition index
    */
-  template<typename FacetSegmentMap>
   void flooding(FacetSegmentMap &seg_pmap) {
     // The facet candidate to be queued.
     struct FacetToIntegrate {

@@ -77,7 +77,7 @@ void vsa_mesh_approximation(
     FacetProxyMap,
     PlaneFitting,
     VertexPointMap,
-    ApproximationTrait::GeomTraits> VSA_mesh_extraction;
+    typename ApproximationTrait::GeomTraits> VSA_mesh_extraction;
 
   VSA_mesh_extraction extractor(tm, f_proxy_pmap, _plane_fitting, v_point_pmap);
 
@@ -301,7 +301,7 @@ void vsa_approximate(
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
   typedef boost::associative_property_map<std::map<face_descriptor, Vector_3> > FacetNormalMap;
   typedef boost::associative_property_map<std::map<face_descriptor, FT> > FacetAreaMap;
-  typedef boost::property_map<TriangleMesh, boost::vertex_point_t>::type VertexPointMap;
+  typedef typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type VertexPointMap;
 
   typedef CGAL::PlaneProxy<TriangleMesh> PlaneProxy;
   typedef CGAL::L21Metric<PlaneProxy, FacetNormalMap, FacetAreaMap> L21Metric;
@@ -371,7 +371,7 @@ void vsa_extract(
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
   typedef boost::associative_property_map<std::map<face_descriptor, Vector_3> > FacetNormalMap;
   typedef boost::associative_property_map<std::map<face_descriptor, FT> > FacetAreaMap;
-  typedef boost::property_map<TriangleMesh, boost::vertex_point_t>::type VertexPointMap;
+  typedef typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type VertexPointMap;
 
   typedef CGAL::PlaneProxy<TriangleMesh> PlaneProxy;
   typedef CGAL::L21Metric<PlaneProxy, FacetNormalMap, FacetAreaMap> L21Metric;
@@ -456,7 +456,7 @@ void vsa_approximate_and_extract(
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
   typedef boost::associative_property_map<std::map<face_descriptor, Vector_3> > FacetNormalMap;
   typedef boost::associative_property_map<std::map<face_descriptor, FT> > FacetAreaMap;
-  typedef boost::property_map<TriangleMesh, boost::vertex_point_t>::type VertexPointMap;
+  typedef typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type VertexPointMap;
 
   typedef CGAL::PlaneProxy<TriangleMesh> PlaneProxy;
   typedef CGAL::L21Metric<PlaneProxy, FacetNormalMap, FacetAreaMap> L21Metric;
