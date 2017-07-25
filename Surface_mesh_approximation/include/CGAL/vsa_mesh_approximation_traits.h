@@ -334,25 +334,17 @@ template<typename TriangleMesh,
   typename GeomTraits = typename TriangleMesh::Traits>
   struct PCAPlaneFitting
 {
-  typedef typename GeomTraits::FT FT;
   typedef typename GeomTraits::Point_3 Point_3;
   typedef typename GeomTraits::Plane_3 Plane_3;
   typedef typename GeomTraits::Triangle_3 Triangle_3;
-  typedef typename GeomTraits::Construct_scaled_vector_3 Construct_scaled_vector_3;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
 
   PCAPlaneFitting(const TriangleMesh &_mesh,  const VertexPointMap &_point_pmap)
-    : mesh(_mesh), point_pmap(_point_pmap) {
-    GeomTraits traits;
-    scale_functor = traits.construct_scaled_vector_3_object();
-  }
+    : mesh(_mesh), point_pmap(_point_pmap) {}
 
   PCAPlaneFitting(const TriangleMesh &_mesh)
     : mesh(_mesh),
-    point_pmap(get(boost::vertex_point, const_cast<TriangleMesh &>(_mesh))) {
-    GeomTraits traits;
-    scale_functor = traits.construct_scaled_vector_3_object();
-  }
+    point_pmap(get(boost::vertex_point, const_cast<TriangleMesh &>(_mesh))) {}
 
   template<typename FacetIterator>
   Plane_3 operator()(const FacetIterator beg, const FacetIterator end) const {
@@ -374,19 +366,12 @@ template<typename TriangleMesh,
       tris.end(),
       fit_plane,
       CGAL::Dimension_tag<2>());
-    typename GeomTraits::Vector_3 normal = fit_plane.orthogonal_vector();
-    normal = scale_functor(normal, FT(1.0 / std::sqrt(CGAL::to_double(normal.squared_length()))));
-
-    // px.normal = normal; how could we access a proxy here
-    // TODO: average normal to reverse proxy plane direction
-    // or seperate plane and normal requirements: plane just for distance, normal for Steiner points
-
+    
     return fit_plane;
   }
 
   const TriangleMesh &mesh;
   const VertexPointMap point_pmap;
-  Construct_scaled_vector_3 scale_functor;
 };
 
 // Bundled l2 approximation traits
