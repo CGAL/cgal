@@ -1622,6 +1622,55 @@ QMenu* Scene_surface_mesh_item::contextMenu()
     menu->removeAction(actionResetColor);
     actionResetColor->deleteLater();
   }
+  const char* prop_name = "Menu modified by Scene_surface_mesh_item.";
+  bool menuChanged = menu->property(prop_name).toBool();
+
+  if(!menuChanged) {
+    menu->addSeparator();
+    QAction* actionPrintVertices=
+        menu->addAction(tr("Display Vertices Ids"));
+    actionPrintVertices->setCheckable(true);
+    actionPrintVertices->setObjectName("actionPrintVertices");
+    connect(actionPrintVertices, SIGNAL(triggered(bool)),
+            this, SLOT(showVertices(bool)));
+
+    QAction* actionPrintEdges=
+        menu->addAction(tr("Display Edges Ids"));
+    actionPrintEdges->setCheckable(true);
+    actionPrintEdges->setObjectName("actionPrintEdges");
+    connect(actionPrintEdges, SIGNAL(triggered(bool)),
+            this, SLOT(showEdges(bool)));
+
+    QAction* actionPrintFaces=
+        menu->addAction(tr("Display Faces Ids"));
+    actionPrintFaces->setCheckable(true);
+    actionPrintFaces->setObjectName("actionPrintFaces");
+    connect(actionPrintFaces, SIGNAL(triggered(bool)),
+            this, SLOT(showFaces(bool)));
+
+    QAction* actionPrintAll=
+        menu->addAction(tr("Display All Ids"));
+    actionPrintAll->setCheckable(true);
+    actionPrintAll->setObjectName("actionPrintAll");
+    connect(actionPrintAll, SIGNAL(triggered(bool)),
+            this, SLOT(showPrimitives(bool)));
+
+    QAction* actionZoomToId=
+        menu->addAction(tr("Zoom to Index"));
+    actionZoomToId->setObjectName("actionZoomToId");
+    connect(actionZoomToId, &QAction::triggered,
+            this, &Scene_surface_mesh_item::zoomToId);
+    menu->setProperty(prop_name, true);
+  }
+
+  QAction* action = menu->findChild<QAction*>("actionPrintVertices");
+  if(action) action->setChecked(d->vertices_displayed);
+  action = menu->findChild<QAction*>("actionPrintEdges");
+  if(action) action->setChecked(d->edges_displayed);
+  action = menu->findChild<QAction*>("actionPrintFaces");
+  if(action) action->setChecked(d->faces_displayed);
+  action = menu->findChild<QAction*>("actionPrintAll");
+  if(action) action->setChecked(d->all_primitives_displayed);
   return menu;
 }
 void Scene_surface_mesh_item::printPrimitiveId(QPoint point, CGAL::Three::Viewer_interface *viewer)
@@ -1866,61 +1915,4 @@ bool Scene_surface_mesh_item::shouldDisplayIds(CGAL::Three::Scene_item *current_
   return this == current_item;
 }
 
-QMenu* Scene_surface_mesh_item::contextMenu()
-{
-  const char* prop_name = "Menu modified by Scene_surface_mesh_item.";
 
-  QMenu* menu = CGAL::Three::Scene_item::contextMenu();
-
-  // Use dynamic properties:
-  // http://doc.qt.io/qt-5/qobject.html#property
-  bool menuChanged = menu->property(prop_name).toBool();
-
-  if(!menuChanged) {
-    menu->addSeparator();
-    QAction* actionPrintVertices=
-        menu->addAction(tr("Display Vertices Ids"));
-    actionPrintVertices->setCheckable(true);
-    actionPrintVertices->setObjectName("actionPrintVertices");
-    connect(actionPrintVertices, SIGNAL(triggered(bool)),
-            this, SLOT(showVertices(bool)));
-
-    QAction* actionPrintEdges=
-        menu->addAction(tr("Display Edges Ids"));
-    actionPrintEdges->setCheckable(true);
-    actionPrintEdges->setObjectName("actionPrintEdges");
-    connect(actionPrintEdges, SIGNAL(triggered(bool)),
-            this, SLOT(showEdges(bool)));
-
-    QAction* actionPrintFaces=
-        menu->addAction(tr("Display Faces Ids"));
-    actionPrintFaces->setCheckable(true);
-    actionPrintFaces->setObjectName("actionPrintFaces");
-    connect(actionPrintFaces, SIGNAL(triggered(bool)),
-            this, SLOT(showFaces(bool)));
-
-    QAction* actionPrintAll=
-        menu->addAction(tr("Display All Ids"));
-    actionPrintAll->setCheckable(true);
-    actionPrintAll->setObjectName("actionPrintAll");
-    connect(actionPrintAll, SIGNAL(triggered(bool)),
-            this, SLOT(showPrimitives(bool)));
-
-    QAction* actionZoomToId=
-        menu->addAction(tr("Zoom to Index"));
-    actionZoomToId->setObjectName("actionZoomToId");
-    connect(actionZoomToId, &QAction::triggered,
-            this, &Scene_surface_mesh_item::zoomToId);
-  }
-
-  QAction* action = menu->findChild<QAction*>("actionPrintVertices");
-  if(action) action->setChecked(d->vertices_displayed);
-  action = menu->findChild<QAction*>("actionPrintEdges");
-  if(action) action->setChecked(d->edges_displayed);
-  action = menu->findChild<QAction*>("actionPrintFaces");
-  if(action) action->setChecked(d->faces_displayed);
-  action = menu->findChild<QAction*>("actionPrintAll");
-  if(action) action->setChecked(d->all_primitives_displayed);
-
-  return menu;
-}

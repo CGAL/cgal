@@ -1146,7 +1146,6 @@ QMenu* Scene_polyhedron_item::contextMenu()
     actionEraseNextFacet->setObjectName("actionEraseNextFacet");
     connect(actionEraseNextFacet, SIGNAL(toggled(bool)),
             this, SLOT(set_erase_next_picked_facet(bool)));
-    menu->setProperty(prop_name, true);
 
     QAction* actionDisableFlatShading=
         menu->addAction(tr("Disable Flat Shading"));
@@ -1155,6 +1154,7 @@ QMenu* Scene_polyhedron_item::contextMenu()
     connect(actionDisableFlatShading, SIGNAL(toggled(bool)),
             this, SLOT(set_flat_disabled(bool)));
 
+    menu->setProperty(prop_name, true);
   }
 
   QAction* action = menu->findChild<QAction*>("actionShowOnlyFeatureEdges");

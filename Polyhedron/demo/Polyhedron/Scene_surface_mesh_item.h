@@ -120,7 +120,6 @@ public:
   CGAL::Three::Scene_item::Header_data header() const Q_DECL_OVERRIDE;
   //zoomable interface
   void zoomToPosition(const QPoint &point, CGAL::Three::Viewer_interface *)const Q_DECL_OVERRIDE;
-  QMenu* contextMenu() Q_DECL_OVERRIDE;
  //print_interface
   void printPrimitiveId(QPoint point, CGAL::Three::Viewer_interface*viewer)Q_DECL_OVERRIDE;
   bool printVertexIds(CGAL::Three::Viewer_interface*)const Q_DECL_OVERRIDE;
