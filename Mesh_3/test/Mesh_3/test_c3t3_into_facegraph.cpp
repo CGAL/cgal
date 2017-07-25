@@ -11,7 +11,7 @@
 #include <CGAL/Polyhedral_mesh_domain_3.h>
 #include <CGAL/Polyhedral_mesh_domain_with_features_3.h>
 #include <CGAL/Mesh_domain_with_polyline_features_3.h>
-#include <CGAL/IO/Complex_3_in_triangulation_3_to_facegraph.h>
+#include <CGAL/IO/output_c3t3_to_facegraph.h>
 
 #include <CGAL/tags.h>
 
