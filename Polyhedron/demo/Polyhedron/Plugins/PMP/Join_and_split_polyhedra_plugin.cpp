@@ -162,7 +162,18 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionSplitPolyhedra_tr
         CGAL::Face_filtered_graph<FaceGraph> filter_graph(*item->face_graph(), i, pidmap);
         FaceGraph* new_graph = new FaceGraph();
         CGAL::copy_face_graph(filter_graph, *new_graph);
-        new_polyhedra.push_back(new_graph);
+        if(!is_valid(*new_graph))
+        {
+          QMessageBox::warning(mw, tr("Error"),
+                             tr("The component %1 could not be extracted. "
+                                "The original mesh is probably not manifold, "
+                                "you should try to remove the self intersections with the "
+                                "Repair Polyhedron plugin and then try again.").arg(i));
+          delete new_graph;
+          continue;
+        }
+        else
+          new_polyhedra.push_back(new_graph);
       }
 
 

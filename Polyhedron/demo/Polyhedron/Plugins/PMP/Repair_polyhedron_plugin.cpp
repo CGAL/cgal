@@ -10,6 +10,7 @@
 #include <CGAL/gl.h>
 
 #include <QAction>
+#include <QApplication>
 #include <QMainWindow>
 #include <QObject>
 
@@ -100,9 +101,11 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionRemoveIsolatedVertices_t
 
 void Polyhedron_demo_repair_polyhedron_plugin::on_actionRemoveIsolatedVertices_triggered()
 {
+  QApplication::setOverrideCursor((Qt::WaitCursor));
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
   on_actionRemoveIsolatedVertices_triggered<Scene_polyhedron_item>(index);
   on_actionRemoveIsolatedVertices_triggered<Scene_surface_mesh_item>(index);
+  QApplication::restoreOverrideCursor();
 }
 
 template <typename Item>
@@ -124,9 +127,11 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionRemoveDegenerateFaces_tr
 
 void Polyhedron_demo_repair_polyhedron_plugin::on_actionRemoveDegenerateFaces_triggered()
 {
+  QApplication::setOverrideCursor((Qt::WaitCursor));
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
   on_actionRemoveDegenerateFaces_triggered<Scene_polyhedron_item>(index);
   on_actionRemoveDegenerateFaces_triggered<Scene_surface_mesh_item>(index);
+  QApplication::restoreOverrideCursor();
 }
 
 template <typename Item>
@@ -148,9 +153,11 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionRemoveSelfIntersections_
 
 void Polyhedron_demo_repair_polyhedron_plugin::on_actionRemoveSelfIntersections_triggered()
 {
+  QApplication::setOverrideCursor((Qt::WaitCursor));
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
   on_actionRemoveSelfIntersections_triggered<Scene_polyhedron_item>(index);
   on_actionRemoveSelfIntersections_triggered<Scene_surface_mesh_item>(index);
+  QApplication::restoreOverrideCursor();
 }
 
 #include "Repair_polyhedron_plugin.moc"
