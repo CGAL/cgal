@@ -146,11 +146,7 @@ private:
     std::size_t index = 0;
     BOOST_FOREACH(face_descriptor f, faces(mesh)) {
       if ((index++) % interval == 0) {
-        // Use proxy_fitting functor to create a proxy
-        std::vector<face_descriptor> fvec(1, f);
-        Proxy px = proxy_fitting(fvec.begin(), fvec.end());
-        px.seed = f;
-        proxies.push_back(px);
+        proxies.push_back(fit_new_proxy(f));
       }
       if (proxies.size() >= initial_px)
         break;
@@ -170,17 +166,11 @@ private:
       return;
 
     proxies.clear();
-    // generate 2 seeds
+    // initialize 2 proxy
     typename boost::graph_traits<TriangleMesh>::face_iterator
-      f0 = faces(mesh).first, f1 = ++f0;
-    std::vector<face_descriptor> fvec0(1, *f0);
-    Proxy px0 = proxy_fitting(fvec0.begin(), fvec0.end());
-    px0.seed = *f0;
-    proxies.push_back(px0);
-    std::vector<face_descriptor> fvec1(1, *f1);
-    Proxy px1 = proxy_fitting(fvec1.begin(), fvec1.end());
-    px1.seed = *f1;
-    proxies.push_back(px1);
+      fitr = faces(mesh).first;
+    proxies.push_back(fit_new_proxy(*fitr));
+    proxies.push_back(fit_new_proxy(*(++fitr)));
 
     const std::size_t num_steps = 5;
     while (proxies.size() < initial_px) {
@@ -260,23 +250,9 @@ private:
     BOOST_FOREACH(face_descriptor f, faces(mesh))
       px_facets[seg_pmap[f]].push_back(f);
 
-    // fit proxy parameter
+    // update proxy parameters and seed
     for (std::size_t i = 0; i < proxies.size(); ++i)
-      proxies[i] = proxy_fitting(px_facets[i].begin(), px_facets[i].end());
-
-    // update proxy seed
-    for (std::size_t i = 0; i < proxies.size(); ++i) {
-      Proxy &px = proxies[i];
-      px.seed = px_facets[i].front();
-      FT err_min = fit_error(px_facets[i].front(), px);
-      BOOST_FOREACH(face_descriptor f, px_facets[i]) {
-        FT err = fit_error(f, px);
-        if (err < err_min) {
-          err_min = err;
-          px.seed = f;
-        }
-      }
-    }
+      proxies[i] = fit_new_proxy(px_facets[i].begin(), px_facets[i].end());
   }
 
   /**
@@ -307,12 +283,7 @@ private:
         max_px_idx = i;
       }
     }
-
-    // create new proxy
-    std::vector<face_descriptor> fvec(1, max_facet[max_px_idx]);
-    Proxy px = proxy_fitting(fvec.begin(), fvec.end());
-    px.seed = max_facet[max_px_idx];
-    proxies.push_back(px);
+    proxies.push_back(fit_new_proxy(max_facet[max_px_idx]));
   }
 
   /**
@@ -373,10 +344,7 @@ private:
         continue;
 
       if (num_to_add[px_id] > 0) {
-        std::vector<face_descriptor> fvec(1, f);
-        Proxy px = proxy_fitting(fvec.begin(), fvec.end());
-        px.seed = f;
-        proxies.push_back(px);
+        proxies.push_back(fit_new_proxy(f));
         --num_to_add[px_id];
         ++num_inserted;
       }
@@ -385,6 +353,52 @@ private:
       << num_proxies_to_be_added << '/' << num_inserted << std::endl;
 
     return num_inserted;
+  }
+
+  /**
+   * Fitting a new proxy.
+   * 1. Fit proxy parameters from a list of facets.
+   * 2. Set seed.
+   * @tparam FacetIterator face_descriptor container iterator
+   * @param beg container begin
+   * @param end container end
+   */
+  template<typename FacetIterator>
+  Proxy fit_new_proxy(const FacetIterator &beg, const FacetIterator &end) {
+    CGAL_assertion(beg != end);
+
+    // use proxy_fitting functor to fit proxy parameters
+    Proxy px = proxy_fitting(beg, end);
+
+    // find proxy seed
+    px.seed = *beg;
+    FT err_min = fit_error(*beg, px);
+    std::pair<FacetIterator, FacetIterator> facets(beg, end);
+    BOOST_FOREACH(face_descriptor f, facets) {
+      FT err = fit_error(f, px);
+      if (err < err_min) {
+        err_min = err;
+        px.seed = f;
+      }
+    }
+
+    return px;
+  }
+
+  /**
+   * Fitting a new proxy from a single facet.
+   * 1. Fit proxy parameters from one facet.
+   * 2. Set seed.
+   * @param face_descriptor facet
+   */
+  Proxy fit_new_proxy(const face_descriptor &f) {
+    std::vector<face_descriptor> fvec(1, f);
+    // fit proxy parameters
+    Proxy px = proxy_fitting(fvec.begin(), fvec.end());
+    // find proxy seed
+    px.seed = f;
+
+    return px;
   }
 
   /**
