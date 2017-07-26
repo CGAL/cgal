@@ -19,7 +19,7 @@ public:
   }
 };
 //! [dock]
-//This plugin crates an action in Operations that creates a DOckWidget to display a number in the 'console' dockwidet.
+//This plugin creates an action in Operations that creates a DockWidget to display a number in the 'console' dockwidet.
 class BasicPlugin :
     public QObject,
     public CGAL::Three::Polyhedron_demo_plugin_helper
@@ -28,7 +28,7 @@ class BasicPlugin :
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 public:
-  //decides if the plugin's actions will be displayed or not.
+  //decides if the plugin actions will be displayed or not.
   bool applicable(QAction*) const Q_DECL_OVERRIDE
   {
     return true;
@@ -44,7 +44,6 @@ public:
   {
     //gets the reference to the message interface, to display text in the console widget
     this->messageInterface = mi;
-    //get the references
     this->scene = sc;
     this->mw = mw;
 

@@ -8,7 +8,7 @@
 #include "Scene_plane_item.h"
 #include <CGAL/Three/Scene_group_item.h>
 
-//This plugin crates an action in Operations that displays "Hello World" in the 'console' dockwidet.
+//This plugin creates an action in Operations that creates a plane item and adds it to a group.
 class GroupItemPlugin :
     public QObject,
     public CGAL::Three::Polyhedron_demo_plugin_interface
@@ -17,7 +17,7 @@ class GroupItemPlugin :
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 public:
-  //This plugin is only applicable if there is at exactly one selected item.
+  //This plugin is always applicable .
   bool applicable(QAction*) const
   {
     return true;
@@ -30,19 +30,19 @@ public:
   //this acts like a constructor for the plugin. It gets the references to the mainwindow and the scene, and connects the action.
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* sc  )
   {
-    //get the references
+    //gets the references
     this->scene = sc;
     this->mw = mainWindow;
 
     //creates the action
-    QAction *actionHelloWorld= new QAction(QString("Hello World"), mw);
+    QAction *actionMakeGroup= new QAction(QString("Create Group"), mw);
     //specifies the subMenu
-    actionHelloWorld->setProperty("submenuName", "Basic");
+    actionMakeGroup->setProperty("submenuName", "Basic");
     //links the action
-    if(actionHelloWorld) {
-      connect(actionHelloWorld, SIGNAL(triggered()),
-              this, SLOT(helloWorld()));
-      _actions << actionHelloWorld;
+    if(actionMakeGroup) {
+      connect(actionMakeGroup, SIGNAL(triggered()),
+              this, SLOT(makeGroup()));
+      _actions << actionMakeGroup;
     }
   }
 
@@ -55,7 +55,7 @@ public:
 private Q_SLOTS:
 
 
-  void helloWorld()
+  void makeGroup()
   {
     //creates an item
     Scene_plane_item *child = new Scene_plane_item(scene);

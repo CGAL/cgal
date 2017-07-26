@@ -8,7 +8,7 @@
 #include "CGAL/Three/Scene_group_item.h"
 #include "Scene_plane_item.h"
 
-//This plugin crates an action in Operations that displays the name of the selected item,
+//This plugin creates an action in Operations that displays the name of the selected item,
 //adds a scene_plane_item to the scene, and adds the selected item and the plane to a new group.
 class BasicItemPlugin :
     public QObject,
@@ -55,7 +55,7 @@ private Q_SLOTS:
 
   void helloWorld()
   { //! [use]
-    //get a reference to the selected item.
+    //gets a reference to the selected item.
     CGAL::Three::Scene_item *item = scene->item(scene->mainSelectionIndex());
     messageInterface->information(QString("The selected item's name is  : %1").arg(item->name()));
     //! [use]
@@ -68,11 +68,11 @@ private Q_SLOTS:
     scene->addItem(new_item);
     //! [additem]
     //! [group]
-    //Create a new group
+    //Creates a new group
     Scene_group_item *group = new Scene_group_item("New group");
-    //add it to the scene
+    //adds it to the scene
     scene->addItem(group);
-    //Then give it its children
+    //Then gives it its children
     scene->changeGroup(item, group);
     scene->changeGroup(new_item,group);
     //! [group]

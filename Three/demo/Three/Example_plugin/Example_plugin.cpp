@@ -18,7 +18,7 @@
 #  define SCENE_TRIANGLE_ITEM_EXPORT Q_DECL_IMPORT
 #endif
 
-class Scene_triangle_item : public CGAL::Three::Scene_item
+class SCENE_TRIANGLE_ITEM_EXPORT Scene_triangle_item : public CGAL::Three::Scene_item
 {
 
   Q_OBJECT
@@ -145,11 +145,11 @@ void Scene_triangle_item::initializeBuffers(CGAL::Three::Viewer_interface *viewe
 
   }
 
-//once the buffers are fill, we can empty the vectors to optimize memory consumption
+  //once the buffers are fill, we can empty the vectors to optimize memory consumption
   nb_pos = vertices.size();
   vertices.resize(0);
-  //"Swap trick" insures that the memory is indeed freed and not kept available
-  std::vector<float>(vertices).swap(vertices);
+  //insures that the memory is indeed freed and not kept available
+  vertices.shrink_to_fit();
   are_buffers_filled = true;
 }
 //! [fillbuffers]
@@ -169,7 +169,7 @@ class Q_DECL_EXPORT Polyhedron_demo_example_plugin :
 public :
   // Adds an action to the menu and configures the widget
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*) Q_DECL_OVERRIDE{
-    //get the references
+    //gets the references
     this->scene = scene_interface;
     this->mw = mainWindow;
 
