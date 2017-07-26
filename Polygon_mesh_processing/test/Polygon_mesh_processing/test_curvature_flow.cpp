@@ -33,10 +33,9 @@ int main(int argc, char* argv[]){
 
     std::vector<std::string> filenames = {
         "data/curved_polygon",
-        /*"data/polygon",
+        "data/polygon",
         "data/polygon3D",
         "data/blobby_3cc",
-        "data/cube_quad",
         "data/elephant",
         "data/degenerate_polygon",
         "data/sneaky_degenerate_polygon",
@@ -50,7 +49,7 @@ int main(int argc, char* argv[]){
         "data/tetra3",
         "data/tetra4",
         "data/two_tris_collinear",
-        "data/U"*/
+        "data/U"
     };
 
 

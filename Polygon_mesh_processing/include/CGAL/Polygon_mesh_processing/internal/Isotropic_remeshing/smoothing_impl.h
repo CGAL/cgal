@@ -118,6 +118,8 @@ public:
 
         //update constrained edges
         check_constrained_edges();
+
+        min_edge_len_ = init_min_edge_length();
     }
 
     std::size_t remove_degenerate_faces()

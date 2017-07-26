@@ -24,15 +24,9 @@ int main(int argc, char* argv[]){
         return 1;
     }
 
-
-
     CGAL::Polygon_mesh_processing::compatible_remeshing(
                                     mesh,
-                                    faces(mesh),
-                                    edges(mesh),
                                     CGAL::Polygon_mesh_processing::parameters::number_of_iterations(3));
-
-
 
     std::ofstream output("data/polygon3D_smoothed.off");
     output << mesh;

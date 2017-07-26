@@ -90,7 +90,7 @@ public:
         tree_ptr_->accelerate_distance_queries();
 
 
-        min_edge_len_ = init_min_edge_length();
+        min_sq_edge_len_ = init_min_edge_length();
 
         //TODO: update constrained edges
         //check_constrained_edges();
@@ -102,7 +102,6 @@ public:
 
     std::size_t remove_degenerate_faces()
     {
-
         std::size_t nb_removed_faces = 0;
 
         /*
@@ -118,33 +117,26 @@ public:
         }
         */
 
-        // repair.h
+        // from repair.h
         nb_removed_faces = CGAL::Polygon_mesh_processing::remove_degenerate_faces(mesh_);
 
+        // debug
+        std::cout<<"nb_collapsed_faces: "<<nb_removed_faces<<std::endl;
 
         return nb_removed_faces;
     }
 
-
-
-
     std::size_t collapse_short_edges()
     {
         std::size_t nb_collapsed_edges = 0;
-
         std::set<edge_descriptor> edges_to_collapse, non_topologically_valid_collapses;
-
 
         // collect short edges
         for(edge_descriptor e : edges(mesh_))
         {
             if(edge_should_collapse(e))
-            {
                 edges_to_collapse.insert(e);
-            }
         }
-
-
 
         // collapse
         while(!edges_to_collapse.empty())
@@ -161,11 +153,10 @@ public:
                     continue;
                 }
 
-
                 // take out from short_edges prev and prev(opposite), which will be collapsed
                 halfedge_descriptor he = halfedge(e, mesh_);
 
-                //
+                // verbose - todo
                 vertex_descriptor vs = source(he, mesh_);
                 vertex_descriptor vt = target(he, mesh_);
                 //
@@ -178,10 +169,7 @@ public:
                 non_topologically_valid_collapses.erase(edge(prev(he, mesh_), mesh_));
                 non_topologically_valid_collapses.erase(edge(prev(opposite(he, mesh_), mesh_), mesh_));
 
-
-
                 vertex_descriptor v = Euler::collapse_edge(e, mesh_);
-
 
                 // check if an out_edge now is too short
                 for (edge_descriptor out_e : out_edges(v, mesh_))
@@ -190,25 +178,17 @@ public:
                         edges_to_collapse.insert(out_e);
                 }
 
-
                 nb_collapsed_edges++;
             }
 
             edges_to_collapse.swap(non_topologically_valid_collapses);
-
         }
 
-
-
+        // debug
         std::cout<<"nb_collapsed_edges: "<<nb_collapsed_edges<<std::endl;
 
         return nb_collapsed_edges;
-
-
     }
-
-
-    // end fixing degenerates
 
     void curvature_smoothing()
     {
@@ -252,9 +232,8 @@ public:
                     he_map[hi] = He_pair( next(hi, mesh_), prev(opposite(hi, mesh_), mesh_) );
 
 
-
                 /*
-                // find barycenter - without cot weights
+                // use barycenter - without cot weights
                 Vector displacement = CGAL::NULL_VECTOR;
                 for(halfedge_descriptor hi : halfedges_around_source(v, mesh_))
                 {
@@ -263,7 +242,6 @@ public:
                 barycenters[v] = get(vpmap_, v) + (displacement / halfedges_around_source(v, mesh_).size()) ;
                 Point new_location = barycenters[v] + n_map[v]; // point + vector
                 */
-
 
 
                 // with cot weights
@@ -293,22 +271,14 @@ public:
                 weighted_barycenter /= sum_c;
 
 
-
-
                 Point new_location = get(vpmap_, v) + weighted_barycenter; // + kn ?
-
-
-
-
 
 
                 // update location
                 put(vpmap_, v, new_location);
 
 
-
-
-            } // in not on border
+            } // not on border
 
 
         } // all vertices
@@ -337,69 +307,6 @@ public:
 
 
 private:
-
-    // start degenerate fixing functions
-
-    bool edge_should_collapse(edge_descriptor e)
-    {
-        halfedge_descriptor he = halfedge(e, mesh_);
-        Point s = get(vpmap_, source(he, mesh_));
-        Point t = get(vpmap_, target(he, mesh_));
-
-        double sq_length = traits_.compute_squared_distance_3_object()(s, t);
-
-        if(sq_length < min_edge_len_)
-            return true;
-        else
-            return false;
-    }
-
-    struct Vertex_to_point
-    {
-        Vertex_to_point(VertexPointMap vpmap) : vpmap(vpmap){}
-
-        typedef typename boost::property_traits<VertexPointMap>::reference output_type;
-
-        output_type operator()(vertex_descriptor vd) const
-        {
-            return get(vpmap, vd);
-        }
-
-        VertexPointMap vpmap;
-    };
-
-
-    double init_min_edge_length()
-    {
-        vertex_iterator vi, ve;
-        std::pair<vertex_iterator, vertex_iterator> vp;
-
-        boost::tie(vi, ve) = vertices(mesh_);
-
-        // to improve
-        Vertex_to_point v_to_p(vpmap_);
-
-        Bbox_3 bbox= CGAL::bbox_3(boost::make_transform_iterator(vi, v_to_p), boost::make_transform_iterator(ve, v_to_p));
-
-        //try with .begin()
-
-        return 0.01 * diagonal_length(bbox);
-    }
-
-    double diagonal_length(const Bbox_3& bbox)
-    {
-      double dx = bbox.xmax() - bbox.xmin();
-      double dy = bbox.ymax() - bbox.ymin();
-      double dz = bbox.zmax() - bbox.zmin();
-
-      double diag = dx * dx + dy * dy + dz * dz;
-      return std::sqrt(diag);
-    }
-
-
-    // end degenerate functions
-
-
     Triangle triangle(face_descriptor f) const
     {
         halfedge_descriptor h = halfedge(f, mesh_);
@@ -409,7 +316,6 @@ private:
         return Triangle(get(vpmap_, v1), get(vpmap_, v2), get(vpmap_, v3));
     }
 
-/*
     double compute_mean_curvature()
     {
         // gather points around v
@@ -429,7 +335,7 @@ private:
 
         return (k1 + k2) / 2.0;
     }
-*/
+
     std::pair<double, double> cot_angles(const halfedge_descriptor& main_he, const He_pair& incd_edges)
     {
         vertex_descriptor v0 = source(main_he, mesh_);
@@ -467,7 +373,6 @@ private:
         return incident_vertices;
     }
 
-
     std::vector<Point> gather_all_points()
     {
         std::vector<Point> points; // todo: preallocate it and fill it by pointing
@@ -477,6 +382,59 @@ private:
         }
 
         return points;
+    }
+
+    // degenerate fixing functions
+
+    bool edge_should_collapse(edge_descriptor e)
+    {
+        halfedge_descriptor he = halfedge(e, mesh_);
+        Point s = get(vpmap_, source(he, mesh_));
+        Point t = get(vpmap_, target(he, mesh_));
+
+        double sq_length = traits_.compute_squared_distance_3_object()(s, t);
+
+        if(sq_length < min_sq_edge_len_)
+            return true;
+        else
+            return false;
+    }
+
+    struct Vertex_to_point
+    {
+        Vertex_to_point(VertexPointMap vpmap) : vpmap(vpmap){}
+
+        typedef typename boost::property_traits<VertexPointMap>::reference output_type;
+
+        output_type operator()(vertex_descriptor vd) const
+        {
+            return get(vpmap, vd);
+        }
+
+        VertexPointMap vpmap;
+    };
+
+    double init_min_edge_length()
+    {
+        vertex_iterator vi, ve;
+        boost::tie(vi, ve) = vertices(mesh_);
+        Vertex_to_point v_to_p(vpmap_);
+
+        Bbox_3 bbox= CGAL::bbox_3(
+                    boost::make_transform_iterator(vi, v_to_p),
+                    boost::make_transform_iterator(ve, v_to_p));
+
+        return 0.002 * diagonal_length(bbox);
+    }
+
+    double diagonal_length(const Bbox_3& bbox)
+    {
+      double dx = bbox.xmax() - bbox.xmin();
+      double dy = bbox.ymax() - bbox.ymin();
+      double dz = bbox.zmax() - bbox.zmin();
+
+      double diag = dx * dx + dy * dy + dz * dz;
+      return std::sqrt(diag);
     }
 
 
@@ -490,7 +448,7 @@ private:
     Triangle_list input_triangles_;
     Tree* tree_ptr_;
     GeomTraits traits_;
-    double min_edge_len_;
+    double min_sq_edge_len_;
 
 
 };

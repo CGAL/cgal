@@ -28,7 +28,7 @@ namespace Polygon_mesh_processing {
 
 
 template<typename PolygonMesh, typename NamedParameters, typename FaceRange, typename EdgeRange>
-void compatible_remeshing(PolygonMesh& pmesh,  const FaceRange& faces, const EdgeRange& edges, const NamedParameters& np)
+void compatible_remeshing(PolygonMesh& pmesh, const FaceRange& faces, const EdgeRange& edges, const NamedParameters& np)
 {
     using boost::choose_param;
     using boost::get_param;
@@ -96,10 +96,16 @@ void compatible_remeshing(PolygonMesh& pmesh,  const FaceRange& faces, const Edg
 #ifdef CGAL_PMP_REMESHING_VERBOSE
   t.stop();
   std::cout << " done ("<< t.time() <<" sec)." << std::endl;
+  std::cout << "Removing degenerate edges and faces..." << std::endl;
+  t.reset(); t.start();
 #endif
 
+    remesher.collapse_short_edges();
+    remesher.remove_degenerate_faces();
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
+  t.stop();
+  std::cout << " done ("<< t.time() <<" sec)." << std::endl;
   std::cout << "#iter = " << nb_iterations << std::endl;
   std::cout << "Remeshing ..." << std::endl;
   t.reset(); t.start();
@@ -132,6 +138,11 @@ void compatible_remeshing(PolygonMesh& pmesh)
     compatible_remeshing(pmesh, faces(pmesh), edges(pmesh), parameters::all_default());
 }
 
+template<typename PolygonMesh, typename NamedParameters>
+void compatible_remeshing(PolygonMesh& pmesh, const NamedParameters& np)
+{
+    compatible_remeshing(pmesh, faces(pmesh), edges(pmesh), np);
+}
 
 
 
@@ -165,10 +176,8 @@ void curvature_flow(PolygonMesh& pmesh, const NamedParameters& np)
   t.reset(); t.start();
 #endif
 
-
     internal::Curvature_flow<PolygonMesh, VertexPointMap, GeomTraits> curvature_remesher(pmesh, vpmap);
     curvature_remesher.init_remeshing(faces(pmesh));
-
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
   t.stop();
@@ -177,7 +186,7 @@ void curvature_flow(PolygonMesh& pmesh, const NamedParameters& np)
   t.reset(); t.start();
 #endif
 
-    curvature_remesher.collapse_short_edges();
+    //curvature_remesher.collapse_short_edges();
     curvature_remesher.remove_degenerate_faces();
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE

@@ -10,7 +10,7 @@
 
 
 #define CGAL_PMP_REMESHING_VERBOSE
-#define CGAL_TEST_COMP_REMESHING_OUTPUT
+//#define CGAL_TEST_COMP_REMESHING_OUTPUT
 
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
@@ -35,7 +35,6 @@ int main(int argc, char* argv[]){
         "data/polygon",
         "data/polygon3D",
         "data/blobby_3cc",
-        "data/cube_quad",
         "data/elephant",
         "data/degenerate_polygon",
         "data/sneaky_degenerate_polygon",
