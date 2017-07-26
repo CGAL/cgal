@@ -204,7 +204,7 @@ Once your code is written, you will need to link the item's library to your plug
 \subsubsection exampleCreatingANewTypeItem Creating a new type of item
 
 If you cannot use an existing type of item, like the Scene_polyhedron_item or the Scene_c3t3_item for your plugin, you will have to create one, by deriving CGAL::Three::Scene_item.\n
-An item is simply a graphic representation of a geometric data set. You need to compute this data, and to display it in CGAL::Three::Scene_item#draw.
+An item is simply a graphic representation of a geometric data set. You need to compute this data, and to display it in `CGAL::Three::Scene_item::draw(CGAL::Three::Viewer_interface*)const`.
 
 \snippet Three/Example_plugin/Example_plugin.cpp itemdeclaration
 
@@ -229,10 +229,10 @@ The code above gets a ShaderProgram, that holds the characteristics of the displ
 
 <b>  - Displaying the data </b>
 
-[draw()]: @ref CGAL::Three::Scene_item#draw
-[drawPoints()]: @ref CGAL::Three::Scene_item#drawPoints
-[drawEdges()]: @ref CGAL::Three::Scene_item#drawEdges
-Originally, it's the viewer that requires displaying. It calls the scene, that calls each visible item's [draw()],[drawEdges()] and [drawPoints()] functions individually.
+[draw()]: @ref CGAL::Three::Scene_item::draw(CGAL::Three::Viewer_interface*)const
+[drawPoints()]: @ref CGAL::Three::Scene_item::drawPoints(CGAL::Three::Viewer_interface*)const
+[drawEdges()]: @ref CGAL::Three::Scene_item::drawEdges(CGAL::Three::Viewer_interface*)const
+Originally, it's the viewer that requires displaying. It calls the scene, that calls each visible item's [draw()], [drawEdges()] and [drawPoints()] functions individually.
 Therefore, this is in those functions that the display of the data must be handled :
 
 \snippet Three/Example_plugin/Example_plugin.cpp draw
