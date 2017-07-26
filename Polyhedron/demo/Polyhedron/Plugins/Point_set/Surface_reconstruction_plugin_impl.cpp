@@ -188,7 +188,7 @@ bool poisson_reconstruct(FaceGraph* graph,
      return false;
 
     // Converts to polyhedron
-    c2t3_to_facegraph(c2t3, *graph);
+    CGAL::output_surface_facets_to_facegraph(c2t3, *graph);
 
     // Prints total reconstruction duration
     std::cerr << "Total reconstruction (implicit function + meshing): " << reconstruction_timer.time() << " seconds\n";
