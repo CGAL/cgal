@@ -90,8 +90,9 @@ public:
    */
   void partition(const std::size_t number_of_segments, const std::size_t number_of_iterations, FacetSegmentMap &seg_pmap) {
     random_seed(number_of_segments);
-    //random_seed(number_of_segments / 2);
     for (std::size_t i = 0; i < number_of_iterations; ++i) {
+      if (i > 0)
+        join_and_teleport(seg_pmap);
       flooding(seg_pmap);
       fitting(seg_pmap);
     }
@@ -428,6 +429,95 @@ private:
       sum_error += err;
     }
     return sum_error;
+  }
+
+  /**
+   * Join two regions and teleport to the worst region.
+   * @param seg_map facet partition index
+   * @return if teleport success
+   */
+  bool join_and_teleport(const FacetSegmentMap &seg_pmap) {
+    typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor edge_descriptor;
+    typedef std::pair<std::size_t, std::size_t> ProxyPair;
+    typedef std::set<ProxyPair> MergedPair;
+
+    std::vector<std::list<face_descriptor> > px_facets(proxies.size());
+    BOOST_FOREACH(face_descriptor f, faces(mesh))
+      px_facets[seg_pmap[f]].push_back(f);
+    
+    // find worst proxy
+    std::vector<FT> px_error(proxies.size(), FT(0));
+    fitting_error(seg_pmap, px_error);
+    std::size_t px_worst = 0;
+    FT max_error = px_error.front();
+    for (std::size_t i = 0; i < proxies.size(); ++i) {
+      if (max_error < px_error[i]) {
+        max_error = px_error[i];
+        px_worst = i;
+      }
+    }
+    if (px_facets[px_worst].size() < 3)
+      return false;
+
+    // find best merge
+    std::size_t px_enlarged = 0, px_merged = 0;
+    MergedPair merged_set;
+    Proxy merged_px;
+    FT merged_error = FT(0);
+    bool first_merge = true;
+    BOOST_FOREACH(edge_descriptor e, edges(mesh)) {
+      if (CGAL::is_border(e, mesh))
+        continue;
+      std::size_t pxi = seg_pmap[face(halfedge(e, mesh), mesh)];
+      std::size_t pxj = seg_pmap[face(opposite(halfedge(e, mesh), mesh), mesh)];
+      if (pxi == pxj)
+        continue;
+      if (pxi > pxj)
+        std::swap(pxi, pxj);
+      if (merged_set.find(ProxyPair(pxi, pxj)) != merged_set.end())
+        continue;
+
+      std::list<face_descriptor> merged_patch(px_facets[pxi]);
+      BOOST_FOREACH(face_descriptor f, px_facets[pxj])
+        merged_patch.push_back(f);
+
+      Proxy px = fit_new_proxy(merged_patch.begin(), merged_patch.end());
+      FT sum_error(0);
+      BOOST_FOREACH(face_descriptor f, merged_patch)
+        sum_error += fit_error(f, px);
+      merged_set.insert(ProxyPair(pxi, pxj));
+
+      if (first_merge || sum_error < merged_error) {
+        first_merge = false;
+        merged_error = sum_error;
+        merged_px = px;
+        px_enlarged = pxi;
+        px_merged = pxj;
+      }
+    }
+
+    // test if merge worth it
+    const FT teleport_thre = max_error / FT(2);
+    const FT increase = merged_error - (px_error[px_enlarged] + px_error[px_merged]);
+    if (increase > teleport_thre
+      || px_worst == px_enlarged
+      || px_worst == px_merged)
+      return false;
+
+    // merge
+    BOOST_FOREACH(face_descriptor f, px_facets[px_merged])
+      seg_pmap[f] = px_enlarged;
+    proxies[px_enlarged] = merged_px;
+    // teleport to a facet in the worst region
+    BOOST_FOREACH(face_descriptor f, px_facets[px_worst]) {
+      if (f != proxies[px_worst].seed) {
+        proxies[px_merged] = fit_new_proxy(f);
+        break;
+      }
+    }
+
+    std::cerr << "teleported" << std::endl;
+    return true;
   }
 }; // end class VSA_approximation
 
