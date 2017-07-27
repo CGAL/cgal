@@ -247,7 +247,7 @@ public:
   Weighted_point robust_canonicalize_point(const Weighted_point& p) const
   {
     bool had_to_use_exact = false;
-    Periodic_bare_point pwp = construct_periodic_weighted_point(p, had_to_use_exact);
+    Periodic_weighted_point pwp = construct_periodic_weighted_point(p, had_to_use_exact);
 
     if(had_to_use_exact)
     {
@@ -502,7 +502,7 @@ public:
                  OutputIteratorBoundaryFacets bfit,
                  OutputIteratorCells cit,
                  OutputIteratorInternalFacets ifit,
-                 bool* could_lock_zone = NULL,
+                 bool* CGAL_assertion_code(could_lock_zone) = NULL,
                  const Facet* /* this_facet_must_be_in_the_cz */ = NULL,
                  bool* /* the_facet_is_in_its_cz */ = NULL) const
   {
@@ -557,7 +557,7 @@ public:
   find_conflicts(const Weighted_point &p, Cell_handle c,
                  OutputIteratorBoundaryFacets bfit,
                  OutputIteratorCells cit,
-                 bool* CGAL_assertion_code(could_lock_zone) = NULL) const
+                 bool* could_lock_zone = NULL) const
   {
     CGAL_assertion(could_lock_zone == NULL);
 
