@@ -730,9 +730,7 @@ public:
     {
       // approximate construction does not manage
       had_to_use_exact = true;
-
-
-      Periodic_point_3 epp = exact_construct_periodic_point(p);
+      pp = exact_construct_periodic_point(p);
     }
 
     return pp;
