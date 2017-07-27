@@ -8,14 +8,14 @@ the triangulation type to be used for the 3D periodic triangulation embedding th
 
 \tparam MD must be a model of `Periodic_3MeshDomain_3`.
 
-\tparam Gt must be a model of `RegularTriangulationTraits_3` or `Default`
-and defaults to `Kernel_traits<MD>::%Kernel`.
+\tparam Gt must be a model of `RegularTriangulationTraits_3`.
+`Default` may be used, with default value `Kernel_traits<MD>::%Kernel`.
 
-\tparam Vertex_base must be a model of `MeshVertexBase_3` and `Periodic_3TriangulationDSVertexBase_3`, or of `Default`
-and defaults to `Mesh_vertex_base_3<Gt, MD, Triangulation_vertex_base_3<Gt, Periodic_3_triangulation_ds_vertex_base_3> >`.
+\tparam Vertex_base must be a model of `MeshVertexBase_3` and `Periodic_3TriangulationDSVertexBase_3`.
+`Default` may be used, with default value `Mesh_vertex_base_3<Gt, MD, Triangulation_vertex_base_3<Gt, Periodic_3_triangulation_ds_vertex_base_3> >`.
 
-\tparam Cell_base must be a model of `MeshCellBase_3` and `Periodic_3TriangulationDSCellBase_3`, or `Default`
-and defaults to `Mesh_cell_base_3<Gt, MD, Triangulation_cell_base_with_circumcenter_3<Gt, Triangulation_cell_base_3<Gt, Periodic_3_triangulation_ds_cell_base_3> > >`.
+\tparam Cell_base must be a model of `MeshCellBase_3` and `Periodic_3TriangulationDSCellBase_3`.
+`Default` may be used, with default value `Mesh_cell_base_3<Gt, MD, Triangulation_cell_base_with_circumcenter_3<Gt, Triangulation_cell_base_3<Gt, Periodic_3_triangulation_ds_cell_base_3> > >`.
 
 \sa `make_periodic_3_mesh_3()`
 
