@@ -925,17 +925,17 @@ next(typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMa
   CGAL_assertion(in_CC(h, w));
   if(in_CC(next(h, w.graph()), w))
     return next(h, w.graph());
-  //act as a border
+
+  //h is on the border of the selection
+  CGAL_assertion( !in_CC(face(h, w.graph()), w) );
   typedef typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_descriptor h_d;
-  BOOST_FOREACH( h_d hcirc,
-                CGAL::halfedges_around_target(target(h, w.graph()), w.graph()))
-  {
-    if(hcirc != h && in_CC(hcirc, w))
-    {
-      return opposite(hcirc, w.graph());
-    }
-  }
-  return boost::graph_traits< CGAL::Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::null_halfedge();
+  h_d candidate = next(h, w.graph());
+  CGAL_assertion(!in_CC(candidate, w));
+  do{
+    candidate = next(opposite(candidate, w.graph()), w.graph());
+    CGAL_assertion(candidate!=opposite(h,w.graph()));
+  }while(!in_CC(candidate, w));
+  return candidate;
 }
 
 template<typename Graph,
@@ -951,17 +951,16 @@ prev(typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMa
   if(in_CC(prev(h, w.graph()), w))
     return prev(h, w.graph());
 
-  //act as a border
+  //h is on the border of the selection
+  CGAL_assertion( !in_CC(face(h, w.graph()), w) );
   typedef typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_descriptor h_d;
-  BOOST_FOREACH(h_d hcirc,
-                CGAL::halfedges_around_source(source(h, w.graph()), w.graph()))
-  {
-    if(hcirc != h && in_CC(hcirc, w))
-    {
-      return opposite(hcirc, w.graph());
-    }
-  }
-  return boost::graph_traits< CGAL::Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::null_halfedge();
+  h_d candidate = prev(h, w.graph());
+  CGAL_assertion(!in_CC(candidate, w));
+  do{
+    candidate = prev(opposite(candidate, w.graph()), w.graph());
+    CGAL_assertion(candidate!=opposite(h,w.graph()));
+  }while(!in_CC(candidate, w));
+  return candidate;
 }
 
 //
