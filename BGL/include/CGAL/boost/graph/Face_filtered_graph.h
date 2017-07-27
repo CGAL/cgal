@@ -280,6 +280,9 @@ struct Face_filtered_graph
     selected_faces.resize(num_faces(_graph));
     selected_vertices.resize(num_vertices(_graph));
     selected_halfedges.resize(num_halfedges(_graph));
+    selected_faces.reset();
+    selected_vertices.reset();
+    selected_halfedges.reset();
     BOOST_FOREACH(face_descriptor fd, faces(_graph) )
     {
       if(get(face_patch_index_map, fd) == face_patch_id)
@@ -312,6 +315,9 @@ struct Face_filtered_graph
     selected_faces.resize(num_faces(_graph));
     selected_vertices.resize(num_vertices(_graph));
     selected_halfedges.resize(num_halfedges(_graph));
+    selected_faces.reset();
+    selected_vertices.reset();
+    selected_halfedges.reset();
     typedef typename boost::property_traits<FacePatchIndexMap>::value_type Patch_index;
     boost::unordered_set<Patch_index> pids(boost::begin(selected_face_patch_indices),
                                            boost::end(selected_face_patch_indices));
@@ -341,6 +347,9 @@ struct Face_filtered_graph
     selected_faces.resize(num_faces(_graph));
     selected_vertices.resize(num_vertices(_graph));
     selected_halfedges.resize(num_halfedges(_graph));
+    selected_faces.reset();
+    selected_vertices.reset();
+    selected_halfedges.reset();
     BOOST_FOREACH(face_descriptor fd, selection)
     {
       selected_faces.set(get(fimap, fd));
