@@ -85,9 +85,8 @@ public:
         return lloyd_move_inside_domain(v,incident_cells,c3t3,sizing_field);
         break;
       case 2:
-//        <PERIODIC>  Needs P3RT3
-//        return lloyd_move_on_boundary(v,c3t3,sizing_field);
-//        break;
+        return lloyd_move_on_boundary(v,c3t3,sizing_field);
+        break;
       case 1:
       case 0:
       case -1: 
