@@ -17,6 +17,9 @@ if ( CGAL_FOUND )
 
   include_directories (BEFORE "../../include")
 
+  create_single_source_cgal_program( "mesh_implicit_shapes_bunch.cpp" )
+  create_single_source_cgal_program( "mesh_triply_periodic_minimal_surfaces.cpp" )
+
 else()
   
     message(STATUS "This program requires the CGAL library, and will not be compiled.")
