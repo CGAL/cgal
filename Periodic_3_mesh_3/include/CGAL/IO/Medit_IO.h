@@ -19,6 +19,8 @@
 #ifndef CGAL_PERIODIC_3_MESH_3_IO_FILE_MEDIT_H
 #define CGAL_PERIODIC_3_MESH_3_IO_FILE_MEDIT_H
 
+#include <CGAL/assertions.h>
+
 #include <boost/unordered_map.hpp>
 
 #include <algorithm>
@@ -91,8 +93,8 @@ Stream& write_complex_to_medit(Stream& out, C3t3& c3t3,
   //       the (Ox) and (Oy) axes
   // -"8": draws 3 occurences of the domain, displaying an additional domain on
   //       the (Ox), (Oy), and (Oz) axes
-  assert(occurence_count == 1 || occurence_count == 2 ||
-         occurence_count == 4 || occurence_count == 8);
+  CGAL_precondition(occurence_count == 1 || occurence_count == 2 ||
+                    occurence_count == 4 || occurence_count == 8);
 
   typedef typename C3t3::Triangulation           Triangulation;
   typedef Triangulation                          Tr;

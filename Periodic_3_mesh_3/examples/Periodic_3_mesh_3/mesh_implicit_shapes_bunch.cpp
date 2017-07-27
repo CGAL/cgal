@@ -171,9 +171,9 @@ Point canonicalize_point(const Point& p)
 {
   Point canonical_p = dummy_tr.canonicalize_point(p);
 
-  assert( !(canonical_p.x() < 0) && (canonical_p.x() < 1) );
-  assert( !(canonical_p.y() < 0) && (canonical_p.y() < 1) );
-  assert( !(canonical_p.z() < 0) && (canonical_p.z() < 1) );
+  CGAL_postcondition( !(canonical_p.x() < 0) && (canonical_p.x() < 1) );
+  CGAL_postcondition( !(canonical_p.y() < 0) && (canonical_p.y() < 1) );
+  CGAL_postcondition( !(canonical_p.z() < 0) && (canonical_p.z() < 1) );
   return canonical_p;
 }
 

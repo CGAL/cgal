@@ -35,10 +35,10 @@
 #include <CGAL/Mesh_vertex_base_3.h>
 #include <CGAL/Mesh_cell_base_3.h>
 
+#include <CGAL/assertions.h>
 #include <CGAL/array.h>
 #include <CGAL/tags.h>
 
-#include <cassert>
 #include <iostream>
 #include <iterator>
 #include <limits>
@@ -158,14 +158,14 @@ public:
   Cell_handle infinite_cell() const
   {
     // there are no infinite cells in a periodic triangulation
-    assert(false);
+    CGAL_assertion(false);
     return Cell_handle();
   }
 
   Vertex_handle infinite_vertex() const
   {
     // there is no infinite vertex in a periodic triangulation
-    assert(false);
+    CGAL_assertion(false);
     return Vertex_handle();
   }
 
@@ -330,7 +330,7 @@ public:
   OutputIterator
   incident_edges_threadsafe(Vertex_handle /* v */, OutputIterator edges) const
   {
-    assert(false); // not yet supported
+    CGAL_assertion(false); // not yet supported
     return edges;
   }
 
@@ -338,7 +338,7 @@ public:
   OutputIterator
   incident_facets_threadsafe(Vertex_handle /* v */, OutputIterator facets) const
   {
-    assert(false); // not yet supported
+    CGAL_assertion(false); // not yet supported
     return facets;
   }
 
@@ -346,7 +346,7 @@ public:
   void
   incident_cells_threadsafe(Vertex_handle /* v */, OutputIterator /* cells */) const
   {
-    assert(false); // not yet supported
+    CGAL_assertion(false); // not yet supported
   }
 
   void clear_v_offsets() const
@@ -426,7 +426,7 @@ public:
       }
     }
 
-    assert(min_power_distance_to_r < 0.5 && min_power_distance_to_q < 0.5);
+    CGAL_postcondition(min_power_distance_to_r < 0.5 && min_power_distance_to_q < 0.5);
     return min_power_distance_to_q >= min_power_distance_to_r;
   }
 
@@ -441,17 +441,17 @@ public:
   /// @{
   Cell_handle locate(const Weighted_point& p,
                      Cell_handle start = Cell_handle(),
-                     bool* could_lock_zone = NULL) const
+                     bool* CGAL_assertion_code(could_lock_zone) = NULL) const
   {
-    assert(could_lock_zone == NULL);
+    CGAL_assertion(could_lock_zone == NULL);
     return Base::locate(p, start);
   }
 
   Cell_handle locate(const Weighted_point& p,
                      Vertex_handle hint,
-                     bool* could_lock_zone = NULL) const
+                     bool* CGAL_assertion_code(could_lock_zone) = NULL) const
   {
-    assert(could_lock_zone == NULL);
+    CGAL_assertion(could_lock_zone == NULL);
     // compared to the non-periodic version in T3, the infinite cell cannot
     // be used; `Cell_handle()` is used instead
     return Base::locate(p, hint == Vertex_handle() ? Cell_handle() : hint->cell());
@@ -460,18 +460,18 @@ public:
   Cell_handle locate(const Weighted_point& p,
                      Locate_type& l, int& i, int& j,
                      Cell_handle start = Cell_handle(),
-                     bool* could_lock_zone = NULL) const
+                     bool* CGAL_assertion_code(could_lock_zone) = NULL) const
   {
-    assert(could_lock_zone == NULL);
+    CGAL_assertion(could_lock_zone == NULL);
     return Base::locate(p, l, i, j, start);
   }
 
   Cell_handle locate(const Weighted_point& p,
                      Locate_type& l, int& i, int& j,
                      Vertex_handle hint,
-                     bool* could_lock_zone = NULL) const
+                     bool* CGAL_assertion_code(could_lock_zone) = NULL) const
   {
-    assert(could_lock_zone == NULL);
+    CGAL_assertion(could_lock_zone == NULL);
     return Base::locate(p, l, i, j,
                         hint == Vertex_handle() ? Cell_handle() : hint->cell());
   }
@@ -491,7 +491,7 @@ public:
                                 OutputIterator res) const
   {
     return res;
-    assert(false); // not yet supported
+    CGAL_assertion(false); // not yet supported
   }
 
   //template < class Gt, class Tds >
@@ -518,7 +518,7 @@ public:
     int li, lj;
     c = locate(canonic_p, lt, li, lj, c);
     if(lt == 0 /* Locate_type::VERTEX */) {
-//      assert(false); // why would the refine point be a point of the triangulation ?
+//      CGAL_assertion(false); // why would the refine point be a point of the triangulation ?
       return make_triple(bfit, cit, ifit);
     }
 
@@ -558,9 +558,9 @@ public:
   find_conflicts(const Weighted_point &p, Cell_handle c,
                  OutputIteratorBoundaryFacets bfit,
                  OutputIteratorCells cit,
-                 bool* could_lock_zone = NULL) const
+                 bool* CGAL_assertion_code(could_lock_zone) = NULL) const
   {
-    assert(could_lock_zone == NULL);
+    CGAL_assertion(could_lock_zone == NULL);
 
     Triple<OutputIteratorBoundaryFacets,
            OutputIteratorCells,
@@ -608,17 +608,17 @@ public:
 
   Vertex_handle insert(const Weighted_point& p,
                        Cell_handle start = Cell_handle(),
-                       bool* could_lock_zone = NULL)
+                       bool* CGAL_assertion_code(could_lock_zone) = NULL)
   {
-    assert(could_lock_zone == NULL);
+    CGAL_assertion(could_lock_zone == NULL);
     return Base::insert(canonicalize_point(p), start);
   }
 
   Vertex_handle insert(const Weighted_point& p,
                        Vertex_handle hint,
-                       bool* could_lock_zone = NULL)
+                       bool* CGAL_assertion_code(could_lock_zone) = NULL)
   {
-    assert(could_lock_zone == NULL);
+    CGAL_assertion(could_lock_zone == NULL);
     // compared to the non-periodic version in T3, the infinite cell cannot
     // be used; `Cell_handle()` is used instead
     return Base::insert(canonicalize_point(p),
@@ -627,18 +627,18 @@ public:
 
   Vertex_handle insert(const Weighted_point& p,
                        Locate_type lt, Cell_handle loc, int li, int lj,
-                       bool* could_lock_zone = NULL)
+                       bool* CGAL_assertion_code(could_lock_zone) = NULL)
   {
-    assert(could_lock_zone == NULL);
+    CGAL_assertion(could_lock_zone == NULL);
     return Base::insert(canonicalize_point(p), lt, loc, li, lj);
   }
   /// @}
 
   /// Remove function
   void remove(Vertex_handle v,
-              bool* could_lock_zone = NULL)
+              bool* CGAL_assertion_code(could_lock_zone) = NULL)
   {
-    assert(could_lock_zone == NULL);
+    CGAL_assertion(could_lock_zone == NULL);
     return Base::remove(v);
   }
 
@@ -664,8 +664,8 @@ public:
 
   // dual rays are impossible in a periodic triangulation since there are no
   // infinite cells, but these functions are still needed for compilation of Mesh_3
-  void dual_ray(const Facet& /*f*/, Ray& /*ray*/) const { assert(false); }
-  void dual_ray_exact(const Facet& /*facet*/, Ray& /*ray*/) const { assert(false); }
+  void dual_ray(const Facet& /*f*/, Ray& /*ray*/) const { CGAL_assertion(false); }
+  void dual_ray_exact(const Facet& /*facet*/, Ray& /*ray*/) const { CGAL_assertion(false); }
 };
 
 namespace details {
