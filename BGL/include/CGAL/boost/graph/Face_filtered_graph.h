@@ -332,7 +332,7 @@ struct Face_filtered_graph
   }
   /// change the set of selected faces using a range of face descriptors
   template<class FaceRange>
-  void set_selected_faces(const FaceRange& selected_faces)
+  void set_selected_faces(const FaceRange& selection)
   {
     face_indices.clear();
     vertex_indices.clear();
@@ -341,7 +341,7 @@ struct Face_filtered_graph
     selected_faces.resize(num_faces(_graph));
     selected_vertices.resize(num_vertices(_graph));
     selected_halfedges.resize(num_halfedges(_graph));
-    BOOST_FOREACH(face_descriptor fd, selected_faces)
+    BOOST_FOREACH(face_descriptor fd, selection)
     {
       selected_faces.set(get(fimap, fd));
       BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(fd, _graph), _graph))
