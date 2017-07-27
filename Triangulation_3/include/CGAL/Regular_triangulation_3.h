@@ -1853,8 +1853,6 @@ namespace CGAL {
       return os;
 
     // We are now in a degenerate case => we do a symbolic perturbation.
-    typedef typename Geom_traits::Construct_point_3 Construct_point_3;
-    Construct_point_3 cp = geom_traits().construct_point_3_object();
 
     // We sort the points lexicographically.
     const Weighted_point * points[5] = {&p0, &p1, &p2, &p3, &p};
@@ -1963,8 +1961,6 @@ namespace CGAL {
       return os;
 
     // We are now in a degenerate case => we do a symbolic perturbation.
-    typedef typename Geom_traits::Construct_point_3 Construct_point_3;
-    Construct_point_3 cp = geom_traits().construct_point_3_object();
 
     // We sort the points lexicographically.
     const Weighted_point * points[4] = {&p0, &p1, &p2, &p};
