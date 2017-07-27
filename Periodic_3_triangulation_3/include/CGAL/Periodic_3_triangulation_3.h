@@ -618,7 +618,6 @@ public:
     while(true) /* while not in */
     {
       dp = etraits.construct_point_3_object()(ep, transl);
-      std::cout << "dp: " << dp << std::endl;
 
       if(dp.x() < dom.xmin())
         transl.x() += 1;

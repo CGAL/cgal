@@ -150,9 +150,9 @@ BOOST_PARAMETER_FUNCTION(
   (deduced
    (optional
     (features_param, (parameters::internal::Features_options), parameters::features(domain))
-    (exude_param, (parameters::internal::Exude_options), parameters::no_exude())
+    (exude_param, (parameters::internal::Exude_options), parameters::no_exude()) // another default parameter distinct from Mesh_3
     (perturb_param, (parameters::internal::Perturb_options), parameters::no_perturb()) // another default parameter distinct from Mesh_3
-    (odt_param, (parameters::internal::Odt_options), parameters::no_odt()) // another default parameter distinct from Mesh_3
+    (odt_param, (parameters::internal::Odt_options), parameters::no_odt())
     (lloyd_param, (parameters::internal::Lloyd_options), parameters::no_lloyd())
     (mesh_options_param, (parameters::internal::Mesh_3_options),
                          parameters::internal::Mesh_3_options())
@@ -229,7 +229,10 @@ void init_domain(C3T3& c3t3, MD& oracle)
   typename Tr::Geom_traits::Construct_point_3 wp2p =
     tr.geom_traits().construct_point_3_object();
 
-  // go over the vertices
+  // At this point, the triangulation contains the dummy point.
+  // Mark them all as corners so they are kept throughout the refinement.
+  // [ Does that really matter ? @fixme ]
+
   for(Finite_vertices_iterator vertex_it = tr.finite_vertices_begin();
       vertex_it != tr.finite_vertices_end(); ++vertex_it) {
     oracle.add_corner(wp2p(vertex_it->point()));
