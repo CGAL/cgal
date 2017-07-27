@@ -43,7 +43,7 @@ namespace CGAL
  */
 template<class Function, class BGT>
 class Labeled_periodic_3_mesh_domain_3
-    : public Labeled_mesh_domain_3<Function, BGT>
+  : public Labeled_mesh_domain_3<Function, BGT>
 {
 public:
   /// Base type
@@ -84,8 +84,8 @@ public:
 
   /**
    * Returns true if the element \ccc{type} intersect properly any of the
-   * surface patches describing the either the domain boundary or some
-   * subdomain boundary.
+   * surface patches describing the either the boundary of the domain
+   * or some subdomain boundary.
    * \ccc{Type} is either \ccc{Segment_3}, \ccc{Ray_3} or \ccc{Line_3}.
    * Parameter index is set to the index of the intersected surface patch
    * if \ccc{true} is returned and to the default \ccc{Surface_patch_index}
@@ -326,14 +326,14 @@ public:
       // Bisection ends when the point is near than error bound from surface
       while(true)
       {
-        // If the two points are enough close, then we return midpoint
+        // If the two points are sufficiently close, then we return the midpoint
         if ( squared_distance(p1, p2) < r_domain_.squared_error_bound_value() )
         {
           CGAL_assertion(value_at_p1 != value_at_p2);
           return Intersection(mid, index, 2);
         }
 
-        // Else we must go on
+        // Otherwise, we must go on...
         // Here we consider that p1(a) is the source point. Thus, we keep p1 and
         // change p2 if f(p1)!=f(p2).
         // That allows us to find the first intersection from a of [a,b] with

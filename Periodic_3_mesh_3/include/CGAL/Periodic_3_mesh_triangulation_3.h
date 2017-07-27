@@ -1,4 +1,4 @@
-// Copyright (c) 2010  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2010, 2017 INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -183,7 +183,6 @@ public:
 
   Bare_point snap_to_domain_border(const Bare_point& p) const
   {
-
     const FT px = p.x();
     const FT py = p.y();
     const FT pz = p.z();

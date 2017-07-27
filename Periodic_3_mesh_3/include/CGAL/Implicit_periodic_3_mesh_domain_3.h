@@ -36,8 +36,8 @@ namespace CGAL {
  * an implicit function.
  */
 template<class Function,
-  class BGT,
-  class Wrapper = Implicit_to_labeling_function_wrapper<Function,BGT> >
+         class BGT,
+         class Wrapper = Implicit_to_labeling_function_wrapper<Function,BGT> >
 class Implicit_periodic_3_mesh_domain_3
  : public Labeled_periodic_3_mesh_domain_3<Wrapper, BGT >
 {
