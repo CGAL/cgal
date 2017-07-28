@@ -17,6 +17,8 @@
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
+#include <CGAL/Three/Scene_print_item_interface.h>
+
 #include "Polyhedron_demo_detect_sharp_edges.h"
 
 // Laurent Rineau, 2016/04/07: that header should not be included here, but
@@ -201,9 +203,12 @@ struct Selection_traits<typename SelectionItem::fg_edge_descriptor, SelectionIte
 //////////////////////////////////////////////////////////////////////////
 struct Scene_polyhedron_selection_item_priv;
 class SCENE_POLYHEDRON_SELECTION_ITEM_EXPORT Scene_polyhedron_selection_item 
-  : public Scene_polyhedron_item_decorator
+  : public Scene_polyhedron_item_decorator,
+    public CGAL::Three::Scene_print_item_interface
 {
   Q_OBJECT
+  Q_INTERFACES(CGAL::Three::Scene_print_item_interface)
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PrintInterface/1.0")
 
 friend class Polyhedron_demo_selection_plugin;
 
@@ -220,6 +225,14 @@ public:
   ~Scene_polyhedron_selection_item();
   void inverse_selection();
   void setPathSelection(bool b);
+  //For ID printing
+  void printPrimitiveId(QPoint, CGAL::Three::Viewer_interface*);
+  bool printVertexIds(CGAL::Three::Viewer_interface*) const;
+  bool printEdgeIds(CGAL::Three::Viewer_interface*) const;
+  bool printFaceIds(CGAL::Three::Viewer_interface*) const;
+  void printAllIds(CGAL::Three::Viewer_interface*);
+  bool testDisplayId(double, double, double, CGAL::Three::Viewer_interface*)const;
+  bool shouldDisplayIds(CGAL::Three::Scene_item *current_item) const;
 
 protected: 
   void init(Scene_face_graph_item* poly_item, QMainWindow* mw);

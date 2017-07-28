@@ -5,9 +5,12 @@
 #include <boost/graph/properties.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <QOpenGLShaderProgram>
+#include <QInputDialog>
 #include <QOpenGLBuffer>
 #include <QApplication>
 #include <QVariant>
+#include <QMessageBox>
+#include <QMenu>
 
 //#include <CGAL/boost/graph/properties_Surface_mesh.h>
 #include <CGAL/Surface_mesh.h>
@@ -31,6 +34,7 @@
 #include <CGAL/statistics_helpers.h>
 
 #include <QMenu>
+#include "id_printing.h"
 
 //Used to triangulate the AABB_Tree
 class Primitive
@@ -83,6 +87,10 @@ struct Scene_surface_mesh_item_priv{
     item = parent;
     has_feature_edges = false;
     invalidate_stats();
+    vertices_displayed = true;
+    edges_displayed = true;
+    faces_displayed = true;
+    all_primitives_displayed = false;
   }
 
   Scene_surface_mesh_item_priv(SMesh* sm, Scene_surface_mesh_item *parent):
@@ -91,6 +99,10 @@ struct Scene_surface_mesh_item_priv{
     item = parent;
     has_feature_edges = false;
     invalidate_stats();
+    vertices_displayed = true;
+    edges_displayed = true;
+    faces_displayed = true;
+    all_primitives_displayed = false;
   }
 
   ~Scene_surface_mesh_item_priv()
@@ -101,6 +113,11 @@ struct Scene_surface_mesh_item_priv{
       smesh_ = NULL;
     }
   }
+  void killIds();
+  void fillTargetedIds(const face_descriptor& selected_fh,
+                       const EPICK::Point_3 &point_under,
+                       CGAL::Three::Viewer_interface *viewer,
+                       const qglviewer::Vec &offset);
 
   void initialize_colors();
   void invalidate_stats();
@@ -141,6 +158,15 @@ struct Scene_surface_mesh_item_priv{
     FColors,
     NbOfVbos
   };
+  TextListItem* textVItems;
+  TextListItem* textEItems;
+  TextListItem* textFItems;
+  mutable bool vertices_displayed;
+  mutable bool edges_displayed;
+  mutable bool faces_displayed;
+  mutable bool all_primitives_displayed;
+  mutable QList<double> text_ids;
+  mutable std::vector<TextItem*> targeted_id;
 
   mutable bool has_fpatch_id;
   mutable bool has_feature_edges;
@@ -187,6 +213,9 @@ Scene_surface_mesh_item::Scene_surface_mesh_item()
   d->has_vcolors = false;
   d->has_fcolors = false;
   d->checkFloat();
+  d->textVItems = new TextListItem(this);
+  d->textEItems = new TextListItem(this);
+  d->textFItems = new TextListItem(this);
 
   are_buffers_filled = false;
 }
@@ -196,6 +225,9 @@ Scene_surface_mesh_item::Scene_surface_mesh_item(const Scene_surface_mesh_item& 
 {
   d = new Scene_surface_mesh_item_priv(other, this);
   are_buffers_filled = false;
+  d->textVItems = new TextListItem(this);
+  d->textEItems = new TextListItem(this);
+  d->textFItems = new TextListItem(this);
 }
 
 void Scene_surface_mesh_item::standard_constructor(SMesh* sm)
@@ -206,6 +238,9 @@ void Scene_surface_mesh_item::standard_constructor(SMesh* sm)
   d->has_vcolors = false;
   d->has_fcolors = false;
   d->checkFloat();
+  d->textVItems = new TextListItem(this);
+  d->textEItems = new TextListItem(this);
+  d->textFItems = new TextListItem(this);
 
   are_buffers_filled = false;
 }
@@ -1587,5 +1622,297 @@ QMenu* Scene_surface_mesh_item::contextMenu()
     menu->removeAction(actionResetColor);
     actionResetColor->deleteLater();
   }
+  const char* prop_name = "Menu modified by Scene_surface_mesh_item.";
+  bool menuChanged = menu->property(prop_name).toBool();
+
+  if(!menuChanged) {
+    menu->addSeparator();
+    QAction* actionPrintVertices=
+        menu->addAction(tr("Display Vertices Ids"));
+    actionPrintVertices->setCheckable(true);
+    actionPrintVertices->setObjectName("actionPrintVertices");
+    connect(actionPrintVertices, SIGNAL(triggered(bool)),
+            this, SLOT(showVertices(bool)));
+
+    QAction* actionPrintEdges=
+        menu->addAction(tr("Display Edges Ids"));
+    actionPrintEdges->setCheckable(true);
+    actionPrintEdges->setObjectName("actionPrintEdges");
+    connect(actionPrintEdges, SIGNAL(triggered(bool)),
+            this, SLOT(showEdges(bool)));
+
+    QAction* actionPrintFaces=
+        menu->addAction(tr("Display Faces Ids"));
+    actionPrintFaces->setCheckable(true);
+    actionPrintFaces->setObjectName("actionPrintFaces");
+    connect(actionPrintFaces, SIGNAL(triggered(bool)),
+            this, SLOT(showFaces(bool)));
+
+    QAction* actionPrintAll=
+        menu->addAction(tr("Display All Ids"));
+    actionPrintAll->setCheckable(true);
+    actionPrintAll->setObjectName("actionPrintAll");
+    connect(actionPrintAll, SIGNAL(triggered(bool)),
+            this, SLOT(showPrimitives(bool)));
+
+    QAction* actionZoomToId=
+        menu->addAction(tr("Zoom to Index"));
+    actionZoomToId->setObjectName("actionZoomToId");
+    connect(actionZoomToId, &QAction::triggered,
+            this, &Scene_surface_mesh_item::zoomToId);
+    menu->setProperty(prop_name, true);
+  }
+
+  QAction* action = menu->findChild<QAction*>("actionPrintVertices");
+  if(action) action->setChecked(d->vertices_displayed);
+  action = menu->findChild<QAction*>("actionPrintEdges");
+  if(action) action->setChecked(d->edges_displayed);
+  action = menu->findChild<QAction*>("actionPrintFaces");
+  if(action) action->setChecked(d->faces_displayed);
+  action = menu->findChild<QAction*>("actionPrintAll");
+  if(action) action->setChecked(d->all_primitives_displayed);
   return menu;
 }
+void Scene_surface_mesh_item::printPrimitiveId(QPoint point, CGAL::Three::Viewer_interface *viewer)
+{
+  if(d->all_primitives_displayed)
+    return;
+  typedef Input_facets_AABB_tree Tree;
+  Tree* aabb_tree = static_cast<Input_facets_AABB_tree*>(d->get_aabb_tree());
+  if(!aabb_tree)
+    return;
+  face_descriptor selected_fh;
+  EPICK::Point_3 pt_under;
+  const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+  if(find_primitive_id(point, aabb_tree, viewer, selected_fh, pt_under))
+    d->fillTargetedIds(selected_fh, pt_under, viewer, offset);
+
+}
+void Scene_surface_mesh_item_priv::fillTargetedIds(const face_descriptor &selected_fh,
+                                                 const EPICK::Point_3& pt_under,
+                                                 CGAL::Three::Viewer_interface *viewer,
+                                                 const qglviewer::Vec& offset)
+{
+  compute_displayed_ids(*smesh_,
+                        viewer,
+                        selected_fh,
+                        pt_under,
+                        offset,
+                        textVItems,
+                        textEItems,
+                        textFItems,
+                        &targeted_id,
+                        &all_primitives_displayed);
+
+
+  if(vertices_displayed
+     && !textVItems->isEmpty())
+    item->showVertices(true);
+  if(edges_displayed
+    && !textEItems->isEmpty())
+    item->showEdges(true);
+  if(faces_displayed
+     && !textFItems->isEmpty())
+    item->showFaces(true);
+
+}
+
+bool Scene_surface_mesh_item::printVertexIds(CGAL::Three::Viewer_interface *viewer) const
+{
+  if(d->vertices_displayed)
+  {
+    return ::printVertexIds(*d->smesh_,
+                            d->textVItems,
+                            viewer);
+  }
+  return true;
+}
+
+bool Scene_surface_mesh_item::printEdgeIds(CGAL::Three::Viewer_interface *viewer) const
+{
+  if(d->edges_displayed)
+  {
+    return ::printEdgeIds(*d->smesh_,
+                            d->textEItems,
+                            viewer);
+  }
+  return true;
+}
+
+bool Scene_surface_mesh_item::printFaceIds(CGAL::Three::Viewer_interface *viewer) const
+{
+  if(d->faces_displayed)
+  {
+    return ::printFaceIds(*d->smesh_,
+                            d->textFItems,
+                            viewer);
+  }
+  return true;
+}
+
+void Scene_surface_mesh_item_priv::killIds()
+{
+  CGAL::Three::Viewer_interface* viewer =
+      qobject_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first());
+  deleteIds(viewer,
+            textVItems,
+            textEItems,
+            textFItems,
+            &targeted_id,
+            &all_primitives_displayed);
+}
+
+void Scene_surface_mesh_item::printAllIds(CGAL::Three::Viewer_interface *viewer)
+{
+  static bool all_ids_displayed = false;
+
+  all_ids_displayed = !all_ids_displayed;
+  if(all_ids_displayed )
+  {
+    bool s1(printVertexIds(viewer)),
+        s2(printEdgeIds(viewer)),
+        s3(printFaceIds(viewer));
+    if((s1 && s2 && s3))
+    {
+      d->all_primitives_displayed = true;
+      viewer->update();
+    }
+    return;
+  }
+  d->killIds();
+}
+
+bool Scene_surface_mesh_item::testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer)const
+{
+  const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+  EPICK::Point_3 src(x - offset.x,
+                      y - offset.y,
+                      z - offset.z);
+  EPICK::Point_3 dest(viewer->camera()->position().x - offset.x,
+                       viewer->camera()->position().y - offset.y,
+                       viewer->camera()->position().z - offset.z);
+  EPICK::Vector_3 v(src,dest);
+  v = 0.01*v;
+  EPICK::Point_3 point = src;
+  point = point + v;
+  EPICK::Segment_3 query(point, dest);
+  return !static_cast<Input_facets_AABB_tree*>(d->get_aabb_tree())->do_intersect(query);
+}
+
+
+void Scene_surface_mesh_item::showVertices(bool b)
+{
+  CGAL::Three::Viewer_interface* viewer =
+      qobject_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first());
+  TextRenderer *renderer = viewer->textRenderer();
+  if(b)
+    if(d->textVItems->isEmpty())
+    {
+      d->vertices_displayed = b;
+      printVertexIds(viewer);
+    }
+    else
+      renderer->addTextList(d->textVItems);
+  else
+    renderer->removeTextList(d->textVItems);
+  viewer->update();
+  d->vertices_displayed = b;
+}
+
+void Scene_surface_mesh_item::showEdges(bool b)
+{
+  CGAL::Three::Viewer_interface* viewer =
+      qobject_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first());
+  TextRenderer *renderer = viewer->textRenderer();
+  if(b)
+  {
+    if(d->textEItems->isEmpty())
+    {
+      d->edges_displayed = b;
+      printFaceIds(viewer);
+    }
+    else
+      renderer->addTextList(d->textEItems);
+  }
+  else
+    renderer->removeTextList(d->textEItems);
+  viewer->update();
+  d->edges_displayed = b;
+}
+
+void Scene_surface_mesh_item::showFaces(bool b)
+{
+  CGAL::Three::Viewer_interface* viewer =
+      qobject_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first());
+  TextRenderer *renderer = viewer->textRenderer();
+  if(b)
+  {
+    if(d->textFItems->isEmpty())
+    {
+      d->faces_displayed = b;
+      printFaceIds(viewer);
+    }
+    else
+      renderer->addTextList(d->textFItems);
+  }
+  else
+    renderer->removeTextList(d->textFItems);
+  viewer->update();
+  d->faces_displayed = b;
+}
+
+void Scene_surface_mesh_item::showPrimitives(bool)
+{
+  CGAL::Three::Viewer_interface* viewer =
+      qobject_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first());
+  printAllIds(viewer);
+}
+void Scene_surface_mesh_item::zoomToId()
+{
+  face_descriptor selected_fh;
+  bool ok;
+  QString text = QInputDialog::getText(QApplication::activeWindow(), tr("Zoom to Index"),
+                                       tr("Simplex"), QLineEdit::Normal,
+                                       tr("v0"), &ok);
+  CGAL::Three::Viewer_interface* viewer =
+      qobject_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first());
+  Point_3 p;
+  QString id = text.right(text.length()-1);
+  int return_value = ::zoomToId(*d->smesh_, text, viewer, selected_fh, p);
+  switch(return_value)
+  {
+  case 1:
+    QMessageBox::warning(QApplication::activeWindow(),
+                       "ERROR",
+                       tr("Input must be of the form [v/e/f][int]")
+                       );
+    return;
+  case 2:
+    QMessageBox::warning(QApplication::activeWindow(),
+                       "ERROR",
+                       tr("No vertex with id %1").arg(id)
+                       );
+    return;
+  case 3:
+    QMessageBox::warning(QApplication::activeWindow(),
+                       "ERROR",
+                       tr("No edge with id %1").arg(id)
+                       );
+    return;
+  case 4:
+    QMessageBox::warning(QApplication::activeWindow(),
+                       "ERROR",
+                       tr("No face with id %1").arg(id)
+                       );
+    return;
+  default: //case 0
+    d->fillTargetedIds(selected_fh, p, viewer, viewer->offset());
+    break;
+  }
+}
+bool Scene_surface_mesh_item::shouldDisplayIds(CGAL::Three::Scene_item *current_item) const
+{
+  return this == current_item;
+}
+
+

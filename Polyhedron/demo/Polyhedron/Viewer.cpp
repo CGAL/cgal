@@ -519,7 +519,7 @@ void Viewer::keyPressEvent(QKeyEvent* e)
     }
   }
   else if(e->key() == Qt::Key_I && e->modifiers() & Qt::ControlModifier){
-    d->scene->printPrimitiveIds(this);
+    d->scene->printAllIds(this);
     update();
     return;
   }
