@@ -285,11 +285,13 @@ public:
   typedef boost::graph_traits<FaceGraph>::vertex_descriptor vertex_descriptor;
   typedef boost::graph_traits<FaceGraph>::face_descriptor face_descriptor;
 
-  QString nameFilters() const {
-    return "VTK PolyData files (*.vtk);; VTK XML PolyData (*.vtp);; VTK XML UnstructuredGrid (*.vtu)"; }
 #ifdef USE_SURFACE_MESH
+  QString nameFilters() const {
+    return "VTK PolyData files (Surface_mesh) (*.vtk);; VTK XML PolyData (Surface_mesh) (*.vtp);; VTK XML UnstructuredGrid (Surface_mesh)(*.vtu)"; }
   QString name() const { return "vtk_sm_plugin"; }
 #else
+  QString nameFilters() const {
+    return "VTK PolyData files (Polyhedron) (*.vtk);; VTK XML PolyData (Polyhedron) (*.vtp);; VTK XML UnstructuredGrid (Polyhedron)(*.vtu)"; }
   QString name() const { return "vtk_plugin"; }
 #endif
   bool canSave(const CGAL::Three::Scene_item* item)
