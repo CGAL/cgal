@@ -18,10 +18,10 @@
 //
 // Author(s)     : Andreas Fabri
 
-#ifndef CGAL_POLYGON_MESH_PROCESSING_PROPERTIES_H
-#define CGAL_POLYGON_MESH_PROCESSING_PROPERTIES_H
+#ifndef CGAL_MESH_3_PROPERTIES_H
+#define CGAL_MESH_3_PROPERTIES_H
 
-#include <CGAL/license/Polygon_mesh_processing.h>
+#include <CGAL/license/Mesh_3.h>
 
 namespace CGAL
 {
@@ -44,4 +44,4 @@ struct face_patch_id_t {
 };
 } //end namespace CGAL
 
-#endif //CGAL_POLYGON_MESH_PROCESSING_PROPERTIES_H
+#endif //CGAL_MESH_3_PROPERTIES_H
