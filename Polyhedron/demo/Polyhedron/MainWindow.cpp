@@ -2036,5 +2036,5 @@ void MainWindow::set_facegraph_mode_adapter(bool is_polyhedron)
 
 void MainWindow::resetStatusColor()
 {
-  statusBar()->setStyleSheet("color: black");
+  statusBar()->setStyleSheet("");
 }
