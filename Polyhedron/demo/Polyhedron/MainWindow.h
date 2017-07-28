@@ -246,7 +246,7 @@ protected Q_SLOTS:
    //!and viewer accordingly.
   /*!
    * Set the scene selected item or selected item list. Sets the manipulated
-   * frame of the viewer to the new selected item's and calls updateGL().
+   * frame of the viewer to the new selected item's and calls update().
    */
   void selectionChanged();
   //! Scrolls to the new selected item from its name in the Geometric Objects list.

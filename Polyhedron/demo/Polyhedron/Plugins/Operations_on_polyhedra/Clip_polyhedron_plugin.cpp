@@ -243,7 +243,7 @@ public Q_SLOTS:
                                                 ui_widget.close_checkBox->isChecked());
           }
           item->invalidateOpenGLBuffers();
-          viewer->updateGL();
+          viewer->update();
         }
         else
         {
