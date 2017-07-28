@@ -46,7 +46,7 @@ struct L21Metric
   typedef typename GeomTraits::Compute_scalar_product_3 Compute_scalar_product_3;
   typedef typename FacetAreaMap::key_type face_descriptor;
 
-  FT operator()(const face_descriptor &f, const PlaneProxy &px) {
+  FT operator()(const face_descriptor &f, const PlaneProxy &px) const {
     Vector_3 v = sum_functor(normal_pmap[f], scale_functor(px.normal, FT(-1)));
     return area_pmap[f] * scalar_product_functor(v, v);
   }
@@ -78,7 +78,7 @@ struct L21ProxyFitting
 
   // Fit and construct a proxy
   template<typename FacetIterator>
-  PlaneProxy operator()(const FacetIterator beg, const FacetIterator end) {
+  PlaneProxy operator()(const FacetIterator beg, const FacetIterator end) const {
     CGAL_assertion(beg != end);
 
     // fitting normal
@@ -222,7 +222,7 @@ struct L2Metric
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
 
-  FT operator()(const face_descriptor &f, const PlaneProxy &px) {
+  FT operator()(const face_descriptor &f, const PlaneProxy &px) const {
     halfedge_descriptor he = halfedge(f, mesh);
     const Point_3 &p0 = point_pmap[source(he, mesh)];
     const Point_3 &p1 = point_pmap[target(he, mesh)];
@@ -257,7 +257,7 @@ struct L2ProxyFitting
     : mesh(_mesh), point_pmap(_point_pmap) {}
 
   template<typename FacetIterator>
-  PlaneProxy operator()(const FacetIterator beg, const FacetIterator end) {
+  PlaneProxy operator()(const FacetIterator beg, const FacetIterator end) const {
     CGAL_assertion(beg != end);
 
     std::list<Triangle_3> tris;

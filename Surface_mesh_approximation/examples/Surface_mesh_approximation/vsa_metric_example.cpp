@@ -30,7 +30,7 @@ struct CompactMetric {
   CompactMetric(const FacetCenterMap &_center_pmap)
     : center_pmap(_center_pmap) {}
 
-  FT operator()(const Facet_const_handle &f, const PointProxy &px) {
+  FT operator()(const Facet_const_handle &f, const PointProxy &px) const {
     return FT(std::sqrt(CGAL::to_double(
       CGAL::squared_distance(center_pmap[f], px.center))));
   }
@@ -45,7 +45,7 @@ struct PointProxyFitting {
     area_pmap(_area_pmap) {}
 
   template<typename FacetIterator>
-  PointProxy operator()(const FacetIterator beg, const FacetIterator end) {
+  PointProxy operator()(const FacetIterator beg, const FacetIterator end) const {
     CGAL_assertion(beg != end);
 
     // fitting center

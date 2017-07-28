@@ -65,10 +65,10 @@ private:
   std::vector<Proxy> proxies;
 
   // The error metric.
-  ErrorMetric fit_error;
+  const ErrorMetric &fit_error;
 
   // The proxy fitting functor.
-  ProxyFitting proxy_fitting;
+  const ProxyFitting &proxy_fitting;
 
   //member functions
 public:
