@@ -9,7 +9,6 @@
 #include <CGAL/Periodic_3_mesh_triangulation_3.h>
 
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
-#include <CGAL/Mesh_constant_domain_field_3.h>
 #include <CGAL/Mesh_criteria_3.h>
 
 #include <CGAL/number_type_config.h> // CGAL_PI
@@ -47,9 +46,6 @@ FT schwarz_p(const Point& p) {
            z2 = std::cos( p.z() * 2 * CGAL_PI );
   return x2 + y2 + z2;
 }
-
-typedef CGAL::Mesh_constant_domain_field_3<Periodic_mesh_domain::R,
-                                           Periodic_mesh_domain::Index> Field;
 
 int main(int argc, char** argv)
 {
