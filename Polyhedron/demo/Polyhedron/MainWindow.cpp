@@ -34,6 +34,8 @@
 #include <QSet>
 #include <QStandardItemModel>
 #include <QStandardItem>
+#include <QTreeWidgetItem>
+#include <QTreeWidget>
 #include <stdexcept>
 #ifdef QT_SCRIPT_LIB
 #  include <QScriptValue>
@@ -514,7 +516,7 @@ void MainWindow::setMenus(QString name, QString parentName, QAction* a )
   }
 }
 
-void MainWindow::load_plugin(QString fileName, bool blacklisted)
+bool MainWindow::load_plugin(QString fileName, bool blacklisted)
 {
     if(fileName.contains("plugin") && QLibrary::isLibrary(fileName)) {
       //set plugin name
@@ -528,7 +530,7 @@ void MainWindow::load_plugin(QString fileName, bool blacklisted)
       {
         if ( plugin_blacklist.contains(name) ){
           qDebug("### Ignoring plugin \"%s\".", qPrintable(fileName));
-          return;
+          return true;
         }
       }
       QDebug qdebug = qDebug();
@@ -548,7 +550,9 @@ void MainWindow::load_plugin(QString fileName, bool blacklisted)
       else {
         qdebug << "error: " << qPrintable(loader.errorString());
       }
+      return true;
     }
+    return false;
 }
 
 void MainWindow::loadPlugins()
@@ -558,10 +562,9 @@ void MainWindow::loadPlugins()
     initPlugin(obj);
     initIOPlugin(obj);
   }
-  QList<QDir> plugins_directories;
+  plugins_directories.clear();
   QString dirPath = qApp->applicationDirPath();
   plugins_directories<<dirPath;
-
   QDir msvc_dir(dirPath);
   QString build_dir_name = msvc_dir.dirName();//Debug or Release for msvc
   msvc_dir.cdUp();
@@ -604,19 +607,27 @@ void MainWindow::loadPlugins()
   }
 
   QSet<QString> loaded;
+  QList<QDir> empty_dirs;
   Q_FOREACH (QDir pluginsDir, plugins_directories) {
     qDebug("# Looking for plugins in directory \"%s\"...",
            qPrintable(pluginsDir.absolutePath()));
+    bool empty = true;
     Q_FOREACH(QString fileName, pluginsDir.entryList(QDir::Files))
     {
       QString abs_name = pluginsDir.absoluteFilePath(fileName);
       if(loaded.find(abs_name) == loaded.end())
       {
-        load_plugin(abs_name, true);
+        empty &= !load_plugin(abs_name, true);
         loaded.insert(abs_name);
       }
     }
+    if(empty)
+    {
+      empty_dirs.push_back(pluginsDir);
+    }
   }
+  Q_FOREACH (QDir dir, empty_dirs)
+    plugins_directories.removeAll(dir);
   updateMenus();
 }
   //Creates sub-Menus for operations.
@@ -1652,50 +1663,49 @@ void MainWindow::on_actionPreferences_triggered()
   connect(prefdiag.polyRadioButton, &QRadioButton::toggled,
           this, &MainWindow::set_facegraph_mode_adapter);
   
-  QStandardItemModel* iStandardModel = new QStandardItemModel(this);
+  //QStandardItemModel* iStandardModel = new QStandardItemModel(this);
+
+  std::vector<QTreeWidgetItem*> items;
+
   //add blacklisted plugins
-  Q_FOREACH(QString name, plugin_blacklist)
-  {
-    QStandardItem* item =  new QStandardItem(name);
-    item->setCheckable(true);
-    item->setCheckState(Qt::Checked);
-    iStandardModel->appendRow(item);
+  Q_FOREACH (QDir dir, plugins_directories) {
+    QTreeWidgetItem* pluginItem = new QTreeWidgetItem(prefdiag.treeWidget);
+    pluginItem->setText(1, dir.absolutePath());
+    prefdiag.treeWidget->setItemExpanded(pluginItem, true);
+    QFont boldFont = pluginItem->font(1);
+    boldFont.setBold(true);
+    pluginItem->setFont(1, boldFont);
+    Q_FOREACH(QString fileName, dir.entryList(QDir::Files))
+    {
+      if(!fileName.contains("plugin") || !QLibrary::isLibrary(fileName))
+        continue;
+      QFileInfo fileinfo(fileName);
+      //set plugin name
+      QString name = fileinfo.fileName();
+      name.remove(QRegExp("^lib"));
+      name.remove(QRegExp("\\..*"));
+      QTreeWidgetItem *item = new QTreeWidgetItem(pluginItem);
+      item->setText(1, name);
+      if(plugin_blacklist.contains(name))
+        item->setCheckState(0, Qt::Checked);
+      else
+        item->setCheckState(0, Qt::Unchecked);
+      items.push_back(item);
+    }
   }
-
-  //add operations plugins
-  Q_FOREACH(PluginNamePair pair,plugins){
-    QStandardItem* item =  new QStandardItem(pair.second);
-    item->setCheckable(true);
-    iStandardModel->appendRow(item);
-  }
-  
-  //add io-plugins
-  Q_FOREACH(CGAL::Three::Polyhedron_demo_io_plugin_interface* plugin, io_plugins)
-  {
-    QStandardItem* item =  new QStandardItem(plugin->name());
-    item->setCheckable(true);
-    if ( plugin_blacklist.contains(plugin->name()) ) item->setCheckState(Qt::Checked);
-    iStandardModel->appendRow(item);
-  }
-
-  //Setting the model
-  prefdiag.listView->setModel(iStandardModel);
-  
   dialog.exec();  
   
   if ( dialog.result() )
   {
     plugin_blacklist.clear();
-    for (int k=0,k_end=iStandardModel->rowCount();k<k_end;++k)
+
+    for (std::size_t k=0; k<items.size(); ++k)
     {
-      QStandardItem* item=iStandardModel->item(k);
-      if (item->checkState()==Qt::Checked)
-        plugin_blacklist.insert(item->text());
+     QTreeWidgetItem* item=items[k];
+      if (item->checkState(0)==Qt::Checked)
+        plugin_blacklist.insert(item->text(1));
     }
   }
-  
-  for (int k=0,k_end=iStandardModel->rowCount();k<k_end;++k) delete iStandardModel->item(k);
-  delete iStandardModel;
 }
 
 void MainWindow::on_actionSetBackgroundColor_triggered()

@@ -380,7 +380,7 @@ protected:
   QList<int> getSelectedSceneItemIndices() const;
 private:
   void updateMenus();
-  void load_plugin(QString names, bool blacklisted);
+  bool load_plugin(QString names, bool blacklisted);
   void recurseExpand(QModelIndex index);
   QMap<QString, QMenu*> menu_map;
   QString get_item_stats();
@@ -388,6 +388,7 @@ private:
   void setMenus(QString, QString, QAction *a);
   /// plugin black-list
   QSet<QString> plugin_blacklist;
+  QList<QDir> plugins_directories;
   Scene* scene;
   Viewer* viewer;
   QSortFilterProxyModel* proxyModel;
