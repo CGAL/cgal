@@ -100,7 +100,7 @@ void compatible_remeshing(PolygonMesh& pmesh, const FaceRange& faces, const Edge
   t.reset(); t.start();
 #endif
 
-    remesher.collapse_short_edges();
+    //remesher.collapse_short_edges();
     remesher.remove_degenerate_faces();
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
