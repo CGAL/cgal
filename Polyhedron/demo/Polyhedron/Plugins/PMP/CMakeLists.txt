@@ -24,6 +24,10 @@ if(EIGEN3_FOUND)
     polyhedron_demo_plugin(fairing_plugin Fairing_plugin ${fairingUI_FILES})
     target_link_libraries(fairing_plugin scene_polyhedron_selection_item)
 
+    polyhedron_demo_plugin(fairing_sm_plugin Fairing_plugin ${fairingUI_FILES})
+    target_link_libraries(fairing_sm_plugin scene_surface_mesh_selection_item)
+    target_compile_definitions(fairing_sm_plugin PUBLIC "-DUSE_SURFACE_MESH" )
+
     polyhedron_demo_plugin(hole_filling_polyline_plugin Hole_filling_polyline_plugin)
     target_link_libraries(hole_filling_polyline_plugin scene_surface_mesh_item scene_polyhedron_item scene_polylines_item)
   else()

@@ -2,10 +2,19 @@
 #include <QtCore/qglobal.h>
 
 #include "Messages_interface.h"
-#include "Scene_polyhedron_selection_item.h"
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
+#include "Scene_polyhedron_selection_item.h"
 #include "ui_Fairing_widget.h"
+
+#ifdef USE_SURFACE_MESH
+#include "SMesh_type.h"
+typedef Scene_surface_mesh_item Scene_facegraph_item;
+
+#else
 #include "Polyhedron_type.h"
+typedef Scene_polyhedron_item Scene_facegraph_item;
+#endif
+
 
 #include <CGAL/iterator.h>
 #include <CGAL/Polygon_mesh_processing/fair.h>
@@ -25,6 +34,8 @@
 #include <algorithm>
 #include <queue>
 
+typedef Scene_facegraph_item::Face_graph FaceGraph;
+
 using namespace CGAL::Three;
 class Polyhedron_demo_fairing_plugin :
   public QObject,
@@ -35,7 +46,7 @@ class Polyhedron_demo_fairing_plugin :
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 public:
   bool applicable(QAction*) const { 
-    return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex()))
+    return qobject_cast<Scene_facegraph_item*>(scene->item(scene->mainSelectionIndex()))
     || qobject_cast<Scene_polyhedron_selection_item*>(scene->item(scene->mainSelectionIndex()));  
   }
   void print_message(QString message) { messages->information(message);}
@@ -85,7 +96,7 @@ public Q_SLOTS:
     if(weight_index == 1)
       CGAL::Polygon_mesh_processing::fair(*selection_item->polyhedron(),
         selection_item->selected_vertices,
-        CGAL::Polygon_mesh_processing::parameters::weight_calculator(CGAL::internal::Uniform_weight_fairing<Polyhedron>(*selection_item->polyhedron())).
+        CGAL::Polygon_mesh_processing::parameters::weight_calculator(CGAL::internal::Uniform_weight_fairing<FaceGraph>(*selection_item->polyhedron())).
         fairing_continuity(continuity));
     if(weight_index == 0)
       CGAL::Polygon_mesh_processing::fair(*selection_item->polyhedron(),
@@ -105,7 +116,7 @@ public Q_SLOTS:
     }
     QApplication::setOverrideCursor(Qt::WaitCursor);
     double alpha = ui_widget.Density_control_factor_spin_box->value();
-    std::vector<Polyhedron::Facet_handle> new_facets;
+    std::vector<boost::graph_traits<FaceGraph>::face_descriptor> new_facets;
 
     CGAL::Polygon_mesh_processing::refine(*selection_item->polyhedron(),
       selection_item->selected_facets,
@@ -113,7 +124,7 @@ public Q_SLOTS:
       CGAL::Emptyset_iterator(),
       CGAL::Polygon_mesh_processing::parameters::density_control_factor(alpha));
     // add new facets to selection
-    for(std::vector<Polyhedron::Facet_handle>::iterator it = new_facets.begin(); it != new_facets.end(); ++it) {
+    for(std::vector<boost::graph_traits<FaceGraph>::face_descriptor>::iterator it = new_facets.begin(); it != new_facets.end(); ++it) {
       selection_item->selected_facets.insert(*it);
     }
     selection_item->changed_with_poly_item();
