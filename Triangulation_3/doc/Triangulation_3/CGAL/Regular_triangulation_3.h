@@ -29,8 +29,8 @@ of all simplices are regular.
 \tparam Traits is the geometric traits class, and must be a model of `RegularTriangulationTraits_3`
 
 \tparam TDS is the triangulation data structure and must be a model of `TriangulationDataStructure_3`.
-TDS has default value `Triangulation_data_structure_3<Regular_triangulation_vertex_base_3<Traits>,
-                                                      Regular_triangulation_cell_base_3<Traits> >`.
+`Default` may be used with default value `Triangulation_data_structure_3<Regular_triangulation_vertex_base_3<Traits>,
+                                                                         Regular_triangulation_cell_base_3<Traits> >`.
 Any custom type can be used instead of `Regular_triangulation_vertex_base_3`
 and `Regular_triangulation_cell_base_3`, provided that they are models of the
 concepts `RegularTriangulationVertexBase_3` and `RegularTriangulationCellBase_3`,

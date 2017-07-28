@@ -61,7 +61,7 @@ int main(int, char**)
   assert( nc->has_vertex( v, nli ) );
   // nli is the index of v in nc
 
-  // writing to file
+  // writing file output
   std::ofstream oFileT("output.tri", std::ios::out); // as a .tri file
   oFileT << T;
 
@@ -71,7 +71,7 @@ int main(int, char**)
   std::ofstream d_to_off("output_dual.off");
   draw_dual_to_off(d_to_off, T);
 
-  // reading file
+  // reading file output
   P3DT3 T1;
   std::ifstream iFileT("output.tri",std::ios::in);
   iFileT >> T1;

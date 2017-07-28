@@ -58,7 +58,7 @@ a bad facet. `Facet_quality` must be accessible by
 `operator*()`. Note that `boost::optional<Facet_quality>` is 
 a natural model of this concept 
 */ 
-typedef unspecified_type Is_facet_bad; 
+typedef unspecified_type Facet_badness;
 
 /// @} 
 
@@ -66,14 +66,10 @@ typedef unspecified_type Is_facet_bad;
 /// @{
 
 /*!
-Returns `Is_facet_bad` value of facet `f`. 
+Returns the `Facet_badness` value of the facet `f`, which lives in the triangulation `tr`.
+The type `Tr` must be identical to the triangulation type used by the mesh generation function.
 */ 
-Is_facet_bad operator()(Facet f); 
-
-/*!
-Same as above with `f=(c,i)`. 
-*/ 
-Is_facet_bad operator()(Cell_handle c, int i); 
+Facet_badness operator()(const Tr& tr, Facet f);
 
 /// @}
 

@@ -1,0 +1,125 @@
+namespace CGAL {
+/*!
+
+\mainpage User Manual
+\anchor Chapter_3D_Periodic_Mesh_Generation
+\anchor userchapterperiodic3mesh3
+\authors Mikhail Bogdanov, Aymeric Pellé, Mael Rouxel-Labbé, and Monique Teillaud
+
+\section Periodic_3_mMesh_3_section_intro Introduction
+
+This package is devoted to the generation of isotropic simplicial
+meshes discretizing periodic 3D domains.
+The domain to be meshed is a region of the three-dimensional flat torus
+(see Section \ref P3Triangulation3secspace).
+The region may be connected or composed of multiple components
+and/or subdivided in several subdomains.
+
+Boundary and subdivision surfaces are either
+smooth or piecewise smooth surfaces, formed with planar or curved surface patches.
+Surfaces may exhibit 1-dimensional features (e.g. crease edges)
+and 0-dimensional features (e.g. singular points as corners
+tips, cusps or darts), that have to be fairly approximated in the mesh.
+
+The output mesh is a periodic 3-dimensional triangulation,
+including subcomplexes that approximate each input domain feature: subdomain,
+boundary surface patch or input domain feature with dimension 0 or 1.
+Thus, the output mesh includes a 3D submesh covering each subdomain,
+a surface mesh approximating each boundary or subdividing
+surface patch, a polyline approximation for each
+1-dimensional feature and of course a vertex on each corner.
+
+The main entry points of the package are two global functions that
+respectively generate and refine such meshes. The mesh generator is customized
+to output a mesh that fits as much as possible the user needs,
+for instance in terms of sizing field or with respect
+to some user customized quality criteria.
+
+The meshing engine used in this mesh generator is based on Delaunay
+refinement \cgalCite{c-gqmgc-93}, \cgalCite{r-draq2d-95}, \cgalCite{s-tmgdr-98}.
+It uses the notion of restricted Delaunay triangulation
+to approximate 1-dimensional curve segments and surface patches \cgalCite{cgal:bo-pgsms-05}.
+Before the refinement, a mechanism of protecting balls is set up on 1-dimensional features, if any,
+to ensure a fair representation of those features in the mesh,
+and also to guarantee the termination of the refinement process,
+whatever may be the input geometry, in particular whatever small angles
+the boundary and subdivision surface patches may form \cgalCite{cgal:cdl-pdma-07},
+\cgalCite{cgal:cdr-drpsc-07}. The Delaunay refinement is followed
+by a mesh optimization phase to remove slivers and provide a good quality mesh.
+
+\subsection Periodic_3_mesh_3InputDomain Input Domain
+
+\subsection Periodic_3_mesh_3OutputMesh Output Mesh
+
+\subsection Periodic_3_mesh_3DelaunayRefinement Delaunay Refinement
+
+\subsection Periodic_3_mesh_3Protectionof0and1dimensionalExposed Protection of 0 and 1-dimensional Exposed Features
+
+\section Periodic_3_mesh_3_section_interface Interface
+
+\subsection Periodic_3_mesh_3TheGlobalFunctions The Global Functions
+
+A periodic 3D mesh generation process is launched through a call
+to one of the two following functions:
+
+\code{.cpp}
+template <class C3T3, class MeshDomain_3, class MeshCriteria>
+C3T3 make_periodic_mesh_3(MeshDomain_3 domain,
+                          MeshCriteria criteria,
+                          parameters::internal::Features_options features = parameters::features(domain),
+                          parameters::internal::Lloyd_options lloyd = parameters::no_lloyd(),
+                          parameters::internal::Odt_options odt = parameters::no_odt(),
+                          parameters::internal::Perturb_options perturb = parameters::perturb(),
+                          parameters::internal::Exude_options exude = parameters::exude());
+
+template <class C3T3, class MeshDomain_3, class MeshCriteria>
+void refine_periodic_mesh_3(C3T3& c3t3,
+                            MeshDomain_3 domain,
+                            MeshCriteria criteria,
+                            parameters::internal::Lloyd_options lloyd = parameters::no_lloyd(),
+                            parameters::internal::Odt_options odt = parameters::no_odt(),
+                            parameters::internal::Perturb_options perturb = parameters::perturb(),
+                            parameters::internal::Exude_options exude = parameters::exude());
+\endcode
+
+The function `make_periodic_mesh_3()` generates from scratch a periodic mesh
+of the input domain, while the function `refine_periodic_mesh_3()` refines
+an existing periodic mesh of the input domain. Note that as the protection
+of 0 and 1-dimensional features does not rely on Delaunay
+refinement, the function `refine_periodic_mesh_3()` has no parameter
+to preserve features.
+
+\subsection Periodic_3_mesh_3TheDataStructure The Data Structure
+
+The template parameter `C3T3` is required to be a model of
+the concept `MeshComplex_3InTriangulation_3`, a data structure devised to
+represent a three dimensional complex embedded in a 3D triangulation.
+In both functions, an instance of type `C3T3` is used to maintain the current
+approximating simplicial mesh and to represent the final 3D mesh at the end
+of the procedure.
+
+The embedding 3D triangulation is required to be the nested type
+`CGAL::Mesh_triangulation_3::type`, provided by the meta functor
+`CGAL::Mesh_triangulation_3`. The type for this triangulation is a
+`CGAL::Regular_triangulation_3` whose vertex and cell base classes
+are respectively models of the concepts `MeshVertexBase_3` and
+`MeshCellBase_3`.
+
+\subsection Periodic_3_mesh_3TheDomainOracleandtheFeaturesParameter The Domain Oracle and the Features Parameter
+
+\subsection Periodic_3_mesh_3TheMeshingCriteria The Meshing Criteria
+
+\subsection Periodic_3_mesh_3TheOptimizationParameters The Optimization Parameters
+
+\subsection Periodic_3_mesh_3ParallelAlgorithms Parallel Algorithms
+
+\section Periodic_3_mesh_3_section_examples Examples
+
+\section Periodic_3_mesh_3DesignAndImpl Design and Implementation History
+
+\subsection Periodic_3_mesh_3TheoreticalFoundations Theoretical Foundations
+
+\subsection Periodic_3_mesh_3ImplementationHistory Implementation History
+
+*/
+} /* namespace CGAL */

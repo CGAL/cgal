@@ -158,6 +158,7 @@ public:
   using Tr_Base::facets_end;
   using Tr_Base::cells_begin;
   using Tr_Base::cells_end;
+  using Tr_Base::construct_periodic_point;
 #endif
 
   // For strict-ansi compliance
@@ -648,30 +649,21 @@ public:
     return geom_traits().compare_power_distance_3_object()(p, q, r, o_p, o_q, o_r);
   }
 
-  Oriented_side power_test(const Weighted_point &p, const Weighted_point &q) const
+  Oriented_side power_side_of_oriented_power_sphere(const Weighted_point &p,
+                                                    const Weighted_point &q) const
   {
     CGAL_triangulation_precondition(this->equal(p, q));
     return geom_traits().power_side_of_oriented_power_sphere_3_object()(p, q);
   }
-  Oriented_side power_test(const Weighted_point &p, const Weighted_point &q,
-                           const Weighted_point &r, const Weighted_point &s,
-                           const Weighted_point &t,
-                           const Offset &o_p, const Offset &o_q,
-                           const Offset &o_r, const Offset &o_s,
-                           const Offset &o_t) const
+  Oriented_side power_side_of_oriented_power_sphere(const Weighted_point &p, const Weighted_point &q,
+                                                    const Weighted_point &r, const Weighted_point &s,
+                                                    const Weighted_point &t,
+                                                    const Offset &o_p, const Offset &o_q,
+                                                    const Offset &o_r, const Offset &o_s,
+                                                    const Offset &o_t) const
   {
     return geom_traits().power_side_of_oriented_power_sphere_3_object()(
-             p, q, r, s, t, o_p, o_q, o_r, o_s, o_t);
-  }
-
-  Oriented_side side_of_oriented_power_sphere(const Weighted_point &p, const Weighted_point &q,
-                                              const Weighted_point &r, const Weighted_point &s,
-                                              const Weighted_point &t,
-                                              const Offset &o_p, const Offset &o_q,
-                                              const Offset &o_r, const Offset &o_s,
-                                              const Offset &o_t) const
-  {
-    return power_test(p,q,r,s,t,o_p,o_q,o_r,o_s,o_t);
+             p,q,r,s,t, o_p,o_q,o_r,o_s,o_t);
   }
 
   Bounded_side side_of_power_sphere(const Cell_handle& c, const Weighted_point& p,
@@ -689,9 +681,68 @@ public:
     return bs;
   }
 
-  Bounded_side _side_of_power_sphere(const Cell_handle& c, const Weighted_point& p,
+  Bounded_side _side_of_power_sphere(const Cell_handle& c, const Weighted_point& q,
                                      const Offset & offset = Offset(),
-                                     bool perturb = false) const;
+                                     bool perturb = false) const
+  {
+    Weighted_point p0 = c->vertex(0)->point(),
+                   p1 = c->vertex(1)->point(),
+                   p2 = c->vertex(2)->point(),
+                   p3 = c->vertex(3)->point();
+    Offset o0 = this->get_offset(c,0),
+           o1 = this->get_offset(c,1),
+           o2 = this->get_offset(c,2),
+           o3 = this->get_offset(c,3),
+           oq = offset;
+
+    CGAL_triangulation_precondition( orientation(p0, p1, p2, p3, o0, o1, o2, o3) == POSITIVE );
+
+    Oriented_side os = ON_NEGATIVE_SIDE;
+    os = power_side_of_oriented_power_sphere(p0, p1, p2, p3, q, o0, o1, o2, o3, oq);
+
+    if(os != ON_ORIENTED_BOUNDARY || !perturb)
+      return enum_cast<Bounded_side>(os);
+
+    // We are now in a degenerate case => we do a symbolic perturbation.
+    // We sort the points lexicographically.
+    Periodic_weighted_point pts[5] = {std::make_pair(p0,o0), std::make_pair(p1,o1),
+                                      std::make_pair(p2,o2), std::make_pair(p3,o3),
+                                      std::make_pair(q,oq)};
+    const Periodic_weighted_point *points[5] ={&pts[0],&pts[1],&pts[2],&pts[3],&pts[4]};
+
+    std::sort(points, points+5, typename Tr_Base::Perturbation_order(this));
+
+    // We successively look whether the leading monomial, then 2nd monomial
+    // of the determinant has non null coefficient.
+    for(int i=4; i>1; --i) {
+      if(points[i] == &pts[4]) {
+        CGAL_triangulation_assertion(orientation(p0, p1, p2, p3, o0, o1, o2, o3)
+            == POSITIVE);
+        // since p0 p1 p2 p3 are non coplanar and positively oriented
+        return ON_UNBOUNDED_SIDE;
+      }
+      Orientation o;
+      if(points[i] == &pts[3] &&
+          (o = orientation(p0, p1, p2, q, o0, o1, o2, oq)) != COPLANAR ) {
+        return (Bounded_side) o;
+      }
+      if(points[i] == &pts[2] &&
+          (o = orientation(p0, p1, q, p3, o0, o1, oq, o3)) != COPLANAR ) {
+        return (Bounded_side) o;
+      }
+      if(points[i] == &pts[1] &&
+          (o = orientation(p0, q, p2, p3, o0, oq, o2, o3)) != COPLANAR ) {
+        return (Bounded_side) o;
+      }
+      if(points[i] == &pts[0] &&
+          (o = orientation(q, p1, p2 ,p3, oq, o1, o2, o3)) != COPLANAR ) {
+        return (Bounded_side) o;
+      }
+    }
+
+    CGAL_triangulation_assertion(false);
+    return ON_UNBOUNDED_SIDE;
+  }
 
   Weighted_point construct_weighted_point(const Weighted_point& p, const Offset &o) const
   {
@@ -700,6 +751,23 @@ public:
   Weighted_point construct_weighted_point(const Periodic_weighted_point& pp) const
   {
     return construct_weighted_point(pp.first, pp.second);
+  }
+
+  // same as the base construct_periodic_point(), but for weighted points
+  Periodic_weighted_point construct_periodic_weighted_point(const Weighted_point& p,
+                                                            bool& had_to_use_exact) const
+  {
+    const Bare_point& bp = geom_traits().construct_point_3_object()(p);
+    const Periodic_bare_point pbp = Tr_Base::construct_periodic_point(bp, had_to_use_exact);
+    return std::make_pair(geom_traits().construct_weighted_point_3_object()(
+                            pbp.first, p.weight()),
+                          pbp.second);
+  }
+
+  Periodic_weighted_point construct_periodic_weighted_point(const Weighted_point& p) const
+  {
+    bool useless = false;
+    return construct_periodic_weighted_point(p, useless);
   }
 
 public:
@@ -883,41 +951,50 @@ private:
 public:
   Periodic_bare_point periodic_weighted_circumcenter(Cell_handle c) const {
     return Tr_Base::periodic_circumcenter(c,
-      geom_traits().construct_weighted_circumcenter_3_object());
+                      geom_traits().construct_weighted_circumcenter_3_object());
   }
 
   /** @name Voronoi diagram */ //@{
+  // cell dual
   Bare_point dual(Cell_handle c) const {
+    return Tr_Base::construct_point(periodic_weighted_circumcenter(c).first);
+  }
+
+  Bare_point canonical_dual(Cell_handle c) const {
     return Tr_Base::construct_point(periodic_weighted_circumcenter(c));
   }
 
+  // facet dual
   bool canonical_dual_segment(Cell_handle c, int i, Periodic_segment_3& ps) const {
     return Tr_Base::canonical_dual_segment(c, i, ps,
       geom_traits().construct_weighted_circumcenter_3_object());
   }
 
-  Periodic_segment_3 dual(const Facet & f) const {
-    return dual( f.first, f.second );
-  }
-
-  Periodic_segment_3 dual(Cell_handle c, int i) const{
+  Periodic_segment_3 dual(Cell_handle c, int i) const
+  {
     Periodic_segment_3 ps;
     canonical_dual_segment(c,i,ps);
     return ps;
   }
 
-  template <class OutputIterator>
-  OutputIterator dual(const Edge & e, OutputIterator points) const {
-    return Tr_Base::dual(e.first, e.second, e.third, points);
+  Periodic_segment_3 dual(const Facet & f) const {
+    return dual(f.first, f.second);
   }
 
+  // edge dual
   template <class OutputIterator>
-  OutputIterator dual(Cell_handle c, int i, int j,
-      OutputIterator points) const {
+  OutputIterator dual(Cell_handle c, int i, int j, OutputIterator points) const
+  {
     Tr_Base::dual(c, i, j, points, geom_traits().construct_weighted_circumcenter_3_object());
     return points;
   }
 
+  template <class OutputIterator>
+  OutputIterator dual(const Edge & e, OutputIterator points) const {
+    return dual(e.first, e.second, e.third, points);
+  }
+
+  // vertex dual
   template <class OutputIterator>
   OutputIterator dual(Vertex_handle v, OutputIterator points) const {
     Tr_Base::dual(v, points, geom_traits().construct_weighted_circumcenter_3_object());
@@ -943,7 +1020,7 @@ public:
 
   template <class OutputIteratorBoundaryFacets, class OutputIteratorCells>
   std::pair<OutputIteratorBoundaryFacets, OutputIteratorCells>
-  find_conflicts(const Weighted_point &p, Cell_handle c,
+  find_conflicts(const Weighted_point& p, Cell_handle c,
                  OutputIteratorBoundaryFacets bfit, OutputIteratorCells cit) const
   {
     Triple<OutputIteratorBoundaryFacets,OutputIteratorCells,Emptyset_iterator>
@@ -955,25 +1032,86 @@ public:
             class OutputIteratorInternalFacets>
   Triple<OutputIteratorBoundaryFacets, OutputIteratorCells,
          OutputIteratorInternalFacets>
-  find_conflicts(const Weighted_point &p, Cell_handle c,
+  find_conflicts(const Weighted_point& p, Cell_handle c,
                  OutputIteratorBoundaryFacets bfit, OutputIteratorCells cit,
-                 OutputIteratorInternalFacets ifit) const;
+                 OutputIteratorInternalFacets ifit) const
+  {
+    CGAL_triangulation_precondition(number_of_vertices() != 0);
+    CGAL_triangulation_precondition(!(p.x() < domain().xmin()) && p.x() < domain().xmax());
+    CGAL_triangulation_precondition(!(p.y() < domain().ymin()) && p.y() < domain().ymax());
+    CGAL_triangulation_precondition(!(p.z() < domain().zmin()) && p.z() < domain().zmax());
+
+    std::vector<Facet> facets;
+    facets.reserve(64);
+    std::vector<Cell_handle> cells;
+    cells.reserve(32);
+
+    Conflict_tester tester(p, this);
+    Triple<typename std::back_insert_iterator<std::vector<Facet> >,
+           typename std::back_insert_iterator<std::vector<Cell_handle> >,
+           OutputIteratorInternalFacets> tit =
+             Tr_Base::find_conflicts(c, tester,
+                                     make_triple(std::back_inserter(facets),
+                                                 std::back_inserter(cells),
+                                                 ifit));
+    ifit = tit.third;
+
+    // Reset the conflict flag on the boundary.
+    for(typename std::vector<Facet>::iterator fit=facets.begin();
+    fit != facets.end(); ++fit) {
+      fit->first->neighbor(fit->second)->tds_data().clear();
+      *bfit++ = *fit;
+    }
+
+    // Reset the conflict flag in the conflict cells.
+    for(typename std::vector<Cell_handle>::iterator ccit=cells.begin();
+        ccit != cells.end(); ++ccit) {
+      (*ccit)->tds_data().clear();
+      *cit++ = *ccit;
+    }
+
+    for(typename std::vector<Vertex_handle>::iterator
+        voit = this->v_offsets.begin(); voit != this->v_offsets.end(); ++voit) {
+      (*voit)->clear_offset();
+    }
+
+    this->v_offsets.clear();
+
+    return make_triple(bfit, cit, ifit);
+  }
 
   /// Returns the vertices on the boundary of the conflict hole.
   template <class OutputIterator>
   OutputIterator vertices_in_conflict(const Weighted_point&p, Cell_handle c,
-                                      OutputIterator res) const;
+                                      OutputIterator res) const
+  {
+    if(number_of_vertices() == 0)
+      return res;
 
-  inline bool
-  is_extensible_triangulation_in_1_sheet_h1() const
+    // Get the facets on the boundary of the hole.
+    std::vector<Facet> facets;
+    find_conflicts(p, c, std::back_inserter(facets), Emptyset_iterator());
+
+    // Then extract uniquely the vertices.
+    std::set<Vertex_handle> vertices;
+    for(typename std::vector<Facet>::const_iterator i = facets.begin();
+         i != facets.end(); ++i) {
+      vertices.insert(i->first->vertex((i->second+1)&3));
+      vertices.insert(i->first->vertex((i->second+2)&3));
+      vertices.insert(i->first->vertex((i->second+3)&3));
+    }
+
+    return std::copy(vertices.begin(), vertices.end(), res);
+  }
+
+  inline bool is_extensible_triangulation_in_1_sheet_h1() const
   {
     if(!is_1_cover())
       return can_be_converted_to_1_sheet();
     return is_extensible_triangulation_in_1_sheet_h2();
   }
 
-  inline bool
-  is_extensible_triangulation_in_1_sheet_h2() const
+  inline bool is_extensible_triangulation_in_1_sheet_h2() const
   {
     FT threshold = FT(0.015625) * (domain().xmax()-domain().xmin()) * (domain().xmax()-domain().xmin());
 
@@ -988,147 +1126,6 @@ public:
     return true;
   }
 };
-
-template < class Gt, class Tds >
-template <class OutputIterator>
-OutputIterator
-Periodic_3_regular_triangulation_3<Gt,Tds>::vertices_in_conflict(
-    const Weighted_point&p, Cell_handle c, OutputIterator res) const
-{
-  if(number_of_vertices() == 0)
-    return res;
-
-  // Get the facets on the boundary of the hole.
-  std::vector<Facet> facets;
-  find_conflicts(p, c, std::back_inserter(facets), Emptyset_iterator());
-
-  // Then extract uniquely the vertices.
-  std::set<Vertex_handle> vertices;
-  for(typename std::vector<Facet>::const_iterator i = facets.begin();
-       i != facets.end(); ++i) {
-    vertices.insert(i->first->vertex((i->second+1)&3));
-    vertices.insert(i->first->vertex((i->second+2)&3));
-    vertices.insert(i->first->vertex((i->second+3)&3));
-  }
-
-  return std::copy(vertices.begin(), vertices.end(), res);
-}
-
-template < class Gt, class Tds >
-template <class OutputIteratorBoundaryFacets, class OutputIteratorCells,
-          class OutputIteratorInternalFacets>
-Triple<OutputIteratorBoundaryFacets, OutputIteratorCells,
-       OutputIteratorInternalFacets>
-Periodic_3_regular_triangulation_3<Gt,Tds>::find_conflicts(
-    const Weighted_point& p, Cell_handle c,
-    OutputIteratorBoundaryFacets bfit,
-    OutputIteratorCells cit,
-    OutputIteratorInternalFacets ifit) const
-{
-  CGAL_triangulation_precondition(number_of_vertices() != 0);
-
-  std::vector<Facet> facets;
-  facets.reserve(64);
-  std::vector<Cell_handle> cells;
-  cells.reserve(32);
-
-  Conflict_tester tester(p, this);
-  Triple<typename std::back_insert_iterator<std::vector<Facet> >,
-         typename std::back_insert_iterator<std::vector<Cell_handle> >,
-         OutputIteratorInternalFacets> tit =
-           Tr_Base::find_conflicts(c, tester,
-                                   make_triple(std::back_inserter(facets),
-                                               std::back_inserter(cells),
-                                               ifit));
-  ifit = tit.third;
-
-  // Reset the conflict flag on the boundary.
-  for(typename std::vector<Facet>::iterator fit=facets.begin();
-  fit != facets.end(); ++fit) {
-    fit->first->neighbor(fit->second)->tds_data().clear();
-    *bfit++ = *fit;
-  }
-
-  // Reset the conflict flag in the conflict cells.
-  for(typename std::vector<Cell_handle>::iterator ccit=cells.begin();
-      ccit != cells.end(); ++ccit) {
-    (*ccit)->tds_data().clear();
-    *cit++ = *ccit;
-  }
-
-  for(typename std::vector<Vertex_handle>::iterator
-      voit = this->v_offsets.begin(); voit != this->v_offsets.end(); ++voit) {
-    (*voit)->clear_offset();
-  }
-
-  this->v_offsets.clear();
-
-  return make_triple(bfit, cit, ifit);
-}
-
-template < class Gt, class Tds >
-Bounded_side Periodic_3_regular_triangulation_3<Gt,Tds>::
-_side_of_power_sphere(const Cell_handle &c, const Weighted_point &q,
-                      const Offset &offset, bool perturb ) const
-{
-  Weighted_point p0 = c->vertex(0)->point(),
-                 p1 = c->vertex(1)->point(),
-                 p2 = c->vertex(2)->point(),
-                 p3 = c->vertex(3)->point();
-  Offset o0 = this->get_offset(c,0),
-         o1 = this->get_offset(c,1),
-         o2 = this->get_offset(c,2),
-         o3 = this->get_offset(c,3),
-         oq = offset;
-
-  CGAL_triangulation_precondition( orientation(p0, p1, p2, p3, o0, o1, o2, o3) == POSITIVE );
-
-  Oriented_side os = ON_NEGATIVE_SIDE;
-  os = side_of_oriented_power_sphere(p0, p1, p2, p3, q, o0, o1, o2, o3, oq);
-
-  if(os != ON_ORIENTED_BOUNDARY || !perturb)
-    return (Bounded_side) os;
-
-  // We are now in a degenerate case => we do a symbolic perturbation.
-  // We sort the points lexicographically.
-  Periodic_weighted_point pts[5] = {std::make_pair(p0,o0), std::make_pair(p1,o1),
-                                    std::make_pair(p2,o2), std::make_pair(p3,o3),
-                                    std::make_pair(q,oq)};
-  const Periodic_weighted_point *points[5] ={&pts[0],&pts[1],&pts[2],&pts[3],&pts[4]};
-
-  std::sort(points, points+5, typename Tr_Base::Perturbation_order(this));
-
-  // We successively look whether the leading monomial, then 2nd monomial
-  // of the determinant has non null coefficient.
-  for(int i=4; i>1; --i) {
-    if(points[i] == &pts[4]) {
-      CGAL_triangulation_assertion(orientation(p0, p1, p2, p3, o0, o1, o2, o3)
-          == POSITIVE);
-      // since p0 p1 p2 p3 are non coplanar and positively oriented
-      return ON_UNBOUNDED_SIDE;
-    }
-    Orientation o;
-    if(points[i] == &pts[3] &&
-        (o = orientation(p0, p1, p2, q, o0, o1, o2, oq)) != COPLANAR ) {
-      return (Bounded_side) o;
-    }
-    if(points[i] == &pts[2] &&
-        (o = orientation(p0, p1, q, p3, o0, o1, oq, o3)) != COPLANAR ) {
-      return (Bounded_side) o;
-    }
-    if(points[i] == &pts[1] &&
-        (o = orientation(p0, q, p2, p3, o0, oq, o2, o3)) != COPLANAR ) {
-      return (Bounded_side) o;
-    }
-    if(points[i] == &pts[0] &&
-        (o = orientation(q, p1, p2 ,p3, oq, o1, o2, o3)) != COPLANAR ) {
-      return (Bounded_side) o;
-    }
-  }
-
-  CGAL_triangulation_assertion(false);
-  return ON_UNBOUNDED_SIDE;
-}
 
 template < class Gt, class Tds >
 bool
@@ -1221,16 +1218,17 @@ public:
     */
   bool operator()(const Cell_handle c, const Offset& off) const {
     return (t->_side_of_power_sphere(c, p, t->combine_offsets(o, off), true)
-             == ON_BOUNDED_SIDE);
+              == ON_BOUNDED_SIDE);
   }
 
   bool operator()(const Cell_handle c, const Weighted_point& pt,
                   const Offset& off) const {
-    return (t->_side_of_power_sphere(c, pt, o + off, true) == ON_BOUNDED_SIDE);
+    return (t->_side_of_power_sphere(c, pt, t->combine_offsets(o, off), true)
+              == ON_BOUNDED_SIDE);
   }
 
   int compare_weight(const Weighted_point& p, const Weighted_point& q) const {
-    return t->power_test(p, q);
+    return t->power_side_of_oriented_power_sphere(p, q);
   }
 
   bool test_initial_cell(Cell_handle c, const Offset& off) const {

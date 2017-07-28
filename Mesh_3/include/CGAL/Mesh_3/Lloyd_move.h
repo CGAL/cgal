@@ -521,41 +521,71 @@ private:
   {
     typedef typename Tr::Cell_circulator Cell_circulator;
     
-    typename Gt::Compute_volume_3 volume = 
-      c3t3.triangulation().geom_traits().compute_volume_3_object();
-    typename Gt::Construct_centroid_3 centroid =
-      c3t3.triangulation().geom_traits().construct_centroid_3_object();
-    typename Gt::Construct_vector_3 vector =
-      c3t3.triangulation().geom_traits().construct_vector_3_object();
-    typename Gt::Construct_point_3 wp2p =
-      c3t3.triangulation().geom_traits().construct_point_3_object();
-    
-    Cell_circulator current_cell = c3t3.triangulation().incident_cells(edge);
+    const Tr& tr = c3t3.triangulation();
+
+    typename Gt::Compute_volume_3 volume = tr.geom_traits().compute_volume_3_object();
+    typename Gt::Construct_centroid_3 centroid = tr.geom_traits().construct_centroid_3_object();
+    typename Gt::Construct_vector_3 vector = tr.geom_traits().construct_vector_3_object();
+    typename Gt::Construct_point_3 wp2p = tr.geom_traits().construct_point_3_object();
+
+//    <PERIODIC>
+    typename Gt::Construct_tetrahedron_3 tetrahedron =
+      tr.geom_traits().construct_tetrahedron_3_object();
+
+    typename Gt::Construct_translated_point_3 translate =
+      tr.geom_traits().construct_translated_point_3_object();
+//    </PERIODIC>
+
+    Cell_circulator current_cell = tr.incident_cells(edge);
     Cell_circulator done = current_cell;
-    
+
     // a & b are fixed points
     const Bare_point& a = wp2p(v->point());
-    const Bare_point& b = c3t3.triangulation().dual(current_cell++);
+
+//    <PERIODIC>
+    const Bare_point b = tr.dual(current_cell);
+    const Bare_point a_b = wp2p(tr.point(current_cell, current_cell->index(v)));
+    Vector_3 ba = Vector_3(a_b, b);
+    current_cell++;
+//    </PERIODIC>
     CGAL_assertion(current_cell != done);
-    
+
     // c & d are moving points
-    Bare_point c = c3t3.triangulation().dual(current_cell++);
+//    <PERIODIC>
+    Bare_point c = tr.dual(current_cell);
+    Bare_point a_c = wp2p(tr.point(current_cell, current_cell->index(v)));
+    Vector_3 ca = Vector_3(a_c, c);
+    current_cell++;
+//    </PERIODIC>
+
     CGAL_assertion(current_cell != done);
-    
+
     while ( current_cell != done )
     {
-      const Bare_point& d = c3t3.triangulation().dual(current_cell++);
-      const Bare_point& tet_centroid = centroid(a,b,c,d);
-      
+//    <PERIODIC>
+      const Bare_point d = tr.dual(current_cell);
+      const Bare_point a_d = wp2p(tr.point(current_cell, current_cell->index(v)));
+      Vector_3 da = Vector_3(a_d, d);
+      current_cell++;
+
+      Tetrahedron_3 tet = tetrahedron(a, translate(a, ba), translate(a, ca), translate(a, da));
+
+      const Bare_point tet_centroid = centroid(tet);
+//    </PERIODIC>
+
       // Compute mass
       FT density = density_3d(tet_centroid, current_cell, sizing_field);
       FT abs_volume = CGAL::abs(volume(a,b,c,d));
       FT mass = abs_volume * density;
-      
+
       move = move + mass * vector(a,tet_centroid);
       sum_masses += mass;
-      
+
       c = d;
+//    <PERIODIC>
+      a_c = a_d;
+      ca = da;
+//    </PERIODIC>
     }
   }
 };

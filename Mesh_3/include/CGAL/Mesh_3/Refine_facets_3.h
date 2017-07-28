@@ -298,9 +298,9 @@ public:
     const Cell_handle c = facet.first;
     const int i = facet.second;
     std::cerr << "Facet ("
-              << c->vertex((i+1)&3)->point() << " , "
-              << c->vertex((i+2)&3)->point() << " , "
-              << c->vertex((i+3)&3)->point() << ") : refinement point is "
+              << r_tr_.point(c, (i+1)&3) << " , "
+              << r_tr_.point(c, (i+2)&3) << " , "
+              << r_tr_.point(c, (i+3)&3) << ") : refinement point is "
               << get_facet_surface_center(facet) << std::endl;
 #endif
     CGAL_assertion (this->is_facet_on_surface(facet));
@@ -349,10 +349,10 @@ public:
   {
     std::stringstream sstr;
     sstr << "Facet { " << std::endl
-    << "  - " << *facet.first->vertex((facet.second+1)%4)  << std::endl
-    << "  - " << *facet.first->vertex((facet.second+2)%4)  << std::endl
-    << "  - " << *facet.first->vertex((facet.second+3)%4)  << std::endl
-    << "  - 4th vertex in cell: " << *facet.first->vertex(facet.second)  << std::endl
+    << "  " << *facet.first->vertex((facet.second+1)%4)  << std::endl
+    << "  " << *facet.first->vertex((facet.second+2)%4)  << std::endl
+    << "  " << *facet.first->vertex((facet.second+3)%4)  << std::endl
+    << "  4th vertex in cell: " << *facet.first->vertex(facet.second)  << std::endl
     << "}" << std::endl;
 
     return sstr.str();
@@ -1437,17 +1437,17 @@ before_insertion_impl(const Facet& facet,
       % display_dual(facet)
       % 0 // dummy: %4% no longer used
       % group(setprecision(17), point)
-      % group(setprecision(17), facet.first->vertex((facet.second + 1)&3)->point())
-      % group(setprecision(17), facet.first->vertex((facet.second + 2)&3)->point())
-      % group(setprecision(17), facet.first->vertex((facet.second + 3)&3)->point())
-      % facet.first->vertex(0)->point()
-      % facet.first->vertex(1)->point()
-      % facet.first->vertex(2)->point()
-      % facet.first->vertex(3)->point()
-      % source_other_side.first->vertex(0)->point()
-      % source_other_side.first->vertex(1)->point()
-      % source_other_side.first->vertex(2)->point()
-      % source_other_side.first->vertex(3)->point();
+      % group(setprecision(17), r_tr_.point(facet.first, (facet.second + 1)&3))
+      % group(setprecision(17), r_tr_.point(facet.first, (facet.second + 2)&3))
+      % group(setprecision(17), r_tr_.point(facet.first, (facet.second + 3)&3))
+      % r_tr_.point(facet.first, 0)
+      % r_tr_.point(facet.first, 1)
+      % r_tr_.point(facet.first, 2)
+      % r_tr_.point(facet.first, 3)
+      % r_tr_.point(source_other_side.first, 0)
+      % r_tr_.point(source_other_side.first, 1)
+      % r_tr_.point(source_other_side.first, 2)
+      % r_tr_.point(source_other_side.first, 3);
 
     CGAL_error_msg(error_msg.str().c_str());
   }
@@ -1536,7 +1536,7 @@ treat_new_facet(Facet& facet)
     set_facet_on_surface(facet, surface_index);
 
     // Insert facet into refinement queue if needed
-    const Is_facet_bad is_facet_bad = r_criteria_(facet);
+    const Is_facet_bad is_facet_bad = r_criteria_(r_tr_, facet);
 
     if ( is_facet_bad )
     {
@@ -1583,6 +1583,8 @@ compute_facet_properties(const Facet& facet,
       r_tr_.geom_traits().is_degenerate_3_object();
   typename Gt::Compare_xyz_3 compare_xyz =
       r_tr_.geom_traits().compare_xyz_3_object();
+  typename Gt::Construct_segment_3 construct_segment =
+      r_tr_.geom_traits().construct_segment_3_object();
 #ifndef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
   typename MD::Do_intersect_surface do_intersect_surface =
       r_oracle_.do_intersect_surface_object();
@@ -1603,9 +1605,9 @@ compute_facet_properties(const Facet& facet,
 
     // Trick to have canonical vector : thus, we compute always the same
     // intersection
-    Segment_3 segment = ( compare_xyz(p1,p2)== CGAL::SMALLER )
-      ? Segment_3(p1, p2)
-      : Segment_3(p2, p1);
+    Segment_3 segment = ( compare_xyz(p1, p2)== CGAL::SMALLER )
+      ? construct_segment(p1, p2)
+      : construct_segment(p2, p1);
 
     // If facet is on surface, compute intersection point and return true
 #ifndef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
@@ -1682,21 +1684,17 @@ is_facet_encroached(const Facet& facet,
                     const Weighted_point& point) const
 {
   if ( r_tr_.is_infinite(facet) || ! this->is_facet_on_surface(facet) )
-  {
     return false;
-  }
-
-  typename Gt::Compare_power_distance_3 compare_distance =
-    r_tr_.geom_traits().compare_power_distance_3_object();
 
   const Cell_handle& cell = facet.first;
   const int& facet_index = facet.second;
-  const Bare_point& center = get_facet_surface_center(facet);
-  const Weighted_point& reference_point = cell->vertex((facet_index+1)&3)->point();
 
-  // facet is encroached if the new point is near from center than
-  // one vertex of the facet
-  return ( compare_distance(center, reference_point, point) != CGAL::SMALLER );
+  const Bare_point& center = get_facet_surface_center(facet);
+  const Weighted_point& reference_point = r_tr_.point(cell, (facet_index+1)&3);
+
+  // the facet is encroached if the new point is closer to the center than
+  // any vertex of the facet
+  return r_tr_.greater_or_equal_power_distance(center, reference_point, point);
 }
 
 template<class Tr, class Cr, class MD, class C3T3_, class Ct, class C_>

@@ -144,12 +144,13 @@ public:
 
    /**
    * @brief returns the badness of facet \c facet
+   * @param tr the triangulation within which \c facet lives
    * @param facet the facet
    * @return the badness of \c facet
    */
-  Facet_badness operator()(const Facet& facet) const
+  Facet_badness operator()(const Tr& tr, const Facet& facet) const
   {
-    return criteria_(facet);
+    return criteria_(tr, facet);
   }
   
   void add(Abstract_criterion* criterion)
