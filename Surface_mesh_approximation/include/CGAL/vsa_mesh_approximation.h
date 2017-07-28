@@ -27,7 +27,8 @@ namespace CGAL
  * @tparam AnchorVertexContainer a container of extracted anchor vertex
  * @tparam BoundaryContainer a container of proxy patch boundary
  * @tparam PlaneFitting a plane fitting functor
- * @tparam ApproximationTrait an approximation trait
+ * @tparam ErrorMetric error metric type
+ * @tparam ProxyFitting proxy fitting type
 
  * @param init select seed initialization
  * @param tm a triangle mesh
@@ -39,7 +40,8 @@ namespace CGAL
  * @param pos anchor position container
  * @param vtx anchor vertex container
  * @param bdrs proxy patch boundary container
- * @param app_trait shape approximation trait
+ * @param fit_error error metric functor
+ * @param proxy_fitting proxy fitting functor
  */
 template<typename TriangleMesh,
   typename FacetProxyMap,
@@ -49,7 +51,8 @@ template<typename TriangleMesh,
   typename AnchorVertexContainer,
   typename BoundaryContainer,
   typename PlaneFitting,
-  typename ApproximationTrait>
+  typename ErrorMetric,
+  typename ProxyFitting>
 void vsa_mesh_approximation(
     const int init,
     const TriangleMesh &tm,
@@ -62,13 +65,14 @@ void vsa_mesh_approximation(
     AnchorVertexContainer &vtx,
     BoundaryContainer &bdrs,
     const PlaneFitting &_plane_fitting,
-    const ApproximationTrait &app_trait) {
+    const ErrorMetric &fit_error,
+    const ProxyFitting &proxy_fitting) {
   // CGAL_precondition(is_pure_triangle(tm));
 
   vsa_approximate(tm,
     f_proxy_pmap,
-    app_trait.construct_fit_error_functor(),
-    app_trait.construct_proxy_fitting_functor(),
+    fit_error,
+    proxy_fitting,
     init,
     number_of_segments,
     number_of_iterations);
@@ -77,8 +81,7 @@ void vsa_mesh_approximation(
     TriangleMesh,
     FacetProxyMap,
     PlaneFitting,
-    VertexPointMap,
-    typename ApproximationTrait::GeomTraits> VSA_mesh_extraction;
+    VertexPointMap> VSA_mesh_extraction;
 
   VSA_mesh_extraction extractor(tm, f_proxy_pmap, _plane_fitting, v_point_pmap);
 
@@ -159,12 +162,14 @@ void vsa_approximate(
  * @tparam AnchorIndexContainer a container of approximated indexed triangle soup
  * @tparam AnchorPositionContainer a container of extracted anchor position
  * @tparam PlaneFitting a plane fitting functor
- * @tparam ApproximationTrait an approximation trait
+ * @tparam ErrorMetric error metric type
+ * @tparam ProxyFitting proxy fitting type
 
  * @param tm a triangle mesh
  * @param[out] tris approximation indexed triangle soup
  * @param[out] pos anchor position container
- * @param app_trait shape approximation trait
+ * @param fit_error error metric functor
+ * @param proxy_fitting proxy fitting functor
  * @param init select seed initialization
  * @param number_of_segments target number of approximation patches
  * @param number_of_iterations number of fitting iterations
@@ -173,13 +178,15 @@ template<typename TriangleMesh,
   typename AnchorIndexContainer,
   typename AnchorPositionContainer,
   typename PlaneFitting,
-  typename ApproximationTrait>
+  typename ErrorMetric,
+  typename ProxyFitting>
 void vsa_extract(
     const TriangleMesh &tm,
     AnchorIndexContainer &tris,
     AnchorPositionContainer &pos,
     const PlaneFitting &_plane_fitting,
-    const ApproximationTrait &app_trait,
+    const ErrorMetric &fit_error,
+    const ProxyFitting &proxy_fitting,
     const int init,
     const std::size_t number_of_segments,
     const std::size_t number_of_iterations) {
@@ -194,8 +201,8 @@ void vsa_extract(
 
   vsa_approximate(tm,
     f_proxy_pmap,
-    app_trait.construct_fit_error_functor(),
-    app_trait.construct_proxy_fitting_functor(),
+    fit_error,
+    proxy_fitting,
     init,
     number_of_segments,
     number_of_iterations);
@@ -225,13 +232,15 @@ void vsa_extract(
  * @tparam AnchorIndexContainer a container of approximated indexed triangle soup
  * @tparam AnchorPositionContainer a container of extracted anchor position
  * @tparam PlaneFitting a plane fitting functor
- * @tparam ApproximationTrait an approximation trait
+ * @tparam ErrorMetric error metric type
+ * @tparam ProxyFitting proxy fitting type
 
  * @param tm a triangle mesh
  * @param[out] f_proxy_pmap facet proxy patch id property map
  * @param[out] tris approximation indexed triangle soup
  * @param[out] pos anchor position container
- * @param app_trait shape approximation trait
+ * @param fit_error error metric functor
+ * @param proxy_fitting proxy fitting functor
  * @param init select seed initialization
  * @param number_of_segments target number of approximation patches
  * @param number_of_iterations number of fitting iterations
@@ -241,14 +250,16 @@ template<typename TriangleMesh,
   typename AnchorIndexContainer,
   typename AnchorPositionContainer,
   typename PlaneFitting,
-  typename ApproximationTrait>
+  typename ErrorMetric,
+  typename ProxyFitting>
 void vsa_approximate_and_extract(
     const TriangleMesh &tm,
     FacetProxyMap f_proxy_pmap,
     AnchorIndexContainer &tris,
     AnchorPositionContainer &pos,
     const PlaneFitting &_plane_fitting,
-    const ApproximationTrait &app_trait,
+    const ErrorMetric &fit_error,
+    const ProxyFitting &proxy_fitting,
     const int init,
     const std::size_t number_of_segments,
     const std::size_t number_of_iterations) {
@@ -256,8 +267,8 @@ void vsa_approximate_and_extract(
 
   vsa_approximate(tm,
     f_proxy_pmap,
-    app_trait.construct_fit_error_functor(),
-    app_trait.construct_proxy_fitting_functor(),
+    fit_error,
+    proxy_fitting,
     init,
     number_of_segments,
     number_of_iterations);
@@ -315,7 +326,6 @@ void vsa_approximate(
   typedef CGAL::PlaneProxy<TriangleMesh> PlaneProxy;
   typedef CGAL::L21Metric<PlaneProxy, FacetNormalMap, FacetAreaMap> L21Metric;
   typedef CGAL::L21ProxyFitting<PlaneProxy, FacetNormalMap, FacetAreaMap> L21ProxyFitting;
-  typedef CGAL::L21ApproximationTrait<PlaneProxy, L21Metric, L21ProxyFitting, FacetNormalMap, FacetAreaMap> L21ApproximationTrait;
 
   VertexPointMap point_pmap = get(boost::vertex_point, const_cast<TriangleMesh &>(tm));
   // construct facet normal & area map
@@ -387,7 +397,6 @@ void vsa_extract(
   typedef CGAL::L21Metric<PlaneProxy, FacetNormalMap, FacetAreaMap> L21Metric;
   typedef CGAL::L21ProxyFitting<PlaneProxy, FacetNormalMap, FacetAreaMap> L21ProxyFitting;
   typedef CGAL::PlaneFitting<TriangleMesh> PlaneFitting;
-  typedef CGAL::L21ApproximationTrait<PlaneProxy, L21Metric, L21ProxyFitting, FacetNormalMap, FacetAreaMap> L21ApproximationTrait;
 
   VertexPointMap point_pmap = get(boost::vertex_point, const_cast<TriangleMesh &>(tm));
   // construct facet normal & area map
@@ -416,7 +425,8 @@ void vsa_extract(
     tris,
     pos,
     PlaneFitting(tm),
-    L21ApproximationTrait(normal_pmap, area_pmap),
+    L21Metric(normal_pmap, area_pmap),
+    L21ProxyFitting(normal_pmap, area_pmap),
     init,
     number_of_segments,
     number_of_iterations);
@@ -472,7 +482,6 @@ void vsa_approximate_and_extract(
   typedef CGAL::L21Metric<PlaneProxy, FacetNormalMap, FacetAreaMap> L21Metric;
   typedef CGAL::L21ProxyFitting<PlaneProxy, FacetNormalMap, FacetAreaMap> L21ProxyFitting;
   typedef CGAL::PlaneFitting<TriangleMesh> PlaneFitting;
-  typedef CGAL::L21ApproximationTrait<PlaneProxy, L21Metric, L21ProxyFitting, FacetNormalMap, FacetAreaMap> L21ApproximationTrait;
 
   VertexPointMap point_pmap = get(boost::vertex_point, const_cast<TriangleMesh &>(tm));
   // construct facet normal & area map
@@ -496,7 +505,8 @@ void vsa_approximate_and_extract(
     tris,
     pos,
     PlaneFitting(tm),
-    L21ApproximationTrait(normal_pmap, area_pmap),
+    L21Metric(normal_pmap, area_pmap),
+    L21ProxyFitting(normal_pmap, area_pmap),
     init,
     number_of_segments,
     number_of_iterations);
