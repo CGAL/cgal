@@ -1022,9 +1022,11 @@ void Scene_edit_box_item_priv::reset_selection()
 }
 
 //intercept events for picking
-bool Scene_edit_box_item::eventFilter(QObject *, QEvent *event)
+bool Scene_edit_box_item::eventFilter(QObject *obj, QEvent *event)
 {
-  QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+  QGLViewer* viewer = qobject_cast<QGLViewer*>(obj);
+  if(!viewer)
+    return false;
   if(event->type() == QEvent::MouseButtonPress)
   {
     QMouseEvent* e = static_cast<QMouseEvent*>(event);
