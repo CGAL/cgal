@@ -280,6 +280,9 @@ struct Face_filtered_graph
     selected_faces.resize(num_faces(_graph));
     selected_vertices.resize(num_vertices(_graph));
     selected_halfedges.resize(num_halfedges(_graph));
+    selected_faces.reset();
+    selected_vertices.reset();
+    selected_halfedges.reset();
     BOOST_FOREACH(face_descriptor fd, faces(_graph) )
     {
       if(get(face_patch_index_map, fd) == face_patch_id)
@@ -312,6 +315,9 @@ struct Face_filtered_graph
     selected_faces.resize(num_faces(_graph));
     selected_vertices.resize(num_vertices(_graph));
     selected_halfedges.resize(num_halfedges(_graph));
+    selected_faces.reset();
+    selected_vertices.reset();
+    selected_halfedges.reset();
     typedef typename boost::property_traits<FacePatchIndexMap>::value_type Patch_index;
     boost::unordered_set<Patch_index> pids(boost::begin(selected_face_patch_indices),
                                            boost::end(selected_face_patch_indices));
@@ -332,7 +338,7 @@ struct Face_filtered_graph
   }
   /// change the set of selected faces using a range of face descriptors
   template<class FaceRange>
-  void set_selected_faces(const FaceRange& selected_faces)
+  void set_selected_faces(const FaceRange& selection)
   {
     face_indices.clear();
     vertex_indices.clear();
@@ -341,7 +347,10 @@ struct Face_filtered_graph
     selected_faces.resize(num_faces(_graph));
     selected_vertices.resize(num_vertices(_graph));
     selected_halfedges.resize(num_halfedges(_graph));
-    BOOST_FOREACH(face_descriptor fd, selected_faces)
+    selected_faces.reset();
+    selected_vertices.reset();
+    selected_halfedges.reset();
+    BOOST_FOREACH(face_descriptor fd, selection)
     {
       selected_faces.set(get(fimap, fd));
       BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(fd, _graph), _graph))
@@ -366,7 +375,7 @@ struct Face_filtered_graph
     bool operator()(Simplex s)
     {
       CGAL_assertion(adapter!=NULL);
-      return (in_CC(s, *adapter));
+      return (adapter->is_in_cc(s));
     }
     const Self* adapter;
   };
@@ -384,6 +393,11 @@ struct Face_filtered_graph
   bool is_in_cc(halfedge_descriptor h) const
   {
     return selected_halfedges[get(himap, h)];
+  }
+
+  bool is_in_cc(edge_descriptor e) const
+  {
+    return selected_halfedges[get(himap, halfedge(e,_graph))];
   }
   ///returns the number of selected faces
   size_type number_of_faces()const
@@ -591,50 +605,6 @@ struct graph_traits< const CGAL::Face_filtered_graph<Graph, FIMap, VIMap, HIMap>
 
 
 namespace CGAL {
-template<typename Graph,
-         typename FIMap,
-         typename VIMap,
-         typename HIMap>
-bool
-in_CC(const typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::face_descriptor f,
-      const Face_filtered_graph<Graph, FIMap, VIMap, HIMap> & w)
-{
-  return w.is_in_cc(f);
-}
-
-template<typename Graph,
-         typename FIMap,
-         typename VIMap,
-         typename HIMap>
-bool
-in_CC(const typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_descriptor h,
-      const Face_filtered_graph<Graph, FIMap, VIMap, HIMap> & w)
-{
-  return  w.is_in_cc(h);
-}
-
-template<typename Graph,
-         typename FIMap,
-         typename VIMap,
-         typename HIMap>
-bool
-in_CC(const typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::edge_descriptor e,
-      const Face_filtered_graph<Graph, FIMap, VIMap, HIMap> & w)
-{
-  return  w.is_in_cc(halfedge(e, w.graph()));
-}
-
-template<typename Graph,
-         typename FIMap,
-         typename VIMap,
-         typename HIMap>
-bool
-in_CC(const typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::vertex_descriptor v,
-      const Face_filtered_graph<Graph, FIMap, VIMap, HIMap> & w)
-{
-  return w.is_in_cc(v);
-}
-
 
 template<typename Graph,
          typename FIMap,
@@ -664,13 +634,13 @@ typename boost::graph_traits<Graph>::degree_size_type
 degree(typename boost::graph_traits<Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::vertex_descriptor v,
        const Face_filtered_graph<Graph, FIMap, VIMap, HIMap>& w)
 {
-  CGAL_assertion(in_CC(v, w));
+  CGAL_assertion(w.is_in_cc(v));
   typename boost::graph_traits<Graph>::degree_size_type v_deg = 0;
   typename boost::graph_traits<Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_descriptor h = halfedge(v, w);
   typename boost::graph_traits<Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_descriptor hcirc = h;
   do
   {
-    if(in_CC(hcirc, w))
+    if(w.is_in_cc(hcirc))
       ++v_deg;
     hcirc = opposite(next(hcirc, w.graph()), w.graph());
   }while(hcirc != h);
@@ -685,7 +655,7 @@ typename boost::graph_traits<Graph>::degree_size_type
 out_degree(typename boost::graph_traits<Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::vertex_descriptor v,
            const Face_filtered_graph<Graph, FIMap, VIMap, HIMap>& w)
 {
-  CGAL_assertion(in_CC(v, w));
+  CGAL_assertion(w.is_in_cc(v));
   return static_cast<typename boost::graph_traits<Graph>::degree_size_type>(
     std::distance(out_edges(v, w).first ,out_edges(v, w).second) );
 }
@@ -698,7 +668,7 @@ typename boost::graph_traits<Graph>::degree_size_type
 in_degree(typename boost::graph_traits<Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::vertex_descriptor v,
           const Face_filtered_graph<Graph, FIMap, VIMap, HIMap>& w)
 {
-  CGAL_assertion(in_CC(v, w));
+  CGAL_assertion(w.is_in_cc(v));
   return static_cast<typename boost::graph_traits<Graph>::degree_size_type>(
     std::distance(in_edges(v, w).first ,in_edges(v, w).second) );
 }
@@ -711,7 +681,7 @@ typename boost::graph_traits<Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::
 source(typename boost::graph_traits<Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::edge_descriptor e,
        const Face_filtered_graph<Graph, FIMap, VIMap, HIMap> & w)
 {
-  CGAL_assertion(in_CC(e, w));
+  CGAL_assertion(w.is_in_cc(e));
   return source(e, w.graph());
 }
 
@@ -723,7 +693,7 @@ typename boost::graph_traits<Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::
 target(typename boost::graph_traits<Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::edge_descriptor e,
        const Face_filtered_graph<Graph, FIMap, VIMap, HIMap> & w)
 {
-  CGAL_assertion(in_CC(e, w));
+  CGAL_assertion(w.is_in_cc(e));
   return target(e, w.graph());
 }
 
@@ -736,9 +706,9 @@ edge(typename boost::graph_traits<Face_filtered_graph<Graph, FIMap, VIMap, HIMap
      typename boost::graph_traits<Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::vertex_descriptor v,
      const Face_filtered_graph<Graph, FIMap, VIMap, HIMap> & w)
 {
-  CGAL_assertion(in_CC(u, w) && in_CC(v, w));
+  CGAL_assertion(w.is_in_cc(u) && w.is_in_cc(v));
   typename boost::graph_traits<Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::edge_descriptor e = edge(u, v, w.graph()).first;
-  bool res = in_CC(e, w);
+  bool res = w.is_in_cc(e);
   return std::make_pair(e, res);
 }
 
@@ -826,7 +796,7 @@ typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >:
 edge(typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_descriptor h,
      const Face_filtered_graph<Graph, FIMap, VIMap, HIMap> & w)
 {
-  CGAL_assertion(CGAL::in_CC(h, w));
+  CGAL_assertion(w.is_in_cc(h));
   return edge(h, w.graph());
 }
 
@@ -838,7 +808,7 @@ typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >:
 halfedge(typename boost::graph_traits<  Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::edge_descriptor e,
          const Face_filtered_graph<Graph, FIMap, VIMap, HIMap> & w)
 {
-  CGAL_assertion(CGAL::in_CC(e, w));
+  CGAL_assertion(w.is_in_cc(e));
   return halfedge(e, w.graph());
 }
 
@@ -850,12 +820,12 @@ typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >:
 halfedge(typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::vertex_descriptor v,
          const Face_filtered_graph<Graph, FIMap, VIMap, HIMap> & w)
 {
-  CGAL_assertion(in_CC(v, w));
+  CGAL_assertion(w.is_in_cc(v));
   typename boost::graph_traits<Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_descriptor h = halfedge(v, w.graph());
   typename boost::graph_traits<Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_descriptor hcirc = h;
   do
   {
-    if(in_CC(hcirc, w))
+    if(w.is_in_cc(hcirc))
       return hcirc;
     hcirc = opposite(next(hcirc, w.graph()), w.graph());
   }while(hcirc != h);
@@ -872,9 +842,9 @@ halfedge(typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, 
          typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::vertex_descriptor v,
          const Face_filtered_graph<Graph, FIMap, VIMap, HIMap> & w)
 {
-  CGAL_assertion(in_CC(u, w) && in_CC(v, w));
+  CGAL_assertion(w.is_in_cc(u) && w.is_in_cc(v));
   typename boost::graph_traits<Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_descriptor h = halfedge(u, v, w.graph()).first;
-  return std::make_pair(h, in_CC(h, w));
+  return std::make_pair(h, w.is_in_cc(h));
 }
 
 
@@ -886,7 +856,7 @@ typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >:
 opposite(typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_descriptor h,
          const Face_filtered_graph<Graph, FIMap, VIMap, HIMap> & w)
 {
-  CGAL_assertion(in_CC(h, w) );
+  CGAL_assertion(w.is_in_cc(h) );
      return opposite(h, w.graph());
 }
 
@@ -898,7 +868,7 @@ typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >:
 source(typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_descriptor h,
        const Face_filtered_graph<Graph, FIMap, VIMap, HIMap> & w)
 {
-  CGAL_assertion(in_CC(h, w) );
+  CGAL_assertion(w.is_in_cc(h) );
   return source(h, w.graph());
 }
 
@@ -910,7 +880,7 @@ typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >:
 target(typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_descriptor h,
        const Face_filtered_graph<Graph, FIMap, VIMap, HIMap> & w)
 {
-  CGAL_assertion(in_CC(h, w) );
+  CGAL_assertion(w.is_in_cc(h) );
   return target(h, w.graph());
 }
 
@@ -922,20 +892,20 @@ typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >:
 next(typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_descriptor h,
      const Face_filtered_graph<Graph, FIMap, VIMap, HIMap> & w)
 {
-  CGAL_assertion(in_CC(h, w));
-  if(in_CC(next(h, w.graph()), w))
+  CGAL_assertion(w.is_in_cc(h));
+  if(w.is_in_cc(next(h, w.graph())))
     return next(h, w.graph());
-  //act as a border
+
+  //h is on the border of the selection
+  CGAL_assertion( !w.is_in_cc(face(h, w.graph())) );
   typedef typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_descriptor h_d;
-  BOOST_FOREACH( h_d hcirc,
-                CGAL::halfedges_around_target(target(h, w.graph()), w.graph()))
-  {
-    if(hcirc != h && in_CC(hcirc, w))
-    {
-      return opposite(hcirc, w.graph());
-    }
-  }
-  return boost::graph_traits< CGAL::Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::null_halfedge();
+  h_d candidate = next(h, w.graph());
+  CGAL_assertion(!w.is_in_cc(candidate));
+  do{
+    candidate = next(opposite(candidate, w.graph()), w.graph());
+    CGAL_assertion(candidate!=opposite(h,w.graph()));
+  }while(!w.is_in_cc(candidate));
+  return candidate;
 }
 
 template<typename Graph,
@@ -947,21 +917,20 @@ prev(typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMa
      const Face_filtered_graph<Graph, FIMap, VIMap, HIMap> & w)
 {
 
-  CGAL_assertion(in_CC(h, w));
-  if(in_CC(prev(h, w.graph()), w))
+  CGAL_assertion(w.is_in_cc(h));
+  if(w.is_in_cc(prev(h, w.graph())))
     return prev(h, w.graph());
 
-  //act as a border
+  //h is on the border of the selection
+  CGAL_assertion( !w.is_in_cc(face(h, w.graph())) );
   typedef typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_descriptor h_d;
-  BOOST_FOREACH(h_d hcirc,
-                CGAL::halfedges_around_source(source(h, w.graph()), w.graph()))
-  {
-    if(hcirc != h && in_CC(hcirc, w))
-    {
-      return opposite(hcirc, w.graph());
-    }
-  }
-  return boost::graph_traits< CGAL::Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::null_halfedge();
+  h_d candidate = prev(h, w.graph());
+  CGAL_assertion(!w.is_in_cc(candidate));
+  do{
+    candidate = prev(opposite(candidate, w.graph()), w.graph());
+    CGAL_assertion(candidate!=opposite(h,w.graph()));
+  }while(!w.is_in_cc(candidate));
+  return candidate;
 }
 
 //
@@ -1006,10 +975,10 @@ typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >:
 face(typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_descriptor h,
      const Face_filtered_graph<Graph, FIMap, VIMap, HIMap> & w)
 {
-  CGAL_assertion(CGAL::in_CC(h, w));
+  CGAL_assertion(w.is_in_cc(h));
   if(face(h, w.graph()) == boost::graph_traits<Graph>::null_face()) // h is a border hafedge
     return boost::graph_traits< CGAL::Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::null_face();
-  else if(in_CC(face(h,w.graph()), w))
+  else if(w.is_in_cc(face(h,w.graph())))
     return face(h,w.graph());
   else
     return boost::graph_traits< CGAL::Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::null_face();
@@ -1023,7 +992,7 @@ typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >:
 halfedge(typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::face_descriptor f,
          const Face_filtered_graph<Graph, FIMap, VIMap, HIMap> & w)
 {
-  CGAL_assertion(CGAL::in_CC(f, w));
+  CGAL_assertion(w.is_in_cc(f));
   return halfedge(f,w.graph());
 }
 
@@ -1055,17 +1024,6 @@ typename Face_filtered_graph<Graph, FIMap, VIMap, HIMap>::size_type
 num_faces(const Face_filtered_graph<Graph, FIMap, VIMap, HIMap> & w)
 {
   return w.number_of_faces();
-}
-
-
-template<typename Graph,
-         typename FIMap,
-         typename VIMap,
-         typename HIMap>
-bool
-in_CC(const Face_filtered_graph<Graph, FIMap, VIMap, HIMap> & w, bool verbose = false)
-{
-  return in_CC(w.graph(),verbose);
 }
 
 template <class Graph,
