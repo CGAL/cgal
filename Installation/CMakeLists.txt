@@ -629,8 +629,13 @@ if(CGAL_DISABLE_GMP)
     "#error GMP is disabled by the CMake option CGAL_DISABLE_GMP")
 else()
   list(APPEND      CGAL_ESSENTIAL_3RD_PARTY_LIBRARIES GMP MPFR)
-  # Where CMake is run several times, to avoid duplicates
+  if(WITH_GMPXX)
+    list(APPEND      CGAL_ESSENTIAL_3RD_PARTY_LIBRARIES GMPXX)
+  endif()
+
+  # When CMake is run several times, to avoid duplicates
   list (REMOVE_DUPLICATES CGAL_ESSENTIAL_3RD_PARTY_LIBRARIES)
+
   file(REMOVE "${CMAKE_BINARY_DIR}/include/gmp.h")
 endif()
 hide_variable(CGAL_ESSENTIAL_3RD_PARTY_LIBRARIES)
