@@ -38,6 +38,7 @@ struct L21Metric
     scale_functor = traits.construct_scaled_vector_3_object();
   }
 
+  typedef PlaneProxy Proxy;
   typedef typename PlaneProxy::GeomTraits GeomTraits;
   typedef typename GeomTraits::FT FT;
   typedef typename GeomTraits::Vector_3 Vector_3;
@@ -70,6 +71,7 @@ struct L21ProxyFitting
     scale_functor = traits.construct_scaled_vector_3_object();
   }
 
+  typedef PlaneProxy Proxy;
   typedef typename PlaneProxy::GeomTraits GeomTraits;
   typedef typename GeomTraits::FT FT;
   typedef typename GeomTraits::Vector_3 Vector_3;
@@ -216,6 +218,7 @@ struct L2Metric
     const VertexPointMap &_point_pmap)
     : mesh(_mesh), area_pmap(_area_pmap), point_pmap(_point_pmap) {}
 
+  typedef PlaneProxy Proxy;
   typedef typename PlaneProxy::GeomTraits GeomTraits;
   typedef typename GeomTraits::FT FT;
   typedef typename GeomTraits::Point_3 Point_3;
@@ -248,6 +251,7 @@ template<typename PlaneProxy,
   typename FacetAreaMap>
 struct L2ProxyFitting
 {
+  typedef PlaneProxy Proxy;
   typedef typename PlaneProxy::GeomTraits GeomTraits;
   typedef typename GeomTraits::Point_3 Point_3;
   typedef typename GeomTraits::Triangle_3 Triangle_3;
