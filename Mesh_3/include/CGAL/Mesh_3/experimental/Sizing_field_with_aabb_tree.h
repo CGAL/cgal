@@ -17,12 +17,6 @@
 //
 // Author(s)     : Laurent Rineau
 //
-//******************************************************************************
-// File Description :
-//
-//
-//******************************************************************************
-
 
 #ifndef CGAL_MESH_3_SIZING_FIELD_WITH_AABB_TREE_H
 #define CGAL_MESH_3_SIZING_FIELD_WITH_AABB_TREE_H

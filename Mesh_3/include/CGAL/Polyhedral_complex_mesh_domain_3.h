@@ -530,7 +530,7 @@ public:
       {
         if (vit->is_feature_vertex()) { continue; }
         const Patch_id patch_id = vit->halfedge()->face()->patch_id();
-        CGAL_assertion(static_cast<std::size_t>(patch_id) <= nb_of_patch_plus_one);
+        CGAL_assertion(std::size_t(patch_id) <= nb_of_patch_plus_one);
         typename Tr::Vertex_handle tr_v = tr.nearest_power_vertex(vit->point());
         if (tr_v != typename Tr::Vertex_handle()) {
           typedef typename IGT::Sphere_3 Sphere_3;
@@ -941,8 +941,8 @@ merge_duplicated_points(const PointSet& duplicated_points)
       HVcirc itend = it;
       do {
         if(!it->is_border()) {
-          CGAL_assertion(static_cast<std::size_t>(it->face()->patch_id())
-                         < this->nb_of_patch_plus_one());
+          CGAL_assertion(std::size_t(it->face()->patch_id()) <
+                         this->nb_of_patch_plus_one());
           patches.insert(Pt_patch_pair(Point_and_mesh(vit->point(), &p),
                                        it->face()->patch_id()));
         }
@@ -967,12 +967,12 @@ merge_duplicated_points(const PointSet& duplicated_points)
     // loop will end with the first iterator when the point differs from
     // the point of the range).
     Patch_iterator it = range_begin;
-    CGAL_assertion(static_cast<std::size_t>(it->second) < new_ids.size());
+    CGAL_assertion(std::size_t(it->second) < new_ids.size());
     Patch_id min_id_around_p = new_ids[it->second];
     ++it;
     for (; it != patches.end() && it->first == range_begin->first; ++it)
     {
-      CGAL_assertion(static_cast<std::size_t>(it->second) < new_ids.size());
+      CGAL_assertion(std::size_t(it->second) < new_ids.size());
       min_id_around_p = (std::min)(min_id_around_p, new_ids[it->second]);
     }
     const Patch_iterator range_end = it;
@@ -980,7 +980,7 @@ merge_duplicated_points(const PointSet& duplicated_points)
     // In a second loop on the equal-range, update new_ids around p
     for (it = range_begin; it != range_end; ++it)
     {
-      CGAL_assertion(static_cast<std::size_t>(it->second) < new_ids.size());
+      CGAL_assertion(std::size_t(it->second) < new_ids.size());
       new_ids[it->second] = min_id_around_p;
     }
     pit = range_end;

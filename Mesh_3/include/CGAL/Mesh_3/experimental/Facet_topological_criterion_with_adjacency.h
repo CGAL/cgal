@@ -16,12 +16,6 @@
 // $Id$
 //
 // Author(s)     : Laurent Rineau
-//
-//******************************************************************************
-// File Description :
-//
-//
-//******************************************************************************
 
 #ifndef CGAL_MESH_3_FACET_TOPOLOGICAL_CRITERION_WITH_ADJACENCY_H
 #define CGAL_MESH_3_FACET_TOPOLOGICAL_CRITERION_WITH_ADJACENCY_H
