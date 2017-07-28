@@ -46,6 +46,7 @@ void copy_face_graph_impl(const SourceMesh& sm, TargetMesh& tm,
 {
   typedef typename boost::graph_traits<SourceMesh>::vertex_descriptor sm_vertex_descriptor;
   typedef typename boost::graph_traits<TargetMesh>::vertex_descriptor tm_vertex_descriptor;
+  typedef typename boost::graph_traits<TargetMesh>::vertex_iterator   tm_vertex_iterator;
 
   typedef typename boost::graph_traits<SourceMesh>::face_descriptor sm_face_descriptor;
   typedef typename boost::graph_traits<TargetMesh>::face_descriptor tm_face_descriptor;
@@ -153,8 +154,10 @@ void copy_face_graph_impl(const SourceMesh& sm, TargetMesh& tm,
   }
 
   // update halfedge vertex of all but the vertex halfedge
-  BOOST_FOREACH(tm_vertex_descriptor v, vertices(tm))
+  for(tm_vertex_iterator vit = vertices(tm).first;
+      vit != vertices(tm).second; ++vit)
   {
+    tm_vertex_descriptor v = *vit;
     tm_halfedge_descriptor h = halfedge(v, tm);
     tm_halfedge_descriptor next_around_vertex=h;
     do{
