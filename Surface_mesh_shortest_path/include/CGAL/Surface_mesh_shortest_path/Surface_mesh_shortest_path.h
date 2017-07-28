@@ -45,6 +45,7 @@
 #include <CGAL/Surface_mesh_shortest_path/internal/Cone_tree.h>
 #include <CGAL/Surface_mesh_shortest_path/internal/misc_functions.h>
 
+#include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/iterator.h>
 #include <boost/variant/get.hpp>
 
@@ -1738,29 +1739,34 @@ private:
             he = next(he, m_graph);
           }
 
-          halfedge_descriptor oppositeHalfedge = opposite(he, m_graph);
-
-          std::size_t oppositeIndex = internal::edge_index(oppositeHalfedge, m_graph);
-
-          FT oppositeLocationCoords[3] = { FT(0.0), FT(0.0), FT(0.0) };
-          oppositeLocationCoords[oppositeIndex] = cbcw(location, (associatedEdge + 1) % 3);
-          oppositeLocationCoords[(oppositeIndex + 1) % 3] = cbcw(location, associatedEdge);
           std::pair<Node_distance_pair,Barycentric_coordinates> mainFace = nearest_on_face(f, location);
-          Barycentric_coordinates oppositeLocation(cbc(oppositeLocationCoords[0], oppositeLocationCoords[1], oppositeLocationCoords[2]));
-          std::pair<Node_distance_pair,Barycentric_coordinates> otherFace = nearest_on_face(face(oppositeHalfedge, m_graph), oppositeLocation);
 
-          if (mainFace.first.first == NULL)
+          halfedge_descriptor oppositeHalfedge = opposite(he, m_graph);
+          if(!CGAL::is_border(oppositeHalfedge, m_graph))
           {
-            return otherFace;
+              std::size_t oppositeIndex = internal::edge_index(oppositeHalfedge, m_graph);
+
+              FT oppositeLocationCoords[3] = { FT(0.0), FT(0.0), FT(0.0) };
+              oppositeLocationCoords[oppositeIndex] = cbcw(location, (associatedEdge + 1) % 3);
+              oppositeLocationCoords[(oppositeIndex + 1) % 3] = cbcw(location, associatedEdge);
+              Barycentric_coordinates oppositeLocation(cbc(oppositeLocationCoords[0], oppositeLocationCoords[1], oppositeLocationCoords[2]));
+              std::pair<Node_distance_pair,Barycentric_coordinates> otherFace = nearest_on_face(face(oppositeHalfedge, m_graph), oppositeLocation);
+
+              if (mainFace.first.first == NULL)
+              {
+                return otherFace;
+              }
+              else if (otherFace.first.first == NULL)
+              {
+                return mainFace;
+              }
+              else
+              {
+                return mainFace.first.second < otherFace.first.second ? mainFace : otherFace;
+              }
           }
-          else if (otherFace.first.first == NULL)
-          {
-            return mainFace;
-          }
-          else
-          {
-            return mainFace.first.second < otherFace.first.second ? mainFace : otherFace;
-          }
+
+          return mainFace;
         }
         break;
       case CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATES_ON_VERTEX:
