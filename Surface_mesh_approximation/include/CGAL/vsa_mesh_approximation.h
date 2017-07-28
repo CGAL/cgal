@@ -125,9 +125,13 @@ void vsa_approximate(
   typedef CGAL::internal::VSA_approximation<
     TriangleMesh,
     FacetProxyMap,
-    ApproximationTrait> VSA_approximation;
+    typename ApproximationTrait::Proxy,
+    typename ApproximationTrait::ErrorMetric,
+    typename ApproximationTrait::ProxyFitting> VSA_approximation;
 
-  VSA_approximation algorithm(tm, app_trait);
+  VSA_approximation algorithm(tm,
+    app_trait.construct_fit_error_functor(),
+    app_trait.construct_proxy_fitting_functor());
 
   switch (init) {
     case VSA_approximation::RandomInit:

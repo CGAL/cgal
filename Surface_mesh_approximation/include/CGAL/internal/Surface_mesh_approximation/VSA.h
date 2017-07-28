@@ -32,20 +32,21 @@ namespace internal
  * @brief Main class for Variational Shape Approximation algorithm.
  * @tparam TriangleMesh a CGAL TriangleMesh
  * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<TriangleMesh>::face_descriptor` as key and `std::size_t` as value type
- * @tparam ApproximationTraits a model of ApproximationGeomTraits
+ * @tparam Proxy proxy type
+ * @tparam ErrorMetric error metric type
+ * @tparam ProxyFitting proxy fitting type
+ * @tparam GeomTraits geometric traits type
  */
 template <typename TriangleMesh,
   typename FacetSegmentMap,
-  typename ApproximationTraits>
+  typename Proxy,
+  typename ErrorMetric,
+  typename ProxyFitting,
+  typename GeomTraits = typename TriangleMesh::Traits>
 class VSA_approximation
 {
   // type definitions
 private:
-  typedef typename ApproximationTraits::GeomTraits GeomTraits;
-  typedef typename ApproximationTraits::Proxy Proxy;
-  typedef typename ApproximationTraits::ErrorMetric ErrorMetric;
-  typedef typename ApproximationTraits::ProxyFitting ProxyFitting;
-
   typedef typename GeomTraits::FT FT;
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
 
@@ -75,12 +76,15 @@ public:
    * Initialize and prepare for the approximation.
    * @pre @a TriangleMesh.is_pure_triangle()
    * @param _mesh `CGAL TriangleMesh` on which approximation operate.
-   * @param _appx_trait approximation traits object.
+   * @param _fit_error error calculation functor.
+   * @param _proxy_fitting proxy fitting functor.
    */
-  VSA_approximation(const TriangleMesh &_mesh, const ApproximationTraits &_appx_trait)
+  VSA_approximation(const TriangleMesh &_mesh,
+    const ErrorMetric &_fit_error,
+    const ProxyFitting &_proxy_fitting)
     : mesh(_mesh),
-    fit_error(_appx_trait.construct_fit_error_functor()),
-    proxy_fitting(_appx_trait.construct_proxy_fitting_functor()) {}
+    fit_error(_fit_error),
+    proxy_fitting(_proxy_fitting) {}
 
   /**
    * Partitions the mesh into the designated number of regions, and stores them in @a seg_map.
