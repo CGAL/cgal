@@ -133,12 +133,12 @@ public:
     
     const FT geod (1.3);
     Point r = domain_.construct_point_on_curve_segment(p,curve_index,geod);
-    const FT& pq_geo = domain_.geodesic_distance(p,q,curve_index);
+    const FT& pq_geo = domain_.signed_geodesic_distance(p,q,curve_index);
     
     assert(CGAL::squared_distance(p,r) < CGAL::square(geod));
-    assert(near_equal(domain_.geodesic_distance(p,r,curve_index), geod));
-    assert(near_equal(domain_.geodesic_distance(r,q,curve_index), pq_geo - geod));
-    assert(near_equal(domain_.geodesic_distance(q,r,curve_index), geod - pq_geo));
+    assert(near_equal(domain_.signed_geodesic_distance(p,r,curve_index), geod));
+    assert(near_equal(domain_.signed_geodesic_distance(r,q,curve_index), pq_geo - geod));
+    assert(near_equal(domain_.signed_geodesic_distance(q,r,curve_index), geod - pq_geo));
   }
   
 private:
