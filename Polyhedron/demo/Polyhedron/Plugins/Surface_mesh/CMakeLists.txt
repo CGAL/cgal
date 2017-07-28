@@ -7,10 +7,10 @@ if(EIGEN3_FOUND)
 
   if(CGAL_Core_FOUND)
     qt5_wrap_ui( parameterizationUI_FILES Parameterization_widget.ui ARAP_dialog.ui OTE_dialog.ui)
-    polyhedron_demo_plugin(parameterization_plugin Parameterization_plugin ${parameterizationUI_FILES})
+    polyhedron_demo_plugin(parameterization_plugin Parameterization_plugin CATEGORY-PLUGINS_mesh_processing ${parameterizationUI_FILES})
     target_link_libraries(parameterization_plugin ${CGAL_Core_LIBRARY} ${CGAL_Core_3RD_PARTY_LIBRARIES} scene_polyhedron_item scene_textured_polyhedron_item scene_polyhedron_selection_item)
 
-    polyhedron_demo_plugin(parameterization_sm_plugin Parameterization_plugin ${parameterizationUI_FILES})
+    polyhedron_demo_plugin(parameterization_sm_plugin Parameterization_plugin CATEGORY-PLUGINS_mesh_processing ${parameterizationUI_FILES})
     target_link_libraries(parameterization_sm_plugin ${CGAL_Core_LIBRARY} ${CGAL_Core_3RD_PARTY_LIBRARIES} scene_surface_mesh_item scene_textured_surface_mesh_item scene_surface_mesh_selection_item)
     target_compile_definitions(parameterization_sm_plugin PUBLIC "-DUSE_SURFACE_MESH" )
 
@@ -32,7 +32,7 @@ qt5_wrap_ui( mesh_simplificationUI_FILES  Mesh_simplification_dialog.ui)
 polyhedron_demo_plugin(mesh_simplification_plugin Mesh_simplification_plugin CATEGORY-PLUGINS_mesh_processing ${mesh_simplificationUI_FILES})
 target_link_libraries(mesh_simplification_plugin scene_polyhedron_item scene_polyhedron_selection_item)
 
-polyhedron_demo_plugin(mesh_simplification_sm_plugin Mesh_simplification_plugin ${mesh_simplificationUI_FILES})
+polyhedron_demo_plugin(mesh_simplification_sm_plugin Mesh_simplification_plugin CATEGORY-PLUGINS_mesh_processing ${mesh_simplificationUI_FILES})
 target_link_libraries(mesh_simplification_sm_plugin scene_surface_mesh_item scene_surface_mesh_selection_item)
 target_compile_definitions(mesh_simplification_sm_plugin PUBLIC "-DUSE_SURFACE_MESH" )
 

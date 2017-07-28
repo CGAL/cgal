@@ -16,7 +16,7 @@ if(EIGEN3_FOUND)
     target_link_libraries(hole_filling_plugin scene_polyhedron_item scene_polylines_item scene_polyhedron_selection_item)
 
     qt5_wrap_ui( hole_fillingUI_FILES Hole_filling_widget.ui)
-    polyhedron_demo_plugin(hole_filling_sm_plugin Hole_filling_plugin ${hole_fillingUI_FILES})
+    polyhedron_demo_plugin(hole_filling_sm_plugin Hole_filling_plugin CATEGORY-PLUGINS_mesh_processing ${hole_fillingUI_FILES})
     target_link_libraries(hole_filling_sm_plugin scene_surface_mesh_item scene_polylines_item scene_surface_mesh_selection_item)
     target_compile_definitions(hole_filling_sm_plugin PUBLIC "-DUSE_SURFACE_MESH" )
 
@@ -24,11 +24,11 @@ if(EIGEN3_FOUND)
     polyhedron_demo_plugin(fairing_plugin Fairing_plugin CATEGORY-PLUGINS_mesh_processing ${fairingUI_FILES})
     target_link_libraries(fairing_plugin scene_polyhedron_selection_item)
 
-    polyhedron_demo_plugin(fairing_sm_plugin Fairing_plugin ${fairingUI_FILES})
+    polyhedron_demo_plugin(fairing_sm_plugin Fairing_plugin CATEGORY-PLUGINS_mesh_processing ${fairingUI_FILES})
     target_link_libraries(fairing_sm_plugin scene_surface_mesh_selection_item)
     target_compile_definitions(fairing_sm_plugin PUBLIC "-DUSE_SURFACE_MESH" )
 
-    polyhedron_demo_plugin(hole_filling_polyline_plugin Hole_filling_polyline_plugin)
+    polyhedron_demo_plugin(hole_filling_polyline_plugin Hole_filling_polyline_plugin  CATEGORY-PLUGINS_meshing )
     target_link_libraries(hole_filling_polyline_plugin scene_surface_mesh_item scene_polyhedron_item scene_polylines_item)
   else()
     message(STATUS "NOTICE: The hole filling and fairing plugins require Eigen 3.2 (or higher) and will not be available.")
@@ -73,12 +73,12 @@ target_compile_definitions(mean_curvature_flow_skeleton_sm_plugin PUBLIC "-DUSE_
 
 
 qt5_wrap_ui( point_inside_polyhedronUI_FILES Point_inside_polyhedron_widget.ui)
-polyhedron_demo_plugin(point_inside_polyhedron_plugin Point_inside_polyhedron_plugin ${point_inside_polyhedronUI_FILES})
+polyhedron_demo_plugin(point_inside_polyhedron_plugin Point_inside_polyhedron_plugin CATEGORY-PLUGINS_point_set_processing ${point_inside_polyhedronUI_FILES})
 target_link_libraries(point_inside_polyhedron_plugin scene_polyhedron_item scene_surface_mesh_item scene_points_with_normal_item)
 
 
 qt5_wrap_ui( polyhedron_slicerUI_FILES Polyhedron_slicer_widget.ui)
-polyhedron_demo_plugin(polyhedron_slicer_plugin Polyhedron_slicer_plugin ${polyhedron_slicerUI_FILES})
+polyhedron_demo_plugin(polyhedron_slicer_plugin Polyhedron_slicer_plugin  CATEGORY-PLUGINS_mesh_processing ${polyhedron_slicerUI_FILES})
 target_link_libraries(polyhedron_slicer_plugin scene_polyhedron_item scene_surface_mesh_item scene_basic_objects scene_polylines_item)
 
 
@@ -123,7 +123,7 @@ polyhedron_demo_plugin(isotropic_remeshing_sm_plugin Isotropic_remeshing_plugin 
 target_link_libraries(isotropic_remeshing_sm_plugin  scene_surface_mesh_item scene_surface_mesh_selection_item)
 target_compile_definitions(isotropic_remeshing_sm_plugin PUBLIC "-DUSE_SURFACE_MESH" )
 
-polyhedron_demo_plugin(distance_plugin Distance_plugin)
+polyhedron_demo_plugin(distance_plugin Distance_plugin  CATEGORY-PLUGINS_mesh_processing)
 target_link_libraries(distance_plugin scene_polyhedron_item scene_color_ramp)
 
 
@@ -134,10 +134,10 @@ polyhedron_demo_plugin(detect_sharp_edges_sm_plugin Detect_sharp_edges_plugin CA
 target_link_libraries(detect_sharp_edges_sm_plugin scene_surface_mesh_item)
 target_compile_definitions(detect_sharp_edges_sm_plugin PUBLIC "-DUSE_SURFACE_MESH" )
 
-polyhedron_demo_plugin(distance_sm_plugin Distance_plugin)
+polyhedron_demo_plugin(distance_sm_plugin Distance_plugin  CATEGORY-PLUGINS_mesh_processing)
 target_link_libraries(distance_sm_plugin scene_surface_mesh_item  scene_color_ramp)
 target_compile_definitions(distance_sm_plugin PUBLIC "-DUSE_SURFACE_MESH" )
 
 qt5_wrap_ui( randomPerturbationUI_FILES Random_perturbation_dialog.ui)
-polyhedron_demo_plugin(random_perturbation_plugin Random_perturbation_plugin ${randomPerturbationUI_FILES})
+polyhedron_demo_plugin(random_perturbation_plugin Random_perturbation_plugin CATEGORY-PLUGINS_mesh_processing ${randomPerturbationUI_FILES})
 target_link_libraries(random_perturbation_plugin scene_polyhedron_item scene_polyhedron_selection_item)

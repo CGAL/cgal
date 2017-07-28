@@ -46,7 +46,7 @@ if (VTK_FOUND)
                                        vtkCommonCore vtkIOCore vtkIOLegacy vtkIOXML
                                        vtkFiltersCore vtkFiltersSources)
 
-      polyhedron_demo_plugin(vtk_sm_plugin VTK_io_plugin)
+      polyhedron_demo_plugin(vtk_sm_plugin VTK_io_plugin CATEGORY-PLUGINS_IO CATEGORY-PLUGINS_mesh_processing CATEGORY-PLUGINS_meshing)
       target_link_libraries(vtk_sm_plugin scene_surface_mesh_item scene_polylines_item scene_c3t3_item
                                        vtkCommonCore vtkIOCore vtkIOLegacy vtkIOXML
                                        vtkFiltersCore vtkFiltersSources)
@@ -62,7 +62,7 @@ else()
   message(STATUS "NOTICE : the vtk IO plugin needs VTK 6.0 or greater and will not be compiled.")
 endif()
 
-polyhedron_demo_plugin(xyz_plugin XYZ_io_plugin  CATEGORY-PLUGINS_IO CATEGORY-PLUGINS_point_set_processing )
+polyhedron_demo_plugin(xyz_plugin XYZ_io_plugin CATEGORY-PLUGINS_IO CATEGORY-PLUGINS_point_set_processing)
 target_link_libraries(xyz_plugin scene_points_with_normal_item)
 
 list(FIND CMAKE_CXX_COMPILE_FEATURES cxx_rvalue_references has_cxx_rvalues)
@@ -78,7 +78,7 @@ else()
   target_compile_features(ply_to_xyz_plugin PRIVATE ${needed_cxx_features})
   
   if (LASLIB_FOUND)
-    polyhedron_demo_plugin(las_plugin LAS_io_plugin)
+    polyhedron_demo_plugin(las_plugin LAS_io_plugin CATEGORY-PLUGINS_IO CATEGORY-PLUGINS_point_set_processing)
     target_link_libraries(las_plugin scene_points_with_normal_item ${LASLIB_LIBRARIES})
     target_compile_features(las_plugin PRIVATE ${needed_cxx_features})
   else()
