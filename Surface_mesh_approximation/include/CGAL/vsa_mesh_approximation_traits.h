@@ -172,41 +172,6 @@ struct PlaneFitting
   Construct_sum_of_vectors_3 sum_functor;
 };
 
-// Bundled l21 approximation traits
-template<typename PlaneProxy,
-  typename L21ErrorMetric,
-  typename L21ProxyFitting,
-  typename FacetNormalMap,
-  typename FacetAreaMap>
-struct L21ApproximationTrait
-{
-  typedef typename PlaneProxy::GeomTraits GeomTraits;
-  typedef PlaneProxy Proxy;
-  typedef L21ErrorMetric ErrorMetric;
-  typedef L21ProxyFitting ProxyFitting;
-
-  L21ApproximationTrait(
-    const FacetNormalMap &_facet_normal_map,
-    const FacetAreaMap &_facet_area_map)
-    : normal_pmap(_facet_normal_map),
-    area_pmap(_facet_area_map) {}
-
-  // traits function object form
-  // construct error functor
-  ErrorMetric construct_fit_error_functor() const {
-    return ErrorMetric(normal_pmap, area_pmap);
-  }
-
-  // construct proxy fitting functor
-  ProxyFitting construct_proxy_fitting_functor() const {
-    return ProxyFitting(normal_pmap, area_pmap);
-  }
-
-private:
-  const FacetNormalMap normal_pmap;
-  const FacetAreaMap area_pmap;
-};
-
 template<typename PlaneProxy,
   typename FacetAreaMap,
   typename VertexPointMap,
@@ -332,47 +297,6 @@ struct PCAPlaneFitting
 
   const TriangleMesh &mesh;
   const VertexPointMap point_pmap;
-};
-
-// Bundled l2 approximation traits
-template<typename TriangleMesh,
-  typename PlaneProxy,
-  typename L2ErrorMetric,
-  typename L2ProxyFitting,
-  typename VertexPointMap,
-  typename FacetAreaMap>
-struct L2ApproximationTrait
-{
-public:
-  typedef typename PlaneProxy::GeomTraits GeomTraits;
-  typedef PlaneProxy Proxy;
-  typedef L2ErrorMetric ErrorMetric;
-  typedef L2ProxyFitting ProxyFitting;
-
-  L2ApproximationTrait(
-    const TriangleMesh &_mesh,
-    const VertexPointMap &_point_pmap,
-    const FacetAreaMap &_facet_area_map)
-    : mesh(_mesh),
-    point_pmap(_point_pmap),
-    area_pmap(_facet_area_map) {
-  }
-
-  // traits function object form
-  // construct error functor
-  ErrorMetric construct_fit_error_functor() const {
-    return ErrorMetric(mesh, area_pmap, point_pmap);
-  }
-
-  // construct proxy fitting functor
-  ProxyFitting construct_proxy_fitting_functor() const {
-    return ProxyFitting(mesh, point_pmap);
-  }
-
-private:
-  const TriangleMesh &mesh;
-  const VertexPointMap point_pmap;
-  const FacetAreaMap area_pmap;
 };
 } // end namespace CGAL
 
