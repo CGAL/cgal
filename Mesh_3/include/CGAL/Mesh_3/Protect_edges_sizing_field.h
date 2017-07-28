@@ -105,7 +105,7 @@ void debug_dump_c3t3(const std::string filename, const C3t3& c3t3)
 
 
 template <typename C3T3, typename MeshDomain, typename SizingFunction>
-class Protect_edges_sizing_field
+class Protect_edges_sizing_field : public CGAL::Mesh_3::internal::Debug_messages_tools
 {
   typedef Protect_edges_sizing_field          Self;
   
@@ -360,28 +360,6 @@ private:
       CGAL_error_msg(msg.str().c_str());
     }
     return s;
-  }
-
-  template <typename Vertex_handle>
-  static std::string disp_vert(Vertex_handle v, Tag_true) {
-    std::stringstream ss;
-    ss << (void*)(&*v) << "[ts=" << v->time_stamp() << "]"
-       << "(" << v->point() <<")";
-    return ss.str();
-  }
-
-  template <typename Vertex_handle>
-  static std::string disp_vert(Vertex_handle v, Tag_false) {
-    std::stringstream ss;
-    ss << (void*)(&*v) << "(" << v->point() <<")";
-    return ss.str();
-  }
-
-  template <typename Vertex_handle>
-  static std::string disp_vert(Vertex_handle v)
-  {
-    typedef typename std::iterator_traits<Vertex_handle>::value_type Vertex;
-    return disp_vert(v, CGAL::internal::Has_timestamp<Vertex>());
   }
 
 private:

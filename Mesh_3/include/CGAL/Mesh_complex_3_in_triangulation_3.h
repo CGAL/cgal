@@ -52,6 +52,7 @@ template <typename Tr,
 class Mesh_complex_3_in_triangulation_3 :
   public Mesh_3::Mesh_complex_3_in_triangulation_3_base<
     Tr, typename Tr::Concurrency_tag>
+  , public CGAL::Mesh_3::internal::Debug_messages_tools
 {
 public:
   typedef typename Tr::Concurrency_tag                   Concurrency_tag;
@@ -553,8 +554,8 @@ private:
   {
     CGAL_precondition(!is_in_complex(edge));
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
-    std::cerr << "Add edge ( " << edge.left->point()
-              << " , " << edge.right->point() << " ), curve_index=" << index
+    std::cerr << "Add edge ( " << disp_vert(edge.left)
+              << " , " << disp_vert(edge.right) << " ), curve_index=" << index
               << " to c3t3.\n";
 #endif // CGAL_MESH_3_PROTECTION_DEBUG
     std::pair<typename Edge_map::iterator, bool> it = edges_.insert(edge);
@@ -721,8 +722,8 @@ is_valid(bool verbose) const
 
     if ( ! do_intersect(sphere(p, sq_rp), sphere(q, sq_rq)) )
     {
-      std::cerr << "Point p[" << p << "], dim=" << it->right->in_dimension()
-                << " and q[" << q << "], dim=" << it->left->in_dimension()
+      std::cerr << "Point p[" << disp_vert(it->right) << "], dim=" << it->right->in_dimension()
+                << " and q[" << disp_vert(it->left) << "], dim=" << it->left->in_dimension()
                 << " form an edge but do not intersect !\n";
       return false;
     }
