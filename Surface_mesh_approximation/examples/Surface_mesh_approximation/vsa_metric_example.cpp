@@ -27,6 +27,8 @@ struct PointProxy {
 };
 
 struct CompactMetric {
+  typedef PointProxy Proxy;
+
   CompactMetric(const FacetCenterMap &_center_pmap)
     : center_pmap(_center_pmap) {}
 
@@ -39,6 +41,8 @@ struct CompactMetric {
 };
 
 struct PointProxyFitting {
+  typedef PointProxy Proxy;
+
   PointProxyFitting(const FacetCenterMap &_center_pmap,
     const FacetAreaMap &_area_pmap)
     : center_pmap(_center_pmap),
@@ -62,28 +66,6 @@ struct PointProxyFitting {
     px.center = CGAL::ORIGIN + center;
 
     return px;
-  }
-
-  const FacetCenterMap center_pmap;
-  const FacetAreaMap area_pmap;
-};
-
-struct ApproxTrait {
-  typedef Kernel GeomTraits;
-  typedef PointProxy Proxy;
-  typedef CompactMetric ErrorMetric;
-  typedef PointProxyFitting ProxyFitting;
-
-  ApproxTrait(const FacetCenterMap &_center_pmap,
-    const FacetAreaMap &_area_pmap)
-    : center_pmap(_center_pmap), area_pmap(_area_pmap) {}
-
-  ErrorMetric construct_fit_error_functor() const {
-    return ErrorMetric(center_pmap);
-  }
-
-  ProxyFitting construct_proxy_fitting_functor() const {
-    return ProxyFitting(center_pmap, area_pmap);
   }
 
   const FacetCenterMap center_pmap;
@@ -133,7 +115,8 @@ int main(int argc, char *argv[])
 
   CGAL::vsa_approximate(mesh,
     proxy_patch_map,
-    ApproxTrait(center_pmap, area_pmap),
+    CompactMetric(center_pmap),
+    PointProxyFitting(center_pmap, area_pmap),
     init,
     num_proxies,
     num_iterations);

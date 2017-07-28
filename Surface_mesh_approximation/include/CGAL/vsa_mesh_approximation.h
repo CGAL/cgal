@@ -67,7 +67,8 @@ void vsa_mesh_approximation(
 
   vsa_approximate(tm,
     f_proxy_pmap,
-    app_trait,
+    app_trait.construct_fit_error_functor(),
+    app_trait.construct_proxy_fitting_functor(),
     init,
     number_of_segments,
     number_of_iterations);
@@ -101,22 +102,26 @@ void vsa_mesh_approximation(
  * @tparam FacetProxyMap a property map containing the approximated facet patch id,
            and `boost::graph_traits<TriangleMesh>::%face_descriptor` as key type,
            std::size_t as value type
- * @tparam ApproximationTrait an approximation trait
+ * @tparam ErrorMetric error metric type
+ * @tparam ProxyFitting proxy fitting type
 
  * @param tm a triangle mesh
  * @param[out] f_proxy_pmap facet proxy patch id property map
- * @param app_trait shape approximation trait
+ * @param fit_error error metric functor
+ * @param proxy_fitting proxy fitting functor
  * @param init select seed initialization
  * @param number_of_segments target number of approximation patches
  * @param number_of_iterations number of fitting iterations
  */
 template<typename TriangleMesh,
   typename FacetProxyMap,
-  typename ApproximationTrait>
+  typename ErrorMetric,
+  typename ProxyFitting>
 void vsa_approximate(
     const TriangleMesh &tm,
-    FacetProxyMap f_proxy_pmap,
-    const ApproximationTrait &app_trait,
+    FacetProxyMap &f_proxy_pmap,
+    const ErrorMetric &fit_error,
+    const ProxyFitting &proxy_fitting,
     const int init,
     const std::size_t number_of_segments,
     const std::size_t number_of_iterations) {
@@ -125,13 +130,11 @@ void vsa_approximate(
   typedef CGAL::internal::VSA_approximation<
     TriangleMesh,
     FacetProxyMap,
-    typename ApproximationTrait::Proxy,
-    typename ApproximationTrait::ErrorMetric,
-    typename ApproximationTrait::ProxyFitting> VSA_approximation;
+    typename ErrorMetric::Proxy,
+    ErrorMetric,
+    ProxyFitting> VSA_approximation;
 
-  VSA_approximation algorithm(tm,
-    app_trait.construct_fit_error_functor(),
-    app_trait.construct_proxy_fitting_functor());
+  VSA_approximation algorithm(tm, fit_error, proxy_fitting);
 
   switch (init) {
     case VSA_approximation::RandomInit:
@@ -191,7 +194,8 @@ void vsa_extract(
 
   vsa_approximate(tm,
     f_proxy_pmap,
-    app_trait,
+    app_trait.construct_fit_error_functor(),
+    app_trait.construct_proxy_fitting_functor(),
     init,
     number_of_segments,
     number_of_iterations);
@@ -252,7 +256,8 @@ void vsa_approximate_and_extract(
 
   vsa_approximate(tm,
     f_proxy_pmap,
-    app_trait,
+    app_trait.construct_fit_error_functor(),
+    app_trait.construct_proxy_fitting_functor(),
     init,
     number_of_segments,
     number_of_iterations);
@@ -331,7 +336,8 @@ void vsa_approximate(
 
   vsa_approximate(tm,
     f_proxy_pmap,
-    L21ApproximationTrait(normal_pmap, area_pmap),
+    L21Metric(normal_pmap, area_pmap),
+    L21ProxyFitting(normal_pmap, area_pmap),
     init,
     number_of_segments,
     number_of_iterations);
