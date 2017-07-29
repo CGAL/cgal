@@ -133,7 +133,6 @@ void vsa_approximate(
   typedef CGAL::internal::VSA_approximation<
     TriangleMesh,
     FacetProxyMap,
-    typename ErrorMetric::Proxy,
     ErrorMetric,
     ProxyFitting> VSA_approximation;
 
@@ -323,7 +322,6 @@ void vsa_approximate(
   typedef boost::associative_property_map<std::map<face_descriptor, FT> > FacetAreaMap;
   typedef typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type VertexPointMap;
 
-  typedef CGAL::PlaneProxy<TriangleMesh> PlaneProxy;
   typedef CGAL::L21Metric<TriangleMesh, FacetNormalMap, FacetAreaMap> L21Metric;
   typedef CGAL::L21ProxyFitting<TriangleMesh, FacetNormalMap, FacetAreaMap> L21ProxyFitting;
 
@@ -393,7 +391,6 @@ void vsa_extract(
   typedef boost::associative_property_map<std::map<face_descriptor, FT> > FacetAreaMap;
   typedef typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type VertexPointMap;
 
-  typedef CGAL::PlaneProxy<TriangleMesh> PlaneProxy;
   typedef CGAL::L21Metric<TriangleMesh, FacetNormalMap, FacetAreaMap> L21Metric;
   typedef CGAL::L21ProxyFitting<TriangleMesh, FacetNormalMap, FacetAreaMap> L21ProxyFitting;
   typedef CGAL::PlaneFitting<TriangleMesh> PlaneFitting;
@@ -478,7 +475,6 @@ void vsa_approximate_and_extract(
   typedef boost::associative_property_map<std::map<face_descriptor, FT> > FacetAreaMap;
   typedef typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type VertexPointMap;
 
-  typedef CGAL::PlaneProxy<TriangleMesh> PlaneProxy;
   typedef CGAL::L21Metric<TriangleMesh, FacetNormalMap, FacetAreaMap> L21Metric;
   typedef CGAL::L21ProxyFitting<TriangleMesh, FacetNormalMap, FacetAreaMap> L21ProxyFitting;
   typedef CGAL::PlaneFitting<TriangleMesh> PlaneFitting;

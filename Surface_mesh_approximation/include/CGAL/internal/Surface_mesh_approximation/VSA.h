@@ -32,14 +32,12 @@ namespace internal
  * @brief Main class for Variational Shape Approximation algorithm.
  * @tparam TriangleMesh a CGAL TriangleMesh
  * @tparam FacetSegmentMap `WritablePropertyMap` with `boost::graph_traits<TriangleMesh>::face_descriptor` as key and `std::size_t` as value type
- * @tparam Proxy proxy type
  * @tparam ErrorMetric error metric type
  * @tparam ProxyFitting proxy fitting type
  * @tparam GeomTraits geometric traits type
  */
 template <typename TriangleMesh,
   typename FacetSegmentMap,
-  typename Proxy,
   typename ErrorMetric,
   typename ProxyFitting,
   typename GeomTraits = typename TriangleMesh::Traits>
@@ -48,6 +46,7 @@ class VSA_approximation
   // type definitions
 private:
   typedef typename GeomTraits::FT FT;
+  typedef typename ErrorMetric::Proxy Proxy;
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
 
 public:
