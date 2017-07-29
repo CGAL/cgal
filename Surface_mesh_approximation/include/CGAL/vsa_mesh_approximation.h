@@ -324,8 +324,8 @@ void vsa_approximate(
   typedef typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type VertexPointMap;
 
   typedef CGAL::PlaneProxy<TriangleMesh> PlaneProxy;
-  typedef CGAL::L21Metric<PlaneProxy, FacetNormalMap, FacetAreaMap> L21Metric;
-  typedef CGAL::L21ProxyFitting<PlaneProxy, FacetNormalMap, FacetAreaMap> L21ProxyFitting;
+  typedef CGAL::L21Metric<TriangleMesh, FacetNormalMap, FacetAreaMap> L21Metric;
+  typedef CGAL::L21ProxyFitting<TriangleMesh, FacetNormalMap, FacetAreaMap> L21ProxyFitting;
 
   VertexPointMap point_pmap = get(boost::vertex_point, const_cast<TriangleMesh &>(tm));
   // construct facet normal & area map
@@ -394,8 +394,8 @@ void vsa_extract(
   typedef typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type VertexPointMap;
 
   typedef CGAL::PlaneProxy<TriangleMesh> PlaneProxy;
-  typedef CGAL::L21Metric<PlaneProxy, FacetNormalMap, FacetAreaMap> L21Metric;
-  typedef CGAL::L21ProxyFitting<PlaneProxy, FacetNormalMap, FacetAreaMap> L21ProxyFitting;
+  typedef CGAL::L21Metric<TriangleMesh, FacetNormalMap, FacetAreaMap> L21Metric;
+  typedef CGAL::L21ProxyFitting<TriangleMesh, FacetNormalMap, FacetAreaMap> L21ProxyFitting;
   typedef CGAL::PlaneFitting<TriangleMesh> PlaneFitting;
 
   VertexPointMap point_pmap = get(boost::vertex_point, const_cast<TriangleMesh &>(tm));
@@ -479,8 +479,8 @@ void vsa_approximate_and_extract(
   typedef typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type VertexPointMap;
 
   typedef CGAL::PlaneProxy<TriangleMesh> PlaneProxy;
-  typedef CGAL::L21Metric<PlaneProxy, FacetNormalMap, FacetAreaMap> L21Metric;
-  typedef CGAL::L21ProxyFitting<PlaneProxy, FacetNormalMap, FacetAreaMap> L21ProxyFitting;
+  typedef CGAL::L21Metric<TriangleMesh, FacetNormalMap, FacetAreaMap> L21Metric;
+  typedef CGAL::L21ProxyFitting<TriangleMesh, FacetNormalMap, FacetAreaMap> L21ProxyFitting;
   typedef CGAL::PlaneFitting<TriangleMesh> PlaneFitting;
 
   VertexPointMap point_pmap = get(boost::vertex_point, const_cast<TriangleMesh &>(tm));

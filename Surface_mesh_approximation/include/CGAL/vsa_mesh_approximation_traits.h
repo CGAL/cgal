@@ -10,11 +10,9 @@
 namespace CGAL
 {
 template<typename TriangleMesh,
-  typename Traits = typename TriangleMesh::Traits>
+  typename GeomTraits = typename TriangleMesh::Traits>
 struct PlaneProxy
 {
-  typedef Traits GeomTraits;
-  typedef typename GeomTraits::Point_3 Point_3;
   typedef typename GeomTraits::Vector_3 Vector_3;
   typedef typename GeomTraits::Plane_3 Plane_3;
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
@@ -24,9 +22,11 @@ struct PlaneProxy
   Plane_3 fit_plane;
 };
 
-template<typename PlaneProxy,
+template<typename TriangleMesh,
   typename FacetNormalMap,
-  typename FacetAreaMap>
+  typename FacetAreaMap,
+  typename GeomTraits = typename TriangleMesh::Traits,
+  typename PlaneProxy = CGAL::PlaneProxy<TriangleMesh, GeomTraits> >
 struct L21Metric
 {
   L21Metric(const FacetNormalMap &normal_pmap, const FacetAreaMap &area_pmap)
@@ -39,7 +39,6 @@ struct L21Metric
   }
 
   typedef PlaneProxy Proxy;
-  typedef typename PlaneProxy::GeomTraits GeomTraits;
   typedef typename GeomTraits::FT FT;
   typedef typename GeomTraits::Vector_3 Vector_3;
   typedef typename GeomTraits::Construct_scaled_vector_3 Construct_scaled_vector_3;
@@ -47,7 +46,7 @@ struct L21Metric
   typedef typename GeomTraits::Compute_scalar_product_3 Compute_scalar_product_3;
   typedef typename FacetAreaMap::key_type face_descriptor;
 
-  FT operator()(const face_descriptor &f, const PlaneProxy &px) const {
+  FT operator()(const face_descriptor &f, const Proxy &px) const {
     Vector_3 v = sum_functor(normal_pmap[f], scale_functor(px.normal, FT(-1)));
     return area_pmap[f] * scalar_product_functor(v, v);
   }
@@ -59,9 +58,11 @@ struct L21Metric
   Construct_sum_of_vectors_3 sum_functor;
 };
 
-template<typename PlaneProxy,
+template<typename TriangleMesh,
   typename FacetNormalMap,
-  typename FacetAreaMap>
+  typename FacetAreaMap,
+  typename GeomTraits = typename TriangleMesh::Traits,
+  typename PlaneProxy = CGAL::PlaneProxy<TriangleMesh, GeomTraits> >
 struct L21ProxyFitting
 {
   L21ProxyFitting(const FacetNormalMap &normal_pmap, const FacetAreaMap &area_pmap)
@@ -72,7 +73,6 @@ struct L21ProxyFitting
   }
 
   typedef PlaneProxy Proxy;
-  typedef typename PlaneProxy::GeomTraits GeomTraits;
   typedef typename GeomTraits::FT FT;
   typedef typename GeomTraits::Vector_3 Vector_3;
   typedef typename GeomTraits::Construct_scaled_vector_3 Construct_scaled_vector_3;
@@ -80,7 +80,7 @@ struct L21ProxyFitting
 
   // Fit and construct a proxy
   template<typename FacetIterator>
-  PlaneProxy operator()(const FacetIterator beg, const FacetIterator end) const {
+  Proxy operator()(const FacetIterator beg, const FacetIterator end) const {
     CGAL_assertion(beg != end);
 
     // fitting normal
@@ -93,7 +93,7 @@ struct L21ProxyFitting
       FT(1.0 / std::sqrt(CGAL::to_double(norm.squared_length()))));
 
     // construct proxy
-    PlaneProxy px;
+    Proxy px;
     px.normal = norm;
 
     return px;
@@ -172,10 +172,11 @@ struct PlaneFitting
   Construct_sum_of_vectors_3 sum_functor;
 };
 
-template<typename PlaneProxy,
+template<typename TriangleMesh,
   typename FacetAreaMap,
   typename VertexPointMap,
-  typename TriangleMesh>
+  typename GeomTraits = typename TriangleMesh::Traits,
+  typename PlaneProxy = CGAL::PlaneProxy<TriangleMesh, GeomTraits> >
 struct L2Metric
 {
   L2Metric(const TriangleMesh &_mesh,
@@ -184,7 +185,6 @@ struct L2Metric
     : mesh(_mesh), area_pmap(_area_pmap), point_pmap(_point_pmap) {}
 
   typedef PlaneProxy Proxy;
-  typedef typename PlaneProxy::GeomTraits GeomTraits;
   typedef typename GeomTraits::FT FT;
   typedef typename GeomTraits::Point_3 Point_3;
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
@@ -210,14 +210,14 @@ struct L2Metric
   const TriangleMesh &mesh;
 };
 
-template<typename PlaneProxy,
-  typename TriangleMesh,
+template<typename TriangleMesh,
   typename VertexPointMap,
-  typename FacetAreaMap>
+  typename FacetAreaMap,
+  typename GeomTraits = typename TriangleMesh::Traits,
+  typename PlaneProxy = CGAL::PlaneProxy<TriangleMesh, GeomTraits> >
 struct L2ProxyFitting
 {
   typedef PlaneProxy Proxy;
-  typedef typename PlaneProxy::GeomTraits GeomTraits;
   typedef typename GeomTraits::Point_3 Point_3;
   typedef typename GeomTraits::Triangle_3 Triangle_3;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
@@ -226,7 +226,7 @@ struct L2ProxyFitting
     : mesh(_mesh), point_pmap(_point_pmap) {}
 
   template<typename FacetIterator>
-  PlaneProxy operator()(const FacetIterator beg, const FacetIterator end) const {
+  Proxy operator()(const FacetIterator beg, const FacetIterator end) const {
     CGAL_assertion(beg != end);
 
     std::list<Triangle_3> tris;
@@ -239,7 +239,7 @@ struct L2ProxyFitting
     }
 
     // construct and fit proxy plane
-    PlaneProxy px;
+    Proxy px;
     CGAL::linear_least_squares_fitting_3(
       tris.begin(),
       tris.end(),
