@@ -174,7 +174,8 @@ struct PlaneFitting
 
 template<typename TriangleMesh,
   typename FacetAreaMap,
-  typename VertexPointMap,
+  typename VertexPointMap
+    = typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type,
   typename GeomTraits = typename TriangleMesh::Traits,
   typename PlaneProxy = CGAL::PlaneProxy<TriangleMesh, GeomTraits> >
 struct L2Metric
@@ -183,6 +184,11 @@ struct L2Metric
     const FacetAreaMap &_area_pmap,
     const VertexPointMap &_point_pmap)
     : mesh(_mesh), area_pmap(_area_pmap), point_pmap(_point_pmap) {}
+
+  L2Metric(const TriangleMesh &_mesh,
+    const FacetAreaMap &_area_pmap)
+    : mesh(_mesh), area_pmap(_area_pmap),
+    point_pmap(get(boost::vertex_point, const_cast<TriangleMesh &>(_mesh))) {}
 
   typedef PlaneProxy Proxy;
   typedef typename GeomTraits::FT FT;
@@ -211,8 +217,9 @@ struct L2Metric
 };
 
 template<typename TriangleMesh,
-  typename VertexPointMap,
   typename FacetAreaMap,
+  typename VertexPointMap
+    = typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type,
   typename GeomTraits = typename TriangleMesh::Traits,
   typename PlaneProxy = CGAL::PlaneProxy<TriangleMesh, GeomTraits> >
 struct L2ProxyFitting
@@ -224,6 +231,10 @@ struct L2ProxyFitting
 
   L2ProxyFitting(const TriangleMesh &_mesh, const VertexPointMap &_point_pmap)
     : mesh(_mesh), point_pmap(_point_pmap) {}
+
+  L2ProxyFitting(const TriangleMesh &_mesh)
+    : mesh(_mesh),
+    point_pmap(get(boost::vertex_point, const_cast<TriangleMesh &>(_mesh))) {}
 
   template<typename FacetIterator>
   Proxy operator()(const FacetIterator beg, const FacetIterator end) const {
