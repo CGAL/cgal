@@ -217,7 +217,6 @@ struct L2Metric
 };
 
 template<typename TriangleMesh,
-  typename FacetAreaMap,
   typename VertexPointMap
     = typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type,
   typename GeomTraits = typename TriangleMesh::Traits,
