@@ -13,7 +13,7 @@ typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 int main(int argc, char *argv[])
 {
   if (argc < 5)
-    return 0;
+    return EXIT_FAILURE;
 
   // create and read Polyhedron
   Polyhedron mesh;

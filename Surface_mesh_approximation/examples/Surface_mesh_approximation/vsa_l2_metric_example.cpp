@@ -23,7 +23,7 @@ typedef CGAL::PCAPlaneFitting<Polyhedron_3> PCAPlaneFitting;
 int main(int argc, char *argv[])
 {
   if (argc < 5)
-    return 0;
+    return EXIT_FAILURE;
   
   // read Polyhedron
   Polyhedron_3 mesh;
