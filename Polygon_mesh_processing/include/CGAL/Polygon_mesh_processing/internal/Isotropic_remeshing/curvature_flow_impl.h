@@ -14,7 +14,6 @@
 #include <boost/graph/graph_traits.hpp>
 #include <boost/iterator/transform_iterator.hpp>
 
-
 #include <utility>
 #include <math.h>
 
@@ -208,21 +207,23 @@ public:
 
 
                 // normals
-                /*
+
                 Vector vn = compute_vertex_normal(v, mesh_,
                                                   Polygon_mesh_processing::parameters::vertex_point_map(vpmap_)
                                                   .geom_traits(GeomTraits())); //traits_
 
-                                                  */
 
+
+                /*
                 // normalize (kn)
                 /*
                 Vector kn = k_mean * vn;
                 normalize(kn, GeomTraits()); //traits_
-
-                n_map[v] = kn;
-
                 */
+
+                //n_map[v] = vn;
+
+
 
 
                 // find incident halfedges
@@ -244,6 +245,7 @@ public:
                 */
 
 
+                // maybe use a seperate function for this
                 // with cot weights
                 Vector weighted_barycenter = CGAL::NULL_VECTOR;
                 double sum_c = 0;
@@ -259,31 +261,32 @@ public:
                     CGAL_assertion(!isinf(sum_c));
 
                     // displacement vector
-                    Vector vec(get(vpmap_, target(hi, mesh_)) - get(vpmap_, source(hi, mesh_)));
+                    Point Xi = get(vpmap_, source(hi, mesh_));
+                    Point Xj = get(vpmap_, target(hi, mesh_));
+                    Vector vec(Xj, Xi); // pointing to the point to be moved
                     // add weight
                     vec *= weight;
                     // sum vecs
                     weighted_barycenter += vec;
-
                 }
 
                 // divide with total weight
                 weighted_barycenter /= sum_c;
 
+                Point new_point = get(vpmap_, v) + weighted_barycenter;
 
-                Point new_location = get(vpmap_, v) + weighted_barycenter; // + kn ?
-
+                // calculate location on the tangential plane
+                Point p = get(vpmap_, v);// original point
+                Point q = new_point;
+                Vector n = vn;
+                Point new_location = q + (n * Vector(q,p)) * n;
 
                 // update location
                 put(vpmap_, v, new_location);
 
-
             } // not on border
 
-
         } // all vertices
-
-
 
 
     }
@@ -452,8 +455,6 @@ private:
 
 
 };
-
-
 
 
 
