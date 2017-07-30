@@ -6,7 +6,6 @@
 The parameterized shape that is fitted.
 
 \cgalHasModel `PlaneProxy`
-\cgalHasModel `DistanceProxy`
 
 */
 class Proxy {

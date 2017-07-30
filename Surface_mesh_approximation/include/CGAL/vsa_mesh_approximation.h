@@ -40,6 +40,7 @@ namespace CGAL
  * @param pos anchor position container
  * @param vtx anchor vertex container
  * @param bdrs proxy patch boundary container
+ * @param plane_fitting plane fitting functor
  * @param fit_error error metric functor
  * @param proxy_fitting proxy fitting functor
  */
@@ -64,7 +65,7 @@ void vsa_mesh_approximation(
     AnchorPositionContainer &pos,
     AnchorVertexContainer &vtx,
     BoundaryContainer &bdrs,
-    const PlaneFitting &_plane_fitting,
+    const PlaneFitting &plane_fitting,
     const ErrorMetric &fit_error,
     const ProxyFitting &proxy_fitting) {
   // CGAL_precondition(is_pure_triangle(tm));
@@ -83,7 +84,7 @@ void vsa_mesh_approximation(
     PlaneFitting,
     VertexPointMap> VSA_mesh_extraction;
 
-  VSA_mesh_extraction extractor(tm, f_proxy_pmap, _plane_fitting, v_point_pmap);
+  VSA_mesh_extraction extractor(tm, f_proxy_pmap, plane_fitting, v_point_pmap);
 
   extractor.extract_mesh(tris);
   BOOST_FOREACH(const typename VSA_mesh_extraction::Anchor &a, extractor.collect_anchors()) {
@@ -167,6 +168,7 @@ void vsa_approximate(
  * @param tm a triangle mesh
  * @param[out] tris approximation indexed triangle soup
  * @param[out] pos anchor position container
+ * @param plane_fitting plane fitting functor
  * @param fit_error error metric functor
  * @param proxy_fitting proxy fitting functor
  * @param init select seed initialization
@@ -183,7 +185,7 @@ void vsa_extract(
     const TriangleMesh &tm,
     AnchorIndexContainer &tris,
     AnchorPositionContainer &pos,
-    const PlaneFitting &_plane_fitting,
+    const PlaneFitting &plane_fitting,
     const ErrorMetric &fit_error,
     const ProxyFitting &proxy_fitting,
     const int init,
@@ -211,7 +213,7 @@ void vsa_extract(
     FacetProxyMap,
     PlaneFitting> VSA_mesh_extraction;
 
-  VSA_mesh_extraction extractor(tm, f_proxy_pmap, _plane_fitting);
+  VSA_mesh_extraction extractor(tm, f_proxy_pmap, plane_fitting);
 
   extractor.extract_mesh(tris);
   BOOST_FOREACH(const typename VSA_mesh_extraction::Anchor &a, extractor.collect_anchors())
@@ -238,6 +240,7 @@ void vsa_extract(
  * @param[out] f_proxy_pmap facet proxy patch id property map
  * @param[out] tris approximation indexed triangle soup
  * @param[out] pos anchor position container
+ * @param plane_fitting plane fitting functor
  * @param fit_error error metric functor
  * @param proxy_fitting proxy fitting functor
  * @param init select seed initialization
@@ -256,7 +259,7 @@ void vsa_approximate_and_extract(
     FacetProxyMap f_proxy_pmap,
     AnchorIndexContainer &tris,
     AnchorPositionContainer &pos,
-    const PlaneFitting &_plane_fitting,
+    const PlaneFitting &plane_fitting,
     const ErrorMetric &fit_error,
     const ProxyFitting &proxy_fitting,
     const int init,
@@ -277,7 +280,7 @@ void vsa_approximate_and_extract(
     FacetProxyMap,
     PlaneFitting> VSA_mesh_extraction;
 
-  VSA_mesh_extraction extractor(tm, f_proxy_pmap, _plane_fitting);
+  VSA_mesh_extraction extractor(tm, f_proxy_pmap, plane_fitting);
 
   extractor.extract_mesh(tris);
   BOOST_FOREACH(const typename VSA_mesh_extraction::Anchor &a, extractor.collect_anchors())

@@ -24,13 +24,13 @@
 
 ## Concepts ##
 - `Proxy`
-- `DistanceProxy`
-- `PlaneProxy`
 - `ErrorMetric`
-- `L21ErrorMetric`
+- `ProxyFitting`
+- `PlaneFitting`
 
 ## Classes and Functions##
-- `CGAL::vsa_mesh_approximation()`
-
+- `CGAL::vsa_approximate()`
+- `CGAL::vsa_extract()`
+- `CGAL::vsa_approximate_and_extract()`
 
 */

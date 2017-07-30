@@ -5,8 +5,8 @@
 
 This is a functor to compute the fitting error of a facet to a proxy.
 
-\cgalHasModel `L21ErrorMetric`
-\cgalHasModel `DistanceErrorMetric`
+\cgalHasModel `L21Metric`
+\cgalHasModel `L2Metric`
 
 */
 class ErrorMetric {
