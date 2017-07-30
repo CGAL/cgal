@@ -49,6 +49,28 @@ private:
   typedef typename ErrorMetric::Proxy Proxy;
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
 
+  // The facet candidate to be queued.
+  struct FacetToIntegrate {
+    face_descriptor f;
+    std::size_t i;
+    FT fit_error;
+    bool operator<(const FacetToIntegrate &rhs) const {
+      return fit_error > rhs.fit_error;
+    }
+  };
+
+  // proxy error with proxy index
+  struct ProxyError {
+    ProxyError(const std::size_t &id, const FT &er)
+      : px_idx(id), fit_error(er) {}
+    // in ascending order
+    bool operator<(const ProxyError &rhs) const {
+      return fit_error < rhs.fit_error;
+    }
+    std::size_t px_idx;
+    FT fit_error;
+  };
+
 public:
   enum Initialization {
     RandomInit,
@@ -196,16 +218,6 @@ private:
    * @param[out] seg_map facet partition index
    */
   void flooding(FacetSegmentMap &seg_pmap) {
-    // The facet candidate to be queued.
-    struct FacetToIntegrate {
-      face_descriptor f;
-      std::size_t i;
-      FT fit_error;
-      bool operator<(const FacetToIntegrate &rhs) const {
-        return fit_error > rhs.fit_error;
-      }
-    };
-
     BOOST_FOREACH(face_descriptor f, faces(mesh))
       seg_pmap[f] = CGAL_NOT_TAGGED_ID;
 
@@ -299,17 +311,6 @@ private:
    * @return inserted number of proxies
    */
   std::size_t insert_proxy_error_diffusion(const std::size_t num_proxies_to_be_added, const FacetSegmentMap &seg_pmap) {
-    struct ProxyError {
-      ProxyError(const std::size_t &id, const FT &er)
-        : px_idx(id), fit_error(er) {}
-      // in ascending order
-      bool operator<(const ProxyError &rhs) const {
-        return fit_error < rhs.fit_error;
-      }
-      std::size_t px_idx;
-      FT fit_error;
-    };
-
     std::cout << "#px " << proxies.size() << std::endl;
     std::vector<FT> err(proxies.size(), FT(0));
     const FT sum_error = fitting_error(seg_pmap, err);
