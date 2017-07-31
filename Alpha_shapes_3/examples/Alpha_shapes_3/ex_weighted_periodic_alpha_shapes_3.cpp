@@ -5,11 +5,9 @@
 #include <CGAL/Periodic_3_regular_triangulation_3.h>
 
 #include <CGAL/Random.h>
-#include <CGAL/point_generators_3.h>
 
 #include <fstream>
 #include <iostream>
-
 
 // Traits
 typedef CGAL::Exact_predicates_inexact_constructions_kernel  K;
@@ -33,10 +31,8 @@ typedef P3RT3::Weighted_point                                Weighted_point;
 
 int main()
 {
-  typedef CGAL::Creator_uniform_3<double, Bare_point> Creator;
   CGAL::Random random(8);
-  CGAL::Random_points_in_cube_3<Bare_point, Creator> in_cube(1, random);
-  std::vector<Weighted_point> pts;
+  std::list<Weighted_point> pts;
 
   // read input
   std::ifstream is("./data/bunny_1000");
@@ -46,19 +42,9 @@ int main()
   Bare_point bp;
   for( ; n>0 ; n--) {
     is >> bp;
-    Weighted_point p(bp, 0.01 * random.get_double(0., 0.015625));
+    Weighted_point p(bp, 0.0001 * random.get_double(0., 0.015625));
     pts.push_back(p);
   }
-
-/*
-  // Generating 1000 random points
-  for(int i=0; i<1000 ; i++) {
-    Weighted_point p(*in_cube++, random.get_double(0., 0.015625));
-//    Weighted_point p(*in_cube++, 0.);
-    std::cout << "inserting: " << i << " || " << p << std::endl;
-    pts.push_back(p);
-  }
-*/
 
   // Define the periodic cube
   P3RT3 prt(PK::Iso_cuboid_3(-0.1,0.,-0.1, 0.1,0.2,0.1));
