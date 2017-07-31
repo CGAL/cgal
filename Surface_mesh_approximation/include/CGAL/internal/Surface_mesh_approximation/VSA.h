@@ -1231,6 +1231,7 @@ private:
 }; // end class VSA_mesh_extraction
 
 } // end namespace internal
+/// @endcond
 } // end namespace CGAL
 
 #undef CGAL_NOT_TAGGED_ID

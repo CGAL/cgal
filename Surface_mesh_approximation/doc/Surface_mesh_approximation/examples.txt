@@ -1,0 +1,6 @@
+/*!
+\example Surface_mesh_approximation/vsa_extraction_example.cpp
+\example Surface_mesh_approximation/vsa_approximation_and_extraction_example.cpp
+\example Surface_mesh_approximation/vsa_l2_metric_example.cpp
+\example Surface_mesh_approximation/vsa_metric_example.cpp
+*/

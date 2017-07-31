@@ -12,6 +12,6 @@ class PlaneFitting {
   typedef unspecified_type Proxy;
 
   template<FacetsIterator>
-  Proxy operator()(const FacetsIterator &beg, const FacetsIterator &end) const;
+  Plane operator()(const FacetsIterator &beg, const FacetsIterator &end) const;
 };
 

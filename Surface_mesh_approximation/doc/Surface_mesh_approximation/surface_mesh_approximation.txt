@@ -1,16 +1,14 @@
 namespace CGAL {
-
 /*!
-
 \mainpage User Manual
 \anchor Chapter_Triangulated_Surface_Mesh_Approximation
-\cgalAutoToc
 
+\cgalAutoToc
 \authors Pierre Alliez, Lingjie Zhu
 
 \section sma_introduction Introduction
 
-This package implement the shape fitting algorithm Variational Shape Approximation (VSA). It is a good complement to current Mesh Segmentation Package and even to the mesh decimation one.
+This package implement the shape approximation algorithm Variational Shape Approximation (VSA). It is a good complement to current Mesh Segmentation Package and even to the mesh decimation one.
 
 \section sma_interface Interface
 
@@ -30,7 +28,13 @@ The following example calls the functions `CGAL::vsa_extract()` on the input tri
 
 \cgalExample{Surface_mesh_approximation/vsa_extraction_example.cpp}
 
-\subsection ApproximationExample_2 User-defined Proxy
+\subsection ApproximationExample_2 Using L2 metric
+
+The following example use the L2 metric to approximate the shape.
+
+\cgalExample{Surface_mesh_approximation/vsa_l2_metric_example.cpp}
+
+\subsection ApproximationExample_3 User-defined Proxy
 
 We could use self-defined proxy and error for the approximation algorithm. In the following example, we define a simple point-wise proxy to achieve a compact patch approximation of the shape:
 

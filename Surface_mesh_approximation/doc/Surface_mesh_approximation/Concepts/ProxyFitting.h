@@ -8,7 +8,7 @@ The function object class to fit a proxy from a range of facets.
 \cgalHasModel `L2ProxyFitting`
 
 */
-class PlaneFitting {
+class ProxyFitting {
   typedef unspecified_type Proxy;
 
   template<FacetsIterator>
