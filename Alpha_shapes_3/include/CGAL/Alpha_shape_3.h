@@ -745,43 +745,37 @@ public:
   // starting point for searching 
   // takes O(#alpha_shape) time
 
-
   //------------------- GEOMETRIC PRIMITIVES ----------------------------
 private:
   NT squared_radius(const Cell_handle& s) const
-    {
-      return Compute_squared_radius_3()(*this)(
-	  this->point(s,0), this->point(s,1),
-	  this->point(s,2), this->point(s,3));
-    }
+  {
+    return Compute_squared_radius_3()(*this)(point(s,0), point(s,1),
+                                             point(s,2), point(s,3));
+  }
 
   NT squared_radius(const Cell_handle& s, const int& i) const
-    {
-      return Compute_squared_radius_3()(*this) (
-	  this->point(s,vertex_triple_index(i,0)),
-	  this->point(s,vertex_triple_index(i,1)),
-	  this->point(s,vertex_triple_index(i,2)) );
-    }
+  {
+    return Compute_squared_radius_3()(*this)(point(s,vertex_triple_index(i,0)),
+                                             point(s,vertex_triple_index(i,1)),
+                                             point(s,vertex_triple_index(i,2)));
+  }
 
   NT squared_radius(const Facet& f) const {
     return squared_radius(f.first, f.second);
   }
 
-  NT squared_radius(const Cell_handle& s, 
-			    const int& i, const int& j) const
-    {
-      return Compute_squared_radius_3()(*this)(
-	  this->point(s,i), this->point(s,j));
-    }
+  NT squared_radius(const Cell_handle& s, const int& i, const int& j) const
+  {
+    return Compute_squared_radius_3()(*this)(point(s,i), point(s,j));
+  }
 
   NT squared_radius(const Edge& e) const {
-   return  squared_radius(e.first,e.second,e.third);
+   return squared_radius(e.first,e.second,e.third);
   }
 
   NT squared_radius(const Vertex_handle& v) const {
     return  Compute_squared_radius_3()(*this)(v->point()); 
   }
-
 
   //---------------------------------------------------------------------
 
