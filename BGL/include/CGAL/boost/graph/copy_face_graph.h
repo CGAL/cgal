@@ -46,6 +46,7 @@ void copy_face_graph_impl(const SourceMesh& sm, TargetMesh& tm,
 {
   typedef typename boost::graph_traits<SourceMesh>::vertex_descriptor sm_vertex_descriptor;
   typedef typename boost::graph_traits<TargetMesh>::vertex_descriptor tm_vertex_descriptor;
+  typedef typename boost::graph_traits<TargetMesh>::vertex_iterator   tm_vertex_iterator;
 
   typedef typename boost::graph_traits<SourceMesh>::face_descriptor sm_face_descriptor;
   typedef typename boost::graph_traits<TargetMesh>::face_descriptor tm_face_descriptor;
@@ -61,6 +62,7 @@ void copy_face_graph_impl(const SourceMesh& sm, TargetMesh& tm,
     conv;
 
   std::vector<tm_halfedge_descriptor> tm_border_halfedges;
+  std::vector<sm_halfedge_descriptor> sm_border_halfedges;
 
   tm_face_descriptor tm_null_face = boost::graph_traits<TargetMesh>::null_face();
 
@@ -78,12 +80,16 @@ void copy_face_graph_impl(const SourceMesh& sm, TargetMesh& tm,
 
     if ( is_border(sm_h, sm) ){
       tm_border_halfedges.push_back( tm_h );
+      sm_border_halfedges.push_back( sm_h );
       set_face(tm_h, tm_null_face, tm);
+      CGAL_assertion(next(tm_h, tm) == boost::graph_traits<TargetMesh>::null_halfedge() );
     }
 
     if( is_border(sm_h_opp, sm) ){
       tm_border_halfedges.push_back( tm_h_opp );
+      sm_border_halfedges.push_back( sm_h_opp );
       set_face(tm_h_opp, tm_null_face, tm);
+      CGAL_assertion(next(tm_h_opp, tm) == boost::graph_traits<TargetMesh>::null_halfedge() );
     }
 
     //create a copy of interior vertices only once
@@ -126,20 +132,32 @@ void copy_face_graph_impl(const SourceMesh& sm, TargetMesh& tm,
     }
   }
 
-  // update next/prev of tm border halfedges by visiting faces of the mesh
-  BOOST_FOREACH(tm_halfedge_descriptor h, tm_border_halfedges)
+  // update next/prev of tm border halfedges
+  std::size_t nb_border_hedges = tm_border_halfedges.size();
+  for (std::size_t i=0; i< nb_border_hedges; ++i)
   {
-    tm_halfedge_descriptor candidate = opposite(h, tm);
-    do{
-      candidate = opposite( prev(candidate, tm), tm);
+    tm_halfedge_descriptor tm_h = tm_border_halfedges[i];
+
+    if ( next(tm_h, tm) != boost::graph_traits<TargetMesh>::null_halfedge() )
+      continue; //already set
+
+    tm_halfedge_descriptor tm_h_prev = tm_h;
+    CGAL_precondition(*halfedges_around_face(sm_border_halfedges[i], sm).first == sm_border_halfedges[i]);
+    BOOST_FOREACH(sm_halfedge_descriptor sm_h,
+                  halfedges_around_face(next(sm_border_halfedges[i], sm), sm))
+    {
+      CGAL_assertion(next(tm_h_prev, tm) == boost::graph_traits<TargetMesh>::null_halfedge());
+      tm_h = get(hmap, sm_h);
+      set_next(tm_h_prev, tm_h, tm);
+      tm_h_prev=tm_h;
     }
-    while( !is_border(candidate, tm) );
-    set_next(h, candidate, tm);
   }
 
   // update halfedge vertex of all but the vertex halfedge
-  BOOST_FOREACH(tm_vertex_descriptor v, vertices(tm))
+  for(tm_vertex_iterator vit = vertices(tm).first;
+      vit != vertices(tm).second; ++vit)
   {
+    tm_vertex_descriptor v = *vit;
     tm_halfedge_descriptor h = halfedge(v, tm);
     tm_halfedge_descriptor next_around_vertex=h;
     do{
