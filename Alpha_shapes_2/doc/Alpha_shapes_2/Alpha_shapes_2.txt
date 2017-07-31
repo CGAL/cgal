@@ -108,7 +108,7 @@ such that the \f$ \alpha\f$-shape satisfies the following two properties,
 or at least the second one if there is no such \f$ \alpha\f$ that both
 are satisfied: <br>
 <ol>
-<li> The number of components equals a number of your choice, and
+<li> the number of components equals a number of your choice, and
 <li> all data points are either on the boundary or in the interior of the regularized version of
 the \f$ \alpha\f$-shape (no singular edges).
 </ol>

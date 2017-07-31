@@ -438,13 +438,13 @@ size_type number_of_solid_components(const FT& alpha = get_alpha()) const;
 
 /*!
 Returns an iterator pointing to smallest \f$ \alpha\f$ value 
-such that the alpha shape satisfies the following two properties: 
+such that the alpha shape satisfies the following two properties:
 
-all data points are either on the boundary or in the interior 
-of the regularized version of the alpha shape. 
+- All data points are either on the boundary or in the interior
+of the regularized version of the alpha shape.
 
-The number of solid component of the alpha shape is equal to or 
-smaller than `nb_components`. 
+- The number of solid component of the alpha shape is equal to or
+smaller than `nb_components`.
 */ 
 Alpha_iterator find_optimal_alpha(size_type nb_components) const; 
 

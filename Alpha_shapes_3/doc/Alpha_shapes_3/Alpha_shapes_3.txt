@@ -145,9 +145,9 @@ order of apparition in the alpha complex when alpha increases.
 
 Finally, it provides a function to determine 
 the smallest value \f$ \alpha\f$
-such that the alpha shape satisfies the following two properties <br>
+such that the alpha shape satisfies the following two properties: <br>
 <ol>
-<li> all data points are either on the boundary or in the interior
+<li> All data points are either on the boundary or in the interior
 of the regularized version of the alpha shape (no singular faces).
 <li> The number of components is equal or less than a given number.
 </ol>
