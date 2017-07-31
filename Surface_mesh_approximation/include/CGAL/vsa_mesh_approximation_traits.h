@@ -27,8 +27,11 @@ class PlaneProxy
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
 
 public:
+  /// The proxy seed.
   face_descriptor seed;
+  /// The proxy normal used in the `L21Metric`.
   Vector_3 normal;
+  /// The fitting plane of the proxy used in the `L2Metric`.
   Plane_3 fit_plane;
 };
 
@@ -62,8 +65,10 @@ class L21Metric
   typedef typename FacetAreaMap::key_type face_descriptor;
 
 public:
+  /// The type define required by the `ErrorMetric` concept
   typedef PlaneProxy Proxy;
 
+  /// construct L21 metric functor from a facet normal map and a facet area map.
   L21Metric(const FacetNormalMap &normal_pmap, const FacetAreaMap &area_pmap)
     : normal_pmap(normal_pmap),
     area_pmap(area_pmap) {
@@ -73,6 +78,7 @@ public:
     scale_functor = traits.construct_scaled_vector_3_object();
   }
 
+  /// returns L21 error of a facet f to a proxy px.
   FT operator()(const face_descriptor &f, const Proxy &px) const {
     Vector_3 v = sum_functor(normal_pmap[f], scale_functor(px.normal, FT(-1)));
     return area_pmap[f] * scalar_product_functor(v, v);
@@ -114,8 +120,10 @@ class L21ProxyFitting
   typedef typename GeomTraits::Construct_sum_of_vectors_3 Construct_sum_of_vectors_3;
 
 public:
+  /// The type define required by the `ErrorMetric` concept
   typedef PlaneProxy Proxy;
 
+  /// construct L21 proxy fitting functor from a facet normal map and a facet area map.
   L21ProxyFitting(const FacetNormalMap &normal_pmap, const FacetAreaMap &area_pmap)
     : normal_pmap(normal_pmap), area_pmap(area_pmap) {
     GeomTraits traits;
@@ -123,7 +131,7 @@ public:
     scale_functor = traits.construct_scaled_vector_3_object();
   }
 
-  // Fit and construct a proxy
+  /// returns the proxy fitted from the facets from beg to end.
   template<typename FacetIterator>
   Proxy operator()(const FacetIterator beg, const FacetIterator end) const {
     CGAL_assertion(beg != end);
@@ -178,6 +186,7 @@ class PlaneFitting
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
 
 public:
+  /// construct plane fitting functor from a triangle mesh and its vertex point map.
   PlaneFitting(const TriangleMesh &_mesh, const VertexPointMap &_point_pmap)
     : mesh(_mesh), point_pmap(_point_pmap) {
     GeomTraits traits;
@@ -186,6 +195,7 @@ public:
     scale_functor = traits.construct_scaled_vector_3_object();
   }
 
+  /// construct plane fitting functor from a triangle mesh.
   PlaneFitting(const TriangleMesh &_mesh)
     : mesh(_mesh),
     point_pmap(get(boost::vertex_point, const_cast<TriangleMesh &>(_mesh))) {
@@ -195,6 +205,7 @@ public:
     scale_functor = traits.construct_scaled_vector_3_object();
   }
 
+  /// fitting a plane from facets in range beg to end.
   template<typename FacetIterator>
   Plane_3 operator()(const FacetIterator &beg, const FacetIterator &end) const {
     CGAL_assertion(beg != end);
@@ -260,18 +271,22 @@ class L2Metric
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
 
 public:
+  /// The type define required by the `ErrorMetric` concept
   typedef PlaneProxy Proxy;
 
+  /// construct L2 metric functor from a triangle mesh, a facet area map and the vertex point map.
   L2Metric(const TriangleMesh &_mesh,
     const FacetAreaMap &_area_pmap,
     const VertexPointMap &_point_pmap)
     : mesh(_mesh), area_pmap(_area_pmap), point_pmap(_point_pmap) {}
 
+  /// construct L2 metric functor from a triangle mesh and a facet area map.
   L2Metric(const TriangleMesh &_mesh,
     const FacetAreaMap &_area_pmap)
     : mesh(_mesh), area_pmap(_area_pmap),
     point_pmap(get(boost::vertex_point, const_cast<TriangleMesh &>(_mesh))) {}
 
+  /// returns the l2 fitting error of a facet f to proxy px.
   FT operator()(const face_descriptor &f, const PlaneProxy &px) const {
     halfedge_descriptor he = halfedge(f, mesh);
     const Point_3 &p0 = point_pmap[source(he, mesh)];
@@ -319,15 +334,19 @@ private:
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
 
 public:
+  /// The type define required by the `ErrorMetric` concept
   typedef PlaneProxy Proxy;
 
+  /// construct L2 proxy fitting functor from a triangle mesh and the vertex point map.
   L2ProxyFitting(const TriangleMesh &_mesh, const VertexPointMap &_point_pmap)
     : mesh(_mesh), point_pmap(_point_pmap) {}
 
+  /// construct L2 proxy fitting functor from a triangle mesh.
   L2ProxyFitting(const TriangleMesh &_mesh)
     : mesh(_mesh),
     point_pmap(get(boost::vertex_point, const_cast<TriangleMesh &>(_mesh))) {}
 
+  /// returns the proxy fitted from a range of facets.
   template<typename FacetIterator>
   Proxy operator()(const FacetIterator beg, const FacetIterator end) const {
     CGAL_assertion(beg != end);
@@ -380,13 +399,16 @@ class PCAPlaneFitting
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
 
 public:
+  /// construct PCA plane fitting functor from a triangle mesh and the vertex point map.
   PCAPlaneFitting(const TriangleMesh &_mesh,  const VertexPointMap &_point_pmap)
     : mesh(_mesh), point_pmap(_point_pmap) {}
 
+  /// construct PCA plane fitting functor from a triangle mesh.
   PCAPlaneFitting(const TriangleMesh &_mesh)
     : mesh(_mesh),
     point_pmap(get(boost::vertex_point, const_cast<TriangleMesh &>(_mesh))) {}
 
+  /// returns a plane fitted from facets in range beg to end by the PCA algorithm.
   template<typename FacetIterator>
   Plane_3 operator()(const FacetIterator beg, const FacetIterator end) const {
     CGAL_assertion(beg != end);

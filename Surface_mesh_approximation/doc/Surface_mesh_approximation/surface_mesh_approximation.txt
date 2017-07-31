@@ -8,9 +8,25 @@ namespace CGAL {
 
 \section sma_introduction Introduction
 
-This package implement the shape approximation algorithm Variational Shape Approximation (VSA). It is a good complement to current Mesh Segmentation Package and even to the mesh decimation one.
+At the core of numerous applications ranging from geometry compression to reverse engineering, finding the concise and faithful approximation of an excessively verbose 3D data (in particular, scanned meshes) is the key for subsequent geometry processing and reducing the computational cost.
 
-\section sma_interface Interface
+This package implements the <em>Variational Shape Approximation</em> \cgalCite{botsch2010PMP} (VSA) framework to approximate the triangle surface. Given a triangulated surface mesh (simply <em>mesh</em> in the following), the VSA uses the Lloyd's iteration to drive the distortion error down with the concept of geometryic <em>proxy</em>. The overview of the algorithm can be found in \ref sma_approximation.
+
+This package offers both the approximation and the approximated mesh extraction functions. They can be accessed as simple free functions or advanced class-based interfaces. This allows an alternative approach to used the default metrics or plug the user-defined proxy and metrics into the VSA framework. It can be viewed as not only an approximation package, but also a simplification, shape discovery one or a complement to current mesh segmentation package.
+
+\section sma_overview Overview of the Approximation Process
+
+\subsection sma_approximation Approximation
+
+Explain: Proxy, Metric, LLoyd, Initialization
+
+The proxy is simply a parameterized description of a facets patch. This package provide the simple basic `PlaneProxy` which .
+
+\subsection sma_extraction Mesh Extraction
+
+Explain: Anchor, Pseudo-CDT, Non-manifold.
+
+\subsection sma_interface Interface
 
 This package can thus be used either with `Polyhedron_3`, `Surface_mesh`, or
 any class model of the concept `FaceGraph` described in \ref chapterBGL.
@@ -22,19 +38,19 @@ Approximate a triangle mesh and extract the approximated triangle surface, using
 
 \section sma_examples Examples
 
-\subsection ApproximationExample_1 Approximate a Mesh
+\subsection sma_example1 Approximate a Mesh
 
 The following example calls the functions `CGAL::vsa_extract()` on the input triangle mesh.
 
 \cgalExample{Surface_mesh_approximation/vsa_extraction_example.cpp}
 
-\subsection ApproximationExample_2 Using L2 metric
+\subsection sma_example2 Using L2 metric
 
 The following example use the L2 metric to approximate the shape.
 
 \cgalExample{Surface_mesh_approximation/vsa_l2_metric_example.cpp}
 
-\subsection ApproximationExample_3 User-defined Proxy
+\subsection sma_example3 User-defined Proxy
 
 We could use self-defined proxy and error for the approximation algorithm. In the following example, we define a simple point-wise proxy to achieve a compact patch approximation of the shape:
 

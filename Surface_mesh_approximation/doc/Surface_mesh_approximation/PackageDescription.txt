@@ -7,11 +7,13 @@
 \addtogroup PkgTSMA
 \cgalPkgDescriptionBegin{Triangulated Surface Mesh Approximation,PkgTSMASummary}
 \cgalPkgPicture{sma-pkg-small.png}
+
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Pierre Alliez, Lingjie Zhu}
-\cgalPkgDesc{Blabla.}
+\cgalPkgDesc{This package implement the Variational Shape Approximation framework to approximate the triangle surface mesh and generate the approximation as triangle soup. The workflow proceeds in an iterative manner as the Lloyd's clustering algorithm. The API is flexiable and can be extended to the user defined proxies and metrics.}
 \cgalPkgManuals{Chapter_Triangulated_Surface_Mesh_Approximation,PkgTSMA}
 \cgalPkgSummaryEnd
+
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.13}
 \cgalPkgBib{cgal:az-tsma}
@@ -28,7 +30,7 @@
 - `ProxyFitting`
 - `PlaneFitting`
 
-## Classes and Functions##
+## Main Functions ##
 - `CGAL::vsa_approximate()`
 - `CGAL::vsa_extract()`
 - `CGAL::vsa_approximate_and_extract()`
