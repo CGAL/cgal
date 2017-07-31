@@ -42,7 +42,7 @@ int main()
   Bare_point bp;
   for( ; n>0 ; n--) {
     is >> bp;
-    Weighted_point p(bp, 0.0001 * random.get_double(0., 0.015625));
+    Weighted_point p(bp, 0.0001 * random.get_double(0., 0.015625)); // arbitrary weights
     pts.push_back(p);
   }
 
@@ -71,19 +71,7 @@ int main()
   std::cout << "Smallest alpha value to get a solid through data points is " << alpha_solid << std::endl;
   std::cout << "Optimal alpha value to get one connected component is " << *opt << std::endl;
   as.set_alpha(*opt);
-//  assert(as.number_of_solid_components() == 1);
-
-  CGAL::Geomview_stream gv(CGAL::Bbox_3(-0.1,0.,-0.1, 0.1,0.2,0.1));
-  gv.set_bg_color(CGAL::Color(0, 200, 200));
-  gv.clear();
-
-  gv << as;
-  gv.set_wired(true);
-  gv << as;
-
-  char ch;
-  std::cout << "Enter any character to quit" << std::endl;
-  std::cin >> ch;
+  assert(as.number_of_solid_components() == 1);
 
   return 0;
 }
