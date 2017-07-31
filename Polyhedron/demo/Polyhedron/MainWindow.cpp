@@ -562,7 +562,8 @@ void MainWindow::loadPlugins()
     initPlugin(obj);
     initIOPlugin(obj);
   }
-  plugins_directories.clear();
+
+  QList<QDir> plugins_directories;
   QString dirPath = qApp->applicationDirPath();
   plugins_directories<<dirPath;
   QDir msvc_dir(dirPath);
@@ -607,27 +608,25 @@ void MainWindow::loadPlugins()
   }
 
   QSet<QString> loaded;
-  QList<QDir> empty_dirs;
   Q_FOREACH (QDir pluginsDir, plugins_directories) {
     qDebug("# Looking for plugins in directory \"%s\"...",
            qPrintable(pluginsDir.absolutePath()));
-    bool empty = true;
     Q_FOREACH(QString fileName, pluginsDir.entryList(QDir::Files))
     {
       QString abs_name = pluginsDir.absoluteFilePath(fileName);
       if(loaded.find(abs_name) == loaded.end())
       {
-        empty &= !load_plugin(abs_name, true);
-        loaded.insert(abs_name);
+        if(load_plugin(abs_name, true))
+        {
+          QString name = QFileInfo(fileName).fileName();
+          name.remove(QRegExp("^lib"));
+          name.remove(QRegExp("\\..*"));
+          PathNames_map[pluginsDir.absolutePath()].push_back(name);
+          loaded.insert(abs_name);
+        }
       }
     }
-    if(empty)
-    {
-      empty_dirs.push_back(pluginsDir);
-    }
   }
-  Q_FOREACH (QDir dir, empty_dirs)
-    plugins_directories.removeAll(dir);
   updateMenus();
 }
   //Creates sub-Menus for operations.
@@ -1668,22 +1667,16 @@ void MainWindow::on_actionPreferences_triggered()
   std::vector<QTreeWidgetItem*> items;
 
   //add blacklisted plugins
-  Q_FOREACH (QDir dir, plugins_directories) {
+  Q_FOREACH (QString path, PathNames_map.keys())
+  {
     QTreeWidgetItem* pluginItem = new QTreeWidgetItem(prefdiag.treeWidget);
-    pluginItem->setText(1, dir.absolutePath());
+    pluginItem->setText(1, path);
     prefdiag.treeWidget->setItemExpanded(pluginItem, true);
     QFont boldFont = pluginItem->font(1);
     boldFont.setBold(true);
     pluginItem->setFont(1, boldFont);
-    Q_FOREACH(QString fileName, dir.entryList(QDir::Files))
+    Q_FOREACH(QString name, PathNames_map[path])
     {
-      if(!fileName.contains("plugin") || !QLibrary::isLibrary(fileName))
-        continue;
-      QFileInfo fileinfo(fileName);
-      //set plugin name
-      QString name = fileinfo.fileName();
-      name.remove(QRegExp("^lib"));
-      name.remove(QRegExp("\\..*"));
       QTreeWidgetItem *item = new QTreeWidgetItem(pluginItem);
       item->setText(1, name);
       if(plugin_blacklist.contains(name))
@@ -1693,7 +1686,7 @@ void MainWindow::on_actionPreferences_triggered()
       items.push_back(item);
     }
   }
-  dialog.exec();  
+  dialog.exec();
   
   if ( dialog.result() )
   {
