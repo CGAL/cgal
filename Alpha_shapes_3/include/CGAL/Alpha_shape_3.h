@@ -148,12 +148,6 @@ public:
   using Dt::finite_vertices_end;
   using Dt::finite_cells_begin;
   using Dt::finite_cells_end;
-  using Dt::VERTEX;
-  using Dt::EDGE;
-  using Dt::FACET;
-  using Dt::CELL;
-  using Dt::OUTSIDE_CONVEX_HULL;
-  using Dt::OUTSIDE_AFFINE_HULL;
   using Dt::vertex_triple_index;
   using Dt::is_infinite;
   using Dt::is_Gabriel;
@@ -161,14 +155,21 @@ public:
   using Dt::incident_vertices;
   using Dt::incident_facets;
   using Dt::locate;
+  using Dt::point;
 
-  enum Classification_type {EXTERIOR, 
-			    SINGULAR, 
-			    REGULAR,
-			    INTERIOR};
- 
+  using Dt::VERTEX;
+  using Dt::EDGE;
+  using Dt::FACET;
+  using Dt::CELL;
+  using Dt::OUTSIDE_CONVEX_HULL;
+  using Dt::OUTSIDE_AFFINE_HULL;
+
+  enum Classification_type {EXTERIOR,
+                            SINGULAR,
+                            REGULAR,
+                            INTERIOR};
+
   enum Mode {GENERAL, REGULARIZED};
-
 
   typedef CGAL::Alpha_status< NT >          Alpha_status;
   typedef Compact_container<Alpha_status>   Alpha_status_container;
