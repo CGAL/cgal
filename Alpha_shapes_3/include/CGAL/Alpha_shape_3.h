@@ -787,6 +787,7 @@ private:
   //---------------------------------------------------------------------
 public:  
 #ifdef CGAL_USE_GEOMVIEW
+  void show_triangulation_edges(Geomview_stream &gv) const;
   void show_alpha_shape_faces(Geomview_stream &gv) const;
 #endif
 
