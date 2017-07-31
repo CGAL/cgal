@@ -20,6 +20,7 @@ if ( CGAL_FOUND )
 
   create_single_source_cgal_program( "test_p3rt3_as_p3t3.cpp" )
   create_single_source_cgal_program( "test_p3rt3_insert_remove_point_set.cpp" )
+  create_single_source_cgal_program( "test_p3rt3_versus_rt3.cpp" )
   create_single_source_cgal_program( "test_periodic_3_alpha_shape_3.cpp" )
   create_single_source_cgal_program( "test_periodic_3_delaunay_3.cpp" )
   create_single_source_cgal_program( "test_periodic_3_delaunay_hierarchy_3.cpp" )
