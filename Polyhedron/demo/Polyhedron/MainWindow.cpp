@@ -792,7 +792,7 @@ void MainWindow::message(QString message, QString colorName, QString font) {
     message.remove(message.length()-1, 1);
   }
   statusBar()->showMessage(message, 5000);
-  QTimer::singleShot(5000, this, SLOT(resetStatusColor()));
+  QTimer::singleShot(5000, [this]{this->statusBar()->setStyleSheet("");});
   message = "<font color=\"" + colorName + "\" style=\"font-style: " + font + ";\" >" +
       message + "</font><br>";
   message = "[" + QTime::currentTime().toString() + "] " + message;
@@ -2034,7 +2034,3 @@ void MainWindow::set_facegraph_mode_adapter(bool is_polyhedron)
     set_face_graph_default_type(SURFACE_MESH);
 }
 
-void MainWindow::resetStatusColor()
-{
-  statusBar()->setStyleSheet("");
-}
