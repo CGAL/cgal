@@ -17,8 +17,9 @@ The modifying functions `insert` and `remove` will overwrite
 the one inherited from the underlying triangulation class `Dt`.
 At the moment, only the static version is implemented.
 
-\tparam Dt must be either `Delaunay_triangulation_3`, `Regular_triangulation_3`
-or `Periodic_3_triangulation_3`. Note that `Dt::Geom_traits`, `Dt::Vertex`, and `Dt::Face`
+\tparam Dt must be either `Delaunay_triangulation_3`, `Regular_triangulation_3`,
+`Periodic_3_Delaunay_triangulation_3` or `Periodic_3_regular_triangulation_3`.
+Note that `Dt::Geom_traits`, `Dt::Vertex`, and `Dt::Face`
 must be model the concepts `AlphaShapeTraits_3`,
 `AlphaShapeVertex_3` and `AlphaShapeCell_3`, respectively.
 
