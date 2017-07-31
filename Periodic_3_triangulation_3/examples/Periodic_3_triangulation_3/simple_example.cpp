@@ -66,7 +66,7 @@ int main(int, char**)
   oFileT << T;
 
   std::ofstream to_off("output_regular.off"); // as a .off file
-  write_triangulation_to_off(to_off, T);
+  CGAL::write_triangulation_to_off(to_off, T);
 
   std::ofstream d_to_off("output_dual.off");
   draw_dual_to_off(d_to_off, T);
