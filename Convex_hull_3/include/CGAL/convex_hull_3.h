@@ -690,8 +690,12 @@ ch_quickhull_polyhedron_3(std::list<typename Traits::Point_3>& points,
       non_coplanar_quickhull_3(points, tds, traits);
       copy_face_graph(tds,P);
     }
-    else
-      make_tetrahedron(v0->point(),v1->point(),v2->point(),v3->point(),P);
+    else{
+      CGAL_assertion( traits.has_on_positive_side_3_object()(
+            construct_plane(v2->point(),v1->point(),v0->point()),
+            v3->point()) );
+      make_tetrahedron(v0->point(),v1->point(),v3->point(),v2->point(),P);
+    }
   }
   
 }
