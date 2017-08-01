@@ -6,20 +6,64 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>490</width>
-    <height>262</height>
+    <width>483</width>
+    <height>408</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>DockWidget</string>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
-   <layout class="QVBoxLayout" name="verticalLayout_3">
+   <layout class="QVBoxLayout" name="verticalLayout_3" stretch="0,1,0,0,0">
     <item>
      <widget class="QCheckBox" name="is_medially_centered">
       <property name="text">
        <string>Is medially centered</string>
       </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QGroupBox" name="groupBox">
+      <property name="title">
+       <string>Help</string>
+      </property>
+      <property name="flat">
+       <bool>false</bool>
+      </property>
+      <property name="checkable">
+       <bool>false</bool>
+      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout_7">
+       <item>
+        <widget class="QScrollArea" name="scrollArea">
+         <property name="widgetResizable">
+          <bool>true</bool>
+         </property>
+         <widget class="QWidget" name="scrollAreaWidgetContents">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>425</width>
+            <height>127</height>
+           </rect>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_4">
+           <item>
+            <widget class="QLabel" name="label_2">
+             <property name="text">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;- Select an item called &lt;span style=&quot; font-style:italic;&quot;&gt;name&lt;/span&gt;(mcf) to apply a step to it, or select a face_graph item to create a new mcf from it. &lt;/p&gt;&lt;p&gt;- Run iterations until you are satisfied of the result.&lt;/p&gt;&lt;p&gt;- You can create a skeleton without running any iteration, but it will probably not be acceptable. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="wordWrap">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </widget>
+       </item>
+      </layout>
      </widget>
     </item>
     <item>
@@ -162,19 +206,6 @@
        </widget>
       </item>
      </layout>
-    </item>
-    <item>
-     <spacer name="verticalSpacer">
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>20</width>
-        <height>40</height>
-       </size>
-      </property>
-     </spacer>
     </item>
    </layout>
   </widget>
