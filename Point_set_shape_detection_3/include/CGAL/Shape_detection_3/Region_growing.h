@@ -629,7 +629,6 @@ shape. The implementation follows \cgalCite{cgal:lm-clscm-12}.
                                                  reajusted_plane,
                                                  CGAL::Dimension_tag<0>());
             optimal_plane = reajusted_plane;
-            Vector previous = plane_normal;
             plane_normal = optimal_plane.orthogonal_vector();
             plane_normal = plane_normal / std::sqrt(plane_normal * plane_normal);
           }
