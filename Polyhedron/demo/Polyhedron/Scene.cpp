@@ -112,13 +112,28 @@ Scene::replaceItem(Scene::Item_id index, CGAL::Three::Scene_item* item, bool emi
       }
       erase(children);
     }
+    CGAL::Three::Scene_group_item* parent = m_entries[index]->parentGroup();
+    bool is_locked = false;
+    if(parent)
+    {
+      is_locked = parent->isChildLocked(m_entries[index]);
+      parent->unlockChild(m_entries[index]);
+      parent->removeChild(m_entries[index]);
+    }
     std::swap(m_entries[index], item);
+    if(parent)
+    {
+      changeGroup(m_entries[index], parent);
+      if(is_locked)
+        parent->lockChild(m_entries[index]);
+    }
+
     Q_EMIT newItem(index);
     if ( item->isFinite() && !item->isEmpty() &&
          m_entries[index]->isFinite() && !m_entries[index]->isEmpty() &&
          item->bbox()!=m_entries[index]->bbox() )
     {
-    Q_EMIT updated_bbox(true);
+      Q_EMIT updated_bbox(true);
     }
 
     if(emit_item_about_to_be_destroyed) {

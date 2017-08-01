@@ -1791,8 +1791,6 @@ void MainWindow::recurseExpand(QModelIndex index)
     {
         recurseExpand(index.child(0,0));
     }
-
-    QString name = scene->item(scene->getIdFromModelIndex(index))->name();
         CGAL::Three::Scene_group_item* group =
                 qobject_cast<CGAL::Three::Scene_group_item*>(scene->item(scene->getIdFromModelIndex(index)));
         if(group && group->isExpanded())
