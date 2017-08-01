@@ -115,13 +115,11 @@ void Clipping_box_plugin::clip(bool b)
       dock_widget->hide();
       return;
     }
-    const qglviewer::Vec v_offset = viewer->offset();
-    Kernel::Vector_3 offset(v_offset.x, v_offset.y, v_offset.z);
     Mesh m;
     Kernel::Point_3 points[8];
     for(int i=0; i<8; ++i)
     {
-      points[i] = Kernel::Point_3(item->point(i,0),item->point(i,1), item->point(i,2))-offset;
+      points[i] = Kernel::Point_3(item->point(i,0),item->point(i,1), item->point(i,2));
     }
     CGAL::make_hexahedron(
           points[0],
