@@ -275,10 +275,10 @@ public:
   Segment segment(const Edge_circulator& ec) const;
   Segment segment(const All_edges_iterator& ei) const;
   Segment segment(const Finite_edges_iterator& ei) const;
-  Point circumcenter(Face_handle f) const;
-  Point circumcenter(const Point& p0,
-                     const Point& p1,
-                     const Point& p2) const;
+  Point_2 circumcenter(Face_handle f) const;
+  Point_2 circumcenter(const Point& p0,
+                       const Point& p1,
+                       const Point& p2) const;
 
 
   //MOVE - INSERTION - DELETION - Flip
@@ -3455,7 +3455,7 @@ orientation(const Point& p, const Point& q,const Point& r ) const
 
 template<class Gt, class Tds>
 inline
-typename Triangulation_2<Gt,Tds>::Point
+typename Triangulation_2<Gt,Tds>::Point_2
 Triangulation_2<Gt,Tds>::
 circumcenter(const Point& p0, const Point& p1, const Point& p2) const
 {
@@ -3466,7 +3466,7 @@ circumcenter(const Point& p0, const Point& p1, const Point& p2) const
 }
 
 template <class Gt, class Tds >
-typename Triangulation_2<Gt, Tds>::Point
+typename Triangulation_2<Gt, Tds>::Point_2
 Triangulation_2<Gt, Tds>::
 circumcenter(Face_handle f) const
 {
