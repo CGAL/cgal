@@ -1,7 +1,7 @@
 namespace CGAL {
 //! \ingroup PkgMesh_3Functions
 //!
-//! Gets reconstructed surface out of a `MeshComplexWithFeatures_3InTriangulation_3` object.
+//! Builds a `TriangleMesh` from the surface facets, with a consistent orientation at the interface of two subdomains.
 //!
 //! This variant exports the surface as a `TriangleMesh` and appends it to `graph`, using
 //! `orient_polygon_soup()`.
@@ -11,6 +11,6 @@ namespace CGAL {
 //!
 //! @param c3t3 an instance of a `C3T3`.
 //! @param graph an instance of `TriangleMesh`.
-template<class C3T3, class FaceGraph>
-void output_c3t3_to_facegraph(const C3T3& c3t3, FaceGraph& graph);
+template<class C3T3, class TriangleMesh>
+void facets_in_complex_3_to_triangle_mesh(const C3T3& c3t3, TriangleMesh& graph);
 }

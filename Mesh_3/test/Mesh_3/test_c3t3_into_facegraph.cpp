@@ -11,7 +11,7 @@
 #include <CGAL/Polyhedral_mesh_domain_3.h>
 #include <CGAL/Polyhedral_mesh_domain_with_features_3.h>
 #include <CGAL/Mesh_domain_with_polyline_features_3.h>
-#include <CGAL/IO/output_c3t3_to_facegraph.h>
+#include <CGAL/IO/facets_in_complex_3_to_triangle_mesh.h>
 
 #include <CGAL/tags.h>
 
@@ -86,7 +86,7 @@ int main (int argc, char** argv){
   }
 
   CGAL::Polyhedron_3<K> poly;
-  CGAL::output_c3t3_to_facegraph(c3t3, poly);
+  CGAL::facets_in_complex_3_to_triangle_mesh(c3t3, poly);
 
   CGAL_assertion(is_valid(poly));
   return EXIT_SUCCESS;

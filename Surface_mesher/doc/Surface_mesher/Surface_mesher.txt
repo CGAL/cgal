@@ -295,7 +295,7 @@ This \cgal component also provides functions to write the reconstructed surface 
 
 - `output_surface_facets_to_off()` 
 - `output_surface_facets_to_polyhedron()` 
-- `output_surface_facets_to_facegraph()`
+- `facets_in_complex_2_to_triangle_mesh()`
 
 \section Surface_mesherUndocumented Undocumented Features Available in Demos
 

@@ -140,7 +140,7 @@ on mesh elements.
 
 This \cgal component also provides a function to convert the reconstructed mesh to a `FaceGraph`:
 
-- `output_c3t3_to_facegraph()`
+- `facets_in_complex_3_to_triangle_mesh()`
 
 The 3D triangulation provides approximations of the
 subdomains, surface patches and curve segments

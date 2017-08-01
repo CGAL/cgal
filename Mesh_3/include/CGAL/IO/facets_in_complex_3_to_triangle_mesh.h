@@ -18,8 +18,8 @@
 //
 // Author(s)     : Maxime Gimeno
 
-#ifndef CGAL_COMPLEX_3_IN_TRIANGULATION_3_TO_FACEGRAPH_H
-#define CGAL_COMPLEX_3_IN_TRIANGULATION_3_TO_FACEGRAPH_H
+#ifndef CGAL_FACETS_IN_COMPLEX_3_TO_TRIANGLE_MESH_H
+#define CGAL_FACETS_IN_COMPLEX_3_TO_TRIANGLE_MESH_H
 
 
 #include <CGAL/license/Mesh_3.h>
@@ -33,7 +33,7 @@
 namespace CGAL {
 //! \ingroup PkgMesh_3Functions
 //!
-//! Gets reconstructed surface out of a `MeshComplexWithFeatures_3InTriangulation_3` object.
+//! Builds a `TriangleMesh` from the surface facets, with a consistent orientation at the interface of two subdomains.
 //!
 //! This variant exports the surface as a `TriangleMesh` and appends it to `graph`, using
 //! `orient_polygon_soup()`.
@@ -44,7 +44,7 @@ namespace CGAL {
 //! @param c3t3 an instance of a `C3T3`.
 //! @param graph an instance of `TriangleMesh`.
 template<class C3T3, class TriangleMesh>
-void output_c3t3_to_facegraph(const C3T3& c3t3, TriangleMesh& graph) //complexity nlogn(number of facets on surface)
+void facets_in_complex_3_to_triangle_mesh(const C3T3& c3t3, TriangleMesh& graph) //complexity nlogn(number of facets on surface)
 {
   typedef typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type VertexPointMap;
   typedef typename boost::property_traits<VertexPointMap>::value_type Point_3;
@@ -137,4 +137,4 @@ void output_c3t3_to_facegraph(const C3T3& c3t3, TriangleMesh& graph) //complexit
   CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(points, polygons, graph);
 }//end c3t3_to_face_graph
 }//end CGAL
-#endif // CGAL_COMPLEX_3_IN_TRIANGULATION_3_TO_FACEGRAPH_H
+#endif // CGAL_FACETS_IN_COMPLEX_3_TO_TRIANGLE_MESH_H

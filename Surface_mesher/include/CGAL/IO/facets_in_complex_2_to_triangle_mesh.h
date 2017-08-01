@@ -19,8 +19,8 @@
 // $Id$
 //
 // Author(s) : Maxime Gimeno, Pierre Alliez
-#ifndef CGAL_OUTPUT_SURFACE_FACETS_TO_FACEGRAPH_H
-#define CGAL_OUTPUT_SURFACE_FACETS_TO_FACEGRAPH_H
+#ifndef CGAL_FACETS_IN_COMPLEX_2_TO_TRIANGLE_MESH_H
+#define CGAL_FACETS_IN_COMPLEX_2_TO_TRIANGLE_MESH_H
 
 #include <CGAL/license/Surface_mesher.h>
 #include <CGAL/boost/graph/Euler_operations.h>
@@ -30,23 +30,23 @@ namespace CGAL{
 /*!
 \ingroup PkgSurfaceMesher3FunctionsIO
 
- Gets reconstructed surface out of a `SurfaceMeshComplex_2InTriangulation_3` object.
+ \brief Converts a manifold surface reconstructed by `make_surface_mesh()` to a `TriangleMesh`.
 
- This variant exports the surface as a `FaceGraph` and appends it to `graph`.
+ This variant exports the surface as a `TriangleMesh` and appends it to `graph`.
  It must be manifold. For this purpose, you may call
  `make_surface_mesh()` with `Manifold_tag` or
  `Manifold_with_boundary_tag` parameter.
 
  @tparam C2T3 model of the `SurfaceMeshComplex_2InTriangulation_3` concept.
- @tparam FaceGraph a model of `MutableFaceGraph`.
+ @tparam TriangleMesh a model of `MutableFaceGraph`.
 
  @param c2t3 an instance of a manifold `C2T3`.
- @param graph an instance of `FaceGraph`.
+ @param graph an instance of `TriangleMesh`.
 
 \sa `CGAL::output_surface_facets_to_off()`
 */
-template<class C2T3, class FaceGraph>
-void output_surface_facets_to_facegraph(const C2T3& c2t3, FaceGraph& graph)
+template<class C2T3, class TriangleMesh>
+void facets_in_complex_2_to_triangle_mesh(const C2T3& c2t3, TriangleMesh& graph)
 {
   typedef typename boost::property_map<FaceGraph, boost::vertex_point_t>::type VertexPointMap;
   typedef typename boost::property_traits<VertexPointMap>::value_type Point_3;
@@ -169,4 +169,4 @@ void output_surface_facets_to_facegraph(const C2T3& c2t3, FaceGraph& graph)
 }
 
 }// end CGAL
-#endif // CGAL_OUTPUT_SURFACE_FACETS_TO_FACEGRAPH_H
+#endif // CGAL_FACETS_IN_COMPLEX_2_TO_TRIANGLE_MESH_H
