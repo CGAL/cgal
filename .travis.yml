@@ -82,8 +82,11 @@ addons:
       - qt55script 
       - qt55svg
       - qt55tools
+      - qt55graphicaleffects
+       
+      - mesa-common-dev
+      - libglu1-mesa-dev
 
-      #  - libqt5opengl5-dev 
       #  - libqt5gui5
       #  - libqt5widgets5
       #  - libqt5xml5

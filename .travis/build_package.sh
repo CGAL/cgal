@@ -22,7 +22,7 @@ function build_demo {
     git clone --depth=4 -b v2.6.3 --single-branch https://github.com/GillesDebunne/libQGLViewer.git ./qglviewer
     pushd ./qglviewer/QGLViewer
     #use qt5 instead of qt4
-    export QT_SELECT=5
+#    export QT_SELECT=5
     qmake NO_QT_VERSION_SUFFIX=yes
     make -j2
     if [ ! -f libQGLViewer.so ]; then
