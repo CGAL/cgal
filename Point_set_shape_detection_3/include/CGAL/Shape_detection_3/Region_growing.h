@@ -30,6 +30,7 @@
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Search_traits_adapter.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
+#include <CGAL/squared_distance_3.h>
 
 #include <boost/iterator/counting_iterator.hpp>
 #include <boost/iterator/transform_iterator.hpp>
