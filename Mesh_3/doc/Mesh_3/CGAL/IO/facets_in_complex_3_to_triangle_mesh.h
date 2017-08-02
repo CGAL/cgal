@@ -7,7 +7,7 @@ namespace CGAL {
 //! `orient_polygon_soup()`.
 //!
 //! @tparam C3T3 a model of `MeshComplexWithFeatures_3InTriangulation_3`.
-//! @tparam TriangleMesh a model of `MutableFaceGraph` with an internal point property map
+//! @tparam TriangleMesh a model of `MutableFaceGraph` with an internal point property map. The point type should be compatible with the one used in `C3T3`.
 //!
 //! @param c3t3 an instance of `C3T3`.
 //! @param graph an instance of `TriangleMesh`.
