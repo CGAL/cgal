@@ -34,13 +34,39 @@
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
-
-  template <typename Polyhedron, typename FT, typename Patch_id>
-void detect_features(Polyhedron& p,
+/*!
+ * \ingroup detect_features_grp
+ *  Probably does something
+ *
+ *  \tparam PolygonMesh a model of `FaceGraph`
+ *  \tparam FT is a number type. It must be
+either `double` or `float`, or an exact number type.
+ *  \tparam NamedParameters a sequence of \ref namedparameters
+ *
+ *  \param p the polygon mesh
+ *  \param angle_in_deg the roof angle.
+ *  \param np optional \ref namedparameters described below
+ *
+ * \cgalNamedParamsBegin
+ *    \cgalParamBegin{face_patch_id_map}  a property map containing the patches identifiers for the faces of `pmesh` \cgalParamEnd
+ * \cgalNamedParamsEnd
+ *
+ */
+  template <typename PolygonMesh, typename FT, typename Patch_id, typename NamedParameters>
+void detect_features(PolygonMesh& p,
                      FT angle_in_deg,
-                     typename boost::property_map<Polyhedron, CGAL::face_patch_id_t<Patch_id> >::type)
+                     const NamedParameters& np)
 {
-  Detect_features_in_polyhedra<Polyhedron, Patch_id> go;
+    typedef typename boost::lookup_named_param_def <
+      internal_np::face_patch_id_t,
+      NamedParameters,
+      typename boost::property_map<PolygonMesh, face_patch_id_t<Patch_id> >::type//default
+    > ::type                                               PatchId_pmap;
+    PatchId_pmap pid_map
+      = choose_param(get_param(np, internal_np::face_patch_id),
+                     get(typename CGAL::face_patch_id_t<Patch_id>(), p));
+
+  Detect_features_in_polyhedra<PolygonMesh, Patch_id, PatchId_pmap> go(pid_map);
   // AF todo: Add overload for the next three functions so that we use the pid_map
   //          Add a default for pid_map
   go.detect_sharp_edges(p,angle_in_deg);
@@ -49,7 +75,7 @@ void detect_features(Polyhedron& p,
 }
 
   
-  template <typename Polyhedron_, typename Patch_id_>
+  template <typename Polyhedron_, typename Patch_id_, typename PatchId_pmap>
 class Detect_features_in_polyhedra
 {
 public:
@@ -68,8 +94,6 @@ public:
   typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor  vertex_descriptor;
   typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor  halfedge_descriptor;
   typedef typename boost::graph_traits<Polyhedron>::face_descriptor     face_descriptor;
-  
-  typedef typename boost::property_map<Polyhedron, face_patch_id_t<Patch_id> >::type PatchId_pmap;
 
   typedef CGAL::Compare_handles_with_or_without_timestamps Compare_handles;
   
@@ -77,8 +101,9 @@ public:
   typedef std::set<halfedge_descriptor> He_handle_set;
   
 public:
-  Detect_features_in_polyhedra()
-    : current_surface_index_(1)
+  Detect_features_in_polyhedra(PatchId_pmap& pid_map)
+    : current_surface_index_(1),
+      pid_map(pid_map)
   {}
   
   void detect_sharp_edges(Polyhedron& polyhedron,
@@ -107,12 +132,13 @@ private:
   // Stores the current surface index (usefull to detect different patches
   // on different polyhedra)
   int current_surface_index_;
+  PatchId_pmap pid_map;
 };
 
 
-template <typename P_, typename I_>
+template <typename P_, typename I_, typename M_>
 void
-Detect_features_in_polyhedra<P_, I_>::
+Detect_features_in_polyhedra<P_, I_, M_>::
 detect_sharp_edges(Polyhedron& polyhedron, FT angle_in_deg) const
 {
   // Initialize vertices
@@ -147,30 +173,29 @@ detect_sharp_edges(Polyhedron& polyhedron, FT angle_in_deg) const
 }
 
 
-template <typename P_, typename I_>
+template <typename P_, typename I_, typename M_>
 template <typename Int>
 Int
-Detect_features_in_polyhedra<P_, I_>::
+Detect_features_in_polyhedra<P_, I_, M_>::
 generate_patch_id(Int, int i)
 {
   return Int(i);
 }
 
-template <typename P_, typename I_>
+template <typename P_, typename I_, typename M_>
 template <typename Int>
 std::pair<Int, Int>
-Detect_features_in_polyhedra<P_, I_>::
+Detect_features_in_polyhedra<P_, I_, M_>::
 generate_patch_id(std::pair<Int, Int>, int i)
 {
   return std::pair<Int, Int>(i, 0);
 }
 
-template <typename P_, typename I_>
+template <typename P_, typename I_, typename M_>
 void
-Detect_features_in_polyhedra<P_, I_>::
+Detect_features_in_polyhedra<P_, I_, M_>::
 detect_surface_patches(Polyhedron& polyhedron)
 {
-  PatchId_pmap pid_map = get(face_patch_id_t<Patch_id>(),polyhedron);
   // Initialize unsorted_faces
   face_descriptor_set unsorted_faces;
   BOOST_FOREACH(typename boost::graph_traits<Polyhedron>::face_descriptor fd, faces(polyhedron))
@@ -193,12 +218,11 @@ detect_surface_patches(Polyhedron& polyhedron)
 }
 
 
-template <typename P_, typename I_>
+template <typename P_, typename I_, typename M_>
 void
-Detect_features_in_polyhedra<P_, I_>::
+Detect_features_in_polyhedra<P_, I_, M_>::
 detect_vertices_incident_patches(Polyhedron& polyhedron)
 {
-  PatchId_pmap pid_map = get(face_patch_id_t<Patch_id>(),polyhedron);
   typename boost::property_map<Polyhedron,halfedge_is_feature_t>::type hif
       = get(halfedge_is_feature,polyhedron);
   typedef typename boost::property_map<Polyhedron,vertex_incident_patches_t<Patch_id> >::type VIP_map;
@@ -229,18 +253,18 @@ detect_vertices_incident_patches(Polyhedron& polyhedron)
 // -----------------------------------
 // Private methods
 // -----------------------------------
-template <typename P_, typename I_>
-typename Detect_features_in_polyhedra<P_, I_>::Vector_3
-Detect_features_in_polyhedra<P_, I_>::
+template <typename P_, typename I_, typename M_>
+typename Detect_features_in_polyhedra<P_, I_, M_>::Vector_3
+Detect_features_in_polyhedra<P_, I_, M_>::
 facet_normal(const Polyhedron& polyhedron, const face_descriptor& f) const
 {
   return Polygon_mesh_processing::compute_face_normal(f,polyhedron);
 }
 
 
-template <typename P_, typename I_>
+template <typename P_, typename I_, typename M_>
 bool
-Detect_features_in_polyhedra<P_, I_>::
+Detect_features_in_polyhedra<P_, I_, M_>::
 is_sharp(Polyhedron& polyhedron, const halfedge_descriptor& he, FT cos_angle) const
 {
   if(is_border(edge(he,polyhedron),polyhedron)){
@@ -259,15 +283,14 @@ is_sharp(Polyhedron& polyhedron, const halfedge_descriptor& he, FT cos_angle) co
 }
   
  
-template <typename P_, typename I_>
+template <typename P_, typename I_, typename M_>
 void
-Detect_features_in_polyhedra<P_, I_>::
+Detect_features_in_polyhedra<P_, I_, M_>::
 flood(Polyhedron& polyhedron,
       face_descriptor f,
       const Patch_id &patch_id,
       face_descriptor_set& unsorted_faces) const
 {
-  PatchId_pmap pid_map = get(face_patch_id_t<Patch_id>(),polyhedron);
   typename boost::property_map<Polyhedron,halfedge_is_feature_t>::type hif
       = get(halfedge_is_feature,polyhedron);
   // Initialize he_to_explore with halfedges of the starting facet

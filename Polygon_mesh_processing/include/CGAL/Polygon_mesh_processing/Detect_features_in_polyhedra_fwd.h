@@ -33,7 +33,7 @@ namespace CGAL {
   class face_patch_id_t;
 namespace Polygon_mesh_processing {
   
-  template <typename Polyhedron, typename PatchId_pmap>
+  template <typename Polyhedron, typename Patch_id_, typename PatchId_pmap>
   class Detect_features_in_polyhedra;
 
 
