@@ -29,15 +29,18 @@
 
 
 namespace CGAL {
+  template <typename PatchId>
+  class face_patch_id_t;
 namespace Polygon_mesh_processing {
   
   template <typename Polyhedron, typename PatchId_pmap>
   class Detect_features_in_polyhedra;
 
-  template <typename Polyhedron, typename FT, typename PatchId_pmap>
+
+  template <typename Polyhedron, typename FT, typename Patch_id>
   void detect_features(Polyhedron& p,
                        FT angle_in_deg,
-                       PatchId_pmap pid_map);
+                       typename boost::property_map<Polyhedron, CGAL::face_patch_id_t<Patch_id> >::type);
   
 } // end namespace Polygon_mesh_processing
   

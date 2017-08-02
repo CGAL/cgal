@@ -129,15 +129,9 @@ void Polyhedron_demo_detect_sharp_edges_plugin::detectSharpEdges(bool input_dial
       qobject_cast<Scene_facegraph_item*>(scene->item(tuple.first));
     FaceGraph* pMesh = tuple.second;
     if (!pMesh) continue;
-
-    CGAL::Polygon_mesh_processing::Detect_features_in_polyhedra<FaceGraph,
-        int> detect_features;
-
-    // Get sharp features
-    detect_features.detect_sharp_edges(*pMesh, angle);
-    detect_features.detect_surface_patches(*pMesh);
-    detect_features.detect_vertices_incident_patches(*pMesh);
-
+    typedef typename boost::property_map<FaceGraph,CGAL::face_patch_id_t<int> >::type PatchID;
+    PatchID dummy = get(CGAL::face_patch_id_t<int>(), *pMesh);
+    CGAL::Polygon_mesh_processing::detect_features<FaceGraph, double, int>(*pMesh, angle, dummy);
     //update item
     item->setItemIsMulticolor(true);
     item->invalidateOpenGLBuffers();
