@@ -35,7 +35,7 @@
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 
 #include <CGAL/Mesh_3/Polyline_with_context.h>
-#include <CGAL/Polygon_mesh_processing/Detect_features_in_polyhedra.h>
+#include <CGAL/Polygon_mesh_processing/Detect_features_in_polygon_mesh.h>
 #include <CGAL/Mesh_3/properties_Polyhedron_3.h>
 
 #include <CGAL/enum.h>
@@ -799,7 +799,7 @@ detect_features(FT angle_in_degree,
   P2vmap p2vmap;
 
   namespace PMP = CGAL::Polygon_mesh_processing;
-  PMP::Detect_features_in_polyhedra<Polyhedron_type, Surface_patch_index> detect_features;
+  PMP::Detect_features_in_polygon_mesh<Polyhedron_type, Surface_patch_index> detect_features;
   BOOST_FOREACH(Polyhedron_type& p, poly)
   {
     initialize_ts(p);

@@ -39,7 +39,7 @@
 
 #include <CGAL/Mesh_3/Detect_polylines_in_polyhedra.h>
 #include <CGAL/Mesh_3/Polyline_with_context.h>
-#include <CGAL/Polygon_mesh_processing/Detect_features_in_polyhedra.h>
+#include <CGAL/Polygon_mesh_processing/Detect_features_in_polygon_mesh.h>
 #include <CGAL/Mesh_3/properties_Polyhedron_3.h>
 
 #include <CGAL/enum.h>
@@ -449,7 +449,7 @@ detect_features(FT angle_in_degree, std::vector<Polyhedron>& poly)
   // TODO: replace this map by and unordered_map
   P2vmap p2vmap;
 
-  CGAL::Polygon_mesh_processing::Detect_features_in_polyhedra<Polyhedron,Surface_patch_index> detect_features;
+  CGAL::Polygon_mesh_processing::Detect_features_in_polygon_mesh<Polyhedron,Surface_patch_index> detect_features;
   BOOST_FOREACH(Polyhedron& p, poly)
   {
     initialize_ts(p);

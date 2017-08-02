@@ -1,4 +1,4 @@
-// Copyright (c) 2010 INRIA Sophia-Antipolis (France).
+// Copyright (c) 2017 GeometryFactory (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -16,14 +16,14 @@
 // $Id$
 //
 //
-// Author(s)     : Stephane Tayeb
+// Author(s)     : Laurent Rineau, Stephane Tayeb, Maxime Gimeno
 //
 //******************************************************************************
 // File Description : 
 //******************************************************************************
 
-#ifndef CGAL_POLYGON_MESH_PROCESSING_DETECT_FEATURES_IN_POLYHEDRA_FWD_H
-#define CGAL_POLYGON_MESH_PROCESSING_DETECT_FEATURES_IN_POLYHEDRA_FWD_H
+#ifndef CGAL_POLYGON_MESH_PROCESSING_DETECT_FEATURES_IN_POLYGON_MESH_FWD_H
+#define CGAL_POLYGON_MESH_PROCESSING_DETECT_FEATURES_IN_POLYGON_MESH_FWD_H
 
 #include <CGAL/license/Polygon_mesh_processing.h>
 
@@ -34,7 +34,7 @@ namespace CGAL {
 namespace Polygon_mesh_processing {
   
   template <typename Polyhedron, typename Patch_id_, typename PatchId_pmap>
-  class Detect_features_in_polyhedra;
+  class Detect_features_in_polygon_mesh;
 
 
   template <typename Polyhedron, typename FT, typename Patch_id>
@@ -46,4 +46,4 @@ namespace Polygon_mesh_processing {
   
 } // end namespace CGAL
 
-#endif // CGAL_POLYGON_MESH_PROCESSING_DETECT_FEATURES_IN_POLYHEDRA_FWD_H
+#endif // CGAL_POLYGON_MESH_PROCESSING_DETECT_FEATURES_IN_POLYGON_MESH_FWD_H

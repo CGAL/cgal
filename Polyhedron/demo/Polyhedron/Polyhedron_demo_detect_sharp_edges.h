@@ -2,7 +2,7 @@
 #ifndef POLYHEDRON_DEMO_DETECT_SHARP_EDGES_H
 #define POLYHEDRON_DEMO_DETECT_SHARP_EDGES_H
 
-#include <CGAL/Polygon_mesh_processing/Detect_features_in_polyhedra.h>
+#include <CGAL/Polygon_mesh_processing/Detect_features_in_polygon_mesh.h>
 #include <CGAL/Mesh_3/properties.h>
 
 namespace CGAL
@@ -27,7 +27,7 @@ namespace CGAL
     typedef typename boost::property_map<Polyhedron,CGAL::face_patch_id_t<int> >::type PatchID;
     PatchID pid_map = get(face_patch_id_t<int>(), *pMesh);
 
-    CGAL::Polygon_mesh_processing::Detect_features_in_polyhedra<Polyhedron,int,PatchID> features_detector(pid_map);
+    CGAL::Polygon_mesh_processing::Detect_features_in_polygon_mesh<Polyhedron,int,PatchID> features_detector(pid_map);
     features_detector.detect_sharp_edges(*pMesh, angle);
   }
 
