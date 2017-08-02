@@ -52,8 +52,6 @@ include( CGAL_CreateSingleSourceCGALProgram )
 
 create_single_source_cgal_program( "dynamic_hull_3.cpp" )
 
-create_single_source_cgal_program( "dynamic_hull_LCC_3.cpp" )
-
 create_single_source_cgal_program( "dynamic_hull_SM_3.cpp" )
 
 create_single_source_cgal_program( "halfspace_intersection_3.cpp" )
