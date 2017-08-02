@@ -8,6 +8,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <set>
 #include <CGAL/boost/graph/selection.h>
 #include <CGAL/boost/graph/helpers.h>
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
