@@ -30,10 +30,7 @@
 
 namespace CGAL {
 
-/// \deprecated This function is deprecated since \cgal 4.12, the function
-/// `facets_in_complex_2_to_triangle_mesh()` should be used instead.
-///
-/// Gets reconstructed surface out of a SurfaceMeshComplex_2InTriangulation_3 object.
+/// \deprecated Gets reconstructed surface out of a SurfaceMeshComplex_2InTriangulation_3 object.
 ///
 /// This variant exports the surface as a polyhedron.
 /// It requires the surface to be manifold. For this purpose,
