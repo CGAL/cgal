@@ -48,7 +48,7 @@ namespace CGAL{
 template<class C2T3, class TriangleMesh>
 void facets_in_complex_2_to_triangle_mesh(const C2T3& c2t3, TriangleMesh& graph)
 {
-  typedef typename boost::property_map<FaceGraph, boost::vertex_point_t>::type VertexPointMap;
+  typedef typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type VertexPointMap;
   typedef typename boost::property_traits<VertexPointMap>::value_type Point_3;
   typedef typename C2T3::Triangulation Tr;
   typedef typename Tr::Vertex_handle Vertex_handle;
@@ -128,13 +128,13 @@ void facets_in_complex_2_to_triangle_mesh(const C2T3& c2t3, TriangleMesh& graph)
     std::map<Vertex_handle, int> V;
     int inum = 0;
     //add vertices
-    std::vector<typename boost::graph_traits<FaceGraph>::vertex_descriptor> vertices;
+    std::vector<typename boost::graph_traits<TriangleMesh>::vertex_descriptor> vertices;
     for(Vertex_iterator vit = tr.vertices_begin();
         vit != tr.vertices_end();
         ++vit)
     {
 
-      typename boost::graph_traits<FaceGraph>::vertex_descriptor v = add_vertex(graph);
+      typename boost::graph_traits<TriangleMesh>::vertex_descriptor v = add_vertex(graph);
       vertices.push_back(v);
       put(vpmap,
           v,
@@ -156,7 +156,7 @@ void facets_in_complex_2_to_triangle_mesh(const C2T3& c2t3, TriangleMesh& graph)
               : V[fit->first->vertex(tr.vertex_triple_index(fit->second, 2))]),
           id2(regular_orientation ? V[fit->first->vertex(tr.vertex_triple_index(fit->second, 2))]
               : V[fit->first->vertex(tr.vertex_triple_index(fit->second, 1))]);
-      std::vector<typename boost::graph_traits<FaceGraph>::vertex_descriptor> face;
+      std::vector<typename boost::graph_traits<TriangleMesh>::vertex_descriptor> face;
       face.resize(3);
       face[0] = vertices[id0];
       face[1] = vertices[id1];
