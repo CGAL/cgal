@@ -106,7 +106,9 @@ class Q_DECL_EXPORT Scene_mcf_item_poly
   Q_OBJECT
 public:
 #ifdef USE_SURFACE_MESH
-  Scene_mcf_item_sm(Face_graph* graph)
+  Scene_mcf_item_sm(Face_graph* graph,
+                    Scene_interface::Item_id id,
+                    QString name)
 #else
   Scene_mcf_item_poly(Face_graph* graph,
                       Scene_interface::Item_id id,
@@ -966,7 +968,7 @@ Polyhedron_demo_mean_curvature_flow_skeleton_plugin::getMCFItem()
       Scene_mcf_item* mcf = new Scene_mcf_item(item->face_graph(),
                                                scene->mainSelectionIndex(),
                                                QString("%1 (mcf)").arg(item->name()));
-      connect(item, &Scene_polyhedron_item::aboutToBeDestroyed,
+      connect(item, &Scene_face_graph_item::aboutToBeDestroyed,
               [mcf]{if(mcf) {mcf->InputMeshItemIndex = -1; mcf->input_triangle_mesh = NULL;}});
       scene->setSelectedItem(scene->addItem(mcf));
       return mcf;
