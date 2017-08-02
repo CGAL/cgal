@@ -26,7 +26,7 @@
 
 
 #include <CGAL/Kernel/global_functions_3.h>
-#include <CGAL/Polygon_mesh_processing/Detect_features_in_polyhedra_fwd.h>
+#include <CGAL/Polygon_mesh_processing/internal/Detect_features_in_polyhedra_fwd.h>
 #include <CGAL/Compare_handles_with_or_without_timestamps.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Mesh_3/properties.h>
