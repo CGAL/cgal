@@ -128,7 +128,13 @@ bool test_scene() {
   }
 
   // Test regularization
-  CGAL::regularize_planes (ransac, true, true, true, true,
+  typename Efficient_ransac::Plane_range planes = ransac.planes();
+  CGAL::regularize_planes (points,
+                           Point_map(),
+                           planes,
+                           CGAL::Shape_detection_3::Plane_map<Traits>(),
+                           CGAL::Shape_detection_3::Point_to_shape_index_map<Traits>(points, planes),
+                           true, true, true, true,
                            (FT)50., (FT)0.01);
   
   Point_index_range pts = ransac.indices_of_unassigned_points();
