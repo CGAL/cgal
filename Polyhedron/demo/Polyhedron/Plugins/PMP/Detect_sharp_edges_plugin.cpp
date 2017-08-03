@@ -130,9 +130,10 @@ void Polyhedron_demo_detect_sharp_edges_plugin::detectSharpEdges(bool input_dial
     FaceGraph* pMesh = tuple.second;
     if (!pMesh) continue;
     typedef typename boost::property_map<FaceGraph,CGAL::face_patch_id_t<int> >::type PatchID;
-    PatchID dummy = get(CGAL::face_patch_id_t<int>(), *pMesh);
-    CGAL::Polygon_mesh_processing::detect_features<FaceGraph, double, int>(*pMesh, angle,
-                                                                           CGAL::Polygon_mesh_processing::parameters::face_patch_id_map(dummy));
+    PatchID pid = get(CGAL::face_patch_id_t<int>(), *pMesh);
+    typedef typename boost::property_map<FaceGraph,CGAL::vertex_incident_patches_t<int> >::type VIP;
+    VIP vip = get(CGAL::vertex_incident_patches_t<int>(), *pMesh);
+    CGAL::Polygon_mesh_processing::detect_features(*pMesh, angle, pid, vip);
     //update item
     item->setItemIsMulticolor(true);
     item->invalidateOpenGLBuffers();

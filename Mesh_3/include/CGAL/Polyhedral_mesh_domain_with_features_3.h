@@ -448,23 +448,23 @@ detect_features(FT angle_in_degree, std::vector<Polyhedron>& poly)
                    vertex_descriptor> P2vmap;
   // TODO: replace this map by and unordered_map
   P2vmap p2vmap;
-
-  CGAL::Polygon_mesh_processing::Detect_features_in_polygon_mesh<Polyhedron,Surface_patch_index> detect_features;
   BOOST_FOREACH(Polyhedron& p, poly)
   {
     initialize_ts(p);
-
+    typedef typename boost::property_map<Polyhedron,CGAL::face_patch_id_t<Patch_id> >::type PIDMap;
+    typedef typename boost::property_map<Polyhedron,CGAL::vertex_incident_patches_t<Patch_id> >::type VIPMap;
+    PIDMap pid_map = get(face_patch_id_t<Patch_id>(), p);
+    VIPMap vip_map = get(vertex_incident_patches_t<Patch_id>(), p);
     // Get sharp features
-    detect_features.detect_sharp_edges(p, angle_in_degree);
-    detect_features.detect_surface_patches(p);
-    detect_features.detect_vertices_incident_patches(p);
+    CGAL::Polygon_mesh_processing::detect_features(p, angle_in_degree,pid_map, vip_map);
+
 
     internal::Mesh_3::Is_featured_edge<Polyhedron> is_featured_edge(p);
 
     add_featured_edges_to_graph(p, is_featured_edge, g_copy, p2vmap);
   }
   add_features_from_split_graph_into_polylines(g_copy);
-  borders_detected_ = true;/*done by Mesh_3::detect_features*/
+  borders_detected_ = true;/*done by PMP::detect_features*/
 }
 
 template < typename GT_, typename P_, typename TA_,
