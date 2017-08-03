@@ -30,8 +30,8 @@ public:
         return true;
       else
         if (action==actionShuffle &&
-            qobject_cast<Scene_polyhedron_item*>(scene->item(index))
-            ||qobject_cast<Scene_surface_mesh_item*>(scene->item(index))
+            (qobject_cast<Scene_polyhedron_item*>(scene->item(index))
+            ||qobject_cast<Scene_surface_mesh_item*>(scene->item(index)))
             )
           return true;
     }
