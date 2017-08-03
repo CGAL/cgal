@@ -210,82 +210,79 @@ public:
     return (std::make_pair(false, iter));
   }
 
-  /*! Remove a curve from the set of left curves. */
-  void remove_curve_from_left(Subcurve* curve)
-  {
-    Subcurve_iterator iter;
-    for (iter = m_left_curves.begin(); iter!= m_left_curves.end(); ++iter) {
-      m_left_curves.erase(iter);
-      return;
-    }
-  }
-
-  /*! Returns an iterator to the first curve to the left of the event. */
+  /*! Return an iterator to the first curve to the left of the event. */
   Subcurve_iterator left_curves_begin() { return (m_left_curves.begin()); }
 
-  /*! Returns an iterator to the one past the last curve to the left
-      of the event. */
+  /*! Return an iterator to the one past the last curve to the left
+   * of the event.
+   */
   Subcurve_iterator left_curves_end() { return (m_left_curves.end()); }
 
-  /*! Returns an iterator to the first curve to the right of the event. */
+  /*! Return an iterator to the first curve to the right of the event. */
   Subcurve_iterator right_curves_begin() { return (m_right_curves.begin()); }
 
-  /*! Returns an iterator to the one past the last curve to the right
-      of the event. */
+  /*! Return an iterator to the one past the last curve to the right
+   * of the event.
+   */
   Subcurve_iterator right_curves_end() { return (m_right_curves.end()); }
 
   /*! Returns a const iterator to the first curve to the left of the event. */
   Subcurve_const_iterator left_curves_begin() const
   { return m_left_curves.begin(); }
 
-  /*! Returns a const iterator to the past the end curve to the left
-    of the event. */
+  /*! Return a const iterator to the past the end curve to the left
+   * of the event.
+   */
   Subcurve_const_iterator left_curves_end() const
   { return m_left_curves.end(); }
 
-  /*! Returns a const iterator to the first curve to the right of the event. */
+  /*! Return a const iterator to the first curve to the right of the event. */
   Subcurve_const_iterator right_curves_begin() const
   { return m_right_curves.begin(); }
 
-  /*! Returns a const iterator to the past the end curve to the right
-    of the event. */
+  /*! Return a const iterator to the past the end curve to the right
+   * of the event.
+   */
   Subcurve_const_iterator right_curves_end() const
   { return m_right_curves.end(); }
 
-  /*! Returns a reverse_iterator to the first curve of the reversed list
-      of the right curves of the event. */
+  /*! Return a reverse_iterator to the first curve of the reversed list
+   * of the right curves of the event.
+   */
   Subcurve_reverse_iterator right_curves_rbegin()
   { return m_right_curves.rbegin(); }
 
-  /*! Returns a reverse_iterator to the past-end curve of the reversed list
-      of the right curves of the event. */
+  /*! Return a reverse_iterator to the past-end curve of the reversed list
+   * of the right curves of the event.
+   */
   Subcurve_reverse_iterator right_curves_rend()
   { return m_right_curves.rend(); }
 
-  /*! Returns a reverse_iterator to the first curve of the reversed list
-      of the left curves of the event. */
+  /*! Return a reverse_iterator to the first curve of the reversed list
+   * of the left curves of the event.
+   */
   Subcurve_reverse_iterator left_curves_rbegin()
   { return m_left_curves.rbegin(); }
 
-  /*! Returns a reverse_iterator to the past-end curve of the reversed list
-      of the left curves of the event. */
+  /*! Return a reverse_iterator to the past-end curve of the reversed list
+   * of the left curves of the event.
+   */
   Subcurve_reverse_iterator left_curves_rend()
   { return m_left_curves.rend(); }
 
-  /*! Returns the number of curves defined to the left of the event. */
+  /*! Return the number of curves defined to the left of the event. */
   size_t number_of_left_curves() { return m_left_curves.size(); }
 
-  /*! Returns the number of curves defined to the right of the event. */
+  /*! Return the number of curves defined to the right of the event. */
   size_t number_of_right_curves() { return (m_right_curves.size()); }
 
-  /*! Checks if at least one curve is defined to the left of the event. */
+  /*! Check whether at least one curve is defined to the left of the event. */
   bool has_left_curves() const { return (! m_left_curves.empty()); }
 
   /*! Checks if at least one curve is defined to the right of the event. */
   bool has_right_curves() const { return (! m_right_curves.empty()); }
 
-  /*!
-   * Get the actual event point (const version).
+  /*! Obtain the actual event point (const version).
    * \pre The event is associated with a valid point.
    */
   const Point_2& point() const
@@ -294,7 +291,7 @@ public:
     return m_point;
   }
 
-  /*! Get the actual event point (non-const version).
+  /*! Obtain the actual event point (non-const version).
    * \pre The event is associated with a valid point.
    */
   Point_2& point()
@@ -303,7 +300,7 @@ public:
     return m_point;
   }
 
-  /*! Get a curve associated with the event (const version).
+  /*! Obtain a curve associated with the event (const version).
    * \pre The event has incident curves.
    */
   const X_monotone_curve_2& curve() const
