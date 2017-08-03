@@ -332,8 +332,8 @@ private:
 * then the source of `p.second` is.
 * If the target of `p.second` has not been marked for deletion,
 * then the source of `p.first` is.
-* A vertex is marked for deletion if its corresponding point has already be seen
-* with a vertex previously handled.
+* A vertex is marked for deletion if its corresponding point has already been seen
+* in another vertex previously handled.
 *
 * \pre For each halfedge in a pair of `hedge_pairs_to_stitch`, the corresponding
 *      edge is neither degenerated nor incident to a degenerate edge.
