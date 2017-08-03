@@ -206,7 +206,6 @@ void insert(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
             const Curve& c, const PointLocation& pl,
             typename PointLocation::Point_2*)
 {
-  typedef GeometryTraits_2                              Gt2;
   typedef TopologyTraits                                Tt;
 
   typedef typename Tt::Zone_insertion_visitor           Zone_visitor;
