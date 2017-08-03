@@ -194,8 +194,8 @@ struct AABB_traits_base_2<GeomTraits,true>{
 ///                 member function `bbox()` that returns the bounding box  of the primitive.
 ///
 /// If the argument `GeomTraits` is a model of the concept \ref
-/// `AABBRayIntersectionGeomTraits`, this class is also a model of \ref
-/// `AABBRayIntersectionTraits`.
+/// AABBRayIntersectionGeomTraits, this class is also a model of \ref
+/// AABBRayIntersectionTraits.
 ///
 /// \sa `AABBTraits`
 /// \sa `AABB_tree`
