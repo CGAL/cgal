@@ -6,7 +6,7 @@ CXX_FLAGS="-DCGAL_NDEBUG"
 function build_examples {
   mkdir -p build-travis
   cd build-travis
-  cmake -DCGAL_DIR="$ROOT/build" -DCMAKE_CXX_FLAGS_RELEASE="${CXX_FLAGS}" ..
+  cmake -DCGAL_DIR="$ROOT/build" -DQt5_DIR="/opt/qt55/lib/cmake/Qt5" -DCMAKE_CXX_FLAGS_RELEASE="${CXX_FLAGS}" ..
   make -j2
 }
 
@@ -44,7 +44,7 @@ function build_demo {
     QGLVIEWERROOT=$PWD/qglviewer
     export QGLVIEWERROOT
   fi
-  cmake -DCGAL_DIR="$ROOT/build" -DCGAL_DONT_OVERRIDE_CMAKE_FLAGS:BOOL=ON -DCMAKE_CXX_FLAGS_RELEASE="${CXX_FLAGS} ${EXTRA_CXX_FLAGS}" ..
+  cmake -DCGAL_DIR="$ROOT/build" -DQt5_DIR="/opt/qt55/lib/cmake/Qt5" -DCGAL_DONT_OVERRIDE_CMAKE_FLAGS:BOOL=ON -DCMAKE_CXX_FLAGS_RELEASE="${CXX_FLAGS} ${EXTRA_CXX_FLAGS}" ..
   make -j2
 }
 
@@ -58,7 +58,7 @@ do
     zsh $ROOT/Scripts/developer_scripts/test_merge_of_branch HEAD
     mkdir -p build-travis
     pushd build-travis
-    cmake -DCGAL_ENABLE_CHECK_HEADERS=ON ../..
+    cmake -DCGAL_ENABLE_CHECK_HEADERS=ON -DQt5_DIR="/opt/qt55/lib/cmake/Qt5" ../..
     make -j2 check_headers
     popd
   	#parse current matrix and check that no package has been forgotten
