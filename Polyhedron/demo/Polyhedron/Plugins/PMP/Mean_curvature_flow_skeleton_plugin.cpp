@@ -14,6 +14,7 @@
 #include <CGAL/Mesh_3/properties_Polyhedron_3.h>
 #endif
 
+#include "Scene_mcf_item.h"
 #include "Scene_points_with_normal_item.h"
 #include "Scene_polylines_item.h"
 #include "Scene.h"
@@ -95,70 +96,6 @@ struct Polyline_visitor
   
   void end_polyline(){}
 };
-
-#ifdef USE_SURFACE_MESH
-class Q_DECL_EXPORT Scene_mcf_item_sm
-#else
-class Q_DECL_EXPORT Scene_mcf_item_poly
-#endif
-    : public CGAL::Three::Scene_group_item
-{
-  Q_OBJECT
-public:
-#ifdef USE_SURFACE_MESH
-  Scene_mcf_item_sm(Face_graph* graph,
-                    Scene_interface::Item_id id,
-                    QString name)
-#else
-  Scene_mcf_item_poly(Face_graph* graph,
-                      Scene_interface::Item_id id,
-                      QString name)
-#endif
-  {
-    mcs = NULL;
-    meso_skeleton = NULL;
-    input_triangle_mesh = graph;
-    fixedPointsItemIndex = -1;
-    skeletonItemIndex = -1;
-    nonFixedPointsItemIndex = -1;
-    poleLinesItemIndex = -1;
-    contractedItemIndex = -1;
-    InputMeshItemIndex = id;
-    meso_skeleton = NULL;
-    this->setName(name);
-  }
-#ifdef USE_SURFACE_MESH
-  ~Scene_mcf_item_sm()
-#else
-  ~Scene_mcf_item_poly()
-#endif
-  {
-    if(mcs)
-      delete mcs;
-    if(meso_skeleton)
-      delete meso_skeleton;
-  }
-
-public:
-  Mean_curvature_skeleton* mcs;
-  Face_graph* meso_skeleton; // a copy of the meso_skeleton that is displayed
-  Face_graph* input_triangle_mesh;
-
-  int fixedPointsItemIndex;
-  int nonFixedPointsItemIndex;
-  int poleLinesItemIndex;
-  int skeletonItemIndex;
-  int contractedItemIndex;
-  int InputMeshItemIndex;
-
-  Skeleton skeleton_curve;
-}; // end class Scene_mcf_item
-
-#ifdef USE_SURFACE_MESH
-typedef Scene_mcf_item_sm Scene_mcf_item;
-#else
-typedef Scene_mcf_item_poly Scene_mcf_item;
-#endif
 
 using namespace CGAL::Three;
 class Polyhedron_demo_mean_curvature_flow_skeleton_plugin :
