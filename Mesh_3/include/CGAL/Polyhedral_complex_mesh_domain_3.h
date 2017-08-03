@@ -236,10 +236,8 @@ is union of the positive side of all of its facets, usually named the
 `Polyhedral_complex_mesh_domain_3` assumes that for each polyhedral
 surface, the sub-domain indices on both sides are known.
 
-\tparam Polyhedron stands for the type of the input polyhedral surface(s).
-The only requirements for this type is that the triangles of the surfaces
-must be accessible through an object of the class
-`TriangleAccessor`. @todo Document the requirements.
+\tparam Polyhedron stands for the type of the input polyhedral surface(s),
+model of `FaceListGraph`.
 
 \tparam IGT_ stands for a geometric traits class
 providing the types and functors required to implement
@@ -247,18 +245,9 @@ the intersection tests and intersection computations
 for polyhedral boundary surfaces. This parameter has to be instantiated
 with a model of the concept `IntersectionGeometricTraits_3`.
 
-\tparam TriangleAccessor provides access to the triangles
-of the input polyhedral
-surface. It must be a model of the concept
-`TriangleAccessor_3`. It defaults to
-`Triangle_accessor_3<Polyhedron,IGT_>`. The type `IGT_::Triangle_3` must
-be identical to the type `TriangleAccessor::Triangle_3`.
-
 \cgalModels `MeshDomainWithFeatures_3`
 
-\sa `TriangleAccessor_3`
 \sa `IntersectionGeometricTraits_3`
-\sa `CGAL::Triangle_accessor_3<Polyhedron_3<K>,K>`
 \sa `CGAL::make_mesh_3()`.
 \sa `CGAL::Mesh_domain_with_polyline_features_3<MeshDomain>`
 \sa `CGAL::Polyhedral_mesh_domain_3<Polyhedron,IGT_,TriangleAccessor>`
@@ -266,13 +255,13 @@ be identical to the type `TriangleAccessor::Triangle_3`.
 */
 template < class IGT_,
            class Polyhedron = typename Mesh_polyhedron_3<IGT_>::type,
-           class TriangleAccessor=Triangle_accessor_3<Polyhedron,IGT_>
+           class TriangleAccessor=CGAL::Default
            >
 class Polyhedral_complex_mesh_domain_3
   : public Mesh_domain_with_polyline_features_3<
       Polyhedral_mesh_domain_3< Polyhedron,
                                 IGT_,
-                                TriangleAccessor,
+                                CGAL::Default,
                                 Tag_true,   //Use_patch_id_tag
                                 Tag_true > >//Use_exact_intersection_tag
 {
@@ -287,17 +276,16 @@ protected:
 
 private:
   typedef IGT_ IGT;
-  typedef Polyhedral_mesh_domain_3<Polyhedron, IGT_, TriangleAccessor,
+  typedef Polyhedral_mesh_domain_3<Polyhedron, IGT_, CGAL::Default,
                                    Tag_true, Tag_true >       BaseBase;
-  typedef Polyhedral_complex_mesh_domain_3<IGT_, Polyhedron,
-                                           TriangleAccessor>  Self;
+  typedef Polyhedral_complex_mesh_domain_3<IGT_, Polyhedron>  Self;
   /// @endcond
 
 public:
   /// The base class
   typedef Mesh_domain_with_polyline_features_3<
     Polyhedral_mesh_domain_3<
-      Polyhedron, IGT_, TriangleAccessor,
+      Polyhedron, IGT_, CGAL::Default,
       Tag_true, Tag_true > > Base;
   /*!
   Numerical type.
