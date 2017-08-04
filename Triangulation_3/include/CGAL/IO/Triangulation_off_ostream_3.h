@@ -37,7 +37,6 @@ export_triangulation_3_to_off(std::ostream & os,
 {
   typedef Triangulation_3<GT,TDS>                       Tr;
   typedef typename Tr::Vertex_handle                    Vertex_handle;
-  typedef typename Tr::Vertex_iterator                  Vertex_iterator;
   typedef typename Tr::Finite_vertices_iterator         Finite_vertex_iterator;
   typedef typename Tr::All_cells_iterator               Cells_iterator;
   typedef typename Tr::Finite_cells_iterator            Finite_cells_iterator;
@@ -48,7 +47,7 @@ export_triangulation_3_to_off(std::ostream & os,
   
   // write the vertices
   std::map<Vertex_handle, int> index_of_vertex;
-  int i = 0;
+  std::size_t i = 0;
   for(Finite_vertex_iterator it = tr.finite_vertices_begin(); 
       it != tr.finite_vertices_end(); ++it, ++i)
   {

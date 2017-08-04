@@ -17,8 +17,9 @@ The modifying functions `insert` and `remove` will overwrite
 the one inherited from the underlying triangulation class `Dt`.
 At the moment, only the static version is implemented.
 
-\tparam Dt must be either `Delaunay_triangulation_3`, `Regular_triangulation_3`
-or `Periodic_3_triangulation_3`. Note that `Dt::Geom_traits`, `Dt::Vertex`, and `Dt::Face`
+\tparam Dt must be either `Delaunay_triangulation_3`, `Regular_triangulation_3`,
+`Periodic_3_Delaunay_triangulation_3` or `Periodic_3_regular_triangulation_3`.
+Note that `Dt::Geom_traits`, `Dt::Vertex`, and `Dt::Face`
 must be model the concepts `AlphaShapeTraits_3`,
 `AlphaShapeVertex_3` and `AlphaShapeCell_3`, respectively.
 
@@ -438,13 +439,13 @@ size_type number_of_solid_components(const FT& alpha = get_alpha()) const;
 
 /*!
 Returns an iterator pointing to smallest \f$ \alpha\f$ value 
-such that the alpha shape satisfies the following two properties: 
+such that the alpha shape satisfies the following two properties:
 
-all data points are either on the boundary or in the interior 
-of the regularized version of the alpha shape. 
+- All data points are either on the boundary or in the interior
+of the regularized version of the alpha shape.
 
-The number of solid component of the alpha shape is equal to or 
-smaller than `nb_components`. 
+- The number of solid component of the alpha shape is equal to or
+smaller than `nb_components`.
 */ 
 Alpha_iterator find_optimal_alpha(size_type nb_components) const; 
 

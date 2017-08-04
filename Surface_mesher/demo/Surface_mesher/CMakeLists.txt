@@ -14,6 +14,9 @@ endif()
 if(POLICY CMP0043)
   cmake_policy(SET CMP0043 OLD)
 endif()
+if(POLICY CMP0071)
+  cmake_policy(SET CMP0071 NEW)
+endif()
 
 set(PACKAGE_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../..)
 

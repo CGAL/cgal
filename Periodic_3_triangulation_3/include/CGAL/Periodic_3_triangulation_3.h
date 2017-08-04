@@ -205,19 +205,37 @@ public:
 
 public:
   enum Iterator_type {
-    STORED=0,
+    STORED = 0,
     UNIQUE, //1
     STORED_COVER_DOMAIN, //2
     UNIQUE_COVER_DOMAIN };//3
 
   enum Locate_type {
-    VERTEX=0,
+    VERTEX = 0,
     EDGE, //1
     FACET, //2
     CELL, //3
     EMPTY , //4
     OUTSIDE_CONVEX_HULL, // unused, for compatibility with Alpha_shape_3
     OUTSIDE_AFFINE_HULL }; // unused, for compatibility with Alpha_shape_3
+
+  // unused and undocumented types and functions required to be
+  // compatible with Alpha_shape_3 / Periodic_3_mesh_3
+public:
+  typedef Cell_iterator                        Finite_cells_iterator;
+  typedef Facet_iterator                       Finite_facets_iterator;
+  typedef Edge_iterator                        Finite_edges_iterator;
+  typedef Vertex_iterator                      Finite_vertices_iterator;
+
+  int dimension() const { return (number_of_vertices() == 0) ? -2 : 3; }
+
+  template<class T>
+  bool is_infinite(const T&, int = 0, int = 0) const { return false; }
+
+  size_type number_of_finite_cells() const { return number_of_cells(); }
+  size_type number_of_finite_facets() const { return number_of_facets(); }
+  size_type number_of_finite_edges() const { return number_of_edges(); }
+  size_type number_of_finite_vertices() const { return number_of_vertices(); }
 
 private:
   Geometric_traits  _gt;
@@ -364,16 +382,6 @@ public:
   size_type number_of_vertices() const {
     if(is_1_cover()) return _tds.number_of_vertices();
     else return _tds.number_of_vertices()/27;
-  }
-
-  size_type number_of_finite_cells() const {
-    return number_of_cells();
-  }
-  size_type number_of_finite_facets() const {
-    return number_of_facets();
-  }
-  size_type number_of_finite_edges() const {
-    return number_of_edges();
   }
 
   size_type number_of_stored_cells() const {

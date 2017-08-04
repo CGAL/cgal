@@ -3,6 +3,7 @@
 project( Polyhedron_Demo )
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON)
 cmake_minimum_required(VERSION 3.1)
@@ -11,6 +12,9 @@ if(POLICY CMP0053)
 endif()
 if(POLICY CMP0043)
   cmake_policy(SET CMP0043 OLD)
+endif()
+if(POLICY CMP0071)
+  cmake_policy(SET CMP0071 NEW)
 endif()
 
 list(FIND CMAKE_CXX_COMPILE_FEATURES cxx_generalized_initializers has_cpp11)
