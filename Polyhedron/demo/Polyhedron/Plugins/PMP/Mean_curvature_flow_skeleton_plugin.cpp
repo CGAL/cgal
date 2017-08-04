@@ -907,6 +907,8 @@ Polyhedron_demo_mean_curvature_flow_skeleton_plugin::getMCFItem()
       connect(item, &Scene_face_graph_item::aboutToBeDestroyed,
               [mcf]{if(mcf) {mcf->InputMeshItemIndex = -1; mcf->input_triangle_mesh = NULL;}});
       scene->setSelectedItem(scene->addItem(mcf));
+      item->setVisible(false);
+      scene->itemChanged(item);
       return mcf;
     }
   }
