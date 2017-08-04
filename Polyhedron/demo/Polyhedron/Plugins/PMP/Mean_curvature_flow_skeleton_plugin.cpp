@@ -175,6 +175,9 @@ public:
   }
 
   void init_ui(double diag) {
+    on_checkbox_toggled(false);
+    connect(ui->is_medially_centered, SIGNAL(toggled(bool)),
+            this, SLOT(on_checkbox_toggled(bool)));
     ui->omega_H->setValue(0.1);
     ui->omega_H->setSingleStep(0.1);
     ui->omega_H->setDecimals(3);
@@ -309,6 +312,7 @@ public Q_SLOTS:
   void on_actionSkeletonize();
   void on_actionConverge();
   void on_actionUpdateBBox(bool);
+  void on_checkbox_toggled(bool);
   void on_actionSegment();
   void on_actionItemAboutToBeDestroyed(CGAL::Three::Scene_item*);
 
@@ -325,6 +329,12 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionMCFSkeleton_t
   dockWidget->show();
   dockWidget->raise();
   getMCFItem();
+}
+
+void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_checkbox_toggled(bool b)
+{
+  ui->omega_P->setEnabled(b);
+  ui->label_omega_P->setEnabled(b);
 }
 
 void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionUpdateBBox(bool)
