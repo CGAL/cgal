@@ -90,7 +90,6 @@ namespace internal {
   template <> void property_header_type<unsigned short> (std::ostream& stream) { stream << "ushort"; }
   template <> void property_header_type<int> (std::ostream& stream) { stream << "int"; }
   template <> void property_header_type<unsigned int> (std::ostream& stream) { stream << "uint"; }
-  template <> void property_header_type<std::size_t> (std::ostream& stream) { stream << "uint"; }
   template <> void property_header_type<float> (std::ostream& stream) { stream << "float"; }
   template <> void property_header_type<double> (std::ostream& stream) { stream << "double"; }
     
