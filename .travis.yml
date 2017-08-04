@@ -45,7 +45,6 @@ env:
   - PACKAGE='Visibility_2 Voronoi_diagram_2 ' 
   - PACKAGE='Polyhedron_demo'
 
-
 compiler: 
   - clang-3.6
   - gcc  
@@ -55,7 +54,7 @@ install:
 before_script: 
 - mkdir -p build 
 - cd build 
-- cmake -DCGAL_HEADER_ONLY=ON -DWITH_demos:BOOL=TRUE -DWITH_examples:BOOL=true -DWITH_tests:BOOL=TRUE -DCMAKE_CXX_FLAGS_RELEASE=-DCGAL_NDEBUG .. 
+- cmake -DCGAL_HEADER_ONLY=ON -DQt5_DIR="/opt/qt55/lib/cmake/Qt5" -DQt5Svg_DIR="/opt/qt55/lib/cmake/Qt5Svg" -DQt5OpenGL_DIR="/opt/qt55/lib/cmake/Qt5OpenGL" -DWITH_demos:BOOL=TRUE -DWITH_examples:BOOL=true -DWITH_tests:BOOL=TRUE -DCMAKE_CXX_FLAGS_RELEASE=-DCGAL_NDEBUG .. 
 - make 
 - cd .. 
 script: 
@@ -87,10 +86,6 @@ addons:
       - mesa-common-dev
       - libglu1-mesa-dev
 
-      #  - libqt5gui5
-      #  - libqt5widgets5
-      #  - libqt5xml5
-      #  - qt5-qmake
       # Not allowed (yet) 
       # - geomview 
       # - libglew1.5-dev 
