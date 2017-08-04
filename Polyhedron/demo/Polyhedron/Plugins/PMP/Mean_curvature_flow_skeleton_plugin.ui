@@ -52,7 +52,7 @@
            <item>
             <widget class="QLabel" name="label_2">
              <property name="text">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;- Select an item called &lt;span style=&quot; font-style:italic;&quot;&gt;name&lt;/span&gt;(mcf) to apply a step to it, or select a face_graph item to create a new mcf from it. &lt;/p&gt;&lt;p&gt;- Run iterations until you are satisfied of the result.&lt;/p&gt;&lt;p&gt;- You can create a skeleton without running any iteration, but it will probably not be acceptable. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This widget gives access to the low level steps of the mean curvature flow sketonization algorithm. The algorithm is iterative. Each iteration consist in calls to &lt;span style=&quot; font-style:italic;&quot;&gt;Contract&lt;/span&gt;, &lt;span style=&quot; font-style:italic;&quot;&gt;Collapse&lt;/span&gt;, &lt;span style=&quot; font-style:italic;&quot;&gt;Split&lt;/span&gt;, and &lt;span style=&quot; font-style:italic;&quot;&gt;Degeneracy&lt;/span&gt; (repectively mesh contraction, edge collapse, edge split, and degenerate edge removal). The skeleton extraction can be called at any time but for a better result it should be called when the iterations are converging. A segmentation of the surface can be extracted using the distance of the mesh to the skeleton computed.&lt;/p&gt;&lt;p&gt;All operations can be applied to a polyhedron item or to a surface mesh item. The generated mcf group must be selected in order to continue an on-going set of operations. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="wordWrap">
               <bool>true</bool>
