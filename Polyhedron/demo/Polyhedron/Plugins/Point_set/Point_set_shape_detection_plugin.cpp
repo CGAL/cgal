@@ -579,6 +579,106 @@ void Polyhedron_demo_point_set_shape_detection_plugin::build_alpha_shape
   delete soup_item;
 }
 
+void Polyhedron_demo_point_set_shape_detection_plugin::on_actionEstimateParameters_triggered() {
+
+  CGAL::Random rand(time(0));
+  const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
+
+  Scene_points_with_normal_item* item =
+    qobject_cast<Scene_points_with_normal_item*>(scene->item(index));
+
+  if(item)
+    {
+      // Gets point set
+      Point_set* points = item->point_set();
+
+      if(points == NULL)
+        return;
+
+      if (points->nb_selected_points() == 0)
+        {
+          QMessageBox::information(NULL,
+                                   tr("Warning"),
+                                   tr("Selection is empty.\nTo estimate parameters, please select a planar section."));
+          return;
+        }
+      
+      QApplication::setOverrideCursor(Qt::WaitCursor);
+
+      typedef CGAL::Search_traits_3<Kernel> SearchTraits_3;
+      typedef CGAL::Search_traits_adapter <Point_set::Index,
+                                           Point_set::Point_map, SearchTraits_3> Search_traits;
+      typedef CGAL::Orthogonal_k_neighbor_search<Search_traits> Neighbor_search;
+      typedef typename Neighbor_search::Tree Tree;
+      typedef typename Neighbor_search::Distance Distance;
+
+      // build kdtree
+      Tree tree(points->first_selected(),
+                points->end(),
+                typename Tree::Splitter(),
+                Search_traits (points->point_map())
+                );
+      Distance tr_dist(points->point_map());
+
+      Plane_3 plane;
+      CGAL::linear_least_squares_fitting_3(boost::make_transform_iterator
+                                           (points->first_selected(),
+                                            CGAL::Property_map_to_unary_function<Point_set::Point_map>
+                                            (points->point_map())),
+                                           boost::make_transform_iterator
+                                           (points->end(),
+                                            CGAL::Property_map_to_unary_function<Point_set::Point_map>
+                                            (points->point_map())),
+                                           plane,
+                                           CGAL::Dimension_tag<0>());
+
+      std::vector<double> epsilon, dispersion, cluster_epsilon;
+
+      Vector_3 norm = plane.orthogonal_vector();
+      norm = norm / std::sqrt (norm * norm);
+      for (Point_set::iterator it = points->first_selected(); it != points->end(); ++ it)
+        {
+          double dist = CGAL::squared_distance (plane, points->point(*it));
+          epsilon.push_back(dist);
+
+          double disp = std::fabs (norm * points->normal(*it));
+          dispersion.push_back (disp);
+
+          Neighbor_search search(tree, points->point(*it), 2, 0, true, tr_dist);
+          typename Neighbor_search::iterator nit = search.begin();
+          ++ nit;
+          double eps = nit->second;
+          cluster_epsilon.push_back(eps);
+        }
+
+      std::sort (epsilon.begin(), epsilon.end());
+      std::sort (dispersion.begin(), dispersion.end());
+      std::sort (cluster_epsilon.begin(), cluster_epsilon.end());
+      
+      QApplication::restoreOverrideCursor();
+
+      
+      QMessageBox::information(NULL,
+                               tr("Estimated Parameters"),
+                               tr("Epsilon = [%1 ; %2 ; %3 ; %4 ; %5]\nNormal Tolerance = [%6 ; %7 ; %8 ; %9 ; %10]\nMinimum Number of Points = %11\nConnectivity Epsilon = [%12 ; %13 ; %14 ; %15 ; %16]")
+                               .arg(std::sqrt(epsilon.front()))
+                               .arg(std::sqrt(epsilon[epsilon.size() / 10]))
+                               .arg(std::sqrt(epsilon[epsilon.size() / 2]))
+                               .arg(std::sqrt(epsilon[9 * epsilon.size() / 10]))
+                               .arg(std::sqrt(epsilon.back()))
+                               .arg(dispersion.back())
+                               .arg(dispersion[9 * dispersion.size() / 10])
+                               .arg(dispersion[dispersion.size() / 2])
+                               .arg(dispersion[dispersion.size() / 10])
+                               .arg(dispersion.front())
+                               .arg(points->nb_selected_points())
+                               .arg(std::sqrt(cluster_epsilon.front()))
+                               .arg(std::sqrt(cluster_epsilon[cluster_epsilon.size() / 10]))
+                               .arg(std::sqrt(cluster_epsilon[cluster_epsilon.size() / 2]))
+                               .arg(std::sqrt(cluster_epsilon[9 * cluster_epsilon.size() / 10]))
+                               .arg(std::sqrt(cluster_epsilon.back())));
+    }
+}
 
 #include <QtPlugin>
 
