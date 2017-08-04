@@ -618,7 +618,6 @@ if(!contracted_item)
 
   std::cout << "ok (" << time.elapsed() << " ms, " << ")" << std::endl;
 
-  on_actionSkeletonize();
   // update scene
   Scene_points_with_normal_item* fixedPointsItem = new Scene_points_with_normal_item;
   fixedPointsItem->setName(QString("fixed points of %1").arg(contracted_item->name()));
