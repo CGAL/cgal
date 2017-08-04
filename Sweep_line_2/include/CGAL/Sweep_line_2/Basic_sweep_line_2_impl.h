@@ -462,6 +462,7 @@ void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_sort_left_curves()
   Subcurve* curve = *(m_currentEvent->left_curves_begin());
   Status_line_iterator sl_iter = curve->hint();
 
+  CGAL_assertion(sl_iter != m_statusLine.end());
   CGAL_assertion(*sl_iter == curve);
   // Look for the first curve in the vertical ordering that is also in the
   // left curve of the event
