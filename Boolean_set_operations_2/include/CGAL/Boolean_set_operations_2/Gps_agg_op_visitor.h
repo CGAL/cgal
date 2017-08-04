@@ -17,7 +17,7 @@
 //             Efi Fogel <efifogel@gmail.com>
 
 #ifndef CGAL_BSO_2_GSP_AGG_OP_VISITOR_H
-#define CGAL_GBSO_2_SP_AGG_OP_VISITOR_H
+#define CGAL_BSO_2_GSP_AGG_OP_VISITOR_H
 
 #include <CGAL/license/Boolean_set_operations_2.h>
 
