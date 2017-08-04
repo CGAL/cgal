@@ -158,6 +158,11 @@ Scene::Item_id
 Scene::erase(Scene::Item_id index)
 {
   CGAL::Three::Scene_item* item = m_entries[index];
+  if(qobject_cast<Scene_group_item*>(item))
+  {
+    setSelectedItemsList(QList<Scene_interface::Item_id>()<<item_id(item));
+    return erase(selectionIndices());
+  }
   if(item->parentGroup()
      && item->parentGroup()->isChildLocked(item))
     return -1;

@@ -905,7 +905,10 @@ Polyhedron_demo_mean_curvature_flow_skeleton_plugin::getMCFItem()
                                                scene->mainSelectionIndex(),
                                                QString("%1 (mcf)").arg(item->name()));
       connect(item, &Scene_face_graph_item::aboutToBeDestroyed,
-              [mcf]{if(mcf) {mcf->InputMeshItemIndex = -1; mcf->input_triangle_mesh = NULL;}});
+              [mcf, this]{
+        if(scene->item_id(mcf) != -1){
+          scene->erase(scene->item_id(mcf));
+      }});
       scene->setSelectedItem(scene->addItem(mcf));
       item->setVisible(false);
       scene->itemChanged(item);
