@@ -178,6 +178,17 @@ public:
     on_checkbox_toggled(false);
     connect(ui->is_medially_centered, SIGNAL(toggled(bool)),
             this, SLOT(on_checkbox_toggled(bool)));
+    connect(ui->helpButton, &QPushButton::clicked,
+            [this]{QMessageBox::about(mw, QString("Help"),
+                                    QString("This widget gives access to the low level steps of the mean curvature flow sketonization algorithm. "
+                                            "The algorithm is iterative. Each iteration consist in calls to Contract, Collapse, Split, "
+                                            "and Degeneracy (repectively mesh contraction, edge collapse, edge split, and degenerate edge"
+                                            "removal). The skeleton extraction can be called at any time but for a better result it should be"
+                                            "called when the iterations are converging. A segmentation of the surface can be extracted using"
+                                            "the distance of the mesh to the skeleton computed.\n"
+                                             "All operations can be applied to a polyhedron item or "
+                                            "to a surface mesh item. The generated mcf group must be selected in "
+                                            "order to continue an on-going set of operations. "));});
     ui->omega_H->setValue(0.1);
     ui->omega_H->setSingleStep(0.1);
     ui->omega_H->setDecimals(3);
