@@ -22,8 +22,7 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_DETECT_FEATURES_IN_POLYGON_MESH_H
 #define CGAL_POLYGON_MESH_PROCESSING_DETECT_FEATURES_IN_POLYGON_MESH_H
 
-#include <CGAL/license/Polygon_mesh_processing.h>
-
+#include <CGAL/license/Polygon_mesh_processing/detect_features.h>
 
 #include <CGAL/Kernel/global_functions_3.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
