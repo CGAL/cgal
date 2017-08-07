@@ -1048,3 +1048,13 @@ zoomToPosition(const QPoint &, CGAL::Three::Viewer_interface *viewer) const
                                                                  .arg(new_orientation[3]));
 
 }
+
+void Scene_points_with_normal_item::setPointSize(int size)
+{
+  d->point_Slider->setValue(size);
+}
+
+void Scene_points_with_normal_item::setNormalSize(int size)
+{
+  d->normal_Slider->setValue(size);
+}
