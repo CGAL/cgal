@@ -255,10 +255,10 @@ bool Construction_test<T_Geom_traits, T_Topol_traits>::are_same_results()
 
   Point_equal point_eq(m_geom_traits);
   if (! std::equal(points_res.begin(), pit, m_points.begin(), point_eq)) {
-    std::cout << "Obtained: " << std::endl;
+    std::cout << "Expected: " << std::endl;
     std::copy(m_points.begin(), m_points.end(),
               std::ostream_iterator<Point_2>(std::cout, "\n"));
-    std::cout << "Expected: " << std::endl;
+    std::cout << "Obtained: " << std::endl;
     std::copy(points_res.begin(), points_res.end(),
               std::ostream_iterator<Point_2>(std::cout, "\n"));
     return false;
@@ -283,11 +283,11 @@ bool Construction_test<T_Geom_traits, T_Topol_traits>::are_same_results()
 
   Curve_equal curve_eq(m_geom_traits);
   if (! std::equal(curves_res.begin(), xcit, m_xcurves.begin(), curve_eq)) {
-    std::cout << "Obtained: " << std::endl;
+    std::cout << "Expected: " << std::endl;
     for (typename Xcurve_container::iterator it = m_xcurves.begin();
          it != m_xcurves.end(); ++it)
       std::cout << *it << " " << it->data() << std::endl;
-    std::cout << "Expected: " << std::endl;
+    std::cout << "Obtained: " << std::endl;
     for (typename Xcurve_container::iterator it = curves_res.begin();
          it != curves_res.end(); ++it)
       std::cout << *it << " " << it->data() << std::endl;
