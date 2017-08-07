@@ -18,6 +18,7 @@ the triangulation type to be used for the 3D periodic triangulation embedding th
 `Default` may be used, with default value `Mesh_cell_base_3<Gt, MD, Triangulation_cell_base_with_circumcenter_3<Gt, Triangulation_cell_base_3<Gt, Periodic_3_triangulation_ds_cell_base_3> > >`.
 
 \sa `make_periodic_3_mesh_3()`
+\sa `refine_periodic_3_mesh_3()`
 
 \sa `Mesh_triangulation_3`
 

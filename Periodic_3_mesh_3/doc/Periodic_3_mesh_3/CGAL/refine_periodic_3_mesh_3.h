@@ -25,7 +25,7 @@ is further refined afterward.
 to refine a previously computed mesh, e.g.:
 
 \code{.cpp}
-C3T3 c3t3 = CGAL::make_mesh_3<C3T3>(domain,criteria);
+C3T3 c3t3 = CGAL::make_periodic_3_mesh_3<C3T3>(domain,criteria);
 
 CGAL::refine_periodic_3_mesh_3(c3t3, domain, new_criteria);
 \endcode
@@ -106,7 +106,7 @@ of the following (see user manual for further details):
 Beware that optimization of the mesh is obtained by perturbing mesh vertices
 and modifying the mesh connectivity and that this has an impact on the strict
 compliance to the refinement criteria. Though a strict compliance to mesh criteria
-is granted at the end of the Delaunay refinement, this may no longer be true after
+is guaranteed at the end of the Delaunay refinement, this may no longer be true after
 some optimization processes. Also beware that the default behavior does involve some
 optimization processes.
 

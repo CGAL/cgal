@@ -7,7 +7,7 @@ namespace CGAL {
 
 This class is a model of concept `MeshDomain_3`.
 
-Any boundary facet is labeled <a,b>, a<b, where a and b are the
+Any boundary facet is labeled <a,b>, with a<b, where a and b are the
 tags of its incident subdomain.
 Thus, a boundary facet of the domain is labeled <0,b>, where b!=0.
 

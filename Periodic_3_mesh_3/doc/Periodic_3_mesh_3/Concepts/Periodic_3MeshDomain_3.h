@@ -8,11 +8,12 @@ The concept `Periodic_3MeshDomain_3` describes the knowledge required on the
 object to be discretized.
 The concept `Periodic_3MeshDomain_3` is the concept to be used when the input
 domain is defined over the three-dimensional flat torus. From a syntaxic point
-of view, it defines exactly the same requirement as the concept `MeshDomain_3`.
+of view, it defines exactly the same requirement as the concept `MeshDomain_3`
+(thus `Periodic_3MeshDomain_3` refines `MeshDomain_3` without adding any requirement).
 
 However, since periodic meshes are constructed by considering a single fundamental
-domain, the oracles must be more powerful than in `MeshDomain_3`
-and handle periodicity.
+domain, the oracles must be more powerful than described in `MeshDomain_3`
+and be able to reflect the periodicity of the domain.
 For instance, when evaluating the `Do_intersect_surface` oracle for a segment
 that intersects a predicate facet of the fundamental domain, it may be the case
 that does not intersect the surface in the domain, but its translated copy that
