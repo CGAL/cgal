@@ -162,7 +162,7 @@ int main()
     std::vector<Plane> before = get_ransac_planes(ransac);
     
     // Test regularization
-    typename Efficient_ransac::Plane_range planes = ransac.planes();
+    Efficient_ransac::Plane_range planes = ransac.planes();
     CGAL::regularize_planes (points,
                              Point_map(),
                              planes,
@@ -208,7 +208,7 @@ int main()
 
     std::vector<Plane> before = get_ransac_planes(ransac);
 
-    typename Efficient_ransac::Plane_range planes = ransac.planes();
+    Efficient_ransac::Plane_range planes = ransac.planes();
     CGAL::regularize_planes (points,
                              Point_map(),
                              planes,
@@ -253,7 +253,7 @@ int main()
 
     std::vector<Plane> before = get_ransac_planes(ransac);
 
-    typename Efficient_ransac::Plane_range planes = ransac.planes();
+    Efficient_ransac::Plane_range planes = ransac.planes();
     CGAL::regularize_planes (points,
                              Point_map(),
                              planes,
@@ -302,7 +302,7 @@ int main()
     check_ransac_size (ransac, 2);
 
     std::vector<Plane> before = get_ransac_planes(ransac);
-    typename Efficient_ransac::Plane_range planes = ransac.planes();
+    Efficient_ransac::Plane_range planes = ransac.planes();
     CGAL::regularize_planes (points,
                              Point_map(),
                              planes,
