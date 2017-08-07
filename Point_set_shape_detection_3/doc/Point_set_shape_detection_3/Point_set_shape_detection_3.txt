@@ -47,7 +47,7 @@ The following steps are repeated: (1) Pick the next available point in the sorte
 
 The efficient RANSAC is a very quick method. Because it is based on randomness, it is not deterministic and some small shapes might be missed in the detection process.
 
-Region growing usually takes longer than the efficient RANSAC but may provide better quality output in the presence of large scenes with numerous small details: as it iterates throughout all points of the scene, there are less chances of missing a shape. In addition, it is deterministic (for a given input and a given set of parameters, it always returns the same output, whereas as RANSAC uses randomness to detect shapes, the output of a RANSAC algorithm may vary). See figure \cgalFigureEnd{Point_set_shape_detection_3Method_comparison_figure}.
+Region growing usually takes longer than the efficient RANSAC but may provide better quality output in the presence of large scenes with numerous small details: as it iterates throughout all points of the scene, there are less chances of missing a shape. In addition, it is deterministic (for a given input and a given set of parameters, it always returns the same output, whereas as RANSAC uses randomness to detect shapes, the output of a RANSAC algorithm may vary). See figure \cgalFigureRef{Point_set_shape_detection_3Method_comparison_figure}.
 
 \cgalFigureBegin{Point_set_shape_detection_3Method_comparison_figure,comparison.png}
 Comparison of efficient RANSAC and region growing. Top: input point set. Bottom left: output of efficient RANSAC, \f$78\%\f$ of the shapes correctly detected in 8 seconds. Bottom right: output of region growing, \f$100\%\f$ of the shapes detected in 15 seconds. Unassigned points are in black in both output images.
@@ -154,7 +154,7 @@ Shape detection applies to man-made scenes or objects such as urban scenes or sc
 
 - Planes that are near __symmetrical__ with respect to a user-defined axis are made symmetrical.
 
-The user can choose to only regularize one or several of these 4 properties (see [reference manual](@ref CGAL::regularize_planes)). The process is greedy and based on a hierarchical decomposition (coplanar clusters are subgroups of parallel clusters which are subgroups of axis-symmetric and orthogonal clusters) as described by Verdie et al. \cgalCite{cgal:vla-lod-15}
+The user can choose to only regularize one or several of these 4 properties (see \link CGAL::regularize_planes() reference manual\endlink)). The process is greedy and based on a hierarchical decomposition (coplanar clusters are subgroups of parallel clusters which are subgroups of axis-symmetric and orthogonal clusters) as described by Verdie et al. \cgalCite{cgal:vla-lod-15}
 
 \cgalExample{Point_set_shape_detection_3/plane_regularization.cpp}
 
