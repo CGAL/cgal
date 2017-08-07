@@ -53,7 +53,7 @@ public :
 
 
     QMenu* menuFile = mw->findChild<QMenu*>("menuFile");
-    QMenu* menu = new QMenu(tr("Add &basic objets"), menuFile);
+    QMenu* menu = new QMenu(tr("Add &Basic Objets"), menuFile);
     QAction* actionLoad = mw->findChild<QAction*>("actionLoadPlugin");
     menuFile->insertMenu(actionLoad, menu);
 
