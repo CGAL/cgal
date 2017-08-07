@@ -630,8 +630,8 @@ void regularize_planes (const PointRange& points,
     (points, point_map, planes.size(), index_map, centroids, areas);
 
   tolerance_angle = tolerance_angle * (FT)CGAL_PI / (FT)(180);
-  FT tolerance_cosangle = (FT)1. - std::cos (tolerance_angle);
-  FT tolerance_cosangle_ortho = std::cos ((FT)0.5 * (FT)CGAL_PI - tolerance_angle);
+  FT tolerance_cosangle = (FT)(1. - std::cos (tolerance_angle));
+  FT tolerance_cosangle_ortho = (FT)(std::cos ((FT)0.5 * (FT)CGAL_PI - (FT)tolerance_angle));
       
   // clustering the parallel primitives and store them in clusters
   // & compute the normal, size and cos angle to the symmetry
@@ -793,7 +793,16 @@ void regularize_planes (const PointRange& points,
                         <PointMap>::value_type>::Kernel::Vector_3 symmetry_direction
                         = typename Kernel_traits
                           <typename boost::property_traits
-                          <PointMap>::value_type>::Kernel::Vector_3 (0., 0., 1.))
+                          <PointMap>::value_type>::Kernel::Vector_3
+                        (typename Kernel_traits
+                         <typename boost::property_traits
+                         <PointMap>::value_type>::Kernel::FT(0.),
+                         typename Kernel_traits
+                         <typename boost::property_traits
+                         <PointMap>::value_type>::Kernel::FT(0.),
+                         typename Kernel_traits
+                         <typename boost::property_traits
+                         <PointMap>::value_type>::Kernel::FT(1.)))
 {
   typedef typename boost::property_traits<PointMap>::value_type Point;
   typedef typename Kernel_traits<Point>::Kernel Kernel;
