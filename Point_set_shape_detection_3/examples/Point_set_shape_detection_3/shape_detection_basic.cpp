@@ -25,7 +25,7 @@ typedef CGAL::Shape_detection_3::Plane<Traits>               Plane;
 
 // This program both works for RANSAC and Region Growing
 template <typename ShapeDetection>
-int run(int argc, char** argv)
+int run(const char* filename)
 {
   // Points with normals.
   Pwn_vector points;
@@ -33,7 +33,7 @@ int run(int argc, char** argv)
   // Loads point set from a file. 
   // read_xyz_points_and_normals takes an OutputIterator for storing the points
   // and a property map to store the normal vector with each point.
-  std::ifstream stream((argc > 2) ? argv[2] : ((argc > 1) ? argv[1] : "data/cube.pwn"));
+  std::ifstream stream(filename);
 
   if (!stream || 
     !CGAL::read_xyz_points_and_normals(stream,
@@ -69,9 +69,9 @@ int main (int argc, char** argv)
   if (argc > 1 && std::string(argv[1]) == "-r")
   {
     std::cout << "Efficient RANSAC" << std::endl;
-    return run<Efficient_ransac> (argc, argv);
+    return run<Efficient_ransac> ((argc > 2) ? argv[2] : "data/cube.pwn");
   }
 
   std::cout << "Region Growing" << std::endl;
-  return run<Region_growing> (argc, argv);
+  return run<Region_growing> ((argc > 1) ? argv[1] : "data/cube.pwn");
 }
