@@ -370,7 +370,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   set(CATEGORY-PLUGINS_IO FALSE CACHE BOOL "Build only the IO plugins. This will make a light viewer.")
   set(CATEGORY-PLUGINS_mesh_processing FALSE CACHE BOOL "Build only the plugins that deal with polygon meshes.")
   set(CATEGORY-PLUGINS_point_set_processing FALSE CACHE BOOL "Build only the plugins that deal with points sets.")
-  set(CATEGORY-PLUGINS_meshing FALSE CACHE BOOL "Build only the plugins that deal with volumic or surfaceic meshing.")
+  set(CATEGORY-PLUGINS_meshing FALSE CACHE BOOL "Build only the plugins that deal with volumic or surfacic meshing.")
 
     file(GLOB DEMO_PLUGINS RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/Plugins/" "${CMAKE_CURRENT_SOURCE_DIR}/Plugins/*")
   FOREACH(SUB_DIR ${DEMO_PLUGINS})
