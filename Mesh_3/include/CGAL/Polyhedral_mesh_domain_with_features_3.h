@@ -39,7 +39,7 @@
 
 #include <CGAL/Mesh_3/Detect_polylines_in_polyhedra.h>
 #include <CGAL/Mesh_3/Polyline_with_context.h>
-#include <CGAL/Polygon_mesh_processing/Detect_features_in_polygon_mesh.h>
+#include <CGAL/Polygon_mesh_processing/detect_features.h>
 #include <CGAL/Mesh_3/properties_Polyhedron_3.h>
 
 #include <CGAL/enum.h>
@@ -93,17 +93,17 @@ struct Angle_tester
 template <typename Polyhedron>
 struct Is_featured_edge {
   const Polyhedron* polyhedron;
-  typename boost::property_map<Polyhedron, halfedge_is_feature_t>::type hifm;
-  Is_featured_edge() 
-    : polyhedron(0) 
+  typename boost::property_map<Polyhedron, edge_is_feature_t>::type eifm;
+  Is_featured_edge()
+    : polyhedron(0)
   {} // required by boost::filtered_graph
-  
+
   Is_featured_edge(const Polyhedron& polyhedron)
-    : polyhedron(&polyhedron), hifm(get(halfedge_is_feature,polyhedron))
+    : polyhedron(&polyhedron), eifm(get(edge_is_feature,polyhedron))
   {}
 
   bool operator()(typename boost::graph_traits<Polyhedron>::edge_descriptor e) const {
-    return get(hifm, halfedge(e, *polyhedron));
+    return get(eifm, e);
   }
 }; // end Is_featured_edge<Polyhedron>
 
@@ -451,10 +451,10 @@ detect_features(FT angle_in_degree, std::vector<Polyhedron>& poly)
   BOOST_FOREACH(Polyhedron& p, poly)
   {
     initialize_ts(p);
-    typedef typename boost::property_map<Polyhedron,CGAL::face_patch_id_t<Patch_id> >::type PIDMap;
-    typedef typename boost::property_map<Polyhedron,CGAL::vertex_incident_patches_t<Patch_id> >::type VIPMap;
-    PIDMap pid_map = get(face_patch_id_t<Patch_id>(), p);
-    VIPMap vip_map = get(vertex_incident_patches_t<Patch_id>(), p);
+    typedef typename boost::property_map<Polyhedron,CGAL::face_patch_id_t<P_id> >::type PIDMap;
+    typedef typename boost::property_map<Polyhedron,CGAL::vertex_incident_patches_t<P_id> >::type VIPMap;
+    PIDMap pid_map = get(face_patch_id_t<P_id>(), p);
+    VIPMap vip_map = get(vertex_incident_patches_t<P_id>(), p);
     // Get sharp features
     CGAL::Polygon_mesh_processing::detect_features(p, angle_in_degree,pid_map, vip_map);
 

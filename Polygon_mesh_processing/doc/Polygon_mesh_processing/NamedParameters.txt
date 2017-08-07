@@ -153,25 +153,25 @@ a default property map where no edge is constrained is provided.
 \cgalNPEnd
 
 \cgalNPBegin{ maximum_number_of_patches } \anchor PMP_maximum_number_of_patches
-contains the surface patch beeing treated +1.\n
+contains the surface patch being treated +1.\n
 \b Type : `std::size_t`* \n
 \b Default : a pointer to a `std::size_t` with value 1.
 \cgalNPEnd
 
-\cgalNPBegin{ halfedge_is_feature_map } \anchor PMP_halfedge_is_feature_map
-the property map containing information about halfedges of the input polygon mesh being featured or not.\n
+\cgalNPBegin{ edge_is_feature_map } \anchor PMP_edge_is_feature_map
+the property map containing information about edges of the input polygon mesh being featured or not.\n
 \b Type : a class model of `ReadWritePropertyMap` with
-`boost::graph_traits<PolygonMesh>::%halfedge_descriptor` as key type and
+`boost::graph_traits<PolygonMesh>::%edge_descriptor` as key type and
 `bool` as value type. It should be default constructible.\n
-\b Default value is \code boost::get(CGAL::halfedge_is_feature, pmesh)\endcode
+\b Default value is \code boost::get(CGAL::edge_is_feature, pmesh)\endcode
 \cgalNPEnd
 
-\cgalNPBegin{ vertex_num_feature_edges_map } \anchor PMP_vertex_num_feature_edges_map
+\cgalNPBegin{ vertex_feature_degree_map } \anchor PMP_vertex_feature_degree_map
 the property map containing the number of feature edges being incident to the vertices of  the polygon mesh `pmesh`.\n
 \b Type : a class model of `ReadWritePropertyMap` with
 `boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and
 `int` as value type. It should be default constructible.\n
-\b Default value is \code boost::get(CGAL::vertex_num_feature_edges_t(), pmesh)\endcode
+\b Default value is \code boost::get(CGAL::vertex_feature_degree_t(), pmesh)\endcode
 \cgalNPEnd
 
 
