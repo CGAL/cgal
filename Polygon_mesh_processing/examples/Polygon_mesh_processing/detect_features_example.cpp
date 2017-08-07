@@ -25,14 +25,14 @@ int main(int argc, char* argv[])
   }
 
 
-  typedef typename boost::property_map<Mesh,CGAL::face_patch_id_t<int> >::type PatchID;
-  PatchID pid = get(CGAL::face_patch_id_t<int>(), mesh);
-  typedef typename boost::property_map<Mesh,CGAL::vertex_incident_patches_t<int> >::type VIP;
-  VIP vip = get(CGAL::vertex_incident_patches_t<int>(), mesh);
+  typedef boost::property_map<Mesh,CGAL::face_patch_id_t<int> >::type PIMap;
+  PIMap pid = get(CGAL::face_patch_id_t<int>(), mesh);
+  typedef boost::property_map<Mesh,CGAL::vertex_incident_patches_t<int> >::type VIMap;
+  VIMap vip = get(CGAL::vertex_incident_patches_t<int>(), mesh);
   std::size_t number_of_patches = 1;
   number_of_patches=PMP::detect_features(mesh, 90, pid, vip);
-  typedef boost::property_map<Mesh,CGAL::edge_is_feature_t>::type EIF_map;
-  EIF_map eif = get(CGAL::edge_is_feature, mesh);
+  typedef boost::property_map<Mesh,CGAL::edge_is_feature_t>::type EIFMap;
+  EIFMap eif = get(CGAL::edge_is_feature, mesh);
   int nb_sharp_edges =0;
   BOOST_FOREACH(boost::graph_traits<Mesh>::edge_descriptor e, edges(mesh))
   {
@@ -42,7 +42,7 @@ int main(int argc, char* argv[])
 
 
   std::cout<<"This mesh contains "<<nb_sharp_edges<<" sharp edges"<<std::endl;
-  std::cout<<" and "<<number_of_patches - 1<<" surface patches."<<std::endl;
+  std::cout<<" and "<<number_of_patches<<" surface patches."<<std::endl;
 
   return 0;
 }
