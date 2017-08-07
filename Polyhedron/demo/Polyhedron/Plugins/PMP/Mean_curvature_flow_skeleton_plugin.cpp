@@ -339,6 +339,8 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionMCFSkeleton_t
 {
   dockWidget->show();
   dockWidget->raise();
+  double diag = scene->len_diagonal();
+  init_ui(diag);
   getMCFItem();
 }
 
@@ -919,9 +921,6 @@ Polyhedron_demo_mean_curvature_flow_skeleton_plugin::getMCFItem()
       Face_graph* pMesh = item->face_graph();
 
       if(!pMesh) return NULL;
-
-      double diag = scene->len_diagonal();
-      init_ui(diag);
       Scene_mcf_item* mcf = new Scene_mcf_item(item->face_graph(),
                                                scene->mainSelectionIndex(),
                                                QString("%1 (mcf)").arg(item->name()));
