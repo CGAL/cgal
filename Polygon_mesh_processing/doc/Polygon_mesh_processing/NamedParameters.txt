@@ -152,10 +152,10 @@ the property map containing information about edges of the input polygon mesh be
 a default property map where no edge is constrained is provided.
 \cgalNPEnd
 
-\cgalNPBegin{ maximum_number_of_patches } \anchor PMP_maximum_number_of_patches
-contains the surface patch being treated +1.\n
-\b Type : `std::size_t`* \n
-\b Default : a pointer to a `std::size_t` with value 1.
+\cgalNPBegin{ first_index } \anchor PMP_first_index
+The index of the first surface patch.\n
+\b Type : `std::size_t`.\n
+\b Default : 1.
 \cgalNPEnd
 
 \cgalNPBegin{ edge_is_feature_map } \anchor PMP_edge_is_feature_map

@@ -448,6 +448,8 @@ detect_features(FT angle_in_degree, std::vector<Polyhedron>& poly)
                    vertex_descriptor> P2vmap;
   // TODO: replace this map by and unordered_map
   P2vmap p2vmap;
+  namespace PMP = CGAL::Polygon_mesh_processing;
+  std::size_t nb_of_patch_plus_one = 1;
   BOOST_FOREACH(Polyhedron& p, poly)
   {
     initialize_ts(p);
@@ -456,7 +458,7 @@ detect_features(FT angle_in_degree, std::vector<Polyhedron>& poly)
     PIDMap pid_map = get(face_patch_id_t<P_id>(), p);
     VIPMap vip_map = get(vertex_incident_patches_t<P_id>(), p);
     // Get sharp features
-    CGAL::Polygon_mesh_processing::detect_features(p, angle_in_degree,pid_map, vip_map);
+    nb_of_patch_plus_one += PMP::detect_features(p, angle_in_degree,pid_map, vip_map, PMP::parameters::first_index(nb_of_patch_plus_one));
 
 
     internal::Mesh_3::Is_featured_edge<Polyhedron> is_featured_edge(p);

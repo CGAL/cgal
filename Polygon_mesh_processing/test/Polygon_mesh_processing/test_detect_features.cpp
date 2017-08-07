@@ -28,8 +28,7 @@ int main(int argc, char* argv[])
     PatchID pid = get(CGAL::face_patch_id_t<int>(), mesh);
     typedef typename boost::property_map<Mesh,CGAL::vertex_incident_patches_t<int> >::type VIP;
     VIP vip = get(CGAL::vertex_incident_patches_t<int>(), mesh);
-    std::size_t number_of_patches = 1;
-    PMP::detect_features(mesh, 90, pid, vip, PMP::parameters::maximum_number_of_patches(&number_of_patches));
+    std::size_t number_of_patches = PMP::detect_features(mesh, 90, pid, vip);
     typedef boost::property_map<Mesh,CGAL::edge_is_feature_t>::type EIF_map;
     EIF_map eif = get(CGAL::edge_is_feature, mesh);
     int nb_sharp_edges =0;

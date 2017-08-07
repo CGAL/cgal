@@ -250,7 +250,7 @@ void detect_sharp_edges(PolygonMesh& p,
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
  *    \cgalParamBegin{edge_is_feature_map}  a property map containing the sharp edges of `p` \cgalParamEnd
- *    \cgalParamBegin{maximum_number_of_patches} an `std::size_t`* the highest number of patches. This usually starts at 1. \cgalParamEnd
+ *    \cgalParamBegin{first_index} an std::size_t containing the index of the first surface patch of `p` \cgalParamEnd
  * \cgalNamedParamsEnd
  * \returns the number of surface patches.
  *
@@ -271,12 +271,8 @@ detect_surface_patches(PolygonMesh& p,
     EIF_map eif
             = choose_param(get_param(np, internal_np::edge_is_feature),
                            get(CGAL::edge_is_feature, p));
-
-    std::size_t dummy = 1;
-    std::size_t* current_surface_index_ =
-            boost::choose_param(get_param(np, internal_np::maximum_number_of_patches), &dummy);
-
-
+    std::size_t current_surface_index_ = boost::choose_param(get_param(np, internal_np::first_index),
+                                                      1);
 
     typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
     typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
@@ -296,12 +292,12 @@ detect_surface_patches(PolygonMesh& p,
         unsorted_faces.erase(unsorted_faces.begin());
 
         const PatchId patch_id = internal::generate_patch_id(PatchId(),
-                                                             *current_surface_index_);
+                                                             current_surface_index_);
         put(patch_id_map, f, patch_id);
         internal::flood(p, f, patch_id_map, patch_id,unsorted_faces, eif);
-        ++(*current_surface_index_);
+        ++current_surface_index_;
     }
-    return *current_surface_index_ - 1;
+    return current_surface_index_ - 1;
 }
 
 
@@ -418,8 +414,9 @@ void detect_incident_patches_of_vertices(PolygonMesh& p,
  *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
  *    \cgalParamBegin{edge_is_feature_map} a property map that will contain the sharp edges of `p` \cgalParamEnd
  *    \cgalParamBegin{vertex_feature_degree_map} a property map that will contain the number of adjacent feature edges for each vertex of `p` \cgalParamEnd
- *    \cgalParamBegin{maximum_number_of_patches} an `std::size_t` that that will contain the number of surface patches of `p`. \cgalParamEnd
+ *    \cgalParamBegin{first_index} an std::size_t containing the index of the first surface patch of `p` \cgalParamEnd
  * \cgalNamedParamsEnd
+ * \returns the number of surface patches.
  *
  * @see `CGAL::Polygon_mesh_processing::detect_sharp_edges()`
  * @see `CGAL::Polygon_mesh_processing::detect_surface_patches()`
@@ -430,19 +427,20 @@ template <typename PolygonMesh, typename FT, typename PatchIdMap, typename Verte
 #else
 template <typename PolygonMesh, typename PatchIdMap, typename VertexIncidentPatchesMap, typename NamedParameters>
 #endif
-void detect_features(PolygonMesh& p,
-                     #ifdef DOXYGEN_RUNNING
-                     FT angle_in_deg,
-                     #else
-                     typename GetGeomTraits<PolygonMesh, NamedParameters>::type::FT angle_in_deg,
-                     #endif
-                     PatchIdMap& patch_id_map,
-                     VertexIncidentPatchesMap& vertex_incident_patches_map,
-                     const NamedParameters& np)
+std::size_t detect_features(PolygonMesh& p,
+                            #ifdef DOXYGEN_RUNNING
+                            FT angle_in_deg,
+                            #else
+                            typename GetGeomTraits<PolygonMesh, NamedParameters>::type::FT angle_in_deg,
+                            #endif
+                            PatchIdMap& patch_id_map,
+                            VertexIncidentPatchesMap& vertex_incident_patches_map,
+                            const NamedParameters& np)
 {
     detect_sharp_edges(p,angle_in_deg, np);
-    detect_surface_patches(p, patch_id_map, np);
+    std::size_t result = detect_surface_patches(p, patch_id_map, np);
     detect_incident_patches_of_vertices(p, patch_id_map, vertex_incident_patches_map, np);
+    return result;
 }
 
 //Convenient overrides
@@ -468,12 +466,12 @@ void detect_incident_patches_of_vertices(PolygonMesh& p,
     detect_incident_patches_of_vertices(p, patch_id_map, vertex_incident_patches_map, parameters::all_default());
 }
 template <typename PolygonMesh, typename FT, typename PatchIdMap, typename VertexIncidentPatchesMap>
-void detect_features(PolygonMesh& p,
+std::size_t detect_features(PolygonMesh& p,
                      FT angle_in_deg,
                      PatchIdMap& patch_id_map,
                      VertexIncidentPatchesMap& vertex_incident_patches_map)
 {
-    detect_features(p,angle_in_deg, patch_id_map, vertex_incident_patches_map, parameters::all_default());
+    return detect_features(p,angle_in_deg, patch_id_map, vertex_incident_patches_map, parameters::all_default());
 }
 
 
