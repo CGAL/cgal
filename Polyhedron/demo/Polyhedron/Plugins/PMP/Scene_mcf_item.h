@@ -1,11 +1,14 @@
 #ifndef SCENE_MCF_ITEM_H
 #define SCENE_MCF_ITEM_H
 
-#ifdef scene_mcf_item_EXPORTS
+
+
+#if defined( scene_mcf_poly_item_EXPORTS ) || defined( scene_mcf_sm_item_EXPORTS )
 #  define SCENE_MCF_ITEM_EXPORT Q_DECL_EXPORT
 #else
 #  define SCENE_MCF_ITEM_EXPORT Q_DECL_IMPORT
 #endif
+
 
 #include <CGAL/Three/Scene_group_item.h>
 #include <CGAL/extract_mean_curvature_flow_skeleton.h>
