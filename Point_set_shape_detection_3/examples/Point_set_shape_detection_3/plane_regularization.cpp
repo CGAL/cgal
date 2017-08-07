@@ -41,7 +41,7 @@ int main(int argc, char** argv)
   region_growing.add_shape_factory<Plane>();
   region_growing.detect();
 
-  typename Region_growing::Plane_range planes = region_growing.planes();
+  Region_growing::Plane_range planes = region_growing.planes();
   // Regularize detected planes
   CGAL::regularize_planes (points,
                            Point_map(),
