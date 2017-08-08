@@ -682,7 +682,7 @@ private:
         double dot = CGAL::scalar_product(v1, v2);
 
         // transform to range [0, 2pi]
-        double res = atan2(-det, -dot) + M_PI;
+        double res = atan2(-det, -dot) + CGAL_PI;
 
         return res;
     }
