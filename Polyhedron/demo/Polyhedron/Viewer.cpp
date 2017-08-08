@@ -75,6 +75,7 @@ public:
   //! Decides if the distance between APoint and BPoint must be drawn;
   bool distance_is_displayed;
   bool i_is_pressed;
+  bool initialized;
   bool z_is_pressed;
   //!Draws the distance between two selected points.
   void showDistance(QPoint);
@@ -111,6 +112,7 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
 {
   d = new Viewer_impl;
   d->scene = 0;
+  d->initialized = false;
   d->antialiasing = antialiasing;
   d->twosides = false;
   this->setProperty("draw_two_sides", false);
@@ -235,6 +237,31 @@ void Viewer::fastDraw()
 
 void Viewer::initializeGL()
 {
+#if QGLVIEWER_VERSION >= 0x020700
+
+  QSurfaceFormat format;
+  format.setDepthBufferSize(24);
+  format.setStencilBufferSize(8);
+  format.setVersion(4,3);
+  format.setProfile(QSurfaceFormat::CompatibilityProfile);
+  context()->setFormat(format);
+  bool created = context()->create();
+  if(!created || context()->format().profile() != QSurfaceFormat::CompatibilityProfile) {
+    // impossible to get a 4.3 compatibility profile, retry with 2.0
+    format.setVersion(2,1);
+    context()->setFormat(format);
+    created = context()->create();
+    d->is_ogl_4_3 = false;
+  }
+  else
+  {
+    d->is_ogl_4_3 = true;
+    d->_recentFunctions = new QOpenGLFunctions_4_3_Compatibility();
+  }
+  CGAL_warning_msg(created && context()->isValid(), "The openGL context initialization failed "
+                   "and the default context (2.0) will be used" );
+  makeCurrent();
+#else
   QGLFormat format;
   format.setVersion(4,3);
   format.setProfile(QGLFormat::CompatibilityProfile);
@@ -257,6 +284,7 @@ void Viewer::initializeGL()
                    "and the default context (2.0) will be used" );
   this->setContext(new_context);
   context()->makeCurrent();
+#endif
   QGLViewer::initializeGL();
   initializeOpenGLFunctions();
   if(isOpenGL_4_3())
@@ -453,7 +481,8 @@ void Viewer::initializeGL()
 
       d->rendering_program.release();
 
-  d->painter = new QPainter(this);
+  d->painter = new QPainter();
+  d->initialized = true;
 }
 
 #include <QMouseEvent>
@@ -1263,6 +1292,8 @@ QPainter* Viewer::getPainter(){return d->painter;}
 
 void Viewer::paintEvent(QPaintEvent *)
 {
+  if(!d->initialized)
+    initializeGL();
     paintGL();
 }
 
