@@ -49,22 +49,20 @@ namespace Single_mold_translational_casting {
  * Otherwise, it has to be computed.  Note that finding the orientation of a
  * polygon requires time linear in the number of edges.
  *
- * \param[in] pgn the input polygon.
- * \param[out] oi the output iterator. Its value type is a pair, where
- *             (i) the first element in the pair identifies a valid top edge
- *                 represented by its index the type of which is convertible to
-                   `size_t`, and
- *             (ii) the second element is a closed range of pullout directions
- *                  represented as a pair of the extreme directions in the
- *                  range of type `Kernel::Direction_2`.
- * \param[in] orientation the orientation of `pgn`.
- * \param[in] traits the traits to use.
+ * \param polygon the input polygon.
+ * \param oi the output iterator. Its value type is a pair, where
+ *         (i) the first element in the pair is an iterator to a top edge, and
+ *         (ii) the second element is a closed range of pullout directions
+ *              represented as a pair of the extreme directions in the range
+ *              of type `CastingTraits::Direction_2`.
+ * \param orientation the orientation of `polygon`.
+ * \param traits the traits to use.
  * \return the past-the-end iterator of the output container.
- * \pre `png` must be non-degenerate (has at least 3 vertices), simple, and
+ * \pre `polygon` must be non-degenerate (has at least 3 vertices), simple, and
  * does not have three consecutive collinear vertices.
  */
 template <typename CastingTraits_2, typename OutputIterator>
-OutputIterator top_edges(const CGAL::Polygon_2<CastingTraits_2>& pgn,
+OutputIterator top_edges(const CGAL::Polygon_2<CastingTraits_2>& polygon,
                          OutputIterator oi,
                          CGAL::Orientation orientation,
                          CastingTraits_2& traits)
@@ -78,17 +76,17 @@ OutputIterator top_edges(const CGAL::Polygon_2<CastingTraits_2>& pgn,
    */
   typedef CastingTraits_2                               Traits;
 
-  CGAL_precondition(pgn.is_simple());
-  CGAL_precondition(!internal::is_any_edge_colinear(pgn, traits));
+  CGAL_precondition(polygon.is_simple());
+  CGAL_precondition(!internal::is_any_edge_colinear(polygon, traits));
 
-  auto e_it = pgn.edges_begin();
+  auto e_it = polygon.edges_begin();
   auto segment_outer_circle =
     internal::get_segment_outer_circle<Traits>(*e_it++, orientation);
   typedef internal::Circle_arrangment<Traits> Circle_arrangment;
   Circle_arrangment circle_arrangment(traits,
-                                      segment_outer_circle,pgn.edges_begin());
+                                      segment_outer_circle,polygon.edges_begin());
 
-  for (; e_it != pgn.edges_end(); ++e_it) {
+  for (; e_it != polygon.edges_end(); ++e_it) {
     segment_outer_circle =
       internal::get_segment_outer_circle<Traits>(*e_it, orientation);
     circle_arrangment.add_segment_outer_circle(segment_outer_circle, e_it);
@@ -98,56 +96,55 @@ OutputIterator top_edges(const CGAL::Polygon_2<CastingTraits_2>& pgn,
   return oi;
 }
 
-/*! \fn OutputIterator top_edges(const CGAL::Polygon_2<CastingTraits_2>& pgn,
- *                               OutputIterator oi,
- *                               CastingTraits_2& traits)
- * \param[in] pgn the input polygon that we want to check if is castable or not.
- * \param[in,out] oi the output iterator to put the top edges in
- * \param[in] traits the traits to use.
+/*! \fn OutputIterator top_edges(const CGAL::Polygon_2<CastingTraits_2>& polygon,
+ *                               OutputIterator oi, CastingTraits_2& traits)
+ * \param polygon the input polygon that we want to check if is castable or not.
+ * \param oi the output iterator to put the top edges in
+ * \param traits the traits to use.
  * \return all the possible top edges of the polygon and there pullout direction
  *  a pair of Directions is build this way [firstClockwise,secondClockwise]
  *   (with no rotation)
  */
 template <typename CastingTraits_2, typename OutputIterator>
-OutputIterator top_edges(const CGAL::Polygon_2<CastingTraits_2>& pgn,
+OutputIterator top_edges(const CGAL::Polygon_2<CastingTraits_2>& polygon,
                          OutputIterator oi, CastingTraits_2& traits)
 {
-  CGAL::Orientation orientation = pgn.orientation();
-  return top_edges(pgn, oi, orientation, traits);
+  CGAL::Orientation orientation = polygon.orientation();
+  return top_edges(polygon, oi, orientation, traits);
 }
 
-/*! \fn OutputIterator top_edges(const CGAL::Polygon_2<CastingTraits_2>& pgn,
+/*! \fn OutputIterator top_edges(const CGAL::Polygon_2<CastingTraits_2>& polygon,
  *                               OutputIterator oi)
- * \param[in] pgn the input polygon that we want to check if is castable or not.
- * \param[in,out] oi the output iterator to put the top edges in
- * \param[in] orientation the orientation of `pgn`.
+ * \param polygon the input polygon that we want to check if is castable or not.
+ * \param oi the output iterator to put the top edges in
+ * \param orientation the orientation of `polygon`.
  * \return all the possible top edges of the polygon and there pullout direction
  *  a pair of Directions is build this way [firstClockwise,secondClockwise]
  *   (with no rotation)
  */
 template <typename CastingTraits_2, typename OutputIterator>
-OutputIterator top_edges(const CGAL::Polygon_2<CastingTraits_2>& pgn,
+OutputIterator top_edges(const CGAL::Polygon_2<CastingTraits_2>& polygon,
                          OutputIterator oi, CGAL::Orientation orientation)
 {
   CastingTraits_2 traits;
-  return top_edges(pgn, oi, orientation, traits);
+  return top_edges(polygon, oi, orientation, traits);
 }
 
-/*! \fn OutputIterator top_edges(const CGAL::Polygon_2<CastingTraits_2>& pgn,
+/*! \fn OutputIterator top_edges(const CGAL::Polygon_2<CastingTraits_2>& polygon,
  *                               OutputIterator oi)
- * \param[in] pgn the input polygon that we want to check if is castable or not.
- * \param[in,out] oi the output iterator to put the top edges in
+ * \param polygon the input polygon that we want to check if is castable or not.
+ * \param oi the output iterator to put the top edges in
  * \return all the possible top edges of the polygon and there pullout direction
  *  a pair of Directions is build this way [firstClockwise,secondClockwise]
  *   (with no rotation)
  */
 template <typename CastingTraits_2, typename OutputIterator>
-OutputIterator top_edges(const CGAL::Polygon_2<CastingTraits_2>& pgn,
+OutputIterator top_edges(const CGAL::Polygon_2<CastingTraits_2>& polygon,
                          OutputIterator oi)
 {
-  CGAL::Orientation orientation = pgn.orientation();
+  CGAL::Orientation orientation = polygon.orientation();
   CastingTraits_2 traits;
-  return top_edges(pgn, oi, orientation, traits);
+  return top_edges(polygon, oi, orientation, traits);
 }
 
 } // namespace Single_mold_translational_casting
