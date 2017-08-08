@@ -46,11 +46,11 @@ public:
   {
     mw = mainWindow;
     scene = scene_interface;
-    QAction *actionDegenFaces = new QAction(tr("Select Degenerated Faces"), mw);
+    QAction *actionDegenFaces = new QAction(tr("Select Degenerated Faces and Their Boundary Edges"), mw);
     actionDegenFaces->setProperty("subMenuName", "Polygon Mesh Processing");
     connect(actionDegenFaces, SIGNAL(triggered()), this, SLOT(on_actionDegenFaces_triggered()));
 
-    QAction *actionDegenEdges = new QAction(tr("Select Degenerated Edges"), mw);
+    QAction *actionDegenEdges = new QAction(tr("Select Degenerated Edges and Their Boundary Vertices"), mw);
     actionDegenEdges->setProperty("subMenuName", "Polygon Mesh Processing");
     connect(actionDegenEdges, SIGNAL(triggered()), this, SLOT(on_actionDegenEdges_triggered()));
 
