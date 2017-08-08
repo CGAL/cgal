@@ -803,6 +803,13 @@ detect_features(FT angle_in_degree,
   BOOST_FOREACH(Polyhedron_type& p, poly)
   {
     initialize_ts(p);
+    typedef typename boost::graph_traits<Polyhedron_type>::face_descriptor face_descriptor;
+    std::map<face_descriptor, std::size_t> face_ids;
+    std::size_t id = 0;
+    BOOST_FOREACH(face_descriptor& f, faces(p))
+    {
+        face_ids[f] = id++;
+    }
 
 #if CGAL_MESH_3_VERBOSE
     std::size_t poly_id = &p-&poly[0];
@@ -816,7 +823,8 @@ detect_features(FT angle_in_degree,
     typedef typename boost::property_map<Polyhedron_type,CGAL::vertex_incident_patches_t<Patch_id> >::type VIPMap;
     PIDMap pid_map = get(face_patch_id_t<Patch_id>(), p);
     VIPMap vip_map = get(vertex_incident_patches_t<Patch_id>(), p);
-    nb_of_patch_plus_one +=PMP::detect_features(p, angle_in_degree,pid_map, vip_map, PMP::parameters::first_index(nb_of_patch_plus_one));
+    nb_of_patch_plus_one +=PMP::detect_features(p, angle_in_degree,pid_map, vip_map, PMP::parameters::first_index(nb_of_patch_plus_one)
+                                                .face_index_map(boost::make_assoc_property_map(face_ids)));
 
     internal::Mesh_3::Is_featured_edge<Polyhedron_type> is_featured_edge(p);
 

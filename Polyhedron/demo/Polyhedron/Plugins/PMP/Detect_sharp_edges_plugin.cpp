@@ -85,6 +85,7 @@ void Polyhedron_demo_detect_sharp_edges_plugin::detectSharpEdgesWithInputDialog(
   detectSharpEdges(true);
 }
 
+namespace PMP = CGAL::Polygon_mesh_processing;
 void Polyhedron_demo_detect_sharp_edges_plugin::detectSharpEdges(bool input_dialog,
                                                                  double angle)
 {
@@ -123,6 +124,7 @@ void Polyhedron_demo_detect_sharp_edges_plugin::detectSharpEdges(bool input_dial
   // Detect edges
   QApplication::setOverrideCursor(Qt::WaitCursor);
   QApplication::processEvents();
+  std::size_t first_patch = 1;
   Q_FOREACH(Poly_tuple tuple, polyhedrons)
   {
     Scene_facegraph_item* item =
@@ -133,9 +135,13 @@ void Polyhedron_demo_detect_sharp_edges_plugin::detectSharpEdges(bool input_dial
     PatchID pid = get(CGAL::face_patch_id_t<int>(), *pMesh);
     typedef typename boost::property_map<FaceGraph,CGAL::vertex_incident_patches_t<int> >::type VIP;
     VIP vip = get(CGAL::vertex_incident_patches_t<int>(), *pMesh);
-    CGAL::Polygon_mesh_processing::detect_features(*pMesh, angle, pid, vip);
+    first_patch+=PMP::detect_features(*pMesh, angle, pid, vip,
+                         PMP::parameters::first_index(first_patch));
     //update item
     item->setItemIsMulticolor(true);
+#ifndef USE_SURFACE_MESH
+    item->set_color_vector_read_only(false);
+#endif
     item->invalidateOpenGLBuffers();
 
     // update scene

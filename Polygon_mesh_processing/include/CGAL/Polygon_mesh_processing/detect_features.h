@@ -28,7 +28,9 @@
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 #include <CGAL/Mesh_3/properties.h>
+#include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <set>
+
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
@@ -72,63 +74,31 @@ is_sharp(PolygonMesh& polygonMesh,
 }
 
 
-template <typename PolygonMesh, typename PatchIdMap, typename EIF_map>
-void
-flood(PolygonMesh& polygonMesh,
-      typename boost::graph_traits<PolygonMesh>::face_descriptor f,
-      PatchIdMap& pid_map,
-      const typename boost::property_traits<PatchIdMap>::value_type& patch_id,
-      std::set<typename boost::graph_traits<PolygonMesh>::face_descriptor>& unsorted_faces,
-      EIF_map& eif)
+//wrapper for patchid map.
+template<typename PatchIdMap>
+struct PatchIdMapWrapper
 {
-    typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor  halfedge_descriptor;
-    typedef typename boost::graph_traits<PolygonMesh>::face_descriptor     face_descriptor;
+    typedef typename boost::property_traits<PatchIdMap>::category category;
+    typedef typename boost::property_traits<PatchIdMap>::value_type value_type;
+    typedef typename boost::property_traits<PatchIdMap>::reference reference;
+    typedef typename boost::property_traits<PatchIdMap>::key_type key_type;
 
-    typedef std::set<face_descriptor> face_descriptor_set;
-    typedef std::set<halfedge_descriptor> He_handle_set;
-    // Initialize he_to_explore with halfedges of the starting facet
-    He_handle_set he_to_explore;
-    BOOST_FOREACH(halfedge_descriptor hd,
-                  CGAL::halfedges_around_face(halfedge(f,polygonMesh), polygonMesh))
-    {
-        he_to_explore.insert(opposite(hd,polygonMesh));
-    }
+ PatchIdMap map;
+ value_type offset;
+ PatchIdMapWrapper(PatchIdMap& map, value_type offset)
+     :map(map), offset(offset){}
+};
+template <typename PatchIdMap, typename Handle_type>
+typename PatchIdMapWrapper<PatchIdMap>::value_type get(PatchIdMapWrapper<PatchIdMap>& map, Handle_type h)
+{
+    return get(map.map, h) - map.offset;
+}
 
-    // While there is something to explore
-    while ( ! he_to_explore.empty() )
-    {
-        // Get next halfedge to explore
-        halfedge_descriptor he = *(he_to_explore.begin());
-        he_to_explore.erase(he_to_explore.begin());
-
-        // If we don't go through a border of the patch
-        if ( ! get(eif, edge(he, polygonMesh)) && ! is_border(he,polygonMesh))
-        {
-            face_descriptor explored_facet = face(he,polygonMesh);
-
-            // Mark facet and delete it from unsorted
-            put(pid_map, explored_facet, patch_id);
-            unsorted_faces.erase(explored_facet);
-
-            // Add/Remove facet's halfedge to/from explore list
-            BOOST_FOREACH(halfedge_descriptor hd,
-                          CGAL::halfedges_around_face(halfedge(explored_facet,polygonMesh),
-                                                      polygonMesh))
-            {
-                halfedge_descriptor current_he = hd;
-
-                // do not explore heh again
-                if ( current_he == he ) { continue; }
-
-                // if current_he is not in to_explore set, add it, otherwise remove it
-                // (because we just explore the facet he_begin is pointing to)
-                if ( he_to_explore.erase(current_he) == 0 )
-                {
-                    he_to_explore.insert(opposite(current_he,polygonMesh));
-                }
-            }
-        }
-    }
+template <typename PatchIdMap, typename Handle_type>
+void put(PatchIdMapWrapper<PatchIdMap>& map, Handle_type h,
+         typename PatchIdMapWrapper<PatchIdMap>::value_type pid)
+{
+  put(map.map, h, pid + map.offset);
 }
 
 } //end internal
@@ -138,7 +108,7 @@ flood(PolygonMesh& polygonMesh,
  *
  * Detects the sharp edges of `p` according to `angle_in_deg` and computes the number of sharp edges incident to each vertex.
  *
- * Property maps for CGAL::edge_is_feature_t and CGAL::vertex_feature_degree_t should be either
+ * Property maps for `CGAL::edge_is_feature_t` and `CGAL::vertex_feature_degree_t` should be either
  * available as internal property maps to `p` or provided as Named Parameters.
  *
  * \tparam PolygonMesh a model of `FaceGraph`
@@ -224,9 +194,8 @@ void detect_sharp_edges(PolygonMesh& p,
  *
  * Computes for each face the index of the corresponding surface patch,
  * based on the feature edges which are considered as barriers between surface patches.
- *
- * A filled property map for CGAL::edge_is_feature_t should be either
- * available as an internal property map to `p` or provided as one of the Named Parameters.
+ * Filled property maps for `CGAL::edge_is_feature_t` and `CGAL::face_index_t`should be either
+ * available as a internal property maps to `p` or provided as Named Parameters.
  *
  * \tparam PolygonMesh a model of `FaceGraph`
  * \tparam PatchIdMap a model of `ReadWritePropertyMap` with
@@ -242,6 +211,7 @@ void detect_sharp_edges(PolygonMesh& p,
  *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
  *    \cgalParamBegin{edge_is_feature_map}  a property map containing the sharp edges of `p` \cgalParamEnd
  *    \cgalParamBegin{first_index} an std::size_t containing the index of the first surface patch of `p` \cgalParamEnd
+ *    \cgalParamBegin{face_index_map} a property map containing the index of each face of `p` \cgalParamEnd
  * \cgalNamedParamsEnd
  * \returns the number of surface patches.
  *
@@ -262,33 +232,20 @@ detect_surface_patches(PolygonMesh& p,
     EIF_map eif
             = choose_param(get_param(np, internal_np::edge_is_feature),
                            get(CGAL::edge_is_feature, p));
-    std::size_t current_surface_index_ = boost::choose_param(get_param(np, internal_np::first_index),
+    typename GetFaceIndexMap<PolygonMesh, NamedParameters>::const_type
+      fimap = choose_param(get_param(np, internal_np::face_index),
+                           get_const_property_map(boost::face_index, p));
+
+    std::size_t offset = boost::choose_param(get_param(np, internal_np::first_index),
                                                       1);
 
     typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
     typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
     typedef typename boost::property_traits<PatchIdMap>::value_type PatchId;
-    // Initialize unsorted_faces
-    typedef std::set<face_descriptor> face_descriptor_set;
-    face_descriptor_set unsorted_faces;
-    BOOST_FOREACH(typename boost::graph_traits<PolygonMesh>::face_descriptor fd, faces(p))
-    {
-        unsorted_faces.insert(fd);
-    }
+    internal::PatchIdMapWrapper<PatchIdMap> wrapmap(patch_id_map, offset);
+    return connected_components(p, wrapmap, parameters::edge_is_constrained_map(eif)
+                                .face_index_map(fimap));
 
-    // Flood
-    while ( ! unsorted_faces.empty() )
-    {
-        face_descriptor f = *(unsorted_faces.begin());
-        unsorted_faces.erase(unsorted_faces.begin());
-
-        const PatchId patch_id = internal::generate_patch_id(PatchId(),
-                                                             current_surface_index_);
-        put(patch_id_map, f, patch_id);
-        internal::flood(p, f, patch_id_map, patch_id,unsorted_faces, eif);
-        ++current_surface_index_;
-    }
-    return current_surface_index_ - 1;
 }
 
 
@@ -297,7 +254,7 @@ detect_surface_patches(PolygonMesh& p,
  *
  * Collects the surface patches of the faces incident to each vertex
  *
- * * A filled property map for CGAL::edge_is_feature_t should be either
+ * * A filled property map for `CGAL::edge_is_feature_t` should be either
  * available as an internal property map to `p` or provided as one of the Named Parameters.
  *
  * \tparam PolygonMesh a model of `FaceGraph`
@@ -378,8 +335,8 @@ void detect_incident_patches(PolygonMesh& p,
  * `CGAL::Polygon_mesh_processing::detect_surface_patches()` and
  * `CGAL::Polygon_mesh_processing::detect_incident_patches()`
  *
- * Property maps for CGAL::edge_is_feature_t and CGAL::vertex_feature_degree_t should be either
- * available as internal property maps to `p` or provided as Named Parameters.
+ * Property maps for `CGAL::edge_is_feature_t`, `CGAL::vertex_feature_degree_t` and `CGAL::face_index_t`
+ * should be either available as internal property maps to `p` or provided as Named Parameters.
  *
  * \tparam PolygonMesh a model of `FaceGraph`
  * \tparam FT a number type. It is
@@ -406,6 +363,7 @@ void detect_incident_patches(PolygonMesh& p,
  *    \cgalParamBegin{edge_is_feature_map} a property map that will contain the constrained-or-not status of each edge of `p` \cgalParamEnd
  *    \cgalParamBegin{vertex_feature_degree_map} a property map that will contain the number of adjacent feature edges for each vertex of `p` \cgalParamEnd
  *    \cgalParamBegin{first_index} an std::size_t containing the index of the first surface patch of `p` \cgalParamEnd
+ *    \cgalParamBegin{face_index_map} a property map containing the index of each face of `p` \cgalParamEnd
  * \cgalNamedParamsEnd
  * \returns the number of surface patches.
  *
