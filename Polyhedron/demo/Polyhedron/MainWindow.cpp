@@ -792,22 +792,26 @@ void MainWindow::message(QString message, QString colorName, QString font) {
     message.remove(message.length()-1, 1);
   }
   statusBar()->showMessage(message, 5000);
+  QTimer::singleShot(5000, [this]{this->statusBar()->setStyleSheet("");});
   message = "<font color=\"" + colorName + "\" style=\"font-style: " + font + ";\" >" +
-    message + "</font><br>";
+      message + "</font><br>";
   message = "[" + QTime::currentTime().toString() + "] " + message;
   ui->consoleTextEdit->append(message);
   ui->consoleTextEdit->verticalScrollBar()->setValue(ui->consoleTextEdit->verticalScrollBar()->maximum());
 }
 
 void MainWindow::information(QString text) {
-  this->message("INFO: " + text, "");
+  statusBar()->setStyleSheet("color: blue");
+  this->message("INFO: " + text, "blue");
 }
 
 void MainWindow::warning(QString text) {
-  this->message("WARNING: " + text, "blue");
+  statusBar()->setStyleSheet("color: orange");
+  this->message("WARNING: " + text, "orange");
 }
 
 void MainWindow::error(QString text) {
+  statusBar()->setStyleSheet("color: red");
   this->message("ERROR: " + text, "red");
 }
 
@@ -2029,3 +2033,4 @@ void MainWindow::set_facegraph_mode_adapter(bool is_polyhedron)
   else
     set_face_graph_default_type(SURFACE_MESH);
 }
+
