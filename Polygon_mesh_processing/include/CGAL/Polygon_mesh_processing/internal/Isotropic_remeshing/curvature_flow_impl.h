@@ -1,7 +1,7 @@
 #ifndef CURVATURE_FLOW_IMPL_H
 #define CURVATURE_FLOW_IMPL_H
 
-#include <CGAL/Polygon_mesh_processing/Weights.h>
+//#include <CGAL/Polygon_mesh_processing/Weights.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
 
@@ -22,6 +22,57 @@ namespace CGAL {
 namespace Polygon_mesh_processing {
 
 namespace internal {
+
+
+template<class PolygonMesh>
+struct Cotangent_value_smoothing_impl
+{
+
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
+  double tolerance = 1e-3;
+  double cot60 = 0.5774;
+
+  template <class VertexPointMap>
+  double operator()(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2, const VertexPointMap& ppmap)
+  {
+    typedef typename Kernel_traits<
+      typename boost::property_traits<VertexPointMap>::value_type >::Kernel::Vector_3 Vector;
+
+    Vector a = get(ppmap, v0) - get(ppmap, v1);
+    Vector b = get(ppmap, v2) - get(ppmap, v1);
+
+    double dot_ab = to_double(a*b);
+    Vector cross_ab = CGAL::cross_product(a, b);
+
+    if(cross_ab.squared_length() < tolerance)
+    {
+        return cot60;
+    }
+
+    return dot_ab / to_double(CGAL::approximate_sqrt(cross_ab*cross_ab));
+  }
+};
+
+template<class PolygonMesh,
+         class VertexPointMap = typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::type>
+class Cotangent_value_smoothing
+{
+
+    PolygonMesh& mesh_;
+    VertexPointMap vpmap_; // no reference here, create a new one!
+    typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
+
+
+
+public:
+    Cotangent_value_smoothing(PolygonMesh& pmesh, VertexPointMap vpmap) : mesh_(pmesh), vpmap_(vpmap){}
+
+    double operator()(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2)
+    {
+        return Cotangent_value_smoothing_impl<PolygonMesh>()(v0, v1, v2, vpmap_);
+    }
+};
+
 
 
 template<typename PolygonMesh, typename VertexPointMap, typename GeomTraits>
@@ -103,19 +154,6 @@ public:
     {
         std::size_t nb_removed_faces = 0;
 
-        /*
-        for(face_descriptor f : faces(mesh_))
-        {
-            Triangle tr = triangle(f);
-            if(tr.is_degenerate())
-            {
-                halfedge_descriptor he = halfedge(f, mesh_);
-                Euler::remove_face(he, mesh_);
-                nb_removed_faces++;
-            }
-        }
-        */
-
         // from repair.h
         nb_removed_faces = CGAL::Polygon_mesh_processing::remove_degenerate_faces(mesh_);
 
@@ -125,6 +163,7 @@ public:
         return nb_removed_faces;
     }
 
+    /*
     std::size_t collapse_short_edges()
     {
         std::size_t nb_collapsed_edges = 0;
@@ -188,6 +227,7 @@ public:
 
         return nb_collapsed_edges;
     }
+    */
 
     void curvature_smoothing()
     {
@@ -253,12 +293,18 @@ public:
                 {
                     halfedge_descriptor hi = it->first;
 
-                    //weight
-                    std::pair<double, double> a1a2 = cot_angles(hi, it->second); //check if correct
-                    double weight = a1a2.first + a1a2.second;
+                    // check if main_he is degenerate
+                    double tolerance = 1e-3;
+                    if(sqlength(hi)< tolerance)
+                    {
+                        continue;
+                        // think of somehting better
+                    }
 
+                    // weight
+                    std::pair<double, double> a1a2 = cot_angles(hi, it->second);
+                    double weight = a1a2.first + a1a2.second;
                     sum_c += weight;
-                    CGAL_assertion(!isinf(sum_c));
 
                     // displacement vector
                     Point Xi = get(vpmap_, source(hi, mesh_));
@@ -319,6 +365,23 @@ private:
         return Triangle(get(vpmap_, v1), get(vpmap_, v2), get(vpmap_, v3));
     }
 
+    double sqlength(const vertex_descriptor& v1, const vertex_descriptor& v2) const
+    {
+        return to_double(CGAL::squared_distance(get(vpmap_, v1), get(vpmap_, v2)));
+    }
+
+    double sqlength(const halfedge_descriptor& h) const
+    {
+      vertex_descriptor v1 = target(h, mesh_);
+      vertex_descriptor v2 = source(h, mesh_);
+      return sqlength(v1, v2);
+    }
+
+    double sqlength(const edge_descriptor& e) const
+    {
+      return sqlength(halfedge(e, mesh_));
+    }
+
     double compute_mean_curvature()
     {
         // gather points around v
@@ -341,19 +404,24 @@ private:
 
     std::pair<double, double> cot_angles(const halfedge_descriptor& main_he, const He_pair& incd_edges)
     {
-        vertex_descriptor v0 = source(main_he, mesh_);
-        vertex_descriptor vs = target(main_he, mesh_);
+        vertex_descriptor vs = source(main_he, mesh_);
+        vertex_descriptor vt = target(main_he, mesh_);
         vertex_descriptor v1 = target(incd_edges.first, mesh_);
         vertex_descriptor v2 = source(incd_edges.second, mesh_);
+
+        Point p1 = get(vpmap_, v1);
+        Point p2 = get(vpmap_, v2);
+
         CGAL_assertion(target(incd_edges.second, mesh_) == source(incd_edges.first, mesh_));
 
-        double a1 = cot_calculator_(v0, v1, vs);
-        double a2 = cot_calculator_(v0, v2, vs);
+        // check degeneracies
+        halfedge_descriptor h_edge1 = incd_edges.first;
+        halfedge_descriptor h_edge2 = incd_edges.second;
 
-        // to check degeneracies
+        double a1 = cot_calculator_(vs, v1, vt);
+        double a2 = cot_calculator_(vs, v2, vt);
 
         return std::make_pair(a1, a2);
-
     }
 
     std::vector<Point> points_around_vertex(vertex_descriptor v)
@@ -445,9 +513,7 @@ private:
     // ------------
     PolygonMesh& mesh_;
     VertexPointMap& vpmap_;
-    // Cotagent calculator class
-    CGAL::internal::Cotangent_value_Meyer<
-        PolygonMesh, VertexPointMap> cot_calculator_;
+    Cotangent_value_smoothing<PolygonMesh, VertexPointMap> cot_calculator_;
     Triangle_list input_triangles_;
     Tree* tree_ptr_;
     GeomTraits traits_;
@@ -455,7 +521,6 @@ private:
 
 
 };
-
 
 
 

@@ -110,7 +110,7 @@ public:
     {
         for (face_descriptor f : face_range)
         {
-            input_triangles_.push_back(triangle(f));
+            input_triangles_.push_back(triangle(f)); //avoid push_back, reserve space
         }
 
         tree_ptr_ = new Tree(input_triangles_.begin(), input_triangles_.end());
@@ -126,19 +126,6 @@ public:
     {
         std::size_t nb_removed_faces = 0;
 
-        /*
-        for(face_descriptor f : faces(mesh_))
-        {
-            Triangle tr = triangle(f);
-            if(tr.is_degenerate())
-            {
-                halfedge_descriptor he = halfedge(f, mesh_);
-                Euler::remove_face(he, mesh_);
-                nb_removed_faces++;
-            }
-        }
-        */
-
         // from repair.h
         nb_removed_faces = CGAL::Polygon_mesh_processing::remove_degenerate_faces(mesh_);
 
@@ -147,6 +134,7 @@ public:
         return nb_removed_faces;
     }
 
+    /*
     std::size_t collapse_short_edges()
     {
         std::size_t nb_collapsed_edges = 0;
@@ -210,6 +198,7 @@ public:
 
         return nb_collapsed_edges;
     }
+    */
 
     void angle_relaxation(bool use_weights)
     {
@@ -595,7 +584,7 @@ private:
     {
 
         // get common vertex around which the edge is rotated
-        Point s = get(vpmap_, target(main_he, mesh_));
+        Point vt = get(vpmap_, target(main_he, mesh_));
 
         // pv is the vertex that is being moved
         Point pv = get(vpmap_, source(main_he, mesh_));
@@ -605,45 +594,43 @@ private:
         Point equidistant_p2 = get(vpmap_, source(incd_edges.second, mesh_));
         CGAL_assertion(target(incd_edges.second, mesh_) == source(incd_edges.first, mesh_));
 
-        Vector edge1(s, equidistant_p1);
-        Vector edge2(s, equidistant_p2);
-        Vector s_pv(s, pv);
+        Vector edge1(vt, equidistant_p1);
+        Vector edge2(vt, equidistant_p2);
+        Vector vt_pv(vt, pv);
 
         // check degenerate cases
         double tolerance = 1e-3; // to think about it
 
-        if ( edge1.squared_length()          < tolerance ||
-             edge2.squared_length()          < tolerance ||
-             sqlength(main_he)               < tolerance ||
-             (edge1 - s_pv).squared_length() < tolerance ||
-             (edge2 - s_pv).squared_length() < tolerance   )
+        if ( edge1.squared_length()           < tolerance ||
+             edge2.squared_length()           < tolerance ||
+             sqlength(main_he)                < tolerance ||
+             (edge1 - vt_pv).squared_length() < tolerance ||
+             (edge2 - vt_pv).squared_length() < tolerance   )
         {
             return CGAL::NULL_VECTOR;
         }
 
-        CGAL_assertion(s_pv.squared_length() > tolerance);
+        CGAL_assertion(vt_pv.squared_length() > tolerance);
 
-        // get bisector
+        // find bisector
         Vector bisector = CGAL::NULL_VECTOR;
         internal::normalize(edge1, traits_);
         internal::normalize(edge2, traits_);
         bisector = edge1 + edge2;
 
-
         // under about 0.5 degrees deviation consider it flat
         if( bisector.squared_length() < 0.001 ) // -> length = 0.01 -> sin(theta) = 0.01 -> theta = 0.57 degrees
         {
-
             // angle is (almost) 180 degrees, take the perpendicular
-            Vector normal_vec = find_perpendicular(edge1, s, pv); // normal to edge and found on (s-pv)'s plane
+            Vector normal_vec = find_perpendicular(edge1, vt, pv); // normal to edge and found on (vt-pv)'s plane
 
             CGAL_assertion(normal_vec != CGAL::NULL_VECTOR);
             CGAL_assertion(CGAL::scalar_product(edge1, normal_vec) < tolerance);
 
-            Segment b_segment(s, s + normal_vec);
+            Segment b_segment(vt, vt + normal_vec);
             Point b_segment_end = b_segment.target();
 
-            if(CGAL::angle(b_segment_end, s, pv) == CGAL::OBTUSE)
+            if(CGAL::angle(b_segment_end, vt, pv) == CGAL::OBTUSE)
             {
                 b_segment = b_segment.opposite();
             }
@@ -707,10 +694,10 @@ private:
     void correct_bisector(Vector& bisector_vec, const halfedge_descriptor& main_he)
     {
         // get common vertex around which the edge is rotated
-        Point s = get(vpmap_, target(main_he, mesh_));
+        Point pt = get(vpmap_, target(main_he, mesh_));
 
         // create a segment to be able to translate
-        Segment bisector(s, s + bisector_vec);
+        Segment bisector(pt, pt + bisector_vec);
 
         // scale
         double scale_factor = CGAL::sqrt(  sqlength(main_he) / bisector.squared_length() );
@@ -718,7 +705,7 @@ private:
         bisector = bisector.transform(t_scale);
 
         // translate
-        Vector vec(bisector.source(), s);
+        Vector vec(bisector.source(), pt);
         typename GeomTraits::Aff_transformation_3 t_translate(CGAL::TRANSLATION, vec);
         bisector = bisector.transform(t_translate);
 

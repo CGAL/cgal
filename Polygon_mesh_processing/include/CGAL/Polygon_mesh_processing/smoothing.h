@@ -26,7 +26,6 @@ namespace Polygon_mesh_processing {
 
 
 
-
 template<typename PolygonMesh, typename NamedParameters, typename FaceRange, typename EdgeRange>
 void compatible_remeshing(PolygonMesh& pmesh, const FaceRange& faces, const EdgeRange& edges, const NamedParameters& np)
 {
@@ -100,7 +99,6 @@ void compatible_remeshing(PolygonMesh& pmesh, const FaceRange& faces, const Edge
   t.reset(); t.start();
 #endif
 
-    //remesher.collapse_short_edges();
     remesher.remove_degenerate_faces();
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
@@ -186,7 +184,6 @@ void curvature_flow(PolygonMesh& pmesh, const NamedParameters& np)
   t.reset(); t.start();
 #endif
 
-    //curvature_remesher.collapse_short_edges();
     curvature_remesher.remove_degenerate_faces();
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
@@ -197,7 +194,7 @@ void curvature_flow(PolygonMesh& pmesh, const NamedParameters& np)
 #endif
 
     curvature_remesher.curvature_smoothing();
-    curvature_remesher.project_to_surface();
+    //curvature_remesher.project_to_surface();
 
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
@@ -215,6 +212,7 @@ void curvature_flow(PolygonMesh& pmesh)
 {
     curvature_flow(pmesh, parameters::all_default());
 }
+
 
 
 
