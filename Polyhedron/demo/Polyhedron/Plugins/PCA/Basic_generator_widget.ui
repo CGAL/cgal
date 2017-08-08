@@ -1052,7 +1052,7 @@ QGroupBox::title {
       </widget>
       <widget class="QWidget" name="pointTab">
        <attribute name="title">
-        <string>Point set</string>
+        <string>Point Set</string>
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_5">
         <item>

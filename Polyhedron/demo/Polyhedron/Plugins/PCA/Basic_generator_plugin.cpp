@@ -58,14 +58,14 @@ public :
     menuFile->insertMenu(actionLoad, menu);
 
 
-    QAction* actionPrism       = new QAction("Create prism", mw);
-    QAction* actionSphere      = new QAction("Create sphere", mw);
-    QAction* actionPyramid     = new QAction("Create pyramid", mw);
-    QAction* actionHexahedron  = new QAction("Create hexahedron", mw);
-    QAction* actionTetrahedron = new QAction("Create tetrahedron", mw);
-    QAction* actionGrid        = new QAction("Create grid", mw);
-    QAction* actionPointSet    = new QAction("Create point set", mw);
-    QAction* actionPolyline    = new QAction("Create polyline", mw);
+    QAction* actionPrism       = new QAction("Create Prism", mw);
+    QAction* actionSphere      = new QAction("Create Sphere", mw);
+    QAction* actionPyramid     = new QAction("Create Pyramid", mw);
+    QAction* actionHexahedron  = new QAction("Create Hexahedron", mw);
+    QAction* actionTetrahedron = new QAction("Create Tetrahedron", mw);
+    QAction* actionGrid        = new QAction("Create Grid", mw);
+    QAction* actionPointSet    = new QAction("Create Point Set", mw);
+    QAction* actionPolyline    = new QAction("Create Polyline", mw);
 
 
 
