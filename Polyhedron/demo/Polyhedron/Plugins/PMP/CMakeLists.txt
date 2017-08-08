@@ -58,6 +58,7 @@ target_link_libraries(mean_curvature_flow_skeleton_plugin
     scene_polyhedron_item 
     scene_points_with_normal_item
     scene_polylines_item
+    scene_mcf_poly_item
     demo_framework)
     
 
@@ -68,6 +69,7 @@ target_link_libraries(mean_curvature_flow_skeleton_sm_plugin
     scene_surface_mesh_item
     scene_points_with_normal_item
     scene_polylines_item
+    scene_mcf_sm_item
     demo_framework)
 target_compile_definitions(mean_curvature_flow_skeleton_sm_plugin PUBLIC "-DUSE_SURFACE_MESH" )
 
