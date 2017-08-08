@@ -21,9 +21,8 @@ namespace Single_mold_translational_casting {
  *
  * \param polygon the input polygon.
  * \param oi the output iterator. Its dereference type is a pair, where
- *             (i) the first element in the pair identifies a valid top edge
- *                 represented by its index the type of which is convertible to
-                   `size_t`, and
+ *             (i) the first element in the pair is an iterator to a top edge,
+ *                 and
  *             (ii) the second element is a closed range of pullout directions
  *                  represented as a pair of the extreme directions in the
  *                  range of type `CastingTraits_2::Direction_2`.
@@ -46,9 +45,8 @@ OutputIterator top_edges(const CGAL::Polygon_2<CastingTraits>& polygon,
  *
  * \param polygon the input polygon.
  * \param oi the output iterator. Its dereference type is a pair, where
- *             (i) the first element in the pair identifies a valid top edge
- *                 represented by its index the type of which is convertible to
-                   `size_t`, and
+ *             (i) the first element in the pair is an iterator to a top edge,
+ *                 and
  *             (ii) the second element is a closed range of pullout directions
  *                  represented as a pair of the extreme directions in the
  *                  range of type `CastingTraits_2::Direction_2`.
