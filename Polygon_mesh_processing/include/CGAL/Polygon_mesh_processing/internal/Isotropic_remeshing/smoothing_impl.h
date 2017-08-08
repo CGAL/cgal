@@ -728,12 +728,12 @@ private:
 
     bool is_constrained(const edge_descriptor& e)
     {
-        get(ecmap_, e);
+        return get(ecmap_, e);
     }
 
     bool is_constrained(const vertex_descriptor& v)
     {
-        get(vcmap_, v);
+        return get(vcmap_, v);
     }
 
     void check_constrained_edges()
