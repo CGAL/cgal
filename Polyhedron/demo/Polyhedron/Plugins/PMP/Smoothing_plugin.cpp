@@ -57,8 +57,9 @@ public:
         ui_widget.setupUi(dock_widget);
         addDockWidget(dock_widget);
 
-        connect(ui_widget.Compatible_button,  SIGNAL(clicked()), this, SLOT(on_Compatible_button_clicked()));
-        connect(ui_widget.Curvature_button,  SIGNAL(clicked()), this, SLOT(on_Curvature_button_clicked()));
+        //set initial values here
+
+        connect(ui_widget.Apply_button,  SIGNAL(clicked()), this, SLOT(on_Apply_clicked()));
 
     }
 
@@ -90,31 +91,46 @@ public Q_SLOTS:
         dock_widget->raise();
     }
 
-    void on_Compatible_button_clicked()
+    void on_Apply_clicked()
     {
         const Scene_interface::Item_id index = scene->mainSelectionIndex();
         Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(index));
-
         Polyhedron& pmesh = *poly_item->polyhedron();
-        CGAL::Polygon_mesh_processing::compatible_remeshing(pmesh);
 
-        poly_item->invalidateOpenGLBuffers();
-        Q_EMIT poly_item->itemChanged();
+        if(ui_widget.Angle_checkBox->isChecked())
+        {
+            unsigned int nb_iterations = ui_widget.Angle_spinBox->value();
+            CGAL::Polygon_mesh_processing::angle_remeshing(pmesh);
+            poly_item->invalidateOpenGLBuffers();
+            Q_EMIT poly_item->itemChanged();
+        }
+
+        if(ui_widget.Area_checkBox->isChecked())
+        {
+            unsigned int nb_iterations = ui_widget.Area_spinBox->value();
+            CGAL::Polygon_mesh_processing::area_remeshing(pmesh);
+            poly_item->invalidateOpenGLBuffers();
+            Q_EMIT poly_item->itemChanged();
+        }
+
+        if(ui_widget.Curvature_checkBox->isChecked())
+        {
+            unsigned int nb_iterations = ui_widget.Curvature_spinBox->value();
+            CGAL::Polygon_mesh_processing::curvature_flow(pmesh,
+                                                          CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iterations));
+            poly_item->invalidateOpenGLBuffers();
+            Q_EMIT poly_item->itemChanged();
+        }
+
+
+
+
+        //poly_item->invalidateOpenGLBuffers();
+        //Q_EMIT poly_item->itemChanged();
         QApplication::restoreOverrideCursor();
     }
 
-    void on_Curvature_button_clicked()
-    {
-        const Scene_interface::Item_id index = scene->mainSelectionIndex();
-        Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(index));
 
-        Polyhedron& pmesh = *poly_item->polyhedron();
-        CGAL::Polygon_mesh_processing::curvature_flow(pmesh);
-
-        poly_item->invalidateOpenGLBuffers();
-        Q_EMIT poly_item->itemChanged();
-        QApplication::restoreOverrideCursor();
-    }
 
 
 private:

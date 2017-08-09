@@ -6,39 +6,68 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>378</width>
+    <height>229</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Smoothing options</string>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
-   <widget class="QPushButton" name="Compatible_button">
+   <widget class="QPushButton" name="Apply_button">
     <property name="geometry">
      <rect>
-      <x>90</x>
-      <y>60</y>
+      <x>80</x>
+      <y>130</y>
       <width>221</width>
       <height>51</height>
      </rect>
     </property>
     <property name="text">
-     <string>Compatible remeshing</string>
+     <string>Apply</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="Curvature_button">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>90</x>
-      <y>120</y>
-      <width>221</width>
-      <height>51</height>
+      <x>60</x>
+      <y>20</y>
+      <width>251</width>
+      <height>101</height>
      </rect>
     </property>
-    <property name="text">
-     <string>Curvature flow</string>
-    </property>
+    <layout class="QFormLayout" name="formLayout">
+     <item row="0" column="0">
+      <widget class="QCheckBox" name="Angle_checkBox">
+       <property name="text">
+        <string>angle remeshing</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QSpinBox" name="Area_spinBox"/>
+     </item>
+     <item row="1" column="0">
+      <widget class="QCheckBox" name="Area_checkBox">
+       <property name="text">
+        <string>area remeshing</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QSpinBox" name="Angle_spinBox"/>
+     </item>
+     <item row="2" column="0">
+      <widget class="QCheckBox" name="Curvature_checkBox">
+       <property name="text">
+        <string>Curvature flow</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QSpinBox" name="Curvature_spinBox"/>
+     </item>
+    </layout>
    </widget>
   </widget>
  </widget>
