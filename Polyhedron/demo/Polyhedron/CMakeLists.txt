@@ -233,6 +233,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   macro(add_item item_name)
     add_library(${item_name} SHARED ${ARGN})
+    set_target_properties(${item_name} PROPERTIES EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)
     qt5_use_modules(${item_name} OpenGL Gui Xml Script Widgets)
     target_link_libraries(${item_name} demo_framework ${CGAL_LIBRARIES} ${Boost_LIBRARIES})
   endmacro(add_item)
@@ -368,8 +369,13 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   # PLUGINS #
   ###########
 
+  set(CATEGORY-PLUGINS_all TRUE CACHE BOOL "Build all the plugins")
+  set(CATEGORY-PLUGINS_IO FALSE CACHE BOOL "Build only the IO plugins. This will make a light viewer.")
+  set(CATEGORY-PLUGINS_mesh_processing FALSE CACHE BOOL "Build only the plugins that deal with polygon meshes.")
+  set(CATEGORY-PLUGINS_point_set_processing FALSE CACHE BOOL "Build only the plugins that deal with points sets.")
+  set(CATEGORY-PLUGINS_meshing FALSE CACHE BOOL "Build only the plugins that deal with volumic or surfacic meshing.")
 
-  file(GLOB DEMO_PLUGINS RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/Plugins/" "${CMAKE_CURRENT_SOURCE_DIR}/Plugins/*")
+    file(GLOB DEMO_PLUGINS RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/Plugins/" "${CMAKE_CURRENT_SOURCE_DIR}/Plugins/*")
   FOREACH(SUB_DIR ${DEMO_PLUGINS})
       add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/Plugins/${SUB_DIR}")
   ENDFOREACH()
@@ -408,6 +414,21 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   configure_file(CGAL_polyhedron_demoConfig.cmake.in  CGAL_polyhedron_demoConfig.cmake)
 #TO DO script the activation of all the plugins.
+#add targets that emulate the cache values
+add_custom_target(category_IO
+  DEPENDS ${CATEGORY-PLUGINS_IO_plugins})
+add_custom_target(category_mesh_processing
+  DEPENDS ${CATEGORY-PLUGINS_mesh_processing_plugins})
+add_custom_target(category_point_set_processing
+  DEPENDS ${CATEGORY-PLUGINS_point_set_processing_plugins})
+add_custom_target(category_meshing
+  DEPENDS ${CATEGORY-PLUGINS_meshing_plugins})
+
+  set(CATEGORY-PLUGINS_all_prec ${CATEGORY-PLUGINS_all} CACHE INTERNAL "")
+  set(CATEGORY-PLUGINS_IO_prec ${CATEGORY-PLUGINS_IO} CACHE INTERNAL "")
+  set(CATEGORY-PLUGINS_mesh_processing_prec ${CATEGORY-PLUGINS_mesh_processing} CACHE INTERNAL "")
+  set(CATEGORY-PLUGINS_point_set_processing_prec ${CATEGORY-PLUGINS_point_set_processing} CACHE INTERNAL "")
+  set(CATEGORY-PLUGINS_meshing_prec ${CATEGORY-PLUGINS_meshing} CACHE INTERNAL "")
 
 else (CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
@@ -430,6 +451,5 @@ else (CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   endif()
 
   message(STATUS "NOTICE: This demo requires ${POLYHEDRON_MISSING_DEPS}and will not be compiled.")
-
 
 endif (CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
