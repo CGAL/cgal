@@ -476,6 +476,15 @@ namespace internal {
     }
 
     template <typename Type>
+    bool does_tag_exist (const char* tag, const std::vector<Type>&)
+    {
+      for (std::size_t i = 0; i < m_properties->size (); ++ i)
+        if ((*m_properties)[i]->name () == tag)
+          return (dynamic_cast<PLY_read_typed_list<Type>*>((*m_properties)[i]) != NULL);
+      return false;
+    }
+    
+    template <typename Type>
     bool does_tag_exist (const char* tag, Type)
     {
       for (std::size_t i = 0; i < m_properties->size (); ++ i)
