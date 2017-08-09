@@ -145,6 +145,8 @@ public:
     //std::cout << "add_curve_to_left, curve: ";
     //curve->Print();
 
+    bool curve_added = false;
+    std::vector<Subcurve_iterator> left_curves_to_remove;
     for (iter = m_leftCurves.begin(); iter != m_leftCurves.end(); ++iter) {
       //std::cout << "add_curve_to_left, iter: ";
       //(*iter)->Print();
@@ -157,21 +159,40 @@ public:
 
       // Replace the existing curve in case of overlap, only if the set of ancesters
       // of curve contains the set of ancesters of *iter
-      if ((curve != *iter) && (curve->has_common_leaf(*iter)))
+      if (curve->has_common_leaf(*iter))
       {
         //std::cout << "add_curve_to_left, curve overlaps" << std::endl;
         if ( curve->number_of_original_curves() > (*iter)->number_of_original_curves() )
         {
-          CGAL_assertion( curve->are_all_leaves_contained(*iter) );
-          *iter = curve;
+          if (curve->are_all_leaves_contained(*iter))
+          {
+            if (curve_added)
+            {
+              left_curves_to_remove.push_back(iter);
+              continue;
+            }
+
+            *iter = curve;
+            curve_added=true;
+          }
         }
         else{
-          CGAL_assertion( (*iter)->are_all_leaves_contained(curve) );
+          if ((*iter)->are_all_leaves_contained(curve))
+          {
+            CGAL_assertion(!curve_added);
+            return;
+          }
         }
-        return;
       }
     }
 
+    for (typename std::vector<Subcurve_iterator>::iterator itit =
+          left_curves_to_remove.begin(); itit!=left_curves_to_remove.end(); ++itit)
+    {
+      m_leftCurves.erase(*itit);
+    }
+
+    if (curve_added) return;
     // The curve does not exist - insert it to the container.
     m_leftCurves.push_back(curve);
     // std::cout << "add_curve_to_left, pushed back" << std::endl;
@@ -245,7 +266,7 @@ public:
   {
     Subcurve_iterator iter;
     for (iter = m_leftCurves.begin(); iter!= m_leftCurves.end(); ++iter) {
-      if (curve->has_common_leaf(*iter)) {
+      if (curve == *iter || curve->are_all_leaves_contained(*iter)) {
         m_leftCurves.erase(iter);
         return;
       }
@@ -257,7 +278,7 @@ public:
   {
     Subcurve_iterator iter;
     for (iter = m_rightCurves.begin(); iter!= m_rightCurves.end(); ++iter) {
-      if (curve->has_common_leaf(*iter)) {
+      if (curve == *iter || curve->are_all_leaves_contained(*iter)) {
         m_rightCurves.erase(iter);
         return;
       }

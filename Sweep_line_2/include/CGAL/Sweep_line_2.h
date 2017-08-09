@@ -31,6 +31,7 @@
 #include <CGAL/Basic_sweep_line_2.h>
 #include <CGAL/Sweep_line_2/Sweep_line_curve_pair.h>
 #include <CGAL/Arrangement_2/Open_hash.h>
+#include <CGAL/algorithm.h>
 
 namespace CGAL {
 
@@ -187,7 +188,8 @@ protected:
   void _create_overlapping_curve(const X_monotone_curve_2& overlap_cv,
                                  Subcurve*& c1 , Subcurve*& c2,
                                  const std::vector<Subcurve*>& all_leaves_diff,
-                                 Subcurve* first_parent);
+                                 Subcurve* first_parent,
+                                 Event* event_on_overlap);
 
   /*! Compute intersections between the two given curves.
    * If the two curves intersect, create a new event (or use the event that
@@ -196,7 +198,7 @@ protected:
    * \param curve1 The first curve.
    * \param curve2 The second curve.
    */
-  void _intersect(Subcurve* c1, Subcurve* c2);
+  void _intersect(Subcurve* c1, Subcurve* c2, Event* event_for_overlap = NULL);
 
   /*! When a curve is removed from the status line for good, its top and
    * bottom neighbors become neighbors. This method finds these cases and
