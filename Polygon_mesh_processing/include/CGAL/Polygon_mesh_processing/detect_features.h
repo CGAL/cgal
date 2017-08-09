@@ -239,9 +239,6 @@ detect_surface_patches(PolygonMesh& p,
     std::size_t offset = boost::choose_param(get_param(np, internal_np::first_index),
                                                       1);
 
-    typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
-    typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
-    typedef typename boost::property_traits<PatchIdMap>::value_type PatchId;
     internal::PatchIdMapWrapper<PatchIdMap> wrapmap(patch_id_map, offset);
     return connected_components(p, wrapmap, parameters::edge_is_constrained_map(eif)
                                 .face_index_map(fimap));
@@ -295,9 +292,6 @@ void detect_incident_patches(PolygonMesh& p,
     EIF_map eif
             = choose_param(get_param(np, internal_np::edge_is_feature),
                            get(CGAL::edge_is_feature, p));
-
-
-    typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
 
     typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor  vertex_descriptor;
     typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor  halfedge_descriptor;
