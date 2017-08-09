@@ -1,7 +1,7 @@
 #ifndef CURVATURE_FLOW_IMPL_H
 #define CURVATURE_FLOW_IMPL_H
 
-//#include <CGAL/Polygon_mesh_processing/Weights.h>
+#include <CGAL/Polygon_mesh_processing/Weights.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
 
@@ -22,56 +22,6 @@ namespace CGAL {
 namespace Polygon_mesh_processing {
 
 namespace internal {
-
-
-template<class PolygonMesh>
-struct Cotangent_value_smoothing_impl
-{
-
-  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
-  double tolerance = 1e-3;
-  double cot60 = 0.5774;
-
-  template <class VertexPointMap>
-  double operator()(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2, const VertexPointMap& ppmap)
-  {
-    typedef typename Kernel_traits<
-      typename boost::property_traits<VertexPointMap>::value_type >::Kernel::Vector_3 Vector;
-
-    Vector a = get(ppmap, v0) - get(ppmap, v1);
-    Vector b = get(ppmap, v2) - get(ppmap, v1);
-
-    double dot_ab = to_double(a*b);
-    Vector cross_ab = CGAL::cross_product(a, b);
-
-    if(cross_ab.squared_length() < tolerance)
-    {
-        return cot60;
-    }
-
-    return dot_ab / to_double(CGAL::approximate_sqrt(cross_ab*cross_ab));
-  }
-};
-
-template<class PolygonMesh,
-         class VertexPointMap = typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::type>
-class Cotangent_value_smoothing
-{
-
-    PolygonMesh& mesh_;
-    VertexPointMap vpmap_; // no reference here, create a new one!
-    typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
-
-
-
-public:
-    Cotangent_value_smoothing(PolygonMesh& pmesh, VertexPointMap vpmap) : mesh_(pmesh), vpmap_(vpmap){}
-
-    double operator()(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2)
-    {
-        return Cotangent_value_smoothing_impl<PolygonMesh>()(v0, v1, v2, vpmap_);
-    }
-};
 
 
 
@@ -140,7 +90,7 @@ public:
         tree_ptr_->accelerate_distance_queries();
 
 
-        min_sq_edge_len_ = init_min_edge_length();
+        //min_sq_edge_len_ = init_min_edge_length();
 
         //TODO: update constrained edges
         //check_constrained_edges();
@@ -261,9 +211,7 @@ public:
                 normalize(kn, GeomTraits()); //traits_
                 */
 
-                //n_map[v] = vn;
-
-
+                n_map[v] = vn;
 
 
                 // find incident halfedges
@@ -273,26 +221,15 @@ public:
                     he_map[hi] = He_pair( next(hi, mesh_), prev(opposite(hi, mesh_), mesh_) );
 
 
-                /*
-                // use barycenter - without cot weights
-                Vector displacement = CGAL::NULL_VECTOR;
-                for(halfedge_descriptor hi : halfedges_around_source(v, mesh_))
-                {
-                    displacement += Vector(get(vpmap_, target(hi, mesh_)) - get(vpmap_, source(hi, mesh_)));
-                }
-                barycenters[v] = get(vpmap_, v) + (displacement / halfedges_around_source(v, mesh_).size()) ;
-                Point new_location = barycenters[v] + n_map[v]; // point + vector
-                */
-
-
                 // maybe use a seperate function for this
                 // with cot weights
-                Vector weighted_barycenter = CGAL::NULL_VECTOR;
-                double sum_c = 0;
+                Vector weighted_move = CGAL::NULL_VECTOR;
+                double sum_cot_weights = 0;
                 for(it = he_map.begin(); it!= he_map.end(); ++it)
                 {
-                    halfedge_descriptor hi = it->first;
+                    halfedge_descriptor hi = it->first; //main_he
 
+                    /*
                     // check if main_he is degenerate
                     double tolerance = 1e-3;
                     if(sqlength(hi)< tolerance)
@@ -300,11 +237,14 @@ public:
                         continue;
                         // think of somehting better
                     }
+                    */
 
                     // weight
-                    std::pair<double, double> a1a2 = cot_angles(hi, it->second);
+                    std::pair<double, double> a1a2 = cot_angles(hi, it->second); // incd_edges
                     double weight = a1a2.first + a1a2.second;
-                    sum_c += weight;
+                    sum_cot_weights += weight;
+
+                    // if I return 0 weight, then vec becomes 0.
 
                     // displacement vector
                     Point Xi = get(vpmap_, source(hi, mesh_));
@@ -313,27 +253,49 @@ public:
                     // add weight
                     vec *= weight;
                     // sum vecs
-                    weighted_barycenter += vec;
+                    weighted_move += vec;
                 }
 
-                // divide with total weight
-                weighted_barycenter /= sum_c;
+                // divide with total weight - be careful of a bloody division with zero.
+                if(sum_cot_weights != 0) // risky business
+                {
+                    weighted_move /= sum_cot_weights;
+                }
 
-                Point new_point = get(vpmap_, v) + weighted_barycenter;
 
-                // calculate location on the tangential plane
-                Point p = get(vpmap_, v);// original point
-                Point q = new_point;
-                Vector n = vn;
-                Point new_location = q + (n * Vector(q,p)) * n;
-
-                // update location
-                put(vpmap_, v, new_location);
+                Point weighted_barycenter = get(vpmap_, v) + weighted_move;
+                barycenters[v] = weighted_barycenter;
 
             } // not on border
 
         } // all vertices
 
+
+        // compute locations on tangent plane
+        typedef typename std::map<vertex_descriptor, Point>::value_type VP;
+        std::map<vertex_descriptor, Point> new_locations;
+        for(const VP& vp: barycenters)
+        {
+            Point p = get(vpmap_, vp.first);
+            Point q = vp.second;
+            Vector n = n_map[vp.first];
+
+            new_locations[vp.first] = q + ( n * Vector(q, p) ) * n ;
+        }
+
+        // update location
+        for(const VP& vp : new_locations)
+        {
+
+#ifdef CGAL_PMP_COMPATIBLE_REMESHING_DEBUG
+std::cout << "from: "<< get(vpmap_, vp.first);
+#endif
+            put(vpmap_, vp.first, vp.second);
+
+#ifdef CGAL_PMP_COMPATIBLE_REMESHING_DEBUG
+std::cout<<" moved at: "<< vp.second << std::endl;
+#endif
+        }
 
     }
 
@@ -381,7 +343,7 @@ private:
     {
       return sqlength(halfedge(e, mesh_));
     }
-
+/*
     double compute_mean_curvature()
     {
         // gather points around v
@@ -401,7 +363,7 @@ private:
 
         return (k1 + k2) / 2.0;
     }
-
+*/
     std::pair<double, double> cot_angles(const halfedge_descriptor& main_he, const He_pair& incd_edges)
     {
         vertex_descriptor vs = source(main_he, mesh_);
@@ -409,21 +371,35 @@ private:
         vertex_descriptor v1 = target(incd_edges.first, mesh_);
         vertex_descriptor v2 = source(incd_edges.second, mesh_);
 
-        Point p1 = get(vpmap_, v1);
-        Point p2 = get(vpmap_, v2);
-
         CGAL_assertion(target(incd_edges.second, mesh_) == source(incd_edges.first, mesh_));
 
-        // check degeneracies
-        halfedge_descriptor h_edge1 = incd_edges.first;
-        halfedge_descriptor h_edge2 = incd_edges.second;
+        Point p1 = get(vpmap_, v1);
+        Point p2 = get(vpmap_, v2);
+        Point pt = get(vpmap_, vt);
+        Point ps = get(vpmap_, vs);
+        Vector edge1(pt, p1);
+        Vector edge2(pt, p2);
+        Vector vec_main_he(pt, ps);
+
+        double tolerance = 1e-3;
+        if ( edge1.squared_length()           < tolerance ||
+             edge2.squared_length()           < tolerance ||
+             sqlength(main_he)                < tolerance ||
+             (edge1 - vec_main_he).squared_length() < tolerance ||
+             (edge2 - vec_main_he).squared_length() < tolerance   )
+        {
+            return std::make_pair(0, 0);
+            // zero means 90 degrees angle (and means also no weight)
+        }
+
+        CGAL_assertion(vec_main_he.squared_length() > tolerance);
 
         double a1 = cot_calculator_(vs, v1, vt);
         double a2 = cot_calculator_(vs, v2, vt);
 
         return std::make_pair(a1, a2);
     }
-
+/*
     std::vector<Point> points_around_vertex(vertex_descriptor v)
     {
         std::vector<Point> incident_vertices;
@@ -454,9 +430,9 @@ private:
 
         return points;
     }
-
+*/
     // degenerate fixing functions
-
+   /*
     bool edge_should_collapse(edge_descriptor e)
     {
         halfedge_descriptor he = halfedge(e, mesh_);
@@ -508,12 +484,13 @@ private:
       return std::sqrt(diag);
     }
 
+    */
 
     // data members
     // ------------
     PolygonMesh& mesh_;
     VertexPointMap& vpmap_;
-    Cotangent_value_smoothing<PolygonMesh, VertexPointMap> cot_calculator_;
+    CGAL::internal::Cotangent_value_Meyer_secure<PolygonMesh, VertexPointMap> cot_calculator_;
     Triangle_list input_triangles_;
     Tree* tree_ptr_;
     GeomTraits traits_;

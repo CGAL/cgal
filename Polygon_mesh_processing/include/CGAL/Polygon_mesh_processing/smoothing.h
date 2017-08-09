@@ -194,7 +194,7 @@ void curvature_flow(PolygonMesh& pmesh, const NamedParameters& np)
 #endif
 
     curvature_remesher.curvature_smoothing();
-    //curvature_remesher.project_to_surface();
+    curvature_remesher.project_to_surface();
 
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
