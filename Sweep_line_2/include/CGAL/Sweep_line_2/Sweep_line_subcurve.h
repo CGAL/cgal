@@ -31,6 +31,7 @@
 #include <CGAL/Sweep_line_2/Sweep_line_event.h>
 #include <CGAL/Multiset.h>
 #include <CGAL/assertions.h>
+#include <set>
 
 namespace CGAL {
 
