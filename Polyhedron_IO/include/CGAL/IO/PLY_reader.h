@@ -25,6 +25,69 @@
 
 namespace CGAL{
 
+  namespace internal
+  {
+    template <typename Integer, class Polygon_3, class Color_rgb>
+    bool
+    read_PLY_faces (std::istream& in,
+                    PLY::PLY_reader& reader,
+                    std::vector< Polygon_3 >& polygons,
+                    std::vector< Color_rgb >& fcolors)
+    {
+      std::size_t faces_read = 0;
+
+      bool has_colors = false;
+      std::string rtag = "r", gtag = "g", btag = "b";
+      if ((reader.does_tag_exist<boost::uint8_t>("red") || reader.does_tag_exist<boost::uint8_t>("r")) &&
+          (reader.does_tag_exist<boost::uint8_t>("green") || reader.does_tag_exist<boost::uint8_t>("g")) &&
+          (reader.does_tag_exist<boost::uint8_t>("blue") || reader.does_tag_exist<boost::uint8_t>("b")))
+      {
+        has_colors = true;
+        if (reader.does_tag_exist<boost::uint8_t>("red"))
+        {
+          rtag = "red"; gtag = "green"; btag = "blue";
+        }
+      }
+      
+      while (!(in.eof()) && faces_read < reader.m_nb_faces)
+      {
+        for (std::size_t i = 0; i < reader.readers().size (); ++ i)
+          reader.readers()[i]->get (in);
+
+        cpp11::tuple<std::vector<Integer>, boost::uint8_t, boost::uint8_t, boost::uint8_t> new_face; 
+
+        if (has_colors)
+        {
+          PLY::process_properties (reader, new_face,
+                                   std::make_pair (CGAL::make_nth_of_tuple_property_map<0>(new_face),
+                                                   PLY_property<std::vector<Integer> >("vertex_indices")),
+                                   std::make_pair (CGAL::make_nth_of_tuple_property_map<1>(new_face),
+                                                   PLY_property<boost::uint8_t>(rtag.c_str())),
+                                   std::make_pair (CGAL::make_nth_of_tuple_property_map<2>(new_face),
+                                                   PLY_property<boost::uint8_t>(gtag.c_str())),
+                                   std::make_pair (CGAL::make_nth_of_tuple_property_map<3>(new_face),
+                                                   PLY_property<boost::uint8_t>(btag.c_str())));
+
+          fcolors.push_back (Color_rgb (get<1>(new_face), get<2>(new_face), get<3>(new_face)));
+        }
+        else
+          PLY::process_properties (reader, new_face,
+                                   std::make_pair (CGAL::make_nth_of_tuple_property_map<0>(new_face),
+                                                   PLY_property<std::vector<Integer> >("vertex_indices")));
+
+        polygons.push_back (Polygon_3(get<0>(new_face).size()));
+        for (std::size_t i = 0; i < get<0>(new_face).size(); ++ i)
+          polygons.back()[i] = std::size_t(get<0>(new_face)[i]);
+
+        ++ faces_read;
+      }
+
+      return in.good();
+    }
+
+  }
+
+
   template <class Point_3, class Polygon_3>
   bool
   read_PLY( std::istream& in,
@@ -64,31 +127,17 @@ namespace CGAL{
     if (points_read != reader.m_nb_points)
       return false;
 
+    std::vector<CGAL::Color> dummy;
+
     reader.read_faces();
 
-    std::size_t faces_read = 0;
-  
-    while (!(in.eof()) && faces_read < reader.m_nb_faces)
-    {
+    if (reader.does_tag_exist<std::vector<boost::int32_t> > ("vertex_indices"))
+      return internal::read_PLY_faces<boost::int32_t> (in, reader, polygons, dummy);
+    else if (reader.does_tag_exist<std::vector<boost::uint32_t> > ("vertex_indices"))
+      return internal::read_PLY_faces<boost::uint32_t> (in, reader, polygons, dummy);
 
-      for (std::size_t i = 0; i < reader.readers().size (); ++ i)
-        reader.readers()[i]->get (in);
-
-      std::vector<int> new_face; 
-
-      internal::PLY::process_properties (reader, new_face,
-                                         std::make_pair (CGAL::Identity_property_map<std::vector<int> >(),
-                                                         PLY_property<std::vector<int> >("vertex_indices")));
-
-      polygons.push_back (Polygon_3(new_face.size()));
-      for (std::size_t i = 0; i < new_face.size(); ++ i)
-        polygons.back()[i] = std::size_t(new_face[i]);
-
-      ++ faces_read;
-    }
-
-
-    return in.good();
+    std::cerr << "Error: can't find vertex indices in PLY input" << std::endl;
+    return false;
   }
 
   template <class Point_3, class Polygon_3, class Color_rgb>
@@ -159,57 +208,14 @@ namespace CGAL{
       return false;
 
     reader.read_faces();
+    
+    if (reader.does_tag_exist<std::vector<boost::int32_t> > ("vertex_indices"))
+      return internal::read_PLY_faces<boost::int32_t> (in, reader, polygons, fcolors);
+    else if (reader.does_tag_exist<std::vector<boost::uint32_t> > ("vertex_indices"))
+      return internal::read_PLY_faces<boost::uint32_t> (in, reader, polygons, fcolors);
 
-    has_colors = false;
-    rtag = "r", gtag = "g", btag = "b";
-    if ((reader.does_tag_exist<boost::uint8_t>("red") || reader.does_tag_exist<boost::uint8_t>("r")) &&
-        (reader.does_tag_exist<boost::uint8_t>("green") || reader.does_tag_exist<boost::uint8_t>("g")) &&
-        (reader.does_tag_exist<boost::uint8_t>("blue") || reader.does_tag_exist<boost::uint8_t>("b")))
-    {
-      has_colors = true;
-      if (reader.does_tag_exist<boost::uint8_t>("red"))
-      {
-        rtag = "red"; gtag = "green"; btag = "blue";
-      }
-    }
-  
-    std::size_t faces_read = 0;
-
-    while (!(in.eof()) && faces_read < reader.m_nb_faces)
-    {
-
-      for (std::size_t i = 0; i < reader.readers().size (); ++ i)
-        reader.readers()[i]->get (in);
-
-      cpp11::tuple<std::vector<int>, boost::uint8_t, boost::uint8_t, boost::uint8_t> new_face; 
-
-      if (has_colors)
-      {
-        internal::PLY::process_properties (reader, new_face,
-                                           std::make_pair (CGAL::make_nth_of_tuple_property_map<0>(new_face),
-                                                           PLY_property<std::vector<int> >("vertex_indices")),
-                                           std::make_pair (CGAL::make_nth_of_tuple_property_map<1>(new_face),
-                                                           PLY_property<boost::uint8_t>(rtag.c_str())),
-                                           std::make_pair (CGAL::make_nth_of_tuple_property_map<2>(new_face),
-                                                           PLY_property<boost::uint8_t>(gtag.c_str())),
-                                           std::make_pair (CGAL::make_nth_of_tuple_property_map<3>(new_face),
-                                                           PLY_property<boost::uint8_t>(btag.c_str())));
-
-        fcolors.push_back (Color_rgb (get<1>(new_face), get<2>(new_face), get<3>(new_face)));
-      }
-      else
-        internal::PLY::process_properties (reader, new_face,
-                                           std::make_pair (CGAL::make_nth_of_tuple_property_map<0>(new_face),
-                                                           PLY_property<std::vector<int> >("vertex_indices")));
-
-      polygons.push_back (Polygon_3(get<0>(new_face).size()));
-      for (std::size_t i = 0; i < get<0>(new_face).size(); ++ i)
-        polygons.back()[i] = std::size_t(get<0>(new_face)[i]);
-
-      ++ faces_read;
-    }
-
-    return in.good();
+    std::cerr << "Error: can't find vertex indices in PLY input" << std::endl;
+    return false;
   }
 
 
