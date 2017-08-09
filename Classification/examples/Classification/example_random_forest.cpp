@@ -3,20 +3,22 @@
 #include <iostream>
 #include <string>
 
-//#define CGAL_CLASSIFICATION_VERBOSE
-
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Classification.h>
 #include <CGAL/Classification/Random_forest_classifier.h>
-#include <CGAL/IO/read_ply_points.h>
+#include <CGAL/Point_set_3.h>
+#include <CGAL/Point_set_3/IO.h>
 
 #include <CGAL/Real_timer.h>
 
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_3 Point;
+typedef CGAL::Point_set_3<Point> Point_set;
 typedef Kernel::Iso_cuboid_3 Iso_cuboid_3;
-typedef std::vector<Point> Point_range;
-typedef CGAL::Identity_property_map<Point> Pmap;
+
+typedef typename Point_set::Point_map Pmap;
+typedef typename Point_set::Property_map<int> Imap;
+typedef typename Point_set::Property_map<unsigned char> UCmap;
 
 namespace Classification = CGAL::Classification;
 
@@ -27,72 +29,38 @@ typedef Classification::Feature_set                                             
 
 typedef Classification::Random_forest_classifier Classifier;
 
-typedef Classification::Point_set_feature_generator<Kernel, Point_range, Pmap> Feature_generator;
-
-/*
-  This interpreter is used to read a PLY input that contains training
-  attributes (with the PLY "label" property).
-*/
-class My_ply_interpreter
-{
-  std::vector<Point>& points;
-  std::vector<std::size_t>& labels;
-    
-public:
-  My_ply_interpreter (std::vector<Point>& points,
-                      std::vector<std::size_t>& labels)
-    : points (points), labels (labels)
-  { }
-
-  // Init and test if input file contains the right properties
-  bool is_applicable (CGAL::Ply_reader& reader)
-  {
-    return reader.does_tag_exist<double> ("x")
-      && reader.does_tag_exist<double> ("y")
-      && reader.does_tag_exist<double> ("z")
-      && reader.does_tag_exist<int> ("label");
-  }
-
-  // Describes how to process one line (= one point object)
-  void process_line (CGAL::Ply_reader& reader)
-  {
-    double x = 0., y = 0., z = 0.;
-    int l = 0;
-
-    reader.assign (x, "x");
-    reader.assign (y, "y");
-    reader.assign (z, "z");
-    reader.assign (l, "label");
-
-    points.push_back (Point (x, y, z));
-    labels.push_back(std::size_t(l));
-  }
-
-};
+typedef Classification::Point_set_feature_generator<Kernel, Point_set, Pmap>    Feature_generator;
 
 
 int main (int argc, char** argv)
 {
   std::string filename (argc > 1 ? argv[1] : "data/b9_training.ply");
   std::ifstream in (filename.c_str());
-  std::vector<Point> pts;
-  std::vector<std::size_t> ground_truth;
+  Point_set pts;
 
   std::cerr << "Reading input" << std::endl;
-  My_ply_interpreter interpreter (pts, ground_truth);
-  if (!in
-      || !(CGAL::read_ply_custom_points (in, interpreter, Kernel())))
+  in >> pts;
+  
+  Imap label_map;
+  bool lm_found = false;
+  boost::tie (label_map, lm_found) = pts.property_map<int> ("label");
+  if (!lm_found)
   {
-    std::cerr << "Error: cannot read " << filename << std::endl;
+    std::cerr << "Error: \"label\" property not found in input file." << std::endl;
     return EXIT_FAILURE;
   }
+
+  std::vector<int> ground_truth;
+  ground_truth.reserve (pts.size());
+  std::copy (pts.range(label_map).begin(), pts.range(label_map).end(),
+             std::back_inserter (ground_truth));
 
   Feature_set features;
   
   std::cerr << "Generating features" << std::endl;
   CGAL::Real_timer t;
   t.start();
-  Feature_generator generator (features, pts, Pmap(),
+  Feature_generator generator (features, pts, pts.point_map(),
                                5);  // using 5 scales
   t.stop();
   std::cerr << "Done in " << t.time() << " second(s)" << std::endl;
@@ -102,7 +70,6 @@ int main (int argc, char** argv)
   Label_handle ground = labels.add ("ground");
   Label_handle vegetation = labels.add ("vegetation");
   Label_handle roof = labels.add ("roof");
-  Label_handle facade = labels.add ("facade");
 
   Classifier classifier (labels, features);
   
@@ -115,11 +82,11 @@ int main (int argc, char** argv)
 
   t.reset();
   t.start();
-  std::vector<std::size_t> label_indices;
+  std::vector<int> label_indices(pts.size(), -1);
   Classification::classify_with_graphcut<CGAL::Sequential_tag>
-    (pts, Pmap(), labels, classifier,
+    (pts, pts.point_map(), labels, classifier,
      generator.neighborhood().k_neighbor_query(12),
-     0.2, 10, label_indices);
+     0.2, 1, label_indices);
   t.stop();
   std::cerr << "Classification with graphcut done in " << t.time() << " second(s)" << std::endl;
 
@@ -138,39 +105,36 @@ int main (int argc, char** argv)
   std::cerr << "Accuracy = " << evaluation.accuracy() << std::endl
             << "Mean F1 score = " << evaluation.mean_f1_score() << std::endl
             << "Mean IoU = " << evaluation.mean_intersection_over_union() << std::endl;
-  
-  std::ofstream f ("classification.ply");
-  f.precision(18);
-  f << "ply" << std::endl
-    << "format ascii 1.0" << std::endl
-    << "element vertex " << pts.size() << std::endl
-    << "property float x" << std::endl
-    << "property float y" << std::endl
-    << "property float z" << std::endl
-    << "property uchar red" << std::endl
-    << "property uchar green" << std::endl
-    << "property uchar blue" << std::endl
-    << "end_header" << std::endl;
-  
-  for (std::size_t i = 0; i < pts.size(); ++ i)
+
+  // Color point set according to class
+  UCmap red = pts.add_property_map<unsigned char>("red", 0).first;
+  UCmap green = pts.add_property_map<unsigned char>("green", 0).first;
+  UCmap blue = pts.add_property_map<unsigned char>("blue", 0).first;
+
+  for (std::size_t i = 0; i < label_indices.size(); ++ i)
   {
-    f << pts[i] << " ";
-      
+    label_map[i] = label_indices[i]; // update label map with computed classification
+    
     Label_handle label = labels[label_indices[i]];
+
     if (label == ground)
-      f << "245 180 0" << std::endl;
-    else if (label == vegetation)
-      f << "0 255 27" << std::endl;
-    else if (label == roof)
-      f << "255 0 170" << std::endl;
-    else if (label == facade)
-      f << "128 128 128" << std::endl;
-    else
     {
-      f << "0 0 0" << std::endl;
-      std::cerr << "Error: unknown classification label" << std::endl;
+      red[i] = 245; green[i] = 180; blue[i] =   0;
+    }
+    else if (label == vegetation)
+    {
+      red[i] =   0; green[i] = 255; blue[i] =  27;
+    }
+    else if (label == roof)
+    {
+      red[i] = 255; green[i] =   0; blue[i] = 170;
     }
   }
+
+  // Write result
+  std::ofstream f ("classification.ply");
+  f.precision(18);
+  f << pts;
 
   std::cerr << "All done" << std::endl;
   

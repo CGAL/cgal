@@ -49,7 +49,7 @@ class Point_set_item_classification : public Item_classification_base
   
   void add_selection_to_training_set (const char* name)
   {
-    std::size_t label = get_label (name);
+    int label = int(get_label (name));
 
     for (Point_set::const_iterator it = m_points->point_set()->first_selected();
          it != m_points->point_set()->end(); ++ it)
@@ -66,7 +66,7 @@ class Point_set_item_classification : public Item_classification_base
   {
     for (Point_set::const_iterator it = m_points->point_set()->begin();
          it != m_points->point_set()->end(); ++ it)
-      m_training[*it] = std::size_t(-1);
+      m_training[*it] = -1;
   }
   void validate_selection ()
   {
@@ -116,7 +116,7 @@ class Point_set_item_classification : public Item_classification_base
   template <typename Classifier>
   bool run (int method, const Classifier& classifier)
   {
-    std::vector<std::size_t> indices;
+    std::vector<int> indices (m_points->point_set()->size(), std::size_t(-1));
 
     if (method == 0)
       CGAL::Classification::classify<Concurrency_tag> (*(m_points->point_set()),
@@ -134,7 +134,7 @@ class Point_set_item_classification : public Item_classification_base
          m_generator->neighborhood().k_neighbor_query(12),
          m_smoothing, m_subdivisions, indices);
 
-    std::vector<std::size_t> ground_truth(m_points->point_set()->size(), std::size_t(-1));
+    std::vector<int> ground_truth(m_points->point_set()->size(), -1);
     for (Point_set::const_iterator it = m_points->point_set()->begin();
          it != m_points->point_set()->first_selected(); ++ it)
       {
@@ -172,8 +172,8 @@ class Point_set_item_classification : public Item_classification_base
   Point_set::Property_map<unsigned char> m_green;
   Point_set::Property_map<unsigned char> m_blue;
   Point_set::Property_map<Color> m_color;
-  Point_set::Property_map<std::size_t> m_training;
-  Point_set::Property_map<std::size_t> m_classif;
+  Point_set::Property_map<int> m_training;
+  Point_set::Property_map<int> m_classif;
 
   Generator* m_generator;
   

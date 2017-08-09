@@ -24,51 +24,45 @@ Point_set_item_classification::Point_set_item_classification(Scene_points_with_n
   reset_indices();
 
   backup_existing_colors_and_add_new();
-  m_training = m_points->point_set()->add_property_map<std::size_t>("training", std::size_t(-1)).first;
-  m_classif = m_points->point_set()->add_property_map<std::size_t>("label", std::size_t(-1)).first;
+  bool training_found = false;
+  boost::tie (m_training, training_found) = m_points->point_set()->add_property_map<int>("training", -1);
+  bool classif_found = false;
+  boost::tie (m_classif, classif_found) = m_points->point_set()->add_property_map<int>("label", -1);
   
-  Point_set::Property_map<int> ps_labels;
-  bool found;
-  boost::tie (ps_labels, found) = m_points->point_set()->property_map<int>("label");
-  Point_set::Property_map<signed char> ps_labels_c;
-  bool found_c;
-  boost::tie (ps_labels_c, found_c) = m_points->point_set()->property_map<signed char>("label");
-  if (found || found_c)
+  training_found = !training_found; // add_property_map returns false if 
+  classif_found = !classif_found;   // property was already there
+  
+  if (training_found || classif_found)
   {
-    int max = 0;
+    int lmax = 0;
     
     for (Point_set::const_iterator it = m_points->point_set()->begin();
          it != m_points->point_set()->first_selected(); ++ it)
     {
-      int l;
-      if (found) l = ps_labels[*it];
-      else l = int(ps_labels_c[*it] - 1);
-      
-      m_classif[*it] = (std::size_t)l;
-      m_training[*it] = (std::size_t)l;
-      if (l > max)
+      if (training_found)
       {
-        max = l;
+        int l = m_training[*it];
+        lmax = (std::max)(l, lmax);
+      }
+      if (classif_found)
+      {
+        int l = m_classif[*it];
+        lmax = (std::max)(l, lmax);
       }
     }
 
-    for (int i = 0; i < max; ++ i)
+    for (int i = 0; i <= lmax; ++ i)
     {
       std::ostringstream oss;
       oss << "label_" << i;
       m_labels.add(oss.str().c_str());
       CGAL::Classification::HSV_Color hsv;
-      hsv[0] = 360. * (i / double(max));
+      hsv[0] = 360. * (i / double(lmax));
       hsv[1] = 76.;
       hsv[2] = 85.;
       Color rgb = CGAL::Classification::hsv_to_rgb(hsv);
       m_label_colors.push_back (QColor(rgb[0], rgb[1], rgb[2]));
     }
-
-    if (found)
-      m_points->point_set()->remove_property_map(ps_labels);
-    else
-      m_points->point_set()->remove_property_map(ps_labels_c);
   }
   else
   {
@@ -235,11 +229,11 @@ void Point_set_item_classification::change_color (int index)
            it != m_points->point_set()->first_selected(); ++ it)
         {
           QColor color (0, 0, 0);
-          std::size_t c = m_training[*it];
-          std::size_t c2 = m_classif[*it];
+          int c = m_training[*it];
+          int c2 = m_classif[*it];
           
-          if (c != std::size_t(-1))
-            color = m_label_colors[c];
+          if (c != -1)
+            color = m_label_colors[std::size_t(c)];
           
           float div = 1;
           if (c != c2)
@@ -363,15 +357,16 @@ void Point_set_item_classification::train(int classifier)
     }
   reset_indices();
 
+  std::vector<int> training (m_points->point_set()->size(), -1);
   std::vector<std::size_t> indices (m_points->point_set()->size(), std::size_t(-1));
 
   for (Point_set::const_iterator it = m_points->point_set()->begin();
        it != m_points->point_set()->first_selected(); ++ it)
-    indices[*it] = m_training[*it];
+    training[*it] = m_training[*it];
 
   if (classifier == 0)
     {
-      m_sowf->train<Concurrency_tag>(indices, m_nb_trials);
+      m_sowf->train<Concurrency_tag>(training, m_nb_trials);
       CGAL::Classification::classify<Concurrency_tag> (*(m_points->point_set()),
                                                        m_labels, *m_sowf,
                                                        indices);
@@ -379,7 +374,7 @@ void Point_set_item_classification::train(int classifier)
   else
     {
 #ifdef CGAL_LINKED_WITH_OPENCV
-      m_random_forest->train (indices);
+      m_random_forest->train (training);
       CGAL::Classification::classify<Concurrency_tag> (*(m_points->point_set()),
                                                        m_labels, *m_random_forest,
                                                        indices);
@@ -387,7 +382,7 @@ void Point_set_item_classification::train(int classifier)
     }
   for (Point_set::const_iterator it = m_points->point_set()->begin();
        it != m_points->point_set()->first_selected(); ++ it)
-    m_classif[*it] = indices[*it];
+    m_classif[*it] = int(indices[*it]);
   
   if (m_index_color == 1 || m_index_color == 2)
      change_color (m_index_color);

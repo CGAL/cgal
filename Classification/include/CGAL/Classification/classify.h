@@ -40,18 +40,18 @@ namespace Classification {
 /// \cond SKIP_IN_MANUAL
 namespace internal {
 
-  template <typename Classifier>
+  template <typename Classifier, typename LabelIndexRange>
   class Classify_functor
   {
     const Label_set& m_labels;
     const Classifier& m_classifier;
-    std::vector<std::size_t>& m_out;
+    LabelIndexRange& m_out;
     
   public:
 
     Classify_functor (const Label_set& labels,
                       const Classifier& classifier,
-                      std::vector<std::size_t>& out)
+                      LabelIndexRange& out)
       : m_labels (labels), m_classifier (classifier), m_out (out)
     { }
     
@@ -79,7 +79,7 @@ namespace internal {
         }
       }
 
-      m_out[s] = nb_class_best;
+      m_out[s] = static_cast<typename LabelIndexRange::iterator::value_type>(nb_class_best);
     }
 
   };
@@ -117,7 +117,7 @@ namespace internal {
     }
   };
   
-  template <typename ItemRange, typename ItemMap, typename NeighborQuery>
+  template <typename ItemRange, typename ItemMap, typename NeighborQuery, typename LabelIndexRange>
   class Classify_functor_local_smoothing
   {
     const ItemRange& m_input;
@@ -125,7 +125,7 @@ namespace internal {
     const Label_set& m_labels;
     const std::vector<std::vector<float> >& m_values;
     const NeighborQuery& m_neighbor_query;
-    std::vector<std::size_t>& m_out;
+    LabelIndexRange& m_out;
     
   public:
 
@@ -134,7 +134,7 @@ namespace internal {
                                       const Label_set& labels,
                                       const std::vector<std::vector<float> >& values,
                                       const NeighborQuery& neighbor_query,
-                                      std::vector<std::size_t>& out)
+                                      LabelIndexRange& out)
       : m_input (input), m_item_map (item_map), m_labels (labels),
         m_values(values),
         m_neighbor_query (neighbor_query),
@@ -171,14 +171,15 @@ namespace internal {
         }
       }
 
-      m_out[s] = nb_class_best;
+      m_out[s] = static_cast<typename LabelIndexRange::iterator::value_type>(nb_class_best);
     }
 
 
   };
 
   template <typename ItemRange, typename ItemMap,
-            typename Classifier, typename NeighborQuery>
+            typename Classifier, typename NeighborQuery,
+            typename LabelIndexRange>
   class Classify_functor_graphcut
   {
     const ItemRange& m_input;
@@ -189,7 +190,7 @@ namespace internal {
     float m_strength;
     const std::vector<std::vector<std::size_t> >& m_indices;
     const std::vector<std::pair<std::size_t, std::size_t> >& m_input_to_indices;
-    std::vector<std::size_t>& m_out;
+    LabelIndexRange& m_out;
 
 #ifdef CGAL_DO_NOT_USE_BOYKOV_KOLMOGOROV_MAXFLOW_SOFTWARE
     typedef CGAL::internal::Alpha_expansion_graph_cut_boost             Alpha_expansion;
@@ -207,7 +208,7 @@ namespace internal {
                                float strength,
                                const std::vector<std::vector<std::size_t> >& indices,
                                const std::vector<std::pair<std::size_t, std::size_t> >& input_to_indices,
-                               std::vector<std::size_t>& out)
+                               LabelIndexRange& out)
     : m_input (input), m_item_map (item_map), m_labels (labels),
       m_classifier (classifier), m_neighbor_query (neighbor_query),
       m_strength (strength), m_indices (indices), m_input_to_indices (input_to_indices), m_out (out)
@@ -271,7 +272,7 @@ namespace internal {
       graphcut(edges, edge_weights, probability_matrix, assigned_label);
 
       for (std::size_t i = 0; i < assigned_label.size(); ++ i)
-        m_out[m_indices[sub][i]] = assigned_label[i];
+        m_out[m_indices[sub][i]] = static_cast<typename LabelIndexRange::iterator::value_type>(assigned_label[i]);
     }
 
   };
@@ -299,6 +300,9 @@ namespace internal {
 
     \tparam Classifier model of `Classifier`.
 
+    \tparam Model of `Range` with random access iterators whose value
+    type is an integer type.
+
     \param input input range.
     \param labels set of input labels.
     \param classifier input classifier.
@@ -309,15 +313,16 @@ namespace internal {
   */
   template <typename ConcurrencyTag,
             typename ItemRange,
-            typename Classifier>
+            typename Classifier,
+            typename LabelIndexRange>
   void classify (const ItemRange& input,
                  const Label_set& labels,
                  const Classifier& classifier,
-                 std::vector<std::size_t>& output)
+                 LabelIndexRange& output)
   {
     output.resize(input.size());
     
-    internal::Classify_functor<Classifier>
+    internal::Classify_functor<Classifier, LabelIndexRange>
       f (labels, classifier, output);
 
 #ifndef CGAL_LINKED_WITH_TBB
@@ -354,6 +359,8 @@ namespace internal {
     is the type of item to classify (for example, `CGAL::Point_3`).
     \tparam NeighborQuery model of `NeighborQuery`.
     \tparam Classifier model of `Classifier`.
+    \tparam Model of `Range` with random access iterators whose value
+    type is an integer type.
 
     \param input input range.
     \param item_map property map to access the input items.
@@ -369,13 +376,14 @@ namespace internal {
             typename ItemRange,
             typename ItemMap,
             typename NeighborQuery,
-            typename Classifier>
+            typename Classifier,
+            typename LabelIndexRange>
   void classify_with_local_smoothing (const ItemRange& input,
                                       const ItemMap item_map,
                                       const Label_set& labels,
                                       const Classifier& classifier,
                                       const NeighborQuery& neighbor_query,
-                                      std::vector<std::size_t>& output)
+                                      LabelIndexRange& output)
   {
     output.resize(input.size());
     
@@ -383,7 +391,7 @@ namespace internal {
       (labels.size(), std::vector<float> (input.size(), -1.));
     internal::Classify_functor_local_smoothing_preprocessing<Classifier>
       f1 (labels, classifier, values);
-    internal::Classify_functor_local_smoothing<ItemRange, ItemMap, NeighborQuery>
+    internal::Classify_functor_local_smoothing<ItemRange, ItemMap, NeighborQuery, LabelIndexRange>
       f2 (input, item_map, labels, values, neighbor_query, output);
     
 #ifndef CGAL_LINKED_WITH_TBB
@@ -431,6 +439,8 @@ namespace internal {
     is the type of item to classify (for example, `CGAL::Point_3`).
     \tparam NeighborQuery model of `NeighborQuery`.
     \tparam Classifier model of `Classifier`.
+    \tparam Model of `Range` with random access iterators whose value
+    type is an integer type.
 
     \param input input range.
     \param item_map property map to access the input items.
@@ -452,7 +462,8 @@ namespace internal {
             typename ItemRange,
             typename ItemMap,
             typename NeighborQuery,
-            typename Classifier>
+            typename Classifier,
+            typename LabelIndexRange>
   void classify_with_graphcut (const ItemRange& input,
                                const ItemMap item_map,
                                const Label_set& labels,
@@ -460,7 +471,7 @@ namespace internal {
                                const NeighborQuery& neighbor_query,
                                const float strength,
                                const std::size_t min_number_of_subdivisions,
-                               std::vector<std::size_t>& output)
+                               LabelIndexRange& output)
   {
     CGAL::Bbox_3 bbox = CGAL::bbox_3
       (boost::make_transform_iterator (input.begin(), CGAL::Property_map_to_unary_function<ItemMap>(item_map)),
@@ -510,9 +521,7 @@ namespace internal {
         }
     }
 
-    output.resize (input.size());
-
-    internal::Classify_functor_graphcut<ItemRange, ItemMap, Classifier, NeighborQuery>
+    internal::Classify_functor_graphcut<ItemRange, ItemMap, Classifier, NeighborQuery, LabelIndexRange>
       f (input, item_map, labels, classifier, neighbor_query, strength, indices, input_to_indices, output);
     
 #ifndef CGAL_LINKED_WITH_TBB

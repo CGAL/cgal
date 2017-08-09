@@ -284,7 +284,7 @@ public:
     each input item, in the same order as the input set, the index of
     the corresponding label in the `Label_set` provided in the
     constructor. Input items that do not have a ground truth
-    information should be given the value `std::size_t(-1)`.
+    information should be given the value `-1`.
 
     \param nb_tests number of tests to perform. Higher values may
     provide the user with better results at the cost of a higher
@@ -295,16 +295,16 @@ public:
     provided ground truth and the best classification found by the
     training set.
   */
-  template <typename ConcurrencyTag>  
-  float train (const std::vector<std::size_t>& ground_truth,
+  template <typename ConcurrencyTag, typename LabelIndexRange>
+  float train (const LabelIndexRange& ground_truth,
                unsigned int nb_tests = 300)
   {
     std::vector<std::vector<std::size_t> > training_sets (m_labels.size());
     std::size_t nb_tot = 0;
     for (std::size_t i = 0; i < ground_truth.size(); ++ i)
-      if (ground_truth[i] != std::size_t(-1))
+      if (ground_truth[i] != -1)
       {
-        training_sets[ground_truth[i]].push_back (i);
+        training_sets[std::size_t(ground_truth[i])].push_back (i);
         ++ nb_tot;
       }
 
@@ -486,16 +486,16 @@ public:
   /// @}
 
   /// \cond SKIP_IN_MANUAL
-  template <typename ConcurrencyTag>  
-  float train_random (const std::vector<std::size_t>& ground_truth,
+  template <typename ConcurrencyTag, typename LabelIndexRange>
+  float train_random (const LabelIndexRange& ground_truth,
                       unsigned int nb_tests = 300)
   {
     std::vector<std::vector<std::size_t> > training_sets (m_labels.size());
     std::size_t nb_tot = 0;
     for (std::size_t i = 0; i < ground_truth.size(); ++ i)
-      if (ground_truth[i] != std::size_t(-1))
+      if (ground_truth[i] != -1)
       {
-        training_sets[ground_truth[i]].push_back (i);
+        training_sets[std::size_t(ground_truth[i])].push_back (i);
         ++ nb_tot;
       }
 

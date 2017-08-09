@@ -91,9 +91,10 @@ public:
     each input item, in the same order as the input set, the index of
     the corresponding label in the `Label_set` provided in the
     constructor. Input items that do not have a ground truth
-    information should be given the value `std::size_t(-1)`.
+    information should be given the value `-1`.
   */
-  void train (const std::vector<std::size_t>& ground_truth)
+  template <typename LabelIndexRange>
+  void train (const LabelIndexRange& ground_truth)
   {
 #if (CV_MAJOR_VERSION < 3)
     if (rtree != NULL)
@@ -102,15 +103,14 @@ public:
     
     std::size_t nb_samples = 0;
     for (std::size_t i = 0; i < ground_truth.size(); ++ i)
-      if (ground_truth[i] != std::size_t(-1))
+      if (ground_truth[i] != -1)
         ++ nb_samples;
-
 
     cv::Mat training_features (nb_samples, m_features.size(), CV_32FC1);
     cv::Mat training_labels (nb_samples, 1, CV_32FC1);
 
     for (std::size_t i = 0, index = 0; i < ground_truth.size(); ++ i)
-      if (ground_truth[i] != std::size_t(-1))
+      if (ground_truth[i] != -1)
       {
         for (std::size_t f = 0; f < m_features.size(); ++ f)
           training_features.at<float>(index, f) = m_features[f]->value(i);

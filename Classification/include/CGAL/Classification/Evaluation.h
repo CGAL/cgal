@@ -18,7 +18,7 @@
 // Author(s)     : Simon Giraudot
 
 #ifndef CGAL_CLASSIFICATION_EVALUATION_H
-#define CGAL_CLASSIFICATION_EVALUATION_H_
+#define CGAL_CLASSIFICATION_EVALUATION_H
 
 #include <CGAL/Classification/Label.h>
 #include <CGAL/Classification/Label_set.h>
@@ -60,15 +60,16 @@ public:
   \param ground_truth vector of label indices: it should contain the
   index of the corresponding label in the `Label_set` provided in the
   constructor. Input items that do not have a ground truth information
-  should be given the value `std::size_t(-1)`.
+  should be given the value `-1`.
 
   \param result similar to `ground_truth` but contained the result of
   a classification.
 
 */
+  template <typename LabelIndexRange>
   Evaluation (const Label_set& labels,
-              const std::vector<std::size_t>& ground_truth,
-              const std::vector<std::size_t>& result)
+              const LabelIndexRange& ground_truth,
+              const LabelIndexRange& result)
     : m_precision (labels.size()),
       m_recall (labels.size()),
       m_iou (labels.size())
@@ -85,9 +86,9 @@ public:
     
     for (std::size_t j = 0; j < ground_truth.size(); ++ j)
     {
-      std::size_t gt = ground_truth[j];
-      std::size_t res = result[j];
-      if (gt == std::size_t(-1) || res == std::size_t(-1))
+      int gt = static_cast<int>(ground_truth[j]);
+      int res = static_cast<int>(result[j]);
+      if (gt == -1 || res == -1)
         continue;
       ++ total;
       if (gt == res)
@@ -217,4 +218,5 @@ public:
 
 } // namespace CGAL
 
-#endif // CGAL_CLASSIFICATION_EVALUATION_H_
+#endif // CGAL_CLASSIFICATION_EVALUATION_H
+
