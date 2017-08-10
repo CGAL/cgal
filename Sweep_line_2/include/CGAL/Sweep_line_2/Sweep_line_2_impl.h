@@ -92,7 +92,7 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_left_curves()
     CGAL_SL_PRINT_EOL();
     this->_handle_event_without_left_curves();
 
-    Status_line_iterator sl_pos = this->m_status_line_insert_hint;
+    // Status_line_iterator sl_pos = this->m_status_line_insert_hint;
 
     if (this->m_is_event_on_above) {
       CGAL_SL_PRINT_TEXT("The event is on a curve in the status line");
