@@ -110,7 +110,7 @@ void compatible_remeshing(PolygonMesh& pmesh, const FaceRange& faces, const Edge
     for(unsigned int i=0; i<nb_iterations; ++i)
     {
 #ifdef CGAL_PMP_REMESHING_VERBOSE
-    std::cout << " * Iteration " << (i + 1) << " *" << std::endl;
+        std::cout << " * Iteration " << (i + 1) << " *" << std::endl;
 #endif
         remesher.angle_relaxation(use_weights);
         remesher.area_relaxation(gd_precision);
@@ -217,7 +217,7 @@ void angle_remeshing(PolygonMesh& pmesh, const FaceRange& faces, const EdgeRange
     {
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
-    std::cout << " * Iteration " << (i + 1) << " *" << std::endl;
+        std::cout << " * Iteration " << (i + 1) << " *" << std::endl;
 #endif
 
         remesher.angle_relaxation(use_weights);
@@ -322,7 +322,7 @@ void area_remeshing(PolygonMesh& pmesh, const FaceRange& faces, const EdgeRange&
     {
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
-    std::cout << " * Iteration " << (i + 1) << " *" << std::endl;
+        std::cout << " * Iteration " << (i + 1) << " *" << std::endl;
 #endif
 
         remesher.area_relaxation(gd_precision);
@@ -371,6 +371,8 @@ void curvature_flow(PolygonMesh& pmesh, const NamedParameters& np)
     // GeomTraits
     typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GeomTraits;
 
+    //nb_iterations
+    unsigned int nb_iterations = choose_param(get_param(np, internal_np::number_of_iterations), 1);
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
     t.stop();
@@ -395,14 +397,23 @@ void curvature_flow(PolygonMesh& pmesh, const NamedParameters& np)
 #ifdef CGAL_PMP_REMESHING_VERBOSE
     t.stop();
     std::cout << " done ("<< t.time() <<" sec)." << std::endl;
+    std::cout << "#iter = " << nb_iterations << std::endl;
     std::cout << "Remeshing ..." << std::endl;
     t.reset(); t.start();
 #endif
 
-    curvature_remesher.curvature_smoothing();
-    //for now
-    //curvature_remesher.project_to_surface();
+    for(unsigned int i=0; i<nb_iterations; ++i)
+    {
 
+#ifdef CGAL_PMP_REMESHING_VERBOSE
+        std::cout << " * Iteration " << (i + 1) << " *" << std::endl;
+#endif
+
+        curvature_remesher.curvature_smoothing();
+        //for now
+        //curvature_remesher.project_to_surface();
+
+    }
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
     t.stop();

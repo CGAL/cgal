@@ -84,11 +84,26 @@ public:
       dock_widget->hide();
     }
 
+    void init_ui()
+    {
+        ui_widget.Angle_spinBox->setValue(1);
+        ui_widget.Area_spinBox->setValue(1);
+        ui_widget.Curvature_spinBox->setValue(1);
+    }
+
 public Q_SLOTS:
     void smoothing_action()
     {
         dock_widget->show();
         dock_widget->raise();
+
+        const Scene_interface::Item_id index = scene->mainSelectionIndex();
+        Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+
+        if(poly_item)
+        {
+            init_ui();
+        }
     }
 
     void on_Apply_clicked()
@@ -99,34 +114,40 @@ public Q_SLOTS:
 
         if(ui_widget.Angle_checkBox->isChecked())
         {
-            unsigned int nb_iterations = ui_widget.Angle_spinBox->value();
-            CGAL::Polygon_mesh_processing::angle_remeshing(pmesh);
+            unsigned int nb_iter = ui_widget.Angle_spinBox->value();
+            std::cout<<"Angle, nb_iterations---------->"<<nb_iter<<std::endl;
+            CGAL::Polygon_mesh_processing::angle_remeshing(pmesh,
+                                                           CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter));
+
             poly_item->invalidateOpenGLBuffers();
             Q_EMIT poly_item->itemChanged();
         }
 
         if(ui_widget.Area_checkBox->isChecked())
         {
-            unsigned int nb_iterations = ui_widget.Area_spinBox->value();
-            CGAL::Polygon_mesh_processing::area_remeshing(pmesh);
+            unsigned int nb_iter = ui_widget.Area_spinBox->value();
+            std::cout<<"Area, nb_iterations---------->"<<nb_iter<<std::endl;
+
+            CGAL::Polygon_mesh_processing::area_remeshing(pmesh,
+                                                          CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter));
+
             poly_item->invalidateOpenGLBuffers();
             Q_EMIT poly_item->itemChanged();
         }
 
         if(ui_widget.Curvature_checkBox->isChecked())
         {
-            unsigned int nb_iterations = ui_widget.Curvature_spinBox->value();
+            unsigned int nb_iter = ui_widget.Curvature_spinBox->value();
+            std::cout<<"Curvature, nb_iterations---------->"<<nb_iter<<std::endl;
             CGAL::Polygon_mesh_processing::curvature_flow(pmesh,
-                                                          CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iterations));
+                                                          CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter));
+
             poly_item->invalidateOpenGLBuffers();
             Q_EMIT poly_item->itemChanged();
         }
 
 
 
-
-        //poly_item->invalidateOpenGLBuffers();
-        //Q_EMIT poly_item->itemChanged();
         QApplication::restoreOverrideCursor();
     }
 

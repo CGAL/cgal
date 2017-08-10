@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>378</width>
-    <height>229</height>
+    <width>346</width>
+    <height>245</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,8 +17,8 @@
    <widget class="QPushButton" name="Apply_button">
     <property name="geometry">
      <rect>
-      <x>80</x>
-      <y>130</y>
+      <x>60</x>
+      <y>160</y>
       <width>221</width>
       <height>51</height>
      </rect>
@@ -27,45 +27,65 @@
      <string>Apply</string>
     </property>
    </widget>
-   <widget class="QWidget" name="layoutWidget">
+   <widget class="QWidget" name="">
     <property name="geometry">
      <rect>
-      <x>60</x>
+      <x>20</x>
       <y>20</y>
-      <width>251</width>
-      <height>101</height>
+      <width>311</width>
+      <height>131</height>
      </rect>
     </property>
-    <layout class="QFormLayout" name="formLayout">
-     <item row="0" column="0">
-      <widget class="QCheckBox" name="Angle_checkBox">
-       <property name="text">
-        <string>angle remeshing</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="QSpinBox" name="Area_spinBox"/>
-     </item>
-     <item row="1" column="0">
-      <widget class="QCheckBox" name="Area_checkBox">
-       <property name="text">
-        <string>area remeshing</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1">
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="4" column="1">
       <widget class="QSpinBox" name="Angle_spinBox"/>
      </item>
-     <item row="2" column="0">
+     <item row="8" column="0">
       <widget class="QCheckBox" name="Curvature_checkBox">
        <property name="text">
         <string>Curvature flow</string>
        </property>
       </widget>
      </item>
-     <item row="2" column="1">
+     <item row="4" column="0">
+      <widget class="QCheckBox" name="Angle_checkBox">
+       <property name="text">
+        <string>angle remeshing</string>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="0">
+      <widget class="QCheckBox" name="Area_checkBox">
+       <property name="text">
+        <string>area remeshing</string>
+       </property>
+      </widget>
+     </item>
+     <item row="8" column="1">
       <widget class="QSpinBox" name="Curvature_spinBox"/>
+     </item>
+     <item row="6" column="1">
+      <widget class="QSpinBox" name="Area_spinBox"/>
+     </item>
+     <item row="0" column="0">
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>type</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>iterations</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
      </item>
     </layout>
    </widget>
