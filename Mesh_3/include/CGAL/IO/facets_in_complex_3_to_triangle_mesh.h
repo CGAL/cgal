@@ -33,7 +33,7 @@
 namespace CGAL {
 //! \ingroup PkgMesh_3Functions
 //!
-//! Builds a `TriangleMesh` from the surface facets, with a consistent orientation at the interface of two subdomains.
+//! \brief builds a `TriangleMesh` from the surface facets, with a consistent orientation at the interface of two subdomains.
 //!
 //! This function exports the surface as a `TriangleMesh` and appends it to `graph`, using
 //! `orient_polygon_soup()`.
