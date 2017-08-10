@@ -804,8 +804,8 @@ detect_features(FT angle_in_degree,
   {
     initialize_ts(p);
     typedef typename boost::graph_traits<Polyhedron_type>::face_descriptor face_descriptor;
-    std::map<face_descriptor, std::size_t> face_ids;
-    std::size_t id = 0;
+    std::map<face_descriptor, int> face_ids;
+    int id = 0;
     BOOST_FOREACH(face_descriptor& f, faces(p))
     {
         face_ids[f] = id++;

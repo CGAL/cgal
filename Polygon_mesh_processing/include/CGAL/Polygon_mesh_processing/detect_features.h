@@ -149,7 +149,7 @@ void detect_sharp_edges(PolygonMesh& p,
             typename boost::property_map<PolygonMesh,edge_is_feature_t>::type//default
             > ::type                                               EIF_map;
     EIF_map eif
-            = choose_param(get_param(np, internal_np::edge_is_feature),
+            = boost::choose_param(get_param(np, internal_np::edge_is_feature),
                            get(CGAL::edge_is_feature, p));
 
     typedef typename boost::lookup_named_param_def <
@@ -158,7 +158,7 @@ void detect_sharp_edges(PolygonMesh& p,
             typename boost::property_map<PolygonMesh,vertex_feature_degree_t>::type//default
             > ::type                                               VNFE_map;
     VNFE_map vnfe
-            = choose_param(get_param(np, internal_np::vertex_feature_degree),
+            = boost::choose_param(get_param(np, internal_np::vertex_feature_degree),
                            get(CGAL::vertex_feature_degree_t(), p));
 
     typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
@@ -230,10 +230,10 @@ detect_surface_patches(PolygonMesh& p,
             typename boost::property_map<PolygonMesh,edge_is_feature_t>::type//default
             > ::type                                               EIF_map;
     EIF_map eif
-            = choose_param(get_param(np, internal_np::edge_is_feature),
+            = boost::choose_param(get_param(np, internal_np::edge_is_feature),
                            get(CGAL::edge_is_feature, p));
     typename GetFaceIndexMap<PolygonMesh, NamedParameters>::const_type
-      fimap = choose_param(get_param(np, internal_np::face_index),
+      fimap = boost::choose_param(get_param(np, internal_np::face_index),
                            get_const_property_map(boost::face_index, p));
 
     std::size_t offset = boost::choose_param(get_param(np, internal_np::first_index),
@@ -290,7 +290,7 @@ void detect_incident_patches(PolygonMesh& p,
             typename boost::property_map<PolygonMesh,edge_is_feature_t>::type//default
             > ::type                                               EIF_map;
     EIF_map eif
-            = choose_param(get_param(np, internal_np::edge_is_feature),
+            = boost::choose_param(get_param(np, internal_np::edge_is_feature),
                            get(CGAL::edge_is_feature, p));
 
     typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor  vertex_descriptor;
