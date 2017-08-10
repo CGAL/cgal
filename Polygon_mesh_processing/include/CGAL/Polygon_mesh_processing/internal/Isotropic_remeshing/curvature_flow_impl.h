@@ -4,6 +4,7 @@
 #include <CGAL/Polygon_mesh_processing/Weights.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
+#include <CGAL/Polygon_mesh_processing/measure.h>
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
@@ -16,6 +17,7 @@
 #include <utility>
 #include <math.h>
 
+# define CGAL_PMP_COMPATIBLE_REMESHING_DEBUG
 
 namespace CGAL {
 
@@ -121,7 +123,7 @@ public:
                     // displacement vector
                     Point Xi = get(vpmap_, source(hi, mesh_));
                     Point Xj = get(vpmap_, target(hi, mesh_));
-                    Vector vec(Xi, Xj);
+                    Vector vec(Xj, Xi);
 
                     // add weight. If weight is 0, then vec becomes 0.
                     vec *= weight;
@@ -133,7 +135,7 @@ public:
                 if(sum_cot_weights != 0)
                     weighted_move /= sum_cot_weights;
 
-                Point weighted_barycenter = get(vpmap_, v) + weighted_move;
+                Point weighted_barycenter = get(vpmap_, v) - weighted_move;
                 barycenters[v] = weighted_barycenter;
 
             } // not on border
@@ -151,11 +153,110 @@ public:
             Vector n = n_map[vp.first];
 
             new_locations[vp.first] = q + ( n * Vector(q, p) ) * n ;
-            //new_locations[vp.first] = q;
         }
 
         // update location
         for(const VP& vp : new_locations)
+        {
+
+#ifdef CGAL_PMP_COMPATIBLE_REMESHING_DEBUG
+            std::cout << "from: "<< get(vpmap_, vp.first);
+#endif
+            put(vpmap_, vp.first, vp.second);
+
+#ifdef CGAL_PMP_COMPATIBLE_REMESHING_DEBUG
+            std::cout<<" moved at: "<< vp.second << std::endl;
+#endif
+        }
+
+    }
+
+
+    void good_curvature_smoothing()
+    {
+        std::map<vertex_descriptor, Vector> n_map;
+        std::map<vertex_descriptor, Point> barycenters;
+
+
+        for(vertex_descriptor v : vertices(mesh_))
+        {
+            if(!is_border(v, mesh_)) // add && !is_constrained
+            {
+                // normals
+                Vector vn = compute_vertex_normal(v, mesh_,
+                                                  Polygon_mesh_processing::parameters::vertex_point_map(vpmap_)
+                                                  .geom_traits(traits_));
+                n_map[v] = vn;
+
+
+                // area around vertex
+                double A = 0;
+                //take one halfedge whose target is v
+                for(halfedge_descriptor ht : halfedges_around_target(v, mesh_))
+                {
+                    // is it ok if it is degenerate?
+                    A = area(faces_around_target(ht, mesh_), mesh_);
+                    continue;
+                }
+
+                // find incident halfedges
+                Edges_around_map he_map;
+                typename Edges_around_map::iterator it;
+                for(halfedge_descriptor hi : halfedges_around_source(v, mesh_))
+                    he_map[hi] = He_pair( next(hi, mesh_), prev(opposite(hi, mesh_), mesh_) );
+
+
+                Vector weighted_move = CGAL::NULL_VECTOR;
+                for(it = he_map.begin(); it!= he_map.end(); ++it)
+                {
+                    halfedge_descriptor hi = it->first; //main_he
+
+                    // weight
+                    double weight = cot_angles(hi, it->second); // incd_edges
+
+                    // displacement vector
+                    Point xi = get(vpmap_, source(hi, mesh_));
+                    Point xj = get(vpmap_, target(hi, mesh_));
+                    Vector vec(xj, xi);
+
+                    // add weight.
+                    vec *= weight;
+                    // sum vecs
+                    weighted_move += vec;
+                    std::cout<<"hi";
+                }
+
+                Vector curvature_normal = CGAL::NULL_VECTOR;
+                if (A != 0)
+                {
+                    curvature_normal = weighted_move / (4 * A);
+                }
+
+                Point old_point = get(vpmap_, v);
+                Point new_point = get(vpmap_, v) + curvature_normal;
+                barycenters[v] = new_point;
+
+            } // not on border
+
+        } // all vertices
+
+
+        /*
+        std::map<vertex_descriptor, Point> new_locations;
+        for(const auto& vp: barycenters)
+        {
+            Point p = get(vpmap_, vp.first);
+            Point q = vp.second;
+            Vector n = n_map[vp.first];
+
+            new_locations[vp.first] = q + ( n * Vector(q, p) ) * n ;
+        }
+        */
+
+
+        // update location
+        for(const auto& vp : barycenters)
+        //for(const auto& vp : new_locations)
         {
 
 #ifdef CGAL_PMP_COMPATIBLE_REMESHING_DEBUG
@@ -250,8 +351,8 @@ private:
     // data members
     PolygonMesh& mesh_;
     VertexPointMap& vpmap_;
-    //CGAL::internal::Cotangent_value_Meyer_secure<PolygonMesh, VertexPointMap> cot_calculator_;
-    CGAL::internal::Cotangent_value_clamped_2<PolygonMesh, VertexPointMap> cot_calculator_;
+    CGAL::internal::Cotangent_value_Meyer_secure<PolygonMesh, VertexPointMap> cot_calculator_;
+    //CGAL::internal::Cotangent_value_clamped_2<PolygonMesh, VertexPointMap> cot_calculator_;
     //CGAL::internal::Cotangent_value_clamped<PolygonMesh, VertexPointMap> cot_calculator_;
     Triangle_list input_triangles_;
     Tree* tree_ptr_;

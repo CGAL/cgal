@@ -410,6 +410,8 @@ void curvature_flow(PolygonMesh& pmesh, const NamedParameters& np)
 #endif
 
         curvature_remesher.curvature_smoothing();
+        //curvature_remesher.good_curvature_smoothing();
+
         //for now
         //curvature_remesher.project_to_surface();
 
