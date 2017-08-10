@@ -14,6 +14,12 @@
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_triangle_primitive.h>
 
+#include <CGAL/property_map.h>
+#include <CGAL/iterator.h>
+#include <CGAL/boost/graph/Euler_operations.h>
+#include <boost/graph/graph_traits.hpp>
+#include <boost/foreach.hpp>
+
 
 namespace CGAL {
 
@@ -27,7 +33,6 @@ namespace internal {
 template<typename PolygonMesh, typename EdgeRange>
 struct Edge_constraint_map
 {
-
     typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor edge_descriptor;
 
     boost::shared_ptr<std::set<edge_descriptor>> constrained_edges_ptr;
@@ -51,7 +56,6 @@ public:
 
     friend bool get(const Edge_constraint_map<PolygonMesh, EdgeRange>& map, const edge_descriptor& e)
     {
-        // assertion on pmesh
         return map.constrained_edges_ptr->find(e) != map.constrained_edges_ptr->end();
     }
 
@@ -65,9 +69,7 @@ public:
         map.constrained_edges_ptr->erase(e);
     }
 
-
 };
-
 
 
 template<typename PolygonMesh, typename VertexPointMap, typename VertexConstraitMap, typename EdgeConstraintMap, typename GeomTraits>
@@ -108,18 +110,17 @@ public:
     template<typename FaceRange>
     void init_remeshing(const FaceRange& face_range)
     {
-        for (face_descriptor f : face_range)
+        BOOST_FOREACH(face_descriptor f, face_range)
         {
-            input_triangles_.push_back(triangle(f)); //avoid push_back, reserve space
+            // todo: avoid push back and reserve the space
+            input_triangles_.push_back(triangle(f));
         }
 
         tree_ptr_ = new Tree(input_triangles_.begin(), input_triangles_.end());
         tree_ptr_->accelerate_distance_queries();
 
-        //update constrained edges
+        // update constrained edges
         check_constrained_edges();
-
-        min_edge_len_ = init_min_edge_length();
     }
 
     std::size_t remove_degenerate_faces()
@@ -129,91 +130,25 @@ public:
         // from repair.h
         nb_removed_faces = CGAL::Polygon_mesh_processing::remove_degenerate_faces(mesh_);
 
+#ifdef CGAL_PMP_SMOOTHING_DEBUG
         std::cout<<"nb_collapsed_faces: "<<nb_removed_faces<<std::endl;
+#endif
 
         return nb_removed_faces;
     }
 
-    /*
-    std::size_t collapse_short_edges()
-    {
-        std::size_t nb_collapsed_edges = 0;
-        std::set<edge_descriptor> edges_to_collapse, non_topologically_valid_collapses;
-
-        // collect short edges
-        for(edge_descriptor e : edges(mesh_))
-        {
-            if(edge_should_collapse(e))
-                edges_to_collapse.insert(e);
-        }
-
-        // collapse
-        while(!edges_to_collapse.empty())
-        {
-            while(!edges_to_collapse.empty())
-            {
-                edge_descriptor e = *edges_to_collapse.begin();
-                edges_to_collapse.erase(edges_to_collapse.begin());
-
-                // link condition
-                if(!Euler::does_satisfy_link_condition(e, mesh_))
-                {
-                    non_topologically_valid_collapses.insert(e);
-                    continue;
-                }
-
-                // take out from short_edges prev and prev(opposite), which will be collapsed
-                halfedge_descriptor he = halfedge(e, mesh_);
-
-                // verbose - todo
-                vertex_descriptor vs = source(he, mesh_);
-                vertex_descriptor vt = target(he, mesh_);
-                //
-
-                edges_to_collapse.erase(edge(prev(he, mesh_), mesh_));
-                edges_to_collapse.erase(edge(prev(opposite(he, mesh_), mesh_), mesh_));
-
-                // shoot out edge to be collapsed from topologically_non_valid
-                non_topologically_valid_collapses.erase(e);
-                non_topologically_valid_collapses.erase(edge(prev(he, mesh_), mesh_));
-                non_topologically_valid_collapses.erase(edge(prev(opposite(he, mesh_), mesh_), mesh_));
-
-                vertex_descriptor v = Euler::collapse_edge(e, mesh_);
-
-                // check if an out_edge now is too short
-                for (edge_descriptor out_e : out_edges(v, mesh_))
-                {
-                    if(edge_should_collapse(out_e))
-                        edges_to_collapse.insert(out_e);
-                }
-
-                nb_collapsed_edges++;
-            }
-
-            edges_to_collapse.swap(non_topologically_valid_collapses);
-        }
-
-        // debug
-        std::cout<<"nb_collapsed_edges: "<<nb_collapsed_edges<<std::endl;
-
-        return nb_collapsed_edges;
-    }
-    */
-
     void angle_relaxation(bool use_weights)
     {
         std::map<vertex_descriptor, Point> barycenters;
-        //boost::vector_property_map<Vector> n_map;
         std::map<vertex_descriptor, Vector> n_map;
-
-        for(vertex_descriptor v : vertices(mesh_))
+        BOOST_FOREACH(vertex_descriptor v, vertices(mesh_))
         {
 
             if(!is_border(v, mesh_) && !is_constrained(v))
             {
 
-#ifdef CGAL_PMP_COMPATIBLE_REMESHING_DEBUG
-std::cout<<"processing vertex: "<< v << std::endl;
+#ifdef CGAL_PMP_SMOOTHING_DEBUG
+                std::cout<<"processing vertex: "<< v << std::endl;
 #endif
 
                 // compute normal to v
@@ -224,28 +159,12 @@ std::cout<<"processing vertex: "<< v << std::endl;
 
                 Edges_around_map he_map;
                 typename Edges_around_map::iterator it;
-
-                for(halfedge_descriptor hi : halfedges_around_source(v, mesh_)) // or make it around target
+                BOOST_FOREACH(halfedge_descriptor hi, halfedges_around_source(v, mesh_))
                     he_map[hi] = He_pair( next(hi, mesh_), prev(opposite(hi, mesh_), mesh_) );
-
-#ifdef CGAL_PMP_COMPATIBLE_REMESHING_DEBUG
-for(it = he_map.begin(); it!=he_map.end(); ++it)
-{
-    halfedge_descriptor main_he = it->first;
-    He_pair he_pair = it->second;
-    std::cout<< "main: " << main_he;
-    std::cout<<" ("<<source(main_he, mesh_)<<"->"<< target(main_he, mesh_)<<")";
-    std::cout<< " - incident: "<< he_pair.first;
-    std::cout<<" ("<<source(he_pair.first, mesh_)<<"->"<< target(he_pair.first, mesh_)<<")";
-    std::cout<<" and " << he_pair.second;
-    std::cout<<" ("<<source(he_pair.second, mesh_)<<"->"<< target(he_pair.second, mesh_)<<")"<<std::endl;
-}
-#endif
 
                 // calculate movement
                 Vector move = CGAL::NULL_VECTOR;
-                double opposite_weight_factor = 0;
-
+                double weights_sum = 0;
                 for(it = he_map.begin(); it != he_map.end(); ++it)
                 {
                     halfedge_descriptor main_he = it->first;
@@ -255,12 +174,12 @@ for(it = he_map.begin(); it!=he_map.end(); ++it)
 
                     // calculate angle
                     double angle = get_angle(incident_pair, vn);
-                    if(angle < 1e-5) // temp
+                    if(angle < 1e-5)
                         continue;
 
                     //small angles have more weight
                     double weight = 1.0 / (angle*angle);
-                    opposite_weight_factor += weight;
+                    weights_sum += weight;
 
                     if(use_weights)
                         move += weight * rotated_edge;
@@ -269,44 +188,39 @@ for(it = he_map.begin(); it!=he_map.end(); ++it)
                 }
 
                 // if at least 1 angle was summed
-                if(use_weights && opposite_weight_factor != 0)
-                    move /= opposite_weight_factor;
+                if(use_weights && weights_sum != 0)
+                    move /= weights_sum;
                 else
                     move /= CGAL::to_double(he_map.size());
 
-
                 barycenters[v] = (get(vpmap_, v) + move) ;
-
 
             } // not on border
         } // for each v
 
-
-
         // compute locations on tangent plane
         typedef typename std::map<vertex_descriptor, Point>::value_type VP;
         std::map<vertex_descriptor, Point> new_locations;
-        for(const VP& vp: barycenters)
+        BOOST_FOREACH(const VP& vp, barycenters)
         {
-            Point q = vp.second;
             Point p = get(vpmap_, vp.first);
+            Point q = vp.second;
             Vector n = n_map[vp.first];
 
             new_locations[vp.first] = q + ( n * Vector(q, p) ) * n ;
         }
 
-
-        // perform moves
-        for(const VP& vp : new_locations)
+        // update location
+        BOOST_FOREACH(const VP& vp, new_locations)
         {
 
-#ifdef CGAL_PMP_COMPATIBLE_REMESHING_DEBUG
-std::cout << "from: "<< get(vpmap_, vp.first);
+#ifdef CGAL_PMP_SMOOTHING_DEBUG
+            std::cout << "from: "<< get(vpmap_, vp.first);
 #endif
             put(vpmap_, vp.first, vp.second);
 
-#ifdef CGAL_PMP_COMPATIBLE_REMESHING_DEBUG
-std::cout<<" moved at: "<< vp.second << std::endl;
+#ifdef CGAL_PMP_SMOOTHING_DEBUG
+            std::cout<<" moved at: "<< vp.second << std::endl;
 #endif
         }
 
@@ -315,26 +229,26 @@ std::cout<<" moved at: "<< vp.second << std::endl;
     void area_relaxation(const double& precision)
     {
 
-        count_non_convex_energy_ = 0; //temp;
+#ifdef CGAL_PMP_SMOOTHING_DEBUG
+        count_non_convex_energy_ = 0;
+#endif
+
         unsigned int moved_points = 0;
 
-        for(vertex_descriptor v : vertices(mesh_))
+        BOOST_FOREACH(vertex_descriptor v, vertices(mesh_))
         {
-
              if(!is_border(v, mesh_) && !is_constrained(v))
              {
-
                  if (gradient_descent(v, precision))
                  {
                      moved_points++;
                  }
 
-             } // not on border
-
+             }
 
         }
 
-#ifdef CGAL_PMP_COMPATIBLE_REMESHING_DEBUG
+#ifdef CGAL_PMP_SMOOTHING_DEBUG
         std::cout<<"moved points: "<<moved_points<<" times"<<std::endl;
         std::cout<<"non_convex_energy found: "<<count_non_convex_energy_<<" times"<<std::endl;
 #endif
@@ -343,7 +257,7 @@ std::cout<<" moved at: "<< vp.second << std::endl;
 
     void project_to_surface()
     {
-        for( vertex_descriptor v : vertices(mesh_))
+        BOOST_FOREACH( vertex_descriptor v, vertices(mesh_))
         {
             if(!is_border(v, mesh_) && !is_constrained(v))
             {
@@ -410,7 +324,7 @@ private:
         double sum_areas = 0;
         unsigned int number_of_edges = 0;
 
-        for(halfedge_descriptor h : halfedges_around_source(v, mesh_))
+        BOOST_FOREACH(halfedge_descriptor h, halfedges_around_source(v, mesh_))
         {
             // opposite vertices
             vertex_descriptor pi = source(next(h, mesh_), mesh_);
@@ -429,7 +343,7 @@ private:
         double energy = 0;
         unsigned int number_of_edges = 0;
 
-        for(halfedge_descriptor h : halfedges_around_source(v, mesh_))
+        BOOST_FOREACH(halfedge_descriptor h, halfedges_around_source(v, mesh_))
         {
             vertex_descriptor pi = source(next(h, mesh_), mesh_);
             vertex_descriptor pi1 = target(next(h, mesh_), mesh_);
@@ -447,7 +361,7 @@ private:
         double energy = 0;
         unsigned int number_of_edges = 0;
 
-        for(halfedge_descriptor h : halfedges_around_source(v, mesh_))
+        BOOST_FOREACH(halfedge_descriptor h, halfedges_around_source(v, mesh_))
         {
             vertex_descriptor pi = source(next(h, mesh_), mesh_);
             vertex_descriptor pi1 = target(next(h, mesh_), mesh_);
@@ -463,7 +377,7 @@ private:
     std::vector<double> calc_areas(const vertex_descriptor& v)
     {
         std::vector<double> areas;
-        for(halfedge_descriptor h : halfedges_around_source(v, mesh_))
+        BOOST_FOREACH(halfedge_descriptor h, halfedges_around_source(v, mesh_))
         {
             vertex_descriptor pi = source(next(h, mesh_), mesh_);
             vertex_descriptor pi1 = target(next(h, mesh_), mesh_);
@@ -476,7 +390,7 @@ private:
 
     void compute_derivatives(double& drdx, double& drdy, double& drdz, const vertex_descriptor& v, const double& S_av)
     {
-        for(halfedge_descriptor h : halfedges_around_source(v, mesh_))
+        BOOST_FOREACH(halfedge_descriptor h, halfedges_around_source(v, mesh_))
         {
             vertex_descriptor pi = source(next(h, mesh_), mesh_);
             vertex_descriptor pi1 = target(next(h, mesh_), mesh_);
@@ -502,7 +416,6 @@ private:
 
     bool gradient_descent(const vertex_descriptor& v, const double& precision)
     {
-
         bool move_flag;
         double x, y, z, x_new, y_new, z_new, drdx, drdy, drdz;
         x = get(vpmap_, v).x();
@@ -516,11 +429,6 @@ private:
         if(energy == 0)
             return false;
 
-#ifdef CGAL_PMP_COMPATIBLE_REMESHING_DEBUG
-        std::ofstream out("data/energy.txt");
-        std::ofstream out("data/coords.txt");
-        std::ofstream out("data/areas.txt");
-#endif
         double energy_new = 0;
         double relative_energy = precision + 1;
         unsigned int t = 1;
@@ -533,16 +441,6 @@ private:
         {
             drdx=0, drdy=0, drdz=0;
             compute_derivatives(drdx, drdy, drdz, v, S_av);
-
-#ifdef CGAL_PMP_COMPATIBLE_REMESHING_DEBUG
-            std::vector<double> areas = calc_areas(v);
-            std::cout<<"v= "<<v<<std::endl;
-            for(unsigned int i=0; i<areas.size(); ++i)
-            {
-                std::cout<<areas[i]<<"\t";
-            }
-            std::cout<<std::endl;
-#endif
 
             x_new = x - eta * drdx;
             y_new = y - eta * drdy;
@@ -558,7 +456,10 @@ private:
             }
             else
             {
+
+#ifdef CGAL_PMP_SMOOTHING_DEBUG
                 count_non_convex_energy_++;
+#endif
                 return false;
             }
 
@@ -572,45 +473,43 @@ private:
             t++;
 
             //eta = eta0 / pow(t, power_t);
-            eta = eta0 / (1 + t0*t);
+            eta = eta0 / (1 + t0 * t);
 
         }
 
-    return move_flag;
-
+        return move_flag;
     }
 
     Vector rotate_edge(const halfedge_descriptor& main_he, const He_pair& incd_edges)
     {
-
         // get common vertex around which the edge is rotated
-        Point vt = get(vpmap_, target(main_he, mesh_));
+        Point pt = get(vpmap_, target(main_he, mesh_)); // CORRECT SYNATX vt
 
-        // pv is the vertex that is being moved
-        Point pv = get(vpmap_, source(main_he, mesh_));
+        // ps is the vertex that is being moved
+        Point ps = get(vpmap_, source(main_he, mesh_));
 
         // get "equidistant" points - in fact they are at equal angles
         Point equidistant_p1 = get(vpmap_, target(incd_edges.first, mesh_));
         Point equidistant_p2 = get(vpmap_, source(incd_edges.second, mesh_));
         CGAL_assertion(target(incd_edges.second, mesh_) == source(incd_edges.first, mesh_));
 
-        Vector edge1(vt, equidistant_p1);
-        Vector edge2(vt, equidistant_p2);
-        Vector vt_pv(vt, pv);
+        Vector edge1(pt, equidistant_p1);
+        Vector edge2(pt, equidistant_p2);
+        Vector vec_main_he(pt, ps);
 
         // check degenerate cases
-        double tolerance = 1e-3; // to think about it
+        double tolerance = 1e-3;
 
         if ( edge1.squared_length()           < tolerance ||
              edge2.squared_length()           < tolerance ||
              sqlength(main_he)                < tolerance ||
-             (edge1 - vt_pv).squared_length() < tolerance ||
-             (edge2 - vt_pv).squared_length() < tolerance   )
+             (edge1 - vec_main_he).squared_length() < tolerance ||
+             (edge2 - vec_main_he).squared_length() < tolerance   )
         {
             return CGAL::NULL_VECTOR;
         }
 
-        CGAL_assertion(vt_pv.squared_length() > tolerance);
+        CGAL_assertion(vec_main_he.squared_length() > tolerance);
 
         // find bisector
         Vector bisector = CGAL::NULL_VECTOR;
@@ -622,15 +521,15 @@ private:
         if( bisector.squared_length() < 0.001 ) // -> length = 0.01 -> sin(theta) = 0.01 -> theta = 0.57 degrees
         {
             // angle is (almost) 180 degrees, take the perpendicular
-            Vector normal_vec = find_perpendicular(edge1, vt, pv); // normal to edge and found on (vt-pv)'s plane
+            Vector normal_vec = find_perpendicular(edge1, pt, ps); // normal to edge and found on (vec_main_he)'s plane
 
             CGAL_assertion(normal_vec != CGAL::NULL_VECTOR);
             CGAL_assertion(CGAL::scalar_product(edge1, normal_vec) < tolerance);
 
-            Segment b_segment(vt, vt + normal_vec);
+            Segment b_segment(pt, pt + normal_vec);
             Point b_segment_end = b_segment.target();
 
-            if(CGAL::angle(b_segment_end, vt, pv) == CGAL::OBTUSE)
+            if(CGAL::angle(b_segment_end, pt, ps) == CGAL::OBTUSE)
             {
                 b_segment = b_segment.opposite();
             }
@@ -640,15 +539,11 @@ private:
 
         correct_bisector(bisector, main_he);
 
-
         double target_length = CGAL::sqrt(sqlength(main_he));
         double bisector_length = CGAL::sqrt(bisector.squared_length());
 
-
-
         CGAL_assertion(   ( target_length - tolerance    <   bisector_length     ) &&
                           ( bisector_length        <   target_length + tolerance )    );
-
 
         return bisector;
     }
@@ -725,7 +620,7 @@ private:
 
     void check_constrained_edges()
     {
-        for(edge_descriptor e : edges(mesh_))
+        BOOST_FOREACH(edge_descriptor e, edges(mesh_))
         {
             if (is_constrained(e))
             {
@@ -737,58 +632,6 @@ private:
         }
     }
 
-    // degenerate fixing functions
-
-    bool edge_should_collapse(edge_descriptor e)
-    {
-        halfedge_descriptor he = halfedge(e, mesh_);
-        Point s = get(vpmap_, source(he, mesh_));
-        Point t = get(vpmap_, target(he, mesh_));
-
-        double sq_length = traits_.compute_squared_distance_3_object()(s, t);
-
-        if(sq_length < min_edge_len_)
-            return true;
-        else
-            return false;
-    }
-
-    struct Vertex_to_point
-    {
-        Vertex_to_point(VertexPointMap vpmap) : vpmap(vpmap){}
-
-        typedef typename boost::property_traits<VertexPointMap>::reference output_type;
-
-        output_type operator()(vertex_descriptor vd) const
-        {
-            return get(vpmap, vd);
-        }
-
-        VertexPointMap vpmap;
-    };
-
-    double init_min_edge_length()
-    {
-        vertex_iterator vi, ve;
-        boost::tie(vi, ve) = vertices(mesh_);
-        Vertex_to_point v_to_p(vpmap_);
-
-        Bbox_3 bbox= CGAL::bbox_3(
-                    boost::make_transform_iterator(vi, v_to_p),
-                    boost::make_transform_iterator(ve, v_to_p));
-
-        return 0.01 * diagonal_length(bbox);
-    }
-
-    double diagonal_length(const Bbox_3& bbox)
-    {
-      double dx = bbox.xmax() - bbox.xmin();
-      double dy = bbox.ymax() - bbox.ymin();
-      double dz = bbox.zmax() - bbox.zmin();
-
-      double diag = dx * dx + dy * dy + dz * dz;
-      return std::sqrt(diag);
-    }
 
 
 
@@ -799,21 +642,14 @@ private:
     EdgeConstraintMap ecmap_;
     Triangle_list input_triangles_;
     Tree* tree_ptr_;
-    unsigned int count_non_convex_energy_;
     GeomTraits traits_;
-    double min_edge_len_;
 
+#ifdef CGAL_PMP_SMOOTHING_DEBUG
+    unsigned int count_non_convex_energy_;
+#endif
 
 
 };
-
-
-
-
-
-
-
-
 
 
 

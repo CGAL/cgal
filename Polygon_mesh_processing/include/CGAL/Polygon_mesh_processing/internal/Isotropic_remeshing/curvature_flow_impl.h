@@ -11,13 +11,15 @@
 #include <CGAL/AABB_triangle_primitive.h>
 #include <CGAL/Bbox_3.h>
 
+#include <CGAL/property_map.h>
+#include <CGAL/iterator.h>
+#include <CGAL/boost/graph/Euler_operations.h>
 #include <boost/graph/graph_traits.hpp>
-#include <boost/iterator/transform_iterator.hpp>
+#include <boost/foreach.hpp>
 
 #include <utility>
 #include <math.h>
 
-# define CGAL_PMP_COMPATIBLE_REMESHING_DEBUG
 
 namespace CGAL {
 
@@ -60,7 +62,7 @@ public:
     template<typename FaceRange>
     void init_remeshing(const FaceRange& face_range)
     {
-        for (face_descriptor f : face_range)
+        BOOST_FOREACH(face_descriptor f, face_range)
         {
             input_triangles_.push_back(triangle(f));
         }
@@ -80,7 +82,7 @@ public:
         // from repair.h
         nb_removed_faces = CGAL::Polygon_mesh_processing::remove_degenerate_faces(mesh_);
 
-#ifdef CGAL_PMP_COMPATIBLE_REMESHING_DEBUG
+#ifdef CGAL_PMP_SMOOTHING_DEBUG
         std::cout<<"nb_collapsed_faces: "<<nb_removed_faces<<std::endl;
 #endif
 
@@ -92,7 +94,7 @@ public:
         std::map<vertex_descriptor, Point> barycenters;
         std::map<vertex_descriptor, Vector> n_map;
 
-        for(vertex_descriptor v : vertices(mesh_))
+        BOOST_FOREACH(vertex_descriptor v, vertices(mesh_))
         {
             if(!is_border(v, mesh_)) // add && !is_constrained
             {
@@ -105,11 +107,9 @@ public:
                 // find incident halfedges
                 Edges_around_map he_map;
                 typename Edges_around_map::iterator it;
-                for(halfedge_descriptor hi : halfedges_around_source(v, mesh_))
+                BOOST_FOREACH(halfedge_descriptor hi, halfedges_around_source(v, mesh_))
                     he_map[hi] = He_pair( next(hi, mesh_), prev(opposite(hi, mesh_), mesh_) );
 
-                // maybe use a seperate function for this
-                // with cot weights
                 Vector weighted_move = CGAL::NULL_VECTOR;
                 double sum_cot_weights = 0;
                 for(it = he_map.begin(); it!= he_map.end(); ++it)
@@ -125,7 +125,7 @@ public:
                     Point Xj = get(vpmap_, target(hi, mesh_));
                     Vector vec(Xj, Xi);
 
-                    // add weight. If weight is 0, then vec becomes 0.
+                    // add weight
                     vec *= weight;
                     // sum vecs
                     weighted_move += vec;
@@ -146,7 +146,7 @@ public:
         // compute locations on tangent plane
         typedef typename std::map<vertex_descriptor, Point>::value_type VP;
         std::map<vertex_descriptor, Point> new_locations;
-        for(const VP& vp: barycenters)
+        BOOST_FOREACH(const VP& vp, barycenters)
         {
             Point p = get(vpmap_, vp.first);
             Point q = vp.second;
@@ -156,29 +156,29 @@ public:
         }
 
         // update location
-        for(const VP& vp : new_locations)
+        BOOST_FOREACH(const VP& vp, new_locations)
         {
 
-#ifdef CGAL_PMP_COMPATIBLE_REMESHING_DEBUG
+#ifdef CGAL_PMP_SMOOTHING_DEBUG
             std::cout << "from: "<< get(vpmap_, vp.first);
 #endif
             put(vpmap_, vp.first, vp.second);
 
-#ifdef CGAL_PMP_COMPATIBLE_REMESHING_DEBUG
+#ifdef CGAL_PMP_SMOOTHING_DEBUG
             std::cout<<" moved at: "<< vp.second << std::endl;
 #endif
         }
 
     }
 
-
+    // test formula (14)
     void good_curvature_smoothing()
     {
         std::map<vertex_descriptor, Vector> n_map;
         std::map<vertex_descriptor, Point> barycenters;
 
 
-        for(vertex_descriptor v : vertices(mesh_))
+        BOOST_FOREACH(vertex_descriptor v, vertices(mesh_))
         {
             if(!is_border(v, mesh_)) // add && !is_constrained
             {
@@ -192,7 +192,7 @@ public:
                 // area around vertex
                 double A = 0;
                 //take one halfedge whose target is v
-                for(halfedge_descriptor ht : halfedges_around_target(v, mesh_))
+                BOOST_FOREACH(halfedge_descriptor ht, halfedges_around_target(v, mesh_))
                 {
                     // is it ok if it is degenerate?
                     A = area(faces_around_target(ht, mesh_), mesh_);
@@ -202,7 +202,7 @@ public:
                 // find incident halfedges
                 Edges_around_map he_map;
                 typename Edges_around_map::iterator it;
-                for(halfedge_descriptor hi : halfedges_around_source(v, mesh_))
+                BOOST_FOREACH(halfedge_descriptor hi, halfedges_around_source(v, mesh_))
                     he_map[hi] = He_pair( next(hi, mesh_), prev(opposite(hi, mesh_), mesh_) );
 
 
@@ -243,7 +243,7 @@ public:
 
         /*
         std::map<vertex_descriptor, Point> new_locations;
-        for(const auto& vp: barycenters)
+        BOOST_FOREACH(const auto& vp, barycenters)
         {
             Point p = get(vpmap_, vp.first);
             Point q = vp.second;
@@ -255,16 +255,16 @@ public:
 
 
         // update location
-        for(const auto& vp : barycenters)
-        //for(const auto& vp : new_locations)
+        BOOST_FOREACH(const auto& vp, barycenters)
+        //BOOST_FOREACH(const auto& vp, new_locations)
         {
 
-#ifdef CGAL_PMP_COMPATIBLE_REMESHING_DEBUG
+#ifdef CGAL_PMP_SMOOTHING_DEBUG
             std::cout << "from: "<< get(vpmap_, vp.first);
 #endif
             put(vpmap_, vp.first, vp.second);
 
-#ifdef CGAL_PMP_COMPATIBLE_REMESHING_DEBUG
+#ifdef CGAL_PMP_SMOOTHING_DEBUG
             std::cout<<" moved at: "<< vp.second << std::endl;
 #endif
         }
@@ -273,7 +273,7 @@ public:
 
     void project_to_surface()
     {
-        for( vertex_descriptor v : vertices(mesh_))
+        BOOST_FOREACH(vertex_descriptor v, vertices(mesh_))
         {
             if(!is_border(v, mesh_) ) // todo: && !is_constrained(v)
             {

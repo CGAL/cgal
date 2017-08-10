@@ -112,12 +112,13 @@ public Q_SLOTS:
         Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(index));
         Polyhedron& pmesh = *poly_item->polyhedron();
 
+        QApplication::setOverrideCursor(Qt::WaitCursor);
+
         if(ui_widget.Angle_checkBox->isChecked())
         {
             unsigned int nb_iter = ui_widget.Angle_spinBox->value();
-            std::cout<<"Angle, nb_iterations---------->"<<nb_iter<<std::endl;
             CGAL::Polygon_mesh_processing::angle_remeshing(pmesh,
-                                                           CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter));
+                CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter));
 
             poly_item->invalidateOpenGLBuffers();
             Q_EMIT poly_item->itemChanged();
@@ -126,10 +127,8 @@ public Q_SLOTS:
         if(ui_widget.Area_checkBox->isChecked())
         {
             unsigned int nb_iter = ui_widget.Area_spinBox->value();
-            std::cout<<"Area, nb_iterations---------->"<<nb_iter<<std::endl;
-
             CGAL::Polygon_mesh_processing::area_remeshing(pmesh,
-                                                          CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter));
+                CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter));
 
             poly_item->invalidateOpenGLBuffers();
             Q_EMIT poly_item->itemChanged();
@@ -138,15 +137,12 @@ public Q_SLOTS:
         if(ui_widget.Curvature_checkBox->isChecked())
         {
             unsigned int nb_iter = ui_widget.Curvature_spinBox->value();
-            std::cout<<"Curvature, nb_iterations---------->"<<nb_iter<<std::endl;
             CGAL::Polygon_mesh_processing::curvature_flow(pmesh,
-                                                          CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter));
+                CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter));
 
             poly_item->invalidateOpenGLBuffers();
             Q_EMIT poly_item->itemChanged();
         }
-
-
 
         QApplication::restoreOverrideCursor();
     }
