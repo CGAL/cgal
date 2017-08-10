@@ -43,7 +43,7 @@ int main(int argc, char* argv[])
     CGAL_assertion(number_of_patches == 6);
 
     number_of_patches = PMP::detect_features(mesh, 90, pid, vip, PMP::parameters::first_index(1)
-                                             .edge_is_feature_map(eif));
+                                             .edge_is_constrained_map(eif));
     nb_sharp_edges =0;
     BOOST_FOREACH(boost::graph_traits<Mesh>::edge_descriptor e, edges(mesh))
     {
@@ -56,7 +56,7 @@ int main(int argc, char* argv[])
     CGAL_assertion(number_of_patches == 6);
 
     PMP::detect_sharp_edges(mesh, 90);
-    number_of_patches = PMP::detect_surface_patches(mesh, pid);
+    number_of_patches = PMP::internal::detect_surface_patches(mesh, pid);
     PMP::detect_incident_patches(mesh, pid, vip);
     nb_sharp_edges =0;
 
@@ -69,9 +69,9 @@ int main(int argc, char* argv[])
 
     CGAL_assertion(nb_sharp_edges == 12);
     CGAL_assertion(number_of_patches == 6);
-    PMP::detect_sharp_edges(mesh, 90, PMP::parameters::edge_is_feature_map(eif));
-    number_of_patches = PMP::detect_surface_patches(mesh, pid, PMP::parameters::first_index(1));
-    PMP::detect_incident_patches(mesh, pid, vip, PMP::parameters::edge_is_feature_map(eif));
+    PMP::detect_sharp_edges(mesh, 90, PMP::parameters::edge_is_constrained_map(eif));
+    number_of_patches = PMP::internal::detect_surface_patches(mesh, pid, PMP::parameters::first_index(1));
+    PMP::detect_incident_patches(mesh, pid, vip, PMP::parameters::edge_is_constrained_map(eif));
     nb_sharp_edges =0;
 
     BOOST_FOREACH(boost::graph_traits<Mesh>::edge_descriptor e, edges(mesh))

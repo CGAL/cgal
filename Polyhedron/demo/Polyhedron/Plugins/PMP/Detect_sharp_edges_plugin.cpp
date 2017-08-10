@@ -131,9 +131,9 @@ void Polyhedron_demo_detect_sharp_edges_plugin::detectSharpEdges(bool input_dial
       qobject_cast<Scene_facegraph_item*>(scene->item(tuple.first));
     FaceGraph* pMesh = tuple.second;
     if (!pMesh) continue;
-    typedef typename boost::property_map<FaceGraph,CGAL::face_patch_id_t<int> >::type PatchID;
+    typedef boost::property_map<FaceGraph,CGAL::face_patch_id_t<int> >::type PatchID;
     PatchID pid = get(CGAL::face_patch_id_t<int>(), *pMesh);
-    typedef typename boost::property_map<FaceGraph,CGAL::vertex_incident_patches_t<int> >::type VIP;
+    typedef boost::property_map<FaceGraph,CGAL::vertex_incident_patches_t<int> >::type VIP;
     VIP vip = get(CGAL::vertex_incident_patches_t<int>(), *pMesh);
     first_patch+=PMP::detect_features(*pMesh, angle, pid, vip,
                          PMP::parameters::first_index(first_patch));

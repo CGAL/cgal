@@ -144,7 +144,9 @@ algorithm.\n
 \cgalNPEnd
 
 \cgalNPBegin{ edge_is_constrained_map } \anchor PMP_edge_is_constrained_map
-the property map containing information about edges of the input polygon mesh being constrained or not.\n
+the property map containing information about edges of the input polygon mesh being marked or not.\n
+In `CGAL::Polygon_mesh_processing::isotropic_remeshing()` and `CGAL::Polygon_mesh_processing::connected_components()`,
+the marked edges are constrained.\n
 \b Type : a class model of `ReadWritePropertyMap` with
 `boost::graph_traits<PolygonMesh>::%edge_descriptor` as key type and
 `bool` as value type. It should be default constructible.\n
@@ -156,14 +158,6 @@ a default property map where no edge is constrained is provided.
 The index of the first surface patch.\n
 \b Type : `std::size_t`.\n
 \b Default : 1.
-\cgalNPEnd
-
-\cgalNPBegin{ edge_is_feature_map } \anchor PMP_edge_is_feature_map
-the property map containing information about edges of the input polygon mesh being featured or not.\n
-\b Type : a class model of `ReadWritePropertyMap` with
-`boost::graph_traits<PolygonMesh>::%edge_descriptor` as key type and
-`bool` as value type. It should be default constructible.\n
-\b Default value is \code boost::get(CGAL::edge_is_feature, pmesh)\endcode
 \cgalNPEnd
 
 \cgalNPBegin{ vertex_feature_degree_map } \anchor PMP_vertex_feature_degree_map

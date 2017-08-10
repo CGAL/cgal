@@ -212,7 +212,14 @@ struct Polyhedron_incident_patches_pmap {
   typedef void                               key_type;
   typedef std::set<Patch_id>                 value_type;
   typedef std::set<Patch_id>&                reference;
-  typedef boost::read_write_property_map_tag category;
+  typedef boost::lvalue_property_map_tag     category;
+
+  template <typename Handle_type>
+  value_type& operator[](Handle_type h)
+  {
+    return get(*this, h);
+  }
+
 };
 
 template <typename Patch_id, typename Handle_type>
@@ -226,6 +233,7 @@ template <typename Patch_id, typename Handle_type>
 void put(Polyhedron_incident_patches_pmap<Patch_id>,
          Handle_type h, const std::set<Patch_id>& v)
 {
+h->clear_incident_patches();
   BOOST_FOREACH(Patch_id n, v)
     h->add_incident_patch(n);
 }
