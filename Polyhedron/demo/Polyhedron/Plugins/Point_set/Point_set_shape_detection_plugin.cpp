@@ -134,6 +134,29 @@ private:
   typedef Kernel::Point_3 Point_3;
   typedef Kernel::Vector_3 Vector_3;
 
+  // RANSAC can handle all types of shapes
+  template <typename Traits, typename Shape>
+  void add_shape (CGAL::Shape_detection_3::Efficient_RANSAC<Traits>& shape_detection,
+                  const Shape&)
+  {
+    shape_detection.template add_shape_factory<Shape>();
+  }
+
+  // Region growing can't handle all types of shapes
+  template <typename Traits, typename Shape>
+  void add_shape (CGAL::Shape_detection_3::Region_growing<Traits>& shape_detection,
+                  const Shape&)
+  {
+  }
+
+  // Region growing only handles planes
+  template <typename Traits>
+  void add_shape (CGAL::Shape_detection_3::Region_growing<Traits>& shape_detection,
+                  const CGAL::Shape_detection_3::Plane<Traits>&)
+  {
+    shape_detection.template add_shape_factory<CGAL::Shape_detection_3::Plane<Traits> >();
+  }
+
   template <typename Traits, typename Shape_detection>
   void detect_shapes (typename Shape_detection::Parameters& op,
                       Scene_points_with_normal_item* item,
@@ -171,27 +194,27 @@ private:
     if(dialog.detect_plane()){
       groups[0] = new Scene_group_item("Planes");
       groups[0]->setRenderingMode(Points);
-      shape_detection.template add_shape_factory<CGAL::Shape_detection_3::Plane<Traits> >();
+      add_shape<Traits> (shape_detection, CGAL::Shape_detection_3::Plane<Traits>());
     }
     if(dialog.detect_cylinder()){
       groups[1] = new Scene_group_item("Cylinders");
       groups[1]->setRenderingMode(Points);
-      shape_detection.template add_shape_factory<CGAL::Shape_detection_3::Cylinder<Traits> >();
+      add_shape<Traits> (shape_detection, CGAL::Shape_detection_3::Cylinder<Traits>());
     }
     if(dialog.detect_torus()){
       groups[2] = new Scene_group_item("Torus");
       groups[2]->setRenderingMode(Points);
-      shape_detection.template add_shape_factory< CGAL::Shape_detection_3::Torus<Traits> >();
+      add_shape<Traits> (shape_detection, CGAL::Shape_detection_3::Torus<Traits>());
     }
     if(dialog.detect_cone()){
       groups[3] = new Scene_group_item("Cones");
       groups[3]->setRenderingMode(Points);
-      shape_detection.template add_shape_factory< CGAL::Shape_detection_3::Cone<Traits> >();
+      add_shape<Traits> (shape_detection, CGAL::Shape_detection_3::Cone<Traits>());
     }
     if(dialog.detect_sphere()){
       groups[4] = new Scene_group_item("Spheres");
       groups[4]->setRenderingMode(Points);
-      shape_detection.template add_shape_factory< CGAL::Shape_detection_3::Sphere<Traits> >();
+      add_shape<Traits> (shape_detection, CGAL::Shape_detection_3::Sphere<Traits>());
     }
 
     // The actual shape detection.
