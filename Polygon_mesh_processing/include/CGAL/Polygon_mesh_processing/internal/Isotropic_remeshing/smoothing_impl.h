@@ -29,56 +29,12 @@ namespace internal {
 
 
 
-
-template<typename PolygonMesh, typename EdgeRange>
-struct Edge_constraint_map
-{
-    typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor edge_descriptor;
-
-    boost::shared_ptr<std::set<edge_descriptor>> constrained_edges_ptr;
-
-public:
-    typedef edge_descriptor                     key_type;
-    typedef bool                                value_type;
-    typedef value_type&                         reference;
-    typedef boost::read_write_property_map_tag  category;
-
-    Edge_constraint_map() : constrained_edges_ptr(new std::set<edge_descriptor>() )
-    {}
-
-    Edge_constraint_map(const EdgeRange& edges) : constrained_edges_ptr(new std::set<edge_descriptor>() )
-    {
-        for (edge_descriptor e : edges)
-        {
-            constrained_edges_ptr->insert(e);
-        }
-    }
-
-    friend bool get(const Edge_constraint_map<PolygonMesh, EdgeRange>& map, const edge_descriptor& e)
-    {
-        return map.constrained_edges_ptr->find(e) != map.constrained_edges_ptr->end();
-    }
-
-    friend void put(const Edge_constraint_map<PolygonMesh, EdgeRange>& map, const edge_descriptor& e)
-    {
-        map.constrained_edges_ptr->insert(e);
-    }
-
-    friend void remove(const Edge_constraint_map<PolygonMesh, EdgeRange>& map, const edge_descriptor& e)
-    {
-        map.constrained_edges_ptr->erase(e);
-    }
-
-};
-
-
-template<typename PolygonMesh, typename VertexPointMap, typename VertexConstraitMap, typename EdgeConstraintMap, typename GeomTraits>
+template<typename PolygonMesh, typename VertexPointMap, typename VertexConstraintMap, typename EdgeConstraintMap, typename GeomTraits>
 class Compatible_remesher
 {
 
     typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
     typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
-    typedef typename boost::graph_traits<PolygonMesh>::vertex_iterator vertex_iterator;
     typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
     typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor edge_descriptor;
 
@@ -98,7 +54,7 @@ class Compatible_remesher
 
 
 public:
-    Compatible_remesher(PolygonMesh& pmesh, VertexPointMap& vpmap, VertexConstraitMap& vcmap, EdgeConstraintMap& ecmap) :
+    Compatible_remesher(PolygonMesh& pmesh, VertexPointMap& vpmap, VertexConstraintMap& vcmap, EdgeConstraintMap& ecmap) :
         mesh_(pmesh), vpmap_(vpmap), vcmap_(vcmap), ecmap_(ecmap)
     {}
 
@@ -109,7 +65,9 @@ public:
 
     template<typename FaceRange>
     void init_remeshing(const FaceRange& face_range)
-    {
+    {        
+        check_constraints();
+
         BOOST_FOREACH(face_descriptor f, face_range)
         {
             // todo: avoid push back and reserve the space
@@ -119,8 +77,6 @@ public:
         tree_ptr_ = new Tree(input_triangles_.begin(), input_triangles_.end());
         tree_ptr_->accelerate_distance_queries();
 
-        // update constrained edges
-        check_constrained_edges();
     }
 
     std::size_t remove_degenerate_faces()
@@ -146,10 +102,6 @@ public:
 
             if(!is_border(v, mesh_) && !is_constrained(v))
             {
-
-#ifdef CGAL_PMP_SMOOTHING_DEBUG
-                std::cout<<"processing vertex: "<< v << std::endl;
-#endif
 
                 // compute normal to v
                 Vector vn = compute_vertex_normal(v, mesh_,
@@ -177,7 +129,7 @@ public:
                     if(angle < 1e-5)
                         continue;
 
-                    //small angles have more weight
+                    // small angles carry more weight
                     double weight = 1.0 / (angle*angle);
                     weights_sum += weight;
 
@@ -239,6 +191,8 @@ public:
         {
              if(!is_border(v, mesh_) && !is_constrained(v))
              {
+
+
                  if (gradient_descent(v, precision))
                  {
                      moved_points++;
@@ -618,7 +572,7 @@ private:
         return get(vcmap_, v);
     }
 
-    void check_constrained_edges()
+    void check_constraints()
     {
         BOOST_FOREACH(edge_descriptor e, edges(mesh_))
         {
@@ -638,7 +592,7 @@ private:
 private:
     PolygonMesh& mesh_;
     VertexPointMap& vpmap_;
-    VertexConstraitMap vcmap_;
+    VertexConstraintMap vcmap_;
     EdgeConstraintMap ecmap_;
     Triangle_list input_triangles_;
     Tree* tree_ptr_;

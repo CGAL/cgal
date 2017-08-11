@@ -29,7 +29,7 @@ namespace internal {
 
 
 
-template<typename PolygonMesh, typename VertexPointMap, typename GeomTraits>
+template<typename PolygonMesh, typename VertexPointMap, typename VertexConstraintMap, typename EdgeConstraintMap, typename GeomTraits>
 class Curvature_flow
 {
 
@@ -37,31 +37,33 @@ class Curvature_flow
     typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
     typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
     typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor edge_descriptor;
-    typedef typename boost::graph_traits<PolygonMesh>::vertex_iterator vertex_iterator;
 
     typedef typename GeomTraits::Point_3  Point;
     typedef typename GeomTraits::Vector_3 Vector;
-    typedef typename GeomTraits::FT       FT;
     typedef typename GeomTraits::Triangle_3 Triangle;
     typedef std::vector<Triangle> Triangle_list;
-
-    // <one halfedge around v, pair of incident halfedges to this halfedge around v>
-    typedef std::pair<halfedge_descriptor, halfedge_descriptor> He_pair;
-    typedef std::map<halfedge_descriptor, He_pair> Edges_around_map;
 
     typedef CGAL::AABB_triangle_primitive<GeomTraits, typename Triangle_list::iterator> AABB_Primitive;
     typedef CGAL::AABB_traits<GeomTraits, AABB_Primitive> AABB_Traits;
     typedef CGAL::AABB_tree<AABB_Traits> Tree;
 
+    // <one halfedge around v, pair of incident halfedges to this halfedge around v>
+    typedef std::pair<halfedge_descriptor, halfedge_descriptor> He_pair;
+    typedef std::map<halfedge_descriptor, He_pair> Edges_around_map;
 
 
 public:
 
-    Curvature_flow(PolygonMesh& pmesh, VertexPointMap& vpmap) : mesh_(pmesh), vpmap_(vpmap), cot_calculator_(pmesh, vpmap){}
+    Curvature_flow(PolygonMesh& pmesh, VertexPointMap& vpmap, VertexConstraintMap& vcmap, EdgeConstraintMap& ecmap) :
+        mesh_(pmesh), vpmap_(vpmap), vcmap_(vcmap), ecmap_(ecmap), cot_calculator_(pmesh, vpmap)
+    {}
 
     template<typename FaceRange>
     void init_remeshing(const FaceRange& face_range)
     {
+
+        check_constraints();
+
         BOOST_FOREACH(face_descriptor f, face_range)
         {
             input_triangles_.push_back(triangle(f));
@@ -69,9 +71,6 @@ public:
 
         tree_ptr_ = new Tree(input_triangles_.begin(), input_triangles_.end());
         tree_ptr_->accelerate_distance_queries();
-
-        //TODO: update constrained edges
-        //check_constrained_edges();
 
     }
 
@@ -96,8 +95,9 @@ public:
 
         BOOST_FOREACH(vertex_descriptor v, vertices(mesh_))
         {
-            if(!is_border(v, mesh_)) // add && !is_constrained
+            if(!is_border(v, mesh_) && !is_constrained(v))
             {
+
                 // normals
                 Vector vn = compute_vertex_normal(v, mesh_,
                                                   Polygon_mesh_processing::parameters::vertex_point_map(vpmap_)
@@ -348,17 +348,43 @@ private:
         return a1 + a2;
     }
 
+    bool is_constrained(const edge_descriptor& e)
+    {
+        return get(ecmap_, e);
+    }
+
+    bool is_constrained(const vertex_descriptor& v)
+    {
+        return get(vcmap_, v);
+    }
+
+    void check_constraints()
+    {
+        BOOST_FOREACH(edge_descriptor e, edges(mesh_))
+        {
+            if (is_constrained(e))
+            {
+                vertex_descriptor vs = source(e, mesh_);
+                vertex_descriptor vt = target(e, mesh_);
+                put(vcmap_, vs, true);
+                put(vcmap_, vt, true);
+            }
+        }
+    }
+
     // data members
     PolygonMesh& mesh_;
     VertexPointMap& vpmap_;
-    CGAL::internal::Cotangent_value_Meyer_secure<PolygonMesh, VertexPointMap> cot_calculator_;
-    //CGAL::internal::Cotangent_value_clamped_2<PolygonMesh, VertexPointMap> cot_calculator_;
-    //CGAL::internal::Cotangent_value_clamped<PolygonMesh, VertexPointMap> cot_calculator_;
+    VertexConstraintMap vcmap_;
+    EdgeConstraintMap ecmap_;
     Triangle_list input_triangles_;
     Tree* tree_ptr_;
     GeomTraits traits_;
     double min_sq_edge_len_;
-
+    // from Weights.h
+    CGAL::internal::Cotangent_value_Meyer_secure<PolygonMesh, VertexPointMap> cot_calculator_;
+    //CGAL::internal::Cotangent_value_clamped_2<PolygonMesh, VertexPointMap> cot_calculator_;
+    //CGAL::internal::Cotangent_value_clamped<PolygonMesh, VertexPointMap> cot_calculator_;
 
 };
 
