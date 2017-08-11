@@ -135,8 +135,12 @@ void Polyhedron_demo_detect_sharp_edges_plugin::detectSharpEdges(bool input_dial
     PatchID pid = get(CGAL::face_patch_id_t<int>(), *pMesh);
     typedef boost::property_map<FaceGraph,CGAL::vertex_incident_patches_t<int> >::type VIP;
     VIP vip = get(CGAL::vertex_incident_patches_t<int>(), *pMesh);
-    first_patch+=PMP::detect_features(*pMesh, angle, pid, vip,
-                         PMP::parameters::first_index(first_patch));
+    typename boost::property_map<FaceGraph, CGAL::edge_is_feature_t>::type eif =
+        get(CGAL::edge_is_feature, *pMesh);
+    first_patch+=PMP::sharp_edges_segmentation(*pMesh, angle, pid,
+                                               PMP::parameters::first_index(first_patch)
+                                               .edge_is_constrained_map(eif)
+                                               .vertex_incident_patches_map(vip));
     //update item
     item->setItemIsMulticolor(true);
 #ifndef USE_SURFACE_MESH

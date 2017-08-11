@@ -466,8 +466,10 @@ detect_features(FT angle_in_degree, std::vector<Polyhedron>& poly)
     PIDMap pid_map = get(face_patch_id_t<P_id>(), p);
     VIPMap vip_map = get(vertex_incident_patches_t<P_id>(), p);
     // Get sharp features
-    nb_of_patch_plus_one += PMP::detect_features(p, angle_in_degree,pid_map, vip_map, PMP::parameters::first_index(nb_of_patch_plus_one)
-                                                 .face_index_map(boost::make_assoc_property_map(face_ids)));
+    nb_of_patch_plus_one += PMP::sharp_edges_segmentation(p, angle_in_degree,pid_map, PMP::parameters::first_index(nb_of_patch_plus_one)
+                                                 .face_index_map(boost::make_assoc_property_map(face_ids))
+                                                 .edge_is_constrained_map(get(CGAL::edge_is_feature, p))
+                                                 .vertex_incident_patches_map(vip_map));
 
 
     internal::Mesh_3::Is_featured_edge<Polyhedron> is_featured_edge(p);

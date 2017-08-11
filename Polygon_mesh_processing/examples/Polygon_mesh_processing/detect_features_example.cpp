@@ -30,9 +30,11 @@ int main(int argc, char* argv[])
   typedef boost::property_map<Mesh,CGAL::vertex_incident_patches_t<int> >::type VIMap;
   VIMap vip = get(CGAL::vertex_incident_patches_t<int>(), mesh);
   std::size_t number_of_patches = 1;
-  number_of_patches=PMP::detect_features(mesh, 90, pid, vip);
   typedef boost::property_map<Mesh,CGAL::edge_is_feature_t>::type EIFMap;
   EIFMap eif = get(CGAL::edge_is_feature, mesh);
+  number_of_patches=PMP::sharp_edges_segmentation(mesh, 90, pid,
+                                                  PMP::parameters::edge_is_constrained_map(eif)
+                                                  .vertex_incident_patches_map(vip));
   int nb_sharp_edges =0;
   BOOST_FOREACH(boost::graph_traits<Mesh>::edge_descriptor e, edges(mesh))
   {

@@ -25,11 +25,9 @@ namespace CGAL
     // Detect edges in current polyhedron
     typedef typename boost::property_map<Polyhedron,CGAL::face_patch_id_t<int> >::type PIDMap;
     typedef typename boost::property_map<Polyhedron,CGAL::vertex_incident_patches_t<int> >::type VIPMap;
-    PIDMap pid_map = get(face_patch_id_t<int>(), *pMesh);
-    VIPMap vip_map = get(vertex_incident_patches_t<int>(), *pMesh);
-
-
-    CGAL::Polygon_mesh_processing::detect_sharp_edges(*pMesh, angle);
+    typename boost::property_map<Polyhedron,edge_is_feature_t>::type eif =
+        get(CGAL::edge_is_feature, *pMesh);
+    CGAL::Polygon_mesh_processing::detect_sharp_edges(*pMesh, angle, eif);
   }
 
 }//end namespace CGAL

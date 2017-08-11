@@ -154,9 +154,19 @@ the marked edges are constrained.\n
 a default property map where no edge is constrained is provided.
 \cgalNPEnd
 
+\cgalNPBegin{ vertex_incident_patches_map } \anchor PMP_vertex_incident_patches_map
+the property map containing the surface patches incident to each vertex of the input polygon mesh.\n
+\b Type : a class model of `LvaluePropertyMap` with
+`boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type.Its value type
+must be a container of `boost::property_traits<PatchIdMap>::%value_type` and have a function `insert()`.
+A `std::set` or a `boost::unordered_set` are recommended, as a patch index may be
+inserted several times.\n
+\b Default value is \code boost::get(CGAL::vertex_incident_patches_t, pmesh)\endcode
+\cgalNPEnd
+
 \cgalNPBegin{ first_index } \anchor PMP_first_index
 The index of the first surface patch.\n
-\b Type : `std::size_t`.\n
+\b Type : `std::size_t`\n
 \b Default : 1.
 \cgalNPEnd
 
