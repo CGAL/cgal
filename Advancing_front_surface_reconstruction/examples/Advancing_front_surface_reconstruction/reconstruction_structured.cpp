@@ -140,7 +140,7 @@ int main (int argc, char* argv[])
 
   ransac.detect(op); // Plane detection
 
-  typename Efficient_ransac::Plane_range planes = ransac.planes();
+  Efficient_ransac::Plane_range planes = ransac.planes();
 
   std::cerr << "done\nPoint set structuring... ";
 

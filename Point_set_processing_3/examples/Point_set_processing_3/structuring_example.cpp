@@ -51,7 +51,7 @@ int main (int argc, char** argv)
   ransac.add_shape_factory<Plane>();
   ransac.detect();
   
-  typename Efficient_ransac::Plane_range planes = ransac.planes();
+  Efficient_ransac::Plane_range planes = ransac.planes();
   
   Pwn_vector structured_pts;
 
