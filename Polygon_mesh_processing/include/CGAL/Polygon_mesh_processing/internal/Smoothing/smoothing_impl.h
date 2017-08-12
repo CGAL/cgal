@@ -504,7 +504,6 @@ private:
 
     double get_angle(const He_pair& incd_edges, const Vector& vn)
     {
-
         Point s = get(vpmap_, source(incd_edges.first, mesh_));
         Point p1 = get(vpmap_, target(incd_edges.first, mesh_));
         Point p2 = get(vpmap_, source(incd_edges.second, mesh_));
