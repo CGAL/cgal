@@ -2,8 +2,8 @@
 #define CGAL_POLYGON_MESH_PROCESSING_SMOOTHING_H
 
 
-#include <CGAL/Polygon_mesh_processing/internal/Isotropic_remeshing/smoothing_impl.h>
-#include <CGAL/Polygon_mesh_processing/internal/Isotropic_remeshing/curvature_flow_impl.h>
+#include <CGAL/Polygon_mesh_processing/internal/Smoothing/smoothing_impl.h>
+#include <CGAL/Polygon_mesh_processing/internal/Smoothing/curvature_flow_impl.h>
 #include <CGAL/Polygon_mesh_processing/internal/Isotropic_remeshing/remesh_impl.h>
 
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
@@ -326,11 +326,11 @@ void curvature_flow(PolygonMesh& pmesh, const FaceRange& faces, const NamedParam
         std::cout << " * Iteration " << (i + 1) << " *" << std::endl;
 #endif
 
-        curvature_remesher.curvature_smoothing();
-        //curvature_remesher.good_curvature_smoothing();
+        curvature_remesher.curvature_smoothing(); // normalized version sec 5.5
+        //curvature_remesher.good_curvature_smoothing(); // formula 14
 
         //for now
-        //curvature_remesher.project_to_surface();
+        curvature_remesher.project_to_surface();
 
     }
 

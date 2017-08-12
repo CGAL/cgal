@@ -49,8 +49,8 @@ class Compatible_remesher
     typedef CGAL::AABB_tree<AABB_Traits> Tree;
 
     // <one halfedge around v, pair of incident halfedges to this halfedge around v>
-    typedef std::pair<halfedge_descriptor, halfedge_descriptor> He_pair;
-    typedef std::map<halfedge_descriptor, He_pair> Edges_around_map;
+    typedef std::pair<halfedge_descriptor, halfedge_descriptor> he_pair;
+    typedef std::map<halfedge_descriptor, he_pair> Edges_around_map;
 
 
 public:
@@ -112,7 +112,7 @@ public:
                 Edges_around_map he_map;
                 typename Edges_around_map::iterator it;
                 BOOST_FOREACH(halfedge_descriptor hi, halfedges_around_source(v, mesh_))
-                    he_map[hi] = He_pair( next(hi, mesh_), prev(opposite(hi, mesh_), mesh_) );
+                    he_map[hi] = he_pair( next(hi, mesh_), prev(opposite(hi, mesh_), mesh_) );
 
                 // calculate movement
                 Vector move = CGAL::NULL_VECTOR;
@@ -120,7 +120,7 @@ public:
                 for(it = he_map.begin(); it != he_map.end(); ++it)
                 {
                     halfedge_descriptor main_he = it->first;
-                    He_pair incident_pair = it->second;
+                    he_pair incident_pair = it->second;
 
                     Vector rotated_edge = rotate_edge(main_he, incident_pair);
 
@@ -434,7 +434,7 @@ private:
         return move_flag;
     }
 
-    Vector rotate_edge(const halfedge_descriptor& main_he, const He_pair& incd_edges)
+    Vector rotate_edge(const halfedge_descriptor& main_he, const he_pair& incd_edges)
     {
         // get common vertex around which the edge is rotated
         Point pt = get(vpmap_, target(main_he, mesh_)); // CORRECT SYNATX vt
@@ -502,7 +502,7 @@ private:
         return bisector;
     }
 
-    double get_angle(const He_pair& incd_edges, const Vector& vn)
+    double get_angle(const he_pair& incd_edges, const Vector& vn)
     {
         Point s = get(vpmap_, source(incd_edges.first, mesh_));
         Point p1 = get(vpmap_, target(incd_edges.first, mesh_));
