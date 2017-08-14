@@ -107,8 +107,8 @@ public:
 
   // member variables
 private:
-  // TODO, update mesh
-  const TriangleMesh &mesh;
+  // TODO, update mesh, keep a copy
+  TriangleMesh mesh;
   VertexPointMap point_pmap;
   Construct_vector_3 vector_functor;
   Construct_scaled_vector_3 scale_functor;
@@ -236,14 +236,14 @@ public:
    * @brief This function run the algorithm until the stop criterion is met.
    * @return true if the algorithm converge, false otherwise.
    */
-  bool run_until_convergence(stop_criterion) {
-    while (stop_criterion) {
-      run_one_step();
-    }
+  // bool run_until_convergence(stop_criterion) {
+  //   while (stop_criterion) {
+  //     run_one_step();
+  //   }
 
-    // TODO
-    return false;
-  }
+  //   // TODO
+  //   return false;
+  // }
 
   /*!
    * @brief Partition the geometry with current proxies.
@@ -302,6 +302,8 @@ public:
     // update proxy parameters and seed
     for (std::size_t i = 0; i < proxies.size(); ++i)
       proxies[i] = fit_new_proxy(px_facets[i].begin(), px_facets[i].end());
+
+    return 0;
   }
 
   /*!
@@ -336,7 +338,7 @@ public:
 
     // find worst proxy
     std::vector<FT> px_error(proxies.size(), FT(0));
-    fitting_error(seg_pmap, px_error);
+    fitting_error(px_error);
     std::size_t px_worst = 0;
     FT max_error = px_error.front();
     for (std::size_t i = 0; i < proxies.size(); ++i) {
@@ -478,7 +480,7 @@ public:
    * @brief Get the proxies.
    * @return range of proxies.
    */
-  std::pair<PxIterator, PxIterator> get_proxies();
+  // std::pair<PxIterator, PxIterator> get_proxies();
 
 // add function to return the proxy errors
 
@@ -632,7 +634,7 @@ private:
   std::size_t insert_proxy_hierarchical(const std::size_t num_proxies_to_be_added) {
     std::cout << "#px " << proxies.size() << std::endl;
     std::vector<FT> err(proxies.size(), FT(0));
-    const FT sum_error = fitting_error(seg_pmap, err);
+    const FT sum_error = fitting_error(err);
     const FT avg_error = sum_error / FT(static_cast<double>(num_proxies_to_be_added));
 
     std::vector<ProxyError> px_error;
@@ -733,7 +735,7 @@ private:
     }
 
     std::vector<FT> px_error(proxies.size(), FT(0));
-    fitting_error(seg_pmap, px_error);
+    fitting_error(px_error);
     FT max_error = px_error.front();
     for (std::size_t i = 0; i < proxies.size(); ++i) {
       if (max_error < px_error[i])
@@ -802,7 +804,7 @@ private:
    * @param seg_map facet partition index
    * @return total fitting error
    */
-  FT fitting_error(const FacetSegmentMap &seg_pmap) {
+  FT fitting_error() {
     FT sum_error(0);
     BOOST_FOREACH(face_descriptor f, faces(mesh))
       sum_error += fit_error(f, proxies[seg_pmap[f]]);
@@ -815,7 +817,7 @@ private:
    * @param px_error vector of error of each proxy
    * @return total fitting error
    */
-  FT fitting_error(const FacetSegmentMap &seg_pmap, std::vector<FT> &px_error) {
+  FT fitting_error(std::vector<FT> &px_error) {
     FT sum_error(0);
     BOOST_FOREACH(face_descriptor f, faces(mesh)) {
       const std::size_t px_idx = seg_pmap[f];
@@ -828,7 +830,7 @@ private:
 
 /**************** Mesh Extraction *******************/
 
-  /*！
+  /*!
    * @brief Initialize proxy planes.
    * @param _plane_fitting the plane fitting functor
    */
