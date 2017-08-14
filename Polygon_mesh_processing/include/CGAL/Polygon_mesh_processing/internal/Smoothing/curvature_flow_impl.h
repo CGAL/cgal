@@ -49,7 +49,7 @@ class Curvature_flow
     typedef CGAL::AABB_traits<GeomTraits, AABB_Primitive> AABB_Traits;
     typedef CGAL::AABB_tree<AABB_Traits> Tree;
 
-    // <one halfedge around v, pair of incident halfedges to this halfedge around v>
+    // <for each halfedge around v, pair of incident halfedges to this halfedge around v>
     typedef std::pair<halfedge_descriptor, halfedge_descriptor> he_pair;
     typedef std::map<halfedge_descriptor, he_pair> Edges_around_map;
 

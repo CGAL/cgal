@@ -13,17 +13,60 @@
 #include <CGAL/Timer.h>
 #endif
 
-
-
-
-
 namespace CGAL {
 
 namespace Polygon_mesh_processing {
 
-
-
-
+/*!
+* \ingroup PMP_meshing_grp
+* @brief smoothes a triangulated region of a polygon mesh.
+* This function imrpoves the angles between triangle edges by moving not
+* constrained vertices so that each pair of adjacent angles becomes equal.
+* Optionally, small angles may carry more weight than larger ones. Projection
+* to the initial surface is performed as a last step.
+* for better result.
+*
+* @tparam PolygonMesh model of `MutableFaceGraph`.
+*         The descriptor types `boost::graph_traits<PolygonMesh>::%face_descriptor`
+*         and `boost::graph_traits<PolygonMesh>::%halfedge_descriptor` must be
+*         models of `Hashable`.
+*         If `PolygonMesh` has an internal property map for `CGAL::face_index_t`,
+*         and no `face_index_map` is given
+*         as a named parameter, then the internal one should be initialized
+* @tparam FaceRange range of `boost::graph_traits<PolygonMesh>::%face_descriptor`,
+          model of `Range`. Its iterator type is `ForwardIterator`.
+* @tparam NamedParameters a sequence of \ref namedparameters
+*
+* @param pmesh a polygon mesh with triangulated surface patches to be remeshed
+* @param faces the range of triangular faces defining one or several surface patches to be remeshed
+* @param np optional sequence of \ref namedparameters among the ones listed below
+*
+* \cgalNamedParamsBegin
+*  \cgalParamBegin{geom_traits} a geometric traits class instance, model of `Kernel`.
+*    Exact constructions kernels are not supported by this function.
+*  \cgalParamEnd
+*  \cgalParamBegin{vertex_point_map} the property map with the points associated
+*    to the vertices of `pmesh`. Instance of a class model of `ReadWritePropertyMap`.
+*  \cgalParamEnd
+*  \cgalParamBegin{face_index_map} a property map containing the index of each face of `pmesh`.
+*  \cgalParamEnd
+*  \cgalParamBegin{number_of_iterations} the number of iterations for the
+*    sequence of atomic operations performed (listed in the above description)
+*  \cgalParamEnd
+*  \cgalParamBegin{edge_is_constrained_map} a property map containing the
+*    constrained-or-not status of each edge of `pmesh`. A constrained edge can be split
+*    or collapsed, but not flipped, nor its endpoints moved by smoothing.
+*    Note that patch boundary edges (i.e. incident to only one face in the range)
+*    are always considered as constrained edges.
+*  \cgalParamEnd
+*  \cgalParamBegin{vertex_is_constrained_map} a property map containing the
+*    constrained-or-not status of each vertex of `pmesh`. A constrained vertex
+*    cannot be modified at all during remeshing.
+*  \cgalParamEnd
+*  \cgalParamBegin{use_weights} If `true`, small angles carry more weight than larger ones.
+*  \cgalParamEnd
+* \cgalNamedParamsEnd
+*/
 template<typename PolygonMesh, typename FaceRange, typename NamedParameters>
 void angle_remeshing(PolygonMesh& pmesh, const FaceRange& faces, const NamedParameters& np)
 {
@@ -131,7 +174,58 @@ void angle_remeshing(PolygonMesh& pmesh)
     angle_remeshing(pmesh, faces(pmesh), parameters::all_default());
 }
 
-
+/*!
+* \ingroup PMP_meshing_grp
+* @brief uses triangle area as a criterion for smoothing.
+* This function imrpoves the overall distribution of points over a mesh area
+* by trying to form triangles as uniform as possible. Should be used in combination with angle remeshing
+* to avoid creation of long and skiny triangles. Vertices are moved towards equalizing adjacent triangle
+* areas using gradient descent.
+*
+* @tparam PolygonMesh model of `MutableFaceGraph`.
+*         The descriptor types `boost::graph_traits<PolygonMesh>::%face_descriptor`
+*         and `boost::graph_traits<PolygonMesh>::%halfedge_descriptor` must be
+*         models of `Hashable`.
+*         If `PolygonMesh` has an internal property map for `CGAL::face_index_t`,
+*         and no `face_index_map` is given
+*         as a named parameter, then the internal one should be initialized
+* @tparam FaceRange range of `boost::graph_traits<PolygonMesh>::%face_descriptor`,
+          model of `Range`. Its iterator type is `ForwardIterator`.
+* @tparam NamedParameters a sequence of \ref namedparameters
+*
+* @param pmesh a polygon mesh with triangulated surface patches to be remeshed
+* @param faces the range of triangular faces defining one or several surface patches to be remeshed
+* @param np optional sequence of \ref namedparameters among the ones listed below
+*
+* \cgalNamedParamsBegin
+*  \cgalParamBegin{geom_traits} a geometric traits class instance, model of `Kernel`.
+*    Exact constructions kernels are not supported by this function.
+*  \cgalParamEnd
+*  \cgalParamBegin{vertex_point_map} the property map with the points associated
+*    to the vertices of `pmesh`. Instance of a class model of `ReadWritePropertyMap`.
+*  \cgalParamEnd
+*  \cgalParamBegin{face_index_map} a property map containing the index of each face of `pmesh`.
+*  \cgalParamEnd
+*  \cgalParamBegin{number_of_iterations} the number of iterations for the
+*    sequence of atomic operations performed (listed in the above description)
+*  \cgalParamEnd
+*  \cgalParamBegin{edge_is_constrained_map} a property map containing the
+*    constrained-or-not status of each edge of `pmesh`. A constrained edge can be split
+*    or collapsed, but not flipped, nor its endpoints moved by smoothing.
+*    Note that patch boundary edges (i.e. incident to only one face in the range)
+*    are always considered as constrained edges.
+*  \cgalParamEnd
+*  \cgalParamBegin{vertex_is_constrained_map} a property map containing the
+*    constrained-or-not status of each vertex of `pmesh`. A constrained vertex
+*    cannot be modified at all during remeshing.
+*  \cgalParamEnd
+*  \cgalParamBegin{gradient_descent_precision} The precision which is met during gradient descent refers to
+*    the relative energy between iterations of each triangle element which is minimized
+*    while one of its vertices is being moved. Triangle energy is defined based on its area compared to
+*    the average area of all triangles adjacent to the vertex that is being moved.  Defaults to 0.001.
+*  \cgalParamEnd
+* \cgalNamedParamsEnd
+*/
 template<typename PolygonMesh, typename FaceRange, typename NamedParameters>
 void area_remeshing(PolygonMesh& pmesh, const FaceRange& faces, const NamedParameters& np)
 {
@@ -239,6 +333,49 @@ void area_remeshing(PolygonMesh& pmesh)
     area_remeshing(pmesh, faces(pmesh), parameters::all_default());
 }
 
+/*!
+* \ingroup PMP_meshing_grp
+* @brief todo
+*
+* @tparam PolygonMesh model of `MutableFaceGraph`.
+*         The descriptor types `boost::graph_traits<PolygonMesh>::%face_descriptor`
+*         and `boost::graph_traits<PolygonMesh>::%halfedge_descriptor` must be
+*         models of `Hashable`.
+*         If `PolygonMesh` has an internal property map for `CGAL::face_index_t`,
+*         and no `face_index_map` is given
+*         as a named parameter, then the internal one should be initialized
+* @tparam FaceRange range of `boost::graph_traits<PolygonMesh>::%face_descriptor`,
+          model of `Range`. Its iterator type is `ForwardIterator`.
+* @tparam NamedParameters a sequence of \ref namedparameters
+*
+* @param pmesh a polygon mesh with triangulated surface patches to be remeshed
+* @param faces the range of triangular faces defining one or several surface patches to be remeshed
+* @param np optional sequence of \ref namedparameters among the ones listed below
+*
+* \cgalNamedParamsBegin
+*  \cgalParamBegin{geom_traits} a geometric traits class instance, model of `Kernel`.
+*    Exact constructions kernels are not supported by this function.
+*  \cgalParamEnd
+*  \cgalParamBegin{vertex_point_map} the property map with the points associated
+*    to the vertices of `pmesh`. Instance of a class model of `ReadWritePropertyMap`.
+*  \cgalParamEnd
+*  \cgalParamBegin{face_index_map} a property map containing the index of each face of `pmesh`.
+*  \cgalParamEnd
+*  \cgalParamBegin{number_of_iterations} the number of iterations for the
+*    sequence of atomic operations performed (listed in the above description)
+*  \cgalParamEnd
+*  \cgalParamBegin{edge_is_constrained_map} a property map containing the
+*    constrained-or-not status of each edge of `pmesh`. A constrained edge can be split
+*    or collapsed, but not flipped, nor its endpoints moved by smoothing.
+*    Note that patch boundary edges (i.e. incident to only one face in the range)
+*    are always considered as constrained edges.
+*  \cgalParamEnd
+*  \cgalParamBegin{vertex_is_constrained_map} a property map containing the
+*    constrained-or-not status of each vertex of `pmesh`. A constrained vertex
+*    cannot be modified at all during remeshing.
+*  \cgalParamEnd
+* \cgalNamedParamsEnd
+*/
 template<typename PolygonMesh, typename FaceRange, typename NamedParameters>
 void curvature_flow(PolygonMesh& pmesh, const FaceRange& faces, const NamedParameters& np)
 {

@@ -48,7 +48,7 @@ class Compatible_remesher
     typedef CGAL::AABB_traits<GeomTraits, AABB_Primitive> AABB_Traits;
     typedef CGAL::AABB_tree<AABB_Traits> Tree;
 
-    // <one halfedge around v, pair of incident halfedges to this halfedge around v>
+    // <for each halfedge around v, pair of incident halfedges to this halfedge around v>
     typedef std::pair<halfedge_descriptor, halfedge_descriptor> he_pair;
     typedef std::map<halfedge_descriptor, he_pair> Edges_around_map;
 
@@ -186,13 +186,10 @@ public:
 #endif
 
         unsigned int moved_points = 0;
-
         BOOST_FOREACH(vertex_descriptor v, vertices(mesh_))
         {
              if(!is_border(v, mesh_) && !is_constrained(v))
              {
-
-
                  if (gradient_descent(v, precision))
                  {
                      moved_points++;
@@ -314,7 +311,6 @@ private:
     {
         double energy = 0;
         unsigned int number_of_edges = 0;
-
         BOOST_FOREACH(halfedge_descriptor h, halfedges_around_source(v, mesh_))
         {
             vertex_descriptor pi = source(next(h, mesh_), mesh_);
@@ -356,7 +352,7 @@ private:
             // r = Σ(S-S_av)^2
             // dr/dx = 2 Σ(S - S_av) dS/dx
             // area of triangle with respect to (x_a, y_a, z_a) =
-            // (1/2) [(v_z - v_y)x_a + (v_x - v_z)y_a + (y_y - v_x)z_a + constants]
+            // (1/2) [(v_z - v_y)x_a + (v_x - v_z)y_a + (v_y - v_x)z_a + constants]
             // vector v is (x_c - x_b, y_c - y_b, z_c - z_b)
             drdx += (S - S_av) * 0.5 * (vec.z() - vec.y());
             drdy += (S - S_av) * 0.5 * (vec.x() - vec.z());
@@ -417,7 +413,7 @@ private:
                 return false;
             }
 
-            relative_energy = to_double( (energy - energy_new) / energy );
+            relative_energy = CGAL::to_double( (energy - energy_new) / energy );
 
             // update
             x = x_new;
