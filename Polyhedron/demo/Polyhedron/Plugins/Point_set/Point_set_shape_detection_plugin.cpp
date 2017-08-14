@@ -144,7 +144,7 @@ private:
 
   // Region growing can't handle all types of shapes
   template <typename Traits, typename Shape>
-  void add_shape (CGAL::Shape_detection_3::Region_growing<Traits>& shape_detection,
+  void add_shape (CGAL::Shape_detection_3::Region_growing<Traits>&,
                   const Shape&)
   {
   }

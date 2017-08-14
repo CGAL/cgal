@@ -60,9 +60,14 @@ struct Plane_cluster
   typename Traits::FT area;
   typename Traits::FT cosangle_centroid;
 
-  Plane_cluster() : normal (typename Traits::FT(0.),
-                            typename Traits::FT(0.),
-                            typename Traits::FT(1.))
+  Plane_cluster()
+    : is_free (true)
+    , normal (typename Traits::FT(0.),
+              typename Traits::FT(0.),
+              typename Traits::FT(1.))
+    , cosangle_symmetry (typename Traits::FT(0.))
+    , area (typename Traits::FT(0.))
+    , cosangle_centroid (typename Traits::FT(0.))
   { }
 };
 

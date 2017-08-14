@@ -117,7 +117,10 @@ private:
     bool active;
 
     Edge (std::size_t a, std::size_t b)
-    { planes[0] = a; planes[1] = b; active = true; }
+      : support (Point (FT(0.), FT(0.), FT(0.)),
+                 Vector (FT(0.), FT(0.), FT(0.)))
+      , active(true)
+    { planes[0] = a; planes[1] = b; }
   };
   struct Corner
   {

@@ -807,8 +807,6 @@ private:
   template <typename Traits, typename Shape_detection>
   void ransac_reconstruction_impl (const Polyhedron_demo_surface_reconstruction_plugin_dialog& dialog)
   {
-    typedef Point_set::Point_map PointMap;
-    typedef Point_set::Vector_map NormalMap;
     const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
 
     Scene_points_with_normal_item* point_set_item =
