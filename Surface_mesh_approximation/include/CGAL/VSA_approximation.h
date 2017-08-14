@@ -97,13 +97,13 @@ public:
    * @param _proxy_fitting proxy fitting functor.
    */
   VSA_approximation(const ErrorMetric &_fit_error,
-    const ProxyFitting &_proxy_fitting)
+    const ProxyFitting &_proxy_fitting) :
     fit_error(_fit_error),
     proxy_fitting(_proxy_fitting),
     seg_pmap(internal_fidx_map) {}
 
   /*!
-   * Set the mesh for approximation.
+   * Set the mesh for approximation and rebuild the internal data structure.
    * @pre @a _mesh.is_pure_triangle()
    * @param _mesh `CGAL TriangleMesh` on which approximation operate.
    */
@@ -126,14 +126,13 @@ public:
    * @brief Initialize by number of proxies.
    * @param num_proxy number of proxies
    * @param seeding_method select one of the seeding method: random, hierarchical, incremental
+   * @return #proxies initialized
    */
-  void init_proxies(const std::size_t num_proxy, const Initialization &seeding_method) {
-    if (initial_px == 0)
-      return;
-    if (num_faces(mesh) < 2)
-      return;
-    
+  std::size_t init_proxies(const std::size_t num_proxy, const Initialization &seeding_method) {
     proxies.clear();
+    if (num_faces(mesh) < num_proxy)
+      return 0;
+
     switch (seeding_method) {
       case IncrementalInit:
         return seed_incremental(num_proxy);
@@ -245,16 +244,14 @@ public:
    * @return #proxies successfully added.
    */
   std::size_t add_proxies(const Initialization &adding_method, const std::size_t &num_proxies = 1) {
-    std::size_t added = 0;
     switch (adding_method) {
       case HierarchicalInit:
-        insert_proxy_hierarchical(num_proxies);
-        return num_proxies;
+        return insert_proxy_hierarchical(num_proxies);
+      case IncrementalInit:
+        return insert_proxy_furthest(num_proxies);
       default:
-        while (added++ < num_proxies)
-          insert_proxy_furthest();
+        return 0;
     }
-    return added;
   }
 
   /*!
@@ -409,8 +406,9 @@ private:
   /*!
    * @brief Random initialize proxies.
    * @param initial_px number of proxies
+   * @return #proxies initialized
    */
-  void seed_random(const std::size_t initial_px) {
+  std::size_t seed_random(const std::size_t initial_px) {
     const std::size_t interval = num_faces(mesh) / initial_px;
     std::size_t index = 0;
     BOOST_FOREACH(face_descriptor f, faces(mesh)) {
@@ -420,33 +418,31 @@ private:
       if (proxies.size() >= initial_px)
         break;
     }
-    std::cerr << initial_px << ' ' << proxies.size() << std::endl;
+    return proxies.size();
+    // std::cerr << initial_px << ' ' << proxies.size() << std::endl;
   }
 
   /*!
    * @brief Incremental initialize proxies.
    * @param initial_px number of proxies
+   * @return #proxies initialized
    */
-  void seed_incremental(const std::size_t initial_px) {
-    const std::size_t num_steps = 5;
-    // TODO: initialize 1 proxy and the proxy map to prepare for the insertion
+  std::size_t seed_incremental(const std::size_t initial_px) {
+    // initialize a proxy and the proxy map to prepare for the insertion
     proxies.push_back(fit_new_proxy(*(faces(mesh).first)));
     BOOST_FOREACH(face_descriptor f, faces(mesh))
       seg_pmap[f] = 0;
-    while (proxies.size() < initial_px) {
-      insert_proxy_furthest();
-      for (std::size_t i = 0; i < num_steps; ++i) {
-        partition();
-        fit();
-      }
-    }
+
+    insert_proxy_furthest(initial_px - 1);
+    return proxies.size();
   }
 
   /*!
    * @brief Hierarchical initialize proxies.
    * @param initial_px number of proxies
+   * @return #proxies initialized
    */
-  void seed_hierarchical(const std::size_t initial_px) {
+  std::size_t seed_hierarchical(const std::size_t initial_px) {
     // initialize 2 proxy
     typename boost::graph_traits<TriangleMesh>::face_iterator
       fitr = faces(mesh).first;
@@ -466,12 +462,15 @@ private:
         (num_proxies * 2 < initial_px) ? num_proxies : (initial_px - num_proxies);
       insert_proxy_hierarchical(num_proxies_to_be_added);
     }
+    return proxies.size();
   }
 
   /*!
    * @brief Inserts a proxy at the furthest facet of the region with the maximum fitting error.
+   * No re-fitting is performed.
+   * @return true if insertion success, false otherwise
    */
-  void insert_proxy_furthest() {
+  bool insert_proxy_furthest() {
     std::vector<FT> px_error(proxies.size(), FT(0.0));
     std::vector<FT> max_facet_error(proxies.size(), FT(0.0));
     std::vector<face_descriptor> max_facet(proxies.size());
@@ -495,7 +494,34 @@ private:
         max_px_idx = i;
       }
     }
+    if (max_facet[max_px_idx] == proxies[max_px_idx].seed)
+      return false;
+
     proxies.push_back(fit_new_proxy(max_facet[max_px_idx]));
+    return true;
+  }
+
+  /*!
+   * @brief Inserts more than one proxies to the regions with the maximum fitting error.
+   * Except for the first one, a coarse re-fitting is performed before each proxy is inserted.
+   * @return #proxies inserted
+   */
+  std::size_t insert_proxy_furthest(const std::size_t num_proxies) {
+    // when insert only one proxy, it has the same effect of insert_proxy_furthest()
+    if (num_proxies == 0 || !insert_proxy_furthest())
+      return 0;
+
+    std::size_t num_inserted = 1;
+    const std::size_t num_steps = 5;
+    for (; num_inserted < num_proxies; ++num_inserted) {
+      for (std::size_t i = 0; i < num_steps; ++i) {
+        partition();
+        fit();
+      }
+      if (!insert_proxy_furthest())
+        return num_inserted;
+    }
+    return num_inserted;
   }
 
   /*!
