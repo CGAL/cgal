@@ -28,11 +28,6 @@ namespace Polygon_mesh_processing {
 
 namespace internal {
 
-enum Vertex_status{
-    SELECTED,
-    CONTRAINED
-};
-
 
 template<typename PolygonMesh, typename VertexPointMap, typename VertexConstraintMap, typename EdgeConstraintMap, typename GeomTraits>
 class Compatible_remesher
@@ -120,35 +115,7 @@ public:
                     he_map[hi] = he_pair( next(hi, mesh_), prev(opposite(hi, mesh_), mesh_) );
 
                 // calculate movement
-                Vector move = CGAL::NULL_VECTOR;
-                double weights_sum = 0;
-                for(it = he_map.begin(); it != he_map.end(); ++it)
-                {
-                    halfedge_descriptor main_he = it->first;
-                    he_pair incident_pair = it->second;
-
-                    Vector rotated_edge = rotate_edge(main_he, incident_pair);
-
-                    // calculate angle
-                    double angle = get_angle(incident_pair, vn);
-                    if(angle < 1e-5)
-                        continue;
-
-                    // small angles carry more weight
-                    double weight = 1.0 / (angle*angle);
-                    weights_sum += weight;
-
-                    if(use_weights)
-                        move += weight * rotated_edge;
-                    else
-                        move += rotated_edge;
-                }
-
-                // if at least 1 angle was summed
-                if(use_weights && weights_sum != 0)
-                    move /= weights_sum;
-                else
-                    move /= CGAL::to_double(he_map.size());
+                Vector move = calc_move(he_map, use_weights);
 
                 barycenters[v] = (get(vpmap_, v) + move) ;
 
@@ -433,6 +400,48 @@ private:
         return move_flag;
     }
 
+    Vector calc_move(const Edges_around_map& he_map, bool use_weights)
+    {
+        Vector move = CGAL::NULL_VECTOR;
+        double weights_sum = 0;
+        typename Edges_around_map::const_iterator it;
+        for(it = he_map.begin(); it != he_map.end(); ++it)
+        {
+            halfedge_descriptor main_he = it->first;
+            he_pair incident_pair = it->second;
+
+            Vector rotated_edge = rotate_edge(main_he, incident_pair);
+
+            // avoid zero angles
+            Point pt = get(vpmap_, source(incident_pair.first, mesh_));
+            Point p1 = get(vpmap_, target(incident_pair.first, mesh_));
+            Point p2 = get(vpmap_, source(incident_pair.second, mesh_));
+            CGAL_assertion(target(incident_pair.second, mesh_) == source(incident_pair.first, mesh_));
+            Vector e1(pt, p1);
+            Vector e2(pt, p2);
+            double angle = get_angle(e1, e2);
+            if(angle < 1e-5)
+                continue;
+
+            // small angles carry more weight
+            double weight = 1.0 / (angle*angle);
+            weights_sum += weight;
+
+            if(use_weights)
+                move += weight * rotated_edge;
+            else
+                move += rotated_edge;
+        }
+
+        // if at least 1 angle was summed
+        if(use_weights && weights_sum != 0)
+            move /= weights_sum;
+        else
+            move /= CGAL::to_double(he_map.size());
+
+        return move;
+    }
+
     Vector rotate_edge(const halfedge_descriptor& main_he, const he_pair& incd_edges)
     {
         // get common vertex around which the edge is rotated
@@ -501,15 +510,15 @@ private:
         return bisector;
     }
 
+    // to be removed
     double get_angle(const he_pair& incd_edges, const Vector& vn)
     {
-        Point s = get(vpmap_, source(incd_edges.first, mesh_));
+        Point pt = get(vpmap_, source(incd_edges.first, mesh_));
         Point p1 = get(vpmap_, target(incd_edges.first, mesh_));
         Point p2 = get(vpmap_, source(incd_edges.second, mesh_));
         CGAL_assertion(target(incd_edges.second, mesh_) == source(incd_edges.first, mesh_));
-
-        Vector v1(s, p1);
-        Vector v2(s, p2);
+        Vector v1(pt, p1);
+        Vector v2(pt, p2);
 
         Vector cp = CGAL::cross_product(v1, v2);
         double det = CGAL::scalar_product(vn, cp);
@@ -519,6 +528,16 @@ private:
         double res = atan2(-det, -dot) + CGAL_PI;
 
         return res;
+    }
+
+    double get_angle(const Vector& e1, const Vector& e2)
+    {
+        double angle = atan2(e2.y(), e2.x()) - atan2(e1.y(), e1.x());
+
+        if (angle < 0)
+            return angle += 2 * CGAL_PI;
+        else
+            return angle;
     }
 
 
@@ -590,7 +609,7 @@ private:
         BOOST_FOREACH(face_descriptor f, face_range)
         {
             BOOST_FOREACH(vertex_descriptor v, vertices_around_face(halfedge(f, mesh_), mesh_))
-                vrange.push_back(v);
+                vrange.insert(v);
         }
     }
 
@@ -603,7 +622,7 @@ private:
     Triangle_list input_triangles_;
     Tree* tree_ptr_;
     GeomTraits traits_;
-    std::vector<vertex_descriptor> vrange;
+    std::set<vertex_descriptor> vrange;
 
 #ifdef CGAL_PMP_SMOOTHING_DEBUG
     unsigned int count_non_convex_energy_;
