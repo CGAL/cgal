@@ -315,12 +315,14 @@ public:
    * @param adding_method select one of the adding method: hierarchical or incremental(furthest).
    * @return #proxies successfully added.
    */
-  std::size_t add_proxies(const Initialization &adding_method, const std::size_t &num_proxies = 1) {
+  std::size_t add_proxies(const Initialization &adding_method,
+    const std::size_t &num_proxies = 1,
+    const std::size_t inner_iteration = 5) {
     switch (adding_method) {
       case HierarchicalInit:
         return insert_proxy_hierarchical(num_proxies);
       case IncrementalInit:
-        return insert_proxy_furthest(num_proxies);
+        return insert_proxy_furthest(num_proxies, inner_iteration);
       default:
         return 0;
     }
@@ -563,33 +565,38 @@ private:
   /*!
    * @brief Incremental initialize proxies.
    * @param initial_px number of proxies
+   * @param inner_iteration number of iterations of coarse re-fitting
+   * before each incremental proxy insertion
    * @return #proxies initialized
    */
-  std::size_t seed_incremental(const std::size_t initial_px) {
+  std::size_t seed_incremental(const std::size_t initial_px,
+    const std::size_t inner_iteration = 5) {
     // initialize a proxy and the proxy map to prepare for the insertion
     proxies.push_back(fit_new_proxy(*(faces(*m_pmesh).first)));
     BOOST_FOREACH(face_descriptor f, faces(*m_pmesh))
       seg_pmap[f] = 0;
 
-    insert_proxy_furthest(initial_px - 1);
+    insert_proxy_furthest(initial_px - 1, inner_iteration);
     return proxies.size();
   }
 
   /*!
    * @brief Hierarchical initialize proxies.
    * @param initial_px number of proxies
+   * @param inner_iteration number of iterations of coarse re-fitting
+   * before each hierarchical proxy insertion
    * @return #proxies initialized
    */
-  std::size_t seed_hierarchical(const std::size_t initial_px) {
+  std::size_t seed_hierarchical(const std::size_t initial_px,
+    const std::size_t inner_iteration = 5) {
     // initialize 2 proxy
     typename boost::graph_traits<TriangleMesh>::face_iterator
       fitr = faces(*m_pmesh).first;
     proxies.push_back(fit_new_proxy(*fitr));
     proxies.push_back(fit_new_proxy(*(++fitr)));
 
-    const std::size_t num_steps = 5;
     while (proxies.size() < initial_px) {
-      for (std::size_t i = 0; i < num_steps; ++i) {
+      for (std::size_t i = 0; i < inner_iteration; ++i) {
         partition();
         fit();
       }
@@ -642,17 +649,19 @@ private:
   /*!
    * @brief Inserts more than one proxies to the regions with the maximum fitting error.
    * Except for the first one, a coarse re-fitting is performed before each proxy is inserted.
+   * @param num_proxies number of proxies to be inserted
+   * @param inner_iteration the number of iterations of coarse re-fitting
    * @return #proxies inserted
    */
-  std::size_t insert_proxy_furthest(const std::size_t num_proxies) {
+  std::size_t insert_proxy_furthest(const std::size_t num_proxies,
+    const std::size_t inner_iteration = 5) {
     // when insert only one proxy, it has the same effect of insert_proxy_furthest()
     if (num_proxies == 0 || !insert_proxy_furthest())
       return 0;
 
     std::size_t num_inserted = 1;
-    const std::size_t num_steps = 5;
     for (; num_inserted < num_proxies; ++num_inserted) {
-      for (std::size_t i = 0; i < num_steps; ++i) {
+      for (std::size_t i = 0; i < inner_iteration; ++i) {
         partition();
         fit();
       }
