@@ -122,10 +122,10 @@ private:
   boost::associative_property_map<std::map<face_descriptor, std::size_t> > seg_pmap;
 
   // The error metric.
-  const ErrorMetric &fit_error;
+  const ErrorMetric fit_error;
 
   // The proxy fitting functor.
-  const ProxyFitting &proxy_fitting;
+  const ProxyFitting proxy_fitting;
 
 /**************** Mesh Extraction *******************/
 
