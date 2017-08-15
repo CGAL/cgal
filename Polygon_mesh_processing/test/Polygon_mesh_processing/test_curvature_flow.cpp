@@ -7,82 +7,109 @@
 #include <CGAL/Surface_mesh.h>
 
 #include <CGAL/Polygon_mesh_processing/smoothing.h>
+#include <CGAL/Polygon_mesh_processing/distance.h>
+#include <CGAL/Polygon_mesh_processing/remesh.h>
 
 
-#define CGAL_PMP_REMESHING_VERBOSE
-#define CGAL_TEST_COMP_REMESHING_OUTPUT
-
+#if defined(CGAL_LINKED_WITH_TBB)
+#define TAG CGAL::Parallel_tag
+#else
+#define TAG CGAL::Sequential_tag
+#endif
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Surface_mesh<K::Point_3> Mesh;
 
+typedef typename Mesh::vertex_index vertex_index;
+typedef typename Mesh::face_index face_index;
+typedef typename Mesh::halfedge_index halfedge_index;
 
+std::set<face_index> select(Mesh mesh, double x0)
+{
+    std::set<face_index> f_selection;
+
+    typedef typename boost::property_map<Mesh, CGAL::vertex_point_t>::type VertexPointMap;
+    VertexPointMap vpmap = get(CGAL::vertex_point, mesh);
+
+
+    for(face_index f : faces(mesh))
+    {
+        halfedge_index he = halfedge(f, mesh);
+        for(vertex_index v : vertices_around_face(he, mesh))
+        {
+            if(get(vpmap, v).x() < x0)
+                f_selection.insert(f);
+            continue;
+        }
+    }
+
+    return f_selection;
+}
 
 int main(int argc, char* argv[]){
 
-
-
-    std::string filename;
-    std::ifstream input;
     Mesh mesh;
-#ifdef CGAL_TEST_COMP_REMESHING_OUTPUT
-    std::ofstream output;
-#endif
+    Mesh originalMesh;
+    std::ifstream input;
+    /*std::ofstream output;*/
 
+    // flat test
+    input.open("data/polygon.off");
+    if (!input || !(input >> mesh) || mesh.is_empty()) {
+        std::cerr << "Not a valid .off file." << std::endl;
+        return 1;
+    }
+    input.close();
 
+    originalMesh = mesh;
+    CGAL::Polygon_mesh_processing::curvature_flow(mesh);
 
-    std::vector<std::string> filenames = {
-        "data/curved_polygon",
-        "data/polygon",
-        "data/polygon3D",
-        "data/blobby_3cc",
-        "data/elephant",
-        "data/degenerate_polygon",
-        "data/sneaky_degenerate_polygon",
-        "data/joint_refined",
-        "data/mannequin-devil",
-        "data/mech-holes-shark",
-        "data/non_manifold_vertex",
-        "data/overlapping_triangles",
-        "data/tetra1",
-        "data/tetra2",
-        "data/tetra3",
-        "data/tetra4",
-        "data/two_tris_collinear",
-        "data/U"
-    };
+    double dist = CGAL::Polygon_mesh_processing::approximate_Hausdorff_distance
+        <TAG>(originalMesh, mesh, CGAL::Polygon_mesh_processing::parameters::number_of_points_per_area_unit(1000));
 
-
-    for(auto i=0; i!= filenames.size(); ++i)
+    if(dist > 1e-3)
     {
-        filename = filenames[i]+".off";
-        input.open(filename);
-
-
-#ifdef CGAL_PMP_REMESHING_VERBOSE
-std::cout<<"case: "<< filename << std::endl;
-#endif
-
-        if (!input || !(input >> mesh) || mesh.is_empty()) {
-            std::cerr << "Not a valid .off file." << std::endl;
-            return 1;
-        }
-        input.close();
-
-
-        CGAL::Polygon_mesh_processing::curvature_flow(mesh);
-
-
-
-#ifdef CGAL_TEST_COMP_REMESHING_OUTPUT
-    output.open(filenames[i]+"_smoothed"+".off");
-    output << mesh;
-    output.close();
-#endif
-
+        return EXIT_FAILURE;
     }
 
+    // half-sphere test
+    input.open("data/sphere.off");
+    if (!input || !(input >> mesh) || mesh.is_empty()) {
+        std::cerr << "Not a valid .off file." << std::endl;
+        return 1;
+    }
+    input.close();
 
+
+    // select half sphere
+    std::cout<<"all faces: "<<faces(mesh).size()<<std::endl;
+    std::set<face_index> selected_faces = select(mesh, 0);
+    std::cout<<"selected faces: "<<selected_faces.size()<<std::endl;
+
+    CGAL::Polygon_mesh_processing::isotropic_remeshing(selected_faces, 0.1, mesh);
+
+    /*
+    output.open("data/half-sphere.off");
+    output << mesh;
+    output.close();
+    */
+
+    originalMesh = mesh;
+    CGAL::Polygon_mesh_processing::curvature_flow(mesh);
+
+    dist = CGAL::Polygon_mesh_processing::approximate_Hausdorff_distance
+        <TAG>(originalMesh, mesh, CGAL::Polygon_mesh_processing::parameters::number_of_points_per_area_unit(1000));
+
+    if(dist > 1e-3)
+    {
+        return EXIT_FAILURE;
+    }
+
+    /*
+    output.open("data/half-sphere_smoothed.off");
+    output << mesh;
+    output.close();
+    */
 
     return 0;
 }
