@@ -5,6 +5,7 @@
 #include <fstream>
 #include <math.h>
 #include <utility>
+#include <iterator>
 
 #include <CGAL/Kernel/global_functions_3.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
@@ -27,6 +28,10 @@ namespace Polygon_mesh_processing {
 
 namespace internal {
 
+enum Vertex_status{
+    SELECTED,
+    CONTRAINED
+};
 
 
 template<typename PolygonMesh, typename VertexPointMap, typename VertexConstraintMap, typename EdgeConstraintMap, typename GeomTraits>
@@ -37,6 +42,7 @@ class Compatible_remesher
     typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
     typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
     typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor edge_descriptor;
+    typedef typename boost::graph_traits<PolygonMesh>::vertex_iterator vertex_iterator;
 
     typedef typename GeomTraits::Point_3 Point;
     typedef typename GeomTraits::Vector_3 Vector;
@@ -66,17 +72,15 @@ public:
     template<typename FaceRange>
     void init_remeshing(const FaceRange& face_range)
     {        
+        check_vertex_range(face_range);
+
         check_constraints();
 
         BOOST_FOREACH(face_descriptor f, face_range)
-        {
-            // todo: avoid push back and reserve the space
             input_triangles_.push_back(triangle(f));
-        }
 
         tree_ptr_ = new Tree(input_triangles_.begin(), input_triangles_.end());
         tree_ptr_->accelerate_distance_queries();
-
     }
 
     std::size_t remove_degenerate_faces()
@@ -97,7 +101,8 @@ public:
     {
         std::map<vertex_descriptor, Point> barycenters;
         std::map<vertex_descriptor, Vector> n_map;
-        BOOST_FOREACH(vertex_descriptor v, vertices(mesh_))
+
+        BOOST_FOREACH(vertex_descriptor v, vrange)
         {
 
             if(!is_border(v, mesh_) && !is_constrained(v))
@@ -194,9 +199,7 @@ public:
                  {
                      moved_points++;
                  }
-
              }
-
         }
 
 #ifdef CGAL_PMP_SMOOTHING_DEBUG
@@ -581,10 +584,18 @@ private:
         }
     }
 
+    template<typename FaceRange>
+    void check_vertex_range(const FaceRange& face_range)
+    {
+        BOOST_FOREACH(face_descriptor f, face_range)
+        {
+            BOOST_FOREACH(vertex_descriptor v, vertices_around_face(halfedge(f, mesh_), mesh_))
+                vrange.push_back(v);
+        }
+    }
 
 
-
-private:
+    // data members
     PolygonMesh& mesh_;
     VertexPointMap& vpmap_;
     VertexConstraintMap vcmap_;
@@ -592,6 +603,7 @@ private:
     Triangle_list input_triangles_;
     Tree* tree_ptr_;
     GeomTraits traits_;
+    std::vector<vertex_descriptor> vrange;
 
 #ifdef CGAL_PMP_SMOOTHING_DEBUG
     unsigned int count_non_convex_energy_;

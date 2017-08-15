@@ -80,6 +80,7 @@ public:
     template<typename FaceRange>
     void init_remeshing(const FaceRange& face_range)
     {
+        check_vertex_range(face_range);
 
         check_constraints();
 
@@ -109,14 +110,12 @@ public:
         return nb_removed_faces;
     }
 
-
-
     void curvature_smoothing()
     {
         std::map<vertex_descriptor, Point> barycenters;
         std::map<vertex_descriptor, Vector> n_map;
 
-        BOOST_FOREACH(vertex_descriptor v, vertices(mesh_))
+        BOOST_FOREACH(vertex_descriptor v, vrange)
         {
             if(!is_border(v, mesh_) && !is_constrained(v))
             {
@@ -169,7 +168,6 @@ public:
                 barycenters[v] = weighted_barycenter;
 
             } // not on border
-
         } // all vertices
 
         typedef typename std::map<vertex_descriptor, Point>::value_type VP;
@@ -471,6 +469,16 @@ private:
         }
     }
 
+    template<typename FaceRange>
+    void check_vertex_range(const FaceRange& face_range)
+    {
+        BOOST_FOREACH(face_descriptor f, face_range)
+        {
+            BOOST_FOREACH(vertex_descriptor v, vertices_around_face(halfedge(f, mesh_), mesh_))
+                vrange.push_back(v);
+        }
+    }
+
     // data members
     PolygonMesh& mesh_;
     VertexPointMap& vpmap_;
@@ -479,7 +487,10 @@ private:
     Triangle_list input_triangles_;
     Tree* tree_ptr_;
     GeomTraits traits_;
-    double min_sq_edge_len_;
+    std::vector<vertex_descriptor> vrange;
+
+    // to fix
+    //double min_sq_edge_len_;
     //double mean_k_;
     // from Weights.h
     CGAL::internal::Cotangent_value_Meyer_secure<PolygonMesh, VertexPointMap> cot_calculator_;

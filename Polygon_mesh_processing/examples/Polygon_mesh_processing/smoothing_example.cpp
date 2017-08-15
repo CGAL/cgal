@@ -12,7 +12,7 @@ typedef CGAL::Surface_mesh<K::Point_3> Mesh;
 
 int main(int argc, char* argv[]){
 
-    const char* filename = "data/elephant.off";
+    const char* filename = "data/eight.off";
     std::ifstream input(filename);
 
     Mesh mesh;
@@ -25,10 +25,9 @@ int main(int argc, char* argv[]){
     CGAL::Polygon_mesh_processing::area_remeshing(mesh);
     CGAL::Polygon_mesh_processing::angle_remeshing(mesh);
 
-    std::ofstream output("data/elephant_smoothed.off");
+    std::ofstream output("data/eight_smoothed.off");
     output << mesh;
     output.close();
-
 
 
     return 0;
