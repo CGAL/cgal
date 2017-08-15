@@ -349,7 +349,7 @@ public:
     }
     std::list<face_descriptor> worst_patch;
     BOOST_FOREACH(face_descriptor f, faces(mesh)) {
-      if (seg_pmap[px_worst] == px_worst)
+      if (seg_pmap[f] == px_worst)
         worst_patch.push_back(f);
     }
     // not enough facets to teleport
@@ -396,10 +396,9 @@ public:
     // merge
     std::list<face_descriptor> merged_patch;
     BOOST_FOREACH(face_descriptor f, faces(mesh)) {
-      if (seg_pmap[f] == px_enlarged
-        || seg_pmap[f] == px_merged) {
+      if (seg_pmap[f] == px_enlarged || seg_pmap[f] == px_merged) {
         seg_pmap[f] = px_enlarged;
-        merged_patch.push_back(f)
+        merged_patch.push_back(f);
       }
     }
     proxies[px_enlarged] = fit_new_proxy(merged_patch.begin(), merged_patch.end());
@@ -409,6 +408,8 @@ public:
       if (seg_pmap[f] > px_merged)
         --seg_pmap[f];
     }
+
+    return 0;
   }
 
   /*!
@@ -455,6 +456,7 @@ public:
     find_edges();
     add_anchors();
 
+    std::vector<int> tris;
     pseudo_CDT(tris);
 
     compute_anchor_position();

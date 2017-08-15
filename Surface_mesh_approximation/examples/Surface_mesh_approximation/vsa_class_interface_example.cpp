@@ -71,5 +71,14 @@ int main(int argc, char *argv[])
     vsa_approx.fit();
   }
 
+  vsa_approx.add_proxies(VSA::IncrementalInit, 3);
+  for (std::size_t i = 0; i < 5; ++i)
+    vsa_approx.run_one_step();
+
+  vsa_approx.teleport_proxies(3, false);
+
+  Polyhedron_3 out_mesh;
+  vsa_approx.meshing(out_mesh);
+
   return EXIT_SUCCESS;
 }
