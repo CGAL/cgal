@@ -122,10 +122,10 @@ private:
   boost::associative_property_map<std::map<face_descriptor, std::size_t> > seg_pmap;
 
   // The error metric.
-  const ErrorMetric fit_error;
+  const ErrorMetric *fit_error;
 
   // The proxy fitting functor.
-  const ProxyFitting proxy_fitting;
+  const ProxyFitting *proxy_fitting;
 
 /**************** Mesh Extraction *******************/
 
@@ -152,14 +152,31 @@ private:
   //member functions
 public:
   /*!
+   * Default constructor.
+   */
+  VSA_approximation() :
+    fit_error(nullptr),
+    proxy_fitting(nullptr),
+    m_pmesh(nullptr),
+    seg_pmap(internal_fidx_map),
+    vanchor_map(vertex_int_map),
+    num_proxies(0) {
+    GeomTraits traits;
+    vector_functor = traits.construct_vector_3_object();
+    scale_functor = traits.construct_scaled_vector_3_object();
+    sum_functor = traits.construct_sum_of_vectors_3_object();
+    scalar_product_functor = traits.compute_scalar_product_3_object();
+  }
+
+  /*!
    * Initialize and prepare for the approximation.
    * @param _fit_error error calculation functor.
    * @param _proxy_fitting proxy fitting functor.
    */
   VSA_approximation(const ErrorMetric &_fit_error,
     const ProxyFitting &_proxy_fitting) :
-    fit_error(_fit_error),
-    proxy_fitting(_proxy_fitting),
+    fit_error(&_fit_error),
+    proxy_fitting(&_proxy_fitting),
     m_pmesh(nullptr),
     seg_pmap(internal_fidx_map),
     vanchor_map(vertex_int_map),
@@ -190,6 +207,22 @@ public:
     internal_fidx_map.clear();
     BOOST_FOREACH(face_descriptor f, faces(*m_pmesh))
       internal_fidx_map[f] = 0;
+  }
+
+  /*!
+   * Set the error metric functor.
+   * @param _error_metric `ErrorMetric` functor.
+   */
+  void set_error_metric(const ErrorMetric &_error_metric) {
+    fit_error = &_error_metric;
+  }
+
+  /*!
+   * Set the proxy fitting functor.
+   * @param _proxy_fitting `ProxyFitting` functor.
+   */
+  void set_proxy_fitting(const ProxyFitting &_proxy_fitting) {
+    proxy_fitting = &_proxy_fitting;
   }
 
   /*!
@@ -266,7 +299,7 @@ public:
             && seg_pmap[fadj] == CGAL_NOT_TAGGED_ID) {
           FacetToIntegrate cand;
           cand.f = fadj;
-          cand.fit_error = fit_error(fadj, proxies[i]);
+          cand.fit_error = (*fit_error)(fadj, proxies[i]);
           cand.i = i;
           facet_pqueue.push(cand);
         }
@@ -283,7 +316,7 @@ public:
             && seg_pmap[fadj] == CGAL_NOT_TAGGED_ID) {
             FacetToIntegrate cand;
             cand.f = fadj;
-            cand.fit_error = fit_error(fadj, proxies[c.i]);
+            cand.fit_error = (*fit_error)(fadj, proxies[c.i]);
             cand.i = c.i;
             facet_pqueue.push(cand);
           }
@@ -447,6 +480,8 @@ public:
    * @return true if output triangle mesh is manifold,false otherwise.
    */
   bool meshing(TriangleMesh &tm_out, const FT split_criterion = 1, bool pca_plane = false) {
+    tris.clear();
+
     if (pca_plane)
       init_proxy_planes(
         CGAL::PCAPlaneFitting<TriangleMesh, VertexPointMap, GeomTraits>(
@@ -622,7 +657,7 @@ private:
 
     BOOST_FOREACH(face_descriptor f, faces(*m_pmesh)) {
       std::size_t px_idx = seg_pmap[f];
-      FT err = fit_error(f, proxies[px_idx]);
+      FT err = (*fit_error)(f, proxies[px_idx]);
       px_error[px_idx] += err;
 
       if (err > max_facet_error[px_idx]) {
@@ -769,7 +804,7 @@ private:
       Proxy px = fit_new_proxy(merged_patch.begin(), merged_patch.end());
       FT sum_error(0);
       BOOST_FOREACH(face_descriptor f, merged_patch)
-        sum_error += fit_error(f, px);
+        sum_error += (*fit_error)(f, px);
       merged_set.insert(ProxyPair(pxi, pxj));
 
       if (first_merge || sum_error < min_merged_error) {
@@ -813,14 +848,14 @@ private:
     CGAL_assertion(beg != end);
 
     // use proxy_fitting functor to fit proxy parameters
-    Proxy px = proxy_fitting(beg, end);
+    Proxy px = (*proxy_fitting)(beg, end);
 
     // find proxy seed
     px.seed = *beg;
-    FT err_min = fit_error(*beg, px);
+    FT err_min = (*fit_error)(*beg, px);
     std::pair<FacetIterator, FacetIterator> facets(beg, end);
     BOOST_FOREACH(face_descriptor f, facets) {
-      FT err = fit_error(f, px);
+      FT err = (*fit_error)(f, px);
       if (err < err_min) {
         err_min = err;
         px.seed = f;
@@ -839,7 +874,7 @@ private:
   Proxy fit_new_proxy(const face_descriptor &f) {
     std::vector<face_descriptor> fvec(1, f);
     // fit proxy parameters
-    Proxy px = proxy_fitting(fvec.begin(), fvec.end());
+    Proxy px = (*proxy_fitting)(fvec.begin(), fvec.end());
     // find proxy seed
     px.seed = f;
 
@@ -854,7 +889,7 @@ private:
   FT fitting_error() {
     FT sum_error(0);
     BOOST_FOREACH(face_descriptor f, faces(*m_pmesh))
-      sum_error += fit_error(f, proxies[seg_pmap[f]]);
+      sum_error += (*fit_error)(f, proxies[seg_pmap[f]]);
     return sum_error;
   }
 
@@ -868,7 +903,7 @@ private:
     FT sum_error(0);
     BOOST_FOREACH(face_descriptor f, faces(*m_pmesh)) {
       const std::size_t px_idx = seg_pmap[f];
-      FT err = fit_error(f, proxies[px_idx]);
+      FT err = (*fit_error)(f, proxies[px_idx]);
       px_error[px_idx] += err;
       sum_error += err;
     }
