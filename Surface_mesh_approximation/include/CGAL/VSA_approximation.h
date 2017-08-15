@@ -480,6 +480,24 @@ public:
    * @return true if output triangle mesh is manifold,false otherwise.
    */
   bool meshing(TriangleMesh &tm_out, const FT split_criterion = 1, bool pca_plane = false) {
+    num_proxies = 0;
+    // count number of proxies
+    BOOST_FOREACH(face_descriptor f, faces(*m_pmesh))
+      num_proxies = num_proxies < seg_pmap[f] ? seg_pmap[f] : num_proxies;
+    ++num_proxies;
+
+    px_planes.clear();
+    px_normals.clear();
+    px_areas.clear();
+
+    vertex_int_map.clear();
+    // initialize all vertex anchor status
+    enum Vertex_status { NO_ANCHOR = -1 };
+    BOOST_FOREACH(vertex_descriptor v, vertices(*m_pmesh))
+      vertex_int_map.insert(std::pair<vertex_descriptor, int>(v, static_cast<int>(NO_ANCHOR)));
+    anchor_index = 0;
+    anchors.clear();
+    borders.clear();
     tris.clear();
 
     if (pca_plane)
@@ -491,20 +509,13 @@ public:
         CGAL::PlaneFitting<TriangleMesh, VertexPointMap, GeomTraits>(
           *m_pmesh, point_pmap));
 
-    anchor_index = 0;
     find_anchors();
     find_edges();
     add_anchors();
-
-    tris.clear();
-    pseudo_CDT(tris);
-
+    pseudo_CDT();
     compute_anchor_position();
-    std::vector<Point_3> vtx;
-    BOOST_FOREACH(const Anchor &a, anchors)
-      vtx.push_back(a.pos);
 
-    return is_manifold_surface(tris, vtx);
+    return is_manifold_surface();
   }
 
   /*!
@@ -918,16 +929,6 @@ private:
    */
   template <typename PlaneFitting>
   void init_proxy_planes(const PlaneFitting &_plane_fitting) {
-    // initialize all vertex anchor status
-    enum Vertex_status { NO_ANCHOR = -1 };
-    BOOST_FOREACH(vertex_descriptor v, vertices(*m_pmesh))
-      vertex_int_map.insert(std::pair<vertex_descriptor, int>(v, static_cast<int>(NO_ANCHOR)));
-
-    // count number of proxies
-    BOOST_FOREACH(face_descriptor f, faces(*m_pmesh))
-      num_proxies = num_proxies < seg_pmap[f] ? seg_pmap[f] : num_proxies;
-    ++num_proxies;
-
     // fit proxy planes, areas, normals
     std::vector<std::list<face_descriptor> > px_facets(num_proxies);
     BOOST_FOREACH(face_descriptor f, faces(*m_pmesh))
@@ -962,8 +963,6 @@ private:
    * @brief Finds the anchors.
    */
   void find_anchors() {
-    anchors.clear();
-
     BOOST_FOREACH(vertex_descriptor vtx, vertices(*m_pmesh)) {
       std::size_t border_count = 0;
 
@@ -992,7 +991,6 @@ private:
     }
 
     // pick up one candidate halfedge each time and traverse the connected border
-    borders.clear();
     while (!he_candidates.empty()) {
       halfedge_descriptor he_start = *he_candidates.begin();
       walk_to_first_anchor(he_start);
@@ -1075,9 +1073,8 @@ private:
 
   /*!
    * @brief Runs the pseudo Constrained Delaunay Triangulation at each region, and stores the extracted indexed triangles in @a tris.
-   * @param tris extracted tirangles, index of anchors
    */
-  void pseudo_CDT(std::vector<int> &tris) {
+  void pseudo_CDT() {
     // subgraph attached with vertex anchor status and edge weight
     typedef boost::property<boost::vertex_index1_t, int,
       boost::property<boost::vertex_index2_t, int> > VertexProperty;
@@ -1410,13 +1407,15 @@ private:
 
   /*!
    * @brief Use an incremental builder to test if the indexed triangle surface is manifold
-   * @param tris indexed triangles
-   * @param vtx vertex positions
    * @return true if build successfully
    */
-  bool is_manifold_surface(const std::vector<int> &tris, const std::vector<Point_3> &vtx) {
+  bool is_manifold_surface() {
     typedef CGAL::Polyhedron_3<GeomTraits> PolyhedronSurface;
     typedef typename PolyhedronSurface::HalfedgeDS HDS;
+    
+    std::vector<Point_3> vtx;
+    BOOST_FOREACH(const Anchor &a, anchors)
+      vtx.push_back(a.pos);
     
     HDS hds;
     CGAL::Polyhedron_incremental_builder_3<HDS> builder(hds, true);
