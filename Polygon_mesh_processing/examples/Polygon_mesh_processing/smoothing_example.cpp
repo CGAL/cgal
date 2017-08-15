@@ -10,12 +10,9 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Surface_mesh<K::Point_3> Mesh;
 
-
-
 int main(int argc, char* argv[]){
 
-
-    const char* filename = "data/polygon3D.off";
+    const char* filename = "data/elephant.off";
     std::ifstream input(filename);
 
     Mesh mesh;
@@ -24,11 +21,11 @@ int main(int argc, char* argv[]){
         return 1;
     }
 
-    CGAL::Polygon_mesh_processing::compatible_remeshing(
-                                    mesh,
-                                    CGAL::Polygon_mesh_processing::parameters::number_of_iterations(3));
+    CGAL::Polygon_mesh_processing::angle_remeshing(mesh);
+    CGAL::Polygon_mesh_processing::area_remeshing(mesh);
+    CGAL::Polygon_mesh_processing::angle_remeshing(mesh);
 
-    std::ofstream output("data/polygon3D_smoothed.off");
+    std::ofstream output("data/elephant_smoothed.off");
     output << mesh;
     output.close();
 
