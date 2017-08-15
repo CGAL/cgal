@@ -147,6 +147,9 @@ private:
   // All borders cycles.
   std::vector<Border> borders;
 
+  // The indexed triangle approximation.
+  std::vector<int> tris;
+
   //member functions
 public:
   /*!
@@ -456,7 +459,7 @@ public:
     find_edges();
     add_anchors();
 
-    std::vector<int> tris;
+    tris.clear();
     pseudo_CDT(tris);
 
     compute_anchor_position();
@@ -490,19 +493,52 @@ public:
    * @brief Get the anchor points, which have the area-averaged position of the projected anchor vertex points on the incident proxies.
    * @return vector of anchor position points
    */
-  const std::vector<Point_3> &get_anchor_points();
+  std::vector<Point_3> get_anchor_points() {
+    std::vector<Point_3> pts;
+    BOOST_FOREACH(const Anchor &a, anchors)
+      pts.push_back(a.pos);
+    return pts;
+  }
 
   /*!
    * @brief Get the anchor vertices.
    * @return vector of anchor vertices
    */
-  const std::vector<vertex_descriptor> &get_anchor_vertices();
+  std::vector<vertex_descriptor> get_anchor_vertices() {
+    std::vector<vertex_descriptor> vts;
+    BOOST_FOREACH(const Anchor &a, anchors)
+      vts.push_back(a.vtx);
+    return vts;
+  }
 
   /*!
    * @brief Get the indexed triangles, one triplet of integers per triangles, and that the integers refer to the anchor point indexes.
    * @return vector of indexed triangles.
    */
-  const std::vector<std::size_t> &get_indexed_triangles();
+  const std::vector<int> &get_indexed_triangles() {
+    return tris;
+  }
+
+  /*!
+   * @brief Get the indexed boundary polygon approximation.
+   * @return vector of indexed polygons.
+   */
+  std::vector<std::vector<std::size_t> > get_indexed_boundary_polygons() {
+    std::vector<std::vector<std::size_t> > bdrs;
+    for (typename std::vector<Border>::iterator bitr = borders.begin();
+      bitr != borders.end(); ++bitr) {
+      std::vector<std::size_t> bdr;
+      const halfedge_descriptor he_mark = bitr->he_head;
+      halfedge_descriptor he = he_mark;
+      do {
+        ChordVector chord;
+        walk_to_next_anchor(he, chord);
+        bdr.push_back(vanchor_map[target(he, mesh)]);
+      } while(he != he_mark);
+      bdrs.push_back(bdr);
+    }
+    return bdrs;
+  }
 
 private:
   /*!
