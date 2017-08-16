@@ -123,7 +123,6 @@ void angle_remeshing(PolygonMesh& pmesh, const FaceRange& faces, const NamedPara
 
     internal::Compatible_remesher<PolygonMesh, VertexPointMap, VCMap, ECMap, GeomTraits>
             remesher(pmesh, vpmap, vcmap, ecmap);
-    remesher.init_remeshing(faces);
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
     t.stop();
@@ -131,8 +130,16 @@ void angle_remeshing(PolygonMesh& pmesh, const FaceRange& faces, const NamedPara
     std::cout << "Removing degenerate faces..." << std::endl;
     t.reset(); t.start();
 #endif
-
     remesher.remove_degenerate_faces();
+
+#ifdef CGAL_PMP_REMESHING_VERBOSE
+    t.stop();
+    std::cout << " done ("<< t.time() <<" sec)." << std::endl;
+    std::cout << "Initializing..." << std::endl;
+    t.reset(); t.start();
+#endif
+    remesher.init_remeshing(faces);
+
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
     t.stop();
@@ -282,16 +289,21 @@ void area_remeshing(PolygonMesh& pmesh, const FaceRange& faces, const NamedParam
 
     internal::Compatible_remesher<PolygonMesh, VertexPointMap, VCMap, ECMap, GeomTraits>
             remesher(pmesh, vpmap, vcmap, ecmap);
-    remesher.init_remeshing(faces);
-
 #ifdef CGAL_PMP_REMESHING_VERBOSE
     t.stop();
     std::cout << " done ("<< t.time() <<" sec)." << std::endl;
     std::cout << "Removing degenerate faces..." << std::endl;
     t.reset(); t.start();
 #endif
-
     remesher.remove_degenerate_faces();
+
+#ifdef CGAL_PMP_REMESHING_VERBOSE
+    t.stop();
+    std::cout << " done ("<< t.time() <<" sec)." << std::endl;
+    std::cout << "Initializing..." << std::endl;
+    t.reset(); t.start();
+#endif
+    remesher.init_remeshing(faces);
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
     t.stop();
@@ -311,7 +323,6 @@ void area_remeshing(PolygonMesh& pmesh, const FaceRange& faces, const NamedParam
         remesher.area_relaxation(gd_precision);
         remesher.project_to_surface();
     }
-
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
     t.stop();
@@ -437,16 +448,21 @@ void curvature_flow(PolygonMesh& pmesh, const FaceRange& faces, const NamedParam
 
     internal::Curvature_flow<PolygonMesh, VertexPointMap, VCMap, ECMap, GeomTraits>
             curvature_remesher(pmesh, vpmap, vcmap, ecmap);
-    curvature_remesher.init_remeshing(faces);
+#ifdef CGAL_PMP_REMESHING_VERBOSE
+    t.stop();
+    std::cout << " done ("<< t.time() <<" sec)." << std::endl;
+    std::cout << "Removing degenerate faces..." << std::endl;
+    t.reset(); t.start();
+#endif
+    curvature_remesher.remove_degenerate_faces();
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
     t.stop();
     std::cout << " done ("<< t.time() <<" sec)." << std::endl;
-    std::cout << "Removing degenerate edges..." << std::endl;
+    std::cout << "Initializing..." << std::endl;
     t.reset(); t.start();
 #endif
-
-    curvature_remesher.remove_degenerate_faces();
+    curvature_remesher.init_remeshing(faces);
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
     t.stop();

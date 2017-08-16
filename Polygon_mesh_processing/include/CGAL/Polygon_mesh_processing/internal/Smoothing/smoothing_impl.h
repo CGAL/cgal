@@ -21,7 +21,7 @@
 #include <boost/graph/graph_traits.hpp>
 #include <boost/foreach.hpp>
 
-#define CGAL_PMP_SMOOTHING_DEBUG
+
 namespace CGAL {
 
 namespace Polygon_mesh_processing {
@@ -190,6 +190,7 @@ public:
 private:
 
     // helper functions
+    // ----------------
     Triangle triangle(face_descriptor f) const
     {
         halfedge_descriptor h = halfedge(f, mesh_);
@@ -653,6 +654,7 @@ private:
 
 
 private:
+
     // data members
     // ------------
     PolygonMesh& mesh_;
