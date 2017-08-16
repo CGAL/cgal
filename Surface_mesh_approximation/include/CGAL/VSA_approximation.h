@@ -1260,8 +1260,10 @@ private:
     const ChordVectorIterator &chord_end,
     const FT thre = FT(0.2)) {
     const std::size_t chord_size = std::distance(chord_begin, chord_end);
-    // do not subdivide trivial chord
-    if (chord_size < 4)
+    // do not subdivide trivial non-circular chord
+    if ((vanchor_map[source(*chord_begin, *m_pmesh)]
+        != vanchor_map[target(*(chord_end - 1), *m_pmesh)])
+      && chord_size < 4)
       return 1;
 
     halfedge_descriptor he_start = *chord_begin;
