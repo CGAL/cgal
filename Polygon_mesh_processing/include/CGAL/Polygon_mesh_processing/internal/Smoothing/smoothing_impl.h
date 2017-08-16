@@ -21,7 +21,7 @@
 #include <boost/graph/graph_traits.hpp>
 #include <boost/foreach.hpp>
 
-//#define CGAL_PMP_SMOOTHING_DEBUG
+#define CGAL_PMP_SMOOTHING_DEBUG
 namespace CGAL {
 
 namespace Polygon_mesh_processing {
@@ -97,9 +97,6 @@ public:
         std::map<vertex_descriptor, Point> barycenters;
         std::map<vertex_descriptor, Vector> n_map;
 
-#ifdef CGAL_PMP_SMOOTHING_DEBUG
-        non_imporving_min_angle_ = 0;
-#endif
 
         BOOST_FOREACH(vertex_descriptor v, vrange_)
         {
@@ -140,54 +137,38 @@ public:
         }
 
         // update location
+        std::size_t moved_points = 0;
         BOOST_FOREACH(const VP& vp, new_locations)
         {
-
             // iff movement impoves all angles
-            if(!does_it_impove(vp.first, vp.second))
+            if(does_it_impove(vp.first, vp.second))
             {
-
-#ifdef CGAL_PMP_SMOOTHING_DEBUG
-                non_imporving_min_angle_++;
-#endif
-                continue;
+                moved_points++;
+                put(vpmap_, vp.first, vp.second);
             }
-
-            put(vpmap_, vp.first, vp.second);
         }
 
 #ifdef CGAL_PMP_SMOOTHING_DEBUG
-        std::cout<<"moved: "<< vrange_.size() - non_imporving_min_angle_<<" points based on angle."<<std::endl;
-        std::cout<<"not imporved min angle: "<< non_imporving_min_angle_<<" times."<<std::endl;
+        std::cout<<"moved: "<< moved_points <<" points based on angle."<<std::endl;
+        std::cout<<"not imporved min angle: "<< vrange_.size() - moved_points <<" times."<<std::endl;
 #endif
     }
 
     void area_relaxation(const double& precision)
     {
-
-#ifdef CGAL_PMP_SMOOTHING_DEBUG
-        count_non_convex_energy_ = 0;
-#endif
-
-        unsigned int moved_points = 0;
+        std::size_t moved_points = 0;
         BOOST_FOREACH(vertex_descriptor v, vrange_)
         {
              if(!is_border(v, mesh_) && !is_constrained(v))
              {
-                 if (!gradient_descent(v, precision))
-                 {
-
-#ifdef CGAL_PMP_SMOOTHING_DEBUG
-                     count_non_convex_energy_++;
-#endif
-                     continue; //
-                 }
+                 if (gradient_descent(v, precision))
+                     moved_points++;
              }
         }
 
 #ifdef CGAL_PMP_SMOOTHING_DEBUG
-        std::cout<<"moved : "<<vrange_.size() - count_non_convex_energy_<<" points based on area."<<std::endl;
-        std::cout<<"non convex energy found: "<<count_non_convex_energy_<<" times."<<std::endl;
+        std::cout<<"moved : "<<moved_points<<" points based on area."<<std::endl;
+        std::cout<<"non convex energy found: "<<vrange_.size() - moved_points<<" times."<<std::endl;
 #endif
 
     }
@@ -233,21 +214,6 @@ private:
     double sqlength(const edge_descriptor& e) const
     {
       return sqlength(halfedge(e, mesh_));
-    }
-
-
-    // to be removed
-    std::vector<double> calc_areas(const vertex_descriptor& v)
-    {
-        std::vector<double> areas;
-        BOOST_FOREACH(halfedge_descriptor h, halfedges_around_source(v, mesh_))
-        {
-            vertex_descriptor pi = source(next(h, mesh_), mesh_);
-            vertex_descriptor pi1 = target(next(h, mesh_), mesh_);
-            double S = element_area(v, pi, pi1);
-            areas.push_back(S);
-        }
-        return areas;
     }
 
 
@@ -397,27 +363,6 @@ private:
     }
 
 
-    // to be removed
-    double get_angle(const he_pair& incd_edges, const Vector& vn)
-    {
-        Point pt = get(vpmap_, source(incd_edges.first, mesh_));
-        Point p1 = get(vpmap_, target(incd_edges.first, mesh_));
-        Point p2 = get(vpmap_, source(incd_edges.second, mesh_));
-        CGAL_assertion(target(incd_edges.second, mesh_) == source(incd_edges.first, mesh_));
-        Vector v1(pt, p1);
-        Vector v2(pt, p2);
-
-        Vector cp = CGAL::cross_product(v1, v2);
-        double det = CGAL::scalar_product(vn, cp);
-        double dot = CGAL::scalar_product(v1, v2);
-
-        // transform to range [0, 2pi]
-        double res = atan2(-det, -dot) + CGAL_PI;
-
-        return res;
-    }
-
-
     // angle measurement & evaluation
     // ------------------------------
     void measure_angles(const Edges_around_map& he_map)
@@ -493,8 +438,6 @@ private:
                 return false;
         }
 
-
-
         return true;
     }
 
@@ -551,9 +494,7 @@ private:
                 move_flag = true;
             }
             else
-            {
                 return false;
-            }
 
             relative_energy = CGAL::to_double( (energy - energy_new) / energy );
 
@@ -711,9 +652,9 @@ private:
     }
 
 
+private:
     // data members
     // ------------
-private:
     PolygonMesh& mesh_;
     VertexPointMap& vpmap_;
     VertexConstraintMap vcmap_;
@@ -723,12 +664,6 @@ private:
     GeomTraits traits_;
     std::set<vertex_descriptor> vrange_;
     double min_angle_;
-
-#ifdef CGAL_PMP_SMOOTHING_DEBUG
-    unsigned int count_non_convex_energy_;
-    unsigned int non_imporving_min_angle_;
-#endif
-
 
 };
 
