@@ -20,8 +20,6 @@
 #include <iostream>
 #include <iterator>
 
-#define CGAL_NOT_TAGGED_ID std::numeric_limits<std::size_t>::max()
-
 namespace CGAL
 {
 /*!
@@ -59,28 +57,6 @@ private:
 
   typedef std::vector<halfedge_descriptor> ChordVector;
   typedef typename ChordVector::iterator ChordVectorIterator;
-
-  // The facet candidate to be queued.
-  struct FacetToIntegrate {
-    face_descriptor f;
-    std::size_t i;
-    FT fit_error;
-    bool operator<(const FacetToIntegrate &rhs) const {
-      return fit_error > rhs.fit_error;
-    }
-  };
-
-  // proxy error with proxy index
-  struct ProxyError {
-    ProxyError(const std::size_t &id, const FT &er)
-      : px_idx(id), fit_error(er) {}
-    // in ascending order
-    bool operator<(const ProxyError &rhs) const {
-      return fit_error < rhs.fit_error;
-    }
-    std::size_t px_idx;
-    FT fit_error;
-  };
 
   // The average positioned anchor attached to a vertex.
   struct Anchor {
@@ -286,6 +262,17 @@ public:
    * Propagates the proxy seed facets and floods the whole mesh to minimize the fitting error.
    */
   void partition() {
+#define CGAL_NOT_TAGGED_ID std::numeric_limits<std::size_t>::max()
+    // The facet candidate to be queued.
+    struct FacetToIntegrate {
+      face_descriptor f; // facet
+      std::size_t px; // proxy index
+      FT err; // fitting error
+      bool operator<(const FacetToIntegrate &rhs) const {
+        return err > rhs.err;
+      }
+    };
+
     BOOST_FOREACH(face_descriptor f, faces(*m_pmesh))
       seg_pmap[f] = CGAL_NOT_TAGGED_ID;
 
@@ -299,8 +286,8 @@ public:
             && seg_pmap[fadj] == CGAL_NOT_TAGGED_ID) {
           FacetToIntegrate cand;
           cand.f = fadj;
-          cand.fit_error = (*fit_error)(fadj, proxies[i]);
-          cand.i = i;
+          cand.err = (*fit_error)(fadj, proxies[i]);
+          cand.px = i;
           facet_pqueue.push(cand);
         }
       }
@@ -310,19 +297,20 @@ public:
       const FacetToIntegrate c = facet_pqueue.top();
       facet_pqueue.pop();
       if (seg_pmap[c.f] == CGAL_NOT_TAGGED_ID) {
-        seg_pmap[c.f] = c.i;
+        seg_pmap[c.f] = c.px;
         BOOST_FOREACH(face_descriptor fadj, faces_around_face(halfedge(c.f, *m_pmesh), *m_pmesh)) {
           if (fadj != boost::graph_traits<TriangleMesh>::null_face()
             && seg_pmap[fadj] == CGAL_NOT_TAGGED_ID) {
             FacetToIntegrate cand;
             cand.f = fadj;
-            cand.fit_error = (*fit_error)(fadj, proxies[c.i]);
-            cand.i = c.i;
+            cand.err = (*fit_error)(fadj, proxies[c.px]);
+            cand.px = c.px;
             facet_pqueue.push(cand);
           }
         }
       }
     }
+#undef CGAL_NOT_TAGGED_ID
   }
 
   /*!
@@ -725,6 +713,18 @@ private:
    * @return inserted number of proxies
    */
   std::size_t insert_proxy_hierarchical(const std::size_t num_proxies_to_be_added) {
+    // proxy error with proxy index
+    struct ProxyError {
+      ProxyError(const std::size_t &_px, const FT &_error)
+        : px(_px), error(_error) {}
+      // in ascending order
+      bool operator<(const ProxyError &rhs) const {
+        return error < rhs.error;
+      }
+      std::size_t px;
+      FT error;
+    };
+
     std::cout << "#px " << proxies.size() << std::endl;
     std::vector<FT> err(proxies.size(), FT(0));
     const FT sum_error = fitting_error(err);
@@ -743,18 +743,18 @@ private:
     BOOST_FOREACH(const ProxyError &pxe, px_error) {
       // add error residual from previous proxy
       // to_add maybe negative but greater than -0.5
-      FT to_add = (residual + pxe.fit_error) / avg_error;
+      FT to_add = (residual + pxe.error) / avg_error;
       // floor_to_add maybe negative but no less than -1
       FT floor_to_add = FT(std::floor(CGAL::to_double(to_add)));
       const std::size_t q_to_add = static_cast<std::size_t>(CGAL::to_double(
         ((to_add - floor_to_add) > FT(0.5)) ? (floor_to_add + FT(1)) : floor_to_add));
       residual = (to_add - FT(static_cast<double>(q_to_add))) * avg_error;
-      num_to_add[pxe.px_idx] = q_to_add;
+      num_to_add[pxe.px] = q_to_add;
     }
     for (std::size_t i = 0; i < px_error.size(); ++i)
-      std::cout << "#px_id " << px_error[i].px_idx
-        << ", #fit_error " << px_error[i].fit_error
-        << ", #num_to_add " << num_to_add[px_error[i].px_idx] << std::endl;
+      std::cout << "#px " << px_error[i].px
+        << ", #error " << px_error[i].error
+        << ", #num_to_add " << num_to_add[px_error[i].px] << std::endl;
 
     std::size_t num_inserted = 0;
     BOOST_FOREACH(face_descriptor f, faces(*m_pmesh)) {
@@ -1443,7 +1443,5 @@ private:
 };
 
 } // end namespace CGAL
-
-#undef CGAL_NOT_TAGGED_ID
 
 #endif // CGAL_VSA_APPROXIMATION
