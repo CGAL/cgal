@@ -38,7 +38,7 @@ public:
 /*!
 is the constant `Dim`. 
 */ 
-typedef unspecified_type D; 
+static const int D;
 
 /// @} 
 
