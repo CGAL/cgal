@@ -246,7 +246,7 @@ template<typename GT,
  *  as key type and `bool` as value type. It should be default constructible.
  * \tparam NamedParameters a sequence of \ref namedparameters
  *
- * \param p the polygon mesh
+ * \param pmesh the polygon mesh
  * \param angle_in_deg the dihedral angle bound
  * \param edge_is_feature_map a filled property map that will contain the sharp-or-not status of each edge of `pmesh`
  * \param np optional \ref namedparameters described below
@@ -297,7 +297,7 @@ void detect_sharp_edges(PolygonMesh& pmesh,
    A `std::set` or a `boost::unordered_set` are recommended, as a patch index may be
    inserted several times.
  * \tparam EdgeIsFeatureMap a model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%edge_descriptor`
- * \param p the polygon mesh
+ * \param pmesh the polygon mesh
  * \param patch_id_map the property map containing the surface patch ids for the faces of `pmesh`. It must be already filled.
  * \param vertex_incident_patches_map a property map that will contain the patch ids of all the faces incident to each vertex of `pmesh`.
  * \param edge_is_feature_map a filled property map that will contain the sharp-or-not status of each edge of `pmesh`
@@ -364,8 +364,10 @@ void vip_call(PolygonMesh&, PIDMap&, const boost::param_not_found&, EIFMap&)
  * `CGAL::Polygon_mesh_processing::connected_components()` and
  * `CGAL::Polygon_mesh_processing::detect_vertex_incident_patches()`
  *
- * It detects the sharp edges of `pmesh` according to `angle_in_deg` and computes the corresponding
- * surface patch ids for each face.
+ * It detects and marks the sharp edges of `pmesh` according to `angle_in_deg`.
+ * The sharp edges define a segmentation of `pmesh`, that is done by
+ * computing a
+ * surface patch id for each face.
  *
  * A property map for `CGAL::face_index_t`should be either available
  * as an internal property map to `pmesh` or provided as one of the Named Parameters.
@@ -380,8 +382,8 @@ void vip_call(PolygonMesh&, PIDMap&, const boost::param_not_found&, EIFMap&)
    and the desired patch id, model of `CopyConstructible` as value type.
  * \tparam NamedParameters a sequence of \ref namedparameters
  *
- * \param p the polygon mesh
- * \param angle_in_deg the floor dihedral angle.
+ * \param pmesh the polygon mesh
+ * \param angle_in_deg the dihedral angle bound
  * \param patch_id_map the property map that will contain the surface patch ids for the faces of `pmesh`.
  * \param np optional \ref namedparameters described below
  *
@@ -430,7 +432,8 @@ sharp_edges_segmentation(PolygonMesh& pmesh,
 
     typename boost::graph_traits<PolygonMesh>::faces_size_type result =
             internal::detect_surface_patches(pmesh, patch_id_map, eif, np);
-   internal::vip_call(pmesh, patch_id_map, get_param(np, internal_np::vertex_incident_patches), eif);
+    internal::vip_call(pmesh, patch_id_map,
+                       get_param(np, internal_np::vertex_incident_patches), eif);
     return result;
 }
 

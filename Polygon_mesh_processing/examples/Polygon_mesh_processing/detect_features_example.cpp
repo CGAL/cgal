@@ -7,8 +7,8 @@
 #include <fstream>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Surface_mesh<K::Point_3>             Mesh;
-typedef boost::graph_traits<Mesh>::face_descriptor face_descriptor;
+typedef CGAL::Surface_mesh<K::Point_3>                      Mesh;
+typedef boost::graph_traits<Mesh>::face_descriptor          face_descriptor;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
@@ -24,7 +24,7 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  typedef boost::property_map<Mesh,CGAL::face_patch_id_t<int> >::type PIMap;
+  typedef boost::property_map<Mesh, CGAL::face_patch_id_t<int> >::type PIMap;
   typedef boost::property_map<Mesh, CGAL::vertex_incident_patches_t<int> >::type VIMap;
   typedef boost::property_map<Mesh, CGAL::edge_is_feature_t>::type EIFMap;
 
@@ -37,7 +37,7 @@ int main(int argc, char* argv[])
                                     PMP::parameters::edge_is_constrained_map(eif)
                                    .vertex_incident_patches_map(vip));
 
-  int nb_sharp_edges = 0;
+  std::size_t nb_sharp_edges = 0;
   BOOST_FOREACH(boost::graph_traits<Mesh>::edge_descriptor e, edges(mesh))
   {
     if(get(eif, e))
