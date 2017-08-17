@@ -133,7 +133,7 @@ void put(PatchIdMapWrapper<PatchIdMap, std::pair<Int, Int> >& map, Handle_type h
 }
 
 template <typename PolygonMesh, typename PatchIdMap, typename EdgeIsFeatureMap, typename NamedParameters>
-std::size_t
+typename boost::graph_traits<PolygonMesh>::faces_size_type
 detect_surface_patches(PolygonMesh& p,
                        PatchIdMap& patch_id_map,
                        EdgeIsFeatureMap& eif,
