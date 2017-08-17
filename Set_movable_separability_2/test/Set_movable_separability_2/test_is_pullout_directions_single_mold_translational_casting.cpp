@@ -56,7 +56,7 @@ int main(int argc, char* argv[])
   }
 
   int success = 0;
-  for (size_t i = 1; i < argc; ++i) {
+  for (size_t i = 1; i < static_cast<size_t>(argc); ++i) {
     std::string str(argv[i]);
     if (str.empty()) continue;
 
