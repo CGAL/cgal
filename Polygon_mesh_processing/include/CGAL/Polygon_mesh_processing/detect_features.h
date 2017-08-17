@@ -230,8 +230,12 @@ template<typename GT,
 /*!
  * \ingroup PMP_detect_features_grp
  *
- * detects and marks as constrained edges around which incident faces form an angle equal to or greater than `angle_in_deg`.
- * Also computes the number of sharp edges incident to each vertex if `vertex_feature_degree_map` is provided.
+ * detects and collects the edges that are considered to be sharp with respect to the given angle bound.
+ * `angle_in_deg` gives the maximum angle (in degrees) between the two normal vectors of adjacent triangles.
+ * For an edge of the input polygon mesh, if the angle between the two normal vectors of its incident facets is bigger
+ * than the given bound, then the edge is marked as being a feature edge.
+ *
+ * Also computes the number of sharp edges incident to each vertex, if `vertex_feature_degree_map` is provided.
  *
  * \tparam PolygonMesh a model of `HalfedgeListGraph`
  * \tparam FT a number type. It is
@@ -243,7 +247,7 @@ template<typename GT,
  * \tparam NamedParameters a sequence of \ref namedparameters
  *
  * \param p the polygon mesh
- * \param angle_in_deg the floor dihedral angle.
+ * \param angle_in_deg the dihedral angle bound
  * \param edge_is_feature_map a filled property map that will contain the sharp-or-not status of each edge of `pmesh`
  * \param np optional \ref namedparameters described below
  *
