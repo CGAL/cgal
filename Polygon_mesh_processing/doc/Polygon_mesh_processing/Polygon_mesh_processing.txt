@@ -691,8 +691,9 @@ and `CGAL::Polygon_mesh_processing::detect_vertex_incident_patches()`,
 that respectively detect the sharp edges, compute the patch indices, and give each of `pmesh` vertices the patch indices of its incident faces.
 
 \subsection DetectFeaturesExample Feature Detection Example
-In the following example, we count how many edges of `pmesh` are incident to two faces forming an angle equal to or lower than 90 degrees,
-and the number of surface patches that are defined by them.
+In the following example, we count how many edges of `pmesh` are incident to two faces
+which normals form an angle smaller than 90 degrees,
+and the number of surface patches that are separated by these edges.
 
 \cgalExample{Polygon_mesh_processing/detect_features_example.cpp}
 
