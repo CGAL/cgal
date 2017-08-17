@@ -207,15 +207,19 @@ template<typename GT,
                  EIFMap& edge_is_feature_map,
                  const boost::param_not_found&)
 {
+    typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor     edge_descriptor;
+    typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
+
     FT cos_angle ( std::cos(CGAL::to_double(angle_in_deg) * CGAL_PI / 180.) );
 
     // Detect sharp edges
-    BOOST_FOREACH(typename boost::graph_traits<PolygonMesh>::edge_descriptor ed, edges(pmesh))
+    BOOST_FOREACH(edge_descriptor ed, edges(pmesh))
     {
-        typename boost::graph_traits<PolygonMesh>::halfedge_descriptor he = halfedge(ed,pmesh);
-        if(is_border(he,pmesh) || angle_in_deg == FT() ||
-                (angle_in_deg != FT(180) && internal::is_sharp<PolygonMesh, GT>(pmesh,he,cos_angle))
-                )
+        halfedge_descriptor he = halfedge(ed,pmesh);
+        if(is_border(he,pmesh)
+          || angle_in_deg == FT()
+          || (angle_in_deg != FT(180) && internal::is_sharp<PolygonMesh, GT>(pmesh,he,cos_angle))
+          )
         {
             put(edge_is_feature_map, edge(he, pmesh), true);
         }
@@ -265,10 +269,11 @@ void detect_sharp_edges(PolygonMesh& pmesh,
                         const NamedParameters& np)
 {
     //extract types from NPs
-
     typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
+    typedef typename GetGeomTraits<PolygonMesh, GT>::type::FT          FT;
 
-    internal::sharp_call<GT, typename GetGeomTraits<PolygonMesh, GT>::type::FT>(pmesh, angle_in_deg, edge_is_feature_map, get_param(np, internal_np::vertex_feature_degree));
+    internal::sharp_call<GT, FT>(pmesh, angle_in_deg, edge_is_feature_map,
+                                 get_param(np, internal_np::vertex_feature_degree));
 }
 
 
@@ -406,18 +411,19 @@ sharp_edges_segmentation(PolygonMesh& pmesh,
                             PatchIdMap& patch_id_map,
                             const NamedParameters& np)
 {
+    typedef std::map<typename boost::graph_traits<PolygonMesh>::edge_descriptor, bool> Edge_bool_map;
+    Edge_bool_map def_map;
+
     typedef typename boost::lookup_named_param_def <
             internal_np::edge_is_constrained_t,
             NamedParameters,
-            typename boost::associative_property_map<std::map<
-            typename boost::graph_traits<PolygonMesh>::edge_descriptor,
-            bool> >//default
+            typename boost::associative_property_map<Edge_bool_map> //default
             > ::type                                               EIF_map;
-    std::map<typename boost::graph_traits<PolygonMesh>::edge_descriptor, bool> def_map;
     EIF_map eif
             = boost::choose_param(get_param(np, internal_np::edge_is_constrained),
                                   boost::make_assoc_property_map(def_map));
     detect_sharp_edges(pmesh,angle_in_deg, eif, np);
+
     typename boost::graph_traits<PolygonMesh>::faces_size_type result =
             internal::detect_surface_patches(pmesh, patch_id_map, eif, np);
    internal::vip_call(pmesh, patch_id_map, get_param(np, internal_np::vertex_incident_patches), eif);
