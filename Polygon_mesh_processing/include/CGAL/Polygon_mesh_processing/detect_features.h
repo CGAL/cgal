@@ -447,11 +447,13 @@ void detect_sharp_edges(PolygonMesh& p,
 }
 
 template <typename PolygonMesh, typename FT, typename PatchIdMap, typename VertexIncidentPatchesMap>
-std::size_t sharp_edges_segmentation(PolygonMesh& p,
-                            FT angle_in_deg,
-                            PatchIdMap& patch_id_map)
+typename boost::graph_traits<PolygonMesh>::faces_size_type
+sharp_edges_segmentation(PolygonMesh& p,
+                         FT angle_in_deg,
+                         PatchIdMap& patch_id_map)
 {
-    return sharp_edges_segmentation(p,angle_in_deg, patch_id_map, parameters::all_default());
+  return sharp_edges_segmentation(p,angle_in_deg, patch_id_map,
+                                 parameters::all_default());
 }
 
 
