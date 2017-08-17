@@ -85,7 +85,7 @@ private:
     std::cerr << "Detecting planes with:" << std::endl
               << " * Area min = " << area_min << std::endl
               << " * Min cos angle = " << angle_max << std::endl;
-    std::vector<std::size_t> label_region(mesh.size_of_facets(), 0);
+    std::vector<int> label_region(mesh.size_of_facets(), 0);
     int class_index = 0;
 
     std::vector<typename Polyhedron::Facet_handle> facets (mesh.size_of_facets());
