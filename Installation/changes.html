@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- $Id$
      $URL$
 -->
@@ -142,15 +142,6 @@ and <code>src/</code> directories).
 <!-- Geometry Kernels -->
 <!-- Convex Hull Algorithms -->
 <!-- Polygons -->
- <h3>CGAL - Polygon Mesh Processing</h3>
-  <ul>
-    <li>
-      Added the functions 
-      - `CGAL::Polygon_mesh_processing::detect_sharp_edges()`
-      - `CGAL::Polygon_mesh_processing::detect_incident_patches()`
-      - `CGAL::Polygon_mesh_processing::detect_features()`
-    </li>
-  </ul>
 <!-- Cell Complexes and Polyhedra -->
 <!-- Arrangements -->
 <!-- Triangulations and Delaunay Triangulations -->
@@ -158,6 +149,16 @@ and <code>src/</code> directories).
 <!-- Mesh Generation -->
 <!-- Surface Reconstruction -->
 <!-- Geometry Processing -->
+ <h3>Polygon Mesh Processing</h3>
+  <ul>
+    <li> Added new functions for feature detection and feature-guided segmentation:
+      <ul>
+        <li><code>CGAL::Polygon_mesh_processing::detect_sharp_edges()</code></li>
+        <li><code>CGAL::Polygon_mesh_processing::detect_vertex_incident_patches()</code></li>
+        <li><code>CGAL::Polygon_mesh_processing::sharp_edges_segmentation()</code></li>
+      </ul>
+    </li>
+  </ul>
 <!-- Spatial Searching and Sorting -->
 <!-- Geometric Optimization -->
 <!-- Interpolation -->
