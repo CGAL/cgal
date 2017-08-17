@@ -26,13 +26,6 @@ namespace casting = SMS::Single_mold_translational_casting;
 struct Top_edge_comparer {
   bool operator()(const Top_edge& a,  const Top_edge& b)
   {
-    auto facet_a = a.first;
-    const auto& d1_a = a.second.first;
-    const auto& d2_a = a.second.second;
-    auto facet_b = b.first;
-    const auto& d1_b = b.second.first;
-    const auto& d2_b = b.second.second;
-
     if (a.first < b.first) return true;
     if (a.first > b.first) return false;
     if (a.second.first < b.second.first) return true;
@@ -104,7 +97,7 @@ int main(int argc, char* argv[])
   }
 
   int success = 0;
-  for (size_t i = 1; i < argc; ++i) {
+  for (size_t i = 1; i < static_cast<size_t>(argc); ++i) {
     std::string str(argv[i]);
     if (str.empty()) continue;
 
