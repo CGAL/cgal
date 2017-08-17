@@ -87,9 +87,9 @@ class Circle_arrangment {
  * \param[in] A - an arc
  * \param[in] B - an *open* arc
  */
-bool is_a_contained_in_b(const bool is_a_start_closed,
-                         const bool is_a_end_closed,
-                         const Arc A,const Arc B) const
+  bool is_a_contained_in_b(const bool is_a_start_closed,
+                           const bool is_a_end_closed,
+                           const Arc A,const Arc B) const
   {
     //A is closed, B is open and they share an vertex -> A not contained in B
     if ((is_a_start_closed &&(A.first == B.first)) ||
@@ -162,7 +162,7 @@ bool is_a_contained_in_b(const bool is_a_start_closed,
     bool is_covered() { return m_count == 2; }
   };
 
-  typedef typename std::list<struct Circle_arrangment_edge> Circle_edges;
+  typedef typename std::list<Circle_arrangment_edge> Circle_edges;
 
   //! The kernel to use.
   const Kernel& m_kernel;
@@ -171,7 +171,7 @@ bool is_a_contained_in_b(const bool is_a_start_closed,
 
   /*! \fn void insert_if_legal(const Circle_edge_iterator cur_it,
    *                           const Circle_edge_iterator next_it,
-   *                           const struct Circle_arrangment_edge &edge)
+   *                           const Circle_arrangment_edge &edge)
    * Adds new edge to the arrangement if it won't create some empty edges
    * \param[in] cur_it iterator to the edge before where the new edge should be
    *        inserted
@@ -185,7 +185,7 @@ bool is_a_contained_in_b(const bool is_a_start_closed,
   template <typename InputIterator>
   void insert_if_legal(const InputIterator cur_it,
                        InputIterator next_it,
-                       const struct Circle_arrangment_edge& edge)
+                       const Circle_arrangment_edge& edge)
   {
     if (((edge.m_start_is_closed && !next_it->m_start_is_closed) ||
          (edge.m_edge_start_angle != next_it->m_edge_start_angle)) &&
@@ -229,7 +229,8 @@ public:
    * depth 0, but it was much easier for me to ignore the case where the all
    * circle is a single arc, so I choose this implementation.
    */
-  Circle_arrangment(const Kernel& kernel, const Arc first_segment_outer_circle, const Edge_iter edge_iter) :
+  Circle_arrangment(const Kernel& kernel, const Arc first_segment_outer_circle,
+                    const Edge_iter edge_iter) :
     m_kernel(kernel)
   {
     m_edges.push_back(Circle_arrangment_edge(first_segment_outer_circle.first,
@@ -301,12 +302,12 @@ public:
             // ?----c
             //      o~-~-~-~-~-~-o
             //                   c-----?
-            struct Circle_arrangment_edge edge2 = *it;
+            Circle_arrangment_edge edge2 = *it;
             edge2.m_start_is_closed = false;
             edge2.m_edge_start_angle = segment_outer_circle.first;
             edge2.plusplus(edge_iter);
             this->insert_if_legal(it, next_it, edge2);
-            struct Circle_arrangment_edge edge3 = *it;
+            Circle_arrangment_edge edge3 = *it;
             edge3.m_start_is_closed = true;
             edge3.m_edge_start_angle = segment_outer_circle.second;
             this->insert_if_legal(it,next_it,edge3);
@@ -318,11 +319,11 @@ public:
             //         ?~-~o
             //             c---c
             //                 o-~-?
-            struct Circle_arrangment_edge edge2 = *it;
+            Circle_arrangment_edge edge2 = *it;
             edge2.m_start_is_closed = true;
             edge2.m_edge_start_angle = segment_outer_circle.second;
             this->insert_if_legal(it, next_it, edge2);
-            struct Circle_arrangment_edge edge3 = *it;
+            Circle_arrangment_edge edge3 = *it;
             edge3.m_start_is_closed = false;
             edge3.m_edge_start_angle = segment_outer_circle.first;
             edge3.plusplus(edge_iter);
@@ -336,7 +337,7 @@ public:
           //_____________________
           // ?----c
           //      o-~-~-~?
-          struct Circle_arrangment_edge edge2 = *it;
+          Circle_arrangment_edge edge2 = *it;
           edge2.m_start_is_closed = false;
           edge2.m_edge_start_angle = segment_outer_circle.first;
           edge2.plusplus(edge_iter);
@@ -350,7 +351,7 @@ public:
           //_____________________
           //        ?-~-~-~-o
           //                c----?
-          struct Circle_arrangment_edge edge2 = *it;
+          Circle_arrangment_edge edge2 = *it;
           edge2.m_start_is_closed = true;
           edge2.m_edge_start_angle = segment_outer_circle.second;
           it->plusplus(edge_iter);
