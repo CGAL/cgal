@@ -35,8 +35,6 @@ template <typename TriangleMesh,
   typename ProxyFitting,
   typename GeomTraits = typename TriangleMesh::Traits>
 class VSA_approximation {
-  // type definitions
-private:
   // typedef typename ErrorMetric::Proxy Proxy;
   typedef typename GeomTraits::FT FT;
   typedef typename GeomTraits::Point_3 Point_3;
@@ -77,6 +75,42 @@ private:
     std::size_t num_anchors; // The number of anchors on the border.
   };
 
+  // member variables
+
+  Construct_vector_3 vector_functor;
+  Construct_scaled_vector_3 scale_functor;
+  Construct_sum_of_vectors_3 sum_functor;
+  Compute_scalar_product_3 scalar_product_functor;
+
+  VertexPointMap point_pmap;
+  // The facet proxy index map.
+  std::map<face_descriptor, std::size_t> internal_fidx_map;
+  boost::associative_property_map<std::map<face_descriptor, std::size_t> > seg_pmap;
+  // The attached anchor index of a vertex.
+  std::map<vertex_descriptor, int> vertex_int_map;
+  VertexAnchorMap vanchor_map;
+
+  // The triangle mesh.
+  const TriangleMesh *m_pmesh;
+  // The error metric.
+  const ErrorMetric *fit_error;
+  // The proxy fitting functor.
+  const ProxyFitting *proxy_fitting;
+
+  // Proxies.
+  std::vector<Proxy> proxies;
+  std::vector<Plane_3> px_planes;
+  std::vector<Vector_3> px_normals;
+  std::vector<FT> px_areas;
+
+  // All anchors.
+  std::vector<Anchor> anchors;
+  // All borders cycles.
+  std::vector<Border> borders;
+  // The indexed triangle approximation.
+  std::vector<int> tris;
+
+  //member functions
 public:
   enum Initialization {
     RandomInit,
@@ -84,52 +118,6 @@ public:
     HierarchicalInit
   };
 
-  // member variables
-private:
-  Construct_vector_3 vector_functor;
-  Construct_scaled_vector_3 scale_functor;
-  Construct_sum_of_vectors_3 sum_functor;
-  Compute_scalar_product_3 scalar_product_functor;
-
-  VertexPointMap point_pmap;
-  // facet proxy index map
-  std::map<face_descriptor, std::size_t> internal_fidx_map;
-  boost::associative_property_map<std::map<face_descriptor, std::size_t> > seg_pmap;
-
-  // The triangle mesh.
-  const TriangleMesh *m_pmesh;
-
-  // The error metric.
-  const ErrorMetric *fit_error;
-
-  // The proxy fitting functor.
-  const ProxyFitting *proxy_fitting;
-
-  // Proxies.
-  std::vector<Proxy> proxies;
-
-/**************** Mesh Extraction *******************/
-
-  // proxy fitting planes
-  std::vector<Plane_3> px_planes;
-  std::vector<Vector_3> px_normals;
-  std::vector<FT> px_areas;
-
-  // The attached anchor index of a vertex.
-  std::map<vertex_descriptor, int> vertex_int_map;
-  VertexAnchorMap vanchor_map;
-
-  // All anchors.
-  std::vector<Anchor> anchors;
-
-  // All borders cycles.
-  std::vector<Border> borders;
-
-  // The indexed triangle approximation.
-  std::vector<int> tris;
-
-  //member functions
-public:
   /*!
    * Default constructor.
    */
@@ -913,8 +901,6 @@ private:
     return sum_error;
   }
 
-/**************** Mesh Extraction *******************/
-
   /*!
    * @brief Initialize proxy planes.
    * @param _plane_fitting the plane fitting functor
@@ -1250,47 +1236,34 @@ private:
     const ChordVectorIterator &chord_end,
     const FT thre = FT(0.2)) {
     const std::size_t chord_size = std::distance(chord_begin, chord_end);
+    const halfedge_descriptor he_first = *chord_begin;
+    const halfedge_descriptor he_last = *(chord_end - 1);
+    const std::size_t anchor_first = vanchor_map[source(he_first, *m_pmesh)];
+    const std::size_t anchor_last = vanchor_map[target(he_last, *m_pmesh)];
+
     // do not subdivide trivial non-circular chord
-    if ((vanchor_map[source(*chord_begin, *m_pmesh)]
-        != vanchor_map[target(*(chord_end - 1), *m_pmesh)])
-      && chord_size < 4)
+    if ((anchor_first != anchor_last) && (chord_size < 4))
       return 1;
 
-    halfedge_descriptor he_start = *chord_begin;
-    std::size_t px_left = seg_pmap[face(he_start, *m_pmesh)];
-    std::size_t px_right = px_left;
-    if (!CGAL::is_border(opposite(he_start, *m_pmesh), *m_pmesh))
-      px_right = seg_pmap[face(opposite(he_start, *m_pmesh), *m_pmesh)];
-
-    // suppose the proxy normal angle is acute
-    FT norm_sin(1.0);
-    if (!CGAL::is_border(opposite(he_start, *m_pmesh), *m_pmesh)) {
-      Vector_3 vec = CGAL::cross_product(px_normals[px_left], px_normals[px_right]);
-      norm_sin = FT(std::sqrt(CGAL::to_double(scalar_product_functor(vec, vec))));
-    }
-    FT criterion = thre + FT(1.0);
-
-    ChordVectorIterator he_max;
-    const ChordVectorIterator chord_last = chord_end - 1;
-    std::size_t anchor_begin = vanchor_map[source(he_start, *m_pmesh)];
-    std::size_t anchor_end = vanchor_map[target(*chord_last, *m_pmesh)];
-    const Point_3 &pt_begin = point_pmap[source(he_start, *m_pmesh)];
-    const Point_3 &pt_end = point_pmap[target(*chord_last, *m_pmesh)];
-    if (anchor_begin == anchor_end) {
+    bool if_subdivide = false;
+    ChordVectorIterator chord_max;
+    const Point_3 &pt_begin = point_pmap[source(he_first, *m_pmesh)];
+    const Point_3 &pt_end = point_pmap[target(he_last, *m_pmesh)];
+    if (anchor_first == anchor_last) {
       // circular chord
       CGAL_assertion(chord_size > 2);
-      // if (chord_size < 3)
-      //   return;
 
       FT dist_max(0.0);
-      for (ChordVectorIterator citr = chord_begin; citr != chord_last; ++citr) {
+      for (ChordVectorIterator citr = chord_begin; citr != chord_end; ++citr) {
         FT dist = CGAL::squared_distance(pt_begin, point_pmap[target(*citr, *m_pmesh)]);
         dist = FT(std::sqrt(CGAL::to_double(dist)));
         if (dist > dist_max) {
-          he_max = citr;
+          chord_max = citr;
           dist_max = dist;
         }
       }
+
+      if_subdivide = true;
     }
     else {
       FT dist_max(0.0);
@@ -1298,25 +1271,37 @@ private:
       FT chord_len(std::sqrt(CGAL::to_double(chord_vec.squared_length())));
       chord_vec = scale_functor(chord_vec, FT(1.0) / chord_len);
 
-      for (ChordVectorIterator citr = chord_begin; citr != chord_last; ++citr) {
+      for (ChordVectorIterator citr = chord_begin; citr != chord_end; ++citr) {
         Vector_3 vec = vector_functor(pt_begin, point_pmap[target(*citr, *m_pmesh)]);
         vec = CGAL::cross_product(chord_vec, vec);
         FT dist(std::sqrt(CGAL::to_double(vec.squared_length())));
         if (dist > dist_max) {
-          he_max = citr;
+          chord_max = citr;
           dist_max = dist;
         }
       }
 
-      criterion = dist_max * norm_sin / chord_len;
+      // suppose the proxy normal angle is acute
+      std::size_t px_left = seg_pmap[face(he_first, *m_pmesh)];
+      std::size_t px_right = px_left;
+      if (!CGAL::is_border(opposite(he_first, *m_pmesh), *m_pmesh))
+        px_right = seg_pmap[face(opposite(he_first, *m_pmesh), *m_pmesh)];
+      FT norm_sin(1.0);
+      if (!CGAL::is_border(opposite(he_first, *m_pmesh), *m_pmesh)) {
+        Vector_3 vec = CGAL::cross_product(px_normals[px_left], px_normals[px_right]);
+        norm_sin = FT(std::sqrt(CGAL::to_double(scalar_product_functor(vec, vec))));
+      }
+      FT criterion = dist_max * norm_sin / chord_len;
+      if (criterion > thre)
+        if_subdivide = true;
     }
 
-    if (criterion > thre) {
+    if (if_subdivide) {
       // subdivide at the most remote vertex
-      attach_anchor(*he_max);
+      attach_anchor(*chord_max);
 
-      std::size_t num0 = subdivide_chord(chord_begin, he_max + 1);
-      std::size_t num1 = subdivide_chord(he_max + 1, chord_end);
+      std::size_t num0 = subdivide_chord(chord_begin, chord_max + 1);
+      std::size_t num1 = subdivide_chord(chord_max + 1, chord_end);
 
       return num0 + num1;
     }
