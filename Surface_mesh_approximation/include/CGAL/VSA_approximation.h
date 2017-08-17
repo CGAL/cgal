@@ -60,6 +60,9 @@ private:
 
   // The average positioned anchor attached to a vertex.
   struct Anchor {
+    Anchor(const vertex_descriptor &_vtx, const Point_3 _pos)
+      : vtx(_vtx), pos(_pos) {}
+
     vertex_descriptor vtx; // The associated vertex.
     Point_3 pos; // The position of the anchor.
   };
@@ -83,19 +86,18 @@ public:
 
   // member variables
 private:
-  const TriangleMesh *m_pmesh;
-  VertexPointMap point_pmap;
   Construct_vector_3 vector_functor;
   Construct_scaled_vector_3 scale_functor;
   Construct_sum_of_vectors_3 sum_functor;
   Compute_scalar_product_3 scalar_product_functor;
 
-  // Proxy.
-  std::vector<Proxy> proxies;
-
+  VertexPointMap point_pmap;
   // facet proxy index map
   std::map<face_descriptor, std::size_t> internal_fidx_map;
   boost::associative_property_map<std::map<face_descriptor, std::size_t> > seg_pmap;
+
+  // The triangle mesh.
+  const TriangleMesh *m_pmesh;
 
   // The error metric.
   const ErrorMetric *fit_error;
@@ -103,10 +105,12 @@ private:
   // The proxy fitting functor.
   const ProxyFitting *proxy_fitting;
 
+  // Proxies.
+  std::vector<Proxy> proxies;
+
 /**************** Mesh Extraction *******************/
 
   // proxy fitting planes
-  std::size_t num_proxies;
   std::vector<Plane_3> px_planes;
   std::vector<Vector_3> px_normals;
   std::vector<FT> px_areas;
@@ -116,7 +120,6 @@ private:
   VertexAnchorMap vanchor_map;
 
   // All anchors.
-  std::size_t anchor_index;
   std::vector<Anchor> anchors;
 
   // All borders cycles.
@@ -135,8 +138,7 @@ public:
     proxy_fitting(nullptr),
     m_pmesh(nullptr),
     seg_pmap(internal_fidx_map),
-    vanchor_map(vertex_int_map),
-    num_proxies(0) {
+    vanchor_map(vertex_int_map) {
     GeomTraits traits;
     vector_functor = traits.construct_vector_3_object();
     scale_functor = traits.construct_scaled_vector_3_object();
@@ -155,8 +157,7 @@ public:
     proxy_fitting(&_proxy_fitting),
     m_pmesh(nullptr),
     seg_pmap(internal_fidx_map),
-    vanchor_map(vertex_int_map),
-    num_proxies(0) {
+    vanchor_map(vertex_int_map) {
     GeomTraits traits;
     vector_functor = traits.construct_vector_3_object();
     scale_functor = traits.construct_scaled_vector_3_object();
@@ -468,26 +469,18 @@ public:
    * @return true if output triangle mesh is manifold,false otherwise.
    */
   bool meshing(TriangleMesh &tm_out, const FT split_criterion = 1, bool pca_plane = false) {
-    num_proxies = 0;
-    // count number of proxies
-    BOOST_FOREACH(face_descriptor f, faces(*m_pmesh))
-      num_proxies = num_proxies < seg_pmap[f] ? seg_pmap[f] : num_proxies;
-    ++num_proxies;
-
-    px_planes.clear();
-    px_normals.clear();
-    px_areas.clear();
-
     vertex_int_map.clear();
     // initialize all vertex anchor status
     enum Vertex_status { NO_ANCHOR = -1 };
     BOOST_FOREACH(vertex_descriptor v, vertices(*m_pmesh))
       vertex_int_map.insert(std::pair<vertex_descriptor, int>(v, static_cast<int>(NO_ANCHOR)));
-    anchor_index = 0;
     anchors.clear();
     borders.clear();
     tris.clear();
 
+    px_planes.clear();
+    px_normals.clear();
+    px_areas.clear();
     if (pca_plane)
       init_proxy_planes(
         CGAL::PCAPlaneFitting<TriangleMesh, VertexPointMap, GeomTraits>(
@@ -501,7 +494,6 @@ public:
     find_edges();
     add_anchors();
     pseudo_CDT();
-    compute_anchor_position();
 
     return is_manifold_surface();
   }
@@ -930,7 +922,7 @@ private:
   template <typename PlaneFitting>
   void init_proxy_planes(const PlaneFitting &_plane_fitting) {
     // fit proxy planes, areas, normals
-    std::vector<std::list<face_descriptor> > px_facets(num_proxies);
+    std::vector<std::list<face_descriptor> > px_facets(proxies.size());
     BOOST_FOREACH(face_descriptor f, faces(*m_pmesh))
       px_facets[seg_pmap[f]].push_back(f);
 
@@ -955,8 +947,6 @@ private:
       px_normals.push_back(norm);
       px_areas.push_back(area);
     }
-
-    std::cerr << "#proxies " << num_proxies << std::endl;
   }
 
   /*!
@@ -1115,7 +1105,7 @@ private:
       add_edge(to_sgv_map[vs], to_sgv_map[vt], len, gmain);
     }
 
-    std::vector<VertexVector> vertex_patches(num_proxies);
+    std::vector<VertexVector> vertex_patches(proxies.size());
     BOOST_FOREACH(vertex_descriptor v, vertices(*m_pmesh)) {
       std::set<std::size_t> px_set;
       BOOST_FOREACH(face_descriptor f, faces_around_target(halfedge(v, *m_pmesh), *m_pmesh)) {
@@ -1360,7 +1350,8 @@ private:
    * @param vtx vertex
    */
   void attach_anchor(const vertex_descriptor &vtx) {
-    vanchor_map[vtx] = static_cast<int>(anchor_index++);
+    vanchor_map[vtx] = static_cast<int>(anchors.size());
+    anchors.push_back(Anchor(vtx, compute_anchor_position(vtx)));
   }
 
   /*!
@@ -1373,38 +1364,32 @@ private:
   }
 
   /*!
-   * @brief Calculate the anchor positions.
+   * @brief Calculate the anchor positions from a vertex.
+   * @param v the vertex descriptor
+   * @return the anchor position
    */
-  void compute_anchor_position() {
-    anchors = std::vector<Anchor>(anchor_index);
-    BOOST_FOREACH(vertex_descriptor v, vertices(*m_pmesh)) {
-      if (is_anchor_attached(v, vanchor_map)) {
-        // construct an anchor from vertex and the incident proxies
-        std::set<std::size_t> px_set;
-        BOOST_FOREACH(halfedge_descriptor h, halfedges_around_target(v, *m_pmesh)) {
-          if (!CGAL::is_border(h, *m_pmesh))
-            px_set.insert(seg_pmap[face(h, *m_pmesh)]);
-        }
-
-        // construct an anchor from vertex and the incident proxies
-        FT avgx(0), avgy(0), avgz(0), sum_area(0);
-        const Point_3 vtx_pt = point_pmap[v];
-        for (std::set<std::size_t>::iterator pxitr = px_set.begin();
-          pxitr != px_set.end(); ++pxitr) {
-          std::size_t px_idx = *pxitr;
-          Point_3 proj = px_planes[px_idx].projection(vtx_pt);
-          FT area = px_areas[px_idx];
-          avgx += proj.x() * area;
-          avgy += proj.y() * area;
-          avgz += proj.z() * area;
-          sum_area += area;
-        }
-        Point_3 pos = Point_3(avgx / sum_area, avgy / sum_area, avgz / sum_area);
-        std::size_t aidx = vanchor_map[v];
-        anchors[aidx].vtx = v;
-        anchors[aidx].pos = pos;
-      }
+  Point_3 compute_anchor_position(const vertex_descriptor &v) {
+    // construct an anchor from vertex and the incident proxies
+    std::set<std::size_t> px_set;
+    BOOST_FOREACH(halfedge_descriptor h, halfedges_around_target(v, *m_pmesh)) {
+      if (!CGAL::is_border(h, *m_pmesh))
+        px_set.insert(seg_pmap[face(h, *m_pmesh)]);
     }
+
+    // construct an anchor from vertex and the incident proxies
+    FT avgx(0), avgy(0), avgz(0), sum_area(0);
+    const Point_3 vtx_pt = point_pmap[v];
+    for (std::set<std::size_t>::iterator pxitr = px_set.begin();
+      pxitr != px_set.end(); ++pxitr) {
+      std::size_t px_idx = *pxitr;
+      Point_3 proj = px_planes[px_idx].projection(vtx_pt);
+      FT area = px_areas[px_idx];
+      avgx += proj.x() * area;
+      avgy += proj.y() * area;
+      avgz += proj.z() * area;
+      sum_area += area;
+    }
+    return Point_3(avgx / sum_area, avgy / sum_area, avgz / sum_area);
   }
 
   /*!
