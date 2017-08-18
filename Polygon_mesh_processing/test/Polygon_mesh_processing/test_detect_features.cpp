@@ -33,8 +33,7 @@ int main(int argc, char* argv[])
     VIP vip     = get(CGAL::vertex_incident_patches_t<int>(), mesh);
     EIF_map eif = get(CGAL::edge_is_feature, mesh);
     std::size_t number_of_patches
-      = PMP::sharp_edges_segmentation(mesh, 90, pid,
-                                      PMP::parameters::edge_is_constrained_map(eif));
+      = PMP::sharp_edges_segmentation(mesh, 90, eif, pid);
 
     std::size_t nb_sharp_edges = 0;
     BOOST_FOREACH(boost::graph_traits<Mesh>::edge_descriptor e, edges(mesh))
@@ -47,7 +46,7 @@ int main(int argc, char* argv[])
     CGAL_assertion(number_of_patches == 6);
 
     number_of_patches
-      = PMP::sharp_edges_segmentation(mesh, 90, pid,
+      = PMP::sharp_edges_segmentation(mesh, 90, eif, pid,
                                       PMP::parameters::first_index(1)
                                      .vertex_incident_patches_map(vip));
     CGAL_assertion(number_of_patches == 6);

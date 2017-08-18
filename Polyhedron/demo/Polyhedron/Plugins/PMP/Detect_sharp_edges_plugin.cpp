@@ -67,7 +67,7 @@ public:
   }
 
 public Q_SLOTS:
-void detectSharpEdges(bool input_dialog = false, double angle = 60);
+  void detectSharpEdges(bool input_dialog = false, double angle = 60);
   void detectSharpEdgesWithInputDialog();
 
 protected:
@@ -130,16 +130,18 @@ void Polyhedron_demo_detect_sharp_edges_plugin::detectSharpEdges(bool input_dial
     Scene_facegraph_item* item =
       qobject_cast<Scene_facegraph_item*>(scene->item(tuple.first));
     FaceGraph* pMesh = tuple.second;
-    if (!pMesh) continue;
+    if (!pMesh)
+      continue;
+
     typedef boost::property_map<FaceGraph,CGAL::face_patch_id_t<int> >::type PatchID;
+    typedef boost::property_map<FaceGraph, CGAL::vertex_incident_patches_t<int> >::type VIP;
+    boost::property_map<FaceGraph, CGAL::edge_is_feature_t>::type eif
+      = get(CGAL::edge_is_feature, *pMesh);
     PatchID pid = get(CGAL::face_patch_id_t<int>(), *pMesh);
-    typedef boost::property_map<FaceGraph,CGAL::vertex_incident_patches_t<int> >::type VIP;
     VIP vip = get(CGAL::vertex_incident_patches_t<int>(), *pMesh);
-    typename boost::property_map<FaceGraph, CGAL::edge_is_feature_t>::type eif =
-        get(CGAL::edge_is_feature, *pMesh);
-    first_patch+=PMP::sharp_edges_segmentation(*pMesh, angle, pid,
+
+    first_patch+=PMP::sharp_edges_segmentation(*pMesh, angle, eif, pid,
                                                PMP::parameters::first_index(first_patch)
-                                               .edge_is_constrained_map(eif)
                                                .vertex_incident_patches_map(vip));
     //update item
     item->setItemIsMulticolor(true);
