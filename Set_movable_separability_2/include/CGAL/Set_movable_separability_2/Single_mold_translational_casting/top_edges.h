@@ -18,6 +18,9 @@
 #ifndef CGAL_SMS_2_TOP_EDGES_SINGLE_MOLD_TRANSLATIONAL_CASTING_H
 #define CGAL_SMS_2_TOP_EDGES_SINGLE_MOLD_TRANSLATIONAL_CASTING_H
 
+#include <CGAL/license/Set_movable_separability_2.h>
+
+
 #include <iostream>
 #include <list>
 
