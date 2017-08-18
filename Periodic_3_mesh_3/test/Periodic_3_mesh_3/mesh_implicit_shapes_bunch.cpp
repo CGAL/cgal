@@ -245,6 +245,7 @@ int main()
     P3M3_IO::write_complex_to_medit(medit_file, c3t3);
   }
 
+  std::cout << "EXIT SUCCESS" << std::endl;
   return 0;
 }
 

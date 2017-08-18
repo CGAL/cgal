@@ -79,20 +79,17 @@ int main(int argc, char** argv)
   Periodic_mesh_domain domain(wrapper, CGAL::Iso_cuboid_3<K>(0, 0, 0, domain_size, domain_size, domain_size));
 
   Periodic_mesh_criteria criteria(facet_angle = 30,
-                                  facet_size = 0.05,
+                                  facet_size = 0.04,
                                   facet_distance = 0.025,
                                   cell_radius_edge_ratio = 2.,
-                                  cell_size = 0.05);
+                                  cell_size = 0.04);
 
   // Mesh generation
   C3t3 c3t3 = CGAL::make_periodic_3_mesh_3<C3t3>(domain, criteria);
 
   // Output
   std::ofstream medit_file("output_multi_domain.mesh");
-
   P3M3_IO::write_complex_to_medit(medit_file, c3t3, 1);
-
-  medit_file.close();
 
   std::cout << "EXIT SUCCESS" << std::endl;
   return 0;

@@ -78,10 +78,7 @@ int main()
 
   // Output
   std::ofstream medit_file("output_implicit_with_subdomains.mesh");
-
   P3M3_IO::write_complex_to_medit(medit_file, c3t3);
-
-  medit_file.close();
 
   return 0;
 }
