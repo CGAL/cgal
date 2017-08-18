@@ -334,7 +334,7 @@ void detect_vertex_incident_patches(PolygonMesh& pmesh,
                 set.insert(get(patch_id_map, face(opposite(he,pmesh),pmesh)));
             }
         }
-        vertex_incident_patches_map[vit] =  set;
+        put(vertex_incident_patches_map, vit, set);
     }
 }
 
