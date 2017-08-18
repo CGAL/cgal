@@ -38,7 +38,7 @@ get_segment_outer_circle(const typename Kernel::Segment_2 seg,
 {
   typename Kernel::Direction_2 forward( seg);
   typename Kernel::Direction_2 backward(-forward);
-  return (orientation == CGAL::Orientation::CLOCKWISE) ?
+  return (orientation == CGAL::CLOCKWISE) ?
     std::make_pair(backward, forward) : std::make_pair(forward, backward);
 }
 
