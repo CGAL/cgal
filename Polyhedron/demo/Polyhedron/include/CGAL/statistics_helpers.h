@@ -161,8 +161,7 @@ void faces_area(Mesh* poly,
     Point a = get(vpmap, target(h, *poly));
     Point b = get(vpmap, target(next(h, *poly), *poly));
     Point c = get(vpmap, target(next(next(h, *poly), *poly), *poly));
-    CGAL::squared_area(a,b,c);
-    acc(CGAL::sqrt(CGAL::squared_distance(a, b)));
+    acc(CGAL::sqrt(CGAL::squared_area(a,b,c)));
   }
 
   mini = extract_result< tag::min >(acc);
