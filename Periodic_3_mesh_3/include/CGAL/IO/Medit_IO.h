@@ -82,8 +82,6 @@ template <class Stream, class C3t3>
 Stream& write_complex_to_medit(Stream& out, C3t3& c3t3,
                                unsigned occurence_count = 8)
 {
-  std::cout << "write complex to medit" << std::endl;
-
   // if:
   // -"1": only draws a single instance of the domain
   // -"2": draws 2 occurences of the domain, displaying an additional domain on
@@ -115,10 +113,6 @@ Stream& write_complex_to_medit(Stream& out, C3t3& c3t3,
   int Ox_rn = 1 + (((occurence_count - 1) >> 0) & 1);
   int Oy_rn = 1 + (((occurence_count - 1) >> 1) & 1);
   int Oz_rn = 1 + (((occurence_count - 1) >> 2) & 1);
-
-  std::cout << Ox_rn << " instances on OX" << std::endl;
-  std::cout << Oy_rn << " instances on OY" << std::endl;
-  std::cout << Oz_rn << " instances on OZ" << std::endl;
 
   int number_of_vertices = static_cast<int>(tr.number_of_vertices());
   int number_of_facets = static_cast<int>(c3t3.number_of_facets());
