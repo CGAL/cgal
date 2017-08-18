@@ -328,19 +328,19 @@ void detect_vertex_incident_patches(PolygonMesh& pmesh,
     { continue; }
 
     // Loop on incident facets of vit
-    typename VertexIncidentPatchesMap::value_type set;
+    typename VertexIncidentPatchesMap::value_type id_set;
     BOOST_FOREACH(halfedge_descriptor he, halfedges_around_target(vit,pmesh))
     {
       if( ! is_border(he,pmesh) )
       {
-        set.insert(get(patch_id_map,face(he,pmesh)));
+        id_set.insert(get(patch_id_map, face(he, pmesh)));
       }
       else if( ! is_border(opposite(he,pmesh),pmesh) )
       {
-        set.insert(get(patch_id_map, face(opposite(he,pmesh),pmesh)));
+        id_set.insert(get(patch_id_map, face(opposite(he, pmesh), pmesh)));
       }
     }
-    put(vertex_incident_patches_map, vit, set);
+    put(vertex_incident_patches_map, vit, id_set);
   }
 }
 
