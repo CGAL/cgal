@@ -13,8 +13,8 @@
 
 /// \defgroup PkgPeriodic_3_mesh_3Functions Mesh Generation Functions
 /// \ingroup PkgPeriodic_3_mesh_3
-/// The two main functions to generate a periodic mesh are `make_periodic_mesh_3()`
-/// and `refine_periodic_mesh_3()`. Other functions are provided to optimize
+/// The two main functions to generate a periodic mesh are `make_periodic_3_mesh_3()`
+/// and `refine_periodic_3_mesh_3()`. Other functions are provided to optimize
 /// an existing periodic mesh.
 
 /// \defgroup PkgPeriodic_3_mesh_3Parameters Parameter Functions

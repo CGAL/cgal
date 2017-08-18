@@ -59,14 +59,14 @@ public:
 
 /*!
 \brief Construction from a function, a fundamental domain, and a relative error bound.
-\param f the function.
-\param bbox the fundamental domain in which we construct the mesh.
+\param f is the function.
+\param cuboid is the fundamental domain in which we construct the mesh.
 \param relative_error_bound is the relative error bound used to compute intersection points between the implicit surface and query segments. The
        bisection is stopped when the length of the intersected segment is less
        than the product of `relative_error_bound` by the diagonal of `bounding_box`.
 */
 Labeled_periodic_3_mesh_domain_3(const LabelingFunction& f,
-                                 const BGT::Iso_cuboid_3& bbox,
+                                 const BGT::Iso_cuboid_3& cuboid,
                                  const BGT::FT& relative_error_bound = FT(1e-6));
 
 /// @}

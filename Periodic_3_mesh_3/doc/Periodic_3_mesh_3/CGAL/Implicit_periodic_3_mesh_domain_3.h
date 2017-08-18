@@ -8,6 +8,7 @@ whose bounding surface is described implicitly as the zero level set
 of a function defined over the three dimensional flat torus.
 The domain to be discretized is assumed to be the domain where
 the function has negative values.
+
 This class is a model of the concept `Periodic_3MeshDomain_3`.
 
 \tparam Function provides the definition of the function.
@@ -21,12 +22,12 @@ This class is a model of the concept `Periodic_3MeshDomain_3`.
         `BisectionGeometricTraits_3`.
 
 The constructor of `Implicit_periodic_3_mesh_domain_3` takes as argument
-a cuboid, which represents the fundamental domain, in which we construct the
+a cuboid (the fundamental domain) in which we construct the
 mesh (see \ref PkgPeriodic_3_mesh_3).
 This domain constructs intersection points between the surface and
 segments/rays/lines by bisection. It requires an `error_bound` such that the bisection
 process is stopped when the query segment is smaller than the error bound.
-The `error_bound` passed as argument to the domain constructor
+The `error_bound`, passed as argument to the domain constructor,
 is a relative error bound expressed as a ratio of the longest space diagonal
 of the cuboid.
 
@@ -48,7 +49,7 @@ public:
 
 /*!
 \param f is the object of type `Function` that represents the implicit surface
-\param cuboid the fundamental domain
+\param cuboid is the fundamental domain
 \param error_bound  is the relative error bound used to compute intersection
        points between the implicit surface and query segments. The bisection
        is stopped when the length of the intersected segment is less than
