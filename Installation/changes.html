@@ -149,26 +149,46 @@ and <code>src/</code> directories).
 <!-- Mesh Generation -->
 <!-- Surface Reconstruction -->
 <!-- Geometry Processing -->
- <h3>Polygon Mesh Processing</h3>
-  <ul>
-    <li> Added new functions for feature detection and feature-guided segmentation:
-      <ul>
-        <li><code>CGAL::Polygon_mesh_processing::detect_sharp_edges()</code></li>
-        <li><code>CGAL::Polygon_mesh_processing::detect_vertex_incident_patches()</code></li>
-        <li><code>CGAL::Polygon_mesh_processing::sharp_edges_segmentation()</code></li>
-      </ul>
-    </li>
-  </ul>
+<h3>Polygon Mesh Processing</h3>
+<ul>
+  <li> Added new functions for feature detection and feature-guided segmentation:
+    <ul>
+      <li><code>CGAL::Polygon_mesh_processing::detect_sharp_edges()</code></li>
+      <li><code>CGAL::Polygon_mesh_processing::detect_vertex_incident_patches()</code></li>
+      <li><code>CGAL::Polygon_mesh_processing::sharp_edges_segmentation()</code></li>
+    </ul>
+  </li>
+</ul>
+<h3>Point Set Shape Detection</h3>
+<ul>
+  <li>New algorithm: <code>CGAL::Region_growing</code>. This is a
+    deterministic alternative to RANSAC for plane detection.</li>
+  <li><b>Breaking change</b>: the API
+  of <code>CGAL::regularize_planes()</code> is generalized to accept
+  other types of input than the RANSAC output.</li>
+</ul>
+<h3>Point Set Processing</h3>
+<ul>
+  <li><b>Breaking change</b>: the API
+  of <code>CGAL::structure_point_set()</code> is generalized to accept
+  other types of input than the RANSAC output.</li>
+</ul>
 <!-- Spatial Searching and Sorting -->
 <!-- Geometric Optimization -->
 <!-- Interpolation -->
 <!-- Kinetic Data Structures -->
 <!-- Support Library -->
 <!-- Visualization -->
-
-<!-- end of the div for 4.10 -->
+<!-- Support Library -->
+ <h3>CGAL and the Boost Graph Library (BGL)</h3>
+  <ul>
+    <li>
+      Add helper function <code>CGAL::expand_face_selection_for_removal</code> that
+      expands a face selection to avoid creating a non manifold mesh when removing the selected faces.
+    </li>
+  </ul>
+<!-- end of the div for 4.12 -->
 </div>
-
 
 <h2 id="release4.11">Release 4.11 </h2>
 <div>
@@ -434,6 +454,11 @@ and <code>src/</code> directories).
     <li>
       Add function <code>Kd_tree::remove(Point)</code>.
     </li>
+  </ul>
+  <h3>3D Fast Intersection and Distance Computation</h3>
+  <ul>
+    <li>Add a template parameter to <code>AABB_traits</code>
+        for a property map that associates a bounding box to a primitive</li>
   </ul>
   <h3>CGAL and the Boost Graph Library</h3>
   <ul>

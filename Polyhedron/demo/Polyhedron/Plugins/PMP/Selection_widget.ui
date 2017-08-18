@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>597</width>
+    <width>613</width>
     <height>334</height>
    </rect>
   </property>
@@ -430,6 +430,13 @@
              </widget>
             </item>
             <item>
+             <widget class="QPushButton" name="pushButton">
+              <property name="text">
+               <string>PushButton</string>
+              </property>
+             </widget>
+            </item>
+            <item>
              <spacer name="verticalSpacer_8">
               <property name="orientation">
                <enum>Qt::Vertical</enum>
@@ -473,6 +480,11 @@
             <item>
              <property name="text">
               <string>Keep Connected Components of Selected Facets</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Expand Face Selection to Stay Manifold After Removal</string>
              </property>
             </item>
             <item>

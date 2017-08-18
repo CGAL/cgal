@@ -791,22 +791,6 @@ private:
     std::vector<Point> hidden;
   };
 #endif //CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG
-
-  // unused and undocumented types and functions required to be
-  // compatible to Alpha_shape_3
-public:
-  typedef Cell_iterator   Finite_cells_iterator;
-  typedef Facet_iterator  Finite_facets_iterator;
-  typedef Edge_iterator   Finite_edges_iterator;
-  typedef Vertex_iterator Finite_vertices_iterator;
-
-  int dimension() const { return 3; }
-  template < class T >
-  bool is_infinite(const T&, int = 0, int = 0) const { return false; }
-  size_type number_of_finite_cells() const { return number_of_cells(); }
-  size_type number_of_finite_facets() const { return number_of_facets(); }
-  size_type number_of_finite_edges() const { return number_of_edges(); }
-  size_type number_of_finite_vertices() const { return number_of_vertices(); }
 };
 
 template < class GT, class Tds >

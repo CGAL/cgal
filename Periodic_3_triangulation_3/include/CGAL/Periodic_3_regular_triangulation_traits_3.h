@@ -75,6 +75,10 @@ public:
   typedef Functor_with_offset_weighted_points_adaptor<Self, typename K::Compare_power_distance_3>
       Compare_power_distance_3;
 
+  // Undocumented, requried for Is_Gabriel (Alpha shapes)
+  typedef Functor_with_offset_weighted_points_adaptor<Self, typename K::Power_side_of_bounded_power_sphere_3>
+      Power_side_of_bounded_power_sphere_3;
+
   // Required for Periodic_3_regular_remove_traits
   typedef Functor_with_offset_weighted_points_adaptor<Self, typename K::Coplanar_orientation_3>
        Coplanar_orientation_3;
@@ -99,6 +103,11 @@ public:
   }
 
   // predicates
+  Power_side_of_bounded_power_sphere_3 power_side_of_bounded_power_sphere_3_object() const {
+    return Power_side_of_bounded_power_sphere_3(
+      this->Base::power_side_of_bounded_power_sphere_3_object(),
+      construct_point_3_object(), construct_weighted_point_3_object());
+  }
   Power_side_of_oriented_power_sphere_3 power_side_of_oriented_power_sphere_3_object() const {
     return Power_side_of_oriented_power_sphere_3(
       this->Base::power_side_of_oriented_power_sphere_3_object(),

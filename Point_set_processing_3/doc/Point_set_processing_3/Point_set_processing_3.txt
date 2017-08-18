@@ -502,9 +502,10 @@ points that are on sharp edges:
 
 \section Point_set_processing_3Structuring Structuring
 
-The function `structure_point_set()` generates a structured version of the
-input point set. It requires that a shape detection algorithm is first applied
-to the point set (see \ref Chapter_Point_Set_Shape_Detection). It is based on
+The function `structure_point_set()` generates a structured version of
+the input point set assigned to a set of planes. Such an input can be
+produced by a shape detection algorithm (see \ref
+Chapter_Point_Set_Shape_Detection). Point set structuring is based on
 the article \cgalCite{cgal:la-srpss-13}.
 
 - __Planes__: inliers of each detected plane are replaced by sets of
@@ -521,7 +522,6 @@ twice the user-defined tolerance.
 graph and sampled using the exact intersection point of the 3 planes
 (provided it exists and remains in the given tolerance). These corners
 are also locally clustered to former corners of degree higher than 3.
-
 
 This algorithm is well suited to point sets sampled on surfaces with
 planar sections and sharp edges.

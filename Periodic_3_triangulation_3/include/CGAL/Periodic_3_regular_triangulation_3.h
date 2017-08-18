@@ -771,6 +771,85 @@ public:
     return get_original_vertex(nearest);
   }
 
+  bool is_Gabriel(Cell_handle c, int i) const
+  {
+    CGAL_triangulation_precondition(number_of_vertices() != 0);
+    typename Geom_traits::Power_side_of_bounded_power_sphere_3
+      side_of_bounded_power_sphere =
+      geom_traits().power_side_of_bounded_power_sphere_3_object();
+
+    if(side_of_bounded_power_sphere (
+         c->vertex(vertex_triple_index(i,0))->point(),
+         c->vertex(vertex_triple_index(i,1))->point(),
+         c->vertex(vertex_triple_index(i,2))->point(),
+         c->vertex(i)->point(),
+         get_offset(c,vertex_triple_index(i,0)),
+         get_offset(c,vertex_triple_index(i,1)),
+         get_offset(c,vertex_triple_index(i,2)),
+         get_offset(c,i) ) == ON_BOUNDED_SIDE )
+      return false;
+
+    Cell_handle neighbor = c->neighbor(i);
+    int in = neighbor->index(c);
+
+    if(side_of_bounded_power_sphere(
+         neighbor->vertex(vertex_triple_index(in,0))->point(),
+         neighbor->vertex(vertex_triple_index(in,1))->point(),
+         neighbor->vertex(vertex_triple_index(in,2))->point(),
+         neighbor->vertex(in)->point(),
+         get_offset(neighbor,vertex_triple_index(in,0)),
+         get_offset(neighbor,vertex_triple_index(in,1)),
+         get_offset(neighbor,vertex_triple_index(in,2)),
+         get_offset(neighbor, in) ) == ON_BOUNDED_SIDE )
+      return false;
+
+    return true;
+  }
+
+  bool is_Gabriel(Cell_handle c, int i, int j) const
+  {
+    CGAL_triangulation_precondition(number_of_vertices() != 0);
+    typename Geom_traits::Power_side_of_bounded_power_sphere_3
+      side_of_bounded_power_sphere =
+      geom_traits().power_side_of_bounded_power_sphere_3_object();
+
+    Facet_circulator fcirc = incident_facets(c,i,j), fdone(fcirc);
+    Vertex_handle v1 = c->vertex(i);
+    Vertex_handle v2 = c->vertex(j);
+    do {
+      // test whether the vertex of cc opposite to *fcirc
+      // is inside the sphere defined by the edge e = (s, i,j)
+      // It is necessary to fetch the offsets from the current cell.
+      Cell_handle cc = fcirc->first;
+      int i1 = cc->index(v1);
+      int i2 = cc->index(v2);
+      int i3 = fcirc->second;
+      Offset off1 = int_to_off(cc->offset(i1));
+      Offset off2 = int_to_off(cc->offset(i2));
+      Offset off3 = int_to_off(cc->offset(i3));
+      if(side_of_bounded_power_sphere(v1->point(), v2->point(), cc->vertex(i3)->point(),
+                                      off1, off2, off3) == ON_BOUNDED_SIDE)
+        return false;
+    } while(++fcirc != fdone);
+    return true;
+  }
+
+  bool is_Gabriel(const Facet& f)const
+  {
+    return is_Gabriel(f.first, f.second);
+  }
+
+  bool is_Gabriel(const Edge& e) const
+  {
+    return is_Gabriel(e.first, e.second, e.third);
+  }
+
+  bool is_Gabriel(Vertex_handle v) const
+  {
+    return nearest_power_vertex(
+             geom_traits().construct_point_3_object()(v->point()), v->cell()) == v;
+  }
+
   Offset get_min_dist_offset(const Bare_point& p, const Offset & o,
                              const Vertex_handle vh) const {
     Offset mdo = get_offset(vh);

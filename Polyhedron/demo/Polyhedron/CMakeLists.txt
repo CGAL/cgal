@@ -3,6 +3,7 @@
 project( Polyhedron_Demo )
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON)
 cmake_minimum_required(VERSION 3.1)
@@ -11,6 +12,9 @@ if(POLICY CMP0053)
 endif()
 if(POLICY CMP0043)
   cmake_policy(SET CMP0043 OLD)
+endif()
+if(POLICY CMP0071)
+  cmake_policy(SET CMP0071 NEW)
 endif()
 
 list(FIND CMAKE_CXX_COMPILE_FEATURES cxx_generalized_initializers has_cpp11)
@@ -241,6 +245,9 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   add_item(scene_edit_box_item Plugins/PCA/Scene_edit_box_item.cpp )
   add_item(scene_image_item Scene_image_item.cpp)
   add_item(scene_surface_mesh_item Scene_surface_mesh_item.cpp)
+  add_item(scene_mcf_poly_item Plugins/PMP/Scene_mcf_item.cpp)
+  add_item(scene_mcf_sm_item Plugins/PMP/Scene_mcf_item.cpp)
+  target_compile_definitions(scene_mcf_sm_item PUBLIC "-DUSE_SURFACE_MESH" )
 
   # special
   target_link_libraries(scene_polyhedron_transform_item scene_polyhedron_item)

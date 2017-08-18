@@ -23,7 +23,7 @@ namespace SMS = CGAL::Surface_mesh_simplification ;
 int main( int argc, char** argv ) 
 {
   Surface_mesh surface_mesh;
-  
+
   std::ifstream is(argc > 1 ? argv[1] : "data/fold.off") ; is >> surface_mesh ;
 
   // This is a stop predicate (defines when the algorithm terminates).
@@ -38,16 +38,15 @@ typedef SMS::Bounded_normal_change_placement<SMS::LindstromTurk_placement<Surfac
   // The surface mesh and stop conditions are mandatory arguments.
   // The index maps are needed because the vertices and edges
   // of this surface mesh lack an "id()" field.
-  int r = SMS::edge_collapse
-            (surface_mesh
-            ,stop
-            ,CGAL::vertex_index_map(get(CGAL::vertex_external_index,surface_mesh)) 
-             .halfedge_index_map  (get(CGAL::halfedge_external_index  ,surface_mesh)) 
-             .get_cost (SMS::LindstromTurk_cost<Surface_mesh>())
-             .get_placement(Placement())
-            );
-  
+  SMS::edge_collapse( surface_mesh,
+                      stop,
+                      CGAL::parameters::vertex_index_map(get(CGAL::vertex_external_index,surface_mesh))
+                        .halfedge_index_map  (get(CGAL::halfedge_external_index  ,surface_mesh))
+                        .get_cost (SMS::LindstromTurk_cost<Surface_mesh>())
+                        .get_placement(Placement())
+                      );
+
   std::ofstream os( argc > 2 ? argv[2] : "out.off" ) ; os << surface_mesh ;
-  
+
   return 0 ;      
 }

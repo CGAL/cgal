@@ -349,7 +349,6 @@ protected Q_SLOTS:
   void on_actionRecenterScene_triggered();
   //!Resizes the header of the scene view
   void resetHeader();
-
 protected:
   QList<QAction*> createSubMenus(QList<QAction*>);
   /*! For each objects in the Geometric Objects view, loads the associated plugins.

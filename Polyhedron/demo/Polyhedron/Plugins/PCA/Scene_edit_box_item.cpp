@@ -1022,14 +1022,16 @@ void Scene_edit_box_item_priv::reset_selection()
 }
 
 //intercept events for picking
-bool Scene_edit_box_item::eventFilter(QObject *, QEvent *event)
+bool Scene_edit_box_item::eventFilter(QObject *obj, QEvent *event)
 {
+  QGLViewer* viewer = qobject_cast<QGLViewer*>(obj);
+  if(!viewer)
+    return false;
   if(event->type() == QEvent::MouseButtonPress)
   {
     QMouseEvent* e = static_cast<QMouseEvent*>(event);
-    if(e->modifiers() == Qt::ShiftModifier)
+    if(e->modifiers() == Qt::NoModifier)
     {
-      QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
       Viewer_interface* v_i = dynamic_cast<Viewer_interface*>(viewer);
       //pick
       int type, picked;
@@ -1082,10 +1084,10 @@ bool Scene_edit_box_item::eventFilter(QObject *, QEvent *event)
 
         viewer->setManipulatedFrame(d->remodel_frame);
         viewer->setMouseBinding(
-              Qt::ShiftModifier,
-              Qt::LeftButton,
-              QGLViewer::FRAME,
-              QGLViewer::TRANSLATE);
+                    Qt::NoModifier,
+                    Qt::LeftButton,
+                    QGLViewer::FRAME,
+                    QGLViewer::TRANSLATE);
       }
       else
       {
@@ -1097,7 +1099,7 @@ bool Scene_edit_box_item::eventFilter(QObject *, QEvent *event)
   else if(event->type() == QEvent::MouseMove)
   {
     QMouseEvent* e = static_cast<QMouseEvent*>(event);
-    if(e->modifiers() == Qt::ShiftModifier)
+    if(e->modifiers() == Qt::NoModifier)
     {
       if(d->selection_on)
       {
@@ -1126,25 +1128,17 @@ bool Scene_edit_box_item::eventFilter(QObject *, QEvent *event)
   {
     d->reset_selection();
     QApplication::setOverrideCursor(QCursor());
-  }
-
-  else if(event->type() == QEvent::KeyPress)
-  {
-     QKeyEvent* e = static_cast<QKeyEvent*>(event);
-     if(e->key() == Qt::Key_Shift)
-     {
-       d->ready_to_hl= true;
-       QTimer::singleShot(0, this, SLOT(highlight()));
-     }
+    viewer->setMouseBinding(
+                Qt::NoModifier,
+                Qt::LeftButton,
+                QGLViewer::CAMERA,
+                QGLViewer::ROTATE);
   }
   else if(event->type() == QEvent::KeyRelease)
   {
      QKeyEvent* e = static_cast<QKeyEvent*>(event);
-     if(e->key() == Qt::Key_Shift)
-       QTimer::singleShot(0, this, SLOT(clearHL()));
-     else if(e->key() == Qt::Key_Control)
+     if(e->key() == Qt::Key_Control)
      {
-
        QApplication::setOverrideCursor(QCursor());
      }
   }

@@ -29,17 +29,17 @@
 
 #include <CGAL/license/Mesh_3.h>
 
-
-#include <CGAL/Polygon_mesh_processing/internal/Side_of_triangle_mesh/Point_inside_vertical_ray_cast.h>
-
 #include <CGAL/Mesh_3/global_parameters.h>
 #include <CGAL/Mesh_3/Robust_intersection_traits_3.h>
-#include <CGAL/Mesh_3/Triangle_accessor_primitive.h>
-#include <CGAL/Triangle_accessor_3.h>
-#include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
+
+#include <CGAL/boost/graph/Graph_with_descriptor_with_graph.h>
+#include <CGAL/Surface_mesh/Surface_mesh_fwd.h>
+
+#include <CGAL/Side_of_triangle_mesh.h>
+
 #include <sstream>
 
+#include <CGAL/Default.h>
 #include <CGAL/Random.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/Mesh_3/Profile_counter.h>
@@ -109,9 +109,10 @@ struct Surface_patch_index_generator<Subdomain_index, Graph_with_descriptor_with
   template < typename Primitive_id >
   Surface_patch_index operator()(const Primitive_id& primitive_id)
   {
-    typedef typename boost::property_map<Surface_mesh<P>, face_patch_id_t<Patch_id> >::type Fpim;
-    Fpim fpim = get(face_patch_id_t<Patch_id>(),*((*primitive_id).graph));
-    Surface_patch_index spi =  get(fpim, (*primitive_id).descriptor);
+    typedef typename boost::property_map<Surface_mesh<P>,
+                                         face_patch_id_t<Patch_id> >::type Fpim;
+    Fpim fpim = get(face_patch_id_t<Patch_id>(),*(primitive_id.graph));
+    Surface_patch_index spi =  get(fpim, primitive_id.descriptor);
     return spi;
   }
 };
@@ -217,9 +218,9 @@ struct IGT_generator<Gt,CGAL::Tag_false>
  *
  *
  */
-template<class Polyhedron,
+template<class Polyhedron,/*FaceGraph*/
          class IGT_,
-         class TriangleAccessor=Triangle_accessor_3<Polyhedron,IGT_>,
+         class TriangleAccessor = CGAL::Default,
          class Patch_id_ = void,
          class Use_exact_intersection_construction_tag = CGAL::Tag_true>
 class Polyhedral_mesh_domain_3
@@ -264,11 +265,10 @@ public:
   typedef IGT R;
 
 public:
-  typedef Mesh_3::Triangle_accessor_primitive<
-    TriangleAccessor, IGT>                              AABB_primitive;
-  typedef class AABB_traits<IGT,AABB_primitive>         AABB_traits;
-  typedef class AABB_tree<AABB_traits>                  AABB_tree_;
-
+  typedef Side_of_triangle_mesh<Polyhedron, IGT>        Inside_functor;
+  typedef typename Inside_functor::AABB_tree              AABB_tree_;
+  typedef typename AABB_tree_::AABB_traits                AABB_traits;
+  typedef typename AABB_tree_::Primitive                  AABB_primitive;
   typedef typename AABB_tree_::Primitive_id             AABB_primitive_id;
   typedef typename AABB_tree_::Primitive                Primitive;
   typedef typename AABB_traits::Bounding_box            Bounding_box;
@@ -673,8 +673,7 @@ public:
 protected:
   void add_primitives(const Polyhedron& p)
   {
-    tree_.insert(TriangleAccessor().triangles_begin(p),
-                 TriangleAccessor().triangles_end(p));
+    tree_.insert(faces(p).begin(), faces(p).end(), p);
   }
 
   void add_primitives_to_bounding_tree(const Polyhedron& p)
@@ -682,8 +681,7 @@ protected:
     if(bounding_tree_ == &tree_ || bounding_tree_ == 0) {
       bounding_tree_ = new AABB_tree_;
     }
-    bounding_tree_->insert(TriangleAccessor().triangles_begin(p),
-                           TriangleAccessor().triangles_end(p));
+    bounding_tree_->insert(faces(p).begin(), faces(p).end(), p);
   }
 
   void build() {
@@ -842,8 +840,8 @@ Is_in_domain::operator()(const Point_3& p) const
 {
   if(r_domain_.bounding_tree_ == 0) return Subdomain();
 
-  internal::Point_inside_vertical_ray_cast<IGT_, AABB_tree_> inside_functor;
-  Bounded_side side = inside_functor(p, *(r_domain_.bounding_tree_));
+  Inside_functor inside_functor(*(r_domain_.bounding_tree_));
+  Bounded_side side = inside_functor(p);
 
   if(side == CGAL::ON_UNBOUNDED_SIDE) { return Subdomain(); }
   else { return Subdomain(Subdomain_index(1)); } // case ON_BOUNDARY && ON_BOUNDED_SIDE

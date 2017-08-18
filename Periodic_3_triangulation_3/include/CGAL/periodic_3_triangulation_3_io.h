@@ -28,6 +28,8 @@
 #include <iostream>
 #include <utility>
 
+namespace CGAL {
+
 template <class Stream, class Triangulation>
 Stream &write_triangulation_to_off(Stream &out, Triangulation &t) {
   typedef typename Triangulation::Point Point;
@@ -136,5 +138,7 @@ Stream& draw_dual_to_off(Stream &os, Triangulation &t) {
   }
   return os;
 }
+
+} // namespace CGAL
 
 #endif //CGAL_PERIODIC_3_TRIANGULATION_3_IO_H
