@@ -18,6 +18,9 @@
 #ifndef CGAL_SET_MOVABLE_SEPARABILITY_2_INTERNAL_UTILS_H
 #define CGAL_SET_MOVABLE_SEPARABILITY_2_INTERNAL_UTILS_H
 
+#include <CGAL/license/Set_movable_separability_2.h>
+
+
 #include <CGAL/enum.h>
 #include <CGAL/Polygon_2.h>
 
