@@ -2,7 +2,7 @@
 # This is the CMake script for compiling a CGAL application.
 
 
-project( Casting_2_example )
+project( Set_movable_separability_2_Examples )
 
 cmake_minimum_required(VERSION 2.8.10)
 
