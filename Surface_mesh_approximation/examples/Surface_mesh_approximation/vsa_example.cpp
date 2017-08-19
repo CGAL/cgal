@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
   const std::size_t num_iterations = std::atoi(argv[4]);
   
   int init = std::atoi(argv[2]);
-  if (init < 0 || init > 3)
+  if (init < 0 || init > 2)
     return EXIT_FAILURE;
 
   Polyhedron out_mesh;
