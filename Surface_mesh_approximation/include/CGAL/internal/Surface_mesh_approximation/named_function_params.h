@@ -9,7 +9,7 @@ namespace internal_np{
 // define enum types and values for new named parameters
 #define CGAL_add_named_parameter(X, Y, Z)            \
   enum X { Y };
-#include <CGAL/Surface_mesh_approximation/internal/parameters_interface.h>
+#include <CGAL/internal/Surface_mesh_approximation/parameters_interface.h>
 #undef CGAL_add_named_parameter
 
 }//internal_np
@@ -34,7 +34,7 @@ namespace internal_np{
     typedef vsa_bgl_named_params<K, internal_np::X, self> Params; \
     return Params(k, *this);                         \
   }
-#include <CGAL/Surface_mesh_approximation/internal/parameters_interface.h>
+#include <CGAL/internal/Surface_mesh_approximation/parameters_interface.h>
 #include <CGAL/boost/graph/parameters_interface.h>
 #include <CGAL/boost/graph/boost_parameters_interface.h>
 #undef CGAL_add_named_parameter
@@ -55,7 +55,7 @@ namespace parameters{
   }
 #include <CGAL/boost/graph/boost_parameters_interface.h>
 #include <CGAL/boost/graph/parameters_interface.h>
-#include <CGAL/Surface_mesh_approximation/internal/parameters_interface.h>
+#include <CGAL/internal/Surface_mesh_approximation/parameters_interface.h>
 #undef CGAL_add_named_parameter
 } //namespace parameters
 } //namespace VSA

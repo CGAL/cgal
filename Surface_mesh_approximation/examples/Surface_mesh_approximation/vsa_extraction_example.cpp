@@ -31,12 +31,9 @@ int main(int argc, char *argv[])
   if (init < 0 || init > 3)
     return EXIT_FAILURE;
 
-  CGAL::vsa_extract(mesh,
-    tris,
-    anchor_pos,
-    init,
-    num_proxies,
-    num_iterations);
+  Polyhedron out_mesh;
+  bool is_manifold = CGAL::vsa_mesh_approximation(mesh, out_mesh,
+    CGAL::VSA::parameters::number_of_proxies(num_proxies).number_of_iterations(num_iterations));
 
   return EXIT_SUCCESS;
 }

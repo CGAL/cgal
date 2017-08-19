@@ -2,6 +2,8 @@
 #define CGAL_SURFACE_MESH_APPROXIMATION_VSA_MESH_APPROXIMATION_H
 
 #include <CGAL/internal/Surface_mesh_approximation/VSA.h>
+#include <CGAL/VSA_approximation.h>
+#include <CGAL/internal/Surface_mesh_approximation/named_function_params.h>
 #include <CGAL/vsa_mesh_approximation_traits.h>
 #include <CGAL/property_map.h>
 #include <boost/graph/graph_traits.hpp>
@@ -56,25 +58,41 @@ bool vsa_mesh_approximation(const TriangleMesh &tm_in,
   using boost::get_param;
   using boost::choose_param;
 
-  typedef typename GetGeomTraits<PM, NamedParameters>::type GeomTraits;
+  // typedef typename GetGeomTraits<PM, NamedParameters>::type GeomTraits;
+  typedef typename TriangleMesh::Traits GeomTraits;
   typedef typename GeomTraits::FT FT;
+  typedef typename GeomTraits::Point_3 Point_3;
   typedef typename GeomTraits::Vector_3 Vector_3;
 
-  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::type VPMap;
-  VPMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
-    get_property_map(vertex_point, tm_in));
+  // typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::type VPMap;
+  // VPMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
+  //   get_property_map(vertex_point, tm_in));
 
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
   typedef boost::associative_property_map<std::map<face_descriptor, Vector_3> > FacetNormalMap;
   typedef boost::associative_property_map<std::map<face_descriptor, FT> > FacetAreaMap;
+  typedef typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type VertexPointMap;
 
   typedef CGAL::PlaneProxy<TriangleMesh> PlaneProxy;
   typedef CGAL::L21Metric<TriangleMesh, FacetNormalMap, FacetAreaMap> L21Metric;
   typedef CGAL::L21ProxyFitting<TriangleMesh, FacetNormalMap, FacetAreaMap> L21ProxyFitting;
   typedef CGAL::VSA_approximation<TriangleMesh, PlaneProxy, L21Metric, L21ProxyFitting> VSAL21;
 
+  VertexPointMap point_pmap = get(boost::vertex_point, const_cast<TriangleMesh &>(tm_in));
+  // construct facet normal & area map
   std::map<face_descriptor, Vector_3> facet_normals;
   std::map<face_descriptor, FT> facet_areas;
+  BOOST_FOREACH(face_descriptor f, faces(tm_in)) {
+    const halfedge_descriptor he = halfedge(f, tm_in);
+    const Point_3 p0 = point_pmap[source(he, tm_in)];
+    const Point_3 p1 = point_pmap[target(he, tm_in)];
+    const Point_3 p2 = point_pmap[target(next(he, tm_in), tm_in)];
+    Vector_3 normal = CGAL::unit_normal(p0, p1, p2);
+    facet_normals.insert(std::pair<face_descriptor, Vector_3>(f, normal));
+    FT area(std::sqrt(CGAL::to_double(CGAL::squared_area(p0, p1, p2))));
+    facet_areas.insert(std::pair<face_descriptor, FT>(f, area));
+  }
   FacetNormalMap normal_pmap(facet_normals);
   FacetAreaMap area_pmap(facet_areas);
 
@@ -86,16 +104,17 @@ bool vsa_mesh_approximation(const TriangleMesh &tm_in,
 
   std::size_t num_proxies = choose_param(get_param(np, internal_np::number_of_proxies),
     num_faces(tm_in) / 100);
-  std::size_t num_proxies = choose_param(get_param(np, internal_np::number_of_iterations), 10);
-  bool pca_plane = choose_param(get_param(np, internal_np::pca_plane), false);
+  std::size_t num_iterations = choose_param(get_param(np, internal_np::number_of_iterations), 10);
+  std::cout << "#px = " << num_proxies << ", #itr = " << num_iterations << std::endl;
+  // bool pca_plane = choose_param(get_param(np, internal_np::pca_plane), false);
 
   vsa_l21.init_proxies(num_proxies, VSAL21::RandomInit);
-  for (std::size_t i = 0; i <n number_of_iterations; ++i)
+  for (std::size_t i = 0; i < num_iterations; ++i)
     vsa_l21.run_one_step();
 
   // vsa_l21.get_proxy_map();
 
-  vsa_l21.meshing(tm_out);
+  return vsa_l21.meshing(tm_out);
   // vsa_l21.get_anchor_points();
 }
 
