@@ -8,93 +8,96 @@
 
 namespace CGAL
 {
-/// @cond SKIP_IN_MANUAL
 /*!
  * \ingroup PkgTSMA
  * @brief variational shape approximation a triangulated mesh.
  * This function approximate the input triangulated mesh by fitting it with proxies.
- * Mainly used for debugging
  *
  * @tparam TriangleMesh model of `FaceGraph`.
- * @tparam FacetProxyMap a property map containing the approximated facet patch id,
-           and `boost::graph_traits<TriangleMesh>::%face_descriptor` as key type,
-           std::size_t as value type
- * @tparam VertexPointMap a property map containing the input mesh vertex point map,
-           and `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type,
-           `TriangleMesh::Point_3` as value type
- * @tparam AnchorIndexContainer a container of approximated indexed triangle soup
- * @tparam AnchorPositionContainer a container of extracted anchor position
- * @tparam AnchorVertexContainer a container of extracted anchor vertex
- * @tparam BoundaryContainer a container of proxy patch boundary
- * @tparam PlaneFitting a plane fitting functor
- * @tparam ErrorMetric error metric type
- * @tparam ProxyFitting proxy fitting type
-
- * @param init select seed initialization
- * @param tm a triangle mesh
- * @param number_of_segments target number of approximation patches
- * @param number_of_iterations number of fitting iterations
- * @param f_proxy_pmap facet proxy patch id property map
- * @param v_point_pmap mesh vertex point property map
- * @param tris approximation indexed triangle soup
- * @param pos anchor position container
- * @param vtx anchor vertex container
- * @param bdrs proxy patch boundary container
- * @param plane_fitting plane fitting functor
- * @param fit_error error metric functor
- * @param proxy_fitting proxy fitting functor
+ *         The descriptor types `boost::graph_traits<TriangleMesh>::%face_descriptor`
+ *         and `boost::graph_traits<TriangleMesh>::%halfedge_descriptor` must be
+ *         models of `Hashable`.
+ *         If `TriangleMesh` has an internal property map for `CGAL::face_index_t`,
+ *         and no `face_index_map` is given
+ *         as a named parameter, then the internal one should be initialized
+ * @tparam FaceRange range of `boost::graph_traits<TriangleMesh>::%face_descriptor`,
+          model of `Range`. Its iterator type is `ForwardIterator`.
+ * @tparam NamedParameters a sequence of \ref namedparameters
+ *
+ * @param pmesh a polygon mesh with triangulated surface patches to be remeshed
+ * @param faces the range of triangular faces defining one or several surface patches to be remeshed
+ * @param target_edge_length the edge length that is targetted in the remeshed patch
+ * @param np optional sequence of \ref namedparameters among the ones listed below
+ *
+ * \cgalNamedParamsBegin
+ *  \cgalParamBegin{geom_traits} a geometric traits class instance, model of `Kernel`.
+ *    Exact constructions kernels are not supported by this function.
+ *  \cgalParamEnd
+ *  \cgalParamBegin{vertex_point_map} the property map with the points associated
+ *    to the vertices of `pmesh`. Instance of a class model of `ReadWritePropertyMap`.
+ *  \cgalParamEnd
+ *  \cgalParamBegin{face_index_map} a property map containing the index of each face of `pmesh`
+ *  \cgalParamEnd
+ *  \cgalParamBegin{number_of_iterations} the number of iterations for the
+ *    sequence of atomic operations performed (listed in the above description)
+ *  \cgalParamEnd
+ *  \cgalParamBegin{face_patch_map} a property map with the patch id's associated to the
+     faces of `faces`. Instance of a class model of `ReadWritePropertyMap`. It gets
+     updated during the remeshing process while new faces are created.
+ *  \cgalParamEnd
+ * \cgalNamedParamsEnd
  */
-template<typename TriangleMesh,
-  typename FacetProxyMap,
-  typename VertexPointMap,
-  typename AnchorIndexContainer,
-  typename AnchorPositionContainer,
-  typename AnchorVertexContainer,
-  typename BoundaryContainer,
-  typename PlaneFitting,
-  typename ErrorMetric,
-  typename ProxyFitting>
-void vsa_mesh_approximation(
-    const int init,
-    const TriangleMesh &tm,
-    const std::size_t number_of_segments,
-    const std::size_t number_of_iterations,
-    FacetProxyMap f_proxy_pmap,
-    const VertexPointMap &v_point_pmap,
-    AnchorIndexContainer &tris,
-    AnchorPositionContainer &pos,
-    AnchorVertexContainer &vtx,
-    BoundaryContainer &bdrs,
-    const PlaneFitting &plane_fitting,
-    const ErrorMetric &fit_error,
-    const ProxyFitting &proxy_fitting) {
-  // CGAL_precondition(is_pure_triangle(tm));
+template <typename TriangleMesh,
+  typename NamedParameters>
+bool vsa_mesh_approximation(const TriangleMesh &tm_in,
+  TriangleMesh &tm_out,
+  const NamedParameters &np)
+{
+  using boost::get_param;
+  using boost::choose_param;
 
-  vsa_approximate(tm,
-    f_proxy_pmap,
-    fit_error,
-    proxy_fitting,
-    init,
-    number_of_segments,
-    number_of_iterations);
+  typedef typename GetGeomTraits<PM, NamedParameters>::type GeomTraits;
+  typedef typename GeomTraits::FT FT;
+  typedef typename GeomTraits::Vector_3 Vector_3;
 
-  typedef CGAL::internal::VSA_mesh_extraction<
-    TriangleMesh,
-    FacetProxyMap,
-    PlaneFitting,
-    VertexPointMap> VSA_mesh_extraction;
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::type VPMap;
+  VPMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
+    get_property_map(vertex_point, tm_in));
 
-  VSA_mesh_extraction extractor(tm, f_proxy_pmap, plane_fitting, v_point_pmap);
+  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
+  typedef boost::associative_property_map<std::map<face_descriptor, Vector_3> > FacetNormalMap;
+  typedef boost::associative_property_map<std::map<face_descriptor, FT> > FacetAreaMap;
 
-  extractor.extract_mesh(tris);
-  BOOST_FOREACH(const typename VSA_mesh_extraction::Anchor &a, extractor.collect_anchors()) {
-    vtx.push_back(a.vtx);
-    pos.push_back(a.pos);
-  }
+  typedef CGAL::PlaneProxy<TriangleMesh> PlaneProxy;
+  typedef CGAL::L21Metric<TriangleMesh, FacetNormalMap, FacetAreaMap> L21Metric;
+  typedef CGAL::L21ProxyFitting<TriangleMesh, FacetNormalMap, FacetAreaMap> L21ProxyFitting;
+  typedef CGAL::VSA_approximation<TriangleMesh, PlaneProxy, L21Metric, L21ProxyFitting> VSAL21;
 
-  bdrs = extractor.collect_borders();
+  std::map<face_descriptor, Vector_3> facet_normals;
+  std::map<face_descriptor, FT> facet_areas;
+  FacetNormalMap normal_pmap(facet_normals);
+  FacetAreaMap area_pmap(facet_areas);
+
+  L21Metric l21_metric(normal_pmap, area_pmap);
+  L21ProxyFitting l21_fitting(normal_pmap, area_pmap);
+
+  VSAL21 vsa_l21(l21_metric, l21_fitting);
+  vsa_l21.set_mesh(tm_in);
+
+  std::size_t num_proxies = choose_param(get_param(np, internal_np::number_of_proxies),
+    num_faces(tm_in) / 100);
+  std::size_t num_proxies = choose_param(get_param(np, internal_np::number_of_iterations), 10);
+  bool pca_plane = choose_param(get_param(np, internal_np::pca_plane), false);
+
+  vsa_l21.init_proxies(num_proxies, VSAL21::RandomInit);
+  for (std::size_t i = 0; i <n number_of_iterations; ++i)
+    vsa_l21.run_one_step();
+
+  // vsa_l21.get_proxy_map();
+
+  vsa_l21.meshing(tm_out);
+  // vsa_l21.get_anchor_points();
 }
-/// @endcond
 
 /*!
  * \ingroup PkgTSMA
