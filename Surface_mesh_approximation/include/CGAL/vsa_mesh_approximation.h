@@ -59,6 +59,7 @@ bool vsa_mesh_approximation(const TriangleMesh &tm_in,
   const NamedParameters &np)
 {
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
 
   using boost::get_param;
@@ -114,11 +115,47 @@ bool vsa_mesh_approximation(const TriangleMesh &tm_in,
   vsa_l21.init_proxies(num_proxies, VSAL21::RandomInit);
   for (std::size_t i = 0; i < num_iterations; ++i)
     vsa_l21.run_one_step();
+  bool is_manifold = vsa_l21.meshing(tm_out);
 
   // vsa_l21.get_proxy_map();
 
-  return vsa_l21.meshing(tm_out);
-  // vsa_l21.get_anchor_points();
+  typedef typename boost::lookup_named_param_def <
+      internal_np::anchor_vertex_t,
+      NamedParameters,
+      std::back_insert_iterator<std::vector<vertex_descriptor> >
+    > ::type AnchorVertexOutItr;
+  AnchorVertexOutItr avtx_out_itr = choose_param(get_param(np, internal_np::anchor_vertex)
+    , std::back_inserter(*(new std::vector<vertex_descriptor>())));
+  vsa_l21.get_anchor_vertices(avtx_out_itr);
+
+  typedef typename boost::lookup_named_param_def <
+      internal_np::anchor_point_t,
+      NamedParameters,
+      std::back_insert_iterator<std::vector<Point_3> >
+    > ::type AnchorPointOutItr;
+  AnchorPointOutItr apts_out_itr = choose_param(get_param(np, internal_np::anchor_point)
+    , std::back_inserter(*(new std::vector<Point_3>())));
+  vsa_l21.get_anchor_points(apts_out_itr);
+
+  typedef typename boost::lookup_named_param_def <
+      internal_np::indexed_triangles_t,
+      NamedParameters,
+      std::back_insert_iterator<std::vector<int> >
+    > ::type IndexedTrisOutItr;
+  IndexedTrisOutItr itris_out_itr = choose_param(get_param(np, internal_np::indexed_triangles)
+    , std::back_inserter(*(new std::vector<int>())));
+  vsa_l21.get_indexed_triangles(itris_out_itr);
+  
+  // typedef typename boost::lookup_named_param_def <
+  //     internal_np::proxies_t,
+  //     NamedParameters,
+  //     std::back_insert_iterator<std::vector<PlaneProxy> >
+  //   > ::type ProxiesOutItr;
+  // ProxiesOutItr pxies_out_itr = choose_param(get_param(np, internal_np::proxies)
+  //   , std::back_inserter(*(new std::vector<PlaneProxy>())));
+  // vsa_l21.get_proxies(pxies_out_itr);
+
+  return is_manifold;
 }
 
 /*!

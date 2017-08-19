@@ -5,4 +5,7 @@ CGAL_add_named_parameter(number_of_proxies_t, number_of_proxies, number_of_proxi
 CGAL_add_named_parameter(face_area_t, face_area, face_area_map)
 CGAL_add_named_parameter(face_normal_t, face_normal, face_normal_map)
 CGAL_add_named_parameter(face_proxy_t, face_proxy, face_proxy_map)
-
+// output parameters
+CGAL_add_named_parameter(anchor_vertex_t, anchor_vertex, anchor_vertex)
+CGAL_add_named_parameter(anchor_point_t, anchor_point, anchor_point)
+CGAL_add_named_parameter(indexed_triangles_t, indexed_triangles, indexed_triangles)
