@@ -2,8 +2,11 @@
 #define CGAL_SURFACE_MESH_APPROXIMATION_VSA_MESH_APPROXIMATION_H
 
 #include <CGAL/internal/Surface_mesh_approximation/VSA.h>
+
 #include <CGAL/VSA_approximation.h>
 #include <CGAL/internal/Surface_mesh_approximation/named_function_params.h>
+#include <CGAL/internal/Surface_mesh_approximation/named_params_helper.h>
+
 #include <CGAL/vsa_mesh_approximation_traits.h>
 #include <CGAL/property_map.h>
 #include <boost/graph/graph_traits.hpp>
@@ -55,31 +58,31 @@ bool vsa_mesh_approximation(const TriangleMesh &tm_in,
   TriangleMesh &tm_out,
   const NamedParameters &np)
 {
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
+
   using boost::get_param;
   using boost::choose_param;
 
-  // typedef typename GetGeomTraits<PM, NamedParameters>::type GeomTraits;
+  typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type GeomTraits;
   typedef typename TriangleMesh::Traits GeomTraits;
   typedef typename GeomTraits::FT FT;
   typedef typename GeomTraits::Point_3 Point_3;
   typedef typename GeomTraits::Vector_3 Vector_3;
 
-  // typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::type VPMap;
-  // VPMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
-  //   get_property_map(vertex_point, tm_in));
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::type VPMap;
+  VPMap point_pmap = choose_param(get_param(np, internal_np::vertex_point),
+    get(boost::vertex_point, const_cast<TriangleMesh &>(tm_in)));
+    // get_property_map(vertex_point, tm_in));
 
-  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
-  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
   typedef boost::associative_property_map<std::map<face_descriptor, Vector_3> > FacetNormalMap;
   typedef boost::associative_property_map<std::map<face_descriptor, FT> > FacetAreaMap;
-  typedef typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type VertexPointMap;
 
   typedef CGAL::PlaneProxy<TriangleMesh> PlaneProxy;
   typedef CGAL::L21Metric<TriangleMesh, FacetNormalMap, FacetAreaMap> L21Metric;
   typedef CGAL::L21ProxyFitting<TriangleMesh, FacetNormalMap, FacetAreaMap> L21ProxyFitting;
   typedef CGAL::VSA_approximation<TriangleMesh, PlaneProxy, L21Metric, L21ProxyFitting> VSAL21;
 
-  VertexPointMap point_pmap = get(boost::vertex_point, const_cast<TriangleMesh &>(tm_in));
   // construct facet normal & area map
   std::map<face_descriptor, Vector_3> facet_normals;
   std::map<face_descriptor, FT> facet_areas;

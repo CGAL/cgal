@@ -33,7 +33,8 @@ int main(int argc, char *argv[])
 
   Polyhedron out_mesh;
   bool is_manifold = CGAL::vsa_mesh_approximation(mesh, out_mesh,
-    CGAL::VSA::parameters::number_of_proxies(num_proxies).number_of_iterations(num_iterations));
+    CGAL::VSA::parameters::number_of_proxies(num_proxies).
+      number_of_iterations(num_iterations));
 
   return EXIT_SUCCESS;
 }
