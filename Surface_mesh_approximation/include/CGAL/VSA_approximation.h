@@ -499,40 +499,56 @@ public:
 
   /*!
    * @brief Get the proxies.
-   * @return range of proxies.
+   * @tparam OutputIterator output iterator with Proxy as value type
+   * @param out_itr output iterator
    */
-  // std::pair<PxIterator, PxIterator> get_proxies();
+  template <typename OutputIterator>
+  void get_proxies(OutputIterator out_itr) {
+    BOOST_FOREACH(const Proxy &px, proxies) {
+      *out_itr = px;
+      ++out_itr;
+    }
+  }
 
 // add function to return the proxy errors
 
   /*!
    * @brief Get the anchor points, which have the area-averaged position of the projected anchor vertex points on the incident proxies.
-   * @return vector of anchor position points
+   * @tparam OutputIterator output iterator with Point_3 as value type
+   * @param out_itr output iterator
    */
-  std::vector<Point_3> get_anchor_points() {
-    std::vector<Point_3> pts;
-    BOOST_FOREACH(const Anchor &a, anchors)
-      pts.push_back(a.pos);
-    return pts;
+  template <typename OutputIterator>
+  void get_anchor_points(OutputIterator out_itr) {
+    BOOST_FOREACH(const Anchor &a, anchors) {
+      *out_itr = a.pos;
+      ++out_itr;
+    }
   }
 
   /*!
    * @brief Get the anchor vertices.
-   * @return vector of anchor vertices
+   * @tparam OutputIterator output iterator with vertex_descriptor as value type
+   * @param out_itr output iterator
    */
-  std::vector<vertex_descriptor> get_anchor_vertices() {
-    std::vector<vertex_descriptor> vts;
-    BOOST_FOREACH(const Anchor &a, anchors)
-      vts.push_back(a.vtx);
-    return vts;
+  template <typename OutputIterator>
+  void get_anchor_vertices(OutputIterator out_itr) {
+    BOOST_FOREACH(const Anchor &a, anchors) {
+      *out_itr = a.vtx;
+      ++out_itr;
+    }
   }
 
   /*!
    * @brief Get the indexed triangles, one triplet of integers per triangles, and that the integers refer to the anchor point indexes.
-   * @return vector of indexed triangles.
+   * @tparam OutputIterator output iterator with std::size_t as value type
+   * @param out_itr output iterator
    */
-  const std::vector<int> &get_indexed_triangles() {
-    return tris;
+  template <typename OutputIterator>
+  void get_indexed_triangles(OutputIterator out_itr) {
+    BOOST_FOREACH(const int &i, tris) {
+      *out_itr = i;
+      ++out_itr;
+    }
   }
 
   /*!
