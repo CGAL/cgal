@@ -3,23 +3,23 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
+
+#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/property_map.h>
-#include <CGAL/vsa_mesh_approximation.h>
+#include <CGAL/VSA_approximation.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 typedef Kernel::FT FT;
 typedef Kernel::Vector_3 Vector_3;
 typedef Kernel::Point_3 Point_3;
-typedef Polyhedron::Facet_handle Facet_handle;
-typedef Polyhedron::Halfedge_handle Halfedge_handle;
-typedef Polyhedron::Facet_iterator Facet_iterator;
-typedef boost::associative_property_map<std::map<Facet_handle, Vector_3> > FacetNormalMap;
+
+typedef CGAL::Polyhedron_3<Kernel> Polyhedron_3;
+typedef Polyhedron_3::Facet_handle Facet_handle;
+typedef Polyhedron_3::Halfedge_handle Halfedge_handle;
+typedef Polyhedron_3::Facet_iterator Facet_iterator;
 typedef boost::associative_property_map<std::map<Facet_handle, FT> > FacetAreaMap;
 typedef boost::associative_property_map<std::map<Facet_handle, Point_3> > FacetCenterMap;
-typedef std::map<Facet_handle, std::size_t> Facet_id_map;
 
 struct PointProxy {
   Facet_handle seed;
@@ -67,14 +67,15 @@ struct PointProxyFitting {
   const FacetCenterMap center_pmap;
   const FacetAreaMap area_pmap;
 };
+typedef CGAL::VSA_approximation<Polyhedron_3, PointProxy, CompactMetric, PointProxyFitting> CompactVSA;
 
 int main(int argc, char *argv[])
 {
   if (argc < 5)
     return EXIT_FAILURE;
 
-  // create and read Polyhedron
-  Polyhedron mesh;
+  // create and read Polyhedron_3
+  Polyhedron_3 mesh;
   std::ifstream input(argv[1]);
   if (!input || !(input >> mesh) || mesh.empty()) {
     std::cerr << "Invalid off file." << std::endl;
@@ -96,25 +97,24 @@ int main(int argc, char *argv[])
   FacetAreaMap area_pmap(facet_areas);
   FacetCenterMap center_pmap(facet_centers);
 
-  // create a property-map for segment-ids
-  Facet_id_map facet_proxy_map;
-  for (Facet_iterator fitr = mesh.facets_begin(); fitr != mesh.facets_end(); ++fitr)
-    facet_proxy_map.insert(std::pair<Facet_handle, std::size_t>(fitr, 0));
-  boost::associative_property_map<Facet_id_map> proxy_pmap(facet_proxy_map);
-
   const std::size_t num_proxies = std::atoi(argv[3]);
   const std::size_t num_iterations = std::atoi(argv[4]);
   int init = std::atoi(argv[2]);
-  if (init < 0 || init > 3)
+  if (init < 0 || init > 2)
     return EXIT_FAILURE;
 
-  CGAL::vsa_approximate(mesh,
-    proxy_pmap,
-    CompactMetric(center_pmap),
-    PointProxyFitting(center_pmap, area_pmap),
-    init,
-    num_proxies,
-    num_iterations);
+  CompactMetric metric(center_pmap);
+  PointProxyFitting proxy_fitting(center_pmap, area_pmap);
+
+  // create compact metric approximation algorithm instance
+  CompactVSA compact_approx;
+  compact_approx.set_mesh(mesh);
+  compact_approx.set_error_metric(metric);
+  compact_approx.set_proxy_fitting(proxy_fitting);
+
+  compact_approx.init_proxies(num_proxies, CompactVSA::RandomInit);
+  for (std::size_t i = 0; i < num_iterations; ++i)
+    compact_approx.run_one_step();
 
   return EXIT_SUCCESS;
 }
