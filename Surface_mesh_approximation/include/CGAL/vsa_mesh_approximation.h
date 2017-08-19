@@ -110,12 +110,18 @@ bool vsa_mesh_approximation(const TriangleMesh &tm_in,
     num_faces(tm_in) / 100);
   std::size_t num_iterations = choose_param(get_param(np, internal_np::number_of_iterations), 10);
   std::cout << "#px = " << num_proxies << ", #itr = " << num_iterations << std::endl;
-  // bool pca_plane = choose_param(get_param(np, internal_np::pca_plane), false);
 
-  vsa_l21.init_proxies(num_proxies, VSAL21::RandomInit);
+  int init = choose_param(get_param(np, internal_np::init_method), 0);
+  if (init < 0 || init > 2)
+    return false;
+
+  vsa_l21.init_proxies(num_proxies, static_cast<VSAL21::Initialization>(init));
   for (std::size_t i = 0; i < num_iterations; ++i)
     vsa_l21.run_one_step();
-  bool is_manifold = vsa_l21.meshing(tm_out);
+
+  bool pca_plane = choose_param(get_param(np, internal_np::pca_plane) , false);
+  FT split_criterion = choose_param(get_param(np, internal_np::chord_subdivide), FT(1));
+  bool is_manifold = vsa_l21.meshing(tm_out, split_criterion, pca_plane);
 
   // vsa_l21.get_proxy_map();
 
@@ -145,6 +151,7 @@ bool vsa_mesh_approximation(const TriangleMesh &tm_in,
   IndexedTrisOutItr itris_out_itr = choose_param(get_param(np, internal_np::indexed_triangles)
     , std::back_inserter(*(new std::vector<int>())));
   vsa_l21.get_indexed_triangles(itris_out_itr);
+
   
   // typedef typename boost::lookup_named_param_def <
   //     internal_np::proxies_t,
