@@ -223,28 +223,45 @@ public:
   /*!
    * @brief This function run the algorithm by one step,
    * including the partitioning and fitting process.
-   * @return true if partitioning has changed, false otherwise.
+   * @return the total fitting error of current partition to the proxies.
    */
-  bool run_one_step() {
+  FT run_one_step() {
     partition();
     fit();
 
-    // TODO
-    return false;
+    return compute_fitting_error();
   }
 
   /*!
-   * @brief This function run the algorithm until the stop criterion is met.
+   * @brief This function run the algorithm until the no significant energy drop.
+   * @param drop_threshold the percentage of energy drop to between two runs, usually in range [0, 1).
+   * @param max_iteration the maximum number of iterations allowed
    * @return true if the algorithm converge, false otherwise.
    */
-  // bool run_until_convergence(stop_criterion) {
-  //   while (stop_criterion) {
-  //     run_one_step();
-  //   }
+  bool run_until_convergence(const FT drop_threshold = FT(0.05),
+    const std::size_t max_iterations = 100) {
+    FT drop_pct(0);
+    std::size_t iteration_count = 0;
+    FT pre_err = compute_fitting_error();
+    do {
+      // average 5 steps to have smoother drop curve
+      FT avg_sum_err(0);
+      for (std::size_t i = 0; i < 5; ++i)
+        avg_sum_err += run_one_step();
+      avg_sum_err /= FT(5);
+      iteration_count += 5;
 
-  //   // TODO
-  //   return false;
-  // }
+      drop_pct = (pre_err - avg_sum_err) / pre_err;
+      if (drop_pct < FT(0))
+        drop_pct = -drop_pct;
+      if (drop_pct < drop_threshold)
+        return true;
+      
+      pre_err = avg_sum_err;
+    } while (iteration_count < max_iterations);
+
+    return false;
+  }
 
   /*!
    * @brief Partition the geometry with current proxies.
@@ -304,10 +321,9 @@ public:
 
   /*!
    * @brief Refitting of current partitioning, update proxy parameters.
-   * Calculates and updates the best fitting proxies of current partition.
-   * @return the total fitting error.
+   * Calculates and updates the fitting proxies of current partition.
    */
-  FT fit() {
+  void fit() {
     std::vector<std::list<face_descriptor> > px_facets(proxies.size());
     BOOST_FOREACH(face_descriptor f, faces(*m_pmesh))
       px_facets[seg_pmap[f]].push_back(f);
@@ -315,8 +331,6 @@ public:
     // update proxy parameters and seed
     for (std::size_t i = 0; i < proxies.size(); ++i)
       proxies[i] = fit_new_proxy(px_facets[i].begin(), px_facets[i].end());
-
-    return 0;
   }
 
   /*!
@@ -353,7 +367,7 @@ public:
 
     // find worst proxy
     std::vector<FT> px_error(proxies.size(), FT(0));
-    fitting_error(px_error);
+    compute_fitting_error(px_error);
     std::size_t px_worst = 0;
     FT max_error = px_error.front();
     for (std::size_t i = 0; i < proxies.size(); ++i) {
@@ -723,7 +737,7 @@ private:
 
     std::cout << "#px " << proxies.size() << std::endl;
     std::vector<FT> err(proxies.size(), FT(0));
-    const FT sum_error = fitting_error(err);
+    const FT sum_error = compute_fitting_error(err);
     const FT avg_error = sum_error / FT(static_cast<double>(num_proxies_to_be_added));
 
     std::vector<ProxyError> px_error;
@@ -824,7 +838,7 @@ private:
     }
 
     std::vector<FT> px_error(proxies.size(), FT(0));
-    fitting_error(px_error);
+    compute_fitting_error(px_error);
     FT max_error = px_error.front();
     for (std::size_t i = 0; i < proxies.size(); ++i) {
       if (max_error < px_error[i])
@@ -889,11 +903,10 @@ private:
   }
 
   /*!
-   * @brief Computes fitting error of a given partition @a seg_pmap.
-   * @param seg_map facet partition index
+   * @brief Computes fitting error of a current partition and proxies.
    * @return total fitting error
    */
-  FT fitting_error() {
+  FT compute_fitting_error() {
     FT sum_error(0);
     BOOST_FOREACH(face_descriptor f, faces(*m_pmesh))
       sum_error += (*fit_error)(f, proxies[seg_pmap[f]]);
@@ -901,12 +914,11 @@ private:
   }
 
   /*!
-   * @brief Computes fitting error of a given partition @a seg_pmap.
-   * @param seg_map facet partition index
+   * @brief Computes fitting error of a current partition and proxies.
    * @param px_error vector of error of each proxy
    * @return total fitting error
    */
-  FT fitting_error(std::vector<FT> &px_error) {
+  FT compute_fitting_error(std::vector<FT> &px_error) {
     FT sum_error(0);
     BOOST_FOREACH(face_descriptor f, faces(*m_pmesh)) {
       const std::size_t px_idx = seg_pmap[f];
