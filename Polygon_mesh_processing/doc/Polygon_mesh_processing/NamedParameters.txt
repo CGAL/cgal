@@ -356,6 +356,15 @@ average area of all triagnles adjacent to the vertex that is being moved.
 \b Default is `0.001`
 \cgalNPEnd
 
+\cgalNPBegin{distance_precision} \anchor PMP_distance_precision
+Parameter used in `compatible_remeshing()` to set precision for the Hausdorff distance
+of the mesh between the previous and the current iteration that has to be achieved for a mesh to converge
+during smoothing.
+\n
+\b Type : `double` \n
+\b Default is `0.01`
+\cgalNPEnd
+
 \cgalNPTableEnd
 
 */
