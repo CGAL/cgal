@@ -573,7 +573,11 @@ public:
     }
   }
 
-// add function to return the proxy errors
+  /*!
+   * @brief Get the proxies size.
+   * @return number of proxies
+   */
+  std::size_t get_proxies_size() { return proxies.size(); }
 
   /*!
    * @brief Get the anchor points, which have the area-averaged position of the projected anchor vertex points on the incident proxies.
