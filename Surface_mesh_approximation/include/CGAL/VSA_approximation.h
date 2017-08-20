@@ -212,12 +212,61 @@ public:
   }
 
   /*!
-   * @brief Initialize by targeted error.
-   * @param target_error targeted error
+   * @brief Initialize by targeted error drop.
+   * @param target_drop targeted error drop to initial state, usually in range (0, 1)
    * @param seeding_method select one of the seeding method: random, hierarchical, incremental
+   * @return #proxies initialized
    */
-  void init_error(const FT &target_error, const Initialization &seeding_method) {
-    // TODO
+  std::size_t init_proxies_error(const FT &target_drop, const Initialization &seeding_method) {
+    proxies.clear();
+    // initialize a proxy and the proxy map to prepare for the insertion
+    proxies.push_back(fit_new_proxy(*(faces(*m_pmesh).first)));
+    BOOST_FOREACH(face_descriptor f, faces(*m_pmesh))
+      seg_pmap[f] = 0;
+    const FT initial_err = compute_fitting_error();
+
+    FT sum_err(0);
+    FT drop(0);
+    const std::size_t max_proxies = num_faces(*m_pmesh) / 2;
+    if (seeding_method == Initialization::RandomInit) {
+      std::size_t target_px = 2;
+      do {
+        seed_random(target_px);
+        for (std::size_t i = 0; i < 5; ++i) {
+          partition();
+          fit();
+        }
+        sum_err = compute_fitting_error();
+        target_px *= 2;
+        drop = sum_err / initial_err;
+      } while(drop > target_drop && proxies.size() < max_proxies);
+    }
+    else if (seeding_method == Initialization::IncrementalInit) {
+      do {
+        insert_proxy_furthest();
+        for (std::size_t i = 0; i < 5; ++i) {
+          partition();
+          fit();
+        }
+        sum_err = compute_fitting_error();
+        drop = sum_err / initial_err;
+      } while (drop > target_drop && proxies.size() < max_proxies);
+    }
+    else {
+      std::size_t target_px = 2;
+      do {
+        insert_proxy_hierarchical(target_px);
+        for (std::size_t i = 0; i < 5; ++i) {
+          partition();
+          fit();
+        }
+        sum_err = compute_fitting_error();
+        target_px *= 2;
+        drop = sum_err / initial_err;
+      } while(drop > target_drop && proxies.size() < max_proxies);
+    }
+
+    return proxies.size();
   }
 
   /*!
@@ -256,7 +305,7 @@ public:
         drop_pct = -drop_pct;
       if (drop_pct < drop_threshold)
         return true;
-      
+
       pre_err = avg_sum_err;
     } while (iteration_count < max_iterations);
 
@@ -603,7 +652,6 @@ private:
         break;
     }
     return proxies.size();
-    // std::cerr << initial_px << ' ' << proxies.size() << std::endl;
   }
 
   /*!
