@@ -483,7 +483,7 @@ void curvature_flow(PolygonMesh& pmesh, const FaceRange& faces, const NamedParam
         //curvature_remesher.good_curvature_smoothing(); // formula 14
 
         //for now
-        curvature_remesher.project_to_surface();
+        //curvature_remesher.project_to_surface();
 
     }
 

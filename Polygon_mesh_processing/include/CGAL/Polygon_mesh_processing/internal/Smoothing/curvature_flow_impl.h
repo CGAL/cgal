@@ -1,15 +1,13 @@
 #ifndef CURVATURE_FLOW_IMPL_H
 #define CURVATURE_FLOW_IMPL_H
 
+#include <utility>
+#include <math.h>
+
 #include <CGAL/Polygon_mesh_processing/Weights.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
-
-#include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
-#include <CGAL/AABB_triangle_primitive.h>
-#include <CGAL/Bbox_3.h>
 
 #include <CGAL/property_map.h>
 #include <CGAL/iterator.h>
@@ -17,16 +15,48 @@
 #include <boost/graph/graph_traits.hpp>
 #include <boost/foreach.hpp>
 
-#include <utility>
-#include <math.h>
+#include <CGAL/AABB_tree.h>
+#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_triangle_primitive.h>
 
-#include <CGAL/Monge_via_jet_fitting.h>
 
 namespace CGAL {
 
 namespace Polygon_mesh_processing {
 
 namespace internal {
+
+
+
+template<typename PolygonMesh, typename VertexPointMap,
+         typename CotangentValue = CGAL::internal::Cotangent_value_Meyer_secure<PolygonMesh, VertexPointMap>>
+class Cotangent_weight : CotangentValue
+{
+public:
+    Cotangent_weight(PolygonMesh& pmesh_, VertexPointMap vpmap_)
+      : CotangentValue(pmesh_, vpmap_)
+    {}
+
+    PolygonMesh& pmesh()
+    {
+      return CotangentValue::pmesh();
+    }
+
+    typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor   halfedge_descriptor;
+    typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor     vertex_descriptor;
+    typedef std::pair<halfedge_descriptor, halfedge_descriptor>              he_pair;
+
+    double operator()(halfedge_descriptor he, he_pair incd_edges)
+    {
+      vertex_descriptor vs = source(he, pmesh());
+      vertex_descriptor vt = target(he, pmesh());
+      vertex_descriptor v1 = target(incd_edges.first, pmesh());
+      vertex_descriptor v2 = source(incd_edges.second, pmesh());
+
+      return ( CotangentValue::operator()(vs, v1, vt) + CotangentValue::operator()(vs, v2, vt));
+    }
+
+};
 
 
 
@@ -53,25 +83,53 @@ class Curvature_flow
     typedef std::pair<halfedge_descriptor, halfedge_descriptor> he_pair;
     typedef std::map<halfedge_descriptor, he_pair> Edges_around_map;
 
-    typedef typename CGAL::Monge_via_jet_fitting<GeomTraits> Monge_via_jet_fitting;
-    typedef typename Monge_via_jet_fitting::Monge_form Monge_form;
+    //typedef typename CGAL::Monge_via_jet_fitting<GeomTraits> Monge_via_jet_fitting;
+    //typedef typename Monge_via_jet_fitting::Monge_form Monge_form;
 
 
+    /*
+    typedef CGAL::internal::Cotangent_weight<
+                    PolygonMesh,
+                    VertexPointMap,
+                    CGAL::internal::Cotangent_value_minimum_zero<PolygonMesh,
+                                                                 VertexPointMap,
+                                                                 CGAL::internal::Cotangent_value_Meyer_secure<PolygonMesh, VertexPointMap>
+                                                                >
+    >
+    Weight_calculator_edge_based;
+
+
+*/
+    typedef CGAL::internal::Cotangent_value_Meyer_secure<PolygonMesh, VertexPointMap>
+    Weight_calculator_angle_based;
+
+    /*
+    typedef CGAL::internal::Cotangent_value_clamped_2<PolygonMesh, VertexPointMap>
+    Weight_calculator_clamped2;
+*/
+
+    typedef Cotangent_weight<PolygonMesh, VertexPointMap> Weight_calculator;
 
 public:
 
     Curvature_flow(PolygonMesh& pmesh, VertexPointMap& vpmap, VertexConstraintMap& vcmap, EdgeConstraintMap& ecmap) :
-        mesh_(pmesh), vpmap_(vpmap), vcmap_(vcmap), ecmap_(ecmap), cot_calculator_(pmesh, vpmap)
+        mesh_(pmesh), vpmap_(vpmap), vcmap_(vcmap), ecmap_(ecmap),
+        cot_calculator_angle_based_(pmesh, vpmap),
+        //cot_calculator_edge_based_(pmesh, vpmap),
+        //my_weight_calculator_(pmesh, vpmap),
+        //cot_clamped2_(pmesh, vpmap)
+        weight_calculator_(pmesh, vpmap)
+
     {
 
-        /*
+/*
         std::size_t num_points = vertices(mesh_).size();
         std::size_t min_num_of_points = 6; // (d+1)(d+2)/2, for d=2
         if(num_points < min_num_of_points)
         {
             CGAL_error_msg("Find curvature: Not enough points in the mesh.");
         }
-        */
+*/
 
 
 
@@ -115,106 +173,12 @@ public:
         std::map<vertex_descriptor, Point> barycenters;
         std::map<vertex_descriptor, Vector> n_map;
 
+
         BOOST_FOREACH(vertex_descriptor v, vrange)
         {
             if(!is_border(v, mesh_) && !is_constrained(v))
             {
 
-                // normals
-                Vector vn = compute_vertex_normal(v, mesh_,
-                                                  Polygon_mesh_processing::parameters::vertex_point_map(vpmap_)
-                                                  .geom_traits(traits_));
-                n_map[v] = vn;
-
-
-                // find incident halfedges
-                Edges_around_map he_map;
-                typename Edges_around_map::iterator it;
-                BOOST_FOREACH(halfedge_descriptor hi, halfedges_around_source(v, mesh_))
-                    he_map[hi] = he_pair( next(hi, mesh_), prev(opposite(hi, mesh_), mesh_) );
-
-
-                // calculate movement
-                Vector curvature_normal = CGAL::NULL_VECTOR;
-                double sum_cot_weights = 0;
-                for(it = he_map.begin(); it!= he_map.end(); ++it)
-                {
-                    halfedge_descriptor hi = it->first;
-                    he_pair incd_edges = it->second;
-
-                    // weight
-                    double weight = cot_angles(hi, incd_edges);
-                    sum_cot_weights += weight;
-
-                    // displacement vector
-                    Point Xi = get(vpmap_, source(hi, mesh_));
-                    Point Xj = get(vpmap_, target(hi, mesh_));
-                  //Vector vec(Xj, Xi);
-                    Vector vec(Xi, Xj);
-
-                    // add weight
-                    vec *= weight;
-
-                    // sum vecs
-                    curvature_normal += vec;
-                }
-
-                // divide with total weight - if there is actually weight
-                if(sum_cot_weights != 0)
-                    curvature_normal /= sum_cot_weights;
-
-                //Point weighted_barycenter = get(vpmap_, v) - curvature_normal;
-                Point weighted_barycenter = get(vpmap_, v) + curvature_normal;
-                barycenters[v] = weighted_barycenter;
-
-            } // not on border
-        } // all vertices
-
-        typedef typename std::map<vertex_descriptor, Point>::value_type VP;
-
-        /*
-        // compute locations on tangent plane
-        typedef typename std::map<vertex_descriptor, Point>::value_type VP;
-        std::map<vertex_descriptor, Point> new_locations;
-        BOOST_FOREACH(const VP& vp, barycenters)
-        {
-            Point p = get(vpmap_, vp.first);
-            Point q = vp.second;
-            Vector n = n_map[vp.first];
-
-            new_locations[vp.first] = q + ( n * Vector(q, p) ) * n ;
-        }
-
-        */
-
-        // update location
-        //BOOST_FOREACH(const VP& vp, new_locations) // uncomment for tangent plane
-        BOOST_FOREACH(const VP& vp, barycenters)
-        {
-#define CGAL_PMP_SMOOTHING_DEBUG
-#ifdef CGAL_PMP_SMOOTHING_DEBUG
-            std::cout << "from: "<< get(vpmap_, vp.first);
-#endif
-            put(vpmap_, vp.first, vp.second);
-
-#ifdef CGAL_PMP_SMOOTHING_DEBUG
-            std::cout<<" moved at: "<< vp.second << std::endl;
-#endif
-        }
-
-    }
-
-    // test formula (14)
-    void good_curvature_smoothing()
-    {
-        std::map<vertex_descriptor, Vector> n_map;
-        std::map<vertex_descriptor, Point> barycenters;
-
-
-        BOOST_FOREACH(vertex_descriptor v, vertices(mesh_))
-        {
-            if(!is_border(v, mesh_)) // add && !is_constrained
-            {
                 // normals
                 Vector vn = compute_vertex_normal(v, mesh_,
                                                   Polygon_mesh_processing::parameters::vertex_point_map(vpmap_)
@@ -241,51 +205,86 @@ public:
 
 
                 // calculate movement
-                Vector weighted_move = CGAL::NULL_VECTOR;
+                Vector curvature_normal = CGAL::NULL_VECTOR;
+                Vector sum_of_vecs = CGAL::NULL_VECTOR;
+                double sum_cot_weights = 0;
                 for(it = he_map.begin(); it!= he_map.end(); ++it)
                 {
                     halfedge_descriptor hi = it->first;
                     he_pair incd_edges = it->second;
 
+
+                    //check_degeneracy(hi);
+
                     // weight
-                    double weight = cot_angles(hi, incd_edges);
+                    //double weight_angle_based = cot_angles(hi, incd_edges);
+                    double weight_angle = weight_calculator_(hi, incd_edges);
+                    //double weight_edge_based = cot_calculator_edge_based_(hi);
+                    //double weight_my_weight = my_weight_calculator_(hi);
+
+                    double weight_angle_based = cot_angles(hi, incd_edges);
+                    //weight_edge_based = cot_calculator_edge_based_(hi);
+                    //weight_my_weight = my_weight_calculator_(hi);
+
+                    CGAL_assertion(weight_angle == weight_angle_based);
+
+                    double weight = weight_angle; // testing
+                    sum_cot_weights += weight;
+
+                    /*
+                    if(weight_edge_based > 1e-10)
+                    {
+                        CGAL_assertion(weight_angle_based > 2 * weight_edge_based - 1e-2 &&
+                                       weight_angle_based < 2 * weight_edge_based + 1e-2);
+                    }
+
+                    if(weight_angle_based > 1e-10)
+                    {
+                        CGAL_assertion(weight_angle_based > 2 * weight_edge_based - 1e-2 &&
+                                       weight_angle_based < 2 * weight_edge_based + 1e-2);
+                    }
+*/
 
                     // displacement vector
-                    Point xi = get(vpmap_, source(hi, mesh_));
-                    Point xj = get(vpmap_, target(hi, mesh_));
-                    Vector vec(xi, xj);
+                    Point Xi = get(vpmap_, source(hi, mesh_));
+                    Point Xj = get(vpmap_, target(hi, mesh_));
+                    Vector vec(Xj, Xi); // towards outside
+                    //Vector vec(Xi, Xj); // towards the inside
 
                     // add weight
-                    vec *= weight; // comment out for just laplacian
+                    vec *= weight;
 
                     // sum vecs
-                    weighted_move += vec;
+                    curvature_normal += vec;
+
+                    //sum_of_vecs += vec; // just curious
+
                 }
 
-                Vector curvature_normal = CGAL::NULL_VECTOR;
-                if (A != 0)
-                {
-                    curvature_normal = weighted_move / (4 * A);
-                    //curvature_normal = weighted_move / he_map.size(); // just laplacian
-                }
+                // divide with total weight - if there is actually weight
+                if(sum_cot_weights != 0)
+                     curvature_normal /= sum_cot_weights;
 
+                //Vector curvature_normal_k = vn * mean_k_ * 0.1;
+                //curvature_normal = vn * sum_cot_weights;
 
-                Point old_point = get(vpmap_, v);
-                Point new_point = get(vpmap_, v) + curvature_normal;
+                 //if(A != 0)
+                 //    curvature_normal /= (4 * A);
 
-#ifdef CGAL_PMP_SMOOTHING_DEBUG
-               std::cout << "new location before projection: "<< new_point << std::endl;
-#endif
-                barycenters[v] = new_point;
+                Point weighted_barycenter = get(vpmap_, v) - curvature_normal;
+                //Point weighted_barycenter = get(vpmap_, v) + curvature_normal;
+                barycenters[v] = weighted_barycenter;
 
             } // not on border
-
         } // all vertices
 
+        typedef typename std::map<vertex_descriptor, Point>::value_type VP;
 
-        // calculate location on tangential plane
+/*
+        // compute locations on tangent plane
+        typedef typename std::map<vertex_descriptor, Point>::value_type VP;
         std::map<vertex_descriptor, Point> new_locations;
-        BOOST_FOREACH(const auto& vp, barycenters)
+        BOOST_FOREACH(const VP& vp, barycenters)
         {
             Point p = get(vpmap_, vp.first);
             Point q = vp.second;
@@ -293,24 +292,16 @@ public:
 
             new_locations[vp.first] = q + ( n * Vector(q, p) ) * n ;
         }
+*/
 
 
         // update location
-        //BOOST_FOREACH(const auto& vp, barycenters)
-        BOOST_FOREACH(const auto& vp, new_locations)
-        {
-
-#ifdef CGAL_PMP_SMOOTHING_DEBUG
-            std::cout << "from: "<< get(vpmap_, vp.first);
-#endif
+        //BOOST_FOREACH(const VP& vp, new_locations) // uncomment for tangent plane
+        BOOST_FOREACH(const VP& vp, barycenters)
             put(vpmap_, vp.first, vp.second);
 
-#ifdef CGAL_PMP_SMOOTHING_DEBUG
-            std::cout<<" moved at: "<< vp.second << std::endl;
-#endif
-        }
-
     }
+
 
     void project_to_surface()
     {
@@ -372,6 +363,7 @@ private:
         Vector edge2(pt, p2);
         Vector vec_main_he(pt, ps);
         double tolerance = 1e-3;
+        /*
         if ( edge1.squared_length()           < tolerance ||
              edge2.squared_length()           < tolerance ||
              sqlength(main_he)                < tolerance ||
@@ -381,19 +373,58 @@ private:
             return 0;
             // zero means 90 degrees angle (also means no weight)
         }
+        */
 
-        CGAL_assertion(vec_main_he.squared_length() > tolerance);
+        //CGAL_assertion(vec_main_he.squared_length() > tolerance);
 
-        double a1 = cot_calculator_(vs, v1, vt);
-        double a2 = cot_calculator_(vs, v2, vt);
+        double a1 = cot_calculator_angle_based_(vs, v1, vt);
+        double a2 = cot_calculator_angle_based_(vs, v2, vt);
+
+        //a1 = cot_clamped2_(vs, v1, vt);
+        //a2 = cot_clamped2_(vs, v2, vt);
 
         return a1 + a2;
+    }
+
+    void check_degeneracy(halfedge_descriptor h1)
+    {
+        halfedge_descriptor h2 = next(h1, mesh_);
+        halfedge_descriptor h3 = next(h2, mesh_);
+
+        double a1 = get_angle(h1, h2);
+        double a2 = get_angle(h2, h3);
+        double a3 = get_angle(h3, h1);
+
+        if(a1 < 0.05 || a2 < 0.05 || a3 < 0.05)
+        {
+            Euler::remove_face(h1, mesh_);
+        }
+
+
+    }
+
+    double get_angle(halfedge_descriptor ha, halfedge_descriptor hb)
+    {
+        Vector a(get(vpmap_, source(ha, mesh_)), get(vpmap_, target(ha, mesh_)));
+        Vector b(get(vpmap_, source(hb, mesh_)), get(vpmap_, target(hb, mesh_)));
+
+        double angle = get_angle(a, b); // to fix
+
+        return angle;
+    }
+
+    double get_angle(const Vector& e1, const Vector& e2)
+    {
+        //double rad_to_deg = 180. / CGAL_PI;
+        double cos_angle = (e1 * e2)
+          / std::sqrt(e1.squared_length() * e2.squared_length());
+
+        return std::acos(cos_angle); //* rad_to_deg;
     }
 
     /*
     double compute_mean_curvature()
     {
-        // gather points around v
         std::vector<Point> incident_points = gather_all_points();
 
         Monge_form monge_form;
@@ -443,7 +474,7 @@ private:
 
         return points;
     }
-    */
+*/
 
     bool is_constrained(const edge_descriptor& e)
     {
@@ -475,7 +506,7 @@ private:
         BOOST_FOREACH(face_descriptor f, face_range)
         {
             BOOST_FOREACH(vertex_descriptor v, vertices_around_face(halfedge(f, mesh_), mesh_))
-                vrange.push_back(v);
+                vrange.insert(v);
         }
     }
 
@@ -487,15 +518,29 @@ private:
     Triangle_list input_triangles_;
     Tree* tree_ptr_;
     GeomTraits traits_;
-    std::vector<vertex_descriptor> vrange;
+    std::set<vertex_descriptor> vrange;
 
     // to fix
     //double min_sq_edge_len_;
-    //double mean_k_;
+    double mean_k_;
     // from Weights.h
-    CGAL::internal::Cotangent_value_Meyer_secure<PolygonMesh, VertexPointMap> cot_calculator_;
+    //CGAL::internal::Cotangent_value_Meyer_secure<PolygonMesh, VertexPointMap> cot_calculator_;
     //CGAL::internal::Cotangent_value_clamped_2<PolygonMesh, VertexPointMap> cot_calculator_;
     //CGAL::internal::Cotangent_value_clamped<PolygonMesh, VertexPointMap> cot_calculator_;
+
+    /*
+    typedef CGAL::internal::Cotangent_weight<
+                    PolygonMesh,
+                    typename boost::property_map<PolygonMesh, vertex_point_t>::type,
+                    CGAL::internal::Cotangent_value_minimum_zero<PolygonMesh,
+                                                                 typename boost::property_map<PolygonMesh, vertex_point_t>::type,
+                                                                 CGAL::internal::Cotangent_value_Meyer_secure<PolygonMesh> > >     cot_calculator_;
+                                                                 */
+    //Weight_calculator_edge_based cot_calculator_edge_based_;
+    Weight_calculator_angle_based cot_calculator_angle_based_;
+    Weight_calculator weight_calculator_;
+    //Weight_calculator_clamped2 cot_clamped2_;
+
 
 };
 
