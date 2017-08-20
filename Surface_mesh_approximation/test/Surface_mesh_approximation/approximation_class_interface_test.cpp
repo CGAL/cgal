@@ -16,20 +16,21 @@ typedef Kernel::Point_3 Point_3;
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron_3;
 typedef Polyhedron_3::Facet_handle Facet_handle;
 typedef boost::associative_property_map<std::map<Facet_handle, FT> > FacetAreaMap;
+typedef boost::associative_property_map<std::map<Facet_handle, std::size_t> > FacetProxyMap;
 
 typedef CGAL::PlaneProxy<Polyhedron_3> PlaneProxy;
 typedef CGAL::L2Metric<Polyhedron_3, FacetAreaMap> L2Metric;
 typedef CGAL::L2ProxyFitting<Polyhedron_3> L2ProxyFitting;
 typedef CGAL::VSA_approximation<Polyhedron_3, PlaneProxy, L2Metric, L2ProxyFitting> VSA;
 
-int main(int argc, char *argv[])
+/**
+ * This file tests the VSA class API and the L2 metric.
+ * It should cover all the APIs.
+ */
+int main()
 {
-  if (argc < 5)
-    return EXIT_FAILURE;
-
-  // read Polyhedron_3
   Polyhedron_3 mesh;
-  std::ifstream input(argv[1]);
+  std::ifstream input("./data/sphere_iso.off");
   if (!input || !(input >> mesh) || mesh.empty()) {
     std::cerr << "Invalid off file." << std::endl;
     return EXIT_FAILURE;
@@ -37,6 +38,7 @@ int main(int argc, char *argv[])
 
   // facet area map
   std::map<Facet_handle, FT> facet_areas;
+  std::map<Facet_handle, std::size_t> facet_index;
   for (Polyhedron_3::Facet_iterator fitr = mesh.facets_begin();
     fitr != mesh.facets_end(); ++fitr) {
     Polyhedron_3::Halfedge_handle he = fitr->halfedge();
@@ -46,44 +48,96 @@ int main(int argc, char *argv[])
 
     FT farea(std::sqrt(CGAL::to_double(CGAL::squared_area(p0, p1, p2))));
     facet_areas.insert(std::pair<Facet_handle, FT>(fitr, farea));
+
+    facet_index.insert(std::pair<Facet_handle, std::size_t>(fitr, 0));
   }
   FacetAreaMap area_pmap(facet_areas);
-
-  const std::size_t num_proxies = std::atoi(argv[3]);
-  const std::size_t num_iterations = std::atoi(argv[4]);
-  std::vector<int> tris;
-  std::vector<Kernel::Point_3> anchor_pos;
-  int init = std::atoi(argv[2]);
-  if (init < 0 || init > 2)
-    return EXIT_FAILURE;
+  FacetProxyMap proxy_pmap(facet_index);
 
   L2Metric metric(mesh, area_pmap);
   L2ProxyFitting proxy_fitting(mesh);
 
   // create VSA L2 metric approximation algorithm instance
+  std::cout << "setup algorithm instance" << std::endl;
   VSA l2_approx;
   l2_approx.set_mesh(mesh);
   l2_approx.set_error_metric(metric);
   l2_approx.set_proxy_fitting(proxy_fitting);
 
-  // initialize proxies randomly on the mesh
-  l2_approx.init_proxies(num_proxies, VSA::RandomInit);
-  
-  // run the iteration to minimize the error
-  for (std::size_t i = 0; i < num_iterations; ++i)
+  // random init and run
+  std::cout << "random init and run" << std::endl;
+  l2_approx.init_proxies(10, VSA::RandomInit);
+  for (std::size_t i = 0; i < 10; ++i)
     l2_approx.run_one_step();
+  if (l2_approx.get_proxies_size() != 10)
+    return EXIT_FAILURE;
 
-  // add proxies to the one with the maximum fitting error
+  // incremental add and run until convergence
+  std::cout << "incremental add and run until convergence" << std::endl;
   l2_approx.add_proxies(VSA::IncrementalInit, 3);
-  for (std::size_t i = 0; i < 5; ++i)
-    l2_approx.run_one_step();
+  if (l2_approx.run_until_convergence(0.1))
+    std::cout << "Converged." << std::endl;
+  if (l2_approx.get_proxies_size() != 13)
+    return EXIT_FAILURE;
 
-  // teleport the proxies from local minimal
+  std::cout << "hierarchical add and run until convergence" << std::endl;
+  l2_approx.add_proxies(VSA::HierarchicalInit, 3);
+  for (std::size_t i = 0; i < 10; ++i)
+    l2_approx.run_one_step();
+  if (l2_approx.get_proxies_size() != 16)
+    return EXIT_FAILURE;
+
+  // merge and teleport the proxies from local minimal
+  std::cout << "teleport" << std::endl;
   l2_approx.teleport_proxies(3, false);
+  if (l2_approx.get_proxies_size() != 16)
+    return EXIT_FAILURE;
 
   // extract the approximation polyhedron
+  std::cout << "meshing" << std::endl;
   Polyhedron_3 out_mesh;
-  l2_approx.meshing(out_mesh);
+  if (l2_approx.meshing(out_mesh, true))
+    std::cout << "manifold." << std::endl;
+  else
+    std::cout << "non-manifold" << std::endl;
+
+  // get outputs
+  std::cout << "get outputs" << std::endl;
+  l2_approx.get_proxy_map(proxy_pmap);
+
+  std::vector<PlaneProxy> proxies;
+  l2_approx.get_proxies(std::back_inserter(proxies));
+
+  std::vector<Point_3> anchor_pos;
+  l2_approx.get_anchor_points(std::back_inserter(anchor_pos));
+
+  std::vector<Polyhedron_3::Vertex_handle> anchor_vtx;
+  l2_approx.get_anchor_vertices(std::back_inserter(anchor_vtx));
+
+  std::vector<int> tris;
+  l2_approx.get_indexed_triangles(std::back_inserter(tris));
+
+  std::vector<std::vector<std::size_t> > boundary;
+  boundary = l2_approx.get_indexed_boundary_polygons();
+
+  const FT drop(0.001);
+  std::cout << "rebuild and hierarchical init" << std::endl;
+  l2_approx.rebuild();
+  if (l2_approx.get_proxies_size() != 0)
+    return EXIT_FAILURE;
+  l2_approx.init_proxies_error(drop, VSA::HierarchicalInit);
+  for (std::size_t i = 0; i < 10; ++i)
+    l2_approx.run_one_step();
+  std::cout << "#proxies " << l2_approx.get_proxies_size() << std::endl;
+
+  std::cout << "rebuild and incremental init" << std::endl;
+  l2_approx.rebuild();
+  if (l2_approx.get_proxies_size() != 0)
+    return EXIT_FAILURE;
+  l2_approx.init_proxies_error(drop, VSA::IncrementalInit);
+  for (std::size_t i = 0; i < 10; ++i)
+    l2_approx.run_one_step();
+  std::cout << "#proxies " << l2_approx.get_proxies_size() << std::endl;
 
   return EXIT_SUCCESS;
 }
