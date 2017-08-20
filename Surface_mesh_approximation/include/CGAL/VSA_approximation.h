@@ -491,6 +491,78 @@ public:
   }
 
   /*!
+   * @brief Find the best two regions to merge.
+   * TODO: define 'best', it is minimum merged sum error now
+   * @param px_enlarged the proxy to be enlarged
+   * @param px_merged the proxy to be merged
+   * @param if_test set true to activate the merge test
+   * @return true if found, false otherwise
+   */
+  bool find_best_merge(std::size_t &px_enlarged, std::size_t &px_merged, const bool if_test) {
+    typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor edge_descriptor;
+    typedef std::pair<std::size_t, std::size_t> ProxyPair;
+    typedef std::set<ProxyPair> MergedPair;
+
+    std::vector<std::list<face_descriptor> > px_facets(proxies.size());
+    BOOST_FOREACH(face_descriptor f, faces(*m_pmesh))
+      px_facets[seg_pmap[f]].push_back(f);
+
+    // find best merge
+    MergedPair merged_set;
+    // Proxy merged_px;
+    FT min_merged_error = FT(0);
+    bool first_merge = true;
+    BOOST_FOREACH(edge_descriptor e, edges(*m_pmesh)) {
+      if (CGAL::is_border(e, *m_pmesh))
+        continue;
+      std::size_t pxi = seg_pmap[face(halfedge(e, *m_pmesh), *m_pmesh)];
+      std::size_t pxj = seg_pmap[face(opposite(halfedge(e, *m_pmesh), *m_pmesh), *m_pmesh)];
+      if (pxi == pxj)
+        continue;
+      if (pxi > pxj)
+        std::swap(pxi, pxj);
+      if (merged_set.find(ProxyPair(pxi, pxj)) != merged_set.end())
+        continue;
+
+      std::list<face_descriptor> merged_patch(px_facets[pxi]);
+      BOOST_FOREACH(face_descriptor f, px_facets[pxj])
+        merged_patch.push_back(f);
+
+      Proxy px = fit_new_proxy(merged_patch.begin(), merged_patch.end());
+      FT sum_error(0);
+      BOOST_FOREACH(face_descriptor f, merged_patch)
+        sum_error += (*fit_error)(f, px);
+      merged_set.insert(ProxyPair(pxi, pxj));
+
+      if (first_merge || sum_error < min_merged_error) {
+        first_merge = false;
+        min_merged_error = sum_error;
+        // merged_px = px;
+        px_enlarged = pxi;
+        px_merged = pxj;
+      }
+    }
+
+    std::vector<FT> px_error(proxies.size(), FT(0));
+    compute_fitting_error(px_error);
+    FT max_error = px_error.front();
+    for (std::size_t i = 0; i < proxies.size(); ++i) {
+      if (max_error < px_error[i])
+        max_error = px_error[i];
+    }
+
+    // test if merge worth it
+    if (if_test) {
+      const FT merge_thre = max_error / FT(2);
+      const FT increase = min_merged_error - (px_error[px_enlarged] + px_error[px_merged]);
+      if (increase > merge_thre)
+        return false;
+    }
+
+    return true;
+  }
+
+  /*!
    * @brief Merge adjacent regions, the re-fitting is performed.
    * @param range_of_proxies range of proxies, must be adjacent
    * @return change of error
@@ -834,78 +906,6 @@ private:
       << num_proxies_to_be_added << '/' << num_inserted << std::endl;
 
     return num_inserted;
-  }
-
-  /*!
-   * @brief Find the best two regions to merge.
-   * TODO: define 'best', it is minimum merged sum error now
-   * @param px_enlarged the proxy to be enlarged
-   * @param px_merged the proxy to be merged
-   * @param if_test set true to activate the merge test
-   * @return true if found, false otherwise
-   */
-  bool find_best_merge(std::size_t &px_enlarged, std::size_t &px_merged, const bool if_test) {
-    typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor edge_descriptor;
-    typedef std::pair<std::size_t, std::size_t> ProxyPair;
-    typedef std::set<ProxyPair> MergedPair;
-
-    std::vector<std::list<face_descriptor> > px_facets(proxies.size());
-    BOOST_FOREACH(face_descriptor f, faces(*m_pmesh))
-      px_facets[seg_pmap[f]].push_back(f);
-
-    // find best merge
-    MergedPair merged_set;
-    // Proxy merged_px;
-    FT min_merged_error = FT(0);
-    bool first_merge = true;
-    BOOST_FOREACH(edge_descriptor e, edges(*m_pmesh)) {
-      if (CGAL::is_border(e, *m_pmesh))
-        continue;
-      std::size_t pxi = seg_pmap[face(halfedge(e, *m_pmesh), *m_pmesh)];
-      std::size_t pxj = seg_pmap[face(opposite(halfedge(e, *m_pmesh), *m_pmesh), *m_pmesh)];
-      if (pxi == pxj)
-        continue;
-      if (pxi > pxj)
-        std::swap(pxi, pxj);
-      if (merged_set.find(ProxyPair(pxi, pxj)) != merged_set.end())
-        continue;
-
-      std::list<face_descriptor> merged_patch(px_facets[pxi]);
-      BOOST_FOREACH(face_descriptor f, px_facets[pxj])
-        merged_patch.push_back(f);
-
-      Proxy px = fit_new_proxy(merged_patch.begin(), merged_patch.end());
-      FT sum_error(0);
-      BOOST_FOREACH(face_descriptor f, merged_patch)
-        sum_error += (*fit_error)(f, px);
-      merged_set.insert(ProxyPair(pxi, pxj));
-
-      if (first_merge || sum_error < min_merged_error) {
-        first_merge = false;
-        min_merged_error = sum_error;
-        // merged_px = px;
-        px_enlarged = pxi;
-        px_merged = pxj;
-      }
-    }
-
-    std::vector<FT> px_error(proxies.size(), FT(0));
-    compute_fitting_error(px_error);
-    FT max_error = px_error.front();
-    for (std::size_t i = 0; i < proxies.size(); ++i) {
-      if (max_error < px_error[i])
-        max_error = px_error[i];
-    }
-
-    // test if merge worth it
-    if (if_test) {
-      const FT merge_thre = max_error / FT(2);
-      const FT increase = min_merged_error - (px_error[px_enlarged] + px_error[px_merged]);
-      if (increase > merge_thre)
-        return false;
-    }
-
-    return true;
   }
 
   /*!
