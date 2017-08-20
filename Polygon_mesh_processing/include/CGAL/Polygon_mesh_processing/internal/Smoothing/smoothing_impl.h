@@ -49,7 +49,6 @@ class Compatible_remesher
     typedef CGAL::AABB_traits<GeomTraits, AABB_Primitive> AABB_Traits;
     typedef CGAL::AABB_tree<AABB_Traits> Tree;
 
-    // <for each halfedge around v, pair of incident halfedges to this halfedge around v>
     typedef std::pair<halfedge_descriptor, halfedge_descriptor> he_pair;
     typedef std::map<halfedge_descriptor, he_pair> Edges_around_map;
 
@@ -81,13 +80,7 @@ public:
     std::size_t remove_degenerate_faces()
     {
         std::size_t nb_removed_faces = 0;
-
-        // from repair.h
         nb_removed_faces = CGAL::Polygon_mesh_processing::remove_degenerate_faces(mesh_);
-
-#ifdef CGAL_PMP_SMOOTHING_DEBUG
-        std::cout<<"nb_collapsed_faces: "<<nb_removed_faces<<std::endl;
-#endif
 
         return nb_removed_faces;
     }
@@ -672,7 +665,7 @@ private:
 
 
 
-} //namespace internal
+} // namespace internal
 } // namespace Polygon_mesh_processing
 } // namespace CGAL
 
