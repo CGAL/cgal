@@ -56,5 +56,6 @@ include_directories( BEFORE ../../include )
 include( CGAL_CreateSingleSourceCGALProgram )
 
 create_single_source_cgal_program( "vsa_timing_benchmark.cpp" )
+create_single_source_cgal_program( "vsa_autoinit_timing_benchmark.cpp" )
 
 
