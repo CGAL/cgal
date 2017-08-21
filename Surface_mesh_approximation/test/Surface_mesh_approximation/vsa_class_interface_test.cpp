@@ -10,16 +10,15 @@
 #include <CGAL/VSA_approximation.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-typedef CGAL::Polyhedron_3<Kernel> Polyhedron_3;
 typedef Kernel::FT FT;
 typedef Kernel::Point_3 Point_3;
+
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron_3;
 typedef Polyhedron_3::Facet_handle Facet_handle;
-typedef boost::associative_property_map<std::map<Facet_handle, FT> > FacetAreaMap;
 typedef boost::associative_property_map<std::map<Facet_handle, std::size_t> > FacetProxyMap;
 
 typedef CGAL::PlaneProxy<Polyhedron_3> PlaneProxy;
-typedef CGAL::L2Metric<Polyhedron_3, FacetAreaMap> L2Metric;
+typedef CGAL::L2Metric<Polyhedron_3> L2Metric;
 typedef CGAL::L2ProxyFitting<Polyhedron_3> L2ProxyFitting;
 typedef CGAL::VSA_approximation<Polyhedron_3, PlaneProxy, L2Metric, L2ProxyFitting> VSA;
 
@@ -37,24 +36,13 @@ int main()
   }
 
   // facet area map
-  std::map<Facet_handle, FT> facet_areas;
   std::map<Facet_handle, std::size_t> facet_index;
   for (Polyhedron_3::Facet_iterator fitr = mesh.facets_begin();
-    fitr != mesh.facets_end(); ++fitr) {
-    Polyhedron_3::Halfedge_handle he = fitr->halfedge();
-    const Point_3 &p0 = he->opposite()->vertex()->point();
-    const Point_3 &p1 = he->vertex()->point();
-    const Point_3 &p2 = he->next()->vertex()->point();
-
-    FT farea(std::sqrt(CGAL::to_double(CGAL::squared_area(p0, p1, p2))));
-    facet_areas.insert(std::pair<Facet_handle, FT>(fitr, farea));
-
+    fitr != mesh.facets_end(); ++fitr)
     facet_index.insert(std::pair<Facet_handle, std::size_t>(fitr, 0));
-  }
-  FacetAreaMap area_pmap(facet_areas);
   FacetProxyMap proxy_pmap(facet_index);
 
-  L2Metric metric(mesh, area_pmap);
+  L2Metric metric(mesh);
   L2ProxyFitting proxy_fitting(mesh);
 
   // create VSA L2 metric approximation algorithm instance
