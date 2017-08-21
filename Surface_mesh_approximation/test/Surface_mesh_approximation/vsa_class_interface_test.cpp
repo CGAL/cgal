@@ -78,7 +78,18 @@ int main()
   // merge and teleport the proxies from local minimal
   std::cout << "teleport" << std::endl;
   l2_approx.teleport_proxies(3, false);
+  for (std::size_t i = 0; i < 10; ++i)
+    l2_approx.run_one_step();
   if (l2_approx.get_proxies_size() != 16)
+    return EXIT_FAILURE;
+
+  // split proxy 0 into 2 proxies
+  // precondition: proxy 0 should have more than 2 facets
+  std::cout << "spliting" << std::endl;
+  l2_approx.split(0);
+  for (std::size_t i = 0; i < 10; ++i)
+    l2_approx.run_one_step();
+  if (l2_approx.get_proxies_size() != 17)
     return EXIT_FAILURE;
 
   // extract the approximation polyhedron

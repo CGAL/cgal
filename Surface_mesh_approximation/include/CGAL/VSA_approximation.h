@@ -518,7 +518,8 @@ public:
   }
 
   /*!
-   * @brief Merge two specified adjacent regions, the re-fitting is performed.
+   * @brief Merge two specified adjacent regions.
+   * The overall re-fitting is not performed and the proxy map is maintained.
    * @pre two proxies must be adjacent and px_enlarged < px_merged
    * @param px_enlarged the enlarged proxy
    * @param px_merged the merged proxy
@@ -617,26 +618,32 @@ public:
   }
 
   /*!
-   * @brief Merge adjacent regions, the re-fitting is performed.
-   * @param range_of_proxies range of proxies, must be adjacent
+   * @brief Split one proxy by default bisection, but N-section is also possible
+   * No re-fitting performed and the proxy map is maintained.
+   * @param px proxy index
+   * @param n split section
    * @return change of error
    */
-  // FT merge(range_of_proxies) {}
-  // Document what happens when the model has only one proxy,.
+  FT split(const std::size_t px, const std::size_t n = 2) {
+    if (px >= proxies.size())
+      return FT(0);
 
-  /*!
-   * @brief Split one proxy by default bisection, but N-section is also possible.
-   * @param p proxy
-   * @return change of error
-   */
-  // FT split(Proxy &p, int n = 2) {}
+    std::size_t count = 1;
+    FT err(0);
+    BOOST_FOREACH(face_descriptor f, faces(*m_pmesh)) {
+      if (count >= n)
+        break;
 
-  /*!
-   * @brief Split range of proxies by default bisection, but N-section is also possible.
-   * @param range_of_proxies range of proxies
-   * @return change of error
-   */
-  // FT split(range_of_proxies, int n = 2) {}
+      if (seg_pmap[f] == px && f != proxies[px].seed) {
+        err += (*fit_error)(f, proxies[px]);
+        seg_pmap[f] = proxies.size();
+        proxies.push_back(fit_new_proxy(f));
+        ++count;
+      }
+    }
+
+    return err;
+  }
 
   /*!
    * @brief Meshing, choose the default area weighted or the PCA plane fitting.
