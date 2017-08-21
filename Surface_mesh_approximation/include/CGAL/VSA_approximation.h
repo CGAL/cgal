@@ -520,29 +520,48 @@ public:
   /*!
    * @brief Merge two specified adjacent regions.
    * The overall re-fitting is not performed and the proxy map is maintained.
-   * @pre two proxies must be adjacent and px_enlarged < px_merged
-   * @param px_enlarged the enlarged proxy
-   * @param px_merged the merged proxy
+   * @pre two proxies must be adjacent
+   * @param px0 the enlarged proxy
+   * @param px1 the merged proxy
    * @return change of error
    */
-  FT merge(const std::size_t &px_enlarged, const std::size_t &px_merged) {
-    // merge
+  FT merge(std::size_t px0, std::size_t px1) {
+    if (px0 >= proxies.size() || px1 >= proxies.size() || px0 == px1)
+      return FT(0);
+
+    // ensure px0 < px1
+    if (px0 > px1)
+      std::swap(px0, px1);
+
+    // merge px1 to px0
+    FT err_sum(0);
     std::list<face_descriptor> merged_patch;
     BOOST_FOREACH(face_descriptor f, faces(*m_pmesh)) {
-      if (seg_pmap[f] == px_enlarged || seg_pmap[f] == px_merged) {
-        seg_pmap[f] = px_enlarged;
+      std::size_t px_idx = seg_pmap[f];
+      if (px_idx == px1) {
+        err_sum += (*fit_error)(f, proxies[px_idx]);
+        seg_pmap[f] = px0;
+        merged_patch.push_back(f);
+      }
+      else if (px_idx == px0) {
+        err_sum += (*fit_error)(f, proxies[px_idx]);
         merged_patch.push_back(f);
       }
     }
-    proxies[px_enlarged] = fit_new_proxy(merged_patch.begin(), merged_patch.end());
-    proxies.erase(proxies.begin() + px_merged);
+    proxies[px0] = fit_new_proxy(merged_patch.begin(), merged_patch.end());
+
+    proxies.erase(proxies.begin() + px1);
     // update facet proxy map
     BOOST_FOREACH(face_descriptor f, faces(*m_pmesh)) {
-      if (seg_pmap[f] > px_merged)
+      if (seg_pmap[f] > px1)
         --seg_pmap[f];
     }
 
-    return 0;
+    FT err_merged(0);
+    BOOST_FOREACH(face_descriptor f, merged_patch)
+      err_merged += (*fit_error)(f, proxies[px0]);
+
+    return err_merged - err_sum;
   }
 
   /*!
