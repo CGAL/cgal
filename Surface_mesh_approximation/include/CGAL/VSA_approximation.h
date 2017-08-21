@@ -59,24 +59,30 @@ class VSA_approximation {
 
   // The facet candidate to be queued.
   struct FacetToIntegrate {
-    face_descriptor f; // facet
-    std::size_t px; // proxy index
-    FT err; // fitting error
+    FacetToIntegrate(const face_descriptor &_f, const std::size_t &_px, const FT &_err)
+      : f(_f), px(_px), err(_err) {}
+
     bool operator<(const FacetToIntegrate &rhs) const {
       return err > rhs.err;
     }
+
+    face_descriptor f; // facet
+    std::size_t px; // proxy index
+    FT err; // fitting error
   };
 
-  // proxy error with proxy index
+  // Proxy error with its index.
   struct ProxyError {
-    ProxyError(const std::size_t &_px, const FT &_error)
-      : px(_px), error(_error) {}
+    ProxyError(const std::size_t &_px, const FT &_err)
+      : px(_px), err(_err) {}
+
     // in ascending order
     bool operator<(const ProxyError &rhs) const {
-      return error < rhs.error;
+      return err < rhs.err;
     }
+
     std::size_t px;
-    FT error;
+    FT err;
   };
 
   // The average positioned anchor attached to a vertex.
@@ -357,11 +363,8 @@ public:
       BOOST_FOREACH(face_descriptor fadj, faces_around_face(halfedge(f, *m_pmesh), *m_pmesh)) {
         if (fadj != boost::graph_traits<TriangleMesh>::null_face()
             && seg_pmap[fadj] == CGAL_NOT_TAGGED_ID) {
-          FacetToIntegrate cand;
-          cand.f = fadj;
-          cand.err = (*fit_error)(fadj, proxies[i]);
-          cand.px = i;
-          facet_pqueue.push(cand);
+          facet_pqueue.push(FacetToIntegrate(
+            fadj, i, (*fit_error)(fadj, proxies[i])));
         }
       }
     }
@@ -374,11 +377,8 @@ public:
         BOOST_FOREACH(face_descriptor fadj, faces_around_face(halfedge(c.f, *m_pmesh), *m_pmesh)) {
           if (fadj != boost::graph_traits<TriangleMesh>::null_face()
             && seg_pmap[fadj] == CGAL_NOT_TAGGED_ID) {
-            FacetToIntegrate cand;
-            cand.f = fadj;
-            cand.err = (*fit_error)(fadj, proxies[c.px]);
-            cand.px = c.px;
-            facet_pqueue.push(cand);
+            facet_pqueue.push(FacetToIntegrate(
+            fadj, c.px, (*fit_error)(fadj, proxies[c.px])));
           }
         }
       }
@@ -876,7 +876,7 @@ private:
     BOOST_FOREACH(const ProxyError &pxe, px_error) {
       // add error residual from previous proxy
       // to_add maybe negative but greater than -0.5
-      FT to_add = (residual + pxe.error) / avg_error;
+      FT to_add = (residual + pxe.err) / avg_error;
       // floor_to_add maybe negative but no less than -1
       FT floor_to_add = FT(std::floor(CGAL::to_double(to_add)));
       const std::size_t q_to_add = static_cast<std::size_t>(CGAL::to_double(
@@ -886,7 +886,7 @@ private:
     }
     for (std::size_t i = 0; i < px_error.size(); ++i)
       std::cout << "#px " << px_error[i].px
-        << ", #error " << px_error[i].error
+        << ", #error " << px_error[i].err
         << ", #num_to_add " << num_to_add[px_error[i].px] << std::endl;
 
     std::size_t num_inserted = 0;
