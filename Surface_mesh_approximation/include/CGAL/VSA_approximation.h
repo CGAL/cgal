@@ -6,6 +6,7 @@
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 #include <CGAL/Polyhedron_3.h>
+#include <CGAL/linear_least_squares_fitting_3.h>
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/adjacency_list.hpp>
@@ -621,14 +622,7 @@ public:
     px_planes.clear();
     px_normals.clear();
     px_areas.clear();
-    if (pca_plane)
-      init_proxy_planes(
-        CGAL::PCAPlaneFitting<TriangleMesh, VertexPointMap, GeomTraits>(
-          *m_pmesh, point_pmap));
-    else
-      init_proxy_planes(
-        CGAL::PlaneFitting<TriangleMesh, VertexPointMap, GeomTraits>(
-          *m_pmesh, point_pmap));
+    init_proxy_planes(pca_plane);
 
     find_anchors();
     find_edges();
@@ -988,17 +982,19 @@ private:
 
   /*!
    * @brief Initialize proxy planes.
-   * @param _plane_fitting the plane fitting functor
+   * @param if_pca_plane true to use the PCA plane fitting
    */
-  template <typename PlaneFitting>
-  void init_proxy_planes(const PlaneFitting &_plane_fitting) {
+  void init_proxy_planes(const bool if_pca_plane) {
     // fit proxy planes, areas, normals
     std::vector<std::list<face_descriptor> > px_facets(proxies.size());
     BOOST_FOREACH(face_descriptor f, faces(*m_pmesh))
       px_facets[seg_pmap[f]].push_back(f);
 
     BOOST_FOREACH(const std::list<face_descriptor> &px_patch, px_facets) {
-      px_planes.push_back(_plane_fitting(px_patch.begin(), px_patch.end()));
+      if (if_pca_plane)
+        px_planes.push_back(fit_plane_pca(px_patch.begin(), px_patch.end()));
+      else
+        px_planes.push_back(fit_plane_area_averaged(px_patch.begin(), px_patch.end()));
 
       Vector_3 norm = CGAL::NULL_VECTOR;
       FT area(0);
@@ -1496,6 +1492,73 @@ private:
     builder.end_surface();
 
     return true;
+  }
+
+  /*!
+   * @brief Fit an area averaged plane from a range of facets.
+   * @tparam FacetIterator face_descriptor container iterator
+   * @param beg container begin
+   * @param end container end
+   * @return fitted plane
+   */
+  template <typename FacetIterator>
+  Plane_3 fit_plane_area_averaged(const FacetIterator &beg, const FacetIterator &end) {
+    CGAL_assertion(beg != end);
+    // area average normal and centroid
+    Vector_3 norm = CGAL::NULL_VECTOR;
+    Vector_3 cent = CGAL::NULL_VECTOR;
+    FT sum_area(0);
+    for (FacetIterator fitr = beg; fitr != end; ++fitr) {
+      const halfedge_descriptor he = halfedge(*fitr, *m_pmesh);
+      const Point_3 &p0 = point_pmap[source(he, *m_pmesh)];
+      const Point_3 &p1 = point_pmap[target(he, *m_pmesh)];
+      const Point_3 &p2 = point_pmap[target(next(he, *m_pmesh), *m_pmesh)];
+
+      Vector_3 vec = vector_functor(CGAL::ORIGIN, CGAL::centroid(p0, p1, p2));
+      FT farea(std::sqrt(CGAL::to_double(CGAL::squared_area(p0, p1, p2))));
+      Vector_3 fnorm = CGAL::unit_normal(p0, p1, p2);
+
+      norm = sum_functor(norm, scale_functor(fnorm, farea));
+      cent = sum_functor(cent, scale_functor(vec, farea));
+      sum_area += farea;
+    }
+    norm = scale_functor(norm,
+      FT(1.0 / std::sqrt(CGAL::to_double(norm.squared_length()))));
+    cent = scale_functor(cent, FT(1) / sum_area);
+
+    return Plane_3(CGAL::ORIGIN + cent, norm);
+  }
+
+  /*!
+   * @brief Fit a plane from a range of facets with PCA algorithm.
+   * @tparam FacetIterator face_descriptor container iterator
+   * @param beg container begin
+   * @param end container end
+   * @return fitted plane
+   */
+  template <typename FacetIterator>
+  Plane_3 fit_plane_pca(const FacetIterator &beg, const FacetIterator &end) {
+    CGAL_assertion(beg != end);
+
+    typedef typename GeomTraits::Triangle_3 Triangle_3;
+    std::list<Triangle_3> tris;
+    for (FacetIterator fitr = beg; fitr != end; ++fitr) {
+      halfedge_descriptor he = halfedge(*fitr, *m_pmesh);
+      const Point_3 &p0 = point_pmap[source(he, *m_pmesh)];
+      const Point_3 &p1 = point_pmap[target(he, *m_pmesh)];
+      const Point_3 &p2 = point_pmap[target(next(he, *m_pmesh), *m_pmesh)];
+      tris.push_back(Triangle_3(p0, p1, p2));
+    }
+
+    // construct and fit proxy plane
+    Plane_3 fit_plane;
+    CGAL::linear_least_squares_fitting_3(
+      tris.begin(),
+      tris.end(),
+      fit_plane,
+      CGAL::Dimension_tag<2>());
+    
+    return fit_plane;
   }
 };
 
