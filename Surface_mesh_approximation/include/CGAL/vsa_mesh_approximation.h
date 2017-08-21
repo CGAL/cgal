@@ -56,9 +56,7 @@ bool vsa_mesh_approximation(const TriangleMesh &tm_in,
   TriangleMesh &tm_out,
   const NamedParameters &np)
 {
-  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
-  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
 
   using boost::get_param;
   using boost::choose_param;
@@ -66,39 +64,19 @@ bool vsa_mesh_approximation(const TriangleMesh &tm_in,
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type GeomTraits;
   typedef typename GeomTraits::FT FT;
   typedef typename GeomTraits::Point_3 Point_3;
-  typedef typename GeomTraits::Vector_3 Vector_3;
 
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::type VPMap;
   VPMap point_pmap = choose_param(get_param(np, internal_np::vertex_point),
     get(boost::vertex_point, const_cast<TriangleMesh &>(tm_in)));
     // get_property_map(vertex_point, tm_in));
 
-  typedef boost::associative_property_map<std::map<face_descriptor, Vector_3> > FacetNormalMap;
-  typedef boost::associative_property_map<std::map<face_descriptor, FT> > FacetAreaMap;
-
   typedef CGAL::PlaneProxy<TriangleMesh> PlaneProxy;
-  typedef CGAL::L21Metric<TriangleMesh, FacetNormalMap, FacetAreaMap> L21Metric;
-  typedef CGAL::L21ProxyFitting<TriangleMesh, FacetNormalMap, FacetAreaMap> L21ProxyFitting;
+  typedef CGAL::L21Metric<TriangleMesh> L21Metric;
+  typedef CGAL::L21ProxyFitting<TriangleMesh> L21ProxyFitting;
   typedef CGAL::VSA_approximation<TriangleMesh, PlaneProxy, L21Metric, L21ProxyFitting> VSAL21;
 
-  // construct facet normal & area map
-  std::map<face_descriptor, Vector_3> facet_normals;
-  std::map<face_descriptor, FT> facet_areas;
-  BOOST_FOREACH(face_descriptor f, faces(tm_in)) {
-    const halfedge_descriptor he = halfedge(f, tm_in);
-    const Point_3 p0 = point_pmap[source(he, tm_in)];
-    const Point_3 p1 = point_pmap[target(he, tm_in)];
-    const Point_3 p2 = point_pmap[target(next(he, tm_in), tm_in)];
-    Vector_3 normal = CGAL::unit_normal(p0, p1, p2);
-    facet_normals.insert(std::pair<face_descriptor, Vector_3>(f, normal));
-    FT area(std::sqrt(CGAL::to_double(CGAL::squared_area(p0, p1, p2))));
-    facet_areas.insert(std::pair<face_descriptor, FT>(f, area));
-  }
-  FacetNormalMap normal_pmap(facet_normals);
-  FacetAreaMap area_pmap(facet_areas);
-
-  L21Metric l21_metric(normal_pmap, area_pmap);
-  L21ProxyFitting l21_fitting(normal_pmap, area_pmap);
+  L21Metric l21_metric(tm_in);
+  L21ProxyFitting l21_fitting(tm_in);
 
   VSAL21 vsa_l21(l21_metric, l21_fitting);
   vsa_l21.set_mesh(tm_in);
