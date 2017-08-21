@@ -229,7 +229,7 @@ private:
     if (dialog.regularize ())
       {
         std::cerr << "Regularization of planes... " << std::endl;
-        typename Shape_detection::Plane_range planes = shape_detection.planes();
+        Shape_detection::Plane_range planes = shape_detection.planes();
         CGAL::regularize_planes (*points,
                                  points->point_map(),
                                  planes,
@@ -632,13 +632,13 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionEstimateParamete
       typedef CGAL::Search_traits_adapter <Point_set::Index,
                                            Point_set::Point_map, SearchTraits_3> Search_traits;
       typedef CGAL::Orthogonal_k_neighbor_search<Search_traits> Neighbor_search;
-      typedef typename Neighbor_search::Tree Tree;
-      typedef typename Neighbor_search::Distance Distance;
+      typedef Neighbor_search::Tree Tree;
+      typedef Neighbor_search::Distance Distance;
 
       // build kdtree
       Tree tree(points->first_selected(),
                 points->end(),
-                typename Tree::Splitter(),
+                Tree::Splitter(),
                 Search_traits (points->point_map())
                 );
       Distance tr_dist(points->point_map());
@@ -668,7 +668,7 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionEstimateParamete
           dispersion.push_back (disp);
 
           Neighbor_search search(tree, points->point(*it), 2, 0, true, tr_dist);
-          typename Neighbor_search::iterator nit = search.begin();
+          Neighbor_search::iterator nit = search.begin();
           ++ nit;
           double eps = nit->second;
           cluster_epsilon.push_back(eps);
