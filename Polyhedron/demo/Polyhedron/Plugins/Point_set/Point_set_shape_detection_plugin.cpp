@@ -229,7 +229,7 @@ private:
     if (dialog.regularize ())
       {
         std::cerr << "Regularization of planes... " << std::endl;
-        Shape_detection::Plane_range planes = shape_detection.planes();
+        typename Shape_detection::Plane_range planes = shape_detection.planes();
         CGAL::regularize_planes (*points,
                                  points->point_map(),
                                  planes,
