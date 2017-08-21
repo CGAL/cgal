@@ -6,7 +6,7 @@
 #include <CGAL/IO/Polyhedron_iostream.h>
 
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#include <CGAL/vsa_mesh_approximation_traits.h>
+#include <CGAL/vsa_mesh_approximation_metrics.h>
 #include <CGAL/VSA_approximation.h>
 #include <CGAL/Timer.h>
 
