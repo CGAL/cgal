@@ -811,10 +811,12 @@ detect_features(FT angle_in_degree,
     typedef typename boost::property_map<Polyhedron_type,CGAL::vertex_incident_patches_t<Patch_id> >::type VIPMap;
     PIDMap pid_map = get(face_patch_id_t<Patch_id>(), p);
     VIPMap vip_map = get(vertex_incident_patches_t<Patch_id>(), p);
-    nb_of_patch_plus_one +=PMP::sharp_edges_segmentation(p, angle_in_degree,pid_map, PMP::parameters::first_index(nb_of_patch_plus_one)
-                                                .face_index_map(boost::make_assoc_property_map(face_ids))
-                                                .edge_is_constrained_map(get(CGAL::edge_is_feature, p))
-                                                .vertex_incident_patches_map(vip_map));
+    nb_of_patch_plus_one +=PMP::sharp_edges_segmentation(p, angle_in_degree
+      , get(CGAL::edge_is_feature, p)
+      , pid_map
+      , PMP::parameters::first_index(nb_of_patch_plus_one)
+      .face_index_map(boost::make_assoc_property_map(face_ids))
+      .vertex_incident_patches_map(vip_map));
 
     internal::Mesh_3::Is_featured_edge<Polyhedron_type> is_featured_edge(p);
 
