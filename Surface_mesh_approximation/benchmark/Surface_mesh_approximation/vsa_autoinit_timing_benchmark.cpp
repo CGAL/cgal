@@ -31,7 +31,7 @@ typedef CGAL::Timer Timer;
  * This file is a timing benchmark of the automatic initialization.
  * With different configuration:
    1. initialization
-   2. error drop tolerence
+   2. error drop tolerance
  */
 int main(int argc, char *argv[])
 {
@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
     return 1;
   const FT tol(std::atof(argv[3]));
   std::cerr << "#init " << init << std::endl;
-  std::cerr << "#tolerence " << tol << std::endl;
+  std::cerr << "#tolerance " << tol << std::endl;
 
   Timer t;
   std::cerr << "start initialization" << std::endl;

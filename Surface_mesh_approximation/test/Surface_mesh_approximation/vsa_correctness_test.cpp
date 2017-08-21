@@ -24,7 +24,7 @@ typedef CGAL::L21Metric<Polyhedron_3, FacetNormalMap, FacetAreaMap> L21Metric;
 typedef CGAL::L21ProxyFitting<Polyhedron_3, FacetNormalMap, FacetAreaMap> L21ProxyFitting;
 typedef CGAL::VSA_approximation<Polyhedron_3, PlaneProxy, L21Metric, L21ProxyFitting> VSAL21;
 
-bool test_shape(const std::string file_name, const std::size_t target_num_proxies)
+bool test_shape(const char *file_name, const std::size_t target_num_proxies)
 {
   Polyhedron_3 mesh;
   std::ifstream input(file_name);
@@ -88,7 +88,7 @@ bool test_shape(const std::string file_name, const std::size_t target_num_proxie
  */
 int main()
 {
-  const std::string file0("./data/cube_meshed.off");
+  const char file0[] = "./data/cube_meshed.off";
   std::cout << "Testing file \"" << file0 << '\"';
   if (!test_shape(file0, 6)) {
     std::cout << "Failed." << std::endl;
@@ -97,7 +97,7 @@ int main()
   else
     std::cout << "Succeeded." << std::endl;
 
-  const std::string file1("./data/cube_meshed_open.off");
+  const char file1[] = "./data/cube_meshed_open.off";
   std::cout << "Testing file \"" << file1 << '\"';
   if (!test_shape(file1, 5)) {
     std::cout << "Failed." << std::endl;

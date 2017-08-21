@@ -290,7 +290,7 @@ public:
   typedef PlaneProxy Proxy;
 
   // default constructor
-  L2Metric() : mesh(nullptr) {}
+  L2Metric() : mesh(NULL) {}
 
   // construct L2 metric functor from a triangle mesh, a facet area map and the vertex point map.
   L2Metric(const TriangleMesh &_mesh,
@@ -357,7 +357,7 @@ public:
   typedef PlaneProxy Proxy;
 
   // default constructor
-  L2ProxyFitting() : mesh(nullptr) {}
+  L2ProxyFitting() : mesh(NULL) {}
 
   // construct L2 proxy fitting functor from a triangle mesh and the vertex point map.
   L2ProxyFitting(const TriangleMesh &_mesh, const VertexPointMap &_point_pmap)

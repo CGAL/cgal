@@ -1,10 +1,10 @@
 #ifndef CGAL_SURFACE_MESH_APPROXIMATION_VSA_MESH_APPROXIMATION_H
 #define CGAL_SURFACE_MESH_APPROXIMATION_VSA_MESH_APPROXIMATION_H
 
+#include <CGAL/vsa_mesh_approximation_traits.h>
 #include <CGAL/VSA_approximation.h>
 #include <CGAL/internal/Surface_mesh_approximation/named_function_params.h>
 #include <CGAL/internal/Surface_mesh_approximation/named_params_helper.h>
-#include <CGAL/vsa_mesh_approximation_traits.h>
 
 #include <CGAL/property_map.h>
 #include <boost/graph/graph_traits.hpp>
@@ -64,7 +64,6 @@ bool vsa_mesh_approximation(const TriangleMesh &tm_in,
   using boost::choose_param;
 
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type GeomTraits;
-  typedef typename TriangleMesh::Traits GeomTraits;
   typedef typename GeomTraits::FT FT;
   typedef typename GeomTraits::Point_3 Point_3;
   typedef typename GeomTraits::Vector_3 Vector_3;
@@ -113,7 +112,7 @@ bool vsa_mesh_approximation(const TriangleMesh &tm_in,
   if (init < 0 || init > 2)
     return false;
 
-  vsa_l21.init_proxies(num_proxies, static_cast<VSAL21::Initialization>(init));
+  vsa_l21.init_proxies(num_proxies, static_cast<typename VSAL21::Initialization>(init));
   for (std::size_t i = 0; i < num_iterations; ++i)
     vsa_l21.run_one_step();
 

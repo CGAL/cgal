@@ -56,6 +56,28 @@ class VSA_approximation {
   typedef std::vector<halfedge_descriptor> ChordVector;
   typedef typename ChordVector::iterator ChordVectorIterator;
 
+  // The facet candidate to be queued.
+  struct FacetToIntegrate {
+    face_descriptor f; // facet
+    std::size_t px; // proxy index
+    FT err; // fitting error
+    bool operator<(const FacetToIntegrate &rhs) const {
+      return err > rhs.err;
+    }
+  };
+
+  // proxy error with proxy index
+  struct ProxyError {
+    ProxyError(const std::size_t &_px, const FT &_error)
+      : px(_px), error(_error) {}
+    // in ascending order
+    bool operator<(const ProxyError &rhs) const {
+      return error < rhs.error;
+    }
+    std::size_t px;
+    FT error;
+  };
+
   // The average positioned anchor attached to a vertex.
   struct Anchor {
     Anchor(const vertex_descriptor &_vtx, const Point_3 _pos)
@@ -122,9 +144,9 @@ public:
    * Default constructor.
    */
   VSA_approximation() :
-    fit_error(nullptr),
-    proxy_fitting(nullptr),
-    m_pmesh(nullptr),
+    fit_error(NULL),
+    proxy_fitting(NULL),
+    m_pmesh(NULL),
     seg_pmap(internal_fidx_map),
     vanchor_map(vertex_int_map) {
     GeomTraits traits;
@@ -143,7 +165,7 @@ public:
     const ProxyFitting &_proxy_fitting) :
     fit_error(&_fit_error),
     proxy_fitting(&_proxy_fitting),
-    m_pmesh(nullptr),
+    m_pmesh(NULL),
     seg_pmap(internal_fidx_map),
     vanchor_map(vertex_int_map) {
     GeomTraits traits;
@@ -232,7 +254,7 @@ public:
 
     FT sum_err(0);
     FT drop(0);
-    if (seeding_method == Initialization::RandomInit) {
+    if (seeding_method == RandomInit) {
       std::size_t target_px = 2;
       do {
         proxies.clear();
@@ -246,7 +268,7 @@ public:
         drop = sum_err / initial_err;
       } while(drop > target_drop && proxies.size() < max_proxies);
     }
-    else if (seeding_method == Initialization::IncrementalInit) {
+    else if (seeding_method == IncrementalInit) {
       do {
         insert_proxy_furthest();
         for (std::size_t i = 0; i < 5; ++i) {
@@ -323,16 +345,6 @@ public:
    */
   void partition() {
 #define CGAL_NOT_TAGGED_ID std::numeric_limits<std::size_t>::max()
-    // The facet candidate to be queued.
-    struct FacetToIntegrate {
-      face_descriptor f; // facet
-      std::size_t px; // proxy index
-      FT err; // fitting error
-      bool operator<(const FacetToIntegrate &rhs) const {
-        return err > rhs.err;
-      }
-    };
-
     BOOST_FOREACH(face_descriptor f, faces(*m_pmesh))
       seg_pmap[f] = CGAL_NOT_TAGGED_ID;
 
@@ -852,18 +864,6 @@ private:
    * @return inserted number of proxies
    */
   std::size_t insert_proxy_hierarchical(const std::size_t num_proxies_to_be_added) {
-    // proxy error with proxy index
-    struct ProxyError {
-      ProxyError(const std::size_t &_px, const FT &_error)
-        : px(_px), error(_error) {}
-      // in ascending order
-      bool operator<(const ProxyError &rhs) const {
-        return error < rhs.error;
-      }
-      std::size_t px;
-      FT error;
-    };
-
     std::cout << "#px " << proxies.size() << std::endl;
     std::vector<FT> err(proxies.size(), FT(0));
     const FT sum_error = compute_fitting_error(err);
