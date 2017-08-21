@@ -225,12 +225,17 @@ public:
       seg_pmap[f] = 0;
     const FT initial_err = compute_fitting_error();
 
+    // maximum allowed number of proxies
+    const std::size_t max_proxies = num_faces(*m_pmesh) / 3;
+    if (max_proxies < 1)
+      return 0;
+
     FT sum_err(0);
     FT drop(0);
-    const std::size_t max_proxies = num_faces(*m_pmesh) / 2;
     if (seeding_method == Initialization::RandomInit) {
       std::size_t target_px = 2;
       do {
+        proxies.clear();
         seed_random(target_px);
         for (std::size_t i = 0; i < 5; ++i) {
           partition();
@@ -253,7 +258,7 @@ public:
       } while (drop > target_drop && proxies.size() < max_proxies);
     }
     else {
-      std::size_t target_px = 2;
+      std::size_t target_px = 1;
       do {
         insert_proxy_hierarchical(target_px);
         for (std::size_t i = 0; i < 5; ++i) {
