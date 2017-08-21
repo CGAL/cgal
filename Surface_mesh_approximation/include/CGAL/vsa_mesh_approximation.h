@@ -23,13 +23,13 @@ namespace CGAL
  *         If `TriangleMesh` has an internal property map for `CGAL::face_index_t`,
  *         and no `face_index_map` is given
  *         as a named parameter, then the internal one should be initialized
+ * @tparam PolyhedronSurface should be `CGAL::Polyhedron_3`
  * @tparam FaceRange range of `boost::graph_traits<TriangleMesh>::%face_descriptor`,
           model of `Range`. Its iterator type is `ForwardIterator`.
  * @tparam NamedParameters a sequence of \ref namedparameters
  *
- * @param pmesh a polygon mesh with triangulated surface patches to be remeshed
- * @param faces the range of triangular faces defining one or several surface patches to be remeshed
- * @param target_edge_length the edge length that is targetted in the remeshed patch
+ * @param tm_in a polygon mesh with triangulated surface patches to be remeshed
+ * @param[out] tm_out approximated polyhedron mesh
  * @param np optional sequence of \ref namedparameters among the ones listed below
  *
  * \cgalNamedParamsBegin
@@ -37,9 +37,9 @@ namespace CGAL
  *    Exact constructions kernels are not supported by this function.
  *  \cgalParamEnd
  *  \cgalParamBegin{vertex_point_map} the property map with the points associated
- *    to the vertices of `pmesh`. Instance of a class model of `ReadWritePropertyMap`.
+ *    to the vertices of `tm_in`. Instance of a class model of `ReadWritePropertyMap`.
  *  \cgalParamEnd
- *  \cgalParamBegin{face_index_map} a property map containing the index of each face of `pmesh`
+ *  \cgalParamBegin{face_index_map} a property map containing the index of each face of `tm_in`
  *  \cgalParamEnd
  *  \cgalParamBegin{number_of_iterations} the number of iterations for the
  *    sequence of atomic operations performed (listed in the above description)
@@ -51,9 +51,10 @@ namespace CGAL
  * \cgalNamedParamsEnd
  */
 template <typename TriangleMesh,
+  typename PolyhedronSurface,
   typename NamedParameters>
 bool vsa_mesh_approximation(const TriangleMesh &tm_in,
-  TriangleMesh &tm_out,
+  PolyhedronSurface &tm_out,
   const NamedParameters &np)
 {
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
