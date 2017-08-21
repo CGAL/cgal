@@ -3,6 +3,7 @@
 
 #include <CGAL/Kernel/global_functions.h>
 #include <CGAL/squared_distance_3.h>
+#include <CGAL/linear_least_squares_fitting_3.h>
 #include <boost/graph/graph_traits.hpp>
 
 #include <map>
