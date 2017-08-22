@@ -1,29 +1,55 @@
-# Created by the script cgal_create_cmake_script
-# This is the CMake script for compiling a CGAL application.
+# Created by the script cgal_create_CMakeLists
+# This is the CMake script for compiling a set of CGAL applications.
+
+project( Surface_mesh_approximation )
 
 
-project( Surface_mesh_approximation_Tests )
+cmake_minimum_required(VERSION 2.8.11)
 
-cmake_minimum_required(VERSION 2.8.10)
+# CGAL and its components
+find_package( CGAL QUIET COMPONENTS  )
 
-find_package(CGAL QUIET)
+if ( NOT CGAL_FOUND )
 
-if ( CGAL_FOUND )
+  message(STATUS "This project requires the CGAL library, and will not be compiled.")
+  return()  
 
-  include( ${CGAL_USE_FILE} )
-
-  include( CGAL_CreateSingleSourceCGALProgram )
-
-  include_directories (BEFORE "../../include")
-
-  # create a target per cppfile
-  file(GLOB cppfiles RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
-  foreach(cppfile ${cppfiles})
-    create_single_source_cgal_program( "${cppfile}" )
-  endforeach()
-
-else()
-  
-    message(STATUS "This program requires the CGAL library, and will not be compiled.")
-  
 endif()
+
+# include helper file
+include( ${CGAL_USE_FILE} )
+
+
+# Boost and its components
+find_package( Boost REQUIRED )
+
+if ( NOT Boost_FOUND )
+
+  message(STATUS "This project requires the Boost library, and will not be compiled.")
+
+  return()  
+
+endif()
+
+# include for local directory
+
+# include for local package
+include_directories( BEFORE ../../include )
+
+
+# Creating entries for all C++ files with "main" routine
+# ##########################################################
+
+include( CGAL_CreateSingleSourceCGALProgram )
+
+create_single_source_cgal_program( "vsa_class_interface_test.cpp" )
+
+create_single_source_cgal_program( "vsa_correctness_test.cpp" )
+
+create_single_source_cgal_program( "vsa_error_decrease_test.cpp" )
+
+create_single_source_cgal_program( "vsa_free_function_test.cpp" )
+
+create_single_source_cgal_program( "vsa_metric_test.cpp" )
+
+
