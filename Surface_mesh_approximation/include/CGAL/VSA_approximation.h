@@ -674,7 +674,7 @@ public:
    * @return true if output triangle mesh is manifold,false otherwise.
    */
   template <typename PolyhedronSurface>
-  bool meshing(PolyhedronSurface &tm_out, const FT split_criterion = 1, bool pca_plane = false) {
+  bool meshing(PolyhedronSurface &tm_out, const FT split_criterion = FT(0.2), bool pca_plane = false) {
     vertex_int_map.clear();
     // initialize all vertex anchor status
     enum Vertex_status { NO_ANCHOR = -1 };
@@ -690,7 +690,7 @@ public:
     init_proxy_planes(pca_plane);
 
     find_anchors();
-    find_edges();
+    find_edges(split_criterion);
     add_anchors();
     pseudo_CDT();
 
@@ -1101,8 +1101,9 @@ private:
 
   /*!
    * @brief Finds and approximates the edges connecting the anchors.
+   * @param split_criterion edge approximation recursive split creterion
    */
-  void find_edges() {
+  void find_edges(const FT split_criterion) {
     // collect candidate halfedges in a set
     std::set<halfedge_descriptor> he_candidates;
     BOOST_FOREACH(halfedge_descriptor h, halfedges(*m_pmesh)) {
@@ -1127,7 +1128,7 @@ private:
       do {
         ChordVector chord;
         walk_to_next_anchor(he_start, chord);
-        borders.back().num_anchors += subdivide_chord(chord.begin(), chord.end());
+        borders.back().num_anchors += subdivide_chord(chord.begin(), chord.end(), split_criterion);
         std::cerr << "#chord_anchor " << borders.back().num_anchors << std::endl;
 
         for (ChordVectorIterator citr = chord.begin(); citr != chord.end(); ++citr)
@@ -1374,12 +1375,13 @@ private:
    * @brief Subdivides a chord recursively in range [@a chord_begin, @a chord_end).
    * @param chord_begin begin iterator of the chord
    * @param chord_end end iterator of the chord
+   * @param thre the recursive split threshold
    * @return the number of anchors of the chord apart from the first one
    */
   std::size_t subdivide_chord(
     const ChordVectorIterator &chord_begin,
     const ChordVectorIterator &chord_end,
-    const FT thre = FT(0.2)) {
+    const FT thre) {
     const std::size_t chord_size = std::distance(chord_begin, chord_end);
     const halfedge_descriptor he_first = *chord_begin;
     const halfedge_descriptor he_last = *(chord_end - 1);
@@ -1445,8 +1447,8 @@ private:
       // subdivide at the most remote vertex
       attach_anchor(*chord_max);
 
-      std::size_t num0 = subdivide_chord(chord_begin, chord_max + 1);
-      std::size_t num1 = subdivide_chord(chord_max + 1, chord_end);
+      std::size_t num0 = subdivide_chord(chord_begin, chord_max + 1, thre);
+      std::size_t num1 = subdivide_chord(chord_max + 1, chord_end, thre);
 
       return num0 + num1;
     }

@@ -77,7 +77,7 @@ struct PointProxyFitting {
 };
 typedef CGAL::VSA_approximation<Polyhedron_3, PointProxy, CompactMetric, PointProxyFitting> CompactVSA;
 
-int main(int argc, char *argv[])
+int main()
 {
   // create and read Polyhedron_3
   Polyhedron_3 mesh;
