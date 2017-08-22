@@ -755,7 +755,7 @@ struct Graph_with_descriptor_with_graph_property_map<Graph, PM, boost::lvalue_pr
   Graph* graph;
   PM pm;
 
-  value_type& operator[](key_type& k)
+  value_type& operator[](key_type& k) const
   {
       return get(*this, k);
   }
