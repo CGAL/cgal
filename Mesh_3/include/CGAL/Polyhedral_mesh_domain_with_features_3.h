@@ -39,7 +39,7 @@
 
 #include <CGAL/Mesh_3/Detect_polylines_in_polyhedra.h>
 #include <CGAL/Mesh_3/Polyline_with_context.h>
-#include <CGAL/Polygon_mesh_processing/Detect_features_in_polyhedra.h>
+#include <CGAL/Polygon_mesh_processing/internal/Detect_features_in_polyhedra.h>
 #include <CGAL/Mesh_3/properties_Polyhedron_3.h>
 
 #include <CGAL/enum.h>
