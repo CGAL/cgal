@@ -376,14 +376,6 @@ public:
   /// \{
 
   /// Checks whether the triangulation is a valid simplicial complex in the one cover.
-  /// Uses an edge-length-criterion.
-  bool is_extensible_triangulation_in_1_sheet_h1() const;
-
-  /// Checks whether the triangulation is a valid simplicial complex in the one cover.
-  /// Uses a criterion based on the maximal radius of the circumscribing circle.
-  bool is_extensible_triangulation_in_1_sheet_h2() const;
-
-  /// Checks whether the triangulation is a valid simplicial complex in the one cover.
   bool is_triangulation_in_1_sheet() const;
 
   /// Convert a 9 sheeted cover (used for sparse triangulations) to a single sheeted cover.
@@ -886,43 +878,7 @@ public:
   /// Returns the orientation of (p1,o1), (p2,o2), (p3,o3)
   Orientation orientation(const Point& p1, const Point& p2, const Point& p3,
                           const Offset& o1, const Offset& o2, const Offset& o3) const;
-
-  /// Determines whether the point p lies on the (un-)bounded side of
-  /// the circle through the vertices of f
-  Oriented_side
-  side_of_oriented_circle(Face_handle f,
-                          const Point & p, bool perturb = false) const;
-  /// Determines whether the point p lies on the (un-)bounded side of
-  /// the circle through the points p0, p1 and p2
-  Oriented_side
-  side_of_oriented_circle(const Point &p0, const Point &p1, const Point &p2,
-                          const Point &p, bool perturb) const;
-  /// Determines whether the point (p,o) lies on the (un-)bounded side of
-  /// the circle through the points (p0,o0), (p1,o1) and (p2,o2)
-  Oriented_side
-  side_of_oriented_circle(const Point &p0, const Point &p1, const Point &p2,
-                          const Point &p, const Offset &o0, const Offset &o1, const Offset &o2,
-                          const Offset &o, bool perturb) const;
-
-
-
-  /// Constructs the circumcenter of the face f, respects the offset
-  Point circumcenter(Face_handle f) const
-  {
-    return construct_circumcenter(f->vertex(0)->point(),
-                                  f->vertex(1)->point(),
-                                  f->vertex(2)->point(),
-                                  get_offset(f, 0),
-                                  get_offset(f, 1),
-                                  get_offset(f, 2));
-  }
-  Point construct_circumcenter(const Point &p1, const Point &p2, const Point &p3,
-                               const Offset &o1, const Offset &o2, const Offset &o3) const
-  {
-    return geom_traits().construct_circumcenter_2_object()(p1, p2, p3, o1, o2, o3);
-  }
   //\}
-
 
   /// \name Miscellaneous
   //\{
@@ -1391,13 +1347,6 @@ protected:
   Tds _tds;
   // \}
 
-  /// Returns false, no infinite simplices in the periodic triangulation
-  template <class T>
-  inline bool is_infinite(T) const
-  {
-    return false;
-  }
-
 private:
   /// Inserts (p,o) in the face f and sets the offsets of the newly created faces
   /// Doesn't insert periodic copies
@@ -1424,6 +1373,10 @@ private:
   /// The domain
   Iso_rectangle _domain;
 
+protected:
+  // @fixme this covering stuff should really be at the Delaunay level (will need
+  // to be if P2RT2 is ever introduced...)
+
   /// This threshold should be chosen such that if all edges are shorter,
   /// we can be sure that there are no self-edges anymore.
   FT _edge_length_threshold;
@@ -1434,6 +1387,7 @@ private:
   /// Number of edges that are too long
   size_t _too_long_edge_counter;
 
+private:
   /// map of offsets for periodic copies of vertices
   Virtual_vertex_map _virtual_vertices;
   /// map of a non-virtual vertex to its virtual copies
@@ -3997,105 +3951,6 @@ inline Orientation Periodic_2_triangulation_2<Gt, Tds>::orientation(
   return geom_traits().orientation_2_object()(p0, p1, p2, o0, o1, o2);
 }
 
-
-template<class Gt, class Tds>
-Oriented_side Periodic_2_triangulation_2<Gt, Tds>::side_of_oriented_circle(
-  const Point &p0, const Point &p1, const Point &p2, const Point &p,
-  bool perturb) const
-{
-  Oriented_side os = geom_traits().side_of_oriented_circle_2_object()(p0, p1, p2, p);
-  if ((os != ON_ORIENTED_BOUNDARY) || (!perturb))
-    return os;
-
-  // We are now in a degenerate case => we do a symbolic perturbation.
-
-  // We sort the points lexicographically.
-  const Point * points[4] = { &p0, &p1, &p2, &p };
-  std::sort(points, points + 4, Perturbation_order(this));
-
-  // We successively look whether the leading monomial, then 2nd monomial
-  // of the determinant has non null coefficient.
-  // 2 iterations are enough (cf paper)
-  for (int i = 3; i > 0; --i)
-    {
-      if (points[i] == &p)
-        return ON_NEGATIVE_SIDE; // since p0 p1 p2 are non collinear
-      // and positively oriented
-      Orientation o;
-      if (points[i] == &p2 && (o = orientation(p0, p1, p)) != COLLINEAR)
-        return Oriented_side(o);
-      if (points[i] == &p1 && (o = orientation(p0, p, p2)) != COLLINEAR)
-        return Oriented_side(o);
-      if (points[i] == &p0 && (o = orientation(p, p1, p2)) != COLLINEAR)
-        return Oriented_side(o);
-    }
-  CGAL_triangulation_assertion(false);
-  return ON_NEGATIVE_SIDE;
-}
-
-template<class Gt, class Tds>
-Oriented_side Periodic_2_triangulation_2<Gt, Tds>::side_of_oriented_circle(
-  const Point &p0, const Point &p1, const Point &p2, const Point &p,
-  const Offset &o0, const Offset &o1, const Offset &o2, const Offset &o,
-  bool perturb) const
-{
-  Oriented_side os = geom_traits().side_of_oriented_circle_2_object()(p0, p1, p2, p, o0, o1, o2, o);
-  if ((os != ON_ORIENTED_BOUNDARY) || (!perturb))
-    return os;
-
-  // We are now in a degenerate case => we do a symbolic perturbation.
-  // We sort the points lexicographically.
-  Periodic_point pts[4] = { std::make_pair(p0, o0), std::make_pair(p1, o1),
-                            std::make_pair(p2, o2), std::make_pair(p, o)
-                          };
-  const Periodic_point *points[4] = { &pts[0], &pts[1], &pts[2], &pts[3] };
-
-  std::sort(points, points + 4, Perturbation_order(this));
-
-  // We successively look whether the leading monomial, then 2nd monomial
-  // of the determinant has non null coefficient.
-  // 2 iterations are enough (cf paper)
-  for (int i = 3; i > 0; --i)
-    {
-      if (points[i] == &pts[3])
-        return ON_NEGATIVE_SIDE; // since p0 p1 p2 are non collinear
-      // and positively oriented
-      Orientation orient;
-      if ((points[i] == &pts[2]) && ((orient = orientation(p0, p1, p, o0, o1, o))
-                                     != COLLINEAR))
-        return Oriented_side(orient);
-      if ((points[i] == &pts[1]) && ((orient = orientation(p0, p, p2, o0, o, o2))
-                                     != COLLINEAR))
-        return Oriented_side(orient);
-      if ((points[i] == &pts[0]) && ((orient = orientation(p, p1, p2, o, o1, o2))
-                                     != COLLINEAR))
-        return Oriented_side(orient);
-    }
-  CGAL_triangulation_assertion(false);
-  return ON_NEGATIVE_SIDE;
-}
-
-template<class Gt, class Tds>
-Oriented_side Periodic_2_triangulation_2<Gt, Tds>::side_of_oriented_circle(
-  Face_handle f, const Point & p, bool perturb) const
-{
-  Oriented_side os = ON_NEGATIVE_SIDE;
-
-  int i = 0;
-  // TODO: optimize which copies to check depending on the offsets in
-  // the face.
-  while (os == ON_NEGATIVE_SIDE && i < 4)
-    {
-      os = side_of_oriented_circle(f->vertex(0)->point(), f->vertex(1)->point(), f->vertex(2)->point(), p,
-                                   get_offset(f, 0), get_offset(f, 1), get_offset(f, 2), combine_offsets(Offset(), int_to_off(i)),
-                                   perturb);
-      i++;
-    }
-
-  return os;
-}
-
-
 template<class Gt, class Tds>
 void Periodic_2_triangulation_2<Gt, Tds>::insert_too_long_edges_in_star(Vertex_handle vh)
 {
@@ -4234,52 +4089,6 @@ bool Periodic_2_triangulation_2<Gt, Tds>::edge_is_too_long(const Point &p1,
     const Point &p2) const
 {
   return squared_distance(p1, p2) > _edge_length_threshold;
-}
-
-template<class GT, class Tds>
-inline bool Periodic_2_triangulation_2<GT, Tds>::is_extensible_triangulation_in_1_sheet_h1() const
-{
-  if (!is_1_cover())
-    {
-      if (_too_long_edge_counter == 0)
-        return true;
-      else
-        return false;
-    }
-  else
-    {
-      typename Geom_traits::FT longest_edge_squared_length(0);
-      Segment s;
-      for (Periodic_segment_iterator psit = periodic_segments_begin(UNIQUE); psit
-           != periodic_segments_end(UNIQUE); ++psit)
-        {
-          s = construct_segment(*psit);
-          longest_edge_squared_length = (std::max)(longest_edge_squared_length,
-                                        s.squared_length());
-        }
-      return (longest_edge_squared_length < _edge_length_threshold);
-    }
-}
-
-template<class GT, class Tds>
-inline bool Periodic_2_triangulation_2<GT, Tds>::is_extensible_triangulation_in_1_sheet_h2() const
-{
-  typedef typename Geom_traits::Construct_circumcenter_2 Construct_circumcenter;
-  typedef typename Geom_traits::FT FT;
-  Construct_circumcenter construct_circumcenter =
-    _gt.construct_circumcenter_2_object();
-  for (Periodic_triangle_iterator tit = periodic_triangles_begin(UNIQUE); tit
-       != periodic_triangles_end(UNIQUE); ++tit)
-    {
-      Point cc = construct_circumcenter(tit->at(0).first, tit->at(1).first,
-                                        tit->at(2).first, tit->at(0).second, tit->at(1).second,
-                                        tit->at(2).second);
-
-      if (!(FT(16) * squared_distance(cc, point(tit->at(0))) < (_domain.xmax()
-            - _domain.xmin()) * (_domain.xmax() - _domain.xmin())))
-        return false;
-    }
-  return true;
 }
 
 template<class GT, class Tds>

@@ -77,17 +77,25 @@ void test_global_access()
   CGAL_USE(number_of_stored_edges);
   CGAL_assertion(number_of_stored_edges == t.number_of_stored_edges());
 
+  bool is_triang1 = t_const.is_triangulation_in_1_sheet();
+  CGAL_USE(is_triang1);
+  CGAL_assertion(is_triang1 == t.is_triangulation_in_1_sheet());
+  t.convert_to_1_sheeted_covering();
+  t.convert_to_9_sheeted_covering();
+}
+
+template <class T>
+void test_delaunay_global_access()
+{
+  T t;
+  const T &t_const = t;
+
   bool ext1 = t_const.is_extensible_triangulation_in_1_sheet_h1();
   CGAL_USE(ext1);
   CGAL_assertion(ext1 == t.is_extensible_triangulation_in_1_sheet_h1());
   bool ext2 = t_const.is_extensible_triangulation_in_1_sheet_h2();
   CGAL_USE(ext2);
   CGAL_assertion(ext2 == t.is_extensible_triangulation_in_1_sheet_h2());
-  bool is_triang1 = t_const.is_triangulation_in_1_sheet();
-  CGAL_USE(is_triang1);
-  CGAL_assertion(is_triang1 == t.is_triangulation_in_1_sheet());
-  t.convert_to_1_sheeted_covering();
-  t.convert_to_9_sheeted_covering();
 }
 
 template <class T>
@@ -664,6 +672,7 @@ void test_locally_delaunay()
 template <class T>
 void test_delaunay()
 {
+  test_delaunay_global_access<T>();
   test_batch_insertion<T>();
   test_nearest<T>();
   test_locally_delaunay<T>();
