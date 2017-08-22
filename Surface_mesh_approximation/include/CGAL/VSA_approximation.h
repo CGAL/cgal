@@ -141,6 +141,12 @@ class VSA_approximation {
   };
 
   // member variables
+  // The triangle mesh.
+  const TriangleMesh *m_pmesh;
+  // The error metric.
+  const ErrorMetric *fit_error;
+  // The proxy fitting functor.
+  const ProxyFitting *proxy_fitting;
 
   Construct_vector_3 vector_functor;
   Construct_scaled_vector_3 scale_functor;
@@ -154,13 +160,6 @@ class VSA_approximation {
   // The attached anchor index of a vertex.
   std::map<vertex_descriptor, int> vertex_int_map;
   VertexAnchorMap vanchor_map;
-
-  // The triangle mesh.
-  const TriangleMesh *m_pmesh;
-  // The error metric.
-  const ErrorMetric *fit_error;
-  // The proxy fitting functor.
-  const ProxyFitting *proxy_fitting;
 
   // Proxies.
   std::vector<Proxy> proxies;
@@ -187,9 +186,9 @@ public:
    * Default constructor.
    */
   VSA_approximation() :
+    m_pmesh(NULL),
     fit_error(NULL),
     proxy_fitting(NULL),
-    m_pmesh(NULL),
     seg_pmap(internal_fidx_map),
     vanchor_map(vertex_int_map) {
     GeomTraits traits;
@@ -206,9 +205,9 @@ public:
    */
   VSA_approximation(const ErrorMetric &_fit_error,
     const ProxyFitting &_proxy_fitting) :
+    m_pmesh(NULL),
     fit_error(&_fit_error),
     proxy_fitting(&_proxy_fitting),
-    m_pmesh(NULL),
     seg_pmap(internal_fidx_map),
     vanchor_map(vertex_int_map) {
     GeomTraits traits;
@@ -1211,7 +1210,6 @@ private:
     typedef typename boost::property_map<SubGraph, boost::vertex_index2_t>::type VertexIndex2Map;
     typedef typename boost::property_map<SubGraph, boost::edge_weight_t>::type EdgeWeightMap;
     typedef typename SubGraph::vertex_descriptor sg_vertex_descriptor;
-    typedef typename SubGraph::edge_descriptor sg_edge_descriptor;
     typedef std::vector<sg_vertex_descriptor> VertexVector;
 
     typedef std::map<vertex_descriptor, sg_vertex_descriptor> VertexMap;

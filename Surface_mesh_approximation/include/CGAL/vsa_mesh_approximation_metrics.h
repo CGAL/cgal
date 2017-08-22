@@ -392,10 +392,10 @@ public:
   }
 
 private:
+  const TriangleMesh *mesh;
   std::map<face_descriptor, FT> facet_areas;
   const FacetAreaMap area_pmap;
   const VertexPointMap point_pmap;
-  const TriangleMesh *mesh;
 };
 
 // specialization
@@ -451,10 +451,10 @@ public:
   }
 
 private:
+  const TriangleMesh *mesh;
   std::map<face_descriptor, FT> facet_areas;
   const FacetAreaMap area_pmap;
   const VertexPointMap point_pmap;
-  const TriangleMesh *mesh;
 };
 
 /**
