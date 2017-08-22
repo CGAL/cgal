@@ -464,12 +464,15 @@ detect_features(FT angle_in_degree, std::vector<Polyhedron>& poly)
 
     typedef typename boost::property_map<Polyhedron,CGAL::face_patch_id_t<P_id> >::type PIDMap;
     typedef typename boost::property_map<Polyhedron,CGAL::vertex_incident_patches_t<P_id> >::type VIPMap;
+    typedef typename boost::property_map<Polyhedron, CGAL::edge_is_feature_t>::type EIFMap;
+
     PIDMap pid_map = get(face_patch_id_t<P_id>(), p);
     VIPMap vip_map = get(vertex_incident_patches_t<P_id>(), p);
+    EIFMap eif_map = get(CGAL::edge_is_feature, p);
 
     // Get sharp features
     nb_of_patch_plus_one += PMP::sharp_edges_segmentation(p, angle_in_degree
-      , get(CGAL::edge_is_feature, p)
+      , eif_map
       , pid_map
       , PMP::parameters::first_index(nb_of_patch_plus_one)
       .face_index_map(boost::make_assoc_property_map(face_ids))
