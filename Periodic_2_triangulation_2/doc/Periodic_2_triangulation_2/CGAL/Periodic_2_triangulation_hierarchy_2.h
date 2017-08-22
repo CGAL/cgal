@@ -18,7 +18,7 @@ implementation, only `Periodic_2_Delaunay_triangulation_2` is
 supported for `PTr`.</I>
 
 \tparam PTr::Vertex has to be a model of the concept
-`Periodic_2TriangulationHierarchyVertexBase_2`.
+`TriangulationHierarchyVertexBase_2`.
 
 \tparam PTr::Geom_traits has to be a model of the concept
 `Periodic_2DelaunayTriangulationTraits_2`.
