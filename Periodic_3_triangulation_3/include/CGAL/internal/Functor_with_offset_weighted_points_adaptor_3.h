@@ -23,20 +23,20 @@
 //                 Manuel Caroli <Manuel.Caroli@sophia.inria.fr>
 //                 Aymeric Pellé <Aymeric.Pelle@sophia.inria.fr>
 //                 Mael Rouxel-Labbé
-#ifndef CGAL_FUNCTOR_WITH_OFFSET_WEIGHTED_POINTS_ADAPTOR_H
-#define CGAL_FUNCTOR_WITH_OFFSET_WEIGHTED_POINTS_ADAPTOR_H
+#ifndef CGAL_FUNCTOR_WITH_OFFSET_WEIGHTED_POINTS_ADAPTOR_3_H
+#define CGAL_FUNCTOR_WITH_OFFSET_WEIGHTED_POINTS_ADAPTOR_3_H
 
 #include <CGAL/license/Periodic_3_triangulation_3.h>
 
-#include <CGAL/internal/Functor_with_offset_points_adaptor.h>
+#include <CGAL/internal/Functor_with_offset_points_adaptor_3.h>
 
 namespace CGAL {
 
 template < class K_, class Functor_ >
-class Functor_with_offset_weighted_points_adaptor
-  : public Functor_with_offset_points_adaptor<K_, Functor_>
+class Functor_with_offset_weighted_points_adaptor_3
+  : public Functor_with_offset_points_adaptor_3<K_, Functor_>
 {
-  typedef Functor_with_offset_points_adaptor<K_, Functor_>  Base;
+  typedef Functor_with_offset_points_adaptor_3<K_, Functor_>  Base;
 
   typedef K_                                                Kernel;
   typedef Functor_                                          Functor;
@@ -52,9 +52,9 @@ class Functor_with_offset_weighted_points_adaptor
 public:
   typedef typename Functor::result_type                     result_type;
 
-  Functor_with_offset_weighted_points_adaptor(const Functor_& functor,
-                                              const Construct_point_3& cp,
-                                              const Construct_weighted_point_3& wp)
+  Functor_with_offset_weighted_points_adaptor_3(const Functor_& functor,
+                                                const Construct_point_3& cp,
+                                                const Construct_weighted_point_3& wp)
     : Base(functor, cp), wp(wp)
   { }
 
@@ -139,4 +139,4 @@ public:
 
 }  // namespace CGAL
 
-#endif /* CGAL_FUNCTOR_WITH_OFFSET_WEIGHTED_POINTS_ADAPTOR_H */
+#endif /* CGAL_FUNCTOR_WITH_OFFSET_WEIGHTED_POINTS_ADAPTOR_3_H */

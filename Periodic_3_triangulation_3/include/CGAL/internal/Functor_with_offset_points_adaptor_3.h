@@ -19,15 +19,15 @@
 //                 Manuel Caroli <Manuel.Caroli@sophia.inria.fr>
 //                 Aymeric Pellé <Aymeric.Pelle@sophia.inria.fr>
 //                 Mael Rouxel-Labbé
-#ifndef CGAL_FUNCTOR_WITH_OFFSET_POINTS_ADAPTOR_H
-#define CGAL_FUNCTOR_WITH_OFFSET_POINTS_ADAPTOR_H
+#ifndef CGAL_FUNCTOR_WITH_OFFSET_POINTS_ADAPTOR_3_H
+#define CGAL_FUNCTOR_WITH_OFFSET_POINTS_ADAPTOR_3_H
 
 #include <CGAL/license/Periodic_3_triangulation_3.h>
 
 namespace CGAL {
 
 template < class K_, class Functor_ >
-class Functor_with_offset_points_adaptor
+class Functor_with_offset_points_adaptor_3
   : public Functor_
 {
   typedef K_                                    Kernel;
@@ -41,8 +41,8 @@ class Functor_with_offset_points_adaptor
 public:
   typedef typename Functor::result_type         result_type;
 
-  Functor_with_offset_points_adaptor(const Functor& functor,
-                                     const Construct_point_3& cp)
+  Functor_with_offset_points_adaptor_3(const Functor& functor,
+                                       const Construct_point_3& cp)
     : Functor_(functor), cp(cp)
   { }
 
@@ -75,4 +75,4 @@ public:
 
 }  // namespace CGAL
 
-#endif /* CGAL_FUNCTOR_WITH_OFFSET_POINTS_ADAPTOR_H */
+#endif /* CGAL_FUNCTOR_WITH_OFFSET_POINTS_ADAPTOR_3_H */
