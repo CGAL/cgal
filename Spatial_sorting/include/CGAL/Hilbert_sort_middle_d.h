@@ -118,19 +118,22 @@ public:
      /////////////start recursive calls
      last_dir = (direction + _dimension -1) % _dimension;
      // first step is special
-     sort( places[0], places[1], start, last_dir,cmin,cmax);
+     if (places[1]!=end)
+       sort( places[0], places[1], start, last_dir,cmin,cmax);
      cmin[last_dir] = med[last_dir];
      cmax[last_dir] = maxi[last_dir];
      
 
      for(int i=1; i<two_to_dim-1; i +=2){
        //std::cout<<i<<";"<<start[0]<<start[1]<<start[2]<<start[3]<<"/"<<dir[i+1]<<std::endl;
-       sort( places[i  ], places[i+1], start, dir[i+1],cmin,cmax);
+       if (places[i]!=begin || places[i+1]!=end)
+         sort( places[i  ], places[i+1], start, dir[i+1],cmin,cmax);
        cmax[ dir[i+1] ] =  (cmin[ dir[i+1]]==mini[ dir[i+1]])
 	                    ? maxi[ dir[i+1] ] : mini[ dir[i+1] ];
        cmin[ dir[i+1] ] =  med[ dir[i+1] ];
 
-       sort( places[i+1], places[i+2], start, dir[i+1],cmin,cmax);
+       if (places[i+1]!=begin || places[i+2]!=end)
+         sort( places[i+1], places[i+2], start, dir[i+1],cmin,cmax);
        cmin[ dir[i+1] ] =  cmax[ dir[i+1] ];
        cmax[ dir[i+1] ] =  med[ dir[i+1] ];
        cmax[ last_dir ] = (cmax[last_dir]==maxi[last_dir])
@@ -140,7 +143,8 @@ public:
      }
 
      //last step is special
-     sort( places[two_to_dim-1], places[two_to_dim], start, last_dir,cmin,cmax);
+     if (places[two_to_dim-1]!=begin)
+       sort( places[two_to_dim-1], places[two_to_dim], start, last_dir,cmin,cmax);
     }
 
 

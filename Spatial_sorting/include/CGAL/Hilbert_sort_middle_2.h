@@ -116,10 +116,14 @@ public:
         RandomAccessIterator m3 = 
 	  internal::fixed_hilbert_split (m2, m4, Cmp< y, !upy> (ymed,_k));
 
-        sort<y, upy, upx> (m0, m1, ymin, xmin, ymed, xmed);
-        sort<x, upx, upy> (m1, m2, xmin, ymed, xmed, ymax);
-        sort<x, upx, upy> (m2, m3, xmed, ymed, xmax, ymax);
-        sort<y,!upy,!upx> (m3, m4, ymed, xmax, ymin, xmed);
+        if (m1!=m4)
+          sort<y, upy, upx> (m0, m1, ymin, xmin, ymed, xmed);
+        if (m1!=m0 || m2!=m4)
+          sort<x, upx, upy> (m1, m2, xmin, ymed, xmed, ymax);
+        if (m2!=m0 || m3!=m4)
+          sort<x, upx, upy> (m2, m3, xmed, ymed, xmax, ymax);
+        if (m3!=m0)
+          sort<y,!upy,!upx> (m3, m4, ymed, xmax, ymin, xmed);
     }
 
     template <class RandomAccessIterator>
