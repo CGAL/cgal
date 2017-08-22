@@ -9,6 +9,7 @@
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
 #include <CGAL/Polygon_mesh_processing/distance.h>
+#define CGAL_PMP_REMESHING_VERBOSE
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
 #include <CGAL/Timer.h>
@@ -147,7 +148,6 @@ void angle_remeshing(PolygonMesh& pmesh, const FaceRange& faces, const NamedPara
     t.reset(); t.start();
 #endif
     remesher.init_remeshing(faces);
-
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
     t.stop();
@@ -295,6 +295,7 @@ void area_remeshing(PolygonMesh& pmesh, const FaceRange& faces, const NamedParam
 
     internal::Compatible_remesher<PolygonMesh, VertexPointMap, VCMap, ECMap, GeomTraits>
             remesher(pmesh, vpmap, vcmap, ecmap);
+
 #ifdef CGAL_PMP_REMESHING_VERBOSE
     t.stop();
     std::cout << " done ("<< t.time() <<" sec)." << std::endl;
@@ -448,17 +449,17 @@ void compatible_remeshing(PolygonMesh& pmesh, const FaceRange& faces, const Name
     : choose_param(get_param(np, internal_np::edge_is_constrained),
                    internal::Border_constraint_pmap<PolygonMesh, FaceRange, FIMap>());
 
-    //nb_iterations
+    // nb_iterations
     unsigned int nb_iterations = choose_param(get_param(np, internal_np::number_of_iterations), 20);
 
-    //use weighted angles
+    // use weighted angles
     bool use_weights = choose_param(get_param(np, internal_np::use_weights), false);
 
-    //gradient descent precision
+    // gradient descent precision
     double gd_precision = choose_param(get_param(np, internal_np::gradient_descent_precision), 0.001);
 
     // convergence precision
-    double dist_precision = choose_param(get_param(np, internal_np::distance_precision), 1);
+    double dist_precision = choose_param(get_param(np, internal_np::distance_precision), 0.01);
 
     internal::Compatible_remesher<PolygonMesh, VertexPointMap, VCMap, ECMap, GeomTraits>
             remesher(pmesh, vpmap, vcmap, ecmap);
@@ -504,6 +505,10 @@ void compatible_remeshing(PolygonMesh& pmesh, const FaceRange& faces, const Name
 
         count_iterations++;
 
+#ifdef CGAL_PMP_REMESHING_VERBOSE
+        std::cout<<"iteration:"<<count_iterations<<std::endl;
+#endif
+
         if(dist < dist_precision)
         {
 
@@ -528,14 +533,6 @@ void compatible_remeshing(PolygonMesh& pmesh, const FaceRange& faces, const Name
             break;
         }
     }
-
-
-
-#ifdef CGAL_PMP_REMESHING_VERBOSE
-    t.stop();
-    std::cout << "Remeshing done in ";
-    std::cout << t.time() << " sec." << std::endl;
-#endif
 
 }
 
