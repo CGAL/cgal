@@ -61,6 +61,9 @@ public:
     /// Extend the number of elements by one.
     virtual void push_back() = 0;
 
+    /// Reset element to default value
+    virtual void reset(size_t idx) = 0;
+
     virtual bool transfer(const Base_property_array& other) = 0;
 
     /// Let two elements swap their storage place.
@@ -117,6 +120,11 @@ public: // virtual interface of Base_property_array
     virtual void push_back()
     {
         data_.push_back(value_);
+    }
+
+    virtual void reset(size_t idx)
+    {
+        data_[idx] = value_;
     }
 
     bool transfer(const Base_property_array& other)
@@ -395,6 +403,13 @@ public:
         for (std::size_t i=0; i<parrays_.size(); ++i)
             parrays_[i]->push_back();
         ++size_;
+    }
+
+    // reset element to its default property values
+    void reset(size_t idx)
+    {
+        for (std::size_t i=0; i<parrays_.size(); ++i)
+            parrays_[i]->reset(idx);
     }
 
     // swap elements i0 and i1 in all arrays
