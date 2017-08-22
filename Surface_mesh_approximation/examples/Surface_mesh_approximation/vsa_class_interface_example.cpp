@@ -19,26 +19,15 @@ typedef CGAL::L2Metric<Polyhedron_3> L2Metric;
 typedef CGAL::L2ProxyFitting<Polyhedron_3> L2ProxyFitting;
 typedef CGAL::VSA_approximation<Polyhedron_3, PlaneProxy, L2Metric, L2ProxyFitting> VSA;
 
-int main(int argc, char *argv[])
+int main()
 {
-  if (argc < 5)
-    return EXIT_FAILURE;
-
   // read Polyhedron_3
   Polyhedron_3 mesh;
-  std::ifstream input(argv[1]);
+  std::ifstream input("data/bear.off");
   if (!input || !(input >> mesh) || mesh.empty()) {
     std::cerr << "Invalid off file." << std::endl;
     return EXIT_FAILURE;
   }
-
-  const std::size_t num_proxies = std::atoi(argv[3]);
-  const std::size_t num_iterations = std::atoi(argv[4]);
-  std::vector<int> tris;
-  std::vector<Kernel::Point_3> anchor_pos;
-  int init = std::atoi(argv[2]);
-  if (init < 0 || init > 2)
-    return EXIT_FAILURE;
 
   L2Metric metric(mesh);
   L2ProxyFitting proxy_fitting(mesh);
@@ -50,19 +39,21 @@ int main(int argc, char *argv[])
   l2_approx.set_proxy_fitting(proxy_fitting);
 
   // initialize proxies randomly on the mesh
-  l2_approx.init_proxies(num_proxies, VSA::RandomInit);
+  l2_approx.init_proxies(100, VSA::RandomInit);
   
   // run the iteration to minimize the error
-  for (std::size_t i = 0; i < num_iterations; ++i)
+  for (std::size_t i = 0; i < 30; ++i)
     l2_approx.run_one_step();
 
   // add proxies to the one with the maximum fitting error
   l2_approx.add_proxies(VSA::IncrementalInit, 3);
-  for (std::size_t i = 0; i < 5; ++i)
+  for (std::size_t i = 0; i < 10; ++i)
     l2_approx.run_one_step();
 
-  // teleport the proxies from local minimal
-  l2_approx.teleport_proxies(3, false);
+  // merge and teleport the proxies from local minimal
+  l2_approx.teleport_proxies(2);
+  for (std::size_t i = 0; i < 10; ++i)
+    l2_approx.run_one_step();
 
   // extract the approximation polyhedron
   Polyhedron_3 out_mesh;

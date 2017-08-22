@@ -21,17 +21,22 @@ typedef Polyhedron_3::Facet_iterator Facet_iterator;
 typedef boost::associative_property_map<std::map<Facet_handle, FT> > FacetAreaMap;
 typedef boost::associative_property_map<std::map<Facet_handle, Point_3> > FacetCenterMap;
 
+// proxy
 struct PointProxy {
   Facet_handle seed;
   Point_3 center;
 };
 
+// metric functor
 struct CompactMetric {
   typedef PointProxy Proxy;
 
+  // keeping a precomputed property map to speed up the computation
   CompactMetric(const FacetCenterMap &_center_pmap)
     : center_pmap(_center_pmap) {}
 
+  // calculate the error of a facet to a proxy
+  // here is just the Euclidean distance
   FT operator()(const Facet_handle &f, const PointProxy &px) const {
     return FT(std::sqrt(CGAL::to_double(
       CGAL::squared_distance(center_pmap[f], px.center))));
@@ -40,12 +45,15 @@ struct CompactMetric {
   const FacetCenterMap center_pmap;
 };
 
+// proxy fitting functor
 struct PointProxyFitting {
   typedef PointProxy Proxy;
 
+  // keeping precomputed property maps to speed up the computation
   PointProxyFitting(const FacetCenterMap &_center_pmap, const FacetAreaMap &_area_pmap)
     : center_pmap(_center_pmap), area_pmap(_area_pmap) {}
 
+  // a template functor fit a new proxy from a range of facets
   template<typename FacetIterator>
   PointProxy operator()(const FacetIterator beg, const FacetIterator end) const {
     // fitting center
@@ -71,18 +79,15 @@ typedef CGAL::VSA_approximation<Polyhedron_3, PointProxy, CompactMetric, PointPr
 
 int main(int argc, char *argv[])
 {
-  if (argc < 5)
-    return EXIT_FAILURE;
-
   // create and read Polyhedron_3
   Polyhedron_3 mesh;
-  std::ifstream input(argv[1]);
+  std::ifstream input("data/bear.off");
   if (!input || !(input >> mesh) || mesh.empty()) {
     std::cerr << "Invalid off file." << std::endl;
     return EXIT_FAILURE;
   }
 
-  // construct facet normal & area map
+  // construct precomputed facet normal and area map
   std::map<Facet_handle, FT> facet_areas;
   std::map<Facet_handle, Point_3> facet_centers;
   for(Facet_iterator fitr = mesh.facets_begin(); fitr != mesh.facets_end(); ++fitr) {
@@ -97,12 +102,6 @@ int main(int argc, char *argv[])
   FacetAreaMap area_pmap(facet_areas);
   FacetCenterMap center_pmap(facet_centers);
 
-  const std::size_t num_proxies = std::atoi(argv[3]);
-  const std::size_t num_iterations = std::atoi(argv[4]);
-  int init = std::atoi(argv[2]);
-  if (init < 0 || init > 2)
-    return EXIT_FAILURE;
-
   CompactMetric metric(center_pmap);
   PointProxyFitting proxy_fitting(center_pmap, area_pmap);
 
@@ -112,8 +111,9 @@ int main(int argc, char *argv[])
   compact_approx.set_error_metric(metric);
   compact_approx.set_proxy_fitting(proxy_fitting);
 
-  compact_approx.init_proxies(num_proxies, CompactVSA::RandomInit);
-  for (std::size_t i = 0; i < num_iterations; ++i)
+  // using 200 proxies to approximate the shape
+  compact_approx.init_proxies(200, CompactVSA::HierarchicalInit);
+  for (std::size_t i = 0; i < 30; ++i)
     compact_approx.run_one_step();
 
   return EXIT_SUCCESS;
