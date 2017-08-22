@@ -460,61 +460,63 @@ public:
    * The proxies are not updated. Here if we specify more than one proxy this means we
    * need to select on one side the set of N best pairs of adjacent regions to merge,
    * and match them with N regions in most need of being split. The matching can be done in a naive iterative fashion for now.
-   * @param force true if force the teleportation (attempt to escape from local minima), else teleport only if it is beneficial to the error.
+   * @param if_test true if do the merge test before the teleportation (attempt to escape from local minima).
    * @return #proxies teleported.
    */
-  std::size_t teleport_proxies(const std::size_t &num_proxies, const bool &force) {
-    typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor edge_descriptor;
-    typedef std::pair<std::size_t, std::size_t> ProxyPair;
-    typedef std::set<ProxyPair> MergedPair;
-
-    // find worst proxy
-    std::vector<FT> px_error(proxies.size(), FT(0));
-    compute_fitting_error(px_error);
-    std::size_t px_worst = 0;
-    FT max_error = px_error.front();
-    for (std::size_t i = 0; i < proxies.size(); ++i) {
-      if (max_error < px_error[i]) {
-        max_error = px_error[i];
-        px_worst = i;
-      }
-    }
-    std::list<face_descriptor> worst_patch;
-    BOOST_FOREACH(face_descriptor f, faces(*m_pmesh)) {
-      if (seg_pmap[f] == px_worst)
-        worst_patch.push_back(f);
-    }
-    // not enough facets to teleport
-    if (worst_patch.size() < num_proxies + 1)
-      return 0;
-
-    std::size_t num_merged = 0;
-    while (num_merged < num_proxies) {
-      // find the best merge pair
-      std::size_t px_enlarged = 0, px_merged = 0;
-      if (!find_best_merge(px_enlarged, px_merged, !force))
-        return num_merged;
-      if (px_worst == px_enlarged || px_worst == px_merged)
-        return num_merged;
-
-      // teleport to a facet in the worst region
-      BOOST_FOREACH(face_descriptor f, worst_patch) {
-        if (f != proxies[px_worst].seed) {
-          proxies.push_back(fit_new_proxy(f));
-          worst_patch.remove(f);
-          break;
+  std::size_t teleport_proxies(const std::size_t &num_proxies, const bool &if_test = true) {
+    std::size_t num_teleported = 0;
+    while (num_teleported < num_proxies) {
+      // find worst proxy
+      std::vector<FT> px_error(proxies.size(), FT(0));
+      compute_fitting_error(px_error);
+      std::size_t px_worst = 0;
+      FT max_error = px_error.front();
+      for (std::size_t i = 0; i < proxies.size(); ++i) {
+        if (max_error < px_error[i]) {
+          max_error = px_error[i];
+          px_worst = i;
         }
       }
+      bool found = false;
+      face_descriptor tele_to;
+      BOOST_FOREACH(face_descriptor f, faces(*m_pmesh)) {
+        if (found)
+          break;
+        if (seg_pmap[f] == px_worst) {
+          if (f != proxies[px_worst].seed) {
+            tele_to = f;
+            found = true;
+          }
+        }
+      }
+      // no where to teleport
+      if (!found)
+        return num_teleported;
 
-      if (merge(px_enlarged, px_merged))
-        num_merged++;
-      else
-        return num_merged;
+      // find the best merge pair
+      std::size_t px_enlarged = 0, px_merged = 0;
+      if (!find_best_merge(px_enlarged, px_merged, if_test))
+        return num_teleported;
+      if (px_worst == px_enlarged || px_worst == px_merged)
+        return num_teleported;
+
+      // teleport to a facet to the worst region
+      seg_pmap[tele_to] = proxies.size();
+      proxies.push_back(fit_new_proxy(tele_to));
+
+      merge(px_enlarged, px_merged);
+      num_teleported++;
+
+      // coarse re-fitting
+      for (std::size_t i = 0; i < 5; ++i) {
+        partition();
+        fit();
+      }
 
       std::cerr << "teleported" << std::endl;
     }
 
-    return num_merged;
+    return num_teleported;
   }
 
   /*!
