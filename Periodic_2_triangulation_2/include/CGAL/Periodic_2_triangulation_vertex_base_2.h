@@ -119,21 +119,6 @@ operator<<(std::ostream &os,
   return os;
 }
 
-// Specialization for void.
-template <>
-class Periodic_2_triangulation_vertex_base_2<void>
-{
-public:
-  typedef Dummy_tds_2                                   Triangulation_data_structure;
-  typedef Triangulation_data_structure::Vertex_handle   Vertex_handle;
-  typedef Triangulation_data_structure::Face_handle     Face_handle;
-  template <typename Tds2>
-  struct Rebind_Tds
-  {
-    typedef Periodic_2_triangulation_vertex_base_2<Tds2> Other;
-  };
-};
-
 } //namespace CGAL
 
 #endif // CGAL_PERIODIC_2_TRIANGULATION_VERTEX_BASE_2_H
