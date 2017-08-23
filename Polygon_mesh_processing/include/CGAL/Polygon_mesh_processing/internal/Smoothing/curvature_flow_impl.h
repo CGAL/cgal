@@ -73,19 +73,11 @@ class Curvature_flow
 
     typedef Cotangent_weight<PolygonMesh, VertexPointMap> Weight_calculator;
 
-    /*
-    typedef CGAL::internal::Cotangent_weight<PolygonMesh, VertexPointMap,
-                            CGAL::internal::Cotangent_value_minimum_zero<PolygonMesh, VertexPointMap,
-                                                                         CGAL::internal::Cotangent_value_Meyer_secure<PolygonMesh, VertexPointMap> > >
-    Edge_weight_calculator;
-    */
-
 public:
 
     Curvature_flow(PolygonMesh& pmesh, VertexPointMap& vpmap, VertexConstraintMap& vcmap, EdgeConstraintMap& ecmap) :
         mesh_(pmesh), vpmap_(vpmap), vcmap_(vcmap), ecmap_(ecmap),
         weight_calculator_(pmesh, vpmap)
-        //edge_weight_calculator_(pmesh, vpmap)
     {}
 
     template<typename FaceRange>
@@ -132,11 +124,7 @@ public:
                     //check_degeneracy(hi);
 
                     // weight
-                    //double edge_weight = edge_weight_calculator_(hi);
-                    double angle_weight = weight_calculator_(hi, incd_edges); // to fix
-
-                    double weight = angle_weight; // temp
-
+                    double weight = weight_calculator_(hi, incd_edges);;
                     sum_cot_weights += weight;
 
                     // displacement vector
@@ -295,7 +283,6 @@ private:
     GeomTraits traits_;
     std::set<vertex_descriptor> vrange;
     Weight_calculator weight_calculator_;
-    //Edge_weight_calculator edge_weight_calculator_;
 
 
 };
