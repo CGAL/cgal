@@ -40,8 +40,6 @@
 #include <CGAL/Triangulation_utils_2.h>
 
 #include <CGAL/Triangulation_data_structure_2.h>
-#include <CGAL/Triangulation_vertex_base_2.h>
-#include <CGAL/Triangulation_face_base_2.h>
 #include <CGAL/Periodic_2_triangulation_face_base_2.h>
 #include <CGAL/Periodic_2_triangulation_vertex_base_2.h>
 #include <CGAL/Periodic_2_triangulation_iterators_2.h>
