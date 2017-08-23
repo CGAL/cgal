@@ -3,7 +3,7 @@
 \cgalConcept
 
 The concept `Proxy` describes the parameterized shape used in the Variational Shape Approximation algorithm.
-It is nexsted within the `ErrorMetric` and `ProxyFitting` concepts.
+It is nested within the `ErrorMetric` and `ProxyFitting` concepts.
 
 \cgalHasModel `PlaneProxy`
 */

@@ -24,15 +24,28 @@
 
 \cgalClassifedRefPages
 
+## Parameters ##
+Optional parameters of the functions of this package
+are implemented as BGL named parameters.
+The page \ref namedparameters describes their usage
+and provides a list of the parameters that are used in this package.
+
 ## Concepts ##
 - `Proxy`
 - `ErrorMetric`
 - `ProxyFitting`
-- `PlaneFitting`
 
 ## Main Functions ##
-- `CGAL::vsa_approximate()`
-- `CGAL::vsa_extract()`
-- `CGAL::vsa_approximate_and_extract()`
+- `CGAL::vsa_mesh_approximation()`
+
+## Classes ##
+- `CGAL::PlaneProxy`
+- `CGAL::L21Metric`
+- `CGAL::L21ProxyFitting`
+- `CGAL::L2Metric`
+- `CGAL::L2ProxyFitting`
+- `CGAL::VSA_approximation`
+
+\todo guarantee manifold output mesh
 
 */

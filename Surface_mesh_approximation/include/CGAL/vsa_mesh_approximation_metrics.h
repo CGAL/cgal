@@ -11,11 +11,14 @@
 
 namespace CGAL
 {
-/**
+/*!
+ * \ingroup PkgTSMA
  * @brief Plane proxy class for the Variational Shape Approximation algorithm.
  *
  * It is simply a class containing few proxy parameters.
  * It is used as the default proxy for the `L21Metric` and `L2Metric`
+ *
+ * \cgalModels `Proxy`
  *
  * @tparam TriangleMesh a triangle `FaceGraph`
  * @tparam GeomTraits geometric traits
@@ -37,9 +40,13 @@ public:
   Plane_3 fit_plane;
 };
 
-/**
+/*!
+ * \ingroup PkgTSMA
  * @brief L21 metric class for the Variational Shape Approximation algorithm.
  * It is simply a functor that takes a facet and a proxy, returns the L21 error between them.
+ *
+ * \cgalModels `ErrorMetric`
+ *
  * @tparam TriangleMesh a triangle `FaceGraph`
  * @tparam VertexPointMap a property map containing the vertex points,
            and `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type,
@@ -173,9 +180,13 @@ private:
   Construct_sum_of_vectors_3 sum_functor;
 };
 
-/**
+/*!
+ * \ingroup PkgTSMA
  * @brief L21 proxy fitting class for the Variational Shape Approximation algorithm.
  * It is simply a functor that takes a range of facets, fitting the proxy parameters.
+ *
+ * \cgalModels `ProxyFitting`
+ *
  * @tparam TriangleMesh a triangle `FaceGraph`
  * @tparam VertexPointMap a property map containing the vertex points,
            and `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type,
@@ -333,9 +344,13 @@ private:
   Construct_sum_of_vectors_3 sum_functor;
 };
 
-/**
+/*!
+ * \ingroup PkgTSMA
  * @brief L2 metric class for the Variational Shape Approximation algorithm.
  * It is simply a functor that takes a facet and a proxy, returns the L2 error between them.
+ *
+ * \cgalModels `ErrorMetric`
+ *
  * @tparam TriangleMesh a triangle `FaceGraph`
  * @tparam VertexPointMap a property map containing the vertex points,
            and `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type,
@@ -457,10 +472,14 @@ private:
   const VertexPointMap point_pmap;
 };
 
-/**
+/*!
+ * \ingroup PkgTSMA
  * @brief L2 proxy fitting class for the Variational Shape Approximation algorithm.
  * It is simply a functor that takes a range of facets, fitting the L2 proxy parameters.
  * It uses the PCA algorithm to fit the proxy parameters.
+ *
+ * \cgalModels `ProxyFitting`
+ *
  * @tparam TriangleMesh a triangle `FaceGraph`
  * @tparam VertexPointMap a property map containing the vertex points,
            and `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type,

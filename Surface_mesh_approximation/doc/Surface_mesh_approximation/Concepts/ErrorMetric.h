@@ -3,7 +3,7 @@
 \cgalConcept
 
 The concept `ErrorMetric` is requied to operate on a facet and a proxy, returns the fitting error.
-It is used in the functions `vsa_approximate()`, `vsa_extract()`, `vsa_approximate_and_extract()`.
+It is used in the function `vsa_mesh_approximation()`.
 
 \cgalHasModel `L21Metric`
 \cgalHasModel `L2Metric`
@@ -23,7 +23,7 @@ public:
   /// @{
 
   /// returns the fitting error of a facet f to the proxy px.
-  FT operator()(const facet_descriptor &f, const Proxy &px);
+  FT operator()(const facet_descriptor &f, const Proxy &px) const;
 
   /// }
 };

@@ -2,8 +2,8 @@
 \ingroup PkgTSMAConcepts
 \cgalConcept
 
-The concept `ProxyFitting` is a function object class that fit a proxy from a range of facets.
-It is used in the functions `vsa_approximate()`, `vsa_extract()`, `vsa_approximate_and_extract()`.
+The concept `ProxyFitting` is required to fit a shape `Proxy` from a range of facets.
+It is used in the functions `vsa_mesh_approximation()`.
 
 \cgalHasModel `L21ProxyFitting`
 \cgalHasModel `L2ProxyFitting`

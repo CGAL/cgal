@@ -6,53 +6,140 @@ namespace CGAL {
 \cgalAutoToc
 \authors Pierre Alliez, Lingjie Zhu
 
+\cgalFigureBegin{Approximation_masque_main, masque_vsa.png}
+Running the variational shape approximation to the masque model. 
+Left: the partition using 100 plane proxies on the input surface with 62K triangles. 
+Right: the extracted triangle mesh with less than 250 triangles.
+\cgalFigureEnd
+
 \section sma_introduction Introduction
 
-At the core of numerous applications ranging from geometry compression to reverse engineering, finding the concise and faithful approximation of an excessively verbose 3D data (in particular, scanned meshes) is the key for subsequent geometry processing and reducing the computational cost.
+For many applications ranging from geometry compression to reverse engineering,
+finding the concise and faithful approximation of an excessively verbose 3D data 
+(in particular, scanned meshes) is beneficial for subsequent processing and may 
+reduce the computational cost dramatically.
 
-This package implements the <em>Variational Shape Approximation</em> \cgalCite{botsch2010PMP} (VSA) framework to approximate the triangle surface. Given a triangulated surface mesh (simply <em>mesh</em> in the following), the VSA uses the Lloyd's iteration to drive the distortion error down with the concept of geometryic <em>proxy</em>. The overview of the algorithm can be found in \ref sma_approximation.
+This package implements the <em>Variational Shape Approximation</em> \cgalCite{cgal:cad-vsa-04} (VSA) 
+framework to approximate a triangle surface with shape primitives. Given a triangulated surface mesh 
+(simply <em>mesh</em> in the following), the VSA uses the Lloyd's iteration \cgalCite{cgal:l-lsqp-82} 
+to drive the distortion error down with the parameterized <em>geometric proxies</em>. The overview of the algorithm can be found in \ref sma_approximation.
 
-This package offers both the approximation and the approximated mesh extraction functions. They can be accessed as simple free functions or advanced class-based interfaces. This allows an alternative approach to used the default metrics or plug the user-defined proxy and metrics into the VSA framework. It can be viewed as not only an approximation package, but also a simplification, shape discovery one or a complement to current mesh segmentation package.
+This package offers both the approximation and mesh extraction functionalities. 
+They can be accessed as simple free functions or more advanced interactive class-based interfaces with customized metric and proxy. 
+It can be used as not only an approximation package, but also a mesh simplification, shape discovery one or a complement to current mesh segmentation package.
 
-\section sma_overview Overview of the Approximation Process
+\section sma_overview Overview
 
-\subsection sma_approximation Approximation
+\subsection sma_approximation Variational Shape Approximation
 
-Explain: Proxy, Metric, LLoyd, Initialization
+The VSA framework consists of two basic components:
 
-The proxy is simply a parameterized description of a facets patch. This package provide the simple basic `PlaneProxy` which .
+- <em>Geometric proxies</em> \f$ P \f$ as a best-fit geometric surrogate to effectively circumvent topological issues; 
+
+- <em>Shape error metrics</em> \f$ E \f$ to measure how well a proxy fits a piece of geometry \f$ \mathcal{R} \f$.
+
+Given an error metric \f$ E \f$, a desired number \f$ k \f$ of proxies, 
+and an input surface \f$ S \f$, we call optimal shape proxies a set \f$ P \f$ of proxies \f$ P_i \f$ 
+associated to the regions \f$ R_i\f$ of a partition \f$ \mathcal{R} \f$ of \f$ S \f$ that minimizes the total distortion:
+
+\f[ E(\mathcal{R}, P) = \sum_{i = 1..k} E(\mathcal{R}_i, P_i). \f]
+
+By casting the approximation problem into an optimal discrete clustering one, 
+the algorithm utilize the simple and effective Lloyd algorithm \cgalCite{cgal:cad-vsa-04} to drive the total error down iteratively. 
+More specifically, every region can be characterized by a single, "average" proxy. 
+After defining \f$ k \f$ proxy, all the triangle facets are partitioned into \f$ k \f$ regions by assigning each facet to its nearest proxy. 
+Then, the algorithm updates the proxies \f$ P_i \f$ with each piece of corresponding region \f$ R_i \f$. This process is repeated until a stopping criterion is met.
+
+\subsection sma_metrics Metrics on Proxies
+
+Often each region \f$ \mathcal{R}_i \f$ of a partition \f$ \mathcal{R} \f$ can be summarily represented to first order as an "average" point \f$ X_i \f$ and an "average" normal \f$ N_i \f$. 
+We denote such local representive pair \f$ P_i = (X_i, N_i) \f$, a <em>plane proxy</em> of the associated region. In the package, we provide such plane proxy as `CGAL::PlaneProxy`.
+
+Defining an appropriate error metric is the key ingredient for the algorithm. 
+The \f$ \mathcal{L}^2 \f$ metric is defined as:
+\f[ \mathcal{L}^2 = \iint_{x \in \mathcal{R}_i}\Vert x - \Pi_i(x)\Vert^2 dx. \f] 
+where \f$ \Pi_i(\cdot) \f$ denotes the orthogonal projection of the argument on the "proxy plane" goint through \f$ X_i \f$ and normal to \f$ N_i \f$.
+
+The \f$ \mathcal{L}^2 \f$ metric tries to match geometry through approximation of the geometric position. 
+In the paper \cgalCite{cgal:cad-vsa-04}, the author proposed a novel \f$ \mathcal{L}^{2,1} \f$ metrics with the belief that normal field is fundamental to the visual interpretation of the shape. The \f$ \mathcal{L}^{2,1} \f$ is defined as:
+\f[ \mathcal{L}^{2,1}(\mathcal{R}_i, P_i) = \iint_{x \in \mathcal{R}_i}\Vert \mathbf{n}(x) - \mathbf{n}_i\Vert^2 dx. \f]
+
+The \f$ \mathcal{L}^{2,1} \f$ is numerically superior to \f$ \mathcal{L}^2 \f$ in several ways:
+- The anisotropy of the surface is better captured.
+- Finding the best normal proxy is as simple as averaging the normals.
+
+In the package, we provide both two metrics as `CGAL::L2Metric` and `CGAL::L21Metric` respectively. 
+Of course, we are not limited to those two metrics. The algorithm framework is extensible and we could define our own metrics and plug it in as we can see in \ref sma_example3.
+
+\subsection sma_seeding Seeding
+
+\cgalFigureBegin{vsa_init_comparison, vsa_init_comparison_200_30.png}
+Comparison of different seeding strategies, all with \f$ \mathcal{L}^{2,1} \f$ metrics and 200 proxies.
+From left to right are random, incremental and hierarchical initialization respectively.
+\cgalFigureEnd
+
+It is no surprise that, the algorithm relys on the initial state of the proxies. There are 3 different seeding strategies:
+- Random. The proxies are initialized randomly from the geometry.
+- Incremental. Each time a proxy is added to the furthest region.
+- Hierarchical. Each time different number of proxies are added to the regions proportional to the fitting error.
+From \cgalFigureRef{vsa_init_comparison} we can see the effect of seeding strategies. Generally speaking, random initialization is even in position and very fast, incremental one focuses on the most distorted region and can be pretty slow. Hierarchical initialization gives fitting patches with more evenly distributed fitting errors and the time consumption is somewhere in between the former two.
+
+\subsection sma_operations Refinement Operations
+
+To get better approximation of the geometry, some refinement operations are available to improve result.
+- Merging. Merge two adjacent regions without significant error increase.
+- Splitting. Split regions with higher error into smaller ones to reduce the error.
+- Region teleportation. It can be used to teleport local minimum regions to other places.
+- Adding proxies. Generally, with more proxies we can aproximate the geometry better.
+In the package, you can use the class interface to manipulate the approximation process with above operations as shown in \ref sma_example2.
 
 \subsection sma_extraction Mesh Extraction
 
-Explain: Anchor, Pseudo-CDT, Non-manifold.
+This package also implement the meshing algorithm described in \cgalCite{cgal:cad-vsa-04}. 
+Basically, it attaches an anchor point to each intersection vertex and approximate the boundary of the geometry partition. 
+Then each polygon boundary is triangulated and assembled to produce the output mesh. 
+Currently, there is no guarantee that the output mesh is 2-manifold. 
+In general, it is more likely to generate non-manifold on complicate shapes. 
+Thus the package provide alternate indexed triangles output as well.
 
-\subsection sma_interface Interface
+\subsection sma_api API
 
-This package can thus be used either with `Polyhedron_3`, `Surface_mesh`, or
-any class model of the concept `FaceGraph` described in \ref chapterBGL.
+This package can be used either with `Polyhedron_3`, `Surface_mesh`, or any class model of the concept `FaceGraph` described in \ref chapterBGL.
 
-Approximate a triangle mesh and extract the approximated triangle surface, using:
-- `CGAL::vsa_approximate()` : given a triangle mesh, approximate the geometry and output the facet proxy index map.
-- `CGAL::vsa_extract()` : given a triangle mesh, approximate the geometry and output the approximated triangle surface.
-- `CGAL::vsa_approximate_and_extract()` : given a triangle mesh, approximate the geometry, output the facet proxy index map and extract the approximated triangle surface.
+Free function with \ref namedparameters options.
+- `CGAL::vsa_mesh_approximation()` : given a triangle mesh, approximate the geometry with default L21 metric.
+
+Class interface:
+- `CGAL::VSA_approximation`: allowing more customization of the proxy, metric and approximation process.
+
+The input of the algorithm is expected to be:
+- Combinatorially 2-manifold
+- Triangulated
 
 \section sma_examples Examples
 
-\subsection sma_example1 Approximate a Mesh
+\subsection sma_example1 Free function
 
-The following example calls the functions `CGAL::vsa_extract()` on the input triangle mesh.
+The following example calls the free function `CGAL::vsa_mesh_approximation()` on the input triangle mesh with default `CGAL::L21Metric`. 
+The function parameters are provided through \ref namedparameters.
 
-\cgalExample{Surface_mesh_approximation/vsa_extraction_example.cpp}
+\cgalExample{Surface_mesh_approximation/vsa_example.cpp}
 
-\subsection sma_example2 Using L2 metric
+\subsection sma_example2 Class interface
 
-The following example use the L2 metric to approximate the shape.
+\cgalFigureBegin{vsa_metric_comparison, vsa_metric_comparison_200_30.png}
+Comparison of different metrics, all with 200 proxies and hierarchical seeding.
+From left to right are \f$ \mathcal{L}^{2,1} \f$ metric, \f$ \mathcal{L}^2 \f$ metric and the compact metric in \ref sma_example3 respectively.
+\cgalFigureEnd
 
-\cgalExample{Surface_mesh_approximation/vsa_l2_metric_example.cpp}
+The following example use the build-in `CGAL::L2Metric` to approximate the shape. 
+With the class interface `CGAL::VSA_approximation`, we can achieve flexible and interactive manipulation of the algorithm.
 
-\subsection sma_example3 User-defined Proxy
+\cgalExample{Surface_mesh_approximation/vsa_class_interface_example.cpp}
 
-We could use self-defined proxy and error for the approximation algorithm. In the following example, we define a simple point-wise proxy to achieve a compact patch approximation of the shape:
+\subsection sma_example3 Self-defined proxy and metric
+
+In the following example, it defines a simple point-wise proxy to achieves a compact patch approximation of the shape. The result is shown in \cgalFigureRef{vsa_metric_comparison}.
 
 \cgalExample{Surface_mesh_approximation/vsa_metric_example.cpp}
 
@@ -62,8 +149,8 @@ We could use self-defined proxy and error for the approximation algorithm. In th
 
 This package is the result of the work of Lingjie Zhu during the 2017 season
 of the Google Summer of Code. He has been mentored by Pierre Alliez.
-The code is based on an initial research code written by Pierre Alliez in XXXX,
-for a paper published at XXXX.
+The code is based on an initial research code written by Pierre Alliez in INRIA 2003,
+for a paper published at \cgalCite{cgal:cad-vsa-04}.
 
 */
 

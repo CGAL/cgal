@@ -24,6 +24,7 @@
 namespace CGAL
 {
 /*!
+ * \ingroup PkgTSMA
  * @brief Main class for Variational Shape Approximation algorithm.
  * @tparam TriangleMesh a CGAL TriangleMesh
  * @tparam ErrorMetric error metric type
@@ -258,7 +259,7 @@ public:
    * @brief Initialize by number of proxies.
    * @param num_proxy number of proxies
    * @param seeding_method select one of the seeding method: random, hierarchical, incremental
-   * @return #proxies initialized
+   * @return number of proxies initialized
    */
   std::size_t init_proxies(const std::size_t num_proxy, const Initialization &seeding_method) {
     proxies.clear();
@@ -279,7 +280,7 @@ public:
    * @brief Initialize by targeted error drop.
    * @param target_drop targeted error drop to initial state, usually in range (0, 1)
    * @param seeding_method select one of the seeding method: random, hierarchical, incremental
-   * @return #proxies initialized
+   * @return number of proxies initialized
    */
   std::size_t init_proxies_error(const FT &target_drop, const Initialization &seeding_method) {
     proxies.clear();
@@ -353,7 +354,7 @@ public:
   /*!
    * @brief This function run the algorithm until the no significant energy drop.
    * @param drop_threshold the percentage of energy drop to between two runs, usually in range [0, 1).
-   * @param max_iteration the maximum number of iterations allowed
+   * @param max_iterations the maximum number of iterations allowed
    * @return true if the algorithm converge, false otherwise.
    */
   bool run_until_convergence(const FT drop_threshold = FT(0.05),
@@ -439,7 +440,8 @@ public:
    * @brief Adding proxies. The proxies are not updated via fitting process.
    * @param num_proxies number of proxies
    * @param adding_method select one of the adding method: hierarchical or incremental(furthest).
-   * @return #proxies successfully added.
+   * @param inner_iteration the coarse re-fitting iteration before incremental insertion
+   * @return number of proxies successfully added.
    */
   std::size_t add_proxies(const Initialization &adding_method,
     const std::size_t &num_proxies = 1,
@@ -455,12 +457,12 @@ public:
   }
 
   /*!
-   * @brief Teleport the local minima to other places, this combines the merging and adding processes
-   * The proxies are not updated. Here if we specify more than one proxy this means we
-   * need to select on one side the set of N best pairs of adjacent regions to merge,
-   * and match them with N regions in most need of being split. The matching can be done in a naive iterative fashion for now.
+   * @brief Teleport the local minima to the worst region, this combines the merging and adding processes.
+   * The partitioning are updated.
+   * Here if we specify more than one proxy this means we teleport in a naive iterative fashion.
+   * @param num_proxies number of proxies request to teleport
    * @param if_test true if do the merge test before the teleportation (attempt to escape from local minima).
-   * @return #proxies teleported.
+   * @return number of proxies teleported.
    */
   std::size_t teleport_proxies(const std::size_t &num_proxies, const bool &if_test = true) {
     std::size_t num_teleported = 0;
@@ -700,7 +702,8 @@ public:
   /*!
    * @brief Get the facet-proxy index map.
    * @tparam FacetProxyMap `WritablePropertyMap` with
-   * `boost::graph_traits<TriangleMesh>::face_descriptor` as key and `std::size_t` as value type
+   * `boost::graph_traits<TriangleMesh>::%face_descriptor` as key and `std::size_t` as value type
+   * @param[out] facet_proxy_map facet proxy index map
    */
   template <typename FacetProxyMap>
   void get_proxy_map(FacetProxyMap &facet_proxy_map) {
@@ -791,7 +794,7 @@ private:
   /*!
    * @brief Random initialize proxies.
    * @param initial_px number of proxies
-   * @return #proxies initialized
+   * @return number of proxies initialized
    */
   std::size_t seed_random(const std::size_t initial_px) {
     const std::size_t interval = num_faces(*m_pmesh) / initial_px;
@@ -811,7 +814,7 @@ private:
    * @param initial_px number of proxies
    * @param inner_iteration number of iterations of coarse re-fitting
    * before each incremental proxy insertion
-   * @return #proxies initialized
+   * @return number of proxies initialized
    */
   std::size_t seed_incremental(const std::size_t initial_px,
     const std::size_t inner_iteration = 5) {
@@ -829,7 +832,7 @@ private:
    * @param initial_px number of proxies
    * @param inner_iteration number of iterations of coarse re-fitting
    * before each hierarchical proxy insertion
-   * @return #proxies initialized
+   * @return number of proxies initialized
    */
   std::size_t seed_hierarchical(const std::size_t initial_px,
     const std::size_t inner_iteration = 5) {
@@ -895,7 +898,7 @@ private:
    * Except for the first one, a coarse re-fitting is performed before each proxy is inserted.
    * @param num_proxies number of proxies to be inserted
    * @param inner_iteration the number of iterations of coarse re-fitting
-   * @return #proxies inserted
+   * @return number of proxies inserted
    */
   std::size_t insert_proxy_furthest(const std::size_t num_proxies,
     const std::size_t inner_iteration = 5) {
