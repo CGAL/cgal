@@ -106,6 +106,14 @@ public:
   typedef typename Dt::Geom_traits                  Gt;
   typedef typename Dt::Triangulation_data_structure Tds;
 
+  // The Exact Comparison Tag cannot be used in conjonction with periodic triangulations
+  // because the periodic triangulations' point() function return a temporary
+  // value while the lazy predicate evaluations that are used when the Exact tag
+  // is set to true rely on a permanent and safe access to the points.
+  CGAL_static_assertion(
+   (boost::is_same<ExactAlphaComparisonTag, Tag_false>::value) ||
+   (boost::is_same<typename Dt::Periodic_tag, Tag_false>::value));
+
   //extra the type used for representing alpha according to ExactAlphaComparisonTag
   typedef typename internal::Alpha_nt_selector_3<Gt,ExactAlphaComparisonTag,typename Dt::Weighted_tag>::Type_of_alpha  NT;
   typedef typename internal::Alpha_nt_selector_3<Gt,ExactAlphaComparisonTag,typename Dt::Weighted_tag>::Compute_squared_radius_3 Compute_squared_radius_3;
