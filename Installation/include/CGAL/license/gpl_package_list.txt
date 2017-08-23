@@ -40,6 +40,17 @@ Point_set_processing_3 Point Set Processing
 Point_set_shape_detection_3 Point Set Shape Detection
 Poisson_surface_reconstruction_3 Poisson Surface Reconstruction
 Polygon_mesh_processing Polygon Mesh Processing
+Polygon_mesh_processing/Compute_normal Polygon Mesh Processing - Normal Computation
+Polygon_mesh_processing/connected_components Polygon Mesh Processing - Connected Components
+Polygon_mesh_processing/corefinement Polygon Mesh Processing - Corefinement
+Polygon_mesh_processing/core Polygon Mesh Processing - Core
+Polygon_mesh_processing/distance Polygon Mesh Processing - Distance
+Polygon_mesh_processing/measure Polygon Mesh Processing - Geometric Measure
+Polygon_mesh_processing/meshing_hole_filling Polygon Mesh Processing - Meshing and Hole Filling
+Polygon_mesh_processing/orientation Polygon Mesh Processing - Orientation
+Polygon_mesh_processing/predicate Polygon Mesh Processing - Predicate
+Polygon_mesh_processing/repair Polygon Mesh Processing - Repair
+Polygon_mesh_processing/miscellaneous Polygon Mesh Processing - Miscellaneous
 Polyhedron 3D Polyhedral Surface
 Polyline_simplification_2 2D Polyline Simplification
 Polytope_distance_d Optimal Distances
