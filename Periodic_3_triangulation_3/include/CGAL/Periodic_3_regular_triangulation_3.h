@@ -907,7 +907,7 @@ public:
 
 protected:
   // Protected, because inheritors(e.g. periodic triangulation for meshing)
-  // of the class Periodic_3_Delaunay_triangulation_3 use this class
+  // of the class Periodic_3_regular_triangulation_3 use this class
   class Conflict_tester;
 
 private:

@@ -81,7 +81,7 @@ public:
   typedef Type_of_alpha               NT;
   typedef Type_of_alpha               FT;
 
-  //check simplices are correctly instantiated
+  // check that simplices are correctly instantiated
   CGAL_static_assertion( (boost::is_same<NT, typename Dt::Face::NT>::value) );
   CGAL_static_assertion( (boost::is_same<NT, typename Dt::Vertex::NT>::value) );
 

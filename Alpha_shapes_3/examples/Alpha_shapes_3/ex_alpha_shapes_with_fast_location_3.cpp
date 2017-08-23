@@ -14,9 +14,9 @@ typedef CGAL::Triangulation_data_structure_3<Vb,Fb>      Tds;
 typedef CGAL::Delaunay_triangulation_3<K,Tds,CGAL::Fast_location>  Delaunay;
 typedef CGAL::Alpha_shape_3<Delaunay>                    Alpha_shape_3;
 
-typedef K::Point_3                                  Point;
-typedef Alpha_shape_3::Alpha_iterator               Alpha_iterator;
-typedef Alpha_shape_3::NT                           NT;
+typedef K::Point_3                                       Point;
+typedef Alpha_shape_3::Alpha_iterator                    Alpha_iterator;
+typedef Alpha_shape_3::NT                                NT;
 
 int main()
 {

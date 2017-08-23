@@ -43,13 +43,13 @@ int main()
   std::list<Facet>       facets;
   std::list<Edge>        edges;
   as.get_alpha_shape_cells(std::back_inserter(cells),
-			   Fixed_alpha_shape_3::INTERIOR);
+                           Fixed_alpha_shape_3::INTERIOR);
   as.get_alpha_shape_facets(std::back_inserter(facets),
-			    Fixed_alpha_shape_3::REGULAR);
+                            Fixed_alpha_shape_3::REGULAR);
   as.get_alpha_shape_facets(std::back_inserter(facets),
-			    Fixed_alpha_shape_3::SINGULAR);
+                            Fixed_alpha_shape_3::SINGULAR);
   as.get_alpha_shape_edges(std::back_inserter(edges),
-			   Fixed_alpha_shape_3::SINGULAR);
+                           Fixed_alpha_shape_3::SINGULAR);
   std::cout << " The 0-shape has : " << std::endl;
   std::cout << cells.size() << " interior tetrahedra" << std::endl;
   std::cout << facets.size() << " boundary facets" << std::endl;
