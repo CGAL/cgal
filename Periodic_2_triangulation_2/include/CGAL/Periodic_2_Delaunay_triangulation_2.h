@@ -48,7 +48,7 @@ class Periodic_2_Delaunay_triangulation_2 : public Periodic_2_triangulation_2<Gt
 {
   typedef Periodic_2_Delaunay_triangulation_2<Gt, Tds>          Self;
 public:
-  typedef Periodic_2_triangulation_2<Gt, Tds>                   Triangulation;
+  typedef Periodic_2_triangulation_2<Gt, Tds>                   Base;
 
 public:
   typedef Tds                                  Triangulation_data_structure;
@@ -68,52 +68,58 @@ public:
   typedef array< std::pair<Point, Offset>, 3>   Periodic_triangle;
   typedef array< std::pair<Point, Offset>, 4>   Periodic_tetrahedron;
 
-  typedef typename Triangulation::size_type             size_type;
-  typedef typename Triangulation::Locate_type           Locate_type;
-  typedef typename Triangulation::Face_handle           Face_handle;
-  typedef typename Triangulation::Vertex_handle         Vertex_handle;
-  typedef typename Triangulation::Edge                  Edge;
-  typedef typename Triangulation::Edge_circulator       Edge_circulator;
-  typedef typename Triangulation::Face_circulator       Face_circulator;
-  typedef typename Triangulation::Vertex_circulator     Vertex_circulator;
-  typedef typename Triangulation::Finite_edges_iterator Finite_edges_iterator;
-  typedef typename Triangulation::Finite_faces_iterator Finite_faces_iterator;
-  typedef typename Triangulation::Finite_vertices_iterator
-  Finite_vertices_iterator;
-  typedef typename Triangulation::All_faces_iterator    All_faces_iterator;
+  typedef typename Base::size_type              size_type;
+  typedef typename Base::Locate_type            Locate_type;
+  typedef typename Base::Face_handle            Face_handle;
+  typedef typename Base::Vertex_handle          Vertex_handle;
+  typedef typename Base::Edge                   Edge;
+  typedef typename Base::Edge_circulator        Edge_circulator;
+  typedef typename Base::Face_circulator        Face_circulator;
+  typedef typename Base::Vertex_circulator      Vertex_circulator;
+  typedef typename Base::Finite_edges_iterator  Finite_edges_iterator;
+  typedef typename Base::Finite_faces_iterator  Finite_faces_iterator;
+  typedef typename Base::Finite_vertices_iterator Finite_vertices_iterator;
+  typedef typename Base::All_faces_iterator     All_faces_iterator;
 
-  typedef typename Triangulation::Edge_iterator    Edge_iterator;
-  typedef typename Triangulation::Face_iterator    Face_iterator;
-  typedef typename Triangulation::Vertex_iterator Vertex_iterator;
+  typedef typename Base::Edge_iterator          Edge_iterator;
+  typedef typename Base::Face_iterator          Face_iterator;
+  typedef typename Base::Vertex_iterator        Vertex_iterator;
 
+  typedef typename Base::Periodic_segment_iterator  Periodic_segment_iterator;
+  typedef typename Base::Periodic_triangle_iterator Periodic_triangle_iterator;
 
 public:
 #ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
-  using Triangulation::empty;
-  using Triangulation::cw;
-  using Triangulation::ccw;
-  using Triangulation::tds;
-  using Triangulation::geom_traits;
-  using Triangulation::create_face;
-  using Triangulation::is_infinite;
-  using Triangulation::get_offset;
-  using Triangulation::set_offsets;
-  using Triangulation::int_to_off;
-  using Triangulation::is_1_cover;
-  using Triangulation::dimension;
-  using Triangulation::number_of_vertices;
-  using Triangulation::faces_begin;
-  using Triangulation::finite_edges_begin;
-  using Triangulation::finite_edges_end;
-  using Triangulation::get_neighbor_offset;
-  using Triangulation::combine_offsets;
-  using Triangulation::locate;
-  using Triangulation::number_of_sheets;
-  using Triangulation::orientation;
-  using Triangulation::side_of_oriented_circle;
-  using Triangulation::remove_degree_init;
-  using Triangulation::insert_too_long_edge;
-  using Triangulation::incident_faces;
+  using Base::empty;
+  using Base::cw;
+  using Base::ccw;
+  using Base::create_face;
+  using Base::insert_too_long_edge;
+  using Base::locate;
+  using Base::remove_degree_init;
+
+  using Base::combine_offsets;
+  using Base::get_offset;
+  using Base::get_neighbor_offset;
+  using Base::int_to_off;
+  using Base::set_offsets;
+  using Base::is_1_cover;
+  using Base::number_of_sheets;
+
+  using Base::dimension;
+  using Base::domain;
+  using Base::geom_traits;
+  using Base::tds;
+  using Base::is_infinite;
+  using Base::number_of_vertices;
+  using Base::faces_begin;
+  using Base::finite_edges_begin;
+  using Base::finite_edges_end;
+  using Base::incident_faces;
+
+  using Base::orientation;
+  using Base::point;
+  using Base::construct_segment;
 #endif
 
   /// \name Constructors
@@ -121,12 +127,11 @@ public:
   /// Constructor
   Periodic_2_Delaunay_triangulation_2(const Iso_rectangle & domain = Iso_rectangle(0, 0, 1, 1),
                                       const Gt& gt = Gt())
-    : Periodic_2_triangulation_2<Gt, Tds>(domain, gt) {}
+    : Base(domain, gt) {}
 
   /// Copy constructor
-  Periodic_2_Delaunay_triangulation_2(
-    const Periodic_2_Delaunay_triangulation_2<Gt, Tds> &tr)
-    : Periodic_2_triangulation_2<Gt, Tds>(tr)
+  Periodic_2_Delaunay_triangulation_2(const Periodic_2_Delaunay_triangulation_2<Gt, Tds> &tr)
+    : Base(tr)
   {
     CGAL_triangulation_postcondition( is_valid(true) );
   }
@@ -263,7 +268,7 @@ public:
       {
         f = locate(*p, lt, li, f);
 
-        if (lt == Triangulation::VERTEX)
+        if (lt == Base::VERTEX)
           {
             dummy_points.erase(f->vertex(li));
           }
@@ -382,7 +387,7 @@ private:
       {
         f = locate(points[*it], lt, li, f);
 
-        if (lt == Triangulation::VERTEX)
+        if (lt == Base::VERTEX)
           {
             // Always copy the info, it might be a dummy vertex
             f->vertex(li)->info() = infos[*it];
@@ -468,20 +473,21 @@ public:
     Locate_type lt;
     Face_handle fh = locate(p, lt, li, start);
     switch(lt)
-      {
-        //case Triangulation::EMPTY:
-      case Triangulation::VERTEX:
+    {
+      default:
+        break;
+      case Base::VERTEX:
         return std::make_pair(fit, eit);
-      case Triangulation::FACE:
-      case Triangulation::EDGE:
-      case Triangulation::EMPTY:
+      case Base::FACE:
+      case Base::EDGE:
+      case Base::EMPTY:
         *fit++ = fh; //put fh in OutputItFaces
         std::pair<OutputItFaces, OutputItBoundaryEdges> pit = std::make_pair(fit, eit);
         pit = propagate_conflicts(p, fh, 0, pit);
         pit = propagate_conflicts(p, fh, 1, pit);
         pit = propagate_conflicts(p, fh, 2, pit);
         return pit;
-      }
+    }
     CGAL_triangulation_assertion(false);
     return std::make_pair(fit, eit);
   }
@@ -991,15 +997,15 @@ typename Periodic_2_Delaunay_triangulation_2<Gt, Tds>::Vertex_handle
 Periodic_2_Delaunay_triangulation_2<Gt, Tds>::
 insert(const Point  &p, Locate_type lt, Face_handle loc, int li)
 {
-  Vertex_handle vh = Triangulation::insert(p, lt, loc, li);
+  Vertex_handle vh = Base::insert(p, lt, loc, li);
 
-  if (lt != Triangulation::VERTEX)
+  if (lt != Base::VERTEX)
     {
       restore_Delaunay(vh);
 
       if (!is_1_cover())
         {
-          typename Triangulation::Virtual_vertex_reverse_map_it vertices_it =
+          typename Base::Virtual_vertex_reverse_map_it vertices_it =
             this->virtual_vertices_reverse().find(vh);
           CGAL_triangulation_assertion(vertices_it != this->virtual_vertices_reverse().end());
           const std::vector<Vertex_handle> &virtual_vertices = vertices_it->second;
@@ -1168,7 +1174,7 @@ remove(Vertex_handle v)
   if ( this->number_of_vertices() == 1)
     {
       // Last vertex
-      Triangulation::remove_first(v);
+      Base::remove_first(v);
       return;
     }
 
@@ -5147,7 +5153,7 @@ move_if_no_collision(Vertex_handle v, const Point &p)
   Vertex_handle inserted;
   Face_handle loc = locate(p, lt, li, v->face());
 
-  if (lt == Triangulation::VERTEX)
+  if (lt == Base::VERTEX)
     return v;
   else
     /// This can be optimized by checking whether we can move v->point() to p
