@@ -331,7 +331,7 @@ int main(int argc, char **argv)
     // ...
     {
         std::ifstream fin ("data/regular_remove_3");
-        assert(fin);
+        assert(bool(fin));
         std:: cout << " test `data/regular_remove_3'" << std::endl;
         while (test_case (fin)) 
             // semicolon

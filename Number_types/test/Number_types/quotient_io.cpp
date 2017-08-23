@@ -13,7 +13,7 @@ main()
   std::ofstream T;
   std::ifstream U;
   S.open("quotient_in");
-  assert( S );
+  assert( bool(S) );
 
   std::vector<CGAL::Quotient<double> >   V1;
   std::vector<CGAL::Quotient<double> >   V2;
@@ -23,14 +23,14 @@ main()
   S.close();
 
   T.open("quotient_out");
-  assert( T );
+  assert( bool(T) );
   std::copy( V1.begin(), 
              V1.end(), 
              std::ostream_iterator<CGAL::Quotient<double> >(T,"\n") );
   T.close();
 
   U.open("quotient_out");
-  assert( T );
+  assert( bool(U) );
   std::copy( std::istream_iterator<CGAL::Quotient<double> >(U),
              std::istream_iterator<CGAL::Quotient<double> >(),
              std::back_inserter(V2) );

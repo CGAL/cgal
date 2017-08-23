@@ -41,7 +41,7 @@ void print_endpoint(Halfedge_handle e, bool is_src) {
 int main()
 {
   std::ifstream ifs("data/data1.dt.cin");
-  assert( ifs );
+  assert( bool(ifs) );
 
   VD vd;
 
@@ -52,7 +52,7 @@ int main()
   assert( vd.is_valid() );
 
   std::ifstream ifq("data/queries1.dt.cin");
-  assert( ifq );
+  assert( bool(ifq) );
 
   Point_2 p;
   while ( ifq >> p ) {

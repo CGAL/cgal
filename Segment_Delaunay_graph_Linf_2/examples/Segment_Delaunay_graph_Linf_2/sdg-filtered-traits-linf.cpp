@@ -27,7 +27,7 @@ int main( int argc, char *argv[] )
   }
 
   std::ifstream ifs( (argc == 1) ? "data/sites.cin" : argv[1] );
-  assert( ifs );
+  assert( bool(ifs) );
 
   SDG2          sdg;
   SDG2::Site_2  site;

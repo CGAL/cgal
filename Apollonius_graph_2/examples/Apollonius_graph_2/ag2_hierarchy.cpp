@@ -44,7 +44,7 @@ typedef CGAL::Apollonius_graph_hierarchy_2<Traits> Apollonius_graph;
 int main()
 {
   std::ifstream ifs("data/hierarchy.cin");
-  assert( ifs );
+  assert( bool(ifs) );
 
   Apollonius_graph ag;
   Apollonius_graph::Site_2 site;

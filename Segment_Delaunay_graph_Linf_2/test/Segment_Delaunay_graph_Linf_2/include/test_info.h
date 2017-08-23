@@ -14,7 +14,7 @@ bool test_info(SDG& sdg, const char* fname)
   CGAL::Random r(static_cast<int>(0));
 
   std::ifstream ifs(fname);
-  assert( ifs );
+  assert( bool(ifs) );
 
   sdg.clear();
   typename SDG::Site_2  site;

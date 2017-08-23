@@ -23,7 +23,7 @@ typedef CGAL::Segment_Delaunay_graph_2<Gt>  SDG2;
 int main()
 {
   std::ifstream ifs("data/sites.cin");
-  assert( ifs );
+  assert( bool(ifs) );
 
   SDG2          sdg;
   SDG2::Site_2  site;

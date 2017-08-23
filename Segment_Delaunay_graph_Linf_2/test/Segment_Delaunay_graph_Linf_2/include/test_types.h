@@ -362,7 +362,7 @@ bool test_sdg(InputStream&, const SDG&, const char* ifname, const char* ofname,
       sdg.clear();
 
       std::ifstream ifs( ifname_full.c_str() );
-      assert( ifs );
+      assert( bool(ifs) );
       Site_2 t;
       while ( ifs >> t ) {
 	sdg.insert(t);
@@ -524,7 +524,7 @@ bool test_sdg(InputStream&, const SDG&, const char* ifname, const char* ofname,
     size_type nv1 = sdg.number_of_vertices();
 
     std::ofstream ofs(ofname);
-    assert( ofs );
+    assert( bool(ofs) );
     sdg.file_output(ofs);
     assert( sdg.is_valid() );
     ofs.close();
@@ -532,7 +532,7 @@ bool test_sdg(InputStream&, const SDG&, const char* ifname, const char* ofname,
     sdg.clear();
 
     std::ifstream ifs(ofname);
-    assert( ifs );
+    assert( bool(ifs) );
     sdg.file_input(ifs);
     assert( sdg.is_valid() );
     ifs.close();

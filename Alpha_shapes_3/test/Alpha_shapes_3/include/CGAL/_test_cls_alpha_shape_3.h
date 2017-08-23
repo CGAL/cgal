@@ -190,7 +190,7 @@ _test_cls_alpha_shape_3()
   a1.clear();
   L.clear();
   std::ifstream is("./data/fin", std::ios::in);
-  assert(is);
+  assert(bool(is));
   file_input(is,L);
   a1.set_mode(Alpha_shape_3::REGULARIZED);
   std::size_t  n = a1.make_alpha_shape(L.begin(), L.end());

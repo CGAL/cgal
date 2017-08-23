@@ -22,7 +22,7 @@ typedef CGAL::Segment_Delaunay_graph_Linf_2<Gt>  SDG2;
 int main()
 {
   std::ifstream ifs("data/sites.cin");
-  assert( ifs );
+  assert( bool(ifs) );
 
   //polygon points
   std::vector<Gt::Point_2> points;

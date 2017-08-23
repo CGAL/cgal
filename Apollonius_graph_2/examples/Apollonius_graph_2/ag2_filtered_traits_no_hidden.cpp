@@ -34,7 +34,7 @@ typedef CGAL::Apollonius_graph_2<Traits,Agds>    Apollonius_graph;
 int main()
 {
   std::ifstream ifs("data/sites.cin");
-  assert( ifs );
+  assert( bool(ifs) );
 
   Apollonius_graph ag;
   Apollonius_graph::Site_2 site;

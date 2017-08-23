@@ -446,10 +446,10 @@ main( int argc, char* argv[])
         int               n, x, y;
         std::ifstream     in( argv[ 1]);
         in >> n;
-        assert( in);
+        assert( bool(in) );
         for ( int i = 0; i < n; ++i) {
             in >> x >> y;
-            assert( in);
+            assert( bool(in) );
             points.push_back( Point( x, y)); }
     
         // compute and check min_circle

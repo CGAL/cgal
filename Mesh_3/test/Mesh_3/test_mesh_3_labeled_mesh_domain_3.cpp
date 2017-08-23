@@ -152,7 +152,7 @@ private:
 	  {
 		  Segment_3 s(Point_3(CGAL::ORIGIN), Point_3(1.5, 0., 0.));
 		  Surface_patch p = do_intersect_surface(s);
-		  assert(p);
+		  assert(bool(p));
 		  Surface_patch_index pi = *p;
 		  assert(pi.first == 0 && pi.second == 1);
 	  }
@@ -166,7 +166,7 @@ private:
 	  {
 		  Ray_3 r(Point_3(CGAL::ORIGIN), Vector_3(1., 0., 0.));
 		  Surface_patch p = do_intersect_surface(r);
-		  assert(p);
+		  assert(bool(p));
 		  Surface_patch_index pi = *p;
 		  assert(pi.first == 0 && pi.second == 1);
 	  }
@@ -180,7 +180,7 @@ private:
 	  {
 		  Line_3 l(Point_3(CGAL::ORIGIN), Point_3(1.5, 0., 0.));
 		  Surface_patch p = do_intersect_surface(l);
-		  assert(p);
+		  assert(bool(p));
 		  Surface_patch_index pi = *p;
 		  assert(pi.first == 0 && pi.second == 1);
 	  }

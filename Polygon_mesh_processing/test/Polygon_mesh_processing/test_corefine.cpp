@@ -20,11 +20,11 @@ int main(int argc, char** argv)
     std::cout << "  with Surface_mesh\n";
     Surface_mesh sm1, sm2;
     std::ifstream input(argv[2*i+1]);
-    assert(input);
+    assert(bool(input));
     input >> sm1;
     input.close();
     input.open(argv[2*(i+1)]);
-    assert(input);
+    assert(bool(input));
     input >> sm2;
     input.close();
 
@@ -36,11 +36,11 @@ int main(int argc, char** argv)
     std::cout << "  with Polyhedron_3\n";
     Polyhedron_3 P, Q;
     input.open(argv[2*i+1]);
-    assert(input);
+    assert(bool(input));
     input >> P;
     input.close();
     input.open(argv[2*(i+1)]);
-    assert(input);
+    assert(bool(input));
     input >> Q;
 
     CGAL::Polygon_mesh_processing::corefine(P, Q);

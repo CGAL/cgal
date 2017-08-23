@@ -58,7 +58,7 @@ public:
     P3RT3 p3rt3(iso_cuboid);
 
     std::ofstream stream("p3rt3_ir_point_set");
-    assert(stream);
+    assert(bool(stream));
     std::ifstream input_stream(path.c_str());
 
     std::vector<Weighted_point_3> insert_set;

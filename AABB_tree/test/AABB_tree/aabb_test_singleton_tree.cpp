@@ -39,8 +39,8 @@ int main()
     tree.accelerate_distance_queries();
     tree.all_intersections(triangle_query, devnull);
     tree.all_intersected_primitives(triangle_query, devnull);
-    assert(tree.any_intersected_primitive(triangle_query));
-    assert(tree.any_intersection(triangle_query));
+    assert(bool(tree.any_intersected_primitive(triangle_query)));
+    assert(bool(tree.any_intersection(triangle_query)));
     const CGAL::Bbox_3 bbox = tree.bbox();
     assert(bbox == CGAL::Bbox_3(0, 0, 0, 2, 2, 2));
     tree.clear();
