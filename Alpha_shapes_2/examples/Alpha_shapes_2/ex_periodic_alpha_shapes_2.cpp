@@ -4,30 +4,29 @@
 #include <CGAL/Periodic_2_Delaunay_triangulation_2.h>
 
 #include <CGAL/Alpha_shape_2.h>
+#include <CGAL/Alpha_shape_face_base_2.h>
+#include <CGAL/Alpha_shape_vertex_base_2.h>
 
 #include <fstream>
 #include <iostream>
 
 // Traits
 typedef CGAL::Exact_predicates_inexact_constructions_kernel     K;
-typedef CGAL::Periodic_2_Delaunay_triangulation_traits_2<K>     PK;
-
-// Exactness tag
-typedef CGAL::Tag_false Exactness_tag;
+typedef CGAL::Periodic_2_Delaunay_triangulation_traits_2<K>     Gt;
 
 // Vertex type
-typedef CGAL::Periodic_2_triangulation_vertex_base_2<PK>        Vb;
-typedef CGAL::Alpha_shape_vertex_base_2<PK, Vb, Exactness_tag>  AsVb;
+typedef CGAL::Periodic_2_triangulation_vertex_base_2<Gt>        Vb;
+typedef CGAL::Alpha_shape_vertex_base_2<Gt, Vb>                 AsVb;
 // Cell type
-typedef CGAL::Periodic_2_triangulation_face_base_2<PK>          Cb;
-typedef CGAL::Alpha_shape_face_base_2<PK, Cb, Exactness_tag>    AsCb;
+typedef CGAL::Periodic_2_triangulation_face_base_2<Gt>          Cb;
+typedef CGAL::Alpha_shape_face_base_2<Gt, Cb>                   AsCb;
 
 typedef CGAL::Triangulation_data_structure_2<AsVb, AsCb>        Tds;
-typedef CGAL::Periodic_2_Delaunay_triangulation_2<PK,Tds>       P2DT2;
-typedef CGAL::Alpha_shape_2<P2DT2, Exactness_tag>               Alpha_shape_2;
+typedef CGAL::Periodic_2_Delaunay_triangulation_2<Gt, Tds>      P2DT2;
+typedef CGAL::Alpha_shape_2<P2DT2>                              Alpha_shape_2;
 
-typedef PK::Point_2                                             Point;
-typedef PK::Segment_2                                           Segment;
+typedef Gt::Point_2                                             Point;
+typedef Gt::Segment_2                                           Segment;
 typedef Alpha_shape_2::Alpha_shape_edges_iterator               Alpha_shape_edges_iterator;
 
 template <class OutputIterator>
@@ -65,7 +64,7 @@ int main()
     return -1;
 
   // Define the periodic square
-  P2DT2 pdt(PK::Iso_rectangle_2(-10,-10, 700,700));
+  P2DT2 pdt(Gt::Iso_rectangle_2(-10,-10, 700,700));
 
   // Heuristic for inserting large point sets (if pts is reasonably large)
   pdt.insert(points.begin(), points.end(), true);
