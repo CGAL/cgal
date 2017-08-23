@@ -1616,9 +1616,6 @@ is_sampling_dense_enough(const Vertex_handle& v1, const Vertex_handle& v2,
   using CGAL::Mesh_3::internal::min_intersection_factor;
   CGAL_precondition(c3t3_.curve_segment_index(v1,v2) == curve_index);
 
-  typename C3T3::Triangulation::Geom_traits::Construct_point_3 wp2p =
-    c3t3_.triangulation().geom_traits().construct_point_3_object();
-
   // Get sizes
   FT size_v1 = get_radius(v1);
   FT size_v2 = get_radius(v2);
