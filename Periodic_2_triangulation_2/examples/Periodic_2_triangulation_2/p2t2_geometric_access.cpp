@@ -1,9 +1,10 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Periodic_2_triangulation_traits_2.h>
+
 #include <CGAL/Periodic_2_Delaunay_triangulation_2.h>
+#include <CGAL/Periodic_2_Delaunay_triangulation_traits_2.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Periodic_2_triangulation_traits_2<K>          PK;
+typedef CGAL::Periodic_2_Delaunay_triangulation_traits_2<K> PK;
 typedef CGAL::Periodic_2_Delaunay_triangulation_2<PK>       P2DT2;
 
 typedef PK::Point_2        Point;

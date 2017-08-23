@@ -1,6 +1,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Periodic_2_triangulation_filtered_traits_2.h>
+
 #include <CGAL/Periodic_2_Delaunay_triangulation_2.h>
+#include <CGAL/Periodic_2_Delaunay_triangulation_traits_2.h>
 #include <CGAL/Triangulation_vertex_base_2.h>
 
 template < class GT, class Vb >
@@ -32,7 +33,7 @@ public:
 
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Periodic_2_triangulation_filtered_traits_2<K> GT;
+typedef CGAL::Periodic_2_Delaunay_triangulation_traits_2<K> GT;
 
 typedef CGAL::Periodic_2_triangulation_vertex_base_2<GT>    VbDS;
 typedef My_vertex_base<GT, VbDS>                             Vb;
