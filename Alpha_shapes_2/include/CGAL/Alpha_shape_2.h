@@ -103,6 +103,8 @@ public:
   typedef typename Dt::Locate_type Locate_type;
   typedef typename Dt::size_type size_type;
 
+  using Dt::cw;
+  using Dt::ccw;
   using Dt::finite_vertices_begin;
   using Dt::finite_vertices_end;
   using Dt::faces_begin;
@@ -110,15 +112,16 @@ public:
   using Dt::edges_begin;
   using Dt::edges_end;
   using Dt::number_of_vertices;
-  using Dt::cw;
-  using Dt::ccw;
+  using Dt::is_infinite;
+  using Dt::locate;
+  using Dt::point;
+
   using Dt::VERTEX;
   using Dt::EDGE;
   using Dt::FACE;
   using Dt::OUTSIDE_CONVEX_HULL;
   using Dt::OUTSIDE_AFFINE_HULL;
   using Dt::dimension;
-  using Dt::is_infinite;
 
   // for backward compatibility
   typedef Finite_vertices_iterator Vertex_iterator;
@@ -602,7 +605,7 @@ public:
       // Classifies a point `p' with respect to `A'.
       Locate_type type;
       int i;
-      Face_handle pFace = this->locate(p, type, i);
+      Face_handle pFace = locate(p, type, i);
       switch (type) 
 	{
 	case VERTEX            : return classify(pFace->vertex(i), alpha);
@@ -713,8 +716,6 @@ public:
 
   Alpha_iterator find_optimal_alpha(size_type nb_components);  	
 
-private:
-
   Type_of_alpha find_alpha_solid() const;
 
   //---------------------- PREDICATES ------------------------------------
@@ -723,26 +724,24 @@ private:
 
   bool is_attached(const Face_handle& f, int i) const
   {
-    Bounded_side b = Side_of_bounded_circle_2()(*this)(f->vertex(cw(i))->point(),
-                                                       f->vertex(ccw(i))->point(),
-                                                       f->vertex(i)->point());
+    Bounded_side b = Side_of_bounded_circle_2()(*this)(point(f, cw(i)),
+                                                       point(f, ccw(i)),
+                                                       point(f, i));
 
-    return (b == ON_BOUNDED_SIDE) ? true : false;
+    return (b == ON_BOUNDED_SIDE);
   }
 
   //-------------------- GEOMETRIC PRIMITIVES ----------------------------
 
   Type_of_alpha squared_radius(const Face_handle& f) const
   {
-    return Compute_squared_radius_2()(*this)(f->vertex(0)->point(),
-                                             f->vertex(1)->point(),
-                                             f->vertex(2)->point());
+    return Compute_squared_radius_2()(*this)(point(f, 0), point(f, 1), point(f, 2));
   }
 
   Type_of_alpha squared_radius(const Face_handle& f, int i) const
   {
-    return Compute_squared_radius_2()(*this)(f->vertex(ccw(i))->point(),
-                                             f->vertex(cw(i))->point());
+    return Compute_squared_radius_2()(*this)(point(f, ccw(i)),
+                                             point(f, cw(i)));
   }
 
   //---------------------------------------------------------------------
@@ -1831,8 +1830,8 @@ void Alpha_shape_2<Dt,EACT>::print_edge_map()
        iemapit != _interval_edge_map.end(); ++iemapit) {
     Interval3 interval = (*iemapit).first;
     Edge edge = (*iemapit).second;
-    Point p1 = edge.first->vertex(cw(edge.second))->point();
-    Point p2 = edge.first->vertex(ccw(edge.second))->point();
+    Point p1 = point(edge.first, cw(edge.second));
+    Point p2 = point(edge.first, ccw(edge.second));
     std::cout << "[ (" <<	p1 << ") - (" << p2 << ") ] :            "
               << interval.first << " "
               << interval.second << " " << interval.third << std::endl;
