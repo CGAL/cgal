@@ -269,12 +269,14 @@ public:
 
   // GEOMETRIC FEATURES AND CONSTRUCTION
   Point_2 construct_point(const Point& p) const;
-  Triangle triangle(Face_handle f) const;
+  const Point& point(Face_handle c, int i) const;
+  const Point& point(Vertex_handle v) const;
   Segment segment(Face_handle f, int i) const;
   Segment segment(const Edge& e) const;
   Segment segment(const Edge_circulator& ec) const;
   Segment segment(const All_edges_iterator& ei) const;
   Segment segment(const Finite_edges_iterator& ei) const;
+  Triangle triangle(Face_handle f) const;
   Point_2 circumcenter(Face_handle f) const;
   Point_2 circumcenter(const Point& p0,
                        const Point& p1,
@@ -965,16 +967,24 @@ construct_point(const Point& p) const
 }
 
 template <class Gt, class Tds >
-typename Triangulation_2<Gt, Tds>::Triangle
+const typename Triangulation_2<Gt, Tds>::Point&
 Triangulation_2<Gt, Tds>::
-triangle(Face_handle f) const
+point(Face_handle f, int i) const
 {
-  CGAL_triangulation_precondition( ! is_infinite(f) );
-  typename Gt::Construct_triangle_2
-      construct_triangle = geom_traits().construct_triangle_2_object();
-  return construct_triangle(construct_point(f->vertex(0)->point()),
-                            construct_point(f->vertex(1)->point()),
-                            construct_point(f->vertex(2)->point()));
+  CGAL_triangulation_precondition( dimension() >= 0 );
+  CGAL_triangulation_precondition( i >= 0 && i <= dimension() );
+  CGAL_triangulation_precondition( ! is_infinite(f->vertex(i)) );
+  return f->vertex(i)->point();
+}
+
+template <class Gt, class Tds >
+const typename Triangulation_2<Gt, Tds>::Point&
+Triangulation_2<Gt, Tds>::
+point(Vertex_handle v) const
+{
+  CGAL_triangulation_precondition( dimension() >= 0 );
+  CGAL_triangulation_precondition( ! is_infinite(v) );
+  return v->point();
 }
 
 template <class Gt, class Tds >
@@ -1023,6 +1033,19 @@ Triangulation_2<Gt, Tds>::
 segment(const All_edges_iterator& ei) const
 {
   return segment(*ei);
+}
+
+template <class Gt, class Tds >
+typename Triangulation_2<Gt, Tds>::Triangle
+Triangulation_2<Gt, Tds>::
+triangle(Face_handle f) const
+{
+  CGAL_triangulation_precondition( ! is_infinite(f) );
+  typename Gt::Construct_triangle_2
+      construct_triangle = geom_traits().construct_triangle_2_object();
+  return construct_triangle(construct_point(f->vertex(0)->point()),
+                            construct_point(f->vertex(1)->point()),
+                            construct_point(f->vertex(2)->point()));
 }
 
 template <class Gt, class Tds >
