@@ -1806,43 +1806,46 @@ Alpha_shape_3<Dt,EACT>::find_optimal_alpha(size_type nb_components) const
   std::ptrdiff_t half;
 
   while (len > 0)
+  {
+    half = len / 2;
+    middle = first + half;
+
+#ifdef CGAL_DEBUG_ALPHA_SHAPE_3
+    std::cerr << "first : " << *first
+              << " last : "
+              << ((first+len != last) ? *(first+len) : *(last-1))
+              << " mid : " << *middle
+              << " nb comps : " << number_of_solid_components(*middle)
+              << std::endl;
+#endif
+    if (number_of_solid_components(*middle) > nb_components)
     {
-      half = len / 2;
-      middle = first + half;
-
- /*      //#ifdef DEBUG */
-/*       std::cerr << "first : " << *first  */
-/* 		<< " last : "  */
-/* 		<< ((first+len != last) ? *(first+len) : *(last-1)) */
-/* 		<< " mid : " << *middle  */
-/* 		<< " nb comps : " << number_of_solid_components(*middle)  */
-/* 		<< std::endl; */
-/*       //#endif // DEBUG */
-
-      if (number_of_solid_components(*middle) > nb_components)
-	{
-	  first = middle + 1;
-	  len = len - half -1; 
-	} 
-      else // number_of_solid_components(*middle) <= nb_components
-	{
-	  len = half;
-	}
+      first = middle + 1;
+      len = len - half -1;
     }
+    else // number_of_solid_components(*middle) <= nb_components
+    {
+      len = half;
+    }
+  }
 
- /*  std::cerr << "a la fin " << std::endl */
-/* 	    << "first : " << *first  */
-/* 	    << " nb comps : " << number_of_solid_components(*first) */
-/* 	    << std::endl; */
-/*   if ((first+1) < alpha_end())  */
-/*     std::cerr << "first+1 " << *(first+1)  */
-/* 	      << " nb comps : " << number_of_solid_components(*(first+1)) */
-/* 	      << std::endl; */
-/*   std::cerr << std::endl; */
+#ifdef CGAL_DEBUG_ALPHA_SHAPE_3
+  std::cerr << "In the end: " << std::endl
+            << "first : " << *first
+            << " nb comps : " << number_of_solid_components(*first)
+            << std::endl;
+  if ((first+1) < alpha_end())
+    std::cerr << "first+1 " << *(first+1)
+              << " nb comps : " << number_of_solid_components(*(first+1))
+              << std::endl;
+  std::cerr << std::endl;
+#endif
 
-  if (number_of_solid_components(*first) <= nb_components ) return first;
-  else return first+1;
-}  	
+  if (number_of_solid_components(*first) <= nb_components )
+    return first;
+  else
+    return first+1;
+}
 
 //----------------------------------------------------------------------
 
