@@ -216,25 +216,17 @@ public:
 /// @}
 
 /// \name Creation
-/// Only a default constructor, copy constructor and an assignment
-/// operator are required. Note that further constructors can be
-/// provided.
 /// @{
 
   /*!
-  default constructor.
+  Default constructor.
   */
-  Periodic_2TriangulationTraits_2();
+  Periodic_2_triangulation_traits_2();
 
   /*!
-  Copy constructor
+  Copy constructor.
   */
-  Periodic_2TriangulationTraits_2(Periodic_2TriangulationTraits_2 gtr);
-
-  /*!
-  Assignment operator.
-  */
-  Periodic_2TriangulationTraits_2 operator=(Periodic_2TriangulationTraits_2 gtr);
+  Periodic_2_triangulation_traits_2(const Periodic_2_triangulation_traits_2& tr);
 
 /// @}
 
@@ -288,16 +280,14 @@ public:
 /// @{
 
   /*!
-  Sets the
-  fundamental domain. This is necessary to evaluate predicates
+  Sets the fundamental domain. This is necessary to evaluate predicates
   correctly.
   \pre `domain` represents a square.
   */
   void set_domain(Iso_rectangle_2 domain);
 
   /*!
-  Returns the
-  fundamental domain.
+  Returns the fundamental domain.
   */
   Iso_rectangle_2 get_domain() const;
 
