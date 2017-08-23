@@ -36,7 +36,7 @@ namespace CGAL {
 template< typename K,
           typename Off = typename CGAL::Periodic_2_offset_2>
 class Periodic_2_triangulation_statically_filtered_traits_2
-    : public Periodic_2_triangulation_filtered_traits_base_2<K, Off>
+  : public Periodic_2_triangulation_filtered_traits_base_2<K, Off>
 {
   typedef Periodic_2_triangulation_statically_filtered_traits_2<K, Off>   Self;
   typedef Periodic_2_triangulation_filtered_traits_base_2<K, Off>         Base;

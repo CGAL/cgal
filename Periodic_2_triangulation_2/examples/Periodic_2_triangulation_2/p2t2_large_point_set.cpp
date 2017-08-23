@@ -30,18 +30,17 @@ int main()
 
   // Generating n random points
   for (int i = 0 ; i < n ; i++)
-    {
-      Point p = *in_square;
-      in_square++;
-      pts.push_back(Point(p.x() + .5, p.y() + .5));
-    }
+  {
+    Point p = *in_square;
+    in_square++;
+    pts.push_back(Point(p.x() + .5, p.y() + .5));
+  }
 
   // Standard insertion
   t.start();
   for (int i = 0 ; i < n ; i++)
-    {
-      PT1.insert(pts[i]);
-    }
+    PT1.insert(pts[i]);
+
   t.stop();
   std::cout << "  Time: " << t.time() << " sec. (Standard insertion)" << std::endl;
   t.reset();

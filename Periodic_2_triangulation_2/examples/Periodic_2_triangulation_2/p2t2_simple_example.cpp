@@ -13,11 +13,11 @@ typedef CGAL::Periodic_2_Delaunay_triangulation_traits_2<K> GT;
 
 typedef CGAL::Periodic_2_Delaunay_triangulation_2<GT>       PDT;
 
-typedef PDT::Face_handle       Face_handle;
-typedef PDT::Vertex_handle     Vertex_handle;
-typedef PDT::Locate_type       Locate_type;
-typedef PDT::Point             Point;
-typedef PDT::Iso_rectangle     Iso_rectangle;
+typedef PDT::Face_handle                                    Face_handle;
+typedef PDT::Vertex_handle                                  Vertex_handle;
+typedef PDT::Locate_type                                    Locate_type;
+typedef PDT::Point                                          Point;
+typedef PDT::Iso_rectangle                                  Iso_rectangle;
 
 int main()
 {

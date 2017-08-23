@@ -60,10 +60,11 @@ namespace CGAL
 /// - Deletion of points
 /// - Point location
 template < class Gt,
-         class Tds = Triangulation_data_structure_2 <
-         Periodic_2_triangulation_vertex_base_2<Gt>,
-         Periodic_2_triangulation_face_base_2<Gt> > >
-class Periodic_2_triangulation_2: public Triangulation_cw_ccw_2
+           class Tds = Triangulation_data_structure_2 <
+             Periodic_2_triangulation_vertex_base_2<Gt>,
+             Periodic_2_triangulation_face_base_2<Gt> > >
+class Periodic_2_triangulation_2
+  : public Triangulation_cw_ccw_2
 {
   typedef Periodic_2_triangulation_2<Gt, Tds> Self;
 

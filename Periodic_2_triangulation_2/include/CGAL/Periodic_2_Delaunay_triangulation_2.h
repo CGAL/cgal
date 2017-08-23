@@ -22,7 +22,6 @@
 
 #include <CGAL/license/Periodic_2_triangulation_2.h>
 
-
 #include <CGAL/Periodic_2_triangulation_2.h>
 #include <CGAL/iterator.h>
 
@@ -35,16 +34,16 @@
 #include <boost/mpl/and.hpp>
 #endif //CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 
-
 namespace CGAL
 {
 
 template <
-class Gt,
-      class Tds = Triangulation_data_structure_2 <
-      Periodic_2_triangulation_vertex_base_2<Gt>,
-      Periodic_2_triangulation_face_base_2<Gt> > >
-class Periodic_2_Delaunay_triangulation_2 : public Periodic_2_triangulation_2<Gt, Tds>
+  class Gt,
+  class Tds = Triangulation_data_structure_2 <
+    Periodic_2_triangulation_vertex_base_2<Gt>,
+    Periodic_2_triangulation_face_base_2<Gt> > >
+class Periodic_2_Delaunay_triangulation_2
+  : public Periodic_2_triangulation_2<Gt, Tds>
 {
   typedef Periodic_2_Delaunay_triangulation_2<Gt, Tds>          Self;
 public:

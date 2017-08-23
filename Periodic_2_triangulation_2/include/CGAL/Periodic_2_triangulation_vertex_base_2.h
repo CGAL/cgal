@@ -38,21 +38,22 @@ template < class Gt, class Vb = CGAL::Triangulation_vertex_base_2<Gt> >
 class Periodic_2_triangulation_vertex_base_2
   : public Vb
 {
-  typedef Vb                                           Base;
-  typedef typename Vb::Triangulation_data_structure    Tds;
-public:
-  typedef Gt                                    Geom_traits;
-  typedef typename Gt::Point_2                  Point;
-  typedef Tds                                   Triangulation_data_structure;
-  typedef typename Tds::Face_handle             Face_handle;
-  typedef typename Tds::Vertex_handle           Vertex_handle;
+  typedef Vb                                            Base;
+  typedef typename Vb::Triangulation_data_structure     Tds;
 
-  typedef Periodic_2_offset_2                   Offset;
+public:
+  typedef Gt                                            Geom_traits;
+  typedef Tds                                           Triangulation_data_structure;
+
+  typedef typename Tds::Vertex_handle                   Vertex_handle;
+  typedef typename Tds::Face_handle                     Face_handle;
+  typedef typename Gt::Point_2                          Point;
+  typedef Periodic_2_offset_2                           Offset;
 
   template < typename Tds2 >
   struct Rebind_TDS
   {
-    typedef typename Vb::template Rebind_TDS<Tds2>::Other     Vb2;
+    typedef typename Vb::template Rebind_TDS<Tds2>::Other      Vb2;
     typedef Periodic_2_triangulation_vertex_base_2<Gt, Vb2>    Other;
   };
 
