@@ -1590,20 +1590,20 @@ private:
     CGAL_assertion(beg != end);
 
     typedef typename GeomTraits::Triangle_3 Triangle_3;
-    std::list<Triangle_3> tris;
+    std::list<Triangle_3> tri_list;
     for (FacetIterator fitr = beg; fitr != end; ++fitr) {
       halfedge_descriptor he = halfedge(*fitr, *m_pmesh);
       const Point_3 &p0 = point_pmap[source(he, *m_pmesh)];
       const Point_3 &p1 = point_pmap[target(he, *m_pmesh)];
       const Point_3 &p2 = point_pmap[target(next(he, *m_pmesh), *m_pmesh)];
-      tris.push_back(Triangle_3(p0, p1, p2));
+      tri_list.push_back(Triangle_3(p0, p1, p2));
     }
 
     // construct and fit proxy plane
     Plane_3 fit_plane;
     CGAL::linear_least_squares_fitting_3(
-      tris.begin(),
-      tris.end(),
+      tri_list.begin(),
+      tri_list.end(),
       fit_plane,
       CGAL::Dimension_tag<2>());
     
