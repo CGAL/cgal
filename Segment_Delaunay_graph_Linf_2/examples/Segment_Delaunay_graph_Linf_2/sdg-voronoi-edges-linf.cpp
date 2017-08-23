@@ -26,7 +26,7 @@ int main( int argc, char *argv[] ) {
   }
 
   ifstream ifs( (argc == 1) ? "data/sites2.cin" : argv[1] );
-  assert( ifs );
+  assert( bool(ifs) );
 
   SDG2          sdg;
   SDG2::Site_2  site;

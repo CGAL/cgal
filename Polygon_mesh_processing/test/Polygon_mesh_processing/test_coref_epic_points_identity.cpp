@@ -14,11 +14,11 @@ int main(int argc, char** argv)
   {
     Surface_mesh sm1, sm2;
     std::ifstream input(argv[2*i+1]);
-    assert(input);
+    assert(bool(input));
     input >> sm1;
     input.close();
     input.open(argv[2*(i+1)]);
-    assert(input);
+    assert(bool(input));
     input >> sm2;
     input.close();
 

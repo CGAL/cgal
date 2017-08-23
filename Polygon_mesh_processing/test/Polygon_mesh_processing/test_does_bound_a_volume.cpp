@@ -22,7 +22,7 @@ int main(int argc, char** argv)
               << " expected res is " << argv[2*(i+1)] << "\n";
 
     std::ifstream input(argv[2*i+1]);
-    assert(input);
+    assert(bool(input));
     Surface_mesh sm;
     input >> sm;
     bool res = atoi(argv[2*(i+1)])>0;

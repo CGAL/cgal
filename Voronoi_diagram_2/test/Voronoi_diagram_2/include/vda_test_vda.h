@@ -509,12 +509,12 @@ void test_vda(const VDA& vda)
 #ifndef VDA_TEST_RT
   // testing file I/O
   std::ofstream ofs("tmp.vd.cgal");
-  assert( ofs );
+  assert( bool(ofs) );
   ofs << vda;
   ofs.close();
 
   std::ifstream ifs("tmp.vd.cgal");
-  assert( ifs );
+  assert( bool(ifs) );
   ifs >> vda_copy;
   ifs.close();
 

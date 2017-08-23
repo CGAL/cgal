@@ -154,7 +154,7 @@ int main()
   assert( ! fc14.facet_criteria_object()(f) );
   
   Mc fc15(facet_topology = CGAL::FACET_VERTICES_ON_SAME_SURFACE_PATCH);
-  assert( fc15.facet_criteria_object()(f) );
+  assert( bool(fc15.facet_criteria_object()(f)) );
   
   // -----------------------------------
   // Test cell criteria

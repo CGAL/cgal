@@ -57,7 +57,7 @@ _test_cls_alpha_shape_3()
   
   // test a bigger alpha_shapes
   std::ifstream is("./data/P3DT3_alpha_shape_test.pts", std::ios::in);
-  assert(is);
+  assert(bool(is));
   file_input(is, L);
 
   Iso_cuboid domain(FT(-0.1),FT(-0.1),FT(-0.1), FT(0.2),FT(0.2),FT(0.2));

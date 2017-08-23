@@ -59,7 +59,7 @@ int main()
   {
     std::ifstream ifs_algo("./data/algo.dat");
 
-    assert( ifs_algo );
+    assert( bool(ifs_algo) );
 
     std::cout << "testing the Apollonius graph class"
 	      << " with filtered traits..." << std::flush;

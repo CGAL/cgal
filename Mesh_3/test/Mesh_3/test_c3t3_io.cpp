@@ -340,21 +340,21 @@ struct Test_c3t3_io {
                 << "\n******end******" << std::endl;
     }
     stream.seekg(0);
-    assert(stream);
+    assert(bool(stream));
     C3t3 c3t3_bis;
     stream >> c3t3_bis;
     std::cout << "Content of c3t3_bis:\n"
               << "*****begin*****\n"
               << c3t3_bis
               << "\n******end******" << std::endl;
-    assert(stream);
+    assert(bool(stream));
 
     {
       std::ostringstream ss_c3t3, ss_c3t3_bis;
       ss_c3t3 << c3t3;
       ss_c3t3_bis << c3t3_bis;
-      assert(ss_c3t3);
-      assert(ss_c3t3_bis);
+      assert(bool(ss_c3t3));
+      assert(bool(ss_c3t3_bis));
       assert(ss_c3t3.str() == ss_c3t3_bis.str());
       if(!check_equality(c3t3, c3t3_bis)) return false;
     }
@@ -366,9 +366,9 @@ struct Test_c3t3_io {
                              (std::ios_base::in | std::ios_base::binary)
                              : std::ios_base::in));
       CGAL::Mesh_3::save_binary_file(ss, c3t3, binary);
-      assert(ss);
+      assert(bool(ss));
       CGAL::Mesh_3::load_binary_file(ss, c3t3_bis);
-      assert(ss);
+      assert(bool(ss));
     }
     if(!check_equality(c3t3, c3t3_bis)) return false;
 
@@ -387,9 +387,9 @@ struct Test_c3t3_io {
       std::ifstream input(filename.c_str(),
                           binary ? (std::ios_base::in | std::ios_base::binary)
                           : std::ios_base::in);
-      assert(input);
+      assert(bool(input));
       CGAL::Mesh_3::load_binary_file(input, c3t3_bis);
-      assert(input);
+      assert(bool(input));
     }
     if(!check_equality(c3t3, c3t3_bis)) return false;
 

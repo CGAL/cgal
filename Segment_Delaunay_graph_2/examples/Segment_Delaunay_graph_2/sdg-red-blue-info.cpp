@@ -99,7 +99,7 @@ int main()
 {
 
   std::ifstream ifs("data/sitesxx.rb.cin");
-  assert( ifs );
+  assert( bool(ifs) );
 
   SDG2 sdg;
   Site_2 site;

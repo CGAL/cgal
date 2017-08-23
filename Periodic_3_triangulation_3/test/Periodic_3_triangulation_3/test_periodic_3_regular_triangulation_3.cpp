@@ -65,7 +65,7 @@ public:
     stream >> z;
     assert(stream && !stream.eof());
     stream >> w;
-    assert(stream);
+    assert(bool(stream));
     return Weighted_point_3(Point_3(x, y, z), w);
   }
 
@@ -348,7 +348,7 @@ public:
     P3RT3 p3rt3(Iso_cuboid(-0.5, -0.5, -0.5, 0.5, 0.5, 0.5));
 
     std::ifstream stream(filename);
-    assert(stream);
+    assert(bool(stream));
 
     unsigned cnt = 1;
     while (stream && !(stream.eof()))

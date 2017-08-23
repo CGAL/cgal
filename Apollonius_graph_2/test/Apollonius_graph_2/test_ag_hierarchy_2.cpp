@@ -62,7 +62,7 @@ int main()
   {
     std::ifstream ifs_hierarchy("./data/hierarchy.dat");
 
-    assert( ifs_hierarchy );
+    assert( bool(ifs_hierarchy) );
 
     std::cout << "testing the Apollonius graph hierarchy class"
 	      << " with filtered traits..." << std::flush;

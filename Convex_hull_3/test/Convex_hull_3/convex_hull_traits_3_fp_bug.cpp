@@ -11,7 +11,7 @@ int main()
   std::set<K::Point_3> pointset;
   std::ifstream input("convex_hull_traits_3_fp_bug.xyz");
 
-  assert(input);
+  assert(bool(input));
   while ( input >> p )
     pointset.insert(p);
 

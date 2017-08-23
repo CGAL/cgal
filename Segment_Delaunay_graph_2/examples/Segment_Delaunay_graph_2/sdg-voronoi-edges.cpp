@@ -23,7 +23,7 @@ using namespace std;
 int main()
 {
   ifstream ifs("data/sites2.cin");
-  assert( ifs );
+  assert( bool(ifs) );
 
   SDG2          sdg;
   SDG2::Site_2  site;

@@ -841,24 +841,24 @@ bool test_algo_generic(InputStream& is)
   //--------------------------------------------------------------------
   {
     std::ofstream ofs("ag_testsuite.tmp");
-    assert( ofs );
+    assert( bool(ofs) );
     ag.file_output(ofs);
     ofs.close();
 
     std::ifstream ifs("ag_testsuite.tmp");
-    assert( ifs );
+    assert( bool(ifs) );
     ag.file_input(ifs);
     ifs.close();
     assert( ag.is_valid() );
   }
   {
     std::ofstream ofs("ag_testsuite.tmp");
-    assert( ofs );
+    assert( bool(ofs) );
     ofs << ag;
     ofs.close();
 
     std::ifstream ifs("ag_testsuite.tmp");
-    assert( ifs );
+    assert( bool(ifs) );
     ifs >> ag;
     ifs.close();
     assert( ag.is_valid() );
