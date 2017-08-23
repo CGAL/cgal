@@ -1,10 +1,13 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Delaunay_triangulation_3.h>
-#include <CGAL/Alpha_shape_3.h>
 
+#include <CGAL/Alpha_shape_3.h>
+#include <CGAL/Alpha_shape_cell_base_3.h>
+#include <CGAL/Alpha_shape_vertex_base_3.h>
+#include <CGAL/Delaunay_triangulation_3.h>
+
+#include <cassert>
 #include <fstream>
 #include <list>
-#include <cassert>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel               Gt;
 typedef CGAL::Tag_true                                                    Alpha_cmp_tag;

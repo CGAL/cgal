@@ -1,8 +1,10 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Regular_triangulation_3.h>
+
 #include <CGAL/Fixed_alpha_shape_3.h>
 #include <CGAL/Fixed_alpha_shape_vertex_base_3.h>
 #include <CGAL/Fixed_alpha_shape_cell_base_3.h>
+#include <CGAL/Regular_triangulation_3.h>
+
 #include <list>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
