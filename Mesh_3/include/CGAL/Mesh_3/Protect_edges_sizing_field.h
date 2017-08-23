@@ -1815,10 +1815,6 @@ repopulate(InputIterator begin, InputIterator last,
   {
     c3t3_.remove_from_complex(*previous++, *current++);
   }
-  // Keep a point between current and last
-  typename C3T3::Triangulation::Geom_traits::Construct_point_3 wp2p =
-    c3t3_.triangulation().geom_traits().construct_point_3_object();
-  Bare_point point_through = wp2p((*previous)->point());
 
   // Remove last edge
   c3t3_.remove_from_complex(*previous, *current);
