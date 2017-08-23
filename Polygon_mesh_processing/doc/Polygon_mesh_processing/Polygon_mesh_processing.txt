@@ -121,16 +121,16 @@ Isotropic remeshing. (a) Triangulated input surface mesh.
 (d) Surface mesh with the selection uniformly remeshed.
 \cgalFigureEnd
 
-\subsection Smoothing
+\subsubsection Smoothing
 
 Smoothing of a triangulated mesh area can be achieved with algorithms that aim at either mesh smoothing or shape smoothing.
 While mesh smoothing is achieved by improving the quality of the triangulated elements based on criteria such as angle and area,
 shape smoothing is designed to be "intrinsic", depending as little as possible to the discretization
-and smoothing the shape only without optimizing the mesh elements.
+and smoothing the shape alone without optimizing the mesh elements.
 
 For mesh smoothing, `CGAL::Polygon_mesh_processing::angle_remeshing()` may be used to
 move vertices so that the angles of its incident edges equalize and `CGAL::Polygon_mesh_processing::area_remeshing()` may be used to
-move vertices so that the areas of adjacent triangles equalize. Angle and area remeshing are used in combination in
+move vertices so that the areas of adjacent triangles equalize. Angle and area remeshing are used combined in
 `CGAL::Polygon_mesh_processing::compatible_remeshing()` which smooths the mesh until convergence is achieved.
 For shape smoothing, `CGAL::Polygon_mesh_processing::curvature_flow()`
 takes into account the mean curvature to calculate a weighted barycenter towards which vertices move incrementally.
@@ -139,9 +139,9 @@ Also, new vertices are not inserted while mesh or shape smoothing, although dege
 before the remeshing.
 
 Angle and area remeshing algorithms are based on Surazhsky and Gotsman \cgalCite{cgal:sg-hqct-04}. When mesh connectivity
-is highly irregular, `angle remeshing` may be used with angle weights so that small angles carry
+is highly irregular, angle remeshing may be used with angle weights so that small angles carry
 more weight and with almost the same computational cost per iteration convergence may be achieved faster.
-`Area remeshing`, since it considers only triangle areas as a smoothing criterion, may result in long and skinny triangles,
+Area remeshing, since it considers only triangle areas as a smoothing criterion, may result in long and skinny triangles,
 especially for meshes with highly irregular connectivity. As such, area remeshing is guaranteed to improve the spatial
 distribution of the vertices over the area that is being remeshed.
 
@@ -151,7 +151,12 @@ area that is being smoothed. This means that if the surface is flat around a ver
 Curvature flow smoothing offers best results in closed surface meshes, where vertices slide according to the curvature
 and smooth the shape while the overall volume is being kept constant.
 
-[[[---to include images---]]]
+\cgalFigureBegin{smoothing, smoothing.png}
+Mesh and shape smoothing. (a) Elephant before mesh smoothing.
+(b) Elephant after applying compatible remeshing for 20 iterations.
+(c) Devil before shape smoothing.
+(d) Resuted devil after application of curvature flow algorithm.
+\cgalFigureEnd
 
 \subsection MeshingExamples Meshing Examples
 
