@@ -46,12 +46,14 @@ You get this error, as you defined CGAL_LICENSE_ERROR."
 #else // no CGAL_BOUNDING_VOLUMES_COMMERCIAL_LICENSE
 
 #  if defined(CGAL_LICENSE_WARNING)
-     CGAL_pragma_warning("You use the CGAL Bounding Volumes package under "
-                         "the terms of the GPLv3+.")
+     CGAL_pragma_warning("CGAL_BOUNDING_VOLUMES_COMMERCIAL_LICENSE is not defined, "
+                          "you use the CGAL Bounding Volumes package under "
+                          "the terms of the GPLv3+.")
 #  endif // CGAL_LICENSE_WARNING
 
 #  ifdef CGAL_LICENSE_ERROR
-#    error "You use the CGAL Bounding Volumes package under the terms of \
+#    error "CGAL_BOUNDING_VOLUMES_COMMERCIAL_LICENSE is not defined,\
+ you use the CGAL Bounding Volumes package under the terms of \
 the GPLv3+. You get this error, as you defined CGAL_LICENSE_ERROR."
 #  endif // CGAL_LICENSE_ERROR
 

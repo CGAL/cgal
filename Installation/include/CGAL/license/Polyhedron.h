@@ -46,12 +46,14 @@ You get this error, as you defined CGAL_LICENSE_ERROR."
 #else // no CGAL_POLYHEDRON_COMMERCIAL_LICENSE
 
 #  if defined(CGAL_LICENSE_WARNING)
-     CGAL_pragma_warning("You use the CGAL 3D Polyhedral Surface package under "
-                         "the terms of the GPLv3+.")
+     CGAL_pragma_warning("CGAL_POLYHEDRON_COMMERCIAL_LICENSE is not defined, "
+                          "you use the CGAL 3D Polyhedral Surface package under "
+                          "the terms of the GPLv3+.")
 #  endif // CGAL_LICENSE_WARNING
 
 #  ifdef CGAL_LICENSE_ERROR
-#    error "You use the CGAL 3D Polyhedral Surface package under the terms of \
+#    error "CGAL_POLYHEDRON_COMMERCIAL_LICENSE is not defined,\
+ you use the CGAL 3D Polyhedral Surface package under the terms of \
 the GPLv3+. You get this error, as you defined CGAL_LICENSE_ERROR."
 #  endif // CGAL_LICENSE_ERROR
 
