@@ -31,6 +31,8 @@ if ( NOT Boost_FOUND )
 
 endif()
 
+add_definitions(-DBOOST_NO_CXX11_TEMPLATE_ALIASES)
+
 # include for local directory
 
 # include for local package

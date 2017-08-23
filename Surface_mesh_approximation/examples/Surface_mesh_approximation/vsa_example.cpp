@@ -13,28 +13,28 @@ typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 int main()
 {
   // create and read Polyhedron
-  Polyhedron mesh;
-  std::ifstream input("data/bear.off");
-  if (!input || !(input >> mesh) || mesh.empty()) {
+  Polyhedron input;
+  std::ifstream file("data/bear.off");
+  if (!file || !(file >> input) || input.empty()) {
     std::cerr << "Invalid off file." << std::endl;
     return EXIT_FAILURE;
   }
 
   // output data
-  Polyhedron out_mesh;
-  std::vector<int> tris;
-  std::vector<Kernel::Point_3> anchor_pos;
+  Polyhedron output;
+  std::vector<int> triangles;
+  std::vector<Kernel::Point_3> anchors;
 
   // free function interface with named parameters
-  CGAL::vsa_mesh_approximation(mesh, out_mesh,
+  CGAL::vsa_mesh_approximation(input, output,
     CGAL::VSA::parameters::number_of_proxies(200). // number of fitting proxies
       number_of_iterations(30). // number of iterations
       init_method(1). // hierarchical init
-      anchor_point(std::back_inserter(anchor_pos)). // get anchor points
-      indexed_triangles(std::back_inserter(tris))); // get indexed triangles
+      anchor_point(std::back_inserter(anchors)). // get anchor points
+	  indexed_triangles(std::back_inserter(triangles))); // get indexed triangles
 
-  std::cout << "#anchor_pos " << anchor_pos.size() << std::endl;
-  std::cout << "#tris " << tris.size() << std::endl;
+  std::cout << "#anchors: " << anchors.size() << std::endl;
+  std::cout << "#triangles: " << triangles.size() << std::endl;
 
   return EXIT_SUCCESS;
 }
