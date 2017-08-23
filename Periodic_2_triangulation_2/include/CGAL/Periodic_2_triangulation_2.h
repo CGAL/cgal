@@ -403,7 +403,7 @@ public:
   /// represented in the 1-sheeted covering space, the offset is
   /// always zero. Otherwise v can correspond to a periodic copy
   /// outside domain of an input point.
-  Periodic_point periodic_point(const Vertex_handle &v) const
+  Periodic_point periodic_point(Vertex_handle v) const
   {
     return Periodic_point(v->point(), get_offset(v));
   }
@@ -415,7 +415,7 @@ public:
   /// covering space, this offset is possibly added to another offset
   /// determining the periodic copy.
   /// \pre i == {0,1,2}
-  Periodic_point periodic_point(const Face_handle &f, int i) const
+  Periodic_point periodic_point(Face_handle f, int i) const
   {
     return Periodic_point(f->vertex(i)->point(), get_offset(f, i));
   }
@@ -423,7 +423,7 @@ public:
   /// Returns the periodic segment formed by the two point-offset
   /// pairs corresponding to the two vertices of edge (f,i).
   /// \pre i == {0,1,2}
-  Periodic_segment periodic_segment(const Face_handle &f, int i) const
+  Periodic_segment periodic_segment(Face_handle f, int i) const
   {
     CGAL_triangulation_precondition( number_of_vertices() != 0 );
     CGAL_triangulation_precondition( i >= 0 && i <= 2);
@@ -439,7 +439,7 @@ public:
 
   /// Returns the periodic triangle formed by the three point-offset
   /// pairs corresponding to the three vertices of facet f.
-  Periodic_triangle periodic_triangle(const Face_handle &f) const
+  Periodic_triangle periodic_triangle(Face_handle f) const
   {
     return make_array(periodic_point(f, 0),
                       periodic_point(f, 1),
@@ -452,14 +452,15 @@ public:
   {
     return construct_point(pp.first, pp.second);
   }
-  Point point(const Vertex_handle &v) const
+  Point point(Vertex_handle v) const
   {
     return point(periodic_point(v));
   }
-  Point point(const Face_handle &fh, int i) const
+  Point point(Face_handle fh, int i) const
   {
     return point(periodic_point(fh, i));
   }
+
   /// Converts the Periodic_segment ps to a Segment in \f$R^2\f$.
   Segment segment(const Periodic_segment &ps) const
   {
