@@ -12,10 +12,6 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-// 
-//
 // Author(s)     : Tran Kai Frank DA <Frank.Da@sophia.inria.fr>
 //                 Andreas Fabri <Andreas.Fabri@geometryfactory.com>
 //                 Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>
@@ -25,28 +21,27 @@
 
 #include <CGAL/license/Alpha_shapes_3.h>
 
+#include <CGAL/internal/Lazy_alpha_nt_3.h>
 
 #include <CGAL/basic.h>
-
-#include <set>
-#include <map>
-#include <list>
-#include <vector>
-#include <algorithm>
-#include <utility>
-#include <iostream>
-
-#include <CGAL/Triangulation_utils_3.h>
+#include <CGAL/Compact_container.h>
+#include <CGAL/iterator.h>
 #include <CGAL/Object.h>
 #include <CGAL/Unique_hash_map.h>
-#include <CGAL/Compact_container.h>
-#include <CGAL/Alpha_shape_vertex_base_3.h>
-#include <CGAL/Alpha_shape_cell_base_3.h>
-#include <CGAL/internal/Lazy_alpha_nt_3.h>
-#include <CGAL/iterator.h>
 #ifdef CGAL_USE_GEOMVIEW
 #include <CGAL/IO/Geomview_stream.h>  // TBC
 #endif
+#include <CGAL/Triangulation_utils_3.h>
+
+#include <boost/type_traits/is_same.hpp>
+
+#include <algorithm>
+#include <iostream>
+#include <map>
+#include <list>
+#include <set>
+#include <utility>
+#include <vector>
 
 //-------------------------------------------------------------------
 namespace CGAL {

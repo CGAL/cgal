@@ -57,6 +57,8 @@ private:
 
 // The partial specialization must be defined before Alpha Shapes-related headers
 #include <CGAL/Alpha_shape_2.h>
+#include <CGAL/Alpha_shape_vertex_base_2.h>
+#include <CGAL/Alpha_shape_face_base_2.h>
 
 // ExactAlphaComparisonTag is false
 typedef K Gt;

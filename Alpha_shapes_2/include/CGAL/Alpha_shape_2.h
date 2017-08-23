@@ -12,10 +12,6 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-// 
-//
 // Author(s)     : Tran Kai Frank DA
 //                 Andreas Fabri <Andreas.Fabri@geometryfactory.com>
 
@@ -24,31 +20,30 @@
 
 #include <CGAL/license/Alpha_shapes_2.h>
 
-
-#include <CGAL/basic.h>
-
-#include <list>
-#include <set>
-#include <map>
-#include <vector>
-#include <algorithm>
-#include <utility>
-#include <iostream>
-
-#include <CGAL/utility.h>
-#include <CGAL/Unique_hash_map.h>
-#include <CGAL/Triangulation_vertex_base_2.h>
-#include <CGAL/Triangulation_face_base_2.h>
-#include <CGAL/Alpha_shape_vertex_base_2.h>
-#include <CGAL/Alpha_shape_face_base_2.h>
 #include <CGAL/internal/Lazy_alpha_nt_2.h>
 
+// for convenience only
+#include <CGAL/Alpha_shape_vertex_base_2.h>
+#include <CGAL/Alpha_shape_face_base_2.h>
 
+#include <CGAL/assertions.h>
+#include <CGAL/basic.h>
+#include <CGAL/triangulation_assertions.h>
+#include <CGAL/Unique_hash_map.h>
+#include <CGAL/utility.h>
+
+#include <algorithm>
+#include <iostream>
+#include <list>
+#include <map>
+#include <set>
+#include <utility>
+#include <vector>
 
 namespace CGAL {
 
 template < class Dt,class ExactAlphaComparisonTag = Tag_false>
-class Alpha_shape_2 : public Dt 
+class Alpha_shape_2 : public Dt
 {
   // DEFINITION The class Alpha_shape_2<Dt> represents the family
   // of alpha-shapes of points in a plane for all positive alpha. It
