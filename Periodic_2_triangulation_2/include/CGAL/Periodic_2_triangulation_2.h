@@ -83,8 +83,10 @@ public:
 
   /// The point type
   typedef typename Gt::Point_2 Point;
-  /// The segment type
+  /// The vector type
   typedef typename Gt::Segment_2 Segment;
+  /// The segment type
+  typedef typename Gt::Vector_2 Vector;
   /// The triangle type
   typedef typename Gt::Triangle_2 Triangle;
 
@@ -175,8 +177,15 @@ public:
     FACE,
     /// The query point lies outside the affine hull of the triangulation,
     /// which is the case when the triangulation is empty.
-    EMPTY
+    EMPTY,
+    OUTSIDE_CONVEX_HULL, // unused, for compatibility with Alpha_shape_2
+    OUTSIDE_AFFINE_HULL  // unused, for compatibility with Alpha_shape_2
   };
+
+  /// Returns false, no infinite simplices in the periodic triangulation
+  template<class T>
+  bool is_infinite(const T&, int = 0) const { return false; }
+
   //\}
 
   // Auxiliary iterators for convenience
