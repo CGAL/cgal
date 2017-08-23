@@ -87,6 +87,12 @@ public:
   typedef typename Base::Periodic_segment_iterator  Periodic_segment_iterator;
   typedef typename Base::Periodic_triangle_iterator Periodic_triangle_iterator;
 
+  //Tag to distinguish Delaunay from regular triangulations
+  typedef Tag_false                             Weighted_tag;
+
+  // Tag to distinguish periodic triangulations from others
+  typedef Tag_true                              Periodic_tag;
+
 public:
 #ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
   using Base::empty;

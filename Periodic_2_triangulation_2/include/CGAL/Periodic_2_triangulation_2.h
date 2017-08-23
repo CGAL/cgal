@@ -204,9 +204,11 @@ public:
   typedef value_type& reference;
   // \}
 
-
   /// Tag to distinguish regular triangulations from others;
   typedef Tag_false Weighted_tag;
+
+  /// Tag to distinguish periodic triangulations from others
+  typedef Tag_true Periodic_tag;
 
 protected:
   // Protected types of Periodic_2_triangulation_2
