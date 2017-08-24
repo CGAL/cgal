@@ -182,20 +182,6 @@ div.groupText {
     background: white;
 }
 
-/* this adjusts the anchors inside the doc-content div by the height of */
-/* the header. this is necessary because anchors are not adjusted by the */
-/* height of the position: fixed top div. */
-#doc-content a.anchor {
-    position: absolute; 
-    padding-top: 91px; 
-    margin-top: -91px;
-}
-
-#doc-content .anchor {
-    padding-top: 91px; 
-    margin-top: -91px;
-}
-
 #MSearchResultsWindow {
     z-index: 2;
 }
