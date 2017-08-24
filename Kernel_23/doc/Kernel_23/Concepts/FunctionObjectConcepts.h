@@ -7923,6 +7923,14 @@ public:
   bool operator()(const Kernel::Iso_cuboid_3&c, 
                   const Kernel::Point_3&p); 
 
+  /*!
+    return true iff the line segment `ab` is inside the union of the
+    bounded sides of `s1` and `s2`.
+  */
+  bool operator()(const Kernel::Sphere_3& s1,
+                  const Kernel::Sphere_3& s2,
+                  const Kernel::Point_3& a,
+                  const Kernel::Point_3& b);
 
   /// @}
 
