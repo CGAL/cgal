@@ -125,7 +125,7 @@ type. Models that work for a basic alpha shape are the classes
 triangulation. A model that works for a weighted alpha shape is
 the class `Regular_triangulation_2`.
 
-\subsection AlphaShape3D_ConceptAndModelsAlphaShapes Alpha Shapes
+\subsection AlphaShape2D_ConceptAndModelsAlphaShapes Alpha Shapes
 
 The triangulation needs a geometric traits class as argument.
 The requirements of this class are described in the concepts `AlphaShapeTraits_2`
@@ -151,7 +151,7 @@ periodic triangulations as underlying triangulation:
 and face classes must be models to both `AlphaShapeVertex_2` and
 `RegularTriangulationVertexBase_2`, as well as
 `AlphaShapeCell_2` and `RegularTriangulationFaceBase_2` respectively
-(see example: \ref AlphaShape_2DExampleforWeightedAlphaShapes).
+(see example: \ref I1_SectWeightedAS2D).
 <li> When using a periodic triangulation (`Periodic_2_Delaunay_triangulation_2`),
 the vertex and face classes must be models to both `AlphaShapeVertex_2`
 and `Periodic_2TriangulationVertexBase_2`,

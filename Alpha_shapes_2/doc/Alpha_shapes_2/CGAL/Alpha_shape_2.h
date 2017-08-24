@@ -51,7 +51,7 @@ must be provided by the user. An example of such specialization is given in the 
 When the tag `ExactAlphaComparisonTag` is set to \link Tag_true `Tag_true`\endlink,
 the evaluations of predicates such as `Side_of_oriented_circle_2` are done lazily.
 Consequently, the predicates store pointers to the geometrical positions of the
-points involved passed as arguments of the predicates. It is thus important that
+points passed as arguments of the predicates. It is thus important that
 these points are not temporary objects. Points of the triangulation are accessed
 using the function `point(Face_handle, int)` of the underlying triangulation.
 In the case of periodic triangulations, the `point(Face_handle, int)` function

@@ -48,7 +48,7 @@ two-dimensional Alpha Shapes example \ref Alpha_shapes_2/ex_alpha_projection_tra
 When the tag `ExactAlphaComparisonTag` is set to \link Tag_true `Tag_true`\endlink,
 the evaluations of predicates such as `Side_of_oriented_sphere_3` are done lazily.
 Consequently, the predicates store pointers to the geometrical positions of the
-points involved passed as arguments of the predicates. It is thus important that
+points passed as arguments of the predicates. It is thus important that
 these points are not temporary objects. Points of the triangulation are accessed
 using the function `point(Cell_handle, int)` of the underlying triangulation.
 In the case of periodic triangulations, the `point(Cell_handle, int)` function
