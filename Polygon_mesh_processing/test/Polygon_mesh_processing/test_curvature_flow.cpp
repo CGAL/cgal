@@ -51,7 +51,9 @@ int main(int argc, char* argv[]){
     Mesh mesh;
     Mesh originalMesh;
     std::ifstream input;
-    /*std::ofstream output;*/
+#ifdef CGAL_PMP_REMESHING_VERBOSE
+    std::ofstream output;
+#endif
 
     // flat test
     input.open("data/polygon.off");
@@ -82,17 +84,22 @@ int main(int argc, char* argv[]){
 
 
     // select half sphere
+#ifdef CGAL_PMP_REMESHING_VERBOSE
     std::cout<<"all faces: "<<faces(mesh).size()<<std::endl;
-    std::set<face_index> selected_faces = select(mesh, 0);
-    std::cout<<"selected faces: "<<selected_faces.size()<<std::endl;
+#endif
 
+    std::set<face_index> selected_faces = select(mesh, 0);
+
+#ifdef CGAL_PMP_REMESHING_VERBOSE
+    std::cout<<"selected faces: "<<selected_faces.size()<<std::endl;
+#endif
     CGAL::Polygon_mesh_processing::isotropic_remeshing(selected_faces, 0.1, mesh);
 
-    /*
+#ifdef CGAL_PMP_REMESHING_VERBOSE
     output.open("data/half-sphere.off");
     output << mesh;
     output.close();
-    */
+#endif
 
     originalMesh = mesh;
     CGAL::Polygon_mesh_processing::curvature_flow(mesh);
@@ -100,16 +107,16 @@ int main(int argc, char* argv[]){
     dist = CGAL::Polygon_mesh_processing::approximate_Hausdorff_distance
         <TAG>(originalMesh, mesh, CGAL::Polygon_mesh_processing::parameters::number_of_points_per_area_unit(1000));
 
-    if(dist > 1e-3)
+    if(dist > 1e-1)
     {
         return EXIT_FAILURE;
     }
 
-    /*
+#ifdef CGAL_PMP_REMESHING_VERBOSE
     output.open("data/half-sphere_smoothed.off");
     output << mesh;
     output.close();
-    */
+#endif
 
     return 0;
 }
