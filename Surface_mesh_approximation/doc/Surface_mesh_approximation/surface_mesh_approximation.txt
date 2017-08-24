@@ -25,8 +25,8 @@ framework to approximate a triangle surface with shape primitives. Given a trian
 to drive the distortion error down with the parameterized <em>geometric proxies</em>. The overview of the algorithm can be found in \ref sma_approximation.
 
 This package offers both the approximation and mesh extraction functionalities. 
-They can be accessed as simple free functions or more advanced interactive class-based interfaces with customized metric and proxy. 
-It can be used as not only an approximation package, but also a mesh simplification, shape discovery one or a complement to current mesh segmentation package.
+They can be accessed through a free function or more advanced interactive class-based interfaces with customized metric and proxy. 
+Apart from approximation, it can be viewed as a package for simplification or shape discovery or a complement to current mesh segmentation package.
 
 \section sma_overview Overview
 
@@ -144,6 +144,31 @@ In the following example, it defines a simple point-wise proxy to achieves a com
 \cgalExample{Surface_mesh_approximation/vsa_metric_example.cpp}
 
 \section sma_perf Performances
+
+We provide some performance comparisons in this section. 
+The machine used is a PC running Windows10 X64 with an Intel Xeon E5-1620 clocked at 3.70 GHz with 32GB of RAM. 
+The program has been optimized with the O2 option with Visual Studio 2015. 
+<!-- By default the kernel used is Simple_cartesian<double> (the fastest in our experiments). -->
+
+We compare the running timing of 3 phase of the algorithm: seeding, relaxation and meshing. By default the kernel used is `Exact_predicates_inexact_constructions_kernel` (`EPICK`).
+
+<center>
+Number of triangles  | Random Seeding | Incremental Seeding | Hierarchical Seeding | Relaxation | Meshing
+---------------------| ------------:  | -----------------:  | ------------------:  | --------:  | ------:
+  7,828              |     tbd        |          tbd        |       tbd            |    tbd     | tbd
+ 20,188              |     tbd        |          tbd        |       tbd            |    tbd     | tbd
+ 88,928              |     tbd        |          tbd        |       tbd            |    tbd     | tbd
+</center>
+
+With different metrics, we compare the running time and complexity of the output mesh.
+
+<center>
+Number of triangles  | \f$ \mathcal{L}^{2,1} \f$ | \f$ \mathcal{L}^2 \f$ | %Compact Metric
+---------------------| -----------------------:  | -------------------:  | -------------:
+  7,828              |           tbd             |           tbd         | tbd
+ 20,188              |           tbd             |           tbd         | tbd
+ 88,928              |           tbd             |           tbd         | tbd
+</center>
 
 \section sma_history Design and Implementation History
 

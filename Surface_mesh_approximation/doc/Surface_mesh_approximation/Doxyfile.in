@@ -10,7 +10,7 @@ HIDE_UNDOC_CLASSES         =  true
 # macros to be used inside the code
 ALIASES += "cgalNamedParamsBegin=<dl class=\"params\"><dt>Named Parameters</dt><dd> <table class=\"params\">"
 ALIASES += "cgalNamedParamsEnd=</table> </dd> </dl>"
-ALIASES += "cgalParamBegin{1}=<tr><td class=\"paramname\">\ref PMP_\1 \"\1\"</td><td>"
+ALIASES += "cgalParamBegin{1}=<tr><td class=\"paramname\">\ref VSA_\1 \"\1\"</td><td>"
 ALIASES += "cgalParamEnd=</td></tr>"
 
 #macros for NamedParameters.txt

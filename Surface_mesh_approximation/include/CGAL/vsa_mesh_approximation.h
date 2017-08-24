@@ -39,14 +39,21 @@ namespace CGAL
  *  \cgalParamBegin{vertex_point_map} the property map with the points associated
  *    to the vertices of `tm_in`. Instance of a class model of `ReadWritePropertyMap`.
  *  \cgalParamEnd
- *  \cgalParamBegin{face_index_map} a property map containing the index of each face of `tm_in`
+ *  \cgalParamBegin{init_method} the selection of seed initialization method.
  *  \cgalParamEnd
- *  \cgalParamBegin{number_of_iterations} the number of iterations for the
- *    sequence of atomic operations performed (listed in the above description)
+ *  \cgalParamBegin{number_of_proxies} the number of proxies to approximate the geometry.
  *  \cgalParamEnd
- *  \cgalParamBegin{face_patch_map} a property map with the patch id's associated to the
-     faces of `faces`. Instance of a class model of `ReadWritePropertyMap`. It gets
-     updated during the remeshing process while new faces are created.
+ *  \cgalParamBegin{number_of_iterations} the relaxation iterations.
+ *  \cgalParamEnd
+ *  \cgalParamBegin{chord_subdivide} the threshold of chord subdivision.
+ *  \cgalParamEnd
+ *  \cgalParamBegin{face_proxy_map} a property map containing the assigned proxy index of each face of `tm_in`
+ *  \cgalParamEnd
+ *  \cgalParamBegin{anchor_vertex} the anchor verteices output iterator
+ *  \cgalParamEnd
+ *  \cgalParamBegin{anchor_point} the anchor points output iterator
+ *  \cgalParamEnd
+ *  \cgalParamBegin{indexed_triangles} the indexed triangles output iterator
  *  \cgalParamEnd
  * \cgalNamedParamsEnd
  */
