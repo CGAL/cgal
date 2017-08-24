@@ -175,12 +175,66 @@ void angle_smoothing(PolygonMesh& pmesh, const FaceRange& faces, const NamedPara
 
 }
 
+/*!
+* \ingroup PMP_meshing_grp
+* @brief angle smoothing on all faces of the mesh.
+*
+* @tparam PolygonMesh model of `MutableFaceGraph`.
+*         The descriptor types `boost::graph_traits<PolygonMesh>::%face_descriptor`
+*         and `boost::graph_traits<PolygonMesh>::%halfedge_descriptor` must be
+*         models of `Hashable`.
+*         If `PolygonMesh` has an internal property map for `CGAL::face_index_t`,
+*         and no `face_index_map` is given
+*         as a named parameter, then the internal one should be initialized.
+* @tparam NamedParameters a sequence of \ref namedparameters.
+*
+* @param pmesh a polygon mesh with triangulated surface patches to be smoothed.
+* @param np optional sequence of \ref namedparameters among the ones listed below.
+*
+* \cgalNamedParamsBegin
+*  \cgalParamBegin{geom_traits} a geometric traits class instance, model of `Kernel`.
+*    Exact constructions kernels are not supported by this function.
+*  \cgalParamEnd
+*  \cgalParamBegin{vertex_point_map} the property map with the points associated
+*    to the vertices of `pmesh`. Instance of a class model of `ReadWritePropertyMap`.
+*  \cgalParamEnd
+*  \cgalParamBegin{face_index_map} a property map containing the index of each face of `pmesh`.
+*  \cgalParamEnd
+*  \cgalParamBegin{number_of_iterations} the number of iterations for the
+*    sequence of the smoothing iterations performed.
+*  \cgalParamEnd
+*  \cgalParamBegin{edge_is_constrained_map} a property map containing the
+*    constrained-or-not status of each edge of `pmesh`. Vertices that belong to constrained
+*    edges are not modified at all during smoothing.
+*  \cgalParamEnd
+*  \cgalParamBegin{vertex_is_constrained_map} a property map containing the
+*    constrained-or-not status of each vertex of `pmesh`. A constrained vertex
+*    cannot be modified at all during smoothing.
+*  \cgalParamEnd
+*  \cgalParamBegin{use_weights} If `true`, small angles carry more weight than larger ones.
+*  \cgalParamEnd
+* \cgalNamedParamsEnd
+*/
 template<typename PolygonMesh, typename NamedParameters>
 void angle_smoothing(PolygonMesh& pmesh, const NamedParameters& np)
 {
     angle_smoothing(pmesh, faces(pmesh), np);
 }
 
+/*!
+* \ingroup PMP_meshing_grp
+* @brief angle smoothing on all faces of the mesh.
+*
+* @tparam PolygonMesh model of `MutableFaceGraph`.
+*         The descriptor types `boost::graph_traits<PolygonMesh>::%face_descriptor`
+*         and `boost::graph_traits<PolygonMesh>::%halfedge_descriptor` must be
+*         models of `Hashable`.
+*         If `PolygonMesh` has an internal property map for `CGAL::face_index_t`,
+*         and no `face_index_map` is given
+*         as a named parameter, then the internal one should be initialized.
+*
+* @param pmesh a polygon mesh with triangulated surface patches to be smoothed.
+*/
 template<typename PolygonMesh>
 void angle_smoothing(PolygonMesh& pmesh)
 {
@@ -337,12 +391,70 @@ void area_smoothing(PolygonMesh& pmesh, const FaceRange& faces, const NamedParam
 
 }
 
+/*!
+* \ingroup PMP_meshing_grp
+* @brief area smoothing on all faces of the mesh.
+*
+* @tparam PolygonMesh model of `MutableFaceGraph`.
+*         The descriptor types `boost::graph_traits<PolygonMesh>::%face_descriptor`
+*         and `boost::graph_traits<PolygonMesh>::%halfedge_descriptor` must be
+*         models of `Hashable`.
+*         If `PolygonMesh` has an internal property map for `CGAL::face_index_t`,
+*         and no `face_index_map` is given
+*         as a named parameter, then the internal one should be initialized.
+* @tparam NamedParameters a sequence of \ref namedparameters
+*
+* @param pmesh a polygon mesh with triangulated surface patches to be smoothed.
+* @param np optional sequence of \ref namedparameters among the ones listed below.
+*
+* \cgalNamedParamsBegin
+*  \cgalParamBegin{geom_traits} a geometric traits class instance, model of `Kernel`.
+*    Exact constructions kernels are not supported by this function.
+*  \cgalParamEnd
+*  \cgalParamBegin{vertex_point_map} the property map with the points associated
+*    to the vertices of `pmesh`. Instance of a class model of `ReadWritePropertyMap`.
+*  \cgalParamEnd
+*  \cgalParamBegin{face_index_map} a property map containing the index of each face of `pmesh`.
+*  \cgalParamEnd
+*  \cgalParamBegin{number_of_iterations} the number of iterations for the
+*    sequence of the smoothing iterations performed.
+*  \cgalParamEnd
+*  \cgalParamBegin{edge_is_constrained_map} a property map containing the
+*    constrained-or-not status of each edge of `pmesh`. Vertices that belong to constrained
+*    edges are not modified at all during smoothing.
+*  \cgalParamEnd
+*  \cgalParamBegin{vertex_is_constrained_map} a property map containing the
+*    constrained-or-not status of each vertex of `pmesh`. A constrained vertex
+*    cannot be modified at all during smoothing.
+*  \cgalParamEnd
+*  \cgalParamBegin{gradient_descent_precision} The precision which is met during gradient descent refers to
+*    the relative energy between iterations of each triangle element which is minimized
+*    while one of its vertices is being moved. Triangle energy is defined based on its area compared to
+*    the average area of all triangles adjacent to the vertex that is being moved.  Defaults to 0.001.
+*  \cgalParamEnd
+* \cgalNamedParamsEnd
+*/
 template<typename PolygonMesh, typename NamedParameters>
 void area_smoothing(PolygonMesh& pmesh, const NamedParameters& np)
 {
     area_smoothing(pmesh, faces(pmesh), np);
 }
 
+/*!
+* \ingroup PMP_meshing_grp
+* @brief area smoothing on all faces of the mesh.
+*
+* @tparam PolygonMesh model of `MutableFaceGraph`.
+*         The descriptor types `boost::graph_traits<PolygonMesh>::%face_descriptor`
+*         and `boost::graph_traits<PolygonMesh>::%halfedge_descriptor` must be
+*         models of `Hashable`.
+*         If `PolygonMesh` has an internal property map for `CGAL::face_index_t`,
+*         and no `face_index_map` is given
+*         as a named parameter, then the internal one should be initialized.
+*
+* @param pmesh a polygon mesh with triangulated surface patches to be smoothed.
+*
+*/
 template<typename PolygonMesh>
 void area_smoothing(PolygonMesh& pmesh)
 {
@@ -534,12 +646,70 @@ void compatible_smoothing(PolygonMesh& pmesh, const FaceRange& faces, const Name
 
 }
 
+
+/*!
+* \ingroup PMP_meshing_grp
+* @brief compatible smoothing on all faces of the mesh.
+*
+* @tparam PolygonMesh model of `MutableFaceGraph`.
+*         The descriptor types `boost::graph_traits<PolygonMesh>::%face_descriptor`
+*         and `boost::graph_traits<PolygonMesh>::%halfedge_descriptor` must be
+*         models of `Hashable`.
+*         If `PolygonMesh` has an internal property map for `CGAL::face_index_t`,
+*         and no `face_index_map` is given
+*         as a named parameter, then the internal one should be initialized.
+* @tparam NamedParameters a sequence of \ref namedparameters
+*
+* @param pmesh a polygon mesh with triangulated surface patches to be smoothed.
+* @param np optional sequence of \ref namedparameters among the ones listed below.
+*
+* \cgalNamedParamsBegin
+*  \cgalParamBegin{geom_traits} a geometric traits class instance, model of `Kernel`.
+*    Exact constructions kernels are not supported by this function.
+*  \cgalParamEnd
+*  \cgalParamBegin{vertex_point_map} the property map with the points associated
+*    to the vertices of `pmesh`. Instance of a class model of `ReadWritePropertyMap`.
+*  \cgalParamEnd
+*  \cgalParamBegin{face_index_map} a property map containing the index of each face of `pmesh`.
+*  \cgalParamEnd
+*  \cgalParamBegin{number_of_iterations} the maximum number of iterations for the
+*    sequence of smoothing iterations performed.
+*  \cgalParamEnd
+*  \cgalParamBegin{edge_is_constrained_map} a property map containing the
+*    constrained-or-not status of each edge of `pmesh`. Vertices that belong to constrained
+*    edges are not modified at all during smoothing.
+*  \cgalParamEnd
+*  \cgalParamBegin{vertex_is_constrained_map} a property map containing the
+*    constrained-or-not status of each vertex of `pmesh`. A constrained vertex
+*    cannot be modified at all during smoothing.
+*  \cgalParamEnd
+*  \cgalParamBegin{use_weights} If `true`, small angles carry more weight than larger ones.
+*  \cgalParamEnd
+*  \cgalParamBegin{distance_precision} The Hausdorff distance between the mesh of the previous and the curent iteration.
+*    Defaults to 0.01.
+*  \cgalParamEnd
+* \cgalNamedParamsEnd
+*/
 template<typename PolygonMesh, typename NamedParameters>
 void compatible_smoothing(PolygonMesh& pmesh, const NamedParameters& np)
 {
     compatible_smoothing(pmesh, faces(pmesh), np);
 }
 
+/*!
+* \ingroup PMP_meshing_grp
+* @brief compatible smoothing on all faces of the mesh.
+*
+* @tparam PolygonMesh model of `MutableFaceGraph`.
+*         The descriptor types `boost::graph_traits<PolygonMesh>::%face_descriptor`
+*         and `boost::graph_traits<PolygonMesh>::%halfedge_descriptor` must be
+*         models of `Hashable`.
+*         If `PolygonMesh` has an internal property map for `CGAL::face_index_t`,
+*         and no `face_index_map` is given
+*         as a named parameter, then the internal one should be initialized.
+*
+* @param pmesh a polygon mesh with triangulated surface patches to be smoothed.
+*/
 template<typename PolygonMesh>
 void compatible_smoothing(PolygonMesh& pmesh)
 {
@@ -549,7 +719,9 @@ void compatible_smoothing(PolygonMesh& pmesh)
 
 /*!
 * \ingroup PMP_meshing_grp
-* @brief todo
+* @brief smooths the overall shape of the mesh by using
+* the mean curvature flow to calculate and apply an operator to mesh vertices.
+* The effect depends only on the curvature of each area.
 *
 * @tparam PolygonMesh model of `MutableFaceGraph`.
 *         The descriptor types `boost::graph_traits<PolygonMesh>::%face_descriptor`
@@ -572,6 +744,9 @@ void compatible_smoothing(PolygonMesh& pmesh)
 *  \cgalParamEnd
 *  \cgalParamBegin{vertex_point_map} the property map with the points associated
 *    to the vertices of `pmesh`. Instance of a class model of `ReadWritePropertyMap`.
+*  \cgalParamEnd
+*  \cgalParamBegin{number_of_iterations} the number of iterations for the
+*    sequence of the smoothing iterations performed.
 *  \cgalParamEnd
 *  \cgalParamBegin{face_index_map} a property map containing the index of each face of `pmesh`.
 *  \cgalParamEnd
@@ -667,11 +842,21 @@ void curvature_flow_smoothing(PolygonMesh& pmesh, const FaceRange& faces, const 
 #ifdef CGAL_PMP_SMOOTHING_VERBOSE
     t.stop();
     std::cout << " done ("<< t.time() <<" sec)." << std::endl;
+    std::cout << "#iter = " << nb_iterations << std::endl;
     std::cout << "Shape smoothing..." << std::endl;
     t.reset(); t.start();
 #endif
 
+    for(unsigned int i=0; i<nb_iterations; ++i)
+    {
+
+#ifdef CGAL_PMP_SMOOTHING_VERBOSE
+        std::cout << " * Iteration " << (i + 1) << " *" << std::endl;
+#endif
+
     curvature_remesher.curvature_smoothing();
+
+    }
 
 #ifdef CGAL_PMP_SMOOTHING_VERBOSE
     t.stop();
@@ -682,12 +867,64 @@ void curvature_flow_smoothing(PolygonMesh& pmesh, const FaceRange& faces, const 
 
 }
 
+/*!
+* \ingroup PMP_meshing_grp
+* @brief curvature flow smoothing on all faces of the mesh.
+*
+* @tparam PolygonMesh model of `MutableFaceGraph`.
+*         The descriptor types `boost::graph_traits<PolygonMesh>::%face_descriptor`
+*         and `boost::graph_traits<PolygonMesh>::%halfedge_descriptor` must be
+*         models of `Hashable`.
+*         If `PolygonMesh` has an internal property map for `CGAL::face_index_t`,
+*         and no `face_index_map` is given
+*         as a named parameter, then the internal one should be initialized
+* @tparam NamedParameters a sequence of \ref namedparameters
+*
+* @param pmesh a polygon mesh with triangulated surface patches to be smoothed.
+* @param np optional sequence of \ref namedparameters among the ones listed below.
+*
+* \cgalNamedParamsBegin
+*  \cgalParamBegin{geom_traits} a geometric traits class instance, model of `Kernel`.
+*    Exact constructions kernels are not supported by this function.
+*  \cgalParamEnd
+*  \cgalParamBegin{vertex_point_map} the property map with the points associated
+*    to the vertices of `pmesh`. Instance of a class model of `ReadWritePropertyMap`.
+*  \cgalParamEnd
+*  \cgalParamBegin{number_of_iterations} the number of iterations for the
+*    sequence of the smoothing iterations performed.
+*  \cgalParamEnd
+*  \cgalParamBegin{face_index_map} a property map containing the index of each face of `pmesh`.
+*  \cgalParamEnd
+*  \cgalParamBegin{edge_is_constrained_map} a property map containing the
+*    constrained-or-not status of each edge of `pmesh`. Vertices that belong to constrained
+*    edges are not modified at all during smoothing.
+*  \cgalParamEnd
+*  \cgalParamBegin{vertex_is_constrained_map} a property map containing the
+*    constrained-or-not status of each vertex of `pmesh`. A constrained vertex
+*    cannot be modified at all during smoothing.
+*  \cgalParamEnd
+* \cgalNamedParamsEnd
+*/
 template<typename PolygonMesh, typename NamedParameters>
 void curvature_flow_smoothing(PolygonMesh& pmesh, const NamedParameters& np)
 {
     curvature_flow_smoothing(pmesh, faces(pmesh), np);
 }
 
+/*!
+* \ingroup PMP_meshing_grp
+* @brief curvature flow smoothing on all faces of the mesh.
+*
+* @tparam PolygonMesh model of `MutableFaceGraph`.
+*         The descriptor types `boost::graph_traits<PolygonMesh>::%face_descriptor`
+*         and `boost::graph_traits<PolygonMesh>::%halfedge_descriptor` must be
+*         models of `Hashable`.
+*         If `PolygonMesh` has an internal property map for `CGAL::face_index_t`,
+*         and no `face_index_map` is given
+*         as a named parameter, then the internal one should be initialized
+*
+* @param pmesh a polygon mesh with triangulated surface patches to be smoothed.
+*/
 template<typename PolygonMesh>
 void curvature_flow_smoothing(PolygonMesh& pmesh)
 {

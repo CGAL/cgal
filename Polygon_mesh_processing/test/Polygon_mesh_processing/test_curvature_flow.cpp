@@ -64,7 +64,7 @@ int main(int argc, char* argv[]){
     input.close();
 
     originalMesh = mesh;
-    CGAL::Polygon_mesh_processing::curvature_flow(mesh);
+    CGAL::Polygon_mesh_processing::curvature_flow_smoothing(mesh);
 
     double dist = CGAL::Polygon_mesh_processing::approximate_Hausdorff_distance
         <TAG>(originalMesh, mesh, CGAL::Polygon_mesh_processing::parameters::number_of_points_per_area_unit(1000));
@@ -102,7 +102,7 @@ int main(int argc, char* argv[]){
 #endif
 
     originalMesh = mesh;
-    CGAL::Polygon_mesh_processing::curvature_flow(mesh);
+    CGAL::Polygon_mesh_processing::curvature_flow_smoothing(mesh);
 
     dist = CGAL::Polygon_mesh_processing::approximate_Hausdorff_distance
         <TAG>(originalMesh, mesh, CGAL::Polygon_mesh_processing::parameters::number_of_points_per_area_unit(1000));

@@ -107,7 +107,7 @@ int main(int argc, char* argv[]){
 
     calc_angles(mesh, min_a, max_a, mean_a);
 
-    CGAL::Polygon_mesh_processing::angle_remeshing(mesh);
+    CGAL::Polygon_mesh_processing::angle_smoothing(mesh);
     calc_angles(mesh, min_a, max_a, mean_a);
 
     if(!check_value_equal(min_a, 24.980))
@@ -123,7 +123,7 @@ int main(int argc, char* argv[]){
     input>>mesh;
     input.close();
 
-    CGAL::Polygon_mesh_processing::area_remeshing(mesh);
+    CGAL::Polygon_mesh_processing::area_smoothing(mesh);
     calc_areas(mesh, min_a, max_a, mean_a);
 
     if(!check_value_equal(min_a, 0.476))
