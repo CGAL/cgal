@@ -46,14 +46,14 @@ You get this error, as you defined CGAL_LICENSE_ERROR."
 #else // no CGAL_JET_FITTING_3_COMMERCIAL_LICENSE
 
 #  if defined(CGAL_LICENSE_WARNING)
-     CGAL_pragma_warning("CGAL_JET_FITTING_3_COMMERCIAL_LICENSE is not defined, "
-                          "you use the CGAL Estimation of Local Differential Properties of Point-Sampled Surfaces package under "
+     CGAL_pragma_warning("\nThe macro CGAL_JET_FITTING_3_COMMERCIAL_LICENSE is not defined."
+                          "\nYou use the CGAL Estimation of Local Differential Properties of Point-Sampled Surfaces package under "
                           "the terms of the GPLv3+.")
 #  endif // CGAL_LICENSE_WARNING
 
 #  ifdef CGAL_LICENSE_ERROR
-#    error "CGAL_JET_FITTING_3_COMMERCIAL_LICENSE is not defined,\
- you use the CGAL Estimation of Local Differential Properties of Point-Sampled Surfaces package under the terms of \
+#    error "The macro CGAL_JET_FITTING_3_COMMERCIAL_LICENSE is not defined.\
+ You use the CGAL Estimation of Local Differential Properties of Point-Sampled Surfaces package under the terms of \
 the GPLv3+. You get this error, as you defined CGAL_LICENSE_ERROR."
 #  endif // CGAL_LICENSE_ERROR
 
