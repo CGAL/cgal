@@ -92,13 +92,13 @@ public:
     return points_.back();
   }
 
-  /// Returns true if the polyline is not degenerated
+  /// Returns `true` if the polyline is not degenerated
   bool is_valid() const
   {
     return points_.size() > 1;
   }
 
-  /// Returns true if polyline is a cycle
+  /// Returns `true` if polyline is a cycle
   bool is_cycle() const
   {
     return start_point() == end_point();
@@ -644,10 +644,10 @@ public:
   CGAL::Sign distance_sign(const Point_3& p, const Point_3& q,
                            const Curve_segment_index& index) const;
 
-  /// Returns true if curve \c curve_index is a cycle
+  /// Returns `true` if curve \c curve_index is a cycle
   bool is_cycle(const Point_3&, const Curve_segment_index& index) const;
 
-  /// Returns true if the portion of the curve segment of index \c index,
+  /// Returns `true` if the portion of the curve segment of index \c index,
   /// between the points \c c1 and \c c2, is covered by the spheres of
   /// centers \c c1 and \c c2 and squared radii \c sq_r1 and \c sq_r2
   /// respectively.

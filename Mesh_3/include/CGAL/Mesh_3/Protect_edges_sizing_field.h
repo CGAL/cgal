@@ -216,12 +216,12 @@ private:
 			     const Curve_segment_index& curve_index,
 			     ErasedVeOutIt out);
   
-  /// Returns true if balls of \c va and \c vb intersect, and (va,vb) is not
+  /// Returns `true` if balls of \c va and \c vb intersect, and (va,vb) is not
   /// an edge of the complex
   bool non_adjacent_but_intersect(const Vertex_handle& va,
                                   const Vertex_handle& vb) const;
   
-  /// Returns true if balls of \c va and \c vb intersect
+  /// Returns `true` if balls of \c va and \c vb intersect
   bool do_balls_intersect(const Vertex_handle& va,
                           const Vertex_handle& vb) const;
   
@@ -230,7 +230,7 @@ private:
                                  const bool special_ball = false);
   
   
-  /// Returns true if balls of v1 and v2 intersect "enough".
+  /// Returns `true` if balls of v1 and v2 intersect "enough".
   /// \param orientation Orientation of the curve segment between \c v1 and
   ///        \c v2, given the orientation of the curve of index
   ///        \c curve_index
@@ -325,7 +325,7 @@ private:
   ErasedVeOutIt
   repopulate_edges_around_corner(const Vertex_handle& v, ErasedVeOutIt out);
   
-  /// Returns true if edge with index \c curve_index is already treated
+  /// Returns `true` if edge with index \c curve_index is already treated
   bool is_treated(const Curve_segment_index& curve_index) const
   {
     return ( treated_edges_.find(curve_index) != treated_edges_.end() );
