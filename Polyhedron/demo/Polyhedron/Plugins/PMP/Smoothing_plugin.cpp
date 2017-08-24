@@ -113,6 +113,10 @@ public:
         ui_widget.iterations_spinBox->setValue(20);
         ui_widget.iterations_spinBox->setSingleStep(1);
         ui_widget.iterations_spinBox->setMinimum(1);
+
+        ui_widget.curv_iterations_spinBox->setValue(1);
+        ui_widget.curv_iterations_spinBox->setSingleStep(1);
+        ui_widget.curv_iterations_spinBox->setMinimum(1);
     }
 
 public Q_SLOTS:
@@ -173,7 +177,9 @@ public Q_SLOTS:
 
         QApplication::setOverrideCursor(Qt::WaitCursor);
 
-        curvature_flow_smoothing(pmesh);
+        unsigned int nb_iter = ui_widget.curv_iterations_spinBox->value();
+        curvature_flow_smoothing(pmesh,
+                                 parameters::number_of_iterations(nb_iter));
 
         poly_item->invalidateOpenGLBuffers();
         Q_EMIT poly_item->itemChanged();

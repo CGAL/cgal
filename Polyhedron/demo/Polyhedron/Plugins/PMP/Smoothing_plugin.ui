@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>451</width>
-    <height>401</height>
+    <height>392</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -47,7 +47,7 @@
      <property name="title">
       <string>Parameters</string>
      </property>
-     <widget class="QWidget" name="">
+     <widget class="QWidget" name="layoutWidget">
       <property name="geometry">
        <rect>
         <x>10</x>
@@ -252,7 +252,7 @@
       <x>10</x>
       <y>290</y>
       <width>431</width>
-      <height>81</height>
+      <height>71</height>
      </rect>
     </property>
     <property name="title">
@@ -261,15 +261,37 @@
     <widget class="QPushButton" name="Curvature_Button">
      <property name="geometry">
       <rect>
-       <x>90</x>
-       <y>40</y>
-       <width>251</width>
-       <height>28</height>
+       <x>20</x>
+       <y>30</y>
+       <width>241</width>
+       <height>31</height>
       </rect>
      </property>
      <property name="text">
       <string>Apply curvature flow algorithm</string>
      </property>
+    </widget>
+    <widget class="QWidget" name="">
+     <property name="geometry">
+      <rect>
+       <x>282</x>
+       <y>30</y>
+       <width>121</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
+      <item>
+       <widget class="QLabel" name="iterations_label_2">
+        <property name="text">
+         <string>Iterations:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QSpinBox" name="curv_iterations_spinBox"/>
+      </item>
+     </layout>
     </widget>
    </widget>
   </widget>
