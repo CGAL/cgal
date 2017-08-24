@@ -79,10 +79,10 @@ typedef CGAL::VSA_approximation<Polyhedron, PointProxy, CompactMetric, PointProx
 
 int main()
 {
-  // create and read Polyhedron_3
-	Polyhedron mesh;
-  std::ifstream input("data/bear.off");
-  if (!input || !(input >> mesh) || mesh.empty()) {
+  // create and read Polyhedron
+  Polyhedron input;
+  std::ifstream file("data/bear.off");
+  if (!file || !(file >> input) || input.empty()) {
     std::cerr << "Invalid off file." << std::endl;
     return EXIT_FAILURE;
   }
@@ -90,25 +90,26 @@ int main()
   // construct precomputed facet normal and area map
   std::map<Facet_handle, FT> facet_areas;
   std::map<Facet_handle, Point> facet_centers;
-  for(Facet_iterator fitr = mesh.facets_begin(); fitr != mesh.facets_end(); ++fitr) {
+  for(Facet_iterator fitr = input.facets_begin(); fitr != input.facets_end(); ++fitr) {
     const Halfedge_handle he = fitr->halfedge();
     const Point &p0 = he->opposite()->vertex()->point();
     const Point &p1 = he->vertex()->point();
     const Point &p2 = he->next()->vertex()->point();
     const FT area = std::sqrt(CGAL::to_double(CGAL::squared_area(p0, p1, p2)));
-	const Point barycenter = CGAL::centroid(p0, p1, p2);
+    const Point barycenter = CGAL::centroid(p0, p1, p2);
     facet_areas.insert(std::pair<Facet_handle, FT>(fitr, area));
-	facet_centers.insert(std::pair<Facet_handle, Point>(fitr, barycenter));
+    facet_centers.insert(std::pair<Facet_handle, Point>(fitr, barycenter));
   }
   FacetAreaMap area_pmap(facet_areas);
   FacetCenterMap center_pmap(facet_centers);
 
+  // construct metric and fitting functors
   CompactMetric metric(center_pmap);
   PointProxyFitting proxy_fitting(center_pmap, area_pmap);
 
   // create compact metric approximation algorithm instance
   CompactVSA compact_approx;
-  compact_approx.set_mesh(mesh);
+  compact_approx.set_mesh(input);
   compact_approx.set_error_metric(metric);
   compact_approx.set_proxy_fitting(proxy_fitting);
 

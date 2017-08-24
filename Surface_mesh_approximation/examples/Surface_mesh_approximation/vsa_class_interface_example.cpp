@@ -10,31 +10,30 @@
 #include <CGAL/VSA_approximation.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-typedef CGAL::Polyhedron_3<Kernel> Polyhedron_3;
 typedef Kernel::Point_3 Point_3;
-typedef CGAL::Polyhedron_3<Kernel> Polyhedron_3;
+typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 
-typedef CGAL::PlaneProxy<Polyhedron_3> PlaneProxy;
-typedef CGAL::L2Metric<Polyhedron_3> L2Metric;
-typedef CGAL::L2ProxyFitting<Polyhedron_3> L2ProxyFitting;
-typedef CGAL::VSA_approximation<Polyhedron_3, PlaneProxy, L2Metric, L2ProxyFitting> VSA;
+typedef CGAL::PlaneProxy<Polyhedron> PlaneProxy;
+typedef CGAL::L2Metric<Polyhedron> L2Metric;
+typedef CGAL::L2ProxyFitting<Polyhedron> L2ProxyFitting;
+typedef CGAL::VSA_approximation<Polyhedron, PlaneProxy, L2Metric, L2ProxyFitting> VSA;
 
 int main()
 {
-  // read Polyhedron_3
-  Polyhedron_3 mesh;
-  std::ifstream input("data/bear.off");
-  if (!input || !(input >> mesh) || mesh.empty()) {
+  // read Polyhedron
+  Polyhedron input;
+  std::ifstream file("data/bear.off");
+  if (!file || !(file >> input) || input.empty()) {
     std::cerr << "Invalid off file." << std::endl;
     return EXIT_FAILURE;
   }
 
-  L2Metric metric(mesh);
-  L2ProxyFitting proxy_fitting(mesh);
+  L2Metric metric(input);
+  L2ProxyFitting proxy_fitting(input);
 
   // create VSA L2 metric approximation algorithm instance
   VSA l2_approx;
-  l2_approx.set_mesh(mesh);
+  l2_approx.set_mesh(input);
   l2_approx.set_error_metric(metric);
   l2_approx.set_proxy_fitting(proxy_fitting);
 
@@ -56,8 +55,8 @@ int main()
     l2_approx.run_one_step();
 
   // extract the approximation polyhedron
-  Polyhedron_3 out_mesh;
-  l2_approx.meshing(out_mesh);
+  Polyhedron output;
+  l2_approx.meshing(output);
 
   return EXIT_SUCCESS;
 }
