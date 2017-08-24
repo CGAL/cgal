@@ -41,19 +41,19 @@
 #include <sstream>
 #include <string>
 
-#define TRY_TO_GENERATE_POINT_PROPERTY(STD_TYPE, T_TYPE, TYPE)          \
+#define TRY_TO_GENERATE_PROPERTY(STD_TYPE, T_TYPE, TYPE)          \
   if (type == STD_TYPE  || type == T_TYPE)                              \
-    m_point_properties.push_back (new PLY_read_typed_number< TYPE > (name, format))
+    m_properties->push_back (new PLY_read_typed_number< TYPE > (name, format))
 
-#define TRY_TO_GENERATE_SIZED_FACE_PROPERTY(STD_SIZE_TYPE, T_SIZE_TYPE, SIZE_TYPE, STD_INDEX_TYPE, T_INDEX_TYPE, INDEX_TYPE) \
+#define TRY_TO_GENERATE_SIZED_LIST_PROPERTY(STD_SIZE_TYPE, T_SIZE_TYPE, SIZE_TYPE, STD_INDEX_TYPE, T_INDEX_TYPE, INDEX_TYPE) \
   if ((size_type == STD_SIZE_TYPE  || size_type == T_SIZE_TYPE) &&      \
       (index_type == STD_INDEX_TYPE || index_type == T_INDEX_TYPE))     \
-    m_face_properties.push_back (new PLY_read_typed_list_with_typed_size< SIZE_TYPE , INDEX_TYPE > (name, format))
+    m_properties->push_back (new PLY_read_typed_list_with_typed_size< SIZE_TYPE , INDEX_TYPE > (name, format))
 
-#define TRY_TO_GENERATE_FACE_PROPERTY(STD_INDEX_TYPE, T_INDEX_TYPE, INDEX_TYPE) \
-  TRY_TO_GENERATE_SIZED_FACE_PROPERTY("uchar", "uint8", boost::uint8_t, STD_INDEX_TYPE, T_INDEX_TYPE, INDEX_TYPE); \
-  else TRY_TO_GENERATE_SIZED_FACE_PROPERTY("ushort", "uint16", boost::uint16_t, STD_INDEX_TYPE, T_INDEX_TYPE, INDEX_TYPE); \
-  else TRY_TO_GENERATE_SIZED_FACE_PROPERTY("uint", "uint32", boost::uint32_t, STD_INDEX_TYPE, T_INDEX_TYPE, INDEX_TYPE)
+#define TRY_TO_GENERATE_LIST_PROPERTY(STD_INDEX_TYPE, T_INDEX_TYPE, INDEX_TYPE) \
+  TRY_TO_GENERATE_SIZED_LIST_PROPERTY("uchar", "uint8", boost::uint8_t, STD_INDEX_TYPE, T_INDEX_TYPE, INDEX_TYPE); \
+  else TRY_TO_GENERATE_SIZED_LIST_PROPERTY("ushort", "uint16", boost::uint16_t, STD_INDEX_TYPE, T_INDEX_TYPE, INDEX_TYPE); \
+  else TRY_TO_GENERATE_SIZED_LIST_PROPERTY("uint", "uint32", boost::uint32_t, STD_INDEX_TYPE, T_INDEX_TYPE, INDEX_TYPE)
 
 
 namespace CGAL {
@@ -367,25 +367,25 @@ namespace internal {
                       return false;
                     }
                     
-                    TRY_TO_GENERATE_FACE_PROPERTY ("char", "int8", boost::int8_t);
-                    else TRY_TO_GENERATE_FACE_PROPERTY ("uchar", "uint8", boost::uint8_t);
-                    else TRY_TO_GENERATE_FACE_PROPERTY ("short", "int16", boost::int16_t);
-                    else TRY_TO_GENERATE_FACE_PROPERTY ("ushort", "uint16", boost::uint16_t);
-                    else TRY_TO_GENERATE_FACE_PROPERTY ("int", "int32", boost::int32_t);
-                    else TRY_TO_GENERATE_FACE_PROPERTY ("uint", "uint32", boost::uint32_t);
-                    else TRY_TO_GENERATE_FACE_PROPERTY ("float", "float32", float);
-                    else TRY_TO_GENERATE_FACE_PROPERTY ("double", "float64", double);
+                    TRY_TO_GENERATE_LIST_PROPERTY ("char", "int8", boost::int8_t);
+                    else TRY_TO_GENERATE_LIST_PROPERTY ("uchar", "uint8", boost::uint8_t);
+                    else TRY_TO_GENERATE_LIST_PROPERTY ("short", "int16", boost::int16_t);
+                    else TRY_TO_GENERATE_LIST_PROPERTY ("ushort", "uint16", boost::uint16_t);
+                    else TRY_TO_GENERATE_LIST_PROPERTY ("int", "int32", boost::int32_t);
+                    else TRY_TO_GENERATE_LIST_PROPERTY ("uint", "uint32", boost::uint32_t);
+                    else TRY_TO_GENERATE_LIST_PROPERTY ("float", "float32", float);
+                    else TRY_TO_GENERATE_LIST_PROPERTY ("double", "float64", double);
                   }
                   else
                   {
-                    TRY_TO_GENERATE_POINT_PROPERTY ("char", "int8", boost::int8_t);
-                    else TRY_TO_GENERATE_POINT_PROPERTY ("uchar", "uint8", boost::uint8_t);
-                    else TRY_TO_GENERATE_POINT_PROPERTY ("short", "int16", boost::int16_t);
-                    else TRY_TO_GENERATE_POINT_PROPERTY ("ushort", "uint16", boost::uint16_t);
-                    else TRY_TO_GENERATE_POINT_PROPERTY ("int", "int32", boost::int32_t);
-                    else TRY_TO_GENERATE_POINT_PROPERTY ("uint", "uint32", boost::uint32_t);
-                    else TRY_TO_GENERATE_POINT_PROPERTY ("float", "float32", float);
-                    else TRY_TO_GENERATE_POINT_PROPERTY ("double", "float64", double);
+                    TRY_TO_GENERATE_PROPERTY ("char", "int8", boost::int8_t);
+                    else TRY_TO_GENERATE_PROPERTY ("uchar", "uint8", boost::uint8_t);
+                    else TRY_TO_GENERATE_PROPERTY ("short", "int16", boost::int16_t);
+                    else TRY_TO_GENERATE_PROPERTY ("ushort", "uint16", boost::uint16_t);
+                    else TRY_TO_GENERATE_PROPERTY ("int", "int32", boost::int32_t);
+                    else TRY_TO_GENERATE_PROPERTY ("uint", "uint32", boost::uint32_t);
+                    else TRY_TO_GENERATE_PROPERTY ("float", "float32", float);
+                    else TRY_TO_GENERATE_PROPERTY ("double", "float64", double);
                   }
                   
                   continue;
@@ -424,6 +424,7 @@ namespace internal {
                       m_nb_faces = number;
                       reading_faces = true;
                       reading_vertices = false;
+                      m_properties = &m_face_properties;
                     }
                   else
                     continue;
@@ -431,6 +432,7 @@ namespace internal {
             
             }
         }
+      m_properties = &m_point_properties;
       return true;
     }
 
