@@ -49,52 +49,6 @@
 
 namespace CGAL {
 
-template <typename K>
-struct Has_on_bounded_side_sphere_sphere_seg {
-  typedef typename K::Sphere_3    Sphere_3;
-  typedef typename K::Segment_3   Segment_3;
-  typedef typename K::Circle_3    Circle_3;
-  typedef typename K::Point_3     Point_3;
-  typedef typename K::Plane_3     Plane_3;
-  typedef typename K::Intersect_3 Intersect_3;
-
-  typedef bool result_type;
-
-  bool operator()(const Sphere_3& s1, const Sphere_3& s2,
-                  const Point_3& a, const Point_3& b) const
-  {
-    typename K::Has_on_bounded_side_3 has_on_bounded_side;
-
-    const bool a_in_s1 = has_on_bounded_side(s1, a);
-    const bool a_in_s2 = has_on_bounded_side(s2, a);
-
-    if(!(a_in_s1 || a_in_s2)) return false;
-
-    const bool b_in_s1 = has_on_bounded_side(s1, b);
-    const bool b_in_s2 = has_on_bounded_side(s2, b);
-
-    if(!(b_in_s1 || b_in_s2)) return false;
-
-    if(a_in_s1 && b_in_s1) return true;
-    if(a_in_s2 && b_in_s2) return true;
-
-    CGAL_assertion(K().do_intersect_3_object()(s1, s2));
-    const Circle_3 circ(s1, s2);
-    const Plane_3& plane = circ.supporting_plane();
-    typename CGAL::cpp11::result_of<Intersect_3(Plane_3, Segment_3)>::type
-      optional = K().intersect_3_object()(plane, Segment_3(a, b));
-    CGAL_assertion_msg(bool(optional) == true,
-                       "the segment does not intersect the supporting plane");
-    using boost::get;
-    const Point_3* p = get<Point_3>(&*optional);
-    CGAL_assertion_msg(p != 0,
-                       "the segment intersection with the plane is "
-                       "not a point");
-    return squared_distance(circ.center(), *p) < circ.squared_radius();
-  }
-};
-
-
 namespace internal {
 namespace Mesh_3 {
 
@@ -109,12 +63,6 @@ class Polyline
 
   typedef typename Kernel::Approximate_kernel Approx_kernel;
   typedef typename Kernel::Exact_kernel        Exact_kernel;
-
-  typedef CGAL::Filtered_predicate<
-    CGAL::Has_on_bounded_side_sphere_sphere_seg<typename Kernel::Exact_kernel>,
-    CGAL::Has_on_bounded_side_sphere_sphere_seg<typename Kernel::Approximate_kernel>,
-    typename Kernel::C2E,
-    typename Kernel::C2F> Has_on_bounded_side_sphere_sphere_seg;
 
 public:
   typedef typename Data::const_iterator const_iterator;
@@ -183,7 +131,8 @@ public:
                                 const FT sq_r1, const FT sq_r2) const
   {
     CGAL_assertion(orientation != CGAL::ZERO);
-    Has_on_bounded_side_sphere_sphere_seg cover_pred;
+    typename Kernel::Has_on_bounded_side_3 cover_pred =
+      Kernel().has_on_bounded_side_3_object();
 
     typedef typename Kernel::Sphere_3 Sphere_3;
     const Sphere_3 s1(c1, sq_r1);
