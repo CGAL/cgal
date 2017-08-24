@@ -64,7 +64,7 @@ public:
     }
 
     template<typename FaceRange>
-    void init_remeshing(const FaceRange& face_range)
+    void init_smoothing(const FaceRange& face_range)
     {
         check_vertex_range(face_range);
 

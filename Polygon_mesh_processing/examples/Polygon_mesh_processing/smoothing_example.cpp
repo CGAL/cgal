@@ -21,9 +21,7 @@ int main(int argc, char* argv[]){
         return 1;
     }
 
-    CGAL::Polygon_mesh_processing::angle_remeshing(mesh);
-    CGAL::Polygon_mesh_processing::area_remeshing(mesh);
-    CGAL::Polygon_mesh_processing::angle_remeshing(mesh);
+    CGAL::Polygon_mesh_processing::compatible_smoothing(mesh);
 
     std::ofstream output("data/eight_smoothed.off");
     output << mesh;

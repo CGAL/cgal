@@ -142,7 +142,7 @@ public Q_SLOTS:
         {
             unsigned int nb_iter = ui_widget.Angle_spinBox->value();
             bool use_weights = ui_widget.use_weights_checkBox->isChecked();
-            angle_remeshing(pmesh,
+            angle_smoothing(pmesh,
                             parameters::number_of_iterations(nb_iter).
                             use_weights(use_weights));
 
@@ -154,7 +154,7 @@ public Q_SLOTS:
         {
             unsigned int nb_iter = ui_widget.Area_spinBox->value();
             double gd_precision = ui_widget.gd_dSpinBox->value();
-            area_remeshing(pmesh,
+            area_smoothing(pmesh,
                            parameters::number_of_iterations(nb_iter).
                            gradient_descent_precision(gd_precision));
 
@@ -173,7 +173,7 @@ public Q_SLOTS:
 
         QApplication::setOverrideCursor(Qt::WaitCursor);
 
-        curvature_flow(pmesh);
+        curvature_flow_smoothing(pmesh);
 
         poly_item->invalidateOpenGLBuffers();
         Q_EMIT poly_item->itemChanged();
@@ -194,7 +194,7 @@ public Q_SLOTS:
         double gd_precision = ui_widget.gd_dSpinBox->value();
         bool use_weights = ui_widget.use_weights_checkBox->isChecked();
 
-        compatible_remeshing(pmesh,
+        compatible_smoothing(pmesh,
                              parameters::number_of_iterations(nb_iter).
                              distance_precision(dist).
                              gradient_descent_precision(gd_precision).

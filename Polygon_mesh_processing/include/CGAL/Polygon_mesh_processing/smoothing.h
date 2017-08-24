@@ -9,9 +9,8 @@
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
 #include <CGAL/Polygon_mesh_processing/distance.h>
-#define CGAL_PMP_REMESHING_VERBOSE
 
-#ifdef CGAL_PMP_REMESHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_VERBOSE
 #include <CGAL/Timer.h>
 #endif
 
@@ -32,7 +31,6 @@ namespace Polygon_mesh_processing {
 * constrained vertices so that each pair of adjacent angles becomes equal.
 * Optionally, small angles may carry more weight than larger ones. Projection
 * to the initial surface is performed as a last step.
-* for better result.
 *
 * @tparam PolygonMesh model of `MutableFaceGraph`.
 *         The descriptor types `boost::graph_traits<PolygonMesh>::%face_descriptor`
@@ -40,14 +38,14 @@ namespace Polygon_mesh_processing {
 *         models of `Hashable`.
 *         If `PolygonMesh` has an internal property map for `CGAL::face_index_t`,
 *         and no `face_index_map` is given
-*         as a named parameter, then the internal one should be initialized
+*         as a named parameter, then the internal one should be initialized.
 * @tparam FaceRange range of `boost::graph_traits<PolygonMesh>::%face_descriptor`,
           model of `Range`. Its iterator type is `ForwardIterator`.
-* @tparam NamedParameters a sequence of \ref namedparameters
+* @tparam NamedParameters a sequence of \ref namedparameters.
 *
-* @param pmesh a polygon mesh with triangulated surface patches to be remeshed
-* @param faces the range of triangular faces defining one or several surface patches to be remeshed
-* @param np optional sequence of \ref namedparameters among the ones listed below
+* @param pmesh a polygon mesh with triangulated surface patches to be smoothed.
+* @param faces the range of triangular faces defining one or several surface patches to be smoothed.
+* @param np optional sequence of \ref namedparameters among the ones listed below.
 *
 * \cgalNamedParamsBegin
 *  \cgalParamBegin{geom_traits} a geometric traits class instance, model of `Kernel`.
@@ -74,14 +72,14 @@ namespace Polygon_mesh_processing {
 * \cgalNamedParamsEnd
 */
 template<typename PolygonMesh, typename FaceRange, typename NamedParameters>
-void angle_remeshing(PolygonMesh& pmesh, const FaceRange& faces, const NamedParameters& np)
+void angle_smoothing(PolygonMesh& pmesh, const FaceRange& faces, const NamedParameters& np)
 {
     using boost::choose_param;
     using boost::get_param;
 
-#ifdef CGAL_PMP_REMESHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_VERBOSE
     CGAL::Timer t;
-    std::cout << "Remeshing parameters...";
+    std::cout << "Smoothing parameters...";
     std::cout.flush();
     t.start();
 #endif
@@ -133,7 +131,7 @@ void angle_remeshing(PolygonMesh& pmesh, const FaceRange& faces, const NamedPara
     internal::Compatible_remesher<PolygonMesh, VertexPointMap, VCMap, ECMap, GeomTraits>
             remesher(pmesh, vpmap, vcmap, ecmap);
 
-#ifdef CGAL_PMP_REMESHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_VERBOSE
     t.stop();
     std::cout << " done ("<< t.time() <<" sec)." << std::endl;
     std::cout << "Removing degenerate faces..." << std::endl;
@@ -141,26 +139,26 @@ void angle_remeshing(PolygonMesh& pmesh, const FaceRange& faces, const NamedPara
 #endif
     remesher.remove_degenerate_faces();
 
-#ifdef CGAL_PMP_REMESHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_VERBOSE
     t.stop();
     std::cout << " done ("<< t.time() <<" sec)." << std::endl;
     std::cout << "Initializing..." << std::endl;
     t.reset(); t.start();
 #endif
-    remesher.init_remeshing(faces);
+    remesher.init_smoothing(faces);
 
-#ifdef CGAL_PMP_REMESHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_VERBOSE
     t.stop();
     std::cout << " done ("<< t.time() <<" sec)." << std::endl;
     std::cout << "#iter = " << nb_iterations << std::endl;
-    std::cout << "Remeshing ..." << std::endl;
+    std::cout << "Smoothing ..." << std::endl;
     t.reset(); t.start();
 #endif
 
     for(unsigned int i=0; i<nb_iterations; ++i)
     {
 
-#ifdef CGAL_PMP_REMESHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_VERBOSE
         std::cout << " * Iteration " << (i + 1) << " *" << std::endl;
 #endif
 
@@ -169,24 +167,24 @@ void angle_remeshing(PolygonMesh& pmesh, const FaceRange& faces, const NamedPara
     }
 
 
-#ifdef CGAL_PMP_REMESHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_VERBOSE
     t.stop();
-    std::cout << "Remeshing done in ";
+    std::cout << "Smoothing done in ";
     std::cout << t.time() << " sec." << std::endl;
 #endif
 
 }
 
 template<typename PolygonMesh, typename NamedParameters>
-void angle_remeshing(PolygonMesh& pmesh, const NamedParameters& np)
+void angle_smoothing(PolygonMesh& pmesh, const NamedParameters& np)
 {
-    angle_remeshing(pmesh, faces(pmesh), np);
+    angle_smoothing(pmesh, faces(pmesh), np);
 }
 
 template<typename PolygonMesh>
-void angle_remeshing(PolygonMesh& pmesh)
+void angle_smoothing(PolygonMesh& pmesh)
 {
-    angle_remeshing(pmesh, faces(pmesh), parameters::all_default());
+    angle_smoothing(pmesh, faces(pmesh), parameters::all_default());
 }
 
 /*!
@@ -203,14 +201,14 @@ void angle_remeshing(PolygonMesh& pmesh)
 *         models of `Hashable`.
 *         If `PolygonMesh` has an internal property map for `CGAL::face_index_t`,
 *         and no `face_index_map` is given
-*         as a named parameter, then the internal one should be initialized
+*         as a named parameter, then the internal one should be initialized.
 * @tparam FaceRange range of `boost::graph_traits<PolygonMesh>::%face_descriptor`,
           model of `Range`. Its iterator type is `ForwardIterator`.
 * @tparam NamedParameters a sequence of \ref namedparameters
 *
-* @param pmesh a polygon mesh with triangulated surface patches to be remeshed
-* @param faces the range of triangular faces defining one or several surface patches to be remeshed
-* @param np optional sequence of \ref namedparameters among the ones listed below
+* @param pmesh a polygon mesh with triangulated surface patches to be smoothed.
+* @param faces the range of triangular faces defining one or several surface patches to be smoothed.
+* @param np optional sequence of \ref namedparameters among the ones listed below.
 *
 * \cgalNamedParamsBegin
 *  \cgalParamBegin{geom_traits} a geometric traits class instance, model of `Kernel`.
@@ -240,14 +238,14 @@ void angle_remeshing(PolygonMesh& pmesh)
 * \cgalNamedParamsEnd
 */
 template<typename PolygonMesh, typename FaceRange, typename NamedParameters>
-void area_remeshing(PolygonMesh& pmesh, const FaceRange& faces, const NamedParameters& np)
+void area_smoothing(PolygonMesh& pmesh, const FaceRange& faces, const NamedParameters& np)
 {
     using boost::choose_param;
     using boost::get_param;
 
-#ifdef CGAL_PMP_REMESHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_VERBOSE
     CGAL::Timer t;
-    std::cout << "Remeshing parameters...";
+    std::cout << "Smoothing parameters...";
     std::cout.flush();
     t.start();
 #endif
@@ -296,7 +294,7 @@ void area_remeshing(PolygonMesh& pmesh, const FaceRange& faces, const NamedParam
     internal::Compatible_remesher<PolygonMesh, VertexPointMap, VCMap, ECMap, GeomTraits>
             remesher(pmesh, vpmap, vcmap, ecmap);
 
-#ifdef CGAL_PMP_REMESHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_VERBOSE
     t.stop();
     std::cout << " done ("<< t.time() <<" sec)." << std::endl;
     std::cout << "Removing degenerate faces..." << std::endl;
@@ -304,26 +302,26 @@ void area_remeshing(PolygonMesh& pmesh, const FaceRange& faces, const NamedParam
 #endif
     remesher.remove_degenerate_faces();
 
-#ifdef CGAL_PMP_REMESHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_VERBOSE
     t.stop();
     std::cout << " done ("<< t.time() <<" sec)." << std::endl;
     std::cout << "Initializing..." << std::endl;
     t.reset(); t.start();
 #endif
-    remesher.init_remeshing(faces);
+    remesher.init_smoothing(faces);
 
-#ifdef CGAL_PMP_REMESHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_VERBOSE
     t.stop();
     std::cout << " done ("<< t.time() <<" sec)." << std::endl;
     std::cout << "#iter = " << nb_iterations << std::endl;
-    std::cout << "Remeshing ..." << std::endl;
+    std::cout << "Smoothing ..." << std::endl;
     t.reset(); t.start();
 #endif
 
     for(unsigned int i=0; i<nb_iterations; ++i)
     {
 
-#ifdef CGAL_PMP_REMESHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_VERBOSE
         std::cout << " * Iteration " << (i + 1) << " *" << std::endl;
 #endif
 
@@ -331,24 +329,24 @@ void area_remeshing(PolygonMesh& pmesh, const FaceRange& faces, const NamedParam
         remesher.project_to_surface();
     }
 
-#ifdef CGAL_PMP_REMESHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_VERBOSE
     t.stop();
-    std::cout << "Remeshing done in ";
+    std::cout << "Smoothing done in ";
     std::cout << t.time() << " sec." << std::endl;
 #endif
 
 }
 
 template<typename PolygonMesh, typename NamedParameters>
-void area_remeshing(PolygonMesh& pmesh, const NamedParameters& np)
+void area_smoothing(PolygonMesh& pmesh, const NamedParameters& np)
 {
-    area_remeshing(pmesh, faces(pmesh), np);
+    area_smoothing(pmesh, faces(pmesh), np);
 }
 
 template<typename PolygonMesh>
-void area_remeshing(PolygonMesh& pmesh)
+void area_smoothing(PolygonMesh& pmesh)
 {
-    area_remeshing(pmesh, faces(pmesh), parameters::all_default());
+    area_smoothing(pmesh, faces(pmesh), parameters::all_default());
 }
 
 /*!
@@ -365,14 +363,14 @@ void area_remeshing(PolygonMesh& pmesh)
 *         models of `Hashable`.
 *         If `PolygonMesh` has an internal property map for `CGAL::face_index_t`,
 *         and no `face_index_map` is given
-*         as a named parameter, then the internal one should be initialized
+*         as a named parameter, then the internal one should be initialized.
 * @tparam FaceRange range of `boost::graph_traits<PolygonMesh>::%face_descriptor`,
           model of `Range`. Its iterator type is `ForwardIterator`.
 * @tparam NamedParameters a sequence of \ref namedparameters
 *
-* @param pmesh a polygon mesh with triangulated surface patches to be remeshed
-* @param faces the range of triangular faces defining one or several surface patches to be remeshed
-* @param np optional sequence of \ref namedparameters among the ones listed below
+* @param pmesh a polygon mesh with triangulated surface patches to be smoothed.
+* @param faces the range of triangular faces defining one or several surface patches to be smoothed.
+* @param np optional sequence of \ref namedparameters among the ones listed below.
 *
 * \cgalNamedParamsBegin
 *  \cgalParamBegin{geom_traits} a geometric traits class instance, model of `Kernel`.
@@ -402,14 +400,14 @@ void area_remeshing(PolygonMesh& pmesh)
 * \cgalNamedParamsEnd
 */
 template<typename PolygonMesh, typename FaceRange, typename NamedParameters>
-void compatible_remeshing(PolygonMesh& pmesh, const FaceRange& faces, const NamedParameters& np)
+void compatible_smoothing(PolygonMesh& pmesh, const FaceRange& faces, const NamedParameters& np)
 {
     using boost::choose_param;
     using boost::get_param;
 
-#ifdef CGAL_PMP_REMESHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_VERBOSE
     CGAL::Timer t;
-    std::cout << "Remeshing parameters...";
+    std::cout << "Smoothing parameters...";
     std::cout.flush();
     t.start();
 #endif
@@ -464,7 +462,7 @@ void compatible_remeshing(PolygonMesh& pmesh, const FaceRange& faces, const Name
     internal::Compatible_remesher<PolygonMesh, VertexPointMap, VCMap, ECMap, GeomTraits>
             remesher(pmesh, vpmap, vcmap, ecmap);
 
-#ifdef CGAL_PMP_REMESHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_VERBOSE
     t.stop();
     std::cout << " done ("<< t.time() <<" sec)." << std::endl;
     std::cout << "Removing degenerate faces..." << std::endl;
@@ -472,20 +470,20 @@ void compatible_remeshing(PolygonMesh& pmesh, const FaceRange& faces, const Name
 #endif
     remesher.remove_degenerate_faces();
 
-#ifdef CGAL_PMP_REMESHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_VERBOSE
     t.stop();
     std::cout << " done ("<< t.time() <<" sec)." << std::endl;
     std::cout << "Initializing..." << std::endl;
     t.reset(); t.start();
 #endif
-    remesher.init_remeshing(faces);
+    remesher.init_smoothing(faces);
 
 
-#ifdef CGAL_PMP_REMESHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_VERBOSE
     t.stop();
     std::cout << " done ("<< t.time() <<" sec)." << std::endl;
     std::cout << "#iter = " << nb_iterations << std::endl;
-    std::cout << "Remeshing ..." << std::endl;
+    std::cout << "Smoothing ..." << std::endl;
     t.reset(); t.start();
 #endif
 
@@ -505,16 +503,16 @@ void compatible_remeshing(PolygonMesh& pmesh, const FaceRange& faces, const Name
 
         count_iterations++;
 
-#ifdef CGAL_PMP_REMESHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_VERBOSE
         std::cout<<"iteration:"<<count_iterations<<std::endl;
 #endif
 
         if(dist < dist_precision)
         {
 
-#ifdef CGAL_PMP_REMESHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_VERBOSE
     t.stop();
-    std::cout << "Remeshing done in ";
+    std::cout << "Smoothing done in ";
     std::cout << t.time() << " sec." << std::endl;
     std::cout << "Convergence to relative hausdorff distance has been achieved." << std::endl;
 #endif
@@ -524,9 +522,9 @@ void compatible_remeshing(PolygonMesh& pmesh, const FaceRange& faces, const Name
         if(count_iterations == nb_iterations)
         {
 
-#ifdef CGAL_PMP_REMESHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_VERBOSE
     t.stop();
-    std::cout << "Remeshing done in ";
+    std::cout << "Smoothing done in ";
     std::cout << t.time() << " sec." << std::endl;
     std::cout << "Maximum number of iterations has been achieved." << std::endl;
 #endif
@@ -537,15 +535,15 @@ void compatible_remeshing(PolygonMesh& pmesh, const FaceRange& faces, const Name
 }
 
 template<typename PolygonMesh, typename NamedParameters>
-void compatible_remeshing(PolygonMesh& pmesh, const NamedParameters& np)
+void compatible_smoothing(PolygonMesh& pmesh, const NamedParameters& np)
 {
-    compatible_remeshing(pmesh, faces(pmesh), np);
+    compatible_smoothing(pmesh, faces(pmesh), np);
 }
 
 template<typename PolygonMesh>
-void compatible_remeshing(PolygonMesh& pmesh)
+void compatible_smoothing(PolygonMesh& pmesh)
 {
-    compatible_remeshing(pmesh, faces(pmesh), parameters::all_default());
+    compatible_smoothing(pmesh, faces(pmesh), parameters::all_default());
 }
 
 
@@ -564,9 +562,9 @@ void compatible_remeshing(PolygonMesh& pmesh)
           model of `Range`. Its iterator type is `ForwardIterator`.
 * @tparam NamedParameters a sequence of \ref namedparameters
 *
-* @param pmesh a polygon mesh with triangulated surface patches to be remeshed
-* @param faces the range of triangular faces defining one or several surface patches to be remeshed
-* @param np optional sequence of \ref namedparameters among the ones listed below
+* @param pmesh a polygon mesh with triangulated surface patches to be smoothed.
+* @param faces the range of triangular faces defining one or several surface patches to be smoothed.
+* @param np optional sequence of \ref namedparameters among the ones listed below.
 *
 * \cgalNamedParamsBegin
 *  \cgalParamBegin{geom_traits} a geometric traits class instance, model of `Kernel`.
@@ -588,14 +586,14 @@ void compatible_remeshing(PolygonMesh& pmesh)
 * \cgalNamedParamsEnd
 */
 template<typename PolygonMesh, typename FaceRange, typename NamedParameters>
-void curvature_flow(PolygonMesh& pmesh, const FaceRange& faces, const NamedParameters& np)
+void curvature_flow_smoothing(PolygonMesh& pmesh, const FaceRange& faces, const NamedParameters& np)
 {
     using boost::choose_param;
     using boost::get_param;
 
-#ifdef CGAL_PMP_REMESHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_VERBOSE
     CGAL::Timer t;
-    std::cout << "Remeshing parameters...";
+    std::cout << "Smoothing parameters...";
     std::cout.flush();
     t.start();
 #endif
@@ -638,9 +636,9 @@ void curvature_flow(PolygonMesh& pmesh, const FaceRange& faces, const NamedParam
     // nb_iterations
     unsigned int nb_iterations = choose_param(get_param(np, internal_np::number_of_iterations), 1);
 
-#ifdef CGAL_PMP_REMESHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_VERBOSE
     t.stop();
-    std::cout << "\rRemeshing parameters done ("<< t.time() <<" sec)" << std::endl;
+    std::cout << "\rSmoothing parameters done ("<< t.time() <<" sec)" << std::endl;
     std::cout << "Remesher construction...";
     std::cout.flush();
     t.reset(); t.start();
@@ -648,7 +646,7 @@ void curvature_flow(PolygonMesh& pmesh, const FaceRange& faces, const NamedParam
 
     internal::Curvature_flow<PolygonMesh, VertexPointMap, VCMap, ECMap, GeomTraits>
             curvature_remesher(pmesh, vpmap, vcmap, ecmap);
-#ifdef CGAL_PMP_REMESHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_VERBOSE
     t.stop();
     std::cout << " done ("<< t.time() <<" sec)." << std::endl;
     std::cout << "Removing degenerate faces..." << std::endl;
@@ -657,16 +655,16 @@ void curvature_flow(PolygonMesh& pmesh, const FaceRange& faces, const NamedParam
 
     curvature_remesher.remove_degenerate_faces();
 
-#ifdef CGAL_PMP_REMESHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_VERBOSE
     t.stop();
     std::cout << " done ("<< t.time() <<" sec)." << std::endl;
     std::cout << "Initializing..." << std::endl;
     t.reset(); t.start();
 #endif
 
-    curvature_remesher.init_remeshing(faces);
+    curvature_remesher.init_smoothing(faces);
 
-#ifdef CGAL_PMP_REMESHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_VERBOSE
     t.stop();
     std::cout << " done ("<< t.time() <<" sec)." << std::endl;
     std::cout << "Shape smoothing..." << std::endl;
@@ -675,7 +673,7 @@ void curvature_flow(PolygonMesh& pmesh, const FaceRange& faces, const NamedParam
 
     curvature_remesher.curvature_smoothing();
 
-#ifdef CGAL_PMP_REMESHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_VERBOSE
     t.stop();
     std::cout << "Shape smoothing done in ";
     std::cout << t.time() << " sec." << std::endl;
@@ -685,15 +683,15 @@ void curvature_flow(PolygonMesh& pmesh, const FaceRange& faces, const NamedParam
 }
 
 template<typename PolygonMesh, typename NamedParameters>
-void curvature_flow(PolygonMesh& pmesh, const NamedParameters& np)
+void curvature_flow_smoothing(PolygonMesh& pmesh, const NamedParameters& np)
 {
-    curvature_flow(pmesh, faces(pmesh), np);
+    curvature_flow_smoothing(pmesh, faces(pmesh), np);
 }
 
 template<typename PolygonMesh>
-void curvature_flow(PolygonMesh& pmesh)
+void curvature_flow_smoothing(PolygonMesh& pmesh)
 {
-    curvature_flow(pmesh, parameters::all_default());
+    curvature_flow_smoothing(pmesh, parameters::all_default());
 }
 
 

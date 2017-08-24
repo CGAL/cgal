@@ -81,7 +81,7 @@ public:
     {}
 
     template<typename FaceRange>
-    void init_remeshing(const FaceRange& face_range)
+    void init_smoothing(const FaceRange& face_range)
     {
         check_vertex_range(face_range);
 
@@ -202,7 +202,6 @@ private:
         double angle_min_threshold = 0.05; // rad
         double angle_max_threshold = CGAL_PI - 0.05;
 
-
         if(a1 < angle_min_threshold || a2 < angle_min_threshold || a3 < angle_min_threshold)
         {
             Euler::remove_face(h1, mesh_);
@@ -212,8 +211,6 @@ private:
         {
             Euler::remove_face(h1, mesh_);
         }
-
-
     }
 
     double get_angle(halfedge_descriptor ha, halfedge_descriptor hb)
