@@ -87,26 +87,52 @@ const Point_3& p, const Curve_segment_index& ci, FT d) const;
 /// @{
 
 /*!
-Returns the signed geodesic distance
-between points `p` and `q` along the input curve segment
-with index `ci`.
-\pre Points `p` and `q` belong to the same connected component of the curve segment with index `ci`.
-*/
-FT geodesic_distance(const Point_3& p,
-const Point_3& q, const Curve_segment_index& ci) const;
+Returns the length of the curve segment, on the curve with index
+\c  curve_index, from \c p to \c q, in the orientation
+\c orientation
 
+If the curve connected component containing \c p and \c q is a cycle,
+the orientation gives identifies which portion of the cycle
+corresponds to the arc, otherwise \c orientation must be compatible
+with the orientation of \c p and \c q on the curve segment.
+*/
+FT arc_length(const Point_3& p, const Point_3 q,
+              const Curve_segment_index& curve_index,
+              CGAL::Orientation orientation) const;
 /*!
 
 Returns `CGAL::POSITIVE` if the signed geodesic distance from
-`p`
-to `q` on the way through \f$ r\f$
-along cycle with index `ci`
-is positive, `CGAL::NEGATIVE` if the distance is negative, and `CGAL::ZERO` if `(p = q = r)`.
-\pre Points `p`, `q` and `r` belongs to the same connected component of curve segment `ci` and this component is a cycle.
+`p` to `q` on the way through `r` along cycle with index `ci`
+is positive, `CGAL::NEGATIVE` if the distance is negative.
+\pre `p != q && p != r && r != q`
 */
 CGAL::Sign distance_sign_along_cycle(const Point_3& p, const Point_3& q,
 const Point_3& r, const Curve_segment_index& ci) const;
 
+/*!
+Returns the sign of the geodesic distance from `p` to `q`, on the curve
+with index `ci`.
+*/
+CGAL::Sign distance_sign(const Point_3& p, const Point_3& q,
+                         const Curve_segment_index& ci) const;
+
+/*!
+Returns the length of the connected component of curve with index
+\c curve_index that includes the point \c p
+*/
+FT curve_segment_length(const Point_3& p,
+                        const Curve_segment_index& curve_index) const;
+/*!
+Returns `true` if the portion of the curve segment of index \c index,
+between the points \c c1 and \c c2, is covered by the spheres of
+centers \c c1 and \c c2 and squared radii \c sq_r1 and \c sq_r2
+respectively. The points \c c1 and \c c2 are assumed to lie on the curve
+segment.
+*/
+bool is_curve_segment_covered(const Curve_segment_index& index,
+                              CGAL::Orientation orientation,
+                              const Point_3& c1, const Point_3& c2,
+                              const FT sq_r1, const FT sq_r2) const;
 /*!
 
 Returns `true` if the connected component of curve segment
@@ -116,7 +142,7 @@ bool is_cycle(const Point_3& p, const Curve_segment_index& ci) const;
 
 /// @}
 
-/// \name Retrieval of the input features and their incidences
+/// \name Retrieval of the input features
 /// @{
 
 /*!
@@ -144,16 +170,6 @@ The `%Index` values associated to the points are their indices w.r.t.\ their dim
 template <typename OutputIterator>
 OutputIterator
 get_curve_segments(OutputIterator curves) const;
-
-/*!
-Returns `true` if the curve segment with index `csi` is incident to the surface patch with index `spi`.
-*/
-bool are_incident_surface_patch_curve_segment(Surface_patch_index spi, Curve_segment_index csi);
-
-/*!
-Returns `true` if the corner with index `ci` is incident to the surface patch with index `spi`.
-*/
-bool are_incident_surface_patch_corner(Surface_patch_index spi, Corner_index ci);
 
 /// @}
 

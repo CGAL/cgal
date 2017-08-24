@@ -604,7 +604,7 @@ public:
   template <typename OutputIterator>
   OutputIterator get_curve_segments(OutputIterator out) const;
 
-  /// Returns the length of the arc of curve, on the curve with index
+  /// Returns the length of the curve segment, on the curve with index
   /// \c  curve_index, from \c p to \c q, in the orientation
   /// \c orientation
   ///
