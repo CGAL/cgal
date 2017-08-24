@@ -238,19 +238,19 @@ and `Fixed_alpha_shape_cell_base_3<Gt>`, respectively.
 
 \subsection AlphaShape3D_ConceptAndModelsTDS Triangulation data structure
 
-Additionally requirements are put when using weighted or
+Additional requirements are put when using weighted or
 periodic triangulations as underlying triangulation:
 <ul>
 <li> When using a weighted triangulation (`Regular_triangulation_3` or
 `Periodic_3_regular_triangulation_3`), the vertex
-and cell classes must be models to both `AlphaShapeVertex_3` and
-`RegularTriangulationVertexBase_3`, as well as
-`AlphaShapeCell_3` and `RegularTriangulationCellBase_3` respectively
+and cell classes must respectively be models to both `AlphaShapeVertex_3` and
+`RegularTriangulationVertexBase_3`, and to both
+`AlphaShapeCell_3` and `RegularTriangulationCellBase_3`
 (see example: \ref AlphaShape_3DExampleforWeightedAlphaShapes).
 <li> When using a periodic triangulation (`Periodic_3_Delaunay_triangulation_3`
 or `Periodic_3_regular_triangulation_3`), the vertex and cell classes must
-be models to both `AlphaShapeVertex_3` and `Periodic_3TriangulationDSVertexBase_3`,
-as well as `AlphaShapeCell_3` and `Periodic_3TriangulationDSCellBase_3`
+respectively be models to both `AlphaShapeVertex_3` and `Periodic_3TriangulationDSVertexBase_3`,
+and to both `AlphaShapeCell_3` and `Periodic_3TriangulationDSCellBase_3`
 (see example: \ref  AlphaShape_3DExampleForPeriodicAlphaShapes).
 </ul>
 
