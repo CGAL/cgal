@@ -604,11 +604,11 @@ public:
   template <typename OutputIterator>
   OutputIterator get_curve_segments(OutputIterator out) const;
 
-  /// Return the length of the arc of curve, on the curve with index
+  /// Returns the length of the arc of curve, on the curve with index
   /// \c  curve_index, from \c p to \c q, in the orientation
   /// \c orientation
   ///
-  /// If the curve connected component containing \c p and \q is a cycle,
+  /// If the curve connected component containing \c p and \c q is a cycle,
   /// the orientation gives identifies which portion of the cycle
   /// corresponds to the arc, otherwise \c orientation must be compatible
   /// with the orientation of \c p and \c q on the curve segment.
@@ -616,7 +616,7 @@ public:
                 const Curve_segment_index& curve_index,
                 CGAL::Orientation orientation) const;
 
-  /// Return the length of the connected component of curve with index
+  /// Returns the length of the connected component of curve with index
   /// \c curve_index including point \c p
   FT curve_segment_length(const Point_3& p,
                           const Curve_segment_index& curve_index) const;

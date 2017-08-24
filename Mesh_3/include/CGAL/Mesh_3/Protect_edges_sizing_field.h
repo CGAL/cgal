@@ -191,7 +191,7 @@ private:
   /// on curve identified by \c curve_index
   ///
   /// \param orientation Orientation of the curve segment between \c vp and
-  ///        \c vp, given the orientation of the curve of index
+  ///        \c vq, given the orientation of the curve of index
   ///        \c curve_index
   template <typename ErasedVeOutIt>
   ErasedVeOutIt insert_balls(const Vertex_handle& vp,
@@ -252,7 +252,7 @@ private:
   check_and_fix_vertex_along_edge(const Vertex_handle& v, ErasedVeOutIt out);
 
   /// Given two vertices \c start and \c next inserted on the curve with
-  /// index \c curve_index, return `CGAL::POSITIVE` if the curve arc from
+  /// index \c curve_index, returns `CGAL::POSITIVE` if the curve arc from
   /// \c start to \c next is oriented in the same orientation as the curve
   /// segment with index \c curve_index, or `CGAL::NEGATIVE` otherwise.
   ///
