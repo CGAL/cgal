@@ -38,19 +38,15 @@
 #include <tbb/mutex.h>
 #endif // CGAL_LINKED_WITH_TBB
 
-//#define CGAL_CLASSIFICATION_VERBOSE
-#if defined(CGAL_CLASSIFICATION_VERBOSE)
-#define CGAL_CLASSIFICATION_CERR std::cerr
+#if defined(CGAL_CLASSTRAINING_VERBOSE)
+#define CGAL_CLASSTRAINING_SILENT false
 #else
-#define CGAL_CLASSIFICATION_CERR std::ostream(0)
+#define CGAL_CLASSTRAINING_SILENT true
 #endif
 
-//#define CGAL_CLASSTRAINING_VERBOSE
-#if defined(CGAL_CLASSTRAINING_VERBOSE)
-#define CGAL_CLASSTRAINING_CERR std::cerr
-#else
-#define CGAL_CLASSTRAINING_CERR std::ostream(0)
-#endif
+#define CGAL_CLASSTRAINING_CERR \
+  if(CGAL_CLASSIFICATION_SILENT) {} else std::cerr
+
 
 namespace CGAL {
 
@@ -150,6 +146,18 @@ private:
   };
 #endif // CGAL_LINKED_WITH_TBB
 
+  struct Feature_training
+  {
+    std::size_t i;
+    float wmin;
+    float wmax;
+    float factor;
+
+    bool operator<(const Feature_training& other) const
+    {
+      return (wmin / wmax) < (other.wmin / other.wmax);
+    }
+  };
 
   const Label_set& m_labels;
   const Feature_set& m_features;
@@ -316,18 +324,6 @@ public:
 
     std::vector<float> best_weights (m_features.size(), 1.);
 
-    struct Feature_training
-    {
-      std::size_t i;
-      float wmin;
-      float wmax;
-      float factor;
-
-      bool operator<(const Feature_training& other) const
-      {
-        return (wmin / wmax) < (other.wmin / other.wmax);
-      }
-    };
     std::vector<Feature_training> feature_train;
     std::size_t nb_trials = 100;
     float wmin = 1e-5f, wmax = 1e5f;
@@ -507,18 +503,6 @@ public:
 
     std::vector<float> best_weights (m_features.size(), 1.);
 
-    struct Feature_training
-    {
-      std::size_t i;
-      float wmin;
-      float wmax;
-      float factor;
-
-      bool operator<(const Feature_training& other) const
-      {
-        return (wmin / wmax) < (other.wmin / other.wmax);
-      }
-    };
     std::vector<Feature_training> feature_train;
     std::size_t nb_trials = 100;
     float wmin = 1e-5, wmax = 1e5;

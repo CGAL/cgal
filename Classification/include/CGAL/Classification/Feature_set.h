@@ -74,7 +74,6 @@ public:
 
     \return a handle to the newly added feature.
   */
-#if (!defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES) && !defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE)) || DOXYGEN_RUNNING
   template <typename Feature, typename ... T>
   Feature_handle add (T&& ... t)
   {
@@ -84,53 +83,6 @@ public:
     mutex_unlock();
     return fh;
   }
-#else
-  template <typename Feature, typename T1>
-  Feature_handle add (T1& t1)
-  {
-    Feature_handle fh (new Feature(t1));
-    mutex_lock();
-    m_features.push_back (fh);
-    mutex_unlock();
-    return fh;
-  }
-  template <typename Feature, typename T1, typename T2>
-  Feature_handle add (T1& t1, T2& t2)
-  {
-    Feature_handle fh (new Feature(t1, t2));
-    mutex_lock();
-    m_features.push_back (fh);
-    mutex_unlock();
-    return fh;
-  }
-  template <typename Feature, typename T1, typename T2, typename T3>
-  Feature_handle add (T1& t1, T2& t2, T3& t3)
-  {
-    Feature_handle fh (new Feature(t1, t2, t3));
-    mutex_lock();
-    m_features.push_back (fh);
-    mutex_unlock();
-    return fh;
-  }
-  template <typename Feature, typename T1, typename T2, typename T3, typename T4>
-  Feature_handle add (T1& t1, T2& t2, T3& t3, T4& t4)
-  {
-    Feature_handle fh (new Feature(t1, t2, t3, t4));
-    mutex_lock();
-    m_features.push_back (fh);
-    mutex_unlock();
-    return fh;
-  }
-  template <typename Feature, typename T1, typename T2, typename T3, typename T4, typename T5>
-  Feature_handle add (T1& t1, T2& t2, T3& t3, T4& t4, T5& t5)
-  {
-    Feature_handle fh (new Feature(t1, t2, t3, t4, t5));
-    mutex_lock();
-    m_features.push_back (fh);
-    mutex_unlock();
-    return fh;
-  }
-#endif
 
   /*!
     \brief Removes a feature.

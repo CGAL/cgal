@@ -52,13 +52,14 @@ include_directories( BEFORE ../../include )
 
 include( CGAL_CreateSingleSourceCGALProgram )
 
-create_single_source_cgal_program( "example_classification.cpp" )
-create_single_source_cgal_program( "example_generation_and_training.cpp" )
-create_single_source_cgal_program( "example_feature.cpp" )
+set(needed_cxx_features cxx_rvalue_references cxx_variadic_templates)
+create_single_source_cgal_program( "example_classification.cpp" CXX_FEATURES ${needed_cxx_features} )
+create_single_source_cgal_program( "example_generation_and_training.cpp" CXX_FEATURES ${needed_cxx_features} )
+create_single_source_cgal_program( "example_feature.cpp" CXX_FEATURES ${needed_cxx_features} )
 
 if( OpenCV_FOUND )
   include_directories( ${OpenCV_INCLUDE_DIRS} )
-  create_single_source_cgal_program( "example_random_forest.cpp" )
+  create_single_source_cgal_program( "example_random_forest.cpp" CXX_FEATURES ${needed_cxx_features} )
   target_link_libraries( example_random_forest ${OpenCV_LIBS} )
 else()
   message(STATUS "OpenCV not found, random forest example won't be compiled.")

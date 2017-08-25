@@ -20,6 +20,15 @@
 #ifndef CGAL_CLASSIFICATION_H
 #define CGAL_CLASSIFICATION_H
 
+#if defined(CGAL_CLASSIFICATION_VERBOSE)
+#define CGAL_CLASSIFICATION_SILENT false
+#else
+#define CGAL_CLASSIFICATION_SILENT true
+#endif
+
+#define CGAL_CLASSIFICATION_CERR \
+  if(CGAL_CLASSIFICATION_SILENT) {} else std::cerr
+
 #include <CGAL/Classification/classify.h>
 #include <CGAL/Classification/Sum_of_weighted_features_classifier.h>
 
