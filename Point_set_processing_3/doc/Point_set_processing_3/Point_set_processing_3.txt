@@ -7,7 +7,7 @@
 
 \cgalAutoToc
 
-\authors Pierre Alliez, Clément Jamin, Quentin Mérigot, Jocelyn Meyron, Laurent Saboret, Nader Salman, Shihao Wu
+\authors Pierre Alliez, Simon Giraudot, Clément Jamin, Florent Lafarge, Quentin Mérigot, Jocelyn Meyron, Laurent Saboret, Nader Salman, Shihao Wu
 
 \section Point_set_processing_3Introduction Introduction
 
@@ -560,6 +560,7 @@ Pierre Alliez and Laurent Saboret contributed the initial component. Nader Salma
 Started from GSoC'2013, three new algorithms were implemented by Shihao Wu and Clément Jamin: WLOP, bilateral smoothing and upsampling.
 Started from GSoC'2014, Jocelyn Meyron with the help of Quentin Mérigot introduced the computation of the Voronoi covarience measure of a point set,
 as well as the normal and feature edge estimation functions based on it.
+Florent Lafarge with the help of Simon Giraudot contributed the point set structuring algorithm.
 
 */ 
 } /* namespace CGAL */
