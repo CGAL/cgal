@@ -841,12 +841,24 @@ _create_overlapping_curve(const X_monotone_curve_2& overlap_cv,
     right_event = this->_push_event(right_end, Base_event::DEFAULT, ARR_INTERIOR, ARR_INTERIOR).first;
   }
 
-  if (!c1->is_start_point(left_event)) 
-    left_event->add_curve_to_left(c1);
+  if (!c1->is_start_point(left_event))
+  {
+    // here we do no add a curve on the left if there wasn't a curve before
+    // it might happen that a curve will be added on the left while
+    // it should have been an overlapping curve (that will be detected
+    // upon handling of an event with no left curve).
+    // See for example data/test_construction/segments/test51.txt
+    if (!c2->is_start_point(left_event) || left_event->has_left_curves())
+      left_event->add_curve_to_left(c1);
+  }
   else
     left_event->remove_curve_from_right(c1);
-  if (!c2->is_start_point(left_event)) 
-    left_event->add_curve_to_left(c2);
+  if (!c2->is_start_point(left_event))
+  {
+    // same reason than just above
+    if (!c1->is_start_point(left_event) || left_event->has_left_curves())
+      left_event->add_curve_to_left(c2);
+  }
   else
     left_event->remove_curve_from_right(c2);
 
