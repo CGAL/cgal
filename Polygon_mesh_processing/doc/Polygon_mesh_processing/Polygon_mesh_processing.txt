@@ -27,7 +27,7 @@ A polygon mesh can have any number of connected components, and also some self-i
 In this package, a polygon mesh is considered to have the topology of a 2-manifold.
 
 \subsection PMPAPI API
-This package follows the BGL API described in \ref chapterBGL.
+This package follows the BGL API described in \ref PkgBGLSummary.
 It can thus be used either with `Polyhedron_3`, `Surface_mesh`, or
 any class model of the concept `FaceGraph`. Each function or class of this package
 details the requirements on the input polygon mesh.
