@@ -1,5 +1,5 @@
-#ifndef CGAL_VSA_APPROXIMATION
-#define CGAL_VSA_APPROXIMATION
+#ifndef CGAL_SURFACE_MESH_APPROXIMATION_VSA_APPROXIMATION_H
+#define CGAL_SURFACE_MESH_APPROXIMATION_VSA_APPROXIMATION_H
 
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/Kernel/global_functions.h>
@@ -18,8 +18,11 @@
 #include <cmath>
 #include <map>
 #include <queue>
-#include <iostream>
 #include <iterator>
+
+#ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEGUB
+#include <iostream>
+#endif
 
 namespace CGAL
 {
@@ -514,7 +517,9 @@ public:
         fit();
       }
 
+#ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEGUB
       std::cerr << "teleported" << std::endl;
+#endif
     }
 
     return num_teleported;
@@ -926,7 +931,11 @@ private:
    * @return inserted number of proxies
    */
   std::size_t insert_proxy_hierarchical(const std::size_t num_proxies_to_be_added) {
-    std::cout << "#px " << proxies.size() << std::endl;
+
+#ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEGUB
+    std::cerr << "#px " << proxies.size() << std::endl;
+#endif
+
     std::vector<FT> err(proxies.size(), FT(0));
     const FT sum_error = compute_fitting_error(err);
     const FT avg_error = sum_error / FT(static_cast<double>(num_proxies_to_be_added));
@@ -952,10 +961,13 @@ private:
       residual = (to_add - FT(static_cast<double>(q_to_add))) * avg_error;
       num_to_add[pxe.px] = q_to_add;
     }
+
+#ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEGUB
     for (std::size_t i = 0; i < px_error.size(); ++i)
-      std::cout << "#px " << px_error[i].px
+      std::cerr << "#px " << px_error[i].px
         << ", #error " << px_error[i].err
         << ", #num_to_add " << num_to_add[px_error[i].px] << std::endl;
+#endif
 
     std::size_t num_inserted = 0;
     BOOST_FOREACH(face_descriptor f, faces(*m_pmesh)) {
@@ -969,8 +981,11 @@ private:
         ++num_inserted;
       }
     }
-    std::cout << "#requested/inserted "
+
+#ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEGUB
+    std::cerr << "#requested/inserted "
       << num_proxies_to_be_added << '/' << num_inserted << std::endl;
+#endif
 
     return num_inserted;
   }
@@ -1126,13 +1141,20 @@ private:
 
       // a new connected border
       borders.push_back(Border(he_start));
+
+#ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEGUB
       std::cerr << "#border " << borders.size() << std::endl;
+#endif
+
       const halfedge_descriptor he_mark = he_start;
       do {
         ChordVector chord;
         walk_to_next_anchor(he_start, chord);
         borders.back().num_anchors += subdivide_chord(chord.begin(), chord.end(), split_criterion);
+
+#ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEGUB
         std::cerr << "#chord_anchor " << borders.back().num_anchors << std::endl;
+#endif
 
         for (ChordVectorIterator citr = chord.begin(); citr != chord.end(); ++citr)
           he_candidates.erase(*citr);
@@ -1616,4 +1638,4 @@ private:
 
 } // end namespace CGAL
 
-#endif // CGAL_VSA_APPROXIMATION
+#endif // CGAL_SURFACE_MESH_APPROXIMATION_VSA_APPROXIMATION_H

@@ -1,7 +1,7 @@
 #ifndef CGAL_SURFACE_MESH_APPROXIMATION_VSA_MESH_APPROXIMATION_H
 #define CGAL_SURFACE_MESH_APPROXIMATION_VSA_MESH_APPROXIMATION_H
 
-#include <CGAL/vsa_mesh_approximation_metrics.h>
+#include <CGAL/VSA_metrics.h>
 #include <CGAL/VSA_approximation.h>
 #include <CGAL/internal/Surface_mesh_approximation/named_function_params.h>
 #include <CGAL/internal/Surface_mesh_approximation/named_params_helper.h>
