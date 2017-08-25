@@ -2,6 +2,7 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_profile.h>
 #include <boost/tuple/tuple.hpp>
+#include <boost/tuple/tuple_comparison.hpp>
 #include <fstream>
 
 typedef CGAL::Simple_cartesian<double> K;
