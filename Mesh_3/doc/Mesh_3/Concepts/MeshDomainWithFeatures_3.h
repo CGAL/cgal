@@ -88,11 +88,10 @@ const Point_3& p, const Curve_segment_index& ci, FT d) const;
 
 /*!
 Returns the length of the curve segment, on the curve with index
-\c  curve_index, from \c p to \c q, in the orientation
-\c orientation
+\c  curve_index, from \c p to \c q
 
 If the curve connected component containing \c p and \c q is a cycle,
-the orientation gives identifies which portion of the cycle
+the orientation identifies which portion of the cycle
 corresponds to the arc, otherwise \c orientation must be compatible
 with the orientation of \c p and \c q on the curve segment.
 */
