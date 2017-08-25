@@ -18,6 +18,8 @@ typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 typedef Polyhedron::Facet_handle Facet_handle;
 typedef Polyhedron::Halfedge_handle Halfedge_handle;
 typedef Polyhedron::Facet_iterator Facet_iterator;
+
+typedef boost::property_map<Polyhedron, boost::vertex_point_t>::type VertexPointMap;
 typedef boost::associative_property_map<std::map<Facet_handle, FT> > FacetAreaMap;
 typedef boost::associative_property_map<std::map<Facet_handle, Point> > FacetCenterMap;
 
@@ -75,7 +77,8 @@ struct PointProxyFitting {
   const FacetCenterMap center_pmap;
   const FacetAreaMap area_pmap;
 };
-typedef CGAL::VSA_approximation<Polyhedron, PointProxy, CompactMetric, PointProxyFitting> CompactVSA;
+typedef CGAL::VSA_approximation<Polyhedron, VertexPointMap,
+  PointProxy, CompactMetric, PointProxyFitting> CompactVSA;
 
 int main()
 {
@@ -103,15 +106,14 @@ int main()
   FacetAreaMap area_pmap(facet_areas);
   FacetCenterMap center_pmap(facet_centers);
 
+  // create compact metric approximation algorithm instance
+  CompactVSA compact_approx(input,
+    get(boost::vertex_point, const_cast<Polyhedron &>(input)));
+
   // construct metric and fitting functors
   CompactMetric metric(center_pmap);
   PointProxyFitting proxy_fitting(center_pmap, area_pmap);
-
-  // create compact metric approximation algorithm instance
-  CompactVSA compact_approx;
-  compact_approx.set_mesh(input);
-  compact_approx.set_error_metric(metric);
-  compact_approx.set_proxy_fitting(proxy_fitting);
+  compact_approx.set_metric(metric, proxy_fitting);
 
   // using 200 proxies to approximate the shape
   compact_approx.init_proxies(200, CompactVSA::HierarchicalInit);
