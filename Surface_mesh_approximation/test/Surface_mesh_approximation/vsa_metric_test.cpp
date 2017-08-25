@@ -14,12 +14,13 @@ typedef Kernel::FT FT;
 typedef Kernel::Vector_3 Vector_3;
 typedef Kernel::Point_3 Point_3;
 
-typedef CGAL::Polyhedron_3<Kernel> Polyhedron_3;
-typedef Polyhedron_3::Facet_handle Facet_handle;
-typedef Polyhedron_3::Halfedge_handle Halfedge_handle;
-typedef Polyhedron_3::Facet_iterator Facet_iterator;
+typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
+typedef Polyhedron::Facet_handle Facet_handle;
+typedef Polyhedron::Halfedge_handle Halfedge_handle;
+typedef Polyhedron::Facet_iterator Facet_iterator;
 typedef boost::associative_property_map<std::map<Facet_handle, FT> > FacetAreaMap;
 typedef boost::associative_property_map<std::map<Facet_handle, Point_3> > FacetCenterMap;
+typedef boost::property_map<Polyhedron, boost::vertex_point_t>::type VertexPointMap;
 
 struct PointProxy {
   Facet_handle seed;
@@ -67,14 +68,15 @@ struct PointProxyFitting {
   const FacetCenterMap center_pmap;
   const FacetAreaMap area_pmap;
 };
-typedef CGAL::VSA_approximation<Polyhedron_3, PointProxy, CompactMetric, PointProxyFitting> CompactVSA;
+typedef CGAL::VSA_approximation<Polyhedron, VertexPointMap,
+  PointProxy, CompactMetric, PointProxyFitting> CompactVSA;
 
 /**
  * This file tests the user defined metric.
  */
 int main()
 {
-  Polyhedron_3 mesh;
+  Polyhedron mesh;
   std::ifstream input("./data/cube_meshed_open.off");
   if (!input || !(input >> mesh) || mesh.empty()) {
     std::cerr << "Invalid off file." << std::endl;
@@ -96,15 +98,14 @@ int main()
   FacetAreaMap area_pmap(facet_areas);
   FacetCenterMap center_pmap(facet_centers);
 
-  CompactMetric metric(center_pmap);
-  PointProxyFitting proxy_fitting(center_pmap, area_pmap);
-
   // create compact metric approximation algorithm instance
   std::cout << "create compact vas instance" << std::endl;
-  CompactVSA compact_approx;
-  compact_approx.set_mesh(mesh);
-  compact_approx.set_error_metric(metric);
-  compact_approx.set_proxy_fitting(proxy_fitting);
+  CompactVSA compact_approx(mesh,
+    get(boost::vertex_point, const_cast<Polyhedron &>(mesh)));
+
+  CompactMetric metric(center_pmap);
+  PointProxyFitting proxy_fitting(center_pmap, area_pmap);
+  compact_approx.set_metric(metric, proxy_fitting);
 
   std::cout << "random init and run" << std::endl;
   compact_approx.init_proxies(20, CompactVSA::RandomInit);
@@ -115,7 +116,7 @@ int main()
 
   // extract the approximation polyhedron
   std::cout << "meshing" << std::endl;
-  Polyhedron_3 out_mesh;
+  Polyhedron out_mesh;
   if (compact_approx.meshing(out_mesh))
     std::cout << "manifold." << std::endl;
   else

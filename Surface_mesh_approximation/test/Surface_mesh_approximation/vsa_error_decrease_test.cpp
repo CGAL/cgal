@@ -6,17 +6,17 @@
 #include <CGAL/IO/Polyhedron_iostream.h>
 
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#include <CGAL/VSA_metrics.h>
 #include <CGAL/VSA_approximation.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::FT FT;
-typedef CGAL::Polyhedron_3<Kernel> Polyhedron_3;
+typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
+typedef boost::property_map<Polyhedron, boost::vertex_point_t>::type VertexPointMap;
 
-typedef CGAL::PlaneProxy<Polyhedron_3> PlaneProxy;
-typedef CGAL::L21Metric<Polyhedron_3> L21Metric;
-typedef CGAL::L21ProxyFitting<Polyhedron_3> L21ProxyFitting;
-typedef CGAL::VSA_approximation<Polyhedron_3, PlaneProxy, L21Metric, L21ProxyFitting> VSAL21;
+typedef CGAL::PlaneProxy<Polyhedron> PlaneProxy;
+typedef CGAL::L21Metric<Polyhedron> L21Metric;
+typedef CGAL::L21ProxyFitting<Polyhedron> L21ProxyFitting;
+typedef CGAL::VSA_approximation<Polyhedron, VertexPointMap> VSAL21;
 
 bool check_strict_ordering(const std::vector<FT> &error)
 {
@@ -37,19 +37,20 @@ bool check_strict_ordering(const std::vector<FT> &error)
  */
 int main()
 {
-  Polyhedron_3 mesh;
+  Polyhedron mesh;
   std::ifstream input("./data/sphere_iso.off");
   if (!input || !(input >> mesh) || mesh.empty()) {
     std::cerr << "Invalid off file." << std::endl;
     return EXIT_FAILURE;
   }
 
+  // algorithm instance
+  VSAL21 vsa_l21(mesh,
+    get(boost::vertex_point, const_cast<Polyhedron &>(mesh)));
+
   L21Metric l21_metric(mesh);
   L21ProxyFitting l21_fitting(mesh);
-
-  // algorithm instance
-  VSAL21 vsa_l21(l21_metric, l21_fitting);
-  vsa_l21.set_mesh(mesh);
+  vsa_l21.set_metric(l21_metric, l21_fitting);
 
   vsa_l21.init_proxies(100, VSAL21::RandomInit);
   std::vector<FT> error;

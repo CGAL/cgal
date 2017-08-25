@@ -6,34 +6,34 @@
 #include <CGAL/IO/Polyhedron_iostream.h>
 
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#include <CGAL/VSA_metrics.h>
 #include <CGAL/VSA_approximation.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::FT FT;
 typedef Kernel::Point_3 Point_3;
-typedef CGAL::Polyhedron_3<Kernel> Polyhedron_3;
+typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
+typedef boost::property_map<Polyhedron, boost::vertex_point_t>::type VertexPointMap;
 
-typedef CGAL::PlaneProxy<Polyhedron_3> PlaneProxy;
-typedef CGAL::L21Metric<Polyhedron_3> L21Metric;
-typedef CGAL::L21ProxyFitting<Polyhedron_3> L21ProxyFitting;
-typedef CGAL::VSA_approximation<Polyhedron_3, PlaneProxy, L21Metric, L21ProxyFitting> VSAL21;
+typedef CGAL::L21Metric<Polyhedron> L21Metric;
+typedef CGAL::L21ProxyFitting<Polyhedron> L21ProxyFitting;
+typedef CGAL::VSA_approximation<Polyhedron, VertexPointMap> VSAL21;
 
 bool test_shape(const char *file_name, const std::size_t target_num_proxies)
 {
-  Polyhedron_3 mesh;
+  Polyhedron mesh;
   std::ifstream input(file_name);
   if (!input || !(input >> mesh) || mesh.empty()) {
     std::cerr << "Invalid off file." << std::endl;
     return false;
   }
 
+  // algorithm instance
+  VSAL21 vsa_l21(mesh,
+    get(boost::vertex_point, const_cast<Polyhedron &>(mesh)));
+
   L21Metric l21_metric(mesh);
   L21ProxyFitting l21_fitting(mesh);
-
-  // algorithm instance
-  VSAL21 vsa_l21(l21_metric, l21_fitting);
-  vsa_l21.set_mesh(mesh);
+  vsa_l21.set_metric(l21_metric, l21_fitting);
 
   // approximation, init from error, drop to the target error incrementally
   // should reach targeted number of proxies gradually
@@ -51,7 +51,7 @@ bool test_shape(const char *file_name, const std::size_t target_num_proxies)
   }
 
   // meshing, should be manifold
-  Polyhedron_3 mesh_out;
+  Polyhedron mesh_out;
   if (!vsa_l21.meshing(mesh_out)) {
     std::cout << "incremental reaching meshing non-manifold" << std::endl;
     return false;
