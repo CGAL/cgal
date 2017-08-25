@@ -81,13 +81,13 @@ bool vsa_mesh_approximation(const TriangleMesh &tm_in,
   typedef CGAL::PlaneProxy<TriangleMesh> PlaneProxy;
   typedef CGAL::L21Metric<TriangleMesh> L21Metric;
   typedef CGAL::L21ProxyFitting<TriangleMesh> L21ProxyFitting;
-  typedef CGAL::VSA_approximation<TriangleMesh, PlaneProxy, L21Metric, L21ProxyFitting> VSAL21;
+  typedef CGAL::VSA_approximation<TriangleMesh, VPMap,
+    PlaneProxy, L21Metric, L21ProxyFitting> VSAL21;
 
+  VSAL21 vsa_l21(tm_in, point_pmap);
   L21Metric l21_metric(tm_in);
   L21ProxyFitting l21_fitting(tm_in);
-
-  VSAL21 vsa_l21(l21_metric, l21_fitting);
-  vsa_l21.set_mesh(tm_in);
+  vsa_l21.set_metric(l21_metric, l21_fitting);
 
   std::size_t num_proxies = choose_param(get_param(np, internal_np::number_of_proxies),
     num_faces(tm_in) / 100);

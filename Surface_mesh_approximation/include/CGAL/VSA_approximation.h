@@ -8,6 +8,9 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
 
+#include <CGAL/VSA_metrics.h>
+#include <CGAL/Default.h>
+
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
@@ -30,17 +33,33 @@ namespace CGAL
  * \ingroup PkgTSMA
  * @brief Main class for Variational Shape Approximation algorithm.
  * @tparam TriangleMesh a CGAL TriangleMesh
+ * @tparam VertexPointMap vertex point map
+ * @tparam Proxy proxy type
  * @tparam ErrorMetric error metric type
  * @tparam ProxyFitting proxy fitting type
  * @tparam GeomTraits geometric traits type
  */
 template <typename TriangleMesh,
-  typename Proxy,
-  typename ErrorMetric,
-  typename ProxyFitting,
-  typename GeomTraits = typename TriangleMesh::Traits>
+  typename VertexPointMap,
+  typename Proxy_ = CGAL::Default,
+  typename ErrorMetric_ = CGAL::Default,
+  typename ProxyFitting_ = CGAL::Default,
+  typename GeomTraits_ = CGAL::Default>
 class VSA_approximation {
-  // typedef typename ErrorMetric::Proxy Proxy;
+// Default typdefs
+  typedef typename CGAL::Default::Get<
+    GeomTraits_,
+    typename Kernel_traits<
+      typename boost::property_traits<VertexPointMap>::value_type
+    >::Kernel >::type GeomTraits;
+  typedef typename CGAL::Default::Get<Proxy_,
+    CGAL::PlaneProxy<TriangleMesh, GeomTraits> >::type Proxy;
+  typedef typename CGAL::Default::Get<ErrorMetric_,
+    CGAL::L21Metric<TriangleMesh, VertexPointMap, GeomTraits, Proxy> >::type ErrorMetric;
+  typedef typename CGAL::Default::Get<ProxyFitting_,
+    CGAL::L21ProxyFitting<TriangleMesh, VertexPointMap, GeomTraits, Proxy> >::type ProxyFitting;
+
+  // GeomTraits typedefs
   typedef typename GeomTraits::FT FT;
   typedef typename GeomTraits::Point_3 Point_3;
   typedef typename GeomTraits::Vector_3 Vector_3;
@@ -50,13 +69,14 @@ class VSA_approximation {
   typedef typename GeomTraits::Construct_sum_of_vectors_3 Construct_sum_of_vectors_3;
   typedef typename GeomTraits::Compute_scalar_product_3 Compute_scalar_product_3;
 
+  // graph_traits typedefs
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor edge_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
 
+  // internal typedefs
   typedef boost::associative_property_map<std::map<vertex_descriptor, int> > VertexAnchorMap;
-  typedef typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type VertexPointMap;
 
   typedef std::vector<halfedge_descriptor> ChordVector;
   typedef typename ChordVector::iterator ChordVectorIterator;
@@ -147,6 +167,8 @@ class VSA_approximation {
   // member variables
   // The triangle mesh.
   const TriangleMesh *m_pmesh;
+  // The mesh vertex point map.
+  VertexPointMap point_pmap;
   // The error metric.
   const ErrorMetric *fit_error;
   // The proxy fitting functor.
@@ -157,7 +179,6 @@ class VSA_approximation {
   Construct_sum_of_vectors_3 sum_functor;
   Compute_scalar_product_3 scalar_product_functor;
 
-  VertexPointMap point_pmap;
   // The facet proxy index map.
   std::map<face_descriptor, std::size_t> internal_fidx_map;
   boost::associative_property_map<std::map<face_descriptor, std::size_t> > seg_pmap;
@@ -187,7 +208,7 @@ public:
   };
 
   /*!
-   * Default constructor.
+   * %Default constructor.
    */
   VSA_approximation() :
     m_pmesh(NULL),
@@ -204,14 +225,15 @@ public:
 
   /*!
    * Initialize and prepare for the approximation.
-   * @param _fit_error error calculation functor.
-   * @param _proxy_fitting proxy fitting functor.
+   * @param _mesh `CGAL TriangleMesh` on which approximation operate.
+   * @param _point_map vertex point map of the mesh
    */
-  VSA_approximation(const ErrorMetric &_fit_error,
-    const ProxyFitting &_proxy_fitting) :
-    m_pmesh(NULL),
-    fit_error(&_fit_error),
-    proxy_fitting(&_proxy_fitting),
+  VSA_approximation(const TriangleMesh &_mesh,
+    const VertexPointMap &_point_pmap) :
+    m_pmesh(&_mesh),
+    point_pmap(_point_pmap),
+    fit_error(NULL),
+    proxy_fitting(NULL),
     seg_pmap(internal_fidx_map),
     vanchor_map(vertex_int_map) {
     GeomTraits traits;
@@ -225,37 +247,38 @@ public:
    * Set the mesh for approximation and rebuild the internal data structure.
    * @pre @a _mesh.is_pure_triangle()
    * @param _mesh `CGAL TriangleMesh` on which approximation operate.
+   * @param _point_map vertex point map of the mesh
    */
-  void set_mesh(const TriangleMesh &_mesh) {
+  void set_mesh(const TriangleMesh &_mesh, const VertexPointMap &_point_pmap) {
     m_pmesh = &_mesh;
-    point_pmap = get(boost::vertex_point, const_cast<TriangleMesh &>(*m_pmesh));
+    point_pmap = _point_pmap;
     rebuild();
+  }
+
+  /*!
+   * Set the error and fitting functor.
+   * @param _error_metric a `ErrorMetric` functor.
+   * @param _proxy_fitting a `ProxyFitting` functor.
+   */
+  void set_metric(const ErrorMetric &_error_metric,
+    const ProxyFitting &_proxy_fitting) {
+    fit_error = &_error_metric;
+    proxy_fitting = &_proxy_fitting;
   }
 
   /*!
    * Rebuild the internal data structure.
    */
   void rebuild() {
+    // rebuild inter data structure
     proxies.clear();
     internal_fidx_map.clear();
     BOOST_FOREACH(face_descriptor f, faces(*m_pmesh))
       internal_fidx_map[f] = 0;
-  }
 
-  /*!
-   * Set the error metric functor.
-   * @param _error_metric `ErrorMetric` functor.
-   */
-  void set_error_metric(const ErrorMetric &_error_metric) {
-    fit_error = &_error_metric;
-  }
-
-  /*!
-   * Set the proxy fitting functor.
-   * @param _proxy_fitting `ProxyFitting` functor.
-   */
-  void set_proxy_fitting(const ProxyFitting &_proxy_fitting) {
-    proxy_fitting = &_proxy_fitting;
+    vertex_int_map.clear();
+    BOOST_FOREACH(vertex_descriptor v, vertices(*m_pmesh))
+      vertex_int_map.insert(std::pair<vertex_descriptor, int>(v, 0));
   }
 
   /*!
@@ -682,7 +705,6 @@ public:
    */
   template <typename PolyhedronSurface>
   bool meshing(PolyhedronSurface &tm_out, const FT split_criterion = FT(0.2), bool pca_plane = false) {
-    vertex_int_map.clear();
     // initialize all vertex anchor status
     enum Vertex_status { NO_ANCHOR = -1 };
     BOOST_FOREACH(vertex_descriptor v, vertices(*m_pmesh))
