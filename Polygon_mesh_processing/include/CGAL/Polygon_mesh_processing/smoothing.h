@@ -1,3 +1,23 @@
+// Copyright (c) 2015 GeometryFactory (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+//
+//
+// Author(s)     : Konstantinos Katrioplas (konst.katrioplas@gmail.com)
+
 #ifndef CGAL_POLYGON_MESH_PROCESSING_SMOOTHING_H
 #define CGAL_POLYGON_MESH_PROCESSING_SMOOTHING_H
 
@@ -623,10 +643,10 @@ void compatible_smoothing(PolygonMesh& pmesh, const FaceRange& faces, const Name
         {
 
 #ifdef CGAL_PMP_SMOOTHING_VERBOSE
-    t.stop();
-    std::cout << "Smoothing done in ";
-    std::cout << t.time() << " sec." << std::endl;
-    std::cout << "Convergence to relative hausdorff distance has been achieved." << std::endl;
+            t.stop();
+            std::cout << "Smoothing done in ";
+            std::cout << t.time() << " sec." << std::endl;
+            std::cout << "Convergence to relative hausdorff distance has been achieved." << std::endl;
 #endif
             break;
         }
@@ -635,10 +655,10 @@ void compatible_smoothing(PolygonMesh& pmesh, const FaceRange& faces, const Name
         {
 
 #ifdef CGAL_PMP_SMOOTHING_VERBOSE
-    t.stop();
-    std::cout << "Smoothing done in ";
-    std::cout << t.time() << " sec." << std::endl;
-    std::cout << "Maximum number of iterations has been achieved." << std::endl;
+            t.stop();
+            std::cout << "Smoothing done in ";
+            std::cout << t.time() << " sec." << std::endl;
+            std::cout << "Maximum number of iterations has been achieved." << std::endl;
 #endif
             break;
         }
