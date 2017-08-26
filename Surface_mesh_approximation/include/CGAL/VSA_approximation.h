@@ -708,7 +708,7 @@ public:
     // initialize all vertex anchor status
     enum Vertex_status { NO_ANCHOR = -1 };
     BOOST_FOREACH(vertex_descriptor v, vertices(*m_pmesh))
-      vertex_int_map.insert(std::pair<vertex_descriptor, int>(v, static_cast<int>(NO_ANCHOR)));
+      vertex_int_map[v] = static_cast<int>(NO_ANCHOR);
     anchors.clear();
     borders.clear();
     tris.clear();
