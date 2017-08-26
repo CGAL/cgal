@@ -23,7 +23,6 @@ typedef boost::associative_property_map<std::map<Facet_handle, Point_3> > FacetC
 typedef boost::property_map<Polyhedron, boost::vertex_point_t>::type VertexPointMap;
 
 struct PointProxy {
-  Facet_handle seed;
   Point_3 center;
 };
 

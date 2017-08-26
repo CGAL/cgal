@@ -13,7 +13,6 @@ typedef Kernel::FT FT;
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 typedef boost::property_map<Polyhedron, boost::vertex_point_t>::type VertexPointMap;
 
-typedef CGAL::PlaneProxy<Polyhedron> PlaneProxy;
 typedef CGAL::L21Metric<Polyhedron> L21Metric;
 typedef CGAL::L21ProxyFitting<Polyhedron> L21ProxyFitting;
 typedef CGAL::VSA_approximation<Polyhedron, VertexPointMap> VSAL21;

@@ -10,14 +10,10 @@ It is nested within the `ErrorMetric` and `ProxyFitting` concepts.
 
 class Proxy {
 public:
-  /// Triangle mesh facet descriptor.
-  typedef unspecified_type facet_descriptor;
-
   /// @name Data members
   /// @{
 
-  /// Data member to store the proxy seed.
-  facet_descriptor seed;
+  /// Anything to store the proxy shape parameters.
 
   /// }
 };

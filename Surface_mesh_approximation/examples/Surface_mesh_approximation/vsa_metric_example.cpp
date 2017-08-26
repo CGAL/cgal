@@ -25,7 +25,6 @@ typedef boost::associative_property_map<std::map<Facet_handle, Point> > FacetCen
 
 // proxy
 struct PointProxy {
-  Facet_handle seed;
   Point center;
 };
 

@@ -53,7 +53,7 @@ class VSA_approximation {
       typename boost::property_traits<VertexPointMap>::value_type
     >::Kernel >::type GeomTraits;
   typedef typename CGAL::Default::Get<Proxy_,
-    CGAL::PlaneProxy<TriangleMesh, GeomTraits> >::type Proxy;
+    CGAL::PlaneProxy<GeomTraits> >::type Proxy;
   typedef typename CGAL::Default::Get<ErrorMetric_,
     CGAL::L21Metric<TriangleMesh, VertexPointMap, GeomTraits, Proxy> >::type ErrorMetric;
   typedef typename CGAL::Default::Get<ProxyFitting_,

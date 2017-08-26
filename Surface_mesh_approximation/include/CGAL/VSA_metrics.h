@@ -20,20 +20,15 @@ namespace CGAL
  *
  * \cgalModels `Proxy`
  *
- * @tparam TriangleMesh a triangle `FaceGraph`
  * @tparam GeomTraits geometric traits
  */
-template<typename TriangleMesh,
-  typename GeomTraits = typename TriangleMesh::Traits>
+template <typename GeomTraits>
 class PlaneProxy
 {
   typedef typename GeomTraits::Vector_3 Vector_3;
   typedef typename GeomTraits::Plane_3 Plane_3;
-  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
 
 public:
-  // The proxy seed.
-  face_descriptor seed;
   // The proxy normal used in the `L21Metric`.
   Vector_3 normal;
   // The fitting plane of the proxy used in the `L2Metric`.
@@ -54,11 +49,11 @@ public:
  * @tparam GeomTraits geometric traits
  * @tparam PlaneProxy a model of `PlaneProxy`
  */
-template<typename TriangleMesh,
+template <typename TriangleMesh,
   typename VertexPointMap
     = typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type,
   typename GeomTraits = typename TriangleMesh::Traits,
-  typename PlaneProxy = CGAL::PlaneProxy<TriangleMesh, GeomTraits> >
+  typename PlaneProxy = CGAL::PlaneProxy<GeomTraits> >
 class L21Metric
 {
   typedef typename GeomTraits::FT FT;
@@ -116,7 +111,7 @@ private:
 };
 
 // specialization
-template<typename TriangleMesh,
+template <typename TriangleMesh,
   typename GeomTraits,
   typename PlaneProxy>
 class L21Metric<TriangleMesh,
@@ -194,11 +189,11 @@ private:
  * @tparam GeomTraits geometric traits
  * @tparam PlaneProxy a model of `PlaneProxy`
  */
-template<typename TriangleMesh,
+template <typename TriangleMesh,
   typename VertexPointMap
     = typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type,
   typename GeomTraits = typename TriangleMesh::Traits,
-  typename PlaneProxy = CGAL::PlaneProxy<TriangleMesh, GeomTraits> >
+  typename PlaneProxy = CGAL::PlaneProxy<GeomTraits> >
 class L21ProxyFitting
 {
   typedef typename GeomTraits::FT FT;
@@ -238,7 +233,7 @@ public:
   }
 
   // returns the proxy fitted from the facets from beg to end.
-  template<typename FacetIterator>
+  template <typename FacetIterator>
   Proxy operator()(const FacetIterator beg, const FacetIterator end) const {
     CGAL_assertion(beg != end);
 
@@ -268,7 +263,7 @@ private:
 };
 
 // specialization
-template<typename TriangleMesh,
+template <typename TriangleMesh,
   typename GeomTraits,
   typename PlaneProxy>
 class L21ProxyFitting<TriangleMesh,
@@ -315,7 +310,7 @@ public:
   }
 
   // returns the proxy fitted from the facets from beg to end.
-  template<typename FacetIterator>
+  template <typename FacetIterator>
   Proxy operator()(const FacetIterator beg, const FacetIterator end) const {
     CGAL_assertion(beg != end);
 
@@ -358,11 +353,11 @@ private:
  * @tparam GeomTraits geometric traits
  * @tparam PlaneProxy a model of `PlaneProxy`
  */
-template<typename TriangleMesh,
+template <typename TriangleMesh,
   typename VertexPointMap
     = typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type,
   typename GeomTraits = typename TriangleMesh::Traits,
-  typename PlaneProxy = CGAL::PlaneProxy<TriangleMesh, GeomTraits> >
+  typename PlaneProxy = CGAL::PlaneProxy<GeomTraits> >
 class L2Metric
 {
   typedef typename GeomTraits::FT FT;
@@ -414,7 +409,7 @@ private:
 };
 
 // specialization
-template<typename TriangleMesh,
+template <typename TriangleMesh,
   typename GeomTraits,
   typename PlaneProxy>
 class L2Metric<TriangleMesh,
@@ -487,11 +482,11 @@ private:
  * @tparam GeomTraits geometric traits
  * @tparam PlaneProxy a model of `PlaneProxy`
  */
-template<typename TriangleMesh,
+template <typename TriangleMesh,
   typename VertexPointMap
     = typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type,
   typename GeomTraits = typename TriangleMesh::Traits,
-  typename PlaneProxy = CGAL::PlaneProxy<TriangleMesh, GeomTraits> >
+  typename PlaneProxy = CGAL::PlaneProxy<GeomTraits> >
 class L2ProxyFitting
 {
   typedef typename GeomTraits::Point_3 Point_3;
@@ -507,7 +502,7 @@ public:
     : mesh(&_mesh), point_pmap(_point_pmap) {}
 
   // returns the proxy fitted from a range of facets.
-  template<typename FacetIterator>
+  template <typename FacetIterator>
   Proxy operator()(const FacetIterator beg, const FacetIterator end) const {
     CGAL_assertion(beg != end);
 
@@ -539,7 +534,7 @@ private:
 /*!
  * Specialization.
  */
-template<typename TriangleMesh,
+template <typename TriangleMesh,
   typename GeomTraits,
   typename PlaneProxy>
 class L2ProxyFitting<TriangleMesh,
@@ -564,7 +559,7 @@ public:
     point_pmap(get(boost::vertex_point, const_cast<TriangleMesh &>(_mesh))) {}
 
   // returns the proxy fitted from a range of facets.
-  template<typename FacetIterator>
+  template <typename FacetIterator>
   Proxy operator()(const FacetIterator beg, const FacetIterator end) const {
     CGAL_assertion(beg != end);
 
