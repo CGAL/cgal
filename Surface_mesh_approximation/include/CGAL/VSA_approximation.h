@@ -81,6 +81,26 @@ class VSA_approximation {
   typedef std::vector<halfedge_descriptor> ChordVector;
   typedef typename ChordVector::iterator ChordVectorIterator;
 
+  // The proxy wrapper for approximation.
+  struct ProxyWrapper {
+    ProxyWrapper(const Proxy &_p, const face_descriptor &_s)
+      : px(_p), seed(_s), err(0) {}
+
+    Proxy px; // parameterized proxy
+    face_descriptor seed; // proxy seed
+    FT err; // proxy fitting error
+  };
+
+  // The proxy fitting plane for meshing.
+  struct ProxyPlane {
+    ProxyPlane(const Plane_3 &_p, const Vector_3 &_n, const FT &_a)
+      : plane(_p), normal(_n), area(_a) {}
+
+    Plane_3 plane;
+    Vector_3 normal;
+    FT area;
+  };
+
   // The facet candidate to be queued.
   struct FacetToIntegrate {
     FacetToIntegrate(const face_descriptor &_f, const std::size_t &_px, const FT &_err)
@@ -187,10 +207,9 @@ class VSA_approximation {
   VertexAnchorMap vanchor_map;
 
   // Proxies.
-  std::vector<Proxy> proxies;
-  std::vector<Plane_3> px_planes;
-  std::vector<Vector_3> px_normals;
-  std::vector<FT> px_areas;
+  std::vector<ProxyWrapper> proxies;
+  // Proxy planes
+  std::vector<ProxyPlane> px_planes;
 
   // All anchors.
   std::vector<Anchor> anchors;
@@ -426,7 +445,7 @@ public:
         if (fadj != boost::graph_traits<TriangleMesh>::null_face()
             && seg_pmap[fadj] == CGAL_NOT_TAGGED_ID) {
           facet_pqueue.push(FacetToIntegrate(
-            fadj, i, (*fit_error)(fadj, proxies[i])));
+            fadj, i, (*fit_error)(fadj, proxies[i].px)));
         }
       }
     }
@@ -440,7 +459,7 @@ public:
           if (fadj != boost::graph_traits<TriangleMesh>::null_face()
             && seg_pmap[fadj] == CGAL_NOT_TAGGED_ID) {
             facet_pqueue.push(FacetToIntegrate(
-            fadj, c.px, (*fit_error)(fadj, proxies[c.px])));
+            fadj, c.px, (*fit_error)(fadj, proxies[c.px].px)));
           }
         }
       }
@@ -570,12 +589,12 @@ public:
     BOOST_FOREACH(face_descriptor f, faces(*m_pmesh)) {
       std::size_t px_idx = seg_pmap[f];
       if (px_idx == px1) {
-        err_sum += (*fit_error)(f, proxies[px_idx]);
+        err_sum += (*fit_error)(f, proxies[px_idx].px);
         seg_pmap[f] = px0;
         merged_patch.push_back(f);
       }
       else if (px_idx == px0) {
-        err_sum += (*fit_error)(f, proxies[px_idx]);
+        err_sum += (*fit_error)(f, proxies[px_idx].px);
         merged_patch.push_back(f);
       }
     }
@@ -590,7 +609,7 @@ public:
 
     FT err_merged(0);
     BOOST_FOREACH(face_descriptor f, merged_patch)
-      err_merged += (*fit_error)(f, proxies[px0]);
+      err_merged += (*fit_error)(f, proxies[px0].px);
 
     return err_merged - err_sum;
   }
@@ -633,10 +652,10 @@ public:
       BOOST_FOREACH(face_descriptor f, px_facets[pxj])
         merged_patch.push_back(f);
 
-      Proxy px = fit_new_proxy(merged_patch.begin(), merged_patch.end());
+      ProxyWrapper px = fit_new_proxy(merged_patch.begin(), merged_patch.end());
       FT sum_error(0);
       BOOST_FOREACH(face_descriptor f, merged_patch)
-        sum_error += (*fit_error)(f, px);
+        sum_error += (*fit_error)(f, px.px);
       merged_set.insert(ProxyPair(pxi, pxj));
 
       if (first_merge || sum_error < min_merged_error) {
@@ -685,7 +704,7 @@ public:
         break;
 
       if (seg_pmap[f] == px && f != proxies[px].seed) {
-        err += (*fit_error)(f, proxies[px]);
+        err += (*fit_error)(f, proxies[px].px);
         seg_pmap[f] = proxies.size();
         proxies.push_back(fit_new_proxy(f));
         ++count;
@@ -714,8 +733,6 @@ public:
     tris.clear();
 
     px_planes.clear();
-    px_normals.clear();
-    px_areas.clear();
     init_proxy_planes(pca_plane);
 
     find_anchors();
@@ -745,8 +762,8 @@ public:
    */
   template <typename OutputIterator>
   void get_proxies(OutputIterator out_itr) {
-    BOOST_FOREACH(const Proxy &px, proxies) {
-      *out_itr = px;
+    BOOST_FOREACH(const ProxyWrapper &pxw, proxies) {
+      *out_itr = pxw.px;
       ++out_itr;
     }
   }
@@ -896,7 +913,7 @@ private:
 
     BOOST_FOREACH(face_descriptor f, faces(*m_pmesh)) {
       std::size_t px_idx = seg_pmap[f];
-      FT err = (*fit_error)(f, proxies[px_idx]);
+      FT err = (*fit_error)(f, proxies[px_idx].px);
       px_error[px_idx] += err;
 
       if (err > max_facet_error[px_idx]) {
@@ -1021,25 +1038,25 @@ private:
    * @param end container end
    */
   template<typename FacetIterator>
-  Proxy fit_new_proxy(const FacetIterator &beg, const FacetIterator &end) {
+  ProxyWrapper fit_new_proxy(const FacetIterator &beg, const FacetIterator &end) {
     CGAL_assertion(beg != end);
 
     // use proxy_fitting functor to fit proxy parameters
     Proxy px = (*proxy_fitting)(beg, end);
 
     // find proxy seed
-    px.seed = *beg;
+    face_descriptor seed = *beg;
     FT err_min = (*fit_error)(*beg, px);
     std::pair<FacetIterator, FacetIterator> facets(beg, end);
     BOOST_FOREACH(face_descriptor f, facets) {
       FT err = (*fit_error)(f, px);
       if (err < err_min) {
         err_min = err;
-        px.seed = f;
+        seed = f;
       }
     }
 
-    return px;
+    return ProxyWrapper(px, seed);
   }
 
   /*!
@@ -1048,14 +1065,12 @@ private:
    * 2. Set seed.
    * @param face_descriptor facet
    */
-  Proxy fit_new_proxy(const face_descriptor &f) {
+  ProxyWrapper fit_new_proxy(const face_descriptor &f) {
     std::vector<face_descriptor> fvec(1, f);
     // fit proxy parameters
     Proxy px = (*proxy_fitting)(fvec.begin(), fvec.end());
-    // find proxy seed
-    px.seed = f;
 
-    return px;
+    return ProxyWrapper(px, f);
   }
 
   /*!
@@ -1065,7 +1080,7 @@ private:
   FT compute_fitting_error() {
     FT sum_error(0);
     BOOST_FOREACH(face_descriptor f, faces(*m_pmesh))
-      sum_error += (*fit_error)(f, proxies[seg_pmap[f]]);
+      sum_error += (*fit_error)(f, proxies[seg_pmap[f]].px);
     return sum_error;
   }
 
@@ -1078,7 +1093,7 @@ private:
     FT sum_error(0);
     BOOST_FOREACH(face_descriptor f, faces(*m_pmesh)) {
       const std::size_t px_idx = seg_pmap[f];
-      FT err = (*fit_error)(f, proxies[px_idx]);
+      FT err = (*fit_error)(f, proxies[px_idx].px);
       px_error[px_idx] += err;
       sum_error += err;
     }
@@ -1096,10 +1111,9 @@ private:
       px_facets[seg_pmap[f]].push_back(f);
 
     BOOST_FOREACH(const std::list<face_descriptor> &px_patch, px_facets) {
-      if (if_pca_plane)
-        px_planes.push_back(fit_plane_pca(px_patch.begin(), px_patch.end()));
-      else
-        px_planes.push_back(fit_plane_area_averaged(px_patch.begin(), px_patch.end()));
+      Plane_3 fit_plane = if_pca_plane ? 
+        fit_plane_pca(px_patch.begin(), px_patch.end()) :
+          fit_plane_area_averaged(px_patch.begin(), px_patch.end());
 
       Vector_3 norm = CGAL::NULL_VECTOR;
       FT area(0);
@@ -1116,8 +1130,7 @@ private:
       }
       norm = scale_functor(norm, FT(1.0 / std::sqrt(CGAL::to_double(norm.squared_length()))));
 
-      px_normals.push_back(norm);
-      px_areas.push_back(area);
+      px_planes.push_back(ProxyPlane(fit_plane, norm, area));
     }
   }
 
@@ -1482,7 +1495,8 @@ private:
         px_right = seg_pmap[face(opposite(he_first, *m_pmesh), *m_pmesh)];
       FT norm_sin(1.0);
       if (!CGAL::is_border(opposite(he_first, *m_pmesh), *m_pmesh)) {
-        Vector_3 vec = CGAL::cross_product(px_normals[px_left], px_normals[px_right]);
+        Vector_3 vec = CGAL::cross_product(
+          px_planes[px_left].normal, px_planes[px_right].normal);
         norm_sin = FT(std::sqrt(CGAL::to_double(scalar_product_functor(vec, vec))));
       }
       FT criterion = dist_max * norm_sin / chord_len;
@@ -1561,8 +1575,8 @@ private:
     for (std::set<std::size_t>::iterator pxitr = px_set.begin();
       pxitr != px_set.end(); ++pxitr) {
       std::size_t px_idx = *pxitr;
-      Point_3 proj = px_planes[px_idx].projection(vtx_pt);
-      FT area = px_areas[px_idx];
+      Point_3 proj = px_planes[px_idx].plane.projection(vtx_pt);
+      FT area = px_planes[px_idx].area;
       avgx += proj.x() * area;
       avgy += proj.y() * area;
       avgz += proj.z() * area;
