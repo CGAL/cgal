@@ -34,31 +34,38 @@ namespace CGAL
  * @brief Main class for Variational Shape Approximation algorithm.
  * @tparam TriangleMesh a CGAL TriangleMesh
  * @tparam VertexPointMap vertex point map
- * @tparam Proxy proxy type
  * @tparam ErrorMetric error metric type
  * @tparam ProxyFitting proxy fitting type
  * @tparam GeomTraits geometric traits type
  */
 template <typename TriangleMesh,
   typename VertexPointMap,
-  typename Proxy_ = CGAL::Default,
   typename ErrorMetric_ = CGAL::Default,
   typename ProxyFitting_ = CGAL::Default,
   typename GeomTraits_ = CGAL::Default>
 class VSA_approximation {
-// Default typdefs
+// public typedefs
+public:
+  // Default typdefs
   typedef typename CGAL::Default::Get<
     GeomTraits_,
     typename Kernel_traits<
       typename boost::property_traits<VertexPointMap>::value_type
     >::Kernel >::type GeomTraits;
-  typedef typename CGAL::Default::Get<Proxy_,
-    CGAL::PlaneProxy<GeomTraits> >::type Proxy;
   typedef typename CGAL::Default::Get<ErrorMetric_,
-    CGAL::L21Metric<TriangleMesh, VertexPointMap, GeomTraits, Proxy> >::type ErrorMetric;
+    CGAL::L21Metric<TriangleMesh, VertexPointMap, GeomTraits> >::type ErrorMetric;
   typedef typename CGAL::Default::Get<ProxyFitting_,
-    CGAL::L21ProxyFitting<TriangleMesh, VertexPointMap, GeomTraits, Proxy> >::type ProxyFitting;
+    CGAL::L21ProxyFitting<TriangleMesh, VertexPointMap, GeomTraits> >::type ProxyFitting;
+  typedef typename ErrorMetric::Proxy Proxy;
 
+  enum Initialization {
+    RandomInit,
+    IncrementalInit,
+    HierarchicalInit
+  };
+
+// private typedefs and data member
+private:
   // GeomTraits typedefs
   typedef typename GeomTraits::FT FT;
   typedef typename GeomTraits::Point_3 Point_3;
@@ -218,14 +225,8 @@ class VSA_approximation {
   // The indexed triangle approximation.
   std::vector<int> tris;
 
-  //member functions
+//member functions
 public:
-  enum Initialization {
-    RandomInit,
-    IncrementalInit,
-    HierarchicalInit
-  };
-
   /*!
    * %Default constructor.
    */
@@ -834,6 +835,7 @@ public:
     return bdrs;
   }
 
+// private member functions
 private:
   /*!
    * @brief Random initialize proxies.

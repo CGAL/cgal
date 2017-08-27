@@ -78,11 +78,9 @@ bool vsa_mesh_approximation(const TriangleMesh &tm_in,
     get(boost::vertex_point, const_cast<TriangleMesh &>(tm_in)));
     // get_property_map(vertex_point, tm_in));
 
-  typedef CGAL::PlaneProxy<GeomTraits> PlaneProxy;
-  typedef CGAL::L21Metric<TriangleMesh> L21Metric;
-  typedef CGAL::L21ProxyFitting<TriangleMesh> L21ProxyFitting;
-  typedef CGAL::VSA_approximation<TriangleMesh, VPMap,
-    PlaneProxy, L21Metric, L21ProxyFitting> VSAL21;
+  typedef CGAL::VSA_approximation<TriangleMesh, VPMap> VSAL21;
+  typedef typename VSAL21::ErrorMetric L21Metric;
+  typedef typename VSAL21::ProxyFitting L21ProxyFitting;
 
   VSAL21 vsa_l21(tm_in, point_pmap);
   L21Metric l21_metric(tm_in);

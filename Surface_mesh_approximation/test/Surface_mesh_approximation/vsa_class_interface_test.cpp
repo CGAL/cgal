@@ -17,11 +17,11 @@ typedef Polyhedron::Facet_handle Facet_handle;
 typedef boost::associative_property_map<std::map<Facet_handle, std::size_t> > FacetProxyMap;
 typedef boost::property_map<Polyhedron, boost::vertex_point_t>::type VertexPointMap;
 
-typedef CGAL::PlaneProxy<Kernel> PlaneProxy;
 typedef CGAL::L2Metric<Polyhedron> L2Metric;
 typedef CGAL::L2ProxyFitting<Polyhedron> L2ProxyFitting;
 typedef CGAL::VSA_approximation<Polyhedron, VertexPointMap,
-  CGAL::Default, L2Metric, L2ProxyFitting> VSA;
+  L2Metric, L2ProxyFitting> VSA;
+typedef VSA::Proxy PlaneProxy;
 
 /**
  * This file tests the VSA class API and the L2 metric.

@@ -13,9 +13,9 @@ typedef Kernel::FT FT;
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 typedef boost::property_map<Polyhedron, boost::vertex_point_t>::type VertexPointMap;
 
-typedef CGAL::L21Metric<Polyhedron> L21Metric;
-typedef CGAL::L21ProxyFitting<Polyhedron> L21ProxyFitting;
 typedef CGAL::VSA_approximation<Polyhedron, VertexPointMap> VSAL21;
+typedef VSAL21::ErrorMetric L21Metric;
+typedef VSAL21::ProxyFitting L21ProxyFitting;
 
 bool check_strict_ordering(const std::vector<FT> &error)
 {

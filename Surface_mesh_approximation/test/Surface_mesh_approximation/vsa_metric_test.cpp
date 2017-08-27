@@ -68,7 +68,7 @@ struct PointProxyFitting {
   const FacetAreaMap area_pmap;
 };
 typedef CGAL::VSA_approximation<Polyhedron, VertexPointMap,
-  PointProxy, CompactMetric, PointProxyFitting> CompactVSA;
+  CompactMetric, PointProxyFitting> CompactVSA;
 
 /**
  * This file tests the user defined metric.

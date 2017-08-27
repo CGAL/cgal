@@ -14,9 +14,9 @@ typedef Kernel::Point_3 Point_3;
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 typedef boost::property_map<Polyhedron, boost::vertex_point_t>::type VertexPointMap;
 
-typedef CGAL::L21Metric<Polyhedron> L21Metric;
-typedef CGAL::L21ProxyFitting<Polyhedron> L21ProxyFitting;
 typedef CGAL::VSA_approximation<Polyhedron, VertexPointMap> VSAL21;
+typedef VSAL21::ErrorMetric L21Metric;
+typedef VSAL21::ProxyFitting L21ProxyFitting;
 
 bool test_shape(const char *file_name, const std::size_t target_num_proxies)
 {
