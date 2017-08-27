@@ -24,6 +24,7 @@
 #include <CGAL/Polygon_mesh_processing/internal/Smoothing/smoothing_impl.h>
 #include <CGAL/Polygon_mesh_processing/internal/Smoothing/curvature_flow_impl.h>
 #include <CGAL/Polygon_mesh_processing/internal/Isotropic_remeshing/remesh_impl.h>
+#include <CGAL/Polygon_mesh_processing/internal/Smoothing/evaluation.h>
 
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
@@ -143,7 +144,7 @@ void angle_smoothing(PolygonMesh& pmesh, const FaceRange& faces, const NamedPara
     unsigned int nb_iterations = choose_param(get_param(np, internal_np::number_of_iterations), 1);
 
     //use weighted angles
-    bool use_weights = choose_param(get_param(np, internal_np::use_weights), false);
+    bool use_weights = choose_param(get_param(np, internal_np::use_weights), true);
 
     // convergence precision
     double precision = choose_param(get_param(np, internal_np::number_of_iterations), 1);
@@ -583,7 +584,7 @@ void compatible_smoothing(PolygonMesh& pmesh, const FaceRange& faces, const Name
     unsigned int nb_iterations = choose_param(get_param(np, internal_np::number_of_iterations), 20);
 
     // use weighted angles
-    bool use_weights = choose_param(get_param(np, internal_np::use_weights), false);
+    bool use_weights = choose_param(get_param(np, internal_np::use_weights), true);
 
     // gradient descent precision
     double gd_precision = choose_param(get_param(np, internal_np::gradient_descent_precision), 0.001);
@@ -949,6 +950,34 @@ template<typename PolygonMesh>
 void curvature_flow_smoothing(PolygonMesh& pmesh)
 {
     curvature_flow_smoothing(pmesh, parameters::all_default());
+}
+
+// not documented
+template<typename PolygonMesh>
+void angles_evaluation(PolygonMesh& pmesh, const char* filename)
+{
+    internal::Quality_evaluator<PolygonMesh> evaluator(pmesh);
+
+    evaluator.gather_angles();
+    evaluator.extract_angles(filename);
+}
+
+template<typename PolygonMesh>
+void areas_evaluation(PolygonMesh& pmesh, const char* filename)
+{
+    internal::Quality_evaluator<PolygonMesh> evaluator(pmesh);
+
+    evaluator.measure_areas();
+    evaluator.extract_areas(filename);
+}
+
+template<typename PolygonMesh>
+void aspect_ratio_evaluation(PolygonMesh& pmesh, const char* filename)
+{
+    internal::Quality_evaluator<PolygonMesh> evaluator(pmesh);
+
+    evaluator.calc_aspect_ratios();
+    evaluator.extract_aspect_ratios(filename);
 }
 
 
