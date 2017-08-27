@@ -128,21 +128,21 @@ While mesh smoothing is achieved by improving the quality of the triangulated el
 shape smoothing is designed to be "intrinsic", depending as little as possible to the discretization
 and smoothing the shape alone without optimizing the mesh elements.
 
-For mesh smoothing, `CGAL::Polygon_mesh_processing::angle_remeshing()` may be used to
-move vertices so that the angles of its incident edges equalize and `CGAL::Polygon_mesh_processing::area_remeshing()` may be used to
-move vertices so that the areas of adjacent triangles equalize. Angle and area remeshing are used combined in
-`CGAL::Polygon_mesh_processing::compatible_remeshing()` which smooths the mesh until convergence is achieved.
+For mesh smoothing, `CGAL::Polygon_mesh_processing::angle_smoothing()` may be used to
+move vertices so that the angles of its incident edges equalize and `CGAL::Polygon_mesh_processing::area_smoothing()` may be used to
+move vertices so that the areas of adjacent triangles equalize. Angle and area smoothing are used combined in
+`CGAL::Polygon_mesh_processing::compatible_smoothing()` which smooths the mesh until convergence is achieved.
 For shape smoothing, `CGAL::Polygon_mesh_processing::curvature_flow()`
 takes into account the mean curvature to calculate a weighted barycenter towards which vertices move incrementally.
 In all cases border vertices are considered constrained and do not move at any step of the procedure.
 Also, new vertices are not inserted while mesh or shape smoothing, although degenerate faces are removed as a first step
-before the remeshing.
+before the smoothing.
 
-Angle and area remeshing algorithms are based on Surazhsky and Gotsman \cgalCite{cgal:sg-hqct-04}. When mesh connectivity
-is highly irregular, angle remeshing may be used with angle weights so that small angles carry
+Angle and area smoothing algorithms are based on Surazhsky and Gotsman \cgalCite{cgal:sg-hqct-04}. When mesh connectivity
+is highly irregular, angle smoothing may be used with angle weights so that small angles carry
 more weight and with almost the same computational cost per iteration convergence may be achieved faster.
-Area remeshing, since it considers only triangle areas as a smoothing criterion, may result in long and skinny triangles,
-especially for meshes with highly irregular connectivity. As such, area remeshing is guaranteed to improve the spatial
+Area smoothing, since it considers only triangle areas as a smoothing criterion, may result in long and skinny triangles,
+especially for meshes with highly irregular connectivity. As such, area smoothing is guaranteed to improve the spatial
 distribution of the vertices over the area that is being remeshed.
 
 The curvature flow algorithm for shape smoothing is based on Desbrun et al \cgalCite{cgal:dmsb-ifamdcf-99}.
@@ -151,11 +151,16 @@ area that is being smoothed. This means that if the surface is flat around a ver
 Curvature flow smoothing offers best results in closed surface meshes, where vertices slide according to the curvature
 and smooth the shape while the overall volume is being kept constant.
 
-\cgalFigureBegin{smoothing, smoothing.png}
-Mesh and shape smoothing. (a) Elephant before mesh smoothing.
-(b) Elephant after applying compatible remeshing for 20 iterations.
-(c) Devil before shape smoothing.
-(d) Resuted devil after application of curvature flow algorithm.
+\cgalFigureBegin{elephants_and_histograms, elephants_and_histograms.png}
+Mesh smoothing. (a) Elephant before mesh smoothing and
+(b) elephant after applying compatible smoothing for 20 iterations.
+and histograms of their aspect ratios beneath them. Aspect ratio is defined as the ratio
+of the largest altidute of a triangle to the length of its shortest edge.
+\cgalFigureEnd
+
+\cgalFigureBegin{mannequins, mannequins.png}
+Shape smoothing. (a) Devil before shape smoothing and
+(b) the devil after applying the curvature flow algorithm.
 \cgalFigureEnd
 
 \subsection MeshingExamples Meshing Examples
