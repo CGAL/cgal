@@ -13,9 +13,9 @@ typedef Kernel::FT FT;
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 typedef boost::property_map<Polyhedron, boost::vertex_point_t>::type VertexPointMap;
 
-typedef CGAL::VSA_approximation<Polyhedron, VertexPointMap> VSAL21;
-typedef VSAL21::ErrorMetric L21Metric;
-typedef VSAL21::ProxyFitting L21ProxyFitting;
+typedef CGAL::VSA_approximation<Polyhedron, VertexPointMap> L21VSA;
+typedef L21VSA::ErrorMetric L21Metric;
+typedef L21VSA::ProxyFitting L21ProxyFitting;
 
 bool check_strict_ordering(const std::vector<FT> &error)
 {
@@ -44,14 +44,14 @@ int main()
   }
 
   // algorithm instance
-  VSAL21 vsa_l21(mesh,
+  L21VSA vsa_l21(mesh,
     get(boost::vertex_point, const_cast<Polyhedron &>(mesh)));
 
   L21Metric l21_metric(mesh);
   L21ProxyFitting l21_fitting(mesh);
   vsa_l21.set_metric(l21_metric, l21_fitting);
 
-  vsa_l21.init_proxies(100, VSAL21::RandomInit);
+  vsa_l21.init_proxies(100, L21VSA::RandomInit);
   std::vector<FT> error;
   for (std::size_t i = 0; i < 30; ++i)
     error.push_back(vsa_l21.run_one_step());

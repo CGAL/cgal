@@ -10,13 +10,12 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::FT FT;
-typedef Kernel::Point_3 Point_3;
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 typedef boost::property_map<Polyhedron, boost::vertex_point_t>::type VertexPointMap;
 
-typedef CGAL::VSA_approximation<Polyhedron, VertexPointMap> VSAL21;
-typedef VSAL21::ErrorMetric L21Metric;
-typedef VSAL21::ProxyFitting L21ProxyFitting;
+typedef CGAL::VSA_approximation<Polyhedron, VertexPointMap> L21VSA;
+typedef L21VSA::ErrorMetric L21Metric;
+typedef L21VSA::ProxyFitting L21ProxyFitting;
 
 bool test_shape(const char *file_name, const std::size_t target_num_proxies)
 {
@@ -28,7 +27,7 @@ bool test_shape(const char *file_name, const std::size_t target_num_proxies)
   }
 
   // algorithm instance
-  VSAL21 vsa_l21(mesh,
+  L21VSA vsa_l21(mesh,
     get(boost::vertex_point, const_cast<Polyhedron &>(mesh)));
 
   L21Metric l21_metric(mesh);
@@ -39,7 +38,7 @@ bool test_shape(const char *file_name, const std::size_t target_num_proxies)
   // should reach targeted number of proxies gradually
   const FT drop(1e-8);
   const std::size_t num_iterations = 20;
-  vsa_l21.init_proxies_error(drop, VSAL21::IncrementalInit);
+  vsa_l21.init_proxies_error(drop, L21VSA::IncrementalInit);
   for (std::size_t i = 0; i < num_iterations; ++i)
     vsa_l21.run_one_step();
   if (vsa_l21.get_proxies_size() != target_num_proxies) {

@@ -14,9 +14,9 @@ typedef Kernel::FT FT;
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 typedef boost::property_map<Polyhedron, boost::vertex_point_t>::type VertexPointMap;
 
-typedef CGAL::VSA_approximation<Polyhedron, VertexPointMap> VSAL21;
-typedef VSAL21::ErrorMetric L21Metric;
-typedef VSAL21::ProxyFitting L21ProxyFitting;
+typedef CGAL::VSA_approximation<Polyhedron, VertexPointMap> L21VSA;
+typedef L21VSA::ErrorMetric L21Metric;
+typedef L21VSA::ProxyFitting L21ProxyFitting;
 
 typedef CGAL::Timer Timer;
 
@@ -40,13 +40,13 @@ int main(int argc, char *argv[])
   std::cerr << "#triangles " << mesh.size_of_facets() << std::endl;
 
   // algorithm instance
-  VSAL21 vsa_l21(mesh,
+  L21VSA l21_vsa(mesh,
     get(boost::vertex_point, const_cast<Polyhedron &>(mesh)));
 
   // set metric error and fitting functors
   L21Metric l21_metric(mesh);
   L21ProxyFitting l21_fitting(mesh);
-  vsa_l21.set_metric(l21_metric, l21_fitting);
+  l21_vsa.set_metric(l21_metric, l21_fitting);
 
   int init = std::atoi(argv[2]);
   if (init < 0 || init > 2)
@@ -58,10 +58,10 @@ int main(int argc, char *argv[])
   Timer t;
   std::cerr << "start initialization" << std::endl;
   t.start();
-  vsa_l21.init_proxies_error(tol, static_cast<VSAL21::Initialization>(init));
+  l21_vsa.init_proxies_error(tol, static_cast<L21VSA::Initialization>(init));
   t.stop();
   std::cerr << "initialization time " << t.time() << " sec." << std::endl;
-  std::cerr << "#proxies " << vsa_l21.get_proxies_size() << std::endl;
+  std::cerr << "#proxies " << l21_vsa.get_proxies_size() << std::endl;
 
   return 0;
 }

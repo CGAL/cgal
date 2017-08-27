@@ -10,7 +10,7 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::FT FT;
-typedef Kernel::Point_3 Point_3;
+typedef Kernel::Point_3 Point;
 
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 typedef Polyhedron::Facet_handle Facet_handle;
@@ -20,11 +20,11 @@ typedef boost::property_map<Polyhedron, boost::vertex_point_t>::type VertexPoint
 typedef CGAL::L2Metric<Polyhedron> L2Metric;
 typedef CGAL::L2ProxyFitting<Polyhedron> L2ProxyFitting;
 typedef CGAL::VSA_approximation<Polyhedron, VertexPointMap,
-  L2Metric, L2ProxyFitting> VSA;
-typedef VSA::Proxy PlaneProxy;
+  L2Metric, L2ProxyFitting> L2VSA;
+typedef L2VSA::Proxy PlaneProxy;
 
 /**
- * This file tests the VSA class API and the L2 metric.
+ * This file tests the main class API and the L2 metric.
  * It should cover all the APIs.
  */
 int main()
@@ -43,9 +43,9 @@ int main()
     facet_index.insert(std::pair<Facet_handle, std::size_t>(fitr, 0));
   FacetProxyMap proxy_pmap(facet_index);
 
-  // create VSA L2 metric approximation algorithm instance
+  // create L2VSA L2 metric approximation algorithm instance
   std::cout << "setup algorithm instance" << std::endl;
-  VSA l2_approx(mesh,
+  L2VSA l2_approx(mesh,
     get(boost::vertex_point, const_cast<Polyhedron &>(mesh)));
   L2Metric metric(mesh);
   L2ProxyFitting proxy_fitting(mesh);
@@ -53,7 +53,7 @@ int main()
 
   // random init and run
   std::cout << "random init and run" << std::endl;
-  l2_approx.init_proxies(10, VSA::RandomInit);
+  l2_approx.init_proxies(10, L2VSA::RandomInit);
   for (std::size_t i = 0; i < 10; ++i)
     l2_approx.run_one_step();
   if (l2_approx.get_proxies_size() != 10)
@@ -61,14 +61,14 @@ int main()
 
   // incremental add and run until convergence
   std::cout << "incremental add and run until convergence" << std::endl;
-  l2_approx.add_proxies(VSA::IncrementalInit, 3);
+  l2_approx.add_proxies(L2VSA::IncrementalInit, 3);
   if (l2_approx.run_until_convergence(0.1))
     std::cout << "Converged." << std::endl;
   if (l2_approx.get_proxies_size() != 13)
     return EXIT_FAILURE;
 
   std::cout << "hierarchical add and run until convergence" << std::endl;
-  l2_approx.add_proxies(VSA::HierarchicalInit, 3);
+  l2_approx.add_proxies(L2VSA::HierarchicalInit, 3);
   for (std::size_t i = 0; i < 10; ++i)
     l2_approx.run_one_step();
   if (l2_approx.get_proxies_size() != 16)
@@ -106,7 +106,7 @@ int main()
   std::vector<PlaneProxy> proxies;
   l2_approx.get_proxies(std::back_inserter(proxies));
 
-  std::vector<Point_3> anchor_pos;
+  std::vector<Point> anchor_pos;
   l2_approx.get_anchor_points(std::back_inserter(anchor_pos));
 
   std::vector<Polyhedron::Vertex_handle> anchor_vtx;
@@ -123,7 +123,7 @@ int main()
   l2_approx.rebuild();
   if (l2_approx.get_proxies_size() != 0)
     return EXIT_FAILURE;
-  l2_approx.init_proxies_error(drop, VSA::HierarchicalInit);
+  l2_approx.init_proxies_error(drop, L2VSA::HierarchicalInit);
   for (std::size_t i = 0; i < 10; ++i)
     l2_approx.run_one_step();
   std::cout << "#proxies " << l2_approx.get_proxies_size() << std::endl;
@@ -132,7 +132,7 @@ int main()
   l2_approx.rebuild();
   if (l2_approx.get_proxies_size() != 0)
     return EXIT_FAILURE;
-  l2_approx.init_proxies_error(drop, VSA::IncrementalInit);
+  l2_approx.init_proxies_error(drop, L2VSA::IncrementalInit);
   for (std::size_t i = 0; i < 10; ++i)
     l2_approx.run_one_step();
   std::cout << "#proxies " << l2_approx.get_proxies_size() << std::endl;
