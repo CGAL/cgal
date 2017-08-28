@@ -128,7 +128,7 @@ shape. The implementation follows \cgalCite{cgal:lm-clscm-12}.
     };
 
     typedef boost::filter_iterator<Filter_unassigned_points,
-      boost::counting_iterator<std::size_t> > Point_index_iterator;
+      boost::counting_iterator<std::size_t, boost::use_default, std::ptrdiff_t> > Point_index_iterator;
     ///< iterator for indices of points.
     /// \endcond
 
@@ -407,8 +407,8 @@ shape. The implementation follows \cgalCite{cgal:lm-clscm-12}.
       if (m_num_total_points == 0)
         return false;
 
-      m_tree = new Tree (boost::counting_iterator<std::size_t>(0),
-                         boost::counting_iterator<std::size_t>(m_num_total_points),
+      m_tree = new Tree (boost::counting_iterator<std::size_t, boost::use_default, std::ptrdiff_t>(0),
+                         boost::counting_iterator<std::size_t, boost::use_default, std::ptrdiff_t>(m_num_total_points),
                          typename Tree::Splitter(),
                          m_index_map);
       m_tree->build();
@@ -515,8 +515,8 @@ shape. The implementation follows \cgalCite{cgal:lm-clscm-12}.
       std::vector<std::size_t> neighbors;
 
       std::vector<std::size_t> sorted_indices (m_num_total_points);
-      std::copy (boost::counting_iterator<std::size_t>(0),
-                 boost::counting_iterator<std::size_t>(m_num_total_points),
+      std::copy (boost::counting_iterator<std::size_t, boost::use_default, std::ptrdiff_t>(0),
+                 boost::counting_iterator<std::size_t, boost::use_default, std::ptrdiff_t>(m_num_total_points),
                  sorted_indices.begin());
 #define SORT_INDICES
 #ifdef SORT_INDICES
@@ -719,8 +719,8 @@ shape. The implementation follows \cgalCite{cgal:lm-clscm-12}.
       Point_index_iterator p1 =
         boost::make_filter_iterator<Filter_unassigned_points>(
         fup,
-        boost::counting_iterator<std::size_t>(0),
-        boost::counting_iterator<std::size_t>(m_shape_index.size()));
+        boost::counting_iterator<std::size_t, boost::use_default, std::ptrdiff_t>(0),
+        boost::counting_iterator<std::size_t, boost::use_default, std::ptrdiff_t>(m_shape_index.size()));
 
       return make_range(p1, Point_index_iterator(p1.end()));
     }
