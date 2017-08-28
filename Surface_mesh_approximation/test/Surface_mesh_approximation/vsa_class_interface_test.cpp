@@ -124,7 +124,7 @@ int main()
   l2_approx.rebuild();
   if (l2_approx.get_proxies_size() != 0)
     return EXIT_FAILURE;
-  l2_approx.seeding_error(L2VSA::HierarchicalInit, drop, iterations);
+  l2_approx.seeding_by_error(L2VSA::HierarchicalInit, drop, iterations);
   for (std::size_t i = 0; i < 10; ++i)
     l2_approx.run_one_step();
   std::cout << "#proxies " << l2_approx.get_proxies_size() << std::endl;
@@ -133,7 +133,7 @@ int main()
   l2_approx.rebuild();
   if (l2_approx.get_proxies_size() != 0)
     return EXIT_FAILURE;
-  l2_approx.seeding_error(L2VSA::IncrementalInit, drop, iterations);
+  l2_approx.seeding_by_error(L2VSA::IncrementalInit, drop, iterations);
   for (std::size_t i = 0; i < 10; ++i)
     l2_approx.run_one_step();
   std::cout << "#proxies " << l2_approx.get_proxies_size() << std::endl;

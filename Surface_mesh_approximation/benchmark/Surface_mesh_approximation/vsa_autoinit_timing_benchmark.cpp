@@ -60,10 +60,8 @@ int main(int argc, char *argv[])
   Timer t;
   std::cerr << "start initialization" << std::endl;
   t.start();
-  l21_vsa.seeding_error(
-    static_cast<L21VSA::Initialization>(init),
-    tol,
-    iterations);
+  l21_vsa.seeding_by_error(
+    static_cast<L21VSA::Initialization>(init), tol, iterations);
   t.stop();
   std::cerr << "initialization time " << t.time() << " sec." << std::endl;
   std::cerr << "#proxies " << l21_vsa.get_proxies_size() << std::endl;

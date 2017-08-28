@@ -314,6 +314,7 @@ public:
    * @param method seeding method
    * @param num_seed target number of proxies seed
    * @param num_iterations number of iterations of coarse re-fitting
+   * in incremental and hierarchical seeding
    * @return number of proxies initialized
    */
   std::size_t seeding_by_number(
@@ -339,10 +340,10 @@ public:
    * @param num_iterations number of iterations of coarse re-fitting
    * @return number of proxies initialized
    */
-  std::size_t seeding_error(
+  std::size_t seeding_by_error(
     const Initialization method,
     const FT target_drop,
-    const std::size_t num_iterations) {
+    const std::size_t num_iterations = 5) {
     switch (method) {
       case RandomInit:
         return seed_error_random(target_drop, num_iterations);
