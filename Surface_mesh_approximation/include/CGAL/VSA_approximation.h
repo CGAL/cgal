@@ -334,12 +334,12 @@ public:
   /*!
    * @brief Incremental initialize proxies.
    * @param num_seed number of proxies seed
-   * @param inner_iteration number of iterations of coarse re-fitting
+   * @param num_iterations number of iterations of coarse re-fitting
    * before each incremental proxy insertion
    * @return number of proxies initialized
    */
   std::size_t seed_incremental(const std::size_t num_seed,
-    const std::size_t inner_iteration = 5) {
+    const std::size_t num_iterations = 5) {
     proxies.clear();
     if (num_faces(*m_pmesh) < num_seed)
       return 0;
@@ -349,19 +349,19 @@ public:
     BOOST_FOREACH(face_descriptor f, faces(*m_pmesh))
       fproxy_map[f] = 0;
 
-    insert_proxy_furthest(num_seed - 1, inner_iteration);
+    insert_proxy_furthest(num_seed - 1, num_iterations);
     return proxies.size();
   }
 
   /*!
    * @brief Hierarchical initialize proxies.
    * @param num_seed number of proxies seed
-   * @param inner_iteration number of iterations of coarse re-fitting
+   * @param num_iterations number of iterations of coarse re-fitting
    * before each hierarchical proxy insertion
    * @return number of proxies initialized
    */
   std::size_t seed_hierarchical(const std::size_t num_seed,
-    const std::size_t inner_iteration = 5) {
+    const std::size_t num_iterations = 5) {
     proxies.clear();
     if (num_faces(*m_pmesh) < num_seed)
       return 0;
@@ -373,7 +373,7 @@ public:
     proxies.push_back(fit_new_proxy(*(++fitr)));
 
     while (proxies.size() < num_seed) {
-      for (std::size_t i = 0; i < inner_iteration; ++i) {
+      for (std::size_t i = 0; i < num_iterations; ++i) {
         partition();
         fit();
       }
@@ -388,66 +388,26 @@ public:
   }
 
   /*!
-   * @brief Initialize by targeted error drop.
+   * @brief Seeding by targeted error drop.
+   * @param method seeding method
    * @param target_drop targeted error drop to initial state, usually in range (0, 1)
-   * @param seeding_method select one of the seeding method: random, hierarchical, incremental
+   * @param num_iterations number of iterations of coarse re-fitting
    * @return number of proxies initialized
    */
-  std::size_t init_proxies_error(const FT &target_drop, const Initialization &seeding_method) {
-    proxies.clear();
-    // initialize a proxy and the proxy map to prepare for the insertion
-    proxies.push_back(fit_new_proxy(*(faces(*m_pmesh).first)));
-    BOOST_FOREACH(face_descriptor f, faces(*m_pmesh))
-      fproxy_map[f] = 0;
-    const FT initial_err = compute_fitting_error();
-
-    // maximum allowed number of proxies
-    const std::size_t max_proxies = num_faces(*m_pmesh) / 3;
-    if (max_proxies < 1)
-      return 0;
-
-    FT sum_err(0);
-    FT drop(0);
-    if (seeding_method == RandomInit) {
-      std::size_t target_px = 2;
-      do {
-        proxies.clear();
-        seed_random(target_px);
-        for (std::size_t i = 0; i < 5; ++i) {
-          partition();
-          fit();
-        }
-        sum_err = compute_fitting_error();
-        target_px *= 2;
-        drop = sum_err / initial_err;
-      } while(drop > target_drop && proxies.size() < max_proxies);
+  std::size_t seeding_error(
+    const Initialization method,
+    const FT target_drop,
+    const std::size_t num_iterations) {
+    switch (method) {
+      case RandomInit:
+        return seed_error_random(target_drop, num_iterations);
+      case IncrementalInit:
+        return seed_error_incremental(target_drop, num_iterations);
+      case HierarchicalInit:
+        return seed_error_hierarchical(target_drop, num_iterations);
+      default:
+        return 0;
     }
-    else if (seeding_method == IncrementalInit) {
-      do {
-        insert_proxy_furthest();
-        for (std::size_t i = 0; i < 5; ++i) {
-          partition();
-          fit();
-        }
-        sum_err = compute_fitting_error();
-        drop = sum_err / initial_err;
-      } while (drop > target_drop && proxies.size() < max_proxies);
-    }
-    else {
-      std::size_t target_px = 1;
-      do {
-        insert_proxy_hierarchical(target_px);
-        for (std::size_t i = 0; i < 5; ++i) {
-          partition();
-          fit();
-        }
-        sum_err = compute_fitting_error();
-        target_px *= 2;
-        drop = sum_err / initial_err;
-      } while(drop > target_drop && proxies.size() < max_proxies);
-    }
-
-    return proxies.size();
   }
 
   /*!
@@ -902,7 +862,115 @@ public:
 
 // private member functions
 private:
-  
+  /*!
+   * @brief Initialize by targeted error drop.
+   * @param target_drop targeted error drop to initial state, usually in range (0, 1)
+   * @param num_iterations number of iterations of coarse re-fitting
+   * @return number of proxies initialized
+   */
+  std::size_t seed_error_random(const FT target_drop,
+    const std::size_t num_iterations) {
+    // maximum allowed number of proxies
+    const std::size_t max_proxies = num_faces(*m_pmesh) / 3;
+    if (max_proxies < 1)
+      return 0;
+
+    // initialize a proxy and the proxy map to prepare for the insertion
+    proxies.clear();
+    proxies.push_back(fit_new_proxy(*(faces(*m_pmesh).first)));
+    BOOST_FOREACH(face_descriptor f, faces(*m_pmesh))
+      fproxy_map[f] = 0;
+    const FT initial_err = compute_fitting_error();
+
+    FT sum_err(0);
+    FT drop(0);
+    std::size_t target_px = 2;
+    do {
+      proxies.clear();
+      seed_random(target_px);
+      for (std::size_t i = 0; i < num_iterations; ++i) {
+        partition();
+        fit();
+      }
+      sum_err = compute_fitting_error();
+      target_px *= 2;
+      drop = sum_err / initial_err;
+    } while(drop > target_drop && proxies.size() < max_proxies);
+
+    return proxies.size();
+  }
+
+  /*!
+   * @brief Initialize by targeted error drop.
+   * @param target_drop targeted error drop to initial state, usually in range (0, 1)
+   * @param num_iterations number of iterations of coarse re-fitting
+   * @return number of proxies initialized
+   */
+  std::size_t seed_error_incremental(const FT target_drop,
+    const std::size_t num_iterations) {
+    // maximum allowed number of proxies
+    const std::size_t max_proxies = num_faces(*m_pmesh) / 3;
+    if (max_proxies < 1)
+      return 0;
+
+    // initialize a proxy and the proxy map to prepare for the insertion
+    proxies.clear();
+    proxies.push_back(fit_new_proxy(*(faces(*m_pmesh).first)));
+    BOOST_FOREACH(face_descriptor f, faces(*m_pmesh))
+      fproxy_map[f] = 0;
+    const FT initial_err = compute_fitting_error();
+
+    FT sum_err(0);
+    FT drop(0);
+    do {
+      insert_proxy_furthest();
+      for (std::size_t i = 0; i < num_iterations; ++i) {
+        partition();
+        fit();
+      }
+      sum_err = compute_fitting_error();
+      drop = sum_err / initial_err;
+    } while (drop > target_drop && proxies.size() < max_proxies);
+
+    return proxies.size();
+  }
+
+  /*!
+   * @brief Initialize by targeted error drop.
+   * @param target_drop targeted error drop to initial state, usually in range (0, 1)
+   * @param num_iterations number of iterations of coarse re-fitting
+   * @return number of proxies initialized
+   */
+  std::size_t seed_error_hierarchical(const FT target_drop,
+    const std::size_t num_iterations) {
+    // maximum allowed number of proxies
+    const std::size_t max_proxies = num_faces(*m_pmesh) / 3;
+    if (max_proxies < 1)
+      return 0;
+
+    // initialize a proxy and the proxy map to prepare for the insertion
+    proxies.clear();
+    proxies.push_back(fit_new_proxy(*(faces(*m_pmesh).first)));
+    BOOST_FOREACH(face_descriptor f, faces(*m_pmesh))
+      fproxy_map[f] = 0;
+    const FT initial_err = compute_fitting_error();
+
+    FT sum_err(0);
+    FT drop(0);
+    std::size_t target_px = 1;
+    do {
+      insert_proxy_hierarchical(target_px);
+      for (std::size_t i = 0; i < num_iterations; ++i) {
+        partition();
+        fit();
+      }
+      sum_err = compute_fitting_error();
+      target_px *= 2;
+      drop = sum_err / initial_err;
+    } while(drop > target_drop && proxies.size() < max_proxies);
+
+    return proxies.size();
+  }
 
   /*!
    * @brief Inserts a proxy at the furthest facet of the region with the maximum fitting error.

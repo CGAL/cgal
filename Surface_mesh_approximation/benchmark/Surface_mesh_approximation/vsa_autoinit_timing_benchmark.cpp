@@ -28,7 +28,7 @@ typedef CGAL::Timer Timer;
  */
 int main(int argc, char *argv[])
 {
-  if (argc < 4)
+  if (argc < 5)
     return 1;
 
   Polyhedron mesh;
@@ -52,13 +52,18 @@ int main(int argc, char *argv[])
   if (init < 0 || init > 2)
     return 1;
   const FT tol(std::atof(argv[3]));
+  int iterations = std::atoi(argv[4]);
   std::cerr << "#init " << init << std::endl;
   std::cerr << "#tolerance " << tol << std::endl;
+  std::cerr << "#iterations " << iterations << std::endl;
 
   Timer t;
   std::cerr << "start initialization" << std::endl;
   t.start();
-  l21_vsa.init_proxies_error(tol, static_cast<L21VSA::Initialization>(init));
+  l21_vsa.seeding_error(
+    static_cast<L21VSA::Initialization>(init),
+    tol,
+    iterations);
   t.stop();
   std::cerr << "initialization time " << t.time() << " sec." << std::endl;
   std::cerr << "#proxies " << l21_vsa.get_proxies_size() << std::endl;
