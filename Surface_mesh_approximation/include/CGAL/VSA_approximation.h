@@ -493,13 +493,12 @@ public:
     std::cerr << "#px " << proxies.size() << std::endl;
 #endif
 
-    std::vector<FT> err(proxies.size(), FT(0));
-    const FT sum_error = compute_fitting_error(err);
+    const FT sum_error = compute_fitting_error();
     const FT avg_error = sum_error / FT(static_cast<double>(num_proxies));
 
     std::vector<ProxyError> px_error;
     for (std::size_t i = 0; i < proxies.size(); ++i)
-      px_error.push_back(ProxyError(i, err[i]));
+      px_error.push_back(ProxyError(i, proxies[i].err));
     // sort partition by error
     std::sort(px_error.begin(), px_error.end());
 
@@ -559,13 +558,12 @@ public:
     std::size_t num_teleported = 0;
     while (num_teleported < num_proxies) {
       // find worst proxy
-      std::vector<FT> px_error(proxies.size(), FT(0));
-      compute_fitting_error(px_error);
+      compute_fitting_error();
       std::size_t px_worst = 0;
-      FT max_error = px_error.front();
+      FT max_error = proxies.front().err;
       for (std::size_t i = 0; i < proxies.size(); ++i) {
-        if (max_error < px_error[i]) {
-          max_error = px_error[i];
+        if (max_error < proxies[i].err) {
+          max_error = proxies[i].err;
           px_worst = i;
         }
       }
@@ -634,13 +632,9 @@ public:
     std::list<face_descriptor> merged_patch;
     BOOST_FOREACH(face_descriptor f, faces(*m_pmesh)) {
       std::size_t px_idx = fproxy_map[f];
-      if (px_idx == px1) {
+      if (px_idx == px1 || px_idx == px0) {
         err_sum += (*fit_error)(f, proxies[px_idx].px);
         fproxy_map[f] = px0;
-        merged_patch.push_back(f);
-      }
-      else if (px_idx == px0) {
-        err_sum += (*fit_error)(f, proxies[px_idx].px);
         merged_patch.push_back(f);
       }
     }
@@ -679,7 +673,6 @@ public:
 
     // find best merge
     MergedPair merged_set;
-    // Proxy merged_px;
     FT min_merged_error = FT(0);
     bool first_merge = true;
     BOOST_FOREACH(edge_descriptor e, edges(*m_pmesh)) {
@@ -698,33 +691,30 @@ public:
       BOOST_FOREACH(face_descriptor f, px_facets[pxj])
         merged_patch.push_back(f);
 
-      ProxyWrapper px = fit_new_proxy(merged_patch.begin(), merged_patch.end());
+      ProxyWrapper pxw = fit_new_proxy(merged_patch.begin(), merged_patch.end());
       FT sum_error(0);
       BOOST_FOREACH(face_descriptor f, merged_patch)
-        sum_error += (*fit_error)(f, px.px);
+        sum_error += (*fit_error)(f, pxw.px);
       merged_set.insert(ProxyPair(pxi, pxj));
 
       if (first_merge || sum_error < min_merged_error) {
         first_merge = false;
         min_merged_error = sum_error;
-        // merged_px = px;
         px_enlarged = pxi;
         px_merged = pxj;
       }
     }
 
-    std::vector<FT> px_error(proxies.size(), FT(0));
-    compute_fitting_error(px_error);
-    FT max_error = px_error.front();
-    for (std::size_t i = 0; i < proxies.size(); ++i) {
-      if (max_error < px_error[i])
-        max_error = px_error[i];
-    }
-
     // test if merge worth it
     if (if_test) {
+      compute_fitting_error();
+      FT max_error = proxies.front().err;
+      for (std::size_t i = 0; i < proxies.size(); ++i) {
+        if (max_error < proxies[i].err)
+          max_error = proxies[i].err;
+      }
       const FT merge_thre = max_error / FT(2);
-      const FT increase = min_merged_error - (px_error[px_enlarged] + px_error[px_merged]);
+      const FT increase = min_merged_error - (proxies[px_enlarged].err + proxies[px_merged].err);
       if (increase > merge_thre)
         return false;
     }
@@ -744,20 +734,20 @@ public:
       return FT(0);
 
     std::size_t count = 1;
-    FT err(0);
+    FT sum_err(0);
     BOOST_FOREACH(face_descriptor f, faces(*m_pmesh)) {
       if (count >= n)
         break;
 
       if (fproxy_map[f] == px && f != proxies[px].seed) {
-        err += (*fit_error)(f, proxies[px].px);
+        sum_err += (*fit_error)(f, proxies[px].px);
         fproxy_map[f] = proxies.size();
         proxies.push_back(fit_new_proxy(f));
         ++count;
       }
     }
 
-    return err;
+    return sum_err;
   }
 
   /*!
@@ -1157,25 +1147,17 @@ private:
    * @return total fitting error
    */
   FT compute_fitting_error() {
-    FT sum_error(0);
-    BOOST_FOREACH(face_descriptor f, faces(*m_pmesh))
-      sum_error += (*fit_error)(f, proxies[fproxy_map[f]].px);
-    return sum_error;
-  }
-
-  /*!
-   * @brief Computes fitting error of a current partition and proxies.
-   * @param px_error vector of error of each proxy
-   * @return total fitting error
-   */
-  FT compute_fitting_error(std::vector<FT> &px_error) {
-    FT sum_error(0);
+    BOOST_FOREACH(ProxyWrapper &pxw, proxies)
+      pxw.err = FT(0);
     BOOST_FOREACH(face_descriptor f, faces(*m_pmesh)) {
-      const std::size_t px_idx = fproxy_map[f];
-      FT err = (*fit_error)(f, proxies[px_idx].px);
-      px_error[px_idx] += err;
-      sum_error += err;
+      std::size_t pxidx = fproxy_map[f];
+      proxies[pxidx].err += (*fit_error)(f, proxies[pxidx].px);
     }
+
+    FT sum_error(0);
+    BOOST_FOREACH(const ProxyWrapper &pxw, proxies)
+      sum_error += pxw.err;
+
     return sum_error;
   }
 
