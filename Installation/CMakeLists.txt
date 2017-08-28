@@ -774,11 +774,11 @@ set ( CGAL_INSTALL_CMAKE_DIR "${CGAL_INSTALL_LIB_DIR}/CGAL"
   CACHE STRING "The folder where CGAL CMake modules will be installed, relative to CMAKE_INSTALL_PREFIX" 
   )
 
-set ( CGAL_INSTALL_DOC_DIR "${CMAKE_INSTALL_FULL_DATAROOTDIR}/doc/${CGAL_VERSION_DIR}"
+set ( CGAL_INSTALL_DOC_DIR "${CMAKE_INSTALL_DATAROOTDIR}/doc/${CGAL_VERSION_DIR}"
   CACHE STRING "The folder where CGAL documentation and license files will be installed, relative to CMAKE_INSTALL_PREFIX"
   )
 
-set ( CGAL_INSTALL_MAN_DIR "${CMAKE_INSTALL_FULL_DATAROOTDIR}/man/man1"
+set ( CGAL_INSTALL_MAN_DIR "${CMAKE_INSTALL_DATAROOTDIR}/man/man1"
   CACHE STRING "The folder where manual pages for CGAL scripts will be installed, relative to CMAKE_INSTALL_PREFIX"
   )
 
