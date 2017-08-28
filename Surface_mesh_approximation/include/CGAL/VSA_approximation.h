@@ -47,29 +47,29 @@ class VSA_approximation {
 // public typedefs
 public:
   // Default typdefs
-  /// GeomTraits typdef
+  /// Geometric trait type
   typedef typename CGAL::Default::Get<
     GeomTraits_,
     typename Kernel_traits<
       typename boost::property_traits<VertexPointMap>::value_type
     >::Kernel >::type GeomTraits;
-  /// ErrorMetric typdef
+  /// ErrorMetric type
   typedef typename CGAL::Default::Get<ErrorMetric_,
     CGAL::L21Metric<TriangleMesh, VertexPointMap, GeomTraits> >::type ErrorMetric;
-  /// ProxyFitting typdef
+  /// ProxyFitting type
   typedef typename CGAL::Default::Get<ProxyFitting_,
     CGAL::L21ProxyFitting<TriangleMesh, VertexPointMap, GeomTraits> >::type ProxyFitting;
-  /// Proxy typdef
+  /// Proxy type
   typedef typename ErrorMetric::Proxy Proxy;
 
   /// Seeding method enumeration
-  enum Initialization {
-    /// Random initialization
-    RandomInit,
-    /// Incremental initialization
-    IncrementalInit,
-    /// Hierarchical initialization
-    HierarchicalInit
+  enum Method {
+    /// Random seeding
+    Random,
+    /// Incremental seeding
+    Incremental,
+    /// Hierarchical seeding
+    Hierarchical
   };
 
 // private typedefs and data member
@@ -318,15 +318,15 @@ public:
    * @return number of proxies initialized
    */
   std::size_t seeding_by_number(
-    const Initialization method,
+    const Method method,
     const std::size_t num_seed,
     const std::size_t num_iterations = 5) {
     switch (method) {
-      case RandomInit:
+      case Random:
         return seed_random(num_seed);
-      case IncrementalInit:
+      case Incremental:
         return seed_incremental(num_seed, num_iterations);
-      case HierarchicalInit:
+      case Hierarchical:
         return seed_hierarchical(num_seed, num_iterations);
       default:
         return 0;
@@ -341,15 +341,15 @@ public:
    * @return number of proxies initialized
    */
   std::size_t seeding_by_error(
-    const Initialization method,
+    const Method method,
     const FT target_drop,
     const std::size_t num_iterations = 5) {
     switch (method) {
-      case RandomInit:
+      case Random:
         return seed_error_random(target_drop, num_iterations);
-      case IncrementalInit:
+      case Incremental:
         return seed_error_incremental(target_drop, num_iterations);
-      case HierarchicalInit:
+      case Hierarchical:
         return seed_error_hierarchical(target_drop, num_iterations);
       default:
         return 0;

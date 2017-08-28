@@ -99,7 +99,7 @@ int main()
   compact_approx.set_metric(metric, proxy_fitting);
 
   std::cout << "random init and run" << std::endl;
-  compact_approx.seeding_by_number(CompactVSA::RandomInit, 20);
+  compact_approx.seeding_by_number(CompactVSA::Random, 20);
   for (std::size_t i = 0; i < 20; ++i)
     compact_approx.run_one_step();
   if (compact_approx.get_proxies_size() != 20)

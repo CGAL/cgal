@@ -94,7 +94,7 @@ bool vsa_mesh_approximation(const TriangleMesh &tm_in,
 
   int init = choose_param(get_param(np, internal_np::init_method), 0);
   vsa_l21.seeding_by_number(
-    static_cast<typename VSAL21::Initialization>(init), num_proxies, 5);
+    static_cast<typename VSAL21::Method>(init), num_proxies, 5);
   for (std::size_t i = 0; i < num_iterations; ++i)
     vsa_l21.run_one_step();
 
