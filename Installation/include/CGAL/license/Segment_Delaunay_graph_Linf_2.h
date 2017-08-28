@@ -46,12 +46,14 @@ You get this error, as you defined CGAL_LICENSE_ERROR."
 #else // no CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_2_COMMERCIAL_LICENSE
 
 #  if defined(CGAL_LICENSE_WARNING)
-     CGAL_pragma_warning("You use the CGAL L Infinity Segment Delaunay Graphs package under "
-                         "the terms of the GPLv3+.")
+     CGAL_pragma_warning("\nThe macro CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_2_COMMERCIAL_LICENSE is not defined."
+                          "\nYou use the CGAL L Infinity Segment Delaunay Graphs package under "
+                          "the terms of the GPLv3+.")
 #  endif // CGAL_LICENSE_WARNING
 
 #  ifdef CGAL_LICENSE_ERROR
-#    error "You use the CGAL L Infinity Segment Delaunay Graphs package under the terms of \
+#    error "The macro CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_2_COMMERCIAL_LICENSE is not defined.\
+ You use the CGAL L Infinity Segment Delaunay Graphs package under the terms of \
 the GPLv3+. You get this error, as you defined CGAL_LICENSE_ERROR."
 #  endif // CGAL_LICENSE_ERROR
 
