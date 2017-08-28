@@ -64,7 +64,19 @@ int main(int argc, char *argv[])
   std::cerr << "start initialization" << std::endl;
   t0.reset();
   t0.start();
-  l21_vsa.init_proxies(num_proxies, static_cast<L21VSA::Initialization>(init));
+  switch(init) {
+    case 0:
+      l21_vsa.seed_random(num_proxies);
+      break;
+    case 1:
+      l21_vsa.seed_incremental(num_proxies, 5);
+      break;
+    case 2:
+      l21_vsa.seed_hierarchical(num_proxies, 5);
+      break;
+    default:
+      return 1;
+  }
   t0.stop();
   std::cerr << "initialization time " << t0.time() << " sec." << std::endl;
 

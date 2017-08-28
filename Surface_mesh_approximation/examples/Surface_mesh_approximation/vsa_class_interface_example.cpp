@@ -35,7 +35,7 @@ int main()
   l21_approx.set_metric(metric, proxy_fitting);
 
   // initialize proxies randomly on the mesh
-  l21_approx.init_proxies(100, L21VSA::RandomInit);
+  l21_approx.seed_random(100);
   
   // run the iteration to minimize the error
   for (std::size_t i = 0; i < 30; ++i)

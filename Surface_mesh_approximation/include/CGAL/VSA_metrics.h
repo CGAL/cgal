@@ -531,9 +531,7 @@ private:
   const VertexPointMap point_pmap;
 };
 
-/*!
- * Specialization.
- */
+// specialization.
 template <typename TriangleMesh,
   typename GeomTraits,
   typename PlaneProxy>

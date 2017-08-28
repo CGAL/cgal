@@ -92,11 +92,21 @@ bool vsa_mesh_approximation(const TriangleMesh &tm_in,
   std::size_t num_iterations = choose_param(get_param(np, internal_np::number_of_iterations), 10);
   std::cout << "#px = " << num_proxies << ", #itr = " << num_iterations << std::endl;
 
-  int init = choose_param(get_param(np, internal_np::init_method), 0);
-  if (init < 0 || init > 2)
-    return false;
-
-  vsa_l21.init_proxies(num_proxies, static_cast<typename VSAL21::Initialization>(init));
+  std::size_t init = choose_param(get_param(np, internal_np::init_method), 0);
+  switch (static_cast<typename VSAL21::Initialization>(init)) {
+    case VSAL21::RandomInit:
+      vsa_l21.seed_random(num_proxies);
+      break;
+    case VSAL21::IncrementalInit:
+      vsa_l21.seed_incremental(num_proxies, 5);
+      break;
+    case VSAL21::HierarchicalInit:
+      vsa_l21.seed_hierarchical(num_proxies, 5);
+      break;
+    default:
+      std::cout << "Error: invalid initialization method parameter." << std::endl;
+      return false;
+  }
   for (std::size_t i = 0; i < num_iterations; ++i)
     vsa_l21.run_one_step();
 
