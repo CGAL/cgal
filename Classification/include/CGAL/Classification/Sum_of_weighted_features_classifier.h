@@ -23,6 +23,7 @@
 
 #include <CGAL/Classification/Feature_set.h>
 #include <CGAL/Classification/Label_set.h>
+#include <CGAL/Classification/internal/verbosity.h>
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
@@ -37,15 +38,6 @@
 #include <tbb/scalable_allocator.h>
 #include <tbb/mutex.h>
 #endif // CGAL_LINKED_WITH_TBB
-
-#if defined(CGAL_CLASSTRAINING_VERBOSE)
-#define CGAL_CLASSTRAINING_SILENT false
-#else
-#define CGAL_CLASSTRAINING_SILENT true
-#endif
-
-#define CGAL_CLASSTRAINING_CERR \
-  if(CGAL_CLASSIFICATION_SILENT) {} else std::cerr
 
 
 namespace CGAL {

@@ -33,6 +33,7 @@
 #include <CGAL/Classification/Feature/Verticality.h>
 #include <CGAL/Classification/Feature/Eigen.h>
 #include <CGAL/Classification/Label.h>
+#include <CGAL/Classification/internal/verbosity.h>
 
 #include <CGAL/bounding_box.h>
 
