@@ -61,14 +61,14 @@ int main()
 
   // incremental add and run until convergence
   std::cout << "incremental add and run until convergence" << std::endl;
-  l2_approx.add_proxies(L2VSA::IncrementalInit, 3);
+  l2_approx.add_proxies_furthest(3);
   if (l2_approx.run_until_convergence(0.1))
     std::cout << "Converged." << std::endl;
   if (l2_approx.get_proxies_size() != 13)
     return EXIT_FAILURE;
 
   std::cout << "hierarchical add and run until convergence" << std::endl;
-  l2_approx.add_proxies(L2VSA::HierarchicalInit, 3);
+  l2_approx.add_proxies_error_diffusion(3);
   for (std::size_t i = 0; i < 10; ++i)
     l2_approx.run_one_step();
   if (l2_approx.get_proxies_size() != 16)

@@ -62,7 +62,7 @@ public:
   /// Proxy typdef
   typedef typename ErrorMetric::Proxy Proxy;
 
-  /// Enueration typdef
+  /// Seeding method enumeration
   enum Initialization {
     /// Random initialization
     RandomInit,
@@ -454,23 +454,97 @@ public:
   }
 
   /*!
-   * @brief Adding proxies. The proxies are not updated via fitting process.
-   * @param adding_method select one of the adding method: hierarchical or incremental(furthest).
-   * @param num_proxies number of proxies
-   * @param inner_iteration coarse re-fitting before each insertion if incremental is selected
-   * @return number of proxies successfully added.
+   * @brief Add proxies to the regions with the maximum fitting error.
+   * Except for the first one, a coarse re-fitting is performed before each proxy is inserted.
+   * @pre current facet proxy map is valid
+   * @note after the addition, the facet proxy map is invalid
+   * @param num_proxies number of proxies to be added
+   * @param num_iterations the number of iterations of coarse re-fitting
+   * @return number of proxies successfully added
    */
-  std::size_t add_proxies(const Initialization &adding_method,
-    const std::size_t &num_proxies = 1,
-    const std::size_t inner_iteration = 5) {
-    switch (adding_method) {
-      case HierarchicalInit:
-        return insert_proxy_hierarchical(num_proxies);
-      case IncrementalInit:
-        return insert_proxy_furthest(num_proxies, inner_iteration);
-      default:
-        return 0;
+  std::size_t add_proxies_furthest(const std::size_t num_proxies,
+    const std::size_t num_iterations = 5) {
+    // when insert only one proxy, it has the same effect of add_proxy_furthest()
+    if (num_proxies == 0 || !add_proxy_furthest())
+      return 0;
+
+    std::size_t num_added = 1;
+    for (; num_added < num_proxies; ++num_added) {
+      for (std::size_t i = 0; i < num_iterations; ++i) {
+        partition();
+        fit();
+      }
+      if (!add_proxy_furthest())
+        return num_added;
     }
+    return num_added;
+  }
+
+  /*!
+   * @brief Add proxies by diffusing fitting error into current partitions.
+   * Each partition is added with the number of proxies in proportional to its fitting error.
+   * @pre current facet proxy map is valid
+   * @note after the addition, the facet proxy map is invalid
+   * @param num_proxies number of proxies to be added
+   * @return number of proxies successfully added
+   */
+  std::size_t add_proxies_error_diffusion(const std::size_t num_proxies) {
+#ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEGUB
+    std::cerr << "#px " << proxies.size() << std::endl;
+#endif
+
+    std::vector<FT> err(proxies.size(), FT(0));
+    const FT sum_error = compute_fitting_error(err);
+    const FT avg_error = sum_error / FT(static_cast<double>(num_proxies));
+
+    std::vector<ProxyError> px_error;
+    for (std::size_t i = 0; i < proxies.size(); ++i)
+      px_error.push_back(ProxyError(i, err[i]));
+    // sort partition by error
+    std::sort(px_error.begin(), px_error.end());
+
+    // number of proxies to be added to each region
+    std::vector<std::size_t> num_to_add(proxies.size(), 0);
+    // residual from previous proxy in range (-0.5, 0.5] * avg_error
+    FT residual(0);
+    BOOST_FOREACH(const ProxyError &pxe, px_error) {
+      // add error residual from previous proxy
+      // to_add maybe negative but greater than -0.5
+      FT to_add = (residual + pxe.err) / avg_error;
+      // floor_to_add maybe negative but no less than -1
+      FT floor_to_add = FT(std::floor(CGAL::to_double(to_add)));
+      const std::size_t q_to_add = static_cast<std::size_t>(CGAL::to_double(
+        ((to_add - floor_to_add) > FT(0.5)) ? (floor_to_add + FT(1)) : floor_to_add));
+      residual = (to_add - FT(static_cast<double>(q_to_add))) * avg_error;
+      num_to_add[pxe.px] = q_to_add;
+    }
+
+#ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEGUB
+    for (std::size_t i = 0; i < px_error.size(); ++i)
+      std::cerr << "#px " << px_error[i].px
+        << ", #error " << px_error[i].err
+        << ", #num_to_add " << num_to_add[px_error[i].px] << std::endl;
+#endif
+
+    std::size_t num_added = 0;
+    BOOST_FOREACH(face_descriptor f, faces(*m_pmesh)) {
+      const std::size_t px_id = fproxy_map[f];
+      if (proxies[px_id].seed == f)
+        continue;
+
+      if (num_to_add[px_id] > 0) {
+        proxies.push_back(fit_new_proxy(f));
+        --num_to_add[px_id];
+        ++num_added;
+      }
+    }
+
+#ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEGUB
+    std::cerr << "#requested/added "
+      << num_proxies << '/' << num_added << std::endl;
+#endif
+
+    return num_added;
   }
 
   /*!
@@ -848,7 +922,7 @@ private:
     BOOST_FOREACH(face_descriptor f, faces(*m_pmesh))
       fproxy_map[f] = 0;
 
-    insert_proxy_furthest(num_seed - 1, num_iterations);
+    add_proxies_furthest(num_seed - 1, num_iterations);
     return proxies.size();
   }
 
@@ -881,11 +955,11 @@ private:
       const std::size_t num_proxies = proxies.size();
       const std::size_t num_proxies_to_be_added =
         (num_proxies * 2 < num_seed) ? num_proxies : (num_seed - num_proxies);
-      insert_proxy_hierarchical(num_proxies_to_be_added);
+      add_proxies_error_diffusion(num_proxies_to_be_added);
     }
     return proxies.size();
   }
-  
+
   /*!
    * @brief Initialize by targeted error drop.
    * @param target_drop targeted error drop to initial state, usually in range (0, 1)
@@ -947,7 +1021,7 @@ private:
     FT sum_err(0);
     FT drop(0);
     do {
-      insert_proxy_furthest();
+      add_proxy_furthest();
       for (std::size_t i = 0; i < num_iterations; ++i) {
         partition();
         fit();
@@ -983,7 +1057,7 @@ private:
     FT drop(0);
     std::size_t target_px = 1;
     do {
-      insert_proxy_hierarchical(target_px);
+      add_proxies_error_diffusion(target_px);
       for (std::size_t i = 0; i < num_iterations; ++i) {
         partition();
         fit();
@@ -999,9 +1073,11 @@ private:
   /*!
    * @brief Inserts a proxy at the furthest facet of the region with the maximum fitting error.
    * No re-fitting is performed.
+   * @pre current facet proxy map is valid
+   * @note after the addition, the facet proxy map is invalid
    * @return true if insertion success, false otherwise
    */
-  bool insert_proxy_furthest() {
+  bool add_proxy_furthest() {
     std::vector<FT> px_error(proxies.size(), FT(0.0));
     std::vector<FT> max_facet_error(proxies.size(), FT(0.0));
     std::vector<face_descriptor> max_facet(proxies.size());
@@ -1030,98 +1106,6 @@ private:
 
     proxies.push_back(fit_new_proxy(max_facet[max_px_idx]));
     return true;
-  }
-
-  /*!
-   * @brief Inserts more than one proxies to the regions with the maximum fitting error.
-   * Except for the first one, a coarse re-fitting is performed before each proxy is inserted.
-   * @param num_proxies number of proxies to be inserted
-   * @param inner_iteration the number of iterations of coarse re-fitting
-   * @return number of proxies inserted
-   */
-  std::size_t insert_proxy_furthest(const std::size_t num_proxies,
-    const std::size_t inner_iteration = 5) {
-    // when insert only one proxy, it has the same effect of insert_proxy_furthest()
-    if (num_proxies == 0 || !insert_proxy_furthest())
-      return 0;
-
-    std::size_t num_inserted = 1;
-    for (; num_inserted < num_proxies; ++num_inserted) {
-      for (std::size_t i = 0; i < inner_iteration; ++i) {
-        partition();
-        fit();
-      }
-      if (!insert_proxy_furthest())
-        return num_inserted;
-    }
-    return num_inserted;
-  }
-
-  /*!
-   * @brief Add proxies by diffusing fitting error into current partitions.
-   * Each partition is added with the number of proxies in proportional to its fitting error.
-   * Note that the number of inserted proxies doesn't necessarily equal the requested number.
-   * @param num_proxies_to_be_added added number of proxies
-   * @return inserted number of proxies
-   */
-  std::size_t insert_proxy_hierarchical(const std::size_t num_proxies_to_be_added) {
-
-#ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEGUB
-    std::cerr << "#px " << proxies.size() << std::endl;
-#endif
-
-    std::vector<FT> err(proxies.size(), FT(0));
-    const FT sum_error = compute_fitting_error(err);
-    const FT avg_error = sum_error / FT(static_cast<double>(num_proxies_to_be_added));
-
-    std::vector<ProxyError> px_error;
-    for (std::size_t i = 0; i < proxies.size(); ++i)
-      px_error.push_back(ProxyError(i, err[i]));
-    // sort partition by error
-    std::sort(px_error.begin(), px_error.end());
-
-    // number of proxies to be added to each region
-    std::vector<std::size_t> num_to_add(proxies.size(), 0);
-    // residual from previous proxy in range (-0.5, 0.5] * avg_error
-    FT residual(0);
-    BOOST_FOREACH(const ProxyError &pxe, px_error) {
-      // add error residual from previous proxy
-      // to_add maybe negative but greater than -0.5
-      FT to_add = (residual + pxe.err) / avg_error;
-      // floor_to_add maybe negative but no less than -1
-      FT floor_to_add = FT(std::floor(CGAL::to_double(to_add)));
-      const std::size_t q_to_add = static_cast<std::size_t>(CGAL::to_double(
-        ((to_add - floor_to_add) > FT(0.5)) ? (floor_to_add + FT(1)) : floor_to_add));
-      residual = (to_add - FT(static_cast<double>(q_to_add))) * avg_error;
-      num_to_add[pxe.px] = q_to_add;
-    }
-
-#ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEGUB
-    for (std::size_t i = 0; i < px_error.size(); ++i)
-      std::cerr << "#px " << px_error[i].px
-        << ", #error " << px_error[i].err
-        << ", #num_to_add " << num_to_add[px_error[i].px] << std::endl;
-#endif
-
-    std::size_t num_inserted = 0;
-    BOOST_FOREACH(face_descriptor f, faces(*m_pmesh)) {
-      const std::size_t px_id = fproxy_map[f];
-      if (proxies[px_id].seed == f)
-        continue;
-
-      if (num_to_add[px_id] > 0) {
-        proxies.push_back(fit_new_proxy(f));
-        --num_to_add[px_id];
-        ++num_inserted;
-      }
-    }
-
-#ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEGUB
-    std::cerr << "#requested/inserted "
-      << num_proxies_to_be_added << '/' << num_inserted << std::endl;
-#endif
-
-    return num_inserted;
   }
 
   /*!
