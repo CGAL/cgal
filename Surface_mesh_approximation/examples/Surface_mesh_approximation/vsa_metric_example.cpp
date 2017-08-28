@@ -23,12 +23,10 @@ typedef boost::property_map<Polyhedron, boost::vertex_point_t>::type VertexPoint
 typedef boost::associative_property_map<std::map<Facet_handle, FT> > FacetAreaMap;
 typedef boost::associative_property_map<std::map<Facet_handle, Point> > FacetCenterMap;
 
-// proxy
-struct PointProxy {
-  Point center;
-};
+// use a point as proxy
+typedef Point PointProxy;
 
-// metric functor
+// user defined point-wise compact metric
 struct CompactMetric {
   typedef PointProxy Proxy;
 
@@ -38,9 +36,9 @@ struct CompactMetric {
 
   // calculate the error of a facet to a proxy
   // here is just the Euclidean distance
-  FT operator()(const Facet_handle &f, const PointProxy &px) const {
+  FT operator()(const Facet_handle &f, const Proxy &px) const {
     return FT(std::sqrt(CGAL::to_double(
-      CGAL::squared_distance(center_pmap[f], px.center))));
+      CGAL::squared_distance(center_pmap[f], px))));
   }
 
   const FacetCenterMap center_pmap;
@@ -56,7 +54,7 @@ struct PointProxyFitting {
 
   // a template functor fit a new proxy from a range of facets
   template<typename FacetIterator>
-  PointProxy operator()(const FacetIterator beg, const FacetIterator end) const {
+  Proxy operator()(const FacetIterator beg, const FacetIterator end) const {
     // fitting center
     Vector center = CGAL::NULL_VECTOR;
     FT area = FT(0.0);
@@ -65,12 +63,7 @@ struct PointProxyFitting {
       area += area_pmap[*fitr];
     }
     center = center / area;
-
-    // construct proxy
-    PointProxy px;
-    px.center = CGAL::ORIGIN + center;
-
-    return px;
+    return CGAL::ORIGIN + center;
   }
 
   const FacetCenterMap center_pmap;

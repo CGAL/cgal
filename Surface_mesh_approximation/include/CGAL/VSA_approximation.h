@@ -246,7 +246,7 @@ public:
   /*!
    * Initialize and prepare for the approximation.
    * @param _mesh `CGAL TriangleMesh` on which approximation operate.
-   * @param _point_map vertex point map of the mesh
+   * @param _point_pmap vertex point map of the mesh
    */
   VSA_approximation(const TriangleMesh &_mesh,
     const VertexPointMap &_point_pmap) :
@@ -267,7 +267,7 @@ public:
    * Set the mesh for approximation and rebuild the internal data structure.
    * @pre @a _mesh.is_pure_triangle()
    * @param _mesh `CGAL TriangleMesh` on which approximation operate.
-   * @param _point_map vertex point map of the mesh
+   * @param _point_pmap vertex point map of the mesh
    */
   void set_mesh(const TriangleMesh &_mesh, const VertexPointMap &_point_pmap) {
     m_pmesh = &_mesh;
@@ -484,9 +484,9 @@ public:
 
   /*!
    * @brief Adding proxies. The proxies are not updated via fitting process.
-   * @param num_proxies number of proxies
    * @param adding_method select one of the adding method: hierarchical or incremental(furthest).
-   * @param inner_iteration the coarse re-fitting iteration before incremental insertion
+   * @param num_proxies number of proxies
+   * @param inner_iteration coarse re-fitting before each insertion if incremental is selected
    * @return number of proxies successfully added.
    */
   std::size_t add_proxies(const Initialization &adding_method,
