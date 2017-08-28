@@ -310,81 +310,26 @@ public:
   }
 
   /*!
-   * @brief Random initialize proxies.
-   * @param num_seed number of proxies seed
-   * @return number of proxies initialized
-   */
-  std::size_t seed_random(const std::size_t num_seed) {
-    proxies.clear();
-    if (num_faces(*m_pmesh) < num_seed)
-      return 0;
-
-    const std::size_t interval = num_faces(*m_pmesh) / num_seed;
-    std::size_t index = 0;
-    BOOST_FOREACH(face_descriptor f, faces(*m_pmesh)) {
-      if ((index++) % interval == 0) {
-        proxies.push_back(fit_new_proxy(f));
-      }
-      if (proxies.size() >= num_seed)
-        break;
-    }
-    return proxies.size();
-  }
-
-  /*!
-   * @brief Incremental initialize proxies.
-   * @param num_seed number of proxies seed
+   * @brief Seeding by targeted number of proxies.
+   * @param method seeding method
+   * @param num_seed target number of proxies seed
    * @param num_iterations number of iterations of coarse re-fitting
-   * before each incremental proxy insertion
    * @return number of proxies initialized
    */
-  std::size_t seed_incremental(const std::size_t num_seed,
+  std::size_t seeding_by_number(
+    const Initialization method,
+    const std::size_t num_seed,
     const std::size_t num_iterations = 5) {
-    proxies.clear();
-    if (num_faces(*m_pmesh) < num_seed)
-      return 0;
-    
-    // initialize a proxy and the proxy map to prepare for the insertion
-    proxies.push_back(fit_new_proxy(*(faces(*m_pmesh).first)));
-    BOOST_FOREACH(face_descriptor f, faces(*m_pmesh))
-      fproxy_map[f] = 0;
-
-    insert_proxy_furthest(num_seed - 1, num_iterations);
-    return proxies.size();
-  }
-
-  /*!
-   * @brief Hierarchical initialize proxies.
-   * @param num_seed number of proxies seed
-   * @param num_iterations number of iterations of coarse re-fitting
-   * before each hierarchical proxy insertion
-   * @return number of proxies initialized
-   */
-  std::size_t seed_hierarchical(const std::size_t num_seed,
-    const std::size_t num_iterations = 5) {
-    proxies.clear();
-    if (num_faces(*m_pmesh) < num_seed)
-      return 0;
-    
-    // initialize 2 proxy
-    typename boost::graph_traits<TriangleMesh>::face_iterator
-      fitr = faces(*m_pmesh).first;
-    proxies.push_back(fit_new_proxy(*fitr));
-    proxies.push_back(fit_new_proxy(*(++fitr)));
-
-    while (proxies.size() < num_seed) {
-      for (std::size_t i = 0; i < num_iterations; ++i) {
-        partition();
-        fit();
-      }
-
-      // add proxies by error diffusion
-      const std::size_t num_proxies = proxies.size();
-      const std::size_t num_proxies_to_be_added =
-        (num_proxies * 2 < num_seed) ? num_proxies : (num_seed - num_proxies);
-      insert_proxy_hierarchical(num_proxies_to_be_added);
+    switch (method) {
+      case RandomInit:
+        return seed_random(num_seed);
+      case IncrementalInit:
+        return seed_incremental(num_seed, num_iterations);
+      case HierarchicalInit:
+        return seed_hierarchical(num_seed, num_iterations);
+      default:
+        return 0;
     }
-    return proxies.size();
   }
 
   /*!
@@ -862,6 +807,84 @@ public:
 
 // private member functions
 private:
+  /*!
+   * @brief Random initialize proxies.
+   * @param num_seed number of proxies seed
+   * @return number of proxies initialized
+   */
+  std::size_t seed_random(const std::size_t num_seed) {
+    proxies.clear();
+    if (num_faces(*m_pmesh) < num_seed)
+      return 0;
+
+    const std::size_t interval = num_faces(*m_pmesh) / num_seed;
+    std::size_t index = 0;
+    BOOST_FOREACH(face_descriptor f, faces(*m_pmesh)) {
+      if ((index++) % interval == 0) {
+        proxies.push_back(fit_new_proxy(f));
+      }
+      if (proxies.size() >= num_seed)
+        break;
+    }
+    return proxies.size();
+  }
+
+  /*!
+   * @brief Incremental initialize proxies.
+   * @param num_seed number of proxies seed
+   * @param num_iterations number of iterations of coarse re-fitting
+   * before each incremental proxy insertion
+   * @return number of proxies initialized
+   */
+  std::size_t seed_incremental(const std::size_t num_seed,
+    const std::size_t num_iterations = 5) {
+    proxies.clear();
+    if (num_faces(*m_pmesh) < num_seed)
+      return 0;
+    
+    // initialize a proxy and the proxy map to prepare for the insertion
+    proxies.push_back(fit_new_proxy(*(faces(*m_pmesh).first)));
+    BOOST_FOREACH(face_descriptor f, faces(*m_pmesh))
+      fproxy_map[f] = 0;
+
+    insert_proxy_furthest(num_seed - 1, num_iterations);
+    return proxies.size();
+  }
+
+  /*!
+   * @brief Hierarchical initialize proxies.
+   * @param num_seed number of proxies seed
+   * @param num_iterations number of iterations of coarse re-fitting
+   * before each hierarchical proxy insertion
+   * @return number of proxies initialized
+   */
+  std::size_t seed_hierarchical(const std::size_t num_seed,
+    const std::size_t num_iterations = 5) {
+    proxies.clear();
+    if (num_faces(*m_pmesh) < num_seed)
+      return 0;
+    
+    // initialize 2 proxy
+    typename boost::graph_traits<TriangleMesh>::face_iterator
+      fitr = faces(*m_pmesh).first;
+    proxies.push_back(fit_new_proxy(*fitr));
+    proxies.push_back(fit_new_proxy(*(++fitr)));
+
+    while (proxies.size() < num_seed) {
+      for (std::size_t i = 0; i < num_iterations; ++i) {
+        partition();
+        fit();
+      }
+
+      // add proxies by error diffusion
+      const std::size_t num_proxies = proxies.size();
+      const std::size_t num_proxies_to_be_added =
+        (num_proxies * 2 < num_seed) ? num_proxies : (num_seed - num_proxies);
+      insert_proxy_hierarchical(num_proxies_to_be_added);
+    }
+    return proxies.size();
+  }
+  
   /*!
    * @brief Initialize by targeted error drop.
    * @param target_drop targeted error drop to initial state, usually in range (0, 1)

@@ -53,7 +53,7 @@ int main()
 
   // random init and run
   std::cout << "random init and run" << std::endl;
-  l2_approx.seed_random(10);
+  l2_approx.seeding_by_number(L2VSA::RandomInit, 10);
   for (std::size_t i = 0; i < 10; ++i)
     l2_approx.run_one_step();
   if (l2_approx.get_proxies_size() != 10)
