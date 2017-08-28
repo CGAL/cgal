@@ -20,6 +20,8 @@
 #ifndef CGAL_CLASSIFICATION_POINT_SET_NEIGHBORHOOD_H
 #define CGAL_CLASSIFICATION_POINT_SET_NEIGHBORHOOD_H
 
+#include <CGAL/license/Classification.h>
+
 #include <vector>
 
 #include <boost/iterator/counting_iterator.hpp>

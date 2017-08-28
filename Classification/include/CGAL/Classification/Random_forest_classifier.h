@@ -6,6 +6,8 @@
 
 #include <opencv2/opencv.hpp>
 
+#include <CGAL/license/Classification.h>
+
 namespace CGAL {
 
 namespace Classification {

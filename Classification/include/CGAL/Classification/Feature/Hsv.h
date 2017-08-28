@@ -20,6 +20,8 @@
 #ifndef CGAL_CLASSIFICATION_FEATURE_HSV_H
 #define CGAL_CLASSIFICATION_FEATURE_HSV_H
 
+#include <CGAL/license/Classification.h>
+
 #include <vector>
 
 #include <CGAL/Classification/Color.h>

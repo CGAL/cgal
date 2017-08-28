@@ -20,6 +20,8 @@
 #ifndef CGAL_CLASSIFICATION_LABEL_SET_H
 #define CGAL_CLASSIFICATION_LABEL_SET_H
 
+#include <CGAL/license/Classification.h>
+
 #include <CGAL/Classification/Label.h>
 
 #include <vector>

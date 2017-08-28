@@ -21,6 +21,8 @@
 #ifndef CLASSIFICATION_SUM_OF_WEIGHTED_FEATURES_CLASSIFIER_H
 #define CLASSIFICATION_SUM_OF_WEIGHTED_FEATURES_CLASSIFIER_H
 
+#include <CGAL/license/Classification.h>
+
 #include <CGAL/Classification/Feature_set.h>
 #include <CGAL/Classification/Label_set.h>
 #include <CGAL/Classification/internal/verbosity.h>

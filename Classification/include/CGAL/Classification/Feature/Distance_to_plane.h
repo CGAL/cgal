@@ -21,6 +21,8 @@
 #ifndef CGAL_CLASSIFICATION_FEATURE_DISTANCE_TO_PLANE_H
 #define CGAL_CLASSIFICATION_FEATURE_DISTANCE_TO_PLANE_H
 
+#include <CGAL/license/Classification.h>
+
 #include <vector>
 
 namespace CGAL {

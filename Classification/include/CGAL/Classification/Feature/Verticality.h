@@ -20,6 +20,8 @@
 #ifndef CGAL_CLASSIFICATION_FEATURE_VERTICALITY_H
 #define CGAL_CLASSIFICATION_FEATURE_VERTICALITY_H
 
+#include <CGAL/license/Classification.h>
+
 #include <vector>
 
 #include <CGAL/Classification/Local_eigen_analysis.h>

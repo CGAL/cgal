@@ -20,6 +20,8 @@
 #ifndef CGAL_CLASSIFICATION_EVALUATION_H
 #define CGAL_CLASSIFICATION_EVALUATION_H
 
+#include <CGAL/license/Classification.h>
+
 #include <CGAL/Classification/Label.h>
 #include <CGAL/Classification/Label_set.h>
 

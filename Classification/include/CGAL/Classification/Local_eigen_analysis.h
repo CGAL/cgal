@@ -20,6 +20,8 @@
 #ifndef CGAL_CLASSIFICATION_LOCAL_EIGEN_ANALYSIS_H
 #define CGAL_CLASSIFICATION_LOCAL_EIGEN_ANALYSIS_H
 
+#include <CGAL/license/Classification.h>
+
 #include <vector>
 
 #include <CGAL/Search_traits_3.h>

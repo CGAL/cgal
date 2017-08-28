@@ -20,6 +20,8 @@
 #ifndef CGAL_CLASSIFICATION_IMAGE_H
 #define CGAL_CLASSIFICATION_IMAGE_H
 
+#include <CGAL/license/Classification.h>
+
 namespace CGAL {
 namespace Classification {
 

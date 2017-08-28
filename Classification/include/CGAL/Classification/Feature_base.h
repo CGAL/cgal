@@ -20,6 +20,8 @@
 #ifndef CGAL_CLASSIFICATION_FEATURE_BASE_H
 #define CGAL_CLASSIFICATION_FEATURE_BASE_H
 
+#include <CGAL/license/Classification.h>
+
 #include <boost/shared_ptr.hpp>
 
 #include <vector>

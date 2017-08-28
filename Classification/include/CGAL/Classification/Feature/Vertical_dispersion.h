@@ -20,6 +20,8 @@
 #ifndef CGAL_CLASSIFICATION_FEATURE_VERTICAL_DISPERSION_H
 #define CGAL_CLASSIFICATION_FEATURE_VERTICAL_DISPERSION_H
 
+#include <CGAL/license/Classification.h>
+
 #include <vector>
 
 #include <CGAL/number_utils.h>

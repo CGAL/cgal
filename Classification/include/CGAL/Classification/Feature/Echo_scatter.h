@@ -21,6 +21,8 @@
 #ifndef CGAL_CLASSIFICATION_FEATURE_ECHO_SCATTER_H
 #define CGAL_CLASSIFICATION_FEATURE_ECHO_SCATTER_H
 
+#include <CGAL/license/Classification.h>
+
 #include <vector>
 
 

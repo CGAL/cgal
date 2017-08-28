@@ -20,6 +20,8 @@
 #ifndef CGAL_CLASSIFICATION_POINT_SET_FEATURE_GENERATOR_H
 #define CGAL_CLASSIFICATION_POINT_SET_FEATURE_GENERATOR_H
 
+#include <CGAL/license/Classification.h>
+
 #include <CGAL/property_map.h>
 #include <CGAL/Classification/Point_set_neighborhood.h>
 #include <CGAL/Classification/Planimetric_grid.h>

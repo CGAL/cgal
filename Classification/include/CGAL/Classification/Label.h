@@ -20,6 +20,8 @@
 #ifndef CGAL_CLASSIFICATION_LABEL_H
 #define CGAL_CLASSIFICATION_LABEL_H
 
+#include <CGAL/license/Classification.h>
+
 #include <boost/shared_ptr.hpp>
 
 namespace CGAL {

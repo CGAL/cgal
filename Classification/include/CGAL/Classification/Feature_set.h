@@ -20,6 +20,8 @@
 #ifndef CGAL_CLASSIFICATION_FEATURE_SET_H
 #define CGAL_CLASSIFICATION_FEATURE_SET_H
 
+#include <CGAL/license/Classification.h>
+
 #include <CGAL/Classification/Feature_base.h>
 
 #ifdef CGAL_LINKED_WITH_TBB

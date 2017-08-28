@@ -21,6 +21,8 @@
 #ifndef CGAL_CLASSIFICATION_FEATURE_ELEVATION_H
 #define CGAL_CLASSIFICATION_FEATURE_ELEVATION_H
 
+#include <CGAL/license/Classification.h>
+
 #include <vector>
 
 #include <CGAL/Classification/Feature_base.h>

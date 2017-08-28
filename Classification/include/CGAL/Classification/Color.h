@@ -20,6 +20,8 @@
 #ifndef CGAL_CLASSIFICATION_COLOR_H
 #define CGAL_CLASSIFICATION_COLOR_H
 
+#include <CGAL/license/Classification.h>
+
 #include <CGAL/array.h>
 
 namespace CGAL {

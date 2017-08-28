@@ -21,6 +21,8 @@
 #ifndef CGAL_CLASSIFICATION_PLANIMETRIC_GRID_H
 #define CGAL_CLASSIFICATION_PLANIMETRIC_GRID_H
 
+#include <CGAL/license/Classification.h>
+
 #include <vector>
 
 #include <CGAL/Classification/Image.h>

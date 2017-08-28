@@ -20,6 +20,8 @@
 #ifndef CGAL_CLASSIFICATION_H
 #define CGAL_CLASSIFICATION_H
 
+#include <CGAL/license/Classification.h>
+
 #include <CGAL/Classification/classify.h>
 #include <CGAL/Classification/Sum_of_weighted_features_classifier.h>
 
