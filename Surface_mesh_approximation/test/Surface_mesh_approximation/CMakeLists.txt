@@ -52,4 +52,6 @@ create_single_source_cgal_program( "vsa_free_function_test.cpp" )
 
 create_single_source_cgal_program( "vsa_metric_test.cpp" )
 
+create_single_source_cgal_program( "vsa_teleportation_test.cpp" )
+
 
