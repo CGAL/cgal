@@ -26,6 +26,7 @@ bool test_manifold(const char *file_name, const FT drop = FT(1e-8))
     return false;
   }
 
+  std::cout << "Testing \"" << file_name << '\"' << std::endl;
   // algorithm instance
   L21VSA vsa_l21(mesh,
     get(boost::vertex_point, const_cast<Polyhedron &>(mesh)));
@@ -44,7 +45,13 @@ bool test_manifold(const char *file_name, const FT drop = FT(1e-8))
 
   // meshing
   Polyhedron mesh_out;
-  return vsa_l21.meshing(mesh_out);
+  if (vsa_l21.meshing(mesh_out)) {
+    std::cout << "Succeeded." << std::endl;
+    return true;
+  }
+
+  std::cout << "Failed." << std::endl;
+  return false;
 }
 
 /**
@@ -54,32 +61,14 @@ bool test_manifold(const char *file_name, const FT drop = FT(1e-8))
 int main()
 {
   std::cout << "Meshing manifold test." << std::endl;
-  const char file0[] = "./data/cube_meshed.off";
-  std::cout << "Testing file \"" << file0 << '\"' << std::endl;
-  if (!test_manifold(file0)) {
-    std::cout << "Failed." << std::endl;
+  if (!test_manifold("./data/cube_meshed.off"))
     return EXIT_FAILURE;
-  }
-  else
-    std::cout << "Succeeded." << std::endl;
 
-  const char file1[] = "./data/cube_meshed_open.off";
-  std::cout << "Testing file \"" << file1 << '\"' << std::endl;
-  if (!test_manifold(file1)) {
-    std::cout << "Failed." << std::endl;
+  if (!test_manifold("./data/cube_meshed_open.off"))
     return EXIT_FAILURE;
-  }
-  else
-    std::cout << "Succeeded." << std::endl;
 
-  const char file2[] = "./data/sphere_iso.off";
-  std::cout << "Testing file \"" << file2 << '\"' << std::endl;
-  if (!test_manifold(file2, FT(1e-2))) {
-    std::cout << "Failed." << std::endl;
+  if (!test_manifold("./data/sphere_iso.off", FT(1e-2)))
     return EXIT_FAILURE;
-  }
-  else
-    std::cout << "Succeeded." << std::endl;
 
   return EXIT_SUCCESS;
 }

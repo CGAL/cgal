@@ -26,6 +26,7 @@ bool test_shape(const char *file_name, const std::size_t target_num_proxies)
     return false;
   }
 
+  std::cout << "Testing \"" << file_name << '\"' << std::endl;
   // algorithm instance
   L21VSA vsa_l21(mesh,
     get(boost::vertex_point, const_cast<Polyhedron &>(mesh)));
@@ -46,36 +47,29 @@ bool test_shape(const char *file_name, const std::size_t target_num_proxies)
     std::cout << "#targeted - #result "
       << target_num_proxies << ' '
       << vsa_l21.get_proxies_size() << std::endl;
-    std::cout << "incremental reaching failed" << std::endl;
+
+    std::cout << "Failed." << std::endl;
     return false;
   }
 
+  std::cout << "Succeeded." << std::endl;
   return true;
 }
 
 /**
  * This file tests the correctness of the algorithm.
- * Basically we input a cube mesh and see if it outputs a cube.
+ * The correctness is verified by seeding by error
+ * and check if the number of desired proxies are generaged.
+ * Basically we input a cube mesh and see if it outputs 6 proxies.
  */
 int main()
 {
-  const char file0[] = "./data/cube_meshed.off";
-  std::cout << "Testing file \"" << file0 << '\"' << std::endl;
-  if (!test_shape(file0, 6)) {
-    std::cout << "Failed." << std::endl;
+  std::cout << "Correctness test." << std::endl;
+  if (!test_shape("./data/cube_meshed.off", 6))
     return EXIT_FAILURE;
-  }
-  else
-    std::cout << "Succeeded." << std::endl;
 
-  const char file1[] = "./data/cube_meshed_open.off";
-  std::cout << "Testing file \"" << file1 << '\"' << std::endl;
-  if (!test_shape(file1, 5)) {
-    std::cout << "Failed." << std::endl;
+  if (!test_shape("./data/cube_meshed_open.off", 5))
     return EXIT_FAILURE;
-  }
-  else
-    std::cout << "Succeeded." << std::endl;
 
   return EXIT_SUCCESS;
 }
