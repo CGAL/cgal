@@ -26,9 +26,9 @@ if ( CGAL_FOUND )
 
   include_directories (BEFORE "../../include")
 
-  create_single_source_cgal_program( "top_edges_single_mold_translational_casting.cpp" )
-  create_single_source_cgal_program( "is_pullout_direction_single_mold_translational_casting.cpp" )
-  create_single_source_cgal_program( "pullout_directions_single_mold_translational_casting.cpp" )
+  create_single_source_cgal_program( "top_edges_single_mold_trans_cast.cpp" )
+  create_single_source_cgal_program( "is_pullout_direction_single_mold_trans_cast.cpp" )
+  create_single_source_cgal_program( "pullout_directions_single_mold_trans_cast.cpp" )
 
 else()
 

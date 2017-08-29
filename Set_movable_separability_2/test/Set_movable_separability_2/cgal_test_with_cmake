@@ -96,12 +96,12 @@ if [ $# -ne 0 ] ; then
   done
 else
   echo "Run all tests."
-  if  ${MAKE_CMD} -f Makefile help | grep -E "test_top_edges_single_mold_translational_casting$" > /dev/null; then
-    compile_and_run test_top_edges_single_mold_translational_casting
+  if  ${MAKE_CMD} -f Makefile help | grep -E "test_top_edges_single_mold_trans_cast$" > /dev/null; then
+    compile_and_run test_top_edges_single_mold_trans_cast
     NEED_CLEAN=y
   fi
-  if  ${MAKE_CMD} -f Makefile help | grep -E "test_is_pullout_directions_single_mold_translational_casting$" > /dev/null; then
-    compile_and_run test_is_pullout_directions_single_mold_translational_casting
+  if  ${MAKE_CMD} -f Makefile help | grep -E "test_is_pullout_directions_single_mold_trans_cast$" > /dev/null; then
+    compile_and_run test_is_pullout_directions_single_mold_trans_cast
     NEED_CLEAN=y
   fi
 fi
