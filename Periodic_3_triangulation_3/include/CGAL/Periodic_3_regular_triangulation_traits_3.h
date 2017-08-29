@@ -132,7 +132,7 @@ public:
 
 template<typename K,
          typename Off = CGAL::Periodic_3_offset_3,
-         bool Has_filtered_predicates = K::Has_filtered_predicates>
+         bool Has_filtered_predicates = internal::Has_filtered_predicates<K>::value>
 class Periodic_3_regular_triangulation_traits_3;
 
 } // namespace CGAL

@@ -165,7 +165,7 @@ protected:
 
 template < typename K,
            typename Off = typename CGAL::Periodic_2_offset_2,
-           bool Has_static_filters = K::Has_static_filters >
+           bool Has_static_filters = internal::Has_static_filters<K>::value >
 class Periodic_2_triangulation_filtered_traits_2;
 
 } //namespace CGAL
