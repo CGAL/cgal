@@ -684,13 +684,13 @@ public:
 				const Type_of_alpha& alpha) const;
 
   //--------------------- NB COMPONENTS ---------------------------------
-  int
+  size_type
   number_solid_components() const
     {
       return number_of_solid_components(get_alpha());
     }
 
-  int
+  size_type
   number_of_solid_components() const
     {
       return number_of_solid_components(get_alpha());
