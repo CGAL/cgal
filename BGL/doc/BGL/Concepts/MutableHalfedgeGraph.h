@@ -10,6 +10,7 @@ update the incidence information between vertices and halfedges.
 \cgalRefines `HalfedgeGraph`
 \cgalHasModel `CGAL::Polyhedron_3`
 \cgalHasModel `CGAL::Surface_mesh`
+\cgalHasModel `CGAL::Linear_cell_complex_for_combinatorial_map`
 
 */
 class MutableHalfedgeGraph{};

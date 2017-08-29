@@ -14,6 +14,14 @@ if ( CGAL_FOUND )
 
   include( CGAL_CreateSingleSourceCGALProgram )
 
+  find_package( OpenMesh QUIET )
+
+  if ( OpenMesh_FOUND )
+    include( UseOpenMesh )
+  else()
+    message(STATUS "Examples that use OpenMesh will not be compiled.")
+  endif()
+
   include_directories (BEFORE "../../include")
 
     include_directories (BEFORE "include")

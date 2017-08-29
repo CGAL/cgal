@@ -22,7 +22,7 @@
 
 #include <QApplication>
 #include <QKeyEvent>
-
+#include <QMap>
 #include <QGLViewer/qglviewer.h>
 #include <QKeyEvent>
 #include <QOpenGLFunctions_2_1>

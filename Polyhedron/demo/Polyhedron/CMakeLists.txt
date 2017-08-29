@@ -3,6 +3,7 @@
 project( Polyhedron_Demo )
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON)
 cmake_minimum_required(VERSION 3.1)
@@ -11,6 +12,9 @@ if(POLICY CMP0053)
 endif()
 if(POLICY CMP0043)
   cmake_policy(SET CMP0043 OLD)
+endif()
+if(POLICY CMP0071)
+  cmake_policy(SET CMP0071 NEW)
 endif()
 
 list(FIND CMAKE_CXX_COMPILE_FEATURES cxx_generalized_initializers has_cpp11)
@@ -241,6 +245,9 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   add_item(scene_edit_box_item Plugins/PCA/Scene_edit_box_item.cpp )
   add_item(scene_image_item Scene_image_item.cpp)
   add_item(scene_surface_mesh_item Scene_surface_mesh_item.cpp)
+  add_item(scene_mcf_poly_item Plugins/PMP/Scene_mcf_item.cpp)
+  add_item(scene_mcf_sm_item Plugins/PMP/Scene_mcf_item.cpp)
+  target_compile_definitions(scene_mcf_sm_item PUBLIC "-DUSE_SURFACE_MESH" )
 
   # special
   target_link_libraries(scene_polyhedron_transform_item scene_polyhedron_item)
@@ -279,9 +286,12 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   target_link_libraries(scene_sm_shortest_path_item scene_surface_mesh_item_decorator scene_surface_mesh_item scene_polylines_item)
 
   if(EIGEN3_FOUND )
-    qt5_wrap_ui( editionUI_FILES Plugins/Surface_mesh_deformation/Deform_mesh.ui )
     add_item(scene_textured_polyhedron_item Scene_textured_polyhedron_item.cpp texture.cpp)
     qt5_use_modules( scene_textured_polyhedron_item Svg )
+    add_item(scene_textured_surface_mesh_item Scene_textured_surface_mesh_item.cpp texture.cpp)
+    qt5_use_modules( scene_textured_surface_mesh_item Svg )
+
+    qt5_wrap_ui( editionUI_FILES Plugins/Surface_mesh_deformation/Deform_mesh.ui )
     add_item(scene_edit_polyhedron_item Plugins/Surface_mesh_deformation/Scene_edit_polyhedron_item.cpp
            ${editionUI_FILES})
            target_link_libraries(scene_edit_polyhedron_item scene_polyhedron_item scene_surface_mesh_item scene_polyhedron_and_sm_item_k_ring_selection
@@ -293,15 +303,24 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   add_item(scene_polygon_soup_item Scene_polygon_soup_item.cpp)
   target_link_libraries(scene_polygon_soup_item scene_polyhedron_item)
+
   add_item(scene_nef_polyhedron_item Scene_nef_polyhedron_item.cpp)
-  
   target_link_libraries(scene_nef_polyhedron_item scene_polyhedron_item scene_surface_mesh_item)
-  add_item(scene_points_with_normal_item Scene_points_with_normal_item.cpp)
-  target_link_libraries( scene_points_with_normal_item gl_splat)
+  
+  find_package(LASLIB)
+  if (LASLIB_FOUND)
+    include(${LASLIB_USE_FILE})
+    include_directories(${LASLIB_INCLUDE_DIR})
+    include_directories(${LASZIP_INCLUDE_DIR})
+    add_item(scene_points_with_normal_item Scene_points_with_normal_item.cpp)
+    target_link_libraries( scene_points_with_normal_item gl_splat  ${LASLIB_LIBRARIES})
+  else()
+    add_item(scene_points_with_normal_item Scene_points_with_normal_item.cpp)
+    target_link_libraries( scene_points_with_normal_item gl_splat )
+  endif()
 
   target_link_libraries( demo_framework gl_splat)
 
-  
 
 
   foreach( lib 

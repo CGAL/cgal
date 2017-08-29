@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>428</width>
+    <width>448</width>
     <height>147</height>
    </rect>
   </property>
@@ -92,6 +92,9 @@
    </item>
    <item row="0" column="1">
     <widget class="QDoubleSpinBox" name="m_distanceThreshold">
+     <property name="decimals">
+      <number>6</number>
+     </property>
      <property name="minimum">
       <double>0.000000000000000</double>
      </property>

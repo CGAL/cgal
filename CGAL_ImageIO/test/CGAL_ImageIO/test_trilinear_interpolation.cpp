@@ -15,6 +15,8 @@
 typedef unsigned char Word;
 
 int main() {
+  CGAL::Set_ieee_double_precision pfr;
+
   CGAL::Image_3 image(_createImage(2, 2, 2, 1,
 				   1., 1., 1.,
 				   1, WK_FIXED, SGN_UNSIGNED));

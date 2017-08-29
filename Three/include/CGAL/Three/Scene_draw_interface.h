@@ -69,10 +69,15 @@ public:
    * \param viewer the viewer used to display the Scene.
    * \return true if the TextItem is visible. */
   virtual bool  testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer) = 0;
- /*!
-   * \brief printPrimitiveIds displays all the TextItems if there are less than Viewer::max_textItems.
-   */
-  virtual void printPrimitiveIds(CGAL::Three::Viewer_interface*) = 0;
+
+  ///\brief displays all the vertices ids if there are less than max_textItems.
+  virtual void printVertexIds(CGAL::Three::Viewer_interface*) = 0;
+  ///\brief displays all the edges ids if there are less than max_textItems.
+  virtual void printEdgeIds(CGAL::Three::Viewer_interface*) = 0;
+  ///\brief displays all the faces ids if there are less than max_textItems.
+  virtual void printFaceIds(CGAL::Three::Viewer_interface*) = 0;
+  ///\brief displays all the primitive ids if there are less than max_textItems.
+  virtual void printAllIds(CGAL::Three::Viewer_interface*) = 0;
 
   //!\brief moves the camera orthogonally to the picked sface.
   //!

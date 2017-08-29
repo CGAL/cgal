@@ -49,6 +49,7 @@
 #include <boost/graph/filtered_graph.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <CGAL/boost/graph/split_graph_into_polylines.h>
+#include <CGAL/Default.h>
 
 #include <boost/iterator/transform_iterator.hpp>
 #include <boost/foreach.hpp>
@@ -193,7 +194,7 @@ struct Extract_polyline_with_context_visitor
  */
 template < class IGT_,
            class Polyhedron_ = typename Mesh_polyhedron_3<IGT_>::type,
-           class TriangleAccessor=Triangle_accessor_3<Polyhedron_,IGT_>,
+           class TriangleAccessor= CGAL::Default,
            class Patch_id=int,
            class Use_exact_intersection_construction_tag = Tag_true >
 class Polyhedral_mesh_domain_with_features_3
@@ -284,7 +285,7 @@ public:
     stored_polyhedra[1] = bounding_p;
     this->add_primitives(stored_polyhedra[0]);
     this->add_primitives(stored_polyhedra[1]);
-    if(is_empty(bounding_p)) {
+    if(CGAL::is_empty(bounding_p)) {
       this->set_surface_only();
     } else {
       this->add_primitives_to_bounding_tree(stored_polyhedra[1]);

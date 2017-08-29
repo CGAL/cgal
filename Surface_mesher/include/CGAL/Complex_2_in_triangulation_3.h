@@ -33,9 +33,6 @@
 #include <set>
 #include <map>
 #include <vector>
-#include <boost/type_traits/is_same.hpp>
-#include <boost/mpl/if.hpp>
-#include <boost/utility/enable_if.hpp>
 #include <boost/format.hpp>
 
 namespace CGAL {

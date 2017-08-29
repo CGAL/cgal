@@ -2,7 +2,9 @@
 #include "config_mesh_3.h"
 #include "C3t3_type.h"
 #include "Scene_c3t3_item.h"
+#include "Scene_surface_mesh_item.h"
 #include "Scene_polyhedron_item.h"
+#include <CGAL/Mesh_3/properties_Surface_mesh.h>
 
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
 #include "Scene_image_item.h"
@@ -142,6 +144,27 @@ Optimizer_thread* cgal_code_optimization(Scene_c3t3_item& c3t3_item,
     return new Optimizer_thread(p_opt_function, p_result_item);
   }
   
+  // Surface mesh
+  const Scene_surface_mesh_item* sm_item =
+    qobject_cast<const Scene_surface_mesh_item*>(c3t3_item.data_item());
+
+  if ( NULL != sm_item )
+  {
+    // Build domain
+    const SMesh* smesh = sm_item->face_graph();
+    if ( NULL == smesh )
+    {
+      return NULL;
+    }
+    SMwgd smesh_wg(const_cast< SMesh& >(*smesh));
+    Polyhedral_mesh_domain_sm* sm_domain = new Polyhedral_mesh_domain_sm(smesh_wg);
+
+    // Create thread
+    typedef Optimization_function<Polyhedral_mesh_domain_sm,Parameters> Opt_function;
+    Opt_function* p_opt_function = new Opt_function(p_result_item->c3t3(), sm_domain, param);
+    return new Optimizer_thread(p_opt_function, p_result_item);
+  }
+
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
   // Function
   const Scene_implicit_function_item* function_item = 

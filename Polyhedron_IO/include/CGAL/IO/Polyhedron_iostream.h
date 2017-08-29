@@ -31,28 +31,55 @@
 
 namespace CGAL {
 
+
+template < class Traits,
+           class Items,
+           template < class T, class I, class A>
+           class HDS, class Alloc>
+bool
+write_off( std::ostream& out, const Polyhedron_3<Traits,Items,HDS,Alloc>& P){
+  // writes P to `out' in PRETTY, ASCII or BINARY format
+    // as the stream indicates.
+    File_header_OFF header( is_binary( out), ! is_pretty( out), false);
+    CGAL::print_polyhedron_with_header_OFF( out, P, header);
+    return out.good();
+}
+
+
+template < class Traits,
+           class Items,
+           template < class T, class I, class A>
+           class HDS, class Alloc>
+bool 
+read_off(std::istream& in,
+         Polyhedron_3<Traits,Items,HDS,Alloc>& P) {
+    // reads a polyhedron from `in' and appends it to P.
+    CGAL::scan_OFF( in, P);
+    return in.good();
+}
+
+
 template < class Traits,
            class Items,
            template < class T, class I, class A>
            class HDS, class Alloc>
 std::ostream&
-operator<<( std::ostream& out, const Polyhedron_3<Traits,Items,HDS,Alloc>& P) {
-    // writes P to `out' in PRETTY, ASCII or BINARY format
-    // as the stream indicates.
-    File_header_OFF header( is_binary( out), ! is_pretty( out), false);
-    CGAL::print_polyhedron_with_header_OFF( out, P, header);
-    return out;
+operator<<( std::ostream& out, const Polyhedron_3<Traits,Items,HDS,Alloc>& P)
+{
+  write_off(out,P);
+  return out;
 }
+
 
 template < class Traits,
            class Items,
            template < class T, class I, class A>
            class HDS, class Alloc>
 std::istream& operator>>(std::istream& in,
-                         Polyhedron_3<Traits,Items,HDS,Alloc>& P) {
-    // reads a polyhedron from `in' and appends it to P.
-    CGAL::scan_OFF( in, P);
-    return in;
+                         Polyhedron_3<Traits,Items,HDS,Alloc>& P)
+{
+  read_off(in,P);
+  return in;
 }
 
 } //namespace CGAL

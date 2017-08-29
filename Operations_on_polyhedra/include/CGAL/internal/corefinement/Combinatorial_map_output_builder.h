@@ -25,7 +25,7 @@
 
 
 #include <CGAL/internal/corefinement/Combinatorial_map_for_corefinement.h>
-#include <CGAL/Polygon_mesh_processing/connected_components.h>
+#include <CGAL/internal/corefinement/connected_components.h>
 #include <CGAL/internal/corefinement/predicates.h>
 #include <CGAL/internal/corefinement/utils.h>
 #include <CGAL/Side_of_triangle_mesh.h>

@@ -50,14 +50,14 @@ namespace Polygon_mesh_processing {
 *         models of `Hashable`.
 *         If `PolygonMesh` has an internal property map for `CGAL::face_index_t`,
 *         and no `face_index_map` is given
-*         as a named parameter, then the internal one should be initialized
+*         as a named parameter, then the internal one must be initialized
 * @tparam FaceRange range of `boost::graph_traits<PolygonMesh>::%face_descriptor`,
           model of `Range`. Its iterator type is `ForwardIterator`.
 * @tparam NamedParameters a sequence of \ref namedparameters
 *
 * @param pmesh a polygon mesh with triangulated surface patches to be remeshed
 * @param faces the range of triangular faces defining one or several surface patches to be remeshed
-* @param target_edge_length the edge length that is targetted in the remeshed patch.
+* @param target_edge_length the edge length that is targeted in the remeshed patch.
 *        If `0` is passed then only the edge-flip, tangential relaxation, and projection steps will be done.
 * @param np optional sequence of \ref namedparameters among the ones listed below
 *
@@ -178,11 +178,10 @@ void isotropic_remeshing(const FaceRange& faces
       NamedParameters,
       internal::Connected_components_pmap<PM, ECMap, FIMap>//default
     > ::type FPMap;
-  FPMap fpmap = (boost::is_same<FPMap, internal::Connected_components_pmap<PM, ECMap, FIMap> >::value)
-    ? choose_param(get_param(np, internal_np::face_patch),
-      internal::Connected_components_pmap<PM, ECMap, FIMap>(pmesh, ecmap, fimap))
-    : choose_param(get_param(np, internal_np::face_patch),
-      internal::Connected_components_pmap<PM, ECMap, FIMap>());//do not compute cc's
+  FPMap fpmap = choose_param(
+    get_param(np, internal_np::face_patch),
+    internal::Connected_components_pmap<PM, ECMap, FIMap>(pmesh, ecmap, fimap,
+        boost::is_default_param(get_param(np, internal_np::face_patch))));
 
   double low = 4. / 5. * target_edge_length;
   double high = 4. / 3. * target_edge_length;
@@ -339,7 +338,7 @@ void split_long_edges(const EdgeRange& edges
     remesher(pmesh, vpmap, false/*protect constraints*/
            , ecmap
            , internal::No_constraint_pmap<vertex_descriptor>()
-           , internal::Connected_components_pmap<PM, ECMap, FIMap>()
+           , internal::Connected_components_pmap<PM, ECMap, FIMap>(pmesh, ecmap, fimap, false)
            , fimap
            , false/*need aabb_tree*/);
 

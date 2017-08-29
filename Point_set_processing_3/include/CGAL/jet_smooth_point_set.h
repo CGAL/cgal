@@ -150,7 +150,7 @@ jet_smooth_point(
 // Public section
 // ----------------------------------------------------------------------------
 
-/// \ingroup PkgPointSetProcessing
+/// \ingroup PkgPointSetProcessingAlgorithms
 /// Smoothes the `[first, beyond)` range of points using jet fitting on the k
 /// nearest neighbors and reprojection onto the jet.
 /// As this method relocates the points, it

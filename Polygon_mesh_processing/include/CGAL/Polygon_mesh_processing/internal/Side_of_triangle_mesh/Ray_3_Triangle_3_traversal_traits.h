@@ -179,7 +179,7 @@ public:
     if ( orient_3!=COPLANAR && 
           (
             //indicates whether the ray is oriented toward the positive side of the plane
-            ( POSITIVE == sign( query.to_vector().z() )  )
+            ( POSITIVE == CGAL::sign( query.to_vector().z() )  )
               ==
             //indicates whether the source of the ray is in the positive side of the plane
             (orient_3==POSITIVE)

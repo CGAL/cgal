@@ -79,6 +79,8 @@ create_single_source_cgal_program( "graph_concept_Seam_mesh_Surface_mesh.cpp" )
 
 create_single_source_cgal_program( "graph_concept_Gwdwg_Surface_mesh.cpp" )
 
+create_single_source_cgal_program( "graph_concept_Linear_cell_complex.cpp" )
+
 create_single_source_cgal_program( "test_clear.cpp" )
 
 create_single_source_cgal_program( "test_helpers.cpp" )
@@ -89,7 +91,11 @@ create_single_source_cgal_program( "test_Has_member_id.cpp" )
 
 create_single_source_cgal_program( "test_cgal_bgl_named_params.cpp" )
 
+create_single_source_cgal_program( "test_bgl_read_write.cpp" )
+
 create_single_source_cgal_program( "graph_concept_Face_filtered_graph.cpp" )
+
+create_single_source_cgal_program( "test_Manifold_face_removal.cpp")
 
 create_single_source_cgal_program( "test_Face_filtered_graph.cpp" )
 

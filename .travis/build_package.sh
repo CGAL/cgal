@@ -22,7 +22,7 @@ function build_demo {
     git clone --depth=4 -b v2.6.3 --single-branch https://github.com/GillesDebunne/libQGLViewer.git ./qglviewer
     pushd ./qglviewer/QGLViewer
     #use qt5 instead of qt4
-    export QT_SELECT=5
+#    export QT_SELECT=5
     qmake NO_QT_VERSION_SUFFIX=yes
     make -j2
     if [ ! -f libQGLViewer.so ]; then
@@ -35,14 +35,16 @@ function build_demo {
     popd
   fi
   EXTRA_CXX_FLAGS=
-  if [ "$CC" = "clang" ]; then
-    EXTRA_CXX_FLAGS="-Werror=inconsistent-missing-override"
-  fi
+  case "$CC" in
+    clang*)
+      EXTRA_CXX_FLAGS="-Werror=inconsistent-missing-override"
+      ;;
+  esac
   if [ $NEED_3D = 1 ]; then
     QGLVIEWERROOT=$PWD/qglviewer
     export QGLVIEWERROOT
   fi
-  cmake -DCGAL_DIR="$ROOT/build" -DCGAL_DONT_OVERRIDE_CMAKE_FLAGS:BOOL=ON -DCMAKE_CXX_FLAGS_RELEASE="${CXX_FLAGS} ${EXTRA_CXX_FLAGS}" ..
+  cmake -DCGAL_DIR="$ROOT/build" -DQt5_DIR="/opt/qt55/lib/cmake/Qt5" -DQt5Svg_DIR="/opt/qt55/lib/cmake/Qt5Svg" -DQt5OpenGL_DIR="/opt/qt55/lib/cmake/Qt5OpenGL" -DCGAL_DONT_OVERRIDE_CMAKE_FLAGS:BOOL=ON -DCMAKE_CXX_FLAGS_RELEASE="${CXX_FLAGS} ${EXTRA_CXX_FLAGS}" ..
   make -j2
 }
 
@@ -56,7 +58,7 @@ do
     zsh $ROOT/Scripts/developer_scripts/test_merge_of_branch HEAD
     mkdir -p build-travis
     pushd build-travis
-    cmake -DCGAL_ENABLE_CHECK_HEADERS=ON ../..
+    cmake -DCGAL_ENABLE_CHECK_HEADERS=ON -DQt5_DIR="/opt/qt55/lib/cmake/Qt5" ../..
     make -j2 check_headers
     popd
   	#parse current matrix and check that no package has been forgotten

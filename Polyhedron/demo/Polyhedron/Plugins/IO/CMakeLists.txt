@@ -17,8 +17,7 @@ target_link_libraries(off_plugin scene_polyhedron_item scene_polygon_soup_item s
 polyhedron_demo_plugin(off_to_nef_plugin OFF_to_nef_io_plugin)
 target_link_libraries(off_to_nef_plugin scene_nef_polyhedron_item)
 
-qt5_wrap_ui( polylines_ioUI_FILES Add_polylines_dialog.ui )
-polyhedron_demo_plugin(polylines_io_plugin Polylines_io_plugin ${polylines_ioUI_FILES})
+polyhedron_demo_plugin(polylines_io_plugin Polylines_io_plugin)
 target_link_libraries(polylines_io_plugin scene_polylines_item)
 
 polyhedron_demo_plugin(selection_io_plugin Selection_io_plugin)
@@ -34,10 +33,7 @@ polyhedron_demo_plugin(surface_mesh_io_plugin Surface_mesh_io_plugin)
 target_link_libraries(surface_mesh_io_plugin scene_surface_mesh_item scene_polygon_soup_item)
 
 polyhedron_demo_plugin(surf_io_plugin Surf_io_plugin)
-target_link_libraries(surf_io_plugin scene_polyhedron_item)
-
-polyhedron_demo_plugin(surf_to_sm_io_plugin Surf_to_sm_io_plugin)
-target_link_libraries(surf_to_sm_io_plugin scene_surface_mesh_item)
+target_link_libraries(surf_io_plugin scene_polyhedron_item scene_surface_mesh_item)
 
 
 
@@ -67,9 +63,26 @@ if (VTK_FOUND)
 else()
   message(STATUS "NOTICE : the vtk IO plugin needs VTK 6.0 or greater and will not be compiled.")
 endif()
-qt5_wrap_ui( xyzUI_FILES Add_point_set_dialog.ui)
-polyhedron_demo_plugin(xyz_plugin XYZ_io_plugin ${xyzUI_FILES})
+polyhedron_demo_plugin(xyz_plugin XYZ_io_plugin)
 target_link_libraries(xyz_plugin scene_points_with_normal_item)
 
-polyhedron_demo_plugin(ply_to_xyz_plugin PLY_to_xyz_io_plugin)
-target_link_libraries(ply_to_xyz_plugin scene_points_with_normal_item)
+list(FIND CMAKE_CXX_COMPILE_FEATURES cxx_rvalue_references has_cxx_rvalues)
+list(FIND CMAKE_CXX_COMPILE_FEATURES cxx_variadic_templates has_cxx_variadic)
+
+if(has_cxx_rvalues LESS 0 OR has_cxx_variadic LESS 0)
+  message(STATUS "NOTICE: LAS/PLY IO examples require a C++11 compiler and will not be compiled.")
+else()
+  set(needed_cxx_features cxx_rvalue_references cxx_variadic_templates)
+  
+  polyhedron_demo_plugin(ply_plugin PLY_io_plugin)
+  target_link_libraries(ply_plugin scene_points_with_normal_item scene_polygon_soup_item scene_surface_mesh_item scene_polygon_soup_item)
+  target_compile_features(ply_plugin PRIVATE ${needed_cxx_features})
+  
+  if (LASLIB_FOUND)
+    polyhedron_demo_plugin(las_plugin LAS_io_plugin)
+    target_link_libraries(las_plugin scene_points_with_normal_item ${LASLIB_LIBRARIES})
+    target_compile_features(las_plugin PRIVATE ${needed_cxx_features})
+  else()
+    message(STATUS "NOTICE : the LAS IO plugin needs LAS libraries and will not be compiled.")
+  endif()
+endif()

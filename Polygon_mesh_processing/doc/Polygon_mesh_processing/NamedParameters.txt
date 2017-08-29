@@ -319,6 +319,26 @@ Monte-Carlo methods.
 \b Default value is `0`
 \cgalNPEnd
 
+\cgalNPBegin{do_project} \anchor PMP_do_project
+Parameter used in `random_perturbation()` to set whether vertices should be re-projected
+to the input surface after their geometric perturbation.
+\n
+\b Type : `bool` \n
+\b Default value is `true`
+\cgalNPEnd
+
+\cgalNPBegin{random_seed} \anchor PMP_random_seed
+Parameter used in `random_perturbation()` to choose a seed to initialize
+the random number generator `CGAL::Random()`.
+If this parameter is not provided,
+the random number generator is initialized with `CGAL::Random()`,
+and perturbation is not deterministic
+(i.e. not reproducible from one run to the other).
+\n
+\b Type : `unsigned int` \n
+\b Default is that this variable is not set
+\cgalNPEnd
+
 \cgalNPTableEnd
 
 */

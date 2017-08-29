@@ -85,7 +85,11 @@ public:
   bool keyPressEvent(QKeyEvent* e) Q_DECL_OVERRIDE;
   void printPrimitiveId(QPoint point,
                         CGAL::Three::Viewer_interface*) Q_DECL_OVERRIDE;
-  void printPrimitiveIds(CGAL::Three::Viewer_interface*) Q_DECL_OVERRIDE;
+  void printVertexIds(CGAL::Three::Viewer_interface*) Q_DECL_OVERRIDE;
+  void printEdgeIds(CGAL::Three::Viewer_interface*) Q_DECL_OVERRIDE;
+  void printFaceIds(CGAL::Three::Viewer_interface*) Q_DECL_OVERRIDE;
+  void printAllIds(CGAL::Three::Viewer_interface*) Q_DECL_OVERRIDE;
+  //!Re-computes the primitiveIds for `item`
   void updatePrimitiveIds(Viewer_interface *, Scene_item *item) Q_DECL_OVERRIDE;
   bool testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer) Q_DECL_OVERRIDE;
   Bbox bbox() const Q_DECL_OVERRIDE;
@@ -142,6 +146,9 @@ public Q_SLOTS:
   void itemChanged();
   void itemChanged(int i) Q_DECL_OVERRIDE;
   void itemChanged(CGAL::Three::Scene_item*) Q_DECL_OVERRIDE;
+  //!Transmits a CGAL::Three::Scene_item::itemVisibilityChanged() signal to the scene.
+  void itemVisibilityChanged();
+  void itemVisibilityChanged(CGAL::Three::Scene_item*) Q_DECL_OVERRIDE;
   //!Removes `item` from all the groups of the scene.
   void remove_item_from_groups(CGAL::Three::Scene_item* item);
   //!Re-organizes the sceneView.
@@ -209,7 +216,8 @@ Q_SIGNALS:
   //! Is emitted when a new item is added to the scene.
   void newItem(int);
   //! Emit this to re-compute the viewer's Bbox;
-  void updated_bbox();
+  //! If `b` is true, the scene will be recentered
+  void updated_bbox(bool b);
   //! Emit this to redraw the scene.
   void updated();
   //! Is emitted when `item` is erased.

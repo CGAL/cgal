@@ -150,7 +150,11 @@ MainWindow::savePoints()
 
 void MainWindow::lloydStep() {
   scene.lloyd_step();
+#if QGLVIEWER_VERSION >= 0x020700
+  viewer->update();
+#else
   viewer->updateGL();
+#endif
   viewer->changed();
   }
 

@@ -45,6 +45,7 @@
 #include <CGAL/Surface_mesh_shortest_path/internal/Cone_tree.h>
 #include <CGAL/Surface_mesh_shortest_path/internal/misc_functions.h>
 
+#include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/iterator.h>
 #include <boost/variant/get.hpp>
 
@@ -1738,29 +1739,34 @@ private:
             he = next(he, m_graph);
           }
 
-          halfedge_descriptor oppositeHalfedge = opposite(he, m_graph);
-
-          std::size_t oppositeIndex = internal::edge_index(oppositeHalfedge, m_graph);
-
-          FT oppositeLocationCoords[3] = { FT(0.0), FT(0.0), FT(0.0) };
-          oppositeLocationCoords[oppositeIndex] = cbcw(location, (associatedEdge + 1) % 3);
-          oppositeLocationCoords[(oppositeIndex + 1) % 3] = cbcw(location, associatedEdge);
           std::pair<Node_distance_pair,Barycentric_coordinates> mainFace = nearest_on_face(f, location);
-          Barycentric_coordinates oppositeLocation(cbc(oppositeLocationCoords[0], oppositeLocationCoords[1], oppositeLocationCoords[2]));
-          std::pair<Node_distance_pair,Barycentric_coordinates> otherFace = nearest_on_face(face(oppositeHalfedge, m_graph), oppositeLocation);
 
-          if (mainFace.first.first == NULL)
+          halfedge_descriptor oppositeHalfedge = opposite(he, m_graph);
+          if(!CGAL::is_border(oppositeHalfedge, m_graph))
           {
-            return otherFace;
+              std::size_t oppositeIndex = internal::edge_index(oppositeHalfedge, m_graph);
+
+              FT oppositeLocationCoords[3] = { FT(0.0), FT(0.0), FT(0.0) };
+              oppositeLocationCoords[oppositeIndex] = cbcw(location, (associatedEdge + 1) % 3);
+              oppositeLocationCoords[(oppositeIndex + 1) % 3] = cbcw(location, associatedEdge);
+              Barycentric_coordinates oppositeLocation(cbc(oppositeLocationCoords[0], oppositeLocationCoords[1], oppositeLocationCoords[2]));
+              std::pair<Node_distance_pair,Barycentric_coordinates> otherFace = nearest_on_face(face(oppositeHalfedge, m_graph), oppositeLocation);
+
+              if (mainFace.first.first == NULL)
+              {
+                return otherFace;
+              }
+              else if (otherFace.first.first == NULL)
+              {
+                return mainFace;
+              }
+              else
+              {
+                return mainFace.first.second < otherFace.first.second ? mainFace : otherFace;
+              }
           }
-          else if (otherFace.first.first == NULL)
-          {
-            return mainFace;
-          }
-          else
-          {
-            return mainFace.first.second < otherFace.first.second ? mainFace : otherFace;
-          }
+
+          return mainFace;
         }
         break;
       case CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATES_ON_VERTEX:
@@ -1997,13 +2003,13 @@ public:
 
   Equivalent to `Surface_mesh_shortest_path(tm, get(boost::vertex_index, tm), get(boost::halfedge_index, tm), get(boost::face_index, tm), get(CGAL::vertex_point, tm), traits)`.
   */
-  Surface_mesh_shortest_path(Triangle_mesh& tm, const Traits& traits = Traits())
+  Surface_mesh_shortest_path(const Triangle_mesh& tm, const Traits& traits = Traits())
     : m_traits(traits)
-    , m_graph(tm)
+    , m_graph(const_cast<Triangle_mesh&>(tm))
     , m_vertexIndexMap(get(boost::vertex_index, tm))
     , m_halfedgeIndexMap(get(boost::halfedge_index, tm))
     , m_faceIndexMap(get(boost::face_index, tm))
-    , m_vertexPointMap(get(CGAL::vertex_point, tm))
+    , m_vertexPointMap(get(CGAL::vertex_point, m_graph))
     , m_debugOutput(false)
   {
     reset_algorithm();
@@ -2026,9 +2032,9 @@ public:
 
   \param traits Optional instance of the traits class to use.
   */
-  Surface_mesh_shortest_path(Triangle_mesh& tm, Vertex_index_map vertexIndexMap, Halfedge_index_map halfedgeIndexMap, Face_index_map faceIndexMap, Vertex_point_map vertexPointMap, const Traits& traits = Traits())
+  Surface_mesh_shortest_path(const Triangle_mesh& tm, Vertex_index_map vertexIndexMap, Halfedge_index_map halfedgeIndexMap, Face_index_map faceIndexMap, Vertex_point_map vertexPointMap, const Traits& traits = Traits())
     : m_traits(traits)
-    , m_graph(tm)
+    , m_graph(const_cast<Triangle_mesh&>(tm))
     , m_vertexIndexMap(vertexIndexMap)
     , m_halfedgeIndexMap(halfedgeIndexMap)
     , m_faceIndexMap(faceIndexMap)

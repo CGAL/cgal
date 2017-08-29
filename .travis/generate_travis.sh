@@ -61,7 +61,7 @@ echo "  - PACKAGE='Polyhedron_demo' " >> .travis.yml
 COPY=0
 for LINE in $(cat "$PWD/.travis/template.txt")
 do
-	if [ "$LINE" = "install: " ]
+	if [ "$LINE" = "compiler: " ]
 	then
 		COPY=1
 	fi

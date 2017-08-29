@@ -9,10 +9,13 @@ uniform highp mat4 mv_matrix;
 varying highp vec4 fP;
 varying highp vec3 fN;
 varying highp vec4 color;
+varying highp float dist[6];
 
 
 void main(void)
 {
+ for(int i=0; i<6; ++i)
+  dist[i] = 1;
   color = vec4(colors, 1.0);
   fP = mv_matrix * vertex;
   fN = mat3(mv_matrix)* normals;

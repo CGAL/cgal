@@ -1509,6 +1509,7 @@ void Scene_c3t3_item_priv::computeSpheres()
       c = QColor(Qt::red);
     else
       c = spheres->color();
+
     switch(vit->in_dimension())
     {
     case 0:

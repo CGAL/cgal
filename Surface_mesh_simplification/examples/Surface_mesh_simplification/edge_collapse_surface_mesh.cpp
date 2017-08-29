@@ -12,12 +12,10 @@
 
 // Stop-condition policy
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_ratio_stop_predicate.h>
-
-// Non-default cost and placement policies
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Midpoint_and_length.h> 
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_length_cost.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Midpoint_placement.h>
 
 typedef CGAL::Simple_cartesian<double> Kernel;
-
 typedef Kernel::Point_3 Point_3;
 
 //
@@ -129,7 +127,7 @@ int main( int argc, char** argv )
   Stats stats ;
   
   My_visitor vis(&stats) ;
-    
+
   // The index maps are not explicitelty passed as in the previous
   // example because the surface mesh items have a proper id() field.
   // On the other hand, we pass here explicit cost and placement
@@ -142,7 +140,7 @@ int main( int argc, char** argv )
                               .get_placement(SMS::Midpoint_placement<Surface_mesh>())
                               .visitor      (vis)
            );
-  
+
   std::cout << "\nEdges collected: "  << stats.collected
             << "\nEdges proccessed: " << stats.processed
             << "\nEdges collapsed: "  << stats.collapsed
@@ -153,8 +151,8 @@ int main( int argc, char** argv )
             << std::endl ; 
             
   std::cout << "\nFinished...\n" << r << " edges removed.\n" 
-            << num_edges(surface_mesh) << " final edges.\n" ;
-        
+            << surface_mesh.number_of_edges() << " final edges.\n";
+ 
   std::ofstream os( argc > 2 ? argv[2] : "out.off" ) ; os << surface_mesh ;
   
   return EXIT_SUCCESS ;      

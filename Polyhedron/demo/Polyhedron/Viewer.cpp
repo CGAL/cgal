@@ -30,6 +30,8 @@ public:
   bool macro_mode;
   bool inFastDrawing;
   bool inDrawWithNames;
+  bool clipping;
+  QVector4D clipbox[6];
   QPainter *painter;
   // F P S    d i s p l a y
   QTime fpsTime;
@@ -113,6 +115,7 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
   d->macro_mode = false;
   d->inFastDrawing = true;
   d->inDrawWithNames = false;
+  d->clipping = false;
   d->shader_programs.resize(NB_OF_PROGRAMS);
   d->offset = qglviewer::Vec(0,0,0);
   d->textRenderer = new TextRenderer();
@@ -517,9 +520,15 @@ void Viewer::keyPressEvent(QKeyEvent* e)
         update();
         return;
     }
+    else if(e->key() == Qt::Key_C) {
+      QVector4D box[6];
+      for(int i=0; i<6; ++i)
+        box[i] = QVector4D(1,0,0,0);
+          enableClippingBox(box);
+        }
   }
   else if(e->key() == Qt::Key_I && e->modifiers() & Qt::ControlModifier){
-    d->scene->printPrimitiveIds(this);
+    d->scene->printAllIds(this);
     update();
     return;
   }
@@ -727,6 +736,19 @@ void Viewer::attribBuffers(int program_name) const {
     QOpenGLShaderProgram* program = getShaderProgram(program_name);
     program->bind();
     program->setUniformValue("mvp_matrix", mvp_mat);
+    program->setUniformValue("is_clipbox_on", d->clipping);
+    if(d->clipping)
+    {
+      QMatrix4x4 clipbox1;
+      QMatrix4x4 clipbox2;
+      for(int i=0;i<12;++i)
+      {
+        clipbox1.data()[i]=d->clipbox[i/4][i%4];
+        clipbox2.data()[i]=d->clipbox[(i+12)/4][(i+12)%4];
+      }
+      program->setUniformValue("clipbox1", clipbox1);
+      program->setUniformValue("clipbox2", clipbox2);
+    }
     switch(program_name)
     {
     case PROGRAM_WITH_LIGHT:
@@ -971,7 +993,8 @@ void Viewer::drawVisualHints()
     if(d->axis_are_displayed)
     {
       d->rendering_program.bind();
-      SetOrthoProjection(true);
+      qglviewer::Camera::Type camera_type = camera()->type();
+      camera()->setType(qglviewer::Camera::ORTHOGRAPHIC);
         QMatrix4x4 mvpMatrix;
         QMatrix4x4 mvMatrix;
         for(int i=0; i < 16; i++)
@@ -980,7 +1003,7 @@ void Viewer::drawVisualHints()
         }
         mvpMatrix.ortho(-1,1,-1,1,-1,1);
         mvpMatrix = mvpMatrix*mvMatrix;
-        SetOrthoProjection(false);
+        camera()->setType(camera_type);
         QVector4D	position(0.0f,0.0f,1.0f,1.0f );
         // define material
         QVector4D	ambient;
@@ -1568,9 +1591,7 @@ void Viewer::SetOrthoProjection(bool b)
     camera()->setType(qglviewer::Camera::ORTHOGRAPHIC);
   else
     camera()->setType(qglviewer::Camera::PERSPECTIVE);
-
-
-
+  update();
 }
 
 void Viewer::setOffset(qglviewer::Vec offset){ d->offset = offset; }
@@ -1597,5 +1618,19 @@ TextRenderer* Viewer::textRenderer()
 bool Viewer::isExtensionFound()
 {
   return d->extension_is_found;
+
 }
+
+void Viewer::disableClippingBox()
+{
+  d->clipping = false;
+}
+
+void Viewer::enableClippingBox(QVector4D box[6])
+{
+  d->clipping = true;
+  for(int i=0; i<6; ++i)
+    d->clipbox[i] = box[i];
+}
+
  #include "Viewer.moc"

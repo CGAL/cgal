@@ -1,4 +1,238 @@
 
+-------------------------------- Release 4.11 --------------------------------
+
+Release date: September 2017
+
+
+* 3D Periodic Regular Triangulations (new feature)
+
+  - Added the class Periodic_3_regular_triangulation_3, which provides
+    functionality for 3D periodic weighted Delaunay triangulations. The
+    construction is fully dynamic: it provides both point insertion and vertex
+    removal.
+
+
+* dD Regular Triangulations (new feature)
+
+  - Added the class Regular_triangulation, which provides functionality for dD
+    weighted Delaunay triangulations. Note that the removal of points is not
+    yet supported.
+
+
+* 2D and 3D Linear Geometry Kernel (breaking change)
+
+  - Breaking change: The dangerous implicit conversions between weighted points
+    and points in the concept Kernel have been disabled. Constructors offering
+    to build a weighted point from a point (and reversely) are still requested
+    by the concept Kernel but must now be marked with the explicit specifier.
+
+  - Breaking change: The removal of implicit conversions between points and
+    weighted points in the concept Kernel has incidentally created various
+    minor breaking changes in the following packages: 2D Alpha Shapes, 2D and
+    3D Triangulations, and 3D Mesh Generation. See the full changelog for
+    details.
+
+
+* Triangulated Surface Mesh Parameterization (breaking change)
+
+  - Breaking change: The package has been rewritten and can operate on any
+    model of the MutableFaceGraph concept. All previous parameterization
+    methods are still offered, although with a different, simpler API. The
+    documentation has been updated and offers a gentle introduction to the new
+    API. Users who wish to use the former API must use a version prior to 4.11.
+
+  - Breaking change: The adapter to add virtual seams is now the class CGAL::
+    Seam_mesh in the package CGAL and the BGL.
+
+  - Breaking change: The package has been restructured and most headers have
+    been moved. In a general manner, users should replace <CGAL/XXX.h> with
+    <CGAL/Surface_mesh_parameterization/XXX.h>
+
+  - Add the As Rigid As Possible Parameterization method. This parameterization
+    allows the user to prioritize angle preservation, shape preservation, or a
+    balance of both.
+
+  - Add the Orbifold Tutte Embedding method. This parameterization method
+    allows to parameterize meshes that are topological spheres.
+
+
+* 3D Surface Subdivision Methods (breaking changes)
+
+  - The subdivision algorithms now work on any model of a MutableFaceGraph. A
+    new API to the subdivision methods is offered, which uses optional named
+    parameters to pass the number of iterations and a vertex property map.
+
+  - Breaking change: Removed the headers <CGAL/Subdivision_method_3.h> and
+    <CGAL/Subdivision_mask_3.h>. The headers <CGAL/Subdivision_method_3/
+    subdivision_methods_3.h> and <CGAL/Subdivision_method_3/
+    subdivision_masks_3.h> should respectively be used instead.
+
+  - Sqrt3 subdivision can now handle input surfaces with a border.
+
+
+* Scale-Space Surface Reconstruction (breaking change)
+
+  - Breaking change: the API was rewritten to separate the smoothing and
+    meshing algorithm and making it possible for the user to use different
+    ones. The default algorithms used are the same as before this API change,
+    but methods are moved to the classes Weighted_PCA_smoother and
+    Alpha_shape_mesher.
+
+  - Alternative smoothing and meshing methods are provided: Jet_smoother and
+    Advancing_front_mesher.
+
+
+* 2D Alpha Shapes
+
+  - Breaking change: Mirrored the concepts of the 2D alpha shape package with
+    those of the 3D Alpha Shapes package. Consequently, a new concept,
+    WeightedAlphaShapeTraits_2, is introduced to provide requirements on the
+    traits class for 2D weighted alpha shapes. All models of the concept Kernel
+    are models of this new concept.
+
+  - The concept AlphaShapeTraits_2 now provides requirements on the traits
+    class for 2D basic alpha shapes, and refines DelaunayTriangulationTraits_2.
+
+
+* 2D and 3D Triangulations
+
+  - Breaking change: Added a new functor requirement, Construct_point_2, to the
+    concepts TriangulationTraits_2 and RegularTriangulationTraits_2 and a new
+    functor requirement, Construct_point_3, to the concepts
+    TriangulationTraits_3 and RegularTriangulationTraits_3. All models of the
+    concept Kernel already provide these functors.
+
+  - Breaking change: Introduced the concepts RegularTriangulationVertexBase_2
+    and RegularTriangulationVertexBase_3. These concepts describe the
+    requirements on classes meant to represent a vertex of a regular
+    triangulation. Concepts that previously refined TriangulationVertexBase_2
+    or TriangulationVertexBase_3 but described in fact a vertex class used in a
+    regular triangulation, such as the concept MeshVertexBase_3 in the 3D mesh
+    generation package, now refine the corresponding new regular vertex
+    concept.
+
+  - Breaking change: Uniformized the point type across all vertex and cell
+    concepts. The triangulation point type name is now always Point. Note that
+    this does not change the requirements but only the name: Point is still
+    expected to be equal to Traits::Point_[23] for basic and Delaunay
+    triangulations or to Traits::Weighted_point_[23] for regular
+    triangulations. Consequently:
+
+      - The concept RegularTriangulationVertexBase_2 now requests a Point type
+        (equal to Traits::Weighted_point_2)
+
+      - The concept RegularTriangulationCellBase_3 now requests a Point type
+        instead of a Weighted_point type (but still equal to Traits::
+        Weighted_point_3)
+
+      - The concept DelaunayTriangulationCellBase_3 now requests a Point type
+        instead of a Point_3 type (but still equal to Traits::Point_3).
+
+
+  - Introduced a new concept,
+    RegularTriangulationCellBaseWithWeightedCircumcenter_3, which describes the
+    requirements on a cell of a regular triangulation that caches its
+    circumcenter. The existing class
+    Regular_triangulation_cell_base_with_weighted_circumcenter_3 is the default
+    model of this concept.
+
+  - Added a new 3D traits class, Robust_weighted_circumcenter_filtered_traits_3
+    which provides robust versions of the kernel functors
+    Construct_weighted_circumcenter_3, Compute_squared_radius_3, and
+    Compute_squared_radius_smallest_orthogonal_sphere_3. This class can be used
+    as traits class in the the Mesh_3 package to efficiently yet robustly
+    generate 3D meshes.
+
+  - Add a new type of polyhedral domain with features,
+    Polyhedral_complex_mesh_domain_3. The domain is defined by a collection of
+    triangulated surfaces, forming a complex.
+
+
+* 3D Periodic Triangulations
+
+  - Added new locate and geometric access functions for 3D periodic
+    triangulations.
+
+  - The class Periodic_3_Delaunay_triangulation_traits_3 now inherits
+    Periodic_3_triangulation_traits_3.
+
+  - Breaking change: Some geometric access functions in
+    Periodic_3_triangulation_3 were renamed. The introduction of
+    Periodic_3_regular_triangulation_3 required to distinguish between
+    functions such as segment() returning a segment of weightless points, or a
+    segment of weighted points. As a general rule, previous geometrical access
+    functions will return objects with point type that of the triangulation
+    (thus, weighted objects when using weighted triangulations) and functions
+    containing construct in the name will always return weightless geometrical
+    objects.
+
+  - Breaking change: The concept Periodic_3TriangulationTraits_3 now requests a
+    domain getter: get_domain().
+
+  - Introduced a new concept,
+    RegularTriangulationCellBaseWithWeightedCircumcenter_3, which describes the
+    requirements on a cell of a regular triangulation that caches its
+    circumcenter. The existing class
+    Regular_triangulation_cell_base_with_weighted_circumcenter_3 is the default
+    model of this concept.
+
+
+* 3D Mesh Generation
+
+  - Breaking change: The type of the surface center in the concept
+    MeshCellBase_3 has been changed from Triangulation::Point to
+    TriangulationTraits::Point_3 to reflect that it is a weightless point.
+
+  - Breaking change: The function invalidate_circumcenter() of the concept
+    MeshCellBase_3 is renamed to invalidate_weighted_circumcenter_cache() and
+    moved to the new concept
+    RegularTriangulationCellBaseWithWeightedCircumcenter_3, which the concept
+    MeshCellBase_3 now refines.
+
+
+* Poisson Surface Reconstruction
+
+  - A new global function CGAL::poisson_surface_reconstruction_delaunay() is
+    provided in addition to the current class-based API in order to make it
+    easier to use.
+
+
+* Point Set Processing
+
+  - New functions to read from and write to LAS/LAZ files (LIDAR format), with
+    or without taking additional properties into account.
+
+  - Breaking change: The API of the PLY function to read points with properties
+    is modified for unification with LAS (see CGAL::
+    read_ply_points_with_properties()). A new function to write PLY with
+    properties is provided (CGAL::write_ply_points_with_properties()).
+
+
+* Spatial Searching
+
+  - Add function Kd_tree::remove(Point).
+
+
+* CGAL and the Boost Graph Library
+
+  - Add a partial specialization for the class CGAL::
+    Linear_cell_complex_for_combinatorial_map so that it is a model of the
+    graph concepts BidirectionalGraph and EdgeAndVertexListGraph and of the
+    concept MutableFaceGraph. This class can thus now be used in all BGL
+    functions and algorithms.
+
+  - Helper functions to create an icosahedron, a regular prism and a pyramid
+    have been added.
+
+  - Add class CGAL::Face_filtered_graph that wraps an existing graph and hide
+    all simplices that are not in the selected connected components.
+
+  - Added the class CGAL::Seam_mesh. The Seam_mesh is a graph adaptor which
+    allows to create virtual borders when marking edges as seam edges.
+
+  - Add the functions read_off() and write_off().
+
+
 -------------------------------- Release 4.10 --------------------------------
 
 Release date: May 2017
@@ -65,9 +299,18 @@ Release date: May 2017
 
 * 2D and 3D Linear Geometry Kernel
 
+  - Breaking change: The function compare_slopes() was renamed compare_slope.
+
   - Added a 2D and 3D weighted point class and predicates and constructions.
 
   - Add functions l_infinity_distance() for 2D and 3D.
+
+  - Add a new functor in CGAL Kernel concept to compare the slope of two 3D
+    segments. All models of the Kernel concept now provide the functor
+    Compare_slope_3, and the free function compare_slope() is available.
+
+  - Add an operator in CGAL Kernel concept Angle_3 to qualify the angle between
+    the normal of the triangle given by three points, and a vector.
 
 
 * 3D Convex Hull
@@ -453,12 +696,6 @@ Release date: April 2016
     volume of simplices or group of simplices of a polygon mesh.
 
   - Add function bbox_3() to compute the bounding box of a polygon mesh.
-
-
-* Surface Mesh Parameterization
-
-  - LSCM_parameterizer_3 now uses by default Eigen instead of OpenNL as a model
-    of SparseLinearAlgebraTraits_d.
 
 
 * Point Set Processing

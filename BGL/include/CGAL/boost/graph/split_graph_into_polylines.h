@@ -292,7 +292,7 @@ split_graph_into_polylines(const Graph& graph,
   std::set<vertex_descriptor, G_copy_less> terminal(g_copy_less);
 
   BOOST_FOREACH(vertex_descriptor v, vertices(g_copy)){
-    typename graph_traits<Graph>::degree_size_type n = degree(v, g_copy);
+    typename graph_traits<G_copy>::degree_size_type n = degree(v, g_copy);
     if ( n == 1 ) terminal.insert(v);
     if ( n ==0 ){
       //isolated vertex

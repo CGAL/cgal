@@ -28,11 +28,14 @@
 
 #include <boost/iterator/transform_iterator.hpp>
 
+#include <OpenMesh/Core/IO/MeshIO.hh>
+
 #include <CGAL/boost/graph/properties_PolyMesh_ArrayKernelT.h>
 #include <CGAL/boost/graph/internal/OM_iterator_from_circulator.h>
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/Iterator_range.h>
 #include <CGAL/boost/graph/helpers.h>
+#include <CGAL/boost/graph/io.h>
 #include <CGAL/assertions.h>
 
 #include <OpenMesh/Core/Mesh/PolyMesh_ArrayKernelT.hh>
@@ -206,6 +209,15 @@ degree(typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::vertex
        const OpenMesh::PolyMesh_ArrayKernelT<K>& sm)
 {
   return sm.valence(v);
+}
+
+
+template <typename K>
+typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::degree_size_type
+degree(typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::face_descriptor f,
+       const OpenMesh::PolyMesh_ArrayKernelT<K>& sm)
+{
+  return sm.valence(f);
 }
 
          
@@ -680,6 +692,20 @@ void clear(OpenMesh::PolyMesh_ArrayKernelT<K>& sm)
   CGAL_postcondition(num_edges(sm) == 0);
   CGAL_postcondition(num_vertices(sm) == 0);
   CGAL_postcondition(num_faces(sm) == 0);
+}
+
+
+template<typename K>
+bool read_off(std::istream& is, OpenMesh::PolyMesh_ArrayKernelT<K>& sm)
+{
+  return OpenMesh::IO::read_mesh(sm, is, ".OFF");
+}
+
+
+template<typename K>
+bool write_off(std::ostream& os, OpenMesh::PolyMesh_ArrayKernelT<K>& sm)
+{
+  return OpenMesh::IO::write_mesh(sm, os, ".OFF");
 }
 
 }

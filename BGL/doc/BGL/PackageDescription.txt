@@ -215,6 +215,9 @@ for conversion between models of different `FaceGraph` concepts, etc.
 Most functions are in the header file `<CGAL/boost/graph/helpers.h>`
 */
 
+/// \defgroup PkgBGLIOFct I/O Functions
+/// \ingroup PkgBGL
+
 /*!
 \addtogroup PkgBGLIterators
 
@@ -298,8 +301,9 @@ adapted types are listed here. The pages document which concepts they
 model, the properties they support, and any possible caveats that a
 user might encounter.
 
-- \link BGLSMGT `boost::graph_traits< CGAL::Surface_mesh<P> >` \endlink
-- \link BGLPolyGT `boost::graph_traits< CGAL::Polyhedron_3<T> >` \endlink
+- \link BGLSMGT  `boost::graph_traits< CGAL::Surface_mesh<P> >` \endlink
+- \link BGLPolyGT  `boost::graph_traits< CGAL::Polyhedron_3<T> >` \endlink
+- \link BGLLCCGT `boost::graph_traits< CGAL::Linear_cell_complex_for_combinatorial_map<...> >` \endlink
 - \link BGLSeam_meshGT `boost::graph_traits< CGAL::Seam_mesh<T> >` \endlink
 - \link BGLT2GT `boost::graph_traits< CGAL::Triangulation_2<GT, TDS> >` \endlink
 - \link BGLArgtGT `boost::graph_traits< CGAL::Arrangement_2<T,DC> >` \endlink
@@ -315,6 +319,12 @@ user might encounter.
 - `CGAL::HalfedgeDS_face_max_base_with_id`
 - `CGAL::Polyhedron_items_with_id_3`
 - `CGAL::set_halfedgeds_items_id()`
+- `CGAL::Dual`
+- `CGAL::Graph_with_descriptor_with_graph`
+- `CGAL::Graph_with_descriptor_with_graph_property_map`
+- `CGAL::Face_filtered_graph`
+- `CGAL::Linear_cell_complex_bgl_min_items`
+- `CGAL::Linear_cell_complex_for_bgl_combinatorial_map_helper`
 
 ## Helper Functions ##
 - `CGAL::is_border()`
@@ -338,6 +348,10 @@ user might encounter.
 - `CGAL::make_tetrahedron()`
 - `CGAL::make_quad()`
 - `CGAL::make_hexahedron()`
+- `CGAL::make_icosahedron()`
+- `CGAL::make_regular_prism()`
+- `CGAL::make_pyramid()`
+- `CGAL::make_grid()`
 
 - `CGAL::clear()`
 - `CGAL::copy_face_graph()`
@@ -401,12 +415,18 @@ user might encounter.
 - `CGAL::convert_nef_polyhedron_to_polygon_mesh()`
 - `CGAL::split_graph_into_polylines()`
 
+
 ## Graph Adaptors ##
 - `CGAL::Dual`
 - `CGAL::Face_filtered_graph`
 - `CGAL::Graph_with_descriptor_with_graph`
 - `CGAL::Graph_with_descriptor_with_graph_property_map`
 - `CGAL::Seam_mesh`
+
+## I/O Functions ##
+- `CGAL::read_off()`
+- `CGAL::write_off()`
+
 */
 
 /*!

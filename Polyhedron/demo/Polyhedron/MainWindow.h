@@ -95,7 +95,8 @@ public Q_SLOTS:
   //!Creates a new group and adds it to the scene.
   void makeNewGroup();
   //! Re-computes the viewer's Bbox
-  void updateViewerBBox();
+  //! If `b` is true, recenters the scene.
+  void updateViewerBBox(bool b);
   //! Opens a script or a file with the default loader if there is.
   void open(QString);
   //! Is called when the up button is pressed.
@@ -250,7 +251,7 @@ protected Q_SLOTS:
    //!and viewer accordingly.
   /*!
    * Set the scene selected item or selected item list. Sets the manipulated
-   * frame of the viewer to the new selected item's and calls updateGL().
+   * frame of the viewer to the new selected item's and calls update().
    */
   void selectionChanged();
   //! Scrolls to the new selected item from its name in the Geometric Objects list.
@@ -351,10 +352,8 @@ protected Q_SLOTS:
   void filterOperations();
   //!Updates the bounding box and moves the camera to fits the scene.
   void on_actionRecenterScene_triggered();
-
   //!Resizes the header of the scene view
   void resetHeader();
-
 protected:
   QList<QAction*> createSubMenus(QList<QAction*>);
   /*! For each objects in the Geometric Objects view, loads the associated plugins.

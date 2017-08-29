@@ -21,6 +21,7 @@
 #include <CGAL/boost/graph/selection.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/border.h>
+#include <CGAL/iterator.h>
 
 #include <CGAL/Polygon_2.h>
 
@@ -109,7 +110,7 @@ public:
     is_edit_mode = b;
     QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
     //for highlighting
-    viewer->setMouseTracking(b);
+    viewer->setMouseTracking(true);
   }
 
   void init(Scene_facegraph_item* poly_item, QMainWindow* mw, Active_handle::Type aht, int k_ring) {
@@ -623,7 +624,12 @@ protected:
       pen.setColor(QColor(Qt::green));
       pen.setWidth(3);
       //Create a QImage of the screen and paint the lasso on top of it
+#if QGLVIEWER_VERSION >= 0x020700
+      QImage image = viewer->grabFramebuffer();
+#else
       QImage image = viewer->grabFrameBuffer();
+
+#endif
       painter->begin(viewer);
       painter->drawImage(QPoint(0,0), image);
       painter->setPen(pen);

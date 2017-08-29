@@ -29,6 +29,7 @@
 #include <CGAL/algorithm.h>
 #include <CGAL/QP_solver/basic.h>
 #include <CGAL/QP_solver/functors.h>
+#include <CGAL/IO/io.h>
 #include <vector> 
 #include <map>
 #include <iomanip>
@@ -1067,7 +1068,7 @@ private:
   template<typename NumberType>
   bool number(NumberType& entry) {
     // whitespace(); the following >> should care for this
-    from >> entry;
+    from >> CGAL::iformat(entry);
     return from.good();
   }
 

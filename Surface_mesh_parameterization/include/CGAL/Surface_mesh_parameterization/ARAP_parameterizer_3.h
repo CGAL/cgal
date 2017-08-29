@@ -84,16 +84,16 @@ namespace Surface_mesh_parameterization {
 ///
 /// This parameterization allows the user to prioritize angle preservation,
 /// shape preservation, or a balance of both.
-/// A parameter &lambda; controls whether the priority is given to angle
-/// or to shape preservation: when &lambda; = 0, the parameterization is
+/// A parameter \f$\lambda\f$ controls whether the priority is given to angle
+/// or to shape preservation: when \f$\lambda=0\f$, the parameterization is
 /// as-similar-as-possible (ASAP) and is equivalent to the (conforming) LSCM parameterization.
-/// As &lambda; grows, the shape preservation becomes more and more important,
-/// yielding, when &lambda; goes to infinity, a parameterization that is as-rigid-as-possible (ARAP).
+/// As \f$\lambda\f$ grows, the shape preservation becomes more and more important,
+/// yielding, when \f$\lambda\f$ goes to infinity, a parameterization that is as-rigid-as-possible (ARAP).
 ///
 /// This is a free border parameterization. There is no need to map the border of the surface
 /// onto a convex polygon.
-/// When &lambda; = 0, only two pinned vertices are needed to ensure a unique solution.
-/// When &lambda; is non-null, the border does not need to be parameterized and
+/// When \f$\lambda=0\f$, only two pinned vertices are needed to ensure a unique solution.
+/// When \f$\lambda\f$ is non-null, the border does not need to be parameterized and
 /// a random vertex is pinned.
 ///
 /// If flips are present in the initial parameterization, a post-processing step
@@ -335,7 +335,7 @@ private:
   }
 
   // Parameterize the border. The number of fixed vertices depends on the value
-  // of the parameter &lambda;.
+  // of the parameter lambda.
   template <typename VertexUVMap,
             typename VertexIndexMap,
             typename VertexParameterizedMap>
@@ -1353,7 +1353,7 @@ public:
   }
 
 public:
-  /// Constructor taking only the parameter &lambda; .
+  /// Constructor taking only the parameter \f$\lambda\f$.
   ARAP_parameterizer_3(NT lambda)
     :
       m_borderParameterizer(Border_parameterizer()),

@@ -50,6 +50,7 @@
 ## Classes ##
 - `CGAL::Combinatorial_map<d,Items,Alloc>`
 - `CGAL::Cell_attribute<CMap,Info_,Tag,OnMerge,OnSplit>`
+- `CGAL::Cell_attribute_with_id<CMap,Info_,Tag,OnMerge,OnSplit>`
 - `CGAL::Generic_map_min_items`
 
 ## Global Functions ##

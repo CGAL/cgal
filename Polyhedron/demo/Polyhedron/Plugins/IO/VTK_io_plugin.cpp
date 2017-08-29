@@ -81,7 +81,7 @@ typedef Scene_surface_mesh_item Scene_facegraph_item;
 typedef Scene_polyhedron_item Scene_facegraph_item;
 #endif
 typedef Scene_facegraph_item::Face_graph FaceGraph;
-typedef typename boost::property_traits<typename boost::property_map<FaceGraph, CGAL::vertex_point_t>::type>::value_type Point;
+typedef boost::property_traits<boost::property_map<FaceGraph, CGAL::vertex_point_t>::type>::value_type Point;
 namespace CGAL{
 
   class ErrorObserverVtk : public vtkCommand
@@ -285,11 +285,13 @@ public:
   typedef boost::graph_traits<FaceGraph>::vertex_descriptor vertex_descriptor;
   typedef boost::graph_traits<FaceGraph>::face_descriptor face_descriptor;
 
-  QString nameFilters() const {
-    return "VTK PolyData files (*.vtk);; VTK XML PolyData (*.vtp);; VTK XML UnstructuredGrid (*.vtu)"; }
 #ifdef USE_SURFACE_MESH
+  QString nameFilters() const {
+    return "VTK PolyData files (Surface_mesh) (*.vtk);; VTK XML PolyData (Surface_mesh) (*.vtp);; VTK XML UnstructuredGrid (Surface_mesh)(*.vtu)"; }
   QString name() const { return "vtk_sm_plugin"; }
 #else
+  QString nameFilters() const {
+    return "VTK PolyData files (Polyhedron) (*.vtk);; VTK XML PolyData (Polyhedron) (*.vtp);; VTK XML UnstructuredGrid (Polyhedron)(*.vtu)"; }
   QString name() const { return "vtk_plugin"; }
 #endif
   bool canSave(const CGAL::Three::Scene_item* item)

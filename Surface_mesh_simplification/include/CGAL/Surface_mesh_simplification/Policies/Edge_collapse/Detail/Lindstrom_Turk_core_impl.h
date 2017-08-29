@@ -90,7 +90,7 @@ void LindstromTurkCore<ECM,K>::Extract_triangle_data()
   for ( const_triangle_iterator it = mProfile.triangles().begin(), eit = mProfile.triangles().end() ; it != eit ; ++ it )
   {
     Triangle const& tri = *it ;
-    
+
     Point const& p0 = get_point(tri.v0);
     Point const& p1 = get_point(tri.v1);
     Point const& p2 = get_point(tri.v2);

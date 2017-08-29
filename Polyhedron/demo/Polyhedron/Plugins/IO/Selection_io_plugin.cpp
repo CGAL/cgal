@@ -12,11 +12,12 @@ class Polyhedron_demo_selection_io_plugin :
 public:
 #ifdef USE_SURFACE_MESH
     QString name() const { return "selection_io_sm_plugin"; }
+    QString nameFilters() const { return "Surface_mesh selection files(*.selection.txt)"; }
 #else
     QString name() const { return "selection_io_plugin"; }
+    QString nameFilters() const { return "Polyhedron selection files (*.selection.txt)"; }
 #endif
 
-    QString nameFilters() const { return "Selection files (*.selection.txt)"; }
 
     bool canLoad() const { return true; }
     CGAL::Three::Scene_item* load(QFileInfo fileinfo) {

@@ -371,8 +371,11 @@ size_type number_of_solid_components(const FT& alpha = get_alpha()) const;
 Returns an iterator pointing to the first element with \f$ \alpha\f$-value 
 such that the alpha shape satisfies the following two properties: 
 
-- `nb_components` equals the number of solid components and 
-- all data points are either on the boundary or in the interior of the regularized version of the alpha shape. 
+- All data points are either on the boundary or in the interior
+of the regularized version of the alpha shape.
+
+- The number of solid component of the alpha shape is equal to or
+smaller than `nb_components`.
 
 If no such value is found, the iterator points to the first element with 
 \f$ \alpha\f$-value such that the alpha shape satisfies the second property. 

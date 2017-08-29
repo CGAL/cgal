@@ -37,7 +37,7 @@
 
 #    ifdef CGAL_LICENSE_ERROR
 #      error "Your commercial license for CGAL does not cover this release \
-of the Polygon Mesh Processing - Geometric Measure  package. \
+of the Polygon Mesh Processing - Geometric Measure package. \
 You get this error, as you defined CGAL_LICENSE_ERROR."
 #    endif // CGAL_LICENSE_ERROR
 
@@ -46,12 +46,14 @@ You get this error, as you defined CGAL_LICENSE_ERROR."
 #else // no CGAL_POLYGON_MESH_PROCESSING_MEASURE_COMMERCIAL_LICENSE
 
 #  if defined(CGAL_LICENSE_WARNING)
-     CGAL_pragma_warning("You use the CGAL Polygon Mesh Processing - Geometric Measure package under "
-                         "the terms of the GPLv3+.")
+     CGAL_pragma_warning("\nThe macro CGAL_POLYGON_MESH_PROCESSING_MEASURE_COMMERCIAL_LICENSE is not defined."
+                          "\nYou use the CGAL Polygon Mesh Processing - Geometric Measure package under "
+                          "the terms of the GPLv3+.")
 #  endif // CGAL_LICENSE_WARNING
 
 #  ifdef CGAL_LICENSE_ERROR
-#    error "You use the CGAL Polygon Mesh Processing - Geometric Measure package under the terms of \
+#    error "The macro CGAL_POLYGON_MESH_PROCESSING_MEASURE_COMMERCIAL_LICENSE is not defined.\
+ You use the CGAL Polygon Mesh Processing - Geometric Measure package under the terms of \
 the GPLv3+. You get this error, as you defined CGAL_LICENSE_ERROR."
 #  endif // CGAL_LICENSE_ERROR
 

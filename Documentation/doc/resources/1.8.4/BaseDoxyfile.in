@@ -238,6 +238,7 @@ ALIASES += "cgalConcept=\details <div id=\"CGALConcept\"></div>\n \brief"
 ALIASES += "cgalConceptNamespace=\details <div id=\"CGALConceptNS\"></div>\n \brief"
 
 ALIASES += "cgalRefines=\xrefitem refines \"Refines\" \"Refinement Relationships\""
+ALIASES += "cgalRequires=\xrefitem requires \"Requires\" \"Type Requirements\""
 ALIASES += "cgalModels=\xrefitem models \"Is Model Of\" \"Is Model Relationships\""
 ALIASES += "cgalGeneralizes=\xrefitem generalizes \"Generalizes\" \"Generalization Relationships\""
 ALIASES += "cgalHasModel=\xrefitem hasModels \"Has Models\" \"Has Model Relationships\""
@@ -250,6 +251,8 @@ ALIASES += "cgalAdvancedBegin=\htmlonly <div class=\"CGALAdvanced\"> <div>Advanc
 ALIASES += "cgalAdvancedEnd=\htmlonly </div> \endhtmlonly"
 ALIASES += "cgalAdvancedFunction=This is an advanced function."
 ALIASES += "cgalAdvancedClass=This is an advanced class."
+
+ALIASES += "cgalRequiresCPP11=\warning This function requires a C++11 compiler."
 
 ALIASES += "cgalPkgPicture{1}=<div class=\"PkgImage\"> \n \image html \1 \n</div>"
 

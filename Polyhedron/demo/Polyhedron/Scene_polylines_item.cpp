@@ -244,7 +244,7 @@ Scene_polylines_item_private::computeSpheres()
           spheres->add_sphere(K::Sphere_3(center+offset, spheres_drawn_square_radius), c);
       }
       spheres->setToolTip(
-            QString("<p>Legende of endpoints colors: <ul>"
+            QString("<p>Legend of endpoints colors: <ul>"
                     "<li>black: one incident polyline</li>"
                     "<li>green: two incident polylines</li>"
                     "<li>blue: three incident polylines</li>"
@@ -340,6 +340,12 @@ Scene_polylines_item::toolTip() const {
             .arg(this->renderingModeName())
             .arg(this->color().name())
             .arg(polylines.size());
+    if(polylines.size() == 1 )
+    {
+      QString vertices_info = tr("<p>Number of vertices: %1</p>")
+                              .arg(polylines.front().size());
+     s.append(vertices_info);
+    }
     return s;
 }
 

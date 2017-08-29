@@ -365,10 +365,10 @@ removes some unneeded files, and performs minor repair on some glitches.''')
     for f in all_pages:
       url_f=os.path.split(f)
       url_f=url_f[0]+"/"+url_f[1]
-      canonical_link="<link rel=\"canonical\" href=\"http://doc.cgal.org/latest/"+url_f+"\"/>\n"
+      canonical_link="<link rel=\"canonical\" href=\"https://doc.cgal.org/latest/"+url_f+"\"/>\n"
       re_replace_first_in_file(r'<head>', r'<head>\n'+canonical_link, f)
     ## special case for how_to_cite.html
-    canonical_link="<link rel=\"canonical\" href=\"http://doc.cgal.org/latest/Manual/how_to_cite.html\"/>\n"
+    canonical_link="<link rel=\"canonical\" href=\"https://doc.cgal.org/latest/Manual/how_to_cite.html\"/>\n"
     re_replace_first_in_file(r'<body>', r'<head>\n'+canonical_link+"</head>\n<body>", os.path.join("Manual","how_to_cite.html"))
 
     #copy deprecated.html

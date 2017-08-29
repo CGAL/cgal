@@ -147,7 +147,7 @@ jet_estimate_normal(const typename Kernel::Point_3& query, ///< point to compute
 // Public section
 // ----------------------------------------------------------------------------
 
-/// \ingroup PkgPointSetProcessing
+/// \ingroup PkgPointSetProcessingAlgorithms
 /// Estimates normal directions of the `[first, beyond)` range of points
 /// using jet fitting on the k nearest neighbors.
 /// The output normals are randomly oriented.

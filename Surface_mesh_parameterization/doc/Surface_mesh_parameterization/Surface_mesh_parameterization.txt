@@ -435,7 +435,7 @@ for its computation.
 The algorithm requires the user to select a set of vertices of the
 input mesh and mark them as <i>cones</i>, which will be the singularities of the unfolding.
 Internally, the process requires the use of (virtual) seams between the cones, but the choice
-of these seams do not influence the result. The `Seam_mesh` structure
+of these seams does not influence the result. The `Seam_mesh` structure
 (see also Section \ref secCuttingaMesh) is used for this purpose.
 
 \cgalFigureAnchor{Surface_mesh_parameterizationfigOrbifold}

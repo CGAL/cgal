@@ -239,7 +239,7 @@ public:
         ck_plane=new typename CK::Plane_3(to_CK(p),to_CK(q),to_CK(r));
       return ck_plane->has_on_positive_side(to_CK(s));
     }
-    catch (Uncertain_conversion_exception){
+    catch (Uncertain_conversion_exception&){
       if (pk_plane==NULL)
         pk_plane=new typename PK::Plane_3(to_PK(p),to_PK(q),to_PK(r));
       return pk_plane->has_on_positive_side(to_PK(s));
@@ -313,10 +313,13 @@ void coplanar_3_hull(InputIterator first, InputIterator beyond,
     }
   }
 
+  typename boost::property_map<Polyhedron_3, CGAL::vertex_point_t>::type vpm
+    = get(CGAL::vertex_point, P);
   std::vector<typename boost::graph_traits<Polyhedron_3>::vertex_descriptor> vertices;
   vertices.reserve(CH_2.size());
   BOOST_FOREACH(const Point_3& p, CH_2){
-    vertices.push_back(add_vertex(p,P));
+    vertices.push_back(add_vertex(P));
+    put(vpm, vertices.back(),p);
   }
   Euler::add_face(vertices, P);
 }
@@ -687,8 +690,12 @@ ch_quickhull_polyhedron_3(std::list<typename Traits::Point_3>& points,
       non_coplanar_quickhull_3(points, tds, traits);
       copy_face_graph(tds,P);
     }
-    else
-      make_tetrahedron(v0->point(),v1->point(),v2->point(),v3->point(),P);
+    else{
+      CGAL_assertion( traits.has_on_positive_side_3_object()(
+            construct_plane(v2->point(),v1->point(),v0->point()),
+            v3->point()) );
+      make_tetrahedron(v0->point(),v1->point(),v3->point(),v2->point(),P);
+    }
   }
   
 }

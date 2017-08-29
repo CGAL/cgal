@@ -184,8 +184,8 @@ MainWindow::MainWindow(QWidget* parent)
   connect(scene, SIGNAL(itemAboutToBeDestroyed(CGAL::Three::Scene_item*)),
           this, SLOT(removeManipulatedFrame(CGAL::Three::Scene_item*)));
 
-  connect(scene, SIGNAL(updated_bbox()),
-          this, SLOT(updateViewerBBox()));
+  connect(scene, SIGNAL(updated_bbox(bool)),
+          this, SLOT(updateViewerBBox(bool)));
 
   connect(scene, SIGNAL(selectionChanged(int)),
           this, SLOT(selectSceneItem(int)));
@@ -241,10 +241,8 @@ MainWindow::MainWindow(QWidget* parent)
   // can easily copy-paste its text.
   // connect(ui->infoLabel, SIGNAL(customContextMenuRequested(const QPoint & )),
   //         this, SLOT(showSceneContextMenu(const QPoint &)));
-
   connect(ui->actionRecenterScene, SIGNAL(triggered()),
           viewer, SLOT(update()));
-
   connect(ui->actionAntiAliasing, SIGNAL(toggled(bool)),
           viewer, SLOT(setAntiAliasing(bool)));
 
@@ -794,28 +792,37 @@ void MainWindow::message(QString message, QString colorName, QString font) {
     message.remove(message.length()-1, 1);
   }
   statusBar()->showMessage(message, 5000);
+  QTimer::singleShot(5000, [this]{this->statusBar()->setStyleSheet("");});
   message = "<font color=\"" + colorName + "\" style=\"font-style: " + font + ";\" >" +
-    message + "</font><br>";
+      message + "</font><br>";
   message = "[" + QTime::currentTime().toString() + "] " + message;
   ui->consoleTextEdit->append(message);
   ui->consoleTextEdit->verticalScrollBar()->setValue(ui->consoleTextEdit->verticalScrollBar()->maximum());
 }
 
 void MainWindow::information(QString text) {
-  this->message("INFO: " + text, "");
+  statusBar()->setStyleSheet("color: blue");
+  this->message("INFO: " + text, "blue");
 }
 
 void MainWindow::warning(QString text) {
-  this->message("WARNING: " + text, "blue");
+  statusBar()->setStyleSheet("color: orange");
+  this->message("WARNING: " + text, "orange");
 }
 
 void MainWindow::error(QString text) {
+  statusBar()->setStyleSheet("color: red");
   this->message("ERROR: " + text, "red");
 }
 
-void MainWindow::updateViewerBBox()
+void MainWindow::updateViewerBBox(bool recenter = true)
 {
   const Scene::Bbox bbox = scene->bbox();
+#if QGLVIEWER_VERSION >= 0x020502
+    qglviewer::Vec center = viewer->camera()->pivotPoint();
+#else
+    qglviewer::Vec center = viewer->camera()->revolveAroundPoint();
+#endif
   const double xmin = bbox.xmin();
   const double ymin = bbox.ymin();
   const double zmin = bbox.zmin();
@@ -851,7 +858,18 @@ void MainWindow::updateViewerBBox()
 
   viewer->setSceneBoundingBox(vec_min,
                               vec_max);
-  viewer->camera()->showEntireScene();
+  if(recenter)
+  {
+    viewer->camera()->showEntireScene();
+  }
+  else
+  {
+#if QGLVIEWER_VERSION >= 0x020502
+    viewer->camera()->setPivotPoint(center);
+#else
+    viewer->camera()->setRevolveAroundPoint(center);
+#endif
+  }
 }
 
 void MainWindow::reloadItem() {
@@ -1009,7 +1027,8 @@ void MainWindow::open(QString filename)
     default:
       load_pair = File_loader_dialog::getItem(fileinfo.fileName(), selected_items, &ok);
   }
-  viewer->context()->makeCurrent();
+
+  viewer->makeCurrent();
   if(!ok || load_pair.first.isEmpty()) { return; }
   
   if (load_pair.second)
@@ -1776,8 +1795,6 @@ void MainWindow::recurseExpand(QModelIndex index)
     {
         recurseExpand(index.child(0,0));
     }
-
-    QString name = scene->item(scene->getIdFromModelIndex(index))->name();
         CGAL::Three::Scene_group_item* group =
                 qobject_cast<CGAL::Three::Scene_group_item*>(scene->item(scene->getIdFromModelIndex(index)));
         if(group && group->isExpanded())

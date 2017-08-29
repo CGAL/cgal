@@ -22,7 +22,7 @@ bool test_torus_parameters() {
   typedef CGAL::Identity_property_map<Pwn>                    Point_map;
   typedef CGAL::Normal_of_point_with_normal_pmap<K>           Normal_map;
 
-  typedef CGAL::Shape_detection_3::Efficient_RANSAC_traits<
+  typedef CGAL::Shape_detection_3::Shape_detection_traits<
     K, Pwn_vector, Point_map, Normal_map>                     Traits;
 
   typedef CGAL::Shape_detection_3::Efficient_RANSAC<Traits>   Efficient_ransac;

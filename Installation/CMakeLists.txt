@@ -386,10 +386,11 @@ endif()
 #   CGAL-4.9   : 12.0.0 (Change the API/ABI in CGAL_ImageIO, but issue with 4GB images.)
 #   CGAL-4.10  : 13.0.0 (Change the API/ABI in CGAL_ImageIO.)
 #   CGAL-4.11  : 13.0.1 (Nothing different in CGAL compiled libraries.)
+#   CGAL-4.12  : 13.0.2 (Nothing different in CGAL compiled libraries.)
 # ¹) According to http://upstream-tracker.org/versions/cgal.html
 
 set( CGAL_SONAME_VERSION "13" )
-set( CGAL_SOVERSION      "13.0.1" )
+set( CGAL_SOVERSION      "13.0.2" )
 
 message( STATUS "CGAL_SONAME_VERSION=${CGAL_SONAME_VERSION}" )
 message( STATUS "CGAL_SOVERSION     =${CGAL_SOVERSION}" )
@@ -629,8 +630,13 @@ if(CGAL_DISABLE_GMP)
     "#error GMP is disabled by the CMake option CGAL_DISABLE_GMP")
 else()
   list(APPEND      CGAL_ESSENTIAL_3RD_PARTY_LIBRARIES GMP MPFR)
-  # Where CMake is run several times, to avoid duplicates
+  if(WITH_GMPXX)
+    list(APPEND      CGAL_ESSENTIAL_3RD_PARTY_LIBRARIES GMPXX)
+  endif()
+
+  # When CMake is run several times, to avoid duplicates
   list (REMOVE_DUPLICATES CGAL_ESSENTIAL_3RD_PARTY_LIBRARIES)
+
   file(REMOVE "${CMAKE_BINARY_DIR}/include/gmp.h")
 endif()
 hide_variable(CGAL_ESSENTIAL_3RD_PARTY_LIBRARIES)
@@ -768,11 +774,11 @@ set ( CGAL_INSTALL_CMAKE_DIR "${CGAL_INSTALL_LIB_DIR}/CGAL"
   CACHE STRING "The folder where CGAL CMake modules will be installed, relative to CMAKE_INSTALL_PREFIX" 
   )
 
-set ( CGAL_INSTALL_DOC_DIR "${CMAKE_INSTALL_FULL_DATAROOTDIR}/doc/${CGAL_VERSION_DIR}"
+set ( CGAL_INSTALL_DOC_DIR "${CMAKE_INSTALL_DATAROOTDIR}/doc/${CGAL_VERSION_DIR}"
   CACHE STRING "The folder where CGAL documentation and license files will be installed, relative to CMAKE_INSTALL_PREFIX"
   )
 
-set ( CGAL_INSTALL_MAN_DIR "${CMAKE_INSTALL_FULL_DATAROOTDIR}/man/man1"
+set ( CGAL_INSTALL_MAN_DIR "${CMAKE_INSTALL_DATAROOTDIR}/man/man1"
   CACHE STRING "The folder where manual pages for CGAL scripts will be installed, relative to CMAKE_INSTALL_PREFIX"
   )
 
