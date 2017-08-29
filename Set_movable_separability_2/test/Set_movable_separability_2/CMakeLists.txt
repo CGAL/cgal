@@ -4,7 +4,7 @@
 
 project( Set_movable_separability_2_Tests )
 
-cmake_minimum_required(VERSION 2.8.10)
+cmake_minimum_required(VERSION 3.1)
 
 # Use C++11 for this directory and its sub-directories.
 set(CMAKE_CXX_STANDARD 11)
