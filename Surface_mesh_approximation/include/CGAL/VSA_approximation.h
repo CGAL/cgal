@@ -23,7 +23,7 @@
 #include <queue>
 #include <iterator>
 
-#ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEGUB
+#ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
 #include <iostream>
 #endif
 
@@ -489,7 +489,7 @@ public:
    * @return number of proxies successfully added
    */
   std::size_t add_proxies_error_diffusion(const std::size_t num_proxies) {
-#ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEGUB
+#ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
     std::cerr << "#px " << proxies.size() << std::endl;
 #endif
 
@@ -518,7 +518,7 @@ public:
       num_to_add[pxe.px] = q_to_add;
     }
 
-#ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEGUB
+#ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
     for (std::size_t i = 0; i < px_error.size(); ++i)
       std::cerr << "#px " << px_error[i].px
         << ", #error " << px_error[i].err
@@ -538,7 +538,7 @@ public:
       }
     }
 
-#ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEGUB
+#ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
     std::cerr << "#requested/added "
       << num_proxies << '/' << num_added << std::endl;
 #endif
@@ -603,7 +603,7 @@ public:
         fit();
       }
 
-#ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEGUB
+#ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
       std::cerr << "teleported" << std::endl;
 #endif
     }
@@ -1091,8 +1091,12 @@ private:
         max_px_idx = i;
       }
     }
-    if (max_facet[max_px_idx] == proxies[max_px_idx].seed)
+    if (max_facet[max_px_idx] == proxies[max_px_idx].seed) {
+#ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
+      std::cerr << "add furthest failed" << std::endl;
+#endif
       return false;
+    }
 
     proxies.push_back(fit_new_proxy(max_facet[max_px_idx]));
     return true;
@@ -1238,7 +1242,7 @@ private:
       // a new connected border
       borders.push_back(Border(he_start));
 
-#ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEGUB
+#ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
       std::cerr << "#border " << borders.size() << std::endl;
 #endif
 
@@ -1248,7 +1252,7 @@ private:
         walk_to_next_anchor(he_start, chord);
         borders.back().num_anchors += subdivide_chord(chord.begin(), chord.end(), split_criterion);
 
-#ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEGUB
+#ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
         std::cerr << "#chord_anchor " << borders.back().num_anchors << std::endl;
 #endif
 
