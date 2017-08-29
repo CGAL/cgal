@@ -1,7 +1,7 @@
 # Created by the script cgal_create_CMakeLists
 # This is the CMake script for compiling a set of CGAL applications.
 
-project( Classification )
+project( Classification_Tests )
 
 
 cmake_minimum_required(VERSION 2.8.11)
