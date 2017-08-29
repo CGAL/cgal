@@ -64,7 +64,7 @@ public:
     // Hence, if the kernel has members and we use filtered traits, then
     // the members will be default constructed here...
 
-    // Problem 2: we have built filtered traits in P3Tfiltered_traits_2 and now
+    // Problem 2: we have built filtered traits in P2Tfiltered_traits_2 and now
     // we also need those two...
   }
 
