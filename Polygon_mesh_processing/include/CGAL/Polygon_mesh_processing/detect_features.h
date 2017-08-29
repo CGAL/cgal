@@ -294,7 +294,7 @@ void detect_sharp_edges(PolygonMesh& pmesh,
  * collects the surface patches of the faces incident to each vertex of the input polygon mesh.
  *
  * \tparam PolygonMesh a model of `HalfedgeListGraph`
- * \tparam PatchIdMap a model of `ReadWritePropertyMap` with
+ * \tparam PatchIdMap a model of `ReadPropertyMap` with
    `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type
    and the desired patch id, model of `CopyConstructible` as value type.
  * \tparam VertexIncidentPatchesMap a model of mutable `LvaluePropertyMap` with
@@ -302,21 +302,22 @@ void detect_sharp_edges(PolygonMesh& pmesh,
    must be a container of `boost::property_traits<PatchIdMap>::%value_type` and have a function `insert()`.
    A `std::set` or a `boost::unordered_set` are recommended, as a patch index may be
    inserted several times.
- * \tparam EdgeIsFeatureMap a model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%edge_descriptor`
+ * \tparam EdgeIsFeatureMap a model of `ReadPropertyMap` with `boost::graph_traits<PolygonMesh>::%edge_descriptor`
+ *  as key type and `bool` as value type.
  * \param pmesh the polygon mesh
  * \param patch_id_map the property map containing the surface patch ids for the faces of `pmesh`. It must be already filled.
  * \param vertex_incident_patches_map a property map that will contain the patch ids of all the faces incident to each vertex of `pmesh`.
  * \param edge_is_feature_map a filled property map that will contain the sharp-or-not status of each edge of `pmesh`
  *
- * * @see `CGAL::Polygon_mesh_processing::sharp_edges_segmentation()`
+ * @see `CGAL::Polygon_mesh_processing::sharp_edges_segmentation()`
  */
 
 template <typename PolygonMesh, typename PatchIdMap,
           typename VertexIncidentPatchesMap, typename EdgeIsFeatureMap>
 void detect_vertex_incident_patches(PolygonMesh& pmesh,
-                             PatchIdMap& patch_id_map,
+                             const PatchIdMap& patch_id_map,
                              VertexIncidentPatchesMap& vertex_incident_patches_map,
-                             EdgeIsFeatureMap& edge_is_feature_map)
+                             const EdgeIsFeatureMap& edge_is_feature_map)
 {
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor    vertex_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor  halfedge_descriptor;
