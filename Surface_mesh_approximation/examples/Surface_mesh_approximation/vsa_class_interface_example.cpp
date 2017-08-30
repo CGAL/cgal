@@ -42,7 +42,7 @@ int main()
     l21_approx.run_one_step();
 
   // add proxies to the one with the maximum fitting error
-  l21_approx.add_proxies_furthest(3);
+  l21_approx.add_proxies_furthest(3, 5);
   for (std::size_t i = 0; i < 10; ++i)
     l21_approx.run_one_step();
 

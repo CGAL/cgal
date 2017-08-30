@@ -454,28 +454,24 @@ public:
   }
 
   /*!
-   * @brief Add proxies to the regions with the maximum fitting error.
-   * Except for the first one, a coarse re-fitting is performed before each proxy is inserted.
+   * @brief Add proxies to the worst regions one by one.
+   * The re-fitting is performed after each proxy is inserted.
    * @pre current facet proxy map is valid
-   * @note after the addition, the facet proxy map is invalid
+   * @note after the addition, the facet proxy map remains valid
    * @param num_proxies number of proxies to be added
-   * @param num_iterations the number of iterations of coarse re-fitting
-   * @return number of proxies successfully added
+   * @param num_iterations the number of iterations of re-fitting
+   * @return number of proxies added
    */
   std::size_t add_proxies_furthest(const std::size_t num_proxies,
-    const std::size_t num_iterations = 5) {
-    // when insert only one proxy, it has the same effect of add_proxy_furthest()
-    if (num_proxies == 0 || !add_proxy_furthest())
-      return 0;
-
-    std::size_t num_added = 1;
+    const std::size_t num_iterations) {
+    std::size_t num_added = 0;
     for (; num_added < num_proxies; ++num_added) {
+      if (!add_proxy_furthest())
+        break;
       for (std::size_t i = 0; i < num_iterations; ++i) {
         partition();
         fit();
       }
-      if (!add_proxy_furthest())
-        return num_added;
     }
     return num_added;
   }
@@ -1083,44 +1079,46 @@ private:
   }
 
   /*!
-   * @brief Inserts a proxy at the furthest facet of the region with the maximum fitting error.
-   * No re-fitting is performed.
-   * @pre current facet proxy map is valid
-   * @note after the addition, the facet proxy map is invalid
-   * @return true if insertion success, false otherwise
+   * @brief Add a proxy seed at the facet with the maximum fitting error.
+   * @pre current facet proxy map is valid, proxy error is computed
+   * @note No re-fitting is performed. After the operation, the facet proxy map remains valid.
+   * @return true add successfully, false otherwise
    */
   bool add_proxy_furthest() {
-    std::vector<FT> px_error(proxies.size(), FT(0.0));
-    std::vector<FT> max_facet_error(proxies.size(), FT(0.0));
-    std::vector<face_descriptor> max_facet(proxies.size());
+#ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
+    std::cerr << "add furthest " << proxies.size() << std::endl;
+#endif
+    compute_fitting_error();
+    FT max_error = proxies.front().err;
+    std::size_t px_worst = 0;
+    for (std::size_t i = 0; i < proxies.size(); ++i) {
+      if (max_error < proxies[i].err) {
+        max_error = proxies[i].err;
+        px_worst = i;
+      }
+    }
 
+    face_descriptor fworst;
+    bool first = true;
     BOOST_FOREACH(face_descriptor f, faces(*m_pmesh)) {
       std::size_t px_idx = fproxy_map[f];
+      if (px_idx != px_worst || f == proxies[px_idx].seed)
+        continue;
+
       FT err = (*fit_error)(f, proxies[px_idx].px);
-      px_error[px_idx] += err;
-
-      if (err > max_facet_error[px_idx]) {
-        max_facet_error[px_idx] = err;
-        max_facet[px_idx] = f;
+      if (first || max_error < err) {
+        first = false;
+        max_error = err;
+        fworst = f;
       }
     }
 
-    FT max_px_error = px_error.front();
-    std::size_t max_px_idx = 0;
-    for (std::size_t i = 0; i < proxies.size(); ++i) {
-      if (px_error[i] > max_px_error) {
-        max_px_error = px_error[i];
-        max_px_idx = i;
-      }
-    }
-    if (max_facet[max_px_idx] == proxies[max_px_idx].seed) {
-#ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
-      std::cerr << "add furthest failed" << std::endl;
-#endif
+    if (first)
       return false;
-    }
 
-    proxies.push_back(fit_new_proxy(max_facet[max_px_idx]));
+    fproxy_map[fworst] = proxies.size();
+    proxies.push_back(fit_new_proxy(fworst));
+
     return true;
   }
 
