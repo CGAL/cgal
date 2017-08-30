@@ -509,7 +509,7 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_intersect(Subcurve* c1,
         return;
       }
       else{
-        CGAL_SL_PRINT_TEXT("Overlap with common ancesters");
+        CGAL_SL_PRINT_TEXT("Overlap with common ancestors");
         X_monotone_curve_2 xc = first_parent->last_curve();
         for (typename Subcurve_vector::iterator sc_it=all_leaves_diff.begin();
              sc_it!=all_leaves_diff.end(); ++sc_it)
@@ -525,7 +525,7 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_intersect(Subcurve* c1,
           xc = *CGAL::object_cast< X_monotone_curve_2 >(&inter_res.front());
         }
         _create_overlapping_curve(xc, c1 , c2, all_leaves_diff, first_parent, event_for_overlap);
-        CGAL_SL_PRINT_END_EOL("computing intersection (overlap with common ancesters)");
+        CGAL_SL_PRINT_END_EOL("computing intersection (overlap with common ancestors)");
         return;
       }
   }

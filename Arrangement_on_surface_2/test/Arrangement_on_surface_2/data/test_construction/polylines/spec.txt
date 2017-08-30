@@ -1,1 +1,1 @@
-test06 covers the case "Overlap with common ancesters"
+test06 covers the case "Overlap with common ancestors"
