@@ -504,18 +504,40 @@ public:
 
     // number of proxies to be added to each region
     std::vector<std::size_t> num_to_add(proxies.size(), 0);
-    // residual from previous proxy in range (-0.5, 0.5] * avg_error
-    FT residual(0);
-    BOOST_FOREACH(const ProxyError &pxe, px_error) {
-      // add error residual from previous proxy
-      // to_add maybe negative but greater than -0.5
-      FT to_add = (residual + pxe.err) / avg_error;
-      // floor_to_add maybe negative but no less than -1
-      FT floor_to_add = FT(std::floor(CGAL::to_double(to_add)));
-      const std::size_t q_to_add = static_cast<std::size_t>(CGAL::to_double(
-        ((to_add - floor_to_add) > FT(0.5)) ? (floor_to_add + FT(1)) : floor_to_add));
-      residual = (to_add - FT(static_cast<double>(q_to_add))) * avg_error;
-      num_to_add[pxe.px] = q_to_add;
+    if (avg_error == FT(0.0)) {
+      // rare case on extremely regular geometry like a cube
+#ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
+      std::cerr << "zero error, diffuse w.r.t. number of facets" << std::endl;
+#endif
+      const FT avg_facet = FT(
+        static_cast<double>(num_faces(*m_pmesh)) / static_cast<double>(num_proxies));
+      std::vector<FT> px_size(proxies.size(), FT(0.0));
+      BOOST_FOREACH(face_descriptor f, faces(*m_pmesh))
+        px_size[fproxy_map[f]] += FT(1.0);
+      FT residual(0.0);
+      for (std::size_t i = 0; i < proxies.size(); ++i) {
+        FT to_add = (residual + px_size[i]) / avg_facet;
+        FT floor_to_add = FT(std::floor(CGAL::to_double(to_add)));
+        FT q_to_add = FT(CGAL::to_double(
+          ((to_add - floor_to_add) > FT(0.5)) ? (floor_to_add + FT(1)) : floor_to_add));
+        residual = (to_add - q_to_add) * avg_facet;
+        num_to_add[i] = static_cast<std::size_t>(CGAL::to_double(q_to_add));
+      }
+    }
+    else {
+      // residual from previous proxy in range (-0.5, 0.5] * avg_error
+      FT residual(0);
+      BOOST_FOREACH(const ProxyError &pxe, px_error) {
+        // add error residual from previous proxy
+        // to_add maybe negative but greater than -0.5
+        FT to_add = (residual + pxe.err) / avg_error;
+        // floor_to_add maybe negative but no less than -1
+        FT floor_to_add = FT(std::floor(CGAL::to_double(to_add)));
+        FT q_to_add = FT(CGAL::to_double(
+          ((to_add - floor_to_add) > FT(0.5)) ? (floor_to_add + FT(1)) : floor_to_add));
+        residual = (to_add - q_to_add) * avg_error;
+        num_to_add[pxe.px] = static_cast<std::size_t>(CGAL::to_double(q_to_add));
+      }
     }
 
 #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
