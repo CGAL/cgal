@@ -38,7 +38,7 @@ if( TBB_FOUND )
 endif()
 
 
-find_package(OpenCV)
+find_package(OpenCV QUIET)
 
 # include for local directory
 include_directories( BEFORE include )
