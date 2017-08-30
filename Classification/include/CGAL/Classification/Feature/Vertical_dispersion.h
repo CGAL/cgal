@@ -88,7 +88,7 @@ public:
   {
     this->set_name ("vertical_dispersion");
     if (radius_neighbors < 0.)
-      radius_neighbors = 5. * grid.resolution();
+      radius_neighbors = 5.f * grid.resolution();
 
 #ifdef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
     Image_float Dispersion(grid.width(), grid.height());
@@ -126,7 +126,7 @@ public:
                <= bound)
             {
               for (typename Grid::iterator it = grid.indices_begin(k,l); it != grid.indices_end(k,l); ++ it)
-                hori.push_back (get(point_map, *(input.begin()+(*it))).z());
+                hori.push_back (float(get(point_map, *(input.begin()+(*it))).z()));
             }
           }
       

@@ -321,7 +321,7 @@ public:
     std::vector<Feature_training> feature_train;
     std::size_t nb_trials = 100;
     float wmin = 1e-5f, wmax = 1e5f;
-    float factor = std::pow (wmax/wmin, 1. / (float)nb_trials);
+    float factor = std::pow (wmax/wmin, 1.f / float(nb_trials));
     
     for (std::size_t j = 0; j < m_features.size(); ++ j)
     {
@@ -365,7 +365,7 @@ public:
 
       if (best_weights[j] == 1.)
       {
-        set_weight(j, 0.5 * (feature_train.back().wmin + feature_train.back().wmax));
+        set_weight(j, 0.5f * (feature_train.back().wmin + feature_train.back().wmax));
         best_weights[j] = weight(j);
       }
       else
@@ -379,7 +379,7 @@ public:
     for (std::size_t i = 0; i < feature_train.size(); ++ i)
       feature_train[i].factor
         = std::pow (feature_train[i].wmax / feature_train[i].wmin,
-                    1. / (float)nb_trials_per_feature);
+                    1.f / float(nb_trials_per_feature));
     
     
     float best_score = 0.;
@@ -811,7 +811,7 @@ private:
   }
   float favored (std::size_t feature, std::size_t index) const
   {
-    return (1. - normalized (feature, index));
+    return (1.f - normalized (feature, index));
   }
   float penalized (std::size_t feature, std::size_t index) const
   {
@@ -819,7 +819,7 @@ private:
   }
   float ignored (std::size_t, std::size_t) const
   {
-    return 0.5;
+    return 0.5f;
   }
 
   void estimate_features_effects(std::vector<std::vector<std::size_t> >& training_sets)

@@ -104,7 +104,7 @@ public:
         typename Grid::iterator end = grid.indices_end(i,j);
         for (typename Grid::iterator it = grid.indices_begin(i,j); it != end; ++ it)
         {
-          mean += get(point_map, *(input.begin()+(*it))).z();
+          mean += float(get(point_map, *(input.begin()+(*it))).z());
           ++ nb;
         }
         if (nb == 0)

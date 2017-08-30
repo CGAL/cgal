@@ -82,7 +82,7 @@ int main (int, char**)
     Label_handle lh = labels.add(oss.str().c_str());
 
     for (std::size_t j = 0; j < 10; ++ j)
-      training_set[CGAL::get_default_random().get_int(0, training_set.size())] = i;
+      training_set[std::size_t(CGAL::get_default_random().get_int(0, int(training_set.size())))] = i;
   }
   CGAL_assertion (labels.size() == 20);
   
@@ -100,13 +100,13 @@ int main (int, char**)
 
   Classification::classify_with_local_smoothing<CGAL::Sequential_tag>
     (pts, pts.point_map(), labels, classifier,
-     generator.neighborhood().sphere_neighbor_query(0.01),
+     generator.neighborhood().sphere_neighbor_query(0.01f),
      label_indices);
 
   Classification::classify_with_graphcut<CGAL::Sequential_tag>
     (pts, pts.point_map(), labels, classifier,
      generator.neighborhood().k_neighbor_query(12),
-     0.2, 10, label_indices);
+     0.2f, 10, label_indices);
 
 #ifdef CGAL_LINKED_WITH_TBB
   Classification::classify<CGAL::Sequential_tag>

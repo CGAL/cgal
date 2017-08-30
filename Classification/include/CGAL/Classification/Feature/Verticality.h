@@ -108,7 +108,7 @@ public:
     {
       typename GeomTraits::Vector_3 normal = get(normal_map, *(input.begin()+i));
       normal = normal / CGAL::sqrt (normal * normal);
-      verticality_feature.push_back (1. - std::fabs(normal * vertical));
+      verticality_feature.push_back (1.f - CGAL::abs(normal * vertical));
     }
   }
 
@@ -121,7 +121,7 @@ public:
     {
       typename GeomTraits::Vector_3 normal = eigen->normal_vector<GeomTraits>(pt_index);
       normal = normal / CGAL::sqrt (normal * normal);
-      return (1. - CGAL::abs(normal * vertical));
+      return (1.f - CGAL::abs(normal * vertical));
     }
     else
 #endif

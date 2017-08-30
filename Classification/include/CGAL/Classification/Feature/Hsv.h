@@ -153,7 +153,7 @@ public:
 #else
     HSV_Color c = Classification::rgb_to_hsv (get(color_map, *(input.begin()+pt_index)));
     return std::exp (-(c[std::size_t(m_channel)] - m_mean)
-                     * (c[std::size_t(m_channel)] - m_mean) / (2. * m_sd * m_sd));
+                     * (c[std::size_t(m_channel)] - m_mean) / (2.f * m_sd * m_sd));
 #endif
   }
 

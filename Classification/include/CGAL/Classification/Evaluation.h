@@ -168,7 +168,7 @@ public:
   float f1_score (Label_handle label) const
   {
     std::size_t label_idx = m_map_labels[label];
-    return 2. * (m_precision[label_idx] * m_recall[label_idx])
+    return 2.f * (m_precision[label_idx] * m_recall[label_idx])
       / (m_precision[label_idx] + m_recall[label_idx]);
   }
 

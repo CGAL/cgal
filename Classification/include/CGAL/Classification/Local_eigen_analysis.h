@@ -206,8 +206,9 @@ public:
         for (std::size_t j = 0; j < neighbors.size(); ++ j)
           neighbor_points.push_back (get(point_map, *(input.begin()+neighbors[j])));
 
-        m_mean_range += CGAL::sqrt (CGAL::squared_distance (get(point_map, *(input.begin() + i)),
-                                                            get(point_map, *(input.begin() + neighbors.back()))));
+        m_mean_range += float(CGAL::sqrt (CGAL::squared_distance
+                                          (get(point_map, *(input.begin() + i)),
+                                           get(point_map, *(input.begin() + neighbors.back())))));
         
         compute<typename PointMap::value_type, DiagonalizeTraits>
           (i, get(point_map, *(input.begin()+i)), neighbor_points);
@@ -286,12 +287,12 @@ private:
     for (std::size_t i = 0; i < neighbor_points.size(); ++ i)
     {
       Vector d = neighbor_points[i] - centroid;
-      covariance[0] += d.x () * d.x ();
-      covariance[1] += d.x () * d.y ();
-      covariance[2] += d.x () * d.z ();
-      covariance[3] += d.y () * d.y ();
-      covariance[4] += d.y () * d.z ();
-      covariance[5] += d.z () * d.z ();
+      covariance[0] += float(d.x () * d.x ());
+      covariance[1] += float(d.x () * d.y ());
+      covariance[2] += float(d.x () * d.z ());
+      covariance[3] += float(d.y () * d.y ());
+      covariance[4] += float(d.y () * d.z ());
+      covariance[5] += float(d.z () * d.z ());
     }
 
     CGAL::cpp11::array<float, 3> evalues = {{ 0.f, 0.f, 0.f }};

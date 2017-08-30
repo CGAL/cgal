@@ -92,8 +92,9 @@ public:
 #ifdef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
     return distance_to_plane_feature[pt_index];
 #else
-    return CGAL::sqrt (CGAL::squared_distance
-                       (get(point_map, *(input.begin()+pt_index)), eigen.plane<Kernel>(pt_index)));
+    return float(CGAL::sqrt (CGAL::squared_distance
+                             (get(point_map, *(input.begin()+pt_index)),
+                              eigen.plane<Kernel>(pt_index))));
 #endif
   }
   /// \endcond

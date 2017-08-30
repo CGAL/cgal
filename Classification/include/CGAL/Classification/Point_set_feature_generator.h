@@ -515,15 +515,15 @@ private:
   {
     for (std::size_t i = 0; i <= 8; ++ i)
       launch_feature_computation (new Feature_adder_color<ColorMap> (this, color_map, 0,
-                                                                     0, 45 * i, 22.5));
+                                                                     0, 45.f * float(i), 22.5f));
 
     for (std::size_t i = 0; i <= 4; ++ i)
       launch_feature_computation (new Feature_adder_color<ColorMap> (this, color_map, 0,
-                                                                     1, 25 * i, 12.5));
+                                                                     1, 25.f * float(i), 12.5f));
     
     for (std::size_t i = 0; i <= 4; ++ i)
       launch_feature_computation (new Feature_adder_color<ColorMap> (this, color_map, 0,
-                                                                     2, 25 * i, 12.5));
+                                                                     2, 25.f * float(i), 12.5f));
   }
 
   void generate_color_based_features(const CGAL::Default_property_map<Iterator, RGB_Color>&)
