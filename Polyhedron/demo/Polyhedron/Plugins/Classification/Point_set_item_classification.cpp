@@ -366,7 +366,7 @@ void Point_set_item_classification::train(int classifier)
 
   if (classifier == 0)
     {
-      m_sowf->train<Concurrency_tag>(training, m_nb_trials);
+      m_sowf->train<Concurrency_tag>(training, (unsigned int)(m_nb_trials));
       CGAL::Classification::classify<Concurrency_tag> (*(m_points->point_set()),
                                                        m_labels, *m_sowf,
                                                        indices);

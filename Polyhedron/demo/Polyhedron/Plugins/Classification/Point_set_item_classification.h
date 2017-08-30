@@ -116,7 +116,7 @@ class Point_set_item_classification : public Item_classification_base
   template <typename Classifier>
   bool run (int method, const Classifier& classifier)
   {
-    std::vector<int> indices (m_points->point_set()->size(), std::size_t(-1));
+    std::vector<int> indices (m_points->point_set()->size(), -1);
 
     if (method == 0)
       CGAL::Classification::classify<Concurrency_tag> (*(m_points->point_set()),
