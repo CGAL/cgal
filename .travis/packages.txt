@@ -19,6 +19,7 @@ CGAL_ipelets
 Circular_kernel_2 
 Circular_kernel_3 
 Circulator 
+Classification 
 Combinatorial_map 
 Cone_spanners_2 
 Convex_decomposition_3 
