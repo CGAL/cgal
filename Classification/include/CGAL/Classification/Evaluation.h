@@ -113,7 +113,7 @@ public:
       m_iou[j] = true_positives[j] / float(true_positives[j] + false_positives[j] + false_negatives[j]);
 
       m_mean_iou += m_iou[j];
-      m_mean_f1 += 2. * (m_precision[j] * m_recall[j])
+      m_mean_f1 += 2.f * (m_precision[j] * m_recall[j])
         / (m_precision[j] + m_recall[j]);
     }
 

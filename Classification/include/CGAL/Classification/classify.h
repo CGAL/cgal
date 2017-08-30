@@ -479,8 +479,8 @@ namespace internal {
       (boost::make_transform_iterator (input.begin(), CGAL::Property_map_to_unary_function<ItemMap>(item_map)),
        boost::make_transform_iterator (input.end(), CGAL::Property_map_to_unary_function<ItemMap>(item_map)));
 
-    float Dx = bbox.xmax() - bbox.xmin();
-    float Dy = bbox.ymax() - bbox.ymin();
+    float Dx = float(bbox.xmax() - bbox.xmin());
+    float Dy = float(bbox.ymax() - bbox.ymin());
     float A = Dx * Dy;
     float a = A / min_number_of_subdivisions;
     float l = std::sqrt(a);
