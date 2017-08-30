@@ -11,6 +11,12 @@
 
 #include <CGAL/Real_timer.h>
 
+#ifdef CGAL_LINKED_WITH_TBB
+typedef CGAL::Parallel_tag Concurrency_tag;
+#else
+typedef CGAL::Sequential_tag Concurrency_tag;
+#endif
+
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_3 Point;
 typedef Kernel::Iso_cuboid_3 Iso_cuboid_3;
@@ -150,7 +156,7 @@ int main (int argc, char** argv)
     
   CGAL::Real_timer t;
   t.start();
-  Classification::classify<CGAL::Parallel_tag> (pts, labels, classifier, label_indices);
+  Classification::classify<Concurrency_tag> (pts, labels, classifier, label_indices);
   t.stop();
   std::cerr << "Raw classification performed in " << t.time() << " second(s)" << std::endl;
   t.reset();
@@ -160,7 +166,7 @@ int main (int argc, char** argv)
   ///////////////////////////////////////////////////////////////////
   //! [Smoothing]
   t.start();
-  Classification::classify_with_local_smoothing<CGAL::Parallel_tag>
+  Classification::classify_with_local_smoothing<Concurrency_tag>
     (pts, Pmap(), labels, classifier,
      neighborhood.sphere_neighbor_query(radius_neighbors),
      label_indices);
@@ -173,7 +179,7 @@ int main (int argc, char** argv)
   ///////////////////////////////////////////////////////////////////
   //! [Graph_cut]
   t.start();
-  Classification::classify_with_graphcut<CGAL::Sequential_tag>
+  Classification::classify_with_graphcut<Concurrency_tag>
     (pts, Pmap(), labels, classifier,
      neighborhood.k_neighbor_query(12),
      0.2, 4, label_indices);
