@@ -228,11 +228,10 @@ public:
     for (std::size_t x = 0; x < m_width; ++ x)
       for (std::size_t y = 0; y < m_height; ++ y)
       {
-        m_has_points[x * m_height + y]
-          = (m_lower_scale->has_points(x*2, y*2)
-             || m_lower_scale->has_points(x*2, y*2 + 1)
-             || m_lower_scale->has_points(x*2 + 1, y*2 + 1)
-             || m_lower_scale->has_points(x*2 + 1, y*2));
+        m_has_points.push_back ((m_lower_scale->has_points(x*2, y*2)
+                                 || m_lower_scale->has_points(x*2, y*2 + 1)
+                                 || m_lower_scale->has_points(x*2 + 1, y*2 + 1)
+                                 || m_lower_scale->has_points(x*2 + 1, y*2)));
       }
 //    std::cerr << "Grid size = " << width() << " " << height() << std::endl;
   }
