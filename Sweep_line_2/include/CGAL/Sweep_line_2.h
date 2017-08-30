@@ -27,6 +27,8 @@
  */
 
 #include <list>
+#include <vector>
+
 #include <CGAL/Object.h>
 #include <CGAL/Basic_sweep_line_2.h>
 #include <CGAL/Sweep_line_2/Sweep_line_curve_pair.h>
@@ -152,6 +154,7 @@ public:
   virtual ~Sweep_line_2() {}
 
 protected:
+  typedef typename std::vector<Subcurve*>               Subcurve_vector;
 
   /*! Initialize the data structures for the sweep-line algorithm. */
   virtual void _init_structures();
@@ -187,7 +190,7 @@ protected:
    */
   void _create_overlapping_curve(const X_monotone_curve_2& overlap_cv,
                                  Subcurve*& c1 , Subcurve*& c2,
-                                 const std::vector<Subcurve*>& all_leaves_diff,
+                                 const Subcurve_vector& all_leaves_diff,
                                  Subcurve* first_parent,
                                  Event* event_on_overlap);
 

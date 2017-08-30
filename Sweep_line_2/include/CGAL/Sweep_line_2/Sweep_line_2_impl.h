@@ -101,7 +101,7 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_left_curves()
 
       // Obtain the subcurve that contains the current event
       Subcurve* sc = static_cast<Subcurve*>(*(this->m_status_line_insert_hint));
-      
+
       // The current event point starts at the interior of a subcurve that
       // already exists in the status line (this may also indicate an overlap).
       if (! this->m_currentEvent->has_right_curves()) {
@@ -438,7 +438,7 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_intersect(Subcurve* c1,
     m_curves_pair_set.resize(m_curves_pair_set.size() * 6);
 
   // handle overlapping curves with common ancesters
-  std::vector<Subcurve*> all_leaves_diff;
+  Subcurve_vector all_leaves_diff;
   Subcurve* first_parent=NULL;
   if (c1->originating_subcurve1()!=NULL || c2->originating_subcurve2()!=NULL)
   {
@@ -448,8 +448,8 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_intersect(Subcurve* c1,
     first_parent = c1;
     Subcurve* second_parent = c2;
 
-    std::vector<Subcurve*> all_leaves_first;
-    std::vector<Subcurve*> all_leaves_second;
+    Subcurve_vector all_leaves_first;
+    Subcurve_vector all_leaves_second;
     first_parent->template all_leaves<Subcurve>(std::back_inserter(all_leaves_first));
     second_parent->template all_leaves<Subcurve>(std::back_inserter(all_leaves_second));
     if (all_leaves_second.size() > all_leaves_first.size())
@@ -509,9 +509,10 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_intersect(Subcurve* c1,
         return;
       }
       else{
+        CGAL_SL_PRINT_TEXT("Overlap with common ancesters");
         X_monotone_curve_2 xc = first_parent->last_curve();
-        for (typename std::vector<Subcurve*>::iterator sc_it=all_leaves_diff.begin();
-                                                       sc_it!=all_leaves_diff.end(); ++sc_it)
+        for (typename Subcurve_vector::iterator sc_it=all_leaves_diff.begin();
+             sc_it!=all_leaves_diff.end(); ++sc_it)
         {
           std::vector<CGAL::Object> inter_res;
           vector_inserter vi(inter_res) ;
@@ -802,7 +803,7 @@ template <typename Tr, typename Vis, typename Subcv, typename Evnt,
 void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::
 _create_overlapping_curve(const X_monotone_curve_2& overlap_cv,
                           Subcurve*& c1 , Subcurve*& c2,
-                          const std::vector<Subcurve*>& all_leaves_diff,
+                          const Subcurve_vector& all_leaves_diff,
                           Subcurve* first_parent,
                           Event* event_on_overlap)
 {
@@ -824,7 +825,7 @@ _create_overlapping_curve(const X_monotone_curve_2& overlap_cv,
     Point_2 left_end = this->m_traits->construct_min_vertex_2_object()(overlap_cv);
     left_event = this->_push_event(left_end, Base_event::DEFAULT, ARR_INTERIOR, ARR_INTERIOR).first;
   }
-  
+
   // Get the right end of overlap_cv.
   Event* right_event;
   Arr_parameter_space  ps_x_r =
