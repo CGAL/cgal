@@ -684,7 +684,7 @@ public:
     }
 
     // Write property tree to XML file
-    boost::property_tree::xml_writer_settings<std::string> settings(' ', 3);
+    boost::property_tree::xml_writer_settings<boost::property_tree::ptree::key_type> settings(' ', 3);
     boost::property_tree::write_xml(output, tree, settings);
   }
   
