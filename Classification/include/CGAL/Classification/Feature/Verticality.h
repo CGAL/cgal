@@ -108,7 +108,7 @@ public:
     {
       typename GeomTraits::Vector_3 normal = get(normal_map, *(input.begin()+i));
       normal = normal / CGAL::sqrt (normal * normal);
-      verticality_feature.push_back (1.f - CGAL::abs(normal * vertical));
+      verticality_feature.push_back (1.f - float(CGAL::abs(normal * vertical)));
     }
   }
 

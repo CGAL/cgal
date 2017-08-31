@@ -97,8 +97,9 @@ private:
           neighbor_points.push_back (get(m_point_map, *(m_input.begin()+neighbors[j])));
 
         m_mutex.lock();
-        m_mean_range += CGAL::sqrt (CGAL::squared_distance (get(m_point_map, *(m_input.begin() + i)),
-                                                            get(m_point_map, *(m_input.begin() + neighbors.back()))));
+        m_mean_range += float(CGAL::sqrt
+                              (CGAL::squared_distance (get(m_point_map, *(m_input.begin() + i)),
+                                                       get(m_point_map, *(m_input.begin() + neighbors.back())))));
         m_mutex.unlock();
           
         m_eigen.compute<typename PointMap::value_type,
