@@ -124,7 +124,7 @@ public:
   typedef typename C3T3::Triangulation        Triangulation;
   typedef typename C3T3::Edge                 Edge;
   
-  typedef typename MeshDomain::Curve_segment_index  Curve_segment_index;
+  typedef typename MeshDomain::Curve_index          Curve_index;
   typedef typename MeshDomain::Corner_index         Corner_index;
   typedef typename MeshDomain::Index                Index;
   
@@ -141,9 +141,9 @@ public:
   }
   
 private:
-  typedef std::vector<std::pair<Curve_segment_index,Bare_point> >    Incident_edges;
-  typedef std::vector<Vertex_handle>                                 Vertex_vector;
-  typedef std::vector<std::pair<Vertex_handle,Curve_segment_index> > Incident_vertices;
+  typedef std::vector<std::pair<Curve_index,Bare_point> >    Incident_edges;
+  typedef std::vector<Vertex_handle>                         Vertex_vector;
+  typedef std::vector<std::pair<Vertex_handle,Curve_index> > Incident_vertices;
   
 private:
   /// Insert corners of the mesh
@@ -196,7 +196,7 @@ private:
   template <typename ErasedVeOutIt>
   ErasedVeOutIt insert_balls(const Vertex_handle& vp,
 			     const Vertex_handle& vq,
-			     const Curve_segment_index& curve_index,
+			     const Curve_index& curve_index,
                              const CGAL::Orientation orientation,
 			     ErasedVeOutIt out);
 
@@ -213,7 +213,7 @@ private:
 			     const FT size_q,
 			     const FT pq_length,
 			     const CGAL::Orientation orientation,
-			     const Curve_segment_index& curve_index,
+			     const Curve_index& curve_index,
 			     ErasedVeOutIt out);
   
   /// Returns `true` if balls of \c va and \c vb intersect, and (va,vb) is not
@@ -234,10 +234,10 @@ private:
   /// \param orientation Orientation of the curve segment between \c v1 and
   ///        \c v2, given the orientation of the curve of index
   ///        \c curve_index
-  /// \pre `c3t3.curve_segment_index(v1, v2) == curve_index`
+  /// \pre `c3t3.curve_index(v1, v2) == curve_index`
   bool is_sampling_dense_enough(const Vertex_handle& v1,
                                 const Vertex_handle& v2,
-                                const Curve_segment_index& curve_index,
+                                const Curve_index& curve_index,
                                 const CGAL::Orientation orientation) const;
   
   /// Takes an iterator on Vertex_handle as input and check if the sampling
@@ -256,11 +256,11 @@ private:
   /// \c start to \c next is oriented in the same orientation as the curve
   /// segment with index \c curve_index, or `CGAL::NEGATIVE` otherwise.
   ///
-  /// \pre `c3t3.curve_segment_index(v1, v2) == curve_index`
+  /// \pre `c3t3.curve_index(v1, v2) == curve_index`
   CGAL::Orientation
   orientation_of_walk(const Vertex_handle& start,
                       const Vertex_handle& next,
-                      Curve_segment_index curve_index) const;
+                      Curve_index curve_index) const;
   
   /// Walk along edge from \c start, following the direction \c start to 
   /// \c next, and fills \c out with the vertices which do not fullfill 
@@ -270,23 +270,23 @@ private:
   ///        \c v2, given the orientation of the curve of index
   ///        \c curve_index
   ///
-  /// \pre `c3t3.curve_segment_index(v1, v2) == curve_index`
+  /// \pre `c3t3.curve_index(v1, v2) == curve_index`
   template <typename ErasedVeOutIt>
   ErasedVeOutIt
   walk_along_edge(const Vertex_handle& start,
                   const Vertex_handle& next,
-                  Curve_segment_index curve_index,
+                  Curve_index curve_index,
                   const CGAL::Orientation orientation,
                   ErasedVeOutIt out) const;
   
   /// Returns next vertex along edge, i.e vertex after \c start, following
   /// the direction from \c previous to \c start
   /// \pre (previous,start) is in c3t3
-  /// \pre `c3t3.curve_segment_index(start, previous) == curve_index`
+  /// \pre `c3t3.curve_index(start, previous) == curve_index`
   Vertex_handle
-  next_vertex_along_curve_segment(const Vertex_handle& start,
-                                  const Vertex_handle& previous,
-                                  const Curve_segment_index& curve_index) const;
+  next_vertex_along_curve(const Vertex_handle& start,
+                          const Vertex_handle& previous,
+                          const Curve_index& curve_index) const;
 
   /// Replace vertices between ]begin,last[ by new vertices, along curve
   /// identified by \c curve_index
@@ -299,7 +299,7 @@ private:
   template <typename InputIterator, typename ErasedVeOutIt>
   ErasedVeOutIt repopulate(InputIterator begin,
 			   InputIterator last,
-                           const Curve_segment_index& curve_index,
+                           const Curve_index& curve_index,
                            const CGAL::Orientation orientation,
 			   ErasedVeOutIt out);
 
@@ -307,7 +307,7 @@ private:
   ErasedVeOutIt
   analyze_and_repopulate(InputIterator begin,
                          InputIterator last,
-                         const Curve_segment_index& index,
+                         const Curve_index& index,
                          const CGAL::Orientation orientation,
 			 ErasedVeOutIt out);
   
@@ -316,7 +316,7 @@ private:
   bool is_sizing_field_correct(const Vertex_handle& v1,
                                const Vertex_handle& v2,
                                const Vertex_handle& v3,
-                               const Curve_segment_index& index,
+                               const Curve_index& index,
                                const CGAL::Orientation orientation) const;
 
   /// Repopulate all incident curve around corner \c v
@@ -326,13 +326,13 @@ private:
   repopulate_edges_around_corner(const Vertex_handle& v, ErasedVeOutIt out);
   
   /// Returns `true` if edge with index \c curve_index is already treated
-  bool is_treated(const Curve_segment_index& curve_index) const
+  bool is_treated(const Curve_index& curve_index) const
   {
     return ( treated_edges_.find(curve_index) != treated_edges_.end() );
   }
   
   /// Set edge with index \c curve_index as treated
-  void set_treated(const Curve_segment_index& curve_index)
+  void set_treated(const Curve_index& curve_index)
   {
     treated_edges_.insert(curve_index);
   }
@@ -409,7 +409,7 @@ private:
   SizingFunction size_;
   FT minimal_size_;
   Weight minimal_weight_;
-  std::set<Curve_segment_index> treated_edges_;
+  std::set<Curve_index> treated_edges_;
   std::set<Vertex_handle> unchecked_vertices_;
   int refine_balls_iteration_nb;
   bool nonlinear_growth_of_balls;
@@ -852,19 +852,19 @@ Protect_edges_sizing_field<C3T3, MD, Sf>::
 insert_balls_on_edges()
 {
   // Get features
-  typedef CGAL::cpp11::tuple<Curve_segment_index,
+  typedef CGAL::cpp11::tuple<Curve_index,
                              std::pair<Bare_point,Index>,
                              std::pair<Bare_point,Index> >    Feature_tuple;
   typedef std::vector<Feature_tuple>                          Input_features;
   
   Input_features input_features;
-  domain_.get_curve_segments(std::back_inserter(input_features));
+  domain_.get_curves(std::back_inserter(input_features));
   
   // Interate on edges
   for ( typename Input_features::iterator fit = input_features.begin(),
        end = input_features.end() ; fit != end ; ++fit )
   {
-    const Curve_segment_index& curve_index = CGAL::cpp11::get<0>(*fit);
+    const Curve_index& curve_index = CGAL::cpp11::get<0>(*fit);
     if ( ! is_treated(curve_index) )
     {
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
@@ -877,7 +877,7 @@ insert_balls_on_edges()
       const Index& q_index = CGAL::cpp11::get<2>(*fit).second;
       
       Vertex_handle vp,vq;
-      if ( ! domain_.is_cycle(p, curve_index) )
+      if ( ! domain_.is_loop(curve_index) )
       {
         vp = get_vertex_corner_from_point(p,p_index);
         vq = get_vertex_corner_from_point(q,q_index);
@@ -897,12 +897,12 @@ insert_balls_on_edges()
           // with the third of the distance from 'p' to 'q'.
           FT p_size = query_size(p, 1, p_index);
 
-          FT curve_lenght = domain_.curve_segment_length(p, curve_index);
+          FT curve_lenght = domain_.curve_length(curve_index);
 
           Bare_point other_point =
-            domain_.construct_point_on_curve_segment(p,
-                                                     curve_index,
-                                                     curve_lenght / 2);
+            domain_.construct_point_on_curve(p,
+                                             curve_index,
+                                             curve_lenght / 2);
           p_size = (std::min)(p_size,
                               compute_distance(p, other_point) / 3);
           vp = smart_insert_point(p,
@@ -958,7 +958,7 @@ ErasedVeOutIt
 Protect_edges_sizing_field<C3T3, MD, Sf>::
 insert_balls(const Vertex_handle& vp,
              const Vertex_handle& vq,
-             const Curve_segment_index& curve_index,
+             const Curve_index& curve_index,
              const CGAL::Orientation orientation,
 	     ErasedVeOutIt out)
 {
@@ -972,13 +972,13 @@ insert_balls(const Vertex_handle& vp,
   const FT sp = get_radius(vp);
   const FT sq = get_radius(vq);
 
-  CGAL_assertion(vp != vq || domain_.is_cycle(p, curve_index));
+  CGAL_assertion(vp != vq || domain_.is_loop(curve_index));
   
   // Compute geodesic distance
   const FT pq_length = (vp == vq) ?
-    domain_.curve_segment_length(p, curve_index)
+    domain_.curve_length(curve_index)
     :
-    domain_.arc_length(p, q, curve_index, orientation);
+    domain_.curve_segment_length(p, q, curve_index, orientation);
 
   // Insert balls
   return
@@ -999,7 +999,7 @@ insert_balls(const Vertex_handle& vp,
              const FT sq,
              const FT d,
              const CGAL::Orientation d_sign,
-             const Curve_segment_index& curve_index,
+             const Curve_index& curve_index,
 	     ErasedVeOutIt out)
 {
   typename C3T3::Triangulation::Geom_traits::Construct_point_3 wp2p =
@@ -1078,16 +1078,17 @@ insert_balls(const Vertex_handle& vp,
                 << n << "\n  between points ("
                 << vp->point() << ") and (" << vq->point()
                 << ") (arc length: "
-                << domain_.arc_length(wp2p(vp->point()), wp2p(vq->point()),
-                                      curve_index, d_sign)
+                << domain_.curve_segment_length(wp2p(vp->point()),
+                                                wp2p(vq->point()),
+                                                curve_index, d_sign)
                 << ")\n";
 #endif
       const Bare_point new_point =
-        domain_.construct_point_on_curve_segment(wp2p(vp->point()),
-                                                 curve_index,
-                                                 d_sign * d / 2);
+        domain_.construct_point_on_curve(wp2p(vp->point()),
+                                         curve_index,
+                                         d_sign * d / 2);
       const int dim = 1; // new_point is on edge
-      const Index index = domain_.index_from_curve_segment_index(curve_index);
+      const Index index = domain_.index_from_curve_index(curve_index);
       const FT point_weight = CGAL::square(size_(new_point, dim, index));
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
       std::cerr << "  middle point: " << new_point << std::endl;
@@ -1167,14 +1168,14 @@ insert_balls(const Vertex_handle& vp,
   {
     // New point position
     Bare_point new_point =
-      domain_.construct_point_on_curve_segment(p, curve_index, pt_dist);
+      domain_.construct_point_on_curve(p, curve_index, pt_dist);
     
     // Weight (use as size the min between norm_step_size and linear interpolation)
     FT current_size = (std::min)(norm_step_size, sp + CGAL::abs(pt_dist)/d*(sq-sp));
     FT point_weight = current_size * current_size;
     
     // Index and dimension
-    Index index = domain_.index_from_curve_segment_index(curve_index);
+    Index index = domain_.index_from_curve_index(curve_index);
     int dim = 1; // new_point is on edge
     
     // Insert point into c3t3
@@ -1552,7 +1553,7 @@ check_and_fix_vertex_along_edge(const Vertex_handle& v, ErasedVeOutIt out)
   // mesh is only two balls on the cycle: then each ball has only one
   // neighbor.
 
-  const Curve_segment_index& curve_index = incident_vertices.front().second;
+  const Curve_index& curve_index = incident_vertices.front().second;
   CGAL_assertion(incident_vertices.back().second== curve_index);
 
   // Walk along edge to find the edge piece which is not correctly sampled
@@ -1610,25 +1611,25 @@ template <typename C3T3, typename MD, typename Sf>
 bool
 Protect_edges_sizing_field<C3T3, MD, Sf>::
 is_sampling_dense_enough(const Vertex_handle& v1, const Vertex_handle& v2,
-                         const Curve_segment_index& curve_index,
+                         const Curve_index& curve_index,
                          const CGAL::Orientation orientation) const
 {
   using CGAL::Mesh_3::internal::min_intersection_factor;
-  CGAL_precondition(c3t3_.curve_segment_index(v1,v2) == curve_index);
+  CGAL_precondition(c3t3_.curve_index(v1,v2) == curve_index);
 
   // Get sizes
   FT size_v1 = get_radius(v1);
   FT size_v2 = get_radius(v2);
 
   CGAL_assertion(get_dimension(v1) != 1 ||
-                 curve_index == domain_.curve_segment_index(v1->index()));
+                 curve_index == domain_.curve_index(v1->index()));
   CGAL_assertion(get_dimension(v2) != 1 ||
-                 curve_index == domain_.curve_segment_index(v2->index()));
+                 curve_index == domain_.curve_index(v2->index()));
 
-  FT arc_length = domain_.arc_length(v1->point().point(),
-                                     v2->point().point(),
-                                     curve_index,
-                                     orientation);
+  FT arc_length = domain_.curve_segment_length(v1->point().point(),
+                                               v2->point().point(),
+                                               curve_index,
+                                               orientation);
   // Sufficient condition so that the curve portion between v1 and v2 is
   // inside the union of the two balls.
   if(arc_length > (size_v1 + size_v2)) {
@@ -1678,19 +1679,19 @@ CGAL::Orientation
 Protect_edges_sizing_field<C3T3, MD, Sf>::
 orientation_of_walk(const Vertex_handle& start,
                     const Vertex_handle& next,
-                    Curve_segment_index curve_index) const
+                    Curve_index curve_index) const
 {
   typename C3T3::Triangulation::Geom_traits::Construct_point_3 wp2p =
     c3t3_.triangulation().geom_traits().construct_point_3_object();
 
-  if(domain_.is_cycle(wp2p(start->point()), curve_index)) {
+  if(domain_.is_loop(curve_index)) {
     // if the curve is a cycle, the direction is the direction passing
     // through the next vertex, and the next-next vertex
     return
-      (domain_.distance_sign_along_cycle
+      (domain_.distance_sign_along_loop
        (wp2p(start->point()),
         wp2p(next->point()),
-        wp2p(next_vertex_along_curve_segment(next,start,curve_index)->point()),
+        wp2p(next_vertex_along_curve(next,start,curve_index)->point()),
         curve_index));
   } else {
     // otherwise, the sign is just the sign of the geodesic distance
@@ -1704,7 +1705,7 @@ template <typename ErasedVeOutIt>
 ErasedVeOutIt
 Protect_edges_sizing_field<C3T3, MD, Sf>::
 walk_along_edge(const Vertex_handle& start, const Vertex_handle& next,
-                Curve_segment_index curve_index,
+                Curve_index curve_index,
                 const CGAL::Orientation orientation,
                 ErasedVeOutIt out) const
 {
@@ -1736,7 +1737,7 @@ walk_along_edge(const Vertex_handle& start, const Vertex_handle& next,
     
     // Get next vertex along edge
     Vertex_handle next =
-      next_vertex_along_curve_segment(current,previous,curve_index);
+      next_vertex_along_curve(current,previous,curve_index);
     previous = current;
     current = next;
   }
@@ -1748,16 +1749,13 @@ walk_along_edge(const Vertex_handle& start, const Vertex_handle& next,
 template <typename C3T3, typename MD, typename Sf>
 typename Protect_edges_sizing_field<C3T3, MD, Sf>::Vertex_handle
 Protect_edges_sizing_field<C3T3, MD, Sf>::
-next_vertex_along_curve_segment(const Vertex_handle& start,
-                                const Vertex_handle& previous,
-                                const Curve_segment_index& curve_index) const
+next_vertex_along_curve(const Vertex_handle& start,
+                        const Vertex_handle& previous,
+                        const Curve_index& curve_index) const
 {
-  typename C3T3::Triangulation::Geom_traits::Construct_point_3 wp2p =
-    c3t3_.triangulation().geom_traits().construct_point_3_object();
-
-  CGAL_USE(curve_index); CGAL_USE(wp2p);
-  CGAL_precondition( c3t3_.curve_segment_index(start, previous) == curve_index);
-  CGAL_precondition( domain_.is_cycle(wp2p(start->point()), curve_index) ||
+  CGAL_USE(curve_index);
+  CGAL_precondition( c3t3_.curve_index(start, previous) == curve_index);
+  CGAL_precondition( domain_.is_loop(curve_index) ||
                      (! c3t3_.is_in_complex(start)) );
 
   Incident_vertices incident_vertices;
@@ -1786,7 +1784,7 @@ template <typename InputIterator, typename ErasedVeOutIt>
 ErasedVeOutIt
 Protect_edges_sizing_field<C3T3, MD, Sf>::
 repopulate(InputIterator begin, InputIterator last,
-	   const Curve_segment_index& index,
+	   const Curve_index& index,
            const CGAL::Orientation orientation,
            ErasedVeOutIt out)
 {
@@ -1851,7 +1849,7 @@ template <typename InputIterator, typename ErasedVeOutIt>
 ErasedVeOutIt
 Protect_edges_sizing_field<C3T3, MD, Sf>::
 analyze_and_repopulate(InputIterator begin, InputIterator last,
-		       const Curve_segment_index& index,
+		       const Curve_index& index,
                        const CGAL::Orientation orientation,
                        ErasedVeOutIt out)
 {
@@ -1928,7 +1926,7 @@ Protect_edges_sizing_field<C3T3, MD, Sf>::
 is_sizing_field_correct(const Vertex_handle& v1,
                         const Vertex_handle& v2,
                         const Vertex_handle& v3,
-                        const Curve_segment_index& curve_index,
+                        const Curve_index& curve_index,
                         const CGAL::Orientation orientation) const
 {
   typename C3T3::Triangulation::Geom_traits::Construct_point_3 wp2p =
@@ -1937,10 +1935,10 @@ is_sizing_field_correct(const Vertex_handle& v1,
   FT s1 = get_radius(v1);
   FT s2 = get_radius(v2);
   FT s3 = get_radius(v3);
-  FT D = domain_.arc_length(wp2p(v1->point()), wp2p(v3->point()),
-                            curve_index, orientation);
-  FT d = domain_.arc_length(wp2p(v1->point()), wp2p(v2->point()),
-                            curve_index, orientation);
+  FT D = domain_.curve_segment_length(wp2p(v1->point()), wp2p(v3->point()),
+                                      curve_index, orientation);
+  FT d = domain_.curve_segment_length(wp2p(v1->point()), wp2p(v2->point()),
+                                      curve_index, orientation);
   
   return ( s2 >= (s1 + d/D*(s3-s1)) );
 }
@@ -1954,9 +1952,6 @@ repopulate_edges_around_corner(const Vertex_handle& v, ErasedVeOutIt out)
 {
   CGAL_precondition(c3t3_.is_in_complex(v));
 
-  typename C3T3::Triangulation::Geom_traits::Construct_point_3 wp2p =
-    c3t3_.triangulation().geom_traits().construct_point_3_object();
-
   Incident_vertices incident_vertices;
   c3t3_.adjacent_vertices_in_complex(v, std::back_inserter(incident_vertices));
   
@@ -1964,12 +1959,12 @@ repopulate_edges_around_corner(const Vertex_handle& v, ErasedVeOutIt out)
        vend = incident_vertices.end() ; vit != vend ; ++vit )
   {
     const Vertex_handle& next = vit->first;
-    const Curve_segment_index& curve_index = vit->second;
+    const Curve_index& curve_index = vit->second;
     
     // if `v` is incident to a cycle, it might be that the full cycle,
     // including the edge `[next, v]`, has already been processed by
     // `analyze_and_repopulate()` walking in the other direction.
-    if(domain_.is_cycle(wp2p(v->point()), curve_index) &&
+    if(domain_.is_loop(curve_index) &&
        !c3t3_.is_in_complex(v, next)) continue;
 
 

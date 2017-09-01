@@ -198,7 +198,7 @@ parameters::internal::Exude_options exude(
 The function `parameters::features()` provides a value of internal type `Features` 
 to specify if 0 and 1-dimensional features have to be taken into account. 
 The provided value is a default value that triggers the representation 
-of corners and curve segments in the mesh when the domain is a model 
+of corners and curves in the mesh when the domain is a model 
 of `MeshDomainWithFeatures_3`. 
 
 Provides a `Features_options` value such that 
@@ -284,7 +284,7 @@ parameters::internal::Exude_options no_exude();
 The function `parameters::no_features()` allows the user to prevent the handling 
 of 0 and 1-dimensional features. This is useful when the 
 domain is a model of `MeshDomainWithFeatures_3` 
-and the user does not want corners and curve segments 
+and the user does not want corners and curves 
 to be accurately represented 
 in the mesh. 
 

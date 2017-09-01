@@ -51,7 +51,7 @@ struct Sizing_field_with_aabb_tree
 
   typedef typename MeshDomain::Index               Index;
   typedef typename MeshDomain::Corner_index        Corner_index;
-  typedef typename MeshDomain::Curve_segment_index Curve_index;
+  typedef typename MeshDomain::Curve_index         Curve_index;
   typedef typename MeshDomain::Surface_patch_index Patch_index;
 
   typedef boost::container::flat_set<Curve_index> Curves_ids;
@@ -293,7 +293,7 @@ struct Sizing_field_with_aabb_tree
       return result;
     } 
     else { // dim == 1
-      const typename MeshDomain::Curve_segment_index& curve_id = 
+      const typename MeshDomain::Curve_index& curve_id = 
         domain.curve_segment_index(id);
       if(!aabb_tree.empty()) {
         const Patches_ids& ids = curves_incident_patches[curve_id];
