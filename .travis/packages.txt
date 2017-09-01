@@ -86,6 +86,7 @@ Ridges_3
 Scale_space_reconstruction_3 
 Segment_Delaunay_graph_2 
 Segment_Delaunay_graph_Linf_2 
+Set_movable_separability_2 
 Skin_surface_3 
 Snap_rounding_2 
 Solver_interface 
