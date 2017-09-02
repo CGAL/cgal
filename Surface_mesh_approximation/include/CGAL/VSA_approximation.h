@@ -96,6 +96,8 @@ private:
   typedef std::vector<halfedge_descriptor> ChordVector;
   typedef typename ChordVector::iterator ChordVectorIterator;
 
+#ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
+public:
   // The proxy wrapper for approximation.
   struct ProxyWrapper {
     ProxyWrapper(const Proxy &_p, const face_descriptor &_s)
@@ -105,6 +107,8 @@ private:
     face_descriptor seed; // proxy seed
     FT err; // proxy fitting error
   };
+private:
+#endif
 
   // The proxy fitting plane for meshing.
   struct ProxyPlane {
@@ -821,6 +825,21 @@ public:
       ++out_itr;
     }
   }
+
+#ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
+  /*!
+   * @brief Get the wrapped proxies.
+   * @tparam OutputIterator output iterator with ProxyWrapper as value type
+   * @param out_itr output iterator
+   */
+  template <typename OutputIterator>
+  void get_wrapped_proxies(OutputIterator out_itr) {
+    BOOST_FOREACH(const ProxyWrapper &pxw, proxies) {
+      *out_itr = pxw;
+      ++out_itr;
+    }
+  }
+#endif
 
   /*!
    * @brief Get the proxies size.
