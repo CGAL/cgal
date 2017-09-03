@@ -55,7 +55,7 @@ public:
     >::Kernel >::type GeomTraits;
   /// ErrorMetric type
   typedef typename CGAL::Default::Get<ErrorMetric_,
-    CGAL::L21Metric<TriangleMesh, VertexPointMap, GeomTraits> >::type ErrorMetric;
+    CGAL::L21Metric<TriangleMesh, VertexPointMap, false, GeomTraits> >::type ErrorMetric;
   /// ProxyFitting type
   typedef typename CGAL::Default::Get<ProxyFitting_,
     CGAL::L21ProxyFitting<TriangleMesh, VertexPointMap, GeomTraits> >::type ProxyFitting;
@@ -98,6 +98,7 @@ private:
 
 #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
 public:
+#endif
   // The proxy wrapper for approximation.
   struct ProxyWrapper {
     ProxyWrapper(const Proxy &_p, const face_descriptor &_s)
@@ -107,6 +108,7 @@ public:
     face_descriptor seed; // proxy seed
     FT err; // proxy fitting error
   };
+#ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
 private:
 #endif
 
