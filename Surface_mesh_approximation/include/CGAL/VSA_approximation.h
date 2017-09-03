@@ -304,8 +304,15 @@ public:
    * Rebuild the internal data structure.
    */
   void rebuild() {
-    // rebuild inter data structure
     proxies.clear();
+    px_planes.clear();
+    anchors.clear();
+    borders.clear();
+    tris.clear();
+
+    if (!m_pmesh)
+      return;
+    // rebuild inter data structure
     internal_fidx_map.clear();
     BOOST_FOREACH(face_descriptor f, faces(*m_pmesh))
       internal_fidx_map[f] = 0;
