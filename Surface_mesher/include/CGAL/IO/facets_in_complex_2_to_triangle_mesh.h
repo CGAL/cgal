@@ -19,28 +19,36 @@
 // $Id$
 //
 // Author(s) : Maxime Gimeno, Pierre Alliez
-#ifndef CGAL_OUTPUT_SURFACE_FACETS_TO_FACEGRAPH_H
-#define CGAL_OUTPUT_SURFACE_FACETS_TO_FACEGRAPH_H
+#ifndef CGAL_FACETS_IN_COMPLEX_2_TO_TRIANGLE_MESH_H
+#define CGAL_FACETS_IN_COMPLEX_2_TO_TRIANGLE_MESH_H
 
 #include <CGAL/license/Surface_mesher.h>
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <map>
 
-//! Gets reconstructed surface out of a SurfaceMeshComplex_2InTriangulation_3 object.
-//!
-//! This variant exports the surface as a FaceGraph and appends it to `graph`.
-//! It requires the surface to be manifold. For this purpose,
-//! you may call make_surface_mesh() with Manifold_tag or Manifold_with_boundary_tag parameter.
-//!
-//! @tparam C2T3 model of the SurfaceMeshComplex_2InTriangulation_3 concept.
-//! @tparam FaceGraph a model of FaceGraph.
-//!
-//! @param c2t3 an instance of a manifold C2T3.
-//! @param graph an instance of FaceGraph.
-template<class C2T3, class FaceGraph>
-void c2t3_to_facegraph(const C2T3& c2t3, FaceGraph& graph)
+namespace CGAL{
+/*!
+\ingroup PkgSurfaceMesher3FunctionsIO
+
+ \brief converts a manifold surface reconstructed by `make_surface_mesh()` to a `TriangleMesh`.
+
+ This function exports the surface as a `TriangleMesh` and appends it to `graph`.
+ It must be manifold. For this purpose, you may call
+ `make_surface_mesh()` with `Manifold_tag` or
+ `Manifold_with_boundary_tag` parameter.
+
+ @tparam C2T3 a model of `SurfaceMeshComplex_2InTriangulation_3`.
+ @tparam TriangleMesh a model of `MutableFaceGraph` with an internal point property map. The point type should be compatible with the one used in `C2T3`.
+
+ @param c2t3 a manifold instance of `C2T3`.
+ @param graph an instance of `TriangleMesh`.
+
+\sa `CGAL::output_surface_facets_to_off()`
+*/
+template<class C2T3, class TriangleMesh>
+void facets_in_complex_2_to_triangle_mesh(const C2T3& c2t3, TriangleMesh& graph)
 {
-  typedef typename boost::property_map<FaceGraph, boost::vertex_point_t>::type VertexPointMap;
+  typedef typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type VertexPointMap;
   typedef typename boost::property_traits<VertexPointMap>::value_type Point_3;
   typedef typename C2T3::Triangulation Tr;
   typedef typename Tr::Vertex_handle Vertex_handle;
@@ -119,16 +127,14 @@ void c2t3_to_facegraph(const C2T3& c2t3, FaceGraph& graph)
     //used to set indices of vertices
     std::map<Vertex_handle, int> V;
     int inum = 0;
-
-
     //add vertices
-    std::vector<typename boost::graph_traits<FaceGraph>::vertex_descriptor> vertices;
+    std::vector<typename boost::graph_traits<TriangleMesh>::vertex_descriptor> vertices;
     for(Vertex_iterator vit = tr.vertices_begin();
         vit != tr.vertices_end();
         ++vit)
     {
 
-      typename boost::graph_traits<FaceGraph>::vertex_descriptor v = add_vertex(graph);
+      typename boost::graph_traits<TriangleMesh>::vertex_descriptor v = add_vertex(graph);
       vertices.push_back(v);
       put(vpmap,
           v,
@@ -150,7 +156,7 @@ void c2t3_to_facegraph(const C2T3& c2t3, FaceGraph& graph)
               : V[fit->first->vertex(tr.vertex_triple_index(fit->second, 2))]),
           id2(regular_orientation ? V[fit->first->vertex(tr.vertex_triple_index(fit->second, 2))]
               : V[fit->first->vertex(tr.vertex_triple_index(fit->second, 1))]);
-      std::vector<typename boost::graph_traits<FaceGraph>::vertex_descriptor> face;
+      std::vector<typename boost::graph_traits<TriangleMesh>::vertex_descriptor> face;
       face.resize(3);
       face[0] = vertices[id0];
       face[1] = vertices[id1];
@@ -161,4 +167,6 @@ void c2t3_to_facegraph(const C2T3& c2t3, FaceGraph& graph)
     CGAL_assertion(nb_facets == number_of_facets);
   }
 }
-#endif // CGAL_OUTPUT_SURFACE_FACETS_TO_FACEGRAPH_H
+
+}// end CGAL
+#endif // CGAL_FACETS_IN_COMPLEX_2_TO_TRIANGLE_MESH_H

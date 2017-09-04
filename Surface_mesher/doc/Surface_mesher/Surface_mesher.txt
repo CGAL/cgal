@@ -291,10 +291,11 @@ guarantees nothing else.
 
 \section Surface_mesherOutput Output
 
-This \cgal component also provides functions to write the reconstructed surface mesh to the %Object File Format (OFF) \cgalCite{cgal:p-gmgv16-96} and to convert it to a polyhedron (when it is manifold): 
+This \cgal component also provides functions to write the reconstructed surface mesh to the %Object File Format (OFF) \cgalCite{cgal:p-gmgv16-96} and to convert it to a `FaceGraph` (when it is manifold): 
 
 - `output_surface_facets_to_off()` 
 - `output_surface_facets_to_polyhedron()` 
+- `facets_in_complex_2_to_triangle_mesh()`
 
 \section Surface_mesherUndocumented Undocumented Features Available in Demos
 

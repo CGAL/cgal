@@ -30,5 +30,4 @@
 -  `TextListItem`
 -  `CGAL::Three::Scene_item`
 -  `CGAL::Three::Scene_group_item`
-
 */
