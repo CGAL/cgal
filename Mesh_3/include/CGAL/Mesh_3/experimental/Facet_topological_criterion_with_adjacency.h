@@ -102,7 +102,7 @@ protected:
         {
           ++nb_vertices_on_curves;
           const typename MeshDomain::Curve_index curve_id =
-            domain->curve_segment_index(v->index());
+            domain->curve_index(v->index());
           Index_set set;
           domain->get_incidences(curve_id, std::back_inserter(set));
           if(std::find(set.begin(), set.end(), patch_index) == set.end())

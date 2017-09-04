@@ -124,16 +124,15 @@ struct Sizing_field_with_aabb_tree
       domain.get_corner_incident_curves(pair.second,
                                         std::inserter(incident_curves,
                                                       incident_curves.end()));
-      // For each incident cycles, insert a point on the cycle, as far as
+      // For each incident loops, insert a point on the loop, as far as
       // possible.
       BOOST_FOREACH(Curve_index curve_index, incident_curves) {
-        if(domain.is_cycle(pair.first, curve_index)) {
-          FT curve_lenght = domain.curve_segment_length(pair.first,
-                                                        curve_index);
+        if(domain.is_loop(curve_index)) {
+          FT curve_lenght = domain.curve_length(curve_index);
           Point_3 other_point =
-            domain.construct_point_on_curve_segment(pair.first,
-                                                    curve_index,
-                                                    curve_lenght / 2);
+            domain.construct_point_on_curve(pair.first,
+                                            curve_index,
+                                            curve_lenght / 2);
           dt.insert(other_point);
         }
       }
@@ -143,7 +142,7 @@ struct Sizing_field_with_aabb_tree
       return;//there is no surface --> no surface patches
 
     //fill incidences with patches
-    curves_incident_patches.resize(domain.maximal_curve_segment_index()+1);
+    curves_incident_patches.resize(domain.maximal_curve_index()+1);
     corners_incident_patches.resize(corners.size());
     for (Curve_index curve_id = 1;
          std::size_t(curve_id) < curves_incident_patches.size();
@@ -294,7 +293,7 @@ struct Sizing_field_with_aabb_tree
     } 
     else { // dim == 1
       const typename MeshDomain::Curve_index& curve_id = 
-        domain.curve_segment_index(id);
+        domain.curve_index(id);
       if(!aabb_tree.empty()) {
         const Patches_ids& ids = curves_incident_patches[curve_id];
 
