@@ -748,7 +748,7 @@ treat_result(Scene_item& source_item,
     if(mw->property("is_polyhedron_mode").toBool())
     {
       Scene_polyhedron_item* new_item = new Scene_polyhedron_item;
-      CGAL::c3t3_to_facegraph(result_item->c3t3(), *new_item->face_graph());
+      CGAL::facets_in_complex_3_to_triangle_mesh(result_item->c3t3(), *new_item->face_graph());
       new_item->setName(tr("%1 [Remeshed as Polyhedron_3]").arg(source_item.name()));
       Q_FOREACH(int ind, scene->selectionIndices()) {
         scene->item(ind)->setVisible(false);
@@ -764,7 +764,7 @@ treat_result(Scene_item& source_item,
     {
       {
         Scene_surface_mesh_item* new_item = new Scene_surface_mesh_item;
-        CGAL::c3t3_to_facegraph(result_item->c3t3(), *new_item->face_graph());
+        CGAL::facets_in_complex_3_to_triangle_mesh(result_item->c3t3(), *new_item->face_graph());
         new_item->setName(tr("%1 [Remeshed as Surface_mesh]").arg(source_item.name()));
         Q_FOREACH(int ind, scene->selectionIndices()) {
           scene->item(ind)->setVisible(false);
