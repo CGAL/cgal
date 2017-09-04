@@ -2,15 +2,7 @@
 #include <QAction>
 #include <QMessageBox>
 #include <QMainWindow>
-#include "opengl_tools.h"
-#include "Kernel_type.h"
-#include "Polyhedron_type.h"
-#include "Scene_polyhedron_item.h"
-#include "Scene_surface_mesh_item.h"
-#include "Scene_polyhedron_selection_item.h"
-
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
-
 #include <CGAL/intersections.h>
 #include <CGAL/Bbox_3.h>
 #include <CGAL/box_intersection_d.h>
@@ -18,6 +10,19 @@
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
 #include <CGAL/Make_triangle_soup.h>
 
+#include "opengl_tools.h"
+#include "Kernel_type.h"
+#include "Scene_polyhedron_selection_item.h"
+
+#ifdef USE_SURFACE_MESH
+#include "Scene_surface_mesh_item.h"
+typedef Scene_surface_mesh_item Scene_face_graph_item;
+#else
+#include "Scene_polyhedron_item.h"
+typedef Scene_polyhedron_item Scene_face_graph_item;
+#endif
+
+typedef Scene_face_graph_item::Face_graph Face_graph;
 typedef Kernel::Triangle_3 Triangle;
 using namespace CGAL::Three;
 class Polyhedron_demo_self_intersection_plugin : 
@@ -49,8 +54,7 @@ public:
 
   bool applicable(QAction*) const { 
     return
-        (qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex())) ||
-         qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex())));
+        qobject_cast<Scene_face_graph_item*>(scene->item(scene->mainSelectionIndex()));
   }
 
 public Q_SLOTS:
@@ -79,54 +83,42 @@ bool selfIntersect(Mesh* mesh, std::vector<std::pair<typename boost::graph_trait
 
 void Polyhedron_demo_self_intersection_plugin::on_actionSelfIntersection_triggered()
 {
-  typedef SMesh Surface_mesh;
-  typedef boost::graph_traits<Surface_mesh>::face_descriptor Face_descriptor;
-  typedef boost::graph_traits<Surface_mesh>::halfedge_descriptor halfedge_descriptor;
-  typedef Surface_mesh::Vertex_index Vertex_index;
+  typedef boost::graph_traits<Face_graph>::face_descriptor Face_descriptor;
+  typedef boost::graph_traits<Face_graph>::halfedge_descriptor halfedge_descriptor;
   QApplication::setOverrideCursor(Qt::WaitCursor);
   bool found = false;
-  std::vector<Scene_polyhedron_item*> selected_polys;
-  std::vector<Scene_surface_mesh_item*> selected_sms;
+  std::vector<Scene_face_graph_item*> selected_polys;
   Q_FOREACH(Scene_interface::Item_id index, scene->selectionIndices())
   {
-    Scene_polyhedron_item* poly_item =
-        qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+    Scene_face_graph_item* poly_item =
+        qobject_cast<Scene_face_graph_item*>(scene->item(index));
     if(poly_item)
     {
       selected_polys.push_back(poly_item);
     }
-    else
-    {
-      Scene_surface_mesh_item* sm_item =
-          qobject_cast<Scene_surface_mesh_item*>(scene->item(index));
-      if(sm_item)
-      {
-        selected_sms.push_back(sm_item);
-      }
-    }
   }
-  Q_FOREACH(Scene_polyhedron_item* poly_item, selected_polys)
+  Q_FOREACH(Scene_face_graph_item* poly_item, selected_polys)
   {
-    typedef boost::graph_traits<Polyhedron>::face_descriptor Face_descriptor;
-    Polyhedron* pMesh = poly_item->polyhedron();
-    std::vector<std::pair<Face_descriptor, Face_descriptor> > facets;
-    // add intersecting triangles to a selection_item.
-    if(selfIntersect(pMesh, facets))
+    Face_graph* mesh = poly_item->face_graph();
+    std::vector<std::pair<Face_descriptor, Face_descriptor> > faces;
+    // add intersecting triangles to a new Surface_mesh.
+    if(selfIntersect(mesh, faces))
     {
+      //add the faces
       Scene_polyhedron_selection_item* selection_item = new Scene_polyhedron_selection_item(poly_item, mw);
-      for(std::vector<std::pair<Face_descriptor, Face_descriptor> >::iterator fb = facets.begin();
-          fb != facets.end(); ++fb) {
+      for(std::vector<std::pair<Face_descriptor, Face_descriptor> >::iterator fb = faces.begin();
+          fb != faces.end(); ++fb) {
         selection_item->selected_facets.insert(fb->first);
         selection_item->selected_facets.insert(fb->second);
 
-        Polyhedron::Halfedge_around_facet_circulator hc = (fb->first)->facet_begin(), cend = hc;
-        CGAL_For_all(hc,cend) {
-          selection_item->selected_edges.insert(edge(hc, *selection_item->polyhedron()));
+        //add the edges
+        BOOST_FOREACH(halfedge_descriptor he_circ, halfedges_around_face( halfedge(fb->first, *mesh), *mesh))
+        {
+          selection_item->selected_edges.insert(edge(he_circ, *mesh));
         }
-        hc = (fb->second)->facet_begin();
-        cend = hc;
-        CGAL_For_all(hc,cend) {
-          selection_item->selected_edges.insert(edge(hc, *selection_item->polyhedron()));
+        BOOST_FOREACH(halfedge_descriptor he_circ, halfedges_around_face( halfedge(fb->second, *mesh), *mesh))
+        {
+          selection_item->selected_edges.insert(edge(he_circ, *mesh));
         }
       }
       selection_item->invalidateOpenGLBuffers();
@@ -135,51 +127,6 @@ void Polyhedron_demo_self_intersection_plugin::on_actionSelfIntersection_trigger
       scene->addItem(selection_item);
       scene->itemChanged(poly_item);
       scene->itemChanged(selection_item);
-      found = true;
-    }
-  }
-
-  Q_FOREACH(Scene_surface_mesh_item* sm_item, selected_sms)
-  {
-    Surface_mesh* sMesh = sm_item->polyhedron();
-    std::vector<std::pair<Face_descriptor, Face_descriptor> > faces;
-    // add intersecting triangles to a new Surface_mesh.
-    if(selfIntersect(sMesh, faces))
-    {
-      //add the faces
-      Surface_mesh* new_mesh = new Surface_mesh();
-      for(std::vector<std::pair<Face_descriptor, Face_descriptor> >::iterator fb = faces.begin();
-          fb != faces.end(); ++fb)
-      {
-        std::vector<Vertex_index> face_vertices;
-        BOOST_FOREACH(halfedge_descriptor he_circ, halfedges_around_face( halfedge(fb->first, *sMesh), *sMesh))
-        {
-          face_vertices.push_back(new_mesh->add_vertex(get(sMesh->points(), target(he_circ, *sMesh))));
-        }
-        new_mesh->add_face(face_vertices);
-        face_vertices.clear();
-        BOOST_FOREACH(halfedge_descriptor he_circ, halfedges_around_face( halfedge(fb->second, *sMesh), *sMesh))
-        {
-          face_vertices.push_back(new_mesh->add_vertex(get(sMesh->points(), target(he_circ, *sMesh))));
-        }
-        new_mesh->add_face(face_vertices);
-      }
-      //add the edges
-      BOOST_FOREACH(Face_descriptor fd, new_mesh->faces())
-      {
-        BOOST_FOREACH(halfedge_descriptor he_circ, halfedges_around_face( halfedge(fd, *new_mesh), *new_mesh))
-        {
-          new_mesh->add_edge(source(he_circ, *new_mesh), target(he_circ, *new_mesh));
-        }
-      }
-      Scene_surface_mesh_item* ism_item = new Scene_surface_mesh_item(new_mesh);
-      ism_item->invalidateOpenGLBuffers();
-      ism_item->setName(tr("%1(intersecting triangles)").arg(sm_item->name()));
-      ism_item->setColor(QColor(Qt::gray).darker(200));
-      sm_item->setRenderingMode(Wireframe);
-      scene->addItem(ism_item);
-      scene->itemChanged(sm_item);
-      scene->itemChanged(ism_item);
       found = true;
     }
   }
