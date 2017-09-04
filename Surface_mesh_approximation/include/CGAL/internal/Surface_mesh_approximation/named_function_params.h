@@ -6,6 +6,8 @@
 namespace CGAL{
 namespace internal_np{
 
+  enum vsa_no_output_t { vsa_no_output };
+
 // define enum types and values for new named parameters
 #define CGAL_add_named_parameter(X, Y, Z)            \
   enum X { Y };

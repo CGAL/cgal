@@ -131,48 +131,46 @@ get_const_property_map(const PropertyTag& p, const PolygonMesh& pmesh)
   return pms.get_const_pmap(p, pmesh);
 }
 
-template<typename PolygonMesh, typename NamedParameters>
-class GetFaceIndexMap
-{
-  typedef typename property_map_selector<PolygonMesh, boost::face_index_t>::type DefaultMap;
-  typedef typename property_map_selector<PolygonMesh, boost::face_index_t>::const_type DefaultMap_const;
-public:
-  typedef typename boost::lookup_named_param_def <
-    internal_np::face_index_t,
-    NamedParameters,
-    DefaultMap
-  > ::type  type;
-  typedef typename boost::lookup_named_param_def <
-    internal_np::face_index_t,
-    NamedParameters,
-    DefaultMap_const
-  > ::type  const_type;
-  typedef typename boost::is_same<type, DefaultMap>::type Is_internal_map;
-  typedef typename boost::is_same<const_type, DefaultMap_const>::type Is_internal_map_const;
-};
+// output helper functions
+template <typename Approximation, typename FacetProxyMap>
+void get_proxy_map(const Approximation &approx, FacetProxyMap fproxymap) {
+  approx.get_proxy_map(fproxymap);
+}
 
-template<typename PolygonMesh, typename NamedParameters>
-class GetFaceNormalMap
-{
-  struct DummyNormalPmap
-  {
-    typedef typename boost::graph_traits<PolygonMesh>::face_descriptor key_type;
-    typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type::Vector_3 value_type;
-    typedef value_type reference;
-    typedef boost::readable_property_map_tag category;
+template <typename Approximation>
+void get_proxy_map(const Approximation &approx, internal_np::vsa_no_output_t) {}
 
-    typedef DummyNormalPmap Self;
-    friend reference get(const Self&, const key_type&) { return CGAL::NULL_VECTOR; }
-  };
+template <typename Approximation, typename OutputIterator>
+void get_anchor_vertices(const Approximation &approx, OutputIterator out_itr) {
+  approx.get_anchor_vertices(out_itr);
+}
 
-public:
-  typedef DummyNormalPmap NoMap;
-  typedef typename boost::lookup_named_param_def <
-    internal_np::face_normal_t,
-    NamedParameters,
-    DummyNormalPmap//default
-  > ::type  type;
-};
+template <typename Approximation>
+void get_anchor_vertices(const Approximation &approx, internal_np::vsa_no_output_t) {}
+
+template <typename Approximation, typename OutputIterator>
+void get_anchor_points(const Approximation &approx, OutputIterator out_itr) {
+  approx.get_anchor_points(out_itr);
+}
+
+template <typename Approximation>
+void get_anchor_points(const Approximation &approx, internal_np::vsa_no_output_t) {}
+
+template <typename Approximation, typename OutputIterator>
+void get_indexed_triangles(const Approximation &approx, OutputIterator out_itr) {
+  approx.get_indexed_triangles(out_itr);
+}
+
+template <typename Approximation>
+void get_indexed_triangles(const Approximation &approx, internal_np::vsa_no_output_t) {}
+
+template <typename Approximation, typename OutputIterator>
+void get_proxies(const Approximation &approx, OutputIterator out_itr) {
+  approx.get_proxies(out_itr);
+}
+
+template <typename Approximation>
+void get_proxies(const Approximation &approx, internal_np::vsa_no_output_t) {}
 
 } //end of namespace CGAL
 
