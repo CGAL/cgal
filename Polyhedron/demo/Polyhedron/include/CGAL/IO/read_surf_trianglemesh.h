@@ -37,7 +37,6 @@ bool get_material_metadata(std::istream& input,
 
   iss >> _material.second;//name
 
-  //static int material_id = 0;
   while (std::getline(input, line))
   {
     std::string prop; //property
@@ -49,7 +48,7 @@ bool get_material_metadata(std::istream& input,
     {
       int tmp_id;
       iss >> tmp_id;
-      _material.first = material_id++;
+      _material.first = material_id;
 
       if ((0 == to_lower_case(_material.second).compare("exterior"))
           && _material.first != 0)
