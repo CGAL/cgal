@@ -48,6 +48,7 @@ int main(int argc, char* argv[])
   output.close();
 
   input.open(filename);
+  mesh.clear();
   input >> mesh;
   std::cout << "Number of vertices before self-intersection removal " << num_vertices(mesh) << "\n";
   if (!PMP::autorefine_and_remove_self_intersections(mesh))

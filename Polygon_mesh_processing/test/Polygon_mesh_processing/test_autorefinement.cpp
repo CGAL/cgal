@@ -41,6 +41,7 @@ void test(const char* fname, std::size_t nb_polylines, std::size_t total_nb_poin
 
 // Testing autorefine_and_remove_self_intersections()
   input.open(fname);
+  mesh.clear();
   input >> mesh;
   bool res=PMP::autorefine_and_remove_self_intersections(mesh);
   assert(res==all_fixed);
