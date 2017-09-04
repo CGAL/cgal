@@ -116,7 +116,7 @@ int main()
   l2_approx.get_indexed_triangles(std::back_inserter(tris));
 
   std::vector<std::vector<std::size_t> > boundary;
-  boundary = l2_approx.get_indexed_boundary_polygons();
+  l2_approx.get_indexed_boundary_polygons(std::back_inserter(boundary));
 
   const FT drop(0.001);
   const std::size_t iterations = 5;

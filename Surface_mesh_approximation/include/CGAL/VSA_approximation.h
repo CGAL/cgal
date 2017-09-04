@@ -817,7 +817,7 @@ public:
    * @param[out] facet_proxy_map facet proxy index map
    */
   template <typename FacetProxyMap>
-  void get_proxy_map(FacetProxyMap &facet_proxy_map) {
+  void get_proxy_map(FacetProxyMap &facet_proxy_map) const {
     BOOST_FOREACH(face_descriptor f, faces(*m_pmesh))
       facet_proxy_map[f] = fproxy_map[f];
   }
@@ -828,11 +828,9 @@ public:
    * @param out_itr output iterator
    */
   template <typename OutputIterator>
-  void get_proxies(OutputIterator out_itr) {
-    BOOST_FOREACH(const ProxyWrapper &pxw, proxies) {
-      *out_itr = pxw.px;
-      ++out_itr;
-    }
+  void get_proxies(OutputIterator out_itr) const {
+    BOOST_FOREACH(const ProxyWrapper &pxw, proxies)
+      *out_itr++ = pxw.px;
   }
 
 #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
@@ -842,11 +840,9 @@ public:
    * @param out_itr output iterator
    */
   template <typename OutputIterator>
-  void get_wrapped_proxies(OutputIterator out_itr) {
-    BOOST_FOREACH(const ProxyWrapper &pxw, proxies) {
-      *out_itr = pxw;
-      ++out_itr;
-    }
+  void get_wrapped_proxies(OutputIterator out_itr) const {
+    BOOST_FOREACH(const ProxyWrapper &pxw, proxies)
+      *out_itr++ = pxw;
   }
 #endif
 
@@ -854,7 +850,7 @@ public:
    * @brief Get the proxies size.
    * @return number of proxies
    */
-  std::size_t get_proxies_size() { return proxies.size(); }
+  std::size_t get_proxies_size() const { return proxies.size(); }
 
   /*!
    * @brief Get the anchor points, which have the area-averaged position of the projected anchor vertex points on the incident proxies.
@@ -862,11 +858,9 @@ public:
    * @param out_itr output iterator
    */
   template <typename OutputIterator>
-  void get_anchor_points(OutputIterator out_itr) {
-    BOOST_FOREACH(const Anchor &a, anchors) {
-      *out_itr = a.pos;
-      ++out_itr;
-    }
+  void get_anchor_points(OutputIterator out_itr) const {
+    BOOST_FOREACH(const Anchor &a, anchors)
+      *out_itr++ = a.pos;
   }
 
   /*!
@@ -875,11 +869,9 @@ public:
    * @param out_itr output iterator
    */
   template <typename OutputIterator>
-  void get_anchor_vertices(OutputIterator out_itr) {
-    BOOST_FOREACH(const Anchor &a, anchors) {
-      *out_itr = a.vtx;
-      ++out_itr;
-    }
+  void get_anchor_vertices(OutputIterator out_itr) const {
+    BOOST_FOREACH(const Anchor &a, anchors)
+      *out_itr++ = a.vtx;
   }
 
   /*!
@@ -888,20 +880,18 @@ public:
    * @param out_itr output iterator
    */
   template <typename OutputIterator>
-  void get_indexed_triangles(OutputIterator out_itr) {
-    BOOST_FOREACH(const int &i, tris) {
-      *out_itr = i;
-      ++out_itr;
-    }
+  void get_indexed_triangles(OutputIterator out_itr) const {
+    BOOST_FOREACH(const int &i, tris)
+      *out_itr++ = i;
   }
 
   /*!
    * @brief Get the indexed boundary polygon approximation.
-   * @return vector of indexed polygons.
+   * @tparam OutputIterator output iterator with std::vector<std::size_t> as value type
    */
-  std::vector<std::vector<std::size_t> > get_indexed_boundary_polygons() {
-    std::vector<std::vector<std::size_t> > bdrs;
-    for (typename std::vector<Border>::iterator bitr = borders.begin();
+  template <typename OutputIterator>
+  void get_indexed_boundary_polygons(OutputIterator out_itr) const {
+    for (typename std::vector<Border>::const_iterator bitr = borders.begin();
       bitr != borders.end(); ++bitr) {
       std::vector<std::size_t> bdr;
       const halfedge_descriptor he_mark = bitr->he_head;
@@ -911,9 +901,8 @@ public:
         walk_to_next_anchor(he, chord);
         bdr.push_back(vanchor_map[target(he, *m_pmesh)]);
       } while(he != he_mark);
-      bdrs.push_back(bdr);
+      *out_itr++ = bdr;
     }
-    return bdrs;
   }
 
 // private member functions
@@ -1523,7 +1512,7 @@ private:
    * @param[in/out] he_start starting region border halfedge pointing to a vertex associated with an anchor
    * @param[out] chord recorded path chord
    */
-  void walk_to_next_anchor(halfedge_descriptor &he_start, ChordVector &chord) {
+  void walk_to_next_anchor(halfedge_descriptor &he_start, ChordVector &chord) const {
     do {
       walk_to_next_border_halfedge(he_start);
       chord.push_back(he_start);
@@ -1534,7 +1523,7 @@ private:
    * @brief Walks to next border halfedge.
    * @param[in/out] he_start region border halfedge
    */
-  void walk_to_next_border_halfedge(halfedge_descriptor &he_start) {
+  void walk_to_next_border_halfedge(halfedge_descriptor &he_start) const {
     const std::size_t px_idx = fproxy_map[face(he_start, *m_pmesh)];
     BOOST_FOREACH(halfedge_descriptor h, halfedges_around_target(he_start, *m_pmesh)) {
       if (CGAL::is_border(h, *m_pmesh) || fproxy_map[face(h, *m_pmesh)] != px_idx) {
@@ -1634,7 +1623,7 @@ private:
    * @brief Check if the target vertex of a halfedge is attached with an anchor.
    * @param he halfedge
    */
-  bool is_anchor_attached(const halfedge_descriptor &he) {
+  bool is_anchor_attached(const halfedge_descriptor &he) const {
     return is_anchor_attached(target(he, *m_pmesh), vanchor_map);
   }
 
@@ -1647,7 +1636,7 @@ private:
   template<typename VertexAnchorIndexMap>
   bool is_anchor_attached(
     const typename boost::property_traits<VertexAnchorIndexMap>::key_type &v,
-    const VertexAnchorIndexMap &vertex_anchor_map) {
+    const VertexAnchorIndexMap &vertex_anchor_map) const {
     return vertex_anchor_map[v] >= 0;
   }
 
