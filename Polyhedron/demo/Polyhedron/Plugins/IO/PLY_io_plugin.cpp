@@ -5,6 +5,7 @@
 
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
 #include <QInputDialog>
+#include <QApplication>
 #include <fstream>
 
 #include <CGAL/IO/PLY_reader.h>
@@ -70,6 +71,8 @@ Polyhedron_demo_ply_plugin::load(QFileInfo fileinfo) {
   if(!in)
     std::cerr << "Error!\n";
 
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+
   // Test if input is mesh or point set
   bool input_is_mesh = false;
   std::string line;
@@ -106,7 +109,10 @@ Polyhedron_demo_ply_plugin::load(QFileInfo fileinfo) {
     std::vector<CGAL::Color> vcolors;
 
     if (!(CGAL::read_PLY (in, points, polygons, fcolors, vcolors)))
+    {
+      QApplication::restoreOverrideCursor();
       return NULL;
+    }
 
     if (CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh (polygons))
     {
@@ -120,6 +126,7 @@ Polyhedron_demo_ply_plugin::load(QFileInfo fileinfo) {
       
       Scene_surface_mesh_item* sm_item = new Scene_surface_mesh_item(surface_mesh);
       sm_item->setName(fileinfo.completeBaseName());
+      QApplication::restoreOverrideCursor();
       return sm_item;
     }
     else
@@ -127,6 +134,7 @@ Polyhedron_demo_ply_plugin::load(QFileInfo fileinfo) {
       Scene_polygon_soup_item* soup_item = new Scene_polygon_soup_item;
       soup_item->setName(fileinfo.completeBaseName());
       soup_item->load (points, polygons, fcolors, vcolors);
+      QApplication::restoreOverrideCursor();
       return soup_item;
     }
   }
@@ -137,13 +145,15 @@ Polyhedron_demo_ply_plugin::load(QFileInfo fileinfo) {
     if(!item->read_ply_point_set(in))
     {
       delete item;
+      QApplication::restoreOverrideCursor();
       return NULL;
     }
 
     item->setName(fileinfo.completeBaseName());
+    QApplication::restoreOverrideCursor();
     return item;
   }
-  
+  QApplication::restoreOverrideCursor();
   return NULL;
 }
 

@@ -88,7 +88,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
     };
 
     typedef boost::filter_iterator<Filter_unassigned_points,
-      boost::counting_iterator<std::size_t> > Point_index_iterator;
+      boost::counting_iterator<std::size_t, boost::use_default, std::ptrdiff_t> > Point_index_iterator;
     ///< iterator for indices of points.
     /// \endcond
 
@@ -817,8 +817,8 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
       Point_index_iterator p1 =
         boost::make_filter_iterator<Filter_unassigned_points>(
         fup,
-        boost::counting_iterator<std::size_t>(0),
-        boost::counting_iterator<std::size_t>(m_shape_index.size()));
+        boost::counting_iterator<std::size_t, boost::use_default, std::ptrdiff_t>(0),
+        boost::counting_iterator<std::size_t, boost::use_default, std::ptrdiff_t>(m_shape_index.size()));
 
       return make_range(p1, Point_index_iterator(p1.end()));
     }
