@@ -36,7 +36,7 @@
 #include <CGAL/AABB_traits.h>
 #include <CGAL/is_streamable.h>
 #include <CGAL/Real_timer.h>
-#include <CGAL/Filtered_predicate.h>
+#include <CGAL/property_map.h>
 
 #include <vector>
 #include <set>
@@ -46,6 +46,7 @@
 #include <boost/next_prior.hpp> // for boost::prior and boost::next
 #include <boost/variant.hpp>
 #include <boost/foreach.hpp>
+#include <boost/property_map/function_property_map.hpp>
 
 namespace CGAL {
 
@@ -60,9 +61,6 @@ class Polyline
   typedef typename Kernel::FT       FT;
 
   typedef std::vector<Point_3>      Data;
-
-  typedef typename Kernel::Approximate_kernel Approx_kernel;
-  typedef typename Kernel::Exact_kernel        Exact_kernel;
 
 public:
   typedef typename Data::const_iterator const_iterator;
@@ -685,6 +683,17 @@ public:
   add_features(InputIterator first, InputIterator last,
                IndicesOutputIterator out /*= CGAL::Emptyset_iterator()*/);
 
+  template <typename InputIterator,
+            typename PolylinePMap,
+            typename IncidentPatchesIndicesPMap,
+            typename IndicesOutputIterator>
+  IndicesOutputIterator
+  add_features_and_incidences
+  (InputIterator first, InputIterator last,
+   PolylinePMap polyline_pmap,
+   IncidentPatchesIndicesPMap incident_paches_indices_pmap,
+   IndicesOutputIterator out /* = CGAL::Emptyset_iterator() */);
+  
   template <typename InputIterator, typename IndicesOutputIterator>
   IndicesOutputIterator
   add_features_with_context(InputIterator first, InputIterator last,
@@ -701,6 +710,20 @@ public:
   add_features_with_context(InputIterator first, InputIterator last)
   { add_features_with_context(first, last, CGAL::Emptyset_iterator()); }
 
+  template <typename InputIterator,
+            typename PolylinePMap,
+            typename IncidentPatchesIndicesPMap>
+  void
+  add_features_and_incidences
+  (InputIterator first, InputIterator last,
+   PolylinePMap polyline_pmap,
+   IncidentPatchesIndicesPMap incident_paches_indices_pmap)
+  {
+    add_features_and_incidences(first, last, polyline_pmap,
+                                incident_paches_indices_pmap,
+                                CGAL::Emptyset_iterator());
+  }
+  
   template <typename Surf_p_index, typename IncidenceMap>
   void reindex_patches(const std::vector<Surf_p_index>& map, IncidenceMap& incidence_map);
 
@@ -969,6 +992,35 @@ add_features(InputIterator first, InputIterator last,
   return indices_out;
 }
 
+
+namespace details {
+
+template <typename PolylineWithContext>
+struct Get_content_from_polyline_with_context {
+  typedef Get_content_from_polyline_with_context Self;
+  typedef const PolylineWithContext& key_type;
+  typedef const typename PolylineWithContext::Bare_polyline& value_type;
+  typedef value_type reference;
+  typedef boost::readable_property_map_tag category;
+  friend value_type get(const Self, key_type polyline) {
+    return polyline.polyline_content;
+  }
+}; // end Get_content_from_polyline_with_context<PolylineWithContext>
+
+template <typename PolylineWithContext>
+struct Get_patches_id_from_polyline_with_context {
+  typedef Get_patches_id_from_polyline_with_context Self;
+  typedef const PolylineWithContext& key_type;
+  typedef const typename PolylineWithContext::Context::Patches_ids& value_type;
+  typedef value_type reference;
+  typedef boost::readable_property_map_tag category;
+  friend value_type get(const Self, key_type polyline) {
+    return polyline.context.adjacent_patches_ids;
+  }
+}; // end Get_patches_id_from_polyline_with_context<PolylineWithContext>
+
+} // end namespace details
+
 template <class MD_>
 template <typename InputIterator, typename IndicesOutputIterator>
 IndicesOutputIterator
@@ -976,22 +1028,46 @@ Mesh_domain_with_polyline_features_3<MD_>::
 add_features_with_context(InputIterator first, InputIterator last,
                           IndicesOutputIterator indices_out)
 {
+  typedef typename std::iterator_traits<InputIterator>::value_type Pwc;
+  return add_features_and_incidences
+    (first, last,
+     details::Get_content_from_polyline_with_context<Pwc>(),
+     details::Get_patches_id_from_polyline_with_context<Pwc>(),
+     indices_out);
+}
+
+template <class MD_>
+template <typename InputIterator,
+          typename PolylinePMap,
+          typename IncidentPatchesIndicesPMap,
+          typename IndicesOutputIterator>
+IndicesOutputIterator
+Mesh_domain_with_polyline_features_3<MD_>::
+add_features_and_incidences(InputIterator first, InputIterator last,
+                            PolylinePMap polyline_pmap,
+                            IncidentPatchesIndicesPMap inc_patches_ind_pmap,
+                            IndicesOutputIterator indices_out)
+{
   // Insert one edge for each element
   for( ; first != last ; ++first )
   {
-    const typename Gt::Point_3& p1 = first->polyline_content.front();
-    const typename Gt::Point_3& p2 = first->polyline_content.back();
+    const typename boost::property_traits<PolylinePMap>::reference
+      polyline = get(polyline_pmap, *first);
+    const typename boost::property_traits<IncidentPatchesIndicesPMap>::reference
+      patches_ids = get(inc_patches_ind_pmap, *first);
+    const typename Gt::Point_3& p1 = *polyline.begin();
+    const typename Gt::Point_3& p2 = *boost::prior(polyline.end());
     Set_of_patch_ids& ids_p1 = corners_incidence_map_[p1];
-    std::copy(first->context.adjacent_patches_ids.begin(),
-              first->context.adjacent_patches_ids.end(),
+    std::copy(patches_ids.begin(),
+              patches_ids.end(),
               std::inserter(ids_p1, ids_p1.begin()));
     Set_of_patch_ids& ids_p2 = corners_incidence_map_[p2];
-    std::copy(first->context.adjacent_patches_ids.begin(),
-              first->context.adjacent_patches_ids.end(),
+    std::copy(patches_ids.begin(),
+              patches_ids.end(),
               std::inserter(ids_p2, ids_p2.begin()));
     Curve_index curve_id =
-      insert_edge(first->polyline_content.begin(), first->polyline_content.end());
-    edges_incidences_[curve_id] = first->context.adjacent_patches_ids;
+      insert_edge(polyline.begin(), polyline.end());
+    edges_incidences_[curve_id].insert(patches_ids.begin(), patches_ids.end());
     *indices_out++ = curve_id;
   }
   compute_corners_incidences();
