@@ -13,7 +13,7 @@ typedef Kernel::Point_3 Point;
 typedef Kernel::Vector_3 Vector;
 
 typedef CGAL::Point_set_3<Point> Point_set;
-typedef typename Point_set::Point_map Point_map;
+typedef Point_set::Point_map Point_map;
 
 typedef Kernel::Iso_cuboid_3 Iso_cuboid_3;
 
@@ -28,8 +28,8 @@ typedef Classification::Sum_of_weighted_features_classifier                     
 
 typedef Classification::Point_set_feature_generator<Kernel, Point_set, Point_map> Feature_generator;
 
-typedef typename Point_set::Property_map<std::size_t> Size_t_map;
-typedef typename Point_set::Property_map<Classification::RGB_Color> Color_map;
+typedef Point_set::Property_map<std::size_t> Size_t_map;
+typedef Point_set::Property_map<Classification::RGB_Color> Color_map;
 
 
 
@@ -50,7 +50,7 @@ int main (int, char**)
 
   for (std::size_t i = 0; i < 1000; ++ i)
   {
-    typename Point_set::iterator it
+    Point_set::iterator it
       = pts.insert (Point (CGAL::get_default_random().get_double(),
                            CGAL::get_default_random().get_double(),
                            CGAL::get_default_random().get_double()),

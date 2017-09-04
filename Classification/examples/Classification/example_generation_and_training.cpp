@@ -15,8 +15,8 @@ typedef Kernel::Point_3 Point;
 typedef CGAL::Point_set_3<Point> Point_set;
 typedef Kernel::Iso_cuboid_3 Iso_cuboid_3;
 
-typedef typename Point_set::Point_map Pmap;
-typedef typename Point_set::Property_map<int> Imap;
+typedef Point_set::Point_map Pmap;
+typedef Point_set::Property_map<int> Imap;
 
 namespace Classification = CGAL::Classification;
 
@@ -90,7 +90,7 @@ int main (int argc, char** argv)
   Classification::classify_with_graphcut<CGAL::Sequential_tag>
     (pts, pts.point_map(), labels, classifier,
      generator.neighborhood().k_neighbor_query(12),
-     0.2, 10, label_indices);
+     0.2f, 10, label_indices);
   t.stop();
   std::cerr << "Classification with graphcut done in " << t.time() << " second(s)" << std::endl;
 

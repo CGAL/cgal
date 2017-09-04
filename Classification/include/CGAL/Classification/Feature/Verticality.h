@@ -121,7 +121,7 @@ public:
     {
       typename GeomTraits::Vector_3 normal = eigen->normal_vector<GeomTraits>(pt_index);
       normal = normal / CGAL::sqrt (normal * normal);
-      return (1.f - CGAL::abs(normal * vertical));
+      return (1.f - float(CGAL::abs(normal * vertical)));
     }
     else
 #endif

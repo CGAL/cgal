@@ -62,9 +62,9 @@ int main (int argc, char** argv)
     return EXIT_FAILURE;
   }
 
-  float grid_resolution = 0.34;
-  float radius_neighbors = 1.7;
-  float radius_dtm = 15.0;
+  float grid_resolution = 0.34f;
+  float radius_neighbors = 1.7f;
+  float radius_dtm = 15.0f;
 
   std::cerr << "Computing useful structures" << std::endl;
 
@@ -111,13 +111,13 @@ int main (int argc, char** argv)
 
   std::cerr << "Setting weights" << std::endl;
   Classifier classifier (labels, features);
-  classifier.set_weight (distance_to_plane, 6.75e-2);
-  classifier.set_weight (linearity, 1.19);
-  classifier.set_weight (omnivariance, 1.34e-1);
-  classifier.set_weight (planarity, 7.32e-1);
-  classifier.set_weight (surface_variation, 1.36e-1);
-  classifier.set_weight (dispersion, 5.45e-1);
-  classifier.set_weight (elevation, 1.47e1);
+  classifier.set_weight (distance_to_plane, 6.75e-2f);
+  classifier.set_weight (linearity, 1.19f);
+  classifier.set_weight (omnivariance, 1.34e-1f);
+  classifier.set_weight (planarity, 7.32e-1f);
+  classifier.set_weight (surface_variation, 1.36e-1f);
+  classifier.set_weight (dispersion, 5.45e-1f);
+  classifier.set_weight (elevation, 1.47e1f);
   
   std::cerr << "Setting effects" << std::endl;
   classifier.set_effect (ground, distance_to_plane, Classifier::NEUTRAL);
@@ -182,7 +182,7 @@ int main (int argc, char** argv)
   Classification::classify_with_graphcut<Concurrency_tag>
     (pts, Pmap(), labels, classifier,
      neighborhood.k_neighbor_query(12),
-     0.2, 4, label_indices);
+     0.2f, 4, label_indices);
   t.stop();
   std::cerr << "Classification with graphcut performed in " << t.time() << " second(s)" << std::endl;
   //! [Graph_cut]
