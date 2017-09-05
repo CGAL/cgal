@@ -6,13 +6,15 @@
 
 #include <CGAL/Polyhedral_complex_mesh_domain_3.h>
 #include <CGAL/make_mesh_3.h>
+#include <CGAL/Surface_mesh.h>
 
 #include <cstdlib>
 
 // Domain
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Mesh_polyhedron_3<K>::type Polyhedron;
-typedef CGAL::Polyhedral_complex_mesh_domain_3<K> Mesh_domain;
+//typedef CGAL::Mesh_polyhedron_3<K>::type Polyhedron;
+typedef CGAL::Surface_mesh<K::Point_3> Polyhedron;
+typedef CGAL::Polyhedral_complex_mesh_domain_3<K, Polyhedron> Mesh_domain;
 
 
 #ifdef CGAL_CONCURRENT_MESH_3
