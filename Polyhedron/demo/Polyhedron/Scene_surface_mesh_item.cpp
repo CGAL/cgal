@@ -84,6 +84,7 @@ struct Scene_surface_mesh_item_priv{
     idx_data_(other.d->idx_data_),
     idx_edge_data_(other.d->idx_edge_data_)
   {
+    //smesh_->collect_garbage();
     item = parent;
     has_feature_edges = false;
     invalidate_stats();
@@ -224,10 +225,17 @@ Scene_surface_mesh_item::Scene_surface_mesh_item(const Scene_surface_mesh_item& 
   : CGAL::Three::Scene_item(Scene_surface_mesh_item_priv::NbOfVbos,Scene_surface_mesh_item_priv::NbOfVaos)
 {
   d = new Scene_surface_mesh_item_priv(other, this);
-  are_buffers_filled = false;
+  d->floated = false;
+
+  d->has_vcolors = false;
+  d->has_fcolors = false;
+  d->checkFloat();
   d->textVItems = new TextListItem(this);
   d->textEItems = new TextListItem(this);
   d->textFItems = new TextListItem(this);
+
+  are_buffers_filled = false;
+  invalidateOpenGLBuffers();
 }
 
 void Scene_surface_mesh_item::standard_constructor(SMesh* sm)
