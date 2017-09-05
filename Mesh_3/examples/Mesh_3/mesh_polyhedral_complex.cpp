@@ -55,6 +55,13 @@ const std::pair<int, int> incident_subdomains[] = {
 
 int main()
 {
+#ifdef CGAL_MESHING_STEPS_WITH_CIN
+  char in_char;
+  std::cout << "Ready for loading the data ? (y or n)";
+  std::cin >> in_char;
+  if (in_char == 'n') return 0;
+#endif
+
   const std::size_t nb_patches = sizeof(filenames) / sizeof(const char*);
   CGAL_assertion(sizeof(incident_subdomains) ==
                  nb_patches * sizeof(std::pair<int, int>));
@@ -66,9 +73,22 @@ int main()
       return EXIT_FAILURE;
     }
   }
+
+#ifdef CGAL_MESHING_STEPS_WITH_CIN
+  std::cout << "Ready for building the domain ? (y or n)";
+  std::cin >> in_char;
+  if (in_char == 'n') return 0;
+#endif
+
   // Create domain
   Mesh_domain domain(patches.begin(), patches.end(),
                      incident_subdomains, incident_subdomains+nb_patches);
+
+#ifdef CGAL_MESHING_STEPS_WITH_CIN
+  std::cout << "Ready for feature detection ? (y or n)";
+  std::cin >> in_char;
+  if (in_char == 'n') return 0;
+#endif
 
   domain.detect_features(); //includes detection of borders
 
@@ -77,12 +97,18 @@ int main()
                          facet_angle = 25, facet_size = 8, facet_distance = 0.2,
                          cell_radius_edge_ratio = 3, cell_size = 10);
 
+#ifdef CGAL_MESHING_STEPS_WITH_CIN
+  std::cout << "Ready for mesh generation ? (y or n)";
+  std::cin >> in_char;
+  if (in_char == 'n') return 0;
+#endif
+
   // Mesh generation
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria);
 
-  // Output
-  std::ofstream medit_file("out.mesh");
-  c3t3.output_to_medit(medit_file);
+  //// Output
+  //std::ofstream medit_file("out.mesh");
+  //c3t3.output_to_medit(medit_file);
 
   return EXIT_SUCCESS;
 }
