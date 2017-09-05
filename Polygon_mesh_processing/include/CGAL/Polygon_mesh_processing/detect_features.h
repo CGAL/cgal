@@ -86,7 +86,7 @@ struct PatchIdMapWrapper
 
   PatchIdMap map;
   int offset;
-  PatchIdMapWrapper(PatchIdMap& map, int offset)
+  PatchIdMapWrapper(PatchIdMap map, int offset)
     : map(map), offset(offset){}
 };
 
@@ -116,7 +116,7 @@ struct PatchIdMapWrapper<PatchIdMap, std::pair<Int, Int> >
 
   PatchIdMap map;
   int offset;
-  PatchIdMapWrapper(PatchIdMap& map, int offset)
+  PatchIdMapWrapper(PatchIdMap map, int offset)
     : map(map), offset(offset){}
 };
 
@@ -138,8 +138,8 @@ template <typename PolygonMesh, typename PatchIdMap,
           typename EdgeIsFeatureMap, typename NamedParameters>
 typename boost::graph_traits<PolygonMesh>::faces_size_type
 detect_surface_patches(PolygonMesh& p,
-                       PatchIdMap& patch_id_map,
-                       EdgeIsFeatureMap& eif,
+                       PatchIdMap patch_id_map,
+                       EdgeIsFeatureMap eif,
                        const NamedParameters& np)
 {
   //extract types from NPs
@@ -162,8 +162,8 @@ detect_surface_patches(PolygonMesh& p,
 template <typename PolygonMesh, typename EdgeIsFeatureMap, typename PatchIdMap>
 typename boost::graph_traits<PolygonMesh>::faces_size_type
 detect_surface_patches(PolygonMesh& p,
-                       PatchIdMap& patch_id_map,
-                       EdgeIsFeatureMap& eif)
+                       PatchIdMap patch_id_map,
+                       EdgeIsFeatureMap eif)
 {
   return detect_surface_patches(p, patch_id_map, eif, parameters::all_default());
 }
@@ -176,8 +176,8 @@ template<typename GT,
          typename VNFEMap>
  void sharp_call(PolygonMesh& pmesh,
                  FT angle_in_deg,
-                 EIFMap& edge_is_feature_map,
-                 VNFEMap& vnfe)
+                 EIFMap edge_is_feature_map,
+                 VNFEMap vnfe)
 {
   // Initialize vertices
   BOOST_FOREACH(typename boost::graph_traits<PolygonMesh>::vertex_descriptor vd,
@@ -210,7 +210,7 @@ template<typename GT,
          typename EIFMap>
  void sharp_call(PolygonMesh& pmesh,
                  FT& angle_in_deg,
-                 EIFMap& edge_is_feature_map,
+                 EIFMap edge_is_feature_map,
                  const boost::param_not_found&)
 {
   typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor     edge_descriptor;
@@ -276,7 +276,7 @@ void detect_sharp_edges(PolygonMesh& pmesh,
 #else
     typename GetGeomTraits<PolygonMesh, NamedParameters>::type::FT angle_in_deg,
 #endif
-    EdgeIsFeatureMap& edge_is_feature_map,
+    EdgeIsFeatureMap edge_is_feature_map,
     const NamedParameters& np)
 {
   //extract types from NPs
@@ -315,9 +315,9 @@ void detect_sharp_edges(PolygonMesh& pmesh,
 template <typename PolygonMesh, typename PatchIdMap,
           typename VertexIncidentPatchesMap, typename EdgeIsFeatureMap>
 void detect_vertex_incident_patches(PolygonMesh& pmesh,
-                             const PatchIdMap& patch_id_map,
-                             VertexIncidentPatchesMap& vertex_incident_patches_map,
-                             const EdgeIsFeatureMap& edge_is_feature_map)
+                             const PatchIdMap patch_id_map,
+                             VertexIncidentPatchesMap vertex_incident_patches_map,
+                             const EdgeIsFeatureMap edge_is_feature_map)
 {
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor    vertex_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor  halfedge_descriptor;
@@ -352,7 +352,7 @@ namespace internal
               typename PIDMap,
               typename VIPMap,
               typename EIFMap>
-  void vip_call(PolygonMesh& mesh, PIDMap& pid, VIPMap& vip, EIFMap& eif )
+  void vip_call(PolygonMesh& mesh, PIDMap pid, VIPMap vip, EIFMap eif )
   {
     CGAL::Polygon_mesh_processing::detect_vertex_incident_patches(mesh, pid, vip, eif);
   }
@@ -360,7 +360,7 @@ namespace internal
   template<typename PolygonMesh,
            typename PIDMap,
            typename EIFMap>
-  void vip_call(PolygonMesh&, PIDMap&, const boost::param_not_found&, EIFMap&)
+  void vip_call(PolygonMesh&, PIDMap, const boost::param_not_found&, EIFMap)
   {
     //do nothing when the parameter is not given
   }
@@ -425,8 +425,8 @@ sharp_edges_segmentation(PolygonMesh& pmesh,
 #else
       typename GetGeomTraits<PolygonMesh, NamedParameters>::type::FT angle_in_deg,
 #endif
-      EdgeIsFeatureMap& edge_is_feature_map,
-      PatchIdMap& patch_id_map,
+      EdgeIsFeatureMap edge_is_feature_map,
+      PatchIdMap patch_id_map,
       const NamedParameters& np)
 {
     detect_sharp_edges(pmesh, angle_in_deg, edge_is_feature_map, np);
@@ -444,7 +444,7 @@ sharp_edges_segmentation(PolygonMesh& pmesh,
 template <typename PolygonMesh, typename EdgeIsFeatureMap, typename FT>
 void detect_sharp_edges(PolygonMesh& p,
                         FT angle_in_deg,
-                        EdgeIsFeatureMap& edge_is_feature_map)
+                        EdgeIsFeatureMap edge_is_feature_map)
 {
   detect_sharp_edges(p, angle_in_deg, edge_is_feature_map,
                      parameters::all_default());
@@ -455,8 +455,8 @@ template <typename PolygonMesh, typename FT,
 typename boost::graph_traits<PolygonMesh>::faces_size_type
 sharp_edges_segmentation(PolygonMesh& p,
                          FT angle_in_deg,
-                         EdgeIsFeatureMap& edge_is_feature_map,
-                         PatchIdMap& patch_id_map)
+                         EdgeIsFeatureMap edge_is_feature_map,
+                         PatchIdMap patch_id_map)
 {
   return sharp_edges_segmentation(p, angle_in_deg, edge_is_feature_map, patch_id_map,
                                  parameters::all_default());

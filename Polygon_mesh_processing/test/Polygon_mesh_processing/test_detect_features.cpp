@@ -44,6 +44,7 @@ int main(int argc, char* argv[])
 
     CGAL_assertion(nb_sharp_edges == 12);
     CGAL_assertion(number_of_patches == 6);
+    CGAL_USE(number_of_patches);
 
     number_of_patches
       = PMP::sharp_edges_segmentation(mesh, 90, eif, pid,
