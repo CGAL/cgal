@@ -4,7 +4,7 @@
 
 \cgalHeading{How to use BGL Optional Named Parameters}
 
-<!-- This page contains similar content to the \ref PkgPolygonMeshProcessing. -->
+This page contains similar content to the named parameters introduced in \ref PkgPolygonMeshProcessingSummary.
 
 The notion of named parameters was introduced in the BGL.
 You can read about it in the following site: http://www.boost.org/libs/graph/doc/bgl_named_params.html.
@@ -18,7 +18,7 @@ That is, you give each parameter a name by wrapping it into a function whose nam
 
 When you use named parameters, the ordering is irrelevant, so `f(name(n).age(a).gender(g))` is equivalent to `f(age(a).gender(g).name(n))`, and you can just omit any named parameter that has a default value.
 
-The sequence of named parameters should start with `CGAL::Polygon_mesh_processing::parameters::`..
+The sequence of named parameters should start with `CGAL::VSA::parameters::`.
 
 \cgalHeading{Example}
 
@@ -27,15 +27,15 @@ See below a sample call of a function that uses the optional BGL named parameter
 \code
 // input : input triangle mesh to be approximated
 // output : output polyhedron mesh
-// init : seed initialization method
+// method : seed initialization method
 // num_proxies : number of proxies used to approximate the geometry
 // num_iterations : number of relaxation iterations
-// anchors : the container to get the anchor points
+// anchors : the container to store the anchor points
 vsa_mesh_approximation(input,
        , output
-       , CGAL::VSA::parameters::init_method(init)
-       .number_of_proxies(num_proxies)
-       .number_of_iterations(num_iterations)
+       , CGAL::VSA::parameters::init_method(method)
+       .seeding_by_number(num_proxies)
+       .iterations(num_iterations)
        .anchor_point(std::back_inserter(anchors)));
 \endcode
 
@@ -43,7 +43,7 @@ vsa_mesh_approximation(input,
 
 In this package, all functions optional parameters are implemented as BGL optional named parameters and listed below.
 
-In the following, we assume that the following types are provided as template parameters of polygon mesh processing functions and classes. Note that, for some of these functions, the type is more specific.
+In the following, we assume that the following types are provided as template parameters of surface mesh approximation functions and classes. Note that, for some of these functions, the type is more specific.
 
 <ul>
 <li>`PolygonMesh` implements a `FaceGraph`
@@ -74,43 +74,56 @@ typename CGAL::Kernel_traits<
 \cgalNPEnd
 
 \cgalNPBegin{init_method} \anchor VSA_init_method
-the selection of seed initialization method\n
-\b Type : \c unsigned \c int \n
-\b Default value is `1`
+the selection of seed initialization method, `0` for random, `1` for incremental, `2` for hierarchical\n
+\b Type : \c int \n
+\b Default value is `0`
 \cgalNPEnd
 
-\cgalNPBegin{number_of_proxies} \anchor VSA_number_of_proxies
+\cgalNPBegin{seeding_by_number} \anchor VSA_seeding_by_number
 the number of proxies used to approximate the input mesh.\n
 \b Type : `std::size_t` \n
 \b Default value is `0`
 \cgalNPEnd
 
-\cgalNPBegin{number_of_iterations} \anchor VSA_number_of_iterations
-the number of iterations of the sequence of iterations performed by the isotropic remeshing
-algorithm.\n
+\cgalNPBegin{seeding_by_error} \anchor VSA_seeding_by_error
+the total error drop to approximate the input mesh.\n
+\b Type : `GeomTraits::FT` \n
+\b Default value is `0.01`
+\cgalNPEnd
+
+\cgalNPBegin{iterations} \anchor VSA_iterations
+the number of iterations of relaxation after seeding.\n
+\b Type : `std::size_t` \n
+\b Default value is `10`
+\cgalNPEnd
+
+\cgalNPBegin{inner_iterations} \anchor VSA_inner_iterations
+the number of iterations of relaxation interleaved within seeding.\n
 \b Type : `std::size_t` \n
 \b Default value is `10`
 \cgalNPEnd
 
 \cgalNPBegin{chord_subdivide} \anchor VSA_chord_subdivide
 the chord subdivision threshold used in the meshing step.\n
-\b Type : `std::double` \n
+\b Type : `GeomTraits::FT` \n
 \b Default value is `1`
 \cgalNPEnd
 
 \cgalNPBegin{face_proxy_map} \anchor VSA_face_proxy_map
- the property map containing the proxy index of each face of the input polygon mesh.\n
-\b Type: a class model of `ReadablePropertyMap` with
-`boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and
-the value type `std::size_t`
-\b Default value is \code boost::get(CGAL::face_index, pmesh)\endcode
-If this internal property map exists, its values should be initialized
+the property map outputs the proxy index of each face of the input polygon mesh.\n
+\b Type: a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and the value type `std::size_t`
+\b Default : if this parameter is omitted, no output operation performed
+\cgalNPEnd
+
+\cgalNPBegin{proxies} \anchor VSA_proxies
+an `OutputIterator` to write proxies in.\n
+\b Type : a class model of `OutputIterator` with `CGAL::PlaneProxy<GeomTraits>` value type.\n
+\b Default : if this parameter is omitted, no output operation performed
 \cgalNPEnd
 
 \cgalNPBegin{anchor_vertex} \anchor VSA_anchor_vertex
 an `OutputIterator` to write anchor vertex in.\n
-\b Type : a class model of `OutputIterator` with
-`boost::graph_traits<PolygonMesh>::%vertex_descriptor` value type.\n
+\b Type : a class model of `OutputIterator` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor` value type.\n
 \b Default : if this parameter is omitted, no output operation performed
 \cgalNPEnd
 

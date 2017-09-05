@@ -57,7 +57,7 @@ We denote such local representive pair \f$ P_i = (X_i, N_i) \f$, a <em>plane pro
 
 Defining an appropriate error metric is the key ingredient for the algorithm. 
 The \f$ \mathcal{L}^2 \f$ metric is defined as:
-\f[ \mathcal{L}^2 = \iint_{x \in \mathcal{R}_i}\Vert x - \Pi_i(x)\Vert^2 dx. \f] 
+\f[ \mathcal{L}^2(\mathcal{R}_i, P_i) = \iint_{x \in \mathcal{R}_i}\Vert x - \Pi_i(x)\Vert^2 dx. \f] 
 where \f$ \Pi_i(\cdot) \f$ denotes the orthogonal projection of the argument on the "proxy plane" goint through \f$ X_i \f$ and normal to \f$ N_i \f$.
 
 The \f$ \mathcal{L}^2 \f$ metric tries to match geometry through approximation of the geometric position. 
@@ -68,46 +68,70 @@ The \f$ \mathcal{L}^{2,1} \f$ is numerically superior to \f$ \mathcal{L}^2 \f$ i
 - The anisotropy of the surface is better captured.
 - Finding the best normal proxy is as simple as averaging the normals.
 
+In \cgalFigureRef{relaxation}, we showed the Lloyd optimization iteration on a plane-sphere model with the \f$ \mathcal{L}^{2,1} \f$ metric.
+
+\cgalFigureBegin{relaxation, relaxation.png}
+Optimization on the plane-shpere model with the \f$ \mathcal{L}^{2,1} \f$ metric: (left) random initialization of 6 partitions; (center) after one iteration of optimization; (right) after 8 iterations, the regions settle. The red line represent the proxy normal parameter.
+\cgalFigureEnd
+
 In the package, we provide both two metrics as `CGAL::L2Metric` and `CGAL::L21Metric` respectively. 
 Of course, we are not limited to those two metrics. The algorithm framework is extensible and we could define our own metrics and plug it in as we can see in \ref sma_example3.
 
 \subsection sma_seeding Seeding
 
-\cgalFigureBegin{vsa_init_comparison, vsa_init_comparison_200_30.png}
-Comparison of different seeding strategies, all with \f$ \mathcal{L}^{2,1} \f$ metrics and 200 proxies.
-From left to right are random, incremental and hierarchical initialization respectively.
+It is no surprise that, the algorithm relies on the initial state of the proxies. There are 3 different seeding methods:
+- <b>Random</b>. The proxies are initialized randomly from the geometry.
+- <b>Incremental</b>. Each time a proxy is added to the furthest region.
+- <b>Hierarchical</b>. Each time proxies are added to current partitions with the number in proportional to their fitting error.
+
+\cgalFigureBegin{seeding_method, seeding_method.png}
+Comparison of different seeding methods on a sphere-cube union model, all with \f$ \mathcal{L}^{2,1} \f$ metrics and 20 proxies.
+From left to right are random, incremental and hierarchical seeding respectively. Notice the entrapped local minima areas in the red rectangles.
 \cgalFigureEnd
 
-It is no surprise that, the algorithm relys on the initial state of the proxies. There are 3 different seeding strategies:
-- Random. The proxies are initialized randomly from the geometry.
-- Incremental. Each time a proxy is added to the furthest region.
-- Hierarchical. Each time different number of proxies are added to the regions proportional to the fitting error.
-From \cgalFigureRef{vsa_init_comparison} we can see the effect of seeding strategies. Generally speaking, random initialization is even in position and very fast, incremental one focuses on the most distorted region and can be pretty slow. Hierarchical initialization gives fitting patches with more evenly distributed fitting errors and the time consumption is somewhere in between the former two.
+From \cgalFigureRef{seeding_method} we can see the effect of different seeding strategies. Generally speaking, random initialization is even in position and very fast and can be entrapped in local minima areas, incremental one focuses on the most distorted region and can be pretty slow. Hierarchical initialization gives fitting patches with more evenly distributed fitting errors and the time consumption is somewhere in between the former two.
+
+To determine how many proxies do we need to approximate the geometry. The package provides two approaches:
+- <b>Target number of proxies</b>. The seeding process will stop once the target number is reached.
+- <b>Target error drop</b>. The seeding process will stop once the fitting error is drop below the target to the initial fitting error.
+
+The former one is straight-forward and examples of the latter one can be found in \cgalFigureRef{meshing}.
 
 \subsection sma_operations Refinement Operations
 
 To get better approximation of the geometry, some refinement operations are available to improve result.
-- Merging. Merge two adjacent regions without significant error increase.
-- Splitting. Split regions with higher error into smaller ones to reduce the error.
-- Region teleportation. It can be used to teleport local minimum regions to other places.
-- Adding proxies. Generally, with more proxies we can aproximate the geometry better.
-In the package, you can use the class interface to manipulate the approximation process with above operations as shown in \ref sma_example2.
+- <b>Merging</b>. Merging two adjacent regions.
+- <b>Splitting</b>. Splitting bigger region into smaller ones to reduce the error. It is a reverse operation to merging.
+- <b>Adding</b>. Adding a proxy to reduce the fitting error and approximate the geometry better. Just like seeding process, we can choose either incremental or hierarchical method.
+- <b>Teleportation</b>. It is a combination of merging and adding proxies: merging the local minimum region to its adjacent area and adding a proxy seed to other places.
+
+\cgalFigureBegin{operations, operations.png}
+Refinement operations.
+\cgalFigureEnd
+
+As we can see from \cgalFigureRef{operations}, teleportation could teleport entrapped local minima to the most needed regions and produce better result. In \ref sma_example2, the class interface is used to manipulate the approximation process with above operations.
 
 \subsection sma_extraction Mesh Extraction
 
 This package also implement the meshing algorithm described in \cgalCite{cgal:cad-vsa-04}. 
-Basically, it attaches an anchor point to each intersection vertex and approximate the boundary of the geometry partition. 
+Basically, it attaches an anchor point to each intersection vertex and approximate the boundary of the geometry partition.
 Then each polygon boundary is triangulated and assembled to produce the output mesh. 
-Currently, there is no guarantee that the output mesh is 2-manifold. 
-In general, it is more likely to generate non-manifold on complicate shapes. 
-Thus the package provide alternate indexed triangles output as well.
+Currently, there is no guarantee that the output mesh is 2-manifold and the package provide an alternate indexed triangles output.
+
+\cgalFigureBegin{meshing, meshing.png}
+Meshing with decreasing target error drop, the output mesh densify. 
+From left to right, the target error drop are 6\%, 4\% and 2\% to the initial error respectively. 
+Notice the boundary subdivision in the black rectangle area.
+\cgalFigureEnd
+
+When approximate the boundary of the proxy region, the subdivision technique described in \cgalCite{cgal:cad-vsa-04} is used to discretize the boundary as illustrated in \cgalFigureRef{meshing}.
 
 \subsection sma_api API
 
 This package can be used either with `Polyhedron_3`, `Surface_mesh`, or any class model of the concept `FaceGraph` described in \ref chapterBGL.
 
 Free function with \ref namedparameters options.
-- `CGAL::vsa_mesh_approximation()` : given a triangle mesh, approximate the geometry with default L21 metric.
+- `CGAL::vsa_mesh_approximation()` : given a triangle mesh, approximate the geometry with default \f$ \mathcal{L}^{2,1} \f$ metric.
 
 Class interface:
 - `CGAL::VSA_approximation`: allowing more customization of the proxy, metric and approximation process.
