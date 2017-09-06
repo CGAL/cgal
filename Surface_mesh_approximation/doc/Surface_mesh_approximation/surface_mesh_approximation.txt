@@ -53,7 +53,7 @@ Then, the algorithm updates the proxies \f$ P_i \f$ with each piece of correspon
 \subsection sma_metrics Metrics on Proxies
 
 Often each region \f$ \mathcal{R}_i \f$ of a partition \f$ \mathcal{R} \f$ can be summarily represented to first order as an "average" point \f$ X_i \f$ and an "average" normal \f$ N_i \f$. 
-We denote such local representive pair \f$ P_i = (X_i, N_i) \f$, a <em>plane proxy</em> of the associated region. In the package, we provide such plane proxy as `CGAL::PlaneProxy`.
+We denote such local representative pair \f$ P_i = (X_i, N_i) \f$, a <em>plane proxy</em> of the associated region. In the package, we provide such plane proxy as `CGAL::PlaneProxy`.
 
 Defining an appropriate error metric is the key ingredient for the algorithm. 
 The \f$ \mathcal{L}^2 \f$ metric is defined as:
@@ -95,7 +95,7 @@ To determine how many proxies do we need to approximate the geometry. The packag
 - <b>Target number of proxies</b>. The seeding process will stop once the target number is reached.
 - <b>Target error drop</b>. The seeding process will stop once the fitting error is drop below the target to the initial fitting error.
 
-The former one is straight-forward and examples of the latter one can be found in \cgalFigureRef{meshing}.
+The former one is straight-forward and examples of the latter one can be found in \cgalFigureRef{meshing}. Some statistics and comparisons are available in \ref sma_perf.
 
 \subsection sma_operations Refinement Operations
 
@@ -124,6 +124,9 @@ From left to right, the target error drop are 6\%, 4\% and 2\% to the initial er
 Notice the boundary subdivision in the black rectangle area.
 \cgalFigureEnd
 
+In \cgalFigureRef{meshing}, the bear model is approximated through \f$ \mathcal{L}^{2,1} \f$ metric and the number of proxies are determined by error drop. 
+The anchor points (black) are attached to the corresponding vertex on the mesh (white). 
+The red lines connecting the anchor points approximate the boundary of each region.
 When approximate the boundary of the proxy region, the subdivision technique described in \cgalCite{cgal:cad-vsa-04} is used to discretize the boundary as illustrated in \cgalFigureRef{meshing}.
 
 \subsection sma_api API
@@ -149,6 +152,21 @@ The function parameters are provided through \ref namedparameters.
 
 \cgalExample{Surface_mesh_approximation/vsa_example.cpp}
 
+It can also be used as a partition algorithm:
+\code
+typedef boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
+// internal facet index map
+std::map<face_descriptor, std::size_t> internal_fidx_map;
+// boost property map with the facet proxy index as value
+boost::associative_property_map<std::map<face_descriptor, std::size_t> > fpxmap(internal_fidx_map);
+// num_iterations: number of relaxation iterations
+// fpxmap: a facet proxy index property map
+vsa_mesh_approximation(input, output,
+        CGAL::VSA::parameters::init_method(method)
+       .iterations(num_iterations)
+       .facet_proxy_map(fpxmap));
+\endcode
+
 \subsection sma_example2 Class interface
 
 \cgalFigureBegin{vsa_metric_comparison, vsa_metric_comparison_200_30.png}
@@ -169,30 +187,52 @@ In the following example, it defines a simple point-wise proxy to achieves a com
 
 \section sma_perf Performances
 
-We provide some performance comparisons in this section. 
+We provide some performance comparisons in this section with the free function API `CGAL::vsa_mesh_approximation`. 
 The machine used is a PC running Windows10 X64 with an Intel Xeon E5-1620 clocked at 3.70 GHz with 32GB of RAM. 
-The program has been optimized with the O2 option with Visual Studio 2015. 
-<!-- By default the kernel used is Simple_cartesian<double> (the fastest in our experiments). -->
+The program has been optimized with the O2 option with Visual Studio 2015. By default the kernel used is `Exact_predicates_inexact_constructions_kernel` (`EPICK`).
 
-We compare the running timing of 3 phase of the algorithm: seeding, relaxation and meshing. By default the kernel used is `Exact_predicates_inexact_constructions_kernel` (`EPICK`).
-
-<center>
-Number of triangles  | Random Seeding | Incremental Seeding | Hierarchical Seeding | Relaxation | Meshing
----------------------| ------------:  | -----------------:  | ------------------:  | --------:  | ------:
-  7,828              |     tbd        |          tbd        |       tbd            |    tbd     | tbd
- 20,188              |     tbd        |          tbd        |       tbd            |    tbd     | tbd
- 88,928              |     tbd        |          tbd        |       tbd            |    tbd     | tbd
-</center>
-
-With different metrics, we compare the running time and complexity of the output mesh.
+Runtime in seconds with target number of proxies of different seeding method:
 
 <center>
-Number of triangles  | \f$ \mathcal{L}^{2,1} \f$ | \f$ \mathcal{L}^2 \f$ | %Compact Metric
----------------------| -----------------------:  | -------------------:  | -------------:
-  7,828              |           tbd             |           tbd         | tbd
- 20,188              |           tbd             |           tbd         | tbd
- 88,928              |           tbd             |           tbd         | tbd
+    Model    | \#Triangles | \#Proxies | Random | Incremental | Hierarchical
+----------:  | ---------:  | -------:  | ----:  | ---------:  | -----------:
+plane-sphere |    6,826    |     20    |     0  |     0.87    | 0.17
+bear         |   20,188    |    200    |     0  |   36.749    | 1.194
+masque       |   62,467    |    200    | 0.002  |  133.901    | 4.308
 </center>
+
+Runtime in seconds with target error drop of different seeding method. 
+The benchmark is running on the bear model with 20,188 facets. 
+Each column shows the time and the resulting number of proxies:
+
+<center>
+ Target Error Drop |   Random   | Incremental | Hierarchical
+----------------:  | --------:  | ---------:  | -----------:
+        0.06       |   1.03/64  |   9.053/53  | 1.017/64
+        0.04       |  1.207/128 |  15.422/88  | 1.2/128
+        0.02       |  1.415/256 |  35.171/192 | 1.428/256
+</center>
+
+Runtime of 3 phases of the algorithm in seconds: seeding, relaxation and meshing. 
+The seeding method is hierarchical with target number of proxies.
+
+<center>
+    Model    | \#Triangles | \#Proxies | \#Iterations | Seeding | Relaxation | Meshing | Total
+----------:  | ---------:  | -------:  | ----------:  | -----:  | --------:  | -----:  | ----:
+plane-sphere |    6,826    |     20    |       20     |   0.17  |    0.228   | 0.044   | 0.442
+bear         |   20,188    |    200    |       20     |  1.194  |    0.784   | 0.128   | 2.006
+masque       |   62,467    |    200    |       20     |  4.308  |    2.974   | 0.349   | 7.631
+</center>
+
+<!-- With different metrics, we compare the running time and complexity of the output mesh.
+
+<center>
+    Model    | \#Triangles | \f$ \mathcal{L}^{2,1} \f$ | \f$ \mathcal{L}^2 \f$ | %Compact Metric
+----------:  | ---------:  | -----------------------:  | -------------------:  | -------------:
+plane-sphere |    6,826    |           tbd             |           tbd         | tbd
+bear         |   20,188    |           tbd             |           tbd         | tbd
+masque       |   62,467    |           tbd             |           tbd         | tbd
+</center> -->
 
 \section sma_history Design and Implementation History
 

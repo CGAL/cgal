@@ -78,7 +78,6 @@ int main(int argc, char *argv[])
   std::cerr << "relaxation time " << t0.time() << " sec." << std::endl;
 
   Polyhedron mesh_out;
-  std::cerr << "start relaxation" << std::endl;
   t0.reset();
   t0.start();
   l21_vsa.meshing(mesh_out);
