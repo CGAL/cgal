@@ -70,14 +70,11 @@ bool vsa_mesh_approximation(const TriangleMesh &tm_in,
   PolyhedronSurface &tm_out,
   const NamedParameters &np)
 {
-  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
-
   using boost::get_param;
   using boost::choose_param;
 
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type GeomTraits;
   typedef typename GeomTraits::FT FT;
-  typedef typename GeomTraits::Point_3 Point_3;
 
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::type VPMap;
   VPMap point_pmap = choose_param(get_param(np, internal_np::vertex_point),

@@ -43,6 +43,15 @@ bool test_shape(const char *file_name, const std::size_t target_num_proxies)
   vsa_l21.seeding_by_error(L21VSA::Incremental, drop, inner_iterations);
   for (std::size_t i = 0; i < num_iterations; ++i)
     vsa_l21.run_one_step();
+
+  // eliminate redundant area (local minima) by merging
+  std::size_t px0 = 0, px1 = 0;
+  while (vsa_l21.find_best_merge(px0, px1, true)) {
+    vsa_l21.merge(px0, px1);
+    for (std::size_t i = 0; i < num_iterations; ++i)
+      vsa_l21.run_one_step();
+  }
+
   if (vsa_l21.get_proxies_size() != target_num_proxies) {
     std::cout << "#targeted - #result "
       << target_num_proxies << ' '
