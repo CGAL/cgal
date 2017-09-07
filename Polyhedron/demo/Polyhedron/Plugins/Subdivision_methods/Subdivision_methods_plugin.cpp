@@ -150,7 +150,7 @@ void Polyhedron_demo_subdivision_methods_plugin::apply_sqrt3(FaceGraphItem* item
   if(!graph) return;
   QTime time;
   time.start();
-  messages->information("Catmull-Clark subdivision...");
+  messages->information("Sqrt-3 subdivision...");
   QApplication::setOverrideCursor(Qt::WaitCursor);
   CGAL::Subdivision_method_3::Sqrt3_subdivision(*graph, 1);
   messages->information(QString("ok (%1 ms)").arg(time.elapsed()));
@@ -186,7 +186,7 @@ void Polyhedron_demo_subdivision_methods_plugin::apply_doosabin(FaceGraphItem* i
   if(!graph) return;
   QTime time;
   time.start();
-  messages->information("Catmull-Clark subdivision...");
+  messages->information("Doo-Sabin subdivision...");
   QApplication::setOverrideCursor(Qt::WaitCursor);
   CGAL::Subdivision_method_3::DooSabin_subdivision(*graph, 1);
   messages->information(QString("ok (%1 ms)").arg(time.elapsed()));
