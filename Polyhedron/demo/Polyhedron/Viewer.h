@@ -150,6 +150,10 @@ protected:
   Viewer_impl* d;
   double prev_radius;
 
+public:
+  bool isOpenGL_4_3() const Q_DECL_OVERRIDE;
+  QOpenGLFunctions_4_3_Compatibility* openGL_4_3_functions() Q_DECL_OVERRIDE;
+
 }; // end class Viewer
 
 

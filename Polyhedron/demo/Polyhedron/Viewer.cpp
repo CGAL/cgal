@@ -42,6 +42,8 @@ public:
   QString message;
   bool _displayMessage;
   QTimer messageTimer;
+  QOpenGLFunctions_4_3_Compatibility* _recentFunctions;
+  bool is_ogl_4_3;
 
   //! Holds useful data to draw the axis system
   struct AxisData
@@ -73,6 +75,7 @@ public:
   //! Decides if the distance between APoint and BPoint must be drawn;
   bool distance_is_displayed;
   bool i_is_pressed;
+  bool initialized;
   bool z_is_pressed;
   //!Draws the distance between two selected points.
   void showDistance(QPoint);
@@ -109,6 +112,7 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
 {
   d = new Viewer_impl;
   d->scene = 0;
+  d->initialized = false;
   d->antialiasing = antialiasing;
   d->twosides = false;
   this->setProperty("draw_two_sides", false);
@@ -233,8 +237,60 @@ void Viewer::fastDraw()
 
 void Viewer::initializeGL()
 {
+#if QGLVIEWER_VERSION >= 0x020700
+
+  QSurfaceFormat format;
+  format.setDepthBufferSize(24);
+  format.setStencilBufferSize(8);
+  format.setVersion(4,3);
+  format.setProfile(QSurfaceFormat::CompatibilityProfile);
+  context()->setFormat(format);
+  bool created = context()->create();
+  if(!created || context()->format().profile() != QSurfaceFormat::CompatibilityProfile) {
+    // impossible to get a 4.3 compatibility profile, retry with 2.0
+    format.setVersion(2,1);
+    context()->setFormat(format);
+    created = context()->create();
+    d->is_ogl_4_3 = false;
+  }
+  else
+  {
+    d->is_ogl_4_3 = true;
+    d->_recentFunctions = new QOpenGLFunctions_4_3_Compatibility();
+  }
+  CGAL_warning_msg(created && context()->isValid(), "The openGL context initialization failed "
+                   "and the default context (2.0) will be used" );
+  makeCurrent();
+#else
+  QGLFormat format;
+  format.setVersion(4,3);
+  format.setProfile(QGLFormat::CompatibilityProfile);
+  QGLContext *new_context = new QGLContext(format, this);
+  new_context->setFormat(format);
+  bool created = new_context->create();
+  if(!created || new_context->format().profile() != QGLFormat::CompatibilityProfile) {
+    // impossible to get a 4.3 compatibility profile, retry with 2.0
+    format.setVersion(2,1);
+    new_context->setFormat(format);
+    created = new_context->create();
+    d->is_ogl_4_3 = false;
+  }
+  else
+  {
+    d->is_ogl_4_3 = true;
+    d->_recentFunctions = new QOpenGLFunctions_4_3_Compatibility();
+  }
+  CGAL_warning_msg(created && new_context->isValid(), "The openGL context initialization failed "
+                   "and the default context (2.0) will be used" );
+  this->setContext(new_context);
+  context()->makeCurrent();
+#endif
   QGLViewer::initializeGL();
   initializeOpenGLFunctions();
+  if(isOpenGL_4_3())
+  {
+   d->_recentFunctions->initializeOpenGLFunctions();
+  }
   glDrawArraysInstanced = (PFNGLDRAWARRAYSINSTANCEDARBPROC)this->context()->getProcAddress("glDrawArraysInstancedARB");
   if(!glDrawArraysInstanced)
   {
@@ -425,7 +481,8 @@ void Viewer::initializeGL()
 
       d->rendering_program.release();
 
-  d->painter = new QPainter(this);
+  d->painter = new QPainter();
+  d->initialized = true;
 }
 
 #include <QMouseEvent>
@@ -759,6 +816,7 @@ void Viewer::attribBuffers(int program_name) const {
     case PROGRAM_CUTPLANE_SPHERES:
     case PROGRAM_SPHERES:
     case PROGRAM_C3T3_TETS:
+    case PROGRAM_OLD_FLAT:
     case PROGRAM_FLAT:
         program->setUniformValue("light_pos", position);
         program->setUniformValue("light_diff",diffuse);
@@ -777,6 +835,7 @@ void Viewer::attribBuffers(int program_name) const {
     case PROGRAM_CUTPLANE_SPHERES:
     case PROGRAM_SPHERES:
     case PROGRAM_C3T3_TETS:
+    case PROGRAM_OLD_FLAT:
     case PROGRAM_FLAT:
       program->setUniformValue("mv_matrix", mv_mat);
       break;
@@ -1140,6 +1199,13 @@ QOpenGLShaderProgram* Viewer::declare_program(int name,
     {
       std::cerr<<"adding fragment shader FAILED"<<std::endl;
     }
+    if(strcmp(f_shader,":/cgal/Polyhedron_3/resources/shader_flat.f" ) == 0)
+    {
+      if(!program->addShaderFromSourceFile(QOpenGLShader::Geometry,":/cgal/Polyhedron_3/resources/shader_flat.g" ))
+      {
+        std::cerr<<"adding geometry shader FAILED"<<std::endl;
+      }
+    }
     program->bindAttributeLocation("colors", 1);
     program->link();
     d->shader_programs[name] = program;
@@ -1190,7 +1256,9 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
       return declare_program(name, ":/cgal/Polyhedron_3/resources/shader_spheres.v" , ":/cgal/Polyhedron_3/resources/shader_with_light.f");
       break;
     case PROGRAM_FLAT:
-      return declare_program(name, ":/cgal/Polyhedron_3/resources/shader_with_light.v", ":/cgal/Polyhedron_3/resources/shader_flat.f");
+      return declare_program(name, ":/cgal/Polyhedron_3/resources/shader_flat.v", ":/cgal/Polyhedron_3/resources/shader_flat.f");
+    case PROGRAM_OLD_FLAT:
+      return declare_program(name, ":/cgal/Polyhedron_3/resources/shader_with_light.v", ":/cgal/Polyhedron_3/resources/shader_old_flat.f");
       break;
 
     default:
@@ -1224,6 +1292,8 @@ QPainter* Viewer::getPainter(){return d->painter;}
 
 void Viewer::paintEvent(QPaintEvent *)
 {
+  if(!d->initialized)
+    initializeGL();
     paintGL();
 }
 
@@ -1610,6 +1680,7 @@ void Viewer::updateIds(CGAL::Three::Scene_item * item)
   d->scene->updatePrimitiveIds(this, item);
 }
 
+
 TextRenderer* Viewer::textRenderer()
 {
   return d->textRenderer;
@@ -1633,4 +1704,8 @@ void Viewer::enableClippingBox(QVector4D box[6])
     d->clipbox[i] = box[i];
 }
 
+
+bool Viewer::isOpenGL_4_3() const { return d->is_ogl_4_3; }
+
+QOpenGLFunctions_4_3_Compatibility* Viewer::openGL_4_3_functions() { return d->_recentFunctions; }
  #include "Viewer.moc"

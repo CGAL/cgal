@@ -28,6 +28,7 @@
 #include <QWidget>
 #include <QPoint>
 #include <QOpenGLFunctions_2_1>
+#include <QOpenGLFunctions_4_3_Compatibility>
 #include <CGAL/Qt/CreateOpenGLContext.h>
 // forward declarations
 class QWidget;
@@ -71,7 +72,8 @@ public:
    PROGRAM_CUTPLANE_SPHERES,    //! Used to render the spheres of an item with a cut plane.
    PROGRAM_SPHERES,             //! Used to render one or several spheres.
    PROGRAM_C3T3_TETS,           //! Used to render the tetrahedra of the intersection of a c3t3_item.
-   PROGRAM_FLAT,                //! Used to render flat shading without pre computing normals
+   PROGRAM_FLAT,                /** Used to render flat shading without pre computing normals*/
+   PROGRAM_OLD_FLAT,            /** Used to render flat shading without pre computing normals without geometry shader*/
    NB_OF_PROGRAMS               //! Holds the number of different programs in this enum.
   };
 
@@ -232,7 +234,16 @@ public Q_SLOTS:
 //! \param animation_duration is the duration of the animation of the movement.
   virtual bool moveCameraToCoordinates(QString target,
                                        float animation_duration = 0.5f) = 0;
-
+public:
+  //! Is used to know if the openGL context is 4.3 or 2.1.
+  //! @returns `true` if the context is 4.3.
+  //! @returns `false` if the context is 2.1.
+  virtual bool isOpenGL_4_3() const = 0;
+  //! Gives acces to recent openGL(4.3) features, allowing use of things like
+  //! Geometry Shaders or Depth Textures.
+  //! @returns a pointer to an initialized  QOpenGLFunctions_4_3_Compatibility if `isOpenGL_4_3()` is `true`
+  //! @returns NULL if `isOpenGL_4_3()` is `false`
+  virtual QOpenGLFunctions_4_3_Compatibility* openGL_4_3_functions() = 0;
 }; // end class Viewer_interface
 }
 }
