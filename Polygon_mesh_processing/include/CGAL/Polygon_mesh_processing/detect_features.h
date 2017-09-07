@@ -191,7 +191,7 @@ template<typename GT,
   BOOST_FOREACH(typename boost::graph_traits<PolygonMesh>::edge_descriptor ed, edges(pmesh))
   {
     typename boost::graph_traits<PolygonMesh>::halfedge_descriptor he = halfedge(ed,pmesh);
-    if(is_border(he,pmesh)
+    if(is_border_edge(he,pmesh)
       || angle_in_deg == FT()
       || (angle_in_deg != FT(180) && internal::is_sharp<PolygonMesh, GT>(pmesh,he,cos_angle))
       )
