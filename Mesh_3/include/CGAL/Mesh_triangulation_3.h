@@ -69,7 +69,7 @@ template<class MD, class K_, class Concurrency_tag,
 struct Mesh_triangulation_3
 {
 private:
-  typedef typename Default::Get<K_, typename Kernel_traits<MD>::Kernel>::type K;
+  typedef typename Default::Lazy_get<K_, Kernel_traits<MD> >::type K;
 
   typedef typename details::Mesh_geom_traits_generator<K>::type Geom_traits;
 
