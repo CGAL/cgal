@@ -145,9 +145,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   qt5_wrap_ui( Show_point_dialogUI_FILES Show_point_dialog.ui )
   qt5_wrap_ui( ViewerUI_FILES  ImageInterface.ui)
   qt5_generate_moc( "File_loader_dialog.h" "${CMAKE_CURRENT_BINARY_DIR}/File_loader_dialog_moc.cpp" )
-  add_file_dependencies( File_loader_dialog_moc_moc.cpp "${CMAKE_CURRENT_SOURCE_DIR}/File_loader_dialog.h" )
-
-  add_file_dependencies( Viewer_moc.cpp "${CMAKE_CURRENT_SOURCE_DIR}/Viewer.h" )
+  add_file_dependencies( File_loader_dialog_moc.cpp "${CMAKE_CURRENT_SOURCE_DIR}/File_loader_dialog.h" )
 
   include( ${CMAKE_CURRENT_SOURCE_DIR}/polyhedron_demo_macros.cmake )
 
