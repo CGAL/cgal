@@ -73,7 +73,7 @@ void PQQ_1step(Poly& p, VertexPointMap vpm, Mask mask) {
   typename boost::graph_traits<Poly>::faces_size_type num_facet = num_faces(p);
 
   // We need to reserve the memory to prevent reallocation.
-  p.reserve(num_vertex+num_edge+num_facet, 4*2*num_edge, 4*num_edge/2);
+  reserve(p,num_vertex+num_edge+num_facet, 4*2*num_edge, 4*num_edge/2);
 
   typedef typename boost::property_traits<VertexPointMap>::value_type Point;
 
@@ -162,7 +162,7 @@ void PQQ_1step(Poly& p, VertexPointMap vpm, Mask mask) {
   for (size_t i = 0; i < num_vertex; i++, ++vitr)
     put(vpm, *vitr, vertex_point_buffer[i]);
 
-  CGAL_postcondition(p.is_valid());
+//  CGAL_postcondition(p.is_valid());
   delete []vertex_point_buffer;
 }
 
@@ -193,7 +193,7 @@ void PTQ_1step(Poly& p, VertexPointMap vpm, Mask mask) {
   typename boost::graph_traits<Poly>::faces_size_type num_facet = num_faces(p);
 
   // We need to reserve the memory to prevent reallocation.
-  p.reserve(num_vertex+num_edge, 2*2*num_edge, 4*num_edge/2);
+  reserve(p,num_vertex+num_edge, 2*2*num_edge, 4*num_edge/2);
 
   Point* vertex_point_buffer = new Point[num_vertex + num_edge];
   Point* edge_point_buffer = vertex_point_buffer + num_vertex;
@@ -260,7 +260,7 @@ void PTQ_1step(Poly& p, VertexPointMap vpm, Mask mask) {
   for (size_t i = 0; i < num_vertex; i++, ++vitr)
     put(vpm, *vitr, vertex_point_buffer[i]);
 
-  CGAL_postcondition(p.is_valid());
+//  CGAL_postcondition(p.is_valid());
   delete []vertex_point_buffer;
 }
 
@@ -304,7 +304,7 @@ void DQQ_1step_impl(Poly& p, VertexPointMap vpm, Mask mask, CGAL::Tag_false) {
   }
 
   // Reserve to avoid rellocations during insertions
-  p.reserve(num_v+num_e+num_f, 2*num_e, (2+4+2)*num_e);
+  reserve(p,num_v+num_e+num_f, 2*num_e, (2+4+2)*num_e);
 
   // Build the connectivity using insert_vertex() and insert_edge()
   pi = 0;
@@ -404,7 +404,7 @@ void DQQ_1step_impl(Poly& p, VertexPointMap vpm, Mask mask, CGAL::Tag_true) {
   // is no additional cost to rebuild from scratch (but there is a bit from
   // using `copy_face_graph`).
   Poly moved_p;
-  moved_p.reserve(num_v, num_e, num_f);
+  reserve(moved_p,num_v, num_e, num_f);
 
   // We must use copy_face_graph rather than an assignement operator because
   // we need the correspondence between vertex_descriptors
@@ -424,8 +424,8 @@ void DQQ_1step_impl(Poly& p, VertexPointMap vpm, Mask mask, CGAL::Tag_true) {
   mask.pmesh = &moved_p;
   mask.vpm = moved_vpm;
 
-  p.clear();
-  p.reserve(num_v+num_e+num_f, 2*num_e, (2+4+2)*num_e);
+  clear(p);
+  reserve(p,num_v+num_e+num_f, 2*num_e, (2+4+2)*num_e);
 
   // Correspondence between halfedges of the original mesh and some of the
   // halfedges in the subdivided mesh. Since we have halfedge_index_t,
@@ -533,7 +533,7 @@ void DQQ_1step(Poly& p, VertexPointMap vpm, Mask mask) {
   // Check if halfedges are index-based, which allows to use vectors instead of maps
   DQQ_1step_impl(p, vpm, mask,
                  boost::graph_has_property<Poly, boost::halfedge_index_t>());
-  CGAL_postcondition(p.is_valid());
+//  CGAL_postcondition(p.is_valid());
 }
 
 // ======================================================================
@@ -571,7 +571,7 @@ void Sqrt3_1step(Poly& p, VertexPointMap vpm, Mask mask,
   Point* cpt = new Point[new_pts_size];
 
   // size of the subdivided mesh
-  p.reserve(num_v + new_pts_size, (num_e + 2*num_f + new_pts_size)*2, 3*num_f);
+  reserve(p,num_v + new_pts_size, (num_e + 2*num_f + new_pts_size)*2, 3*num_f);
 
   // keep in memory whether a face is incident to the border and, if so, which
   // halfedge corresponds to THE (there can only be one) border edge.
@@ -669,7 +669,7 @@ void Sqrt3_1step(Poly& p, VertexPointMap vpm, Mask mask,
     }
   }
 
-  CGAL_postcondition(p.is_valid());
+//  CGAL_postcondition(p.is_valid());
   delete []cpt;
 }
 
