@@ -2158,7 +2158,8 @@ private: //------------------------------------------------------- private data
 
  
   /// \relates Surface_mesh
-  /// This operator calls `read_off(std::istream& , CGAL::Surface_mesh)`.
+  /// This operator calls `read_off(std::istream& , CGAL::Surface_mesh& sm)`.
+  /// \attention Up to CGAL 4.10 this operator called `sm.clear()`.
   template <typename P>
   std::istream& operator>>(std::istream& is, Surface_mesh<P>& sm)
   {
