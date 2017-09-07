@@ -827,6 +827,9 @@ detect_features(FT angle_in_degree,
   typedef typename boost::property_map<Polyhedron_type,
                                        CGAL::edge_is_feature_t
                                        >::type                        EIFMap;
+  typedef typename boost::property_map<Polyhedron_type,
+                                       CGAL::vertex_feature_degree_t
+                                       >::type                        VFDMap;
   namespace PMP = CGAL::Polygon_mesh_processing;
   std::size_t nb_of_patch_plus_one = 1;
   BOOST_FOREACH(Polyhedron_type& p, poly)
@@ -850,12 +853,14 @@ detect_features(FT angle_in_degree,
     PIDMap pid_map = get(face_patch_id_t<Patch_id>(), p);
     VIPMap vip_map = get(vertex_incident_patches_t<Patch_id>(), p);
     EIFMap eif = get(CGAL::edge_is_feature, p);
+    VFDMap vertex_feature_degree_map = get(CGAL::vertex_feature_degree, p);
     nb_of_patch_plus_one +=PMP::sharp_edges_segmentation(p, angle_in_degree
       , eif
       , pid_map
       , PMP::parameters::first_index(nb_of_patch_plus_one)
       .face_index_map(boost::make_assoc_property_map(face_ids))
-      .vertex_incident_patches_map(vip_map));
+      .vertex_incident_patches_map(vip_map)
+      .vertex_feature_degree_map(vertex_feature_degree_map));
 
     internal::Mesh_3::Is_featured_edge<Polyhedron_type> is_featured_edge(p);
 
@@ -882,10 +887,10 @@ detect_features(FT angle_in_degree,
       if(is_border(he, p) || !get(eif, edge(he, p))) continue;
       patch_has_featured_edges.set(get(pid_map, face(he, p)));
     }
-    auto vertex_feature_degree_map = get(CGAL::vertex_feature_degree, p);
+    VFDMap vertex_feature_degree_map = get(CGAL::vertex_feature_degree, p);
     BOOST_FOREACH(vertex_descriptor v, vertices(p))
     {
-      if( get(vertex_feature_degree_map, v) >0 ) { continue; }
+      if( get(vertex_feature_degree_map, v) != 0 ) { continue; }
       const Patch_id patch_id = get(pid_map, face(halfedge(v, p), p));
       if(patch_has_featured_edges.test(patch_id)) continue;
       several_vertices_on_patch[patch_id].push_back(v);
