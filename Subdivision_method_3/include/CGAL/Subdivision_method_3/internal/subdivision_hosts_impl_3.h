@@ -97,9 +97,11 @@ void PQQ_1step(Poly& p, VertexPointMap vpm, Mask mask) {
     std::size_t i = 0;
     BOOST_FOREACH(edge_descriptor ed, edges(p)){
       if(is_border(ed,p)){
-        int v = v_index[target(ed,p)];
+        halfedge_descriptor h=halfedge(ed,p);
+        if (is_border(h,p)) h=opposite(h,p);
+        int v = v_index[target(h,p)];
         v_onborder[v] = true;
-        mask.border_node(halfedge(ed,p), edge_point_buffer[i], vertex_point_buffer[v]);
+        mask.border_node(h, edge_point_buffer[i], vertex_point_buffer[v]);
 
       }else{
         mask.edge_node(halfedge(ed,p), edge_point_buffer[i]);
@@ -211,9 +213,11 @@ void PTQ_1step(Poly& p, VertexPointMap vpm, Mask mask) {
       if(! is_border(ed,p)){
         mask.edge_node(halfedge(ed,p), edge_point_buffer[i]);
       } else{
-        int v = v_index[target(ed,p)];
+        halfedge_descriptor h = halfedge(ed,p);
+        if (is_border(h, p)) h = opposite(h,p);
+        int v = v_index[target(h,p)];
         v_onborder[v] = true;
-        mask.border_node(halfedge(ed,p), edge_point_buffer[i], vertex_point_buffer[v]);
+        mask.border_node(h, edge_point_buffer[i], vertex_point_buffer[v]);
       }
       ++i;
     }
