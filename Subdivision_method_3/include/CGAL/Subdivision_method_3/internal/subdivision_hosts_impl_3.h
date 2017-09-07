@@ -581,6 +581,7 @@ void Sqrt3_1step(Poly& p, VertexPointMap vpm, Mask mask,
   // halfedge corresponds to THE (there can only be one) border edge.
   std::vector<halfedge_descriptor> face_halfedge_border(num_f,
                                                         boost::graph_traits<Poly>::null_halfedge());
+  std::list<std::pair<vertex_descriptor, Point> > new_positions;
 
   // compute the positions of new points
   std::size_t i = 0;
@@ -591,8 +592,9 @@ void Sqrt3_1step(Poly& p, VertexPointMap vpm, Mask mask,
       BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(fd, p), p)) {
         if(is_border(opposite(hd, p),p)) {
           face_halfedge_border[face_id] = hd;
-          halfedge_descriptor bhd = opposite(hd, p);
-          mask.border_node(bhd, cpt[i], cpt[i+1]);
+          Point vpt;
+          mask.border_node(hd, cpt[i+1], cpt[i], vpt);
+          new_positions.push_back(std::make_pair(target(hd,p), vpt));
           i += 2;
 
           // the border subdivision is only performed every second subdivision
@@ -611,7 +613,6 @@ void Sqrt3_1step(Poly& p, VertexPointMap vpm, Mask mask,
   }
 
   // smooth the position of existing vertices
-  std::list<std::pair<vertex_descriptor, Point> > new_positions;
   BOOST_FOREACH(vertex_descriptor vd, vertices(p)){
     Point pt;
     if(!is_border(vd, p)) {
@@ -637,21 +638,6 @@ void Sqrt3_1step(Poly& p, VertexPointMap vpm, Mask mask,
     } else {
       halfedge_descriptor center = Euler::add_center_vertex(halfedge(fd,p),p);
       put(vpm, target(center,p), cpt[cpt_id++]);
-    }
-  }
-
-  if(refine_border) {
-    // collect the new positions for border vertices
-    BOOST_FOREACH(halfedge_descriptor hd, halfedges(p)) {
-      // switch to the border halfedge
-      hd = opposite(hd, p);
-      if(!is_border(hd, p))
-        continue;
-
-      Point pt;
-      mask.border_node(hd, pt);
-      vertex_descriptor vd = target(hd, p);
-      new_positions.push_back(std::make_pair(vd, pt));
     }
   }
 

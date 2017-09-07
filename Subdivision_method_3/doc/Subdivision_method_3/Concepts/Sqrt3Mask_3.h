@@ -55,10 +55,11 @@ of the vertex `vd`.
 void vertex_node(vertex_descriptor vd, Point& pt);
 
 /*!
-computes the subdivided points `ept` and `vpt` based on the neighborhood
-of the border halfedge `hd`.
+computes the subdivided points `ept1` and `ept2` based on the neighborhood
+of the halfedge `hd` (which opposite is on the border), as well as the updated
+position `vpt` of its target vertex. Along `hd`, `ept1` is before `ept2`.
 */
-void border_node(halfedge_descriptor hd, Point& ept, Point& vpt);
+void border_node(halfedge_descriptor hd, Point& ept1, Point& ept2, Point& vpt);
 
 /// @}
 
