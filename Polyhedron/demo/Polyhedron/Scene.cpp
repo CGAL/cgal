@@ -781,6 +781,10 @@ Scene::setData(const QModelIndex &index,
         return true;
         break;
     case ColorColumn:
+      if(!selectionIndices().empty())
+        Q_FOREACH(Item_id item_index, selectionIndices())
+          this->item(item_index)->setColor(value.value<QColor>());
+      else
         item->setColor(value.value<QColor>());
     Q_EMIT dataChanged(index, index);
         return true;
