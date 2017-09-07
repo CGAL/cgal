@@ -265,8 +265,18 @@ public:
   typedef IGT R;
 
 public:
-  typedef Side_of_triangle_mesh<Polyhedron, IGT>        Inside_functor;
+  typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron,
+                                                   Default,
+                                                   Tag_false> Ins_fctor_prim;
+  typedef CGAL::AABB_traits<IGT, Ins_fctor_prim> Ins_fctor_traits;
+  typedef CGAL::AABB_tree<Ins_fctor_traits> Ins_fctor_AABB_tree;
+
+  typedef Side_of_triangle_mesh<Polyhedron,
+                                IGT,
+                                Default,
+                                Ins_fctor_AABB_tree>      Inside_functor;
   typedef typename Inside_functor::AABB_tree              AABB_tree_;
+  BOOST_STATIC_ASSERT((boost::is_same<AABB_tree_, Ins_fctor_AABB_tree>::value));
   typedef typename AABB_tree_::AABB_traits                AABB_traits;
   typedef typename AABB_tree_::Primitive                  AABB_primitive;
   typedef typename AABB_tree_::Primitive_id             AABB_primitive_id;
