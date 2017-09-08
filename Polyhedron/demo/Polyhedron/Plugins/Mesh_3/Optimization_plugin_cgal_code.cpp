@@ -156,8 +156,7 @@ Optimizer_thread* cgal_code_optimization(Scene_c3t3_item& c3t3_item,
     {
       return NULL;
     }
-    SMwgd smesh_wg(const_cast< SMesh& >(*smesh));
-    Polyhedral_mesh_domain_sm* sm_domain = new Polyhedral_mesh_domain_sm(smesh_wg);
+    Polyhedral_mesh_domain_sm* sm_domain = new Polyhedral_mesh_domain_sm(*smesh);
 
     // Create thread
     typedef Optimization_function<Polyhedral_mesh_domain_sm,Parameters> Opt_function;

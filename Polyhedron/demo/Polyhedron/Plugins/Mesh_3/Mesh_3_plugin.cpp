@@ -531,17 +531,15 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
   // Surface_mesh
   if ( NULL != sm_item )
   {
-    SMesh* psMesh = sm_item->polyhedron();
-    if (NULL == psMesh)
+    SMesh* pMesh = sm_item->polyhedron();
+    if (NULL == pMesh)
     {
       QMessageBox::critical(mw, tr(""), tr("ERROR: no data in selected item"));
       return;
     }
-    typedef CGAL::Graph_with_descriptor_with_graph<SMesh> SMwgd;
-    SMwgd *pMesh = new SMwgd(*psMesh);
     Scene_polylines_item::Polylines_container plc;
-    SMwgd *pBMesh = (bounding_sm_item == NULL) ? NULL
-                    : new SMwgd(*bounding_sm_item->polyhedron());
+    SMesh *pBMesh = (bounding_sm_item == NULL) ? NULL
+                    : bounding_sm_item->polyhedron();
 
     thread =    cgal_code_mesh_3(pMesh,
                                  (polylines_item == NULL)?plc:polylines_item->polylines,
@@ -559,7 +557,6 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
                                  manifold,
                                  surface_only,
                                  scene);
-    delete pMesh;
   }
   // Image
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS

@@ -30,7 +30,6 @@
 
 #include <CGAL/tags.h>
 
-typedef CGAL::Graph_with_descriptor_with_graph<SMesh> SMwgd;
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
 template <typename K>
 struct Wrapper
@@ -52,7 +51,7 @@ private:
 typedef CGAL::Polyhedral_mesh_domain_with_features_3<
           Kernel, Polyhedron, CGAL::Default, CGAL::Tag_true> Polyhedral_mesh_domain;
 typedef CGAL::Polyhedral_mesh_domain_with_features_3<
-          Kernel, SMwgd, CGAL::Default, int> Polyhedral_mesh_domain_sm;
+          Kernel, SMesh, CGAL::Default, int> Polyhedral_mesh_domain_sm;
 // The last `Tag_true` says the Patch_id type will be int, and not pair<int, int>
 
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES

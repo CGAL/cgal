@@ -5,7 +5,6 @@
 #include <C3t3_type.h>
 #include <CGAL/Mesh_3/polylines_to_protect.h>
 #include <CGAL/Bbox_3.h>
-#include "CGAL/boost/graph/Graph_with_descriptor_with_graph.h"
 #include <Polyhedron_type.h>
 #include <CGAL/Mesh_3/properties_Surface_mesh.h>
 
@@ -28,9 +27,8 @@ struct Polyhedral_mesh_domain_selector
 };
 
 template<>
-struct Polyhedral_mesh_domain_selector<SMwgd>
+struct Polyhedral_mesh_domain_selector<SMesh>
 {
-
   typedef Polyhedral_mesh_domain_sm type;
 };
 template<class Mesh>
@@ -168,9 +166,9 @@ Meshing_thread* cgal_code_mesh_3(const Polyhedron* pMesh,
                           scene);
 }
 
-Meshing_thread* cgal_code_mesh_3(const SMwgd* pMesh,
+Meshing_thread* cgal_code_mesh_3(const SMesh* pMesh,
                                  const Polylines_container& polylines,
-                                 const SMwgd* pBoundingMesh,
+                                 const SMesh* pBoundingMesh,
                                  QString filename,
                                  const double facet_angle,
                                  const double facet_sizing,
