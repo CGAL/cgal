@@ -678,7 +678,9 @@ public:
           typedef typename boost::graph_traits<Polyhedron_type>::face_descriptor
             Face_descriptor;
           Face_descriptor fd = opt->face_descriptor;
-          auto face_pid_pmap = get(face_patch_id_t<Patch_id>(), *opt->graph);
+          typename boost::property_map<Polyhedron,
+                                       face_patch_id_t<Patch_id> >::type
+            face_pid_pmap = get(face_patch_id_t<Patch_id>(), *opt->graph);
           if(fd == Face_descriptor()) continue; // loop
           const std::pair<Subdomain_index, Subdomain_index>& pair =
             r_domain_.incident_subdomains_indices(get(face_pid_pmap, fd));
@@ -927,7 +929,6 @@ void
 Polyhedral_complex_mesh_domain_3<GT_,P_,TA_>::
 merge_duplicated_points(const PointSet& duplicated_points)
 {
-#if 0
   typedef typename Polyhedron_type::Point Point;
   typedef typename Polyhedron_type::Halfedge_around_vertex_const_circulator HVcirc;
   typedef std::pair<Point, const Polyhedron_type*> Point_and_mesh;
@@ -997,7 +998,6 @@ merge_duplicated_points(const PointSet& duplicated_points)
     pit = range_end;
   }
   reindex_patches(new_ids);
-#endif
 }
 
 template < typename GT_, typename P_, typename TA_>
@@ -1104,13 +1104,16 @@ void
 Polyhedral_complex_mesh_domain_3<GT_,P_,TA_>::
 reindex_patches(const std::vector<Surf_p_index>& map)
 {
-#if 0
+  typedef typename boost::graph_traits<Polyhedron_type>::face_descriptor
+    Face_descriptor;
   for(std::size_t i = 0, end = stored_polyhedra.size(); i < end; ++i) {
     Polyhedron_type& poly = stored_polyhedra[i];
-    for(typename Polyhedron_type::Facet_iterator fit = poly.facets_begin(),
-          end = poly.facets_end(); fit != end; ++fit)
+    typename boost::property_map<Polyhedron_type,
+                                 face_patch_id_t<Patch_id> >::type
+      face_pid_pmap = get(face_patch_id_t<Patch_id>(), poly);
+    BOOST_FOREACH(Face_descriptor fd, faces(poly))
     {
-      fit->set_patch_id(map[fit->patch_id()]);
+      put(face_pid_pmap, fd, map[get(face_pid_pmap, fd)]);
     }
   }
   BOOST_FOREACH(Surface_patch_index& id,
@@ -1119,7 +1122,6 @@ reindex_patches(const std::vector<Surf_p_index>& map)
     id = map[id];
   }
   Base::reindex_patches(map);
-#endif
 }
 /// @endcond
 
