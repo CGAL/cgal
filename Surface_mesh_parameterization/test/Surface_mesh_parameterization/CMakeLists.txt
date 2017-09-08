@@ -19,8 +19,6 @@ if ( CGAL_FOUND )
 
   # VisualC++ optimization for applications dealing with large data
   if (MSVC)
-    # Use /FR to turn on IntelliSense
-    SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /FR")
 
     # Allow Windows applications to use up to 3GB of RAM
     SET (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /LARGEADDRESSAWARE")
