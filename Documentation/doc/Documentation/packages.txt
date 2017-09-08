@@ -48,6 +48,7 @@ h1 {
 \package_listing{Minkowski_sum_2}
 \package_listing{Polyline_simplification_2}
 \package_listing{Visibility_2}
+\package_listing{Set_movable_separability_2}
 
 
 \section PartPolyhedra Cell Complexes and Polyhedra

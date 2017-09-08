@@ -88,7 +88,7 @@ R = RU Groningen
  Periodic_3_triangulation_3              I
  Point_set_2                             Halle transfered copyright to Inria
  Point_set_processing_3                  I
- Poisson_surface_reconstruction_3        I 
+ Poisson_surface_reconstruction_3        I
  Polygon                                 ETIMU
  Polyhedron                              E
  Polyhedron_IO                           E
@@ -105,6 +105,7 @@ R = RU Groningen
  Scripts                                 ETIMU
  SearchStructures                        E
  Segment_Delaunay_graph_2                I Menelaos removed Notre Dame U
+ Set_movable_separability_2              T
  Skin_surface_3                          R Gert Vegter agreed to upgrade
  Snap_rounding_2                         T
  Spatial_searching                       U
