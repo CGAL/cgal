@@ -880,7 +880,6 @@ detect_features(FT angle_in_degree,
   BOOST_FOREACH(Polyhedron_type& p, poly)
   {
     PIDMap pid_map = get(face_patch_id_t<Patch_id>(), p);
-    VIPMap vip_map = get(vertex_incident_patches_t<Patch_id>(), p);
     EIFMap eif = get(CGAL::edge_is_feature, p);
     const std::size_t polyhedron_id = &p - &poly[0];
     BOOST_FOREACH(face_descriptor f, faces(p))

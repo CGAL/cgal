@@ -463,11 +463,11 @@ detect_features(FT angle_in_degree, std::vector<Polyhedron>& poly)
         face_ids[f] = id++;
     }
 
-    typedef typename boost::property_map<Polyhedron,CGAL::face_patch_id_t<Patch_id> >::type PIDMap;
+    typedef typename boost::property_map<Polyhedron,CGAL::face_patch_id_t<Tag_> >::type PIDMap;
     typedef typename boost::property_map<Polyhedron,CGAL::vertex_incident_patches_t<P_id> >::type VIPMap;
     typedef typename boost::property_map<Polyhedron, CGAL::edge_is_feature_t>::type EIFMap;
 
-    PIDMap pid_map = get(face_patch_id_t<Patch_id>(), p);
+    PIDMap pid_map = get(face_patch_id_t<Tag_>(), p);
     VIPMap vip_map = get(vertex_incident_patches_t<P_id>(), p);
     EIFMap eif_map = get(CGAL::edge_is_feature, p);
 
@@ -572,8 +572,8 @@ add_featured_edges_to_graph(const Polyhedron& p,
     }
   }
 
-  typedef typename boost::property_map<Polyhedron,face_patch_id_t<Patch_id> >::type Face_patch_id_pmap;
-  Face_patch_id_pmap fpm = get(face_patch_id_t<Patch_id>(),p);
+  typedef typename boost::property_map<Polyhedron,face_patch_id_t<Tag_> >::type Face_patch_id_pmap;
+  Face_patch_id_pmap fpm = get(face_patch_id_t<Tag_>(),p);
 
   BOOST_FOREACH(Graph_edge_descriptor e, edges(graph)){
     vertex_descriptor vs = p2vmap[get(vpm,source(e,graph))];

@@ -32,8 +32,7 @@
 #include <CGAL/Mesh_3/global_parameters.h>
 #include <CGAL/Mesh_3/Robust_intersection_traits_3.h>
 
-#include <CGAL/boost/graph/Graph_with_descriptor_with_graph.h>
-#include <CGAL/Surface_mesh/Surface_mesh_fwd.h>
+#include <CGAL/Mesh_3/properties_Polyhedron_3.h>
 
 #include <CGAL/Side_of_triangle_mesh.h>
 #include <CGAL/AABB_tree.h>
@@ -53,6 +52,8 @@
 #include <boost/utility/enable_if.hpp>
 #include <boost/mpl/vector.hpp>
 #include <boost/mpl/contains.hpp>
+#include <boost/mpl/or.hpp>
+#include <boost/type_traits/is_same.hpp>
 #include <CGAL/tuple.h>
 #include <boost/format.hpp>
 #include <boost/variant.hpp>
@@ -188,8 +189,8 @@ public:
   struct Primitive {
     typedef typename boost::graph_traits<P>::face_descriptor face_descriptor_t;
 
-    const P* graph;
     face_descriptor_t face_descriptor;
+    const P* graph;
 
     typedef Triangle_from_face_descriptor_map<P>   Triangle_pmap;
     typedef One_point_from_face_descriptor_map<P>  Point_pmap;
@@ -223,18 +224,37 @@ public:
     typedef Primitive<P> type;
 
     static Surface_patch_index get_index(const typename type::Id primitive_id) {
-      return get(get(face_patch_id_t<Surface_patch_index>(),
+      return get(get(face_patch_id_t<Patch_id>(),
                      *primitive_id.graph),
                  primitive_id.face_descriptor);
     }
-  };
+  }; // Primitive_type (for non-Polyhedron_3)
+
   template <typename P> struct Primitive_type<P, true> {
     typedef AABB_face_graph_triangle_primitive<P > type;
 
-    static Surface_patch_index get_index(const typename type::Id face_handle) {
-      return face_handle->patch_id();
+    static Surface_patch_index get_index(const typename type::Id face_handle,
+                                         Tag_false)
+    {
+      typename boost::property_map<P, face_patch_id_t<Patch_id> >::type pmap;
+      return get(pmap, face_handle);
     }
-  };
+
+    static Surface_patch_index get_index(const typename type::Id,
+                                         Tag_true)
+    {
+      return Surface_patch_index(0,1);
+    }
+
+    static Surface_patch_index get_index(const typename type::Id face_handle)
+    {
+      namespace m = boost::mpl;
+      return get_index(face_handle,
+                       Boolean_tag<m::or_<boost::is_same<Patch_id, void>,
+                                          boost::is_same<Patch_id, Tag_false>
+                       >::value>());
+    }
+  }; // Primitive_type specialized for CGAL::Polyehdron_3
 
 public:
   typedef typename Primitive_type<Polyhedron>::type       Ins_fctor_primitive;
