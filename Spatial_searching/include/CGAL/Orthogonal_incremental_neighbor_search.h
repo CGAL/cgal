@@ -268,11 +268,11 @@ namespace CGAL {
 
 
       template<bool use_cache>
-      bool search_in_leaf(typename Tree::Leaf_node_const_handle node);
+      bool search_in_leaf(typename Tree::Leaf_node_const_handle node, bool search_furthest);
 
       // With cache
       template<>
-      bool search_in_leaf<true>(typename Tree::Leaf_node_const_handle node)
+      bool search_in_leaf<true>(typename Tree::Leaf_node_const_handle node, bool search_furthest)
       {
         typename Tree::iterator it_node_point = node->begin(), it_node_point_end = node->end();
         typename std::vector<FT>::const_iterator cache_point_begin = m_tree.cache_begin() + m_dim*(it_node_point - m_tree.begin());
@@ -297,9 +297,9 @@ namespace CGAL {
         if (!(PriorityQueue.empty()))
         {
           rd = CGAL::cpp11::get<1>(*PriorityQueue.top());
-          next_neighbour_found =
-            (multiplication_factor*rd >
-              Item_PriorityQueue.top()->second);
+          next_neighbour_found = (search_furthest ?
+            multiplication_factor*rd < Item_PriorityQueue.top()->second
+            : multiplication_factor*rd > Item_PriorityQueue.top()->second);
         }
         else // priority queue empty => last neighbour found
         {
@@ -312,7 +312,7 @@ namespace CGAL {
 
       // Without cache
       template<>
-      bool search_in_leaf<false>(typename Tree::Leaf_node_const_handle node)
+      bool search_in_leaf<false>(typename Tree::Leaf_node_const_handle node, bool search_furthest)
       {
         typename Tree::iterator it_node_point = node->begin(), it_node_point_end = node->end();
 
@@ -333,9 +333,9 @@ namespace CGAL {
 	if (!(PriorityQueue.empty()))
         {
 	  rd = CGAL::cpp11::get<1>(*PriorityQueue.top());
-	  next_neighbour_found =
-            (multiplication_factor*rd > 
-	      Item_PriorityQueue.top()->second);
+          next_neighbour_found = (search_furthest ?
+            multiplication_factor*rd < Item_PriorityQueue.top()->second
+            : multiplication_factor*rd > Item_PriorityQueue.top()->second);
 	}
 	else // priority queue empty => last neighbour found
 	{
@@ -405,7 +405,7 @@ namespace CGAL {
 	  number_of_leaf_nodes_visited++;
 	  if (node->size() > 0)
             next_neighbour_found = 
-              search_in_leaf<internal::Has_points_cache<Tree, internal::has_Enable_points_cache<Tree>::type::value>::value>(node);
+              search_in_leaf<internal::Has_points_cache<Tree, internal::has_Enable_points_cache<Tree>::type::value>::value>(node, false);
         }   // next_neighbour_found or priority queue is empty
         // in the latter case also the item priority quee is empty
       }
@@ -466,31 +466,9 @@ namespace CGAL {
           typename Tree::Leaf_node_const_handle node =
             static_cast<typename Tree::Leaf_node_const_handle>(N);
 	  number_of_leaf_nodes_visited++;
-	  if (node->size() > 0) {
-	    for (typename Tree::iterator it=node->begin(); it != node->end(); it++) {
-	      number_of_items_visited++;
-	      FT distance_to_query_point=
-		orthogonal_distance_instance.transformed_distance(query_point,*it);
-	      Point_with_transformed_distance *NN_Candidate=
-		new Point_with_transformed_distance(*it,distance_to_query_point);
-	      Item_PriorityQueue.push(NN_Candidate);
-	    }
-	    // old top of PriorityQueue has been processed,
-	    // hence update rd
-                
-	    if (!(PriorityQueue.empty()))  {
-	      rd = CGAL::cpp11::get<1>(*PriorityQueue.top());
-		next_neighbour_found =
-                  (multiplication_factor*rd < 
-		   Item_PriorityQueue.top()->second);
-	    }
-	    else // priority queue empty => last neighbour found
-	      {
-		next_neighbour_found=true;
-	      }
-
-	    number_of_neighbours_computed++;
-	  }
+	  if (node->size() > 0)
+            next_neighbour_found = 
+              search_in_leaf<internal::Has_points_cache<Tree, internal::has_Enable_points_cache<Tree>::type::value>::value>(node, true);
         }   // next_neighbour_found or priority queue is empty
         // in the latter case also the item priority quee is empty
       }
