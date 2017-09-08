@@ -4,18 +4,17 @@
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/Mesh_criteria_3.h>
 
+#include <CGAL/Surface_mesh.h>
+#include <CGAL/Mesh_3/properties_Surface_mesh.h>
+
 #include <CGAL/Polyhedral_complex_mesh_domain_3.h>
 #include <CGAL/make_mesh_3.h>
-#include <CGAL/Surface_mesh.h>
-#include <CGAL/boost/graph/Graph_with_descriptor_with_graph.h>
-#include <CGAL/Mesh_3/properties_Surface_mesh.h>
 #include <cstdlib>
 
 // Domain
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 //typedef CGAL::Mesh_polyhedron_3<K>::type Polyhedron;
-typedef CGAL::Surface_mesh<K::Point_3> SM;
-typedef CGAL::Graph_with_descriptor_with_graph<SM> Face_graph;
+typedef CGAL::Surface_mesh<K::Point_3> Face_graph;
 typedef CGAL::Polyhedral_complex_mesh_domain_3<K, Face_graph> Mesh_domain;
 
 
@@ -67,7 +66,7 @@ int main()
   const std::size_t nb_patches = sizeof(filenames) / sizeof(const char*);
   CGAL_assertion(sizeof(incident_subdomains) ==
                  nb_patches * sizeof(std::pair<int, int>));
-  std::vector<SM> patches(nb_patches);
+  std::vector<Face_graph> patches(nb_patches);
   for(std::size_t i = 0; i < nb_patches; ++i) {
     std::ifstream input(filenames[i]);
     if(!(input >> patches[i])) {

@@ -139,7 +139,20 @@ struct Polyhedron_property_map<CGAL::face_patch_id_t<void> >
   };
 };
 
-
+// Compatibility: when the `Patch_id` template argument of
+// `Polyhedron_mesh_domain` is `Tag_true` (because that argument was named
+// `UsePatchId` in previous versions of CGAL.
+template <>
+struct Polyhedron_property_map<CGAL::face_patch_id_t<CGAL::Tag_true> >
+{
+  template<class Gt, class I, CGAL_HDS_PARAM_, class A>
+  struct bind_
+  {
+    typedef Polyhedron_3<Gt,I,HDS,A> Polyhedron;
+    typedef Polyhedron_face_patch_id_pmap<typename Polyhedron::Face::Patch_id> type;
+    typedef type const_type;
+  };
+};
 
 struct Polyhedron_num_feature_edges_pmap {
   typedef void                               key_type;
