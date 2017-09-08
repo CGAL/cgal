@@ -585,8 +585,8 @@ public:
     pt = CGAL::ORIGIN + cv;
   }
 
-  /// computes the \f$ \sqrt{3}\f$ edge-points `ept1` and `ept2` of the halfedge `hd`,
-  /// as well as the updated point for its target vertex.
+  /// computes the \f$ \sqrt{3}\f$ edge-points `ept1` and `ept2` of the halfedge `hd`.
+  /// The updated point coordinates for the target vertex of `hd` is also computed and put in `vpt`.
   /// \attention Border subdivision only happens every second step of a <em>single</em>
   ///            successive \f$ \sqrt{3}\f$ subdivision (thus requiring a depth larger than 1).
   void border_node(halfedge_descriptor hd, Point& ept1, Point& ept2, Point& vpt) {
