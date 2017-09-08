@@ -24,10 +24,7 @@ typedef Tr::Bare_point Bare_point;
 template<typename Mesh>
 struct Polyhedral_mesh_domain_selector
 {
-
   typedef Polyhedral_mesh_domain type;
-  Polyhedral_mesh_domain_selector(const Mesh&)
-  {}
 };
 
 template<>
@@ -35,8 +32,6 @@ struct Polyhedral_mesh_domain_selector<SMwgd>
 {
 
   typedef Polyhedral_mesh_domain_sm type;
-  Polyhedral_mesh_domain_selector(const SMwgd&)
-  {}
 };
 template<class Mesh>
 Meshing_thread* cgal_code_mesh_3_templated(const Mesh* pMesh,
