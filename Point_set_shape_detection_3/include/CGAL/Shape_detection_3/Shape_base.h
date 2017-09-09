@@ -166,7 +166,7 @@ namespace CGAL {
         u = (u < 0) ? 0 : (((std::size_t)u >= u_extent) ? (int)u_extent - 1 : u);
         v = (v < 0) ? 0 : (((std::size_t)v >= v_extent) ? (int)v_extent - 1 : v);
 
-        bitmap[v * int(u_extent) + u] = true;
+        bitmap[size_t(v) * u_extent + size_t(u)] = true;
       }
 
       // Iterate through the bitmap
@@ -249,7 +249,7 @@ namespace CGAL {
         u = (u < 0) ? 0 : (((std::size_t)u >= u_extent) ? (int)u_extent - 1 : u);
         v = (v < 0) ? 0 : (((std::size_t)v >= v_extent) ? (int)v_extent - 1 : v);
 
-        count[bitmap[v * int(u_extent) + u]]++;
+        count[bitmap[size_t(v) * u_extent + size_t(u)]]++;
       }
 
       // Find largest component. Start at index 2 as 0/1 are reserved for
@@ -269,7 +269,7 @@ namespace CGAL {
         u = (u < 0) ? 0 : (((std::size_t)u >= u_extent) ? (int)u_extent - 1 : u);
         v = (v < 0) ? 0 : (((std::size_t)v >= v_extent) ? (int)v_extent - 1 : v);
 
-        if (bitmap[v * int(u_extent) + u] == largest)
+        if (bitmap[size_t(v) * u_extent + size_t(u)] == largest)
           comp_indices.push_back(indices[i]);
       }
 
