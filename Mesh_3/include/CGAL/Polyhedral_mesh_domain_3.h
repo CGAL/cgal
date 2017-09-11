@@ -206,6 +206,11 @@ public:
       : face_descriptor(*it), graph(&polyhedron)
     {}
 
+    bool operator==(const Primitive& other) const {
+      return other.face_descriptor == this->face_descriptor
+        && other.graph == this->graph;
+    }
+
     Datum datum() const {
       return get(Triangle_pmap(graph), face_descriptor);
     }
