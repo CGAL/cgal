@@ -675,18 +675,12 @@ public:
         if(!opt)
           return Subdomain();
         else {
-          typedef typename boost::graph_traits<Polyhedron_type>::face_descriptor
-            Face_descriptor;
-          Face_descriptor fd = opt->face_descriptor;
-          typename boost::property_map<Polyhedron,
-                                       face_patch_id_t<Patch_id> >::type
-            face_pid_pmap = get(face_patch_id_t<Patch_id>(), *opt->graph);
-          if(fd == Face_descriptor()) continue; // loop
+          if(AABB_primitive_id() == *opt) continue; // loop
+          Surface_patch_index face_id = r_domain_.make_surface_index(*opt);
           const std::pair<Subdomain_index, Subdomain_index>& pair =
-            r_domain_.incident_subdomains_indices(get(face_pid_pmap, fd));
-          CGAL::Triangle_from_face_descriptor_map<Polyhedron_type>
-            tri_pmap(opt->graph);
-          const typename IGT::Triangle_3 triangle = get(tri_pmap, fd);
+            r_domain_.incident_subdomains_indices(face_id);
+          const typename IGT::Triangle_3 triangle =
+            BaseBase::template Primitive_type<Polyhedron_type>::datum(*opt);
           const Point_3& a = triangle[0];
           const Point_3& b = triangle[1];
           const Point_3& c = triangle[2];

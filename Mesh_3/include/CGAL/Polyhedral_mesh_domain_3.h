@@ -223,6 +223,12 @@ public:
   struct Primitive_type {
     typedef Primitive<P> type;
 
+    static
+    typename IGT_::Triangle_3 datum(const typename type::Id primitive_id) {
+      CGAL::Triangle_from_face_descriptor_map<P> pmap(primitive_id.graph);
+      return get(pmap, primitive_id.face_descriptor);
+    }
+
     static Surface_patch_index get_index(const typename type::Id primitive_id) {
       return get(get(face_patch_id_t<Patch_id>(),
                      *primitive_id.graph),
@@ -232,6 +238,15 @@ public:
 
   template <typename P> struct Primitive_type<P, true> {
     typedef AABB_face_graph_triangle_primitive<P > type;
+
+    static
+    typename IGT_::Triangle_3 datum(const typename type::Id face_handle) {
+      typedef typename IGT_::Point_3 Point;
+      const Point& a = face_handle->halfedge()->vertex()->point();
+      const Point& b = face_handle->halfedge()->next()->vertex()->point();
+      const Point& c = face_handle->halfedge()->next()->next()->vertex()->point();
+      return typename IGT_::Triangle_3(a,b,c);
+    }
 
     static Surface_patch_index get_index(const typename type::Id face_handle,
                                          Tag_false)
