@@ -1498,6 +1498,7 @@ void Scene_c3t3_item_priv::computeSpheres()
         vvit = incident_vertices.begin(), end = incident_vertices.end();
         vvit != end; ++vvit)
     {
+      if(c3t3.triangulation().is_infinite(*vvit)) continue;
       if(Geom_traits::Sphere_3(wp2p(vit->point()),
                                vit->point().weight()).bounded_side(wp2p((*vvit)->point()))
          == CGAL::ON_BOUNDED_SIDE)
