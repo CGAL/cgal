@@ -572,7 +572,9 @@ bool Scene_points_with_normal_item::read_las_point_set(std::istream& stream)
 bool Scene_points_with_normal_item::write_las_point_set(std::ostream& stream) const
 {
   Q_ASSERT(d->m_points != NULL);
-
+  
+  d->m_points->reset_indices();
+  
   return stream &&
     CGAL::write_las_point_set (stream, *(d->m_points));
 }
@@ -606,6 +608,8 @@ bool Scene_points_with_normal_item::write_ply_point_set(std::ostream& stream, bo
 {
   Q_ASSERT(d->m_points != NULL);
 
+  d->m_points->reset_indices();
+  
   if (!stream)
     return false;
 
@@ -636,6 +640,8 @@ bool Scene_points_with_normal_item::write_off_point_set(std::ostream& stream) co
 {
   Q_ASSERT(d->m_points != NULL);
 
+  d->m_points->reset_indices();
+
   return stream &&
     CGAL::write_off_point_set (stream, *(d->m_points));
 }
@@ -659,6 +665,8 @@ bool Scene_points_with_normal_item::read_xyz_point_set(std::istream& stream)
 bool Scene_points_with_normal_item::write_xyz_point_set(std::ostream& stream) const
 {
   Q_ASSERT(d->m_points != NULL);
+
+  d->m_points->reset_indices();
 
   return stream &&
     CGAL::write_xyz_point_set (stream, *(d->m_points));
