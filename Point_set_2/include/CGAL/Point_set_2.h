@@ -326,25 +326,35 @@ public:
   
   void dfs(Vertex_handle v,const Circle& C, std::list<Vertex_handle>& L)
   {
-    L.push_back(v);
-    mark_vertex(v);
-    
-    // get incident vertices of v ...
-    Vertex_circulator vc = incident_vertices(v);
-    Vertex_circulator start =vc;
-     
-    Vertex_handle act;
-     
-    // go through the vertices ...
-    do {
-      act = vc;
- 
-       if (! is_infinite(act)) {
-        if (!is_marked(act) && ! (tr_circleptori(C,act->point())==ON_UNBOUNDED_SIDE) ) 
-           dfs(act,C,L);       
-       }             
-       vc++;
-    } while (vc != start);     
+    std::stack<Vertex_handle> todo;
+    todo.push(v);
+
+    while (!todo.empty())
+    {
+      Vertex_handle current = todo.top();
+      todo.pop();
+
+      if (is_marked(current))
+        continue;
+      
+      L.push_back(current);
+      mark_vertex(current);
+
+      // get incident vertices of v ...
+      Vertex_circulator vc = incident_vertices(current);
+      Vertex_circulator start =vc;
+      Vertex_handle act;
+      // go through the vertices ...
+      do {
+        act = vc;
+        
+        if (! is_infinite(act)) {
+          if (!is_marked(act) && ! (tr_circleptori(C,act->point())==ON_UNBOUNDED_SIDE) )
+            todo.push(act);
+        }             
+        vc++;
+      } while (vc != start);
+    }
   }
 
 
