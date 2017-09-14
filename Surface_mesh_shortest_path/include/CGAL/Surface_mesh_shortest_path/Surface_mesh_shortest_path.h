@@ -2773,6 +2773,12 @@ public:
   \param outTree Output parameter to store the computed `AABB_tree`
   */
   template <class AABBTraits>
+  void build_aabb_tree(AABB_tree<AABBTraits>& outTree) const
+  {
+    build_aabb_tree(m_graph, outTree, m_vertexPointMap);
+  }
+
+  template <class AABBTraits>
   void build_aabb_tree(AABB_tree<AABBTraits>& outTree, Vertex_point_map vertexPointMap) const
   {
     build_aabb_tree(m_graph, outTree, vertexPointMap);
