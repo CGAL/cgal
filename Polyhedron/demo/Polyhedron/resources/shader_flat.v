@@ -7,7 +7,6 @@ in vec4 colors;
 out VS_OUT
 {
   vec4 fP;
-  vec3 normal;
   vec4 out_color;
 }vs_out;
 
@@ -18,6 +17,5 @@ void main(void)
 {
    vs_out.out_color=colors;
    vs_out.fP = mv_matrix * vertex;
-   vs_out.normal = normals;
    gl_Position = mvp_matrix * vertex;
 }
