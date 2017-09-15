@@ -33,30 +33,13 @@
 #include <CGAL/memory.h>
 #include <CGAL/iterator.h>
 #include <CGAL/CC_safe_handle.h>
+#include <CGAL/Has_member.h>
 
 #include <tbb/tbb.h>
 
 #include <boost/mpl/if.hpp>
 
 namespace CGAL {
-
-#define CGAL_GENERATE_MEMBER_DETECTOR(X)                                           \
-template<typename T> class has_##X {                                          \
-    struct Fallback { int X; };                                               \
-    struct Derived : T, Fallback { };                                         \
-                                                                              \
-    template<typename U, U> struct Check;                                     \
-                                                                              \
-    typedef char ArrayOfOne[1];                                               \
-    typedef char ArrayOfTwo[2];                                               \
-                                                                              \
-    template<typename U> static ArrayOfOne & func(                            \
-                                            Check<int Fallback::*, &U::X> *); \
-    template<typename U> static ArrayOfTwo & func(...);                       \
-  public:                                                                     \
-    typedef has_##X type;                                                     \
-    enum { value = sizeof(func<Derived>(0)) == 2 };                           \
-} // semicolon is after the macro call
 
 #define CGAL_INIT_CONCURRENT_COMPACT_CONTAINER_BLOCK_SIZE 14
 #define CGAL_INCREMENT_CONCURRENT_COMPACT_CONTAINER_BLOCK_SIZE 16
