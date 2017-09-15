@@ -3,6 +3,11 @@
 zmodload zsh/stat
 set -e
 
+if ! ${git} diff --exit-code > /dev/null || ! ${git} diff --staged --exit-code  > /dev/null ; then
+    echo 'Your working directory contains local modifications!' >&2
+    exit 1
+fi
+
 base=${1:-HEAD}
 save=$(git rev-parse HEAD)
 
