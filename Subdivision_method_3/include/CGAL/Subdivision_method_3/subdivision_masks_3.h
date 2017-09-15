@@ -585,11 +585,13 @@ public:
     pt = CGAL::ORIGIN + cv;
   }
 
-  /// computes the \f$ \sqrt{3}\f$ edge-points `ept` and `vpt` of the halfedge `hd`.
+  /// computes the \f$ \sqrt{3}\f$ edge-points `ept1` and `ept2` of the halfedge `hd`.
+  /// The updated point coordinates for the target vertex of `hd` is also computed and put in `vpt`.
   /// \attention Border subdivision only happens every second step of a <em>single</em>
   ///            successive \f$ \sqrt{3}\f$ subdivision (thus requiring a depth larger than 1).
-  void border_node(halfedge_descriptor bhd, Point& ept, Point& vpt) {
-    // this function takes a BORDER halfedge
+  void border_node(halfedge_descriptor hd, Point& ept1, Point& ept2, Point& vpt) {
+    // this function takes the opposite of a BORDER halfedge
+    halfedge_descriptor bhd = opposite(hd, *(this->pmesh));
     CGAL_precondition(is_border(bhd, *(this->pmesh)));
     vertex_descriptor prev_s = source(prev(bhd, *(this->pmesh)), *(this->pmesh));
     Vector prev_sv = get(this->vpmap, prev_s) - CGAL::ORIGIN;
@@ -604,22 +606,9 @@ public:
     Vector next_tv = get(this->vpmap, next_t) - CGAL::ORIGIN;
 
     const FT denom = 1./27.;
-    ept = CGAL::ORIGIN + denom * ( 10.*sv + 16.*tv + next_tv );
-    vpt = CGAL::ORIGIN + denom * ( prev_sv + 16.*sv + 10.*tv );
-  }
-
-  void border_node(halfedge_descriptor bhd, Point& pt) {
-    // this function takes a BORDER halfedge
-    CGAL_precondition(is_border(bhd, *(this->pmesh)));
-
-    vertex_descriptor s = source(bhd, *(this->pmesh));
-    Vector sv = get(this->vpmap, s) - CGAL::ORIGIN;
-    vertex_descriptor c = target(bhd, *(this->pmesh));
-    Vector cv = get(this->vpmap, c) - CGAL::ORIGIN;
-    vertex_descriptor n = target(next(bhd, *(this->pmesh)), *(this->pmesh));
-    Vector nv = get(this->vpmap, n) - CGAL::ORIGIN;
-
-    pt = CGAL::ORIGIN + 1./27. * ( 4*sv + 19*cv + 4*nv );
+    ept1 = CGAL::ORIGIN + denom * ( prev_sv + 16.*sv + 10.*tv );
+    ept2 = CGAL::ORIGIN + denom * ( 10.*sv + 16.*tv + next_tv );
+    vpt = CGAL::ORIGIN + 1./27. * ( 4*prev_sv + 19*sv + 4*tv );
   }
 };
 
