@@ -257,9 +257,9 @@ struct Scene_c3t3_item_priv {
   {
     init_default_values();
     tet_Slider = new QSlider(Qt::Horizontal);
-    tet_Slider->setValue(100);
     tet_Slider->setMinimum(0);
     tet_Slider->setMaximum(100);
+    tet_Slider->setValue(100);
     invalidate_stats();
   }
   Scene_c3t3_item_priv(const C3t3& c3t3_, Scene_c3t3_item* item)
@@ -273,9 +273,9 @@ struct Scene_c3t3_item_priv {
   {
     init_default_values();
     tet_Slider = new QSlider(Qt::Horizontal);
-    tet_Slider->setValue(100);
     tet_Slider->setMinimum(0);
     tet_Slider->setMaximum(100);
+    tet_Slider->setValue(100);
     invalidate_stats();
   }
   ~Scene_c3t3_item_priv()
