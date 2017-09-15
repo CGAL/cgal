@@ -120,12 +120,19 @@ Color_ramp::build_thermal()
   g_.rebuild(1,0);
   b_.rebuild(1,0);
 
-  r_.add(0.3,1);
-  r_.add(0.05,1);
+  r_.add(0.0,0);
+  r_.add(1,1);
   g_.add(0.05,0.8);
   g_.add(0.3,0.5);
-  b_.add(0.05,0.6);
-  b_.add(0.05,0.3);
+  b_.add(0.0,1.0);
+  b_.add(1.0,0.0);
+}
+void Color_ramp::
+build_red_to_green()
+{
+  r_.rebuild(1,0);
+  g_.rebuild(0,1);
+  b_.rebuild(0,0);
 }
 
 void

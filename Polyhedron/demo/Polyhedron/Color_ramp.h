@@ -47,6 +47,7 @@ public :
 	void build_red();
 	void build_blue();
         void build_thermal();
+        void build_red_to_green();
   void print() const;
 
 private :
