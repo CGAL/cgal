@@ -87,6 +87,19 @@ Color_ramp::Color_ramp()
 { 
 }
 
+Color_ramp::Color_ramp(const double r0, const double r1,
+           const double g0, const double g1,
+           const double b0, const double b1)
+{
+  r_.rebuild(r0,r1);
+  g_.rebuild(g0,g1);
+  b_.rebuild(b0,b1);
+
+  r_.add(0.5,(std::max)(r0,r1));
+  g_.add(0.5,(std::max)(g0,g1));
+  b_.add(0.5,(std::max)(b0,b1));
+  }
+
 void 
 Color_ramp::build_red()
 {
@@ -126,13 +139,6 @@ Color_ramp::build_thermal()
   g_.add(0.3,0.5);
   b_.add(0.0,1.0);
   b_.add(1.0,0.0);
-}
-void Color_ramp::
-build_red_to_green()
-{
-  r_.rebuild(1,0);
-  g_.rebuild(0,1);
-  b_.rebuild(0,0);
 }
 
 void
