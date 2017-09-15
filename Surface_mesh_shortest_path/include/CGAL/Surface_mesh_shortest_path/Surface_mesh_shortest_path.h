@@ -2618,10 +2618,11 @@ public:
   /// \cond
 
   template <class AABBTraits>
-  static Face_location locate(const Point_3& location, const Triangle_mesh& tm, Vertex_point_map vertexPointMap, const Traits& traits = Traits())
+  static Face_location locate(const Point_3& location, const Triangle_mesh& tm,
+                              Vertex_point_map vertexPointMap, const Traits& traits = Traits())
   {
     AABB_tree<AABBTraits> tree;
-    build_aabb_tree(tm, tree);
+    build_aabb_tree(tm, tree, vertexPointMap);
     return locate(location, tree, tm, vertexPointMap, traits);
   }
 
@@ -2682,10 +2683,11 @@ public:
   /// \cond
 
   template <class AABBTraits>
-  static Face_location locate(const Ray_3& ray, const Triangle_mesh& tm, Vertex_point_map vertexPointMap, const Traits& traits = Traits())
+  static Face_location locate(const Ray_3& ray, const Triangle_mesh& tm,
+                              Vertex_point_map vertexPointMap, const Traits& traits = Traits())
   {
     AABB_tree<AABBTraits> tree;
-    build_aabb_tree(tm, tree);
+    build_aabb_tree(tm, tree, vertexPointMap);
     return locate(ray, tree, tm, vertexPointMap, traits);
   }
 
@@ -2779,17 +2781,24 @@ public:
   template <class AABBTraits>
   void build_aabb_tree(AABB_tree<AABBTraits>& outTree) const
   {
-    build_aabb_tree(m_graph, outTree);
+    build_aabb_tree(m_graph, outTree, m_vertexPointMap);
+  }
+
+  template <class AABBTraits>
+  void build_aabb_tree(AABB_tree<AABBTraits>& outTree, Vertex_point_map vertexPointMap) const
+  {
+    build_aabb_tree(m_graph, outTree, vertexPointMap);
   }
 
   /// \cond
 
   template <class AABBTraits>
-  static void build_aabb_tree(const Triangle_mesh& tm, AABB_tree<AABBTraits>& outTree)
+  static void build_aabb_tree(const Triangle_mesh& tm, AABB_tree<AABBTraits>& outTree,
+                              Vertex_point_map vertexPointMap)
   {
     face_iterator facesStart, facesEnd;
     boost::tie(facesStart, facesEnd) = faces(tm);
-    outTree.rebuild(facesStart, facesEnd, tm);
+    outTree.rebuild(facesStart, facesEnd, tm, vertexPointMap);
     outTree.build();
   }
   /// \endcond
