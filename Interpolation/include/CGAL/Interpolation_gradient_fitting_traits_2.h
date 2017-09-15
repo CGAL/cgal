@@ -100,8 +100,10 @@ public:
 
   typedef typename Rep::FT                           FT;
   typedef typename Rep::Point_2                      Point_d;
+  typedef typename Rep::Weighted_point_2             Weighted_point_d;
   typedef typename Rep::Vector_2                     Vector_d;
 
+  typedef typename Rep::Construct_point_2            Construct_point_d;
   typedef typename Rep::Construct_vector_2           Construct_vector_d;
   typedef typename Rep::Construct_scaled_vector_2    Construct_scaled_vector_d;
   //only one not needed by gradient fitting:
@@ -139,6 +141,10 @@ public:
   Construct_scaled_vector_d
   construct_scaled_vector_d_object()const
   {return Construct_scaled_vector_d();}
+
+  Construct_point_d
+  construct_point_d_object()const
+  {return Construct_point_d();}
 
   Construct_vector_d
   construct_vector_d_object()const
