@@ -53,19 +53,19 @@ public :
 
 
     QMenu* menuFile = mw->findChild<QMenu*>("menuFile");
-    QMenu* menu = new QMenu(tr("Add &basic objets"), menuFile);
+    QMenu* menu = new QMenu(tr("Objet Generator Widget"), menuFile);
     QAction* actionLoad = mw->findChild<QAction*>("actionLoadPlugin");
     menuFile->insertMenu(actionLoad, menu);
 
 
-    QAction* actionPrism       = new QAction("Create prism", mw);
-    QAction* actionSphere      = new QAction("Create sphere", mw);
-    QAction* actionPyramid     = new QAction("Create pyramid", mw);
-    QAction* actionHexahedron  = new QAction("Create hexahedron", mw);
-    QAction* actionTetrahedron = new QAction("Create tetrahedron", mw);
-    QAction* actionGrid        = new QAction("Create grid", mw);
-    QAction* actionPointSet    = new QAction("Create point set", mw);
-    QAction* actionPolyline    = new QAction("Create polyline", mw);
+    QAction* actionPrism       = new QAction("Prism", mw);
+    QAction* actionSphere      = new QAction("Sphere", mw);
+    QAction* actionPyramid     = new QAction("Pyramid", mw);
+    QAction* actionHexahedron  = new QAction("Hexahedron", mw);
+    QAction* actionTetrahedron = new QAction("Tetrahedron", mw);
+    QAction* actionGrid        = new QAction("Grid", mw);
+    QAction* actionPointSet    = new QAction("Point Set", mw);
+    QAction* actionPolyline    = new QAction("Polyline", mw);
 
 
 
