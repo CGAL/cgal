@@ -28,6 +28,8 @@
 #include <CGAL/Origin.h>
 
 #include <CGAL/regular_neighbor_coordinates_2.h>
+#include <CGAL/Interpolation_gradient_fitting_traits_2.h>
+#include <CGAL/sibson_gradient_fitting.h>
 
 template < class ForwardIterator >
 bool test_norm(ForwardIterator first, ForwardIterator beyond,
@@ -55,6 +57,34 @@ bool test_barycenter(ForwardIterator first, ForwardIterator beyond,
   return p==b;
 }
 
+template <class Point, class FT>
+struct Functor
+{
+  typedef std::pair<FT, bool>                  result_type;
+
+  result_type operator()(const Point&) { return std::make_pair(0., true); }
+};
+
+template <class Triangul>
+void test_gradient_fitting(const Triangul& rt)
+{
+  typedef typename Triangul::Geom_traits::Kernel    K;
+  typedef typename Triangul::Geom_traits::FT        FT;
+  typedef typename Triangul::Geom_traits::Vector_2  Vector_2;
+  typedef typename Triangul::Geom_traits::Point_2   Point;
+
+  typedef typename std::back_insert_iterator<
+                     std::vector<
+                       std::pair< Point, Vector_2 > > >   OutputIterator;
+
+  std::vector<std::pair< Point, Vector_2 > > v;
+  OutputIterator out = std::back_inserter(v);
+  Functor<Point, FT> f;
+
+  CGAL::Interpolation_gradient_fitting_traits_2<K> traits;
+
+  sibson_gradient_fitting_rn_2(rt, out, f, traits);
+}
 
 template <class Triangul>
 void
@@ -112,6 +142,8 @@ _test_regular_neighbors_2( const Triangul & )
     assert(test_barycenter( coords.begin(), coords.end(),norm, points[i]));
     coords.clear();
   }
+
+  test_gradient_fitting(T);
 
   //TESTING a GRID POINT SET
   std::cout << "RN2: Testing grid points." << std::endl;
