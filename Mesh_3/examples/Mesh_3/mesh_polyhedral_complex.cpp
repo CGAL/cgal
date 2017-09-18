@@ -6,12 +6,13 @@
 
 #include <CGAL/Polyhedral_complex_mesh_domain_3.h>
 #include <CGAL/make_mesh_3.h>
+
 #include <cstdlib>
 
 // Domain
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Mesh_polyhedron_3<K>::type Polyhedron;
-typedef CGAL::Polyhedral_complex_mesh_domain_3<K, Polyhedron> Mesh_domain;
+typedef CGAL::Polyhedral_complex_mesh_domain_3<K> Mesh_domain;
 
 
 #ifdef CGAL_CONCURRENT_MESH_3
@@ -21,7 +22,7 @@ typedef CGAL::Sequential_tag Concurrency_tag;
 #endif
 
 // Triangulation
-typedef CGAL::Mesh_triangulation_3<Mesh_domain,K,Concurrency_tag>::type Tr;
+typedef CGAL::Mesh_triangulation_3<Mesh_domain,CGAL::Default,Concurrency_tag>::type Tr;
 
 typedef CGAL::Mesh_complex_3_in_triangulation_3<
   Tr,Mesh_domain::Corner_index,Mesh_domain::Curve_segment_index> C3t3;
