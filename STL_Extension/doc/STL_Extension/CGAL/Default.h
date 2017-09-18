@@ -53,7 +53,16 @@ template <typename Parameter, typename Type>
 struct struct Get {
   typedef unspecified_type type;
 };
-/// @}
+/*!
+A nested template providing a typedef `type` which equals `MetaFct::type` if
+`Parameter` is `Default`, and `Parameter` otherwise. Use this template
+instead of `CGAL::Default::Get` when the default parameter should not be
+instantiated by default.
+*/
+template <typename Parameter, typename MetaFct>
+struct struct Lazy_get {
+  typedef unspecified_type type;
+};/// @}
 
 
 }; /* end Default */
