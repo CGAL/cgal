@@ -168,8 +168,8 @@ and <code>src/</code> directories).
   <h3>Surface Mesh</h3>
   <ul>
     <li>
-      <b>Breaking change</b>: <code>operator >>(std::istream&, Surface_mesh&)</code>
-      no longer clears the surface mesh.
+      <b>Breaking change</b>: <code>operator >>(std::istream&,
+      Surface_mesh&)</code> no longer clears the surface mesh.
     </li>
   </ul>
   <h3>Triangulated Surface Mesh Parameterization (breaking change)</h3>
@@ -253,11 +253,13 @@ and <code>src/</code> directories).
   </ul>
   <h3> Interpolation </h3>
   <ul>
-    <li><b>Breaking change</b>: The concept <code>GradientFittingTraits</code>
-    now additionally requests a weighted point type <code>Weighted_point_d</code>
-    and a functor <code>Construct_point_d</code>. The model
-    <code>CGAL::Interpolation_gradient_fitting_traits_2</code> has been appropriately
-    modified to still be a model of the concept <code>GradientFittingTraits</code>.
+    <li><b>Breaking change</b>: The
+    concept <code>GradientFittingTraits</code> now additionally requests a
+    weighted point type <code>Weighted_point_d</code> and a
+    functor <code>Construct_point_d</code>. The model
+    <code>CGAL::Interpolation_gradient_fitting_traits_2</code> has been
+    appropriately modified to still be a model of the
+    concept <code>GradientFittingTraits</code>.
     </li>
   </ul>
   <h3> 2D and 3D Triangulations </h3>

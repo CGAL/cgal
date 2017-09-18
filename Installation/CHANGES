@@ -33,6 +33,12 @@ Release date: September 2017
     details.
 
 
+* Surface Mesh
+
+  - Breaking change: operator >>(std::istream&, Surface_mesh&) no longer clears
+    the surface mesh.
+
+
 * Triangulated Surface Mesh Parameterization (breaking change)
 
   - Breaking change: The package has been rewritten and can operate on any
@@ -92,6 +98,15 @@ Release date: September 2017
 
   - The concept AlphaShapeTraits_2 now provides requirements on the traits
     class for 2D basic alpha shapes, and refines DelaunayTriangulationTraits_2.
+
+
+* Interpolation
+
+  - Breaking change: The concept GradientFittingTraits now additionally
+    requests a weighted point type Weighted_point_d and a functor
+    Construct_point_d. The model CGAL::Interpolation_gradient_fitting_traits_2
+    has been appropriately modified to still be a model of the concept
+    GradientFittingTraits.
 
 
 * 2D and 3D Triangulations
