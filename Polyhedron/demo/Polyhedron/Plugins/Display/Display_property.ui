@@ -186,12 +186,12 @@
        <widget class="QComboBox" name="propertyBox">
         <item>
          <property name="text">
-          <string>Scaled Jacobian</string>
+          <string>Smallest Angle Per Face</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>Smallest Angle Per Face</string>
+          <string>Scaled Jacobian</string>
          </property>
         </item>
        </widget>

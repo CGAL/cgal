@@ -94,15 +94,13 @@ private Q_SLOTS:
     QApplication::setOverrideCursor(Qt::WaitCursor);
     SMesh& smesh = *item->face_graph();
     smesh.collect_garbage();
-    typedef boost::property_map<SMesh, boost::vertex_point_t>::type PMap;
-    PMap pmap = get(boost::vertex_point, smesh);
     switch(dock_widget->propertyBox->currentIndex())
     {
     case 0:
-      displayScaledJacobian(smesh);
+      displayAngles(smesh);
       break;
     default:
-      displayAngles(smesh);
+      displayScaledJacobian(smesh);
       break;
     }
     QApplication::restoreOverrideCursor();
@@ -293,15 +291,6 @@ private Q_SLOTS:
     switch(dock_widget->propertyBox->currentIndex())
     {
     case 0:
-      dock_widget->minBox->setMinimum(-1000);
-      dock_widget->minBox->setMaximum(1000);
-      dock_widget->minBox->setValue(0);
-
-      dock_widget->maxBox->setMinimum(-1000);
-      dock_widget->maxBox->setMaximum(1000);
-      dock_widget->maxBox->setValue(2);
-      break;
-    default:
       dock_widget->minBox->setMinimum(0);
       dock_widget->minBox->setMaximum(360);
       dock_widget->minBox->setValue(0);
@@ -310,7 +299,17 @@ private Q_SLOTS:
       dock_widget->maxBox->setMaximum(360);
       dock_widget->maxBox->setValue(60);
       break;
+    default:
+      dock_widget->minBox->setMinimum(-1000);
+      dock_widget->minBox->setMaximum(1000);
+      dock_widget->minBox->setValue(0);
+
+      dock_widget->maxBox->setMinimum(-1000);
+      dock_widget->maxBox->setMaximum(1000);
+      dock_widget->maxBox->setValue(2);
+      break;
     }
+    replaceRamp();
   }
 
   void closure()Q_DECL_OVERRIDE
