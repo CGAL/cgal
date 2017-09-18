@@ -834,13 +834,8 @@ detect_features(FT angle_in_degree,
   BOOST_FOREACH(Polyhedron_type& p, poly)
   {
     initialize_ts(p);
-    std::map<face_descriptor, int> face_ids;
-    int id = 0;
-    BOOST_FOREACH(face_descriptor f, faces(p))
-    {
-        face_ids[f] = id++;
-    }
-
+    using internal::Mesh_3::Get_face_index_pmap;
+    Get_face_index_pmap<Polyhedron_type> get_face_index_pmap(p);
 #if CGAL_MESH_3_VERBOSE
     std::size_t poly_id = &p-&poly[0];
     std::cerr << "Polyhedron #" << poly_id << " :\n";
@@ -857,7 +852,7 @@ detect_features(FT angle_in_degree,
       , eif
       , pid_map
       , PMP::parameters::first_index(nb_of_patch_plus_one)
-      .face_index_map(boost::make_assoc_property_map(face_ids))
+      .face_index_map(get_face_index_pmap(p))
       .vertex_incident_patches_map(vip_map)
       .vertex_feature_degree_map(vertex_feature_degree_map));
 
