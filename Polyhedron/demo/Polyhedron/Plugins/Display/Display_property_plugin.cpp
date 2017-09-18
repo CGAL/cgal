@@ -11,8 +11,8 @@
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include "ui_Display_property.h"
 
-#define VERDICT_DBL_MIN 1.0E-30
-#define VERDICT_DBL_MAX 1.0E+30
+#define ARBITRARY_DBL_MIN 1.0E-30
+#define ARBITRARY_DBL_MAX 1.0E+30
 
 class DockWidget :
     public QDockWidget,
@@ -49,7 +49,7 @@ public:
     return _actions;
   }
 
-  void init(QMainWindow* mw, CGAL::Three::Scene_interface* sc, Messages_interface* mi) Q_DECL_OVERRIDE
+  void init(QMainWindow* mw, CGAL::Three::Scene_interface* sc, Messages_interface*) Q_DECL_OVERRIDE
   {
     this->scene = sc;
     this->mw = mw;
@@ -112,10 +112,10 @@ private Q_SLOTS:
   {
 
     //compute and store the jacobian per face
-    std::vector<float> jacobians;
+    std::vector<double> jacobians;
     jacobians.reserve(num_faces(smesh));
-    float res_min = VERDICT_DBL_MAX,
-        res_max = -VERDICT_DBL_MAX;
+    double res_min = ARBITRARY_DBL_MAX,
+        res_max = -ARBITRARY_DBL_MAX;
     for(boost::graph_traits<SMesh>::face_iterator fit = faces(smesh).begin();
         fit != faces(smesh).end();
         ++fit)
@@ -129,8 +129,8 @@ private Q_SLOTS:
       QApplication::processEvents();
     }
     //scale a color ramp between min and max
-    float max = maxBox;
-    float min = minBox;
+    double max = maxBox;
+    double min = minBox;
     //fill f:color pmap
     SMesh::Property_map<face_descriptor, CGAL::Color> fcolors =
         smesh.add_property_map<face_descriptor, CGAL::Color >("f:color", CGAL::Color()).first;
@@ -141,7 +141,7 @@ private Q_SLOTS:
     {
       if(min == max)
         --min;
-      float f = (jacobians[index]-min)/(max-min);
+      double f = (jacobians[index]-min)/(max-min);
       if(f<min)
         f = min;
       if(f>max)
@@ -153,7 +153,7 @@ private Q_SLOTS:
       ++index;
       fcolors[*fit] = color;
     }
-    dock_widget->minBox->setValue(res_min);
+    dock_widget->minBox->setValue(res_min-0.01);
     dock_widget->maxBox->setValue(res_max);
   }
 
@@ -163,8 +163,8 @@ private Q_SLOTS:
     PMap pmap = get(boost::vertex_point, smesh);
     //compute and store smallest angle per face
     std::vector<float> angles;
-    float res_min = VERDICT_DBL_MAX,
-        res_max = -VERDICT_DBL_MAX;
+    float res_min = ARBITRARY_DBL_MAX,
+        res_max = -ARBITRARY_DBL_MAX;
     angles.reserve(num_faces(smesh));
     for(boost::graph_traits<SMesh>::face_iterator fit = faces(smesh).begin();
         fit != faces(smesh).end();
@@ -382,8 +382,8 @@ private:
   QList<QAction*> _actions;
   Color_ramp color_ramp;
   DockWidget* dock_widget;
-  float minBox;
-  float maxBox;
+  double minBox;
+  double maxBox;
   QPixmap legend_;
 };
 
@@ -409,31 +409,28 @@ private:
     {
       edges.push_back(EPICK::Vector_3(get(pmap, source(hd, mesh)), get(pmap, target(hd, mesh))));
     }
-    BOOST_FOREACH(halfedge_descriptor hd, CGAL::halfedges_around_face(halfedge(f, mesh), mesh))
+    std::vector<EPICK::Vector_3> corner_normals;
+    for(std::size_t i = 0; i < edges.size(); ++i)
     {
-      std::vector<EPICK::Vector_3> corner_normals;
-      for(std::size_t i = 0; i < edges.size(); ++i)
-      {
-        corner_normals.push_back(CGAL::cross_product(edges[i], edges[(i+1)%(edges.size())]));
-      }
+      corner_normals.push_back(CGAL::cross_product(edges[i], edges[(i+1)%(edges.size())]));
+    }
 
 
-      EPICK::Vector_3 unit_center_normal = CGAL::Polygon_mesh_processing::compute_face_normal(f, mesh);
-      unit_center_normal *= 1.0/CGAL::approximate_sqrt(unit_center_normal.squared_length());
+    EPICK::Vector_3 unit_center_normal = CGAL::Polygon_mesh_processing::compute_face_normal(f, mesh);
+    unit_center_normal *= 1.0/CGAL::approximate_sqrt(unit_center_normal.squared_length());
 
-      for(std::size_t i = 0; i < corner_areas.size(); ++i)
-      {
-        corner_areas[i] =  unit_center_normal*corner_normals[i];
-      }
+    for(std::size_t i = 0; i < corner_areas.size(); ++i)
+    {
+      corner_areas[i] =  unit_center_normal*corner_normals[i];
     }
     std::vector<double> length;
     for(std::size_t i=0; i<edges.size(); ++i)
     {
       length.push_back(CGAL::approximate_sqrt(edges[i].squared_length()));
-      if( length[i] < VERDICT_DBL_MIN)
+      if( length[i] < ARBITRARY_DBL_MIN)
         return 0.0;
     }
-    double min_scaled_jac = VERDICT_DBL_MAX;
+    double min_scaled_jac = ARBITRARY_DBL_MAX;
     for(std::size_t i=0; i<edges.size(); ++i)
     {
       double scaled_jac = corner_areas[i] / (length[i] * length[(i+edges.size()-1)%(edges.size())]);
@@ -441,8 +438,8 @@ private:
     }
 
     if( min_scaled_jac > 0 )
-      return (double) (std::min)( min_scaled_jac, VERDICT_DBL_MAX );
-    return (double) (std::max)( min_scaled_jac, -VERDICT_DBL_MAX );
+      return (double) (std::min)( min_scaled_jac, ARBITRARY_DBL_MAX );
+    return (double) (std::max)( min_scaled_jac, -ARBITRARY_DBL_MAX );
 
   }
 
