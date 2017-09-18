@@ -35,7 +35,7 @@
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 
 #include <CGAL/Mesh_3/Polyline_with_context.h>
-#include <CGAL/Polygon_mesh_processing/Detect_features_in_polyhedra.h>
+#include <CGAL/Polygon_mesh_processing/detect_features.h>
 #include <CGAL/Mesh_3/properties_Polyhedron_3.h>
 
 #include <CGAL/enum.h>
@@ -787,10 +787,17 @@ detect_features(FT angle_in_degree,
   P2vmap p2vmap;
 
   namespace PMP = CGAL::Polygon_mesh_processing;
-  PMP::Detect_features_in_polyhedra<Polyhedron_type, Surface_patch_index> detect_features;
+  std::size_t nb_of_patch_plus_one = 1;
   BOOST_FOREACH(Polyhedron_type& p, poly)
   {
     initialize_ts(p);
+    typedef typename boost::graph_traits<Polyhedron_type>::face_descriptor face_descriptor;
+    std::map<face_descriptor, int> face_ids;
+    int id = 0;
+    BOOST_FOREACH(face_descriptor& f, faces(p))
+    {
+        face_ids[f] = id++;
+    }
 
 #if CGAL_MESH_3_VERBOSE
     std::size_t poly_id = &p-&poly[0];
@@ -800,16 +807,23 @@ detect_features(FT angle_in_degree,
 #endif // CGAL_MESH_3_VERBOSE
 
     // Get sharp features
-    detect_features.detect_sharp_edges(p, angle_in_degree);
-    detect_features.detect_surface_patches(p);
-    detect_features.detect_vertices_incident_patches(p);
+    typedef typename boost::property_map<Polyhedron_type,CGAL::face_patch_id_t<Patch_id> >::type PIDMap;
+    typedef typename boost::property_map<Polyhedron_type,CGAL::vertex_incident_patches_t<Patch_id> >::type VIPMap;
+    typedef typename boost::property_map<Polyhedron_type,CGAL::edge_is_feature_t>::type EIFMap;
+    PIDMap pid_map = get(face_patch_id_t<Patch_id>(), p);
+    VIPMap vip_map = get(vertex_incident_patches_t<Patch_id>(), p);
+    EIFMap eif = get(CGAL::edge_is_feature, p);
+    nb_of_patch_plus_one +=PMP::sharp_edges_segmentation(p, angle_in_degree
+      , eif
+      , pid_map
+      , PMP::parameters::first_index(nb_of_patch_plus_one)
+      .face_index_map(boost::make_assoc_property_map(face_ids))
+      .vertex_incident_patches_map(vip_map));
 
     internal::Mesh_3::Is_featured_edge<Polyhedron_type> is_featured_edge(p);
 
     add_featured_edges_to_graph(p, is_featured_edge, g_copy, p2vmap);
   }
-  const std::size_t nb_of_patch_plus_one =
-    detect_features.maximal_surface_patch_index()+1;
   this->patch_id_to_polyhedron_id.resize(nb_of_patch_plus_one);
   this->patch_has_featured_edges.resize(nb_of_patch_plus_one);
   this->several_vertices_on_patch.resize(nb_of_patch_plus_one);
