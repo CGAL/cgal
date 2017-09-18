@@ -313,7 +313,7 @@ private Q_SLOTS:
     }
   }
 
-  void closure()
+  void closure()Q_DECL_OVERRIDE
   {
     dock_widget->hide();
   }
