@@ -8,6 +8,7 @@ in VS_OUT
   vec4 fP;
   vec3 normal;
   vec4 out_color;
+  float dist[6];
 } gs_in[3];
 
 out GS_OUT
@@ -15,6 +16,7 @@ out GS_OUT
   vec4 fP;
   flat vec3 normal;
   flat vec4 color;
+  float dist[6];
 } gs_out;
 
 uniform mat4 mv_matrix;
@@ -24,11 +26,14 @@ void main(void)
   gl_Position = gl_in[0].gl_Position;
   gs_out.fP = gs_in[0].fP;
 
+for(int i=0; i< 6; ++i)
+  gs_out.dist[i] = gs_in[0].dist[i];
   EmitVertex();
 
   gl_Position = gl_in[1].gl_Position;
   gs_out.fP = gs_in[1].fP;
-
+  for(int i=0; i< 6; ++i)
+    gs_out.dist[i] = gs_in[1].dist[i];
 EmitVertex();
 
   gl_Position = gl_in[2].gl_Position;
@@ -44,6 +49,9 @@ EmitVertex();
   }
   gs_out.normal = mat3(mv_matrix)* normal;
   gs_out.color = gs_in[2].out_color;
+
+  for(int i=0; i< 6; ++i)
+    gs_out.dist[i] = gs_in[2].dist[i];
 
   EmitVertex();
 

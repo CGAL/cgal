@@ -5,6 +5,7 @@ in GS_OUT
   vec4 fP;
   flat vec3 normal;
   flat vec4 color;
+  float dist[6];
 } fs_in;
 
 uniform bool is_two_side;
@@ -13,11 +14,20 @@ uniform vec4 light_diff;
 uniform vec4 light_spec;
 uniform vec4 light_amb;
 uniform float spec_power ;
+uniform bool is_clipbox_on;
 
 out vec4 out_color;
 
 void main(void)
 {
+  if(is_clipbox_on)
+    if(fs_in.dist[0]>0 ||
+       fs_in.dist[1]>0 ||
+       fs_in.dist[2]>0 ||
+       fs_in.dist[3]>0 ||
+       fs_in.dist[4]>0 ||
+       fs_in.dist[5]>0)
+      discard;
   vec3 L = light_pos.xyz - fs_in.fP.xyz;
   vec3 V = -fs_in.fP.xyz;
 
