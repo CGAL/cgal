@@ -95,10 +95,11 @@ bool are_vertices_stitchable(
 
   BOOST_FOREACH(halfedge_descriptor h1, halfedges_around_target(halfedge(v1, pmesh), pmesh))
   {
-    if (is_border(edge(h1, pmesh), pmesh)) continue;
     BOOST_FOREACH(halfedge_descriptor h2, halfedges_around_source(h1, pmesh))
     {
-      if (is_border(edge(h2, pmesh), pmesh)) continue;
+      // skip edges that are on the boundary and that share a vertex
+      if (is_border(edge(h2, pmesh), pmesh) &&
+          is_border(edge(h1, pmesh), pmesh)) continue;
       if (target(h2, pmesh) == v2) return false;
     }
   }
