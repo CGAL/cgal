@@ -113,6 +113,8 @@ const Point_3& r, const Curve_index& ci) const;
 /*!
 Returns the sign of the geodesic distance from `p` to `q`, on the curve
 with index `ci`.
+If the curve with index `ci` is a loop, the function `distance_sign_along_loop()`
+must be used instead.
 */
 CGAL::Sign distance_sign(const Point_3& p, const Point_3& q,
                          const Curve_index& ci) const;
