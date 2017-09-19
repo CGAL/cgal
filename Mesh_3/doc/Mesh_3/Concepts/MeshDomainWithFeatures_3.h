@@ -42,6 +42,11 @@ Numerical type.
 typedef unspecified_type FT;
 
 /*!
+Point type.
+*/
+typedef unspecified_type Point_3;
+
+/*!
 Type of indices for curves (i.e. \f$ 1\f$-dimensional features)
 of the input domain.
 Must be a model of CopyConstructible, Assignable, DefaultConstructible and
