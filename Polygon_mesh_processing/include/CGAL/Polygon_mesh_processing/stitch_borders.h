@@ -109,7 +109,7 @@ bool are_vertices_stitchable(
 
 template <typename PM, typename OutputIterator, typename LessHedge, typename VertexPointMap>
 OutputIterator
-detect_duplicated_boundary_edges
+collect_duplicated_stitchable_boundary_edges
 (PM& pmesh, OutputIterator out, LessHedge less_hedge, const VertexPointMap& vpmap)
 {
   typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
@@ -424,7 +424,7 @@ void stitch_borders(PolygonMesh& pmesh, const CGAL_PMP_NP_CLASS& np)
   VPMap vpm = choose_param(get_param(np, internal_np::vertex_point),
                            get_const_property_map(vertex_point, pmesh));
 
-  internal::detect_duplicated_boundary_edges(pmesh,
+  internal::collect_duplicated_stitchable_boundary_edges(pmesh,
     std::back_inserter(hedge_pairs_to_stitch),
     internal::Less_for_halfedge<PolygonMesh, VPMap>(pmesh, vpm), vpm);
 
