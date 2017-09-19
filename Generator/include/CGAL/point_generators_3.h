@@ -208,7 +208,7 @@ public:
 	typedef Random_points_in_triangle_3<P, Creator> This;
 	typedef typename Kernel_traits<P>::Kernel::Triangle_3 Triangle_3;
 	Random_points_in_triangle_3() {}
-	Random_points_in_triangle_3( const This& x,Random& rnd = get_default_random())
+	Random_points_in_triangle_3( const This& x,Random& rnd)
 	: Random_generator_base<P>( 1, rnd ),_p(x._p),_q(x._q),_r(x._r) {
 		generate_point();
 	}
@@ -325,7 +325,7 @@ public:
 	typedef Random_points_in_tetrahedron_3<P, Creator> This;
 	typedef typename Kernel_traits<P>::Kernel::Tetrahedron_3 Tetrahedron_3;
 	Random_points_in_tetrahedron_3() {}
-	Random_points_in_tetrahedron_3( const This& x,Random& rnd = get_default_random())
+	Random_points_in_tetrahedron_3( const This& x,Random& rnd)
 	: Random_generator_base<P>( 1, rnd ),_p(x._p),_q(x._q),_r(x._r),_s(x._s) {
 		generate_point();
 	}

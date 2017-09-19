@@ -508,7 +508,7 @@ public:
 	typedef Random_points_in_triangle_2<P, Creator> This;
 	typedef typename Kernel_traits<P>::Kernel::Triangle_2 Triangle_2;
 	Random_points_in_triangle_2() {}
-	Random_points_in_triangle_2( const This& x,Random& rnd = get_default_random())
+	Random_points_in_triangle_2( const This& x,Random& rnd)
 	: Random_generator_base<P>( 1, rnd ),_p(x._p),_q(x._q),_r(x._r) {
 		generate_point();
 	}
