@@ -92,15 +92,14 @@ private Q_SLOTS:
     if(!item)
       return;
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    SMesh& smesh = *item->face_graph();
-    smesh.collect_garbage();
+    item->face_graph()->collect_garbage();
     switch(dock_widget->propertyBox->currentIndex())
     {
     case 0:
-      displayAngles(smesh);
+      displayAngles(item);
       break;
     default:
-      displayScaledJacobian(smesh);
+      displayScaledJacobian(item);
       break;
     }
     QApplication::restoreOverrideCursor();
@@ -108,25 +107,29 @@ private Q_SLOTS:
     item->itemChanged();
   }
 
-  void displayScaledJacobian(SMesh& smesh)
+  void displayScaledJacobian(Scene_surface_mesh_item* item)
   {
 
+    SMesh& smesh = *item->face_graph();
     //compute and store the jacobian per face
-    std::vector<double> jacobians;
-    jacobians.reserve(num_faces(smesh));
-    double res_min = ARBITRARY_DBL_MAX,
-        res_max = -ARBITRARY_DBL_MAX;
-    for(boost::graph_traits<SMesh>::face_iterator fit = faces(smesh).begin();
-        fit != faces(smesh).end();
-        ++fit)
+    bool non_init;
+    SMesh::Property_map<face_descriptor, double> fjacobian;
+    boost::tie(fjacobian, non_init) = smesh.add_property_map<face_descriptor, double>("f:jacobian", 0);
+    if(non_init)
     {
-      jacobians.push_back(scaled_jacobian(*fit, smesh));
-      if(jacobians.back() > res_max)
-        res_max = jacobians.back();
-      if(jacobians.back() < res_min)
-        res_min = jacobians.back();
-
-      QApplication::processEvents();
+      double res_min = ARBITRARY_DBL_MAX,
+          res_max = -ARBITRARY_DBL_MAX;
+      for(boost::graph_traits<SMesh>::face_iterator fit = faces(smesh).begin();
+          fit != faces(smesh).end();
+          ++fit)
+      {
+        fjacobian[*fit] = scaled_jacobian(*fit, smesh);
+        if(fjacobian[*fit] > res_max)
+          res_max = fjacobian[*fit];
+        if(fjacobian[*fit] < res_min)
+          res_min = fjacobian[*fit];
+      }
+      jacobian_extrema.insert(std::make_pair(item, std::make_pair(res_min, res_max)));
     }
     //scale a color ramp between min and max
     double max = maxBox;
@@ -134,14 +137,13 @@ private Q_SLOTS:
     //fill f:color pmap
     SMesh::Property_map<face_descriptor, CGAL::Color> fcolors =
         smesh.add_property_map<face_descriptor, CGAL::Color >("f:color", CGAL::Color()).first;
-    int index =0;
     for(boost::graph_traits<SMesh>::face_iterator fit = faces(smesh).begin();
         fit != faces(smesh).end();
         ++fit)
     {
       if(min == max)
         --min;
-      double f = (jacobians[index]-min)/(max-min);
+      double f = (fjacobian[*fit]-min)/(max-min);
       if(f<min)
         f = min;
       if(f>max)
@@ -150,93 +152,98 @@ private Q_SLOTS:
             255*color_ramp.r(f),
             255*color_ramp.g(f),
             255*color_ramp.b(f));
-      ++index;
       fcolors[*fit] = color;
     }
-    dock_widget->minBox->setValue(res_min-0.01);
-    dock_widget->maxBox->setValue(res_max);
+    dock_widget->minBox->setValue(jacobian_extrema[item].first-0.01);
+    dock_widget->maxBox->setValue(jacobian_extrema[item].second);
   }
 
-  void displayAngles(SMesh& smesh)
+  void displayAngles(Scene_surface_mesh_item* item)
   {
+    SMesh& smesh = *item->face_graph();
     typedef boost::property_map<SMesh, boost::vertex_point_t>::type PMap;
     PMap pmap = get(boost::vertex_point, smesh);
     //compute and store smallest angle per face
-    std::vector<float> angles;
-    float res_min = ARBITRARY_DBL_MAX,
-        res_max = -ARBITRARY_DBL_MAX;
-    angles.reserve(num_faces(smesh));
-    for(boost::graph_traits<SMesh>::face_iterator fit = faces(smesh).begin();
-        fit != faces(smesh).end();
-        ++fit)
+    bool non_init;
+    SMesh::Property_map<face_descriptor, double> fangle;
+    boost::tie(fangle, non_init) = smesh.add_property_map<face_descriptor, double>("f:angle", 0);
+    if(non_init)
     {
-      bool is_face_triangle = is_triangle(halfedge(*fit, smesh), smesh);
-      bool normal_is_ok;
-      EPICK::Vector_3 normal(0,0,0);
-
-      EPICK::Orientation orientation;
-      if(!is_face_triangle)
+      float res_min = ARBITRARY_DBL_MAX,
+          res_max = -ARBITRARY_DBL_MAX;
+      for(boost::graph_traits<SMesh>::face_iterator fit = faces(smesh).begin();
+          fit != faces(smesh).end();
+          ++fit)
       {
-        face_descriptor f = *fit;
-        CGAL::Halfedge_around_face_circulator<SMesh>
-            he(halfedge(f, smesh), smesh),
-            he_end(he);
-        do{
-          normal_is_ok = true;
+        bool is_face_triangle = is_triangle(halfedge(*fit, smesh), smesh);
+        bool normal_is_ok;
+        EPICK::Vector_3 normal(0,0,0);
 
-          //Initializes the facet orientation
-
-          EPICK::Point_3 S,T;
-          T = get(pmap, source(*he, smesh));
-          S = get(pmap, target(*he, smesh));
-          EPICK::Vector_3 V1((T-S).x(), (T-S).y(), (T-S).z());
-          S = get(pmap,source(next(*he,smesh), smesh));
-          T = get(pmap, target(next(*he,smesh), smesh));
-          EPICK::Vector_3 V2((T-S).x(), (T-S).y(), (T-S).z());
-
-          if(normal == EPICK::Vector_3(0,0,0))
-            normal_is_ok = false;
-          {
-            normal = CGAL::cross_product(V1, V2);
-          }
-          if(normal_is_ok)
-          {
-            orientation = EPICK::Orientation_3()(V1, V2, normal);
-            if( orientation == CGAL::COPLANAR )
-              normal_is_ok = false;
-          }
-        }while( ++he != he_end && !normal_is_ok);
-      }
-
-      std::vector<float> local_angles;
-      local_angles.reserve(degree(*fit, smesh));
-      BOOST_FOREACH(halfedge_descriptor hd,
-                    halfedges_around_face(halfedge(*fit, smesh),smesh))
-      {
-        halfedge_descriptor hdn = next(hd, smesh);
-        EPICK::Vector_3 v1(get(pmap, source(hd, smesh)), get(pmap, target(hd, smesh))),
-            v2(get(pmap, target(hdn, smesh)), get(pmap, source(hdn, smesh)));
-        float norm1(CGAL::approximate_sqrt(v1.squared_length())), norm2(CGAL::approximate_sqrt(v2.squared_length()));
-        float dot_prod = v1*v2;
-        float angle = std::acos(dot_prod/(norm1*norm2));
-        if(is_face_triangle || !normal_is_ok)
-          local_angles.push_back(angle * 180/CGAL_PI);
-        else
+        EPICK::Orientation orientation;
+        if(!is_face_triangle)
         {
-          bool is_convex = true;
-          EPICK::Orientation res = EPICK::Orientation_3()(v1, v2, normal) ;
-          if(res!= orientation && res != CGAL::ZERO)
-            is_convex = false;
-          local_angles.push_back(is_convex ? angle * 180/CGAL_PI : 360 - angle * 180/CGAL_PI );
+          face_descriptor f = *fit;
+          CGAL::Halfedge_around_face_circulator<SMesh>
+              he(halfedge(f, smesh), smesh),
+              he_end(he);
+          do{
+            normal_is_ok = true;
+
+            //Initializes the facet orientation
+
+            EPICK::Point_3 S,T;
+            T = get(pmap, source(*he, smesh));
+            S = get(pmap, target(*he, smesh));
+            EPICK::Vector_3 V1((T-S).x(), (T-S).y(), (T-S).z());
+            S = get(pmap,source(next(*he,smesh), smesh));
+            T = get(pmap, target(next(*he,smesh), smesh));
+            EPICK::Vector_3 V2((T-S).x(), (T-S).y(), (T-S).z());
+
+            if(normal == EPICK::Vector_3(0,0,0))
+              normal_is_ok = false;
+            {
+              normal = CGAL::cross_product(V1, V2);
+            }
+            if(normal_is_ok)
+            {
+              orientation = EPICK::Orientation_3()(V1, V2, normal);
+              if( orientation == CGAL::COPLANAR )
+                normal_is_ok = false;
+            }
+          }while( ++he != he_end && !normal_is_ok);
         }
+
+        std::vector<float> local_angles;
+        local_angles.reserve(degree(*fit, smesh));
+        BOOST_FOREACH(halfedge_descriptor hd,
+                      halfedges_around_face(halfedge(*fit, smesh),smesh))
+        {
+          halfedge_descriptor hdn = next(hd, smesh);
+          EPICK::Vector_3 v1(get(pmap, source(hd, smesh)), get(pmap, target(hd, smesh))),
+              v2(get(pmap, target(hdn, smesh)), get(pmap, source(hdn, smesh)));
+          float norm1(CGAL::approximate_sqrt(v1.squared_length())), norm2(CGAL::approximate_sqrt(v2.squared_length()));
+          float dot_prod = v1*v2;
+          float angle = std::acos(dot_prod/(norm1*norm2));
+          if(is_face_triangle || !normal_is_ok)
+            local_angles.push_back(angle * 180/CGAL_PI);
+          else
+          {
+            bool is_convex = true;
+            EPICK::Orientation res = EPICK::Orientation_3()(v1, v2, normal) ;
+            if(res!= orientation && res != CGAL::ZERO)
+              is_convex = false;
+            local_angles.push_back(is_convex ? angle * 180/CGAL_PI : 360 - angle * 180/CGAL_PI );
+          }
+        }
+        std::sort(local_angles.begin(), local_angles.end());
+        fangle[*fit]=local_angles.front();
+
+        if(fangle[*fit] > res_max)
+          res_max = fangle[*fit];
+        if(fangle[*fit] < res_min)
+          res_min = fangle[*fit];
       }
-      std::sort(local_angles.begin(), local_angles.end());
-      angles.push_back(local_angles.front());
-      if(angles.back() > res_max)
-        res_max = angles.back();
-      if(angles.back() < res_min)
-        res_min = angles.back();
-      QApplication::processEvents();
+      angles_extrema.insert(std::make_pair(item, std::make_pair(res_min, res_max)));
     }
     //scale a color ramp between min and max
 
@@ -246,14 +253,13 @@ private Q_SLOTS:
     //fill f:color pmap
     SMesh::Property_map<face_descriptor, CGAL::Color> fcolors =
         smesh.add_property_map<face_descriptor, CGAL::Color >("f:color", CGAL::Color()).first;
-    int index =0;
     for(boost::graph_traits<SMesh>::face_iterator fit = faces(smesh).begin();
         fit != faces(smesh).end();
         ++fit)
     {
       if(min == max)
         --min;
-      float f = (angles[index]-min)/(max-min);
+      float f = (fangle[*fit]-min)/(max-min);
       if(f<0)
         f = 0;
       if(f>1)
@@ -262,11 +268,10 @@ private Q_SLOTS:
             255*color_ramp.r(f),
             255*color_ramp.g(f),
             255*color_ramp.b(f));
-      ++index;
       fcolors[*fit] = color;
     }
-    dock_widget->minBox->setValue(res_min);
-    dock_widget->maxBox->setValue(res_max);
+    dock_widget->minBox->setValue(angles_extrema[item].first);
+    dock_widget->maxBox->setValue(angles_extrema[item].second);
   }
 
   void replaceRamp()
@@ -291,14 +296,23 @@ private Q_SLOTS:
     switch(dock_widget->propertyBox->currentIndex())
     {
     case 0:
+    {
       dock_widget->minBox->setMinimum(0);
       dock_widget->minBox->setMaximum(360);
       dock_widget->minBox->setValue(0);
 
       dock_widget->maxBox->setMinimum(0);
       dock_widget->maxBox->setMaximum(360);
-      dock_widget->maxBox->setValue(60);
+      Scene_surface_mesh_item* item =
+          qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex()));
+      if(! item )
+        dock_widget->maxBox->setValue(180);
+      else if(is_triangle_mesh(*item->face_graph()))
+        dock_widget->maxBox->setValue(60);
+      else if(is_quad_mesh(*item->face_graph()))
+        dock_widget->maxBox->setValue(90);
       break;
+    }
     default:
       dock_widget->minBox->setMinimum(-1000);
       dock_widget->minBox->setMaximum(1000);
@@ -378,10 +392,12 @@ private:
 
     dock_widget->legendLabel->setPixmap(legend_);
   }
-  double scaled_jacobian( const face_descriptor& f , const SMesh mesh);
+  double scaled_jacobian(const face_descriptor& f , const SMesh &mesh);
   QList<QAction*> _actions;
   Color_ramp color_ramp;
   DockWidget* dock_widget;
+  std::map<Scene_surface_mesh_item*, std::pair<double, double> > jacobian_extrema;
+  std::map<Scene_surface_mesh_item*, std::pair<double, double> > angles_extrema;
   double minBox;
   double maxBox;
   QPixmap legend_;
@@ -399,7 +415,7 @@ private:
      PURPOSE.  See the above copyright notice for more information.
 =========================================================================*/
 
-  double DisplayPropertyPlugin::scaled_jacobian( const face_descriptor& f , const SMesh mesh)
+  double DisplayPropertyPlugin::scaled_jacobian( const face_descriptor& f , const SMesh& mesh)
   {
     boost::property_map<SMesh, boost::vertex_point_t>::type
         pmap = get(boost::vertex_point, mesh);
