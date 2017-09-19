@@ -165,6 +165,11 @@ namespace internal {
       c = static_cast<unsigned char>(s);
     }
 
+    void read_ascii(std::istream& stream, double& d) const
+    {
+      stream >> iformat(d);
+    }
+
     // Default template when Type is not a char type
     template <typename Type>
     void read_ascii (std::istream& stream, Type& t) const
