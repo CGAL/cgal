@@ -11,8 +11,8 @@ subdomains, surface patches, curves
 and corners according to their respective dimensions 3,2,1 and 0.
 
 Each curve is assumed to be bounded, with only one connected component, and
-without auto-intersection. Each curve is also assumed to be
-oriented. Therefore it is possible to defined the signed geodesic distance
+without auto-intersections. Each curve is also assumed to be
+oriented. Therefore it is possible to define the signed geodesic distance
 between two ordered points on the same curve.
 
 \cgalRefines `MeshDomain_3`
@@ -42,7 +42,7 @@ Numerical type.
 typedef unspecified_type FT;
 
 /*!
-Type of indices for curves (\f$ 1\f$-dimensional features)
+Type of indices for curves (i.e. \f$ 1\f$-dimensional features)
 of the input domain.
 Must be a model of CopyConstructible, Assignable, DefaultConstructible and
 LessThanComparable. The default constructed value must be the value of an edge which
@@ -51,7 +51,7 @@ does not approximate a 1-dimensional feature of the input domain.
 typedef unspecified_type Curve_index;
 
 /*!
-Type of indices for corners (i.e.\ 0-dimensional features)
+Type of indices for corners (i.e.\f$ 0\f$--dimensional features)
 of the input domain.
 Must be a model of CopyConstructible, Assignable, DefaultConstructible and
 LessThanComparable.
@@ -69,10 +69,10 @@ typedef unspecified_type Corner_index;
 
 Returns a point on the curve with index `ci`
 at signed geodesic distance `d` from point `p`.
-\pre Point `p` is supposed to be on curve `ci`. If ` d > 0`, the signed
+\pre Point `p` is supposed to be on curve `ci`. If `d > 0`, the signed
 geodesic distance from `p` to the endpoint of `ci` should be greater than
-\f$ d\f$. If ` d < 0`, the signed geodesic distance from `p` to the origin
-of the curve should be less than \f$ d\f$ from the origin.
+`d`. If ` d < 0`, the signed geodesic distance from `p` to the origin
+of the curve should be less than `d`.
 
 */
 Point_3 construct_point_on_curve(
@@ -92,7 +92,7 @@ orientation identifies which portion of the loop corresponds to the curve
 segment, otherwise \c orientation must be compatible with the orientation
 of \c p and \c q on the curve.
 */
-FT curve_segment_length(const Point_3& p, const Point_3 q,
+FT curve_segment_length(const Point_3& p, const Point_3& q,
                         const Curve_index& curve_index,
                         CGAL::Orientation orientation) const;
 /*!
@@ -154,9 +154,9 @@ of the input domain.
 `curves` value type must be
 `CGAL::cpp11::tuple<Curve_index,std::pair<Point_3,%Index>,std::pair<Point_3,%Index> >`.
 If the curve corresponding to an entry
-in curves is not a loop, the pair of associated points should
+in `curves` is not a loop, the pair of associated points should
 belong to
-two corners incident on the curve.
+two corners incident to the curve.
 If it is a loop, then the same `Point_3` should be given twice and must be any
 point on the loop.
 The `%Index` values associated to the points are their indices w.r.t.\ their dimension.
