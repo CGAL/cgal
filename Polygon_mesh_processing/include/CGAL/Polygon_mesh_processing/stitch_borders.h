@@ -146,6 +146,21 @@ detect_duplicated_boundary_edges
           {
             manifold_halfedge_pairs[ set_it->second.second ] = false;
           }
+
+          // here we check that the next and prev halfedges are not degenerated
+          // (in case next and prev of a degenerate edge are set for stitching but not
+          //  the degenerate edge, then we'll end up with an edge made of two identical vertices)
+          cpp11::array<halfedge_descriptor,4> halfedges_to_test =
+            make_array(next(he, pmesh), prev(he,pmesh),
+                       next(set_it->first, pmesh), prev(set_it->first, pmesh) );
+
+          for(int i=0; i<4; ++i)
+            if ( get(vpmap, source(halfedges_to_test[i], pmesh))==
+                 get(vpmap, target(halfedges_to_test[i], pmesh)) )
+            {
+              manifold_halfedge_pairs[ set_it->second.second ] = false;
+              break;
+            }
         }
       }
       else
@@ -337,7 +352,7 @@ private:
 * with a vertex previously handled.
 *
 * \pre For each halfedge in a pair of `hedge_pairs_to_stitch`, the corresponding
-*      edge is neither degenerated nor incident to a degenerate edge.
+*      edge is neither degenerated nor incident to a degenerate border edge.
 *
 * @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
 * @tparam HalfedgePairsRange a range of
