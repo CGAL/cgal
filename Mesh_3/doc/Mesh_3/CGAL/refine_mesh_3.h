@@ -84,6 +84,10 @@ functions for each optimization parameter
 to generate appropriate value of this parameter. 
 
 \cgalHeading{Named Parameters}
+- <b>`manifold`</b> `parameters::manifold()`, `parameters::manifold_with_boundary()`,
+`parameters::non_manifold()`
+@todo : document
+
 - <b>`lloyd`</b>  `parameters::lloyd()` and `parameters::no_lloyd()` are designed to 
 trigger or not a call to `lloyd_optimize_mesh_3()` function and to set the 
 parameters of this optimizer. If one parameter is not set, the default value of 
@@ -126,6 +130,9 @@ some optimization processes. Also beware that the default behavior does involve 
 optimization processes. 
 
 \sa `CGAL::make_mesh_3()` 
+\sa `CGAL::parameters::manifold`
+\sa `CGAL::parameters::manifold_with_boundary`
+\sa `CGAL::parameters::non_manifold`
 \sa `CGAL::exude_mesh_3()` 
 \sa `CGAL::perturb_mesh_3()` 
 \sa `CGAL::lloyd_optimize_mesh_3()` 
@@ -137,7 +144,7 @@ optimization processes.
 \sa `CGAL::parameters::lloyd` 
 \sa `CGAL::parameters::no_lloyd` 
 \sa `CGAL::parameters::odt` 
-\sa `CGAL::parameters::no_odt` 
+\sa `CGAL::parameters::no_odt`
 
 */
 
@@ -150,9 +157,44 @@ MeshCriteria mesh_criteria,
 parameters::internal::Lloyd_options lloyd = parameters::no_lloyd(),
 parameters::internal::Odt_options odt = parameters::no_odt(),
 parameters::internal::Perturb_options perturb = parameters::perturb(),
-parameters::internal::Exude_options exude = parameters::exude()); 
+parameters::internal::Exude_options exude = parameters::exude(),
+parameters::internal::Manifold_options manifold = parameters::non_manifold()
+); 
 
 namespace parameters {
+
+  /*!
+  \ingroup PkgMesh_3Parameters
+
+  The function `parameters::manifold()` provides ****************
+  \sa `CGAL::make_mesh_3()`
+  \sa `CGAL::refine_mesh_3()`
+  \sa `CGAL::parameters::manifold_with_boundary()`
+  \sa `CGAL::parameters::non_manifold()`
+  */
+  parameters::internal::Manifold_options manifold();
+
+  /*!
+  \ingroup PkgMesh_3Parameters
+
+  The function `parameters::non_manifold()` provides ****************
+  \sa `CGAL::make_mesh_3()`
+  \sa `CGAL::refine_mesh_3()`
+  \sa `CGAL::parameters::manifold_with_boundary()`
+  \sa `CGAL::parameters::manifold()`
+  */
+  parameters::internal::Manifold_options non_manifold();
+
+  /*!
+  \ingroup PkgMesh_3Parameters
+
+  The function `parameters::manifold_with_boundary()` provides ****************
+  \sa `CGAL::make_mesh_3()`
+  \sa `CGAL::refine_mesh_3()`
+  \sa `CGAL::parameters::non_manifold()`
+  \sa `CGAL::parameters::manifold()`
+  */
+  parameters::internal::Manifold_options manifold_with_boundary();
 
 /*!
 \ingroup PkgMesh_3Parameters
