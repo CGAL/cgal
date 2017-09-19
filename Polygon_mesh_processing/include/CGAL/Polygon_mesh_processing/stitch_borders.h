@@ -183,153 +183,142 @@ detect_duplicated_boundary_edges
   return out;
 }
 
+
+template <class PM>
+void update_target_vertex(typename boost::graph_traits<PM>::halfedge_descriptor h,
+                          typename boost::graph_traits<PM>::vertex_descriptor v_kept,
+                          PM& pmesh)
+{
+  typename boost::graph_traits<PM>::halfedge_descriptor start = h;
+  do{
+    set_target(h, v_kept, pmesh);
+    h = opposite(next(h, pmesh), pmesh);
+  } while( h != start );
+}
+
 template <class PM, typename VertexPointMap, typename HalfedgePairsRange>
-struct Naive_border_stitching_modifier
+void stitch_borders_impl(PM& pmesh,
+                         const HalfedgePairsRange& to_stitch,
+                         VertexPointMap vpmap)
 {
   typedef typename boost::graph_traits<PM>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
   typedef typename std::pair<halfedge_descriptor, halfedge_descriptor> halfedges_pair;
   typedef typename boost::property_traits<VertexPointMap>::value_type Point;
 
-  typedef HalfedgePairsRange To_stitch;
+  /// Merge the vertices
+  std::vector<vertex_descriptor> vertices_to_delete;
+  // since there might be several vertices with identical point
+  // we use the following map to choose one vertex per point
+  std::map<Point, vertex_descriptor> vertices_kept;
 
-  Naive_border_stitching_modifier(const To_stitch& to_stitch_,
-                                  VertexPointMap vpmap_)
-    : to_stitch(to_stitch_)
-    , vpmap(vpmap_)
-  {}
-
-  void update_target_vertex(halfedge_descriptor h,
-                            vertex_descriptor v_kept,
-                            PM& pmesh)
+  BOOST_FOREACH(const halfedges_pair hk, to_stitch)
   {
-    halfedge_descriptor start = h;
-    do{
-      set_target(h, v_kept, pmesh);
-      h = opposite(next(h, pmesh), pmesh);
-    } while( h != start );
-  }
+    halfedge_descriptor h1 = hk.first;
+    halfedge_descriptor h2 = hk.second;
 
-  void operator()(PM& pmesh)
-  {
-    /// Merge the vertices
-    std::vector<vertex_descriptor> vertices_to_delete;
-    // since there might be several vertices with identical point
-    // we use the following map to choose one vertex per point
-    std::map<Point, vertex_descriptor> vertices_kept;
+    CGAL_assertion(CGAL::is_border(h1, pmesh));
+    CGAL_assertion(CGAL::is_border(h2, pmesh));
+    CGAL_assertion(!CGAL::is_border(opposite(h1, pmesh), pmesh));
+    CGAL_assertion(!CGAL::is_border(opposite(h2, pmesh), pmesh));
 
-    BOOST_FOREACH(const halfedges_pair hk, to_stitch)
-    {
-      halfedge_descriptor h1 = hk.first;
-      halfedge_descriptor h2 = hk.second;
+    vertex_descriptor h1_tgt = target(h1, pmesh);
+    vertex_descriptor h2_src = source(h2, pmesh);
 
-      CGAL_assertion(CGAL::is_border(h1, pmesh));
-      CGAL_assertion(CGAL::is_border(h2, pmesh));
-      CGAL_assertion(!CGAL::is_border(opposite(h1, pmesh), pmesh));
-      CGAL_assertion(!CGAL::is_border(opposite(h2, pmesh), pmesh));
-
-      vertex_descriptor h1_tgt = target(h1, pmesh);
-      vertex_descriptor h2_src = source(h2, pmesh);
-
-      //update vertex pointers: target of h1 vs source of h2
-      vertex_descriptor v_to_keep = h1_tgt;
-      std::pair<typename std::map<Point, vertex_descriptor>::iterator, bool >
-        insert_res =
-        vertices_kept.insert( std::make_pair(get(vpmap, v_to_keep), v_to_keep) );
-
-      if (!insert_res.second && v_to_keep != insert_res.first->second)
-      {
-        v_to_keep = insert_res.first->second;
-        //we remove h1->vertex()
-        vertices_to_delete.push_back( h1_tgt );
-        update_target_vertex(h1, v_to_keep, pmesh);
-      }
-      if (v_to_keep != h2_src)
-      {
-        //we remove h2->opposite()->vertex()
-        vertices_to_delete.push_back( h2_src );
-        update_target_vertex(opposite(h2, pmesh), v_to_keep, pmesh);
-      }
-      set_halfedge(v_to_keep, h1, pmesh);
-
-      vertex_descriptor h1_src = source(h1, pmesh);
-      vertex_descriptor h2_tgt = target(h2, pmesh);
-
-      //update vertex pointers: target of h1 vs source of h2
-      v_to_keep = h2_tgt;
+    //update vertex pointers: target of h1 vs source of h2
+    vertex_descriptor v_to_keep = h1_tgt;
+    std::pair<typename std::map<Point, vertex_descriptor>::iterator, bool >
       insert_res =
-          vertices_kept.insert( std::make_pair(get(vpmap, v_to_keep), v_to_keep) );
-      if (!insert_res.second && v_to_keep != insert_res.first->second)
-      {
-        v_to_keep = insert_res.first->second;
-        //we remove h2->vertex()
-        vertices_to_delete.push_back( h2_tgt );
-        update_target_vertex(h2, v_to_keep, pmesh);
-      }
-      if (v_to_keep!=h1_src)
-      {
-        //we remove h1->opposite()->vertex()
-        vertices_to_delete.push_back( h1_src );
-        update_target_vertex(opposite(h1, pmesh), v_to_keep, pmesh);
-      }
-      set_halfedge(v_to_keep, opposite(h1,pmesh), pmesh);
-    }
+      vertices_kept.insert( std::make_pair(get(vpmap, v_to_keep), v_to_keep) );
 
-    /// Update next/prev of neighbor halfedges (that are not set for stiching)
-    /// _______   _______
-    ///        | |
-    ///        | |
-    /// In order to avoid having to maintain a set with halfedges to stitch
-    /// we do on purpose next-prev linking that might not be useful but that
-    /// is harmless and still less expensive than doing queries in a set
-    BOOST_FOREACH(const halfedges_pair hk, to_stitch)
+    if (!insert_res.second && v_to_keep != insert_res.first->second)
     {
-      halfedge_descriptor h1 = hk.first;
-      halfedge_descriptor h2 = hk.second;
-
-      //link h2->prev() to h1->next()
-      halfedge_descriptor pr = prev(h2, pmesh);
-      halfedge_descriptor nx = next(h1, pmesh);
-      set_next(pr, nx, pmesh);
-
-      //link h1->prev() to h2->next()
-      pr = prev(h1, pmesh);
-      nx = next(h2, pmesh);
-      set_next(pr, nx, pmesh);
+      v_to_keep = insert_res.first->second;
+      //we remove h1->vertex()
+      vertices_to_delete.push_back( h1_tgt );
+      update_target_vertex(h1, v_to_keep, pmesh);
     }
-
-    /// update HDS connectivity, removing the second halfedge
-    /// of each the pair and its opposite
-    BOOST_FOREACH(const halfedges_pair hk, to_stitch)
+    if (v_to_keep != h2_src)
     {
-      halfedge_descriptor h1 = hk.first;
-      halfedge_descriptor h2 = hk.second;
-
-    ///Set face-halfedge relationship
-      //h2 and its opposite will be removed
-      set_face(h1, face(opposite(h2, pmesh), pmesh), pmesh);
-      set_halfedge(face(h1, pmesh), h1, pmesh);
-      //update next/prev pointers
-      halfedge_descriptor tmp = prev(opposite(h2, pmesh), pmesh);
-      set_next(tmp, h1, pmesh);
-      tmp = next(opposite(h2, pmesh), pmesh);
-      set_next(h1, tmp, pmesh);
-
-    /// remove the extra halfedges
-      remove_edge(edge(h2, pmesh), pmesh);
+      //we remove h2->opposite()->vertex()
+      vertices_to_delete.push_back( h2_src );
+      update_target_vertex(opposite(h2, pmesh), v_to_keep, pmesh);
     }
+    set_halfedge(v_to_keep, h1, pmesh);
 
-    //remove the extra vertices
-    BOOST_FOREACH(vertex_descriptor vd, vertices_to_delete)
+    vertex_descriptor h1_src = source(h1, pmesh);
+    vertex_descriptor h2_tgt = target(h2, pmesh);
+
+    //update vertex pointers: target of h1 vs source of h2
+    v_to_keep = h2_tgt;
+    insert_res =
+        vertices_kept.insert( std::make_pair(get(vpmap, v_to_keep), v_to_keep) );
+    if (!insert_res.second && v_to_keep != insert_res.first->second)
     {
-      remove_vertex(vd, pmesh);
+      v_to_keep = insert_res.first->second;
+      //we remove h2->vertex()
+      vertices_to_delete.push_back( h2_tgt );
+      update_target_vertex(h2, v_to_keep, pmesh);
     }
+    if (v_to_keep!=h1_src)
+    {
+      //we remove h1->opposite()->vertex()
+      vertices_to_delete.push_back( h1_src );
+      update_target_vertex(opposite(h1, pmesh), v_to_keep, pmesh);
+    }
+    set_halfedge(v_to_keep, opposite(h1,pmesh), pmesh);
   }
 
-private:
-  const To_stitch& to_stitch;
-  VertexPointMap vpmap;
-};
+  /// Update next/prev of neighbor halfedges (that are not set for stiching)
+  /// _______   _______
+  ///        | |
+  ///        | |
+  /// In order to avoid having to maintain a set with halfedges to stitch
+  /// we do on purpose next-prev linking that might not be useful but that
+  /// is harmless and still less expensive than doing queries in a set
+  BOOST_FOREACH(const halfedges_pair hk, to_stitch)
+  {
+    halfedge_descriptor h1 = hk.first;
+    halfedge_descriptor h2 = hk.second;
+
+    //link h2->prev() to h1->next()
+    halfedge_descriptor pr = prev(h2, pmesh);
+    halfedge_descriptor nx = next(h1, pmesh);
+    set_next(pr, nx, pmesh);
+
+    //link h1->prev() to h2->next()
+    pr = prev(h1, pmesh);
+    nx = next(h2, pmesh);
+    set_next(pr, nx, pmesh);
+  }
+
+  /// update HDS connectivity, removing the second halfedge
+  /// of each the pair and its opposite
+  BOOST_FOREACH(const halfedges_pair hk, to_stitch)
+  {
+    halfedge_descriptor h1 = hk.first;
+    halfedge_descriptor h2 = hk.second;
+
+  ///Set face-halfedge relationship
+    //h2 and its opposite will be removed
+    set_face(h1, face(opposite(h2, pmesh), pmesh), pmesh);
+    set_halfedge(face(h1, pmesh), h1, pmesh);
+    //update next/prev pointers
+    halfedge_descriptor tmp = prev(opposite(h2, pmesh), pmesh);
+    set_next(tmp, h1, pmesh);
+    tmp = next(opposite(h2, pmesh), pmesh);
+    set_next(h1, tmp, pmesh);
+
+  /// remove the extra halfedges
+    remove_edge(edge(h2, pmesh), pmesh);
+  }
+
+  //remove the extra vertices
+  BOOST_FOREACH(vertex_descriptor vd, vertices_to_delete)
+  {
+    remove_vertex(vd, pmesh);
+  }
+}
 
 } //end of namespace internal
 
@@ -387,10 +376,7 @@ void stitch_borders(PolygonMesh& pmesh,
   VPMap vpm = choose_param(get_param(np, internal_np::vertex_point),
                            get_const_property_map(vertex_point, pmesh));
 
-  internal::Naive_border_stitching_modifier<PolygonMesh, VPMap, HalfedgePairsRange>
-    modifier(hedge_pairs_to_stitch, vpm);
-
-  modifier(pmesh);
+  internal::stitch_borders_impl(pmesh, hedge_pairs_to_stitch, vpm);
 }
 
 ///\cond SKIP_IN_MANUAL
