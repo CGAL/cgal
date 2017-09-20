@@ -169,7 +169,7 @@ private Q_SLOTS:
     boost::tie(fangle, non_init) = smesh.add_property_map<face_descriptor, double>("f:angle", 0);
     if(non_init)
     {
-      float res_min = ARBITRARY_DBL_MAX,
+      double res_min = ARBITRARY_DBL_MAX,
           res_max = -ARBITRARY_DBL_MAX;
       for(boost::graph_traits<SMesh>::face_iterator fit = faces(smesh).begin();
           fit != faces(smesh).end();
