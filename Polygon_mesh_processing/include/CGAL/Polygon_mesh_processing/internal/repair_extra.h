@@ -134,7 +134,8 @@ void collect_close_stitchable_boundary_edges(PM& pm,
                                              Vpm vpm,
                                              std::vector< std::pair<
                                                 typename boost::graph_traits<PM>::halfedge_descriptor,
-                                                typename boost::graph_traits<PM>::halfedge_descriptor> >& halfedges_to_stitch)
+                                                typename boost::graph_traits<PM>::halfedge_descriptor> >& halfedges_to_stitch,
+                                             bool merge_points=true)
 {
   typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
   typedef typename boost::graph_traits<PM>::edge_descriptor edge_descriptor;
@@ -216,8 +217,11 @@ void collect_close_stitchable_boundary_edges(PM& pm,
         continue;
 
       // put the opposite vertices in the same set
-      internal::uf_join_vertices( source(p.first, pm), target(p.second, pm), uf_vertices, handles );
-      internal::uf_join_vertices( target(p.first, pm), source(p.second, pm), uf_vertices, handles );
+      if (merge_points)
+      {
+        internal::uf_join_vertices( source(p.first, pm), target(p.second, pm), uf_vertices, handles );
+        internal::uf_join_vertices( target(p.first, pm), source(p.second, pm), uf_vertices, handles );
+      }
 
       // set the halfedges for stitching
       halfedges_to_stitch.push_back(p);
