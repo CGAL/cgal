@@ -91,7 +91,7 @@ class Side_of_triangle_mesh
     typedef CGAL::AABB_tree<Traits> type;
   };
   typedef typename Default::Lazy_get<AABBTree,
-                                     AABB_tree_default<AABBTree,
+                                     AABB_tree_default<TriangleMesh,
                                                        GeomTraits,
                                                        VertexPointMap>
                                      >::type AABB_tree_;
