@@ -1095,9 +1095,9 @@ public:
         hconn_[hi].prev_halfedge_ = Halfedge_index(size_type(hconn_[hi].prev_halfedge_)+nh);
       }
     }
-    size_type nil = -1;
-    if(other.vertices_freelist_ != nil){
-      if(vertices_freelist_ != nil){
+    size_type inf_value = -1;
+    if(other.vertices_freelist_ != inf_value){
+      if(vertices_freelist_ != inf_value){
         Vertex_index vi(nv+other.vertices_freelist_);
         Halfedge_index inf(-1);
         while(vconn_[vi].halfedge_ != inf){
@@ -1107,8 +1107,8 @@ public:
       }
       vertices_freelist_ = nv + other.vertices_freelist_; 
     }
-    if(other.faces_freelist_ != nil){
-      if(faces_freelist_ != nil){
+    if(other.faces_freelist_ != inf_value){
+      if(faces_freelist_ != inf_value){
         Face_index fi(nf+other.faces_freelist_);
         Halfedge_index inf(-1);
         while(fconn_[fi].halfedge_ != inf){
@@ -1118,8 +1118,8 @@ public:
       }
       faces_freelist_ = nf + other.faces_freelist_; 
     }
-    if(other.edges_freelist_ != nil){
-      if(edges_freelist_ != nil){
+    if(other.edges_freelist_ != inf_value){
+      if(edges_freelist_ != inf_value){
         Halfedge_index hi((nh>>1)+other.edges_freelist_);
         Halfedge_index inf(-1);
         while(hconn_[hi].next_halfedge_ != inf){

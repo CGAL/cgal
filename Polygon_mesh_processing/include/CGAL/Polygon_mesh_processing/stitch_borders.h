@@ -95,10 +95,11 @@ bool are_vertices_stitchable(
 
   BOOST_FOREACH(halfedge_descriptor h1, halfedges_around_target(halfedge(v1, pmesh), pmesh))
   {
-    if (is_border(edge(h1, pmesh), pmesh)) continue;
     BOOST_FOREACH(halfedge_descriptor h2, halfedges_around_source(h1, pmesh))
     {
-      if (is_border(edge(h2, pmesh), pmesh)) continue;
+      // skip edges that are on the boundary and that share a vertex
+      if (is_border(edge(h2, pmesh), pmesh) &&
+          is_border(edge(h1, pmesh), pmesh)) continue;
       if (target(h2, pmesh) == v2) return false;
     }
   }
@@ -145,6 +146,21 @@ detect_duplicated_boundary_edges
           {
             manifold_halfedge_pairs[ set_it->second.second ] = false;
           }
+
+          // here we check that the next and prev halfedges are not degenerated
+          // (in case next and prev of a degenerate edge are set for stitching but not
+          //  the degenerate edge, then we'll end up with an edge made of two identical vertices)
+          cpp11::array<halfedge_descriptor,4> halfedges_to_test =
+            make_array(next(he, pmesh), prev(he,pmesh),
+                       next(set_it->first, pmesh), prev(set_it->first, pmesh) );
+
+          for(int i=0; i<4; ++i)
+            if ( get(vpmap, source(halfedges_to_test[i], pmesh))==
+                 get(vpmap, target(halfedges_to_test[i], pmesh)) )
+            {
+              manifold_halfedge_pairs[ set_it->second.second ] = false;
+              break;
+            }
         }
       }
       else
@@ -336,7 +352,7 @@ private:
 * in another vertex previously handled.
 *
 * \pre For each halfedge in a pair of `hedge_pairs_to_stitch`, the corresponding
-*      edge is neither degenerated nor incident to a degenerate edge.
+*      edge is neither degenerated nor incident to a degenerate border edge.
 *
 * @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
 * @tparam HalfedgePairsRange a range of
