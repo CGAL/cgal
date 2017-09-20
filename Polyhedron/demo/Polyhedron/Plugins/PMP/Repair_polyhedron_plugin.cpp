@@ -41,18 +41,17 @@ public:
     actionRemoveIsolatedVertices->setObjectName("actionRemoveIsolatedVertices");
     actionRemoveDegenerateFaces->setObjectName("actionRemoveDegenerateFaces");
     actionRemoveSelfIntersections->setObjectName("actionRemoveSelfIntersections");
-    actionRemoveIsolatedVertices->setProperty("subMenuName", "Polygon Mesh Processing");
-    actionRemoveDegenerateFaces->setProperty("subMenuName", "Polygon Mesh Processing");
-    actionRemoveSelfIntersections->setProperty("subMenuName", "Polygon Mesh Processing");
+    actionRemoveDegenerateFaces->setProperty("subMenuName", "Polygon Mesh Processing/Repair/Experimental");
+    actionRemoveIsolatedVertices->setProperty("subMenuName", "Polygon Mesh Processing/Repair");
+    actionRemoveSelfIntersections->setProperty("subMenuName", "Polygon Mesh Processing/Repair");
 
     autoConnectActions();
   }
 
   QList<QAction*> actions() const
   {
-    return QList<QAction*>() << actionRemoveIsolatedVertices
-                                //removed until the function is fully working;
-      //<< actionRemoveDegenerateFaces
+    return QList<QAction*>() << actionRemoveDegenerateFaces
+                             << actionRemoveIsolatedVertices
                              << actionRemoveSelfIntersections;
   }
 
