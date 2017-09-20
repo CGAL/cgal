@@ -30,6 +30,7 @@
 
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+#include <CGAL/array.h>
 
 #include <map>
 #include <vector>
