@@ -1,4 +1,5 @@
-#define CGAL_TRIANGULATION_3_TRAVERSER_CHECK_INTERSECTION
+//#define CGAL_TRIANGULATION_3_TRAVERSER_CHECK_INTERSECTION
+//#define CGAL_EXPERIMENT_WITH_SIMPLE_CARTESIAN
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_3.h>
@@ -29,7 +30,8 @@ typedef CGAL::Triangulation_segment_cell_iterator_3< DT >       Cell_traverser;
 int main(int argc, char* argv[])
 {
   const char* fname = (argc>1) ? argv[1] : "data/blobby.xyz";
-  int nb_seg = (argc > 2) ? atoi(argv[2]) : 100;
+  unsigned int nb_seg = (argc > 2) ? static_cast<unsigned int>(atoi(argv[2]))
+                                   : 100;
 
   // Reads a .xyz point set file in points.
   // As the point is the second element of the tuple (that is with index 1)
@@ -85,25 +87,25 @@ int main(int argc, char* argv[])
         {
           ++fin;
 
-          DT::Locate_type lt;
-          int li, lj;
-          ct.entry(lt, li, lj);
+          //DT::Locate_type lt;
+          //int li, lj;
+          //ct.entry(lt, li, lj);
 
-          switch (lt)
-          {
-          case DT::Locate_type::FACET:
-            ++nb_facets;
-            break;
-          case DT::Locate_type::EDGE:
-            ++nb_edges;
-            break;
-          case DT::Locate_type::VERTEX:
-            ++nb_vertex;
-            break;
-          default:
-            /*when source is in a cell*/
-            CGAL_assertion(lt == DT::Locate_type::CELL);
-          }
+          //switch (lt)
+          //{
+          //case DT::Locate_type::FACET:
+          //  ++nb_facets;
+          //  break;
+          //case DT::Locate_type::EDGE:
+          //  ++nb_edges;
+          //  break;
+          //case DT::Locate_type::VERTEX:
+          //  ++nb_vertex;
+          //  break;
+          //default:
+          //  /*when source is in a cell*/
+          //  CGAL_assertion(lt == DT::Locate_type::CELL);
+          //}
         }
       }
 
@@ -117,6 +119,8 @@ int main(int argc, char* argv[])
     }
 
     time.stop();
+    std::cout << "Triangulation has " << dt.number_of_vertices() << " vertices."
+      << std::endl;
     std::cout << "Traversing cells of triangulation with "
       << nb_seg << " segments took " << time.time() << " seconds."
       << std::endl;
