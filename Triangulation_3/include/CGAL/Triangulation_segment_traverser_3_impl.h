@@ -20,6 +20,8 @@
 #define CGAL_TRIANGULATION_SEGMENT_TRAVERSER_3_IMPL_H
 
 #include <boost/array.hpp>
+#include <CGAL/Cartesian_converter.h>
+#include <CGAL/Simple_cartesian.h>
 
 namespace CGAL {
 
@@ -54,7 +56,7 @@ Triangulation_segment_cell_iterator_3( const Tr& tr, Vertex_handle s, const Poin
     CGAL_triangulation_precondition( s->point() != t );
     CGAL_triangulation_precondition( _tr.dimension() >= 2 );
     CGAL_triangulation_precondition( _tr.dimension() == 3 ||
-                                     _tr.orientation( *_tr.finite_facets_begin(), t ) == COPLANAR );
+                                     orientation( *_tr.finite_facets_begin(), t ) == COPLANAR );
 
     _source = s->point();
     _target = t;
@@ -78,7 +80,7 @@ Triangulation_segment_cell_iterator_3( const Tr& tr, const Point& s, Vertex_hand
     CGAL_triangulation_precondition( s != t->point() );
     CGAL_triangulation_precondition( _tr.dimension() >= 2 );
     CGAL_triangulation_precondition( _tr.dimension() == 3 ||
-                                     _tr.orientation( *_tr.finite_facets_begin(), s ) == COPLANAR );
+                                     orientation( *_tr.finite_facets_begin(), s ) == COPLANAR );
 
     _source = s;
     _target = t->point();
@@ -342,7 +344,7 @@ walk_to_next_3()
         vert[li] = &_target;
 
         // Check if the target is on the opposite side of the supporting plane.
-        op[li] = _tr.orientation( *vert[0], *vert[1], *vert[2], *vert[3] );
+        op[li] = orientation( *vert[0], *vert[1], *vert[2], *vert[3] );
         if( op[li] == POSITIVE )
             pos += li;
         if( op[li] != NEGATIVE ) {
@@ -365,7 +367,7 @@ walk_to_next_3()
             if( !calc[oij] ) {
                 Point* backup2 = vert[lj];
                 vert[lj] = &_source;
-                o[oij] = _tr.orientation( *vert[0], *vert[1], *vert[2], *vert[3] );
+                o[oij] = orientation( *vert[0], *vert[1], *vert[2], *vert[3] );
                 vert[lj] = backup2;
                 calc[oij] = true;
             }
@@ -489,7 +491,7 @@ walk_to_next_3_inf( int inf ) {
     Orientation o[4];
 
     // Check if the target lies outside the convex hull.
-    if( _tr.orientation( *vert[0], *vert[1], *vert[2], *vert[3] ) == POSITIVE ) {
+    if( orientation( *vert[0], *vert[1], *vert[2], *vert[3] ) == POSITIVE ) {
         // The target lies in an infinite cell.
         // Note that we do not traverse to other infinite cells.
         _prev = Simplex( get<0>(_cur), Tr::OUTSIDE_CONVEX_HULL, -1, -1 );
@@ -498,7 +500,7 @@ walk_to_next_3_inf( int inf ) {
     }
 
     vert[inf] = &(_source);
-    CGAL_triangulation_assertion( _tr.orientation( *vert[0], *vert[1], *vert[2], *vert[3] ) == POSITIVE );
+    CGAL_triangulation_assertion( orientation( *vert[0], *vert[1], *vert[2], *vert[3] ) == POSITIVE );
 
     // For the remembering stochastic walk, we start trying with a random index:
     int li = rng.template get_bits<2>();
@@ -521,7 +523,7 @@ walk_to_next_3_inf( int inf ) {
 
         Point* backup = vert[li];
         vert[li] = &(_target);
-        o[li] = _tr.orientation( *vert[0], *vert[1], *vert[2], *vert[3] );
+        o[li] = orientation( *vert[0], *vert[1], *vert[2], *vert[3] );
 
         if( o[li] != NEGATIVE ) {
             vert[li] = backup;
@@ -930,6 +932,22 @@ walk_to_next_2_inf( int inf ) {
         return;
     }
 }
+
+template < class Tr, class Inc >
+CGAL::Orientation
+Triangulation_segment_cell_iterator_3<Tr, Inc>::orientation(
+  const Point& p, const Point& q, const Point& r, const Point& s) const
+{
+#ifdef CGAL_EXPERIMENT_WITH_SIMPLE_CARTESIAN
+  typedef CGAL::Simple_cartesian<double> K2;
+  CGAL::Cartesian_converter<Gt, K2> c;
+
+  return CGAL::orientation(c(p), c(q), c(r), c(s));
+#else
+  return _tr.orientation(p, q, r, s);
+#endif
+}
+
 	
 } //end of CGAL namespace
 

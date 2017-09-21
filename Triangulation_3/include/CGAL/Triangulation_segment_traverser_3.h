@@ -459,6 +459,9 @@ private:
 
     bool have_same_entry(const Simplex& s1, const Simplex& s2) const;
 
+    CGAL::Orientation orientation(const Point& p, const Point& q,
+                                  const Point& r, const Point& s) const;
+
 }; // class Triangulation_segment_cell_iterator_3
 	
 //  compares a handle to a cell to a traverser.
