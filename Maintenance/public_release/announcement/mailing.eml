@@ -5,6 +5,11 @@ Body:
 The CGAL Open Source Project is pleased to announce the release 4.11
 of CGAL, the Computational Geometry Algorithms Library.
 
+This release is pretty special by its number of breaking changes in the
+API. In order to have a better feature set, or a better API, several
+packages have been reworked in a way that breaks the back-compatibility
+with the previous versions of the API.
+
 Besides fixes and general enhancement to existing packages, the following
 has changed since CGAL 4.10:
 
@@ -90,7 +95,7 @@ has changed since CGAL 4.10:
     and Advancing_front_mesher.
 
 
-See http://www.cgal.org/2017/09/19/cgal411/ for a complete list of
+See http://www.cgal.org/2017/09/21/cgal411/ for a complete list of
 changes.
 
 
