@@ -1,5 +1,5 @@
 //#define CGAL_TRIANGULATION_3_TRAVERSER_CHECK_INTERSECTION
-//#define CGAL_EXPERIMENT_WITH_SIMPLE_CARTESIAN
+#define CGAL_EXPERIMENT_WITH_SIMPLE_CARTESIAN
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_3.h>
@@ -9,10 +9,12 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <boost/foreach.hpp>
 
 #include <CGAL/IO/read_xyz_points.h>
 #include <CGAL/Random.h>
 #include <CGAL/Timer.h>
+
 
 //#define CGAL_TRIANGULATION_3_VERBOSE_TRAVERSER_EXAMPLE
 
@@ -47,7 +49,22 @@ int main(int argc, char* argv[])
   }
 
   //bbox
-  //min (-0.481293,-0.220929,-0.194076), max (0.311532,0.225525,0.198025)
+  double xmin = points[0].x();
+  double xmax = points[0].x();
+  double ymin = points[0].y();
+  double ymax = points[0].y();
+  double zmin = points[0].z();
+  double zmax = points[0].z();
+
+  BOOST_FOREACH(Point_3 p, points)
+  {
+    xmin = (std::min)(xmin, p.x());
+    ymin = (std::min)(ymin, p.y());
+    zmin = (std::min)(zmin, p.z());
+    xmax = (std::max)(xmax, p.x());
+    ymax = (std::max)(ymax, p.y());
+    zmax = (std::max)(zmax, p.z());
+  }
 
     // Construct the Delaunay triangulation.
     DT dt( points.begin(), points.end() );
@@ -63,12 +80,12 @@ int main(int argc, char* argv[])
     for (unsigned int i = 0; i < nb_seg; ++i)
     {
       // Construct a traverser.
-      Point_3 p1(rng.get_double(-0.48, 0.31),
-                 rng.get_double(-0.22, 0.22),
-                 rng.get_double(-0.19, 0.19));
-      Point_3 p2(rng.get_double(-0.48, 0.31),
-                 rng.get_double(-0.22, 0.22),
-                 rng.get_double(-0.19, 0.19));
+      Point_3 p1(rng.get_double(xmin, xmax),
+                 rng.get_double(ymin, ymax),
+                 rng.get_double(zmin, zmax));
+      Point_3 p2(rng.get_double(xmin, xmax),
+                 rng.get_double(ymin, ymax),
+                 rng.get_double(zmin, zmax));
 
 #ifdef CGAL_TRIANGULATION_3_VERBOSE_TRAVERSER_EXAMPLE
       std::cout << "Traverser " << (i + 1)
