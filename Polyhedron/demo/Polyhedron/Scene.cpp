@@ -63,8 +63,8 @@ Scene::addItem(CGAL::Three::Scene_item* item)
             this, SLOT(itemChanged()));
     connect(item, SIGNAL(itemVisibilityChanged()),
             this, SLOT(itemVisibilityChanged()));
-    connect(item, SIGNAL(redraw()),
-            this, SLOT(callDraw()));
+    connect(item, &Scene_item::redraw,
+            this, &Scene::updated);
     if(item->isFinite()
             && !item->isEmpty()
             && bbox_before + item->bbox() != bbox_before
@@ -73,13 +73,13 @@ Scene::addItem(CGAL::Three::Scene_item* item)
         Q_EMIT updated_bbox(true);
     }
     QList<QStandardItem*> list;
-    for(int i=0; i<5; i++)
+    for(int i=0; i<6; i++)
     {
         list<<new QStandardItem();
         list.at(i)->setEditable(false);
     }
     invisibleRootItem()->appendRow(list);
-    for(int i=0; i<5; i++){
+    for(int i=0; i<6; i++){
         index_map[list.at(i)->index()] = m_entries.size() -1;
     }
     Q_EMIT updated();
@@ -97,13 +97,13 @@ Scene::replaceItem(Scene::Item_id index, CGAL::Three::Scene_item* item, bool emi
 {
     if(index < 0 || index >= m_entries.size())
         return 0;
-
+    item->moveToThread(QApplication::instance()->thread());
     connect(item, SIGNAL(itemChanged()),
             this, SLOT(itemChanged()));
     connect(item, SIGNAL(itemVisibilityChanged()),
             this, SLOT(itemVisibilityChanged()));
-    connect(item, SIGNAL(redraw()),
-            this, SLOT(callDraw()));
+    connect(item, &Scene_item::redraw,
+            this, &Scene::updated);
     CGAL::Three::Scene_group_item* group =
             qobject_cast<CGAL::Three::Scene_group_item*>(m_entries[index]);
     if(group)
@@ -162,6 +162,8 @@ Scene::Item_id
 Scene::erase(Scene::Item_id index)
 {
   CGAL::Three::Scene_item* item = m_entries[index];
+  if(item->isWriting() || item->isReading()>0)
+    return -1;
   if(qobject_cast<Scene_group_item*>(item))
   {
     setSelectedItemsList(QList<Scene_interface::Item_id>()<<item_id(item));
@@ -213,6 +215,8 @@ Scene::erase(QList<int> indices)
 
     max_index = (std::max)(max_index, index);
     CGAL::Three::Scene_item* item = m_entries[index];
+    if(item->isWriting() || item->isReading()>0)
+      continue;
     if(item->parentGroup()
        && item->parentGroup()->isChildLocked(item))
       if(!indices.contains(item_id(item->parentGroup())))
@@ -665,6 +669,17 @@ Scene::data(const QModelIndex &index, int role) const
     }
     switch(index.column())
     {
+    case LockColumn:
+      if(role == ::Qt::DisplayRole)
+      {
+        if(m_entries.value(id)->isReading())
+          return 1;
+        else if(m_entries.value(id)->isWriting())
+          return 2;
+        else
+          return 0;
+      }
+      break;
     case ColorColumn:
         if(role == ::Qt::DecorationRole)
             return m_entries.value(id)->color();
@@ -715,6 +730,9 @@ Scene::headerData ( int section, ::Qt::Orientation orientation, int role ) const
         {
             switch(section)
             {
+            case LockColumn:
+              return tr("State");
+              break;
             case NameColumn:
                 return tr("Name");
                 break;
@@ -1084,16 +1102,17 @@ void SceneDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
                           const QModelIndex &index) const
 {
     QModelIndex test = proxy->mapToSource(index);
-    if (index.column() != Scene::VisibleColumn) {
+    if (index.column() != Scene::VisibleColumn &&
+        index.column() != Scene::LockColumn) {
         QItemDelegate::paint(painter, option, index);
     } else {
         const QAbstractItemModel *model = index.model();
 
         QPalette::ColorGroup cg = (option.state & QStyle::State_Enabled) ?
-                    (option.state & QStyle::State_Active) ? QPalette::Normal : QPalette::Inactive : QPalette::Disabled;
+              (option.state & QStyle::State_Active) ? QPalette::Normal : QPalette::Inactive : QPalette::Disabled;
 
         if (option.state & QStyle::State_Selected)
-            painter->fillRect(option.rect, option.palette.color(cg, QPalette::Highlight));
+          painter->fillRect(option.rect, option.palette.color(cg, QPalette::Highlight));
         bool checked = model->data(index, ::Qt::DisplayRole).toBool();
         int width = option.rect.width();
         int height = option.rect.height();
@@ -1101,17 +1120,37 @@ void SceneDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
         int x = option.rect.x() + (option.rect.width() / 2) - (size / 2);;
         int y = option.rect.y() + (option.rect.height() / 2) - (size / 2);
         if(test.row()>=0 && test.row()<scene->m_entries.size()){
-
+          if(index.column() == Scene::VisibleColumn)
+          {
             if(checked) {
-                painter->drawPixmap(x, y, checkOnPixmap.scaled(QSize(size, size),
-                                                               ::Qt::KeepAspectRatio,
-                                                               ::Qt::SmoothTransformation));
+              painter->drawPixmap(x, y, checkOnPixmap.scaled(QSize(size, size),
+                                                             ::Qt::KeepAspectRatio,
+                                                             ::Qt::SmoothTransformation));
             }
             else {
-                painter->drawPixmap(x, y, checkOffPixmap.scaled(QSize(size, size),
-                                                                ::Qt::KeepAspectRatio,
-                                                                ::Qt::SmoothTransformation));
+              painter->drawPixmap(x, y, checkOffPixmap.scaled(QSize(size, size),
+                                                              ::Qt::KeepAspectRatio,
+                                                              ::Qt::SmoothTransformation));
             }
+          }
+          else
+          {
+            switch(model->data(index, ::Qt::DisplayRole).toInt())
+            {
+            case 1:
+              painter->drawPixmap(x, y, readingPixmap.scaled(QSize(size, size),
+                                                             ::Qt::KeepAspectRatio,
+                                                             ::Qt::SmoothTransformation));
+              break;
+            case 2:
+              painter->drawPixmap(x, y, writingPixmap.scaled(QSize(size, size),
+                                                             ::Qt::KeepAspectRatio,
+                                                             ::Qt::SmoothTransformation));
+              break;
+            default:
+              painter->drawPixmap(x,y,QPixmap());
+            }
+          }
         }
         drawFocus(painter, option, option.rect); // since we draw the grid ourselves
     }
@@ -1219,7 +1258,6 @@ void Scene::changeGroup(Scene_item *item, CGAL::Three::Scene_group_item *target_
     //add the item to the target group
     target_group->addChild(item);
     item->moveToGroup(target_group);
-    redraw_model();
     Q_EMIT updated();
 }
 
@@ -1321,14 +1359,14 @@ void Scene::organize_items(Scene_item* item, QStandardItem* root, int loop)
     if(item->has_group <= loop)
     {
         QList<QStandardItem*> list;
-        for(int i=0; i<5; i++)
+        for(int i=0; i<6; i++)
         {
             list<<new QStandardItem();
             list.at(i)->setEditable(false);
 
         }
         root->appendRow(list);
-        for(int i=0; i<5; i++){
+        for(int i=0; i<6; i++){
             index_map[list.at(i)->index()] = m_entries.indexOf(item);
         }
         CGAL::Three::Scene_group_item* group =

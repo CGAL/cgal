@@ -914,18 +914,8 @@ void MainWindow::reloadItem() {
   CGAL::Three::Polyhedron_demo_io_plugin_interface* fileloader = findLoader(loader_name);
   QFileInfo fileinfo(filename);
 
-  CGAL::Three::Scene_item* new_item = loadItem(fileinfo, fileloader);
-
-  new_item->setName(item->name());
-  new_item->setColor(item->color());
-  new_item->setRenderingMode(item->renderingMode());
-  new_item->setVisible(item->visible());
-  Scene_item_with_properties *property_item = dynamic_cast<Scene_item_with_properties*>(new_item);
-  if(property_item)
-    property_item->copyProperties(item);
-  scene->replaceItem(scene->item_id(item), new_item, true);
-  new_item->invalidateOpenGLBuffers();
-  item->deleteLater();
+  ReloadingController* reload = new ReloadingController(fileinfo,fileloader,this,scene,item);
+  reload->process();
 }
 
 CGAL::Three::Polyhedron_demo_io_plugin_interface* MainWindow::findLoader(const QString& loader_name) const {
@@ -1006,42 +996,10 @@ void MainWindow::open(QString filename)
     return;
   }
 
-
-  QStringList selected_items;
-  QStringList all_items;
-
-  QMap<QString,QString>::iterator dfs_it =
-    default_plugin_selection.find( fileinfo.completeSuffix() );
-
-  if ( dfs_it==default_plugin_selection.end() )
-  {
-    // collect all io_plugins and offer them to load if the file extension match one name filter
-    // also collect all available plugin in case of a no extension match
-    Q_FOREACH(CGAL::Three::Polyhedron_demo_io_plugin_interface* io_plugin, io_plugins) {
-      if ( !io_plugin->canLoad() ) continue;
-      all_items << io_plugin->name();
-      if ( file_matches_filter(io_plugin->loadNameFilters(), filename) )
-        selected_items << io_plugin->name();
-    }
-  }
-  else
-    selected_items << *dfs_it;
-
-  bool ok;
   std::pair<QString, bool> load_pair;
 
-  switch( selected_items.size() )
-  {
-    case 1:
-      load_pair = std::make_pair(selected_items.first(), false);
-      ok=true;
-      break;
-    case 0:
-      load_pair = File_loader_dialog::getItem(fileinfo.fileName(), all_items, &ok);
-      break;
-    default:
-      load_pair = File_loader_dialog::getItem(fileinfo.fileName(), selected_items, &ok);
-  }
+  bool ok;
+  chooseLoader(fileinfo, load_pair, ok);
 
   viewer->makeCurrent();
   if(!ok || load_pair.first.isEmpty()) { return; }
@@ -1058,58 +1016,29 @@ void MainWindow::open(QString filename)
   QSettings settings;
   settings.setValue("OFF open directory",
                     fileinfo.absoluteDir().absolutePath());
-  CGAL::Three::Scene_item* scene_item = loadItem(fileinfo, findLoader(load_pair.first));
-  if(!scene_item)
-    return;
-  this->addToRecentFiles(fileinfo.absoluteFilePath());
-
-  selectSceneItem(scene->addItem(scene_item));
-
-  CGAL::Three::Scene_group_item* group =
-          qobject_cast<CGAL::Three::Scene_group_item*>(scene_item);
-  if(group)
-    scene->redraw_model();
+  QList<InfoLoader> list;
+  list.append(std::make_pair(fileinfo, findLoader(load_pair.first)));
+  LoadingController* loader = new LoadingController(list, this, scene);
+  loader->process();
 }
 
 bool MainWindow::open(QString filename, QString loader_name) {
-  QFileInfo fileinfo(filename);
-  boost::optional<CGAL::Three::Scene_item*> item_opt;
-  CGAL::Three::Scene_item* item = 0;
-  try {
-    item_opt = wrap_a_call_to_cpp
-      ([this, fileinfo, loader_name]()
-       {
-         return loadItem(fileinfo, findLoader(loader_name));
-       },
-       this, __FILE__, __LINE__
-       );
-    if(!item_opt) return false;
-    else item = *item_opt;
-  }
-  catch(std::logic_error& e) {
-    std::cerr << e.what() << std::endl;
-    return false;
-  }
-  selectSceneItem(scene->addItem(item));
-
-  CGAL::Three::Scene_group_item* group =
-          qobject_cast<CGAL::Three::Scene_group_item*>(item);
-  if(group)
-    scene->redraw_model();
-
+  QFileInfo fileinfo(filename); 
+  loadItem(fileinfo, findLoader(loader_name));
   return true;
 }
 
 
-CGAL::Three::Scene_item* MainWindow::loadItem(QFileInfo fileinfo, CGAL::Three::Polyhedron_demo_io_plugin_interface* loader) {
-  CGAL::Three::Scene_item* item = NULL;
-  if(!fileinfo.isFile() || !fileinfo.isReadable()) {
-    throw std::invalid_argument(QString("File %1 is not a readable file.")
-                                .arg(fileinfo.absoluteFilePath()).toStdString());
+Scene_item* MainWindow::loadItem(QFileInfo fileinfo, CGAL::Three::Polyhedron_demo_io_plugin_interface* loader, bool reloading) {
+  if(!fileinfo.isFile() || !fileinfo.isReadable())
+  {
+    std::cerr<<QString("File %1 is not a readable file.")
+               .arg(fileinfo.absoluteFilePath()).toStdString()<<std::endl;
+    return 0;
   }
   //test if the file is empty.
   QFile test(fileinfo.absoluteFilePath());
-
+  QApplication::setOverrideCursor(Qt::BusyCursor);
   test.open( QIODevice::WriteOnly|QIODevice::Append);
   if (test.pos() == 0) {
     QMessageBox::warning(this, tr("Error"),
@@ -1117,16 +1046,22 @@ CGAL::Three::Scene_item* MainWindow::loadItem(QFileInfo fileinfo, CGAL::Three::P
     return 0;
   }
   QApplication::setOverrideCursor(Qt::WaitCursor);
-
-  item = loader->load(fileinfo);
+  CGAL::Three::Scene_item* item = NULL;
+  item = loader->load(fileinfo, scene, this);
   QApplication::restoreOverrideCursor();
   if(!item) {
-    throw std::logic_error(QString("Could not load item from file %1 using plugin %2")
-                           .arg(fileinfo.absoluteFilePath()).arg(loader->name()).toStdString());
+    std::cerr<<QString("Could not load item from file %1 using plugin %2")
+               .arg(fileinfo.absoluteFilePath()).arg(loader->name()).toStdString()<<std::endl;
+    return 0;
   }
 
   item->setProperty("source filename", fileinfo.absoluteFilePath());
   item->setProperty("loader_name", loader->name());
+  if(!reloading)
+  {
+    this->addToRecentFiles(fileinfo.absoluteFilePath());
+  }
+
   return item;
 }
 
@@ -1273,18 +1208,20 @@ void MainWindow::showSceneContextMenu(int selectedItemIndex,
       {
         QAction* actionStatistics =
             menu->addAction(tr("Statistics..."));
-        actionStatistics->setObjectName("actionStatisticsOnPolyhedron");
+        actionStatistics->setObjectName("actionStatisticsOnItem");
         connect(actionStatistics, SIGNAL(triggered()),
                 this, SLOT(statisticsOnItem()));
       }
       menu->addSeparator();
       if(!item->property("source filename").toString().isEmpty()) {
         QAction* reload = menu->addAction(tr("&Reload Item from File"));
+        reload->setObjectName("actionReloadFromFile");
         reload->setData(qVariantFromValue((void*)item));
         connect(reload, SIGNAL(triggered()),
                 this, SLOT(reloadItem()));
       }
       QAction* saveas = menu->addAction(tr("&Save as..."));
+      saveas->setObjectName("actionSaveAs");
       saveas->setData(qVariantFromValue((void*)item));
       connect(saveas,  SIGNAL(triggered()),
               this, SLOT(on_actionSaveAs_triggered()));
@@ -1292,7 +1229,12 @@ void MainWindow::showSceneContextMenu(int selectedItemIndex,
       showobject->setData(qVariantFromValue((void*)item));
       connect(showobject, SIGNAL(triggered()),
               this, SLOT(viewerShowObject()));
-
+      QAction* action = menu->findChild<QAction*>("actionStatisticsOnItem");
+      if(action) action->setVisible(!item->isWriting());
+      action = menu->findChild<QAction*>("actionSaveAs");
+      if(action) action->setVisible(!item->isWriting());
+      action = menu->findChild<QAction*>("actionReloadFromFile");
+      if(action) action->setVisible(!item->isWriting() && item->isReading()==0);
       menu->setProperty(prop_name, true);
     }
   }
@@ -1515,33 +1457,30 @@ void MainWindow::on_actionLoad_triggered()
     selectedPlugin = it.value();
   }
 
-  std::size_t nb_files = dialog.selectedFiles().size();
-  std::vector<QColor> colors_;
-  colors_.reserve(nb_files);
-  compute_color_map(QColor(100, 100, 255),//Scene_item's default color
-                    static_cast<unsigned>(nb_files),
-                    std::back_inserter(colors_));
-  std::size_t nb_item = -1;
-  Q_FOREACH(const QString& filename, dialog.selectedFiles()) {
-    CGAL::Three::Scene_item* item = NULL;
-    if(selectedPlugin) {
-      QFileInfo info(filename);
-      item = loadItem(info, selectedPlugin);
-      item->setColor(colors_[++nb_item]);
-      Scene::Item_id index = scene->addItem(item);
-      selectSceneItem(index);
-      CGAL::Three::Scene_group_item* group =
-              qobject_cast<CGAL::Three::Scene_group_item*>(item);
-      if(group)
-        scene->redraw_model();
-      this->addToRecentFiles(filename);
-    } else {
-      int scene_size = scene->numberOfEntries();
-      open(filename);
-      if(scene->numberOfEntries() != scene_size)
-        scene->item(scene->numberOfEntries()-1)->setColor(colors_[++nb_item]);
+  QList<InfoLoader> list;
+  if(selectedPlugin) {
+    Q_FOREACH(const QString& filename, dialog.selectedFiles()) {
+      list.append(std::make_pair(QFileInfo(filename), selectedPlugin));
     }
   }
+  else
+  {
+    Q_FOREACH(const QString& filename, dialog.selectedFiles()) {
+      std::pair<QString, bool> load_pair;
+      bool ok;
+      QFileInfo fileinfo(filename);
+      chooseLoader(fileinfo, load_pair, ok);
+      if (!ok)
+        continue;
+      list.append(std::make_pair(fileinfo, findLoader(load_pair.first)));
+    }
+  }
+
+  LoadingController* loader = new LoadingController(list, this, scene);
+  connect(loader, &LoadingController::finished,
+          loader, &LoadingController::deleteLater);
+  loader->process();
+
 }
 
 void MainWindow::on_actionSaveAs_triggered()
@@ -1879,8 +1818,6 @@ void MainWindow::recenterSceneView(const QModelIndex &id)
 
 void MainWindow::statisticsOnItem()
 {
-  QApplication::setOverrideCursor(Qt::WaitCursor);
-
   if (statistics_dlg == NULL)
   {
     statistics_dlg = new QDialog(this);
@@ -1892,12 +1829,8 @@ void MainWindow::statisticsOnItem()
     connect(statistics_ui->exportButton, &QPushButton::clicked,
             this, &MainWindow::exportStatistics);
   }
-  statistics_ui->label_htmltab->setText(get_item_stats());
-
-  statistics_dlg->show();
-  statistics_dlg->raise();
-
-  QApplication::restoreOverrideCursor();
+  StatisticsController* stats_loader = new StatisticsController(this);
+  stats_loader->process();
 }
 
 /* Creates a string containing an html table. This string is constructed by appending each parts of each row, so that the data can
@@ -1908,7 +1841,9 @@ QString MainWindow::get_item_stats()
   QList<QString> classnames;
   Q_FOREACH(int id, getSelectedSceneItemIndices())
   {
-    QString classname = scene->item(id)->metaObject()->className();
+    CT::Scene_item* item = scene->item(id);
+    item->reading();
+    QString classname = item->metaObject()->className();
     if(!classnames.contains(classname))
       classnames << classname;
   }
@@ -1970,6 +1905,13 @@ QString MainWindow::get_item_stats()
       str.append(QString("</tr>""</table></html>"));
     }
   }
+  for(int i = 0; i<items.size(); ++i)
+  {
+    Q_FOREACH(Scene_item* sit, items[i])
+    {
+      sit->doneReading();
+    }
+  }
   return str;
 }
 
@@ -2001,7 +1943,9 @@ void MainWindow::on_actionMaxTextItemsDisplayed_triggered()
 void MainWindow::resetHeader()
 {
   sceneView->header()->setStretchLastSection(false);
-  scene->invisibleRootItem()->setColumnCount(5);
+  scene->invisibleRootItem()->setColumnCount(6);
+  sceneView->header()->resizeSection(Scene::LockColumn,
+                                     sceneView->header()->fontMetrics().width(QString("_State_")));
   sceneView->header()->setSectionResizeMode(Scene::NameColumn, QHeaderView::Stretch);
   sceneView->header()->setSectionResizeMode(Scene::ColorColumn, QHeaderView::Fixed);
   sceneView->header()->setSectionResizeMode(Scene::RenderingModeColumn, QHeaderView::ResizeToContents);
@@ -2009,8 +1953,10 @@ void MainWindow::resetHeader()
   sceneView->header()->setSectionResizeMode(Scene::VisibleColumn, QHeaderView::Fixed);
   sceneView->header()->resizeSection(Scene::ColorColumn, sceneView->header()->fontMetrics().width("_#_"));
   sceneView->resizeColumnToContents(Scene::RenderingModeColumn);
-  sceneView->header()->resizeSection(Scene::ABColumn, sceneView->header()->fontMetrics().width(QString("_AB_")));
-  sceneView->header()->resizeSection(Scene::VisibleColumn, sceneView->header()->fontMetrics().width(QString("_View_")));
+  sceneView->header()->resizeSection(Scene::ABColumn,
+                                     sceneView->header()->fontMetrics().width(QString("_AB_")));
+  sceneView->header()->resizeSection(Scene::VisibleColumn,
+                                     sceneView->header()->fontMetrics().width(QString("_View_")));
 }
 
 void MainWindow::reset_default_loaders()
@@ -2117,4 +2063,125 @@ void MainWindow::exportStatistics()
   QTextStream outStream(&output);
   outStream << str;
   output.close();
+}
+
+void ReloadingController::handleResults(CT::Scene_item* item)
+{
+  if(!item)
+  {
+    finish(false);
+    return;
+  }
+  item->setName(QString("%1 reloaded").arg(original->name()));
+  item->setColor(original->color());
+  item->setRenderingMode(original->renderingMode());
+  item->setVisible(original->visible());
+  Scene_item_with_properties *property_item = dynamic_cast<Scene_item_with_properties*>(item);
+  if(property_item)
+    property_item->copyProperties(original);
+  original->doneReading();
+  scene->replaceItem(scene->item_id(original), item, true);
+  original->deleteLater();
+  finish(true);
+}
+
+void ReloadingController::process()
+{
+  original->reading();
+  workerThread->start();
+}
+
+LoadingController::LoadingController(const QList<InfoLoader>& input,
+                                     MainWindow* mw,
+                                     Scene* scene):
+  mw(mw),
+  input(input),
+  scene(scene),
+  counter(0)
+{
+  workerThread = new LoadingThread(input, mw, false);
+  connect(workerThread, SIGNAL(resultReady(CT::Scene_item*)),
+          this, SLOT(handleResults(CT::Scene_item*)));
+  connect(workerThread, SIGNAL(finished()), workerThread, SLOT(deleteLater()));
+  colors_.reserve(input.size());
+  compute_color_map(CT::Scene_item::defaultColor,
+                    static_cast<unsigned>(input.size()),
+                    std::back_inserter(colors_));
+  connect(this, &LoadingController::finished,
+          this, &LoadingController::deleteLater);
+}
+
+void LoadingController::handleResults(CT::Scene_item* item)
+{
+  counter++;
+  if(!item)
+  {
+    error();
+    return;
+  }
+  if(!qobject_cast<Scene_group_item*>(item))
+    item->setColor(colors_[counter-1]);
+  mw->selectSceneItem(scene->item_id(item));
+  scene->addItem(item);
+  CGAL::Three::Scene_group_item* group =
+      qobject_cast<CGAL::Three::Scene_group_item*>(item);
+  if(group)
+    scene->redraw_model();
+  if(counter == input.size())
+    finished();
+}
+
+void StatisticsController::handleResults(QString res)
+{
+  mw->statistics_ui->label_htmltab->setText(res);
+  mw->statistics_dlg->show();
+  mw->statistics_dlg->raise();
+  finished();
+}
+
+StatisticsController::StatisticsController(MainWindow* mw):
+  mw(mw)
+{
+  workerThread = new StatisticsThread(mw);
+  connect(workerThread, SIGNAL(resultReady(QString)),
+          this, SLOT(handleResults(QString)));
+  connect(workerThread, SIGNAL(finished()), workerThread, SLOT(deleteLater()));
+  connect(this, &StatisticsController::finished,
+          this, &StatisticsController::deleteLater);
+}
+
+void MainWindow::chooseLoader(QFileInfo fileinfo,
+                  std::pair<QString, bool>& load_pair,
+                  bool& ok)
+{
+  QMap<QString,QString>::iterator dfs_it =
+    default_plugin_selection.find( fileinfo.completeSuffix() );
+  QStringList selected_items;
+  QStringList all_items;
+  if ( dfs_it==default_plugin_selection.end() )
+  {
+    // collect all io_plugins and offer them to load if the file extension match one name filter
+    // also collect all available plugin in case of a no extension match
+    Q_FOREACH(CGAL::Three::Polyhedron_demo_io_plugin_interface* io_plugin, io_plugins) {
+      if ( !io_plugin->canLoad() ) continue;
+      all_items << io_plugin->name();
+      if ( file_matches_filter(io_plugin->loadNameFilters(), fileinfo.fileName()) )
+        selected_items << io_plugin->name();
+    }
+  }
+  else
+    selected_items << *dfs_it;
+
+  switch( selected_items.size() )
+  {
+    case 1:
+      load_pair = std::make_pair(selected_items.first(), false);
+      ok=true;
+      break;
+    case 0:
+      load_pair = File_loader_dialog::getItem(fileinfo.fileName(), all_items, &ok);
+      break;
+    default:
+      load_pair = File_loader_dialog::getItem(fileinfo.fileName(), selected_items, &ok);
+  }
 }

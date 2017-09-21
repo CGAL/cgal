@@ -46,7 +46,8 @@ struct DEMO_FRAMEWORK_EXPORT Edge_container :public Primitive_container
     NbOfVbos
   };
 
-    Edge_container(Scene_item *item, CGAL::Three::Viewer_interface *viewer, int program, bool indexed);
+    Edge_container(int program, bool indexed);
+    void initGL(Scene_item *item, Viewer_interface *viewer) const Q_DECL_OVERRIDE;
     void draw(const Scene_item &item, CGAL::Three::Viewer_interface* viewer,
               bool is_color_uniform = true) const Q_DECL_OVERRIDE;
     //drawing variables

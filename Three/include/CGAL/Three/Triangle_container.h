@@ -50,8 +50,8 @@ struct DEMO_FRAMEWORK_EXPORT Triangle_container :public Primitive_container
     NbOfVbos
   };
 
-    Triangle_container(Scene_item *item, CGAL::Three::Viewer_interface *viewer, int program, bool indexed);
-
+    Triangle_container(int program, bool indexed);
+    void initGL(CGAL::Three::Scene_item* item, CGAL::Three::Viewer_interface* viewer)const Q_DECL_OVERRIDE;
     void draw(const Scene_item &item, CGAL::Three::Viewer_interface* viewer,
               bool is_color_uniform) const Q_DECL_OVERRIDE;
 

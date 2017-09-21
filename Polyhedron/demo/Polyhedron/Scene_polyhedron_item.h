@@ -191,7 +191,7 @@ protected:
 
    public:
     void zoomToPosition(const QPoint &point, CGAL::Three::Viewer_interface *)const Q_DECL_OVERRIDE;
-
+    void computeElements()const Q_DECL_OVERRIDE{};
 }; // end class Scene_polyhedron_item
 
 #endif // SCENE_POLYHEDRON_ITEM_H

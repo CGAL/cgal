@@ -151,7 +151,7 @@ public:
 
     const Points& points() const;
     const Polygons& polygons() const;
-
+    void computeElements()const Q_DECL_OVERRIDE{}
 public Q_SLOTS:
     void shuffle_orientations();
     bool orient();

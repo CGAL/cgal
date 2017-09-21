@@ -3,10 +3,15 @@
 
 typedef CGAL::Three::Viewer_interface VI;
 using namespace CGAL::Three;
-Edge_container::Edge_container(CGAL::Three::Scene_item* item, CGAL::Three::Viewer_interface* viewer, int program, bool indexed)
+Edge_container::Edge_container(int program, bool indexed)
   :Primitive_container(program, indexed)
 {
   VBOs.resize(NbOfVbos);
+
+}
+
+void Edge_container::initGL(Scene_item *item, Viewer_interface *viewer) const
+{
   if(indexed)
   {
     switch(program_id)
@@ -29,7 +34,6 @@ Edge_container::Edge_container(CGAL::Three::Scene_item* item, CGAL::Three::Viewe
     }
   }
 }
-
 void Edge_container::draw(const CGAL::Three::Scene_item& item,
                           CGAL::Three::Viewer_interface* viewer,
                           bool is_color_uniform) const

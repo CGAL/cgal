@@ -28,9 +28,11 @@
 #include <QFileInfo>
 #include <QStringList>
 
+class QMainWindow;
 namespace CGAL{
 namespace Three {
 class Scene_item;
+class Scene_interface;
   /*!
    * This class provides a base for creating a new IO plugin.
    */
@@ -60,7 +62,7 @@ public:
   virtual bool canLoad() const = 0;
   //!  Loads an item from a file.
   //! This must be overriden.
-  virtual Scene_item* load(QFileInfo fileinfo) = 0;
+  virtual Scene_item* load(QFileInfo fileinfo, CGAL::Three::Scene_interface* scene, QMainWindow*) = 0;
   //!Specifies if the io_plugin can save the item or not.
   //!This must be overriden.
   virtual bool canSave(const Scene_item*) = 0;

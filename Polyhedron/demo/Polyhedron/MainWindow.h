@@ -16,10 +16,13 @@
 #include <QStringList>
 #include <QSet>
 #include <QModelIndex>
+#include <QItemSelection>
 class Scene;
 class Viewer;
 class QTreeView;
 class QMenu;
+class StatisticsThread;
+class StatisticsController;
 namespace CGAL {
 namespace Three{
 class Polyhedron_demo_io_plugin_interface;
@@ -34,6 +37,7 @@ namespace Ui {
   class MainWindow;
   class Statistics_on_item_dialog;
 }
+namespace CT = CGAL::Three;
 
 #include "Polyhedron_type_fwd.h"
 
@@ -74,13 +78,20 @@ public:
   /*! Finds an IO plugin.
    * throws std::invalid_argument if no loader with that argument can be found
    @returns the IO plugin associated with `loader_name`*/
-  CGAL::Three::Polyhedron_demo_io_plugin_interface* findLoader(const QString& loader_name) const;
+  CT::Polyhedron_demo_io_plugin_interface* findLoader(const QString& loader_name) const;
 
   /*! \brief Loads an item with a given loader.
    *
    * throws `std::logic_error` if loading does not succeed or
    * `std::invalid_argument` if `fileinfo` specifies an invalid file*/
-  CGAL::Three::Scene_item* loadItem(QFileInfo fileinfo, CGAL::Three::Polyhedron_demo_io_plugin_interface*);
+  CT::Scene_item* loadItem(QFileInfo fileinfo, CT::Polyhedron_demo_io_plugin_interface*, bool reloading = false);
+  /*!
+   * \brief chooseLoader finds default loader for a given filename.
+   */
+  void chooseLoader(QFileInfo fileinfo,
+                    std::pair<QString, bool> &load_pair,
+                    bool& ok);
+
 
 Q_SIGNALS:
   //! Is emitted when the Application is closed.
@@ -326,7 +337,7 @@ protected Q_SLOTS:
   //!Opens a dialog to save selected item if able.
   void on_actionSaveAs_triggered(); 
   //!Calls the function save of the current plugin if able.
-  void save(QString filename, CGAL::Three::Scene_item* item);
+  void save(QString filename, CT::Scene_item* item);
   //!Calls the function saveSnapShot of the viewer.
   void on_actionSaveSnapshot_triggered();
   //!Opens a Dialog to choose a color and make it the background color.
@@ -399,10 +410,10 @@ private:
   QSortFilterProxyModel* proxyModel;
   QTreeView* sceneView;
   Ui::MainWindow* ui;
-  QVector<CGAL::Three::Polyhedron_demo_io_plugin_interface*> io_plugins;
+  QVector<CT::Polyhedron_demo_io_plugin_interface*> io_plugins;
   QMap<QString,QString> default_plugin_selection;
   // typedef to make Q_FOREACH work
-  typedef QPair<CGAL::Three::Polyhedron_demo_plugin_interface*, QString> PluginNamePair;
+  typedef QPair<CT::Polyhedron_demo_plugin_interface*, QString> PluginNamePair;
   QVector<PluginNamePair > plugins;
   //!Called when "Add new group" in the file menu is triggered.
   QAction* actionAddToGroup;
@@ -413,6 +424,8 @@ private:
   QDialog *statistics_dlg;
   Ui::Statistics_on_item_dialog* statistics_ui;
   void insertActionBeforeLoadPlugin(QMenu*, QAction *actionToInsert);
+  friend class StatisticsThread;
+  friend class StatisticsController;
 
 #ifdef QT_SCRIPT_LIB
   QScriptEngine* script_engine;
@@ -430,6 +443,140 @@ public:
 
 private Q_SLOTS:
   void set_facegraph_mode_adapter(bool is_polyhedron);
+};
+
+typedef std::pair<QFileInfo,
+CT::Polyhedron_demo_io_plugin_interface*> InfoLoader;
+
+class LoadingThread : public QThread
+{
+  Q_OBJECT
+  QList<InfoLoader> input;
+  MainWindow* mw;
+  bool reloading;
+
+  void run() Q_DECL_OVERRIDE {
+    for(int i = 0;
+        i < input.size();
+        ++i)
+    {
+      CT::Scene_item* result =
+          mw->loadItem(input[i].first, input[i].second, reloading);
+      resultReady(result);
+    }
+  }
+public:
+  LoadingThread(const QList<std::pair<QFileInfo,
+                CT::Polyhedron_demo_io_plugin_interface*> >& input,
+                MainWindow* mw,
+                bool reloading):
+    input(input),
+    mw(mw),
+    reloading(reloading)
+  {}
+
+Q_SIGNALS:
+  void resultReady(CT::Scene_item* result);
+};
+
+class LoadingController : public QObject
+{
+  Q_OBJECT
+  MainWindow* mw;
+  LoadingThread* workerThread;
+  QList<InfoLoader> input;
+  Scene* scene;
+  int counter;
+  std::vector<QColor> colors_;
+public:
+  LoadingController(const QList<InfoLoader>& input,
+                    MainWindow* mw, Scene *scene);
+  void process()
+  {
+    workerThread->start();
+  }
+
+public Q_SLOTS:
+  void handleResults(CT::Scene_item* item);
+
+Q_SIGNALS:
+  void error();
+  void finished();
+};
+
+
+class ReloadingController : public QObject
+{
+  Q_OBJECT
+  MainWindow* mw;
+  Scene* scene;
+  CT::Scene_item* original;
+  LoadingThread* workerThread;
+public:
+  ReloadingController(QFileInfo info,
+                      CT::Polyhedron_demo_io_plugin_interface* loader,
+                      MainWindow* mw,
+                      Scene* scene,
+                      CT::Scene_item* old_item):
+    mw(mw),
+    scene(scene),
+    original(old_item)
+  {
+    QList<InfoLoader> list;
+    list.append(std::make_pair(info, loader));
+    workerThread = new LoadingThread(list, mw, true);
+    connect(workerThread, SIGNAL(resultReady(CT::Scene_item*)),
+            this, SLOT(handleResults(CT::Scene_item*)));
+    connect(workerThread, SIGNAL(finished()), workerThread, SLOT(deleteLater()));
+    connect(this, &ReloadingController::finish,
+            this, &ReloadingController::deleteLater);
+  }
+  void process();
+
+public Q_SLOTS:
+  void handleResults(CT::Scene_item* item);
+
+Q_SIGNALS:
+  void finish(bool);
+};
+
+class StatisticsThread : public QThread
+{
+  Q_OBJECT
+  MainWindow* mw;
+  void run() Q_DECL_OVERRIDE {
+    QApplication::setOverrideCursor(Qt::BusyCursor);
+    QString result = mw->get_item_stats();
+    resultReady(result);
+    QApplication::restoreOverrideCursor();
+  }
+public:
+  StatisticsThread(MainWindow* mw):
+    mw(mw)
+  {}
+
+Q_SIGNALS:
+  void resultReady(QString res);
+};
+
+class StatisticsController : public QObject
+{
+  Q_OBJECT
+  MainWindow* mw;
+  StatisticsThread* workerThread;
+public:
+  StatisticsController(MainWindow*);
+  void process()
+  {
+    workerThread->start();
+  }
+
+public Q_SLOTS:
+  void handleResults(QString res);
+
+Q_SIGNALS:
+  void error();
+  void finished();
 };
 
 #endif // ifndef MAINWINDOW_H

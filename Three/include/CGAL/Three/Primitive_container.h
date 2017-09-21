@@ -42,7 +42,8 @@ struct DEMO_FRAMEWORK_EXPORT Primitive_container
 
     Primitive_container(int program, bool indexed)
       : program_id(program), indexed(indexed),
-        is_init(false),flat_size(0), idx_size(0)
+        is_init(false), is_gl_init(false),
+        flat_size(0), idx_size(0)
     {}
 
     virtual ~Primitive_container()
@@ -52,6 +53,7 @@ struct DEMO_FRAMEWORK_EXPORT Primitive_container
           delete vbo;
       delete VAO;
     }
+    virtual void initGL(CGAL::Three::Scene_item* item, CGAL::Three::Viewer_interface* viewer) const = 0;
 
     virtual void draw(const Scene_item &item, CGAL::Three::Viewer_interface* viewer,
                       bool is_color_uniform) const = 0;
@@ -105,6 +107,7 @@ struct DEMO_FRAMEWORK_EXPORT Primitive_container
     int program_id;
     bool indexed;
     mutable bool is_init;
+    mutable bool is_gl_init;
     mutable std::size_t flat_size;
     mutable std::size_t idx_size;
     mutable QColor color;

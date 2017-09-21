@@ -2,10 +2,14 @@
 
 typedef CGAL::Three::Viewer_interface VI;
 using namespace CGAL::Three;
-Triangle_container::Triangle_container(CGAL::Three::Scene_item* item, CGAL::Three::Viewer_interface* viewer, int program, bool indexed)
+Triangle_container::Triangle_container(int program, bool indexed)
   : Primitive_container(program, indexed)
 {
   VBOs.resize(NbOfVbos);
+}
+
+void Triangle_container::initGL(CGAL::Three::Scene_item* item, CGAL::Three::Viewer_interface* viewer)const
+{
   if(indexed)
   {
     switch(program_id)
@@ -69,8 +73,8 @@ Triangle_container::Triangle_container(CGAL::Three::Scene_item* item, CGAL::Thre
       break;
     }
   }
+  is_gl_init = true;
 }
-
 void Triangle_container::draw(const CGAL::Three::Scene_item& item,
                               CGAL::Three::Viewer_interface* viewer,
                               bool is_color_uniform ) const
@@ -112,6 +116,7 @@ void Triangle_container::draw(const CGAL::Three::Scene_item& item,
     if(is_color_uniform)
       VAO->program->setAttributeValue("colors", color);
     viewer->glDrawArrays(GL_TRIANGLES,0,static_cast<GLsizei>(flat_size/3));
+
     VAO->release();
   }
 }

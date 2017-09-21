@@ -41,9 +41,10 @@ class SCENE_EXPORT Scene  :
 public:
   QList<QModelIndex> getModelIndexFromId(int id) const;
   int getIdFromModelIndex(QModelIndex modelId) const;
-  enum Columns { NameColumn = 0, 
-                 ColorColumn, 
-                 RenderingModeColumn, 
+  enum Columns { LockColumn = 0,
+                 NameColumn ,
+                 ColorColumn,
+                 RenderingModeColumn,
                  VisibleColumn,
                  ABColumn,
                  LastColumn = ABColumn,
@@ -235,7 +236,6 @@ Q_SIGNALS:
 private Q_SLOTS:
   // Casts a selection ray and calls the item function select.
   void setSelectionRay(double, double, double, double, double, double);
-  void callDraw(){  QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin(); viewer->update();}
   void s_itemAboutToBeDestroyed(CGAL::Three::Scene_item *);
 private:
   /*! Calls the drawing functions of each visible item according
@@ -278,7 +278,9 @@ public:
   SceneDelegate(QObject * parent = 0)
     : QItemDelegate(parent),
       checkOnPixmap(":/cgal/icons/check-on.png"),
-      checkOffPixmap(":/cgal/icons/check-off.png")
+      checkOffPixmap(":/cgal/icons/check-off.png"),
+      readingPixmap(":/cgal/icons/resources/reading_pic.png"),
+      writingPixmap(":/cgal/icons/resources/writing_pic.png")
   {
   }
 // Handles the clicks on the sceneView
@@ -298,6 +300,8 @@ public:
 private:
   QPixmap checkOnPixmap;
   QPixmap checkOffPixmap;
+  QPixmap readingPixmap;
+  QPixmap writingPixmap;
   QAbstractProxyModel *proxy;
   Scene *scene;
   mutable int size;

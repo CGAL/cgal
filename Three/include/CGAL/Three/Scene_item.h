@@ -32,9 +32,9 @@
 #include <QOpenGLBuffer>
 #include <QOpenGLShader>
 #include <QOpenGLVertexArrayObject>
+#include <QThread>
 #include <vector>
 #include <CGAL/Bbox_3.h>
-
 
 namespace CGAL {
 namespace Three {
@@ -236,6 +236,12 @@ public:
   //! the Operations menu, actions to save or clone the item if it is supported
   //! and any contextual action for the item.
   virtual QMenu* contextMenu();
+  bool isWriting(){ return is_locked; }
+  void writing(){ is_locked = true; itemChanged();}
+  void doneWriting() { is_locked = false; itemChanged();}
+  int isReading(){ return is_reading; }
+  void reading(){ ++is_reading; itemChanged(); }
+  void doneReading() { --is_reading; itemChanged(); }
 
   //!Handles key press events.
   virtual bool keyPressEvent(QKeyEvent*){return false;}
@@ -301,6 +307,10 @@ public:
   /*! Compatibility function. Calls `viewer->getShaderProgram()`. */
   virtual QOpenGLShaderProgram* getShaderProgram(int name , CGAL::Three::Viewer_interface *viewer = 0) const;
 
+  /*! Collects all the data for the shaders. Must be called in #invalidateOpenGLBuffers().
+   * @see invalidateOpenGLBuffers().
+   */
+  virtual void computeElements()const{}
 public Q_SLOTS:
 
   //! Notifies the program that the internal data or the properties of
@@ -388,6 +398,7 @@ Q_SIGNALS:
   void aboutToBeDestroyed();
   //! Is emitted to require a new display.
   void redraw();
+  void dataProcessed();
 
 protected:
   //!Holds the BBox of the item
@@ -436,21 +447,40 @@ protected:
    * in certain cases.
    * @see invalidateOpenGLBuffers()*/
   RenderingMode cur_shading;
+  //when this is true, all the operations and options of this item are disabled.
+  //Used in multithreading context.
+  mutable bool is_locked;
+  mutable int is_reading;
 
   /*! Fills the VBOs with data. Must be called after each call to #computeElements().
    * @see compute_elements()
    */
   virtual void initializeBuffers(Viewer_interface*)const{}
+  /*!
+    * \brief processData calls `computeElements()` in a dedicated thread so the
+    * application does not get stuck while the processing is performed.
+    * Emits `dataProcessed()`.
+    */
+  void processData();
 
-  /*! Collects all the data for the shaders. Must be called in #invalidateOpenGLBuffers().
-   * @see invalidateOpenGLBuffers().
-   */
-  virtual void computeElements(Viewer_interface*)const{}
 }; // end class Scene_item
 }
 }
 
 #include <QMetaType>
 Q_DECLARE_METATYPE(CGAL::Three::Scene_item*)
+
+class WorkerThread : public QThread
+{
+  Q_OBJECT
+  CGAL::Three::Scene_item* item;
+public:
+  WorkerThread(CGAL::Three::Scene_item* item):
+    item(item){}
+private:
+  void run() Q_DECL_OVERRIDE{
+    item->computeElements();
+  }
+};
 
 #endif // SCENE_ITEM_H

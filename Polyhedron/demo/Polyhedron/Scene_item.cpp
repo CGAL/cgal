@@ -5,15 +5,18 @@
 #include <iostream>
 #include <QDebug>
 #include <CGAL/Three/Viewer_interface.h>
-const QColor CGAL::Three::Scene_item::defaultColor = QColor(100, 100, 255);
 
+namespace CT = CGAL::Three;
+const QColor CT::Scene_item::defaultColor = QColor(100, 100, 255);
 CGAL::Three::Scene_item::Scene_item()
   : name_("unnamed"),
     color_(defaultColor),
     visible_(true),
     are_buffers_filled(false),
     rendering_mode(FlatPlusEdges),
-    defaultContextMenu(0)
+    defaultContextMenu(0),
+    is_locked(false),
+    is_reading(0)
 {
   is_bbox_computed = false;
   is_diag_bbox_computed = false;
@@ -27,6 +30,8 @@ CGAL::Three::Scene_item::~Scene_item() {
   if(defaultContextMenu)
     defaultContextMenu->deleteLater();
 }
+
+
 
 void CGAL::Three::Scene_item::itemAboutToBeDestroyed(CGAL::Three::Scene_item* item) {
     if(this == item)
@@ -210,4 +215,19 @@ void CGAL::Three::Scene_item::compute_diag_bbox()const
         + CGAL::square(b_box.zmax() - b_box.zmin())
         );
 
+}
+
+void CT::Scene_item::processData()
+{
+  writing();
+
+  WorkerThread *workerThread = new WorkerThread(this);
+  connect(workerThread, &WorkerThread::finished, [this, workerThread]()
+  {
+    doneWriting();
+    redraw();
+    dataProcessed();
+  });
+  connect(workerThread, &WorkerThread::finished, workerThread, &WorkerThread::deleteLater);
+  workerThread->start();
 }
