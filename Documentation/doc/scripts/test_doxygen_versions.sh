@@ -59,6 +59,7 @@ if [ -z $PATH_TO_2 ] || [ $(basename $PATH_TO_2) != "doxygen" ] || [ ! -e $PATH_
   echo "No second path detected. Cloning Doxygen master branch..."
   git clone https://github.com/doxygen/doxygen.git doxygen_master  1> /dev/null
   cd doxygen_master
+  git pull  https://github.com/lrineau/doxygen.git 1> /dev/null
   MASTER_DESCRIBE=$(git describe --tags)
   mkdir -p build
   cd build
