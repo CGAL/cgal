@@ -57,7 +57,7 @@ void Polyhedron_demo_merge_point_sets_plugin::on_actionMergePointSets_triggered(
 {
   QApplication::setOverrideCursor(Qt::WaitCursor);
   CGAL::Three::Scene_interface::Item_id mainSelectionIndex
-    = scene->mainSelectionIndex();
+    = scene->selectionIndices().first();
   Scene_points_with_normal_item* mainSelectionItem
     = qobject_cast<Scene_points_with_normal_item*>(scene->item(mainSelectionIndex));
 
