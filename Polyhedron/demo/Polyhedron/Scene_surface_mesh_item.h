@@ -163,6 +163,8 @@ public Q_SLOTS:
 protected:
   friend struct Scene_surface_mesh_item_priv;
   Scene_surface_mesh_item_priv* d;
+  void computeElements(CGAL::Three::Viewer_interface*)const Q_DECL_OVERRIDE;
+  void initializeBuffers(CGAL::Three::Viewer_interface*)const Q_DECL_OVERRIDE;
 };
 
 #endif /* CGAL_SCENE_SURFACE_MESH_ITEM_H */

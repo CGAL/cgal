@@ -181,6 +181,8 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     Viewer_interface_moc.cpp
     Scene_item_moc.cpp
     Scene_item.cpp
+    Triangle_container.cpp
+    Edge_container.cpp
     Scene_group_item.cpp
     Scene_group_item_moc.cpp
     TextRenderer.cpp

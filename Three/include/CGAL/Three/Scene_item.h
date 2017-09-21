@@ -35,6 +35,7 @@
 #include <vector>
 #include <CGAL/Bbox_3.h>
 
+
 namespace CGAL {
 namespace Three {
   class Viewer_interface;
@@ -94,10 +95,7 @@ public:
   //! This color is the one that will be displayed if none is specified after its creation.
   static const QColor defaultColor; // defined in Scene_item.cpp
 
-  //!\brief The Constructor.
-  //!
-  //! This is where the vectors of VBOs and VAOs are initialized.
-  Scene_item(int buffers_size = 20, int vaos_size = 10);
+  Scene_item();
 
   //! \brief Sets the number of isolated vertices.
   //!
@@ -294,6 +292,14 @@ public:
 
   //!Contains the number of group and subgroups containing this item.
   int has_group;
+  /*! Passes all the uniform data to the shaders.
+    * According to program_name, this data may change.
+    */
+  void attribBuffers(CGAL::Three::Viewer_interface*, int program_name) const;
+  //! Returns the selection status of this item.
+  bool isSelected() const { return is_selected; }
+  /*! Compatibility function. Calls `viewer->getShaderProgram()`. */
+  virtual QOpenGLShaderProgram* getShaderProgram(int name , CGAL::Three::Viewer_interface *viewer = 0) const;
 
 public Q_SLOTS:
 
@@ -430,38 +436,16 @@ protected:
    * in certain cases.
    * @see invalidateOpenGLBuffers()*/
   RenderingMode cur_shading;
-  //!Contains the size of the vector of VBOs
-  int buffersSize;
-  //!Contains the size of the map of VAOs
-  int vaosSize;
-  //!Contains the VBOs
-  mutable std::vector<QOpenGLBuffer> buffers;
-  /*! Contains the VAOs.
-   */
-  std::vector<QOpenGLVertexArrayObject*> vaos;
-  //!Adds a VAO to the Map.
-  void addVaos(int i)
-  {
-      QOpenGLVertexArrayObject* n_vao = new QOpenGLVertexArrayObject();
-      vaos[i] = n_vao;
-  }
 
   /*! Fills the VBOs with data. Must be called after each call to #computeElements().
    * @see compute_elements()
    */
-  void initializeBuffers(){}
+  virtual void initializeBuffers(Viewer_interface*)const{}
 
   /*! Collects all the data for the shaders. Must be called in #invalidateOpenGLBuffers().
    * @see invalidateOpenGLBuffers().
    */
-  void computeElements(){}
-  /*! Passes all the uniform data to the shaders.
-   * According to program_name, this data may change.
-   */
-  void attribBuffers(CGAL::Three::Viewer_interface*, int program_name) const;
-
-  /*! Compatibility function. Calls `viewer->getShaderProgram()`. */
-  virtual QOpenGLShaderProgram* getShaderProgram(int name , CGAL::Three::Viewer_interface *viewer = 0) const;
+  virtual void computeElements(Viewer_interface*)const{}
 }; // end class Scene_item
 }
 }

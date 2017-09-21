@@ -47,7 +47,7 @@ class DEMO_FRAMEWORK_EXPORT Scene_group_item : public Scene_item
 {
     Q_OBJECT
 public :
-    Scene_group_item(QString name = QString("New group"), int nb_vbos = 0, int nb_vaos = 0);
+    Scene_group_item(QString name = QString("New group"));
     ~Scene_group_item() {}
     //!Sets the scene;
     void setScene(Scene_interface* s) { scene = s; }

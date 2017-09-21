@@ -3,8 +3,8 @@
 #include <QDebug>
 
 using namespace CGAL::Three;
-Scene_group_item::Scene_group_item(QString name, int nb_vbos, int nb_vaos )
-    :  Scene_item(nb_vbos, nb_vaos)
+Scene_group_item::Scene_group_item(QString name)
+    :  Scene_item()
     , scene(NULL)
 {
     this->name_ = name;
