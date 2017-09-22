@@ -81,18 +81,25 @@ CGAL_ImageIO_LIB_DEPENDS:STATIC=general;C:/3rdPartyLibs/VC-64/gmp-5.0.1_and_mpfr
 //Dependencies for the target
 CGAL_LIB_DEPENDS:STATIC=general;C:/3rdPartyLibs/VC-64/gmp-5.0.1_and_mpfr-3.0.0/lib/libmpfr-4.lib;general;C:/3rdPartyLibs/VC-64/gmp-5.0.1_and_mpfr-3.0.0/lib/libgmp-10.lib;
 
+//Dependencies for the target
+CGAL_Qt5_LIB_DEPENDS:STATIC=general;C:/3rdPartyLibs/VC-64/gmp-5.0.1_and_mpfr-3.0.0/lib/libmpfr-4.lib;general;C:/3rdPartyLibs/VC-64/gmp-5.0.1_and_mpfr-3.0.0/lib/libgmp-10.lib;general;Qt5::OpenGL;general;Qt5::Svg;general;CGAL;general;glu32;general;opengl32;
+
 //Value Computed by CMake
 CGAL_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.9
 
-//Choose the type of build, options are: None(CMAKE_CXX_FLAGS or
-// CMAKE_C_FLAGS used) Debug Release RelWithDebInfo MinSizeRel.
+//Path to a program.
+CMAKE_AR:FILEPATH=CMAKE_AR-NOTFOUND
+
+//Build type: Release or Debug
 CMAKE_BUILD_TYPE:STRING=Debug
 
 //Enable/Disable color output during build.
 CMAKE_COLOR_MAKEFILE:BOOL=ON
 
-//CXX compiler
-CMAKE_CXX_COMPILER:FILEPATH=C:/Program Files (x86)/Microsoft Visual Studio/2017/Professional/VC/Tools/MSVC/14.10.24930/bin/HostX64/x64/cl.exe
+//Semicolon separated list of supported configuration types, only
+// supports Debug, Release, MinSizeRel, and RelWithDebInfo, anything
+// else will be ignored.
+CMAKE_CONFIGURATION_TYPES:STRING=Debug;Release;MinSizeRel;RelWithDebInfo
 
 //User-defined flags
 CMAKE_CXX_FLAGS:STRING=/DWIN32 /D_WINDOWS /W3 /GR /EHsc -D_CRT_SECURE_NO_DEPRECATE -D_SCL_SECURE_NO_DEPRECATE -D_CRT_SECURE_NO_WARNINGS -D_SCL_SECURE_NO_WARNINGS /fp:strict /fp:except- /wd4503 /bigobj
@@ -108,13 +115,10 @@ CMAKE_CXX_FLAGS_MINSIZEREL:STRING=/MD /O1 /Ob1 /DNDEBUG
 CMAKE_CXX_FLAGS_RELEASE:STRING=/MD /O2 /Ob2 /DCGAL_NDEBUG
 
 //Flags used by the compiler during release builds with debug info.
-CMAKE_CXX_FLAGS_RELWITHDEBINFO:STRING=/MD  /O2 /Ob1 /DNDEBUG
+CMAKE_CXX_FLAGS_RELWITHDEBINFO:STRING=/MD /O2 /Ob1 /DNDEBUG
 
 //Libraries linked by default with all C++ applications.
 CMAKE_CXX_STANDARD_LIBRARIES:STRING=kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib
-
-//C compiler
-CMAKE_C_COMPILER:FILEPATH=C:/Program Files (x86)/Microsoft Visual Studio/2017/Professional/VC/Tools/MSVC/14.10.24930/bin/HostX64/x64/cl.exe
 
 //Flags used by the compiler during all build types.
 CMAKE_C_FLAGS:STRING=/DWIN32 /D_WINDOWS /W3
@@ -130,7 +134,7 @@ CMAKE_C_FLAGS_MINSIZEREL:STRING=/MD /O1 /Ob1 /DNDEBUG
 CMAKE_C_FLAGS_RELEASE:STRING=/MD /O2 /Ob2 /DCGAL_NDEBUG
 
 //Flags used by the compiler during release builds with debug info.
-CMAKE_C_FLAGS_RELWITHDEBINFO:STRING=/MD  /O2 /Ob1 /DNDEBUG
+CMAKE_C_FLAGS_RELWITHDEBINFO:STRING=/MD /O2 /Ob1 /DNDEBUG
 
 //Libraries linked by default with all C applications.
 CMAKE_C_STANDARD_LIBRARIES:STRING=kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib
@@ -199,10 +203,7 @@ CMAKE_INSTALL_SHAREDSTATEDIR:PATH=com
 CMAKE_INSTALL_SYSCONFDIR:PATH=etc
 
 //Path to a program.
-CMAKE_LINKER:FILEPATH=C:/Program Files (x86)/Microsoft Visual Studio/2017/Professional/VC/Tools/MSVC/14.10.24930/bin/HostX64/x64/link.exe
-
-//Program used to build from makefiles.
-CMAKE_MAKE_PROGRAM:STRING=nmake
+CMAKE_LINKER:FILEPATH=C:/Program Files (x86)/Microsoft Visual Studio/2017/Professional/VC/Tools/MSVC/14.11.25503/bin/HostX86/x64/link.exe
 
 //Flags used by the linker during the creation of modules.
 CMAKE_MODULE_LINKER_FLAGS:STRING=/machine:x64
@@ -223,7 +224,7 @@ CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO:STRING=/debug /INCREMENTAL
 CMAKE_PROJECT_NAME:STATIC=CGAL
 
 //RC compiler
-CMAKE_RC_COMPILER:FILEPATH=C:/Program Files (x86)/Windows Kits/10/bin/x64/rc.exe
+CMAKE_RC_COMPILER:FILEPATH=rc
 
 //Flags for Windows Resource Compiler.
 CMAKE_RC_FLAGS:STRING=/DWIN32
@@ -293,8 +294,23 @@ OPENGL_gl_LIBRARY:STRING=opengl32
 //GLU library for win32
 OPENGL_glu_LIBRARY:STRING=glu32
 
+//The directory containing a CMake configuration file for Qt5Core.
+Qt5Core_DIR:PATH=C:/3rdPartyLibs/Qt/5.9.1/msvc2017_64/lib/cmake/Qt5Core
+
+//The directory containing a CMake configuration file for Qt5Gui.
+Qt5Gui_DIR:PATH=C:/3rdPartyLibs/Qt/5.9.1/msvc2017_64/lib/cmake/Qt5Gui
+
+//The directory containing a CMake configuration file for Qt5OpenGL.
+Qt5OpenGL_DIR:PATH=C:/3rdPartyLibs/Qt/5.9.1/msvc2017_64/lib/cmake/Qt5OpenGL
+
+//The directory containing a CMake configuration file for Qt5Svg.
+Qt5Svg_DIR:PATH=C:/3rdPartyLibs/Qt/5.9.1/msvc2017_64/lib/cmake/Qt5Svg
+
+//The directory containing a CMake configuration file for Qt5Widgets.
+Qt5Widgets_DIR:PATH=C:/3rdPartyLibs/Qt/5.9.1/msvc2017_64/lib/cmake/Qt5Widgets
+
 //The directory containing a CMake configuration file for Qt5.
-Qt5_DIR:PATH=Qt5_DIR-NOTFOUND
+Qt5_DIR:PATH=C:/3rdPartyLibs/Qt/5.9.1/msvc2017_64/lib/cmake/Qt5
 
 //Select external library BLAS
 WITH_BLAS:BOOL=OFF
@@ -306,7 +322,7 @@ WITH_CGAL_Core:BOOL=ON
 WITH_CGAL_ImageIO:BOOL=ON
 
 //Enable CGAL component CGAL_Qt5
-WITH_CGAL_Qt5:BOOL=OFF
+WITH_CGAL_Qt5:BOOL=ON
 
 //Select external library Coin3D
 WITH_Coin3D:BOOL=OFF
@@ -515,7 +531,7 @@ CGAL_ImageIO_LIBRARY:INTERNAL=
 CGAL_MAINTENANCE_PACKAGE_DIR:INTERNAL=C:/CGAL/CGAL-4.9
 CGAL_Qt5_3RD_PARTY_DEFINITIONS:INTERNAL=
 CGAL_Qt5_3RD_PARTY_INCLUDE_DIRS:INTERNAL=
-CGAL_Qt5_3RD_PARTY_LIBRARIES:INTERNAL=
+CGAL_Qt5_3RD_PARTY_LIBRARIES:INTERNAL=glu32;opengl32
 CGAL_Qt5_3RD_PARTY_LIBRARIES_DIRS:INTERNAL=
 CGAL_Qt5_LIBRARY:INTERNAL=
 //Variable hidden from user
@@ -530,16 +546,12 @@ CMAKE_CACHE_MAJOR_VERSION:INTERNAL=3
 CMAKE_CACHE_MINOR_VERSION:INTERNAL=7
 //Patch version of cmake used to create the current loaded cache
 CMAKE_CACHE_PATCH_VERSION:INTERNAL=2
-//ADVANCED property for variable: CMAKE_COLOR_MAKEFILE
-CMAKE_COLOR_MAKEFILE-ADVANCED:INTERNAL=1
 //Path to CMake executable.
 CMAKE_COMMAND:INTERNAL=C:/Program Files/CMake/bin/cmake.exe
 //Path to cpack program executable.
 CMAKE_CPACK_COMMAND:INTERNAL=C:/Program Files/CMake/bin/cpack.exe
 //Path to ctest program executable.
 CMAKE_CTEST_COMMAND:INTERNAL=C:/Program Files/CMake/bin/ctest.exe
-//ADVANCED property for variable: CMAKE_CXX_COMPILER
-CMAKE_CXX_COMPILER-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_CXX_FLAGS
 CMAKE_CXX_FLAGS-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_CXX_FLAGS_DEBUG
@@ -552,8 +564,6 @@ CMAKE_CXX_FLAGS_RELEASE-ADVANCED:INTERNAL=1
 CMAKE_CXX_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_CXX_STANDARD_LIBRARIES
 CMAKE_CXX_STANDARD_LIBRARIES-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: CMAKE_C_COMPILER
-CMAKE_C_COMPILER-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_C_FLAGS
 CMAKE_C_FLAGS-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_C_FLAGS_DEBUG
@@ -566,8 +576,6 @@ CMAKE_C_FLAGS_RELEASE-ADVANCED:INTERNAL=1
 CMAKE_C_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_C_STANDARD_LIBRARIES
 CMAKE_C_STANDARD_LIBRARIES-ADVANCED:INTERNAL=1
-//Path to cache edit program executable.
-CMAKE_EDIT_COMMAND:INTERNAL=C:/Program Files/CMake/bin/cmake-gui.exe
 //Executable file format
 CMAKE_EXECUTABLE_FORMAT:INTERNAL=Unknown
 //ADVANCED property for variable: CMAKE_EXE_LINKER_FLAGS
@@ -583,7 +591,7 @@ CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //Name of external makefile project generator.
 CMAKE_EXTRA_GENERATOR:INTERNAL=
 //Name of generator.
-CMAKE_GENERATOR:INTERNAL=NMake Makefiles
+CMAKE_GENERATOR:INTERNAL=Visual Studio 15 2017 Win64
 //Name of generator platform.
 CMAKE_GENERATOR_PLATFORM:INTERNAL=
 //Name of generator toolset.
@@ -623,8 +631,6 @@ CMAKE_INSTALL_SHAREDSTATEDIR-ADVANCED:INTERNAL=1
 CMAKE_INSTALL_SYSCONFDIR-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_LINKER
 CMAKE_LINKER-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: CMAKE_MAKE_PROGRAM
-CMAKE_MAKE_PROGRAM-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_MODULE_LINKER_FLAGS
 CMAKE_MODULE_LINKER_FLAGS-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_MODULE_LINKER_FLAGS_DEBUG
@@ -636,7 +642,7 @@ CMAKE_MODULE_LINKER_FLAGS_RELEASE-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO
 CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //number of local generators
-CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=5
+CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=6
 //ADVANCED property for variable: CMAKE_RC_COMPILER
 CMAKE_RC_COMPILER-ADVANCED:INTERNAL=1
 CMAKE_RC_COMPILER_WORKS:INTERNAL=1
@@ -681,6 +687,8 @@ GMP_COMPILE_RES:INTERNAL=TRUE
 GMP_IN_CGAL_AUXILIARY:INTERNAL=TRUE
 //Result of TRY_RUN
 GMP_RUN_RES:INTERNAL=0
+//Generator uses intermediate configuration directory
+HAS_CFG_INTDIR:INTERNAL=TRUE
 //Result of TRY_COMPILE
 MPFR_COMPILE_RES:INTERNAL=TRUE
 MPFR_IN_CGAL_AUXILIARY:INTERNAL=TRUE

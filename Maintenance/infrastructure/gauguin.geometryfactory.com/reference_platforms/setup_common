@@ -31,23 +31,30 @@ export MPFR_INC_DIR="C:\3rdPartyLibs\VC-${ARCH}\gmp-5.0.1_and_mpfr-3.0.0\include
 export MPFR_LIB_DIR="C:\3rdPartyLibs\VC-${ARCH}\gmp-5.0.1_and_mpfr-3.0.0\lib"
 export PATH="`cygpath $GMP_LIB_DIR`":$PATH
 
-##paths depending on the compiler and the architecture
-#if [ -d /cygdrive/c/3rdPartyLibs/Qt/5.8/msvc${VC_VERSION_YEAR}_${ARCH} ]; then
-#   export QTDIR="C:\3rdPartyLibs\Qt\5.8\msvc${VC_VERSION_YEAR}_${ARCH}"
-#   export Qt5_DIR=`cygpath -w /cygdrive/c/3rdPartyLibs/Qt/5.8/msvc${VC_VERSION_YEAR}_${ARCH}/lib/cmake/Qt5`
-##else
-##  export Qt5_DIR=`cygpath -w /cygdrive/c/3rdPartyLibs/VC${VC_VERSION_YEAR}-${ARCH}/QT-5*/*/msvc*/lib/cmake/Qt5`
-#fi
+#paths depending on the compiler and the architecture
+if [ -d /cygdrive/c/3rdPartyLibs/Qt/${QT_VERSION}/msvc${VC_VERSION_YEAR}_${ARCH} ]; then
+   export QTDIR="C:\3rdPartyLibs\Qt\${QT_VERSION}\msvc${VC_VERSION_YEAR}_${ARCH}"
+   export Qt5_DIR=`cygpath -w /cygdrive/c/3rdPartyLibs/Qt/${QT_VERSION}/msvc${VC_VERSION_YEAR}_${ARCH}/lib/cmake/Qt5`
+elif [ -d /cygdrive/c/3rdPartyLibs/Qt/${QT_VERSION}/msvc${VC_VERSION_YEAR} ]; then
+   export QTDIR="C:\3rdPartyLibs\Qt\${QT_VERSION}\msvc${VC_VERSION_YEAR}"
+   export Qt5_DIR=`cygpath -w /cygdrive/c/3rdPartyLibs/Qt/${QT_VERSION}/msvc${VC_VERSION_YEAR}/lib/cmake/Qt5`
+#else
+#  export Qt5_DIR=`cygpath -w /cygdrive/c/3rdPartyLibs/VC${VC_VERSION_YEAR}-${ARCH}/QT-5*/*/msvc*/lib/cmake/Qt5`
+fi
 
-#if [ -d /cygdrive/c/3rdPartyLibs/VC${VC_VERSION}-${ARCH}/libQGLViewer-2.6.2 ]; then
-#   export QGLVIEWERROOT="C:\3rdPartyLibs\VC${VC_VERSION}-${ARCH}\libQGLViewer-2.6.2"
-#fi
+if [ -d /cygdrive/c/3rdPartyLibs/VC${VC_VERSION}-${ARCH}/libQGLViewer-2.6.2 ]; then
+   export QGLVIEWERROOT="C:\3rdPartyLibs\VC${VC_VERSION}-${ARCH}\libQGLViewer-2.6.2"
+elif [ -d /cygdrive/c/3rdPartyLibs/VC-${ARCH}/libQGLViewer-2.6.2  ]; then
+   export QGLVIEWERROOT="C:\3rdPartyLibs/VC-${ARCH}/libQGLViewer-2.6.2"
+fi
 
 export OPENMESH_DIR="C:\3rdPartyLibs\OpenMesh-6.3"
 export OPENMESH_INC_DIR="${OPENMESH_DIR}\src"
-export OPENMESH_LIB_DIR="${OPENMESH_DIR}\build_vs${VC_VERSION_YEAR}\Build\lib"
+export OPENMESH_LIB_DIR="${OPENMESH_DIR}\build_vs${VC_VERSION_YEAR}-${ARCH}\Build\lib"
 
-export PATH="/cygdrive/c/3rdPartyLibs/zlib-1.2.8/build_vs2017/Release":$PATH
-export PATH="/cygdrive/c/3rdPartyLibs/zlib-1.2.8/build_vs2017/Debug":$PATH
+export PATH=${OPENMESH_LIB_DIR}:$PATH
+
+export PATH="/cygdrive/c/3rdPartyLibs/zlib-1.2.8/build_vs${VC_VERSION_YEAR}/Release":$PATH
+export PATH="/cygdrive/c/3rdPartyLibs/zlib-1.2.8/build_vs${VC_VERSION_YEAR}/Debug":$PATH
 
 
