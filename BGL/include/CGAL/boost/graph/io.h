@@ -210,7 +210,7 @@ bool write_inp(std::ostream& os,
   typedef typename boost::graph_traits<FaceGraph>::faces_size_type faces_size_type;
 
   typedef typename boost::property_map<FaceGraph, CGAL::vertex_point_t>::const_type VPM;
-  typedef boost::property_traits<VPM>::value_type Point_3;
+  typedef typename boost::property_traits<VPM>::value_type Point_3;
 
   VPM vpm = get(CGAL::vertex_point,g);
   vertices_size_type nv = static_cast<vertices_size_type>(std::distance(vertices(g).first, vertices(g).second));
