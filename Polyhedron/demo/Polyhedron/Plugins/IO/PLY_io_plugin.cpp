@@ -183,7 +183,7 @@ bool Polyhedron_demo_ply_plugin::save(const CGAL::Three::Scene_item* item, QFile
   if (!ok)
     return false;
   
-  std::ofstream out(fileinfo.filePath().toUtf8().data());
+  std::ofstream out(fileinfo.filePath().toUtf8().data(), std::ios::binary);
   out.precision (std::numeric_limits<double>::digits10 + 2);
   
   // This plugin supports point sets
