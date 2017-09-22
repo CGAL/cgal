@@ -47,6 +47,6 @@ void main(void)
     0, shrink_factor, 0, 0,
     0, 0, shrink_factor, 0,
     0, 0, 0, 1);
-    void compute_distances();
+    compute_distances();
   gl_Position = mvp_matrix *transOB * scaling * transBO * vertex;
 }
