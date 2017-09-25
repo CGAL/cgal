@@ -673,11 +673,13 @@ one_step()
       case REFINE_FACETS:
         facets_mesher_.scan_edges();
         refinement_stage = REFINE_FACETS_AND_EDGES;
-        break;
+        if (!facets_mesher_.is_algorithm_done()) break;
+        CGAL_FALLTHROUGH;
       case REFINE_FACETS_AND_EDGES:
         facets_mesher_.scan_vertices();
         refinement_stage = REFINE_FACETS_AND_EDGES_AND_VERTICES;
-        break;
+        if (!facets_mesher_.is_algorithm_done()) break;
+        CGAL_FALLTHROUGH;
       default:
         facets_visitor_.activate();
         cells_mesher_.scan_triangulation();
