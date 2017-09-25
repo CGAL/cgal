@@ -68,8 +68,8 @@ public:
   std::size_t& id()       { return mID; }
   std::size_t  id() const { return mID; }
 
-  Polyhedron_demo_vertex() : Pdv_base(), mID(-1), nb_of_feature_edges(0) {}
-  Polyhedron_demo_vertex(const Point& p) : Pdv_base(p), mID(-1), nb_of_feature_edges(0) {}
+  Polyhedron_demo_vertex() : Pdv_base(), mID(-1), time_stamp_(-1), nb_of_feature_edges(0) {}
+  Polyhedron_demo_vertex(const Point& p) : Pdv_base(p), mID(-1), time_stamp_(-1), nb_of_feature_edges(0) {}
 };
 
 template <class Refs, class Tprev, class Tvertex, class Tface>
