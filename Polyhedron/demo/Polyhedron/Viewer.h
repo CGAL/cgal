@@ -35,6 +35,7 @@ class VIEWER_EXPORT Viewer : public CGAL::Three::Viewer_interface {
 
 public:
   Viewer(QWidget * parent, bool antialiasing = false);
+  Viewer(QWidget * parent, Viewer *sharedWidget, bool antialiasing = false);
   ~Viewer();
   bool testDisplayId(double, double, double)Q_DECL_OVERRIDE;
   void updateIds(CGAL::Three::Scene_item *)Q_DECL_OVERRIDE;
@@ -87,6 +88,7 @@ public:
 
 Q_SIGNALS:
   void sendMessage(QString);
+  void GLinit();
 public Q_SLOTS:
   //! Sets the antialiasing to true or false.
   void setAntiAliasing(bool b) Q_DECL_OVERRIDE;

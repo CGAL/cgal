@@ -188,8 +188,6 @@ void CGAL::Three::Scene_item::attribBuffers(CGAL::Three::Viewer_interface* viewe
 
 QOpenGLShaderProgram* CGAL::Three::Scene_item::getShaderProgram(int name, CGAL::Three::Viewer_interface * viewer) const
 {
-    if(viewer == 0)
-        viewer = dynamic_cast<CGAL::Three::Viewer_interface*>(*QGLViewer::QGLViewerPool().begin());
     return viewer->getShaderProgram(name);
 }
 

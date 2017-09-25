@@ -24,7 +24,6 @@
 #include <CGAL/Three/Scene_group_item.h>
 class QEvent;
 class QMouseEvent;
-namespace GlSplat { class SplatRenderer; }
 namespace CGAL { namespace Three{ class Viewer_interface;}}
 
 //! This class is not supposed to be used by Plugins, but sometimes you may need access to
@@ -237,6 +236,14 @@ private Q_SLOTS:
   // Casts a selection ray and calls the item function select.
   void setSelectionRay(double, double, double, double, double, double);
   void s_itemAboutToBeDestroyed(CGAL::Three::Scene_item *);
+  void callDraw(){
+    Q_FOREACH(QGLViewer* viewer, QGLViewer::QGLViewerPool())
+    {
+      if(viewer == NULL)
+        continue;
+      viewer->update();
+    }
+  }
 private:
   /*! Calls the drawing functions of each visible item according
    * to its current renderingMode. If with_names is true, uses
@@ -259,12 +266,11 @@ private:
   bool picked;
   QPoint picked_pixel;
   bool gl_init;
-  static GlSplat::SplatRenderer* ms_splatting;
-  static int ms_splattingCounter;
   QMap<QModelIndex, int> index_map;
 
 public:
-  static GlSplat::SplatRenderer* splatting();
+  void newViewer(CGAL::Three::Viewer_interface*);
+  void removeViewer(CGAL::Three::Viewer_interface*);
 
 }; // end class Scene
 

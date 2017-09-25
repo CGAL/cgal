@@ -10,6 +10,7 @@ Triangle_container::Triangle_container(int program, bool indexed)
 
 void Triangle_container::initGL(CGAL::Three::Scene_item* item, CGAL::Three::Viewer_interface* viewer)const
 {
+  viewer->makeCurrent();
   if(indexed)
   {
     switch(program_id)
@@ -25,14 +26,15 @@ void Triangle_container::initGL(CGAL::Three::Scene_item* item, CGAL::Three::View
       VBOs[Vertex_indices] =
           new CGAL::Three::Vbo("indices",
                                QOpenGLBuffer::IndexBuffer);
-      VAO = new CGAL::Three::Vao(item->getShaderProgram(program_id, viewer));
-      VAO->addVbo(VBOs[Smooth_vertices]);
-      VAO->addVbo(VBOs[Vertex_indices]);
-      VAO->addVbo(VBOs[Smooth_normals]);
-      VAO->addVbo(VBOs[VColors]);
+      VAOs[viewer] = new CGAL::Three::Vao(item->getShaderProgram(program_id, viewer));
+      VAOs[viewer]->addVbo(VBOs[Smooth_vertices]);
+      VAOs[viewer]->addVbo(VBOs[Vertex_indices]);
+      VAOs[viewer]->addVbo(VBOs[Smooth_normals]);
+      VAOs[viewer]->addVbo(VBOs[VColors]);
     }
       break;
     default:
+      Q_UNUSED(viewer);
       break;
     }
   }
@@ -45,78 +47,88 @@ void Triangle_container::initGL(CGAL::Three::Scene_item* item, CGAL::Three::View
     //case VI::PROGRAM_C3T3_TETS:
 
     {
-      VBOs[Flat_vertices] =
-          new CGAL::Three::Vbo("vertex");
-      VBOs[Flat_normals] =
-          new CGAL::Three::Vbo("normals");
-      VBOs[FColors] =
-          new CGAL::Three::Vbo("colors");
-      VAO = new CGAL::Three::Vao(item->getShaderProgram(program_id, viewer));
-      VAO->addVbo(VBOs[Flat_vertices]);
-      VAO->addVbo(VBOs[Flat_normals]);
-      VAO->addVbo(VBOs[FColors]);
+      if(!VBOs[Flat_vertices])
+        VBOs[Flat_vertices] =
+            new CGAL::Three::Vbo("vertex");
+      if(!VBOs[Flat_normals])
+        VBOs[Flat_normals] =
+            new CGAL::Three::Vbo("normals");
+      if(!VBOs[FColors])
+        VBOs[FColors] =
+            new CGAL::Three::Vbo("colors");
+      VAOs[viewer] = new CGAL::Three::Vao(item->getShaderProgram(program_id, viewer));
+      VAOs[viewer]->addVbo(VBOs[Flat_vertices]);
+      VAOs[viewer]->addVbo(VBOs[Flat_normals]);
+      VAOs[viewer]->addVbo(VBOs[FColors]);
 
     }
+      break;
+    default:
+      Q_UNUSED(viewer);
       break;
     }
     switch(program_id)
     {
     case VI::PROGRAM_C3T3:
+
       //case VI::PROGRAM_C3T3_TETS:
     {
-      VBOs[Facet_barycenters] =
-          new CGAL::Three::Vbo("barycenter");
-      VAO->addVbo(VBOs[Facet_barycenters]);
+      if(!VBOs[Facet_barycenters])
+        VBOs[Facet_barycenters] =
+            new CGAL::Three::Vbo("barycenter");
+      VAOs[viewer]->addVbo(VBOs[Facet_barycenters]);
     }
       break;
     default:
+      Q_UNUSED(viewer);
       break;
     }
   }
-  is_gl_init = true;
+  is_gl_init[viewer] = true;
 }
+
 void Triangle_container::draw(const CGAL::Three::Scene_item& item,
                               CGAL::Three::Viewer_interface* viewer,
                               bool is_color_uniform ) const
 {
-  if(!is_init)
-  {
-    initializeBuffers();
-  }
+//  if(!is_init[viewer])
+//  {
+//    initializeBuffers(viewer);
+//  }
   item.attribBuffers(viewer, program_id);
 
   if(indexed)
   {
-    VAO->bind();
+    VAOs[viewer]->bind();
     if(item.isSelected())
-      VAO->program->setAttributeValue("is_selected", true);
+      VAOs[viewer]->program->setAttributeValue("is_selected", true);
     else
-      VAO->program->setAttributeValue("is_selected", false);
+      VAOs[viewer]->program->setAttributeValue("is_selected", false);
     if(is_color_uniform)
-      VAO->program->setAttributeValue("colors", color);
+      VAOs[viewer]->program->setAttributeValue("colors", color);
     VBOs[Vertex_indices]->bind();
     viewer->glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(idx_size),
                            GL_UNSIGNED_INT, 0 );
     VBOs[Vertex_indices]->release();
-    VAO->release();
+    VAOs[viewer]->release();
   }
   else
   {
-    VAO->bind();
+    VAOs[viewer]->bind();
     if(program_id == VI::PROGRAM_C3T3
        //|| program_id == VI::PROGRAM_C3T3_TETS
        )
-      VAO->program->setUniformValue("shrink_factor", shrink_factor);
+      VAOs[viewer]->program->setUniformValue("shrink_factor", shrink_factor);
     if(program_id == VI::PROGRAM_C3T3)
-      VAO->program->setUniformValue("cutplane", plane);
+      VAOs[viewer]->program->setUniformValue("cutplane", plane);
     if(item.isSelected())
-      VAO->program->setAttributeValue("is_selected", true);
+      VAOs[viewer]->program->setAttributeValue("is_selected", true);
     else
-      VAO->program->setAttributeValue("is_selected", false);
+      VAOs[viewer]->program->setAttributeValue("is_selected", false);
     if(is_color_uniform)
-      VAO->program->setAttributeValue("colors", color);
+      VAOs[viewer]->program->setAttributeValue("colors", color);
     viewer->glDrawArrays(GL_TRIANGLES,0,static_cast<GLsizei>(flat_size/3));
 
-    VAO->release();
+    VAOs[viewer]->release();
   }
 }

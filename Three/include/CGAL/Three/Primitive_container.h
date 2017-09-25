@@ -42,7 +42,6 @@ struct DEMO_FRAMEWORK_EXPORT Primitive_container
 
     Primitive_container(int program, bool indexed)
       : program_id(program), indexed(indexed),
-        is_init(false), is_gl_init(false),
         flat_size(0), idx_size(0)
     {}
 
@@ -51,19 +50,28 @@ struct DEMO_FRAMEWORK_EXPORT Primitive_container
       Q_FOREACH(Vbo* vbo, VBOs)
         if(vbo)
           delete vbo;
-      delete VAO;
+      Q_FOREACH(CGAL::Three::Viewer_interface*viewer, VAOs.keys())
+      {
+        removeViewer(viewer);
+      }
     }
     virtual void initGL(CGAL::Three::Scene_item* item, CGAL::Three::Viewer_interface* viewer) const = 0;
+    void removeViewer(CGAL::Three::Viewer_interface* viewer) const
+    {
+      delete VAOs[viewer];
+      VAOs.remove(viewer);
+    }
 
     virtual void draw(const Scene_item &item, CGAL::Three::Viewer_interface* viewer,
                       bool is_color_uniform) const = 0;
 
-    void initializeBuffers() const
+    void initializeBuffers(CGAL::Three::Viewer_interface* viewer) const
     {
-      if(!VAO)
+      if(!VAOs[viewer])
         return;
-      VAO->bind();
-      Q_FOREACH(CGAL::Three::Vbo* vbo, VAO->vbos)
+      viewer->makeCurrent();
+      VAOs[viewer]->bind();
+      Q_FOREACH(CGAL::Three::Vbo* vbo, VAOs[viewer]->vbos)
       {
         vbo->bind();
         if(vbo->dataSize !=0)
@@ -77,19 +85,19 @@ struct DEMO_FRAMEWORK_EXPORT Primitive_container
           }
           if(vbo->vbo_type == QOpenGLBuffer::VertexBuffer)
           {
-            VAO->program->enableAttributeArray(vbo->attribute);
-            VAO->program->setAttributeBuffer(vbo->attribute, vbo->data_type, vbo->offset, vbo->tupleSize, vbo->stride);
+            VAOs[viewer]->program->enableAttributeArray(vbo->attribute);
+            VAOs[viewer]->program->setAttributeBuffer(vbo->attribute, vbo->data_type, vbo->offset, vbo->tupleSize, vbo->stride);
           }
         }
         else if(vbo->vbo_type == QOpenGLBuffer::VertexBuffer)
         {
-          VAO->program->disableAttributeArray(vbo->attribute);
+          VAOs[viewer]->program->disableAttributeArray(vbo->attribute);
         }
         vbo->release();
       }
-      VAO->release();
+      VAOs[viewer]->release();
 
-      is_init = true;
+      is_init[viewer] = true;
     }
 
     void reset_vbos()
@@ -102,12 +110,12 @@ struct DEMO_FRAMEWORK_EXPORT Primitive_container
       }
     }
 
-    mutable Vao* VAO;
+    mutable QMap<CGAL::Three::Viewer_interface*, Vao*> VAOs;
     mutable std::vector<Vbo*> VBOs;
     int program_id;
     bool indexed;
-    mutable bool is_init;
-    mutable bool is_gl_init;
+    mutable QMap<CGAL::Three::Viewer_interface*, bool> is_init;
+    mutable QMap<CGAL::Three::Viewer_interface*, bool> is_gl_init;
     mutable std::size_t flat_size;
     mutable std::size_t idx_size;
     mutable QColor color;

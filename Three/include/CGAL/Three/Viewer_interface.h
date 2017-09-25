@@ -104,6 +104,7 @@ public:
   //! Creates a valid context for OpenGL 2.1.
   //! \param parent the parent widget. It usually is the MainWindow.
   Viewer_interface(QWidget* parent) : QGLViewer(CGAL::Qt::createOpenGLContext(), parent) {}
+  Viewer_interface(QWidget* parent, QGLWidget* sharedWidget) : QGLViewer(parent, sharedWidget ) {}
   virtual ~Viewer_interface() {}
 
   //! \brief Sets the scene for the viewer.

@@ -30,6 +30,7 @@ public:
   bool inFastDrawing;
   bool inDrawWithNames;
   bool clipping;
+  bool is_sharing;
   QVector4D clipbox[6];
   QPainter *painter;
   // F P S    d i s p l a y
@@ -100,17 +101,25 @@ public:
   void clearDistancedisplay();
   void draw_aux(bool with_names, Viewer*);
   //! Contains all the programs for the item rendering.
-  mutable std::vector<QOpenGLShaderProgram*> shader_programs;
+  static std::vector<QOpenGLShaderProgram*> shader_programs;
+  std::vector<QOpenGLShaderProgram*>& shaderPrograms()
+  {
+    return shader_programs;
+  }
   QMatrix4x4 projectionMatrix;
   void setFrustum(double l, double r, double t, double b, double n, double f);
   QImage* takeSnapshot(Viewer* viewer, int quality, int background_color, QSize size, double oversampling, bool expand);
   void sendSnapshotToClipboard(Viewer*);
 };
+
+std::vector<QOpenGLShaderProgram*> Viewer_impl::shader_programs = std::vector<QOpenGLShaderProgram*>(Viewer::NB_OF_PROGRAMS);
+
 Viewer::Viewer(QWidget* parent, bool antialiasing)
   : CGAL::Three::Viewer_interface(parent)
 {
   d = new Viewer_impl;
   d->scene = 0;
+  d->is_sharing = false;
   d->initialized = false;
   d->antialiasing = antialiasing;
   d->twosides = false;
@@ -119,7 +128,7 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
   d->inFastDrawing = true;
   d->inDrawWithNames = false;
   d->clipping = false;
-  d->shader_programs.resize(NB_OF_PROGRAMS);
+  d->shaderPrograms().resize(NB_OF_PROGRAMS);
   d->offset = qglviewer::Vec(0,0,0);
   d->textRenderer = new TextRenderer();
   connect( d->textRenderer, SIGNAL(sendMessage(QString,int)),
@@ -138,6 +147,85 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
                       tr("Toggle the primitive IDs visibility of the selected Item."));
   setKeyDescription(Qt::Key_D,
                       tr("Disable the distance between two points  visibility."));
+
+#if QGLVIEWER_VERSION >= 0x020501
+  //modify mouse bindings that have been updated
+  setMouseBinding(Qt::Key(0), Qt::NoModifier, Qt::LeftButton, RAP_FROM_PIXEL, true, Qt::RightButton);
+  setMouseBindingDescription(Qt::ShiftModifier, Qt::RightButton,
+                             tr("Select and pop context menu"));
+  setMouseBinding(Qt::Key_R, Qt::NoModifier, Qt::LeftButton, RAP_FROM_PIXEL);
+  //use the new API for these
+  setMouseBinding(Qt::ShiftModifier, Qt::LeftButton, SELECT);
+
+  setMouseBindingDescription(Qt::Key(0), Qt::ShiftModifier, Qt::LeftButton,
+                             tr("Selects and display context "
+                                "menu of the selected item"));
+  setMouseBindingDescription(Qt::Key_I, Qt::NoModifier, Qt::LeftButton,
+                             tr("Show/hide the primitive ID."));
+  setMouseBindingDescription(Qt::Key_D, Qt::NoModifier, Qt::LeftButton,
+                             tr("Selects a point. When the second point is selected,  "
+                                "displays the two points and the distance between them."));
+  setMouseBindingDescription(Qt::Key_O, Qt::NoModifier, Qt::LeftButton,
+                             tr("Move the camera orthogonally to the picked facet of a Scene_polyhedron_item or "
+                                "to the current selection of a Scene_points_with_normal_item."));
+#else
+  setMouseBinding(Qt::SHIFT + Qt::LeftButton, SELECT);
+  setMouseBindingDescription(Qt::SHIFT + Qt::RightButton,
+                             tr("Selects and display context "
+                                "menu of the selected item"));
+
+#endif // QGLVIEWER_VERSION >= 2.5.0
+  prev_radius = sceneRadius();
+  d->axis_are_displayed = true;
+  d->has_text = false;
+  d->i_is_pressed = false;
+  d->z_is_pressed = false;
+  d->fpsTime.start();
+  d->fpsCounter=0;
+  d->f_p_s=0.0;
+  d->fpsString=tr("%1Hz", "Frames per seconds, in Hertz").arg("?");
+  d->distance_is_displayed = false;
+  d->is_d_pressed = false;
+  d->viewer = this;
+}
+
+Viewer::Viewer(QWidget* parent,
+               Viewer* sharedWidget,
+               bool antialiasing)
+  : CGAL::Three::Viewer_interface(parent, sharedWidget)
+{
+  d = new Viewer_impl;
+  d->is_sharing = true;
+  d->scene = 0;
+  d->initialized = false;
+  d->antialiasing = antialiasing;
+  d->twosides = false;
+  this->setProperty("draw_two_sides", false);
+  d->macro_mode = false;
+  d->inFastDrawing = true;
+  d->inDrawWithNames = false;
+  d->clipping = false;
+  d->shaderPrograms().resize(NB_OF_PROGRAMS);
+  d->offset = qglviewer::Vec(0,0,0);
+  d->textRenderer = new TextRenderer();
+  d->is_ogl_4_3 = sharedWidget->d->is_ogl_4_3;
+  d->_recentFunctions = sharedWidget->d->_recentFunctions;
+  connect( d->textRenderer, SIGNAL(sendMessage(QString,int)),
+           this, SLOT(printMessage(QString,int)) );
+  connect(&d->messageTimer, SIGNAL(timeout()), SLOT(hideMessage()));
+  setShortcut(EXIT_VIEWER, 0);
+  setShortcut(DRAW_AXIS, 0);
+  setKeyDescription(Qt::Key_T,
+                    tr("Turn the camera by 180 degrees"));
+  setKeyDescription(Qt::Key_M,
+                    tr("Toggle macro mode: useful to view details very near from the camera, "
+                       "but decrease the z-buffer precision"));
+  setKeyDescription(Qt::Key_A,
+                    tr("Toggle the axis system visibility."));
+  setKeyDescription(Qt::Key_I + Qt::CTRL,
+                    tr("Toggle the primitive IDs visibility of the selected Item."));
+  setKeyDescription(Qt::Key_D,
+                    tr("Disable the distance between two points  visibility."));
 
 #if QGLVIEWER_VERSION >= 0x020501
   //modify mouse bindings that have been updated
@@ -224,7 +312,6 @@ bool Viewer::inFastDrawing() const
 
 void Viewer::draw()
 { 
-  makeCurrent();
   glEnable(GL_DEPTH_TEST);
   d->draw_aux(false, this);
 }
@@ -236,40 +323,53 @@ void Viewer::fastDraw()
 
 void Viewer::initializeGL()
 {
-#if QGLVIEWER_VERSION >= 0x020700
-
-  QSurfaceFormat format;
-  format.setDepthBufferSize(24);
-  format.setStencilBufferSize(8);
-  format.setVersion(4,3);
-  format.setProfile(QSurfaceFormat::CompatibilityProfile);
-  context()->setFormat(format);
-  bool created = context()->create();
-  if(!created || context()->format().profile() != QSurfaceFormat::CompatibilityProfile) {
-    // impossible to get a 4.3 compatibility profile, retry with 2.0
-    format.setVersion(2,1);
-    context()->setFormat(format);
-    created = context()->create();
-    d->is_ogl_4_3 = false;
-  }
-  else
+  if(!d->is_sharing)
   {
-    d->is_ogl_4_3 = true;
-    d->_recentFunctions = new QOpenGLFunctions_4_3_Compatibility();
-  }
-  CGAL_warning_msg(created && context()->isValid(), "The openGL context initialization failed "
-                   "and the default context (2.0) will be used" );
-  makeCurrent();
+#if QGLVIEWER_VERSION >= 0x020700
+    QSurfaceFormat format;
+    format.setDepthBufferSize(24);
+    format.setStencilBufferSize(8);
+    format.setVersion(4,3);
+    format.setProfile(QSurfaceFormat::CompatibilityProfile);
+    context()->setFormat(format);
+    bool created = context()->create();
+    if(!created || context()->format().profile() != QSurfaceFormat::CompatibilityProfile) {
+      // impossible to get a 4.3 compatibility profile, retry with 2.0
+      format.setVersion(2,1);
+      context()->setFormat(format);
+      created = context()->create();
+      d->is_ogl_4_3 = false;
+    }
+    else
+    {
+      d->is_ogl_4_3 = true;
+      d->_recentFunctions = new QOpenGLFunctions_4_3_Compatibility();
+    }
+    CGAL_warning_msg(created && context()->isValid(), "The openGL context initialization failed "
+                                                      "and the default context (2.0) will be used" );
+    makeCurrent();
 #else
-  QGLFormat format;
-  format.setVersion(4,3);
-  format.setProfile(QGLFormat::CompatibilityProfile);
-  QGLContext *new_context = new QGLContext(format, this);
-  new_context->setFormat(format);
-  bool created = new_context->create();
-  if(!created || new_context->format().profile() != QGLFormat::CompatibilityProfile) {
-    // impossible to get a 4.3 compatibility profile, retry with 2.0
-    format.setVersion(2,1);
+    QGLFormat format;
+    format.setVersion(4,3);
+    format.setProfile(QGLFormat::CompatibilityProfile);
+    QGLContext *new_context = new QGLContext(format, this);
+    new_context->setFormat(format);
+    bool created = new_context->create();
+    if(!created || new_context->format().profile() != QGLFormat::CompatibilityProfile) {
+      // impossible to get a 4.3 compatibility profile, retry with 2.0
+      format.setVersion(2,1);
+      new_context->setFormat(format);
+      created = new_context->create();
+      d->is_ogl_4_3 = false;
+    }
+    else
+    {
+      d->is_ogl_4_3 = true;
+      d->_recentFunctions = new QOpenGLFunctions_4_3_Compatibility();
+    }
+    CGAL_warning_msg(created && new_context->isValid(), "The openGL context initialization failed "
+                                                        "and the default context (2.0) will be used" );
+    this->setContext(new_context);
     new_context->setFormat(format);
     created = new_context->create();
     d->is_ogl_4_3 = false;
@@ -279,9 +379,7 @@ void Viewer::initializeGL()
     d->is_ogl_4_3 = true;
     d->_recentFunctions = new QOpenGLFunctions_4_3_Compatibility();
   }
-  CGAL_warning_msg(created && new_context->isValid(), "The openGL context initialization failed "
-                   "and the default context (2.0) will be used" );
-  this->setContext(new_context);
+  GLinit();
   context()->makeCurrent();
 #endif
   QGLViewer::initializeGL();
@@ -1179,9 +1277,9 @@ QOpenGLShaderProgram* Viewer::declare_program(int name,
   // workaround constness issues in Qt
   Viewer* viewer = const_cast<Viewer*>(this);
 
-  if(d->shader_programs[name])
+  if(d->shaderPrograms()[name])
   {
-    return d->shader_programs[name];
+    return d->shaderPrograms()[name];
   }
 
   else
@@ -1205,7 +1303,7 @@ QOpenGLShaderProgram* Viewer::declare_program(int name,
     }
     program->bindAttributeLocation("colors", 1);
     program->link();
-    d->shader_programs[name] = program;
+    d->shaderPrograms()[name] = program;
     return program;
   }
 }
@@ -1293,6 +1391,7 @@ void Viewer::paintEvent(QPaintEvent *)
 
 void Viewer::paintGL()
 {
+  makeCurrent();
   if (!d->painter->isActive())
     d->painter->begin(this);
   d->painter->beginNativePainting();

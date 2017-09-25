@@ -395,6 +395,7 @@ protected:
   QList<int> getSelectedSceneItemIndices() const;
 private:
   void updateMenus();
+  void setupViewer(Viewer* viewer);
   bool load_plugin(QString names, bool blacklisted);
   void recurseExpand(QModelIndex index);
   QMap<QString, QMenu*> menu_map;
@@ -443,6 +444,7 @@ public:
 
 private Q_SLOTS:
   void set_facegraph_mode_adapter(bool is_polyhedron);
+  void on_actionAdd_Viewer_triggered();
 };
 
 typedef std::pair<QFileInfo,

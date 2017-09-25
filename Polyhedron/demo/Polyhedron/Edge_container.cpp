@@ -12,6 +12,7 @@ Edge_container::Edge_container(int program, bool indexed)
 
 void Edge_container::initGL(Scene_item *item, Viewer_interface *viewer) const
 {
+  viewer->makeCurrent();
   if(indexed)
   {
     switch(program_id)
@@ -19,44 +20,47 @@ void Edge_container::initGL(Scene_item *item, Viewer_interface *viewer) const
     case VI::PROGRAM_WITHOUT_LIGHT:
     case VI::PROGRAM_NO_SELECTION:
     {
-      VBOs[Vertices] =
-          new CGAL::Three::Vbo("vertex");
-      VBOs[Indices] =
-          new CGAL::Three::Vbo("indices",
-                               QOpenGLBuffer::IndexBuffer);
-      VAO = new CGAL::Three::Vao(item->getShaderProgram(program_id, viewer));
-      VAO->addVbo(VBOs[Vertices]);
-      VAO->addVbo(VBOs[Indices]);
+      if(!VBOs[Vertices])
+        VBOs[Vertices] =
+            new CGAL::Three::Vbo("vertex");
+      if(!VBOs[Indices])
+        VBOs[Indices] =
+            new CGAL::Three::Vbo("indices",
+                                 QOpenGLBuffer::IndexBuffer);
+      VAOs[viewer] = new CGAL::Three::Vao(item->getShaderProgram(program_id, viewer));
+      VAOs[viewer]->addVbo(VBOs[Vertices]);
+      VAOs[viewer]->addVbo(VBOs[Indices]);
     }
       break;
     default:
       break;
     }
   }
+  is_gl_init[viewer] = true;
 }
 void Edge_container::draw(const CGAL::Three::Scene_item& item,
                           CGAL::Three::Viewer_interface* viewer,
                           bool is_color_uniform) const
 {
-  if(!is_init)
+  if(!is_init[viewer])
   {
-    initializeBuffers();
+    initializeBuffers(viewer);
   }
   item.attribBuffers(viewer, program_id);
 
   if(indexed)
   {
-    VAO->bind();
+    VAOs[viewer]->bind();
     if(item.isSelected())
-      VAO->program->setAttributeValue("is_selected", true);
+      VAOs[viewer]->program->setAttributeValue("is_selected", true);
     else
-      VAO->program->setAttributeValue("is_selected", false);
+      VAOs[viewer]->program->setAttributeValue("is_selected", false);
     if(is_color_uniform)
-      VAO->program->setAttributeValue("colors", color);
+      VAOs[viewer]->program->setAttributeValue("colors", color);
     VBOs[Indices]->bind();
-    glDrawElements(GL_LINES, static_cast<GLuint>(idx_size),
+    viewer->glDrawElements(GL_LINES, static_cast<GLuint>(idx_size),
                    GL_UNSIGNED_INT, 0);
     VBOs[Indices]->release();
-    VAO->release();
+    VAOs[viewer]->release();
   }
 }

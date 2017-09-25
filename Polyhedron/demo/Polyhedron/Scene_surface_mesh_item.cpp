@@ -171,17 +171,22 @@ struct Scene_surface_mesh_item_priv{
                     bool index) const;
   void compute_elements() const;
   void checkFloat() const;
-  void initGL(VI* viewer)
+  void initGL()
   {
-    if(!idx_triangles->is_gl_init)
-      idx_triangles->initGL(item, viewer);
-    if(!dup_triangles->is_gl_init)
-      dup_triangles->initGL(item, viewer);
-    if(!idx_edges->is_gl_init)
-      idx_edges->initGL(item, viewer);
-    if(!feature_edges->is_gl_init)
-      feature_edges->initGL(item, viewer);
-
+    Q_FOREACH(QGLViewer* v, QGLViewer::QGLViewerPool())
+    {
+      if(!v)
+        continue;
+      VI* viewer = static_cast<VI*>(v);
+      if(!idx_triangles->is_gl_init[viewer])
+        idx_triangles->initGL(item, viewer);
+      if(!dup_triangles->is_gl_init[viewer])
+        dup_triangles->initGL(item, viewer);
+      if(!idx_edges->is_gl_init[viewer])
+        idx_edges->initGL(item, viewer);
+      if(!feature_edges->is_gl_init[viewer])
+        feature_edges->initGL(item, viewer);
+    }
     if(!isinit)
     {
       item->processData();
@@ -224,6 +229,7 @@ struct Scene_surface_mesh_item_priv{
 
   mutable QOpenGLShaderProgram *program;
   Scene_surface_mesh_item *item;
+  mutable QMap<CGAL::Three::Viewer_interface*, bool> buffers_init;
 
   mutable SMesh::Property_map<face_descriptor,int> fpatch_id_map;
   mutable SMesh::Property_map<vertex_descriptor,int> v_selection_map;
@@ -600,49 +606,52 @@ void D::initialize_colors()const
                     std::back_inserter(colors_));
 }
 
-void D::initializeBuffers(CGAL::Three::Viewer_interface*)const
+void D::initializeBuffers(CGAL::Three::Viewer_interface* viewer)const
 {
-  dup_triangles->initializeBuffers();
-  idx_triangles->initializeBuffers();
-  idx_edges->initializeBuffers();
-  feature_edges->initializeBuffers();
+  dup_triangles->initializeBuffers(viewer);
+  idx_triangles->initializeBuffers(viewer);
+  idx_edges->initializeBuffers(viewer);
+  feature_edges->initializeBuffers(viewer);
 
-  //Clean-up
+  ////Clean-up
   dup_triangles->flat_size = flat_vertices.size();
   idx_triangles->idx_size = idx_data_.size();
   idx_edges->idx_size = idx_edge_data_.size();
   feature_edges->idx_size = idx_feature_edge_data_.size();
-  smooth_vertices       .resize(0);
-  smooth_normals        .resize(0);
-  flat_vertices         .resize(0);
-  flat_normals          .resize(0);
-  f_colors              .resize(0);
-  v_colors              .resize(0);
-  idx_data_             .resize(0);
-  idx_edge_data_        .resize(0);
-  idx_feature_edge_data_.resize(0);
-  smooth_vertices       .shrink_to_fit();
-  smooth_normals        .shrink_to_fit();
-  flat_vertices         .shrink_to_fit();
-  flat_normals          .shrink_to_fit();
-  f_colors              .shrink_to_fit();
-  v_colors              .shrink_to_fit();
-  idx_data_             .shrink_to_fit();
-  idx_edge_data_        .shrink_to_fit();
-  idx_feature_edge_data_.shrink_to_fit();
+  //smooth_vertices       .resize(0);
+  //smooth_normals        .resize(0);
+  //flat_vertices         .resize(0);
+  //flat_normals          .resize(0);
+  //f_colors              .resize(0);
+  //v_colors              .resize(0);
+  //idx_data_             .resize(0);
+  //idx_edge_data_        .resize(0);
+  //idx_feature_edge_data_.resize(0);
+  //smooth_vertices       .shrink_to_fit();
+  //smooth_normals        .shrink_to_fit();
+  //flat_vertices         .shrink_to_fit();
+  //flat_normals          .shrink_to_fit();
+  //f_colors              .shrink_to_fit();
+  //v_colors              .shrink_to_fit();
+  //idx_data_             .shrink_to_fit();
+  //idx_edge_data_        .shrink_to_fit();
+  //idx_feature_edge_data_.shrink_to_fit();
 
-  item->are_buffers_filled = true;
+ // item->are_buffers_filled = true;
 }
 
 
 void Scene_surface_mesh_item::draw(CGAL::Three::Viewer_interface *viewer) const
 {
   if(!d->isinit)
-    d->initGL(viewer);
-  if(!is_locked && !are_buffers_filled )
+    d->initGL();
+  if(!is_locked && are_buffers_filled &&
+     ! d->buffers_init[viewer])
   {
     initializeBuffers(viewer);
+    d->buffers_init[viewer] = true;
   }
+
 
   if(renderingMode() == Gouraud)
   {
@@ -658,12 +667,16 @@ void Scene_surface_mesh_item::draw(CGAL::Three::Viewer_interface *viewer) const
 
 void Scene_surface_mesh_item::drawEdges(CGAL::Three::Viewer_interface *viewer) const
 {
+
   if(!d->isinit)
-    d->initGL(viewer);
-  if(!is_locked && !are_buffers_filled )
+    d->initGL();
+  if(!is_locked && are_buffers_filled &&
+     ! d->buffers_init[viewer])
   {
     initializeBuffers(viewer);
+    d->buffers_init[viewer] = true;
   }
+
   d->idx_edges->color = color().lighter(50);
   d->idx_edges->draw(*this, viewer, true);
   if(d->has_feature_edges)
@@ -675,8 +688,9 @@ void Scene_surface_mesh_item::drawEdges(CGAL::Three::Viewer_interface *viewer) c
 
 void Scene_surface_mesh_item::drawPoints(CGAL::Three::Viewer_interface *viewer) const
 {
+  return;
   if(!d->isinit)
-    d->initGL(viewer);
+    d->initGL();
   if(!is_locked && !are_buffers_filled )
   {
     initializeBuffers(viewer);
@@ -1051,6 +1065,15 @@ void Scene_surface_mesh_item::invalidateOpenGLBuffers()
   d->smesh_->collect_garbage();
   are_buffers_filled = false;
   d->invalidate_stats();
+  Q_FOREACH(CGAL::Three::Viewer_interface* v, d->buffers_init.keys())
+  {
+    if(v == NULL)
+      continue;
+    d->buffers_init[v] = false;
+    v->update();
+  }
+
+
   d->idx_triangles->reset_vbos();
   d->dup_triangles->reset_vbos();
   d->idx_edges->reset_vbos();
@@ -1923,6 +1946,7 @@ bool Scene_surface_mesh_item::shouldDisplayIds(CGAL::Three::Scene_item *current_
 void Scene_surface_mesh_item::computeElements()const
 {
   d->compute_elements();
+  are_buffers_filled = true;
 }
 
 void Scene_surface_mesh_item::initializeBuffers(Viewer_interface *viewer) const
@@ -1930,3 +1954,18 @@ void Scene_surface_mesh_item::initializeBuffers(Viewer_interface *viewer) const
   d->initializeBuffers(viewer);
 }
 
+void Scene_surface_mesh_item::newViewer(Viewer_interface *viewer)
+{
+    d->idx_triangles->initGL(this, viewer);
+    d->dup_triangles->initGL(this, viewer);
+    d->idx_edges->initGL(this, viewer);
+    d->feature_edges->initGL(this, viewer);
+}
+
+void Scene_surface_mesh_item::removeViewer(Viewer_interface *viewer)
+{
+  d->idx_triangles->removeViewer(viewer);
+  d->dup_triangles->removeViewer(viewer);
+  d->idx_edges    ->removeViewer(viewer);
+  d->feature_edges->removeViewer(viewer);
+}

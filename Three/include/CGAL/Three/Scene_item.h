@@ -298,6 +298,16 @@ public:
 
   //!Contains the number of group and subgroups containing this item.
   int has_group;
+  //!
+  //! \brief newViewer adds Vaos for `viewer`.
+  //!
+  //! Override this to call the convinent functions
+  virtual void newViewer(CGAL::Three::Viewer_interface* ){}
+  //!
+  //! \brief removeViewer removes the Vaos fo `viewer`.
+  //!
+  //! Override this to call the convinent functions
+  virtual void removeViewer(CGAL::Three::Viewer_interface*){}
   /*! Passes all the uniform data to the shaders.
     * According to program_name, this data may change.
     */
