@@ -1294,7 +1294,7 @@ void Viewer::paintEvent(QPaintEvent *)
 {
   if(!d->initialized)
     initializeGL();
-    paintGL();
+  paintGL();
 }
 
 void Viewer::paintGL()
