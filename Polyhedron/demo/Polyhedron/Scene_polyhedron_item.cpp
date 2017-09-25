@@ -626,10 +626,6 @@ Scene_polyhedron_item_priv::initialize_buffers(CGAL::Three::Viewer_interface* vi
     program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
     item->buffers[Edges_vertices].release();
 
-    item->buffers[Facets_normals_gouraud].bind();
-    program->enableAttributeArray("normals");
-    program->setAttributeBuffer("normals",GL_FLOAT,0,3);
-    item->buffers[Facets_normals_gouraud].release();
     if(is_multicolor)
     {
       item->buffers[Facets_color].bind();
