@@ -538,7 +538,7 @@ public:
   typedef int                     Corner_index;
 
 #ifndef CGAL_NO_DEPRECATED_CODE
-  CGAL_DEPRECATED typedef Curve_index Curve_segment_index;
+  typedef Curve_index Curve_segment_index CGAL_DEPRECATED;
 #endif
 
   typedef typename Base::R         Gt;
