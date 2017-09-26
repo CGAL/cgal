@@ -92,32 +92,6 @@ struct Edges_proximity_report{
   }
 };
 
-template <class vertex_descriptor, class Handle_map>
-typename Union_find<vertex_descriptor>::handle
-uf_get_handle(vertex_descriptor v,
-              Union_find<vertex_descriptor>& uf_vertices,
-              Handle_map& handles)
-{
-  std::pair<typename Handle_map::iterator, bool> insert_res =
-  handles.insert( std::make_pair(v, typename Union_find<vertex_descriptor>::handle()) );
-  if( insert_res.second )
-  {
-    insert_res.first->second=uf_vertices.make_set(v);
-  }
-  return insert_res.first->second;
-}
-
-template <class vertex_descriptor, class Handle_map>
-void uf_join_vertices(vertex_descriptor v1, vertex_descriptor v2,
-                      Union_find<vertex_descriptor>& uf_vertices,
-                      Handle_map& handles)
-{
-  typename Union_find<vertex_descriptor>::handle
-    h1 = uf_get_handle(v1, uf_vertices, handles),
-    h2 = uf_get_handle(v2, uf_vertices, handles);
-  uf_vertices.unify_sets(h1, h2);
-}
-
 } // end of internal namespace
 
 // \todo document me and move me into another file
