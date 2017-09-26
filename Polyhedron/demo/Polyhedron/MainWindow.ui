@@ -18,12 +18,12 @@
     <normaloff>:/cgal/icons/resources/cgal_logo.xpm</normaloff>:/cgal/icons/resources/cgal_logo.xpm</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QVBoxLayout" name="verticalLayout_2">
+   <layout class="QVBoxLayout" name="verticalLayout_2" stretch="1,0">
     <item>
-      <widget class="Viewer" name="viewer" native="true"/>
+     <widget class="Viewer" name="viewer" native="true"/>
     </item>
     <item>
-      <layout class="QHBoxLayout" name="viewerLayout"/>
+     <layout class="QHBoxLayout" name="viewerLayout"/>
     </item>
    </layout>
   </widget>
@@ -435,9 +435,6 @@
    <property name="text">
     <string>Re&amp;center Scene</string>
    </property>
-   <property name="shortcut">
-    <string>Ctrl+R</string>
-   </property>
   </action>
   <action name="actionSetBackgroundColor">
    <property name="text">
@@ -546,9 +543,11 @@
    <class>Viewer</class>
    <extends>QWidget</extends>
    <header>Viewer.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>
+  <include location="Polyhedron_3.qrc"/>
   <include location="Polyhedron_3.qrc"/>
  </resources>
  <connections/>

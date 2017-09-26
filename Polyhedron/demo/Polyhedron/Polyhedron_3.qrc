@@ -12,6 +12,8 @@
         <file alias="plus">resources/plus.png</file>
         <file alias="check-off.png">resources/check-off.png</file>
         <file alias="minus">resources/minus.png</file>
+        <file alias="exit">resources/exit.png</file>
+        <file alias="menu">resources/menu.png</file>
         <file>resources/back.png</file>
         <file>resources/front.png</file>
         <file>resources/top.png</file>

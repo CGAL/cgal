@@ -23,11 +23,17 @@ class QTreeView;
 class QMenu;
 class StatisticsThread;
 class StatisticsController;
+class SubViewer;
+namespace qglviewer
+{
+struct Vec;
+}
 namespace CGAL {
 namespace Three{
 class Polyhedron_demo_io_plugin_interface;
 class Polyhedron_demo_plugin_interface;
 class Scene_item;
+class Viewer_interface;
 }
 }
 
@@ -35,6 +41,7 @@ class QSortFilterProxyModel;
 
 namespace Ui {
   class MainWindow;
+  struct SubViewer;
   class Statistics_on_item_dialog;
 }
 namespace CT = CGAL::Three;
@@ -105,9 +112,9 @@ Q_SIGNALS:
 public Q_SLOTS:
   //!Creates a new group and adds it to the scene.
   void makeNewGroup();
-  //! Re-computes the viewer's Bbox
+  //! Re-computes the viewers Bboxes
   //! If `b` is true, recenters the scene.
-  void updateViewerBBox(bool b);
+  void updateViewersBboxes(bool recenter);
   //! Opens a script or a file with the default loader if there is.
   void open(QString);
   //! Is called when the up button is pressed.
@@ -209,7 +216,7 @@ public Q_SLOTS:
    * scene slide to this new center. Also sets the pivotPoint of
    * the camera to this position.
    */
-  void viewerShow(float, float, float);
+  void viewerShow(CGAL::Three::Viewer_interface *viewer, float, float, float);
   /*!
    * Sets the scene center to be the center of the target BBox.
    * Also sets the pivotPoint of the camera to this position.
@@ -341,23 +348,23 @@ protected Q_SLOTS:
   //!Calls the function saveSnapShot of the viewer.
   void on_actionSaveSnapshot_triggered();
   //!Opens a Dialog to choose a color and make it the background color.
-  void on_actionSetBackgroundColor_triggered();
+  void actionSetBackgroundColor_triggered();
   /*! Opens a Dialog to enter coordinates of the new center point and sets it
    * with viewerShow.
    *@see viewerShow(float, float, float, float, float, float)
    */
   void on_actionLookAt_triggered();
   //!Returns the position and orientation of the current camera frame.
-  QString cameraString() const;
+  QString cameraString(CGAL::Three::Viewer_interface *v) const;
   /*! Prints the position and orientation of the current camera frame.
    * @see cameraString()
    */
-  void on_actionDumpCamera_triggered();
+  void actionDumpCamera_triggered();
   //!Sets the coordinates of the camera in the clipboard text.
-  void on_actionCopyCamera_triggered();
+  void actionCopyCamera_triggered();
   //!Gets coordinates from the clipboard and sets them as the current ones for
   //!the camera.
-  void on_actionPasteCamera_triggered();
+  void actionPasteCamera_triggered();
   //!Hides not available operations and show available operations in all the
   //!menus.
   void filterOperations();
@@ -395,7 +402,7 @@ protected:
   QList<int> getSelectedSceneItemIndices() const;
 private:
   void updateMenus();
-  void setupViewer(Viewer* viewer);
+  void setupViewer(Viewer* viewer, SubViewer *subviewer);
   bool load_plugin(QString names, bool blacklisted);
   void recurseExpand(QModelIndex index);
   QMap<QString, QMenu*> menu_map;
@@ -441,10 +448,13 @@ public:
   void evaluate_script_quiet(QString script, 
                              const QString & fileName = QString());
 #endif
+void computeViewerBBox(qglviewer::Vec &min, qglviewer::Vec &max);
+void updateViewerBbox(Viewer* vi, bool recenter, qglviewer::Vec min, qglviewer::Vec max);
 
 private Q_SLOTS:
   void set_facegraph_mode_adapter(bool is_polyhedron);
   void on_actionAdd_Viewer_triggered();
+  void recenterViewer();
 };
 
 typedef std::pair<QFileInfo,
@@ -579,6 +589,23 @@ public Q_SLOTS:
 Q_SIGNALS:
   void error();
   void finished();
+};
+
+struct SubViewer : public QWidget
+{
+  Q_OBJECT
+public:
+  MainWindow* mw;
+  Viewer* viewer;
+  Ui::SubViewer* ui;
+  QMenu* viewMenu;
+
+  SubViewer(MainWindow* mw, Viewer* viewer);
+  ~SubViewer();
+public Q_SLOTS:
+  void recenter();
+  void lookat();
+  void color();
 };
 
 #endif // ifndef MAINWINDOW_H
