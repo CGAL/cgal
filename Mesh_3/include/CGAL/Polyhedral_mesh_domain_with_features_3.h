@@ -455,7 +455,6 @@ detect_features(FT angle_in_degree, std::vector<Polyhedron>& poly)
   BOOST_FOREACH(Polyhedron& p, poly)
   {
     initialize_ts(p);
-    typedef typename boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
     typedef typename boost::property_map<Polyhedron,CGAL::face_patch_id_t<Tag_> >::type PIDMap;
     typedef typename boost::property_map<Polyhedron,CGAL::vertex_incident_patches_t<P_id> >::type VIPMap;
     typedef typename boost::property_map<Polyhedron, CGAL::edge_is_feature_t>::type EIFMap;

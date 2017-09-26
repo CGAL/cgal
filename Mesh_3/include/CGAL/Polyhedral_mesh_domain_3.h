@@ -159,7 +159,7 @@ public:
   }
   typedef boost::associative_property_map<Map> Pmap;
 
-  Pmap operator()(const Polyhedron_type& polyhedron) {
+  Pmap operator()(const Polyhedron_type&) {
     return Pmap(face_ids);
   }
 private:
