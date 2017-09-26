@@ -325,6 +325,16 @@ update_cluster(Cluster& c, iterator it, Vertex_handle va,
   c.vertices.erase(vb);
   c.vertices[vm] = reduction;
 
+  if(false == reduction) {
+    for(typename Cluster::Vertices_map::iterator
+          it = c.vertices.begin(),
+          end = c.vertices.end();
+        it != end; ++it)
+    {
+      it->second = false;
+    }
+  }
+
   if(vb==c.smallest_angle.first)
     c.smallest_angle.first = vm;
   if(vb==c.smallest_angle.second)
