@@ -123,6 +123,8 @@ collect_duplicated_stitchable_boundary_edges
   {
     if ( !CGAL::is_border(he, pmesh) )
       continue;
+    if ( get(vpmap, source(he,pmesh)) == get(vpmap, target(he,pmesh)) ) // skip degenerate edges
+      continue;
     typename Border_halfedge_map::iterator set_it;
     bool insertion_ok;
     CGAL::cpp11::tie(set_it, insertion_ok)
