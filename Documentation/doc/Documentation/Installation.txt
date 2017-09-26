@@ -332,7 +332,7 @@ One advantage of using \cgal in header-only mode is that you do not need to comp
 
 <PRE>
 cd CGAL-\cgalReleaseNumber # go to \cgal directory
-cmake . # configure \cgal
+cmake -DCGAL_HEADER_ONLY=ON . # configure \cgal
 </PRE>
 
 and we do not need to run make anymore.
