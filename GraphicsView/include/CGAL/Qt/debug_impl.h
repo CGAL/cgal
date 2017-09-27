@@ -75,10 +75,14 @@ void opengl_check_errors(unsigned int line)
      std::cerr << "The framebuffer object is not complete." << "@" << line << std::endl;
    if(error == GL_OUT_OF_MEMORY)
      std::cerr << "There is not enough memory left to execute the command." << "@" << line << std::endl;
+#ifdef GL_STACK_UNDERFLOW
    if(error == GL_STACK_UNDERFLOW)
      std::cerr << "An attempt has been made to perform an operation that would cause an internal stack to underflow." << "@" << line << std::endl;
+#endif
+#ifdef GL_STACK_OVERFLOW
    if(error == GL_STACK_OVERFLOW)
      std::cerr << "An attempt has been made to perform an operation that would cause an internal stack to overflow." << "@" << line << std::endl;
+#endif
    error = ::glGetError();
  }
 }

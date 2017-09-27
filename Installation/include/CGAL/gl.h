@@ -30,7 +30,11 @@
 #    include <OpenGL/gl.h>
 #  endif
 #else
-#  include <GL/gl.h>
+#  ifdef __arm__
+#    include <GLES3/gl3.h>
+#  else
+#    include <GL/gl.h>
+#  endif
 #endif
 
 #endif // CGAL_GL_H
