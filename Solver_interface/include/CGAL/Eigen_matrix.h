@@ -185,13 +185,44 @@ public:
   /// @commentheading Preconditions:
   /// - 0 <= i < row_dimension().
   /// - 0 <= j < column_dimension().
-  NT get_coef (unsigned int i, unsigned int j) const 
-  {    
+  NT get_coef (unsigned int i, unsigned int j) const
+  {
     CGAL_precondition(i < row_dimension());
     CGAL_precondition(j < column_dimension());
 
-    NT val = m_matrix.coeffRef(i,j);
-    return val;
+    NT val;
+    if (m_is_already_built)
+        val = m_matrix.coeffRef(i,j);
+    else
+    {
+        // with lambda
+        auto pred = [i, j](const Triplet& triplet)
+        {
+            return triplet.row() == i && triplet.col() == j;
+        };
+        typename std::vector<Triplet>::iterator it;
+        it = std::find_if(m_triplets.begin(), m_triplets.end(), pred);
+        Triplet tr = *it;
+        val = tr.value();
+
+        /*
+        // with a functor
+        struct WantedTriplet
+        {
+            unsigned int i_, j_;
+            WantedTriplet(const unsigned int& i, const unsigned int& j) : i_(i), j_(j) {}
+            bool operator()(const Triplet& triplet) const
+            {
+                return triplet.row() == i_ && triplet.col() == j_;
+            }
+        };
+        typename std::vector<Triplet>::iterator it;
+        it = std::find_if(m_triplets.begin(), m_triplets.end(), WantedTriplet(i, j));
+        Triplet tr = *it;
+        val = tr.value();
+        */
+    }
+    return  val;
   }
 
   void assemble_matrix() const
