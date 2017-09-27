@@ -200,34 +200,14 @@ public:
         val = m_matrix.coeffRef(i,j);
     else
     {
-        // with lambda
-        auto pred = [i, j](const Triplet& triplet)
-        {
-            return triplet.row() == i && triplet.col() == j;
-        };
-        typename std::vector<Triplet>::iterator it;
-        it = std::find_if(m_triplets.begin(), m_triplets.end(), pred);
-        Triplet tr = *it;
-        val = tr.value();
-
-        /*
-        // with a functor
-        struct WantedTriplet
-        {
-            unsigned int i_, j_;
-            WantedTriplet(const unsigned int& i, const unsigned int& j) : i_(i), j_(j) {}
-            bool operator()(const Triplet& triplet) const
-            {
-                return triplet.row() == i_ && triplet.col() == j_;
-            }
-        };
-        typename std::vector<Triplet>::iterator it;
-        it = std::find_if(m_triplets.begin(), m_triplets.end(), WantedTriplet(i, j));
-        Triplet tr = *it;
-        val = tr.value();
-        */
+      for(std::size_t t=0; t<m_triplets.size(); ++t)
+      {
+        if(m_triplets[t].col() == j &&
+           m_triplets[t].row() == i)
+          val = m_triplets[t].value();
+      }
     }
-    return  val;
+    return val;
   }
 
   void assemble_matrix() const
