@@ -160,6 +160,24 @@ and <code>src/</code> directories).
 <!-- Cell Complexes and Polyhedra -->
 <!-- Arrangements -->
 <!-- Triangulations and Delaunay Triangulations -->
+<h3>2D Alpha Shapes</h3>
+<ul>
+  <li> It is now possible to use <code>CGAL::Periodic_2_triangulation_2</code>
+  as underlying triangulation for <code>Alpha_shape_2</code>. </li>
+</ul>
+
+<h3>2D Periodic Triangulations </h3>
+<ul>
+   <li><b>Breaking change</b>:
+   The class <code>Periodic_2_triangulation_hierarchy_vertex_base_2</code>
+   (and its corresponding header) have been removed. Users should directly use the
+   class <code>Triangulation_hierarchy_vertex_base_2</code>, which is identical.</li>
+   <li><b>Breaking change</b>:
+   The functions <code>circumcenter()</code>, <code>side_of_oriented_circle()</code>,
+   and <code>is_extensible_in_1_sheet_h[12]()</code> are related to
+   Delaunay triangulations and have been moved from <code>Periodic_2_triangulation_2</code>
+   to <code>Periodic_2_Delaunay_triangulation_2</code>. </li>
+</ul>
 <!-- Voronoi Diagrams -->
 <!-- Mesh Generation -->
  <h3>3D Surface Mesh Generation</h3>

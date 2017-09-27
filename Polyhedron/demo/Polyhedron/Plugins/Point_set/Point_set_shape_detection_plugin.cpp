@@ -23,6 +23,8 @@
 #include <CGAL/regularize_planes.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Alpha_shape_2.h>
+#include <CGAL/Alpha_shape_face_base_2.h>
+#include <CGAL/Alpha_shape_vertex_base_2.h>
 
 #include <CGAL/structure_point_set.h>
 
