@@ -38,59 +38,6 @@ namespace CGAL {
 
 namespace Mesh_3 {
 
-BOOST_MPL_HAS_XXX_TRAIT_DEF(Has_manifold_criterion)
-
-template <typename Criteria,
-          bool has_Has_manifold_criterion =
-          has_Has_manifold_criterion<Criteria>::value>
-struct Has_manifold_criterion :
-    public CGAL::Boolean_tag<Criteria::Has_manifold_criterion::value>
-// when Criteria has the nested type Has_manifold_criterion
-{};
-
-template <typename Criteria>
-struct Has_manifold_criterion<Criteria, false> : public CGAL::Tag_false
-// when Criteria does not have the nested type Has_manifold_criterion
-{};
-
-
-
-template <typename Criteria>
-bool get_with_manifold(const Criteria&, CGAL::Tag_false)
-{
-  return false;
-}
-
-template <typename Criteria>
-bool get_with_manifold(const Criteria& c, CGAL::Tag_true)
-{
-  return (c.topology() & MANIFOLD_WITH_BOUNDARY) != 0;
-}
-
-template <typename Criteria>
-bool get_with_manifold(const Criteria& c)
-{
-  return get_with_manifold(c, Has_manifold_criterion<Criteria>());
-}
-
-template <typename Criteria>
-bool get_with_boundary(const Criteria&, CGAL::Tag_false)
-{
-  return false;
-}
-
-template <typename Criteria>
-bool get_with_boundary(const Criteria& c, CGAL::Tag_true)
-{
-  return (c.topology() & NO_BOUNDARY) == 0;
-}
-
-template <typename Criteria>
-bool get_with_boundary(const Criteria& c)
-{
-  return get_with_boundary(c, Has_manifold_criterion<Criteria>());
-}
-
 template<class Tr,
          class Criteria,
          class MeshDomain,
@@ -354,15 +301,16 @@ public:
   Refine_facets_manifold_base(Tr& triangulation,
                               C3t3& c3t3,
                               const Mesh_domain& oracle,
-                              const Criteria& criteria)
+                              const Criteria& criteria,
+                              int mesh_topology)
     : Base(triangulation,
            c3t3,
            oracle,
            criteria)
     , m_manifold_info_initialized(false)
     , m_bad_vertices_initialized(false)
-    , m_with_manifold_criterion(get_with_manifold(criteria))
-    , m_with_boundary(get_with_boundary(criteria))
+    , m_with_manifold_criterion((mesh_topology & MANIFOLD_WITH_BOUNDARY) != 0)
+    , m_with_boundary((mesh_topology & NO_BOUNDARY) == 0)
   {
 #ifdef CGAL_MESH_3_DEBUG_CONSTRUCTORS
     std::cerr << "CONS: Refine_facets_manifold_base";

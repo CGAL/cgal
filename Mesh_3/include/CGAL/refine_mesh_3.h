@@ -180,17 +180,17 @@ namespace parameters {
     // Manifold
     struct Manifold_options {
       enum {
-        NON_MANIFOLD = -1,
+        NON_MANIFOLD = 0,
         MANIFOLD_WITH_BOUNDARY = 8,
         NO_BOUNDARY = 16,
         MANIFOLD = 24
       };
       
-      Manifold_options(const int& topology)
+      Manifold_options(const int topology)
         : mesh_topology(topology)
       {}
       Manifold_options()
-        : mesh_topology(MANIFOLD)
+        : mesh_topology(NON_MANIFOLD)
       {}
 
       int mesh_topology;
@@ -502,7 +502,7 @@ void refine_mesh_3_impl(C3T3& c3t3,
   dump_c3t3(c3t3, mesh_options.dump_after_init_prefix);
 
   // Build mesher and launch refinement process
-  Mesher mesher (c3t3, domain, criteria);
+  Mesher mesher (c3t3, domain, criteria, manifold_options.mesh_topology);
   double refine_time = mesher.refine_mesh(mesh_options.dump_after_refine_surface_prefix);
   c3t3.clear_manifold_info();
 

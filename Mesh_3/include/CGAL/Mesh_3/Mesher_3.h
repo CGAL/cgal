@@ -211,7 +211,8 @@ public:
   /// Constructor
   Mesher_3(C3T3&               c3t3,
            const MeshDomain&   domain,
-           const MeshCriteria& criteria);
+           const MeshCriteria& criteria,
+           int mesh_topology = 0);
 
   /// Destructor
   ~Mesher_3() 
@@ -286,7 +287,8 @@ private:
 template<class C3T3, class MC, class MD>
 Mesher_3<C3T3,MC,MD>::Mesher_3(C3T3& c3t3,
                                const MD& domain,
-                               const MC& criteria)
+                               const MC& criteria,
+                               int mesh_topology)
 : Base(c3t3.bbox(),
        Concurrent_mesher_config::get().locking_grid_num_cells_per_axis)
 , r_oracle_(domain)
@@ -295,7 +297,8 @@ Mesher_3<C3T3,MC,MD>::Mesher_3(C3T3& c3t3,
                  criteria.facet_criteria_object(),
                  domain,
                  null_mesher_,
-                 c3t3)
+                 c3t3,
+                 mesh_topology)
 , cells_mesher_(c3t3.triangulation(),
                 criteria.cell_criteria_object(),
                 domain,

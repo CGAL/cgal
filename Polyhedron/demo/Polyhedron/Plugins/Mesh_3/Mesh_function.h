@@ -326,8 +326,7 @@ launch()
   Mesh_criteria criteria(edge_criteria(p_.edge_sizing, Tag()),
                          Facet_criteria(p_.facet_angle,
                                         p_.facet_sizing,
-                                        p_.facet_approx,
-                                        topology(p_.manifold)),
+                                        p_.facet_approx),
                          Cell_criteria(p_.tet_shape,
                                        p_.tet_sizing));
 
@@ -335,7 +334,8 @@ launch()
   initialize(criteria, Tag());
 
   // Build mesher and launch refinement process
-  mesher_ = new Mesher(c3t3_, *domain_, criteria);
+  mesher_ = new Mesher(c3t3_, *domain_, criteria,
+                       topology(p_.manifold) & CGAL::MANIFOLD);
 
 #ifdef CGAL_MESH_3_PROFILING
   CGAL::Real_timer t;
