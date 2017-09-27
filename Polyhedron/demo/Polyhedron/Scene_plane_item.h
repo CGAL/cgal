@@ -1,7 +1,5 @@
 #ifndef SCENE_PLANE_ITEM_H
 #define SCENE_PLANE_ITEM_H
-
-
 #include  <CGAL/Three/Scene_item.h>
 #include <CGAL/Three/Scene_interface.h>
 
@@ -16,6 +14,10 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel_epic;
 typedef Kernel_epic::Plane_3 Plane_3;
+namespace CGAL{
+namespace Three{
+class Triangle_container;
+}}
 
 class SCENE_BASIC_OBJECTS_EXPORT Scene_plane_item 
   : public CGAL::Three::Scene_item
@@ -113,12 +115,15 @@ protected:
 
   mutable std::vector<float> positions_lines;
   mutable std::vector<float> positions_quad;
+  mutable std::vector<unsigned int> idx_quad;
+
   mutable GLint sampler_location;
   mutable bool smooth_shading;
   mutable QOpenGLShaderProgram *program;
+  CGAL::Three::Triangle_container* faces_container;
 
-  void initializeBuffers(CGAL::Three::Viewer_interface*)const;
-  void compute_normals_and_vertices(void) const;
+  void initializeBuffers(CGAL::Three::Viewer_interface*)const Q_DECL_OVERRIDE;
+  void computeElements()const Q_DECL_OVERRIDE;
 };
 
 #endif // SCENE_PLANE_ITEM_H

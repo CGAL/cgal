@@ -39,6 +39,8 @@
 namespace CGAL {
 namespace Three {
   class Viewer_interface;
+  struct Triangle_container;
+  struct Edge_container;
 }
 }
 namespace qglviewer {
@@ -111,12 +113,13 @@ public:
   //! Creates a new item as a copy of this one.
   virtual Scene_item* clone() const = 0;
 
+  //!Create the VAOs and VBOs.
+  void initGL() const;
+
   //! \brief Indicates if `m` is supported
   //!
   //! If it is, it will be displayed in the context menu of the item.
   virtual bool supportsRenderingMode(RenderingMode m) const = 0;
-  //! Deprecated. Does nothing.
-  virtual void draw() const {}
   /*! \brief The drawing function for faces.
    *
    * Draws the faces of the item in the viewer. The data
@@ -125,9 +128,7 @@ public:
    * @see computeElements()
    * @see initializeBuffers()
    */
-  virtual void draw(CGAL::Three::Viewer_interface*) const  { draw(); }
-  //! Deprecated. Does nothing.
-  virtual void drawEdges() const { draw(); }
+  virtual void draw(CGAL::Three::Viewer_interface* viewer) const  {Q_UNUSED(viewer)}
   /*! \brief The drawing function for the edges.
    *
    * Draws the edges and lines of the item in the viewer. The data
@@ -136,9 +137,7 @@ public:
    * @see computeElements()
    * @see initializeBuffers()
    */
-  virtual void drawEdges(CGAL::Three::Viewer_interface* viewer) const { draw(viewer); }
-  //! Deprecated. Does nothing.
-  virtual void drawPoints() const { draw(); }
+  virtual void drawEdges(CGAL::Three::Viewer_interface* viewer) const {draw(viewer);}
   /*! \brief The drawing function for the points.
    *
    * Draws the points of the item in the viewer. The data
@@ -147,7 +146,7 @@ public:
    * @see computeElements()
    * @see initializeBuffers()
    */
-  virtual void drawPoints(CGAL::Three::Viewer_interface*) const { drawPoints(); }
+  virtual void drawPoints(CGAL::Three::Viewer_interface* viewer) const { draw(viewer); }
 
   //! Draws the splats of the item in the viewer using GLSplat functions.
   virtual void drawSplats() const {}
@@ -301,13 +300,11 @@ public:
   //!
   //! \brief newViewer adds Vaos for `viewer`.
   //!
-  //! Override this to call the convinent functions
-  virtual void newViewer(CGAL::Three::Viewer_interface* ){}
+  virtual void newViewer(CGAL::Three::Viewer_interface* viewer);
   //!
   //! \brief removeViewer removes the Vaos fo `viewer`.
   //!
-  //! Override this to call the convinent functions
-  virtual void removeViewer(CGAL::Three::Viewer_interface*){}
+  virtual void removeViewer(CGAL::Three::Viewer_interface* viewer);
   /*! Passes all the uniform data to the shaders.
     * According to program_name, this data may change.
     */
@@ -440,6 +437,8 @@ protected:
    * @see invalidateOpenGLBuffers()
    */
   mutable bool are_buffers_filled;
+  mutable bool isinit;
+  mutable QMap<CGAL::Three::Viewer_interface*, bool> buffers_init;
   //!The rendering mode of the item.
   //!@see RenderingMode
   RenderingMode rendering_mode;
@@ -461,6 +460,8 @@ protected:
   //Used in multithreading context.
   mutable bool is_locked;
   mutable int is_reading;
+  std::vector<CGAL::Three::Triangle_container*> triangle_containers;
+  std::vector<CGAL::Three::Edge_container*> edge_containers;
 
   /*! Fills the VBOs with data. Must be called after each call to #computeElements().
    * @see compute_elements()
@@ -471,7 +472,7 @@ protected:
     * application does not get stuck while the processing is performed.
     * Emits `dataProcessed()`.
     */
-  void processData();
+  void processData() const;
 
 }; // end class Scene_item
 }
@@ -494,3 +495,4 @@ private:
 };
 
 #endif // SCENE_ITEM_H
+

@@ -43,6 +43,10 @@ public:
   QString computeStats(int type)  Q_DECL_OVERRIDE;
   CGAL::Three::Scene_item::Header_data header() const Q_DECL_OVERRIDE;
 
+  enum EdgesType{
+    Grid=0,
+    Edges
+  };
 
   void setColor(QColor c) Q_DECL_OVERRIDE;
   bool save_binary(std::ostream& os) const
@@ -147,6 +151,10 @@ public:
   void updateCutPlane();
 
   void build_histogram();
+
+  void computeElements()const Q_DECL_OVERRIDE;
+
+  void initializeBuffers(Viewer_interface *) const Q_DECL_OVERRIDE;
 
   QColor get_histogram_color(const double v) const;
 

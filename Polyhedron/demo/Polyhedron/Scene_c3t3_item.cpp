@@ -29,12 +29,16 @@
 #include <CGAL/AABB_triangulation_3_triangle_primitive.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
-
+#include <CGAL/Three/Triangle_container.h>
+#include <CGAL/Three/Edge_container.h>
 
 typedef CGAL::AABB_triangulation_3_triangle_primitive<Kernel,C3t3> Primitive;
 typedef CGAL::AABB_traits<Kernel, Primitive> Traits;
 typedef CGAL::AABB_tree<Traits> Tree;
 typedef Tree::Point_and_primitive_id Point_and_primitive_id;
+typedef Viewer_interface VI;
+typedef CGAL::Three::Triangle_container Tri;
+typedef CGAL::Three::Edge_container Ed;
 
 // The special Scene_item only for triangles
 class Scene_intersection_item : public CGAL::Three::Scene_item
@@ -42,10 +46,14 @@ class Scene_intersection_item : public CGAL::Three::Scene_item
   Q_OBJECT
 public :
   Scene_intersection_item(Scene_c3t3_item* parent)
-  :CGAL::Three::Scene_item(NumberOfBuffers,NumberOfVaos),
+  :CGAL::Three::Scene_item(),
     is_fast(false)
   {
     setParent(parent);
+    triangle_containers.push_back(
+          new Triangle_container(VI::PROGRAM_C3T3, false));
+    edge_containers.push_back(
+          new Edge_container(VI::PROGRAM_NO_SELECTION, false));
   }
   void init_vectors(
       std::vector<float> *p_vertices,
@@ -59,8 +67,33 @@ public :
     edges = p_edges;
     colors = p_colors;
     barycenters = p_bary;
-
   }
+
+  void allocate()
+   {
+    if(!isinit)
+      initGL();
+    triangle_containers[0]->reset_vbos();
+    triangle_containers[0]->VBOs[Tri::Flat_vertices]->allocate(vertices->data(),
+                                                                              static_cast<int>(vertices->size()*sizeof(float)));
+    triangle_containers[0]->VBOs[Tri::Flat_normals]->allocate(normals->data(),
+                                                                              static_cast<int>(normals->size()*sizeof(float)));
+    triangle_containers[0]->VBOs[Tri::FColors]->allocate(colors->data(),
+                                                                              static_cast<int>(colors->size()*sizeof(float)));
+    triangle_containers[0]->VBOs[Tri::Facet_barycenters]->allocate(barycenters->data(),
+                                                                              static_cast<int>(barycenters->size()*sizeof(float)));
+    triangle_containers[0]->flat_size = vertices->size();
+
+    edge_containers[0]->reset_vbos();
+    edge_containers[0]->VBOs[Ed::Vertices]->allocate(edges->data(),
+                                                     static_cast<int>(edges->size()*sizeof(float)));
+    edge_containers[0]->VBOs[Ed::Vertices]->allocate(edges->data(),
+                                                     static_cast<int>(edges->size()*sizeof(float)));
+    edge_containers[0]->flat_size = edges->size();
+
+    are_buffers_filled = true;
+   }
+
   void setColor(QColor c)
   {
     qobject_cast<Scene_c3t3_item*>(this->parent())->setColor(c);
@@ -70,95 +103,48 @@ public :
   bool supportsRenderingMode(RenderingMode m) const {
     return (m != Gouraud && m != PointsPlusNormals && m != Splatting && m != Points && m != ShadedPoints);
   }
-  void initialize_buffers(CGAL::Three::Viewer_interface *viewer)
+  void initializeBuffers(CGAL::Three::Viewer_interface *viewer)const Q_DECL_OVERRIDE
   {
-   //vao containing the data for the facets
-    {
-      program = getShaderProgram(PROGRAM_C3T3, viewer);
-      program->bind();
-
-      vaos[Facets]->bind();
-      buffers[Vertices].bind();
-      buffers[Vertices].allocate(vertices->data(),
-        static_cast<int>(vertices->size()*sizeof(float)));
-      program->enableAttributeArray("vertex");
-      program->setAttributeBuffer("vertex", GL_FLOAT, 0, 3);
-      buffers[Vertices].release();
-
-      buffers[Normals].bind();
-      buffers[Normals].allocate(normals->data(),
-        static_cast<int>(normals->size()*sizeof(float)));
-      program->enableAttributeArray("normals");
-      program->setAttributeBuffer("normals", GL_FLOAT, 0, 3);
-      buffers[Normals].release();
-
-      buffers[Colors].bind();
-      buffers[Colors].allocate(colors->data(),
-        static_cast<int>(colors->size()*sizeof(float)));
-      program->enableAttributeArray("colors");
-      program->setAttributeBuffer("colors", GL_FLOAT, 0, 3);
-      buffers[Colors].release();
-
-      buffers[Barycenters].bind();
-      buffers[Barycenters].allocate(barycenters->data(),
-        static_cast<int>(barycenters->size()*sizeof(float)));
-      program->enableAttributeArray("barycenter");
-      program->setAttributeBuffer("barycenter", GL_FLOAT, 0, 3);
-      buffers[Barycenters].release();
-
-      vaos[Facets]->release();
-      program->release();
-
-    }
-      //vao containing the data for the lines
-      {
-          program = getShaderProgram(PROGRAM_NO_SELECTION, viewer);
-          program->bind();
-
-          vaos[Lines]->bind();
-          buffers[Edges].bind();
-          buffers[Edges].allocate(edges->data(),
-                                           static_cast<int>(edges->size()*sizeof(float)));
-          program->enableAttributeArray("vertex");
-          program->setAttributeBuffer("vertex", GL_FLOAT, 0, 3);
-          buffers[Edges].release();
-
-          vaos[Lines]->release();
-          program->release();
-      }
+    Triangle_container* tc = triangle_containers[0];
+    tc->initializeBuffers(viewer);
+    edge_containers[0]->initializeBuffers(viewer);
   }
   //Displays the item
   void draw(CGAL::Three::Viewer_interface* viewer) const
   {
     if(is_fast)
       return;
+
+    if(!isinit)
+      initGL();
+    if(!is_locked && are_buffers_filled &&
+       ! buffers_init[viewer])
+    {
+      initializeBuffers(viewer);
+      buffers_init[viewer] = true;
+    }
     const Kernel::Plane_3& plane = qobject_cast<Scene_c3t3_item*>(this->parent())->plane();
-    vaos[Facets]->bind();
-    program = getShaderProgram(PROGRAM_C3T3);
-    attribBuffers(viewer, PROGRAM_C3T3);
-    program->bind();
-    float shrink_factor = qobject_cast<Scene_c3t3_item*>(this->parent())->getShrinkFactor();
     QVector4D cp(-plane.a(), -plane.b(), -plane.c(), -plane.d());
-    program->setUniformValue("cutplane", cp);
-    program->setUniformValue("shrink_factor", shrink_factor);
-    // positions_poly is also used for the faces in the cut plane
-    // and changes when the cut plane is moved
-    viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(vertices->size() / 3));
-    program->release();
-    vaos[Facets]->release();
+    triangle_containers[0]->plane = cp;
+    triangle_containers[0]->shrink_factor =
+        qobject_cast<Scene_c3t3_item*>(this->parent())->getShrinkFactor();
+    triangle_containers[0]->draw(*this, viewer, false);
   }
   void drawEdges(CGAL::Three::Viewer_interface* viewer) const
   {
     if(is_fast)
       return;
-    vaos[Lines]->bind();
-    program = getShaderProgram(PROGRAM_NO_SELECTION);
-    attribBuffers(viewer, PROGRAM_NO_SELECTION);
-    program->bind();
-    program->setAttributeValue("colors", QColor(Qt::black));
-    viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(edges->size() / 3));
-    program->release();
-    vaos[Lines]->release();
+    if(!isinit)
+      initGL();
+    if(!is_locked && are_buffers_filled &&
+       ! buffers_init[viewer])
+    {
+      initializeBuffers(viewer);
+      buffers_init[viewer] = true;
+    }
+    edge_containers[0]->color =
+        QColor(Qt::black);
+    edge_containers[0]->draw(*this, viewer, true);
   }
 
   void setFast(bool b)
@@ -231,21 +217,7 @@ public :
   Scene_item* clone() const {return 0;}
   QString toolTip() const {return QString();}
 private:
-  enum Buffer
-  {
-      Vertices =0,
-      Normals,
-      Colors,
-      Edges,
-      Barycenters,
-      NumberOfBuffers
-  };
-  enum Vao
-  {
-      Facets=0,
-      Lines,
-      NumberOfVaos
-  };
+
 
   //contains the data
   mutable std::vector<float> *vertices;
@@ -270,10 +242,7 @@ struct Scene_c3t3_item_priv {
     , is_valid(true)
   {
     init_default_values();
-    tet_Slider = new QSlider(Qt::Horizontal);
-    tet_Slider->setMinimum(0);
-    tet_Slider->setMaximum(100);
-    tet_Slider->setValue(100);
+    tet_Slider = NULL;
     invalidate_stats();
   }
   Scene_c3t3_item_priv(const C3t3& c3t3_, Scene_c3t3_item* item)
@@ -286,10 +255,7 @@ struct Scene_c3t3_item_priv {
     , is_valid(true)
   {
     init_default_values();
-    tet_Slider = new QSlider(Qt::Horizontal);
-    tet_Slider->setMinimum(0);
-    tet_Slider->setMaximum(100);
-    tet_Slider->setValue(100);
+    tet_Slider = NULL;
     invalidate_stats();
   }
   ~Scene_c3t3_item_priv()
@@ -301,7 +267,8 @@ struct Scene_c3t3_item_priv {
       static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->setManipulatedFrame(0);
       delete frame;
       frame = NULL;
-      delete tet_Slider;
+      if(tet_Slider)
+        delete tet_Slider;
     }
   }
 
@@ -323,6 +290,7 @@ struct Scene_c3t3_item_priv {
     is_grid_shown = true;
   }
   void computeIntersection(const Primitive& facet);
+  void computeElements() const;
   void fill_aabb_tree() {
     if(item->isEmpty()) return;
     QGuiApplication::setOverrideCursor(Qt::WaitCursor);
@@ -365,10 +333,8 @@ struct Scene_c3t3_item_priv {
                                const Tr::Bare_point& pc) const;
   double complex_diag() const;
   void compute_color_map(const QColor& c);
-  void initializeBuffers(CGAL::Three::Viewer_interface *viewer);
   void initialize_intersection_buffers(CGAL::Three::Viewer_interface *viewer);
   void computeSpheres();
-  void computeElements();
   void computeIntersections();
 
   void invalidate_stats()
@@ -391,31 +357,7 @@ struct Scene_c3t3_item_priv {
   }
 
 
-  enum Buffer
-  {
-      Facet_vertices =0,
-      Facet_normals,
-      Facet_colors,
-      Facet_barycenters,
-      Edges_vertices,
-      Edges_CNC,
-      Grid_vertices,
-      iEdges_vertices,
-      iFacet_vertices,
-      iFacet_normals,
-      iFacet_colors,
-      NumberOfBuffers
-  };
-  enum Vao
-  {
-      Facets=0,
-      Edges,
-      Grid,
-      CNC,
-      iEdges,
-      iFacets,
-      NumberOfVaos
-  };
+
 
   enum STATS {
     MIN_EDGES_LENGTH = 0,
@@ -459,12 +401,13 @@ struct Scene_c3t3_item_priv {
   //!Allows OpenGL 2.1 context to get access to glVertexAttribDivisor.
   PFNGLVERTEXATTRIBDIVISORARBPROC glVertexAttribDivisor;
 
-  mutable std::size_t positions_poly_size;
-  mutable std::size_t positions_lines_size;
+  mutable std::size_t poly_size;
+  mutable std::size_t lines_size;
   mutable std::size_t positions_lines_not_in_complex_size;
   mutable std::vector<float> positions_lines;
   mutable std::vector<float> positions_lines_not_in_complex;
   mutable std::vector<float> positions_grid;
+  mutable std::size_t grid_size;
   mutable std::vector<float> positions_poly;
   mutable std::vector<float> positions_barycenter;
 
@@ -513,29 +456,45 @@ struct Set_show_tetrahedra {
 };
 
 Scene_c3t3_item::Scene_c3t3_item()
-  : Scene_group_item("unnamed", Scene_c3t3_item_priv::NumberOfBuffers, Scene_c3t3_item_priv::NumberOfVaos)
+  : Scene_group_item("unnamed")
   , d(new Scene_c3t3_item_priv(this))
 
 {
-
   compute_bbox();
   connect(d->frame, SIGNAL(modified()), this, SLOT(changed()));
   c3t3_changed();
   setRenderingMode(FlatPlusEdges);
   create_flat_and_wire_sphere(1.0f,d->s_vertex,d->s_normals, d->ws_vertex);
+  triangle_containers.push_back(
+        new Triangle_container(CGAL::Three::Scene_item::PROGRAM_C3T3,
+                                        false));
+  edge_containers.push_back(
+        new Edge_container(CGAL::Three::Scene_item::PROGRAM_WITHOUT_LIGHT,
+                           false));
+  edge_containers.push_back(
+        new Edge_container(CGAL::Three::Scene_item::PROGRAM_C3T3_EDGES,
+                           false));
 }
 
 Scene_c3t3_item::Scene_c3t3_item(const C3t3& c3t3)
-  : Scene_group_item("unnamed", Scene_c3t3_item_priv::NumberOfBuffers, Scene_c3t3_item_priv::NumberOfVaos)
+  : Scene_group_item("unnamed")
   , d(new Scene_c3t3_item_priv(c3t3, this))
 {
-
   compute_bbox();
   connect(d->frame, SIGNAL(modified()), this, SLOT(changed()));
   d->reset_cut_plane();
   c3t3_changed();
   setRenderingMode(FlatPlusEdges);
   create_flat_and_wire_sphere(1.0f,d->s_vertex,d->s_normals, d->ws_vertex);
+  triangle_containers.push_back(
+        new Triangle_container(CGAL::Three::Scene_item::PROGRAM_C3T3,
+                                        false));
+  edge_containers.push_back(
+        new Edge_container(CGAL::Three::Scene_item::PROGRAM_C3T3_EDGES,
+                           false));
+  edge_containers.push_back(
+        new Edge_container(CGAL::Three::Scene_item::PROGRAM_C3T3_EDGES,
+                           false));
 }
 
 Scene_c3t3_item::~Scene_c3t3_item()
@@ -589,6 +548,7 @@ Scene_c3t3_item::changed()
   if(!d)
     return;
   d->need_changed = true;
+  moveToThread(qApp->thread());
   QTimer::singleShot(0,this, SLOT(updateCutPlane()));
 }
 
@@ -894,104 +854,98 @@ QString Scene_c3t3_item::toolTip() const {
 void Scene_c3t3_item::draw(CGAL::Three::Viewer_interface* viewer) const {
   Scene_c3t3_item* ncthis = const_cast<Scene_c3t3_item*>(this);
 
-  if (!are_buffers_filled)
+  if(!isinit)
   {
-    ncthis->d->computeElements();
-    ncthis->d->initializeBuffers(viewer);
-  }
-
-  vaos[Scene_c3t3_item_priv::Facets]->bind();
-  d->program = getShaderProgram(PROGRAM_C3T3);
-  attribBuffers(viewer, PROGRAM_C3T3);
-  d->program->bind();
-  QVector4D cp(this->plane().a(),this->plane().b(),this->plane().c(),this->plane().d());
-  d->program->setUniformValue("cutplane", cp);
-  float shrink_factor = getShrinkFactor();
-  d->program->setUniformValue("shrink_factor", shrink_factor);
-  // positions_poly_size is the number of total facets in the C3T3
-  // it is only computed once and positions_poly is emptied at the end
-  viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(d->positions_poly_size / 3));
-  d->program->release();
-  vaos[Scene_c3t3_item_priv::Facets]->release();
-
-  if(d->show_tetrahedra){
-    if(!d->frame->isManipulated())
-      d->intersection->setFast(false);
-    else
-      d->intersection->setFast(true);
-
-    if(!d->frame->isManipulated() && !d->are_intersection_buffers_filled)
+    initGL();
+    if(!d->tet_Slider)
     {
-      ncthis->d->computeIntersections();
-      d->intersection->initialize_buffers(viewer);
-      d->are_intersection_buffers_filled = true;
+      d->tet_Slider = new QSlider(Qt::Horizontal);
+      d->tet_Slider->setMinimum(0);
+      d->tet_Slider->setMaximum(100);
+      d->tet_Slider->setValue(100);
     }
   }
-
-  if(d->spheres_are_shown)
+  if(!is_locked && are_buffers_filled &&
+     !buffers_init[viewer])
   {
-    d->spheres->setPlane(this->plane());
+    initializeBuffers(viewer);
+    ncthis->initializeBuffers(viewer);
+    buffers_init[viewer] = true;
   }
 
-  if(d->is_grid_shown)
-  {
-    vaos[Scene_c3t3_item_priv::Grid]->bind();
-    d->program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
-    attribBuffers(viewer, PROGRAM_WITHOUT_LIGHT);
-    d->program->bind();
-    d->program->setAttributeValue("colors", QColor(Qt::black));
-    QMatrix4x4 f_mat;
-    for (int i = 0; i<16; i++)
-      f_mat.data()[i] = d->frame->matrix()[i];
-    d->program->setUniformValue("f_matrix", f_mat);
-    viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->positions_grid.size() / 3));
-    d->program->release();
-    vaos[Scene_c3t3_item_priv::Grid]->release();
-  }
+  QVector4D cp(this->plane().a(),this->plane().b(),this->plane().c(),this->plane().d());
+  triangle_containers[0]->plane = cp;
+  triangle_containers[0]->shrink_factor = getShrinkFactor();
+  triangle_containers[0]->draw(*this, viewer, false);
 
-  Scene_group_item::draw(viewer);
+  if(d->show_tetrahedra){
+      if(!d->frame->isManipulated())
+      {
+        d->intersection->setFast(false);
+        ncthis->redraw();
+      }
+      else
+        d->intersection->setFast(true);
+
+      if(!d->frame->isManipulated() && !d->are_intersection_buffers_filled)
+      {
+        ncthis->d->computeIntersections();
+        d->intersection->initializeBuffers(viewer);
+        d->are_intersection_buffers_filled = true;
+      }
+    }
+
+    if(d->spheres_are_shown)
+    {
+      d->spheres->setPlane(this->plane());
+    }
+
+    if(d->is_grid_shown)
+    {
+      QMatrix4x4 f_mat;
+      for (int i = 0; i<16; i++)
+        f_mat.data()[i] = d->frame->matrix()[i];
+      edge_containers[Grid]->f_matrix = f_mat;
+      edge_containers[Grid]->color=QColor(Qt::black);
+      edge_containers[Grid]->draw(*this, viewer, true);
+    }
 }
 
 void Scene_c3t3_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
-  if(renderingMode() == FlatPlusEdges)
+  Scene_c3t3_item* ncthis = const_cast<Scene_c3t3_item*>(this);
+  if(!isinit)
   {
     GLint renderMode;
     viewer->glGetIntegerv(GL_RENDER_MODE, &renderMode);
     if(renderMode == GL_SELECT) return;
+    initGL();
+    if(!d->tet_Slider)
+    {
+      d->tet_Slider = new QSlider(Qt::Horizontal);
+      d->tet_Slider->setMinimum(0);
+      d->tet_Slider->setMaximum(100);
+      d->tet_Slider->setValue(100);
+    }
   }
-  Scene_c3t3_item* ncthis = const_cast<Scene_c3t3_item*>(this);
-  if (!are_buffers_filled)
+  if(!is_locked && are_buffers_filled &&
+     !buffers_init[viewer])
   {
-    ncthis->d->computeElements();
-    ncthis->d->initializeBuffers(viewer);
+    initializeBuffers(viewer);
+    ncthis->initializeBuffers(viewer);
+    buffers_init[viewer] = true;
   }
-
   if(renderingMode() == Wireframe && d->is_grid_shown)
   {
-    vaos[Scene_c3t3_item_priv::Grid]->bind();
-
-    d->program = getShaderProgram(PROGRAM_NO_SELECTION);
-    attribBuffers(viewer, PROGRAM_NO_SELECTION);
-    d->program->bind();
-    d->program->setAttributeValue("colors", QColor(Qt::black));
     QMatrix4x4 f_mat;
     for (int i = 0; i<16; i++)
-        f_mat.data()[i] = d->frame->matrix()[i];
-    d->program->setUniformValue("f_matrix", f_mat);
-    viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->positions_grid.size() / 3));
-    d->program->release();
-    vaos[Scene_c3t3_item_priv::Grid]->release();
+      f_mat.data()[i] = d->frame->matrix()[i];
+    edge_containers[Grid]->f_matrix = f_mat;
+    edge_containers[Grid]->color=QColor(Qt::black);
+    edge_containers[Grid]->draw(*this, viewer, true);
   }
-  vaos[Scene_c3t3_item_priv::Edges]->bind();
-  d->program = getShaderProgram(PROGRAM_C3T3_EDGES);
-  attribBuffers(viewer, PROGRAM_C3T3_EDGES);
-  d->program->bind();
-  QVector4D cp(this->plane().a(),this->plane().b(),this->plane().c(),this->plane().d());
-  d->program->setUniformValue("cutplane", cp);
-  d->program->setAttributeValue("colors", QColor(Qt::black));
-  viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->positions_lines_size / 3));
-  d->program->release();
-  vaos[Scene_c3t3_item_priv::Edges]->release();
+  edge_containers[Edges]->plane = QVector4D(this->plane().a(),this->plane().b(),this->plane().c(),this->plane().d());
+  edge_containers[Edges]->color = QColor(Qt::black);
+  edge_containers[Edges]->draw(*this, viewer);
 
   if(d->show_tetrahedra){
     if(!d->frame->isManipulated())
@@ -1001,67 +955,67 @@ void Scene_c3t3_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
     if(!d->frame->isManipulated() && !d->are_intersection_buffers_filled)
     {
       ncthis->d->computeIntersections();
-      d->intersection->initialize_buffers(viewer);
+      d->intersection->initializeBuffers(viewer);
       d->are_intersection_buffers_filled = true;
     }
   }
-  if(d->spheres_are_shown)
-  {
-      d->spheres->setPlane(this->plane());
-  }
-  Scene_group_item::drawEdges(viewer);
-  if(d->cnc_are_shown)
-  {
-    vaos[Scene_c3t3_item_priv::CNC]->bind();
-    d->program = getShaderProgram(PROGRAM_NO_SELECTION);
-    attribBuffers(viewer, PROGRAM_NO_SELECTION);
-    d->program->bind();
-    d->program->setAttributeValue("colors", QColor(Qt::black));
-    viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->positions_lines_not_in_complex_size / 3));
-    d->program->release();
-    vaos[Scene_c3t3_item_priv::CNC]->release();
-  }
+//  if(d->spheres_are_shown)
+//  {
+//      d->spheres->setPlane(this->plane());
+//  }
+//  Scene_group_item::drawEdges(viewer);
+//  if(d->cnc_are_shown)
+//  {
+//    vaos[Scene_c3t3_item_priv::CNC]->bind();
+//    d->program = getShaderProgram(PROGRAM_NO_SELECTION);
+//    attribBuffers(viewer, PROGRAM_NO_SELECTION);
+//    d->program->bind();
+//    d->program->setAttributeValue("colors", QColor(Qt::black));
+//    viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->positions_lines_not_in_complex_size / 3));
+//    d->program->release();
+//    vaos[Scene_c3t3_item_priv::CNC]->release();
+//  }
 }
 
 void Scene_c3t3_item::drawPoints(CGAL::Three::Viewer_interface * viewer) const
 {
-  Scene_c3t3_item* ncthis = const_cast<Scene_c3t3_item*>(this);
-  if (!are_buffers_filled)
-  {
-    ncthis->d->computeElements();
-    ncthis->d->initializeBuffers(viewer);
-  }
-  vaos[Scene_c3t3_item_priv::Edges]->bind();
-  d->program = getShaderProgram(PROGRAM_C3T3_EDGES);
-  attribBuffers(viewer, PROGRAM_C3T3_EDGES);
-  d->program->bind();
-  QVector4D cp(this->plane().a(),this->plane().b(),this->plane().c(),this->plane().d());
-  d->program->setUniformValue("cutplane", cp);
-  d->program->setAttributeValue("colors", this->color());
-  viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(d->positions_lines.size() / 3));
-  vaos[Scene_c3t3_item_priv::Edges]->release();
-  d->program->release();
+//  Scene_c3t3_item* ncthis = const_cast<Scene_c3t3_item*>(this);
+//  if (!are_buffers_filled)
+//  {
+//    ncthis->d->computeElements();
+//    ncthis->d->initializeBuffers(viewer);
+//  }
+//  vaos[Scene_c3t3_item_priv::Edges]->bind();
+//  d->program = getShaderProgram(PROGRAM_C3T3_EDGES);
+//  attribBuffers(viewer, PROGRAM_C3T3_EDGES);
+//  d->program->bind();
+//  QVector4D cp(this->plane().a(),this->plane().b(),this->plane().c(),this->plane().d());
+//  d->program->setUniformValue("cutplane", cp);
+//  d->program->setAttributeValue("colors", this->color());
+//  viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(d->positions_lines.size() / 3));
+//  vaos[Scene_c3t3_item_priv::Edges]->release();
+//  d->program->release();
 
-  if(d->is_grid_shown)
-  {
-    vaos[Scene_c3t3_item_priv::Grid]->bind();
-    d->program = getShaderProgram(PROGRAM_NO_SELECTION);
-    attribBuffers(viewer, PROGRAM_NO_SELECTION);
-    d->program->bind();
-    d->program->setAttributeValue("colors", this->color());
-    QMatrix4x4 f_mat;
-    for (int i = 0; i<16; i++)
-      f_mat.data()[i] = d->frame->matrix()[i];
-    d->program->setUniformValue("f_matrix", f_mat);
-    viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->positions_grid.size() / 3));
-    d->program->release();
-    vaos[Scene_c3t3_item_priv::Grid]->release();
-  }
-  if(d->spheres_are_shown)
-  {
-    d->spheres->setPlane(this->plane());
-  }
-  Scene_group_item::drawEdges(viewer);
+//  if(d->is_grid_shown)
+//  {
+//    vaos[Scene_c3t3_item_priv::Grid]->bind();
+//    d->program = getShaderProgram(PROGRAM_NO_SELECTION);
+//    attribBuffers(viewer, PROGRAM_NO_SELECTION);
+//    d->program->bind();
+//    d->program->setAttributeValue("colors", this->color());
+//    QMatrix4x4 f_mat;
+//    for (int i = 0; i<16; i++)
+//      f_mat.data()[i] = d->frame->matrix()[i];
+//    d->program->setUniformValue("f_matrix", f_mat);
+//    viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->positions_grid.size() / 3));
+//    d->program->release();
+//    vaos[Scene_c3t3_item_priv::Grid]->release();
+//  }
+//  if(d->spheres_are_shown)
+//  {
+//    d->spheres->setPlane(this->plane());
+//  }
+//  Scene_group_item::drawEdges(viewer);
 
 }
 
@@ -1254,6 +1208,7 @@ QMenu* Scene_c3t3_item::contextMenu()
     QMenu *container = new QMenu(tr("Tetrahedra's Shrink Factor"));
     QWidgetAction *sliderAction = new QWidgetAction(0);
     connect(d->tet_Slider, &QSlider::valueChanged, this, &Scene_c3t3_item::itemChanged);
+
     sliderAction->setDefaultWidget(d->tet_Slider);
     container->addAction(sliderAction);
     menu->addMenu(container);
@@ -1284,7 +1239,8 @@ QMenu* Scene_c3t3_item::contextMenu()
       menu->addAction(tr("Show &tetrahedra"));
     actionShowTets->setCheckable(true);
     actionShowTets->setObjectName("actionShowTets");
-    connect(actionShowTets, &QAction::toggled, Set_show_tetrahedra(this->d));
+    connect(actionShowTets, SIGNAL(toggled(bool)),
+            this, SLOT(show_intersection(bool)));
 
     QAction* actionShowGrid=
       menu->addAction(tr("Show &grid"));
@@ -1300,117 +1256,23 @@ QMenu* Scene_c3t3_item::contextMenu()
 }
 
 
-void Scene_c3t3_item_priv::initializeBuffers(CGAL::Three::Viewer_interface *viewer)
+void Scene_c3t3_item::initializeBuffers(CGAL::Three::Viewer_interface *viewer) const
 {
-  //vao containing the data for the facets
-  {
-    program = item->getShaderProgram(Scene_c3t3_item::PROGRAM_C3T3, viewer);
-    program->bind();
+  triangle_containers[0]->initializeBuffers(viewer);
+  triangle_containers[0]->flat_size =d->poly_size;
+  edge_containers[Grid]->initializeBuffers(viewer);
+  edge_containers[Grid]->flat_size = d->grid_size;
+  edge_containers[Edges]->initializeBuffers(viewer);
+  edge_containers[Edges]->flat_size = d->lines_size;
 
-    item->vaos[Facets]->bind();
-    item->buffers[Facet_vertices].bind();
-    item->buffers[Facet_vertices].allocate(positions_poly.data(),
-      static_cast<int>(positions_poly.size()*sizeof(float)));
-    program->enableAttributeArray("vertex");
-    program->setAttributeBuffer("vertex", GL_FLOAT, 0, 3);
-    item->buffers[Facet_vertices].release();
-
-    item->buffers[Facet_normals].bind();
-    item->buffers[Facet_normals].allocate(normals.data(),
-      static_cast<int>(normals.size()*sizeof(float)));
-    program->enableAttributeArray("normals");
-    program->setAttributeBuffer("normals", GL_FLOAT, 0, 3);
-    item->buffers[Facet_normals].release();
-
-    item->buffers[Facet_colors].bind();
-    item->buffers[Facet_colors].allocate(f_colors.data(),
-      static_cast<int>(f_colors.size()*sizeof(float)));
-    program->enableAttributeArray("colors");
-    program->setAttributeBuffer("colors", GL_FLOAT, 0, 3);
-    item->buffers[Facet_colors].release();
-
-    item->buffers[Facet_barycenters].bind();
-    item->buffers[Facet_barycenters].allocate(positions_barycenter.data(),
-      static_cast<int>(positions_barycenter.size()*sizeof(float)));
-    program->enableAttributeArray("barycenter");
-    program->setAttributeBuffer("barycenter", GL_FLOAT, 0, 3);
-    item->buffers[Facet_barycenters].release();
-
-    item->vaos[Facets]->release();
-    program->release();
-    positions_poly_size = positions_poly.size();
-    positions_poly.clear();
-    positions_poly.swap(positions_poly);
-    normals.clear();
-    normals.swap(normals);
-    f_colors.clear();
-    f_colors.swap(f_colors);
-    positions_barycenter.clear();
-    positions_barycenter.swap(positions_barycenter);
-  }
-
-  //vao containing the data for the lines
-  {
-    program = item->getShaderProgram(Scene_c3t3_item::PROGRAM_C3T3_EDGES, viewer);
-    program->bind();
-
-    item->vaos[Edges]->bind();
-    item->buffers[Edges_vertices].bind();
-    item->buffers[Edges_vertices].allocate(positions_lines.data(),
-                                     static_cast<int>(positions_lines.size()*sizeof(float)));
-    program->enableAttributeArray("vertex");
-    program->setAttributeBuffer("vertex", GL_FLOAT, 0, 3);
-    item->buffers[Edges_vertices].release();
-
-    item->vaos[Edges]->release();
-    program->release();
-
-    positions_lines_size = positions_lines.size();
-    positions_lines.clear();
-    positions_lines.swap(positions_lines);
-
-  }
-
-  // vao containing the data for the cnc
-  {
-    program = item->getShaderProgram(Scene_c3t3_item::PROGRAM_NO_SELECTION, viewer);
-    program->bind();
-
-    item->vaos[CNC]->bind();
-    item->buffers[Edges_CNC].bind();
-    item->buffers[Edges_CNC].allocate(positions_lines_not_in_complex.data(),
-                                     static_cast<int>(positions_lines_not_in_complex.size()*sizeof(float)));
-    program->enableAttributeArray("vertex");
-    program->setAttributeBuffer("vertex", GL_FLOAT, 0, 3);
-    item->buffers[Edges_CNC].release();
-
-    item->vaos[CNC]->release();
-    program->release();
-
-    positions_lines_not_in_complex_size = positions_lines_not_in_complex.size();
-    positions_lines_not_in_complex.clear();
-    positions_lines_not_in_complex.swap(positions_lines_not_in_complex);
-
-  }
-
-  //vao containing the data for the grid
-  {
-    program = item->getShaderProgram(Scene_c3t3_item::PROGRAM_NO_SELECTION, viewer);
-    program->bind();
-
-    item->vaos[Grid]->bind();
-    item->buffers[Grid_vertices].bind();
-    item->buffers[Grid_vertices].allocate(positions_grid.data(),
-                                    static_cast<int>(positions_grid.size()*sizeof(float)));
-    program->enableAttributeArray("vertex");
-    program->setAttributeBuffer("vertex", GL_FLOAT, 0, 3);
-    item->buffers[Grid_vertices].release();
-    item->vaos[Grid]->release();
-    program->release();
-  }
-
-    program->release();
-    item->are_buffers_filled = true;
+  d->positions_poly.clear();
+  d->positions_poly.shrink_to_fit();
+  d->normals.clear();
+  d->normals.shrink_to_fit();
+  d->f_colors.clear();
+  d->f_colors.shrink_to_fit();
+  d->positions_barycenter.clear();
+  d->positions_barycenter.shrink_to_fit();
 }
 
 
@@ -1488,6 +1350,7 @@ void Scene_c3t3_item_priv::computeIntersections()
   const Geom_traits::Plane_3& plane = item->plane(offset);
   tree.all_intersected_primitives(plane,
         boost::make_function_output_iterator(ComputeIntersection(*this)));
+  intersection->allocate();
   intersected_cells.clear();
 }
 
@@ -1549,7 +1412,7 @@ void Scene_c3t3_item_priv::computeSpheres()
   spheres->invalidateOpenGLBuffers();
 }
 
-void Scene_c3t3_item_priv::computeElements()
+void Scene_c3t3_item_priv::computeElements()const
 {
   QApplication::setOverrideCursor(Qt::WaitCursor);
   positions_poly.clear();
@@ -1645,9 +1508,34 @@ void Scene_c3t3_item_priv::computeElements()
       }
     }
   }
+
+  item->triangle_containers[0]->VBOs[Tri::Flat_vertices]->allocate(positions_poly.data(),
+                                                                   static_cast<int>(positions_poly.size()*sizeof(float)));
+  item->triangle_containers[0]->VBOs[Tri::Flat_normals]->allocate(normals.data(),
+                                                                  static_cast<int>(normals.size()*sizeof(float)));
+  item->triangle_containers[0]->VBOs[Tri::FColors]->allocate(f_colors.data(),
+                                                             static_cast<int>(f_colors.size()*sizeof(float)));
+  item->triangle_containers[0]->VBOs[Tri::Facet_barycenters]->allocate(positions_barycenter.data(),
+                                                                       static_cast<int>(positions_barycenter.size()*sizeof(float)));
+  item->edge_containers[Scene_c3t3_item::Grid]->VBOs[Ed::Vertices]->allocate(positions_grid.data(),
+                                                         static_cast<int>(positions_grid.size()*sizeof(float)));
+  item->edge_containers[Scene_c3t3_item::Edges]->VBOs[Ed::Vertices]->allocate(positions_lines.data(),
+                                                             static_cast<int>(positions_lines.size()*sizeof(float)));
+  poly_size = positions_poly.size();
+  lines_size = positions_lines.size();
+  grid_size = positions_grid.size();
+
   QApplication::restoreOverrideCursor();
 }
 
+void Scene_c3t3_item::computeElements()const
+{
+  triangle_containers[0]->reset_vbos();
+  edge_containers[Grid]->reset_vbos();
+  edge_containers[Edges]->reset_vbos();
+  d->computeElements();
+  are_buffers_filled = true;
+}
 bool Scene_c3t3_item::load_binary(std::istream& is)
 {
   if(!CGAL::Mesh_3::load_binary_file(is, c3t3())) return false;
@@ -1719,10 +1607,14 @@ void Scene_c3t3_item::show_spheres(bool b)
 }
 void Scene_c3t3_item::show_intersection(bool b)
 {
-      contextMenu()->findChild<QAction*>("actionShowTets")->setChecked(b);
+  d->show_tetrahedra = b;
+  contextMenu()->findChild<QAction*>("actionShowTets")->setChecked(b);
   if(b && !d->intersection)
   {
     d->intersection = new Scene_intersection_item(this);
+    scene->addItem(d->intersection);
+    scene->changeGroup(d->intersection, this);
+    lockChild(d->intersection);
     d->intersection->init_vectors(&d->positions_poly,
                                   &d->normals,
                                   &d->positions_lines,
@@ -1731,9 +1623,6 @@ void Scene_c3t3_item::show_intersection(bool b)
     d->intersection->setName("Intersection tetrahedra");
     d->intersection->setRenderingMode(renderingMode());
     connect(d->intersection, SIGNAL(destroyed()), this, SLOT(reset_intersection_item()));
-    scene->addItem(d->intersection);
-    scene->changeGroup(d->intersection, this);
-    lockChild(d->intersection);
     d->are_intersection_buffers_filled = false;
   }
   else if (!b && d->intersection!=NULL)
@@ -2071,6 +1960,7 @@ void Scene_c3t3_item::itemAboutToBeDestroyed(Scene_item *item)
       static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->setManipulatedFrame(0);
       delete d->frame;
       d->frame = NULL;
+      if(d->tet_Slider)
       delete d->tet_Slider;
     }
     delete d;
@@ -2087,3 +1977,4 @@ void Scene_c3t3_item::on_spheres_color_changed()
 }
 
 #include "Scene_c3t3_item.moc"
+

@@ -5,6 +5,8 @@
 #include <iostream>
 #include <QDebug>
 #include <CGAL/Three/Viewer_interface.h>
+#include <CGAL/Three/Triangle_container.h>
+#include <CGAL/Three/Edge_container.h>
 
 namespace CT = CGAL::Three;
 const QColor CT::Scene_item::defaultColor = QColor(100, 100, 255);
@@ -13,6 +15,7 @@ CGAL::Three::Scene_item::Scene_item()
     color_(defaultColor),
     visible_(true),
     are_buffers_filled(false),
+    isinit(false),
     rendering_mode(FlatPlusEdges),
     defaultContextMenu(0),
     is_locked(false),
@@ -29,6 +32,15 @@ CGAL::Three::Scene_item::Scene_item()
 CGAL::Three::Scene_item::~Scene_item() {
   if(defaultContextMenu)
     defaultContextMenu->deleteLater();
+
+  for(std::size_t i = 0; i < triangle_containers.size(); ++i)
+  {
+    delete triangle_containers[i];
+  }
+  for(std::size_t i = 0; i < edge_containers.size(); ++i)
+  {
+    delete edge_containers[i];
+  }
 }
 
 
@@ -95,7 +107,7 @@ const char* slotName(RenderingMode mode) {
 QString CGAL::Three::Scene_item::renderingModeName() const
 {
     return modeName(renderingMode());
-} 
+}
 QMenu* CGAL::Three::Scene_item::contextMenu()
 {
     if(defaultContextMenu) {
@@ -215,17 +227,70 @@ void CGAL::Three::Scene_item::compute_diag_bbox()const
 
 }
 
-void CT::Scene_item::processData()
+void CT::Scene_item::processData()const
 {
-  writing();
+  Scene_item* cthis = const_cast<Scene_item*>(this);
+  cthis->writing();
 
-  WorkerThread *workerThread = new WorkerThread(this);
-  connect(workerThread, &WorkerThread::finished, [this, workerThread]()
+  WorkerThread *workerThread = new WorkerThread(cthis);
+  connect(workerThread, &WorkerThread::finished, [cthis, workerThread]()
   {
-    doneWriting();
-    redraw();
-    dataProcessed();
+    cthis->doneWriting();
+    cthis->redraw();
+    cthis->dataProcessed();
   });
   connect(workerThread, &WorkerThread::finished, workerThread, &WorkerThread::deleteLater);
   workerThread->start();
+}
+
+void CT::Scene_item::initGL() const
+{
+  Q_FOREACH(QGLViewer* v, QGLViewer::QGLViewerPool())
+  {
+    if(!v)
+      continue;
+    CT::Viewer_interface* viewer = static_cast<CT::Viewer_interface*>(v);
+    Q_FOREACH(CT::Triangle_container* tc, triangle_containers)
+    {
+      if(!tc->is_gl_init[viewer])
+        tc->initGL(*this, viewer);
+    }
+    Q_FOREACH(CT::Edge_container* ec, edge_containers)
+    {
+      if(!ec->is_gl_init[viewer])
+        ec->initGL(*this, viewer);
+    }
+  }
+  if(!isinit)
+  {
+    processData();
+  }
+  isinit = true;
+}
+
+void Scene_item::newViewer(Viewer_interface *viewer)
+{
+  computeElements();
+  Q_FOREACH(CT::Triangle_container* tc, triangle_containers)
+  {
+    if(!tc->is_gl_init[viewer])
+      tc->initGL(*this, viewer);
+  }
+  Q_FOREACH(CT::Edge_container* ec, edge_containers)
+  {
+    if(!ec->is_gl_init[viewer])
+      ec->initGL(*this, viewer);
+  }
+}
+
+void Scene_item::removeViewer(Viewer_interface *viewer)
+{
+  Q_FOREACH(CT::Triangle_container* tc, triangle_containers)
+  {
+    tc->removeViewer(viewer);
+  }
+  Q_FOREACH(CT::Edge_container* ec, edge_containers)
+  {
+    ec->removeViewer(viewer);
+  }
 }

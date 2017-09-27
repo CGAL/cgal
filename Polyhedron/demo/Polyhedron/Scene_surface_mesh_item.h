@@ -128,8 +128,6 @@ public:
   void printAllIds(CGAL::Three::Viewer_interface*) Q_DECL_OVERRIDE;
   bool shouldDisplayIds(CGAL::Three::Scene_item *current_item) const Q_DECL_OVERRIDE;
   bool testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface*)const Q_DECL_OVERRIDE;
-  void newViewer(CGAL::Three::Viewer_interface *viewer)Q_DECL_OVERRIDE;
-  void removeViewer(CGAL::Three::Viewer_interface *viewer)Q_DECL_OVERRIDE;
 
 
 Q_SIGNALS:

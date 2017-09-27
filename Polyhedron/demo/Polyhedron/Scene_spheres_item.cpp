@@ -1,6 +1,11 @@
 #include "Scene_spheres_item.h"
-#include <QApplication>
 
+#include <QApplication>
+#include <CGAL/Three/Buffer_objects.h>
+#include <CGAL/Three/Triangle_container.h>
+#include <CGAL/Three/Edge_container.h>
+
+typedef CGAL::Three::Viewer_interface VI;
 struct Scene_spheres_item_priv
 {
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
@@ -11,39 +16,34 @@ struct Scene_spheres_item_priv
 
   {
     item = parent;
+    isinit=false;
     create_flat_and_wire_sphere(1.0f,vertices,normals, edges);
     colors.clear();
     edges_colors.clear();
     centers.clear();
     radius.clear();
+    if(has_plane)
+    {
+      face_container = new Triangle_container(VI::PROGRAM_CUTPLANE_SPHERES, false);
+      edge_container = new Edge_container(VI::PROGRAM_CUTPLANE_SPHERES, false);
+    }
+    else
+    {
+      face_container = new Triangle_container(VI::PROGRAM_SPHERES, false);
+      edge_container = new Edge_container(VI::PROGRAM_SPHERES, false);
+    }
   }
 
   ~Scene_spheres_item_priv()
   {
+    delete face_container;
+    delete edge_container;
   }
-  void initializeBuffers(CGAL::Three::Viewer_interface *viewer)const;
-  enum Vbos
-  {
-    Vertices = 0,
-    Edge_vertices,
-    Normals,
-    Center,
-    Radius,
-    Color,
-    Edge_color,
-    NbOfVbos
-  };
-  enum Vaos
-  {
-    Facets = 0,
-    Edges,
-    NbOfVaos
-  };
-
 
   int precision;
   mutable CGAL::Plane_3<Kernel> plane;
   bool has_plane;
+  bool isinit;
 
   mutable std::vector<float> vertices;
   mutable std::vector<float> normals;
@@ -52,14 +52,17 @@ struct Scene_spheres_item_priv
   mutable std::vector<float> edges_colors;
   mutable std::vector<float> centers;
   mutable std::vector<float> radius;
+  mutable QMap<CGAL::Three::Viewer_interface*, bool> buffers_init;
   mutable QOpenGLShaderProgram *program;
+  Triangle_container* face_container;
+  Edge_container* edge_container;
   mutable int nb_centers;
   Scene_spheres_item* item;
   QString tooltip;
 
 };
 Scene_spheres_item::Scene_spheres_item(Scene_group_item* parent, bool planed)
-  :CGAL::Three::Scene_item(Scene_spheres_item_priv::NbOfVbos,Scene_spheres_item_priv::NbOfVaos)
+  :CGAL::Three::Scene_item()
 
 {
   setParent(parent);
@@ -71,166 +74,68 @@ Scene_spheres_item::~Scene_spheres_item()
   delete d;
 }
 
-void Scene_spheres_item_priv::initializeBuffers(CGAL::Three::Viewer_interface *viewer) const
+void Scene_spheres_item::initializeBuffers(CGAL::Three::Viewer_interface *viewer) const
 {
-  if(has_plane)
-  {
-    program = item->getShaderProgram(Scene_spheres_item::PROGRAM_CUTPLANE_SPHERES, viewer);
-    item->attribBuffers(viewer, Scene_spheres_item::PROGRAM_CUTPLANE_SPHERES);
-  }
-  else
-  {
-    program = item->getShaderProgram(Scene_spheres_item::PROGRAM_SPHERES, viewer);
-    item->attribBuffers(viewer, Scene_spheres_item::PROGRAM_SPHERES);
-  }
+  d->face_container->initializeBuffers(viewer);
+  d->edge_container->initializeBuffers(viewer);
+  d->face_container->flat_size = static_cast<int>(d->vertices.size());
+  d->edge_container->flat_size = static_cast<int>(d->edges.size());
+  d->face_container->center_size = d->centers.size();
+  d->edge_container->center_size = d->centers.size();
 
-  program->bind();
-  item->vaos[Facets]->bind();
-  item->buffers[Vertices].bind();
-  item->buffers[Vertices].allocate(vertices.data(),
-                             static_cast<int>(vertices.size()*sizeof(float)));
-  program->enableAttributeArray("vertex");
-  program->setAttributeBuffer("vertex", GL_FLOAT, 0, 3);
-  item->buffers[Vertices].release();
-
-  item->buffers[Normals].bind();
-  item->buffers[Normals].allocate(normals.data(),
-                            static_cast<int>(normals.size()*sizeof(float)));
-  program->enableAttributeArray("normals");
-  program->setAttributeBuffer("normals", GL_FLOAT, 0, 3);
-  item->buffers[Normals].release();
-
-  item->buffers[Color].bind();
-  item->buffers[Color].allocate(colors.data(),
-                          static_cast<int>(colors.size()*sizeof(float)));
-  program->enableAttributeArray("colors");
-  program->setAttributeBuffer("colors", GL_FLOAT, 0, 3);
-  item->buffers[Color].release();
-
-  item->buffers[Radius].bind();
-  item->buffers[Radius].allocate(radius.data(),
-                           static_cast<int>(radius.size()*sizeof(float)));
-  program->enableAttributeArray("radius");
-  program->setAttributeBuffer("radius", GL_FLOAT, 0, 1);
-  item->buffers[Radius].release();
-
-  item->buffers[Center].bind();
-  item->buffers[Center].allocate(centers.data(),
-                           static_cast<int>(centers.size()*sizeof(float)));
-  program->enableAttributeArray("center");
-  program->setAttributeBuffer("center", GL_FLOAT, 0, 3);
-  item->buffers[Center].release();
-
-  viewer->glVertexAttribDivisor(program->attributeLocation("center"), 1);
-  viewer->glVertexAttribDivisor(program->attributeLocation("radius"), 1);
-  viewer->glVertexAttribDivisor(program->attributeLocation("colors"), 1);
-  item->vaos[Facets]->release();
+//  centers.clear();
+//  centers.swap(centers);
+//  colors.clear();
+//  colors.swap(colors);
+//  radius.clear();
+//  radius.swap(radius);
+//  edges_colors.clear();
+//  edges_colors.swap(edges_colors);
 
 
-  item->vaos[Edges]->bind();
-  item->buffers[Edge_vertices].bind();
-  item->buffers[Edge_vertices].allocate(edges.data(),
-                                  static_cast<int>(edges.size()*sizeof(float)));
-  program->enableAttributeArray("vertex");
-  program->setAttributeBuffer("vertex", GL_FLOAT, 0, 3);
-  item->buffers[Edge_vertices].release();
-
-  item->buffers[Normals].bind();
-  program->enableAttributeArray("normals");
-  program->setAttributeBuffer("normals", GL_FLOAT, 0, 3);
-  item->buffers[Normals].release();
-
-  item->buffers[Edge_color].bind();
-  item->buffers[Edge_color].allocate(edges_colors.data(),
-                               static_cast<int>(edges_colors.size()*sizeof(float)));
-  program->enableAttributeArray("colors");
-  program->setAttributeBuffer("colors", GL_FLOAT, 0, 3);
-  item->buffers[Edge_color].release();
-
-  item->buffers[Radius].bind();
-  program->enableAttributeArray("radius");
-  program->setAttributeBuffer("radius", GL_FLOAT, 0, 1);
-  item->buffers[Radius].release();
-
-  item->buffers[Center].bind();
-  program->enableAttributeArray("center");
-  program->setAttributeBuffer("center", GL_FLOAT, 0, 3);
-  item->buffers[Center].release();
-
-  viewer->glVertexAttribDivisor(program->attributeLocation("center"), 1);
-  viewer->glVertexAttribDivisor(program->attributeLocation("radius"), 1);
-  viewer->glVertexAttribDivisor(program->attributeLocation("colors"), 1);
-  item->vaos[Edges]->release();
-
-  program->release();
-
-  nb_centers = static_cast<int>(centers.size());
-  centers.clear();
-  centers.swap(centers);
-  colors.clear();
-  colors.swap(colors);
-  radius.clear();
-  radius.swap(radius);
-  edges_colors.clear();
-  edges_colors.swap(edges_colors);
-
-  item->are_buffers_filled = true;
 }
 
 void Scene_spheres_item::draw(Viewer_interface *viewer) const
 {
-  if (!are_buffers_filled)
+  if(!d->isinit)
+    initGL();
+  if(!is_locked && are_buffers_filled &&
+     ! d->buffers_init[viewer])
   {
-    d->initializeBuffers(viewer);
+    initializeBuffers(viewer);
+    d->buffers_init[viewer] = true;
   }
-  vaos[Scene_spheres_item_priv::Facets]->bind();
   if(d->has_plane)
   {
-    d->program = getShaderProgram(PROGRAM_CUTPLANE_SPHERES, viewer);
-    attribBuffers(viewer, PROGRAM_CUTPLANE_SPHERES);
-    d->program->bind();
     QVector4D cp(d->plane.a(),d->plane.b(),d->plane.c(),d->plane.d());
-    d->program->setUniformValue("cutplane", cp);
-
+    d->face_container->plane = cp;
+    d->face_container->draw(*this, viewer,false);
   }
   else
   {
-    d->program = getShaderProgram(PROGRAM_SPHERES, viewer);
-    attribBuffers(viewer, PROGRAM_SPHERES);
-    d->program->bind();
+    d->face_container->draw(*this, viewer,false);
   }
-  viewer->glDrawArraysInstanced(GL_TRIANGLES, 0,
-                                static_cast<GLsizei>(d->vertices.size()/3),
-                                static_cast<GLsizei>(d->nb_centers));
-  d->program->release();
-  vaos[Scene_spheres_item_priv::Facets]->release();
 }
 void Scene_spheres_item::drawEdges(Viewer_interface *viewer) const
 {
-  if (!are_buffers_filled)
+  if(!d->isinit)
+    initGL();
+  if(!is_locked && are_buffers_filled &&
+     ! d->buffers_init[viewer])
   {
-    d->initializeBuffers(viewer);
+    initializeBuffers(viewer);
+    d->buffers_init[viewer] = true;
   }
-  vaos[Scene_spheres_item_priv::Edges]->bind();
   if(d->has_plane)
   {
-    d->program = getShaderProgram(PROGRAM_CUTPLANE_SPHERES, viewer);
-    attribBuffers(viewer, PROGRAM_CUTPLANE_SPHERES);
-    d->program->bind();
     QVector4D cp(d->plane.a(),d->plane.b(),d->plane.c(),d->plane.d());
-    d->program->setUniformValue("cutplane", cp);
+    d->edge_container->plane = cp;
+    d->edge_container->draw(*this, viewer,false);
   }
   else
   {
-    d->program = getShaderProgram(PROGRAM_SPHERES, viewer);
-    attribBuffers(viewer, PROGRAM_SPHERES);
-    d->program->bind();
+    d->edge_container->draw(*this, viewer,false);
   }
-  viewer->glDrawArraysInstanced(GL_LINES, 0,
-                                static_cast<GLsizei>(d->edges.size()/3),
-                                static_cast<GLsizei>(d->nb_centers));
-  d->program->release();
-  vaos[Scene_spheres_item_priv::Edges]->release();
 }
 void Scene_spheres_item::add_sphere(const CGAL::Sphere_3<Kernel>& sphere, CGAL::Color color)
 {
@@ -275,3 +180,6 @@ void Scene_spheres_item::setColor(QColor c)
   CGAL::Three::Scene_item::setColor(c);
   this->on_color_changed();
 }
+
+void Scene_spheres_item::computeElements() const
+{}

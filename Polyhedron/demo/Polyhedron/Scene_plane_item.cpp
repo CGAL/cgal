@@ -1,17 +1,19 @@
 #include "Scene_plane_item.h"
+#include <CGAL/Three/Triangle_container.h>
 #include <QApplication>
 using namespace CGAL::Three;
-
-
+typedef Viewer_interface VI;
+typedef Triangle_container Tri;
 
 Scene_plane_item::Scene_plane_item(const CGAL::Three::Scene_interface* scene_interface)
-      :CGAL::Three::Scene_item(NbOfVbos,NbOfVaos),
+      :CGAL::Three::Scene_item(),
       scene(scene_interface),
       manipulable(false),
       can_clone(true),
       frame(new ManipulatedFrame())
   {
     setNormal(0., 0., 1.);
+    faces_container = new Triangle_container(VI::PROGRAM_WITHOUT_LIGHT, true);
 
     //Generates an integer which will be used as ID for each buffer
     invalidateOpenGLBuffers();
@@ -22,34 +24,24 @@ Scene_plane_item::~Scene_plane_item() {
 
 void Scene_plane_item::initializeBuffers(Viewer_interface *viewer) const
 {
-    program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
-    program->bind();
-    vaos[Facets]->bind();
-
-    buffers[Facets_vertices].bind();
-    buffers[Facets_vertices].allocate(positions_quad.data(),
-                        static_cast<int>(positions_quad.size()*sizeof(float)));
-    program->enableAttributeArray("vertex");
-    program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
-    buffers[Facets_vertices].release();
-    vaos[Facets]->release();
+  faces_container->initializeBuffers(viewer);
+  faces_container->idx_size = static_cast<int>(idx_quad.size());
 
 
-    vaos[Edges]->bind();
-    buffers[Edges_vertices].bind();
-    buffers[Edges_vertices].allocate(positions_lines.data(),
-                        static_cast<int>(positions_lines.size()*sizeof(float)));
-    program->enableAttributeArray("vertex");
-    program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
-    buffers[Edges_vertices].release();
-    vaos[Edges]->release();
 
-    program->release();
-    are_buffers_filled = true;
+//    vaos[Edges]->bind();
+//    buffers[Edges_vertices].bind();
+//    buffers[Edges_vertices].allocate(positions_lines.data(),
+//                        static_cast<int>(positions_lines.size()*sizeof(float)));
+//    program->enableAttributeArray("vertex");
+//    program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
+//    buffers[Edges_vertices].release();
+//    vaos[Edges]->release();
+
 
 }
 
-void Scene_plane_item::compute_normals_and_vertices(void) const
+void Scene_plane_item::computeElements() const
 {
     QApplication::setOverrideCursor(Qt::WaitCursor);
     positions_quad.resize(0);
@@ -62,22 +54,25 @@ void Scene_plane_item::compute_normals_and_vertices(void) const
     positions_quad.push_back(-diag);
     positions_quad.push_back(-diag);
     positions_quad.push_back(0.0  );
+
     positions_quad.push_back(-diag);
     positions_quad.push_back(diag );
-    positions_quad.push_back(0.0  );
-    positions_quad.push_back(diag );
-    positions_quad.push_back(-diag);
     positions_quad.push_back(0.0  );
 
     positions_quad.push_back(diag );
     positions_quad.push_back(-diag);
     positions_quad.push_back(0.0  );
-    positions_quad.push_back(-diag);
-    positions_quad.push_back(diag );
-    positions_quad.push_back(0.0  );
+
     positions_quad.push_back(diag );
     positions_quad.push_back(diag );
     positions_quad.push_back(0.0  );
+
+    idx_quad.push_back(0);
+    idx_quad.push_back(1);
+    idx_quad.push_back(2);
+    idx_quad.push_back(2);
+    idx_quad.push_back(1);
+    idx_quad.push_back(3);
 
 }
     //The grid
@@ -108,45 +103,56 @@ void Scene_plane_item::compute_normals_and_vertices(void) const
         }
 
     }
+
+    faces_container->VBOs[Tri::Vertex_indices]->allocate(idx_quad.data(),
+                                                       static_cast<int>(idx_quad.size()*sizeof(unsigned int)));
+    faces_container->VBOs[Tri::Smooth_vertices]->allocate(positions_quad.data(),
+                                                        static_cast<int>(positions_quad.size()*sizeof(float)));
     QApplication::restoreOverrideCursor();
 }
 
 void Scene_plane_item::draw(Viewer_interface* viewer)const
 {
-    if(!are_buffers_filled)
-        initializeBuffers(viewer);
-    vaos[Facets]->bind();
-    program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
-    attribBuffers(viewer, PROGRAM_WITHOUT_LIGHT);
+
+  if(!isinit)
+    initGL();
+  if(!is_locked && are_buffers_filled &&
+     !buffers_init[viewer])
+  {
+    initializeBuffers(viewer);
+    buffers_init[viewer] = true;
+  }
+
     QMatrix4x4 f_matrix;
     for(int i=0; i<16; i++)
         f_matrix.data()[i] = (float)frame->matrix()[i];
-    program->bind();
+
     program->setUniformValue("f_matrix", f_matrix);
-    program->setAttributeValue("colors",this->color());
     program->setUniformValue("is_selected", false);
-    viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(positions_quad.size()/3));
-    program->release();
-    vaos[Facets]->release();
+
+    faces_container->color = color();
+    faces_container->is_selected = false;
+    faces_container->draw(*this, viewer, true);
+
 
 }
 
 void Scene_plane_item::drawEdges(CGAL::Three::Viewer_interface* viewer)const
 {
-    if(!are_buffers_filled)
-        initializeBuffers(viewer);
-    vaos[Edges]->bind();
-    program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
-    attribBuffers(viewer, PROGRAM_WITHOUT_LIGHT);
-    QMatrix4x4 f_matrix;
-    for(int i=0; i<16; i++)
-        f_matrix.data()[i] = (float)frame->matrix()[i];
-    program->bind();
-    program->setUniformValue("f_matrix", f_matrix);
-    program->setAttributeValue("colors",QVector3D(0,0,0));
-    viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines.size()/3));
-    program->release();
-    vaos[Edges]->release();
+//    if(!are_buffers_filled)
+//        initializeBuffers(viewer);
+//    vaos[Edges]->bind();
+//    program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
+//    attribBuffers(viewer, PROGRAM_WITHOUT_LIGHT);
+//    QMatrix4x4 f_matrix;
+//    for(int i=0; i<16; i++)
+//        f_matrix.data()[i] = (float)frame->matrix()[i];
+//    program->bind();
+//    program->setUniformValue("f_matrix", f_matrix);
+//    program->setAttributeValue("colors",QVector3D(0,0,0));
+//    viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines.size()/3));
+//    program->release();
+//    vaos[Edges]->release();
 }
 
 void Scene_plane_item::flipPlane()
@@ -218,7 +224,6 @@ Plane_3 Scene_plane_item::plane(qglviewer::Vec offset) const {
 
 void Scene_plane_item::invalidateOpenGLBuffers()
 {
-    compute_normals_and_vertices();
     are_buffers_filled = false;
     compute_bbox();
 }

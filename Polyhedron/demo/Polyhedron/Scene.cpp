@@ -84,7 +84,6 @@ Scene::replaceItem(Scene::Item_id index, CGAL::Three::Scene_item* item, bool emi
 {
     if(index < 0 || index >= m_entries.size())
         return 0;
-    item->moveToThread(QApplication::instance()->thread());
     connect(item, SIGNAL(itemChanged()),
             this, SLOT(itemChanged()));
     connect(item, SIGNAL(itemVisibilityChanged()),
@@ -1142,6 +1141,7 @@ void Scene::changeGroup(Scene_item *item, CGAL::Three::Scene_group_item *target_
     //add the item to the target group
     target_group->addChild(item);
     item->moveToGroup(target_group);
+    redraw_model();
     Q_EMIT updated();
 }
 

@@ -43,15 +43,20 @@ struct DEMO_FRAMEWORK_EXPORT Edge_container :public Primitive_container
   enum vbosName {
     Vertices = 0,
     Indices,
+    Normals,
+    Colors,
+    Radius,
+    Barycenters,
     NbOfVbos
   };
 
     Edge_container(int program, bool indexed);
-    void initGL(Scene_item *item, Viewer_interface *viewer) const Q_DECL_OVERRIDE;
+    void initGL(const Scene_item &item, Viewer_interface *viewer) const Q_DECL_OVERRIDE;
     void draw(const Scene_item &item, CGAL::Three::Viewer_interface* viewer,
               bool is_color_uniform = true) const Q_DECL_OVERRIDE;
     //drawing variables
     QVector4D plane;
+    QMatrix4x4 f_matrix;
 }; //end of class Triangle_container
 }
 }

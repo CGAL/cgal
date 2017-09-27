@@ -45,13 +45,14 @@ struct DEMO_FRAMEWORK_EXPORT Triangle_container :public Primitive_container
     Flat_normals,
     Smooth_normals,
     Facet_barycenters,
+    Radius,
     VColors,
     FColors,
     NbOfVbos
   };
 
     Triangle_container(int program, bool indexed);
-    void initGL(CGAL::Three::Scene_item* item, CGAL::Three::Viewer_interface* viewer)const Q_DECL_OVERRIDE;
+    void initGL(const Scene_item &item, CGAL::Three::Viewer_interface* viewer)const Q_DECL_OVERRIDE;
     void draw(const Scene_item &item, CGAL::Three::Viewer_interface* viewer,
               bool is_color_uniform) const Q_DECL_OVERRIDE;
 

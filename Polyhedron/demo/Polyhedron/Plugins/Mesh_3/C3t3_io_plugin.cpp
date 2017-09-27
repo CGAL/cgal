@@ -2,7 +2,6 @@
 #include "Scene_c3t3_item.h"
 #include <CGAL/Mesh_3/tet_soup_to_c3t3.h>
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
-#include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/IO/File_avizo.h>
 #include <iostream>
 #include <fstream>
@@ -11,33 +10,20 @@
 
 class Polyhedron_demo_c3t3_binary_io_plugin :
   public QObject,
-  public CGAL::Three::Polyhedron_demo_io_plugin_interface,
-  public CGAL::Three::Polyhedron_demo_plugin_interface
+  public CGAL::Three::Polyhedron_demo_io_plugin_interface
 {
     Q_OBJECT
     Q_INTERFACES(CGAL::Three::Polyhedron_demo_io_plugin_interface)
-    Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
-    Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
+    Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.0")
 
 public:
-  void init(QMainWindow*, CGAL::Three::Scene_interface* sc, Messages_interface*)
-  {
-    this->scene = sc;
-  }
+
   QString name() const { return "C3t3_io_plugin"; }
   QString nameFilters() const { return "binary files (*.cgal);;ascii (*.mesh);;maya (*.ma)"; }
   QString saveNameFilters() const { return "binary files (*.cgal);;ascii (*.mesh);;maya (*.ma);;avizo (*.am);;OFF files (*.off)"; }
   QString loadNameFilters() const { return "binary files (*.cgal);;ascii (*.mesh)"; }
-  QList<QAction*> actions() const
-  {
-    return QList<QAction*>();
-  }
-  bool applicable(QAction*) const
-  {
-    return false;
-  }
   bool canLoad() const;
-  CGAL::Three::Scene_item* load(QFileInfo fileinfo);
+  CGAL::Three::Scene_item* load(QFileInfo fileinfo, Scene_interface *scene, QMainWindow *);
 
   bool canSave(const CGAL::Three::Scene_item*);
   bool save(const CGAL::Three::Scene_item*, QFileInfo fileinfo);
@@ -55,7 +41,7 @@ bool Polyhedron_demo_c3t3_binary_io_plugin::canLoad() const {
 
 
 CGAL::Three::Scene_item*
-Polyhedron_demo_c3t3_binary_io_plugin::load(QFileInfo fileinfo) {
+Polyhedron_demo_c3t3_binary_io_plugin::load(QFileInfo fileinfo, CGAL::Three::Scene_interface* scene, QMainWindow* ) {
 
     // Open file
     std::ifstream in(fileinfo.filePath().toUtf8(),

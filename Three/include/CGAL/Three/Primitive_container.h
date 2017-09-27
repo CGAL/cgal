@@ -55,7 +55,7 @@ struct DEMO_FRAMEWORK_EXPORT Primitive_container
         removeViewer(viewer);
       }
     }
-    virtual void initGL(CGAL::Three::Scene_item* item, CGAL::Three::Viewer_interface* viewer) const = 0;
+    virtual void initGL(const CGAL::Three::Scene_item& item, CGAL::Three::Viewer_interface* viewer) const = 0;
     void removeViewer(CGAL::Three::Viewer_interface* viewer) const
     {
       delete VAOs[viewer];
@@ -116,7 +116,9 @@ struct DEMO_FRAMEWORK_EXPORT Primitive_container
     bool indexed;
     mutable QMap<CGAL::Three::Viewer_interface*, bool> is_init;
     mutable QMap<CGAL::Three::Viewer_interface*, bool> is_gl_init;
+    mutable bool is_selected;
     mutable std::size_t flat_size;
+    mutable std::size_t center_size;
     mutable std::size_t idx_size;
     mutable QColor color;
 }; //end of class Triangle_container

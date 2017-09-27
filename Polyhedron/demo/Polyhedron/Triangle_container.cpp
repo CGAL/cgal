@@ -8,27 +8,43 @@ Triangle_container::Triangle_container(int program, bool indexed)
   VBOs.resize(NbOfVbos);
 }
 
-void Triangle_container::initGL(CGAL::Three::Scene_item* item, CGAL::Three::Viewer_interface* viewer)const
+void Triangle_container::initGL(const CGAL::Three::Scene_item& item, CGAL::Three::Viewer_interface* viewer)const
 {
   viewer->makeCurrent();
   if(indexed)
   {
     switch(program_id)
     {
+    case VI::PROGRAM_WITHOUT_LIGHT:
     case VI::PROGRAM_WITH_LIGHT:
     {
-      VBOs[Smooth_vertices] =
-          new CGAL::Three::Vbo("vertex");
-      VBOs[Smooth_normals] =
-          new CGAL::Three::Vbo("normals");
-      VBOs[VColors] =
-          new CGAL::Three::Vbo("colors");
-      VBOs[Vertex_indices] =
-          new CGAL::Three::Vbo("indices",
-                               QOpenGLBuffer::IndexBuffer);
-      VAOs[viewer] = new CGAL::Three::Vao(item->getShaderProgram(program_id, viewer));
+      if(!VBOs[Smooth_vertices])
+        VBOs[Smooth_vertices] =
+            new CGAL::Three::Vbo("vertex");
+      if(!VBOs[Vertex_indices])
+        VBOs[Vertex_indices] =
+            new CGAL::Three::Vbo("indices",
+                                 QOpenGLBuffer::IndexBuffer);
+      if(!VAOs[viewer])
+        VAOs[viewer] = new CGAL::Three::Vao(item.getShaderProgram(program_id, viewer));
       VAOs[viewer]->addVbo(VBOs[Smooth_vertices]);
       VAOs[viewer]->addVbo(VBOs[Vertex_indices]);
+    }
+      break;
+    default:
+      Q_UNUSED(viewer);
+      break;
+    }
+    switch(program_id)
+    {
+    case VI::PROGRAM_WITH_LIGHT:
+    {
+      if(!VBOs[Smooth_normals])
+        VBOs[Smooth_normals] =
+            new CGAL::Three::Vbo("normals");
+      if(!VBOs[VColors])
+        VBOs[VColors] =
+            new CGAL::Three::Vbo("colors");
       VAOs[viewer]->addVbo(VBOs[Smooth_normals]);
       VAOs[viewer]->addVbo(VBOs[VColors]);
     }
@@ -42,21 +58,25 @@ void Triangle_container::initGL(CGAL::Three::Scene_item* item, CGAL::Three::View
   {
     switch(program_id)
     {
+
     case VI::PROGRAM_WITH_LIGHT:
     case VI::PROGRAM_C3T3:
     //case VI::PROGRAM_C3T3_TETS:
-
+    case VI::PROGRAM_SPHERES:
+    case VI::PROGRAM_CUTPLANE_SPHERES:
     {
       if(!VBOs[Flat_vertices])
+      {
         VBOs[Flat_vertices] =
             new CGAL::Three::Vbo("vertex");
+      }
       if(!VBOs[Flat_normals])
         VBOs[Flat_normals] =
             new CGAL::Three::Vbo("normals");
       if(!VBOs[FColors])
         VBOs[FColors] =
             new CGAL::Three::Vbo("colors");
-      VAOs[viewer] = new CGAL::Three::Vao(item->getShaderProgram(program_id, viewer));
+      VAOs[viewer] = new CGAL::Three::Vao(item.getShaderProgram(program_id, viewer));
       VAOs[viewer]->addVbo(VBOs[Flat_vertices]);
       VAOs[viewer]->addVbo(VBOs[Flat_normals]);
       VAOs[viewer]->addVbo(VBOs[FColors]);
@@ -70,8 +90,9 @@ void Triangle_container::initGL(CGAL::Three::Scene_item* item, CGAL::Three::View
     switch(program_id)
     {
     case VI::PROGRAM_C3T3:
-
       //case VI::PROGRAM_C3T3_TETS:
+    case VI::PROGRAM_SPHERES:
+    case VI::PROGRAM_CUTPLANE_SPHERES:
     {
       if(!VBOs[Facet_barycenters])
         VBOs[Facet_barycenters] =
@@ -83,6 +104,18 @@ void Triangle_container::initGL(CGAL::Three::Scene_item* item, CGAL::Three::View
       Q_UNUSED(viewer);
       break;
     }
+    if(program_id == VI::PROGRAM_SPHERES
+       || program_id == VI::PROGRAM_CUTPLANE_SPHERES)
+    {
+      if(!VBOs[Radius])
+        VBOs[Radius] =
+            new CGAL::Three::Vbo("radius",
+                                 QOpenGLBuffer::VertexBuffer, GL_FLOAT, 0, 1);
+      VAOs[viewer]->addVbo(VBOs[Radius]);
+      viewer->glVertexAttribDivisor(VAOs[viewer]->program->attributeLocation("barycenter"), 1);
+      viewer->glVertexAttribDivisor(VAOs[viewer]->program->attributeLocation("radius"), 1);
+      viewer->glVertexAttribDivisor(VAOs[viewer]->program->attributeLocation("colors"), 1);
+    }
   }
   is_gl_init[viewer] = true;
 }
@@ -91,19 +124,13 @@ void Triangle_container::draw(const CGAL::Three::Scene_item& item,
                               CGAL::Three::Viewer_interface* viewer,
                               bool is_color_uniform ) const
 {
-//  if(!is_init[viewer])
-//  {
-//    initializeBuffers(viewer);
-//  }
+
   item.attribBuffers(viewer, program_id);
 
   if(indexed)
   {
     VAOs[viewer]->bind();
-    if(item.isSelected())
-      VAOs[viewer]->program->setAttributeValue("is_selected", true);
-    else
-      VAOs[viewer]->program->setAttributeValue("is_selected", false);
+    VAOs[viewer]->program->setAttributeValue("is_selected", is_selected);
     if(is_color_uniform)
       VAOs[viewer]->program->setAttributeValue("colors", color);
     VBOs[Vertex_indices]->bind();
@@ -115,19 +142,21 @@ void Triangle_container::draw(const CGAL::Three::Scene_item& item,
   else
   {
     VAOs[viewer]->bind();
-    if(program_id == VI::PROGRAM_C3T3
-       //|| program_id == VI::PROGRAM_C3T3_TETS
-       )
-      VAOs[viewer]->program->setUniformValue("shrink_factor", shrink_factor);
     if(program_id == VI::PROGRAM_C3T3)
+      VAOs[viewer]->program->setUniformValue("shrink_factor", shrink_factor);
+    if(program_id == VI::PROGRAM_C3T3
+       || program_id == VI::PROGRAM_CUTPLANE_SPHERES)
       VAOs[viewer]->program->setUniformValue("cutplane", plane);
-    if(item.isSelected())
-      VAOs[viewer]->program->setAttributeValue("is_selected", true);
-    else
-      VAOs[viewer]->program->setAttributeValue("is_selected", false);
+    VAOs[viewer]->program->setAttributeValue("is_selected", is_selected);
     if(is_color_uniform)
       VAOs[viewer]->program->setAttributeValue("colors", color);
-    viewer->glDrawArrays(GL_TRIANGLES,0,static_cast<GLsizei>(flat_size/3));
+    if(program_id == VI::PROGRAM_SPHERES
+       || program_id == VI::PROGRAM_CUTPLANE_SPHERES)
+      viewer->glDrawArraysInstanced(GL_TRIANGLES, 0,
+                                    static_cast<GLsizei>(flat_size/3),
+                                    static_cast<GLsizei>(center_size/3));
+    else
+      viewer->glDrawArrays(GL_TRIANGLES,0,static_cast<GLsizei>(flat_size/3));
 
     VAOs[viewer]->release();
   }

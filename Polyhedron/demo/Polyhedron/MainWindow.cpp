@@ -1045,7 +1045,7 @@ Scene_item* MainWindow::loadItem(QFileInfo fileinfo, CGAL::Three::Polyhedron_dem
   {
     this->addToRecentFiles(fileinfo.absoluteFilePath());
   }
-
+  item->moveToThread(QApplication::instance()->thread());
   return item;
 }
 
@@ -2123,9 +2123,11 @@ void LoadingController::handleResults(CT::Scene_item* item)
     error();
     return;
   }
+  item->moveToThread(QApplication::instance()->thread());
   if(!qobject_cast<Scene_group_item*>(item))
     item->setColor(colors_[counter-1]);
   mw->selectSceneItem(scene->item_id(item));
+
   scene->addItem(item);
   CGAL::Three::Scene_group_item* group =
       qobject_cast<CGAL::Three::Scene_group_item*>(item);
@@ -2281,6 +2283,7 @@ void MainWindow::setupViewer(Viewer* viewer, SubViewer* subviewer=NULL)
 void MainWindow::on_actionAdd_Viewer_triggered()
 {
   Viewer *viewer2 = new Viewer(ui->centralwidget, viewer);
+  viewer2->setManipulatedFrame(viewer->manipulatedFrame());
   viewer2->setObjectName("viewer2");
   scene->newViewer(viewer2);
   SubViewer* sub_viewer = new SubViewer(this, viewer2);

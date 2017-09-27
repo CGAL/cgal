@@ -582,7 +582,6 @@ void Viewer::initializeGL()
   d->initialized = true;
 }
 
-#include <QMouseEvent>
 
 void Viewer::mousePressEvent(QMouseEvent* event)
 {

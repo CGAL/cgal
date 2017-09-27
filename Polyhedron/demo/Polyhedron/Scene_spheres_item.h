@@ -42,7 +42,8 @@ public:
   void draw(CGAL::Three::Viewer_interface* viewer) const Q_DECL_OVERRIDE;
   void drawEdges(CGAL::Three::Viewer_interface* viewer) const Q_DECL_OVERRIDE;
   void invalidateOpenGLBuffers() Q_DECL_OVERRIDE;
-  void computeElements() const;
+  void computeElements() const Q_DECL_OVERRIDE;
+  void initializeBuffers(CGAL::Three::Viewer_interface *) const Q_DECL_OVERRIDE;
   void setPlane(Kernel::Plane_3 p_plane);
   void setToolTip(QString s);
   void setColor(QColor c) Q_DECL_OVERRIDE;
