@@ -180,7 +180,12 @@ public:
       m_triplets.push_back(Triplet(i,j,val));
   }
 
-  /// Read access to a matrix coefficient: a_ij.
+  /// Read access to a matrix coefficient.
+  ///
+  /// Complexity:
+  /// - O(log(n)) if the matrix is already built.
+  /// - O(n) if the matrix is not built.
+  /// n being the number of entries in the matrix.
   ///
   /// @commentheading Preconditions:
   /// - 0 <= i < row_dimension().
