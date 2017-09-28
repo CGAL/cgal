@@ -227,7 +227,7 @@ public:
   typedef typename Base::Subdomain_index      Subdomain_index;
 
 #ifndef CGAL_NO_DEPRECATED_CODE
-  typedef Curve_index Curve_segment_index CGAL_DEPRECATED; ///< Backward-compatibility
+  typedef Curve_index Curve_segment_index; ///< Backward-compatibility
 #endif
 
   typedef typename boost::property_map<Polyhedron,

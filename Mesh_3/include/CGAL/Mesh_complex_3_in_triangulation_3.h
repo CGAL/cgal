@@ -75,7 +75,7 @@ public:
   typedef CurveIndex                                      Curve_index;
 
 #ifndef CGAL_NO_DEPRECATED_CODE
-  typedef CurveIndex Curve_segment_index CGAL_DEPRECATED;
+  typedef CurveIndex Curve_segment_index;
 #endif
 
   typedef typename Base::Triangulation                    Triangulation;
