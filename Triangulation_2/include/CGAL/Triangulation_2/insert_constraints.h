@@ -26,7 +26,7 @@
 
 #include <CGAL/Spatial_sort_traits_adapter_2.h>
 #include <CGAL/property_map.h>
-#include <boost/iterator/counting_iterator.hpp>
+#include <CGAL/boost/iterator/counting_iterator.hpp>
 #include <vector>
 #include <iterator>
 

@@ -42,7 +42,7 @@
 #include <sstream>
 
 //boost --------------
-#include <boost/iterator/counting_iterator.hpp>
+#include <CGAL/boost/iterator/counting_iterator.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/make_shared.hpp>
 //---------------------
