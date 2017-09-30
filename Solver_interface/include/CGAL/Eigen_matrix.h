@@ -195,18 +195,22 @@ public:
     CGAL_precondition(i < row_dimension());
     CGAL_precondition(j < column_dimension());
 
+    if(m_is_symmetric && j > i)
+      std::swap(i, j);
+
     if (m_is_already_built)
-        return m_matrix.coeffRef(i,j);
+      return m_matrix.coeffRef(i,j);
     else
     {
+      NT val = 0;
       for(std::size_t t=0; t<m_triplets.size(); ++t)
       {
         if(m_triplets[t].col() == j &&
            m_triplets[t].row() == i)
-          return m_triplets[t].value();
+          val += m_triplets[t].value();
       }
+      return val;
     }
-    return 0;
   }
 
   void assemble_matrix() const
