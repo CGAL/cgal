@@ -93,7 +93,8 @@ public:
     // Indicate if rendering mode is supported
     virtual bool supportsRenderingMode(RenderingMode m) const Q_DECL_OVERRIDE;
     // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
-    virtual void draw(CGAL::Three::Viewer_interface*) const Q_DECL_OVERRIDE;
+    virtual void draw(CGAL::Three::Viewer_interface*,
+                      int pass, bool, QOpenGLFramebufferObject*  ) const Q_DECL_OVERRIDE;
     virtual void drawEdges(CGAL::Three::Viewer_interface* viewer) const Q_DECL_OVERRIDE;
     virtual void drawPoints(CGAL::Three::Viewer_interface*) const Q_DECL_OVERRIDE;
 

@@ -36,6 +36,7 @@ using namespace CGAL::Three;
 #else
 #  define DEMO_FRAMEWORK_EXPORT Q_DECL_IMPORT
 #endif
+
 namespace CGAL {
 namespace Three {
 //!A Scene_group_item is a special Scene_item that does not draw anything,
@@ -47,7 +48,7 @@ class DEMO_FRAMEWORK_EXPORT Scene_group_item : public Scene_item
 {
     Q_OBJECT
 public :
-    Scene_group_item(QString name = QString("New group"));
+    Scene_group_item(QString name,Scene_interface *scene);
     ~Scene_group_item() {}
     //!Sets the scene;
     void setScene(Scene_interface* s) { scene = s; }
@@ -63,17 +64,38 @@ public :
      */
     void lockChild(CGAL::Three::Scene_item*);
     /*!
+    * \brief Locks a child
+    *
+    * A locked child cannot be moved out of the group nor can it be deleted.
+    * Use it to prevent a child to be destroyed without its parent.
+    */
+    void lockChild(Scene_interface::Item_id id);
+
+    /*!
      * \brief Unlocks a child
      *
      * @see lockChild()
      */
     void unlockChild(CGAL::Three::Scene_item*);
     /*!
+     * \brief Unlocks a child
+     *
+     * @see lockChild()
+     */
+    void unlockChild(Scene_interface::Item_id id);
+    /*!
+
      * \brief Tells if a child is locked.
      * \return true if the child is locked.
      * @see lockChild()
      */
     bool isChildLocked(CGAL::Three::Scene_item*);
+    /*!
+         * \brief Tells if a child is locked.
+         * \return true if the child is locked.
+         * @see lockChild()
+         */
+    bool isChildLocked(Scene_interface::Item_id id);
     //!Returns if the group_item is currently expanded or collapsed in the Geometric Objects list.
     //! True means expanded, false means collapsed.
     //! @see isExpanded().
@@ -102,7 +124,8 @@ public :
     //! and `Scene_item::drawPoints` for each child if its current
     //! rendering mode is adequat.
     //! @see #RenderingMode
-    virtual void draw(CGAL::Three::Viewer_interface*) const;
+    virtual void draw(CGAL::Three::Viewer_interface*, int pass,
+                      bool is_writing, QOpenGLFramebufferObject*fbo) const;
     //!\brief draws all the children
     //!
     //! Calls `Scene_item::drawEdges()`, then calls `Scene_item::draw()`
@@ -117,15 +140,13 @@ public :
     //! rendering mode is adequat.
     //! @see #RenderingMode
     virtual void drawPoints(CGAL::Three::Viewer_interface*) const;
-    //!\brief draws all the children
-    //!
-    //! Calls `Scene_item::drawSplats()` for each child if its current
-    //! rendering mode is `Splatting`.
-    //! @see #RenderingMode
-    virtual void drawSplats(CGAL::Three::Viewer_interface*) const;
     ///@}
 
-    //!Adds a CGAL::Three::Scene_item* to the list of children.
+    //!Adds a CGAL::Three::Scene_item* to the list of children from its id.
+    //! //!@see getChildren() @see removeChild()
+    void addChild(Scene_interface::Item_id new_id);
+
+    //!Adds a CGAL::Three::Scene_item* to the list of children. It must be in the Scene.
     //!@see getChildren() @see removeChild()
     void addChild(Scene_item* new_item);
     //!Sets all the children to the specified color.
@@ -170,20 +191,31 @@ public :
     void setSplattingMode(){
       setRenderingMode(Splatting);
     }
-    //! \brief Returns a list of all the direct children.
+    //! \brief Returns a list of all the direct children ids.
     //!
-    //! Only returns children that have this item as a parent.
+    //! Only returns ids of the children that have this item as a parent.
     //! Children of these children are not returned.
-    QList<Scene_item*> getChildren() const {return children;}
+    QList<Scene_interface::Item_id> getChildrenIds() const {return children;}
+    //! \brief getChild gives access to the Scene_item of the wanted index.
+    //! \returns the `CGAL::Three::Scene_item` which index is `id`.
+    //!
+    Scene_item* getChild(Scene_interface::Item_id id) { return scene->item(id);}
+    Scene_item* getChild(Scene_interface::Item_id id) const{ return scene->item(id);}
     //!Removes a Scene_item from the list of children.
     //!@see getChildren() @see addChild()
     void removeChild( Scene_item* item)
     {
-     if(isChildLocked(item))
-      return;
-     update_group_number(item,0);
-     item->moveToGroup(0);
-     children.removeOne(item);
+      if(isChildLocked(item))
+        return;
+      update_group_number(item,0);
+      item->moveToGroup(0);
+      children.removeOne(scene->item_id(item));
+    }
+    //!Removes a Scene_item from the list of children using its index.
+    //!@see getChildren() @see addChild()
+    void removeChild( Scene_interface::Item_id id)
+    {
+      removeChild(scene->item(id));
     }
     //!Moves a child up in the list.
     void moveUp(int);
@@ -199,14 +231,22 @@ public Q_SLOTS:
     //! drawn several times. It is automatically called at the end of the scene's
     //! `draw()` function.
     void resetDraw() { already_drawn = false;}
+    void adjustIds(Scene_interface::Item_id removed_id)
+    {
+      for(int i = 0; i < children.size(); ++i)
+      {
+        if(children[i] >= removed_id)
+          --children[i];
+      }
+    }
 private:
     void update_group_number(Scene_item*new_item, int n);
     bool expanded;
     mutable bool already_drawn;
 protected:
     Scene_interface *scene;
-    //!Contains a reference to all the children of this group.
-    QList<Scene_item*> children;
+    //!Contains the indices of all the children of this group.
+    QList<Scene_interface::Item_id> children;
 
 }; //end of class Scene_group_item
 

@@ -1,4 +1,5 @@
 #include <CGAL/Three/Triangle_container.h>
+#include <QOpenGLFramebufferObject>
 
 typedef CGAL::Three::Viewer_interface VI;
 using namespace CGAL::Three;
@@ -44,7 +45,7 @@ void Triangle_container::initGL(const CGAL::Three::Scene_item& item, CGAL::Three
             new CGAL::Three::Vbo("normals");
       if(!VBOs[VColors])
         VBOs[VColors] =
-            new CGAL::Three::Vbo("colors");
+            new CGAL::Three::Vbo("colors", QOpenGLBuffer::VertexBuffer, GL_FLOAT, 0, 4);
       VAOs[viewer]->addVbo(VBOs[Smooth_normals]);
       VAOs[viewer]->addVbo(VBOs[VColors]);
     }
@@ -75,7 +76,7 @@ void Triangle_container::initGL(const CGAL::Three::Scene_item& item, CGAL::Three
             new CGAL::Three::Vbo("normals");
       if(!VBOs[FColors])
         VBOs[FColors] =
-            new CGAL::Three::Vbo("colors");
+            new CGAL::Three::Vbo("colors", QOpenGLBuffer::VertexBuffer, GL_FLOAT, 0, 4);
       VAOs[viewer] = new CGAL::Three::Vao(item.getShaderProgram(program_id, viewer));
       VAOs[viewer]->addVbo(VBOs[Flat_vertices]);
       VAOs[viewer]->addVbo(VBOs[Flat_normals]);
@@ -122,7 +123,8 @@ void Triangle_container::initGL(const CGAL::Three::Scene_item& item, CGAL::Three
 
 void Triangle_container::draw(const CGAL::Three::Scene_item& item,
                               CGAL::Three::Viewer_interface* viewer,
-                              bool is_color_uniform ) const
+                              bool is_color_uniform,
+                              QOpenGLFramebufferObject* fbo) const
 {
 
   item.attribBuffers(viewer, program_id);
@@ -134,6 +136,18 @@ void Triangle_container::draw(const CGAL::Three::Scene_item& item,
     if(is_color_uniform)
       VAOs[viewer]->program->setAttributeValue("colors", color);
     VBOs[Vertex_indices]->bind();
+    if(program_id == VI::PROGRAM_WITH_LIGHT)
+    {
+      VAOs[viewer]->program->setUniformValue("comparing", comparing);
+      VAOs[viewer]->program->setUniformValue("pass", pass);
+      VAOs[viewer]->program->setUniformValue("width", width);
+      VAOs[viewer]->program->setUniformValue("height", height);
+      VAOs[viewer]->program->setUniformValue("near", near);
+      VAOs[viewer]->program->setUniformValue("far", far);
+      VAOs[viewer]->program->setUniformValue("writing", writing);
+      if( fbo)
+        viewer->glBindTexture(GL_TEXTURE_2D, fbo->texture());
+    }
     viewer->glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(idx_size),
                            GL_UNSIGNED_INT, 0 );
     VBOs[Vertex_indices]->release();
@@ -152,11 +166,27 @@ void Triangle_container::draw(const CGAL::Three::Scene_item& item,
       VAOs[viewer]->program->setAttributeValue("colors", color);
     if(program_id == VI::PROGRAM_SPHERES
        || program_id == VI::PROGRAM_CUTPLANE_SPHERES)
+    {
       viewer->glDrawArraysInstanced(GL_TRIANGLES, 0,
                                     static_cast<GLsizei>(flat_size/3),
                                     static_cast<GLsizei>(center_size/3));
+    }
     else
+    {
+      if(program_id == VI::PROGRAM_WITH_LIGHT)
+      {
+        VAOs[viewer]->program->setUniformValue("comparing", comparing);
+        VAOs[viewer]->program->setUniformValue("pass", pass);
+        VAOs[viewer]->program->setUniformValue("width", width);
+        VAOs[viewer]->program->setUniformValue("height", height);
+        VAOs[viewer]->program->setUniformValue("near", near);
+        VAOs[viewer]->program->setUniformValue("far", far);
+        VAOs[viewer]->program->setUniformValue("writing", writing);
+        if( fbo)
+          viewer->glBindTexture(GL_TEXTURE_2D, fbo->texture());
+      }
       viewer->glDrawArrays(GL_TRIANGLES,0,static_cast<GLsizei>(flat_size/3));
+    }
 
     VAOs[viewer]->release();
   }

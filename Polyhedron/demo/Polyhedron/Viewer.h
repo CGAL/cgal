@@ -146,6 +146,7 @@ protected:
 
 
   void resizeGL(int w, int h)Q_DECL_OVERRIDE;
+  float total_pass()Q_DECL_OVERRIDE;
 
 protected:
   friend class Viewer_impl;

@@ -84,7 +84,8 @@ public:
   qglviewer::Vec offset;
   bool is_d_pressed;
   bool extension_is_found;
-
+  int pass;
+  int total_pass;
   TextRenderer *textRenderer;
   /*!
    * \brief makeArrow creates an arrow and stores it in a struct of vectors.
@@ -187,6 +188,8 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
   d->distance_is_displayed = false;
   d->is_d_pressed = false;
   d->viewer = this;
+  d->pass = 0;
+  d->total_pass = 4;
 }
 
 Viewer::Viewer(QWidget* parent,
@@ -572,7 +575,7 @@ void Viewer::initializeGL()
       d->buffers[2].bind();
       d->buffers[2].allocate(d->c_Axis.data(), static_cast<int>(d->c_Axis.size() * sizeof(float)));
       d->rendering_program.enableAttributeArray("colors");
-      d->rendering_program.setAttributeBuffer("colors",GL_FLOAT,0,3);
+      d->rendering_program.setAttributeBuffer("colors",GL_FLOAT,0,4);
       d->buffers[2].release();
       d->vao[0].release();
 
@@ -736,6 +739,7 @@ void Viewer_impl::draw_aux(bool with_names, Viewer* viewer)
 {
   if(scene == 0)
     return;
+  total_pass = viewer->inFastDrawing() ? 3 : 6;
   viewer->glLineWidth(1.0f);
   viewer->glPointSize(2.f);
   viewer->glEnable(GL_POLYGON_OFFSET_FILL);
@@ -883,7 +887,7 @@ void Viewer::attribBuffers(int program_name) const {
     QVector4D position(0.0f,0.0f,1.0f, 1.0f );
     QVector4D ambient(0.4f, 0.4f, 0.4f, 0.4f);
     // Diffuse
-    QVector4D diffuse(1.0f, 1.0f, 1.0f, 1.0f);
+    QVector4D diffuse(0.8f, 0.8f, 0.8f, 1.0f);
     // Specular
     QVector4D specular(0.0f, 0.0f, 0.0f, 1.0f);
     QOpenGLShaderProgram* program = getShaderProgram(program_name);
@@ -1005,7 +1009,7 @@ void Viewer_impl::makeArrow(double R, int prec, qglviewer::Vec from, qglviewer::
         data.colors->push_back((float)color.x);
         data.colors->push_back((float)color.y);
         data.colors->push_back((float)color.z);
-
+        data.colors->push_back(1.0f);
         //point B1
         p = QVector4D(Rf*2.*sin(D), 0.66f, Rf*2.* cos(D), 1.f);
         n = QVector4D(sin(D), sin(a), cos(D), 1.);
@@ -1020,6 +1024,7 @@ void Viewer_impl::makeArrow(double R, int prec, qglviewer::Vec from, qglviewer::
         data.colors->push_back((float)color.x);
         data.colors->push_back((float)color.y);
         data.colors->push_back((float)color.z);
+        data.colors->push_back(1.0f);
         //point C1
         D = (d+360/prec)*M_PI/180.0;
         p = QVector4D(Rf*2.* sin(D), 0.66f, Rf *2.* cos(D), 1.f);
@@ -1036,6 +1041,7 @@ void Viewer_impl::makeArrow(double R, int prec, qglviewer::Vec from, qglviewer::
         data.colors->push_back((float)color.x);
         data.colors->push_back((float)color.y);
         data.colors->push_back((float)color.z);
+        data.colors->push_back(1.0f);
 
     }
 
@@ -1059,6 +1065,7 @@ void Viewer_impl::makeArrow(double R, int prec, qglviewer::Vec from, qglviewer::
         data.colors->push_back(color.x);
         data.colors->push_back(color.y);
         data.colors->push_back(color.z);
+        data.colors->push_back(1.0f);
         //point B1
         p = QVector4D(Rf * sin(D),0,Rf*cos(D), 1.0);
         n = QVector4D(sin(D), 0, cos(D), 1.0);
@@ -1075,6 +1082,7 @@ void Viewer_impl::makeArrow(double R, int prec, qglviewer::Vec from, qglviewer::
         data.colors->push_back(color.x);
         data.colors->push_back(color.y);
         data.colors->push_back(color.z);
+        data.colors->push_back(1.0f);
           //point C1
         D = (d+360/prec)*M_PI/180.0;
         p = QVector4D(Rf * sin(D),0,Rf*cos(D), 1.0);
@@ -1090,6 +1098,7 @@ void Viewer_impl::makeArrow(double R, int prec, qglviewer::Vec from, qglviewer::
         data.colors->push_back(color.x);
         data.colors->push_back(color.y);
         data.colors->push_back(color.z);
+        data.colors->push_back(1.0f);
         //point A2
         D = (d+360/prec)*M_PI/180.0;
 
@@ -1106,6 +1115,7 @@ void Viewer_impl::makeArrow(double R, int prec, qglviewer::Vec from, qglviewer::
         data.colors->push_back((float)color.x);
         data.colors->push_back((float)color.y);
         data.colors->push_back((float)color.z);
+        data.colors->push_back(1.0f);
         //point B2
         p = QVector4D(Rf * sin(D), 0.66f, Rf*cos(D), 1.f);
         n = QVector4D(sin(D), 0, cos(D), 1.0);
@@ -1120,6 +1130,7 @@ void Viewer_impl::makeArrow(double R, int prec, qglviewer::Vec from, qglviewer::
         data.colors->push_back((float)color.x);
         data.colors->push_back((float)color.y);
         data.colors->push_back((float)color.z);
+        data.colors->push_back(1.0f);
         //point C2
         D = d*M_PI/180.0;
         p = QVector4D(Rf * sin(D), 0.66f, Rf*cos(D), 1.f);
@@ -1135,7 +1146,7 @@ void Viewer_impl::makeArrow(double R, int prec, qglviewer::Vec from, qglviewer::
         data.colors->push_back(color.x);
         data.colors->push_back(color.y);
         data.colors->push_back(color.z);
-
+        data.colors->push_back(1.0f);
     }
 }
 
@@ -1796,6 +1807,11 @@ void Viewer::enableClippingBox(QVector4D box[6])
     d->clipbox[i] = box[i];
 }
 
+
+float Viewer::total_pass()
+{
+  return d->total_pass * 1.0f;
+}
 
 bool Viewer::isOpenGL_4_3() const { return d->is_ogl_4_3; }
 

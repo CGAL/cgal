@@ -36,6 +36,7 @@
 #include <vector>
 #include <CGAL/Bbox_3.h>
 
+class QOpenGLFramebufferObject;
 namespace CGAL {
 namespace Three {
   class Viewer_interface;
@@ -128,7 +129,8 @@ public:
    * @see computeElements()
    * @see initializeBuffers()
    */
-  virtual void draw(CGAL::Three::Viewer_interface* viewer) const  {Q_UNUSED(viewer)}
+    virtual void draw(CGAL::Three::Viewer_interface*,
+                      int, bool, QOpenGLFramebufferObject*) const  {}
   /*! \brief The drawing function for the edges.
    *
    * Draws the edges and lines of the item in the viewer. The data
@@ -137,7 +139,7 @@ public:
    * @see computeElements()
    * @see initializeBuffers()
    */
-  virtual void drawEdges(CGAL::Three::Viewer_interface* viewer) const {draw(viewer);}
+  virtual void drawEdges(CGAL::Three::Viewer_interface* ) const {}
   /*! \brief The drawing function for the points.
    *
    * Draws the points of the item in the viewer. The data
@@ -146,7 +148,7 @@ public:
    * @see computeElements()
    * @see initializeBuffers()
    */
-  virtual void drawPoints(CGAL::Three::Viewer_interface* viewer) const { draw(viewer); }
+  virtual void drawPoints(CGAL::Three::Viewer_interface* ) const {}
 
   //! Draws the splats of the item in the viewer using GLSplat functions.
   virtual void drawSplats() const {}

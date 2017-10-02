@@ -135,7 +135,7 @@ QMenu* CGAL::Three::Scene_item::contextMenu()
 }
 
 CGAL::Three::Scene_group_item* CGAL::Three::Scene_item::parentGroup() const {
-  return parent_group;
+  return has_group > 0 ? parent_group : NULL;
 }
 
 void CGAL::Three::Scene_item::

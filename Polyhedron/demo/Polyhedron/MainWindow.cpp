@@ -1795,7 +1795,8 @@ void MainWindow::restoreCollapseState()
 }
 void MainWindow::makeNewGroup()
 {
-    Scene_group_item * group = new Scene_group_item();
+        Scene_group_item * group =
+            new Scene_group_item(QString("New group"), scene);
     scene->addItem(group);
 }
 

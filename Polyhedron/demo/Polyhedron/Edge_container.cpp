@@ -92,9 +92,9 @@ void Edge_container::initGL(const Scene_item& item, Viewer_interface *viewer) co
   }
   is_gl_init[viewer] = true;
 }
-void Edge_container::draw(const CGAL::Three::Scene_item& item,
-                          CGAL::Three::Viewer_interface* viewer,
-                          bool is_color_uniform) const
+void Edge_container::draw(const Scene_item &item, Viewer_interface *viewer,
+                          bool is_color_uniform, QOpenGLFramebufferObject *) const
+
 {
   if(!is_init[viewer])
   {

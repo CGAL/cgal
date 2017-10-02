@@ -1,6 +1,6 @@
 #version 120
 attribute highp vec4 vertex;
-attribute highp vec3 colors;
+attribute highp vec4 colors;
 uniform highp mat4 mvp_matrix;
 uniform highp mat4 f_matrix;
 varying highp vec4 color; 
@@ -28,7 +28,7 @@ void compute_distances(void)
 
 void main(void)
 {
-   color = vec4(colors, 1.0);
+   color = colors;
    if(is_clipbox_on)
     compute_distances();
    gl_Position = mvp_matrix * f_matrix * vertex;

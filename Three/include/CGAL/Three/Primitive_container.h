@@ -34,6 +34,7 @@ using namespace CGAL::Three;
 #else
 #  define DEMO_FRAMEWORK_EXPORT Q_DECL_IMPORT
 #endif
+class QOpenGLFramebufferObject;
 namespace CGAL {
 namespace Three {
 
@@ -63,7 +64,8 @@ struct DEMO_FRAMEWORK_EXPORT Primitive_container
     }
 
     virtual void draw(const Scene_item &item, CGAL::Three::Viewer_interface* viewer,
-                      bool is_color_uniform) const = 0;
+                      bool is_color_uniform,
+                      QOpenGLFramebufferObject* fbo = NULL) const = 0;
 
     void initializeBuffers(CGAL::Three::Viewer_interface* viewer) const
     {

@@ -21,7 +21,7 @@
 
 
 struct Scene_surface_mesh_item_priv;
-
+class QOpenGLFramebufferObject;
 class SCENE_SURFACE_MESH_ITEM_EXPORT Scene_surface_mesh_item
   : public CGAL::Three::Scene_item,
     public CGAL::Three::Scene_zoomable_item_interface,
@@ -45,7 +45,8 @@ public:
 
 
   Scene_surface_mesh_item* clone() const Q_DECL_OVERRIDE;
-  void draw(CGAL::Three::Viewer_interface *) const Q_DECL_OVERRIDE;
+  void draw(CGAL::Three::Viewer_interface *, int pass,
+            bool, QOpenGLFramebufferObject *fbo) const Q_DECL_OVERRIDE;
   void drawEdges(CGAL::Three::Viewer_interface *) const Q_DECL_OVERRIDE;
   void drawPoints(CGAL::Three::Viewer_interface *) const Q_DECL_OVERRIDE;
 

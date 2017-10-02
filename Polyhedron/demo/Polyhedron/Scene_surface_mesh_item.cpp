@@ -38,6 +38,7 @@
 #include <CGAL/Three/Edge_container.h>
 
 #include <QMenu>
+#include <QOpenGLFramebufferObject>
 #include "id_printing.h"
 
 typedef CGAL::Three::Triangle_container Tri;
@@ -191,12 +192,16 @@ struct Scene_surface_mesh_item_priv{
   SMesh* smesh_;
   mutable bool is_filled;
   mutable std::vector<unsigned int> idx_data_;
+  mutable std::size_t idx_data_size;
   mutable std::map<unsigned int, unsigned int> current_indices; //map im values to ghosts-free values
   mutable std::vector<unsigned int> idx_edge_data_;
+  mutable std::size_t idx_edge_data_size;
   mutable std::vector<unsigned int> idx_feature_edge_data_;
+  mutable std::size_t idx_feature_edge_data_size;
   mutable std::vector<cgal_gl_data> smooth_vertices;
   mutable std::vector<cgal_gl_data> smooth_normals;
   mutable std::vector<cgal_gl_data> flat_vertices;
+  mutable std::size_t flat_vertices_size;
   mutable std::vector<cgal_gl_data> flat_normals;
   mutable std::vector<cgal_gl_data> f_colors;
   mutable std::vector<cgal_gl_data> v_colors;
@@ -531,6 +536,11 @@ void D::compute_elements()const
     }
   }
 
+  idx_edge_data_size = idx_edge_data_.size();
+  idx_feature_edge_data_size = idx_feature_edge_data_.size();
+  idx_data_size = idx_data_.size();
+  flat_vertices_size = flat_vertices.size();
+
   item->edge_containers[0]->VBOs[Ed::Indices]->allocate(idx_edge_data_.data(),
                                          static_cast<int>(idx_edge_data_.size()*sizeof(unsigned int)));
   item->edge_containers[0]->VBOs[Ed::Vertices]->allocate(smooth_vertices.data(),
@@ -587,10 +597,10 @@ void D::initializeBuffers(CGAL::Three::Viewer_interface* viewer)const
   item->edge_containers[1]->initializeBuffers(viewer);
 
   ////Clean-up
-  item->triangle_containers[1]->flat_size = flat_vertices.size();
-  item->triangle_containers[0]->idx_size = idx_data_.size();
-  item->edge_containers[0]->idx_size = idx_edge_data_.size();
-  item->edge_containers[1]->idx_size = idx_feature_edge_data_.size();
+  item->triangle_containers[1]->flat_size = flat_vertices_size;
+  item->triangle_containers[0]->idx_size = idx_data_size;
+  item->edge_containers[0]->idx_size = idx_edge_data_size;
+  item->edge_containers[1]->idx_size = idx_feature_edge_data_size;
   smooth_vertices       .resize(0);
   smooth_normals        .resize(0);
   flat_vertices         .resize(0);
@@ -612,7 +622,10 @@ void D::initializeBuffers(CGAL::Three::Viewer_interface* viewer)const
 }
 
 
-void Scene_surface_mesh_item::draw(CGAL::Three::Viewer_interface *viewer) const
+void Scene_surface_mesh_item::draw(CGAL::Three::Viewer_interface *viewer,
+                                   int pass,
+                                   bool writing_depth,
+                                   QOpenGLFramebufferObject* fbo) const
 {
   if(!isinit)
     initGL();
@@ -623,18 +636,34 @@ void Scene_surface_mesh_item::draw(CGAL::Three::Viewer_interface *viewer) const
     buffers_init[viewer] = true;
   }
 
+  float near(viewer->camera()->zNear()), far(viewer->camera()->zFar());
+
 
   if(renderingMode() == Gouraud)
   {
+    triangle_containers[0]->comparing = pass!=0;
+    triangle_containers[0]->pass= pass*1.0f;
+    triangle_containers[0]->width=viewer->width()*1.0f;
+    triangle_containers[0]->height=viewer->height()*1.0f;
+    triangle_containers[0]->near=near;
+    triangle_containers[0]->far=far;
+    triangle_containers[0]->writing=writing_depth;
     triangle_containers[0]->color = color();
     triangle_containers[0]->is_selected = isSelected();
-    triangle_containers[0]->draw(*this, viewer, !d->has_vcolors);
+    triangle_containers[0]->draw(*this, viewer, !d->has_vcolors, fbo);
   }
   else
   {
-    triangle_containers[1]->is_selected = isSelected();
+    triangle_containers[1]->comparing = pass!=0;
+    triangle_containers[1]->pass= pass*1.0f;
+    triangle_containers[1]->width=viewer->width()*1.0f;
+    triangle_containers[1]->height=viewer->height()*1.0f;
+    triangle_containers[1]->near=near;
+    triangle_containers[1]->far=far;
+    triangle_containers[1]->writing=writing_depth;
     triangle_containers[1]->color = color();
-    triangle_containers[1]->draw(*this, viewer, !d->has_fcolors);
+    triangle_containers[1]->is_selected = isSelected();
+    triangle_containers[1]->draw(*this, viewer, !d->has_fcolors, fbo);
   }
 }
 

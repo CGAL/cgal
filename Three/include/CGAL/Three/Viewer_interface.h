@@ -199,6 +199,9 @@ public:
   //! Unbinds the combination SHIFT+LEFT CLICK. It allows to
   //! avoid conflicts in the selection_tool, for example.
   virtual void setNoBinding() = 0 ;
+  //!The number of passes that are performed for the scene transparency.
+  //!Usually 2 or 4.
+  virtual float total_pass() = 0;
 
 Q_SIGNALS:
   //!Emit this to signal that the `id`th item has been picked.

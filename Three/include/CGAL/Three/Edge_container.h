@@ -53,7 +53,8 @@ struct DEMO_FRAMEWORK_EXPORT Edge_container :public Primitive_container
     Edge_container(int program, bool indexed);
     void initGL(const Scene_item &item, Viewer_interface *viewer) const Q_DECL_OVERRIDE;
     void draw(const Scene_item &item, CGAL::Three::Viewer_interface* viewer,
-              bool is_color_uniform = true) const Q_DECL_OVERRIDE;
+              bool is_color_uniform,
+              QOpenGLFramebufferObject* = NULL) const Q_DECL_OVERRIDE;
     //drawing variables
     QVector4D plane;
     QMatrix4x4 f_matrix;

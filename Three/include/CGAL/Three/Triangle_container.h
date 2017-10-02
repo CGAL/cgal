@@ -54,11 +54,19 @@ struct DEMO_FRAMEWORK_EXPORT Triangle_container :public Primitive_container
     Triangle_container(int program, bool indexed);
     void initGL(const Scene_item &item, CGAL::Three::Viewer_interface* viewer)const Q_DECL_OVERRIDE;
     void draw(const Scene_item &item, CGAL::Three::Viewer_interface* viewer,
-              bool is_color_uniform) const Q_DECL_OVERRIDE;
+              bool is_color_uniform,
+              QOpenGLFramebufferObject* fbo = NULL) const Q_DECL_OVERRIDE;
 
     //drawing variables
     QVector4D plane;
     float shrink_factor;
+    bool comparing;
+    float pass;
+    float width;
+    float height;
+    float near;
+    float far;
+    bool writing;
 }; //end of class Triangle_container
 
 }

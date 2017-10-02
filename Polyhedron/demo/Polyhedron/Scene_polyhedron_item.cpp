@@ -1087,7 +1087,8 @@ void Scene_polyhedron_item::set_erase_next_picked_facet(bool b)
     d->erase_next_picked_facet_m = b;
 }
 
-void Scene_polyhedron_item::draw(CGAL::Three::Viewer_interface* viewer) const {
+void Scene_polyhedron_item::draw(CGAL::Three::Viewer_interface* viewer,
+                                 int, bool, QOpenGLFramebufferObject* ) const {
     if(!are_buffers_filled)
     {
         d->compute_normals_and_vertices(viewer->isOpenGL_4_3(),

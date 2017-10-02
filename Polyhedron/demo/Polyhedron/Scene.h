@@ -191,8 +191,8 @@ public Q_SLOTS:
        if(group)
        {
          QList<int> list;
-         Q_FOREACH(CGAL::Three::Scene_item* child, group->getChildren())
-           list<<m_entries.indexOf(child);
+         Q_FOREACH(Item_id id, group->getChildrenIds())
+           list<<id;
          l << setSelectedItemsList(list);
        }
 
@@ -222,6 +222,8 @@ Q_SIGNALS:
   void updated();
   //! Is emitted when `item` is erased.
   void itemAboutToBeDestroyed(CGAL::Three::Scene_item* item);
+  //!Is emitted when the ids of the items are changed.
+  void indexErased(Scene_interface::Item_id id);
   //! Is emitted when the selection ray is changed.
   void selectionRay(double, double, double, double, double, double);
   //! Used to update the selected item in the Geometric Objects view.
@@ -236,6 +238,7 @@ private Q_SLOTS:
   // Casts a selection ray and calls the item function select.
   void setSelectionRay(double, double, double, double, double, double);
   void s_itemAboutToBeDestroyed(CGAL::Three::Scene_item *);
+  void adjustIds(Scene_interface::Item_id removed_id);
   void callDraw(){
     Q_FOREACH(QGLViewer* viewer, QGLViewer::QGLViewerPool())
     {
@@ -249,12 +252,25 @@ private:
    * to its current renderingMode. If with_names is true, uses
    * the OpenGL mode GL_WITH_NAMES, essentially used for the picking.*/
   void draw_aux(bool with_names, CGAL::Three::Viewer_interface*);
+  void renderScene(const QList<Scene_interface::Item_id > &items,
+                   CGAL::Three::Viewer_interface* viewer, QMap<float, int> &picked_item_IDs, bool with_names,
+                   int pass, bool writing_depth,
+                   QOpenGLFramebufferObject* fbo);
+  void renderWireScene(const QList<Scene_interface::Item_id> &items,
+                       Viewer_interface *viewer, QMap<float, int> &picked_item_IDs, bool with_names);
+  void renderPointScene(const QList<Scene_interface::Item_id> &items,
+                        Viewer_interface *viewer,
+                        QMap<float, int>& picked_item_IDs,
+                        bool with_names);
+
   // Re-draw the hierarchy of the view.
   void organize_items(CGAL::Three::Scene_item* item, QStandardItem *root, int loop);
   // List of Scene_items.
   typedef QList<CGAL::Three::Scene_item*> Entries;
   //List containing all the scene_items.
   Entries m_entries;
+  //List containing the indices of the items without parents.
+  QList<Item_id> children;
   // Index of the currently selected item.
   int selected_item;
   //List of indices of the currently selected items.
@@ -263,10 +279,15 @@ private:
   int item_A;
   //Index of the item_B.
   int item_B;
-  bool picked;
   QPoint picked_pixel;
   bool gl_init;
   QMap<QModelIndex, int> index_map;
+  QOpenGLShaderProgram program;
+  QMap<CGAL::Three::Viewer_interface*, QOpenGLVertexArrayObject*> vaos;
+  QOpenGLBuffer vbo[2];
+  float points[18];
+  float uvs[12];
+  void initGL(CGAL::Three::Viewer_interface* viewer);
 
 public:
   void newViewer(CGAL::Three::Viewer_interface*);
