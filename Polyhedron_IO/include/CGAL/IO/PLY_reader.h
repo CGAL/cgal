@@ -82,7 +82,7 @@ namespace CGAL{
         ++ faces_read;
       }
 
-      return in.good();
+      return !in.bad();
     }
 
   }
