@@ -32,6 +32,7 @@
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 #include <CGAL/array.h>
 #include <CGAL/Union_find.h>
+#include <CGAL/utility.h>
 
 #include <map>
 #include <vector>
@@ -155,6 +156,7 @@ collect_duplicated_stitchable_boundary_edges
           // here we check that the next and prev halfedges are not degenerated
           // (in case next and prev of a degenerate edge are set for stitching but not
           //  the degenerate edge, then we'll end up with an edge made of two identical vertices)
+          // WARNING: not necessarilly true now that we use union-find
           cpp11::array<halfedge_descriptor,4> halfedges_to_test =
             make_array(next(he, pmesh), prev(he,pmesh),
                        next(set_it->first, pmesh), prev(set_it->first, pmesh) );
@@ -226,34 +228,19 @@ void uf_join_vertices(vertex_descriptor v1, vertex_descriptor v2,
   uf_vertices.unify_sets(h1, h2);
 }
 
-template <class PM, typename HalfedgePairsRange>
-void stitch_borders_impl(PM& pmesh,
-                         const HalfedgePairsRange& to_stitch)
+
+
+// main functions (vertices to keep selected and halfedge pairs filtered)
+template <class PM, typename HalfedgePairsRange,
+          typename Uf_vertices, typename Uf_handles>
+void run_stitch_borders(PM& pmesh,
+                        const HalfedgePairsRange& to_stitch,
+                        Uf_vertices& uf_vertices,
+                        Uf_handles& uf_handles)
 {
   typedef typename boost::graph_traits<PM>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
   typedef typename std::pair<halfedge_descriptor, halfedge_descriptor> halfedges_pair;
-
-  /// Merge the vertices
-  typedef CGAL::Union_find<vertex_descriptor> Uf_vertices;
-  Uf_vertices uf_vertices;
-  boost::unordered_map<vertex_descriptor, typename Uf_vertices::handle> uf_handles;
-
-  BOOST_FOREACH(const halfedges_pair hk, to_stitch)
-  {
-    halfedge_descriptor h1 = hk.first;
-    halfedge_descriptor h2 = hk.second;
-
-    CGAL_assertion(CGAL::is_border(h1, pmesh));
-    CGAL_assertion(CGAL::is_border(h2, pmesh));
-    CGAL_assertion(!CGAL::is_border(opposite(h1, pmesh), pmesh));
-    CGAL_assertion(!CGAL::is_border(opposite(h2, pmesh), pmesh));
-
-    vertex_descriptor tgt1 = target(h1, pmesh), src1 = source(h1, pmesh);
-    vertex_descriptor src2 = source(h2, pmesh), tgt2 = target(h2, pmesh);
-    uf_join_vertices(tgt1, src2, uf_vertices, uf_handles);
-    uf_join_vertices(src1, tgt2, uf_vertices, uf_handles);
-  }
 
   std::vector<vertex_descriptor> vertices_to_delete;
   BOOST_FOREACH(const halfedges_pair hk, to_stitch)
@@ -346,6 +333,114 @@ void stitch_borders_impl(PM& pmesh,
   {
     remove_vertex(vd, pmesh);
   }
+}
+
+template <class PM, typename HalfedgePairsRange>
+void stitch_borders_impl(PM& pmesh,
+                         const HalfedgePairsRange& to_stitch)
+{
+  typedef typename boost::graph_traits<PM>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
+  typedef typename boost::graph_traits<PM>::edge_descriptor edge_descriptor;
+  typedef typename std::pair<halfedge_descriptor, halfedge_descriptor> halfedges_pair;
+
+  /// Merge the vertices
+  typedef CGAL::Union_find<vertex_descriptor> Uf_vertices;
+  Uf_vertices uf_vertices;
+  typedef boost::unordered_map<vertex_descriptor, typename Uf_vertices::handle> Uf_handles;
+  Uf_handles uf_handles;
+  boost::unordered_set<edge_descriptor> to_stitch_edge_set;
+
+  BOOST_FOREACH(const halfedges_pair hk, to_stitch)
+  {
+    halfedge_descriptor h1 = hk.first;
+    halfedge_descriptor h2 = hk.second;
+
+    CGAL_assertion(CGAL::is_border(h1, pmesh));
+    CGAL_assertion(CGAL::is_border(h2, pmesh));
+    CGAL_assertion(!CGAL::is_border(opposite(h1, pmesh), pmesh));
+    CGAL_assertion(!CGAL::is_border(opposite(h2, pmesh), pmesh));
+
+    vertex_descriptor tgt1 = target(h1, pmesh), src1 = source(h1, pmesh);
+    vertex_descriptor src2 = source(h2, pmesh), tgt2 = target(h2, pmesh);
+    uf_join_vertices(tgt1, src2, uf_vertices, uf_handles);
+    uf_join_vertices(src1, tgt2, uf_vertices, uf_handles);
+
+    to_stitch_edge_set.insert(edge(h1, pmesh));
+    to_stitch_edge_set.insert(edge(h2, pmesh));
+  }
+
+  // detect vertices that cannot be stitched because it would produce a non-manifold edge
+  // We look for vertex to be stitched and collect all incident edges with another endpoint
+  // to be stitched (that is not an edge scheduled for stitching). That way we can detect
+  // if more that one edge will share the same two "master" endpoints.
+  typedef boost::unordered_map< std::pair<vertex_descriptor, vertex_descriptor>,
+                                std::vector<halfedge_descriptor> > Halfedges_after_stitching;
+  Halfedges_after_stitching halfedges_after_stitching;
+
+  typedef std::pair<const vertex_descriptor, typename Uf_vertices::handle> Pair_type;
+  BOOST_FOREACH(const Pair_type p, uf_handles)
+  {
+    vertex_descriptor vd=p.first;
+    typename Uf_vertices::handle tgt_handle = uf_vertices.find(uf_handles[vd]);
+    BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_target(vd, pmesh))
+    {
+      vertex_descriptor other_vd = source(hd, pmesh);
+
+      // avoid reporting twice (if other_vd is problematic it is also in uf_handles)
+      if (other_vd < vd) continue;
+      typename Uf_handles::iterator it_res = uf_handles.find(other_vd);
+
+      if (it_res!=uf_handles.end())
+      {
+        if ( is_border_edge(hd, pmesh) &&
+            to_stitch_edge_set.count(edge(hd, pmesh))==1 ) // skip edges to be stitched
+          continue;
+
+        typename Uf_vertices::handle src_handle=uf_vertices.find(it_res->second);
+        halfedges_after_stitching[make_sorted_pair(*tgt_handle, *src_handle)].push_back(hd);
+      }
+    }
+  }
+
+  boost::unordered_set<vertex_descriptor> unstitchable_vertices;
+  for (typename Halfedges_after_stitching::iterator it=halfedges_after_stitching.begin(),
+                                                    it_end=halfedges_after_stitching.end();
+                                                    it!=it_end; ++it)
+  {
+    if (it->second.size() > 1)
+    {
+      // this is a bit extreme as maybe some could be stitched
+      // (but safer because the master could be one of them)
+      BOOST_FOREACH(halfedge_descriptor hd, it->second)
+      {
+        unstitchable_vertices.insert(source(hd, pmesh));
+        unstitchable_vertices.insert(target(hd, pmesh));
+      }
+    }
+  }
+
+  // filter halfedges to stitch
+  if (!unstitchable_vertices.empty())
+  {
+    std::vector<halfedges_pair> to_stitch_filtered;
+    to_stitch_filtered.reserve( to_stitch.size());
+    BOOST_FOREACH(const halfedges_pair hk, to_stitch)
+    {
+      // We test both halfedges because the previous test
+      // might involve of only one of the two halfedges
+      if ( unstitchable_vertices.count( source(hk.first, pmesh) )== 0 &&
+           unstitchable_vertices.count( target(hk.first, pmesh) )== 0 &&
+           unstitchable_vertices.count( source(hk.second, pmesh) )== 0 &&
+           unstitchable_vertices.count( target(hk.second, pmesh) )== 0 )
+      {
+        to_stitch_filtered.push_back(hk);
+      }
+    }
+    run_stitch_borders(pmesh, to_stitch_filtered, uf_vertices, uf_handles);
+  }
+  else
+    run_stitch_borders(pmesh, to_stitch, uf_vertices, uf_handles);
 }
 
 } //end of namespace internal

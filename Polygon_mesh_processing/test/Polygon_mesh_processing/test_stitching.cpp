@@ -73,6 +73,7 @@ int main()
   test_polyhedron<Epic>("data_stitching/non_stitchable.off");
   test_polyhedron<Epic>("data_stitching/deg_border.off");
   test_polyhedron<Epic>("data_stitching/two_patches.off");
+  test_polyhedron<Epic>("data_stitching/non_manifold.off");
 
   test_surface_mesh("data_stitching/full_border.off");
   test_surface_mesh("data_stitching/full_border_quads.off");
@@ -83,7 +84,7 @@ int main()
   test_surface_mesh("data_stitching/incoherent_patch_orientation.off");
   test_surface_mesh("data_stitching/non_stitchable.off");
   test_surface_mesh("data_stitching/deg_border.off");
-  test_surface_mesh("data_stitching/two_patches.off");
+  test_surface_mesh("data_stitching/non_manifold.off");
 
   return 0;
 }
