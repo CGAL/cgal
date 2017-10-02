@@ -597,7 +597,8 @@ shape. The implementation follows \cgalCite{cgal:lm-clscm-12}.
 
               m_shape_index[neighbor_index] = class_index;
               propagation = true;
-              index_container_current_ring.insert(neighbor_index);
+              if (neighbor_index != i)
+                index_container_current_ring.insert(neighbor_index);
             }
           }
 
