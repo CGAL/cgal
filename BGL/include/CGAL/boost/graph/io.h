@@ -213,8 +213,6 @@ bool write_inp(std::ostream& os,
   typedef typename boost::property_traits<VPM>::value_type Point_3;
 
   VPM vpm = get(CGAL::vertex_point,g);
-  vertices_size_type nv = static_cast<vertices_size_type>(std::distance(vertices(g).first, vertices(g).second));
-  faces_size_type nf = static_cast<faces_size_type>(std::distance(faces(g).first, faces(g).second));
 
   os << "*Part, name=" << name << "\n*Node\n";
   boost::container::flat_map<vertex_descriptor,vertices_size_type> reindex;
