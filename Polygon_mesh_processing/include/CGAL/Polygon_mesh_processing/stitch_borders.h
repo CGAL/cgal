@@ -452,7 +452,6 @@ void stitch_borders_impl(PM& pmesh,
 *
 * @param pmesh the polygon mesh to be modified by stitching
 * @param hedge_pairs_to_stitch a range of `std::pair` of halfedges to be stitched together
-* @param np optional \ref namedparameters described below
 *
 */
 template <typename PolygonMesh,
