@@ -683,7 +683,7 @@ of the base class.
     \param polyline_pmap the property map that provides access to the
       polyline, model of `MeshPolyline_3`, from the `%reference` type of
       the iterator
-    \param incident_paches_indices_pmap the property map that provides
+    \param incident_patches_indices_pmap the property map that provides
       access the set of indices of the surface patches that are incident to
       a given 1D-feature (curve)
   */ 
@@ -694,10 +694,10 @@ of the base class.
   add_features_and_incidences
   (InputIterator first, InputIterator end,
    PolylinePMap polyline_pmap,
-   IncidentPatchesIndicesPMap incident_paches_indices_pmap)
+   IncidentPatchesIndicesPMap incident_patches_indices_pmap)
   {
     add_features_and_incidences(first, end, polyline_pmap,
-                                incident_paches_indices_pmap,
+                                incident_patches_indices_pmap,
                                 CGAL::Emptyset_iterator());
   }
 /// @}
