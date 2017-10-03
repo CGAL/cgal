@@ -318,6 +318,7 @@ void D::addFlatData(Point p, EPICK::Vector_3 n, CGAL::Color *c) const
     f_colors.push_back((float)c->red()/255);
     f_colors.push_back((float)c->green()/255);
     f_colors.push_back((float)c->blue()/255);
+    f_colors.push_back(1.0f);
   }
 }
 
@@ -454,6 +455,7 @@ void D::compute_elements()const
           f_colors.push_back(c.redF());
           f_colors.push_back(c.greenF());
           f_colors.push_back(c.blueF());
+          f_colors.push_back(1.0f);
         }
         else if(has_fcolors)
         {
@@ -461,6 +463,7 @@ void D::compute_elements()const
           f_colors.push_back((float)c.red()/255);
           f_colors.push_back((float)c.green()/255);
           f_colors.push_back((float)c.blue()/255);
+          f_colors.push_back(1.0f);
         }
       }
     }
@@ -516,6 +519,7 @@ void D::compute_elements()const
       v_colors.push_back((float)c.red()/255);
       v_colors.push_back((float)c.green()/255);
       v_colors.push_back((float)c.blue()/255);
+      v_colors.push_back(1.0f);
     }
   }
 

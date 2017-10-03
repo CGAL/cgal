@@ -65,7 +65,6 @@
 #  include <QScriptValue>
 #include "Color_map.h"
 
-
 using namespace CGAL::Three;
 QScriptValue
 myScene_itemToScriptValue(QScriptEngine *engine,
@@ -126,7 +125,6 @@ QScriptValue myPrintFunction(QScriptContext *context, QScriptEngine *engine)
   return engine->undefinedValue();
 }
 
-
 MainWindow::~MainWindow()
 {
   delete ui;
@@ -135,6 +133,7 @@ MainWindow::~MainWindow()
 MainWindow::MainWindow(QWidget* parent)
   : CGAL::Qt::DemosMainWindow(parent)
 {
+  qRegisterMetaTypeStreamOperators<LightComponents>("LightComponents");
   ui = new Ui::MainWindow;
   ui->setupUi(this);
   menuBar()->setNativeMenuBar(false);
@@ -1318,6 +1317,13 @@ void MainWindow::readSettings()
     QStringList blacklist=settings.value("plugin_blacklist",QStringList()).toStringList();
     Q_FOREACH(QString name,blacklist){ plugin_blacklist.insert(name); }
     set_facegraph_mode_adapter(settings.value("polyhedron_mode", true).toBool());
+    QVariant var = settings.value("viewer_lighting");
+    LightComponents main_lighting;
+    if(var.isValid())
+      main_lighting = var.value<LightComponents>();
+    else
+      main_lighting = viewer->lighting();
+    viewer->setLighting(main_lighting);
 }
 
 void MainWindow::writeSettings()
@@ -1334,6 +1340,7 @@ void MainWindow::writeSettings()
     else settings.remove("plugin_blacklist");
     //setting polyhedron mode
     settings.setValue("polyhedron_mode", this->property("is_polyhedron_mode").toBool());
+    settings.setValue("viewer_lighting", qVariantFromValue(viewer->lighting()));
   }
   std::cerr << "Write setting... done.\n";
 }
@@ -2231,6 +2238,8 @@ void MainWindow::setupViewer(Viewer* viewer, SubViewer* subviewer=NULL)
             viewer, SLOT(setFastDrawing(bool)));
     connect(ui->actionSwitchProjection, SIGNAL(toggled(bool)),
             viewer, SLOT(SetOrthoProjection(bool)));
+    connect(ui->actionL_ighting, SIGNAL(triggered()),
+            viewer, SLOT(setLighting_clicked()));
   }
   else
   {
@@ -2274,6 +2283,10 @@ void MainWindow::setupViewer(Viewer* viewer, SubViewer* subviewer=NULL)
     action= subviewer->findChild<QAction*>("actionOrtho");
     connect(action, SIGNAL(toggled(bool)),
             viewer, SLOT(SetOrthoProjection(bool)));
+    action= subviewer->findChild<QAction*>("actionLight");
+    connect(action, &QAction::triggered,
+            viewer, &Viewer::setLighting_clicked);
+
   }
 
 
@@ -2283,8 +2296,21 @@ void MainWindow::setupViewer(Viewer* viewer, SubViewer* subviewer=NULL)
 
 void MainWindow::on_actionAdd_Viewer_triggered()
 {
+  Q_FOREACH(Scene_item* item, scene->entries())
+  {
+    if(item->isWriting())
+    {
+      warning(QString("Action is impossible while writing in an item."));
+      return;
+    }
+  }
+
   Viewer *viewer2 = new Viewer(ui->centralwidget, viewer);
   viewer2->setManipulatedFrame(viewer->manipulatedFrame());
+  qglviewer::Vec min, max;
+  computeViewerBBox(min, max);
+  updateViewerBbox(viewer2, true, min, max);
+  viewer2->camera()->interpolateToFitScene();
   viewer2->setObjectName("viewer2");
   scene->newViewer(viewer2);
   SubViewer* sub_viewer = new SubViewer(this, viewer2);
@@ -2385,6 +2411,9 @@ SubViewer::SubViewer(MainWindow* mw, Viewer* viewer)
   actionOrtho->setCheckable(true);
   actionOrtho->setChecked(false);
   viewMenu->addAction(actionOrtho);
+  QAction* actionLight = new QAction("L&ighting...",this);
+  actionLight->setObjectName("actionLight");
+  viewMenu->addAction(actionLight);
 
 }
 SubViewer::~SubViewer()
@@ -2424,5 +2453,3 @@ void SubViewer::color()
     viewer->update();
   }
 }
-
-

@@ -15,6 +15,7 @@
 #include <QFont>
 #include <QOpenGLFramebufferObject>
 #include <CGAL/Three/TextRenderer.h>
+#include <QMetaType>
 // forward declarations
 class QWidget;
 namespace CGAL{
@@ -27,6 +28,31 @@ class QKeyEvent;
 class QContextMenuEvent;
 
 class Viewer_impl;
+struct LightComponents{
+  QVector4D position;
+  QVector4D ambient;
+  QVector4D diffuse;
+  QVector4D specular;
+  float shininess;
+  friend QDataStream& operator << (QDataStream& out, const LightComponents& value) {
+    out << value.position;
+    out << value.ambient;
+    out << value.diffuse;
+    out << value.specular;
+    out << value.shininess;
+    return out;
+  }
+  friend QDataStream& operator >> (QDataStream& in, LightComponents& value) {
+    in >> value.position;
+    in >> value.ambient;
+    in >> value.diffuse;
+    in >> value.specular;
+    in >> value.shininess;
+    return in;
+  }
+};
+Q_DECLARE_METATYPE(LightComponents)
+
 //! The viewer class. Deals with all the openGL rendering and the mouse/keyboard events.
 //! It should not be needed in the plugin.
 class VIEWER_EXPORT Viewer : public CGAL::Three::Viewer_interface {
@@ -82,6 +108,9 @@ public:
   qglviewer::Vec offset()const Q_DECL_OVERRIDE;
   void setSceneBoundingBox(const qglviewer::Vec &min, const qglviewer::Vec &max);
 
+  //!Set the light components for this `Viewer`
+  void setLighting(LightComponents);
+  LightComponents lighting();
   TextRenderer* textRenderer() Q_DECL_OVERRIDE;
   void enableClippingBox(QVector4D box[]) Q_DECL_OVERRIDE;
   void disableClippingBox() Q_DECL_OVERRIDE;
@@ -90,6 +119,8 @@ Q_SIGNALS:
   void sendMessage(QString);
   void GLinit();
 public Q_SLOTS:
+  //!prompt a dialog to set the lighting values for this viewer;
+  void setLighting_clicked();
   //! Sets the antialiasing to true or false.
   void setAntiAliasing(bool b) Q_DECL_OVERRIDE;
   //! If b is true, facets will be ligted from both internal and external sides.
@@ -151,13 +182,12 @@ protected:
 protected:
   friend class Viewer_impl;
   Viewer_impl* d;
-  double prev_radius;
+  void doBindings();
 
 public:
   bool isOpenGL_4_3() const Q_DECL_OVERRIDE;
   QOpenGLFunctions_4_3_Compatibility* openGL_4_3_functions() Q_DECL_OVERRIDE;
 
 }; // end class Viewer
-
 
 #endif // VIEWER_H

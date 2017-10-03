@@ -98,6 +98,7 @@
     <addaction name="menuDockWindows"/>
     <addaction name="menuCamera"/>
     <addaction name="actionAdd_Viewer"/>
+    <addaction name="actionL_ighting"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -534,7 +535,12 @@
   </action>
   <action name="actionAdd_Viewer">
    <property name="text">
-    <string>Add Viewer</string>
+    <string>Add &amp;Viewer</string>
+   </property>
+  </action>
+  <action name="actionL_ighting">
+   <property name="text">
+    <string>L&amp;ighting...</string>
    </property>
   </action>
  </widget>

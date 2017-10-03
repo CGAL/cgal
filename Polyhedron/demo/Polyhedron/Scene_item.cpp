@@ -2,11 +2,13 @@
 #include <CGAL/Three/Scene_group_item.h>
 #include <CGAL/Three/Scene_interface.h>
 #include <QMenu>
+#include <QWidgetAction>
 #include <iostream>
 #include <QDebug>
 #include <CGAL/Three/Viewer_interface.h>
 #include <CGAL/Three/Triangle_container.h>
 #include <CGAL/Three/Edge_container.h>
+#include <QSlider>
 
 namespace CT = CGAL::Three;
 const QColor CT::Scene_item::defaultColor = QColor(100, 100, 255);
@@ -27,11 +29,14 @@ CGAL::Three::Scene_item::Scene_item()
   has_group = 0;
   parent_group = 0;
   is_selected = false;
+  alphaSlider = NULL;
 }
 
 CGAL::Three::Scene_item::~Scene_item() {
   if(defaultContextMenu)
     defaultContextMenu->deleteLater();
+  if(alphaSlider)
+    delete alphaSlider;
 
   for(std::size_t i = 0; i < triangle_containers.size(); ++i)
   {
@@ -116,10 +121,6 @@ QMenu* CGAL::Three::Scene_item::contextMenu()
     }
 
     defaultContextMenu = new QMenu(name());
-    // defaultContextMenu->addAction(name());
-    // defaultContextMenu->addSeparator();
-    // QMenu* modeMenu = new QMenu(QObject::tr("Rendering mode"),
-    //                             defaultContextMenu);
     for(unsigned int mode = 0; mode < NumberOfRenderingMode;
         ++mode)
     {
@@ -130,7 +131,13 @@ QMenu* CGAL::Three::Scene_item::contextMenu()
                                       this,
                                       slotName(RenderingMode(mode)));
     }
-    // defaultContextMenu->addAction(modeMenu->menuAction());
+    QMenu *container = new QMenu(tr("Alpha value"));
+    QWidgetAction *sliderAction = new QWidgetAction(0);
+    connect(alphaSlider, &QSlider::valueChanged, this, &Scene_item::redraw);
+
+    sliderAction->setDefaultWidget(alphaSlider);
+    container->addAction(sliderAction);
+    defaultContextMenu->addMenu(container);
     return defaultContextMenu;
 }
 
@@ -177,6 +184,8 @@ void CGAL::Three::Scene_item::attribBuffers(CGAL::Three::Viewer_interface* viewe
         viewer->getShaderProgram(program_name)->setUniformValue("is_selected", true);
     else
         viewer->getShaderProgram(program_name)->setUniformValue("is_selected", false);
+
+    viewer->getShaderProgram(program_name)->setUniformValue("alpha", alpha());
     QColor c = this->color();
     if(program_name == Scene_item::PROGRAM_WITH_TEXTURE)
     {
@@ -245,6 +254,13 @@ void CT::Scene_item::processData()const
 
 void CT::Scene_item::initGL() const
 {
+  if(!alphaSlider)
+  {
+    alphaSlider = new QSlider(::Qt::Horizontal);
+    alphaSlider->setMinimum(0);
+    alphaSlider->setMaximum(255);
+    alphaSlider->setValue(255);
+  }
   Q_FOREACH(QGLViewer* v, QGLViewer::QGLViewerPool())
   {
     if(!v)
@@ -270,7 +286,7 @@ void CT::Scene_item::initGL() const
 
 void Scene_item::newViewer(Viewer_interface *viewer)
 {
-  computeElements();
+  processData();
   Q_FOREACH(CT::Triangle_container* tc, triangle_containers)
   {
     if(!tc->is_gl_init[viewer])
@@ -293,4 +309,11 @@ void Scene_item::removeViewer(Viewer_interface *viewer)
   {
     ec->removeViewer(viewer);
   }
+}
+
+float Scene_item::alpha() const
+{
+  if(!alphaSlider)
+    return 1.0f;
+  return (float)alphaSlider->value() / 255.0f;
 }

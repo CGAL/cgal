@@ -1162,10 +1162,10 @@ bool SceneDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
             QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(event);
             if(mouseEvent->button() == ::Qt::LeftButton) {
                 QColor color =
-                        QColorDialog::getColor(model->data(index).value<QColor>(),
+                        QColorDialog::getColor(model->data(index).value<QColor>()/*,
                                                0,
                                                tr("Select color"),
-                                               QColorDialog::ShowAlphaChannel);
+                                               QColorDialog::ShowAlphaChannel*/);
                 if (color.isValid()) {
                     model->setData(index, color );
                 }

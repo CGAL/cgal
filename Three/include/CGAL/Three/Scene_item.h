@@ -50,6 +50,7 @@ namespace qglviewer {
 
 class QMenu;
 class QKeyEvent;
+class QSlider;
 namespace CGAL {
 namespace Three {
 
@@ -387,6 +388,8 @@ public Q_SLOTS:
   //!memory leak, for example when multiple items are created at the same time.
   virtual void itemAboutToBeDestroyed(Scene_item*);
 
+  //!returns the alpha value for the item.
+  float alpha() const;
   //!Selects a point through raycasting.
   virtual void select(double orig_x,
                       double orig_y,
@@ -428,6 +431,8 @@ protected:
   Scene_group_item* parent_group;
   //!Specifies if the item is currently selected.
   bool is_selected;
+  //!Slider managing the transparency of an item
+  mutable QSlider* alphaSlider;
   //! Holds the number of vertices that are not linked to the polyhedron from the OFF
   //! file.
   std::size_t nb_isolated_vertices;

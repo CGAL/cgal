@@ -13,6 +13,7 @@
 #include <QInputDialog>
 #include <cmath>
 #include <QApplication>
+#include "ui_Lighting.h"
 
 #if defined(_WIN32)
 #include <QMimeData>
@@ -38,6 +39,7 @@ public:
   unsigned int fpsCounter;
   QString fpsString;
   float f_p_s;
+  LightComponents lighting;
   // M e s s a g e s
   QString message;
   bool _displayMessage;
@@ -97,6 +99,36 @@ public:
    * \param color the RGB color of the arrow.
    * \param data the struct of std::vector that will contain the results.
    */
+  Viewer_impl()
+  {
+    scene = 0;
+    is_sharing = false;
+    initialized = false;
+    twosides = false;
+    macro_mode = false;
+    inFastDrawing = true;
+    inDrawWithNames = false;
+    clipping = false;
+    shaderPrograms().resize(Viewer::NB_OF_PROGRAMS);
+    offset = qglviewer::Vec(0,0,0);
+    textRenderer = new TextRenderer();
+    lighting.position = QVector4D(0,0,0,1);
+    lighting.ambient = QVector4D(0.4f, 0.4f, 0.4f, 0.4f);
+    lighting.diffuse = QVector4D(0.8f, 0.8f, 0.8f, 1.0f);
+    lighting.specular = QVector4D(0.0f, 0.0f, 0.0f, 1.0f);
+    lighting.shininess = 32.0f;
+    axis_are_displayed = true;
+    has_text = false;
+    i_is_pressed = false;
+    z_is_pressed = false;
+    fpsTime.start();
+    fpsCounter=0;
+    f_p_s=0.0;
+    fpsString=Viewer::tr("%1Hz", "Frames per seconds, in Hertz").arg("?");
+    distance_is_displayed = false;
+    is_d_pressed = false;
+    total_pass = 4;
+  }
   void makeArrow(double R, int prec, qglviewer::Vec from, qglviewer::Vec to, qglviewer::Vec color, AxisData &data);
   //!Clears the distance display
   void clearDistancedisplay();
@@ -114,24 +146,8 @@ public:
 };
 
 std::vector<QOpenGLShaderProgram*> Viewer_impl::shader_programs = std::vector<QOpenGLShaderProgram*>(Viewer::NB_OF_PROGRAMS);
-
-Viewer::Viewer(QWidget* parent, bool antialiasing)
-  : CGAL::Three::Viewer_interface(parent)
+void Viewer::doBindings()
 {
-  d = new Viewer_impl;
-  d->scene = 0;
-  d->is_sharing = false;
-  d->initialized = false;
-  d->antialiasing = antialiasing;
-  d->twosides = false;
-  this->setProperty("draw_two_sides", false);
-  d->macro_mode = false;
-  d->inFastDrawing = true;
-  d->inDrawWithNames = false;
-  d->clipping = false;
-  d->shaderPrograms().resize(NB_OF_PROGRAMS);
-  d->offset = qglviewer::Vec(0,0,0);
-  d->textRenderer = new TextRenderer();
   connect( d->textRenderer, SIGNAL(sendMessage(QString,int)),
            this, SLOT(printMessage(QString,int)) );
   connect(&d->messageTimer, SIGNAL(timeout()), SLOT(hideMessage()));
@@ -176,20 +192,16 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
                                 "menu of the selected item"));
 
 #endif // QGLVIEWER_VERSION >= 2.5.0
-  prev_radius = sceneRadius();
-  d->axis_are_displayed = true;
-  d->has_text = false;
-  d->i_is_pressed = false;
-  d->z_is_pressed = false;
-  d->fpsTime.start();
-  d->fpsCounter=0;
-  d->f_p_s=0.0;
-  d->fpsString=tr("%1Hz", "Frames per seconds, in Hertz").arg("?");
-  d->distance_is_displayed = false;
-  d->is_d_pressed = false;
+}
+Viewer::Viewer(QWidget* parent, bool antialiasing)
+  : CGAL::Three::Viewer_interface(parent)
+{
+  d = new Viewer_impl;
   d->viewer = this;
-  d->pass = 0;
-  d->total_pass = 4;
+  this->setProperty("draw_two_sides", false);
+  d->antialiasing = antialiasing;
+  doBindings();
+
 }
 
 Viewer::Viewer(QWidget* parent,
@@ -198,77 +210,13 @@ Viewer::Viewer(QWidget* parent,
   : CGAL::Three::Viewer_interface(parent, sharedWidget)
 {
   d = new Viewer_impl;
+  d->viewer = this;
   d->is_sharing = true;
-  d->scene = 0;
-  d->initialized = false;
   d->antialiasing = antialiasing;
-  d->twosides = false;
   this->setProperty("draw_two_sides", false);
-  d->macro_mode = false;
-  d->inFastDrawing = true;
-  d->inDrawWithNames = false;
-  d->clipping = false;
-  d->shaderPrograms().resize(NB_OF_PROGRAMS);
-  d->offset = qglviewer::Vec(0,0,0);
-  d->textRenderer = new TextRenderer();
   d->is_ogl_4_3 = sharedWidget->d->is_ogl_4_3;
   d->_recentFunctions = sharedWidget->d->_recentFunctions;
-  connect( d->textRenderer, SIGNAL(sendMessage(QString,int)),
-           this, SLOT(printMessage(QString,int)) );
-  connect(&d->messageTimer, SIGNAL(timeout()), SLOT(hideMessage()));
-  setShortcut(EXIT_VIEWER, 0);
-  setShortcut(DRAW_AXIS, 0);
-  setKeyDescription(Qt::Key_T,
-                    tr("Turn the camera by 180 degrees"));
-  setKeyDescription(Qt::Key_M,
-                    tr("Toggle macro mode: useful to view details very near from the camera, "
-                       "but decrease the z-buffer precision"));
-  setKeyDescription(Qt::Key_A,
-                    tr("Toggle the axis system visibility."));
-  setKeyDescription(Qt::Key_I + Qt::CTRL,
-                    tr("Toggle the primitive IDs visibility of the selected Item."));
-  setKeyDescription(Qt::Key_D,
-                    tr("Disable the distance between two points  visibility."));
-
-#if QGLVIEWER_VERSION >= 0x020501
-  //modify mouse bindings that have been updated
-  setMouseBinding(Qt::Key(0), Qt::NoModifier, Qt::LeftButton, RAP_FROM_PIXEL, true, Qt::RightButton);
-  setMouseBindingDescription(Qt::ShiftModifier, Qt::RightButton,
-                             tr("Select and pop context menu"));
-  setMouseBinding(Qt::Key_R, Qt::NoModifier, Qt::LeftButton, RAP_FROM_PIXEL);
-  //use the new API for these
-  setMouseBinding(Qt::ShiftModifier, Qt::LeftButton, SELECT);
-
-  setMouseBindingDescription(Qt::Key(0), Qt::ShiftModifier, Qt::LeftButton,
-                             tr("Selects and display context "
-                                "menu of the selected item"));
-  setMouseBindingDescription(Qt::Key_I, Qt::NoModifier, Qt::LeftButton,
-                             tr("Show/hide the primitive ID."));
-  setMouseBindingDescription(Qt::Key_D, Qt::NoModifier, Qt::LeftButton,
-                             tr("Selects a point. When the second point is selected,  "
-                                "displays the two points and the distance between them."));
-  setMouseBindingDescription(Qt::Key_O, Qt::NoModifier, Qt::LeftButton,
-                             tr("Move the camera orthogonally to the picked facet of a Scene_polyhedron_item or "
-                                "to the current selection of a Scene_points_with_normal_item."));
-#else
-  setMouseBinding(Qt::SHIFT + Qt::LeftButton, SELECT);
-  setMouseBindingDescription(Qt::SHIFT + Qt::RightButton,
-                             tr("Selects and display context "
-                                "menu of the selected item"));
-
-#endif // QGLVIEWER_VERSION >= 2.5.0
-  prev_radius = sceneRadius();
-  d->axis_are_displayed = true;
-  d->has_text = false;
-  d->i_is_pressed = false;
-  d->z_is_pressed = false;
-  d->fpsTime.start();
-  d->fpsCounter=0;
-  d->f_p_s=0.0;
-  d->fpsString=tr("%1Hz", "Frames per seconds, in Hertz").arg("?");
-  d->distance_is_displayed = false;
-  d->is_d_pressed = false;
-  d->viewer = this;
+ doBindings();
 }
 
 Viewer::~Viewer()
@@ -884,12 +832,7 @@ void Viewer::attribBuffers(int program_name) const {
     const_cast<Viewer*>(this)->glGetIntegerv(GL_LIGHT_MODEL_TWO_SIDE,
                                              &is_both_sides);
 
-    QVector4D position(0.0f,0.0f,1.0f, 1.0f );
-    QVector4D ambient(0.4f, 0.4f, 0.4f, 0.4f);
-    // Diffuse
-    QVector4D diffuse(0.8f, 0.8f, 0.8f, 1.0f);
-    // Specular
-    QVector4D specular(0.0f, 0.0f, 0.0f, 1.0f);
+
     QOpenGLShaderProgram* program = getShaderProgram(program_name);
     program->bind();
     program->setUniformValue("mvp_matrix", mvp_mat);
@@ -917,11 +860,11 @@ void Viewer::attribBuffers(int program_name) const {
     case PROGRAM_SPHERES:
     case PROGRAM_OLD_FLAT:
     case PROGRAM_FLAT:
-        program->setUniformValue("light_pos", position);
-        program->setUniformValue("light_diff",diffuse);
-        program->setUniformValue("light_spec", specular);
-        program->setUniformValue("light_amb", ambient);
-        program->setUniformValue("spec_power", 51.8f);
+        program->setUniformValue("light_pos", d->lighting.position);
+        program->setUniformValue("light_diff",d->lighting.diffuse);
+        program->setUniformValue("light_spec", d->lighting.specular);
+        program->setUniformValue("light_amb", d->lighting.ambient);
+        program->setUniformValue("spec_power", d->lighting.shininess);
         program->setUniformValue("is_two_side", is_both_sides);
         break;
     }
@@ -1168,37 +1111,14 @@ void Viewer::drawVisualHints()
         mvpMatrix.ortho(-1,1,-1,1,-1,1);
         mvpMatrix = mvpMatrix*mvMatrix;
         camera()->setType(camera_type);
-        QVector4D	position(0.0f,0.0f,1.0f,1.0f );
-        // define material
-        QVector4D	ambient;
-        QVector4D	diffuse;
-        QVector4D	specular;
-        GLfloat      shininess ;
-        // Ambient
-        ambient[0] = 0.29225f;
-        ambient[1] = 0.29225f;
-        ambient[2] = 0.29225f;
-        ambient[3] = 1.0f;
-        // Diffuse
-        diffuse[0] = 0.50754f;
-        diffuse[1] = 0.50754f;
-        diffuse[2] = 0.50754f;
-        diffuse[3] = 1.0f;
-        // Specular
-        specular[0] = 0.0f;
-        specular[1] = 0.0f;
-        specular[2] = 0.0f;
-        specular[3] = 0.0f;
-        // Shininess
-        shininess = 51.2f;
 
-        d->rendering_program.setUniformValue("light_pos", position);
+        d->rendering_program.setUniformValue("light_pos", d->lighting.position);
         d->rendering_program.setUniformValue("mvp_matrix", mvpMatrix);
         d->rendering_program.setUniformValue("mv_matrix", mvMatrix);
-        d->rendering_program.setUniformValue("light_diff", diffuse);
-        d->rendering_program.setUniformValue("light_spec", specular);
-        d->rendering_program.setUniformValue("light_amb", ambient);
-        d->rendering_program.setUniformValue("spec_power", shininess);
+        d->rendering_program.setUniformValue("light_diff", d->lighting.diffuse);
+        d->rendering_program.setUniformValue("light_spec", d->lighting.specular);
+        d->rendering_program.setUniformValue("light_amb", d->lighting.ambient);
+        d->rendering_program.setUniformValue("spec_power", d->lighting.shininess);
 
         d->vao[0].bind();
         int viewport[4];
@@ -1817,3 +1737,36 @@ bool Viewer::isOpenGL_4_3() const { return d->is_ogl_4_3; }
 
 QOpenGLFunctions_4_3_Compatibility* Viewer::openGL_4_3_functions() { return d->_recentFunctions; }
  #include "Viewer.moc"
+
+void Viewer::setLighting(LightComponents light)
+{
+  d->lighting = light;
+}
+
+LightComponents Viewer::lighting()
+{
+  return d->lighting;
+}
+
+void Viewer::setLighting_clicked()
+{
+  QDialog dialog(this);
+  Ui::LightDialog lightdiag;
+  lightdiag.setupUi(&dialog);
+
+  lightdiag.posX->setValue(lighting().position.x());  lightdiag.posY->setValue(lighting().position.y());  lightdiag.posZ->setValue(lighting().position.z());
+  lightdiag.diffR->setValue(lighting().diffuse.x()); lightdiag.diffG->setValue(lighting().diffuse.y()); lightdiag.diffB->setValue(lighting().diffuse.z());
+  lightdiag.ambR->setValue(lighting().ambient.x());  lightdiag.ambG->setValue(lighting().ambient.y());  lightdiag.ambB->setValue(lighting().ambient.z());
+  lightdiag.specR->setValue(lighting().specular.x()); lightdiag.specG->setValue(lighting().specular.y()); lightdiag.specB->setValue(lighting().specular.z());
+  lightdiag.shininess->setValue(lighting().shininess);
+  if(!dialog.exec())
+    return;
+  LightComponents light;
+  light.position = QVector4D(lightdiag.posX->value(), lightdiag.posY->value(), lightdiag.posZ->value(), 1.0f);
+  light.diffuse = QVector4D(lightdiag.diffR->value(), lightdiag.diffG->value(),lightdiag.diffB->value(), 1.0f);
+  light.ambient = QVector4D(lightdiag.ambR->value(), lightdiag.ambG->value(),lightdiag.ambB->value(), 1.0f);
+  light.specular = QVector4D(lightdiag.specR->value(), lightdiag.specG->value(),lightdiag.specB->value(), 1.0f);
+  light.shininess = lightdiag.shininess->value();
+  setLighting(light);
+  update();
+}
