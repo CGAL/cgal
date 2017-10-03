@@ -540,7 +540,7 @@ shape. The implementation follows \cgalCite{cgal:lm-clscm-12}.
         if (m_shape_index[i] != -1)
           continue;
 
-        m_shape_index[i] = class_index++;
+        m_shape_index[i] = ++ class_index;
         
         int conti = 0; 	//for accelerate least_square fitting 
 
