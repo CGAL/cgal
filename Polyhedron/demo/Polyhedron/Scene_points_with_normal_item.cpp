@@ -949,10 +949,13 @@ QMenu* Scene_points_with_normal_item::contextMenu()
         d->actionSelectDuplicatedPoints = menu->addAction(tr("Select duplicated points"));
         d->actionSelectDuplicatedPoints->setObjectName("actionSelectDuplicatedPoints");
         connect(d->actionSelectDuplicatedPoints, SIGNAL(triggered()),this, SLOT(selectDuplicates()));
-
+        QAction* resetColorsAction = menu->addAction(tr("Make Unicolor"));
+        resetColorsAction->setObjectName("resetColorsAction");
+        connect(resetColorsAction, &QAction::triggered, this, &Scene_points_with_normal_item::resetColors);
         menu->setProperty(prop_name, true);
     }
-
+    QAction* actionColor = menu->findChild<QAction*>(tr("resetColorsAction"));
+    actionColor->setVisible(d->m_points->has_colors());
     if (isSelectionEmpty())
     {
         d->actionDeleteSelection->setDisabled(true);
@@ -1084,4 +1087,11 @@ void Scene_points_with_normal_item::setPointSize(int size)
 void Scene_points_with_normal_item::setNormalSize(int size)
 {
   d->normal_Slider->setValue(size);
+}
+
+void Scene_points_with_normal_item::resetColors()
+{
+  d->m_points->remove_colors();
+  invalidateOpenGLBuffers();
+  redraw();
 }

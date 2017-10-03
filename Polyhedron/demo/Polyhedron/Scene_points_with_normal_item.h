@@ -113,7 +113,7 @@ public Q_SLOTS:
   void itemAboutToBeDestroyed(Scene_item *) Q_DECL_OVERRIDE;
   void setPointSize(int size);
   void setNormalSize(int size);
-
+  void resetColors();
 // Data
 protected:
   friend struct Scene_points_with_normal_item_priv;
