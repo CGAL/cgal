@@ -1,6 +1,9 @@
 #ifndef CGAL_VSA_BGL_NAMED_FUNCTION_PARAMS_H
 #define CGAL_VSA_BGL_NAMED_FUNCTION_PARAMS_H
 
+#include <CGAL/license/Surface_mesh_approximation.h>
+
+
 #include <CGAL/boost/graph/named_function_params.h>
 
 namespace CGAL{

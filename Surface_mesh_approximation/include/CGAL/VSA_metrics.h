@@ -1,6 +1,9 @@
 #ifndef CGAL_SURFACE_MESH_APPROXIMATION_VSA_METRICS_H
 #define CGAL_SURFACE_MESH_APPROXIMATION_VSA_METRICS_H
 
+#include <CGAL/license/Surface_mesh_approximation.h>
+
+
 #include <CGAL/Kernel/global_functions.h>
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/linear_least_squares_fitting_3.h>

@@ -1,6 +1,9 @@
 #ifndef CGAL_NAMED_PARAMETERS_HELPERS_H
 #define CGAL_NAMED_PARAMETERS_HELPERS_H
 
+#include <CGAL/license/Surface_mesh_approximation.h>
+
+
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/Origin.h>
 #include <CGAL/internal/Surface_mesh_approximation/named_function_params.h>
