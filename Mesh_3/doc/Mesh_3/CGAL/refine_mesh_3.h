@@ -84,10 +84,11 @@ functions for each optimization parameter
 to generate appropriate value of this parameter. 
 
 \cgalHeading{Named Parameters}
-- <b>`manifold`</b> allows the user to monitor the meshing algorithm,
+- <b>`manifold`</b> allows the user to drive the meshing algorithm,
 and ensure that the output mesh surface follows the given manifold criterion.
 It can be activated with `parameters::manifold()`, `parameters::manifold_with_boundary()`
-and `parameters::non_manifold()`.
+and `parameters::non_manifold()`. Note that the meshing algorithm cannot generate a manifold
+surface if the input surface is not manifold.
 
 - <b>`lloyd`</b>  `parameters::lloyd()` and `parameters::no_lloyd()` are designed to 
 trigger or not a call to `lloyd_optimize_mesh_3()` function and to set the 
@@ -167,7 +168,7 @@ namespace parameters {
   /*!
   \ingroup PkgMesh_3Parameters
 
-  The function `parameters::manifold()` is used to monitor the
+  The function `parameters::manifold()` is used to drive the
   meshing algorithm for surfaces.
   It ensures that the surface of the output mesh is a manifold surface
     without boundaries.
@@ -181,7 +182,7 @@ namespace parameters {
   /*!
   \ingroup PkgMesh_3Parameters
 
-  The function `parameters::non_manifold()` is used to monitor the
+  The function `parameters::non_manifold()` is used to drive the
   meshing algorithm for surfaces.
   It does not ensure that the surface of the output mesh is a manifold surface.
   The manifold property of output mesh may nevertheless result from the choice of appropriate meshing criteria.
@@ -195,7 +196,7 @@ namespace parameters {
   /*!
   \ingroup PkgMesh_3Parameters
 
-  The function `parameters::manifold_with_boundary()` is used to monitor the
+  The function `parameters::manifold_with_boundary()` is used to drive the
   meshing algorithm for surfaces.
   It ensures that the surface of the output mesh is a manifold surface which
     may have boundaries.
