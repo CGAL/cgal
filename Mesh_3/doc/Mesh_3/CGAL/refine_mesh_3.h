@@ -84,9 +84,10 @@ functions for each optimization parameter
 to generate appropriate value of this parameter. 
 
 \cgalHeading{Named Parameters}
-- <b>`manifold`</b> `parameters::manifold()`, `parameters::manifold_with_boundary()`,
-`parameters::non_manifold()`
-@todo : document
+- <b>`manifold`</b> allows the user to monitor the meshing algorithm,
+and ensure that the output mesh surface follows the given manifold criterion.
+It can be activated with `parameters::manifold()`, `parameters::manifold_with_boundary()`
+and `parameters::non_manifold()`.
 
 - <b>`lloyd`</b>  `parameters::lloyd()` and `parameters::no_lloyd()` are designed to 
 trigger or not a call to `lloyd_optimize_mesh_3()` function and to set the 
