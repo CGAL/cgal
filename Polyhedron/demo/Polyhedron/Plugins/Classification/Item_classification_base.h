@@ -37,13 +37,17 @@ public:
   virtual void compute_features () = 0;
 
   virtual void add_selection_to_training_set (const char* name) = 0;
+  virtual void reset_training_set (const char* name) = 0;
   virtual void reset_training_sets() = 0;
 
   virtual void validate_selection () = 0;
   virtual void train(int classifier) = 0;
   virtual bool run (int method, int classifier) = 0;
-  
+
+  virtual void update_color () = 0;
   virtual void change_color (int index) = 0;
+  virtual CGAL::Three::Scene_item* generate_one_item (const char* name,
+                                                      int label) const = 0;
   virtual void generate_one_item_per_label(std::vector<CGAL::Three::Scene_item*>& items,
                                            const char* name) const = 0;
 

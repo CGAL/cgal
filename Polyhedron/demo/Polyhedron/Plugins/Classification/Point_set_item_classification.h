@@ -62,11 +62,24 @@ class Point_set_item_classification : public Item_classification_base
     if (m_index_color == 1 || m_index_color == 2)
       change_color (m_index_color);
   }
+  void reset_training_set(const char* name)
+  {
+    int label = int(get_label (name));
+
+    for (Point_set::const_iterator it = m_points->point_set()->begin();
+         it != m_points->point_set()->end(); ++ it)
+      if (m_training[*it] == label)
+        m_training[*it] = -1;
+    if (m_index_color == 1 || m_index_color == 2)
+      change_color (m_index_color);
+  }
   void reset_training_sets()
   {
     for (Point_set::const_iterator it = m_points->point_set()->begin();
          it != m_points->point_set()->end(); ++ it)
       m_training[*it] = -1;
+    if (m_index_color == 1 || m_index_color == 2)
+      change_color (m_index_color);
   }
   void validate_selection ()
   {
@@ -81,7 +94,25 @@ class Point_set_item_classification : public Item_classification_base
   void train(int classifier);
   bool run (int method, int classifier);
 
+  void update_color () { change_color (m_index_color); }
   void change_color (int index);
+  CGAL::Three::Scene_item* generate_one_item (const char* name,
+                                              int label) const
+  {
+    Scene_points_with_normal_item* points_item
+      = new Scene_points_with_normal_item;
+    
+    points_item->setName (QString("%1 (%2)").arg(name).arg(m_labels[label]->name().c_str()));
+    points_item->setColor (m_label_colors[label]);
+    for (Point_set::const_iterator it = m_points->point_set()->begin();
+         it != m_points->point_set()->end(); ++ it)
+    {
+      int c = m_classif[*it];
+      if (c == label)
+        points_item->point_set()->insert (m_points->point_set()->point(*it));
+    }
+    return points_item;
+  }
   void generate_one_item_per_label(std::vector<CGAL::Three::Scene_item*>& items,
                                    const char* name) const
   {
@@ -98,8 +129,8 @@ class Point_set_item_classification : public Item_classification_base
     for (Point_set::const_iterator it = m_points->point_set()->begin();
          it != m_points->point_set()->end(); ++ it)
       {
-        std::size_t c = m_classif[*it];
-        if (c != std::size_t(-1))
+        int c = m_classif[*it];
+        if (c != -1)
           points_item[c]->point_set()->insert (m_points->point_set()->point(*it));
       }
   }
