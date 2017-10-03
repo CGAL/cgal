@@ -133,7 +133,7 @@ public:
   //!\brief The scene's Bbox
   //!@returns the scene's bounding box
   //! @see Scene_interface::Bbox
-  virtual Bbox bbox() const = 0;
+  virtual Bbox bbox(bool all = false) const = 0;
   //!The length of the diagonal of the scene's Bbox
   //!@returns the length of the bounding box's diagonal.
   virtual double len_diagonal() const = 0;

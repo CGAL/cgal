@@ -238,10 +238,10 @@ public:
   //! the Operations menu, actions to save or clone the item if it is supported
   //! and any contextual action for the item.
   virtual QMenu* contextMenu();
-  bool isWriting(){ return is_locked; }
+  bool isWriting()const{ return is_locked; }
   void writing(){ is_locked = true; itemChanged();}
   void doneWriting() { is_locked = false; itemChanged();}
-  int isReading(){ return is_reading; }
+  int isReading()const{ return is_reading; }
   void reading(){ ++is_reading; itemChanged(); }
   void doneReading() { --is_reading; itemChanged(); }
 

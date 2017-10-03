@@ -631,9 +631,9 @@ void Scene_surface_mesh_item::draw(CGAL::Three::Viewer_interface *viewer,
                                    bool writing_depth,
                                    QOpenGLFramebufferObject* fbo) const
 {
-  if(!isinit)
+  if(!is_locked && !isinit)
     initGL();
-  if(!is_locked && are_buffers_filled &&
+  if (!is_locked&& are_buffers_filled &&
      ! buffers_init[viewer])
   {
     initializeBuffers(viewer);
@@ -1065,7 +1065,7 @@ Scene_surface_mesh_item::select(double orig_x,
 
 void Scene_surface_mesh_item::invalidateOpenGLBuffers()
 {
-  if(is_locked)
+  if(isWriting() || isReading())
     return;
   Q_EMIT item_is_about_to_be_changed();
   delete_aabb_tree(this);
@@ -1080,12 +1080,14 @@ void Scene_surface_mesh_item::invalidateOpenGLBuffers()
     v->update();
   }
 
-
   triangle_containers[0]->reset_vbos();
   triangle_containers[1]->reset_vbos();
   edge_containers[0]->reset_vbos();
   edge_containers[1]->reset_vbos();
-  processData();
+  if(isinit)
+    processData();
+  else
+    initGL();
 }
 
 

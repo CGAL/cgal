@@ -834,6 +834,7 @@ void MainWindow::updateViewersBboxes(bool recenter)
 void MainWindow::computeViewerBBox(qglviewer::Vec& min, qglviewer::Vec& max)
 {
   const Scene::Bbox bbox = scene->bbox();
+  const Scene::Bbox all_bbox = scene->bbox(true);
   const double xmin = bbox.xmin();
   const double ymin = bbox.ymin();
   const double zmin = bbox.zmin();
@@ -841,18 +842,31 @@ void MainWindow::computeViewerBBox(qglviewer::Vec& min, qglviewer::Vec& max)
   const double ymax = bbox.ymax();
   const double zmax = bbox.zmax();
 
+  const double axmin = all_bbox.xmin();
+  const double aymin = all_bbox.ymin();
+  const double azmin = all_bbox.zmin();
+  const double axmax = all_bbox.xmax();
+  const double aymax = all_bbox.ymax();
+  const double azmax = all_bbox.zmax();
+
+
 
   min = qglviewer::Vec(xmin, ymin, zmin);
   max= qglviewer::Vec(xmax, ymax, zmax);
-  qglviewer::Vec bbox_center((xmin+xmax)/2, (ymin+ymax)/2, (zmin+zmax)/2);
+qglviewer::Vec amin(axmin, aymin, azmin),
+    amax(axmax, aymax, azmax);
+  qglviewer::Vec bbox_center((xmin+xmax)/2, (ymin+ymax)/2, (zmin+zmax)/2),
+  abbox_center((axmin+axmax)/2, (aymin+aymax)/2, (azmin+azmax)/2);
+
   qglviewer::Vec offset(0,0,0);
-  double l_dist = (std::max)((std::abs)(bbox_center.x - viewer->offset().x),
-                             (std::max)((std::abs)(bbox_center.y - viewer->offset().y),
-                                        (std::abs)(bbox_center.z - viewer->offset().z)));
+
+  double l_dist = (std::max)((std::abs)(abbox_center.x - viewer->offset().x),
+                             (std::max)((std::abs)(abbox_center.y - viewer->offset().y),
+                                        (std::abs)(abbox_center.z - viewer->offset().z)));
   if((std::log2)(l_dist) > 13.0 )
     for(int i=0; i<3; ++i)
     {
-      offset[i] = -bbox_center[i];
+      offset[i] = -abbox_center[i];
 
     }
   if(offset != viewer->offset())

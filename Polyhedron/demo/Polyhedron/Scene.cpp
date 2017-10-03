@@ -1323,7 +1323,7 @@ void Scene::setItemB(int i)
                      this->createIndex(m_entries.size()-1, ABColumn));
 }
 
-Scene::Bbox Scene::bbox() const
+Scene::Bbox Scene::bbox(bool all) const
 {
     if(m_entries.empty())
         return Bbox(0,0,0,0,0,0);
@@ -1332,7 +1332,7 @@ Scene::Bbox Scene::bbox() const
     Bbox bbox = Bbox(0,0,0,0,0,0);
     Q_FOREACH(CGAL::Three::Scene_item* item, m_entries)
     {
-        if(item->isFinite() && !item->isEmpty() && item->visible()) {
+        if(item->isFinite() && !item->isEmpty() && (all || item->visible())) {
             if(bbox_initialized) {
 
                 bbox = bbox + item->bbox();

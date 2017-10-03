@@ -279,14 +279,14 @@ void CT::Scene_item::initGL() const
   }
   if(!isinit)
   {
-    processData();
+      processData();
   }
   isinit = true;
 }
 
 void Scene_item::newViewer(Viewer_interface *viewer)
 {
-  processData();
+  processData(); //newViewer shouldn't be called when item is locked;
   Q_FOREACH(CT::Triangle_container* tc, triangle_containers)
   {
     if(!tc->is_gl_init[viewer])
