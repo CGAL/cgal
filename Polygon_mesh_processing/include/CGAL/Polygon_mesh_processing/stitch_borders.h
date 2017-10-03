@@ -98,8 +98,7 @@ collect_duplicated_stitchable_boundary_edges
   {
     if ( !CGAL::is_border(he, pmesh) )
       continue;
-    if ( get(vpmap, source(he,pmesh)) == get(vpmap, target(he,pmesh)) ) // skip degenerate edges
-      continue;
+
     typename Border_halfedge_map::iterator set_it;
     bool insertion_ok;
     CGAL::cpp11::tie(set_it, insertion_ok)
@@ -115,22 +114,6 @@ collect_duplicated_stitchable_boundary_edges
           set_it->second.second = halfedge_pairs.size(); // set the id of the pair in the vector
           halfedge_pairs.push_back( std::make_pair(set_it->first, he) );
           manifold_halfedge_pairs.push_back(true);
-
-          // here we check that the next and prev halfedges are not degenerated
-          // (in case next and prev of a degenerate edge are set for stitching but not
-          //  the degenerate edge, then we'll end up with an edge made of two identical vertices)
-          // WARNING: not necessarilly true now that we use union-find
-          cpp11::array<halfedge_descriptor,4> halfedges_to_test =
-            make_array(next(he, pmesh), prev(he,pmesh),
-                       next(set_it->first, pmesh), prev(set_it->first, pmesh) );
-
-          for(int i=0; i<4; ++i)
-            if ( get(vpmap, source(halfedges_to_test[i], pmesh))==
-                 get(vpmap, target(halfedges_to_test[i], pmesh)) )
-            {
-              manifold_halfedge_pairs[ set_it->second.second ] = false;
-              break;
-            }
         }
       }
       else
@@ -460,9 +443,6 @@ void stitch_borders_impl(PM& pmesh,
 * For each pair `p` in this vector, `p.second` and its opposite will be removed
 * from `pmesh`.
 *
-* \pre For each halfedge in a pair of `hedge_pairs_to_stitch`, the corresponding
-*      edge is neither degenerated nor incident to a degenerate border edge.
-*
 * @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
 * @tparam HalfedgePairsRange a range of
 *         `std::pair<boost::graph_traits<PolygonMesh>::%halfedge_descriptor,
@@ -492,8 +472,6 @@ void stitch_borders(PolygonMesh& pmesh,
 /// Two border halfedges `h1` and `h2` are set to be stitched
 /// if the points associated to the source and target vertices of `h1` are
 /// the same as those of the target and source vertices of `h2` respectively.
-///
-/// \pre `pmesh` does not contains any degenerate border edge.
 ///
 /// @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
 /// @tparam NamedParameters a sequence of \ref namedparameters
