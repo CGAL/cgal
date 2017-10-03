@@ -684,7 +684,7 @@ of the base class.
       polyline, model of `MeshPolyline_3`, from the `%reference` type of
       the iterator
     \param incident_patches_indices_pmap the property map that provides
-      access the set of indices of the surface patches that are incident to
+      access to the set of indices of the surface patches that are incident to
       a given 1D-feature (curve)
   */ 
   template <typename InputIterator,
