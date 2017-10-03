@@ -78,10 +78,10 @@ if parameter `features` is not specified.
 of 0 and 1-dimensional features in the mesh. 
 </UL> 
 
-- <b>`manifold`</b> allows the user ********
+- <b>`manifold`</b> allows the user to monitor the meshing algorithm,
+and ensure that the output mesh surface follows the given manifold criterion.
 It can be activated with `parameters::manifold()`, `parameters::manifold_with_boundary()`
 and `parameters::non_manifold()`.
-@todo give details
 
 The four additional parameters are optimization parameters. 
 They control which optimization processes are performed 

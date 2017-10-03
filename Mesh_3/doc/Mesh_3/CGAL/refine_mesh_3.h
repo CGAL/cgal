@@ -166,7 +166,10 @@ namespace parameters {
   /*!
   \ingroup PkgMesh_3Parameters
 
-  The function `parameters::manifold()` provides ****************
+  The function `parameters::manifold()` is used to monitor the
+  meshing algorithm for surfaces.
+  It ensures that the surface of the output mesh is a manifold surface
+    without boundaries.
   \sa `CGAL::make_mesh_3()`
   \sa `CGAL::refine_mesh_3()`
   \sa `CGAL::parameters::manifold_with_boundary()`
@@ -177,7 +180,10 @@ namespace parameters {
   /*!
   \ingroup PkgMesh_3Parameters
 
-  The function `parameters::non_manifold()` provides ****************
+  The function `parameters::non_manifold()` is used to monitor the
+  meshing algorithm for surfaces.
+  It does not ensure that the surface of the output mesh is a manifold surface.
+  The manifold property of output mesh may nevertheless result from the choice of appropriate meshing criteria.
   \sa `CGAL::make_mesh_3()`
   \sa `CGAL::refine_mesh_3()`
   \sa `CGAL::parameters::manifold_with_boundary()`
@@ -188,7 +194,10 @@ namespace parameters {
   /*!
   \ingroup PkgMesh_3Parameters
 
-  The function `parameters::manifold_with_boundary()` provides ****************
+  The function `parameters::manifold_with_boundary()` is used to monitor the
+  meshing algorithm for surfaces.
+  It ensures that the surface of the output mesh is a manifold surface which
+    may have boundaries.
   \sa `CGAL::make_mesh_3()`
   \sa `CGAL::refine_mesh_3()`
   \sa `CGAL::parameters::non_manifold()`
