@@ -677,6 +677,15 @@ of the base class.
     \tparam IncidentPatchesIndicesPMap is a model of `ReadablePropertyMap`
       with key type `std::iterator_traits<InputIterator>::%reference` and a
       value type that is a range of `Surface_patch_index`.
+
+    \param first iterator to the first curve of the sequence
+    \param end past-the-end iterator of the sequence of curves
+    \param polyline_pmap the property map that provides access to the
+      polyline, model of `MeshPolyline_3`, from the `%reference` type of
+      the iterator
+    \param incident_paches_indices_pmap the property map that provides
+      access the set of indices of the surface patches that are incident to
+      a given 1D-feature (curve)
   */ 
   template <typename InputIterator,
             typename PolylinePMap,
