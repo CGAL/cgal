@@ -25,25 +25,38 @@
 
 namespace CGAL {
 
+/*!
+\ingroup PkgSolver
 
-/// The class Eigen_sparse_matrix
-/// is a C++ wrapper around Eigen' matrix type SparseMatrix<>.
-///
-/// This kind of matrix can be either symmetric or not. Symmetric
-/// matrices store only the lower triangle.
-///
-/// @heading Is Model for the Concepts: Model of the SparseLinearAlgebraTraits_d::Matrix concept.
-///
-/// @heading Parameters:
-/// @param T Number type.
+The class `Eigen_sparse_matrix` is a wrapper around \ref thirdpartyEigen "Eigen" matrix type <a href="http://eigen.tuxfamily.org/dox/classEigen_1_1SparseMatrix.html">`Eigen::SparseMatrix` </a>
+that represents general matrices, be they symmetric or not. 
+
+\cgalModels `SparseLinearAlgebraTraits_d::Matrix` 
+
+\tparam T Number type. 
+
+\sa `CGAL::Eigen_solver_traits<T>`
+\sa `CGAL::Eigen_sparse_symmetric_matrix<T>`
+\sa `CGAL::Eigen_vector<T>`
+*/
+
 
 template<class T>
 struct Eigen_sparse_matrix
 {
 // Public types
 public:
+/// \name Types 
+/// @{
 
-	typedef Eigen::SparseMatrix<T> EigenType;
+/*!
+The internal matrix type from \ref thirdpartyEigen "Eigen". 
+*/
+#ifdef DOXYGEN_RUNNING
+  typedef unspecified_type EigenType; 
+#else
+  typedef Eigen::SparseMatrix<T> EigenType;
+#endif  
   typedef T NT;
 
 // Public operations
@@ -220,16 +233,22 @@ private:
 }; // Eigen_sparse_matrix
 
 
+/*!
+\ingroup PkgSolver
 
-/// The class Eigen_sparse_symmetric_matrix is a C++ wrapper
-/// around a Eigen sparse matrix (type Eigen::SparseMatrix).
-///
-/// Symmetric matrices store only the lower triangle.
-///
-/// @heading Is Model for the Concepts: Model of the SparseLinearAlgebraTraits_d::Matrix concept.
-///
-/// @heading Parameters:
-/// @param T Number type.
+The class `Eigen_sparse_symmetric_matrix` is a wrapper around \ref thirdpartyEigen "Eigen" matrix type <a href="http://eigen.tuxfamily.org/dox/classEigen_1_1SparseMatrix.html">`Eigen::SparseMatrix` </a>
+
+As the matrix is symmetric only the lower triangle part is stored. 
+
+\cgalModels `SparseLinearAlgebraTraits_d::Matrix` 
+
+\tparam T Number type. 
+
+\sa `CGAL::Eigen_solver_traits<T>`
+\sa `CGAL::Eigen_sparse_matrix<T>`
+\sa `CGAL::Eigen_vector<T>`
+
+*/
 
 template<class T>
 struct Eigen_sparse_symmetric_matrix
@@ -237,7 +256,17 @@ struct Eigen_sparse_symmetric_matrix
 {
 // Public types
   typedef T NT;
+  
+/// \name Types 
+/// @{
 
+/*!
+The internal matrix type from \ref thirdpartyEigen "Eigen". 
+*/
+#ifdef DOXYGEN_RUNNING  
+typedef unspecified_type EigenType; 
+#endif
+/// @}
 // Public operations
 
   /// Create a square *symmetric* matrix initialized with zeros.
@@ -255,7 +284,23 @@ struct Eigen_sparse_symmetric_matrix
   {
   }
 };
+  
+/*!
+\ingroup PkgSolver
 
+The class `Eigen_matrix` is a wrapper around \ref thirdpartyEigen "Eigen" 
+matrix type 
+<a href="http://eigen.tuxfamily.org/dox/classEigen_1_1Matrix.html">`Eigen::Matrix`</a>. 
+
+
+\cgalModels `SvdTraits::Matrix` 
+
+\tparam T Number type. 
+
+\sa `CGAL::Eigen_svd`
+\sa `CGAL::Eigen_vector<T>`
+
+*/
 template <class FT>
 struct Eigen_matrix : public ::Eigen::Matrix<FT,::Eigen::Dynamic,::Eigen::Dynamic>
 {

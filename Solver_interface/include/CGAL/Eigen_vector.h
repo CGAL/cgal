@@ -24,11 +24,24 @@
 #include <Eigen/Core>
 
 namespace CGAL {
+/*!
+\ingroup PkgSolver
 
-/// The class Eigen_vector
-/// is a C++ wrapper around Eigen' dense vector type Matrix<T,Dynamic,1>.
-///
-/// @heading Is Model for the Concepts: Model of the SparseLinearAlgebraTraits_d::Vector concept.
+The class `Eigen_vector` is a wrapper around \ref thirdpartyEigen "Eigen" vector
+type <a href="http://eigen.tuxfamily.org/dox/classEigen_1_1Matrix.html"> </a>, 
+which is a simple array of numbers. 
+
+\cgalModels `SvdTraits::Vector` 
+\cgalModels `SparseLinearAlgebraTraits_d::Vector`. 
+
+
+\tparam T  Number type. 
+
+\sa `CGAL::Eigen_solver_traits<T>`
+\sa `CGAL::Eigen_sparse_matrix<T>`
+\sa `CGAL::Eigen_sparse_symmetric_matrix<T>`
+
+*/
 
 template<class T> 
 class Eigen_vector : public Eigen::Matrix<T,Eigen::Dynamic,1>
@@ -37,8 +50,19 @@ class Eigen_vector : public Eigen::Matrix<T,Eigen::Dynamic,1>
 public:
 
    typedef T NT;
-   typedef Eigen::Matrix<T,Eigen::Dynamic,1> EigenType;
+/// \name Types 
+/// @{
 
+/*!
+The internal vector type from \ref thirdpartyEigen "Eigen". 
+*/
+#ifdef DOXYGEN_RUNNING
+  typedef unspecified_type EigenType;
+#else
+   typedef Eigen::Matrix<T,Eigen::Dynamic,1> EigenType;
+#endif
+/// @}
+  
 // Public operations
 public:
 

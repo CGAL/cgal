@@ -65,14 +65,43 @@ namespace internal {
 #endif
 } //internal 
   
-/// The class Eigen_solver_traits
-/// is a generic traits class for solving asymmetric or symmetric positive definite (SPD)
-/// sparse linear systems using one of the Eigen solvers.
-/// The default solver is the iterative bi-congugate gradient stabilized solver
-/// <a href="http://eigen.tuxfamily.org/dox/classEigen_1_1BiCGSTAB.html">Eigen::BiCGSTAB</a> for double.
-///
-/// \cgalModels `SparseLinearAlgebraWithFactorTraits_d`.
+/*!
+\ingroup PkgSolver
 
+The class `Eigen_solver_traits` provides an interface to the sparse solvers of \ref thirdpartyEigen "Eigen".
+The version 3.1 (or greater) of \ref thirdpartyEigen "Eigen" must be available on the system. 
+
+\cgalModels `SparseLinearAlgebraWithFactorTraits_d` and `NormalEquationSparseLinearAlgebraTraits_d`
+
+
+\tparam T A sparse solver of \ref thirdpartyEigen "Eigen". The default solver is the iterative bi-congugate gradient stabilized solver  `Eigen::BiCGSTAB` for `double`. 
+
+\sa `CGAL::Eigen_sparse_matrix<T>`
+\sa `CGAL::Eigen_sparse_symmetric_matrix<T>`
+\sa `CGAL::Eigen_vector<T>`
+\sa http://eigen.tuxfamily.org
+
+Example 
+-------------- 
+
+The instantiation of this class assumes an \ref thirdpartyEigen "Eigen" sparse solver is provided. Here are few examples: 
+
+\code{.cpp} 
+
+typedef CGAL::Eigen_sparse_matrix<double>::EigenType EigenMatrix; 
+
+//iterative general solver 
+typedef CGAL::Eigen_solver_traits< Eigen::BiCGSTAB<EigenMatrix> > Iterative_general_solver; 
+
+//iterative symmetric solver 
+typedef CGAL::Eigen_solver_traits< Eigen::ConjugateGradient<EigenMatrix> > Iterative_symmetric_solver; 
+
+//direct symmetric solver 
+typedef CGAL::Eigen_solver_traits< Eigen::SimplicialCholesky<EigenMatrix> > Direct_symmetric_solver; 
+
+\endcode 
+
+*/
 template<class EigenSolverT = Eigen::BiCGSTAB<Eigen_sparse_matrix<double>::EigenType> >
 class Eigen_solver_traits
 {
@@ -80,11 +109,32 @@ class Eigen_solver_traits
 // Public types
 public:
    typedef EigenSolverT Solver;
-   typedef Scalar                                                       NT;
-   typedef typename internal::Get_eigen_matrix<EigenSolverT,NT>::type   Matrix;
-   typedef Eigen_vector<Scalar>                                         Vector;
-   
+/// \name Types 
+/// @{
 
+/*!
+
+*/ 
+   typedef Scalar                                                       NT;
+
+  /*!
+
+*/ 
+  typedef CGAL::Eigen_vector<NT> Vector; 
+
+  /*!
+If `T` is `Eigen::ConjugateGradient<M>` or `Eigen::SimplicialCholesky<M>`, `Matrix` is `CGAL::Eigen_sparse_symmetric_matrix<T>` 
+and `CGAL::Eigen_sparse_matrix<T>` otherwise. 
+
+*/
+#ifdef DOXYGEN_RUNNING  
+  typedef unspecified_type Matrix;
+#else
+  typedef typename internal::Get_eigen_matrix<EigenSolverT,NT>::type   Matrix;
+#endif   
+
+/// @}
+  
 // Public operations
 public:
 
@@ -92,8 +142,20 @@ public:
    {
    }
    
+  /// @} 
+
+  /// \name Operations 
+  /// @{
+
+  /*!
+
+Returns a reference to the internal \ref thirdpartyEigen "Eigen" solver. This function can be used for example to set specific parameters of the solver. 
+
+*/ 
    EigenSolverT& solver() { return *m_solver_sptr; }
 
+/// @}
+  
    /// Solve the sparse linear system "A*X = B".
    /// Return true on success. The solution is then (1/D) * X.
    ///
