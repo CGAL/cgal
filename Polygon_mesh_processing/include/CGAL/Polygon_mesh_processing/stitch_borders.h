@@ -82,34 +82,6 @@ struct Less_for_halfedge
   const VertexPointMap& vpmap;
 };
 
-// this function checks whether two vertices are stitchable. They are not
-// if the two vertices are incident to a common vertex (that is not on the
-// edge to be merged). In this case we would introduce twice that edge in
-// the mesh.
-template <class PM>
-bool are_vertices_stitchable(
-  typename boost::graph_traits<PM>::vertex_descriptor v1,
-  typename boost::graph_traits<PM>::vertex_descriptor v2,
-  const PM& pmesh)
-{
-  typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
-
-  //by convention if they are identical they are stitchable
-  if (v1==v2) return true;
-
-  BOOST_FOREACH(halfedge_descriptor h1, halfedges_around_target(halfedge(v1, pmesh), pmesh))
-  {
-    BOOST_FOREACH(halfedge_descriptor h2, halfedges_around_source(h1, pmesh))
-    {
-      // skip edges that are on the boundary and that share a vertex
-      if (is_border(edge(h2, pmesh), pmesh) &&
-          is_border(edge(h1, pmesh), pmesh)) continue;
-      if (target(h2, pmesh) == v2) return false;
-    }
-  }
-  return true;
-}
-
 template <typename PM, typename OutputIterator, typename LessHedge, typename VertexPointMap>
 OutputIterator
 collect_duplicated_stitchable_boundary_edges
@@ -143,15 +115,6 @@ collect_duplicated_stitchable_boundary_edges
           set_it->second.second = halfedge_pairs.size(); // set the id of the pair in the vector
           halfedge_pairs.push_back( std::make_pair(set_it->first, he) );
           manifold_halfedge_pairs.push_back(true);
-
-          // here we test whether the snapping of the two halfedges
-          // will produce a non-manifold edge: we check that if two vertices
-          // that are being merged are not already incident to the same vertex
-          if ( !are_vertices_stitchable(source(he,pmesh), target(set_it->first,pmesh), pmesh) ||
-               !are_vertices_stitchable(target(he,pmesh), source(set_it->first,pmesh), pmesh) )
-          {
-            manifold_halfedge_pairs[ set_it->second.second ] = false;
-          }
 
           // here we check that the next and prev halfedges are not degenerated
           // (in case next and prev of a degenerate edge are set for stitching but not
@@ -344,7 +307,10 @@ void stitch_borders_impl(PM& pmesh,
   typedef typename boost::graph_traits<PM>::edge_descriptor edge_descriptor;
   typedef typename std::pair<halfedge_descriptor, halfedge_descriptor> halfedges_pair;
 
-  /// Merge the vertices
+  // The first step of the algorithm is to filter halfedges to be stitched so that
+  // after stitching no edges will be present more than once.
+
+  // Merge the vertices
   typedef CGAL::Union_find<vertex_descriptor> Uf_vertices;
   Uf_vertices uf_vertices;
   typedef boost::unordered_map<vertex_descriptor, typename Uf_vertices::handle> Uf_handles;
@@ -387,22 +353,24 @@ void stitch_borders_impl(PM& pmesh,
     {
       vertex_descriptor other_vd = source(hd, pmesh);
 
-      // avoid reporting twice (if other_vd is problematic it is also in uf_handles)
-      if (other_vd < vd) continue;
       typename Uf_handles::iterator it_res = uf_handles.find(other_vd);
 
-      if (it_res!=uf_handles.end())
+      if (it_res!=uf_handles.end()) // if the other vertex is also involved in a merge
       {
+        if (other_vd < vd) continue; // avoid reporting twice the same edge
         if ( is_border_edge(hd, pmesh) &&
             to_stitch_edge_set.count(edge(hd, pmesh))==1 ) // skip edges to be stitched
           continue;
-
         typename Uf_vertices::handle src_handle=uf_vertices.find(it_res->second);
         halfedges_after_stitching[make_sorted_pair(*tgt_handle, *src_handle)].push_back(hd);
       }
+      else
+        halfedges_after_stitching[make_sorted_pair(*tgt_handle, other_vd)].push_back(hd);
     }
   }
 
+  // look for edges that will be present more than once after the stitching
+  // (no edges scheduled for stitching involved)
   boost::unordered_set<vertex_descriptor> unstitchable_vertices;
   for (typename Halfedges_after_stitching::iterator it=halfedges_after_stitching.begin(),
                                                     it_end=halfedges_after_stitching.end();
@@ -420,6 +388,29 @@ void stitch_borders_impl(PM& pmesh,
     }
   }
 
+  // look for edges that are not scheduled for stitching but that will be identical
+  // to stitched edges (we have this additional loop since edges to be stitched are skipped)
+  BOOST_FOREACH(const halfedges_pair hk, to_stitch)
+  {
+    vertex_descriptor v1 = *uf_vertices.find( uf_handles[source(hk.first, pmesh)] );
+    vertex_descriptor v2 = *uf_vertices.find( uf_handles[target(hk.first, pmesh)] );
+
+    typename Halfedges_after_stitching::iterator it_res =
+      halfedges_after_stitching.find(make_sorted_pair(v1,v2));
+    if (it_res != halfedges_after_stitching.end() )
+    {
+      BOOST_FOREACH(halfedge_descriptor hd, it_res->second)
+      {
+        unstitchable_vertices.insert(source(hd, pmesh));
+        unstitchable_vertices.insert(target(hd, pmesh));
+      }
+      unstitchable_vertices.insert( source(hk.first, pmesh) );
+      unstitchable_vertices.insert( target(hk.first, pmesh) );
+      unstitchable_vertices.insert( source(hk.second, pmesh) );
+      unstitchable_vertices.insert( target(hk.second, pmesh) );
+    }
+  }
+
   // filter halfedges to stitch
   if (!unstitchable_vertices.empty())
   {
@@ -428,7 +419,7 @@ void stitch_borders_impl(PM& pmesh,
     BOOST_FOREACH(const halfedges_pair hk, to_stitch)
     {
       // We test both halfedges because the previous test
-      // might involve of only one of the two halfedges
+      // might involve only one of the two halfedges
       if ( unstitchable_vertices.count( source(hk.first, pmesh) )== 0 &&
            unstitchable_vertices.count( target(hk.first, pmesh) )== 0 &&
            unstitchable_vertices.count( source(hk.second, pmesh) )== 0 &&
@@ -437,6 +428,21 @@ void stitch_borders_impl(PM& pmesh,
         to_stitch_filtered.push_back(hk);
       }
     }
+
+    // redo union find as some "master" vertex might be unstitchable
+    uf_vertices.clear();
+    uf_handles.clear();
+    BOOST_FOREACH(const halfedges_pair hk, to_stitch_filtered)
+    {
+      halfedge_descriptor h1 = hk.first;
+      halfedge_descriptor h2 = hk.second;
+
+      vertex_descriptor tgt1 = target(h1, pmesh), src1 = source(h1, pmesh);
+      vertex_descriptor src2 = source(h2, pmesh), tgt2 = target(h2, pmesh);
+      uf_join_vertices(tgt1, src2, uf_vertices, uf_handles);
+      uf_join_vertices(src1, tgt2, uf_vertices, uf_handles);
+    }
+
     run_stitch_borders(pmesh, to_stitch_filtered, uf_vertices, uf_handles);
   }
   else

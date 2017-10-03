@@ -186,10 +186,6 @@ void collect_close_stitchable_boundary_edges(PM& pm,
         }
       if (skip) continue;
 
-      if ( !internal::are_vertices_stitchable(source(p.first,pm), target(p.second, pm), pm) ||
-           !internal::are_vertices_stitchable(target(p.first,pm), source(p.second,pm), pm) )
-        continue;
-
       // put the opposite vertices in the same set
       if (merge_points)
       {
