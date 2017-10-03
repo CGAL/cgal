@@ -758,7 +758,6 @@ of the base class.
   { return boost::get<Corner_index>(index); }
 
   /// @cond DEVELOPERS
-  CGAL_DEPRECATED
   FT signed_geodesic_distance(const Point_3& p, const Point_3& q,
                               const Curve_index& curve_index) const;
 
