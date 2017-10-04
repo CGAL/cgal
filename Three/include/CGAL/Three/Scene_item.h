@@ -377,10 +377,6 @@ public Q_SLOTS:
   void setPointsPlusNormalsMode(){
     setRenderingMode(PointsPlusNormals);
   }
-  //!Sets the RenderingMode to Splatting.
-  void setSplattingMode(){
-    setRenderingMode(Splatting);
-  }
   
   //!Emits an aboutToBeDestroyed() signal.
   //!Override this function to delete what needs to be deleted on destruction.

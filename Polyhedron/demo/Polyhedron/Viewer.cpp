@@ -88,6 +88,7 @@ public:
   bool extension_is_found;
   int pass;
   int total_pass;
+  int current_total_pass;
   TextRenderer *textRenderer;
   /*!
    * \brief makeArrow creates an arrow and stores it in a struct of vectors.
@@ -127,7 +128,7 @@ public:
     fpsString=Viewer::tr("%1Hz", "Frames per seconds, in Hertz").arg("?");
     distance_is_displayed = false;
     is_d_pressed = false;
-    total_pass = 4;
+    total_pass = 5;
   }
   void makeArrow(double R, int prec, qglviewer::Vec from, qglviewer::Vec to, qglviewer::Vec color, AxisData &data);
   //!Clears the distance display
@@ -231,7 +232,7 @@ void Viewer::setScene(CGAL::Three::Scene_draw_interface* scene)
 
 bool Viewer::antiAliasing() const
 {
-  return d->antialiasing; 
+  return d->antialiasing;
 }
 
 void Viewer::setAntiAliasing(bool b)
@@ -262,7 +263,7 @@ bool Viewer::inFastDrawing() const
 }
 
 void Viewer::draw()
-{ 
+{
   glEnable(GL_DEPTH_TEST);
   d->draw_aux(false, this);
 }
@@ -537,7 +538,7 @@ void Viewer::initializeGL()
 void Viewer::mousePressEvent(QMouseEvent* event)
 {
   if(event->button() == Qt::RightButton &&
-     event->modifiers().testFlag(Qt::ShiftModifier)) 
+     event->modifiers().testFlag(Qt::ShiftModifier))
   {
     select(event->pos());
     requestContextMenu(event->globalPos());
@@ -687,7 +688,7 @@ void Viewer_impl::draw_aux(bool with_names, Viewer* viewer)
 {
   if(scene == 0)
     return;
-  total_pass = viewer->inFastDrawing() ? 3 : 6;
+  current_total_pass = viewer->inFastDrawing() ? total_pass/2 : total_pass;
   viewer->glLineWidth(1.0f);
   viewer->glPointSize(2.f);
   viewer->glEnable(GL_POLYGON_OFFSET_FILL);
@@ -795,7 +796,7 @@ QString CGAL::Three::Viewer_interface::dumpFrame(const qglviewer::Frame& frame) 
 bool Viewer::moveCameraToCoordinates(QString s, float animation_duration) {
   qglviewer::Frame new_frame;
   if(readFrame(s, new_frame)) {
-    camera()->interpolateTo(new_frame, animation_duration); 
+    camera()->interpolateTo(new_frame, animation_duration);
     return true;
   }
   else
@@ -1734,12 +1735,13 @@ void Viewer::enableClippingBox(QVector4D box[6])
 
 float Viewer::total_pass()
 {
-  return d->total_pass * 1.0f;
+  return d->current_total_pass * 1.0f;
 }
 
 void Viewer::setTotalPass(int p)
 {
   d->total_pass = p;
+  update();
 }
 bool Viewer::isOpenGL_4_3() const { return d->is_ogl_4_3; }
 
@@ -1781,6 +1783,9 @@ void Viewer::setLighting_clicked()
 
 void Viewer::setTotalPass_clicked()
 {
-
-
+  bool ok;
+  int passes = QInputDialog::getInt(0, QString("Set Number of Passes"), QString("Number of Depth Peeling Passes:  "), 4, 2,100, 1, &ok);
+  if(!ok)
+    return;
+  setTotalPass(passes);
 }

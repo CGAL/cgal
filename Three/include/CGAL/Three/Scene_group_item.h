@@ -190,10 +190,6 @@ public :
     void setPointsPlusNormalsMode(){
       setRenderingMode(PointsPlusNormals);
     }
-    //!Sets all the children in splat rendering.
-    void setSplattingMode(){
-      setRenderingMode(Splatting);
-    }
 
     //!Sets the alpha value for the froup and all its children.
     virtual void setAlpha(int) Q_DECL_OVERRIDE;

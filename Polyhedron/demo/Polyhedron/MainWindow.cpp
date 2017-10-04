@@ -2255,7 +2255,7 @@ void MainWindow::setupViewer(Viewer* viewer, SubViewer* subviewer=NULL)
     connect(ui->actionL_ighting, SIGNAL(triggered()),
             viewer, SLOT(setLighting_clicked()));
     connect(ui->actionSet_Transparency_Pass_Number, SIGNAL(triggered()),
-            viewer, SLOT());
+            viewer, SLOT(setTotalPass_clicked()));
   }
   else
   {
@@ -2302,6 +2302,9 @@ void MainWindow::setupViewer(Viewer* viewer, SubViewer* subviewer=NULL)
     action= subviewer->findChild<QAction*>("actionLight");
     connect(action, &QAction::triggered,
             viewer, &Viewer::setLighting_clicked);
+    action= subviewer->findChild<QAction*>("actionTotalPass");
+    connect(action, &QAction::triggered,
+            viewer, &Viewer::setTotalPass_clicked);
 
   }
 
@@ -2430,6 +2433,9 @@ SubViewer::SubViewer(MainWindow* mw, Viewer* viewer)
   QAction* actionLight = new QAction("L&ighting...",this);
   actionLight->setObjectName("actionLight");
   viewMenu->addAction(actionLight);
+  QAction* actionTotalPass = new QAction("Set Transparency Pass &Number...",this);
+  actionTotalPass->setObjectName("actionTotalPass");
+  viewMenu->addAction(actionTotalPass);
 
 }
 SubViewer::~SubViewer()

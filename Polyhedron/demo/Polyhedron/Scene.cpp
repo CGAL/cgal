@@ -471,6 +471,8 @@ void Scene::renderScene(const QList<Scene_interface::Item_id> &items,
   Q_FOREACH(Scene_interface::Item_id index, items)
   {
     CGAL::Three::Scene_item& item = *m_entries[index];
+    CGAL::Three::Scene_group_item* group =
+        qobject_cast<CGAL::Three::Scene_group_item*>(&item);
     if(index == selected_item || selected_items_list.contains(index))
     {
       item.selection_changed(true);
@@ -481,13 +483,10 @@ void Scene::renderScene(const QList<Scene_interface::Item_id> &items,
       item.selection_changed(false);
     }
 
-    if(item.visible())
+    if(group ||item.visible())
     {
-      if(item.renderingMode() == Flat || item.renderingMode() == FlatPlusEdges || item.renderingMode() == Gouraud)
+      if( group || item.renderingMode() == Flat || item.renderingMode() == FlatPlusEdges || item.renderingMode() == Gouraud)
       {
-        //viewer->glEnable(GL_LIGHTING);
-        //viewer->glPointSize(2.f);
-        //viewer->glLineWidth(1.0f);
         if(item.renderingMode() == Gouraud)
           viewer->glShadeModel(GL_SMOOTH);
         else
@@ -518,6 +517,8 @@ void Scene::renderWireScene(const QList<Scene_interface::Item_id> &items,
   Q_FOREACH(Scene_interface::Item_id index, items)
    {
      CGAL::Three::Scene_item& item = *m_entries[index];
+     CGAL::Three::Scene_group_item* group =
+         qobject_cast<CGAL::Three::Scene_group_item*>(&item);
      if(index == selected_item || selected_items_list.contains(index))
      {
          item.selection_changed(true);
@@ -527,9 +528,9 @@ void Scene::renderWireScene(const QList<Scene_interface::Item_id> &items,
          item.selection_changed(false);
      }
 
-     if(item.visible())
+     if(group ||item.visible())
      {
-       if((!with_names && item.renderingMode() == FlatPlusEdges )
+       if( group || (!with_names && item.renderingMode() == FlatPlusEdges )
           || item.renderingMode() == Wireframe
           || item.renderingMode() == PointsPlusNormals)
        {
@@ -582,14 +583,16 @@ void Scene::renderPointScene(const QList<Scene_interface::Item_id> &items,
   Q_FOREACH(Scene_interface::Item_id index, items)
   {
     CGAL::Three::Scene_item& item = *m_entries[index];
-    if(item.visible())
+    CGAL::Three::Scene_group_item* group =
+        qobject_cast<CGAL::Three::Scene_group_item*>(&item);
+    if(group ||item.visible())
     {
       if(item.renderingMode() == Points && with_names) {
           viewer->glClearDepth(1.0);
           viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
       }
 
-      if(item.renderingMode() == Points  ||
+      if(group || item.renderingMode() == Points  ||
          (item.renderingMode() == PointsPlusNormals)  ||
          (item.renderingMode() == ShadedPoints))
       {
