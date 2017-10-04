@@ -76,6 +76,9 @@ public:
   Point_set*       point_set();
   const Point_set* point_set() const;
 
+  // Gets PLY comments (empty if point set not originated from PLY input)
+  const std::string& comments() const;
+
   // Gets dimensions
   virtual bool isFinite() const Q_DECL_OVERRIDE { return true; }
   virtual bool isEmpty() const Q_DECL_OVERRIDE;
