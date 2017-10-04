@@ -56,13 +56,39 @@ Point_set_item_classification::Point_set_item_classification(Scene_points_with_n
       }
     }
 
+    // Try to recover label names from PLY comments
+    std::map<int, std::string> label_names;
+    const std::string& comments = m_points->comments();
+    std::istringstream stream (comments);
+    std::string line;
+    while (getline(stream, line))
+    {
+      std::stringstream iss (line);
+      std::string tag;
+      if (iss >> tag && tag == "label")
+      {
+        int idx;
+        std::string name;
+        if (iss >> idx >> name)
+          label_names.insert (std::make_pair (idx, name));
+      }
+    }
+    
     for (int i = 0; i <= lmax; ++ i)
     {
-      std::ostringstream oss;
-      oss << "label_" << i;
-      m_labels.add(oss.str().c_str());
+      typename std::map<int, std::string>::iterator found
+        = label_names.find (i);
+      if (found != label_names.end())
+        m_labels.add(found->second.c_str());
+      else
+      {
+        std::ostringstream oss;
+        oss << "label_" << i;
+        m_labels.add(oss.str().c_str());
+      }
+      
       CGAL::Classification::HSV_Color hsv;
-      hsv[0] = 360. * (i / double(lmax));
+      hsv[0] = 360. * (i / double(lmax + 1));
       hsv[1] = 76.;
       hsv[2] = 85.;
       Color rgb = CGAL::Classification::hsv_to_rgb(hsv);
