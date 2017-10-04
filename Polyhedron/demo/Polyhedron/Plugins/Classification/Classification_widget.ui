@@ -6,19 +6,25 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>479</width>
-    <height>354</height>
+    <width>430</width>
+    <height>263</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>Classification</string>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
-   <layout class="QVBoxLayout" name="verticalLayout_4">
+   <layout class="QVBoxLayout" name="verticalLayout_3">
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_7">
       <item>
-       <widget class="QPushButton" name="compute_features">
+       <widget class="QPushButton" name="features">
         <property name="font">
          <font>
           <weight>75</weight>
@@ -26,37 +32,33 @@
          </font>
         </property>
         <property name="text">
-         <string>Compute features</string>
+         <string>Features</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QSpinBox" name="numberOfScalesSpinBox">
-        <property name="suffix">
-         <string> scale(s)</string>
+       <widget class="QPushButton" name="training">
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
         </property>
-        <property name="prefix">
-         <string>using </string>
-        </property>
-        <property name="minimum">
-         <number>1</number>
-        </property>
-        <property name="value">
-         <number>5</number>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="save_config">
         <property name="text">
-         <string>Save</string>
+         <string>Training</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="load_config">
+       <widget class="QPushButton" name="output">
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
         <property name="text">
-         <string>Load</string>
+         <string>Output</string>
         </property>
        </widget>
       </item>
@@ -133,119 +135,28 @@
     </item>
     <item>
      <widget class="QTabWidget" name="tabWidget">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="contextMenuPolicy">
-       <enum>Qt::NoContextMenu</enum>
-      </property>
       <property name="currentIndex">
        <number>0</number>
       </property>
-      <widget class="QWidget" name="tab_classif">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
+      <widget class="QWidget" name="tab">
        <attribute name="title">
-        <string>Classification</string>
+        <string>Labels</string>
        </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout">
+       <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
-         <widget class="QFrame" name="frame_2">
-          <property name="frameShape">
-           <enum>QFrame::StyledPanel</enum>
+         <layout class="QGridLayout" name="labelGrid">
+          <property name="sizeConstraint">
+           <enum>QLayout::SetDefaultConstraint</enum>
           </property>
-          <property name="frameShadow">
-           <enum>QFrame::Raised</enum>
-          </property>
-          <layout class="QHBoxLayout" name="horizontalLayout_12">
-           <item>
-            <layout class="QGridLayout" name="labelGrid">
-             <property name="sizeConstraint">
-              <enum>QLayout::SetDefaultConstraint</enum>
-             </property>
-            </layout>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item>
-         <widget class="QFrame" name="frame_3">
-          <property name="frameShape">
-           <enum>QFrame::StyledPanel</enum>
-          </property>
-          <property name="frameShadow">
-           <enum>QFrame::Raised</enum>
-          </property>
-          <layout class="QHBoxLayout" name="horizontalLayout_6">
-           <item>
-            <widget class="QPushButton" name="train">
-             <property name="font">
-              <font>
-               <weight>75</weight>
-               <bold>true</bold>
-              </font>
-             </property>
-             <property name="text">
-              <string>Train</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="reset_training_sets">
-             <property name="text">
-              <string>Reset</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="validate_selection">
-             <property name="text">
-              <string>Validate selection</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QSpinBox" name="number_of_trials">
-             <property name="suffix">
-              <string> trials</string>
-             </property>
-             <property name="minimum">
-              <number>10</number>
-             </property>
-             <property name="maximum">
-              <number>10000</number>
-             </property>
-             <property name="singleStep">
-              <number>10</number>
-             </property>
-             <property name="value">
-              <number>300</number>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
+         </layout>
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="tab_advanced">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
+      <widget class="QWidget" name="tab_2">
        <attribute name="title">
         <string>Advanced</string>
        </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout_3">
+       <layout class="QVBoxLayout" name="verticalLayout">
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="0,2">
           <item>
@@ -365,136 +276,14 @@
      </widget>
     </item>
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_9">
-      <item>
-       <widget class="QPushButton" name="run">
-        <property name="font">
-         <font>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string>Run</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QComboBox" name="regularizationComboBox">
-        <property name="currentIndex">
-         <number>2</number>
-        </property>
-        <item>
-         <property name="text">
-          <string>Simple</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Smoothed</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Graph Cut</string>
-         </property>
-        </item>
-       </widget>
-      </item>
-      <item>
-       <widget class="QFrame" name="frame">
-        <property name="frameShape">
-         <enum>QFrame::StyledPanel</enum>
-        </property>
-        <property name="frameShadow">
-         <enum>QFrame::Raised</enum>
-        </property>
-        <layout class="QHBoxLayout" name="horizontalLayout_10">
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_3">
-           <item>
-            <widget class="QLabel" name="label_6">
-             <property name="text">
-              <string>Sub =</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QSpinBox" name="subdivisionsSpinBox">
-             <property name="minimum">
-              <number>1</number>
-             </property>
-             <property name="maximum">
-              <number>10000</number>
-             </property>
-             <property name="value">
-              <number>16</number>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_2">
-           <item>
-            <widget class="QLabel" name="label_5">
-             <property name="text">
-              <string>Weight =</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QDoubleSpinBox" name="smoothingDoubleSpinBox">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="toolTip">
-              <string>Smoothing strenght</string>
-             </property>
-             <property name="maximum">
-              <double>10.000000000000000</double>
-             </property>
-             <property name="singleStep">
-              <double>0.100000000000000</double>
-             </property>
-             <property name="value">
-              <double>0.500000000000000</double>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-        </layout>
-       </widget>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_5">
-      <item>
-       <widget class="QPushButton" name="generate_items">
-        <property name="text">
-         <string>Generate one item per label</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-    <item>
      <spacer name="verticalSpacer">
       <property name="orientation">
        <enum>Qt::Vertical</enum>
       </property>
-      <property name="sizeType">
-       <enum>QSizePolicy::Expanding</enum>
-      </property>
       <property name="sizeHint" stdset="0">
        <size>
         <width>20</width>
-        <height>40</height>
+        <height>12</height>
        </size>
       </property>
      </spacer>

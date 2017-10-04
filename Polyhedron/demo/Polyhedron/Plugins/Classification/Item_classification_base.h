@@ -34,16 +34,16 @@ public:
   virtual CGAL::Three::Scene_item* item() = 0;
   virtual void erase_item() = 0;
 
-  virtual void compute_features () = 0;
+  virtual void compute_features (std::size_t nb_scales) = 0;
 
   virtual void add_selection_to_training_set (const char* name) = 0;
   virtual void reset_training_set (const char* name) = 0;
   virtual void reset_training_sets() = 0;
 
   virtual void validate_selection () = 0;
-  virtual void train(int classifier) = 0;
-  virtual bool run (int method, int classifier) = 0;
-
+  virtual void train(int classifier, unsigned int nb_trials) = 0;
+  virtual bool run (int method, int classifier, std::size_t subdivisions, double smoothing) = 0;
+  
   virtual void update_color () = 0;
   virtual void change_color (int index) = 0;
   virtual CGAL::Three::Scene_item* generate_one_item (const char* name,
@@ -146,10 +146,6 @@ public:
     }
   }
 
-  std::size_t& nb_scales() { return m_nb_scales; }
-  std::size_t& number_of_trials() { return m_nb_trials; }
-  float& smoothing() { return m_smoothing; }
-  std::size_t& subdivisions() { return m_subdivisions; }
   const QColor& label_color(std::size_t i) const { return m_label_colors[i]; }
   std::size_t get_label (const char* name)
   {
@@ -172,11 +168,6 @@ protected:
 #ifdef CGAL_LINKED_WITH_OPENCV
   Random_forest* m_random_forest;
 #endif
-
-  std::size_t m_nb_scales;
-  std::size_t m_nb_trials;
-  float m_smoothing;
-  std::size_t m_subdivisions;
   
 };
 

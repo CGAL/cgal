@@ -45,7 +45,7 @@ class Point_set_item_classification : public Item_classification_base
   CGAL::Three::Scene_item* item() { return m_points; }
   void erase_item() { m_points = NULL; }
 
-  void compute_features ();
+  void compute_features (std::size_t nb_scales);
   
   void add_selection_to_training_set (const char* name)
   {
@@ -91,8 +91,8 @@ class Point_set_item_classification : public Item_classification_base
     if (m_index_color == 1 || m_index_color == 2)
       change_color (m_index_color);
   }
-  void train(int classifier);
-  bool run (int method, int classifier);
+  void train(int classifier, unsigned int nb_trials);
+  bool run (int method, int classifier, std::size_t subdivisions, double smoothing);
 
   void update_color () { change_color (m_index_color); }
   void change_color (int index);
@@ -145,7 +145,8 @@ class Point_set_item_classification : public Item_classification_base
  private:
   
   template <typename Classifier>
-  bool run (int method, const Classifier& classifier)
+  bool run (int method, const Classifier& classifier,
+            std::size_t subdivisions, double smoothing)
   {
     std::vector<int> indices (m_points->point_set()->size(), -1);
 
@@ -163,7 +164,7 @@ class Point_set_item_classification : public Item_classification_base
         (*(m_points->point_set()), m_points->point_set()->point_map(),
          m_labels, classifier,
          m_generator->neighborhood().k_neighbor_query(12),
-         m_smoothing, m_subdivisions, indices);
+         smoothing, subdivisions, indices);
 
     std::vector<int> ground_truth(m_points->point_set()->size(), -1);
     for (Point_set::const_iterator it = m_points->point_set()->begin();

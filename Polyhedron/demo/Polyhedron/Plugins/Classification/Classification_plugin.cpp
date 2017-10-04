@@ -6,6 +6,7 @@
 
 #include "Messages_interface.h"
 #include "Scene_points_with_normal_item.h"
+#include "Item_classification_base.h"
 #include "Point_set_item_classification.h"
 #include "Scene_polylines_item.h"
 #include "Scene_polygon_soup_item.h"
@@ -22,6 +23,10 @@
 #include <QApplication>
 #include <QCheckBox>
 #include <QInputDialog>
+#include <QFormLayout>
+#include <QSpinBox>
+#include <QDoubleSpinBox>
+#include <QDialogButtonBox>
 #include <QSlider>
 
 #include <map>
@@ -115,6 +120,7 @@ public:
   
   using Polyhedron_demo_plugin_helper::init;
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface* m) {
+
     mw = mainWindow;
     scene = scene_interface;
     messages = m;
@@ -129,7 +135,6 @@ public:
 
     connect(new_label_button,  SIGNAL(clicked()), this,
             SLOT(on_add_new_label_clicked()));
-     
     
     ui_widget.setupUi(dock_widget);
     addDockWidget(dock_widget);
@@ -139,45 +144,60 @@ public:
 #endif
 
     color_att = QColor (75, 75, 77);
-    
-    connect(ui_widget.compute_features,  SIGNAL(clicked()), this,
+
+    ui_widget.features->setMenu (new QMenu("Features Menu", ui_widget.features));
+
+    QAction* compute_features = ui_widget.features->menu()->addAction ("Compute features");
+    connect(compute_features,  SIGNAL(triggered()), this,
             SLOT(on_compute_features_button_clicked()));
-    connect(ui_widget.display,  SIGNAL(currentIndexChanged(int)), this,
-            SLOT(on_display_button_clicked(int)));
-    connect(ui_widget.run,  SIGNAL(clicked()), this,
-            SLOT(on_run_button_clicked()));
-    connect(ui_widget.save_config,  SIGNAL(clicked()), this,
+
+    QAction* save_config = ui_widget.features->menu()->addAction ("Save classifier's current configuration");
+    QAction* load_config = ui_widget.features->menu()->addAction ("Load configuration for classifier");
+    connect(save_config,  SIGNAL(triggered()), this,
             SLOT(on_save_config_button_clicked()));
-    connect(ui_widget.load_config,  SIGNAL(clicked()), this,
+    connect(load_config,  SIGNAL(triggered()), this,
             SLOT(on_load_config_button_clicked()));
-    connect(ui_widget.smoothingDoubleSpinBox,  SIGNAL(valueChanged(double)), this,
-            SLOT(on_smoothing_value_changed(double)));
-    connect(ui_widget.subdivisionsSpinBox,  SIGNAL(valueChanged(int)), this,
-            SLOT(on_subdivisions_value_changed(int)));
-    connect(ui_widget.generate_items,  SIGNAL(clicked()), this,
+
+    ui_widget.training->setMenu (new QMenu("Training Menu", ui_widget.training));
+
+    QAction* train = ui_widget.training->menu()->addAction ("Train classifier");
+    connect(train,  SIGNAL(triggered()), this,
+            SLOT(on_train_clicked()));
+
+    QAction* reset = ui_widget.training->menu()->addAction ("Reset all training sets");
+    connect(reset,  SIGNAL(triggered()), this,
+            SLOT(on_reset_training_sets_clicked()));
+
+    QAction* validate = ui_widget.training->menu()->addAction ("Validate labels of current selection as training sets");
+    connect(validate,  SIGNAL(triggered()), this,
+            SLOT(on_validate_selection_clicked()));
+
+    ui_widget.output->setMenu (new QMenu("Output Menu", ui_widget.output));
+
+    QAction* run = ui_widget.output->menu()->addAction ("Run raw classification");
+    connect(run,  SIGNAL(triggered()), this,
+            SLOT(on_run_button_clicked()));
+
+    QAction* run_smoothed = ui_widget.output->menu()->addAction ("Run classification with local smoothing");
+    connect(run_smoothed,  SIGNAL(triggered()), this,
+            SLOT(on_run_smoothed_button_clicked()));
+
+    QAction* run_graphcut = ui_widget.output->menu()->addAction ("Run classification with Graph Cut");
+    connect(run_graphcut,  SIGNAL(triggered()), this,
+            SLOT(on_run_graphcut_button_clicked()));
+
+    QAction* generate = ui_widget.output->menu()->addAction ("Generate one item per label");
+    connect(generate,  SIGNAL(triggered()), this,
             SLOT(on_generate_items_button_clicked()));
 
-    connect(ui_widget.numberOfScalesSpinBox,  SIGNAL(valueChanged(int)), this,
-            SLOT(on_update_nb_scales()));
-    connect(ui_widget.number_of_trials,  SIGNAL(valueChanged(int)), this,
-            SLOT(on_update_number_of_trials()));
-
-    connect(ui_widget.reset_training_sets,  SIGNAL(clicked()), this,
-            SLOT(on_reset_training_sets_clicked()));
-    connect(ui_widget.validate_selection,  SIGNAL(clicked()), this,
-            SLOT(on_validate_selection_clicked()));
-    connect(ui_widget.train,  SIGNAL(clicked()), this,
-            SLOT(on_train_clicked()));
+    connect(ui_widget.display,  SIGNAL(currentIndexChanged(int)), this,
+            SLOT(on_display_button_clicked(int)));
 
     connect(ui_widget.selected_feature,  SIGNAL(currentIndexChanged(int)), this,
             SLOT(on_selected_feature_changed(int)));
     connect(ui_widget.feature_weight,  SIGNAL(valueChanged(int)), this,
             SLOT(on_feature_weight_changed(int)));
 
-    connect(ui_widget.regularizationComboBox,  SIGNAL(currentIndexChanged(int)), this,
-            SLOT(on_regularization_changed(int)));
-
-    
     QObject* scene_obj = dynamic_cast<QObject*>(scene_interface);
     if(scene_obj)
     {
@@ -236,56 +256,38 @@ public Q_SLOTS:
 
   void disable_everything ()
   {
-    ui_widget.load_config->setEnabled(false);
-    ui_widget.save_config->setEnabled(false);
-    ui_widget.compute_features->setEnabled(false);
-    ui_widget.numberOfScalesSpinBox->setEnabled(false);
+    ui_widget.features->setEnabled(false);
+    ui_widget.training->setEnabled(false);
+    ui_widget.output->setEnabled(false);
     ui_widget.display->setEnabled(false);
     ui_widget.classifier->setEnabled(false);
     ui_widget.tabWidget->setEnabled(false);
-    ui_widget.run->setEnabled(false);
-    ui_widget.regularizationComboBox->setEnabled(false);
-    ui_widget.frame->setEnabled(false);
-    ui_widget.generate_items->setEnabled(false);
   }
 
   void enable_computation()
   {
-    ui_widget.compute_features->setEnabled(true);
-    ui_widget.numberOfScalesSpinBox->setEnabled(true);
+    ui_widget.features->setEnabled(true);
     ui_widget.display->setEnabled(true);
     ui_widget.classifier->setEnabled(true);
   }
 
   void enable_classif()
   {
-    ui_widget.load_config->setEnabled(true);
-    ui_widget.save_config->setEnabled(true);
+    ui_widget.features->setEnabled(true);
+    ui_widget.training->setEnabled(true);
+    ui_widget.output->setEnabled(true);
     ui_widget.tabWidget->setEnabled(true);
-    ui_widget.run->setEnabled(true);
-    ui_widget.regularizationComboBox->setEnabled(true);
-    ui_widget.frame->setEnabled(true);
-    ui_widget.generate_items->setEnabled(true);
   }
-
 
   void update_plugin_from_item(Item_classification_base* classif)
   {
+    disable_everything();
     if (classif == NULL) // Deactivate plugin
-      {
-        disable_everything();
-        ui_widget.tabWidget->setCurrentIndex(0);
-      }
+      ui_widget.tabWidget->setCurrentIndex(0);
     else
       {
-        disable_everything();
         enable_computation();
         
-        ui_widget.numberOfScalesSpinBox->setValue((int)(classif->nb_scales()));
-        ui_widget.number_of_trials->setValue((int)(classif->number_of_trials()));
-        ui_widget.smoothingDoubleSpinBox->setValue((double)(classif->smoothing()));
-        ui_widget.subdivisionsSpinBox->setValue((int)(classif->subdivisions()));
-
         // Clear class labels
         for (std::size_t i = 0; i < label_buttons.size(); ++ i)
           {
@@ -327,30 +329,6 @@ public Q_SLOTS:
       }
   }
 
-  void on_regularization_changed(int i)
-  {
-    bool graphcut = (i == 2);
-    ui_widget.frame->setEnabled(graphcut);
-  }
-  
-  void on_update_nb_scales()
-  {
-    Item_classification_base* classif
-      = get_classification();
-    if(!classif)
-      return; 
-    classif->nb_scales() = ui_widget.numberOfScalesSpinBox->value();
-  }
-  void on_update_number_of_trials()
-  {
-    Item_classification_base* classif
-      = get_classification();
-    if(!classif)
-      return; 
-    classif->number_of_trials() = ui_widget.number_of_trials->value();
-  }
-                           
-  
   Item_classification_base* get_classification(Scene_item* item = NULL)
   {
     if (!item)
@@ -385,9 +363,11 @@ public Q_SLOTS:
     return classif;
   }
 
-  void run (Item_classification_base* classif, int method)
+  void run (Item_classification_base* classif, int method,
+            std::size_t subdivisions = 1,
+            double smoothing = 0.5)
   {
-    classif->run (method, ui_widget.classifier->currentIndex());
+    classif->run (method, ui_widget.classifier->currentIndex(), subdivisions, smoothing);
   }
 
   void on_compute_features_button_clicked()
@@ -400,9 +380,17 @@ public Q_SLOTS:
         return; 
       }
     
+    bool ok = false;
+    int nb_scales = QInputDialog::getInt((QWidget*)mw,
+                                         tr("Compute Features"), // dialog title
+                                         tr("Number of scales:"), // field label
+                                         5, 1, 99, 1, &ok);
+    if (!ok)
+      return;
+
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
-    classif->compute_features ();
+    classif->compute_features (std::size_t(nb_scales));
 
     update_plugin_from_item(classif);
     QApplication::restoreOverrideCursor();
@@ -486,41 +474,72 @@ public Q_SLOTS:
         return; 
       }
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    int method = ui_widget.regularizationComboBox->currentIndex();
-    
-    QTime time;
-    time.start();
-    run (classif, method);
-
-    if (method == 0)
-      std::cerr << "Classification";
-    else if (method == 1)
-      std::cerr << "Smoothed classification";
-    else if (method == 2)
-      std::cerr << "Graph cut classification";
-    
-    std::cerr << " computed in " << time.elapsed() / 1000 << " second(s)" << std::endl;
-    
+    run (classif, 0);
     QApplication::restoreOverrideCursor();
     item_changed(classif->item());
   }
 
-  void on_smoothing_value_changed(double v)
+  void on_run_smoothed_button_clicked()
   {
     Item_classification_base* classif
       = get_classification();
     if(!classif)
-      return; 
-    classif->smoothing() = v;
-  }
+      {
+        print_message("Error: there is no point set classification item!");
+        return; 
+      }
 
-  void on_subdivisions_value_changed(int v)
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    QTime time;
+    time.start();
+    run (classif, 1);
+    std::cerr << "Smoothed classification computed in " << time.elapsed() / 1000 << " second(s)" << std::endl;
+    QApplication::restoreOverrideCursor();
+    item_changed(classif->item());
+  }
+  
+  void on_run_graphcut_button_clicked()
   {
     Item_classification_base* classif
       = get_classification();
     if(!classif)
-      return; 
-    classif->subdivisions() = v;
+      {
+        print_message("Error: there is no point set classification item!");
+        return; 
+      }
+
+    QDialog dialog(mw);
+    dialog.setWindowTitle ("Classify with Graph Cut");
+    QFormLayout form (&dialog);
+    QString label_sub = QString("Number of subdivisions: ");
+    QSpinBox subdivisions (&dialog);
+    subdivisions.setRange (1, 9999);
+    subdivisions.setValue (16);
+    form.addRow(label_sub, &subdivisions);
+
+    QString label_smooth = QString("Regularization weight: ");
+    QDoubleSpinBox smoothing (&dialog);
+    smoothing.setRange (0.0, 100.0);
+    smoothing.setValue (0.5);
+    smoothing.setSingleStep (0.1);
+    form.addRow(label_smooth, &smoothing);
+
+    QDialogButtonBox oknotok (QDialogButtonBox::Ok | QDialogButtonBox::Cancel,
+                              Qt::Horizontal, &dialog);
+    form.addRow (&oknotok);
+    QObject::connect (&oknotok, SIGNAL(accepted()), &dialog, SLOT(accept()));
+    QObject::connect (&oknotok, SIGNAL(rejected()), &dialog, SLOT(reject()));
+
+    if (dialog.exec() != QDialog::Accepted)
+      return;
+    
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    QTime time;
+    time.start();
+    run (classif, 2, std::size_t(subdivisions.value()), smoothing.value());
+    std::cerr << "Graphcut classification computed in " << time.elapsed() / 1000 << " second(s)" << std::endl;
+    QApplication::restoreOverrideCursor();
+    item_changed(classif->item());
   }
 
   void on_create_point_set_item()
@@ -700,8 +719,22 @@ public Q_SLOTS:
         classes.push_back (label_buttons[i].color_button->text().toStdString());
         colors.push_back (label_buttons[i].color);
       }
+
+    int nb_trials = 0;
+
+    if (ui_widget.classifier->currentIndex() == 0)
+    {
+      bool ok = false;
+      nb_trials = QInputDialog::getInt((QWidget*)mw,
+                                       tr("Train Classifier"), // dialog title
+                                       tr("Number of trials:"), // field label
+                                       800, 1, 99999, 50, &ok);
+      if (!ok)
+        return;
+    }
+    
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    classif->train(ui_widget.classifier->currentIndex());
+    classif->train(ui_widget.classifier->currentIndex(), nb_trials);
     QApplication::restoreOverrideCursor();
     update_plugin_from_item(classif);
   }
