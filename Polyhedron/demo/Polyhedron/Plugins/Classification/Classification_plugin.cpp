@@ -575,7 +575,6 @@ public Q_SLOTS:
 
     QDialogButtonBox oknotok (QDialogButtonBox::Ok | QDialogButtonBox::Cancel,
                               Qt::Horizontal, &dialog);
-
     form.addRow (&oknotok);
     QObject::connect (&oknotok, SIGNAL(accepted()), &dialog, SLOT(accept()));
     QObject::connect (&oknotok, SIGNAL(rejected()), &dialog, SLOT(reject()));
