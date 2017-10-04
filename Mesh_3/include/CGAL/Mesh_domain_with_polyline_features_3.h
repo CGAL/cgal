@@ -749,19 +749,19 @@ of the base class.
                                 const Point_3& c1, const Point_3& c2,
                                 const FT sq_r1, const FT sq_r2) const;
 
-  /// Returns an Index from a Curve_index
+  /// Returns an `Index` from a `Curve_index`
   Index index_from_curve_index(const Curve_index& index) const
   { return Index(index); }
 
-  /// Returns an Curve_index from an Index
+  /// Returns a `Curve_index` from an `Index`
   Curve_index curve_index(const Index& index) const
   { return boost::get<Curve_index>(index); }
 
-  /// Returns an Index from a Corner_index
+  /// Returns an `Index` from a `Corner_index`
   Index index_from_corner_index(const Corner_index& index) const
   { return Index(index); }
 
-  /// Returns an Corner_index from an Index
+  /// Returns a `Corner_index` from an `Index`
   Corner_index corner_index(const Index& index) const
   { return boost::get<Corner_index>(index); }
 
