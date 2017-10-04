@@ -15,7 +15,6 @@ uniform highp float near;
 uniform highp float far;
 uniform highp float width;
 uniform highp float height;
-uniform highp float pass;
 uniform bool comparing;
 uniform bool writing;
 uniform sampler2D sampler;

@@ -3,6 +3,7 @@
 #include <CGAL/Three/Scene_interface.h>
 #include <QMenu>
 #include <QWidgetAction>
+#include <QApplication>
 #include <iostream>
 #include <QDebug>
 #include <CGAL/Three/Viewer_interface.h>
@@ -120,6 +121,7 @@ QMenu* CGAL::Three::Scene_item::contextMenu()
         return defaultContextMenu;
     }
 
+    this->moveToThread(QApplication::instance()->thread());
     defaultContextMenu = new QMenu(name());
     for(unsigned int mode = 0; mode < NumberOfRenderingMode;
         ++mode)
@@ -133,7 +135,6 @@ QMenu* CGAL::Three::Scene_item::contextMenu()
     }
     QMenu *container = new QMenu(tr("Alpha value"));
     QWidgetAction *sliderAction = new QWidgetAction(0);
-    connect(alphaSlider, &QSlider::valueChanged, this, &Scene_item::redraw);
 
     sliderAction->setDefaultWidget(alphaSlider);
     container->addAction(sliderAction);
@@ -254,12 +255,16 @@ void CT::Scene_item::processData()const
 
 void CT::Scene_item::initGL() const
 {
+  CT::Scene_item* ncthis = const_cast<CT::Scene_item*>(this);
   if(!alphaSlider)
   {
     alphaSlider = new QSlider(::Qt::Horizontal);
     alphaSlider->setMinimum(0);
     alphaSlider->setMaximum(255);
     alphaSlider->setValue(255);
+
+    connect(alphaSlider, &QSlider::valueChanged,
+            [ncthis](){ncthis->redraw();});
   }
   Q_FOREACH(QGLViewer* v, QGLViewer::QGLViewerPool())
   {
@@ -316,4 +321,12 @@ float Scene_item::alpha() const
   if(!alphaSlider)
     return 1.0f;
   return (float)alphaSlider->value() / 255.0f;
+}
+
+void Scene_item::setAlpha(int alpha)
+{
+  if(!alphaSlider)
+    initGL();
+  alphaSlider->setValue(alpha);
+  redraw();
 }

@@ -5,8 +5,6 @@
 #include <QMainWindow>
 #include <QObject>
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
-#include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
-#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Scene_group_item.h>
 
 #include <CGAL/IO/read_surf_trianglemesh.h>
@@ -21,47 +19,36 @@
 using namespace CGAL::Three;
 class Surf_io_plugin:
     public QObject,
-    public Polyhedron_demo_io_plugin_interface,
-    public Polyhedron_demo_plugin_helper
+    public Polyhedron_demo_io_plugin_interface
 {
   Q_OBJECT
-  Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface CGAL::Three::Polyhedron_demo_io_plugin_interface)
-  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
+  Q_INTERFACES(CGAL::Three::Polyhedron_demo_io_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.0")
 
 public:
-  void init(QMainWindow* mainWindow,
-            CGAL::Three::Scene_interface* scene_interface,
-            Messages_interface*) {
-    //get the references
-    this->scene = scene_interface;
-    this->mw = mainWindow;
-  }
-  QList<QAction*> actions() const {
-    return QList<QAction*>();
-  }
-  bool applicable(QAction*) const { return false;}
+
   QString name() const { return "surf_io_plugin"; }
   QString nameFilters() const { return "Amira files (*.surf)"; }
   bool canLoad() const{ return true; }
   template<class FaceGraphItem>
-  CGAL::Three::Scene_item* actual_load(QFileInfo fileinfo);
-  CGAL::Three::Scene_item* load(QFileInfo fileinfo);
+  CGAL::Three::Scene_item* actual_load(QFileInfo fileinfo, CGAL::Three::Scene_interface* scene);
+  CGAL::Three::Scene_item* load(QFileInfo fileinfo, Scene_interface *scene, QMainWindow*mw);
 
   bool canSave(const CGAL::Three::Scene_item*) { return false; }
   bool save(const CGAL::Three::Scene_item*, QFileInfo) { return false; }
 };
 
 
-CGAL::Three::Scene_item* Surf_io_plugin::load(QFileInfo fileinfo)
+CGAL::Three::Scene_item* Surf_io_plugin::load(QFileInfo fileinfo, Scene_interface *scene, QMainWindow *mw)
 {
   if(mw->property("is_polyhedron_mode").toBool())
-    return actual_load<Scene_polyhedron_item>(fileinfo);
+    return actual_load<Scene_polyhedron_item>(fileinfo, scene);
   else
-    return actual_load<Scene_surface_mesh_item>(fileinfo);
+    return actual_load<Scene_surface_mesh_item>(fileinfo, scene);
 }
+
 template< class FaceGraphItem>
-CGAL::Three::Scene_item* Surf_io_plugin::actual_load(QFileInfo fileinfo)
+CGAL::Three::Scene_item* Surf_io_plugin::actual_load(QFileInfo fileinfo, CGAL::Three::Scene_interface* scene)
 {
   typedef typename FaceGraphItem::Face_graph FaceGraph;
   typedef typename boost::property_traits<
@@ -103,6 +90,7 @@ CGAL::Three::Scene_item* Surf_io_plugin::actual_load(QFileInfo fileinfo)
     scene->addItem(patch);
     scene->changeGroup(patch, group);
   }
+
   return group;
 }
 

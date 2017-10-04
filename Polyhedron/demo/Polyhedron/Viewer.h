@@ -114,7 +114,7 @@ public:
   TextRenderer* textRenderer() Q_DECL_OVERRIDE;
   void enableClippingBox(QVector4D box[]) Q_DECL_OVERRIDE;
   void disableClippingBox() Q_DECL_OVERRIDE;
-
+  float total_pass()Q_DECL_OVERRIDE;
 Q_SIGNALS:
   void sendMessage(QString);
   void GLinit();
@@ -159,7 +159,8 @@ public Q_SLOTS:
     setMouseBinding(::Qt::SHIFT + ::Qt::LeftButton, NO_CLICK_ACTION);
 #endif
   }
-
+  //!Set total number of depth peeling passes.
+  void setTotalPass(int);
 protected:
   void postDraw()Q_DECL_OVERRIDE;
   void paintEvent(QPaintEvent *)Q_DECL_OVERRIDE;
@@ -177,7 +178,6 @@ protected:
 
 
   void resizeGL(int w, int h)Q_DECL_OVERRIDE;
-  float total_pass()Q_DECL_OVERRIDE;
 
 protected:
   friend class Viewer_impl;

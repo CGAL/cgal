@@ -52,6 +52,9 @@ public :
     ~Scene_group_item() {}
     //!Sets the scene;
     void setScene(Scene_interface* s) { scene = s; }
+
+    //!Create the VAOs and VBOs.
+    virtual void initGL() const Q_DECL_OVERRIDE;
     //!Returns false to avoid disturbing the BBox of the scene.
     bool isFinite() const;
     //!Returns true to avoid disturbing the BBox of the scene.
@@ -191,6 +194,10 @@ public :
     void setSplattingMode(){
       setRenderingMode(Splatting);
     }
+
+    //!Sets the alpha value for the froup and all its children.
+    virtual void setAlpha(int) Q_DECL_OVERRIDE;
+
     //! \brief Returns a list of all the direct children ids.
     //!
     //! Only returns ids of the children that have this item as a parent.
@@ -223,14 +230,6 @@ public :
     void moveDown(int);
 
 public Q_SLOTS:
-    //!\brief Redraws children.
-    //!
-    //! As each drawing function of a group draws all parts of its children,
-    //! once any of these functions is called, we skip all drawing calls
-    //! until `resetDraw()` is called. This keeps children from being
-    //! drawn several times. It is automatically called at the end of the scene's
-    //! `draw()` function.
-    void resetDraw() { already_drawn = false;}
     void adjustIds(Scene_interface::Item_id removed_id)
     {
       for(int i = 0; i < children.size(); ++i)
@@ -242,7 +241,6 @@ public Q_SLOTS:
 private:
     void update_group_number(Scene_item*new_item, int n);
     bool expanded;
-    mutable bool already_drawn;
 protected:
     Scene_interface *scene;
     //!Contains the indices of all the children of this group.

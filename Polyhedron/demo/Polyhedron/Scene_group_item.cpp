@@ -1,6 +1,7 @@
 #include <CGAL/Three/Scene_group_item.h>
 #include <CGAL/Three/Viewer_interface.h>
 #include <QDebug>
+#include <QSlider>
 
 using namespace CGAL::Three;
 Scene_group_item::Scene_group_item(QString name, Scene_interface *scene)
@@ -9,7 +10,6 @@ Scene_group_item::Scene_group_item(QString name, Scene_interface *scene)
 {
     this->name_ = name;
     expanded = true;
-    already_drawn = false;
 }
 
 bool Scene_group_item::isFinite() const
@@ -130,6 +130,8 @@ void Scene_group_item::moveUp(int i)
 
 void Scene_group_item::draw(CGAL::Three::Viewer_interface* viewer, int pass , bool is_writing, QOpenGLFramebufferObject *fbo) const
 {
+  if(!isinit)
+    initGL();
   Q_FOREACH(Scene_interface::Item_id id, children){
     if(getChild(id)->visible() &&
        (getChild(id)->renderingMode() == Flat ||
@@ -143,6 +145,8 @@ void Scene_group_item::draw(CGAL::Three::Viewer_interface* viewer, int pass , bo
 
 void Scene_group_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const
 {
+  if(!isinit)
+    initGL();
   Q_FOREACH(Scene_interface::Item_id id, children){
     if(getChild(id)->visible() &&
        (getChild(id)->renderingMode() == FlatPlusEdges
@@ -156,6 +160,8 @@ void Scene_group_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const
 
 void Scene_group_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const
 {
+  if(!isinit)
+    initGL();
   Q_FOREACH(Scene_interface::Item_id id, children){
     if(getChild(id)->visible())
     {
@@ -204,3 +210,20 @@ bool Scene_group_item::isChildLocked(Scene_item *child)
 {
   return isChildLocked(scene->item_id(child));
 }
+
+void Scene_group_item::setAlpha(int )
+{
+
+  Q_FOREACH(Scene_interface::Item_id id, children)
+  {
+    scene->item(id)->setAlpha(static_cast<int>(alpha()*255));
+  }
+}
+
+void Scene_group_item::initGL()const
+{
+  Scene_item::initGL();
+  connect(alphaSlider, &QSlider::valueChanged,
+          this, &Scene_group_item::setAlpha);
+}
+

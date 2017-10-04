@@ -1176,7 +1176,11 @@ void Viewer::drawVisualHints()
     glDisable(GL_DEPTH_TEST);
     d->painter->endNativePainting();
     //prints FPS
-    TextItem *fps_text = new TextItem(20, int(1.5*((QApplication::font().pixelSize()>0)?QApplication::font().pixelSize():QApplication::font().pointSize())),0,d->fpsString,false, QFont(), Qt::gray);
+    TextItem *fps_text =
+        new TextItem(20,int(1.5*((QApplication::font().pixelSize()>0)
+                                 ?QApplication::font().pixelSize()
+                                :QApplication::font().pointSize())),
+                     0,d->fpsString,false, QFont(), Qt::gray);
     if(FPSIsDisplayed())
     {
       d->textRenderer->addText(fps_text);
@@ -1733,6 +1737,10 @@ float Viewer::total_pass()
   return d->total_pass * 1.0f;
 }
 
+void Viewer::setTotalPass(int p)
+{
+  d->total_pass = p;
+}
 bool Viewer::isOpenGL_4_3() const { return d->is_ogl_4_3; }
 
 QOpenGLFunctions_4_3_Compatibility* Viewer::openGL_4_3_functions() { return d->_recentFunctions; }

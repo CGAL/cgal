@@ -645,8 +645,7 @@ void Scene_surface_mesh_item::draw(CGAL::Three::Viewer_interface *viewer,
 
   if(renderingMode() == Gouraud)
   {
-    triangle_containers[0]->comparing = pass!=0;
-    triangle_containers[0]->pass= pass*1.0f;
+    triangle_containers[0]->comparing = pass >0;
     triangle_containers[0]->width=viewer->width()*1.0f;
     triangle_containers[0]->height=viewer->height()*1.0f;
     triangle_containers[0]->near=near;
@@ -658,8 +657,7 @@ void Scene_surface_mesh_item::draw(CGAL::Three::Viewer_interface *viewer,
   }
   else
   {
-    triangle_containers[1]->comparing = pass!=0;
-    triangle_containers[1]->pass= pass*1.0f;
+    triangle_containers[1]->comparing = pass >0;
     triangle_containers[1]->width=viewer->width()*1.0f;
     triangle_containers[1]->height=viewer->height()*1.0f;
     triangle_containers[1]->near=near;

@@ -116,7 +116,7 @@ public:
   virtual Scene_item* clone() const = 0;
 
   //!Create the VAOs and VBOs.
-  void initGL() const;
+  virtual void initGL() const;
 
   //! \brief Indicates if `m` is supported
   //!
@@ -388,8 +388,13 @@ public Q_SLOTS:
   //!memory leak, for example when multiple items are created at the same time.
   virtual void itemAboutToBeDestroyed(Scene_item*);
 
-  //!returns the alpha value for the item.
-  float alpha() const;
+  //!Returns the alpha value for the item.
+  //! Must be called within a valid openGl context.
+  virtual float alpha() const;
+
+  //!Sets the value of the aplha Slider for this item.
+  virtual void setAlpha(int alpha);
+
   //!Selects a point through raycasting.
   virtual void select(double orig_x,
                       double orig_y,

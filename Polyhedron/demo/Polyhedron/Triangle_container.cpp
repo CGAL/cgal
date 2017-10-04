@@ -139,7 +139,6 @@ void Triangle_container::draw(const CGAL::Three::Scene_item& item,
     if(program_id == VI::PROGRAM_WITH_LIGHT)
     {
       VAOs[viewer]->program->setUniformValue("comparing", comparing);
-      VAOs[viewer]->program->setUniformValue("pass", pass);
       VAOs[viewer]->program->setUniformValue("width", width);
       VAOs[viewer]->program->setUniformValue("height", height);
       VAOs[viewer]->program->setUniformValue("near", near);
@@ -176,7 +175,6 @@ void Triangle_container::draw(const CGAL::Three::Scene_item& item,
       if(program_id == VI::PROGRAM_WITH_LIGHT)
       {
         VAOs[viewer]->program->setUniformValue("comparing", comparing);
-        VAOs[viewer]->program->setUniformValue("pass", pass);
         VAOs[viewer]->program->setUniformValue("width", width);
         VAOs[viewer]->program->setUniformValue("height", height);
         VAOs[viewer]->program->setUniformValue("near", near);

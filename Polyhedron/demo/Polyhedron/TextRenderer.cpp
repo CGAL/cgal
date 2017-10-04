@@ -4,6 +4,7 @@
 #include "Scene_polyhedron_selection_item.h"
 void TextRenderer::draw(CGAL::Three::Viewer_interface *viewer)
 {
+    viewer->makeCurrent();
     QPainter *painter = viewer->getPainter();
     if (!painter->isActive())
       painter->begin(viewer);
@@ -11,8 +12,7 @@ void TextRenderer::draw(CGAL::Three::Viewer_interface *viewer)
     qglviewer::Camera* camera = viewer->camera();
     //Display the items textItems
     Q_FOREACH(TextListItem* list, textItems)
-    {
-      CGAL::Three::Scene_print_item_interface* item =
+    {      CGAL::Three::Scene_print_item_interface* item =
       qobject_cast<CGAL::Three::Scene_print_item_interface*>(scene->item(scene->mainSelectionIndex()));
       if( item &&
           item->shouldDisplayIds(list->item())

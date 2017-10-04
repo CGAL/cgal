@@ -61,7 +61,6 @@ struct DEMO_FRAMEWORK_EXPORT Triangle_container :public Primitive_container
     QVector4D plane;
     float shrink_factor;
     bool comparing;
-    float pass;
     float width;
     float height;
     float near;

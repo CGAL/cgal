@@ -252,6 +252,7 @@ private:
    * to its current renderingMode. If with_names is true, uses
    * the OpenGL mode GL_WITH_NAMES, essentially used for the picking.*/
   void draw_aux(bool with_names, CGAL::Three::Viewer_interface*);
+  bool has_alpha();
   void renderScene(const QList<Scene_interface::Item_id > &items,
                    CGAL::Three::Viewer_interface* viewer, QMap<float, int> &picked_item_IDs, bool with_names,
                    int pass, bool writing_depth,

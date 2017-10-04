@@ -485,14 +485,14 @@ void Scene::renderScene(const QList<Scene_interface::Item_id> &items,
     {
       if(item.renderingMode() == Flat || item.renderingMode() == FlatPlusEdges || item.renderingMode() == Gouraud)
       {
-        viewer->glEnable(GL_LIGHTING);
-        viewer->glPointSize(2.f);
-        viewer->glLineWidth(1.0f);
+        //viewer->glEnable(GL_LIGHTING);
+        //viewer->glPointSize(2.f);
+        //viewer->glLineWidth(1.0f);
         if(item.renderingMode() == Gouraud)
           viewer->glShadeModel(GL_SMOOTH);
         else
           viewer->glShadeModel(GL_FLAT);
-        item.draw(viewer, pass,writing_depth, fbo);
+        item.draw(viewer, pass, writing_depth, fbo);
       }
 
       if(with_names) {
@@ -515,7 +515,7 @@ void Scene::renderWireScene(const QList<Scene_interface::Item_id> &items,
                             QMap<float, int>& picked_item_IDs,
                             bool with_names)
 {
-  for(int index = 0; index < items.size(); ++index)
+  Q_FOREACH(Scene_interface::Item_id index, items)
    {
      CGAL::Three::Scene_item& item = *m_entries[index];
      if(index == selected_item || selected_items_list.contains(index))
@@ -579,7 +579,7 @@ void Scene::renderPointScene(const QList<Scene_interface::Item_id> &items,
                              QMap<float, int>& picked_item_IDs,
                              bool with_names)
 {
-  for(int index = 0; index < items.size(); ++index)
+  Q_FOREACH(Scene_interface::Item_id index, items)
   {
     CGAL::Three::Scene_item& item = *m_entries[index];
     if(item.visible())
@@ -611,21 +611,25 @@ void Scene::renderPointScene(const QList<Scene_interface::Item_id> &items,
     }
   }
 }
+bool Scene::has_alpha()
+{
+  Q_FOREACH(Scene_item* item, m_entries)
+    if(item->alpha() != 1.0f)
+      return true;
+  return false;
+}
 
 void
 Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
 {
   viewer->makeCurrent();
   QMap<float, int> picked_item_IDs;
+  if(with_names)
+    viewer->glEnable(GL_DEPTH_TEST);
   if(!gl_init)
     initializeGL(viewer);
-  viewer->glEnable(GL_DEPTH_TEST);
-
-  // Flat/Gouraud OpenGL drawing
-  viewer->glClearDepth(1.0);
-  viewer->glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-  renderScene(children, viewer, picked_item_IDs, with_names, -1, true, NULL);
-  if(!with_names)
+  renderScene(children, viewer, picked_item_IDs, with_names, -1, false, NULL);
+  if(!with_names && has_alpha())
   {
     QOpenGLFramebufferObject* fbos[(int)viewer->total_pass()];
     QOpenGLFramebufferObject* depth_test[(int)viewer->total_pass()-1];
@@ -739,6 +743,7 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
     vaos[viewer]->release();
     program.release();
   }
+
   viewer->glDepthFunc(GL_LEQUAL);
   // Wireframe OpenGL drawing
   renderWireScene(children, viewer, picked_item_IDs, with_names);
@@ -1537,7 +1542,6 @@ QList<QModelIndex> Scene::getModelIndexFromId(int id) const
 
 void Scene::addGroup(Scene_group_item* group)
 {
-    connect(this, SIGNAL(drawFinished()), group, SLOT(resetDraw()));
     connect(this, SIGNAL(indexErased(Scene_interface::Item_id)),
             group, SLOT(adjustIds(Scene_interface::Item_id)));
 }
