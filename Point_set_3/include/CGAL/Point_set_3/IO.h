@@ -297,7 +297,12 @@ template <typename Point, typename Vector>
 bool
 read_ply_point_set(
   std::istream& stream, ///< input stream.
+#ifdef DOXYGEN_RUNNING
   CGAL::Point_set_3<Point, Vector>& point_set) ///< point set
+#else
+  CGAL::Point_set_3<Point, Vector>& point_set, ///< point set
+  std::string* comments = NULL) ///< recover PLY comments
+#endif
 {
   if(!stream)
     {
@@ -310,6 +315,9 @@ read_ply_point_set(
   
   if (!(reader.init (stream)))
     return false;
+
+  if (comments != NULL)
+    *comments = reader.comments();
 
   filler.instantiate_properties (reader);
   
@@ -328,7 +336,7 @@ read_ply_point_set(
 
   return (points_read == reader.m_nb_points);
 }
-
+  
 /*!
   \ingroup PkgPointSet3IO
  */
