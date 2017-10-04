@@ -2254,6 +2254,8 @@ void MainWindow::setupViewer(Viewer* viewer, SubViewer* subviewer=NULL)
             viewer, SLOT(SetOrthoProjection(bool)));
     connect(ui->actionL_ighting, SIGNAL(triggered()),
             viewer, SLOT(setLighting_clicked()));
+    connect(ui->actionSet_Transparency_Pass_Number, SIGNAL(triggered()),
+            viewer, SLOT());
   }
   else
   {

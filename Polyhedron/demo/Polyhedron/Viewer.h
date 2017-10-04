@@ -119,8 +119,10 @@ Q_SIGNALS:
   void sendMessage(QString);
   void GLinit();
 public Q_SLOTS:
-  //!prompt a dialog to set the lighting values for this viewer;
+  //!Prompt a dialog to set the lighting values for this viewer;
   void setLighting_clicked();
+  //!Prompt a dialog to set the number of passes for the transparency.
+  void setTotalPass_clicked();
   //! Sets the antialiasing to true or false.
   void setAntiAliasing(bool b) Q_DECL_OVERRIDE;
   //! If b is true, facets will be ligted from both internal and external sides.

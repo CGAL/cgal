@@ -1778,3 +1778,9 @@ void Viewer::setLighting_clicked()
   setLighting(light);
   update();
 }
+
+void Viewer::setTotalPass_clicked()
+{
+
+
+}

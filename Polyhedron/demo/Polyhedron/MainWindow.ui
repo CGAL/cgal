@@ -99,6 +99,7 @@
     <addaction name="menuCamera"/>
     <addaction name="actionAdd_Viewer"/>
     <addaction name="actionL_ighting"/>
+    <addaction name="actionSet_Transparency_Pass_Number"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -541,6 +542,11 @@
   <action name="actionL_ighting">
    <property name="text">
     <string>L&amp;ighting...</string>
+   </property>
+  </action>
+  <action name="actionSet_Transparency_Pass_Number">
+   <property name="text">
+    <string>Set Transparency Pass &amp;Number...</string>
    </property>
   </action>
  </widget>
