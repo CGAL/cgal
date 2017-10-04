@@ -10,6 +10,8 @@
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include "ui_Display_property.h"
+#include "id_printing.h"
+#include "Scene.h"
 
 #define ARBITRARY_DBL_MIN 1.0E-30
 #define ARBITRARY_DBL_MAX 1.0E+30
@@ -75,6 +77,15 @@ public:
 
     connect(dock_widget->propertyBox, SIGNAL(currentIndexChanged(int)),
             this, SLOT(on_propertyBox_currentIndexChanged(int)));
+    connect(dock_widget->zoomToMinButton, &QPushButton::pressed,
+            this, &DisplayPropertyPlugin::on_zoomToMinButton_pressed);
+    connect(dock_widget->zoomToMaxButton, &QPushButton::pressed,
+            this, &DisplayPropertyPlugin::on_zoomToMaxButton_pressed);
+    dock_widget->zoomToMaxButton->setEnabled(false);
+    dock_widget->zoomToMinButton->setEnabled(false);
+    Scene* scene_obj =static_cast<Scene*>(scene);
+    connect(scene_obj, &Scene::itemIndexSelected,
+            this, &DisplayPropertyPlugin::enableButtons);
     on_propertyBox_currentIndexChanged(0);
 
   }
@@ -105,6 +116,33 @@ private Q_SLOTS:
     QApplication::restoreOverrideCursor();
     item->invalidateOpenGLBuffers();
     item->itemChanged();
+    dock_widget->zoomToMinButton->setEnabled(true);
+    dock_widget->zoomToMaxButton->setEnabled(true);
+  }
+
+  void enableButtons()
+  {
+    Scene_surface_mesh_item* item =
+        qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex()));
+    if(! item )
+    {
+      dock_widget->zoomToMinButton->setEnabled(false);
+      dock_widget->zoomToMaxButton->setEnabled(false);
+    }
+
+    switch(dock_widget->propertyBox->currentIndex())
+    {
+    case 0:
+      dock_widget->zoomToMinButton->setEnabled(angles_max.count(item)>0 );
+      dock_widget->zoomToMaxButton->setEnabled(angles_max.count(item)>0 );
+      break;
+    case 1:
+      dock_widget->zoomToMinButton->setEnabled(jacobian_max.count(item)>0);
+      dock_widget->zoomToMaxButton->setEnabled(jacobian_max.count(item)>0);
+      break;
+    default:
+      break;
+    }
   }
 
   void displayScaledJacobian(Scene_surface_mesh_item* item)
@@ -119,17 +157,25 @@ private Q_SLOTS:
     {
       double res_min = ARBITRARY_DBL_MAX,
           res_max = -ARBITRARY_DBL_MAX;
+      SMesh::Face_index min_index, max_index;
       for(boost::graph_traits<SMesh>::face_iterator fit = faces(smesh).begin();
           fit != faces(smesh).end();
           ++fit)
       {
         fjacobian[*fit] = scaled_jacobian(*fit, smesh);
         if(fjacobian[*fit] > res_max)
+        {
           res_max = fjacobian[*fit];
+          max_index = *fit;
+        }
         if(fjacobian[*fit] < res_min)
+        {
           res_min = fjacobian[*fit];
+          min_index = *fit;
+        }
       }
-      jacobian_extrema.insert(std::make_pair(item, std::make_pair(res_min, res_max)));
+      jacobian_min.insert(std::make_pair(item, std::make_pair(res_min, min_index)));
+      jacobian_max.insert(std::make_pair(item, std::make_pair(res_max, max_index)));
     }
     //scale a color ramp between min and max
     double max = maxBox;
@@ -154,8 +200,8 @@ private Q_SLOTS:
             255*color_ramp.b(f));
       fcolors[*fit] = color;
     }
-    dock_widget->minBox->setValue(jacobian_extrema[item].first-0.01);
-    dock_widget->maxBox->setValue(jacobian_extrema[item].second);
+    dock_widget->minBox->setValue(jacobian_min[item].first-0.01);
+    dock_widget->maxBox->setValue(jacobian_max[item].first);
   }
 
   void displayAngles(Scene_surface_mesh_item* item)
@@ -171,6 +217,7 @@ private Q_SLOTS:
     {
       double res_min = ARBITRARY_DBL_MAX,
           res_max = -ARBITRARY_DBL_MAX;
+      SMesh::Face_index index_min, index_max;
       for(boost::graph_traits<SMesh>::face_iterator fit = faces(smesh).begin();
           fit != faces(smesh).end();
           ++fit)
@@ -239,11 +286,18 @@ private Q_SLOTS:
         fangle[*fit]=local_angles.front();
 
         if(fangle[*fit] > res_max)
+        {
           res_max = fangle[*fit];
+          index_max = *fit;
+        }
         if(fangle[*fit] < res_min)
+        {
           res_min = fangle[*fit];
+          index_min = *fit;
+        }
       }
-      angles_extrema.insert(std::make_pair(item, std::make_pair(res_min, res_max)));
+      angles_min.insert(std::make_pair(item, std::make_pair(res_min, index_min)));
+      angles_max.insert(std::make_pair(item, std::make_pair(res_max, index_max)));
     }
     //scale a color ramp between min and max
 
@@ -270,8 +324,8 @@ private Q_SLOTS:
             255*color_ramp.b(f));
       fcolors[*fit] = color;
     }
-    dock_widget->minBox->setValue(angles_extrema[item].first);
-    dock_widget->maxBox->setValue(angles_extrema[item].second);
+    dock_widget->minBox->setValue(angles_min[item].first);
+    dock_widget->maxBox->setValue(angles_max[item].first);
   }
 
   void replaceRamp()
@@ -324,11 +378,78 @@ private Q_SLOTS:
       break;
     }
     replaceRamp();
+    enableButtons();
   }
 
   void closure()Q_DECL_OVERRIDE
   {
     dock_widget->hide();
+  }
+
+  void on_zoomToMinButton_pressed()
+  {
+    Scene_surface_mesh_item* item =
+        qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex()));
+    if(!item)
+      return;
+    face_descriptor dummy_fd;
+    Point_3 dummy_p;
+    switch(dock_widget->propertyBox->currentIndex())
+    {
+    case 0:
+    {
+      ::zoomToId(*item->face_graph(),
+                     QString("f%1").arg(angles_min[item].second),
+                     qobject_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first()),
+                     dummy_fd,
+                     dummy_p);
+    }
+      break;
+    case 1:
+    {
+      ::zoomToId(*item->face_graph(),
+                     QString("f%1").arg(jacobian_min[item].second),
+                     qobject_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first()),
+                     dummy_fd,
+                     dummy_p);
+    }
+      break;
+    default:
+      break;
+    }
+  }
+
+  void on_zoomToMaxButton_pressed()
+  {
+    Scene_surface_mesh_item* item =
+        qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex()));
+    if(!item)
+      return;
+    face_descriptor dummy_fd;
+    Point_3 dummy_p;
+    switch(dock_widget->propertyBox->currentIndex())
+    {
+    case 0:
+    {
+      ::zoomToId(*item->face_graph(),
+                 QString("f%1").arg(angles_max[item].second),
+                 qobject_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first()),
+                 dummy_fd,
+                 dummy_p);
+    }
+      break;
+    case 1:
+    {
+      ::zoomToId(*item->face_graph(),
+                 QString("f%1").arg(jacobian_max[item].second),
+                 qobject_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first()),
+                 dummy_fd,
+                 dummy_p);
+    }
+      break;
+    default:
+      break;
+    }
   }
 
 private:
@@ -396,8 +517,12 @@ private:
   QList<QAction*> _actions;
   Color_ramp color_ramp;
   DockWidget* dock_widget;
-  std::map<Scene_surface_mesh_item*, std::pair<double, double> > jacobian_extrema;
-  std::map<Scene_surface_mesh_item*, std::pair<double, double> > angles_extrema;
+  std::map<Scene_surface_mesh_item*, std::pair<double, SMesh::Face_index> > jacobian_min;
+  std::map<Scene_surface_mesh_item*, std::pair<double, SMesh::Face_index> > jacobian_max;
+
+  std::map<Scene_surface_mesh_item*, std::pair<double, SMesh::Face_index> > angles_min;
+  std::map<Scene_surface_mesh_item*, std::pair<double, SMesh::Face_index> > angles_max;
+
   double minBox;
   double maxBox;
   QPixmap legend_;

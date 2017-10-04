@@ -1,5 +1,6 @@
 #ifndef ID_PRINTING_H
 #define ID_PRINTING_H
+#include <CGAL/boost/graph/selection.h>
 #include <CGAL/Three/Viewer_interface.h>
 #include <CGAL/Three/TextRenderer.h>
 #include <CGAL/Kernel_traits.h>
