@@ -350,10 +350,8 @@ void Scene_surface_mesh_item_priv::compute_elements(Scene_item::Gl_data_names na
   SMesh::Property_map<face_descriptor, CGAL::Color> fcolors =
       smesh_->property_map<face_descriptor, CGAL::Color >("f:color").first;
 
-  if(smesh_->property_map<vertex_descriptor, CGAL::Color >("v:color").second)
-    has_vcolors = true;
 
-  has_fpatch_id = smesh_->property_map<face_descriptor, int >("f:patch_id").second;
+
 
   boost::property_map< SMesh, boost::vertex_index_t >::type
     im = get(boost::vertex_index, *smesh_);
@@ -397,8 +395,9 @@ void Scene_surface_mesh_item_priv::compute_elements(Scene_item::Gl_data_names na
 
   if(name.testFlag(Scene_item::COLORS))
   {
-    if(smesh_->property_map<face_descriptor, CGAL::Color >("f:color").second)
-      has_fcolors = true;
+    has_fpatch_id = smesh_->property_map<face_descriptor, int >("f:patch_id").second;
+    has_fcolors = smesh_->property_map<face_descriptor, CGAL::Color >("f:color").second;
+    has_vcolors = smesh_->property_map<vertex_descriptor, CGAL::Color >("v:color").second;
   }
 
   if(name.testFlag(Scene_item::GEOMETRY))
@@ -427,8 +426,9 @@ void Scene_surface_mesh_item_priv::compute_elements(Scene_item::Gl_data_names na
   }
 
 
-
-  if(has_fpatch_id && colors_.empty()){
+  if(name.testFlag(Scene_item::COLORS) &&
+     has_fpatch_id &&
+     colors_.empty()){
     initialize_colors();
   }
 
@@ -590,15 +590,22 @@ void Scene_surface_mesh_item_priv::compute_elements(Scene_item::Gl_data_names na
     item->getTriangleContainer(0)->allocate(Tri::Smooth_normals, smooth_normals.data(),
                                             static_cast<int>(num_vertices(*smesh_)*3*sizeof(cgal_gl_data)));
   }
-  if(!f_colors.empty() && name.testFlag(Scene_item::COLORS))
+  if(name.testFlag(Scene_item::COLORS))
   {
-    item->getTriangleContainer(1)->allocate(Tri::FColors, f_colors.data(),
-                                            static_cast<int>(f_colors.size()*sizeof(cgal_gl_data)));
-  }
-  if(!v_colors.empty() && name.testFlag(Scene_item::COLORS))
-  {
-    item->getTriangleContainer(0)->allocate(Tri::VColors, v_colors.data(),
-                                            static_cast<int>(v_colors.size()*sizeof(cgal_gl_data)));
+    if(!f_colors.empty())
+    {
+      item->getTriangleContainer(1)->allocate(Tri::FColors, f_colors.data(),
+                                              static_cast<int>(f_colors.size()*sizeof(cgal_gl_data)));
+    }
+    else
+      item->getTriangleContainer(1)->allocate(Tri::FColors, 0, 0);
+    if(!v_colors.empty())
+    {
+      item->getTriangleContainer(0)->allocate(Tri::VColors, v_colors.data(),
+                                              static_cast<int>(v_colors.size()*sizeof(cgal_gl_data)));
+    }
+    else
+      item->getTriangleContainer(0)->allocate(Tri::VColors, 0, 0);
   }
 
   QApplication::restoreOverrideCursor();
@@ -624,8 +631,8 @@ void Scene_surface_mesh_item_priv::initializeBuffers(CGAL::Three::Viewer_interfa
 {
   item->getTriangleContainer(1)->initializeBuffers(viewer);
   item->getTriangleContainer(0)->initializeBuffers(viewer);
-  item->getEdgeContainer(0)->initializeBuffers(viewer);
   item->getEdgeContainer(1)->initializeBuffers(viewer);
+  item->getEdgeContainer(0)->initializeBuffers(viewer);
 
   ////Clean-up
   item->getTriangleContainer(1)->setFlatDataSize(flat_vertices_size);
@@ -1102,9 +1109,9 @@ void Scene_surface_mesh_item::invalidate(Gl_data_names name)
   {
     delete_aabb_tree(this);
     d->smesh_->collect_garbage();
+    d->invalidate_stats();
   }
   setBuffersFilled(false);
-  d->invalidate_stats();
   Q_FOREACH(QGLViewer* v, QGLViewer::QGLViewerPool())
   {
     CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(v);
@@ -1272,7 +1279,7 @@ void Scene_surface_mesh_item::show_feature_edges(bool b)
 
 bool Scene_surface_mesh_item::isItemMulticolor()
 {
-  return d->has_fcolors;
+  return d->has_fcolors || d->has_fpatch_id || d->has_vcolors;
 }
 
 bool

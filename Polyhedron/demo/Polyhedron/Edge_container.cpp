@@ -18,7 +18,8 @@ struct D{
 };
 
 Edge_container::Edge_container(int program, bool indexed)
-  :Primitive_container(program, indexed)
+  :Primitive_container(program, indexed),
+    d(new D)
 {
   std::vector<Vbo*> vbos(NbOfVbos, NULL);
   setVbos(vbos);
