@@ -225,7 +225,7 @@ bool write_inp(std::ostream& os,
   n = 1;
   os << "*Element, type=" << type << std::endl;
   BOOST_FOREACH(face_descriptor f, faces(g)){
-    os << n;
+    os << n++;
     BOOST_FOREACH(vertex_descriptor v, vertices_around_face(halfedge(f,g),g)){
       os << ", " << reindex[v];
     }
