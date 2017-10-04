@@ -130,6 +130,9 @@ public:
   virtual Item_id selectionBindex() const = 0;
 
   //!\brief The scene's Bbox
+  //!\param all detemines if the items that are not visible
+  //! should be taken into account in the resulting Bbox.
+  //! `true` means they should.
   //!@returns the scene's bounding box
   //! @see Scene_interface::Bbox
   virtual Bbox bbox(bool all = false) const = 0;

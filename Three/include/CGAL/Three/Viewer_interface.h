@@ -104,6 +104,13 @@ public:
   //! Creates a valid context for OpenGL 2.1.
   //! \param parent the parent widget. It usually is the MainWindow.
   Viewer_interface(QWidget* parent) : QGLViewer(CGAL::Qt::createOpenGLContext(), parent) {}
+  //!
+  //! \brief Constructor
+  //!
+  //! \param parent the parent widget. It usually is the MainWindow.
+  //! \param sharedWidget the main viewer of the Application. This will share the context and allow
+  //! synchronized rendering of multiple views.
+  //!
   Viewer_interface(QWidget* parent, QGLWidget* sharedWidget) : QGLViewer(parent, sharedWidget ) {}
   virtual ~Viewer_interface() {}
 
@@ -200,7 +207,7 @@ public:
   //! avoid conflicts in the selection_tool, for example.
   virtual void setNoBinding() = 0 ;
   //!The number of passes that are performed for the scene transparency.
-  //!Usually 2 or 4.
+  //! Customizable from the MainWindow or the SubViewer menu.
   virtual float total_pass() = 0;
 
 Q_SIGNALS:

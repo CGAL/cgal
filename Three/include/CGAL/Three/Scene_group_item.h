@@ -48,6 +48,11 @@ class DEMO_FRAMEWORK_EXPORT Scene_group_item : public Scene_item
 {
     Q_OBJECT
 public :
+  //!
+  //! \brief The `Scene_group_item` constructor.
+  //! \param name The name of this item.
+  //! \param scene the scene that will hold this item.
+  //!
     Scene_group_item(QString name,Scene_interface *scene);
     ~Scene_group_item() {}
     //!Sets the scene;
@@ -123,23 +128,20 @@ public :
     ///@{
     //!\brief draws all the children
     //!
-    //! Calls `Scene_item::draw()`, then calls `Scene_item::drawEdges()`
-    //! and `Scene_item::drawPoints` for each child if its current
+    //! Calls `Scene_item::draw()`for each child if its current
     //! rendering mode is adequat.
     //! @see #RenderingMode
     virtual void draw(CGAL::Three::Viewer_interface*, int pass,
                       bool is_writing, QOpenGLFramebufferObject*fbo) const;
     //!\brief draws all the children
     //!
-    //! Calls `Scene_item::drawEdges()`, then calls `Scene_item::draw()`
-    //! and `Scene_item::drawPoints` for each child if its current
+    //! Calls `Scene_item::drawEdges()`for each child if its current
     //! rendering mode is adequat.
     //! @see #RenderingMode
     virtual void drawEdges(CGAL::Three::Viewer_interface*) const;
     //!\brief draws all the children
     //!
-    //! Calls `Scene_item::drawPoints()`, then calls `Scene_item::draw()`
-    //! and `Scene_item::drawEdges()` for each child if its current
+    //! Calls `Scene_item::drawPoints()`for each child if its current
     //! rendering mode is adequat.
     //! @see #RenderingMode
     virtual void drawPoints(CGAL::Three::Viewer_interface*) const;
@@ -226,6 +228,10 @@ public :
     void moveDown(int);
 
 public Q_SLOTS:
+    //!
+    //! \brief adjustIds maintains the list of children up to date when an item has been erased.
+    //! \param removed_id the index of the item that has been erased.
+    //!
     void adjustIds(Scene_interface::Item_id removed_id)
     {
       for(int i = 0; i < children.size(); ++i)

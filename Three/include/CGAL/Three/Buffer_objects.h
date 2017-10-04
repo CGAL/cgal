@@ -11,13 +11,21 @@ namespace CGAL {
 namespace Three {
 
 struct Vbo;
-
+//!
+//! \brief The Vao struct is a wrapper for the `QOpenGLVertexArrayObject`.
+//! They are context dependent, most of the time it means `Viewer` dependent.
+//!
 struct Vao{
 
   QOpenGLVertexArrayObject* vao;
   QOpenGLShaderProgram* program;
   std::vector<Vbo*> vbos;
-
+  //!
+  //! \brief Creates a `Vao`.
+  //! \param program the `QOpenGLShaderProgram` associated with this `Vao`.
+  //! \attention This must be called within a valid OpenGLContext.
+  //! Most of the time, initGL() functions are safe places to do so.
+  //!
   Vao( QOpenGLShaderProgram* program)
     :vao(new QOpenGLVertexArrayObject()),
       program(program)
@@ -30,17 +38,20 @@ struct Vao{
     delete vao;
   }
 
+  //!Adds a `Vbo` to the list of Vbos.
   void addVbo(Vbo* vbo)
   {
     vbos.push_back(vbo);
   }
 
+  //!Makes the `Vao` and its program active until `release()` is called.
   void bind()
   {
     program->bind();
     vao->bind();
   }
 
+  //!Makes the `Vao` and its program not active.
   void release()
   {
     vao->release();
@@ -48,7 +59,10 @@ struct Vao{
   }
 };
 
-
+//!
+//! \brief The Vbo struct is a wrapper for the `QOpenGLBufferObject` item.
+//! It contains the data necessary for the rendering of any displayed entity.
+//! A Vbo can be shared between Vaos of the same context.
 struct Vbo
 {
 
@@ -62,7 +76,19 @@ struct Vbo
   int tupleSize;
   int stride;
   bool allocated;
+  //!
+  //! \brief Creates a `Vbo`.
+  //! \param attribute the name of the corresponding data in the shader.
+  //! \param vbo_type is almost always `QOpenGLBuffer::VertexBuffer` but can be `QOpenGLBuffer::IndexBuffer`
+  //! if it contains the indices for an indexed rendering.
+  //! \param data_type the GL data type. Mostly GL_FLOAT.
+  //! \param offset the offset in the buffer. See OpenGL documentation.
+  //! \param tupleSize the size of the tuple. If it contains vector_3s, then tuple_size is 3.
+  //! \param stride the stride for the buffer. See OpenGL documentation.
 
+  //! \attention This must be called within a valid OpenGLContext.
+  //! Most of the time, initGL() functions are safe places to do so.
+  //!
   Vbo(
       const char* attribute,
       QOpenGLBuffer::Type vbo_type = QOpenGLBuffer::VertexBuffer,
@@ -88,16 +114,23 @@ struct Vbo
     vbo.destroy();
   }
 
+  //! Makes the `Vbo` active until `release()` is called.
   bool bind()
   {
     return vbo.bind();
   }
 
+  //!Makes the `Vbo` and its program not active.
   void release()
   {
     vbo.release();
   }
 
+  //!
+  //! \brief allocate gives CPU data to the GPU.
+  //! \param data the content of the buffer.
+  //! \param datasize the number of bytes in `data`.
+  //!
   void allocate(void* data, int datasize)
   {
     this->data = data;

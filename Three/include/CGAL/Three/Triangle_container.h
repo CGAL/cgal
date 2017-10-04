@@ -36,36 +36,92 @@ using namespace CGAL::Three;
 namespace CGAL {
 namespace Three {
 
+//! \brief The Triangle_container struct wraps the OpenGL data for drawing triangles.
 struct DEMO_FRAMEWORK_EXPORT Triangle_container :public Primitive_container
 {
+
+  //! \brief The vbosName enum
+  //!
+  //! Holds the `Vbo` Ids of this container.
+  //!
   enum vbosName {
-    Flat_vertices = 0,
-    Smooth_vertices,
-    Vertex_indices,
-    Flat_normals,
-    Smooth_normals,
-    Facet_barycenters,
-    Radius,
-    VColors,
-    FColors,
-    NbOfVbos
+    Flat_vertices = 0,  //!Designates the buffer that contains the flat vertex coordinates (not indexed).
+    Smooth_vertices,    //!Designates the buffer that contains the smooth vertex coordinates (indexed).
+    Vertex_indices,     //!Designates the buffer that contains the indices for the smooth vertices.
+    Flat_normals,       //!Designates the buffer that contains the normals for the flat vertices.
+    Smooth_normals,     //!Designates the buffer that contains the normals for the smooth vertices.
+    Facet_barycenters,  //!Designates the buffer that contains the barycenters of the c3t3 facets or the center of the spheres.
+    Radius,             //!Designates the buffer that contains the radius of the spheres.
+    VColors,            //!Designates the buffer that contains the colors of the smooth vertices.
+    FColors,            //!Designates the buffer that contains the colors of the flat vertices.
+    NbOfVbos            //!Designates the size of the VBOs vector for `Triangle_containers`s
   };
 
+  //!
+  //! \brief The constructor.
+  //! \param program is the `QOpenGLShaderProgram` that is used by this `Triangle_container` `Vao`.
+  //! \param indexed must be `true` if the data is indexed, `false` otherwise. If `true`, `VBOs`[`Vertex_indices`] must be filled.
+  //!
     Triangle_container(int program, bool indexed);
+
+    //!
+    //! \brief initGL creates the Vbos and Vaos of this `Triangle_container`.
+    //! \attention It must be called within a valid OpenGL context. The `draw()` function of an item is always a safe place to call this.
+    //!
+    //! \param item the `Scene_item` that uses this `Triangle_container`.
+    //! \param viewer the active `Viewer_interface`.
+    //!
     void initGL(const Scene_item &item, CGAL::Three::Viewer_interface* viewer)const Q_DECL_OVERRIDE;
+
+    //!
+    //! \brief draw is the function that actually renders the data.
+    //! \param item the `Scene_item` that uses this `Triangle_container`.
+    //! \param viewer the active `Viewer_interface`.
+    //! \param is_color_uniform must be `false` if the color buffers are not empty, `true` otherwise.
+    //! \param fbo holds the texture that is used for transparency.
+    //!
     void draw(const Scene_item &item, CGAL::Three::Viewer_interface* viewer,
               bool is_color_uniform,
               QOpenGLFramebufferObject* fbo = NULL) const Q_DECL_OVERRIDE;
 
     //drawing variables
-    QVector4D plane;
+    /// Shader parameters
+    /// Those should be filled at each draw() from the item.
+    ///@{
+
+    //!
+    //! \brief shrink_factor is used for the c3t3 item.
+    //!
     float shrink_factor;
+    //!
+    //! \brief comparing is used by the Depth Peeling.
+    //!
     bool comparing;
+    //!
+    //! \brief plane is used by some programs.
+    //!
+    QVector4D plane;
+    //!
+    //! \brief width the viewer's width. Used by some programs.
+    //!
     float width;
+    //!
+    //! \brief height the viewer's height. Used by some programs.
+    //!
     float height;
+    //!
+    //! \brief near the viewer's near coefficient. Used by some programs.
+    //!
     float near;
+    //!
+    //! \brief far the viewer's far coefficient. Used by some programs.
+    //!
     float far;
+    //!
+    //! \brief writing is used by the Depth Peeling.
+    //!
     bool writing;
+    ///@}
 }; //end of class Triangle_container
 
 }

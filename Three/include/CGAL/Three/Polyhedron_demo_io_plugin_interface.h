@@ -60,9 +60,16 @@ public:
   //! Specifies if the io_plugin is able to load an item or not.
   //! This must be overriden.
   virtual bool canLoad() const = 0;
-  //!  Loads an item from a file.
-  //! This must be overriden.
-  virtual Scene_item* load(QFileInfo fileinfo, CGAL::Three::Scene_interface* scene, QMainWindow*) = 0;
+
+  //! \brief Loads an item from a file.
+  //!
+  //! //! This must be overriden.
+  //! \param fileinfo the path to the item file.
+  //! \param scene the `Scene_interface` that will hold the item. Mostly used for group_items.
+  //! \param mw the application `MainWindow`. Mostly used for getting the `is_polyhedron_mode` property.
+  //! \return the loaded `Scene_item`
+  //!
+  virtual Scene_item* load(QFileInfo fileinfo, CGAL::Three::Scene_interface* scene, QMainWindow* mw) = 0;
   //!Specifies if the io_plugin can save the item or not.
   //!This must be overriden.
   virtual bool canSave(const Scene_item*) = 0;

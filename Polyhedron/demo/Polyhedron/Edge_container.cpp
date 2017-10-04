@@ -27,6 +27,8 @@ void Edge_container::initGL(const Scene_item& item, Viewer_interface *viewer) co
         VBOs[Indices] =
             new CGAL::Three::Vbo("indices",
                                  QOpenGLBuffer::IndexBuffer);
+      if(VAOs[viewer])
+        delete VAOs[viewer];
       VAOs[viewer] = new CGAL::Three::Vao(item.getShaderProgram(program_id, viewer));
       VAOs[viewer]->addVbo(VBOs[Vertices]);
       VAOs[viewer]->addVbo(VBOs[Indices]);

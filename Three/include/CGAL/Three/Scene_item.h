@@ -116,6 +116,7 @@ public:
   virtual Scene_item* clone() const = 0;
 
   //!Create the VAOs and VBOs.
+  //! \attention must be called within a valid OpenGL context.
   virtual void initGL() const;
 
   //! \brief Indicates if `m` is supported
@@ -127,11 +128,18 @@ public:
    * Draws the faces of the item in the viewer. The data
    * for the drawing is gathered in computeElements(), and is sent
    * to buffers in initializeBuffers().
+   * \param viewer the active `Viewer_interface`
+   * \param pass the current pass in the Depth Peeling (transparency) algorithm.
+   * -1 means that no depth peeling is applied.
+   * \param writing_depth means that the color of the faces will be drawn in a grayscale
+   * according to the depth of the fragment in the shader. It is used by the transparency.
+   * \param fbo contains the texture used by the Depth Peeling algorithm.
+   * Should be NULL if pass <= 0;
    * @see computeElements()
    * @see initializeBuffers()
-   */
-    virtual void draw(CGAL::Three::Viewer_interface*,
-                      int, bool, QOpenGLFramebufferObject*) const  {}
+   */  
+    virtual void draw(CGAL::Three::Viewer_interface* viewer,
+                      int pass, bool writing_depth, QOpenGLFramebufferObject* fbo) const  {}
   /*! \brief The drawing function for the edges.
    *
    * Draws the edges and lines of the item in the viewer. The data
@@ -238,11 +246,36 @@ public:
   //! the Operations menu, actions to save or clone the item if it is supported
   //! and any contextual action for the item.
   virtual QMenu* contextMenu();
+  //!
+  //! \brief isWriting is a property associated with threads.
+  //! \return `true` if the item is being modified.
+  //! \see `writing()`
+  //!
   bool isWriting()const{ return is_locked; }
+  //!
+  //! \brief writing sets the state of the item to being modified.
+  //! Some features will be disabled.
+  //!\see `doneWriting()`
+  //! \see `isWriting()`
   void writing(){ is_locked = true; itemChanged();}
+  //!
+  //! \brief doneWriting sets the state of the item to done being modified.
+  //!
   void doneWriting() { is_locked = false; itemChanged();}
+  //!
+  //! \brief isReading is a property associated with threads.
+  //! \return `true` if something is parsing the item data.
+  //! \see `reading()`
+  //!
   int isReading()const{ return is_reading; }
+  //!
+  //! \brief reading sets the state of the item to being parsed.
+  //! Some features will be disabled.
+  //!
   void reading(){ ++is_reading; itemChanged(); }
+  //!
+  //! \brief doneReading sets the state of the item to done being parsed.
+  //!
   void doneReading() { --is_reading; itemChanged(); }
 
   //!Handles key press events.
@@ -411,6 +444,10 @@ Q_SIGNALS:
   void aboutToBeDestroyed();
   //! Is emitted to require a new display.
   void redraw();
+  //!
+  //! Is emitted when the data computation of the item is finished and the thread
+  //! that were performing it is done.
+  //!
   void dataProcessed();
 
 protected:
@@ -489,11 +526,19 @@ protected:
 #include <QMetaType>
 Q_DECLARE_METATYPE(CGAL::Three::Scene_item*)
 
+//!
+//! \brief The WorkerThread class computes the data of this item in a separated
+//! thread. It allows to keep the hand on the GUI and to manage several items at the same time.
+//!
 class WorkerThread : public QThread
 {
   Q_OBJECT
   CGAL::Three::Scene_item* item;
 public:
+  //!
+  //! \brief The `WorkerThread` constructor.
+  //! \param item the `Scene_item` with the data that needs computation.
+  //!
   WorkerThread(CGAL::Three::Scene_item* item):
     item(item){}
 private:

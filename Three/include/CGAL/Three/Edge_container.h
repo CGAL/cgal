@@ -37,26 +37,65 @@ using namespace CGAL::Three;
 namespace CGAL {
 namespace Three {
 
+//!
+//! \brief The Edge_container struct wraps the OpenGL data for drawing lines.
+//!
 struct DEMO_FRAMEWORK_EXPORT Edge_container :public Primitive_container
 {
 
+  //!
+  //! \brief The vbosName enum
+  //!
+  //! Holds the `Vbo` Ids of this container.
+  //!
   enum vbosName {
-    Vertices = 0,
-    Indices,
-    Normals,
-    Colors,
-    Radius,
-    Barycenters,
-    NbOfVbos
+    Vertices = 0, //! Designates the buffer that contains the vertex coordinates.
+    Indices, //! Designates the buffer that contains the vertex indices.
+    Normals, //! Designates the buffer that contains the normal coordinates.
+    Colors, //! Designates the buffer that contains the color components.
+    Radius, //! Designates the buffer that contains the radius of wire spheres.
+    Barycenters, //! Designates the buffer that contains the barycenter of c3t3 facets or the center of wire spheres, for example.
+    NbOfVbos //! Designates the size of the VBOs vector for `Edge_containers`s
   };
 
+  //!
+  //! \brief The constructor.
+  //! \param program is the `QOpenGLShaderProgram` that is used by this `Edge_container` `Vao`.
+  //! \param indexed must be `true` if the data is indexed, `false` otherwise. If `true`, VBOs[Indices] must be filled.
+  //!
     Edge_container(int program, bool indexed);
+
+    //!
+    //! \brief initGL creates the `Vbo`s and `Vao`s of this `Edge_container`.
+    //! \attention It must be called within a valid OpenGL context. The `draw()` function of an item is always a safe place to call this.
+    //!
+    //! \todo Is it a good idea to call InitGL of each item in the scene so the developper doesn't have to worry about this in each draw() of each item ?
+    //!
+    //! \param item the `Scene_item` that uses this `Edge_container`.
+    //! \param viewer the active `Viewer_interface`.
+    //!
     void initGL(const Scene_item &item, Viewer_interface *viewer) const Q_DECL_OVERRIDE;
+
+    //!
+    //! \brief draw is the function that actually renders the data.
+    //! \param item the `Scene_item` that uses this `Edge_container`.
+    //! \param viewer the active `Viewer_interface`.
+    //! \param is_color_uniform must be `false` if `VBOs`[`Colors`] is not empty, `true` otherwise.
+    //!
     void draw(const Scene_item &item, CGAL::Three::Viewer_interface* viewer,
               bool is_color_uniform,
               QOpenGLFramebufferObject* = NULL) const Q_DECL_OVERRIDE;
     //drawing variables
+    //!
+    //! \brief plane contains the coefficients of the plane used in some programs :
+    //! - `PROGRAM_CUTPLANE_SPHERES`
+    //! - `PROGRAM_C3T3_EDGES`
+    //!
     QVector4D plane;
+    //!
+    //! \brief f_matrix is a Matrix4x4 used in some programs:
+    //! - PROGRAM_WITHOUT_LIGHT
+    //!
     QMatrix4x4 f_matrix;
 }; //end of class Triangle_container
 }
