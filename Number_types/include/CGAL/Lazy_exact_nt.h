@@ -757,7 +757,7 @@ struct Square_selector< NT, Null_functor > {
 
 template< class NT, class Functor >
 struct Integral_division_selector {
-  struct Integral_division : public std::binary_function<NT, NT, NT > {
+  struct Integral_division : public CGAL::binary_function<NT, NT, NT > {
     NT operator()( const NT& x, const NT& y ) const {
       return NT( CGAL_NTS integral_division( x.exact(), y.exact() ) );
     }
@@ -773,7 +773,7 @@ struct Integral_division_selector< NT, Null_functor > {
 
 template< class NT, class Functor >
 struct Is_square_selector {
-  struct Is_square : public std::binary_function<NT, NT&, bool > {
+  struct Is_square : public CGAL::binary_function<NT, NT&, bool > {
       bool operator()( const NT& x, NT& y ) const {
           typename NT::ET y_et;
           bool result = CGAL_NTS is_square( x.exact(), y_et );
@@ -810,7 +810,7 @@ struct Sqrt_selector<NT,Null_functor> {
 
 template< class NT, class Functor >
 struct Kth_root_selector {
-  struct Kth_root : public std::binary_function<int, NT, NT > {
+  struct Kth_root : public CGAL::binary_function<int, NT, NT > {
     NT operator()( int k, const NT& x ) const {
       return NT( CGAL_NTS kth_root( k, x.exact() ) );
     }
@@ -855,7 +855,7 @@ struct Root_of_selector< NT, Null_functor > {
 
 template< class NT, class Functor >
 struct Gcd_selector {
-  struct Gcd : public std::binary_function<NT, NT, NT > {
+  struct Gcd : public CGAL::binary_function<NT, NT, NT > {
     NT operator()( const NT& x, const NT& y ) const {
      CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
      return NT( CGAL_NTS gcd( x.exact(), y.exact() ) );
@@ -872,7 +872,7 @@ struct Gcd_selector< NT, Null_functor > {
 
 template< class NT, class Functor >
 struct Div_selector {
-  struct Div : public std::binary_function<NT, NT, NT > {
+  struct Div : public CGAL::binary_function<NT, NT, NT > {
     NT operator()( const NT& x, const NT& y ) const {
       return NT( CGAL_NTS div( x.exact(), y.exact() ) );
     }
@@ -904,7 +904,7 @@ struct Inverse_selector< NT, Null_functor > {
 
 template< class NT, class Functor >
 struct Mod_selector {
-  struct Mod : public std::binary_function<NT, NT, NT > {
+  struct Mod : public CGAL::binary_function<NT, NT, NT > {
     NT operator()( const NT& x, const NT& y ) const {
       return NT( CGAL_NTS mod( x.exact(), y.exact() ) );
     }
@@ -1054,7 +1054,7 @@ template < typename ET > class Real_embeddable_traits< Lazy_exact_nt<ET> >
     };
 
     class Compare
-      : public std::binary_function< Type, Type,
+      : public CGAL::binary_function< Type, Type,
                                 Comparison_result > {
       public:
         Comparison_result operator()( const Type& a,
@@ -1215,13 +1215,13 @@ public:
     typedef Lazy_exact_nt<ET_numerator> Numerator_type;
     typedef Lazy_exact_nt<ET_denominator> Denominator_type;
 
-    struct Common_factor : std::binary_function<Denominator_type,Denominator_type,Denominator_type>{
+    struct Common_factor : CGAL::binary_function<Denominator_type,Denominator_type,Denominator_type>{
         Denominator_type operator()(const Denominator_type& a, const Denominator_type& b) const {
             typename ETT::Common_factor common_factor;
             return Denominator_type(common_factor(a.exact(),b.exact()));
         }
     };
-    struct Compose : std::binary_function<Type,Numerator_type,Denominator_type>{
+    struct Compose : CGAL::binary_function<Type,Numerator_type,Denominator_type>{
         Type operator()(const Numerator_type& n, const Denominator_type& d) const {
             typename ETT::Compose compose;
             return Type(compose(n.exact(),d.exact()));
@@ -1253,7 +1253,7 @@ class Fraction_traits< Lazy_exact_nt< ET > >
 
 template < class ET >
 struct Min <Lazy_exact_nt<ET> >
-    : public std::binary_function<Lazy_exact_nt<ET>,Lazy_exact_nt<ET>,Lazy_exact_nt<ET> > {
+    : public CGAL::binary_function<Lazy_exact_nt<ET>,Lazy_exact_nt<ET>,Lazy_exact_nt<ET> > {
 
     Lazy_exact_nt<ET> operator()( const Lazy_exact_nt<ET>& x, const Lazy_exact_nt<ET>& y) const
     {
@@ -1271,7 +1271,7 @@ struct Min <Lazy_exact_nt<ET> >
 
 template < class ET >
 struct Max <Lazy_exact_nt<ET> >
-    : public std::binary_function<Lazy_exact_nt<ET>,Lazy_exact_nt<ET>,Lazy_exact_nt<ET> > {
+    : public CGAL::binary_function<Lazy_exact_nt<ET>,Lazy_exact_nt<ET>,Lazy_exact_nt<ET> > {
 
     Lazy_exact_nt<ET> operator()( const Lazy_exact_nt<ET>& x, const Lazy_exact_nt<ET>& y) const
     {

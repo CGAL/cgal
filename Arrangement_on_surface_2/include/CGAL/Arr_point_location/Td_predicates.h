@@ -70,7 +70,7 @@ struct Td_active_edge_item:
 };
 
 template <class _Tp>
-struct Td_map_item_handle_less : public std::binary_function<_Tp, _Tp, bool>
+struct Td_map_item_handle_less : public CGAL::binary_function<_Tp, _Tp, bool>
 {
   bool operator()(const _Tp& __x, const _Tp& __y) const { 
     return __x->id() < __y->id(); }

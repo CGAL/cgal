@@ -49,7 +49,7 @@ template <> class Algebraic_structure_traits< CORE::Expr >
     };
 
     class Kth_root
-      : public std::binary_function<int, Type, Type> {
+      : public CGAL::binary_function<int, Type, Type> {
       public:
         Type operator()( int k,
                                         const Type& x) const {
@@ -144,7 +144,7 @@ template <> class Real_embeddable_traits< CORE::Expr >
     };
 
     class Compare
-      : public std::binary_function< Type, Type,
+      : public CGAL::binary_function< Type, Type,
                                 Comparison_result > {
       public:
         Comparison_result operator()( const Type& x,

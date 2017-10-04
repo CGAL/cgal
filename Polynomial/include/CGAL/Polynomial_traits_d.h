@@ -325,7 +325,7 @@ public:
   typedef Null_functor  Pseudo_division_quotient;
 
   struct Gcd_up_to_constant_factor 
-    : public std::binary_function< ICoeff, ICoeff, ICoeff >{
+    : public CGAL::binary_function< ICoeff, ICoeff, ICoeff >{
     ICoeff operator()(const ICoeff& x, const ICoeff& y) const {
       if (CGAL::is_zero(x) && CGAL::is_zero(y)) 
         return ICoeff(0);
@@ -364,7 +364,7 @@ public:
   };
   
   struct Get_innermost_coefficient 
-    : public std::binary_function< ICoeff, Polynomial_d, Exponent_vector > {
+    : public CGAL::binary_function< ICoeff, Polynomial_d, Exponent_vector > {
     const ICoeff& operator()( const Polynomial_d& p, Exponent_vector ) {
       return p;
     }
@@ -471,7 +471,7 @@ private:
   // coeff type has no comparison operators available.
 private:
   struct Compare_exponents_coeff_pair 
-    : public std::binary_function< 
+    : public CGAL::binary_function<
        std::pair< Exponent_vector, Innermost_coefficient_type >,
        std::pair< Exponent_vector, Innermost_coefficient_type >,
        bool > 
@@ -697,7 +697,7 @@ public:
 
   // Get_coefficient;
   struct Get_coefficient 
-    : public std::binary_function<Polynomial_d, int, Coefficient_type > {
+    : public CGAL::binary_function<Polynomial_d, int, Coefficient_type > {
         
     const Coefficient_type& operator()( const Polynomial_d& p, int i) const {
       static const Coefficient_type zero =  Coefficient_type(0);
@@ -712,7 +712,7 @@ public:
   //     Get_innermost_coefficient;
   struct Get_innermost_coefficient
     : public 
-    std::binary_function< Polynomial_d, Exponent_vector, Innermost_coefficient_type >
+    CGAL::binary_function< Polynomial_d, Exponent_vector, Innermost_coefficient_type >
   {
         
     const Innermost_coefficient_type& 
@@ -927,7 +927,7 @@ public:
 
   // Evaluate;
   struct Evaluate
-    :public std::binary_function<Polynomial_d,Coefficient_type,Coefficient_type>{
+    :public CGAL::binary_function<Polynomial_d,Coefficient_type,Coefficient_type>{
     // Evaluate with respect to one variable 
     Coefficient_type
     operator()(const Polynomial_d& p, const Coefficient_type& x) const {
@@ -1124,7 +1124,7 @@ struct Construct_innermost_coefficient_const_iterator_range
   };
     
   struct Pseudo_division_quotient
-    :public std::binary_function<Polynomial_d, Polynomial_d, Polynomial_d> {
+    :public CGAL::binary_function<Polynomial_d, Polynomial_d, Polynomial_d> {
         
     Polynomial_d
     operator()(const Polynomial_d& f, const Polynomial_d& g) const {
@@ -1136,7 +1136,7 @@ struct Construct_innermost_coefficient_const_iterator_range
   };
 
   struct Pseudo_division_remainder
-    :public std::binary_function<Polynomial_d, Polynomial_d, Polynomial_d> {
+    :public CGAL::binary_function<Polynomial_d, Polynomial_d, Polynomial_d> {
         
     Polynomial_d
     operator()(const Polynomial_d& f, const Polynomial_d& g) const {
@@ -1148,7 +1148,7 @@ struct Construct_innermost_coefficient_const_iterator_range
   };
     
   struct Gcd_up_to_constant_factor
-    :public std::binary_function<Polynomial_d, Polynomial_d, Polynomial_d> {
+    :public CGAL::binary_function<Polynomial_d, Polynomial_d, Polynomial_d> {
     Polynomial_d
     operator()(const Polynomial_d& p, const Polynomial_d& q) const {
       if(p==q) return CGAL::canonicalize(p); 
@@ -1165,7 +1165,7 @@ struct Construct_innermost_coefficient_const_iterator_range
   };
     
   struct Integral_division_up_to_constant_factor
-    :public std::binary_function<Polynomial_d, Polynomial_d, Polynomial_d> {
+    :public CGAL::binary_function<Polynomial_d, Polynomial_d, Polynomial_d> {
    
   
     
@@ -1269,7 +1269,7 @@ struct Construct_innermost_coefficient_const_iterator_range
   };
 
   struct Shift
-    : public std::binary_function< Polynomial_d,int,Polynomial_d >{
+    : public CGAL::binary_function< Polynomial_d,int,Polynomial_d >{
     
     Polynomial_d 
     operator()(const Polynomial_d& p, int e, int i = (d-1)) const {
@@ -1319,7 +1319,7 @@ struct Construct_innermost_coefficient_const_iterator_range
   };
 
   struct Translate
-    : public std::binary_function< Polynomial_d , Innermost_coefficient_type, 
+    : public CGAL::binary_function< Polynomial_d , Innermost_coefficient_type,
                                    Polynomial_d >{
     Polynomial_d
     operator()(
@@ -1364,7 +1364,7 @@ struct Construct_innermost_coefficient_const_iterator_range
 
   struct Scale 
     : public 
-    std::binary_function< Polynomial_d, Innermost_coefficient_type, Polynomial_d > {
+    CGAL::binary_function< Polynomial_d, Innermost_coefficient_type, Polynomial_d > {
         
     Polynomial_d operator()( Polynomial_d p, const Innermost_coefficient_type& c,
         int i = (PT::d-1) ) const  {
@@ -1410,7 +1410,7 @@ struct Construct_innermost_coefficient_const_iterator_range
   };
 
   struct Resultant
-    : public std::binary_function<Polynomial_d, Polynomial_d, Coefficient_type>{
+    : public CGAL::binary_function<Polynomial_d, Polynomial_d, Coefficient_type>{
         
     Coefficient_type
     operator()(

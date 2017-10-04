@@ -384,7 +384,7 @@ public:
   typedef internal::Algebraic_real_d_1< Coefficient, Rational, HandlePolicy, RepClass > Type;
 
   class Compare
-    : public std::binary_function< Type, Type, CGAL::Comparison_result > {
+    : public CGAL::binary_function< Type, Type, CGAL::Comparison_result > {
   public:
     CGAL::Comparison_result operator()( const Type& a, const Type& b ) const
     { return a.compare( b ); }

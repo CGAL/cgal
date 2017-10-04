@@ -62,7 +62,7 @@ template <> class Algebraic_structure_traits< CORE::BigInt >
 
 
     class Gcd
-      : public std::binary_function< Type, Type,
+      : public CGAL::binary_function< Type, Type,
                                 Type > {
       public:
         Type operator()( const Type& x,
@@ -101,7 +101,7 @@ template <> class Real_embeddable_traits< CORE::BigInt >
     };
 
     class Compare
-      : public std::binary_function< Type, Type,
+      : public CGAL::binary_function< Type, Type,
                                 Comparison_result > {
       public:
         Comparison_result operator()( const Type& x,

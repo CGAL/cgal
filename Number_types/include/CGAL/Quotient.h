@@ -638,7 +638,7 @@ public:
 
 
     class Is_square
-        : public std::binary_function< Quotient<NT>, Quotient<NT>&, bool > {
+        : public CGAL::binary_function< Quotient<NT>, Quotient<NT>&, bool > {
     public:
         bool operator()( Quotient<NT> x, Quotient<NT>& y ) const {
             NT x_num, x_den, y_num, y_den;
@@ -687,7 +687,7 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
     typedef Quotient<NT> Type;
 
     class Compare
-      : public std::binary_function< Type, Type,
+      : public CGAL::binary_function< Type, Type,
                                 Comparison_result > {
       public:
         Comparison_result operator()( const Type& x,

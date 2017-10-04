@@ -1034,7 +1034,7 @@ std::istream& operator>> (std::istream& is, Mpzf& a)
 	};
 
       struct Gcd
-	: public std::binary_function< Type, Type, Type > {
+	: public CGAL::binary_function< Type, Type, Type > {
 	  Type operator()(
 	      const Type& x,
 	      const Type& y ) const {
@@ -1050,7 +1050,7 @@ std::istream& operator>> (std::istream& is, Mpzf& a)
 	};
 
       struct Integral_division
-	: public std::binary_function< Type, Type, Type > {
+	: public CGAL::binary_function< Type, Type, Type > {
 	  Type operator()(
 	      const Type& x,
 	      const Type& y ) const {
@@ -1066,7 +1066,7 @@ std::istream& operator>> (std::istream& is, Mpzf& a)
 	};
 
       struct Is_square
-	: public std::binary_function< Type, Type&, bool > {
+	: public CGAL::binary_function< Type, Type&, bool > {
 	  bool operator()( const Type& x, Type& y ) const {
 	    // TODO: avoid doing 2 calls.
 	    if (!Mpzf_is_square(x)) return false;
@@ -1096,7 +1096,7 @@ std::istream& operator>> (std::istream& is, Mpzf& a)
 	};
 
       struct Compare
-	: public std::binary_function< Type, Type, Comparison_result > {
+	: public CGAL::binary_function< Type, Type, Comparison_result > {
 	    Comparison_result operator()(
 		const Type& x,
 		const Type& y ) const {

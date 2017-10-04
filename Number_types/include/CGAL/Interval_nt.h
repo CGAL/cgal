@@ -682,7 +682,7 @@ operator/ (const Interval_nt<Protected> & a, double b)
 // TODO: What about these two guys? Where do they belong to?
 template <bool Protected>
 struct Min <Interval_nt<Protected> >
-    : public std::binary_function<Interval_nt<Protected>,
+    : public CGAL::binary_function<Interval_nt<Protected>,
                              Interval_nt<Protected>,
                              Interval_nt<Protected> >
 {
@@ -697,7 +697,7 @@ struct Min <Interval_nt<Protected> >
 
 template <bool Protected>
 struct Max <Interval_nt<Protected> >
-    : public std::binary_function<Interval_nt<Protected>,
+    : public CGAL::binary_function<Interval_nt<Protected>,
                              Interval_nt<Protected>,
                              Interval_nt<Protected> >
 {
@@ -744,7 +744,7 @@ ldexp(const Interval_nt<b> &i, int e)
 // TODO: To which concept do these functors belong? Can we remove them??
 template < bool b >
 struct Equal_to < Interval_nt<b>, Interval_nt<b> >
-  : public std::binary_function< Interval_nt<b>, Interval_nt<b>, Uncertain<bool> >
+  : public CGAL::binary_function< Interval_nt<b>, Interval_nt<b>, Uncertain<bool> >
 {
   Uncertain<bool> operator()( const Interval_nt<b>& x,
                               const Interval_nt<b>& y) const
@@ -753,7 +753,7 @@ struct Equal_to < Interval_nt<b>, Interval_nt<b> >
 
 template < bool b >
 struct Not_equal_to < Interval_nt<b>, Interval_nt<b> >
-  : public std::binary_function< Interval_nt<b>, Interval_nt<b>, Uncertain<bool> >
+  : public CGAL::binary_function< Interval_nt<b>, Interval_nt<b>, Uncertain<bool> >
 {
   Uncertain<bool> operator()( const Interval_nt<b>& x,
                               const Interval_nt<b>& y) const
@@ -762,7 +762,7 @@ struct Not_equal_to < Interval_nt<b>, Interval_nt<b> >
 
 template < bool b >
 struct Greater < Interval_nt<b>, Interval_nt<b> >
-  : public std::binary_function< Interval_nt<b>, Interval_nt<b>, Uncertain<bool> >
+  : public CGAL::binary_function< Interval_nt<b>, Interval_nt<b>, Uncertain<bool> >
 {
   Uncertain<bool> operator()( const Interval_nt<b>& x,
                               const Interval_nt<b>& y) const
@@ -771,7 +771,7 @@ struct Greater < Interval_nt<b>, Interval_nt<b> >
 
 template < bool b >
 struct Less < Interval_nt<b>, Interval_nt<b> >
-  : public std::binary_function< Interval_nt<b>, Interval_nt<b>, Uncertain<bool> >
+  : public CGAL::binary_function< Interval_nt<b>, Interval_nt<b>, Uncertain<bool> >
 {
   Uncertain<bool> operator()( const Interval_nt<b>& x,
                               const Interval_nt<b>& y) const
@@ -780,7 +780,7 @@ struct Less < Interval_nt<b>, Interval_nt<b> >
 
 template < bool b >
 struct Greater_equal < Interval_nt<b>, Interval_nt<b> >
-  : public std::binary_function< Interval_nt<b>, Interval_nt<b>, Uncertain<bool> >
+  : public CGAL::binary_function< Interval_nt<b>, Interval_nt<b>, Uncertain<bool> >
 {
   Uncertain<bool> operator()( const Interval_nt<b>& x,
                               const Interval_nt<b>& y) const
@@ -789,7 +789,7 @@ struct Greater_equal < Interval_nt<b>, Interval_nt<b> >
 
 template < bool b >
 struct Less_equal < Interval_nt<b>, Interval_nt<b> >
-  : public std::binary_function< Interval_nt<b>, Interval_nt<b>, Uncertain<bool> >
+  : public CGAL::binary_function< Interval_nt<b>, Interval_nt<b>, Uncertain<bool> >
 {
   Uncertain<bool> operator()( const Interval_nt<b>& x,
                               const Interval_nt<b>& y) const
@@ -991,7 +991,7 @@ template< bool B > class Real_embeddable_traits< Interval_nt<B> >
     };
 
     class Compare
-      : public std::binary_function< Type, Type, Comparison_result > {
+      : public CGAL::binary_function< Type, Type, Comparison_result > {
       public:
       Comparison_result operator()( const Type& x, const Type& y ) const {
         return INTERN_INTERVAL_NT::compare( x, y );
@@ -1070,7 +1070,7 @@ class Algebraic_structure_traits< Interval_nt<B> >
     };
 
     struct Is_square
-        :public std::binary_function<Interval_nt<B>,Interval_nt<B>&,Boolean >
+        :public CGAL::binary_function<Interval_nt<B>,Interval_nt<B>&,Boolean >
     {
         Boolean operator()(const Interval_nt<B>& x) const {
             return INTERN_INTERVAL_NT::is_positive( x );
@@ -1093,7 +1093,7 @@ class Algebraic_structure_traits< Interval_nt<B> >
     };
 
   class Divides
-    : public std::binary_function< Type, Type, Boolean > { 
+    : public CGAL::binary_function< Type, Type, Boolean > {
   public:
     Boolean operator()( const Type& x, const Type&) const {
       return ! Is_zero()(x);
@@ -1154,7 +1154,7 @@ public:
   typedef CGAL::Tag_false With_empty_interval; 
   typedef CGAL::Tag_true  Is_interval; 
 
- struct Construct :public std::binary_function<Bound,Bound,Interval>{
+ struct Construct :public CGAL::binary_function<Bound,Bound,Interval>{
     Interval operator()( const Bound& l,const Bound& r) const {
       CGAL_precondition( l < r ); 
       return Interval(l,r);
@@ -1203,37 +1203,37 @@ public:
     }
   };
 
-  struct In :public std::binary_function<Bound,Interval,bool>{
+  struct In :public CGAL::binary_function<Bound,Interval,bool>{
     bool operator()( Bound x, const Interval& a ) const {
       return Lower()(a) <= x && x <= Upper()(a);
     }
   };
 
-  struct Equal :public std::binary_function<Interval,Interval,bool>{
+  struct Equal :public CGAL::binary_function<Interval,Interval,bool>{
     bool operator()( const Interval& a, const Interval& b ) const {
       return a.is_same(b);
     }
   };
     
-  struct Overlap :public std::binary_function<Interval,Interval,bool>{
+  struct Overlap :public CGAL::binary_function<Interval,Interval,bool>{
     bool operator()( const Interval& a, const Interval& b ) const {
       return a.do_overlap(b);
     }
   };
     
-  struct Subset :public std::binary_function<Interval,Interval,bool>{
+  struct Subset :public CGAL::binary_function<Interval,Interval,bool>{
     bool operator()( const Interval& a, const Interval& b ) const {
       return Lower()(b) <= Lower()(a) && Upper()(a) <= Upper()(b) ;  
     }
   };
     
-  struct Proper_subset :public std::binary_function<Interval,Interval,bool>{
+  struct Proper_subset :public CGAL::binary_function<Interval,Interval,bool>{
     bool operator()( const Interval& a, const Interval& b ) const {
       return Subset()(a,b) && ! Equal()(a,b); 
     }
   };
     
-  struct Hull :public std::binary_function<Interval,Interval,Interval>{
+  struct Hull :public CGAL::binary_function<Interval,Interval,Interval>{
     Interval operator()( const Interval& a, const Interval& b ) const {
       BOOST_USING_STD_MAX();
       BOOST_USING_STD_MIN();
@@ -1247,7 +1247,7 @@ public:
   
 //  struct Empty is Null_functor 
   
-  struct Intersection :public std::binary_function<Interval,Interval,Interval>{
+  struct Intersection :public CGAL::binary_function<Interval,Interval,Interval>{
     Interval operator()( const Interval& a, const Interval& b ) const {
       BOOST_USING_STD_MAX();
       BOOST_USING_STD_MIN();

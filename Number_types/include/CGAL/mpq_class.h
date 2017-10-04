@@ -92,7 +92,7 @@ class Algebraic_structure_traits< mpq_class  >
     };
 
     struct Integral_division
-        : public std::binary_function< mpq_class , mpq_class, mpq_class > {
+        : public CGAL::binary_function< mpq_class , mpq_class, mpq_class > {
         template <typename T,  typename U1, typename U2>
         mpq_class operator()(
                 const ::__gmp_expr< T , U1 >& x,
@@ -108,7 +108,7 @@ class Algebraic_structure_traits< mpq_class  >
     };
 
     class Is_square
-        : public std::binary_function< mpq_class, mpq_class&, bool > {
+        : public CGAL::binary_function< mpq_class, mpq_class&, bool > {
     public:
         bool operator()( const mpq_class& x, mpq_class& y ) const {
             y = mpq_class (::sqrt( x.get_num() ), ::sqrt( x.get_den() )) ;
@@ -181,7 +181,7 @@ class Real_embeddable_traits< mpq_class >
     };
 
     struct Compare
-        : public std::binary_function< mpq_class, mpq_class, Comparison_result>
+        : public CGAL::binary_function< mpq_class, mpq_class, Comparison_result>
     {
         template <typename T, typename U1, typename U2>
         Comparison_result operator()(

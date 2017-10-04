@@ -38,7 +38,7 @@ namespace CGAL {
 namespace internal {
 
 template<typename Polynomial_1, typename Bound>
-struct Interval_evaluate_1 : public std::binary_function
+struct Interval_evaluate_1 : public CGAL::binary_function
 <Polynomial_1,std::pair<Bound,Bound>,
   std::pair<typename CGAL::Coercion_traits<typename 
      CGAL::Polynomial_traits_d<Polynomial_1>::Coefficient_type,Bound>::Type,

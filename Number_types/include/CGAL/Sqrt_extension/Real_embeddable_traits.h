@@ -43,7 +43,7 @@ class Real_embeddable_traits< Sqrt_extension<COEFF, ROOT, ACDE_TAG,FP_TAG> >
     };
     
     class Compare
-        : public std::binary_function< Type, Type, Comparison_result > {
+        : public CGAL::binary_function< Type, Type, Comparison_result > {
     public:
         Comparison_result operator()( const Type& x, const Type& y) const {
             // must be from the same extension 

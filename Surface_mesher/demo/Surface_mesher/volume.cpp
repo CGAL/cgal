@@ -61,7 +61,7 @@ class Classify_from_isovalue_list :
   boost::shared_ptr<Isovalues> isovalues;
   bool is_identity;
 
-  struct Sort_isovalues : std::binary_function<Isovalue, Isovalue, bool> 
+  struct Sort_isovalues : CGAL::binary_function<Isovalue, Isovalue, bool>
   {
     bool operator()(const Isovalue& isoval1, const Isovalue& isoval2)
     {
@@ -110,7 +110,7 @@ public:
 };
 
 class Generate_surface_identifiers :
-  public std::binary_function<Classify_from_isovalue_list::result_type,
+  public CGAL::binary_function<Classify_from_isovalue_list::result_type,
                               Classify_from_isovalue_list::result_type,
                               const QTreeWidgetItem*>
 {
@@ -143,7 +143,7 @@ public:
 //   typedef std::vector<Isovalue> Isovalues;
 //   boost::shared_ptr<Isovalues> isovalues;
 
-//   struct Sort_isovalues : std::binary_function<Isovalue, Isovalue, bool> 
+//   struct Sort_isovalues : CGAL::binary_function<Isovalue, Isovalue, bool>
 //   {
 //     bool operator()(const Isovalue& isoval1, const Isovalue& isoval2)
 //     {

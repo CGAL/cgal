@@ -55,7 +55,7 @@ public:
         };
 
         struct Is_square:
-        public std::binary_function<Type,Type&,Boolean>{
+        public CGAL::binary_function<Type,Type&,Boolean>{
                 Boolean operator()(const Type &x,Type &y)const{
                         return x.is_square(y);
                 };
@@ -72,7 +72,7 @@ public:
         };
 
         struct Kth_Root:
-        public std::binary_function<int,Type,Type>{
+        public CGAL::binary_function<int,Type,Type>{
                 Type operator()(int k,const Type &x)const{
                         return (k==3?x.cbrt():x.kthroot(k));
                 };
@@ -130,7 +130,7 @@ public INTERN_RET::Real_embeddable_traits_base<Gmpfr,CGAL::Tag_true>{
         };
 
         struct Compare:
-        public std::binary_function<Type,Type,Comparison_result>{
+        public CGAL::binary_function<Type,Type,Comparison_result>{
                 inline Comparison_result operator()
                         (const Type &x,const Type &y)const{
                                 return x.compare(y);

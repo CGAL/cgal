@@ -35,7 +35,7 @@ template <> class Algebraic_structure_traits< Gmpq >
     typedef Tag_false            Is_numerical_sensitive;
 
     class Is_square
-      : public std::binary_function< Type, Type&,
+      : public CGAL::binary_function< Type, Type&,
                                 bool > {
       public:
         bool operator()( const Type& x_, Type& y ) const {

@@ -91,7 +91,7 @@ struct Predicate_traits_d : public BoxTraits {
 
     // compare dim a b = islolesslo a b dim
     class Compare : 
-        public std::binary_function<Box_parameter,Box_parameter,bool>
+        public CGAL::binary_function<Box_parameter,Box_parameter,bool>
     {
         int dim;
     public:

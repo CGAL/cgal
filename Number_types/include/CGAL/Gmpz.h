@@ -51,7 +51,7 @@ public:
     typedef INTERN_AST::Is_square_per_sqrt< Type >
     Is_square;
     class Integral_division
-        : public std::binary_function< Type, Type,
+        : public CGAL::binary_function< Type, Type,
                                 Type > {
     public:
         Type operator()( const Type& x,
@@ -64,7 +64,7 @@ public:
     };
 
     class Gcd
-        : public std::binary_function< Type, Type,
+        : public CGAL::binary_function< Type, Type,
                                 Type > {
     public:
         Type operator()( const Type& x,

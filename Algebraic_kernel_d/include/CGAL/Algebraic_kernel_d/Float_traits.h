@@ -80,7 +80,7 @@ public:
   };
 
   struct Mul_by_pow_of_2
-    : public std::binary_function< leda_bigfloat, long, leda_bigfloat> {
+    : public CGAL::binary_function< leda_bigfloat, long, leda_bigfloat> {
     leda_bigfloat operator()( const leda_bigfloat& a, long e ) const {
       return leda_bigfloat(a.get_significant(), a.get_exponent()+e);
     }
@@ -111,7 +111,7 @@ public:
   };
 
   struct Mul_by_pow_of_2
-    : public std::binary_function
+    : public CGAL::binary_function
     < CORE::BigFloat, long , CORE::BigFloat> {
     CORE::BigFloat operator()( const CORE::BigFloat& a, long e ) const {
       return a*CORE::BigFloat::exp2(e);
@@ -148,7 +148,7 @@ public:
   };
     
 struct Mul_by_pow_of_2
-  : public std::binary_function< Gmpfr, Gmpz, Gmpfr> {
+  : public CGAL::binary_function< Gmpfr, Gmpz, Gmpfr> {
   Gmpfr operator()( const Gmpfr& a, long e ) const {
     Gmpfr result(0,a.get_precision()); // just to get the prec of a 
     if (e >= 0 ){

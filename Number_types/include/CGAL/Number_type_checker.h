@@ -506,7 +506,7 @@ public:
 
 // CGAL::Algebraic_structure_traits< >::Integral_division
     class Integral_division
-        : public std::binary_function< Type, Type, Type > {
+        : public CGAL::binary_function< Type, Type, Type > {
     public:
         Type operator()( const Type& a, const Type& b) const {
             CGAL_NT_CHECK_DEBUG("AST::Integral_division");
@@ -517,7 +517,7 @@ public:
     }; 
   
   class Divides
-    : public std::binary_function< Type, Type, bool > {
+    : public CGAL::binary_function< Type, Type, bool > {
   public:
     bool operator()( const Type& a, const Type& b) const {
       CGAL_NT_CHECK_DEBUG("AST::Divides");
@@ -554,7 +554,7 @@ private:
 public:
     // CGAL::Algebraic_structure_traits< >::Gcd
     class Gcd
-        : public std::binary_function< Type,
+        : public CGAL::binary_function< Type,
                                   Type,
                                   Type > {
     public:
@@ -582,7 +582,7 @@ private:
 public:
     // CGAL::Algebraic_structure_traits< >::Div
     class Div
-        : public std::binary_function< Type,
+        : public CGAL::binary_function< Type,
                                   Type,
                                   Type > {
     public:
@@ -597,7 +597,7 @@ public:
     };
     // CGAL::Algebraic_structure_traits< >::Mod
     class Mod
-        : public std::binary_function< Type,
+        : public CGAL::binary_function< Type,
                                   Type,
                                   Type > {
     public:
@@ -797,7 +797,7 @@ public:
 
     // CGAL::Real_embeddable_traits<  >::Compare
     class Compare
-        : public std::binary_function< Type , Type, Comparison_result > {
+        : public CGAL::binary_function< Type , Type, Comparison_result > {
     public:
         Comparison_result operator()(const Type& a, const Type& b) const {
             CGAL_NT_CHECK_DEBUG("RET::Compare");

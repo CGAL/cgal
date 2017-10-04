@@ -145,7 +145,7 @@ public:
     typedef typename AST_NT::Is_exact            Is_exact;
     typedef Tag_false                            Is_numerical_sensitive;                                                           
     class Integral_division
-        : public std::binary_function< Type, Type,
+        : public CGAL::binary_function< Type, Type,
                                 Type > {
     public:
         Type operator()( const Type& x,
@@ -157,7 +157,7 @@ public:
     };
 
     class Gcd 
-      : public std::binary_function< Type, Type, Type > {
+      : public CGAL::binary_function< Type, Type, Type > {
     public:
         Type operator()( const Type& x, const Type& y ) const {
             // By definition gcd(0,0) == 0
@@ -191,7 +191,7 @@ template <class NT> class Real_embeddable_traits< Nef_polynomial<NT> >
     };
     
     class Compare 
-      : public std::binary_function< Type, Type,
+      : public CGAL::binary_function< Type, Type,
                                 CGAL::Comparison_result > {
       public:
         CGAL::Comparison_result inline operator()( 

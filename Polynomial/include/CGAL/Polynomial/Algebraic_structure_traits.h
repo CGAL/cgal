@@ -121,7 +121,7 @@ class Polynomial_algebraic_structure_traits_base< POLY, Integral_domain_tag >
     typedef Integral_domain_tag Algebraic_category;
     
     class Integral_division 
-      : public std::binary_function< POLY, POLY, POLY > {
+      : public CGAL::binary_function< POLY, POLY, POLY > {
       public:
         POLY operator()( const POLY& x, const POLY& y ) const {
           return x / y;
@@ -135,7 +135,7 @@ private:
   typedef typename Divides_coeff::result_type BOOL;
 public:
   class Divides 
-    : public std::binary_function<POLY,POLY,BOOL>{  
+    : public CGAL::binary_function<POLY,POLY,BOOL>{  
   public:
      BOOL operator()( const POLY& p1, const POLY& p2) const {
        POLY q; 
@@ -209,7 +209,7 @@ class Polynomial_algebraic_structure_traits_base< POLY, Unique_factorization_dom
     typedef Unique_factorization_domain_tag Algebraic_category;
     
   class Gcd 
-    : public std::binary_function< POLY, POLY, POLY > {
+    : public CGAL::binary_function< POLY, POLY, POLY > {
     typedef typename Polynomial_traits_d<POLY>::Multivariate_content Mcontent;
     typedef typename Mcontent::result_type ICoeff; 
     
@@ -292,7 +292,7 @@ class Polynomial_algebraic_structure_traits_base< POLY, Field_tag >
     };
     
     class Div 
-      : public std::binary_function< POLY, POLY, POLY > {
+      : public CGAL::binary_function< POLY, POLY, POLY > {
       public:
         POLY operator()(const POLY& a, const POLY& b) const {
           POLY q, r;
@@ -304,7 +304,7 @@ class Polynomial_algebraic_structure_traits_base< POLY, Field_tag >
     };
     
     class Mod 
-      : public std::binary_function< POLY, POLY, POLY > {
+      : public CGAL::binary_function< POLY, POLY, POLY > {
       public:
         POLY operator () (const POLY& a, const POLY& b) const {
           POLY q, r;

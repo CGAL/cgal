@@ -436,7 +436,7 @@ public:
      * caching is used when appropriate
      */
     class Construct_curve_pair_2 :
-            public std::binary_function<Curve_analysis_2, Curve_analysis_2,
+            public CGAL::binary_function<Curve_analysis_2, Curve_analysis_2,
                 Curve_pair_analysis_2> {
 
     public:
@@ -669,7 +669,7 @@ public:
 			       compute_polynomial_y_2_object);
 
 
-    class Isolate_x_2 : public std::binary_function<Algebraic_real_2,
+    class Isolate_x_2 : public CGAL::binary_function<Algebraic_real_2,
                                                     Polynomial_1,
                                                     std::pair<Bound,Bound> > {
       
@@ -692,7 +692,7 @@ public:
     CGAL_Algebraic_Kernel_cons(Isolate_x_2, 
 			       isolate_x_2_object);
 
-    class Isolate_y_2 : public std::binary_function<Algebraic_real_2,
+    class Isolate_y_2 : public CGAL::binary_function<Algebraic_real_2,
                                                     Polynomial_1,
                                                     std::pair<Bound,Bound> > {
       
@@ -938,7 +938,7 @@ public:
 #endif
 
     class Approximate_absolute_x_2 
-    : public std::binary_function<Algebraic_real_2,int,std::pair<Bound,Bound> >{
+    : public CGAL::binary_function<Algebraic_real_2,int,std::pair<Bound,Bound> >{
     
     public:
 
@@ -961,7 +961,7 @@ public:
                                approximate_absolute_x_2_object);
 
     class Approximate_relative_x_2 
-    : public std::binary_function<Algebraic_real_2,int,std::pair<Bound,Bound> >{
+    : public CGAL::binary_function<Algebraic_real_2,int,std::pair<Bound,Bound> >{
     
     public:
         
@@ -983,7 +983,7 @@ public:
                                approximate_relative_x_2_object);
 
     class Approximate_absolute_y_2 
-    : public std::binary_function<Algebraic_real_2,int,std::pair<Bound,Bound> >{
+    : public CGAL::binary_function<Algebraic_real_2,int,std::pair<Bound,Bound> >{
 
     public:
 
@@ -1013,7 +1013,7 @@ public:
                                approximate_absolute_y_2_object);
 
     class Approximate_relative_y_2 
-    : public std::binary_function<Algebraic_real_2,int,std::pair<Bound,Bound> >{
+    : public CGAL::binary_function<Algebraic_real_2,int,std::pair<Bound,Bound> >{
         
     public:
         
@@ -1164,8 +1164,8 @@ public:
     
     //! \brief comparison of x-coordinates 
     class Compare_x_2 :
-         public std::binary_function<Algebraic_real_2, Algebraic_real_2, 
-                Comparison_result > {
+         public CGAL::binary_function<Algebraic_real_2, Algebraic_real_2,
+                                      Comparison_result > {
 
     public:
         
@@ -1257,7 +1257,7 @@ public:
      * If possible, it is recommended to avoid this functor for efficiency.}
      */
     class Compare_y_2 :
-        public std::binary_function< Algebraic_real_2, Algebraic_real_2, 
+        public CGAL::binary_function< Algebraic_real_2, Algebraic_real_2,
                 Comparison_result > {
     
     public:
@@ -1369,7 +1369,7 @@ public:
      * to have equal x-coordinates, thus only the y-coordinates are compared.
      */
     class Compare_xy_2 :
-          public std::binary_function<Algebraic_real_2, Algebraic_real_2, 
+          public CGAL::binary_function<Algebraic_real_2, Algebraic_real_2,
                 Comparison_result > {
 
     public:
@@ -1529,7 +1529,7 @@ public:
      * the two polynomials \c f and \c g are coprime.
      */ 
     class Has_finite_number_of_intersections_2 :
-        public std::binary_function< Polynomial_2, Polynomial_2, bool > {
+        public CGAL::binary_function< Polynomial_2, Polynomial_2, bool > {
          
     public:
 
@@ -1800,7 +1800,7 @@ public:
      * In pariticular, each singular point is x-critical.
      */
     class X_critical_points_2 : 
-        public std::binary_function< Curve_analysis_2, 
+        public CGAL::binary_function< Curve_analysis_2,
             std::iterator<std::output_iterator_tag, Algebraic_real_2>,
             std::iterator<std::output_iterator_tag, Algebraic_real_2> > {
        
@@ -1879,7 +1879,7 @@ public:
      * In pariticular, each singular point is y-critical.
      */
     class Y_critical_points_2 :
-        public std::binary_function< Curve_analysis_2, 
+        public CGAL::binary_function< Curve_analysis_2,
             std::iterator<std::output_iterator_tag, Algebraic_real_2>,
             std::iterator<std::output_iterator_tag, Algebraic_real_2> > {
         
@@ -1974,7 +1974,7 @@ public:
     // Overload the Sign_at_1 functor, to enable filter steps in the
     // Curve analysis in a coherent way
     class Sign_at_1 
-      : public::std::binary_function<Polynomial_1,Algebraic_real_1,Sign> {
+      : public::CGAL::binary_function<Polynomial_1,Algebraic_real_1,Sign> {
 
       
     public:
@@ -2051,7 +2051,7 @@ public:
      * curve. Returns a value convertible to \c CGAL::Sign
      */
     class Sign_at_2 :
-        public std::binary_function<Polynomial_2, Algebraic_real_2, Sign > {
+        public CGAL::binary_function<Polynomial_2, Algebraic_real_2, Sign > {
 
     public:
         
@@ -2147,7 +2147,7 @@ public:
     CGAL_Algebraic_Kernel_pred(Sign_at_2, sign_at_2_object);
 
     class Is_zero_at_2 
-      : public std::binary_function<Polynomial_2,Algebraic_real_2,bool> {
+      : public CGAL::binary_function<Polynomial_2,Algebraic_real_2,bool> {
     
     public:
       
@@ -2491,7 +2491,7 @@ public:
     CGAL_Algebraic_Kernel_cons(Solve_2, solve_2_object);
 
     class Number_of_solutions_2 
-      : public std::binary_function<Polynomial_2,Polynomial_2,size_type> {
+      : public CGAL::binary_function<Polynomial_2,Polynomial_2,size_type> {
     
     public:
       
@@ -2517,7 +2517,7 @@ public:
     // Functor used to evaluate a Polynomial_2 in a Bound, up to a
     // constant factor
     class Evaluate_utcf_2 
-      : public std::binary_function<Polynomial_2,Bound,Polynomial_1> {
+      : public CGAL::binary_function<Polynomial_2,Bound,Polynomial_1> {
     
     public:
       

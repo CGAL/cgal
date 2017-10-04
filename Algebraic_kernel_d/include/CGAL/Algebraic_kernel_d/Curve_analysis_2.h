@@ -111,7 +111,7 @@ template<typename Comparable>
 };
 
 template<typename Comparable> struct Compare_for_vert_line_map
-  : public std::binary_function<Comparable,Comparable,bool> {
+  : public CGAL::binary_function<Comparable,Comparable,bool> {
     
   BOOST_MPL_HAS_XXX_TRAIT_DEF(T)
   BOOST_MPL_HAS_XXX_TRAIT_DEF(Handle_policy)

@@ -313,7 +313,7 @@ public:
     typedef CGAL::Tag_true Is_interval; 
     typedef CGAL::Tag_true With_empty_interval; 
 
-    struct Construct :public std::binary_function<Bound,Bound,Interval>{
+    struct Construct :public CGAL::binary_function<Bound,Bound,Interval>{
         Interval operator()( const Bound& l,const Bound& r) const {
             CGAL_precondition( l < r ); 
             return Interval(l,r);
@@ -368,43 +368,43 @@ public:
         }
     };
 
-    struct In :public std::binary_function<Bound,Interval,bool>{
+    struct In :public CGAL::binary_function<Bound,Interval,bool>{
         bool operator()( Bound x, const Interval& a ) const {
             return ::boost::numeric::in(x,a);
         }
     };
 
-    struct Equal :public std::binary_function<Interval,Interval,bool>{
+    struct Equal :public CGAL::binary_function<Interval,Interval,bool>{
         bool operator()( const Interval& a, const Interval& b ) const {
             return ::boost::numeric::equal(a,b);
         }
     };
     
-    struct Overlap :public std::binary_function<Interval,Interval,bool>{
+    struct Overlap :public CGAL::binary_function<Interval,Interval,bool>{
         bool operator()( const Interval& a, const Interval& b ) const {
             return ::boost::numeric::overlap(a,b);
         }
     };
     
-    struct Subset :public std::binary_function<Interval,Interval,bool>{
+    struct Subset :public CGAL::binary_function<Interval,Interval,bool>{
         bool operator()( const Interval& a, const Interval& b ) const {
             return ::boost::numeric::subset(a,b);
         }
     };
     
-    struct Proper_subset :public std::binary_function<Interval,Interval,bool>{
+    struct Proper_subset :public CGAL::binary_function<Interval,Interval,bool>{
         bool operator()( const Interval& a, const Interval& b ) const {
             return ::boost::numeric::proper_subset(a,b);
         }
     };
     
-    struct Hull :public std::binary_function<Interval,Interval,Interval>{
+    struct Hull :public CGAL::binary_function<Interval,Interval,Interval>{
         Interval operator()( const Interval& a, const Interval& b ) const {
             return ::boost::numeric::hull(a,b);
         }
     };
     
-    struct Intersection :public std::binary_function<Interval,Interval,Interval>{
+    struct Intersection :public CGAL::binary_function<Interval,Interval,Interval>{
         Interval operator()( const Interval& a, const Interval& b ) const {
             Interval r = ::boost::numeric::intersect(a,b);      
             return r;

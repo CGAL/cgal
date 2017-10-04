@@ -62,7 +62,7 @@ public:
         };
 
         struct Is_square:
-        public std::binary_function<Type,Type&,Boolean>{
+        public CGAL::binary_function<Type,Type&,Boolean>{
                 Boolean operator()(const Type &x)const{
                         return x.is_square();
                 };
@@ -79,14 +79,14 @@ public:
         };
 
         struct Kth_Root:
-        public std::binary_function<int,Type,Type>{
+        public CGAL::binary_function<int,Type,Type>{
                 Type operator()(int k,const Type &x)const{
                         return (k==3?x.cbrt():x.kthroot(k));
                 };
         };
 
         struct Divides:
-        public std::binary_function<Type,Type,Boolean>{
+        public CGAL::binary_function<Type,Type,Boolean>{
                 Boolean operator()(const Type &d,const Type &n)const{
                         // Avoid compiler warning
 		        (void)n;
@@ -149,7 +149,7 @@ public INTERN_RET::Real_embeddable_traits_base<Gmpfi,CGAL::Tag_true>{
         };
 
         struct Compare:
-        public std::binary_function<Type,Type,Comparison_result>{
+        public CGAL::binary_function<Type,Type,Comparison_result>{
                 inline Comparison_result operator()
                         (const Type &x,const Type &y)const{
                                 return x.compare(y);
@@ -184,7 +184,7 @@ public:
   typedef CGAL::Tag_false With_empty_interval; 
   typedef CGAL::Tag_true  Is_interval; 
 
-  struct Construct :public std::binary_function<Bound,Bound,Interval>{
+  struct Construct :public CGAL::binary_function<Bound,Bound,Interval>{
     Interval operator()( const Bound& l,const Bound& r) const {
       CGAL_precondition( l < r ); 
       return Interval(std::make_pair(l,r));
@@ -233,37 +233,37 @@ public:
     }
   };
 
-  struct In :public std::binary_function<Bound,Interval,bool>{
+  struct In :public CGAL::binary_function<Bound,Interval,bool>{
     bool operator()( Bound x, const Interval& a ) const {
       return a.inf() <= x && x <= a.sup();
     }
   };
 
-  struct Equal :public std::binary_function<Interval,Interval,bool>{
+  struct Equal :public CGAL::binary_function<Interval,Interval,bool>{
     bool operator()( const Interval& a, const Interval& b ) const {
       return a.is_same(b);
     }
   };
     
-  struct Overlap :public std::binary_function<Interval,Interval,bool>{
+  struct Overlap :public CGAL::binary_function<Interval,Interval,bool>{
     bool operator()( const Interval& a, const Interval& b ) const {
       return a.do_overlap(b);
     }
   };
     
-  struct Subset :public std::binary_function<Interval,Interval,bool>{
+  struct Subset :public CGAL::binary_function<Interval,Interval,bool>{
     bool operator()( const Interval& a, const Interval& b ) const {
       return b.inf() <= a.inf() && a.sup() <= b.sup() ;  
     }
   };
     
-  struct Proper_subset :public std::binary_function<Interval,Interval,bool>{
+  struct Proper_subset :public CGAL::binary_function<Interval,Interval,bool>{
     bool operator()( const Interval& a, const Interval& b ) const {
       return Subset()(a,b) && ! Equal()(a,b); 
     }
   };
     
-  struct Hull :public std::binary_function<Interval,Interval,Interval>{
+  struct Hull :public CGAL::binary_function<Interval,Interval,Interval>{
     Interval operator()( const Interval& a, const Interval& b ) const {
       BOOST_USING_STD_MAX();
       BOOST_USING_STD_MIN();
@@ -277,7 +277,7 @@ public:
   
 //  struct Empty is Null_functor 
   
-  struct Intersection :public std::binary_function<Interval,Interval,Interval>{
+  struct Intersection :public CGAL::binary_function<Interval,Interval,Interval>{
     Interval operator()( const Interval& a, const Interval& b ) const {
       BOOST_USING_STD_MAX();
       BOOST_USING_STD_MIN();

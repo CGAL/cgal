@@ -83,7 +83,7 @@ public:
     typedef Algebraic_real_1                      Type;
     
     struct Bound_between 
-      : public std::binary_function< Type, Type, Bound > {
+      : public CGAL::binary_function< Type, Type, Bound > {
       Bound operator()( const Type& t1, 
           const Type& t2 ) const {
 #if CGAL_AK_DONT_USE_SIMPLE_BOUND_BETWEEN
@@ -148,7 +148,7 @@ public:
     };              
     
     struct Approximate_absolute_1:
-      public std::binary_function<Algebraic_real_1,int,std::pair<Bound,Bound> >{
+      public CGAL::binary_function<Algebraic_real_1,int,std::pair<Bound,Bound> >{
       std::pair<Bound,Bound> 
       operator()(const Algebraic_real_1& x, int prec) const {
         Lower_bound lower; 
@@ -167,7 +167,7 @@ public:
     }; 
     
     struct Approximate_relative_1:
-      public std::binary_function<Algebraic_real_1,int,std::pair<Bound,Bound> >{
+      public CGAL::binary_function<Algebraic_real_1,int,std::pair<Bound,Bound> >{
       std::pair<Bound,Bound> 
       operator()(const Algebraic_real_1& x, int prec) const {
         
@@ -275,7 +275,7 @@ public:
     /*
     // TODO: Can we avoid to use this?
     struct Greater_compare : 
-      public std::binary_function<Algebraic_real_1,Algebraic_real_1,bool> {
+      public CGAL::binary_function<Algebraic_real_1,Algebraic_real_1,bool> {
       
       bool operator() (const Algebraic_real_1& a, const Algebraic_real_1& b)
 	const {
@@ -349,7 +349,7 @@ public:
 
             
   struct Sign_at_1 
-    : public std::binary_function< Polynomial_1, Algebraic_real_1, CGAL::Sign > {
+    : public CGAL::binary_function< Polynomial_1, Algebraic_real_1, CGAL::Sign > {
     CGAL::Sign operator()( const Polynomial_1& p, const Algebraic_real_1& ar ) const {
       if(CGAL::is_zero(p)) return ZERO; 
       if(CGAL::degree(p)==0) return p.sign_at(0);
@@ -372,7 +372,7 @@ public:
     }
   };                
   struct Is_zero_at_1 
-    : public std::binary_function< Polynomial_1, Algebraic_real_1, bool > {
+    : public CGAL::binary_function< Polynomial_1, Algebraic_real_1, bool > {
     bool operator()( const Polynomial_1& p, const Algebraic_real_1& ar ) const {
       if(CGAL::is_zero(p)) return true; 
       if( ar.low() == ar.high() ) return p.sign_at( ar.low() ) == ZERO;
@@ -390,7 +390,7 @@ public:
   };
             
   struct Is_coprime_1
-    : public std::binary_function< Polynomial_1, Polynomial_1, bool > {
+    : public CGAL::binary_function< Polynomial_1, Polynomial_1, bool > {
     bool operator()( const Polynomial_1& p1, const Polynomial_1& p2 ) const {
       typename CGAL::Polynomial_traits_d< Polynomial_1 >::Total_degree total_degree;
                         
@@ -485,7 +485,7 @@ public:
   };
 
   struct Compare_1
-    : public std::binary_function<Algebraic_real_1,
+    : public CGAL::binary_function<Algebraic_real_1,
 	                          Algebraic_real_1,
                                   CGAL::Comparison_result>{
     
@@ -530,7 +530,7 @@ public:
 
  public:
 
-  struct Isolate_1 : public std::binary_function
+  struct Isolate_1 : public CGAL::binary_function
     < Algebraic_real_1,Polynomial_1,std::pair<Bound,Bound> > {
     
     public:

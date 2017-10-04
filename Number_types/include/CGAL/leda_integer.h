@@ -53,7 +53,7 @@ template <> class Algebraic_structure_traits< leda_integer >
                                                                  Is_square;
 
     class Gcd
-      : public std::binary_function< Type, Type,
+      : public CGAL::binary_function< Type, Type,
                                 Type > {
       public:
         Type operator()( const Type& x,
@@ -106,7 +106,7 @@ template <> class Algebraic_structure_traits< leda_integer >
 
 //     typedef INTERN_AST::Div_per_operator< Type > Div;
 //     class Mod
-//       : public std::binary_function< Type, Type,
+//       : public CGAL::binary_function< Type, Type,
 //                                 Type > {
 //       public:
 //         Type operator()( const Type& x, const Type& y ) const {
@@ -146,7 +146,7 @@ template <> class Real_embeddable_traits< leda_integer >
     };
 
     class Compare
-      : public std::binary_function< Type, Type,
+      : public CGAL::binary_function< Type, Type,
                                 Comparison_result > {
       public:
         Comparison_result operator()( const Type& x,

@@ -968,7 +968,7 @@ public:
   };
     
   class Compare 
-    : public std::binary_function< Type, Type,
+    : public CGAL::binary_function< Type, Type,
 			      Comparison_result > {
   public:
     Comparison_result operator()( const Type& x, 

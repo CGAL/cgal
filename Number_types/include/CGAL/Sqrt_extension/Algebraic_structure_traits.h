@@ -61,7 +61,7 @@ public:
     typedef CGAL::Integral_domain_tag Algebraic_category;
     
     class Integral_division
-      : public std::binary_function< Type, Type, Type > {
+      : public CGAL::binary_function< Type, Type, Type > {
     public:
       Type operator()( const Type& x,const Type& y ) const {
         return x/y;
@@ -77,7 +77,7 @@ private:
   typedef typename AST_COEFF::Divides Divides_coeff;   
 public:
   class Divides 
-    : public std::binary_function<Type,Type,typename Divides_coeff::result_type>{ 
+    : public CGAL::binary_function<Type,Type,typename Divides_coeff::result_type>{
     typedef typename Divides_coeff::result_type BOOL;
   public:
     BOOL operator()( const Type& x, const Type& y) const {  

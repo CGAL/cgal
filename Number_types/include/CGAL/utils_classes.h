@@ -27,43 +27,43 @@
 namespace CGAL {
 
 template < class A, class B = A >
-struct Equal_to : public std::binary_function< A, B, bool > {
+struct Equal_to : public CGAL::binary_function< A, B, bool > {
   bool operator()( const A& x, const B& y) const
   { return x == y; }
 };
 
 template < class A, class B = A >
-struct Not_equal_to : public std::binary_function< A, B, bool > {
+struct Not_equal_to : public CGAL::binary_function< A, B, bool > {
   bool operator()( const A& x, const B& y) const
   { return x != y; }
 };
 
 template < class A, class B = A >
-struct Greater : public std::binary_function< A, B, bool > {
+struct Greater : public CGAL::binary_function< A, B, bool > {
   bool operator()( const A& x, const B& y) const
   { return x > y; }
 };
 
 template < class A, class B = A >
-struct Less : public std::binary_function< A, B, bool > {
+struct Less : public CGAL::binary_function< A, B, bool > {
   bool operator()( const A& x, const B& y) const
   { return x < y; }
 };
 
 template < class A, class B = A >
-struct Greater_equal : public std::binary_function< A, B, bool > {
+struct Greater_equal : public CGAL::binary_function< A, B, bool > {
   bool operator()( const A& x, const B& y) const
   { return x >= y; }
 };
 
 template < class A, class B = A >
-struct Less_equal : public std::binary_function< A, B, bool > {
+struct Less_equal : public CGAL::binary_function< A, B, bool > {
   bool operator()( const A& x, const B& y) const
   { return x <= y; }
 };
 
 template < class NT, class Less = std::less< NT > >
-struct Min :public std::binary_function< NT, NT, NT > {
+struct Min :public CGAL::binary_function< NT, NT, NT > {
  Min() {}
  Min(const Less& c_) : c(c_) {}
  NT operator()( const NT& x, const NT& y) const
@@ -73,7 +73,7 @@ protected:
 };
 
 template < class NT, class Less = std::less< NT > >
-struct Max :public std::binary_function< NT, NT, NT > {
+struct Max :public CGAL::binary_function< NT, NT, NT > {
  Max() {}
  Max(const Less& c_) : c(c_) {}
  NT operator()( const NT& x, const NT& y) const
@@ -198,7 +198,7 @@ inline void sse2minmax(double& a, double b, double& c)
 #endif // CGAL_USE_SSE2_MAX
 
 template <>
-struct Max<double> :public std::binary_function< double, double, double > {
+struct Max<double> :public CGAL::binary_function< double, double, double > {
  Max() {}
 
  double operator()( const double& x, const double& y) const
@@ -230,7 +230,7 @@ struct Max<double> :public std::binary_function< double, double, double > {
 };
 
 template <>
-struct Min<double> :public std::binary_function< double, double, double > {
+struct Min<double> :public CGAL::binary_function< double, double, double > {
  Min() {}
 
  double operator()( const double& x, const double& y) const

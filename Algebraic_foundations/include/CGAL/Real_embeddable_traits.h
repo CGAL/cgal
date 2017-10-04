@@ -134,7 +134,7 @@ public:
         
   //! The generic \c Compare functor implementation uses two comparisons.
   class Compare 
-    : public std::binary_function< Type, Type, 
+    : public CGAL::binary_function< Type, Type,
                                 Comparison_result > {
   public:
     //! the function call.

@@ -279,7 +279,7 @@ public:
     };
     
     class Compare 
-        : public std::binary_function< Real_embeddable, 
+        : public CGAL::binary_function< Real_embeddable,
                                   Real_embeddable, 
                                   CGAL::Comparison_result >{
     public:

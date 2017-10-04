@@ -424,7 +424,7 @@ template <> class Algebraic_structure_traits< MP_Float >
     };
 
     struct Integral_division
-        : public std::binary_function< Type,
+        : public CGAL::binary_function< Type,
                                  Type,
                                  Type > {
     public:
@@ -448,7 +448,7 @@ template <> class Algebraic_structure_traits< MP_Float >
     };
 
     class Gcd
-      : public std::binary_function< Type, Type,
+      : public CGAL::binary_function< Type, Type,
                                 Type > {
       public:
         Type operator()( const Type& x,
@@ -458,7 +458,7 @@ template <> class Algebraic_structure_traits< MP_Float >
     };
 
     class Div
-      : public std::binary_function< Type, Type,
+      : public CGAL::binary_function< Type, Type,
                                 Type > {
       public:
         Type operator()( const Type& x,
@@ -471,7 +471,7 @@ template <> class Algebraic_structure_traits< MP_Float >
 // Default implementation of Divides functor for unique factorization domains
   // x divides y if gcd(y,x) equals x up to inverses 
   class Divides 
-    : public std::binary_function<Type,Type,bool>{ 
+    : public CGAL::binary_function<Type,Type,bool>{
   public:
     bool operator()( const Type& x,  const Type& y) const {  
       return internal::division(y,x).second == 0 ;
@@ -501,7 +501,7 @@ template <> class Real_embeddable_traits< MP_Float >
     };
 
     class Compare
-      : public std::binary_function< Type, Type,
+      : public CGAL::binary_function< Type, Type,
                                 Comparison_result > {
       public:
         Comparison_result operator()( const Type& x,

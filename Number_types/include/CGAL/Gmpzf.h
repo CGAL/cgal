@@ -44,7 +44,7 @@ public:
     };
 
     struct Integral_division
-        : public std::binary_function< Type,
+        : public CGAL::binary_function< Type,
                                 Type,
                                 Type > {
     public:
@@ -56,7 +56,7 @@ public:
     };
 
     struct Gcd
-        : public std::binary_function< Type,
+        : public CGAL::binary_function< Type,
                                 Type,
                                 Type > {
     public:
@@ -69,7 +69,7 @@ public:
     };
 
     class Div
-        : public std::binary_function< Type, Type, Type > {
+        : public CGAL::binary_function< Type, Type, Type > {
     public:
         Type operator()( const Type& x, const Type& y ) const {
             return Type(x).div( y );
@@ -79,7 +79,7 @@ public:
     typedef INTERN_AST::Mod_per_operator< Type > Mod;
   
   class Is_square
-    : public std::binary_function< Type, Type&, bool > {
+    : public CGAL::binary_function< Type, Type&, bool > {
   public:      
     bool operator()( const Type& x, Type& y ) const {
       y = CGAL::approximate_sqrt(x);
@@ -111,7 +111,7 @@ public:
     };
 
     struct Compare
-        : public std::binary_function< Type,
+        : public CGAL::binary_function< Type,
                                   Type,
                                   Comparison_result > {
     public:

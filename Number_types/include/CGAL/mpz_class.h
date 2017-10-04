@@ -95,7 +95,7 @@ public:
 
 
     struct Integral_division:
-        public std::binary_function< mpz_class , mpz_class, mpz_class > {
+        public CGAL::binary_function< mpz_class , mpz_class, mpz_class > {
         template <typename T,  typename U1, typename U2>
         mpz_class operator()(
                 const ::__gmp_expr< T , U1 >& x,
@@ -110,7 +110,7 @@ public:
         CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Type )
     };
 
-    struct Gcd : public std::binary_function< mpz_class, mpz_class, mpz_class > {
+    struct Gcd : public CGAL::binary_function< mpz_class, mpz_class, mpz_class > {
         mpz_class operator()(
                 const mpz_class& x,
                 const mpz_class& y) const {
@@ -121,7 +121,7 @@ public:
         CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Type )
     };
 
-    struct Div : public std::binary_function< mpz_class, mpz_class, mpz_class > {
+    struct Div : public CGAL::binary_function< mpz_class, mpz_class, mpz_class > {
         template <typename T,  typename U1, typename U2>
         mpz_class operator()(
                 const ::__gmp_expr< T , U1 >& x,
@@ -132,7 +132,7 @@ public:
         CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Type )
     };
 
-    struct Mod : public std::binary_function< mpz_class, mpz_class, mpz_class > {
+    struct Mod : public CGAL::binary_function< mpz_class, mpz_class, mpz_class > {
         template <typename T,  typename U1, typename U2>
         mpz_class operator()(
                 const ::__gmp_expr< T , U1 >& x,
@@ -174,7 +174,7 @@ public:
     };
 
 
-    /*struct Is_square: public std::binary_function< mpz_class , mpz_class& , bool > {
+    /*struct Is_square: public CGAL::binary_function< mpz_class , mpz_class& , bool > {
         template <typename T, typename U>
         bool operator()(
                 const ::__gmp_expr< T , U >& x,
@@ -246,7 +246,7 @@ public:
     };
 
     struct Compare
-        : public std::binary_function< mpz_class, mpz_class, Comparison_result > {
+        : public CGAL::binary_function< mpz_class, mpz_class, Comparison_result > {
         template <typename T,  typename U1, typename U2>
         Comparison_result operator()(
                 const ::__gmp_expr< T , U1 >& x,

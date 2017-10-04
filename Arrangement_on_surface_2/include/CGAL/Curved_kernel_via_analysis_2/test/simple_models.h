@@ -1062,7 +1062,7 @@ public:
      * caching is used when appropriate
      */
     struct Construct_curve_pair_2 :
-            public std::binary_function<Curve_analysis_2, Curve_analysis_2,
+            public CGAL::binary_function<Curve_analysis_2, Curve_analysis_2,
                 Curve_pair_analysis_2> {
            
         Curve_pair_analysis_2 operator()
@@ -1198,7 +1198,7 @@ public:
     
     //! \brief comparison of x-coordinates 
     struct Compare_x_2 :
-         public std::binary_function<Algebraic_real_1, Algebraic_real_1, 
+         public CGAL::binary_function<Algebraic_real_1, Algebraic_real_1,
                 Comparison_result > {
 
         Comparison_result operator()(const Algebraic_real_1& x1, 
@@ -1214,7 +1214,7 @@ public:
 
     //! \brief comparison of y-coordinates of two points
     struct Compare_y_2 :
-        public std::binary_function< Xy_coordinate_2, Xy_coordinate_2, 
+        public CGAL::binary_function< Xy_coordinate_2, Xy_coordinate_2,
                 Comparison_result > {
         
         Comparison_result operator()(const Xy_coordinate_2& xy1, 
@@ -1228,7 +1228,7 @@ public:
     //!
     //! \c equal_x specifies that only y-coordinates need to be compared
     struct Compare_xy_2 :
-          public std::binary_function<Xy_coordinate_2, Xy_coordinate_2, 
+          public CGAL::binary_function<Xy_coordinate_2, Xy_coordinate_2,
                 Comparison_result > 
     {
         Comparison_result operator()(const Xy_coordinate_2& xy1, 
@@ -1260,7 +1260,7 @@ public:
     //! in case of algerbaic curves: checks whether supporting polynomials are
     //! coprime
     struct Has_finite_number_of_intersections_2 :
-        public std::binary_function< Curve_analysis_2, Curve_analysis_2, bool > { 
+        public CGAL::binary_function< Curve_analysis_2, Curve_analysis_2, bool > {
                
         bool operator()(const Curve_analysis_2& c1, 
                         const Curve_analysis_2& c2) const {
@@ -1376,7 +1376,7 @@ public:
      * returns a value convertible to \c CGAL::Sign
      */
     struct Sign_at_2 :
-        public std::binary_function< Polynomial_2, Xy_coordinate_2, Sign > {
+        public CGAL::binary_function< Polynomial_2, Xy_coordinate_2, Sign > {
 
         Sign operator()(const Polynomial_2& p, const Xy_coordinate_2& r) const
         {

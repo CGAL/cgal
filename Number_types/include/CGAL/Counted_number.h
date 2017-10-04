@@ -584,7 +584,7 @@ struct Square_selector< NT, Null_functor > {
 
 template< class NT, class Functor >
 struct Integral_division_selector {
-  struct Integral_division : public std::binary_function<NT, NT, NT > {
+  struct Integral_division : public CGAL::binary_function<NT, NT, NT > {
     NT operator()( const NT& x, const NT& y ) const {
       return x.integral_division( y );
     }
@@ -598,7 +598,7 @@ struct Integral_division_selector< NT, Null_functor > {
 
 template< class NT, class Functor >
 struct Is_square_selector {
-  struct Is_square : public std::binary_function<NT, NT&, bool > {
+  struct Is_square : public CGAL::binary_function<NT, NT&, bool > {
       bool operator()( const NT& x, NT& y ) const {
           return x.is_square( y );
       }
@@ -630,7 +630,7 @@ struct Sqrt_selector<NT,Null_functor> {
 
 template< class NT, class Functor >
 struct Kth_root_selector {
-  struct Kth_root : public std::binary_function<int, NT, NT > {
+  struct Kth_root : public CGAL::binary_function<int, NT, NT > {
     NT operator()( int k, const NT& x ) const {
       return x.kth_root( k );
     }
@@ -686,7 +686,7 @@ struct Root_of_selector< NT, Null_functor > {
 
 template< class NT, class Functor >
 struct Gcd_selector {
-  struct Gcd : public std::binary_function<NT, NT, NT > {
+  struct Gcd : public CGAL::binary_function<NT, NT, NT > {
     NT operator()( const NT& x, const NT& y ) const {
       return x.gcd( y );
     }
@@ -700,7 +700,7 @@ struct Gcd_selector< NT, Null_functor > {
 
 template< class NT, class Functor >
 struct Div_selector {
-  struct Div : public std::binary_function<NT, NT, NT > {
+  struct Div : public CGAL::binary_function<NT, NT, NT > {
     NT operator()( const NT& x, const NT& y ) const {
       return x.div( y );
     }
@@ -714,7 +714,7 @@ struct Div_selector< NT, Null_functor > {
 
 template< class NT, class Functor >
 struct Mod_selector {
-  struct Mod : public std::binary_function<NT, NT, NT > {
+  struct Mod : public CGAL::binary_function<NT, NT, NT > {
     NT operator()( const NT& x, const NT& y ) const {
       return x.mod( y );
     }

@@ -93,7 +93,7 @@ template <> class Real_embeddable_traits< leda_rational >
     };
 
     class Compare
-      : public std::binary_function< Type, Type,
+      : public CGAL::binary_function< Type, Type,
                                 Comparison_result > {
       public:
         Comparison_result operator()( const Type& x,
