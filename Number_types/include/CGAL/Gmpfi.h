@@ -41,21 +41,21 @@ public:
         typedef Uncertain<bool> Boolean;
 
         struct Is_zero:
-        public std::unary_function<Type,Boolean>{
+        public CGAL::unary_function<Type,Boolean>{
                 Boolean operator()(const Type &x)const{
                         return x.is_zero();
                 }
         };
 
         struct Is_one:
-        public std::unary_function<Type,Boolean>{
+        public CGAL::unary_function<Type,Boolean>{
                 Boolean operator()(const Type &x)const{
                         return x.is_one();
                 }
         };
 
         struct Square:
-        public std::unary_function<Type,Type>{
+        public CGAL::unary_function<Type,Type>{
                 Type operator()(const Type &x)const{
                         return x.square();
                 };
@@ -72,7 +72,7 @@ public:
         };
 
         struct Sqrt:
-        public std::unary_function<Type,Type>{
+        public CGAL::unary_function<Type,Type>{
                 Type operator()(const Type &x)const{
                         return x.sqrt();
                 };
@@ -114,35 +114,35 @@ public INTERN_RET::Real_embeddable_traits_base<Gmpfi,CGAL::Tag_true>{
         typedef AST::Is_zero    Is_zero;
 
         struct Is_finite:
-        public std::unary_function<Type,Boolean>{
+        public CGAL::unary_function<Type,Boolean>{
                 inline Boolean operator()(const Type &x)const{
                         return(x.is_number());
                 };
         };
 
         struct Abs:
-        public std::unary_function<Type,Type>{
+        public CGAL::unary_function<Type,Type>{
                 inline Type operator()(const Type &x)const{
                         return x.abs();
                 };
         };
 
         struct Sgn:
-        public std::unary_function<Type,Sign>{
+        public CGAL::unary_function<Type,Sign>{
                 inline Sign operator()(const Type &x)const{
                         return x.sign();
                 };
         };
 
         struct Is_positive:
-        public std::unary_function<Type,Boolean>{
+        public CGAL::unary_function<Type,Boolean>{
                 inline Boolean operator()(const Type &x)const{
                         return x.is_positive();
                 };
         };
 
         struct Is_negative:
-        public std::unary_function<Type,Boolean>{
+        public CGAL::unary_function<Type,Boolean>{
                 inline Boolean operator()(const Type &x)const{
                         return x.is_negative();
                 };
@@ -158,14 +158,14 @@ public INTERN_RET::Real_embeddable_traits_base<Gmpfi,CGAL::Tag_true>{
         };
 
         struct To_double:
-        public std::unary_function<Type,double>{
+        public CGAL::unary_function<Type,double>{
                 inline double operator()(const Type &x)const{
                         return x.to_double();
                 };
         };
 
         struct To_interval:
-        public std::unary_function<Type,std::pair<double,double> >{
+        public CGAL::unary_function<Type,std::pair<double,double> >{
                 inline std::pair<double,double> operator()(const Type &x)const{
                                 return x.to_interval();
                         };
@@ -191,43 +191,43 @@ public:
     }
   };
 
-  struct Lower :public std::unary_function<Interval,Bound>{
+  struct Lower :public CGAL::unary_function<Interval,Bound>{
     Bound operator()( const Interval& a ) const {
       return a.inf();
     }
   };
 
-  struct Upper :public std::unary_function<Interval,Bound>{
+  struct Upper :public CGAL::unary_function<Interval,Bound>{
     Bound operator()( const Interval& a ) const {
       return a.sup();
     }
   };
 
-  struct Width :public std::unary_function<Interval,Bound>{
+  struct Width :public CGAL::unary_function<Interval,Bound>{
     Bound operator()( const Interval& a ) const {
       return Gmpfr::sub(a.sup(),a.inf(),std::round_toward_infinity);
     }
   };
 
-  struct Median :public std::unary_function<Interval,Bound>{
+  struct Median :public CGAL::unary_function<Interval,Bound>{
     Bound operator()( const Interval& a ) const {
       return (a.inf()+a.sup())/2;
     }
   };
     
-  struct Norm :public std::unary_function<Interval,Bound>{
+  struct Norm :public CGAL::unary_function<Interval,Bound>{
     Bound operator()( const Interval& a ) const {
       return a.abs().sup();
     }
   };
 
-  struct Singleton :public std::unary_function<Interval,bool>{
+  struct Singleton :public CGAL::unary_function<Interval,bool>{
     bool operator()( const Interval& a ) const {
       return a.inf() == a.sup();
     }
   };
 
-  struct Zero_in :public std::unary_function<Interval,bool>{
+  struct Zero_in :public CGAL::unary_function<Interval,bool>{
     bool operator()( const Interval& a ) const {
       return a.inf() <= 0  &&  0 <= a.sup();
     }
@@ -299,7 +299,7 @@ public:
   typedef Bigfloat_interval_traits<Gmpfi> Self; 
   typedef CGAL::Tag_true                  Is_bigfloat_interval; 
   
-  struct Relative_precision: public std::unary_function<NT,long>{
+  struct Relative_precision: public CGAL::unary_function<NT,long>{
 
     long operator()(const NT& x) const {
       CGAL_precondition(!Singleton()(x));

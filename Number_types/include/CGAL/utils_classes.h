@@ -19,7 +19,6 @@
 #define CGAL_UTILS_CLASSES_H
 
 #include <CGAL/config.h>
-#include <functional> // for std::binary_function
 
 #ifdef CGAL_USE_SSE2_MAX
 #include <CGAL/sse2.h>
@@ -263,7 +262,7 @@ struct Min<double> :public std::binary_function< double, double, double > {
 };
 template< class T >
 class Is_valid
-  : public std::unary_function< T, bool > {
+  : public CGAL::unary_function< T, bool > {
   public:
     bool operator()( const T& ) const {
       return true;

@@ -65,7 +65,7 @@ template<>
 class Float_traits< leda_bigfloat > {
 public:
   struct Get_mantissa
-    : public std::unary_function< leda_bigfloat, leda_integer > {
+    : public CGAL::unary_function< leda_bigfloat, leda_integer > {
     leda_integer operator()( const leda_bigfloat& x ) const {
       //std::cout << x.get_significant() << std::endl;
       return x.get_significant();                
@@ -73,7 +73,7 @@ public:
   };
         
   struct Get_exponent
-    : public std::unary_function< leda_bigfloat, long > {
+    : public CGAL::unary_function< leda_bigfloat, long > {
     long operator()( const leda_bigfloat& x ) const {
       return x.get_exponent().to_long();                
     }
@@ -97,14 +97,14 @@ class Float_traits< CORE::BigFloat > {
 public:
       
   struct Get_mantissa
-    : public std::unary_function< CORE::BigFloat, CORE::BigInt > {
+    : public CGAL::unary_function< CORE::BigFloat, CORE::BigInt > {
     CORE::BigInt operator()( const CORE::BigFloat& x ) const { 
       return x.m();
     }
   };
         
   struct Get_exponent
-    : public std::unary_function< CORE::BigFloat, long > {
+    : public CGAL::unary_function< CORE::BigFloat, long > {
     long operator()( const CORE::BigFloat& x ) const {
       return CORE::CHUNK_BIT*x.exp(); // The basis is 2^CORE::CHUNK_BIT
     }
@@ -126,7 +126,7 @@ public:
 template<> class Float_traits< Gmpfr > {
   
   struct Get_mantissa_exponent
-    : public std::unary_function< Gmpfr, std::pair<Gmpz,long> > {
+    : public CGAL::unary_function< Gmpfr, std::pair<Gmpz,long> > {
     
     std::pair<Gmpz,long> operator()( const Gmpfr& x ) const {
       return x.to_integer_exp(); 
@@ -134,14 +134,14 @@ template<> class Float_traits< Gmpfr > {
   };
 public:  
   struct Get_mantissa
-    : public std::unary_function< Gmpfr, Gmpz > {
+    : public CGAL::unary_function< Gmpfr, Gmpz > {
     Gmpz operator()( const Gmpfr& x ) const {
       return Get_mantissa_exponent()(x).first;      
     }
   };
   
   struct Get_exponent
-    : public std::unary_function< Gmpfr, long > {
+    : public CGAL::unary_function< Gmpfr, long > {
     long operator()( const Gmpfr& x ) const { 
       return Get_mantissa_exponent()(x).second;      
     }

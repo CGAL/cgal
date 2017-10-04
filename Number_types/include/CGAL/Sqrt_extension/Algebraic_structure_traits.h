@@ -41,7 +41,7 @@ class Sqrt_extension_algebraic_structure_traits_base< Type,
     typedef CGAL::Integral_domain_without_division_tag Algebraic_category;
 
     class Simplify
-      : public std::unary_function< Type&, void > {
+      : public CGAL::unary_function< Type&, void > {
       public:
         typedef void result_type;
         typedef Type& argument_type;
@@ -159,14 +159,14 @@ class Sqrt_extension_algebraic_structure_traits_base< Type,
     typedef Field_tag Algebraic_category;
 
     class Unit_part
-      : public std::unary_function< Type, Type > {
+      : public CGAL::unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
           return( x == Type(0) ? Type(1) : x );
         }
     };
   class Inverse
-    : public std::unary_function< Type, Type > {
+    : public CGAL::unary_function< Type, Type > {
   public:
     Type operator()( const Type& x ) const {
       return Type(1)/x ;

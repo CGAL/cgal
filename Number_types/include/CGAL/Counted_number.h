@@ -444,7 +444,7 @@ operator>=(Counted_number<NT> const &n1, Counted_number<NT> const &n2)
 
 template <class NT>
 class Is_valid< Counted_number<NT> >
-  : public std::unary_function< Counted_number<NT>, bool > {
+  : public CGAL::unary_function< Counted_number<NT>, bool > {
   public:
     bool operator()( const Counted_number<NT>& x ) {
       return is_valid( x.rep() );
@@ -514,7 +514,7 @@ namespace INTERN_COUNTED_NUMBER{
 
 template< class NT, class Functor >
 struct Simplify_selector {
-  struct Simplify : public std::unary_function<NT&, void> {
+  struct Simplify : public CGAL::unary_function<NT&, void> {
     void operator()( NT& x ) const {
       x.simplify();
     }
@@ -528,7 +528,7 @@ struct Simplify_selector< NT, Null_functor > {
 
 template< class NT, class Functor >
 struct Unit_part_selector {
-  struct Unit_part : public std::unary_function<NT, NT > {
+  struct Unit_part : public CGAL::unary_function<NT, NT > {
     NT operator()( const NT& x ) const {
       return x.unit_part();
     }
@@ -542,7 +542,7 @@ struct Unit_part_selector< NT, Null_functor > {
 
 template< class NT, class Functor >
 struct Is_zero_selector {
-  struct Is_zero : public std::unary_function<NT, bool > {
+  struct Is_zero : public CGAL::unary_function<NT, bool > {
     bool operator()( const NT& x ) const {
       return x.is_zero();
     }
@@ -556,7 +556,7 @@ struct Is_zero_selector< NT, Null_functor > {
 
 template< class NT, class Functor >
 struct Is_one_selector {
-  struct Is_one : public std::unary_function<NT, bool > {
+  struct Is_one : public CGAL::unary_function<NT, bool > {
     bool operator()( const NT& x ) const {
       return x.is_one();
     }
@@ -570,7 +570,7 @@ struct Is_one_selector< NT, Null_functor > {
 
 template< class NT, class Functor >
 struct Square_selector {
-  struct Square : public std::unary_function<NT, NT > {
+  struct Square : public CGAL::unary_function<NT, NT > {
     NT operator()( const NT& x ) const {
       return x.square();
     }
@@ -617,7 +617,7 @@ struct Is_square_selector< NT, Null_functor > {
 
 template <class NT, class AlgebraicStructureTag>
 struct Sqrt_selector{
-    struct Sqrt : public std::unary_function<NT,NT> {
+    struct Sqrt : public CGAL::unary_function<NT,NT> {
         NT operator ()(const NT& x) const {
             return x.sqrt();
         }
@@ -817,20 +817,20 @@ public:
     <Counted_number<NT>, typename RET_NT::Is_zero > ::Is_zero Is_zero;
 
     class Is_finite
-      : public std::unary_function< Counted_number<NT>, bool > {
+      : public CGAL::unary_function< Counted_number<NT>, bool > {
       public:
         bool operator()( const Counted_number<NT>& x ) const {
           return CGAL_NTS is_finite( x.rep() );
         }
     };
 
-    struct To_double : public std::unary_function< Counted_number<NT>, double > {
+    struct To_double : public CGAL::unary_function< Counted_number<NT>, double > {
         double operator()(const Counted_number<NT>& x) const {
             return x.to_double();
         }
     };
 
-    struct To_interval: public std::unary_function< Counted_number<NT>, std::pair<double,double> > {
+    struct To_interval: public CGAL::unary_function< Counted_number<NT>, std::pair<double,double> > {
         std::pair<double,double>
         operator()(const Counted_number<NT>& x) const {
             return x.to_interval();

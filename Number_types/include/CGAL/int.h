@@ -121,7 +121,7 @@ template <> class Real_embeddable_traits< long int >
 public:
 
     class To_interval
-      : public std::unary_function< Type, std::pair< double, double > > {
+      : public CGAL::unary_function< Type, std::pair< double, double > > {
       public:
         std::pair<double, double> operator()( const Type& x ) const {
           return Interval_nt<true>(x).pair();
@@ -281,7 +281,7 @@ template <> class Real_embeddable_traits< unsigned long >
 public:
 
     class To_interval
-      : public std::unary_function< Type, std::pair< double, double > > {
+      : public CGAL::unary_function< Type, std::pair< double, double > > {
       public:
         std::pair<double, double> operator()( const Type& x ) const {
           return Interval_nt<true>(x).pair();

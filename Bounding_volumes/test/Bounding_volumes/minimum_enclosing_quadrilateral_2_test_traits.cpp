@@ -144,7 +144,7 @@ struct MyTraits {
     }
   };
   struct Construct_vector_from_direction_2
-  : public std::unary_function<Direction_2,Vector_2>
+  : public CGAL::unary_function<Direction_2,Vector_2>
   {
     Vector_2 operator()(const Direction_2& d) const
     {
@@ -171,7 +171,7 @@ struct MyTraits {
     }
   };
   struct Construct_direction_2
-  : public std::unary_function<Vector_2,Direction_2>
+  : public CGAL::unary_function<Vector_2,Direction_2>
   {
     Direction_2 operator()(const Vector_2& v) const
     {
@@ -182,7 +182,7 @@ struct MyTraits {
     }
   };
   struct Construct_opposite_direction_2
-  : public std::unary_function<Direction_2,Direction_2>
+  : public CGAL::unary_function<Direction_2,Direction_2>
   {
     Direction_2 operator()(const Direction_2& d) const
     {

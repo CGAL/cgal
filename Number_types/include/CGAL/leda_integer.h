@@ -117,7 +117,7 @@ template <> class Algebraic_structure_traits< leda_integer >
 //     };
 
     class Sqrt
-      : public std::unary_function< Type, Type > {
+      : public CGAL::unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
           return CGAL_LEDA_SCOPE::sqrt( x );
@@ -130,7 +130,7 @@ template <> class Real_embeddable_traits< leda_integer >
   public:
   
     class Abs
-      : public std::unary_function< Type, Type > {
+      : public CGAL::unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
             return CGAL_LEDA_SCOPE::abs( x );
@@ -138,7 +138,7 @@ template <> class Real_embeddable_traits< leda_integer >
     };
 
     class Sgn
-      : public std::unary_function< Type, ::CGAL::Sign > {
+      : public CGAL::unary_function< Type, ::CGAL::Sign > {
       public:
         ::CGAL::Sign operator()( const Type& x ) const {
             return (::CGAL::Sign) CGAL_LEDA_SCOPE::sign( x );
@@ -157,7 +157,7 @@ template <> class Real_embeddable_traits< leda_integer >
     };
 
     class To_double
-      : public std::unary_function< Type, double > {
+      : public CGAL::unary_function< Type, double > {
       public:
         double operator()( const Type& x ) const {
           return x.to_double();
@@ -165,7 +165,7 @@ template <> class Real_embeddable_traits< leda_integer >
     };
 
     class To_interval
-      : public std::unary_function< Type, std::pair< double, double > > {
+      : public CGAL::unary_function< Type, std::pair< double, double > > {
       public:
       std::pair<double, double> operator()( const Type& x ) const {
         leda::bigfloat h(x);

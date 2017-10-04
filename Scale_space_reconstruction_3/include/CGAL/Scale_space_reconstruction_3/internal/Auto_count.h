@@ -39,7 +39,7 @@ namespace internal {
  */
 template < class T, class C = unsigned int >
 class Auto_count
-: public std::unary_function< const T&, std::pair< T, C > > {
+: public CGAL::unary_function< const T&, std::pair< T, C > > {
     mutable C i; // Note, not thread-safe.
 public:
 /// \name Constructors

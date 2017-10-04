@@ -87,7 +87,7 @@ class Polynomial_algebraic_structure_traits_base< POLY,
     typedef Integral_domain_without_division_tag Algebraic_category;
     
     class Simplify 
-      : public std::unary_function< POLY&, void > {
+      : public CGAL::unary_function< POLY&, void > {
       public:
         void operator()( POLY& p ) const {
           p.simplify_coefficients();
@@ -95,7 +95,7 @@ class Polynomial_algebraic_structure_traits_base< POLY,
     };
     
     class Unit_part 
-      : public std::unary_function< POLY, POLY > {
+      : public CGAL::unary_function< POLY, POLY > {
       public:
         POLY operator()( const POLY& x ) const {
           return POLY( x.unit_part() );
@@ -103,7 +103,7 @@ class Polynomial_algebraic_structure_traits_base< POLY,
     };
   
   class Is_zero
-    : public std::unary_function< POLY, bool > {
+    : public CGAL::unary_function< POLY, bool > {
   public:
     bool operator()( const POLY& x ) const {
       return x.is_zero();

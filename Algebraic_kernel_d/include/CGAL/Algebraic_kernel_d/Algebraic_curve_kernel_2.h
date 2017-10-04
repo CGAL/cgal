@@ -193,7 +193,7 @@ protected:
    
     //! polynomial canonicalizer, needed for the cache
     template <class Poly> 
-    struct Poly_canonicalizer : public std::unary_function< Poly, Poly >
+    struct Poly_canonicalizer : public CGAL::unary_function< Poly, Poly >
     {
     // use Polynomial_traits_d<>::Canonicalize ?
         Poly operator()(Poly p) 
@@ -349,7 +349,7 @@ public:
     // Composition of two unary functors
     template<typename InnerFunctor,typename OuterFunctor>
       class Unary_compose 
-      : public std::unary_function<typename InnerFunctor::argument_type,
+      : public CGAL::unary_function<typename InnerFunctor::argument_type,
                                    typename OuterFunctor::result_type> {
 				     
     public:
@@ -412,7 +412,7 @@ public:
      * when appropriate
      */
     class Construct_curve_2 :
-        public std::unary_function< Polynomial_2, Curve_analysis_2 > {
+        public CGAL::unary_function< Polynomial_2, Curve_analysis_2 > {
 
     public:
 
@@ -629,7 +629,7 @@ public:
 
     
     class Compute_polynomial_x_2 :
-      public std::unary_function<Algebraic_real_2, Polynomial_1> {
+      public CGAL::unary_function<Algebraic_real_2, Polynomial_1> {
 
     public:
 
@@ -649,7 +649,7 @@ public:
 			       compute_polynomial_x_2_object);
 
     class Compute_polynomial_y_2 :
-      public std::unary_function<Algebraic_real_2, Polynomial_1> {
+      public CGAL::unary_function<Algebraic_real_2, Polynomial_1> {
 
     public:
 
@@ -880,7 +880,7 @@ public:
             
     //! returns the x-coordinate of an \c Algebraic_real_2 object
     class Compute_x_2 :
-        public std::unary_function<Algebraic_real_2, Algebraic_real_1> {
+        public CGAL::unary_function<Algebraic_real_2, Algebraic_real_1> {
 
     public:
 
@@ -915,7 +915,7 @@ public:
      * return approximation of the y-coordinate. 
      */
     class Compute_y_2 :
-        public std::unary_function<Algebraic_real_2, Algebraic_real_1> {
+        public CGAL::unary_function<Algebraic_real_2, Algebraic_real_1> {
         
     public:
         
@@ -1500,7 +1500,7 @@ public:
      * the polynomial \c p is square free.
      */
     class Has_finite_number_of_self_intersections_2 :
-            public std::unary_function< Polynomial_2, bool > {
+            public CGAL::unary_function< Polynomial_2, bool > {
         
     public:
 
@@ -1713,7 +1713,7 @@ public:
     //! Non-Algebraic name
     typedef Algebraic_real_2 Coordinate_2;
 
-    class Is_square_free_2 : public std::unary_function<Polynomial_2,bool> {
+    class Is_square_free_2 : public CGAL::unary_function<Polynomial_2,bool> {
 
     public:
 
@@ -1735,7 +1735,7 @@ public:
     typedef Has_finite_number_of_intersections_2 Is_coprime_2;
     CGAL_Algebraic_Kernel_cons(Is_coprime_2, is_coprime_2_object);
 
-    class Make_square_free_2 : public std::unary_function<Polynomial_2,
+    class Make_square_free_2 : public CGAL::unary_function<Polynomial_2,
                                                           Polynomial_2> {
 
     public:
@@ -2593,7 +2593,7 @@ public:
 
     //! Refines the x-coordinate of an Algebraic_real_2 object
     class Refine_x_2 :
-        public std::unary_function<Algebraic_real_2, void> {
+        public CGAL::unary_function<Algebraic_real_2, void> {
 
     public:
         
@@ -2617,7 +2617,7 @@ public:
     CGAL_Algebraic_Kernel_pred(Refine_x_2, refine_x_2_object);
     
     class Refine_y_2 :
-        public std::unary_function<Algebraic_real_2, void> {
+        public CGAL::unary_function<Algebraic_real_2, void> {
 
     public:
 

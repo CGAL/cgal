@@ -2632,7 +2632,7 @@ namespace std {
 
   template <>
   struct hash<CGAL::SM_Halfedge_index >
-    : public std::unary_function<CGAL::SM_Halfedge_index, std::size_t> {
+    : public CGAL::unary_function<CGAL::SM_Halfedge_index, std::size_t> {
 
     std::size_t operator()(const CGAL::SM_Halfedge_index& i) const
     {
@@ -2642,7 +2642,7 @@ namespace std {
 
   template <>
   struct hash<CGAL::SM_Vertex_index >
-    : public std::unary_function<CGAL::SM_Vertex_index, std::size_t>  {
+    : public CGAL::unary_function<CGAL::SM_Vertex_index, std::size_t>  {
 
     std::size_t operator()(const CGAL::SM_Vertex_index& i) const
     {
@@ -2652,7 +2652,7 @@ namespace std {
 
   template <>
   struct hash<CGAL::SM_Face_index > 
-    : public std::unary_function<CGAL::SM_Face_index, std::size_t> {
+    : public CGAL::unary_function<CGAL::SM_Face_index, std::size_t> {
 
     std::size_t operator()(const CGAL::SM_Face_index& i) const
     {
@@ -2662,7 +2662,7 @@ namespace std {
 
   template <>
   struct hash<CGAL::SM_Edge_index >
-    : public std::unary_function<CGAL::SM_Edge_index, std::size_t>  {
+    : public CGAL::unary_function<CGAL::SM_Edge_index, std::size_t>  {
 
     std::size_t operator()(const CGAL::SM_Edge_index& i) const
     {

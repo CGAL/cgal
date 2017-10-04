@@ -401,7 +401,7 @@ operator>=(int i, const Number_type_checker<NT1, NT2, Cmp> &b)
 
 template < typename NT1, typename NT2, typename Cmp >
 class Is_valid< Number_type_checker<NT1, NT2, Cmp> >
-    : public std::unary_function< Number_type_checker<NT1, NT2, Cmp> , bool > {
+    : public CGAL::unary_function< Number_type_checker<NT1, NT2, Cmp> , bool > {
 public :
     bool operator()(const  Number_type_checker<NT1, NT2, Cmp>& a ) const {
         bool b1 = is_valid(a.n1());
@@ -434,7 +434,7 @@ private:
 public:
     //CGAL::Algebraic_structure_traits<>::Simplify
     class Simplify
-        : public std::unary_function< Type& , void > {
+        : public CGAL::unary_function< Type& , void > {
     public:
         void operator()( Type& a) const {
             typename AST1::Simplify()(a.n1());
@@ -445,7 +445,7 @@ public:
 
     //CGAL::Algebraic_structure_traits< >::Is_zero
     class Is_zero
-        : public std::unary_function< Type, bool > {
+        : public CGAL::unary_function< Type, bool > {
     public:
         bool operator()(const  Type& a ) const {
             bool b1 = typename AST1::Is_zero()(a.n1());
@@ -457,7 +457,7 @@ public:
 
     // CGAL::Algebraic_structure_traits< >::Is_one
     class Is_one
-        : public std::unary_function< Type, bool > {
+        : public CGAL::unary_function< Type, bool > {
     public:
         bool operator()(const Type& a) const {
             bool b1 = typename AST1::Is_one()(a.n1());
@@ -468,7 +468,7 @@ public:
     };
     // CGAL::Algebraic_structure_traits<  >::Square
     class Square
-        : public std::unary_function< Type , Type > {
+        : public CGAL::unary_function< Type , Type > {
     public:
         Type operator()(const Type& a) const {
             return Type(
@@ -480,7 +480,7 @@ public:
 
     // CGAL::Algebraic_structure_traits<  >::Unit_part
     class Unit_part
-        : public std::unary_function< Type , Type > {
+        : public CGAL::unary_function< Type , Type > {
     public:
         Type operator()(const Type& a) const {
             CGAL_NT_CHECK_DEBUG("AST::Unit_part");
@@ -649,7 +649,7 @@ private:
   typedef Number_type_checker<NT1, NT2, Cmp> Type;
 public:  
   class Inverse
-    : public std::unary_function< Type, Type > {
+    : public CGAL::unary_function< Type, Type > {
   public:
     Type operator()( const Type& a ) const {
       NT1 r1 = typename AST1::Inverse()(a.n1());
@@ -676,7 +676,7 @@ public:
 
     // CGAL::Algebraic_structure_traits<  >::Sqrt
     class Sqrt
-        : public std::unary_function< Type , Type > {
+        : public CGAL::unary_function< Type , Type > {
     public:
         Type operator()(const Type& a) const {
             CGAL_NT_CHECK_DEBUG("AST::Sqrt");
@@ -725,7 +725,7 @@ public:
 
     // CGAL::Real_embeddable_traits<  >::Abs
     class Abs
-        : public std::unary_function< Type , Type > {
+        : public CGAL::unary_function< Type , Type > {
     public:
         Type operator()(const Type& a) const {
             CGAL_NT_CHECK_DEBUG("RET::Abs");
@@ -737,7 +737,7 @@ public:
 
     // CGAL::Real_embeddable_traits<  >::Sign
     class Sgn
-        : public std::unary_function< Type , ::CGAL::Sign > {
+        : public CGAL::unary_function< Type , ::CGAL::Sign > {
     public:
         ::CGAL::Sign operator()(const Type& a) const {
             CGAL_NT_CHECK_DEBUG("RET::Sign");
@@ -749,7 +749,7 @@ public:
 
     // CGAL::Real_embeddable_traits<  >::Is_finite
     class Is_finite
-        : public std::unary_function< Type , bool > {
+        : public CGAL::unary_function< Type , bool > {
     public:
         bool operator()(const Type& a) const {
             CGAL_NT_CHECK_DEBUG("RET::Is_finite");
@@ -761,7 +761,7 @@ public:
 
     // CGAL::Real_embeddable_traits<  >::Is_positive
     class Is_positive
-        : public std::unary_function< Type , bool > {
+        : public CGAL::unary_function< Type , bool > {
     public:
         bool operator()(const Type& a) const {
             CGAL_NT_CHECK_DEBUG("RET::Is_positive");
@@ -773,7 +773,7 @@ public:
 
     // CGAL::Real_embeddable_traits<  >::Is_negative
     class Is_negative
-        : public std::unary_function< Type , bool > {
+        : public CGAL::unary_function< Type , bool > {
     public:
         bool operator()(const Type& a) const {
             CGAL_NT_CHECK_DEBUG("RET::Is_negative");
@@ -785,7 +785,7 @@ public:
 
     // CGAL::Real_embeddable_traits<  >::Is_zero
     class Is_zero
-        : public std::unary_function< Type , bool > {
+        : public CGAL::unary_function< Type , bool > {
     public:
         bool operator()(const Type& a) const {
             CGAL_NT_CHECK_DEBUG("RET::Is_zero");
@@ -809,7 +809,7 @@ public:
 
     // CGAL::Real_embeddable_traits<  >::To_double
     class To_double
-        : public std::unary_function< Type , double > {
+        : public CGAL::unary_function< Type , double > {
     public:
         double operator()(const Type& a) const {
             CGAL_NT_CHECK_DEBUG("RET::To_double");
@@ -821,7 +821,7 @@ public:
 
     // CGAL::Real_embeddable_traits<  >::To_interval
     class To_interval
-        : public std::unary_function< Type , std::pair<double, double> > {
+        : public CGAL::unary_function< Type , std::pair<double, double> > {
     public:
         std::pair<double, double> operator()(const Type& a) const {
             CGAL_NT_CHECK_DEBUG("RET::To_interval");

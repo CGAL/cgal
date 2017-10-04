@@ -127,7 +127,7 @@ namespace CGAL {
 
   // non documented class
   template <typename FT, typename Point>
-  class Implicit_function_wrapper : public std::unary_function<Point, FT> 
+  class Implicit_function_wrapper : public CGAL::unary_function<Point, FT> 
   {
     typedef FT (*Implicit_function)(FT, FT, FT);
 

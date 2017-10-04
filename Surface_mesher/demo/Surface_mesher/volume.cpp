@@ -36,7 +36,7 @@
 #include <CGAL/make_surface_mesh.h>
 #include <CGAL/Qt/debug.h>
 
-struct Threshold : public std::unary_function<FT, unsigned char> {
+struct Threshold : public CGAL::unary_function<FT, unsigned char> {
   double isovalue;
   bool is_identity;
 
@@ -54,7 +54,7 @@ struct Threshold : public std::unary_function<FT, unsigned char> {
 };
 
 class Classify_from_isovalue_list :
-  public std::unary_function<FT, unsigned char> 
+  public CGAL::unary_function<FT, unsigned char> 
 {
   typedef std::pair<FT, result_type> Isovalue;
   typedef std::vector<Isovalue> Isovalues;
@@ -137,7 +137,7 @@ public:
 };
 
 // class Classify_from_isovalue_list :
-//   public std::unary_function<FT, const QTreeWidgetItem*> 
+//   public CGAL::unary_function<FT, const QTreeWidgetItem*> 
 // {
 //   typedef std::pair<FT, result_type> Isovalue;
 //   typedef std::vector<Isovalue> Isovalues;

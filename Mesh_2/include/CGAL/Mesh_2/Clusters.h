@@ -117,7 +117,7 @@ private:
   typedef typename Cluster_map::value_type Cluster_map_value_type;
 
   template <class Pair>
-  struct Pair_get_first: public std::unary_function<Pair,
+  struct Pair_get_first: public CGAL::unary_function<Pair,
                                                     typename Pair::first_type>
   {
     typedef typename Pair::first_type result;

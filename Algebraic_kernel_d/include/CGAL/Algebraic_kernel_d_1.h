@@ -68,12 +68,12 @@ protected:
 
   // Some functors used for STL calls
   template<typename A,typename B>
-    struct Pair_first : public std::unary_function<std::pair<A,B>,A> {
+    struct Pair_first : public CGAL::unary_function<std::pair<A,B>,A> {
       A operator() (std::pair<A,B> pair) const { return pair.first; }
   };
 
   template<typename A,typename B>
-    struct Pair_second : public std::unary_function<std::pair<A,B>,B> {
+    struct Pair_second : public CGAL::unary_function<std::pair<A,B>,B> {
       B operator() (std::pair<A,B> pair) const { return pair.second; }
   };
   
@@ -96,21 +96,21 @@ public:
     };
                                 
     struct Lower_bound
-      : public std::unary_function< Type, Bound > {
+      : public CGAL::unary_function< Type, Bound > {
       Bound operator()( const Type& t ) const {
         return t.low();
       }
     };
                 
     struct Upper_bound
-      : public std::unary_function< Type, Bound > {
+      : public CGAL::unary_function< Type, Bound > {
       Bound operator()( const Type& t ) const {
         return t.high();
       }
     };
                 
     struct Refine
-      : public std::unary_function< Type, void > {
+      : public CGAL::unary_function< Type, void > {
       void operator()( const Type& t ) const {
         t.refine();
       }
@@ -333,7 +333,7 @@ public:
   };
 
   class Number_of_solutions_1 
-      : public std::unary_function<Polynomial_1,size_type> {
+      : public CGAL::unary_function<Polynomial_1,size_type> {
     
     public:
 	
@@ -382,7 +382,7 @@ public:
   };                
                    
   struct Is_square_free_1 
-    : public std::unary_function< Polynomial_1, bool > {
+    : public CGAL::unary_function< Polynomial_1, bool > {
     bool operator()( const Polynomial_1& p ) const {
       typename CGAL::Polynomial_traits_d< Polynomial_1 >::Is_square_free isf;
       return isf(p);
@@ -400,7 +400,7 @@ public:
   }; 
             
   struct Make_square_free_1
-    : public std::unary_function< Polynomial_1, Polynomial_1 > {
+    : public CGAL::unary_function< Polynomial_1, Polynomial_1 > {
     Polynomial_1 operator()( const Polynomial_1& p ) const {
       return typename CGAL::Polynomial_traits_d< Polynomial_1 >::Make_square_free()( p );
     }
@@ -435,7 +435,7 @@ public:
     } 
   };
 
-  struct Compute_polynomial_1 : public std::unary_function<Algebraic_real_1,
+  struct Compute_polynomial_1 : public CGAL::unary_function<Algebraic_real_1,
                                                            Polynomial_1> {
     Polynomial_1 operator()(const Algebraic_real_1& x) const {
       return x.polynomial();

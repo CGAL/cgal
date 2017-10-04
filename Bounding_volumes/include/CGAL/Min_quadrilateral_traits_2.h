@@ -256,7 +256,7 @@ public:
 
   // new constructions
   struct Construct_vector_from_direction_2
-  : public std::unary_function<Direction_2,Vector_2>
+  : public CGAL::unary_function<Direction_2,Vector_2>
   {
     Vector_2 operator()(const Direction_2& d) const { return d.vector(); }
   };

@@ -40,7 +40,7 @@ typedef unspecified_type Scale;
 
 /*!
 function object class derived from 
-`std::unary_function<Point_2, FT>` 
+`CGAL::unary_function<Point_2, FT>` 
 */ 
 typedef unspecified_type Max_coordinate; 
 

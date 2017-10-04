@@ -36,7 +36,7 @@ public:
     typedef Tag_true            Is_exact;
 
     struct Is_zero
-        : public std::unary_function< Type, bool > {
+        : public CGAL::unary_function< Type, bool > {
     public:
         bool operator()( const Type& x ) const {
             return x.is_zero();
@@ -103,7 +103,7 @@ public:
   typedef AST::Is_zero Is_zero;
   
     struct Sgn
-        : public std::unary_function< Type, ::CGAL::Sign > {
+        : public CGAL::unary_function< Type, ::CGAL::Sign > {
     public:
         ::CGAL::Sign operator()( const Type& x ) const {
             return x.sign();
@@ -123,7 +123,7 @@ public:
     };
 
     struct To_double
-        : public std::unary_function< Type, double > {
+        : public CGAL::unary_function< Type, double > {
     public:
         double operator()( const Type& x ) const {
             return x.to_double();
@@ -131,7 +131,7 @@ public:
     };
 
     struct To_interval
-        : public std::unary_function< Type, std::pair< double, double > > {
+        : public CGAL::unary_function< Type, std::pair< double, double > > {
     public:
         std::pair<double, double> operator()( const Type& x ) const {
 	    return x.to_interval();
@@ -146,7 +146,7 @@ class Real_embeddable_traits< Quotient<Gmpzf> >
 INTERN_QUOTIENT::Real_embeddable_traits_quotient_base< Quotient<Gmpzf> >
 {
 public:
-    struct To_double: public std::unary_function<Quotient<Gmpzf>, double>{
+    struct To_double: public CGAL::unary_function<Quotient<Gmpzf>, double>{
         inline
         double operator()(const Quotient<Gmpzf>& q) const {
 	  std::pair<double, long> n = q.numerator().to_double_exp();
@@ -157,7 +157,7 @@ public:
 	}
     };
     struct To_interval
-        : public std::unary_function<Quotient<Gmpzf>, std::pair<double,double> >{
+        : public CGAL::unary_function<Quotient<Gmpzf>, std::pair<double,double> >{
         inline
         std::pair<double,double> operator()(const Quotient<Gmpzf>& q) const {
 	  // do here as MP_Float does

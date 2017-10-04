@@ -445,7 +445,7 @@ relative_precision(const Interval_nt<Protected> & d)
 
 template< bool Protected >
 class Is_valid< Interval_nt<Protected> >
-  : public std::unary_function< Interval_nt<Protected>, bool > {
+  : public CGAL::unary_function< Interval_nt<Protected>, bool > {
   public :
     bool operator()( const Interval_nt<Protected>& x ) const {
       return is_valid(x.inf()) &&
@@ -959,7 +959,7 @@ template< bool B > class Real_embeddable_traits< Interval_nt<B> >
   typedef Uncertain<CGAL::Comparison_result> Comparison_result; 
 
     class Abs
-      : public std::unary_function< Type, Type > {
+      : public CGAL::unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
             return INTERN_INTERVAL_NT::abs( x );
@@ -967,7 +967,7 @@ template< bool B > class Real_embeddable_traits< Interval_nt<B> >
     };
 
     class Sgn
-        : public std::unary_function< Type, Uncertain< ::CGAL::Sign > > {
+        : public CGAL::unary_function< Type, Uncertain< ::CGAL::Sign > > {
       public:
         Uncertain< ::CGAL::Sign > operator()( const Type& x ) const {
             return INTERN_INTERVAL_NT::sign( x );
@@ -975,7 +975,7 @@ template< bool B > class Real_embeddable_traits< Interval_nt<B> >
     };
 
     class Is_positive
-      : public std::unary_function< Type, Uncertain<bool> > {
+      : public CGAL::unary_function< Type, Uncertain<bool> > {
       public:
         Uncertain<bool> operator()( const Type& x ) const {
           return INTERN_INTERVAL_NT::is_positive( x );
@@ -983,7 +983,7 @@ template< bool B > class Real_embeddable_traits< Interval_nt<B> >
     };
 
     class Is_negative
-      : public std::unary_function< Type, Uncertain<bool> > {
+      : public CGAL::unary_function< Type, Uncertain<bool> > {
       public:
         Uncertain<bool> operator()( const Type& x ) const {
           return INTERN_INTERVAL_NT::is_negative( x );
@@ -1001,7 +1001,7 @@ template< bool B > class Real_embeddable_traits< Interval_nt<B> >
     };
 
     class To_double
-      : public std::unary_function< Type, double > {
+      : public CGAL::unary_function< Type, double > {
       public:
         double operator()( const Type& x ) const {
             return INTERN_INTERVAL_NT::to_double( x );
@@ -1009,7 +1009,7 @@ template< bool B > class Real_embeddable_traits< Interval_nt<B> >
     };
 
     class To_interval
-      : public std::unary_function< Type, std::pair< double, double > > {
+      : public CGAL::unary_function< Type, std::pair< double, double > > {
       public:
         std::pair<double, double> operator()( const Type& x ) const {
             return INTERN_INTERVAL_NT::to_interval( x );
@@ -1017,7 +1017,7 @@ template< bool B > class Real_embeddable_traits< Interval_nt<B> >
     };
 
     class Is_finite
-      : public std::unary_function< Type, Boolean > {
+      : public CGAL::unary_function< Type, Boolean > {
       public :
         Boolean operator()( const Type& x ) const {
           return CGAL_NTS is_finite( x.inf() ) && CGAL_NTS is_finite( x.sup() );
@@ -1038,7 +1038,7 @@ class Algebraic_structure_traits< Interval_nt<B> >
     typedef Uncertain<bool>     Boolean; 
 
     class Is_zero
-      : public std::unary_function< Type, Boolean > {
+      : public CGAL::unary_function< Type, Boolean > {
       public:
         Boolean operator()( const Type& x ) const {
           return INTERN_INTERVAL_NT::is_zero( x );
@@ -1046,7 +1046,7 @@ class Algebraic_structure_traits< Interval_nt<B> >
     };
 
     class Is_one
-      : public std::unary_function< Type, Boolean > {
+      : public CGAL::unary_function< Type, Boolean > {
       public:
         Boolean operator()( const Type& x ) const {
           return INTERN_INTERVAL_NT::is_one( x );
@@ -1054,7 +1054,7 @@ class Algebraic_structure_traits< Interval_nt<B> >
     };
 
     class Square
-      : public std::unary_function< Type, Type > {
+      : public CGAL::unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
           return INTERN_INTERVAL_NT::square( x );
@@ -1062,7 +1062,7 @@ class Algebraic_structure_traits< Interval_nt<B> >
     };
 
     class Sqrt
-      : public std::unary_function< Type, Type > {
+      : public CGAL::unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
           return INTERN_INTERVAL_NT::sqrt( x );
@@ -1161,43 +1161,43 @@ public:
     }
   };
 
-  struct Lower :public std::unary_function<Interval,Bound>{
+  struct Lower :public CGAL::unary_function<Interval,Bound>{
     Bound operator()( const Interval& a ) const {
       return a.inf();
     }
   };
 
-  struct Upper :public std::unary_function<Interval,Bound>{
+  struct Upper :public CGAL::unary_function<Interval,Bound>{
     Bound operator()( const Interval& a ) const {
       return a.sup();
     }
   };
 
-  struct Width :public std::unary_function<Interval,Bound>{
+  struct Width :public CGAL::unary_function<Interval,Bound>{
     Bound operator()( const Interval& a ) const {
       return width(a); 
     }
   };
 
-  struct Median :public std::unary_function<Interval,Bound>{
+  struct Median :public CGAL::unary_function<Interval,Bound>{
     Bound operator()( const Interval& a ) const {
       return (Lower()(a)+Upper()(a))/2.0;
     }
   };
     
-  struct Norm :public std::unary_function<Interval,Bound>{
+  struct Norm :public CGAL::unary_function<Interval,Bound>{
     Bound operator()( const Interval& a ) const {
       return magnitude(a);
     }
   };
 
-  struct Singleton :public std::unary_function<Interval,bool>{
+  struct Singleton :public CGAL::unary_function<Interval,bool>{
     bool operator()( const Interval& a ) const {
       return Lower()(a) == Upper()(a);
     }
   };
 
-  struct Zero_in :public std::unary_function<Interval,bool>{
+  struct Zero_in :public CGAL::unary_function<Interval,bool>{
     bool operator()( const Interval& a ) const {
       return Lower()(a) <= 0  &&  0 <= Upper()(a);
     }

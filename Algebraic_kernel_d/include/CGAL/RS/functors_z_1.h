@@ -68,7 +68,7 @@ struct Construct_algebraic_real_z_1{
 
 template <class Polynomial_,class Algebraic_>
 struct Compute_polynomial_z_1:
-public std::unary_function<Algebraic_,Polynomial_>{
+public CGAL::unary_function<Algebraic_,Polynomial_>{
         typedef Polynomial_                                     Polynomial;
         typedef Algebraic_                                      Algebraic;
         Polynomial operator()(const Algebraic &x)const{
@@ -482,7 +482,7 @@ template <class Polynomial_,
           class PolConverter_,
           class Isolator_>
 struct Number_of_solutions_z_1:
-public std::unary_function<Polynomial_,int>{
+public CGAL::unary_function<Polynomial_,int>{
         typedef Polynomial_                                     Polynomial_1;
         typedef ZPolynomial_                                    ZPolynomial_1;
         typedef PolConverter_                                   PolConverter;

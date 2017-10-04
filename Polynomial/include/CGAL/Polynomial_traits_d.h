@@ -119,7 +119,7 @@ public:
 
  
  struct Multivariate_content
-    : public std::unary_function< Polynomial_d , Innermost_coefficient_type >{
+    : public CGAL::unary_function< Polynomial_d , Innermost_coefficient_type >{
     Innermost_coefficient_type 
     operator()(const Polynomial_d& p) const {
       typedef Innermost_coefficient_const_iterator IT;
@@ -152,7 +152,7 @@ public:
     
   //       Multivariate_content;
   struct Multivariate_content
-    : public std::unary_function< Polynomial_d , Innermost_coefficient_type >{
+    : public CGAL::unary_function< Polynomial_d , Innermost_coefficient_type >{
     Innermost_coefficient_type operator()(const Polynomial_d& p) const {
       if( CGAL::is_zero(p) )
         return Innermost_coefficient_type(0);
@@ -213,7 +213,7 @@ public:
     
   //       Univariate_content
   struct Univariate_content
-    : public std::unary_function< Polynomial_d , Coefficient_type>{
+    : public CGAL::unary_function< Polynomial_d , Coefficient_type>{
     Coefficient_type operator()(const Polynomial_d& p) const {
       return p.content();
     }
@@ -283,11 +283,11 @@ public:
   typedef ICoeff Innermost_coefficient_type;
     
   struct Degree 
-    : public std::unary_function< ICoeff , int > {
+    : public CGAL::unary_function< ICoeff , int > {
     int operator()(const ICoeff&) const { return 0; }
   };
   struct Total_degree 
-    : public std::unary_function< ICoeff , int > {
+    : public CGAL::unary_function< ICoeff , int > {
     int operator()(const ICoeff&) const { return 0; }
   };
     
@@ -305,14 +305,14 @@ public:
   typedef Null_functor  Differentiate;
     
   struct Is_square_free
-    : public std::unary_function< ICoeff, bool > {
+    : public CGAL::unary_function< ICoeff, bool > {
     bool operator()( const ICoeff& ) const {
       return true;
     }
   };
     
   struct Make_square_free 
-    : public std::unary_function< ICoeff, ICoeff>{
+    : public CGAL::unary_function< ICoeff, ICoeff>{
     ICoeff operator()( const ICoeff& x ) const {
       if (CGAL::is_zero(x)) return x ;
       else  return ICoeff(1);
@@ -337,7 +337,7 @@ public:
   typedef Null_functor Integral_division_up_to_constant_factor;
 
   struct Univariate_content_up_to_constant_factor
-    : public std::unary_function< ICoeff, ICoeff >{
+    : public CGAL::unary_function< ICoeff, ICoeff >{
     ICoeff operator()(const ICoeff& ) const {
       // TODO: Why not return 0 if argument is 0 ? 
       return ICoeff(1);
@@ -350,7 +350,7 @@ public:
   typedef Null_functor  Evaluate_homogeneous;
     
   struct Innermost_leading_coefficient
-    :public std::unary_function <ICoeff, ICoeff>{
+    :public CGAL::unary_function <ICoeff, ICoeff>{
     const ICoeff& operator()(const ICoeff& x){return x;}
   };
     
@@ -830,7 +830,7 @@ public:
   typedef CGAL::internal::Degree<Polynomial_d> Degree; 
 
   //       Total_degree;
-  struct Total_degree : public std::unary_function< Polynomial_d , int >{
+  struct Total_degree : public CGAL::unary_function< Polynomial_d , int >{
     int operator()(const Polynomial_d& p) const {
       typedef Polynomial_traits_d<Coefficient_type> COEFF_POLY_TRAITS;
       typename COEFF_POLY_TRAITS::Total_degree total_degree;
@@ -848,7 +848,7 @@ public:
 
   //       Leading_coefficient;
   struct Leading_coefficient 
-    : public std::unary_function< Polynomial_d , Coefficient_type>{
+    : public CGAL::unary_function< Polynomial_d , Coefficient_type>{
     const Coefficient_type& operator()(const Polynomial_d& p) const {
       return p.lcoeff();
     }
@@ -856,7 +856,7 @@ public:
     
   //       Innermost_leading_coefficient;
   struct Innermost_leading_coefficient 
-    : public std::unary_function< Polynomial_d , Innermost_coefficient_type>{
+    : public CGAL::unary_function< Polynomial_d , Innermost_coefficient_type>{
     const Innermost_coefficient_type& 
     operator()(const Polynomial_d& p) const {
       typename PTC::Innermost_leading_coefficient ilcoeff;
@@ -868,7 +868,7 @@ public:
   
   //return a canonical representative of all constant multiples. 
   struct Canonicalize
-    : public std::unary_function<Polynomial_d, Polynomial_d>{
+    : public CGAL::unary_function<Polynomial_d, Polynomial_d>{
  
   private: 
     inline Polynomial_d canonicalize_(Polynomial_d p, CGAL::Tag_true) const 
@@ -910,7 +910,7 @@ public:
 
   //       Differentiate;
   struct Differentiate 
-    : public std::unary_function<Polynomial_d, Polynomial_d>{
+    : public CGAL::unary_function<Polynomial_d, Polynomial_d>{
     Polynomial_d
     operator()(Polynomial_d p, int i = (d-1)) const {
       if (i == (d-1) ){
@@ -1044,7 +1044,7 @@ public:
  
 
 struct Construct_coefficient_const_iterator_range                                       
-     : public std::unary_function< Polynomial_d, 
+     : public CGAL::unary_function< Polynomial_d, 
                                   Coefficient_const_iterator_range> {
     Coefficient_const_iterator_range      
     operator () (const Polynomial_d& p) const {                                      
@@ -1053,7 +1053,7 @@ struct Construct_coefficient_const_iterator_range
 };        
                                        
 struct Construct_innermost_coefficient_const_iterator_range                                       
-   : public std::unary_function< Polynomial_d, 
+   : public CGAL::unary_function< Polynomial_d, 
                                  Innermost_coefficient_const_iterator_range> {
    Innermost_coefficient_const_iterator_range      
    operator () (const Polynomial_d& p) const {                                      
@@ -1064,7 +1064,7 @@ struct Construct_innermost_coefficient_const_iterator_range
 };                           
   
   struct Is_square_free 
-    : public std::unary_function< Polynomial_d, bool >{
+    : public CGAL::unary_function< Polynomial_d, bool >{
     bool operator()( const Polynomial_d& p ) const {
       if( !internal::may_have_multiple_factor( p ) )
         return true;
@@ -1089,7 +1089,7 @@ struct Construct_innermost_coefficient_const_iterator_range
 
                    
   struct Make_square_free 
-    : public std::unary_function< Polynomial_d, Polynomial_d >{
+    : public CGAL::unary_function< Polynomial_d, Polynomial_d >{
     Polynomial_d
     operator()(const Polynomial_d& p) const {
       if (CGAL::is_zero(p)) return p;
@@ -1194,7 +1194,7 @@ struct Construct_innermost_coefficient_const_iterator_range
   };
     
   struct Univariate_content_up_to_constant_factor
-    :public std::unary_function<Polynomial_d, Coefficient_type> {
+    :public CGAL::unary_function<Polynomial_d, Coefficient_type> {
     Coefficient_type
     operator()(const Polynomial_d& p) const {
       typename PTC::Gcd_up_to_constant_factor gcd_utcf;
@@ -1287,7 +1287,7 @@ struct Construct_innermost_coefficient_const_iterator_range
   };
     
   struct Negate
-    : public std::unary_function< Polynomial_d, Polynomial_d >{
+    : public CGAL::unary_function< Polynomial_d, Polynomial_d >{
         
     Polynomial_d operator()(const Polynomial_d& p, int i = (d-1)) const {
       Construct_polynomial construct; 
@@ -1305,7 +1305,7 @@ struct Construct_innermost_coefficient_const_iterator_range
   };
 
   struct Invert
-    : public std::unary_function< Polynomial_d , Polynomial_d >{
+    : public CGAL::unary_function< Polynomial_d , Polynomial_d >{
     Polynomial_d operator()(Polynomial_d p, int i = (PT::d-1)) const {
       if (i == (d-1)){
         p.reversal(); 

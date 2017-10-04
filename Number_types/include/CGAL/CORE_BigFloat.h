@@ -45,7 +45,7 @@ public:
     typedef CGAL::Tag_true Is_bigfloat_interval; 
   
  
-    struct Lower :public std::unary_function<Interval,Bound>{
+    struct Lower :public CGAL::unary_function<Interval,Bound>{
         Bound operator() ( Interval x ) const {   
             CORE::BigFloat result = ::CORE::BigFloat(x.m()-x.err(),0,x.exp());
             CGAL_postcondition(result <= x);
@@ -53,7 +53,7 @@ public:
         }
     };
     
-    struct Upper :public std::unary_function<Interval,Bound>{
+    struct Upper :public CGAL::unary_function<Interval,Bound>{
         Bound operator() ( Interval x ) const {     
             CORE::BigFloat result = ::CORE::BigFloat(x.m()+x.err(),0,x.exp());
             CGAL_postcondition(result >= x);
@@ -61,7 +61,7 @@ public:
         }
     };
 
-    struct Width :public std::unary_function<Interval,Bound>{
+    struct Width :public CGAL::unary_function<Interval,Bound>{
          
         Bound operator() ( Interval x ) const {    
             unsigned long err = 2*x.err();
@@ -69,21 +69,21 @@ public:
         }
     };
 
-    struct Median :public std::unary_function<Interval,Bound>{
+    struct Median :public CGAL::unary_function<Interval,Bound>{
          
         Bound operator() ( Interval x ) const {   
             return Bound(x.m(),0,x.exp());
         }
     };
 
-    struct Norm :public std::unary_function<Interval,Bound>{
+    struct Norm :public CGAL::unary_function<Interval,Bound>{
         Bound operator() ( Interval x ) const {
           BOOST_USING_STD_MAX();
           return max BOOST_PREVENT_MACRO_SUBSTITUTION (Upper()(x).abs(),Lower()(x).abs());
         }
     };
     
-    struct Zero_in :public std::unary_function<Interval,bool>{
+    struct Zero_in :public CGAL::unary_function<Interval,bool>{
         bool operator() ( Interval x ) const {      
             return x.isZeroIn(); 
         }
@@ -228,7 +228,7 @@ public:
         }
     };
 
-    struct Singleton :public std::unary_function<Interval,bool> {
+    struct Singleton :public CGAL::unary_function<Interval,bool> {
         bool operator() ( Interval x ) const {       
             return (x.err() == 0); 
         }
@@ -375,7 +375,7 @@ template <> class Algebraic_structure_traits< CORE::BigFloat >
     typedef Tag_true           Is_numerical_sensitive;
 
     class Sqrt
-      : public std::unary_function< Type, Type > {
+      : public CGAL::unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
             // What I want is a sqrt computed with 
@@ -428,7 +428,7 @@ template <> class Real_embeddable_traits< CORE::BigFloat >
   : public INTERN_RET::Real_embeddable_traits_base< CORE::BigFloat , CGAL::Tag_true  > {
   public:
     class Abs
-      : public std::unary_function< Type, Type > {
+      : public CGAL::unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
             Type result; 
@@ -461,7 +461,7 @@ template <> class Real_embeddable_traits< CORE::BigFloat >
     };
 
     class Sgn
-      : public std::unary_function< Type, ::CGAL::Sign > {
+      : public CGAL::unary_function< Type, ::CGAL::Sign > {
       public:
         ::CGAL::Sign operator()( const Type& x ) const {
             ::CGAL::Sign result =  sign( x.sign());
@@ -482,7 +482,7 @@ template <> class Real_embeddable_traits< CORE::BigFloat >
     };
 
     class To_double
-      : public std::unary_function< Type, double > {
+      : public CGAL::unary_function< Type, double > {
       public:
         double operator()( const Type& x ) const {
           // this call is required to get reasonable values for the double
@@ -492,7 +492,7 @@ template <> class Real_embeddable_traits< CORE::BigFloat >
     };
 
     class To_interval
-      : public std::unary_function< Type, std::pair< double, double > > {
+      : public CGAL::unary_function< Type, std::pair< double, double > > {
     public:
         std::pair<double, double> operator()( const Type& x ) const {
                         

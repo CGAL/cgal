@@ -66,7 +66,7 @@ class Quick_multiscale_approximate_knn_distance<Kernel, typename Kernel::Point_3
   typedef typename Neighbor_search::iterator Iterator;
 
   template <typename ValueType, typename PointPMap>
-  struct Pmap_unary_function : public std::unary_function<ValueType, typename Kernel::Point_3>
+  struct Pmap_unary_function : public CGAL::unary_function<ValueType, typename Kernel::Point_3>
   {
     PointPMap point_pmap;
     Pmap_unary_function (PointPMap point_pmap) : point_pmap (point_pmap) { }
@@ -222,7 +222,7 @@ class Quick_multiscale_approximate_knn_distance<Kernel, typename Kernel::Point_2
   typedef typename Point_set::Vertex_handle Vertex_handle;
 
   template <typename ValueType, typename PointPMap>
-  struct Pmap_unary_function : public std::unary_function<ValueType, typename Kernel::Point_2>
+  struct Pmap_unary_function : public CGAL::unary_function<ValueType, typename Kernel::Point_2>
   {
     PointPMap point_pmap;
     Pmap_unary_function (PointPMap point_pmap) : point_pmap (point_pmap) { }

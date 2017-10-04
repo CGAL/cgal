@@ -45,7 +45,7 @@ struct Random_convex_set_traits_2 : public Kernel {
   { return _origin; }
 
   struct Max_coordinate
-  : public std::unary_function< Point_2, FT >
+  : public CGAL::unary_function< Point_2, FT >
   {
     FT
     operator()( const Point_2& p) const

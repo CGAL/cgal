@@ -60,7 +60,7 @@ struct Construct_algebraic_real_1{
 
 template <class Polynomial_,class Algebraic_>
 struct Compute_polynomial_1:
-public std::unary_function<Algebraic_,Polynomial_>{
+public CGAL::unary_function<Algebraic_,Polynomial_>{
         typedef Polynomial_                                     Polynomial;
         typedef Algebraic_                                      Algebraic;
         Polynomial operator()(const Algebraic &x)const{
@@ -442,7 +442,7 @@ public std::binary_function<Polynomial_,Algebraic_,bool>{
 // programs assume that this is equal to int
 template <class Polynomial_,class Isolator_>
 struct Number_of_solutions_1:
-public std::unary_function<Polynomial_,int>{
+public CGAL::unary_function<Polynomial_,int>{
         typedef Polynomial_                                     Polynomial_1;
         typedef Isolator_                                       Isolator;
         size_t operator()(const Polynomial_1 &p)const{

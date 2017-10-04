@@ -685,7 +685,7 @@ namespace INTERN_LAZY_EXACT_NT {
 
 template< class NT, class Functor >
 struct Simplify_selector {
-  struct Simplify : public std::unary_function<NT&, void> {
+  struct Simplify : public CGAL::unary_function<NT&, void> {
     void operator()( NT& ) const {
       // TODO: In the old implementation the Simplify-functor was the default
       //       (which does nothing). But this cannot be the correct way!?
@@ -700,7 +700,7 @@ struct Simplify_selector< NT, Null_functor > {
 
 template< class NT, class Functor >
 struct Unit_part_selector {
-  struct Unit_part : public std::unary_function<NT, NT > {
+  struct Unit_part : public CGAL::unary_function<NT, NT > {
     NT operator()( const NT& x ) const {
       return NT( CGAL_NTS unit_part( x.exact() ) );
     }
@@ -714,7 +714,7 @@ struct Unit_part_selector< NT, Null_functor > {
 
 template< class NT, class Functor >
 struct Is_zero_selector {
-  struct Is_zero : public std::unary_function<NT, bool > {
+  struct Is_zero : public CGAL::unary_function<NT, bool > {
     bool operator()( const NT& x ) const {
       return CGAL_NTS is_zero( x.exact() );
     }
@@ -728,7 +728,7 @@ struct Is_zero_selector< NT, Null_functor > {
 
 template< class NT, class Functor >
 struct Is_one_selector {
-  struct Is_one : public std::unary_function<NT, bool > {
+  struct Is_one : public CGAL::unary_function<NT, bool > {
     bool operator()( const NT& x ) const {
       return CGAL_NTS is_one( x.exact() );
     }
@@ -742,7 +742,7 @@ struct Is_one_selector< NT, Null_functor > {
 
 template< class NT, class Functor >
 struct Square_selector {
-  struct Square : public std::unary_function<NT, NT > {
+  struct Square : public CGAL::unary_function<NT, NT > {
     NT operator()( const NT& x ) const {
       CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
       return new Lazy_exact_Square<typename NT::ET>(x);
@@ -795,7 +795,7 @@ struct Is_square_selector< NT, Null_functor > {
 
 template <class NT, class AlgebraicStructureTag>
 struct Sqrt_selector{
-    struct Sqrt : public std::unary_function<NT, NT > {
+    struct Sqrt : public CGAL::unary_function<NT, NT > {
         NT operator ()(const NT& x) const {
           CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
           CGAL_precondition(x >= 0);
@@ -1032,7 +1032,7 @@ template < typename ET > class Real_embeddable_traits< Lazy_exact_nt<ET> >
     typedef Lazy_exact_nt<ET> Type;
 
     class Abs
-      : public std::unary_function< Type, Type > {
+      : public CGAL::unary_function< Type, Type > {
       public:
         Type operator()( const Type& a ) const {
             CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
@@ -1041,7 +1041,7 @@ template < typename ET > class Real_embeddable_traits< Lazy_exact_nt<ET> >
     };
 
     class Sgn
-      : public std::unary_function< Type, ::CGAL::Sign > {
+      : public CGAL::unary_function< Type, ::CGAL::Sign > {
       public:
         ::CGAL::Sign operator()( const Type& a ) const {
             CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
@@ -1075,7 +1075,7 @@ template < typename ET > class Real_embeddable_traits< Lazy_exact_nt<ET> >
     };
 
     class To_double
-      : public std::unary_function< Type, double > {
+      : public CGAL::unary_function< Type, double > {
       public:
         double operator()( const Type& a ) const {
             CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
@@ -1100,7 +1100,7 @@ template < typename ET > class Real_embeddable_traits< Lazy_exact_nt<ET> >
     };
 
     class To_interval
-      : public std::unary_function< Type, std::pair< double, double > > {
+      : public CGAL::unary_function< Type, std::pair< double, double > > {
       public:
         std::pair<double, double> operator()( const Type& a ) const {
             CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
@@ -1109,7 +1109,7 @@ template < typename ET > class Real_embeddable_traits< Lazy_exact_nt<ET> >
     };
 
     class Is_finite
-      : public std::unary_function< Type, bool > {
+      : public CGAL::unary_function< Type, bool > {
       public:
         bool operator()( const Type& x ) const {
           return CGAL_NTS is_finite(x.approx()) || CGAL_NTS is_finite(x.exact());
@@ -1318,7 +1318,7 @@ operator>> (std::istream & is, Lazy_exact_nt<ET> & a)
 
 template< class ET >
 class Is_valid< Lazy_exact_nt<ET> >
-  : public std::unary_function< Lazy_exact_nt<ET>, bool > {
+  : public CGAL::unary_function< Lazy_exact_nt<ET>, bool > {
   public :
     bool operator()( const Lazy_exact_nt<ET>& x ) const {
       return is_valid(x.approx());

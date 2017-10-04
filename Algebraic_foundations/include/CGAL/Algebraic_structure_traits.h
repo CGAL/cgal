@@ -111,7 +111,7 @@ class Algebraic_structure_traits_base< Type_, Null_tag > {
 
     // does nothing by default
     class Simplify 
-      : public std::unary_function< Type&, void > {
+      : public CGAL::unary_function< Type&, void > {
       public:
         void operator()( Type& ) const {}
     };
@@ -150,7 +150,7 @@ class Algebraic_structure_traits_base< Type_,
 
     // returns Type(1) by default
     class Unit_part 
-      : public std::unary_function< Type, Type > { 
+      : public CGAL::unary_function< Type, Type > { 
       public:
         Type operator()( const Type& x ) const {
           return( x < Type(0)) ? 
@@ -159,7 +159,7 @@ class Algebraic_structure_traits_base< Type_,
     };
     
     class Square 
-      : public std::unary_function< Type, Type > {
+      : public CGAL::unary_function< Type, Type > {
       public:        
         Type operator()( const Type& x ) const {
           return x*x;
@@ -167,7 +167,7 @@ class Algebraic_structure_traits_base< Type_,
     };
     
     class Is_zero 
-      : public std::unary_function< Type, bool > {
+      : public CGAL::unary_function< Type, bool > {
       public:        
         bool operator()( const Type& x ) const {
           return x == Type(0);
@@ -175,7 +175,7 @@ class Algebraic_structure_traits_base< Type_,
     };
 
     class Is_one 
-      : public std::unary_function< Type, bool > {
+      : public CGAL::unary_function< Type, bool > {
       public:        
         bool operator()( const Type& x ) const {
           return x == Type(1);
@@ -447,7 +447,7 @@ class Algebraic_structure_traits_base< Type_, Field_tag >
 
     // returns the argument \a a by default
     class Unit_part 
-      : public std::unary_function< Type, Type > { 
+      : public CGAL::unary_function< Type, Type > { 
       public:
         Type operator()( const Type& x ) const {
             return( x == Type(0)) ? Type(1) : x;
@@ -474,7 +474,7 @@ class Algebraic_structure_traits_base< Type_, Field_tag >
   
   // maps to \c 1/x by default.
   class Inverse 
-    : public std::unary_function< Type, Type > { 
+    : public CGAL::unary_function< Type, Type > { 
   public:
     Type operator()( const Type& x ) const { 
       return Type(1)/x;

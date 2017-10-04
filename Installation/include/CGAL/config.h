@@ -261,7 +261,7 @@
 
 
 //----------------------------------------------------------------------//
-//  As std::unary_function is deprecated we unse internally CGAL::unary_function
+//  As CGAL::unary_function is deprecated we unse internally CGAL::unary_function
 //----------------------------------------------------------------------//
 
 #include <CGAL/unary_function.h>

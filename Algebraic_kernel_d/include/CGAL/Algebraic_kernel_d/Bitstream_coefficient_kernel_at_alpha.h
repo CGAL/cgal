@@ -117,7 +117,7 @@ public:
     //! \name Functors
     //! @{
 
-    struct Is_zero : public std::unary_function<Coefficient,bool> {
+    struct Is_zero : public CGAL::unary_function<Coefficient,bool> {
         
         Is_zero(Algebraic_kernel_d_1* kernel,Algebraic_real_1 alpha) 
             : _m_kernel(kernel),_m_alpha(alpha) {}
@@ -137,7 +137,7 @@ public:
     }
 
     struct Convert_to_bfi 
-        : public std::unary_function<Coefficient,Bigfloat_interval> {
+        : public CGAL::unary_function<Coefficient,Bigfloat_interval> {
         
         Convert_to_bfi(Algebraic_kernel_d_1* kernel,
 		       Algebraic_real_1 alpha) 

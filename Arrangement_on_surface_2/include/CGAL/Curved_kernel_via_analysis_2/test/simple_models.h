@@ -1043,7 +1043,7 @@ public:
     
     //! \brief constructs \c Curve_analysis_2 object, uses caching if appropriate
     struct Construct_curve_2 :
-            public std::unary_function< Polynomial_2, Curve_analysis_2 >
+            public CGAL::unary_function< Polynomial_2, Curve_analysis_2 >
     {
         //! \brief constructs an object from \c Algebraic_curve_kernel_2 type
         //! no default constructor provided
@@ -1080,7 +1080,7 @@ public:
     
     //! returns the first coordinate of \c Xy_coordinate_2
     struct Get_x_2 :
-        public std::unary_function<Xy_coordinate_2, Algebraic_real_1> {
+        public CGAL::unary_function<Xy_coordinate_2, Algebraic_real_1> {
         
         Algebraic_real_1 operator()(const Xy_coordinate_2& xy) const {
             return xy.x();
@@ -1090,7 +1090,7 @@ public:
     
     //! returns the second coordinate of \c Xy_coordinate_2
     struct Get_y_2 :
-        public std::unary_function<Xy_coordinate_2, Algebraic_real_1> {
+        public CGAL::unary_function<Xy_coordinate_2, Algebraic_real_1> {
         
         Algebraic_real_1 operator()(const Xy_coordinate_2& xy) const {
             return xy.y();
@@ -1099,7 +1099,7 @@ public:
     CGAL_Algebraic_Kernel_cons(Get_y_2, Get_y_2_object);
     
     struct Refine_x_2 :
-        public std::unary_function<Xy_coordinate_2, void> {
+        public CGAL::unary_function<Xy_coordinate_2, void> {
       
         void operator()(const Xy_coordinate_2& r) const {  }
         
@@ -1108,7 +1108,7 @@ public:
     CGAL_Algebraic_Kernel_pred(Refine_x_2, refine_x_2_object);
     
     struct Refine_y_2 :
-        public std::unary_function<Xy_coordinate_2, void> {
+        public CGAL::unary_function<Xy_coordinate_2, void> {
       
         void operator()(const Xy_coordinate_2& r) const {  }
         
@@ -1245,7 +1245,7 @@ public:
     //! for algerbaic curves this means that supporting polynomial is 
     //! square-free
     struct Has_finite_number_of_self_intersections_2 :
-            public std::unary_function< Polynomial_2, bool > {
+            public CGAL::unary_function< Polynomial_2, bool > {
 
         bool operator()(const Polynomial_2& p) const {
             return true; //is_square_free(p);
@@ -1317,7 +1317,7 @@ public:
     
     //! \brief computes the derivative w.r.t. the first (innermost) variable
     struct Derivative_x_2 : 
-        public std::unary_function< Polynomial_2, Polynomial_2 > {
+        public CGAL::unary_function< Polynomial_2, Polynomial_2 > {
         
         Polynomial_2 operator()(const Polynomial_2& p) const {
             return p;
@@ -1327,7 +1327,7 @@ public:
 
     //! \brief computes the derivative w.r.t. the first (outermost) variable
     struct Derivative_y_2 :
-        public std::unary_function< Polynomial_2, Polynomial_2 > {
+        public CGAL::unary_function< Polynomial_2, Polynomial_2 > {
         
         Polynomial_2 operator()(const Polynomial_2& p) const  {
             return p;
