@@ -68,7 +68,7 @@ bool test_shape(const char *file_name, const std::size_t target_num_proxies)
 /**
  * This file tests the correctness of the algorithm.
  * The correctness is verified by seeding by error
- * and check if the number of desired proxies are generaged.
+ * and check if the number of desired proxies are generated.
  * Basically we input a cube mesh and see if it outputs 6 proxies.
  */
 int main()
