@@ -259,6 +259,13 @@
 #define CGAL_CFG_NO_STD_HASH 1
 #endif
 
+
+//----------------------------------------------------------------------//
+//  As std::unary_function is deprecated we unse internally CGAL::unary_function
+//----------------------------------------------------------------------//
+
+#include <CGAL/unary_function.h>
+
 //----------------------------------------------------------------------//
 //  auto-link the CGAL library on platforms that support it
 //----------------------------------------------------------------------//
