@@ -46,7 +46,6 @@
 #include <boost/next_prior.hpp> // for boost::prior and boost::next
 #include <boost/variant.hpp>
 #include <boost/foreach.hpp>
-#include <boost/property_map/function_property_map.hpp>
 
 namespace CGAL {
 
