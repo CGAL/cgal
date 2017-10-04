@@ -261,10 +261,12 @@
 
 
 //----------------------------------------------------------------------//
-//  As CGAL::unary_function is deprecated we unse internally CGAL::unary_function
+//  As std::unary_function and std::binary_function are deprecated
+//  we use internally equivalent class templates from
+// <CGAL/functional.h>.
 //----------------------------------------------------------------------//
 
-#include <CGAL/unary_function.h>
+#include <CGAL/functional.h>
 
 //----------------------------------------------------------------------//
 //  auto-link the CGAL library on platforms that support it
