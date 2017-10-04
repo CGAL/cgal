@@ -600,7 +600,7 @@ bool Scene_points_with_normal_item::read_ply_point_set(std::istream& stream)
   if (d->m_points->check_colors())
     std::cerr << "-> Point set has colors" << std::endl;
 
-  std::cerr << "[Comments from PLY inputm]" << std::endl << d->m_comments;
+  std::cerr << "[Comments from PLY input]" << std::endl << d->m_comments;
 
   invalidateOpenGLBuffers();
   return ok;
@@ -618,7 +618,8 @@ bool Scene_points_with_normal_item::write_ply_point_set(std::ostream& stream, bo
 
   if (binary)
     CGAL::set_binary_mode (stream);
-  stream << *(d->m_points);
+
+  CGAL::write_ply_point_set (stream, *(d->m_points), &(d->m_comments));
 
   return true;
 }
