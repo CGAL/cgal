@@ -767,6 +767,13 @@ of the base class.
   { return boost::get<Corner_index>(index); }
 
   /// @cond DEVELOPERS
+#ifndef CGAL_NO_DEPRECATED_CODE
+  CGAL_DEPRECATED_MSG("deprecated: use curve_index() instead")
+  Curve_index curve_segment_index(const Index& index) const {
+    return curve_index(index);
+  }
+#endif // CGAL_NO_DEPRECATED_CODE
+
   FT signed_geodesic_distance(const Point_3& p, const Point_3& q,
                               const Curve_index& curve_index) const;
 
