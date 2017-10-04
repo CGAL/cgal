@@ -106,12 +106,37 @@ class Point_set_item_classification : public Item_classification_base
   
   bool write_output(std::ostream& out);
 
+  void add_new_label (const char* name, const QColor& color)
+  {
+    Item_classification_base::add_new_label (name, color);
+    update_comments_of_point_set_item();
+  }
+
+  void remove_label (const char* name)
+  {
+    Item_classification_base::remove_label (name);
+    update_comments_of_point_set_item();
+  }
+  
   int real_index_color() const;
   void reset_indices();
   void backup_existing_colors_and_add_new();
   void reset_colors();
 
  private:
+
+  void update_comments_of_point_set_item()
+  {
+    std::string& comments = m_points->comments();
+    comments.clear();
+    comments += "label -1 unclassified\n";
+    for (std::size_t i = 0; i < m_labels.size(); ++ i)
+    {
+      std::ostringstream oss;
+      oss << "label " << i << " " << m_labels[i]->name() << std::endl;
+      comments += oss.str();
+    }
+  }
   
   template <typename Classifier>
   bool run (int method, const Classifier& classifier)

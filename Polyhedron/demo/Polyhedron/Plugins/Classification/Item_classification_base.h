@@ -58,7 +58,7 @@ public:
   void set_effect (Label_handle l, Feature_handle f, Sum_of_weighted_features::Effect e)
   { m_sowf->set_effect (l, f, e); }
   
-  void add_new_label (const char* name, const QColor& color)
+  virtual void add_new_label (const char* name, const QColor& color)
   {
     m_labels.add(name);
     m_label_colors.push_back (color);
@@ -70,7 +70,7 @@ public:
     m_random_forest = new Random_forest (m_labels, m_features);
 #endif
   }
-  void remove_label (const char* name)
+  virtual void remove_label (const char* name)
   {
     for (std::size_t i = 0; i < m_labels.size(); ++ i)
       if (m_labels[i]->name() == name)
