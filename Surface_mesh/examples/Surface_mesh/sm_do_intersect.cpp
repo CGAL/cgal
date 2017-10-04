@@ -2,7 +2,6 @@
 #include <vector>
 #include <fstream>
 
-#include <boost/utility/addressof.hpp>
 #include <boost/bind.hpp>
 #include <boost/functional/value_factory.hpp>
 #include <boost/range/algorithm/transform.hpp>
@@ -44,7 +43,7 @@ private:
 public:
   typedef double                                   NT;
   typedef std::size_t                              ID;
-  
+
   Box(Face_descriptor f, const Mesh& sm) : Base(triangle(sm, f).bbox()), fd(f) {}
   Box(const Bbox_3& b, Face_descriptor fd) : Base(b), fd(fd) {}
   Face_descriptor f() const { return fd; }
@@ -73,6 +72,12 @@ struct Callback {
   unsigned int& count;
 };
 
+const Box*
+address_of_box(const Box& b)
+{
+  return &b;
+}
+
 unsigned int intersect(const Mesh& P, const Mesh& Q) {
   std::vector<Box> P_boxes, Q_boxes;
   std::vector<const Box*> P_box_ptr, Q_box_ptr;
@@ -85,16 +90,16 @@ unsigned int intersect(const Mesh& P, const Mesh& Q) {
   boost::transform(P.faces(),
                  std::back_inserter(P_boxes), 
                  boost::bind(boost::value_factory<Box>(), _1, boost::cref(P)));
-  
+
+
   std::transform(P_boxes.begin(), P_boxes.end(), std::back_inserter(P_box_ptr), 
-                 &boost::addressof<Box>);
-  
+                 &address_of_box);
   boost::transform(Q.faces(),
                  std::back_inserter(Q_boxes), 
                  boost::bind(boost::value_factory<Box>(), _1, boost::cref(Q)));
   std::transform(Q_boxes.begin(), Q_boxes.end(), std::back_inserter(Q_box_ptr),
-                 &boost::addressof<Box>);
-  
+                 &address_of_box);
+
   unsigned int i = 0;
   Callback c(P,Q, i);
   CGAL::box_intersection_d(P_box_ptr.begin(), P_box_ptr.end(),
