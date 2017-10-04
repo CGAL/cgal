@@ -835,6 +835,10 @@ const Point_set* Scene_points_with_normal_item::point_set() const
 }
 
 // Gets wrapped point set
+std::string& Scene_points_with_normal_item::comments()
+{
+  return d->m_comments;
+}
 const std::string& Scene_points_with_normal_item::comments() const
 {
   return d->m_comments;
