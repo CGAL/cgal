@@ -29,7 +29,7 @@ namespace CGAL {
 
   template < typename ArgumentType, typename ResultType>
   struct unary_function {
-    typdef ArgumentType argument_type;
+    typedef ArgumentType argument_type;
     typedef ResultType result_type;
   };
   
