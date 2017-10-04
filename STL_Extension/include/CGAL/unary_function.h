@@ -27,6 +27,8 @@
 
 namespace CGAL {
 
+  /// Replacement for `std::unary_function` that is deprecated since C++11,
+  /// and removed from C++17
   template < typename ArgumentType, typename ResultType>
   struct unary_function {
     typedef ArgumentType argument_type;
