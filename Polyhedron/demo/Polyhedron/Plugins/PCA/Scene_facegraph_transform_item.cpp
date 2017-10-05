@@ -47,7 +47,7 @@ struct Scene_facegraph_transform_item_priv
 };
 
 Scene_facegraph_transform_item::Scene_facegraph_transform_item(const qglviewer::Vec& pos, FaceGraph* sm,
-                                                                 const QString name, const Scene_interface* scene_interface):
+                                                                 const QString name):
     Scene_item(Scene_facegraph_transform_item_priv::NbOfVbos,Scene_facegraph_transform_item_priv::NbOfVaos)
 {
   d = new Scene_facegraph_transform_item_priv(pos,sm, name, this);

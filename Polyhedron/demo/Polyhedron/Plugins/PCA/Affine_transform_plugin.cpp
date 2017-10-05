@@ -414,7 +414,7 @@ void Polyhedron_demo_affine_transform_plugin::start(FaceGraph *facegraph, const 
   lastMatrix.data()[12] = x;
   lastMatrix.data()[13] = y;
   lastMatrix.data()[14] = z;
-  transform_item = new Scene_facegraph_transform_item(qglviewer::Vec(x,y,z),facegraph, name, scene);
+  transform_item = new Scene_facegraph_transform_item(qglviewer::Vec(x,y,z),facegraph, name);
   transform_item->setManipulatable(true);
   transform_item->setColor(Qt::green);
   transform_item->setRenderingMode(Wireframe);
