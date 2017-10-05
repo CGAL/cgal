@@ -207,7 +207,6 @@ bool write_inp(std::ostream& os,
   typedef typename boost::graph_traits<FaceGraph>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<FaceGraph>::face_descriptor face_descriptor;
   typedef typename boost::graph_traits<FaceGraph>::vertices_size_type vertices_size_type;
-  typedef typename boost::graph_traits<FaceGraph>::faces_size_type faces_size_type;
 
   typedef typename boost::property_map<FaceGraph, CGAL::vertex_point_t>::const_type VPM;
   typedef typename boost::property_traits<VPM>::value_type Point_3;
