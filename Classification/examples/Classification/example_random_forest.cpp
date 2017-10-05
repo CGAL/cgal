@@ -21,9 +21,9 @@ typedef Kernel::Point_3 Point;
 typedef CGAL::Point_set_3<Point> Point_set;
 typedef Kernel::Iso_cuboid_3 Iso_cuboid_3;
 
-typedef typename Point_set::Point_map Pmap;
-typedef typename Point_set::Property_map<int> Imap;
-typedef typename Point_set::Property_map<unsigned char> UCmap;
+typedef Point_set::Point_map Pmap;
+typedef Point_set::Property_map<int> Imap;
+typedef Point_set::Property_map<unsigned char> UCmap;
 
 namespace Classification = CGAL::Classification;
 
