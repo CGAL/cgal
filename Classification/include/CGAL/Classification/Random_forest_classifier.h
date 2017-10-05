@@ -135,7 +135,7 @@ public:
       {
         for (std::size_t f = 0; f < m_features.size(); ++ f)
           training_features.at<float>(int(index), int(f)) = m_features[f]->value(i);
-        training_labels.at<float>(int(index), 0) = ground_truth[i];
+        training_labels.at<float>(int(index), 0) = static_cast<float>(ground_truth[i]);
         ++ index;
       }
 
