@@ -47,6 +47,14 @@ class Feature_set
 {
   typedef std::vector<Feature_handle> Base;
   Base m_features;
+
+  struct Compare_name
+  {
+    bool operator() (const Feature_handle& a, const Feature_handle& b) const
+    {
+      return a->name() < b->name();
+    }
+  };
   
 #ifdef CGAL_LINKED_WITH_TBB
   tbb::mutex m_mutex;
@@ -135,6 +143,12 @@ public:
   void free_memory(std::size_t i)
   {
     m_features[i] = Feature_handle();
+  }
+
+  void sort_features_by_name()
+  {
+    std::sort (m_features.begin(), m_features.end(),
+               Compare_name());               
   }
   /// \endcond
   
