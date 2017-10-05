@@ -157,7 +157,7 @@ public:
     action_train = ui_widget.menu->menu()->addAction ("Train classifier");
     connect(action_train,  SIGNAL(triggered()), this,
             SLOT(on_train_clicked()));
-
+    
     action_reset = ui_widget.menu->menu()->addAction ("Reset all training sets");
     connect(action_reset,  SIGNAL(triggered()), this,
             SLOT(on_reset_training_sets_clicked()));
@@ -740,6 +740,20 @@ public Q_SLOTS:
       }
 
     classif->validate_selection();
+  }
+
+  void on_select_random_region_clicked()
+  {
+    Item_classification_base* classif
+      = get_classification();
+    if(!classif)
+      {
+        print_message("Error: there is no point set classification item!");
+        return; 
+      }
+
+    classif->select_random_region();
+    item_changed(classif->item());
   }
 
   void on_train_clicked()

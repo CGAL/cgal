@@ -29,10 +29,32 @@ Point_set_item_classification::Point_set_item_classification(Scene_points_with_n
   boost::tie (m_training, training_found) = m_points->point_set()->add_property_map<int>("training", -1);
   bool classif_found = false;
   boost::tie (m_classif, classif_found) = m_points->point_set()->add_property_map<int>("label", -1);
-  
+
   training_found = !training_found; // add_property_map returns false if 
   classif_found = !classif_found;   // property was already there
-  
+
+  bool las_found = false;
+
+  if (!classif_found)
+  {
+    Point_set::Property_map<unsigned char> las_classif;
+    boost::tie (las_classif, las_found) = m_points->point_set()->property_map<unsigned char>("classification");
+    if (las_found)
+    {
+      for (Point_set::const_iterator it = m_points->point_set()->begin();
+           it != m_points->point_set()->first_selected(); ++ it)
+      {
+        unsigned char uc = las_classif[*it];
+        m_classif[*it] = int(uc);
+        if (!training_found)
+          m_training[*it] = int(uc);
+      }
+      m_points->point_set()->remove_property_map (las_classif);
+      classif_found = true;
+      training_found = true;
+    }
+  }
+    
   if (training_found || classif_found)
   {
     int lmax = 0;
@@ -51,22 +73,47 @@ Point_set_item_classification::Point_set_item_classification(Scene_points_with_n
         lmax = (std::max)(l, lmax);
       }
     }
-
-    // Try to recover label names from PLY comments
+    
     std::map<int, std::string> label_names;
-    const std::string& comments = m_points->comments();
-    std::istringstream stream (comments);
-    std::string line;
-    while (getline(stream, line))
+    if (las_found) // Use LAS standard
     {
-      std::stringstream iss (line);
-      std::string tag;
-      if (iss >> tag && tag == "label")
+      label_names.insert (std::make_pair (0, std::string("never_clfied")));
+      label_names.insert (std::make_pair (1, std::string("unclassified")));
+      label_names.insert (std::make_pair (2, std::string("ground")));
+      label_names.insert (std::make_pair (3, std::string("low_veget")));
+      label_names.insert (std::make_pair (4, std::string("med_veget")));
+      label_names.insert (std::make_pair (5, std::string("high_veget")));
+      label_names.insert (std::make_pair (6, std::string("building")));
+      label_names.insert (std::make_pair (7, std::string("noise")));
+      label_names.insert (std::make_pair (8, std::string("reserved")));
+      label_names.insert (std::make_pair (9, std::string("water")));
+      label_names.insert (std::make_pair (10, std::string("rail")));
+      label_names.insert (std::make_pair (11, std::string("road surface")));
+      label_names.insert (std::make_pair (12, std::string("reserved_2")));
+      label_names.insert (std::make_pair (13, std::string("wire_guard")));
+      label_names.insert (std::make_pair (14, std::string("wire_conduct")));
+      label_names.insert (std::make_pair (15, std::string("trans_tower")));
+      label_names.insert (std::make_pair (16, std::string("wire_connect")));
+      label_names.insert (std::make_pair (17, std::string("bridge_deck")));
+      label_names.insert (std::make_pair (18, std::string("high_noise")));
+    }
+    else // Try to recover label names from PLY comments
+    {
+
+      const std::string& comments = m_points->comments();
+      std::istringstream stream (comments);
+      std::string line;
+      while (getline(stream, line))
       {
-        int idx;
-        std::string name;
-        if (iss >> idx >> name)
-          label_names.insert (std::make_pair (idx, name));
+        std::stringstream iss (line);
+        std::string tag;
+        if (iss >> tag && tag == "label")
+        {
+          int idx;
+          std::string name;
+          if (iss >> idx >> name)
+            label_names.insert (std::make_pair (idx, name));
+        }
       }
     }
     
@@ -83,12 +130,9 @@ Point_set_item_classification::Point_set_item_classification(Scene_points_with_n
         m_labels.add(oss.str().c_str());
       }
       
-      CGAL::Classification::HSV_Color hsv;
-      hsv[0] = 360. * (i / double(lmax + 1));
-      hsv[1] = 76.;
-      hsv[2] = 85.;
-      Color rgb = CGAL::Classification::hsv_to_rgb(hsv);
-      m_label_colors.push_back (QColor(rgb[0], rgb[1], rgb[2]));
+      m_label_colors.push_back (QColor (64 + rand() % 192,
+                                        64 + rand() % 192,
+                                        64 + rand() % 192));
     }
   }
   else
@@ -369,7 +413,55 @@ void Point_set_item_classification::compute_features (std::size_t nb_scales)
   std::cerr << "Features = " << m_features.size() << std::endl;
 }
 
+void Point_set_item_classification::select_random_region()
+{
+  m_points->point_set()->reset_indices();
+  
+  std::size_t scale = (rand() % m_generator->number_of_scales());
 
+  bool use_grid = (rand() % 2);
+
+  std::vector<std::size_t> selected;
+  
+  if (use_grid)
+  {
+    std::size_t x = (rand() % m_generator->grid(scale).width());
+    std::size_t y = (rand() % m_generator->grid(scale).height());
+    std::copy (m_generator->grid(scale).indices_begin(x,y),
+               m_generator->grid(scale).indices_end(x,y),
+               std::back_inserter (selected));
+  }
+  else
+  {
+    m_generator->neighborhood(0).sphere_neighbor_query (m_generator->radius_neighbors(scale))
+      (*(m_points->point_set()->points().begin() + (rand() % m_points->point_set()->size())),
+       std::back_inserter (selected));
+  }
+
+  if (selected.empty())
+    return;
+
+  std::sort (selected.begin(), selected.end());
+  std::size_t current_idx = 0;
+
+  std::vector<std::size_t> unselected;
+
+  for (Point_set::const_iterator it = m_points->point_set()->begin();
+       it != m_points->point_set()->end(); ++ it)
+    if (std::size_t(*it) == selected[current_idx])
+      current_idx ++;
+    else
+      unselected.push_back (*it);
+  
+  for (std::size_t i = 0; i < unselected.size(); ++ i)
+    *(m_points->point_set()->begin() + i) = unselected[i];
+  for (std::size_t i = 0; i < selected.size(); ++ i)
+    *(m_points->point_set()->begin() + (unselected.size() + i)) = selected[i];
+
+  m_points->point_set()->set_first_selected
+    (m_points->point_set()->begin() + unselected.size());
+
+}
 
 void Point_set_item_classification::train(int classifier, unsigned int nb_trials)
 {

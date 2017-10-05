@@ -40,6 +40,7 @@ public:
   virtual void reset_training_set (const char* name) = 0;
   virtual void reset_training_sets() = 0;
 
+  virtual void select_random_region() = 0;
   virtual void validate_selection () = 0;
   virtual void train(int classifier, unsigned int nb_trials) = 0;
   virtual bool run (int method, int classifier, std::size_t subdivisions, double smoothing) = 0;

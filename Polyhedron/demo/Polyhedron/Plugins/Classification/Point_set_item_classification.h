@@ -46,6 +46,8 @@ class Point_set_item_classification : public Item_classification_base
   void erase_item() { m_points = NULL; }
 
   void compute_features (std::size_t nb_scales);
+
+  void select_random_region();
   
   void add_selection_to_training_set (const char* name)
   {
