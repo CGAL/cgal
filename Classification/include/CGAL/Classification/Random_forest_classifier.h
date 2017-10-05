@@ -25,7 +25,8 @@
 #include <CGAL/Classification/Feature_set.h>
 #include <CGAL/Classification/Label_set.h>
 
-#include <opencv2/opencv.hpp>
+#include <cv.h>
+#include <ml.h>
 
 namespace CGAL {
 
@@ -120,6 +121,13 @@ public:
 #if (CV_MAJOR_VERSION < 3)
     if (rtree != NULL)
       delete rtree;
+#endif
+
+#ifdef CGAL_CLASSIFICATION_VERBOSE
+
+    std::cerr << "Training random forest (OpenCV "
+              << CV_MAJOR_VERSION << "."
+              << CV_MINOR_VERSION << ")" << std::endl;
 #endif
     
     std::size_t nb_samples = 0;
