@@ -1,4 +1,4 @@
-// Copyright (c) 2012 GeometryFactory Sarl (France).
+// Copyright (c) 2012,2017 GeometryFactory Sarl (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -17,6 +17,8 @@
 
 #ifndef CGAL_MESH_ERROR_CODE_H
 #define CGAL_MESH_ERROR_CODE_H
+
+#include <CGAL/license/Mesh_3.h>
 
 #include <string>
 #include <sstream>
