@@ -57,7 +57,7 @@ Point_set_item_classification::Point_set_item_classification(Scene_points_with_n
     
   if (training_found || classif_found)
   {
-    int lmax = 0;
+    std::vector<int> used_indices;
     
     for (Point_set::const_iterator it = m_points->point_set()->begin();
          it != m_points->point_set()->first_selected(); ++ it)
@@ -65,20 +65,68 @@ Point_set_item_classification::Point_set_item_classification(Scene_points_with_n
       if (training_found)
       {
         int l = m_training[*it];
-        lmax = (std::max)(l, lmax);
+        if (l >= 0)
+        {
+          if (std::size_t(l) >= used_indices.size())
+            used_indices.resize(std::size_t(l + 1), -1);
+          used_indices[std::size_t(l)] = 0;
+        }
       }
       if (classif_found)
       {
         int l = m_classif[*it];
-        lmax = (std::max)(l, lmax);
+        if (l >= 0)
+        {
+          if (std::size_t(l) >= used_indices.size())
+            used_indices.resize(std::size_t(l + 1), -1);
+          used_indices[std::size_t(l)] = 0;
+        }
+      }
+    }
+
+    // map indices to filtered indices
+    int current_idx = 0;
+    for (std::size_t i = 0; i < used_indices.size(); ++ i)
+    {
+      if (las_found && i < 2)
+      {
+        used_indices[i] = -1;
+        continue;
+      }
+      if (used_indices[i] == -1)
+        continue;
+
+      used_indices[i] = current_idx;
+      ++ current_idx;
+    }
+
+    if (current_idx != used_indices.size()) // Empty indices -> reorder indices in point set
+    {
+      for (Point_set::const_iterator it = m_points->point_set()->begin();
+           it != m_points->point_set()->first_selected(); ++ it)
+      {
+        if (training_found)
+        {
+          if (las_found && (m_training[*it] == 0 || m_training[*it] == 1)) // Unclassified class in LAS
+            m_training[*it] = -1;
+          else if (m_training[*it] != -1)
+            m_training[*it] = used_indices[std::size_t(m_training[*it])];
+        }
+        if (classif_found)
+        {
+          if (las_found && (m_classif[*it] == 0 || m_classif[*it] == 1)) // Unclassified class in LAS
+            m_classif[*it] = -1;
+          else if (m_classif[*it] != -1)
+            m_classif[*it] = used_indices[std::size_t(m_classif[*it])];
+        }
       }
     }
     
     std::map<int, std::string> label_names;
     if (las_found) // Use LAS standard
     {
-      label_names.insert (std::make_pair (0, std::string("never_clfied")));
-      label_names.insert (std::make_pair (1, std::string("unclassified")));
+      // label_names.insert (std::make_pair (0, std::string("never_clfied")));
+      // label_names.insert (std::make_pair (1, std::string("unclassified")));
       label_names.insert (std::make_pair (2, std::string("ground")));
       label_names.insert (std::make_pair (3, std::string("low_veget")));
       label_names.insert (std::make_pair (4, std::string("med_veget")));
@@ -117,9 +165,12 @@ Point_set_item_classification::Point_set_item_classification(Scene_points_with_n
       }
     }
     
-    for (int i = 0; i <= lmax; ++ i)
+    for (int i = 0; i < used_indices.size(); ++ i)
     {
-      std::map<int, std::string>::iterator found
+      if (used_indices[i] == std::size_t(-1))
+        continue;
+      
+      typename std::map<int, std::string>::iterator found
         = label_names.find (i);
       if (found != label_names.end())
         m_labels.add(found->second.c_str());
