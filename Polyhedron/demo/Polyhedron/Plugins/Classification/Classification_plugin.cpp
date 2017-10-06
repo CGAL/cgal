@@ -15,6 +15,7 @@
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 
 #include <CGAL/Random.h>
+#include <CGAL/Real_timer.h>
 
 #include "ui_Classification_widget.h"
 
@@ -140,8 +141,10 @@ public:
     ui_widget.setupUi(dock_widget);
     addDockWidget(dock_widget);
 
-#ifndef CGAL_LINKED_WITH_OPENCV
-    ui_widget.classifier->removeItem(1);
+#ifdef CGAL_LINKED_WITH_OPENCV
+    ui_widget.classifier->addItem (tr("Random Forest (OpenCV %1.%2)")
+                                   .arg(CV_MAJOR_VERSION)
+                                   .arg(CV_MINOR_VERSION));
 #endif
 
     color_att = QColor (75, 75, 77);
@@ -515,7 +518,11 @@ public Q_SLOTS:
         return; 
       }
     QApplication::setOverrideCursor(Qt::WaitCursor);
+    CGAL::Real_timer t;
+    t.start();
     run (classif, 0);
+    t.stop();
+    std::cerr << "Raw classification computed in " << t.time() << " second(s)" << std::endl;
     QApplication::restoreOverrideCursor();
     item_changed(classif->item());
   }
@@ -531,10 +538,11 @@ public Q_SLOTS:
       }
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    QTime time;
-    time.start();
+    CGAL::Real_timer t;
+    t.start();
     run (classif, 1);
-    std::cerr << "Smoothed classification computed in " << time.elapsed() / 1000 << " second(s)" << std::endl;
+    t.stop();
+    std::cerr << "Smoothed classification computed in " << t.time() << " second(s)" << std::endl;
     QApplication::restoreOverrideCursor();
     item_changed(classif->item());
   }
@@ -567,6 +575,7 @@ public Q_SLOTS:
 
     QDialogButtonBox oknotok (QDialogButtonBox::Ok | QDialogButtonBox::Cancel,
                               Qt::Horizontal, &dialog);
+
     form.addRow (&oknotok);
     QObject::connect (&oknotok, SIGNAL(accepted()), &dialog, SLOT(accept()));
     QObject::connect (&oknotok, SIGNAL(rejected()), &dialog, SLOT(reject()));
@@ -575,10 +584,11 @@ public Q_SLOTS:
       return;
     
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    QTime time;
-    time.start();
+    CGAL::Real_timer t;
+    t.start();
     run (classif, 2, std::size_t(subdivisions.value()), smoothing.value());
-    std::cerr << "Graphcut classification computed in " << time.elapsed() / 1000 << " second(s)" << std::endl;
+    t.stop();
+    std::cerr << "Graph Cut classification computed in " << t.time() << " second(s)" << std::endl;
     QApplication::restoreOverrideCursor();
     item_changed(classif->item());
   }
@@ -789,7 +799,11 @@ public Q_SLOTS:
     }
     
     QApplication::setOverrideCursor(Qt::WaitCursor);
+    CGAL::Real_timer t;
+    t.start();
     classif->train(ui_widget.classifier->currentIndex(), nb_trials);
+    t.stop();
+    std::cerr << "Done in " << t.time() << " second(s)" << std::endl;
     QApplication::restoreOverrideCursor();
     update_plugin_from_item(classif);
   }
