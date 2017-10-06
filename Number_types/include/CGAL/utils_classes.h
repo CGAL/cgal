@@ -19,6 +19,8 @@
 #define CGAL_UTILS_CLASSES_H
 
 #include <CGAL/config.h>
+#include <functional> // for std::less
+#include <algorithm>  // for std::min and max
 
 #ifdef CGAL_USE_SSE2_MAX
 #include <CGAL/sse2.h>
