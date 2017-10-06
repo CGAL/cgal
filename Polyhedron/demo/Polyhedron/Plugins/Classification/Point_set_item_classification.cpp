@@ -88,7 +88,7 @@ Point_set_item_classification::Point_set_item_classification(Scene_points_with_n
     int current_idx = 0;
     for (std::size_t i = 0; i < used_indices.size(); ++ i)
     {
-      if (las_found && i < 2)
+      if (las_found && (i < 2 || i == 7 || i == 18))
       {
         used_indices[i] = -1;
         continue;
@@ -100,7 +100,7 @@ Point_set_item_classification::Point_set_item_classification(Scene_points_with_n
       ++ current_idx;
     }
 
-    if (current_idx != used_indices.size()) // Empty indices -> reorder indices in point set
+    if (std::size_t(current_idx) != used_indices.size()) // Empty indices -> reorder indices in point set
     {
       for (Point_set::const_iterator it = m_points->point_set()->begin();
            it != m_points->point_set()->first_selected(); ++ it)
@@ -165,9 +165,9 @@ Point_set_item_classification::Point_set_item_classification(Scene_points_with_n
       }
     }
     
-    for (int i = 0; i < used_indices.size(); ++ i)
+    for (std::size_t i = 0; i < used_indices.size(); ++ i)
     {
-      if (used_indices[i] == std::size_t(-1))
+      if (used_indices[i] == -1)
         continue;
       
       typename std::map<int, std::string>::iterator found
@@ -430,6 +430,10 @@ void Point_set_item_classification::compute_features (std::size_t nb_scales)
   Point_set::Property_map<boost::uint8_t> echo_map;
   bool echo;
   boost::tie (echo_map, echo) = m_points->point_set()->template property_map<boost::uint8_t>("echo");
+  if (!echo)
+    boost::tie (echo_map, echo) = m_points->point_set()->template property_map<boost::uint8_t>("number_of_returns");
+
+  add_remaining_point_set_properties_as_features();
 
   if (!normals && !colors && !echo)
     m_generator = new Generator (m_features, *(m_points->point_set()), m_points->point_set()->point_map(), nb_scales);
@@ -462,6 +466,46 @@ void Point_set_item_classification::compute_features (std::size_t nb_scales)
   m_random_forest = new Random_forest (m_labels, m_features);
 #endif
   std::cerr << "Features = " << m_features.size() << std::endl;
+}
+
+
+
+void Point_set_item_classification::add_remaining_point_set_properties_as_features()
+{
+  const std::vector<std::string>& prop = m_points->point_set()->base().properties();
+  
+  for (std::size_t i = 0; i < prop.size(); ++ i)
+  {
+    if (prop[i] == "index" ||
+        prop[i] == "point" ||
+        prop[i] == "normal" ||
+        prop[i] == "echo" ||
+        prop[i] == "number_of_returns" ||
+        prop[i] == "training" ||
+        prop[i] == "label" ||
+        prop[i] == "classification" ||
+        prop[i] == "real_color" ||
+        prop[i] == "red" || prop[i] == "green" || prop[i] == "blue" ||
+        prop[i] == "r" || prop[i] == "g" || prop[i] == "b")
+      continue;
+
+    if (try_adding_simple_feature<boost::int8_t>(prop[i]))
+      continue;
+    if (try_adding_simple_feature<boost::uint8_t>(prop[i]))
+      continue;
+    if (try_adding_simple_feature<boost::int16_t>(prop[i]))
+      continue;
+    if (try_adding_simple_feature<boost::uint16_t>(prop[i]))
+      continue;
+    if (try_adding_simple_feature<boost::int32_t>(prop[i]))
+      continue;
+    if (try_adding_simple_feature<boost::uint32_t>(prop[i]))
+      continue;
+    if (try_adding_simple_feature<float>(prop[i]))
+      continue;
+    if (try_adding_simple_feature<double>(prop[i]))
+      continue;
+  }
 }
 
 void Point_set_item_classification::select_random_region()

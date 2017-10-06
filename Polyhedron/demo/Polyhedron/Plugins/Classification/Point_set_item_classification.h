@@ -46,8 +46,23 @@ class Point_set_item_classification : public Item_classification_base
   void erase_item() { m_points = NULL; }
 
   void compute_features (std::size_t nb_scales);
-
+  void add_remaining_point_set_properties_as_features();
+  
   void select_random_region();
+
+  template <typename Type>
+  bool try_adding_simple_feature (const std::string& name)
+  {
+    typedef typename Point_set::template Property_map<Type> Pmap;
+    bool okay = false;
+    Pmap pmap;
+    boost::tie (pmap, okay) = m_points->point_set()->template property_map<Type>(name.c_str());
+    if (okay)
+      m_features.template add<CGAL::Classification::Feature::Simple_feature <Point_set, Pmap> >
+        (*(m_points->point_set()), pmap, name.c_str());
+
+    return okay;
+  }
   
   void add_selection_to_training_set (const char* name)
   {
