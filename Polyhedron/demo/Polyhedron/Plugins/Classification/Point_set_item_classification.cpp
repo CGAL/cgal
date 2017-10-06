@@ -242,6 +242,7 @@ Point_set_item_classification::Point_set_item_classification(Scene_points_with_n
   update_comments_of_point_set_item();
 
   m_sowf = new Sum_of_weighted_features (m_labels, m_features);
+  m_ethz = new ETHZ_random_forest (m_labels, m_features);
 #ifdef CGAL_LINKED_WITH_OPENCV
   m_random_forest = new Random_forest (m_labels, m_features);
 #endif
@@ -252,6 +253,8 @@ Point_set_item_classification::~Point_set_item_classification()
 {
   if (m_sowf != NULL)
     delete m_sowf;
+  if (m_ethz != NULL)
+    delete m_ethz;
 #ifdef CGAL_LINKED_WITH_OPENCV
   if (m_random_forest != NULL)
     delete m_random_forest;
@@ -501,6 +504,8 @@ void Point_set_item_classification::compute_features (std::size_t nb_scales)
 
   delete m_sowf;
   m_sowf = new Sum_of_weighted_features (m_labels, m_features);
+  delete m_ethz;
+  m_ethz = new ETHZ_random_forest (m_labels, m_features);
 #ifdef CGAL_LINKED_WITH_OPENCV
   delete m_random_forest;
   m_random_forest = new Random_forest (m_labels, m_features);
@@ -669,6 +674,13 @@ void Point_set_item_classification::train(int classifier, unsigned int nb_trials
                                                        m_labels, *m_sowf,
                                                        indices);
     }
+  else if (classifier == 1)
+  {
+    m_ethz->train(training);
+    CGAL::Classification::classify<Concurrency_tag> (*(m_points->point_set()),
+                                                     m_labels, *m_ethz,
+                                                     indices);
+  }
   else
     {
 #ifdef CGAL_LINKED_WITH_OPENCV
@@ -699,6 +711,8 @@ bool Point_set_item_classification::run (int method, int classifier,
 
   if (classifier == 0)
     run (method, *m_sowf, subdivisions, smoothing);
+  else if (classifier == 1)
+    run (method, *m_ethz, subdivisions, smoothing);
 #ifdef CGAL_LINKED_WITH_OPENCV
   else
     run (method, *m_random_forest, subdivisions, smoothing);

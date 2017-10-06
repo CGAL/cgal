@@ -141,6 +141,8 @@ public:
     ui_widget.setupUi(dock_widget);
     addDockWidget(dock_widget);
 
+    ui_widget.classifier->addItem (tr("Random Forest (ETHZ)"));
+    
 #ifdef CGAL_LINKED_WITH_OPENCV
     ui_widget.classifier->addItem (tr("Random Forest (OpenCV %1.%2)")
                                    .arg(CV_MAJOR_VERSION)

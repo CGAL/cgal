@@ -8,6 +8,7 @@
 #include <CGAL/Classification/Feature_set.h>
 #include <CGAL/Classification/Label_set.h>
 #include <CGAL/Classification/Sum_of_weighted_features_classifier.h>
+#include <CGAL/Classification/ETHZ_random_forest_classifier.h>
 
 #ifdef CGAL_LINKED_WITH_OPENCV
 #include <CGAL/Classification/Random_forest_classifier.h>
@@ -21,6 +22,7 @@ public:
   typedef CGAL::Classification::Label_set   Label_set;
   typedef CGAL::Classification::Feature_set Feature_set;
   typedef CGAL::Classification::Sum_of_weighted_features_classifier Sum_of_weighted_features;
+  typedef CGAL::Classification::ETHZ_random_forest_classifier ETHZ_random_forest;
 
 #ifdef CGAL_LINKED_WITH_OPENCV
   typedef CGAL::Classification::Random_forest_classifier Random_forest;
@@ -67,9 +69,13 @@ public:
   {
     m_labels.add(name);
     m_label_colors.push_back (color);
+    
     delete m_sowf;
     m_sowf = new Sum_of_weighted_features (m_labels, m_features);
-    
+
+    delete m_ethz;
+    m_ethz = new ETHZ_random_forest (m_labels, m_features);
+
 #ifdef CGAL_LINKED_WITH_OPENCV
     delete m_random_forest;
     m_random_forest = new Random_forest (m_labels, m_features);
@@ -86,6 +92,9 @@ public:
         }
     delete m_sowf;
     m_sowf = new Sum_of_weighted_features (m_labels, m_features);
+
+    delete m_ethz;
+    m_ethz = new ETHZ_random_forest (m_labels, m_features);
 
 #ifdef CGAL_LINKED_WITH_OPENCV
     delete m_random_forest;
@@ -119,6 +128,10 @@ public:
       std::ofstream f (filename);
       m_sowf->save_configuration (f);
     }
+    else if (classifier == 1)
+    {
+      m_ethz->save_configuration (filename);
+    }
     else
     {
 #ifdef CGAL_LINKED_WITH_OPENCV
@@ -138,6 +151,10 @@ public:
     {
       std::ifstream f (filename);
       m_sowf->load_configuration (f, true);
+    }
+    else if (classifier == 1)
+    {
+      m_ethz->load_configuration (filename);
     }
     else
     {
@@ -166,6 +183,7 @@ protected:
   Feature_set m_features;
   std::vector<QColor> m_label_colors;
   Sum_of_weighted_features* m_sowf;
+  ETHZ_random_forest* m_ethz;
 #ifdef CGAL_LINKED_WITH_OPENCV
   Random_forest* m_random_forest;
 #endif
