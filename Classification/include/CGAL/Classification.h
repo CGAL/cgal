@@ -46,6 +46,7 @@
 #include <CGAL/Classification/Feature/Eigen.h>
 #include <CGAL/Classification/Feature/Elevation.h>
 #include <CGAL/Classification/Feature/Hsv.h>
+#include <CGAL/Classification/Feature/Simple_feature.h>
 #include <CGAL/Classification/Feature/Vertical_dispersion.h>
 #include <CGAL/Classification/Feature/Verticality.h>
 
