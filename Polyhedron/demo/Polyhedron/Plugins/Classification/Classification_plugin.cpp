@@ -198,6 +198,9 @@ public:
     connect(ui_widget.feature_weight,  SIGNAL(valueChanged(int)), this,
             SLOT(on_feature_weight_changed(int)));
 
+    connect(dock_widget,  SIGNAL(visibilityChanged(bool)), this,
+            SLOT(close_classification(bool)));
+
     QObject* scene_obj = dynamic_cast<QObject*>(scene_interface);
     if(scene_obj)
     {
@@ -211,13 +214,7 @@ public:
   virtual void closure()
   {
     dock_widget->hide();
-    for (Item_map::iterator it = item_map.begin(); it != item_map.end(); ++ it)
-      {
-        Item_classification_base* classif = it->second;
-        classif->erase_item();
-        delete classif;
-      }
-    item_map.clear();
+    close_classification(false);
   }
 
 
@@ -229,7 +226,6 @@ public Q_SLOTS:
       {
         Item_classification_base* classif = it->second;
         item_map.erase(it); // first erase from map, because scene->erase will cause a call to this function
-        classif->erase_item();
         delete classif;
       }
   }
@@ -240,6 +236,21 @@ public Q_SLOTS:
     dock_widget->raise();
     Scene_points_with_normal_item* points_item = getSelectedItem<Scene_points_with_normal_item>();
     create_from_item(points_item);
+  }
+
+
+  void close_classification(bool show)
+  {
+    if (show)
+      return;
+    
+    for (Item_map::iterator it = item_map.begin(); it != item_map.end(); ++ it)
+      {
+        Item_classification_base* classif = it->second;
+        item_changed (classif->item());
+        delete classif;
+      }
+    item_map.clear();
   }
 
   void item_changed (Scene_item* item)

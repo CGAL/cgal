@@ -100,6 +100,7 @@ Point_set_item_classification::~Point_set_item_classification()
     {
       reset_colors();
       m_points->point_set()->remove_property_map(m_training);
+      erase_item();
     }
 }
 
@@ -134,12 +135,7 @@ void Point_set_item_classification::backup_existing_colors_and_add_new()
 void Point_set_item_classification::reset_colors()
 {
   if (m_color == Point_set::Property_map<Color>())
-    {
-      m_points->point_set()->remove_property_map(m_red);
-      m_points->point_set()->remove_property_map(m_green);
-      m_points->point_set()->remove_property_map(m_blue);
-      m_points->point_set()->check_colors();
-    }
+    m_points->point_set()->remove_colors();
   else
     {
       for (Point_set::const_iterator it = m_points->point_set()->begin();
