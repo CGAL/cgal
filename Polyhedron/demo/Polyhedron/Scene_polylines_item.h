@@ -23,7 +23,7 @@ public:
     typedef std::vector<Point_3> Polyline;
     typedef std::list<Polyline> Polylines_container;
 
-    Scene_polylines_item();
+    Scene_polylines_item(Scene_interface *scene);
     virtual ~Scene_polylines_item();
     enum STATS {
       NB_VERTICES = 0,
@@ -47,18 +47,16 @@ public:
 
     // Indicate if rendering mode is supported
     bool supportsRenderingMode(RenderingMode m) const;
+    void computeElements() const;
 
     QMenu* contextMenu();
 
     // Flat/Gouraud OpenGL drawing
-    void draw() const {}
-    void draw(CGAL::Three::Viewer_interface*) const;
+    void draw(Viewer_interface *viewer, int pass, bool is_writing, QOpenGLFramebufferObject *fbo) const;
 
     // Wireframe OpenGL drawing
-    void drawEdges() const{}
     void drawEdges(CGAL::Three::Viewer_interface*) const;
 
-    void drawPoints() const{}
     void drawPoints(CGAL::Three::Viewer_interface*) const;
 
 
@@ -80,6 +78,7 @@ protected:
     // http://en.wikipedia.org/wiki/D-pointer
     friend struct Scene_polylines_item_private;
     Scene_polylines_item_private* d;
+    CGAL::Three::Scene_interface* scene;
 
 }; // end class Scene_polylines_item
 

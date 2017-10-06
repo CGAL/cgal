@@ -46,7 +46,7 @@ public:
   QString name() const { return "polylines_io_plugin"; }
   QString nameFilters() const { return "Polylines files (*.polylines.txt *.cgal)"; }
   bool canLoad() const;
-  CGAL::Three::Scene_item* load(QFileInfo fileinfo);
+  CGAL::Three::Scene_item* load(QFileInfo fileinfo, CGAL::Three::Scene_interface* scene, QMainWindow*);
 
   bool canSave(const CGAL::Three::Scene_item*);
   bool save(const CGAL::Three::Scene_item*, QFileInfo fileinfo);
@@ -91,7 +91,7 @@ bool Polyhedron_demo_polylines_io_plugin::canLoad() const {
 
 
 CGAL::Three::Scene_item*
-Polyhedron_demo_polylines_io_plugin::load(QFileInfo fileinfo) {
+Polyhedron_demo_polylines_io_plugin::load(QFileInfo fileinfo, Scene_interface *scene, QMainWindow *) {
 
   // Open file
   std::ifstream ifs(fileinfo.filePath().toUtf8());
@@ -131,7 +131,7 @@ Polyhedron_demo_polylines_io_plugin::load(QFileInfo fileinfo) {
     if(ifs.bad() || ifs.fail()) return 0;
   }
   if(counter == 0) return 0;
-  Scene_polylines_item* item = new Scene_polylines_item;
+  Scene_polylines_item* item = new Scene_polylines_item(scene);
   item->polylines = polylines;
   item->setName(fileinfo.baseName());
   item->setColor(Qt::black);
@@ -186,7 +186,7 @@ bool Polyhedron_demo_polylines_io_plugin::save(const CGAL::Three::Scene_item* it
 void Polyhedron_demo_polylines_io_plugin::split()
 {
   Scene_polylines_item* item = qobject_cast<Scene_polylines_item*>(scene->item(scene->mainSelectionIndex()));
-  Scene_group_item* group = new Scene_group_item("Splitted Polylines");
+  Scene_group_item* group = new Scene_group_item("Splitted Polylines", scene);
   scene->addItem(group);
   group->setColor(item->color());
   int i=0;
@@ -194,7 +194,7 @@ void Polyhedron_demo_polylines_io_plugin::split()
   {
     Scene_polylines_item::Polylines_container container;
     container.push_back(polyline);
-    Scene_polylines_item *new_polyline = new Scene_polylines_item();
+    Scene_polylines_item *new_polyline = new Scene_polylines_item(scene);
     new_polyline->polylines = container;
     new_polyline->setColor(item->color());
     new_polyline->setName(QString("Splitted %1 #%2").arg(item->name()).arg(i++));
@@ -211,7 +211,7 @@ void Polyhedron_demo_polylines_io_plugin::join()
   for(int i = 0; i < scene->selectionIndices().size(); ++i)
     items[i] = qobject_cast<Scene_polylines_item*>(scene->item(scene->selectionIndices().at(i)));
 
-  Scene_polylines_item* new_polyline= new Scene_polylines_item();
+  Scene_polylines_item* new_polyline= new Scene_polylines_item(scene);
   Scene_polylines_item::Polylines_container container;
   Q_FOREACH(Scene_polylines_item* item, items)
   {

@@ -138,8 +138,14 @@ public:
    * @see computeElements()
    * @see initializeBuffers()
    */  
+#ifdef DOXYGEN_RUNNING
     virtual void draw(CGAL::Three::Viewer_interface* viewer,
-                      int pass, bool writing_depth, QOpenGLFramebufferObject* fbo) const  {}
+                      int pass, bool writing_depth, QOpenGLFramebufferObject* fbo) const
+#else
+  virtual void draw(CGAL::Three::Viewer_interface* ,
+                    int , bool , QOpenGLFramebufferObject* ) const
+#endif
+  {}
   /*! \brief The drawing function for the edges.
    *
    * Draws the edges and lines of the item in the viewer. The data

@@ -98,10 +98,6 @@ void Edge_container::draw(const Scene_item &item, Viewer_interface *viewer,
                           bool is_color_uniform, QOpenGLFramebufferObject *) const
 
 {
-  if(!is_init[viewer])
-  {
-    initializeBuffers(viewer);
-  }
   item.attribBuffers(viewer, program_id);
 
   if(indexed)

@@ -39,7 +39,7 @@ public:
   void clear_spheres();
   void setPrecision(int prec);
 
-  void draw(CGAL::Three::Viewer_interface* viewer) const Q_DECL_OVERRIDE;
+  void draw(Viewer_interface *, int, bool, QOpenGLFramebufferObject *) const Q_DECL_OVERRIDE;
   void drawEdges(CGAL::Three::Viewer_interface* viewer) const Q_DECL_OVERRIDE;
   void invalidateOpenGLBuffers() Q_DECL_OVERRIDE;
   void computeElements() const Q_DECL_OVERRIDE;

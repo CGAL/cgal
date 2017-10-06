@@ -95,7 +95,7 @@ void Scene_spheres_item::initializeBuffers(CGAL::Three::Viewer_interface *viewer
 
 }
 
-void Scene_spheres_item::draw(Viewer_interface *viewer) const
+void Scene_spheres_item::draw(Viewer_interface *viewer, int, bool, QOpenGLFramebufferObject *) const
 {
   if(!d->isinit)
     initGL();

@@ -2146,13 +2146,14 @@ void LoadingController::handleResults(CT::Scene_item* item)
     return;
   }
   item->moveToThread(QApplication::instance()->thread());
-  if(!qobject_cast<Scene_group_item*>(item))
+  Scene_group_item* group = qobject_cast<Scene_group_item*>(item);
+  if(!group
+     || group->getChildrenIds().size() == 0)
     item->setColor(colors_[counter-1]);
   mw->selectSceneItem(scene->item_id(item));
 
   scene->addItem(item);
-  CGAL::Three::Scene_group_item* group =
-      qobject_cast<CGAL::Three::Scene_group_item*>(item);
+
   if(group)
     scene->redraw_model();
   if(counter == input.size())
