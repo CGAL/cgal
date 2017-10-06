@@ -2,7 +2,7 @@
 
 int main()
 {
-  CGAL::Dynamic_property_map<int,int> dpm(2);
+  CGAL::internal::Dynamic_property_map<int,int> dpm(2);
   assert(dpm.default_value() == 2);
   
   assert(get(dpm, 0) == 2);

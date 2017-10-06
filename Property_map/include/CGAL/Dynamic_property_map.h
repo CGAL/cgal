@@ -49,7 +49,7 @@ struct Dynamic_property_map {
     }
   }
 
-  friend value_type get(const Dynamic_property_map& m, const key_type& k)
+  friend reference get(const Dynamic_property_map& m, const key_type& k)
   {
     typename Map::const_iterator it = m.map_->find(k);
     if(it == m.map_->end()){
