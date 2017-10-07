@@ -24,12 +24,12 @@
 #  pragma warning(push)
 #  pragma warning(disable:4244)
 #endif
-#include <Eigen/Sparse>
-#if EIGEN_VERSION_AT_LEAST(3, 1, 91)
 
+#include <Eigen/Sparse>
+
+#if EIGEN_VERSION_AT_LEAST(3, 1, 91)
 #include <Eigen/SparseLU>
 #endif
-
 
 #if defined(BOOST_MSVC)
 #  pragma warning(pop)
@@ -40,146 +40,144 @@
 #include <boost/shared_ptr.hpp>
 
 namespace CGAL {
-
-
 namespace internal {
-  template <class EigenSolver,class FT>
-  struct Get_eigen_matrix{
-    typedef Eigen_sparse_matrix<FT> type;
-  };
-  
-  template <class FT,class EigenMatrix>
-  struct Get_eigen_matrix< ::Eigen::ConjugateGradient<EigenMatrix>,FT>{
-    typedef Eigen_sparse_symmetric_matrix<FT> type;
-  };
 
-  template <class FT,class EigenMatrix>
-  struct Get_eigen_matrix< ::Eigen::SimplicialCholesky<EigenMatrix>,FT>{
-    typedef Eigen_sparse_symmetric_matrix<FT> type;
-  };
+template <class EigenSolver, class FT>
+struct Get_eigen_matrix
+{
+  typedef Eigen_sparse_matrix<FT>             type;
+};
+
+template <class FT, class EigenMatrix>
+struct Get_eigen_matrix< ::Eigen::ConjugateGradient<EigenMatrix>, FT>
+{
+  typedef Eigen_sparse_symmetric_matrix<FT>   type;
+};
+
+template <class FT, class EigenMatrix>
+struct Get_eigen_matrix< ::Eigen::SimplicialCholesky<EigenMatrix>, FT>
+{
+  typedef Eigen_sparse_symmetric_matrix<FT>   type;
+};
+
 #if EIGEN_VERSION_AT_LEAST(3, 1, 91)
-  template <class FT, class EigenMatrix, class EigenOrdering>
-  struct Get_eigen_matrix< ::Eigen::SparseLU<EigenMatrix, EigenOrdering >, FT> {
-    typedef Eigen_sparse_matrix<FT> type;
-  };
+template <class FT, class EigenMatrix, class EigenOrdering>
+struct Get_eigen_matrix< ::Eigen::SparseLU<EigenMatrix, EigenOrdering >, FT>
+{
+  typedef Eigen_sparse_matrix<FT>             type;
+};
 #endif
-} //internal 
-  
+} //internal
+
 /*!
 \ingroup PkgSolver
 
 The class `Eigen_solver_traits` provides an interface to the sparse solvers of \ref thirdpartyEigen "Eigen".
-The version 3.1 (or greater) of \ref thirdpartyEigen "Eigen" must be available on the system. 
+The version 3.1 (or greater) of \ref thirdpartyEigen "Eigen" must be available on the system.
 
 \cgalModels `SparseLinearAlgebraWithFactorTraits_d` and `NormalEquationSparseLinearAlgebraTraits_d`
 
-
-\tparam T A sparse solver of \ref thirdpartyEigen "Eigen". The default solver is the iterative bi-congugate gradient stabilized solver  `Eigen::BiCGSTAB` for `double`. 
+\tparam T A sparse solver of \ref thirdpartyEigen "Eigen". The default solver is the iterative bi-congugate gradient stabilized solver  `Eigen::BiCGSTAB` for `double`.
 
 \sa `CGAL::Eigen_sparse_matrix<T>`
 \sa `CGAL::Eigen_sparse_symmetric_matrix<T>`
 \sa `CGAL::Eigen_vector<T>`
 \sa http://eigen.tuxfamily.org
 
-Example 
+Example
 -------------- 
 
-The instantiation of this class assumes an \ref thirdpartyEigen "Eigen" sparse solver is provided. Here are few examples: 
+The instantiation of this class assumes an \ref thirdpartyEigen "Eigen" sparse solver is provided. Here are few examples:
 
-\code{.cpp} 
+\code{.cpp}
 
-typedef CGAL::Eigen_sparse_matrix<double>::EigenType EigenMatrix; 
+typedef CGAL::Eigen_sparse_matrix<double>::EigenType EigenMatrix;
 
-//iterative general solver 
-typedef CGAL::Eigen_solver_traits< Eigen::BiCGSTAB<EigenMatrix> > Iterative_general_solver; 
+//iterative general solver
+typedef CGAL::Eigen_solver_traits< Eigen::BiCGSTAB<EigenMatrix> > Iterative_general_solver;
 
-//iterative symmetric solver 
-typedef CGAL::Eigen_solver_traits< Eigen::ConjugateGradient<EigenMatrix> > Iterative_symmetric_solver; 
+//iterative symmetric solver
+typedef CGAL::Eigen_solver_traits< Eigen::ConjugateGradient<EigenMatrix> > Iterative_symmetric_solver;
 
-//direct symmetric solver 
-typedef CGAL::Eigen_solver_traits< Eigen::SimplicialCholesky<EigenMatrix> > Direct_symmetric_solver; 
+//direct symmetric solver
+typedef CGAL::Eigen_solver_traits< Eigen::SimplicialCholesky<EigenMatrix> > Direct_symmetric_solver;
 
-\endcode 
+\endcode
 
 */
 template<class EigenSolverT = Eigen::BiCGSTAB<Eigen_sparse_matrix<double>::EigenType> >
 class Eigen_solver_traits
 {
-  typedef typename EigenSolverT::Scalar Scalar;
-// Public types
+  typedef typename EigenSolverT::Scalar                               Scalar;
+
+  // Public types
 public:
-   typedef EigenSolverT Solver;
-/// \name Types 
-/// @{
-
-/*!
-
-*/ 
-   typedef Scalar                                                       NT;
+  typedef EigenSolverT                                                Solver;
+  /// \name Types
+  /// @{
 
   /*!
 
-*/ 
-  typedef CGAL::Eigen_vector<NT> Vector; 
+*/
+  typedef Scalar                                                      NT;
+
+  /*!
+
+*/
+  typedef CGAL::Eigen_vector<NT>                                      Vector;
 
   /*!
 If `T` is `Eigen::ConjugateGradient<M>` or `Eigen::SimplicialCholesky<M>`, `Matrix` is `CGAL::Eigen_sparse_symmetric_matrix<T>` 
 and `CGAL::Eigen_sparse_matrix<T>` otherwise. 
 
 */
-#ifdef DOXYGEN_RUNNING  
-  typedef unspecified_type Matrix;
+#ifdef DOXYGEN_RUNNING
+  typedef unspecified_type                                            Matrix;
 #else
-  typedef typename internal::Get_eigen_matrix<EigenSolverT,NT>::type   Matrix;
-#endif   
+  typedef typename internal::Get_eigen_matrix<EigenSolverT,NT>::type  Matrix;
+#endif
 
-/// @}
-  
-// Public operations
+  /// @}
+
+  // Public operations
 public:
+  Eigen_solver_traits():m_mat(NULL), m_solver_sptr(new EigenSolverT) { }
+  /// @}
 
-   Eigen_solver_traits():m_mat(NULL), m_solver_sptr(new EigenSolverT)
-   {
-   }
-   
-  /// @} 
-
-  /// \name Operations 
+  /// \name Operations
   /// @{
 
   /*!
-
 Returns a reference to the internal \ref thirdpartyEigen "Eigen" solver. This function can be used for example to set specific parameters of the solver. 
+*/
+  EigenSolverT& solver() { return *m_solver_sptr; }
 
-*/ 
-   EigenSolverT& solver() { return *m_solver_sptr; }
+  /// @}
 
-/// @}
-  
-   /// Solve the sparse linear system "A*X = B".
-   /// Return true on success. The solution is then (1/D) * X.
-   ///
-   /// @commentheading Preconditions:
-   /// - A.row_dimension()    == B.dimension().
-   /// - A.column_dimension() == X.dimension().
-   bool linear_solver(const Matrix& A, const Vector& B, Vector& X, NT& D)
-   {
-      D = 1;          // Eigen does not support homogeneous coordinates
+  /// Solve the sparse linear system "A*X = B".
+  /// Return true on success. The solution is then (1/D) * X.
+  ///
+  /// @commentheading Preconditions:
+  /// - A.row_dimension() == B.dimension().
+  /// - A.column_dimension() == X.dimension().
+  bool linear_solver(const Matrix& A, const Vector& B, Vector& X, NT& D)
+  {
+    D = 1; // Eigen does not support homogeneous coordinates
 
-      m_solver_sptr->compute(A.eigen_object());
-       
-      if(m_solver_sptr->info() != Eigen::Success)
-         return false;
-         
-      X = m_solver_sptr->solve(B);
+    m_solver_sptr->compute(A.eigen_object());
 
-      return m_solver_sptr->info() == Eigen::Success;
-   }
+    if(m_solver_sptr->info() != Eigen::Success)
+      return false;
 
-  bool factor (const Matrix& A, NT& D)
+    X = m_solver_sptr->solve(B);
+
+    return m_solver_sptr->info() == Eigen::Success;
+  }
+
+  bool factor(const Matrix& A, NT& D)
   {
     D = 1;
-    
+
     m_mat = &A.eigen_object();
     solver().compute(*m_mat);
     return solver().info() == Eigen::Success;
@@ -187,13 +185,13 @@ Returns a reference to the internal \ref thirdpartyEigen "Eigen" solver. This fu
 
   bool linear_solver(const Vector& B, Vector& X)
   {
-    CGAL_precondition(m_mat!=NULL); //factor should have been called first
+    CGAL_precondition(m_mat != NULL); // factor should have been called first
     X = solver().solve(B);
     return solver().info() == Eigen::Success;
   }
 
-// Solving the normal equation "At*A*X = At*B".
-// --
+  // Solving the normal equation "At*A*X = At*B".
+  // --
   bool normal_equation_factor(const Matrix& A)
   {
     typename Matrix::EigenType At = A.eigen_object().transpose();
@@ -215,60 +213,57 @@ Returns a reference to the internal \ref thirdpartyEigen "Eigen" solver. This fu
     if (!normal_equation_factor(A)) return false;
     return normal_equation_solver(B, X);
   }
-// --
+
+  // --
 protected:
   const typename Matrix::EigenType* m_mat;
   boost::shared_ptr<EigenSolverT> m_solver_sptr;
-
 };
 
 //specialization of the solver for BiCGSTAB as for surface parameterization, the 
 //intializer should be a vector of one's (this was the case in 3.1-alpha but not in the official 3.1).
 template<>
-class Eigen_solver_traits< Eigen::BiCGSTAB<Eigen_sparse_matrix<double>::EigenType> >
+class Eigen_solver_traits<Eigen::BiCGSTAB<Eigen_sparse_matrix<double>::EigenType> >
 {
-  typedef Eigen::BiCGSTAB<Eigen_sparse_matrix<double>::EigenType> EigenSolverT;
-  typedef EigenSolverT::Scalar Scalar;
-// Public types
+  typedef Eigen::BiCGSTAB<Eigen_sparse_matrix<double>::EigenType>       EigenSolverT;
+  typedef EigenSolverT::Scalar                                          Scalar;
+
+  // Public types
 public:
-   typedef EigenSolverT Solver;
-   typedef Scalar                                                       NT;
-   typedef internal::Get_eigen_matrix<EigenSolverT,NT>::type   Matrix;
-   typedef Eigen_vector<Scalar>                                         Vector;
-   
+  typedef EigenSolverT                                                  Solver;
+  typedef Scalar                                                        NT;
+  typedef internal::Get_eigen_matrix<EigenSolverT,NT>::type             Matrix;
+  typedef Eigen_vector<Scalar>                                          Vector;
 
-// Public operations
+  // Public operations
 public:
+  Eigen_solver_traits(): m_solver_sptr(new EigenSolverT) { }
 
-   Eigen_solver_traits(): m_solver_sptr(new EigenSolverT)
-   {
-   }
-   
-   EigenSolverT& solver() { return *m_solver_sptr; }
+  EigenSolverT& solver() { return *m_solver_sptr; }
 
-   /// Solve the sparse linear system "A*X = B".
-   /// Return true on success. The solution is then (1/D) * X.
-   ///
-   /// @commentheading Preconditions:
-   /// - A.row_dimension()    == B.dimension().
-   /// - A.column_dimension() == X.dimension().
-   bool linear_solver(const Matrix& A, const Vector& B, Vector& X, NT& D)
-   {
-      D = 1;          // Eigen does not support homogeneous coordinates
+  /// Solve the sparse linear system "A*X = B".
+  /// Return true on success. The solution is then (1/D) * X.
+  ///
+  /// @commentheading Preconditions:
+  /// - A.row_dimension()    == B.dimension().
+  /// - A.column_dimension() == X.dimension().
+  bool linear_solver(const Matrix& A, const Vector& B, Vector& X, NT& D)
+  {
+    D = 1; // Eigen does not support homogeneous coordinates
 
-      m_solver_sptr->compute(A.eigen_object());
-       
-      if(m_solver_sptr->info() != Eigen::Success)
-         return false;
-      
-      X.setOnes(B.rows());
-      X = m_solver_sptr->solveWithGuess(B,X);
+    m_solver_sptr->compute(A.eigen_object());
 
-      return m_solver_sptr->info() == Eigen::Success;
-   }
+    if(m_solver_sptr->info() != Eigen::Success)
+      return false;
+
+    X.setOnes(B.rows());
+    X = m_solver_sptr->solveWithGuess(B,X);
+
+    return m_solver_sptr->info() == Eigen::Success;
+  }
+
 protected:
   boost::shared_ptr<EigenSolverT> m_solver_sptr;
-
 };
 
 } //namespace CGAL

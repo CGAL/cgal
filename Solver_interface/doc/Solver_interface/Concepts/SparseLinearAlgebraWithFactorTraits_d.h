@@ -19,9 +19,7 @@ public:
 /// @{
 
 /*!
-
 Default constructor.
-
 */
 SparseLinearAlgebraWithFactorTraits_d();
 

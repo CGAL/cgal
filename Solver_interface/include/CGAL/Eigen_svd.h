@@ -26,12 +26,9 @@
 #  pragma warning(disable:4244)
 #endif
 
-
 #include <CGAL/Eigen_matrix.h>
 #include <CGAL/Eigen_vector.h>
 #include <Eigen/SVD>
-
-
 
 namespace CGAL {
 
@@ -45,24 +42,25 @@ square sense a linear system with a singular value decomposition using
 \cgalModels `SvdTraits`
 
 */
- 
-class Eigen_svd{
+class Eigen_svd
+{
 public:
-  typedef double FT;
-  typedef Eigen_vector<FT> Vector;
-  typedef Eigen_matrix<FT> Matrix;
+  typedef double                                          FT;
+  typedef Eigen_vector<FT>                                Vector;
+  typedef Eigen_matrix<FT>                                Matrix;
+
   //solve MX=B using SVD and return the condition number of M
   //The solution is stored in B
-  static FT solve(const Matrix& M, Vector& B){
+  static FT solve(const Matrix& M, Vector& B)
+  {
     Eigen::JacobiSVD<Matrix::EigenType> jacobiSvd(M.eigen_object(),::Eigen::ComputeThinU | ::Eigen::ComputeThinV);
     B.eigen_object()=jacobiSvd.solve(Vector::EigenType(B.eigen_object()));
-    return jacobiSvd.singularValues().array().abs().maxCoeff()/
+    return jacobiSvd.singularValues().array().abs().maxCoeff() /
            jacobiSvd.singularValues().array().abs().minCoeff();
   }
 };
 
-}//namespace CGAL
-
+} // namespace CGAL
 
 #if defined(BOOST_MSVC)
 #  pragma warning(pop)
