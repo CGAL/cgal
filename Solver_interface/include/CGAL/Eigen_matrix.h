@@ -297,7 +297,7 @@ struct Eigen_matrix
   std::size_t number_of_columns() const { return this->cols(); }
 
   /// Return the value of the matrix at position (i,j).
-  FT operator()( std::size_t i , std::size_t j ) const { return this->operator()(i,j); }
+  FT operator()( std::size_t i , std::size_t j ) const { return EigenType::operator()(i,j); }
 
   /// Write access to a matrix coefficient: `a_ij` <- `val`.
   void set(std::size_t i, std::size_t j, FT value) { this->coeffRef(i,j) = value; }
