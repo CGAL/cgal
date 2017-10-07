@@ -57,7 +57,11 @@ void dgelss(int *m, int *n, int *nrhs,
 
 namespace CGAL {
 
-////////////////////////class Lapack_vector/////////////////////
+/// \ingroup PkgSolver
+///
+/// A matrix class to be used in the class `Lapack_svd`.
+///
+/// \cgalModels `SvdTraits::Matrix`
 class Lapack_vector
 {
   typedef double FT;
@@ -67,23 +71,28 @@ protected:
   size_t nb_elts;
 
 public:
-  // constructor
-  // initializes all the elements of the vector to zero.
+  /// Initializes all the elements of the vector to zero.
   Lapack_vector(size_t n)
   {
-    m_vector = (FT*) std::calloc (n, sizeof(FT));
+    m_vector = (FT*) std::calloc(n, sizeof(FT));
     nb_elts = n;
   }
 
   ~Lapack_vector() { free(m_vector); }
 
+  /// Return the size of the vector.
   size_t size() { return nb_elts; }
 
-  //data access
+  /// Return the vector as an array.
   const FT* vector() const { return m_vector;}
+
+  /// Return the vector as an array.
   FT* vector() { return m_vector; }
 
+  /// Return the `i`th entry, `i` from `0` to `size()-1`.
   FT operator()(size_t i) {return m_vector[i];}
+
+  /// Set the `i`'th entry to `value`.
   void set(size_t i, const FT value) { m_vector[i] = value; }
 
 private:
@@ -92,10 +101,13 @@ private:
   Lapack_vector& operator =(const Lapack_vector& toCopy);
 };
 
-////////////////////////class Lapack_matrix/////////////////////
-// In clapack, matrices are one-dimensional arrays and elements are
-// column-major ordered. This class is a wrapper defining set and get
-// in the usual way with line and column indices.
+/// \ingroup PkgSolver
+///
+/// In CLAPACK, matrices are one-dimensional arrays and elements are
+/// column-major ordered. This class is a wrapper defining set and get
+/// in the usual way with line and column indices.
+///
+/// \cgalModels `SvdTraits::Matrix`
 class Lapack_matrix
 {
   typedef double FT;
@@ -106,8 +118,7 @@ protected:
   size_t nb_columns;
 
 public:
-  // constructor
-  // initializes all the elements of the matrix to zero.
+  /// Initializes all the elements of the matrix to zero.
   Lapack_matrix(size_t n1, size_t n2)
   {
     m_matrix = (FT*) std::calloc (n1*n2, sizeof(FT));
@@ -115,19 +126,24 @@ public:
     nb_columns = n2;
   }
 
-  ~Lapack_matrix() {
-    free(m_matrix);
-  }
+  ~Lapack_matrix() { free(m_matrix); }
 
+  /// Return the number of rows of the matrix.
   size_t number_of_rows() { return nb_rows; }
+  /// Return the number of columns of the matrix.
   size_t number_of_columns() { return nb_columns; }
 
-  //access
+  /// Return the matrix as an array.
   const FT* matrix() const { return m_matrix; }
+  /// Return the matrix as an array.
   FT* matrix() { return m_matrix; }
 
-  void set(size_t i, size_t j, const FT value) { m_matrix[j*nb_rows+i] = value; }
+  /// Return the entry at row `i` and column `j`, `i` from `0` to `number_of_rows - 1`,
+  /// `j` from `0` to `number_of_columns - 1`.
   FT operator()(size_t i, size_t j) { return m_matrix[j*nb_rows+i]; }
+
+  /// Set the entry at row `i` and column `j` to `value`.
+  void set(size_t i, size_t j, const FT value) { m_matrix[j*nb_rows+i] = value; }
 
 private:
   /// Copy constructor and operator =() are not implemented.
@@ -135,7 +151,11 @@ private:
   Lapack_matrix& operator =(const Lapack_matrix& toCopy);
 }; 
 
-////////////////////////class Lapack_svd/////////////////////
+/// \ingroup PkgSolver
+///
+/// This class is a wrapper to the singular value decomposition algorithm of LAPACK.
+///
+/// \cgalModels `SvdTraits`
 class Lapack_svd
 {
 public:
@@ -143,8 +163,9 @@ public:
   typedef Lapack_vector                               Vector;
   typedef Lapack_matrix                               Matrix;
 
-  //solve MX=B using SVD and return the condition number of M
-  //The solution is stored in B
+  /// Solves the system \f$ MX=B\f$ (in the least square sense if \f$ M\f$ is not
+  /// square) using a singular value decomposition. The solution is stored in \f$ B\f$.
+  /// \return the condition number of \f$ M\f$
   static FT solve(Matrix& M, Vector& B);
 };
 
@@ -160,7 +181,7 @@ Lapack_svd::FT Lapack_svd::solve(Matrix& M, Vector& B)
       lwork = 5*m,
       info;
 
-  //c style
+  // c style
   FT* sing_values = (FT*) std::malloc(n*sizeof(FT));
   FT* work = (FT*) std::malloc(lwork*sizeof(FT));
 
@@ -172,7 +193,7 @@ Lapack_svd::FT Lapack_svd::solve(Matrix& M, Vector& B)
 
   FT cond_nb = sing_values[0]/sing_values[n-1];
 
-  //clean up
+  // clean up
   free(sing_values);
   free(work);
 

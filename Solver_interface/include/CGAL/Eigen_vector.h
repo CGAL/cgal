@@ -47,19 +47,13 @@ class Eigen_vector
 {
 // Public types
 public:
-   typedef T                                      NT;
-/// \name Types 
-/// @{
+  /// \name Types
+  /// @{
+  typedef T                                      NT;
 
-/*!
-The internal vector type from \ref thirdpartyEigen "Eigen".
-*/
-#ifdef DOXYGEN_RUNNING
-  typedef unspecified_type                        EigenType;
-#else
-   typedef Eigen::Matrix<T, Eigen::Dynamic, 1>    EigenType;
-#endif
-/// @}
+  /// The internal vector type from \ref thirdpartyEigen "Eigen".
+  typedef Eigen::Matrix<T, Eigen::Dynamic, 1>    EigenType;
+  /// @}
 
 // Public operations
 public:
@@ -88,15 +82,19 @@ public:
   /// Return the vector's number of coefficients.
   int dimension() const { return static_cast<int>(this->size()); }
 
-  /// Get vector wrapped by this object.
+  /// Return the internal vector wrapped by this object.
   const EigenType& eigen_object() const { return *this; }
+
+  /// Return the internal vector wrapped by this object.
   EigenType& eigen_object() { return *this; }
 
+  /// Write access to a vector coefficient: `a_i` <- `value`.
   void set(std::size_t i, NT value)
   {
     this->operator[](static_cast<int>(i)) = value;
   }
 
+  /// Return a pointer to the data array of this vector.
   NT* vector() { return this->data(); }
 };
 

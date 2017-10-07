@@ -6,6 +6,7 @@
   to solve in the least square sense a linear system with a singular value decomposition
 
   \cgalHasModel `CGAL::Eigen_svd`
+  \cgalHasModel `CGAL::Lapack_svd`
 */
 class SvdTraits
 {
@@ -57,26 +58,27 @@ class SvdTraits::Vector
 {
 public:
   /*!
-    initialize all the elements of the vector to zero.
+    Initialize all the elements of the vector to zero.
   */
   Vector(size_t n);
-  /*!
 
+  /*!
+    Return the size of the vector.
    */
   size_t size();
 
   /*!
-    return the `i`th entry, `i` from `0` to `size()-1`.
+    Return the `i`th entry, `i` from `0` to `size()-1`.
   */
   FT operator()(size_t i);
 
   /*!
-    set the `i`'th entry to `value`.
+    Set the `i`'th entry to `value`.
   */
   void set(size_t i, const FT value);
 
   /*!
-    return the vector as an array.
+    Return the vector as an array.
   */
   FT* vector();
 };
@@ -91,28 +93,28 @@ class SvdTraits::Matrix
 {
 public:
   /*!
-    initialize all the entries of the matrix to zero.
+    Initialize all the entries of the matrix to zero.
   */
   Matrix(size_t n1, size_t n2);
 
   /*!
-
+    Return the number of rows of the matrix.
    */
   size_t number_of_rows();
 
   /*!
-
+    Return the number of columns of the matrix.
    */
   size_t number_of_columns();
 
   /*!
-    return the entry at row `i` and column `j`, `i` from `0` to `number_of_rows - 1`,
+    Return the entry at row `i` and column `j`, `i` from `0` to `number_of_rows - 1`,
     `j` from `0` to `number_of_columns - 1`.
   */
   FT operator()(size_t i, size_t j);
 
   /*!
-    set the entry at row `i` and column `j` to `value`.
+    Set the entry at row `i` and column `j` to `value`.
   */
   void set(size_t i, size_t j, const FT value);
 };

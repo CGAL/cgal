@@ -28,16 +28,17 @@ namespace CGAL {
 /*!
 \ingroup PkgSolver
 
-The class `Eigen_sparse_matrix` is a wrapper around \ref thirdpartyEigen "Eigen" matrix type <a href="http://eigen.tuxfamily.org/dox/classEigen_1_1SparseMatrix.html">`Eigen::SparseMatrix` </a>
-that represents general matrices, be they symmetric or not. 
+The class `Eigen_sparse_matrix` is a wrapper around \ref thirdpartyEigen "Eigen" matrix type
+<a href="http://eigen.tuxfamily.org/dox/classEigen_1_1SparseMatrix.html">`Eigen::SparseMatrix`</a>
+that represents general matrices, be they symmetric or not.
 
-\cgalModels `SparseLinearAlgebraTraits_d::Matrix` 
+\cgalModels `SparseLinearAlgebraTraits_d::Matrix`
 
-\tparam T Number type. 
+\tparam T Number type.
 
-\sa `CGAL::Eigen_solver_traits<T>`
-\sa `CGAL::Eigen_sparse_symmetric_matrix<T>`
 \sa `CGAL::Eigen_vector<T>`
+\sa `CGAL::Eigen_matrix<T>`
+\sa `CGAL::Eigen_sparse_symmetric_matrix<T>`
 */
 template<class T>
 struct Eigen_sparse_matrix
@@ -47,19 +48,14 @@ public:
   /// \name Types
   /// @{
 
-  /*!
-The internal matrix type from \ref thirdpartyEigen "Eigen".
-*/
-#ifdef DOXYGEN_RUNNING
-  typedef unspecified_type EigenType;
-#else
+  /// The internal matrix type from \ref thirdpartyEigen "Eigen".
   typedef Eigen::SparseMatrix<T>      EigenType;
-#endif
+
   typedef T                           NT;
+  /// @}
 
   // Public operations
 public:
-
   /// Create a square matrix initialized with zeros.
   Eigen_sparse_matrix(std::size_t  dim,           ///< Matrix dimension.
                       bool is_symmetric = false)  ///< Symmetric/hermitian?
@@ -70,8 +66,7 @@ public:
     CGAL_precondition(dim > 0);
 
     m_is_symmetric = is_symmetric;
-    // reserve memory for a regular 3D grid
-    m_triplets.reserve(dim);
+    m_triplets.reserve(dim); // reserve memory for a regular 3D grid
   }
 
   /// Create a square matrix initialized with zeros.
@@ -89,7 +84,7 @@ public:
 
   /// Create a rectangular matrix initialized with zeros.
   ///
-  /// @commentheading Precondition: rows == columns if is_symmetric is true.
+  /// \pre rows == columns if `is_symmetric` is true.
   Eigen_sparse_matrix(std::size_t rows,          ///< Number of rows.
                       std::size_t columns,       ///< Number of columns.
                       bool is_symmetric = false) ///< Symmetric/hermitian?
@@ -113,7 +108,7 @@ public:
 
   /// Create a rectangular matrix initialized with zeros.
   ///
-  /// @commentheading Precondition: rows == columns if is_symmetric is true.
+  /// \pre rows == columns if `is_symmetric` is true.
   Eigen_sparse_matrix(int rows,                  ///< Number of rows.
                       int columns,               ///< Number of columns.
                       bool is_symmetric = false) ///< Symmetric/hermitian?
@@ -139,15 +134,14 @@ public:
 
   /// Write access to a matrix coefficient: a_ij <- val.
   ///
-  /// Optimizations:
-  /// - For symmetric matrices, Eigen_sparse_matrix stores only the lower triangle
-  ///   set_coef() does nothing if (i, j) belongs to the upper triangle.
-  /// - Caller can optimize this call by setting 'new_coef' to true
-  ///   if the coefficient does not already exist in the matrix.
+  /// Users can optimize calls to this function by setting 'new_coef' to `true`
+  /// if the coefficient does not already exist in the matrix.
   ///
-  /// @commentheading Preconditions:
-  /// - 0 <= i < row_dimension().
-  /// - 0 <= j < column_dimension().
+  /// \warning For symmetric matrices, `Eigen_sparse_matrix` only stores the lower triangle
+  ///   and `set_coef()` does nothing if (i, j) belongs to the upper triangle.
+  ///
+  /// \pre 0 <= i < row_dimension().
+  /// \pre 0 <= j < column_dimension().
   void set_coef(std::size_t i_, std::size_t j_, T val, bool new_coef = false)
   {
     int i = static_cast<int>(i_);
@@ -178,13 +172,11 @@ public:
 
   /// Write access to a matrix coefficient: a_ij <- a_ij + val.
   ///
-  /// Optimizations:
-  /// - For symmetric matrices, Eigen_sparse_matrix stores only the lower triangle
-  ///   add_coef() does nothing if (i, j) belongs to the upper triangle.
+  /// \warning For symmetric matrices, Eigen_sparse_matrix only stores the lower triangle
+  /// `add_coef()` does nothing if (i, j) belongs to the upper triangle.
   ///
-  /// @commentheading Preconditions:
-  /// - 0 <= i < row_dimension().
-  /// - 0 <= j < column_dimension().
+  /// \pre 0 <= i < row_dimension().
+  /// \pre 0 <= j < column_dimension().
   void add_coef(int i, int j, T  val)
   {
     CGAL_precondition(i < row_dimension());
@@ -199,13 +191,16 @@ public:
       m_triplets.push_back(Triplet(i,j,val));
   }
 
+  /// \cond SKIP_IN_MANUAL
   void assemble_matrix() const
   {
     m_matrix.setFromTriplets(m_triplets.begin(), m_triplets.end());
     m_is_already_built = true;
     m_triplets.clear(); // the matrix is built and will not be rebuilt
   }
+  /// \endcond
 
+  /// Return the internal matrix, with type `EigenType`.
   const EigenType& eigen_object() const
   {
     if(!m_is_already_built)
@@ -239,38 +234,23 @@ private:
 /*!
 \ingroup PkgSolver
 
-The class `Eigen_sparse_symmetric_matrix` is a wrapper around \ref thirdpartyEigen "Eigen" matrix type <a href="http://eigen.tuxfamily.org/dox/classEigen_1_1SparseMatrix.html">`Eigen::SparseMatrix` </a>
+The class `Eigen_sparse_symmetric_matrix` is a wrapper around \ref thirdpartyEigen "Eigen" matrix type
+<a href="http://eigen.tuxfamily.org/dox/classEigen_1_1SparseMatrix.html">`Eigen::SparseMatrix` </a>
 
-As the matrix is symmetric only the lower triangle part is stored. 
+Since the matrix is symmetric, only the lower triangle part is stored.
 
-\cgalModels `SparseLinearAlgebraTraits_d::Matrix` 
+\cgalModels `SparseLinearAlgebraTraits_d::Matrix`
 
-\tparam T Number type. 
+\tparam T Number type.
 
-\sa `CGAL::Eigen_solver_traits<T>`
-\sa `CGAL::Eigen_sparse_matrix<T>`
 \sa `CGAL::Eigen_vector<T>`
+\sa `CGAL::Eigen_sparse_matrix<T>`
 */
 
 template<class T>
 struct Eigen_sparse_symmetric_matrix
   : public Eigen_sparse_matrix<T>
 {
-  // Public types
-  typedef T NT;
-
-  /// \name Types
-  /// @{
-
-  /*!
-The internal matrix type from \ref thirdpartyEigen "Eigen". 
-*/
-#ifdef DOXYGEN_RUNNING
-  typedef unspecified_type EigenType;
-#endif
-  /// @}
-  // Public operations
-
   /// Create a square *symmetric* matrix initialized with zeros.
   Eigen_sparse_symmetric_matrix(int dim)                  ///< Matrix dimension.
     : Eigen_sparse_matrix<T>(dim, true /* symmetric */)
@@ -279,7 +259,7 @@ The internal matrix type from \ref thirdpartyEigen "Eigen".
 
   /// Create a square *symmetric* matrix initialized with zeros.
   ///
-  /// @commentheading Precondition: rows == columns.
+  /// \pre rows == columns.
   Eigen_sparse_symmetric_matrix(int rows,                 ///< Number of rows.
                                 int columns)              ///< Number of columns.
     : Eigen_sparse_matrix<T>(rows, columns, true /* symmetric */)
@@ -290,32 +270,39 @@ The internal matrix type from \ref thirdpartyEigen "Eigen".
 /*!
 \ingroup PkgSolver
 
-The class `Eigen_matrix` is a wrapper around \ref thirdpartyEigen "Eigen"
-matrix type 
+The class `Eigen_matrix` is a wrapper around \ref thirdpartyEigen "Eigen" matrix type
 <a href="http://eigen.tuxfamily.org/dox/classEigen_1_1Matrix.html">`Eigen::Matrix`</a>.
 
 \cgalModels `SvdTraits::Matrix` 
 
 \tparam T Number type.
 
-\sa `CGAL::Eigen_svd`
 \sa `CGAL::Eigen_vector<T>`
-
+\sa `CGAL::Eigen_sparse_matrix<T>`
+\sa `CGAL::Eigen_sparse_symmetric_matrix<T>`
 */
 template <class FT>
-struct Eigen_matrix : public ::Eigen::Matrix<FT, ::Eigen::Dynamic, ::Eigen::Dynamic>
+struct Eigen_matrix
+  : public ::Eigen::Matrix<FT, ::Eigen::Dynamic, ::Eigen::Dynamic>
 {
+  /// The internal matrix type from \ref thirdpartyEigen "Eigen".
   typedef ::Eigen::Matrix<FT, ::Eigen::Dynamic, ::Eigen::Dynamic> EigenType;
 
-  Eigen_matrix(std::size_t n1, std::size_t n2):EigenType(n1, n2) { }
+  /// Construct a matrix with `nr` rows and `nc` columns.
+  Eigen_matrix(std::size_t nr, std::size_t nc) : EigenType(nr, nc) { }
 
+  /// Return the matrix number of rows.
   std::size_t number_of_rows() const { return this->rows(); }
+  /// Return the matrix number of columns.
   std::size_t number_of_columns() const { return this->cols(); }
 
+  /// Return the value of the matrix at position (i,j).
   FT operator()( std::size_t i , std::size_t j ) const { return this->operator()(i,j); }
 
-  void set( std::size_t i, std::size_t j, FT value) { this->coeffRef(i,j) = value; }
+  /// Write access to a matrix coefficient: `a_ij` <- `val`.
+  void set(std::size_t i, std::size_t j, FT value) { this->coeffRef(i,j) = value; }
 
+  /// Return the internal matrix, with type `EigenType`.
   const EigenType& eigen_object() const { return static_cast<const EigenType&>(*this); }
 };
 

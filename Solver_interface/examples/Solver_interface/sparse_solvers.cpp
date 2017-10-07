@@ -15,8 +15,6 @@ int main(void)
   Eigen_vector B(degree); // Zero vector
   Eigen_matrix A(degree);
 
-  Eigen_vector diag(degree);
-
   // Randomly make some coefficients of the matrix non-zero
   for(std::size_t i=0; i<nb_nonzero_coef; ++i)
   {
@@ -28,9 +26,6 @@ int main(void)
     A.add_coef(x, y, value);
     A.add_coef(y, x, value);
   }
-
-  // Create sparse matrix
-  A.assemble_matrix();
 
   Eigen_vector X(degree);
   FT d;

@@ -35,9 +35,9 @@ namespace CGAL {
   /*!
 \ingroup PkgSolver
 
-The class `Eigen_svd` provides an algorithm to solve in the least 
-square sense a linear system with a singular value decomposition using 
-\ref thirdpartyEigen. 
+The class `Eigen_svd` provides an algorithm to solve in the least
+square sense a linear system with a singular value decomposition using
+\ref thirdpartyEigen.
 
 \cgalModels `SvdTraits`
 
@@ -45,12 +45,18 @@ square sense a linear system with a singular value decomposition using
 class Eigen_svd
 {
 public:
+  /// \name Types
+  /// @{
+
   typedef double                                          FT;
   typedef Eigen_vector<FT>                                Vector;
   typedef Eigen_matrix<FT>                                Matrix;
 
-  //solve MX=B using SVD and return the condition number of M
-  //The solution is stored in B
+  /// @}
+
+  /// Solves the system \f$ MX=B\f$ (in the least square sense if \f$ M\f$ is not
+  /// square) using a singular value decomposition.The solution is stored in \f$ B\f$.
+  /// \return the condition number of \f$ M\f$
   static FT solve(const Matrix& M, Vector& B)
   {
     Eigen::JacobiSVD<Matrix::EigenType> jacobiSvd(M.eigen_object(),::Eigen::ComputeThinU | ::Eigen::ComputeThinV);

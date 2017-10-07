@@ -11,7 +11,7 @@ The concept `SparseLinearAlgebraTraits_d` is used to solve sparse linear systems
 class SparseLinearAlgebraTraits_d
 {
 public:
-/// \name Types 
+/// \name Types
 /// @{
 
 /*!
@@ -29,15 +29,13 @@ typedef unspecified_type Vector;
 */
 typedef unspecified_type NT;
 
-/// @} 
+/// @}
 
 /// \name Creation
 /// @{
 
 /*!
-
 Default constructor.
-
 */
 SparseLinearAlgebraTraits_d();
 
@@ -47,7 +45,8 @@ SparseLinearAlgebraTraits_d();
 /// @{
 
 /*!
-Solve the sparse linear system <I>A\f$ \times \f$ X = B</I>. Return true on success. The solution is then (1/D) \f$ \times \f$ X.
+Solve the sparse linear system \f$A \times X = B\f$. Return `true` on success.
+The solution is then \f$(1/D) \times X \f$.
 
 \pre `A.row_dimension()` == `B.dimension()`
 \pre `A.column_dimension()` == `X.dimension()`
@@ -60,7 +59,8 @@ bool linear_solver(const Matrix& A, const Vector& B, Vector& X, NT& D);
 /*!
 \cgalConcept
 
-`SparseLinearAlgebraTraits_d::Vector` is a concept of a vector that can be multiplied by a sparse matrix. 
+`SparseLinearAlgebraTraits_d::Vector` is a concept of a vector that can be multiplied
+by a sparse matrix.
 
 \cgalHasModel `CGAL::Eigen_vector<T>`
 
@@ -85,7 +85,7 @@ typedef unspecified_type NT;
 /// @{
 
 /*!
-Create a vector initialized with zeros. 
+Create a vector initialized with zeros.
 */
 Vector(int rows);
 
@@ -122,20 +122,18 @@ NT& operator[](int row);
 
 \cgalConcept
 
-`SparseLinearAlgebraTraits_d::Matrix` is a concept of a sparse matrix class. 
+`SparseLinearAlgebraTraits_d::Matrix` is a concept of a sparse matrix class.
 
 \cgalHasModel `CGAL::Eigen_sparse_matrix<T>`
 \cgalHasModel `CGAL::Eigen_sparse_symmetric_matrix<T>`
 
 \sa `SparseLinearAlgebraTraits_d`
 \sa `SparseLinearAlgebraTraits_d::Vector`
-
 */
-
 class SparseLinearAlgebraTraits_d::Matrix
 {
 public:
-/// \name Types 
+/// \name Types
 /// @{
 
 /*!
@@ -192,7 +190,8 @@ void add_coef(int row, int column, NT value);
 /*!
 Write access to a matrix coefficient: `a_ij = val`. 
 
-Optimization: Caller can optimize this call by setting `new_coef` to true if the coefficient does not already exist in the matrix. 
+Optimization: Users can indicate that the coefficient does not already exist
+in the matrix by setting `new_coef` to `true`.
 
 \pre `0 <= i < row_dimension()`
 \pre `0 <= j < column_dimension()`

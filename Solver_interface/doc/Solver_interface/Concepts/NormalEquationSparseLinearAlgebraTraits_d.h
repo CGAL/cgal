@@ -50,14 +50,14 @@ NormalEquationSparseLinearAlgebraTraits_d();
 /*!
 Factorize the sparse matrix `At * A`.
 This factorization is used in `normal_equation_solver()` to solve the system for different right-hand side vectors.
-@return true if the factorization is successful
+@return `true` if the factorization is successful and `false` otherwise.
 */
 bool normal_equation_factor(const Matrix& A);
 
 /*!
 Solve the sparse linear system `At * A * X = At * B`, with `A` being the matrix
 provided in `#normal_equation_factor()`, and `At` its transpose matrix.
-@return true if the solver is successful
+@return `true` if the solver is successful and `false` otherwise.
 */
 bool normal_equation_solver(const Vector& B, Vector& X);
 
