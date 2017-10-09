@@ -1918,7 +1918,6 @@ private:
     Patch_id_to_index_map patch_id_to_index_map;
     Triangle_list input_triangles_;
     Patch_id_list input_patch_ids_;
-    Patch_id_to_index_map patch_id_to_index_map_;
     Halfedge_status_pmap halfedge_status_pmap_;
     bool protect_constraints_;
     FacePatchMap patch_ids_map_;
