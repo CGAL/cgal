@@ -880,7 +880,7 @@ qglviewer::Vec amin(axmin, aymin, azmin),
     }
     for(int i=0; i<scene->numberOfEntries(); ++i)
     {
-      scene->item(i)->invalidateOpenGLBuffers();
+      scene->item(i)->invalidate(Scene_item::GEOMETRY);
       scene->item(i)->itemChanged();
     }
   }

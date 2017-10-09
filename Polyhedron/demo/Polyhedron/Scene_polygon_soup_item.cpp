@@ -381,7 +381,7 @@ Scene_polygon_soup_item::load(std::istream& in)
 
   bool result = CGAL::read_OFF(in, d->soup->points, d->soup->polygons,
                                d->soup->fcolors, d->soup->vcolors);
-  invalidateOpenGLBuffers();
+  invalidate(GEOMETRY|NORMALS|COLORS);
   return result;
 }
 
@@ -438,7 +438,7 @@ void Scene_polygon_soup_item::load(Scene_polyhedron_item* poly_item) {
   if(!d->soup)
     d->soup = new Polygon_soup;
   polygon_mesh_to_soup(*poly_item->polyhedron(), *d->soup);
-  invalidateOpenGLBuffers();
+  invalidate(GEOMETRY|NORMALS|COLORS);
 }
 
 void Scene_polygon_soup_item::load(Scene_surface_mesh_item* sm_item) {
@@ -448,7 +448,7 @@ void Scene_polygon_soup_item::load(Scene_surface_mesh_item* sm_item) {
   if(!d->soup)
     d->soup = new Polygon_soup;
   polygon_mesh_to_soup(*sm_item->face_graph(), *d->soup);
-  invalidateOpenGLBuffers();
+  invalidate(GEOMETRY|NORMALS|COLORS);
 }
 void
 Scene_polygon_soup_item::setDisplayNonManifoldEdges(const bool b)
@@ -470,7 +470,7 @@ void Scene_polygon_soup_item::shuffle_orientations()
   {
     if(std::rand() % 2 == 0) d->soup->inverse_orientation(i);
   }
-  invalidateOpenGLBuffers();
+  invalidate(NORMALS);
 }
 
 void Scene_polygon_soup_item::inside_out()
@@ -480,7 +480,7 @@ void Scene_polygon_soup_item::inside_out()
   {
     d->soup->inverse_orientation(i);
   }
-  invalidateOpenGLBuffers();
+  invalidate(NORMALS);
 }
 
 bool 
@@ -666,7 +666,7 @@ Scene_polygon_soup_item::isEmpty() const {
   return (d->soup == 0 || d->soup->points.empty());
 }
 void
-Scene_polygon_soup_item::invalidateOpenGLBuffers()
+Scene_polygon_soup_item::invalidate(Gl_data_names)
 {
     setBuffersFilled(false);
     compute_bbox();
@@ -730,7 +730,7 @@ void Scene_polygon_soup_item::load(const std::vector<Point>& points, const std::
     /// fill non-manifold edges container
     //soup->fill_edges();
     d->oriented = false;
-    invalidateOpenGLBuffers();
+    invalidate(GEOMETRY|NORMALS|COLORS);
 }
 
 template <class Point, class Polygon>

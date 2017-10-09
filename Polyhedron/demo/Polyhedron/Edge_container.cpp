@@ -1,37 +1,54 @@
 #include <CGAL/Three/Edge_container.h>
 
 
-typedef CGAL::Three::Viewer_interface VI;
+typedef Viewer_interface VI;
 using namespace CGAL::Three;
+
+struct D{
+
+  D()
+    :
+      plane(QVector4D())
+  {
+    f_matrix.setToIdentity();
+  }
+
+  QVector4D plane;
+  QMatrix4x4 f_matrix;
+};
+
 Edge_container::Edge_container(int program, bool indexed)
   :Primitive_container(program, indexed)
 {
-  VBOs.resize(NbOfVbos);
+  std::vector<Vbo*> vbos(NbOfVbos, NULL);
+  setVbos(vbos);
 
 }
 
 void Edge_container::initGL(Viewer_interface *viewer) const
 {
   viewer->makeCurrent();
-  if(indexed)
+  if(isDataIndexed())
   {
-    switch(program_id)
+    switch(getProgram())
     {
     case VI::PROGRAM_WITHOUT_LIGHT:
     case VI::PROGRAM_NO_SELECTION:
     {
-      if(!VBOs[Vertices])
-        VBOs[Vertices] =
-            new CGAL::Three::Vbo("vertex");
-      if(!VBOs[Indices])
-        VBOs[Indices] =
-            new CGAL::Three::Vbo("indices",
-                                 QOpenGLBuffer::IndexBuffer);
-      if(VAOs[viewer])
-        delete VAOs[viewer];
-      VAOs[viewer] = new CGAL::Three::Vao(viewer->getShaderProgram(program_id));
-      VAOs[viewer]->addVbo(VBOs[Vertices]);
-      VAOs[viewer]->addVbo(VBOs[Indices]);
+      if(!getVbos()[Vertices])
+        getVbos()[Vertices] =
+            new Vbo("vertex",
+                    Vbo::GEOMETRY);
+      if(!getVbos()[Indices])
+        getVbos()[Indices] =
+            new Vbo("indices",
+                    Vbo::GEOMETRY,
+                    QOpenGLBuffer::IndexBuffer);
+      if(getVao(viewer))
+        delete getVao(viewer);
+      setVao(viewer, new Vao(viewer->getShaderProgram(getProgram())));
+      getVao(viewer)->addVbo(getVbos()[Vertices]);
+      getVao(viewer)->addVbo(getVbos()[Indices]);
     }
       break;
     default:
@@ -41,7 +58,7 @@ void Edge_container::initGL(Viewer_interface *viewer) const
   }
   else
   {
-    switch(program_id)
+    switch(getProgram())
     {
     case VI::PROGRAM_SPHERES:
     case VI::PROGRAM_CUTPLANE_SPHERES:
@@ -49,15 +66,17 @@ void Edge_container::initGL(Viewer_interface *viewer) const
     case VI::PROGRAM_WITHOUT_LIGHT:
     case VI::PROGRAM_C3T3_EDGES:
     {
-      if(!VBOs[Vertices])
-        VBOs[Vertices] =
-            new CGAL::Three::Vbo("vertex");
-      if(!VBOs[Colors])
-        VBOs[Colors] =
-            new CGAL::Three::Vbo("colors");
-      VAOs[viewer] = new CGAL::Three::Vao(viewer->getShaderProgram(program_id));
-      VAOs[viewer]->addVbo(VBOs[Vertices]);
-      VAOs[viewer]->addVbo(VBOs[Colors]);
+      if(!getVbos()[Vertices])
+        getVbos()[Vertices] =
+            new Vbo("vertex",
+                    Vbo::GEOMETRY);
+      if(!getVbos()[Colors])
+        getVbos()[Colors] =
+            new Vbo("colors",
+                    Vbo::COLORS);
+      setVao(viewer, new Vao(viewer->getShaderProgram(getProgram())));
+      getVao(viewer)->addVbo(getVbos()[Vertices]);
+      getVao(viewer)->addVbo(getVbos()[Colors]);
     }
       break;
     default:
@@ -65,34 +84,37 @@ void Edge_container::initGL(Viewer_interface *viewer) const
       break;
     }
 
-    switch(program_id)
+    switch(getProgram())
     {
     case VI::PROGRAM_SPHERES:
     case VI::PROGRAM_CUTPLANE_SPHERES:
     {
-      if(!VBOs[Normals])
-        VBOs[Normals] =
-            new CGAL::Three::Vbo("normals");
-      if(!VBOs[Radius])
-        VBOs[Radius] =
-            new CGAL::Three::Vbo("radius",
-                                 QOpenGLBuffer::VertexBuffer, GL_FLOAT, 0, 1);
-      if(!VBOs[Barycenters])
-        VBOs[Barycenters] =
-            new CGAL::Three::Vbo("barycenter");
-      VAOs[viewer]->addVbo(VBOs[Normals]);
-      VAOs[viewer]->addVbo(VBOs[Radius]);
-      VAOs[viewer]->addVbo(VBOs[Barycenters]);
-      viewer->glVertexAttribDivisor(VAOs[viewer]->program->attributeLocation("barycenter"), 1);
-      viewer->glVertexAttribDivisor(VAOs[viewer]->program->attributeLocation("radius"), 1);
-      viewer->glVertexAttribDivisor(VAOs[viewer]->program->attributeLocation("colors"), 1);
+      if(!getVbos()[Normals])
+        getVbos()[Normals] =
+            new Vbo("normals",
+                    Vbo::NORMALS);
+      if(!getVbos()[Radius])
+        getVbos()[Radius] =
+            new Vbo("radius",
+                    Vbo::GEOMETRY,
+                    QOpenGLBuffer::VertexBuffer, GL_FLOAT, 0, 1);
+      if(!getVbos()[Barycenters])
+        getVbos()[Barycenters] =
+            new Vbo("barycenter",
+                    Vbo::GEOMETRY);
+      getVao(viewer)->addVbo(getVbos()[Normals]);
+      getVao(viewer)->addVbo(getVbos()[Radius]);
+      getVao(viewer)->addVbo(getVbos()[Barycenters]);
+      viewer->glVertexAttribDivisor(getVao(viewer)->program->attributeLocation("barycenter"), 1);
+      viewer->glVertexAttribDivisor(getVao(viewer)->program->attributeLocation("radius"), 1);
+      viewer->glVertexAttribDivisor(getVao(viewer)->program->attributeLocation("colors"), 1);
     }
       break;
     default:
       break;
     }
   }
-  is_gl_init[viewer] = true;
+  setGLInit(viewer, true);
 }
 void Edge_container::draw(Viewer_interface *viewer,
                           bool is_color_uniform, QOpenGLFramebufferObject *) const
@@ -100,39 +122,45 @@ void Edge_container::draw(Viewer_interface *viewer,
 {
   bindUniformValues(viewer);
 
-  if(indexed)
+  if(isDataIndexed())
   {
-    VAOs[viewer]->bind();
+    getVao(viewer)->bind();
     if(is_color_uniform)
-      VAOs[viewer]->program->setAttributeValue("colors", color);
-    VBOs[Indices]->bind();
-    viewer->glDrawElements(GL_LINES, static_cast<GLuint>(idx_size),
+      getVao(viewer)->program->setAttributeValue("colors", getColor());
+    getVbos()[Indices]->bind();
+    viewer->glDrawElements(GL_LINES, static_cast<GLuint>(getIdxSize()),
                            GL_UNSIGNED_INT, 0);
-    VBOs[Indices]->release();
-    VAOs[viewer]->release();
+    getVbos()[Indices]->release();
+    getVao(viewer)->release();
   }
   else
   {
-    VAOs[viewer]->bind();
+    getVao(viewer)->bind();
     if(is_color_uniform)
-      VAOs[viewer]->program->setAttributeValue("colors", color);
-    if(program_id == VI::PROGRAM_WITHOUT_LIGHT)
-      VAOs[viewer]->program->setUniformValue("f_matrix", f_matrix);
-    if(program_id == VI::PROGRAM_C3T3_EDGES
-       || program_id == VI::PROGRAM_CUTPLANE_SPHERES)
-      VAOs[viewer]->program->setUniformValue("cutplane", plane);
-    if(program_id == VI::PROGRAM_SPHERES
-       || program_id == VI::PROGRAM_CUTPLANE_SPHERES)
+      getVao(viewer)->program->setAttributeValue("colors", getColor());
+    if(getProgram() == VI::PROGRAM_WITHOUT_LIGHT)
+      getVao(viewer)->program->setUniformValue("f_matrix", d->f_matrix);
+    if(getProgram() == VI::PROGRAM_C3T3_EDGES
+       || getProgram() == VI::PROGRAM_CUTPLANE_SPHERES)
+      getVao(viewer)->program->setUniformValue("cutplane", d->plane);
+    if(getProgram() == VI::PROGRAM_SPHERES
+       || getProgram() == VI::PROGRAM_CUTPLANE_SPHERES)
     {
       viewer->glDrawArraysInstanced(GL_LINES, 0,
-                                    static_cast<GLsizei>(flat_size/3),
-                                    static_cast<GLsizei>(center_size/3));
+                                    static_cast<GLsizei>(getFlatDataSize()/3),
+                                    static_cast<GLsizei>(getCenterSize()/3));
     }
     else
     {
-      viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(flat_size/3));
+      viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(getFlatDataSize()/3));
     }
-    VAOs[viewer]->release();
+    getVao(viewer)->release();
 
   }
 }
+
+QVector4D Edge_container::getPlane() const{ return d->plane; }
+QMatrix4x4 Edge_container::getFrameMatrix() const{ return d->f_matrix; }
+
+void Edge_container::setPlane(const QVector4D& p) const{ d->plane = p; }
+void Edge_container::setFrameMatrix(const QMatrix4x4& m) const{ d->f_matrix = m; }

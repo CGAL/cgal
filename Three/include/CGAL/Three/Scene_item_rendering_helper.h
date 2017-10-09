@@ -16,6 +16,11 @@ struct D;
 namespace CGAL {
 namespace Three{
 
+//!
+//! \brief The Scene_item_rendering_helper class is a convenience class for  constructing an item.
+//! It is more elaborated than a `Scene_item` and facilitates the process of creating an item that can
+//! be rendered.
+//!
 class DEMO_FRAMEWORK_EXPORT Scene_item_rendering_helper
     :public Scene_item
 {
@@ -39,7 +44,7 @@ public:
     * application does not get stuck while the processing is performed.
     * Emits `dataProcessed()`.
     */
-  void processData()const;
+  void processData(Gl_data_names name)const;
   //!
   //! \brief setAlpha sets the integer value of the alpha channel of this item.
   //! Also updates the slider value.
@@ -136,7 +141,7 @@ protected:
   float alpha() const Q_DECL_OVERRIDE;
 
   /*! Fills the `Vbo`s with data. Must be called after each call to #computeElements().
-     * @see compute_elements()
+     * @see computeElements()
      */
   virtual void initializeBuffers(Viewer_interface*)const{}
 
@@ -167,16 +172,18 @@ class WorkerThread : public QThread
 {
   Q_OBJECT
   CGAL::Three::Scene_item* item;
+  CGAL::Three::Scene_item::Gl_data_names name;
 public:
   //!
   //! \brief The `WorkerThread` constructor.
   //! \param item the `Scene_item` with the data that needs computation.
   //!
-  WorkerThread(CGAL::Three::Scene_item* item):
-    item(item){}
+  WorkerThread(CGAL::Three::Scene_item* item, CGAL::Three::Scene_item::Gl_data_names name):
+    item(item),
+    name(name){}
 private:
   void run() Q_DECL_OVERRIDE{
-    item->computeElements();
+    item->computeElements(name);
   }
 };
 

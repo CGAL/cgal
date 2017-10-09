@@ -65,9 +65,14 @@ struct Vao{
 //! A Vbo can be shared between Vaos of the same context.
 struct Vbo
 {
-
+enum Flag{
+  GEOMETRY=0,
+  COLORS,
+  NORMALS
+};
   QOpenGLBuffer vbo;
   const char* attribute;
+  Flag flag;
   void* data;
   int dataSize;
   QOpenGLBuffer::Type vbo_type;
@@ -91,12 +96,14 @@ struct Vbo
   //!
   Vbo(
       const char* attribute,
+      Flag flag,
       QOpenGLBuffer::Type vbo_type = QOpenGLBuffer::VertexBuffer,
       GLenum data_type=GL_FLOAT,
       int offset = 0,
       int tupleSize = 3,
       int stride = 0):
     attribute(attribute),
+    flag(flag),
     data(0),
     dataSize(0),
     vbo_type(vbo_type),

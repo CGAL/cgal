@@ -65,6 +65,14 @@ class SCENE_ITEM_EXPORT Scene_item : public QObject{
 public:
   typedef CGAL::Bbox_3 Bbox;
   typedef qglviewer::ManipulatedFrame ManipulatedFrame;
+
+  enum Gl_data_name{
+    GEOMETRY = 0x1, //!< Invalidates the vertices, edges and faces.
+    COLORS   = 0x2, //!< Invalidates the color of each vertex
+    NORMALS  = 0x4  //!Invalidate the normal of each vertex.
+  };
+  Q_DECLARE_FLAGS(Gl_data_names, Gl_data_name)
+
   //! \brief The default color of a scene_item.
   //!
   //! This color is the one that will be displayed if none is specified after its creation.
@@ -122,11 +130,6 @@ public:
    * @see initializeBuffers()
    */
   virtual void drawPoints(CGAL::Three::Viewer_interface* ) const {}
-
-  //! Draws the splats of the item in the viewer using GLSplat functions.
-  virtual void drawSplats() const {}
-  //! Draws the splats of the item in the viewer using the GLSplat library.
-  virtual void drawSplats(CGAL::Three::Viewer_interface*) const {drawSplats();}
 
   //! Called by the scene. If b is true, then this item is currently selected.
   virtual void selection_changed(bool b);
@@ -302,17 +305,18 @@ public:
   //!Set the selection status of this item
   void setSelected(bool b);
 
-  /*! Collects all the data for the shaders. Must be called in #invalidateOpenGLBuffers().
-   * @see invalidateOpenGLBuffers().
+  /*! Collects all the data for the shaders. Must be called in #invalidate().
+   * @see invalidate().
    */
-  virtual void computeElements()const{}
+  virtual void computeElements(Gl_data_names)const{}
+
 public Q_SLOTS:
 
-  //! Notifies the program that the internal data or the properties of
-  //! an item has changed, and that it must be computed again. It is
+  //! Notifies the application that the internal data corresponding to `name` is not valid anymore,
+  //! and asks for a re-computation of this data. It is
   //! important to call this function whenever the internal data is changed,
   //! or the displayed item will not be updated.
-  virtual void invalidateOpenGLBuffers();
+  virtual void invalidate(Gl_data_names name);
   //!Setter for the color of the item.
   virtual void setColor(QColor c);
   //!Setter for the RGB color of the item. Calls setColor(QColor).
@@ -371,7 +375,7 @@ public Q_SLOTS:
 
   //! Sets the value of the aplha Slider for this item.
   //! \param alpha must be between 0 and 255
-  virtual void setAlpha(int alpha);
+  virtual void setAlpha(int alpha) = 0;
 
   //!Selects a point through raycasting.
   virtual void select(double orig_x,
@@ -384,7 +388,8 @@ public Q_SLOTS:
 
 
 Q_SIGNALS:
-  //! Is emitted to notify a change in the item's data.
+  //! Is emitted to notify a change in the item's geometric data.
+  //! Will replace the information of this item and re-draw the scene.
   void itemChanged();
   //! Is emitted when the item is shown to notify a change in the item's visibility.
   //! Typically used to update the scene's bbox;
@@ -392,6 +397,7 @@ Q_SIGNALS:
   //! Is emitted to notify that the item is about to be deleted.
   void aboutToBeDestroyed();
   //! Is emitted to require a new display.
+  //! Use it to avoid having to move the camera to see the changes of this item.
   void redraw();
   //!
   //! Is emitted when the data computation of the item is finished and the thread
@@ -404,11 +410,11 @@ private:
   friend struct D;
   mutable D* d;
 }; // end class Scene_item
+Q_DECLARE_OPERATORS_FOR_FLAGS(CGAL::Three::Scene_item::Gl_data_names)
 }
 }
 
 #include <QMetaType>
 Q_DECLARE_METATYPE(CGAL::Three::Scene_item*)
-
 #endif // SCENE_ITEM_H
 

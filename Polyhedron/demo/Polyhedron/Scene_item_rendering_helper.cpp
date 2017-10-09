@@ -103,33 +103,35 @@ void Scene_item_rendering_helper::initGL() const
     Viewer_interface* viewer = static_cast<Viewer_interface*>(v);
     Q_FOREACH(Triangle_container* tc, d->triangle_containers)
     {
-      if(!tc->is_gl_init[viewer])
+      if(!tc->isGLInit(viewer))
         tc->initGL(viewer);
     }
     Q_FOREACH(Edge_container* ec, d->edge_containers)
     {
-      if(!ec->is_gl_init[viewer])
+      if(!ec->isGLInit(viewer))
         ec->initGL(viewer);
     }
   }
   if(!d->isinit)
   {
-    processData();
+    Gl_data_names flags;
+    flags = (GEOMETRY|NORMALS|COLORS);
+    processData(flags);
   }
   d->isinit = true;
 }
 
 void Scene_item_rendering_helper::newViewer(Viewer_interface *viewer)
 {
-  processData(); //newViewer shouldn't be called when item is locked;
+  processData(GEOMETRY|COLORS|NORMALS); //newViewer shouldn't be called when item is locked;
   Q_FOREACH(Triangle_container* tc, d->triangle_containers)
   {
-    if(!tc->is_gl_init[viewer])
+    if(!tc->isGLInit(viewer))
       tc->initGL(viewer);
   }
   Q_FOREACH(Edge_container* ec, d->edge_containers)
   {
-    if(!ec->is_gl_init[viewer])
+    if(!ec->isGLInit(viewer))
       ec->initGL(viewer);
   }
 }
@@ -164,12 +166,12 @@ QMenu* Scene_item_rendering_helper::contextMenu()
   return resMenu;
 }
 
-void Scene_item_rendering_helper::processData()const
+void Scene_item_rendering_helper::processData(Gl_data_names name)const
 {
   Scene_item* ncthis = const_cast<Scene_item_rendering_helper*>(this);
   ncthis->writing();
 
-  WorkerThread *workerThread = new WorkerThread(ncthis);
+  WorkerThread *workerThread = new WorkerThread(ncthis, name);
   connect(workerThread, &WorkerThread::finished, [ncthis, workerThread]()
   {
     ncthis->doneWriting();

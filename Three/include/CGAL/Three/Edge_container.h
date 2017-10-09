@@ -34,6 +34,7 @@ using namespace CGAL::Three;
 #else
 #  define DEMO_FRAMEWORK_EXPORT Q_DECL_IMPORT
 #endif
+struct D;
 namespace CGAL {
 namespace Three {
 
@@ -63,38 +64,41 @@ struct DEMO_FRAMEWORK_EXPORT Edge_container :public Primitive_container
   //! \param program is the `QOpenGLShaderProgram` that is used by this `Edge_container` `Vao`.
   //! \param indexed must be `true` if the data is indexed, `false` otherwise. If `true`, VBOs[Indices] must be filled.
   //!
-    Edge_container(int program, bool indexed);
+  Edge_container(int program, bool indexed);
 
-    //!
-    //! \brief initGL creates the `Vbo`s and `Vao`s of this `Edge_container`.
-    //! \attention It must be called within a valid OpenGL context. The `draw()` function of an item is always a safe place to call this.
-    //!
-    //! \todo Is it a good idea to call InitGL of each item in the scene so the developper doesn't have to worry about this in each draw() of each item ?
-    //!`.
-    //! \param viewer the active `Viewer_interface`.
-    //!
-    void initGL(Viewer_interface *viewer) const Q_DECL_OVERRIDE;
+  //!
+  //! \brief initGL creates the `Vbo`s and `Vao`s of this `Edge_container`.
+  //! \attention It must be called within a valid OpenGL context. The `draw()` function of an item is always a safe place to call this.
+  //!
+  //! \todo Is it a good idea to call InitGL of each item in the scene so the developper doesn't have to worry about this in each draw() of each item ?
+  //!`.
+  //! \param viewer the active `Viewer_interface`.
+  //!
+  void initGL(Viewer_interface *viewer) const Q_DECL_OVERRIDE;
 
-    //!
-    //! \brief draw is the function that actually renders the data.
-    //! \param viewer the active `Viewer_interface`.
-    //! \param is_color_uniform must be `false` if `VBOs`[`Colors`] is not empty, `true` otherwise.
-    //!
-    void draw(CGAL::Three::Viewer_interface* viewer,
-              bool is_color_uniform,
-              QOpenGLFramebufferObject* = NULL) const Q_DECL_OVERRIDE;
-    //drawing variables
-    //!
-    //! \brief plane contains the coefficients of the plane used in some programs :
-    //! - `PROGRAM_CUTPLANE_SPHERES`
-    //! - `PROGRAM_C3T3_EDGES`
-    //!
-    QVector4D plane;
-    //!
-    //! \brief f_matrix is a Matrix4x4 used in some programs:
-    //! - PROGRAM_WITHOUT_LIGHT
-    //!
-    QMatrix4x4 f_matrix;
+  //!
+  //! \brief draw is the function that actually renders the data.
+  //! \param viewer the active `Viewer_interface`.
+  //! \param is_color_uniform must be `false` if `VBOs`[`Colors`] is not empty, `true` otherwise.
+  //!
+  void draw(CGAL::Three::Viewer_interface* viewer,
+            bool is_color_uniform,
+            QOpenGLFramebufferObject* = NULL) const Q_DECL_OVERRIDE;
+  /// Getters and Setters for the shaders parameters.
+  /// Each of those depends of the `OpenGL_program_IDs` this container is using.
+  /// If the shaders of this program doesn't need one, you can ignore it.
+  /// The others should be filled at each `draw()` from the item.
+  ///@{
+  QVector4D getPlane()const;
+  QMatrix4x4 getFrameMatrix()const;
+
+  void setPlane(const QVector4D&)const;
+  void setFrameMatrix(const QMatrix4x4&)const;
+  ///@}
+
+private:
+  friend struct D;
+  mutable D* d;
 }; //end of class Triangle_container
 }
 }

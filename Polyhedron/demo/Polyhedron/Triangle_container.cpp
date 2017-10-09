@@ -1,53 +1,93 @@
 #include <CGAL/Three/Triangle_container.h>
 #include <QOpenGLFramebufferObject>
 
-typedef CGAL::Three::Viewer_interface VI;
+typedef Viewer_interface VI;
 using namespace CGAL::Three;
+
+struct D{
+
+  D():
+    shrink_factor(1.0f),
+    comparing(false),
+    plane(QVector4D()),
+    width(0.0f),
+    height(0.0f),
+    near(0.0f),
+    far(0.0f),
+    writing(false),
+    alpha(1.0f)
+  {}
+
+  Triangle_container* container;
+  float shrink_factor;
+
+  bool comparing;
+
+  QVector4D plane;
+
+  float width;
+
+  float height;
+
+  float near;
+
+  float far;
+
+  bool writing;
+  float alpha;
+};
+
 Triangle_container::Triangle_container(int program, bool indexed)
-  : Primitive_container(program, indexed)
+  : Primitive_container(program, indexed),
+    d(new D())
 {
-  VBOs.resize(NbOfVbos);
+  std::vector<Vbo*> vbos(NbOfVbos, NULL);
+  setVbos(vbos);
 }
 
-void Triangle_container::initGL( CGAL::Three::Viewer_interface* viewer)const
+void Triangle_container::initGL( Viewer_interface* viewer)const
 {
   viewer->makeCurrent();
-  if(indexed)
+  if(isDataIndexed())
   {
-    switch(program_id)
+    switch(getProgram())
     {
     case VI::PROGRAM_WITHOUT_LIGHT:
     case VI::PROGRAM_WITH_LIGHT:
     {
-      if(!VBOs[Smooth_vertices])
-        VBOs[Smooth_vertices] =
-            new CGAL::Three::Vbo("vertex");
-      if(!VBOs[Vertex_indices])
-        VBOs[Vertex_indices] =
-            new CGAL::Three::Vbo("indices",
-                                 QOpenGLBuffer::IndexBuffer);
-      if(!VAOs[viewer])
-        VAOs[viewer] = new CGAL::Three::Vao(viewer->getShaderProgram(program_id));
-      VAOs[viewer]->addVbo(VBOs[Smooth_vertices]);
-      VAOs[viewer]->addVbo(VBOs[Vertex_indices]);
+      if(!getVbos()[Smooth_vertices])
+        getVbos()[Smooth_vertices] =
+            new Vbo("vertex", Vbo::GEOMETRY);
+      if(!getVbos()[Vertex_indices])
+        getVbos()[Vertex_indices] =
+            new Vbo("indices",
+                    Vbo::GEOMETRY,
+                    QOpenGLBuffer::IndexBuffer);
+      if(!getVao(viewer))
+        setVao(viewer, new Vao(viewer->getShaderProgram(getProgram())));
+      getVao(viewer)->addVbo(getVbos()[Smooth_vertices]);
+      getVao(viewer)->addVbo(getVbos()[Vertex_indices]);
     }
       break;
     default:
       Q_UNUSED(viewer);
       break;
     }
-    switch(program_id)
+    switch(getProgram())
     {
     case VI::PROGRAM_WITH_LIGHT:
     {
-      if(!VBOs[Smooth_normals])
-        VBOs[Smooth_normals] =
-            new CGAL::Three::Vbo("normals");
-      if(!VBOs[VColors])
-        VBOs[VColors] =
-            new CGAL::Three::Vbo("colors", QOpenGLBuffer::VertexBuffer, GL_FLOAT, 0, 4);
-      VAOs[viewer]->addVbo(VBOs[Smooth_normals]);
-      VAOs[viewer]->addVbo(VBOs[VColors]);
+      if(!getVbos()[Smooth_normals])
+        getVbos()[Smooth_normals] =
+            new Vbo("normals",
+                    Vbo::NORMALS);
+      if(!getVbos()[VColors])
+        getVbos()[VColors] =
+            new Vbo("colors",
+                    Vbo::COLORS,
+                    QOpenGLBuffer::VertexBuffer, GL_FLOAT, 0, 4);
+      getVao(viewer)->addVbo(getVbos()[Smooth_normals]);
+      getVao(viewer)->addVbo(getVbos()[VColors]);
     }
       break;
     default:
@@ -57,7 +97,7 @@ void Triangle_container::initGL( CGAL::Three::Viewer_interface* viewer)const
   }
   else
   {
-    switch(program_id)
+    switch(getProgram())
     {
 
     case VI::PROGRAM_WITH_LIGHT:
@@ -66,21 +106,25 @@ void Triangle_container::initGL( CGAL::Three::Viewer_interface* viewer)const
     case VI::PROGRAM_SPHERES:
     case VI::PROGRAM_CUTPLANE_SPHERES:
     {
-      if(!VBOs[Flat_vertices])
+      if(!getVbos()[Flat_vertices])
       {
-        VBOs[Flat_vertices] =
-            new CGAL::Three::Vbo("vertex");
+        getVbos()[Flat_vertices] =
+            new Vbo("vertex",
+                    Vbo::GEOMETRY);
       }
-      if(!VBOs[Flat_normals])
-        VBOs[Flat_normals] =
-            new CGAL::Three::Vbo("normals");
-      if(!VBOs[FColors])
-        VBOs[FColors] =
-            new CGAL::Three::Vbo("colors", QOpenGLBuffer::VertexBuffer, GL_FLOAT, 0, 4);
-      VAOs[viewer] = new CGAL::Three::Vao(viewer->getShaderProgram(program_id));
-      VAOs[viewer]->addVbo(VBOs[Flat_vertices]);
-      VAOs[viewer]->addVbo(VBOs[Flat_normals]);
-      VAOs[viewer]->addVbo(VBOs[FColors]);
+      if(!getVbos()[Flat_normals])
+        getVbos()[Flat_normals] =
+            new Vbo("normals",
+                    Vbo::NORMALS);
+      if(!getVbos()[FColors])
+        getVbos()[FColors] =
+            new Vbo("colors",
+                    Vbo::COLORS,
+                    QOpenGLBuffer::VertexBuffer, GL_FLOAT, 0, 4);
+      setVao(viewer, new Vao(viewer->getShaderProgram(getProgram())));
+      getVao(viewer)->addVbo(getVbos()[Flat_vertices]);
+      getVao(viewer)->addVbo(getVbos()[Flat_normals]);
+      getVao(viewer)->addVbo(getVbos()[FColors]);
 
     }
       break;
@@ -88,103 +132,127 @@ void Triangle_container::initGL( CGAL::Three::Viewer_interface* viewer)const
       Q_UNUSED(viewer);
       break;
     }
-    switch(program_id)
+    switch(getProgram())
     {
     case VI::PROGRAM_C3T3:
       //case VI::PROGRAM_C3T3_TETS:
     case VI::PROGRAM_SPHERES:
     case VI::PROGRAM_CUTPLANE_SPHERES:
     {
-      if(!VBOs[Facet_barycenters])
-        VBOs[Facet_barycenters] =
-            new CGAL::Three::Vbo("barycenter");
-      VAOs[viewer]->addVbo(VBOs[Facet_barycenters]);
+      if(!getVbos()[Facet_barycenters])
+        getVbos()[Facet_barycenters] =
+            new Vbo("barycenter",
+                    Vbo::GEOMETRY);
+      getVao(viewer)->addVbo(getVbos()[Facet_barycenters]);
     }
       break;
     default:
       Q_UNUSED(viewer);
       break;
     }
-    if(program_id == VI::PROGRAM_SPHERES
-       || program_id == VI::PROGRAM_CUTPLANE_SPHERES)
+    if(getProgram() == VI::PROGRAM_SPHERES
+       || getProgram() == VI::PROGRAM_CUTPLANE_SPHERES)
     {
-      if(!VBOs[Radius])
-        VBOs[Radius] =
-            new CGAL::Three::Vbo("radius",
-                                 QOpenGLBuffer::VertexBuffer, GL_FLOAT, 0, 1);
-      VAOs[viewer]->addVbo(VBOs[Radius]);
-      viewer->glVertexAttribDivisor(VAOs[viewer]->program->attributeLocation("barycenter"), 1);
-      viewer->glVertexAttribDivisor(VAOs[viewer]->program->attributeLocation("radius"), 1);
-      viewer->glVertexAttribDivisor(VAOs[viewer]->program->attributeLocation("colors"), 1);
+      if(!getVbos()[Radius])
+        getVbos()[Radius] =
+            new Vbo("radius",
+                    Vbo::GEOMETRY,
+                    QOpenGLBuffer::VertexBuffer, GL_FLOAT, 0, 1);
+      getVao(viewer)->addVbo(getVbos()[Radius]);
+      viewer->glVertexAttribDivisor(getVao(viewer)->program->attributeLocation("barycenter"), 1);
+      viewer->glVertexAttribDivisor(getVao(viewer)->program->attributeLocation("radius"), 1);
+      viewer->glVertexAttribDivisor(getVao(viewer)->program->attributeLocation("colors"), 1);
     }
   }
-  is_gl_init[viewer] = true;
+  setGLInit(viewer, true);
 }
 
-void Triangle_container::draw(CGAL::Three::Viewer_interface* viewer,
+void Triangle_container::draw(Viewer_interface* viewer,
                               bool is_color_uniform,
                               QOpenGLFramebufferObject* fbo) const
 {
 
   bindUniformValues(viewer);
 
-  if(indexed)
+  if(isDataIndexed())
   {
-    VAOs[viewer]->bind();
+    getVao(viewer)->bind();
     if(is_color_uniform)
-      VAOs[viewer]->program->setAttributeValue("colors", color);
-    VBOs[Vertex_indices]->bind();
-    if(program_id == VI::PROGRAM_WITH_LIGHT)
+      getVao(viewer)->program->setAttributeValue("colors", getColor());
+    getVbos()[Vertex_indices]->bind();
+    if(getProgram() == VI::PROGRAM_WITH_LIGHT)
     {
-      VAOs[viewer]->program->setUniformValue("comparing", comparing);
-      VAOs[viewer]->program->setUniformValue("width", width);
-      VAOs[viewer]->program->setUniformValue("height", height);
-      VAOs[viewer]->program->setUniformValue("near", near);
-      VAOs[viewer]->program->setUniformValue("far", far);
-      VAOs[viewer]->program->setUniformValue("writing", writing);
-      VAOs[viewer]->program->setUniformValue("alpha", alpha);
+      getVao(viewer)->program->setUniformValue("comparing", d->comparing);
+      getVao(viewer)->program->setUniformValue("width", d->width);
+      getVao(viewer)->program->setUniformValue("height", d->height);
+      getVao(viewer)->program->setUniformValue("near", d->near);
+      getVao(viewer)->program->setUniformValue("far", d->far);
+      getVao(viewer)->program->setUniformValue("writing", d->writing);
+      getVao(viewer)->program->setUniformValue("alpha", d->alpha);
       if( fbo)
         viewer->glBindTexture(GL_TEXTURE_2D, fbo->texture());
     }
-    viewer->glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(idx_size),
+    viewer->glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(getIdxSize()),
                            GL_UNSIGNED_INT, 0 );
-    VBOs[Vertex_indices]->release();
-    VAOs[viewer]->release();
+    getVbos()[Vertex_indices]->release();
+    getVao(viewer)->release();
   }
   else
   {
-    VAOs[viewer]->bind();
-    if(program_id == VI::PROGRAM_C3T3)
-      VAOs[viewer]->program->setUniformValue("shrink_factor", shrink_factor);
-    if(program_id == VI::PROGRAM_C3T3
-       || program_id == VI::PROGRAM_CUTPLANE_SPHERES)
-      VAOs[viewer]->program->setUniformValue("cutplane", plane);
+    getVao(viewer)->bind();
+    if(getProgram() == VI::PROGRAM_C3T3)
+      getVao(viewer)->program->setUniformValue("shrink_factor", d->shrink_factor);
+    if(getProgram() == VI::PROGRAM_C3T3
+       || getProgram() == VI::PROGRAM_CUTPLANE_SPHERES)
+      getVao(viewer)->program->setUniformValue("cutplane", d->plane);
     if(is_color_uniform)
-      VAOs[viewer]->program->setAttributeValue("colors", color);
-    VAOs[viewer]->program->setUniformValue("alpha", alpha);
-    if(program_id == VI::PROGRAM_SPHERES
-       || program_id == VI::PROGRAM_CUTPLANE_SPHERES)
+      getVao(viewer)->program->setAttributeValue("colors", getColor());
+    getVao(viewer)->program->setUniformValue("alpha", d->alpha);
+    if(getProgram() == VI::PROGRAM_SPHERES
+       || getProgram() == VI::PROGRAM_CUTPLANE_SPHERES)
     {
       viewer->glDrawArraysInstanced(GL_TRIANGLES, 0,
-                                    static_cast<GLsizei>(flat_size/3),
-                                    static_cast<GLsizei>(center_size/3));
+                                    static_cast<GLsizei>(getFlatDataSize()/3),
+                                    static_cast<GLsizei>(getCenterSize()/3));
     }
     else
     {
-      if(program_id == VI::PROGRAM_WITH_LIGHT)
+      if(getProgram() == VI::PROGRAM_WITH_LIGHT)
       {
-        VAOs[viewer]->program->setUniformValue("comparing", comparing);
-        VAOs[viewer]->program->setUniformValue("width", width);
-        VAOs[viewer]->program->setUniformValue("height", height);
-        VAOs[viewer]->program->setUniformValue("near", near);
-        VAOs[viewer]->program->setUniformValue("far", far);
-        VAOs[viewer]->program->setUniformValue("writing", writing);
+        getVao(viewer)->program->setUniformValue("comparing", d->comparing);
+        getVao(viewer)->program->setUniformValue("width", d->width);
+        getVao(viewer)->program->setUniformValue("height", d->height);
+        getVao(viewer)->program->setUniformValue("near", d->near);
+        getVao(viewer)->program->setUniformValue("far", d->far);
+        getVao(viewer)->program->setUniformValue("writing", d->writing);
         if( fbo)
           viewer->glBindTexture(GL_TEXTURE_2D, fbo->texture());
       }
-      viewer->glDrawArrays(GL_TRIANGLES,0,static_cast<GLsizei>(flat_size/3));
+      viewer->glDrawArrays(GL_TRIANGLES,0,static_cast<GLsizei>(getFlatDataSize()/3));
     }
 
-    VAOs[viewer]->release();
+    getVao(viewer)->release();
   }
 }
+
+
+
+float     Triangle_container::getShrinkFactor()const { return d->shrink_factor ; }
+bool      Triangle_container::isComparing()const     { return d->comparing; }
+QVector4D Triangle_container::getPlane()const        { return d->plane; }
+float     Triangle_container::getWidth()const        { return d->width; }
+float     Triangle_container::getHeight()const       { return d->height; }
+float     Triangle_container::getNear()const         { return d->near; }
+float     Triangle_container::getFar()const          { return d->far; }
+bool      Triangle_container::isDepthWriting()const  { return d->writing; }
+float     Triangle_container::getAlpha()const        { return d->alpha; }
+
+void Triangle_container::setShrinkFactor(const float& f)const { d->shrink_factor = f; }
+void Triangle_container::setComparing   (const bool& b)const     { d->comparing = b; }
+void Triangle_container::setPlane       (const QVector4D& p)const    { d->plane = p; }
+void Triangle_container::setWidth       (const float& f)const        { d->width = f; }
+void Triangle_container::setHeight      (const float& f)const       { d->height = f; }
+void Triangle_container::setNear        (const float& f)const         { d->near = f; }
+void Triangle_container::setFar         (const float& f)const          { d->far = f; }
+void Triangle_container::setDepthWriting(const bool& b)const  { d->writing = b; }
+void Triangle_container::setAlpha       (const float& f)const        { d->alpha = f ; }

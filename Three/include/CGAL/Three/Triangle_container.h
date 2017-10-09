@@ -33,6 +33,7 @@ using namespace CGAL::Three;
 #else
 #  define DEMO_FRAMEWORK_EXPORT Q_DECL_IMPORT
 #endif
+struct D;
 namespace CGAL {
 namespace Three {
 
@@ -62,65 +63,58 @@ struct DEMO_FRAMEWORK_EXPORT Triangle_container :public Primitive_container
   //! \param program is the `QOpenGLShaderProgram` that is used by this `Triangle_container` `Vao`.
   //! \param indexed must be `true` if the data is indexed, `false` otherwise. If `true`, `VBOs`[`Vertex_indices`] must be filled.
   //!
-    Triangle_container(int program, bool indexed);
+  Triangle_container(int program, bool indexed);
 
-    //!
-    //! \brief initGL creates the Vbos and Vaos of this `Triangle_container`.
-    //! \attention It must be called within a valid OpenGL context. The `draw()` function of an item is always a safe place to call this.
-    //!
-    //! \param viewer the active `Viewer_interface`.
-    //!
-    void initGL(CGAL::Three::Viewer_interface* viewer)const Q_DECL_OVERRIDE;
+  //!
+  //! \brief initGL creates the Vbos and Vaos of this `Triangle_container`.
+  //! \attention It must be called within a valid OpenGL context. The `draw()` function of an item is always a safe place to call this.
+  //!
+  //! \param viewer the active `Viewer_interface`.
+  //!
+  void initGL(CGAL::Three::Viewer_interface* viewer)const Q_DECL_OVERRIDE;
 
-    //!
-    //! \brief draw is the function that actually renders the data.
-    //! \param viewer the active `Viewer_interface`.
-    //! \param is_color_uniform must be `false` if the color buffers are not empty, `true` otherwise.
-    //! \param fbo holds the texture that is used for transparency.
-    //!
-    void draw(CGAL::Three::Viewer_interface* viewer,
-              bool is_color_uniform,
-              QOpenGLFramebufferObject* fbo = NULL) const Q_DECL_OVERRIDE;
+  //!
+  //! \brief draw is the function that actually renders the data.
+  //! \param viewer the active `Viewer_interface`.
+  //! \param is_color_uniform must be `false` if the color buffers are not empty, `true` otherwise.
+  //! \param fbo holds the texture that is used for transparency.
+  //!
+  void draw(CGAL::Three::Viewer_interface* viewer,
+            bool is_color_uniform,
+            QOpenGLFramebufferObject* fbo = NULL) const Q_DECL_OVERRIDE;
+  /// Getters and Setters for the shaders parameters.
+  /// Each of those depends of the `OpenGL_program_IDs` this container is using.
+  /// If the shaders of this program doesn't need one, you can ignore it.
+  /// The others should be filled at each `draw()` from the item.
+  ///@{
+  float getShrinkFactor()const;
+  bool isComparing()const;
+  QVector4D getPlane()const;
+  float getWidth()const;
+  float getHeight()const;
+  float getNear()const;
+  float getFar()const;
+  bool isDepthWriting()const;
+  float getAlpha()const;
 
-    //drawing variables
-    /// Shader parameters
-    /// Those should be filled at each draw() from the item.
-    ///@{
+  void setShrinkFactor(const float&)const;
+  void setComparing   (const bool&)const;
+  void setPlane       (const QVector4D&)const;
+  void setWidth       (const float&)const;
+  void setHeight      (const float&)const;
+  void setNear        (const float&)const;
+  void setFar         (const float&)const;
+  void setDepthWriting(const bool&)const;
+  void setAlpha       (const float&)const;
+  ///@}
 
-    //!
-    //! \brief shrink_factor is used for the c3t3 item.
-    //!
-    float shrink_factor;
-    //!
-    //! \brief comparing is used by the Depth Peeling.
-    //!
-    bool comparing;
-    //!
-    //! \brief plane is used by some programs.
-    //!
-    QVector4D plane;
-    //!
-    //! \brief width the viewer's width. Used by some programs.
-    //!
-    float width;
-    //!
-    //! \brief height the viewer's height. Used by some programs.
-    //!
-    float height;
-    //!
-    //! \brief near the viewer's near coefficient. Used by some programs.
-    //!
-    float near;
-    //!
-    //! \brief far the viewer's far coefficient. Used by some programs.
-    //!
-    float far;
-    //!
-    //! \brief writing is used by the Depth Peeling.
-    //!
-    bool writing;
-    float alpha;
-    ///@}
+  //drawing variables
+
+
+private:
+  friend struct D;
+  mutable D* d;
+
 }; //end of class Triangle_container
 
 }

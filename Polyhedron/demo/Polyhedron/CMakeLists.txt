@@ -192,7 +192,8 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     TextRenderer_moc.cpp
     Polyhedron_demo_plugin_helper.cpp
     Scene_item_rendering_helper.cpp
-    Scene_item_rendering_helper_moc.cpp)
+    Scene_item_rendering_helper_moc.cpp
+    Primitive_container.cpp)
 
     qt5_use_modules(demo_framework OpenGL Gui Widgets Script Xml)
   target_link_libraries(demo_framework

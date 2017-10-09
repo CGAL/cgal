@@ -158,7 +158,7 @@ moveToGroup(CGAL::Three::Scene_group_item* group) {
     d->has_group = 0;
 }
 
-void CGAL::Three::Scene_item::invalidateOpenGLBuffers() {}
+void CGAL::Three::Scene_item::invalidate(Gl_data_names) {}
 
 void CGAL::Three::Scene_item::selection_changed(bool) {}
 void CGAL::Three::Scene_item::setVisible(bool b)
@@ -200,9 +200,6 @@ float Scene_item::alpha() const
   return 1.0f;
 }
 
-void Scene_item::setAlpha(int )
-{
-}
 
 void Scene_item::writing(){
   d->mutex.lock();

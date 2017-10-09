@@ -75,7 +75,7 @@ public:
   const Face_graph* face_graph() const { return polyhedron(); }
 
   void invalidate_aabb_tree();
-  void invalidateOpenGLBuffers()Q_DECL_OVERRIDE;
+  void invalidate(Gl_data_names name)Q_DECL_OVERRIDE;
 
 
   void compute_bbox()const Q_DECL_OVERRIDE;
@@ -164,7 +164,7 @@ public Q_SLOTS:
 protected:
   friend struct Scene_surface_mesh_item_priv;
   Scene_surface_mesh_item_priv* d;
-  void computeElements()const Q_DECL_OVERRIDE;
+  void computeElements(Gl_data_names name)const Q_DECL_OVERRIDE;
   void initializeBuffers(CGAL::Three::Viewer_interface*)const Q_DECL_OVERRIDE;
 };
 

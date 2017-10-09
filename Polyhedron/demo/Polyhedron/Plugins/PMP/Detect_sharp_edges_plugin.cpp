@@ -148,7 +148,7 @@ void Polyhedron_demo_detect_sharp_edges_plugin::detectSharpEdges(bool input_dial
 #ifndef USE_SURFACE_MESH
     item->set_color_vector_read_only(false);
 #endif
-    item->invalidateOpenGLBuffers();
+    item->invalidate(Scene_item::COLORS);
 
     // update scene
     scene->itemChanged(tuple.first);

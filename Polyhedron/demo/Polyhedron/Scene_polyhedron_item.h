@@ -147,7 +147,7 @@ public:
                         Polyhedron::Facet_handle f);
 
 public Q_SLOTS:
-    virtual void invalidateOpenGLBuffers() Q_DECL_OVERRIDE;
+    virtual void invalidate(Gl_data_names) Q_DECL_OVERRIDE;
     virtual void selection_changed(bool) Q_DECL_OVERRIDE;
     virtual void setColor(QColor c) Q_DECL_OVERRIDE;
     virtual void show_feature_edges(bool);
@@ -192,7 +192,7 @@ protected:
 
    public:
     void zoomToPosition(const QPoint &point, CGAL::Three::Viewer_interface *)const Q_DECL_OVERRIDE;
-    void computeElements()const Q_DECL_OVERRIDE{};
+    void computeElements(Gl_data_names)const Q_DECL_OVERRIDE{};
 }; // end class Scene_polyhedron_item
 
 #endif // SCENE_POLYHEDRON_ITEM_H

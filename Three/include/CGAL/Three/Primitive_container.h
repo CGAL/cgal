@@ -23,9 +23,8 @@
 
 #include <CGAL/license/Three.h>
 #include <CGAL/Three/Buffer_objects.h>
-
-#include <CGAL/Three/Scene_item.h>
 #include <CGAL/Three/Viewer_interface.h>
+#include <CGAL/Three/Scene_item.h>
 
 using namespace CGAL::Three;
 
@@ -35,34 +34,26 @@ using namespace CGAL::Three;
 #  define DEMO_FRAMEWORK_EXPORT Q_DECL_IMPORT
 #endif
 class QOpenGLFramebufferObject;
+struct D;
 namespace CGAL {
 namespace Three {
+
+
 //!
 //! \brief The Primitive_container struct provides a base for the OpenGL data wrappers.
 //!
-struct DEMO_FRAMEWORK_EXPORT Primitive_container
+class DEMO_FRAMEWORK_EXPORT Primitive_container
 {
+public:
 
   //!
   //! \brief Primitive_container constructor.
   //! \param program the `QOpenGLShaderProgram` used by the VAOs.
   //! \param indexed must be `true` if the data is indexed, `false` otherwise.
   //!
-    Primitive_container(int program, bool indexed)
-      : program_id(program), indexed(indexed),
-        flat_size(0), idx_size(0)
-    {}
+    Primitive_container(int program, bool indexed);
 
-    virtual ~Primitive_container()
-    {
-      Q_FOREACH(Vbo* vbo, VBOs)
-        if(vbo)
-          delete vbo;
-      Q_FOREACH(CGAL::Three::Viewer_interface*viewer, VAOs.keys())
-      {
-        removeViewer(viewer);
-      }
-    }
+    virtual ~Primitive_container();
 
     /*!
      * \brief bindUniformValues sets the uniform variables for the concerned shaders.
@@ -75,34 +66,7 @@ struct DEMO_FRAMEWORK_EXPORT Primitive_container
      * valid OpenGL context.
      * \param viewer the active `Viewer_interface`
      */
-    void bindUniformValues(CGAL::Three::Viewer_interface* viewer) const
-    {
-      viewer->bindUniformValues(program_id);
-      viewer->getShaderProgram(program_id)->bind();
-      if(is_selected)
-          viewer->getShaderProgram(program_id)->setUniformValue("is_selected", true);
-      else
-          viewer->getShaderProgram(program_id)->setUniformValue("is_selected", false);
-
-      QColor c = color;
-      if(program_id == Viewer_interface::PROGRAM_WITH_TEXTURE)
-      {
-         if(is_selected) c = c.lighter(120);
-         viewer->getShaderProgram(program_id)->setAttributeValue
-           ("color_facets",
-            c.redF(),
-            c.greenF(),
-            c.blueF());
-      }
-      else if(program_id == Viewer_interface::PROGRAM_WITH_TEXTURED_EDGES)
-      {
-          if(is_selected) c = c.lighter(50);
-          viewer->getShaderProgram(program_id)->setUniformValue
-            ("color_lines",
-             QVector3D(c.redF(), c.greenF(), c.blueF()));
-      }
-      viewer->getShaderProgram(program_id)->release();
-    }
+    void bindUniformValues(CGAL::Three::Viewer_interface* viewer) const;
 
     //!
     //! \brief draw is the function that actually renders the data.
@@ -120,41 +84,7 @@ struct DEMO_FRAMEWORK_EXPORT Primitive_container
     //! It actually fills up the buffers with the data provided by `Vbo::allocate()`;
     //! \param viewer the active `Viewer_interface`.
     //!
-    void initializeBuffers(CGAL::Three::Viewer_interface* viewer) const
-    {
-      if(!VAOs[viewer])
-        return;
-      viewer->makeCurrent();
-      VAOs[viewer]->bind();
-      Q_FOREACH(CGAL::Three::Vbo* vbo, VAOs[viewer]->vbos)
-      {
-        vbo->bind();
-        if(vbo->dataSize !=0)
-        {
-          if(!vbo->allocated)
-          {
-            if(vbo->vbo_type == QOpenGLBuffer::IndexBuffer)
-              vbo->vbo.setUsagePattern(QOpenGLBuffer::StaticDraw);
-
-            vbo->vbo.allocate(vbo->data, vbo->dataSize);
-            vbo->allocated = true;
-          }
-          if(vbo->vbo_type == QOpenGLBuffer::VertexBuffer)
-          {
-            VAOs[viewer]->program->enableAttributeArray(vbo->attribute);
-            VAOs[viewer]->program->setAttributeBuffer(vbo->attribute, vbo->data_type, vbo->offset, vbo->tupleSize, vbo->stride);
-          }
-        }
-        else if(vbo->vbo_type == QOpenGLBuffer::VertexBuffer)
-        {
-          VAOs[viewer]->program->disableAttributeArray(vbo->attribute);
-        }
-        vbo->release();
-      }
-      VAOs[viewer]->release();
-
-      is_init[viewer] = true;
-    }
+    void initializeBuffers(CGAL::Three::Viewer_interface* viewer) const;
 
     //!
     //! \brief initGL initializes the OpenGL containers.
@@ -167,66 +97,51 @@ struct DEMO_FRAMEWORK_EXPORT Primitive_container
     //! \brief removeViewer deletes and removes the Vao assigned to `viewer` from `Vaos`.
     //! \param viewer the `Viewer_interface` to remove.
     //!
-    void removeViewer(CGAL::Three::Viewer_interface* viewer) const
-    {
-      delete VAOs[viewer];
-      VAOs.remove(viewer);
-    }
+    void removeViewer(CGAL::Three::Viewer_interface* viewer) const;
 
     //!
     //! \brief reset_vbos de-allocates the `Vbo`s. It must be called when the `Vbo`s data is updated.
     //!
-    void reset_vbos()
-    {
-      Q_FOREACH(CGAL::Three::Vbo* vbo, VBOs)
-      {
-        if(!vbo)
-          continue;
-        vbo->allocated = false;
-      }
-    }
+    void reset_vbos(Scene_item::Gl_data_names);
 
+//!\todo is it better to have a non const draw() or to have 99% of the setters const ?
+    void setVao(Viewer_interface* viewer, Vao*) const;
+    void setVbos(std::vector<Vbo*>)const;
+    void setInit(Viewer_interface* viewer, bool) const;
+    void setGLInit(Viewer_interface* viewer, bool) const;
+    void setSelected(bool)const;
+    void setFlatDataSize(std::size_t)const;
+    void setCenterSize(std::size_t)const;
+    void setIdxSize(std::size_t)const;
+    void setColor(QColor)const;
+    bool isGLInit(Viewer_interface* viewer)const;
+    void allocate(std::size_t vbo_id, void* data, int datasize)const;
+protected:
     //!
-    //! \brief VAOs holds the `Vao`s for each `Viewer_interface`. As a `Vao` is context dependent, there must be one Vao for each `Viewer_interface`.
+    //! \brief Returns the `Vao` bound to `viewer`.
     //!
-    mutable QMap<CGAL::Three::Viewer_interface*, Vao*> VAOs;
+    Vao* getVao(Viewer_interface* viewer)const;
     //!
-    //! \brief VBOs holds the `Vbo`s containing the data for this container.
+    //! \brief geVbos holds the `Vbo`s containing the data for this container.
     //!
-    mutable std::vector<Vbo*> VBOs;
+    std::vector<Vbo*>& getVbos()const;
     //!
-    //! \brief program_id is the `OpenGL_program_IDs` used with this container.
+    //! \brief getProgram returns the `OpenGL_program_IDs` used with this container.
     //!
-    int program_id;
+    int getProgram()const;
     //!
-    //! \brief indexed specifies if the data is indexed or not. This matters for the internal drawing functions.
+    //! \brief isDataIndexed specifies if the data is indexed or not. This matters for the internal drawing functions.
     //!
-    bool indexed;
-    mutable QMap<CGAL::Three::Viewer_interface*, bool> is_init;
-    mutable QMap<CGAL::Three::Viewer_interface*, bool> is_gl_init;
-
-    //!
-    //! \brief is_selected must be filled with the selected state of the item that holds this container everytime this state changes.
-    //! If program_id doesn't use this property, it can be ignored.
-    //!
-    mutable bool is_selected;
-    //!
-    //! \brief flat_size contains the number of units contained in the vertex buffer.
-    //! You can ignore it if `indexed` is true.
-    //!
-    mutable std::size_t flat_size;
-    //! \brief flat_size contains the number of units contained in the barycenter buffer.
-    //! You can ignore it if `program_id` is not an instanced program (like PROGRAM_SPHERES, PROGRAM_CUTPLANE_SPHERES,
-    //! PROGRAM_INSTANCED_WIRE or PROGRAM_INSTANCED).
-    mutable std::size_t center_size;
-    //!
-    //! \brief idx_size contains the number of indices in an `Index_buffer`. You can ignore it if `indexed` is `false`.
-    //!
-    mutable std::size_t idx_size;
-    //!
-    //! \brief color contains the color of the data. Ignore it if `is_color_uniform` is `false` in `draw()`.
-    //!
-    mutable QColor color;
+    bool isDataIndexed()const;
+    bool isInit(Viewer_interface* viewer)const;
+    bool isSelected()const;
+    std::size_t getFlatDataSize() const;
+    std::size_t getCenterSize() const;
+    std::size_t getIdxSize() const;
+    QColor getColor() const;
+private:
+    friend struct D;
+    mutable D* d;
 }; //end of class Triangle_container
 
 }

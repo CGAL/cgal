@@ -796,7 +796,7 @@ public:
 
   void changed_with_poly_item() {
     // no need to update indices
-    poly_item->invalidateOpenGLBuffers();
+    poly_item->invalidate(GEOMETRY|NORMALS);
     Q_EMIT poly_item->itemChanged();
     compute_normal_maps();
     Q_EMIT itemChanged();

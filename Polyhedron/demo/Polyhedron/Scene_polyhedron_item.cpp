@@ -862,7 +862,7 @@ Scene_polyhedron_item::load(std::istream& in)
 
     if ( in && !isEmpty() )
     {
-        invalidateOpenGLBuffers();
+        invalidate(GEOMETRY|NORMALS|COLORS);
         return true;
     }
     return false;
@@ -880,7 +880,7 @@ Scene_polyhedron_item::load_obj(std::istream& in)
   CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh( points,faces,*(d->poly));
   if ( (! failed) && !isEmpty() )
   {
-    invalidateOpenGLBuffers();
+    invalidate(GEOMETRY|NORMALS|COLORS);
     return true;
   }
   return false;
@@ -1058,14 +1058,14 @@ QMenu* Scene_polyhedron_item::contextMenu()
 void Scene_polyhedron_item::show_only_feature_edges(bool b)
 {
     d->show_only_feature_edges_m = b;
-    invalidateOpenGLBuffers();
+    //invalidateOpenGLBuffers();
     Q_EMIT itemChanged();
 }
 
 void Scene_polyhedron_item::show_feature_edges(bool b)
 {
   d->show_feature_edges_m = b;
-  invalidateOpenGLBuffers();
+  //invalidateOpenGLBuffers();
   Q_EMIT itemChanged();
 }
 
@@ -1128,16 +1128,16 @@ void Scene_polyhedron_item::compute_bbox() const {
 
 void
 Scene_polyhedron_item::
-invalidateOpenGLBuffers()
+invalidate(Gl_data_names )
 {
-  Q_EMIT item_is_about_to_be_changed();
-    delete_aabb_tree(this);
-    d->init();
-    Base::invalidateOpenGLBuffers();
-    setBuffersFilled(false);
-
-    d->invalidate_stats();
-    d->killIds();
+ // Q_EMIT item_is_about_to_be_changed();
+ //   delete_aabb_tree(this);
+ //   d->init();
+ //   Base::invalidateOpenGLBuffers();
+ //   setBuffersFilled(false);
+ //
+ //   d->invalidate_stats();
+ //   d->killIds();
 }
 
 void
@@ -1160,7 +1160,7 @@ Scene_polyhedron_item::setColor(QColor c)
   }
   Scene_item::setColor(c);
   if(d->is_multicolor)
-    invalidateOpenGLBuffers();
+    invalidate(COLORS);
 }
 
 void
@@ -1278,7 +1278,7 @@ Scene_polyhedron_item::select(double orig_x,
                         polyhedron()->erase_facet(selected_fh->halfedge());
                         polyhedron()->normalize_border();
                         //set_erase_next_picked_facet(false);
-                        invalidateOpenGLBuffers();
+                        invalidate(GEOMETRY|COLORS|NORMALS);
 
                         Q_EMIT itemChanged();
                     }
@@ -1756,7 +1756,7 @@ bool Scene_polyhedron_item::supportsRenderingMode(RenderingMode m) const
 void Scene_polyhedron_item::set_flat_disabled(bool b)
 {
   d->no_flat = b;
-  invalidateOpenGLBuffers();
+  invalidate(GEOMETRY);
   itemChanged();
 }
 
@@ -1884,7 +1884,7 @@ void Scene_polyhedron_item::zoomToPosition(const QPoint &point, CGAL::Three::Vie
 void Scene_polyhedron_item::resetColors()
 {
   setItemIsMulticolor(false);
-  invalidateOpenGLBuffers();
+  invalidate(COLORS);
   itemChanged();
 }
 

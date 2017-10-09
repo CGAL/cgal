@@ -140,7 +140,7 @@ public:
                       bool, QOpenGLFramebufferObject*) const Q_DECL_OVERRIDE;
     virtual void drawPoints(CGAL::Three::Viewer_interface*) const Q_DECL_OVERRIDE;
     virtual void drawEdges(CGAL::Three::Viewer_interface* viewer) const Q_DECL_OVERRIDE;
-    void invalidateOpenGLBuffers() Q_DECL_OVERRIDE;
+    void invalidate(Gl_data_names) Q_DECL_OVERRIDE;
     bool isFinite() const Q_DECL_OVERRIDE{ return true; }
     bool isEmpty() const Q_DECL_OVERRIDE;
     void compute_bbox() const Q_DECL_OVERRIDE;
@@ -152,7 +152,7 @@ public:
 
     const Points& points() const;
     const Polygons& polygons() const;
-    void computeElements()const Q_DECL_OVERRIDE{}
+    void computeElements(Gl_data_names)const Q_DECL_OVERRIDE{}
 public Q_SLOTS:
     void shuffle_orientations();
     bool orient();
