@@ -25,17 +25,13 @@
 #include <CGAL/license/Three.h>
 
 #include <CGAL/Three/Scene_item_config.h>
-#include <CGAL/Three/Scene_interface.h>
 #include <QString>
 #include <QPixmap>
-#include <QFont>
-#include <QOpenGLBuffer>
-#include <QOpenGLShader>
-#include <QOpenGLVertexArrayObject>
-#include <QThread>
 #include <vector>
+#include <CGAL/Three/Scene_interface.h>  //gives access to RenderingMode
 #include <CGAL/Bbox_3.h>
 
+struct D;
 class QOpenGLFramebufferObject;
 namespace CGAL {
 namespace Three {
@@ -67,57 +63,19 @@ class SCENE_ITEM_EXPORT Scene_item : public QObject{
   Q_ENUMS(RenderingMode)
   Q_PROPERTY(RenderingMode renderingMode READ renderingMode WRITE setRenderingMode)
 public:
- /*!
-   * \brief The OpenGL_program_IDs enum
-   *
-   * This enum holds the OpenGL programs IDs that are given to getShaderProgram() and attribBuffers().
-   * @see getShaderProgram
-   * @see attribBuffers
-   */
- enum OpenGL_program_IDs
- {
-  PROGRAM_WITH_LIGHT = 0,      /** Used to render a surface or edge affected by the light. It uses a per fragment lighting model, and renders brighter the selected item.*/
-  PROGRAM_WITHOUT_LIGHT,       /** Used to render a polygon edge or points. It renders in a uniform color and is not affected by light. It renders the selected item in black.*/
-  PROGRAM_NO_SELECTION,        /** Used to render a polyline or a surface that is not affected by light, like a cutting plane. It renders in a uniform color that does not change with selection.*/
-  PROGRAM_WITH_TEXTURE,        /** Used to render a textured polyhedron. Affected by light.*/
-  PROGRAM_PLANE_TWO_FACES,     /** Used to render a two-faced plane. The two faces have a different color. Not affected by light.*/
-  PROGRAM_WITH_TEXTURED_EDGES, /** Used to render the edges of a textured polyhedorn. Not affected by light.*/
-  PROGRAM_INSTANCED,           /** Used to display instanced rendered spheres.Affected by light.*/
-  PROGRAM_INSTANCED_WIRE,      /** Used to display instanced rendered wired spheres. Not affected by light.*/
-  PROGRAM_C3T3,                /** Used to render a c3t3_item. It discards any fragment on a side of a plane, meaning that nothing is displayed on this side of the plane. Affected by light.*/
-  PROGRAM_C3T3_EDGES,          /** Used to render the edges of a c3t3_item. It discards any fragment on a side of a plane, meaning that nothing is displayed on this side of the plane. Not affected by light.*/
-  PROGRAM_CUTPLANE_SPHERES,    /** Used to render the spheres of an item with a cut plane.*/
-  PROGRAM_SPHERES,             /** Used to render one or several spheres.*/
-  PROGRAM_FLAT,                /** Used to render flat shading without pre computing normals*/
-  PROGRAM_OLD_FLAT,            /** Used to render flat shading without pre computing normals without geometry shader*/
-  NB_OF_PROGRAMS               /** Holds the number of different programs in this enum.*/
- };
   typedef CGAL::Bbox_3 Bbox;
   typedef qglviewer::ManipulatedFrame ManipulatedFrame;
   //! \brief The default color of a scene_item.
   //!
   //! This color is the one that will be displayed if none is specified after its creation.
-  static const QColor defaultColor; // defined in Scene_item.cpp
-
+  static const QColor defaultColor();
   Scene_item();
 
-  //! \brief Sets the number of isolated vertices.
-  //!
-  //! This number will be displayed in a warning box at loading.
-  //! @see getNbIsolatedvertices
-  void setNbIsolatedvertices(std::size_t nb) { nb_isolated_vertices = nb;}
-  //! Getter for the number of isolated vertices.
-  //! @see setNbIsolatedvertices
-  std::size_t getNbIsolatedvertices() const {return nb_isolated_vertices;}
   virtual ~Scene_item();
   //! \brief Duplicates the item.
   //!
   //! Creates a new item as a copy of this one.
   virtual Scene_item* clone() const = 0;
-
-  //!Create the VAOs and VBOs.
-  //! \attention must be called within a valid OpenGL context.
-  virtual void initGL() const;
 
   //! \brief Indicates if `m` is supported
   //!
@@ -180,9 +138,6 @@ public:
   //! \brief Contains graphical meta-data about the item.
   //! @returns a QPixmap containing graphical meta-data about the item.
   virtual QPixmap graphicalToolTip() const { return QPixmap(); }
-  //! \brief Contains the font used for the data of the item.
-  //! @returns a QFont containing the font used for the data of the item.
-  virtual QFont font() const { return QFont(); }
 
   // Functions that help the Scene to compute its bbox
   //! \brief Determines if the item is finite or not.
@@ -194,27 +149,8 @@ public:
   //! If true, the BBox is not computed.
   virtual bool isEmpty() const { return true; }
   //! \brief The item's bounding box.
-  //!
-  //! If the Bbox has never been computed, computes it and
-  //! saves the result for further calls.
-  //! @returns the item's bounding box.
-  virtual Bbox bbox() const {
-      if(!is_bbox_computed)
-          compute_bbox();
-      is_bbox_computed = true;
-      return _bbox;
-  }
-  //! \brief the item's bounding box's diagonal length.
-  //!
-  //! If the diagonal's length has never been computed, computes it and
-  //! saves the result for further calls.
-  //! @returns the item's bounding box's diagonal length.
-  virtual double diagonalBbox() const {
-   if(!is_diag_bbox_computed)
-       compute_diag_bbox();
-   is_diag_bbox_computed = true;
-   return _diag_bbox;
-  }
+  virtual Bbox bbox() const = 0 ;
+
 
   // Function about manipulation
   //! Returns true if the item has a ManipulatedFrame.
@@ -230,18 +166,18 @@ public:
   // Getters for the four basic properties
   //!Getter for the item's color.
   //! @returns the current color of the item.
-  virtual QColor color() const { return color_; }
+  virtual QColor color() const;
   //!Getter for the item's name.
   //! @returns the current name of the item.
-  virtual QString name() const { return name_; }
+  virtual QString name() const;
   //! If the item is not visible, it is not drawn and its Bbox
   //! is ignored in the computation of the scene's.
   //! @returns the current visibility of the item.
-  virtual bool visible() const { return visible_; }
+  virtual bool visible() const;
   //!Getter for the item's rendering mode.
   //! @returns the current rendering mode of the item.
   //!@see RenderingMode
-  virtual RenderingMode renderingMode() const { return rendering_mode; }
+  virtual RenderingMode renderingMode() const;
   //!The renderingMode's name.
   //! @returns the current rendering mode of the item as a human readable string.
   virtual QString renderingModeName() const;
@@ -257,34 +193,44 @@ public:
   //! \return `true` if the item is being modified.
   //! \see `writing()`
   //!
-  bool isWriting()const{ return is_locked; }
+  bool isWriting()const;
   //!
   //! \brief writing sets the state of the item to being modified.
+  //!
+  //! Thread safe.
   //! Some features will be disabled.
   //!\see `doneWriting()`
   //! \see `isWriting()`
-  void writing(){ is_locked = true; itemChanged();}
+  void writing();
   //!
   //! \brief doneWriting sets the state of the item to done being modified.
   //!
-  void doneWriting() { is_locked = false; itemChanged();}
+  //! Thread safe.
+  //!
+  void doneWriting();
   //!
   //! \brief isReading is a property associated with threads.
+  //!
+  //! Thread safe.
   //! \return `true` if something is parsing the item data.
   //! \see `reading()`
   //!
-  int isReading()const{ return is_reading; }
+  int isReading()const;
   //!
   //! \brief reading sets the state of the item to being parsed.
+  //!
+  //! Thread safe.
   //! Some features will be disabled.
   //!
-  void reading(){ ++is_reading; itemChanged(); }
+  void reading();
   //!
   //! \brief doneReading sets the state of the item to done being parsed.
   //!
-  void doneReading() { --is_reading; itemChanged(); }
+  //! Thread safe.
+  //!
+  void doneReading();
 
-  //!Handles key press events.
+  //!Handles key press events received from the event filters installed for this item.
   virtual bool keyPressEvent(QKeyEvent*){return false;}
 
   //!The group containing the item.
@@ -338,23 +284,23 @@ public:
   virtual QString computeStats(int i);
 
   //!Contains the number of group and subgroups containing this item.
-  int has_group;
+  int hasGroup() const;
+  //!Sets the number of group and subgroups containing this item.
+  void setHasGroup(int );
   //!
   //! \brief newViewer adds Vaos for `viewer`.
   //!
-  virtual void newViewer(CGAL::Three::Viewer_interface* viewer);
+  virtual void newViewer(CGAL::Three::Viewer_interface* ) = 0;
   //!
   //! \brief removeViewer removes the Vaos fo `viewer`.
   //!
-  virtual void removeViewer(CGAL::Three::Viewer_interface* viewer);
-  /*! Passes all the uniform data to the shaders.
-    * According to program_name, this data may change.
-    */
-  void attribBuffers(CGAL::Three::Viewer_interface*, int program_name) const;
+  virtual void removeViewer(CGAL::Three::Viewer_interface* ) = 0;
+
   //! Returns the selection status of this item.
-  bool isSelected() const { return is_selected; }
-  /*! Compatibility function. Calls `viewer->getShaderProgram()`. */
-  virtual QOpenGLShaderProgram* getShaderProgram(int name , CGAL::Three::Viewer_interface *viewer = 0) const;
+  bool isSelected() const;
+
+  //!Set the selection status of this item
+  void setSelected(bool b);
 
   /*! Collects all the data for the shaders. Must be called in #invalidateOpenGLBuffers().
    * @see invalidateOpenGLBuffers().
@@ -368,12 +314,12 @@ public Q_SLOTS:
   //! or the displayed item will not be updated.
   virtual void invalidateOpenGLBuffers();
   //!Setter for the color of the item.
-  virtual void setColor(QColor c) { color_ = c;}
+  virtual void setColor(QColor c);
   //!Setter for the RGB color of the item. Calls setColor(QColor).
   //!@see setColor(QColor c)
-  void setRbgColor(int r, int g, int b) { setColor(QColor(r, g, b)); }
+  void setRbgColor(int r, int g, int b){ setColor(QColor(r, g, b)); }
   //!Sets the name of the item.
-  virtual void setName(QString n) { name_ = n; }
+  virtual void setName(QString n);
     //!Sets the visibility of the item.
   virtual void setVisible(bool b);
   //!Set the parent group. If `group==0`, then the item has no parent.
@@ -382,11 +328,7 @@ public Q_SLOTS:
   virtual void moveToGroup(Scene_group_item* group);
   //!Sets the rendering mode of the item.
   //!@see RenderingMode
-  virtual void setRenderingMode(RenderingMode m) { 
-    if (supportsRenderingMode(m))
-      rendering_mode = m; 
-    Q_EMIT redraw();
-  }
+  virtual void setRenderingMode(RenderingMode m) ;
   //!Sets the RenderingMode to Points.
   void setPointsMode() {
     setRenderingMode(Points);
@@ -427,7 +369,8 @@ public Q_SLOTS:
   //! Must be called within a valid openGl context.
   virtual float alpha() const;
 
-  //!Sets the value of the aplha Slider for this item.
+  //! Sets the value of the aplha Slider for this item.
+  //! \param alpha must be between 0 and 255
   virtual void setAlpha(int alpha);
 
   //!Selects a point through raycasting.
@@ -457,101 +400,15 @@ Q_SIGNALS:
   void dataProcessed();
 
 protected:
-  //!Holds the BBox of the item
-  mutable Bbox _bbox;
-  mutable double _diag_bbox;
-  mutable bool is_bbox_computed;
-  mutable bool is_diag_bbox_computed;
-  virtual void compute_bbox()const{}
-  virtual void compute_diag_bbox()const;
-  // The four basic properties
-  //!The name of the item.
-  QString name_;
-  //!The color of the item.
-  QColor color_;
-  //!The visibility of the item.
-  bool visible_;
-  //!The parent group, or 0 if the item is not in a group.
-  Scene_group_item* parent_group;
-  //!Specifies if the item is currently selected.
-  bool is_selected;
-  //!Slider managing the transparency of an item
-  mutable QSlider* alphaSlider;
-  //! Holds the number of vertices that are not linked to the polyhedron from the OFF
-  //! file.
-  std::size_t nb_isolated_vertices;
-  /*! Decides if the draw function must call initializeBuffers() or not. It is set
-   * to true in the end of initializeBuffers() and to false in invalidateOpenGLBuffers(). The need of
-   * this boolean comes from the need of a context from the OpenGLFunctions used in
-   * initializeBuffers().
-   * @see initializeBuffers()
-   * @see invalidateOpenGLBuffers()
-   */
-  mutable bool are_buffers_filled;
-  mutable bool isinit;
-  mutable QMap<CGAL::Three::Viewer_interface*, bool> buffers_init;
-  //!The rendering mode of the item.
-  //!@see RenderingMode
-  RenderingMode rendering_mode;
-  //!The default context menu.
-  QMenu* defaultContextMenu;
-  /*! Contains the previous RenderingMode.
-   * This is used to determine if invalidateOpenGLBuffers should be called or not
-   * in certain cases.
-   * @see invalidateOpenGLBuffers()*/
-  RenderingMode prev_shading;
-  /*! \todo replace it by RenderingMode().
-   * \brief Contains the current RenderingMode.
-   *
-   * This is used to determine if invalidateOpenGLBuffers should be called or not
-   * in certain cases.
-   * @see invalidateOpenGLBuffers()*/
-  RenderingMode cur_shading;
-  //when this is true, all the operations and options of this item are disabled.
-  //Used in multithreading context.
-  mutable bool is_locked;
-  mutable int is_reading;
-  std::vector<CGAL::Three::Triangle_container*> triangle_containers;
-  std::vector<CGAL::Three::Edge_container*> edge_containers;
-
-  /*! Fills the VBOs with data. Must be called after each call to #computeElements().
-   * @see compute_elements()
-   */
-  virtual void initializeBuffers(Viewer_interface*)const{}
-  /*!
-    * \brief processData calls `computeElements()` in a dedicated thread so the
-    * application does not get stuck while the processing is performed.
-    * Emits `dataProcessed()`.
-    */
-  void processData() const;
-
+private:
+  friend struct D;
+  mutable D* d;
 }; // end class Scene_item
 }
 }
 
 #include <QMetaType>
 Q_DECLARE_METATYPE(CGAL::Three::Scene_item*)
-
-//!
-//! \brief The WorkerThread class computes the data of this item in a separated
-//! thread. It allows to keep the hand on the GUI and to manage several items at the same time.
-//!
-class WorkerThread : public QThread
-{
-  Q_OBJECT
-  CGAL::Three::Scene_item* item;
-public:
-  //!
-  //! \brief The `WorkerThread` constructor.
-  //! \param item the `Scene_item` with the data that needs computation.
-  //!
-  WorkerThread(CGAL::Three::Scene_item* item):
-    item(item){}
-private:
-  void run() Q_DECL_OVERRIDE{
-    item->computeElements();
-  }
-};
 
 #endif // SCENE_ITEM_H
 

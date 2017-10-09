@@ -42,6 +42,7 @@ struct Scene_polygon_soup_item_priv{
   {
     item = parent;
     nb_polys = 0;
+    nb_isolated_vertices = 0;
     nb_lines = 0;
     nb_nm_edges = 0;
   }
@@ -76,6 +77,7 @@ struct Scene_polygon_soup_item_priv{
       NbOfVbos
   };
   Polygon_soup* soup;
+  std::size_t nb_isolated_vertices;
   bool oriented;
   mutable std::vector<float> positions_poly;
   mutable std::vector<float> positions_lines;
@@ -138,7 +140,7 @@ void
 Scene_polygon_soup_item_priv::initializeBuffers(CGAL::Three::Viewer_interface* ) const
 {
 
-    item->are_buffers_filled = true;
+    item->setBuffersFilled(true);
 }
 
 typedef Polyhedron::Traits Traits;
@@ -353,7 +355,6 @@ Scene_polygon_soup_item_priv::compute_normals_and_vertices() const{
 
 
 Scene_polygon_soup_item::Scene_polygon_soup_item()
-    : Scene_item()
 {
   d = new Scene_polygon_soup_item_priv(this);
 }
@@ -610,9 +611,9 @@ Scene_polygon_soup_item::toolTip() const
 }
 
 void
-Scene_polygon_soup_item::draw(CGAL::Three::Viewer_interface* viewer,
+Scene_polygon_soup_item::draw(CGAL::Three::Viewer_interface*,
                               int, bool,QOpenGLFramebufferObject*) const {
-    if(!are_buffers_filled)
+  /*  if(!are_buffers_filled)
     {
      d->compute_normals_and_vertices();
      d->initializeBuffers(viewer);
@@ -629,12 +630,12 @@ Scene_polygon_soup_item::draw(CGAL::Three::Viewer_interface* viewer,
     else if(renderingMode() == Gouraud)
     {
 
-    }
+    }*/
   }
 
 void
 Scene_polygon_soup_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const {
-    if(!are_buffers_filled)
+    if(!getBuffersFilled())
     {
       d->compute_normals_and_vertices();
       d->initializeBuffers(viewer);
@@ -645,7 +646,7 @@ Scene_polygon_soup_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const
 
 void
 Scene_polygon_soup_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
-    if(!are_buffers_filled)
+    if(!getBuffersFilled())
   {
      d->compute_normals_and_vertices();
      d->initializeBuffers(viewer);
@@ -667,7 +668,7 @@ Scene_polygon_soup_item::isEmpty() const {
 void
 Scene_polygon_soup_item::invalidateOpenGLBuffers()
 {
-    are_buffers_filled = false;
+    setBuffersFilled(false);
     compute_bbox();
 }
 
@@ -682,8 +683,8 @@ void Scene_polygon_soup_item::compute_bbox() const {
       ++it) {
     bbox = bbox + it->bbox();
   }
-  _bbox = Bbox(bbox.xmin(),bbox.ymin(),bbox.zmin(),
-              bbox.xmax(),bbox.ymax(),bbox.zmax());
+  setBbox(Bbox(bbox.xmin(),bbox.ymin(),bbox.zmin(),
+               bbox.xmax(),bbox.ymax(),bbox.zmax()));
 }
 
 void 
@@ -778,3 +779,6 @@ void Scene_polygon_soup_item::itemAboutToBeDestroyed(Scene_item *item)
     }
   }
 }
+
+void Scene_polygon_soup_item::setNbIsolatedvertices(std::size_t nb) { d->nb_isolated_vertices = nb;}
+std::size_t Scene_polygon_soup_item::getNbIsolatedvertices() const {return d->nb_isolated_vertices;}

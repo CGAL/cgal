@@ -37,7 +37,6 @@ using namespace CGAL::Three;
 class QOpenGLFramebufferObject;
 namespace CGAL {
 namespace Three {
-
 //!
 //! \brief The Primitive_container struct provides a base for the OpenGL data wrappers.
 //!
@@ -65,32 +64,53 @@ struct DEMO_FRAMEWORK_EXPORT Primitive_container
       }
     }
 
-    //!
-    //! \brief initGL initializes the OpenGL containers.
-    //! \attention It must be called within a valid OpenGL context. The `draw()` function of an item is always a safe place to call this.
-    //!
-    //! \param item the `Scene_item` that uses this container.
-    //! \param viewer the active `Viewer_interface`.
-    virtual void initGL(const CGAL::Three::Scene_item& item, CGAL::Three::Viewer_interface* viewer) const = 0;
-
-    //!
-    //! \brief removeViewer deletes and removes the Vao assigned to `viewer` from `Vaos`.
-    //! \param viewer the `Viewer_interface` to remove.
-    //!
-    void removeViewer(CGAL::Three::Viewer_interface* viewer) const
+    /*!
+     * \brief bindUniformValues sets the uniform variables for the concerned shaders.
+     *
+     * Such variables are valid at every step of the pipeline. For example,
+     * the ModelViewProjection matrix, the uniform color or the is_selected state are uniform values.
+     * This function is called in the `draw()`function.
+     * \attention `Vbo`s data should be allocated for this function to be effective.
+     * \attention This should only be called once the `Vao`s and the `Vbo`s are created, in a
+     * valid OpenGL context.
+     * \param viewer the active `Viewer_interface`
+     */
+    void bindUniformValues(CGAL::Three::Viewer_interface* viewer) const
     {
-      delete VAOs[viewer];
-      VAOs.remove(viewer);
+      viewer->bindUniformValues(program_id);
+      viewer->getShaderProgram(program_id)->bind();
+      if(is_selected)
+          viewer->getShaderProgram(program_id)->setUniformValue("is_selected", true);
+      else
+          viewer->getShaderProgram(program_id)->setUniformValue("is_selected", false);
+
+      QColor c = color;
+      if(program_id == Viewer_interface::PROGRAM_WITH_TEXTURE)
+      {
+         if(is_selected) c = c.lighter(120);
+         viewer->getShaderProgram(program_id)->setAttributeValue
+           ("color_facets",
+            c.redF(),
+            c.greenF(),
+            c.blueF());
+      }
+      else if(program_id == Viewer_interface::PROGRAM_WITH_TEXTURED_EDGES)
+      {
+          if(is_selected) c = c.lighter(50);
+          viewer->getShaderProgram(program_id)->setUniformValue
+            ("color_lines",
+             QVector3D(c.redF(), c.greenF(), c.blueF()));
+      }
+      viewer->getShaderProgram(program_id)->release();
     }
 
     //!
     //! \brief draw is the function that actually renders the data.
-    //! \param item the `Scene_item` that uses this container.
     //! \param viewer the active `Viewer_interface`.
     //! \param is_color_uniform should be `true` if the item is unicolor.
     //! \param fbo holds the texture that is used for transparency.
     //!
-    virtual void draw(const Scene_item &item, CGAL::Three::Viewer_interface* viewer,
+    virtual void draw(CGAL::Three::Viewer_interface* viewer,
                       bool is_color_uniform,
                       QOpenGLFramebufferObject* fbo = NULL) const = 0;
 
@@ -115,6 +135,7 @@ struct DEMO_FRAMEWORK_EXPORT Primitive_container
           {
             if(vbo->vbo_type == QOpenGLBuffer::IndexBuffer)
               vbo->vbo.setUsagePattern(QOpenGLBuffer::StaticDraw);
+
             vbo->vbo.allocate(vbo->data, vbo->dataSize);
             vbo->allocated = true;
           }
@@ -133,6 +154,23 @@ struct DEMO_FRAMEWORK_EXPORT Primitive_container
       VAOs[viewer]->release();
 
       is_init[viewer] = true;
+    }
+
+    //!
+    //! \brief initGL initializes the OpenGL containers.
+    //! \attention It must be called within a valid OpenGL context. The `draw()` function of an item is always a safe place to call this.
+    //!
+    //! \param viewer the active `Viewer_interface`.
+    virtual void initGL(CGAL::Three::Viewer_interface* viewer) const = 0;
+
+    //!
+    //! \brief removeViewer deletes and removes the Vao assigned to `viewer` from `Vaos`.
+    //! \param viewer the `Viewer_interface` to remove.
+    //!
+    void removeViewer(CGAL::Three::Viewer_interface* viewer) const
+    {
+      delete VAOs[viewer];
+      VAOs.remove(viewer);
     }
 
     //!

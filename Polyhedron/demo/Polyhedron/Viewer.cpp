@@ -812,7 +812,7 @@ QString Viewer::dumpCameraCoordinates()
   }
 }
 
-void Viewer::attribBuffers(int program_name) const {
+void Viewer::bindUniformValues(int program_name) const {
     GLint is_both_sides = 0;
     //ModelViewMatrix used for the transformation of the camera.
     QMatrix4x4 mvp_mat;

@@ -5,11 +5,10 @@
 
 using namespace CGAL::Three;
 Scene_group_item::Scene_group_item(QString name, Scene_interface *scene)
-  :  Scene_item()
-  , scene(scene)
+  : scene(scene)
 {
-    this->name_ = name;
-    expanded = true;
+  setName(name);
+  expanded = true;
 }
 
 bool Scene_group_item::isFinite() const
@@ -27,11 +26,6 @@ bool Scene_group_item::isEmpty() const {
       return true;
     }
   return true;
-}
-
-Scene_group_item::Bbox Scene_group_item::bbox() const
-{
-    return Bbox(0, 0, 0, 0, 0, 0);
 }
 
 
@@ -56,7 +50,7 @@ void Scene_group_item::addChild(Scene_interface::Item_id new_id)
   if(!children.contains(new_id))
   {
     children.append(new_id);
-    update_group_number(getChild(new_id), has_group+1);
+    update_group_number(getChild(new_id), hasGroup()+1);
   }
 }
 
@@ -75,7 +69,7 @@ void Scene_group_item::update_group_number(Scene_item * new_item, int n)
     {
       update_group_number(getChild(id),n+1);
     }
-  new_item->has_group = n;
+  new_item->setHasGroup(n);
 }
 
 void Scene_group_item::setColor(QColor c)
@@ -130,7 +124,7 @@ void Scene_group_item::moveUp(int i)
 
 void Scene_group_item::draw(CGAL::Three::Viewer_interface* viewer, int pass , bool is_writing, QOpenGLFramebufferObject *fbo) const
 {
-  if(!isinit)
+  if(!isInit())
     initGL();
   Q_FOREACH(Scene_interface::Item_id id, children){
     if(getChild(id)->visible() &&
@@ -145,7 +139,7 @@ void Scene_group_item::draw(CGAL::Three::Viewer_interface* viewer, int pass , bo
 
 void Scene_group_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const
 {
-  if(!isinit)
+  if(!isInit())
     initGL();
   Q_FOREACH(Scene_interface::Item_id id, children){
     if(getChild(id)->visible() &&
@@ -160,7 +154,7 @@ void Scene_group_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const
 
 void Scene_group_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const
 {
-  if(!isinit)
+  if(!isInit())
     initGL();
   Q_FOREACH(Scene_interface::Item_id id, children){
     if(getChild(id)->visible())
@@ -222,8 +216,13 @@ void Scene_group_item::setAlpha(int )
 
 void Scene_group_item::initGL()const
 {
-  Scene_item::initGL();
-  connect(alphaSlider, &QSlider::valueChanged,
-          this, &Scene_group_item::setAlpha);
+  Scene_item_rendering_helper::initGL();
+  Scene_group_item* ncthis = const_cast<Scene_group_item*>(this);
+  connect(ncthis->alphaSlider(), &QSlider::valueChanged,
+          ncthis, &Scene_group_item::setAlpha);
 }
 
+void Scene_group_item::compute_bbox() const
+{
+  setBbox(Bbox(0, 0, 0, 0, 0, 0));
+}

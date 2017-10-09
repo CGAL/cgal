@@ -49,7 +49,7 @@ Scene_polyhedron_item_decorator::isEmpty() const {
 
 void
 Scene_polyhedron_item_decorator::compute_bbox() const {
-  _bbox = poly_item->bbox();
+  setBbox(poly_item->bbox());
 }
 
 

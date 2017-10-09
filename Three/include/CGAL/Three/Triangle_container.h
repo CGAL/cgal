@@ -68,19 +68,17 @@ struct DEMO_FRAMEWORK_EXPORT Triangle_container :public Primitive_container
     //! \brief initGL creates the Vbos and Vaos of this `Triangle_container`.
     //! \attention It must be called within a valid OpenGL context. The `draw()` function of an item is always a safe place to call this.
     //!
-    //! \param item the `Scene_item` that uses this `Triangle_container`.
     //! \param viewer the active `Viewer_interface`.
     //!
-    void initGL(const Scene_item &item, CGAL::Three::Viewer_interface* viewer)const Q_DECL_OVERRIDE;
+    void initGL(CGAL::Three::Viewer_interface* viewer)const Q_DECL_OVERRIDE;
 
     //!
     //! \brief draw is the function that actually renders the data.
-    //! \param item the `Scene_item` that uses this `Triangle_container`.
     //! \param viewer the active `Viewer_interface`.
     //! \param is_color_uniform must be `false` if the color buffers are not empty, `true` otherwise.
     //! \param fbo holds the texture that is used for transparency.
     //!
-    void draw(const Scene_item &item, CGAL::Three::Viewer_interface* viewer,
+    void draw(CGAL::Three::Viewer_interface* viewer,
               bool is_color_uniform,
               QOpenGLFramebufferObject* fbo = NULL) const Q_DECL_OVERRIDE;
 
@@ -121,6 +119,7 @@ struct DEMO_FRAMEWORK_EXPORT Triangle_container :public Primitive_container
     //! \brief writing is used by the Depth Peeling.
     //!
     bool writing;
+    float alpha;
     ///@}
 }; //end of class Triangle_container
 

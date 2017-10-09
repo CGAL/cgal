@@ -3,7 +3,7 @@
 
 #include "Scene_polyhedron_item_config.h"
 #include <CGAL/Three/Scene_print_item_interface.h>
-#include <CGAL/Three/Scene_item.h>
+#include <CGAL/Three/Scene_item_rendering_helper.h>
 #include <CGAL/Three/TextRenderer.h>
 #include "Polyhedron_type_fwd.h"
 #include "Polyhedron_type.h"
@@ -23,7 +23,7 @@ struct Scene_polyhedron_item_priv;
 
 // This class represents a polyhedron in the OpenGL scene
 class SCENE_POLYHEDRON_ITEM_EXPORT Scene_polyhedron_item
-        : public CGAL::Three::Scene_item,
+        : public CGAL::Three::Scene_item_rendering_helper,
           public CGAL::Three::Scene_zoomable_item_interface,
           public CGAL::Three::Scene_print_item_interface{
     Q_INTERFACES(CGAL::Three::Scene_print_item_interface)
@@ -173,6 +173,8 @@ public Q_SLOTS:
     void showFaces(bool);
     void showPrimitives(bool);
     void zoomToId();
+    void setNbIsolatedvertices(std::size_t nb);
+    std::size_t getNbIsolatedvertices() const;
 
 Q_SIGNALS:
     void selection_done();

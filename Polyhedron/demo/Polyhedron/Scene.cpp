@@ -807,7 +807,7 @@ Scene::data(const QModelIndex &index, int role) const
         if(role == ::Qt::DisplayRole || role == ::Qt::EditRole)
             return m_entries.value(id)->name();
         if(role == ::Qt::FontRole)
-            return m_entries.value(id)->font();
+            return QFont();
         break;
     case RenderingModeColumn:
         if(role == ::Qt::DisplayRole) {
@@ -1021,7 +1021,7 @@ void Scene::moveRowUp()
     return;
   if(index_map.key(selected_id).row() > 0)
     {
-        if(selected_item->has_group >0)
+        if(selected_item->hasGroup() >0)
         {
             Scene_group_item* group = selected_item->parentGroup();
             if(group)
@@ -1050,7 +1050,7 @@ void Scene::moveRowDown()
     return;
   if(index_map.key(selected_id).row() < rowCount(index_map.key(selected_id).parent())-1)
   {
-    if(selected_item->has_group >0)
+    if(selected_item->hasGroup() >0)
     {
       Scene_group_item* group = selected_item->parentGroup();
       if(group)
@@ -1489,7 +1489,7 @@ bool Scene::testDisplayId(double x, double y, double z, CGAL::Three::Viewer_inte
 
 void Scene::organize_items(Scene_item* item, QStandardItem* root, int loop)
 {
-    if(item->has_group <= loop)
+    if(item->hasGroup() <= loop)
     {
         QList<QStandardItem*> list;
         for(int i=0; i<6; i++)

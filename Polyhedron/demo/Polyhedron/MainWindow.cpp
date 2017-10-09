@@ -2130,7 +2130,7 @@ LoadingController::LoadingController(const QList<InfoLoader>& input,
           this, SLOT(handleResults(CT::Scene_item*)));
   connect(workerThread, SIGNAL(finished()), workerThread, SLOT(deleteLater()));
   colors_.reserve(input.size());
-  compute_color_map(CT::Scene_item::defaultColor,
+  compute_color_map(CT::Scene_item::defaultColor(),
                     static_cast<unsigned>(input.size()),
                     std::back_inserter(colors_));
   connect(this, &LoadingController::finished,

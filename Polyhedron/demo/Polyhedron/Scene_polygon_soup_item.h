@@ -1,7 +1,7 @@
 #ifndef SCENE_POLYGON_SOUP_ITEM_H
 #define SCENE_POLYGON_SOUP_ITEM_H
 #include "Scene_polygon_soup_item_config.h"
-#include  <CGAL/Three/Scene_item.h>
+#include  <CGAL/Three/Scene_item_rendering_helper.h>
 #include "Polyhedron_type.h"
 #include "SMesh_type.h"
 
@@ -101,7 +101,7 @@ class Scene_polyhedron_item;
 class Scene_surface_mesh_item;
 
 class SCENE_POLYGON_SOUP_ITEM_EXPORT Scene_polygon_soup_item 
-        : public CGAL::Three::Scene_item
+        : public CGAL::Three::Scene_item_rendering_helper
 {
     Q_OBJECT
 public:  
@@ -126,14 +126,15 @@ public:
     void load(Scene_polyhedron_item*);
     void load(Scene_surface_mesh_item*);
     bool isDataColored();
-
+    void setNbIsolatedvertices(std::size_t nb);
+    std::size_t getNbIsolatedvertices() const;
     bool save(std::ostream& out) const;
     std::vector<CGAL::Color> getVColors() const;
     std::vector<CGAL::Color> getFColors() const;
     QString toolTip() const Q_DECL_OVERRIDE;
 
     // Indicate if rendering mode is supported
-    virtual bool supportsRenderingMode(RenderingMode m) const Q_DECL_OVERRIDE{ return ( m!=PointsPlusNormals && m!=Splatting && m!=ShadedPoints); }
+    virtual bool supportsRenderingMode(RenderingMode m) const Q_DECL_OVERRIDE{ return ( m!=PointsPlusNormals && m!=ShadedPoints); }
     // OpenGL drawing in a display list
     virtual void draw(CGAL::Three::Viewer_interface*, int pass,
                       bool, QOpenGLFramebufferObject*) const Q_DECL_OVERRIDE;

@@ -122,6 +122,7 @@ struct Scene_polyhedron_item_priv{
     is_multicolor = false;
     no_flat = false;
     vertices_displayed = true;
+    nb_isolated_vertices = 0;
     edges_displayed = true;
     faces_displayed = true;
     all_primitives_displayed = false;
@@ -166,6 +167,7 @@ struct Scene_polyhedron_item_priv{
                        const qglviewer::Vec &offset);
   Scene_polyhedron_item* item;
   Polyhedron *poly;
+  std::size_t nb_isolated_vertices;
   double volume, area;
   QVector<QColor> colors;
   mutable std::vector<float> positions_lines;
@@ -532,7 +534,7 @@ Scene_polyhedron_item_priv::triangulate_facet(Scene_polyhedron_item::Facet_itera
 
 
 void
-Scene_polyhedron_item_priv::initialize_buffers(CGAL::Three::Viewer_interface* viewer) const
+Scene_polyhedron_item_priv::initialize_buffers(CGAL::Three::Viewer_interface* ) const
 {
 //TODO
 }
@@ -725,11 +727,8 @@ Scene_polyhedron_item_priv::compute_normals_and_vertices(const bool is_recent,
 }
 
 Scene_polyhedron_item::Scene_polyhedron_item()
-    : Scene_item(),
-      d(new Scene_polyhedron_item_priv(this))
+    : d(new Scene_polyhedron_item_priv(this))
 {
-    cur_shading=FlatPlusEdges;
-    is_selected = true;
     d->textVItems = new TextListItem(this);
     d->textEItems = new TextListItem(this);
     d->textFItems = new TextListItem(this);
@@ -737,22 +736,16 @@ Scene_polyhedron_item::Scene_polyhedron_item()
 }
 
 Scene_polyhedron_item::Scene_polyhedron_item(Polyhedron* const p)
-    : Scene_item(),
-      d(new Scene_polyhedron_item_priv(p,this))
+    : d(new Scene_polyhedron_item_priv(p,this))
 {
-    cur_shading=FlatPlusEdges;
-    is_selected = true;
     d->textVItems = new TextListItem(this);
     d->textEItems = new TextListItem(this);
     d->textFItems = new TextListItem(this);
 }
 
 Scene_polyhedron_item::Scene_polyhedron_item(const Polyhedron& p)
-    : Scene_item(),
-      d(new Scene_polyhedron_item_priv(p,this))
+    : d(new Scene_polyhedron_item_priv(p,this))
 {
-    cur_shading=FlatPlusEdges;
-    is_selected=true;
     d->textVItems = new TextListItem(this);
     d->textEItems = new TextListItem(this);
     d->textFItems = new TextListItem(this);
@@ -1087,130 +1080,25 @@ void Scene_polyhedron_item::set_erase_next_picked_facet(bool b)
     d->erase_next_picked_facet_m = b;
 }
 
-void Scene_polyhedron_item::draw(CGAL::Three::Viewer_interface* viewer,
+void Scene_polyhedron_item::draw(CGAL::Three::Viewer_interface* ,
                                  int, bool, QOpenGLFramebufferObject* ) const {
-    if(!are_buffers_filled)
-    {
-        d->compute_normals_and_vertices(viewer->isOpenGL_4_3(),
-                                        false,
-                                        viewer->property("draw_two_sides").toBool());
-        d->initialize_buffers(viewer);
-        compute_bbox();
-    }
 
-    if(!d->is_multicolor && viewer->isOpenGL_4_3() &&
-       (renderingMode() == Flat || renderingMode() == FlatPlusEdges))
-    {
-/*
-        vaos[Scene_polyhedron_item_priv::Gouraud_Facets]->bind();
-        attribBuffers(viewer, PROGRAM_FLAT);
-        d->program = getShaderProgram(PROGRAM_FLAT);
-        d->program->bind();
-        if(!d->is_multicolor)
-        {
-                d->program->setAttributeValue("colors", this->color());
-        }
-        if(is_selected)
-                d->program->setUniformValue("is_selected", true);
-        else
-                d->program->setUniformValue("is_selected", false);
-        viewer->glDrawElements(GL_TRIANGLES, static_cast<GLuint>(d->idx_faces.size()),
-                               GL_UNSIGNED_INT, d->idx_faces.data());
-        d->program->release();
-        vaos[Scene_polyhedron_item_priv::Gouraud_Facets]->release();
-*/
-    }
-    else if((d->is_multicolor || !viewer->isOpenGL_4_3()) &&
-            (renderingMode() == Flat || renderingMode() == FlatPlusEdges))
-    {
-
-    }
-    else
-    {
-/*
-        vaos[Scene_polyhedron_item_priv::Gouraud_Facets]->bind();
-        attribBuffers(viewer, PROGRAM_WITH_LIGHT);
-        d->program = getShaderProgram(PROGRAM_WITH_LIGHT);
-        d->program->bind();
-        if(!d->is_multicolor)
-        {
-                d->program->setAttributeValue("colors", this->color());
-        }
-        if(is_selected)
-                d->program->setUniformValue("is_selected", true);
-        else
-                d->program->setUniformValue("is_selected", false);
-
-        viewer->glDrawElements(GL_TRIANGLES, static_cast<GLuint>(d->idx_faces.size()),
-                               GL_UNSIGNED_INT, d->idx_faces.data());
-        d->program->release();
-        vaos[Scene_polyhedron_item_priv::Gouraud_Facets]->release();
-*/
-    }
 }
 
 // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
-void Scene_polyhedron_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const
+void Scene_polyhedron_item::drawEdges(CGAL::Three::Viewer_interface* ) const
 {
-  if (!are_buffers_filled)
-  {
-    d->compute_normals_and_vertices(viewer->isOpenGL_4_3(), false,
-                                    viewer->property("draw_two_sides").toBool());
-    d->initialize_buffers(viewer);
-    compute_bbox();
-  }
 
-  if(!d->show_only_feature_edges_m)
-  {
-    /*
-        vaos[Scene_polyhedron_item_priv::Edges]->bind();
-
-        attribBuffers(viewer, PROGRAM_WITHOUT_LIGHT);
-        d->program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
-        d->program->bind();
-        //draw the edges
-        d->program->setAttributeValue("colors", this->color().lighter(50));
-        if(is_selected)
-          d->program->setUniformValue("is_selected", true);
-        else
-          d->program->setUniformValue("is_selected", false);
-        viewer->glDrawElements(GL_LINES, static_cast<GLuint>(d->idx_lines.size()),
-                               GL_UNSIGNED_INT, d->idx_lines.data());
-        d->program->release();
-        vaos[Scene_polyhedron_item_priv::Edges]->release();
-    }
-
-    //draw the feature edges
-    vaos[Scene_polyhedron_item_priv::Feature_edges]->bind();
-    attribBuffers(viewer, PROGRAM_NO_SELECTION);
-    d->program = getShaderProgram(PROGRAM_NO_SELECTION);
-    d->program->bind();
-    if(d->show_feature_edges_m || d->show_only_feature_edges_m)
-        d->program->setAttributeValue("colors", Qt::red);
-    else
-    {
-        if(!is_selected)
-            d->program->setAttributeValue("colors", this->color().lighter(50));
-        else
-            d->program->setAttributeValue("colors",QColor(0,0,0));
-    }
-    viewer->glDrawElements(GL_LINES, static_cast<GLuint>(d->idx_feature_lines.size()),
-                           GL_UNSIGNED_INT, d->idx_feature_lines.data());
-    d->program->release();
-    vaos[Scene_polyhedron_item_priv::Feature_edges]->release();
-*/
-
-  }
 }
 
 void
-Scene_polyhedron_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const {
-    if(!are_buffers_filled)
-    {
-        d->compute_normals_and_vertices(viewer->isOpenGL_4_3(), false, viewer->property("draw_two_sides").toBool());
-        d->initialize_buffers(viewer);
-        compute_bbox();
-    }
+Scene_polyhedron_item::drawPoints(CGAL::Three::Viewer_interface* ) const {
+//    if(!are_buffers_filled)
+//    {
+//        d->compute_normals_and_vertices(viewer->isOpenGL_4_3(), false, viewer->property("draw_two_sides").toBool());
+//        d->initialize_buffers(viewer);
+//        compute_bbox();
+//    }
 
 
 }
@@ -1233,8 +1121,8 @@ void Scene_polyhedron_item::compute_bbox() const {
         ++it) {
         bbox = bbox + it->bbox();
     }
-    _bbox = Bbox(bbox.xmin(),bbox.ymin(),bbox.zmin(),
-                bbox.xmax(),bbox.ymax(),bbox.zmax());
+    setBbox(Bbox(bbox.xmin(),bbox.ymin(),bbox.zmin(),
+                 bbox.xmax(),bbox.ymax(),bbox.zmax()));
 }
 
 
@@ -1246,7 +1134,7 @@ invalidateOpenGLBuffers()
     delete_aabb_tree(this);
     d->init();
     Base::invalidateOpenGLBuffers();
-    are_buffers_filled = false;
+    setBuffersFilled(false);
 
     d->invalidate_stats();
     d->killIds();
@@ -1255,9 +1143,9 @@ invalidateOpenGLBuffers()
 void
 Scene_polyhedron_item::selection_changed(bool p_is_selected)
 {
-    if(p_is_selected != is_selected)
+    if(p_is_selected != isSelected())
     {
-        is_selected = p_is_selected;
+        setSelected(p_is_selected);
     }
 }
 
@@ -2112,3 +2000,6 @@ bool Scene_polyhedron_item::shouldDisplayIds(CGAL::Three::Scene_item *current_it
 {
   return this == current_item;
 }
+
+void Scene_polyhedron_item::setNbIsolatedvertices(std::size_t nb) { d->nb_isolated_vertices = nb;}
+std::size_t Scene_polyhedron_item::getNbIsolatedvertices() const {return d->nb_isolated_vertices;}

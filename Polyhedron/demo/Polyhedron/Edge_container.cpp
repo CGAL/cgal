@@ -10,7 +10,7 @@ Edge_container::Edge_container(int program, bool indexed)
 
 }
 
-void Edge_container::initGL(const Scene_item& item, Viewer_interface *viewer) const
+void Edge_container::initGL(Viewer_interface *viewer) const
 {
   viewer->makeCurrent();
   if(indexed)
@@ -29,7 +29,7 @@ void Edge_container::initGL(const Scene_item& item, Viewer_interface *viewer) co
                                  QOpenGLBuffer::IndexBuffer);
       if(VAOs[viewer])
         delete VAOs[viewer];
-      VAOs[viewer] = new CGAL::Three::Vao(item.getShaderProgram(program_id, viewer));
+      VAOs[viewer] = new CGAL::Three::Vao(viewer->getShaderProgram(program_id));
       VAOs[viewer]->addVbo(VBOs[Vertices]);
       VAOs[viewer]->addVbo(VBOs[Indices]);
     }
@@ -55,7 +55,7 @@ void Edge_container::initGL(const Scene_item& item, Viewer_interface *viewer) co
       if(!VBOs[Colors])
         VBOs[Colors] =
             new CGAL::Three::Vbo("colors");
-      VAOs[viewer] = new CGAL::Three::Vao(item.getShaderProgram(program_id, viewer));
+      VAOs[viewer] = new CGAL::Three::Vao(viewer->getShaderProgram(program_id));
       VAOs[viewer]->addVbo(VBOs[Vertices]);
       VAOs[viewer]->addVbo(VBOs[Colors]);
     }
@@ -94,16 +94,15 @@ void Edge_container::initGL(const Scene_item& item, Viewer_interface *viewer) co
   }
   is_gl_init[viewer] = true;
 }
-void Edge_container::draw(const Scene_item &item, Viewer_interface *viewer,
+void Edge_container::draw(Viewer_interface *viewer,
                           bool is_color_uniform, QOpenGLFramebufferObject *) const
 
 {
-  item.attribBuffers(viewer, program_id);
+  bindUniformValues(viewer);
 
   if(indexed)
   {
     VAOs[viewer]->bind();
-    VAOs[viewer]->program->setAttributeValue("is_selected", is_selected);
     if(is_color_uniform)
       VAOs[viewer]->program->setAttributeValue("colors", color);
     VBOs[Indices]->bind();
@@ -115,7 +114,6 @@ void Edge_container::draw(const Scene_item &item, Viewer_interface *viewer,
   else
   {
     VAOs[viewer]->bind();
-    VAOs[viewer]->program->setAttributeValue("is_selected", is_selected);
     if(is_color_uniform)
       VAOs[viewer]->program->setAttributeValue("colors", color);
     if(program_id == VI::PROGRAM_WITHOUT_LIGHT)

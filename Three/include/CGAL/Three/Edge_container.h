@@ -70,19 +70,17 @@ struct DEMO_FRAMEWORK_EXPORT Edge_container :public Primitive_container
     //! \attention It must be called within a valid OpenGL context. The `draw()` function of an item is always a safe place to call this.
     //!
     //! \todo Is it a good idea to call InitGL of each item in the scene so the developper doesn't have to worry about this in each draw() of each item ?
-    //!
-    //! \param item the `Scene_item` that uses this `Edge_container`.
+    //!`.
     //! \param viewer the active `Viewer_interface`.
     //!
-    void initGL(const Scene_item &item, Viewer_interface *viewer) const Q_DECL_OVERRIDE;
+    void initGL(Viewer_interface *viewer) const Q_DECL_OVERRIDE;
 
     //!
     //! \brief draw is the function that actually renders the data.
-    //! \param item the `Scene_item` that uses this `Edge_container`.
     //! \param viewer the active `Viewer_interface`.
     //! \param is_color_uniform must be `false` if `VBOs`[`Colors`] is not empty, `true` otherwise.
     //!
-    void draw(const Scene_item &item, CGAL::Three::Viewer_interface* viewer,
+    void draw(CGAL::Three::Viewer_interface* viewer,
               bool is_color_uniform,
               QOpenGLFramebufferObject* = NULL) const Q_DECL_OVERRIDE;
     //drawing variables

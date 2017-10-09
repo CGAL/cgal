@@ -26,7 +26,7 @@
 #include <CGAL/license/Three.h>
 
 
-#include <CGAL/Three/Scene_item.h>
+#include <CGAL/Three/Scene_item_rendering_helper.h>
 #include <CGAL/Three/Scene_interface.h>
 using namespace CGAL::Three;
 
@@ -44,7 +44,7 @@ namespace Three {
 //! user to apply several actions to multiple items at the same time.
 //! A custom Scene_item can derive from it to have children. They appear
 //! hierarchically in the Geometric Objects list.
-class DEMO_FRAMEWORK_EXPORT Scene_group_item : public Scene_item
+class DEMO_FRAMEWORK_EXPORT Scene_group_item : public Scene_item_rendering_helper
 {
     Q_OBJECT
 public :
@@ -112,8 +112,7 @@ public :
     //! True means expanded, false means collapsed.
     //! @see isExpanded().
     void setExpanded(bool);
-    //!Returns an empty Bbox to avoid disturbing the Bbox of the scene.
-    Bbox bbox() const;
+
     //!Not supported.
     Scene_item* clone() const {return 0;}
     //! Indicates if the rendering mode is supported.
@@ -247,6 +246,7 @@ protected:
     Scene_interface *scene;
     //!Contains the indices of all the children of this group.
     QList<Scene_interface::Item_id> children;
+    void compute_bbox() const;
 
 }; //end of class Scene_group_item
 

@@ -16,12 +16,16 @@
 #include <QItemDelegate>
 #include <QPixmap>
 #include <QItemSelection>
+#include <QOpenGLShaderProgram>
+#include <QOpenGLVertexArrayObject>
+#include <QOpenGLBuffer>
 #include <QGLViewer/qglviewer.h>
 #include <QDebug>
 #include <iostream>
 #include <cmath>
 #include <boost/variant.hpp>
 #include <CGAL/Three/Scene_group_item.h>
+
 class QEvent;
 class QMouseEvent;
 namespace CGAL { namespace Three{ class Viewer_interface;}}

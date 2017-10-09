@@ -9,7 +9,7 @@
 #include <CGAL/Three/Scene_zoomable_item_interface.h>
 #include <CGAL/Three/Scene_print_item_interface.h>
 #include "SMesh_type.h"
-#include <CGAL/Three/Scene_item.h>
+#include <CGAL/Three/Scene_item_rendering_helper.h>
 #include <CGAL/Three/Viewer_interface.h>
 #include <vector>
 
@@ -23,7 +23,7 @@
 struct Scene_surface_mesh_item_priv;
 class QOpenGLFramebufferObject;
 class SCENE_SURFACE_MESH_ITEM_EXPORT Scene_surface_mesh_item
-  : public CGAL::Three::Scene_item,
+  : public CGAL::Three::Scene_item_rendering_helper,
     public CGAL::Three::Scene_zoomable_item_interface,
     public CGAL::Three::Scene_print_item_interface{
   Q_INTERFACES(CGAL::Three::Scene_print_item_interface)
@@ -53,7 +53,6 @@ public:
   bool supportsRenderingMode(RenderingMode m) const Q_DECL_OVERRIDE;
   bool isFinite() const Q_DECL_OVERRIDE { return true; }
   bool isEmpty() const Q_DECL_OVERRIDE;
-  Bbox bbox() const Q_DECL_OVERRIDE;
   QString toolTip() const Q_DECL_OVERRIDE;
 
   QMenu* contextMenu() Q_DECL_OVERRIDE;

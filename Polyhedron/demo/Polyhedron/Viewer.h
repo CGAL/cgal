@@ -94,8 +94,8 @@ public:
   bool inFastDrawing() const Q_DECL_OVERRIDE;
   //! Implementation of `Viewer_interface::inDrawWithNames()`
   bool inDrawWithNames() const Q_DECL_OVERRIDE;
-  //! Implementation of `Viewer_interface::attribBuffers()`
-  void attribBuffers(int program_name) const Q_DECL_OVERRIDE;
+  //! Implementation of `Viewer_interface::bindUniformValues()`
+  void bindUniformValues(int program_name) const Q_DECL_OVERRIDE;
   //! Implementation of `Viewer_interface::getShaderProgram()`
   QOpenGLShaderProgram* getShaderProgram(int name) const Q_DECL_OVERRIDE;
   //!Declares a program names `name`, using `v_shader` as vertex shader and `f_shader` as fragment shader.

@@ -159,6 +159,8 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
       "${CMAKE_CURRENT_BINARY_DIR}/Scene_item_moc.cpp" )
     qt5_generate_moc( "${CGAL_THREE_HEADERS_PATH}/CGAL/Three/Scene_group_item.h"
       "${CMAKE_CURRENT_BINARY_DIR}/Scene_group_item_moc.cpp" )
+    qt5_generate_moc( "${CGAL_THREE_HEADERS_PATH}/CGAL/Three/Scene_item_rendering_helper.h"
+      "${CMAKE_CURRENT_BINARY_DIR}/Scene_item_rendering_helper_moc.cpp" )
     qt5_generate_moc( "${CGAL_THREE_HEADERS_PATH}/CGAL/Three/TextRenderer.h"
       "${CMAKE_CURRENT_BINARY_DIR}/TextRenderer_moc.cpp" )
   else()
@@ -188,11 +190,14 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     Scene_group_item_moc.cpp
     TextRenderer.cpp
     TextRenderer_moc.cpp
-    Polyhedron_demo_plugin_helper.cpp)
+    Polyhedron_demo_plugin_helper.cpp
+    Scene_item_rendering_helper.cpp
+    Scene_item_rendering_helper_moc.cpp)
+
+    qt5_use_modules(demo_framework OpenGL Gui Widgets Script Xml)
   target_link_libraries(demo_framework
-    PUBLIC Qt5::OpenGL Qt5::Widgets Qt5::Gui Qt5::Script
+    Qt5::OpenGL Qt5::Widgets Qt5::Gui Qt5::Script
     ${QGLVIEWER_LIBRARIES}
-    gl_splat
     )
   if(CGAL_HEADER_ONLY)
     target_compile_definitions(demo_framework PRIVATE -DCGAL_USE_Qt5_RESOURCES)
@@ -309,8 +314,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   if(TBB_FOUND)
     CGAL_target_use_TBB(scene_points_with_normal_item)
   endif()
-
-  target_link_libraries( demo_framework PUBLIC gl_splat)
 
 
   foreach( lib 

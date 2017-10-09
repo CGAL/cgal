@@ -14,7 +14,7 @@ typedef Scene_face_graph_item::Face_graph Face_graph;
 
 // This class is a decorator for Scene_polyhedron_item yet it does not inherit it but Scene_item
 class SCENE_POLYHEDRON_ITEM_DECORATOR_EXPORT Scene_polyhedron_item_decorator 
-  : public CGAL::Three::Scene_item {
+  : public CGAL::Three::Scene_item_rendering_helper {
   Q_OBJECT
 public:  
   /// Create an Scene_polyhedron_item_decorator from a Scene_polyhedron_item.
