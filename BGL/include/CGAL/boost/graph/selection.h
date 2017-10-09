@@ -544,8 +544,8 @@ reduce_vertex_selection(
  *
  **/
 template<class TriangleMesh, class FaceRange, class IsSelectedMap>
-void expand_face_selection_for_removal(TriangleMesh& tm,
-                                       const FaceRange& faces_to_be_deleted,
+void expand_face_selection_for_removal(const FaceRange& faces_to_be_deleted,
+                                       TriangleMesh& tm,
                                        IsSelectedMap is_selected)
 {
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
