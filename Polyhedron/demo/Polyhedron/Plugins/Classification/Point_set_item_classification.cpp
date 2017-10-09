@@ -136,7 +136,7 @@ Point_set_item_classification::Point_set_item_classification(Scene_points_with_n
       label_names.insert (std::make_pair (8, std::string("reserved")));
       label_names.insert (std::make_pair (9, std::string("water")));
       label_names.insert (std::make_pair (10, std::string("rail")));
-      label_names.insert (std::make_pair (11, std::string("road surface")));
+      label_names.insert (std::make_pair (11, std::string("road_surface")));
       label_names.insert (std::make_pair (12, std::string("reserved_2")));
       label_names.insert (std::make_pair (13, std::string("wire_guard")));
       label_names.insert (std::make_pair (14, std::string("wire_conduct")));
@@ -169,21 +169,61 @@ Point_set_item_classification::Point_set_item_classification(Scene_points_with_n
     {
       if (used_indices[i] == -1)
         continue;
-      
+
+      Label_handle new_label;
       typename std::map<int, std::string>::iterator found
         = label_names.find (i);
       if (found != label_names.end())
-        m_labels.add(found->second.c_str());
+        new_label = m_labels.add(found->second.c_str());
       else
       {
         std::ostringstream oss;
         oss << "label_" << i;
-        m_labels.add(oss.str().c_str());
+        new_label = m_labels.add(oss.str().c_str());
       }
+
+      QColor color (64 + rand() % 192,
+                    64 + rand() % 192,
+                    64 + rand() % 192);
       
-      m_label_colors.push_back (QColor (64 + rand() % 192,
-                                        64 + rand() % 192,
-                                        64 + rand() % 192));
+      if (new_label->name() == "ground")
+        color = QColor (186, 189, 182);
+      else if (new_label->name() == "low_veget")
+        color = QColor (78, 154, 6);
+      else if (new_label->name() == "med_veget"
+               || new_label->name() == "vegetation")
+        color = QColor (138, 226, 52);
+      else if (new_label->name() == "high_veget")
+        color = QColor (204, 255, 201);
+      else if (new_label->name() == "building"
+               || new_label->name() == "roof")
+        color = QColor (245, 121, 0);
+      else if (new_label->name() == "noise")
+        color = QColor (0, 0, 0);
+      else if (new_label->name() == "reserved")
+        color = QColor (233, 185, 110);
+      else if (new_label->name() == "water")
+        color = QColor (114, 159, 207);
+      else if (new_label->name() == "rail")
+        color = QColor (136, 46, 25);
+      else if (new_label->name() == "road_surface")
+        color = QColor (56, 56, 56);
+      else if (new_label->name() == "reserved_2")
+        color = QColor (193, 138, 51);
+      else if (new_label->name() == "wire_guard")
+        color = QColor (37, 61, 136);
+      else if (new_label->name() == "wire_conduct")
+        color = QColor (173, 127, 168);
+      else if (new_label->name() == "trans_tower")
+        color = QColor (136, 138, 133);
+      else if (new_label->name() == "wire_connect")
+        color = QColor (145, 64, 236);
+      else if (new_label->name() == "bridge_deck")
+        color = QColor (213, 93, 93);
+      else if (new_label->name() == "high_noise")
+        color = QColor (255, 0, 0);
+      
+      m_label_colors.push_back (color);
     }
   }
   else
@@ -193,10 +233,10 @@ Point_set_item_classification::Point_set_item_classification(Scene_points_with_n
     m_labels.add("roof");
     m_labels.add("facade");
 
-    m_label_colors.push_back (QColor(245, 180, 0));
-    m_label_colors.push_back (QColor(0, 255, 27));
-    m_label_colors.push_back (QColor(255, 0, 170));
-    m_label_colors.push_back (QColor(100, 0, 255));
+    m_label_colors.push_back (QColor(186, 189, 182));
+    m_label_colors.push_back (QColor(138, 226, 52));
+    m_label_colors.push_back (QColor(245, 121, 0));
+    m_label_colors.push_back (QColor(233, 185, 110));
   }
   
   update_comments_of_point_set_item();
