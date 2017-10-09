@@ -25,8 +25,8 @@
 #include <CGAL/Classification/Feature_set.h>
 #include <CGAL/Classification/Label_set.h>
 
-#include <CGAL/Classification/random-forest/node-gini.hpp>
-#include <CGAL/Classification/random-forest/forest.hpp>
+#include <CGAL/Classification/internal/auxiliary/random-forest/node-gini.hpp>
+#include <CGAL/Classification/internal/auxiliary/random-forest/forest.hpp>
 
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>

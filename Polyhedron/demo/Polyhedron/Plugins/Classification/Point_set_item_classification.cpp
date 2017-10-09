@@ -88,7 +88,7 @@ Point_set_item_classification::Point_set_item_classification(Scene_points_with_n
     int current_idx = 0;
     for (std::size_t i = 0; i < used_indices.size(); ++ i)
     {
-      if (las_found && (i < 2 || i == 7 || i == 18))
+      if (las_found && (i < 2))
       {
         used_indices[i] = -1;
         continue;
