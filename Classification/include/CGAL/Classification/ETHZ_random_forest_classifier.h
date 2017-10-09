@@ -25,6 +25,10 @@
 #include <CGAL/Classification/Feature_set.h>
 #include <CGAL/Classification/Label_set.h>
 
+#ifdef CGAL_CLASSIFICATION_VERBOSE
+#define VERBOSE_TREE_PROGRESS true
+#endif
+
 #include <CGAL/Classification/internal/auxiliary/random-forest/node-gini.hpp>
 #include <CGAL/Classification/internal/auxiliary/random-forest/forest.hpp>
 
@@ -92,6 +96,7 @@ public:
   */
   template <typename LabelIndexRange>
   void train (const LabelIndexRange& ground_truth,
+              bool reset_trees = true,
               std::size_t num_trees = 25,
               std::size_t max_depth = 20)
   {
@@ -113,13 +118,18 @@ public:
     liblearning::DataView2D<int> label_vector (&(gt[0]), gt.size(), 1);    
     liblearning::DataView2D<float> feature_vector(&(ft[0]), gt.size(), ft.size() / gt.size());
 
-    if (m_rfc != NULL)
+    if (m_rfc != NULL && reset_trees)
+    {
       delete m_rfc;
-    m_rfc = new Forest (params);
+      m_rfc = NULL;
+    }
+    
+    if (m_rfc == NULL)
+      m_rfc = new Forest (params);
 
     liblearning::RandomForest::AxisAlignedRandomSplitGenerator generator;
     
-    m_rfc->train(feature_vector, label_vector, liblearning::DataView2D<int>(), generator, 0, false);
+    m_rfc->train(feature_vector, label_vector, liblearning::DataView2D<int>(), generator, 0, false, reset_trees);
   }
 
   /// \cond SKIP_IN_MANUAL

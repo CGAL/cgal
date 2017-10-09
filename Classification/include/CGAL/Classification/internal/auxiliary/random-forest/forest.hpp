@@ -32,10 +32,13 @@ public:
                DataView2D<int> train_sample_idxes, 
                SplitGenerator const& split_generator,
                size_t seed_start = 1,
-               bool register_oob = true 
+               bool register_oob = true,
+               bool reset_trees = true
                ) 
     {
-        trees.clear();
+        if (reset_trees)
+          trees.clear();
+
         params.n_classes  = *std::max_element(&labels(0,0), &labels(0,0)+labels.num_elements()) + 1;
         params.n_features = samples.cols;
         params.n_samples  = samples.rows;
@@ -65,9 +68,10 @@ public:
             was_oob = DataView2D<uint8_t>(&was_oob_data[0], n_idxes, params.n_trees);
         }
 
-        for (size_t i_tree = 0; i_tree < params.n_trees; ++i_tree) {
+        std::size_t nb_trees = trees.size();
+        for (size_t i_tree = nb_trees; i_tree < nb_trees + params.n_trees; ++i_tree) {
 #if VERBOSE_TREE_PROGRESS
-            std::printf("Training tree %zu/%zu, max depth %zu\n", i_tree+1, params.n_trees, params.max_depth);
+            std::printf("Training tree %zu/%zu, max depth %zu\n", i_tree+1, nb_trees + params.n_trees, params.max_depth);
 #endif
             // new tree
             trees.push_back(new TreeType(&params));
