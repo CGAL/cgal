@@ -1437,7 +1437,7 @@ private:
       if (GeomTraits().collinear_3_object()(p,q,r))
         return CGAL::NULL_VECTOR;
       else
-        return PMP::compute_face_normal(f, mesh_);
+        return PMP::compute_face_normal(f, mesh_, parameters::vertex_point_map(vpmap_));
     }
 
     template <typename FaceRange>
