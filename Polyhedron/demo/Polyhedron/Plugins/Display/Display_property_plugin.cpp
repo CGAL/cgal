@@ -115,7 +115,7 @@ private Q_SLOTS:
     }
     QApplication::restoreOverrideCursor();
     item->invalidateOpenGLBuffers();
-    item->itemChanged();
+    item->redraw();
     dock_widget->zoomToMinButton->setEnabled(true);
     dock_widget->zoomToMaxButton->setEnabled(true);
   }
@@ -142,6 +142,28 @@ private Q_SLOTS:
       break;
     default:
       break;
+    }
+  }
+
+  void resetProperty()
+  {
+    Scene_surface_mesh_item* item =
+        qobject_cast<Scene_surface_mesh_item*>(sender());
+    if(!item)
+      return;
+    SMesh& smesh = *item->face_graph();
+    SMesh::Property_map<face_descriptor, double> jacobians;
+    bool found;
+    boost::tie(jacobians, found) = smesh.property_map<face_descriptor,double>("f:jacobian");
+    if(found)
+    {
+      smesh.remove_property_map(jacobians);
+    }
+    SMesh::Property_map<face_descriptor, double> angles;
+    boost::tie(angles, found) = smesh.property_map<face_descriptor,double>("f:angle");
+    if(found)
+    {
+      smesh.remove_property_map(angles);
     }
   }
 
@@ -174,8 +196,12 @@ private Q_SLOTS:
           min_index = *fit;
         }
       }
+      jacobian_min.erase(item);
       jacobian_min.insert(std::make_pair(item, std::make_pair(res_min, min_index)));
+      jacobian_max.erase(item);
       jacobian_max.insert(std::make_pair(item, std::make_pair(res_max, max_index)));
+      connect(item, &Scene_surface_mesh_item::itemChanged,
+              this, &DisplayPropertyPlugin::resetProperty);
     }
     //scale a color ramp between min and max
     double max = maxBox;
@@ -296,8 +322,13 @@ private Q_SLOTS:
           index_min = *fit;
         }
       }
+      angles_min.erase(item);
       angles_min.insert(std::make_pair(item, std::make_pair(res_min, index_min)));
+      angles_max.erase(item);
       angles_max.insert(std::make_pair(item, std::make_pair(res_max, index_max)));
+
+      connect(item, &Scene_surface_mesh_item::itemChanged,
+              this, &DisplayPropertyPlugin::resetProperty);
     }
     //scale a color ramp between min and max
 
