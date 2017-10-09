@@ -939,7 +939,10 @@ namespace internal {
       // at each vertex, compute barycenter of neighbors
       BOOST_FOREACH(vertex_descriptor v, vertices(mesh_))
       {
-        if (is_on_patch(v) && !is_constrained(v))
+        if (is_constrained(v) || is_isolated(v))
+          continue;
+
+        else if (is_on_patch(v))
         {
         Vector_3 vn = PMP::compute_vertex_normal(v, mesh_
                             , PMP::parameters::vertex_point_map(vpmap_)
@@ -953,7 +956,7 @@ namespace internal {
             move = move + Vector_3(get(vpmap_, v), get(vpmap_, source(h, mesh_)));
             ++star_size;
           }
-          CGAL_assertion(star_size > 0);
+          CGAL_assertion(star_size > 0); //isolated vertices have already been discarded
           move = (1. / (double)star_size) * move;
 
           barycenters[v] = get(vpmap_, v) + move;
@@ -961,8 +964,7 @@ namespace internal {
         else if (relax_constraints
               && !protect_constraints_
               && is_on_patch_border(v)
-              && !is_corner(v)
-              && !is_constrained(v))
+              && !is_corner(v))
         {
           put(propmap_normals, v, CGAL::NULL_VECTOR);
 
@@ -1046,7 +1048,7 @@ namespace internal {
 
       BOOST_FOREACH(vertex_descriptor v, vertices(mesh_))
       {
-        if (is_constrained(v) || !is_on_patch(v))
+        if (is_constrained(v) || is_isolated(v) || !is_on_patch(v))
           continue;
         //note if v is constrained, it has not moved
 
@@ -1394,6 +1396,10 @@ private:
     void set_constrained(const vertex_descriptor& v, const bool b)
     {
       put(vcmap_, v, b);
+    }
+    bool is_isolated(const vertex_descriptor& v) const
+    {
+      return halfedges_around_target(v, mesh_).empty();
     }
 
     bool is_corner(const vertex_descriptor& v) const
