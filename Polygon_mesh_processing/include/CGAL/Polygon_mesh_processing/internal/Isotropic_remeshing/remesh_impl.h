@@ -617,6 +617,10 @@ namespace internal {
       std::cout << "Collapse short edges (" << low << ", " << high << ")..."
                 << std::endl;
 #endif
+#ifdef CGAL_PMP_REMESHING_VERBOSE_PROGRESS
+      std::cout << "Fill bimap...";
+      std::cout.flush();
+#endif
       double sq_low = low*low;
       double sq_high = high*high;
 
@@ -627,6 +631,9 @@ namespace internal {
         if( (sqlen < sq_low) && is_collapse_allowed(e) )
           short_edges.insert(short_edge(halfedge(e, mesh_), sqlen));
       }
+#ifdef CGAL_PMP_REMESHING_VERBOSE_PROGRESS
+      std::cout << "done." << std::endl;
+#endif
 
       unsigned int nb_collapses = 0;
       while (!short_edges.empty())
