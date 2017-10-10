@@ -26,7 +26,7 @@
 #include <CGAL/Classification/Label_set.h>
 
 #ifdef CGAL_CLASSIFICATION_VERBOSE
-#define VERBOSE_TREE_PROGRESS true
+#define VERBOSE_TREE_PROGRESS 1
 #endif
 
 #include <CGAL/Classification/internal/auxiliary/random-forest/node-gini.hpp>
