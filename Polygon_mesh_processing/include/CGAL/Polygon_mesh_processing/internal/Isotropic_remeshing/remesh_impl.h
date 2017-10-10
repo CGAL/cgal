@@ -45,6 +45,7 @@
 #include <boost/bimap/multiset_of.hpp>
 #include <boost/bimap/set_of.hpp>
 #include <boost/range.hpp>
+#include <boost/range/join.hpp>
 #include <boost/unordered_map.hpp>
 #include <boost/unordered_set.hpp>
 #include <boost/shared_ptr.hpp>
@@ -1306,51 +1307,13 @@ private:
       //move source at target
       put(vpmap_, vs, get(vpmap_, vt));
 
-      //collect halfedges around vs and vt
-      std::vector<halfedge_descriptor> hedges;
-      BOOST_FOREACH(halfedge_descriptor hd,
-        halfedges_around_target(h, mesh_))
-          hedges.push_back(hd);
-      BOOST_FOREACH(halfedge_descriptor hd,
-        halfedges_around_target(opposite(h, mesh_), mesh_))
-          hedges.push_back(hd);
-
       //collect normals to faces around vs AND vt
       //vertices are at the same location, but connectivity is still be same,
       //with plenty of degenerate triangles (which are common to both stars)
-      typedef std::multimap<Patch_id, Vector_3>   Normals_multimap;
-      typedef typename Normals_multimap::iterator Normals_iterator;
-
-      Normals_multimap normals_per_patch;
-      BOOST_FOREACH(halfedge_descriptor hd, hedges)
-      {
-        Vector_3 n = compute_normal(face(hd, mesh_));
-        if (n == CGAL::NULL_VECTOR) //for degenerate faces
-          continue;
-        Patch_id pid = get_patch_id(face(hd, mesh_));
-
-        normals_per_patch.insert(std::make_pair(pid, n));
-      }
-
-      //on each surface patch,
-      //check all normals have same orientation
-      bool res = true;
-      for (Normals_iterator it = normals_per_patch.begin();
-           it != normals_per_patch.end();/*done inside loop*/)
-      {
-        std::vector<Vector_3> normals;
-        std::pair<Normals_iterator, Normals_iterator> n_range
-          = normals_per_patch.equal_range((*it).first);
-        for (Normals_iterator iit = n_range.first; iit != n_range.second; ++iit)
-          normals.push_back((*iit).second);
-
-        if (!check_orientation(normals))
-        {
-          res = false;
-          break;
-        }
-        it = n_range.second;
-      }
+      bool res = check_normals(
+                   boost::range::join(
+                     halfedges_around_target(h, mesh_),
+                     halfedges_around_target(opposite(h, mesh_), mesh_)));
 
       //restore position
       put(vpmap_, vs, ps);
@@ -1783,15 +1746,17 @@ private:
     //have all their 2 by 2 dot products > 0
     bool check_normals(const vertex_descriptor& v) const
     {
-      //collect normals to faces around vs AND vt
-      //vertices are at the same location, but connectivity is still be same,
-      //with plenty of degenerate triangles (which are common to both stars)
+      return check_normals(halfedges_around_target(halfedge(v, mesh_), mesh_));
+    }
+
+    template <typename HalfedgeRange>
+    bool check_normals(const HalfedgeRange& hedges) const
+    {
       typedef std::multimap<Patch_id, Vector_3>   Normals_multimap;
       typedef typename Normals_multimap::iterator Normals_iterator;
 
       Normals_multimap normals_per_patch;
-      BOOST_FOREACH(halfedge_descriptor hd,
-                    halfedges_around_target(halfedge(v, mesh_), mesh_))
+      BOOST_FOREACH(halfedge_descriptor hd, hedges)
       {
         Vector_3 n = compute_normal(face(hd, mesh_));
         if (n == CGAL::NULL_VECTOR) //for degenerate faces
