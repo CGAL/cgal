@@ -1565,6 +1565,13 @@ public:
     collapse operators on the output simplex until the user-defined
     tolerance is reached.
 
+    \note The tolerance is given in the sense of the Wasserstein
+    distance. It is _not_ a Hausdorff tolerance: it does not mean that
+    the distance between the input samples and the output polyline is
+    guaranteed to be less than `tolerance`. It means that the square
+    root of transport cost per mass (homogeneous to a distance) is at
+    most `tolerance`.
+    
     \param tolerance Tolerance on the Wasserstein distance.
    */
   void run_under_wasserstein_tolerance (const FT tolerance) {
