@@ -16,9 +16,10 @@ if(EIGEN3_FOUND)
 
       message(STATUS "Found OpenCV ${OpenCV_VERSION}")
       include_directories(${OpenCV_INCLUDE_DIRS})
-      target_link_libraries(classification_plugin scene_points_with_normal_item scene_polylines_item scene_polygon_soup_item scene_color_ramp ${OpenCV_LIBS}
-        ${Boost_SERIALIZATION_LIBRARY} ${Boost_IOSTREAMS_LIBRARY}
-        ${LASLIB_LIBRARIES})
+      target_link_libraries(classification_plugin scene_points_with_normal_item
+          scene_polylines_item scene_polygon_soup_item scene_color_ramp ${OpenCV_LIBS}
+          ${Boost_SERIALIZATION_LIBRARY} ${Boost_IOSTREAMS_LIBRARY}
+          ${LASLIB_LIBRARIES})
 
       target_compile_definitions(classification_plugin PUBLIC "-DCGAL_LINKED_WITH_OPENCV")
 
