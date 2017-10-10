@@ -171,7 +171,7 @@ Point_set_item_classification::Point_set_item_classification(Scene_points_with_n
         continue;
 
       Label_handle new_label;
-      typename std::map<int, std::string>::iterator found
+      std::map<int, std::string>::iterator found
         = label_names.find (i);
       if (found != label_names.end())
         new_label = m_labels.add(found->second.c_str());
