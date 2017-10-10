@@ -97,9 +97,9 @@ struct Scene_surface_mesh_item_priv{
                                                          false));
     item->setTriangleContainer(0, new Triangle_container(VI::PROGRAM_WITH_LIGHT,
                                                          true));
-    item->setEdgeContainer(0, new Edge_container(VI::PROGRAM_WITHOUT_LIGHT,
-                                                 true));
     item->setEdgeContainer(1, new Edge_container(VI::PROGRAM_NO_SELECTION,
+                                                 true));
+    item->setEdgeContainer(0, new Edge_container(VI::PROGRAM_WITHOUT_LIGHT,
                                                  true));
     has_feature_edges = false;
     invalidate_stats();
@@ -119,9 +119,9 @@ struct Scene_surface_mesh_item_priv{
                                                          false));
     item->setTriangleContainer(0, new Triangle_container(VI::PROGRAM_WITH_LIGHT,
                                                          true));
-    item->setEdgeContainer(0, new Edge_container(VI::PROGRAM_WITHOUT_LIGHT,
-                                                 true));
     item->setEdgeContainer(1, new Edge_container(VI::PROGRAM_NO_SELECTION,
+                                                 true));
+    item->setEdgeContainer(0, new Edge_container(VI::PROGRAM_WITHOUT_LIGHT,
                                                  true));
     has_feature_edges = false;
     invalidate_stats();
@@ -631,8 +631,8 @@ void Scene_surface_mesh_item_priv::initializeBuffers(CGAL::Three::Viewer_interfa
   ////Clean-up
   item->getTriangleContainer(1)->setFlatDataSize(flat_vertices_size);
   item->getTriangleContainer(0)->setIdxSize(idx_data_size);
-  item->getEdgeContainer(0)->setIdxSize( idx_edge_data_size);
   item->getEdgeContainer(1)->setIdxSize( idx_feature_edge_data_size);
+  item->getEdgeContainer(0)->setIdxSize( idx_edge_data_size);
   smooth_vertices       .resize(0);
   smooth_normals        .resize(0);
   flat_vertices         .resize(0);
@@ -1115,10 +1115,10 @@ void Scene_surface_mesh_item::invalidate(Gl_data_names name)
     viewer->update();
   }
 
-  getTriangleContainer(0)->reset_vbos(name);
   getTriangleContainer(1)->reset_vbos(name);
-  getEdgeContainer(0)->reset_vbos(name);
+  getTriangleContainer(0)->reset_vbos(name);
   getEdgeContainer(1)->reset_vbos(name);
+  getEdgeContainer(0)->reset_vbos(name);
   if(isInit())
     processData(name);
   else

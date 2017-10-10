@@ -84,6 +84,7 @@ enum Flag{
   //!
   //! \brief Creates a `Vbo`.
   //! \param attribute the name of the corresponding data in the shader.
+  //! \param flag the flag that specifies which type of data this corresponds to.
   //! \param vbo_type is almost always `QOpenGLBuffer::VertexBuffer` but can be `QOpenGLBuffer::IndexBuffer`
   //! if it contains the indices for an indexed rendering.
   //! \param data_type the GL data type. Mostly GL_FLOAT.

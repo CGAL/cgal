@@ -36,20 +36,20 @@ void Edge_container::initGL(Viewer_interface *viewer) const
     case VI::PROGRAM_WITHOUT_LIGHT:
     case VI::PROGRAM_NO_SELECTION:
     {
-      if(!getVbos()[Vertices])
-        getVbos()[Vertices] =
+      if(!getVbo(Vertices))
+        setVbo(Vertices,
             new Vbo("vertex",
-                    Vbo::GEOMETRY);
-      if(!getVbos()[Indices])
-        getVbos()[Indices] =
+                    Vbo::GEOMETRY));
+      if(!getVbo(Indices))
+        setVbo(Indices,
             new Vbo("indices",
                     Vbo::GEOMETRY,
-                    QOpenGLBuffer::IndexBuffer);
+                    QOpenGLBuffer::IndexBuffer));
       if(getVao(viewer))
         delete getVao(viewer);
       setVao(viewer, new Vao(viewer->getShaderProgram(getProgram())));
-      getVao(viewer)->addVbo(getVbos()[Vertices]);
-      getVao(viewer)->addVbo(getVbos()[Indices]);
+      getVao(viewer)->addVbo(getVbo(Vertices));
+      getVao(viewer)->addVbo(getVbo(Indices));
     }
       break;
     default:
@@ -67,17 +67,17 @@ void Edge_container::initGL(Viewer_interface *viewer) const
     case VI::PROGRAM_WITHOUT_LIGHT:
     case VI::PROGRAM_C3T3_EDGES:
     {
-      if(!getVbos()[Vertices])
-        getVbos()[Vertices] =
+      if(!getVbo(Vertices))
+        setVbo(Vertices,
             new Vbo("vertex",
-                    Vbo::GEOMETRY);
-      if(!getVbos()[Colors])
-        getVbos()[Colors] =
+                    Vbo::GEOMETRY));
+      if(!getVbo(Colors))
+        setVbo(Colors,
             new Vbo("colors",
-                    Vbo::COLORS);
+                    Vbo::COLORS));
       setVao(viewer, new Vao(viewer->getShaderProgram(getProgram())));
-      getVao(viewer)->addVbo(getVbos()[Vertices]);
-      getVao(viewer)->addVbo(getVbos()[Colors]);
+      getVao(viewer)->addVbo(getVbo(Vertices));
+      getVao(viewer)->addVbo(getVbo(Colors));
     }
       break;
     default:
@@ -90,22 +90,22 @@ void Edge_container::initGL(Viewer_interface *viewer) const
     case VI::PROGRAM_SPHERES:
     case VI::PROGRAM_CUTPLANE_SPHERES:
     {
-      if(!getVbos()[Normals])
-        getVbos()[Normals] =
+      if(!getVbo(Normals))
+        setVbo(Normals,
             new Vbo("normals",
-                    Vbo::NORMALS);
-      if(!getVbos()[Radius])
-        getVbos()[Radius] =
+                    Vbo::NORMALS));
+      if(!getVbo(Radius))
+        setVbo(Radius,
             new Vbo("radius",
                     Vbo::GEOMETRY,
-                    QOpenGLBuffer::VertexBuffer, GL_FLOAT, 0, 1);
-      if(!getVbos()[Barycenters])
-        getVbos()[Barycenters] =
+                    QOpenGLBuffer::VertexBuffer, GL_FLOAT, 0, 1));
+      if(!getVbo(Barycenters))
+        setVbo(Barycenters,
             new Vbo("barycenter",
-                    Vbo::GEOMETRY);
-      getVao(viewer)->addVbo(getVbos()[Normals]);
-      getVao(viewer)->addVbo(getVbos()[Radius]);
-      getVao(viewer)->addVbo(getVbos()[Barycenters]);
+                    Vbo::GEOMETRY));
+      getVao(viewer)->addVbo(getVbo(Normals));
+      getVao(viewer)->addVbo(getVbo(Radius));
+      getVao(viewer)->addVbo(getVbo(Barycenters));
       viewer->glVertexAttribDivisor(getVao(viewer)->program->attributeLocation("barycenter"), 1);
       viewer->glVertexAttribDivisor(getVao(viewer)->program->attributeLocation("radius"), 1);
       viewer->glVertexAttribDivisor(getVao(viewer)->program->attributeLocation("colors"), 1);
@@ -128,10 +128,10 @@ void Edge_container::draw(Viewer_interface *viewer,
     getVao(viewer)->bind();
     if(is_color_uniform)
       getVao(viewer)->program->setAttributeValue("colors", getColor());
-    getVbos()[Indices]->bind();
+    getVbo(Indices)->bind();
     viewer->glDrawElements(GL_LINES, static_cast<GLuint>(getIdxSize()),
                            GL_UNSIGNED_INT, 0);
-    getVbos()[Indices]->release();
+    getVbo(Indices)->release();
     getVao(viewer)->release();
   }
   else

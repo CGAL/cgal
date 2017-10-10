@@ -116,15 +116,16 @@ public:
     void setColor(QColor)const;
     bool isGLInit(Viewer_interface* viewer)const;
     void allocate(std::size_t vbo_id, void* data, int datasize)const;
+    void setVbo(std::size_t vbo_id, Vbo* vbo)const;
 protected:
     //!
     //! \brief Returns the `Vao` bound to `viewer`.
     //!
     Vao* getVao(Viewer_interface* viewer)const;
     //!
-    //! \brief geVbos holds the `Vbo`s containing the data for this container.
+    //! \brief getVbo returns the `id`th Vbo of this container.
     //!
-    std::vector<Vbo*>& getVbos()const;
+    Vbo *getVbo(std::size_t id)const;
     //!
     //! \brief getProgram returns the `OpenGL_program_IDs` used with this container.
     //!

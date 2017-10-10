@@ -177,7 +177,13 @@ void Primitive_container::setColor(QColor c)const
 
 Vao* Primitive_container::getVao(Viewer_interface* viewer) const { return d->VAOs[viewer]; }
 
-std::vector<Vbo*>& Primitive_container::getVbos() const { return d->VBOs; }
+Vbo* Primitive_container::getVbo(std::size_t id) const
+{
+
+  return d->VBOs[id];
+}
+
+void Primitive_container::setVbo(std::size_t vbo_id, Vbo* vbo)const { d->VBOs[vbo_id] = vbo; }
 
 int Primitive_container::getProgram() const { return d->program_id; }
 

@@ -26,6 +26,9 @@
 
 ## Classes ##
 -  `TextRenderer`
+-  `CGAL::Three::Primitive_container`
+-  `CGAL::Three::Triangle_container`
+-  `CGAL::Three::Edge_container`
 -  `TextItem`
 -  `TextListItem`
 -  `CGAL::Three::Scene_item`

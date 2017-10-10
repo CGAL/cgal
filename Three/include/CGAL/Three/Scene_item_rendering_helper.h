@@ -177,6 +177,7 @@ public:
   //!
   //! \brief The `WorkerThread` constructor.
   //! \param item the `Scene_item` with the data that needs computation.
+  //! \param name specifies which type of data must be re-computed.
   //!
   WorkerThread(CGAL::Three::Scene_item* item, CGAL::Three::Scene_item::Gl_data_names name):
     item(item),

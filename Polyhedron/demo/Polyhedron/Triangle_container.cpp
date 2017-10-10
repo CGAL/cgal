@@ -55,18 +55,18 @@ void Triangle_container::initGL( Viewer_interface* viewer)const
     case VI::PROGRAM_WITHOUT_LIGHT:
     case VI::PROGRAM_WITH_LIGHT:
     {
-      if(!getVbos()[Smooth_vertices])
-        getVbos()[Smooth_vertices] =
-            new Vbo("vertex", Vbo::GEOMETRY);
-      if(!getVbos()[Vertex_indices])
-        getVbos()[Vertex_indices] =
+      if(!getVbo(Smooth_vertices))
+        setVbo(Smooth_vertices,
+            new Vbo("vertex", Vbo::GEOMETRY));
+      if(!getVbo(Vertex_indices))
+        setVbo(Vertex_indices,
             new Vbo("indices",
                     Vbo::GEOMETRY,
-                    QOpenGLBuffer::IndexBuffer);
+                    QOpenGLBuffer::IndexBuffer));
       if(!getVao(viewer))
         setVao(viewer, new Vao(viewer->getShaderProgram(getProgram())));
-      getVao(viewer)->addVbo(getVbos()[Smooth_vertices]);
-      getVao(viewer)->addVbo(getVbos()[Vertex_indices]);
+      getVao(viewer)->addVbo(getVbo(Smooth_vertices));
+      getVao(viewer)->addVbo(getVbo(Vertex_indices));
     }
       break;
     default:
@@ -77,17 +77,17 @@ void Triangle_container::initGL( Viewer_interface* viewer)const
     {
     case VI::PROGRAM_WITH_LIGHT:
     {
-      if(!getVbos()[Smooth_normals])
-        getVbos()[Smooth_normals] =
+      if(!getVbo(Smooth_normals))
+        setVbo(Smooth_normals,
             new Vbo("normals",
-                    Vbo::NORMALS);
-      if(!getVbos()[VColors])
-        getVbos()[VColors] =
+                    Vbo::NORMALS));
+      if(!getVbo(VColors))
+        setVbo(VColors,
             new Vbo("colors",
                     Vbo::COLORS,
-                    QOpenGLBuffer::VertexBuffer, GL_FLOAT, 0, 4);
-      getVao(viewer)->addVbo(getVbos()[Smooth_normals]);
-      getVao(viewer)->addVbo(getVbos()[VColors]);
+                    QOpenGLBuffer::VertexBuffer, GL_FLOAT, 0, 4));
+      getVao(viewer)->addVbo(getVbo(Smooth_normals));
+      getVao(viewer)->addVbo(getVbo(VColors));
     }
       break;
     default:
@@ -106,25 +106,25 @@ void Triangle_container::initGL( Viewer_interface* viewer)const
     case VI::PROGRAM_SPHERES:
     case VI::PROGRAM_CUTPLANE_SPHERES:
     {
-      if(!getVbos()[Flat_vertices])
+      if(!getVbo(Flat_vertices))
       {
-        getVbos()[Flat_vertices] =
+        setVbo(Flat_vertices,
             new Vbo("vertex",
-                    Vbo::GEOMETRY);
+                    Vbo::GEOMETRY));
       }
-      if(!getVbos()[Flat_normals])
-        getVbos()[Flat_normals] =
+      if(!getVbo(Flat_normals))
+        setVbo(Flat_normals,
             new Vbo("normals",
-                    Vbo::NORMALS);
-      if(!getVbos()[FColors])
-        getVbos()[FColors] =
+                    Vbo::NORMALS));
+      if(!getVbo(FColors))
+        setVbo(FColors,
             new Vbo("colors",
                     Vbo::COLORS,
-                    QOpenGLBuffer::VertexBuffer, GL_FLOAT, 0, 4);
+                    QOpenGLBuffer::VertexBuffer, GL_FLOAT, 0, 4));
       setVao(viewer, new Vao(viewer->getShaderProgram(getProgram())));
-      getVao(viewer)->addVbo(getVbos()[Flat_vertices]);
-      getVao(viewer)->addVbo(getVbos()[Flat_normals]);
-      getVao(viewer)->addVbo(getVbos()[FColors]);
+      getVao(viewer)->addVbo(getVbo(Flat_vertices));
+      getVao(viewer)->addVbo(getVbo(Flat_normals));
+      getVao(viewer)->addVbo(getVbo(FColors));
 
     }
       break;
@@ -139,11 +139,11 @@ void Triangle_container::initGL( Viewer_interface* viewer)const
     case VI::PROGRAM_SPHERES:
     case VI::PROGRAM_CUTPLANE_SPHERES:
     {
-      if(!getVbos()[Facet_barycenters])
-        getVbos()[Facet_barycenters] =
+      if(!getVbo(Facet_barycenters))
+        setVbo(Facet_barycenters,
             new Vbo("barycenter",
-                    Vbo::GEOMETRY);
-      getVao(viewer)->addVbo(getVbos()[Facet_barycenters]);
+                    Vbo::GEOMETRY));
+      getVao(viewer)->addVbo(getVbo(Facet_barycenters));
     }
       break;
     default:
@@ -153,12 +153,12 @@ void Triangle_container::initGL( Viewer_interface* viewer)const
     if(getProgram() == VI::PROGRAM_SPHERES
        || getProgram() == VI::PROGRAM_CUTPLANE_SPHERES)
     {
-      if(!getVbos()[Radius])
-        getVbos()[Radius] =
+      if(!getVbo(Radius))
+        setVbo(Radius,
             new Vbo("radius",
                     Vbo::GEOMETRY,
-                    QOpenGLBuffer::VertexBuffer, GL_FLOAT, 0, 1);
-      getVao(viewer)->addVbo(getVbos()[Radius]);
+                    QOpenGLBuffer::VertexBuffer, GL_FLOAT, 0, 1));
+      getVao(viewer)->addVbo(getVbo(Radius));
       viewer->glVertexAttribDivisor(getVao(viewer)->program->attributeLocation("barycenter"), 1);
       viewer->glVertexAttribDivisor(getVao(viewer)->program->attributeLocation("radius"), 1);
       viewer->glVertexAttribDivisor(getVao(viewer)->program->attributeLocation("colors"), 1);
@@ -179,7 +179,7 @@ void Triangle_container::draw(Viewer_interface* viewer,
     getVao(viewer)->bind();
     if(is_color_uniform)
       getVao(viewer)->program->setAttributeValue("colors", getColor());
-    getVbos()[Vertex_indices]->bind();
+    getVbo(Vertex_indices)->bind();
     if(getProgram() == VI::PROGRAM_WITH_LIGHT)
     {
       getVao(viewer)->program->setUniformValue("comparing", d->comparing);
@@ -194,7 +194,7 @@ void Triangle_container::draw(Viewer_interface* viewer,
     }
     viewer->glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(getIdxSize()),
                            GL_UNSIGNED_INT, 0 );
-    getVbos()[Vertex_indices]->release();
+    getVbo(Vertex_indices)->release();
     getVao(viewer)->release();
   }
   else
