@@ -402,12 +402,6 @@ void Scene_surface_mesh_item_priv::compute_elements(Scene_item::Gl_data_names na
 
   if(name.testFlag(Scene_item::GEOMETRY))
   {
-    if(has_feature_edges)
-    {
-      idx_feature_edge_data_.clear();
-      idx_feature_edge_data_.shrink_to_fit();
-      idx_feature_edge_data_.reserve(num_edges(*smesh_) * 2);
-    }
     idx_edge_data_.clear();
     idx_edge_data_.shrink_to_fit();
     idx_edge_data_.reserve(num_edges(*smesh_) * 2);
@@ -416,7 +410,7 @@ void Scene_surface_mesh_item_priv::compute_elements(Scene_item::Gl_data_names na
       idx_edge_data_.push_back(source(ed, *smesh_));
       idx_edge_data_.push_back(target(ed, *smesh_));
       if(has_feature_edges &&
-         get(h_is_feature_map, halfedge(ed, *smesh_)) )
+         get(e_is_feature_map, ed))
       {
         idx_feature_edge_data_.push_back(source(ed, *smesh_));
         idx_feature_edge_data_.push_back(target(ed, *smesh_));
@@ -1265,13 +1259,8 @@ void Scene_surface_mesh_item::show_feature_edges(bool b)
 {
   if(b)
   {
-<<<<<<< HEAD
     d->e_is_feature_map = d->smesh_->add_property_map<boost::graph_traits<SMesh>::edge_descriptor,bool>("e:is_feature").first;
-    invalidateOpenGLBuffers();
-=======
-    d->h_is_feature_map = d->smesh_->add_property_map<halfedge_descriptor,bool>("h:is_feature").first;
     invalidate(COLORS);
->>>>>>> 48011ed5dd... Use d-pointers for containers and split invalidateOpenGLBuffers
     itemChanged();
   }
   d->has_feature_edges = b;
