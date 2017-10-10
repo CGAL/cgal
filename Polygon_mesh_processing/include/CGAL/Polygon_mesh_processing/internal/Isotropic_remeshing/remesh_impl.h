@@ -1783,35 +1783,41 @@ private:
     //have all their 2 by 2 dot products > 0
     bool check_normals(const vertex_descriptor& v) const
     {
-      if (is_corner(v))
-        return true;//if we want to deal with this case,
-                    //we should use a multimap to store <Patch_id, Normal>
+      //collect normals to faces around vs AND vt
+      //vertices are at the same location, but connectivity is still be same,
+      //with plenty of degenerate triangles (which are common to both stars)
+      typedef std::multimap<Patch_id, Vector_3>   Normals_multimap;
+      typedef typename Normals_multimap::iterator Normals_iterator;
 
-      std::vector<Vector_3> normals_patch1;
-      std::vector<Vector_3> normals_patch2;
-      Patch_id patch1 = -1, patch2 = -1;
+      Normals_multimap normals_per_patch;
       BOOST_FOREACH(halfedge_descriptor hd,
                     halfedges_around_target(halfedge(v, mesh_), mesh_))
       {
         Vector_3 n = compute_normal(face(hd, mesh_));
-        if (n == CGAL::NULL_VECTOR)
+        if (n == CGAL::NULL_VECTOR) //for degenerate faces
           continue;
         Patch_id pid = get_patch_id(face(hd, mesh_));
 
-        if (patch1 == Patch_id(-1))
-          patch1 = pid; //not met yet
-        else if (patch2 == Patch_id(-1) && patch1 != pid)
-          patch2 = pid; //not met yet
-        CGAL_assertion(pid == patch1 || pid == patch2);
-
-        if (pid == patch1)     normals_patch1.push_back(n);
-        else                   normals_patch2.push_back(n);
+        normals_per_patch.insert(std::make_pair(pid, n));
       }
 
       //on each surface patch,
       //check all normals have same orientation
-      return check_orientation(normals_patch1)
-          && check_orientation(normals_patch2);
+      for (Normals_iterator it = normals_per_patch.begin();
+        it != normals_per_patch.end();/*done inside loop*/)
+      {
+        std::vector<Vector_3> normals;
+        std::pair<Normals_iterator, Normals_iterator> n_range
+          = normals_per_patch.equal_range((*it).first);
+        for (Normals_iterator iit = n_range.first; iit != n_range.second; ++iit)
+          normals.push_back((*iit).second);
+
+        if (!check_orientation(normals))
+          return false;
+
+        it = n_range.second;
+      }
+      return true;
     }
 
     bool check_normals(const halfedge_descriptor& h) const
