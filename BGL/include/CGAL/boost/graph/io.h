@@ -197,6 +197,43 @@ bool read_off(const char* fname,
   return false;
 }
 
+  
+template <typename FaceGraph>
+bool write_inp(std::ostream& os,
+               const FaceGraph& g,
+               std::string name,
+               std::string type)
+{
+  typedef typename boost::graph_traits<FaceGraph>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<FaceGraph>::face_descriptor face_descriptor;
+  typedef typename boost::graph_traits<FaceGraph>::vertices_size_type vertices_size_type;
+
+  typedef typename boost::property_map<FaceGraph, CGAL::vertex_point_t>::const_type VPM;
+  typedef typename boost::property_traits<VPM>::value_type Point_3;
+
+  VPM vpm = get(CGAL::vertex_point,g);
+
+  os << "*Part, name=" << name << "\n*Node\n";
+  boost::container::flat_map<vertex_descriptor,vertices_size_type> reindex;
+  int n = 1;
+  BOOST_FOREACH(vertex_descriptor v, vertices(g)){
+    Point_3 p =  get(vpm,v);
+    os << n << ", " << p.x() << ", " << p.y() << ", " << p.z() << '\n';
+    reindex[v]=n++;
+  }
+  n = 1;
+  os << "*Element, type=" << type << std::endl;
+  BOOST_FOREACH(face_descriptor f, faces(g)){
+    os << n++;
+    BOOST_FOREACH(vertex_descriptor v, vertices_around_face(halfedge(f,g),g)){
+      os << ", " << reindex[v];
+    }
+    os << '\n';
+  }
+  os << "*End Part"<< std::endl;
+  return os.good();
+}
+
 
 } // namespace CGAL
 
