@@ -4,6 +4,8 @@
 #include <QAction>
 #include <QMainWindow>
 #include <QInputDialog>
+#include <QColorDialog>
+#include <QPalette>
 #include "Messages_interface.h"
 #include "Scene_surface_mesh_item.h"
 #include "Color_ramp.h"
@@ -51,6 +53,14 @@ public:
     return _actions;
   }
 
+  QColor textColor(const QColor& color)
+  {
+    QColor text_color (255, 255, 255);
+    if (color.red() * 0.299 + color.green() * 0.587 + color.blue() * 0.114 > 128)
+      text_color = QColor (0, 0, 0);
+    return text_color;
+  }
+
   void init(QMainWindow* mw, CGAL::Three::Scene_interface* sc, Messages_interface*) Q_DECL_OVERRIDE
   {
     this->scene = sc;
@@ -58,6 +68,12 @@ public:
 
     QAction *actionDisplayAngles= new QAction(QString("Display Properties"), mw);
 
+    rm = 1.0;
+    rM = 0.0;
+    gm = 0.0;
+    gM = 1.0;
+    bm = 0.0;
+    bM = 0.0;
     actionDisplayAngles->setProperty("submenuName", "Color");
 
     if(actionDisplayAngles) {
@@ -69,6 +85,13 @@ public:
     dock_widget = new DockWidget("Property Displaying", mw);
     dock_widget->setVisible(false);
     addDockWidget(dock_widget);
+    QPalette palette(QColor(Qt::red));
+    dock_widget->minColorButton->setPalette(palette);
+    dock_widget->minColorButton->update();
+
+    palette = QPalette(QColor(Qt::green));
+    dock_widget->maxColorButton->setPalette(palette);
+    dock_widget->maxColorButton->update();
     connect(dock_widget->colorizeButton, SIGNAL(clicked(bool)),
             this, SLOT(colorize()));
 
@@ -81,6 +104,31 @@ public:
             this, &DisplayPropertyPlugin::on_zoomToMinButton_pressed);
     connect(dock_widget->zoomToMaxButton, &QPushButton::pressed,
             this, &DisplayPropertyPlugin::on_zoomToMaxButton_pressed);
+    connect(dock_widget->minColorButton, &QPushButton::pressed,
+            this, [this]()
+    {
+      QColor minColor = QColorDialog::getColor();
+      rm = minColor.redF();
+      gm = minColor.greenF();
+      bm = minColor.blueF();
+      QPalette palette(minColor);
+      dock_widget->minColorButton->setAutoFillBackground(true);
+      dock_widget->minColorButton->setPalette(palette);
+      dock_widget->minColorButton->update();
+    });
+    connect(dock_widget->maxColorButton, &QPushButton::pressed,
+            this, [this]()
+    {
+      QColor maxColor = QColorDialog::getColor();
+      QPalette palette(maxColor);
+      rM = maxColor.redF();
+      gM = maxColor.greenF();
+      bM = maxColor.blueF();
+
+      dock_widget->maxColorButton->setAutoFillBackground(true);
+      dock_widget->maxColorButton->setPalette(palette);
+      dock_widget->maxColorButton->update();
+    });
     dock_widget->zoomToMaxButton->setEnabled(false);
     dock_widget->zoomToMinButton->setEnabled(false);
     Scene* scene_obj =static_cast<Scene*>(scene);
@@ -361,15 +409,6 @@ private Q_SLOTS:
 
   void replaceRamp()
   {
-    double rm = dock_widget->redMinBox->value();
-    double rM = dock_widget->redMaxBox->value();
-
-    double gm = dock_widget->greenMinBox->value();
-    double gM = dock_widget->greenMaxBox->value();
-
-    double bm = dock_widget->blueMinBox->value();
-    double bM = dock_widget->blueMaxBox->value();
-
     color_ramp = Color_ramp(rm, rM, gm, gM, bm, bM);
     displayLegend();
     minBox = dock_widget->minBox->value();
@@ -488,10 +527,10 @@ private:
   {
     // Create an legend_ and display it
     const int height = 256;
-    const int width = 256;
+    const int width = 90;
     const int cell_width = width/3;
     const int top_margin = 5;
-    const int left_margin = (width-cell_width)/2;
+    const int left_margin = 5;
     const int drawing_height = height - top_margin * 2;
     const int text_height = 20;
 
@@ -548,6 +587,12 @@ private:
   QList<QAction*> _actions;
   Color_ramp color_ramp;
   DockWidget* dock_widget;
+  double rm;
+  double rM;
+  double gm;
+  double gM;
+  double bm;
+  double bM;
   std::map<Scene_surface_mesh_item*, std::pair<double, SMesh::Face_index> > jacobian_min;
   std::map<Scene_surface_mesh_item*, std::pair<double, SMesh::Face_index> > jacobian_max;
 
