@@ -379,7 +379,7 @@ protected:
   void change_poly_item_by_blocking(Scene_face_graph_item* poly_item, Scene_hole_visualizer* collection) {
     if(collection) collection->block_poly_item_changed = true;
     poly_item->invalidateOpenGLBuffers();
-    scene->itemChanged(poly_item);
+    poly_item->redraw();
     if(collection) collection->block_poly_item_changed = false;
   }
 private:
@@ -628,7 +628,7 @@ void Polyhedron_demo_hole_filling_plugin::on_Reject_button() {
   if(last_active_item == NULL) { return; }
 
   accept_reject_toggle(false);
-  FaceGraph graph = *(last_active_item->polyhedron());
+  FaceGraph& graph = *(last_active_item->polyhedron());
   for(std::vector<fg_face_descriptor>::iterator it = new_facets.begin(); it != new_facets.end(); ++it) {
     CGAL::Euler::remove_face(halfedge(*it, graph), graph);
   }
