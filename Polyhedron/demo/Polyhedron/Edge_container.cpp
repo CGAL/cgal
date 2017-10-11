@@ -26,7 +26,7 @@ Edge_container::Edge_container(int program, bool indexed)
 
 }
 
-void Edge_container::initGL(Viewer_interface *viewer) const
+void Edge_container::initGL(Viewer_interface *viewer)
 {
   viewer->makeCurrent();
   if(isDataIndexed())
@@ -118,7 +118,7 @@ void Edge_container::initGL(Viewer_interface *viewer) const
   setGLInit(viewer, true);
 }
 void Edge_container::draw(Viewer_interface *viewer,
-                          bool is_color_uniform, QOpenGLFramebufferObject *) const
+                          bool is_color_uniform, QOpenGLFramebufferObject *)
 
 {
   bindUniformValues(viewer);
@@ -160,8 +160,8 @@ void Edge_container::draw(Viewer_interface *viewer,
   }
 }
 
-QVector4D Edge_container::getPlane() const{ return d->plane; }
-QMatrix4x4 Edge_container::getFrameMatrix() const{ return d->f_matrix; }
+QVector4D Edge_container::getPlane() const { return d->plane; }
+QMatrix4x4 Edge_container::getFrameMatrix() const { return d->f_matrix; }
 
-void Edge_container::setPlane(const QVector4D& p) const{ d->plane = p; }
-void Edge_container::setFrameMatrix(const QMatrix4x4& m) const{ d->f_matrix = m; }
+void Edge_container::setPlane(const QVector4D& p) { d->plane = p; }
+void Edge_container::setFrameMatrix(const QMatrix4x4& m) { d->f_matrix = m; }

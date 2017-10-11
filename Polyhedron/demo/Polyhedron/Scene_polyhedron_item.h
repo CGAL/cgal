@@ -94,9 +94,9 @@ public:
     virtual bool supportsRenderingMode(RenderingMode m) const Q_DECL_OVERRIDE;
     // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
     virtual void draw(CGAL::Three::Viewer_interface*,
-                      int pass, bool, QOpenGLFramebufferObject*  ) const Q_DECL_OVERRIDE;
-    virtual void drawEdges(CGAL::Three::Viewer_interface* viewer) const Q_DECL_OVERRIDE;
-    virtual void drawPoints(CGAL::Three::Viewer_interface*) const Q_DECL_OVERRIDE;
+                      int pass, bool, QOpenGLFramebufferObject*  )  Q_DECL_OVERRIDE;
+    virtual void drawEdges(CGAL::Three::Viewer_interface* viewer)  Q_DECL_OVERRIDE;
+    virtual void drawPoints(CGAL::Three::Viewer_interface*) Q_DECL_OVERRIDE;
 
     // Get wrapped polyhedron
     Polyhedron*       polyhedron();
@@ -192,7 +192,7 @@ protected:
 
    public:
     void zoomToPosition(const QPoint &point, CGAL::Three::Viewer_interface *)const Q_DECL_OVERRIDE;
-    void computeElements(Gl_data_names)const Q_DECL_OVERRIDE{};
+    void computeElements(Gl_data_names) Q_DECL_OVERRIDE{}
 }; // end class Scene_polyhedron_item
 
 #endif // SCENE_POLYHEDRON_ITEM_H

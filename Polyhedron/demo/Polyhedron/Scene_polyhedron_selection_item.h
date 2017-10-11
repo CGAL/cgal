@@ -319,13 +319,13 @@ public:
     
       }
     }
-
+Scene_polyhedron_selection_item* ncthis = const_cast<Scene_polyhedron_selection_item*>(this);
     if(!item_bbox)
     {
-      setBbox(this->poly_item->bbox());
+      ncthis->setBbox(this->poly_item->bbox());
       return;
     }
-    setBbox(Bbox(item_bbox->xmin(),item_bbox->ymin(),item_bbox->zmin(),
+    ncthis->setBbox(Bbox(item_bbox->xmin(),item_bbox->ymin(),item_bbox->zmin(),
                  item_bbox->xmax(),item_bbox->ymax(),item_bbox->zmax()));
   }
 

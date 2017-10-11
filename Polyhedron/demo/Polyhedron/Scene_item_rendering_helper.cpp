@@ -82,9 +82,8 @@ float Scene_item_rendering_helper::alpha() const
   return (float)d->alphaSlider->value() / 255.0f;
 }
 
-void Scene_item_rendering_helper::initGL() const
+void Scene_item_rendering_helper::initGL()
 {
-  Scene_item_rendering_helper* ncthis = const_cast<Scene_item_rendering_helper*>(this);
   if(!d->alphaSlider)
   {
     d->alphaSlider = new QSlider(::Qt::Horizontal);
@@ -93,7 +92,7 @@ void Scene_item_rendering_helper::initGL() const
     d->alphaSlider->setValue(255);
 
     connect(d->alphaSlider, &QSlider::valueChanged,
-            [ncthis](){ncthis->redraw();});
+            [this](){redraw();});
   }
 
   Q_FOREACH(QGLViewer* v, QGLViewer::QGLViewerPool())
@@ -166,17 +165,16 @@ QMenu* Scene_item_rendering_helper::contextMenu()
   return resMenu;
 }
 
-void Scene_item_rendering_helper::processData(Gl_data_names name)const
+void Scene_item_rendering_helper::processData(Gl_data_names name)
 {
-  Scene_item* ncthis = const_cast<Scene_item_rendering_helper*>(this);
-  ncthis->writing();
+  writing();
 
-  WorkerThread *workerThread = new WorkerThread(ncthis, name);
-  connect(workerThread, &WorkerThread::finished, [ncthis, workerThread]()
+  WorkerThread *workerThread = new WorkerThread(this, name);
+  connect(workerThread, &WorkerThread::finished, [this, workerThread]()
   {
-    ncthis->doneWriting();
-    ncthis->redraw();
-    ncthis->dataProcessed();
+    doneWriting();
+    redraw();
+    dataProcessed();
   });
   connect(workerThread, &WorkerThread::finished, workerThread, &WorkerThread::deleteLater);
   workerThread->start();
@@ -201,7 +199,7 @@ bool Scene_item_rendering_helper::isInit()const { return d->isinit; }
 
 QSlider* Scene_item_rendering_helper::alphaSlider() { return d->alphaSlider; }
 
-void Scene_item_rendering_helper::setBbox(Bbox b)const { d->_bbox = b; }
+void Scene_item_rendering_helper::setBbox(Bbox b) { d->_bbox = b; }
 
 Triangle_container* Scene_item_rendering_helper::getTriangleContainer(std::size_t id)const
 {
@@ -233,7 +231,7 @@ void Scene_item_rendering_helper::setEdgeContainer(std::size_t id,
   d->edge_containers[id] = ec;
 }
 
-void Scene_item_rendering_helper::setBuffersFilled(bool b)const
+void Scene_item_rendering_helper::setBuffersFilled(bool b)
 {
   d->are_buffers_filled = b;
 }
@@ -248,7 +246,7 @@ bool Scene_item_rendering_helper::getBuffersInit(Viewer_interface* viewer) const
   return d->buffers_init[viewer];
 }
 
-void Scene_item_rendering_helper::setBuffersInit(Viewer_interface* viewer, bool val) const
+void Scene_item_rendering_helper::setBuffersInit(Viewer_interface* viewer, bool val)
 {
   d->buffers_init[viewer] = val;
 }

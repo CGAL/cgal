@@ -46,16 +46,16 @@ struct DEMO_FRAMEWORK_EXPORT Triangle_container :public Primitive_container
   //! Holds the `Vbo` Ids of this container.
   //!
   enum vbosName {
-    Flat_vertices = 0,  //!Designates the buffer that contains the flat vertex coordinates (not indexed).
-    Smooth_vertices,    //!Designates the buffer that contains the smooth vertex coordinates (indexed).
-    Vertex_indices,     //!Designates the buffer that contains the indices for the smooth vertices.
-    Flat_normals,       //!Designates the buffer that contains the normals for the flat vertices.
-    Smooth_normals,     //!Designates the buffer that contains the normals for the smooth vertices.
-    Facet_barycenters,  //!Designates the buffer that contains the barycenters of the c3t3 facets or the center of the spheres.
-    Radius,             //!Designates the buffer that contains the radius of the spheres.
-    VColors,            //!Designates the buffer that contains the colors of the smooth vertices.
-    FColors,            //!Designates the buffer that contains the colors of the flat vertices.
-    NbOfVbos            //!Designates the size of the VBOs vector for `Triangle_containers`s
+    Flat_vertices = 0,  //!< Designates the buffer that contains the flat vertex coordinates (not indexed).
+    Smooth_vertices,    //!< Designates the buffer that contains the smooth vertex coordinates (indexed).
+    Vertex_indices,     //!< Designates the buffer that contains the indices for the smooth vertices.
+    Flat_normals,       //!< Designates the buffer that contains the normals for the flat vertices.
+    Smooth_normals,     //!< Designates the buffer that contains the normals for the smooth vertices.
+    Facet_barycenters,  //!< Designates the buffer that contains the barycenters of the c3t3 facets or the center of the spheres.
+    Radius,             //!< Designates the buffer that contains the radius of the spheres.
+    VColors,            //!< Designates the buffer that contains the colors of the smooth vertices.
+    FColors,            //!< Designates the buffer that contains the colors of the flat vertices.
+    NbOfVbos            //!< Designates the size of the VBOs vector for `Triangle_container`s
   };
 
   //!
@@ -71,7 +71,7 @@ struct DEMO_FRAMEWORK_EXPORT Triangle_container :public Primitive_container
   //!
   //! \param viewer the active `Viewer_interface`.
   //!
-  void initGL(CGAL::Three::Viewer_interface* viewer)const Q_DECL_OVERRIDE;
+  void initGL(CGAL::Three::Viewer_interface* viewer) Q_DECL_OVERRIDE;
 
   //!
   //! \brief draw is the function that actually renders the data.
@@ -81,31 +81,33 @@ struct DEMO_FRAMEWORK_EXPORT Triangle_container :public Primitive_container
   //!
   void draw(CGAL::Three::Viewer_interface* viewer,
             bool is_color_uniform,
-            QOpenGLFramebufferObject* fbo = NULL) const Q_DECL_OVERRIDE;
-  /// Getters and Setters for the shaders parameters.
+            QOpenGLFramebufferObject* fbo = NULL)  Q_DECL_OVERRIDE;
+
+  /// \name Getters and Setters for the shaders parameters.
+  ///
   /// Each of those depends of the `OpenGL_program_IDs` this container is using.
   /// If the shaders of this program doesn't need one, you can ignore it.
   /// The others should be filled at each `draw()` from the item.
   ///@{
-  float getShrinkFactor()const;
-  bool isComparing()const;
-  QVector4D getPlane()const;
-  float getWidth()const;
-  float getHeight()const;
-  float getNear()const;
-  float getFar()const;
-  bool isDepthWriting()const;
-  float getAlpha()const;
+  float getShrinkFactor();
+  bool isComparing();
+  QVector4D getPlane();
+  float getWidth();
+  float getHeight();
+  float getNear();
+  float getFar();
+  bool isDepthWriting();
+  float getAlpha();
 
-  void setShrinkFactor(const float&)const;
-  void setComparing   (const bool&)const;
-  void setPlane       (const QVector4D&)const;
-  void setWidth       (const float&)const;
-  void setHeight      (const float&)const;
-  void setNear        (const float&)const;
-  void setFar         (const float&)const;
-  void setDepthWriting(const bool&)const;
-  void setAlpha       (const float&)const;
+  void setShrinkFactor(const float&);
+  void setComparing   (const bool&);
+  void setPlane       (const QVector4D&);
+  void setWidth       (const float&);
+  void setHeight      (const float&);
+  void setNear        (const float&);
+  void setFar         (const float&);
+  void setDepthWriting(const bool&);
+  void setAlpha       (const float&);
   ///@}
 
   //drawing variables

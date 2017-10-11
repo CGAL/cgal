@@ -122,7 +122,7 @@ void Scene_group_item::moveUp(int i)
     children.move(i, i-1);
 }
 
-void Scene_group_item::draw(CGAL::Three::Viewer_interface* viewer, int pass , bool is_writing, QOpenGLFramebufferObject *fbo) const
+void Scene_group_item::draw(CGAL::Three::Viewer_interface* viewer, int pass , bool is_writing, QOpenGLFramebufferObject *fbo)
 {
   if(!isInit())
     initGL();
@@ -137,7 +137,7 @@ void Scene_group_item::draw(CGAL::Three::Viewer_interface* viewer, int pass , bo
   }
 }
 
-void Scene_group_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const
+void Scene_group_item::drawEdges(CGAL::Three::Viewer_interface* viewer)
 {
   if(!isInit())
     initGL();
@@ -152,7 +152,7 @@ void Scene_group_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const
   }
 }
 
-void Scene_group_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const
+void Scene_group_item::drawPoints(CGAL::Three::Viewer_interface* viewer)
 {
   if(!isInit())
     initGL();
@@ -214,15 +214,15 @@ void Scene_group_item::setAlpha(int )
   }
 }
 
-void Scene_group_item::initGL()const
+void Scene_group_item::initGL()
 {
   Scene_item_rendering_helper::initGL();
-  Scene_group_item* ncthis = const_cast<Scene_group_item*>(this);
-  connect(ncthis->alphaSlider(), &QSlider::valueChanged,
-          ncthis, &Scene_group_item::setAlpha);
+  connect(alphaSlider(), &QSlider::valueChanged,
+          this, &Scene_group_item::setAlpha);
 }
 
-void Scene_group_item::compute_bbox() const
+void Scene_group_item::compute_bbox()const
 {
-  setBbox(Bbox(0, 0, 0, 0, 0, 0));
+  Scene_group_item* ncthis = const_cast<Scene_group_item*>(this);
+  ncthis->setBbox(Bbox(0, 0, 0, 0, 0, 0));
 }

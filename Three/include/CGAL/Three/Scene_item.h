@@ -97,9 +97,7 @@ public:
   virtual bool supportsRenderingMode(RenderingMode m) const = 0;
   /*! \brief The drawing function for faces.
    *
-   * Draws the faces of the item in the viewer. The data
-   * for the drawing is gathered in computeElements(), and is sent
-   * to buffers in initializeBuffers().
+   * Draws the faces of the item in the viewer.
    * \param viewer the active `Viewer_interface`
    * \param pass the current pass in the Depth Peeling (transparency) algorithm.
    * -1 means that no depth peeling is applied.
@@ -107,35 +105,25 @@ public:
    * according to the depth of the fragment in the shader. It is used by the transparency.
    * \param fbo contains the texture used by the Depth Peeling algorithm.
    * Should be NULL if pass <= 0;
-   * @see computeElements()
-   * @see initializeBuffers()
    */  
 #ifdef DOXYGEN_RUNNING
     virtual void draw(CGAL::Three::Viewer_interface* viewer,
-                      int pass, bool writing_depth, QOpenGLFramebufferObject* fbo) const
+                      int pass, bool writing_depth, QOpenGLFramebufferObject* fbo)
 #else
   virtual void draw(CGAL::Three::Viewer_interface* ,
-                    int , bool , QOpenGLFramebufferObject* ) const
+                    int , bool , QOpenGLFramebufferObject* )
 #endif
   {}
   /*! \brief The drawing function for the edges.
    *
-   * Draws the edges and lines of the item in the viewer. The data
-   * for the drawing is gathered in computeElements(), and is sent
-   * to buffers in initializeBuffers().
-   * @see computeElements()
-   * @see initializeBuffers()
+   * Draws the edges and lines of the item in the viewer.
    */
-  virtual void drawEdges(CGAL::Three::Viewer_interface* ) const {}
+  virtual void drawEdges(CGAL::Three::Viewer_interface* ) {}
   /*! \brief The drawing function for the points.
    *
-   * Draws the points of the item in the viewer. The data
-   * for the drawing is gathered in computeElements(), and is sent
-   * to buffers in initializeBuffers().
-   * @see computeElements()
-   * @see initializeBuffers()
+   * Draws the points of the item in the viewer.
    */
-  virtual void drawPoints(CGAL::Three::Viewer_interface* ) const {}
+  virtual void drawPoints(CGAL::Three::Viewer_interface* ) {}
 
   //! Called by the scene. If b is true, then this item is currently selected.
   virtual void selection_changed(bool b);
@@ -314,7 +302,7 @@ public:
   /*! Collects all the data for the shaders. Must be called in #invalidate().
    * @see invalidate().
    */
-  virtual void computeElements(Gl_data_names)const{}
+  virtual void computeElements(Gl_data_names){}
 
 public Q_SLOTS:
 

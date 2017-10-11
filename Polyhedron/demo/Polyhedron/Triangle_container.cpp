@@ -45,7 +45,7 @@ Triangle_container::Triangle_container(int program, bool indexed)
   setVbos(vbos);
 }
 
-void Triangle_container::initGL( Viewer_interface* viewer)const
+void Triangle_container::initGL( Viewer_interface* viewer)
 {
   viewer->makeCurrent();
   if(isDataIndexed())
@@ -169,7 +169,7 @@ void Triangle_container::initGL( Viewer_interface* viewer)const
 
 void Triangle_container::draw(Viewer_interface* viewer,
                               bool is_color_uniform,
-                              QOpenGLFramebufferObject* fbo) const
+                              QOpenGLFramebufferObject* fbo)
 {
 
   bindUniformValues(viewer);
@@ -237,22 +237,22 @@ void Triangle_container::draw(Viewer_interface* viewer,
 
 
 
-float     Triangle_container::getShrinkFactor()const { return d->shrink_factor ; }
-bool      Triangle_container::isComparing()const     { return d->comparing; }
-QVector4D Triangle_container::getPlane()const        { return d->plane; }
-float     Triangle_container::getWidth()const        { return d->width; }
-float     Triangle_container::getHeight()const       { return d->height; }
-float     Triangle_container::getNear()const         { return d->near; }
-float     Triangle_container::getFar()const          { return d->far; }
-bool      Triangle_container::isDepthWriting()const  { return d->writing; }
-float     Triangle_container::getAlpha()const        { return d->alpha; }
+float     Triangle_container::getShrinkFactor() { return d->shrink_factor ; }
+bool      Triangle_container::isComparing()     { return d->comparing; }
+QVector4D Triangle_container::getPlane()        { return d->plane; }
+float     Triangle_container::getWidth()        { return d->width; }
+float     Triangle_container::getHeight()       { return d->height; }
+float     Triangle_container::getNear()         { return d->near; }
+float     Triangle_container::getFar()          { return d->far; }
+bool      Triangle_container::isDepthWriting()  { return d->writing; }
+float     Triangle_container::getAlpha()        { return d->alpha; }
 
-void Triangle_container::setShrinkFactor(const float& f)const { d->shrink_factor = f; }
-void Triangle_container::setComparing   (const bool& b)const     { d->comparing = b; }
-void Triangle_container::setPlane       (const QVector4D& p)const    { d->plane = p; }
-void Triangle_container::setWidth       (const float& f)const        { d->width = f; }
-void Triangle_container::setHeight      (const float& f)const       { d->height = f; }
-void Triangle_container::setNear        (const float& f)const         { d->near = f; }
-void Triangle_container::setFar         (const float& f)const          { d->far = f; }
-void Triangle_container::setDepthWriting(const bool& b)const  { d->writing = b; }
-void Triangle_container::setAlpha       (const float& f)const        { d->alpha = f ; }
+void Triangle_container::setShrinkFactor(const float& f) { d->shrink_factor = f; }
+void Triangle_container::setComparing   (const bool& b)     { d->comparing = b; }
+void Triangle_container::setPlane       (const QVector4D& p)    { d->plane = p; }
+void Triangle_container::setWidth       (const float& f)        { d->width = f; }
+void Triangle_container::setHeight      (const float& f)       { d->height = f; }
+void Triangle_container::setNear        (const float& f)         { d->near = f; }
+void Triangle_container::setFar         (const float& f)          { d->far = f; }
+void Triangle_container::setDepthWriting(const bool& b)  { d->writing = b; }
+void Triangle_container::setAlpha       (const float& f)        { d->alpha = f ; }

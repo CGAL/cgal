@@ -50,13 +50,13 @@ struct DEMO_FRAMEWORK_EXPORT Edge_container :public Primitive_container
   //! Holds the `Vbo` Ids of this container.
   //!
   enum vbosName {
-    Vertices = 0, //! Designates the buffer that contains the vertex coordinates.
-    Indices, //! Designates the buffer that contains the vertex indices.
-    Normals, //! Designates the buffer that contains the normal coordinates.
-    Colors, //! Designates the buffer that contains the color components.
-    Radius, //! Designates the buffer that contains the radius of wire spheres.
-    Barycenters, //! Designates the buffer that contains the barycenter of c3t3 facets or the center of wire spheres, for example.
-    NbOfVbos //! Designates the size of the VBOs vector for `Edge_containers`s
+    Vertices = 0, //!< Designates the buffer that contains the vertex coordinates.
+    Indices,      //!< Designates the buffer that contains the vertex indices.
+    Normals,      //!< Designates the buffer that contains the normal coordinates.
+    Colors,       //!< Designates the buffer that contains the color components.
+    Radius,       //!< Designates the buffer that contains the radius of wire spheres.
+    Barycenters,  //!< Designates the buffer that contains the barycenter of c3t3 facets or the center of wire spheres, for example.
+    NbOfVbos      //!< Designates the size of the VBOs vector for `Edge_container`s
   };
 
   //!
@@ -74,7 +74,7 @@ struct DEMO_FRAMEWORK_EXPORT Edge_container :public Primitive_container
   //!`.
   //! \param viewer the active `Viewer_interface`.
   //!
-  void initGL(Viewer_interface *viewer) const Q_DECL_OVERRIDE;
+  void initGL(Viewer_interface *viewer)  Q_DECL_OVERRIDE;
 
   //!
   //! \brief draw is the function that actually renders the data.
@@ -83,8 +83,9 @@ struct DEMO_FRAMEWORK_EXPORT Edge_container :public Primitive_container
   //!
   void draw(CGAL::Three::Viewer_interface* viewer,
             bool is_color_uniform,
-            QOpenGLFramebufferObject* = NULL) const Q_DECL_OVERRIDE;
-  /// Getters and Setters for the shaders parameters.
+            QOpenGLFramebufferObject* = NULL)  Q_DECL_OVERRIDE;
+  /// \name Getters and Setters for the shaders parameters.
+  ///
   /// Each of those depends of the `OpenGL_program_IDs` this container is using.
   /// If the shaders of this program doesn't need one, you can ignore it.
   /// The others should be filled at each `draw()` from the item.
@@ -92,8 +93,8 @@ struct DEMO_FRAMEWORK_EXPORT Edge_container :public Primitive_container
   QVector4D getPlane()const;
   QMatrix4x4 getFrameMatrix()const;
 
-  void setPlane(const QVector4D&)const;
-  void setFrameMatrix(const QMatrix4x4&)const;
+  void setPlane(const QVector4D&);
+  void setFrameMatrix(const QMatrix4x4&);
   ///@}
 
 private:

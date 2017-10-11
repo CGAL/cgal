@@ -46,9 +46,9 @@ public:
 
   Scene_surface_mesh_item* clone() const Q_DECL_OVERRIDE;
   void draw(CGAL::Three::Viewer_interface *, int pass,
-            bool, QOpenGLFramebufferObject *fbo) const Q_DECL_OVERRIDE;
-  void drawEdges(CGAL::Three::Viewer_interface *) const Q_DECL_OVERRIDE;
-  void drawPoints(CGAL::Three::Viewer_interface *) const Q_DECL_OVERRIDE;
+            bool, QOpenGLFramebufferObject *fbo) Q_DECL_OVERRIDE;
+  void drawEdges(CGAL::Three::Viewer_interface *) Q_DECL_OVERRIDE;
+  void drawPoints(CGAL::Three::Viewer_interface *) Q_DECL_OVERRIDE;
 
   bool supportsRenderingMode(RenderingMode m) const Q_DECL_OVERRIDE;
   bool isFinite() const Q_DECL_OVERRIDE { return true; }
@@ -164,8 +164,8 @@ public Q_SLOTS:
 protected:
   friend struct Scene_surface_mesh_item_priv;
   Scene_surface_mesh_item_priv* d;
-  void computeElements(Gl_data_names name)const Q_DECL_OVERRIDE;
-  void initializeBuffers(CGAL::Three::Viewer_interface*)const Q_DECL_OVERRIDE;
+  void computeElements(Gl_data_names name) Q_DECL_OVERRIDE;
+  void initializeBuffers(CGAL::Three::Viewer_interface*) Q_DECL_OVERRIDE;
 };
 
 #endif /* CGAL_SCENE_SURFACE_MESH_ITEM_H */

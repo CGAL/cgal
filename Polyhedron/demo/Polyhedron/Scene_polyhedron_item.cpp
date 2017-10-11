@@ -1081,18 +1081,18 @@ void Scene_polyhedron_item::set_erase_next_picked_facet(bool b)
 }
 
 void Scene_polyhedron_item::draw(CGAL::Three::Viewer_interface* ,
-                                 int, bool, QOpenGLFramebufferObject* ) const {
+                                 int, bool, QOpenGLFramebufferObject* ) {
 
 }
 
 // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
-void Scene_polyhedron_item::drawEdges(CGAL::Three::Viewer_interface* ) const
+void Scene_polyhedron_item::drawEdges(CGAL::Three::Viewer_interface* )
 {
 
 }
 
 void
-Scene_polyhedron_item::drawPoints(CGAL::Three::Viewer_interface* ) const {
+Scene_polyhedron_item::drawPoints(CGAL::Three::Viewer_interface* )  {
 //    if(!are_buffers_filled)
 //    {
 //        d->compute_normals_and_vertices(viewer->isOpenGL_4_3(), false, viewer->property("draw_two_sides").toBool());
@@ -1121,8 +1121,8 @@ void Scene_polyhedron_item::compute_bbox() const {
         ++it) {
         bbox = bbox + it->bbox();
     }
-    setBbox(Bbox(bbox.xmin(),bbox.ymin(),bbox.zmin(),
-                 bbox.xmax(),bbox.ymax(),bbox.zmax()));
+    const_cast<Scene_polyhedron_item*>(this)->setBbox(Bbox(bbox.xmin(),bbox.ymin(),bbox.zmin(),
+                                                           bbox.xmax(),bbox.ymax(),bbox.zmax()));
 }
 
 

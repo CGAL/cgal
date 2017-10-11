@@ -612,7 +612,7 @@ Scene_polygon_soup_item::toolTip() const
 
 void
 Scene_polygon_soup_item::draw(CGAL::Three::Viewer_interface*,
-                              int, bool,QOpenGLFramebufferObject*) const {
+                              int, bool,QOpenGLFramebufferObject*) {
   /*  if(!are_buffers_filled)
     {
      d->compute_normals_and_vertices();
@@ -634,7 +634,7 @@ Scene_polygon_soup_item::draw(CGAL::Three::Viewer_interface*,
   }
 
 void
-Scene_polygon_soup_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const {
+Scene_polygon_soup_item::drawPoints(CGAL::Three::Viewer_interface* viewer)  {
     if(!getBuffersFilled())
     {
       d->compute_normals_and_vertices();
@@ -645,7 +645,7 @@ Scene_polygon_soup_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const
 }
 
 void
-Scene_polygon_soup_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
+Scene_polygon_soup_item::drawEdges(CGAL::Three::Viewer_interface* viewer)  {
     if(!getBuffersFilled())
   {
      d->compute_normals_and_vertices();
@@ -683,8 +683,8 @@ void Scene_polygon_soup_item::compute_bbox() const {
       ++it) {
     bbox = bbox + it->bbox();
   }
-  setBbox(Bbox(bbox.xmin(),bbox.ymin(),bbox.zmin(),
-               bbox.xmax(),bbox.ymax(),bbox.zmax()));
+  const_cast<Scene_polygon_soup_item*>(this)->setBbox(Bbox(bbox.xmin(),bbox.ymin(),bbox.zmin(),
+                                                           bbox.xmax(),bbox.ymax(),bbox.zmax()));
 }
 
 void 

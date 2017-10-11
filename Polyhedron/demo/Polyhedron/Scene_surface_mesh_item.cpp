@@ -657,7 +657,7 @@ void Scene_surface_mesh_item_priv::initializeBuffers(CGAL::Three::Viewer_interfa
 void Scene_surface_mesh_item::draw(CGAL::Three::Viewer_interface *viewer,
                                    int pass,
                                    bool writing_depth,
-                                   QOpenGLFramebufferObject* fbo) const
+                                   QOpenGLFramebufferObject* fbo)
 {
   if(!isWriting() && !isInit())
     initGL();
@@ -699,7 +699,7 @@ void Scene_surface_mesh_item::draw(CGAL::Three::Viewer_interface *viewer,
   }
 }
 
-void Scene_surface_mesh_item::drawEdges(CGAL::Three::Viewer_interface *viewer) const
+void Scene_surface_mesh_item::drawEdges(CGAL::Three::Viewer_interface *viewer)
 {
 
   if(!isWriting() && !isInit())
@@ -721,7 +721,7 @@ void Scene_surface_mesh_item::drawEdges(CGAL::Three::Viewer_interface *viewer) c
   }
 }
 
-void Scene_surface_mesh_item::drawPoints(CGAL::Three::Viewer_interface *viewer) const
+void Scene_surface_mesh_item::drawPoints(CGAL::Three::Viewer_interface *viewer)
 {
   return;
   if(!isWriting() && !isInit())
@@ -911,8 +911,9 @@ void Scene_surface_mesh_item::compute_bbox()const
   {
     bbox = bbox + pprop[vd].bbox();
   }
-  setBbox(Bbox(bbox.xmin(),bbox.ymin(),bbox.zmin(),
-               bbox.xmax(),bbox.ymax(),bbox.zmax()));
+
+  const_cast<Scene_surface_mesh_item*>(this)->setBbox(Bbox(bbox.xmin(),bbox.ymin(),bbox.zmin(),
+                                                           bbox.xmax(),bbox.ymax(),bbox.zmax()));
 
 }
 
@@ -1987,13 +1988,13 @@ bool Scene_surface_mesh_item::shouldDisplayIds(CGAL::Three::Scene_item *current_
 }
 
 
-void Scene_surface_mesh_item::computeElements(Gl_data_names name) const
+void Scene_surface_mesh_item::computeElements(Gl_data_names name)
 {
   d->compute_elements(name);
   setBuffersFilled(true);
 }
 
-void Scene_surface_mesh_item::initializeBuffers(Viewer_interface *viewer) const
+void Scene_surface_mesh_item::initializeBuffers(Viewer_interface *viewer)
 {
   d->initializeBuffers(viewer);
 }

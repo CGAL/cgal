@@ -59,7 +59,7 @@ public :
     void setScene(Scene_interface* s) { scene = s; }
 
     //!Create the VAOs and VBOs.
-    virtual void initGL() const Q_DECL_OVERRIDE;
+    virtual void initGL() Q_DECL_OVERRIDE;
     //!Returns false to avoid disturbing the BBox of the scene.
     bool isFinite() const;
     //!Returns true to avoid disturbing the BBox of the scene.
@@ -131,19 +131,19 @@ public :
     //! rendering mode is adequat.
     //! @see #RenderingMode
     virtual void draw(CGAL::Three::Viewer_interface*, int pass,
-                      bool is_writing, QOpenGLFramebufferObject*fbo) const;
+                      bool is_writing, QOpenGLFramebufferObject*fbo);
     //!\brief draws all the children
     //!
     //! Calls `Scene_item::drawEdges()`for each child if its current
     //! rendering mode is adequat.
     //! @see #RenderingMode
-    virtual void drawEdges(CGAL::Three::Viewer_interface*) const;
+    virtual void drawEdges(CGAL::Three::Viewer_interface*);
     //!\brief draws all the children
     //!
     //! Calls `Scene_item::drawPoints()`for each child if its current
     //! rendering mode is adequat.
     //! @see #RenderingMode
-    virtual void drawPoints(CGAL::Three::Viewer_interface*) const;
+    virtual void drawPoints(CGAL::Three::Viewer_interface*);
     ///@}
 
     //!Adds a CGAL::Three::Scene_item* to the list of children from its id.

@@ -44,7 +44,7 @@ public:
     * application does not get stuck while the processing is performed.
     * Emits `dataProcessed()`.
     */
-  void processData(Gl_data_names name)const;
+  void processData(Gl_data_names name);
   //!
   //! \brief setAlpha sets the integer value of the alpha channel of this item.
   //! Also updates the slider value.
@@ -94,7 +94,7 @@ public:
   //! If called with `true`, the item rendering data is considered ready and will not be computed
   //! until `setBuffersFilled()` is called with `false` again.
   //!
-  void setBuffersFilled(bool b) const;
+  void setBuffersFilled(bool b);
 
   //!
   //! \brief getBuffersFilled returns `false` if the item rendering data needs to be re-computed.,
@@ -117,7 +117,7 @@ public:
   //!
   //! This function should be called in the drawing functions, when `getBuffersFilled()` is `true`.
   //!
-  void setBuffersInit(Viewer_interface *viewer, bool val) const;
+  void setBuffersInit(Viewer_interface *viewer, bool val);
 protected:
 
   /*!
@@ -143,10 +143,10 @@ protected:
   /*! Fills the `Vbo`s with data. Must be called after each call to #computeElements().
      * @see computeElements()
      */
-  virtual void initializeBuffers(Viewer_interface*)const{}
+  virtual void initializeBuffers(Viewer_interface*){}
 
   //!Creates the VAOs and VBOs for each existing viewer.
-  virtual void initGL() const;
+  virtual void initGL();
   //!
   //! Computes the items Bbox and stores the result. Must be overridden.
   //!
@@ -155,7 +155,7 @@ protected:
   //! \brief setBbox allows to set the Bbox in compute_bbox();
   //! \param b
   //!
-  void setBbox(Bbox b) const;
+  void setBbox(Bbox b);
 private:
   friend struct D;
   mutable D* d;
