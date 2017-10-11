@@ -453,10 +453,31 @@ public Q_SLOTS:
         return; 
       }
 
-    QString filename = QFileDialog::getSaveFileName(mw,
-                                                    tr("Save classification configuration"),
-                                                    QString("config.xml"),
-                                                    "Config file (*.xml);;");
+    QString filename;
+
+    if (ui_widget.classifier->currentIndex() == 0)
+      filename = QFileDialog::getSaveFileName(mw,
+                                              tr("Save classification configuration"),
+                                              tr("%1 (CGAL classif config).xml").arg(classif->item()->name()),
+                                              "CGAL classification configuration (*.xml);");
+    else if (ui_widget.classifier->currentIndex() == 1)
+      filename = QFileDialog::getSaveFileName(mw,
+                                              tr("Save classification configuration"),
+                                              tr("%1 (ETHZ random forest config).gz").arg(classif->item()->name()),
+                                              "Compressed ETHZ random forest configuration (*.gz);");
+#ifdef CGAL_LINKED_WITH_OPENCV
+    else if (ui_widget.classifier->currentIndex() == 2)
+      filename = QFileDialog::getSaveFileName(mw,
+                                              tr("Save classification configuration"),
+                                              tr("%1 (OpenCV %2.%3 random forest config).xml")
+                                              .arg(classif->item()->name())
+                                              .arg(CV_MAJOR_VERSION)
+                                              .arg(CV_MINOR_VERSION),
+                                              tr("OpenCV %2.%3 random forest configuration (*.xml);")
+                                              .arg(CV_MAJOR_VERSION)
+                                              .arg(CV_MINOR_VERSION));
+#endif
+    
     if (filename == QString())
       return;
 
@@ -479,10 +500,29 @@ public Q_SLOTS:
         print_message("Error: there is no point set classification item!");
         return; 
       }
-    QString filename = QFileDialog::getOpenFileName(mw,
-                                                    tr("Open classification configuration"),
-                                                    ".",
-                                                    "Config file (*.xml);;All Files (*)");
+    QString filename;
+
+    if (ui_widget.classifier->currentIndex() == 0)
+      filename = QFileDialog::getOpenFileName(mw,
+                                              tr("Open CGAL classification configuration"),
+                                              ".",
+                                              "CGAL classification configuration (*.xml);;All Files (*)");
+    else if (ui_widget.classifier->currentIndex() == 1)
+      filename = QFileDialog::getOpenFileName(mw,
+                                              tr("Open ETHZ random forest configuration"),
+                                              ".",
+                                              "Compressed ETHZ random forest configuration (*.gz);;All Files (*)");
+#ifdef CGAL_LINKED_WITH_OPENCV
+    else if (ui_widget.classifier->currentIndex() == 2)
+      filename = QFileDialog::getOpenFileName(mw,
+                                              tr("Open OpenCV %2.%3 random forest configuration")
+                                              .arg(CV_MAJOR_VERSION)
+                                              .arg(CV_MINOR_VERSION),
+                                              ".",
+                                              tr("OpenCV %2.%3 random forest configuration (*.xml);;All Files (*)")
+                                              .arg(CV_MAJOR_VERSION)
+                                              .arg(CV_MINOR_VERSION));
+#endif
 
     if (filename == QString())
       return;
