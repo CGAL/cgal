@@ -1184,11 +1184,28 @@ void Scene_surface_mesh_item::setItemIsMulticolor(bool b)
     d->fpatch_id_map = d->smesh_->add_property_map<face_descriptor,int>("f:patch_id", 1).first;
     d->has_fcolors = true;
   }
-  else if(d->smesh_->property_map<face_descriptor,int>("f:patch_id").second)
+  else
   {
-    d->fpatch_id_map = d->smesh_->property_map<face_descriptor,int>("f:patch_id").first;
-    d->smesh_->remove_property_map(d->fpatch_id_map);
-    d->has_fcolors = false;
+    if(d->smesh_->property_map<face_descriptor,int>("f:patch_id").second)
+    {
+      d->fpatch_id_map = d->smesh_->property_map<face_descriptor,int>("f:patch_id").first;
+      d->smesh_->remove_property_map(d->fpatch_id_map);
+      d->has_fcolors = false;
+    }
+    if(d->smesh_->property_map<face_descriptor, CGAL::Color >("f:color").second)
+    {
+     SMesh::Property_map<face_descriptor, CGAL::Color> pmap =
+         d->smesh_->property_map<face_descriptor, CGAL::Color >("f:color").first;
+         d->smesh_->remove_property_map(pmap);
+      d->has_fcolors = false;
+    }
+    if(d->smesh_->property_map<vertex_descriptor, CGAL::Color >("v:color").second)
+    {
+      SMesh::Property_map<vertex_descriptor, CGAL::Color> pmap =
+          d->smesh_->property_map<vertex_descriptor, CGAL::Color >("v:color").first;
+          d->smesh_->remove_property_map(pmap);
+      d->has_vcolors = false;
+    }
   }
 }
 
