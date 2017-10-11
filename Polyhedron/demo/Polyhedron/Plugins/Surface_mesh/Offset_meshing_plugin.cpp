@@ -74,7 +74,7 @@ private:
 } //end of CGAL namespace
 
 // declare the CGAL function
-CGAL::Three::Scene_item* cgal_off_meshing(QWidget* parent,
+CGAL::Three::Scene_item* cgal_off_meshing(QWidget*,
                                           Polyhedron* tm_ptr,
                                           const double offset_value,
                                           const double angle,
