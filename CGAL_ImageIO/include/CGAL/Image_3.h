@@ -49,7 +49,7 @@ namespace ImageIO {
 template <typename T>
 struct Indicator_factory
 {
-  class Indicator : public std::unary_function<T, double>
+  class Indicator : public CGAL::unary_function<T, double>
   {
     const T label;
   public:

@@ -634,7 +634,7 @@ protected:
 
 private: /** \name DEBUGGING TYPES AND DATAS */
   class From_pair_of_vertex_to_edge 
-    : public std::unary_function<Constrained_edge, Edge>
+    : public CGAL::unary_function<Constrained_edge, Edge>
   {
     Tr& tr;
   public:

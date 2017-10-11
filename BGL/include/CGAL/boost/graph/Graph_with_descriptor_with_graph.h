@@ -151,7 +151,7 @@ struct Graph_with_descriptor_with_graph
 
 
 template <typename Graph, typename Graph_descriptor, typename Descriptor>
-struct Descriptor2Descriptor: public std::unary_function<Graph_descriptor,Descriptor>
+struct Descriptor2Descriptor: public CGAL::unary_function<Graph_descriptor,Descriptor>
 {
 
   Descriptor2Descriptor()

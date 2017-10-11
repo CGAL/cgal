@@ -36,7 +36,7 @@
 #include <CGAL/make_surface_mesh.h>
 #include <CGAL/Qt/debug.h>
 
-struct Threshold : public std::unary_function<FT, unsigned char> {
+struct Threshold : public CGAL::unary_function<FT, unsigned char> {
   double isovalue;
   bool is_identity;
 
@@ -54,14 +54,14 @@ struct Threshold : public std::unary_function<FT, unsigned char> {
 };
 
 class Classify_from_isovalue_list :
-  public std::unary_function<FT, unsigned char> 
+  public CGAL::unary_function<FT, unsigned char> 
 {
   typedef std::pair<FT, result_type> Isovalue;
   typedef std::vector<Isovalue> Isovalues;
   boost::shared_ptr<Isovalues> isovalues;
   bool is_identity;
 
-  struct Sort_isovalues : std::binary_function<Isovalue, Isovalue, bool> 
+  struct Sort_isovalues : CGAL::binary_function<Isovalue, Isovalue, bool>
   {
     bool operator()(const Isovalue& isoval1, const Isovalue& isoval2)
     {
@@ -110,7 +110,7 @@ public:
 };
 
 class Generate_surface_identifiers :
-  public std::binary_function<Classify_from_isovalue_list::result_type,
+  public CGAL::binary_function<Classify_from_isovalue_list::result_type,
                               Classify_from_isovalue_list::result_type,
                               const QTreeWidgetItem*>
 {
@@ -137,13 +137,13 @@ public:
 };
 
 // class Classify_from_isovalue_list :
-//   public std::unary_function<FT, const QTreeWidgetItem*> 
+//   public CGAL::unary_function<FT, const QTreeWidgetItem*> 
 // {
 //   typedef std::pair<FT, result_type> Isovalue;
 //   typedef std::vector<Isovalue> Isovalues;
 //   boost::shared_ptr<Isovalues> isovalues;
 
-//   struct Sort_isovalues : std::binary_function<Isovalue, Isovalue, bool> 
+//   struct Sort_isovalues : CGAL::binary_function<Isovalue, Isovalue, bool>
 //   {
 //     bool operator()(const Isovalue& isoval1, const Isovalue& isoval2)
 //     {

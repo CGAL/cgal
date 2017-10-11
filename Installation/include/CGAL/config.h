@@ -259,6 +259,15 @@
 #define CGAL_CFG_NO_STD_HASH 1
 #endif
 
+
+//----------------------------------------------------------------------//
+//  As std::unary_function and std::binary_function are deprecated
+//  we use internally equivalent class templates from
+// <CGAL/functional.h>.
+//----------------------------------------------------------------------//
+
+#include <CGAL/functional.h>
+
 //----------------------------------------------------------------------//
 //  auto-link the CGAL library on platforms that support it
 //----------------------------------------------------------------------//

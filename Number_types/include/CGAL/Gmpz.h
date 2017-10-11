@@ -51,7 +51,7 @@ public:
     typedef INTERN_AST::Is_square_per_sqrt< Type >
     Is_square;
     class Integral_division
-        : public std::binary_function< Type, Type,
+        : public CGAL::binary_function< Type, Type,
                                 Type > {
     public:
         Type operator()( const Type& x,
@@ -64,7 +64,7 @@ public:
     };
 
     class Gcd
-        : public std::binary_function< Type, Type,
+        : public CGAL::binary_function< Type, Type,
                                 Type > {
     public:
         Type operator()( const Type& x,
@@ -96,7 +96,7 @@ public:
     typedef INTERN_AST::Mod_per_operator< Type > Mod;
 
     class Sqrt
-        : public std::unary_function< Type, Type > {
+        : public CGAL::unary_function< Type, Type > {
     public:
         Type operator()( const Type& x ) const {
             Gmpz result;
@@ -110,7 +110,7 @@ template <> class Real_embeddable_traits< Gmpz >
     : public INTERN_RET::Real_embeddable_traits_base< Gmpz , CGAL::Tag_true > {
 public:
     class Sgn
-        : public std::unary_function< Type, ::CGAL::Sign > {
+        : public CGAL::unary_function< Type, ::CGAL::Sign > {
     public:
         ::CGAL::Sign operator()( const Type& x ) const {
             return x.sign();
@@ -118,7 +118,7 @@ public:
     };
 
     class To_double
-        : public std::unary_function< Type, double > {
+        : public CGAL::unary_function< Type, double > {
     public:
         double operator()( const Type& x ) const {
             return x.to_double();
@@ -126,7 +126,7 @@ public:
     };
 
     class To_interval
-        : public std::unary_function< Type, std::pair< double, double > > {
+        : public CGAL::unary_function< Type, std::pair< double, double > > {
     public:
         std::pair<double, double> operator()( const Type& x ) const {
 
@@ -148,7 +148,7 @@ template<> class Algebraic_structure_traits< Quotient<Gmpz> >
 public:
     typedef Quotient<Gmpz> Type;
 
-    struct To_double: public std::unary_function<Quotient<Gmpz>, double>{
+    struct To_double: public CGAL::unary_function<Quotient<Gmpz>, double>{
         double operator()(const Quotient<Gmpz>& quot){
             mpq_t  mpQ;
             mpq_init(mpQ);
