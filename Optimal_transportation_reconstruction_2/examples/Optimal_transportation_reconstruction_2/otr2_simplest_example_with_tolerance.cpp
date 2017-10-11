@@ -1,5 +1,6 @@
-// Simplest example for Optimal_transportation_reconstruction_2, with no mass
-// attributes for the input points and no Wasserstein tolerance
+// Simplest example with tolerance for
+// Optimal_transportation_reconstruction_2, with no mass attributes
+// for the input points
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/point_generators_2.h>
@@ -22,11 +23,7 @@ int main ()
   CGAL::cpp11::copy_n(point_generator, 100, std::back_inserter(points));
 
   Otr otr(points);
-
-  if (otr.run(100)) //100 steps
-    std::cerr << "All done." << std::endl;
-  else
-    std::cerr << "Premature ending." << std::endl;
+  otr.run_under_wasserstein_tolerance(0.1);
 
   return 0;
 }
