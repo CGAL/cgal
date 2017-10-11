@@ -52,15 +52,11 @@ namespace internal{
 //general case for polyhedron
 template<class Domain>
 struct Get_facet_patch_id_selector {
-  Get_facet_patch_id_selector(const Domain&)
-  {}
   typedef CGAL::Default type;
 };
 //specialization for surface_mesh
 template<>
 struct Get_facet_patch_id_selector<Polyhedral_mesh_domain_sm> {
-  Get_facet_patch_id_selector(const Polyhedral_mesh_domain_sm&)
-  {}
   typedef CGAL::Mesh_3::Get_facet_patch_id_sm<Polyhedral_mesh_domain_sm> type;
 };
 }//end internal

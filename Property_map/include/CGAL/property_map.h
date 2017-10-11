@@ -44,10 +44,13 @@ namespace CGAL {
 template <typename K, typename V>
 class Static_property_map
 {
+public:
   typedef K key_type;
   typedef V value_type;
   typedef const V& reference;
   typedef boost::read_write_property_map_tag category;
+
+private:
   V v;
 
 public:

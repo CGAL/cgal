@@ -226,10 +226,11 @@ public:
   typedef typename Base::Surface_patch_index  Surface_patch_index;
   typedef typename Base::Subdomain_index      Subdomain_index;
 
-  typedef typename CGAL::Mesh_3::details::Surface_patch_index_generator
-  <Subdomain_index,
-   Polyhedron,
-   Patch_id>::Patch_id P_id;
+  typedef typename boost::property_map<Polyhedron,
+                                       face_patch_id_t<Patch_id>
+                                       >::type            Face_patch_id_pmap;
+  typedef typename boost::property_traits<
+    Face_patch_id_pmap>::value_type                       P_id;
 
   // Backward compatibility
 #ifndef CGAL_MESH_3_NO_DEPRECATED_SURFACE_INDEX
@@ -454,19 +455,14 @@ detect_features(FT angle_in_degree, std::vector<Polyhedron>& poly)
   BOOST_FOREACH(Polyhedron& p, poly)
   {
     initialize_ts(p);
-    typedef typename boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
-    std::map<face_descriptor, int> face_ids;
-    int id = 0;
-    BOOST_FOREACH(face_descriptor f, faces(p))
-    {
-        face_ids[f] = id++;
-    }
-
-    typedef typename boost::property_map<Polyhedron,CGAL::face_patch_id_t<P_id> >::type PIDMap;
+    typedef typename boost::property_map<Polyhedron,CGAL::face_patch_id_t<Tag_> >::type PIDMap;
     typedef typename boost::property_map<Polyhedron,CGAL::vertex_incident_patches_t<P_id> >::type VIPMap;
     typedef typename boost::property_map<Polyhedron, CGAL::edge_is_feature_t>::type EIFMap;
 
-    PIDMap pid_map = get(face_patch_id_t<P_id>(), p);
+    using internal::Mesh_3::Get_face_index_pmap;
+    Get_face_index_pmap<Polyhedron> get_face_index_pmap(p);
+
+    PIDMap pid_map = get(face_patch_id_t<Tag_>(), p);
     VIPMap vip_map = get(vertex_incident_patches_t<P_id>(), p);
     EIFMap eif_map = get(CGAL::edge_is_feature, p);
 
@@ -475,7 +471,7 @@ detect_features(FT angle_in_degree, std::vector<Polyhedron>& poly)
       , eif_map
       , pid_map
       , PMP::parameters::first_index(nb_of_patch_plus_one)
-      .face_index_map(boost::make_assoc_property_map(face_ids))
+      .face_index_map(get_face_index_pmap(p))
       .vertex_incident_patches_map(vip_map));
 
     internal::Mesh_3::Is_featured_edge<Polyhedron> is_featured_edge(p);
@@ -571,8 +567,8 @@ add_featured_edges_to_graph(const Polyhedron& p,
     }
   }
 
-  typedef typename boost::property_map<Polyhedron,face_patch_id_t<P_id> >::type Face_patch_id_pmap;
-  Face_patch_id_pmap fpm = get(face_patch_id_t<P_id>(),p);
+  typedef typename boost::property_map<Polyhedron,face_patch_id_t<Tag_> >::type Face_patch_id_pmap;
+  Face_patch_id_pmap fpm = get(face_patch_id_t<Tag_>(),p);
 
   BOOST_FOREACH(Graph_edge_descriptor e, edges(graph)){
     vertex_descriptor vs = p2vmap[get(vpm,source(e,graph))];

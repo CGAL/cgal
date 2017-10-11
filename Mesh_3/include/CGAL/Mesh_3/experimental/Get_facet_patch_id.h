@@ -117,11 +117,12 @@ get(const Get_facet_patch_id_sm<MeshDomain>,
     const typename MeshDomain::AABB_primitive::Id& primitive_id)
 {
   typedef typename boost::property_map<
-       typename MeshDomain::Polyhedron::Graph,
+       typename MeshDomain::Polyhedron,
        face_patch_id_t<typename MeshDomain::Patch_id> >::type Fpim;
   Fpim fpim = get(face_patch_id_t<typename MeshDomain::Patch_id>(),
                   *(primitive_id.graph));
-  typename MeshDomain::Patch_id patch_index = get(fpim, primitive_id.descriptor);
+  typename MeshDomain::Patch_id patch_index = get(fpim,
+                                                  primitive_id.face_descriptor);
   return patch_index;
 }
 }} // end namespace CGAL::Mesh_3

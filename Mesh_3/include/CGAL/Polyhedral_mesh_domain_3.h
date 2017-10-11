@@ -32,10 +32,11 @@
 #include <CGAL/Mesh_3/global_parameters.h>
 #include <CGAL/Mesh_3/Robust_intersection_traits_3.h>
 
-#include <CGAL/boost/graph/Graph_with_descriptor_with_graph.h>
-#include <CGAL/Surface_mesh/Surface_mesh_fwd.h>
+#include <CGAL/Mesh_3/properties_Polyhedron_3.h>
 
 #include <CGAL/Side_of_triangle_mesh.h>
+#include <CGAL/AABB_tree.h>
+#include <CGAL/AABB_face_graph_triangle_primitive.h>
 
 #include <sstream>
 
@@ -51,6 +52,8 @@
 #include <boost/utility/enable_if.hpp>
 #include <boost/mpl/vector.hpp>
 #include <boost/mpl/contains.hpp>
+#include <boost/mpl/or.hpp>
+#include <boost/type_traits/is_same.hpp>
 #include <CGAL/tuple.h>
 #include <boost/format.hpp>
 #include <boost/variant.hpp>
@@ -77,93 +80,6 @@ max_length(const Bbox_3& b)
   return (std::max)(b.xmax()-b.xmin(),
                     (std::max)(b.ymax()-b.ymin(),b.zmax()-b.zmin()) );
 }
-
-
-// -----------------------------------
-// Surface_patch_index_generator
-// To use patch_id enclosed in AABB_primitives or not
-// -----------------------------------
-
-// here we had Tag_true instead of Patch_id
-template < class Subdomain_index, class Polyhedron, class Patch_id_>
-struct Surface_patch_index_generator
-{
-  typedef Patch_id_ Patch_id;
-  typedef Patch_id Surface_patch_index;
-  typedef Surface_patch_index   type;
-
-  template < typename Primitive_id >
-  Surface_patch_index operator()(const Primitive_id& primitive_id)
-  {
-    return primitive_id->patch_id(); 
-  }
-};
-
-template < class Subdomain_index, class P, class Patch_id_>
-struct Surface_patch_index_generator<Subdomain_index, Graph_with_descriptor_with_graph<Surface_mesh<P> >, Patch_id_>
-{
-  typedef Patch_id_ Patch_id;
-  typedef Patch_id Surface_patch_index;
-  typedef Surface_patch_index   type;
-
-  template < typename Primitive_id >
-  Surface_patch_index operator()(const Primitive_id& primitive_id)
-  {
-    typedef typename boost::property_map<Surface_mesh<P>,
-                                         face_patch_id_t<Patch_id> >::type Fpim;
-    Fpim fpim = get(face_patch_id_t<Patch_id>(),*(primitive_id.graph));
-    Surface_patch_index spi =  get(fpim, primitive_id.descriptor);
-    return spi;
-  }
-};
-
-
-
-template < class Subdomain_index, class Polyhedron>
-struct Surface_patch_index_generator<Subdomain_index, Polyhedron,void>
-{
-  typedef void Patch_id;
-  typedef std::pair<Subdomain_index,Subdomain_index>  Surface_patch_index;
-  typedef Surface_patch_index                         type;
-
-  template < typename Primitive_id >
-  Surface_patch_index operator()(const Primitive_id&)
-  { return Surface_patch_index(0,1); }
-};
-
-template < class Subdomain_index, class P>
-struct Surface_patch_index_generator<Subdomain_index,  Graph_with_descriptor_with_graph<Surface_mesh<P> >,void>
-{
-  typedef void Patch_id;
-  typedef std::pair<Subdomain_index,Subdomain_index>  Surface_patch_index;
-  typedef Surface_patch_index                         type;
-
-  template < typename Primitive_id >
-  Surface_patch_index operator()(const Primitive_id&)
-  { return Surface_patch_index(0,1); }
-};
-
-// Compatibility: when `Patch_id` is `Tag_true`, use the `Patch_id`
-// from the `Facet`
-template < class Subdomain_index, class Polyhedron>
-struct Surface_patch_index_generator<Subdomain_index,
-                                     Polyhedron,
-                                     Tag_true>
- : public Surface_patch_index_generator<Subdomain_index,
-                                        Polyhedron,
-                                        typename Polyhedron::Facet::Patch_id>
-{};
-
-// Compatibility: when `Patch_id` is `Tag_false`, treat it as `void`
-template < class Subdomain_index, class Polyhedron>
-struct Surface_patch_index_generator<Subdomain_index,
-                                     Polyhedron,
-                                     Tag_false>
- : public Surface_patch_index_generator<Subdomain_index,
-                                        Polyhedron,
-                                        void>
-{};
-
 
 // -----------------------------------
 // Index_generator
@@ -213,6 +129,46 @@ struct IGT_generator<Gt,CGAL::Tag_false>
 }  // end namespace Mesh_3
 
 
+namespace internal { namespace Mesh_3 {
+
+template <typename Polyhedron_type,
+          bool = boost::graph_has_property<Polyhedron_type,
+                                           CGAL::face_index_t>::value>
+class Get_face_index_pmap {
+public:
+  typedef typename boost::property_map<Polyhedron_type,
+                                       CGAL::face_index_t>::const_type Pmap;
+  Get_face_index_pmap(const Polyhedron_type&) {}
+  Pmap operator()(const Polyhedron_type& polyhedron) {
+    return get(CGAL::face_index, polyhedron);
+  }
+};
+
+template <typename Polyhedron_type>
+class Get_face_index_pmap<Polyhedron_type, false> {
+  typedef typename boost::graph_traits<Polyhedron_type>::face_descriptor
+                                                              face_descriptor;
+  typedef std::map<face_descriptor, int> Map;
+public:
+  Get_face_index_pmap(const Polyhedron_type& polyhedron) {
+    int id = 0;
+    BOOST_FOREACH(face_descriptor f, faces(polyhedron))
+    {
+      face_ids[f] = id++;
+    }
+  }
+  typedef boost::associative_property_map<Map> Pmap;
+
+  Pmap operator()(const Polyhedron_type&) {
+    return Pmap(face_ids);
+  }
+private:
+  Map face_ids;
+};
+
+} // end namespace Mesh_3
+} // end namespace internal
+
 /**
  * @class Polyhedral_mesh_domain_3
  *
@@ -220,7 +176,7 @@ struct IGT_generator<Gt,CGAL::Tag_false>
  */
 template<class Polyhedron,/*FaceGraph*/
          class IGT_,
-         class TriangleAccessor = CGAL::Default,
+         class = CGAL::Default,
          class Patch_id_ = void,
          class Use_exact_intersection_construction_tag = CGAL::Tag_true>
 class Polyhedral_mesh_domain_3
@@ -246,10 +202,13 @@ public:
   /// Type of indexes for cells of the input complex
   typedef int Subdomain_index;
   typedef boost::optional<Subdomain_index> Subdomain;
+
   /// Type of indexes for surface patch of the input complex
-  typedef Mesh_3::details::Surface_patch_index_generator<
-    Subdomain_index,Polyhedron,Patch_id> Surface_patch_index_generator;
-  typedef typename Surface_patch_index_generator::type    Surface_patch_index;
+  typedef typename boost::property_map<Polyhedron,
+                                       face_patch_id_t<Patch_id>
+                                       >::type            Face_patch_id_pmap;
+  typedef typename boost::property_traits<
+    Face_patch_id_pmap>::value_type                       Surface_patch_index;
   typedef boost::optional<Surface_patch_index>            Surface_patch;
   /// Type of indexes to characterize the lowest dimensional face of the input
   /// complex on which a vertex lie
@@ -264,14 +223,114 @@ public:
   // Kernel_traits compatibility
   typedef IGT R;
 
+  BOOST_MPL_HAS_XXX_TRAIT_DEF(HalfedgeDS)
+
+  template <typename P>
+  struct Primitive {
+    typedef typename boost::graph_traits<P>::face_descriptor face_descriptor_t;
+
+    face_descriptor_t face_descriptor;
+    const P* graph;
+
+    typedef Triangle_from_face_descriptor_map<P>   Triangle_pmap;
+    typedef One_point_from_face_descriptor_map<P>  Point_pmap;
+
+    typedef typename Triangle_pmap::value_type              Datum;
+    typedef typename Point_pmap::value_type                 Point;
+    typedef Primitive                                       Id;
+
+    Primitive() : face_descriptor(), graph() {}
+
+    template <typename IndexIterator>
+    Primitive(IndexIterator it, const P& polyhedron)
+      : face_descriptor(*it), graph(&polyhedron)
+    {}
+
+    bool operator==(const Primitive& other) const {
+      return other.face_descriptor == this->face_descriptor
+        && other.graph == this->graph;
+    }
+
+    Datum datum() const {
+      return get(Triangle_pmap(graph), face_descriptor);
+    }
+
+    Point reference_point() const {
+      return get(Point_pmap(graph), face_descriptor);
+    }
+
+    Id id() const {
+      return *this;
+    }
+  }; // Primitive template, for face graphs
+
+  template <typename P, bool is_a_CGAL_Polyhedron_3 = has_HalfedgeDS<P>::value>
+  struct Primitive_type {
+    typedef Primitive<P> type;
+
+    static
+    typename IGT_::Triangle_3 datum(const typename type::Id primitive_id) {
+      CGAL::Triangle_from_face_descriptor_map<P> pmap(primitive_id.graph);
+      return get(pmap, primitive_id.face_descriptor);
+    }
+
+    static Surface_patch_index get_index(const typename type::Id primitive_id) {
+      return get(get(face_patch_id_t<Patch_id>(),
+                     *primitive_id.graph),
+                 primitive_id.face_descriptor);
+    }
+  }; // Primitive_type (for non-Polyhedron_3)
+
+  template <typename P> struct Primitive_type<P, true> {
+    typedef AABB_face_graph_triangle_primitive<P > type;
+
+    static
+    typename IGT_::Triangle_3 datum(const typename type::Id face_handle) {
+      typedef typename IGT_::Point_3 Point;
+      const Point& a = face_handle->halfedge()->vertex()->point();
+      const Point& b = face_handle->halfedge()->next()->vertex()->point();
+      const Point& c = face_handle->halfedge()->next()->next()->vertex()->point();
+      return typename IGT_::Triangle_3(a,b,c);
+    }
+
+    static Surface_patch_index get_index(const typename type::Id face_handle,
+                                         Tag_false)
+    {
+      typename boost::property_map<P, face_patch_id_t<Patch_id> >::type pmap;
+      return get(pmap, face_handle);
+    }
+
+    static Surface_patch_index get_index(const typename type::Id,
+                                         Tag_true)
+    {
+      return Surface_patch_index(0,1);
+    }
+
+    static Surface_patch_index get_index(const typename type::Id face_handle)
+    {
+      namespace m = boost::mpl;
+      return get_index(face_handle,
+                       Boolean_tag<m::or_<boost::is_same<Patch_id, void>,
+                                          boost::is_same<Patch_id, Tag_false>
+                       >::value>());
+    }
+  }; // Primitive_type specialized for CGAL::Polyehdron_3
+
 public:
-  typedef Side_of_triangle_mesh<Polyhedron, IGT>        Inside_functor;
+  typedef typename Primitive_type<Polyhedron>::type       Ins_fctor_primitive;
+  typedef CGAL::AABB_traits<IGT, Ins_fctor_primitive>     Ins_fctor_traits;
+  typedef CGAL::AABB_tree<Ins_fctor_traits>               Ins_fctor_AABB_tree;
+
+  typedef Side_of_triangle_mesh<Polyhedron,
+                                IGT,
+                                Default,
+                                Ins_fctor_AABB_tree>      Inside_functor;
   typedef typename Inside_functor::AABB_tree              AABB_tree_;
+  BOOST_STATIC_ASSERT((boost::is_same<AABB_tree_, Ins_fctor_AABB_tree>::value));
   typedef typename AABB_tree_::AABB_traits                AABB_traits;
   typedef typename AABB_tree_::Primitive                  AABB_primitive;
-  typedef typename AABB_tree_::Primitive_id             AABB_primitive_id;
-  typedef typename AABB_tree_::Primitive                Primitive;
-  typedef typename AABB_traits::Bounding_box            Bounding_box;
+  typedef typename AABB_tree_::Primitive_id               AABB_primitive_id;
+  typedef typename AABB_traits::Bounding_box              Bounding_box;
 
 public:
 
@@ -651,11 +710,7 @@ public:
   Surface_patch_index make_surface_index(
     const AABB_primitive_id& primitive_id = AABB_primitive_id() ) const
   {
-    Mesh_3::details::Surface_patch_index_generator<Subdomain_index,
-                                                   Polyhedron,
-                                                   Patch_id> generator;
-
-    return generator(primitive_id);
+    return Primitive_type<Polyhedron>::get_index(primitive_id);
   }
 
   // Undocumented function, used to implement a sizing field that
