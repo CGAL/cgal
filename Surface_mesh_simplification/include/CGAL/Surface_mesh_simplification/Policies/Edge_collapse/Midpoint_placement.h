@@ -34,7 +34,9 @@ namespace Surface_mesh_simplification
 class Midpoint_placement
 {
 public:
-    
+
+  typedef ECM_ ECM;
+  
   Midpoint_placement()
   {}
   
