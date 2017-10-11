@@ -20,7 +20,7 @@
 #ifndef CGAL_KD_TYPE_SPHERE_H
 #define CGAL_KD_TYPE_SPHERE_H
 #include <CGAL/NewKernel_d/store_kernel.h>
-#include <boost/iterator/counting_iterator.hpp>
+#include <CGAL/boost/iterator/counting_iterator.hpp>
 namespace CGAL {
 template <class R_> class Sphere {
 	typedef typename Get_type<R_, FT_tag>::type FT_;
