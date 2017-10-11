@@ -27,9 +27,13 @@
 
 #include <CGAL/Splitters.h>
 #include <CGAL/Compact_container.h>
+#include <CGAL/Has_member.h>
+#include <CGAL/internal/Search_helpers.h>
 #include <boost/cstdint.hpp>
 
 namespace CGAL {
+
+  CGAL_GENERATE_MEMBER_DETECTOR(contains_point_given_as_coordinates);
 
   template <class SearchTraits, class Splitter, class UseExtendedNode, class EnablePointsCache> 
   class Kd_tree;
@@ -193,15 +197,19 @@ namespace CGAL {
     template <class OutputIterator, class FuzzyQueryItem>
     OutputIterator 
     search(OutputIterator it, const FuzzyQueryItem& q,
-	   Kd_tree_rectangle<FT,D>& b) const
+	   Kd_tree_rectangle<FT,D>& b, 
+           typename Kdt::const_iterator tree_points_begin,
+           typename std::vector<FT>::const_iterator cache_begin,
+           int dim) const
     {
       if (is_leaf()) { 
         Leaf_node_const_handle node = 
           static_cast<Leaf_node_const_handle>(this);
-	if (node->size()>0) 
-	  for (iterator i=node->begin(); i != node->end(); i++) 
-	    if (q.contains(*i)) 
-	      {*it++=*i;}
+        if (node->size() > 0)
+        {
+          internal::Has_points_cache<Kdt, internal::has_Enable_points_cache<Kdt>::type::value>::type dummy;
+          search_in_leaf(node, q, tree_points_begin, cache_begin, dim, it, dummy);
+        }
       }
       else {
          Internal_node_const_handle node = 
@@ -214,12 +222,12 @@ namespace CGAL {
 	  it=node->lower()->tree_items(it);
 	else
 	  if (q.inner_range_intersects(b)) 
-	    it=node->lower()->search(it,q,b);
+	    it=node->lower()->search(it,q,b,tree_points_begin,cache_begin,dim);
 	if  (q.outer_range_contains(b_upper))     
 	  it=node->upper()->tree_items(it);
 	else
 	  if (q.inner_range_intersects(b_upper)) 
-	    it=node->upper()->search(it,q,b_upper);
+	    it=node->upper()->search(it,q,b_upper,tree_points_begin,cache_begin,dim);
       };
       return it;				
     }
@@ -266,6 +274,67 @@ namespace CGAL {
       return result;				
     }
 
+  private:
+
+    // If contains_point_given_as_coordinates does not exist in `FuzzyQueryItem`
+    template <typename FuzzyQueryItem>
+    bool contains(
+      const FuzzyQueryItem& q,
+      Point_d const& p,
+      typename std::vector<FT>::const_iterator it_coord_begin,
+      typename std::vector<FT>::const_iterator it_coord_end,
+      Tag_false /*has_contains_point_given_as_coordinates*/) const
+    {
+      return q.contains(p);
+    }
+    // ... or if it exists
+    template <typename FuzzyQueryItem>
+    bool contains(
+      const typename FuzzyQueryItem& q,
+      Point_d const& p,
+      typename std::vector<FT>::const_iterator it_coord_begin,
+      typename std::vector<FT>::const_iterator it_coord_end,
+      Tag_true /*has_contains_point_given_as_coordinates*/) const
+    {
+      return q.contains_point_given_as_coordinates(it_coord_begin, it_coord_end);
+    }
+
+    // With cache
+    template<class FuzzyQueryItem, class OutputIterator>
+    void search_in_leaf(
+      Leaf_node_const_handle node, 
+      const FuzzyQueryItem &q,
+      typename Kdt::const_iterator tree_points_begin,
+      typename std::vector<FT>::const_iterator cache_begin,
+      int dim,
+      OutputIterator oit, 
+      Tag_true /*has_points_cache*/) const
+    {
+      typename Kdt::iterator it_node_point = node->begin(), it_node_point_end = node->end();
+      typename std::vector<FT>::const_iterator cache_point_it = cache_begin + dim*(it_node_point - tree_points_begin);
+      for (; it_node_point != it_node_point_end; ++it_node_point, cache_point_it += dim)
+      {
+        Boolean_tag<has_contains_point_given_as_coordinates<FuzzyQueryItem>::value> dummy;
+        if (contains(q, *it_node_point, cache_point_it, cache_point_it + dim, dummy))
+          *oit++ = *it_node_point;
+      }
+    }
+
+    // Without cache
+    template<class FuzzyQueryItem, class OutputIterator>
+    void search_in_leaf(
+      Leaf_node_const_handle node,
+      const FuzzyQueryItem &q,
+      typename Kdt::const_iterator tree_points_begin,
+      typename std::vector<FT>::const_iterator cache_begin,
+      int dim,
+      OutputIterator oit,
+      Tag_false /*has_points_cache*/) const
+    {
+      for (iterator i = node->begin(); i != node->end(); ++i)
+        if (q.contains(*i))
+          *oit++ = *i;
+    }
   };
 
 

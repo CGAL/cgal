@@ -112,6 +112,8 @@ private:
   //
   std::vector<const Point_d*> data;
 
+  // Dimension of the points
+  int dim_;
 
   #ifdef CGAL_HAS_THREADS
   mutable CGAL_MUTEX building_mutex;//mutex used to protect const calls inducing build()
@@ -121,7 +123,7 @@ private:
 
   // protected copy constructor
   Kd_tree(const Tree& tree)
-    : traits_(tree.traits_),built_(tree.built_)
+    : traits_(tree.traits_),built_(tree.built_),dim_(-1)
   {};
 
 
@@ -276,13 +278,13 @@ public:
     CGAL_assertion(!removed_);
     const Point_d& p = *pts.begin();
     typename SearchTraits::Construct_cartesian_const_iterator_d ccci=traits_.construct_cartesian_const_iterator_d_object();
-    int dim = static_cast<int>(std::distance(ccci(p), ccci(p,0)));
+    dim_ = static_cast<int>(std::distance(ccci(p), ccci(p,0)));
 
     data.reserve(pts.size());
     for(unsigned int i = 0; i < pts.size(); i++){
       data.push_back(&pts[i]);
     }
-    Point_container c(dim, data.begin(), data.end(),traits_);
+    Point_container c(dim_, data.begin(), data.end(),traits_);
     bbox = new Kd_tree_rectangle<FT,D>(c.bounding_box());
     if (c.size() <= split.bucket_size()){
       tree_root = create_leaf_node(c);
@@ -300,7 +302,7 @@ public:
     if (Enable_points_cache::value)
     {
       typename SearchTraits::Construct_cartesian_const_iterator_d construct_it = traits_.construct_cartesian_const_iterator_d_object();
-      points_cache.reserve(dim * pts.size());
+      points_cache.reserve(dim_ * pts.size());
       for (std::size_t i = 0; i < pts.size(); ++i)
         points_cache.insert(points_cache.end(), construct_it(ptstmp[i]), construct_it(ptstmp[i], 0));
     }
@@ -491,7 +493,7 @@ public:
 	const_build();
       }
       Kd_tree_rectangle<FT,D> b(*bbox);
-      return tree_root->search(it,q,b);
+      return tree_root->search(it,q,b,begin(),cache_begin(),dim_);
     }
     return it;
   }

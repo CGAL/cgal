@@ -36,12 +36,14 @@ struct Has_points_cache;
 template <typename Tree>
 struct Has_points_cache<Tree, true>
 {
-  static const bool value = Tree::Enable_points_cache::value;
+  typedef typename Tree::Enable_points_cache type;
+  static const bool value = type::value;
 };
 
 template <typename Tree>
 struct Has_points_cache<Tree, false>
 {
+  typedef Tag_false type;
   static const bool value = false;
 };
 
@@ -50,7 +52,7 @@ CGAL_GENERATE_MEMBER_DETECTOR(interruptible_transformed_distance);
 BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_Enable_points_cache, Enable_points_cache, false)
 
 
-template <typename Distance>
+template <typename Distance, typename SearchTraits>
 class Distance_helper
 {
   typedef typename Distance::FT         FT;
@@ -59,8 +61,8 @@ class Distance_helper
 
 public:
 
-  Distance_helper(Distance const& distance)
-    : m_distance(distance)
+  Distance_helper(Distance const& distance, SearchTraits const& traits)
+    : m_distance(distance), m_traits(traits)
   {}
 
   // If transformed_distance_from_coordinates does not exist in `Distance`
@@ -132,13 +134,14 @@ public:
     Point const& p,
     FT stop_if_geq_to_this)
   {
-    typename SearchTraits::Construct_cartesian_const_iterator_d construct_it = m_tree.traits().construct_cartesian_const_iterator_d_object();
+    typename SearchTraits::Construct_cartesian_const_iterator_d construct_it = m_traits.construct_cartesian_const_iterator_d_object();
     return m_distance.interruptible_transformed_distance(
       q, construct_it(p), construct_it(p, 0), stop_if_geq_to_this);
   }
 
 private:
-  Distance const & m_distance;
+  Distance     const& m_distance;
+  SearchTraits const& m_traits;
 
 }; // Distance_helper
 

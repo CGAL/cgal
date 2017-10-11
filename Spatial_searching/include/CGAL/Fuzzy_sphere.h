@@ -79,6 +79,22 @@ namespace CGAL {
 		return (distance < squared_radius); 
         }
 
+        template <typename Coord_iterator>
+        bool contains_point_given_as_coordinates(Coord_iterator it_coord_begin, Coord_iterator /*unused*/) const {
+          // test whether the distance between c and p is less than the radius
+          FT squared_radius = r*r;
+          FT distance = FT(0);
+          typename SearchTraits::Construct_cartesian_const_iterator_d construct_it =
+            traits.construct_cartesian_const_iterator_d_object();
+          typename SearchTraits::Cartesian_const_iterator_d cit = construct_it(c),
+            end = construct_it(c, 0);
+
+          for (; cit != end && (distance < squared_radius); ++cit, ++it_coord_begin)
+            distance += ((*cit) - (*it_coord_begin))*((*cit) - (*it_coord_begin));
+
+          return (distance < squared_radius);
+        }
+
     bool inner_range_intersects(const Kd_tree_rectangle<FT,Dimension>& rectangle) const {
       // test whether the interior of a sphere
       // with radius (r-eps) intersects 'rectangle', i.e.
