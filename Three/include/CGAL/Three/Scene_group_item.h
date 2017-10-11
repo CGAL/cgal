@@ -122,9 +122,10 @@ public :
     //!\returns a string containing the number of children.
     QString toolTip() const;
 
-    /// Draw functions
+    /// \name Draw functions
     /// Scene_group_item's children are not drawn by the scene, they are drawn by the group.
     ///@{
+
     //!\brief draws all the children
     //!
     //! Calls `Scene_item::draw()`for each child if its current
@@ -134,7 +135,7 @@ public :
                       bool is_writing, QOpenGLFramebufferObject*fbo);
 
     //!
-    //! \brief renderChildren deals with the rendering, selecting and picking of
+    //! \brief deals with the rendering, selecting and picking of
     //! the group's children.
     //!
     //! \param picked_item_IDs the depth-index map
