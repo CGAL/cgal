@@ -413,7 +413,7 @@ void Viewer::initializeGL()
       "   vec4 diffuse = max(abs(dot(N,L)),0.0) * light_diff*color; \n"
       "   vec4 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec; \n"
 
-      "gl_FragColor = color*light_amb + diffuse + specular; \n"
+      "gl_FragColor = vec4(vec3(color*light_amb + diffuse + specular).xyz, 1.0f); \n"
       "} \n"
       "\n"
       };
@@ -1103,43 +1103,43 @@ void Viewer::drawVisualHints()
       d->rendering_program.bind();
       qglviewer::Camera::Type camera_type = camera()->type();
       camera()->setType(qglviewer::Camera::ORTHOGRAPHIC);
-        QMatrix4x4 mvpMatrix;
-        QMatrix4x4 mvMatrix;
-        for(int i=0; i < 16; i++)
-        {
-            mvMatrix.data()[i] = camera()->orientation().inverse().matrix()[i];
-        }
-        mvpMatrix.ortho(-1,1,-1,1,-1,1);
-        mvpMatrix = mvpMatrix*mvMatrix;
-        camera()->setType(camera_type);
+      QMatrix4x4 mvpMatrix;
+      QMatrix4x4 mvMatrix;
+      for(int i=0; i < 16; i++)
+      {
+        mvMatrix.data()[i] = camera()->orientation().inverse().matrix()[i];
+      }
+      mvpMatrix.ortho(-1,1,-1,1,-1,1);
+      mvpMatrix = mvpMatrix*mvMatrix;
+      camera()->setType(camera_type);
 
-        d->rendering_program.setUniformValue("light_pos", d->lighting.position);
-        d->rendering_program.setUniformValue("mvp_matrix", mvpMatrix);
-        d->rendering_program.setUniformValue("mv_matrix", mvMatrix);
-        d->rendering_program.setUniformValue("light_diff", d->lighting.diffuse);
-        d->rendering_program.setUniformValue("light_spec", d->lighting.specular);
-        d->rendering_program.setUniformValue("light_amb", d->lighting.ambient);
-        d->rendering_program.setUniformValue("spec_power", d->lighting.shininess);
+      d->rendering_program.setUniformValue("light_pos", d->lighting.position);
+      d->rendering_program.setUniformValue("mvp_matrix", mvpMatrix);
+      d->rendering_program.setUniformValue("mv_matrix", mvMatrix);
+      d->rendering_program.setUniformValue("light_diff", d->lighting.diffuse);
+      d->rendering_program.setUniformValue("light_spec", d->lighting.specular);
+      d->rendering_program.setUniformValue("light_amb", d->lighting.ambient);
+      d->rendering_program.setUniformValue("spec_power", d->lighting.shininess);
 
-        d->vao[0].bind();
-        int viewport[4];
-        int scissor[4];
+      d->vao[0].bind();
+      int viewport[4];
+      int scissor[4];
 
-        // The viewport and the scissor are changed to fit the upper right
-        // corner. Original values are saved.
-        glGetIntegerv(GL_VIEWPORT, viewport);
-        glGetIntegerv(GL_SCISSOR_BOX, scissor);
+      // The viewport and the scissor are changed to fit the upper right
+      // corner. Original values are saved.
+      glGetIntegerv(GL_VIEWPORT, viewport);
+      glGetIntegerv(GL_SCISSOR_BOX, scissor);
 
-        // Axis viewport size, in pixels
-        const int size = 100;
-        glViewport(width()*devicePixelRatio()-size, height()*devicePixelRatio()-size, size, size);
-        glScissor (width()*devicePixelRatio()-size, height()*devicePixelRatio()-size, size, size);
-        glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(d->v_Axis.size() / 3));
-        // The viewport and the scissor are restored.
-        glScissor(scissor[0],scissor[1],scissor[2],scissor[3]);
-        glViewport(viewport[0],viewport[1],viewport[2],viewport[3]);
-        d->vao[0].release();
-        d->rendering_program.release();
+      // Axis viewport size, in pixels
+      const int size = 100;
+      glViewport(width()*devicePixelRatio()-size, height()*devicePixelRatio()-size, size, size);
+      glScissor (width()*devicePixelRatio()-size, height()*devicePixelRatio()-size, size, size);
+      glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(d->v_Axis.size() / 3));
+      // The viewport and the scissor are restored.
+      glScissor(scissor[0],scissor[1],scissor[2],scissor[3]);
+      glViewport(viewport[0],viewport[1],viewport[2],viewport[3]);
+      d->vao[0].release();
+      d->rendering_program.release();
     }
 
     if(d->distance_is_displayed)

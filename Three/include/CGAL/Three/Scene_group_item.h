@@ -132,6 +132,27 @@ public :
     //! @see #RenderingMode
     virtual void draw(CGAL::Three::Viewer_interface*, int pass,
                       bool is_writing, QOpenGLFramebufferObject*fbo);
+
+    //!
+    //! \brief renderChildren deals with the rendering, selecting and picking of
+    //! the group's children.
+    //!
+    //! \param picked_item_IDs the depth-index map
+    //! \param picked_pixel the screen point that has been picked.
+    //! \param with_names should be `true` if a picking is being performed.
+    //! \param pass the dept peeling pass.
+    //! \param is_writing means that the color of the faces will be drawn in a grayscale
+    //! according to the depth of the fragment in the shader. It is used by the transparency.
+    //! \param fbo contains the texture used by the Depth Peeling algorithm.
+    //!  Should be NULL if pass <= 0;
+    //!
+    virtual void renderChildren(Viewer_interface *,
+              QMap<float, int>& picked_item_IDs, const QPoint &picked_pixel,
+              bool with_names,
+              int pass,
+              bool is_writing,
+              QOpenGLFramebufferObject *fbo);
+
     //!\brief draws all the children
     //!
     //! Calls `Scene_item::drawEdges()`for each child if its current

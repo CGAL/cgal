@@ -141,7 +141,6 @@ Q_SIGNALS:
 
 public Q_SLOTS:
   void itemAboutToBeDestroyed(Scene_item *) Q_DECL_OVERRIDE;
-  virtual void selection_changed(bool) Q_DECL_OVERRIDE;
   void select(double orig_x,
               double orig_y,
               double orig_z,

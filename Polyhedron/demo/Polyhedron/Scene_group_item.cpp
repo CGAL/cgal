@@ -122,17 +122,50 @@ void Scene_group_item::moveUp(int i)
     children.move(i, i-1);
 }
 
-void Scene_group_item::draw(CGAL::Three::Viewer_interface* viewer, int pass , bool is_writing, QOpenGLFramebufferObject *fbo)
+void Scene_group_item::draw(CGAL::Three::Viewer_interface* , int , bool , QOpenGLFramebufferObject *)
 {
   if(!isInit())
     initGL();
+}
+
+void Scene_group_item::renderChildren(Viewer_interface *viewer,
+                            QMap<float, int>& picked_item_IDs,
+                            const QPoint& picked_pixel,
+                            bool with_names,
+                            int pass,
+                            bool is_writing,
+                            QOpenGLFramebufferObject *fbo)
+{
+
   Q_FOREACH(Scene_interface::Item_id id, children){
+    if(with_names) {
+      viewer->glClearDepth(1.0);
+      viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    }
+    if(id == scene->mainSelectionIndex()|| scene->selectionIndices().contains(id))
+    {
+      getChild(id)->selection_changed(true);
+    }
+    else
+    {
+      getChild(id)->selection_changed(false);
+    }
     if(getChild(id)->visible() &&
        (getChild(id)->renderingMode() == Flat ||
         getChild(id)->renderingMode() == FlatPlusEdges ||
         getChild(id)->renderingMode() == Gouraud))
     {
       getChild(id)->draw(viewer, pass, is_writing, fbo);
+    }
+    if(with_names) {
+      //    read depth buffer at pick location;
+      float depth = 1.0;
+      viewer->glReadPixels(picked_pixel.x(),viewer->camera()->screenHeight()-1-picked_pixel.y(),1,1,GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+      if (depth != 1.0)
+      {
+        //add object to list of picked objects;
+        picked_item_IDs[depth] = id;
+      }
     }
   }
 }
@@ -142,6 +175,15 @@ void Scene_group_item::drawEdges(CGAL::Three::Viewer_interface* viewer)
   if(!isInit())
     initGL();
   Q_FOREACH(Scene_interface::Item_id id, children){
+    if(id == scene->mainSelectionIndex()|| scene->selectionIndices().contains(id))
+    {
+      getChild(id)->selection_changed(true);
+    }
+    else
+
+    {
+      getChild(id)->selection_changed(false);
+    }
     if(getChild(id)->visible() &&
        (getChild(id)->renderingMode() == FlatPlusEdges
         || getChild(id)->renderingMode() == Wireframe
@@ -157,6 +199,15 @@ void Scene_group_item::drawPoints(CGAL::Three::Viewer_interface* viewer)
   if(!isInit())
     initGL();
   Q_FOREACH(Scene_interface::Item_id id, children){
+    if(id == scene->mainSelectionIndex()|| scene->selectionIndices().contains(id))
+    {
+      getChild(id)->selection_changed(true);
+    }
+    else
+
+    {
+      getChild(id)->selection_changed(false);
+    }
     if(getChild(id)->visible())
     {
 

@@ -679,7 +679,7 @@ void Scene_surface_mesh_item::draw(CGAL::Three::Viewer_interface *viewer,
     getTriangleContainer(0)->setNear(near);
     getTriangleContainer(0)->setFar(far);
     getTriangleContainer(0)->setDepthWriting(writing_depth);
-    getTriangleContainer(0)->setColor(color());
+    getTriangleContainer(0)->setColor(isSelected() ? selectionColor() : color());
     getTriangleContainer(0)->setSelected(isSelected());
     getTriangleContainer(0)->setAlpha(alpha());
     getTriangleContainer(0)->draw( viewer, !d->has_vcolors, fbo);
@@ -692,7 +692,7 @@ void Scene_surface_mesh_item::draw(CGAL::Three::Viewer_interface *viewer,
     getTriangleContainer(1)->setNear(near);
     getTriangleContainer(1)->setFar(far);
     getTriangleContainer(1)->setDepthWriting(writing_depth);
-    getTriangleContainer(1)->setColor(color());
+    getTriangleContainer(1)->setColor(isSelected() ? selectionColor() : color());
     getTriangleContainer(1)->setSelected(isSelected());
     getTriangleContainer(1)->setAlpha(alpha());
     getTriangleContainer(1)->draw( viewer, !d->has_fcolors, fbo);
@@ -735,14 +735,6 @@ void Scene_surface_mesh_item::drawPoints(CGAL::Three::Viewer_interface *viewer)
   //TODO
 }
 
-void
-Scene_surface_mesh_item::selection_changed(bool p_is_selected)
-{
-  if(p_is_selected != isSelected())
-  {
-    setSelected(p_is_selected);
-  }
-}
 
 bool
 Scene_surface_mesh_item::supportsRenderingMode(RenderingMode m) const

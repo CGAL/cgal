@@ -83,6 +83,10 @@ public:
   //!
   //! This color is the one that will be displayed if none is specified after its creation.
   static const QColor defaultColor();
+  //!
+  //! \brief selectionColor is the color used for selected item.
+  //!
+  QColor selectionColor();
   Scene_item();
 
   virtual ~Scene_item();

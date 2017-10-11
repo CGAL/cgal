@@ -487,6 +487,10 @@ void Scene::renderScene(const QList<Scene_interface::Item_id> &items,
     {
       if( group || item.renderingMode() == Flat || item.renderingMode() == FlatPlusEdges || item.renderingMode() == Gouraud)
       {
+        if(with_names) {
+          viewer->glClearDepth(1.0);
+          viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        }
         if(item.renderingMode() == Gouraud)
           viewer->glShadeModel(GL_SMOOTH);
         else
@@ -505,6 +509,8 @@ void Scene::renderScene(const QList<Scene_interface::Item_id> &items,
           picked_item_IDs[depth] = index;
         }
       }
+      if(group)
+        group->renderChildren(viewer, picked_item_IDs, picked_pixel, with_names, pass, writing_depth, fbo);
     }
   }
 }

@@ -18,6 +18,7 @@ struct D{
     visible_(true),
     parent_group(0),
     is_selected(false),
+    was_selected(false),
     rendering_mode(FlatPlusEdges),
     defaultContextMenu(NULL),
     is_locked(false),
@@ -28,18 +29,20 @@ struct D{
 
   int has_group;
 
-  //!The name of the item.
+  //The name of the item.
   QString name_;
-  //!The color of the item.
+  //The color of the item.
   QColor color_;
-  //!The visibility of the item.
+  //The visibility of the item.
   bool visible_;
-  //!The parent group, or 0 if the item is not in a group.
+  //The parent group, or 0 if the item is not in a group.
   Scene_group_item* parent_group;
-  //!Specifies if the item is currently selected.
+  //Specifies if the item is currently selected.
   bool is_selected;
+  //Last selection state
+  bool was_selected;
   RenderingMode rendering_mode;
-  //!The default context menu.
+  //The default context menu.
   QMenu* defaultContextMenu;
   //when this is true, all the operations and options of this item are disabled.
   //Used in multithreading context.
@@ -52,6 +55,15 @@ struct D{
 const QColor Scene_item::defaultColor()
 {
   return QColor(100, 100, 255);
+}
+
+QColor Scene_item::selectionColor()
+{
+  QColor c = color();
+  return (QColor::fromHsv(
+            c.hue()<270 && c.hue() > 90 ? 0
+                                        : 180,
+            255, 255));
 }
 
 namespace CT = CGAL::Three;
@@ -160,7 +172,22 @@ moveToGroup(CGAL::Three::Scene_group_item* group) {
 
 void CGAL::Three::Scene_item::invalidate(Gl_data_names) {}
 
-void CGAL::Three::Scene_item::selection_changed(bool) {}
+void CGAL::Three::Scene_item::selection_changed(bool b)
+{
+  if(b && !d->was_selected)
+  {
+    setSelected(true);
+    d->was_selected = true;
+    redraw();
+    QTimer::singleShot(500, [this]{setSelected(false); redraw();});
+  }
+  else{
+    if(!b)
+      setSelected(false);
+    d->was_selected = b;
+  }
+
+}
 void CGAL::Three::Scene_item::setVisible(bool b)
 {
   d->visible_ = b;
