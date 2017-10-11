@@ -321,9 +321,6 @@ can choose to produce static libraries instead by setting the CMake
 variable `BUILD_SHARED_LIBS` to `FALSE`. If you use
 `cmake-gui`, a tick box for that variable is available to set it.
 
-These setting affect the variants of third-party libraries (see next
-section) selected whenever the choice is available.
-
 \subsection subsection_headeronly Header-only option
 
 Since \cgal 4.9, \cgal can be used in headers only mode, i.e. without compiling the \cgal libraries and linking with these libraries when compiling examples, tests and demos. This possibility can be enabled by setting the value of the CMake variable `CGAL_HEADER_ONLY` to `ON`. CMake version 3.0.0 or higher is required to use this option.
