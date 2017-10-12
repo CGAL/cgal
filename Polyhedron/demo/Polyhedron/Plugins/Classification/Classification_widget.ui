@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>430</width>
+    <width>289</width>
     <height>263</height>
    </rect>
   </property>
@@ -24,7 +24,7 @@
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_7">
       <item>
-       <widget class="QPushButton" name="features">
+       <widget class="QPushButton" name="menu">
         <property name="font">
          <font>
           <weight>75</weight>
@@ -32,68 +32,15 @@
          </font>
         </property>
         <property name="text">
-         <string>Features</string>
+         <string>Classification</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="training">
-        <property name="font">
-         <font>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
+       <widget class="Line" name="line">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
         </property>
-        <property name="text">
-         <string>Training</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="output">
-        <property name="font">
-         <font>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string>Output</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <layout class="QHBoxLayout" name="horizontalLayout">
-      <item>
-       <widget class="QLabel" name="label_7">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="text">
-         <string>Classifier:</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QComboBox" name="classifier">
-        <property name="currentIndex">
-         <number>0</number>
-        </property>
-        <item>
-         <property name="text">
-          <string>Sum of Weighted Features</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Random Forest</string>
-         </property>
-        </item>
        </widget>
       </item>
       <item>
@@ -127,6 +74,40 @@
         <item>
          <property name="text">
           <string>Training sets</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QLabel" name="label_7">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Classifier:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="classifier">
+        <property name="currentIndex">
+         <number>0</number>
+        </property>
+        <item>
+         <property name="text">
+          <string>Sum of Weighted Features</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Random Forest</string>
          </property>
         </item>
        </widget>

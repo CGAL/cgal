@@ -23,6 +23,7 @@
 #include <QApplication>
 #include <QCheckBox>
 #include <QInputDialog>
+#include <QMessageBox>
 #include <QFormLayout>
 #include <QSpinBox>
 #include <QDoubleSpinBox>
@@ -145,50 +146,58 @@ public:
 
     color_att = QColor (75, 75, 77);
 
-    ui_widget.features->setMenu (new QMenu("Features Menu", ui_widget.features));
+    ui_widget.menu->setMenu (new QMenu("Classification Menu", ui_widget.menu));
 
-    QAction* compute_features = ui_widget.features->menu()->addAction ("Compute features");
+    QAction* compute_features = ui_widget.menu->menu()->addAction ("Compute features");
     connect(compute_features,  SIGNAL(triggered()), this,
             SLOT(on_compute_features_button_clicked()));
 
-    QAction* save_config = ui_widget.features->menu()->addAction ("Save classifier's current configuration");
-    QAction* load_config = ui_widget.features->menu()->addAction ("Load configuration for classifier");
-    connect(save_config,  SIGNAL(triggered()), this,
-            SLOT(on_save_config_button_clicked()));
-    connect(load_config,  SIGNAL(triggered()), this,
-            SLOT(on_load_config_button_clicked()));
+    ui_widget.menu->menu()->addSection ("Training");
 
-    ui_widget.training->setMenu (new QMenu("Training Menu", ui_widget.training));
-
-    QAction* train = ui_widget.training->menu()->addAction ("Train classifier");
-    connect(train,  SIGNAL(triggered()), this,
+    action_train = ui_widget.menu->menu()->addAction ("Train classifier");
+    connect(action_train,  SIGNAL(triggered()), this,
             SLOT(on_train_clicked()));
 
-    QAction* reset = ui_widget.training->menu()->addAction ("Reset all training sets");
-    connect(reset,  SIGNAL(triggered()), this,
+    action_reset = ui_widget.menu->menu()->addAction ("Reset all training sets");
+    connect(action_reset,  SIGNAL(triggered()), this,
             SLOT(on_reset_training_sets_clicked()));
 
-    QAction* validate = ui_widget.training->menu()->addAction ("Validate labels of current selection as training sets");
-    connect(validate,  SIGNAL(triggered()), this,
+    action_validate = ui_widget.menu->menu()->addAction ("Validate labels of current selection as training sets");
+    connect(action_validate,  SIGNAL(triggered()), this,
             SLOT(on_validate_selection_clicked()));
 
-    ui_widget.output->setMenu (new QMenu("Output Menu", ui_widget.output));
+    action_save_config = ui_widget.menu->menu()->addAction ("Save classifier's current configuration");
+    action_load_config = ui_widget.menu->menu()->addAction ("Load configuration for classifier");
+    connect(action_save_config,  SIGNAL(triggered()), this,
+            SLOT(on_save_config_button_clicked()));
+    connect(action_load_config,  SIGNAL(triggered()), this,
+            SLOT(on_load_config_button_clicked()));
 
-    QAction* run = ui_widget.output->menu()->addAction ("Run raw classification");
-    connect(run,  SIGNAL(triggered()), this,
+    ui_widget.menu->menu()->addSection ("Algorithms");
+
+    action_run = ui_widget.menu->menu()->addAction ("Classification");
+    connect(action_run,  SIGNAL(triggered()), this,
             SLOT(on_run_button_clicked()));
 
-    QAction* run_smoothed = ui_widget.output->menu()->addAction ("Run classification with local smoothing");
-    connect(run_smoothed,  SIGNAL(triggered()), this,
+    action_run_smoothed = ui_widget.menu->menu()->addAction ("Classification with local smoothing");
+    connect(action_run_smoothed,  SIGNAL(triggered()), this,
             SLOT(on_run_smoothed_button_clicked()));
 
-    QAction* run_graphcut = ui_widget.output->menu()->addAction ("Run classification with Graph Cut");
-    connect(run_graphcut,  SIGNAL(triggered()), this,
+    action_run_graphcut = ui_widget.menu->menu()->addAction ("Classification with Graph Cut");
+    connect(action_run_graphcut,  SIGNAL(triggered()), this,
             SLOT(on_run_graphcut_button_clicked()));
 
-    QAction* generate = ui_widget.output->menu()->addAction ("Generate one item per label");
-    connect(generate,  SIGNAL(triggered()), this,
+    ui_widget.menu->menu()->addSection ("Output");
+
+    action_generate = ui_widget.menu->menu()->addAction ("Generate one item per label");
+    connect(action_generate,  SIGNAL(triggered()), this,
             SLOT(on_generate_items_button_clicked()));
+
+    ui_widget.menu->menu()->addSeparator();
+
+    QAction* close = ui_widget.menu->menu()->addAction ("Close");
+    connect(close,  SIGNAL(triggered()), this,
+            SLOT(ask_for_closing()));
 
     connect(ui_widget.display,  SIGNAL(currentIndexChanged(int)), this,
             SLOT(on_display_button_clicked(int)));
@@ -197,9 +206,6 @@ public:
             SLOT(on_selected_feature_changed(int)));
     connect(ui_widget.feature_weight,  SIGNAL(valueChanged(int)), this,
             SLOT(on_feature_weight_changed(int)));
-
-    connect(dock_widget,  SIGNAL(visibilityChanged(bool)), this,
-            SLOT(close_classification(bool)));
 
     QObject* scene_obj = dynamic_cast<QObject*>(scene_interface);
     if(scene_obj)
@@ -214,7 +220,7 @@ public:
   virtual void closure()
   {
     dock_widget->hide();
-    close_classification(false);
+    close_classification();
   }
 
 
@@ -239,11 +245,21 @@ public Q_SLOTS:
   }
 
 
-  void close_classification(bool show)
+  void ask_for_closing()
   {
-    if (show)
-      return;
-    
+    QMessageBox oknotok;
+    oknotok.setWindowTitle("Closing classification");
+    oknotok.setText("All computed data structures will be discarded.\nColored display will be reinitialized.\nLabels and training information will remain in the classified items.\n\nAre you sure you want to close?");
+    oknotok.setStandardButtons(QMessageBox::Yes);
+    oknotok.addButton(QMessageBox::No);
+    oknotok.setDefaultButton(QMessageBox::Yes);
+
+    if (oknotok.exec() == QMessageBox::Yes)
+      close_classification();
+  }
+  
+  void close_classification()
+  {
     for (Item_map::iterator it = item_map.begin(); it != item_map.end(); ++ it)
       {
         Item_classification_base* classif = it->second;
@@ -251,6 +267,7 @@ public Q_SLOTS:
         delete classif;
       }
     item_map.clear();
+    dock_widget->hide();
   }
 
   void item_changed (Scene_item* item)
@@ -267,9 +284,7 @@ public Q_SLOTS:
 
   void disable_everything ()
   {
-    ui_widget.features->setEnabled(false);
-    ui_widget.training->setEnabled(false);
-    ui_widget.output->setEnabled(false);
+    ui_widget.menu->setEnabled(false);
     ui_widget.display->setEnabled(false);
     ui_widget.classifier->setEnabled(false);
     ui_widget.tabWidget->setEnabled(false);
@@ -277,16 +292,31 @@ public Q_SLOTS:
 
   void enable_computation()
   {
-    ui_widget.features->setEnabled(true);
+    ui_widget.menu->setEnabled(true);
+    action_train->setEnabled(false);
+    action_reset->setEnabled(false);
+    action_validate->setEnabled(false);
+    action_save_config->setEnabled(false);
+    action_load_config->setEnabled(false);
+    action_run->setEnabled(false);
+    action_run_smoothed->setEnabled(false);
+    action_run_graphcut->setEnabled(false);
+    action_generate->setEnabled(false);
     ui_widget.display->setEnabled(true);
     ui_widget.classifier->setEnabled(true);
   }
 
   void enable_classif()
   {
-    ui_widget.features->setEnabled(true);
-    ui_widget.training->setEnabled(true);
-    ui_widget.output->setEnabled(true);
+    action_train->setEnabled(true);
+    action_reset->setEnabled(true);
+    action_validate->setEnabled(true);
+    action_save_config->setEnabled(true);
+    action_load_config->setEnabled(true);
+    action_run->setEnabled(true);
+    action_run_smoothed->setEnabled(true);
+    action_run_graphcut->setEnabled(true);
+    action_generate->setEnabled(true);
     ui_widget.tabWidget->setEnabled(true);
   }
 
@@ -1009,7 +1039,17 @@ private:
   QAction* actionClassification;
 
   QDockWidget* dock_widget;
+  QAction* action_train;
+  QAction* action_reset;
+  QAction* action_validate;
+  QAction* action_save_config;
+  QAction* action_load_config;
+  QAction* action_run;
+  QAction* action_run_smoothed;
+  QAction* action_run_graphcut;
+  QAction* action_generate;
 
+  
   std::vector<LabelButton> label_buttons;
   QPushButton* new_label_button;
   
