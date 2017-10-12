@@ -10,6 +10,7 @@
 #include <QApplication>
 #include <QtPlugin>
 #include "Scene_polyhedron_item.h"
+#include "Scene_surface_mesh_item.h"
 #include "Scene_polygon_soup_item.h"
 #include <QInputDialog>
 #include <QStringList>
@@ -28,7 +29,7 @@
 #include <CGAL/Surface_mesh_default_criteria_3.h>
 
 #include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
-#include <CGAL/IO/Complex_2_in_triangulation_3_polyhedron_builder.h>
+#include <CGAL/IO/facets_in_complex_2_to_triangle_mesh.h>
 #include <CGAL/Implicit_surface_3.h>
 
 namespace CGAL{
@@ -73,9 +74,21 @@ private:
 
 } //end of CGAL namespace
 
+
+Scene_polyhedron_item* make_item(Polyhedron* poly)
+{
+  return new Scene_polyhedron_item(poly);
+}
+
+Scene_surface_mesh_item* make_item(SMesh* sm)
+{
+  return new Scene_surface_mesh_item(sm);
+}
+
 // declare the CGAL function
+template<class Mesh>
 CGAL::Three::Scene_item* cgal_off_meshing(QWidget*,
-                                          Polyhedron* tm_ptr,
+                                          Mesh* tm_ptr,
                                           const double offset_value,
                                           const double angle,
                                           const double sizing,
@@ -83,7 +96,7 @@ CGAL::Three::Scene_item* cgal_off_meshing(QWidget*,
                                           int tag)
 {
   typedef Tr::Geom_traits GT;
-  typedef CGAL::Offset_function<Polyhedron, GT> Offset_function;
+  typedef CGAL::Offset_function<Mesh, GT> Offset_function;
   typedef CGAL::Implicit_surface_3<GT, Offset_function> Surface_3;
   typedef GT::Sphere_3 Sphere_3;
 
@@ -131,10 +144,9 @@ CGAL::Three::Scene_item* cgal_off_meshing(QWidget*,
   if(c2t3.triangulation().number_of_vertices() > 0)
   {
     // add remesh as new polyhedron
-    Polyhedron *pRemesh = new Polyhedron;
-    CGAL::Complex_2_in_triangulation_3_polyhedron_builder<C2t3, Polyhedron> builder(c2t3);
-    pRemesh->delegate(builder);
-    if(c2t3.number_of_facets() != pRemesh->size_of_facets())
+    Mesh *pRemesh = new Mesh;
+    CGAL::facets_in_complex_2_to_triangle_mesh<C2t3, Mesh>(c2t3, *pRemesh);
+    if(c2t3.number_of_facets() != num_faces(*pRemesh))
     {
       delete pRemesh;
       std::stringstream temp_file;
@@ -152,7 +164,7 @@ CGAL::Three::Scene_item* cgal_off_meshing(QWidget*,
       else
         return soup;
     } else {
-      return new Scene_polyhedron_item(pRemesh);
+      return make_item(pRemesh);
     }
   }
   else
@@ -181,7 +193,9 @@ public:
   }
 
   bool applicable(QAction*) const {
-    return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex()));
+    Scene_item* item = scene->item(scene->mainSelectionIndex());
+    return qobject_cast<Scene_polyhedron_item*>(item) ||
+        qobject_cast<Scene_surface_mesh_item*>(item);
   }
 
   QList<QAction*> actions() const {
@@ -199,88 +213,112 @@ private:
 void Polyhedron_demo_offset_meshing_plugin::offset_meshing()
 {
   const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
+  Scene_item* item = scene->item(index);
 
-  Scene_polyhedron_item* item =
-    qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+  Scene_polyhedron_item* poly_item =
+      qobject_cast<Scene_polyhedron_item*>(item);
+  Scene_surface_mesh_item* sm_item =
+      qobject_cast<Scene_surface_mesh_item*>(item);
 
-  if(item)
+  Polyhedron* pMesh = NULL;
+  SMesh* sMesh = NULL;
+  if(poly_item)
   {
-    Polyhedron* pMesh = item->polyhedron();
+    pMesh = poly_item->polyhedron();
 
-    if(!pMesh) return;
-
-    double diag = scene->len_diagonal();
-    double offset_value = QInputDialog::getDouble(mw,
-                                             QString("Choose Offset Value"),
-                                             QString("Offset Value (use negative number for inset)"),
-                                             0.1*diag,
-                                             -(std::numeric_limits<double>::max)(),
-                                             (std::numeric_limits<double>::max)(), 10);
-
-    QDialog dialog(mw);
-    Ui::Remeshing_dialog ui;
-    ui.setupUi(&dialog);
-    connect(ui.buttonBox, SIGNAL(accepted()),
-            &dialog, SLOT(accept()));
-    connect(ui.buttonBox, SIGNAL(rejected()),
-            &dialog, SLOT(reject()));
-
-    ui.sizing->setDecimals(4);
-    ui.sizing->setRange(diag * 10e-6, // min
-                       diag); // max
-    ui.sizing->setValue(diag * 0.05); // default value
-
-    ui.approx->setDecimals(6);
-    ui.approx->setRange(diag * 10e-7, // min
-                       diag); // max
-    ui.approx->setValue(diag * 0.005);
-
-
-    int i = dialog.exec();
-    if(i == QDialog::Rejected)
+    if(!pMesh)
       return;
-
-    const double angle = ui.angle->value();
-    const double approx = ui.approx->value();
-    const double sizing = ui.sizing->value();
-    const int tag_index = ui.tags->currentIndex();
-
-    if(tag_index < 0) return;
-
-    QApplication::setOverrideCursor(Qt::WaitCursor);
-
-    std::cerr << "mesh with:"
-              << "\n  angle=" << angle
-              << "\n  sizing=" << sizing
-              << "\n  approx=" << approx
-              << "\n  tag=" << tag_index
-              << std::boolalpha
-              << std::endl;
-    CGAL::Three::Scene_item* new_item = cgal_off_meshing(mw,
-                                            pMesh,
-                                            offset_value,
-                                            angle,
-                                            sizing,
-                                            approx,
-                                            tag_index);
-
-    if(new_item)
-    {
-      new_item->setName(tr("%1 offset %5 (%2 %3 %4)")
-                         .arg(item->name())
-                         .arg(angle)
-                         .arg(sizing)
-                         .arg(approx)
-                         .arg(offset_value));
-      new_item->setColor(Qt::magenta);
-      new_item->setRenderingMode(item->renderingMode());
-      item->setVisible(false);
-      scene->itemChanged(index);
-      scene->addItem(new_item);
-    }
-
-    QApplication::restoreOverrideCursor();
   }
+  else if(sm_item)
+  {
+    sMesh = sm_item->face_graph();
+    if(!sMesh)
+      return;
+  }
+  else
+    return;
+
+  double diag = scene->len_diagonal();
+  double offset_value = QInputDialog::getDouble(mw,
+                                                QString("Choose Offset Value"),
+                                                QString("Offset Value (use negative number for inset)"),
+                                                0.1*diag,
+                                                -(std::numeric_limits<double>::max)(),
+                                                (std::numeric_limits<double>::max)(), 10);
+
+  QDialog dialog(mw);
+  Ui::Remeshing_dialog ui;
+  ui.setupUi(&dialog);
+  connect(ui.buttonBox, SIGNAL(accepted()),
+          &dialog, SLOT(accept()));
+  connect(ui.buttonBox, SIGNAL(rejected()),
+          &dialog, SLOT(reject()));
+
+  ui.sizing->setDecimals(4);
+  ui.sizing->setRange(diag * 10e-6, // min
+                      diag); // max
+  ui.sizing->setValue(diag * 0.05); // default value
+
+  ui.approx->setDecimals(6);
+  ui.approx->setRange(diag * 10e-7, // min
+                      diag); // max
+  ui.approx->setValue(diag * 0.005);
+
+
+  int i = dialog.exec();
+  if(i == QDialog::Rejected)
+    return;
+
+  const double angle = ui.angle->value();
+  const double approx = ui.approx->value();
+  const double sizing = ui.sizing->value();
+  const int tag_index = ui.tags->currentIndex();
+
+  if(tag_index < 0) return;
+
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+
+  std::cerr << "mesh with:"
+            << "\n  angle=" << angle
+            << "\n  sizing=" << sizing
+            << "\n  approx=" << approx
+            << "\n  tag=" << tag_index
+            << std::boolalpha
+            << std::endl;
+  CGAL::Three::Scene_item* new_item;
+  if(pMesh)
+    new_item = cgal_off_meshing(mw,
+                                pMesh,
+                                offset_value,
+                                angle,
+                                sizing,
+                                approx,
+                                tag_index);
+  else
+    new_item = cgal_off_meshing(mw,
+                                sMesh,
+                                offset_value,
+                                angle,
+                                sizing,
+                                approx,
+                                tag_index);
+
+  if(new_item)
+  {
+    new_item->setName(tr("%1 offset %5 (%2 %3 %4)")
+                      .arg(item->name())
+                      .arg(angle)
+                      .arg(sizing)
+                      .arg(approx)
+                      .arg(offset_value));
+    new_item->setColor(Qt::magenta);
+    new_item->setRenderingMode(item->renderingMode());
+    item->setVisible(false);
+    scene->itemChanged(index);
+    scene->addItem(new_item);
+  }
+
+  QApplication::restoreOverrideCursor();
 }
 
 #include "Offset_meshing_plugin.moc"
