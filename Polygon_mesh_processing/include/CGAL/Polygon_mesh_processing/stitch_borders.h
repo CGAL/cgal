@@ -287,7 +287,6 @@ void stitch_borders_impl(PM& pmesh,
 {
   typedef typename boost::graph_traits<PM>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
-  typedef typename boost::graph_traits<PM>::edge_descriptor edge_descriptor;
   typedef typename std::pair<halfedge_descriptor, halfedge_descriptor> halfedges_pair;
 
   // The first step of the algorithm is to filter halfedges to be stitched so that
@@ -298,7 +297,6 @@ void stitch_borders_impl(PM& pmesh,
   Uf_vertices uf_vertices;
   typedef boost::unordered_map<vertex_descriptor, typename Uf_vertices::handle> Uf_handles;
   Uf_handles uf_handles;
-  boost::unordered_set<edge_descriptor> to_stitch_edge_set;
 
   BOOST_FOREACH(const halfedges_pair hk, to_stitch)
   {
@@ -314,9 +312,6 @@ void stitch_borders_impl(PM& pmesh,
     vertex_descriptor src2 = source(h2, pmesh), tgt2 = target(h2, pmesh);
     uf_join_vertices(tgt1, src2, uf_vertices, uf_handles);
     uf_join_vertices(src1, tgt2, uf_vertices, uf_handles);
-
-    to_stitch_edge_set.insert(edge(h1, pmesh));
-    to_stitch_edge_set.insert(edge(h2, pmesh));
   }
 
   // detect vertices that cannot be stitched because it would produce a non-manifold edge
@@ -341,9 +336,6 @@ void stitch_borders_impl(PM& pmesh,
       if (it_res!=uf_handles.end()) // if the other vertex is also involved in a merge
       {
         if (other_vd < vd) continue; // avoid reporting twice the same edge
-        if ( is_border_edge(hd, pmesh) &&
-            to_stitch_edge_set.count(edge(hd, pmesh))==1 ) // skip edges to be stitched
-          continue;
         typename Uf_vertices::handle src_handle=uf_vertices.find(it_res->second);
         halfedges_after_stitching[make_sorted_pair(*tgt_handle, *src_handle)].push_back(hd);
       }
@@ -359,38 +351,27 @@ void stitch_borders_impl(PM& pmesh,
                                                     it_end=halfedges_after_stitching.end();
                                                     it!=it_end; ++it)
   {
-    if (it->second.size() > 1)
+    switch (it->second.size())
     {
-      // this is a bit extreme as maybe some could be stitched
-      // (but safer because the master could be one of them)
-      BOOST_FOREACH(halfedge_descriptor hd, it->second)
+      case 1:
+       break; // nothing to do
+      case 2:
       {
-        unstitchable_vertices.insert(source(hd, pmesh));
-        unstitchable_vertices.insert(target(hd, pmesh));
+        if (is_border_edge(it->second.front(), pmesh) &&
+            is_border_edge(it->second.back(), pmesh))
+          break; // these are edges that are most possibly scheduled for stitching or will create a two halfedge loop
+        CGAL_FALLTHROUGH;
       }
-    }
-  }
-
-  // look for edges that are not scheduled for stitching but that will be identical
-  // to stitched edges (we have this additional loop since edges to be stitched are skipped)
-  BOOST_FOREACH(const halfedges_pair hk, to_stitch)
-  {
-    vertex_descriptor v1 = *uf_vertices.find( uf_handles[source(hk.first, pmesh)] );
-    vertex_descriptor v2 = *uf_vertices.find( uf_handles[target(hk.first, pmesh)] );
-
-    typename Halfedges_after_stitching::iterator it_res =
-      halfedges_after_stitching.find(make_sorted_pair(v1,v2));
-    if (it_res != halfedges_after_stitching.end() )
-    {
-      BOOST_FOREACH(halfedge_descriptor hd, it_res->second)
+      default:
       {
-        unstitchable_vertices.insert(source(hd, pmesh));
-        unstitchable_vertices.insert(target(hd, pmesh));
+        // this is a bit extreme as maybe some could be stitched
+        // (but safer because the master could be one of them)
+        BOOST_FOREACH(halfedge_descriptor hd, it->second)
+        {
+          unstitchable_vertices.insert(source(hd, pmesh));
+          unstitchable_vertices.insert(target(hd, pmesh));
+        }
       }
-      unstitchable_vertices.insert( source(hk.first, pmesh) );
-      unstitchable_vertices.insert( target(hk.first, pmesh) );
-      unstitchable_vertices.insert( source(hk.second, pmesh) );
-      unstitchable_vertices.insert( target(hk.second, pmesh) );
     }
   }
 
