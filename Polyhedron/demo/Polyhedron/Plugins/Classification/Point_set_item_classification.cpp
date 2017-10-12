@@ -99,7 +99,6 @@ Point_set_item_classification::~Point_set_item_classification()
   if (m_points != NULL)
     {
       reset_colors();
-      m_points->point_set()->remove_property_map(m_training);
       erase_item();
     }
 }
