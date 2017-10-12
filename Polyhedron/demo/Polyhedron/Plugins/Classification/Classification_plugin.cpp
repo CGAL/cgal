@@ -863,9 +863,9 @@ public Q_SLOTS:
       delete label_buttons[position].effect;
 
       if (label_buttons.size() > 1)
-        for (int i = position + 1; i < label_buttons.size(); ++ i)
+        for (int i = position + 1; i < static_cast<int>(label_buttons.size()); ++ i)
         {
-          int position = static_cast<int>(i - 1);
+          int position = i - 1;
           int x = position / 3;
           int y = position % 3;
           
