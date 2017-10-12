@@ -601,56 +601,6 @@ void Point_set_item_classification::add_remaining_point_set_properties_as_featur
   }
 }
 
-void Point_set_item_classification::select_random_region()
-{
-  m_points->point_set()->reset_indices();
-  
-  std::size_t scale = (rand() % m_generator->number_of_scales());
-
-  bool use_grid = (rand() % 2);
-
-  std::vector<std::size_t> selected;
-  
-  if (use_grid)
-  {
-    std::size_t x = (rand() % m_generator->grid(scale).width());
-    std::size_t y = (rand() % m_generator->grid(scale).height());
-    std::copy (m_generator->grid(scale).indices_begin(x,y),
-               m_generator->grid(scale).indices_end(x,y),
-               std::back_inserter (selected));
-  }
-  else
-  {
-    m_generator->neighborhood(0).sphere_neighbor_query (m_generator->radius_neighbors(scale))
-      (*(m_points->point_set()->points().begin() + (rand() % m_points->point_set()->size())),
-       std::back_inserter (selected));
-  }
-
-  if (selected.empty())
-    return;
-
-  std::sort (selected.begin(), selected.end());
-  std::size_t current_idx = 0;
-
-  std::vector<std::size_t> unselected;
-
-  for (Point_set::const_iterator it = m_points->point_set()->begin();
-       it != m_points->point_set()->end(); ++ it)
-    if (std::size_t(*it) == selected[current_idx])
-      current_idx ++;
-    else
-      unselected.push_back (*it);
-  
-  for (std::size_t i = 0; i < unselected.size(); ++ i)
-    *(m_points->point_set()->begin() + i) = unselected[i];
-  for (std::size_t i = 0; i < selected.size(); ++ i)
-    *(m_points->point_set()->begin() + (unselected.size() + i)) = selected[i];
-
-  m_points->point_set()->set_first_selected
-    (m_points->point_set()->begin() + unselected.size());
-
-}
-
 void Point_set_item_classification::train(int classifier, unsigned int nb_trials)
 {
   if (m_features.size() == 0)
