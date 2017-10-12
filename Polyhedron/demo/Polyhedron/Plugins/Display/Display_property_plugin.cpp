@@ -6,6 +6,7 @@
 #include <QInputDialog>
 #include <QColorDialog>
 #include <QPalette>
+#include <QColor>
 #include "Messages_interface.h"
 #include "Scene_surface_mesh_item.h"
 #include "Color_ramp.h"
@@ -85,11 +86,11 @@ public:
     dock_widget = new DockWidget("Property Displaying", mw);
     dock_widget->setVisible(false);
     addDockWidget(dock_widget);
-    QPalette palette(QColor(Qt::red));
+    QPalette palette(Qt::red);
     dock_widget->minColorButton->setPalette(palette);
     dock_widget->minColorButton->update();
 
-    palette = QPalette(QColor(Qt::green));
+    palette = QPalette(Qt::green);
     dock_widget->maxColorButton->setPalette(palette);
     dock_widget->maxColorButton->update();
     connect(dock_widget->colorizeButton, SIGNAL(clicked(bool)),
