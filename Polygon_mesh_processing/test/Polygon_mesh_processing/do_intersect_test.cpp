@@ -64,7 +64,6 @@ struct Intersect_facets
   mutable bool            m_intersected;
   mutable boost::function_output_iterator<Output_iterator_with_bool> m_iterator_wrapper;
 
-  typename Kernel::Construct_segment_3  segment_functor;
   typename Kernel::Construct_triangle_3 triangle_functor;
   typename Kernel::Do_intersect_3       do_intersect_3_functor;
 
@@ -83,7 +82,6 @@ struct Intersect_facets
       m_iterator(it),
       m_intersected(false),
       m_iterator_wrapper(Output_iterator_with_bool(&m_iterator, &m_intersected)),
-      segment_functor(kernel.construct_segment_3_object()),
       triangle_functor(kernel.construct_triangle_3_object()),
       do_intersect_3_functor(kernel.do_intersect_3_object())
   { }
@@ -113,7 +111,7 @@ template<class TM,
          class Box,
          class OutputIterator,
          class VertexPointMap>
-struct Intersect_face_polyline
+struct Intersect_facet_polyline
 {
   // wrapper to check whether anything is inserted to output iterator
   struct Output_iterator_with_bool
@@ -158,12 +156,12 @@ struct Intersect_face_polyline
 
 
 
-  Intersect_face_polyline(const TM& mesh,
-                          const std::vector<face_descriptor>& faces,
-                          const std::vector<Point>& polyline,
-                          OutputIterator it,
-                          VertexPointMap vpmap,
-                          const Kernel& kernel)
+  Intersect_facet_polyline(const TM& mesh,
+                           const std::vector<face_descriptor>& faces,
+                           const std::vector<Point>& polyline,
+                           OutputIterator it,
+                           VertexPointMap vpmap,
+                           const Kernel& kernel)
     :
       m_tmesh(mesh),
       faces(faces),
@@ -192,7 +190,76 @@ struct Intersect_face_polyline
       *m_iterator_wrapper++ = std::make_pair(b->info(), c->info());
     }
   } // end operator ()
-}; // end struct Intersect_face_polyline
+}; // end struct Intersect_facet_polyline
+
+template<class Polyline,
+         class Kernel,
+         class Box,
+         class OutputIterator>
+struct Intersect_polylines
+{
+  // wrapper to check whether anything is inserted to output iterator
+  struct Output_iterator_with_bool
+  {
+    Output_iterator_with_bool(OutputIterator* out, bool* intersected)
+      : m_iterator(out), m_intersected(intersected) { }
+
+    template<class T>
+    void operator()(const T& t) {
+      *m_intersected = true;
+      *(*m_iterator)++ = t;
+    }
+
+    OutputIterator* m_iterator;
+    bool* m_intersected;
+  };
+
+
+  // typedefs
+  typedef typename Kernel::Segment_3    Segment;
+  typedef typename Kernel::Point_3 Point;
+
+
+  // members
+  const std::vector<Point>& polyline1;
+  const std::vector<Point>& polyline2;
+  mutable OutputIterator  m_iterator;
+  mutable bool            m_intersected;
+  mutable boost::function_output_iterator<Output_iterator_with_bool> m_iterator_wrapper;
+
+  typename Kernel::Construct_segment_3  segment_functor;
+  typename Kernel::Do_intersect_3       do_intersect_3_functor;
+
+
+
+
+  Intersect_polylines(const Polyline& polyline1,
+                      const Polyline& polyline2,
+                      OutputIterator it,
+                      const Kernel& kernel)
+    :
+      polyline1(polyline1),
+      polyline2(polyline2),
+      m_iterator(it),
+      m_intersected(false),
+      m_iterator_wrapper(Output_iterator_with_bool(&m_iterator, &m_intersected)),
+      segment_functor(kernel.construct_segment_3_object()),
+      do_intersect_3_functor(kernel.do_intersect_3_object())
+  { }
+
+  void operator()(const Box* b, const Box* c) const
+  {
+
+
+    // check for geometric intersection
+
+    Segment s1 = segment_functor(polyline1[b->info()], polyline1[b->info() + 1]);
+    Segment s2 = segment_functor(polyline2[c->info()], polyline2[c->info() + 1]);
+    if(do_intersect_3_functor(s1, s2)){
+      *m_iterator_wrapper++ = std::make_pair(b->info(), c->info());
+    }
+  } // end operator ()
+}; // end struct Intersect_polylines
 
 struct Throw_at_output {
   class Throw_at_output_exception: public std::exception
@@ -317,9 +384,7 @@ intersections( const FaceRange& face_range,
   typedef typename boost::property_traits<VertexPointMap>::value_type Point;
 
   std::vector<face_descriptor> faces;
-  std::vector<Point> points;
   faces.reserve(std::distance( boost::begin(face_range), boost::end(face_range) ));
-  points.reserve(std::distance( boost::begin(polyline), boost::end(polyline)) );
 
   typedef typename CGAL::Box_intersection_d::Box_with_info_d<double, 3, std::size_t> Box;
 
@@ -344,14 +409,10 @@ intersections( const FaceRange& face_range,
                           faces.size()-1));
   }
 
-  BOOST_FOREACH(Point p, polyline)
+  for(std::size_t i =0; i< polyline.size()-1; ++i)
   {
-    points.push_back(p);
-  }
-  for(std::size_t i =0; i< points.size()-1; i+=2)
-  {
-    Point p1 = points[i];
-    Point p2 = points[i+1];
+    Point p1 = polyline[i];
+    Point p2 = polyline[i+1];
     boxes2.push_back(Box(p1.bbox() + p2.bbox(), i));
   }
 
@@ -369,24 +430,92 @@ intersections( const FaceRange& face_range,
   // compute intersections filtered out by boxes
   typedef typename GetGeomTraits<TM, NamedParameters>::type GeomTraits;
 
-  CGAL::internal::Intersect_face_polyline<TM,
+  CGAL::internal::Intersect_facet_polyline<TM,
       GeomTraits,
       Box,
       OutputIterator,
       VertexPointMap>
-      intersect_face_polyline(mesh,
-                              faces,
-                              points,
-                              out,
-                              vpmap,
-                              GeomTraits());
+      intersect_facet_polyline(mesh,
+                               faces,
+                               polyline,
+                               out,
+                               vpmap,
+                               GeomTraits());
 
   std::ptrdiff_t cutoff = 2000;
   CGAL::box_intersection_d(box1_ptr.begin(), box1_ptr.end(),
                            box2_ptr.begin(), box2_ptr.end(),
-                           intersect_face_polyline, cutoff);
-  return intersect_face_polyline.m_iterator;
+                           intersect_facet_polyline, cutoff);
+  return intersect_facet_polyline.m_iterator;
 }
+
+
+template < class Polyline
+           , class OutputIterator
+           , class Kernel
+           >
+OutputIterator
+intersections( const Polyline& polyline1,
+               const Polyline& polyline2,
+               OutputIterator out,
+               const Kernel& )
+{
+  typedef typename CGAL::Box_intersection_d::Box_with_info_d<double, 3, std::size_t> Box;
+  typedef typename Kernel::Point_3 Point;
+  // make one box per facet
+  std::vector<Box> boxes1;
+  std::vector<Box> boxes2;
+  boxes1.reserve(
+        std::distance( boost::begin(polyline1), boost::end(polyline1) ) - 1
+        );
+
+  boxes2.reserve(
+        std::distance( boost::begin(polyline2), boost::end(polyline2) ) - 1
+        );
+
+  for(std::size_t i =0; i< polyline1.size()-1; ++i)
+  {
+    Point p1 = polyline1[i];
+    Point p2 = polyline1[i+1];
+    boxes1.push_back(Box(p1.bbox() + p2.bbox(), i));
+  }
+
+  for(std::size_t i =0; i< polyline2.size()-1; ++i)
+  {
+    Point p1 = polyline2[i];
+    Point p2 = polyline2[i+1];
+    boxes2.push_back(Box(p1.bbox() + p2.bbox(), i));
+  }
+
+  // generate box pointers
+  std::vector<const Box*> box1_ptr;
+  std::vector<const Box*> box2_ptr;
+  box1_ptr.reserve(boxes1.size());
+  box2_ptr.reserve(boxes2.size());
+
+  BOOST_FOREACH(Box& b, boxes1)
+      box1_ptr.push_back(&b);
+  BOOST_FOREACH(Box& b, boxes2)
+      box2_ptr.push_back(&b);
+
+  // compute intersections filtered out by boxes
+
+  CGAL::internal::Intersect_polylines<Polyline,
+      Kernel,
+      Box,
+      OutputIterator>
+      intersect_polylines(polyline1,
+                          polyline2,
+                          out,
+                          Kernel());
+
+  std::ptrdiff_t cutoff = 2000;
+  CGAL::box_intersection_d(box1_ptr.begin(), box1_ptr.end(),
+                           box2_ptr.begin(), box2_ptr.end(),
+                           intersect_polylines, cutoff);
+  return intersect_polylines.m_iterator;
+}
+
 
 template <class TriangleMesh
           , class OutputIterator
@@ -462,6 +591,24 @@ bool do_intersect(const TriangleMesh& mesh
   return false;
 }
 
+template < class Polyline
+           , class Kernel
+           >
+bool do_intersect( const Polyline& polyline1
+                  , const Polyline& polyline2,
+                   const Kernel&)
+{
+  try
+  {
+    typedef boost::function_output_iterator<CGAL::internal::Throw_at_output> OutputIterator;
+    intersections(polyline1,polyline2, OutputIterator(), Kernel());
+  }
+  catch( CGAL::internal::Throw_at_output::Throw_at_output_exception& )
+  { return true; }
+
+  return false;
+}
+
 }//end PMP
 } //end CGAL
 
@@ -482,6 +629,26 @@ bool do_intersect(const TriangleMesh& mesh
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel     Epic;
 typedef CGAL::Exact_predicates_exact_constructions_kernel       Epec;
+
+template<class Point>
+int load_polyline(std::ifstream& input,
+                   std::vector<Point>& points)
+{
+  std::size_t n;
+  input >> n;
+  points.reserve(n);
+  while(n--){
+    Point p;
+    input >> p;
+    points.push_back(p);
+    if(!input.good())
+    {
+      std::cerr << "Error: cannot read file: " << std::endl;
+      return 1;
+    }
+  }
+  return 0;
+}
 
 template <typename K>
 int
@@ -563,20 +730,8 @@ test_faces_polyline_intersections(const char* filename1,
     return 1;
   }
   std::vector<Point> points;
-  std::size_t n;
-  input2 >> n;
-  points.reserve(n);
-  while(n--){
-    Point p;
-    input2 >> p;
-    points.push_back(p);
-    if(!input2.good())
-    {
-      std::cerr << "Error: cannot read file: " << filename2 << std::endl;
-      return 1 ;
-    }
-  }
-
+  if(load_polyline(input2, points) >0)
+    return 1;
 
   std::cout << "Reading files: " << filename1 <<", "<< filename2 << std::endl;
 
@@ -589,7 +744,7 @@ test_faces_polyline_intersections(const char* filename1,
         std::back_inserter(intersected_tris),
         CGAL::Polygon_mesh_processing::parameters::all_default());
 
-      bool intersecting_1 = !intersected_tris.empty();
+  bool intersecting_1 = !intersected_tris.empty();
 
   std::cout << "intersections test took " << timer.time() << " sec." << std::endl;
   std::cout << intersected_tris.size() << " intersections." << std::endl;
@@ -609,6 +764,70 @@ test_faces_polyline_intersections(const char* filename1,
 
   return 0;
 }
+
+template <typename K>
+int
+test_polylines_intersections(const char* filename1,
+                                  const char* filename2,
+                                  const bool expected)
+{
+  typedef typename K::Point_3                                    Point;
+  typedef typename CGAL::Surface_mesh<Point>                     Mesh;
+  typedef typename boost::graph_traits<Mesh>::face_descriptor    face_descriptor;
+
+  std::ifstream input1(filename1);
+  std::ifstream input2(filename2);
+
+  if ( !input1 ) {
+    std::cerr << "Error: cannot read file: " << filename1 << std::endl;
+    return 1;
+  }
+
+  if ( !input2 ) {
+    std::cerr << "Error: cannot read file: " << filename2 << std::endl;
+    return 1;
+  }
+
+  std::vector<Point> points1;
+  if(load_polyline(input1, points1)>0)
+    return 1;
+  std::vector<Point> points2;
+  if(load_polyline(input2, points2)>0)
+    return 1;
+
+
+  std::cout << "Reading files: " << filename1 <<", "<< filename2 << std::endl;
+
+  CGAL::Timer timer;
+  timer.start();
+
+  std::vector<std::pair<std::size_t, std::size_t> > intersected_polys;
+  CGAL::Polygon_mesh_processing::intersections(
+        points1, points2,
+        std::back_inserter(intersected_polys),
+        K());
+
+  bool intersecting_1 = !intersected_polys.empty();
+
+  std::cout << "intersections test took " << timer.time() << " sec." << std::endl;
+  std::cout << intersected_polys.size() << " intersections." << std::endl;
+
+  timer.reset();
+  bool intersecting_2 = CGAL::Polygon_mesh_processing::do_intersect(points1, points2,
+                                                                    K());
+
+  std::cout << "does_intersect test took " << timer.time() << " sec." << std::endl;
+  std::cout << (intersecting_2 ? "There are intersections." :
+                                 "There are no intersections.") << std::endl;
+
+  assert(intersecting_1 == intersecting_2);
+  assert(intersecting_1 == expected);
+
+  std::cout << filename1 << "and " <<filename2  << " passed the tests." << std::endl << std::endl;
+
+  return 0;
+}
+
 int main()
 {
 
@@ -617,6 +836,7 @@ int main()
   const char* filename1 =  "data/tetra1.off";
   const char* filename2 =  "data/tetra2.off";
   const char* filename3 =  "data/triangle.polylines.txt";
+  const char* filename4 =  "data/planar.polylines.txt";
 
 
   std::cout << "First test (Epic):" << std::endl;
@@ -626,6 +846,8 @@ int main()
   r += test_faces_intersections<Epec>(filename1, filename2, expected);
   std::cout << "Third test (Polyline):" << std::endl;
   r += test_faces_polyline_intersections<Epic>(filename1, filename3, expected);
+  std::cout << "Fourth test (Polylines):" << std::endl;
+  r += test_polylines_intersections<Epic>(filename3, filename4, expected);
 
   return r;
 }
