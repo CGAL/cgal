@@ -2061,7 +2061,6 @@ void MainWindow::exportStatistics()
         {
           str.append(QString("    %1: ").arg(data.titles.at(title)));
           str.append(QString("%1\n").arg(sit->computeStats(title)));
-          title++;
         }
       }
     }
