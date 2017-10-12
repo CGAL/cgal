@@ -459,12 +459,12 @@ public Q_SLOTS:
       filename = QFileDialog::getSaveFileName(mw,
                                               tr("Save classification configuration"),
                                               tr("%1 (CGAL classif config).xml").arg(classif->item()->name()),
-                                              "CGAL classification configuration (*.xml);");
+                                              "CGAL classification configuration (*.xml);;");
     else if (ui_widget.classifier->currentIndex() == 1)
       filename = QFileDialog::getSaveFileName(mw,
                                               tr("Save classification configuration"),
                                               tr("%1 (ETHZ random forest config).gz").arg(classif->item()->name()),
-                                              "Compressed ETHZ random forest configuration (*.gz);");
+                                              "Compressed ETHZ random forest configuration (*.gz);;");
 #ifdef CGAL_LINKED_WITH_OPENCV
     else if (ui_widget.classifier->currentIndex() == 2)
       filename = QFileDialog::getSaveFileName(mw,
@@ -473,7 +473,7 @@ public Q_SLOTS:
                                               .arg(classif->item()->name())
                                               .arg(CV_MAJOR_VERSION)
                                               .arg(CV_MINOR_VERSION),
-                                              tr("OpenCV %2.%3 random forest configuration (*.xml);")
+                                              tr("OpenCV %2.%3 random forest configuration (*.xml);;")
                                               .arg(CV_MAJOR_VERSION)
                                               .arg(CV_MINOR_VERSION));
 #endif
