@@ -433,9 +433,9 @@ public Q_SLOTS:
         are_edges_constrained.resize(are_edges_removed.size());
         for(std::size_t i=0; i< are_edges_removed.size(); ++i)
         {
-          are_edges_removed[i] = mesh_.is_removed(SMesh::Edge_index(i));
+          are_edges_removed[i] = mesh_.is_removed(SMesh::Edge_index(static_cast<int>(i)));
           if(!are_edges_removed[i])
-            are_edges_constrained[i] = get(selection_item->constrained_edges_pmap(), SMesh::Edge_index(i));
+            are_edges_constrained[i] = get(selection_item->constrained_edges_pmap(), SMesh::Edge_index(static_cast<int>(i)));
         }
 
 
@@ -470,10 +470,6 @@ public Q_SLOTS:
           Scene_polyhedron_selection_item::Is_constrained_map<Scene_polyhedron_selection_item::Selection_set_edge>
               pmap = selection_item->constrained_edges_pmap();
           put(pmap, SMesh::Edge_index(i), are_edges_constrained[i]);
-        }
-#else
-        if(!selection_item->polyhedron_item()->isItemMulticolor())
-        {
         }
 #endif
         selection_item->poly_item_changed();
