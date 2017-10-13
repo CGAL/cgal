@@ -514,8 +514,8 @@ public Q_SLOTS:
         }
         ++index;
       }
-      CGAL::expand_face_selection_for_removal(*selection_item->polyhedron(),
-                                        selection_item->selected_facets,
+      CGAL::expand_face_selection_for_removal(selection_item->selected_facets,
+                                              *selection_item->polyhedron(),
                                         boost::make_assoc_property_map(is_selected_map));
 
       BOOST_FOREACH(fg_face_descriptor fh, faces(*selection_item->polyhedron()))

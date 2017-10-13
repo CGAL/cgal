@@ -410,6 +410,7 @@ user might encounter.
 - `CGAL::expand_vertex_selection()`
 - `CGAL::reduce_vertex_selection()`
 - `CGAL::select_incident_faces()`
+- `CGAL::expand_face_selection_for_removal()`
 
 ## Conversion Functions ##
 - `CGAL::convert_nef_polyhedron_to_polygon_mesh()`
