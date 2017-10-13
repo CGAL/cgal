@@ -172,8 +172,8 @@ struct Intersect_face_polyline
     :
       m_tmesh(mesh),
       faces(faces),
-      polyline(polyline),
       m_vpmap(vpmap),
+      polyline(polyline),
       m_iterator(it),
       m_intersected(false),
       m_iterator_wrapper(Output_iterator_with_bool(&m_iterator, &m_intersected)),
