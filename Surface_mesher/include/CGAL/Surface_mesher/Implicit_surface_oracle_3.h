@@ -104,7 +104,7 @@ namespace CGAL {
   namespace {
     
   template <typename T>
-  struct Return_min : std::binary_function<T, T, T>
+  struct Return_min : CGAL::binary_function<T, T, T>
   {
     T operator()(const T& a, const T& b) const
     {

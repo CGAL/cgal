@@ -87,8 +87,9 @@ Polyhedron_demo_ply_plugin::load(QFileInfo fileinfo) {
       if (keyword == "element")
       {
         std::string type;
-        if (iss >> type)
-          if (type == "face")
+        int nb;
+        if (iss >> type >> nb)
+          if (type == "face" && nb > 0)
           {
             input_is_mesh = true;
             break;

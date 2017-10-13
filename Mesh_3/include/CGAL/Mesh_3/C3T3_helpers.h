@@ -1028,7 +1028,7 @@ private:
    * A functor which returns true if a given handle is in c3t3
    */
   template <typename Handle>
-  class Is_in_c3t3 : public std::unary_function<Handle, bool>
+  class Is_in_c3t3 : public CGAL::unary_function<Handle, bool>
   {
   public:
     Is_in_c3t3(const C3T3& c3t3) : c3t3_(c3t3) { }
@@ -1045,7 +1045,7 @@ private:
    * A functor which answers true if a Cell_handle is a sliver
    */
   template <typename SliverCriterion>
-  struct Is_sliver : public std::unary_function<Cell_handle,bool>
+  struct Is_sliver : public CGAL::unary_function<Cell_handle,bool>
   {
     Is_sliver(const C3T3& c3t3,
               const SliverCriterion& criterion,
@@ -1318,7 +1318,7 @@ private:
    */
   template <typename SliverCriterion>
   class Sliver_criterion_value
-    : public std::unary_function<Cell_handle, double>
+    : public CGAL::unary_function<Cell_handle, double>
   {
   public:
     Sliver_criterion_value(const Tr& tr,

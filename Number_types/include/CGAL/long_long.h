@@ -45,7 +45,7 @@ template<> class Algebraic_structure_traits< long long int >
     typedef INTERN_AST::Mod_per_operator< Type >  Mod;
 
     class Is_square
-      : public std::binary_function< Type, Type&,
+      : public CGAL::binary_function< Type, Type&,
                                 bool > {
       public:
         bool operator()( const Type& x,
@@ -66,7 +66,7 @@ template <> class Real_embeddable_traits< long long int >
   public:
 
     class To_interval
-      : public std::unary_function< Type, std::pair< double, double > > {
+      : public CGAL::unary_function< Type, std::pair< double, double > > {
       public:
         std::pair<double, double> operator()( const Type& x ) const {
           return Interval_nt<true>(x).pair();
@@ -80,7 +80,7 @@ template <> class Real_embeddable_traits< unsigned long long >
   public:
 
     class To_interval
-      : public std::unary_function< Type, std::pair< double, double > > {
+      : public CGAL::unary_function< Type, std::pair< double, double > > {
       public:
         std::pair<double, double> operator()( const Type& x ) const {
           return Interval_nt<true>(x).pair();
@@ -108,7 +108,7 @@ template <> class Real_embeddable_traits< boost::int128_type >
   public:
 
     class To_interval
-      : public std::unary_function< Type, std::pair< double, double > > {
+      : public CGAL::unary_function< Type, std::pair< double, double > > {
       public:
         std::pair<double, double> operator()( const Type& x ) const {
 	  return (Interval_nt<>((double)x)+Interval_nt<>::smallest()).pair();
@@ -122,7 +122,7 @@ template <> class Real_embeddable_traits< boost::uint128_type >
   public:
 
     class To_interval
-      : public std::unary_function< Type, std::pair< double, double > > {
+      : public CGAL::unary_function< Type, std::pair< double, double > > {
       public:
         std::pair<double, double> operator()( const Type& x ) const {
 	  return (Interval_nt<>((double)x)+Interval_nt<>::smallest()).pair();

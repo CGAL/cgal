@@ -60,9 +60,9 @@ struct Polyline_with_context
  */
 template <typename Pwc_>
 struct Extract_bare_polyline :
-  public std::unary_function<Pwc_, const typename Pwc_::Bare_polyline&>
+  public CGAL::unary_function<Pwc_, const typename Pwc_::Bare_polyline&>
 {
-  typedef std::unary_function<Pwc_, const typename Pwc_::Bare_polyline&> Base;
+  typedef CGAL::unary_function<Pwc_, const typename Pwc_::Bare_polyline&> Base;
   typedef typename Base::result_type                                     result_type;
   typedef typename Base::argument_type                                   argument_type;
   

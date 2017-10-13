@@ -4,6 +4,7 @@
 #include "Scene_edit_polyhedron_item_config.h"
 #include "Scene_polyhedron_item.h"
 #include "Scene_surface_mesh_item.h"
+#include <CGAL/Three/Scene_transparent_interface.h>
 
 
 #include <CGAL/Three/Scene_group_item.h>
@@ -203,7 +204,7 @@ public:
 
     bool oldState = frame->blockSignals(true); // do not let it Q_EMIT modified, which will cause a deformation
                                   // but we are just adjusting the center so it does not require a deformation
-    // frame->setOrientation(qglviewer::Quaternion());
+    frame->setOrientation(qglviewer::Quaternion());
     const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
     frame->setPosition(frame_initial_center+offset);
     frame->blockSignals(oldState);
@@ -283,9 +284,14 @@ typedef std::list<Control_vertices_data<SMesh> > Ctrl_vertices_sm_group_data_lis
 struct Scene_edit_polyhedron_item_priv;
 // This class represents a polyhedron in the OpenGL scene
 class SCENE_EDIT_POLYHEDRON_ITEM_EXPORT Scene_edit_polyhedron_item 
-  : public CGAL::Three::Scene_group_item {
+  : public CGAL::Three::Scene_group_item ,
+    public CGAL::Three::Scene_transparent_interface
+{
+  Q_INTERFACES(CGAL::Three::Scene_transparent_interface)
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.TransparentInterface/1.0")
   Q_OBJECT
 public:  
+  Scene_edit_polyhedron_item(){} //needed by the transparent interface
   /// Create an Scene_edit_polyhedron_item from a Scene_polyhedron_item.
   /// The ownership of the polyhedron is moved to the new edit_polyhedron
   /// item.
@@ -313,6 +319,7 @@ public:
   void draw() const{}
   void draw(CGAL::Three::Viewer_interface*) const;
   void drawEdges(CGAL::Three::Viewer_interface*) const;
+  void drawTransparent(Viewer_interface *) const;
   void draw_bbox(const CGAL::Three::Scene_interface::Bbox&) const;
   void draw_ROI_and_control_vertices(CGAL::Three::Viewer_interface *viewer) const;
   template<typename Mesh>

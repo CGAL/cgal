@@ -40,9 +40,9 @@ namespace internal {
  */
 template <typename Pair>
 struct First_of :
-  public std::unary_function<Pair, const typename Pair::first_type&>
+  public CGAL::unary_function<Pair, const typename Pair::first_type&>
 {
-  typedef std::unary_function<Pair, const typename Pair::first_type&> Base;
+  typedef CGAL::unary_function<Pair, const typename Pair::first_type&> Base;
   typedef typename Base::result_type                                  result_type;
   typedef typename Base::argument_type                                argument_type;
   

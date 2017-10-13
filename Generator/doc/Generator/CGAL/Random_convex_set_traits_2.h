@@ -27,26 +27,26 @@ typedef Kernel::FT FT;
 
 /*!
 function object class derived from 
-`std::binary_function<Point_2, Point_2, Point_2>` 
+`CGAL::binary_function<Point_2, Point_2, Point_2>`
 
 */ 
 typedef unspecified_type Sum; 
 
 /*!
 function object class derived from 
-`std::binary_function<Point_2, Point_2, Point_2>` 
+`CGAL::binary_function<Point_2, Point_2, Point_2>`
 */ 
 typedef unspecified_type Scale; 
 
 /*!
 function object class derived from 
-`std::unary_function<Point_2, FT>` 
+`CGAL::unary_function<Point_2, FT>` 
 */ 
 typedef unspecified_type Max_coordinate; 
 
 /*!
 function object class derived from 
-`std::binary_function<Point_2, Point_2, bool>` 
+`CGAL::binary_function<Point_2, Point_2, bool>`
 */ 
 typedef unspecified_type Angle_less; 
 

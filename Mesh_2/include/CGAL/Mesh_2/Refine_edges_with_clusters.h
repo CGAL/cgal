@@ -75,7 +75,7 @@ class Refine_edges_base_with_clusters :
   Clusters<Tr>& clusters;
 
   bool va_has_a_cluster, vb_has_a_cluster;
-  bool cluster_splitted;
+  mutable bool cluster_splitted;
   Cluster ca, cb;
   clusters_iterator ca_it, cb_it;
 
@@ -114,6 +114,10 @@ public:
         { // both ends are clusters
           va_has_a_cluster = true;
           vb_has_a_cluster = true;
+#ifdef CGAL_MESH_2_DEBUG_CLUSTERS
+          std::cerr << "midpoint(" << this->va->point()
+                    << " , " << this->vb->point() << ")\n";
+#endif // CGAL_MESH_2_DEBUG_CLUSTERS
           return midpoint(this->va->point(), this->vb->point());
         }
       else {
@@ -128,13 +132,17 @@ public:
       return split_cluster_point(this->vb,this->va,cb);
     }else{
       // no cluster
+#ifdef CGAL_MESH_2_DEBUG_CLUSTERS
+      std::cerr << "midpoint(" << this->va->point()
+                << " , " << this->vb->point() << ")\n";
+#endif // CGAL_MESH_2_DEBUG_CLUSTERS
       return midpoint(this->va->point(), this->vb->point());
     }
   };
 
   void after_insertion_impl(const Vertex_handle& v)
   {
-#ifdef CGAL_MESH_2_DEBUG_CLUSTERS    
+#ifdef CGAL_MESH_2_DEBUG_CLUSTERS
     std::cerr << "update_clusters" << std::endl;
     std::cerr << "va_has_a_cluster=" << va_has_a_cluster
               << std::endl
@@ -236,7 +244,7 @@ private:
     return ((CGAL::min)(a, (CGAL::min)(b, c)));
   }
 
-  Point split_cluster_point(Vertex_handle va, Vertex_handle vb, Cluster& c)
+  Point split_cluster_point(Vertex_handle va, Vertex_handle vb, const Cluster& c) const
   {
     typename Geom_traits::Construct_vector_2 vector =
       this->tr.geom_traits().construct_vector_2_object();
@@ -257,8 +265,17 @@ private:
     const Point& a = va->point();
     const Point& b = vb->point();
 
-    if( c.is_reduced() )
+#ifdef CGAL_MESH_2_DEBUG_CLUSTERS
+    std::cerr << "split_cluster_point(" << va->point()
+              << " , " << vb->point() << ")\n"
+              << "  reduced: " << c.is_reduced() << "\nresult:  ";
+#endif // CGAL_MESH_2_DEBUG_CLUSTERS
+    if( c.is_reduced() ) {
+#ifdef CGAL_MESH_2_DEBUG_CLUSTERS
+      std::cerr << midpoint(a, b) << " (midpoint)\n";
+#endif  // CGAL_MESH_2_DEBUG_CLUSTERS
       return midpoint(a, b);
+    }
     else
       {
         const Point m = midpoint(a, b);
@@ -277,6 +294,9 @@ private:
         if( squared_distance(i,m) > squared_distance(m,i2) )
           i = i2;
         //here i is the best point for splitting
+#ifdef CGAL_MESH_2_DEBUG_CLUSTERS
+        std::cerr << i << std::endl;
+#endif  // CGAL_MESH_2_DEBUG_CLUSTERS
         return i;
       }
   }

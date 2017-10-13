@@ -488,9 +488,11 @@ public Q_SLOTS:
         }
         //destroys the patch_id_map for the Surface_mesh_item to avoid assertions.
 #ifdef USE_SURFACE_MESH
-        poly_item->setItemIsMulticolor(false);
+        poly_item->resetColors();
+
 #endif
         poly_item->invalidateOpenGLBuffers();
+
         Q_EMIT poly_item->itemChanged();
       }
       else{
@@ -602,7 +604,7 @@ public Q_SLOTS:
     {
 #ifdef USE_SURFACE_MESH
       //destroys the patch_id_map for the Surface_mesh_item to avoid assertions.
-      poly_item->setItemIsMulticolor(false);
+      poly_item->resetColors();
 #endif
       poly_item->invalidateOpenGLBuffers();
       Q_EMIT poly_item->itemChanged();

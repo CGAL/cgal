@@ -123,6 +123,7 @@ struct Scene_points_with_normal_item_priv
       NbOfVbos
   };
   Point_set* m_points;
+  std::string m_comments;
   QAction* actionDeleteSelection;
   QAction* actionResetSelection;
   QAction* actionSelectDuplicatedPoints;
@@ -589,7 +590,7 @@ bool Scene_points_with_normal_item::read_ply_point_set(std::istream& stream)
   d->m_points->clear();
 
   bool ok = stream &&
-    CGAL::read_ply_point_set (stream, *(d->m_points)) &&
+    CGAL::read_ply_point_set (stream, *(d->m_points), &(d->m_comments)) &&
             !isEmpty();
 
   std::cerr << d->m_points->info();
@@ -598,7 +599,9 @@ bool Scene_points_with_normal_item::read_ply_point_set(std::istream& stream)
     setRenderingMode(PointsPlusNormals);
   if (d->m_points->check_colors())
     std::cerr << "-> Point set has colors" << std::endl;
-  
+
+  std::cerr << "[Comments from PLY input]" << std::endl << d->m_comments;
+
   invalidateOpenGLBuffers();
   return ok;
 }
@@ -615,7 +618,8 @@ bool Scene_points_with_normal_item::write_ply_point_set(std::ostream& stream, bo
 
   if (binary)
     CGAL::set_binary_mode (stream);
-  stream << *(d->m_points);
+
+  CGAL::write_ply_point_set (stream, *(d->m_points), &(d->m_comments));
 
   return true;
 }
@@ -828,6 +832,16 @@ const Point_set* Scene_points_with_normal_item::point_set() const
 {
   Q_ASSERT(d->m_points != NULL);
   return d->m_points;
+}
+
+// Gets wrapped point set
+std::string& Scene_points_with_normal_item::comments()
+{
+  return d->m_comments;
+}
+const std::string& Scene_points_with_normal_item::comments() const
+{
+  return d->m_comments;
 }
 
 bool

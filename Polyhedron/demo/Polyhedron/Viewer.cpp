@@ -815,7 +815,6 @@ void Viewer::attribBuffers(int program_name) const {
     case PROGRAM_WITH_TEXTURE:
     case PROGRAM_CUTPLANE_SPHERES:
     case PROGRAM_SPHERES:
-    case PROGRAM_C3T3_TETS:
     case PROGRAM_OLD_FLAT:
     case PROGRAM_FLAT:
         program->setUniformValue("light_pos", position);
@@ -834,7 +833,6 @@ void Viewer::attribBuffers(int program_name) const {
     case PROGRAM_INSTANCED:
     case PROGRAM_CUTPLANE_SPHERES:
     case PROGRAM_SPHERES:
-    case PROGRAM_C3T3_TETS:
     case PROGRAM_OLD_FLAT:
     case PROGRAM_FLAT:
       program->setUniformValue("mv_matrix", mv_mat);
@@ -1248,9 +1246,6 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
         break;
     case PROGRAM_CUTPLANE_SPHERES:
       return declare_program(name, ":/cgal/Polyhedron_3/resources/shader_c3t3_spheres.v" , ":/cgal/Polyhedron_3/resources/shader_c3t3.f");
-     break;
-    case PROGRAM_C3T3_TETS:
-      return declare_program(name, ":/cgal/Polyhedron_3/resources/shader_c3t3_tets.v" , ":/cgal/Polyhedron_3/resources/shader_with_light.f");
      break;
     case PROGRAM_SPHERES:
       return declare_program(name, ":/cgal/Polyhedron_3/resources/shader_spheres.v" , ":/cgal/Polyhedron_3/resources/shader_with_light.f");

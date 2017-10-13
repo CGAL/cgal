@@ -38,6 +38,16 @@ struct Default
     struct Get <Default, Value> {
         typedef Value type;
     };
+
+  template <typename Argument, typename Fct>
+    struct Lazy_get {
+        typedef Argument type;
+    };
+
+    template <typename Fct>
+    struct Lazy_get <Default, Fct> {
+        typedef typename Fct::type type;
+    };
 };
 
 }

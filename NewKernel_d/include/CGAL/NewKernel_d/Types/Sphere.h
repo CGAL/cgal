@@ -20,7 +20,7 @@
 #ifndef CGAL_KD_TYPE_SPHERE_H
 #define CGAL_KD_TYPE_SPHERE_H
 #include <CGAL/NewKernel_d/store_kernel.h>
-#include <boost/iterator/counting_iterator.hpp>
+#include <CGAL/boost/iterator/counting_iterator.hpp>
 namespace CGAL {
 template <class R_> class Sphere {
 	typedef typename Get_type<R_, FT_tag>::type FT_;
@@ -103,7 +103,7 @@ template<class R_> struct Point_of_sphere : private Store_kernel<R_> {
   typedef Point result_type;
   typedef Sphere first_argument_type;
   typedef int second_argument_type;
-  struct Trans : std::binary_function<FT,int,FT> {
+  struct Trans : CGAL::binary_function<FT,int,FT> {
     FT const& r_; int idx; bool sgn;
     Trans (int n, FT const& r, bool b) : r_(r), idx(n), sgn(b) {}
     FT operator()(FT const&x, int i)const{

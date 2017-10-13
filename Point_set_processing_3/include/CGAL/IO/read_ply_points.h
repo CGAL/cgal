@@ -282,6 +282,7 @@ namespace internal {
     std::vector<PLY_read_number*> m_point_properties;
     std::vector<PLY_read_number*> m_face_properties;
     std::vector<PLY_read_number*>* m_properties;
+    std::string m_comments;
 
   public:
     std::size_t m_nb_points;
@@ -294,6 +295,8 @@ namespace internal {
     {
       m_properties = &m_face_properties;
     }
+
+    const std::string& comments() const { return m_comments; }
 
     template <typename Stream>
     bool init (Stream& stream)
@@ -402,19 +405,19 @@ namespace internal {
                   
                   continue;
                 }
-              else
-                reading_vertices = false;
-            
-              // ignore comments and properties (if not in element
-              // vertex - cf below - properties are useless in our case)
-              if (keyword == "comment" || keyword == "property")
-                continue;
-
+              else if (keyword == "comment")
+                {
+                  std::string str = iss.str();
+                  if (str.size() > 8)
+                    {
+                      std::copy (str.begin() + 8, str.end(), std::back_inserter (m_comments));
+                      m_comments += "\n";
+                    }
+                }
               // When end_header is reached, stop loop and begin reading points
-              if (keyword == "end_header")
+              else if (keyword == "end_header")
                 break;
-            
-              if (keyword == "element")
+              else if (keyword == "element")
                 {
                   std::string type;
                   std::size_t number;

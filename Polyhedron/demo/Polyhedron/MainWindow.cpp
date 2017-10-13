@@ -1512,8 +1512,10 @@ void MainWindow::on_actionLoad_triggered()
         scene->redraw_model();
       this->addToRecentFiles(filename);
     } else {
+      int scene_size = scene->numberOfEntries();
       open(filename);
-      scene->item(scene->numberOfEntries()-1)->setColor(colors_[++nb_item]);
+      if(scene->numberOfEntries() != scene_size)
+        scene->item(scene->numberOfEntries()-1)->setColor(colors_[++nb_item]);
     }
   }
 }

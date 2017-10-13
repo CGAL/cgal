@@ -602,7 +602,7 @@ namespace SurfaceReconstruction
   }
 
   struct Point_set_make_pair_point_index
-    : public std::unary_function<const Point_set::Index&, std::pair<Kernel::Point_3, std::size_t> >
+    : public CGAL::unary_function<const Point_set::Index&, std::pair<Kernel::Point_3, std::size_t> >
   {
     const Point_set& point_set;
     Point_set_make_pair_point_index (const Point_set& point_set) : point_set (point_set) { }

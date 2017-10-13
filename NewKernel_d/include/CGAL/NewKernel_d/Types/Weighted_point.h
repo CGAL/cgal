@@ -20,7 +20,7 @@
 #ifndef CGAL_KD_TYPE_WP_H
 #define CGAL_KD_TYPE_WP_H
 #include <CGAL/NewKernel_d/store_kernel.h>
-#include <boost/iterator/counting_iterator.hpp>
+#include <CGAL/boost/iterator/counting_iterator.hpp>
 namespace CGAL {
 namespace KerD {
 template <class R_> class Weighted_point {

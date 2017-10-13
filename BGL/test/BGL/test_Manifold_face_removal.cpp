@@ -41,8 +41,8 @@ int main()
     ++index;
   }
 
-  expand_face_selection_for_removal(sm,
-                                    faces_to_remove,
+  expand_face_selection_for_removal(faces_to_remove,
+                                    sm,
                                     boost::make_assoc_property_map(is_selected_map));
 
   index=0;

@@ -4,12 +4,17 @@
 #include <QAction>
 #include <QMainWindow>
 #include <QInputDialog>
+#include <QColorDialog>
+#include <QPalette>
+#include <QColor>
 #include "Messages_interface.h"
 #include "Scene_surface_mesh_item.h"
 #include "Color_ramp.h"
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include "ui_Display_property.h"
+#include "id_printing.h"
+#include "Scene.h"
 
 #define ARBITRARY_DBL_MIN 1.0E-30
 #define ARBITRARY_DBL_MAX 1.0E+30
@@ -49,6 +54,14 @@ public:
     return _actions;
   }
 
+  QColor textColor(const QColor& color)
+  {
+    QColor text_color (255, 255, 255);
+    if (color.red() * 0.299 + color.green() * 0.587 + color.blue() * 0.114 > 128)
+      text_color = QColor (0, 0, 0);
+    return text_color;
+  }
+
   void init(QMainWindow* mw, CGAL::Three::Scene_interface* sc, Messages_interface*) Q_DECL_OVERRIDE
   {
     this->scene = sc;
@@ -56,6 +69,12 @@ public:
 
     QAction *actionDisplayAngles= new QAction(QString("Display Properties"), mw);
 
+    rm = 1.0;
+    rM = 0.0;
+    gm = 0.0;
+    gM = 1.0;
+    bm = 0.0;
+    bM = 0.0;
     actionDisplayAngles->setProperty("submenuName", "Color");
 
     if(actionDisplayAngles) {
@@ -67,6 +86,13 @@ public:
     dock_widget = new DockWidget("Property Displaying", mw);
     dock_widget->setVisible(false);
     addDockWidget(dock_widget);
+    QPalette palette(Qt::red);
+    dock_widget->minColorButton->setPalette(palette);
+    dock_widget->minColorButton->update();
+
+    palette = QPalette(Qt::green);
+    dock_widget->maxColorButton->setPalette(palette);
+    dock_widget->maxColorButton->update();
     connect(dock_widget->colorizeButton, SIGNAL(clicked(bool)),
             this, SLOT(colorize()));
 
@@ -75,6 +101,40 @@ public:
 
     connect(dock_widget->propertyBox, SIGNAL(currentIndexChanged(int)),
             this, SLOT(on_propertyBox_currentIndexChanged(int)));
+    connect(dock_widget->zoomToMinButton, &QPushButton::pressed,
+            this, &DisplayPropertyPlugin::on_zoomToMinButton_pressed);
+    connect(dock_widget->zoomToMaxButton, &QPushButton::pressed,
+            this, &DisplayPropertyPlugin::on_zoomToMaxButton_pressed);
+    connect(dock_widget->minColorButton, &QPushButton::pressed,
+            this, [this]()
+    {
+      QColor minColor = QColorDialog::getColor();
+      rm = minColor.redF();
+      gm = minColor.greenF();
+      bm = minColor.blueF();
+      QPalette palette(minColor);
+      dock_widget->minColorButton->setAutoFillBackground(true);
+      dock_widget->minColorButton->setPalette(palette);
+      dock_widget->minColorButton->update();
+    });
+    connect(dock_widget->maxColorButton, &QPushButton::pressed,
+            this, [this]()
+    {
+      QColor maxColor = QColorDialog::getColor();
+      QPalette palette(maxColor);
+      rM = maxColor.redF();
+      gM = maxColor.greenF();
+      bM = maxColor.blueF();
+
+      dock_widget->maxColorButton->setAutoFillBackground(true);
+      dock_widget->maxColorButton->setPalette(palette);
+      dock_widget->maxColorButton->update();
+    });
+    dock_widget->zoomToMaxButton->setEnabled(false);
+    dock_widget->zoomToMinButton->setEnabled(false);
+    Scene* scene_obj =static_cast<Scene*>(scene);
+    connect(scene_obj, &Scene::itemIndexSelected,
+            this, &DisplayPropertyPlugin::enableButtons);
     on_propertyBox_currentIndexChanged(0);
 
   }
@@ -104,7 +164,56 @@ private Q_SLOTS:
     }
     QApplication::restoreOverrideCursor();
     item->invalidateOpenGLBuffers();
-    item->itemChanged();
+    item->redraw();
+    dock_widget->zoomToMinButton->setEnabled(true);
+    dock_widget->zoomToMaxButton->setEnabled(true);
+  }
+
+  void enableButtons()
+  {
+    Scene_surface_mesh_item* item =
+        qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex()));
+    if(! item )
+    {
+      dock_widget->zoomToMinButton->setEnabled(false);
+      dock_widget->zoomToMaxButton->setEnabled(false);
+    }
+
+    switch(dock_widget->propertyBox->currentIndex())
+    {
+    case 0:
+      dock_widget->zoomToMinButton->setEnabled(angles_max.count(item)>0 );
+      dock_widget->zoomToMaxButton->setEnabled(angles_max.count(item)>0 );
+      break;
+    case 1:
+      dock_widget->zoomToMinButton->setEnabled(jacobian_max.count(item)>0);
+      dock_widget->zoomToMaxButton->setEnabled(jacobian_max.count(item)>0);
+      break;
+    default:
+      break;
+    }
+  }
+
+  void resetProperty()
+  {
+    Scene_surface_mesh_item* item =
+        qobject_cast<Scene_surface_mesh_item*>(sender());
+    if(!item)
+      return;
+    SMesh& smesh = *item->face_graph();
+    SMesh::Property_map<face_descriptor, double> jacobians;
+    bool found;
+    boost::tie(jacobians, found) = smesh.property_map<face_descriptor,double>("f:jacobian");
+    if(found)
+    {
+      smesh.remove_property_map(jacobians);
+    }
+    SMesh::Property_map<face_descriptor, double> angles;
+    boost::tie(angles, found) = smesh.property_map<face_descriptor,double>("f:angle");
+    if(found)
+    {
+      smesh.remove_property_map(angles);
+    }
   }
 
   void displayScaledJacobian(Scene_surface_mesh_item* item)
@@ -119,17 +228,29 @@ private Q_SLOTS:
     {
       double res_min = ARBITRARY_DBL_MAX,
           res_max = -ARBITRARY_DBL_MAX;
+      SMesh::Face_index min_index, max_index;
       for(boost::graph_traits<SMesh>::face_iterator fit = faces(smesh).begin();
           fit != faces(smesh).end();
           ++fit)
       {
         fjacobian[*fit] = scaled_jacobian(*fit, smesh);
         if(fjacobian[*fit] > res_max)
+        {
           res_max = fjacobian[*fit];
+          max_index = *fit;
+        }
         if(fjacobian[*fit] < res_min)
+        {
           res_min = fjacobian[*fit];
+          min_index = *fit;
+        }
       }
-      jacobian_extrema.insert(std::make_pair(item, std::make_pair(res_min, res_max)));
+      jacobian_min.erase(item);
+      jacobian_min.insert(std::make_pair(item, std::make_pair(res_min, min_index)));
+      jacobian_max.erase(item);
+      jacobian_max.insert(std::make_pair(item, std::make_pair(res_max, max_index)));
+      connect(item, &Scene_surface_mesh_item::itemChanged,
+              this, &DisplayPropertyPlugin::resetProperty);
     }
     //scale a color ramp between min and max
     double max = maxBox;
@@ -154,8 +275,8 @@ private Q_SLOTS:
             255*color_ramp.b(f));
       fcolors[*fit] = color;
     }
-    dock_widget->minBox->setValue(jacobian_extrema[item].first-0.01);
-    dock_widget->maxBox->setValue(jacobian_extrema[item].second);
+    dock_widget->minBox->setValue(jacobian_min[item].first-0.01);
+    dock_widget->maxBox->setValue(jacobian_max[item].first);
   }
 
   void displayAngles(Scene_surface_mesh_item* item)
@@ -171,6 +292,7 @@ private Q_SLOTS:
     {
       double res_min = ARBITRARY_DBL_MAX,
           res_max = -ARBITRARY_DBL_MAX;
+      SMesh::Face_index index_min, index_max;
       for(boost::graph_traits<SMesh>::face_iterator fit = faces(smesh).begin();
           fit != faces(smesh).end();
           ++fit)
@@ -239,11 +361,23 @@ private Q_SLOTS:
         fangle[*fit]=local_angles.front();
 
         if(fangle[*fit] > res_max)
+        {
           res_max = fangle[*fit];
+          index_max = *fit;
+        }
         if(fangle[*fit] < res_min)
+        {
           res_min = fangle[*fit];
+          index_min = *fit;
+        }
       }
-      angles_extrema.insert(std::make_pair(item, std::make_pair(res_min, res_max)));
+      angles_min.erase(item);
+      angles_min.insert(std::make_pair(item, std::make_pair(res_min, index_min)));
+      angles_max.erase(item);
+      angles_max.insert(std::make_pair(item, std::make_pair(res_max, index_max)));
+
+      connect(item, &Scene_surface_mesh_item::itemChanged,
+              this, &DisplayPropertyPlugin::resetProperty);
     }
     //scale a color ramp between min and max
 
@@ -270,21 +404,12 @@ private Q_SLOTS:
             255*color_ramp.b(f));
       fcolors[*fit] = color;
     }
-    dock_widget->minBox->setValue(angles_extrema[item].first);
-    dock_widget->maxBox->setValue(angles_extrema[item].second);
+    dock_widget->minBox->setValue(angles_min[item].first);
+    dock_widget->maxBox->setValue(angles_max[item].first);
   }
 
   void replaceRamp()
   {
-    double rm = dock_widget->redMinBox->value();
-    double rM = dock_widget->redMaxBox->value();
-
-    double gm = dock_widget->greenMinBox->value();
-    double gM = dock_widget->greenMaxBox->value();
-
-    double bm = dock_widget->blueMinBox->value();
-    double bM = dock_widget->blueMaxBox->value();
-
     color_ramp = Color_ramp(rm, rM, gm, gM, bm, bM);
     displayLegend();
     minBox = dock_widget->minBox->value();
@@ -324,6 +449,7 @@ private Q_SLOTS:
       break;
     }
     replaceRamp();
+    enableButtons();
   }
 
   void closure()Q_DECL_OVERRIDE
@@ -331,15 +457,81 @@ private Q_SLOTS:
     dock_widget->hide();
   }
 
+  void on_zoomToMinButton_pressed()
+  {
+    Scene_surface_mesh_item* item =
+        qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex()));
+    if(!item)
+      return;
+    face_descriptor dummy_fd;
+    Point_3 dummy_p;
+    switch(dock_widget->propertyBox->currentIndex())
+    {
+    case 0:
+    {
+      ::zoomToId(*item->face_graph(),
+                     QString("f%1").arg(angles_min[item].second),
+                     qobject_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first()),
+                     dummy_fd,
+                     dummy_p);
+    }
+      break;
+    case 1:
+    {
+      ::zoomToId(*item->face_graph(),
+                     QString("f%1").arg(jacobian_min[item].second),
+                     qobject_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first()),
+                     dummy_fd,
+                     dummy_p);
+    }
+      break;
+    default:
+      break;
+    }
+  }
+
+  void on_zoomToMaxButton_pressed()
+  {
+    Scene_surface_mesh_item* item =
+        qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex()));
+    if(!item)
+      return;
+    face_descriptor dummy_fd;
+    Point_3 dummy_p;
+    switch(dock_widget->propertyBox->currentIndex())
+    {
+    case 0:
+    {
+      ::zoomToId(*item->face_graph(),
+                 QString("f%1").arg(angles_max[item].second),
+                 qobject_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first()),
+                 dummy_fd,
+                 dummy_p);
+    }
+      break;
+    case 1:
+    {
+      ::zoomToId(*item->face_graph(),
+                 QString("f%1").arg(jacobian_max[item].second),
+                 qobject_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first()),
+                 dummy_fd,
+                 dummy_p);
+    }
+      break;
+    default:
+      break;
+    }
+  }
+
 private:
   void displayLegend()
   {
     // Create an legend_ and display it
     const int height = 256;
-    const int width = 256;
+    const int width = 90;
     const int cell_width = width/3;
     const int top_margin = 5;
-    const int left_margin = (width-cell_width)/2;
+    const int left_margin = 5;
     const int drawing_height = height - top_margin * 2;
     const int text_height = 20;
 
@@ -396,8 +588,18 @@ private:
   QList<QAction*> _actions;
   Color_ramp color_ramp;
   DockWidget* dock_widget;
-  std::map<Scene_surface_mesh_item*, std::pair<double, double> > jacobian_extrema;
-  std::map<Scene_surface_mesh_item*, std::pair<double, double> > angles_extrema;
+  double rm;
+  double rM;
+  double gm;
+  double gM;
+  double bm;
+  double bM;
+  std::map<Scene_surface_mesh_item*, std::pair<double, SMesh::Face_index> > jacobian_min;
+  std::map<Scene_surface_mesh_item*, std::pair<double, SMesh::Face_index> > jacobian_max;
+
+  std::map<Scene_surface_mesh_item*, std::pair<double, SMesh::Face_index> > angles_min;
+  std::map<Scene_surface_mesh_item*, std::pair<double, SMesh::Face_index> > angles_max;
+
   double minBox;
   double maxBox;
   QPixmap legend_;

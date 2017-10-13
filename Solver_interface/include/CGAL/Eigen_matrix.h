@@ -191,6 +191,38 @@ public:
       m_triplets.push_back(Triplet(i,j,val));
   }
 
+  /// Read access to a matrix coefficient.
+  ///
+  /// \warning Complexity:
+  /// - O(log(n)) if the matrix is already built.
+  /// - O(n) if the matrix is not built.
+  /// `n` being the number of entries in the matrix.
+  ///
+  /// \pre 0 <= i < row_dimension().
+  /// \pre 0 <= j < column_dimension().
+  NT get_coef (unsigned int i, unsigned int j) const
+  {
+    CGAL_precondition(i < row_dimension());
+    CGAL_precondition(j < column_dimension());
+
+    if(m_is_symmetric && j > i)
+      std::swap(i, j);
+
+    if (m_is_already_built)
+      return m_matrix.coeffRef(i,j);
+    else
+    {
+      NT val = 0;
+      for(std::size_t t=0; t<m_triplets.size(); ++t)
+      {
+        if(m_triplets[t].col() == j &&
+           m_triplets[t].row() == i)
+          val += m_triplets[t].value();
+      }
+      return val;
+    }
+  }
+
   /// \cond SKIP_IN_MANUAL
   void assemble_matrix() const
   {

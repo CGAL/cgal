@@ -139,7 +139,39 @@ struct Polyhedron_property_map<CGAL::face_patch_id_t<void> >
   };
 };
 
+// Compatibility: when the `Patch_id` template argument of
+// `Polyhedron_mesh_domain` is `Tag_true` (because that argument was named
+// `UsePatchId` in previous versions of CGAL.
+template <>
+struct Polyhedron_property_map<CGAL::face_patch_id_t<CGAL::Tag_true> >
+{
+  template<class Gt, class I, CGAL_HDS_PARAM_, class A>
+  struct bind_
+  {
+    typedef Polyhedron_3<Gt,I,HDS,A> Polyhedron;
+    typedef Polyhedron_face_patch_id_pmap<typename Polyhedron::Face::Patch_id> type;
+    typedef type const_type;
+  };
+};
 
+// Compatibility: when the `Patch_id` template argument of
+// `Polyhedron_mesh_domain` is `Tag_false` (because that argument was named
+// `UsePatchId` in previous versions of CGAL.
+template <>
+struct Polyhedron_property_map<CGAL::face_patch_id_t<CGAL::Tag_false> >
+  : public Polyhedron_property_map<CGAL::face_patch_id_t<void> >
+{
+};
+
+template <class Gt, class I, CGAL_HDS_PARAM_, class A>
+typename boost::lazy_enable_if<
+  internal::has_Plane_3<Gt>,
+  internal::Get_static_property_map<Gt, I, HDS, A>
+  >::type
+get(CGAL::face_patch_id_t<Tag_false>, const Polyhedron_3<Gt,I,HDS,A>& p)
+{
+  return get(CGAL::face_patch_id_t<void>(), p);
+}
 
 struct Polyhedron_num_feature_edges_pmap {
   typedef void                               key_type;
