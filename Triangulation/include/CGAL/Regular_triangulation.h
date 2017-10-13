@@ -833,7 +833,7 @@ Regular_triangulation<Traits, TDS>
         }
       }
       // Otherwise, we apply the "normal" algorithm
-
+      CGAL_FALLTHROUGH;
       // !NO break here!
     }
     default:
@@ -929,7 +929,7 @@ Regular_triangulation<Traits, TDS>
           return v;
       }
       // Otherwise, we apply the "normal" algorithm
-
+      CGAL_FALLTHROUGH;
       // !NO break here!
       }
     default:

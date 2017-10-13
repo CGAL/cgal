@@ -162,18 +162,16 @@ void get_triangles(Polyhedron& polyhedron,
 		   OutputIterator out)
 {
   typedef typename boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
-  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor halfedge_descriptor;
   typedef typename boost::property_map<Polyhedron, CGAL::vertex_point_t>::type VPmap;
   typedef typename boost::property_traits<VPmap>::value_type Point;
   typedef typename CGAL::Kernel_traits<Point>::Kernel::Triangle_3 Triangle;
 
   VPmap vpmap = get(CGAL::vertex_point,polyhedron);
   BOOST_FOREACH(face_descriptor fd, faces(polyhedron)){
-    Point points[3];
-    int i = 0;
-    BOOST_FOREACH(vertex_descriptor vd, vertices_around_face(halfedge(fd,polyhedron),polyhedron)){
-      points[i++] = get(vpmap,vd);
-    }
-    *out++ = Triangle(points[0],points[1], points[2]);
+    halfedge_descriptor h=halfedge(fd, polyhedron);
+    *out++ = Triangle(get(vpmap, target(h, polyhedron)),
+                      get(vpmap, target(next(h, polyhedron), polyhedron)),
+                      get(vpmap, source(h, polyhedron)));
   }
 }
