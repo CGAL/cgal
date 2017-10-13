@@ -522,6 +522,12 @@ public:
     const std::size_t nb_of_extra_vertices_per_patch = 20;
     std::vector<std::vector<Vertex_const_handle> >
       several_vertices_on_patch(nb_of_patch_plus_one);
+
+    // For a patch, a "free" vertex is a vertex that is not on a feature,
+    // and with a point that is not inside the set of protecting balls.
+    std::vector<std::size_t> nb_of_free_vertices_on_patch(nb_of_patch_plus_one);
+
+    // First path to count of the number of free vertices per patch...
     BOOST_FOREACH(const Polyhedron& p, this->stored_polyhedra)
     {
       for (typename Polyhedron::Vertex_const_iterator
@@ -535,23 +541,59 @@ public:
         if (tr_v != typename Tr::Vertex_handle()) {
           typedef typename IGT::Sphere_3 Sphere_3;
           const Sphere_3 sphere(tr_v->point().point(), tr_v->point().weight());
-          if (!sphere.has_on_negative_side(vit->point())) continue;
+          if (!sphere.has_on_unbounded_side(vit->point())) continue;
         }
-        if (several_vertices_on_patch[patch_id].size() <
-          nb_of_extra_vertices_per_patch)
+        ++nb_of_free_vertices_on_patch[patch_id];
+      }
+    }
+    std::vector<std::size_t>
+      needed_vertices_on_patch = nb_of_free_vertices_on_patch;
+    for(std::size_t i = 0, end = needed_vertices_on_patch.size(); i < end; ++i)
+    {
+      needed_vertices_on_patch[i] = (std::min)(nb_of_extra_vertices_per_patch,
+                                               needed_vertices_on_patch[i]);
+    }
+    // Then a second path to fill `several_vertices_on_patch`...
+    // The algorithm is adapted from SGI `random_sample_n`:
+    //   https://www.sgi.com/tech/stl/random_sample_n.html
+    BOOST_FOREACH(const Polyhedron& p, this->stored_polyhedra)
+    {
+      for (typename Polyhedron::Vertex_const_iterator
+        vit = p.vertices_begin(), end = p.vertices_end();
+        vit != end; ++vit)
+      {
+        if (vit->is_feature_vertex()) { continue; }
+        const Patch_id patch_id = vit->halfedge()->face()->patch_id();
+        CGAL_assertion(std::size_t(patch_id) <= nb_of_patch_plus_one);
+
+        // If needed_vertices_on_patch is null, no need to proceed with the
+        // rest of the loop.
+        if(needed_vertices_on_patch[patch_id] == 0) continue;
+
+        typename Tr::Vertex_handle tr_v = tr.nearest_power_vertex(vit->point());
+        if (tr_v != typename Tr::Vertex_handle()) {
+          typedef typename IGT::Sphere_3 Sphere_3;
+          const Sphere_3 sphere(tr_v->point().point(), tr_v->point().weight());
+          if (!sphere.has_on_unbounded_side(vit->point())) continue;
+        }
+
+        // here we have a new free vertex on patch #`patch_id`
+
+        if(random.uniform_smallint(std::size_t(0),
+                                   nb_of_free_vertices_on_patch[patch_id])
+           < needed_vertices_on_patch[patch_id])
         {
           several_vertices_on_patch[patch_id].push_back(vit);
+          --needed_vertices_on_patch[patch_id];
         }
-        else {
-          int i = random.uniform_smallint(0,
-            static_cast<int>(nb_of_extra_vertices_per_patch - 1));
-          several_vertices_on_patch[patch_id][i] = vit;
-        }
+        --nb_of_free_vertices_on_patch[patch_id];
       }
     }
     for (Patch_id patch_id = 1; std::size_t(patch_id) < nb_of_patch_plus_one;
       ++patch_id)
     {
+      CGAL_assertion(several_vertices_on_patch[patch_id].size()
+                     <= nb_of_extra_vertices_per_patch);
       if (this->patch_has_featured_edges.test(patch_id)) {
         if (!several_vertices_on_patch[patch_id].empty()) {
           Vertex_const_handle v =
@@ -729,7 +771,6 @@ protected:
   std::vector<std::size_t> patch_id_to_polyhedron_id;
   boost::dynamic_bitset<> patch_has_featured_edges;
   typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
-  std::vector<std::vector<vertex_descriptor> > several_vertices_on_patch;
   std::vector<Surface_patch_index> boundary_patches_ids;
   std::vector<std::size_t> inside_polyhedra_ids;
   std::vector<std::size_t> boundary_polyhedra_ids;
@@ -862,7 +903,6 @@ detect_features(FT angle_in_degree,
   }
   this->patch_id_to_polyhedron_id.resize(nb_of_patch_plus_one);
   this->patch_has_featured_edges.resize(nb_of_patch_plus_one);
-  this->several_vertices_on_patch.resize(nb_of_patch_plus_one);
 #if CGAL_MESH_3_VERBOSE
   std::cerr << "Number of patches: " << (nb_of_patch_plus_one - 1) << std::endl;
 #endif
@@ -886,22 +926,7 @@ detect_features(FT angle_in_degree,
       if( get(vertex_feature_degree_map, v) != 0 ) { continue; }
       const Patch_id patch_id = get(pid_map, face(halfedge(v, p), p));
       if(patch_has_featured_edges.test(patch_id)) continue;
-      several_vertices_on_patch[patch_id].push_back(v);
     }
-  }
-  for(Patch_id patch_id = 1; std::size_t(patch_id) < nb_of_patch_plus_one;
-      ++patch_id)
-  {
-    CGAL_assertion(patch_has_featured_edges.test(patch_id) ==
-                   several_vertices_on_patch[patch_id].empty() );
-    if(several_vertices_on_patch[patch_id].empty()) continue;
-    std::random_shuffle(several_vertices_on_patch[patch_id].begin(),
-                        several_vertices_on_patch[patch_id].end());
-    if(several_vertices_on_patch[patch_id].size()>20)
-      several_vertices_on_patch[patch_id].resize(20);
-#if __cplusplus > 201103L
-    several_vertices_on_patch.shrink_to_fit();
-#endif
   }
   if (!dont_protect)
     add_features_from_split_graph_into_polylines(g_copy);
