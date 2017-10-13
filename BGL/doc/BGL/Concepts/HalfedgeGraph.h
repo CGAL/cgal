@@ -97,4 +97,4 @@ returns a special halfedge that is not equal to any other halfedge.
  */
 template <typename HalfedgeGraph>
 boost::graph_traits<HalfedgeGraph>::halfedge_descriptor
-null_halfedge(const HalfedgeGraph& g);
+null_halfedge();
