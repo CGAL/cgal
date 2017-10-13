@@ -59,7 +59,7 @@ write_STL(const TriangleMesh& tm, std::ostream& out)
       Point_3_ref r = get(vpm, source(h, tm));
 
       Vector_3 n = collinear(p,q,r) ? Vector_3(1,0,0):
-                                      normal(p,q,r);
+                                      unit_normal(p,q,r);
 
       const float coords[12]={
         static_cast<float>(n.x()), static_cast<float>(n.y()), static_cast<float>(n.z()),
@@ -83,7 +83,7 @@ write_STL(const TriangleMesh& tm, std::ostream& out)
       Point_3_ref r = get(vpm, source(h, tm));
 
       Vector_3 n = collinear(p,q,r) ? Vector_3(1,0,0):
-                                      normal(p,q,r);
+                                      unit_normal(p,q,r);
       out << "facet normal " << n << "\nouter loop\n";
       out << "vertex " << p << "\n";
       out << "vertex " << q << "\n";
