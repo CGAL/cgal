@@ -491,8 +491,44 @@ public Q_SLOTS:
       selection_item->keep_connected_components();
       break;
     }
-      //Convert from Edge Selection to Facet Selection
+      //Expand face selection
     case 5:
+    {
+      Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
+      if (!selection_item ||
+          selection_item->selected_facets.empty())
+      {
+        print_message("Error: Please select a selection item with a selection of faces.");
+        return;
+      }
+      boost::unordered_map<fg_face_descriptor, bool> is_selected_map;
+      int index = 0;
+      BOOST_FOREACH(fg_face_descriptor fh, faces(*selection_item->polyhedron()))
+      {
+        if(selection_item->selected_facets.find(fh)
+           == selection_item->selected_facets.end())
+          is_selected_map[fh]=false;
+        else
+        {
+          is_selected_map[fh]=true;
+        }
+        ++index;
+      }
+      CGAL::expand_face_selection_for_removal(*selection_item->polyhedron(),
+                                        selection_item->selected_facets,
+                                        boost::make_assoc_property_map(is_selected_map));
+
+      BOOST_FOREACH(fg_face_descriptor fh, faces(*selection_item->polyhedron()))
+      {
+        if (is_selected_map[fh])
+          selection_item->selected_facets.insert(fh);
+      }
+      selection_item->invalidateOpenGLBuffers();
+      selection_item->itemChanged();
+      break;
+    }
+      //Convert from Edge Selection to Facet Selection
+    case 6:
     {
       Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
       if(!selection_item) {
@@ -514,7 +550,7 @@ public Q_SLOTS:
       break;
     }
       //Convert from Edge Selection to Point Selection
-    case 6:
+    case 7:
     {
       Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
       if(!selection_item) {
@@ -537,7 +573,7 @@ public Q_SLOTS:
       break;
     }
       //Convert from Facet Selection to Bounding Edge Selection
-    case 7:
+    case 8:
     {
       Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
       if(!selection_item) {
@@ -560,7 +596,7 @@ public Q_SLOTS:
       break;
     }
       //Convert from Facet Selection to Points Selection
-    case 8:
+    case 9:
     {
       Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
       if(!selection_item) {

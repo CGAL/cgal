@@ -302,6 +302,8 @@ private:
       double hausdorff = compute_distances(*poly_B,
                                            sorted_points,
                                            distances);
+      if(hausdorff == 0)
+        hausdorff++;
       //compute the colors
       colors.resize(sorted_points.size()*3);
       for(std::size_t i=0; i<sorted_points.size(); ++i)

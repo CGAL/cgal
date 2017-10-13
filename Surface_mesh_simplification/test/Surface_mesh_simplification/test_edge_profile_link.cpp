@@ -65,7 +65,7 @@ void test(const char* fname)
 {
   Mesh m;
   std::ifstream input(fname);
-  assert( ! input.bad() );
+  assert( !input.fail() );
   input >> m;
   assert(num_vertices(m)!=0);
   A a;

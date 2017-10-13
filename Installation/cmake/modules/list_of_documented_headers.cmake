@@ -753,7 +753,7 @@ CGAL/Segment_tree_k.h
 CGAL/Shape_detection_3/Cone.h
 CGAL/Shape_detection_3/Cylinder.h
 CGAL/Shape_detection_3/Efficient_RANSAC.h
-CGAL/Shape_detection_3/Efficient_RANSAC_traits.h
+CGAL/Shape_detection_3/Shape_detection_traits.h
 CGAL/Shape_detection_3.h
 CGAL/Shape_detection_3/Plane.h
 CGAL/Shape_detection_3/Shape_base.h
