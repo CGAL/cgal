@@ -217,9 +217,10 @@ void compute_displayed_ids(Mesh& mesh,
       displayed_vertices.push_back(vh);
     }
   }
-  QVector3D point(get(ppmap, displayed_vertices[0]).x(),
-      get(ppmap, displayed_vertices[0]).y(),
-      get(ppmap, displayed_vertices[0]).z());
+  QVector3D point(
+      get(ppmap, displayed_vertices[0]).x() + offset.x,
+      get(ppmap, displayed_vertices[0]).y() + offset.y,
+      get(ppmap, displayed_vertices[0]).z() + offset.z);
 
   //test if we want to erase or not
   BOOST_FOREACH(TextItem* text_item, *targeted_ids)
@@ -267,14 +268,16 @@ void compute_displayed_ids(Mesh& mesh,
     displayed_vertices.clear();
     displayed_edges.clear();
     displayed_faces.clear();
-    displayed_faces.push_back(selected_fh);
+    if(selected_fh != boost::graph_traits<Mesh>::null_face())
+      displayed_faces.push_back(selected_fh);
   }
 
   if(!displayed_vertices.empty())
   {
     BOOST_FOREACH(face_descriptor f, CGAL::faces_around_target(halfedge(displayed_vertices[0],mesh), mesh))
     {
-      displayed_faces.push_back(f);
+      if(f != boost::graph_traits<Mesh>::null_face())
+        displayed_faces.push_back(f);
     }
     BOOST_FOREACH(halfedge_descriptor h, CGAL::halfedges_around_target(halfedge(displayed_vertices[0], mesh), mesh))
     {
@@ -285,9 +288,12 @@ void compute_displayed_ids(Mesh& mesh,
   {
     displayed_vertices.push_back(target(halfedge(displayed_edges[0], mesh), mesh));
     displayed_vertices.push_back(target(opposite(halfedge(displayed_edges[0], mesh), mesh),mesh));
-
-    displayed_faces.push_back(face(halfedge(displayed_edges[0], mesh),mesh));
-    displayed_faces.push_back(face(opposite(halfedge(displayed_edges[0], mesh), mesh),mesh));
+    face_descriptor f1(face(halfedge(displayed_edges[0], mesh),mesh)),
+        f2(face(opposite(halfedge(displayed_edges[0], mesh), mesh),mesh));
+    if(f1 != boost::graph_traits<Mesh>::null_face())
+      displayed_faces.push_back(f1);
+    if(f2 != boost::graph_traits<Mesh>::null_face())
+      displayed_faces.push_back(f2);
   }
 
   else if(!displayed_faces.empty())
@@ -325,7 +331,9 @@ void compute_displayed_ids(Mesh& mesh,
   face_selection.resize(num_faces(mesh));
   FKRingPMAP<Mesh> fpmap(&face_selection, &mesh);
   BOOST_FOREACH(face_descriptor f_h, displayed_faces)
+  {
       put(fpmap, f_h, true);
+  }
   CGAL::expand_face_selection(displayed_faces,
                               mesh,
                               1,
