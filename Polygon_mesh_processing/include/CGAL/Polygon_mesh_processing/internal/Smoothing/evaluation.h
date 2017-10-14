@@ -29,10 +29,7 @@
 #include <boost/foreach.hpp>
 #include <boost/property_map/property_map.hpp>
 
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
-
-typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 
 
 namespace CGAL {
