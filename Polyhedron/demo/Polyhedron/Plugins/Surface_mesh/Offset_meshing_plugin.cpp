@@ -1,5 +1,5 @@
 #include "config.h"
-//~ #ifdef CGAL_POLYHEDRON_DEMO_USE_SURFACE_MESHER
+#ifdef CGAL_POLYHEDRON_DEMO_USE_SURFACE_MESHER
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include "ui_Remeshing_dialog.h"
 
@@ -50,13 +50,14 @@ public:
                           tm) )
     , m_side_of_ptr( new Side_of(*m_tree_ptr) )
     , m_offset_distance(offset_distance)
+    , m_is_closed( is_closed(tm) )
   {}
 
   double operator()(const typename GeomTraits::Point_3& p) const
   {
     using CGAL::sqrt;
 
-    Bounded_side side = m_side_of_ptr->operator()(p);
+    Bounded_side side = m_is_closed?m_side_of_ptr->operator()(p):ON_UNBOUNDED_SIDE;
     if (side==ON_BOUNDARY) return m_offset_distance;
 
     typename GeomTraits::Point_3 closest_point = m_tree_ptr->closest_point(p);
@@ -69,6 +70,7 @@ private:
   boost::shared_ptr<Tree> m_tree_ptr;
   boost::shared_ptr<Side_of> m_side_of_ptr;
   double m_offset_distance;
+  bool m_is_closed;
 
 };
 
@@ -323,4 +325,4 @@ void Polyhedron_demo_offset_meshing_plugin::offset_meshing()
 
 #include "Offset_meshing_plugin.moc"
 
-//~ #endif // CGAL_POLYHEDRON_DEMO_USE_SURFACE_MESHER
+#endif // CGAL_POLYHEDRON_DEMO_USE_SURFACE_MESHER
