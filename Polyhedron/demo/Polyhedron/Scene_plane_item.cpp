@@ -22,10 +22,10 @@ Scene_plane_item::~Scene_plane_item() {
   delete frame;
 }
 
-void Scene_plane_item::initializeBuffers(Viewer_interface *viewer) const
+void Scene_plane_item::initializeBuffers(Viewer_interface *viewer)
 {
-  faces_container->initializeBuffers(viewer);
-  faces_container->idx_size = static_cast<int>(idx_quad.size());
+  //faces_container->initializeBuffers(viewer);
+  //faces_container->idx_size = static_cast<int>(idx_quad.size());
 
 
 
@@ -41,8 +41,8 @@ void Scene_plane_item::initializeBuffers(Viewer_interface *viewer) const
 
 }
 
-void Scene_plane_item::computeElements() const
-{
+void Scene_plane_item::computeElements()
+{/*
     QApplication::setOverrideCursor(Qt::WaitCursor);
     positions_quad.resize(0);
     positions_lines.resize(0);
@@ -108,36 +108,36 @@ void Scene_plane_item::computeElements() const
                                                        static_cast<int>(idx_quad.size()*sizeof(unsigned int)));
     faces_container->VBOs[Tri::Smooth_vertices]->allocate(positions_quad.data(),
                                                         static_cast<int>(positions_quad.size()*sizeof(float)));
-    QApplication::restoreOverrideCursor();
+    QApplication::restoreOverrideCursor();*/
 }
 
-void Scene_plane_item::draw(Viewer_interface* viewer)const
+void Scene_plane_item::draw(Viewer_interface* viewer)
 {
 
-  if(!isinit)
-    initGL();
-  if(!is_locked && are_buffers_filled &&
-     !buffers_init[viewer])
-  {
-    initializeBuffers(viewer);
-    buffers_init[viewer] = true;
-  }
+//  if(!isinit)
+//    initGL();
+//  if(!is_locked && are_buffers_filled &&
+//     !buffers_init[viewer])
+//  {
+//    initializeBuffers(viewer);
+//    buffers_init[viewer] = true;
+//  }
 
-    QMatrix4x4 f_matrix;
-    for(int i=0; i<16; i++)
-        f_matrix.data()[i] = (float)frame->matrix()[i];
+//    QMatrix4x4 f_matrix;
+//    for(int i=0; i<16; i++)
+//        f_matrix.data()[i] = (float)frame->matrix()[i];
 
-    program->setUniformValue("f_matrix", f_matrix);
-    program->setUniformValue("is_selected", false);
+//    program->setUniformValue("f_matrix", f_matrix);
+//    program->setUniformValue("is_selected", false);
 
-    faces_container->color = color();
-    faces_container->is_selected = false;
-    faces_container->draw(*this, viewer, true);
+//    faces_container->color = color();
+//    faces_container->is_selected = false;
+//    faces_container->draw(*this, viewer, true);
 
 
 }
 
-void Scene_plane_item::drawEdges(CGAL::Three::Viewer_interface* viewer)const
+void Scene_plane_item::drawEdges(CGAL::Three::Viewer_interface* viewer)
 {
 //    if(!are_buffers_filled)
 //        initializeBuffers(viewer);
@@ -177,17 +177,17 @@ Scene_item::ManipulatedFrame* Scene_plane_item::manipulatedFrame() {
 }
 
 Scene_plane_item* Scene_plane_item::clone() const {
-  if(can_clone)
-  {
-    Scene_plane_item* item = new Scene_plane_item(scene);
-    item->manipulable = manipulable;
-    item->can_clone = true;
-    item->frame = new ManipulatedFrame;
-    item->frame->setPosition(frame->position());
-    item->frame->setOrientation(frame->orientation());
-    return item;
-  }
-  else
+//  if(can_clone)
+//  {
+//    Scene_plane_item* item = new Scene_plane_item(scene);
+//    item->manipulable = manipulable;
+//    item->can_clone = true;
+//    item->frame = new ManipulatedFrame;
+//    item->frame->setPosition(frame->position());
+//    item->frame->setOrientation(frame->orientation());
+//    return item;
+//  }
+//  else
     return 0;
 }
 
@@ -224,8 +224,8 @@ Plane_3 Scene_plane_item::plane(qglviewer::Vec offset) const {
 
 void Scene_plane_item::invalidateOpenGLBuffers()
 {
-    are_buffers_filled = false;
-    compute_bbox();
+//    are_buffers_filled = false;
+//    compute_bbox();
 }
 
 void Scene_plane_item::setPosition(float x, float y, float z) {

@@ -74,14 +74,14 @@ Scene_spheres_item::~Scene_spheres_item()
   delete d;
 }
 
-void Scene_spheres_item::initializeBuffers(CGAL::Three::Viewer_interface *viewer) const
+void Scene_spheres_item::initializeBuffers(CGAL::Three::Viewer_interface *viewer)
 {
-  d->face_container->initializeBuffers(viewer);
-  d->edge_container->initializeBuffers(viewer);
-  d->face_container->flat_size = static_cast<int>(d->vertices.size());
-  d->edge_container->flat_size = static_cast<int>(d->edges.size());
-  d->face_container->center_size = d->centers.size();
-  d->edge_container->center_size = d->centers.size();
+ // d->face_container->initializeBuffers(viewer);
+ // d->edge_container->initializeBuffers(viewer);
+ // d->face_container->flat_size = static_cast<int>(d->vertices.size());
+ // d->edge_container->flat_size = static_cast<int>(d->edges.size());
+ // d->face_container->center_size = d->centers.size();
+ // d->edge_container->center_size = d->centers.size();
 
 //  centers.clear();
 //  centers.swap(centers);
@@ -95,47 +95,47 @@ void Scene_spheres_item::initializeBuffers(CGAL::Three::Viewer_interface *viewer
 
 }
 
-void Scene_spheres_item::draw(Viewer_interface *viewer, int, bool, QOpenGLFramebufferObject *) const
+void Scene_spheres_item::draw(Viewer_interface *viewer, int, bool, QOpenGLFramebufferObject *)
 {
-  if(!d->isinit)
-    initGL();
-  if(!is_locked && are_buffers_filled &&
-     ! d->buffers_init[viewer])
-  {
-    initializeBuffers(viewer);
-    d->buffers_init[viewer] = true;
-  }
-  if(d->has_plane)
-  {
-    QVector4D cp(d->plane.a(),d->plane.b(),d->plane.c(),d->plane.d());
-    d->face_container->plane = cp;
-    d->face_container->draw(*this, viewer,false);
-  }
-  else
-  {
-    d->face_container->draw(*this, viewer,false);
-  }
+//  if(!d->isinit)
+//    initGL();
+//  if(!is_locked && are_buffers_filled &&
+//     ! d->buffers_init[viewer])
+//  {
+//    initializeBuffers(viewer);
+//    d->buffers_init[viewer] = true;
+//  }
+//  if(d->has_plane)
+//  {
+//    QVector4D cp(d->plane.a(),d->plane.b(),d->plane.c(),d->plane.d());
+//    d->face_container->plane = cp;
+//    d->face_container->draw(*this, viewer,false);
+//  }
+//  else
+//  {
+//    d->face_container->draw(*this, viewer,false);
+//  }
 }
-void Scene_spheres_item::drawEdges(Viewer_interface *viewer) const
+void Scene_spheres_item::drawEdges(Viewer_interface *viewer)
 {
-  if(!d->isinit)
-    initGL();
-  if(!is_locked && are_buffers_filled &&
-     ! d->buffers_init[viewer])
-  {
-    initializeBuffers(viewer);
-    d->buffers_init[viewer] = true;
-  }
-  if(d->has_plane)
-  {
-    QVector4D cp(d->plane.a(),d->plane.b(),d->plane.c(),d->plane.d());
-    d->edge_container->plane = cp;
-    d->edge_container->draw(*this, viewer,false);
-  }
-  else
-  {
-    d->edge_container->draw(*this, viewer,false);
-  }
+//  if(!d->isinit)
+//    initGL();
+//  if(!is_locked && are_buffers_filled &&
+//     ! d->buffers_init[viewer])
+//  {
+//    initializeBuffers(viewer);
+//    d->buffers_init[viewer] = true;
+//  }
+//  if(d->has_plane)
+//  {
+//    QVector4D cp(d->plane.a(),d->plane.b(),d->plane.c(),d->plane.d());
+//    d->edge_container->plane = cp;
+//    d->edge_container->draw(*this, viewer,false);
+//  }
+//  else
+//  {
+//    d->edge_container->draw(*this, viewer,false);
+//  }
 }
 void Scene_spheres_item::add_sphere(const CGAL::Sphere_3<Kernel>& sphere, CGAL::Color color)
 {
@@ -163,7 +163,9 @@ void Scene_spheres_item::clear_spheres()
 }
 void Scene_spheres_item::setPrecision(int prec) { d->precision = prec; }
 void Scene_spheres_item::setPlane(Kernel::Plane_3 p_plane) { d->plane = p_plane; }
-void Scene_spheres_item::invalidateOpenGLBuffers(){are_buffers_filled = false;}
+void Scene_spheres_item::invalidateOpenGLBuffers(){
+//  are_buffers_filled = false;
+}
 
 QString
 Scene_spheres_item::toolTip() const {
@@ -181,5 +183,5 @@ void Scene_spheres_item::setColor(QColor c)
   this->on_color_changed();
 }
 
-void Scene_spheres_item::computeElements() const
+void Scene_spheres_item::computeElements()
 {}

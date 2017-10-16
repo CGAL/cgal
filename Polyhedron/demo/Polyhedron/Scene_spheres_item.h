@@ -34,16 +34,16 @@ public:
   bool supportsRenderingMode(RenderingMode m) const Q_DECL_OVERRIDE{
     return (m == Gouraud || m == Wireframe);
   }
-  void compute_bbox() const Q_DECL_OVERRIDE{ _bbox = Bbox(); }
+  //void compute_bbox() const Q_DECL_OVERRIDE{ _bbox = Bbox(); }
   void add_sphere(const CGAL::Sphere_3<Kernel> &sphere, CGAL::Color = CGAL::Color(120,120,120));
   void clear_spheres();
   void setPrecision(int prec);
 
-  void draw(Viewer_interface *, int, bool, QOpenGLFramebufferObject *) const Q_DECL_OVERRIDE;
-  void drawEdges(CGAL::Three::Viewer_interface* viewer) const Q_DECL_OVERRIDE;
-  void invalidateOpenGLBuffers() Q_DECL_OVERRIDE;
-  void computeElements() const Q_DECL_OVERRIDE;
-  void initializeBuffers(CGAL::Three::Viewer_interface *) const Q_DECL_OVERRIDE;
+  void draw(Viewer_interface *, int, bool, QOpenGLFramebufferObject *)Q_DECL_OVERRIDE;
+  void drawEdges(CGAL::Three::Viewer_interface* viewer) Q_DECL_OVERRIDE;
+  void invalidateOpenGLBuffers() ;
+  void computeElements() ;
+  void initializeBuffers(CGAL::Three::Viewer_interface *);
   void setPlane(Kernel::Plane_3 p_plane);
   void setToolTip(QString s);
   void setColor(QColor c) Q_DECL_OVERRIDE;

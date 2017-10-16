@@ -39,7 +39,6 @@ public:
     bool isFinite() const { return true; }
     bool isEmpty() const;
     void compute_bbox() const;
-    Bbox bbox() const;
 
     Scene_polylines_item* clone() const;
 
@@ -47,17 +46,17 @@ public:
 
     // Indicate if rendering mode is supported
     bool supportsRenderingMode(RenderingMode m) const;
-    void computeElements() const;
+    void computeElements(Gl_data_names);
 
     QMenu* contextMenu();
 
     // Flat/Gouraud OpenGL drawing
-    void draw(Viewer_interface *viewer, int pass, bool is_writing, QOpenGLFramebufferObject *fbo) const;
+    void draw(Viewer_interface *viewer, int pass, bool is_writing, QOpenGLFramebufferObject *fbo) ;
 
     // Wireframe OpenGL drawing
-    void drawEdges(CGAL::Three::Viewer_interface*) const;
+    void drawEdges(CGAL::Three::Viewer_interface*) ;
 
-    void drawPoints(CGAL::Three::Viewer_interface*) const;
+    void drawPoints(CGAL::Three::Viewer_interface*);
 
 
     void smooth(std::vector<Point_3>& polyline);

@@ -65,7 +65,7 @@ public:
   }
   bool isFinite() const { return false; }
   bool isEmpty() const { return false; }
-  void compute_bbox() const { _bbox = Bbox(); }
+  //void compute_bbox() const { _bbox = Bbox(); }
   bool manipulatable() const;
   ManipulatedFrame* manipulatedFrame();
 
@@ -77,8 +77,8 @@ public:
   bool supportsRenderingMode(RenderingMode m) const {
     return (m == Wireframe || m == Flat || m == FlatPlusEdges);
   }
-  virtual void draw(CGAL::Three::Viewer_interface*) const;
- virtual void drawEdges(CGAL::Three::Viewer_interface* viewer)const;
+  virtual void draw(CGAL::Three::Viewer_interface*) ;
+ virtual void drawEdges(CGAL::Three::Viewer_interface* viewer);
   Plane_3 plane(qglviewer::Vec offset = qglviewer::Vec(0,0,0)) const;
 
 public Q_SLOTS:
@@ -122,8 +122,8 @@ protected:
   mutable QOpenGLShaderProgram *program;
   CGAL::Three::Triangle_container* faces_container;
 
-  void initializeBuffers(CGAL::Three::Viewer_interface*)const Q_DECL_OVERRIDE;
-  void computeElements()const Q_DECL_OVERRIDE;
+  void initializeBuffers(CGAL::Three::Viewer_interface *) ;
+  void computeElements();
 };
 
 #endif // SCENE_PLANE_ITEM_H

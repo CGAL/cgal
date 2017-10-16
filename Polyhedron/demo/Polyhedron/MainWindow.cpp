@@ -1493,7 +1493,6 @@ void MainWindow::on_actionLoad_triggered()
   connect(loader, &LoadingController::finished,
           loader, &LoadingController::deleteLater);
   loader->process();
-
 }
 
 void MainWindow::on_actionSaveAs_triggered()
