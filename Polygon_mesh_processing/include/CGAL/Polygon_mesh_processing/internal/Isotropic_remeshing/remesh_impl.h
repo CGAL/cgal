@@ -189,6 +189,9 @@ namespace internal {
       patch_ids_map = CGAL::internal::add_property(Face_property_tag("PMP_patch_id"), pmesh);
       if (do_init)
       {
+#ifdef CGAL_PMP_REMESHING_VERBOSE
+        std::cout << "Compute connected components property map." << std::endl;
+#endif
         nb_cc
           = PMP::connected_components(pmesh,
                                       patch_ids_map,

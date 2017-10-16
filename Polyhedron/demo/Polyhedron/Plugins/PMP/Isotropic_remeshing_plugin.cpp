@@ -348,11 +348,9 @@ public Q_SLOTS:
 
      reset_face_ids(pmesh);
 
-     Patch_id_pmap fpmap;
+     Patch_id_pmap fpmap = get(CGAL::face_patch_id_t<int>(), pmesh);
      bool fpmap_valid = false;
-     if(boost::graph_has_property<FaceGraph, CGAL::face_patch_id_t<int>()>::type::value)
      {
-       fpmap = get(CGAL::face_patch_id_t<int>(), *poly_item->polyhedron());
        BOOST_FOREACH(face_descriptor f, faces(pmesh))
        {
          if (get(fpmap, f) != 1)
