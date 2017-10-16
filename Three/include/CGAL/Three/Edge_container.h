@@ -84,6 +84,9 @@ struct DEMO_FRAMEWORK_EXPORT Edge_container :public Primitive_container
   void draw(CGAL::Three::Viewer_interface* viewer,
             bool is_color_uniform,
             QOpenGLFramebufferObject* = NULL)  Q_DECL_OVERRIDE;
+
+  void initializeBuffers(Viewer_interface *viewer) Q_DECL_OVERRIDE;
+
   /// \name Getters and Setters for the shaders parameters.
   ///
   /// Each of those depends of the `OpenGL_program_IDs` this container is using.

@@ -159,9 +159,7 @@ void Triangle_container::initGL( Viewer_interface* viewer)
                     Vbo::GEOMETRY,
                     QOpenGLBuffer::VertexBuffer, GL_FLOAT, 0, 1));
       getVao(viewer)->addVbo(getVbo(Radius));
-      viewer->glVertexAttribDivisor(getVao(viewer)->program->attributeLocation("barycenter"), 1);
-      viewer->glVertexAttribDivisor(getVao(viewer)->program->attributeLocation("radius"), 1);
-      viewer->glVertexAttribDivisor(getVao(viewer)->program->attributeLocation("colors"), 1);
+
     }
   }
   setGLInit(viewer, true);
@@ -208,6 +206,18 @@ void Triangle_container::draw(Viewer_interface* viewer,
     if(is_color_uniform)
       getVao(viewer)->program->setAttributeValue("colors", getColor());
     getVao(viewer)->program->setUniformValue("alpha", d->alpha);
+    if(getProgram() == VI::PROGRAM_WITH_LIGHT
+       || getProgram() == VI::PROGRAM_SPHERES)
+    {
+      getVao(viewer)->program->setUniformValue("comparing", d->comparing);
+      getVao(viewer)->program->setUniformValue("width", d->width);
+      getVao(viewer)->program->setUniformValue("height", d->height);
+      getVao(viewer)->program->setUniformValue("near", d->near);
+      getVao(viewer)->program->setUniformValue("far", d->far);
+      getVao(viewer)->program->setUniformValue("writing", d->writing);
+      if( fbo)
+        viewer->glBindTexture(GL_TEXTURE_2D, fbo->texture());
+    }
     if(getProgram() == VI::PROGRAM_SPHERES
        || getProgram() == VI::PROGRAM_CUTPLANE_SPHERES)
     {
@@ -217,17 +227,7 @@ void Triangle_container::draw(Viewer_interface* viewer,
     }
     else
     {
-      if(getProgram() == VI::PROGRAM_WITH_LIGHT)
-      {
-        getVao(viewer)->program->setUniformValue("comparing", d->comparing);
-        getVao(viewer)->program->setUniformValue("width", d->width);
-        getVao(viewer)->program->setUniformValue("height", d->height);
-        getVao(viewer)->program->setUniformValue("near", d->near);
-        getVao(viewer)->program->setUniformValue("far", d->far);
-        getVao(viewer)->program->setUniformValue("writing", d->writing);
-        if( fbo)
-          viewer->glBindTexture(GL_TEXTURE_2D, fbo->texture());
-      }
+
       viewer->glDrawArrays(GL_TRIANGLES,0,static_cast<GLsizei>(getFlatDataSize()/3));
     }
 
@@ -236,6 +236,19 @@ void Triangle_container::draw(Viewer_interface* viewer,
 }
 
 
+void Triangle_container::initializeBuffers(Viewer_interface *viewer)
+{
+  Primitive_container::initializeBuffers(viewer);
+  if(getProgram() == VI::PROGRAM_SPHERES
+     || getProgram() == VI::PROGRAM_CUTPLANE_SPHERES)
+  {
+    getVao(viewer)->bind();
+    viewer->glVertexAttribDivisor(getVao(viewer)->program->attributeLocation("barycenter"), 1);
+    viewer->glVertexAttribDivisor(getVao(viewer)->program->attributeLocation("radius"), 1);
+    viewer->glVertexAttribDivisor(getVao(viewer)->program->attributeLocation("colors"), 1);
+    getVao(viewer)->release();
+  }
+}
 
 float     Triangle_container::getShrinkFactor() { return d->shrink_factor ; }
 bool      Triangle_container::isComparing()     { return d->comparing; }

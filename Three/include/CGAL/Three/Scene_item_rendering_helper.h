@@ -2,7 +2,7 @@
 #define SCENE_ITEM_RENDERING_HELPER_H
 
 #include <CGAL/Three/Scene_item.h>
-#include <QThread>
+#include <QRunnable>
 
 
 #ifdef demo_framework_EXPORTS
@@ -44,7 +44,7 @@ public:
     * application does not get stuck while the processing is performed.
     * Emits `dataProcessed()`.
     */
-  void processData(Gl_data_names name);
+  virtual void processData(Gl_data_names name);
   //!
   //! \brief setAlpha sets the integer value of the alpha channel of this item.
   //! Also updates the slider value.
@@ -168,7 +168,7 @@ private:
 //! \brief The WorkerThread class computes the data of this item in a separated
 //! thread. It allows to keep the hand on the GUI and to manage several items at the same time.
 //!
-class WorkerThread : public QThread
+class WorkerThread : public QObject, public QRunnable
 {
   Q_OBJECT
   CGAL::Three::Scene_item* item;
@@ -182,9 +182,13 @@ public:
   WorkerThread(CGAL::Three::Scene_item* item, CGAL::Three::Scene_item::Gl_data_names name):
     item(item),
     name(name){}
+Q_SIGNALS:
+  void finished();
+
 private:
   void run() Q_DECL_OVERRIDE{
     item->computeElements(name);
+    finished();
   }
 };
 

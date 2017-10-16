@@ -460,7 +460,7 @@ private Q_SLOTS:
 typedef std::pair<QFileInfo,
 CT::Polyhedron_demo_io_plugin_interface*> InfoLoader;
 
-class LoadingThread : public QThread
+class LoadingThread : public QObject, public QRunnable
 {
   Q_OBJECT
   QList<InfoLoader> input;
@@ -505,7 +505,7 @@ public:
                     MainWindow* mw, Scene *scene);
   void process()
   {
-    workerThread->start();
+    QThreadPool::globalInstance()->start(workerThread);
   }
 
 public Q_SLOTS:
@@ -539,7 +539,6 @@ public:
     workerThread = new LoadingThread(list, mw, true);
     connect(workerThread, SIGNAL(resultReady(CT::Scene_item*)),
             this, SLOT(handleResults(CT::Scene_item*)));
-    connect(workerThread, SIGNAL(finished()), workerThread, SLOT(deleteLater()));
     connect(this, &ReloadingController::finish,
             this, &ReloadingController::deleteLater);
   }

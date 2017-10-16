@@ -75,9 +75,11 @@ public:
   //! An item's index is its position in the Geometric Objects list.
   typedef int Item_id;
   virtual ~Scene_interface() {};
-  //!Adds an item to the Geometric Objects list.
+  //!Adds `item` to the Geometric Objects list.
+  //! If `update_bbox` is `true`, the whole bbox of the scene is re-computed,
+  //! and the `Viewer` offset.
   //!@returns the index of the new item.
-  virtual Item_id addItem(CGAL::Three::Scene_item* item) = 0;
+  virtual Item_id addItem(CGAL::Three::Scene_item* item, bool update_bbox = true) = 0;
   //! \brief Replaces an item by a new one in the scene.
   //! The item which id is `id` is replaced by `item`.
   //! The first one is deleted and gives its index to the second one.

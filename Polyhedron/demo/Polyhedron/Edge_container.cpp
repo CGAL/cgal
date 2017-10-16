@@ -106,9 +106,6 @@ void Edge_container::initGL(Viewer_interface *viewer)
       getVao(viewer)->addVbo(getVbo(Normals));
       getVao(viewer)->addVbo(getVbo(Radius));
       getVao(viewer)->addVbo(getVbo(Barycenters));
-      viewer->glVertexAttribDivisor(getVao(viewer)->program->attributeLocation("barycenter"), 1);
-      viewer->glVertexAttribDivisor(getVao(viewer)->program->attributeLocation("radius"), 1);
-      viewer->glVertexAttribDivisor(getVao(viewer)->program->attributeLocation("colors"), 1);
     }
       break;
     default:
@@ -117,6 +114,21 @@ void Edge_container::initGL(Viewer_interface *viewer)
   }
   setGLInit(viewer, true);
 }
+
+void Edge_container::initializeBuffers(Viewer_interface *viewer)
+{
+  Primitive_container::initializeBuffers(viewer);
+  if(getProgram() == VI::PROGRAM_SPHERES
+     || getProgram() == VI::PROGRAM_CUTPLANE_SPHERES)
+  {
+    getVao(viewer)->bind();
+    viewer->glVertexAttribDivisor(getVao(viewer)->program->attributeLocation("barycenter"), 1);
+    viewer->glVertexAttribDivisor(getVao(viewer)->program->attributeLocation("radius"), 1);
+    viewer->glVertexAttribDivisor(getVao(viewer)->program->attributeLocation("colors"), 1);
+    getVao(viewer)->release();
+  }
+}
+
 void Edge_container::draw(Viewer_interface *viewer,
                           bool is_color_uniform, QOpenGLFramebufferObject *)
 

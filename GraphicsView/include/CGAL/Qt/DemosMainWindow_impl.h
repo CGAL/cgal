@@ -91,6 +91,7 @@ DemosMainWindow::DemosMainWindow(QWidget * parent, ::Qt::WindowFlags flags)
   actionAbout = new QAction(this);
   actionAbout->setObjectName("actionAbout");
   actionAbout->setText(tr("&About..."));
+  settings = new QSettings();
 
   setAcceptDrops(true);
 }
@@ -379,15 +380,13 @@ CGAL_INLINE_FUNCTION
 void 
 DemosMainWindow::addToRecentFiles(QString fileName)
 {
-  QSettings settings;
-  QStringList files = settings.value("recentFileList").toStringList();
+  QStringList files = settings->value("recentFileList").toStringList();
   files.removeAll(fileName);
   files.prepend(fileName);
   while (files.size() > (int)maxNumberOfRecentFiles())
     files.removeLast();
 
-  settings.setValue("recentFileList", files);
-
+  settings->setValue("recentFileList", files);
   updateRecentFileActions();
 }
 
@@ -423,11 +422,9 @@ CGAL_INLINE_FUNCTION
 void 
 DemosMainWindow::updateRecentFileActions()
 {
-  QSettings settings;
-  QStringList files = settings.value("recentFileList").toStringList();
+  QStringList files = settings->value("recentFileList").toStringList();
 
   int numRecentFiles = qMin(files.size(), (int)this->maxNumberOfRecentFiles());
-  
   for (int i = 0; i < numRecentFiles; ++i) {
     QString strippedName = QFileInfo(files[i]).fileName();
     QString text = tr("&%1 %2").arg(i).arg(strippedName);
@@ -437,40 +434,37 @@ DemosMainWindow::updateRecentFileActions()
   }
   for (unsigned int j = numRecentFiles; j < maxNumberOfRecentFiles(); ++j)
     recentFileActs[j]->setVisible(false);
-  
+
   recentFilesSeparator->setVisible(numRecentFiles > 0);
 }
 
 CGAL_INLINE_FUNCTION
 void DemosMainWindow::writeState(QString groupname)
 {
-  QSettings settings;
 
-  settings.beginGroup(groupname);
-  settings.setValue("size", size());
-  settings.setValue("pos", pos());
-  settings.setValue("state", saveState());
-  settings.endGroup();
+  settings->beginGroup(groupname);
+  settings->setValue("size", size());
+  settings->setValue("pos", pos());
+  settings->setValue("state", saveState());
+  settings->endGroup();
 }
 
 CGAL_INLINE_FUNCTION
 void DemosMainWindow::readState(QString groupname, Options /*what_to_save*/)
-{
-  QSettings settings;
-  
-  settings.beginGroup(groupname);
-  resize(settings.value("size", this->size()).toSize());
+{  
+  settings->beginGroup(groupname);
+  resize(settings->value("size", this->size()).toSize());
 
   QDesktopWidget* desktop = qApp->desktop();
-  QPoint pos = settings.value("pos", this->pos()).toPoint();
+  QPoint pos = settings->value("pos", this->pos()).toPoint();
   if(desktop->availableGeometry(pos).contains(pos)) {
     move(pos);
   }
-  QByteArray mainWindowState = settings.value("state").toByteArray();
+  QByteArray mainWindowState = settings->value("state").toByteArray();
   if(!mainWindowState.isNull()) {
     this->restoreState(mainWindowState);
   }
-  settings.endGroup();
+  settings->endGroup();
 }
 
 

@@ -92,7 +92,6 @@ bool Polyhedron_demo_polylines_io_plugin::canLoad() const {
 
 CGAL::Three::Scene_item*
 Polyhedron_demo_polylines_io_plugin::load(QFileInfo fileinfo, Scene_interface *scene, QMainWindow *) {
-
   // Open file
   std::ifstream ifs(fileinfo.filePath().toUtf8());
   if(!ifs) {
@@ -136,8 +135,7 @@ Polyhedron_demo_polylines_io_plugin::load(QFileInfo fileinfo, Scene_interface *s
   item->setName(fileinfo.baseName());
   item->setColor(Qt::black);
   item->setProperty("polylines metadata", polylines_metadata);
-  std::cerr << "Number of polylines in item: " << item->polylines.size() << std::endl;
-  item->invalidateOpenGLBuffers();
+  item->invalidate(Scene_item::GEOMETRY|Scene_item::COLORS|Scene_item::NORMALS);
   return item;
 }
 

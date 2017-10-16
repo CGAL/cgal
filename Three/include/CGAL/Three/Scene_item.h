@@ -231,6 +231,16 @@ public:
   //!
   void doneReading();
 
+  //!
+  //! \brief setId informs the item of its current index in the scene entries.
+  //!
+  void setId(int id);
+
+  //!
+  //! \brief getId returns the current index of this item in the scene entries.
+  //!
+  int getId()const;
+
   //!Handles key press events received from the event filters installed for this item.
   virtual bool keyPressEvent(QKeyEvent*){return false;}
 

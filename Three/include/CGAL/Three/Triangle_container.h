@@ -83,6 +83,7 @@ struct DEMO_FRAMEWORK_EXPORT Triangle_container :public Primitive_container
             bool is_color_uniform,
             QOpenGLFramebufferObject* fbo = NULL)  Q_DECL_OVERRIDE;
 
+  void initializeBuffers(Viewer_interface *viewer) Q_DECL_OVERRIDE;
   /// \name Getters and Setters for the shaders parameters.
   ///
   /// Each of those depends of the `OpenGL_program_IDs` this container is using.

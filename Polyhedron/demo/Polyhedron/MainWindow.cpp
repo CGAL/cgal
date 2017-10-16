@@ -365,6 +365,7 @@ MainWindow::MainWindow(QWidget* parent)
 
   // setup menu filtering
   connect(ui->menuOperations, SIGNAL(aboutToShow()), this, SLOT(filterOperations()));
+
 }
 
 //Recursive function that do a pass over a menu and its sub-menus(etc.) and hide them when they are empty
@@ -1054,9 +1055,10 @@ Scene_item* MainWindow::loadItem(QFileInfo fileinfo, CGAL::Three::Polyhedron_dem
 
   item->setProperty("source filename", fileinfo.absoluteFilePath());
   item->setProperty("loader_name", loader->name());
+
   if(!reloading)
   {
-    this->addToRecentFiles(fileinfo.absoluteFilePath());
+    addToRecentFiles(fileinfo.absoluteFilePath());
   }
   item->moveToThread(QApplication::instance()->thread());
   return item;
@@ -1469,7 +1471,6 @@ void MainWindow::on_actionLoad_triggered()
   if(it != filterPluginMap.end()) {
     selectedPlugin = it.value();
   }
-
   QList<InfoLoader> list;
   if(selectedPlugin) {
     Q_FOREACH(const QString& filename, dialog.selectedFiles()) {
@@ -1817,7 +1818,7 @@ void MainWindow::makeNewGroup()
 {
         Scene_group_item * group =
             new Scene_group_item(QString("New group"), scene);
-    scene->addItem(group);
+    scene->addItem(group, false);
 }
 
 void MainWindow::on_upButton_pressed()
@@ -2097,7 +2098,7 @@ void ReloadingController::handleResults(CT::Scene_item* item)
     finish(false);
     return;
   }
-  item->setName(QString("%1 reloaded").arg(original->name()));
+  item->setName(original->name());
   item->setColor(original->color());
   item->setRenderingMode(original->renderingMode());
   item->setVisible(original->visible());
@@ -2113,7 +2114,7 @@ void ReloadingController::handleResults(CT::Scene_item* item)
 void ReloadingController::process()
 {
   original->reading();
-  workerThread->start();
+  QThreadPool::globalInstance()->start(workerThread);
 }
 
 LoadingController::LoadingController(const QList<InfoLoader>& input,
@@ -2127,7 +2128,6 @@ LoadingController::LoadingController(const QList<InfoLoader>& input,
   workerThread = new LoadingThread(input, mw, false);
   connect(workerThread, SIGNAL(resultReady(CT::Scene_item*)),
           this, SLOT(handleResults(CT::Scene_item*)));
-  connect(workerThread, SIGNAL(finished()), workerThread, SLOT(deleteLater()));
   colors_.reserve(input.size());
   compute_color_map(CT::Scene_item::defaultColor(),
                     static_cast<unsigned>(input.size()),
@@ -2138,7 +2138,7 @@ LoadingController::LoadingController(const QList<InfoLoader>& input,
 
 void LoadingController::handleResults(CT::Scene_item* item)
 {
-  counter++;
+  ++counter;
   if(!item)
   {
     error();
@@ -2149,14 +2149,20 @@ void LoadingController::handleResults(CT::Scene_item* item)
   if(!group
      || group->getChildrenIds().size() == 0)
     item->setColor(colors_[counter-1]);
-  mw->selectSceneItem(scene->item_id(item));
 
-  scene->addItem(item);
+  scene->addItem(item,
+                 counter == input.size());
 
-  if(group)
+  if(group
+     && group->getChildrenIds().size() > 0)
+  {
     scene->redraw_model();
+  }
   if(counter == input.size())
+  {
+    mw->selectSceneItem(scene->item_id(item));
     finished();
+  }
 }
 
 void StatisticsController::handleResults(QString res)

@@ -5,6 +5,8 @@
 #include <CGAL/Three/Edge_container.h>
 #include <QWidgetAction>
 #include <QMenu>
+#include <QApplication>
+#include <QThreadPool>
 
 using namespace CGAL::Three;
 
@@ -169,15 +171,16 @@ void Scene_item_rendering_helper::processData(Gl_data_names name)
 {
   writing();
 
+  QApplication::setOverrideCursor(::Qt::BusyCursor);
   WorkerThread *workerThread = new WorkerThread(this, name);
   connect(workerThread, &WorkerThread::finished, [this, workerThread]()
   {
     doneWriting();
     redraw();
     dataProcessed();
+    QApplication::restoreOverrideCursor();
   });
-  connect(workerThread, &WorkerThread::finished, workerThread, &WorkerThread::deleteLater);
-  workerThread->start();
+  QThreadPool::globalInstance()->start(workerThread);
 }
 
 void Scene_item_rendering_helper::setAlpha(int alpha)

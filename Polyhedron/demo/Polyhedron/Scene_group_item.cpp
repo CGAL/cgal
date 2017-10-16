@@ -157,6 +157,22 @@ void Scene_group_item::renderChildren(Viewer_interface *viewer,
     {
       getChild(id)->draw(viewer, pass, is_writing, fbo);
     }
+
+    if(getChild(id)->visible() &&
+       (getChild(id)->renderingMode() == FlatPlusEdges
+        || getChild(id)->renderingMode() == Wireframe
+        || getChild(id)->renderingMode() == PointsPlusNormals))
+    {
+      getChild(id)->drawEdges(viewer);
+    }
+
+    if(getChild(id)->visible() &&
+       (getChild(id)->renderingMode() == Points  ||
+       (getChild(id)->renderingMode() == PointsPlusNormals)  ||
+       (getChild(id)->renderingMode() == ShadedPoints)))
+    {
+      getChild(id)->drawPoints(viewer);
+    }
     if(with_names) {
       //    read depth buffer at pick location;
       float depth = 1.0;
@@ -174,51 +190,12 @@ void Scene_group_item::drawEdges(CGAL::Three::Viewer_interface* viewer)
 {
   if(!isInit())
     initGL();
-  Q_FOREACH(Scene_interface::Item_id id, children){
-    if(id == scene->mainSelectionIndex()|| scene->selectionIndices().contains(id))
-    {
-      getChild(id)->selection_changed(true);
-    }
-    else
-
-    {
-      getChild(id)->selection_changed(false);
-    }
-    if(getChild(id)->visible() &&
-       (getChild(id)->renderingMode() == FlatPlusEdges
-        || getChild(id)->renderingMode() == Wireframe
-        || getChild(id)->renderingMode() == PointsPlusNormals))
-    {
-      getChild(id)->drawEdges(viewer);
-    }
-  }
 }
 
 void Scene_group_item::drawPoints(CGAL::Three::Viewer_interface* viewer)
 {
   if(!isInit())
     initGL();
-  Q_FOREACH(Scene_interface::Item_id id, children){
-    if(id == scene->mainSelectionIndex()|| scene->selectionIndices().contains(id))
-    {
-      getChild(id)->selection_changed(true);
-    }
-    else
-
-    {
-      getChild(id)->selection_changed(false);
-    }
-    if(getChild(id)->visible())
-    {
-
-      if(getChild(id)->renderingMode() == Points  ||
-         (getChild(id)->renderingMode() == PointsPlusNormals)  ||
-         (getChild(id)->renderingMode() == ShadedPoints))
-      {
-        getChild(id)->drawPoints(viewer);
-      }
-    }
-  }
 }
 
 

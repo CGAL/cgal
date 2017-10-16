@@ -29,6 +29,7 @@
 #include <iostream>
 #include <QVector>
 #include <QMainWindow>
+#include <QSettings>
 #include <QDragEnterEvent>
 #include <QDropEvent>
 
@@ -125,6 +126,7 @@ protected:
   QAction* recentFilesSeparator;
   unsigned int maxNumRecentFiles;
   QVector<QAction*> recentFileActs;
+  QSettings *settings;
 }; // end class DemosMainWindow
 
 } // namespace Qt

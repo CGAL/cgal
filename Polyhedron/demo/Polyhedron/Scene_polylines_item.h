@@ -62,7 +62,7 @@ public:
     void smooth(std::vector<Point_3>& polyline);
 
 public Q_SLOTS:
-    virtual void invalidateOpenGLBuffers();
+    virtual void invalidate(Gl_data_names name = 0) Q_DECL_OVERRIDE;
     void change_corner_radii(double);
     void change_corner_radii();
     void split_at_sharp_angles();

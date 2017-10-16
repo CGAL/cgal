@@ -76,7 +76,7 @@ void
 Scene_polylines_item_private::computeElements()
 {
    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
-    QApplication::setOverrideCursor(Qt::WaitCursor);
+
     positions_lines.resize(0);
     double mean = 0;
     //Fills the VBO with the lines
@@ -124,7 +124,6 @@ Scene_polylines_item_private::computeElements()
                                             static_cast<int>(nb_lines*sizeof(float)));
 
     item->setBuffersFilled(true);
-    QApplication::restoreOverrideCursor();
 }
 
 void
@@ -235,6 +234,7 @@ Scene_polylines_item_private::computeSpheres()
                     "</ul></p>"
                     "<p>Tip: To erase this item, set its radius to 0 or less. </p>")
                             );
+      spheres->computeElements(Scene_item::GEOMETRY|Scene_item::COLORS|Scene_item::NORMALS);
       QApplication::restoreOverrideCursor();
 }
 
@@ -248,7 +248,7 @@ Scene_polylines_item::Scene_polylines_item(CGAL::Three::Scene_interface* scene)
     d->spheres = NULL;
     setEdgeContainer(0, new Edge_container(VI::PROGRAM_NO_SELECTION,
                                    false));
-    invalidateOpenGLBuffers();
+    invalidate();
 
 }
 
@@ -352,6 +352,9 @@ Scene_polylines_item::draw(Viewer_interface *, int , bool, QOpenGLFramebufferObj
 // Wireframe OpenGL drawing
 void 
 Scene_polylines_item::drawEdges(CGAL::Three::Viewer_interface* viewer) {
+  if(!visible()
+     || !(renderingMode() == Wireframe || renderingMode() == FlatPlusEdges))
+    return;
   if(!isWriting() && !isInit())
   {
     initGL();
@@ -378,7 +381,9 @@ Scene_polylines_item::drawEdges(CGAL::Three::Viewer_interface* viewer) {
 
 void 
 Scene_polylines_item::drawPoints(CGAL::Three::Viewer_interface* viewer)  {
-
+if(!visible()
+   || !renderingMode() == Points)
+  return;
 /*  if(!isWriting() && !isInit())
   {
     initGL();
@@ -449,13 +454,11 @@ QMenu* Scene_polylines_item::contextMenu()
     return menu;
 }
 
-void Scene_polylines_item::invalidateOpenGLBuffers()
+void Scene_polylines_item::invalidate(Gl_data_names)
 {
     setBuffersFilled(false);
     d->invalidate_stats();
     compute_bbox();
-
-
 }
 
 void Scene_polylines_item::change_corner_radii() {
@@ -485,7 +488,7 @@ void Scene_polylines_item::change_corner_radii() {
 }
 
 void Scene_polylines_item::change_corner_radii(double r) {
-    /*if(r >= 0) {
+    if(r >= 0) {
         d->spheres_drawn_square_radius = r*r;
         d->draw_extremities = (r > 0);
         if(r>0 && !d->spheres)
@@ -497,13 +500,13 @@ void Scene_polylines_item::change_corner_radii(double r) {
           scene->addItem(d->spheres);
           scene->changeGroup(d->spheres, this);
           lockChild(d->spheres);
+          d->spheres->invalidate();
           d->computeSpheres();
-          d->spheres->invalidateOpenGLBuffers();
         }
         else if(r>0 && d->spheres)
         {
+          d->spheres->invalidate();
           d->computeSpheres();
-          d->spheres->invalidateOpenGLBuffers();
         }
         else if (r<=0 && d->spheres!=NULL)
         {
@@ -511,7 +514,7 @@ void Scene_polylines_item::change_corner_radii(double r) {
           scene->erase(scene->item_id(d->spheres));
         }
     Q_EMIT itemChanged();
-    }*/
+    }
 }
 
 void Scene_polylines_item::split_at_sharp_angles()
@@ -611,7 +614,7 @@ Scene_polylines_item::merge(Scene_polylines_item* other_item) {
         metadata.append(other_metadata_variant.toStringList());
         setProperty("polylines metadata", metadata);
     }
-    invalidateOpenGLBuffers();
+    invalidate();
 }
 
 void Scene_polylines_item::reset_spheres()
@@ -622,7 +625,7 @@ void Scene_polylines_item::reset_spheres()
 void Scene_polylines_item::smooth(){
     for (Polylines_container::iterator pit=polylines.begin(),pit_end=polylines.end();pit!=pit_end;++pit)
         smooth(*pit);
-  invalidateOpenGLBuffers();
+  invalidate();
   Q_EMIT itemChanged();
 }
 
@@ -680,3 +683,4 @@ CGAL::Three::Scene_item::Header_data Scene_polylines_item::header() const
   data.titles.append(QString("Average Segment Edge Length"));
   return data;
 }
+

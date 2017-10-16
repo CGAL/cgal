@@ -49,7 +49,9 @@ struct D{
   bool is_locked;
   int is_reading;
   QMutex mutex;
+  int cur_id;
   Scene_item* item;
+
 }; //end D
 
 const QColor Scene_item::defaultColor()
@@ -281,7 +283,9 @@ int            Scene_item::hasGroup() const      { return d->has_group; }
  bool          Scene_item::visible() const       { return d->visible_;       }
  RenderingMode Scene_item::renderingMode() const { return d->rendering_mode; }
 bool           Scene_item::isSelected() const    { return d->is_selected; }
+int            Scene_item::getId() const         { return d->cur_id; }
 void           Scene_item::setSelected(bool b)   { d->is_selected = b; }
 void           Scene_item::setColor(QColor c)    { d->color_ = c;}
 void           Scene_item::setName(QString n)    { d->name_ = n; }
 void           Scene_item::setHasGroup(int hg)   { d->has_group = hg; }
+void           Scene_item::setId(int id)         {d->cur_id = id; }

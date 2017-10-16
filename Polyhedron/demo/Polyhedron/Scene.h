@@ -54,7 +54,7 @@ public:
                  NumberOfColumns = LastColumn + 1};
   Scene(QObject*  parent);
   ~Scene();
-  int addItem(CGAL::Three::Scene_item* item) Q_DECL_OVERRIDE;
+  int addItem(CGAL::Three::Scene_item* item, bool update_bbox = true) Q_DECL_OVERRIDE;
   void changeGroup(CGAL::Three::Scene_item* item, CGAL::Three::Scene_group_item* target_group) Q_DECL_OVERRIDE;
   CGAL::Three::Scene_item* replaceItem(int index, CGAL::Three::Scene_item* item, bool emit_item_about_to_be_destroyed = false) Q_DECL_OVERRIDE;
   Q_INVOKABLE int erase(int) Q_DECL_OVERRIDE;
@@ -68,7 +68,7 @@ public:
   const QList<CGAL::Three::Scene_item*>& entries() const { return m_entries; }
   Q_INVOKABLE CGAL::Three::Scene_item* item(int) const Q_DECL_OVERRIDE;
   int item_id(CGAL::Three::Scene_item*) const Q_DECL_OVERRIDE;
-  
+
   //! \todo Replace Index based selection functionality with those
   //! functions.
   ///@{
@@ -292,6 +292,7 @@ private:
   QOpenGLBuffer vbo[2];
   float points[18];
   float uvs[12];
+  Bbox last_bbox;
   void initGL(CGAL::Three::Viewer_interface* viewer);
 
 public:

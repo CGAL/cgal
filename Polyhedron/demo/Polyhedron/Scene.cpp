@@ -23,6 +23,7 @@
 #include <QList>
 #include <QAbstractProxyModel>
 #include <QMimeData>
+#include <QMainWindow>
 #include <QOpenGLFramebufferObject>
 
 
@@ -43,23 +44,17 @@ Scene::Scene(QObject* parent)
 
 }
 Scene::Item_id
-Scene::addItem(CGAL::Three::Scene_item* item)
+Scene::addItem(CGAL::Three::Scene_item* item, bool update_bbox)
 {
-    Bbox bbox_before = bbox();
     m_entries.push_back(item);
+    Item_id id = m_entries.size() - 1;
+    item->setId(id);
     connect(item, SIGNAL(itemChanged()),
             this, SLOT(itemChanged()));
     connect(item, SIGNAL(itemVisibilityChanged()),
             this, SLOT(itemVisibilityChanged()));
     connect(item, SIGNAL(redraw()),
             this, SLOT(callDraw()));
-    if(item->isFinite()
-            && !item->isEmpty()
-            && bbox_before + item->bbox() != bbox_before
-            )
-    {
-        Q_EMIT updated_bbox(true);
-    }
     QList<QStandardItem*> list;
     for(int i=0; i<6; i++)
     {
@@ -70,14 +65,22 @@ Scene::addItem(CGAL::Three::Scene_item* item)
     for(int i=0; i<6; i++){
         index_map[list.at(i)->index()] = m_entries.size() -1;
     }
-    Q_EMIT updated();
-    Item_id id = m_entries.size() - 1;
     children.push_back(id);
     Q_EMIT newItem(id);
     CGAL::Three::Scene_group_item* group =
             qobject_cast<CGAL::Three::Scene_group_item*>(item);
     if(group)
         addGroup(group);
+    if(update_bbox
+       && item->isFinite()
+       && !item->isEmpty()
+       && bbox() != last_bbox
+       )
+    {
+      Q_EMIT updated_bbox(true);
+      last_bbox = bbox();
+      Q_EMIT updated();
+    }
     return id;
 }
 
@@ -113,6 +116,7 @@ Scene::replaceItem(Scene::Item_id index, CGAL::Three::Scene_item* item, bool emi
       parent->removeChild(m_entries[index]);
     }
     std::swap(m_entries[index], item);
+    m_entries[index]->setId(index);
     if(parent)
     {
       changeGroup(m_entries[index], parent);
@@ -433,7 +437,11 @@ void Scene::s_itemAboutToBeDestroyed(CGAL::Three::Scene_item *rmv_itm)
  Q_FOREACH(CGAL::Three::Scene_item* item, m_entries)
  {
    if(item == rmv_itm)
+   {
      item->itemAboutToBeDestroyed(item);
+     return;
+   }
+
  }
 }
 bool
@@ -937,14 +945,13 @@ Scene::setData(const QModelIndex &index,
             rendering_mode = static_cast<RenderingMode>( (rendering_mode+1) % NumberOfRenderingMode );
         }
         item->setRenderingMode(rendering_mode);
-        QModelIndex nindex = createIndex(m_entries.size()-1,RenderingModeColumn+1);
-    Q_EMIT dataChanged(index, nindex);
+    Q_EMIT dataChanged(index, index);
         return true;
         break;
     }
     case VisibleColumn:
         item->setVisible(value.toBool());
-    Q_EMIT dataChanged(index, createIndex(m_entries.size()-1,VisibleColumn+1));
+    Q_EMIT dataChanged(index, index);
         return true;
     default:
         return false;
@@ -1098,20 +1105,20 @@ QItemSelection Scene::createSelection(int i)
 {
 
     return QItemSelection(index_map.keys(i).at(0),
-                          index_map.keys(i).at(4));
+                          index_map.keys(i).at(5));
 }
 
 QItemSelection Scene::createSelectionAll()
 {
     return QItemSelection(index_map.keys(0).at(0),
-                          index_map.keys(m_entries.size() - 1).at(4));
+                          index_map.keys(m_entries.size() - 1).at(5));
 }
 
 void Scene::itemChanged()
 {
     CGAL::Three::Scene_item* item = qobject_cast<CGAL::Three::Scene_item*>(sender());
     if(item)
-        itemChanged(item);
+        itemChanged(item->getId());
 }
 
 void Scene::itemChanged(Item_id i)
@@ -1120,13 +1127,13 @@ void Scene::itemChanged(Item_id i)
         return;
 
   Q_EMIT dataChanged(this->createIndex(i, 0),
-                     this->createIndex(i, LastColumn));
+                     this->createIndex(i, 0));
 }
 
 void Scene::itemChanged(CGAL::Three::Scene_item*)
 {
   Q_EMIT dataChanged(this->createIndex(0, 0),
-                     this->createIndex(m_entries.size() - 1, LastColumn));
+                     this->createIndex(m_entries.size() - 1, 0));
 }
 
 void Scene::itemVisibilityChanged()
@@ -1176,8 +1183,8 @@ bool SceneDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
             QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(event);
             if(mouseEvent->button() == ::Qt::LeftButton) {
                 QColor color =
-                        QColorDialog::getColor(model->data(index).value<QColor>()/*,
-                                               0,
+                        QColorDialog::getColor(model->data(index).value<QColor>(),
+                                               qobject_cast<QMainWindow*>(this->parent())/*,
                                                tr("Select color"),
                                                QColorDialog::ShowAlphaChannel*/);
                 if (color.isValid()) {
@@ -1221,8 +1228,8 @@ bool SceneDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
             else {
                 scene->item_B = id;
             }
-            scene->dataChanged(scene->createIndex(0, Scene::ABColumn),
-                               scene->createIndex(scene->rowCount() - 1, Scene::ABColumn));
+            scene->dataChanged(scene->createIndex(0, 0),
+                               scene->createIndex(scene->rowCount() - 1, 0));
         }
         return false;
         break;
@@ -1561,6 +1568,10 @@ void Scene::adjustIds(Item_id removed_id)
   {
     if(children[i] >= removed_id)
       --children[i];
+  }
+  for(int i = removed_id; i < numberOfEntries(); ++i)
+  {
+    m_entries[i]->setId(i-1);//the signal is emitted before m_entries is amputed from the item, so new id is current id -1.
   }
 }
 

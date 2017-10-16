@@ -4,7 +4,7 @@
 #include "create_sphere.h"
 
 #include <CGAL/Three/Scene_group_item.h>
-#include <CGAL/Three/Scene_item.h>
+#include <CGAL/Three/Scene_item_rendering_helper.h>
 #include <CGAL/Three/Scene_interface.h>
 #include <CGAL/Three/Viewer_interface.h>
 #include <CGAL/Sphere_3.h>
@@ -16,7 +16,7 @@
 #include <vector>
 struct Scene_spheres_item_priv;
 class SCENE_BASIC_OBJECTS_EXPORT Scene_spheres_item
-    : public CGAL::Three::Scene_item
+    : public CGAL::Three::Scene_item_rendering_helper
 {
   Q_OBJECT
 public:
@@ -41,12 +41,14 @@ public:
 
   void draw(Viewer_interface *, int, bool, QOpenGLFramebufferObject *)Q_DECL_OVERRIDE;
   void drawEdges(CGAL::Three::Viewer_interface* viewer) Q_DECL_OVERRIDE;
-  void invalidateOpenGLBuffers() ;
-  void computeElements() ;
+  void invalidate(Gl_data_names name = 0);
+  void computeElements(Gl_data_names);
   void initializeBuffers(CGAL::Three::Viewer_interface *);
   void setPlane(Kernel::Plane_3 p_plane);
   void setToolTip(QString s);
   void setColor(QColor c) Q_DECL_OVERRIDE;
+  void compute_bbox() const Q_DECL_OVERRIDE;
+  void processData(Gl_data_names) Q_DECL_OVERRIDE{};
 Q_SIGNALS:
   void on_color_changed();
 protected:

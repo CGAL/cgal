@@ -84,7 +84,7 @@ public:
   //! It actually fills up the buffers with the data provided by `Vbo::allocate()`;
   //! \param viewer the active `Viewer_interface`.
   //!
-  void initializeBuffers(CGAL::Three::Viewer_interface* viewer) ;
+  virtual void initializeBuffers(CGAL::Three::Viewer_interface* viewer) ;
 
   //!
   //! \brief initGL initializes the OpenGL containers.
