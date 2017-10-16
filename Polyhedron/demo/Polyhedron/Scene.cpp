@@ -102,6 +102,8 @@ Scene::replaceItem(Scene::Item_id index, CGAL::Three::Scene_item* item, bool emi
             this, SLOT(itemChanged()));
     connect(item, SIGNAL(itemVisibilityChanged()),
             this, SLOT(itemVisibilityChanged()));
+    connect(item, SIGNAL(redraw()),
+            this, SLOT(callDraw()));
     CGAL::Three::Scene_group_item* group =
             qobject_cast<CGAL::Three::Scene_group_item*>(m_entries[index]);
     if(group)
