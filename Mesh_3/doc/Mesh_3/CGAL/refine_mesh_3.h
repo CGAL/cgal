@@ -185,7 +185,8 @@ namespace parameters {
   The function `parameters::non_manifold()` is used to drive the
   meshing algorithm for surfaces.
   It does not ensure that the surface of the output mesh is a manifold surface.
-  The manifold property of output mesh may nevertheless result from the choice of appropriate meshing criteria.
+  The manifold property of the output mesh might nevertheless result from an appropriate
+  choice of meshing criteria.
   \sa `CGAL::make_mesh_3()`
   \sa `CGAL::refine_mesh_3()`
   \sa `CGAL::parameters::manifold_with_boundary()`
