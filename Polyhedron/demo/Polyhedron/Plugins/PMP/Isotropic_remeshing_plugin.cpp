@@ -467,7 +467,7 @@ public Q_SLOTS:
 #ifdef USE_SURFACE_MESH
         selection_item->polyhedron_item()->setColor(
               selection_item->polyhedron_item()->color());
-        selection_item->polyhedron_item()->setItemIsMulticolor(false);
+        selection_item->polyhedron_item()->setItemIsMulticolor(fpmap_valid);
         selection_item->polyhedron_item()->polyhedron()->collect_garbage();
 #else
         if(!selection_item->polyhedron_item()->isItemMulticolor())
