@@ -194,7 +194,7 @@ struct Scene_surface_mesh_item_priv{
   mutable SMesh::Property_map<face_descriptor,int> fpatch_id_map;
   mutable SMesh::Property_map<vertex_descriptor,int> v_selection_map;
   mutable SMesh::Property_map<face_descriptor,int> f_selection_map;
-  mutable SMesh::Property_map<halfedge_descriptor, bool> h_is_feature_map;
+  mutable SMesh::Property_map<boost::graph_traits<SMesh>::edge_descriptor, bool> e_is_feature_map;
 
   Color_vector colors_;
   double volume, area;
@@ -390,7 +390,7 @@ void Scene_surface_mesh_item_priv::compute_elements()
     idx_edge_data_.push_back(source(ed, *smesh_));
     idx_edge_data_.push_back(target(ed, *smesh_));
     if(has_feature_edges &&
-       get(h_is_feature_map, halfedge(ed, *smesh_)) )
+       get(e_is_feature_map, ed) )
     {
       idx_feature_edge_data_.push_back(source(ed, *smesh_));
       idx_feature_edge_data_.push_back(target(ed, *smesh_));
@@ -1213,7 +1213,7 @@ void Scene_surface_mesh_item::show_feature_edges(bool b)
 {
   if(b)
   {
-    d->h_is_feature_map = d->smesh_->add_property_map<halfedge_descriptor,bool>("h:is_feature").first;
+    d->e_is_feature_map = d->smesh_->add_property_map<boost::graph_traits<SMesh>::edge_descriptor,bool>("e:is_feature").first;
     invalidateOpenGLBuffers();
     itemChanged();
   }
