@@ -684,14 +684,6 @@ namespace internal {
           swap_done = true;
           CGAL_assertion(is_on_patch_border(vb) && !is_on_patch_border(va));
         }
-        else if (is_corner(va) && !is_corner(vb))
-        {
-          he = opposite(he, mesh_);
-          va = source(he, mesh_);
-          vb = target(he, mesh_);
-          swap_done = true;
-          CGAL_assertion(is_on_patch_border(vb) && !is_on_patch_border(va));
-        }
 
         if(!collapse_does_not_invert_face(he))
         {
