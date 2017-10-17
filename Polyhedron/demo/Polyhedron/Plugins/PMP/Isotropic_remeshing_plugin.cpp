@@ -9,10 +9,14 @@
 
 #ifdef USE_SURFACE_MESH
 #include "Scene_surface_mesh_item.h"
+#include <CGAL/Mesh_3/properties_Surface_mesh.h>
 #else
 #include "Scene_polyhedron_item.h"
 #include "Polyhedron_type.h"
+#include <CGAL/Mesh_3/properties_Polyhedron_3.h>
 #endif
+
+#include <CGAL/Mesh_3/properties.h>
 
 #include "Scene_polyhedron_selection_item.h"
 
@@ -342,7 +346,7 @@ public Q_SLOTS:
       typedef boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
       typedef boost::graph_traits<FaceGraph>::face_descriptor face_descriptor;
 
-      const FaceGraph& pmesh = (poly_item != NULL)
+      FaceGraph& pmesh = (poly_item != NULL)
         ? *poly_item->polyhedron()
         : *selection_item->polyhedron();
 
