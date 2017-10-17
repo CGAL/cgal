@@ -367,7 +367,7 @@ public:
   }
 
   // Warning : This is a periodic version that computes the smallest possible
-  // between p and q, REGARDLESS OF OFFSETS
+  // between p and q, for all combinations of offsets
   FT min_squared_distance(const Bare_point& p, const Bare_point& q) const
   {
     const Bare_point cp = canonicalize_point(p);

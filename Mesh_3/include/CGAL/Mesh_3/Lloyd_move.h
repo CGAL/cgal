@@ -507,10 +507,10 @@ private:
 
   /**
    * Turns around edge \c edge and add values computed from tets made by
-   * v->point() and circumcenters of \c edge incident cells
+   * v->point() and circumcenters of the cells incident to \c edge
    *
-   * Note that this function uses lots of dual() calls, so using a cell base
-   * which stores the circumcenter improve efficiency.
+   * Note that this function abundantly uses dual() calls and using a cell base
+   * which stores the circumcenter thus improves its efficiency.
    */
   void turn_around_edge(const Vertex_handle& v,
                         const Edge& edge,

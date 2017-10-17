@@ -476,11 +476,11 @@ protected:
     if ( c3t3.in_dimension(v) < 3 )
       final_loc = helper.project_on_surface(new_loc, v);
 
-    // as long as no topological change takes place
     unsigned int i = 0;
     // Concurrent-safe version
     if (could_lock_zone)
     {
+      // as long as no topological change takes place
       while(Th().no_topological_change__without_set_point(c3t3.triangulation(), 
                                                           v, p2wp(final_loc)) 
             && (++i <= max_step_nb_) )

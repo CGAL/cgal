@@ -256,11 +256,13 @@ private:
   Vertex_handle V[4];
   TDS_data _tds_data;
   unsigned char _additional_flag:2;
-  // 3 respective bits are the offset in x,y and z
-  // right to left: bit[0]-bit[2]: vertex(0),
-  // bit[3]-bit[5]: vertex(1), bit[6]-bit[8]: vertex(2),
-  // and bit[9]-bit[12]: vertex(3)
-  // Thus the underlying data type needs to have at least 12 bit,
+  // 3 consecutive bits give the offset in x, y, and z.
+  // From right to left:
+  // - vertex(0): bit[0]-bit[2],
+  // - vertex(1): bit[3]-bit[5],
+  // - vertex(2): bit[6]-bit[8],
+  // - vertex(3): bit[9]-bit[12].
+  // Thus the underlying data type must have at least 12 bits,
   // which is true for uint.
   unsigned int off;
 };
