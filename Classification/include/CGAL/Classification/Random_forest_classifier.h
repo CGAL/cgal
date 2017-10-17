@@ -25,7 +25,8 @@
 #include <CGAL/Classification/Feature_set.h>
 #include <CGAL/Classification/Label_set.h>
 
-#include <opencv2/opencv.hpp>
+#include <cv.h>
+#include <ml.h>
 
 namespace CGAL {
 
@@ -121,21 +122,28 @@ public:
     if (rtree != NULL)
       delete rtree;
 #endif
+
+#ifdef CGAL_CLASSIFICATION_VERBOSE
+
+    std::cerr << "Training random forest (OpenCV "
+              << CV_MAJOR_VERSION << "."
+              << CV_MINOR_VERSION << ")" << std::endl;
+#endif
     
     std::size_t nb_samples = 0;
     for (std::size_t i = 0; i < ground_truth.size(); ++ i)
       if (ground_truth[i] != -1)
         ++ nb_samples;
 
-    cv::Mat training_features (nb_samples, m_features.size(), CV_32FC1);
-    cv::Mat training_labels (nb_samples, 1, CV_32FC1);
+    cv::Mat training_features (int(nb_samples), int(m_features.size()), CV_32FC1);
+    cv::Mat training_labels (int(nb_samples), 1, CV_32FC1);
 
     for (std::size_t i = 0, index = 0; i < ground_truth.size(); ++ i)
       if (ground_truth[i] != -1)
       {
         for (std::size_t f = 0; f < m_features.size(); ++ f)
-          training_features.at<float>(index, f) = m_features[f]->value(i);
-        training_labels.at<float>(index, 0) = ground_truth[i];
+          training_features.at<float>(int(index), int(f)) = m_features[f]->value(i);
+        training_labels.at<float>(int(index), 0) = static_cast<float>(ground_truth[i]);
         ++ index;
       }
 
@@ -194,9 +202,9 @@ public:
   {
     out.resize (m_labels.size(), 0.);
     
-    cv::Mat feature (1, m_features.size(), CV_32FC1);
+    cv::Mat feature (1, int(m_features.size()), CV_32FC1);
     for (std::size_t f = 0; f < m_features.size(); ++ f)
-      feature.at<float>(0, f) = m_features[f]->value(item_index);
+      feature.at<float>(0, int(f)) = m_features[f]->value(item_index);
 
 //compute the result of each tree
 #if (CV_MAJOR_VERSION < 3)

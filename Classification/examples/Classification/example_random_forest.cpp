@@ -21,9 +21,9 @@ typedef Kernel::Point_3 Point;
 typedef CGAL::Point_set_3<Point> Point_set;
 typedef Kernel::Iso_cuboid_3 Iso_cuboid_3;
 
-typedef typename Point_set::Point_map Pmap;
-typedef typename Point_set::Property_map<int> Imap;
-typedef typename Point_set::Property_map<unsigned char> UCmap;
+typedef Point_set::Point_map Pmap;
+typedef Point_set::Property_map<int> Imap;
+typedef Point_set::Property_map<unsigned char> UCmap;
 
 namespace Classification = CGAL::Classification;
 
@@ -40,7 +40,7 @@ typedef Classification::Point_set_feature_generator<Kernel, Point_set, Pmap>    
 int main (int argc, char** argv)
 {
   std::string filename (argc > 1 ? argv[1] : "data/b9_training.ply");
-  std::ifstream in (filename.c_str());
+  std::ifstream in (filename.c_str(), std::ios::binary);
   Point_set pts;
 
   std::cerr << "Reading input" << std::endl;
@@ -91,7 +91,7 @@ int main (int argc, char** argv)
   Classification::classify_with_graphcut<CGAL::Sequential_tag>
     (pts, pts.point_map(), labels, classifier,
      generator.neighborhood().k_neighbor_query(12),
-     0.2, 1, label_indices);
+     0.2f, 1, label_indices);
   t.stop();
   std::cerr << "Classification with graphcut done in " << t.time() << " second(s)" << std::endl;
 

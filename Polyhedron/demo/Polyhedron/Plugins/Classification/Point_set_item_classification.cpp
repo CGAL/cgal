@@ -20,11 +20,7 @@ Point_set_item_classification::Point_set_item_classification(Scene_points_with_n
   : m_points (points),
     m_generator (NULL)
 {
-  m_nb_scales = 5;
   m_index_color = 1;
-  m_nb_trials = 300;
-  m_smoothing = 0.5;
-  m_subdivisions = 16;
 
   reset_indices();
 
@@ -130,7 +126,7 @@ Point_set_item_classification::~Point_set_item_classification()
   if (m_points != NULL)
     {
       reset_colors();
-      m_points->point_set()->remove_property_map(m_training);
+      erase_item();
     }
 }
 
@@ -165,12 +161,7 @@ void Point_set_item_classification::backup_existing_colors_and_add_new()
 void Point_set_item_classification::reset_colors()
 {
   if (m_color == Point_set::Property_map<Color>())
-    {
-      m_points->point_set()->remove_property_map(m_red);
-      m_points->point_set()->remove_property_map(m_green);
-      m_points->point_set()->remove_property_map(m_blue);
-      m_points->point_set()->check_colors();
-    }
+    m_points->point_set()->remove_colors();
   else
     {
       for (Point_set::const_iterator it = m_points->point_set()->begin();
@@ -327,7 +318,7 @@ void Point_set_item_classification::reset_indices ()
     *(indices.begin() + i) = idx ++;
 }
 
-void Point_set_item_classification::compute_features ()
+void Point_set_item_classification::compute_features (std::size_t nb_scales)
 {
   CGAL_assertion (!(m_points->point_set()->empty()));
 
@@ -336,7 +327,7 @@ void Point_set_item_classification::compute_features ()
 
   reset_indices();
   
-  std::cerr << "Computing features with " << m_nb_scales << " scale(s)" << std::endl;
+  std::cerr << "Computing features with " << nb_scales << " scale(s)" << std::endl;
   m_features.clear();
 
   bool normals = m_points->point_set()->has_normal_map();
@@ -346,27 +337,27 @@ void Point_set_item_classification::compute_features ()
   boost::tie (echo_map, echo) = m_points->point_set()->template property_map<boost::uint8_t>("echo");
 
   if (!normals && !colors && !echo)
-    m_generator = new Generator (m_features, *(m_points->point_set()), m_points->point_set()->point_map(), m_nb_scales);
+    m_generator = new Generator (m_features, *(m_points->point_set()), m_points->point_set()->point_map(), nb_scales);
   else if (!normals && !colors && echo)
-    m_generator = new Generator (m_features, *(m_points->point_set()), m_points->point_set()->point_map(), m_nb_scales,
+    m_generator = new Generator (m_features, *(m_points->point_set()), m_points->point_set()->point_map(), nb_scales,
                                  CGAL::Default(), CGAL::Default(), echo_map);
   else if (!normals && colors && !echo)
-    m_generator = new Generator (m_features, *(m_points->point_set()), m_points->point_set()->point_map(), m_nb_scales,
+    m_generator = new Generator (m_features, *(m_points->point_set()), m_points->point_set()->point_map(), nb_scales,
                                  CGAL::Default(), m_color);
   else if (!normals && colors && echo)
-    m_generator = new Generator (m_features, *(m_points->point_set()), m_points->point_set()->point_map(), m_nb_scales,
+    m_generator = new Generator (m_features, *(m_points->point_set()), m_points->point_set()->point_map(), nb_scales,
                                  CGAL::Default(), m_color, echo_map);
   else if (normals && !colors && !echo)
-    m_generator = new Generator (m_features, *(m_points->point_set()), m_points->point_set()->point_map(), m_nb_scales,
+    m_generator = new Generator (m_features, *(m_points->point_set()), m_points->point_set()->point_map(), nb_scales,
                                  m_points->point_set()->normal_map());
   else if (normals && !colors && echo)
-    m_generator = new Generator (m_features, *(m_points->point_set()), m_points->point_set()->point_map(), m_nb_scales,
+    m_generator = new Generator (m_features, *(m_points->point_set()), m_points->point_set()->point_map(), nb_scales,
                                  m_points->point_set()->normal_map(), CGAL::Default(), echo_map);
   else if (normals && colors && !echo)
-    m_generator = new Generator (m_features, *(m_points->point_set()), m_points->point_set()->point_map(), m_nb_scales,
+    m_generator = new Generator (m_features, *(m_points->point_set()), m_points->point_set()->point_map(), nb_scales,
                                  m_points->point_set()->normal_map(), m_color);
   else
-    m_generator = new Generator (m_features, *(m_points->point_set()), m_points->point_set()->point_map(), m_nb_scales,
+    m_generator = new Generator (m_features, *(m_points->point_set()), m_points->point_set()->point_map(), nb_scales,
                                  m_points->point_set()->normal_map(), m_color, echo_map);
 
   delete m_sowf;
@@ -380,7 +371,7 @@ void Point_set_item_classification::compute_features ()
 
 
 
-void Point_set_item_classification::train(int classifier)
+void Point_set_item_classification::train(int classifier, unsigned int nb_trials)
 {
   if (m_features.size() == 0)
     {
@@ -398,7 +389,7 @@ void Point_set_item_classification::train(int classifier)
 
   if (classifier == 0)
     {
-      m_sowf->train<Concurrency_tag>(training, (unsigned int)(m_nb_trials));
+      m_sowf->train<Concurrency_tag>(training, nb_trials);
       CGAL::Classification::classify<Concurrency_tag> (*(m_points->point_set()),
                                                        m_labels, *m_sowf,
                                                        indices);
@@ -420,7 +411,9 @@ void Point_set_item_classification::train(int classifier)
      change_color (m_index_color);
 }
 
-bool Point_set_item_classification::run (int method, int classifier)
+bool Point_set_item_classification::run (int method, int classifier,
+                                         std::size_t subdivisions,
+                                         double smoothing)
 {
   if (m_features.size() == 0)
     {
@@ -430,10 +423,10 @@ bool Point_set_item_classification::run (int method, int classifier)
   reset_indices();
 
   if (classifier == 0)
-    run (method, *m_sowf);
+    run (method, *m_sowf, subdivisions, smoothing);
 #ifdef CGAL_LINKED_WITH_OPENCV
   else
-    run (method, *m_random_forest);
+    run (method, *m_random_forest, subdivisions, smoothing);
 #endif
   
   return true;
