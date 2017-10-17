@@ -22,6 +22,13 @@
         <file>resources/down.png</file>
         <file>resources/left_arrow.png</file>
         <file>resources/right_arrow.png</file>
+        <file>resources/pss_rectangle.png</file>
+        <file>resources/pss_freeform.png</file>
+        <file>resources/pss_box.png</file>
+        <file>resources/pss_new.png</file>
+        <file>resources/pss_union.png</file>
+        <file>resources/pss_inter.png</file>
+        <file>resources/pss_diff.png</file>
     </qresource>
     <qresource prefix="/cgal/Polyhedron_3">
         <file alias="about.html">resources/about.html</file>
