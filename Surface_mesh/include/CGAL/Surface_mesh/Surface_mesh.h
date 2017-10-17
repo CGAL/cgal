@@ -198,7 +198,7 @@ namespace CGAL {
 
         SM_Edge_index() : halfedge_(-1) { }
 
-        SM_Edge_index(size_type idx) : halfedge_(idx * 2) { }
+        explicit SM_Edge_index(size_type idx) : halfedge_(idx * 2) { }
 
         explicit SM_Edge_index(SM_Halfedge_index he) : halfedge_(he) { }
 
