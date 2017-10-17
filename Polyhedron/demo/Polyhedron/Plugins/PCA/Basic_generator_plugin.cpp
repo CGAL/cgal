@@ -53,19 +53,18 @@ public :
 
 
     QMenu* menuFile = mw->findChild<QMenu*>("menuFile");
-    QMenu* menu = new QMenu(tr("Objet Generator Widget"), menuFile);
+    QMenu* menu = new QMenu(tr("&Objet Generator Widget"), menuFile);
     QAction* actionLoad = mw->findChild<QAction*>("actionLoadPlugin");
-    menuFile->insertMenu(actionLoad, menu);
 
 
-    QAction* actionPrism       = new QAction("Prism", mw);
-    QAction* actionSphere      = new QAction("Sphere", mw);
-    QAction* actionPyramid     = new QAction("Pyramid", mw);
-    QAction* actionHexahedron  = new QAction("Hexahedron", mw);
-    QAction* actionTetrahedron = new QAction("Tetrahedron", mw);
-    QAction* actionGrid        = new QAction("Grid", mw);
-    QAction* actionPointSet    = new QAction("Point Set", mw);
-    QAction* actionPolyline    = new QAction("Polyline", mw);
+    QAction* actionPrism       = new QAction("P&rism", mw);
+    QAction* actionSphere      = new QAction("&Sphere", mw);
+    QAction* actionPyramid     = new QAction("Py&ramid", mw);
+    QAction* actionHexahedron  = new QAction("&Hexahedron", mw);
+    QAction* actionTetrahedron = new QAction("&Tetrahedron", mw);
+    QAction* actionGrid        = new QAction("&Grid", mw);
+    QAction* actionPointSet    = new QAction("Po&int Set", mw);
+    QAction* actionPolyline    = new QAction("Po&lyline", mw);
 
 
 
@@ -107,7 +106,7 @@ public :
     {
       menu->addAction(action);
     }
-
+    menuFile->insertMenu(actionLoad, menu);
     dock_widget = new GeneratorWidget("Basic Objets", mw);
     dock_widget->setVisible(false); // do not show at the beginning
     addDockWidget(dock_widget);
