@@ -1534,7 +1534,8 @@ private:
             c3t3.remove_from_complex(Facet(c, i));
 
           c->set_facet_surface_center(i, facet_surface_center_[0]);
-          c->set_facet_surface_center_index(i, surface_center_index_table_[0]);
+          const Facet mirror = c3t3.triangulation().mirror_facet(Facet(c, i));
+          mirror.first->set_facet_surface_center(mirror.second, facet_surface_center_[0]);
           return;
         }
       }
