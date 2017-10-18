@@ -17,6 +17,8 @@
 #include <CGAL/Random.h>
 #include <CGAL/Real_timer.h>
 
+#include <QMultipleInputDialog.h>
+
 #include "ui_Classification_widget.h"
 
 #include <QAction>
@@ -25,10 +27,8 @@
 #include <QCheckBox>
 #include <QInputDialog>
 #include <QMessageBox>
-#include <QFormLayout>
 #include <QSpinBox>
 #include <QDoubleSpinBox>
-#include <QDialogButtonBox>
 #include <QSlider>
 
 #include <map>
@@ -599,27 +599,15 @@ public Q_SLOTS:
         return; 
       }
 
-    QDialog dialog(mw);
-    dialog.setWindowTitle ("Classify with Graph Cut");
-    QFormLayout form (&dialog);
-    QString label_sub = QString("Number of subdivisions: ");
-    QSpinBox subdivisions (&dialog);
-    subdivisions.setRange (1, 9999);
-    subdivisions.setValue (16);
-    form.addRow(label_sub, &subdivisions);
+    QMultipleInputDialog dialog ("Classify with Graph Cut", mw);
+    QSpinBox* subdivisions = dialog.add<QSpinBox> ("Number of subdivisons: ");
+    subdivisions->setRange (1, 9999);
+    subdivisions->setValue (16);
 
-    QString label_smooth = QString("Regularization weight: ");
-    QDoubleSpinBox smoothing (&dialog);
-    smoothing.setRange (0.0, 100.0);
-    smoothing.setValue (0.5);
-    smoothing.setSingleStep (0.1);
-    form.addRow(label_smooth, &smoothing);
-
-    QDialogButtonBox oknotok (QDialogButtonBox::Ok | QDialogButtonBox::Cancel,
-                              Qt::Horizontal, &dialog);
-    form.addRow (&oknotok);
-    QObject::connect (&oknotok, SIGNAL(accepted()), &dialog, SLOT(accept()));
-    QObject::connect (&oknotok, SIGNAL(rejected()), &dialog, SLOT(reject()));
+    QDoubleSpinBox* smoothing = dialog.add<QDoubleSpinBox> ("Regularization weight: ");
+    smoothing->setRange (0.0, 100.0);
+    smoothing->setValue (0.5);
+    smoothing->setSingleStep (0.1);
 
     if (dialog.exec() != QDialog::Accepted)
       return;
@@ -627,7 +615,7 @@ public Q_SLOTS:
     QApplication::setOverrideCursor(Qt::WaitCursor);
     CGAL::Real_timer t;
     t.start();
-    run (classif, 2, std::size_t(subdivisions.value()), smoothing.value());
+    run (classif, 2, std::size_t(subdivisions->value()), smoothing->value());
     t.stop();
     std::cerr << "Graph Cut classification computed in " << t.time() << " second(s)" << std::endl;
     QApplication::restoreOverrideCursor();
