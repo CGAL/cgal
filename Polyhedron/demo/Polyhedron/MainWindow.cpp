@@ -2481,3 +2481,8 @@ void SubViewer::color()
     viewer->update();
   }
 }
+
+void MainWindow::on_actionZoom_With_Wheel_toggled(bool b)
+{
+    viewer->setZooming(b);
+}

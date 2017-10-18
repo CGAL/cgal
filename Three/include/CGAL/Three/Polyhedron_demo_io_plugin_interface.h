@@ -39,7 +39,8 @@ class Scene_interface;
 class Polyhedron_demo_io_plugin_interface 
 {
 public:
-  //!Returns the name of the plugin
+  //!\brief Returns the name of the plugin
+  //!
   //!It is used by the loading system.
   virtual QString name() const = 0;
   virtual ~Polyhedron_demo_io_plugin_interface() {}

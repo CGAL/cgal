@@ -18,12 +18,13 @@
     <normaloff>:/cgal/icons/resources/cgal_logo.xpm</normaloff>:/cgal/icons/resources/cgal_logo.xpm</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QVBoxLayout" name="verticalLayout_2" stretch="1,0">
+   <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0">
     <item>
-     <widget class="Viewer" name="viewer" native="true"/>
-    </item>
-    <item>
-     <layout class="QHBoxLayout" name="viewerLayout"/>
+     <layout class="QHBoxLayout" name="viewerLayout">
+      <item>
+       <widget class="Viewer" name="viewer" native="true"/>
+      </item>
+     </layout>
     </item>
    </layout>
   </widget>
@@ -63,6 +64,7 @@
     <addaction name="actionSelectAllItems"/>
     <addaction name="actionPreferences"/>
     <addaction name="actionColorItems"/>
+    <addaction name="actionZoom_With_Wheel"/>
    </widget>
    <widget class="QMenu" name="menuOperations">
     <property name="title">
@@ -549,6 +551,14 @@
     <string>Set Transparency Pass &amp;Number...</string>
    </property>
   </action>
+  <action name="actionZoom_With_Wheel">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Zoom With Wheel</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -559,6 +569,8 @@
   </customwidget>
  </customwidgets>
  <resources>
+  <include location="Polyhedron_3.qrc"/>
+  <include location="Polyhedron_3.qrc"/>
   <include location="Polyhedron_3.qrc"/>
   <include location="Polyhedron_3.qrc"/>
  </resources>

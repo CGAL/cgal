@@ -61,7 +61,7 @@ public:
   enum OpenGL_program_IDs
   {
    PROGRAM_WITH_LIGHT = 0,      /**< Used to render a surface or an edge affected by the light. It uses a per fragment lighting model, and renders the selected item brighter.*/
-   PROGRAM_WITHOUT_LIGHT,       /**< Used to render a polyhedron edge or points. It renders in a uniform color and is not affected by light. \attention It renders the selected item in black.*/
+   PROGRAM_WITHOUT_LIGHT,       /**< Used to render a polyhedron edge or points. It renders in a uniform color and is not affected by light. \attention If is_selected is true, the rendering color is black.*/
    PROGRAM_NO_SELECTION,        /**< Used to render a polyline or a surface that is not affected by light, like a cutting plane. It renders in a uniform color that does not change with selection.*/
    PROGRAM_WITH_TEXTURE,        /**< Used to render a textured polyhedron. Affected by light.*/
    PROGRAM_PLANE_TWO_FACES,     /**< Used to render a two-faced plane. The two faces have a different color. Not affected by light.*/
@@ -99,13 +99,12 @@ public:
   //!
   //! \returns true if the primitive ids are currently displayed
   virtual bool hasText() const { return false; }
-  //! \brief Constructor
+  //! \brief Constructor for the main viewer.
   //!
-  //! Creates a valid context for OpenGL 2.1.
   //! \param parent the parent widget. It usually is the MainWindow.
-  Viewer_interface(QWidget* parent) : QGLViewer(CGAL::Qt::createOpenGLContext(), parent) {}
+  Viewer_interface(QWidget* parent) : QGLViewer(parent) {}
   //!
-  //! \brief Constructor
+  //! \brief Constructor for the secondary viewers.
   //!
   //! \param parent the parent widget. It usually is the MainWindow.
   //! \param sharedWidget the main viewer of the Application. This will share the context and allow
@@ -149,7 +148,7 @@ public:
   //! @returns true if the viewer is drawing with names.
   virtual bool inDrawWithNames() const = 0;
 
-  //! \brief Passes all the uniform data to the shaders.
+  //! \brief Gives all the uniform data to the shaders.
   //!
   //! According to program_name, this data may change.
   //! This should be called in every Scene_item::draw() call.
@@ -232,7 +231,7 @@ public Q_SLOTS:
   virtual void setFastDrawing(bool b) = 0;
   //! Makes the camera turn around.
   virtual void turnCameraBy180Degres() = 0;
-  //! @returns a QString containing the position and orientation of the camera.
+  //! \brief returns a QString containing the position and orientation of the camera.
   //! @see dumpFrame()
   virtual QString dumpCameraCoordinates() = 0;
 //! \brief Moves the camera to the new coordinates.

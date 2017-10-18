@@ -115,6 +115,8 @@ public:
   void enableClippingBox(QVector4D box[]) Q_DECL_OVERRIDE;
   void disableClippingBox() Q_DECL_OVERRIDE;
   float total_pass()Q_DECL_OVERRIDE;
+  bool isZooming()const;
+  void setZooming(bool b);
 Q_SIGNALS:
   void sendMessage(QString);
   void GLinit();

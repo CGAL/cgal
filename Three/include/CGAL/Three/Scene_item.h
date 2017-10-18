@@ -77,6 +77,11 @@ public:
     NORMALS  = 0x4,                     //!< Invalidate the normal of each vertex.
     ALL      = GEOMETRY|COLORS|NORMALS  //!< Invalidate everything
   };
+
+#ifdef DOXYGEN_RUNNING
+  //! \brief Flag interface for Scene_item::Gl_data_name.
+  enum Gl_data_names{};
+#endif
   Q_DECLARE_FLAGS(Gl_data_names, Gl_data_name)
 
   //! \brief The default color of a scene_item.

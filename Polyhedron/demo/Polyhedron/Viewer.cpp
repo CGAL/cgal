@@ -89,6 +89,7 @@ public:
   int pass;
   int total_pass;
   int current_total_pass;
+  bool zooming;
   TextRenderer *textRenderer;
   /*!
    * \brief makeArrow creates an arrow and stores it in a struct of vectors.
@@ -103,6 +104,7 @@ public:
   Viewer_impl()
   {
     scene = 0;
+    zooming = false;
     is_sharing = false;
     initialized = false;
     twosides = false;
@@ -1788,4 +1790,14 @@ void Viewer::setTotalPass_clicked()
   if(!ok)
     return;
   setTotalPass(passes);
+}
+
+void Viewer::setZooming(bool b)
+{
+  d->zooming = b;
+}
+
+bool Viewer::isZooming() const
+{
+  return d->zooming;
 }

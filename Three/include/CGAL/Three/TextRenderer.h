@@ -37,8 +37,7 @@ namespace Three{
 class Scene_item;
 }
 }
-//!A TextItem is a string with properties, like coordinates, font and color, that is
-//! to be rendered in the viewer.
+//!A TextItem is a string with properties, like coordinates, font and color, that will be rendered in the viewer.
 class  VIEWER_EXPORT TextItem{
 public :
   /*!

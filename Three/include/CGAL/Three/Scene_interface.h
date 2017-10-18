@@ -77,7 +77,7 @@ public:
   virtual ~Scene_interface() {};
   //!Adds `item` to the Geometric Objects list.
   //! If `update_bbox` is `true`, the whole bbox of the scene is re-computed,
-  //! and the `Viewer` offset.
+  //! along with the global offset.
   //!@returns the index of the new item.
   virtual Item_id addItem(CGAL::Three::Scene_item* item, bool update_bbox = true) = 0;
   //! \brief Replaces an item by a new one in the scene.
@@ -102,13 +102,13 @@ public:
    */
   virtual int erase(QList<int>) = 0;
 
-  /*! Creates a copy of the item whith the id `id`.
+  /*! Creates a copy of the `id`th item .
    * @returns the index of the new item (-1 on error).
    */
     virtual Item_id duplicate(Item_id id) = 0;
 
   // Accessors (getters)
-  //! \brief The number of items
+  //! \brief The total number of items in the scene.
   //!@returns the number of items in the scene.
   virtual int numberOfEntries() const = 0;
   //!\brief The `id`th item.
@@ -145,11 +145,18 @@ public:
 public:
   //! Updates the information about the `i`th item in the
   //! Geometric Objects list and redraws the scene.
+  //!
+  //! This is called for example when an item's color is changed,
+  //! to update the color quad.
   virtual void itemChanged(Item_id i) = 0;
   //! Updates the information about `item` in the
   //! Geometric Objects list and redraws the scene.
+  //!
+  //! This is called for example when an item's color is changed,
+  //! to update the color quad.
   virtual void itemChanged(CGAL::Three::Scene_item* item) = 0;
-  //! Re computes the scene Bbox without recentering it.
+  //! Re computes the scene Bbox without recentering it. This allows to keep an
+  //! adapted frustum without moving the camera.
   virtual void itemVisibilityChanged(CGAL::Three::Scene_item*) = 0;
   //! Clears the current selection then sets the selected item to the target index.
   //! Used to update the selection in the Geometric Objects view.
