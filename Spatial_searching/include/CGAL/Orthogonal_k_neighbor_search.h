@@ -25,9 +25,10 @@
 
 #include <CGAL/license/Spatial_searching.h>
 
-
 #include <CGAL/internal/K_neighbor_search.h>
 #include <CGAL/internal/Search_helpers.h>
+
+#include <iterator> // for std::distance
 
 namespace CGAL {
 

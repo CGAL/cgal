@@ -24,16 +24,16 @@
 
 #include <CGAL/license/Spatial_searching.h>
 
+#include <CGAL/Kd_tree.h>
+#include <CGAL/Euclidean_distance.h>
+#include <CGAL/tuple.h>
+#include <CGAL/internal/Search_helpers.h>
 
 #include <cstring>
 #include <list>
 #include <queue>
 #include <memory>
-#include <CGAL/Kd_tree.h>
-#include <CGAL/Euclidean_distance.h>
-#include <CGAL/tuple.h>
-
-#include <CGAL/internal/Search_helpers.h>
+#include <iterator> // for std::distance
 
 namespace CGAL {
 
@@ -155,10 +155,10 @@ namespace CGAL {
 	orthogonal_distance_instance(tr), 
         m_distance_helper(orthogonal_distance_instance, traits),
         multiplication_factor(orthogonal_distance_instance.transformed_distance(FT(1.0)+Eps)), 
-	query_point(q), search_nearest_neighbour(search_nearest), 
+	query_point(q), search_nearest_neighbour(search_nearest),
+        m_tree(tree),
 	PriorityQueue(Priority_higher(search_nearest)), Item_PriorityQueue(Distance_smaller(search_nearest)),
-	reference_count(1),
-        m_tree(tree)
+	reference_count(1)
 	  
 	  
       {
