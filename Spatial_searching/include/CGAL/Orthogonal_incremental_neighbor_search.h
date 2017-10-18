@@ -83,7 +83,7 @@ namespace CGAL {
       Distance_vector dists;
 
       Distance orthogonal_distance_instance;
-      internal::Distance_helper<Distance> m_distance_helper;
+      internal::Distance_helper<Distance, SearchTraits> m_distance_helper;
     
       FT multiplication_factor;
 
@@ -153,7 +153,7 @@ namespace CGAL {
 	: traits(tree.traits()),number_of_neighbours_computed(0), number_of_internal_nodes_visited(0), 
 	number_of_leaf_nodes_visited(0), number_of_items_visited(0),
 	orthogonal_distance_instance(tr), 
-        m_distance_helper(orthogonal_distance_instance),
+        m_distance_helper(orthogonal_distance_instance, traits),
         multiplication_factor(orthogonal_distance_instance.transformed_distance(FT(1.0)+Eps)), 
 	query_point(q), search_nearest_neighbour(search_nearest), 
 	PriorityQueue(Priority_higher(search_nearest)), Item_PriorityQueue(Distance_smaller(search_nearest)),

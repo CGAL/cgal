@@ -46,7 +46,7 @@ public:
 private:
   typename SearchTraits::Cartesian_const_iterator_d query_object_it;
   
-  internal::Distance_helper<Distance> m_distance_helper;
+  internal::Distance_helper<Distance, SearchTraits> m_distance_helper;
   std::vector<FT> dists;
   int m_dim;
   Tree const& m_tree;
@@ -56,7 +56,7 @@ public:
   Orthogonal_k_neighbor_search(const Tree& tree, const typename Base::Query_item& q,  
                                unsigned int k=1, FT Eps=FT(0.0), bool Search_nearest=true, const Distance& d=Distance(),bool sorted=true)
   : Base(q,k,Eps,Search_nearest,d), 
-    m_distance_helper(this->distance_instance),
+    m_distance_helper(this->distance_instance, tree.traits()),
     m_tree(tree)
   {
     if (tree.empty()) return;

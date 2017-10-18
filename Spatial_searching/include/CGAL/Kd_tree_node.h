@@ -236,16 +236,20 @@ namespace CGAL {
     template <class FuzzyQueryItem>
     boost::optional<Point_d>
     search_any_point(const FuzzyQueryItem& q,
-                     Kd_tree_rectangle<FT,D>& b) const
+                     Kd_tree_rectangle<FT,D>& b, 
+                     typename Kdt::const_iterator tree_points_begin,
+                     typename std::vector<FT>::const_iterator cache_begin,
+                     int dim) const
     {
       boost::optional<Point_d> result = boost::none;
       if (is_leaf()) { 
         Leaf_node_const_handle node = 
           static_cast<Leaf_node_const_handle>(this);
-	if (node->size()>0) 
-	  for (iterator i=node->begin(); i != node->end(); i++) 
-	    if (q.contains(*i)) 
-	      { result = *i; break; }
+	if (node->size()>0)
+        {
+          internal::Has_points_cache<Kdt, internal::has_Enable_points_cache<Kdt>::type::value>::type dummy;
+          result = search_any_point_in_leaf(node, q, tree_points_begin, cache_begin, dim, dummy);
+        }
       }
       else {
          Internal_node_const_handle node = 
@@ -258,7 +262,7 @@ namespace CGAL {
           result = node->lower()->any_tree_item();
 	}else{
 	  if (q.inner_range_intersects(b)){ 
-	    result = node->lower()->search_any_point(q,b);
+	    result = node->lower()->search_any_point(q,b,tree_points_begin,cache_begin,dim);
           }
         }
         if(result){
@@ -268,7 +272,7 @@ namespace CGAL {
 	  result = node->upper()->any_tree_item();
 	}else{
 	  if (q.inner_range_intersects(b_upper)) 
-	    result = node->upper()->search_any_point(q,b_upper);
+	    result = node->upper()->search_any_point(q,b_upper,tree_points_begin,cache_begin,dim);
         }
       }
       return result;				
@@ -332,8 +336,57 @@ namespace CGAL {
       Tag_false /*has_points_cache*/) const
     {
       for (iterator i = node->begin(); i != node->end(); ++i)
+      {
         if (q.contains(*i))
           *oit++ = *i;
+      }
+    }
+
+    // With cache
+    template<class FuzzyQueryItem>
+    boost::optional<Point_d> search_any_point_in_leaf(
+      Leaf_node_const_handle node, 
+      const FuzzyQueryItem &q,
+      typename Kdt::const_iterator tree_points_begin,
+      typename std::vector<FT>::const_iterator cache_begin,
+      int dim,
+      Tag_true /*has_points_cache*/) const
+    {
+      boost::optional<Point_d> result = boost::none;
+      typename Kdt::iterator it_node_point = node->begin(), it_node_point_end = node->end();
+      typename std::vector<FT>::const_iterator cache_point_it = cache_begin + dim*(it_node_point - tree_points_begin);
+      for (; it_node_point != it_node_point_end; ++it_node_point, cache_point_it += dim)
+      {
+        Boolean_tag<has_contains_point_given_as_coordinates<FuzzyQueryItem>::value> dummy;
+        if (contains(q, *it_node_point, cache_point_it, cache_point_it + dim, dummy))
+        {
+          result = *it_node_point;
+          break;
+        }
+      }
+      return result;
+    }
+
+    // Without cache
+    template<class FuzzyQueryItem>
+    boost::optional<Point_d> search_any_point_in_leaf(
+      Leaf_node_const_handle node,
+      const FuzzyQueryItem &q,
+      typename Kdt::const_iterator tree_points_begin,
+      typename std::vector<FT>::const_iterator cache_begin,
+      int dim,
+      Tag_false /*has_points_cache*/) const
+    {
+      boost::optional<Point_d> result = boost::none;
+      for (iterator i = node->begin(); i != node->end(); ++i)
+      {
+        if (q.contains(*i))
+        {
+          result = *i;
+          break;
+        }
+      }
+      return result;
     }
   };
 

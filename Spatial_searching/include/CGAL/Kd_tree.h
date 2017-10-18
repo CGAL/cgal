@@ -509,7 +509,7 @@ public:
 	const_build();
       }
       Kd_tree_rectangle<FT,D> b(*bbox);
-      return tree_root->search_any_point(q,b);
+      return tree_root->search_any_point(q,b,begin(),cache_begin(),dim_);
     }
     return boost::none;
   }
