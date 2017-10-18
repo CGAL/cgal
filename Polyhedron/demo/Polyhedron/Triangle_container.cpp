@@ -207,7 +207,8 @@ void Triangle_container::draw(Viewer_interface* viewer,
       getVao(viewer)->program->setAttributeValue("colors", getColor());
     getVao(viewer)->program->setUniformValue("alpha", d->alpha);
     if(getProgram() == VI::PROGRAM_WITH_LIGHT
-       || getProgram() == VI::PROGRAM_SPHERES)
+       || getProgram() == VI::PROGRAM_SPHERES
+       || getProgram() == VI::PROGRAM_C3T3)
     {
       getVao(viewer)->program->setUniformValue("comparing", d->comparing);
       getVao(viewer)->program->setUniformValue("width", d->width);

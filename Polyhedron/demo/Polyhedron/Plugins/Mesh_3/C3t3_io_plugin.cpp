@@ -51,11 +51,10 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(QFileInfo fileinfo, CGAL::Three::Sce
                 << (const char*)fileinfo.filePath().toUtf8() << std::endl;
       return NULL;
     }
-    Scene_c3t3_item* item = new Scene_c3t3_item();
+    Scene_c3t3_item* item = new Scene_c3t3_item(scene);
     if(fileinfo.suffix().toLower() == "cgal")
     {
         item->setName(fileinfo.baseName());
-        item->setScene(scene);
 
 
         if(item->load_binary(in)) {
@@ -86,7 +85,7 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(QFileInfo fileinfo, CGAL::Three::Sce
       in.open(fileinfo.filePath().toUtf8(), std::ios_base::in);//not binary
       CGAL_assertion(!(!in));
 
-      Scene_c3t3_item* item = new Scene_c3t3_item();
+      Scene_c3t3_item* item = new Scene_c3t3_item(scene);
       item->setName(fileinfo.baseName());
       item->setScene(scene);
       item->set_valid(false);

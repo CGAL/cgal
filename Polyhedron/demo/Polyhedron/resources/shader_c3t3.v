@@ -9,7 +9,7 @@ uniform highp vec4 cutplane;
 uniform highp float shrink_factor;
 varying highp vec4 fP; 
 varying highp vec3 fN; 
-varying highp vec4 color; 
+varying highp vec4 color;
 void main(void)
 {
   color = vec4(colors, vertex.x * cutplane.x  + vertex.y * cutplane.y  + vertex.z * cutplane.z  +  cutplane.w);

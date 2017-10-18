@@ -173,8 +173,8 @@ void Scene_spheres_item::invalidate(Gl_data_names){
     setBuffersInit(viewer, false);
     viewer->update();
   }
-  getTriangleContainer(0)->reset_vbos(GEOMETRY|NORMALS|COLORS);
-  getEdgeContainer(0)->reset_vbos(GEOMETRY|NORMALS|COLORS);
+  getTriangleContainer(0)->reset_vbos(ALL);
+  getEdgeContainer(0)->reset_vbos(ALL);
   if(!isInit())
     initGL();
 }

@@ -35,8 +35,8 @@ using namespace CGAL::Three;
 public:
   typedef qglviewer::ManipulatedFrame ManipulatedFrame;
 
-  Scene_c3t3_item();
-  Scene_c3t3_item(const C3t3& c3t3);
+  Scene_c3t3_item(Scene_interface *scene);
+  Scene_c3t3_item(CGAL::Three::Scene_interface* scene, const C3t3& c3t3);
   ~Scene_c3t3_item();
 
   bool has_stats()const  Q_DECL_OVERRIDE {return true;}
@@ -60,7 +60,7 @@ public:
       return !!(os << c3t3());
   }
 
-  void invalidateOpenGLBuffers() Q_DECL_OVERRIDE;
+  void invalidate(Gl_data_names name) Q_DECL_OVERRIDE;
 
   void c3t3_changed();
 
@@ -100,8 +100,9 @@ public:
   void compute_bbox() const Q_DECL_OVERRIDE;
   Scene_item::Bbox bbox() const Q_DECL_OVERRIDE
   {
-      return Scene_item::bbox();
+      return Scene_item_rendering_helper::bbox();
   }
+
   Scene_c3t3_item* clone() const  Q_DECL_OVERRIDE{
     return 0;
   }
@@ -116,12 +117,12 @@ public:
 
   // Indicate if rendering mode is supported
   bool supportsRenderingMode(RenderingMode m) const  Q_DECL_OVERRIDE{
-    return (m != Gouraud && m != PointsPlusNormals && m != Splatting && m != Points && m != ShadedPoints);
+    return (m != Gouraud && m != PointsPlusNormals && m != Points && m != ShadedPoints);
   }
 
-  void draw(CGAL::Three::Viewer_interface* viewer) const Q_DECL_OVERRIDE;
-  void drawEdges(CGAL::Three::Viewer_interface* viewer) const Q_DECL_OVERRIDE;
-  void drawPoints(CGAL::Three::Viewer_interface * viewer) const Q_DECL_OVERRIDE;
+  void draw(Viewer_interface *, int pass, bool is_writing, QOpenGLFramebufferObject *fbo) Q_DECL_OVERRIDE;
+  void drawEdges(Viewer_interface *) Q_DECL_OVERRIDE;
+  void drawPoints(Viewer_interface *) Q_DECL_OVERRIDE;
   public:
     QMenu* contextMenu() Q_DECL_OVERRIDE;
     void copyProperties(Scene_item *) Q_DECL_OVERRIDE;
@@ -152,9 +153,9 @@ public:
 
   void build_histogram();
 
-  void computeElements()const Q_DECL_OVERRIDE;
+  void computeElements(Gl_data_names) Q_DECL_OVERRIDE;
 
-  void initializeBuffers(Viewer_interface *) const Q_DECL_OVERRIDE;
+  void initializeBuffers(Viewer_interface *)Q_DECL_OVERRIDE;
 
   QColor get_histogram_color(const double v) const;
 

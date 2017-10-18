@@ -1286,7 +1286,7 @@ Scene_surface_mesh_item::load_obj(std::istream& in)
   CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(points,faces,*(d->smesh_));
   if ( (! failed) && !isEmpty() )
   {
-    invalidate(GEOMETRY|COLORS|NORMALS);
+    invalidate(ALL);
     return true;
   }
   return false;

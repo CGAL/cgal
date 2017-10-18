@@ -862,7 +862,7 @@ Scene_polyhedron_item::load(std::istream& in)
 
     if ( in && !isEmpty() )
     {
-        invalidate(GEOMETRY|NORMALS|COLORS);
+        invalidate(ALL);
         return true;
     }
     return false;
@@ -880,7 +880,7 @@ Scene_polyhedron_item::load_obj(std::istream& in)
   CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh( points,faces,*(d->poly));
   if ( (! failed) && !isEmpty() )
   {
-    invalidate(GEOMETRY|NORMALS|COLORS);
+    invalidate(ALL);
     return true;
   }
   return false;
@@ -1278,7 +1278,7 @@ Scene_polyhedron_item::select(double orig_x,
                         polyhedron()->erase_facet(selected_fh->halfedge());
                         polyhedron()->normalize_border();
                         //set_erase_next_picked_facet(false);
-                        invalidate(GEOMETRY|COLORS|NORMALS);
+                        invalidate(ALL);
 
                         Q_EMIT itemChanged();
                     }

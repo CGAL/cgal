@@ -116,7 +116,7 @@ void Scene_item_rendering_helper::initGL()
   if(!d->isinit)
   {
     Gl_data_names flags;
-    flags = (GEOMETRY|NORMALS|COLORS);
+    flags = (ALL);
     processData(flags);
   }
   d->isinit = true;
@@ -124,7 +124,7 @@ void Scene_item_rendering_helper::initGL()
 
 void Scene_item_rendering_helper::newViewer(Viewer_interface *viewer)
 {
-  processData(GEOMETRY|COLORS|NORMALS); //newViewer shouldn't be called when item is locked;
+  processData(ALL); //newViewer shouldn't be called when item is locked;
   Q_FOREACH(Triangle_container* tc, d->triangle_containers)
   {
     if(!tc->isGLInit(viewer))

@@ -381,7 +381,7 @@ Scene_polygon_soup_item::load(std::istream& in)
 
   bool result = CGAL::read_OFF(in, d->soup->points, d->soup->polygons,
                                d->soup->fcolors, d->soup->vcolors);
-  invalidate(GEOMETRY|NORMALS|COLORS);
+  invalidate(ALL);
   return result;
 }
 
@@ -438,7 +438,7 @@ void Scene_polygon_soup_item::load(Scene_polyhedron_item* poly_item) {
   if(!d->soup)
     d->soup = new Polygon_soup;
   polygon_mesh_to_soup(*poly_item->polyhedron(), *d->soup);
-  invalidate(GEOMETRY|NORMALS|COLORS);
+  invalidate(ALL);
 }
 
 void Scene_polygon_soup_item::load(Scene_surface_mesh_item* sm_item) {
@@ -448,7 +448,7 @@ void Scene_polygon_soup_item::load(Scene_surface_mesh_item* sm_item) {
   if(!d->soup)
     d->soup = new Polygon_soup;
   polygon_mesh_to_soup(*sm_item->face_graph(), *d->soup);
-  invalidate(GEOMETRY|NORMALS|COLORS);
+  invalidate(ALL);
 }
 void
 Scene_polygon_soup_item::setDisplayNonManifoldEdges(const bool b)
@@ -730,7 +730,7 @@ void Scene_polygon_soup_item::load(const std::vector<Point>& points, const std::
     /// fill non-manifold edges container
     //soup->fill_edges();
     d->oriented = false;
-    invalidate(GEOMETRY|NORMALS|COLORS);
+    invalidate(ALL);
 }
 
 template <class Point, class Polygon>

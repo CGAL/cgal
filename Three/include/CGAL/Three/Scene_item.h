@@ -65,7 +65,6 @@ class SCENE_ITEM_EXPORT Scene_item : public QObject{
 public:
   typedef CGAL::Bbox_3 Bbox;
   typedef qglviewer::ManipulatedFrame ManipulatedFrame;
-
   //!
   //! \brief The Gl_data_name enum is used as a flag to specify what should be
   //! re-computed during `computeElements()`. The flag correspondig to this enum is
@@ -73,9 +72,10 @@ public:
   //! For instance, you can use GEOMETRY|COLORS as a single value.
   //!
   enum Gl_data_name{
-    GEOMETRY = 0x1, //!< Invalidates the vertices, edges and faces.
-    COLORS   = 0x2, //!< Invalidates the color of each vertex
-    NORMALS  = 0x4  //!< Invalidate the normal of each vertex.
+    GEOMETRY = 0x1,                     //!< Invalidates the vertices, edges and faces.
+    COLORS   = 0x2,                     //!< Invalidates the color of each vertex
+    NORMALS  = 0x4,                     //!< Invalidate the normal of each vertex.
+    ALL      = GEOMETRY|COLORS|NORMALS  //!< Invalidate everything
   };
   Q_DECLARE_FLAGS(Gl_data_names, Gl_data_name)
 

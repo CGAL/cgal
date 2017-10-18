@@ -135,7 +135,7 @@ Polyhedron_demo_polylines_io_plugin::load(QFileInfo fileinfo, Scene_interface *s
   item->setName(fileinfo.baseName());
   item->setColor(Qt::black);
   item->setProperty("polylines metadata", polylines_metadata);
-  item->invalidate(Scene_item::GEOMETRY|Scene_item::COLORS|Scene_item::NORMALS);
+  item->invalidate(Scene_item::ALL);
   return item;
 }
 

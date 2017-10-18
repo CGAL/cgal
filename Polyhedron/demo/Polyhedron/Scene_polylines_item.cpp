@@ -234,7 +234,7 @@ Scene_polylines_item_private::computeSpheres()
                     "</ul></p>"
                     "<p>Tip: To erase this item, set its radius to 0 or less. </p>")
                             );
-      spheres->computeElements(Scene_item::GEOMETRY|Scene_item::COLORS|Scene_item::NORMALS);
+      spheres->computeElements(Scene_item::ALL);
       QApplication::restoreOverrideCursor();
 }
 
@@ -380,43 +380,11 @@ Scene_polylines_item::drawEdges(CGAL::Three::Viewer_interface* viewer) {
 }
 
 void 
-Scene_polylines_item::drawPoints(CGAL::Three::Viewer_interface* viewer)  {
+Scene_polylines_item::drawPoints(CGAL::Three::Viewer_interface* )  {
 if(!visible()
    || !renderingMode() == Points)
   return;
-/*  if(!isWriting() && !isInit())
-  {
-    initGL();
-    if(d->line_Slider)
-      delete d->line_Slider;
-    d->line_Slider = new QSlider(Qt::Horizontal);
-    d->line_Slider->setMaximum(2);
-    d->line_Slider->setMinimum(1);
-    d->line_Slider->setValue(2);
-    connect(d->line_Slider, &QSlider::valueChanged, this, &Scene_polylines_item::itemChanged);
-  }
 
-  if (!is_locked&& are_buffers_filled &&
-     ! buffers_init[viewer])
-  {
-    initializeBuffers(viewer);
-    buffers_init[viewer] = true;
-  }
-
-    *  vaos[Scene_polylines_item_private::Edges]->bind();
-    attribBuffers(viewer, PROGRAM_NO_SELECTION);
-    QOpenGLShaderProgram *program = getShaderProgram(PROGRAM_NO_SELECTION);
-    program->bind();
-    QColor temp = this->color();
-    program->setAttributeValue("colors", temp);
-    viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(d->nb_lines/4));
-    // Clean-up
-   vaos[Scene_polylines_item_private::Edges]->release();
-   program->release();
-   if(d->draw_extremities)
-   {
-      Scene_group_item::drawPoints(viewer);
-   }*/
 }
 
 QMenu* Scene_polylines_item::contextMenu() 
