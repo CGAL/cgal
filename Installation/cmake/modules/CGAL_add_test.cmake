@@ -46,9 +46,11 @@ function(expand_list_with_globbing list_name)
 endfunction()
 
 function(cgal_add_test exe_name)
+  add_test(NAME "compilation_of__${exe_name}"
+    COMMAND ${TIME_COMMAND} "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target "${exe_name}")
   set(cin_file "${CGAL_CURRENT_SOURCE_DIR}/${exe_name}.cin")
   if(EXISTS ${cin_file})
-    add_test(NAME ${exe_name}
+    add_test(NAME execution___of__${exe_name}
       COMMAND ${CMAKE_COMMAND}
       -DCMD:STRING=$<TARGET_FILE:${exe_name}>
       -DCIN:STRING=${cin_file}
@@ -77,19 +79,17 @@ function(cgal_add_test exe_name)
       expand_list_with_globbing(ARGS)
     endif()
     #	message(STATUS "add test: ${exe_name} ${ARGS}")
-    add_test(NAME ${exe_name} COMMAND ${exe_name} ${ARGS})
+    add_test(NAME execution___of__${exe_name} COMMAND $<TARGET_FILE:${exe_name}> ${ARGS})
   endif()
-  set_property(TEST "${exe_name}"
+  set_property(TEST "execution___of__${exe_name}"
     APPEND PROPERTY LABELS "${PROJECT_NAME}")
   #      message(STATUS "  working dir: ${CGAL_CURRENT_SOURCE_DIR}")
-  set_property(TEST "${exe_name}"
+  set_property(TEST "execution___of__${exe_name}"
     PROPERTY WORKING_DIRECTORY ${CGAL_CURRENT_SOURCE_DIR})
-  add_test(NAME "build_target_${exe_name}"
-    COMMAND "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target "${exe_name}")
-  set_property(TEST "build_target_${exe_name}"
+  set_property(TEST "compilation_of__${exe_name}"
     APPEND PROPERTY LABELS "${PROJECT_NAME}")
-  set_property(TEST "${exe_name}"
-    APPEND PROPERTY DEPENDS "build_target_${exe_name}")
+  set_property(TEST "execution___of__${exe_name}"
+    APPEND PROPERTY DEPENDS "compilation_of__${exe_name}")
 
   return()
 
@@ -108,9 +108,9 @@ function(cgal_add_test exe_name)
     # see https://github.com/CGAL/cgal/pull/1295/files/c65d3abe17bb3e677b8077996cdaf8672f9c4c6f#r71705451
   endif()
   string(REPLACE ";" " " args_str "${ARGS}")
-  add_test(NAME ${exe_name}
-    COMMAND ${exe_name} ${ARGS}
+  add_test(NAME execution___of__${exe_name}
+    COMMAND $<TARGET_FILE:${exe_name}> ${ARGS}
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-  set_property(TEST "${exe_name}"
+  set_property(TEST "execution___of__${exe_name}"
     APPEND PROPERTY LABELS "${PROJECT_NAME}")
 endfunction()
