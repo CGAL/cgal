@@ -628,7 +628,9 @@ public Q_SLOTS:
   void on_SelectionOrEuler_changed(int index)
   {
     Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
-    if(selection_item)
+    if(!selection_item)
+      return;
+    else
       selection_item->on_Ctrlz_pressed();
     last_mode = index;
     switch(index)
