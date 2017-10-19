@@ -359,22 +359,22 @@ void reverse_face_orientations(const FaceRange& face_range, PolygonMesh& pmesh)
 * The normal vector to each face is chosen pointing on the side of the face
 * where its sequence of vertices is seen counterclockwise.
 *
-* @tparam TriangleMesh a model of `FaceListGraph` and `MutableFaceGraph` with no self-intersection.
+* @tparam TriangleMesh a model of `FaceListGraph` and `MutableFaceGraph` .
 * @tparam NamedParameters a sequence of \ref namedparameters
 *
 * @param tm a triangulated `TriangleMesh`
 * @param np optional sequence of \ref namedparameters among the ones listed below
 *
 * \cgalNamedParamsBegin
- *   \cgalParamBegin{vertex_point_map}
- *     the property map with the points associated to the vertices of `tm`.
- *     If this parameter is omitted, an internal property map for
- *     `CGAL::vertex_point_t` should be available in `TriangleMesh`
- *   \cgalParamEnd
- *   \cgalParamBegin{face_index_map}
- *     a property map containing the index of each face of `tm`.
- *   \cgalParamEnd
- * \cgalNamedParamsEnd
+*   \cgalParamBegin{vertex_point_map}
+*     the property map with the points associated to the vertices of `tm`.
+*     If this parameter is omitted, an internal property map for
+*     `CGAL::vertex_point_t` should be available in `TriangleMesh`
+*   \cgalParamEnd
+*   \cgalParamBegin{face_index_map}
+*     a property map containing the index of each face of `tm`.
+*   \cgalParamEnd
+* \cgalNamedParamsEnd
 */
 template<class TriangleMesh, class NamedParameters>
 void orient_connected_components(TriangleMesh& tm, const NamedParameters& np)
