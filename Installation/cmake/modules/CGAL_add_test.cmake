@@ -3,6 +3,15 @@ if(CGAL_add_test_included)
 endif(CGAL_add_test_included)
 set(CGAL_add_test_included TRUE)
 
+option(CGAL_CTEST_DISPLAY_MEM_AND_TIME
+  "Display memory and real time usage at end of CTest test outputs"
+  FALSE)
+if(CGAL_CTEST_DISPLAY_MEM_AND_TIME)
+  find_program(TIME time)
+  if(TIME)
+    set(TIME_COMMAND ${TIME} -f "\\nMEM: %M\\tTIME: %e\\t%C")
+  endif()
+endif()
 
 # Process a list, and replace items contains a file pattern (like
 # `*.off`) by the sublist that corresponds to the globbing of the
@@ -51,7 +60,7 @@ function(cgal_add_test exe_name)
   set(cin_file "${CGAL_CURRENT_SOURCE_DIR}/${exe_name}.cin")
   if(EXISTS ${cin_file})
     add_test(NAME execution___of__${exe_name}
-      COMMAND ${CMAKE_COMMAND}
+      COMMAND ${TIME_COMMAND} ${CMAKE_COMMAND}
       -DCMD:STRING=$<TARGET_FILE:${exe_name}>
       -DCIN:STRING=${cin_file}
       -P "${CGAL_MODULES_DIR}/run_test_with_cin.cmake")
@@ -79,7 +88,7 @@ function(cgal_add_test exe_name)
       expand_list_with_globbing(ARGS)
     endif()
     #	message(STATUS "add test: ${exe_name} ${ARGS}")
-    add_test(NAME execution___of__${exe_name} COMMAND $<TARGET_FILE:${exe_name}> ${ARGS})
+    add_test(NAME execution___of__${exe_name} COMMAND ${TIME_COMMAND} $<TARGET_FILE:${exe_name}> ${ARGS})
   endif()
   set_property(TEST "execution___of__${exe_name}"
     APPEND PROPERTY LABELS "${PROJECT_NAME}")
@@ -109,7 +118,7 @@ function(cgal_add_test exe_name)
   endif()
   string(REPLACE ";" " " args_str "${ARGS}")
   add_test(NAME execution___of__${exe_name}
-    COMMAND $<TARGET_FILE:${exe_name}> ${ARGS}
+    COMMAND ${TIME_COMMAND} $<TARGET_FILE:${exe_name}> ${ARGS}
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
   set_property(TEST "execution___of__${exe_name}"
     APPEND PROPERTY LABELS "${PROJECT_NAME}")
