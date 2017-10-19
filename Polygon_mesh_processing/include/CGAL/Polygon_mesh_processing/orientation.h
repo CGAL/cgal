@@ -25,12 +25,14 @@
 
 #include <CGAL/license/Polygon_mesh_processing/orientation.h>
 
-
 #include <algorithm>
+#include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 #include <CGAL/Projection_traits_xy_3.h>
+#include <CGAL/Projection_traits_xz_3.h>
+#include <CGAL/Projection_traits_yz_3.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/iterator.h>
 
@@ -114,7 +116,21 @@ namespace internal{
     Orientation p1p2p3_2d = orientation_2(p1, p2, p3);
     Orientation p2p1p4_2d = orientation_2(p2, p1, p4);
 
-    CGAL_assertion( p1p2p3_2d!=COLLINEAR || p2p1p4_2d!=COLLINEAR ); // no self-intersection
+    if(!( p1p2p3_2d!=COLLINEAR || p2p1p4_2d!=COLLINEAR ))
+    {
+      Projection_traits_xz_3<GT> p_gt_bis;
+      typename Projection_traits_xz_3<GT>::Orientation_2 orientation_2_bis = p_gt_bis.orientation_2_object();
+      p1p2p3_2d = orientation_2_bis(p1, p2, p3);
+      p2p1p4_2d = orientation_2_bis(p2, p1, p4);
+      if(!( p1p2p3_2d!=COLLINEAR || p2p1p4_2d!=COLLINEAR ))
+      {
+        Projection_traits_yz_3<GT> p_gt_last;
+        typename Projection_traits_yz_3<GT>::Orientation_2 orientation_2_last = p_gt_last.orientation_2_object();
+        p1p2p3_2d = orientation_2_last(p1, p2, p3);
+        p2p1p4_2d = orientation_2_last(p2, p1, p4);
+      }
+    }
+    CGAL_assertion( p1p2p3_2d!=COLLINEAR || p2p1p4_2d!=COLLINEAR );//no self-intersection
 
     if ( p1p2p3_2d == COLLINEAR)
       return p2p1p4_2d == LEFT_TURN;
@@ -333,6 +349,91 @@ void reverse_face_orientations(const FaceRange& face_range, PolygonMesh& pmesh)
         reverse_orientation(ohd, pmesh);
       }
     }
+}
+
+/**
+* \ingroup PMP_orientation_grp
+* makes the orientation of all the connected_components of a `TriangleMesh` positive.
+* A closed polygon mesh is considered to have a positive orientation if the normal vectors
+* to all its faces point outside the domain bounded by the polygon mesh.
+* The normal vector to each face is chosen pointing on the side of the face
+* where its sequence of vertices is seen counterclockwise.
+*
+* @tparam TriangleMesh a model of `FaceListGraph` and `MutableFaceGraph` with no self-intersection.
+* @tparam NamedParameters a sequence of \ref namedparameters
+*
+* @param tm a triangulated `TriangleMesh`
+* @param np optional sequence of \ref namedparameters among the ones listed below
+*
+* \cgalNamedParamsBegin
+ *   \cgalParamBegin{vertex_point_map}
+ *     the property map with the points associated to the vertices of `tm`.
+ *     If this parameter is omitted, an internal property map for
+ *     `CGAL::vertex_point_t` should be available in `TriangleMesh`
+ *   \cgalParamEnd
+ *   \cgalParamBegin{face_index_map}
+ *     a property map containing the index of each face of `tm`.
+ *   \cgalParamEnd
+ * \cgalNamedParamsEnd
+*/
+template<class TriangleMesh, class NamedParameters>
+void orient_connected_components(TriangleMesh& tm, const NamedParameters& np)
+{
+  typedef boost::graph_traits<TriangleMesh> GT;
+  typedef typename GT::vertex_descriptor vertex_descriptor;
+  typedef typename GT::face_descriptor face_descriptor;
+  typedef typename GetVertexPointMap<TriangleMesh,
+                                     NamedParameters>::const_type Vpm;
+  typedef typename GetFaceIndexMap<TriangleMesh,
+                                   NamedParameters>::const_type Fid_map;
+
+  if (!is_triangle_mesh(tm)) return ;
+
+  Vpm vpm = boost::choose_param(get_param(np, internal_np::vertex_point),
+                                get_const_property_map(boost::vertex_point, tm));
+
+  Fid_map fid_map = boost::choose_param(get_param(np, internal_np::face_index),
+                                        get_const_property_map(boost::face_index, tm));
+
+  std::vector<std::size_t> face_cc(num_faces(tm), std::size_t(-1));
+
+  // set the connected component id of each face
+  std::size_t nb_cc = connected_components(tm,
+                                bind_property_maps(fid_map,make_property_map(face_cc)),
+                                parameters::face_index_map(fid_map));
+
+  if (nb_cc == 1)
+    return;
+
+  // extract a vertex with max z coordinate for each connected component
+  std::vector<vertex_descriptor> xtrm_vertices(nb_cc, GT::null_vertex());
+  BOOST_FOREACH(vertex_descriptor vd, vertices(tm))
+  {
+    face_descriptor test_face = face(halfedge(vd, tm), tm);
+    if(test_face == GT::null_face())
+      continue;
+    std::size_t cc_id = face_cc[get(fid_map,test_face )];
+    if (xtrm_vertices[cc_id]==GT::null_vertex())
+      xtrm_vertices[cc_id]=vd;
+    else
+      if (get(vpm, vd).z()>get(vpm,xtrm_vertices[cc_id]).z())
+        xtrm_vertices[cc_id]=vd;
+  }
+  std::vector<std::vector<face_descriptor> > ccs(nb_cc);
+  BOOST_FOREACH(face_descriptor fd, faces(tm))
+  {
+    ccs[face_cc[get(fid_map,fd)]].push_back(fd);
+  }
+
+  //orient ccs outward
+  for(std::size_t id=0; id<nb_cc; ++id)
+  {
+    if(!internal::is_outward_oriented(xtrm_vertices[id], tm, np))
+    {
+      reverse_face_orientations(ccs[id]
+            ,tm);
+    }
+  }
 }
 
 } // namespace Polygon_mesh_processing
