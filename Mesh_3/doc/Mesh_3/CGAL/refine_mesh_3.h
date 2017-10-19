@@ -172,6 +172,12 @@ namespace parameters {
   meshing algorithm for surfaces.
   It ensures that the surface of the output mesh is a manifold surface
     without boundaries.
+  The manifold property of the output mesh can be achieved only if the input surface
+  is a manifold.
+  Note that the meshing algorithm provably terminates only if the input
+  sharp edges have been protected, using the
+  feature protection (see \ref Mesh_3Protectionof0and1dimensionalExposed).
+
   \sa `CGAL::make_mesh_3()`
   \sa `CGAL::refine_mesh_3()`
   \sa `CGAL::parameters::manifold_with_boundary()`
@@ -200,7 +206,13 @@ namespace parameters {
   The function `parameters::manifold_with_boundary()` is used to drive the
   meshing algorithm for surfaces.
   It ensures that the surface of the output mesh is a manifold surface which
-    may have boundaries.
+  may have boundaries.
+  The manifold property of the output mesh can be achieved only if the input surface
+  is a manifold.
+  Note that the meshing algorithm provably terminates only if the input
+  sharp edges have been protected, using the
+  feature protection (see \ref Mesh_3Protectionof0and1dimensionalExposed).
+
   \sa `CGAL::make_mesh_3()`
   \sa `CGAL::refine_mesh_3()`
   \sa `CGAL::parameters::non_manifold()`
