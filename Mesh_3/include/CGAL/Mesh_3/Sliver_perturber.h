@@ -65,6 +65,9 @@
 
 #include <boost/format.hpp>
 #ifdef CGAL_MESH_3_USE_RELAXED_HEAP
+#  error This option CGAL_MESH_3_USE_RELAXED_HEAP is no longer supported
+// The reason is that the Boost relaxed heap does not ensure a strict order
+// of the priority queue.
 #include <boost/pending/relaxed_heap.hpp>
 #else
 #include <CGAL/Modifiable_priority_queue.h>
