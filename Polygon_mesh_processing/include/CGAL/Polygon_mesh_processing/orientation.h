@@ -353,7 +353,7 @@ void reverse_face_orientations(const FaceRange& face_range, PolygonMesh& pmesh)
 
 /**
 * \ingroup PMP_orientation_grp
-* makes the orientation of all the connected_components of a `TriangleMesh` positive.
+* makes the orientation of all the connected components of a `TriangleMesh` positive.
 * A closed polygon mesh is considered to have a positive orientation if the normal vectors
 * to all its faces point outside the domain bounded by the polygon mesh.
 * The normal vector to each face is chosen pointing on the side of the face
@@ -379,9 +379,9 @@ void reverse_face_orientations(const FaceRange& face_range, PolygonMesh& pmesh)
 template<class TriangleMesh, class NamedParameters>
 void orient_connected_components(TriangleMesh& tm, const NamedParameters& np)
 {
-  typedef boost::graph_traits<TriangleMesh> GT;
-  typedef typename GT::vertex_descriptor vertex_descriptor;
-  typedef typename GT::face_descriptor face_descriptor;
+  typedef boost::graph_traits<TriangleMesh> Graph_traits;
+  typedef typename Graph_traits::vertex_descriptor vertex_descriptor;
+  typedef typename Graph_traits::face_descriptor face_descriptor;
   typedef typename GetVertexPointMap<TriangleMesh,
                                      NamedParameters>::const_type Vpm;
   typedef typename GetFaceIndexMap<TriangleMesh,
@@ -406,14 +406,14 @@ void orient_connected_components(TriangleMesh& tm, const NamedParameters& np)
     return;
 
   // extract a vertex with max z coordinate for each connected component
-  std::vector<vertex_descriptor> xtrm_vertices(nb_cc, GT::null_vertex());
+  std::vector<vertex_descriptor> xtrm_vertices(nb_cc, Graph_traits::null_vertex());
   BOOST_FOREACH(vertex_descriptor vd, vertices(tm))
   {
     face_descriptor test_face = face(halfedge(vd, tm), tm);
-    if(test_face == GT::null_face())
-      continue;
+    if(test_face == Graph_traits::null_face())
+      test_face = face(opposite(halfedge(vd, tm), tm), tm);
     std::size_t cc_id = face_cc[get(fid_map,test_face )];
-    if (xtrm_vertices[cc_id]==GT::null_vertex())
+    if (xtrm_vertices[cc_id]==Graph_traits::null_vertex())
       xtrm_vertices[cc_id]=vd;
     else
       if (get(vpm, vd).z()>get(vpm,xtrm_vertices[cc_id]).z())
