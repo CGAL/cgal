@@ -4,6 +4,8 @@
 
 project( Interpolation_Demo )
 
+set_property(DIRECTORY PROPERTY CGAL_NO_TESTING TRUE)
+
 cmake_minimum_required(VERSION 2.8.11)
 if(POLICY CMP0053)
   cmake_policy(SET CMP0053 OLD)
