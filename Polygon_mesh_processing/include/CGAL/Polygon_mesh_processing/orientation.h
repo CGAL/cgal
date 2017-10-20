@@ -90,6 +90,10 @@ namespace internal{
     BOOST_FOREACH(halfedge_descriptor he, halfedges_around_target(v_max, pmesh))
     {
       CGAL_assertion(v_max == target(min_slope_he, pmesh));
+      if(v_max != target(he, pmesh))
+      {
+        std::cout<<"plouf";
+      }
       CGAL_assertion(v_max == target(he, pmesh));
 
       if(CGAL::SMALLER == compare_slope(get(vpmap, source(he, pmesh)),
@@ -389,7 +393,7 @@ void orient_connected_components(TriangleMesh& tm, const NamedParameters& np)
                                    NamedParameters>::const_type Fid_map;
 
   if (!is_triangle_mesh(tm)) return ;
-
+  if (!is_valid(tm)) return ;
   Vpm vpm = boost::choose_param(get_param(np, internal_np::vertex_point),
                                 get_const_property_map(boost::vertex_point, tm));
 
@@ -416,6 +420,7 @@ void orient_connected_components(TriangleMesh& tm, const NamedParameters& np)
     face_descriptor test_face = face(halfedge(vd, tm), tm);
     if(test_face == Graph_traits::null_face())
       test_face = face(opposite(halfedge(vd, tm), tm), tm);
+      CGAL_assertion(test_face != Graph_traits::null_face());
     std::size_t cc_id = face_cc[get(fid_map,test_face )];
     if (xtrm_vertices[cc_id]==Graph_traits::null_vertex())
       xtrm_vertices[cc_id]=vd;
