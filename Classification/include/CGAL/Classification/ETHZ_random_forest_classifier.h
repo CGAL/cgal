@@ -147,7 +147,11 @@ public:
     m_rfc->evaluate (ft.data(), prob.data());
     
     for (std::size_t i = 0; i < out.size(); ++ i)
+    {
       out[i] = - std::log (prob[i]);
+      if (out[i] < 0.f)
+        out[i] = -out[i];
+    }
   }
 
   void save_configuration (const char* filename)
