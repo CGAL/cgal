@@ -13,6 +13,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Fernando Cacciola <fernando.cacciola@geometryfactory.com>
 //

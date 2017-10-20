@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Iddo Hanniel <hanniel@math.tau.ac.il>

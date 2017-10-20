@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Bernd Gaertner <gaertner@inf.ethz.ch>

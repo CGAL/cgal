@@ -614,6 +614,7 @@ o = o_next;
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Miguel Granados <granados@mpi-sb.mpg.de>

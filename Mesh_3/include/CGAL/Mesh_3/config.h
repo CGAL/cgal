@@ -12,8 +12,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: https://scm.gforge.inria.fr/svn/cgal/branches/features/Mesh_3-experimental-GF/Mesh_3/include/CGAL/Mesh_3/config.h $
-// $Id: config.h 70893 2012-07-31 10:43:20Z jtournoi $
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Laurent Rineau
 

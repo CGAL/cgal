@@ -12,9 +12,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://balasmic@scm.gforge.inria.fr/svn/cgal/branches/features/Arrangement_on_surface_2-RIC_pl_for_unbounded-balasmic/Arrangement_on_surface_2/include/CGAL/Arr_point_location/Td_inactive_trapezoid.h $
-// $Id: Td_inactive_trapezoid.h 65793 2011-10-10 17:04:38Z balasmic $
-// 
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)	 : Oren Nechushtan <theoren@math.tau.ac.il>
 //               updated by: Michal Balas <balasmic@post.tau.ac.il>

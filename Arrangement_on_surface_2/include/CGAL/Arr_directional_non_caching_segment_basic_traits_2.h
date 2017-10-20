@@ -11,7 +11,9 @@
 //
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-
+//
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s)     : Efi Fogel <efif@post.tau.ac.il>
 
 #ifndef CGAL_ARR_DIRECTIONAL_NON_CACHING_SEGMENT_BASIC_TRAITS_2_H

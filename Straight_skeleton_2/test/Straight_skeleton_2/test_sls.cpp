@@ -11,8 +11,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://fcacciola@scm.gforge.inria.fr/svn/cgal/trunk/Straight_skeleton_2/test/Straight_skeleton_2/test_offset_builder.cpp $
-// $Id: test_offset_builder.cpp 33476 2006-08-22 08:24:07Z afabri $
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //

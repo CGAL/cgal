@@ -12,9 +12,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://fcacciola@scm.gforge.inria.fr/svn/cgal/trunk/GraphicsView/include/CGAL/Qt/GpsCircleSegmentGraphicsItem.h $
-// $Id: GpsCircleSegmentGraphicsItem.h 45725 2008-09-24 13:24:24Z lrineau $
-// 
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Andreas Fabri <Andreas.Fabri@geometryfactory.com>
 //                 Laurent Rineau <Laurent.Rineau@geometryfactory.com>
