@@ -21,12 +21,6 @@ bool test_orientation(TriangleMesh& tm, const NamedParameters& np)
   typedef typename CGAL::GetFaceIndexMap<TriangleMesh,
       NamedParameters>::const_type Fid_map;
 
-  if (!CGAL::is_triangle_mesh(tm))
-  {
-    std::cerr<< "tested mesh is not triangle."<<std::endl;
-    return false ;
-  }
-
   Vpm vpm = boost::choose_param(get_param(np, CGAL::internal_np::vertex_point),
                                 CGAL::get_const_property_map(boost::vertex_point, tm));
 
@@ -80,7 +74,7 @@ int main()
   SMesh sm1, sm2;
   input >> sm1;
   sm2 = sm1;
-  PMP::orient_connected_components(sm1, PMP::parameters::all_default());
+  PMP::orient_connected_components(sm1);
   if(!test_orientation(sm1, PMP::parameters::all_default()))
     return 1;
   typedef boost::property_map<SMesh, CGAL::vertex_point_t>::type Ppmap;
