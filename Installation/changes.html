@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- $Id$
      $URL$
 -->
@@ -187,6 +187,30 @@ and <code>src/</code> directories).
   other types of input than the RANSAC output.</li>
 </ul>
 <!-- Spatial Searching and Sorting -->
+<h3>dD Spatial Searching</h3>
+<ul>
+  <li>
+  Improved the performance of the kd-tree in some cases:<br />
+  1. Not storing the points coordinates inside the tree usually 
+      generates a lot of cache misses, leading to non-optimal 
+      performance. This is the case when indices are stored inside 
+      the tree, or when the points coordinates are stored in a
+      dynamically allocated array (e.g., <code>CGAL::Epick_d</code>
+      with dynamic dimension).
+      In this case, the new EnablePointsCache template parameter of the
+      <code>CGAL::Kd_tree</code> class can be set to 
+      <code>CGAL::Tag_true</code>. The points coordinates
+      will then be cached in an optimal way. This will increase memory
+      consumption but provide better search performance. See the updated
+      <code>GeneralDistance</code> and <code>FuzzyQueryItem</code>
+      concepts for additional requirements when using such a cache.
+  2. In most cases (e.g., Euclidean distance), the distance computation
+      algorithm knows before its end that the distance will be greater
+      than or equal to some given value. This is used in the (orthogonal)
+      k-NN search to interrupt some distance computations before its end,
+      saving precious milliseconds, in particular in medium-to-high dimension.
+  </li>
+</ul>
 <!-- Geometric Optimization -->
 <!-- Interpolation -->
 <!-- Kinetic Data Structures -->
