@@ -3,6 +3,10 @@ if(CGAL_add_test_included)
 endif(CGAL_add_test_included)
 set(CGAL_add_test_included TRUE)
 
+if(POLICY CMP0064)
+  cmake_policy(SET CMP0064 NEW)
+endif()
+
 option(CGAL_CTEST_DISPLAY_MEM_AND_TIME
   "Display memory and real time usage at end of CTest test outputs"
   FALSE)
@@ -100,6 +104,34 @@ function(cgal_add_test exe_name)
   set_property(TEST "execution___of__${exe_name}"
     APPEND PROPERTY DEPENDS "compilation_of__${exe_name}")
 
+  if(POLICY CMP0066) # CMake 3.7 or later
+    if(NOT TEST ${PROJECT_NAME}_SetupFixture)
+      add_test(NAME ${PROJECT_NAME}_SetupFixture
+        COMMAND
+        ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_CURRENT_SOURCE_DIR}
+        ${CMAKE_CURRENT_BINARY_DIR}/__exec_test_dir
+        )
+      set_property(TEST ${PROJECT_NAME}_SetupFixture
+        PROPERTY FIXTURES_SETUP ${PROJECT_NAME})
+
+      add_test(NAME ${PROJECT_NAME}_CleanupFixture
+        COMMAND
+        ${CMAKE_COMMAND} -E remove_directory
+        ${CMAKE_CURRENT_BINARY_DIR}/__exec_test_dir
+        )
+      set_property(TEST ${PROJECT_NAME}_CleanupFixture
+        PROPERTY FIXTURES_CLEANUP ${PROJECT_NAME})
+
+      set_property(TEST
+        ${PROJECT_NAME}_CleanupFixture ${PROJECT_NAME}_SetupFixture
+        APPEND PROPERTY LABELS "${PROJECT_NAME}")
+    endif()
+    set_tests_properties("execution___of__${exe_name}"
+      PROPERTIES
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/__exec_test_dir
+      FIXTURES_REQUIRED ${PROJECT_NAME})
+  endif() # end CMake 3.7 or later
   return()
 
   if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${exe_name}.cin")
