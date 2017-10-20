@@ -61,7 +61,7 @@ FT transformed_distance_from_coordinates(
   Query_item q, Coord_iterator begin, Coord_iterator end) const;
 
 /*!
-Optional: in most cases (e.g. Euclidean distance), the distance computation
+Optional: in most cases (e.g., Euclidean distance), the distance computation
 algorithm knows before its end that the distance will be greater than or equal
 to some given value. In this function, the computation can be stopped when the
 distance is going to be greater than or equal to `stop_if_geq_to_this`. In this case,

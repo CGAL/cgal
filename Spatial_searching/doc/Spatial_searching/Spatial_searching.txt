@@ -508,7 +508,7 @@ set to `Tag_true`. The points coordinates will then be cached in an optimal
 way. This will increase memory consumption but provide better search
 performance. See also the `GeneralDistance` and `FuzzyQueryItem` concepts for
 additional requirements when using such a cache.
-\cgalModif
+\cgalModifEnd
 
 \section Spatial_searchingImplementationHistory Implementation History
 
