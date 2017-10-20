@@ -14,6 +14,8 @@
 //
 // Author(s) : Andreas Fabri
 //
+// SPDX-License-Identifier: LGPL-3.0+
+//
 // Warning: this file is generated, see include/CGAL/licence/README.md
 
 #ifndef CGAL_LICENSE_SNAP_ROUNDING_2_H
