@@ -453,6 +453,7 @@ endif()
 include(CGAL_Common)
 include(CGAL_GeneratorSpecificSettings)
 include(CGAL_CheckCXXFileRuns)
+include(CGAL_add_test)
 
 mark_as_advanced(CMAKE_BACKWARDS_COMPATIBILITY)
 
