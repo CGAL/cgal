@@ -436,6 +436,11 @@ void orient_connected_components(TriangleMesh& tm, const NamedParameters& np)
   }
 }
 
+template<class TriangleMesh>
+void orient_connected_components(TriangleMesh& tm)
+{
+  orient_connected_components(tm, parameters::all_default());
+}
 } // namespace Polygon_mesh_processing
 } // namespace CGAL
 #endif // CGAL_ORIENT_POLYGON_MESH_H
