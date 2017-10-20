@@ -13,7 +13,7 @@
 // WARRANTY OF DESISGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$ 
-// $Id$ 
+// $Id$
 // 
 //
 // Author(s)     : Michael Seel       <seel@mpi-sb.mpg.de>
