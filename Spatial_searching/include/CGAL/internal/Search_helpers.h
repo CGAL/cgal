@@ -21,6 +21,8 @@
 #ifndef CGAL_INTERNAL_SEARCH_HELPERS_H
 #define CGAL_INTERNAL_SEARCH_HELPERS_H
 
+#include <CGAL/license/Spatial_searching.h>
+
 #include <CGAL/Has_member.h>
 
 #include <boost/mpl/has_xxx.hpp>
