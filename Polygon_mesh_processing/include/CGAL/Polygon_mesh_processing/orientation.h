@@ -382,6 +382,7 @@ void orient_connected_components(TriangleMesh& tm, const NamedParameters& np)
   typedef boost::graph_traits<TriangleMesh> Graph_traits;
   typedef typename Graph_traits::vertex_descriptor vertex_descriptor;
   typedef typename Graph_traits::face_descriptor face_descriptor;
+  typedef typename Graph_traits::halfedge_descriptor halfedge_descriptor;
   typedef typename GetVertexPointMap<TriangleMesh,
                                      NamedParameters>::const_type Vpm;
   typedef typename GetFaceIndexMap<TriangleMesh,
@@ -409,6 +410,9 @@ void orient_connected_components(TriangleMesh& tm, const NamedParameters& np)
   std::vector<vertex_descriptor> xtrm_vertices(nb_cc, Graph_traits::null_vertex());
   BOOST_FOREACH(vertex_descriptor vd, vertices(tm))
   {
+    halfedge_descriptor test_hd = halfedge(vd, tm);
+    if(test_hd == Graph_traits::null_halfedge())
+      continue;
     face_descriptor test_face = face(halfedge(vd, tm), tm);
     if(test_face == Graph_traits::null_face())
       test_face = face(opposite(halfedge(vd, tm), tm), tm);
