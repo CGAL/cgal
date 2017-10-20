@@ -31,7 +31,7 @@ for t in testing.findall('Test'):
            "Name":   t.find('Name').text, \
            "Status": t.attrib['Status'], \
            "Output": t.find('Results').find('Measurement').find('Value').text, \
-           "Labels": [l.text for l in t.find('Labels').findall('Label')], \
+           "Labels": [l.text for l in t.find('Labels').findall('Label')] if t.find('Labels') is not None else ['UNKNOWN_LABEL'], \
          }
 
 tests_per_label = defaultdict(list)
