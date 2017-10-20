@@ -394,7 +394,7 @@ public:
   }
 
   // Tells if the refinement process of cells is currently finished
-  bool no_longer_element_to_refine_impl() const
+  bool no_longer_element_to_refine_impl()
   {
     if(m_maximal_number_of_vertices_ !=0 &&
        triangulation_ref_impl().number_of_vertices() >=

@@ -294,7 +294,7 @@ public:
   void scan_triangulation_impl_amendement() const {}
 
   // Tells if the refinement process of cells is currently finished
-  bool no_longer_element_to_refine_impl() const
+  bool no_longer_element_to_refine_impl()
   {
     if(m_maximal_number_of_vertices_ !=0 &&
        r_tr_.number_of_vertices() >=
