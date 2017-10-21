@@ -37,7 +37,7 @@
  ** Nokia at qt-info@nokia.com.
  ** $QT_END_LICENSE$
  **
- ** SPDX-License-Identifier: LGPL-3.0+
+ ** SPDX-License-Identifier: LGPL-2.1
  **
  ****************************************************************************/
 
