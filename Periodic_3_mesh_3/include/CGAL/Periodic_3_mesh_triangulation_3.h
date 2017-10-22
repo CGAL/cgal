@@ -123,6 +123,7 @@ public:
   using Base::incident_facets;
   using Base::insert_dummy_points;
   using Base::number_of_vertices;
+  using Base::periodic_triangle;
   using Base::periodic_tetrahedron;
   using Base::point;
   using Base::tds;
@@ -266,6 +267,12 @@ public:
   Weighted_point canonicalize_point(const Weighted_point& p) const
   {
     return robust_canonicalize_point(p);
+  }
+
+  Triangle triangle(const Facet& f) const
+  {
+    Periodic_triangle ptri = periodic_triangle(f);
+    return construct_triangle(ptri);
   }
 
   Tetrahedron tetrahedron(const Cell_handle c) const
