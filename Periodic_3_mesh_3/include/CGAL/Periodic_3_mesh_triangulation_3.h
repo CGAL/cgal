@@ -534,7 +534,6 @@ public:
     int li, lj;
     c = locate(canonic_p, lt, li, lj, c);
     if(lt == 0 /* Locate_type::VERTEX */) {
-//      CGAL_assertion(false); // why would the refine point be a point of the triangulation ?
       return make_triple(bfit, cit, ifit);
     }
 
