@@ -154,8 +154,6 @@ void refine_periodic_3_mesh_3_impl(C3T3& c3t3,
   // Perturbation
   if ( perturb )
   {
-    std::cout << "perturb" << std::endl;
-
     double perturb_time_limit = refine_time;
 
     if ( perturb.is_time_limit_set() )
@@ -169,7 +167,6 @@ void refine_periodic_3_mesh_3_impl(C3T3& c3t3,
     dump_c3t3(c3t3, mesh_options.dump_after_perturb_prefix);
   }
 
-#if 1 // regular stuff is not yet supported by periodic triangulations
   // Exudation
   if ( exude )
   {
@@ -184,7 +181,6 @@ void refine_periodic_3_mesh_3_impl(C3T3& c3t3,
 
     dump_c3t3(c3t3, mesh_options.dump_after_perturb_prefix);
   }
-#endif
 }
 
 } // end namespace CGAL

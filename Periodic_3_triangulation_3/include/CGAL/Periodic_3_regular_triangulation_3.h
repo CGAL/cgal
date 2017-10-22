@@ -62,16 +62,16 @@ template < class Gt,
 class Periodic_3_regular_triangulation_3
   : public Periodic_3_triangulation_3<Gt, Tds>
 {
-  typedef Periodic_3_regular_triangulation_3<Gt, Tds>             Self;
+  typedef Periodic_3_regular_triangulation_3<Gt, Tds>      Self;
 
 public:
-  typedef Periodic_3_triangulation_3<Gt, Tds>      Tr_Base;
+  typedef Periodic_3_triangulation_3<Gt, Tds>              Tr_Base;
 
-  typedef Gt                                       Geometric_traits;
-  typedef Geometric_traits                         Geom_traits;
-  typedef Tds                                      Triangulation_data_structure;
+  typedef Gt                                               Geometric_traits;
+  typedef Geometric_traits                                 Geom_traits;
+  typedef Tds                                              Triangulation_data_structure;
 
-  typedef typename Gt::FT                          FT;
+  typedef typename Gt::FT                                  FT;
 
   typedef typename Tr_Base::Periodic_segment_3             Periodic_segment_3;
   typedef typename Tr_Base::Periodic_triangle_3            Periodic_triangle_3;
@@ -158,6 +158,7 @@ public:
   using Tr_Base::facets_end;
   using Tr_Base::cells_begin;
   using Tr_Base::cells_end;
+  using Tr_Base::construct_point;
   using Tr_Base::construct_periodic_point;
 #endif
 
@@ -801,6 +802,13 @@ public:
 
   Vertex_handle nearest_power_vertex(const Bare_point& p, Cell_handle start) const
   {
+    CGAL_triangulation_precondition(p.x() < domain().xmax());
+    CGAL_triangulation_precondition(p.y() < domain().ymax());
+    CGAL_triangulation_precondition(p.z() < domain().zmax());
+    CGAL_triangulation_precondition(p.x() >= domain().xmin());
+    CGAL_triangulation_precondition(p.y() >= domain().ymin());
+    CGAL_triangulation_precondition(p.z() >= domain().zmin());
+
     if(number_of_vertices() == 0)
       return Vertex_handle();
 
@@ -809,9 +817,11 @@ public:
 
     typename Gt::Construct_weighted_point_3 p2wp =
       geom_traits().construct_weighted_point_3_object();
+
     Cell_handle c = locate(p2wp(p), lt, li, lj, start);
     if(lt == Tr_Base::VERTEX)
       return c->vertex(li);
+
     const Conflict_tester tester(p2wp(p), this);
     Offset o = combine_offsets(Offset(), get_location_offset(tester, c));
 

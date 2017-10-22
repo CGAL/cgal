@@ -57,48 +57,51 @@ class Periodic_3_regular_triangulation_3_mesher_3
     : public Periodic_3_regular_triangulation_3<Gt, Tds>
 {
 public:
-  typedef Sequential_tag                 Concurrency_tag;
-  typedef void                           Lock_data_structure;
+  typedef Sequential_tag                                      Concurrency_tag;
+  typedef void                                                Lock_data_structure;
 
   void *get_lock_data_structure() const { return 0; }
   void set_lock_data_structure(void *) const { }
 
-  typedef Periodic_3_regular_triangulation_3<Gt, Tds>  Base;
+  typedef Periodic_3_regular_triangulation_3<Gt, Tds>         Base;
 
-  typedef Gt                              Geom_traits;
-  typedef Tds                             Triangulation_data_structure;
+  typedef Gt                                                  Geom_traits;
+  typedef Tds                                                 Triangulation_data_structure;
 
-  typedef typename Base::Cell_iterator    Finite_cells_iterator;
-  typedef typename Base::Facet_iterator   Finite_facets_iterator;
-  typedef typename Base::Edge_iterator    Finite_edges_iterator;
-  typedef typename Base::Vertex_iterator  Finite_vertices_iterator;
+  typedef typename Base::Cell_iterator                        Finite_cells_iterator;
+  typedef typename Base::Facet_iterator                       Finite_facets_iterator;
+  typedef typename Base::Edge_iterator                        Finite_edges_iterator;
+  typedef typename Base::Vertex_iterator                      Finite_vertices_iterator;
 
-  typedef typename Base::Vertex_handle    Vertex_handle;
-  typedef typename Base::Cell_handle      Cell_handle;
-  typedef typename Base::Facet            Facet;
-  typedef typename Base::Edge             Edge;
+  typedef typename Base::Vertex_handle                        Vertex_handle;
+  typedef typename Base::Edge                                 Edge;
+  typedef typename Base::Facet                                Facet;
+  typedef typename Base::Cell_handle                          Cell_handle;
 
-  typedef typename Base::FT               FT;
+  typedef typename Base::FT                                   FT;
 
-  typedef typename Base::Bare_point                Bare_point;
-  typedef typename Base::Weighted_point            Weighted_point;
-  typedef typename Base::Periodic_bare_point       Periodic_bare_point;
-  typedef typename Base::Periodic_weighted_point   Periodic_weighted_point;
+  typedef typename Base::Bare_point                           Bare_point;
+  typedef typename Base::Weighted_point                       Weighted_point;
+  typedef typename Base::Periodic_bare_point                  Periodic_bare_point;
+  typedef typename Base::Periodic_weighted_point              Periodic_weighted_point;
 
-  typedef typename Base::Locate_type      Locate_type;
+  typedef typename Base::Locate_type                          Locate_type;
 
-  typedef typename Base::Segment          Segment;
-  typedef typename Base::Periodic_segment Periodic_segment;
+  typedef typename Base::Segment                              Segment;
+  typedef typename Base::Periodic_segment                     Periodic_segment;
 
-  typedef typename Base::Tetrahedron      Tetrahedron;
-  typedef typename Base::Periodic_tetrahedron Periodic_tetrahedron;
+  typedef typename Base::Triangle                             Triangle;
+  typedef typename Base::Periodic_triangle                    Periodic_triangle;
+  typedef typename Base::Tetrahedron                          Tetrahedron;
+  typedef typename Base::Periodic_tetrahedron                 Periodic_tetrahedron;
 
-  typedef typename Base::Offset           Offset;
-  typedef typename Base::Iso_cuboid       Iso_cuboid;
-  typedef typename Base::Conflict_tester  Conflict_tester;
-  typedef typename Base::Covering_sheets  Covering_sheets;
+  typedef typename Base::Offset                               Offset;
+  typedef typename Base::Iso_cuboid                           Iso_cuboid;
+  typedef typename Base::Conflict_tester                      Conflict_tester;
+  typedef typename Base::Covering_sheets                      Covering_sheets;
 
-  typedef typename Gt::Ray_3              Ray;
+  typedef typename Gt::Vector_3                               Vector_3;
+  typedef typename Gt::Ray_3                                  Ray;
 
   using Base::construct_point;
   using Base::construct_weighted_point;

@@ -650,7 +650,6 @@ Labeled_mesh_domain_3<F,BGT,Null>::Construct_initial_points::operator()(
   typedef Random_points_on_sphere_3<Point_3> Random_points_on_sphere_3;
   typedef Random_points_in_sphere_3<Point_3> Random_points_in_sphere_3;
 
-
   const FT squared_radius = BGT().compute_squared_radius_3_object()(
       r_domain_.bounding_sphere(r_domain_.bbox_));
 

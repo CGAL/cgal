@@ -27,7 +27,6 @@
 
 #include <CGAL/license/Mesh_3.h>
 
-
 #include <CGAL/Mesh_3/config.h>
 
 #include <CGAL/Mesh_3/Uniform_sizing_field.h>
@@ -36,32 +35,29 @@
 
 namespace CGAL {
 
-
 namespace Mesh_3 {
-  
 
 template <typename C3T3,
   typename SizingField = Uniform_sizing_field<typename C3T3::Triangulation> >
 class Odt_move
 {
-  typedef typename C3T3::Triangulation Tr;
-  typedef typename Tr::Geom_traits Gt;
-  
-  typedef typename Tr::Cell_handle Cell_handle;
-  typedef typename Tr::Vertex_handle Vertex_handle;
-  typedef typename Tr::Facet Facet;
-  typedef typename Tr::Weighted_point Weighted_point;
-  typedef typename Tr::Bare_point Bare_point;
-  
-  typedef typename std::vector<Cell_handle>   Cell_vector;
-  typedef typename std::vector<Vertex_handle> Vertex_vector;
-  typedef typename std::vector<Facet>         Facet_vector;
-  
-  typedef typename Gt::FT FT;
-  typedef typename Gt::Vector_3 Vector_3;
+  typedef typename C3T3::Triangulation                        Tr;
+  typedef typename Tr::Geom_traits                            Gt;
+
+  typedef typename Tr::Vertex_handle                          Vertex_handle;
+  typedef typename Tr::Facet                                  Facet;
+  typedef typename Tr::Cell_handle                            Cell_handle;
+
+  typedef typename Tr::Bare_point                             Bare_point;
+
+  typedef typename std::vector<Facet>                         Facet_vector;
+  typedef typename std::vector<Cell_handle>                   Cell_vector;
+
+  typedef typename Gt::FT                                     FT;
+  typedef typename Gt::Vector_3                               Vector_3;
 
 public:
-  typedef SizingField Sizing_field;
+  typedef SizingField                                         Sizing_field;
   
   Vector_3 operator()(const Vertex_handle& v,
                       const Cell_vector& incident_cells,

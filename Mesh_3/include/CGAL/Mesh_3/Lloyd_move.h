@@ -27,7 +27,6 @@
 
 #include <CGAL/license/Mesh_3.h>
 
-
 #include <CGAL/Mesh_3/config.h>
 
 #include <CGAL/convex_hull_2.h>
@@ -45,34 +44,32 @@ template <typename C3T3,
   typename SizingField = Uniform_sizing_field<typename C3T3::Triangulation> >
 class Lloyd_move
 {
-  typedef typename C3T3::Triangulation  Tr;
-  typedef typename Tr::Geom_traits      Gt;
-  
-  typedef typename Tr::Cell_handle    Cell_handle;
-  typedef typename Tr::Vertex_handle  Vertex_handle;
-  typedef typename Tr::Edge           Edge;
-  typedef typename Tr::Facet          Facet;
-  typedef typename Tr::Weighted_point Weighted_point;
-  typedef typename Tr::Bare_point     Bare_point;
-  
-  typedef typename std::vector<Cell_handle>   Cell_vector;
-  typedef typename std::vector<Vertex_handle> Vertex_vector;
-  typedef typename std::vector<Facet>         Facet_vector;
-  
-  typedef typename Gt::FT             FT;
-  typedef typename Gt::Vector_3       Vector_3;
-  typedef typename Gt::Tetrahedron_3  Tetrahedron_3;
-  typedef typename Gt::Plane_3        Plane_3;
-  typedef typename Gt::Point_2        Point_2;
-  
-  typedef typename Gt::Aff_transformation_3   Aff_transformation_3;
-  
+  typedef typename C3T3::Triangulation                        Tr;
+  typedef typename Tr::Geom_traits                            Gt;
+
+  typedef typename Tr::Vertex_handle                          Vertex_handle;
+  typedef typename Tr::Edge                                   Edge;
+  typedef typename Tr::Facet                                  Facet;
+  typedef typename Tr::Cell_handle                            Cell_handle;
+
+  typedef typename Tr::Bare_point                             Bare_point;
+
+  typedef typename std::vector<Facet>                         Facet_vector;
+  typedef typename std::vector<Cell_handle>                   Cell_vector;
+
+  typedef typename Gt::FT                                     FT;
+  typedef typename Gt::Point_2                                Point_2;
+  typedef typename Gt::Vector_3                               Vector_3;
+  typedef typename Gt::Tetrahedron_3                          Tetrahedron_3;
+  typedef typename Gt::Plane_3                                Plane_3;
+  typedef typename Gt::Aff_transformation_3                   Aff_transformation_3;
+
 public:
-  typedef SizingField Sizing_field;
+  typedef SizingField                                         Sizing_field;
   
   /**
-   * @brief Return move to apply on \c v according to Lloyd optimization 
-   * function
+   * @brief Return the move to apply on \c v according to Lloyd optimization
+   * function.
    */
   Vector_3 operator()(const Vertex_handle& v,
                       const Cell_vector& incident_cells,
@@ -112,7 +109,7 @@ public:
   
 private:
   /**
-   * Project_on_plane defines operator() to project point object on plane.
+   * Project_on_plane defines `operator()` to project a point object on the plane `plane`.
    */
   struct Project_on_plane
   {
@@ -130,7 +127,7 @@ private:
   };
   
   /**
-   * To_2d defines operator() to transform Bare_point into Point_2
+   * `To_2d` defines `operator()` to transform from `Bare_point` to `Point_2`.
    */
   struct To_2d
   {
@@ -142,24 +139,24 @@ private:
   private:
     const Aff_transformation_3& to_2d_;
   };
-  
+
   /**
-   * To_3d defines operator() to transform Point_2 into Bare_point
+   * `To_3d` defines `operator()` to transform from `Point_2` to `Bare_point`.
    */
   struct To_3d
   {
     To_3d(const Aff_transformation_3& to_3d) : to_3d_(to_3d) {}
-    
+
     Bare_point operator()(const Point_2& p) const
     { return to_3d_.transform((Bare_point(p.x(),p.y(),0))); }
-    
+
   private:
     const Aff_transformation_3& to_3d_;
   };
-  
- 
+
+
   /**
-   * Return move for inside vertex \c v
+   * Return the move for the inside vertex \c v.
    */
   Vector_3 lloyd_move_inside_domain(const Vertex_handle& v,
                                     const Cell_vector& incident_cells,
@@ -202,7 +199,7 @@ private:
   }
   
   /**
-   * Return move for on boundary vertex \c v
+   * Return the move for the on-boundary vertex \c v.
    */
   Vector_3 lloyd_move_on_boundary(const Vertex_handle& v,
                                   const C3T3& c3t3,
@@ -221,7 +218,7 @@ private:
         return CGAL::NULL_VECTOR;
         break;
       }
-      case 2: // centroid 
+      case 2: // segment centroid
       {
         const Bare_point& a = points.front();
         const Bare_point& b = points.back();
@@ -245,8 +242,8 @@ private:
   }
   
   /**
-   * Returns a vector containing surface delaunay ball center of surface
-   * facets incident to vertex \c v
+   * Returns a vector containing the surface delaunay ball centers of the surface
+   * facets that are incident to vertex \c v.
    */
   std::vector<Bare_point> extract_lloyd_boundary_points(const Vertex_handle& v,
                                                         const C3T3& c3t3) const
@@ -254,10 +251,10 @@ private:
     Facet_vector incident_facets;
     incident_facets.reserve(64);
     c3t3.triangulation().finite_incident_facets(v,std::back_inserter(incident_facets));
-    
+
     std::vector<Bare_point> points;
     points.reserve(64);
-    
+
     // Get c3t3's facets incident to v, and add their surface delaunay ball
     // center to output
     for ( typename Facet_vector::iterator fit = incident_facets.begin() ;
@@ -269,12 +266,12 @@ private:
       
       points.push_back(fit->first->get_facet_surface_center(fit->second));
     }
-    
+
     return points;
   }
   
   /**
-   * Return move from \c v to centroid of segment [a,b]
+   * Return the move from \c v to the centroid of the segment [a,b].
    */
   Vector_3 centroid_segment_move(const Vertex_handle& v,
                                  const Bare_point& a,
@@ -282,22 +279,22 @@ private:
                                  const C3T3& c3t3,
                                  const Sizing_field& sizing_field) const
   {
+    typename Gt::Construct_point_3 cp =
+      c3t3.triangulation().geom_traits().construct_point_3_object();
     typename Gt::Construct_vector_3 vector =
       c3t3.triangulation().geom_traits().construct_vector_3_object();
-    typename Gt::Construct_point_3 wp2p =
-      c3t3.triangulation().geom_traits().construct_point_3_object();
 
-    const Bare_point& p = wp2p(v->point());
+    const Bare_point& p = cp(v->point());
 
     FT da = density_1d(a,v,sizing_field);
     FT db = density_1d(b,v,sizing_field);
 
-    CGAL_assertion( !is_zero(da+db) ); 
+    CGAL_assertion( !is_zero(da+db) );
     return ( (vector(p,a)*da + vector(p,b)*db) / (da+db) );
   }
   
   /**
-   * Return move from \c v to centroid of triangle [a,b,c]
+   * Return the move from \c v to the centroid of triangle [a,b,c].
    */
   Vector_3 centroid_triangle_move(const Vertex_handle& v,
                                   const Bare_point& a,
@@ -308,11 +305,11 @@ private:
   {
     typename Gt::Construct_vector_3 vector =
       c3t3.triangulation().geom_traits().construct_vector_3_object();
-    typename Gt::Construct_point_3 wp2p =
+    typename Gt::Construct_point_3 cp =
       c3t3.triangulation().geom_traits().construct_point_3_object();
 
-    const Bare_point& p = wp2p(v->point());
-    
+    const Bare_point& p = cp(v->point());
+
     FT da = density_2d<true>(a,v,sizing_field);
     FT db = density_2d<false>(b,v,sizing_field);
     FT dc = density_2d<false>(c,v,sizing_field);
@@ -322,9 +319,9 @@ private:
   }
   
   /**
-   * compute approximate centroid of intersection between 3D voronoi cell and
-   * boundary. The input is the set of intersection points between Voronoi 
-   * edges and the boundary.
+   * Compute the approximate centroid of the intersection between the 3D voronoi
+   * cell and the boundary. The input is the set of intersection points between
+   * Voronoi edges and the boundary.
    */
   template <typename ForwardIterator>
   Vector_3 centroid_general_move(const Vertex_handle& v,
@@ -334,7 +331,7 @@ private:
                                  const Sizing_field& sizing_field) const
   {
     CGAL_assertion(std::distance(first,last) > 3);
-    
+
     // Fit plane using point-based PCA: compute least square fitting plane
     Plane_3 plane;
     Bare_point point;
@@ -345,16 +342,16 @@ private:
     // Project all points to the plane
     std::transform(first, last, first, Project_on_plane(plane, c3t3));
     CGAL_assertion(std::distance(first,last) > 3);
-    
+
     // Get 2D-3D transformations
     Aff_transformation_3 to_3d = compute_to_3d_transform(plane, *first, c3t3);
     Aff_transformation_3 to_2d = to_3d.inverse();
-    
+
     // Transform to 2D
     std::vector<Point_2> points_2d;
     points_2d.reserve(std::distance(first,last));
     std::transform(first, last, std::back_inserter(points_2d), To_2d(to_2d));
-    
+
     // Compute 2D convex hull
     CGAL_assertion(points_2d.size() > 3);
     std::vector<Point_2> ch_2d;
@@ -362,21 +359,21 @@ private:
     //     as it triggers filter failures unnecessarily
     CGAL::ch_graham_andrew(points_2d.begin(),points_2d.end(),
                            std::back_inserter(ch_2d));
-    
-    // Lift back convex hull to 3D 
+
+    // Lift back convex hull to 3D
     std::vector<Bare_point> polygon_3d;
     polygon_3d.reserve(ch_2d.size());
     std::transform(ch_2d.begin(), ch_2d.end(),
                    std::back_inserter(polygon_3d), To_3d(to_3d));
-    
+
     // Compute centroid using quadrature sizing
     return centroid_3d_polygon_move(v, polygon_3d.begin(), polygon_3d.end(),
                                     c3t3, sizing_field);
   }
-  
+
   /**
-   * Return move from \c v to centroid of polygon[first,last]
-   * Polygon has to be convex
+   * Return the move from \c v to the centroid of polygon[first,last].
+   * The polygon has to be convex.
    */
   template <typename ForwardIterator>
   Vector_3 centroid_3d_polygon_move(const Vertex_handle& v,
@@ -386,7 +383,7 @@ private:
                                     const Sizing_field& sizing_field) const
   {
     CGAL_precondition(std::distance(first,last) >= 3);
-    
+
     typename Gt::Construct_vector_3 vector =
       c3t3.triangulation().geom_traits().construct_vector_3_object();
     typename Gt::Construct_centroid_3 centroid =
@@ -398,7 +395,7 @@ private:
 
     // Vertex current position
     const Bare_point& vertex_position = cp(v->point());
-    
+
     // Use as reference point to triangulate
     const Bare_point& a = *first++;
     const Bare_point* b = &(*first++);
@@ -435,7 +432,7 @@ private:
   }
   
   /**
-   * Returns the transformation from reference_point to plane
+   * Return the transformation from `reference_point` to `plane`.
    */
   Aff_transformation_3 compute_to_3d_transform(const Plane_3& plane,
                                                const Bare_point& reference_point,
@@ -461,7 +458,7 @@ private:
   }
   
   /**
-   * returns density_1d
+   * Return density_1d
    */
   template <typename Sizing_field>
   FT density_1d(const Bare_point& p,
@@ -476,7 +473,7 @@ private:
   }
   
   /**
-   * returns density_2d
+   * Return density_2d
    */
   template <bool use_v, typename Sizing_field>
   FT density_2d(const Bare_point& p,
@@ -491,7 +488,7 @@ private:
   }
   
   /**
-   * returns density_3d
+   * Return density_3d
    */
   template <typename Sizing_field>
   FT density_3d(const Bare_point& p,
@@ -506,8 +503,8 @@ private:
   }
 
   /**
-   * Turns around edge \c edge and add values computed from tets made by
-   * v->point() and circumcenters of the cells incident to \c edge
+   * Turn around the edge \c edge and add the values computed from tets made by
+   * v->point() and the circumcenters of cells incident to \c edge.
    *
    * Note that this function abundantly uses dual() calls and using a cell base
    * which stores the circumcenter thus improves its efficiency.
@@ -526,7 +523,7 @@ private:
     typename Gt::Compute_volume_3 volume = tr.geom_traits().compute_volume_3_object();
     typename Gt::Construct_centroid_3 centroid = tr.geom_traits().construct_centroid_3_object();
     typename Gt::Construct_vector_3 vector = tr.geom_traits().construct_vector_3_object();
-    typename Gt::Construct_point_3 wp2p = tr.geom_traits().construct_point_3_object();
+    typename Gt::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
 
 //    <PERIODIC>
     typename Gt::Construct_tetrahedron_3 tetrahedron =
@@ -540,22 +537,22 @@ private:
     Cell_circulator done = current_cell;
 
     // a & b are fixed points
-    const Bare_point& a = wp2p(v->point());
+    const Bare_point& a = cp(v->point());
 
 //    <PERIODIC>
     const Bare_point b = tr.dual(current_cell);
-    const Bare_point a_b = wp2p(tr.point(current_cell, current_cell->index(v)));
+    const Bare_point a_b = cp(tr.point(current_cell, current_cell->index(v)));
     Vector_3 ba = Vector_3(a_b, b);
-    current_cell++;
+    ++current_cell;
 //    </PERIODIC>
     CGAL_assertion(current_cell != done);
 
     // c & d are moving points
 //    <PERIODIC>
     Bare_point c = tr.dual(current_cell);
-    Bare_point a_c = wp2p(tr.point(current_cell, current_cell->index(v)));
+    Bare_point a_c = cp(tr.point(current_cell, current_cell->index(v)));
     Vector_3 ca = Vector_3(a_c, c);
-    current_cell++;
+    ++current_cell;
 //    </PERIODIC>
 
     CGAL_assertion(current_cell != done);
@@ -564,9 +561,9 @@ private:
     {
 //    <PERIODIC>
       const Bare_point d = tr.dual(current_cell);
-      const Bare_point a_d = wp2p(tr.point(current_cell, current_cell->index(v)));
+      const Bare_point a_d = cp(tr.point(current_cell, current_cell->index(v)));
       Vector_3 da = Vector_3(a_d, d);
-      current_cell++;
+      ++current_cell;
 
       Tetrahedron_3 tet = tetrahedron(a, translate(a, ba), translate(a, ca), translate(a, da));
 
@@ -575,10 +572,10 @@ private:
 
       // Compute mass
       FT density = density_3d(tet_centroid, current_cell, sizing_field);
-      FT abs_volume = CGAL::abs(volume(a,b,c,d));
+      FT abs_volume = CGAL::abs(volume(tet));
       FT mass = abs_volume * density;
 
-      move = move + mass * vector(a,tet_centroid);
+      move = move + mass * vector(a, tet_centroid);
       sum_masses += mass;
 
       c = d;

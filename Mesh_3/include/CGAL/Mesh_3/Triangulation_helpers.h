@@ -182,7 +182,7 @@ no_topological_change(const Tr& tr,
       if(c->is_facet_visited(j))
         continue;
 
-      // Set facet and it's mirror's one visited
+      // Set facet and its mirrored version as visited
       Cell_handle cj = c->neighbor(j);
       int mj = tr.mirror_index(c, j);
       c->set_facet_visited(j);
@@ -349,8 +349,8 @@ inside_protecting_balls(const Tr& tr,
 }
 
   
-/// This function well_oriented is called by no_topological_change after a
-/// v->set_point(p)
+/// This function well_oriented is called by no_topological_change after the
+/// position of the vertex has been (tentatively) modified.
 template<typename Tr>
 bool
 Triangulation_helpers<Tr>::

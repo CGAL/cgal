@@ -27,7 +27,6 @@
 
 #include <CGAL/license/Convex_hull_2.h>
 
-
 #include <CGAL/Point_2.h>
 #include <CGAL/predicates_on_points_2.h>
 #include <CGAL/distance_predicates_2.h>

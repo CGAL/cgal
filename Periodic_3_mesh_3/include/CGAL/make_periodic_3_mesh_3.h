@@ -229,7 +229,7 @@ void init_domain(C3T3& c3t3, MD& oracle)
   typename Tr::Geom_traits::Construct_point_3 wp2p =
     tr.geom_traits().construct_point_3_object();
 
-  // At this point, the triangulation contains the dummy point.
+  // At this point, the triangulation contains the dummy points.
   // Mark them all as corners so they are kept throughout the refinement.
   // [ Does that really matter ? @fixme ]
 

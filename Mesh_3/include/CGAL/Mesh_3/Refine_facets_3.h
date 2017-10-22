@@ -1606,8 +1606,8 @@ compute_facet_properties(const Facet& facet,
     // Trick to have canonical vector : thus, we compute always the same
     // intersection
     Segment_3 segment = ( compare_xyz(p1, p2)== CGAL::SMALLER )
-      ? construct_segment(p1, p2)
-      : construct_segment(p2, p1);
+                          ? construct_segment(p1, p2)
+                          : construct_segment(p2, p1);
 
     // If facet is on surface, compute intersection point and return true
 #ifndef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3

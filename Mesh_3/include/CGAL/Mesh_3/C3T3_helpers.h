@@ -960,7 +960,7 @@ public:
 
 private:
   // -----------------------------------
-  // Usefull Functors
+  // Useful Functors
   // -----------------------------------
   /**
    * @class Get_all_facets
@@ -1089,7 +1089,7 @@ private:
   /**
    * @class Update_c3t3
    *
-   * A functor which updates c3t3 w.r.t the domain.
+   * A functor which updates c3t3 w.r.t. the domain.
    */
   class Update_c3t3
   {

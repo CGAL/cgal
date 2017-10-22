@@ -415,9 +415,9 @@ public:
   // Offset converters
   int off_to_int(const Offset& off) const
   {
-    CGAL_triangulation_assertion( off.x()==0 || off.x() ==1 );
-    CGAL_triangulation_assertion( off.y()==0 || off.y() ==1 );
-    CGAL_triangulation_assertion( off.z()==0 || off.z() ==1 );
+    CGAL_triangulation_assertion( off.x() == 0 || off.x() == 1 );
+    CGAL_triangulation_assertion( off.y() == 0 || off.y() == 1 );
+    CGAL_triangulation_assertion( off.z() == 0 || off.z() == 1 );
     int i = ((off.x()&1)<<2) + ((off.y()&1)<<1) + ((off.z()&1));
     return i;
   }
@@ -754,10 +754,9 @@ public:
     return cp(pp.first, pp.second);
   }
 
-  // The following functions return the "real" position in space (unrestrained
+  // The following functions return the "real" position in space (unconstrained
   // to the original periodic domain) of the vertices v and c->vertex(idx),
   // respectively
-
   template <class ConstructPoint>
   Point point(Vertex_handle v, ConstructPoint cp) const {
     return point(periodic_point(v), cp);
@@ -2165,6 +2164,13 @@ exact_periodic_locate
 (const Point& p, const Offset& o_p, Offset& lo,
  Locate_type& lt, int& li, int& lj, Cell_handle start) const
 {
+  CGAL_triangulation_precondition(p.x() < domain().xmax());
+  CGAL_triangulation_precondition(p.y() < domain().ymax());
+  CGAL_triangulation_precondition(p.z() < domain().zmax());
+  CGAL_triangulation_precondition(p.x() >= domain().xmin());
+  CGAL_triangulation_precondition(p.y() >= domain().ymin());
+  CGAL_triangulation_precondition(p.z() >= domain().zmin());
+
   int cumm_off = 0;
   Offset off_query = o_p;
   if(number_of_vertices() == 0) {
@@ -2342,6 +2348,13 @@ inexact_periodic_locate(const Point& p, const Offset& o_p,
                         Cell_handle start,
                         int n_of_turns) const
 {
+  CGAL_triangulation_precondition(p.x() < domain().xmax());
+  CGAL_triangulation_precondition(p.y() < domain().ymax());
+  CGAL_triangulation_precondition(p.z() < domain().zmax());
+  CGAL_triangulation_precondition(p.x() >= domain().xmin());
+  CGAL_triangulation_precondition(p.y() >= domain().ymin());
+  CGAL_triangulation_precondition(p.z() >= domain().zmin());
+
   int cumm_off = 0;
   Offset off_query = o_p;
   if(number_of_vertices() == 0) {
@@ -4036,7 +4049,9 @@ inline void Periodic_3_triangulation_3<GT, TDS>::get_vertex(
   off = combine_offsets(Offset(),int_to_off(ch->offset(i)));
   vh = ch->vertex(i);
 
-  if(is_1_cover()) return;
+  if(is_1_cover())
+    return;
+
   Vertex_handle vh_i = vh;
   get_vertex(vh_i, vh, off);
   return;
