@@ -188,10 +188,9 @@ no_topological_change(const Tr& tr,
       c->set_facet_visited(j);
       cj->set_facet_visited(mj);
 
-      Vertex_handle v1 = c->vertex(j);
-      if(tr.is_infinite(v1))
+      if(tr.is_infinite(c->vertex(j)))
       {
-        if(tr.side_of_power_sphere(c, cj->vertex(mj)->point(), false)
+        if(tr.side_of_power_sphere(c, tr.point(cj, mj), false)
            != CGAL::ON_UNBOUNDED_SIDE)
         {
           np = false;
@@ -200,7 +199,7 @@ no_topological_change(const Tr& tr,
       }
       else
       {
-        if(tr.side_of_power_sphere(cj, v1->point(), false)
+        if(tr.side_of_power_sphere(cj, tr.point(c, j), false)
            != CGAL::ON_UNBOUNDED_SIDE)
         {
           np = false;
@@ -370,16 +369,16 @@ well_oriented(const Tr& tr,
       int iv = c->index(tr.infinite_vertex());
       Cell_handle cj = c->neighbor(iv);
       int mj = tr.mirror_index(c, iv);
-      if(orientation(wp2p(cj->vertex(mj)->point()),
-                     wp2p(c->vertex((iv+1)&3)->point()),
-                     wp2p(c->vertex((iv+2)&3)->point()),
-                     wp2p(c->vertex((iv+3)&3)->point())) != CGAL::NEGATIVE)
+      if(orientation(wp2p(tr.point(cj, mj)),
+                     wp2p(tr.point(c, (iv+1)&3)),
+                     wp2p(tr.point(c, (iv+2)&3)),
+                     wp2p(tr.point(c, (iv+3)&3))) != CGAL::NEGATIVE)
         return false;
     }
-    else if(orientation(wp2p(c->vertex(0)->point()),
-                        wp2p(c->vertex(1)->point()),
-                        wp2p(c->vertex(2)->point()),
-                        wp2p(c->vertex(3)->point())) != CGAL::POSITIVE)
+    else if(orientation(wp2p(tr.point(c, 0)),
+                        wp2p(tr.point(c, 1)),
+                        wp2p(tr.point(c, 2)),
+                        wp2p(tr.point(c, 3))) != CGAL::POSITIVE)
       return false;
   }
   return true;

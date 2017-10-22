@@ -120,17 +120,19 @@ namespace Mesh_3 {
      */ 
     template <typename Tr>
     typename Tr::Geom_traits::FT
-    edge_sq_length(const typename Tr::Edge& e)
+    edge_sq_length(const typename Tr::Edge& e,
+                   const Tr& tr)
     {
       typedef typename Tr::Geom_traits    Gt;
       typedef typename Tr::Bare_point     Bare_point;
       
-      typename Gt::Compute_squared_distance_3 sq_distance 
-        = Gt().compute_squared_distance_3_object();
-      typename Gt::Construct_point_3 wp2p = Gt().construct_point_3_object();
+      typename Gt::Compute_squared_distance_3 sq_distance =
+        tr.geom_traits().compute_squared_distance_3_object();
+      typename Gt::Construct_point_3 cp =
+        tr.geom_traits().construct_point_3_object();
 
-      const Bare_point& p = wp2p(e.first->vertex(e.second)->point());
-      const Bare_point& q = wp2p(e.first->vertex(e.third)->point());
+      const Bare_point& p = cp(tr.point(e.first, e.second));
+      const Bare_point& q = cp(tr.point(e.first, e.third));
       
       return sq_distance(p,q);
     }
@@ -641,19 +643,22 @@ private:
                                    const Cell_handle& cell,
                                    const Vertex_handle& v) const
   {
-    typedef typename C3T3::Triangulation::Geom_traits Gt;
+    typedef typename C3T3::Triangulation          Triangulation;
+    typedef typename Triangulation::Geom_traits   Gt;
+
+    const Triangulation& tr = c3t3.triangulation();
 
     typename Gt::Construct_translated_point_3 translate =
       c3t3.triangulation().geom_traits().construct_translated_point_3_object();
     typename Gt::Construct_point_3 wp2p =
       c3t3.triangulation().geom_traits().construct_point_3_object();
-    
+
     // translate the tet so that cell->vertex((i+3)&3) is 0_{R^3}
     unsigned int index = cell->index(v);
-    Vector_3 translate_to_origin(CGAL::ORIGIN, wp2p(cell->vertex((index+3)&3)->point())); //p4
-    const Bare_point& p1 = translate(wp2p(v->point()), - translate_to_origin);
-    const Bare_point& p2 = translate(wp2p(cell->vertex((index+1)&3)->point()), - translate_to_origin);
-    const Bare_point& p3 = translate(wp2p(cell->vertex((index+2)&3)->point()), - translate_to_origin);
+    Vector_3 translate_to_origin(CGAL::ORIGIN, wp2p(tr.point(cell, (index+3)&3))); //p4
+    const Bare_point& p1 = translate(wp2p(tr.point(cell, index)), - translate_to_origin);
+    const Bare_point& p2 = translate(wp2p(tr.point(cell, (index+1)&3)), - translate_to_origin);
+    const Bare_point& p3 = translate(wp2p(tr.point(cell, (index+2)&3)), - translate_to_origin);
 
     // pre-compute everything
     FT sq_p1 = p1.x()*p1.x() + p1.y()*p1.y() + p1.z()*p1.z();
@@ -810,6 +815,8 @@ private:
                                    const Vertex_handle& v) const
   {
     CGAL_assertion(cell->has_vertex(v));
+    const typename C3T3::Triangulation& tr = c3t3.triangulation();
+
     typename Gt::Construct_point_3 wp2p =
         c3t3.triangulation().geom_traits().construct_point_3_object();
     const int i = cell->index(v);
@@ -822,9 +829,9 @@ private:
     if ( (i&1) == 0 )
       std::swap(k1,k3);
     
-    const Bare_point& p1 = wp2p(cell->vertex(k1)->point());
-    const Bare_point& p2 = wp2p(cell->vertex(k2)->point());
-    const Bare_point& p3 = wp2p(cell->vertex(k3)->point());
+    const Bare_point& p1 = wp2p(tr.point(cell, k1));
+    const Bare_point& p2 = wp2p(tr.point(cell, k2));
+    const Bare_point& p3 = wp2p(tr.point(cell, k3));
     
     FT gx =  p2.y()*p3.z() + p1.y()*(p2.z()-p3.z())
             - p3.y()*p2.z() - p1.z()*(p2.y()-p3.y());
@@ -955,14 +962,15 @@ private:
                           const Vertex_handle& v) const
   {
     CGAL_assertion(cell->has_vertex(v));
-    
+    const typename C3T3::Triangulation& tr = c3t3.triangulation();
+
     typename Gt::Construct_point_3 wp2p =
-        c3t3.triangulation().geom_traits().construct_point_3_object();
+      tr.geom_traits().construct_point_3_object();
     typename Gt::Compute_squared_distance_3 sq_distance =
-        c3t3.triangulation().geom_traits().compute_squared_distance_3_object();
+      tr.geom_traits().compute_squared_distance_3_object();
 
     const int i = cell->index(v);
-    const Bare_point& p0 = wp2p(v->point());
+    const Bare_point& p0 = wp2p(tr.point(cell, i));
     
     // Other indices
     int k1 = (i+1)&3;
@@ -981,9 +989,9 @@ private:
       std::swap(k2,k3);
 
     // Here edge k1k2 minimizes dihedral angle
-    const Bare_point& p1 = wp2p(cell->vertex(k1)->point());
-    const Bare_point& p2 = wp2p(cell->vertex(k2)->point());
-    const Bare_point& p3 = wp2p(cell->vertex(k3)->point());
+    const Bare_point& p1 = wp2p(tr.point(cell, k1));
+    const Bare_point& p2 = wp2p(tr.point(cell, k2));
+    const Bare_point& p3 = wp2p(tr.point(cell, k3));
 
     // grad of min dihedral angle (in cell) wrt p0
     const Vector_3 p1p0 (p1,p0);
@@ -1011,16 +1019,18 @@ private:
                         const int k2,
                         const int k3,
                         const Cell_handle& cell) const
-  { 
+  {
+    const typename C3T3::Triangulation& tr = c3t3.triangulation();
+
     typename Gt::Compute_approximate_dihedral_angle_3 approx_dihedral_angle =
-        c3t3.triangulation().geom_traits().compute_approximate_dihedral_angle_3_object();
+        tr.geom_traits().compute_approximate_dihedral_angle_3_object();
     typename Gt::Construct_point_3 wp2p =
-        c3t3.triangulation().geom_traits().construct_point_3_object();
+        tr.geom_traits().construct_point_3_object();
 
     return CGAL::abs(approx_dihedral_angle(wp2p(p),
-                                           wp2p(cell->vertex(k1)->point()),
-                                           wp2p(cell->vertex(k2)->point()),
-                                           wp2p(cell->vertex(k3)->point())));
+                                           wp2p(tr.point(cell, k1)),
+                                           wp2p(tr.point(cell, k2)),
+                                           wp2p(tr.point(cell, k3))));
   }
     
   /**
@@ -1037,8 +1047,9 @@ private:
    */
   Vector_3 normal_estimate(const C3T3& c3t3, const Cell_handle& ch, const int i) const
   {
-    typename Gt::Construct_point_3 wp2p =
-        c3t3.triangulation().geom_traits().construct_point_3_object();
+    const typename C3T3::Triangulation& tr = c3t3.triangulation();
+
+    typename Gt::Construct_point_3 wp2p = tr.geom_traits().construct_point_3_object();
 
     int k1 = (i+1)&3;
     int k2 = (i+2)&3;
@@ -1047,11 +1058,11 @@ private:
     // Orient normals to the outside of cell
     if ( (i&1) == 1 )
       std::swap(k1,k2);
-    
-    const Bare_point& p1 = wp2p(ch->vertex(k1)->point());
-    const Bare_point& p2 = wp2p(ch->vertex(k2)->point());
-    const Bare_point& p3 = wp2p(ch->vertex(k3)->point());
-    
+
+    const Bare_point& p1 = wp2p(tr.point(ch, k1));
+    const Bare_point& p2 = wp2p(tr.point(ch, k2));
+    const Bare_point& p3 = wp2p(tr.point(ch, k3));
+
     // compute normal and return it
     return normal(p1, p2, p3);
   }

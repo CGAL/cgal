@@ -630,10 +630,10 @@ private:
     Critical_radius critical_radius =
       tr_.geom_traits().compute_power_distance_to_power_sphere_3_object();
 
-    return CGAL::to_double(critical_radius(c->vertex(0)->point(),
-                                           c->vertex(1)->point(),
-                                           c->vertex(2)->point(),
-                                           c->vertex(3)->point(),
+    return CGAL::to_double(critical_radius(tr_.point(c, 0),
+                                           tr_.point(c, 1),
+                                           tr_.point(c, 2),
+                                           tr_.point(c, 3),
                                            v->point()));
   }
 
