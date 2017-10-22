@@ -586,7 +586,6 @@ private:
 
       c = d;
 //    <PERIODIC>
-      a_c = a_d;
       ca = da;
 //    </PERIODIC>
     }
