@@ -34,6 +34,8 @@
 
 #include <CGAL/Mesh_3/Uniform_sizing_field.h>
 
+#include <boost/unordered_set.hpp>
+
 #include <string>
 
 namespace CGAL {
@@ -172,7 +174,10 @@ private:
     // -----------------------------------
 
     // Stores vertex that have already been used
-    std::set<Vertex_handle> treated_vertex;
+    typedef boost::unordered_set<Vertex_handle>              Vertex_container;
+    typedef typename Vertex_container::iterator              VC_it;
+
+    boost::unordered_set<Vertex_handle> treated_vertices;
 
     for (typename Cell_vector::const_iterator cit = incident_cells.begin();
          cit != incident_cells.end();
@@ -184,11 +189,12 @@ private:
       for ( int i=1 ; i<4 ; ++i )
       {
         const Vertex_handle& v1 = (*cit)->vertex((k+i)&3);
-        if ( treated_vertex.find(v1) != treated_vertex.end() )
+
+        std::pair<VC_it, bool> is_insert_succesful = treated_vertices.insert(v1);
+        if ( ! is_insert_succesful.second ) // vertex has already been treated
           continue;
-        
+
         // Vertex has not been treated: turn around edge(v,v1)
-        treated_vertex.insert(v1);
         turn_around_edge(v, Edge(*cit,k,(k+i)&3), c3t3,
                          move, sum_masses, sizing_field);
       }
