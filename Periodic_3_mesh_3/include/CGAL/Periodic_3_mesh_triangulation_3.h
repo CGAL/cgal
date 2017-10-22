@@ -442,12 +442,17 @@ public:
   ///
   /// \sa `CGAL::Regular_triangulation_3::locate`
   /// @{
+  Vertex_handle nearest_power_vertex(const Bare_point& p, Cell_handle start) const
+  {
+    return Base::nearest_power_vertex(canonicalize_point(p), start);
+  }
+
   Cell_handle locate(const Weighted_point& p,
                      Cell_handle start = Cell_handle(),
                      bool* CGAL_assertion_code(could_lock_zone) = NULL) const
   {
     CGAL_assertion(could_lock_zone == NULL);
-    return Base::locate(p, start);
+    return Base::locate(canonicalize_point(p), start);
   }
 
   Cell_handle locate(const Weighted_point& p,
@@ -455,9 +460,10 @@ public:
                      bool* CGAL_assertion_code(could_lock_zone) = NULL) const
   {
     CGAL_assertion(could_lock_zone == NULL);
-    // compared to the non-periodic version in T3, the infinite cell cannot
-    // be used; `Cell_handle()` is used instead
-    return Base::locate(p, hint == Vertex_handle() ? Cell_handle() : hint->cell());
+    // Compared to the non-periodic version in T3, the infinite cell cannot
+    // be used as default hint, so `Cell_handle()` is used instead.
+    return Base::locate(canonicalize_point(p),
+                        hint == Vertex_handle() ? Cell_handle() : hint->cell());
   }
 
   Cell_handle locate(const Weighted_point& p,
@@ -466,7 +472,7 @@ public:
                      bool* CGAL_assertion_code(could_lock_zone) = NULL) const
   {
     CGAL_assertion(could_lock_zone == NULL);
-    return Base::locate(p, l, i, j, start);
+    return Base::locate(canonicalize_point(p), l, i, j, start);
   }
 
   Cell_handle locate(const Weighted_point& p,
@@ -475,7 +481,7 @@ public:
                      bool* CGAL_assertion_code(could_lock_zone) = NULL) const
   {
     CGAL_assertion(could_lock_zone == NULL);
-    return Base::locate(p, l, i, j,
+    return Base::locate(canonicalize_point(p), l, i, j,
                         hint == Vertex_handle() ? Cell_handle() : hint->cell());
   }
   /// @}
