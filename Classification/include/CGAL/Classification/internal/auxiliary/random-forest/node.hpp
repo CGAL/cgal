@@ -158,8 +158,12 @@ public:
         node_dist.resize(params->n_classes, 0.0f);
         for (size_t i_sample = 0; i_sample < n_samples; ++i_sample) {
             int label = labels(sample_idxes[i_sample], 0);
-            node_dist[label] += 1.0f/n_samples;
+            node_dist[label] += 1.0f;
         }
+
+        for (std::size_t i = 0; i < node_dist.size(); ++ i)
+          node_dist[i] /= n_samples;
+
         bool do_split = // Only split if ...
             (n_samples >= params->min_samples_per_node) && // enough samples are available
             !pure(labels, sample_idxes) && // this node is not already pure
