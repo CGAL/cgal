@@ -28,11 +28,11 @@
 #include <CGAL/Polygon_mesh_processing/internal/Corefinement/intersection_impl.h>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/utility/enable_if.hpp>
+#include <CGAL/Polygon_mesh_processing/bbox.h>
 
 
 namespace CGAL {
 namespace internal {
-//BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_faces_size_type, faces_size_type, false)
 
 template<class TM,
          class Kernel,
@@ -41,22 +41,6 @@ template<class TM,
          class VertexPointMap>
 struct Intersect_faces
 {
-  // wrapper to check whether anything is inserted to output iterator
-  struct Output_iterator_with_bool
-  {
-    Output_iterator_with_bool(OutputIterator* out, bool* intersected)
-      : m_iterator(out), m_intersected(intersected) { }
-
-    template<class T>
-    void operator()(const T& t) {
-      *m_intersected = true;
-      *(*m_iterator)++ = t;
-    }
-
-    OutputIterator* m_iterator;
-    bool* m_intersected;
-  };
-
 
   // typedefs
   typedef typename Kernel::Segment_3    Segment;
@@ -71,8 +55,6 @@ struct Intersect_faces
   const TM& m_tmesh2;
   const VertexPointMap m_vpmap2;
   mutable OutputIterator  m_iterator;
-  mutable bool            m_intersected;
-  mutable boost::function_output_iterator<Output_iterator_with_bool> m_iterator_wrapper;
 
   typename Kernel::Construct_triangle_3 triangle_functor;
   typename Kernel::Do_intersect_3       do_intersect_3_functor;
@@ -90,8 +72,6 @@ struct Intersect_faces
       m_tmesh2(mesh2),
       m_vpmap2(vpmap2),
       m_iterator(it),
-      m_intersected(false),
-      m_iterator_wrapper(Output_iterator_with_bool(&m_iterator, &m_intersected)),
       triangle_functor(kernel.construct_triangle_3_object()),
       do_intersect_3_functor(kernel.do_intersect_3_object())
   { }
@@ -111,7 +91,7 @@ struct Intersect_faces
                                     get(m_vpmap2, target(next(g,m_tmesh2),m_tmesh2)),
                                     get(m_vpmap2, target(next(next(g,m_tmesh2),m_tmesh2),m_tmesh2)));
     if(do_intersect_3_functor(t1, t2)){
-      *m_iterator_wrapper++ = std::make_pair(b->info(), c->info());
+      *m_iterator++ = std::make_pair(b->info(), c->info());
     }
   } // end operator ()
 }; // end struct Intersect_faces
@@ -124,21 +104,6 @@ template<class TM,
 struct Intersect_face_polyline
 {
   // wrapper to check whether anything is inserted to output iterator
-  struct Output_iterator_with_bool
-  {
-    Output_iterator_with_bool(OutputIterator* out, bool* intersected)
-      : m_iterator(out), m_intersected(intersected) { }
-
-    template<class T>
-    void operator()(const T& t) {
-      *m_intersected = true;
-      *(*m_iterator)++ = t;
-    }
-
-    OutputIterator* m_iterator;
-    bool* m_intersected;
-  };
-
 
   // typedefs
   typedef typename Kernel::Segment_3    Segment;
@@ -156,8 +121,6 @@ struct Intersect_face_polyline
   const VertexPointMap m_vpmap;
   const std::vector<Point>& polyline;
   mutable OutputIterator  m_iterator;
-  mutable bool            m_intersected;
-  mutable boost::function_output_iterator<Output_iterator_with_bool> m_iterator_wrapper;
 
   typename Kernel::Construct_segment_3  segment_functor;
   typename Kernel::Construct_triangle_3 triangle_functor;
@@ -178,8 +141,6 @@ struct Intersect_face_polyline
       m_vpmap(vpmap),
       polyline(polyline),
       m_iterator(it),
-      m_intersected(false),
-      m_iterator_wrapper(Output_iterator_with_bool(&m_iterator, &m_intersected)),
       segment_functor(kernel.construct_segment_3_object()),
       triangle_functor(kernel.construct_triangle_3_object()),
       do_intersect_3_functor(kernel.do_intersect_3_object())
@@ -197,7 +158,7 @@ struct Intersect_face_polyline
 
     Segment s = segment_functor(polyline[c->info()], polyline[c->info() + 1]);
     if(do_intersect_3_functor(t, s)){
-      *m_iterator_wrapper++ = std::make_pair(b->info(), c->info());
+      *m_iterator++ = std::make_pair(b->info(), c->info());
     }
   } // end operator ()
 }; // end struct Intersect_face_polyline
@@ -208,21 +169,6 @@ template<class Polyline,
          class OutputIterator>
 struct Intersect_polylines
 {
-  // wrapper to check whether anything is inserted to output iterator
-  struct Output_iterator_with_bool
-  {
-    Output_iterator_with_bool(OutputIterator* out, bool* intersected)
-      : m_iterator(out), m_intersected(intersected) { }
-
-    template<class T>
-    void operator()(const T& t) {
-      *m_intersected = true;
-      *(*m_iterator)++ = t;
-    }
-
-    OutputIterator* m_iterator;
-    bool* m_intersected;
-  };
 
 
   // typedefs
@@ -234,8 +180,6 @@ struct Intersect_polylines
   const std::vector<Point>& polyline1;
   const std::vector<Point>& polyline2;
   mutable OutputIterator  m_iterator;
-  mutable bool            m_intersected;
-  mutable boost::function_output_iterator<Output_iterator_with_bool> m_iterator_wrapper;
 
   typename Kernel::Construct_segment_3  segment_functor;
   typename Kernel::Do_intersect_3       do_intersect_3_functor;
@@ -251,8 +195,6 @@ struct Intersect_polylines
       polyline1(polyline1),
       polyline2(polyline2),
       m_iterator(it),
-      m_intersected(false),
-      m_iterator_wrapper(Output_iterator_with_bool(&m_iterator, &m_intersected)),
       segment_functor(kernel.construct_segment_3_object()),
       do_intersect_3_functor(kernel.do_intersect_3_object())
   { }
@@ -266,7 +208,7 @@ struct Intersect_polylines
     Segment s1 = segment_functor(polyline1[b->info()], polyline1[b->info() + 1]);
     Segment s2 = segment_functor(polyline2[c->info()], polyline2[c->info() + 1]);
     if(do_intersect_3_functor(s1, s2)){
-      *m_iterator_wrapper++ = std::make_pair(b->info(), c->info());
+      *m_iterator++ = std::make_pair(b->info(), c->info());
     }
   } // end operator ()
 }; // end struct Intersect_polylines
@@ -354,18 +296,12 @@ compute_face_face_intersection( const FaceRange& face_range1,
 
   BOOST_FOREACH(face_descriptor f, face_range1)
   {
-    boxes1.push_back(Box( get(vpmap1, target(halfedge(f,mesh1),mesh1)).bbox()
-                          + get(vpmap1, target(next(halfedge(f, mesh1), mesh1), mesh1)).bbox()
-                          + get(vpmap1, target(next(next(halfedge(f, mesh1), mesh1), mesh1), mesh1)).bbox(),
-                          f));
+    boxes1.push_back(Box(Polygon_mesh_processing::face_bbox(f, mesh1), f));
   }
 
   BOOST_FOREACH(face_descriptor f, face_range2)
   {
-    boxes2.push_back(Box( get(vpmap2, target(halfedge(f,mesh2),mesh2)).bbox()
-                          + get(vpmap2, target(next(halfedge(f, mesh2), mesh2), mesh2)).bbox()
-                          + get(vpmap2, target(next(next(halfedge(f, mesh2), mesh2), mesh2), mesh2)).bbox(),
-                          f));
+    boxes2.push_back(Box(Polygon_mesh_processing::face_bbox(f, mesh2), f));
   }
 
   // generate box pointers
@@ -476,10 +412,7 @@ compute_face_polyline_intersection( const FaceRange& face_range,
   BOOST_FOREACH(face_descriptor f, face_range)
   {
     faces.push_back(f);
-    boxes1.push_back(Box( get(vpmap, target(halfedge(f,mesh),mesh)).bbox()
-                          + get(vpmap, target(next(halfedge(f, mesh), mesh), mesh)).bbox()
-                          + get(vpmap, target(next(next(halfedge(f, mesh), mesh), mesh), mesh)).bbox(),
-                          faces.size()-1));
+    boxes1.push_back(Box(Polygon_mesh_processing::face_bbox(f, mesh), faces.size()-1));
   }
 
   for(std::size_t i =0; i< polyline.size()-1; ++i)
