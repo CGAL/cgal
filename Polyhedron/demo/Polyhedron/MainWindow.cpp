@@ -1044,9 +1044,9 @@ void MainWindow::open(QString filename)
   settings.setValue("OFF open directory",
                     fileinfo.absoluteDir().absolutePath());
   CGAL::Three::Scene_item* scene_item = loadItem(fileinfo, findLoader(load_pair.first));
-  if(scene_item != 0) {
-    this->addToRecentFiles(fileinfo.absoluteFilePath());
-  }
+  if(!scene_item)
+    return;
+  this->addToRecentFiles(fileinfo.absoluteFilePath());
 
   selectSceneItem(scene->addItem(scene_item));
 
