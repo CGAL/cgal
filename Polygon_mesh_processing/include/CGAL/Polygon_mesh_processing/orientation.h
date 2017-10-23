@@ -90,10 +90,6 @@ namespace internal{
     BOOST_FOREACH(halfedge_descriptor he, halfedges_around_target(v_max, pmesh))
     {
       CGAL_assertion(v_max == target(min_slope_he, pmesh));
-      if(v_max != target(he, pmesh))
-      {
-        std::cout<<"plouf";
-      }
       CGAL_assertion(v_max == target(he, pmesh));
 
       if(CGAL::SMALLER == compare_slope(get(vpmap, source(he, pmesh)),
@@ -357,16 +353,18 @@ void reverse_face_orientations(const FaceRange& face_range, PolygonMesh& pmesh)
 
 /**
 * \ingroup PMP_orientation_grp
-* makes the orientation of all the connected components of a `TriangleMesh` positive.
-* A closed polygon mesh is considered to have a positive orientation if the normal vectors
-* to all its faces point outside the domain bounded by the polygon mesh.
-* The normal vector to each face is chosen pointing on the side of the face
-* where its sequence of vertices is seen counterclockwise.
+* makes the orientation of all the connected components of a `TriangleMesh` consistent.
 *
 * @tparam TriangleMesh a model of `FaceListGraph` and `MutableFaceGraph` .
 * @tparam NamedParameters a sequence of \ref namedparameters
 *
 * @param tm a triangulated `TriangleMesh`
+* @param orient_outward indicates if the output mesh should be oriented positively (`true`) or negatively (`false`).
+* default value is true.
+* A closed polygon mesh is considered to have a positive orientation if the normal vectors
+* to all its faces point outside the domain bounded by the polygon mesh.
+* The normal vector to each face is chosen pointing on the side of the face
+* where its sequence of vertices is seen counterclockwise.
 * @param np optional sequence of \ref namedparameters among the ones listed below
 *
 * \cgalNamedParamsBegin
@@ -381,16 +379,16 @@ void reverse_face_orientations(const FaceRange& face_range, PolygonMesh& pmesh)
 * \cgalNamedParamsEnd
 */
 template<class TriangleMesh, class NamedParameters>
-void orient_connected_components(TriangleMesh& tm, const NamedParameters& np)
+void orient_connected_components(TriangleMesh& tm, bool orient_outward, const NamedParameters& np)
 {
   typedef boost::graph_traits<TriangleMesh> Graph_traits;
   typedef typename Graph_traits::vertex_descriptor vertex_descriptor;
   typedef typename Graph_traits::face_descriptor face_descriptor;
   typedef typename Graph_traits::halfedge_descriptor halfedge_descriptor;
   typedef typename GetVertexPointMap<TriangleMesh,
-                                     NamedParameters>::const_type Vpm;
+      NamedParameters>::const_type Vpm;
   typedef typename GetFaceIndexMap<TriangleMesh,
-                                   NamedParameters>::const_type Fid_map;
+      NamedParameters>::const_type Fid_map;
 
   if (!is_triangle_mesh(tm)) return ;
   if (!is_valid(tm)) return ;
@@ -404,11 +402,8 @@ void orient_connected_components(TriangleMesh& tm, const NamedParameters& np)
 
   // set the connected component id of each face
   std::size_t nb_cc = connected_components(tm,
-                                bind_property_maps(fid_map,make_property_map(face_cc)),
-                                parameters::face_index_map(fid_map));
-
-  if (nb_cc == 1)
-    return;
+                                           bind_property_maps(fid_map,make_property_map(face_cc)),
+                                           parameters::face_index_map(fid_map));
 
   // extract a vertex with max z coordinate for each connected component
   std::vector<vertex_descriptor> xtrm_vertices(nb_cc, Graph_traits::null_vertex());
@@ -420,7 +415,7 @@ void orient_connected_components(TriangleMesh& tm, const NamedParameters& np)
     face_descriptor test_face = face(halfedge(vd, tm), tm);
     if(test_face == Graph_traits::null_face())
       test_face = face(opposite(halfedge(vd, tm), tm), tm);
-      CGAL_assertion(test_face != Graph_traits::null_face());
+    CGAL_assertion(test_face != Graph_traits::null_face());
     std::size_t cc_id = face_cc[get(fid_map,test_face )];
     if (xtrm_vertices[cc_id]==Graph_traits::null_vertex())
       xtrm_vertices[cc_id]=vd;
@@ -437,18 +432,26 @@ void orient_connected_components(TriangleMesh& tm, const NamedParameters& np)
   //orient ccs outward
   for(std::size_t id=0; id<nb_cc; ++id)
   {
-    if(!internal::is_outward_oriented(xtrm_vertices[id], tm, np))
+    if((!internal::is_outward_oriented(xtrm_vertices[id], tm, np)
+        && orient_outward)
+       || (internal::is_outward_oriented(xtrm_vertices[id], tm, np)
+           && !orient_outward))
     {
-      reverse_face_orientations(ccs[id]
-            ,tm);
+      reverse_face_orientations(ccs[id], tm);
     }
   }
 }
 
 template<class TriangleMesh>
+void orient_connected_components(TriangleMesh& tm, bool orient_outward)
+{
+  orient_connected_components(tm, orient_outward, parameters::all_default());
+}
+
+template<class TriangleMesh>
 void orient_connected_components(TriangleMesh& tm)
 {
-  orient_connected_components(tm, parameters::all_default());
+  orient_connected_components(tm, true, parameters::all_default());
 }
 } // namespace Polygon_mesh_processing
 } // namespace CGAL

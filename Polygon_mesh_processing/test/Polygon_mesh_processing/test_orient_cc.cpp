@@ -11,7 +11,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Surface_mesh<Kernel::Point_3> SMesh;
 
 template<class TriangleMesh, class NamedParameters>
-bool test_orientation(TriangleMesh& tm, const NamedParameters& np)
+bool test_orientation(TriangleMesh& tm, bool is_positive, const NamedParameters& np)
 {
   typedef boost::graph_traits<TriangleMesh> Graph_traits;
   typedef typename Graph_traits::vertex_descriptor vertex_descriptor;
@@ -57,7 +57,10 @@ bool test_orientation(TriangleMesh& tm, const NamedParameters& np)
   //test ccs orientation
   for(std::size_t id=0; id<nb_cc; ++id)
   {
-    if(!PMP::internal::is_outward_oriented(xtrm_vertices[id], tm, np))
+    if((!PMP::internal::is_outward_oriented(xtrm_vertices[id], tm, np)
+         &&  is_positive)
+       || (PMP::internal::is_outward_oriented(xtrm_vertices[id], tm, np)
+           &&  !is_positive))
     {
       std::cerr<<" the orientation failed"<<std::endl;
       return false;
@@ -71,25 +74,36 @@ int main()
 
   std::ifstream input("data-coref/nested_cubes_invalid_volume.off");
   assert(input);
-  SMesh sm1, sm2;
+  SMesh sm1, sm2, sm3, sm4;
   input >> sm1;
   sm2 = sm1;
+  sm3 = sm1;
+  sm4 = sm1;
   PMP::orient_connected_components(sm1);
-  if(!test_orientation(sm1, PMP::parameters::all_default()))
+  if(!test_orientation(sm1, true, PMP::parameters::all_default()))
     return 1;
   typedef boost::property_map<SMesh, CGAL::vertex_point_t>::type Ppmap;
   typedef boost::property_map<SMesh, CGAL::face_index_t>::type Fidmap;
-  Ppmap vpmap = get(CGAL::vertex_point, sm2);
-  Fidmap fidmap = get(CGAL::face_index, sm2);
+  Ppmap vpmap2 = get(CGAL::vertex_point, sm2);
+  Fidmap fidmap2 = get(CGAL::face_index, sm2);
 
-  PMP::orient_connected_components(sm2, PMP::parameters::vertex_point_map(vpmap)
-                                   .face_index_map(fidmap));
-  if(!test_orientation(sm2, PMP::parameters::vertex_point_map(vpmap)
-                       .face_index_map(fidmap)))
+  PMP::orient_connected_components(sm2, true, PMP::parameters::vertex_point_map(vpmap2)
+                                   .face_index_map(fidmap2));
+  if(!test_orientation(sm2, true, PMP::parameters::vertex_point_map(vpmap2)
+                       .face_index_map(fidmap2)))
     return 1;
-  return 0;
 
+  PMP::orient_connected_components(sm3, false);
+  if(!test_orientation(sm3, false, PMP::parameters::all_default()))
+    return 1;
 
+  Ppmap vpmap4 = get(CGAL::vertex_point, sm4);
+  Fidmap fidmap4 = get(CGAL::face_index, sm4);
 
+  PMP::orient_connected_components(sm4, false, PMP::parameters::vertex_point_map(vpmap4)
+                                   .face_index_map(fidmap4));
+  if(!test_orientation(sm4, false, PMP::parameters::vertex_point_map(vpmap4)
+                       .face_index_map(fidmap4)))
+    return 1;
   return 0;
 }
