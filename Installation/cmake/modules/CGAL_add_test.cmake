@@ -59,8 +59,10 @@ function(expand_list_with_globbing list_name)
 endfunction()
 
 function(cgal_add_test exe_name)
-  add_test(NAME "compilation_of__${exe_name}"
-    COMMAND ${TIME_COMMAND} "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target "${exe_name}")
+  if(NOT TEST compilation_of__${exe_name})
+    add_test(NAME "compilation_of__${exe_name}"
+      COMMAND ${TIME_COMMAND} "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target "${exe_name}")
+  endif()
   set(cin_file "${CGAL_CURRENT_SOURCE_DIR}/${exe_name}.cin")
   if(EXISTS ${cin_file})
     add_test(NAME execution___of__${exe_name}
