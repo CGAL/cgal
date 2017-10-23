@@ -43,7 +43,7 @@ respectively.
 \tparam MeshDomain_3 is required to be a model of 
 the concept `MeshDomain_3`, or of the refined concept 
 `MeshDomainWithFeatures_3` 
-if the domain has corners and curve segments that need to be accurately represented in the mesh. 
+if the domain has corners and curves that need to be accurately represented in the mesh. 
 The argument `domain` 
 is the sole link through which the domain 
 to be discretized is known by the mesh generation algorithm. 

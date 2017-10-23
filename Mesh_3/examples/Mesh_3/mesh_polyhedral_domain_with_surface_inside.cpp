@@ -21,7 +21,7 @@ typedef CGAL::Polyhedral_mesh_domain_with_features_3<K> Mesh_domain;
 typedef CGAL::Mesh_triangulation_3<Mesh_domain,CGAL::Default,CGAL::Sequential_tag>::type Tr;
 
 typedef CGAL::Mesh_complex_3_in_triangulation_3<
-  Tr,Mesh_domain::Corner_index,Mesh_domain::Curve_segment_index> C3t3;
+  Tr,Mesh_domain::Corner_index,Mesh_domain::Curve_index> C3t3;
 
 // Criteria
 typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;

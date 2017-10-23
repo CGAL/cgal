@@ -222,9 +222,13 @@ public:
   // Index types
   typedef typename Base::Index                Index;
   typedef typename Base::Corner_index         Corner_index;
-  typedef typename Base::Curve_segment_index  Curve_segment_index;
+  typedef typename Base::Curve_index          Curve_index;
   typedef typename Base::Surface_patch_index  Surface_patch_index;
   typedef typename Base::Subdomain_index      Subdomain_index;
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+  typedef Curve_index Curve_segment_index; ///< Backward-compatibility
+#endif
 
   typedef typename boost::property_map<Polyhedron,
                                        face_patch_id_t<Patch_id>
@@ -244,7 +248,7 @@ public:
   typedef CGAL::Tag_true           Has_features;
 
   typedef std::vector<Point_3> Bare_polyline;
-  typedef Mesh_3::Polyline_with_context<Surface_patch_index, Curve_segment_index,
+  typedef Mesh_3::Polyline_with_context<Surface_patch_index, Curve_index,
                                         Bare_polyline > Polyline_with_context;
   /// Constructors
   Polyhedral_mesh_domain_with_features_3(const Polyhedron& p,

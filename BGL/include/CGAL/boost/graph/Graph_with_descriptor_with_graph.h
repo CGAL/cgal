@@ -26,6 +26,7 @@
 #include <CGAL/boost/graph/iterator.h>
 #include <boost/iterator/transform_iterator.hpp>
 
+#include <CGAL/boost/graph/Graph_with_descriptor_with_graph_fwd.h>
 
 namespace CGAL
 {

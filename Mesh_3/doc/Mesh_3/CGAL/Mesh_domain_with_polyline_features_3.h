@@ -35,9 +35,9 @@ public:
 typedef int Corner_index; 
 
 /*!
-`Curve_segment_index` type. 
+`Curve_index` type. 
 */ 
-typedef int Curve_segment_index; 
+typedef int Curve_index; 
 
 /// @} 
 
