@@ -766,7 +766,8 @@ public:
                   const Criteria& criteria,
                   const MeshDomain& oracle,
                   Previous_level_& previous,
-                  C3T3& c3t3);
+                  C3T3& c3t3,
+                  int mesh_topology);
   // For parallel
   Refine_facets_3(Tr& triangulation,
                   const Criteria& criteria,
@@ -885,8 +886,9 @@ Refine_facets_3(Tr& triangulation,
                 const Cr& criteria,
                 const MD& oracle,
                 P_& previous,
-                C3T3& c3t3)
-  : Rf_base(triangulation, c3t3, oracle, criteria)
+                C3T3& c3t3,
+                int mesh_topology)
+  : Rf_base(triangulation, c3t3, oracle, criteria, mesh_topology)
   , Mesher_level<Tr, Self, Facet, P_,
       Triangulation_mesher_level_traits_3<Tr>, Ct>(previous)
   , No_after_no_insertion()

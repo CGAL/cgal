@@ -127,6 +127,9 @@ and their associated classes:
 - `CGAL::parameters::no_lloyd`
 - `CGAL::parameters::odt`
 - `CGAL::parameters::no_odt`
+- `CGAL::parameters::manifold`
+- `CGAL::parameters::manifold_with_boundary`
+- `CGAL::parameters::non_manifold`
 
 ## Enumerations ##
 
