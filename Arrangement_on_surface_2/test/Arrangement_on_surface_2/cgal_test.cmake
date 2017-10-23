@@ -156,9 +156,18 @@ function(cgal_arr_2_add_target exe_name source_file)
   target_compile_options(${name} PRIVATE ${flags})
   cgal_debug_message(STATUS "#      -> target ${name} with TESTSUITE_CXXFLAGS: ${flags}")
 
+  add_test(NAME "compilation_of__${name}"
+    COMMAND ${TIME_COMMAND} "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target "${name}")
+  set_property(TEST "compilation_of__${name}"
+    APPEND PROPERTY LABELS "${PROJECT_NAME}")
+
   # Add a compatibility-mode with the shell script `cgal_test_base`
   if(NOT TARGET ${exe_name})
     create_single_source_cgal_program( "${source_file}" NO_TESTING)
+    add_test(NAME "compilation_of__${exe_name}"
+      COMMAND ${TIME_COMMAND} "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target "${exe_name}")
+    set_property(TEST "compilation_of__${exe_name}"
+      APPEND PROPERTY LABELS "${PROJECT_NAME}")
   endif()
 endfunction()
 
@@ -185,6 +194,16 @@ function(run_test_alt name datafile)
   string(MAKE_C_IDENTIFIER "${name}  ${ARGV4}  ${ARGV5}" test_name)
   add_test(NAME ${test_name} COMMAND ${command}
     WORKING_DIRECTORY ${CGAL_CURRENT_SOURCE_DIR})
+  set_property(TEST "${test_name}"
+    APPEND PROPERTY DEPENDS "compilation_of__${name}")
+  if(POLICY CMP0066) # CMake 3.7 or later
+    set_tests_properties("${test_name}"
+      PROPERTIES
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/__exec_test_dir
+      FIXTURES_REQUIRED ${PROJECT_NAME})
+  endif()
+  cgal_debug_message(STATUS "#       .. depends on compilation_of__${name}")
+
 #  message("   successful execution of ${name}  ${ARGV4} ${ARGV5}")
   set_property(TEST "${test_name}"
     APPEND PROPERTY LABELS "${PROJECT_NAME}")
