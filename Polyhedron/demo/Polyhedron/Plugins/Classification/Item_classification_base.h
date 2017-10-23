@@ -44,7 +44,8 @@ public:
 
   virtual void select_random_region() = 0;
   virtual void validate_selection () = 0;
-  virtual void train(int classifier, unsigned int nb_trials) = 0;
+  virtual void train(int classifier, unsigned int nb_trials,
+                     std::size_t num_trees, std::size_t max_depth) = 0;
   virtual bool run (int method, int classifier, std::size_t subdivisions, double smoothing) = 0;
   
   virtual void update_color () = 0;

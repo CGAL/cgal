@@ -601,7 +601,8 @@ void Point_set_item_classification::add_remaining_point_set_properties_as_featur
   }
 }
 
-void Point_set_item_classification::train(int classifier, unsigned int nb_trials)
+void Point_set_item_classification::train(int classifier, unsigned int nb_trials,
+                                          std::size_t num_trees, std::size_t max_depth)
 {
   if (m_features.size() == 0)
     {
@@ -626,7 +627,7 @@ void Point_set_item_classification::train(int classifier, unsigned int nb_trials
     }
   else if (classifier == 1)
   {
-    m_ethz->train(training);
+    m_ethz->train(training, true, num_trees, max_depth);
     CGAL::Classification::classify<Concurrency_tag> (*(m_points->point_set()),
                                                      m_labels, *m_ethz,
                                                      indices);
@@ -634,6 +635,11 @@ void Point_set_item_classification::train(int classifier, unsigned int nb_trials
   else
     {
 #ifdef CGAL_LINKED_WITH_OPENCV
+      if (m_random_forest != NULL)
+        delete m_random_forest;
+      m_random_forest = new Random_forest (m_labels, m_features,
+                                           max_depth, 5, 15,
+                                           num_trees);
       m_random_forest->train (training);
       CGAL::Classification::classify<Concurrency_tag> (*(m_points->point_set()),
                                                        m_labels, *m_random_forest,

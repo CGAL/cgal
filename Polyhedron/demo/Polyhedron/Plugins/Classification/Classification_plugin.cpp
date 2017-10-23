@@ -815,6 +815,8 @@ public Q_SLOTS:
       }
 
     int nb_trials = 0;
+    int num_trees = 0;
+    int max_depth = 0;
 
     if (ui_widget.classifier->currentIndex() == 0)
     {
@@ -826,11 +828,27 @@ public Q_SLOTS:
       if (!ok)
         return;
     }
+    else
+    {
+      QMultipleInputDialog dialog ("Train Random Forest Classifier", mw);
+      QSpinBox* trees = dialog.add<QSpinBox> ("Number of trees: ");
+      trees->setRange (1, 9999);
+      trees->setValue (25);
+      QSpinBox* depth = dialog.add<QSpinBox> ("Maximum depth of tree: ");
+      depth->setRange (1, 9999);
+      depth->setValue (20);
+
+      if (dialog.exec() != QDialog::Accepted)
+        return;
+      num_trees = trees->value();
+      max_depth = depth->value();
+    }
     
     QApplication::setOverrideCursor(Qt::WaitCursor);
     CGAL::Real_timer t;
     t.start();
-    classif->train(ui_widget.classifier->currentIndex(), nb_trials);
+    classif->train(ui_widget.classifier->currentIndex(), nb_trials,
+                   num_trees, max_depth);
     t.stop();
     std::cerr << "Done in " << t.time() << " second(s)" << std::endl;
     QApplication::restoreOverrideCursor();
