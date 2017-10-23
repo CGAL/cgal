@@ -189,6 +189,9 @@ namespace internal {
       patch_ids_map = CGAL::internal::add_property(Face_property_tag("PMP_patch_id"), pmesh);
       if (do_init)
       {
+#ifdef CGAL_PMP_REMESHING_VERBOSE
+        std::cout << "Compute connected components property map." << std::endl;
+#endif
         nb_cc
           = PMP::connected_components(pmesh,
                                       patch_ids_map,
@@ -617,6 +620,10 @@ namespace internal {
       std::cout << "Collapse short edges (" << low << ", " << high << ")..."
                 << std::endl;
 #endif
+#ifdef CGAL_PMP_REMESHING_VERBOSE_PROGRESS
+      std::cout << "Fill bimap...";
+      std::cout.flush();
+#endif
       double sq_low = low*low;
       double sq_high = high*high;
 
@@ -627,6 +634,9 @@ namespace internal {
         if( (sqlen < sq_low) && is_collapse_allowed(e) )
           short_edges.insert(short_edge(halfedge(e, mesh_), sqlen));
       }
+#ifdef CGAL_PMP_REMESHING_VERBOSE_PROGRESS
+      std::cout << "done." << std::endl;
+#endif
 
       unsigned int nb_collapses = 0;
       while (!short_edges.empty())
@@ -686,6 +696,8 @@ namespace internal {
 
             if (is_on_patch_border(va) && !is_on_patch_border(vb))
               continue;//we cannot swap again. It would lead to a face inversion
+            else if (is_corner(va) && !is_corner(vb))
+              continue;//idem
           }
           else
             continue;//both directions invert a face
@@ -1355,34 +1367,10 @@ private:
       //collect normals to faces around vs AND vt
       //vertices are at the same location, but connectivity is still be same,
       //with plenty of degenerate triangles (which are common to both stars)
-      std::vector<Vector_3> normals_patch1;
-      std::vector<Vector_3> normals_patch2;
-      normals_patch1.reserve(8);
-      normals_patch2.reserve(8);
-      Patch_id patch1 = -1, patch2 = -1;
-      BOOST_FOREACH(halfedge_descriptor hd,
-                    boost::range::join(halfedges_around_target(h, mesh_),
-                                       halfedges_around_target(opposite(h, mesh_), mesh_)))
-      {
-        Vector_3 n = compute_normal(face(hd, mesh_));
-        if (n == CGAL::NULL_VECTOR) //for degenerate faces
-          continue;
-        Patch_id pid = get_patch_id(face(hd, mesh_));
-
-        if (patch1 == Patch_id(-1))
-          patch1 = pid; //not met yet
-        else if (patch2 == Patch_id(-1) && patch1 != pid)
-          patch2 = pid; //not met yet
-        CGAL_assertion(pid == patch1 || pid == patch2);
-
-        if (pid == patch1)     normals_patch1.push_back(n);
-        else                   normals_patch2.push_back(n);
-      }
-
-      //on each surface patch,
-      //check all normals have same orientation
-      bool res = check_orientation(normals_patch1)
-              && check_orientation(normals_patch2);
+      bool res = check_normals(
+                   boost::range::join(
+                     halfedges_around_target(h, mesh_),
+                     halfedges_around_target(opposite(h, mesh_), mesh_)));
 
       //restore position
       put(vpmap_, vs, ps);
@@ -1436,7 +1424,7 @@ private:
       if (GeomTraits().collinear_3_object()(p,q,r))
         return CGAL::NULL_VECTOR;
       else
-        return PMP::compute_face_normal(f, mesh_);
+        return PMP::compute_face_normal(f, mesh_, parameters::vertex_point_map(vpmap_));
     }
 
     template <typename FaceRange>
@@ -1832,37 +1820,43 @@ private:
     //have all their 2 by 2 dot products > 0
     bool check_normals(const vertex_descriptor& v) const
     {
-      if (is_corner(v))
-        return true;//if we want to deal with this case,
-                    //we should use a multimap to store <Patch_id, Normal>
+      return check_normals(halfedges_around_target(halfedge(v, mesh_), mesh_));
+    }
 
-      std::vector<Vector_3> normals_patch1;
-      std::vector<Vector_3> normals_patch2;
-      normals_patch1.reserve(8);
-      normals_patch2.reserve(8);
-      Patch_id patch1 = -1, patch2 = -1;
-      BOOST_FOREACH(halfedge_descriptor hd,
-                    halfedges_around_target(halfedge(v, mesh_), mesh_))
+    template <typename HalfedgeRange>
+    bool check_normals(const HalfedgeRange& hedges) const
+    {
+      typedef std::multimap<Patch_id, Vector_3>   Normals_multimap;
+      typedef typename Normals_multimap::iterator Normals_iterator;
+
+      Normals_multimap normals_per_patch;
+      BOOST_FOREACH(halfedge_descriptor hd, hedges)
       {
         Vector_3 n = compute_normal(face(hd, mesh_));
-        if (n == CGAL::NULL_VECTOR)
+        if (n == CGAL::NULL_VECTOR) //for degenerate faces
           continue;
         Patch_id pid = get_patch_id(face(hd, mesh_));
 
-        if (patch1 == Patch_id(-1))
-          patch1 = pid; //not met yet
-        else if (patch2 == Patch_id(-1) && patch1 != pid)
-          patch2 = pid; //not met yet
-        CGAL_assertion(pid == patch1 || pid == patch2);
-
-        if (pid == patch1)     normals_patch1.push_back(n);
-        else                   normals_patch2.push_back(n);
+        normals_per_patch.insert(std::make_pair(pid, n));
       }
 
       //on each surface patch,
       //check all normals have same orientation
-      return check_orientation(normals_patch1)
-          && check_orientation(normals_patch2);
+      for (Normals_iterator it = normals_per_patch.begin();
+        it != normals_per_patch.end();/*done inside loop*/)
+      {
+        std::vector<Vector_3> normals;
+        std::pair<Normals_iterator, Normals_iterator> n_range
+          = normals_per_patch.equal_range((*it).first);
+        for (Normals_iterator iit = n_range.first; iit != n_range.second; ++iit)
+          normals.push_back((*iit).second);
+
+        if (!check_orientation(normals))
+          return false;
+
+        it = n_range.second;
+      }
+      return true;
     }
 
     bool check_normals(const halfedge_descriptor& h) const
@@ -1917,7 +1911,6 @@ private:
     Patch_id_to_index_map patch_id_to_index_map;
     Triangle_list input_triangles_;
     Patch_id_list input_patch_ids_;
-    Patch_id_to_index_map patch_id_to_index_map_;
     Halfedge_status_pmap halfedge_status_pmap_;
     bool protect_constraints_;
     FacePatchMap patch_ids_map_;
