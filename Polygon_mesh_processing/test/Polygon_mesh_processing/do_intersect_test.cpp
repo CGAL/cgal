@@ -63,7 +63,7 @@ test_faces_intersections(const char* filename1,
   timer.start();
 
   std::vector<std::pair<face_descriptor, face_descriptor> > intersected_tris;
-  CGAL::Polygon_mesh_processing::compute_face_face_intersection(
+  CGAL::internal::compute_face_face_intersection(
         m1, m2,
         std::back_inserter(intersected_tris),
         CGAL::Polygon_mesh_processing::parameters::all_default(),
@@ -122,7 +122,7 @@ test_faces_polyline_intersections(const char* filename1,
   timer.start();
 
   std::vector<std::pair<std::size_t, std::size_t> > intersected_tris;
-  CGAL::Polygon_mesh_processing::compute_face_polyline_intersection(
+  CGAL::internal::compute_face_polyline_intersection(
         m, points,
         std::back_inserter(intersected_tris),
         CGAL::Polygon_mesh_processing::parameters::all_default());
@@ -184,7 +184,7 @@ test_polylines_intersections(const char* filename1,
   timer.start();
 
   std::vector<std::pair<std::size_t, std::size_t> > intersected_polys;
-  CGAL::Polygon_mesh_processing::compute_polyline_polyline_intersection(
+  CGAL::internal::compute_polyline_polyline_intersection(
         points1, points2,
         std::back_inserter(intersected_polys),
         K());

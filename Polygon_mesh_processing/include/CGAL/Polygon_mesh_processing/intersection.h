@@ -280,9 +280,7 @@ struct Throw_at_first_output {
     throw Throw_at_first_output_exception();
   }
 };
-}// namespace internal
 
-namespace Polygon_mesh_processing{
 /*
  * \ingroup PMP_intersection_grp
  * detects and records intersections between the specified
@@ -698,7 +696,9 @@ compute_face_polyline_intersection(const TriangleMesh& mesh,
 {
   return compute_face_polyline_intersection(faces(mesh), polyline, mesh, out, np);
 }
+}// namespace internal
 
+namespace Polygon_mesh_processing{
 /**
  * \ingroup PMP_intersection_grp
  * tests if two `Polyline`s intersect.
@@ -725,7 +725,7 @@ bool do_intersect( const Polyline& polyline1,
   try
   {
     typedef boost::function_output_iterator<CGAL::internal::Throw_at_first_output> OutputIterator;
-    compute_polyline_polyline_intersection(polyline1, polyline2, OutputIterator(), K());
+    internal::compute_polyline_polyline_intersection(polyline1, polyline2, OutputIterator(), K());
   }
   catch( CGAL::internal::Throw_at_first_output::Throw_at_first_output_exception& )
   { return true; }
@@ -771,7 +771,7 @@ bool do_intersect(const TriangleMesh& mesh1
   try
   {
     typedef boost::function_output_iterator<CGAL::internal::Throw_at_first_output> OutputIterator;
-    compute_face_face_intersection(mesh1,mesh2, OutputIterator(), np1, np2);
+    internal::compute_face_face_intersection(mesh1,mesh2, OutputIterator(), np1, np2);
   }
   catch( CGAL::internal::Throw_at_first_output::Throw_at_first_output_exception& )
   { return true; }
@@ -829,7 +829,7 @@ bool do_intersect(const TriangleMesh& mesh
   try
   {
     typedef boost::function_output_iterator<CGAL::internal::Throw_at_first_output> OutputIterator;
-    compute_face_polyline_intersection(mesh,polyline, OutputIterator(), np);
+    internal::compute_face_polyline_intersection(mesh,polyline, OutputIterator(), np);
   }
   catch( CGAL::internal::Throw_at_first_output::Throw_at_first_output_exception& )
   { return true; }
