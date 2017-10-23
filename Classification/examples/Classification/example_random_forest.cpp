@@ -10,7 +10,6 @@
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Classification.h>
-#include <CGAL/Classification/Random_forest_classifier.h>
 #include <CGAL/Point_set_3.h>
 #include <CGAL/Point_set_3/IO.h>
 
@@ -32,7 +31,7 @@ typedef Classification::Feature_handle                                          
 typedef Classification::Label_set                                               Label_set;
 typedef Classification::Feature_set                                             Feature_set;
 
-typedef Classification::Random_forest_classifier Classifier;
+typedef Classification::OpenCV_random_forest_classifier Classifier;
 
 typedef Classification::Point_set_feature_generator<Kernel, Point_set, Pmap>    Feature_generator;
 

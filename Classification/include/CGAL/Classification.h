@@ -28,7 +28,7 @@
 #include <CGAL/Classification/ETHZ_random_forest_classifier.h>
 
 #ifdef CGAL_LINKED_WITH_OPENCV
-#include <CGAL/Classification/Random_forest_classifier.h>
+#include <CGAL/Classification/OpenCV_random_forest_classifier.h>
 #endif
 
 #include <CGAL/Classification/Color.h>

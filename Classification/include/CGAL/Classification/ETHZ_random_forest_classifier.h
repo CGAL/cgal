@@ -154,31 +154,25 @@ public:
     }
   }
 
-  void save_configuration (const char* filename)
+  void save_configuration (std::ostream& output)
   {
-    std::ofstream ofs(filename, std::ios_base::out | std::ios_base::binary);
     boost::iostreams::filtering_ostream outs;
     outs.push(boost::iostreams::gzip_compressor());
-    outs.push(ofs);
+    outs.push(output);
     boost::archive::text_oarchive oas(outs);
     oas << BOOST_SERIALIZATION_NVP(*m_rfc);
   }
 
-  void load_configuration (const char* filename,
-                           std::size_t num_trees = 25,
-                           std::size_t max_depth = 20)
+  void load_configuration (std::istream& input)
   {
     liblearning::RandomForest::ForestParams params;
-    params.n_trees   = num_trees;
-    params.max_depth = max_depth;
     if (m_rfc != NULL)
       delete m_rfc;
     m_rfc = new Forest (params);
     
-    std::ifstream ifs(filename, std::ios_base::in | std::ios_base::binary);
     boost::iostreams::filtering_istream ins;
     ins.push(boost::iostreams::gzip_decompressor());
-    ins.push(ifs);
+    ins.push(input);
     boost::archive::text_iarchive ias(ins);
     ias >> BOOST_SERIALIZATION_NVP(*m_rfc);
   }
