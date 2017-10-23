@@ -23,6 +23,8 @@
 
 #include <CGAL/license/Classification.h>
 
+#include <boost/shared_ptr.hpp>
+
 namespace CGAL {
 namespace Classification {
 
@@ -33,9 +35,13 @@ class Image
 {
   std::size_t m_width;
   std::size_t m_height;
-  Type* m_raw;
+  boost::shared_ptr<std::vector<Type> > m_raw;
 
-
+  // Forbid using copy constructor
+  Image (const Image&)
+  {
+  }
+  
 public:
 
   Image () : m_width(0), m_height(0), m_raw (NULL)
@@ -47,50 +53,23 @@ public:
       m_height (height)
   {
     if (m_width * m_height > 0)
-      m_raw = new Type[width * height]();
-    else
-      m_raw = NULL;
+      m_raw = boost::shared_ptr<std::vector<Type> > (new std::vector<Type>(m_width * m_height));
   }
   
   ~Image ()
   {
-    free();
   }
 
   void free()
   {
-    if (m_raw != NULL)
-      delete[] m_raw;
-    m_raw = NULL;
+    m_raw = boost::shared_ptr<std::vector<Type> >();
   }
 
-  Image (const Image& other)
-    : m_width (other.width()),
-      m_height (other.height())
-
-  {
-    if (m_width * m_height > 0)
-    {
-      m_raw = new Type[m_width * m_height];
-      std::copy (other.m_raw, other.m_raw + (m_width * m_height), this->m_raw);
-    }
-    else
-      m_raw = NULL;
-  }
   Image& operator= (const Image& other)
   {
-    if (m_raw != NULL)
-      delete[] m_raw;
-
-    m_raw = NULL;
+    m_raw = other.m_raw;
     m_width = other.width();
     m_height = other.height();
-    if (m_width * m_height > 0)
-    {
-      m_raw = new Type[m_width * m_height];
-      std::copy (other.m_raw, other.m_raw + (m_width * m_height), this->m_raw);
-    }
-    
     return *this;
   }
   
@@ -100,12 +79,12 @@ public:
   Type& operator() (const std::size_t& x, const std::size_t& y)
   {
     //    return m_raw[y * m_width + x];
-    return m_raw[x * m_height + y];
+    return (*m_raw)[x * m_height + y];
   }
   const Type& operator() (const std::size_t& x, const std::size_t& y) const
   {
     //    return m_raw[y * m_width + x];
-    return m_raw[x * m_height + y];
+    return (*m_raw)[x * m_height + y];
   }
   
 
