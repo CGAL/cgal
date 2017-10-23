@@ -27,9 +27,12 @@
 
 #include <CGAL/Polygon_mesh_processing/internal/Corefinement/intersection_impl.h>
 #include <boost/type_traits/is_same.hpp>
+#include <boost/utility/enable_if.hpp>
+
 
 namespace CGAL {
 namespace internal {
+//BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_faces_size_type, faces_size_type, false)
 
 template<class TM,
          class Kernel,
@@ -280,8 +283,7 @@ struct Throw_at_first_output {
 }// namespace internal
 
 namespace Polygon_mesh_processing{
-
-/*!
+/*
  * \ingroup PMP_intersection_grp
  * detects and records intersections between the specified
  * faces of two triangulated surface meshes.
@@ -320,7 +322,7 @@ template <class TriangleMesh
           , class NamedParameters
           >
 OutputIterator
-intersections( const FaceRange& face_range1,
+compute_face_face_intersection( const FaceRange& face_range1,
                const FaceRange& face_range2,
                const TriangleMesh& mesh1,
                const TriangleMesh& mesh2,
@@ -400,7 +402,7 @@ intersections( const FaceRange& face_range1,
 }
 
 
-/*!
+/*
  * \ingroup PMP_intersection_grp
  * detects and records intersections between the specified
  * faces of a triangulated surface mesh and a `Polyline`.
@@ -440,7 +442,7 @@ template <class TriangleMesh
           , class NamedParameters
           >
 OutputIterator
-intersections( const FaceRange& face_range,
+compute_face_polyline_intersection( const FaceRange& face_range,
                const Polyline& polyline,
                const TriangleMesh& mesh,
                OutputIterator out,
@@ -522,7 +524,7 @@ intersections( const FaceRange& face_range,
   return Intersect_face_polyline.m_iterator;
 }
 
-/*!
+/*
  * \ingroup PMP_intersection_grp
  * detects and records intersections between two `Polyline`s.
  * This function depends on the package \ref PkgBoxIntersectionDSummary
@@ -551,7 +553,7 @@ template < class Polyline
            , class Kernel
            >
 OutputIterator
-intersections( const Polyline& polyline1,
+compute_polyline_polyline_intersection( const Polyline& polyline1,
                const Polyline& polyline2,
                OutputIterator out,
                const Kernel& K)
@@ -613,7 +615,7 @@ intersections( const Polyline& polyline1,
 }
 
 
-/*!
+/*
  * \ingroup PMP_intersection_grp
  * detects and records intersections between two triangulated surface meshes.
  * This function depends on the package \ref PkgBoxIntersectionDSummary
@@ -645,16 +647,16 @@ template <class TriangleMesh
           , class NamedParameters
           >
 OutputIterator
-intersections(const TriangleMesh& mesh1,
+compute_face_face_intersection(const TriangleMesh& mesh1,
               const TriangleMesh& mesh2,
               OutputIterator out,
               const NamedParameters& np1,
               const NamedParameters& np2)
 {
-  return intersections(faces(mesh1), faces(mesh2),
+  return compute_face_face_intersection(faces(mesh1), faces(mesh2),
                        mesh1, mesh2, out, np1, np2);
 }
-/*!
+/*
  * \ingroup PMP_intersection_grp
  * detects and records intersections between a triangulated surface mesh
  * and a `Polyline`.
@@ -689,14 +691,47 @@ template <class TriangleMesh
           , class NamedParameters
           >
 OutputIterator
-intersections(const TriangleMesh& mesh,
+compute_face_polyline_intersection(const TriangleMesh& mesh,
               const Polyline& polyline,
               OutputIterator out,
               const NamedParameters& np)
 {
-  return intersections(faces(mesh), polyline, mesh, out, np);
+  return compute_face_polyline_intersection(faces(mesh), polyline, mesh, out, np);
 }
 
+/**
+ * \ingroup PMP_intersection_grp
+ * tests if two `Polyline`s intersect.
+ * This function depends on the package \ref PkgBoxIntersectionDSummary
+ *
+ * \tparam Polyline a `RandomAccessRange` of `CGAL::Point_3<Kernel>`.
+ * \tparam Kernel a model of `Kernel`.
+ *
+ * @param polyline1 the first `Polyline` to be tested.
+ * @param polyline2 the second `Polyline` to be tested.
+ * @param K an instance of `Kernel`.
+ *
+ * @return true if `polyline1` and `polyline2` intersect
+ */
+template <class Polyline>
+bool do_intersect( const Polyline& polyline1,
+                   const Polyline& polyline2,
+                   const typename boost::enable_if<
+                                     typename boost::has_range_iterator<Polyline>::type
+                                     >::type* = 0)
+{
+  typedef typename boost::range_value<Polyline>::type Point;
+  typedef typename CGAL::Kernel_traits<Point>::Kernel K;
+  try
+  {
+    typedef boost::function_output_iterator<CGAL::internal::Throw_at_first_output> OutputIterator;
+    compute_polyline_polyline_intersection(polyline1, polyline2, OutputIterator(), K());
+  }
+  catch( CGAL::internal::Throw_at_first_output::Throw_at_first_output_exception& )
+  { return true; }
+
+  return false;
+}
 
 /**
  * \ingroup PMP_intersection_grp
@@ -736,7 +771,7 @@ bool do_intersect(const TriangleMesh& mesh1
   try
   {
     typedef boost::function_output_iterator<CGAL::internal::Throw_at_first_output> OutputIterator;
-    intersections(mesh1,mesh2, OutputIterator(), np1, np2);
+    compute_face_face_intersection(mesh1,mesh2, OutputIterator(), np1, np2);
   }
   catch( CGAL::internal::Throw_at_first_output::Throw_at_first_output_exception& )
   { return true; }
@@ -744,6 +779,18 @@ bool do_intersect(const TriangleMesh& mesh1
   return false;
 }
 
+//convenient overload
+template <class TriangleMesh>
+bool do_intersect(const TriangleMesh& mesh1,
+                  const TriangleMesh& mesh2,
+                  const typename boost::disable_if<
+                                    typename boost::has_range_iterator<TriangleMesh>::type
+                                    >::type* = 0)
+{
+  CGAL_precondition(CGAL::is_triangle_mesh(mesh1));
+  CGAL_precondition(CGAL::is_triangle_mesh(mesh2));
+  return do_intersect(mesh1, mesh2, parameters::all_default(), parameters::all_default());
+}
 /**
  * \ingroup PMP_intersection_grp
  * tests if a triangulated surface mesh and
@@ -782,7 +829,7 @@ bool do_intersect(const TriangleMesh& mesh
   try
   {
     typedef boost::function_output_iterator<CGAL::internal::Throw_at_first_output> OutputIterator;
-    intersections(mesh,polyline, OutputIterator(), np);
+    compute_face_polyline_intersection(mesh,polyline, OutputIterator(), np);
   }
   catch( CGAL::internal::Throw_at_first_output::Throw_at_first_output_exception& )
   { return true; }
@@ -790,37 +837,22 @@ bool do_intersect(const TriangleMesh& mesh
   return false;
 }
 
-/**
- * \ingroup PMP_intersection_grp
- * tests if two `Polyline`s intersect.
- * This function depends on the package \ref PkgBoxIntersectionDSummary
- *
- * \tparam Polyline a `RandomAccessRange` of `CGAL::Point_3<Kernel>`.
- * \tparam Kernel a model of `Kernel`.
- *
- * @param polyline1 the first `Polyline` to be tested.
- * @param polyline2 the second `Polyline` to be tested.
- * @param K an instance of `Kernel`.
- *
- * @return true if `polyline1` and `polyline2` intersect
- */
-template < class Polyline
-           , class Kernel
-           >
-bool do_intersect( const Polyline& polyline1
-                  , const Polyline& polyline2,
-                   const Kernel& K)
+template <class TriangleMesh
+          , class Polyline>
+bool do_intersect(const TriangleMesh& mesh,
+                  const Polyline& polyline,
+                  const typename boost::disable_if<
+                                    typename boost::has_range_iterator<TriangleMesh>::type
+                                    >::type* = 0,
+                   const typename boost::enable_if<
+                  typename boost::has_range_const_iterator<Polyline>::type
+                  >::type* = 0)
 {
-  try
-  {
-    typedef boost::function_output_iterator<CGAL::internal::Throw_at_first_output> OutputIterator;
-    intersections(polyline1,polyline2, OutputIterator(), K);
-  }
-  catch( CGAL::internal::Throw_at_first_output::Throw_at_first_output_exception& )
-  { return true; }
+  CGAL_precondition(CGAL::is_triangle_mesh(mesh));
 
-  return false;
+  return do_intersect(mesh, polyline, parameters::all_default());
 }
+
 
 
 /**

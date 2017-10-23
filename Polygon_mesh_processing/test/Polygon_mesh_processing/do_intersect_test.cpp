@@ -9,7 +9,6 @@
 #include <CGAL/Polygon_mesh_processing/intersection.h>
 
 #include <CGAL/Surface_mesh.h>
-#include <CGAL/Polyhedron_3.h>
 
 #include <CGAL/Timer.h>
 
@@ -64,7 +63,7 @@ test_faces_intersections(const char* filename1,
   timer.start();
 
   std::vector<std::pair<face_descriptor, face_descriptor> > intersected_tris;
-  CGAL::Polygon_mesh_processing::intersections(
+  CGAL::Polygon_mesh_processing::compute_face_face_intersection(
         m1, m2,
         std::back_inserter(intersected_tris),
         CGAL::Polygon_mesh_processing::parameters::all_default(),
@@ -76,9 +75,7 @@ test_faces_intersections(const char* filename1,
   std::cout << intersected_tris.size() << " pairs of triangles are intersecting." << std::endl;
 
   timer.reset();
-  bool intersecting_2 = CGAL::Polygon_mesh_processing::do_intersect(m1, m2,
-                                                                    CGAL::Polygon_mesh_processing::parameters::all_default(),
-                                                                    CGAL::Polygon_mesh_processing::parameters::all_default());
+  bool intersecting_2 = CGAL::Polygon_mesh_processing::do_intersect(m1, m2);
 
   std::cout << "does_intersect test took " << timer.time() << " sec." << std::endl;
   std::cout << (intersecting_2 ? "There are intersections." :
@@ -125,7 +122,7 @@ test_faces_polyline_intersections(const char* filename1,
   timer.start();
 
   std::vector<std::pair<std::size_t, std::size_t> > intersected_tris;
-  CGAL::Polygon_mesh_processing::intersections(
+  CGAL::Polygon_mesh_processing::compute_face_polyline_intersection(
         m, points,
         std::back_inserter(intersected_tris),
         CGAL::Polygon_mesh_processing::parameters::all_default());
@@ -136,8 +133,7 @@ test_faces_polyline_intersections(const char* filename1,
   std::cout << intersected_tris.size() << " intersections." << std::endl;
 
   timer.reset();
-  bool intersecting_2 = CGAL::Polygon_mesh_processing::do_intersect(m,points,
-                                                                    CGAL::Polygon_mesh_processing::parameters::all_default());
+  bool intersecting_2 = CGAL::Polygon_mesh_processing::do_intersect(m,points);
 
   std::cout << "does_intersect test took " << timer.time() << " sec." << std::endl;
   std::cout << (intersecting_2 ? "There are intersections." :
@@ -188,7 +184,7 @@ test_polylines_intersections(const char* filename1,
   timer.start();
 
   std::vector<std::pair<std::size_t, std::size_t> > intersected_polys;
-  CGAL::Polygon_mesh_processing::intersections(
+  CGAL::Polygon_mesh_processing::compute_polyline_polyline_intersection(
         points1, points2,
         std::back_inserter(intersected_polys),
         K());
@@ -199,8 +195,8 @@ test_polylines_intersections(const char* filename1,
   std::cout << intersected_polys.size() << " intersections." << std::endl;
 
   timer.reset();
-  bool intersecting_2 = CGAL::Polygon_mesh_processing::do_intersect(points1, points2,
-                                                                    K());
+
+  bool intersecting_2 = CGAL::Polygon_mesh_processing::do_intersect(points1, points2);
 
   std::cout << "does_intersect test took " << timer.time() << " sec." << std::endl;
   std::cout << (intersecting_2 ? "There are intersections." :
