@@ -191,7 +191,8 @@ and <code>src/</code> directories).
 <ul>
   <li>
   Improved the performance of the kd-tree in some cases:<br />
-  1. Not storing the points coordinates inside the tree usually 
+  <ol>
+    <li> Not storing the points coordinates inside the tree usually 
       generates a lot of cache misses, leading to non-optimal 
       performance. This is the case when indices are stored inside 
       the tree, or when the points coordinates are stored in a
@@ -204,11 +205,14 @@ and <code>src/</code> directories).
       consumption but provides better search performance. See the updated
       <code>GeneralDistance</code> and <code>FuzzyQueryItem</code>
       concepts for additional requirements when using such a cache.
-  2. In most cases (e.g., Euclidean distance), the distance computation
+    </li>
+    <li> In most cases (e.g., Euclidean distance), the distance computation
       algorithm knows before its end that the distance will be greater
       than or equal to some given value. This is used in the (orthogonal)
       k-NN search to interrupt some distance computations before its end,
       saving precious milliseconds, in particular in medium-to-high dimension.
+    </li>
+  </ol>
   </li>
 </ul>
 <!-- Geometric Optimization -->
