@@ -161,8 +161,9 @@ public:
             node_dist[label] += 1.0f;
         }
 
-        for (std::size_t i = 0; i < node_dist.size(); ++ i)
-          node_dist[i] /= n_samples;
+        if (n_samples != 0)
+          for (std::size_t i = 0; i < node_dist.size(); ++ i)
+            node_dist[i] /= n_samples;
 
         bool do_split = // Only split if ...
             (n_samples >= params->min_samples_per_node) && // enough samples are available
