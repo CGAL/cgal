@@ -123,7 +123,7 @@ fi
 
 #update overview
 
-python ./testsuite.py --output-dir $PWD/doc_dir/doc_output/ --doc-log-dir $PWD/doc_dir/doc_log/ \
+python ${PWD}/testsuite.py --output-dir $PWD/doc_dir/doc_output/ --doc-log-dir $PWD/doc_dir/doc_log/ \
   --publish $PUBLISH_DIR --diff $PWD/diff.txt --master-dir $PWD/doc_master/doc_output/ \
   --cgal-version "$CGAL_NAME" --do-copy-results --version-to-keep 10 --doxygen-version "$DOXYGEN_1" --master-describe "$MASTER_DESCRIBE"
 

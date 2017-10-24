@@ -28,6 +28,9 @@ import glob
 import re
 import operator
 import datetime
+import getpass
+import socket
+import time
 from xml.dom.minidom import parseString
 from pyquery import PyQuery as pq
 
@@ -185,8 +188,14 @@ body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
 <html><head><title>Manual Testsuite Overview</title></head>
 <body><h1>Overviewpage of the Doxygen Manual Testsuite</h1>
 <table  border="1" cellspacing="2" cellpadding="5" id="revisions" class="rev-table">
-<tr><th>Revision</th><th>Date</th><th>Warnings</th><th>Errors</th><th>Diff with doxygen master</th></tr></table></body></html>''')
-
+<tr><th>Revision</th><th>Date</th><th>Warnings</th><th>Errors</th><th>Diff with doxygen master</th></tr></table></body>''')
+                args_list=''
+                for arg in sys.argv[0:]:
+                  args_list+=arg+' '
+                signature='<p id="suffix"> Generated with the command line</p><code> python {script_args}</p><p> by {user_name}@{host_name} at {date_time} </code></html>'.format(
+                  user_name=getpass.getuser(), host_name=socket.gethostname(), date_time=time.ctime(), script_args=args_list)
+                f.write(signature)
+                print(signature)
         with open(diff_file, 'r') as myfile:
           diff=myfile.read()
         if not diff:
