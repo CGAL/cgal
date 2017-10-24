@@ -25,6 +25,8 @@
 
 #include <boost/shared_ptr.hpp>
 
+#define CGAL_CLASSIFICATION_IMAGE_SIZE_LIMIT 10000000
+
 namespace CGAL {
 namespace Classification {
 
@@ -33,9 +35,14 @@ namespace Classification {
 template <typename Type>
 class Image
 {
+  typedef std::vector<Type> Vector;
+  typedef std::map<std::size_t, Type> Map;
+  
   std::size_t m_width;
   std::size_t m_height;
-  boost::shared_ptr<std::vector<Type> > m_raw;
+  boost::shared_ptr<Vector> m_raw;
+  boost::shared_ptr<Map> m_sparse;
+  Type m_default;
 
   // Forbid using copy constructor
   Image (const Image&)
@@ -53,7 +60,12 @@ public:
       m_height (height)
   {
     if (m_width * m_height > 0)
-      m_raw = boost::shared_ptr<std::vector<Type> > (new std::vector<Type>(m_width * m_height));
+    {
+      if (m_width * m_height < CGAL_CLASSIFICATION_IMAGE_SIZE_LIMIT)
+        m_raw = boost::shared_ptr<Vector> (new Vector(m_width * m_height));
+      else
+        m_sparse = boost::shared_ptr<Map> (new Map());
+    }
   }
   
   ~Image ()
@@ -62,12 +74,14 @@ public:
 
   void free()
   {
-    m_raw = boost::shared_ptr<std::vector<Type> >();
+    m_raw = boost::shared_ptr<Vector>();
+    m_sparse = boost::shared_ptr<Map>();
   }
 
   Image& operator= (const Image& other)
   {
     m_raw = other.m_raw;
+    m_sparse = other.m_sparse;
     m_width = other.width();
     m_height = other.height();
     return *this;
@@ -78,12 +92,24 @@ public:
 
   Type& operator() (const std::size_t& x, const std::size_t& y)
   {
-    //    return m_raw[y * m_width + x];
+    if (m_raw == boost::shared_ptr<Vector>()) // sparse case
+    {
+      typename Map::iterator inserted = m_sparse->insert (std::make_pair (x * m_height + y, Type())).first;
+      return inserted->second;
+    }
+
     return (*m_raw)[x * m_height + y];
   }
   const Type& operator() (const std::size_t& x, const std::size_t& y) const
   {
-    //    return m_raw[y * m_width + x];
+    if (m_raw == boost::shared_ptr<Vector>()) // sparse case
+    {
+      typename Map::iterator found = m_sparse->find (x * m_height + y);
+      if (found != m_sparse->end())
+        return found->second;
+      return m_default;
+    }
+
     return (*m_raw)[x * m_height + y];
   }
   
