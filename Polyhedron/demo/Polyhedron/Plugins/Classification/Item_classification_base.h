@@ -11,7 +11,7 @@
 #include <CGAL/Classification/ETHZ_random_forest_classifier.h>
 
 #ifdef CGAL_LINKED_WITH_OPENCV
-#include <CGAL/Classification/Random_forest_classifier.h>
+#include <CGAL/Classification/OpenCV_random_forest_classifier.h>
 #endif
 
 class Item_classification_base
@@ -25,7 +25,7 @@ public:
   typedef CGAL::Classification::ETHZ_random_forest_classifier ETHZ_random_forest;
 
 #ifdef CGAL_LINKED_WITH_OPENCV
-  typedef CGAL::Classification::Random_forest_classifier Random_forest;
+  typedef CGAL::Classification::OpenCV_random_forest_classifier Random_forest;
 #endif
   
 public:
@@ -131,7 +131,8 @@ public:
     }
     else if (classifier == 1)
     {
-      m_ethz->save_configuration (filename);
+      std::ofstream f (filename, std::ios_base::binary);
+      m_ethz->save_configuration (f);
     }
     else
     {
@@ -155,7 +156,8 @@ public:
     }
     else if (classifier == 1)
     {
-      m_ethz->load_configuration (filename);
+      std::ifstream f (filename, std::ios_base::binary);
+      m_ethz->load_configuration (f);
     }
     else
     {
