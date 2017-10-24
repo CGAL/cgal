@@ -131,7 +131,7 @@ public:
     }
     else if (classifier == 1)
     {
-      std::ofstream f (filename, std::ios_base::binary);
+      std::ofstream f (filename, std::ios_base::out | std::ios_base::binary);
       m_ethz->save_configuration (f);
     }
     else
@@ -156,7 +156,7 @@ public:
     }
     else if (classifier == 1)
     {
-      std::ifstream f (filename, std::ios_base::binary);
+      std::ifstream f (filename, std::ios_base::in | std::ios_base::binary);
       m_ethz->load_configuration (f);
     }
     else
