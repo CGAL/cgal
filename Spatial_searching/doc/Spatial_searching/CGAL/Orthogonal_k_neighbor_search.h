@@ -14,9 +14,7 @@ for example `Search_traits_2<Simple_cartesian<double> >`.
 concept `OrthogonalDistance`. If `Traits` is 
 `Search_traits_adapter<Key,PointPropertyMap,BaseTraits>` 
 the default type is `Distance_adapter<Key,PointPropertyMap,Euclidean_distance<BaseTraits> >`, 
-and `Euclidean_distance<Traits>` otherwise. 
-
-The default type is `Euclidean_distance<Traits>`. 
+and `Euclidean_distance<Traits>` otherwise.
 
 \tparam Splitter must be a model of the concept `Splitter`. 
 The default type is `Sliding_midpoint<Traits>`. 

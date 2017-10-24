@@ -11,11 +11,14 @@ extended or unextended nodes.
 \tparam Traits must be an implementation of the concept `SearchTraits`, 
 for example `Simple_cartesian<double>`. 
 
-\tparam Splitter must be a model of the 
+\tparam GeneralDistance must be a model of the 
 concept `GeneralDistance`. If `Traits` is
 `Search_traits_adapter<Key,PointPropertyMap,BaseTraits>` 
 the default type is `Distance_adapter<Key,PointPropertyMap,Euclidean_distance<BaseTraits> >`, 
 and `Euclidean_distance<Traits>` otherwise.
+
+\tparam Splitter must be a model of the concept `Splitter`.
+The default type is `Sliding_midpoint<Traits>`.
 
 \tparam SpatialTree must be an implementation of the concept `SpatialTree`. 
 The default type is `Kd_tree<Traits, Splitter, Tag_false>`. The 
