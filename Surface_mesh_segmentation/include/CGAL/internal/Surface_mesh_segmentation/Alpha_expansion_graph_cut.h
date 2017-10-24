@@ -296,7 +296,7 @@ public:
         cut_time += timer.time();
         #endif
 
-        if(min_cut - flow < flow * tolerance) {
+        if(min_cut - flow <= flow * tolerance) {
           continue;
         }
         min_cut = flow;
@@ -534,7 +534,7 @@ public:
         cut_time += timer.time();
         #endif
 
-        if(min_cut - flow < flow * tolerance) {
+        if(min_cut - flow <= flow * tolerance) {
           continue;
         }
         min_cut = flow;
@@ -664,7 +664,7 @@ public:
         cut_time += timer.time();
         #endif
 
-        if(min_cut - flow < flow * tolerance) {
+        if(min_cut - flow <= flow * tolerance) {
           continue;
         }
 
