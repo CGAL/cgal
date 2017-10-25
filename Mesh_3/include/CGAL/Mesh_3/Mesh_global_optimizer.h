@@ -304,8 +304,8 @@ private:
 
   /**
    * Returns the move for vertex \c v
-   * warning : this function should be called only on moving vertices
-   *           even for frozen vertices, it could return a non-zero vector
+   * \warning This function should be called only on moving vertices
+   *          even for frozen vertices, it could return a non-zero vector
    */
   Vector_3 compute_move(const Vertex_handle& v);
 
@@ -323,7 +323,7 @@ private:
   void fill_sizing_field();
 
   /**
-   * Returns true if convergence is reached
+   * Returns `true` if convergence is reached
    */
   bool check_convergence() const;
 
@@ -344,7 +344,7 @@ private:
                             const Vertex_handle& v) const;
 
   /**
-   * Returns true if time_limit is reached
+   * Returns `true` if time_limit is reached
    */
   bool is_time_limit_reached() const
   {
