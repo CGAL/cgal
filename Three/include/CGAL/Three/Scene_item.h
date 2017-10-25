@@ -53,8 +53,7 @@ namespace Three {
 class Scene_group_item;
 class Viewer_interface;
 //! This class represents an object in the OpenGL scene.
-//! It contains all the functions called by the Scene. It
-//! acts like a mix between an interface and a helper.
+//! It contains all the functions called by the Scene.
 class SCENE_ITEM_EXPORT Scene_item : public QObject{
   Q_OBJECT
   Q_PROPERTY(QColor color READ color WRITE setColor)
@@ -98,11 +97,13 @@ public:
   //! \brief Duplicates the item.
   //!
   //! Creates a new item as a copy of this one.
+  //! Must be overriden;
   virtual Scene_item* clone() const = 0;
 
   //! \brief Indicates if `m` is supported
   //!
   //! If it is, it will be displayed in the context menu of the item.
+  //! Must be overriden;
   virtual bool supportsRenderingMode(RenderingMode m) const = 0;
   /*! \brief The drawing function for faces.
    *
@@ -139,6 +140,8 @@ public:
 
   // Functions for displaying meta-data of the item
   //!\brief Contains meta-data about the item.
+  //!
+  //! Must be overriden;
   //! @returns a QString containing meta-data about the item.
   virtual QString toolTip() const = 0;
   //! \brief Contains graphical meta-data about the item.
@@ -176,8 +179,7 @@ public:
   //!Getter for the item's name.
   //! @returns the current name of the item.
   virtual QString name() const;
-  //! If the item is not visible, it is not drawn and its Bbox
-  //! is ignored in the computation of the scene's.
+  //! If the item is not visible, it is not drawn.
   //! @returns the current visibility of the item.
   virtual bool visible() const;
   //!Getter for the item's rendering mode.
@@ -188,7 +190,7 @@ public:
   //! @returns the current rendering mode of the item as a human readable string.
   virtual QString renderingModeName() const;
 
-  //! \brief Context menu
+  //! \brief The context menu of an item.
   //!
   //! Contains the list of the supported rendering modes,
   //! the Operations menu, actions to save or clone the item if it is supported
@@ -256,24 +258,24 @@ public:
 
   //!Contains the header for the table in the statistics dialog
   /*!
-   * A header data is composed of 2 columns : the Categories and the titles.
-   * A category is the name given to an association of titles.
-   * A title is the name of a line.
-   *\verbatim
-   * For example,
-   * Category :    | Titles| Values
-   * 2 lines       |       |
-   *  ____________________________
-   * |             |Name   |Cube |
-   * |             |_______|_____|
-   * |General Info | #Edges|12   |
-   * |_____________|_______|_____|
-   *
-   *  would be stored as follows :
-   * categories = std::pair<QString,int>(QString("General Info"),2)
-   * titles.append("Name");
-   * titles.append("#Edges");\endverbatim
-   */
+     A header data is composed of 2 columns : the Categories and the titles.
+     A category is the name given to an association of titles.
+     A title is the name of a line.
+     \verbatim
+     For example,
+     Category :    | Titles| Values
+     2 lines       |       |
+      ____________________________
+     |             |Name   |Cube |
+     |             |_______|_____|
+     |General Info | #Edges|12   |
+     |_____________|_______|_____|
+
+      would be stored as follows :
+     categories = std::pair<QString,int>(QString("General Info"),2)
+     titles.append("Name");
+     titles.append("#Edges");\endverbatim
+    */
   struct Header_data{
    //!Contains the name of the category of statistics and the number of lines it will contain
    QList<std::pair<QString, int> > categories;
@@ -306,11 +308,15 @@ public:
   //!
   //! \brief newViewer adds Vaos for `viewer`.
   //!
-  virtual void newViewer(CGAL::Three::Viewer_interface* ) = 0;
+  //! Must be overriden;
+  //!
+  virtual void newViewer(CGAL::Three::Viewer_interface* viewer) = 0;
   //!
   //! \brief removeViewer removes the Vaos fo `viewer`.
   //!
-  virtual void removeViewer(CGAL::Three::Viewer_interface* ) = 0;
+  //! Must be overriden;
+  //!
+  virtual void removeViewer(CGAL::Three::Viewer_interface* viewer) = 0;
 
   //! Returns the selection status of this item.
   bool isSelected() const;
@@ -387,6 +393,8 @@ public Q_SLOTS:
   virtual float alpha() const;
 
   //! Sets the value of the aplha Slider for this item.
+  //!
+  //! Must be overriden;
   //! \param alpha must be between 0 and 255
   virtual void setAlpha(int alpha) = 0;
 

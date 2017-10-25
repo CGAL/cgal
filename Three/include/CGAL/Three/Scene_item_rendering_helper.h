@@ -120,14 +120,11 @@ public:
   void setBuffersInit(Viewer_interface *viewer, bool val);
 protected:
 
-  /*!
-   * \return a pointer to the slider initialized in initGL();
-   */
+
+  //!Returns a pointer to the slider initialized in initGL();
   QSlider* alphaSlider();
 
-  //!
-  //! \return `true` if `initGL()` was called.
-  //!
+  //!Returns`true` if `initGL()` was called.
   bool isInit()const;
   //! \brief the item's bounding box's diagonal length.
   //!

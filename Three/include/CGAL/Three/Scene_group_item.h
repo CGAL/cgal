@@ -55,7 +55,7 @@ public :
   //!
     Scene_group_item(QString name,Scene_interface *scene);
     ~Scene_group_item() {}
-    //!Sets the scene;
+    //!Sets the scene
     void setScene(Scene_interface* s) { scene = s; }
 
     //!Create the VAOs and VBOs.
@@ -126,13 +126,15 @@ public :
     /// Scene_group_item's children are not drawn by the scene, they are drawn by the group.
     ///@{
 
-    //!\brief draws all the children
-    //!
-    //! Calls `Scene_item::draw()`for each child if its current
-    //! rendering mode is adequat.
-    //! @see #RenderingMode
+    //!\brief default does nothing.
     virtual void draw(CGAL::Three::Viewer_interface*, int pass,
                       bool is_writing, QOpenGLFramebufferObject*fbo);
+
+    //!\brief default does nothing.
+    virtual void drawEdges(CGAL::Three::Viewer_interface*);
+
+    //!\brief default does nothing.
+    virtual void drawPoints(CGAL::Three::Viewer_interface*);
 
     //!
     //! \brief deals with the rendering, selecting and picking of
@@ -154,18 +156,6 @@ public :
               bool is_writing,
               QOpenGLFramebufferObject *fbo);
 
-    //!\brief draws all the children
-    //!
-    //! Calls `Scene_item::drawEdges()`for each child if its current
-    //! rendering mode is adequat.
-    //! @see #RenderingMode
-    virtual void drawEdges(CGAL::Three::Viewer_interface*);
-    //!\brief draws all the children
-    //!
-    //! Calls `Scene_item::drawPoints()`for each child if its current
-    //! rendering mode is adequat.
-    //! @see #RenderingMode
-    virtual void drawPoints(CGAL::Three::Viewer_interface*);
     ///@}
 
     //!Adds a CGAL::Three::Scene_item* to the list of children from its id.
