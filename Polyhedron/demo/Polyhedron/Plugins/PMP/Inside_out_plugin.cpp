@@ -2,6 +2,7 @@
 #include <QAction>
 #include <QStringList>
 #include <QMainWindow>
+#include <QInputDialog>
 #include "Scene_polyhedron_item.h"
 #include "Scene_polygon_soup_item.h"
 #include "Scene_surface_mesh_item.h"
@@ -29,6 +30,7 @@ public:
             Messages_interface*)
   {
       scene = scene_interface;
+      this->mw = mw;
       actionInsideOut = new QAction(tr("Inside Out"), mw);
 
       actionInsideOut->setProperty("subMenuName", "Polygon Mesh Processing");
@@ -64,6 +66,7 @@ private:
   QAction* actionOrientCC;
   QList<QAction*> _actions;
   Scene_interface *scene;
+  QMainWindow* mw;
 }; // end Polyhedron_demo_inside_out_plugin
 
 void Polyhedron_demo_inside_out_plugin::on_actionInsideOut_triggered()
@@ -121,19 +124,32 @@ void Polyhedron_demo_inside_out_plugin::on_actionOrientCC_triggered()
 
   if(poly_item || sm_item)
   {
-    QApplication::setOverrideCursor(Qt::WaitCursor);
+    QStringList items;
+    items << tr("Outward") << tr("Inward");
 
+    bool ok;
+    QString item = QInputDialog::getItem(mw, tr("QInputDialog::getItem()"),
+                                         tr("The connected components should be oriented:"), items, 0, false, &ok);
+    if (!ok )
+      return;
+    QApplication::setOverrideCursor(Qt::WaitCursor);
     if(poly_item) {
       Polyhedron* pMesh = poly_item->polyhedron();
       if(pMesh){
-        CGAL::Polygon_mesh_processing::orient_connected_components(*pMesh);
+        if(is_closed(*pMesh))
+          CGAL::Polygon_mesh_processing::orient_volume_connected_components(*pMesh, item==items.first());
+        else
+          CGAL::Polygon_mesh_processing::orient_connected_components(*pMesh, item==items.first());
         poly_item->invalidateOpenGLBuffers();
       }
     }
     else if(sm_item) {
       SMesh* pMesh = sm_item->polyhedron();
       if(pMesh){
-        CGAL::Polygon_mesh_processing::orient_connected_components(*pMesh);
+        if(is_closed(*pMesh))
+          CGAL::Polygon_mesh_processing::orient_volume_connected_components(*pMesh, item==items.first());
+        else
+          CGAL::Polygon_mesh_processing::orient_connected_components(*pMesh, item==items.first());
         sm_item->invalidateOpenGLBuffers();
       }
     }

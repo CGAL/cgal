@@ -1,6 +1,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polygon_mesh_processing/orientation.h>
+#include <CGAL/Polygon_mesh_processing/corefinement.h>
 
 #include <iostream>
 #include <fstream>
@@ -69,6 +70,7 @@ bool test_orientation(TriangleMesh& tm, bool is_positive, const NamedParameters&
   return true;
 }
 
+
 int main()
 {
 
@@ -105,5 +107,16 @@ int main()
   if(!test_orientation(sm4, false, PMP::parameters::vertex_point_map(vpmap4)
                        .face_index_map(fidmap4)))
     return 1;
+
+
+  SMesh volume;
+  std::ifstream input2("data/Volume_nested_spheres.off");
+  assert(input);
+  input2 >> volume;
+
+  PMP::orient_volume_connected_components(volume, true);
+  if( !PMP::does_bound_a_volume(volume))
+    return 1;
+
   return 0;
 }
