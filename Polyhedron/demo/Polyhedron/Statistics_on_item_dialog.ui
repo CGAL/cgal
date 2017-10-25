@@ -20,7 +20,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>Statistics on Polyhedron</string>
+   <string>Statistics</string>
   </property>
   <property name="modal">
    <bool>false</bool>
