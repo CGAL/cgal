@@ -38,7 +38,7 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: (LGPL-3.0+ AND BSL-1.0)
 // 
 //
 // Author(s)     : Andreas Fabri, Fernando Cacciola
