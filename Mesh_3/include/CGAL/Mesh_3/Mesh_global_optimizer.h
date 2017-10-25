@@ -76,6 +76,9 @@ protected:
   typedef typename Gt::FT                                   FT;
   typedef typename Tr::Lock_data_structure                  Lock_data_structure;
 
+  // The sizing field info is stored inside the move vector because it is computed
+  // when the move is computed. This is because the parallel version uses the threadsafe
+  // version of incident_cells (which thus requires points to not be moving yet)
   typedef std::vector<cpp11::tuple<
     typename Tr::Vertex_handle, typename Tr::Weighted_point, FT> > Moves_vector;
   typedef unsigned int                                             Nb_frozen_points_type ;
