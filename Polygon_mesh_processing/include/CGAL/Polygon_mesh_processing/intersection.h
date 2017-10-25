@@ -649,9 +649,12 @@ namespace Polygon_mesh_processing{
 template <class Polyline>
 bool do_intersect( const Polyline& polyline1,
                    const Polyline& polyline2,
+#ifndef DOXYGEN_RUNNING
                    const typename boost::enable_if<
-                                     typename boost::has_range_iterator<Polyline>::type
-                                     >::type* = 0)
+                   typename boost::has_range_iterator<Polyline>::type
+                   >::type* = 0
+#endif
+    )
 {
   typedef typename boost::range_value<Polyline>::type Point;
   typedef typename CGAL::Kernel_traits<Point>::Kernel K;
