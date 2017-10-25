@@ -192,7 +192,7 @@ body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
                 args_list=''
                 for arg in sys.argv[0:]:
                   args_list+=arg+' '
-                signature='<p id="suffix"> Generated with the command line</p><code> python {script_args}</p><p> by {user_name}@{host_name} at {date_time} </code></html>'.format(
+                signature='<p id="suffix"> Generated with the command line <br /> <code> python {script_args} <br /> by {user_name}@{host_name} at {date_time} </code></p></html>'.format(
                   user_name=getpass.getuser(), host_name=socket.gethostname(), date_time=time.ctime(), script_args=args_list)
                 f.write(signature)
         with open(diff_file, 'r') as myfile:
@@ -217,13 +217,15 @@ body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
                 sys.stderr.write("Warning: the directory " + publish_dir + dir_to_remove + " does not exist or is not writable!\n")
             revs.eq(k).remove()
         script_info=d('#suffix')
-        if script_info.text()=='':
-          args_list=''
-          for arg in sys.argv[0:]:
-            args_list+=arg+' '
-          signature='<html><p id="suffix"> Generated with the command line</p><code> python {script_args}</p><p> by {user_name}@{host_name} at {date_time} </code></html>'.format(
-            user_name=getpass.getuser(), host_name=socket.gethostname(), date_time=time.ctime(), script_args=args_list)
-          d('table').after(signature)
+        if script_info.text()!='':
+             print("Found")
+             script_info.remove()
+        args_list=''
+        for arg in sys.argv[0:]:
+          args_list+=arg+' '
+        signature='<html><p id="suffix"> Generated with the command line<br /> <code> python {script_args}<br /> by {user_name}@{host_name} at {date_time} </code></p></html>'.format(
+          user_name=getpass.getuser(), host_name=socket.gethostname(), date_time=time.ctime(), script_args=args_list)
+        d('table').after(signature)
         write_out_html(d, publish_dir + 'index.html')
         try:
           #copy log files
