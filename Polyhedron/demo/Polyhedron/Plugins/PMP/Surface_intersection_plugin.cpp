@@ -78,7 +78,10 @@ public:
   QList<QAction*> actions() const {
     return QList<QAction*>() << actionPolyhedronIntersection_3
                              << actionSurfacePolylineIntersection
-                             << actionPolylinesIntersection;
+#ifdef USE_SURFACE_MESH
+                             << actionPolylinesIntersection
+#endif
+                                ;
   }
 
   void init(QMainWindow* mw, CGAL::Three::Scene_interface* scene_interface, Messages_interface* mi) {
@@ -178,7 +181,9 @@ void Polyhedron_demo_intersection_plugin::intersectionSurfaces()
 #include <CGAL/intersections.h>
 void Polyhedron_demo_intersection_plugin::intersectionPolylines()
 {
-  typedef std::pair<std::size_t, std::size_t>  Poly_intersection;
+  typedef std::pair<
+      std::pair<std::size_t, std::size_t>,
+      std::pair<std::size_t, std::size_t> >  Poly_intersection;
 
   Scene_polylines_item* itemA = NULL;
   Q_FOREACH(CGAL::Three::Scene_interface::Item_id index, scene->selectionIndices())
@@ -201,31 +206,23 @@ void Polyhedron_demo_intersection_plugin::intersectionPolylines()
      // perform Boolean operation
       QTime time;
       time.start();
-      Polyline polyA, polyB;
-      Q_FOREACH(Polyline poly, itemA->polylines)
+      std::vector<Polyline> polyA, polyB;
+      Q_FOREACH(const Polyline& poly, itemA->polylines)
       {
-        Q_FOREACH( Kernel::Point_3 p, poly)
-        {
-          if(polyA.empty()
-             || p != polyA.back())
-            polyA.push_back(p);
-        }
+        polyA.push_back(poly);
       }
-      Q_FOREACH(Polyline poly, itemB->polylines)
+      Q_FOREACH(const Polyline& poly, itemB->polylines)
       {
-        Q_FOREACH( Kernel::Point_3 p, poly)
-          if(polyB.empty()
-             || p != polyB.back())
-            polyB.push_back(p);
+        polyB.push_back(poly);
       }
 
       std::vector<Poly_intersection> poly_intersections;
-      CGAL::internal::compute_polyline_polyline_intersection(polyA, polyB,std::back_inserter(poly_intersections) , Kernel());
+      CGAL::internal::compute_polylines_polylines_intersection(polyA, polyB,std::back_inserter(poly_intersections) , Kernel());
 
       Q_FOREACH(const Poly_intersection& inter, poly_intersections)
       {
-        Kernel::Segment_3 segA(polyA[inter.first], polyA[inter.first +1]);
-        Kernel::Segment_3 segB(polyB[inter.second], polyB[inter.second+1]);
+        Kernel::Segment_3 segA(polyA[inter.first.first][inter.first.second], polyA[inter.first.first][inter.first.second +1]);
+        Kernel::Segment_3 segB(polyB[inter.second.first][inter.second.second], polyB[inter.second.first][inter.second.second+1]);
 
         CGAL::cpp11::result_of<Kernel::Intersect_3(Kernel::Segment_3, Kernel::Segment_3)>::type
             result = CGAL::intersection(segA, segB);
@@ -276,7 +273,8 @@ void Polyhedron_demo_intersection_plugin::intersectionPolylines()
 
 void Polyhedron_demo_intersection_plugin::intersectionSurfacePolyline()
 {
-  typedef std::pair<std::size_t, std::size_t>  Poly_intersection;
+  typedef std::pair<std::size_t,
+      std::pair<std::size_t, std::size_t> >Poly_intersection;
 
   Scene_item* it1 = scene->item(scene->selectionIndices().first());
   Scene_item* it2 = scene->item(scene->selectionIndices().last());;
@@ -313,23 +311,22 @@ void Polyhedron_demo_intersection_plugin::intersectionSurfacePolyline()
   boost::property_map<Scene_face_graph_item::Face_graph ,CGAL::vertex_point_t>::type
   vpm = get(CGAL::vertex_point,tm);
 
-  Polyline polyline;
-  Q_FOREACH(Polyline pol, itemB->polylines)
+  std::vector<Polyline> polylines;
+  //Polyline polyline;
+  Q_FOREACH(const Polyline &pol, itemB->polylines)
   {
-    Q_FOREACH(Kernel::Point_3 p, pol)
-      if(polyline.empty()
-         || p != polyline.back())
-      polyline.push_back(p);
+    polylines.push_back(pol);
   }
   std::vector<Poly_intersection> poly_intersections;
-  CGAL::internal::compute_face_polyline_intersection(*itemA->face_graph(),
-                                               polyline,
-                                               std::back_inserter(poly_intersections),
-                                               CGAL::Polygon_mesh_processing::parameters::all_default);
+  CGAL::internal::compute_face_polylines_intersection(faces(*itemA->face_graph()),
+                                                      polylines,
+                                                      *itemA->face_graph(),
+                                                      std::back_inserter(poly_intersections),
+                                                      CGAL::Polygon_mesh_processing::parameters::all_default);
 
   Q_FOREACH(const Poly_intersection& inter, poly_intersections)
   {
-    Kernel::Segment_3 segment(polyline[inter.second], polyline[inter.second+1]);
+    Kernel::Segment_3 segment(polylines[inter.second.first][inter.second.second], polylines[inter.second.first][inter.second.second+1]);
 
     Kernel::Triangle_3 triangle(
           get(vpm, target(halfedge(Afaces[inter.first],tm), tm)),
