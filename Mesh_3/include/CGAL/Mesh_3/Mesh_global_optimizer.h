@@ -506,7 +506,6 @@ private:
         // Get size at new position
         if ( MGO::Sizing_field::is_vertex_update_needed )
         {
-          //FT size = sizing_field_(new_position,v);
           FT size = cpp11::get<2>(m_moves[i]);
 
           // Move point
@@ -588,9 +587,7 @@ Mesh_global_optimizer(C3T3& c3t3,
 , sizing_field_(c3t3.triangulation())
 , time_limit_(-1)
 , running_time_()
-
 , do_freeze_(do_freeze)
-
 #ifdef CGAL_MESH_3_OPTIMIZER_VERBOSE
 , sum_moves_(0)
 #endif // CGAL_MESH_3_OPTIMIZER_VERBOSE
@@ -612,7 +609,6 @@ Mesh_global_optimizer(C3T3& c3t3,
   std::cerr << "done (" << timer.time() << "s)\n";
 #endif
 }
-
 
 
 template <typename C3T3, typename Md, typename Mf, typename V_>
@@ -666,14 +662,13 @@ operator()(int nb_iterations, Visitor visitor)
     Moves_vector moves = compute_moves(moving_vertices);
     visitor.after_compute_moves();
 
-    //Pb with Freeze : sometimes a few vertices continue moving indefinitely
-    //if the nb of moving vertices is < 1% of total nb AND does not decrease
+    // Pb with Freeze : sometimes a few vertices continue moving indefinitely
+    // if the nb of moving vertices is < 1% of total nb AND does not decrease
     if(do_freeze_
       && double(nb_vertices_moved) < 0.005 * double(initial_vertices_nb)
       && nb_vertices_moved == moving_vertices.size())
     {
-      // we should stop because we are
-      // probably entering an infinite instable loop
+      // we should stop because we are probably entering an infinite instable loop
       convergence_stop = true;
       break;
     }
@@ -753,6 +748,7 @@ operator()(int nb_iterations, Visitor visitor)
 
   return MAX_ITERATION_NUMBER_REACHED;
 }
+
 
 template <typename C3T3, typename Md, typename Mf, typename V_>
 void
@@ -855,6 +851,7 @@ compute_moves(Moving_vertices_set& moving_vertices)
 
   return moves;
 }
+
 
 template <typename C3T3, typename Md, typename Mf, typename V_>
 typename Mesh_global_optimizer<C3T3,Md,Mf,V_>::Vector_3
@@ -963,7 +960,6 @@ update_mesh(const Moves_vector& moves,
       // Get size at new position
       if ( Sizing_field::is_vertex_update_needed )
       {
-        //FT size = sizing_field_(new_position,v);
         FT size = cpp11::get<2>(*it);
 
         // Move point
@@ -983,7 +979,6 @@ update_mesh(const Moves_vector& moves,
         break;
     }
   }
-
 
   visitor.after_move_points();
 
@@ -1015,7 +1010,6 @@ update_mesh(const Moves_vector& moves,
 #ifdef CGAL_MESH_3_PROFILING
   std::cerr << "Updating C3T3 done in " << t.elapsed() << " seconds." << std::endl;
 #endif
-
 }
 
 
@@ -1049,20 +1043,20 @@ fill_sizing_field()
   else
 #endif //CGAL_LINKED_WITH_TBB
   {
+    typename Gt::Construct_point_3 wp2p =
+        tr_.geom_traits().construct_point_3_object();
+
     // Fill map with local size
     for(typename Tr::Finite_vertices_iterator vit = tr_.finite_vertices_begin();
         vit != tr_.finite_vertices_end();
         ++vit)
     {
-      typename Gt::Construct_point_3 wp2p =
-          tr_.geom_traits().construct_point_3_object();
-
       value_map.insert(std::make_pair(wp2p(vit->point()),
                                       average_circumradius_length(vit)));
     }
   }
 
-  // fill sizing field
+  // Fill the sizing field
   sizing_field_.fill(value_map);
 }
 
@@ -1079,8 +1073,10 @@ check_convergence() const
     sum += CGAL::sqrt(*it);
   }
 
-  FT average_move = sum/FT(big_moves_size_);/*even if set is not full, divide*/
-       /*by max size so that if only 1 point moves, it goes to 0*/
+  // Even if set is not full, divide by the max size so that if only 1 point moves,
+  // then it goes to 0.
+  FT average_move = sum / FT(big_moves_size_);
+
 #ifdef CGAL_MESH_3_OPTIMIZER_VERBOSE
   sum_moves_ = average_move;
 #endif

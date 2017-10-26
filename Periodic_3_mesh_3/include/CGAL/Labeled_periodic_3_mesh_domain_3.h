@@ -324,7 +324,7 @@ public:
       const Index index = r_domain_.index_from_surface_patch_index(sp_index);
 
       // Else lets find a point (by bisection)
-      // Bisection ends when the point is near than error bound from surface
+      // Bisection ends when the point is closer to the surface than the error bound
       while(true)
       {
         // If the two points are sufficiently close, then we return the midpoint

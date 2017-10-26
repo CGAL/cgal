@@ -43,7 +43,7 @@ namespace CGAL {
 namespace Mesh_3 {
 
 template <typename C3T3,
-  typename SizingField = Uniform_sizing_field<typename C3T3::Triangulation> >
+          typename SizingField = Uniform_sizing_field<typename C3T3::Triangulation> >
 class Lloyd_move
 {
   typedef typename C3T3::Triangulation                        Tr;
@@ -228,7 +228,7 @@ private:
       {
         const Bare_point& a = points.front();
         const Bare_point& b = points.back();
-        return centroid_segment_move(v,a,b,c3t3,sizing_field);
+        return centroid_segment_move(v, a, b, c3t3, sizing_field);
         break;
       }
       case 3: // triangle centroid 
@@ -236,11 +236,11 @@ private:
         const Bare_point& a = points.at(0);
         const Bare_point& b = points.at(1);
         const Bare_point& c = points.at(2);
-        return centroid_triangle_move(v,a,b,c,c3t3,sizing_field);
+        return centroid_triangle_move(v, a, b, c, c3t3, sizing_field);
         break;
       }
       default: // >= 4 points, centroid + projection
-        return centroid_general_move(v,points.begin(),points.end(),c3t3,sizing_field);
+        return centroid_general_move(v, points.begin(), points.end(), c3t3, sizing_field);
         break;
     }
     
@@ -264,8 +264,8 @@ private:
     // Get c3t3's facets incident to v, and add their surface delaunay ball
     // center to output
     for ( typename Facet_vector::iterator fit = incident_facets.begin() ;
-         fit != incident_facets.end() ;
-         ++fit )
+                                          fit != incident_facets.end() ;
+                                          ++fit )
     {
       if ( ! c3t3.is_in_complex(*fit) )
         continue;
@@ -295,8 +295,8 @@ private:
     FT da = density_1d(a,v,sizing_field);
     FT db = density_1d(b,v,sizing_field);
 
-    CGAL_assertion( !is_zero(da+db) );
-    return ( (vector(p,a)*da + vector(p,b)*db) / (da+db) );
+    CGAL_assertion( !is_zero(da + db) );
+    return ( (vector(p,a)*da + vector(p,b)*db) / (da + db) );
   }
   
   /**
@@ -341,7 +341,7 @@ private:
     // Fit plane using point-based PCA: compute least square fitting plane
     Plane_3 plane;
     Bare_point point;
-    CGAL::linear_least_squares_fitting_3(first,last,plane, point, Dimension_tag<0>(),
+    CGAL::linear_least_squares_fitting_3(first, last, plane, point, Dimension_tag<0>(),
                                          c3t3.triangulation().geom_traits(),
                                          Default_diagonalize_traits<FT, 3>());
     

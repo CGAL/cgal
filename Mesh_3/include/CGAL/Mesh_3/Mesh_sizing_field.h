@@ -128,7 +128,7 @@ public:
    * in triangulation
    */
   FT operator()(const Bare_point& p, const Vertex_handle& v) const
-  { return this->operator()(p,v->cell()); }
+  { return this->operator()(p, v->cell()); }
 
   /**
    * Returns size at point \c p.
@@ -138,7 +138,7 @@ public:
   /**
    * Returns size at point \c p. Assumes that p is the centroid of c.
    */
-  FT operator()(const Bare_point& p, const std::pair<Cell_handle,bool>& c) const;
+  FT operator()(const Bare_point& p, const std::pair<Cell_handle, bool>& c) const;
 
 private:
   /**
@@ -158,7 +158,6 @@ private:
   /// The triangulation
   Tr& tr_;
 };
-
 
 
 template <typename Tr, bool B>
@@ -195,6 +194,7 @@ fill(const std::map<Bare_point, FT>& value_map)
   }
 }
 
+
 template <typename Tr, bool B>
 typename Mesh_sizing_field<Tr,B>::FT
 Mesh_sizing_field<Tr,B>::
@@ -215,9 +215,9 @@ operator()(const Bare_point& p, const Cell_handle& c) const
   this->set_last_cell(cell);
 
   if ( !tr_.is_infinite(cell) )
-    return interpolate_on_cell_vertices(p,cell);
+    return interpolate_on_cell_vertices(p, cell);
   else
-    return interpolate_on_facet_vertices(p,cell);
+    return interpolate_on_facet_vertices(p, cell);
 }
 
 

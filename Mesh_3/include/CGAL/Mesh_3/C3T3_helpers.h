@@ -629,70 +629,69 @@ class C3T3_helpers
                             typename C3T3::Concurrency_tag> Base;
   typedef typename C3T3::Concurrency_tag Concurrency_tag;
 
-  typedef typename Base::Lock_data_structure  Lock_data_structure;
-  typedef typename C3T3::Triangulation        Tr;
-  typedef Tr                                  Triangulation;
-  typedef typename Tr::Geom_traits            Gt;
-  typedef typename Tr::Bare_point             Bare_point;
-  typedef typename Tr::Weighted_point         Weighted_point;
+  typedef typename Base::Lock_data_structure          Lock_data_structure;
+  typedef typename C3T3::Triangulation                Tr;
+  typedef Tr                                          Triangulation;
+  typedef typename Tr::Geom_traits                    Gt;
 
-  typedef typename Gt::Vector_3               Vector_3;
-  typedef typename Gt::Plane_3                Plane_3;
-  typedef typename Gt::FT                     FT;
-  typedef typename Gt::Tetrahedron_3          Tetrahedron;
+  typedef typename Gt::FT                             FT;
+  typedef typename Tr::Bare_point                     Bare_point;
+  typedef typename Tr::Weighted_point                 Weighted_point;
+  typedef typename Gt::Vector_3                       Vector_3;
+  typedef typename Gt::Plane_3                        Plane_3;
+  typedef typename Gt::Tetrahedron_3                  Tetrahedron;
 
-  typedef typename Gt::Construct_point_3             Construct_point_3;
-  typedef typename Gt::Construct_weighted_point_3    Construct_weighted_point_3;
+  typedef typename Gt::Construct_point_3              Construct_point_3;
+  typedef typename Gt::Construct_weighted_point_3     Construct_weighted_point_3;
 
-  typedef typename Tr::Vertex_handle    Vertex_handle;
-  typedef typename Tr::Cell_handle      Cell_handle;
-  typedef typename Tr::Cell             Cell;
-  typedef typename Tr::Facet            Facet;
+  typedef typename Tr::Vertex_handle                  Vertex_handle;
+  typedef typename Tr::Facet                          Facet;
+  typedef typename Tr::Cell                           Cell;
+  typedef typename Tr::Cell_handle                    Cell_handle;
 
-  typedef typename C3T3::Surface_patch_index  Surface_patch_index;
-  typedef typename C3T3::Subdomain_index      Subdomain_index;
-  typedef typename C3T3::Index                Index;
+  typedef typename C3T3::Surface_patch_index          Surface_patch_index;
+  typedef typename C3T3::Subdomain_index              Subdomain_index;
+  typedef typename C3T3::Index                        Index;
 
-  typedef boost::optional<Surface_patch_index>  Surface_patch;
-  typedef boost::optional<Subdomain_index>      Subdomain;
+  typedef boost::optional<Surface_patch_index>        Surface_patch;
+  typedef boost::optional<Subdomain_index>            Subdomain;
 
-  typedef std::vector<Cell_handle>      Cell_vector;
-  typedef std::set<Cell_handle>         Cell_set;
-  typedef std::vector<Tetrahedron>      Tet_vector;
+  typedef std::vector<Cell_handle>                    Cell_vector;
+  typedef std::set<Cell_handle>                       Cell_set;
+  typedef std::vector<Tetrahedron>                    Tet_vector;
 
-  typedef std::vector<Facet>            Facet_vector;
-  typedef std::vector<Vertex_handle>    Vertex_vector;
-  typedef std::set<Vertex_handle>       Vertex_set;
+  typedef std::vector<Facet>                          Facet_vector;
+  typedef std::vector<Vertex_handle>                  Vertex_vector;
+  typedef std::set<Vertex_handle>                     Vertex_set;
 
 #ifdef CGAL_INTRUSIVE_LIST
-  typedef Intrusive_list<Cell_handle>   Outdated_cell_set;
+  typedef Intrusive_list<Cell_handle>                 Outdated_cell_set;
 #else
-  typedef Cell_set  Outdated_cell_set;
+  typedef Cell_set                                    Outdated_cell_set;
 #endif //CGAL_INTRUSIVE_LIST
 
 #ifdef CGAL_INTRUSIVE_LIST
-  typedef Intrusive_list<Vertex_handle>  Moving_vertices_set;
+  typedef Intrusive_list<Vertex_handle>               Moving_vertices_set;
 #else
-  typedef Vertex_set Moving_vertices_set;
+  typedef Vertex_set                                  Moving_vertices_set;
 #endif //CGAL_INTRUSIVE_LIST
 
 private:
-  // Facet_boundary stores the edges, of the boundary of surface facets,
-  // with meta-data.
-  typedef std::pair<Vertex_handle,Vertex_handle> Ordered_edge;
-  typedef std::pair<int, Index> Vertex_data;
-  // Vertex_data is the dimension and Index of the third vertex of the
-  // facet.
-  typedef std::pair<Surface_patch_index, Vertex_data>  Facet_topology_description;
-  typedef std::map<Ordered_edge,Facet_topology_description>  Facet_boundary;
+  typedef std::pair<Vertex_handle, Vertex_handle>     Ordered_edge;
+  // Vertex_data is the dimension and Index of the third vertex of the facet.
+  typedef std::pair<int, Index>                       Vertex_data;
+  typedef std::pair<Surface_patch_index, Vertex_data> Facet_topology_description;
+  // Facet_boundary stores the edges, of the boundary of surface facets, with meta-data.
+  typedef std::map<Ordered_edge,
+                   Facet_topology_description>        Facet_boundary;
 
-  typedef Triangulation_helpers<Tr> Th;
+  typedef Triangulation_helpers<Tr>                   Th;
 
 public:
   // -----------------------------------
   // Public interface
   // -----------------------------------
-  typedef boost::optional<Vertex_handle> Update_mesh;
+  typedef boost::optional<Vertex_handle>              Update_mesh;
 
   using Base::try_lock_point;
   using Base::try_lock_vertex;
@@ -1266,8 +1265,8 @@ private:
     C3T3& c3t3_;
   }; //end class Update_c3t3
 
-  class Facet_updater {
-
+  class Facet_updater
+  {
     std::set<Vertex_handle>& vertex_to_proj;
     C3T3& c3t3_;
     Update_c3t3& c3t3_updater_;
@@ -2466,7 +2465,6 @@ update_mesh_no_topo_change(const Weighted_point& new_position,
 
   // Get old values
   criterion.before_move(c3t3_cells(conflict_cells));
-  // std::cerr << "old_sliver_value=" << old_sliver_value << std::endl;
   Weighted_point old_position = old_vertex->point();
 
   // Move point
@@ -2536,7 +2534,7 @@ update_mesh_topo_change(const Weighted_point& new_position,
     return std::make_pair(false, Vertex_handle());
 
   if(insertion_conflict_boundary.empty())
-    return std::make_pair(false,old_vertex); //new_location is a vertex already
+    return std::make_pair(false, old_vertex); // new_location is already a vertex
 
   Cell_vector conflict_cells;
   conflict_cells.reserve(insertion_conflict_cells.size()+removal_conflict_cells.size());
@@ -2544,13 +2542,12 @@ update_mesh_topo_change(const Weighted_point& new_position,
                  removal_conflict_cells.begin(), removal_conflict_cells.end(),
                  std::back_inserter(conflict_cells));
 
-    //backup metadata
+  // Backup metadata
   std::set<Cell_data_backup> cells_backup;
   fill_cells_backup(conflict_cells, cells_backup);
   CGAL_assertion(conflict_cells.size() == cells_backup.size());
 
   criterion.before_move(c3t3_cells(conflict_cells));
-  // std::cerr << "old_sliver_value=" << old_sliver_value << std::endl;
   Weighted_point old_position = old_vertex->point();
 
   // Keep old boundary
@@ -2565,13 +2562,13 @@ update_mesh_topo_change(const Weighted_point& new_position,
   outdated_cells.reserve(64);
     Vertex_handle new_vertex =
         move_point_topo_change_conflict_zone_known(old_vertex, new_position,
-                                                    insertion_conflict_boundary[0],
-                                                    insertion_conflict_cells.begin(),
-                                                    insertion_conflict_cells.end(),
-                                                    removal_conflict_cells.begin(),
-                                                    removal_conflict_cells.end(),
-                                                    std::back_inserter(outdated_cells),
-                                                    CGAL::Emptyset_iterator());
+                                                   insertion_conflict_boundary[0],
+                                                   insertion_conflict_cells.begin(),
+                                                   insertion_conflict_cells.end(),
+                                                   removal_conflict_cells.begin(),
+                                                   removal_conflict_cells.end(),
+                                                   std::back_inserter(outdated_cells),
+                                                   CGAL::Emptyset_iterator());
 
   // If nothing changed, return
   if ( old_position == new_vertex->point() )
@@ -2635,6 +2632,7 @@ update_mesh(const Weighted_point& new_position,
   // std::cerr << "\nupdate_mesh[v2](" << new_position << ",\n"
   //           << "                " << (void*)(&*old_vertex) << "=" << old_vertex->point()
   //           << ")\n";
+
   Cell_vector outdated_cells;
   Vertex_handle new_vertex = move_point(old_vertex,
                                         new_position,
@@ -2642,7 +2640,7 @@ update_mesh(const Weighted_point& new_position,
                                         CGAL::Emptyset_iterator());
   // move_point has invalidated caches
 
-  restore_mesh(outdated_cells.begin(),outdated_cells.end());
+  restore_mesh(outdated_cells.begin(), outdated_cells.end());
 
   // Fill modified vertices
   if ( fill_vertices
@@ -2753,7 +2751,6 @@ rebuild_restricted_delaunay(OutdatedCells& outdated_cells,
     CGAL_HISTOGRAM_PROFILER("|vertex_to_proj|=", 
                             static_cast<unsigned int>(vertex_to_proj.size()));
 
-
   // Project interior vertices
   // Note: ~0% of rebuild_restricted_delaunay time
   // TODO : iterate to be sure no interior vertice become on the surface
@@ -2818,9 +2815,9 @@ rebuild_restricted_delaunay(ForwardIterator first_cell,
   }
 
   // Updates facets
-  typedef std::set<std::pair<Vertex_handle, Surface_patch_index> >
-    Vertex_to_proj_set;
+  typedef std::set<std::pair<Vertex_handle, Surface_patch_index> > Vertex_to_proj_set;
   Vertex_to_proj_set vertex_to_proj;
+
 #ifdef CGAL_LINKED_WITH_TBB
   // Parallel
   if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
@@ -2853,8 +2850,8 @@ rebuild_restricted_delaunay(ForwardIterator first_cell,
           const Vertex_handle& v = fit->first->vertex((k+i)&3);
           if ( c3t3_.in_dimension(v) > 2 )
           {
-            vertex_to_proj.insert
-              (std::make_pair(v, c3t3_.surface_patch_index(*fit)));
+            vertex_to_proj.insert(
+              std::make_pair(v, c3t3_.surface_patch_index(*fit)));
           }
         }
       }
@@ -2864,10 +2861,9 @@ rebuild_restricted_delaunay(ForwardIterator first_cell,
   // Project interior vertices
   // TODO : iterate to be sure no interior vertice become on the surface
   // because of move ?
-  for ( typename std::set<std::pair<Vertex_handle, Surface_patch_index> >
-          ::iterator it = vertex_to_proj.begin() ;
-        it != vertex_to_proj.end() ;
-        ++it )
+  typename Vertex_to_proj_set::iterator it = vertex_to_proj.begin(),
+                                        end = vertex_to_proj.end();
+  for ( ; it != end; ++it )
   {
     Bare_point new_pos = project_on_surface(wp2p_((it->first)->point()),it->first,it->second);
 
@@ -2923,10 +2919,7 @@ move_point(const Vertex_handle& old_vertex,
   }
   else
   {
-    return move_point_topo_change(old_vertex,
-                                  new_position,
-                                  outdated_cells,
-                                  deleted_cells);
+    return move_point_topo_change(old_vertex, new_position, outdated_cells, deleted_cells);
   }
 }
 
@@ -3029,7 +3022,6 @@ move_point(const Vertex_handle& old_vertex,
       unlock_all_elements();
       return Vertex_handle();
     }
-
 
     lock_moving_vertices();
     moving_vertices.erase(old_vertex);
@@ -3182,6 +3174,7 @@ move_point_topo_change_conflict_zone_known(
     std::copy(conflict_zone.begin(), conflict_zone.end(), outdated_cells);
     return old_vertex;
   }
+
   // remove old point
   tr_.remove(old_vertex);
 
@@ -3205,6 +3198,7 @@ move_point_topo_change_conflict_zone_known(
   return new_vertex;
 }
 
+
 template <typename C3T3, typename MD>
 typename C3T3_helpers<C3T3,MD>::Vertex_handle
 C3T3_helpers<C3T3,MD>::
@@ -3217,7 +3211,7 @@ move_point_topo_change(const Vertex_handle& old_vertex,
   FT meshing_info = old_vertex->meshing_info();
 
   // insert new point
-  Vertex_handle new_vertex = tr_.insert(new_position,old_vertex->cell());
+  Vertex_handle new_vertex = tr_.insert(new_position, old_vertex->cell());
   // If new_position is hidden, return default constructed handle
   if ( Vertex_handle() == new_vertex ) { return Vertex_handle(); }
   // remove old point
@@ -3288,19 +3282,19 @@ project_on_surface_aux(const Bare_point& p,
   typename MD::Construct_intersection construct_intersection =
     domain_.construct_intersection_object();
 
-  const FT sq_dist = sq_distance(p,ref_point);
+  const FT sq_dist = sq_distance(p, ref_point);
   const FT sq_proj_length = sq_length(projection_vector);
 
   if ( CGAL_NTS is_zero(sq_proj_length) )
     return ref_point;
 
   const Vector_3 projection_scaled_vector =
-    scale(projection_vector, CGAL::sqrt(sq_dist/sq_proj_length));
+    scale(projection_vector, CGAL::sqrt(sq_dist / sq_proj_length));
 
   const Bare_point source = translate(p, projection_scaled_vector);
   const Bare_point target = translate(p, - projection_scaled_vector);
 
-  const Segment_3 proj_segment(source,target);
+  const Segment_3 proj_segment(source, target);
 
   if ( is_degenerate(proj_segment) )
     return ref_point;
@@ -3347,14 +3341,13 @@ get_least_square_surface_plane(const Vertex_handle& v,
   else
 # endif // CGAL_LINKED_WITH_TBB
   {
-    tr_.finite_incident_facets(v,std::back_inserter(facets));
+    tr_.finite_incident_facets(v, std::back_inserter(facets));
   }
 
   // Get adjacent surface points
   std::vector<Bare_point> surface_point_vector;
-  for ( typename Facet_vector::iterator fit = facets.begin() ;
-       fit != facets.end() ;
-       ++fit )
+  typename Facet_vector::iterator fit = facets.begin(), fend = facets.end();
+  for ( ; fit != fend; ++fit )
   {
     if ( c3t3_.is_in_complex(*fit) &&
          (patch_index == Surface_patch_index() ||
@@ -3396,24 +3389,22 @@ project_on_surface(const Bare_point& p,
                    const Vertex_handle& v,
                    Surface_patch_index index) const
 {
-  typename Gt::Equal_3 equal = tr_.geom_traits().equal_3_object();
   // return domain_.project_on_surface(p);
+
+  typename Gt::Equal_3 equal = tr_.geom_traits().equal_3_object();
+
   // Get plane
   Bare_point reference_point(CGAL::ORIGIN);
-  Plane_3 plane = get_least_square_surface_plane(v,reference_point, index);
+  Plane_3 plane = get_least_square_surface_plane(v, reference_point, index);
 
   if ( equal(reference_point, CGAL::ORIGIN) )
     return p;
 
   // Project
   if ( ! equal(p, wp2p_(v->point())) )
-    return project_on_surface_aux(p,
-                                  wp2p_(v->point()),
-                                  plane.orthogonal_vector());
+    return project_on_surface_aux(p, wp2p_(v->point()), plane.orthogonal_vector());
   else
-    return project_on_surface_aux(p,
-                                  reference_point,
-                                  plane.orthogonal_vector());
+    return project_on_surface_aux(p, reference_point, plane.orthogonal_vector());
 }
 
 
@@ -3761,7 +3752,7 @@ C3T3_helpers<C3T3,MD>::
 get_conflict_zone_no_topo_change(const Vertex_handle& vertex,
                                  OutputIterator conflict_cells) const
 {
-  return tr_.incident_cells(vertex,conflict_cells);
+  return tr_.incident_cells(vertex, conflict_cells);
 }
 
 template <typename C3T3, typename MD>
@@ -3823,11 +3814,7 @@ get_conflict_zone_topo_change(const Vertex_handle& vertex,
   int li=0;
   int lj=0;
   typename Tr::Locate_type locate_type;
-  Cell_handle cell = tr_.locate(conflict_point,
-                                locate_type,
-                                li,
-                                lj,
-                                vertex->cell());
+  Cell_handle cell = tr_.locate(conflict_point, locate_type, li, lj, vertex->cell());
 
   if ( Tr::VERTEX == locate_type )
     return conflict_cells;

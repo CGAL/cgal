@@ -128,11 +128,11 @@ namespace Mesh_3 {
       
       typename Gt::Compute_squared_distance_3 sq_distance =
         tr.geom_traits().compute_squared_distance_3_object();
-      typename Gt::Construct_point_3 cp =
+      typename Gt::Construct_point_3 wp2p =
         tr.geom_traits().construct_point_3_object();
 
-      const Bare_point& p = cp(tr.point(e.first, e.second));
-      const Bare_point& q = cp(tr.point(e.first, e.third));
+      const Bare_point& p = wp2p(tr.point(e.first, e.second));
+      const Bare_point& q = wp2p(tr.point(e.first, e.third));
       
       return sq_distance(p,q);
     }
@@ -512,7 +512,7 @@ protected:
     // Topology could not change moving this vertex
     if ( i > max_step_nb_ 
       || Th().inside_protecting_balls(c3t3.triangulation(), v, final_loc))
-      return std::make_pair(false,v);
+      return std::make_pair(false, v);
 
     // we know that there will be a combinatorial change
     return helper.update_mesh_topo_change(p2wp(final_loc),
@@ -521,15 +521,12 @@ protected:
                                           std::back_inserter(modified_vertices),
                                           could_lock_zone);
   }
-  
-  
+
 private:
   unsigned int max_step_nb_;
   double sq_step_size_;
 };
-  
 
-  
 /**
  * @class Sq_radius_perturbation
  *
@@ -1312,10 +1309,10 @@ private:
     unsigned int try_nb = 0;
     while ( ++try_nb <= Base::max_try_nb() )
     {
-      Vector_3 delta = this->random_vector(c3t3, sq_norm,on_sphere_);
+      Vector_3 delta = this->random_vector(c3t3, sq_norm, on_sphere_);
       
       // always from initial_location!
-      Bare_point new_location = translate(initial_location,delta);
+      Bare_point new_location = translate(initial_location, delta);
       
       if ( c3t3.in_dimension(moving_vertex) < 3 )
         new_location = helper.project_on_surface(new_location, moving_vertex);
