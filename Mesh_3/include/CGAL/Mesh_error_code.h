@@ -26,15 +26,16 @@
 namespace CGAL {
 
 enum Mesh_error_code {
-  NO_ERROR = 0,
-  MAXIMAL_NUMBER_OF_VERTICES_REACHED
+  CGAL_MESH_3_NO_ERROR = 0,
+  CGAL_MESH_3_MAXIMAL_NUMBER_OF_VERTICES_REACHED
 };
 
+inline
 std::string mesh_error_string(const Mesh_error_code& error_code) {
   switch(error_code) {
-  case NO_ERROR:
+  case CGAL_MESH_3_NO_ERROR:
     return "no error";
-  case MAXIMAL_NUMBER_OF_VERTICES_REACHED:
+  case CGAL_MESH_3_MAXIMAL_NUMBER_OF_VERTICES_REACHED:
     return "the maximal number of vertices has been reached";
   default:
     std::stringstream str("");

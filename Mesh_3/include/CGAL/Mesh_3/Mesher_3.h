@@ -510,7 +510,7 @@ refine_mesh(std::string dump_after_refine_surface_prefix)
      r_tr.number_of_vertices() >= maximal_number_of_vertices_ &&
      error_code_ != 0)
   {
-    *error_code_ = MAXIMAL_NUMBER_OF_VERTICES_REACHED;
+    *error_code_ = CGAL_MESH_3_MAXIMAL_NUMBER_OF_VERTICES_REACHED;
   }
 
   timer.stop();
