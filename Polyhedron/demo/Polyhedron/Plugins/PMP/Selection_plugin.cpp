@@ -171,6 +171,11 @@ public Q_SLOTS:
     ui_widget.instructionsLabel->setText(s);
   }
 
+  void printMessage(QString s)
+  {
+    print_message(s);
+  }
+
   void selection_action() {
     dock_widget->show();
     dock_widget->raise();
@@ -803,6 +808,7 @@ public Q_SLOTS:
     selection_item_map.insert(std::make_pair(poly_item, selection_item));
     connect(this, SIGNAL(save_handleType()),selection_item, SLOT(save_handleType()));
     connect(selection_item, SIGNAL(updateInstructions(QString)), this, SLOT(setInstructions(QString)));
+    connect(selection_item, SIGNAL(printMessage(QString)), this, SLOT(printMessage(QString)));
     connect(this, SIGNAL(set_operation_mode(int)),selection_item, SLOT(set_operation_mode(int)));
     QObject* scene_ptr = dynamic_cast<QObject*>(scene);
     if (scene_ptr)

@@ -1629,13 +1629,20 @@ void Scene_polyhedron_selection_item_priv::computeAndDisplayPath()
   path.append(vop);
 
   // Display path
+  double path_length = 0;
   QList<vertex_on_path>::iterator path_it;
   for(path_it = path.begin(); path_it!=path.end()-1; ++path_it)
   {
     std::pair<fg_halfedge_descriptor, bool> h = halfedge((path_it+1)->vertex,path_it->vertex,*item->polyhedron());
     if(h.second)
+    {
+      VPmap vpm = get(CGAL::vertex_point,*polyhedron());
+      Point p1(get(vpm, (path_it+1)->vertex)), p2(get(vpm, path_it->vertex));
+          path_length += CGAL::sqrt(Vector(p1,p2).squared_length());
       item->temp_selected_edges.insert(edge(h.first, *item->polyhedron()));
+    }
   }
+  item->printMessage(QString("New path length: %1").arg(path_length));
 }
 
 void Scene_polyhedron_selection_item_priv::addVertexToPath(fg_vertex_descriptor vh, vertex_on_path &first)
@@ -2115,7 +2122,7 @@ void Scene_polyhedron_selection_item::clearHL()
 }
 void Scene_polyhedron_selection_item::selected_HL(const std::set<fg_vertex_descriptor>& m)
 {
-  HL_selected_edges.clear();
+//  HL_selected_edges.clear();
   HL_selected_facets.clear();
   HL_selected_vertices.clear();
   HL_selected_vertices.insert(*m.begin());

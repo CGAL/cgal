@@ -812,6 +812,7 @@ Q_SIGNALS:
   void updateInstructions(QString);
   void simplicesSelected(CGAL::Three::Scene_item*);
   void isCurrentlySelected(Scene_facegraph_item_k_ring_selection*);
+  void printMessage(QString);
 
 public Q_SLOTS:
 
