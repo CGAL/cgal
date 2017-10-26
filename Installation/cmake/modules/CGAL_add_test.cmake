@@ -128,10 +128,12 @@ function(cgal_add_test exe_name)
         ${PROJECT_NAME}_CleanupFixture ${PROJECT_NAME}_SetupFixture
         APPEND PROPERTY LABELS "${PROJECT_NAME}")
     endif()
+    set_property(TEST "compilation_of__${exe_name}"
+      PROPERTY FIXTURES_SETUP "${exe_name}")
     set_tests_properties("execution___of__${exe_name}"
       PROPERTIES
       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/__exec_test_dir
-      FIXTURES_REQUIRED ${PROJECT_NAME})
+      FIXTURES_REQUIRED "${PROJECT_NAME};${exe_name}")
   endif() # end CMake 3.7 or later
   return()
 
