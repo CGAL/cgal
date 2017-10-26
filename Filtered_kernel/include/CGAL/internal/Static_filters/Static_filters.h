@@ -45,7 +45,8 @@
 #  define CGAL_NO_COMPARE_X_2_STATIC_FILTERS 1
 #  define CGAL_NO_IS_DEGENERATE_3_STATIC_FILTERS 1
 #  define CGAL_NO_ANGLE_3_STATIC_FILTERS 1
-#  define CGAL_NO_DO_INTERSECT_3_STATIC_FILTERS 1
+#  define CGAL_NO_DO_INTERSECT_STATIC_FILTERS 1
+
 #endif // CGAL_DISABLE_STATIC_FILTERS_ADDED_2011
 
 
@@ -67,9 +68,10 @@
 #  include <CGAL/internal/Static_filters/Angle_3.h>
 #endif // NOT CGAL_NO_ANGLE_3_STATIC_FILTERS
 
-#ifndef CGAL_NO_DO_INTERSECT_3_STATIC_FILTERS
+#ifndef CGAL_NO_DO_INTERSECT_STATIC_FILTERS
 #  include <CGAL/internal/Static_filters/Do_intersect_3.h>
-#endif // NOT NOT CGAL_NO_DO_INTERSECT_3_STATIC_FILTERS
+#  include <CGAL/internal/Static_filters/Do_intersect_2.h>
+#endif // NOT NOT CGAL_NO_DO_INTERSECT_STATIC_FILTERS
 
 #include <CGAL/internal/Static_filters/Compare_y_at_x_2.h>
 #include <CGAL/internal/Static_filters/Side_of_oriented_circle_2.h>
@@ -139,9 +141,6 @@ public:
 
   typedef Static_filters_predicates::Angle_3<K_base>                        Angle_3;
 #endif // NOT CGAL_NO_ANGLE_3_STATIC_FILTERS
-#ifndef CGAL_NO_DO_INTERSECT_3_STATIC_FILTERS
-  typedef Static_filters_predicates::Do_intersect_3<K_base,Self>            Do_intersect_3;
-#endif // NOT CGAL_NO_DO_INTERSECT_3_STATIC_FILTERS
   typedef Static_filters_predicates::Side_of_oriented_circle_2<K_base>      Side_of_oriented_circle_2;
   typedef Static_filters_predicates::Side_of_oriented_sphere_3<K_base>      Side_of_oriented_sphere_3;
   typedef Static_filters_predicates::Compare_squared_radius_3<K_base>       Compare_squared_radius_3;
@@ -179,6 +178,7 @@ public:
 Compare_y_2
   compare_y_2_object() const
   { return Compare_y_2(); }
+
 #endif // NOT CGAL_NO_COMPARE_Y_2_STATIC_FILTERS
 
 #ifndef CGAL_NO_IS_DEGENERATE_3_STATIC_FILTERS
@@ -192,12 +192,6 @@ Compare_y_2
   angle_3_object() const
   { return Angle_3(); }
 #endif // NOT CGAL_NO_ANGLE_3_STATIC_FILTERS
-
-#ifndef CGAL_NO_DO_INTERSECT_3_STATIC_FILTERS
-  Do_intersect_3
-  do_intersect_3_object() const
-  { return Do_intersect_3(); }
-#endif // NOT CGAL_NO_DO_INTERSECT_3_STATIC_FILTERS
 
   Side_of_oriented_circle_2
   side_of_oriented_circle_2_object() const
@@ -260,6 +254,11 @@ public:
   typedef CartesianKernelFunctors::Compare_z_3<Self>   Compare_z_3;
   typedef CartesianKernelFunctors::Compare_xy_3<Self>  Compare_xy_3;
   typedef CartesianKernelFunctors::Compare_xyz_3<Self> Compare_xyz_3;
+
+#ifndef CGAL_NO_DO_INTERSECT_STATIC_FILTERS
+  typedef Static_filters_predicates::Do_intersect_2<K_base,Self>            Do_intersect_2;
+  typedef Static_filters_predicates::Do_intersect_3<K_base,Self>            Do_intersect_3;
+#endif // NOT CGAL_NO_DO_INTERSECT_STATIC_FILTERS
 
   Compare_xy_2
   compare_xy_2_object() const
@@ -328,6 +327,17 @@ public:
   Compare_y_at_x_2
   compare_y_at_x_2_object() const
   { return Compare_y_at_x_2(); }
+
+#ifndef CGAL_NO_DO_INTERSECT_STATIC_FILTERS
+  Do_intersect_3
+  do_intersect_3_object() const
+  { return Do_intersect_3(); }
+  
+  Do_intersect_2
+  do_intersect_2_object() const
+  { return Do_intersect_2(); }
+  
+#endif // NOT CGAL_NO_DO_INTERSECT_STATIC_FILTERS
 
   // The two following are for degenerate cases, so I'll update them later.
   //
