@@ -298,10 +298,10 @@ private Q_SLOTS:
           ++fit)
       {
         bool is_face_triangle = is_triangle(halfedge(*fit, smesh), smesh);
-        bool normal_is_ok;
+        bool normal_is_ok = true;
         EPICK::Vector_3 normal(0,0,0);
 
-        EPICK::Orientation orientation;
+        EPICK::Orientation orientation = CGAL::POSITIVE;
         if(!is_face_triangle)
         {
           face_descriptor f = *fit;
