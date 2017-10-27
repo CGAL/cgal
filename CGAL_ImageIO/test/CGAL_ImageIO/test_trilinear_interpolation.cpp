@@ -192,6 +192,7 @@ int main() {
 
 
   const char* filenames[] = {
+    "data/skull_2.9.inr",
     "../../examples/Surface_mesher/data/skull_2.9.inr",
     "../../../Surface_mesher/examples/Surface_mesher/data/skull_2.9.inr",
     "../Surface_mesher_Examples/data/skull_2.9.inr" 

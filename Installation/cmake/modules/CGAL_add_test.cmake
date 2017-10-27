@@ -3,6 +3,19 @@ if(CGAL_add_test_included)
 endif(CGAL_add_test_included)
 set(CGAL_add_test_included TRUE)
 
+if(POLICY CMP0064)
+  cmake_policy(SET CMP0064 NEW)
+endif()
+
+option(CGAL_CTEST_DISPLAY_MEM_AND_TIME
+  "Display memory and real time usage at end of CTest test outputs"
+  FALSE)
+if(CGAL_CTEST_DISPLAY_MEM_AND_TIME)
+  find_program(TIME time)
+  if(TIME)
+    set(TIME_COMMAND ${TIME} -f "\\nMEM: %M\\tTIME: %e\\t%C")
+  endif()
+endif()
 
 # Process a list, and replace items contains a file pattern (like
 # `*.off`) by the sublist that corresponds to the globbing of the
@@ -46,17 +59,19 @@ function(expand_list_with_globbing list_name)
 endfunction()
 
 function(cgal_add_test exe_name)
+  if(NOT TEST compilation_of__${exe_name})
+    add_test(NAME "compilation_of__${exe_name}"
+      COMMAND ${TIME_COMMAND} "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target "${exe_name}")
+  endif()
   set(cin_file "${CGAL_CURRENT_SOURCE_DIR}/${exe_name}.cin")
   if(EXISTS ${cin_file})
-    add_test(NAME ${exe_name}
-      COMMAND ${CMAKE_COMMAND}
+    add_test(NAME execution___of__${exe_name}
+      COMMAND ${TIME_COMMAND} ${CMAKE_COMMAND}
       -DCMD:STRING=$<TARGET_FILE:${exe_name}>
       -DCIN:STRING=${cin_file}
       -P "${CGAL_MODULES_DIR}/run_test_with_cin.cmake")
     #	message(STATUS "add test: ${exe_name} < ${cin_file}")
   else()
-    # TODO: deal with shell globbing; if the `cmd` file contains
-    # a `*`, then interprete the command using bash.
     if(ARGC GREATER 2 AND ARGV2)
       set(cmd_file "${CGAL_CURRENT_SOURCE_DIR}/${ARGV2}.cmd")
     elseif(ARGC GREATER 1 AND ARGV1 AND NOT EXISTS ${cmd_file})
@@ -70,6 +85,7 @@ function(cgal_add_test exe_name)
       #	  message(STATUS "DEBUG test ${exe_name}")
       foreach(CMD_LINE ${CMD_LINES})
 	#	    message(STATUS "  command line: ${CMD_LINE}")
+        string(REGEX REPLACE "\#.*" "" CMD_LINE "${CMD_LINE}")
 	separate_arguments(CMD_LINE_ARGS UNIX_COMMAND ${CMD_LINE})
 	#	    message(STATUS "  args: ${CMD_LINE_ARGS}")
 	list(APPEND ARGS ${CMD_LINE_ARGS})
@@ -77,20 +93,48 @@ function(cgal_add_test exe_name)
       expand_list_with_globbing(ARGS)
     endif()
     #	message(STATUS "add test: ${exe_name} ${ARGS}")
-    add_test(NAME ${exe_name} COMMAND ${exe_name} ${ARGS})
+    add_test(NAME execution___of__${exe_name} COMMAND ${TIME_COMMAND} $<TARGET_FILE:${exe_name}> ${ARGS})
   endif()
-  set_property(TEST "${exe_name}"
+  set_property(TEST "execution___of__${exe_name}"
     APPEND PROPERTY LABELS "${PROJECT_NAME}")
   #      message(STATUS "  working dir: ${CGAL_CURRENT_SOURCE_DIR}")
-  set_property(TEST "${exe_name}"
+  set_property(TEST "execution___of__${exe_name}"
     PROPERTY WORKING_DIRECTORY ${CGAL_CURRENT_SOURCE_DIR})
-  add_test(NAME "build_target_${exe_name}"
-    COMMAND "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target "${exe_name}")
-  set_property(TEST "build_target_${exe_name}"
+  set_property(TEST "compilation_of__${exe_name}"
     APPEND PROPERTY LABELS "${PROJECT_NAME}")
-  set_property(TEST "${exe_name}"
-    APPEND PROPERTY DEPENDS "build_target_${exe_name}")
+  set_property(TEST "execution___of__${exe_name}"
+    APPEND PROPERTY DEPENDS "compilation_of__${exe_name}")
 
+  if(POLICY CMP0066) # CMake 3.7 or later
+    if(NOT TEST ${PROJECT_NAME}_SetupFixture)
+      add_test(NAME ${PROJECT_NAME}_SetupFixture
+        COMMAND
+        ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_CURRENT_SOURCE_DIR}
+        ${CMAKE_CURRENT_BINARY_DIR}/__exec_test_dir
+        )
+      set_property(TEST ${PROJECT_NAME}_SetupFixture
+        PROPERTY FIXTURES_SETUP ${PROJECT_NAME})
+
+      add_test(NAME ${PROJECT_NAME}_CleanupFixture
+        COMMAND
+        ${CMAKE_COMMAND} -E remove_directory
+        ${CMAKE_CURRENT_BINARY_DIR}/__exec_test_dir
+        )
+      set_property(TEST ${PROJECT_NAME}_CleanupFixture
+        PROPERTY FIXTURES_CLEANUP ${PROJECT_NAME})
+
+      set_property(TEST
+        ${PROJECT_NAME}_CleanupFixture ${PROJECT_NAME}_SetupFixture
+        APPEND PROPERTY LABELS "${PROJECT_NAME}")
+    endif()
+    set_property(TEST "compilation_of__${exe_name}"
+      PROPERTY FIXTURES_SETUP "${exe_name}")
+    set_tests_properties("execution___of__${exe_name}"
+      PROPERTIES
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/__exec_test_dir
+      FIXTURES_REQUIRED "${PROJECT_NAME};${exe_name}")
+  endif() # end CMake 3.7 or later
   return()
 
   if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${exe_name}.cin")
@@ -108,9 +152,9 @@ function(cgal_add_test exe_name)
     # see https://github.com/CGAL/cgal/pull/1295/files/c65d3abe17bb3e677b8077996cdaf8672f9c4c6f#r71705451
   endif()
   string(REPLACE ";" " " args_str "${ARGS}")
-  add_test(NAME ${exe_name}
-    COMMAND ${exe_name} ${ARGS}
+  add_test(NAME execution___of__${exe_name}
+    COMMAND ${TIME_COMMAND} $<TARGET_FILE:${exe_name}> ${ARGS}
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-  set_property(TEST "${exe_name}"
+  set_property(TEST "execution___of__${exe_name}"
     APPEND PROPERTY LABELS "${PROJECT_NAME}")
 endfunction()
