@@ -622,12 +622,12 @@ namespace CGAL {
       }
         
       const Bbox_3 &buildBoundingCube() {
-        FT min[] = {(std::numeric_limits<FT>::max)(),
-                    (std::numeric_limits<FT>::max)(),
-                    (std::numeric_limits<FT>::max)()};
-        FT max[] = {(std::numeric_limits<FT>::min)(),
-                    (std::numeric_limits<FT>::min)(),
-                    (std::numeric_limits<FT>::min)()};
+        FT min[] = {std::numeric_limits<FT>::infinity(),
+                    std::numeric_limits<FT>::infinity(),
+                    std::numeric_limits<FT>::infinity()};
+        FT max[] = {-std::numeric_limits<FT>::infinity(),
+                    -std::numeric_limits<FT>::infinity(),
+                    -std::numeric_limits<FT>::infinity()};
 
         for (std::size_t i = 0;i<this->size();i++) {
           Point_3 p = get(m_point_pmap, *this->at(i));
