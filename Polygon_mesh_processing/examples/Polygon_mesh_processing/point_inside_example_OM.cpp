@@ -26,7 +26,7 @@ double max_coordinate(const Mesh& mesh)
   typedef boost::property_map<Mesh,CGAL::vertex_point_t>::type VPmap;
   VPmap vpmap = get(CGAL::vertex_point,mesh);
 
-  double max_coord = std::numeric_limits<double>::min();
+  double max_coord = -std::numeric_limits<double>::infinity();
   BOOST_FOREACH(vertex_descriptor v, vertices(mesh))
   {
     Point p = get(vpmap, v);

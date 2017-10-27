@@ -129,12 +129,12 @@ Two_vertices_parameterizer_3<Adaptor>::parameterize_border(Adaptor& mesh)
         return Parameterizer_traits_3<Adaptor>::ERROR_BORDER_TOO_SHORT;
 
     // Get mesh's bounding box
-    double xmin = (std::numeric_limits<double>::max)() ;
-    double ymin = (std::numeric_limits<double>::max)() ;
-    double zmin = (std::numeric_limits<double>::max)() ;
-    double xmax = (std::numeric_limits<double>::min)() ;
-    double ymax = (std::numeric_limits<double>::min)() ;
-    double zmax = (std::numeric_limits<double>::min)() ;
+    double xmin = std::numeric_limits<double>::infinity();
+    double ymin = std::numeric_limits<double>::infinity();
+    double zmin = std::numeric_limits<double>::infinity();
+    double xmax = -std::numeric_limits<double>::infinity();
+    double ymax = -std::numeric_limits<double>::infinity();
+    double zmax = -std::numeric_limits<double>::infinity();
     for (it = mesh.mesh_vertices_begin(); it != mesh.mesh_vertices_end(); it++)
     {
         Point_3 position = mesh.get_vertex_position(it);
@@ -226,10 +226,11 @@ Two_vertices_parameterizer_3<Adaptor>::parameterize_border(Adaptor& mesh)
     // Project onto longest bounding box axes,
     // Set extrema vertices' (u,v) in unit square and mark them as "parameterized"
     Vertex_handle vxmin = NULL ;
-    double  umin  =  (std::numeric_limits<double>::max)() ;
-    double vmin =  (std::numeric_limits<double>::max)(), vmax=  (std::numeric_limits<double>::min)();
     Vertex_handle vxmax = NULL ;
-    double  umax  =  (std::numeric_limits<double>::min)() ;
+    double umin = std::numeric_limits<double>::infinity();
+    double umax = -std::numeric_limits<double>::infinity();
+    double vmin = std::numeric_limits<double>::infinity();
+    double vmax = -std::numeric_limits<double>::infinity();
     for (it = mesh.mesh_vertices_begin(); it != mesh.mesh_vertices_end(); it++)
     {
         Point_3  position = mesh.get_vertex_position(it);
