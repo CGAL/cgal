@@ -52,6 +52,10 @@
 /// \defgroup PMP_detect_features_grp Feature Detection Functions
 /// Functions to detect sharp edges and surface patches of polygon meshes.
 /// \ingroup PkgPolygonMeshProcessing
+
+/// \defgroup PMP_predicates_grp Intersection Detection Functions
+/// Functions to detect intersections.
+/// \ingroup PkgPolygonMeshProcessing
 /*!
 \addtogroup PkgPolygonMeshProcessing
  
@@ -138,6 +142,9 @@ and provides a list of the parameters that are used in this package.
 - `CGAL::Polygon_mesh_processing::corefine()`
 - `CGAL::Polygon_mesh_processing::surface_intersection()`
 - `CGAL::Polygon_mesh_processing::does_bound_a_volume()`
+
+## Intersection Detection Functions ##
+- \link PMP_predicates_grp `CGAL::Polygon_mesh_processing::do_intersect()` \endlink
 
 ## Geometric Measure Functions ##
 - \link measure_grp `CGAL::Polygon_mesh_processing::face_area()` \endlink

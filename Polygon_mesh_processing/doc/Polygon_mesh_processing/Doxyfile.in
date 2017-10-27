@@ -11,6 +11,7 @@ ALIASES += "cgalNamedParamsBegin=<dl class=\"params\"><dt>Named Parameters</dt><
 ALIASES += "cgalNamedParamsEnd=</table> </dd> </dl>"
 ALIASES += "cgalParamBegin{1}=<tr><td class=\"paramname\">\ref PMP_\1 \"\1\"</td><td>"
 ALIASES += "cgalParamEnd=</td></tr>"
+ALIASES += "cgalDescribePolylineType=A polyline is considered as a set of segments sharing a vertex."
 
 #macros for NamedParameters.txt
 ALIASES += "cgalNPTableBegin=<dl class=\"params\"><dt></dt><dd> <table class=\"params\">"
