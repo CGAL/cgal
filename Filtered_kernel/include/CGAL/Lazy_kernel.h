@@ -23,6 +23,7 @@
 
 #include <CGAL/basic.h>
 //#include <CGAL/Filtered_predicate.h>
+#include <CGAL/Static_filtered_predicate.h>
 #include <CGAL/Filtered_kernel.h>
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/Simple_cartesian.h>
@@ -110,6 +111,8 @@ public:
   typedef E2A_  E2A;
   typedef Kernel_ Kernel;
 
+  typedef Lazy_kernel_generic_base<EK_, AK_, E2A_, Kernel_> Self;
+  
   // synonym identical to Filtered_kernel
   typedef AK_   FK;
 
@@ -272,7 +275,7 @@ public:
   // FIXME TODO : better use a layer of Filtered_kernel on top of everything,
   //              so that semi-static filters are used as well (?).
 #define CGAL_Kernel_pred(P, Pf)  \
-    typedef Filtered_predicate<typename Exact_kernel::P, typename Approximate_kernel::P, C2E, C2F> P; \
+  typedef Static_filtered_predicate<Approximate_kernel, Filtered_predicate<typename Exact_kernel::P, typename Approximate_kernel::P, C2E, C2F>, Exact_predicates_inexact_constructions_kernel::P> P; \
     P Pf() const { return P(); }
 
 #define CGAL_Kernel_cons(C, Cf) \
@@ -312,7 +315,7 @@ public:
   // typedef void Compute_z_3; // to detect where .z() is called
   // typedef void Construct_point_3; // to detect where the ctor is called
 
-
+#if 0
   class Do_intersect_2 {
   public:
     bool operator()(const Segment_2& s, const Segment_2& t) const
@@ -338,9 +341,15 @@ public:
     }
   };
 
+
+  typedef Static_filtered_predicate<Approximate_kernel,
+                                    typename Lazy_kernel_generic_base<EK_, AK_, E2A_, Kernel_>::Do_intersect_2,
+                                    typename Exact_predicates_inexact_constructions_kernel::Do_intersect_2> Do_intersect_2;
+
   Do_intersect_2 do_intersect_2_object() const
   { return Do_intersect_2(); }
-
+#endif
+  
   Assign_2
   assign_2_object() const
   { return Assign_2(); }
