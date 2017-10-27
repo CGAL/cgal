@@ -901,6 +901,11 @@ namespace CGAL {
       side_of_power_segment(Cell_handle c, const Weighted_point &p,
       bool perturb = false) const;
 
+    // Undocumented, needed for Mesh_3 (because of Periodic_3_mesh_3)
+    bool greater_or_equal_power_distance(const Bare_point& p,
+                                         const Weighted_point& q,
+                                         const Weighted_point& r) const;
+
     Vertex_handle
       nearest_power_vertex_in_cell(const Bare_point& p,
       Cell_handle c)  const;
@@ -2101,6 +2106,16 @@ namespace CGAL {
     return side_of_bounded_power_segment(finite_neighbor->vertex(0)->point(),
       finite_neighbor->vertex(1)->point(),
       p, perturb);
+  }
+
+  template < class Gt, class Tds, class Lds >
+  bool
+  Regular_triangulation_3<Gt,Tds,Lds>::
+  greater_or_equal_power_distance(const Bare_point& p,
+                                  const Weighted_point& q,
+                                  const Weighted_point& r) const
+  {
+    return ! less_power_distance(p, q, r);
   }
 
   template < class Gt, class Tds, class Lds >

@@ -128,7 +128,7 @@ public:
    * in triangulation
    */
   FT operator()(const Bare_point& p, const Vertex_handle& v) const
-  { return this->operator()(p,v->cell()); }
+  { return this->operator()(p, v->cell()); }
 
   /**
    * Returns size at point \c p.
@@ -138,7 +138,7 @@ public:
   /**
    * Returns size at point \c p. Assumes that p is the centroid of c.
    */
-  FT operator()(const Bare_point& p, const std::pair<Cell_handle,bool>& c) const;
+  FT operator()(const Bare_point& p, const std::pair<Cell_handle, bool>& c) const;
 
 private:
   /**
@@ -158,7 +158,6 @@ private:
   /// The triangulation
   Tr& tr_;
 };
-
 
 
 template <typename Tr, bool B>
@@ -195,6 +194,7 @@ fill(const std::map<Bare_point, FT>& value_map)
   }
 }
 
+
 template <typename Tr, bool B>
 typename Mesh_sizing_field<Tr,B>::FT
 Mesh_sizing_field<Tr,B>::
@@ -215,9 +215,9 @@ operator()(const Bare_point& p, const Cell_handle& c) const
   this->set_last_cell(cell);
 
   if ( !tr_.is_infinite(cell) )
-    return interpolate_on_cell_vertices(p,cell);
+    return interpolate_on_cell_vertices(p, cell);
   else
-    return interpolate_on_facet_vertices(p,cell);
+    return interpolate_on_facet_vertices(p, cell);
 }
 
 
@@ -253,10 +253,10 @@ interpolate_on_cell_vertices(const Bare_point& p, const Cell_handle& cell) const
   const FT& vc = cell->vertex(2)->meshing_info();
   const FT& vd = cell->vertex(3)->meshing_info();
 
-  const Bare_point& a = wp2p(cell->vertex(0)->point());
-  const Bare_point& b = wp2p(cell->vertex(1)->point());
-  const Bare_point& c = wp2p(cell->vertex(2)->point());
-  const Bare_point& d = wp2p(cell->vertex(3)->point());
+  const Bare_point& a = wp2p(tr_.point(cell, 0));
+  const Bare_point& b = wp2p(tr_.point(cell, 1));
+  const Bare_point& c = wp2p(tr_.point(cell, 2));
+  const Bare_point& d = wp2p(tr_.point(cell, 3));
 
   const FT abcp = CGAL::abs(volume(a,b,c,p));
   const FT abdp = CGAL::abs(volume(a,d,b,p));
@@ -298,9 +298,9 @@ interpolate_on_facet_vertices(const Bare_point& p, const Cell_handle& cell) cons
   const FT& vb = cell->vertex(k2)->meshing_info();
   const FT& vc = cell->vertex(k3)->meshing_info();
 
-  const Bare_point& a = wp2p(cell->vertex(k1)->point());
-  const Bare_point& b = wp2p(cell->vertex(k2)->point());
-  const Bare_point& c = wp2p(cell->vertex(k3)->point());
+  const Bare_point& a = wp2p(tr_.point(cell, k1));
+  const Bare_point& b = wp2p(tr_.point(cell, k2));
+  const Bare_point& c = wp2p(tr_.point(cell, k3));
 
   const FT abp = area(a,b,p);
   const FT acp = area(a,c,p);

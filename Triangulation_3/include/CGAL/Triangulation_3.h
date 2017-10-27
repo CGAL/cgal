@@ -549,6 +549,7 @@ protected:
   GT  _gt;
   Vertex_handle infinite; //infinite vertex
 
+public:
   Point_3 construct_point(const Point &p) const
   {
     return geom_traits().construct_point_3_object()(p);
@@ -647,6 +648,16 @@ protected:
       if (pt == st)
           return MIDDLE;
       return AFTER;
+  }
+
+  // @fixme, can't be defined there because TriangulationTraits_3 does not
+  // require the following construction
+
+  // Undocumented, needed for Mesh_3 (because of Periodic_3_mesh_3)
+  typename Geom_traits::FT min_squared_distance(const Point_3& p,
+                                                const Point_3& q) const
+  {
+    return geom_traits().compute_squared_distance_3_object()(p, q);
   }
 
   // used as functor in std::sort in Delaunay and regular triangulations
@@ -822,6 +833,13 @@ public:
   Segment segment(const Edge & e) const
     { return segment(e.first,e.second,e.third); }
 
+  void set_point(Cell_handle c, int i, const Point& p) {
+    CGAL_triangulation_precondition( dimension() >= 0 );
+    CGAL_triangulation_precondition( i >= 0 && i <= dimension() );
+    CGAL_triangulation_precondition( ! is_infinite(c->vertex(i)) );
+    c->vertex(i)->point() = p;
+  }
+
   const Point & point(Cell_handle c, int i) const {
     CGAL_triangulation_precondition( dimension() >= 0 );
     CGAL_triangulation_precondition( i >= 0 && i <= dimension() );
@@ -829,7 +847,13 @@ public:
     return c->vertex(i)->point();
   }
 
-  const Point & point(Vertex_handle v) const {
+  void set_point(Vertex_handle v, const Point& p) {
+    CGAL_triangulation_precondition( dimension() >= 0 );
+    CGAL_triangulation_precondition( ! is_infinite(v) );
+    v->point() = p;
+  }
+
+  const Point& point(Vertex_handle v) const {
     CGAL_triangulation_precondition( dimension() >= 0 );
     CGAL_triangulation_precondition( ! is_infinite(v) );
     return v->point();

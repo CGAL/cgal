@@ -124,6 +124,7 @@ namespace Mesh_3 {
         typedef typename Gt::Construct_point_3 Construct_point_3;
         Construct_point_3 wp2p = gt.construct_point_3_object();
 
+        // <periodic...>
         const double d = CGAL::to_double(distance(wp2p((*v)->point()),
                                                   wp2p(vh->point())));
         if(d < dist){
@@ -630,10 +631,10 @@ private:
     Critical_radius critical_radius =
       tr_.geom_traits().compute_power_distance_to_power_sphere_3_object();
 
-    return CGAL::to_double(critical_radius(c->vertex(0)->point(),
-                                           c->vertex(1)->point(),
-                                           c->vertex(2)->point(),
-                                           c->vertex(3)->point(),
+    return CGAL::to_double(critical_radius(tr_.point(c, 0),
+                                           tr_.point(c, 1),
+                                           tr_.point(c, 2),
+                                           tr_.point(c, 3),
                                            v->point()));
   }
 
@@ -1172,6 +1173,9 @@ initialize_prestar_and_criterion_values(const Vertex_handle& v,
     const int index = (*cit)->index(v);
     const Facet f = Facet(*cit, index);
     const Facet opposite_facet = tr_.mirror_facet(f);
+
+    // <periodic> : compute the offset between *cit and its mirror and transform
+    // v->point() before giving to `compute_critical_radius`
 
     // Sliver criterion values initialization
     if( c3t3_.is_in_complex(*cit) )

@@ -120,17 +120,19 @@ namespace Mesh_3 {
      */ 
     template <typename Tr>
     typename Tr::Geom_traits::FT
-    edge_sq_length(const typename Tr::Edge& e)
+    edge_sq_length(const typename Tr::Edge& e,
+                   const Tr& tr)
     {
       typedef typename Tr::Geom_traits    Gt;
       typedef typename Tr::Bare_point     Bare_point;
       
-      typename Gt::Compute_squared_distance_3 sq_distance 
-        = Gt().compute_squared_distance_3_object();
-      typename Gt::Construct_point_3 wp2p = Gt().construct_point_3_object();
+      typename Gt::Compute_squared_distance_3 sq_distance =
+        tr.geom_traits().compute_squared_distance_3_object();
+      typename Gt::Construct_point_3 wp2p =
+        tr.geom_traits().construct_point_3_object();
 
-      const Bare_point& p = wp2p(e.first->vertex(e.second)->point());
-      const Bare_point& q = wp2p(e.first->vertex(e.third)->point());
+      const Bare_point& p = wp2p(tr.point(e.first, e.second));
+      const Bare_point& q = wp2p(tr.point(e.first, e.third));
       
       return sq_distance(p,q);
     }
@@ -156,11 +158,11 @@ namespace Mesh_3 {
       
       // Get squared min length
       typename std::vector<Edge>::iterator eit = edges.begin();
-      FT min_sq_length = edge_sq_length<Tr>(*eit++);
+      FT min_sq_length = edge_sq_length<Tr>(*eit++, tr);
       
       for ( ; eit != edges.end() ; ++eit )
       {
-        min_sq_length = (std::min)(min_sq_length, edge_sq_length<Tr>(*eit));
+        min_sq_length = (std::min)(min_sq_length, edge_sq_length<Tr>(*eit, tr));
       }
       
       return min_sq_length;
@@ -460,6 +462,8 @@ protected:
       tr.geom_traits().construct_point_3_object();
     typename Gt::Construct_weighted_point_3 p2wp =
       tr.geom_traits().construct_weighted_point_3_object();
+    typename Gt::Construct_vector_3 vector =
+      tr.geom_traits().construct_vector_3_object();
 
     // create a helper
     typedef C3T3_helpers<C3T3,MeshDomain> C3T3_helpers;
@@ -467,67 +471,71 @@ protected:
     
     modified_vertices.clear();
 
+    // <periodic> shenanigans with v->point() ?
     // norm depends on the local size of the mesh
     FT sq_norm = this->compute_perturbation_sq_amplitude(v, c3t3, sq_step_size_);
-    FT step_length = CGAL::sqrt(sq_norm/sq_length(gradient_vector));
-    Bare_point new_loc = translate(wp2p(v->point()), step_length * gradient_vector);
+    FT step_length = CGAL::sqrt(sq_norm / sq_length(gradient_vector));
+    Vector_3 step_vector = step_length * gradient_vector;
+    Bare_point initial_loc = wp2p(v->point());
+    Bare_point new_loc = translate(initial_loc, step_vector);
     Bare_point final_loc = new_loc;
 
     if ( c3t3.in_dimension(v) < 3 )
-      final_loc = helper.project_on_surface(new_loc, v);
+      final_loc = helper.project_on_surface(v, new_loc);
 
-    // as long as no topological change takes place
     unsigned int i = 0;
     // Concurrent-safe version
     if (could_lock_zone)
     {
+      // as long as no topological change takes place
       while(Th().no_topological_change__without_set_point(c3t3.triangulation(), 
                                                           v, p2wp(final_loc)) 
             && (++i <= max_step_nb_) )
       {
-        new_loc = translate(new_loc, step_length * gradient_vector);
+        new_loc = translate(new_loc, step_vector);
       
         if ( c3t3.in_dimension(v) == 3 )
           final_loc = new_loc;
         else 
-          final_loc = helper.project_on_surface(new_loc, v);
+          final_loc = helper.project_on_surface(v, new_loc);
       }
     }
     else
     {
-      while( Th().no_topological_change(c3t3.triangulation(), v, p2wp(final_loc)) 
-            && (++i <= max_step_nb_) )
+      Vector_3 move_vector = vector(initial_loc, final_loc);
+      while( Th().no_topological_change(c3t3.triangulation(), v,
+                                        move_vector, p2wp(final_loc)) &&
+             ++i <= max_step_nb_ )
       {
-        new_loc = translate(new_loc, step_length * gradient_vector);
+        new_loc = translate(new_loc, step_vector);
       
         if ( c3t3.in_dimension(v) == 3 )
           final_loc = new_loc;
         else 
-          final_loc = helper.project_on_surface(new_loc, v);
+          final_loc = helper.project_on_surface(v, new_loc);
+
+        move_vector = vector(initial_loc, final_loc);
       }
     }
     
     // Topology could not change moving this vertex
     if ( i > max_step_nb_ 
       || Th().inside_protecting_balls(c3t3.triangulation(), v, final_loc))
-      return std::make_pair(false,v);
+      return std::make_pair(false, v);
 
     // we know that there will be a combinatorial change
-    return helper.update_mesh_topo_change(p2wp(final_loc),
-                                          v,
+    return helper.update_mesh_topo_change(v,
+                                          p2wp(final_loc),
                                           criterion,
                                           std::back_inserter(modified_vertices),
                                           could_lock_zone);
   }
-  
-  
+
 private:
   unsigned int max_step_nb_;
   double sq_step_size_;
 };
-  
 
-  
 /**
  * @class Sq_radius_perturbation
  *
@@ -641,19 +649,22 @@ private:
                                    const Cell_handle& cell,
                                    const Vertex_handle& v) const
   {
-    typedef typename C3T3::Triangulation::Geom_traits Gt;
+    typedef typename C3T3::Triangulation          Triangulation;
+    typedef typename Triangulation::Geom_traits   Gt;
+
+    const Triangulation& tr = c3t3.triangulation();
 
     typename Gt::Construct_translated_point_3 translate =
       c3t3.triangulation().geom_traits().construct_translated_point_3_object();
     typename Gt::Construct_point_3 wp2p =
       c3t3.triangulation().geom_traits().construct_point_3_object();
-    
+
     // translate the tet so that cell->vertex((i+3)&3) is 0_{R^3}
     unsigned int index = cell->index(v);
-    Vector_3 translate_to_origin(CGAL::ORIGIN, wp2p(cell->vertex((index+3)&3)->point())); //p4
-    const Bare_point& p1 = translate(wp2p(v->point()), - translate_to_origin);
-    const Bare_point& p2 = translate(wp2p(cell->vertex((index+1)&3)->point()), - translate_to_origin);
-    const Bare_point& p3 = translate(wp2p(cell->vertex((index+2)&3)->point()), - translate_to_origin);
+    Vector_3 translate_to_origin(CGAL::ORIGIN, wp2p(tr.point(cell, (index+3)&3))); //p4
+    const Bare_point& p1 = translate(wp2p(tr.point(cell, index)), - translate_to_origin);
+    const Bare_point& p2 = translate(wp2p(tr.point(cell, (index+1)&3)), - translate_to_origin);
+    const Bare_point& p3 = translate(wp2p(tr.point(cell, (index+2)&3)), - translate_to_origin);
 
     // pre-compute everything
     FT sq_p1 = p1.x()*p1.x() + p1.y()*p1.y() + p1.z()*p1.z();
@@ -810,6 +821,8 @@ private:
                                    const Vertex_handle& v) const
   {
     CGAL_assertion(cell->has_vertex(v));
+    const typename C3T3::Triangulation& tr = c3t3.triangulation();
+
     typename Gt::Construct_point_3 wp2p =
         c3t3.triangulation().geom_traits().construct_point_3_object();
     const int i = cell->index(v);
@@ -822,9 +835,9 @@ private:
     if ( (i&1) == 0 )
       std::swap(k1,k3);
     
-    const Bare_point& p1 = wp2p(cell->vertex(k1)->point());
-    const Bare_point& p2 = wp2p(cell->vertex(k2)->point());
-    const Bare_point& p3 = wp2p(cell->vertex(k3)->point());
+    const Bare_point& p1 = wp2p(tr.point(cell, k1));
+    const Bare_point& p2 = wp2p(tr.point(cell, k2));
+    const Bare_point& p3 = wp2p(tr.point(cell, k3));
     
     FT gx =  p2.y()*p3.z() + p1.y()*(p2.z()-p3.z())
             - p3.y()*p2.z() - p1.z()*(p2.y()-p3.y());
@@ -895,7 +908,7 @@ protected:
              bool *could_lock_zone = NULL) const
   {
     CGAL_precondition(!slivers.empty());
-    
+
     Vector_3 grad_vector = compute_gradient_vector(c3t3, v, slivers);
 
     // Exit if grad_vector is not relevant
@@ -927,7 +940,7 @@ private:
     switch (slivers.size())
     {
       case 1:
-        return -1*compute_gradient_vector(c3t3, slivers.front(),v);
+        return -1*compute_gradient_vector(c3t3, slivers.front(), v);
         break;
       case 2:
       {
@@ -955,14 +968,15 @@ private:
                           const Vertex_handle& v) const
   {
     CGAL_assertion(cell->has_vertex(v));
-    
+    const typename C3T3::Triangulation& tr = c3t3.triangulation();
+
     typename Gt::Construct_point_3 wp2p =
-        c3t3.triangulation().geom_traits().construct_point_3_object();
+      tr.geom_traits().construct_point_3_object();
     typename Gt::Compute_squared_distance_3 sq_distance =
-        c3t3.triangulation().geom_traits().compute_squared_distance_3_object();
+      tr.geom_traits().compute_squared_distance_3_object();
 
     const int i = cell->index(v);
-    const Bare_point& p0 = wp2p(v->point());
+    const Bare_point& p0 = wp2p(tr.point(cell, i));
     
     // Other indices
     int k1 = (i+1)&3;
@@ -981,9 +995,9 @@ private:
       std::swap(k2,k3);
 
     // Here edge k1k2 minimizes dihedral angle
-    const Bare_point& p1 = wp2p(cell->vertex(k1)->point());
-    const Bare_point& p2 = wp2p(cell->vertex(k2)->point());
-    const Bare_point& p3 = wp2p(cell->vertex(k3)->point());
+    const Bare_point& p1 = wp2p(tr.point(cell, k1));
+    const Bare_point& p2 = wp2p(tr.point(cell, k2));
+    const Bare_point& p3 = wp2p(tr.point(cell, k3));
 
     // grad of min dihedral angle (in cell) wrt p0
     const Vector_3 p1p0 (p1,p0);
@@ -992,9 +1006,9 @@ private:
     
     FT a_02 = CGAL::abs(details::angle_in_radian(p1p0, p1p2));
     FT a_03 = CGAL::abs(details::angle_in_radian(p1p0, p1p3));
-    
-    Vector_3 n0 = normal_estimate(c3t3, cell,k3);
-    Vector_3 n1 = normal_estimate(c3t3, cell,k2);
+
+    Vector_3 n0 = normal_estimate(c3t3, cell, k3);
+    Vector_3 n1 = normal_estimate(c3t3, cell, k2);
 
     const FT d_p0p1 = CGAL::sqrt(sq_distance(p0,p1));
     CGAL_assertion(!is_zero(d_p0p1));
@@ -1011,16 +1025,18 @@ private:
                         const int k2,
                         const int k3,
                         const Cell_handle& cell) const
-  { 
+  {
+    const typename C3T3::Triangulation& tr = c3t3.triangulation();
+
     typename Gt::Compute_approximate_dihedral_angle_3 approx_dihedral_angle =
-        c3t3.triangulation().geom_traits().compute_approximate_dihedral_angle_3_object();
+        tr.geom_traits().compute_approximate_dihedral_angle_3_object();
     typename Gt::Construct_point_3 wp2p =
-        c3t3.triangulation().geom_traits().construct_point_3_object();
+        tr.geom_traits().construct_point_3_object();
 
     return CGAL::abs(approx_dihedral_angle(wp2p(p),
-                                           wp2p(cell->vertex(k1)->point()),
-                                           wp2p(cell->vertex(k2)->point()),
-                                           wp2p(cell->vertex(k3)->point())));
+                                           wp2p(tr.point(cell, k1)),
+                                           wp2p(tr.point(cell, k2)),
+                                           wp2p(tr.point(cell, k3))));
   }
     
   /**
@@ -1037,8 +1053,9 @@ private:
    */
   Vector_3 normal_estimate(const C3T3& c3t3, const Cell_handle& ch, const int i) const
   {
-    typename Gt::Construct_point_3 wp2p =
-        c3t3.triangulation().geom_traits().construct_point_3_object();
+    const typename C3T3::Triangulation& tr = c3t3.triangulation();
+
+    typename Gt::Construct_point_3 wp2p = tr.geom_traits().construct_point_3_object();
 
     int k1 = (i+1)&3;
     int k2 = (i+2)&3;
@@ -1047,14 +1064,13 @@ private:
     // Orient normals to the outside of cell
     if ( (i&1) == 1 )
       std::swap(k1,k2);
-    
-    const Bare_point& p1 = wp2p(ch->vertex(k1)->point());
-    const Bare_point& p2 = wp2p(ch->vertex(k2)->point());
-    const Bare_point& p3 = wp2p(ch->vertex(k3)->point());
-    
+
+    const Bare_point& p1 = wp2p(tr.point(ch, k1));
+    const Bare_point& p2 = wp2p(tr.point(ch, k2));
+    const Bare_point& p3 = wp2p(tr.point(ch, k3));
+
     // compute normal and return it
-    Construct_point_3 cp;
-    return normal(cp(p1),cp(p2),cp(p3));
+    return normal(p1, p2, p3);
   }
 };  
   
@@ -1279,6 +1295,8 @@ private:
       c3t3.triangulation().geom_traits().construct_translated_point_3_object();
     typename Gt::Construct_weighted_point_3 p2wp =
       c3t3.triangulation().geom_traits().construct_weighted_point_3_object();
+    typename Gt::Construct_vector_3 vector =
+      c3t3.triangulation().geom_traits().construct_vector_3_object();
     typename Gt::Construct_point_3 wp2p =
       c3t3.triangulation().geom_traits().construct_point_3_object();
 
@@ -1302,13 +1320,13 @@ private:
     unsigned int try_nb = 0;
     while ( ++try_nb <= Base::max_try_nb() )
     {
-      Vector_3 delta = this->random_vector(c3t3, sq_norm,on_sphere_);
+      Vector_3 delta = this->random_vector(c3t3, sq_norm, on_sphere_);
       
       // always from initial_location!
-      Bare_point new_location = translate(initial_location,delta);
+      Bare_point new_location = translate(initial_location, delta);
       
       if ( c3t3.in_dimension(moving_vertex) < 3 )
-        new_location = helper.project_on_surface(new_location, moving_vertex);
+        new_location = helper.project_on_surface(moving_vertex, new_location);
       
       // check that we don't insert a vertex inside a protecting ball
       if(Th().inside_protecting_balls(c3t3.triangulation(), 
@@ -1318,8 +1336,9 @@ private:
       // try to move vertex
       std::vector<Vertex_handle> tmp_mod_vertices;
       std::pair<bool,Vertex_handle> update =
-        helper.update_mesh(p2wp(new_location),
-                           moving_vertex,
+        helper.update_mesh(moving_vertex,
+                           vector(initial_location, new_location),
+                           p2wp(new_location),
                            criterion,
                            std::back_inserter(tmp_mod_vertices),
                            could_lock_zone);

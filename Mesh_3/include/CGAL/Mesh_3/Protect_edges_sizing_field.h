@@ -492,7 +492,7 @@ insert_corners()
   typedef std::vector< std::pair<Corner_index, Bare_point> > Initial_corners;
   Initial_corners corners;
   domain_.get_corners(std::back_inserter(corners));
-  
+
   Dt dt;
   for ( typename Initial_corners::iterator it = corners.begin(),
        end = corners.end() ; it != end ; ++it )

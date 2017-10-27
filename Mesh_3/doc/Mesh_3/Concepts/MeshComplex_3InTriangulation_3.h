@@ -14,10 +14,10 @@ are more conveniently represented by the refined concept
 The data structure includes a 3D triangulation which is itself a 3D complex. 
 To distinguish the faces of the embedded 3D complex from the 
 faces of the triangulation, we call the faces of the embedded complex 
-respectively <I>subdomains</I>, for 3D faces 
-and <I>surface patches</I>, for 2D faces, 
+respectively <I>subdomains</I> for 3D faces
+and <I>surface patches</I> for 2D faces,
 while the triangulations faces are called respectively 
-cells, facets, edges and vertices. 
+cells, facets, edges, and vertices.
 
 Each subdomain of the embedded 3D complex is a union of 
 triangulation cells. Cells that belong to some subdomain are said to belong 

@@ -442,6 +442,8 @@ Mesher_3<C3T3,MC,MD>::refine_mesh(std::string dump_after_refine_surface_prefix)
   std::cerr << "Total refining surface time: " << timer.time() << "s" << std::endl;
   std::cerr << std::endl;
 
+  CGAL_triangulation_postcondition(r_tr.is_valid());
+
   elapsed_time += timer.time();
   timer.stop(); timer.reset(); timer.start();
   nbsteps = 0;
@@ -479,6 +481,8 @@ Mesher_3<C3T3,MC,MD>::refine_mesh(std::string dump_after_refine_surface_prefix)
   std::cerr << "Total refining volume time: " << timer.time() << "s" << std::endl;
   std::cerr << "Total refining time: " << timer.time()+elapsed_time << "s" << std::endl;
   std::cerr << std::endl;
+
+  CGAL_triangulation_postcondition(r_tr.is_valid());
 #endif
 
   timer.stop();
