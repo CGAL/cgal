@@ -126,6 +126,7 @@ public:
   using Base::periodic_triangle;
   using Base::periodic_tetrahedron;
   using Base::point;
+  using Base::set_point;
   using Base::tds;
   using Base::set_offsets;
 #ifndef CGAL_NO_STRUCTURAL_FILTERING
@@ -384,9 +385,9 @@ public:
     const Bare_point cq = canonicalize_point(q);
     FT min_sq_dist = std::numeric_limits<FT>::infinity();
 
-    for( int i = 0; i < 3; i++ ) {
-      for( int j = 0; j < 3; j++) {
-        for( int k = 0; k < 3; k++ ) {
+    for(int i = 0; i < 3; ++i) {
+      for(int j = 0; j < 3; ++j) {
+        for(int k = 0; k < 3; ++k) {
           FT sq_dist = geom_traits().compute_squared_distance_3_object()
             (cq, construct_point(std::make_pair(cp, Offset(i-1, j-1, k-1))));
 
@@ -397,6 +398,33 @@ public:
     }
 
     return min_sq_dist;
+  }
+
+  // Warning : This is a periodic version that computes the closest possible
+  // point between p and q, for all combinations of offsets
+  // \pre 'p' is canonical
+  Bare_point get_closest_point(const Bare_point& p, const Bare_point& q) const
+  {
+    Bare_point rq;
+    const Bare_point cq = canonicalize_point(q);
+    FT min_sq_dist = std::numeric_limits<FT>::infinity();
+
+    for(int i = 0; i < 3; ++i) {
+      for(int j = 0; j < 3; ++j) {
+        for(int k = 0; k < 3; ++k) {
+          const Bare_point tcq = construct_point(std::make_pair(cq, Offset(i-1, j-1, k-1)));
+          FT sq_dist = geom_traits().compute_squared_distance_3_object()(p, tcq);
+
+          if(sq_dist < min_sq_dist)
+          {
+            rq = tcq;
+            min_sq_dist = sq_dist;
+          }
+        }
+      }
+    }
+
+    return rq;
   }
 
   // Warning: This is a periodic version that computes the smallest possible
@@ -419,9 +447,9 @@ public:
     FT min_power_distance_to_q = std::numeric_limits<FT>::infinity();
     FT min_power_distance_to_r = std::numeric_limits<FT>::infinity();
 
-    for(int i = 0; i < 3; i++) {
-      for(int j = 0; j < 3; j++) {
-        for(int k = 0; k < 3; k++) {
+    for(int i = 0; i < 3; ++i) {
+      for(int j = 0; j < 3; ++j) {
+        for(int k = 0; k < 3; ++k) {
           const Weighted_point cp_copy =
             construct_weighted_point(std::make_pair(cp, Offset(i-1, j-1, k-1)));
 
@@ -586,6 +614,15 @@ public:
   }
   /// @}
 
+  void set_point(const Vertex_handle v,
+                 const Vector_3& move,
+                 const Weighted_point& new_position)
+  {
+    // calling robust canonical here means we don't necessarily have
+    // canonical(v + move) = new_position... @fixme
+    return Base::set_point(v, move, canonicalize_point(new_position));
+  }
+
   /// \name Insert functions
   ///
   /// Insert points in the triangulation.
@@ -613,7 +650,7 @@ public:
     for (; cit != cend; cit++)
     {
       Offset off[4];
-      for (int i=0 ; i<4 ; i++)
+      for (int i=0 ; i<4 ; ++i)
         off[i] = (*cit)->vertex(i)->offset();
 
       set_offsets(*cit, off[0], off[1], off[2], off[3]);
@@ -676,12 +713,12 @@ public:
 
   void dual_segment_exact(const Facet& facet, Bare_point& p, Bare_point& q) const
   {
-    // @fixme
+    // @fixme (below is not exact)
     return dual_segment(facet, p, q);
   }
 
   // dual rays are impossible in a periodic triangulation since there are no
-  // infinite cells, but these functions are still needed for compilation of Mesh_3
+  // infinite cells, but these functions are still required to compile Mesh_3
   void dual_ray(const Facet& /*f*/, Ray& /*ray*/) const { CGAL_assertion(false); }
   void dual_ray_exact(const Facet& /*facet*/, Ray& /*ray*/) const { CGAL_assertion(false); }
 };

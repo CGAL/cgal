@@ -252,6 +252,8 @@ public:
       typename BGT::Construct_midpoint_3 midpoint =
                                       BGT().construct_midpoint_3_object();
 
+      // @todo this whole normalization of offsets process seems completely useless...
+#ifdef CGAL_PERIODIC_CANONICALIZE_DUAL_INTERSECTIONS
       Iso_cuboid_3 pbb = r_domain_.periodic_bounding_box();
       FT dimension [3] = { pbb.xmax() - pbb.xmin(),
                            pbb.ymax() - pbb.ymin(),
@@ -271,15 +273,19 @@ public:
       int o2 [3] = { static_cast<int>(b_t[0] / dimension[0]),
                      static_cast<int>(b_t[1] / dimension[1]),
                      static_cast<int>(b_t[2] / dimension[2]) };
+#endif
 
       FT a_min [3] = { a.x(), a.y(), a.z() };
       FT b_min [3] = { b.x(), b.y(), b.z() };
+
+#ifdef CGAL_PERIODIC_CANONICALIZE_DUAL_INTERSECTIONS
       for (unsigned idx = 0; idx < 3; ++idx)
       {
         FT offset = dimension[idx] * static_cast<FT>((std::min)(o1[idx], o2[idx]));
         a_min[idx] -= offset;
         b_min[idx] -= offset;
       }
+#endif
 
       // Non const points
       Point_3 p1(a_min[0], a_min[1], a_min[2]);
@@ -295,6 +301,7 @@ public:
       // This should not happen...
       if( value_at_p1 == value_at_p2 )
       {
+#ifdef CGAL_PERIODIC_CANONICALIZE_DUAL_INTERSECTIONS
         FT a_max [3] = { a.x(), a.y(), a.z() };
         FT b_max [3] = { b.x(), b.y(), b.z() };
         for (unsigned idx = 0; idx < 3; ++idx)
@@ -306,6 +313,7 @@ public:
         p1 = Point_3(a_max[0], a_max[1], a_max[2]);
         p2 = Point_3(b_max[0], b_max[1], b_max[2]);
         mid = midpoint(p1, p2);
+#endif
 
         value_at_p1 = r_domain_.labeling_function()(p1);
         value_at_p2 = r_domain_.labeling_function()(p2);

@@ -1,4 +1,4 @@
-// Copyright (c) 2009 INRIA Sophia-Antipolis (France).
+﻿// Copyright (c) 2009 INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -74,14 +74,15 @@ class Mesh_global_optimizer_base
 protected:
   typedef typename Tr::Geom_traits                          Gt;
   typedef typename Gt::FT                                   FT;
+  typedef typename Gt::Vector_3                             Vector_3;
   typedef typename Tr::Lock_data_structure                  Lock_data_structure;
 
   // The sizing field info is stored inside the move vector because it is computed
   // when the move is computed. This is because the parallel version uses the threadsafe
   // version of incident_cells (which thus requires points to not be moving yet)
-  typedef std::vector<cpp11::tuple<
-    typename Tr::Vertex_handle, typename Tr::Weighted_point, FT> > Moves_vector;
-  typedef unsigned int                                             Nb_frozen_points_type ;
+  typedef std::vector<cpp11::tuple<typename Tr::Vertex_handle, Vector_3, FT> >
+                                                            Moves_vector;
+  typedef unsigned int                                      Nb_frozen_points_type;
 
   Mesh_global_optimizer_base(const Bbox_3 &, int)
     : big_moves_size_(0) {}
@@ -122,9 +123,10 @@ class Mesh_global_optimizer_base<Tr, Parallel_tag>
 protected:
   typedef typename Tr::Geom_traits                          Gt;
   typedef typename Gt::FT                                   FT;
+  typedef typename Gt::Vector_3                             Vector_3;
   typedef typename Tr::Lock_data_structure                  Lock_data_structure;
-  typedef tbb::concurrent_vector<cpp11::tuple<
-    typename Tr::Vertex_handle, typename Tr::Weighted_point, FT> >   Moves_vector;
+  typedef tbb::concurrent_vector<cpp11::tuple<typename Tr::Vertex_handle, Vector_3, FT> >
+                                                            Moves_vector;
   typedef tbb::atomic<unsigned int>                         Nb_frozen_points_type ;
 
   Mesh_global_optimizer_base(const Bbox_3 &bbox, int num_grid_cells_per_axis)
@@ -406,14 +408,20 @@ private:
       Vector_3 move = m_mgo.compute_move(oldv);
       if ( CGAL::NULL_VECTOR != move )
       {
-        Bare_point new_position = translate(wp2p(oldv->point()), move);
-        FT size = (MGO::Sizing_field::is_vertex_update_needed ?
-          m_sizing_field(new_position, oldv) : 0);
+        FT size = 0.;
+
+        if(MGO::Sizing_field::is_vertex_update_needed)
+        {
+          Bare_point new_position = translate(wp2p(oldv->point()), move);
+          size = m_sizing_field(new_position, oldv);
+        }
+
         // typedef Triangulation_helpers<typename C3T3::Triangulation> Th;
         //if( !Th().inside_protecting_balls(tr_, oldv, new_position))
         //note : this is not happening for Lloyd and ODT so it's commented
         //       maybe for a new global optimizer it should be de-commented
-        m_moves.push_back(cpp11::make_tuple(oldv, p2wp(new_position), size));
+
+        m_moves.push_back(cpp11::make_tuple(oldv, move, size));
       }
       else // CGAL::NULL_VECTOR == move
       {
@@ -499,10 +507,14 @@ private:
     // operator()
     void operator()( const tbb::blocked_range<size_t>& r ) const
     {
+      typename Gt::Construct_translated_point_3 translate =
+          m_gt.construct_translated_point_3_object();
+
       for( size_t i = r.begin() ; i != r.end() ; ++i)
       {
         const Vertex_handle& v = cpp11::get<0>(m_moves[i]);
-        const Weighted_point& new_position = cpp11::get<1>(m_moves[i]);
+        const Vector_3& move = cpp11::get<1>(m_moves[i]);
+
         // Get size at new position
         if ( MGO::Sizing_field::is_vertex_update_needed )
         {
@@ -511,11 +523,11 @@ private:
           // Move point
           bool could_lock_zone;
           Vertex_handle new_v = m_helper.move_point(
-            v, new_position, m_outdated_cells, m_moving_vertices, &could_lock_zone);
+            v, move, m_outdated_cells, m_moving_vertices, &could_lock_zone);
           while (could_lock_zone == false)
           {
             new_v = m_helper.move_point(
-              v, new_position, m_outdated_cells, m_moving_vertices, &could_lock_zone);
+              v, move, m_outdated_cells, m_moving_vertices, &could_lock_zone);
           }
 
           // Restore size in meshing_info data
@@ -526,7 +538,7 @@ private:
           bool could_lock_zone;
           do {
             m_helper.move_point(
-              v, new_position, m_outdated_cells, m_moving_vertices, &could_lock_zone);
+              v, move, m_outdated_cells, m_moving_vertices, &could_lock_zone);
           } while (!could_lock_zone);
         }
 
@@ -806,8 +818,6 @@ compute_moves(Moving_vertices_set& moving_vertices)
   {
     typename Gt::Construct_point_3 wp2p =
         tr_.geom_traits().construct_point_3_object();
-    typename Gt::Construct_weighted_point_3 p2wp =
-        tr_.geom_traits().construct_weighted_point_3_object();
     typename Gt::Construct_translated_point_3 translate =
         tr_.geom_traits().construct_translated_point_3_object();
 
@@ -821,13 +831,15 @@ compute_moves(Moving_vertices_set& moving_vertices)
 
       if ( CGAL::NULL_VECTOR != move )
       {
-        Bare_point new_position = translate(wp2p(oldv->point()),move);
+        FT size = 0.;
+        if(Sizing_field::is_vertex_update_needed)
+        {
+          Bare_point new_position = translate(wp2p(tr_.point(oldv)), move);
+//          std::cout << "new position: " << new_position << std::endl;
+          size = sizing_field_(new_position, oldv);
+        }
 
-        std::cout << "new position: " << new_position << std::endl;
-
-        FT size = (Sizing_field::is_vertex_update_needed ?
-                     sizing_field_(new_position, oldv) : 0);
-        moves.push_back(cpp11::make_tuple(oldv,p2wp(new_position),size));
+        moves.push_back(cpp11::make_tuple(oldv, move, size));
       }
       else // CGAL::NULL_VECTOR == move
       {
@@ -883,32 +895,35 @@ compute_move(const Vertex_handle& v)
 
   // Get move from move function
   Vector_3 move = move_function_(v, incident_cells, c3t3_, sizing_field_);
-
-  // Project surface vertex
-  if ( c3t3_.in_dimension(v) == 2 )
-  {
-    Bare_point new_position = translate(wp2p(v->point()),move);
-    move = vector(wp2p(v->point()), helper_.project_on_surface(new_position, v));
-  }
+//  std::cout << "move from lloyd: " << move << std::endl;
 
   FT local_sq_size = min_circumradius_sq_length(v, incident_cells);
   if ( FT(0) == local_sq_size )
     return CGAL::NULL_VECTOR;
 
-  FT local_move_sq_ratio = sq_length(move) / local_sq_size;
-
-  // <PERIODIC>
-  // The case c3t3_.in_dimension(v) == 2 is not yet adapted
+  // Project surface vertex
   if ( c3t3_.in_dimension(v) == 2 )
   {
-    return CGAL::NULL_VECTOR;
+    Bare_point new_position = translate(wp2p(tr_.point(v)), move);
+//    std::cout << "new pos before projection: " << new_position << std::endl;
+    Bare_point projected_new_position = helper_.project_on_surface(v, new_position);
+//    std::cout << "projected: " << projected_new_position << std::endl;
+    move = vector(wp2p(tr_.point(v)), projected_new_position);
   }
-  // </PERIODIC>
 
-  // Move point only if displacement is big enough w.r.t local size
+  FT local_move_sq_ratio = sq_length(move) / local_sq_size;
+
+//  std::cout << "optimizing point: " << tr_.point(v) << std::endl;
+//  std::cout << "moving with: " << move << std::endl;
+
+  CGAL_assertion(CGAL::abs(move.x()) < 0.8*(tr_.domain().xmax() - tr_.domain().xmin()));
+  CGAL_assertion(CGAL::abs(move.y()) < 0.8*(tr_.domain().ymax() - tr_.domain().ymin()));
+  CGAL_assertion(CGAL::abs(move.z()) < 0.8*(tr_.domain().zmax() - tr_.domain().zmin()));
+
+  // Move point only if the displacement is big enough w.r.t. the local size
   if ( local_move_sq_ratio < sq_freeze_ratio_ )
   {
-    nb_frozen_points_++;
+    ++nb_frozen_points_;
     return CGAL::NULL_VECTOR;
   }
 
@@ -956,21 +971,33 @@ update_mesh(const Moves_vector& moves,
          ++it )
     {
       const Vertex_handle& v = cpp11::get<0>(*it);
-      const Weighted_point& new_position = cpp11::get<1>(*it);
+      const Vector_3& move = cpp11::get<1>(*it);
       // Get size at new position
       if ( Sizing_field::is_vertex_update_needed )
       {
         FT size = cpp11::get<2>(*it);
 
         // Move point
-        Vertex_handle new_v = helper_.move_point(v, new_position, outdated_cells, moving_vertices);
+//        CGAL_assertion(tr_.is_valid());
+        std::cout << "checked tr, moving: " << it - moves.begin() << " addr: " << &*v << std::endl;
+
+        Vertex_handle new_v = helper_.move_point(v, move, outdated_cells, moving_vertices);
+
+        std::cout << "checked tr. post move" << std::endl;
+        if(!tr_.is_valid())
+        {
+          std::cout << "invalid" << std::endl;
+          exit(0);
+        }
 
         // Restore size in meshing_info data
         new_v->set_meshing_info(size);
       }
       else // Move point
       {
-        helper_.move_point(v, new_position, outdated_cells, moving_vertices);
+        std::cerr << "got lost" << std::endl;
+        exit(0);
+        helper_.move_point(v, move, outdated_cells, moving_vertices);
       }
 
       // Stop if time_limit_ is reached, here we can't return without rebuilding
@@ -979,6 +1006,8 @@ update_mesh(const Moves_vector& moves,
         break;
     }
   }
+  std::cout << "post moves check..." << std::endl;
+  CGAL_assertion(tr_.is_valid());
 
   visitor.after_move_points();
 
@@ -1004,6 +1033,8 @@ update_mesh(const Moves_vector& moves,
                                       outdated_cells.end(),
                                       moving_vertices);
 #endif
+  std::cout << "post rebuild check..." << std::endl;
+  CGAL_assertion(tr_.is_valid());
 
   visitor.after_rebuild_restricted_delaunay();
 
@@ -1051,7 +1082,7 @@ fill_sizing_field()
         vit != tr_.finite_vertices_end();
         ++vit)
     {
-      value_map.insert(std::make_pair(wp2p(vit->point()),
+      value_map.insert(std::make_pair(wp2p(tr_.point(vit)),
                                       average_circumradius_length(vit)));
     }
   }

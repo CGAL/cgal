@@ -54,7 +54,7 @@ BOOST_PARAMETER_FUNCTION(
   )
 )
 {
-  // TODO: Can we call refine_mesh_3_impl?
+  // @todo Can we call refine_mesh_3_impl?
   return refine_periodic_3_mesh_3_impl(c3t3,
                                        domain,
                                        criteria,
@@ -116,6 +116,8 @@ void refine_periodic_3_mesh_3_impl(C3T3& c3t3,
   Mesher mesher (c3t3, domain, criteria);
   double refine_time = mesher.refine_mesh(mesh_options.dump_after_refine_surface_prefix);
 
+  // <periodic> below is the only difference with refine_mesh_3_impl. What does
+  // it do and can it be removed ? (I guess something related to the initial grid)
   // try to project bad vertices
   //projection_of_external_points_of_surface(c3t3, domain);
 

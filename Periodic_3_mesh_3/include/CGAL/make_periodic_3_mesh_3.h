@@ -327,6 +327,8 @@ void make_periodic_3_mesh_3_impl(C3T3& c3t3,
   // Initialize the triangulation of c3t3
   init_triangulation(c3t3, const_cast<MeshDomain&>(domain));
 
+  // @todo call make_mesh_3_impl here ?
+
   // Initialize c3t3
   internal::Mesh_3::C3t3_initializer<
       C3T3,
@@ -343,9 +345,11 @@ void make_periodic_3_mesh_3_impl(C3T3& c3t3,
   // a planar curve as feature for example), add some surface points
   //if ( c3t3.triangulation().dimension() != 3 )
   {
-    internal::Mesh_3::init_c3t3(c3t3, domain, criteria, 12);
+    // internal::Mesh_3::init_c3t3(c3t3, domain, criteria, 12);
   }
   CGAL_assertion( c3t3.triangulation().dimension() == 3 );
+
+  CGAL_assertion(c3t3.triangulation().is_valid());
 
   // Build mesher and launch refinement process
   // Don't reset c3t3 as we just created it

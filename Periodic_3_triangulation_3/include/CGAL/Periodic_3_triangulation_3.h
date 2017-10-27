@@ -766,8 +766,9 @@ public:
   Point point(Cell_handle c, int idx, ConstructPoint cp) const
   {
 //    if(is_1_cover())
-      return point(periodic_point(c, idx), cp);
+    return point(periodic_point(c, idx), cp);
 
+    // @todo figure out everything below
     Offset vec_off[4];
     for(int i=0; i<4; i++)
       vec_off[i] = periodic_point(c,i).second;
@@ -2653,7 +2654,7 @@ Periodic_3_triangulation_3<GT,TDS>::periodic_insert(
   if(!is_1_cover())
     cover_manager.delete_unsatisfying_elements(cells.begin(), cells.end());
 
-  // Insertion. Attention: facets[0].first MUST be in conflict!
+  // Insertion. Warning: facets[0].first MUST be in conflict!
   // Compute the star and put it into the data structure.
   // Store the new cells from the star in nbs.
   v = _tds._insert_in_hole(cells.begin(), cells.end(), facet.first, facet.second);
@@ -3138,21 +3139,24 @@ is_valid_conflict(ConflictTester& tester, bool verbose, int level) const
   for( it = cells_begin(); it != cells_end(); ++it ) {
     is_valid(it, verbose, level);
     for(int i=0; i<4; i++ ) {
-      Offset o_nb = neighbor_offset(it,i,it->neighbor(i));
-      Offset o_vt = get_offset(it->neighbor(i),
-                               it->neighbor(i)->index(it));
+      Offset o_nb = neighbor_offset(it, i, it->neighbor(i));
+      Offset o_vt = get_offset(it->neighbor(i), it->neighbor(i)->index(it));
       if(tester(it,
-                 it->neighbor(i)->vertex(it->neighbor(i)->index(it))->point(),
-                 o_vt-o_nb)) {
+                it->neighbor(i)->vertex(it->neighbor(i)->index(it))->point(),
+                o_vt - o_nb)) {
         if(verbose) {
-          std::cerr << "non-empty sphere: "
-                    << it->vertex(0)->point()<<'\t'
-                    << it->vertex(1)->point()<<'\t'
-                    << it->vertex(2)->point()<<'\t'
-                    << it->vertex(3)->point()<<'\n'
+          std::cerr << "non-empty sphere: \n"
+                    << "Point[0]: " << it->vertex(0)->point()
+                    << " Off: " << int_to_off(it->offset(0)) << "\n"
+                    << "Point[1]: " << it->vertex(1)->point()
+                    << " Off: " << int_to_off(it->offset(1)) << "\n"
+                    << "Point[2]: " << it->vertex(2)->point()
+                    << " Off: " << int_to_off(it->offset(2)) << "\n"
+                    << "Point[3]: " << it->vertex(3)->point()
+                    << " Off: " << int_to_off(it->offset(3)) << "\n"
+                    << "Foreign point: "
                     << it->neighbor(i)->vertex(it->neighbor(i)->index(it))->point()
-                    << '\t'<<o_vt-o_nb
-                    << std::endl;
+                    << "\t Off: " << o_vt - o_nb << std::endl;
         }
         return false;
       }

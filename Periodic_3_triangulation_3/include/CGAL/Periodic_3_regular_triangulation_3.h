@@ -121,6 +121,7 @@ public:
   typedef std::pair<Weighted_point, Offset>        Periodic_weighted_point;
 
   typedef typename Gt::Segment_3                   Segment;
+  typedef typename Gt::Vector_3                    Vector;
   typedef typename Gt::Triangle_3                  Triangle;
   typedef typename Gt::Tetrahedron_3               Tetrahedron;
 
@@ -673,12 +674,13 @@ public:
   {
     Bounded_side bs = ON_UNBOUNDED_SIDE;
     int i = 0;
-    // TODO: optimize which copies to check depending on the offsets in
-    // the cell.
-    while(bs == ON_UNBOUNDED_SIDE && i<8) {
-      bs = _side_of_power_sphere(c,p,combine_offsets(offset,int_to_off(i)),perturb);
-      i++;
+    // TODO: optimize which copies to check depending on the offsets in the cell.
+    do
+    {
+      bs = _side_of_power_sphere(c, p, combine_offsets(offset, int_to_off(i)), perturb);
     }
+    while(bs == ON_UNBOUNDED_SIDE && (++i < 8));
+
     return bs;
   }
 
@@ -774,6 +776,167 @@ public:
 public:
   /** @name Geometric access functions */
   /// @{
+  // The following functions allow to change the position of a vertex.
+  // It does not check the validity of the mesh.
+  void set_point(const Vertex_handle v,
+                 const Vector& move,
+                 const Weighted_point& new_position)
+  {
+    Bare_point p = geom_traits().construct_point_3_object()(point(v));
+    Bare_point moved_p = p + move;
+
+//#define CGAL_PERIODIC_SET_POINT_VERBOSE
+#ifdef CGAL_PERIODIC_SET_POINT_VERBOSE
+    std::cout.precision(20);
+    std::cout << "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" << std::endl;
+    std::cout << "SET POINT " << std::endl;
+    std::cout << "v: " << &*v << " new canonical position " << new_position << std::endl;
+    std::cout << "position: " << p << " move: " << move << std::endl;
+    std::cout << "position and move: " << moved_p << std::endl;
+#endif
+
+    // Disallow moves larger than the domain
+    CGAL_precondition(CGAL::abs(move.x()) < domain().xmax() - domain().xmin() );
+    CGAL_precondition(CGAL::abs(move.y()) < domain().ymax() - domain().ymin() );
+    CGAL_precondition(CGAL::abs(move.z()) < domain().zmax() - domain().zmin() );
+
+    // 'new_position' must be canonical
+    CGAL_triangulation_precondition(new_position.x() < domain().xmax());
+    CGAL_triangulation_precondition(new_position.y() < domain().ymax());
+    CGAL_triangulation_precondition(new_position.z() < domain().zmax());
+    CGAL_triangulation_precondition(new_position.x() >= domain().xmin());
+    CGAL_triangulation_precondition(new_position.y() >= domain().ymin());
+    CGAL_triangulation_precondition(new_position.z() >= domain().zmin());
+
+    Offset offset_change_from_move;
+
+    if(moved_p.x() < domain().xmin())
+      offset_change_from_move[0] = -1;
+    if(moved_p.y() < domain().ymin())
+      offset_change_from_move[1] = -1;
+    if(moved_p.z() < domain().zmin())
+      offset_change_from_move[2] = -1;
+
+    if(moved_p.x() >= domain().xmax())
+      offset_change_from_move[0] = 1;
+    if(moved_p.y() >= domain().ymax())
+      offset_change_from_move[1] = 1;
+    if(moved_p.z() >= domain().zmax())
+      offset_change_from_move[2] = 1;
+
+#ifdef CGAL_PERIODIC_SET_POINT_VERBOSE
+    std::cout << "offset change from move: " << offset_change_from_move << std::endl;
+#endif
+
+    // Go through the cells incident to 'v' and modify their offset if needed
+    std::vector<Cell_handle> cells;
+    cells.reserve(64);
+    incident_cells(v, std::back_inserter(cells));
+
+    typename std::vector<Cell_handle>::iterator cit = cells.begin(), end = cells.end();
+    for(; cit != end; ++cit)
+    {
+      Cell_handle c = *cit;
+      int index = c->index(v);
+      Offset offset = this->int_to_off(c->offset(index));
+
+#ifdef CGAL_PERIODIC_SET_POINT_VERBOSE
+      std::cout << "--" << std::endl;
+      std::cout << "v: " << &*v << " new canonical position " << new_position << std::endl;
+      std::cout << "position: " << p << " move: " << move << std::endl;
+      std::cout << "position and move: " << moved_p << std::endl;
+      std::cout << "in cell: " << &*c << " v: " << point(c, index) << " offset: " << offset << std::endl;
+      std::cout << "offset after move is: " << offset_change_from_move << std::endl;
+#endif
+
+      for(int i=0; i<4; ++i)
+      {
+#ifdef CGAL_PERIODIC_SET_POINT_VERBOSE
+        std::cout << "vertex: " << c->vertex(i)->point().point()
+                  << " offset: " << this->int_to_off(c->offset(i))
+                  << " in cell: " << (this->point(c, i)).point() << std::endl;
+#endif
+        CGAL_assertion(this->int_to_off(c->offset(i))[0] == 0 ||
+                       this->int_to_off(c->offset(i))[0] == 1); // x
+        CGAL_assertion(this->int_to_off(c->offset(i))[1] == 0 ||
+                       this->int_to_off(c->offset(i))[1] == 1); // y
+        CGAL_assertion(this->int_to_off(c->offset(i))[2] == 0 ||
+                       this->int_to_off(c->offset(i))[2] == 1); // z
+      }
+
+      offset += offset_change_from_move;
+
+      // additional offset that might be required to bring 'offset' back to something
+      // meaningful
+      Offset canonical_offset_change; // initializes to [0,0,0]
+
+      for(int i=0; i<3; ++i) // xyz directions
+      {
+        bool should_be_positively_translated = (offset[i] == -1);
+        if(should_be_positively_translated)
+        {
+          canonical_offset_change[i] = 1;
+        }
+        else // !should_be_positively_translated
+        {
+          bool should_be_negatively_translated =
+              (offset[i] == 2) /*||
+              (offset[i] == 1 &&
+               this->int_to_off(c->offset((index+1)%4))[i] == 1 &&
+               this->int_to_off(c->offset((index+2)%4))[i] == 1 &&
+               this->int_to_off(c->offset((index+3)%4))[i] == 1)*/;
+
+          if(should_be_negatively_translated)
+          {
+            canonical_offset_change[i] = -1;
+          }
+        }
+      }
+
+#ifdef CGAL_PERIODIC_SET_POINT_VERBOSE
+      std::cout << "canonical_offset_change: " << canonical_offset_change << std::endl;
+      std::cout << "four offsets: " << std::endl;
+#endif
+
+      boost::array<int, 4> offsets;
+      for(int i=0; i<4; ++i)
+      {
+#ifdef CGAL_PERIODIC_SET_POINT_VERBOSE
+        std::cout << "old: " << this->int_to_off(c->offset(i));
+#endif
+        if(i == index)
+        {
+#ifdef CGAL_PERIODIC_SET_POINT_VERBOSE
+          std::cout << " new (v): " << offset + canonical_offset_change << std::endl;
+#endif
+          offsets[i] = this->off_to_int(offset + canonical_offset_change);
+        }
+        else
+        {
+#ifdef CGAL_PERIODIC_SET_POINT_VERBOSE
+          std::cout << " new: " << this->int_to_off(c->offset(i)) + canonical_offset_change << std::endl;
+#endif
+          offsets[i] = this->off_to_int(this->int_to_off(c->offset(i)) + canonical_offset_change);
+        }
+
+        CGAL_assertion(this->int_to_off(offsets[i])[0] == 0 || this->int_to_off(offsets[i])[0] == 1);
+        CGAL_assertion(this->int_to_off(offsets[i])[1] == 0 || this->int_to_off(offsets[i])[1] == 1);
+        CGAL_assertion(this->int_to_off(offsets[i])[1] == 0 || this->int_to_off(offsets[i])[1] == 1);
+      }
+
+      c->set_offsets(offsets[0], offsets[1], offsets[2], offsets[3]);
+    }
+
+    v->set_point(new_position);
+#ifdef CGAL_PERIODIC_SET_POINT_VERBOSE
+    std::cout << "moved v to " << v->point() << std::endl;
+#endif
+
+    CGAL_triangulation_precondition(!(v->point().x() < domain().xmin()) && v->point().x() < domain().xmax());
+    CGAL_triangulation_precondition(!(v->point().y() < domain().ymin()) && v->point().y() < domain().ymax());
+    CGAL_triangulation_precondition(!(v->point().z() < domain().zmin()) && v->point().z() < domain().zmax());
+  }
+
   Weighted_point point(const Periodic_weighted_point& pp) const
   {
     return point(pp, geom_traits().construct_weighted_point_3_object());
@@ -1424,4 +1587,4 @@ operator>> (std::istream& is, Periodic_3_regular_triangulation_3<GT, TDS>& tr)
 
 } // namespace CGAL
 
-#endif
+#endif // CGAL_PERIODIC_3_REGULAR_TRIANGULATION_3_H

@@ -265,6 +265,9 @@ int main(int, char**)
       Labeling_function labeling_function(funcs, it->second);
       C3t3 c3t3 = make_mesh(labeling_function);
 
+      CGAL_postcondition(c3t3.is_valid());
+      CGAL_postcondition(c3t3.triangulation().is_valid());
+
       std::cout << " Done" << std::flush;
 
       for (std::vector<unsigned>::iterator i = v_ncopy.begin(); i != v_ncopy.end(); ++i)

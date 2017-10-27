@@ -109,7 +109,7 @@ struct Get_Is_facet_bad<Facet_criteria, true> {
 #ifdef _DEBUG
       int f1_current_erase_counter = CGAL::cpp11::get<0>(f).first->erase_counter();
       int f1_saved_erase_counter = CGAL::cpp11::get<1>(f);
-      int f2_current_erase_counter = CGAL::cpp11::get<2>(f).first->erase_counter();
+      int f2_current_erase_counte7r = CGAL::cpp11::get<2>(f).first->erase_counter();
       int f2_saved_erase_counter = CGAL::cpp11::get<3>(f);
       //f1_current_erase_counter - f1_saved_erase_counter + f2_current_erase_counter - f2_saved_erase_counter == 1
 
@@ -306,7 +306,7 @@ public:
     CGAL_assertion (this->is_facet_on_surface(facet));
     this->set_last_vertex_index(get_facet_surface_center_index(facet));
     return get_facet_surface_center(facet);
-  };
+  }
 
   Facet get_next_element_impl()
   {
