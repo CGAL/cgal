@@ -675,6 +675,15 @@ public:
   Corner_index corner_index(const Index& index) const
   { return boost::get<Corner_index>(index); }
 
+  /// @cond DEVELOPERS
+#ifndef CGAL_NO_DEPRECATED_CODE
+  CGAL_DEPRECATED_MSG("deprecated: use curve_index() instead")
+  Curve_index curve_segment_index(const Index& index) const {
+    return curve_index(index);
+  }
+#endif // CGAL_NO_DEPRECATED_CODE
+  /// @endcond
+
   /// Insert a bunch of edges into domain
   ///   + InputIterator type should have begin() and end() function
   ///   + InputIterator::iterator value type must be Point_3

@@ -92,6 +92,8 @@ BOOST_PARAMETER_NAME( (dump_after_glob_opt_prefix, tag ) dump_after_glob_opt_pre
 BOOST_PARAMETER_NAME( (dump_after_perturb_prefix, tag ) dump_after_perturb_prefix_)
 BOOST_PARAMETER_NAME( (dump_after_exude_prefix, tag ) dump_after_exude_prefix_)
 BOOST_PARAMETER_NAME( (number_of_initial_points, tag) number_of_initial_points_)
+BOOST_PARAMETER_NAME( (maximal_number_of_vertices, tag ) maximal_number_of_vertices_)
+BOOST_PARAMETER_NAME( (pointer_to_error_code, tag ) pointer_to_error_code_)
 
 CGAL_PRAGMA_DIAG_POP
 } // end namespace parameters
