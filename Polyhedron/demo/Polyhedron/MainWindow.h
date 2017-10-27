@@ -455,7 +455,6 @@ private Q_SLOTS:
   void set_facegraph_mode_adapter(bool is_polyhedron);
   void on_actionAdd_Viewer_triggered();
   void recenterViewer();
-  void on_actionZoom_With_Wheel_toggled(bool arg1);
 };
 
 typedef std::pair<QFileInfo,

@@ -117,6 +117,7 @@ public:
   float total_pass()Q_DECL_OVERRIDE;
   bool isZooming()const;
   void setZooming(bool b);
+  void resetFov();
 Q_SIGNALS:
   void sendMessage(QString);
   void GLinit();

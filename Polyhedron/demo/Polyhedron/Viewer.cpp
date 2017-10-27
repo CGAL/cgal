@@ -20,7 +20,7 @@
 #include <QByteArray>
 #include <QBuffer>
 #endif
-
+#define ORIGINAL_FOV 0.94853805396568136
 class Viewer_impl {
 public:
   CGAL::Three::Scene_draw_interface* scene;
@@ -167,6 +167,8 @@ void Viewer::doBindings()
                       tr("Toggle the primitive IDs visibility of the selected Item."));
   setKeyDescription(Qt::Key_D,
                       tr("Disable the distance between two points  visibility."));
+  setKeyDescription(Qt::Key_Z,
+                      tr("When used with the wheel, ajusts the camera focale distance."));
 
 #if QGLVIEWER_VERSION >= 0x020501
   //modify mouse bindings that have been updated
@@ -188,7 +190,7 @@ void Viewer::doBindings()
   setMouseBindingDescription(Qt::Key_O, Qt::NoModifier, Qt::LeftButton,
                              tr("Move the camera orthogonally to the picked facet of a Scene_polyhedron_item or "
                                 "to the current selection of a Scene_points_with_normal_item."));
-#else
+  #else
   setMouseBinding(Qt::SHIFT + Qt::LeftButton, SELECT);
   setMouseBindingDescription(Qt::SHIFT + Qt::RightButton,
                              tr("Selects and display context "
@@ -627,6 +629,14 @@ void Viewer::keyPressEvent(QKeyEvent* e)
         update();
         return;
     }
+    else if(e->key() == Qt::Key_Z) {
+        if(e->isAutoRepeat())
+        {
+            return;
+        }
+        d->zooming = true;
+        return;
+    }
     else if(e->key() == Qt::Key_C) {
       QVector4D box[6];
       for(int i=0; i<6; ++i)
@@ -670,6 +680,14 @@ void Viewer::keyReleaseEvent(QKeyEvent *e)
       return;
     }
     d->is_d_pressed = false;
+  }
+  else if(!e->modifiers() && e->key() == Qt::Key_Z)
+  {
+    if(e->isAutoRepeat())
+    {
+      return;
+    }
+    d->zooming = false;
   }
   QGLViewer::keyReleaseEvent(e);
 }
@@ -1295,10 +1313,12 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
         return 0;
     }
 }
+
 void Viewer::wheelEvent(QWheelEvent* e)
 {
     if(e->modifiers().testFlag(Qt::ShiftModifier))
     {
+      std::cout<<camera()->horizontalFieldOfView()<<std::endl;
         double delta = e->delta();
         if(delta>0)
         {
@@ -1307,6 +1327,34 @@ void Viewer::wheelEvent(QWheelEvent* e)
         else
             camera()->setZNearCoefficient(camera()->zNearCoefficient() / 1.01);
         update();
+    }
+    else if(isZooming())
+    {
+      double fov(camera()->horizontalFieldOfView());
+
+      double delta = e->delta();
+      if(delta>0)
+      {
+        double test = fov - exp(-0.1/fov)/5.0;
+        if(test > 0.02){
+          fov = test;}
+        else {
+          test = fov - 0.002;
+          if(test >0)
+            fov = test;}
+      }
+      else
+      {
+        double test = fov + 0.002;
+        if(test < 0.02){
+          fov += 0.002;}
+        else {
+          test = fov + exp(-0.1/fov)/5.0;
+          if(test < ORIGINAL_FOV)
+            fov = test;}
+      }
+      camera()->setHorizontalFieldOfView(fov);
+      update();
     }
     else
         QGLViewer::wheelEvent(e);
@@ -1800,4 +1848,9 @@ void Viewer::setZooming(bool b)
 bool Viewer::isZooming() const
 {
   return d->zooming;
+}
+
+void Viewer::resetFov()
+{
+  camera()->setHorizontalFieldOfView(ORIGINAL_FOV);
 }

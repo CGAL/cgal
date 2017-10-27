@@ -2372,6 +2372,7 @@ void MainWindow::updateViewerBbox(Viewer *vi, bool recenter,
                           max);
   if(recenter)
   {
+    vi->resetFov();
     vi->camera()->showEntireScene();
   }
   else
@@ -2442,7 +2443,6 @@ SubViewer::SubViewer(MainWindow* mw, Viewer* viewer)
   QAction* actionTotalPass = new QAction("Set Transparency Pass &Number...",this);
   actionTotalPass->setObjectName("actionTotalPass");
   viewMenu->addAction(actionTotalPass);
-
 }
 SubViewer::~SubViewer()
 {
@@ -2482,7 +2482,3 @@ void SubViewer::color()
   }
 }
 
-void MainWindow::on_actionZoom_With_Wheel_toggled(bool b)
-{
-    viewer->setZooming(b);
-}
