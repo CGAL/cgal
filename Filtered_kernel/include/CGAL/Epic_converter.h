@@ -51,7 +51,7 @@ class Epic_converter {
   typedef typename Exact_predicates_inexact_constructions_kernel::Segment_3 Segment_3;
   typedef typename Exact_predicates_inexact_constructions_kernel::Weighted_point_3 Weighted_point_3;
   typedef typename Exact_predicates_inexact_constructions_kernel::Sphere_3 Sphere_3;
-    typedef typename Exact_predicates_inexact_constructions_kernel::Circle_3 Circle_3;
+  typedef typename Exact_predicates_inexact_constructions_kernel::Circle_3 Circle_3;
   typedef typename Exact_predicates_inexact_constructions_kernel::Iso_cuboid_3 Iso_cuboid_3;
 public:
 
@@ -66,6 +66,15 @@ public:
     return std::make_pair(0,false);
   }
 
+  std::pair<Bbox_2,bool> operator()(const Bbox_2 b) const
+  {
+    return std::make_pair(b,true);
+  }
+ 
+  std::pair<Bbox_3,bool> operator()(const Bbox_3 b) const
+  {
+    return std::make_pair(b,true);
+  }
   
   std::pair<Point_2,bool> operator()(const typename IK::Point_2& p) const
   {

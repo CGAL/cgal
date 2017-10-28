@@ -67,16 +67,44 @@ public:
     CGAL::Epic_converter<AK> convert;
     typedef typename Kernel_traits<A1>::type EK;
     typedef typename Type_mapper<A1,EK, Exact_predicates_inexact_constructions_kernel>::type T1;
-    std::pair<T1,bool> aa1 = convert(a1.approx());
+    std::pair<T1,bool> aa1 = convert(approx(a1));
     if(! aa1.second){
       return fp(a1, a2);
     }
     typedef typename Type_mapper<A2,EK, Exact_predicates_inexact_constructions_kernel>::type T2;
-    std::pair<T2,bool> aa2 = convert(a2.approx());
+    std::pair<T2,bool> aa2 = convert(approx(a2));
     if(! aa2.second){
       return fp(a1, a2);
     }
     return epicp(aa1.first, aa2.first);
+  }
+
+    // We need these two specializations as in general we determine
+    // the kernel for the template argument A1, and this does not work for Bbox_2 and Bbox_3
+  template <typename A2>
+  result_type operator()(const Bbox_2& bb, const A2& a2) const
+  {
+    CGAL::Epic_converter<AK> convert;
+    typedef typename Kernel_traits<A2>::type EK;
+    typedef typename Type_mapper<A2,EK, Exact_predicates_inexact_constructions_kernel>::type T2;
+    std::pair<T2,bool> aa2 = convert(approx(a2));
+    if(! aa2.second){
+      return fp(bb, a2);
+    }
+    return epicp(bb, aa2.first);
+  }
+
+  template <typename A2>
+  result_type operator()(const Bbox_3& bb, const A2& a2) const
+  {
+    CGAL::Epic_converter<AK> convert;
+    typedef typename Kernel_traits<A2>::type EK;
+    typedef typename Type_mapper<A2,EK, Exact_predicates_inexact_constructions_kernel>::type T2;
+    std::pair<T2,bool> aa2 = convert(approx(a2));
+    if(! aa2.second){
+      return fp(bb, a2);
+    }
+    return epicp(bb, aa2.first);
   }
 
   template <typename A1, typename A2, typename A3>
