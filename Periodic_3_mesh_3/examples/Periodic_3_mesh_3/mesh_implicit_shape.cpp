@@ -1,4 +1,8 @@
 #define CGAL_MESH_3_VERBOSE
+#define _DEBUG
+#define CGAL_MESHES_DEBUG_REFINEMENT_POINTS
+#define CGAL_MESH_3_DEBUG_FACET_CRITERIA
+#define CGAL_MESH_3_DEBUG_CELL_CRITERIA
 
 #include <CGAL/Mesh_3/config.h>
 #include <CGAL/Periodic_3_mesh_3/config.h>
@@ -72,8 +76,8 @@ int main(int argc, char** argv)
   C3t3 c3t3 = CGAL::make_periodic_3_mesh_3<C3t3>(domain, criteria,
 //                                                 odt(),
                                                  no_odt(),
-//                                                 lloyd(),
-                                                 no_lloyd(),
+                                                 lloyd(),
+//                                                 no_lloyd(),
 //                                                 exude(),
                                                  no_exude(),
 //                                                 perturb(sliver_bound=10, time_limit=10)

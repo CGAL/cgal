@@ -109,11 +109,11 @@ struct Get_Is_facet_bad<Facet_criteria, true> {
 #ifdef _DEBUG
       int f1_current_erase_counter = CGAL::cpp11::get<0>(f).first->erase_counter();
       int f1_saved_erase_counter = CGAL::cpp11::get<1>(f);
-      int f2_current_erase_counte7r = CGAL::cpp11::get<2>(f).first->erase_counter();
+      int f2_current_erase_counter = CGAL::cpp11::get<2>(f).first->erase_counter();
       int f2_saved_erase_counter = CGAL::cpp11::get<3>(f);
       //f1_current_erase_counter - f1_saved_erase_counter + f2_current_erase_counter - f2_saved_erase_counter == 1
 
-      /*if (f1_current_erase_counter - f1_saved_erase_counter + f2_current_erase_counter - f2_saved_erase_counter == 1)
+      if (f1_current_erase_counter - f1_saved_erase_counter + f2_current_erase_counter - f2_saved_erase_counter == 1)
       {
 #ifdef CGAL_LINKED_WITH_TBB
         tbb::queuing_mutex mut;
@@ -138,8 +138,8 @@ struct Get_Is_facet_bad<Facet_criteria, true> {
         << "}" << std::endl;
 
         std::string s = sstr.str();
-        //std::cerr << s << std::endl;
-      }*/
+        std::cerr << s << std::endl;
+      }
 #endif
       return (CGAL::cpp11::get<0>(f).first->erase_counter() == CGAL::cpp11::get<1>(f)
         && CGAL::cpp11::get<2>(f).first->erase_counter() == CGAL::cpp11::get<3>(f) );
@@ -297,12 +297,16 @@ public:
 #ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
     const Cell_handle c = facet.first;
     const int i = facet.second;
-    std::cerr << "Facet ("
+    std::cerr << "\n Facet ("
               << r_tr_.point(c, (i+1)&3) << " , "
               << r_tr_.point(c, (i+2)&3) << " , "
               << r_tr_.point(c, (i+3)&3) << ") : refinement point is "
               << get_facet_surface_center(facet) << std::endl;
 #endif
+    if(CGAL::squared_distance(get_facet_surface_center(facet),
+                              r_tr_.point(c, (i+3)&3)) < 1e-6)
+      exit(0);
+
     CGAL_assertion (this->is_facet_on_surface(facet));
     this->set_last_vertex_index(get_facet_surface_center_index(facet));
     return get_facet_surface_center(facet);
@@ -349,9 +353,9 @@ public:
   {
     std::stringstream sstr;
     sstr << "Facet { " << std::endl
-    << "  " << *facet.first->vertex((facet.second+1)%4)  << std::endl
-    << "  " << *facet.first->vertex((facet.second+2)%4)  << std::endl
-    << "  " << *facet.first->vertex((facet.second+3)%4)  << std::endl
+    << "  " << *facet.first->vertex((facet.second+1)%4) << std::endl
+    << "  " << *facet.first->vertex((facet.second+2)%4) << std::endl
+    << "  " << *facet.first->vertex((facet.second+3)%4) << std::endl
     << "  4th vertex in cell: " << *facet.first->vertex(facet.second)  << std::endl
     << "}" << std::endl;
 
@@ -973,9 +977,10 @@ scan_triangulation_impl()
     {
       // Cannot be const, see treat_new_facet signature
       Facet facet = *facet_it;
-      /*std::cerr << "*" << *facet.first->vertex((facet.second+1)%4)  << std::endl
-          << "  " << *facet.first->vertex((facet.second+2)%4)  << std::endl
-          << "  " << *facet.first->vertex((facet.second+3)%4)  << std::endl;*/
+      std::cerr << "TREAT FACET : " << std::endl
+                 << "*" << *facet.first->vertex((facet.second+1)%4)  << std::endl
+                << "  " << *facet.first->vertex((facet.second+2)%4)  << std::endl
+                << "  " << *facet.first->vertex((facet.second+3)%4)  << std::endl;
       this->treat_new_facet(facet);
     }
   }
@@ -1388,10 +1393,10 @@ before_insertion_impl(const Facet& facet,
 
   bool source_facet_is_in_conflict = false;
 
-  /*std::cerr << "before_insertion_impl:" << std::endl
-    << "* " << *facet.first->vertex((facet.second+1)%4)  << std::endl
-    << "  " << *facet.first->vertex((facet.second+2)%4)  << std::endl
-    << "  " << *facet.first->vertex((facet.second+3)%4)  << std::endl;*/
+  std::cerr << "before_insertion_impl:" << std::endl
+            << "* " << *facet.first->vertex((facet.second+1)%4)  << std::endl
+            << "  " << *facet.first->vertex((facet.second+2)%4)  << std::endl
+            << "  " << *facet.first->vertex((facet.second+3)%4)  << std::endl;
 
   // Iterate on conflict zone facets
   for (Facets_iterator facet_it = zone.internal_facets.begin();
@@ -1544,11 +1549,12 @@ treat_new_facet(Facet& facet)
     {
       insert_bad_facet(facet, *is_facet_bad);
 
-      /*std::cerr << "INSERT BAD FACET : " << std::endl
-        << "* " << *facet.first->vertex((facet.second+1)%4)  << std::endl
-        << "  " << *facet.first->vertex((facet.second+2)%4)  << std::endl
-        << "  " << *facet.first->vertex((facet.second+3)%4)  << std::endl
-        << "  Quality=" << is_facet_bad->second << std::endl;*/
+      std::cerr << "INSERT BAD FACET : " << std::endl
+                << "* " << *facet.first->vertex((facet.second+1)%4) << std::endl
+                << "  " << *facet.first->vertex((facet.second+2)%4) << std::endl
+                << "  " << *facet.first->vertex((facet.second+3)%4) << std::endl
+                << "  Surface center: " << get_facet_surface_center(facet) << std::endl
+                << "  Quality = " << is_facet_bad->second << std::endl;
     }
   }
   else
@@ -1741,9 +1747,9 @@ is_encroached_facet_refinable(Facet& facet) const
     ++wp_nb;
   }
 
-  const Weighted_point& p1 = c->vertex(k1)->point();
-  const Weighted_point& p2 = c->vertex(k2)->point();
-  const Weighted_point& p3 = c->vertex(k3)->point();
+  const Weighted_point& p1 = r_tr_.point(c, k1);
+  const Weighted_point& p2 = r_tr_.point(c, k2);
+  const Weighted_point& p3 = r_tr_.point(c, k3);
 
   const FT min_ratio (0.16); // (0.2*2)^2
 

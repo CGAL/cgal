@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2009 INRIA Sophia-Antipolis (France).
+// Copyright (c) 2009 INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -398,12 +398,9 @@ private:
     // operator()
     void operator()(const Vertex_handle& oldv) const
     {
-      typename Gt::Construct_point_3 wp2p =
-          m_gt.construct_point_3_object();
-      typename Gt::Construct_weighted_point_3 p2wp =
-          m_gt.construct_weighted_point_3_object();
-      typename Gt::Construct_translated_point_3 translate =
-          m_gt.construct_translated_point_3_object();
+      typename Gt::Construct_point_3 cp = m_gt.construct_point_3_object();
+      typename Gt::Construct_weighted_point_3 cwp = m_gt.construct_weighted_point_3_object();
+      typename Gt::Construct_translated_point_3 translate = m_gt.construct_translated_point_3_object();
 
       Vector_3 move = m_mgo.compute_move(oldv);
       if ( CGAL::NULL_VECTOR != move )
@@ -412,7 +409,8 @@ private:
 
         if(MGO::Sizing_field::is_vertex_update_needed)
         {
-          Bare_point new_position = translate(wp2p(oldv->point()), move);
+          const Weighted_point& position = m_gt.tr_.point(oldv);
+          Bare_point new_position = translate(cp(position), move);
           size = m_sizing_field(new_position, oldv);
         }
 
@@ -464,13 +462,13 @@ private:
     // operator()
     void operator()(Vertex& v) const
     {
-      typename Gt::Construct_point_3 wp2p =
-          m_gt.construct_point_3_object();
+      typename Gt::Construct_point_3 cp = m_gt.construct_point_3_object();
 
       Vertex_handle vh 
         = Tr::Triangulation_data_structure::Vertex_range::s_iterator_to(v);
+      const Weighted_point& position = m_mgo.tr_.point(vh);
       m_local_lists.local().push_back(
-          std::make_pair(wp2p(v.point()), m_mgo.average_circumradius_length(vh)));
+          std::make_pair(cp(position), m_mgo.average_circumradius_length(vh)));
     }
   };
 
@@ -508,7 +506,7 @@ private:
     void operator()( const tbb::blocked_range<size_t>& r ) const
     {
       typename Gt::Construct_translated_point_3 translate =
-          m_gt.construct_translated_point_3_object();
+          m_mgo.tr_.geom_traits().construct_translated_point_3_object();
 
       for( size_t i = r.begin() ; i != r.end() ; ++i)
       {
@@ -816,10 +814,8 @@ compute_moves(Moving_vertices_set& moving_vertices)
   else
 #endif // CGAL_LINKED_WITH_TBB
   {
-    typename Gt::Construct_point_3 wp2p =
-        tr_.geom_traits().construct_point_3_object();
-    typename Gt::Construct_translated_point_3 translate =
-        tr_.geom_traits().construct_translated_point_3_object();
+    typename Gt::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
+    typename Gt::Construct_translated_point_3 translate = tr_.geom_traits().construct_translated_point_3_object();
 
     // Get move for each moving vertex
     typename Moving_vertices_set::iterator vit = moving_vertices.begin();
@@ -834,7 +830,8 @@ compute_moves(Moving_vertices_set& moving_vertices)
         FT size = 0.;
         if(Sizing_field::is_vertex_update_needed)
         {
-          Bare_point new_position = translate(wp2p(tr_.point(oldv)), move);
+          const Weighted_point& position = tr_.point(oldv);
+          Bare_point new_position = translate(cp(position), move);
 //          std::cout << "new position: " << new_position << std::endl;
           size = sizing_field_(new_position, oldv);
         }
@@ -870,14 +867,10 @@ typename Mesh_global_optimizer<C3T3,Md,Mf,V_>::Vector_3
 Mesh_global_optimizer<C3T3,Md,Mf,V_>::
 compute_move(const Vertex_handle& v)
 {
-  typename Gt::Compute_squared_length_3 sq_length =
-      tr_.geom_traits().compute_squared_length_3_object();
-  typename Gt::Construct_vector_3 vector =
-      tr_.geom_traits().construct_vector_3_object();
-  typename Gt::Construct_translated_point_3 translate =
-      tr_.geom_traits().construct_translated_point_3_object();
-  typename Gt::Construct_point_3 wp2p =
-      tr_.geom_traits().construct_point_3_object();
+  typename Gt::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
+  typename Gt::Compute_squared_length_3 sq_length = tr_.geom_traits().compute_squared_length_3_object();
+  typename Gt::Construct_translated_point_3 translate = tr_.geom_traits().construct_translated_point_3_object();
+  typename Gt::Construct_vector_3 vector = tr_.geom_traits().construct_vector_3_object();
 
   Cell_vector incident_cells;
   incident_cells.reserve(64);
@@ -904,16 +897,17 @@ compute_move(const Vertex_handle& v)
   // Project surface vertex
   if ( c3t3_.in_dimension(v) == 2 )
   {
-    Bare_point new_position = translate(wp2p(tr_.point(v)), move);
+    const Weighted_point& position = tr_.point(v);
+    Bare_point new_position = translate(cp(position), move);
 //    std::cout << "new pos before projection: " << new_position << std::endl;
     Bare_point projected_new_position = helper_.project_on_surface(v, new_position);
 //    std::cout << "projected: " << projected_new_position << std::endl;
-    move = vector(wp2p(tr_.point(v)), projected_new_position);
+    move = vector(cp(position), projected_new_position);
   }
 
   FT local_move_sq_ratio = sq_length(move) / local_sq_size;
 
-//  std::cout << "optimizing point: " << tr_.point(v) << std::endl;
+//  std::cout << "optimizing point: " << position << std::endl;
 //  std::cout << "moving with: " << move << std::endl;
 
   CGAL_assertion(CGAL::abs(move.x()) < 0.8*(tr_.domain().xmax() - tr_.domain().xmin()));
@@ -1074,16 +1068,15 @@ fill_sizing_field()
   else
 #endif //CGAL_LINKED_WITH_TBB
   {
-    typename Gt::Construct_point_3 wp2p =
-        tr_.geom_traits().construct_point_3_object();
+    typename Gt::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
 
     // Fill map with local size
     for(typename Tr::Finite_vertices_iterator vit = tr_.finite_vertices_begin();
         vit != tr_.finite_vertices_end();
         ++vit)
     {
-      value_map.insert(std::make_pair(wp2p(tr_.point(vit)),
-                                      average_circumradius_length(vit)));
+      const Weighted_point& position = tr_.point(vit);
+      value_map.insert(std::make_pair(cp(position), average_circumradius_length(vit)));
     }
   }
 
@@ -1209,14 +1202,13 @@ typename Mesh_global_optimizer<C3T3,Md,Mf,V_>::FT
 Mesh_global_optimizer<C3T3,Md,Mf,V_>::
 sq_circumradius_length(const Cell_handle& cell, const Vertex_handle& v) const
 {
-  typename Gt::Compute_squared_distance_3 sq_distance =
-    tr_.geom_traits().compute_squared_distance_3_object();
-  typename Gt::Construct_point_3 wp2p =
-    tr_.geom_traits().construct_point_3_object();
+  typename Gt::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
+  typename Gt::Compute_squared_distance_3 sq_distance = tr_.geom_traits().compute_squared_distance_3_object();
 
   const Bare_point circumcenter = tr_.dual(cell);
+  const Weighted_point& position = tr_.point(cell, cell->index(v));
 
-  return ( sq_distance(wp2p(tr_.point(cell, cell->index(v))), circumcenter) );
+  return ( sq_distance(cp(position), circumcenter) );
 }
 
 } // end namespace Mesh_3

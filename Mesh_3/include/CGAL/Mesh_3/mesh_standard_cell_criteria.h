@@ -79,20 +79,26 @@ protected:
 
   virtual Badness do_is_bad(const Tr& tr, const Cell_handle& ch) const
   {
-    typedef typename Tr::Bare_point     Bare_point;
     typedef typename Tr::Geom_traits    Geom_traits;
+    typedef typename Tr::Bare_point     Bare_point;
+    typedef typename Tr::Weighted_point Weighted_point;
 
     typedef typename Geom_traits::Compute_squared_distance_3 Distance;
     typedef typename Geom_traits::Compute_squared_radius_3   Radius;
     typedef typename Geom_traits::Construct_point_3          Construct_point_3;
+
     Distance distance = tr.geom_traits().compute_squared_distance_3_object();
     Radius sq_radius = tr.geom_traits().compute_squared_radius_3_object();
-    Construct_point_3 wp2p = tr.geom_traits().construct_point_3_object();
+    Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
 
-    const Bare_point& p = wp2p(tr.point(ch, 0));
-    const Bare_point& q = wp2p(tr.point(ch, 1));
-    const Bare_point& r = wp2p(tr.point(ch, 2));
-    const Bare_point& s = wp2p(tr.point(ch, 3));
+    const Weighted_point& wp = tr.point(ch, 0);
+    const Weighted_point& wq = tr.point(ch, 1);
+    const Weighted_point& wr = tr.point(ch, 2);
+    const Weighted_point& ws = tr.point(ch, 3);
+    const Bare_point& p = cp(wp);
+    const Bare_point& q = cp(wq);
+    const Bare_point& r = cp(wr);
+    const Bare_point& s = cp(ws);
 
     const FT size = sq_radius(p, q, r, s);
 
@@ -164,18 +170,23 @@ protected:
 
   virtual Badness do_is_bad(const Tr& tr, const Cell_handle& ch) const
   {
-    typedef typename Tr::Bare_point  Bare_point;
-    typedef typename Tr::Geom_traits Geom_traits;
+    typedef typename Tr::Geom_traits     Geom_traits;
+    typedef typename Tr::Bare_point      Bare_point;
+    typedef typename Tr::Weighted_point  Weighted_point;
 
     typedef typename Geom_traits::Compute_squared_radius_3 Radius;
     typedef typename Geom_traits::Construct_point_3        Construct_point_3;
     Radius sq_radius = tr.geom_traits().compute_squared_radius_3_object();
-    Construct_point_3 wp2p = tr.geom_traits().construct_point_3_object();
+    Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
 
-    const Bare_point& p = wp2p(tr.point(ch, 0));
-    const Bare_point& q = wp2p(tr.point(ch, 1));
-    const Bare_point& r = wp2p(tr.point(ch, 2));
-    const Bare_point& s = wp2p(tr.point(ch, 3));
+    const Weighted_point& wp = tr.point(ch, 0);
+    const Weighted_point& wq = tr.point(ch, 1);
+    const Weighted_point& wr = tr.point(ch, 2);
+    const Weighted_point& ws = tr.point(ch, 3);
+    const Bare_point& p = cp(wp);
+    const Bare_point& q = cp(wq);
+    const Bare_point& r = cp(wr);
+    const Bare_point& s = cp(ws);
 
     const FT size = sq_radius(p, q, r, s);
 
@@ -234,18 +245,23 @@ protected:
   
   virtual Badness do_is_bad(const Tr& tr, const Cell_handle& ch) const
   {
-    typedef typename Tr::Bare_point    Bare_point;
-    typedef typename Tr::Geom_traits   Geom_traits;
+    typedef typename Tr::Geom_traits      Geom_traits;
+    typedef typename Tr::Bare_point       Bare_point;
+    typedef typename Tr::Weighted_point   Weighted_point;
 
     typedef typename Geom_traits::Compute_squared_radius_3 Radius;
     typedef typename Geom_traits::Construct_point_3        Construct_point_3;
     Radius sq_radius = tr.geom_traits().compute_squared_radius_3_object();
-    Construct_point_3 wp2p = tr.geom_traits().construct_point_3_object();
+    Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
 
-    const Bare_point& p = wp2p(tr.point(ch, 0));
-    const Bare_point& q = wp2p(tr.point(ch, 1));
-    const Bare_point& r = wp2p(tr.point(ch, 2));
-    const Bare_point& s = wp2p(tr.point(ch, 3));
+    const Weighted_point& wp = tr.point(ch, 0);
+    const Weighted_point& wq = tr.point(ch, 1);
+    const Weighted_point& wr = tr.point(ch, 2);
+    const Weighted_point& ws = tr.point(ch, 3);
+    const Bare_point& p = cp(wp);
+    const Bare_point& q = cp(wq);
+    const Bare_point& r = cp(wr);
+    const Bare_point& s = cp(ws);
 
     const FT size = sq_radius(p, q, r, s);
     const FT sq_bound = CGAL::square( size_(tr.dual(ch), 3,

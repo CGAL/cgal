@@ -641,9 +641,6 @@ class C3T3_helpers
   typedef typename Gt::Plane_3                        Plane_3;
   typedef typename Gt::Tetrahedron_3                  Tetrahedron;
 
-  typedef typename Gt::Construct_point_3              Construct_point_3;
-  typedef typename Gt::Construct_weighted_point_3     Construct_weighted_point_3;
-
   typedef typename Tr::Vertex_handle                  Vertex_handle;
   typedef typename Tr::Facet                          Facet;
   typedef typename Tr::Cell                           Cell;
@@ -717,8 +714,6 @@ public:
     , c3t3_(c3t3)
     , tr_(c3t3.triangulation())
     , domain_(domain)
-    , wp2p_(tr_.geom_traits().construct_point_3_object())
-    , p2wp_(tr_.geom_traits().construct_weighted_point_3_object())
   { }
 
   /**
@@ -1248,13 +1243,13 @@ private:
 
           // Update facet surface center
           Bare_point surface_center = CGAL::cpp0x::get<0>(intersection);
-          facet.first->set_facet_surface_center(facet.second,surface_center);
-          facet_m.first->set_facet_surface_center(facet_m.second,surface_center);
+          facet.first->set_facet_surface_center(facet.second, surface_center);
+          facet_m.first->set_facet_surface_center(facet_m.second, surface_center);
         }
         else
         {
-          facet.first->set_facet_surface_center(facet.second,Bare_point());
-          facet_m.first->set_facet_surface_center(facet_m.second,Bare_point());
+          facet.first->set_facet_surface_center(facet.second, Bare_point());
+          facet_m.first->set_facet_surface_center(facet_m.second, Bare_point());
         }
       }
 
@@ -2408,9 +2403,6 @@ private:
   C3T3& c3t3_;
   Tr& tr_;
   const MeshDomain& domain_;
-  // @todo purge the two members below?
-  Construct_point_3 wp2p_;
-  Construct_weighted_point_3 p2wp_;
 }; // class C3T3_helpers
 
 
@@ -2425,9 +2417,10 @@ update_mesh(const Vertex_handle& old_vertex,
             OutputIterator modified_vertices,
             bool *could_lock_zone)
 {
-  // std::cerr << "\nupdate_mesh[v1](" << new_position << ",\n"
-  //           << "                " << (void*)(&*old_vertex) << "=" << old_vertex->point()
-  //           << ")\n";
+  // std::cerr << "\nupdate_mesh[v1](" << (void*)(&*old_vertex)
+  //                                   << "=" << tr_.point(old_vertex) << ",\n"
+  //           << "                  " << move << ",\n"
+  //           << "                  " << new_position << ")\n";
 
   if (could_lock_zone)
     *could_lock_zone = true;
@@ -2459,9 +2452,11 @@ update_mesh_no_topo_change(const Vertex_handle& old_vertex,
                            const Cell_vector& conflict_cells )
 {
   // std::cerr << "update_mesh_no_topo_change("
-  //           << (void*)(&*old_vertex) << " = " << old_vertex->point() << ",\n"
+  //           << (void*)(&*old_vertex) << " = " << tr_.point(old_vertex) << ",\n"
   //           << "                            " << move << ",\n"
   //           << "                            " << new_position << ")" << std::endl;
+
+  typename Gt::Construct_opposite_vector_3 cov = tr_.geom_traits().construct_opposite_vector_3_object();
 
   //backup metadata
   std::set<Cell_data_backup> cells_backup;
@@ -2469,7 +2464,7 @@ update_mesh_no_topo_change(const Vertex_handle& old_vertex,
 
   // Get old values
   criterion.before_move(c3t3_cells(conflict_cells));
-  Weighted_point old_position = old_vertex->point();
+  Weighted_point old_position = tr_.point(old_vertex); // intentional copy
 
   // Move point
   reset_circumcenter_cache(conflict_cells);
@@ -2496,10 +2491,6 @@ update_mesh_no_topo_change(const Vertex_handle& old_vertex,
 
     //sliver caches have been updated by valid_move
     reset_sliver_cache(conflict_cells);
-
-    typename Gt::Construct_opposite_vector_3 cov =
-        tr_.geom_traits().construct_opposite_vector_3_object();
-
     move_point_no_topo_change(old_vertex, cov(move), old_position);
 
     //restore meta-data (cells should have same connectivity as before move)
@@ -2507,7 +2498,7 @@ update_mesh_no_topo_change(const Vertex_handle& old_vertex,
     CGAL_assertion(conflict_cells.size() >= cells_backup.size());
     restore_from_cells_backup(conflict_cells, cells_backup);
 
-    return std::make_pair(false,old_vertex);
+    return std::make_pair(false, old_vertex);
   }
 }
 
@@ -2522,8 +2513,8 @@ update_mesh_topo_change(const Vertex_handle& old_vertex,
                         OutputIterator modified_vertices,
                         bool *could_lock_zone)
 {
-  // std::cerr << "update_mesh_topo_change("
-  //           << (void*)(&*old_vertex) << "=" << old_vertex->point()
+  // std::cerr << "update_mesh_topo_change(" << (void*)(&*old_vertex)
+  //                                         << "=" << tr_.point(old_vertex)
   //           << "                        " << move << ",\n"
   //           << "                        " << new_position << ",\n"
   //           << ")" << std::endl;
@@ -2558,7 +2549,7 @@ update_mesh_topo_change(const Vertex_handle& old_vertex,
   CGAL_assertion(conflict_cells.size() == cells_backup.size());
 
   criterion.before_move(c3t3_cells(conflict_cells));
-  Weighted_point old_position = old_vertex->point();
+  Weighted_point old_position = tr_.point(old_vertex); // intentional copy
 
   // Keep old boundary
   Vertex_set old_incident_surface_vertices;
@@ -2581,7 +2572,7 @@ update_mesh_topo_change(const Vertex_handle& old_vertex,
                                                    CGAL::Emptyset_iterator());
 
   // If nothing changed, return
-  if ( old_position == new_vertex->point() )
+  if ( old_position == tr_.point(new_vertex) )
   {
     // std::cerr << "update_mesh_topo_change: no move!\n";
     // check_c3t3(c3t3_);
@@ -2639,9 +2630,9 @@ update_mesh(const Vertex_handle& old_vertex,
             OutputIterator modified_vertices,
             bool fill_vertices)
 {
-  // std::cerr << "\nupdate_mesh[v2](" << new_position << ",\n"
-  //           << "                " << (void*)(&*old_vertex) << "=" << old_vertex->point()
-  //           << ")\n";
+  // std::cerr << "\nupdate_mesh[v2]("  << (void*)(&*old_vertex)
+  //                                    << "=" << tr_.point(old_vertex) << ",\n"
+  //           << "                   " << new_position << ")\n";
 
   Cell_vector outdated_cells;
   Vertex_handle new_vertex = move_point(old_vertex, move,
@@ -2670,7 +2661,9 @@ C3T3_helpers<C3T3,MD>::
 rebuild_restricted_delaunay(OutdatedCells& outdated_cells,
                             Moving_vertices_set& moving_vertices)
 {
+  typename Gt::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
   typename Gt::Equal_3 equal = tr_.geom_traits().equal_3_object();
+
   typename OutdatedCells::iterator first_cell = outdated_cells.begin();
   typename OutdatedCells::iterator last_cell = outdated_cells.end();
   Update_c3t3 updater(domain_,c3t3_);
@@ -2768,8 +2761,8 @@ rebuild_restricted_delaunay(OutdatedCells& outdated_cells,
        it != vertex_to_proj.end() ;
        ++it )
   {
-    Bare_point initial_position = wp2p_((*it)->point());
-    Bare_point new_pos = project_on_surface(*it, initial_position);
+    const Weighted_point& initial_position = tr_.point(*it);
+    Bare_point new_pos = project_on_surface(*it, cp(initial_position));
 
     std::cout << "project: " << initial_position << " got: " << new_pos << std::endl;
 
@@ -2779,7 +2772,7 @@ rebuild_restricted_delaunay(OutdatedCells& outdated_cells,
       // Update moving vertices (it becomes new_vertex)
       moving_vertices.erase(*it);
 
-      Vector_3 move(initial_position, new_pos);
+      Vector_3 move(cp(initial_position), new_pos);
       std::cout << "projection move: " << move << std::endl;
 
       CGAL_assertion(CGAL::abs(move.x()) < 0.8*(tr_.domain().xmax() - tr_.domain().xmin()));
@@ -2807,8 +2800,8 @@ rebuild_restricted_delaunay(ForwardIterator first_cell,
                             ForwardIterator last_cell,
                             Moving_vertices_set& moving_vertices)
 {
-  typename Gt::Equal_3 equal = tr_.geom_traits().equal_3_object();
   typename Gt::Construct_vector_3 vector = tr_.geom_traits().construct_vector_3_object();
+  typename Gt::Equal_3 equal = tr_.geom_traits().equal_3_object();
 
   Update_c3t3 updater(domain_,c3t3_);
 
@@ -2886,16 +2879,17 @@ rebuild_restricted_delaunay(ForwardIterator first_cell,
                                         end = vertex_to_proj.end();
   for ( ; it != end; ++it )
   {
-    const Bare_point& initial_pos = wp2p_((it->first)->point());
-    Bare_point new_pos = project_on_surface(it->first, initial_pos, it->second);
+    Vertex_handle vh = it->first;
+    const Weighted_point& initial_position = tr_.point(vh);
+    Bare_point new_pos = project_on_surface(vh, cp(initial_position), it->second);
 
     if ( ! equal(new_pos, Bare_point()) )
     {
       //freezing needs 'erase' to be done before the vertex is actually destroyed
       // Update moving vertices (it becomes new_vertex)
-      moving_vertices.erase(it->first);
+      moving_vertices.erase(vh);
 
-      Vertex_handle new_vertex = update_mesh(it->first, vector(initial_pos, new_pos));
+      Vertex_handle new_vertex = update_mesh(vh, vector(cp(initial_position), new_pos));
       c3t3_.set_dimension(new_vertex, 2);
 
       moving_vertices.insert(new_vertex);
@@ -2925,22 +2919,20 @@ move_point(const Vertex_handle& old_vertex,
            OutdatedCellsOutputIterator outdated_cells,
            DeletedCellsOutputIterator deleted_cells) const
 {
-  // std::cerr << "C3T3_helpers::move_point[v2]("
-  //           << (void*)(&*old_vertex) << " = " << old_vertex->point()
-  //           << " , move: " << move << ")\n";
+  // std::cerr << "C3T3_helpers::move_point[v2](" << (void*)(&*old_vertex)
+  //                                              << " = " << tr_.point(old_vertex)  << ",\n"
+  //           << "                             " << move << ")\n";
 
-  typename Gt::Construct_translated_point_3 translate =
-      tr_.geom_traits().construct_translated_point_3_object();
-  typename Gt::Construct_weighted_point_3 p2wp =
-      tr_.geom_traits().construct_weighted_point_3_object();
-  typename Gt::Construct_point_3 wp2p =
-      tr_.geom_traits().construct_point_3_object();
+  typename Gt::Construct_translated_point_3 translate = tr_.geom_traits().construct_translated_point_3_object();
+  typename Gt::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
+  typename Gt::Construct_weighted_point_3 cwp = tr_.geom_traits().construct_weighted_point_3_object();
 
   Cell_vector incident_cells_;
   incident_cells_.reserve(64);
   tr_.incident_cells(old_vertex, std::back_inserter(incident_cells_));
 
-  const Weighted_point& new_position = p2wp(translate(wp2p(tr_.point(old_vertex)), move));
+  const Weighted_point& position = tr_.point(old_vertex);
+  const Weighted_point& new_position = cwp(translate(cp(position), move));
 
   if ( Th().no_topological_change(tr_, old_vertex, move, new_position, incident_cells_) )
   {
@@ -2964,18 +2956,16 @@ move_point(const Vertex_handle& old_vertex,
            Outdated_cell_set& outdated_cells_set,
            Moving_vertices_set& moving_vertices) const
 {
-  typename Gt::Construct_translated_point_3 translate =
-      tr_.geom_traits().construct_translated_point_3_object();
-  typename Gt::Construct_weighted_point_3 p2wp =
-      tr_.geom_traits().construct_weighted_point_3_object();
-  typename Gt::Construct_point_3 wp2p =
-      tr_.geom_traits().construct_point_3_object();
+  typename Gt::Construct_translated_point_3 translate = tr_.geom_traits().construct_translated_point_3_object();
+  typename Gt::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
+  typename Gt::Construct_weighted_point_3 cwp = tr_.geom_traits().construct_weighted_point_3_object();
 
   Cell_vector incident_cells_;
   incident_cells_.reserve(64);
   tr_.incident_cells(old_vertex, std::back_inserter(incident_cells_));
 
-  const Weighted_point& new_position = p2wp(translate(wp2p(tr_.point(old_vertex)), move));
+  const Weighted_point& position = tr_.point(old_vertex);
+  const Weighted_point& new_position = cwp(translate(cp(position), move));
 
   if ( Th().no_topological_change(tr_, old_vertex, move, new_position, incident_cells_) )
   {
@@ -3029,14 +3019,12 @@ move_point(const Vertex_handle& old_vertex,
   }
   //======= /Get incident cells ==========
 
-  typename Gt::Construct_translated_point_3 translate =
-      tr_.geom_traits().construct_translated_point_3_object();
-  typename Gt::Construct_weighted_point_3 p2wp =
-      tr_.geom_traits().construct_weighted_point_3_object();
-  typename Gt::Construct_point_3 wp2p =
-      tr_.geom_traits().construct_point_3_object();
+  typename Gt::Construct_translated_point_3 translate = tr_.geom_traits().construct_translated_point_3_object();
+  typename Gt::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
+  typename Gt::Construct_weighted_point_3 cwp = tr_.geom_traits().construct_weighted_point_3_object();
 
-  const Weighted_point& new_position = p2wp(translate(wp2p(tr_.point(old_vertex)), move));
+  const Weighted_point& position = tr_.point(old_vertex);
+  const Weighted_point& new_position = cwp(translate(cp(position), move));
 
   if (!try_lock_point(new_position)) // LOCK
   {
@@ -3198,7 +3186,7 @@ move_point_topo_change_conflict_zone_known(
                                              //o.w. deleted_cells will point to null pointer or so and crash
                                              const
 {
-  Weighted_point old_position = old_vertex->point();
+  Weighted_point old_position = tr_.point(old_vertex); // intentional copy
   // make one set with conflict zone
   Cell_set conflict_zone;
   std::set_union(insertion_conflict_cells_begin, insertion_conflict_cells_end,
@@ -3325,16 +3313,11 @@ project_on_surface_aux(const Bare_point& p,
   typedef typename Gt::Segment_3 Segment_3;
 
   // Build a segment directed as projection_direction,
-  typename Gt::Compute_squared_distance_3 sq_distance =
-    tr_.geom_traits().compute_squared_distance_3_object();
-  typename Gt::Compute_squared_length_3 sq_length =
-    tr_.geom_traits().compute_squared_length_3_object();
-  typename Gt::Construct_scaled_vector_3 scale =
-    tr_.geom_traits().construct_scaled_vector_3_object();
-  typename Gt::Is_degenerate_3 is_degenerate =
-    tr_.geom_traits().is_degenerate_3_object();
-  typename Gt::Construct_translated_point_3 translate =
-    tr_.geom_traits().construct_translated_point_3_object();
+  typename Gt::Compute_squared_distance_3 sq_distance = tr_.geom_traits().compute_squared_distance_3_object();
+  typename Gt::Compute_squared_length_3 sq_length = tr_.geom_traits().compute_squared_length_3_object();
+  typename Gt::Construct_scaled_vector_3 scale = tr_.geom_traits().construct_scaled_vector_3_object();
+  typename Gt::Is_degenerate_3 is_degenerate = tr_.geom_traits().is_degenerate_3_object();
+  typename Gt::Construct_translated_point_3 translate = tr_.geom_traits().construct_translated_point_3_object();
 
   typename MD::Construct_intersection construct_intersection =
     domain_.construct_intersection_object();
@@ -3388,6 +3371,8 @@ get_least_square_surface_plane(const Vertex_handle& v,
                                Bare_point& reference_point,
                                Surface_patch_index patch_index) const
 {
+  typename Gt::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
+
   // Get incident facets
   Facet_vector facets;
 # ifdef CGAL_LINKED_WITH_TBB
@@ -3416,7 +3401,8 @@ get_least_square_surface_plane(const Vertex_handle& v,
       const int& i = fit->second;
 
       // @fixme really ugly
-      const Bare_point& bp = tr_.get_closest_point(wp2p_(tr_.point(v)),
+      const Weighted_point& position = tr_.point(v);
+      const Bare_point& bp = tr_.get_closest_point(cp(position),
                                                    cell->get_facet_surface_center(i));
       surface_point_vector.push_back(bp);
     }
@@ -3453,6 +3439,7 @@ project_on_surface(const Vertex_handle& v,
 {
   // return domain_.project_on_surface(p);
 
+  typename Gt::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
   typename Gt::Equal_3 equal = tr_.geom_traits().equal_3_object();
 
   // Get plane
@@ -3463,8 +3450,9 @@ project_on_surface(const Vertex_handle& v,
     return p;
 
   // Project
-  if ( ! equal(p, wp2p_(v->point())) )
-    return project_on_surface_aux(p, wp2p_(v->point()), plane.orthogonal_vector());
+  const Weighted_point& position = tr_.point(v);
+  if ( ! equal(p, cp(position)) )
+    return project_on_surface_aux(p, cp(position), plane.orthogonal_vector());
   else
     return project_on_surface_aux(p, reference_point, plane.orthogonal_vector());
 }

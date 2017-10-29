@@ -618,10 +618,10 @@ Mesh_complex_3_in_triangulation_3(const Self& rhs)
     const Vertex_handle& vb = it->left;
 
     Vertex_handle new_va;
-    this->triangulation().is_vertex(va->point(), new_va);
+    this->triangulation().is_vertex(rhs.triangulation().point(va), new_va);
 
     Vertex_handle new_vb;
-    this->triangulation().is_vertex(vb->point(), new_vb);
+    this->triangulation().is_vertex(rhs.triangulation().point(vb), new_vb);
 
     this->add_to_complex(make_internal_edge(new_va,new_vb), it->info);
   }
@@ -631,7 +631,7 @@ Mesh_complex_3_in_triangulation_3(const Self& rhs)
        end = rhs.corners_.end() ; it != end ; ++it )
   {
     Vertex_handle new_v;
-    this->triangulation().is_vertex(it->first->point(), new_v);
+    this->triangulation().is_vertex(rhs.triangulation().point(it->first), new_v);
     this->add_to_complex(new_v, it->second);
   }
 
@@ -685,9 +685,10 @@ bool
 Mesh_complex_3_in_triangulation_3<Tr,CI_,CSI_>::
 is_valid(bool verbose) const
 {
-  typedef typename Tr::Point::Point    Bare_point;
-  typedef typename Tr::Point::Weight   Weight;
-  typedef Weight FT;
+  typedef typename Tr::Bare_point              Bare_point;
+  typedef typename Tr::Weighted_point          Weighted_point;
+  typedef typename Tr::Weighted_point::Weight  Weight;
+  typedef Weight                               FT;
 
   std::map<Vertex_handle, int> vertex_map;
 
@@ -712,7 +713,7 @@ is_valid(bool verbose) const
     {
       if(verbose)
         std::cerr << "Validity error: vertex " << (void*)(&*vit->first)
-                  << " (" << vit->first->point() << ") "
+                  << " (" << this->triangulation().point(vit->first) << ") "
                   << "is not a corner (dimension " << vit->first->in_dimension()
                   << ") but has " << vit->second << " neighbor(s)!\n";
       return false;
@@ -727,11 +728,13 @@ is_valid(bool verbose) const
       this->triangulation().geom_traits().construct_sphere_3_object();
     typename Tr::Geom_traits::Do_intersect_3 do_intersect =
       this->triangulation().geom_traits().do_intersect_3_object();
-    typename Tr::Geom_traits::Construct_point_3 wp2p =
+    typename Tr::Geom_traits::Construct_point_3 cp =
       this->triangulation().geom_traits().construct_point_3_object();
 
-    const Bare_point& p = wp2p(it->right->point());
-    const Bare_point& q = wp2p(it->left->point());
+    const Weighted_point& itrwp = this->triangulation().point(it->right);
+    const Weighted_point& itlwp = this->triangulation().point(it->left);
+    const Bare_point& p = cp(itrwp);
+    const Bare_point& q = cp(itlwp);
 
     const FT& sq_rp = it->right->point().weight();
     const FT& sq_rq = it->left->point().weight();

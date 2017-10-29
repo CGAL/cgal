@@ -55,6 +55,7 @@ class Lloyd_move
   typedef typename Tr::Cell_handle                            Cell_handle;
 
   typedef typename Tr::Bare_point                             Bare_point;
+  typedef typename Tr::Weighted_point                         Weighted_point;
 
   typedef typename std::vector<Facet>                         Facet_vector;
   typedef typename std::vector<Cell_handle>                   Cell_vector;
@@ -79,7 +80,7 @@ public:
                       const Sizing_field& sizing_field = Sizing_field() ) const
   {
 //    std::cout << "computing move of: " << &*v
-//              << " pos: " << v->point().point()
+//              << " pos: " << c3t3.triangulation().point(v)
 //              << " dim: " << c3t3.in_dimension(v) << std::endl;
 
     switch ( c3t3.in_dimension(v) )
@@ -260,7 +261,7 @@ private:
   {
     const Tr& tr = c3t3.triangulation();
 
-    typename Gt::Construct_point_3 wp2p = tr.geom_traits().construct_point_3_object();
+    typename Gt::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
 
     Facet_vector incident_facets;
     incident_facets.reserve(64);
@@ -281,9 +282,10 @@ private:
       const Cell_handle& cell = fit->first;
       const int& i = fit->second;
 
-      // @fixme really ugly
-      points.push_back(tr.get_closest_point(wp2p(tr.point(v)),
-                                             cell->get_facet_surface_center(i)));
+      // @fixme 'get_closest_point' is really ugly
+      const Weighted_point& position = tr.point(v);
+      points.push_back(tr.get_closest_point(cp(position),
+                                            cell->get_facet_surface_center(i)));
     }
 
     return points;
@@ -298,20 +300,19 @@ private:
                                  const C3T3& c3t3,
                                  const Sizing_field& sizing_field) const
   {
-    typename Gt::Construct_point_3 cp =
-      c3t3.triangulation().geom_traits().construct_point_3_object();
-    typename Gt::Construct_vector_3 vector =
-      c3t3.triangulation().geom_traits().construct_vector_3_object();
+    typename Gt::Construct_point_3 cp = c3t3.triangulation().geom_traits().construct_point_3_object();
+    typename Gt::Construct_vector_3 vector = c3t3.triangulation().geom_traits().construct_vector_3_object();
 
-    const Bare_point& p = cp(v->point());
+    const Weighted_point position = c3t3.triangulation().point(v);
+    const Bare_point& p = cp(position);
 
-    FT da = density_1d(a,v,sizing_field);
-    FT db = density_1d(b,v,sizing_field);
+    FT da = density_1d(a, v, sizing_field);
+    FT db = density_1d(b, v, sizing_field);
 
     CGAL_assertion( !is_zero(da + db) );
     return ( (vector(p,a)*da + vector(p,b)*db) / (da + db) );
   }
-  
+
   /**
    * Return the move from \c v to the centroid of triangle [a,b,c].
    */
@@ -322,12 +323,11 @@ private:
                                   const C3T3& c3t3,
                                   const Sizing_field& sizing_field) const
   {
-    typename Gt::Construct_vector_3 vector =
-      c3t3.triangulation().geom_traits().construct_vector_3_object();
-    typename Gt::Construct_point_3 cp =
-      c3t3.triangulation().geom_traits().construct_point_3_object();
+    typename Gt::Construct_point_3 cp = c3t3.triangulation().geom_traits().construct_point_3_object();
+    typename Gt::Construct_vector_3 vector = c3t3.triangulation().geom_traits().construct_vector_3_object();
 
-    const Bare_point& p = cp(v->point());
+    const Weighted_point& position = c3t3.triangulation().point(v);
+    const Bare_point& p = cp(position);
 
     FT da = density_2d<true>(a,v,sizing_field);
     FT db = density_2d<false>(b,v,sizing_field);
@@ -360,7 +360,7 @@ private:
     
     // Project all points to the plane
     std::transform(first, last, first, Project_on_plane(plane, c3t3));
-    CGAL_assertion(std::distance(first,last) > 3);
+    CGAL_assertion(std::distance(first, last) > 3);
 
     // Get 2D-3D transformations
     Aff_transformation_3 to_3d = compute_to_3d_transform(plane, *first, c3t3);
@@ -403,17 +403,14 @@ private:
   {
     CGAL_precondition(std::distance(first,last) >= 3);
 
-    typename Gt::Construct_vector_3 vector =
-      c3t3.triangulation().geom_traits().construct_vector_3_object();
-    typename Gt::Construct_centroid_3 centroid =
-      c3t3.triangulation().geom_traits().construct_centroid_3_object();
-    typename Gt::Compute_area_3 area = 
-      c3t3.triangulation().geom_traits().compute_area_3_object();
-    typename Gt::Construct_point_3 cp =
-      c3t3.triangulation().geom_traits().construct_point_3_object();
+    typename Gt::Compute_area_3 area = c3t3.triangulation().geom_traits().compute_area_3_object();
+    typename Gt::Construct_centroid_3 centroid = c3t3.triangulation().geom_traits().construct_centroid_3_object();
+    typename Gt::Construct_point_3 cp = c3t3.triangulation().geom_traits().construct_point_3_object();
+    typename Gt::Construct_vector_3 vector = c3t3.triangulation().geom_traits().construct_vector_3_object();
 
     // Vertex current position
-    const Bare_point& vertex_position = cp(v->point());
+    const Weighted_point& vertex_weighted_position = c3t3.triangulation().point(v);
+    const Bare_point& vertex_position = cp(vertex_weighted_position);
 
     // Use as reference point to triangulate
     const Bare_point& a = *first++;
@@ -457,10 +454,8 @@ private:
                                                const Bare_point& reference_point,
                                                const C3T3& c3t3) const
   {
-    typename Gt::Construct_base_vector_3 base =
-      c3t3.triangulation().geom_traits().construct_base_vector_3_object();
-    typename Gt::Construct_orthogonal_vector_3 orthogonal_vector =
-      c3t3.triangulation().geom_traits().construct_orthogonal_vector_3_object();
+    typename Gt::Construct_base_vector_3 base = c3t3.triangulation().geom_traits().construct_base_vector_3_object();
+    typename Gt::Construct_orthogonal_vector_3 orthogonal_vector = c3t3.triangulation().geom_traits().construct_orthogonal_vector_3_object();
 
     Vector_3 u = base(plane, 1);
     u = u / CGAL::sqrt(u*u);
@@ -553,19 +548,20 @@ private:
     CGAL_assertion(c3t3.is_in_complex(current_cell));
 
     // a & b are fixed points
-    const Bare_point& a = cp(v->point());
+    const Weighted_point& wa = tr.point(v);
+    const Bare_point& a = cp(wa);
 
     Bare_point b = tr.dual(current_cell);
-    const Bare_point& a_b = cp(tr.point(current_cell, current_cell->index(v)));
-    Vector_3 ba = Vector_3(a_b, b);
+    const Weighted_point& a_b = tr.point(current_cell, current_cell->index(v));
+    Vector_3 ba = Vector_3(cp(a_b), b);
     ++current_cell;
     CGAL_assertion(c3t3.is_in_complex(current_cell));
     CGAL_assertion(current_cell != done);
 
     // c & d are moving points
     Bare_point c = tr.dual(current_cell);
-    const Bare_point& a_c = cp(tr.point(current_cell, current_cell->index(v)));
-    Vector_3 ca = Vector_3(a_c, c);
+    const Weighted_point& a_c = tr.point(current_cell, current_cell->index(v));
+    Vector_3 ca = Vector_3(cp(a_c), c);
     ++current_cell;
     CGAL_assertion(current_cell != done);
 
@@ -573,8 +569,8 @@ private:
     {
       CGAL_assertion(c3t3.is_in_complex(current_cell));
       Bare_point d = tr.dual(current_cell);
-      const Bare_point& a_d = cp(tr.point(current_cell, current_cell->index(v)));
-      Vector_3 da = Vector_3(a_d, d);
+      const Weighted_point& a_d = tr.point(current_cell, current_cell->index(v));
+      Vector_3 da = Vector_3(cp(a_d), d);
 
       Tetrahedron_3 tet = tetrahedron(a, translate(a, ba), translate(a, ca), translate(a, da));
       Bare_point tet_centroid = centroid(tet);

@@ -245,6 +245,11 @@ public:
 
   Bare_point canonicalize_point(const Bare_point& p) const
   {
+    if(p.x() >= domain().xmin() && p.x() < domain().xmax() &&
+       p.y() >= domain().ymin() && p.y() < domain().ymax() &&
+       p.z() >= domain().zmin() && p.z() < domain().zmax())
+      return p;
+
     return robust_canonicalize_point(p);
   }
 
@@ -267,6 +272,11 @@ public:
 
   Weighted_point canonicalize_point(const Weighted_point& p) const
   {
+    if(p.x() >= domain().xmin() && p.x() < domain().xmax() &&
+       p.y() >= domain().ymin() && p.y() < domain().ymax() &&
+       p.z() >= domain().zmin() && p.z() < domain().zmax())
+      return p;
+
     return robust_canonicalize_point(p);
   }
 
@@ -381,8 +391,13 @@ public:
   // between p and q, for all combinations of offsets
   FT min_squared_distance(const Bare_point& p, const Bare_point& q) const
   {
+//    std::cout << "minsqd: " << p << " // " << q << std::endl;
+
     const Bare_point cp = canonicalize_point(p);
     const Bare_point cq = canonicalize_point(q);
+
+//    std::cout << "canon: " << cp << " // " << cq << std::endl;
+
     FT min_sq_dist = std::numeric_limits<FT>::infinity();
 
     for(int i = 0; i < 3; ++i) {
@@ -397,6 +412,7 @@ public:
       }
     }
 
+//    std::cout << "minsqdt: " << min_sq_dist << std::endl;
     return min_sq_dist;
   }
 

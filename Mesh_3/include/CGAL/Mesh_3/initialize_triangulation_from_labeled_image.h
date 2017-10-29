@@ -84,21 +84,21 @@ void initialize_triangulation_from_labeled_image(C3T3& c3t3,
                                                  )
 {
   typedef typename C3T3::Triangulation       Tr;
+  typedef typename Tr::Geom_traits           Gt;
   typedef typename Tr::Weighted_point        Weighted_point;
   typedef typename Tr::Bare_point            Bare_point;
   typedef typename Tr::Segment               Segment_3;
-  typedef typename Tr::Geom_traits::Vector_3 Vector_3;
   typedef typename Tr::Vertex_handle         Vertex_handle;
   typedef typename Tr::Cell_handle           Cell_handle;
+
+  typedef typename Gt::Vector_3              Vector_3;
 
   typedef MeshDomain                         Mesh_domain;
 
   Tr& tr = c3t3.triangulation();
 
-  typename Tr::Geom_traits::Construct_point_3 wp2p =
-    tr.geom_traits().construct_point_3_object();
-  typename Tr::Geom_traits::Construct_weighted_point_3 p2wp =
-    tr.geom_traits().construct_weighted_point_3_object();
+  typename Gt::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
+  typename Gt::Construct_weighted_point_3 cwp = tr.geom_traits().construct_weighted_point_3_object();
 
   if(protect_features) {
     init_tr_from_labeled_image_call_init_features
@@ -155,7 +155,8 @@ void initialize_triangulation_from_labeled_image(C3T3& c3t3,
         construct_intersection(Segment_3(it->first, test));
       if (CGAL::cpp11::get<2>(intersect) != 0)
       {
-        Weighted_point pi = p2wp(CGAL::cpp11::get<0>(intersect));
+        const Bare_point& bpi = CGAL::cpp11::get<0>(intersect);
+        Weighted_point pi = cwp(bpi);
 
         // This would cause trouble to optimizers
         // check pi will not be hidden
@@ -201,8 +202,9 @@ void initialize_triangulation_from_labeled_image(C3T3& c3t3,
         {
           if (cv->point().weight() == 0.)
             continue;
-          if (CGAL::compare_squared_distance(pi.point(), wp2p(cv->point()), cv->point().weight())
-              != CGAL::LARGER)
+
+          const Weighted_point& cvwp = tr.point(cv);
+          if (tr.min_squared_distance(bpi, cp(cvwp) <= cv->point().weight()))
           {
             pi_inside_protecting_sphere = true;
             break;

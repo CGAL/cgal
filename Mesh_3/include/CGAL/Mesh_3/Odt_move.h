@@ -49,6 +49,7 @@ class Odt_move
   typedef typename Tr::Cell_handle                            Cell_handle;
 
   typedef typename Tr::Bare_point                             Bare_point;
+  typedef typename Tr::Weighted_point                         Weighted_point;
 
   typedef typename std::vector<Facet>                         Facet_vector;
   typedef typename std::vector<Cell_handle>                   Cell_vector;
@@ -73,10 +74,8 @@ public:
     // Compute move
     const Tr& tr = c3t3.triangulation();
 
-    typename Gt::Construct_vector_3 vector =
-      tr.geom_traits().construct_vector_3_object();
-    typename Gt::Construct_point_3 cp =
-      tr.geom_traits().construct_point_3_object();
+    typename Gt::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
+    typename Gt::Construct_vector_3 vector = tr.geom_traits().construct_vector_3_object();
 
     Vector_3 move = CGAL::NULL_VECTOR;
     FT sum_volume(0);
@@ -95,8 +94,8 @@ public:
       Bare_point circumcenter = tr.dual(cell);
 
       // Compute move
-      const Bare_point& p = cp(tr.point(cell, cell->index(v)));
-      Vector_3 p_circum = vector(p, circumcenter);
+      const Weighted_point& p = tr.point(cell, cell->index(v));
+      Vector_3 p_circum = vector(cp(p), circumcenter);
       FT volume = volume_quadrature(cell, tr, sizing_field);
       
       move = move + p_circum * volume;
@@ -126,13 +125,11 @@ private:
                        const Tr& tr,
                        const Sizing_field& sizing_field) const
   {
-    typename Gt::Compute_volume_3 volume =
-        tr.geom_traits().compute_volume_3_object();
-    typename Gt::Construct_centroid_3 centroid =
-        tr.geom_traits().construct_centroid_3_object();
+    typename Gt::Construct_centroid_3 centroid = tr.geom_traits().construct_centroid_3_object();
+    typename Gt::Compute_volume_3 volume = tr.geom_traits().compute_volume_3_object();
     
     Bare_point c = centroid(tr.tetrahedron(cell));
-    FT s = sizing_field(c,std::make_pair(cell,true));
+    FT s = sizing_field(c, std::make_pair(cell, true));
     CGAL_assertion(!is_zero(s));
 
     // Points of cell are positively oriented
@@ -206,10 +203,8 @@ private:
 //                     const Tr& tr,
 //                     const Sizing_field& sizing_field) const
 //  {
-//    typename Gt::Compute_area_3 area =
-//        tr.geom_traits().compute_area_3_object();
-//    typename Gt::Construct_centroid_3 centroid =
-//        tr.geom_traits().construct_centroid_3_object();
+//    typename Gt::Compute_area_3 area = tr.geom_traits().compute_area_3_object();
+//    typename Gt::Construct_centroid_3 centroid = tr.geom_traits().construct_centroid_3_object();
 //
 //    Bare_point c = centroid(tr.triangle(facet));
 //    FT s = sizing_field(c, facet.first->vertex(0));
@@ -224,15 +219,14 @@ private:
 //                          const Tr& tr,
 //                          const Sizing_field& sizing_field) const
 //  {
-//    typename Gt::Construct_point_3 cp =
-//      tr.geom_traits().construct_point_3_object();
-//    typename Gt::Compute_squared_distance_3 sq_distance =
-//      tr.geom_traits().compute_squared_distance_3_object();
-//    typename Gt::Construct_midpoint_3 midpoint =
-//      tr.geom_traits().construct_midpoint_3_object();
+//    typename Gt::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
+//    typename Gt::Construct_midpoint_3 midpoint = tr.geom_traits().construct_midpoint_3_object();
+//    typename Gt::Compute_squared_distance_3 sq_distance = tr.geom_traits().compute_squared_distance_3_object();
 //
-//    const Bare_point& p1 = cp(tr.point(cell, vertex_index_1));
-//    const Bare_point& p2 = cp(tr.point(cell, vertex_index_2));
+//    const Weighted_point& wp1 = tr.point(cell, vertex_index_1);
+//    const Weighted_point& wp2 = tr.point(cell, vertex_index_2);
+//    const Bare_point& p1 = cp(wp1);
+//    const Bare_point& p2 = cp(wp2);
 //
 //    Bare_point c = midpoint(p1, p2);
 //    FT s = sizing_field(c, cell->vertex(vertex_index_1));
@@ -265,10 +259,8 @@ private:
 //
 //  Vector_3 normal_outside(const Facet& f, const C3T3& c3t3) const
 //  {
-//    typename Gt::Construct_point_3 cp =
-//      c3t3.triangulation().geom_traits().construct_point_3_object();
-//    typename Gt::Construct_normal_3 normal =
-//      c3t3.triangulation().geom_traits().construct_normal_3_object();
+//    typename Gt::Construct_point_3 cp = c3t3.triangulation().geom_traits().construct_point_3_object();
+//    typename Gt::Construct_normal_3 normal = c3t3.triangulation().geom_traits().construct_normal_3_object();
 //
 //    const Cell_handle& cell = f.first;
 //    const int& i = f.second;
@@ -285,11 +277,11 @@ private:
 //    if ( ! c3t3.is_in_complex(cell) )
 //      std::swap(k1,k2);
 //
-//    const Bare_point& p1 = cp(c3t3.triangulation().point(cell, k1));
-//    const Bare_point& p2 = cp(c3t3.triangulation().point(cell, k2));
-//    const Bare_point& p3 = cp(c3t3.triangulation().point(cell, k3));
+//    const Weighted_point& wp1 = c3t3.triangulation().point(cell, k1);
+//    const Weighted_point& wp2 = c3t3.triangulation().point(cell, k2);
+//    const Weighted_point& wp3 = c3t3.triangulation().point(cell, k3);
 //
-//    return normal(p1,p2,p3);
+//    return normal(cp(p1), cp(p2), cp(p3));
 //  }
 };
 

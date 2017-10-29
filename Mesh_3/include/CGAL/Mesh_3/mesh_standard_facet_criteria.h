@@ -110,8 +110,9 @@ protected:
     CGAL_assertion (f.first->is_facet_on_surface(f.second));
     CGAL_assertion (B_ != 0);
 
-    typedef typename Tr::Geom_traits    Gt;
-    typedef typename Tr::Bare_point     Bare_point;
+    typedef typename Tr::Geom_traits      Gt;
+    typedef typename Tr::Bare_point       Bare_point;
+    typedef typename Tr::Weighted_point   Weighted_point;
 
     typedef typename Gt::Compute_squared_area_3     Area;
     typedef typename Gt::Compute_squared_distance_3 Distance;
@@ -120,12 +121,15 @@ protected:
 
     Area area = tr.geom_traits().compute_squared_area_3_object();
     Distance distance = tr.geom_traits().compute_squared_distance_3_object();
-    Construct_point_3 wp2p = tr.geom_traits().construct_point_3_object();
+    Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
     Construct_triangle_3 triangle = tr.geom_traits().construct_triangle_3_object();
 
-    const Bare_point& p1 = wp2p(tr.point(f.first, (f.second+1)&3));
-    const Bare_point& p2 = wp2p(tr.point(f.first, (f.second+2)&3));
-    const Bare_point& p3 = wp2p(tr.point(f.first, (f.second+3)&3));
+    const Weighted_point& wp1 = tr.point(f.first, (f.second+1)&3);
+    const Weighted_point& wp2 = tr.point(f.first, (f.second+2)&3);
+    const Weighted_point& wp3 = tr.point(f.first, (f.second+3)&3);
+    const Bare_point& p1 = cp(wp1);
+    const Bare_point& p2 = cp(wp2);
+    const Bare_point& p3 = cp(wp3);
 
     const FT triangle_area = area(triangle(p1,p2,p3));
     const FT d12 = distance(p1,p2);
@@ -351,12 +355,13 @@ protected:
     CGAL_assertion (f.first->is_facet_on_surface(f.second));
     
     typedef typename Tr::Geom_traits    Gt;
-    typedef typename Tr::Bare_point Bare_point;
+    typedef typename Tr::Bare_point     Bare_point;
+    typedef typename Tr::Weighted_point Weighted_point;
 
-    typename Gt::Construct_point_3 wp2p =
-      tr.geom_traits().construct_point_3_object();
+    typename Gt::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
 
-    const Bare_point& p1 = wp2p(tr.point(f.first, (f.second+1)&3));
+    const Weighted_point& wp1 = tr.point(f.first, (f.second+1)&3);
+    const Bare_point& p1 = cp(wp1);
     const Bare_point& ball_center = f.first->get_facet_surface_center(f.second);
     const Index& index = f.first->get_facet_surface_center_index(f.second);
 
@@ -420,13 +425,14 @@ protected:
     CGAL_assertion (f.first->is_facet_on_surface(f.second));
     CGAL_assertion (B_ != 0);
 
-    typedef typename Tr::Geom_traits    Gt;
-    typedef typename Tr::Bare_point     Bare_point;
+    typedef typename Tr::Geom_traits        Gt;
+    typedef typename Tr::Bare_point         Bare_point;
+    typedef typename Tr::Weighted_point     Weighted_point;
 
-    typename Gt::Construct_point_3 wp2p =
-        tr.geom_traits().construct_point_3_object();
+    typename Gt::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
 
-    const Bare_point& p1 = wp2p(tr.point(f.first, (f.second+1)&3));
+    const Weighted_point& wp1 = tr.point(f.first, (f.second+1)&3);
+    const Bare_point p1 = cp(wp1);
     const Bare_point& ball_center = f.first->get_facet_surface_center(f.second);
 
     const FT sq_radius = tr.min_squared_distance(p1, ball_center);

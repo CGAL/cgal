@@ -172,7 +172,7 @@ no_topological_change(Tr& tr,
       tr.geom_traits().construct_opposite_vector_3_object();
 
   bool np = true;
-  const Weighted_point fp = v0->point();
+  const Weighted_point fp = tr.point(v0);
 
 //#define CGAL_PERIODIC_BACKUP_CHECK
 //#define CGAL_PERIODIC_SIDE_OF_DEBUG
@@ -528,12 +528,16 @@ inside_protecting_balls(const Tr& tr,
 {
   Vertex_handle nv = tr.nearest_power_vertex(p, v->cell());
   if(nv->point().weight() > 0)
-    return tr.geom_traits().compare_squared_distance_3_object()(
-          p, nv->point(), nv->point().weight()) != CGAL::LARGER;
+  {
+    typename Tr::Geom_traits::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
+    const Weighted_point& nvwp = tr.point(nv);
+    return (tr.min_squared_distance(p, cp(nvwp)) <= nv->point().weight());
+  }
+
   return false;
 }
 
-  
+
 /// This function well_oriented is called by no_topological_change after the
 /// position of the vertex has been (tentatively) modified.
 template<typename Tr>
@@ -544,7 +548,7 @@ well_oriented(const Tr& tr,
 {
   typedef typename Tr::Geom_traits Gt;
   typename Gt::Orientation_3 orientation = tr.geom_traits().orientation_3_object();
-  typename Gt::Construct_point_3 wp2p = tr.geom_traits().construct_point_3_object();
+  typename Gt::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
 
   typename Cell_vector::const_iterator it = cells_tos.begin();
   for( ; it != cells_tos.end() ; ++it)
@@ -555,17 +559,25 @@ well_oriented(const Tr& tr,
       int iv = c->index(tr.infinite_vertex());
       Cell_handle cj = c->neighbor(iv);
       int mj = tr.mirror_index(c, iv);
-      if(orientation(wp2p(tr.point(cj, mj)),
-                     wp2p(tr.point(c, (iv+1)&3)),
-                     wp2p(tr.point(c, (iv+2)&3)),
-                     wp2p(tr.point(c, (iv+3)&3))) != CGAL::NEGATIVE)
+
+      const Weighted_point& mjwp = tr.point(cj, mj);
+      const Weighted_point& fwp1 = tr.point(c, (iv+1)&3);
+      const Weighted_point& fwp2 = tr.point(c, (iv+2)&3);
+      const Weighted_point& fwp3 = tr.point(c, (iv+3)&3);
+
+      if(orientation(cp(mjwp), cp(fwp1), cp(fwp2), cp(fwp3)) != CGAL::NEGATIVE)
         return false;
     }
-    else if(orientation(wp2p(tr.point(c, 0)),
-                        wp2p(tr.point(c, 1)),
-                        wp2p(tr.point(c, 2)),
-                        wp2p(tr.point(c, 3))) != CGAL::POSITIVE)
+    else
+    {
+      const Weighted_point& cwp0 = tr.point(c, 0);
+      const Weighted_point& cwp1 = tr.point(c, 1);
+      const Weighted_point& cwp2 = tr.point(c, 2);
+      const Weighted_point& cwp3 = tr.point(c, 3);
+
+      if(orientation(cp(cwp0), cp(cwp1), cp(cwp2), cp(cwp3)) != CGAL::POSITIVE)
       return false;
+    }
   }
   return true;
 }
@@ -582,7 +594,7 @@ well_oriented(const Tr& tr,
 {
   typedef typename Tr::Geom_traits Gt;
   typename Gt::Orientation_3 orientation = tr.geom_traits().orientation_3_object();
-  typename Gt::Construct_point_3 wp2p = tr.geom_traits().construct_point_3_object();
+  typename Gt::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
 
   typename Cell_vector::const_iterator it = cells_tos.begin();
   for( ; it != cells_tos.end() ; ++it)
@@ -593,16 +605,16 @@ well_oriented(const Tr& tr,
       int iv = c->index(tr.infinite_vertex());
       Cell_handle cj = c->neighbor(iv);
       int mj = tr.mirror_index(c, iv);
-      if(orientation(wp2p(pg(cj->vertex(mj))),
-                     wp2p(pg(c->vertex((iv+1)&3))),
-                     wp2p(pg(c->vertex((iv+2)&3))),
-                     wp2p(pg(c->vertex((iv+3)&3)))) != CGAL::NEGATIVE)
+      if(orientation(cp(pg(cj->vertex(mj))),
+                     cp(pg(c->vertex((iv+1)&3))),
+                     cp(pg(c->vertex((iv+2)&3))),
+                     cp(pg(c->vertex((iv+3)&3)))) != CGAL::NEGATIVE)
         return false;
     }
-    else if(orientation(wp2p(pg(c->vertex(0))),
-                        wp2p(pg(c->vertex(1))),
-                        wp2p(pg(c->vertex(2))),
-                        wp2p(pg(c->vertex(3)))) != CGAL::POSITIVE)
+    else if(orientation(cp(pg(c->vertex(0))),
+                        cp(pg(c->vertex(1))),
+                        cp(pg(c->vertex(2))),
+                        cp(pg(c->vertex(3)))) != CGAL::POSITIVE)
       return false;
   }
   return true;

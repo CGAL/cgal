@@ -99,34 +99,34 @@ namespace Mesh_3 {
     // Then, its operator() takes an other vertex handle v2 as input, and
     // returns the distance d(v1, v2).
     // It is used in Slivers_exuder, to constructor a transform iterator.
-    template <typename Gt, typename Vertex_handle>
+    template <typename Tr, typename Vertex_handle>
     class Min_distance_from_v :
-    public CGAL::unary_function<Vertex_handle, void>
+      public CGAL::unary_function<Vertex_handle, void>
     {
       const Vertex_handle * v;
-      const Gt& gt;
+      const Tr& tr;
       double & dist;
 
     public:
       Min_distance_from_v(const Vertex_handle& vh,
                           double& dist,
-                          const Gt& geom_traits = Gt())
-        : v(&vh), gt(geom_traits), dist(dist)
+                          const Tr& tr)
+        : v(&vh), tr(tr), dist(dist)
       {
       }
 
       void
       operator()(const Vertex_handle& vh) const
       {
-        typedef typename Gt::Compute_squared_distance_3 Compute_squared_distance_3;
-        Compute_squared_distance_3 distance = gt.compute_squared_distance_3_object();
+        typedef typename Tr::Geom_traits::Construct_point_3   Construct_point_3;
+        typedef typename Tr::Weighted_point                   Weighted_point;
 
-        typedef typename Gt::Construct_point_3 Construct_point_3;
-        Construct_point_3 wp2p = gt.construct_point_3_object();
+        Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
 
-        // <periodic...>
-        const double d = CGAL::to_double(distance(wp2p((*v)->point()),
-                                                  wp2p(vh->point())));
+        const Weighted_point& wpv = tr.point(*v);
+        const Weighted_point& wpvh = tr.point(vh);
+
+        const double d = CGAL::to_double(tr.min_squared_distance(cp(wpv), cp(wpvh)));
         if(d < dist){
           dist = d;
         }
@@ -645,7 +645,7 @@ private:
   {
 
     double dist = (std::numeric_limits<double>::max)();
-    details::Min_distance_from_v<Gt, Vertex_handle> min_distance_from_v(vh, dist, tr_.geom_traits());
+    details::Min_distance_from_v<Tr, Vertex_handle> min_distance_from_v(vh, dist, tr_);
 
     tr_.adjacent_vertices(vh, boost::make_function_output_iterator(min_distance_from_v));
 
@@ -1126,8 +1126,10 @@ pump_vertex(const Vertex_handle& pumped_vertex,
   // If best_weight < pumped_vertex weight, nothing to do
   if ( best_weight > pumped_vertex->point().weight() )
   {
-    typename Gt::Construct_point_3 wp2p = tr_.geom_traits().construct_point_3_object();
-    Weighted_point wp(wp2p(pumped_vertex->point()), best_weight);
+    typename Gt::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
+
+    const Weighted_point& pwp = tr_.point(pumped_vertex);
+    Weighted_point wp(cp(pwp), best_weight);
 
     // Insert weighted point into mesh
     // note it can fail if the mesh is non-manifold at pumped_vertex
@@ -1205,6 +1207,8 @@ expand_prestar(const Cell_handle& cell_to_add,
                Pre_star& pre_star,
                Sliver_values& criterion_values) const
 {
+  typename Gt::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
+
   // Delete first facet of pre_star
   Facet start_facet = pre_star.front()->second;
   CGAL_assertion(tr_.mirror_facet(start_facet).first == cell_to_add);
@@ -1278,14 +1282,15 @@ expand_prestar(const Cell_handle& cell_to_add,
       // Update ratio (ratio is needed for cells of complex only)
       if ( c3t3_.is_in_complex(cell_to_add) )
       {
-        typename Gt::Construct_point_3 wp2p = tr_.geom_traits().construct_point_3_object();
-        Tetrahedron_3 tet(wp2p(pumped_vertex->point()),
-                          wp2p(cell_to_add->vertex((i+1)&3)->point()),
-                          wp2p(cell_to_add->vertex((i+2)&3)->point()),
-                          wp2p(cell_to_add->vertex((i+3)&3)->point()));
+        const Weighted_point& pwp = tr_.point(pumped_vertex);
+        const Weighted_point& fwp1 = tr_.point(cell_to_add, (i+1)&3);
+        const Weighted_point& fwp2 = tr_.point(cell_to_add, (i+2)&3);
+        const Weighted_point& fwp3 = tr_.point(cell_to_add, (i+3)&3);
+
+        const Tetrahedron_3 tet(cp(pwp), cp(fwp1), cp(fwp2), cp(fwp3));
 
         double new_value = sliver_criteria_(tet);
-        criterion_values.insert(std::make_pair(current_facet,new_value));
+        criterion_values.insert(std::make_pair(current_facet, new_value));
       }
     }
   }
@@ -1369,7 +1374,7 @@ get_best_weight(const Vertex_handle& v, bool *could_lock_zone) const
 #ifdef CGAL_MESH_3_DEBUG_SLIVERS_EXUDER
   if ( best_weight > v->point().weight() )
   {
-    Weighted_point wp(v->point(), best_weight);
+    Weighted_point wp(tr_.point(v), best_weight);
     check_pre_star(pre_star_copy, wp, v);
     check_ratios(ratios_copy, wp, v);
   }
@@ -1794,7 +1799,7 @@ check_ratios(const Sliver_values& criterion_values,
   Facet_vector internal_facets;
   Facet_vector boundary_facets;
 
-  typename Gt::Construct_point_3 wp2p = tr_.geom_traits().construct_point_3_object();
+  typename Gt::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
 
   tr_.find_conflicts(wp,
                      vh->cell(),
@@ -1821,10 +1826,13 @@ check_ratios(const Sliver_values& criterion_values,
       continue;
 
     int k = it->second;
-    Tetrahedron_3 tet(wp2p(vh->point()),
-                      wp2p(it->first->vertex((k+1)&3)->point()),
-                      wp2p(it->first->vertex((k+2)&3)->point()),
-                      wp2p(it->first->vertex((k+3)&3)->point()));
+
+    const Weighted_point& vhwp = tr_.point(vh);
+    const Weighted_point& fwp1 = tr_.point(it->first, (k+1)&3));
+    const Weighted_point& fwp2 = tr_.point(it->first, (k+2)&3));
+    const Weighted_point& fwp3 = tr_.point(it->first, (k+3)&3));
+
+    Tetrahedron_3 tet(cp(vhwp), cp(fwp1), cp(fwp2), cp(fwp3));
 
     double ratio = sliver_criteria_(tet);
     expected_ratios.push_back(ratio);

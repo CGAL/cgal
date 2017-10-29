@@ -123,16 +123,19 @@ namespace Mesh_3 {
     edge_sq_length(const typename Tr::Edge& e,
                    const Tr& tr)
     {
-      typedef typename Tr::Geom_traits    Gt;
-      typedef typename Tr::Bare_point     Bare_point;
-      
+      typedef typename Tr::Geom_traits     Gt;
+      typedef typename Tr::Bare_point      Bare_point;
+      typedef typename Tr::Weighted_point  Weighted_point;
+
       typename Gt::Compute_squared_distance_3 sq_distance =
         tr.geom_traits().compute_squared_distance_3_object();
-      typename Gt::Construct_point_3 wp2p =
+      typename Gt::Construct_point_3 cp =
         tr.geom_traits().construct_point_3_object();
 
-      const Bare_point& p = wp2p(tr.point(e.first, e.second));
-      const Bare_point& q = wp2p(tr.point(e.first, e.third));
+      const Weighted_point& wp = tr.point(e.first, e.second);
+      const Weighted_point& wq = tr.point(e.first, e.third);
+      const Bare_point& p = cp(wp);
+      const Bare_point& q = cp(wq);
       
       return sq_distance(p,q);
     }
@@ -182,10 +185,11 @@ template <typename C3T3, typename MeshDomain, typename SliverCriterion>
 class Abstract_perturbation
 {
 protected:
-  typedef typename C3T3::Vertex_handle Vertex_handle;
-  typedef typename C3T3::Cell_handle Cell_handle;
-  typedef typename C3T3::Triangulation::Geom_traits::FT FT;
-  
+  typedef typename C3T3::Vertex_handle                    Vertex_handle;
+  typedef typename C3T3::Cell_handle                      Cell_handle;
+
+  typedef typename C3T3::Triangulation::Geom_traits::FT   FT;
+
 public:
   /**
    * @brief constructor
@@ -393,12 +397,19 @@ class Gradient_based_perturbation
   : public Abstract_perturbation<C3T3,MeshDomain,SliverCriterion>
 {
 protected:
-  typedef Abstract_perturbation<C3T3,MeshDomain,SliverCriterion> Base;
-  typedef typename Base::Vertex_handle Vertex_handle;
-  typedef typename Base::Cell_handle Cell_handle;
-  typedef typename Base::FT FT;
-  typedef typename C3T3::Triangulation::Geom_traits::Vector_3 Vector_3;
-  
+  typedef Abstract_perturbation<C3T3, MeshDomain, SliverCriterion> Base;
+
+  typedef typename Base::Vertex_handle                Vertex_handle;
+  typedef typename Base::Cell_handle                  Cell_handle;
+
+  typedef typename C3T3::Triangulation                Tr;
+  typedef typename Tr::Geom_traits                    Gt;
+  typedef typename Gt::FT                             FT;
+  typedef typename Gt::Vector_3                       Vector_3;
+
+  typedef typename Tr::Bare_point                     Bare_point;
+  typedef typename Tr::Weighted_point                 Weighted_point;
+
 public:
   /**
    * @brief Constructor
@@ -445,11 +456,6 @@ protected:
                      std::vector<Vertex_handle>& modified_vertices,
                      bool *could_lock_zone = NULL) const
   {
-    typedef typename C3T3::Triangulation              Tr;
-    typedef typename Tr::Geom_traits                  Gt;
-    typedef typename Gt::FT                           FT;
-    typedef typename Tr::Bare_point                   Bare_point;
-
     typedef Triangulation_helpers<typename C3T3::Triangulation> Th;
 
     const Tr& tr = c3t3.triangulation();
@@ -458,9 +464,9 @@ protected:
       tr.geom_traits().compute_squared_length_3_object();
     typename Gt::Construct_translated_point_3 translate =
       tr.geom_traits().construct_translated_point_3_object();
-    typename Gt::Construct_point_3 wp2p =
+    typename Gt::Construct_point_3 cp =
       tr.geom_traits().construct_point_3_object();
-    typename Gt::Construct_weighted_point_3 p2wp =
+    typename Gt::Construct_weighted_point_3 cwp =
       tr.geom_traits().construct_weighted_point_3_object();
     typename Gt::Construct_vector_3 vector =
       tr.geom_traits().construct_vector_3_object();
@@ -471,12 +477,12 @@ protected:
     
     modified_vertices.clear();
 
-    // <periodic> shenanigans with v->point() ?
     // norm depends on the local size of the mesh
     FT sq_norm = this->compute_perturbation_sq_amplitude(v, c3t3, sq_step_size_);
     FT step_length = CGAL::sqrt(sq_norm / sq_length(gradient_vector));
     Vector_3 step_vector = step_length * gradient_vector;
-    Bare_point initial_loc = wp2p(v->point());
+    const Weighted_point& weighted_initial_loc = c3t3.triangulation().point(v);
+    Bare_point initial_loc = cp(weighted_initial_loc);
     Bare_point new_loc = translate(initial_loc, step_vector);
     Bare_point final_loc = new_loc;
 
@@ -489,7 +495,7 @@ protected:
     {
       // as long as no topological change takes place
       while(Th().no_topological_change__without_set_point(c3t3.triangulation(), 
-                                                          v, p2wp(final_loc)) 
+                                                          v, cwp(final_loc))
             && (++i <= max_step_nb_) )
       {
         new_loc = translate(new_loc, step_vector);
@@ -504,7 +510,7 @@ protected:
     {
       Vector_3 move_vector = vector(initial_loc, final_loc);
       while( Th().no_topological_change(c3t3.triangulation(), v,
-                                        move_vector, p2wp(final_loc)) &&
+                                        move_vector, cwp(final_loc)) &&
              ++i <= max_step_nb_ )
       {
         new_loc = translate(new_loc, step_vector);
@@ -525,7 +531,7 @@ protected:
 
     // we know that there will be a combinatorial change
     return helper.update_mesh_topo_change(v,
-                                          p2wp(final_loc),
+                                          cwp(final_loc),
                                           criterion,
                                           std::back_inserter(modified_vertices),
                                           could_lock_zone);
@@ -546,16 +552,21 @@ class Sq_radius_perturbation
   : public Gradient_based_perturbation<C3T3,MeshDomain,SliverCriterion>
 {
 protected:
-  typedef Gradient_based_perturbation<C3T3,MeshDomain,SliverCriterion> Base;
-  typedef typename Base::Vertex_handle Vertex_handle;
-  typedef typename Base::Cell_handle Cell_handle;
-  typedef typename Base::FT FT;
-  
-  typedef typename C3T3::Triangulation Tr;
-  typedef typename Tr::Geom_traits Gt;
-  typedef typename Gt::Vector_3 Vector_3;
-  typedef typename Tr::Bare_point Bare_point;
-  typedef typename Gt::Construct_point_3 Construct_point_3;
+  typedef Gradient_based_perturbation<C3T3, MeshDomain, SliverCriterion>  Base;
+
+  typedef typename C3T3::Triangulation                Tr;
+  typedef typename C3T3::Triangulation                Triangulation;
+
+  typedef typename Base::Vertex_handle                Vertex_handle;
+  typedef typename Base::Cell_handle                  Cell_handle;
+
+  typedef typename Tr::Geom_traits                    Gt;
+  typedef typename Gt::FT                             FT;
+  typedef typename Gt::Vector_3                       Vector_3;
+
+  typedef typename Tr::Bare_point                     Bare_point;
+  typedef typename Tr::Weighted_point                 Weighted_point;
+
 public:
   /**
    * @brief Constructor
@@ -649,22 +660,25 @@ private:
                                    const Cell_handle& cell,
                                    const Vertex_handle& v) const
   {
-    typedef typename C3T3::Triangulation          Triangulation;
-    typedef typename Triangulation::Geom_traits   Gt;
-
     const Triangulation& tr = c3t3.triangulation();
 
     typename Gt::Construct_translated_point_3 translate =
       c3t3.triangulation().geom_traits().construct_translated_point_3_object();
-    typename Gt::Construct_point_3 wp2p =
+    typename Gt::Construct_point_3 cp =
       c3t3.triangulation().geom_traits().construct_point_3_object();
 
-    // translate the tet so that cell->vertex((i+3)&3) is 0_{R^3}
     unsigned int index = cell->index(v);
-    Vector_3 translate_to_origin(CGAL::ORIGIN, wp2p(tr.point(cell, (index+3)&3))); //p4
-    const Bare_point& p1 = translate(wp2p(tr.point(cell, index)), - translate_to_origin);
-    const Bare_point& p2 = translate(wp2p(tr.point(cell, (index+1)&3)), - translate_to_origin);
-    const Bare_point& p3 = translate(wp2p(tr.point(cell, (index+2)&3)), - translate_to_origin);
+
+    const Weighted_point& wvp = tr.point(cell, index);
+    const Weighted_point& wp2 = tr.point(cell, (index+1)&3);
+    const Weighted_point& wp3 = tr.point(cell, (index+2)&3);
+    const Weighted_point& wp4 = tr.point(cell, (index+3)&3);
+
+    // translate the tet so that 'wp4' is the origin
+    Vector_3 translate_to_origin(CGAL::ORIGIN, cp(wp4));
+    const Bare_point& p1 = translate(cp(wvp), - translate_to_origin);
+    const Bare_point& p2 = translate(cp(wp2), - translate_to_origin);
+    const Bare_point& p3 = translate(cp(wp3), - translate_to_origin);
 
     // pre-compute everything
     FT sq_p1 = p1.x()*p1.x() + p1.y()*p1.y() + p1.z()*p1.z();
@@ -717,15 +731,19 @@ class Volume_perturbation
 : public Gradient_based_perturbation<C3T3,MeshDomain,SliverCriterion>
 {
 protected:
-  typedef Gradient_based_perturbation<C3T3,MeshDomain,SliverCriterion> Base;
-  typedef typename Base::Vertex_handle Vertex_handle;
-  typedef typename Base::Cell_handle Cell_handle;
-  typedef typename Base::FT FT;
-  
-  typedef typename C3T3::Triangulation::Geom_traits Gt;
-  typedef typename Gt::Vector_3 Vector_3;
-  typedef typename C3T3::Triangulation::Bare_point Bare_point;
-  
+  typedef Gradient_based_perturbation<C3T3, MeshDomain, SliverCriterion> Base;
+
+  typedef typename Base::Vertex_handle                Vertex_handle;
+  typedef typename Base::Cell_handle                  Cell_handle;
+
+  typedef typename C3T3::Triangulation                Tr;
+  typedef typename Tr::Geom_traits                    Gt;
+  typedef typename Gt::FT                             FT;
+  typedef typename Gt::Vector_3                       Vector_3;
+
+  typedef typename Tr::Bare_point                     Bare_point;
+  typedef typename Tr::Weighted_point                 Weighted_point;
+
 public:
   /**
    * @brief Constructor
@@ -823,7 +841,7 @@ private:
     CGAL_assertion(cell->has_vertex(v));
     const typename C3T3::Triangulation& tr = c3t3.triangulation();
 
-    typename Gt::Construct_point_3 wp2p =
+    typename Gt::Construct_point_3 cp =
         c3t3.triangulation().geom_traits().construct_point_3_object();
     const int i = cell->index(v);
     
@@ -834,11 +852,14 @@ private:
     
     if ( (i&1) == 0 )
       std::swap(k1,k3);
-    
-    const Bare_point& p1 = wp2p(tr.point(cell, k1));
-    const Bare_point& p2 = wp2p(tr.point(cell, k2));
-    const Bare_point& p3 = wp2p(tr.point(cell, k3));
-    
+
+    const Weighted_point& wp1 = tr.point(cell, k1);
+    const Weighted_point& wp2 = tr.point(cell, k2);
+    const Weighted_point& wp3 = tr.point(cell, k3);
+    const Bare_point& p1 = cp(wp1);
+    const Bare_point& p2 = cp(wp2);
+    const Bare_point& p3 = cp(wp3);
+
     FT gx =  p2.y()*p3.z() + p1.y()*(p2.z()-p3.z())
             - p3.y()*p2.z() - p1.z()*(p2.y()-p3.y());
     
@@ -863,15 +884,18 @@ class Dihedral_angle_perturbation
   : public Gradient_based_perturbation<C3T3,MeshDomain,SliverCriterion>
 {
 protected:
-  typedef Gradient_based_perturbation<C3T3,MeshDomain,SliverCriterion> Base;
-  typedef typename Base::Vertex_handle Vertex_handle;
-  typedef typename Base::Cell_handle Cell_handle;
-  typedef typename Base::FT FT;
-  
-  typedef typename C3T3::Triangulation::Geom_traits Gt;
-  typedef typename Gt::Vector_3 Vector_3;
-  typedef typename C3T3::Triangulation::Bare_point Bare_point;
-  typedef typename Gt::Construct_point_3 Construct_point_3;
+  typedef Gradient_based_perturbation<C3T3, MeshDomain, SliverCriterion> Base;
+
+  typedef typename Base::Vertex_handle                Vertex_handle;
+  typedef typename Base::Cell_handle                  Cell_handle;
+
+  typedef typename C3T3::Triangulation                Tr;
+  typedef typename Tr::Geom_traits                    Gt;
+  typedef typename Gt::FT                             FT;
+  typedef typename Gt::Vector_3                       Vector_3;
+
+  typedef typename Tr::Bare_point                     Bare_point;
+  typedef typename Tr::Weighted_point                 Weighted_point;
 
 public:
   /**
@@ -970,13 +994,14 @@ private:
     CGAL_assertion(cell->has_vertex(v));
     const typename C3T3::Triangulation& tr = c3t3.triangulation();
 
-    typename Gt::Construct_point_3 wp2p =
+    typename Gt::Construct_point_3 cp =
       tr.geom_traits().construct_point_3_object();
     typename Gt::Compute_squared_distance_3 sq_distance =
       tr.geom_traits().compute_squared_distance_3_object();
 
     const int i = cell->index(v);
-    const Bare_point& p0 = wp2p(tr.point(cell, i));
+    const Weighted_point& wp0 = tr.point(cell, i);
+    const Bare_point& p0 = cp(wp0);
     
     // Other indices
     int k1 = (i+1)&3;
@@ -995,9 +1020,12 @@ private:
       std::swap(k2,k3);
 
     // Here edge k1k2 minimizes dihedral angle
-    const Bare_point& p1 = wp2p(tr.point(cell, k1));
-    const Bare_point& p2 = wp2p(tr.point(cell, k2));
-    const Bare_point& p3 = wp2p(tr.point(cell, k3));
+    const Weighted_point& wp1 = tr.point(cell, k1);
+    const Weighted_point& wp2 = tr.point(cell, k2);
+    const Weighted_point& wp3 = tr.point(cell, k3);
+    const Bare_point& p1 = cp(wp1);
+    const Bare_point& p2 = cp(wp2);
+    const Bare_point& p3 = cp(wp3);
 
     // grad of min dihedral angle (in cell) wrt p0
     const Vector_3 p1p0 (p1,p0);
@@ -1030,15 +1058,16 @@ private:
 
     typename Gt::Compute_approximate_dihedral_angle_3 approx_dihedral_angle =
         tr.geom_traits().compute_approximate_dihedral_angle_3_object();
-    typename Gt::Construct_point_3 wp2p =
+    typename Gt::Construct_point_3 cp =
         tr.geom_traits().construct_point_3_object();
 
-    return CGAL::abs(approx_dihedral_angle(wp2p(p),
-                                           wp2p(tr.point(cell, k1)),
-                                           wp2p(tr.point(cell, k2)),
-                                           wp2p(tr.point(cell, k3))));
+    const Weighted_point& wp1 = tr.point(cell, k1);
+    const Weighted_point& wp2 = tr.point(cell, k2);
+    const Weighted_point& wp3 = tr.point(cell, k3);
+
+    return CGAL::abs(approx_dihedral_angle(cp(p), cp(wp1), cp(wp2), cp(wp3)));
   }
-    
+
   /**
    * @brief returns the cotangent of \c value
    */
@@ -1055,7 +1084,7 @@ private:
   {
     const typename C3T3::Triangulation& tr = c3t3.triangulation();
 
-    typename Gt::Construct_point_3 wp2p = tr.geom_traits().construct_point_3_object();
+    typename Gt::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
 
     int k1 = (i+1)&3;
     int k2 = (i+2)&3;
@@ -1065,9 +1094,12 @@ private:
     if ( (i&1) == 1 )
       std::swap(k1,k2);
 
-    const Bare_point& p1 = wp2p(tr.point(ch, k1));
-    const Bare_point& p2 = wp2p(tr.point(ch, k2));
-    const Bare_point& p3 = wp2p(tr.point(ch, k3));
+    const Weighted_point& wp1 = tr.point(ch, k1);
+    const Weighted_point& wp2 = tr.point(ch, k2);
+    const Weighted_point& wp3 = tr.point(ch, k3);
+    const Bare_point& p1 = cp(wp1);
+    const Bare_point& p2 = cp(wp2);
+    const Bare_point& p3 = cp(wp3);
 
     // compute normal and return it
     return normal(p1, p2, p3);
@@ -1087,12 +1119,18 @@ class Random_based_perturbation
   : public Abstract_perturbation<C3T3,MeshDomain,SliverCriterion>
 {
 protected:
-  typedef Abstract_perturbation<C3T3,MeshDomain,SliverCriterion> Base;
-  typedef typename Base::Vertex_handle Vertex_handle;
-  typedef typename Base::Cell_handle Cell_handle;
-  typedef typename Base::FT FT;
-  typedef typename C3T3::Triangulation::Geom_traits::Vector_3 Vector_3;
-  
+  typedef Abstract_perturbation<C3T3, MeshDomain, SliverCriterion> Base;
+
+  typedef typename Base::Vertex_handle                Vertex_handle;
+  typedef typename Base::Cell_handle                  Cell_handle;
+
+  typedef typename C3T3::Triangulation                Tr;
+  typedef typename Tr::Geom_traits                    Gt;
+  typedef typename Gt::FT                             FT;
+  typedef typename Gt::Vector_3                       Vector_3;
+
+  typedef typename Tr::Bare_point                     Bare_point;
+
 public:
   /**
    * @brief constructor
@@ -1150,8 +1188,6 @@ protected:
   Vector_3 random_vector_fixed_size(const C3T3& c3t3,
                                     const FT& vector_sq_size) const
   {
-    typedef typename C3T3::Triangulation::Geom_traits Gt;
-    
     typename Gt::Compute_squared_length_3 sq_length =
       c3t3.triangulation().geom_traits().compute_squared_length_3_object();
     
@@ -1212,15 +1248,19 @@ class Li_random_perturbation
 : public Random_based_perturbation<C3T3,MeshDomain,SliverCriterion>
 {
 protected:
-  typedef Random_based_perturbation<C3T3,MeshDomain,SliverCriterion> Base;
-  typedef typename Base::Vertex_handle Vertex_handle;
-  typedef typename Base::Cell_handle Cell_handle;
-  typedef typename Base::FT FT;
-  
-  typedef typename C3T3::Triangulation::Geom_traits Gt;
-  typedef typename Gt::Vector_3 Vector_3;
-  typedef typename C3T3::Triangulation::Bare_point Bare_point;
-  
+  typedef Random_based_perturbation<C3T3, MeshDomain, SliverCriterion> Base;
+
+  typedef typename Base::Vertex_handle                Vertex_handle;
+  typedef typename Base::Cell_handle                  Cell_handle;
+
+  typedef typename C3T3::Triangulation                Tr;
+  typedef typename Tr::Geom_traits                    Gt;
+  typedef typename Gt::FT                             FT;
+  typedef typename Gt::Vector_3                       Vector_3;
+
+  typedef typename Tr::Bare_point                     Bare_point;
+  typedef typename Tr::Weighted_point                 Weighted_point;
+
 public:
   /**
    * @brief constructor
@@ -1288,16 +1328,13 @@ private:
   {
     typedef Triangulation_helpers<typename C3T3::Triangulation> Th;
 
-    typedef typename C3T3::Triangulation              Tr;
-    typedef typename Tr::Geom_traits                  Gt;
-
     typename Gt::Construct_translated_point_3 translate =
       c3t3.triangulation().geom_traits().construct_translated_point_3_object();
-    typename Gt::Construct_weighted_point_3 p2wp =
+    typename Gt::Construct_weighted_point_3 cwp =
       c3t3.triangulation().geom_traits().construct_weighted_point_3_object();
     typename Gt::Construct_vector_3 vector =
       c3t3.triangulation().geom_traits().construct_vector_3_object();
-    typename Gt::Construct_point_3 wp2p =
+    typename Gt::Construct_point_3 cp =
       c3t3.triangulation().geom_traits().construct_point_3_object();
 
     modified_vertices.clear();
@@ -1308,8 +1345,9 @@ private:
     
     // norm depends on the local size of the mesh
     FT sq_norm = this->compute_perturbation_sq_amplitude(v, c3t3, this->sphere_sq_radius());
-    const Bare_point initial_location = wp2p(v->point());
-    
+    const Weighted_point& weighted_initial_location = c3t3.triangulation().point(v);
+    const Bare_point initial_location = cp(weighted_initial_location);
+
     // Initialize loop variables
     bool criterion_improved = false;
     Vertex_handle moving_vertex = v;
@@ -1338,7 +1376,7 @@ private:
       std::pair<bool,Vertex_handle> update =
         helper.update_mesh(moving_vertex,
                            vector(initial_location, new_location),
-                           p2wp(new_location),
+                           cwp(new_location),
                            criterion,
                            std::back_inserter(tmp_mod_vertices),
                            could_lock_zone);
@@ -1352,7 +1390,7 @@ private:
       if ( update.first )
       {
         criterion_improved = true;
-        best_location = wp2p(moving_vertex->point());
+        best_location = cp(moving_vertex->point()); // <periodic> this seems useless
 
         mod_vertices.insert(tmp_mod_vertices.begin(), tmp_mod_vertices.end());
 

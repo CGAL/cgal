@@ -44,13 +44,15 @@ namespace CGAL {
 //! @param c3t3 an instance of `C3T3`.
 //! @param graph an instance of `TriangleMesh`.
 template<class C3T3, class TriangleMesh>
-void facets_in_complex_3_to_triangle_mesh(const C3T3& c3t3, TriangleMesh& graph) //complexity nlogn(number of facets on surface)
+void facets_in_complex_3_to_triangle_mesh(const C3T3& c3t3, TriangleMesh& graph)
 {
+  //complexity nlogn(number of facets on surface)
+
+  // <periodic> needs a rewrite (see medit periodic)
   typedef typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type VertexPointMap;
   typedef typename boost::property_traits<VertexPointMap>::value_type Point_3;
   typedef typename C3T3::Triangulation Tr;
   typedef typename Tr::Vertex_handle Vertex_handle;
-
 
   typedef typename C3T3::Triangulation Triangulation;
   typedef typename Triangulation::Vertex_handle Vertex_handle;

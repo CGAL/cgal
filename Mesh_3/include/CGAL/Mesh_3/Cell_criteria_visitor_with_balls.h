@@ -66,7 +66,7 @@ public:
     : Base(ch) 
   {
 
-    const Weighted_point& p = ch->vertex(0)->point();
+    const Weighted_point& p = ch->vertex(0)->point(); // <periodic> ?
     const Weighted_point& q = ch->vertex(1)->point();
     const Weighted_point& r = ch->vertex(2)->point();
     const Weighted_point& s = ch->vertex(3)->point();

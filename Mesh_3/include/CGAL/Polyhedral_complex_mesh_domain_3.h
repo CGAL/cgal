@@ -512,9 +512,13 @@ public:
     std::cout.flush();
 #endif
     CGAL::Random random(0);
-    typedef typename C3t3::Triangulation Tr;
+
+    typedef typename C3t3::Triangulation                  Tr;
+    typedef typename IGT::Sphere_3                        Sphere_3;
+    typedef typename Polyhedron::Vertex_const_handle      Vertex_const_handle;
+
     Tr& tr = c3t3.triangulation();
-    typedef typename Polyhedron::Vertex_const_handle Vertex_const_handle;
+
     typename Tr::Geom_traits::Construct_weighted_point_3 cwp
       = tr.geom_traits().construct_weighted_point_3_object();
 
@@ -538,10 +542,11 @@ public:
         const Patch_id patch_id = vit->halfedge()->face()->patch_id();
         CGAL_assertion(std::size_t(patch_id) <= nb_of_patch_plus_one);
         typename Tr::Vertex_handle tr_v = tr.nearest_power_vertex(vit->point());
-        if (tr_v != typename Tr::Vertex_handle()) {
-          typedef typename IGT::Sphere_3 Sphere_3;
+        if (tr_v != typename Tr::Vertex_handle())
+        {
           const Sphere_3 sphere(tr_v->point().point(), tr_v->point().weight());
-          if (!sphere.has_on_unbounded_side(vit->point())) continue;
+          if (!sphere.has_on_unbounded_side(vit->point()))
+            continue;
         }
         ++nb_of_free_vertices_on_patch[patch_id];
       }
