@@ -70,72 +70,70 @@ namespace CGAL {
 
 namespace Mesh_3 {
 
-  namespace details { // various function objects
+namespace details { // various function objects
 
-    // That functor Second_of takes a pair as input (the value type of a
-    // map), and returns the ".second" member of that pair. It is used in
-    // Slivers_exuder, to constructor a transform iterator.
+// That functor Second_of takes a pair as input (the value type of a
+// map), and returns the ".second" member of that pair. It is used in
+// Slivers_exuder, to constructor a transform iterator.
 
-    // It should be doable using STL bind operators, but i am not sure how
-    // to use them. -- Laurent Rineau, 2007/07/27
-    template <typename Map>
-    struct Second_of :
-    public CGAL::unary_function<typename Map::value_type,
-    const typename Map::mapped_type&>
-    {
-      typedef CGAL::unary_function<typename Map::value_type,
-        const typename Map::mapped_type&> Base;
-      typedef typename Base::result_type result_type;
-      typedef typename Base::argument_type argument_type;
+// It should be doable using STL bind operators, but i am not sure how
+// to use them. -- Laurent Rineau, 2007/07/27
+template <typename Map>
+struct Second_of
+  : public CGAL::unary_function<typename Map::value_type,
+                                const typename Map::mapped_type&>
+{
+  typedef CGAL::unary_function<typename Map::value_type,
+                               const typename Map::mapped_type&> Base;
+  typedef typename Base::result_type                             result_type;
+  typedef typename Base::argument_type                           argument_type;
 
-      const typename Map::mapped_type&
-      operator()(const typename Map::value_type& p) const
-      {
-        return p.second;
-      }
-    }; // end class Second_of
+  const typename Map::mapped_type&
+  operator()(const typename Map::value_type& p) const
+  {
+    return p.second;
+  }
+}; // end class Second_of
 
-    // That function is constructed with a vertex handle v1.
-    // Then, its operator() takes an other vertex handle v2 as input, and
-    // returns the distance d(v1, v2).
-    // It is used in Slivers_exuder, to constructor a transform iterator.
-    template <typename Tr, typename Vertex_handle>
-    class Min_distance_from_v :
-      public CGAL::unary_function<Vertex_handle, void>
-    {
-      const Vertex_handle * v;
-      const Tr& tr;
-      double & dist;
+// That function is constructed with a vertex handle v1.
+// Then, its operator() takes an other vertex handle v2 as input, and
+// returns the distance d(v1, v2).
+// It is used in Slivers_exuder, to constructor a transform iterator.
+template <typename Tr, typename Vertex_handle>
+class Min_distance_from_v
+  : public CGAL::unary_function<Vertex_handle, void>
+{
+  const Vertex_handle * v;
+  const Tr& tr;
+  double & dist;
 
-    public:
-      Min_distance_from_v(const Vertex_handle& vh,
-                          double& dist,
-                          const Tr& tr)
-        : v(&vh), tr(tr), dist(dist)
-      {
-      }
+public:
+  Min_distance_from_v(const Vertex_handle& vh,
+                      double& dist,
+                      const Tr& tr)
+    : v(&vh), tr(tr), dist(dist)
+  {
+  }
 
-      void
-      operator()(const Vertex_handle& vh) const
-      {
-        typedef typename Tr::Geom_traits::Construct_point_3   Construct_point_3;
-        typedef typename Tr::Weighted_point                   Weighted_point;
+  void
+  operator()(const Vertex_handle& vh) const
+  {
+    typedef typename Tr::Geom_traits::Construct_point_3   Construct_point_3;
+    typedef typename Tr::Weighted_point                   Weighted_point;
 
-        Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
+    Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
 
-        const Weighted_point& wpv = tr.point(*v);
-        const Weighted_point& wpvh = tr.point(vh);
+    const Weighted_point& wpv = tr.point(*v);
+    const Weighted_point& wpvh = tr.point(vh);
 
-        const double d = CGAL::to_double(tr.min_squared_distance(cp(wpv), cp(wpvh)));
-        if(d < dist){
-          dist = d;
-        }
-      }
-    }; // end class Min_distance_from_v
+    const double d = CGAL::to_double(tr.min_squared_distance(cp(wpv), cp(wpvh)));
+    if(d < dist){
+      dist = d;
+    }
+  }
+}; // end class Min_distance_from_v
 
-  } // end namespace details
-
-
+} // end namespace details
 
 /************************************************
 // Class Slivers_exuder_base
@@ -186,7 +184,7 @@ protected:
   }
 
   // Dummy
-  unsigned int erase_counter(const Cell_handle &) const { return 0;}
+  unsigned int erase_counter(const Cell_handle &) const { return 0; }
 
   std::size_t cells_queue_size() const { return cells_queue_.size(); }
   bool cells_queue_empty()       const { return cells_queue_.empty(); }
@@ -208,8 +206,7 @@ protected:
     Erase_from_queue(Tet_priority_queue& queue)
     : r_queue_(queue) { }
 
-    void operator()(const Cell_handle& cell)
-    { r_queue_.erase(cell); }
+    void operator()(const Cell_handle& cell) { r_queue_.erase(cell); }
 
   private:
     Tet_priority_queue& r_queue_;
@@ -357,11 +354,9 @@ protected:
   mutable tbb::task                          *m_empty_root_task;
 
 private:
-
   Tet_priority_queue cells_queue_;
 };
 #endif // CGAL_LINKED_WITH_TBB
-
 
 /************************************************
 // Class Slivers_exuder
@@ -374,18 +369,15 @@ template <
   typename FT = typename C3T3::Triangulation::Geom_traits::FT
   >
 class Slivers_exuder
-: public Slivers_exuder_base<typename C3T3::Triangulation,
-                             typename C3T3::Concurrency_tag>
+  : public Slivers_exuder_base<typename C3T3::Triangulation,
+                               typename C3T3::Concurrency_tag>
 {
-
 public: // Types
-
   typedef typename C3T3::Concurrency_tag                    Concurrency_tag;
   typedef Slivers_exuder_base<
     typename C3T3::Triangulation, Concurrency_tag>          Base;
 
 private: // Types
-
   typedef Slivers_exuder<C3T3, SliverCriteria, Visitor_, FT> Self;
 
   typedef typename C3T3::Triangulation                       Tr;
@@ -411,34 +403,33 @@ private: // Types
   // Umbrella will store the surface_index of internal facets of a new
   // weighted point conflict zone. Such facets are represented by their edge
   // which do not contain the pumped vertex
-  typedef std::pair<Vertex_handle,Vertex_handle> Ordered_edge;
-  typedef std::pair<Surface_patch_index, std::size_t> Patch_and_counter;
-  typedef std::map<Ordered_edge, Patch_and_counter> Umbrella;
+  typedef std::pair<Vertex_handle,Vertex_handle>             Ordered_edge;
+  typedef std::pair<Surface_patch_index, std::size_t>        Patch_and_counter;
+  typedef std::map<Ordered_edge, Patch_and_counter>          Umbrella;
 
   // Boundary_facets_from_outside represents the facet of the conflict zone
   // seen from outside of it. It stores Surface_patch_index of the facet, and
   // Subdomain_index of the cell which is inside the conflict zone.
-  typedef std::map<Facet, std::pair<Surface_patch_index,Subdomain_index> >
-    Boundary_facets_from_outside;
+  typedef std::map<Facet,
+    std::pair<Surface_patch_index, Subdomain_index> >       Boundary_facets_from_outside;
 
   /** Pre_star will represent the pre-star of a point. It is a (double)-map
    *  of Facet (viewed from cells inside the star), ordered by the
    *  critial_radius of the point with the cell that lies on the facet, at
    *  the exterior of the pre-star. */
-  typedef CGAL::Double_map<Facet, double> Pre_star;
+  typedef CGAL::Double_map<Facet, double>                   Pre_star;
 
   // Stores the value of facet for the sliver criterion functor
-  typedef std::map<Facet, double> Sliver_values;
+  typedef std::map<Facet, double>                           Sliver_values;
 
   // Visitor class
   // Should define
   //  - after_cell_pumped(std::size_t cells_left_number)
-  typedef Visitor_ Visitor;
-  
+  typedef Visitor_                                          Visitor;
+
   using Base::get_lock_data_structure;
 
 public: // methods
-
   /**
    * @brief Constructor
    * @param c3t3 The mesh to exude
@@ -455,8 +446,7 @@ public: // methods
    * @param criterion_value_limit All vertices of tetrahedra that have a
    * quality below this bound will be pumped
    */
-  Mesh_optimization_return_code
-  operator()(Visitor visitor = Visitor())
+  Mesh_optimization_return_code operator()(Visitor visitor = Visitor())
   {
 #ifdef CGAL_MESH_3_PROFILING
   WallClockTimer t;
@@ -578,6 +568,7 @@ private:
       std::swap(h1, h2);
   }
 
+
   template <typename Handle>
   static
   void order_three_handles(Handle& h1, Handle& h2, Handle& h3)
@@ -586,6 +577,7 @@ private:
     if(h2 > h3) std::swap(h2, h3);
     if(h1 > h2) std::swap(h1, h2);
   }
+
 
   /**
    * Initialization
@@ -602,6 +594,7 @@ private:
     initialized_ = true;
   }
 
+
   /**
    * Initialize cells_queue w.r.t sliver_bound_
    */
@@ -611,13 +604,13 @@ private:
         cit != c3t3_.cells_in_complex_end() ;
         ++cit)
     {
-      const double value
-        = sliver_criteria_(cit);
+      const double value = sliver_criteria_(cit);
 
       if( value < sliver_criteria_.sliver_bound() )
         this->cells_queue_insert(cit, value);
     }
   }
+
 
   /**
    * Returns critical radius of (v,c)
@@ -638,12 +631,12 @@ private:
                                            v->point()));
   }
 
+
   /**
    * Returns the squared distance from vh to its closest vertice
    */
   double get_closest_vertice_squared_distance(const Vertex_handle& vh) const
   {
-
     double dist = (std::numeric_limits<double>::max)();
     details::Min_distance_from_v<Tr, Vertex_handle> min_distance_from_v(vh, dist, tr_);
 
@@ -651,6 +644,7 @@ private:
 
     return dist;
   }
+
 
   /**
    * Returns the min value of second element of Ratio
@@ -664,6 +658,7 @@ private:
       make_transform_iterator(criterion_values.begin(), Second_of()),
       make_transform_iterator(criterion_values.end(), Second_of())));
   }
+
 
   /**
    * Returns the \c Boundary_facets_from_outside object containing mirror facets
@@ -702,8 +697,8 @@ private:
     else
 #endif
       this->cells_queue_insert(ch, criterion_value);
-
   }
+
 
   /**
    * A functor to remove one handle (Cell_handle/Facet_handle) from complex
@@ -749,8 +744,7 @@ private:
         cit != c3t3_.cells_in_complex_end() ;
         ++cit)
     {
-      const double value =
-        sliver_criteria_(cit);
+      const double value = sliver_criteria_(cit);
 
       if( value < sliver_criteria_.sliver_bound() )
         return false;
@@ -758,6 +752,7 @@ private:
 
     return true;
   }
+
 
 #ifdef CGAL_LINKED_WITH_TBB
   // For parallel version
@@ -767,10 +762,7 @@ private:
 #endif
 
 private:
-
-
 #ifdef CGAL_LINKED_WITH_TBB
-
   // Functor for enqueue_task function
   template <typename SE, bool pump_vertices_on_surfaces>
   class Pump_vertex
@@ -939,7 +931,6 @@ private:
 }; // end class Slivers_exuder
 
 
-
 template <typename C3T3, typename SC, typename V_, typename FT>
 Slivers_exuder<C3T3,SC,V_,FT>::
 Slivers_exuder(C3T3& c3t3, const SC& criteria, double d)
@@ -993,7 +984,6 @@ pump_vertices(double sliver_criterion_limit,
 #ifdef CGAL_MESH_3_PROFILING
   t.reset();
 #endif
-
 
 #ifdef CGAL_LINKED_WITH_TBB
   // Parallel
@@ -1081,7 +1071,6 @@ pump_vertices(double sliver_criterion_limit,
   std::cerr << std::endl << "==== Iterations time: "
             << t.elapsed() << "s ====" << std::endl;
 #endif
-
 
 #ifdef CGAL_MESH_3_EXUDER_VERBOSE
   std::cerr << std::endl;
@@ -1184,7 +1173,6 @@ initialize_prestar_and_criterion_values(const Vertex_handle& v,
     {
       criterion_values[f] = sliver_criteria_(*cit);
     }
-
 
     // Pre_star initialization
     // If facet is adjacent to and infinite cell, no need to put it in prestar
@@ -1370,7 +1358,6 @@ get_best_weight(const Vertex_handle& v, bool *could_lock_zone) const
     }
   } // end while(... can pump...)
 
-
 #ifdef CGAL_MESH_3_DEBUG_SLIVERS_EXUDER
   if ( best_weight > v->point().weight() )
   {
@@ -1387,9 +1374,8 @@ get_best_weight(const Vertex_handle& v, bool *could_lock_zone) const
 template <typename C3T3, typename SC, typename V_, typename FT>
 boost::optional<typename Slivers_exuder<C3T3,SC,V_,FT>::Umbrella >
 Slivers_exuder<C3T3,SC,V_,FT>::
-get_umbrella(const Facet_vector& facets,//internal_facets of conflict zone
-
-             const Vertex_handle& /* v no longer used */) const
+get_umbrella(const Facet_vector& facets, // internal_facets of conflict zone
+             const Vertex_handle& /* v, no longer used */) const
 {
   Umbrella umbrella; //std::map<Ordered_edge, Patch_and_counter>
 
@@ -1432,10 +1418,10 @@ get_umbrella(const Facet_vector& facets,//internal_facets of conflict zone
     }
   }
 
-  // erase edges that have been counted twice
-  //each Oriented_edge should appear only once
-  // twice means it belongs to two internal facets that are restricted
-  // three or more corresponds to a non-manifold geometry
+  // Erase edges that have been counted twice.
+  // Each Oriented_edge should appear only once.
+  // Twice means that it belongs to two internal facets that are restricted.
+  // Three or more corresponds to a non-manifold geometry.
   typename Umbrella::iterator uit = umbrella.begin();
   while(uit != umbrella.end())
   {
@@ -1445,7 +1431,9 @@ get_umbrella(const Facet_vector& facets,//internal_facets of conflict zone
       umbrella.erase(to_be_erased);
     }
     else
+    {
       ++uit;
+    }
   }
 
   return umbrella;
@@ -1504,7 +1492,6 @@ restore_cells_and_boundary_facets(
     }
   }
 }
-
 
 
 template <typename C3T3, typename SC, typename V_, typename FT>
@@ -1599,8 +1586,7 @@ update_mesh(const Weighted_point& new_point,
   Boundary_facets_from_outside boundary_facets_from_outside =
     get_boundary_facets_from_outside(boundary_facets);
 
-  boost::optional<Umbrella> umbrella
-    = get_umbrella(internal_facets, old_vertex);
+  boost::optional<Umbrella> umbrella = get_umbrella(internal_facets, old_vertex);
   if(umbrella == boost::none)
     return false; //abort pumping this vertex
 
@@ -1631,7 +1617,7 @@ update_mesh(const Weighted_point& new_point,
   // Only true for sequential version
   CGAL_assertion(could_lock_zone || nb_vert == tr_.number_of_vertices());
 
-  return true;//pump was done successfully
+  return true; // pump was done successfully
 }
 
 
@@ -1880,10 +1866,8 @@ check_ratios(const Sliver_values& criterion_values,
 }
 #endif // CGAL_MESH_3_DEBUG_SLIVERS_EXUDER
 
-
 } // end namespace Mesh_3
 
 } // end namespace CGAL
-
 
 #endif // end CGAL_MESH_3_SLIVERS_EXUDER_H
