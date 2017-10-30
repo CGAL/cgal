@@ -29,7 +29,8 @@ namespace CGAL {
 template <class Traits>
 class Indirect_not_less_yx_2 
 {
-   public:
+public:
+     typedef typename Traits::Point_2 Point_2;
      typedef typename Traits::Less_yx_2     Less_yx_2;
 
      Indirect_not_less_yx_2(const Traits& traits) : 
@@ -38,7 +39,7 @@ class Indirect_not_less_yx_2
      template <class Iterator>
      bool 
      operator()( const Iterator& p, const Iterator& q) const
-     { return less_yx_2( *q, *p); }
+     { return less_yx_2( Point_2(*q), Point_2(*p)); }
 
    private:
      Less_yx_2 less_yx_2;

@@ -277,7 +277,7 @@ private:
          next = *next_d_it;
    
 //      return _right_turn(*prev, *vertex_ref, *next);
-      return _left_turn(*vertex_ref, *prev, *next);
+      return _left_turn(Point_2(*vertex_ref), Point_2(*prev), Point_2(*next));
    }
 
    bool diagonal_is_necessary(Circulator diag_ref1, Circulator diag_ref2) 

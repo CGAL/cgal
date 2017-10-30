@@ -61,19 +61,19 @@ class Indirect_edge_compare
         ForwardCirculator edge_vtx_2 = edge_vtx_1;
         edge_vtx_2++;
         // check for horizontal edge
-        if (_compare_y_2((*edge_vtx_1), (*edge_vtx_2)) == EQUAL)  
+        if(_compare_y_2((*edge_vtx_1), (*edge_vtx_2)) == EQUAL)  
         { 
             // compare the smaller x and vertex x
-           if (_compare_x_2(*edge_vtx_1, *edge_vtx_2) == SMALLER)
-              return _compare_x_2(*edge_vtx_1, *vertex) == LARGER;
+          if(_compare_x_2(*edge_vtx_1, *edge_vtx_2) == SMALLER)
+             return _compare_x_2(*edge_vtx_1, *vertex) == LARGER;
            else
-              return _compare_x_2(*edge_vtx_2, *vertex) == LARGER;
+             return _compare_x_2(*edge_vtx_2, *vertex) == LARGER;
         }
         else 
         { 
            // construct supporting line for edge
            Line_2  line = _construct_line_2(*edge_vtx_1, *edge_vtx_2);
-           return _compare_x_at_y_2(*vertex, line) == SMALLER;
+           return _compare_x_at_y_2(Point_2(*vertex), line) == SMALLER;
         }
      }               
 
@@ -122,12 +122,12 @@ class Indirect_edge_compare
             }
             else  // p and after_p must both be on same side of l_q
             {
-                 return (_compare_x_at_y_2(*p, l_q) == LARGER);
+              return (_compare_x_at_y_2(Point_2(*p), l_q) == LARGER);
             }
         }
 
-        bool q_larger_x = _compare_x_at_y_2(*q, l_p) == SMALLER;
-        bool after_q_larger_x = _compare_x_at_y_2(*after_q, l_p) == SMALLER;
+        bool q_larger_x =_compare_x_at_y_2(Point_2(*q), l_p) == SMALLER;
+        bool after_q_larger_x = _compare_x_at_y_2(Point_2(*after_q), l_p) == SMALLER;
 
         if (q_larger_x == after_q_larger_x)
             return q_larger_x;
@@ -136,9 +136,9 @@ class Indirect_edge_compare
         Line_2 l_q = _construct_line_2(*q, *after_q); 
         if (_is_horizontal_2(l_q))     // p is not horizontal
         {
-            return _compare_x_at_y_2((*q), l_p) == LARGER;
+          return _compare_x_at_y_2(Point_2(*q), l_p) == LARGER;
         }
-        return _compare_x_at_y_2((*p), l_q) != SMALLER;
+        return _compare_x_at_y_2(Point_2(*p), l_q) != SMALLER;
      }
 
    private:

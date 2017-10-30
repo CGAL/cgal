@@ -409,10 +409,12 @@ struct Lazy_kernel
 
 template <class Exact_kernel, class Approximate_kernel, class E2A>
 struct Lazy_kernel<Exact_kernel, Approximate_kernel, E2A, true>
-  : public internal::Static_filters<
+  : public
+//internal::Static_filters<
       Type_equality_wrapper<
         Lazy_kernel_base< Exact_kernel, Approximate_kernel, E2A, Lazy_kernel<Exact_kernel, Approximate_kernel, E2A, true> > ,
-        Lazy_kernel<Exact_kernel, Approximate_kernel, E2A, true> >, false >
+        Lazy_kernel<Exact_kernel, Approximate_kernel, E2A, true> >
+//, false >
 {
 // WARNING: If you change the definition of Lazy_kernel, then you need to
 // change also the definition of Epeck in
