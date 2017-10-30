@@ -973,7 +973,7 @@ Triangulation (in blue) of the domain delimited by the red polygons.
 
 \cgalExample{Triangulation_2/polygon_triangulation.cpp}
 
-\section Section_2D_Triangulations_Constrained_Plus Constrained Triangulations with a Bidirectional Mapping between Constaints and Subconstraints
+\section Section_2D_Triangulations_Constrained_Plus Constrained Triangulations with a Bidirectional Mapping between Constraints and Subconstraints
 
 The class `Constrained_triangulation_plus_2<Tr>`
 provides a constrained triangulation with an additional data
