@@ -343,9 +343,9 @@ public:
   }
 
   // Periodic triangulations cannot be used in parallel (yet), but the functions below
-  // are required for compilation. Note that they could already be implemented
-  // and put in P3T3.h but to make it clear that it's not supposed to be parallel,
-  // they are put here and left empty.
+  // are required for compilation. Note that these functions could already
+  // be implemented and moved to P3T3.h but to make it clear that P3M3 is
+  // not available in parallel, they are put here and left empty.
 
   template <class OutputIterator>
   OutputIterator
@@ -388,7 +388,7 @@ public:
   }
 
   // Warning : This is a periodic version that computes the smallest possible
-  // between p and q, for all combinations of offsets
+  // between 'p' and 'q', for all possible combinations of offsets
   FT min_squared_distance(const Bare_point& p, const Bare_point& q) const
   {
 //    std::cout << "minsqd: " << p << " // " << q << std::endl;
@@ -416,9 +416,10 @@ public:
     return min_sq_dist;
   }
 
-  // Warning : This is a periodic version that computes the closest possible
-  // point between p and q, for all combinations of offsets
-  // \pre 'p' is canonical
+  // Warning : This function finds which offset 'Oq' should be applied to 'q' so
+  // that the distance between 'p' and '(q, Oq)' is minimal.
+  //
+  // \pre 'p' lives in the canonical domain.
   Bare_point get_closest_point(const Bare_point& p, const Bare_point& q) const
   {
     Bare_point rq;
@@ -444,9 +445,10 @@ public:
   }
 
   // Warning: This is a periodic version that computes the smallest possible
-  // distances between p&q and p&r FOR ANY OFFSETS before comparing these distances
+  // distances between p and q, and between p and r FOR ALL POSSIBLE OFFSETS
+  // before comparing these distances.
   //
-  // It's main purpose is facet_encroachement checks in Periodic_mesh_3
+  // It is used in facet encroachement checks in Periodic_3_mesh_3.
   bool greater_or_equal_power_distance(const Bare_point& p,
                                        const Weighted_point& q,
                                        const Weighted_point& r) const

@@ -2489,11 +2489,11 @@ update_mesh_no_topo_change(const Vertex_handle& old_vertex,
     //           << old_position << "\n";
     reset_circumcenter_cache(conflict_cells);
 
-    //sliver caches have been updated by valid_move
+    // Sliver caches have been updated by valid_move
     reset_sliver_cache(conflict_cells);
     move_point_no_topo_change(old_vertex, cov(move), old_position);
 
-    //restore meta-data (cells should have same connectivity as before move)
+    // Restore meta-data (cells should have same connectivity as before move)
     // cells_backup does not contain infinite cells so they can be fewer
     CGAL_assertion(conflict_cells.size() >= cells_backup.size());
     restore_from_cells_backup(conflict_cells, cells_backup);

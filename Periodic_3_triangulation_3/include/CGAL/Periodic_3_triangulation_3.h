@@ -3157,7 +3157,7 @@ is_valid_conflict(ConflictTester& tester, bool verbose, int level) const
                 it->neighbor(i)->vertex(it->neighbor(i)->index(it))->point(),
                 o_vt - o_nb)) {
         if(verbose) {
-          std::cerr << "non-empty sphere: \n"
+          std::cerr << "non-empty sphere:\n"
                     << "Point[0]: " << it->vertex(0)->point()
                     << " Off: " << int_to_off(it->offset(0)) << "\n"
                     << "Point[1]: " << it->vertex(1)->point()

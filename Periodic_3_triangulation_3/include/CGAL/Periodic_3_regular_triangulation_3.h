@@ -672,7 +672,7 @@ public:
   }
 
   Bounded_side side_of_power_sphere(const Cell_handle& c, const Weighted_point& p,
-                                    const Offset & offset = Offset(),
+                                    const Offset& offset = Offset(),
                                     bool perturb = false) const
   {
     Bounded_side bs = ON_UNBOUNDED_SIDE;
@@ -688,7 +688,7 @@ public:
   }
 
   Bounded_side _side_of_power_sphere(const Cell_handle& c, const Weighted_point& q,
-                                     const Offset & offset = Offset(),
+                                     const Offset& offset = Offset(),
                                      bool perturb = false) const
   {
     Weighted_point p0 = c->vertex(0)->point(),
