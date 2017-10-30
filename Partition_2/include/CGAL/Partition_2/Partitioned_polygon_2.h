@@ -47,15 +47,15 @@ public:
                 _vertex(vertex),
                 _prev_v_ref(prev_ref)
    { 
-      _vertex_orientation = _orientation(*_prev_v_ref, vertex, *next_ref);
+     _vertex_orientation = _orientation(Point_2(*_prev_v_ref), Point_2(vertex), Point_2(*next_ref));
    }
 
    bool
    operator()(Iterator d1, Iterator d2) 
    {
-      Orientation d1_orientation = _orientation(*_prev_v_ref, _vertex, *d1);
-      Orientation d2_orientation = _orientation(*_prev_v_ref, _vertex, *d2);
-      Orientation d1_to_d2 = _orientation(*d1, _vertex, *d2);
+     Orientation d1_orientation = _orientation(Point_2(*_prev_v_ref), Point_2(_vertex), Point_2(*d1));
+     Orientation d2_orientation = _orientation(Point_2(*_prev_v_ref), Point_2(_vertex), Point_2(*d2));
+     Orientation d1_to_d2 = _orientation(Point_2(*d1), Point_2(_vertex), Point_2(*d2));
 
       // if both diagonals are on the same side of the line from previous 
       // vertex to this vertex then d1 comes before d2 (in CW order from

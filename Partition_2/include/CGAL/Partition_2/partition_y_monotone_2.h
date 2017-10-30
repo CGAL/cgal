@@ -83,8 +83,8 @@ Partition_y_mono_vertex_type partition_y_mono_vertex_type(
 #endif
    typename Traits::Compare_y_2 compare_y_2 = traits.compare_y_2_object();
 
-   if (compare_y_2(*previous, *c) == EQUAL &&
-       compare_y_2(*next, *c) == EQUAL)
+   if (compare_y_2(Point_2(*previous), Point_2(*c)) == EQUAL &&
+       compare_y_2(Point_2(*next), Point_2(*c)) == EQUAL)
       return PARTITION_Y_MONO_COLLINEAR_VERTEX;
 
    typename Traits::Less_yx_2   less_yx = traits.less_yx_2_object();
@@ -300,16 +300,17 @@ template <class BidirectionalCirculator, class Traits>
 bool partition_y_mono_interior_to_right(BidirectionalCirculator c,
                                         const Traits& traits)
 {
+  typedef typename Traits::Point_2 Point_2;
    typename Traits::Compare_y_2 compare_y_2 = traits.compare_y_2_object();
-
+ 
    BidirectionalCirculator previous = c; previous--;
 
-   Comparison_result cmp_y = compare_y_2(*previous, *c);
+   Comparison_result cmp_y = compare_y_2(Point_2(*previous), Point_2(*c));
    if (cmp_y == LARGER) return true;
 
    BidirectionalCirculator next = c; next++;
 
-   if (cmp_y == EQUAL && compare_y_2(*next, *c) == SMALLER) return true;
+   if (cmp_y == EQUAL && compare_y_2(Point_2(*next), Point_2(*c)) == SMALLER) return true;
 
    return false;
 }

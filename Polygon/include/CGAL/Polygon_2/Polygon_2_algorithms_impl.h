@@ -416,7 +416,8 @@ Orientation orientation_2(ForwardIterator first,
   // of the points (prev,i,next) will coincide
 
   // return the orientation of the triple (prev,i,next)
-  return traits.orientation_2_object()(*prev, *i, *next);
+  typedef typename Traits::Point_2 Point;
+  return traits.orientation_2_object()(Point(*prev), Point(*i), Point(*next));
 }
 
 } //namespace CGAL

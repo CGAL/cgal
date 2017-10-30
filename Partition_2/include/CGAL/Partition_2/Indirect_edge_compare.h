@@ -61,13 +61,13 @@ class Indirect_edge_compare
         ForwardCirculator edge_vtx_2 = edge_vtx_1;
         edge_vtx_2++;
         // check for horizontal edge
-        if(_compare_y_2((*edge_vtx_1), (*edge_vtx_2)) == EQUAL)  
+        if(_compare_y_2(Point_2(*edge_vtx_1), Point_2(*edge_vtx_2)) == EQUAL)  
         { 
             // compare the smaller x and vertex x
-          if(_compare_x_2(*edge_vtx_1, *edge_vtx_2) == SMALLER)
-             return _compare_x_2(*edge_vtx_1, *vertex) == LARGER;
+          if(_compare_x_2(Point_2(*edge_vtx_1), Point_2(*edge_vtx_2)) == SMALLER)
+            return _compare_x_2(Point_2(*edge_vtx_1), Point_2(*vertex)) == LARGER;
            else
-             return _compare_x_2(*edge_vtx_2, *vertex) == LARGER;
+             return _compare_x_2(Point_2(*edge_vtx_2), Point_2(*vertex)) == LARGER;
         }
         else 
         { 
@@ -110,11 +110,11 @@ class Indirect_edge_compare
             {                         
                  Point_2 p_max;
                  Point_2 q_max;
-                 if (_compare_x_2(*p, *after_p) == SMALLER)
+                 if (_compare_x_2(Point_2(*p), Point_2(*after_p)) == SMALLER)
                     p_max = *after_p;
                  else
                     p_max = *p;
-                 if (_compare_x_2(*q, *after_q) == SMALLER)
+                 if (_compare_x_2(Point_2(*q), Point_2(*after_q)) == SMALLER)
                     q_max = *after_q;
                  else
                     q_max = *q;
