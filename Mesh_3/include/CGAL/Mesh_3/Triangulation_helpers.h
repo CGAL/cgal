@@ -289,7 +289,7 @@ no_topological_change(Tr& tr,
 
       if(tr.is_infinite(c->vertex(j)))
       {
-        if(tr.side_of_power_sphere(c, tr.point(cj, mj), false)
+        if(tr.side_of_power_sphere(c, cj->vertex(mj)->point(), false)
            != CGAL::ON_UNBOUNDED_SIDE)
         {
           np = false;
