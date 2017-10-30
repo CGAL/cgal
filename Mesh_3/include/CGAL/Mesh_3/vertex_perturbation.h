@@ -1351,7 +1351,6 @@ private:
     // Initialize loop variables
     bool criterion_improved = false;
     Vertex_handle moving_vertex = v;
-    Bare_point best_location = initial_location;
     std::set<Vertex_handle> mod_vertices;
     
     // TODO: use no_topo_change to compute new_angle without moving everything
@@ -1390,7 +1389,6 @@ private:
       if ( update.first )
       {
         criterion_improved = true;
-        best_location = cp(moving_vertex->point()); // <periodic> this seems useless
 
         mod_vertices.insert(tmp_mod_vertices.begin(), tmp_mod_vertices.end());
 
