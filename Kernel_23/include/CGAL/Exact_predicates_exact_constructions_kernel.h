@@ -59,20 +59,6 @@ class Epeck
 #else // no CGAL_DONT_USE_LAZY_KERNEL
 
 // Equivalent to Lazy_kernel<Simple_cartesian<Epeck_ft> >
-#ifdef CGAL_LAZY_KERNEL_USE_STATIC_FILTERS_BY_DEFAULT
-class Epeck
-  : public internal::Static_filters<
-      Type_equality_wrapper<
-             Lazy_kernel_base< Simple_cartesian<Epeck_ft>,
-                               Simple_cartesian<Interval_nt_advanced>,
-	                       Cartesian_converter< Simple_cartesian<Epeck_ft>,
-                                                    Simple_cartesian<Interval_nt_advanced> >,
-                               Epeck>,
-             Epeck >, false>
-{};
-
-#else // no CGAL_LAZY_KERNEL_USE_STATIC_FILTERS_BY_DEFAULT
-
 class Epeck
   : public Type_equality_wrapper<
              Lazy_kernel_base< Simple_cartesian<Epeck_ft>,
@@ -82,7 +68,6 @@ class Epeck
                                Epeck>,
              Epeck >
 {};
-#endif // no CGAL_LAZY_KERNEL_USE_STATIC_FILTERS_BY_DEFAULT
 
 #endif // no CGAL_DONT_USE_LAZY_KERNEL
 
