@@ -135,7 +135,10 @@ else ( CGAL_BRANCH_BUILD )
   # Enable testing with BUILD_TESTING
   option(BUILD_TESTING "Build the testing tree." OFF)
   include(CTest)
-
+  if(BUILD_TESTING AND NOT POLICY CMP0064)
+    message(FATAL_ERROR "CGAL support of CTest requires CMake version 3.4 or later.
+The variable BUILD_TESTING must be set of OFF.")
+  endif()
 endif (CGAL_BRANCH_BUILD )
 
 #message(STATUS "Packages found: ${CGAL_CONFIGURED_PACKAGES}")
