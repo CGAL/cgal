@@ -1,10 +1,9 @@
-// Copyright (c) 2016-2017 INRIA Nancy Grand-Est (France).
+// Copyright (c) 2016  INRIA Nancy - Grand Est (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -12,10 +11,11 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
+// $URL: svn+ssh://scm.gforge.inria.fr/svn/cgal/branches/candidate-packages/Triangulation_2/include/CGAL/Delaunay_triangulation_2.h $
+// $Id: Delaunay_triangulation_2.h 57509 2010-07-15 09:14:09Z sloriot $
 //
-// Author(s)     : Iordan Iordanov <iordan.iordanov@loria.fr>
+//
+// Author(s)     : Iordan Iordanov
 
 #ifndef CGAL_PERIODIC_4_HYPERBOLIC_TRIANGULATION_DUMMY_14_H
 #define CGAL_PERIODIC_4_HYPERBOLIC_TRIANGULATION_DUMMY_14_H
@@ -26,22 +26,22 @@ namespace CGAL {
 
     template<class Point, class Face_handle>
     Point barycenter(Face_handle fh) {
-        Point p0 = fh->offset(0).apply(fh->vertex(0)->point());
-        Point p1 = fh->offset(1).apply(fh->vertex(1)->point());
-        Point p2 = fh->offset(2).apply(fh->vertex(2)->point());
+        Point p0 = fh->translation(0).apply(fh->vertex(0)->point());
+        Point p1 = fh->translation(1).apply(fh->vertex(1)->point());
+        Point p2 = fh->translation(2).apply(fh->vertex(2)->point());
         return Point( (p0.x() + p1.x() + p2.x())/3, (p0.y() + p1.y() + p2.y())/3 );
     }
     
     template<class Point, class Face_handle>
     Point midpoint(Face_handle fh, int i, int j) {
-        Point p0 = fh->offset(i).apply(fh->vertex(i)->point());
-        Point p1 = fh->offset(j).apply(fh->vertex(j)->point());
+        Point p0 = fh->translation(i).apply(fh->vertex(i)->point());
+        Point p1 = fh->translation(j).apply(fh->vertex(j)->point());
         return Point( (p0.x() + p1.x())/2, (p0.y() + p1.y())/2 );
     }
 
     template<class Point, class Face_handle>
     Point vertex(Face_handle fh, int i) {
-        Point p0 = fh->offset(i).apply(fh->vertex(i)->point());
+        Point p0 = fh->translation(i).apply(fh->vertex(i)->point());
         return Point( p0.x(), p0.y() );
     }
 
@@ -61,9 +61,6 @@ namespace CGAL {
 
         int fcount = 32;    // Faces count
         int vcount = 14;    // Vertices count
-
-        f_cnt = fcount;
-        v_cnt = vcount;
 
         dummy_points.clear();
 
@@ -122,20 +119,20 @@ namespace CGAL {
         }
 
 
-        Offset off[32][3]; 
+        Hyperbolic_translation off[32][3]; 
         for (int i = 0; i < 32; i++) {
             for (int j = 0; j < 3; j++) {
-                off[i][j] = Offset();
+                off[i][j] = Hyperbolic_translation();
             }
         }
 
         int tri[32][3];
         for (int i = 0; i < 4; i++) {
-            Offset vo1, vo2;
-            if (i == 0) { vo1 = Offset(1, 6, 3);    vo2 = Offset();         }
-            if (i == 1) { vo1 = Offset(1, 4);       vo2 = Offset(1, 6, 3);  }
-            if (i == 2) { vo1 = Offset(3);          vo2 = Offset(1, 4);     }
-            if (i == 3) { vo1 = Offset(4, 1, 6, 3); vo2 = Offset(3);        }
+            Hyperbolic_translation vo1, vo2;
+            if (i == 0) { vo1 = Hyperbolic_translation(1, 6, 3);    vo2 = Hyperbolic_translation();         }
+            if (i == 1) { vo1 = Hyperbolic_translation(1, 4);       vo2 = Hyperbolic_translation(1, 6, 3);  }
+            if (i == 2) { vo1 = Hyperbolic_translation(3);          vo2 = Hyperbolic_translation(1, 4);     }
+            if (i == 3) { vo1 = Hyperbolic_translation(4, 1, 6, 3); vo2 = Hyperbolic_translation(3);        }
 
             int i0 = 0;
             int fn = i;
@@ -153,37 +150,37 @@ namespace CGAL {
             i1 = i+2;
             i2 = i+1;
             tri[fn][0] = i0; tri[fn][1] = i1; tri[fn][2] = i2;
-            off[fn][0] = Offset(i);
+            off[fn][0] = Hyperbolic_translation(i);
             //----------------------
             fn = i + 12;
             i0 = i+9;
             i1 = ((i+5)%8)+1;
             i2 = ((i+4)%8)+1;
             tri[fn][0] = i0; tri[fn][1] = i1; tri[fn][2] = i2;
-            //off[fn][0] = Offset(i+4);
+            //off[fn][0] = Hyperbolic_translation(i+4);
             //----------------------
             fn = 2*(i + 8);
             i0 = i+1;
             i1 = ((i+5)%8)+1;
             i2 = i+9;
             tri[fn][0] = i0; tri[fn][1] = i1; tri[fn][2] = i2;
-            off[fn][1] = Offset(i);
-            off[fn][2] = Offset(i);
+            off[fn][1] = Hyperbolic_translation(i);
+            off[fn][2] = Hyperbolic_translation(i);
             //----------------------
             fn = 2*(i + 8) + 1;
             i0 = i+2;
             i1 = i+9;
             i2 = i+5;
             tri[fn][0] = i0; tri[fn][1] = i1; tri[fn][2] = i2;
-            off[fn][1] = Offset(i);
-            off[fn][2] = Offset(i);
+            off[fn][1] = Hyperbolic_translation(i);
+            off[fn][2] = Hyperbolic_translation(i);
             //----------------------
             fn = 2*(i + 12);
             i0 = ((i+5)%8)+1;
             i1 = i+1;
             i2 = 13;
             tri[fn][0] = i0; tri[fn][1] = i1; tri[fn][2] = i2;
-            off[fn][0] = Offset(i);
+            off[fn][0] = Hyperbolic_translation(i);
             off[fn][2] = vo2;
             //----------------------
             fn = 2*(i + 12) + 1;
@@ -191,7 +188,7 @@ namespace CGAL {
             i1 = 13;
             i2 = i+2;
             tri[fn][0] = i0; tri[fn][1] = i1; tri[fn][2] = i2;
-            off[fn][0] = Offset(i);
+            off[fn][0] = Hyperbolic_translation(i);
             off[fn][1] = vo1;
         }
 
@@ -201,7 +198,6 @@ namespace CGAL {
             vertices[i] = tds().create_vertex();
             vertices[i]->set_point(dummy_points[i]());
             dummy_points[i].set_vertex(vertices[i]);
-            vertices[i]->set_idx(i);
         }
 
 
@@ -209,8 +205,7 @@ namespace CGAL {
         for (int i = 0; i < fcount; i++) {
             int x, y, z;
             faces[i] = tds().create_face(vertices[tri[i][0]], vertices[tri[i][1]], vertices[tri[i][2]]);
-            faces[i]->set_offsets(      off[i][0],           off[i][1],           off[i][2]);
-            faces[i]->set_number(i);
+            faces[i]->set_translations(      off[i][0],           off[i][1],           off[i][2]);
         }
 
         tds().set_dimension(2);
@@ -282,6 +277,9 @@ namespace CGAL {
         for (int i = 0; i < vcount; i++) {
             ret.push_back(vertices[i]);
         }
+
+        for (Face_iterator fit = tds().faces_begin(); fit != tds().faces_end(); fit++)
+            fit->make_canonical();
 
         CGAL_triangulation_assertion(is_valid(true));
 

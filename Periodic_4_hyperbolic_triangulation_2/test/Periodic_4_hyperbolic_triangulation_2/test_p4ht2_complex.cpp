@@ -1,25 +1,6 @@
-// Copyright (c) 2016-2017 INRIA Nancy Grand-Est (France).
-// All rights reserved.
-//
-// This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-//
-// $URL$
-// $Id$
-//
-// Author(s)     : Iordan Iordanov <iordan.iordanov@loria.fr>
-
 #include <iostream>
 #include <CGAL/CORE_Expr.h>
-#include <CGAL/exact_complex.h>
+#include <CGAL/Exact_complex.h>
 #include <CGAL/Point_2.h>
 #include <CGAL/Circle_2.h>
 #include <CGAL/Cartesian.h>
@@ -30,7 +11,7 @@ using namespace std;
 int main(void) {
 
     typedef CORE::Expr                  NT;
-    typedef exact_complex<NT>           cplx;
+    typedef Exact_complex<NT>           cplx;
     typedef Point_2< Cartesian<NT> >    Point;
     typedef Circle_2< Cartesian<NT> >   Circle;
 
@@ -65,7 +46,7 @@ int main(void) {
     cout << "n < m: " << (n < m ? "true" : "false") << endl;
 
     Point pt(NT(2)/NT(10), NT(6)/NT(10));
-    cplx p(pt);
+    cplx p(pt.x(), pt.y());
     cout << "p = " << p << endl;
     cout << "recip = " << p.reciprocal() << endl;
     cout << "inver = " << p.invert_in_unit_circle() << endl;

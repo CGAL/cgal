@@ -1,35 +1,9 @@
-// Copyright (c) 2016-2017 INRIA Nancy Grand-Est (France).
-// All rights reserved.
-//
-// This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-//
-// $URL$
-// $Id$
-//
-// Author(s)     : Iordan Iordanov <iordan.iordanov@loria.fr>
-
-
 #ifndef CGAL_EXACT_COMPLEX_H
 #define CGAL_EXACT_COMPLEX_H
 
-
 #include <iostream>
 #include <CGAL/assertions.h>
-#include <CGAL/Point_2.h>
 #include <CGAL/number_utils.h>
-
-
-namespace CGAL {
-
 
 // Complex number in the form a + bi, where a and b are of type NT.
 // NT must be an exact number type, model of:
@@ -37,24 +11,26 @@ namespace CGAL {
 //		+ RealEmbeddable
 //		+ FromDoubleConstructible
 //
-template <class NT>
-class exact_complex {
 
-typedef exact_complex<NT> 		Self;
+
+namespace CGAL {
+
+template <class NumberType>
+class Exact_complex {
+
+typedef Exact_complex<NumberType> 		Self;
 
 private:
-	NT _a, _b;
+	NumberType _a, _b;
 
 public:
-	exact_complex() :
+	typedef NumberType NT;
+
+	Exact_complex() :
 		_a(0), _b(0) {}
 
-	exact_complex(NT a, NT b) :
+	Exact_complex(NT a, NT b) :
 		_a(a), _b(b) {}
-
-	template <class K>
-	exact_complex(const Point_2<K>& p) :
-		_a(p.x()), _b(p.y()) {}
 
 	NT real() const {
 		return _a;
@@ -134,22 +110,22 @@ public:
 
 
 template <class NT>
-std::ostream& operator<<(std::ostream& s, const exact_complex<NT>& c) {
+std::ostream& operator<<(std::ostream& s, const Exact_complex<NT>& c) {
 	s << c.real() << (c.imag() >= 0 ? " + " : " - ") << abs(c.imag()) << "i";
 	return s;
 } 
 
 // just to give an ordering
 template<class NT>
-bool operator==(	const exact_complex<NT>& lh,
-  					const exact_complex<NT>& rh)
+bool operator==(	const Exact_complex<NT>& lh,
+  					const Exact_complex<NT>& rh)
 {
   return (lh.real() == rh.real() && lh.imag() == rh.imag());
 }
 
 template<class NT>
-bool operator!=(	const exact_complex<NT>& lh,
-  					const exact_complex<NT>& rh)
+bool operator!=(	const Exact_complex<NT>& lh,
+  					const Exact_complex<NT>& rh)
 {
  	return !operator==(lh, rh); 
 }
@@ -157,8 +133,8 @@ bool operator!=(	const exact_complex<NT>& lh,
 
 // just to give an ordering
 template<class NT>
-bool operator<(	const exact_complex<NT>& lh,
-  					const exact_complex<NT>& rh)
+bool operator<(	const Exact_complex<NT>& lh,
+  					const Exact_complex<NT>& rh)
 {
   return lh.square_modulus() < rh.square_modulus();
 }

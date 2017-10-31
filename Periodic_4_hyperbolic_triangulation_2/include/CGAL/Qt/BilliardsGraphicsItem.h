@@ -18,8 +18,8 @@
 // Author(s)     : Andreas Fabri <Andreas.Fabri@geometryfactory.com>
 //                 Laurent Rineau <Laurent.Rineau@geometryfactory.com>
 
-#ifndef CGAL_QT_TRIANGULATION_GRAPHICS_ITEM_OVERLAY_H
-#define CGAL_QT_TRIANGULATION_GRAPHICS_ITEM_OVERLAY_H
+#ifndef CGAL_QT_TRIANGULATION_GRAPHICS_ITEM_H
+#define CGAL_QT_TRIANGULATION_GRAPHICS_ITEM_H
 
 #include <CGAL/Bbox_2.h>
 #include <CGAL/apply_to_range.h>
@@ -31,7 +31,8 @@
 #include <QPainter>
 #include <QStyleOption>
 
-#define PAINT_COPIES 1
+
+//#define DRAW_OCTAGON_IMAGE ;
 
 namespace CGAL {
 namespace Qt {
@@ -39,7 +40,8 @@ namespace Qt {
 template <typename T>
 class TriangulationGraphicsItem : public GraphicsItem
 {
-  typedef typename T::Geometric_traits Geom_traits;
+  typedef typename T::Geometric_traits  Geom_traits;
+  typedef typename Geom_traits::Point_2 Point_2;
 public:
   TriangulationGraphicsItem(T* t_);
 
@@ -84,6 +86,12 @@ public:
     update();
   }
 
+  void setVisibleOctagon(const bool b)
+  {
+    visible_octagon = b;
+    update();
+  }
+
   bool visibleEdges() const
   {
     return visible_edges;
@@ -94,6 +102,19 @@ public:
     visible_edges = b;
     update();
   }
+
+  void setMovingPoint(Point_2 p) {
+    moving_point = p;
+  }
+
+  void setSource(Point_2 p) {
+    source = p;
+  }
+
+  void setTarget(Point_2 p) {
+    target = p;
+  }
+
 
 protected:
   virtual void drawAll(QPainter *painter);
@@ -116,6 +137,11 @@ protected:
   QPen edges_pen;
   bool visible_edges;
   bool visible_vertices;
+  bool visible_octagon;
+
+  Point_2 moving_point;
+  Point_2 source;
+  Point_2 target;
 };
 
 
@@ -123,7 +149,7 @@ template <typename T>
 TriangulationGraphicsItem<T>::TriangulationGraphicsItem(T * t_)
   :  t(t_), painterostream(0),
      bb(0,0,0,0), bb_initialized(false),
-     visible_edges(true), visible_vertices(true)
+     visible_edges(true), visible_vertices(true), visible_octagon(true)
 {
   setVerticesPen(QPen(::Qt::red, 3.));
   if(t->number_of_vertices() == 0){
@@ -147,7 +173,7 @@ TriangulationGraphicsItem<T>::operator()(typename T::Face_handle fh)
 {
   if(visible_edges) {
     for (int i=0; i<3; i++) {
-      if (fh < fh->neighbor(i) || t->is_infinite(fh->neighbor(i))){
+      if (fh < fh->neighbor(i)) {
         m_painter->setPen(this->edgesPen());
         painterostream << t->segment(fh, i);
       }
@@ -167,177 +193,114 @@ TriangulationGraphicsItem<T>::drawAll(QPainter *painter)
   //delete
   QPen temp = painter->pen();
   QPen old = temp;
-  old.setWidthF(0.0035);
-  temp.setWidthF(0.002);
-  painter->setPen(temp);
-  //
   
-  typedef typename T::Offset  Offset;
-  typedef typename T::Point_2 Point;
-  typedef typename T::Segment Segment; 
-  typedef typename T::Edge    Edge;
-  vector<Offset> o;
-  for (int i = 0; i < 8; i++) {
-    o.push_back(Offset(i));
+  temp.setWidthF(0.0125);
+  temp.setColor(::Qt::black);
+  painter->setPen(temp);
+  painterostream = PainterOstream<Geom_traits>(painter);
+  
+  painter->drawEllipse(QRectF(-1.0, -1.0, 2.0, 2.0));
+
+  if (visible_octagon) {
+    typedef typename Geom_traits::FT        FT;
+    typedef typename Geom_traits::Point_2   Point_2;
+    FT ep = CGAL::sqrt(FT(2)+CGAL::sqrt(FT(2)));
+    FT em = CGAL::sqrt(FT(2)-CGAL::sqrt(FT(2)));
+    FT p14( CGAL::sqrt(CGAL::sqrt(FT(2))) );
+    FT p34( p14*p14*p14 );
+
+    Point_2 v0(ep*p34/FT(4), -em*p34/FT(4));
+    Point_2 v1(p14*(ep + em)/FT(4), p14*(ep - em)/FT(4));
+    Point_2 v2(em*p34/FT(4), ep*p34/FT(4));
+    Point_2 v3(-p14*(ep - em)/FT(4), p14*(ep + em)/FT(4));
+    Point_2 v4(-ep*p34/FT(4), em*p34/FT(4));
+    Point_2 v5(-p14*(ep + em)/FT(4), -p14*(ep - em)/FT(4));
+    Point_2 v6(-em*p34/FT(4), -ep*p34/FT(4));
+    Point_2 v7(p14*(ep - em)/FT(4), -p14*(ep + em)/FT(4));
+
+    painterostream << t->segment(v0, v1);
+    painterostream << t->segment(v1, v2);
+    painterostream << t->segment(v2, v3);
+    painterostream << t->segment(v3, v4);
+    painterostream << t->segment(v4, v5);
+    painterostream << t->segment(v5, v6);
+    painterostream << t->segment(v6, v7);
+    painterostream << t->segment(v7, v0);
   }
 
+
+  temp.setWidthF(0.01);
+  temp.setColor(::Qt::darkGreen);
+  painter->setPen(temp);
   painterostream = PainterOstream<Geom_traits>(painter);
 
-  double sz = 0.05;
-  double factor = 0.003;
+  // for (typename T::Face_iterator fit = t->faces_begin();
+  //      fit != t->faces_end(); fit++) {
 
-  Converter<Geom_traits> convert;
-  QMatrix matrix = painter->matrix();
-  
-  QImage image(":/icon/bgd.png");
-  Q_ASSERT(!image.isNull());
-  QRectF target(-1.0, -1.0, 2.0, 2.0);
-  painter->drawImage(target, image);
+  //   for (int k = 0; k < 3; k++) {
+  //     painterostream << t->segment(fit, k);
+  //   }
 
-  if(visibleEdges()) {
-    for(typename T::Edge_iterator eit = t->edges_begin();
-        eit != t->edges_end();
-        ++eit){
+  // }
 
-    	//typename T::Vertex_handle vh = eit->first->vertices_begin();
-    	//std::cout << vh << std::endl;
-
-    	//typename T::Geom_traits::Segment_2 sg = t->segment(*eit);
-    	//std::cout << sg(0) << std::endl;
-
-      Segment seg = t->segment(*eit);
-      temp.setColor(::Qt::red);
-      painter->setPen(temp);
-      painterostream = PainterOstream<Geom_traits>(painter);
-
-      if ( PAINT_COPIES == 1 ) {
- 
-        for (int i = 0; i < 8; i++) {
-          painterostream << t->segment( t->periodic_segment(*eit, o[i]) );
-        }
-
-        painter->setPen(old);
-        painterostream = PainterOstream<Geom_traits>(painter);
-      }
-
-      painterostream << seg;
-    }
-
-    
-    for (typename T::Face_iterator fit = t->faces_begin(); fit != t->faces_end(); ++fit) {
-      
-      double mx = 0.0;
-      double my = 0.0;
-      for (int i = 0; i < 3; i++) {
-        Point pt = fit->offset(i).apply(fit->vertex(i)->point());
-        mx += to_double(pt.x());
-        my += to_double(pt.y());
-      }
-      mx /= 3.;
-      my /= 3.;
-      
-      QPainterPath textPath;
-      QFont timesFont("Arial");
-      textPath.addText(0.0, 0.0, timesFont, QString::number(fit->get_number()));
-      textPath.setFillRule(::Qt::WindingFill);
-
-      QTransform m;
-      m.scale(factor, -factor);
-      m.translate((mx-sz)/factor, -(my-sz/2.)/factor);
-      QPainterPath pp = textPath * m;
-
-      old.setColor(::Qt::blue);
-      painter->setPen(old);
-      painter->drawPath(pp);
-      
-      if ( PAINT_COPIES == 1 ) {
-        old.setColor(::Qt::red);
-        painter->setPen(old);
-        for (int i = 0; i < 8; i++) {
-          QTransform mm;
-          double ff = factor/1.75;
-          mm.scale(ff, -ff);
-          Point im = o[i].apply(Point(mx, my));
-          double xx = to_double(im.x()), yy = to_double(im.y());
-          mm.translate((xx-.5*sz)/ff, -(yy-.25*sz)/ff);
-          QPainterPath p1 = textPath * mm;
-          painter->drawPath(p1);
-        }
-      }
-      
-    }
-
-    
-
-    
-
-  }
-  
-  //delete
-  painter->setPen(old);
-  //
-  
   paintVertices(painter);
 
 }
+
 
 template <typename T>
 void 
 TriangulationGraphicsItem<T>::paintVertices(QPainter *painter)
 {
-  if(visibleVertices()) {
+
     Converter<Geom_traits> convert;
-
-    typedef typename T::Offset  Offset;
-    typedef typename T::Point_2 Point;
-
-    vector<Offset> o;
-    for (int i = 0; i < 8; i++) {
-      o.push_back(Offset(i));
-    }
 
     painter->setPen(verticesPen());
     QMatrix matrix = painter->matrix();
     painter->resetMatrix();
-    for(typename T::Vertex_iterator it = t->vertices_begin();
-        it != t->vertices_end();
-        it++){
-
-      // delete
-      QPen temp = painter->pen();
-      QPen old = temp;
-      temp.setWidth(9);
       
-      double px = to_double(it->point().x());
-      double py = to_double(it->point().y());
-      double dist = px*px + py*py;
+    // delete
+    QPen temp = painter->pen();
+    QPen old = temp;
+    temp.setWidth(9);
+    
+    double px = to_double(moving_point.x());
+    double py = to_double(moving_point.y());
+    double dist = px*px + py*py;
 
+    double width = 10.*(exp(.85) - exp(dist));
+    temp.setWidthF(width);
+    temp.setColor(::Qt::blue);
+    painter->setPen(temp);
+    
+    QPointF point = matrix.map(convert(moving_point));
+    painter->drawPoint(point);
 
-      double width = 5.*(exp(1.01) - exp(dist));
-      temp.setWidthF(width);
-      painter->setPen(temp);
-      
-      QPointF point = matrix.map(convert(it->point()));
-      painter->drawPoint(point);
-      
-      if (PAINT_COPIES == 1) {
-        for (int i = 0; i < 8; i++) {
-          Point img = o[i].apply(it->point());
-          px = to_double(img.x());
-          py = to_double(img.y());
-          dist = px*px + py*py;
-          width = 5.*(exp(1.01) - exp(dist));
-          temp.setWidthF(width);
-          temp.setColor(::Qt::green);
-          painter->setPen(temp);
-          painter->drawPoint(matrix.map(convert(img)));
-        }
-      }
+    //--------------------------------------
 
-      painter->setPen(old);
-       
-    }
-  }
+    double sx = to_double(source.x());
+    double sy = to_double(source.y());
+    double sdist = sx*sx + sy*sy;
+
+    width = 10;
+    temp.setWidthF(width);
+    temp.setColor(::Qt::red);
+    painter->setPen(temp);
+
+    QPointF spoint = matrix.map(convert(source));
+    painter->drawPoint(spoint);
+
+    //--------------------------------------
+
+    double tx = to_double(target.x());
+    double ty = to_double(target.y());
+    double tdist = tx*tx + ty*ty;
+
+    QPointF tpoint = matrix.map(convert(target));
+    painter->drawPoint(tpoint);
+    
+    painter->setPen(old);
+  
 }
 
 template <typename T>
@@ -379,13 +342,6 @@ TriangulationGraphicsItem<T>::paint(QPainter *painter,
   } else {
     m_painter = painter;
     painterostream = PainterOstream<Geom_traits>(painter);
-    /*
-    CGAL::apply_to_range (*t, 
-                          typename T::Point(option->exposedRect.left(),
-                                            option->exposedRect.bottom()), 
-                          typename T::Point(option->exposedRect.right(),
-                                            option->exposedRect.top()), 
-                          *this); */
   }
 }
 
@@ -396,30 +352,6 @@ void
 TriangulationGraphicsItem<T>::updateBoundingBox()
 {
   prepareGeometryChange();
- //  if(t->number_of_vertices() == 0){
- //    bb = Bbox_2(0,0,0,0);
- //    bb_initialized = false;
- //    return;
- //  } else if(! bb_initialized){
- //    bb = t->vertices_begin()->point().bbox();
- //    bb_initialized = true;
- //  }
-  
- //  if(t->dimension() <2){
- //    for(typename T::Finite_vertices_iterator it = t->vertices_begin();
-	// it != t->vertices_end();
-	// ++it){
- //      bb = bb + it->point().bbox();
- //    }
- //  } else {
- //    typename T::Vertex_handle inf = t->invertex();
- //    typedef typename T::Vertex_circulator Circ;
- //    Circ vc = t->incident_vertices(inf), done(vc);
- //    do {
- //      bb = bb + vc->point().bbox();
- //      ++vc;
- //    } while(vc != done);
- //  }
   bounding_rect = QRectF(-1., -1., 2., 2.);
 }
 
@@ -441,4 +373,4 @@ TriangulationGraphicsItem<T>::modelChanged()
 } // namespace Qt
 } // namespace CGAL
 
-#endif // CGAL_QT_TRIANGULATION_GRAPHICS_ITEM_OVERLAY_H
+#endif // CGAL_QT_TRIANGULATION_GRAPHICS_ITEM_H

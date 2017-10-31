@@ -63,8 +63,10 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actionPlayDemo"/>
    <addaction name="actionInsertPoint"/>
    <addaction name="actionCircumcenter"/>
+   <addaction name="actionShowConflictZone"/>
    <addaction name="separator"/>
    <addaction name="actionShowTriangulation"/>
    <addaction name="actionShowVoronoi"/>
@@ -102,8 +104,10 @@
     <property name="title">
      <string>&amp;Tools</string>
     </property>
+    <addaction name="actionPlayDemo"/>
     <addaction name="actionInsertPoint"/>
     <addaction name="actionCircumcenter"/>
+    <addaction name="actionShowConflictZone"/>
     <addaction name="separator"/>
     <addaction name="actionShowTriangulation"/>
     <addaction name="actionShowVoronoi"/>
@@ -139,6 +143,27 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+I</string>
+   </property>
+  </action>
+  <action name="actionPlayDemo">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="Main_resources.qrc">
+     <normaloff>:/icon/icons/play.png</normaloff>:/icon/icons/play.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Play Demo</string>
+   </property>
+   <property name="toolTip">
+    <string>Play Demo</string>
+   </property>
+   <property name="statusTip">
+    <string>Left: Play demo</string>
    </property>
   </action>
   <action name="actionInsertPoint">
@@ -190,6 +215,24 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
+   </property>
+  </action>
+  <action name="actionShowConflictZone">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="Main_resources.qrc">
+     <normaloff>:/icon/icons/conflict_zone.png</normaloff>:/icon/icons/conflict_zone.png</iconset>
+   </property>
+   <property name="text">
+    <string>Show Con&amp;flict Zone</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+F</string>
    </property>
   </action>
   <action name="actionShowVoronoi">

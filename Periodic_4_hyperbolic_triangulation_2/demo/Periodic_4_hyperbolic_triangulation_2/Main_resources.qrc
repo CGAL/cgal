@@ -1,5 +1,7 @@
 <RCC>
   <qresource prefix="icon">
+    <file>icons/play.png</file>
+    <file>icons/conflict_zone.png</file>
     <file>icons/fit-page-32.png</file>
     <file>icons/octagon.png</file>
     <file>icons/inputPoint.png</file>

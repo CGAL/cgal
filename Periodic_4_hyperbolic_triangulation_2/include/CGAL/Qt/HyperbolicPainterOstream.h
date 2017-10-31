@@ -1,10 +1,9 @@
-// Copyright (c) 2016-2017 INRIA Nancy Grand-Est (France).
+// Copyright (c) 2011   INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -12,27 +11,29 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
+// $URL: svn+ssh://mbogdanov@scm.gforge.inria.fr/svn/cgal/trunk/Triangulation_2/include/CGAL/Triangulation_hyperbolic_traits_2.h $
+// $Id: Triangulation_hyperbolic_traits_2.h 57323 2010-07-05 10:07:39Z sloriot $
+// 
 //
-// Author(s)     :   Mikhail Bogdanov
-// Modified by   :	 Iordan Iordanov <iordan.iordanov@loria.fr>
+// Author(s)     : Mikhail Bogdanov
 
 #ifndef CGAL_HYPERBOLIC_PAINTER_OSTREAM_H
 #define CGAL_HYPERBOLIC_PAINTER_OSTREAM_H
 
 #include <CGAL/Qt/PainterOstream.h>
+#include <CGAL/Periodic_4_hyperbolic_Delaunay_triangulation_traits_2.h>
+#include <CGAL/Hyperbolic_octagon_translation.h>
 
 namespace CGAL{
 
 namespace Qt {
   
   template <typename K>
-  class PainterOstream<Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<K> > : public PainterOstream<K> {
+  class PainterOstream<Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<K, Hyperbolic_octagon_translation> > : public PainterOstream<K> {
 
   	typedef PainterOstream<K> 															Base;
-	typedef PainterOstream<Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<K> > 	Self;
-	typedef Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<K> 					Gt;
+	typedef PainterOstream<Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<K, Hyperbolic_octagon_translation> > 	Self;
+	typedef Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<K, Hyperbolic_octagon_translation> 					Gt;
 	
 	typedef typename Gt::Hyperbolic_segment_2       									Hyperbolic_segment_2;    
 	typedef typename Gt::Circular_arc_2             									Circular_arc_2;

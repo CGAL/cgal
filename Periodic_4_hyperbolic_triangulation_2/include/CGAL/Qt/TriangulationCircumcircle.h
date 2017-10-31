@@ -1,24 +1,3 @@
-// Copyright (c) 2016-2017 INRIA Nancy Grand-Est (France).
-// All rights reserved.
-//
-// This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-//
-// $URL$
-// $Id$
-//
-// Author(s)     : 
-// Modified by   :  Iordan Iordanov <iordan.iordanov@loria.fr>
-
-
 #ifndef CGAL_QT_TRIANGULATION_CIRCUMCIRCLE_H
 #define CGAL_QT_TRIANGULATION_CIRCUMCIRCLE_H
 
@@ -103,6 +82,11 @@ TriangulationCircumcircle<T>::hide()
   circle->hide();
 }
 
+template <typename T>
+typename T::Point apply(typename T::Point p, typename T::Hyperbolic_translation tr) {
+  typename T::Construct_point_2 CP2;
+  return CP2(p, tr);
+}
 
 template <typename T>
 void 
@@ -118,9 +102,9 @@ TriangulationCircumcircle<T>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
   if (fh != typename T::Face_handle()) {
     hint = fh->vertex(0);
     typename T::Point p0, p1, p2;
-    p0 = fh->offset(0).apply(fh->vertex(0)->point());
-    p1 = fh->offset(1).apply(fh->vertex(1)->point());
-    p2 = fh->offset(2).apply(fh->vertex(2)->point());
+    p0 = apply<T>(fh->vertex(0)->point(), fh->translation(0));
+    p1 = apply<T>(fh->vertex(1)->point(), fh->translation(1));
+    p2 = apply<T>(fh->vertex(2)->point(), fh->translation(2));
 
     typename T::Geom_traits::Circle_2 c(p0, p1, p2);  
     CGAL::Bbox_2 bb = c.bbox();

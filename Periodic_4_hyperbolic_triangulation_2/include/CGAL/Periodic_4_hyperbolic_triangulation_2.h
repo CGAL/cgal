@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2017 INRIA Nancy Grand-Est (France).
+// Copyright (c) 1999-2016   INRIA Nancy - Grand Est (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -14,8 +14,10 @@
 //
 // $URL$
 // $Id$
+// 
 //
-// Author(s)     : Iordan Iordanov <iordan.iordanov@loria.fr>
+// Author(s)     : Iordan Iordanov  <Iordan.Iordanov@loria.fr>
+//                 
 
 
 #ifndef CGAL_PERIODIC_4_HYPERBOLIC_TRIANGULATION_2_H
@@ -36,20 +38,28 @@
 #include <CGAL/use.h>
 
 #include <CGAL/Triangulation_2.h>
-#include <CGAL/Periodic_4_hyperbolic_triangulation_ds_face_base_2.h>
-#include <CGAL/Periodic_4_hyperbolic_triangulation_ds_vertex_base_2.h>
-#include <CGAL/Periodic_4_hyperbolic_triangulation_iterators_2.h>
+#include <CGAL/Periodic_4_hyperbolic_triangulation_face_base_2.h>
+#include <CGAL/Periodic_4_hyperbolic_triangulation_vertex_base_2.h>
 #include <CGAL/NT_converter.h>
-#include <CGAL/Hyperbolic_octagon_word_4.h>
 
+
+#if defined PROFILING_MODE
+	#include <CGAL/Timer.h>
+	extern long calls_predicate_identity;
+	extern long calls_predicate_non_identity;
+	extern double time_predicate_identity;
+	extern double time_predicate_non_identity;
+#endif	
+
+using std::pair;
 
 namespace CGAL {
 
 
 template < 	class GT,
 			class TDS = Triangulation_data_structure_2<
-				Periodic_4_hyperbolic_triangulation_ds_vertex_base_2<GT>,
-				Periodic_4_hyperbolic_triangulation_ds_face_base_2<GT>
+				Periodic_4_hyperbolic_triangulation_vertex_base_2<GT>,
+				Periodic_4_hyperbolic_triangulation_face_base_2<GT>
 			>
 		>
 class Periodic_4_hyperbolic_triangulation_2 : public Triangulation_2<GT, TDS> {
@@ -70,7 +80,7 @@ public:
 
 	typedef GT 										        Geometric_traits;
 	typedef TDS 									        Triangulation_data_structure;
-	typedef typename GT::Offset 							Offset;
+	typedef typename GT::Hyperbolic_translation 			Hyperbolic_translation;
 	typedef typename GT::Circle_2 							Circle_2;
 	typedef Circle_2 								      	Circle;
 	typedef typename GT::Point_2 			    			Point_2;
@@ -80,9 +90,11 @@ public:
 	typedef typename GT::Triangle_2 						Triangle_2;
 	typedef Triangle_2 								    	Triangle;
 
-	typedef std::pair<Point, Offset> 				      	Periodic_point;
-	typedef array< std::pair<Point, Offset>, 2 >			Periodic_segment;
-	typedef array< std::pair<Point, Offset>, 3 > 			Periodic_triangle;	
+	typedef std::pair<Point, Hyperbolic_translation> 				      	Periodic_point;
+	typedef array< std::pair<Point, Hyperbolic_translation>, 2 >			Periodic_segment;
+	typedef array< std::pair<Point, Hyperbolic_translation>, 3 > 			Periodic_triangle;	
+
+	typedef typename GT::Construct_point_2 					Construct_point_2;
 
 	typedef typename TDS::Vertex 					        Vertex;
 	typedef typename TDS::Edge 						        Edge;
@@ -104,12 +116,6 @@ public:
 	typedef Point                                			value_type;
 	typedef const value_type&                    			const_reference;
 
-	enum Iterator_type {
-		STORED=0,
-		UNIQUE, 				// 1
-		STORED_COVER_DOMAIN, 	// 2
-		UNIQUE_COVER_DOMAIN 	// 3
-	};
 
 	enum Locate_type {
 		VERTEX=0, 
@@ -198,6 +204,15 @@ public:
 	}
 
 
+	Point_2 apply(Point_2 p, Hyperbolic_translation tr) const {
+		return Construct_point_2()(p, tr);
+	}
+
+	Point_2 apply(Vertex_handle vh, Hyperbolic_translation tr) const {
+		CGAL_triangulation_precondition(vh != Vertex_handle());
+		return apply(vh->point(), tr);
+	}
+
 	size_type number_of_faces() const {
 		return _tds.number_of_faces();
 	}
@@ -215,7 +230,7 @@ public:
 	}
 
 	Comparison_result compare_x(const Point  &p1, const Point  &p2,
-								const Offset &o1, const Offset &o2) const {
+								const Hyperbolic_translation &o1, const Hyperbolic_translation &o2) const {
 		return geom_traits().compare_x_2_object()(p1, p2, o1, o2);
 	}
 
@@ -225,7 +240,7 @@ public:
 	}
 
 	Comparison_result compare_y(const Point  &p1, const Point  &p2,
-								const Offset &o1, const Offset &o2) const {
+								const Hyperbolic_translation &o1, const Hyperbolic_translation &o2) const {
 		return geom_traits().compare_y_2_object()(p1, p2, o1, o2);
 	}
 
@@ -235,7 +250,7 @@ public:
 	}
 
 	Comparison_result compare_xy(const Point  &p1, const Point  &p2,
-								 const Offset &o1, const Offset &o2) const {
+								 const Hyperbolic_translation &o1, const Hyperbolic_translation &o2) const {
 		return geom_traits().compare_xy_2_object()(p1, p2, o1, o2);
 	}
 
@@ -245,7 +260,7 @@ public:
 	}
 
 	Orientation orientation(const Point  &p1, const Point  &p2, const Point  &p3,
-							const Offset &o1, const Offset &o2, const Offset &o3) const {
+							const Hyperbolic_translation &o1, const Hyperbolic_translation &o2, const Hyperbolic_translation &o3) const {
 		return geom_traits().orientation_2_object()(p1, p2, p3, o1, o2, o3);
 	}
 
@@ -255,7 +270,7 @@ public:
 	}
 
 	bool equal(const Point  &p1, const Point  &p2,
-			   const Offset &o1, const Offset &o2) const {
+			   const Hyperbolic_translation &o1, const Hyperbolic_translation &o2) const {
 		return ( compare_xy(p1, p2, o1, o2) == EQUAL );
 	}
 
@@ -265,33 +280,33 @@ public:
 	}
 
 	Oriented_side side_of_oriented_circle(const Point  &p0, const Point  &p1, const Point  &p2, const Point &q,
-										  const Offset &o0, const Offset &o1, const Offset &o2, const Offset &oq) const {
+										  const Hyperbolic_translation &o0, const Hyperbolic_translation &o1, const Hyperbolic_translation &o2, const Hyperbolic_translation &oq) const {
 		return geom_traits().side_of_oriented_circle_2_object()(p0, p1, p2, q, o0, o1, o2, oq);
 	}
 
 
-	Periodic_triangle construct_periodic_3_triangle(const Point &p1, const Point &p2, const Point &p3) const {
-		return make_array(	 std::make_pair(p1,Offset()),
-										 std::make_pair(p2,Offset()), 
-										 std::make_pair(p3,Offset()) );
+	Periodic_triangle construct_periodic_2_triangle(const Point &p1, const Point &p2, const Point &p3) const {
+		return make_array(	std::make_pair(p1,Hyperbolic_translation()),
+							std::make_pair(p2,Hyperbolic_translation()), 
+							std::make_pair(p3,Hyperbolic_translation()) );
 	}
 
-	Periodic_triangle construct_periodic_3_triangle(const Point  &p1, const Point  &p2, const Point  &p3,
-													const Offset &o1, const Offset &o2, const Offset &o3) const {
-		return make_array(	 std::make_pair(p1,o1), 
-									   std::make_pair(p2,o2),
-										 std::make_pair(p3,o3) );
-	}
-
-	Periodic_segment construct_periodic_3_segment(const Point &p1, const Point &p2) const {
-		return make_array(	std::make_pair(p1,Offset()), 
-									  std::make_pair(p2,Offset()) );
-	}
-
-	Periodic_segment construct_periodic_3_segment(	const Point  &p1, const Point  &p2,
-													const Offset &o1, const Offset &o2) const {
+	Periodic_triangle construct_periodic_2_triangle(const Point  &p1, const Point  &p2, const Point  &p3,
+													const Hyperbolic_translation &o1, const Hyperbolic_translation &o2, const Hyperbolic_translation &o3) const {
 		return make_array(	std::make_pair(p1,o1), 
-									  std::make_pair(p2,o2) );
+							std::make_pair(p2,o2),
+							std::make_pair(p3,o3) );
+	}
+
+	Periodic_segment construct_periodic_2_segment(const Point &p1, const Point &p2) const {
+		return make_array(	std::make_pair(p1,Hyperbolic_translation()), 
+							std::make_pair(p2,Hyperbolic_translation()) );
+	}
+
+	Periodic_segment construct_periodic_2_segment(	const Point  &p1, const Point  &p2,
+													const Hyperbolic_translation &o1, const Hyperbolic_translation &o2) const {
+		return make_array(	std::make_pair(p1,o1), 
+							std::make_pair(p2,o2) );
 	}
 
 
@@ -300,11 +315,11 @@ public:
 	}
 
 	Triangle construct_triangle(const Point  &p1, const Point  &p2, const Point  &p3,
-								const Offset &o1, const Offset &o2, const Offset &o3) const {
-		return geom_traits().construct_triangle_2_object()(p1,p2,p3,o1,o2,o3);
+								const Hyperbolic_translation &o1, const Hyperbolic_translation &o2, const Hyperbolic_translation &o3) const {
+		return geom_traits().construct_triangle_2_object()(apply(p1, o1), apply(p2, o2), apply(p3, o3));
 	}
 
-	Triangle construct_triangle(const Periodic_triangle& tri) {
+	Triangle construct_triangle(const Periodic_triangle& tri) const {
 		return construct_triangle(	tri[0].first,  tri[1].first,  tri[2].first,
 									tri[0].second, tri[1].second, tri[2].second);
 	}
@@ -314,8 +329,7 @@ public:
 	}
 
 	Segment construct_segment(	const Point &p1, const Point &p2,
-								const Offset &o1, const Offset &o2) const {
-	  //std::cout << ".....making a segment between a point with offset " << o1 << " and another with offset " << o2 << std::endl; 
+								const Hyperbolic_translation &o1, const Hyperbolic_translation &o2) const {
 		return geom_traits().construct_segment_2_object()(p1,p2,o1,o2);
 	}
 
@@ -324,7 +338,7 @@ public:
 								 seg[0].second, seg[1].second);
 	}
 
-	Point construct_point(const Point& p, const Offset &o) const {
+	Point construct_point(const Point& p, const Hyperbolic_translation &o) const {
 		return geom_traits().construct_point_2_object()(p,o);
 	}
 
@@ -333,16 +347,16 @@ public:
 	}
 
 	Periodic_point periodic_point( const Face_handle c, int i) const {
-		return std::make_pair(c->vertex(i)->point(), c->offset(i));
+		CGAL_triangulation_precondition( i >= 0 && i <= 2 );
+		return std::make_pair(c->vertex(i)->point(), c->translation(i));
 	}
 
 
 	Periodic_segment periodic_segment(const Face_handle c, int i, int j) const {
 		CGAL_triangulation_precondition( i != j );
-		CGAL_triangulation_precondition( number_of_vertices() != 0 );
 		CGAL_triangulation_precondition( (i >= 0 && i <= 2) && (j >= 0 && j <= 2) );
-		return make_array( 	std::make_pair(c->vertex(i)->point(), c->offset(i)),
-							std::make_pair(c->vertex(j)->point(), c->offset(j)) );
+		return make_array( 	std::make_pair(c->vertex(i)->point(), c->translation(i)),
+							std::make_pair(c->vertex(j)->point(), c->translation(j)) );
 	}
   
 
@@ -351,18 +365,18 @@ public:
 	}
 
 
-	Periodic_segment periodic_segment(const Edge & e, const Offset& o) const {
+	Periodic_segment periodic_segment(const Edge & e, const Hyperbolic_translation& o) const {
 		Face_handle f = e.first;
 		int i = e.second;
-		return make_array( 	std::make_pair(f->offset(cw(i)).apply(f->vertex(cw(i))->point()),  o),
-							std::make_pair(f->offset(ccw(i)).apply(f->vertex(ccw(i))->point()), o) );
+		return make_array( 	std::make_pair(f->vertex(cw(i))->point(),  o * f->translation(cw(i))),
+							std::make_pair(f->vertex(ccw(i))->point(), o * f->translation(ccw(i))) );
 	}
 
 
-	Periodic_triangle periodic_triangle(const Face_handle c, int i) const;
-
 	Periodic_triangle periodic_triangle(const Face & f) const {
-		return periodic_triangle(f.first, f.second);
+		return make_array( 	std::make_pair(f->vertex(0)->point(), f->translation(0)),
+							std::make_pair(f->vertex(1)->point(), f->translation(1)),
+							std::make_pair(f->vertex(2)->point(), f->translation(2)) );
 	}
 
 	Point point(const Periodic_point & pp) const {
@@ -372,15 +386,16 @@ public:
 
 
 	Segment segment(const Face_handle & fh, int idx) const {
-	  return construct_segment( fh->vertex(idx)->point(),  fh->vertex(ccw(idx))->point(),
-								fh->offset(idx),           fh->offset(ccw(idx)) );
+		CGAL_triangulation_precondition( idx >= 0 && idx <= 2 );
+	  	return construct_segment( fh->vertex(ccw(idx))->point(),  fh->vertex(cw(idx))->point(),
+								  fh->translation(ccw(idx)),           fh->translation(cw(idx)) );
 	}
 
-	Segment segment(const Point& src, const Point& tgt) {
+	Segment segment(const Point& src, const Point& tgt) const {
 	  return construct_segment(src, tgt);
 	}
 
-	Segment segment(const pair<Face_handle, int> & edge) {
+	Segment segment(const pair<Face_handle, int> & edge) const {
 	  return segment(edge.first, ccw(edge.second));
 	}
 
@@ -392,43 +407,42 @@ public:
 
 	Triangle triangle(const Face_handle & fh) const {
 	  return construct_triangle( fh->vertex(0)->point(), fh->vertex(1)->point(), fh->vertex(2)->point(),
-								 fh->offset(0),          fh->offset(1),          fh->offset(2)        );
+								 fh->translation(0),          fh->translation(1),          fh->translation(2)        );
 	}
 
 
 	Triangle triangle(const Periodic_triangle & pt) const {
 		return construct_triangle(	pt[0].first, pt[1].first, pt[2].first,
-												pt[0].second,pt[1].second,pt[2].second );
+									pt[0].second,pt[1].second,pt[2].second );
 	}
 
-
-	bool is_vertex(const Point & p, Vertex_handle & v) const;
 
 	bool is_vertex(Vertex_handle v) const {
 		return _tds.is_vertex(v);
 	}
 
 	bool is_edge(Vertex_handle u, Vertex_handle v,
-				 Face_handle & c, int & i, int & j) const {
-		return _tds.is_edge(u, v, c, i, j);
+				 Face_handle & fh, int & i) const {
+		return _tds.is_edge(u, v, fh, i);
 	}
 
-	bool is_edge(	Vertex_handle u, const Offset & off_u,
-					Vertex_handle v, const Offset & off_v,
-					Face_handle & c, int & i, int & j) const {
-		if (!_tds.is_edge(u,v,c,i,j)) return false;
-		if ((c->offset(i) == off_u) && (c->offset(j) == off_v))
+	bool is_edge(	Vertex_handle u,  		Vertex_handle v,
+					const Hyperbolic_translation & off_u, 	const Hyperbolic_translation & off_v,
+					Face_handle & fh, 		int & i) const {
+		if (!_tds.is_edge(u,v,fh,i)) return false;
+		if ((fh->translation(ccw(i)) == off_u) && (fh->translation(cw(i)) == off_v))
 			return true;
 		
 		// it might be that different cells containing (u,v) yield
-		// different offsets, which forces us to test for all possibilities.
+		// different translations, which forces us to test for all possibilities.
 		else {
-			Face_circulator ccirc = incident_cells(c,i,j,c);
-			while (++ccirc != c) {
-				i = ccirc->index(u);
-				j = ccirc->index(v);
-				if ((ccirc->offset(i) == off_u) && (ccirc->offset(j) == off_v)) {
-					c = ccirc;
+			Face_circulator fcirc = incident_cells(u, fh);
+			while (++fcirc != fh) {
+				int iu = fcirc->index(u);
+				int iv = fcirc->index(v);
+				if ((fcirc->translation(iu) == off_u) && (fcirc->translation(iv) == off_v)) {
+					fh = fcirc;
+					i = cw(iu);
 					return true;
 				}
 			}
@@ -437,116 +451,121 @@ public:
 	}
 
 	bool is_face(	Vertex_handle u, Vertex_handle v, Vertex_handle w,
-					Face_handle & c, int & i, int & j, int & k) const {
-		return _tds.is_face(u, v, w, c, i, j, k);
+					Face_handle & fh) const {
+		return _tds.is_face(u, v, w, fh);
 	}
 
-	bool is_face(Vertex_handle u, const Offset & off_u,
-				 Vertex_handle v, const Offset & off_v,
-				 Vertex_handle w, const Offset & off_w,
-				 Face_handle & c, int & i, int & j, int & k) const {
-		if (!_tds.is_face(u,v,w,c,i,j,k)) return false;
-		if (	(get_offset(c,i) == off_u)
-			 && (get_offset(c,j) == off_v)
-			 && (get_offset(c,k) == off_w) )
+	bool is_face(	Vertex_handle u, Vertex_handle v, Vertex_handle w,
+					Face_handle & fh, int& i, int& j, int& k) const {
+		if (!_tds.is_face(u, v, w, fh)) {
+			return false;
+		} else {
+			i = fh->index(u);
+			j = fh->index(v);
+			k = fh->index(w);
 			return true;
-	
-		// it might be that c and c->neighbor(l) yield different offsets
-		// which forces us to test for both possibilities.
+		}
+	}	
+
+	bool is_face(Vertex_handle u, 	   Vertex_handle v, 	 Vertex_handle w,
+				 const Hyperbolic_translation& off_u,  const Hyperbolic_translation& off_v,  const Hyperbolic_translation& off_w,
+				 Face_handle & fh, int & i, int & j, int & k) const {
+		if (!this->is_face(u,v,w,fh,i,j,k)) return false;
+		if (	(fh->translation(i) == off_u)
+			 && (fh->translation(j) == off_v)
+			 && (fh->translation(k) == off_w) )
+			return true;
 		else {
-			int l = 6-i-j-k;
-			c = c->neighbor(l);
-			i = c->index(u);
-			j = c->index(v);
-			k = c->index(w);      
-			return (	(c->offset(i) == off_u)
-					 && (c->offset(j) == off_v)
-					 && (c->offset(k) == off_w) );
+			return false;
 		}
 	}
 
-	bool has_vertex(const Face & f, Vertex_handle v, int & j) const {
-		return _tds.has_vertex(f.first, f.second, v, j);
+	bool has_vertex(const Face& f, Vertex_handle v, int& i) const {
+		if (f->vertex(0) == v) {
+			i = 0;
+			return true;
+		} else {
+			if (f->vertex(1) == v) {
+				i = 1;
+				return true;
+			} else {
+				if (f->vertex(2) == v) {
+					i = 2;
+					return true;
+				} else {
+					return false;
+				}
+			}
+		}
 	}
-
-	bool has_vertex(Face_handle c, int i, Vertex_handle v, int & j) const {
-		return _tds.has_vertex(c, i, v, j);
-	}
-
-	bool has_vertex(const Face & f, Vertex_handle v) const {
-		return _tds.has_vertex(f.first, f.second, v);
-	}
-
-	bool has_vertex(Face_handle c, int i, Vertex_handle v) const {
-		return _tds.has_vertex(c, i, v);
-	}
-  
-	bool are_equal(Face_handle c, int i, Face_handle n, int j) const {
-		return _tds.are_equal(c, i, n, j);
-	}
-
-	bool are_equal(const Face & f, const Face & g) const {
-		return _tds.are_equal(f.first, f.second, g.first, g.second);
-	}
-
-	bool are_equal(const Face & f, Face_handle n, int j) const {
-		return _tds.are_equal(f.first, f.second, n, j);
-	}
-
 
 
 
 protected:
- 
-  template<class OutputFaceIterator>
-  void 
-  find_conflicts( Face_handle         d, 
-				  const Point&        pt, 
-				  const Offset&       current_off,
-				  OutputFaceIterator  it ) const;
 
-
-protected:
-	Bounded_side _side_of_circle( const Face_handle &f, const Point &q,
-								  const Offset &offset ) const {
-	  Point p[] = { f->vertex(0)->point(),
-					f->vertex(1)->point(),
-					f->vertex(2)->point()};
-	  
-	  Offset o[]= { offset.append(f->offset(0)),
-					offset.append(f->offset(1)),
-					offset.append(f->offset(2))};
-
-	  Oriented_side os = this->side_of_oriented_circle( p[0], p[1], p[2], q,
-														o[0], o[1], o[2], Offset());
-
-	  if (os == ON_NEGATIVE_SIDE) {
-		return ON_UNBOUNDED_SIDE;
-	  }
-	  else if (os == ON_POSITIVE_SIDE) {
-		return ON_BOUNDED_SIDE;
-	  }
-	  else {
-		return ON_BOUNDARY;
-	  }
+   bool
+   has_inexact_negative_orientation(const Point& p, 	const Point& q, 	const Point& r,
+   									const Hyperbolic_translation& ofp, 	const Hyperbolic_translation& ofq, 	const Hyperbolic_translation& ofr) const {
+   		return has_inexact_negative_orientation(apply(p, ofp), apply(q, ofq), apply(r, ofr));
    }
+
+	bool
+	has_inexact_negative_orientation(const Point &p, const Point &q, const Point &r) const
+	{ 
+	  const double px = to_double(p.x()); 
+	  const double py = to_double(p.y());
+	  const double qx = to_double(q.x());
+	  const double qy = to_double(q.y());
+	  const double rx = to_double(r.x());
+	  const double ry = to_double(r.y());
+
+	  const double pqx = qx - px;
+	  const double pqy = qy - py;
+	  const double prx = rx - px;
+	  const double pry = ry - py;
+
+	  return ( determinant(pqx, pqy, prx, pry) < 0);
+	}
+
+	Face_handle inexact_euclidean_locate(const Point& p, Hyperbolic_translation& o, Face_handle fh = Face_handle()) const; 
 
 
 public:
 
-	Face_handle euclidean_locate(const Point& p, Locate_type& lt, int& li, Offset& lo, Face_handle f = Face_handle(), bool verified_input = false) const;
+	Face_handle euclidean_locate(const Point& p, 
+								 Locate_type& lt, 
+								 int& li, 
+								 Hyperbolic_translation& lo, 
+								 Face_handle f = Face_handle(), 
+								 bool verified_input = false) const;
 
-	Face_handle euclidean_locate(const Point& p, Offset& lo, Face_handle f = Face_handle(), bool verified_input = false) const {
+	Face_handle euclidean_locate(const Point& p, 
+								 Hyperbolic_translation& lo, 
+								 Face_handle f = Face_handle(), 
+								 bool verified_input = false) const {
 		Locate_type lt;
 		int li;
 		return euclidean_locate(p, lt, li, lo, f, verified_input);		
 	}
 
-	Face_handle hyperbolic_locate(const Point& p, Locate_type& lt, int& li, Offset& lo, Face_handle start = Face_handle()) const;
+	Face_handle hyperbolic_locate(const Point& p, 
+								  Locate_type& lt, 
+								  int& li, 
+								  Hyperbolic_translation& lo, 
+								  Face_handle start = Face_handle()) const;
 
+	Face_handle hyperbolic_locate(const Point& p, 
+								  Hyperbolic_translation& lo, 
+								  Face_handle start = Face_handle()) const {
+		Locate_type lt;
+		int li;
+		return hyperbolic_locate(p, lt, li, lo, start);
+	}
 	
 	template< class FaceIt >
-	Vertex_handle insert_in_hole(const Point& p, FaceIt face_begin, FaceIt face_end) {
+	Vertex_handle insert_in_hole(const Point& p, 
+								 FaceIt face_begin, 
+								 FaceIt face_end) {
 		Vertex_handle v = _tds.insert_in_hole(face_begin, face_end);
 		v->set_point(p);
 		return v;
@@ -580,30 +599,6 @@ public:
 
 
   // Circulators
-
-	Face_circulator incident_faces(const Edge & e) const {
-		return _tds.incident_faces(e);
-	}
-
-	Face_circulator incident_faces(Face_handle c, int i, int j) const {
-		return _tds.incident_faces(c, i, j);
-	}
-
-	Face_circulator incident_faces(const Edge & e, const Face & start) const {
-		return _tds.incident_faces(e, start);
-	}
-
-	Face_circulator incident_faces(Face_handle c, int i, int j, const Face & start) const {
-		return _tds.incident_faces(c, i, j, start);
-	}
-
-	Face_circulator incident_faces(const Edge & e, Face_handle start, int f) const {
-		return _tds.incident_faces(e, start, f);
-	}
-
-	Face_circulator incident_faces(Face_handle c, int i, int j, Face_handle start, int f) const {
-		return _tds.incident_faces(c, i, j, start, f);
-	}
 
 	// around a vertex
 	template <class OutputIterator>
@@ -647,8 +642,8 @@ public:
 		return _tds.mirror_vertex(c, i);
 	}
 
-	Face mirror_face(Face f) const {
-		return _tds.mirror_face(f);
+	Edge mirror_edge(Edge e) const {
+		return _tds.mirror_edge(e);
 	}
 
 private:
@@ -674,42 +669,17 @@ private:
 	bool has_cycles_length_2(Vertex_handle v) const;
 
 public:
-	bool is_valid(bool verbose = false, int level = 0) const;
-	bool is_valid(Face_handle c, bool verbose = false, int level = 0) const;
+	bool is_valid(bool verbose = false) const;
+	bool is_valid(Face_handle c, bool verbose = false) const;
 
-	// These functions give the pair (vertex, offset) that corresponds to the
-	// i-th vertex of cell ch or vertex vh, respectively.
-	void get_vertex(Face_handle ch, int i, Vertex_handle &vh, Offset &off) const;
-	void get_vertex(Vertex_handle vh_i, Vertex_handle &vh, Offset &off) const;
-
-protected:
-	// Auxiliary functions
-	Face_handle get_face(const Vertex_handle* vh) const;
-  
-
-public:
-
-  int dimension() const {
-	return _tds.dimension();
-  }
+  	int dimension() const {
+		return _tds.dimension();
+  	}
 
 }; // class Periodic_4_hyperbolic_triangulation_2
 
 
 /*********** FUNCTION IMPLEMENTATIONS *************/
-
-
-template < class GT, class TDS >
-inline typename Periodic_4_hyperbolic_triangulation_2<GT,TDS>::Periodic_triangle
-Periodic_4_hyperbolic_triangulation_2<GT,TDS>::
-periodic_triangle(const Face_handle c, int i) const { 
-	CGAL_triangulation_precondition( number_of_vertices() != 0 );
-	CGAL_triangulation_precondition( i >= 0 && i <= 2 );
-
-	return make_array(	std::make_pair(c->vertex( (i+0)&3 )->point(), c->offset((i+0)&3)),
-						std::make_pair(c->vertex( (i+1)&3 )->point(), c->offset((i+1)&3)),
-						std::make_pair(c->vertex( (i+2)&3 )->point(), c->offset((i+2)&3)) );
-}
 
 
 
@@ -718,9 +688,9 @@ periodic_triangle(const Face_handle c, int i) const {
 template < class GT, class TDS >
 inline bool Periodic_4_hyperbolic_triangulation_2<GT, TDS>::
 has_self_edges(typename TDS::Face_handle c) const {
-	CGAL_triangulation_assertion((c->vertex(0) != c->vertex(1)) || (c->offset(0) != c->offset(1)));
-	CGAL_triangulation_assertion((c->vertex(0) != c->vertex(2)) || (c->offset(0) != c->offset(2)));
-	CGAL_triangulation_assertion((c->vertex(1) != c->vertex(2)) || (c->offset(1) != c->offset(2)));
+	CGAL_triangulation_assertion((c->vertex(0) != c->vertex(1)) || (c->translation(0) != c->translation(1)));
+	CGAL_triangulation_assertion((c->vertex(0) != c->vertex(2)) || (c->translation(0) != c->translation(2)));
+	CGAL_triangulation_assertion((c->vertex(1) != c->vertex(2)) || (c->translation(1) != c->translation(2)));
 
 	return ( (c->vertex(0) == c->vertex(1)) || 
 				 (c->vertex(0) == c->vertex(2)) ||
@@ -747,7 +717,7 @@ has_cycles_length_2(typename TDS::Vertex_handle v) const {
  * A triangulation is valid if
  * - A cell is not its own neighbor.
  * - A cell has no two equal neighbors
- * - A cell has no two equal vertex-offset pairs
+ * - A cell has no two equal vertex-translation pairs
  * - A cell is positively oriented.
  * - The point of a neighbor of cell c that does not belong to c is not inside
  *   the circumcircle of c.
@@ -755,7 +725,7 @@ has_cycles_length_2(typename TDS::Vertex_handle v) const {
 template < class GT, class TDS >
 bool
 Periodic_4_hyperbolic_triangulation_2<GT,TDS>::
-is_valid(bool verbose, int level) const {
+is_valid(bool verbose) const {
 
 	bool error = false;
 	for (Face_iterator cit = faces_begin(); cit != faces_end(); ++cit) {
@@ -767,13 +737,34 @@ is_valid(bool verbose, int level) const {
 			}
 		}
 
-		if (orientation( cit->vertex(0)->point(), cit->vertex(1)->point(), cit->vertex(2)->point(), 
-						 cit->offset(0),          cit->offset(1),          cit->offset(2) ) != POSITIVE) {
+		#if defined PROFILING_MODE
+			if (cit->translation(0).is_identity() && cit->translation(1).is_identity() && cit->translation(2).is_identity()) {
+				calls_predicate_identity++;
+			} else {
+				calls_predicate_non_identity++;
+			}
+		#endif
+			
+		#if defined PROFILING_MODE
+		  	CGAL::Timer tmr;
+			tmr.start();
+		#endif
+
+			Orientation ori = orientation( cit->vertex(0)->point(), cit->vertex(1)->point(), cit->vertex(2)->point(), 
+						 				   cit->translation(0),          cit->translation(1),          cit->translation(2) );
+
+		#if defined PROFILING_MODE
+		  	tmr.stop();
+		  	if (cit->translation(0).is_identity() && cit->translation(1).is_identity() && cit->translation(2).is_identity()) {
+		  		time_predicate_identity += tmr.time();
+		  	} else {
+		  		time_predicate_non_identity += tmr.time();
+		  	}
+	  	#endif	
+
+		if ( ori != POSITIVE ) {
 		if (verbose) {
-		  std::cerr << "Orientation failed for face " << cit->get_number() << std::endl;
-		  for (int j = 0; j < 3; j++) {
-			std::cerr << "   v" << j << " is " << cit->vertex(j)->idx() << " with offset " << cit->offset(j) << std::endl;
-		  }
+		  std::cerr << "Orientation test failed!" << std::endl;
 		}
 		error = true;
 		}
@@ -792,53 +783,49 @@ is_valid(bool verbose, int level) const {
 
 template < class GT, class TDS >
 bool Periodic_4_hyperbolic_triangulation_2<GT,TDS>::
-is_valid(Face_handle ch, bool verbose, int level) const {
+is_valid(Face_handle ch, bool verbose) const {
 
-	if ( ! _tds.is_valid(ch,verbose,level) )
+	if ( ! _tds.is_valid(ch,verbose) )
 		return false;
 	
 	bool error = false;
-	const Point *p[3]; Offset off[3];
+	const Point *p[3]; Hyperbolic_translation off[3];
 	
 	for (int i=0; i<3; i++) {
 		p[i] = &ch->vertex(i)->point();
-		off[i] = ch->offset(i);
+		off[i] = ch->translation(i);
 	}
 	
+	#if defined PROFILING_MODE
+		if (off[0].is_identity() && off[1].is_identity() && off[2].is_identity()) {
+			calls_predicate_identity++;
+		} else {
+			calls_predicate_non_identity++;
+		}
+	#endif
+
+	#if defined PROFILING_MODE
+	  	CGAL::Timer tmr;
+		tmr.start();
+	#endif
+
 	if (orientation( *p[0],  *p[1],  *p[2],  
 					off[0], off[1], off[2]) != POSITIVE) {
 		error = true;
 	}
+
+	#if defined PROFILING_MODE
+	  	tmr.stop();
+	  	if (off[0].is_identity() && off[1].is_identity() && off[2].is_identity()) {
+	  		time_predicate_identity += tmr.time();
+	  	} else {
+	  		time_predicate_non_identity += tmr.time();
+	  	}
+  	#endif	
   
   return !error;
 }
 
-
-
-/*********************************************************************************/
-
-
-template <class GT, class TDS>
-template <class OutputFaceIterator>
-void
-Periodic_4_hyperbolic_triangulation_2<GT,TDS>::
-find_conflicts( Face_handle         d, 
-				const Point&        pt, 
-				const Offset&       current_off,
-				OutputFaceIterator  it ) const {
-  if (d->tds_data().is_clear()) {
-	if (_side_of_circle(d, pt, current_off) == ON_BOUNDED_SIDE) {
-	  d->tds_data().mark_in_conflict();
-	  d->store_offsets(current_off);
-	  it++ = d;
-	  for (int jj = 0; jj < 3; jj++) {
-		if (d->neighbor(jj)->tds_data().is_clear()) {
-		  find_conflicts(d->neighbor(jj), pt, current_off.append(d->neighbor_offset(jj)), it);
-		}
-	  }
-	}
-  }
-}
 
 
 
@@ -847,15 +834,81 @@ find_conflicts( Face_handle         d,
 
 template <class GT, class TDS>
 typename TDS::Face_handle Periodic_4_hyperbolic_triangulation_2<GT, TDS>::
-euclidean_locate(const Point& p, Locate_type& lt, int& li, Offset& loff, Face_handle f, bool verified_input) const {
+inexact_euclidean_locate(const Point& p, Hyperbolic_translation& loff, Face_handle f) const {
+	typename GT::Side_of_original_octagon check;
+
+	if (check(p) != ON_BOUNDED_SIDE) {
+		return Face_handle();
+	}
+
+	if (f == Face_handle()) {
+		f = _tds.faces().begin();
+	}	
+
+	int curr = 0;
+	int succ = ccw(curr);
+	int counter = 0;
+
+	while (true) {
+		#if defined PROFILING_MODE
+			if ((loff * f->translation(curr)).is_identity() &&
+				(loff * f->translation(succ)).is_identity()) {
+				calls_predicate_identity++;
+			} else {
+				calls_predicate_non_identity++;
+			}
+		#endif
+
+		#if defined PROFILING_MODE
+		  	CGAL::Timer tmr;
+			tmr.start();
+		#endif
+
+		bool on_negative_side = has_inexact_negative_orientation(f->vertex(curr)->point(), f->vertex(succ)->point(), p,
+									loff * f->translation(curr),   loff * f->translation(succ),   Hyperbolic_translation());
+
+		#if defined PROFILING_MODE
+		  	tmr.stop();
+		  	if ((loff * f->translation(curr)).is_identity() &&
+				(loff * f->translation(succ)).is_identity()) {
+		  		time_predicate_identity += tmr.time();
+		  	} else {
+		  		time_predicate_non_identity += tmr.time();
+		  	}
+	  	#endif	
+		  
+		if (on_negative_side) {
+			loff = loff * f->neighbor_translation(cw(curr)); 
+			f = f->neighbor(cw(curr));
+			curr = ccw(curr);
+			succ = ccw(curr);
+			counter = 0;
+		} else {
+			curr = succ;
+			succ = ccw(curr);
+			counter++;
+		}
+
+		if (counter > 2) {
+		  	break;
+		}
+	}
+
+	return f;
+}
+
+
+template <class GT, class TDS>
+typename TDS::Face_handle Periodic_4_hyperbolic_triangulation_2<GT, TDS>::
+euclidean_locate(const Point& p, Locate_type& lt, int& li, Hyperbolic_translation& loff, Face_handle f, bool verified_input) const {
 
 	if (!verified_input) {
-		typedef typename GT::Side_of_fundamental_octagon Side_of_fundamental_octagon;
+		typedef typename GT::Side_of_original_octagon Side_of_original_octagon;
 
-		Side_of_fundamental_octagon check = Side_of_fundamental_octagon();
+		Side_of_original_octagon check = Side_of_original_octagon();
 		CGAL::Bounded_side side = check(p);
 		if (side != ON_BOUNDED_SIDE) {
-			return Face_handle();
+			return f; //Face_handle();
 		}
 	}
 	
@@ -869,11 +922,35 @@ euclidean_locate(const Point& p, Locate_type& lt, int& li, Offset& loff, Face_ha
 	int counter = 0;
 
 	while (true) {
-		Orientation o = orientation(f->vertex(curr)->point(),       f->vertex(succ)->point(),       p,
-									loff.append(f->offset(curr)),   loff.append(f->offset(succ)),   Offset());
+		#if defined PROFILING_MODE
+			if ((loff * f->translation(curr)).is_identity() &&
+				(loff * f->translation(succ)).is_identity()) {
+				calls_predicate_identity++;
+			} else {
+				calls_predicate_non_identity++;
+			}
+		#endif
+
+		#if defined PROFILING_MODE
+		  	CGAL::Timer tmr;
+			tmr.start();
+		#endif
+
+		Orientation o = orientation(f->vertex(curr)->point(),      f->vertex(succ)->point(),      p,
+									loff * f->translation(curr),   loff * f->translation(succ),   Hyperbolic_translation());
+
+		#if defined PROFILING_MODE
+		  	tmr.stop();
+		  	if ((loff * f->translation(curr)).is_identity() &&
+				(loff * f->translation(succ)).is_identity()) {
+		  		time_predicate_identity += tmr.time();
+		  	} else {
+		  		time_predicate_non_identity += tmr.time();
+		  	}
+	  	#endif	
 		  
 		if (o == NEGATIVE) {
-			loff = loff.append(f->neighbor_offset(cw(curr))); 
+			loff = loff * f->neighbor_translation(cw(curr)); 
 			f = f->neighbor(cw(curr));
 			curr = ccw(curr);
 			succ = ccw(curr);
@@ -890,9 +967,11 @@ euclidean_locate(const Point& p, Locate_type& lt, int& li, Offset& loff, Face_ha
 
 	}
 
-	Point_2 p0 = loff.append(f->offset(0)).apply(f->vertex(0)->point());
-	Point_2 p1 = loff.append(f->offset(1)).apply(f->vertex(1)->point());
-	Point_2 p2 = loff.append(f->offset(2)).apply(f->vertex(2)->point());
+	//f = inexact_euclidean_locate(p, loff, f);
+
+	Point_2 p0 = apply(f->vertex(0), loff * f->translation(0));
+	Point_2 p1 = apply(f->vertex(1), loff * f->translation(1));
+	Point_2 p2 = apply(f->vertex(2), loff * f->translation(2));
 
 	lt = FACE;
 	li = -1;
@@ -920,7 +999,7 @@ euclidean_locate(const Point& p, Locate_type& lt, int& li, Offset& loff, Face_ha
 
 template <class GT, class TDS>
 typename TDS::Face_handle Periodic_4_hyperbolic_triangulation_2<GT, TDS>::
-hyperbolic_locate(const Point& p, Locate_type& lt, int& li, Offset& lo, Face_handle start) const
+hyperbolic_locate(const Point& p, Locate_type& lt, int& li, Hyperbolic_translation& lo, Face_handle start) const
 {
 	// Get a hint of where the point is located. It's either in lf or in one of its neighbors.
 	Face_handle lf = euclidean_locate(p, lt, li, lo, start);
@@ -935,8 +1014,6 @@ hyperbolic_locate(const Point& p, Locate_type& lt, int& li, Offset& lo, Face_han
 
 	typedef typename GT::Side_of_hyperbolic_face_2 Side_of_hyperbolic_face_2;
 	Side_of_hyperbolic_face_2 sf;
-
-	// cout << "Euclidean locate says face " << lf->get_number() << " with offset " << lo;
 
 	Bounded_side sides[3];
     
@@ -957,29 +1034,26 @@ hyperbolic_locate(const Point& p, Locate_type& lt, int& li, Offset& lo, Face_han
 		}	
 	} else {
 		// Here we have to find the face containing the point, it's one of the neighbors of lf.
-		Bounded_side bs1 = sf(p, sides, lf->neighbor(0), lo.append(lf->neighbor_offset(0)));
+		Bounded_side bs1 = sf(p, sides, lf->neighbor(0), lo * lf->neighbor_translation(0));
 		if (bs1 == ON_BOUNDED_SIDE) {
-			lo = lo.append(lf->neighbor_offset(0));
+			lo = lo * lf->neighbor_translation(0);
 			lf = lf->neighbor(0);
 			lt = FACE;
 		} else {
-			Bounded_side bs2 = sf(p, sides, lf->neighbor(1), lo.append(lf->neighbor_offset(1)));	
+			Bounded_side bs2 = sf(p, sides, lf->neighbor(1), lo * lf->neighbor_translation(1));	
 			if (bs2 == ON_BOUNDED_SIDE) {
-				lo = lo.append(lf->neighbor_offset(1));
+				lo = lo * lf->neighbor_translation(1);
 				lf = lf->neighbor(1);
 				lt = FACE;
 			} else {
-				Bounded_side bs3 = sf(p, sides, lf->neighbor(2), lo.append(lf->neighbor_offset(2)));
-				CGAL_triangulation_assertion(bs3 == ON_UNBOUNDED_SIDE);
-				lo = lo.append(lf->neighbor_offset(2));
+				Bounded_side bs3 = sf(p, sides, lf->neighbor(2), lo * lf->neighbor_translation(2));
+				CGAL_triangulation_assertion(bs3 == ON_BOUNDED_SIDE);
+				lo = lo * lf->neighbor_translation(2);
 				lf = lf->neighbor(2);
 				lt = FACE;
 			}
 		}
 	}
-
-	// cout << "; hyperbolic locate says face " << lf->get_number() << " with offset " << lo << endl;
-
 
 	return lf;
 }

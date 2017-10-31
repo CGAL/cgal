@@ -1,44 +1,30 @@
-// Copyright (c) 2016-2017 INRIA Nancy Grand-Est (France).
-// All rights reserved.
-//
-// This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-//
-// $URL$
-// $Id$
-//
-// Author(s)     : Iordan Iordanov <iordan.iordanov@loria.fr>
+
 
 #include <boost/tuple/tuple.hpp>
 #include <boost/random/linear_congruential.hpp>
 #include <boost/random/uniform_smallint.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <CGAL/point_generators_2.h>
-
 #include <CGAL/Periodic_4_hyperbolic_Delaunay_triangulation_2.h>
 #include <CGAL/Periodic_4_hyperbolic_Delaunay_triangulation_traits_2.h>
+#include <CGAL/Hyperbolic_octagon_translation.h>
 #include <CGAL/CORE_Expr.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/determinant.h>
 
-
 typedef CORE::Expr                                                                  NT;
 typedef CGAL::Cartesian<NT>                                                         Kernel;
-typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<Kernel>         Traits;
+typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<Kernel,
+                                      CGAL::Hyperbolic_octagon_translation>         Traits;
 typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_2<Traits>                Triangulation;
 typedef Triangulation::Face_iterator                                                Face_iterator;
 typedef Triangulation::Vertex_handle 												Vertex_handle;
 typedef Triangulation::Point 														Point;
-typedef Traits::Side_of_fundamental_octagon                                         Side_of_fundamental_octagon;
+typedef Traits::Side_of_original_octagon                                            Side_of_original_octagon;
 typedef CGAL::Creator_uniform_2<NT, Point >                                         Creator;
+
+using std::cout;
+using std::endl;
 
 int main(int argc, char** argv) {
 
@@ -62,7 +48,7 @@ int main(int argc, char** argv) {
 
 
     CGAL::Random_points_in_disc_2<Point, Creator> g( 1.0 );
-    Side_of_fundamental_octagon pred;
+    Side_of_original_octagon pred;
 
     cout << "Inserting " << N << " random new vertices... " << endl;
     std::vector<Vertex_handle> new_v;

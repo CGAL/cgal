@@ -1,21 +1,3 @@
-// Copyright (c) 2016-2017 INRIA Nancy Grand-Est (France).
-// All rights reserved.
-//
-// This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-//
-// $URL$
-// $Id$
-//
-// Author(s)     : Iordan Iordanov <iordan.iordanov@loria.fr>
 
 #include <CGAL/basic.h>
 #include <boost/tuple/tuple.hpp>
@@ -29,16 +11,15 @@
 
 #include <CGAL/Timer.h>
 
-
 typedef double                                                                  NT;
 typedef CGAL::Cartesian<NT>                                                     Kernel;
 typedef CGAL::Delaunay_triangulation_2<Kernel>                                  Triangulation;
 typedef Kernel::Point_2                                                         Point;
 typedef Triangulation::Vertex_handle                                            Vertex_handle;
-
 typedef CGAL::Creator_uniform_2<double, Point>                                  Creator;
 
-using namespace std;
+using std::cout;
+using std::endl;
 
 int main(int argc, char** argv) {    
 

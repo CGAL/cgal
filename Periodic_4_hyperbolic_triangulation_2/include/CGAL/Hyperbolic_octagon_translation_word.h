@@ -1,9 +1,9 @@
-// Copyright (c) 2016-2017 INRIA Nancy Grand-Est (France).
+// Copyright (c) 1999-2004,2006-2009,2014-2016   INRIA Nancy - Grand Est (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
 // You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
+// Interal Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
@@ -15,14 +15,16 @@
 // $URL$
 // $Id$
 //
+//
 // Author(s)     : Iordan Iordanov <iordan.iordanov@loria.fr>
 
-#ifndef CGAL_HYPERBOLIC_OCTAGON_WORD_4
-#define CGAL_HYPERBOLIC_OCTAGON_WORD_4
+#ifndef CGAL_HYPERBOLIC_OCTAGON_TRANSLATION_WORD
+#define CGAL_HYPERBOLIC_OCTAGON_TRANSLATION_WORD
 
 #include <iostream>
-#include <cassert>
+#include <vector>
 #include <CGAL/Hyperbolic_octagon_translation_matrix.h>
+#include <CGAL/Dehn_hyperbolic_octagon_translation_word.h>
  
 
 //-------------------------------------------------------
@@ -41,11 +43,13 @@ extern long calls_append_non_identity;
 
 namespace CGAL {
 
-template <class Int, class NT>
-class Hyperbolic_octagon_word_4 {
+using std::vector;
 
-  	typedef Hyperbolic_octagon_translation_matrix<NT> 	Octagon_translation_matrix;
-  	typedef Hyperbolic_octagon_word_4<Int, NT> 			Self;
+template <class Int>
+class Hyperbolic_octagon_translation_word {
+
+  	typedef Dehn_hyperbolic_octagon_translation_word<Int> 	Dehn_reductor;
+  	typedef Hyperbolic_octagon_translation_word<Int> 		Self;
 private:
 	Int   w0 : 3;
 	bool  b0 : 1; 
@@ -62,78 +66,13 @@ private:
 	static const Int RELATION_LENGTH = 8;			// Length of the group relation
 	static const Int INVERSES_DISTANCE = 4;			// How many elements between inverses, i.e., inv(a) = (a + INVERSE_DISTANCE) % RELATION_LENGTH
 	
-	static std::map<std::string, int> wmap;
-	static std::map<std::string, Octagon_translation_matrix> gmap;
+	static std::map<std::string, Int> wmap;
 
-	static std::map<std::string, Octagon_translation_matrix> init_gmap() {
-		std::map<std::string, Octagon_translation_matrix> m;
-		vector<Octagon_translation_matrix> g;
-  		get_generators(g);
+	static std::map<std::string, Int> init_wmap() {
+		std::map<std::string, Int> m;
 
-  		m["_"] 		= Octagon_translation_matrix();
-		m["0527"] 	=  g[0]*g[5]*g[2]*g[7];
-		m["052"] 	=  g[0]*g[5]*g[2];
-		m["05"] 	=  g[0]*g[5];
-		m["0"] 		=  g[0];
-		m["03"] 	=  g[0]*g[3];
-		m["036"]	=  g[0]*g[3]*g[6];
-
-		m["1630"] 	=  g[1]*g[6]*g[3]*g[0];
-		m["163"] 	=  g[1]*g[6]*g[3];
-		m["16"] 	=  g[1]*g[6];
-		m["1"] 		=  g[1];
-		m["14"] 	=  g[1]*g[4];
-		m["147"]	=  g[1]*g[4]*g[7];
-
-		m["2741"] 	= g[2]*g[7]*g[4]*g[1];
-		m["274"] 	= g[2]*g[7]*g[4];
-		m["27"] 	= g[2]*g[7];
-		m["2"] 		= g[2];
-		m["25"] 	= g[2]*g[5];
-		m["250"]	= g[2]*g[5]*g[0];
-
-		m["3052"] 	= g[3]*g[0]*g[5]*g[2];
-		m["305"] 	= g[3]*g[0]*g[5];
-		m["30"] 	= g[3]*g[0];
-		m["3"] 		= g[3];
-		m["36"] 	= g[3]*g[6];
-		m["361"]	= g[3]*g[6]*g[1];
-
-		m["4163"] 	= g[4]*g[1]*g[6]*g[3];
-		m["416"] 	= g[4]*g[1]*g[6];
-		m["41"] 	= g[4]*g[1];
-		m["4"] 		= g[4];
-		m["47"] 	= g[4]*g[7];
-		m["472"]	= g[4]*g[7]*g[2];
-
-		m["5274"]	= g[5]*g[2]*g[7]*g[4];
-		m["527"] 	= g[5]*g[2]*g[7];
-		m["52"] 	= g[5]*g[2];
-		m["5"] 		= g[5];
-		m["50"] 	= g[5]*g[0];
-		m["503"]	= g[5]*g[0]*g[3];
-
-		m["6305"] 	= g[6]*g[3]*g[0]*g[5];
-		m["630"] 	= g[6]*g[3]*g[0];
-		m["63"] 	= g[6]*g[3];
-		m["6"] 		= g[6];
-		m["61"] 	= g[6]*g[1];
-		m["614"]	= g[6]*g[1]*g[4];
-
-		m["7416"] 	= g[7]*g[4]*g[1]*g[6];
-		m["741"] 	= g[7]*g[4]*g[1];
-		m["74"] 	= g[7]*g[4];
-		m["7"] 		= g[7];
-		m["72"] 	= g[7]*g[2];
-		m["725"]	= g[7]*g[2]*g[5];
-
-		return m;
-	}
-
-
-	static std::map<std::string, int> init_wmap() {
-		std::map<std::string, int> m;
 		m["_"] 		= -1;
+		
 		m["0527"] 	=  0;
 		m["052"] 	=  1;
 		m["05"] 	=  2;
@@ -195,31 +134,27 @@ private:
 
 public:
 
-	static int map_size() {
-		return wmap.size();
-	}
-
-	Hyperbolic_octagon_word_4() : 
+	Hyperbolic_octagon_translation_word() : 
 	w0(0), w1(0), w2(0), w3(0), b0(false), b1(false), b2(false), b3(false) {	}
 
-	Hyperbolic_octagon_word_4(Int x) :
+	Hyperbolic_octagon_translation_word(Int x) :
 	w0(x), w1(0), w2(0), w3(0), b0(true), b1(false), b2(false), b3(false) {	}
 
-	Hyperbolic_octagon_word_4(Int x, Int y) :
+	Hyperbolic_octagon_translation_word(Int x, Int y) :
 	w0(x), w1(y), w2(0), w3(0), b0(true), b1(true), b2(false), b3(false) {	}
 
-	Hyperbolic_octagon_word_4(Int x, Int y, Int z) :
+	Hyperbolic_octagon_translation_word(Int x, Int y, Int z) :
 	w0(x), w1(y), w2(z), w3(0), b0(true), b1(true), b2(true), b3(false) {	}
 
-	Hyperbolic_octagon_word_4(Int x, Int y, Int z, Int t) :
+	Hyperbolic_octagon_translation_word(Int x, Int y, Int z, Int t) :
 	w0(x), w1(y), w2(z), w3(t), b0(true), b1(true), b2(true), b3(true) {	}
 
-	Hyperbolic_octagon_word_4(const Hyperbolic_octagon_word_4& other) :
+	Hyperbolic_octagon_translation_word(const Hyperbolic_octagon_translation_word& other) :
 		w0(other.w0), w1(other.w1), w2(other.w2), w3(other.w3),
 		b0(other.b0), b1(other.b1), b2(other.b2), b3(other.b3)
 	{	}
 
-	Hyperbolic_octagon_word_4(std::vector<Int> v) {
+	Hyperbolic_octagon_translation_word(std::vector<Int> v) {
 		switch(v.size()) {
 			case 0:
 				w0 = 0; b0 = false;
@@ -259,7 +194,7 @@ public:
 	}
 
 	void operator()(Int idx, Int val) {
-		assert(idx >= 0 && idx <= 3);
+		CGAL_precondition(idx >= 0 && idx <= 3);
 		switch (idx) {
 			case 0:
 				w0 = val;
@@ -280,7 +215,7 @@ public:
 	}
 
 	Int operator()(Int i) const {
-		assert(i >= 0 && i <= 3);
+		CGAL_precondition(i >= 0 && i <= 3);
 		switch (i) {
 			case 0:
 				return w0;
@@ -294,7 +229,7 @@ public:
 	}
 
 	bool b(Int i) const {
-		assert(i >= 0 && i <= 3);
+		CGAL_precondition(i >= 0 && i <= 3);
 		switch (i) {
 			case 0:
 				return b0;
@@ -342,62 +277,16 @@ private:
 	void reduce() {
 		std::vector<Int> old = this->get_vector();
 		std::vector<Int> red;
-		Dehn_reduce_word(red, old);
+		Dehn_reductor dehn;
+		dehn(red, old);
 		Self newone(red);
 		this->copy_from(newone);
 	}
 
 
-	std::string get_char(Int v) const {
-		switch(v) {
-			case 0:
-				return "a";
-			case 1:
-				return "\\bar{b}";
-			case 2:
-				return "c";
-			case 3:
-				return "\\bar{d}";
-			case 4:
-				return "\\bar{a}";
-			case 5:
-				return "b";
-			case 6:
-				return "\\bar{c}";
-			case 7:
-				return "d";
-		}
-		assert(false);
-		return "";
-	}
-
-	Int ridx(Int v) const {
-		switch(v) {
-			case 0:
-				return 0;
-			case 1:
-				return 5;
-			case 2:
-				return 2;
-			case 3:
-				return 7;
-			case 4:
-				return 4;
-			case 5:
-				return 1;
-			case 6:
-				return 6;
-			case 7:
-				return 3;
-		}
-
-		CGAL_assertion(false);
-		return -1;
-	}
-
 public:
-	int weight() const {
-		return wmap[this->get_string()];
+	int index_in_order() const {
+		return wmap[this->to_string()];
 	}
 
 public:
@@ -422,27 +311,6 @@ public:
 
 		return Self();
 	}
-
-/*
-	void append(Int val) {
-
-		std::vector<Int> old = this->get_vector();
-		old.push_back(val);
-		std::vector<Int> red;
-		Dehn_reduce_word(red, old); 
-		CGAL_assertion(red.size() < 5);
-		Self newone(red);
-		this->copy_from(newone);
-
-		#if defined PROFILING_MODE
-			if (this->is_identity()) {
-				calls_append_identity++;
-			} else {
-				calls_append_non_identity++;
-			}
-		#endif
-
-	}*/
 	
 
 	Self append(Self val) const {
@@ -469,7 +337,8 @@ public:
 			o1.push_back(o2[i]);
 		}
 		std::vector<Int> red;
-		Dehn_reduce_word(red, o1);
+		Dehn_reductor dehn;
+		dehn(red, o1);
 
 		CGAL_assertion(red.size() < 5);
 		
@@ -525,7 +394,7 @@ public:
 		return ( b0 == false );
 	}
 
-	std::string get_string() const {
+	std::string to_string() const {
 		std::string s = "";
 
 		if (b0) {
@@ -548,24 +417,6 @@ public:
 
 		return s;
 	}
-
-	std::string get_label() const {
-		std::string s = "";
-		if (b0) {
-			s += get_char(w0);
-		}
-		if (b1) {
-			s += get_char(w1);
-		}
-		if (b2) {
-			s += get_char(w2);
-		}
-		if (b3) {
-			s += get_char(w3);
-		}
-		return s;
-	}
-
 	
 
 	Self operator*(const Self& rh) const {
@@ -576,14 +427,15 @@ public:
 			old.push_back(oth[i]);
 		}
 		std::vector<Int> red;
-		Dehn_reduce_word(red, old); 
+		Dehn_reductor dehn;
+		dehn(red, old); 
 		CGAL_assertion(red.size() < 5);
 		Self newone(red);
 	
     	return newone;
   	}
 
-  	Self operator-(const Self& other) {
+  	Self operator-(const Self& other) const {
   		Self res = ((*this) * other.inverse());
   		res.reduce(); 
   		return res;
@@ -594,83 +446,41 @@ public:
 		w0 = other.w0; w1 = other.w1; w2 = other.w2; w3 = other.w3;
 		return *this;
 	}
-  	
 
-  	Octagon_translation_matrix get_matrix() const {
-  		return gmap[this->get_string()];
-  	}
-
-  	template <class Point>
-  	Point apply(Point p) const {
-
-  		#if defined PROFILING_MODE
-	  		if (this->is_identity()) {
-	  			calls_apply_identity++;
-	  		} else {
-	  			calls_apply_non_identity++;
+	// Equality
+	bool operator==(const Self& other) const {
+	  int N = this->length();
+	  if (N == other.length()) {
+	  	for (int i = 0; i < N; i++) {
+	  		if (this->operator()(i) != other(i)) {
+	  			return false;
 	  		}
-  		#endif
+	  	}
+	  	return true;
+	  } else {
+	  	return false;
+	  }	   
+	}
 
-  		if (this->is_identity()) {
-  			return p;
-  		} else {
-  			return this->get_matrix().apply(p);
-  		}
-  	}
+	// Inequality
+	bool operator!=(const Self& other) const {
+	 	return !operator==(other); 
+	}
+
+	// just to give an ordering
+	bool operator<(	const Self& other) const {
+	  return this->index_in_order() < other.index_in_order();
+	}
 
 };
 
 
-template <class Int, class GT>
-std::map<std::string, int> Hyperbolic_octagon_word_4<Int, GT>::wmap = init_wmap();
-
-template <class Int, class GT>
-std::map<std::string, Hyperbolic_octagon_translation_matrix<GT> > Hyperbolic_octagon_word_4<Int, GT>::gmap = init_gmap();
-
-template <class Int, class GT>
-int offset_distance(const Hyperbolic_octagon_word_4<Int, GT>& o1, const Hyperbolic_octagon_word_4<Int, GT>& o2) {
-
-	if (o1.is_identity()) {
-		return o2.length();
-	}
-
-	if (o2.is_identity()) {
-		return o1.length();
-	}
-
-	int w1 = o1.weight();
-	int w2 = o2.weight();
-	int N = Hyperbolic_octagon_word_4<Int, GT>::map_size();
-	if (w2 < w1) {
-		return ((N+w2-1) - w1);
-	} else {
-		return (w2-w1);
-	}
-}
+template <class Int>
+std::map<std::string, Int> Hyperbolic_octagon_translation_word<Int>::wmap = init_wmap();
 
 
-template <class Int, class GT>
-int offset_reference_distance(const Hyperbolic_octagon_word_4<Int, GT>& o1) {
-
-	if (o1.is_identity()) {
-		return 4;
-	}
-
-	Hyperbolic_octagon_word_4<Int, GT> o(0, 5, 2, 7); //o(4, 1, 6, 3);
-
-	int w1 = o.weight();
-	int w2 = o1.weight();
-	int N = Hyperbolic_octagon_word_4<Int, GT>::map_size();
-	if (w2 < w1) {
-		return ((N+w2-1) - w1);
-	} else {
-		return (w2-w1);
-	}
-}
-
-
-template <class Int, class GT>
-ostream& operator<<(ostream& s, const Hyperbolic_octagon_word_4<Int, GT>& o) {
+template <class Int>
+std::ostream& operator<<(std::ostream& s, const Hyperbolic_octagon_translation_word<Int>& o) {
 	
 	if (o.is_identity()) {
 		s << "_";
@@ -684,40 +494,6 @@ ostream& operator<<(ostream& s, const Hyperbolic_octagon_word_4<Int, GT>& o) {
 	}
 	return s;
 } 
-
-// just to give an ordering
-template<class Int, class GT>
-bool operator == (const Hyperbolic_octagon_word_4<Int, GT>& lh,
-  				  const Hyperbolic_octagon_word_4<Int, GT>& rh)
-{
-  int N = lh.length();
-  if (N == rh.length()) {
-  	for (int i = 0; i < N; i++) {
-  		if (lh(i) != rh(i)) {
-  			return false;
-  		}
-  	}
-  	return true;
-  } else {
-  	return false;
-  }	   
-}
-
-template<class Int, class GT>
-bool operator != (const Hyperbolic_octagon_word_4<Int, GT>& lh,
-  				  const Hyperbolic_octagon_word_4<Int, GT>& rh)
-{
- 	return !operator==(lh, rh); 
-}
-
-
-// just to give an ordering
-template<class Int, class GT>
-bool operator < (const Hyperbolic_octagon_word_4<Int, GT>& lh,
-  				 const Hyperbolic_octagon_word_4<Int, GT>& rh)
-{
-  return lh.weight() < rh.weight();
-}
 
 
 
