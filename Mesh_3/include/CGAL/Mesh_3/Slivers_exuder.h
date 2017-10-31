@@ -888,7 +888,7 @@ private:
 
   /** This function verifies that the pre_star contains exactly the set of
    facets on the boundary of the conflict zone of the weighted point wp.
-   The vertex handle vh is an hint for the location of wp.
+   The vertex handle vh is a hint for the location of wp.
 
    It also fills another Pre_star object, and checks that is in the same
    order as pre_star.
@@ -1203,7 +1203,7 @@ expand_prestar(const Cell_handle& cell_to_add,
     double new_power_distance_to_power_sphere = std::numeric_limits<double>::infinity();
 
     // If current_facet_mirror is in prestar, delete it
-    // (it may happen than pre_star contains two facets of the same cell)
+    // (it may happen that pre_star contains two facets of the same cell)
     if ( pre_star.erase(current_mirror_facet) )
     {
       // If it is a boundary facet, stop pre_star expansion
@@ -1483,8 +1483,7 @@ restore_cells_and_boundary_facets(
     // the maximum, push it in the cells queue.
     if( c3t3_.is_in_complex(*cit) )
     {
-      double criterion_value
-        = sliver_criteria_(*cit);
+      double criterion_value = sliver_criteria_(*cit);
 
       if( criterion_value < sliver_criteria_.sliver_bound() )
         add_cell_to_queue<pump_vertices_on_surfaces>(*cit, criterion_value);
@@ -1561,8 +1560,7 @@ update_mesh(const Weighted_point& new_point,
             const Vertex_handle& old_vertex,
             bool *could_lock_zone)
 {
-  CGAL_assertion_code(std::size_t nb_vert =
-                      tr_.number_of_vertices());
+  CGAL_assertion_code(std::size_t nb_vert = tr_.number_of_vertices();)
   Cell_vector deleted_cells;
   Facet_vector internal_facets;
   Facet_vector boundary_facets;
@@ -1765,10 +1763,21 @@ check_pre_star(const Pre_star& pre_star,
                                       boundary_facets.end(),
                                       vh);
   if( ! result )
-    std::cerr << "boundary_facets.size()=" << boundary_facets.size()
-    << "\npre_star.size()=" << pre_star.size()
-    << "\ntested wp=" << wp
-    << "\n";
+  {
+    std::cerr << "tested wp=" << wp << '\n';
+    std::cerr << "boundary_facets.size()=" << boundary_facets.size() << std::endl;
+    typename std::vector<Facet>::const_iterator bfit = boundary_facets.begin(),
+                                                bfend = boundary_facets.end();
+    for(; bfit != bfend; ++bfit)
+      std::cerr << "Cell: " << &*(bfit->first) << " second: " << bfit->second << '\n';
+
+    std::cerr << "\npre_star.size()=" << pre_star.size() << std::endl;
+    typename Pre_star::const_iterator psit = pre_star.begin(), psend = pre_star.end();
+    for(; psit != psend; ++psit)
+      std::cerr << "Cell: " << &*(psit->first.first) << " second: " << psit->first.second << '\n';
+    std::cerr << std::endl;
+  }
+
   return result;
 }
 
@@ -1841,10 +1850,10 @@ check_ratios(const Sliver_values& criterion_values,
                         ratio_vector.begin(),ratio_vector.end(),
                         std::back_inserter(diff));
 
-
-    std::cerr << "\nExpected criterion_values:[";
+    std::cerr << "\nExpected criterion_values (size: "
+              << expected_ratios.size() << ") [";
     std::for_each(expected_ratios.begin(), expected_ratios.end(), print_double);
-    std::cerr << "]\nRatios:[";
+    std::cerr << "]\nRatios (size: " << ratio_vector.size() << ") [";
     std::for_each(ratio_vector.begin(), ratio_vector.end(), print_double);
     std::cerr << "]\nDiff:[";
     std::for_each(diff.begin(),diff.end(), print_double);

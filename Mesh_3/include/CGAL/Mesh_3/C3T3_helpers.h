@@ -3261,9 +3261,6 @@ move_point_topo_change(const Vertex_handle& old_vertex,
   c3t3_.set_index(new_vertex,vertex_index);
   new_vertex->set_meshing_info(meshing_info);
 
-//  CGAL_assertion(c3t3_.is_valid());
-//  CGAL_assertion(tr_.is_valid());
-
   return new_vertex;
 }
 
@@ -3295,6 +3292,7 @@ move_point_no_topo_change(const Vertex_handle& old_vertex,
 {
   // Change vertex position
   tr_.set_point(old_vertex, move, new_position);
+  CGAL_expensive_postcondition(tr_.is_valid());
   return old_vertex;
 }
 

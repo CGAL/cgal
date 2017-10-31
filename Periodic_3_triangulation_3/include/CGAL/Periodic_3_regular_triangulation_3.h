@@ -691,15 +691,23 @@ public:
                                      const Offset& offset = Offset(),
                                      bool perturb = false) const
   {
-    Weighted_point p0 = c->vertex(0)->point(),
-                   p1 = c->vertex(1)->point(),
-                   p2 = c->vertex(2)->point(),
-                   p3 = c->vertex(3)->point();
-    Offset o0 = this->get_offset(c,0),
-           o1 = this->get_offset(c,1),
-           o2 = this->get_offset(c,2),
-           o3 = this->get_offset(c,3),
-           oq = offset;
+//    std::cout << "_side_of_power_sphere with at " << &*c << std::endl
+//              << "                              " << &*(c->vertex(0)) << " : " << c->vertex(0)->point() << std::endl
+//              << "                              " << &*(c->vertex(1)) << " : " << c->vertex(1)->point() << std::endl
+//              << "                              " << &*(c->vertex(2)) << " : " << c->vertex(2)->point() << std::endl
+//              << "                              " << &*(c->vertex(3)) << " : " << c->vertex(3)->point() << std::endl
+//              << " Foreign: " << q << std::endl
+//              << " Offset: " << offset << std::endl;
+
+    const Weighted_point& p0 = c->vertex(0)->point();
+    const Weighted_point& p1 = c->vertex(1)->point();
+    const Weighted_point& p2 = c->vertex(2)->point();
+    const Weighted_point& p3 = c->vertex(3)->point();
+    const Offset& o0 = this->get_offset(c,0);
+    const Offset& o1 = this->get_offset(c,1);
+    const Offset& o2 = this->get_offset(c,2);
+    const Offset& o3 = this->get_offset(c,3);
+    const Offset& oq = offset;
 
     CGAL_triangulation_precondition( orientation(p0, p1, p2, p3, o0, o1, o2, o3) == POSITIVE );
 
@@ -883,11 +891,11 @@ public:
         else // !should_be_positively_translated
         {
           bool should_be_negatively_translated =
-              (offset[i] == 2) /*||
+              (offset[i] == 2) ||
               (offset[i] == 1 &&
                this->int_to_off(c->offset((index+1)%4))[i] == 1 &&
                this->int_to_off(c->offset((index+2)%4))[i] == 1 &&
-               this->int_to_off(c->offset((index+3)%4))[i] == 1)*/;
+               this->int_to_off(c->offset((index+3)%4))[i] == 1);
 
           if(should_be_negatively_translated)
           {

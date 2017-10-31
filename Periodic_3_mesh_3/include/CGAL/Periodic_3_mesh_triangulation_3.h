@@ -876,10 +876,6 @@ template<class MD,
          class K_ = Default,
          class Vertex_base_ = Default,
          class Cell_base_ = Default>
-class Periodic_3_mesh_triangulation_3;
-
-template<class MD, class K_,
-         class Vertex_base_, class Cell_base_>
 class Periodic_3_mesh_triangulation_3
 {
   // default K

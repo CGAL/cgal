@@ -303,9 +303,6 @@ public:
               << r_tr_.point(c, (i+3)&3) << ") : refinement point is "
               << get_facet_surface_center(facet) << std::endl;
 #endif
-    if(CGAL::squared_distance(get_facet_surface_center(facet),
-                              r_tr_.point(c, (i+3)&3)) < 1e-6)
-      exit(0);
 
     CGAL_assertion (this->is_facet_on_surface(facet));
     this->set_last_vertex_index(get_facet_surface_center_index(facet));
@@ -1392,11 +1389,6 @@ before_insertion_impl(const Facet& facet,
   typedef typename Zone::Facets_iterator Facets_iterator;
 
   bool source_facet_is_in_conflict = false;
-
-  std::cerr << "before_insertion_impl:" << std::endl
-            << "* " << *facet.first->vertex((facet.second+1)%4)  << std::endl
-            << "  " << *facet.first->vertex((facet.second+2)%4)  << std::endl
-            << "  " << *facet.first->vertex((facet.second+3)%4)  << std::endl;
 
   // Iterate on conflict zone facets
   for (Facets_iterator facet_it = zone.internal_facets.begin();
