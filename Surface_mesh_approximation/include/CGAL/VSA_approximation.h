@@ -175,12 +175,12 @@ private:
   // Triangle polyhedron builder.
   template <typename HDS>
   class TrianglePolyhedronBuilder : public CGAL::Modifier_base<HDS> {
-  public:
     const std::vector<Point_3> &vtxs;
-    const std::vector<int> &tris;
+    const std::vector<std::size_t> &tris;
+  public:
     bool is_manifold;
     TrianglePolyhedronBuilder(const std::vector<Point_3> &_vtxs,
-      const std::vector<int> &_tris)
+      const std::vector<std::size_t> &_tris)
       : vtxs(_vtxs), tris(_tris), is_manifold(true) {}
 
     void operator()(HDS &hds) {
@@ -190,7 +190,7 @@ private:
       builder.begin_surface(vtxs.size(), tris.size() / 3);
       BOOST_FOREACH(const Point_3 &v, vtxs)
         builder.add_vertex(Point(v));
-      for (std::vector<int>::const_iterator itr = tris.begin(); itr != tris.end(); itr += 3) {
+      for (std::vector<std::size_t>::const_iterator itr = tris.begin(); itr != tris.end(); itr += 3) {
         if (builder.test_facet(itr, itr + 3)) {
           builder.begin_facet();
           builder.add_vertex_to_facet(*itr);
@@ -240,7 +240,7 @@ private:
   // All borders cycles.
   std::vector<Border> borders;
   // The indexed triangle approximation.
-  std::vector<int> tris;
+  std::vector<std::size_t> tris;
 
 //member functions
 public:
@@ -884,7 +884,7 @@ public:
    */
   template <typename OutputIterator>
   void get_indexed_triangles(OutputIterator out_itr) const {
-    BOOST_FOREACH(const int &i, tris)
+    BOOST_FOREACH(const std::size_t &i, tris)
       *out_itr++ = i;
   }
 
@@ -1489,9 +1489,9 @@ private:
       int j = global_vtag_map[to_sgv_map[target(he, *m_pmesh)]];
       int k = global_vtag_map[to_sgv_map[target(next(he, *m_pmesh), *m_pmesh)]];
       if (i != j && i != k && j != k) {
-        tris.push_back(i);
-        tris.push_back(j);
-        tris.push_back(k);
+        tris.push_back(static_cast<std::size_t>(i));
+        tris.push_back(static_cast<std::size_t>(j));
+        tris.push_back(static_cast<std::size_t>(k));
       }
     }
   }

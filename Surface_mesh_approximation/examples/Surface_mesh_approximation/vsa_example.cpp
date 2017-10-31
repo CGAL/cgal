@@ -22,7 +22,7 @@ int main()
 
   // output data
   Polyhedron output;
-  std::vector<int> triangles;
+  std::vector<std::size_t> triangles;
   std::vector<Kernel::Point_3> anchors;
 
   // free function interface with named parameters, seperated with dots

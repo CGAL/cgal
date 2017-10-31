@@ -23,7 +23,7 @@ int main()
   }
 
   Polyhedron out_mesh;
-  std::vector<int> tris;
+  std::vector<std::size_t> tris;
   std::vector<Kernel::Point_3> anchor_pos;
   std::list<Polyhedron::Vertex_handle> anchor_vtx;
   std::vector<CGAL::PlaneProxy<Kernel> > proxies;

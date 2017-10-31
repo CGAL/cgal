@@ -112,7 +112,7 @@ int main()
   std::vector<Polyhedron::Vertex_handle> anchor_vtx;
   l2_approx.get_anchor_vertices(std::back_inserter(anchor_vtx));
 
-  std::vector<int> tris;
+  std::vector<std::size_t> tris;
   l2_approx.get_indexed_triangles(std::back_inserter(tris));
 
   std::vector<std::vector<std::size_t> > boundary;
