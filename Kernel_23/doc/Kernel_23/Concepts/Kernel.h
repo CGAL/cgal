@@ -1339,6 +1339,11 @@ public:
   typedef unspecified_type Compute_power_product_3;
 
   /*!
+    a model of `Kernel::ComputePowerDistanceToPowerSphere_3`
+  */
+  typedef unspecified_type Compute_power_distance_to_power_sphere_3;
+
+  /*!
     a model of `Kernel::ComputeSquaredRadiusSmallestOrthogonalSphere_3`
   */
   typedef unspecified_type Compute_squared_radius_smallest_orthogonal_sphere_3;
