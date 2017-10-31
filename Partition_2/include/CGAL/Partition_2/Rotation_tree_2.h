@@ -55,15 +55,15 @@ public:
 
    using internal::vector< Rotation_tree_node_2<Traits_> >::push_back;
 
-   class Less {
+   class Greater {
       typename Traits::Less_xy_2 less;
       typedef typename Traits::Point_2 Point;
    public:
-      Less(typename Traits::Less_xy_2 less) : less(less) {}
+      Greater(typename Traits::Less_xy_2 less) : less(less) {}
 
       template <typename Point_like>
       bool operator()(const Point_like& p1, const Point_like& p2) {
-         return less(Point(p1), Point(p2));
+         return less(Point(p2), Point(p1));
       }
    };
 
@@ -74,8 +74,8 @@ public:
       for (ForwardIterator it = first; it != beyond; it++)
          push_back(*it);
 
-      Less less (Traits().less_xy_2_object());
-      std::sort(this->begin(), this->end(), less);
+      Greater greater (Traits().less_xy_2_object());
+      std::sort(this->begin(), this->end(), greater);
       std::unique(this->begin(), this->end());
    
       // front() is the point with the largest x coordinate
