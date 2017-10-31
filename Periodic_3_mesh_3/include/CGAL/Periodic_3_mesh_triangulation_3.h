@@ -128,6 +128,7 @@ public:
   using Base::point;
   using Base::set_point;
   using Base::tds;
+  using Base::tetrahedron;
   using Base::set_offsets;
 #ifndef CGAL_NO_STRUCTURAL_FILTERING
   using Base::inexact_locate;
@@ -379,11 +380,126 @@ public:
     this->v_offsets.clear();
   }
 
-  /// Call `CGAL::side_of_power_sphere` with a canonicalized point
+  double compute_power_distance_to_power_sphere(const Cell_handle& c, const int i) const
+  {
+    typename Gt::Compute_power_distance_to_power_sphere_3 cr =
+      geom_traits().compute_power_distance_to_power_sphere_3_object();
+
+    Offset o_nb = this->neighbor_offset(c, i, c->neighbor(i));
+    Offset o_vt = this->get_offset(c->neighbor(i), c->neighbor(i)->index(c));
+
+    const Weighted_point& wp0 = this->point(c->vertex(0)); // need the canonical point
+    const Weighted_point& wp1 = this->point(c->vertex(1));
+    const Weighted_point& wp2 = this->point(c->vertex(2));
+    const Weighted_point& wp3 = this->point(c->vertex(3));
+    const Weighted_point& wq = this->point(c->neighbor(i)->vertex(c->neighbor(i)->index(c)));
+    const Offset& op0 = this->get_offset(c, 0);
+    const Offset& op1 = this->get_offset(c, 1);
+    const Offset& op2 = this->get_offset(c, 2);
+    const Offset& op3 = this->get_offset(c, 3);
+    const Offset& oq = o_vt - o_nb;
+
+    return CGAL::to_double(cr(wp0, wp1, wp2, wp3, wq, op0, op1, op2, op3, oq));
+  }
+
+  // The functions below are needed by Mesh_3 but need a specific implementation
+  // for the periodic case because we need to try with different offsets
+  // to get a result
+  double compute_power_distance_to_power_sphere(const Cell_handle& c,
+                                                const Vertex_handle v) const
+  {
+    typename Gt::Compute_power_distance_to_power_sphere_3 cr =
+      geom_traits().compute_power_distance_to_power_sphere_3_object();
+
+    double min_power_dist = std::numeric_limits<double>::infinity();
+
+    for(int i = 0; i < 3; ++i) {
+      for(int j = 0; j < 3; ++j) {
+        for(int k = 0; k < 3; ++k) {
+          const Weighted_point& wp0 = this->point(c->vertex(0)); // need the canonical point
+          const Weighted_point& wp1 = this->point(c->vertex(1));
+          const Weighted_point& wp2 = this->point(c->vertex(2));
+          const Weighted_point& wp3 = this->point(c->vertex(3));
+          const Weighted_point& wq = this->point(v);
+          const Offset& op0 = this->get_offset(c, 0);
+          const Offset& op1 = this->get_offset(c, 1);
+          const Offset& op2 = this->get_offset(c, 2);
+          const Offset& op3 = this->get_offset(c, 3);
+          const Offset oq(i-1, j-1, k-1);
+
+          // @todo how to be sure that 27 copies are enough... ?
+          CGAL_assertion(c->offset(0) == 0 || c->offset(1) == 0 ||
+                         c->offset(2) == 0 || c->offset(3) == 0);
+
+          double power_dist =
+            CGAL::to_double(cr(wp0, wp1, wp2, wp3, wq, op0, op1, op2, op3, oq));
+
+          if(power_dist < min_power_dist)
+            min_power_dist = power_dist;
+        }
+      }
+    }
+
+    return min_power_dist;
+  }
+
+  // Return the tetrahedron made of 'f' + 'wp'
+  // \pre there exists an offset such that 'f.first' is in conflict with 'wp'
+  Tetrahedron tetrahedron(const Facet& f, const Weighted_point& wp) const
+  {
+    Weighted_point canonic_wp = canonicalize_point(wp);
+    Conflict_tester tester(canonic_wp, this);
+
+    const Cell_handle c = f.first;
+    const int index = f.second;
+
+    for(int i = 0; i < 3; ++i) {
+      for(int j = 0; j < 3; ++j) {
+        for(int k = 0; k < 3; ++k) {
+          const Offset off(i-1, j-1, k-1);
+          if(tester(c, off))
+          {
+            return construct_tetrahedron(
+                       canonic_wp, this->point(c->vertex((index+1)&3)),
+                       this->point(c->vertex((index+2)&3)), this->point(c->vertex((index+3)&3)),
+                       off, this->get_offset(c, (index+1)&3),
+                       this->get_offset(c, (index+2)&3), this->get_offset(c, (index+3)&3));
+          }
+        }
+      }
+    }
+
+    CGAL_assertion(false);
+    return Tetrahedron();
+  }
+
   Bounded_side side_of_power_sphere(const Cell_handle& c, const Weighted_point& p,
                                     bool perturb = false) const
   {
     Weighted_point canonical_p = canonicalize_point(p);
+
+//    std::cout << "Pside_of_power_sphere with at " << &*c << std::endl
+//              << "                              " << &*(c->vertex(0)) << " : " << c->vertex(0)->point() << std::endl
+//              << "                              " << &*(c->vertex(1)) << " : " << c->vertex(1)->point() << std::endl
+//              << "                              " << &*(c->vertex(2)) << " : " << c->vertex(2)->point() << std::endl
+//              << "                              " << &*(c->vertex(3)) << " : " << c->vertex(3)->point() << std::endl
+//              << " Foreign: " << p << std::endl;
+
+    Bounded_side bs = ON_UNBOUNDED_SIDE;
+    for(int i = 0; i < 3; ++i) {
+      for(int j = 0; j < 3; ++j) {
+        for(int k = 0; k < 3; ++k) {
+          bs = Base::_side_of_power_sphere(c, canonical_p,
+                                           Offset(i-1, j-1, k-1), perturb);
+
+          if(bs != ON_UNBOUNDED_SIDE)
+            return bs;
+        }
+      }
+    }
+
+    return bs;
+
     return Base::side_of_power_sphere(c, canonical_p, Offset(), perturb);
   }
 
@@ -391,11 +507,13 @@ public:
   // between 'p' and 'q', for all possible combinations of offsets
   FT min_squared_distance(const Bare_point& p, const Bare_point& q) const
   {
-//    std::cout << "minsqd: " << p << " // " << q << std::endl;
+    typename Geom_traits::Compute_squared_distance_3 csd =
+      geom_traits().compute_squared_distance_3_object();
 
     const Bare_point cp = canonicalize_point(p);
     const Bare_point cq = canonicalize_point(q);
 
+//    std::cout << "minsqd: " << p << " // " << q << std::endl;
 //    std::cout << "canon: " << cp << " // " << cq << std::endl;
 
     FT min_sq_dist = std::numeric_limits<FT>::infinity();
@@ -403,8 +521,7 @@ public:
     for(int i = 0; i < 3; ++i) {
       for(int j = 0; j < 3; ++j) {
         for(int k = 0; k < 3; ++k) {
-          FT sq_dist = geom_traits().compute_squared_distance_3_object()
-            (cq, construct_point(std::make_pair(cp, Offset(i-1, j-1, k-1))));
+          FT sq_dist = csd(cq, construct_point(std::make_pair(cp, Offset(i-1, j-1, k-1))));
 
           if(sq_dist < min_sq_dist)
             min_sq_dist = sq_dist;
@@ -579,9 +696,6 @@ public:
     Locate_type lt;
     int li, lj;
     c = locate(canonic_p, lt, li, lj, c);
-    if(lt == 0 /* Locate_type::VERTEX */) {
-      return make_triple(bfit, cit, ifit);
-    }
 
     std::vector<Facet> facets;
     facets.reserve(64);

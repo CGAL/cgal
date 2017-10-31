@@ -87,6 +87,10 @@ public:
   typedef Functor_with_offset_weighted_points_adaptor_3<Self, typename K::Construct_weighted_circumcenter_3>
       Construct_weighted_circumcenter_3;
 
+  // Required for Periodic_3_mesh_3
+  typedef Functor_with_offset_weighted_points_adaptor_3<Self, typename K::Compute_power_distance_to_power_sphere_3>
+      Compute_power_distance_to_power_sphere_3;
+
   // Operations
   using Base::construct_point_3_object;
 
@@ -95,10 +99,16 @@ public:
                                       this->Base::construct_weighted_point_3_object());
   }
 
-  // construction
+  // constructions
   Construct_weighted_circumcenter_3 construct_weighted_circumcenter_3_object() const {
     return Construct_weighted_circumcenter_3(
       this->Base::construct_weighted_circumcenter_3_object(),
+      construct_point_3_object(), construct_weighted_point_3_object());
+  }
+
+  Compute_power_distance_to_power_sphere_3 compute_power_distance_to_power_sphere_3_object() const {
+    return Compute_power_distance_to_power_sphere_3(
+      this->Base::compute_power_distance_to_power_sphere_3_object(),
       construct_point_3_object(), construct_weighted_point_3_object());
   }
 

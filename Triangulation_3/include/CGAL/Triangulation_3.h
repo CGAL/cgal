@@ -814,14 +814,30 @@ public:
   // GEOMETRIC ACCESS FUNCTIONS
 
   Tetrahedron tetrahedron(const Cell_handle c) const
-    {
-      CGAL_triangulation_precondition( dimension() == 3 );
-      CGAL_triangulation_precondition( ! is_infinite(c) );
-      return construct_tetrahedron(c->vertex(0)->point(),
-                                   c->vertex(1)->point(),
-                                   c->vertex(2)->point(),
-                                   c->vertex(3)->point());
-    }
+  {
+    CGAL_triangulation_precondition( dimension() == 3 );
+    CGAL_triangulation_precondition( ! is_infinite(c) );
+    return construct_tetrahedron(c->vertex(0)->point(),
+                                 c->vertex(1)->point(),
+                                 c->vertex(2)->point(),
+                                 c->vertex(3)->point());
+  }
+
+  template<typename P> // can be 'Point' or 'Point_3'
+  Tetrahedron tetrahedron(const Facet& f, const P& p) const
+  {
+    const Cell_handle c = f.first;
+    const int index = f.second;
+
+    const P& fp1 = point(c, (index + 1)&3);
+    const P& fp2 = point(c, (index + 2)&3);
+    const P& fp3 = point(c, (index + 3)&3);
+
+    return construct_tetrahedron(construct_point(p),
+                                 construct_point(fp1),
+                                 construct_point(fp2),
+                                 construct_point(fp3));
+  }
 
   Triangle triangle(const Cell_handle c, int i) const;
 
