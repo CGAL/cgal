@@ -201,8 +201,8 @@ class Triangulation_3_base<Parallel_tag, Lock_data_structure_>
 public:
   // If Lock_data_structure_ = Default => use Spatial_lock_grid_3
   typedef typename Default::Get<
-  Lock_data_structure_, Spatial_lock_grid_3<Tag_priority_blocking> >
-  ::type Lock_data_structure;
+    Lock_data_structure_,
+    Spatial_lock_grid_3<Tag_priority_blocking> >::type Lock_data_structure;
 
 protected:
   Triangulation_3_base()
@@ -237,9 +237,9 @@ protected:
   struct Vertex_handle_unique_hash_map_generator
   {
     typedef Unique_hash_map<Vertex_handle,
-    Vertex_handle,
-    Handle_hash_function,
-    tbb::scalable_allocator<Vertex_handle> > type;
+                            Vertex_handle,
+                            Handle_hash_function,
+                            tbb::scalable_allocator<Vertex_handle> > type;
   };
 
 public:
