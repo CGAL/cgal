@@ -623,6 +623,25 @@ of the base class.
 
   /// @cond DEVELOPERS
   /// @{
+
+  /// Add a 0-dimensional feature in the domain.
+  Corner_index add_corner(const Point_3& p);
+
+  /// Overloads where the last parameter \c out is not `CGAL::Emptyset_iterator()`.
+  template <typename InputIterator, typename IndicesOutputIterator>
+  IndicesOutputIterator
+  add_corners(InputIterator first, InputIterator end,
+              IndicesOutputIterator out  /*= CGAL::Emptyset_iterator()*/);
+
+  /*!
+    Add 0-dimensional features in the domain. The value type of `InputIterator` must
+    be `Point_3`.
+  */
+  template <typename InputIterator>
+  void
+  add_corners(InputIterator first, InputIterator end)
+  { add_corners(first, end, CGAL::Emptyset_iterator()); }
+
   /// Overloads where the last parameter \c out is not
   /// `CGAL::Emptyset_iterator()`.
   template <typename InputIterator, typename IndicesOutputIterator>
@@ -808,7 +827,7 @@ of the base class.
   Curve_index insert_edge(InputIterator first, InputIterator end);
   /// @endcond
 private:
-  void register_corner(const Point_3& p, const Curve_index& index);
+  Corner_index register_corner(const Point_3& p, const Curve_index& index);
   void compute_corners_incidences();
 
   /// Returns Index associated to p (p must be the coordinates of a corner
@@ -1012,6 +1031,39 @@ construct_point_on_curve(const Point_3& starting_point,
   return eit->second.point_at(starting_point,distance);
 }
 
+
+
+template <class MD_>
+typename Mesh_domain_with_polyline_features_3<MD_>::Corner_index
+Mesh_domain_with_polyline_features_3<MD_>::
+add_corner(const Point_3& p)
+{
+  typename Corners::iterator cit = corners_.lower_bound(p);
+
+  // If the corner already exists, return its assigned Corner_index...
+  if(cit != corners_.end() && !(corners_.key_comp()(p, cit->first)))
+    return cit->second;
+
+  // ... otherwise, insert it!
+  const Corner_index index = current_corner_index_++;
+  corners_.insert(cit, std::make_pair(p, index));
+
+  return index;
+}
+
+
+template <class MD_>
+template <typename InputIterator, typename IndicesOutputIterator>
+IndicesOutputIterator
+Mesh_domain_with_polyline_features_3<MD_>::
+add_corners(InputIterator first, InputIterator end,
+            IndicesOutputIterator indices_out)
+{
+  while ( first != end )
+    *indices_out++ = add_corner(*first++);
+
+  return indices_out;
+}
 
 
 template <class MD_>
@@ -1352,26 +1404,16 @@ get_incidences(Curve_index id) const
 /// @endcond
 
 template <class MD_>
-void
+typename Mesh_domain_with_polyline_features_3<MD_>::Corner_index
 Mesh_domain_with_polyline_features_3<MD_>::
 register_corner(const Point_3& p, const Curve_index& curve_index)
 {
-
-  typename Corners::iterator cit = corners_.lower_bound(p);
-
-  // If the corner already exists, returns...
-  if(cit != corners_.end() && !(corners_.key_comp()(p, cit->first))) {
-    corners_tmp_incidences_[cit->second].insert(curve_index);
-    return;
-  }
-
-  // ...else insert it!
-
-  const Corner_index index = current_corner_index_;
-  ++current_corner_index_;
-
-  corners_.insert(cit, std::make_pair(p, index));
+  // 'add_corner' will itself seek if 'p' is already a corner, and, in that case,
+  // return the Corner_index that has been assigned to this position.
+  Corner_index index = add_corner(p);
   corners_tmp_incidences_[index].insert(curve_index);
+
+  return index;
 }
 
 /// @cond DEVELOPERS
