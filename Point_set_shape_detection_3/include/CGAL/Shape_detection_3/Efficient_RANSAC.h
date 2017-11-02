@@ -681,9 +681,9 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
               best_candidate->indices_of_assigned_points();
 
             // update generated candidates to reflect removal of points
-            generated_candidates = std::pow (1.f - (indices_points_best_candidate.size() /
-                                                    float(m_num_available_points - num_invalid)), 3.f)
-              * generated_candidates;
+            generated_candidates = std::size_t(std::pow (1.f - (indices_points_best_candidate.size() /
+                                                                float(m_num_available_points - num_invalid)), 3.f)
+                                               * generated_candidates);
 
             //2.3 Remove the points from the subtrees
             for (std::size_t i = 0;i<indices_points_best_candidate.size();i++) {
