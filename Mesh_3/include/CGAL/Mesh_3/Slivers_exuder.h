@@ -1266,7 +1266,7 @@ expand_prestar(const Cell_handle& cell_to_add,
 
         // With 'new_weight' only, the point is orthogonal to the power sphere,
         // so we add a little bit more weight to make sure that pwp is in conflict.
-        new_weight += new_weight / 100.;
+        new_weight += std::numeric_limits<double>::epsilon();
 
         Weighted_point ncr_pwp(cp(pwp), new_weight);
 
