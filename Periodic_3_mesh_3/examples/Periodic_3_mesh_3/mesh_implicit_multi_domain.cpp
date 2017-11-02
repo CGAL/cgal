@@ -11,6 +11,7 @@
 #include <CGAL/Implicit_to_labeling_function_wrapper.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/Mesh_criteria_3.h>
+#include <CGAL/Mesh_domain_with_polyline_features_3.h>
 
 #include <CGAL/number_type_config.h> // CGAL_PI
 
@@ -32,7 +33,9 @@ typedef FT (*Function)(const Point&);
 typedef CGAL::Implicit_multi_domain_to_labeling_function_wrapper<Function> Wrapper;
 
 // Domain
-typedef CGAL::Labeled_periodic_3_mesh_domain_3<Wrapper, K>                 Periodic_mesh_domain;
+typedef CGAL::Labeled_periodic_3_mesh_domain_3<Wrapper, K>  Periodic_labeled_mesh_domain;
+typedef CGAL::Mesh_domain_with_polyline_features_3<
+          Periodic_labeled_mesh_domain>                     Periodic_mesh_domain;
 
 // Triangulation
 typedef CGAL::Periodic_3_mesh_triangulation_3<Periodic_mesh_domain>::type  Tr;

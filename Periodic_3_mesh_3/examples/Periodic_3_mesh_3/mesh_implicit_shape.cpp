@@ -12,11 +12,12 @@
 #include <CGAL/IO/Medit_IO.h>
 #include <CGAL/Implicit_periodic_3_mesh_domain_3.h>
 #include <CGAL/make_periodic_3_mesh_3.h>
+#include <CGAL/optimize_periodic_mesh_3.h>
 #include <CGAL/Periodic_3_mesh_triangulation_3.h>
 
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/Mesh_criteria_3.h>
-#include <CGAL/optimize_periodic_mesh_3.h>
+#include <CGAL/Mesh_domain_with_polyline_features_3.h>
 
 #include <CGAL/number_type_config.h> // CGAL_PI
 
@@ -31,7 +32,8 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::FT                                               FT;
 typedef K::Point_3                                          Point;
 typedef FT (Function)(const Point&);
-typedef CGAL::Implicit_periodic_3_mesh_domain_3<Function,K> Periodic_mesh_domain;
+typedef CGAL::Implicit_periodic_3_mesh_domain_3<Function,K> Periodic_implicit_mesh_domain;
+typedef CGAL::Mesh_domain_with_polyline_features_3<Periodic_implicit_mesh_domain> Periodic_mesh_domain;
 
 // Triangulation
 typedef CGAL::Periodic_3_mesh_triangulation_3<Periodic_mesh_domain>::type Tr;
