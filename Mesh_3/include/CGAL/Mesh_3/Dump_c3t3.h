@@ -121,8 +121,8 @@ void dump_c3t3_edges(const C3t3& c3t3, std::string prefix)
     const typename C3t3::Triangulation::Cell_handle c = edge_it->first;
     const int i = edge_it->second;
     const int j = edge_it->third;
-    const typename C3t3::Weighted_point& ei = c3t3.triangulation().point(c, i);
-    const typename C3t3::Weighted_point& ej = c3t3.triangulation().point(c, j);
+    const typename C3t3::Triangulation::Weighted_point& ei = c3t3.triangulation().point(c, i);
+    const typename C3t3::Triangulation::Weighted_point& ej = c3t3.triangulation().point(c, j);
     file << "2 " << cp(ei) << " "  << cp(ej) << "\n";
   }
 }
