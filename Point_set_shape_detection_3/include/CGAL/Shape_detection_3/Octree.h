@@ -289,8 +289,9 @@ namespace CGAL {
             + (m_bBox.ymax() - m_bBox.ymin()) * (m_bBox.ymax() - m_bBox.ymin()) 
             + (m_bBox.zmax() - m_bBox.zmin()) * (m_bBox.zmax() - m_bBox.zmin()));
 
-          m_set_max_level = std::size_t (std::log2 (bbox_diagonal
-                                                    / cluster_epsilon_for_max_level_recomputation));
+          m_set_max_level = std::size_t (std::log (bbox_diagonal
+                                                    / cluster_epsilon_for_max_level_recomputation)
+                                         / std::log (2.0));
         }
 
         std::stack<Cell *> stack;
