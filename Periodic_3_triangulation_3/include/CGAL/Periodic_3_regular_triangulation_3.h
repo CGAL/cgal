@@ -992,30 +992,42 @@ public:
     typename Gt::Construct_weighted_point_3 p2wp =
       geom_traits().construct_weighted_point_3_object();
 
-    Cell_handle c = locate(p2wp(p), lt, li, lj, start);
-    if(lt == Tr_Base::VERTEX)
-      return c->vertex(li);
+    Offset query_offset;
+    Cell_handle c = locate(p2wp(p), query_offset, lt, li, lj, start);
 
-    const Conflict_tester tester(p2wp(p), this);
-    Offset o = combine_offsets(Offset(), get_location_offset(tester, c));
+    // @todo remove that since 'has_on_bounded_side_3_object' is not in RTTraits3
+    CGAL_assertion(geom_traits().has_on_bounded_side_3_object()(
+                     Tetrahedron(this->point(c, 0).point(), this->point(c, 1).point(),
+                                 this->point(c, 2).point(), this->point(c, 3).point()),
+                     construct_point(p, -query_offset)) != CGAL::ON_UNBOUNDED_SIDE);
 
     // - start with the closest vertex from the located cell.
     // - repeatedly take the nearest of its incident vertices if any
     // - if not, we're done.
-    Vertex_handle nearest = nearest_vertex_in_cell(c, p, o);
+
+    // Take the opposite because periodic_locate() returns the offset such that
+    // cell + offset contains 'p' but here we need to move 'p'
+    query_offset = - query_offset;
+
+    Vertex_handle nearest = nearest_vertex_in_cell(c, p, query_offset);
     std::vector<Vertex_handle> vs;
     vs.reserve(32);
     while(true)
     {
       Vertex_handle tmp = nearest;
-      Offset tmp_off = get_min_dist_offset(p, o, tmp);
+      Offset tmp_off = get_min_dist_offset(p, query_offset, tmp);
       adjacent_vertices(nearest, std::back_inserter(vs));
-      for(typename std::vector<Vertex_handle>::const_iterator vsit = vs.begin(); vsit != vs.end(); ++vsit)
+      for(typename std::vector<Vertex_handle>::const_iterator vsit = vs.begin();
+                                                              vsit != vs.end(); ++vsit)
+      {
         tmp = (compare_distance(p, tmp->point(), (*vsit)->point(),
-                                o, tmp_off, get_min_dist_offset(p, o, *vsit))
+                                query_offset, tmp_off, get_min_dist_offset(p, query_offset, *vsit))
                  == SMALLER) ? tmp : *vsit;
+      }
+
       if(tmp == nearest)
         break;
+
       vs.clear();
       nearest = tmp;
     }
@@ -1103,31 +1115,27 @@ public:
   }
 
   Offset get_min_dist_offset(const Bare_point& p, const Offset & o,
-                             const Vertex_handle vh) const {
+                             const Vertex_handle vh) const
+  {
+    // @todo same changes in P3DT3
     Offset mdo = get_offset(vh);
-    Offset min_off = Offset(0,0,0);
-    min_off = (compare_distance(p,vh->point(),vh->point(),
-      o,combine_offsets(mdo,min_off),combine_offsets(mdo,Offset(0,0,1)))
-        == SMALLER ? min_off : Offset(0,0,1) );
-    min_off = (compare_distance(p,vh->point(),vh->point(),
-      o,combine_offsets(mdo,min_off),combine_offsets(mdo,Offset(0,1,0)))
-        == SMALLER ? min_off : Offset(0,1,0) );
-    min_off = (compare_distance(p,vh->point(),vh->point(),
-      o,combine_offsets(mdo,min_off),combine_offsets(mdo,Offset(0,1,1)))
-        == SMALLER ? min_off : Offset(0,1,1) );
-    min_off = (compare_distance(p,vh->point(),vh->point(),
-      o,combine_offsets(mdo,min_off),combine_offsets(mdo,Offset(1,0,0)))
-        == SMALLER ? min_off : Offset(1,0,0) );
-    min_off = (compare_distance(p,vh->point(),vh->point(),
-      o,combine_offsets(mdo,min_off),combine_offsets(mdo,Offset(1,0,1)))
-        == SMALLER ? min_off : Offset(1,0,1) );
-    min_off = (compare_distance(p,vh->point(),vh->point(),
-      o,combine_offsets(mdo,min_off),combine_offsets(mdo,Offset(1,1,0)))
-        == SMALLER ? min_off : Offset(1,1,0) );
-    min_off = (compare_distance(p,vh->point(),vh->point(),
-      o,combine_offsets(mdo,min_off),combine_offsets(mdo,Offset(1,1,1)))
-        == SMALLER ? min_off : Offset(1,1,1) );
-    return combine_offsets(mdo,min_off);
+    Offset min = combine_offsets(mdo, Offset(0, 0, 0));
+
+    for(int i=0; i<2; ++i) {
+      for(int j=0; j<2; ++j) {
+        for(int k=0; k<2; ++k)
+        {
+          if(i==0 && j==0 && k==0)
+            continue;
+
+          Offset loc_off = combine_offsets(mdo, Offset(i, j, k));
+          if(compare_distance(p, vh->point(), vh->point(), o, min, loc_off) == LARGER)
+            min = loc_off;
+        }
+      }
+    }
+
+    return min;
   }
 
   Vertex_handle nearest_vertex_in_cell(const Cell_handle& c, const Bare_point& p,
