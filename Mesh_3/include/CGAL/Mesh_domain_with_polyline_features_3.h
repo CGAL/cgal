@@ -102,7 +102,8 @@ public:
     return start_point() == end_point();
   }
 
-  const_iterator next(const_iterator it, Orientation orientation) const {
+  const_iterator next(const_iterator it, Orientation orientation) const
+  {
     if(orientation == POSITIVE) {
       CGAL_assertion(it != (points_.end() - 1));
       if(it == (points_.end() - 2)) {
@@ -209,7 +210,8 @@ public:
 
   /// Returns the angle at the first point.
   /// \pre The polyline must be a loop.
-  Angle angle_at_first_point() const {
+  Angle angle_at_first_point() const
+  {
     CGAL_precondition(is_loop());
     const Point_3& first = points_.front();
     const Point_3& next_p = points_[1];
@@ -639,16 +641,16 @@ of the base class.
    PolylinePMap polyline_pmap,
    IncidentPatchesIndicesPMap incident_paches_indices_pmap,
    IndicesOutputIterator out /* = CGAL::Emptyset_iterator() */);
-  
+
   template <typename InputIterator, typename IndicesOutputIterator>
   IndicesOutputIterator
   add_features_with_context(InputIterator first, InputIterator end,
-                            IndicesOutputIterator out /*=
-                                                        CGAL::Emptyset_iterator()*/);
+                            IndicesOutputIterator out /*= CGAL::Emptyset_iterator()*/);
   /// @}
   /// \endcond
+
   /*!
-    Add 1-dimensional features in the domain. `InputIterator` value type must 
+    Add 1-dimensional features in the domain. `InputIterator` value type must
     be a model of the concept `MeshPolyline_3`.
   */
   template <typename InputIterator>
@@ -668,9 +670,9 @@ of the base class.
   /*!
     Add 1-dimensional features (curves) from the range `[first, end)` in the domain with their incidences
     with 2-dimensional features (patches) of the domain.
- 
+
     \tparam InputIterator input iterator over curves
-    \tparam PolylinePMap is a model of `ReadablePropertyMap` with key type 
+    \tparam PolylinePMap is a model of `ReadablePropertyMap` with key type
       `std::iterator_traits<InputIterator>::%reference` and a value type
       that is a model of `MeshPolyline_3`.
     \tparam IncidentPatchesIndicesPMap is a model of `ReadablePropertyMap`
@@ -685,7 +687,7 @@ of the base class.
     \param incident_patches_indices_pmap the property map that provides
       access to the set of indices of the surface patches that are incident to
       a given 1D-feature (curve)
-  */ 
+  */
   template <typename InputIterator,
             typename PolylinePMap,
             typename IncidentPatchesIndicesPMap>
@@ -700,7 +702,7 @@ of the base class.
                                 CGAL::Emptyset_iterator());
   }
 /// @}
-  
+
 /// \name Implementation of the concept MeshDomainWithFeatures_3
 /// The following methods implement the requirement of the concept
 /// `MeshDomainWithFeatures_3`.
@@ -806,6 +808,7 @@ of the base class.
   template <typename InputIterator>
   Curve_index insert_edge(InputIterator first, InputIterator end);
   /// @endcond
+
 private:
   void register_corner(const Point_3& p, const Curve_index& index);
   void compute_corners_incidences();
@@ -858,12 +861,14 @@ public:
     if(!curves_aabb_tree_is_built) build_curves_aabb_tree();
     return curves_aabb_tree_;
   }
+
   Curve_index maximal_curve_index() const {
     if(edges_incidences_.empty()) return Curve_index();
     return boost::prior(edges_incidences_.end())->first;
   }
 
-  void build_curves_aabb_tree() const {
+  void build_curves_aabb_tree() const
+  {
 #if CGAL_MESH_3_VERBOSE
     std::cerr << "Building curves AABB tree...";
     CGAL::Real_timer timer;
@@ -901,7 +906,6 @@ private:
 };  // end class Mesh_domain_with_polyline_features_3
 
 
-
 template <class MD_>
 template <typename OutputIterator>
 OutputIterator
@@ -916,6 +920,7 @@ get_corners(OutputIterator out) const
 
   return out;
 }
+
 
 template <class MD_>
 template <typename OutputIterator>
@@ -1012,7 +1017,6 @@ construct_point_on_curve(const Point_3& starting_point,
 }
 
 
-
 template <class MD_>
 template <typename InputIterator, typename IndicesOutputIterator>
 IndicesOutputIterator
@@ -1034,7 +1038,8 @@ add_features(InputIterator first, InputIterator end,
 namespace details {
 
 template <typename PolylineWithContext>
-struct Get_content_from_polyline_with_context {
+struct Get_content_from_polyline_with_context
+{
   typedef Get_content_from_polyline_with_context Self;
   typedef const PolylineWithContext& key_type;
   typedef const typename PolylineWithContext::Bare_polyline& value_type;
@@ -1046,7 +1051,8 @@ struct Get_content_from_polyline_with_context {
 }; // end Get_content_from_polyline_with_context<PolylineWithContext>
 
 template <typename PolylineWithContext>
-struct Get_patches_id_from_polyline_with_context {
+struct Get_patches_id_from_polyline_with_context
+{
   typedef Get_patches_id_from_polyline_with_context Self;
   typedef const PolylineWithContext& key_type;
   typedef const typename PolylineWithContext::Context::Patches_ids& value_type;
@@ -1205,7 +1211,8 @@ get_corner_incident_curves(Corner_index id,
 /// @endcond
 
 /// @cond DEVELOPERS
-namespace internal { namespace Mesh_3 {
+namespace internal {
+namespace Mesh_3 {
 
 template <typename MDwPF_, bool curve_id_is_streamable>
 // here 'curve_id_is_streamable' is true
@@ -1290,6 +1297,7 @@ display_corner_incidences(std::ostream& os, Point_3 p, Corner_index id)
   D_i_t_p()(os, p, id, corners_incidences_[id]);
 }
 /// @endcond
+
 template <class MD_>
 void
 Mesh_domain_with_polyline_features_3<MD_>::
@@ -1350,12 +1358,12 @@ get_incidences(Curve_index id) const
 }
 /// @endcond
 
+
 template <class MD_>
 void
 Mesh_domain_with_polyline_features_3<MD_>::
 register_corner(const Point_3& p, const Curve_index& curve_index)
 {
-
   typename Corners::iterator cit = corners_.lower_bound(p);
 
   // If the corner already exists, returns...
@@ -1365,13 +1373,13 @@ register_corner(const Point_3& p, const Curve_index& curve_index)
   }
 
   // ...else insert it!
-
   const Corner_index index = current_corner_index_;
   ++current_corner_index_;
 
   corners_.insert(cit, std::make_pair(p, index));
   corners_tmp_incidences_[index].insert(curve_index);
 }
+
 
 /// @cond DEVELOPERS
 template <class MD_>
@@ -1453,6 +1461,7 @@ distance_sign_along_loop(const Point_3& p,
   else { return CGAL::NEGATIVE; }
 }
 
+
 template <class MD_>
 bool
 Mesh_domain_with_polyline_features_3<MD_>::
@@ -1464,6 +1473,7 @@ is_loop(const Curve_index& index) const
 
   return eit->second.is_loop();
 }
+
 
 template <class MD_>
 bool
