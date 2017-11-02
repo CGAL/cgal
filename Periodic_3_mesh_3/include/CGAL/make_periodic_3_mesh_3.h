@@ -322,40 +322,16 @@ void make_periodic_3_mesh_3_impl(C3T3& c3t3,
                                  const parameters::internal::Lloyd_options& lloyd,
                                  const bool with_features,
                                  const parameters::internal::Mesh_3_options&
-                                   mesh_options = parameters::internal::Mesh_3_options())
+                                   mesh_options = parameters::internal::Mesh_3_options(),
+                                 const parameters::internal::Manifold_options&
+                                   manifold_options = parameters::internal::Manifold_options())
 {
-  // Initialize the triangulation of c3t3
+  // Initialize the periodic triangulation
   init_triangulation(c3t3, const_cast<MeshDomain&>(domain));
 
-  // @todo call make_mesh_3_impl here ?
-
-  // Initialize c3t3
-  internal::Mesh_3::C3t3_initializer<
-      C3T3,
-      MeshDomain,
-      MeshCriteria,
-      internal::Mesh_3::has_Has_features<MeshDomain>::value > () (
-          c3t3,
-          domain,
-          criteria,
-          with_features,
-          mesh_options.number_of_initial_points);
-
-  // If c3t3 initialization is not sufficient (may happen if there is only
-  // a planar curve as feature for example), add some surface points
-  //if ( c3t3.triangulation().dimension() != 3 )
-  {
-    // internal::Mesh_3::init_c3t3(c3t3, domain, criteria, 12);
-  }
-  CGAL_assertion( c3t3.triangulation().dimension() == 3 );
-
-  CGAL_assertion(c3t3.triangulation().is_valid());
-
-  // Build mesher and launch refinement process
-  // Don't reset c3t3 as we just created it
-  refine_periodic_3_mesh_3(c3t3, domain, criteria,
-                           exude, perturb, odt, lloyd,
-                           parameters::no_reset_c3t3(), mesh_options);
+  return make_mesh_3_impl(c3t3, domain, criteria,
+                          exude, perturb, odt, lloyd, with_features,
+                          mesh_options, manifold_options);
 }
 
 }  // end namespace CGAL
