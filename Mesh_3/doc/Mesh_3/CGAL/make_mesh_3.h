@@ -124,12 +124,12 @@ they are always launched in the order that is a suborder
 of the following (see user manual for further details): 
 *lloyd*, *odt*, *perturb*, *exude*. 
 
-Also beware, that optimization of the mesh is obtained 
+Beware that optimization of the mesh is obtained
 by perturbing mesh vertices and modifying the mesh connectivity 
 and that this has an impact 
 on the strict compliance to the refinement criteria. 
 Though a strict compliance to mesh criteria 
-is granted at the end of the Delaunay refinement, this may no longer be true after 
+is guaranteed at the end of the Delaunay refinement, this may no longer be true after
 some optimization processes. Also beware that the default behavior does involve some 
 optimization processes. 
 

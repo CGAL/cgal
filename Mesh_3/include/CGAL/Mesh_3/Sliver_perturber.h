@@ -472,13 +472,15 @@ class Sliver_perturber
   typedef Sliver_perturber_base<
     typename C3T3::Triangulation, Concurrency_tag>                      Base;
 
-  typedef typename C3T3::Triangulation  Tr;
-  typedef typename Tr::Geom_traits      Gt;
+  typedef typename C3T3::Triangulation          Tr;
+  typedef typename Tr::Geom_traits              Gt;
 
   typedef typename Tr::Cell_handle              Cell_handle;
   typedef typename Base::Vertex_handle          Vertex_handle;
   typedef typename Tr::Vertex                   Vertex;
-  typedef typename MeshDomain::Point_3          Point_3;
+
+  typedef typename Tr::Bare_point               Bare_point;
+  typedef typename Tr::Weighted_point           Weighted_point;
 
   typedef typename std::vector<Cell_handle>     Cell_vector;
   typedef typename std::vector<Vertex_handle>   Vertex_vector;
@@ -507,7 +509,7 @@ private:
 
   typedef PVertex_<FT,
                    Vertex_handle,
-                   Point_3,
+                   Bare_point,
                    SliverCriterion,
                    Perturbation,
                    Concurrency_tag> PVertex;
@@ -1298,7 +1300,7 @@ perturb_vertex( PVertex pv
               , bool *could_lock_zone
               ) const
 {
-  typename Gt::Construct_point_3 wp2p = tr_.geom_traits().construct_point_3_object();
+  typename Gt::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
 
 #ifdef CGAL_CONCURRENT_MESH_3_PROFILING
   static Profile_branch_counter_3 bcounter(
@@ -1313,9 +1315,10 @@ perturb_vertex( PVertex pv
     return;
   }
 
-  Point_3 p = wp2p(pv.vertex()->point());
+  // <periodic> and what's happening below... ?
+  Point_3 p = cp(pv.vertex()->point());
   if (!helper_.try_lock_point_no_spin(pv.vertex()->point()) ||
-      ! tr_.geom_traits().equal_3_object()(p, wp2p(pv.vertex()->point())))
+      ! tr_.geom_traits().equal_3_object()(p, cp(pv.vertex()->point())))
   {
 #ifdef CGAL_CONCURRENT_MESH_3_PROFILING
     bcounter.increment_branch_2(); // THIS is an early withdrawal!

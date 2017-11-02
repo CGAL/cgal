@@ -40,10 +40,16 @@ template<typename Tr>
 class Triangulation_helpers
 {
   typedef typename Tr::Geom_traits              Gt;
+
   typedef typename Tr::Bare_point               Bare_point;
   typedef typename Tr::Weighted_point           Weighted_point;
+  typedef typename Gt::Vector_3                 Vector_3;
+
+  typedef typename Tr::Vertex                   Vertex;
   typedef typename Tr::Vertex_handle            Vertex_handle;
+  typedef typename Tr::Cell                     Cell;
   typedef typename Tr::Cell_handle              Cell_handle;
+  typedef typename Tr::Cell_iterator            Cell_iterator;
   typedef std::vector<Cell_handle>              Cell_vector;
 
   /**
@@ -89,34 +95,37 @@ public:
    * Moves point from \c v to \c p.
    */
   void move_point(Tr& tr,
-                  const Vertex_handle& v,
+                  const Vertex_handle v,
+                  const Vector_3& move,
                   const Weighted_point& p) const;
 
   /**
    * Returns true if moving \c v to \c p makes no topological
    * change in \c tr
    */
-  bool no_topological_change(const Tr& tr,
-                             const Vertex_handle& v,
+  bool no_topological_change(Tr& tr,
+                             const Vertex_handle v,
+                             const Vector_3& move,
                              const Weighted_point& p,
                              Cell_vector& cells_tos) const;
   bool no_topological_change__without_set_point(
                              const Tr& tr,
-                             const Vertex_handle& v,
+                             const Vertex_handle v,
                              const Weighted_point& p,
                              Cell_vector& cells_tos) const;
 
-  bool no_topological_change(const Tr& tr,
-                             const Vertex_handle& v,
+  bool no_topological_change(Tr& tr,
+                             const Vertex_handle v,
+                             const Vector_3& move,
                              const Weighted_point& p) const;
   bool no_topological_change__without_set_point(
                              const Tr& tr,
-                             const Vertex_handle& v,
+                             const Vertex_handle v,
                              const Weighted_point& p) const;
 
 
   bool inside_protecting_balls(const Tr& tr,
-                               const Vertex_handle& v,
+                               const Vertex_handle v,
                                const Bare_point& p) const;
   
 private:
@@ -137,11 +146,12 @@ template<typename Tr>
 void
 Triangulation_helpers<Tr>::
 move_point(Tr& tr,
-           const Vertex_handle& v,
+           const Vertex_handle v,
+           const Vector_3& move,
            const Weighted_point& p) const
 {
-  if ( no_topological_change(tr, v, p) )
-    v->set_point(p);
+  if ( no_topological_change(tr, v, move, p) )
+    tr.set_point(v, move, p);
   else
   {
     tr.insert(p);
@@ -152,44 +162,132 @@ move_point(Tr& tr,
 template<typename Tr>
 bool
 Triangulation_helpers<Tr>::
-no_topological_change(const Tr& tr,
-                      const Vertex_handle& v0,
+no_topological_change(Tr& tr,
+                      const Vertex_handle v0,
+                      const Vector_3& move,
                       const Weighted_point& p,
                       Cell_vector& cells_tos) const
 {
-  bool np = true;
-  const Weighted_point fp = v0->point();
-  v0->set_point(p);
+  typename Gt::Construct_opposite_vector_3 cov =
+      tr.geom_traits().construct_opposite_vector_3_object();
 
-  if(!well_oriented(tr, cells_tos))
+  bool np = true;
+  const Weighted_point fp = tr.point(v0);
+
+//#define CGAL_PERIODIC_BACKUP_CHECK
+//#define CGAL_PERIODIC_SIDE_OF_DEBUG
+//#define CGAL_PERIODIC_CELL_VERBOSE
+
+#ifdef CGAL_PERIODIC_BACKUP_CHECK
+  std::vector<Cell> cells_backup;
+  for(Cell_iterator cit=tr.all_cells_begin(); cit!=tr.all_cells_end(); ++cit)
+    cells_backup.push_back(*cit);
+
+  std::vector<Vertex> vertex_backup;
+  for(typename Tr::Vertex_iterator vit=tr.all_vertices_begin();
+                                   vit!=tr.all_vertices_end(); ++vit)
+    vertex_backup.push_back(*vit);
+#endif
+
+#ifdef CGAL_PERIODIC_SIDE_OF_DEBUG
+  CGAL_assertion(well_oriented(tr, cells_tos));
+
+  for(Cell_iterator cit=tr.all_cells_begin(); cit!=tr.all_cells_end(); ++cit)
   {
-    // Reset (restore) v0
-    v0->set_point(fp);
-    return false;
+    for(int j=0; j<4; j++)
+      cit->reset_visited(j);
   }
 
-  // Reset visited tags of facets
-  std::for_each(cells_tos.begin(), cells_tos.end(), Reset_facet_visited());
-
-  for ( typename Cell_vector::iterator cit = cells_tos.begin() ;
-        cit != cells_tos.end() ;
-        ++cit )
+  for(Cell_iterator cit=tr.all_cells_begin(); cit!=tr.all_cells_end(); ++cit)
   {
-    Cell_handle c = *cit;
+    Cell_handle c = cit;
     for(int j=0; j<4; j++)
     {
       // Treat each facet only once
       if(c->is_facet_visited(j))
         continue;
 
-      // Set facet and it's mirror's one visited
+      // Set facet and its mirrored version as visited
+      Cell_handle cj = c->neighbor(j);
+      CGAL_assertion(c!=cj);
+      int mj = tr.mirror_index(c, j);
+      c->set_facet_visited(j);
+      cj->set_facet_visited(mj);
+
+      if(tr.is_infinite(c->vertex(j)))
+      {
+        CGAL_assertion(tr.side_of_power_sphere(c, tr.point(cj, mj), false)
+                         != CGAL::ON_BOUNDED_SIDE);
+      }
+      else
+      {
+#ifdef CGAL_PERIODIC_CELL_VERBOSE
+        std::cout << "--- pre" << std::endl;
+        std::cout << "Cj: " << &*cj << std::endl
+                  << cj->vertex(0)->point() << " Off: " << cj->offset(0) << " tra: " << tr.point(cj, 0) << std::endl
+                  << cj->vertex(1)->point() << " Off: " << cj->offset(1) << " tra: " << tr.point(cj, 1) << std::endl
+                  << cj->vertex(2)->point() << " Off: " << cj->offset(2) << " tra: " << tr.point(cj, 2) << std::endl
+                  << cj->vertex(3)->point() << " Off: " << cj->offset(3) << " tra: " << tr.point(cj, 3) << std::endl
+                  << "fifth: " << tr.point(c, j) << std::endl;
+#endif
+        if(tr.side_of_power_sphere(cj, c->vertex(j)->point(), false) == CGAL::ON_BOUNDARY)
+        {
+//          std::cerr << "warning: on boundary" << std::endl;
+        }
+
+        CGAL_assertion(tr.side_of_power_sphere(cj, c->vertex(j)->point(), false)
+                        != CGAL::ON_BOUNDED_SIDE);
+      }
+    }
+  }
+#endif
+
+//  CGAL_assertion(tr.is_valid(true, 1000));
+
+  // move point
+  tr.set_point(v0, move, p);
+
+  if(!well_oriented(tr, cells_tos))
+  {
+    // Reset (restore) v0
+    tr.set_point(v0, cov(move), fp);
+    return false;
+  }
+
+#if 1
+  // Reset visited tags of facets
+  std::for_each(cells_tos.begin(), cells_tos.end(), Reset_facet_visited());
+
+  for ( typename Cell_vector::iterator cit = cells_tos.begin() ;
+                                       cit != cells_tos.end() ;
+                                       ++cit )
+  {
+    Cell_handle c = *cit;
+#else
+  // Reset visited tags of facets
+  for(Cell_iterator cit=tr.all_cells_begin(); cit!=tr.all_cells_end(); ++cit)
+  {
+    for(int j=0; j<4; j++)
+      cit->reset_visited(j);
+  }
+
+  for(Cell_iterator cit=tr.all_cells_begin(); cit!=tr.all_cells_end(); ++cit)
+  {
+    Cell_handle c = cit;
+#endif
+    for(int j=0; j<4; j++)
+    {
+      // Treat each facet only once
+      if(c->is_facet_visited(j))
+        continue;
+
+      // Set facet and its mirrored version as visited
       Cell_handle cj = c->neighbor(j);
       int mj = tr.mirror_index(c, j);
       c->set_facet_visited(j);
       cj->set_facet_visited(mj);
 
-      Vertex_handle v1 = c->vertex(j);
-      if(tr.is_infinite(v1))
+      if(tr.is_infinite(c->vertex(j)))
       {
         if(tr.side_of_power_sphere(c, cj->vertex(mj)->point(), false)
            != CGAL::ON_UNBOUNDED_SIDE)
@@ -200,7 +298,16 @@ no_topological_change(const Tr& tr,
       }
       else
       {
-        if(tr.side_of_power_sphere(cj, v1->point(), false)
+#ifdef CGAL_PERIODIC_CELL_VERBOSE
+        std::cout << "--- inprogress" << std::endl;
+        std::cout << "Cj: " << &*cj << std::endl
+                  << cj->vertex(0)->point() << " Off: " << cj->offset(0) << " tra: " << tr.point(cj, 0) << std::endl
+                  << cj->vertex(1)->point() << " Off: " << cj->offset(1) << " tra: " << tr.point(cj, 1) << std::endl
+                  << cj->vertex(2)->point() << " Off: " << cj->offset(2) << " tra: " << tr.point(cj, 2) << std::endl
+                  << cj->vertex(3)->point() << " Off: " << cj->offset(3) << " tra: " << tr.point(cj, 3) << std::endl
+                  << "fifth: " << tr.point(c, j) << std::endl;
+#endif
+        if(tr.side_of_power_sphere(cj, c->vertex(j)->point(), false)
            != CGAL::ON_UNBOUNDED_SIDE)
         {
           np = false;
@@ -211,7 +318,84 @@ no_topological_change(const Tr& tr,
   }
 
   // Reset (restore) v0
-  v0->set_point(fp);
+  tr.set_point(v0, cov(move), fp);
+
+#ifdef CGAL_PERIODIC_SIDE_OF_DEBUG
+  CGAL_assertion(well_oriented(tr, cells_tos));
+
+  for(Cell_iterator cit=tr.all_cells_begin(); cit!=tr.all_cells_end(); ++cit)
+  {
+    for(int j=0; j<4; j++)
+      cit->reset_visited(j);
+  }
+
+  for(Cell_iterator cit=tr.all_cells_begin(); cit!=tr.all_cells_end(); ++cit)
+  {
+    Cell_handle c = cit;
+    for(int j=0; j<4; j++)
+    {
+      // Treat each facet only once
+      if(c->is_facet_visited(j))
+        continue;
+
+      // Set facet and its mirrored version as visited
+      Cell_handle cj = c->neighbor(j);
+      int mj = tr.mirror_index(c, j);
+      c->set_facet_visited(j);
+      cj->set_facet_visited(mj);
+
+      if(tr.is_infinite(c->vertex(j)))
+      {
+        CGAL_assertion(tr.side_of_power_sphere(c, tr.point(cj, mj), false)
+                         != CGAL::ON_BOUNDED_SIDE);
+      }
+      else
+      {
+#ifdef CGAL_PERIODIC_CELL_VERBOSE
+        std::cout << "--- post" << std::endl;
+        std::cout << "Cj: " << &*cj << std::endl
+                  << cj->vertex(0)->point() << " Off: " << cj->offset(0) << " tra: " << tr.point(cj, 0) << std::endl
+                  << cj->vertex(1)->point() << " Off: " << cj->offset(1) << " tra: " << tr.point(cj, 1) << std::endl
+                  << cj->vertex(2)->point() << " Off: " << cj->offset(2) << " tra: " << tr.point(cj, 2) << std::endl
+                  << cj->vertex(3)->point() << " Off: " << cj->offset(3) << " tra: " << tr.point(cj, 3) << std::endl
+                  << "fifth: " << tr.point(c, j) << std::endl;
+#endif
+        CGAL_assertion(tr.side_of_power_sphere(cj, c->vertex(j)->point(), false)
+                        != CGAL::ON_BOUNDED_SIDE);
+      }
+    }
+  }
+#endif
+
+  // DEBUG: check that the triangulation is the same as before...
+#ifdef CGAL_PERIODIC_BACKUP_CHECK
+  typename std::vector<Cell>::const_iterator ccit = cells_backup.begin();
+  for(Cell_iterator cit=tr.all_cells_begin(); cit!=tr.all_cells_end(); ++cit)
+  {
+    const Cell& c1 = *ccit++;
+    const Cell& c2 = *cit;
+
+    CGAL_assertion(c1.vertex(0) == c2.vertex(0));
+    CGAL_assertion(c1.vertex(1) == c2.vertex(1));
+    CGAL_assertion(c1.vertex(2) == c2.vertex(2));
+    CGAL_assertion(c1.vertex(3) == c2.vertex(3));
+
+    CGAL_assertion(c1.offset(0) == c2.offset(0));
+    CGAL_assertion(c1.offset(1) == c2.offset(1));
+    CGAL_assertion(c1.offset(2) == c2.offset(2));
+    CGAL_assertion(c1.offset(3) == c2.offset(3));
+  }
+
+  typename std::vector<Vertex>::iterator vvit = vertex_backup.begin();
+  for(typename Tr::Vertex_iterator vit=tr.all_vertices_begin();
+                                   vit!=tr.all_vertices_end(); ++vit)
+  {
+    CGAL_assertion(vvit->point() == vit->point());
+    ++vvit;
+  }
+#endif
+
+//  CGAL_assertion(tr.is_valid(true, 1000));
 
   return np;
 }
@@ -221,7 +405,7 @@ bool
 Triangulation_helpers<Tr>::
 no_topological_change__without_set_point(
   const Tr& tr,
-  const Vertex_handle& v0,
+  const Vertex_handle v0,
   const Weighted_point& p,
   Cell_vector& cells_tos) const
 {
@@ -309,14 +493,15 @@ no_topological_change__without_set_point(
 template<typename Tr>
 bool
 Triangulation_helpers<Tr>::
-no_topological_change(const Tr& tr,
-                      const Vertex_handle& v0,
+no_topological_change(Tr& tr,
+                      const Vertex_handle v0,
+                      const Vector_3& move,
                       const Weighted_point& p) const
 {
   Cell_vector cells_tos;
   cells_tos.reserve(64);
   tr.incident_cells(v0, std::back_inserter(cells_tos));
-  return no_topological_change(tr, v0, p, cells_tos);
+  return no_topological_change(tr, v0, move, p, cells_tos);
 }
 
 template<typename Tr>
@@ -324,7 +509,7 @@ bool
 Triangulation_helpers<Tr>::
 no_topological_change__without_set_point(
                       const Tr& tr,
-                      const Vertex_handle& v0,
+                      const Vertex_handle v0,
                       const Weighted_point& p) const
 {
   Cell_vector cells_tos;
@@ -338,19 +523,23 @@ template<typename Tr>
 bool
 Triangulation_helpers<Tr>::
 inside_protecting_balls(const Tr& tr,
-                        const Vertex_handle& v,
+                        const Vertex_handle v,
                         const Bare_point& p) const
 {
   Vertex_handle nv = tr.nearest_power_vertex(p, v->cell());
   if(nv->point().weight() > 0)
-    return tr.geom_traits().compare_squared_distance_3_object()(
-          p, nv->point(), nv->point().weight()) != CGAL::LARGER;
+  {
+    typename Tr::Geom_traits::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
+    const Weighted_point& nvwp = tr.point(nv);
+    return (tr.min_squared_distance(p, cp(nvwp)) <= nv->point().weight());
+  }
+
   return false;
 }
 
-  
-/// This function well_oriented is called by no_topological_change after a
-/// v->set_point(p)
+
+/// This function well_oriented is called by no_topological_change after the
+/// position of the vertex has been (tentatively) modified.
 template<typename Tr>
 bool
 Triangulation_helpers<Tr>::
@@ -359,7 +548,7 @@ well_oriented(const Tr& tr,
 {
   typedef typename Tr::Geom_traits Gt;
   typename Gt::Orientation_3 orientation = tr.geom_traits().orientation_3_object();
-  typename Gt::Construct_point_3 wp2p = tr.geom_traits().construct_point_3_object();
+  typename Gt::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
 
   typename Cell_vector::const_iterator it = cells_tos.begin();
   for( ; it != cells_tos.end() ; ++it)
@@ -370,17 +559,25 @@ well_oriented(const Tr& tr,
       int iv = c->index(tr.infinite_vertex());
       Cell_handle cj = c->neighbor(iv);
       int mj = tr.mirror_index(c, iv);
-      if(orientation(wp2p(cj->vertex(mj)->point()),
-                     wp2p(c->vertex((iv+1)&3)->point()),
-                     wp2p(c->vertex((iv+2)&3)->point()),
-                     wp2p(c->vertex((iv+3)&3)->point())) != CGAL::NEGATIVE)
+
+      const Weighted_point& mjwp = tr.point(cj, mj);
+      const Weighted_point& fwp1 = tr.point(c, (iv+1)&3);
+      const Weighted_point& fwp2 = tr.point(c, (iv+2)&3);
+      const Weighted_point& fwp3 = tr.point(c, (iv+3)&3);
+
+      if(orientation(cp(mjwp), cp(fwp1), cp(fwp2), cp(fwp3)) != CGAL::NEGATIVE)
         return false;
     }
-    else if(orientation(wp2p(c->vertex(0)->point()),
-                        wp2p(c->vertex(1)->point()),
-                        wp2p(c->vertex(2)->point()),
-                        wp2p(c->vertex(3)->point())) != CGAL::POSITIVE)
+    else
+    {
+      const Weighted_point& cwp0 = tr.point(c, 0);
+      const Weighted_point& cwp1 = tr.point(c, 1);
+      const Weighted_point& cwp2 = tr.point(c, 2);
+      const Weighted_point& cwp3 = tr.point(c, 3);
+
+      if(orientation(cp(cwp0), cp(cwp1), cp(cwp2), cp(cwp3)) != CGAL::POSITIVE)
       return false;
+    }
   }
   return true;
 }
@@ -397,7 +594,7 @@ well_oriented(const Tr& tr,
 {
   typedef typename Tr::Geom_traits Gt;
   typename Gt::Orientation_3 orientation = tr.geom_traits().orientation_3_object();
-  typename Gt::Construct_point_3 wp2p = tr.geom_traits().construct_point_3_object();
+  typename Gt::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
 
   typename Cell_vector::const_iterator it = cells_tos.begin();
   for( ; it != cells_tos.end() ; ++it)
@@ -408,16 +605,16 @@ well_oriented(const Tr& tr,
       int iv = c->index(tr.infinite_vertex());
       Cell_handle cj = c->neighbor(iv);
       int mj = tr.mirror_index(c, iv);
-      if(orientation(wp2p(pg(cj->vertex(mj))),
-                     wp2p(pg(c->vertex((iv+1)&3))),
-                     wp2p(pg(c->vertex((iv+2)&3))),
-                     wp2p(pg(c->vertex((iv+3)&3)))) != CGAL::NEGATIVE)
+      if(orientation(cp(pg(cj->vertex(mj))),
+                     cp(pg(c->vertex((iv+1)&3))),
+                     cp(pg(c->vertex((iv+2)&3))),
+                     cp(pg(c->vertex((iv+3)&3)))) != CGAL::NEGATIVE)
         return false;
     }
-    else if(orientation(wp2p(pg(c->vertex(0))),
-                        wp2p(pg(c->vertex(1))),
-                        wp2p(pg(c->vertex(2))),
-                        wp2p(pg(c->vertex(3)))) != CGAL::POSITIVE)
+    else if(orientation(cp(pg(c->vertex(0))),
+                        cp(pg(c->vertex(1))),
+                        cp(pg(c->vertex(2))),
+                        cp(pg(c->vertex(3)))) != CGAL::POSITIVE)
       return false;
   }
   return true;

@@ -60,7 +60,7 @@ struct Null_subdomain_index {
  *  - f(p)=0 means that p is outside domain.
  *  - f(p)=a, a!=0 means that p is inside subdomain a.
  *
- *  Any boundary facet is labelled <a,b>, a<b, where a and b are the
+ *  Any boundary facet is labelled <a,b>, with a<b, where a and b are the
  *  tags of it's incident subdomain.
  *  Thus, a boundary facet of the domain is labelled <0,b>, where b!=0.
  */
@@ -466,7 +466,7 @@ public:
   // -----------------------------------
 
 
-private:
+protected:
   /// Returns Surface_patch_index from \c i and \c j
   Surface_patch_index make_surface_index(const Subdomain_index i,
                                    const Subdomain_index j) const
@@ -510,6 +510,8 @@ private:
 protected:
   /// Returns bounding box
   const Iso_cuboid_3& bounding_box() const { return bbox_; }
+  const Function& labeling_function() const { return function_; }
+  FT squared_error_bound_value() const { return squared_error_bound_; }
 
 private:
   /// The function which answers subdomain queries
@@ -647,7 +649,6 @@ Labeled_mesh_domain_3<F,BGT,Null>::Construct_initial_points::operator()(
   // Create point_iterator on and in bounding_sphere
   typedef Random_points_on_sphere_3<Point_3> Random_points_on_sphere_3;
   typedef Random_points_in_sphere_3<Point_3> Random_points_in_sphere_3;
-
 
   const FT squared_radius = BGT().compute_squared_radius_3_object()(
       r_domain_.bounding_sphere(r_domain_.bbox_));

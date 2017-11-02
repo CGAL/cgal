@@ -38,7 +38,7 @@ namespace CGAL
 
 template < typename K >
 class Robust_filtered_compute_squared_radius_3
-    : public K::Compute_squared_radius_3
+  : public K::Compute_squared_radius_3
 {
 public:
   typedef Exact_predicates_exact_constructions_kernel  EK;
@@ -63,36 +63,36 @@ public:
   operator()( const Circle_3& c) const
   { return K::Compute_squared_radius_3::operator()(c); }
 
-  FT operator() ( const Point_3 & p,
-                  const Point_3 & q,
-                  const Point_3 & r) const
+  FT operator()(const Point_3& p,
+                const Point_3& q,
+                const Point_3& r) const
   {
     return K::Compute_squared_radius_3::operator()(p,q,r);
   }
 
-  FT operator() ( const Point_3 & p,
-                  const Point_3 & q) const
+  FT operator()(const Point_3& p,
+                const Point_3& q) const
   {
     return K::Compute_squared_radius_3::operator()(p,q);
   }
 
-  FT operator() ( const Point_3 & p) const
+  FT operator()(const Point_3& p) const
   {
     return K::Compute_squared_radius_3::operator()(p);
   }
 #endif // CGAL_CFG_MATCHING_BUG_6
 
-  FT operator() ( const Point_3 & p,
-                  const Point_3 & q,
-                  const Point_3 & r,
-                  const Point_3 & s ) const
+  FT operator()(const Point_3& p,
+                const Point_3& q,
+                const Point_3& r,
+                const Point_3& s) const
   {
     typename K::Compute_squared_radius_3 sq_radius =
         K().compute_squared_radius_3_object();
 
     // Compute denominator to swith to exact if it is 0
     const FT denom = compute_denom(p,q,r,s);
-    if ( ! CGAL_NTS is_zero(denom) )
+    if( ! CGAL_NTS is_zero(denom) )
     {
       return sq_radius(p,q,r,s);
     }
@@ -110,10 +110,10 @@ public:
   }
 
 private:
-  FT compute_denom(const Point_3 & p,
-                   const Point_3 & q,
-                   const Point_3 & r,
-                   const Point_3 & s) const
+  FT compute_denom(const Point_3& p,
+                   const Point_3& q,
+                   const Point_3& r,
+                   const Point_3& s) const
   {
     return compute_denom(p.x(),p.y(),p.z(),
                          q.x(),q.y(),q.z(),
@@ -121,10 +121,10 @@ private:
                          s.x(),s.y(),s.z());
   }
 
-  FT compute_denom(const FT &px, const FT &py, const FT &pz,
-                   const FT &qx, const FT &qy, const FT &qz,
-                   const FT &rx, const FT &ry, const FT &rz,
-                   const FT &sx, const FT &sy, const FT &sz) const
+  FT compute_denom(const FT& px, const FT& py, const FT& pz,
+                   const FT& qx, const FT& qy, const FT& qz,
+                   const FT& rx, const FT& ry, const FT& rz,
+                   const FT& sx, const FT& sy, const FT& sz) const
   {
     const FT qpx = qx-px;
     const FT qpy = qy-py;
@@ -160,23 +160,23 @@ public:
 
   typedef Point_3                                           result_type;
 
-  typename K::Construct_point_3 wp2p;
+  typename K::Construct_point_3 cp;
   typename K::Construct_weighted_point_3 p2wp;
 
   Robust_filtered_construct_weighted_circumcenter_3()
     :
-      wp2p(K().construct_point_3_object()),
+      cp(K().construct_point_3_object()),
       p2wp(K().construct_weighted_point_3_object())
   { }
 
-  Point_3  operator() ( const Weighted_point_3 & p,
-                        const Weighted_point_3 & q,
-                        const Weighted_point_3 & r,
-                        const Weighted_point_3 & s,
-                        bool force_exact = false) const
+  Point_3 operator()(const Weighted_point_3& p,
+                     const Weighted_point_3& q,
+                     const Weighted_point_3& r,
+                     const Weighted_point_3& s,
+                     bool force_exact = false) const
   {
     CGAL_precondition(K().orientation_3_object()(
-      wp2p(p), wp2p(q), wp2p(r), wp2p(s)) == CGAL::POSITIVE);
+      cp(p), cp(q), cp(r), cp(s)) == CGAL::POSITIVE);
 
     if(! force_exact)
     {
@@ -204,18 +204,21 @@ public:
                                                  num_x,  num_y, num_z, den);
       }
 
-      if ( ! CGAL_NTS is_zero(den) )
+      if(! CGAL_NTS is_zero(den))
       {
         FT inv = FT(1)/(FT(2) * den);
         Point_3 res(p.x() + num_x*inv, p.y() - num_y*inv, p.z() + num_z*inv);
 
-        if(unweighted){
-          if (side_of_oriented_sphere(wp2p(p), wp2p(q), wp2p(r), wp2p(s), res)
+        if(unweighted)
+        {
+          if(side_of_oriented_sphere(cp(p), cp(q), cp(r), cp(s), res)
               == CGAL::ON_POSITIVE_SIDE )
             return res;
-        } else {
+        }
+        else
+        {
           // Fast output
-          if ( power_side_of_oriented_power_sphere(p,q,r,s,p2wp(res)) == CGAL::ON_POSITIVE_SIDE )
+          if(power_side_of_oriented_power_sphere(p,q,r,s,p2wp(res)) == CGAL::ON_POSITIVE_SIDE)
             return res;
         }
       }
@@ -233,11 +236,11 @@ public:
                                                        to_exact(s)));
   }
 
-  Point_3 operator() ( const Weighted_point_3 & p,
-                       const Weighted_point_3 & q,
-                       const Weighted_point_3 & r ) const
+  Point_3 operator()(const Weighted_point_3& p,
+                     const Weighted_point_3& q,
+                     const Weighted_point_3& r) const
   {
-    CGAL_precondition(! K().collinear_3_object()(wp2p(p), wp2p(q), wp2p(r)));
+    CGAL_precondition(! K().collinear_3_object()(cp(p), cp(q), cp(r)));
 
     typename K::Side_of_bounded_sphere_3 side_of_bounded_sphere =
         K().side_of_bounded_sphere_3_object();
@@ -249,13 +252,13 @@ public:
                                              r.x(), r.y(), r.z(), r.weight(),
                                              num_x,  num_y, num_z, den);
 
-    if ( ! CGAL_NTS is_zero(den) )
+    if(! CGAL_NTS is_zero(den))
     {
       FT inv = FT(1)/(FT(2) * den);
       Point_3 res(p.x() + num_x*inv, p.y() - num_y*inv, p.z() + num_z*inv);
 
       // Fast output
-      if ( side_of_bounded_sphere(wp2p(p),wp2p(q),wp2p(r),res) == CGAL::ON_BOUNDED_SIDE )
+      if(side_of_bounded_sphere(cp(p),cp(q),cp(r),res) == CGAL::ON_BOUNDED_SIDE)
         return res;
     }
 
@@ -270,8 +273,8 @@ public:
                                                        to_exact(r)));
   }
 
-  Point_3 operator() ( const Weighted_point_3 & p,
-                       const Weighted_point_3 & q ) const
+  Point_3 operator()(const Weighted_point_3& p,
+                     const Weighted_point_3& q ) const
   {
     typename K::Construct_weighted_circumcenter_3 weighted_circumcenter =
         K().construct_weighted_circumcenter_3_object();
@@ -284,7 +287,7 @@ public:
     result_type point = weighted_circumcenter(p,q);
 
     // Fast output
-    if ( side_of_bounded_sphere(cp(p), cp(q), point) == CGAL::ON_BOUNDED_SIDE )
+    if(side_of_bounded_sphere(cp(p), cp(q), point) == CGAL::ON_BOUNDED_SIDE)
       return point;
 
     // Switch to exact
@@ -293,8 +296,7 @@ public:
     EK::Construct_weighted_circumcenter_3 exact_weighted_circumcenter =
         EK().construct_weighted_circumcenter_3_object();
 
-    return back_from_exact(exact_weighted_circumcenter(to_exact(p),
-                                                       to_exact(q)));
+    return back_from_exact(exact_weighted_circumcenter(to_exact(p), to_exact(q)));
   }
 };
 
@@ -310,10 +312,10 @@ public:
   typedef typename K::Weighted_point_3                       Weighted_point_3;
   typedef typename K::FT                                     FT;
 
-  FT operator() ( const Weighted_point_3& p,
-                  const Weighted_point_3& q,
-                  const Weighted_point_3& r,
-                  const Weighted_point_3& s ) const
+  FT operator()(const Weighted_point_3& p,
+                const Weighted_point_3& q,
+                const Weighted_point_3& r,
+                const Weighted_point_3& s) const
   {
     // Compute denominator to swith to exact if it is 0
     FT num_x, num_y, num_z, den;
@@ -322,13 +324,13 @@ public:
                                              r.x(), r.y(), r.z(), r.weight(),
                                              s.x(), s.y(), s.z(), s.weight(),
                                              num_x,  num_y, num_z, den);
-    if ( ! CGAL_NTS is_zero(den) )
+    if(! CGAL_NTS is_zero(den))
     {
       FT inv = FT(1)/(FT(2) * den);
 
-      return (  CGAL_NTS square(num_x)
-                + CGAL_NTS square(num_y)
-                + CGAL_NTS square(num_z) ) * CGAL_NTS square(inv) - p.weight();
+      return (CGAL_NTS square(num_x) +
+              CGAL_NTS square(num_y) +
+              CGAL_NTS square(num_z)) * CGAL_NTS square(inv) - p.weight();
     }
 
     // Switch to exact
@@ -341,9 +343,9 @@ public:
                                                 to_exact(r),to_exact(s)));
   }
 
-  FT operator() (const Weighted_point_3& p,
-                 const Weighted_point_3& q,
-                 const Weighted_point_3& r) const
+  FT operator()(const Weighted_point_3& p,
+                const Weighted_point_3& q,
+                const Weighted_point_3& r) const
   {
     // Compute denominator to swith to exact if it is 0
     FT num_x, num_y, num_z, den;
@@ -352,13 +354,13 @@ public:
                                              r.x(), r.y(), r.z(), r.weight(),
                                              num_x,  num_y, num_z, den);
 
-    if ( ! CGAL_NTS is_zero(den) )
+    if(! CGAL_NTS is_zero(den))
     {
       FT inv = FT(1)/(FT(2) * den);
 
-      return (  CGAL_NTS square(num_x)
-                + CGAL_NTS square(num_y)
-                + CGAL_NTS square(num_z) ) * CGAL_NTS square(inv) - p.weight();
+      return (CGAL_NTS square(num_x) +
+              CGAL_NTS square(num_y) +
+              CGAL_NTS square(num_z) ) * CGAL_NTS square(inv) - p.weight();
     }
 
     // Switch to exact
@@ -370,8 +372,8 @@ public:
     return back_from_exact(exact_compute_radius(to_exact(p),to_exact(q),to_exact(r)));
   }
 
-  FT operator() (const Weighted_point_3& p,
-                 const Weighted_point_3& q) const
+  FT operator()(const Weighted_point_3& p,
+                const Weighted_point_3& q) const
   {
     // Compute denominator to swith to exact if it is 0
     FT qpx = q.x() - p.x();
@@ -379,7 +381,7 @@ public:
     FT qpz = q.z() - p.z();
     FT qp2 = CGAL_NTS square(qpx) + CGAL_NTS square(qpy) + CGAL_NTS square(qpz);
 
-    if ( ! CGAL_NTS is_zero(qp2) )
+    if(! CGAL_NTS is_zero(qp2))
     {
       FT inv = FT(1)/(FT(2)*qp2);
       FT alpha = 1/FT(2) + (p.weight()-q.weight())*inv;
@@ -396,7 +398,7 @@ public:
     return back_from_exact(exact_compute_radius(to_exact(p),to_exact(q)));
   }
 
-  FT operator() (const Weighted_point_3& p) const
+  FT operator()(const Weighted_point_3& p) const
   {
     return -p.weight();
   }

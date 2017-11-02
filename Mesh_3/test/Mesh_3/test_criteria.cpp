@@ -221,13 +221,15 @@ struct Tester
   {
     typedef typename Cell_criteria::Cell_badness Badness;
 
+    const Tr& tr = c3t3_.triangulation();
+
     Cell_handle cell1 = cell_handle(c1_);
     Cell_handle cell2 = cell_handle(c2_);
 
     Cell_criteria cell_criteria(radius_edge,radius);
 
-    Badness b1 = cell_criteria(cell1);
-    Badness b2 = cell_criteria(cell2);
+    Badness b1 = cell_criteria(tr, cell1);
+    Badness b2 = cell_criteria(tr, cell2);
 
     std::cerr << "\t[Radius bound: " << radius
               << " - Radius-edge bound: " << radius_edge
@@ -266,13 +268,15 @@ struct Tester
     {
       typedef typename Facet_criteria::Facet_badness Badness;
 
+      const Tr& tr = c3t3_.triangulation();
+
       Facet f1 = facet_handle(f1_);
       Facet f2 = facet_handle(f2_);
 
       Facet_criteria criteria(angle, radius, distance);
 
-      Badness b1 = criteria(f1);
-      Badness b2 = criteria(f2);
+      Badness b1 = criteria(tr, f1);
+      Badness b2 = criteria(tr, f2);
 
       std::cerr << "\t[Angle bound: " << angle
                 << " - Radius bound: " << radius

@@ -70,71 +70,70 @@ namespace CGAL {
 
 namespace Mesh_3 {
 
-  namespace details { // various function objects
+namespace details { // various function objects
 
-    // That functor Second_of takes a pair as input (the value type of a
-    // map), and returns the ".second" member of that pair. It is used in
-    // Slivers_exuder, to constructor a transform iterator.
+// That functor Second_of takes a pair as input (the value type of a
+// map), and returns the ".second" member of that pair. It is used in
+// Slivers_exuder, to constructor a transform iterator.
 
-    // It should be doable using STL bind operators, but i am not sure how
-    // to use them. -- Laurent Rineau, 2007/07/27
-    template <typename Map>
-    struct Second_of :
-    public CGAL::unary_function<typename Map::value_type,
-    const typename Map::mapped_type&>
-    {
-      typedef CGAL::unary_function<typename Map::value_type,
-        const typename Map::mapped_type&> Base;
-      typedef typename Base::result_type result_type;
-      typedef typename Base::argument_type argument_type;
+// It should be doable using STL bind operators, but i am not sure how
+// to use them. -- Laurent Rineau, 2007/07/27
+template <typename Map>
+struct Second_of
+  : public CGAL::unary_function<typename Map::value_type,
+                                const typename Map::mapped_type&>
+{
+  typedef CGAL::unary_function<typename Map::value_type,
+                               const typename Map::mapped_type&> Base;
+  typedef typename Base::result_type                             result_type;
+  typedef typename Base::argument_type                           argument_type;
 
-      const typename Map::mapped_type&
-      operator()(const typename Map::value_type& p) const
-      {
-        return p.second;
-      }
-    }; // end class Second_of
+  const typename Map::mapped_type&
+  operator()(const typename Map::value_type& p) const
+  {
+    return p.second;
+  }
+}; // end class Second_of
 
-    // That function is constructed with a vertex handle v1.
-    // Then, its operator() takes an other vertex handle v2 as input, and
-    // returns the distance d(v1, v2).
-    // It is used in Slivers_exuder, to constructor a transform iterator.
-    template <typename Gt, typename Vertex_handle>
-    class Min_distance_from_v :
-    public CGAL::unary_function<Vertex_handle, void>
-    {
-      const Vertex_handle * v;
-      const Gt& gt;
-      double & dist;
+// That function is constructed with a vertex handle v1.
+// Then, its operator() takes an other vertex handle v2 as input, and
+// returns the distance d(v1, v2).
+// It is used in Slivers_exuder, to constructor a transform iterator.
+template <typename Tr, typename Vertex_handle>
+class Min_distance_from_v
+  : public CGAL::unary_function<Vertex_handle, void>
+{
+  const Vertex_handle * v;
+  const Tr& tr;
+  double & dist;
 
-    public:
-      Min_distance_from_v(const Vertex_handle& vh,
-                          double& dist,
-                          const Gt& geom_traits = Gt())
-        : v(&vh), gt(geom_traits), dist(dist)
-      {
-      }
+public:
+  Min_distance_from_v(const Vertex_handle& vh,
+                      double& dist,
+                      const Tr& tr)
+    : v(&vh), tr(tr), dist(dist)
+  {
+  }
 
-      void
-      operator()(const Vertex_handle& vh) const
-      {
-        typedef typename Gt::Compute_squared_distance_3 Compute_squared_distance_3;
-        Compute_squared_distance_3 distance = gt.compute_squared_distance_3_object();
+  void
+  operator()(const Vertex_handle& vh) const
+  {
+    typedef typename Tr::Geom_traits::Construct_point_3   Construct_point_3;
+    typedef typename Tr::Weighted_point                   Weighted_point;
 
-        typedef typename Gt::Construct_point_3 Construct_point_3;
-        Construct_point_3 wp2p = gt.construct_point_3_object();
+    Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
 
-        const double d = CGAL::to_double(distance(wp2p((*v)->point()),
-                                                  wp2p(vh->point())));
-        if(d < dist){
-          dist = d;
-        }
-      }
-    }; // end class Min_distance_from_v
+    const Weighted_point& wpv = tr.point(*v);
+    const Weighted_point& wpvh = tr.point(vh);
 
-  } // end namespace details
+    const double d = CGAL::to_double(tr.min_squared_distance(cp(wpv), cp(wpvh)));
+    if(d < dist){
+      dist = d;
+    }
+  }
+}; // end class Min_distance_from_v
 
-
+} // end namespace details
 
 /************************************************
 // Class Slivers_exuder_base
@@ -185,7 +184,7 @@ protected:
   }
 
   // Dummy
-  unsigned int erase_counter(const Cell_handle &) const { return 0;}
+  unsigned int erase_counter(const Cell_handle &) const { return 0; }
 
   std::size_t cells_queue_size() const { return cells_queue_.size(); }
   bool cells_queue_empty()       const { return cells_queue_.empty(); }
@@ -207,8 +206,7 @@ protected:
     Erase_from_queue(Tet_priority_queue& queue)
     : r_queue_(queue) { }
 
-    void operator()(const Cell_handle& cell)
-    { r_queue_.erase(cell); }
+    void operator()(const Cell_handle& cell) { r_queue_.erase(cell); }
 
   private:
     Tet_priority_queue& r_queue_;
@@ -356,11 +354,9 @@ protected:
   mutable tbb::task                          *m_empty_root_task;
 
 private:
-
   Tet_priority_queue cells_queue_;
 };
 #endif // CGAL_LINKED_WITH_TBB
-
 
 /************************************************
 // Class Slivers_exuder
@@ -373,18 +369,15 @@ template <
   typename FT = typename C3T3::Triangulation::Geom_traits::FT
   >
 class Slivers_exuder
-: public Slivers_exuder_base<typename C3T3::Triangulation,
-                             typename C3T3::Concurrency_tag>
+  : public Slivers_exuder_base<typename C3T3::Triangulation,
+                               typename C3T3::Concurrency_tag>
 {
-
 public: // Types
-
   typedef typename C3T3::Concurrency_tag                    Concurrency_tag;
   typedef Slivers_exuder_base<
     typename C3T3::Triangulation, Concurrency_tag>          Base;
 
 private: // Types
-
   typedef Slivers_exuder<C3T3, SliverCriteria, Visitor_, FT> Self;
 
   typedef typename C3T3::Triangulation                       Tr;
@@ -410,34 +403,33 @@ private: // Types
   // Umbrella will store the surface_index of internal facets of a new
   // weighted point conflict zone. Such facets are represented by their edge
   // which do not contain the pumped vertex
-  typedef std::pair<Vertex_handle,Vertex_handle> Ordered_edge;
-  typedef std::pair<Surface_patch_index, std::size_t> Patch_and_counter;
-  typedef std::map<Ordered_edge, Patch_and_counter> Umbrella;
+  typedef std::pair<Vertex_handle,Vertex_handle>             Ordered_edge;
+  typedef std::pair<Surface_patch_index, std::size_t>        Patch_and_counter;
+  typedef std::map<Ordered_edge, Patch_and_counter>          Umbrella;
 
   // Boundary_facets_from_outside represents the facet of the conflict zone
   // seen from outside of it. It stores Surface_patch_index of the facet, and
   // Subdomain_index of the cell which is inside the conflict zone.
-  typedef std::map<Facet, std::pair<Surface_patch_index,Subdomain_index> >
-    Boundary_facets_from_outside;
+  typedef std::map<Facet,
+    std::pair<Surface_patch_index, Subdomain_index> >       Boundary_facets_from_outside;
 
   /** Pre_star will represent the pre-star of a point. It is a (double)-map
    *  of Facet (viewed from cells inside the star), ordered by the
    *  critial_radius of the point with the cell that lies on the facet, at
    *  the exterior of the pre-star. */
-  typedef CGAL::Double_map<Facet, double> Pre_star;
+  typedef CGAL::Double_map<Facet, double>                   Pre_star;
 
   // Stores the value of facet for the sliver criterion functor
-  typedef std::map<Facet, double> Sliver_values;
+  typedef std::map<Facet, double>                           Sliver_values;
 
   // Visitor class
   // Should define
   //  - after_cell_pumped(std::size_t cells_left_number)
-  typedef Visitor_ Visitor;
-  
+  typedef Visitor_                                          Visitor;
+
   using Base::get_lock_data_structure;
 
 public: // methods
-
   /**
    * @brief Constructor
    * @param c3t3 The mesh to exude
@@ -454,8 +446,7 @@ public: // methods
    * @param criterion_value_limit All vertices of tetrahedra that have a
    * quality below this bound will be pumped
    */
-  Mesh_optimization_return_code
-  operator()(Visitor visitor = Visitor())
+  Mesh_optimization_return_code operator()(Visitor visitor = Visitor())
   {
 #ifdef CGAL_MESH_3_PROFILING
   WallClockTimer t;
@@ -577,6 +568,7 @@ private:
       std::swap(h1, h2);
   }
 
+
   template <typename Handle>
   static
   void order_three_handles(Handle& h1, Handle& h2, Handle& h3)
@@ -585,6 +577,7 @@ private:
     if(h2 > h3) std::swap(h2, h3);
     if(h1 > h2) std::swap(h1, h2);
   }
+
 
   /**
    * Initialization
@@ -601,6 +594,7 @@ private:
     initialized_ = true;
   }
 
+
   /**
    * Initialize cells_queue w.r.t sliver_bound_
    */
@@ -610,8 +604,7 @@ private:
         cit != c3t3_.cells_in_complex_end() ;
         ++cit)
     {
-      const double value
-        = sliver_criteria_(cit);
+      const double value = sliver_criteria_(cit);
 
       if( value < sliver_criteria_.sliver_bound() )
         this->cells_queue_insert(cit, value);
@@ -619,37 +612,18 @@ private:
   }
 
   /**
-   * Returns critical radius of (v,c)
-   */
-  double compute_critical_radius(const Vertex_handle& v,
-                                 const Cell_handle& c) const
-  {
-    typedef typename Gt::Compute_power_distance_to_power_sphere_3
-      Critical_radius;
-
-    Critical_radius critical_radius =
-      tr_.geom_traits().compute_power_distance_to_power_sphere_3_object();
-
-    return CGAL::to_double(critical_radius(c->vertex(0)->point(),
-                                           c->vertex(1)->point(),
-                                           c->vertex(2)->point(),
-                                           c->vertex(3)->point(),
-                                           v->point()));
-  }
-
-  /**
    * Returns the squared distance from vh to its closest vertice
    */
   double get_closest_vertice_squared_distance(const Vertex_handle& vh) const
   {
-
     double dist = (std::numeric_limits<double>::max)();
-    details::Min_distance_from_v<Gt, Vertex_handle> min_distance_from_v(vh, dist, tr_.geom_traits());
+    details::Min_distance_from_v<Tr, Vertex_handle> min_distance_from_v(vh, dist, tr_);
 
     tr_.adjacent_vertices(vh, boost::make_function_output_iterator(min_distance_from_v));
 
     return dist;
   }
+
 
   /**
    * Returns the min value of second element of Ratio
@@ -663,6 +637,7 @@ private:
       make_transform_iterator(criterion_values.begin(), Second_of()),
       make_transform_iterator(criterion_values.end(), Second_of())));
   }
+
 
   /**
    * Returns the \c Boundary_facets_from_outside object containing mirror facets
@@ -701,8 +676,8 @@ private:
     else
 #endif
       this->cells_queue_insert(ch, criterion_value);
-
   }
+
 
   /**
    * A functor to remove one handle (Cell_handle/Facet_handle) from complex
@@ -748,8 +723,7 @@ private:
         cit != c3t3_.cells_in_complex_end() ;
         ++cit)
     {
-      const double value =
-        sliver_criteria_(cit);
+      const double value = sliver_criteria_(cit);
 
       if( value < sliver_criteria_.sliver_bound() )
         return false;
@@ -757,6 +731,7 @@ private:
 
     return true;
   }
+
 
 #ifdef CGAL_LINKED_WITH_TBB
   // For parallel version
@@ -766,10 +741,7 @@ private:
 #endif
 
 private:
-
-
 #ifdef CGAL_LINKED_WITH_TBB
-
   // Functor for enqueue_task function
   template <typename SE, bool pump_vertices_on_surfaces>
   class Pump_vertex
@@ -916,7 +888,7 @@ private:
 
   /** This function verifies that the pre_star contains exactly the set of
    facets on the boundary of the conflict zone of the weighted point wp.
-   The vertex handle vh is an hint for the location of wp.
+   The vertex handle vh is a hint for the location of wp.
 
    It also fills another Pre_star object, and checks that is in the same
    order as pre_star.
@@ -936,7 +908,6 @@ private:
 #endif // CGAL_MESH_3_DEBUG_SLIVERS_EXUDER
 
 }; // end class Slivers_exuder
-
 
 
 template <typename C3T3, typename SC, typename V_, typename FT>
@@ -992,7 +963,6 @@ pump_vertices(double sliver_criterion_limit,
 #ifdef CGAL_MESH_3_PROFILING
   t.reset();
 #endif
-
 
 #ifdef CGAL_LINKED_WITH_TBB
   // Parallel
@@ -1081,7 +1051,6 @@ pump_vertices(double sliver_criterion_limit,
             << t.elapsed() << "s ====" << std::endl;
 #endif
 
-
 #ifdef CGAL_MESH_3_EXUDER_VERBOSE
   std::cerr << std::endl;
   std::cerr << "Total exuding time: " << running_time_.time() << "s";
@@ -1125,8 +1094,10 @@ pump_vertex(const Vertex_handle& pumped_vertex,
   // If best_weight < pumped_vertex weight, nothing to do
   if ( best_weight > pumped_vertex->point().weight() )
   {
-    typename Gt::Construct_point_3 wp2p = tr_.geom_traits().construct_point_3_object();
-    Weighted_point wp(wp2p(pumped_vertex->point()), best_weight);
+    typename Gt::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
+
+    const Weighted_point& pwp = tr_.point(pumped_vertex);
+    Weighted_point wp(cp(pwp), best_weight);
 
     // Insert weighted point into mesh
     // note it can fail if the mesh is non-manifold at pumped_vertex
@@ -1169,26 +1140,29 @@ initialize_prestar_and_criterion_values(const Vertex_handle& v,
        cit != incident_cells.end() ;
        ++cit )
   {
-    const int index = (*cit)->index(v);
-    const Facet f = Facet(*cit, index);
+    const Cell_handle c = *cit;
+    const int index = c->index(v);
+    const Facet f = Facet(c, index);
     const Facet opposite_facet = tr_.mirror_facet(f);
 
     // Sliver criterion values initialization
-    if( c3t3_.is_in_complex(*cit) )
+    if( c3t3_.is_in_complex(c) )
     {
-      criterion_values[f] = sliver_criteria_(*cit);
+      criterion_values[f] = sliver_criteria_(c);
     }
 
-
     // Pre_star initialization
-    // If facet is adjacent to and infinite cell, no need to put it in prestar
-    // (infinite critical radius)
+    // If facet is adjacent to an infinite cell, no need to put it in prestar
+    // (infinite power distance radius)
     if ( tr_.is_infinite(opposite_facet.first) )
       continue;
 
     // Insert facet in prestar (even if it is not in complex)
-    double critical_radius = compute_critical_radius(v, opposite_facet.first);
-    pre_star.insert(f, critical_radius);
+    const Cell_handle opposite_cell = opposite_facet.first;
+    const int index_in_opposite = opposite_cell->index(c);
+    double power_distance_to_power_sphere =
+      tr_.compute_power_distance_to_power_sphere(opposite_facet.first, index_in_opposite);
+    pre_star.insert(f, power_distance_to_power_sphere);
   }
 }
 
@@ -1201,11 +1175,13 @@ expand_prestar(const Cell_handle& cell_to_add,
                Pre_star& pre_star,
                Sliver_values& criterion_values) const
 {
+  typename Gt::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
+
   // Delete first facet of pre_star
   Facet start_facet = pre_star.front()->second;
   CGAL_assertion(tr_.mirror_facet(start_facet).first == cell_to_add);
 #ifdef CGAL_MESH_3_DEBUG_SLIVERS_EXUDER
-  double critical_radius = pre_star.front()->first;
+  double power_distance_to_power_sphere = pre_star.front()->first;
 #endif
   pre_star.pop_front();
   if ( c3t3_.is_in_complex(cell_to_add) )
@@ -1224,9 +1200,10 @@ expand_prestar(const Cell_handle& cell_to_add,
 
     const Facet current_facet(cell_to_add, i);
     const Facet current_mirror_facet(tr_.mirror_facet(current_facet));
+    double new_power_distance_to_power_sphere = std::numeric_limits<double>::infinity();
 
     // If current_facet_mirror is in prestar, delete it
-    // (it may happen than pre_star contains two facets of the same cell)
+    // (it may happen that pre_star contains two facets of the same cell)
     if ( pre_star.erase(current_mirror_facet) )
     {
       // If it is a boundary facet, stop pre_star expansion
@@ -1253,20 +1230,20 @@ expand_prestar(const Cell_handle& cell_to_add,
       CGAL_assertion(pumped_vertex != current_mirror_facet.first->vertex(2));
       CGAL_assertion(pumped_vertex != current_mirror_facet.first->vertex(3));
 
-      // Update pre_star (we do not insert facets with infinite critical radius)
+      // Update pre_star (we do not insert facets with infinite power distance)
       // We do insert facet of cells which are outside the complex (we just
       // don't use their sliver criterion value to get best weight)
       if ( ! tr_.is_infinite(current_mirror_cell) )
       {
-        double new_critical_radius =
-          compute_critical_radius(pumped_vertex, current_mirror_cell);
+        new_power_distance_to_power_sphere =
+          tr_.compute_power_distance_to_power_sphere(current_mirror_cell, pumped_vertex);
 
-        pre_star.insert(current_facet, new_critical_radius);
+        pre_star.insert(current_facet, new_power_distance_to_power_sphere);
 
 #ifdef CGAL_MESH_3_DEBUG_SLIVERS_EXUDER
-        if ( new_critical_radius < critical_radius )
-          std::cerr << "new critical radius:" << new_critical_radius
-                    << " / current critical radius:" << critical_radius
+        if ( new_power_distance_to_power_sphere < power_distance_to_power_sphere )
+          std::cerr << "new power distance:" << new_power_distance_to_power_sphere
+                    << " / current power distance:" << power_distance_to_power_sphere
                     << std::endl;
 #endif // CGAL_MESH_3_DEBUG_SLIVERS_EXUDER
       }
@@ -1274,14 +1251,31 @@ expand_prestar(const Cell_handle& cell_to_add,
       // Update ratio (ratio is needed for cells of complex only)
       if ( c3t3_.is_in_complex(cell_to_add) )
       {
-        typename Gt::Construct_point_3 wp2p = tr_.geom_traits().construct_point_3_object();
-        Tetrahedron_3 tet(wp2p(pumped_vertex->point()),
-                          wp2p(cell_to_add->vertex((i+1)&3)->point()),
-                          wp2p(cell_to_add->vertex((i+2)&3)->point()),
-                          wp2p(cell_to_add->vertex((i+3)&3)->point()));
+        const Weighted_point& pwp = tr_.point(pumped_vertex);
+
+        // Ensure that 'new_power_distance_to_power_sphere' has been initialized
+        CGAL_assertion(new_power_distance_to_power_sphere != std::numeric_limits<double>::infinity());
+
+        // Adding the power distance to the pumped vertex's weight is a way
+        // to artificially make the cell 'cell_to_add' be in conflict
+        // with the pumped vertex. This is done for periodic triangulations,
+        // where the function 'tetrahedron(Facet, Weighted_point)' requires
+        // the cell of the facet to be in conflict with the point to determine
+        // the correct offset of the weighted point (to get a correct tetrahedron).
+        FT new_weight = pwp.weight() + new_power_distance_to_power_sphere;
+
+        // With 'new_weight' only, the point is orthogonal to the power sphere,
+        // so we add a little bit more weight to make sure that pwp is in conflict.
+        new_weight += std::numeric_limits<double>::epsilon();
+
+        Weighted_point ncr_pwp(cp(pwp), new_weight);
+
+        const int index = current_mirror_cell->index(cell_to_add);
+        const Tetrahedron_3 tet = tr_.tetrahedron(Facet(current_mirror_cell, index),
+                                                  ncr_pwp);
 
         double new_value = sliver_criteria_(tet);
-        criterion_values.insert(std::make_pair(current_facet,new_value));
+        criterion_values.insert(std::make_pair(current_facet, new_value));
       }
     }
   }
@@ -1325,7 +1319,7 @@ get_best_weight(const Vertex_handle& v, bool *could_lock_zone) const
         && ! c3t3_.is_in_complex(pre_star.front()->second) )
   {
     // Store critial radius (pre_star will be modified in expand_prestar)
-    double critical_r = pre_star.front()->first;
+    double power_distance_to_power_sphere = pre_star.front()->first;
 
     // expand prestar (insert opposite_cell facets in pre_star)
     Facet link = pre_star.front()->second;
@@ -1351,7 +1345,7 @@ get_best_weight(const Vertex_handle& v, bool *could_lock_zone) const
         // Update best_weight
         CGAL_assertion(!pre_star.empty());
         double next_r = pre_star.front()->first;
-        best_weight = (critical_r + next_r) / 2;
+        best_weight = (power_distance_to_power_sphere + next_r) / 2;
 
 #ifdef CGAL_MESH_3_DEBUG_SLIVERS_EXUDER
         pre_star_copy = pre_star;
@@ -1361,11 +1355,12 @@ get_best_weight(const Vertex_handle& v, bool *could_lock_zone) const
     }
   } // end while(... can pump...)
 
-
 #ifdef CGAL_MESH_3_DEBUG_SLIVERS_EXUDER
   if ( best_weight > v->point().weight() )
   {
-    Weighted_point wp(v->point(), best_weight);
+    typename Gt::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
+    const Weighted_point& wpv = tr_.point(v);
+    Weighted_point wp(cp(wpv), best_weight);
     check_pre_star(pre_star_copy, wp, v);
     check_ratios(ratios_copy, wp, v);
   }
@@ -1378,9 +1373,8 @@ get_best_weight(const Vertex_handle& v, bool *could_lock_zone) const
 template <typename C3T3, typename SC, typename V_, typename FT>
 boost::optional<typename Slivers_exuder<C3T3,SC,V_,FT>::Umbrella >
 Slivers_exuder<C3T3,SC,V_,FT>::
-get_umbrella(const Facet_vector& facets,//internal_facets of conflict zone
-
-             const Vertex_handle& /* v no longer used */) const
+get_umbrella(const Facet_vector& facets, // internal_facets of conflict zone
+             const Vertex_handle& /* v, no longer used */) const
 {
   Umbrella umbrella; //std::map<Ordered_edge, Patch_and_counter>
 
@@ -1423,10 +1417,10 @@ get_umbrella(const Facet_vector& facets,//internal_facets of conflict zone
     }
   }
 
-  // erase edges that have been counted twice
-  //each Oriented_edge should appear only once
-  // twice means it belongs to two internal facets that are restricted
-  // three or more corresponds to a non-manifold geometry
+  // Erase edges that have been counted twice.
+  // Each Oriented_edge should appear only once.
+  // Twice means that it belongs to two internal facets that are restricted.
+  // Three or more corresponds to a non-manifold geometry.
   typename Umbrella::iterator uit = umbrella.begin();
   while(uit != umbrella.end())
   {
@@ -1436,7 +1430,9 @@ get_umbrella(const Facet_vector& facets,//internal_facets of conflict zone
       umbrella.erase(to_be_erased);
     }
     else
+    {
       ++uit;
+    }
   }
 
   return umbrella;
@@ -1487,15 +1483,13 @@ restore_cells_and_boundary_facets(
     // the maximum, push it in the cells queue.
     if( c3t3_.is_in_complex(*cit) )
     {
-      double criterion_value
-        = sliver_criteria_(*cit);
+      double criterion_value = sliver_criteria_(*cit);
 
       if( criterion_value < sliver_criteria_.sliver_bound() )
         add_cell_to_queue<pump_vertices_on_surfaces>(*cit, criterion_value);
     }
   }
 }
-
 
 
 template <typename C3T3, typename SC, typename V_, typename FT>
@@ -1566,8 +1560,7 @@ update_mesh(const Weighted_point& new_point,
             const Vertex_handle& old_vertex,
             bool *could_lock_zone)
 {
-  CGAL_assertion_code(std::size_t nb_vert =
-                      tr_.number_of_vertices());
+  CGAL_assertion_code(std::size_t nb_vert = tr_.number_of_vertices();)
   Cell_vector deleted_cells;
   Facet_vector internal_facets;
   Facet_vector boundary_facets;
@@ -1590,8 +1583,7 @@ update_mesh(const Weighted_point& new_point,
   Boundary_facets_from_outside boundary_facets_from_outside =
     get_boundary_facets_from_outside(boundary_facets);
 
-  boost::optional<Umbrella> umbrella
-    = get_umbrella(internal_facets, old_vertex);
+  boost::optional<Umbrella> umbrella = get_umbrella(internal_facets, old_vertex);
   if(umbrella == boost::none)
     return false; //abort pumping this vertex
 
@@ -1622,7 +1614,7 @@ update_mesh(const Weighted_point& new_point,
   // Only true for sequential version
   CGAL_assertion(could_lock_zone || nb_vert == tr_.number_of_vertices());
 
-  return true;//pump was done successfully
+  return true; // pump was done successfully
 }
 
 
@@ -1665,8 +1657,8 @@ check_pre_star(const Pre_star& pre_star,
       const Facet opposite_facet = tr_.mirror_facet(*fit);
       if(! tr_.is_infinite(opposite_facet.first) )
       {
-        pre_star2.insert(*fit, compute_critical_radius(v,
-                                                       opposite_facet.first));
+        pre_star2.insert(
+          *fit, tr_.compute_power_distance_to_power_sphere(opposite_facet.first, v));
       }
     }
 
@@ -1712,7 +1704,7 @@ check_pre_star(const Pre_star& pre_star,
         const Facet f = pre_star_copy.front()->second;
         const double r = pre_star_copy.front()->first;
         pre_star_copy.pop_front();
-        std::cerr << boost::format("extra facet (%1%,%2%) (infinite: %3%, opposite infinite: %4%), critical radius: %5%\n")
+        std::cerr << boost::format("extra facet (%1%,%2%) (infinite: %3%, opposite infinite: %4%), power distance: %5%\n")
         % &*f.first % f.second % tr_.is_infinite(f.first) % tr_.is_infinite(f.first->neighbor(f.second))
         % r;
       }
@@ -1771,10 +1763,21 @@ check_pre_star(const Pre_star& pre_star,
                                       boundary_facets.end(),
                                       vh);
   if( ! result )
-    std::cerr << "boundary_facets.size()=" << boundary_facets.size()
-    << "\npre_star.size()=" << pre_star.size()
-    << "\ntested wp=" << wp
-    << "\n";
+  {
+    std::cerr << "tested wp=" << wp << '\n';
+    std::cerr << "boundary_facets.size()=" << boundary_facets.size() << std::endl;
+    typename std::vector<Facet>::const_iterator bfit = boundary_facets.begin(),
+                                                bfend = boundary_facets.end();
+    for(; bfit != bfend; ++bfit)
+      std::cerr << "Cell: " << &*(bfit->first) << " second: " << bfit->second << '\n';
+
+    std::cerr << "\npre_star.size()=" << pre_star.size() << std::endl;
+    typename Pre_star::const_iterator psit = pre_star.begin(), psend = pre_star.end();
+    for(; psit != psend; ++psit)
+      std::cerr << "Cell: " << &*(psit->first.first) << " second: " << psit->first.second << '\n';
+    std::cerr << std::endl;
+  }
+
   return result;
 }
 
@@ -1789,8 +1792,6 @@ check_ratios(const Sliver_values& criterion_values,
   Cell_vector deleted_cells;
   Facet_vector internal_facets;
   Facet_vector boundary_facets;
-
-  typename Gt::Construct_point_3 wp2p = tr_.geom_traits().construct_point_3_object();
 
   tr_.find_conflicts(wp,
                      vh->cell(),
@@ -1816,12 +1817,7 @@ check_ratios(const Sliver_values& criterion_values,
     if ( !c3t3_.is_in_complex((it->first)) )
       continue;
 
-    int k = it->second;
-    Tetrahedron_3 tet(wp2p(vh->point()),
-                      wp2p(it->first->vertex((k+1)&3)->point()),
-                      wp2p(it->first->vertex((k+2)&3)->point()),
-                      wp2p(it->first->vertex((k+3)&3)->point()));
-
+    Tetrahedron_3 tet = tr_.tetrahedron(*it, wp);
     double ratio = sliver_criteria_(tet);
     expected_ratios.push_back(ratio);
 
@@ -1854,10 +1850,10 @@ check_ratios(const Sliver_values& criterion_values,
                         ratio_vector.begin(),ratio_vector.end(),
                         std::back_inserter(diff));
 
-
-    std::cerr << "\nExpected criterion_values:[";
+    std::cerr << "\nExpected criterion_values (size: "
+              << expected_ratios.size() << ") [";
     std::for_each(expected_ratios.begin(), expected_ratios.end(), print_double);
-    std::cerr << "]\nRatios:[";
+    std::cerr << "]\nRatios (size: " << ratio_vector.size() << ") [";
     std::for_each(ratio_vector.begin(), ratio_vector.end(), print_double);
     std::cerr << "]\nDiff:[";
     std::for_each(diff.begin(),diff.end(), print_double);
@@ -1868,10 +1864,8 @@ check_ratios(const Sliver_values& criterion_values,
 }
 #endif // CGAL_MESH_3_DEBUG_SLIVERS_EXUDER
 
-
 } // end namespace Mesh_3
 
 } // end namespace CGAL
-
 
 #endif // end CGAL_MESH_3_SLIVERS_EXUDER_H

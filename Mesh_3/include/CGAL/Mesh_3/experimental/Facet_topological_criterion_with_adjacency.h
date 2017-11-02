@@ -51,9 +51,10 @@ public:
   /// Constructor
   Facet_topological_criterion_with_adjacency(const MeshDomain* domain)
     : domain(domain)
-  {};
+  {}
+
   /// Destructor
-  virtual ~Facet_topological_criterion_with_adjacency() {};
+  virtual ~Facet_topological_criterion_with_adjacency() {}
   
 protected:
   virtual void do_accept(Visitor_& v) const

@@ -687,16 +687,20 @@ public:
 
 public:
   /** @name Voronoi diagram */ //@{
+  // cell dual
   Point dual(Cell_handle c) const {
+    return Base::construct_point(periodic_circumcenter(c).first);
+  }
+
+  Point canonical_dual(Cell_handle c) const {
     return point(periodic_circumcenter(c));
   }
 
+  // facet dual
   bool canonical_dual_segment(Cell_handle c, int i, Periodic_segment& ps) const {
     return Base::canonical_dual_segment(c, i, ps, geom_traits().construct_circumcenter_3_object());
   }
-  Periodic_segment dual(const Facet & f) const {
-    return dual( f.first, f.second );
-  }
+
   Periodic_segment dual(Cell_handle c, int i) const
   {
     Periodic_segment ps;
@@ -704,17 +708,23 @@ public:
     return ps;
   }
 
-  template <class OutputIterator>
-  OutputIterator dual(const Edge & e, OutputIterator points) const {
-    return dual(e.first, e.second, e.third, points);
+  Periodic_segment dual(const Facet & f) const {
+    return dual( f.first, f.second );
   }
 
+  // edge dual
   template <class OutputIterator>
   OutputIterator dual(Cell_handle c, int i, int j, OutputIterator points) const {
     Base::dual(c, i, j, points, geom_traits().construct_circumcenter_3_object());
     return points;
   }
 
+  template <class OutputIterator>
+  OutputIterator dual(const Edge & e, OutputIterator points) const {
+    return dual(e.first, e.second, e.third, points);
+  }
+
+  // vertex dual
   template <class OutputIterator>
   OutputIterator dual(Vertex_handle v, OutputIterator points) const {
     Base::dual(v, points, geom_traits().construct_circumcenter_3_object());
@@ -1024,7 +1034,7 @@ _side_of_sphere(const Cell_handle& c, const Point& q,
   os= side_of_oriented_sphere(p0, p1, p2, p3, q, o0, o1, o2, o3, oq);
 
   if(os != ON_ORIENTED_BOUNDARY || !perturb)
-    return (Bounded_side) os;
+    return enum_cast<Bounded_side>(os);
 
   //We are now in a degenerate case => we do a symbolic perturbation.
   // We sort the points lexicographically.
