@@ -31,6 +31,8 @@
 #include <CGAL/Polygon_mesh_processing/bbox.h>
 #include <boost/iterator/counting_iterator.hpp>
 #include <boost/mpl/if.hpp>
+#include <CGAL/Polygon_mesh_processing/bbox.h>
+#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
 
 namespace CGAL {
@@ -999,6 +1001,7 @@ compute_face_polyline_intersection(const TriangleMesh& mesh,
 {
   return compute_face_polyline_intersection(faces(mesh), polyline, mesh, out, np);
 }
+
 }// namespace internal
 
 namespace Polygon_mesh_processing{
@@ -1301,8 +1304,89 @@ bool do_intersect(const TriangleMesh& mesh,
 
   return do_intersect(mesh, polyline, parameters::all_default());
 }
+}//end PMP
+namespace internal{
 
+template<class TriangleMesh
+         , typename OutputIterator
+         >
+struct Mesh_callback
+{
+  const TriangleMesh* mesh_0_ptr;
+  OutputIterator m_iterator;
 
+  Mesh_callback(const TriangleMesh& mesh0,
+                OutputIterator iterator)
+    : mesh_0_ptr(&mesh0), m_iterator(iterator)
+  {}
+
+  template<class Mesh_box>
+  void operator()(const Mesh_box* b1, const Mesh_box* b2)
+  {
+    std::size_t mesh_id_1 = b1->info() - mesh_0_ptr;
+    std::size_t mesh_id_2 = b2->info() - mesh_0_ptr;
+    if(Polygon_mesh_processing::do_intersect(*b1->info(), *b2->info()))
+    {
+      *m_iterator++ = std::make_pair(mesh_id_1, mesh_id_2);
+    }
+  }
+};
+}//end internal
+
+namespace Polygon_mesh_processing{
+/*!
+ * \ingroup PMP_corefinement_grp
+ * computes the pairs of intersecting triangle meshes in `range`. The output is a
+ * set of std::pair<std::size_t, std::size_t>, containing the indices (in the input range)
+ * of the triangle meshes that intersect with each other.
+ *
+ * * \pre \link CGAL::Polygon_mesh_processing::do_intersect() `!CGAL::Polygon_mesh_processing::do_intersect(mesh1, mesh2)` \endlink
+ *
+ * \tparam TriangleMeshRange a model of `Bidirectional Range` of triangle `FaceListGraph`s.
+ * \tparam OutputIterator an output iterator in which `std::pair<std::size_t, std::size_t>`
+ *                        can be put.
+ *
+ * \param range the range of `TriangleMesh`
+ * \param out the OutputIterator that will be filled.
+ * \todo How do we manage NamedParameters ?
+ * - Create a new namedParameter that is a range of VertexPointMap and pass
+ *   a NP that contains the Geom_traits and the range of VPM
+ * -
+ */
+template <class TriangleMeshRange
+          , class OutputIterator
+          >
+OutputIterator get_intersections_in_range(const TriangleMeshRange& range,
+                                          OutputIterator out,
+                                          bool by_the_volume = false)
+{
+  typedef typename boost::range_value<TriangleMeshRange>::type TriangleMesh;
+  /*
+   typedef GetGeomTraits<TriangleMesh, NP> Geom_traits;
+   typedef CGAL::AABB_face_graph_triangle_primitive<TriangleMesh> Primitive;
+   typedef CGAL::AABB_traits<Geom_traits, Primitive> Traits;
+   typedef CGAL::AABB_tree<Traits> AABBTree;
+   */
+  typedef CGAL::Box_intersection_d::Box_with_info_d<double, 3, const TriangleMesh*> Mesh_box;
+  std::vector<Mesh_box> boxes;
+  boxes.reserve(std::distance(range.begin(), range.end()));
+
+  BOOST_FOREACH(const TriangleMesh& m, range)
+  {
+    boxes.push_back( Mesh_box(Polygon_mesh_processing::bbox(m), &m) );
+  }
+
+  std::vector<Mesh_box*> boxes_ptr(
+        boost::make_counting_iterator(&boxes[0]),
+    boost::make_counting_iterator(&boxes[0]+boxes.size()));
+
+  //get all the pairs of meshes intersecting (no strict inclusion test)
+  std::ptrdiff_t cutoff = 2000;
+  internal::Mesh_callback<TriangleMesh, OutputIterator> callback(*range.begin(), out);
+  CGAL::box_self_intersection_d(boxes_ptr.begin(), boxes_ptr.end(),
+                                callback, cutoff);
+  return callback.m_iterator;
+}
 
 /**
  * \ingroup PMP_corefinement_grp

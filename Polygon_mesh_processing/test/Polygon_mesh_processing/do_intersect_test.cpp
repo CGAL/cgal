@@ -364,6 +364,27 @@ test_polylines_intersections(const char* filename1,
   return 0;
 }
 
+template <typename K>
+int test_inter_in_range(const std::vector<const char*>& filenames, std::size_t expected)
+{
+  typedef typename K::Point_3                                    Point;
+  typedef typename CGAL::Surface_mesh<Point>                     Mesh;
+  typedef typename boost::graph_traits<Mesh>::face_descriptor    face_descriptor;
+
+  // reading input meshes
+  std::vector<Mesh> meshes(filenames.size());
+  for (int i=0; i< filenames.size(); ++i)
+  {
+    std::ifstream input(filenames[i]);
+    input >> meshes[i];
+  }
+  std::vector<std::pair<std::size_t, std::size_t> > output;
+  CGAL::Polygon_mesh_processing::get_intersections_in_range(meshes, std::back_inserter(output));
+  std::cout << output.size() <<" pairs."<<std::endl;
+  if(output.size() != expected)
+    return 1;
+  return 0;
+}
 int main()
 {
 
@@ -375,6 +396,8 @@ int main()
   const char* filename4 =  "data/planar.polylines.txt";
   const char* filename5 =  "data/tetra3_inter.polylines.txt";
   const char* filename6 =  "data/polylines_inter.polylines.txt";
+  const char* filename7 =  "data/tetra2.off";
+  const char* filename8 =  "data/tetra4.off";
 
 
   std::cout << "First test (Epic):" << std::endl;
@@ -390,6 +413,12 @@ int main()
   r += test_faces_polylines_intersections<Epic>(filename2, filename5, expected);
   std::cout << "Sixth test (Polyline Ranges):" << std::endl;
   r += test_polylines_polylines_intersections<Epic>(filename5, filename6, expected);
-
+  std::cout << "Seventh test (number of intersecting meshes):" << std::endl;
+  std::vector<const char*> names;
+  names.push_back(filename1);
+  names.push_back(filename2);
+  names.push_back(filename7);
+  names.push_back(filename8);
+  r += test_inter_in_range<Epic>(names, 4);
   return r;
 }
