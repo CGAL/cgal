@@ -7,6 +7,8 @@ if(POLICY CMP0064)
   cmake_policy(SET CMP0064 NEW)
 endif()
 
+include(CMakeParseArguments)
+
 option(CGAL_CTEST_DISPLAY_MEM_AND_TIME
   "Display memory and real time usage at end of CTest test outputs"
   FALSE)
@@ -58,51 +60,75 @@ function(expand_list_with_globbing list_name)
   set(${list_name} ${output_list} PARENT_SCOPE)
 endfunction()
 
-function(cgal_add_test exe_name)
-  if(NOT TEST compilation_of__${exe_name})
-    add_test(NAME "compilation_of__${exe_name}"
-      COMMAND ${TIME_COMMAND} "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target "${exe_name}")
+function(cgal_add_compilation_test exe_name)
+  if(TEST compilation_of__${exe_name})
+    return()
   endif()
+  add_test(NAME "compilation_of__${exe_name}"
+    COMMAND ${TIME_COMMAND} "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target "${exe_name}")
+  set_property(TEST "compilation_of__${exe_name}"
+    APPEND PROPERTY LABELS "${PROJECT_NAME}")
+endfunction(cgal_add_compilation_test)
+
+function(cgal_add_test exe_name)
+  cgal_add_compilation_test(${exe_name})
+
+  cmake_parse_arguments("cgal_add_test" # prefix
+    ""                                  # optional arguments
+    "TEST_NAME"                         # single arguments
+    ""                                  # multivalue arguments
+    ${ARGN})
+  set(ARGS ${cgal_add_test_UNPARSED_ARGUMENTS})
+  set(test_name ${cgal_add_test_TEST_NAME})
+#  message("  test_name: ${test_name}")
+  if(NOT test_name)
+    set(test_name "execution___of__${exe_name}")
+  endif()
+#  message("  test_name: ${test_name}")
+  if(TEST ${test_name})
+    return()
+  endif()
+#  message("Add test ${test_name}")
   set(cin_file "${CGAL_CURRENT_SOURCE_DIR}/${exe_name}.cin")
-  if(EXISTS ${cin_file})
-    add_test(NAME execution___of__${exe_name}
+  if(NOT ARGS AND EXISTS ${cin_file})
+    add_test(NAME ${test_name}
       COMMAND ${TIME_COMMAND} ${CMAKE_COMMAND}
       -DCMD:STRING=$<TARGET_FILE:${exe_name}>
       -DCIN:STRING=${cin_file}
       -P "${CGAL_MODULES_DIR}/run_test_with_cin.cmake")
     #	message(STATUS "add test: ${exe_name} < ${cin_file}")
   else()
-    if(ARGC GREATER 2 AND ARGV2)
-      set(cmd_file "${CGAL_CURRENT_SOURCE_DIR}/${ARGV2}.cmd")
-    elseif(ARGC GREATER 1 AND ARGV1 AND NOT EXISTS ${cmd_file})
-      set(cmd_file "${CGAL_CURRENT_SOURCE_DIR}/${ARGV1}.cmd")
-    elseif(NOT EXISTS ${cmd_file})
-      set(cmd_file "${CGAL_CURRENT_SOURCE_DIR}/${exe_name}.cmd")
-    endif()
-    if(EXISTS ${cmd_file})
-      file(STRINGS "${cmd_file}" CMD_LINES)
-      set(ARGS)
-      #	  message(STATUS "DEBUG test ${exe_name}")
-      foreach(CMD_LINE ${CMD_LINES})
-	#	    message(STATUS "  command line: ${CMD_LINE}")
-        string(REGEX REPLACE "\#.*" "" CMD_LINE "${CMD_LINE}")
-	separate_arguments(CMD_LINE_ARGS UNIX_COMMAND ${CMD_LINE})
-	#	    message(STATUS "  args: ${CMD_LINE_ARGS}")
-	list(APPEND ARGS ${CMD_LINE_ARGS})
-      endforeach()
-      expand_list_with_globbing(ARGS)
+    if(NOT ARGS)
+      if(ARGC GREATER 2 AND ARGV2)
+        set(cmd_file "${CGAL_CURRENT_SOURCE_DIR}/${ARGV2}.cmd")
+      elseif(ARGC GREATER 1 AND ARGV1 AND NOT EXISTS ${cmd_file})
+        set(cmd_file "${CGAL_CURRENT_SOURCE_DIR}/${ARGV1}.cmd")
+      elseif(NOT EXISTS ${cmd_file})
+        set(cmd_file "${CGAL_CURRENT_SOURCE_DIR}/${exe_name}.cmd")
+      endif()
+      if(EXISTS ${cmd_file})
+        file(STRINGS "${cmd_file}" CMD_LINES)
+        set(ARGS)
+        #	  message(STATUS "DEBUG test ${exe_name}")
+        foreach(CMD_LINE ${CMD_LINES})
+	  #	    message(STATUS "  command line: ${CMD_LINE}")
+          string(REGEX REPLACE "\#.*" "" CMD_LINE "${CMD_LINE}")
+	  separate_arguments(CMD_LINE_ARGS UNIX_COMMAND ${CMD_LINE})
+	  #	    message(STATUS "  args: ${CMD_LINE_ARGS}")
+	  list(APPEND ARGS ${CMD_LINE_ARGS})
+        endforeach()
+        expand_list_with_globbing(ARGS)
+      endif()
     endif()
     #	message(STATUS "add test: ${exe_name} ${ARGS}")
-    add_test(NAME execution___of__${exe_name} COMMAND ${TIME_COMMAND} $<TARGET_FILE:${exe_name}> ${ARGS})
+    add_test(NAME ${test_name} COMMAND ${TIME_COMMAND} $<TARGET_FILE:${exe_name}> ${ARGS})
   endif()
-  set_property(TEST "execution___of__${exe_name}"
+  set_property(TEST "${test_name}"
     APPEND PROPERTY LABELS "${PROJECT_NAME}")
   #      message(STATUS "  working dir: ${CGAL_CURRENT_SOURCE_DIR}")
-  set_property(TEST "execution___of__${exe_name}"
+  set_property(TEST "${test_name}"
     PROPERTY WORKING_DIRECTORY ${CGAL_CURRENT_SOURCE_DIR})
-  set_property(TEST "compilation_of__${exe_name}"
-    APPEND PROPERTY LABELS "${PROJECT_NAME}")
-  set_property(TEST "execution___of__${exe_name}"
+  set_property(TEST "${test_name}"
     APPEND PROPERTY DEPENDS "compilation_of__${exe_name}")
 
   if(POLICY CMP0066) # CMake 3.7 or later
@@ -130,7 +156,7 @@ function(cgal_add_test exe_name)
     endif()
     set_property(TEST "compilation_of__${exe_name}"
       PROPERTY FIXTURES_SETUP "${exe_name}")
-    set_tests_properties("execution___of__${exe_name}"
+    set_tests_properties("${test_name}"
       PROPERTIES
       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/__exec_test_dir
       FIXTURES_REQUIRED "${PROJECT_NAME};${exe_name}")
@@ -152,9 +178,9 @@ function(cgal_add_test exe_name)
     # see https://github.com/CGAL/cgal/pull/1295/files/c65d3abe17bb3e677b8077996cdaf8672f9c4c6f#r71705451
   endif()
   string(REPLACE ";" " " args_str "${ARGS}")
-  add_test(NAME execution___of__${exe_name}
+  add_test(NAME ${test_name}
     COMMAND ${TIME_COMMAND} $<TARGET_FILE:${exe_name}> ${ARGS}
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-  set_property(TEST "execution___of__${exe_name}"
+  set_property(TEST "${test_name}"
     APPEND PROPERTY LABELS "${PROJECT_NAME}")
 endfunction()

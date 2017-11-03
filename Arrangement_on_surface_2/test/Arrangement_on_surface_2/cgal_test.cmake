@@ -157,20 +157,14 @@ function(cgal_arr_2_add_target exe_name source_file)
   cgal_debug_message(STATUS "#      -> target ${name} with TESTSUITE_CXXFLAGS: ${flags}")
 
   if(BUILD_TESTING)
-    add_test(NAME "compilation_of__${name}"
-      COMMAND ${TIME_COMMAND} "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target "${name}")
-    set_property(TEST "compilation_of__${name}"
-      APPEND PROPERTY LABELS "${PROJECT_NAME}")
+    cgal_add_compilation_test(${name})
   endif(BUILD_TESTING)
 
   # Add a compatibility-mode with the shell script `cgal_test_base`
   if(NOT TARGET ${exe_name})
     create_single_source_cgal_program( "${source_file}" NO_TESTING)
     if(BUILD_TESTING)
-      add_test(NAME "compilation_of__${exe_name}"
-        COMMAND ${TIME_COMMAND} "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target "${exe_name}")
-      set_property(TEST "compilation_of__${exe_name}"
-        APPEND PROPERTY LABELS "${PROJECT_NAME}")
+      cgal_add_compilation_test(${exe_name})
     endif(BUILD_TESTING)
   endif()
 endfunction()
