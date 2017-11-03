@@ -247,6 +247,12 @@
           <property name="toolTip">
            <string>Probability to overlook the largest primitive in one extraction iteration</string>
           </property>
+          <property name="decimals">
+           <number>5</number>
+          </property>
+          <property name="minimum">
+           <double>0.000010000000000</double>
+          </property>
           <property name="maximum">
            <double>1.000000000000000</double>
           </property>

@@ -277,10 +277,22 @@ namespace CGAL {
       // | 3.| 2.|
       // +---+---+
       // z max before z min, then y max before y min, then x max before x min
-      void createTree() {
+      void createTree(double cluster_epsilon_for_max_level_recomputation = -1.) {
         buildBoundingCube();
         std::size_t count = 0;
         m_max_level = 0;
+
+        if (cluster_epsilon_for_max_level_recomputation > 0.)
+        {
+          FT bbox_diagonal = (FT) CGAL::sqrt(
+            (m_bBox.xmax() - m_bBox.xmin()) * (m_bBox.xmax() - m_bBox.xmin())
+            + (m_bBox.ymax() - m_bBox.ymin()) * (m_bBox.ymax() - m_bBox.ymin()) 
+            + (m_bBox.zmax() - m_bBox.zmin()) * (m_bBox.zmax() - m_bBox.zmin()));
+
+          m_set_max_level = std::size_t (std::log (bbox_diagonal
+                                                    / cluster_epsilon_for_max_level_recomputation)
+                                         / std::log (2.0));
+        }
 
         std::stack<Cell *> stack;
         m_root = new Cell(0, this->size() - 1, m_center, 0);
