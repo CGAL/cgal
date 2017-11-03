@@ -70,6 +70,56 @@ function(cgal_add_compilation_test exe_name)
     APPEND PROPERTY LABELS "${PROJECT_NAME}")
 endfunction(cgal_add_compilation_test)
 
+function(cgal_setup_test_properties test_name)
+  if(ARGC GREATER 1)
+    set(exe_name ${ARGV1})
+  endif()
+  set_property(TEST "${test_name}"
+    APPEND PROPERTY LABELS "${PROJECT_NAME}")
+  #      message(STATUS "  working dir: ${CGAL_CURRENT_SOURCE_DIR}")
+  set_property(TEST "${test_name}"
+    PROPERTY WORKING_DIRECTORY ${CGAL_CURRENT_SOURCE_DIR})
+  if(exe_name)
+    set_property(TEST "${test_name}"
+      APPEND PROPERTY DEPENDS "compilation_of__${exe_name}")
+  endif()
+
+  if(POLICY CMP0066) # CMake 3.7 or later
+    if(NOT TEST ${PROJECT_NAME}_SetupFixture)
+      add_test(NAME ${PROJECT_NAME}_SetupFixture
+        COMMAND
+        ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_CURRENT_SOURCE_DIR}
+        ${CMAKE_CURRENT_BINARY_DIR}/__exec_test_dir
+        )
+      set_property(TEST ${PROJECT_NAME}_SetupFixture
+        PROPERTY FIXTURES_SETUP ${PROJECT_NAME})
+
+      add_test(NAME ${PROJECT_NAME}_CleanupFixture
+        COMMAND
+        ${CMAKE_COMMAND} -E remove_directory
+        ${CMAKE_CURRENT_BINARY_DIR}/__exec_test_dir
+        )
+      set_property(TEST ${PROJECT_NAME}_CleanupFixture
+        PROPERTY FIXTURES_CLEANUP ${PROJECT_NAME})
+
+      set_property(TEST
+        ${PROJECT_NAME}_CleanupFixture ${PROJECT_NAME}_SetupFixture
+        APPEND PROPERTY LABELS "${PROJECT_NAME}")
+    endif()
+    set_tests_properties("${test_name}"
+      PROPERTIES
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/__exec_test_dir
+      FIXTURES_REQUIRED "${PROJECT_NAME}")
+    if(exe_name)
+      set_property(TEST ${test_name}
+        APPEND PROPERTY FIXTURES_REQUIRED "${exe_name}")
+      set_property(TEST "compilation_of__${exe_name}"
+        PROPERTY FIXTURES_SETUP "${exe_name}")
+    endif()
+  endif() # end CMake 3.7 or later
+endfunction(cgal_setup_test_properties)
+
 function(cgal_add_test exe_name)
   cgal_add_compilation_test(${exe_name})
 
@@ -123,44 +173,7 @@ function(cgal_add_test exe_name)
     #	message(STATUS "add test: ${exe_name} ${ARGS}")
     add_test(NAME ${test_name} COMMAND ${TIME_COMMAND} $<TARGET_FILE:${exe_name}> ${ARGS})
   endif()
-  set_property(TEST "${test_name}"
-    APPEND PROPERTY LABELS "${PROJECT_NAME}")
-  #      message(STATUS "  working dir: ${CGAL_CURRENT_SOURCE_DIR}")
-  set_property(TEST "${test_name}"
-    PROPERTY WORKING_DIRECTORY ${CGAL_CURRENT_SOURCE_DIR})
-  set_property(TEST "${test_name}"
-    APPEND PROPERTY DEPENDS "compilation_of__${exe_name}")
-
-  if(POLICY CMP0066) # CMake 3.7 or later
-    if(NOT TEST ${PROJECT_NAME}_SetupFixture)
-      add_test(NAME ${PROJECT_NAME}_SetupFixture
-        COMMAND
-        ${CMAKE_COMMAND} -E copy_directory
-        ${CMAKE_CURRENT_SOURCE_DIR}
-        ${CMAKE_CURRENT_BINARY_DIR}/__exec_test_dir
-        )
-      set_property(TEST ${PROJECT_NAME}_SetupFixture
-        PROPERTY FIXTURES_SETUP ${PROJECT_NAME})
-
-      add_test(NAME ${PROJECT_NAME}_CleanupFixture
-        COMMAND
-        ${CMAKE_COMMAND} -E remove_directory
-        ${CMAKE_CURRENT_BINARY_DIR}/__exec_test_dir
-        )
-      set_property(TEST ${PROJECT_NAME}_CleanupFixture
-        PROPERTY FIXTURES_CLEANUP ${PROJECT_NAME})
-
-      set_property(TEST
-        ${PROJECT_NAME}_CleanupFixture ${PROJECT_NAME}_SetupFixture
-        APPEND PROPERTY LABELS "${PROJECT_NAME}")
-    endif()
-    set_property(TEST "compilation_of__${exe_name}"
-      PROPERTY FIXTURES_SETUP "${exe_name}")
-    set_tests_properties("${test_name}"
-      PROPERTIES
-      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/__exec_test_dir
-      FIXTURES_REQUIRED "${PROJECT_NAME};${exe_name}")
-  endif() # end CMake 3.7 or later
+  cgal_setup_test_properties(${test_name} ${exe_name})
   return()
 
   if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${exe_name}.cin")
