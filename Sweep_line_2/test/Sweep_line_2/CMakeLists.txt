@@ -47,7 +47,7 @@ if ( CGAL_FOUND )
 #      message("test ${source_file} ${file}")
       string(MAKE_C_IDENTIFIER "${name}  ${file}" test_name)
 #      message(" --> ${test_name}")
-      cgal_add_test(${name} TEST_NAME ${test_name} ${file})
+      cgal_add_test(${name} TEST_NAME ${test_name} ARGUMENTS ${file})
     endforeach()
   endfunction()
 

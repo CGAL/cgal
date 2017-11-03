@@ -23,7 +23,7 @@ if ( CGAL_FOUND )
     file(GLOB files  RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}/${data_dir} "${CMAKE_CURRENT_SOURCE_DIR}/${data_dir}/data*")
     foreach(file ${files})
       string(MAKE_C_IDENTIFIER "${name}  ${data_dir}/${file}" test_name)
-      cgal_add_test(${name} TEST_NAME ${test_name} ${data_dir}/${file} ${data_dir}/output_${file})
+      cgal_add_test(${name} TEST_NAME ${test_name} ARGUMENTS ${data_dir}/${file} ${data_dir}/output_${file})
       add_test(NAME "${test_name}_compare_results"
         COMMAND ${CMAKE_COMMAND} -E compare_files ${data_dir}/output_${file} ${data_dir}/gold_${file})
       cgal_setup_test_properties("${test_name}_compare_results")

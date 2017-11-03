@@ -126,9 +126,9 @@ function(cgal_add_test exe_name)
   cmake_parse_arguments("cgal_add_test" # prefix
     ""                                  # optional arguments
     "TEST_NAME"                         # single arguments
-    ""                                  # multivalue arguments
+    "ARGUMENTS"                         # multivalue arguments
     ${ARGN})
-  set(ARGS ${cgal_add_test_UNPARSED_ARGUMENTS})
+  set(ARGS ${cgal_add_test_ARGUMENTS})
   set(test_name ${cgal_add_test_TEST_NAME})
 #  message("  test_name: ${test_name}")
   if(NOT test_name)
@@ -148,7 +148,7 @@ function(cgal_add_test exe_name)
       -P "${CGAL_MODULES_DIR}/run_test_with_cin.cmake")
     #	message(STATUS "add test: ${exe_name} < ${cin_file}")
   else()
-    if(NOT ARGS)
+    if(NOT ARGS AND NOT cgal_add_test_TEST_NAME)
       if(ARGC GREATER 2 AND ARGV2)
         set(cmd_file "${CGAL_CURRENT_SOURCE_DIR}/${ARGV2}.cmd")
       elseif(ARGC GREATER 1 AND ARGV1 AND NOT EXISTS ${cmd_file})
