@@ -835,12 +835,13 @@ private:
   /// Initialize some global data structures such as vertex id.
   void init(const TriangleMesh& tmesh)
   {
-    copy_face_graph(tmesh, m_tmesh);
+    typedef std::pair<Input_vertex_descriptor, vertex_descriptor> Vertex_pair;
+    std::vector<Vertex_pair> v2v;
+    copy_face_graph(tmesh, m_tmesh, std::back_inserter(v2v));
 
     // copy input vertices to keep correspondence
-    typename boost::graph_traits<mTriangleMesh>::vertex_iterator vit=vertices(m_tmesh).first;
-    BOOST_FOREACH(Input_vertex_descriptor vd, vertices(tmesh) )
-      (*vit++)->vertices.push_back(vd);
+    BOOST_FOREACH(const Vertex_pair& vp, v2v)
+      vp.second->vertices.push_back(vp.first);
 
     //init indices
     typedef typename boost::graph_traits<mTriangleMesh>::vertex_descriptor vertex_descriptor;
