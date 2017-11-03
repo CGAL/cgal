@@ -15,7 +15,7 @@ typedef CGAL::Polyhedron_3<K> Polyhedron;
 
 double max_coordinate(const Polyhedron& poly)
 {
-  double max_coord = (std::numeric_limits<double>::min)();
+  double max_coord = -std::numeric_limits<double>::infinity();
   BOOST_FOREACH(Polyhedron::Vertex_handle v, vertices(poly))
   {
     Point p = v->point();
