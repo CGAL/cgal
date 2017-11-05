@@ -183,7 +183,7 @@ and <code>src/</code> directories).
  <h3>3D Surface Mesh Generation</h3>
    <ul>
      <li>
-       Add the function facets_in_complex_2_to_triangle_mesh() 
+       Add the function facets_in_complex_2_to_triangle_mesh()
        that exports Surface_mesh_complex_2_in_triangulation_3
        facets into a MutableFaceGraph.
      </li>
@@ -191,7 +191,7 @@ and <code>src/</code> directories).
   <h3>3D Mesh Generation</h3>
    <ul>
      <li>
-       Add the function facets_in_complex_3_to_triangle_mesh() 
+       Add the function facets_in_complex_3_to_triangle_mesh()
        that exports Mesh_complex_3_in_triangulation_3
        facets into a MutableFaceGraph.
      </li>
@@ -247,6 +247,14 @@ and <code>src/</code> directories).
   </ul>
 <!-- end of the div for 4.12 -->
 </div>
+<h3>2D Arrangements</h3>
+  <ul>
+    <li>Fixed the <code>Construct_opposite_2</code> functor required by the
+      concept <code>ArrangementDirectionalXMonotoneTraits_2</code> when using
+      the <code>Arr_curve_data_traits_2</code> class template to attach data
+      to curves.
+    </li>
+  </ul>
 
 <h2 id="release4.11">Release 4.11 </h2>
 <div>
@@ -547,7 +555,7 @@ and <code>src/</code> directories).
       concept <code>MutableFaceGraph</code>. This class can thus now be
       used in all BGL functions and algorithms.
     </li>
-    <li>Helper functions to create an icosahedron, a regular prism and a 
+    <li>Helper functions to create an icosahedron, a regular prism and a
       pyramid have been added.
     </li>
     <li>
