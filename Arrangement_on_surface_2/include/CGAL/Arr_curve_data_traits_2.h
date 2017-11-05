@@ -28,11 +28,13 @@
  * Definition of the Arr_curve_data_traits_2<> class template.
  */
 
-#include<CGAL/Object.h>
-#include<CGAL/tags.h>
-#include<CGAL/Arr_tags.h>
-#include<CGAL/Arr_geometry_traits/Curve_data_aux.h>
-#include<list>
+#include <list>
+#include <boost/utility/enable_if.hpp>
+
+#include <CGAL/Object.h>
+#include <CGAL/tags.h>
+#include <CGAL/Arr_tags.h>
+#include <CGAL/Arr_geometry_traits/Curve_data_aux.h>
 
 namespace CGAL {
 
@@ -93,10 +95,10 @@ public:
   /// \name Construction.
   //@{
 
-  /*! Default constructor. */
+  /*! Construct default. */
   Arr_curve_data_traits_2() {}
 
-  /*! Constructor from a base-traits class. */
+  /*! Construct from a base-traits class. */
   Arr_curve_data_traits_2(const Base_traits_2& traits) : Base_traits_2(traits) {}
   //@}
 
@@ -160,10 +162,10 @@ public:
     Split_2(const Base_traits_2& base) : m_base(base) {}
 
     /*! Split a given x-monotone curve at a given point into two sub-curves.
-     * \param cv The curve to split
-     * \param p The split point.
-     * \param c1 Output: The left resulting subcurve (p is its right endpoint).
-     * \param c2 Output: The right resulting subcurve (p is its left endpoint).
+     * \param cv[in] The curve to split
+     * \param p[in] The split point.
+     * \param c1[out] The left resulting subcurve (p is its right endpoint).
+     * \param c2[out] The right resulting subcurve (p is its left endpoint).
      * \pre p lies on cv but is not one of its end-points.
      */
     void operator()(const X_monotone_curve_2& cv, const Point_2& p,
@@ -239,25 +241,28 @@ public:
   private:
     const Base_traits_2& m_base;
 
-  public:
-    /*! Constructor. */
-    Are_mergeable_2(const Base_traits_2& base) : m_base(base) {}
-
-    /*! Check whether it is possible to merge two given x-monotone curves.
-     * \param cv1 The first curve.
-     * \param cv2 The second curve.
-     * \return (true) if the two curves are mergeable; (false) otherwise.
+    /*! Helper class template to find out whether the base geometry traits has
+     * a nested type named Are_mergeable_2.
      */
-    bool operator()(const X_monotone_curve_2& cv1,
-                    const X_monotone_curve_2& cv2) const
-    { return (_are_mergeable_base_imp(cv1, cv2, Base_has_merge_category())); }
+    template <typename T>
+    struct has_are_mergeable_2 {
+      typedef char yes[1];
+      typedef char no[2];
 
-  private:
-    /*! Implementation of the base predicate in case the HasMerge tag is true.
+      template<typename U> static yes& test(typename U::Are_mergeable_2*);
+      template<typename U> static no& test(...);
+
+      static const bool value = (sizeof(test<T>(0)) == sizeof(yes));
+    };
+
+    /*! Implementation of the predicate in case the base geometry traits class
+     * has a nested type named Are_mergeable_2.
      */
-    bool _are_mergeable_base_imp(const X_monotone_curve_2& cv1,
-                                 const X_monotone_curve_2& cv2,
-                                 Tag_true) const
+    template <typename GeomeTraits_2>
+    typename boost::enable_if_c<has_are_mergeable_2<GeomeTraits_2>::value,
+                                bool>::type
+    are_mergeable(const X_monotone_curve_2& cv1,
+                  const X_monotone_curve_2& cv2) const
     {
       // In case the two base curves are not mergeable, the extended curves
       // are not mergeable as well.
@@ -268,12 +273,32 @@ public:
       return (cv1.data() == cv2.data());
     }
 
-    /*! Implementation of the base predicate in case the HasMerge tag is false.
+    /*! Implementation of the predicate in case the base geometry traits class
+     * does not have a nested type named Are_mergeable_2.
+     * This function should never be called!
      */
-    bool _are_mergeable_base_imp(const X_monotone_curve_2& /* cv1 */,
-                                 const X_monotone_curve_2& /* cv2 */,
-                                 Tag_false) const
-    { return false; }
+    template <typename GeomeTraits_2>
+    typename boost::enable_if_c<!has_are_mergeable_2<GeomeTraits_2>::value,
+                                bool>::type
+    are_mergeable(const X_monotone_curve_2& /* cv1 */,
+                  const X_monotone_curve_2& /* cv2 */) const
+    {
+      CGAL_error_msg("Are mergeable is not supported.");
+      return false;
+    }
+
+  public:
+    /*! Constructor. */
+    Are_mergeable_2(const Base_traits_2& base) : m_base(base) {}
+
+    /*! Check whether it is possible to merge two given x-monotone curves.
+     * \param cv1[in] The first curve.
+     * \param cv2[in] The second curve.
+     * \return (true) if the two curves are mergeable; (false) otherwise.
+     */
+    bool operator()(const X_monotone_curve_2& cv1,
+                    const X_monotone_curve_2& cv2) const
+    { return are_mergeable<Base_traits_2>(cv1, cv2); }
   };
 
   /*! Obtain an Are_mergeable_2 functor object. */
@@ -287,31 +312,27 @@ public:
   private:
     const Base_traits_2& m_base;
 
-  public:
-    /*! Constructor. */
-    Merge_2(const Base_traits_2& base) : m_base(base) {}
-
-    /*! Merge two given x-monotone curves into a single curve (segment).
-     * \param cv1 The first curve.
-     * \param cv2 The second curve.
-     * \param c Output: The merged curve.
-     * \pre The two curves are mergeable.
+    /*! Helper class template to find out whether the base geometry traits has
+     * a nested type named Merge_2.
      */
-    void operator()(const X_monotone_curve_2& cv1,
-                    const X_monotone_curve_2& cv2,
-                    X_monotone_curve_2& c) const
-    {
-      // Dispatch based on the base Has_merge category.
-      _merge_imp(cv1, cv2, c, Base_has_merge_category());
-    }
+    template <typename T>
+    struct has_merge_2 {
+      typedef char yes[1];
+      typedef char no[2];
 
-  private:
-    /*! Implementation of the operator() in case the HasMerge tag is true.
+      template<typename U> static yes& test(typename U::Merge_2*);
+      template<typename U> static no& test(...);
+
+      static const bool value = (sizeof(test<T>(0)) == sizeof(yes));
+    };
+
+    /*! Implementation of the predicate in case the base geometry traits class
+     * has a nested type named Merge_2.
      */
-    void _merge_imp(const X_monotone_curve_2& cv1,
-                    const X_monotone_curve_2& cv2,
-                    X_monotone_curve_2& c,
-                    Tag_true) const
+    template <typename GeomeTraits_2>
+    typename boost::enable_if_c<has_merge_2<GeomeTraits_2>::value, void>::type
+    merge(const X_monotone_curve_2& cv1, const X_monotone_curve_2& cv2,
+          X_monotone_curve_2& c) const
     {
       // Merge the two base curve.
       Base_x_monotone_curve_2 base_cv;
@@ -324,13 +345,31 @@ public:
       c = X_monotone_curve_2(base_cv, cv1.data());
     }
 
-    /*! Implementation of the operator() in case the HasMerge tag is false.
+    /*! Implementation of the predicate in case the base geometry traits class
+     * does not have a nested type named Merge_2.
      * This function should never be called!
      */
-    void _merge_imp(const X_monotone_curve_2& /* cv1 */,
-                    const X_monotone_curve_2& /* cv2 */,
-                    X_monotone_curve_2& /* c */, Tag_false) const
+    template <typename GeomeTraits_2>
+    typename boost::enable_if_c<!has_merge_2<GeomeTraits_2>::value, void>::type
+    merge(const X_monotone_curve_2& /* cv1 */,
+          const X_monotone_curve_2& /* cv2 */,
+          X_monotone_curve_2& /* c */) const
     { CGAL_error_msg("Merging curves is not supported."); }
+
+  public:
+    /*! Constructor. */
+    Merge_2(const Base_traits_2& base) : m_base(base) {}
+
+    /*! Merge two given x-monotone curves into a single curve (segment).
+     * \param[in] cv1 The first curve.
+     * \param[in] cv2 The second curve.
+     * \param[out] c The merged curve.
+     * \pre The two curves are mergeable.
+     */
+    void operator()(const X_monotone_curve_2& cv1,
+                    const X_monotone_curve_2& cv2,
+                    X_monotone_curve_2& c) const
+    { merge<Base_traits_2>(cv1, cv2, c); }
   };
 
   /*! Obtain a Merge_2 functor object. */
@@ -361,8 +400,67 @@ public:
   /*! Obtain a Construct_x_monotone_curve_2 functor object. */
   Construct_x_monotone_curve_2 construct_x_monotone_curve_2_object() const
   { return Construct_x_monotone_curve_2(*this); }
-  //@}
 
+  class Construct_opposite_2 {
+  private:
+    const Base_traits_2& m_base;
+
+    /*! Helper class template to find out whether the base geometry traits has
+     * a nested type named Construct_opposite_2.
+     */
+    template <typename T>
+    struct has_construct_opposite_2 {
+      typedef char yes[1];
+      typedef char no[2];
+
+      template<typename U> static yes& test(typename U::Construct_opposite_2*);
+      template<typename U> static no& test(...);
+
+      static const bool value = (sizeof(test<T>(0)) == sizeof(yes));
+    };
+
+    /*! Implementation of the predicate in case the base geometry traits class
+     * has a nested type named Construct_opposite_2.
+     */
+    template <typename GeomeTraits_2>
+    typename boost::enable_if_c<has_construct_opposite_2<GeomeTraits_2>::value,
+                                X_monotone_curve_2>::type
+    construct_opposite(const X_monotone_curve_2& cv) const
+    {
+      X_monotone_curve_2 new_cv = m_base.construct_opposite_2_object()(cv);
+      new_cv.set_data(cv.data());
+      return new_cv;
+    }
+
+    /*! Implementation of the predicate in case the base geometry traits class
+     * does not have a nested type named Construct_opposite_2.
+     * This function should never be called!
+     */
+    template <typename GeomeTraits_2>
+    typename boost::enable_if_c<!has_construct_opposite_2<GeomeTraits_2>::value,
+                                X_monotone_curve_2>::type
+    construct_opposite(const X_monotone_curve_2& cv) const
+    {
+      CGAL_error_msg("Construct opposite curve is not supported!");
+      return X_monotone_curve_2();
+    }
+
+  public:
+    /*! Constructor. */
+    Construct_opposite_2(const Base_traits_2& base) : m_base(base) {}
+
+    /*! Construct an opposite x-monotone (with swapped source and target).
+     * \param cv The curve.
+     * \return The opposite curve.
+     */
+    X_monotone_curve_2 operator()(const X_monotone_curve_2& cv) const
+    { return construct_opposite<Base_traits_2>(cv); }
+  };
+
+  /*! Obtain a Construct_opposite_2 functor object. */
+  Construct_opposite_2 construct_opposite_2_object() const
+  { return Construct_opposite_2(*this); }
+  //@}
 };
 
 } //namespace CGAL
