@@ -43,6 +43,7 @@
 #include <boost/iterator/transform_iterator.hpp>
 #include <boost/optional.hpp>
 #include <boost/type_traits/is_convertible.hpp>
+#include <boost/unordered_set.hpp>
 
 #include <algorithm>
 #include <iomanip> // std::setprecision
@@ -94,44 +95,6 @@ struct Second_of
     return p.second;
   }
 }; // end class Second_of
-
-// That function is constructed with a vertex handle v1.
-// Then, its operator() takes an other vertex handle v2 as input, and
-// returns the distance d(v1, v2).
-// It is used in Slivers_exuder, to constructor a transform iterator.
-template <typename Tr, typename Vertex_handle>
-class Min_distance_from_v
-  : public CGAL::unary_function<Vertex_handle, void>
-{
-  const Vertex_handle * v;
-  const Tr& tr;
-  double & dist;
-
-public:
-  Min_distance_from_v(const Vertex_handle& vh,
-                      double& dist,
-                      const Tr& tr)
-    : v(&vh), tr(tr), dist(dist)
-  {
-  }
-
-  void
-  operator()(const Vertex_handle& vh) const
-  {
-    typedef typename Tr::Geom_traits::Construct_point_3   Construct_point_3;
-    typedef typename Tr::Weighted_point                   Weighted_point;
-
-    Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
-
-    const Weighted_point& wpv = tr.point(*v);
-    const Weighted_point& wpvh = tr.point(vh);
-
-    const double d = CGAL::to_double(tr.min_squared_distance(cp(wpv), cp(wpvh)));
-    if(d < dist){
-      dist = d;
-    }
-  }
-}; // end class Min_distance_from_v
 
 } // end namespace details
 
@@ -510,9 +473,9 @@ private:
    */
   void
   initialize_prestar_and_criterion_values(const Vertex_handle& v,
+                                          const Cell_vector& incident_cells,
                                           Pre_star& pre_star,
-                                          Sliver_values& criterion_values,
-                                          bool *could_lock_zone = NULL) const;
+                                          Sliver_values& criterion_values) const;
 
   /**
    * Expand pre_star with cell_to_add
@@ -612,16 +575,55 @@ private:
   }
 
   /**
-   * Returns the squared distance from vh to its closest vertice
+   * Returns the squared distance from vh to its closest vertex
    */
-  double get_closest_vertice_squared_distance(const Vertex_handle& vh) const
+  double get_distance_to_closest_vertex(const Vertex_handle& vh,
+                                        const Cell_vector& incident_cells) const
   {
-    double dist = (std::numeric_limits<double>::max)();
-    details::Min_distance_from_v<Tr, Vertex_handle> min_distance_from_v(vh, dist, tr_);
+    CGAL_precondition(!tr_.is_infinite(vh));
 
-    tr_.adjacent_vertices(vh, boost::make_function_output_iterator(min_distance_from_v));
+    typedef boost::unordered_set<Vertex_handle>              Vertex_container;
+    typedef typename Vertex_container::iterator              VC_it;
 
-    return dist;
+    // There is no need to use tr.min_squared_distance() here because we are computing
+    // distances between 'v' and a neighbor within their common cell, which means
+    // that even if we are using a periodic triangulation, the distance is correctly computed.
+    typename Gt::Compute_squared_distance_3 csqd = tr_.geom_traits().compute_squared_distance_3_object();
+    typename Gt::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
+
+    Vertex_container treated_vertices;
+    double min_sq_dist = std::numeric_limits<double>::infinity();
+
+    for(typename Cell_vector::const_iterator cit = incident_cells.begin();
+                                             cit != incident_cells.end();
+                                             ++cit)
+    {
+      const Cell_handle c = (*cit);
+      const int k = (*cit)->index(vh);
+      const Weighted_point& wpvh = tr_.point(c, k);
+
+      // For each vertex of the cell
+      for(int i=1; i<4; ++i)
+      {
+        const int n = (k+i)&3;
+        const Vertex_handle& vn = c->vertex(n);
+
+        std::pair<VC_it, bool> is_insert_succesful = treated_vertices.insert(vn);
+        if(! is_insert_succesful.second) // vertex has already been treated
+          continue;
+
+        if(tr_.is_infinite(vn))
+          continue;
+
+        const Weighted_point& wpvn = tr_.point(c, n);
+        const double sq_d = CGAL::to_double(csqd(cp(wpvh), cp(wpvn)));
+
+        if(sq_d < min_sq_dist)
+          min_sq_dist = sq_d;
+      }
+    }
+
+    return min_sq_dist;
   }
 
 
@@ -1114,28 +1116,10 @@ template <typename C3T3, typename SC, typename V_, typename FT>
 void
 Slivers_exuder<C3T3,SC,V_,FT>::
 initialize_prestar_and_criterion_values(const Vertex_handle& v,
+                                        const Cell_vector& incident_cells,
                                         Pre_star& pre_star,
-                                        Sliver_values& criterion_values,
-                                        bool *could_lock_zone) const
+                                        Sliver_values& criterion_values) const
 {
-  std::vector<Cell_handle> incident_cells;
-  incident_cells.reserve(64);
-  // Parallel
-  if (could_lock_zone)
-  {
-    if (!tr_.try_lock_and_get_incident_cells(v, incident_cells))
-    {
-      this->unlock_all_elements();
-      *could_lock_zone = false;
-      return;
-    }
-  }
-  // Sequential
-  else
-  {
-    tr_.incident_cells(v, std::back_inserter(incident_cells));
-  }
-
   for ( typename Cell_vector::const_iterator cit = incident_cells.begin() ;
        cit != incident_cells.end() ;
        ++cit )
@@ -1289,14 +1273,30 @@ double
 Slivers_exuder<C3T3,SC,V_,FT>::
 get_best_weight(const Vertex_handle& v, bool *could_lock_zone) const
 {
+  // incident_cells will be used both in 'initialize_prestar_and_criterion_values'
+  // and to get the smallest distance between 'v' and a neighbor.
+  Cell_vector incident_cells;
+  incident_cells.reserve(64);
+  // Parallel
+  if (could_lock_zone)
+  {
+    if (!tr_.try_lock_and_get_incident_cells(v, incident_cells))
+    {
+      this->unlock_all_elements();
+      *could_lock_zone = false;
+      return 0.;
+    }
+  }
+  // Sequential
+  else
+  {
+    tr_.incident_cells(v, std::back_inserter(incident_cells));
+  }
+
   // Get pre_star and criterion_values
   Pre_star pre_star;
   Sliver_values criterion_values;
-  initialize_prestar_and_criterion_values(
-    v, pre_star, criterion_values, could_lock_zone);
-
-  if (could_lock_zone && *could_lock_zone == false)
-    return 0.;
+  initialize_prestar_and_criterion_values(v, incident_cells, pre_star, criterion_values);
 
 #ifdef CGAL_MESH_3_DEBUG_SLIVERS_EXUDER
   Pre_star pre_star_copy;
@@ -1305,8 +1305,7 @@ get_best_weight(const Vertex_handle& v, bool *could_lock_zone) const
 
   double worst_criterion_value = get_min_value(criterion_values);
   double best_weight = 0;
-  // TODO: it seems that this computes the incident cells again
-  double sq_d_v = get_closest_vertice_squared_distance(v);
+  double sq_d_v = get_distance_to_closest_vertex(v, incident_cells);
 
   // If that boolean is set to false, it means that a facet in the complex
   // is about to be flipped. In that case, the pumping is stopped.
