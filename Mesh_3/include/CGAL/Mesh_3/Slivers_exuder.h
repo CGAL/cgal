@@ -1669,9 +1669,7 @@ check_pre_star(const Pre_star& pre_star,
     Pre_star pre_star2;
 
     // fill pre_star2
-    for(Input_facet_it fit = begin;
-        fit != end;
-        ++fit)
+    for(Input_facet_it fit = begin; fit != end; ++fit)
     {
       const Facet opposite_facet = tr_.mirror_facet(*fit);
       if(! tr_.is_infinite(opposite_facet.first) )

@@ -1562,7 +1562,7 @@ Sliver_perturber<C3T3,Md,Sc,V_>::
 initialize_vertices_id() const
 {
   int cur_id = 0;
-  for(typename Tr::Finite_vertices_iterator it = tr_.finite_vertices_begin(); 
+  for(typename Tr::Finite_vertices_iterator it = tr_.finite_vertices_begin();
       it != tr_.finite_vertices_end(); ++it) {
     it->set_meshing_info(cur_id++);
   }

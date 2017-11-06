@@ -74,10 +74,10 @@ private:
   typedef typename details::Mesh_geom_traits_generator<K>::type Geom_traits;
 
   typedef typename Default::Get<
-    Vertex_base_, 
+    Vertex_base_,
     Mesh_vertex_base_3<Geom_traits, MD> >::type                 Vertex_base;
   typedef typename Default::Get<
-    Cell_base_, 
+    Cell_base_,
     Compact_mesh_cell_base_3<Geom_traits, MD> >::type           Cell_base;
 
   typedef Triangulation_data_structure_3<Vertex_base,Cell_base> Tds;
@@ -101,10 +101,10 @@ private:
   typedef typename details::Mesh_geom_traits_generator<K>::type Geom_traits;
 
   typedef typename Default::Get<
-    Vertex_base_, 
+    Vertex_base_,
     Mesh_vertex_base_3<Geom_traits, MD> >::type                 Vertex_base;
   typedef typename Default::Get<
-    Cell_base_, 
+    Cell_base_,
     Compact_mesh_cell_base_3<Geom_traits, MD> >::type           Cell_base;
 
   typedef Triangulation_data_structure_3<

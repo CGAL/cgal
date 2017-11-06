@@ -820,9 +820,11 @@ Periodic_3_Delaunay_triangulation_3<GT,Tds>::nearest_vertex(const Point& p,
   Locate_type lt;
   int li, lj;
   Cell_handle c = locate(p, lt, li, lj, start);
-  if(lt == Base::VERTEX) return c->vertex(li);
+  if(lt == Base::VERTEX)
+    return c->vertex(li);
+
   const Conflict_tester tester(p, this);
-  Offset o = combine_offsets(Offset(),get_location_offset(tester,c));
+  Offset o = combine_offsets(Offset(), get_location_offset(tester,c));
 
   // - start with the closest vertex from the located cell.
   // - repeatedly take the nearest of its incident vertices if any
@@ -830,7 +832,8 @@ Periodic_3_Delaunay_triangulation_3<GT,Tds>::nearest_vertex(const Point& p,
   Vertex_handle nearest = nearest_vertex_in_cell(c, p, o);
   std::vector<Vertex_handle> vs;
   vs.reserve(32);
-  while(true) {
+  while(true)
+  {
     Vertex_handle tmp = nearest;
     Offset tmp_off = get_min_dist_offset(p,o,tmp);
     adjacent_vertices(nearest, std::back_inserter(vs));
@@ -839,8 +842,10 @@ Periodic_3_Delaunay_triangulation_3<GT,Tds>::nearest_vertex(const Point& p,
       tmp = (compare_distance(p,tmp->point(),(*vsit)->point(),
                               o,tmp_off,get_min_dist_offset(p,o,*vsit))
              == SMALLER) ? tmp : *vsit;
+
     if(tmp == nearest)
       break;
+
     vs.clear();
     nearest = tmp;
   }

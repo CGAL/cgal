@@ -69,7 +69,7 @@ class Lloyd_move
 
 public:
   typedef SizingField                                         Sizing_field;
-  
+
   /**
    * @brief Return the move to apply on \c v according to Lloyd optimization
    * function.
@@ -93,7 +93,7 @@ public:
         break;
       case 1:
       case 0:
-      case -1: 
+      case -1:
         // Don't move edge or corner vertices
         // N.B.: dimension = -1 is possible if we added points on a far sphere
         //       during initialization
@@ -105,15 +105,15 @@ public:
         return CGAL::NULL_VECTOR;
         break;
     }
-    
+
     return CGAL::NULL_VECTOR;
   }
-  
+
 #if defined(CGAL_MESH_3_OPTIMIZER_VERBOSE) \
  || defined (CGAL_MESH_3_EXPORT_PERFORMANCE_DATA)
   static std::string name() { return std::string("Lloyd"); }
 #endif
-  
+
 private:
   /**
    * Project_on_plane defines `operator()` to project a point object on the plane `plane`.
@@ -127,22 +127,22 @@ private:
     Bare_point operator()(const Bare_point& p) const
     { return c3t3_.triangulation().geom_traits().
           construct_projected_point_3_object()(plane_, p); }
-    
+
   private:
     const Plane_3& plane_;
     const C3T3& c3t3_;
   };
-  
+
   /**
    * `To_2d` defines `operator()` to transform from `Bare_point` to `Point_2`.
    */
   struct To_2d
   {
     To_2d(const Aff_transformation_3& to_2d) : to_2d_(to_2d) {}
-    
+
     Point_2 operator()(const Bare_point& p) const
     { return Point_2(to_2d_.transform(p).x(), to_2d_.transform(p).y()); }
-    
+
   private:
     const Aff_transformation_3& to_2d_;
   };
@@ -173,7 +173,7 @@ private:
     // Move data
     Vector_3 move = CGAL::NULL_VECTOR;
     FT sum_masses(0);
-    
+
     // -----------------------------------
     // Tessellate Voronoi cell
     // -----------------------------------
@@ -189,7 +189,7 @@ private:
          ++cit)
     {
       const int& k = (*cit)->index(v);
-      
+
       // For each vertex of the cell
       for ( int i=1 ; i<4 ; ++i )
       {
@@ -204,11 +204,11 @@ private:
                          move, sum_masses, sizing_field);
       }
     }
-    
+
     CGAL_assertion(sum_masses != 0.0);
     return move / sum_masses;
   }
-  
+
   /**
    * Return the move for the on-boundary vertex \c v.
    */
@@ -217,10 +217,10 @@ private:
                                   const Sizing_field& sizing_field) const
   {
     CGAL_precondition(c3t3.in_dimension(v) == 2);
-    
+
     // get all surface delaunay ball point
     std::vector<Bare_point> points = extract_lloyd_boundary_points(v,c3t3);
-    
+
     switch(points.size())
     {
       case 0: // could happen if there is an isolated surface point into mesh
@@ -236,7 +236,7 @@ private:
         return centroid_segment_move(v, a, b, c3t3, sizing_field);
         break;
       }
-      case 3: // triangle centroid 
+      case 3: // triangle centroid
       {
         const Bare_point& a = points.at(0);
         const Bare_point& b = points.at(1);
@@ -248,10 +248,10 @@ private:
         return centroid_general_move(v, points.begin(), points.end(), c3t3, sizing_field);
         break;
     }
-    
+
     return CGAL::NULL_VECTOR;
   }
-  
+
   /**
    * Returns a vector containing the surface delaunay ball centers of the surface
    * facets that are incident to vertex \c v.
@@ -290,7 +290,7 @@ private:
 
     return points;
   }
-  
+
   /**
    * Return the move from \c v to the centroid of the segment [a,b].
    */
@@ -336,7 +336,7 @@ private:
     CGAL_assertion( !is_zero(da+db+dc) );
     return ( (da*vector(p,a) + db*vector(p,b) + dc*vector(p,c)) / (da+db+dc) );
   }
-  
+
   /**
    * Compute the approximate centroid of the intersection between the 3D voronoi
    * cell and the boundary. The input is the set of intersection points between
@@ -357,7 +357,7 @@ private:
     CGAL::linear_least_squares_fitting_3(first, last, plane, point, Dimension_tag<0>(),
                                          c3t3.triangulation().geom_traits(),
                                          Default_diagonalize_traits<FT, 3>());
-    
+
     // Project all points to the plane
     std::transform(first, last, first, Project_on_plane(plane, c3t3));
     CGAL_assertion(std::distance(first, last) > 3);
@@ -415,18 +415,18 @@ private:
     // Use as reference point to triangulate
     const Bare_point& a = *first++;
     const Bare_point* b = &(*first++);
-    
+
     // Treat first point (optimize density_2d call)
     const Bare_point& c = *first++;
-    
+
     const Bare_point& triangle_centroid = centroid(a,*b,c);
     FT density = density_2d<true>(triangle_centroid, v, sizing_field);
-    
+
     FT sum_masses = density * area(a,*b,c);
     Vector_3 move = sum_masses * vector(vertex_position, triangle_centroid);
-    
+
     b = &c;
-    
+
     // Next points
     while ( first != last )
     {
@@ -435,10 +435,10 @@ private:
       const Bare_point& triangle_centroid = centroid(a,*b,c);
       FT density = density_2d<false>(triangle_centroid, v, sizing_field);
       FT mass = density * area(a,*b,c);
-      
+
       move = move + mass * vector(vertex_position, triangle_centroid);
       sum_masses += mass;
-      
+
       // Go one step forward
       b = &c;
     }
@@ -446,7 +446,7 @@ private:
 
     return move / sum_masses;
   }
-  
+
   /**
    * Return the transformation from `reference_point` to `plane`.
    */
@@ -459,18 +459,18 @@ private:
 
     Vector_3 u = base(plane, 1);
     u = u / CGAL::sqrt(u*u);
-    
+
     Vector_3 v = base(plane, 2);
     v = v / CGAL::sqrt(v*v);
-    
+
     Vector_3 w = orthogonal_vector(plane);
     w = w / CGAL::sqrt(w*w);
-    
+
     return Aff_transformation_3(u.x(),v.x(),w.x(),reference_point.x(),
                                 u.y(),v.y(),w.y(),reference_point.y(),
                                 u.z(),v.z(),w.z(),reference_point.z());
   }
-  
+
   /**
    * Return density_1d
    */
@@ -485,7 +485,7 @@ private:
     // s^(d+2)
     return ( 1/(s*s*s) );
   }
-  
+
   /**
    * Return density_2d
    */
@@ -500,7 +500,7 @@ private:
     // s^(d+2)
     return ( 1/(s*s*s*s) );
   }
-  
+
   /**
    * Return density_3d
    */
@@ -533,7 +533,7 @@ private:
     CGAL_precondition(c3t3.in_dimension(v) == 3);
 
     typedef typename Tr::Cell_circulator Cell_circulator;
-    
+
     const Tr& tr = c3t3.triangulation();
 
     typename Gt::Construct_centroid_3 centroid = tr.geom_traits().construct_centroid_3_object();
@@ -590,7 +590,7 @@ private:
   }
 };
 
-} // end namespace Mesh_3 
+} // end namespace Mesh_3
 
 
 } //namespace CGAL

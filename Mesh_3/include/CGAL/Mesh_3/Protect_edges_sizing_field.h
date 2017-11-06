@@ -540,7 +540,7 @@ insert_corners()
 
     // Insert corner with ball (dim is zero because p is a corner)
     Vertex_handle v = smart_insert_point(p, w, 0, p_index,
-           CGAL::Emptyset_iterator()).first;
+                                         CGAL::Emptyset_iterator()).first;
     CGAL_assertion(v != Vertex_handle());
 
     // As C3t3::add_to_complex modifies the 'in_dimension' of the vertex,
@@ -652,7 +652,6 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
   if ( tr.dimension() > 2 )
   {
     // Check that new point will not be inside a power sphere
-
     typename Tr::Locate_type lt;
     int li, lj;
     Cell_handle ch = tr.locate(wp0, lt, li, lj);
@@ -661,10 +660,11 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
     while ( nearest_vh->point().weight() > sq_d &&
             ! is_special(nearest_vh) )
     {
-      CGAL_assertion( minimal_size_ >0 || sq_d > 0 );
+      CGAL_assertion( minimal_size_ > 0 || sq_d > 0 );
 
       bool special_ball = false;
-      if(minimal_weight_ != Weight() && sq_d < minimal_weight_) {
+      if(minimal_weight_ != Weight() && sq_d < minimal_weight_)
+      {
         sq_d = minimal_weight_;
         w = minimal_weight_;
         special_ball = true;
@@ -691,7 +691,8 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
     // Change w in order to be sure that no existing point will be included
     // in (p,w)
     std::vector<Vertex_handle> vertices_in_conflict_zone;
-    { // fill vertices_in_conflict_zone
+    {
+      // fill vertices_in_conflict_zone
       std::set<Vertex_handle> vertices_in_conflict_zone_set;
       std::vector<Cell_handle> cells_in_conflicts;
       Weighted_point wp = cwp(p, w);
@@ -1008,7 +1009,7 @@ insert_balls(const Vertex_handle& vp,
             << "             vq=" << disp_vert(vq) << ",\n"
             << "             sp=" << sp << ",\n"
             << "             sq=" << sq << ",\n"
-            << "              d=" << d << ",\n"
+            << "             d=" << d << ",\n"
             << "             d_sign=" << d_sign << ",\n"
             << "             curve_index=" << curve_index << ")\n";
 #endif
@@ -1787,11 +1788,10 @@ repopulate(InputIterator begin, InputIterator last,
 {
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
   std::cerr << "repopulate(begin=" << disp_vert(*begin) << "\n"
-            << "            last=" << disp_vert(*last)  << "\n"
-            << "                  distance(begin, last)="
-            << std::distance(begin, last) << ",\n"
-            << "           index=" << CGAL::oformat(index) << ")\n"
-            << "     orientation=" << orientation << ")\n";
+            << "           last=" << disp_vert(*last)  << "\n"
+            << "           distance(begin, last)=" << std::distance(begin, last) << ",\n"
+            << "           index=" << CGAL::oformat(index) << ",\n"
+            << "           orientation=" << orientation << ")\n";
 #endif
   CGAL_assertion( std::distance(begin,last) >= 0 );
 
@@ -1853,10 +1853,9 @@ analyze_and_repopulate(InputIterator begin, InputIterator last,
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
   std::cerr << "analyze_and_repopulate(begin=" << disp_vert(*begin) << "\n"
             << "                       last=" << disp_vert(*last) << "\n"
-            << "                              distance(begin, last)="
-            << std::distance(begin, last) << ",\n"
-            << "                       index=" << CGAL::oformat(index) << ")\n"
-            << "                 orientation=" << orientation << ")\n";
+            << "                       distance(begin, last)=" << std::distance(begin, last) << ",\n"
+            << "                       index=" << CGAL::oformat(index) << ",\n"
+            << "                       orientation=" << orientation << ")\n";
 #endif
   CGAL_assertion( std::distance(begin,last) >= 0 );
 

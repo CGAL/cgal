@@ -54,7 +54,7 @@ namespace CGAL {
 /// become obsolete.
 template<class Gt, class Tds>
 class Periodic_3_regular_triangulation_3_mesher_3
-    : public Periodic_3_regular_triangulation_3<Gt, Tds>
+  : public Periodic_3_regular_triangulation_3<Gt, Tds>
 {
 public:
   typedef Sequential_tag                                      Concurrency_tag;

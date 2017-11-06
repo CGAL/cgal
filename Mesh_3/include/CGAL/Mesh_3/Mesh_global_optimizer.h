@@ -371,7 +371,7 @@ private:
 
   public:
     // Constructor
-    Compute_move(MGO &mgo, 
+    Compute_move(MGO &mgo,
                  const Sizing_field_ &sizing_field,
                  Moves_vector_ &moves,
                  bool do_freeze,
@@ -387,8 +387,8 @@ private:
 
     // Constructor
     Compute_move(const Compute_move &cm)
-    : m_mgo(cm.m_mgo), 
-      m_sizing_field(cm.m_sizing_field), 
+    : m_mgo(cm.m_mgo),
+      m_sizing_field(cm.m_sizing_field),
       m_moves(cm.m_moves),
       m_do_freeze(cm.m_do_freeze),
       m_vertices_not_moving_any_more(cm.m_vertices_not_moving_any_more),
@@ -444,7 +444,7 @@ private:
 
   public:
     // Constructor
-    Compute_sizing_field_value(MGO &mgo, 
+    Compute_sizing_field_value(MGO &mgo,
                                const Gt &gt,
                                Local_list_ &local_lists)
     : m_mgo(mgo),
@@ -454,7 +454,7 @@ private:
 
     // Constructor
     Compute_sizing_field_value(const Compute_sizing_field_value &csfv)
-    : m_mgo(csfv.m_mgo), 
+    : m_mgo(csfv.m_mgo),
       m_gt(csfv.m_gt),
       m_local_lists(csfv.m_local_lists)
     {}
@@ -464,7 +464,7 @@ private:
     {
       typename Gt::Construct_point_3 cp = m_gt.construct_point_3_object();
 
-      Vertex_handle vh 
+      Vertex_handle vh
         = Tr::Triangulation_data_structure::Vertex_range::s_iterator_to(v);
       const Weighted_point& position = m_mgo.tr_.point(vh);
       m_local_lists.local().push_back(
@@ -482,7 +482,7 @@ private:
     const Moves_vector_                  & m_moves;
     Moving_vertices_set_                 & m_moving_vertices;
     Outdated_cell_set_                   & m_outdated_cells;
-  
+
     typedef typename Tr_::Bare_point    Bare_point;
     typedef typename Tr_::Vertex_handle Vertex_handle;
 
@@ -491,7 +491,7 @@ private:
     Move_vertex(MGO &mgo, const Helper &helper, const Moves_vector_ &moves,
                 Moving_vertices_set_ &moving_vertices,
                 Outdated_cell_set_ &outdated_cells)
-    : m_mgo(mgo), m_helper(helper), m_moves(moves), 
+    : m_mgo(mgo), m_helper(helper), m_moves(moves),
       m_moving_vertices(moving_vertices), m_outdated_cells(outdated_cells)
     {}
 

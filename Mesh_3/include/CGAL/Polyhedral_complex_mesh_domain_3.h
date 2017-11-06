@@ -308,7 +308,7 @@ public:
 
   /// The polyhedron type
   typedef Polyhedron Polyhedron_type;
-  
+
   /// \name Index types
   /// @{
   /// The types are `int` or types compatible with `int`.
@@ -427,7 +427,7 @@ public:
   For an edge of the polyhedron, if the angle between the two normal vectors of its
   incident facets is bigger than the given bound, then the edge is considered as
   a feature edge, and inserted as a feature of the domain.
-  */ 
+  */
   void detect_features(FT angle_bound = FT(60)) {
     detect_features(angle_bound, stored_polyhedra, false/*do protect*/);
   }
@@ -692,7 +692,7 @@ public:
       {
         return Subdomain();
       }
-  
+
       // Shoot ray
       typename IGT::Construct_ray_3 ray = IGT().construct_ray_3_object();
       typename IGT::Construct_vector_3 vector = IGT().construct_vector_3_object();
@@ -921,7 +921,7 @@ detect_features(FT angle_in_degree,
     {
       patch_id_to_polyhedron_id[get(pid_map, f)] = polyhedron_id;
     }
-    BOOST_FOREACH(halfedge_descriptor he, halfedges(p)) 
+    BOOST_FOREACH(halfedge_descriptor he, halfedges(p))
     {
       if(is_border(he, p) || !get(eif, edge(he, p))) continue;
       patch_has_featured_edges.set(get(pid_map, face(he, p)));
@@ -982,7 +982,7 @@ merge_duplicated_points(const PointSet& duplicated_points)
     }
   }
 
-  //collect ids to be modified 
+  //collect ids to be modified
   std::vector<Patch_id> new_ids(this->nb_of_patch_plus_one());
   for (std::size_t i = 0; i < this->nb_of_patch_plus_one(); ++i)
     new_ids[i] = Patch_id(i);

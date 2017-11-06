@@ -15,7 +15,7 @@
 //
 // $URL: https://scm.gforge.inria.fr/svn/cgal/branches/features/Mesh_3-experimental-GF/Mesh_3/include/CGAL/Mesh_3/io_signature.h $
 // $Id: io_signature.h 68587 2012-04-17 16:00:12Z lrineau $
-// 
+//
 //
 // Author(s)     : Laurent RINEAU
 
@@ -39,19 +39,19 @@
 #include <boost/tuple/tuple.hpp>
 #include <utility>
 
-namespace CGAL { 
+namespace CGAL {
 
 // SFINAE test
 template <typename T, typename U>
 class has_io_signature
 {
 private:
-	template <U> struct helper;
-	template <typename V> static char check(helper<&V::io_signature> *);
-	template <typename V> static char (&check(...))[2];
+  template <U> struct helper;
+  template <typename V> static char check(helper<&V::io_signature> *);
+  template <typename V> static char (&check(...))[2];
 
 public:
-	enum { value = (sizeof(check<T>(0)) == sizeof(char)) };
+  enum { value = (sizeof(check<T>(0)) == sizeof(char)) };
 };
 
 template <class T, bool has_io_signature>
@@ -150,7 +150,7 @@ struct Get_io_signature<boost::variant<T,U,V> >
   }
 };
 
-template <typename T, typename U, 
+template <typename T, typename U,
           typename V, typename W>
 struct Get_io_signature<boost::variant<T,U,V,W> >
 {
@@ -198,7 +198,7 @@ Get_io_signature<Triangulation_3<Gt, Triangulation_data_structure_3<Vb, Cb, C_ta
 
 #ifdef CGAL_DELAUNAY_TRIANGULATION_3_H
 template <class Gt, class Tds>
-struct 
+struct
 Get_io_signature<Delaunay_triangulation_3<Gt, Tds> >
 {
   std::string operator()() {

@@ -973,7 +973,7 @@ scan_triangulation_impl()
     // PARALLEL_DO
     tbb::parallel_do(
       this->r_tr_.finite_facets_begin(), this->r_tr_.finite_facets_end(),
-      typename Rf_base::template Scan_facet<Self>(*this) 
+      typename Rf_base::template Scan_facet<Self>(*this)
     );
 
     splice_local_lists();
@@ -1312,7 +1312,7 @@ conflicts_zone_impl(const Weighted_point& point
       std::cerr << "Info: the facet is not in the conflict zone of (" << point
                 << "). Switching to exact computation." << std::endl;
 # endif
-      
+
       typename Rf_base::Facet_properties properties;
       this->compute_facet_properties(facet, properties, /*force_exact=*/true);
       if ( properties )
@@ -1329,7 +1329,7 @@ conflicts_zone_impl(const Weighted_point& point
       {
         // Facet is not on surface
         this->remove_facet_from_surface(facet);
-	this->remove_bad_facet(facet, Ct());
+        this->remove_bad_facet(facet, Ct());
       }
     }
   }
@@ -1391,7 +1391,7 @@ conflicts_zone_impl(const Weighted_point& point
       {
         // Facet is not on surface
         this->remove_facet_from_surface(facet);
-	this->remove_bad_facet(facet, Ct());
+        this->remove_bad_facet(facet, Ct());
       }
     }
   }

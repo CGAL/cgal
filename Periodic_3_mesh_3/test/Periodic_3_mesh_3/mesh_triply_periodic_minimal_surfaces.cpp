@@ -13,7 +13,6 @@
 #include <CGAL/Mesh_criteria_3.h>
 #include <CGAL/Mesh_domain_with_polyline_features_3.h>
 
-
 #include <algorithm>
 #include <cmath>
 #include <map>

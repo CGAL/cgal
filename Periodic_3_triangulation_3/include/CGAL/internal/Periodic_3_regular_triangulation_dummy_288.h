@@ -5255,7 +5255,7 @@ static const int O[1728][4] = {
 
 
   for(unsigned i = 0; i < 1728; ++i){
-    cells[i]->set_vertices(vertices[V[i][0]], vertices[V[i][1]], vertices[V[i][2]], vertices[V[i][3]]);    
+    cells[i]->set_vertices(vertices[V[i][0]], vertices[V[i][1]], vertices[V[i][2]], vertices[V[i][3]]);
     cells[i]->set_neighbors(cells[N[i][0]], cells[N[i][1]], cells[N[i][2]], cells[N[i][3]]);
     set_offsets(cells[i],O[i][0],O[i][1],O[i][2],O[i][3]);
   }

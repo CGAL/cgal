@@ -123,11 +123,10 @@ public:
                              const Vertex_handle v,
                              const Weighted_point& p) const;
 
-
   bool inside_protecting_balls(const Tr& tr,
                                const Vertex_handle v,
                                const Bare_point& p) const;
-  
+
 private:
   /**
    * Returns true if \c v is well_oriented on each cell of \c cell_tos
@@ -448,11 +447,11 @@ no_topological_change__without_set_point(
         if (c_copy.has_vertex(v0, i_v0))
         {
           v.set_point(p);
-          c_copy.set_vertex(i_v0, 
+          c_copy.set_vertex(i_v0,
             Tr::Triangulation_data_structure::Vertex_range::s_iterator_to(v));
         }
-        
-        Cell_handle c_copy_h = 
+
+        Cell_handle c_copy_h =
           Tr::Triangulation_data_structure::Cell_range::s_iterator_to(c_copy);
         if(tr.side_of_power_sphere(c_copy_h, pg(cj->vertex(mj)), false)
            != CGAL::ON_UNBOUNDED_SIDE)
@@ -474,7 +473,7 @@ no_topological_change__without_set_point(
             Tr::Triangulation_data_structure::Vertex_range::s_iterator_to(v));
         }
 
-        Cell_handle cj_copy_h = 
+        Cell_handle cj_copy_h =
           Tr::Triangulation_data_structure::Cell_range::s_iterator_to(cj_copy);
         if(tr.side_of_power_sphere(cj_copy_h, pg(v1), false)
            != CGAL::ON_UNBOUNDED_SIDE)
