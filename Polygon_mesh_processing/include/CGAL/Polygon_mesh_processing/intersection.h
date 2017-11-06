@@ -1307,25 +1307,57 @@ bool do_intersect(const TriangleMesh& mesh,
 }//end PMP
 namespace internal{
 
-template<class TriangleMesh
+template<class TriangleMeshRange
          , typename OutputIterator
+         , class NamedParametersRange
+         , class NamedParameter
          >
 struct Mesh_callback
 {
-  const TriangleMesh* mesh_0_ptr;
-  OutputIterator m_iterator;
+  typedef typename boost::range_value<TriangleMeshRange>::type TriangleMesh;
+  typedef typename boost::range_value<NamedParametersRange>::type VertexPointMapNP;
+  //typedef CGAL::AABB_face_graph_triangle_primitive<TriangleMesh> Primitive;
+  //typedef CGAL::AABB_traits<Geom_traits, Primitive> Traits;
+  //typedef CGAL::AABB_tree<Traits> AABBTree;
 
-  Mesh_callback(const TriangleMesh& mesh0,
-                OutputIterator iterator)
-    : mesh_0_ptr(&mesh0), m_iterator(iterator)
+  // todo : add a vector/map of trees for each mesh.
+  // fill them in the operator and test for inclusion with
+  // Side_of_triangle_mesh.
+  const TriangleMeshRange& meshes;
+  OutputIterator m_iterator;
+  const NamedParametersRange& nps;
+  const NamedParameter& np;
+
+  Mesh_callback(const TriangleMeshRange& meshes,
+                OutputIterator iterator,
+                const NamedParametersRange& nps,
+                const NamedParameter& np)
+    : meshes(meshes), m_iterator(iterator), nps(nps), np(np)
   {}
 
   template<class Mesh_box>
   void operator()(const Mesh_box* b1, const Mesh_box* b2)
   {
-    std::size_t mesh_id_1 = b1->info() - mesh_0_ptr;
-    std::size_t mesh_id_2 = b2->info() - mesh_0_ptr;
-    if(Polygon_mesh_processing::do_intersect(*b1->info(), *b2->info()))
+    std::size_t mesh_id_1 = std::distance(meshes.begin(), b1->info());
+    std::size_t mesh_id_2 = std::distance(meshes.begin(), b2->info());
+
+    typename GetVertexPointMap<TriangleMesh, VertexPointMapNP>::const_type
+      vpm1 = choose_param(get_param(*(nps.begin() + mesh_id_1), internal_np::vertex_point),
+                         get_const_property_map(CGAL::vertex_point, *b1->info()));
+
+    typename GetVertexPointMap<TriangleMesh, VertexPointMapNP>::const_type
+      vpm2 = choose_param(get_param(*(nps.begin() + mesh_id_2), internal_np::vertex_point),
+                         get_const_property_map(CGAL::vertex_point, *b2->info()));
+
+    typedef typename GetGeomTraits<TriangleMesh, NamedParameter>::type GT;
+    GT gt = choose_param(get_param(np, internal_np::geom_traits), GT());
+
+    if(Polygon_mesh_processing::do_intersect(*b1->info(),
+                                             *b2->info(),
+                                             Polygon_mesh_processing::parameters::vertex_point_map(vpm1)
+                                             .geom_traits(gt),
+                                             Polygon_mesh_processing::parameters::vertex_point_map(vpm2)
+                                             .geom_traits(gt)))
     {
       *m_iterator++ = std::make_pair(mesh_id_1, mesh_id_2);
     }
@@ -1343,37 +1375,47 @@ namespace Polygon_mesh_processing{
  * * \pre \link CGAL::Polygon_mesh_processing::do_intersect() `!CGAL::Polygon_mesh_processing::do_intersect(mesh1, mesh2)` \endlink
  *
  * \tparam TriangleMeshRange a model of `Bidirectional Range` of triangle `FaceListGraph`s.
+ * All of those `FaceListGraph`s must be of the same type.
  * \tparam OutputIterator an output iterator in which `std::pair<std::size_t, std::size_t>`
  *                        can be put.
+ * \tparam NamedParametersRange a range of namedparameters.
+ * \tparam namedParameter a namedparameter.
  *
  * \param range the range of `TriangleMesh`
  * \param out the OutputIterator that will be filled.
- * \todo How do we manage NamedParameters ?
- * - Create a new namedParameter that is a range of VertexPointMap and pass
- *   a NP that contains the Geom_traits and the range of VPM
- * -
+ * \param np_vpms an optional range of `vertex_point_map` namedparameters containing the `VertexPointMap` of each mesh in `range`, in the same order.
+ * if this parameter is omitted, then an internal property map for
+ *   `CGAL::vertex_point_t` should be available in every `TriangleMesh` of `range`.
+ * All the `VertexPointMap`s must be of the same type.
+ * \param np an optional `geom_traits` namedparameter containing the `Geom_traits` used by the meshes in `range`.
+ * The default value for this parameter is `CGAL::Kernel_traits<Point>::Kernel`, where `Point` is the
+ * value type of the `VertexPointMap` of the first mesh of the range.
+ * \cgalNamedParamsBegin
+ *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tmesh`.
+ *   If this parameter is omitted, an internal property map for
+ *   `CGAL::vertex_point_t` should be available in `TriangleMesh`\cgalParamEnd
+ *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `PMPSelfIntersectionTraits` \cgalParamEnd
+ * \cgalNamedParamsEnd
  */
+
 template <class TriangleMeshRange
           , class OutputIterator
-          >
+          , class NamedParametersRange
+          , class NamedParameter>
 OutputIterator get_intersections_in_range(const TriangleMeshRange& range,
                                           OutputIterator out,
-                                          bool by_the_volume = false)
+                                          NamedParametersRange np_vpms,
+                                          NamedParameter np)
 {
-  typedef typename boost::range_value<TriangleMeshRange>::type TriangleMesh;
-  /*
-   typedef GetGeomTraits<TriangleMesh, NP> Geom_traits;
-   typedef CGAL::AABB_face_graph_triangle_primitive<TriangleMesh> Primitive;
-   typedef CGAL::AABB_traits<Geom_traits, Primitive> Traits;
-   typedef CGAL::AABB_tree<Traits> AABBTree;
-   */
-  typedef CGAL::Box_intersection_d::Box_with_info_d<double, 3, const TriangleMesh*> Mesh_box;
+  typedef typename TriangleMeshRange::const_iterator TriangleMeshIterator;
+
+  typedef CGAL::Box_intersection_d::Box_with_info_d<double, 3, TriangleMeshIterator> Mesh_box;
   std::vector<Mesh_box> boxes;
   boxes.reserve(std::distance(range.begin(), range.end()));
 
-  BOOST_FOREACH(const TriangleMesh& m, range)
+  for(TriangleMeshIterator it = range.begin(); it != range.end(); ++it)
   {
-    boxes.push_back( Mesh_box(Polygon_mesh_processing::bbox(m), &m) );
+    boxes.push_back( Mesh_box(Polygon_mesh_processing::bbox(*it), it) );
   }
 
   std::vector<Mesh_box*> boxes_ptr(
@@ -1382,10 +1424,25 @@ OutputIterator get_intersections_in_range(const TriangleMeshRange& range,
 
   //get all the pairs of meshes intersecting (no strict inclusion test)
   std::ptrdiff_t cutoff = 2000;
-  internal::Mesh_callback<TriangleMesh, OutputIterator> callback(*range.begin(), out);
+  internal::Mesh_callback<TriangleMeshRange, OutputIterator, NamedParametersRange, NamedParameter> callback(range, out, np_vpms, np);
   CGAL::box_self_intersection_d(boxes_ptr.begin(), boxes_ptr.end(),
                                 callback, cutoff);
   return callback.m_iterator;
+}
+
+template <class TriangleMeshRange
+          , class OutputIterator>
+OutputIterator get_intersections_in_range(const TriangleMeshRange& range,
+                                          OutputIterator out)
+{
+  typedef typename boost::range_value<TriangleMeshRange>::type TriangleMesh;
+  std::vector<pmp_bgl_named_params<bool, internal_np::all_default_t> >nps;
+  nps.reserve(std::distance(range.begin(), range.end()));
+  for(int i = 0; i<std::distance(range.begin(), range.end()); ++i)
+  {
+    nps.push_back(parameters::all_default);
+  }
+  return get_intersections_in_range(range, out, nps, parameters::all_default);
 }
 
 /**
