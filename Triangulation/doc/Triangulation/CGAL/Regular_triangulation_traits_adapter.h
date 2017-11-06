@@ -36,6 +36,11 @@ public:
   /// @{
 
   /*!
+  The base traits.
+  */
+  typedef RTTraits                                  Base;
+  
+  /*!
   The weighted point type.
   */
   typedef typename K::Weighted_point_d              Point_d;
