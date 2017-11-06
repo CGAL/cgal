@@ -1237,26 +1237,46 @@ expand_prestar(const Cell_handle& cell_to_add,
       {
         const Weighted_point& pwp = tr_.point(pumped_vertex);
 
-        // Ensure that 'new_power_distance_to_power_sphere' has been initialized
-        CGAL_assertion(new_power_distance_to_power_sphere != std::numeric_limits<double>::infinity());
-
         // Adding the power distance to the pumped vertex's weight is a way
         // to artificially make the cell 'cell_to_add' be in conflict
         // with the pumped vertex. This is done for periodic triangulations,
         // where the function 'tetrahedron(Facet, Weighted_point)' requires
         // the cell of the facet to be in conflict with the point to determine
         // the correct offset of the weighted point (to get a correct tetrahedron).
-        FT new_weight = pwp.weight() + new_power_distance_to_power_sphere;
+        FT new_weight = pwp.weight();
+        Facet curr_f;
 
-        // With 'new_weight' only, the point is orthogonal to the power sphere,
-        // so we add a little bit more weight to make sure that pwp is in conflict.
-        new_weight += std::numeric_limits<double>::epsilon();
+        if(! tr_.is_infinite(current_mirror_cell))
+        {
+          // if current_mirror_cell is finite, we can re-use the value
+          // 'new_power_distance_to_power_sphere'
 
+          // Ensure that 'new_power_distance_to_power_sphere' has been initialized
+          CGAL_assertion(new_power_distance_to_power_sphere != std::numeric_limits<double>::infinity());
+          new_weight += new_power_distance_to_power_sphere;
+
+          curr_f = current_mirror_facet;
+        }
+        else // tr_.is_infinite(current_mirror_cell)
+        {
+          // We can't use 'new_power_distance_to_power_sphere' because 'current_mirror_cell'
+          // is infinite. So we compute the power distance to 'cell_to_add' instead.
+          CGAL_assertion(!tr_.is_infinite(cell_to_add));
+          new_weight += tr_.compute_power_distance_to_power_sphere(cell_to_add, pumped_vertex);
+          curr_f = current_facet;
+        }
+
+        // With 'new_weight' only, the point is only orthogonal to the power sphere,
+        // so we add a little bit more weight to make sure that 'pwp' is in conflict.
+        new_weight += 1e5 * std::numeric_limits<FT>::epsilon(); // @fixme epsilon alone is not enough
         Weighted_point ncr_pwp(cp(pwp), new_weight);
 
-        const int index = current_mirror_cell->index(cell_to_add);
-        const Tetrahedron_3 tet = tr_.tetrahedron(Facet(current_mirror_cell, index),
-                                                  ncr_pwp);
+        // @tmp
+        std::cout.precision(18);
+        std::cout << "new_power_distance_to_power_sphere: " << new_power_distance_to_power_sphere << std::endl;
+        std::cout << "new_weight: " << new_weight << std::endl;
+
+        Tetrahedron_3 tet = tr_.tetrahedron(curr_f, ncr_pwp);
 
         double new_value = sliver_criteria_(tet);
         criterion_values.insert(std::make_pair(current_facet, new_value));
