@@ -49,21 +49,21 @@ BOOST_PARAMETER_FUNCTION(
       (lloyd_param, (parameters::internal::Lloyd_options), parameters::no_lloyd())
       (reset_param, (parameters::Reset), parameters::reset_c3t3())
       (mesh_options_param, (parameters::internal::Mesh_3_options),
-                           parameters::internal::Mesh_3_options())
+       parameters::internal::Mesh_3_options())
+      (manifold_options_param, (parameters::internal::Manifold_options),
+       parameters::internal::Manifold_options())
     )
   )
 )
 {
-  // @todo Can we call refine_mesh_3_impl?
-  return refine_periodic_3_mesh_3_impl(c3t3,
-                                       domain,
-                                       criteria,
+  return refine_periodic_3_mesh_3_impl(c3t3, domain, criteria,
                                        exude_param,
                                        perturb_param,
                                        odt_param,
                                        lloyd_param,
                                        reset_param(),
-                                       mesh_options_param);
+                                       mesh_options_param,
+                                       manifold_options_param);
 }
 
 CGAL_PRAGMA_DIAG_POP
@@ -95,7 +95,9 @@ void refine_periodic_3_mesh_3_impl(C3T3& c3t3,
                                    const parameters::internal::Lloyd_options& lloyd,
                                    bool reset_c3t3,
                                    const parameters::internal::Mesh_3_options&
-                                     mesh_options = parameters::internal::Mesh_3_options())
+                                     mesh_options = parameters::internal::Mesh_3_options(),
+                                   const parameters::internal::Manifold_options&
+                                     manifold_options = parameters::internal::Manifold_options())
 {
   typedef Mesh_3::Mesher_3<C3T3, MeshCriteria, MeshDomain> Mesher;
 
@@ -113,8 +115,13 @@ void refine_periodic_3_mesh_3_impl(C3T3& c3t3,
   dump_c3t3(c3t3, mesh_options.dump_after_init_prefix);
 
   // Build mesher and launch refinement process
-  Mesher mesher (c3t3, domain, criteria);
+  Mesher mesher(c3t3, domain, criteria,
+                manifold_options.mesh_topology,
+                mesh_options.maximal_number_of_vertices,
+                mesh_options.pointer_to_error_code);
+
   double refine_time = mesher.refine_mesh(mesh_options.dump_after_refine_surface_prefix);
+  c3t3.clear_manifold_info();
 
   // <periodic> below is the only difference with refine_mesh_3_impl. What does
   // it do and can it be removed ? (I guess something related to the initial grid)
