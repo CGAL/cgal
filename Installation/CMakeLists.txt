@@ -8,26 +8,10 @@ if(NOT PROJECT_NAME)
 endif()
 
 # Minimal version of CMake:
-cmake_minimum_required(VERSION 2.8.11)
+cmake_minimum_required(VERSION 3.1)
 
 # Tested version:
-cmake_policy(VERSION 2.8.11)
-
-#
-# Compatibility with CMake 3.0
-#
-if(POLICY CMP0042)
-  # Do not enable the use of MACOSX_RPATH
-  # http://www.cmake.org/cmake/help/v3.0/policy/CMP0042.html
-  cmake_policy(SET CMP0042 OLD)
-endif()
-
-# Compatibility with CMake 3.1
-if(POLICY CMP0054)
-  # http://www.cmake.org/cmake/help/v3.1/policy/CMP0054.html
-  # See the discussion https://github.com/CGAL/cgal/issues/189
-  cmake_policy(SET CMP0054 NEW)
-endif()
+cmake_policy(VERSION 3.1)
 
 if(POLICY CMP0056)
   # http://www.cmake.org/cmake/help/v3.2/policy/CMP0056.html
