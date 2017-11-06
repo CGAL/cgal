@@ -604,16 +604,13 @@ public:
       bool found = false;
       face_descriptor tele_to;
       BOOST_FOREACH(face_descriptor f, faces(*m_pmesh)) {
-        if (found)
+        if (fproxy_map[f] == px_worst && f != proxies[px_worst].seed) {
+          // teleport to anywhere but the seed
+          tele_to = f;
+          found = true;
           break;
-        if (fproxy_map[f] == px_worst) {
-          if (f != proxies[px_worst].seed) {
-            tele_to = f;
-            found = true;
-          }
         }
       }
-      // no where to teleport
       if (!found)
         return num_teleported;
 
@@ -624,13 +621,22 @@ public:
       if (px_worst == px_enlarged || px_worst == px_merged)
         return num_teleported;
 
-      // teleport to a facet to the worst region
-      fproxy_map[tele_to] = proxies.size();
-      proxies.push_back(fit_new_proxy(tele_to));
+      // teleport to a facet of the worst region
+      // update merged proxies
+      std::list<face_descriptor> merged_patch;
+      BOOST_FOREACH(face_descriptor f, faces(*m_pmesh)) {
+        std::size_t &px_idx = fproxy_map[f];
+        if (px_idx == px_enlarged || px_idx == px_merged) {
+          px_idx = px_enlarged;
+          merged_patch.push_back(f);
+        }
+      }
+      proxies[px_enlarged] = fit_new_proxy(merged_patch.begin(), merged_patch.end());
+      // replace the merged proxy position to the newly teleported proxy
+      proxies[px_merged] = fit_new_proxy(tele_to);
+      fproxy_map[tele_to] = px_merged;
 
-      merge(px_enlarged, px_merged);
       num_teleported++;
-
       // coarse re-fitting
       for (std::size_t i = 0; i < 5; ++i) {
         partition();
