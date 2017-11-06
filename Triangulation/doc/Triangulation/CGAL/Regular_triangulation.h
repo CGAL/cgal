@@ -52,11 +52,6 @@ A point in Euclidean space with an associated weight.
 */
 typedef RegularTriangulationTraits_::Weighted_point_d Weighted_point;
 
-/*!
-A point in Euclidean space (with no associated weight).
-*/
-typedef RegularTriangulationTraits_::Bare_point_d Bare_point;
-
 /// @}
 
 /// \name Creation
