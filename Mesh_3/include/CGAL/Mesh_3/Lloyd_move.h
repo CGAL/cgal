@@ -182,7 +182,7 @@ private:
     typedef boost::unordered_set<Vertex_handle>              Vertex_container;
     typedef typename Vertex_container::iterator              VC_it;
 
-    boost::unordered_set<Vertex_handle> treated_vertices;
+    Vertex_container treated_vertices;
 
     for (typename Cell_vector::const_iterator cit = incident_cells.begin();
          cit != incident_cells.end();

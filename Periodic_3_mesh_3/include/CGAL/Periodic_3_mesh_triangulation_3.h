@@ -427,10 +427,6 @@ public:
           const Offset& op3 = this->get_offset(c, 3);
           const Offset oq(i-1, j-1, k-1);
 
-          // @todo how to be sure that 27 copies are enough... ?
-          CGAL_assertion(c->offset(0) == 0 || c->offset(1) == 0 ||
-                         c->offset(2) == 0 || c->offset(3) == 0);
-
           double power_dist =
             CGAL::to_double(cr(wp0, wp1, wp2, wp3, wq, op0, op1, op2, op3, oq));
 

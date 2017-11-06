@@ -399,7 +399,6 @@ private:
     void operator()(const Vertex_handle& oldv) const
     {
       typename Gt::Construct_point_3 cp = m_gt.construct_point_3_object();
-      typename Gt::Construct_weighted_point_3 cwp = m_gt.construct_weighted_point_3_object();
       typename Gt::Construct_translated_point_3 translate = m_gt.construct_translated_point_3_object();
 
       Vector_3 move = m_mgo.compute_move(oldv);
@@ -907,10 +906,6 @@ compute_move(const Vertex_handle& v)
 //  std::cout << "optimizing point: " << position << std::endl;
 //  std::cout << "moving with: " << move << std::endl;
 
-  CGAL_assertion(CGAL::abs(move.x()) < 0.8*(tr_.domain().xmax() - tr_.domain().xmin()));
-  CGAL_assertion(CGAL::abs(move.y()) < 0.8*(tr_.domain().ymax() - tr_.domain().ymin()));
-  CGAL_assertion(CGAL::abs(move.z()) < 0.8*(tr_.domain().zmax() - tr_.domain().zmin()));
-
   // Move point only if the displacement is big enough w.r.t. the local size
   if ( local_move_sq_ratio < sq_freeze_ratio_ )
   {
@@ -969,25 +964,19 @@ update_mesh(const Moves_vector& moves,
         FT size = cpp11::get<2>(*it);
 
         // Move point
-//        CGAL_assertion(tr_.is_valid());
-        std::cout << "checked tr, moving: " << it - moves.begin() << " addr: " << &*v << std::endl;
-
+#ifdef CGAL_MESH_3_OPTIMIZER_VERBOSE
+        std::cout << "Moving: " << it - moves.begin()
+                  << " addr: " << &*v
+                  << " pt: " << v->point()
+                  << " to: " << v->point().point() + move << std::endl;
+#endif
         Vertex_handle new_v = helper_.move_point(v, move, outdated_cells, moving_vertices);
-
-        std::cout << "checked tr. post move" << std::endl;
-        if(!tr_.is_valid())
-        {
-          std::cout << "invalid" << std::endl;
-          exit(0);
-        }
 
         // Restore size in meshing_info data
         new_v->set_meshing_info(size);
       }
       else // Move point
       {
-        std::cerr << "got lost" << std::endl;
-        exit(0);
         helper_.move_point(v, move, outdated_cells, moving_vertices);
       }
 
@@ -997,8 +986,6 @@ update_mesh(const Moves_vector& moves,
         break;
     }
   }
-  std::cout << "post moves check..." << std::endl;
-  CGAL_assertion(tr_.is_valid());
 
   visitor.after_move_points();
 
@@ -1024,8 +1011,6 @@ update_mesh(const Moves_vector& moves,
                                       outdated_cells.end(),
                                       moving_vertices);
 #endif
-  std::cout << "post rebuild check..." << std::endl;
-  CGAL_assertion(tr_.is_valid());
 
   visitor.after_rebuild_restricted_delaunay();
 

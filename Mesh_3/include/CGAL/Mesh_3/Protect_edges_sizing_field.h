@@ -527,8 +527,7 @@ insert_corners()
              it = vs.begin(); it != vs.end(); ++it)
       {
         if(compare_dist(p, (*it)->point(), nearest) == CGAL::SMALLER) {
-          // 	    std::cerr << "  nearest!\n";
-          nearest =  (*it)->point();
+          nearest = (*it)->point();
         }
       }
       typename Gt::Compute_squared_distance_3 squared_distance =

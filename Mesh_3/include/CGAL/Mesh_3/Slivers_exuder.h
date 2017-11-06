@@ -1270,12 +1270,6 @@ expand_prestar(const Cell_handle& cell_to_add,
         // so we add a little bit more weight to make sure that 'pwp' is in conflict.
         new_weight += 1e5 * std::numeric_limits<FT>::epsilon(); // @fixme epsilon alone is not enough
         Weighted_point ncr_pwp(cp(pwp), new_weight);
-
-        // @tmp
-        std::cout.precision(18);
-        std::cout << "new_power_distance_to_power_sphere: " << new_power_distance_to_power_sphere << std::endl;
-        std::cout << "new_weight: " << new_weight << std::endl;
-
         Tetrahedron_3 tet = tr_.tetrahedron(curr_f, ncr_pwp);
 
         double new_value = sliver_criteria_(tet);

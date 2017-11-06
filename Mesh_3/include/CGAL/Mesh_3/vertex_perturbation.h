@@ -482,6 +482,8 @@ protected:
     if ( c3t3.in_dimension(v) < 3 )
       final_loc = helper.project_on_surface(v, new_loc);
 
+    Vector_3 move_vector = vector(initial_loc, final_loc);
+
     unsigned int i = 0;
     // Concurrent-safe version
     if (could_lock_zone)
@@ -501,7 +503,6 @@ protected:
     }
     else
     {
-      Vector_3 move_vector = vector(initial_loc, final_loc);
       while( Th().no_topological_change(c3t3.triangulation(), v,
                                         move_vector, cwp(final_loc)) &&
              ++i <= max_step_nb_ )

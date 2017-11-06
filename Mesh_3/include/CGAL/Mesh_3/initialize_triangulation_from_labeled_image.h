@@ -204,7 +204,7 @@ void initialize_triangulation_from_labeled_image(C3T3& c3t3,
             continue;
 
           const Weighted_point& cvwp = tr.point(cv);
-          if (tr.min_squared_distance(bpi, cp(cvwp) <= cv->point().weight()))
+          if (tr.min_squared_distance(bpi, cp(cvwp)) <= cv->point().weight())
           {
             pi_inside_protecting_sphere = true;
             break;

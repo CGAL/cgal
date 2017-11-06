@@ -2775,10 +2775,6 @@ rebuild_restricted_delaunay(OutdatedCells& outdated_cells,
       Vector_3 move(cp(initial_position), new_pos);
       std::cout << "projection move: " << move << std::endl;
 
-      CGAL_assertion(CGAL::abs(move.x()) < 0.8*(tr_.domain().xmax() - tr_.domain().xmin()));
-      CGAL_assertion(CGAL::abs(move.y()) < 0.8*(tr_.domain().ymax() - tr_.domain().ymin()));
-      CGAL_assertion(CGAL::abs(move.z()) < 0.8*(tr_.domain().zmax() - tr_.domain().zmin()));
-
       Vertex_handle new_vertex = update_mesh(*it, move);
       c3t3_.set_dimension(new_vertex, 2);
 
@@ -2800,6 +2796,7 @@ rebuild_restricted_delaunay(ForwardIterator first_cell,
                             ForwardIterator last_cell,
                             Moving_vertices_set& moving_vertices)
 {
+  typename Gt::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
   typename Gt::Construct_vector_3 vector = tr_.geom_traits().construct_vector_3_object();
   typename Gt::Equal_3 equal = tr_.geom_traits().equal_3_object();
 
