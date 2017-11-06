@@ -286,6 +286,7 @@ public:
 	  // CHECKING
 
   	void make_canonical() {
+  		
   		// If all translation are the same, there is an image of the face
   		// inside the original octagon. We store that one. This covers the
   		// simplest case.
@@ -366,7 +367,11 @@ public:
 
   	void restore_translations(Hyperbolic_translation loff = Hyperbolic_translation()) {
   		for (int i = 0; i < 3; i++) {
-  			o[i] = loff.inverse()* V[i]->get_translation();
+  			if (loff.is_identity()) {
+  				o[i] = V[i]->get_translation();
+  			} else {
+  				o[i] = loff.inverse()*V[i]->get_translation();
+  			}
   		}  		
   	}
 

@@ -46,13 +46,11 @@
 typedef CORE::Expr                                                              NT;
 typedef CGAL::Cartesian<NT>                                                     Kernel;
 
-typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<Kernel, 
-                                    CGAL::Hyperbolic_octagon_translation>       Traits;
+typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<Kernel>     Traits; 
 typedef Traits::Segment_2                                                       Segment_2;
 typedef Traits::Circle_2                                                        Circle_2;
 typedef Traits::Circular_arc_2                                                  Circular_arc_2;
 typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_2<Traits>            Triangulation;
-//typedef CGAL::Hyperbolic_octagon_translation_matrix<NT>                         Octagon_matrix;
 typedef Kernel::Point_2                                                         Point;
 typedef Triangulation::Vertex_handle                                            Vertex_handle;
 typedef Traits::Side_of_original_octagon                                        Side_of_original_octagon;
@@ -77,7 +75,7 @@ class MainWindow :
   
 private:    
 
-  Point                                                           movingPoint;
+  Point                                                              movingPoint;
 
   Triangulation                                                      dt;
   QGraphicsEllipseItem                                             * disk;
@@ -153,7 +151,6 @@ MainWindow::MainWindow()
   rx2 = ((double)std::rand()/(double)RAND_MAX)*0.6;
   ry1 = ((double)std::rand()/(double)RAND_MAX)*0.6;
   ry2 = ((double)std::rand()/(double)RAND_MAX)*0.6;
-  cout << "rx1 = " << rx1 << ", rx2 = " << rx2 << ", ry1 = " << ry1 << ", ry2 = " << ry2 << endl;
   source = Point(rx1, ry1);
   target = Point(rx2, ry2);
   Segment_2 seg = Construct_hyperbolic_line_2()(source, target);
@@ -161,8 +158,6 @@ MainWindow::MainWindow()
   source = carc->source();
   target = carc->target();
 
-  cout << "source = " << source << endl;
-  cout << "target = " << target << endl;
   timestep = 0.005;
   time = updateTime();
   last_location = dt.periodic_locate(get_image(source, target, time), last_Hyperbolic_translation); 
@@ -270,16 +265,19 @@ MainWindow::MainWindow()
 void
 MainWindow::processInput(CGAL::Object o)
 {
-
   Point p;
   if(CGAL::assign(p, o)){
-
-    cout << "inserting point " << p << endl;
-    cout << "   moving point: " << movingPoint << endl;
-    //cout << "   last_location = " << last_location->get_number() << " with Hyperbolic_translation " << last_Hyperbolic_translation << endl;
     if (last_location != Face_handle()) {
       for (Triangulation::Face_iterator fit = dt.faces_begin(); fit != dt.faces_end(); fit++)
         fit->tds_data().clear();
+    }
+
+    // make sure that the vertices and faces of the triangulation are clean
+    for (Triangulation::Face_iterator fi = dt.faces_begin(); fi != dt.faces_end(); fi++) {
+      fi->tds_data().clear();
+    }
+    for (Triangulation::Vertex_iterator vi = dt.vertices_begin(); vi != dt.vertices_end(); vi++) {
+      vi->remove_translation();
     }
 
     Vertex_handle v = dt.insert(p);
@@ -292,7 +290,6 @@ MainWindow::processInput(CGAL::Object o)
 void
 MainWindow::updateMovingPoint(CGAL::Object o) {
   CGAL::assign(movingPoint, o);
-  //cout << "Moving point: " << movingPoint << endl;
   dgi->setMovingPoint(movingPoint);
   emit(changed());
 }
@@ -308,12 +305,9 @@ MainWindow::updateMovingPoint(CGAL::Object o) {
 void
 MainWindow::on_actionInsertPoint_toggled(bool checked)
 {
-  //this->actionInsertPoint->setChecked(checked);
   if(checked){
-    cout << "INSTALLING insertion event filter!" << endl;
     scene.installEventFilter(pi);
   } else {
-    cout << "REMOVING insertion event filter!" << endl;
     scene.removeEventFilter(pi);
   }
 }
@@ -365,10 +359,8 @@ MainWindow::updateTime() {
   double t = 0.1;
   Side_of_original_octagon check;
   while(check(get_image(source, target, t)) == CGAL::ON_UNBOUNDED_SIDE) {
-    cout << "   updating time, now at " << t << endl;
     t += timestep;
   }
-  cout << "RETURN FROM updateTime()!!!" << endl;
   return t;
 }
 
@@ -377,7 +369,6 @@ void
 MainWindow::animate() {
   
   Point p = get_image(source, target, time);
-  //cout << "p = " << p << endl;
 
   Side_of_original_octagon check;
   if (check(p) != CGAL::ON_UNBOUNDED_SIDE) {
@@ -408,7 +399,6 @@ MainWindow::animate() {
 
     assert(check(Make_point()(p,o)) == CGAL::ON_BOUNDED_SIDE);
 
-    cout << "o = " << o << endl;
     source = Make_point()(source,o);
     target = Make_point()(target,o);
     
@@ -422,9 +412,7 @@ MainWindow::animate() {
       target = carc->source();
     }
 
-    cout << "time is " << time << endl;
     time = updateTime();
-    cout << "now time is " << time << endl;
   }
 
   emit(changed());

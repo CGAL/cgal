@@ -34,6 +34,7 @@
 #include <CGAL/Exact_complex.h>
 #include "boost/tuple/tuple.hpp"
 #include "boost/variant.hpp"
+#include <CGAL/Hyperbolic_octagon_translation.h>
 
 
 #if defined PROFILING_MODE
@@ -234,7 +235,7 @@ public:
 
 
 
-template< class Kernel, template<typename> class Translation_type >
+template< class Kernel, template<typename> class Translation_type = Hyperbolic_octagon_translation>
 class Periodic_4_hyperbolic_Delaunay_triangulation_traits_2 : public Kernel {
 
 typedef Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<Kernel, Translation_type>  Self;  

@@ -57,9 +57,6 @@ TriangulationConflictZone<T>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 }
 
 
-
-
-
 template <typename T>
 bool 
 TriangulationConflictZone<T>::eventFilter(QObject *obj, QEvent *event)
@@ -67,7 +64,7 @@ TriangulationConflictZone<T>::eventFilter(QObject *obj, QEvent *event)
   if (event->type() == QEvent::GraphicsSceneMouseMove) {
     QGraphicsSceneMouseEvent *mouseEvent = static_cast<QGraphicsSceneMouseEvent *>(event);
     mouseMoveEvent(mouseEvent);
-    return false; // do not eat move event!
+    return false; // don't consume the event
   } else {
     // standard event processing
     return QObject::eventFilter(obj, event);

@@ -317,7 +317,7 @@ TriangulationGraphicsItem<T>::drawAll(QPainter *painter)
   }
 
   if (visible_edges) {
-    cout << "painting edges" << endl;
+    //cout << "painting edges" << endl;
     temp.setWidthF(0.01);
     temp.setColor(::Qt::darkGreen);
     painter->setPen(temp);
@@ -359,7 +359,7 @@ TriangulationGraphicsItem<T>::drawAll(QPainter *painter)
   painter->setPen(old);
   //
   
-  cout << "painting vertices" << endl;
+  //cout << "painting vertices" << endl;
   paintVertices(painter);
 }
 

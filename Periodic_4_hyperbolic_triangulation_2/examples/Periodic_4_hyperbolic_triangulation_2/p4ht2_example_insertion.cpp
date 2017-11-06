@@ -8,8 +8,7 @@
 
 typedef CORE::Expr                                                              NT;
 typedef CGAL::Cartesian<NT>                                                     Kernel;
-typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<Kernel,
-                                      CGAL::Hyperbolic_octagon_translation>     Traits;
+typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<Kernel>     Traits;
 typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_2<Traits>            Triangulation;
 typedef Kernel::Point_2                                                         Point;
 typedef CGAL::Creator_uniform_2<NT,Point>                                       Creator;
@@ -62,8 +61,10 @@ int main(int argc, char** argv) {
     cout << "Number of vertices NV:             " << NV << endl;
     cout << "Number of faces NF:                " << NF << endl;
     cout << "Number of edges NE:                " << NE << endl;
-    cout << "Surface genus via Euler relation:  " << ( (2 + NE - NV - NF) / 2 ) << endl;
-    cout << endl;
+
+    // Note that the Euler relation is already verified by the function `is_valid()`.
+    CGAL_assertion( (2 + NE - NV - NF) / 2 == 2);
+    cout << "Euler relation verified!           " << endl << endl;    
 
     return 0;
 }
