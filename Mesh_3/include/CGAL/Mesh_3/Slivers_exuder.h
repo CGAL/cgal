@@ -25,31 +25,31 @@
 
 #include <CGAL/license/Mesh_3.h>
 
-
 #include <CGAL/Mesh_3/config.h>
 #include <CGAL/Mesh_3/Concurrent_mesher_config.h>
-#include <CGAL/Bbox_3.h>
-
-#include <CGAL/Double_map.h>
-#include <CGAL/iterator.h>
-#include <map>
-#include <vector>
-#include <set>
-#include <algorithm>
-#include <iomanip> // std::setprecision
-#include <iostream> // std::cerr/cout
-#include <boost/iterator/transform_iterator.hpp>
-#include <boost/function_output_iterator.hpp>
-#include <boost/bind.hpp>
-#include <boost/format.hpp>
-#include <boost/type_traits/is_convertible.hpp>
-#include <boost/optional.hpp>
-
-#include <CGAL/Real_timer.h>
 
 #include <CGAL/Mesh_3/sliver_criteria.h>
 #include <CGAL/Mesh_optimization_return_code.h>
 #include <CGAL/Mesh_3/Null_exuder_visitor.h>
+
+#include <CGAL/Bbox_3.h>
+#include <CGAL/Double_map.h>
+#include <CGAL/iterator.h>
+#include <CGAL/Real_timer.h>
+
+#include <boost/bind.hpp>
+#include <boost/format.hpp>
+#include <boost/function_output_iterator.hpp>
+#include <boost/iterator/transform_iterator.hpp>
+#include <boost/optional.hpp>
+#include <boost/type_traits/is_convertible.hpp>
+
+#include <algorithm>
+#include <iomanip> // std::setprecision
+#include <iostream> // std::cerr/cout
+#include <map>
+#include <set>
+#include <vector>
 
 #ifdef CGAL_CONCURRENT_MESH_3_PROFILING
 # define CGAL_PROFILE
