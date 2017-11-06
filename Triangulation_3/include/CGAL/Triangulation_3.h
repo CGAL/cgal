@@ -550,12 +550,14 @@ protected:
   Vertex_handle infinite; // infinite vertex
 
 public:
-  Point_3 construct_point(const Point& p) const
+  template<typename P> // Point or Point_3
+  Point_3 construct_point(const P& p) const
   {
     return geom_traits().construct_point_3_object()(p);
   }
 
-  Comparison_result compare_xyz(const Point& p, const Point& q) const
+  template<typename P> // Point or Point_3
+  Comparison_result compare_xyz(const P& p, const P& q) const
   {
     return geom_traits().compare_xyz_3_object()(construct_point(p),
                                                 construct_point(q));
@@ -566,8 +568,8 @@ public:
     return compare_xyz(p, q) == EQUAL;
   }
 
-  Orientation orientation(const Point& p, const Point& q,
-                          const Point& r, const Point& s) const
+  template<typename P> // Point or Point_3
+  Orientation orientation(const P& p, const P& q, const P& r, const P& s) const
   {
     return geom_traits().orientation_3_object()(construct_point(p),
                                                 construct_point(q),
@@ -580,7 +582,8 @@ public:
     return orientation(p, q, r, s) == COPLANAR;
   }
 
-  Orientation coplanar_orientation(const Point& p, const Point& q, const Point& r) const
+  template<typename P> // Point or Point_3
+  Orientation coplanar_orientation(const P& p, const P& q, const P& r) const
   {
     return geom_traits().coplanar_orientation_3_object()(construct_point(p),
                                                          construct_point(q),
@@ -592,21 +595,23 @@ public:
     return coplanar_orientation(p, q, r) == COLLINEAR;
   }
 
-  Segment construct_segment(const Point& p, const Point& q) const
+  template<typename P> // Point or Point_3
+  Segment construct_segment(const P& p, const P& q) const
   {
     return geom_traits().construct_segment_3_object()(construct_point(p),
                                                       construct_point(q));
   }
 
-  Triangle construct_triangle(const Point& p, const Point& q, const Point& r) const
+  template<typename P> // Point or Point_3
+  Triangle construct_triangle(const P& p, const P& q, const P& r) const
   {
     return geom_traits().construct_triangle_3_object()(construct_point(p),
                                                        construct_point(q),
                                                        construct_point(r));
   }
 
-  Tetrahedron construct_tetrahedron(const Point& p, const Point& q,
-                                    const Point& r, const Point& s) const
+  template<typename P> // Point or Point_3
+  Tetrahedron construct_tetrahedron(const P& p, const P& q, const P& r, const P& s) const
   {
     return geom_traits().construct_tetrahedron_3_object()(construct_point(p),
                                                           construct_point(q),
