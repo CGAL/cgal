@@ -77,7 +77,7 @@ int main()
   // teleport until merge test failed
   std::vector<FT> error;
   std::size_t count = 0;
-  while(l21_vsa.teleport_proxies(1, true) == 1) {
+  while(l21_vsa.teleport_proxies(1) == 1) {
     FT sum_err(0);
     for (std::size_t i = 0; i < 10; ++i)
       sum_err += l21_vsa.run_one_step();

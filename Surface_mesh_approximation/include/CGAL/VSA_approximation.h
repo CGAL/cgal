@@ -329,7 +329,7 @@ public:
    * @brief Seeding by targeted number of proxies.
    * @param method seeding method
    * @param num_seed target number of proxies seed
-   * @param num_iterations number of iterations of coarse re-fitting
+   * @param num_iterations number of re-fitting iterations 
    * in incremental and hierarchical seeding
    * @return number of proxies initialized
    */
@@ -353,7 +353,7 @@ public:
    * @brief Seeding by targeted error drop.
    * @param method seeding method
    * @param target_drop targeted error drop to initial state, usually in range (0, 1)
-   * @param num_iterations number of iterations of coarse re-fitting
+   * @param num_iterations number of re-fitting iterations 
    * @return number of proxies initialized
    */
   std::size_t seeding_by_error(
@@ -475,11 +475,11 @@ public:
    * @pre current facet proxy map is valid
    * @note after the addition, the facet proxy map remains valid
    * @param num_proxies number of proxies to be added
-   * @param num_iterations the number of iterations of re-fitting
+   * @param num_iterations number of re-fitting iterations
    * @return number of proxies added
    */
   std::size_t add_proxies_furthest(const std::size_t num_proxies,
-    const std::size_t num_iterations) {
+    const std::size_t num_iterations = 5) {
     std::size_t num_added = 0;
     for (; num_added < num_proxies; ++num_added) {
       if (!add_proxy_furthest())
@@ -582,13 +582,16 @@ public:
 
   /*!
    * @brief Teleport the local minima to the worst region, this combines the merging and adding processes.
-   * The partitioning are updated.
+   * The re-fitting is performed after each teleportation.
    * Here if we specify more than one proxy this means we teleport in a naive iterative fashion.
    * @param num_proxies number of proxies request to teleport
+   * @param num_iterations number of re-fitting iterations
    * @param if_test true if do the merge test before the teleportation (attempt to escape from local minima).
    * @return number of proxies teleported.
    */
-  std::size_t teleport_proxies(const std::size_t &num_proxies, const bool &if_test = true) {
+  std::size_t teleport_proxies(const std::size_t num_proxies,
+    const std::size_t num_iterations = 5,
+    const bool if_test = true) {
     std::size_t num_teleported = 0;
     while (num_teleported < num_proxies) {
       // find worst proxy
@@ -638,7 +641,7 @@ public:
 
       num_teleported++;
       // coarse re-fitting
-      for (std::size_t i = 0; i < 5; ++i) {
+      for (std::size_t i = 0; i < num_iterations; ++i) {
         partition();
         fit();
       }
@@ -941,12 +944,12 @@ private:
   /*!
    * @brief Incremental initialize proxies.
    * @param num_seed number of proxies seed
-   * @param num_iterations number of iterations of coarse re-fitting
+   * @param num_iterations number of re-fitting iterations 
    * before each incremental proxy insertion
    * @return number of proxies initialized
    */
   std::size_t seed_incremental(const std::size_t num_seed,
-    const std::size_t num_iterations = 5) {
+    const std::size_t num_iterations) {
     proxies.clear();
     if (num_faces(*m_pmesh) < num_seed)
       return 0;
@@ -963,12 +966,12 @@ private:
   /*!
    * @brief Hierarchical initialize proxies.
    * @param num_seed number of proxies seed
-   * @param num_iterations number of iterations of coarse re-fitting
+   * @param num_iterations number of re-fitting iterations 
    * before each hierarchical proxy insertion
    * @return number of proxies initialized
    */
   std::size_t seed_hierarchical(const std::size_t num_seed,
-    const std::size_t num_iterations = 5) {
+    const std::size_t num_iterations) {
     proxies.clear();
     if (num_faces(*m_pmesh) < num_seed)
       return 0;
@@ -997,7 +1000,7 @@ private:
   /*!
    * @brief Initialize by targeted error drop.
    * @param target_drop targeted error drop to initial state, usually in range (0, 1)
-   * @param num_iterations number of iterations of coarse re-fitting
+   * @param num_iterations number of re-fitting iterations 
    * @return number of proxies initialized
    */
   std::size_t seed_error_random(const FT target_drop,
@@ -1035,7 +1038,7 @@ private:
   /*!
    * @brief Initialize by targeted error drop.
    * @param target_drop targeted error drop to initial state, usually in range (0, 1)
-   * @param num_iterations number of iterations of coarse re-fitting
+   * @param num_iterations number of re-fitting iterations 
    * @return number of proxies initialized
    */
   std::size_t seed_error_incremental(const FT target_drop,
@@ -1070,7 +1073,7 @@ private:
   /*!
    * @brief Initialize by targeted error drop.
    * @param target_drop targeted error drop to initial state, usually in range (0, 1)
-   * @param num_iterations number of iterations of coarse re-fitting
+   * @param num_iterations number of re-fitting iterations 
    * @return number of proxies initialized
    */
   std::size_t seed_error_hierarchical(const FT target_drop,

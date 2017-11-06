@@ -76,7 +76,7 @@ int main()
 
   // merge and teleport the proxies from local minimal
   std::cout << "teleport" << std::endl;
-  l2_approx.teleport_proxies(3, false);
+  l2_approx.teleport_proxies(3);
   for (std::size_t i = 0; i < 10; ++i)
     l2_approx.run_one_step();
   if (l2_approx.get_proxies_size() != 16)
