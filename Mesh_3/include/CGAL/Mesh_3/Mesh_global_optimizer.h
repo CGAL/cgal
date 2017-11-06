@@ -409,7 +409,7 @@ private:
 
         if(MGO::Sizing_field::is_vertex_update_needed)
         {
-          const Weighted_point& position = m_gt.tr_.point(oldv);
+          const Weighted_point& position = m_mgo.tr_.point(oldv);
           Bare_point new_position = translate(cp(position), move);
           size = m_sizing_field(new_position, oldv);
         }
@@ -505,9 +505,6 @@ private:
     // operator()
     void operator()( const tbb::blocked_range<size_t>& r ) const
     {
-      typename Gt::Construct_translated_point_3 translate =
-          m_mgo.tr_.geom_traits().construct_translated_point_3_object();
-
       for( size_t i = r.begin() ; i != r.end() ; ++i)
       {
         const Vertex_handle& v = cpp11::get<0>(m_moves[i]);
