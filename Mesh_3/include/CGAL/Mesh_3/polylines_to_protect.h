@@ -52,6 +52,21 @@ struct Polyline_visitor
     : polylines(lines), graph(p_graph)
   {}
 
+  ~Polyline_visitor()
+  {//DEBUG
+#if CGAL_MESH_3_PROTECTION_DEBUG > 1
+    std::ofstream og("polylines_graph.polylines.txt");
+    og.precision(17);
+    BOOST_FOREACH(const std::vector<P>& poly, polylines)
+    {
+      og << poly.size() << " ";
+      BOOST_FOREACH(const P& p, poly)
+        og << p << " ";
+      og << std::endl;
+    }
+#endif // CGAL_MESH_3_PROTECTION_DEBUG > 1
+  }
+
   void start_new_polyline()
   {
     std::vector<P> V;
@@ -558,19 +573,6 @@ case_4:
   const Graph& const_graph = graph;
   split_graph_into_polylines(const_graph, visitor,
                              Mesh_3::Angle_tester<K>(), less);
-#if CGAL_MESH_3_PROTECTION_DEBUG > 1
-  {//DEBUG
-    std::ofstream og("polylines_graph.polylines.txt");
-    og.precision(17);
-    BOOST_FOREACH(const std::vector<P>& poly, polylines)
-    {
-      og << poly.size() << " ";
-      BOOST_FOREACH(const P& p, poly)
-        og << p << " ";
-      og << std::endl;
-    }
-  }
-#endif // CGAL_MESH_3_PROTECTION_DEBUG > 1
 }
 
 template <typename P,
@@ -611,19 +613,6 @@ polylines_to_protect(std::vector<std::vector<P> >& polylines,
   typedef typename Kernel_traits<P>::Kernel K;
   split_graph_into_polylines(const_graph, visitor,
                              Mesh_3::Angle_tester<K>(), less);
-#if CGAL_MESH_3_PROTECTION_DEBUG > 1
-  {//DEBUG
-    std::ofstream og("polylines_graph.polylines.txt");
-    og.precision(17);
-    BOOST_FOREACH(const std::vector<P>& poly, polylines)
-    {
-      og << poly.size() << " ";
-      BOOST_FOREACH(const P& p, poly)
-        og << p << " ";
-      og << std::endl;
-    }
-  }
-#endif // CGAL_MESH_3_PROTECTION_DEBUG > 1
 }
 
 template <typename P, typename Image_word_type, typename Null_subdomain_index>
