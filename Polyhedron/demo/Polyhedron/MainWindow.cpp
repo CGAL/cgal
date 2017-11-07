@@ -137,6 +137,14 @@ MainWindow::MainWindow(QWidget* parent)
   ui = new Ui::MainWindow;
   ui->setupUi(this);
   menuBar()->setNativeMenuBar(false);
+  this->setProperty("helpText", QString("    "));
+  ui->infoDockWidget->setProperty("helpText", QString("This is the info widget. It is not entirely useless, I swear."));
+  ui->sceneDockWidget->setProperty("helpText", QString("This is the Scene view. It does stuff when you click on it. Sometimes."));
+  ui->searchEdit->setProperty("helpText", QString("This is the search filter. Enter a name to find the corresponding item in the list."));
+  ui->consoleDockWidget->setProperty("helpText", QString("This is the console widget. It doesn't do anything useful."));
+  ui->helpDockWidget->setProperty("helpText", QString("This is me. I speak a lot."));
+  this->setMouseTracking(true);
+  qApp->installEventFilter(this);
   menu_map[ui->menuOperations->title()] = ui->menuOperations;
   // remove the Load Script menu entry, when the demo has not been compiled with QT_SCRIPT_LIB
 #if !defined(QT_SCRIPT_LIB)
@@ -163,9 +171,11 @@ MainWindow::MainWindow(QWidget* parent)
 
   proxyModel = new QSortFilterProxyModel(this);
   proxyModel->setSourceModel(scene);
+  proxyModel->setFilterKeyColumn(1);
   SceneDelegate *delegate = new SceneDelegate(this);
   delegate->setProxy(proxyModel);
   delegate->setScene(scene);
+
 
 
   connect(ui->searchEdit, SIGNAL(textChanged(QString)),
@@ -2227,7 +2237,6 @@ void MainWindow::setupViewer(Viewer* viewer, SubViewer* subviewer=NULL)
   viewer->setStateFileName(QString::null);
   viewer->textRenderer()->setScene(scene);
   viewer->setScene(scene);
-
   connect(scene, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex & )),
           viewer, SLOT(update()));
   connect(scene, SIGNAL(updated()),
@@ -2384,6 +2393,33 @@ void MainWindow::updateViewerBbox(Viewer *vi, bool recenter,
 #endif
   }
 }
+
+QObject* MainWindow::getDirectChild(QObject* widget)
+{
+
+    if(!widget->property("helpText").toString().isEmpty())
+      return widget;
+  return getDirectChild(widget->parent());
+}
+
+bool MainWindow::eventFilter(QObject *obj, QEvent *event)
+{
+  if (event->type() == QEvent::MouseMove)
+  {
+    QMouseEvent *me = static_cast<QMouseEvent*>(event);
+    QPoint pos = mapFromGlobal(me->globalPos());
+    QWidget* target = childAt(pos);
+
+    if(target)
+    {
+      QObject* child = getDirectChild(target);
+      ui->helpTextBrowser->setText(child->property("helpText").toString());
+    }
+
+  }
+  return QMainWindow::eventFilter(obj, event);
+}
+
 SubViewer::SubViewer(MainWindow* mw, Viewer* viewer)
   :QWidget(mw),
     mw(mw),
@@ -2394,6 +2430,9 @@ SubViewer::SubViewer(MainWindow* mw, Viewer* viewer)
   ui->setupUi(this);
   ui->mainLayout->addWidget(viewer, 1);
   ui->menuButton->setMenu(viewMenu);
+  ui->menuButton->setProperty("helpText", QString("This is the view menu for this Viewer. \n"
+                                                  "It holds independant display options."));
+  ui->exitButton->setProperty("helpText", QString("Click here to close this Viewer."));
 
 
   QAction* actionRecenter = new QAction("Re&center Scene",this);

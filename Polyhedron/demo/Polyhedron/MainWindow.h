@@ -99,6 +99,10 @@ public:
                     std::pair<QString, bool> &load_pair,
                     bool& ok);
 
+  //!
+  //! Used to display help text in help widget.
+  //!
+  bool eventFilter(QObject *watched, QEvent *event);
 
 Q_SIGNALS:
   //! Is emitted when the Application is closed.
@@ -401,6 +405,7 @@ protected:
   //! Returns a list of the selected items in the Geometric Objects view.
   QList<int> getSelectedSceneItemIndices() const;
 private:
+  QObject* getDirectChild(QObject* widget);
   void updateMenus();
   void setupViewer(Viewer* viewer, SubViewer *subviewer);
   bool load_plugin(QString names, bool blacklisted);

@@ -204,6 +204,8 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
   d = new Viewer_impl;
   d->viewer = this;
   this->setProperty("draw_two_sides", false);
+  this->setProperty("helpText", QString("This is the Viewer. It displays the scene. \n "
+                                        "Press H for more info."));
   d->antialiasing = antialiasing;
   doBindings();
 
@@ -219,9 +221,11 @@ Viewer::Viewer(QWidget* parent,
   d->is_sharing = true;
   d->antialiasing = antialiasing;
   this->setProperty("draw_two_sides", false);
+  this->setProperty("helpText", QString("This is a sub-viewer. It displays the scene "
+                                        "from another point of view. \n "));
   d->is_ogl_4_3 = sharedWidget->d->is_ogl_4_3;
   d->_recentFunctions = sharedWidget->d->_recentFunctions;
- doBindings();
+  doBindings();
 }
 
 Viewer::~Viewer()
