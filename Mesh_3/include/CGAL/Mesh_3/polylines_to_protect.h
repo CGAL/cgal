@@ -215,9 +215,9 @@ polylines_to_protect(const CGAL::Image_3& cgal_image,
 
   for(int axis = 0; axis < 3; ++axis)
   {
-    for(int i = 0; i < xdim; i+= (axis == 0 ? (xdim-1) : 1 ) )
-      for(int j = 0; j < ydim; j+= (axis == 1 ? (ydim-1) : 1 ) )
-        for(int k = 0; k < zdim; k+= (axis == 2 ? (zdim-1) : 1 ) )
+    for(int i = 0; i < xdim; i+= (axis == 0 ? (std::max)(1, xdim-1) : 1 ) )
+      for(int j = 0; j < ydim; j+= (axis == 1 ? (std::max)(1, ydim-1) : 1 ) )
+        for(int k = 0; k < zdim; k+= (axis == 2 ? (std::max)(1, zdim-1) : 1 ) )
         {
 
           using CGAL::cpp11::array;
@@ -538,7 +538,9 @@ case_4:
   const std::ptrdiff_t nb_facets =
     case4 + case211 + case121 + case31 + case22 + case1;
   const std::ptrdiff_t expected_nb_facets =
-    2*((xdim-1)*(ydim-1) + (ydim-1)*(zdim-1) + (xdim-1)*(zdim-1));
+    ((xdim != 1 && ydim != 1 && zdim != 1) ? 2 : 1)
+    *
+    ((xdim-1)*(ydim-1) + (ydim-1)*(zdim-1) + (xdim-1)*(zdim-1));
 
   // std::cerr << "nb of facets:           " << nb_facets << std::endl
   //           << " expected nb of facets: " << expected_nb_facets << std::endl;
