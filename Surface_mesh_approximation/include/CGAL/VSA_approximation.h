@@ -373,8 +373,7 @@ public:
   }
 
   /*!
-   * @brief This function run the algorithm by one step,
-   * including the partitioning and fitting process.
+   * @brief Run the the partitioning and fitting process by one step.
    * @return the total fitting error of current partition to the proxies.
    */
   FT run_one_step() {
@@ -385,32 +384,39 @@ public:
   }
 
   /*!
-   * @brief This function run the algorithm until the no significant energy drop.
-   * @param drop_threshold the percentage of energy drop to between two runs, usually in range [0, 1).
-   * @param max_iterations the maximum number of iterations allowed
-   * @return true if the algorithm converge, false otherwise.
+   * @brief Run the partitioning and fitting process until no significant error change
+   * @param cvg_threshold the percentage of error change between two successive runs,
+   * should be in range (0, 1).
+   * @param max_iterations maximum number of iterations allowed
+   * @param avg_inverval size of error average interval to have smoother convergence curve,
+   * if 0 is assigned, 1 is used instead.
+   * @return true if converged before hitting the maximum iterations, false otherwise
    */
-  bool run_until_convergence(const FT drop_threshold = FT(0.05),
-    const std::size_t max_iterations = 100) {
+  bool run_to_converge(const FT cvg_threshold,
+    const std::size_t max_iterations = 100,
+    std::size_t avg_interval = 3) {
+    if (avg_interval == 0)
+      avg_interval = 1;
     FT drop_pct(0);
-    std::size_t iteration_count = 0;
     FT pre_err = compute_fitting_error();
-    do {
-      // average 5 steps to have smoother drop curve
-      FT avg_sum_err(0);
-      for (std::size_t i = 0; i < 5; ++i)
-        avg_sum_err += run_one_step();
-      avg_sum_err /= FT(5);
-      iteration_count += 5;
-
-      drop_pct = (pre_err - avg_sum_err) / pre_err;
-      if (drop_pct < FT(0))
-        drop_pct = -drop_pct;
-      if (drop_pct < drop_threshold)
+    for (std::size_t itr_count = 0; itr_count < max_iterations; itr_count += avg_interval) {
+      if (pre_err == FT(0))
         return true;
 
-      pre_err = avg_sum_err;
-    } while (iteration_count < max_iterations);
+      FT avg_err(0);
+      for (std::size_t i = 0; i < avg_interval; ++i)
+        avg_err += run_one_step();
+      avg_err /= FT(avg_interval);
+
+      drop_pct = (pre_err - avg_err) / pre_err;
+      // the error may fluctuates
+      if (drop_pct < FT(0))
+        drop_pct = -drop_pct;
+      if (drop_pct < cvg_threshold)
+        return true;
+
+      pre_err = avg_err;
+    }
 
     return false;
   }
