@@ -10,7 +10,7 @@
 
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Pierre Alliez, Lingjie Zhu}
-\cgalPkgDesc{This package implement the Variational Shape Approximation framework to approximate the triangle surface mesh and generate the approximation as triangle soup. The workflow proceeds in an iterative manner as the Lloyd's clustering algorithm. The API is flexiable and can be extended to the user defined proxies and metrics.}
+\cgalPkgDesc{This package implement the Variational Shape Approximation method to approximate an input surface triangle mesh by a simpler triangle surface mesh or triangle soup. The algorithm proceeds by iterative clustering of triangles, and the clustering can initialized randomly, iteratively or hierarchically. The API is flexible and can be extended to user-defined proxies and metrics.}
 \cgalPkgManuals{Chapter_Triangulated_Surface_Mesh_Approximation,PkgTSMA}
 \cgalPkgSummaryEnd
 
