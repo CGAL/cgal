@@ -92,14 +92,6 @@ public:
   ~Triangulation_helpers() {}
 
   /**
-   * Moves point from \c v to \c p.
-   */
-  void move_point(Tr& tr,
-                  const Vertex_handle v,
-                  const Vector_3& move,
-                  const Weighted_point& p) const;
-
-  /**
    * Returns true if moving \c v to \c p makes no topological
    * change in \c tr
    */
@@ -139,24 +131,6 @@ private:
                      const Cell_vector& cell_tos,
                      const Point_getter& pg) const;
 };
-
-
-template<typename Tr>
-void
-Triangulation_helpers<Tr>::
-move_point(Tr& tr,
-           const Vertex_handle v,
-           const Vector_3& move,
-           const Weighted_point& p) const
-{
-  if ( no_topological_change(tr, v, move, p) )
-    tr.set_point(v, move, p);
-  else
-  {
-    tr.insert(p);
-    tr.remove(v);
-  }
-}
 
 template<typename Tr>
 bool
