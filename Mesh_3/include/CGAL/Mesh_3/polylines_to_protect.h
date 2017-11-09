@@ -43,15 +43,31 @@
 namespace CGAL {
 
 namespace internal { namespace Mesh_3 {
+
+template <typename K, typename NT>
+struct Returns_midpoint {
+  typedef typename K::Point_3 Point_3;
+
+  Point_3 operator()(const Point_3& a,
+                     const Point_3& b,
+                     const NT,
+                     const NT) const
+  {
+    typename K::Construct_midpoint_3 midpt
+      = K().construct_midpoint_3_object();
+    return a < b ? midpt(a, b) : midpt(b, a);
+  }
+};
+
 template <typename Pixel,
           typename Point,
           typename Domain_type,
-          typename Coeff_type>
+          typename Image_word_type>
 struct Enriched_pixel {
   Pixel pixel;
   Point point;
   Domain_type domain;
-  Coeff_type coeff;
+  Image_word_type word;
 }; // end struct template Enriched_pixel<Pix,P,D,C>
 }} // namespaces: end Mesh_3, end internal
 
@@ -204,6 +220,8 @@ struct Less_for_Graph_vertex_descriptors
 template <typename P,
           typename Image_word_type,
           typename Null_subdomain_index,
+          typename DomainFunctor,
+          typename InterpolationFunctor,
           typename PolylineInputIterator>
 void
 polylines_to_protect(const CGAL::Image_3& cgal_image,
@@ -211,9 +229,12 @@ polylines_to_protect(const CGAL::Image_3& cgal_image,
                      std::vector<std::vector<P> >& polylines,
                      Image_word_type*,
                      Null_subdomain_index null,
+                     DomainFunctor domain_fct,
+                     InterpolationFunctor interpolate,
                      PolylineInputIterator existing_polylines_begin,
                      PolylineInputIterator existing_polylines_end)
 {
+  typedef typename DomainFunctor::result_type Domain_type;
   typedef typename Kernel_traits<P>::Kernel K;
   typedef P Point_3;
   typedef boost::adjacency_list<boost::setS, boost::vecS, boost::undirectedS, Point_3> Graph;
@@ -227,7 +248,10 @@ polylines_to_protect(const CGAL::Image_3& cgal_image,
   const int image_dims[3] = { xdim, ydim, zdim };
 
   Graph graph;
-  internal::Mesh_3::Graph_manipulations<Graph, Point_3> g_manip(graph);
+  internal::Mesh_3::Graph_manipulations<Graph,
+                                        Point_3,
+                                        Image_word_type,
+                                        InterpolationFunctor> g_manip(graph, interpolate);
 
   std::size_t
     case4 = 0, // 4 colors
@@ -270,15 +294,15 @@ polylines_to_protect(const CGAL::Image_3& cgal_image,
           }
           typedef internal::Mesh_3::Enriched_pixel<Pixel,
                                                    Point_3,
-                                                   Image_word_type,
-                                                   int
+                                                   Domain_type,
+                                                   Image_word_type
                                                    > Enriched_pixel;
 
           array<array<Enriched_pixel, 2>, 2> square =
-            {{ {{ { pix00, Point_3(), Image_word_type(), 0 },
-                  { pix01, Point_3(), Image_word_type(), 0 } }},
-               {{ { pix10, Point_3(), Image_word_type(), 0 },
-                  { pix11, Point_3(), Image_word_type(), 0 } }} }};
+            {{ {{ { pix00, Point_3(), Domain_type(), 0 },
+                  { pix01, Point_3(), Domain_type(), 0 } }},
+               {{ { pix10, Point_3(), Domain_type(), 0 },
+                  { pix11, Point_3(), Domain_type(), 0 } }} }};
 
           std::map<Image_word_type, int> pixel_values_set;
           for(int ii = 0; ii < 2; ++ii)
@@ -289,15 +313,22 @@ polylines_to_protect(const CGAL::Image_3& cgal_image,
               double y = pixel[1] * vy;
               double z = pixel[2] * vz;
               square[ii][jj].point = Point_3(x, y, z);
-              square[ii][jj].domain = static_cast<Image_word_type>(cgal_image.value(pixel[0],
-                                                                                    pixel[1],
-                                                                                    pixel[2]));
+              square[ii][jj].word =
+                static_cast<Image_word_type>(cgal_image.value(pixel[0],
+                                                              pixel[1],
+                                                              pixel[2]));
+              square[ii][jj].domain = domain_fct(square[ii][jj].word);
               ++pixel_values_set[square[ii][jj].domain];
             }
           const Point_3& p00 = square[0][0].point;
           const Point_3& p10 = square[1][0].point;
           const Point_3& p01 = square[0][1].point;
           const Point_3& p11 = square[1][1].point;
+
+          const Image_word_type& v00 = square[0][0].word;
+          const Image_word_type& v10 = square[1][0].word;
+          const Image_word_type& v01 = square[0][1].word;
+          const Image_word_type& v11 = square[1][1].word;
 
           bool out00 = null(square[0][0].domain);
           bool out10 = null(square[1][0].domain);
@@ -346,10 +377,10 @@ polylines_to_protect(const CGAL::Image_3& cgal_image,
 case_4:
             // case 4 or case 2-2
             ++case4;
-            vertex_descriptor left   = g_manip.split(p00, p01, out00, out01);
-            vertex_descriptor right  = g_manip.split(p10, p11, out10, out11);
-            vertex_descriptor top    = g_manip.split(p01, p11, out01, out11);
-            vertex_descriptor bottom = g_manip.split(p00, p10, out00, out10);
+            vertex_descriptor left   = g_manip.split(p00, p01, v00, v01, out00, out01);
+            vertex_descriptor right  = g_manip.split(p10, p11, v10, v11, out10, out11);
+            vertex_descriptor top    = g_manip.split(p01, p11, v01, v11, out01, out11);
+            vertex_descriptor bottom = g_manip.split(p00, p10, v00, v10, out00, out10);
 
             vertex_descriptor vmid = g_manip.get_vertex(midpoint(p00, p11));
             g_manip.try_add_edge(left   , vmid);
@@ -372,10 +403,10 @@ case_4:
               CGAL_assertion(square[0][1].domain != square[0][0].domain);
               CGAL_assertion(square[0][1].domain != square[1][1].domain);
               ++case121;
-              vertex_descriptor left   = g_manip.split(p00, p01, out00, out01);
-              vertex_descriptor right  = g_manip.split(p10, p11, out10, out11);
-              vertex_descriptor top    = g_manip.split(p01, p11, out01, out11);
-              vertex_descriptor bottom = g_manip.split(p00, p10, out00, out10);
+              vertex_descriptor left   = g_manip.split(p00, p01, v00, v01, out00, out01);
+              vertex_descriptor right  = g_manip.split(p10, p11, v10, v11, out10, out11);
+              vertex_descriptor top    = g_manip.split(p01, p11, v01, v11, out01, out11);
+              vertex_descriptor bottom = g_manip.split(p00, p10, v00, v10, out00, out10);
 
               vertex_descriptor old_left = left;
               vertex_descriptor old_right = right;
@@ -427,9 +458,9 @@ case_4:
               Point_3 inter = translate(midleft
                               , (2./3) * vector(midleft, midright));
               vertex_descriptor v_inter = g_manip.get_vertex(inter);
-              vertex_descriptor right  = g_manip.split(p10, p11, out10, out11);
-              vertex_descriptor top    = g_manip.split(p01, p11, out01, out11);
-              vertex_descriptor bottom = g_manip.split(p00, p10, out00, out10);
+              vertex_descriptor right  = g_manip.split(p10, p11, v10, v11, out10, out11);
+              vertex_descriptor top    = g_manip.split(p01, p11, v01, v11, out01, out11);
+              vertex_descriptor bottom = g_manip.split(p00, p10, v00, v10, out00, out10);
 
               vertex_descriptor old_top = top;
               vertex_descriptor old_bottom = bottom;
@@ -489,8 +520,8 @@ case_4:
                 ++case22;
                 CGAL_assertion(square[1][0].domain==square[1][1].domain);
                 CGAL_assertion(square[1][0].domain!=square[0][1].domain);
-                vertex_descriptor top    = g_manip.split(p01, p11, out01, out11);
-                vertex_descriptor bottom = g_manip.split(p00, p10, out00, out10);
+                vertex_descriptor top    = g_manip.split(p01, p11, v01, v11, out01, out11);
+                vertex_descriptor bottom = g_manip.split(p00, p10, v00, v10, out00, out10);
                 g_manip.try_add_edge(top, bottom);
               } else {
                 // Else diagonal case case 2-2
@@ -534,7 +565,7 @@ case_4:
               CGAL_assertion(square[1][0].domain != square[0][0].domain);
               CGAL_assertion(square[1][1].domain == square[0][0].domain);
               CGAL_assertion(square[0][1].domain == square[0][0].domain);
-              vertex_descriptor bottom = g_manip.split(p00, p10, out00, out10);
+              vertex_descriptor bottom = g_manip.split(p00, p10, v00, v10, out00, out10);
               vertex_descriptor old = bottom;
 
               vertex_descriptor v_int;
@@ -549,7 +580,7 @@ case_4:
                 old = v_int;
               }
 
-              vertex_descriptor right  = g_manip.split(p10, p11, out10, out11);
+              vertex_descriptor right  = g_manip.split(p10, p11, v10, v11, out10, out11);
               g_manip.try_add_edge(v_int, right);
             }
           }
@@ -601,12 +632,17 @@ polylines_to_protect(std::vector<std::vector<P> >& polylines,
                      PolylineInputIterator existing_polylines_end)
 {
   typedef P Point_3;
+  typedef typename Kernel_traits<P>::Kernel K;
   typedef boost::adjacency_list<boost::setS, boost::vecS, boost::undirectedS, Point_3> Graph;
   typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_descriptor;
   typedef typename std::iterator_traits<PolylineInputIterator>::value_type Polyline;
 
   Graph graph;
-  internal::Mesh_3::Graph_manipulations<Graph, Point_3> g_manip(graph);
+  typedef internal::Mesh_3::Returns_midpoint<K, int> Midpoint_fct;
+  internal::Mesh_3::Graph_manipulations<Graph,
+                                        Point_3,
+                                        int,
+                                        Midpoint_fct> g_manip(graph);
 
   for (PolylineInputIterator poly_it = existing_polylines_begin;
        poly_it != existing_polylines_end; ++poly_it)
@@ -642,7 +678,6 @@ polylines_to_protect(const CGAL::Image_3& cgal_image,
 {
   polylines_to_protect<P>
     (cgal_image,
-     cgal_image.vx(), cgal_image.vy(),cgal_image.vz(),
      polylines,
      word_type,
      null,
@@ -655,14 +690,7 @@ void
 polylines_to_protect(const CGAL::Image_3& cgal_image,
                      std::vector<std::vector<P> >& polylines)
 {
-  polylines_to_protect<P>
-    (cgal_image,
-     cgal_image.vx(), cgal_image.vy(),cgal_image.vz(),
-     polylines,
-     (Image_word_type*)0,
-     CGAL::Null_subdomain_index(),
-     0,
-     0);
+  polylines_to_protect<P, Image_word_type>(cgal_image, polylines, 0, 0);
 }
 
 
@@ -677,7 +705,6 @@ polylines_to_protect(const CGAL::Image_3& cgal_image,
 {
   polylines_to_protect<P>
     (cgal_image,
-     cgal_image.vx(), cgal_image.vy(),cgal_image.vz(),
      polylines,
      (Image_word_type*)0,
      CGAL::Null_subdomain_index(),
@@ -697,12 +724,15 @@ polylines_to_protect(const CGAL::Image_3& cgal_image,
                      PolylineInputIterator existing_polylines_begin,
                      PolylineInputIterator existing_polylines_end)
 {
+  typedef typename Kernel_traits<P>::Kernel K;
   polylines_to_protect<P>
     (cgal_image,
      cgal_image.vx(), cgal_image.vy(),cgal_image.vz(),
      polylines,
      word_type,
      null,
+     CGAL::Identity<Image_word_type>(),
+     internal::Mesh_3::Returns_midpoint<K, Image_word_type>(),
      existing_polylines_begin,
      existing_polylines_end);
 }
