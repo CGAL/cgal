@@ -274,9 +274,15 @@ public:
   // We don't touch the predicates.
   // FIXME TODO : better use a layer of Filtered_kernel on top of everything,
   //              so that semi-static filters are used as well (?).
+#ifdef CGAL_NO_STATIC_FILTERS
+#define CGAL_Kernel_pred(P, Pf)                                         \
+    typedef Filtered_predicate<typename Exact_kernel::P, typename Approximate_kernel::P, C2E, C2F> P; \
+    P Pf() const { return P(); }
+#else
 #define CGAL_Kernel_pred(P, Pf)  \
   typedef Static_filtered_predicate<Approximate_kernel, Filtered_predicate<typename Exact_kernel::P, typename Approximate_kernel::P, C2E, C2F>, Exact_predicates_inexact_constructions_kernel::P> P; \
     P Pf() const { return P(); }
+#endif
 
 #define CGAL_Kernel_cons(C, Cf) \
   typedef typename Select_wrapper<typename Approximate_kernel::C>::template apply<Kernel, typename Approximate_kernel::C, typename Exact_kernel::C>::type C; \
