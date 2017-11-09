@@ -271,10 +271,8 @@ private:
 
 public:
 
-  // We don't touch the predicates.
-  // FIXME TODO : better use a layer of Filtered_kernel on top of everything,
-  //              so that semi-static filters are used as well (?).
-#ifdef CGAL_NO_STATIC_FILTERS
+
+#ifdef CGAL_NO_STATIC_FILTERS_FOR_LAZY_KERNEL
 #define CGAL_Kernel_pred(P, Pf)                                         \
     typedef Filtered_predicate<typename Exact_kernel::P, typename Approximate_kernel::P, C2E, C2F> P; \
     P Pf() const { return P(); }
