@@ -93,7 +93,7 @@ public Q_SLOTS:
     getPixel(e->pos());
   }
 Q_SIGNALS:
-  void x(int);
+  void x(QString);
 
 public:
   void setIC(const IntConverter& x) { ic = x; fc = boost::optional<DoubleConverter>(); }
@@ -111,9 +111,9 @@ private:
     viewer->glReadPixels(e.x(), vp[3] - e.y(), 1, 1, GL_RGB, GL_FLOAT, data);
 
     if(fc) {
-      Q_EMIT x( (*fc)(data[0]) );
+      Q_EMIT x(QString::number((*fc)(data[0]), 'f', 6 ));
     } else if(ic) {
-      Q_EMIT x( (*ic)(data[0]) );
+      Q_EMIT x( QString::number((*ic)(data[0]) ));
     }
   }
 };
@@ -536,12 +536,12 @@ private:
       QHBoxLayout* vbox = new QHBoxLayout(vlabels);
       vbox->setAlignment(Qt::AlignLeft);
       QLabel* text = new QLabel(vlabels);
-      text->setText("Isovalue at point:");
+      text->setText("Value of that pixel:");
       QLabel* help = new QLabel(vlabels);
       help->setText("Cut planes for the selected image:");
       QLabel* x = new QLabel(vlabels);
 
-      connect(&pxr_, SIGNAL(x(int)), x, SLOT(setNum(int)));
+      connect(&pxr_, SIGNAL(x(QString)), x, SLOT(setText(QString)));
 
       layout->addWidget(help); vbox->addWidget(text); vbox->addWidget(x);
       controlDockWidget->setWidget(content);
