@@ -277,9 +277,10 @@ public:
     // Iterate over all vertices that are not in the original domain
     // and construct the respective entries to virtual_vertices and
     // virtual_vertices_reverse
-    for(Vertex_iterator vit2 = vertices_begin();
-         vit2 != vertices_end(); ++vit2) {
-      if(vit2->offset() != Offset()) {
+    for(Vertex_iterator vit2 = vertices_begin(); vit2 != vertices_end(); ++vit2)
+    {
+      if(vit2->offset() != Offset())
+      {
         typename std::list<Vertex_handle>::iterator vlist_it
             = std::find_if(vlist.begin(), vlist.end(),
                            typename Tr_Base::Finder(this,vit2->point()));
@@ -293,11 +294,9 @@ public:
     }
 
     // Cleanup vertex offsets
-    for(Vertex_iterator vit = vertices_begin();
-         vit != vertices_end(); ++vit)
+    for(Vertex_iterator vit = vertices_begin(); vit != vertices_end(); ++vit)
       vit->clear_offset();
-    for(Vertex_iterator vit = tr.vertices_begin();
-         vit != tr.vertices_end(); ++vit)
+    for(Vertex_iterator vit = tr.vertices_begin(); vit != tr.vertices_end(); ++vit)
       vit->clear_offset();
 
     insert_cells_with_too_big_orthoball(tr.cells_begin(), tr.cells_end());
