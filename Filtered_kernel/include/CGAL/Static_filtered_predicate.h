@@ -25,7 +25,7 @@
 
 namespace CGAL {
   
-  template <typename AK, typename FP, typename EpicP>
+template <typename AK, typename FP, typename EpicP>
 class Static_filtered_predicate {
 public:
   FP fp;
