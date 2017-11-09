@@ -134,56 +134,35 @@ public:
   typedef Tag_true                                 Periodic_tag;
 
 #ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
-  using Tr_Base::cw;
-  using Tr_Base::ccw;
   using Tr_Base::domain;
   using Tr_Base::geom_traits;
   using Tr_Base::int_to_off;
   using Tr_Base::is_1_cover;
-  using Tr_Base::is_virtual;
-  using Tr_Base::mirror_vertex;
   using Tr_Base::number_of_vertices;
-  using Tr_Base::number_of_edges;
-  using Tr_Base::number_of_facets;
-  using Tr_Base::number_of_cells;
-  using Tr_Base::number_of_sheets;
-  using Tr_Base::next_around_edge;
   using Tr_Base::orientation;
   using Tr_Base::point;
   using Tr_Base::set_offsets;
-  using Tr_Base::swap;
   using Tr_Base::tds;
   using Tr_Base::vertex_triple_index;
   using Tr_Base::vertices_begin;
   using Tr_Base::vertices_end;
-  using Tr_Base::edges_begin;
-  using Tr_Base::edges_end;
-  using Tr_Base::facets_begin;
-  using Tr_Base::facets_end;
   using Tr_Base::cells_begin;
   using Tr_Base::cells_end;
   using Tr_Base::construct_point;
   using Tr_Base::construct_periodic_point;
 #endif
 
-  // For strict-ansi compliance
   using Tr_Base::combine_offsets;
   using Tr_Base::draw_dual;
   using Tr_Base::find_conflicts;
   using Tr_Base::get_offset;
   using Tr_Base::get_original_vertex;
-  using Tr_Base::get_location_offset;
   using Tr_Base::adjacent_vertices;
-  using Tr_Base::incident_edges;
   using Tr_Base::incident_facets;
   using Tr_Base::incident_cells;
   using Tr_Base::is_valid_conflict;
   using Tr_Base::locate;
-  using Tr_Base::neighbor_offset;
   using Tr_Base::periodic_point;
-#ifndef CGAL_NO_STRUCTURAL_FILTERING
-  using Tr_Base::inexact_locate;
-#endif
 
 private:
   struct Cell_handle_hash
