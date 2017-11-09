@@ -42,7 +42,21 @@
 
 namespace CGAL {
 
+namespace internal { namespace Mesh_3 {
+template <typename Pixel,
+          typename Point,
+          typename Domain_type,
+          typename Coeff_type>
+struct Enriched_pixel {
+  Pixel pixel;
+  Point point;
+  Domain_type domain;
+  Coeff_type coeff;
+}; // end struct template Enriched_pixel<Pix,P,D,C>
+}} // namespaces: end Mesh_3, end internal
+
 namespace Mesh_3{
+
 template<typename P, typename G>
 struct Polyline_visitor
 {
@@ -254,37 +268,41 @@ polylines_to_protect(const CGAL::Image_3& cgal_image,
             // we have gone too far
             continue;
           }
-          typedef tuple<Pixel, Point_3, Image_word_type> Enriched_pixel;
+          typedef internal::Mesh_3::Enriched_pixel<Pixel,
+                                                   Point_3,
+                                                   Image_word_type,
+                                                   int
+                                                   > Enriched_pixel;
 
           array<array<Enriched_pixel, 2>, 2> square =
-            {{ {{ Enriched_pixel(pix00, Point_3(), Image_word_type()),
-                  Enriched_pixel(pix01, Point_3(), Image_word_type()) }},
-               {{ Enriched_pixel(pix10, Point_3(), Image_word_type()),
-                  Enriched_pixel(pix11, Point_3(), Image_word_type()) }} }};
+            {{ {{ { pix00, Point_3(), Image_word_type(), 0 },
+                  { pix01, Point_3(), Image_word_type(), 0 } }},
+               {{ { pix10, Point_3(), Image_word_type(), 0 },
+                  { pix11, Point_3(), Image_word_type(), 0 } }} }};
 
           std::map<Image_word_type, int> pixel_values_set;
           for(int ii = 0; ii < 2; ++ii)
             for(int jj = 0; jj < 2; ++jj)
             {
-              const Pixel& pixel = get<0>(square[ii][jj]);
+              const Pixel& pixel = square[ii][jj].pixel;
               double x = pixel[0] * vx;
               double y = pixel[1] * vy;
               double z = pixel[2] * vz;
-              get<1>(square[ii][jj]) = Point_3(x, y, z);
-              get<2>(square[ii][jj]) = static_cast<Image_word_type>(cgal_image.value(pixel[0],
-                                                                                     pixel[1],
-                                                                                     pixel[2]));
-              ++pixel_values_set[get<2>(square[ii][jj])];
+              square[ii][jj].point = Point_3(x, y, z);
+              square[ii][jj].domain = static_cast<Image_word_type>(cgal_image.value(pixel[0],
+                                                                                    pixel[1],
+                                                                                    pixel[2]));
+              ++pixel_values_set[square[ii][jj].domain];
             }
-          const Point_3& p00 = get<1>(square[0][0]);
-          const Point_3& p10 = get<1>(square[1][0]);
-          const Point_3& p01 = get<1>(square[0][1]);
-          const Point_3& p11 = get<1>(square[1][1]);
+          const Point_3& p00 = square[0][0].point;
+          const Point_3& p10 = square[1][0].point;
+          const Point_3& p01 = square[0][1].point;
+          const Point_3& p11 = square[1][1].point;
 
-          bool out00 = null(get<2>(square[0][0]));
-          bool out10 = null(get<2>(square[1][0]));
-          bool out01 = null(get<2>(square[0][1]));
-          bool out11 = null(get<2>(square[1][1]));
+          bool out00 = null(square[0][0].domain);
+          bool out10 = null(square[1][0].domain);
+          bool out01 = null(square[0][1].domain);
+          bool out11 = null(square[1][1].domain);
 
           //
           // Protect the edges of the cube
@@ -319,12 +337,12 @@ polylines_to_protect(const CGAL::Image_3& cgal_image,
           //
           switch(pixel_values_set.size()) {
           case 4: {
-            CGAL_assertion(get<2>(square[0][0]) != get<2>(square[0][1]));
-            CGAL_assertion(get<2>(square[0][0]) != get<2>(square[1][0]));
-            CGAL_assertion(get<2>(square[0][0]) != get<2>(square[1][1]));
-            CGAL_assertion(get<2>(square[1][0]) != get<2>(square[1][1]));
-            CGAL_assertion(get<2>(square[0][1]) != get<2>(square[1][1]));
-            CGAL_assertion(get<2>(square[0][1]) != get<2>(square[1][0]));
+            CGAL_assertion(square[0][0].domain != square[0][1].domain);
+            CGAL_assertion(square[0][0].domain != square[1][0].domain);
+            CGAL_assertion(square[0][0].domain != square[1][1].domain);
+            CGAL_assertion(square[1][0].domain != square[1][1].domain);
+            CGAL_assertion(square[0][1].domain != square[1][1].domain);
+            CGAL_assertion(square[0][1].domain != square[1][0].domain);
 case_4:
             // case 4 or case 2-2
             ++case4;
@@ -341,18 +359,18 @@ case_4:
           }
             break;
           case 3: {
-            if(get<2>(square[0][0]) == get<2>(square[1][1])) {
+            if(square[0][0].domain == square[1][1].domain) {
               // Diagonal, but the wrong one.
               // Vertical swap
               std::swap(square[0][1], square[0][0]); std::swap(out01, out00);
               std::swap(square[1][1], square[1][0]); std::swap(out11, out10);
             }
-            if(get<2>(square[0][1]) == get<2>(square[1][0])) {
+            if(square[0][1].domain == square[1][0].domain) {
               // diagonal case 1-2-1
-              CGAL_assertion(get<2>(square[0][1]) == get<2>(square[1][0]));
-              CGAL_assertion(get<2>(square[1][1]) != get<2>(square[0][0]));
-              CGAL_assertion(get<2>(square[0][1]) != get<2>(square[0][0]));
-              CGAL_assertion(get<2>(square[0][1]) != get<2>(square[1][1]));
+              CGAL_assertion(square[0][1].domain == square[1][0].domain);
+              CGAL_assertion(square[1][1].domain != square[0][0].domain);
+              CGAL_assertion(square[0][1].domain != square[0][0].domain);
+              CGAL_assertion(square[0][1].domain != square[1][1].domain);
               ++case121;
               vertex_descriptor left   = g_manip.split(p00, p01, out00, out01);
               vertex_descriptor right  = g_manip.split(p10, p11, out10, out11);
@@ -386,23 +404,23 @@ case_4:
               g_manip.try_add_edge(v_int_right, top);
             } else {
               // case 2-1-1
-              if(get<2>(square[0][0]) == get<2>(square[1][0])) {
+              if(square[0][0].domain == square[1][0].domain) {
                 // Diagonal swap
                 std::swap(square[0][1], square[1][0]); std::swap(out01, out10);
               } else
-              if(get<2>(square[0][1]) == get<2>(square[1][1])) {
+              if(square[0][1].domain == square[1][1].domain) {
                 // The other diagonal swap
                 std::swap(square[0][0], square[1][1]); std::swap(out00, out11);
               } else
-              if(get<2>(square[1][0]) == get<2>(square[1][1])) {
+              if(square[1][0].domain == square[1][1].domain) {
                 // Vertical swap
                 std::swap(square[0][0], square[1][0]); std::swap(out00, out10);
                 std::swap(square[0][1], square[1][1]); std::swap(out01, out11);
               }
-              CGAL_assertion(get<2>(square[0][0]) == get<2>(square[0][1]));
-              CGAL_assertion(get<2>(square[0][0]) != get<2>(square[1][0]));
-              CGAL_assertion(get<2>(square[0][0]) != get<2>(square[1][1]));
-              CGAL_assertion(get<2>(square[1][0]) != get<2>(square[1][1]));
+              CGAL_assertion(square[0][0].domain == square[0][1].domain);
+              CGAL_assertion(square[0][0].domain != square[1][0].domain);
+              CGAL_assertion(square[0][0].domain != square[1][1].domain);
+              CGAL_assertion(square[1][0].domain != square[1][1].domain);
               ++case211;
               Point_3 midleft =  midpoint(p00, p01);
               Point_3 midright = midpoint(p10, p11);
@@ -449,37 +467,37 @@ case_4:
             {
               // Case of two colors with two pixels each.
 
-              if(get<2>(square[0][0])==get<2>(square[1][0])) {
+              if(square[0][0].domain==square[1][0].domain) {
                 // case 2-2, diagonal swap
                 std::swap(square[0][1], square[1][0]); std::swap(out01, out10);
-                CGAL_assertion(get<2>(square[0][0])==get<2>(square[0][1]));
+                CGAL_assertion(square[0][0].domain==square[0][1].domain);
               }
-              if(get<2>(square[1][0])==get<2>(square[1][1])) {
+              if(square[1][0].domain==square[1][1].domain) {
                 // case 2-2, vertical swap
                 std::swap(square[0][1], square[1][1]); std::swap(out01, out11);
                 std::swap(square[0][0], square[1][0]); std::swap(out00, out10);
-                CGAL_assertion(get<2>(square[0][0])==get<2>(square[0][1]));
+                CGAL_assertion(square[0][0].domain==square[0][1].domain);
               }
-              if(get<2>(square[0][1])==get<2>(square[1][1])) {
+              if(square[0][1].domain==square[1][1].domain) {
                 // case 2-2, diagonal swap
                 std::swap(square[0][0], square[1][1]); std::swap(out00, out11);
-                CGAL_assertion(get<2>(square[0][0])==get<2>(square[0][1]));
+                CGAL_assertion(square[0][0].domain==square[0][1].domain);
               }
 
-              if(get<2>(square[0][0])==get<2>(square[0][1])) {
+              if(square[0][0].domain==square[0][1].domain) {
                 // vertical case 2-2
                 ++case22;
-                CGAL_assertion(get<2>(square[1][0])==get<2>(square[1][1]));
-                CGAL_assertion(get<2>(square[1][0])!=get<2>(square[0][1]));
+                CGAL_assertion(square[1][0].domain==square[1][1].domain);
+                CGAL_assertion(square[1][0].domain!=square[0][1].domain);
                 vertex_descriptor top    = g_manip.split(p01, p11, out01, out11);
                 vertex_descriptor bottom = g_manip.split(p00, p10, out00, out10);
                 g_manip.try_add_edge(top, bottom);
               } else {
                 // Else diagonal case case 2-2
                 // Same as the case with 4 colors
-                CGAL_assertion(get<2>(square[0][0])==get<2>(square[1][1]));
-                CGAL_assertion(get<2>(square[1][0])==get<2>(square[0][1]));
-                CGAL_assertion(get<2>(square[0][0])!=get<2>(square[0][1]));
+                CGAL_assertion(square[0][0].domain==square[1][1].domain);
+                CGAL_assertion(square[1][0].domain==square[0][1].domain);
+                CGAL_assertion(square[0][0].domain!=square[0][1].domain);
                 goto case_4;
               }
             }
@@ -493,29 +511,29 @@ case_4:
                 CGAL_assertion(pixel_values_set.rbegin()->second ==1);
                 value_alone = pixel_values_set.rbegin()->first;
               }
-              if(get<2>(square[0][1]) == value_alone) {
+              if(square[0][1].domain == value_alone) {
                 // central symmetry
                 std::swap(square[0][1], square[1][0]); std::swap(out01, out10);
                 std::swap(square[0][0], square[1][1]); std::swap(out00, out11);
-                CGAL_assertion(get<2>(square[1][0]) == value_alone);
+                CGAL_assertion(square[1][0].domain == value_alone);
               }
-              if(get<2>(square[1][1]) == value_alone) {
+              if(square[1][1].domain == value_alone) {
                 // vertical swap
                 std::swap(square[0][0], square[0][1]); std::swap(out00, out01);
                 std::swap(square[1][0], square[1][1]); std::swap(out10, out11);
-                CGAL_assertion(get<2>(square[1][0]) == value_alone);
+                CGAL_assertion(square[1][0].domain == value_alone);
               }
-              if(get<2>(square[0][0]) == value_alone) {
+              if(square[0][0].domain == value_alone) {
                 // horizontal swap
                 std::swap(square[0][1], square[1][1]); std::swap(out01, out11);
                 std::swap(square[0][0], square[1][0]); std::swap(out00, out10);
-                CGAL_assertion(get<2>(square[1][0]) == value_alone);
+                CGAL_assertion(square[1][0].domain == value_alone);
               }
               ++case31;
-              CGAL_assertion(get<2>(square[1][0]) == value_alone);
-              CGAL_assertion(get<2>(square[1][0]) != get<2>(square[0][0]));
-              CGAL_assertion(get<2>(square[1][1]) == get<2>(square[0][0]));
-              CGAL_assertion(get<2>(square[0][1]) == get<2>(square[0][0]));
+              CGAL_assertion(square[1][0].domain == value_alone);
+              CGAL_assertion(square[1][0].domain != square[0][0].domain);
+              CGAL_assertion(square[1][1].domain == square[0][0].domain);
+              CGAL_assertion(square[0][1].domain == square[0][0].domain);
               vertex_descriptor bottom = g_manip.split(p00, p10, out00, out10);
               vertex_descriptor old = bottom;
 
