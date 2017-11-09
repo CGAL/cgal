@@ -895,12 +895,12 @@ insert_balls_on_edges()
           // with the third of the distance from 'p' to 'q'.
           FT p_size = query_size(p, 1, p_index);
 
-          FT curve_lenght = domain_.curve_length(curve_index);
+          FT curve_length = domain_.curve_length(curve_index);
 
           Bare_point other_point =
             domain_.construct_point_on_curve(p,
                                              curve_index,
-                                             curve_lenght / 2);
+                                             curve_length / 2);
           p_size = (std::min)(p_size,
                               compute_distance(p, other_point) / 3);
           vp = smart_insert_point(p,
@@ -941,11 +941,11 @@ get_vertex_corner_from_point(const Bare_point& p, const Index&) const
 
   // Get vertex_handle associated to corner (dim=0) point
   Vertex_handle v;
-  CGAL_assertion_code( bool q_finded = )
+  CGAL_assertion_code( bool q_found = )
   c3t3_.triangulation().is_vertex(cwp(p), v);
   // Let the weight be 0, because is_vertex only locates the point, and
   // check that the location type is VERTEX.
-  CGAL_assertion( q_finded );
+  CGAL_assertion( q_found );
   return v;
 }
 
