@@ -194,6 +194,12 @@ private:
     }
   };
 
+  /// This threshold is chosen such that if all orthosphere radii are shorter
+  /// than this treshold, then we can be sure that there are no self-edges anymore.
+  FT orthosphere_radius_threshold;
+
+  /// This container stores all the cells whose orthosphere radius is larger
+  /// than the treshold `orthosphere_radius_threshold`.
   boost::unordered_set<Cell_handle, Cell_handle_hash> cells_with_too_big_orthoball;
 
   class Cover_manager
@@ -230,14 +236,17 @@ public:
 
 public:
   /** @name Creation */ //@{
-  Periodic_3_regular_triangulation_3 (const Iso_cuboid& domain = Iso_cuboid(0, 0, 0, 1, 1, 1),
-                                      const Geometric_traits& gt = Geometric_traits())
+  Periodic_3_regular_triangulation_3(const Iso_cuboid& domain = Iso_cuboid(0, 0, 0, 1, 1, 1),
+                                     const Geometric_traits& gt = Geometric_traits())
     : Tr_Base(domain, gt)
-  { }
+  {
+    orthosphere_radius_threshold = FT(0.015625) * (domain.xmax() - domain.xmin())
+                                                * (domain.xmax() - domain.xmin());
+  }
 
   // copy constructor duplicates vertices and cells
-  Periodic_3_regular_triangulation_3 (const Periodic_3_regular_triangulation_3& tr)
-    : Tr_Base(tr)
+  Periodic_3_regular_triangulation_3(const Periodic_3_regular_triangulation_3& tr)
+    : Tr_Base(tr), orthosphere_radius_threshold(tr.orthosphere_radius_threshold)
   {
     if(is_1_cover())
       tds() = tr.tds();
@@ -255,6 +264,9 @@ public:
                                      bool is_large_point_set = false)
     : Tr_Base(domain, gt)
   {
+    orthosphere_radius_threshold = FT(0.015625) * (domain.xmax() - domain.xmin())
+                                                * (domain.xmax() - domain.xmin());
+
     insert(first, last, is_large_point_set);
   }
 
@@ -321,6 +333,7 @@ public:
   void swap(Periodic_3_regular_triangulation_3&tr)
   {
     std::swap(cells_with_too_big_orthoball, tr.cells_with_too_big_orthoball);
+    std::swap(orthosphere_radius_threshold, tr.orthosphere_radius_threshold);
     Tr_Base::swap(tr);
   }
 
@@ -370,10 +383,9 @@ public:
   template <class CellIt>
   void insert_cells_with_too_big_orthoball(Vertex_handle /*v*/, CellIt begin, const CellIt end)
   {
-    FT threshold = FT(0.015625) * (domain().xmax()-domain().xmin()) * (domain().xmax()-domain().xmin());
     for(; begin != end; ++begin)
     {
-      if(compare_orthsphere_radius_to_threshold(*begin, threshold) != CGAL::SMALLER)
+      if(compare_orthsphere_radius_to_threshold(*begin, orthosphere_radius_threshold) != CGAL::SMALLER)
       {
         cells_with_too_big_orthoball.insert(*begin);
       }
@@ -382,10 +394,9 @@ public:
 
   void insert_cells_with_too_big_orthoball(Cell_iterator begin, Cell_iterator end)
   {
-    FT threshold = FT(0.015625) * (domain().xmax()-domain().xmin()) * (domain().xmax()-domain().xmin());
     for(; begin != end; ++begin)
     {
-      if(compare_orthsphere_radius_to_threshold(begin, threshold) != CGAL::SMALLER)
+      if(compare_orthsphere_radius_to_threshold(begin, orthosphere_radius_threshold) != CGAL::SMALLER)
       {
         cells_with_too_big_orthoball.insert(begin);
       }
@@ -400,9 +411,8 @@ public:
   bool update_cover_data_during_management (Cell_handle new_ch, const std::vector<Cell_handle>& new_cells)
   {
     bool result = false;
-    FT threshold = FT(0.015625) * (domain().xmax() - domain().xmin()) * (domain().xmax() - domain().xmin());
 
-    if(compare_orthsphere_radius_to_threshold(new_ch, threshold) != CGAL::SMALLER)
+    if(compare_orthsphere_radius_to_threshold(new_ch, orthosphere_radius_threshold) != CGAL::SMALLER)
     {
       if(is_1_cover())
       {
@@ -421,19 +431,20 @@ public:
 
   virtual void update_cover_data_after_converting_to_27_sheeted_covering ()
   {
-    FT threshold = FT(0.015625) * (domain().xmax()-domain().xmin()) * (domain().xmax() - domain().xmin());
     for(Cell_iterator iter = cells_begin(), end_iter = cells_end(); iter != end_iter; ++iter)
     {
-      if(compare_orthsphere_radius_to_threshold(iter, threshold) != CGAL::SMALLER)
+      if(compare_orthsphere_radius_to_threshold(iter, orthosphere_radius_threshold) != CGAL::SMALLER)
       {
         cells_with_too_big_orthoball.insert(iter);
       }
     }
   }
 
-  // in the regular setting, there is nothing to do since we use `cells_with_too_big_orthoball`
-  // instead of an edge length threshold
-  virtual void update_cover_data_after_setting_domain () {}
+  virtual void update_cover_data_after_setting_domain ()
+  {
+    orthosphere_radius_threshold = FT(0.015625) * (domain().xmax() - domain().xmin())
+                                                * (domain().xmax() - domain().xmin());
+  }
 
   // the function below is used in `convert_to_1_sheeted_covering()` of P3T3
   // but only makes sense for regular triangulations.
@@ -463,7 +474,7 @@ public:
     CGAL_triangulation_precondition(point.weight() >= 0);
     CGAL_triangulation_precondition_msg
     (
-      point.weight() < ( FT(0.015625) * (domain().xmax()-domain().xmin()) * (domain().xmax()-domain().xmin()) ),
+      point.weight() < orthosphere_radius_threshold ,
      "point.weight() < 1/64 * domain_size * domain_size"
     );
     return Tr_Base::insert_in_conflict(point, start, tester, hider, cover_manager);
@@ -479,7 +490,7 @@ public:
     CGAL_triangulation_precondition(point.weight() >= 0);
     CGAL_triangulation_precondition_msg
     (
-      point.weight() < ( FT(0.015625) * (domain().xmax()-domain().xmin()) * (domain().xmax()-domain().xmin()) ),
+      point.weight() < orthosphere_radius_threshold,
       "point.weight() < 1/64 * domain_size * domain_size"
     );
     return Tr_Base::insert_in_conflict(point,lt,c,li,lj, tester,hider,cover_manager);
@@ -495,10 +506,9 @@ public:
     CGAL_triangulation_precondition_code
     (
       bool precondition_is_satisfied = true;
-      FT upper_bound = FT(0.015625) * (domain().xmax()-domain().xmin()) * (domain().xmax()-domain().xmin());
       for(InputIterator pc_first = first, pc_last = last; pc_first != pc_last; ++pc_first)
       {
-        if(pc_first->weight() < FT(0) || pc_first->weight() >= upper_bound)
+        if(pc_first->weight() < FT(0) || pc_first->weight() >= orthosphere_radius_threshold)
         {
           precondition_is_satisfied = false;
           break;
