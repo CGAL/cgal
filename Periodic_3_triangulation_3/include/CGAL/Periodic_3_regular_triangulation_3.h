@@ -1296,9 +1296,6 @@ public:
                  OutputIteratorInternalFacets ifit) const
   {
     CGAL_triangulation_precondition(number_of_vertices() != 0);
-    CGAL_triangulation_precondition(!(p.x() < domain().xmin()) && p.x() < domain().xmax());
-    CGAL_triangulation_precondition(!(p.y() < domain().ymin()) && p.y() < domain().ymax());
-    CGAL_triangulation_precondition(!(p.z() < domain().zmin()) && p.z() < domain().zmax());
 
     std::vector<Facet> facets;
     facets.reserve(64);

@@ -2177,13 +2177,6 @@ exact_periodic_locate
 (const Point& p, const Offset& o_p, Offset& lo,
  Locate_type& lt, int& li, int& lj, Cell_handle start) const
 {
-  CGAL_triangulation_precondition(p.x() < domain().xmax());
-  CGAL_triangulation_precondition(p.y() < domain().ymax());
-  CGAL_triangulation_precondition(p.z() < domain().zmax());
-  CGAL_triangulation_precondition(p.x() >= domain().xmin());
-  CGAL_triangulation_precondition(p.y() >= domain().ymin());
-  CGAL_triangulation_precondition(p.z() >= domain().zmin());
-
   int cumm_off = 0;
   Offset off_query = o_p;
   if(number_of_vertices() == 0) {
@@ -2361,13 +2354,6 @@ inexact_periodic_locate(const Point& p, const Offset& o_p,
                         Cell_handle start,
                         int n_of_turns) const
 {
-  CGAL_triangulation_precondition(p.x() < domain().xmax());
-  CGAL_triangulation_precondition(p.y() < domain().ymax());
-  CGAL_triangulation_precondition(p.z() < domain().zmax());
-  CGAL_triangulation_precondition(p.x() >= domain().xmin());
-  CGAL_triangulation_precondition(p.y() >= domain().ymin());
-  CGAL_triangulation_precondition(p.z() >= domain().zmin());
-
   int cumm_off = 0;
   Offset off_query = o_p;
   if(number_of_vertices() == 0) {
