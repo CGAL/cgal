@@ -314,41 +314,6 @@ public:
 
   // typedef void Compute_z_3; // to detect where .z() is called
   // typedef void Construct_point_3; // to detect where the ctor is called
-
-#if 0
-  class Do_intersect_2 {
-  public:
-    bool operator()(const Segment_2& s, const Segment_2& t) const
-    {
-      internal::Static_filters_predicates::Get_approx<Segment_2> get_approx;
-      typedef Exact_predicates_inexact_constructions_kernel Fit;
-      typedef typename Fit::Point_2 Fpoint;
-      typedef typename Fit::Segment_2 Fsegment;
-      double ssx, ssy, stx, sty, tsx, tsy, ttx, tty;
-      if(fit_in_double(get_approx(s).source().x(), ssx) &&
-         fit_in_double(get_approx(s).source().y(), ssy) &&
-         fit_in_double(get_approx(s).target().x(), stx) &&
-         fit_in_double(get_approx(s).target().y(), sty) &&
-         fit_in_double(get_approx(t).source().x(), tsx) &&
-         fit_in_double(get_approx(t).source().y(), tsy) &&
-         fit_in_double(get_approx(t).target().x(), ttx) &&
-         fit_in_double(get_approx(t).target().y(), tty)){
-        return do_intersect(Fsegment(Fpoint(ssx,ssy), Fpoint(stx,sty)),
-                            Fsegment(Fpoint(tsx,tsy), Fpoint(ttx,tty)));
-      }
-      typename Lazy_kernel_generic_base<EK_, AK_, E2A_, Kernel_>::Do_intersect_2 DI;
-      return DI(s,t);
-    }
-  };
-
-
-  typedef Static_filtered_predicate<Approximate_kernel,
-                                    typename Lazy_kernel_generic_base<EK_, AK_, E2A_, Kernel_>::Do_intersect_2,
-                                    typename Exact_predicates_inexact_constructions_kernel::Do_intersect_2> Do_intersect_2;
-
-  Do_intersect_2 do_intersect_2_object() const
-  { return Do_intersect_2(); }
-#endif
   
   Assign_2
   assign_2_object() const
