@@ -40,13 +40,14 @@ namespace internal {
 
 
 
-template<typename PolygonMesh>
+template<typename PolygonMesh, typename GeomTraits>
 class Quality_evaluator
 {
 
+    typedef typename GeomTraits::Point_3 Point;
+    typedef typename GeomTraits::Vector_3 Vector;
     typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
     typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
-
     typedef typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::type VertexPointMap;
 
 
@@ -75,12 +76,12 @@ public:
         for(halfedge_descriptor hi : halfedges(mesh_))
         {
 
-            typename Kernel::Point_3 a = get(vpmap_, source(hi, mesh_));
-            typename Kernel::Point_3 b = get(vpmap_, target(hi, mesh_));
-            typename Kernel::Point_3 c = get(vpmap_, target(next(hi, mesh_), mesh_));
+            Point a = get(vpmap_, source(hi, mesh_));
+            Point b = get(vpmap_, target(hi, mesh_));
+            Point c = get(vpmap_, target(next(hi, mesh_), mesh_));
 
-            typename Kernel::Vector_3 ba(b, a);
-            typename Kernel::Vector_3 bc(b, c);
+            Vector ba(b, a);
+            Vector bc(b, c);
 
             double cos_angle = (ba * bc)
               / std::sqrt(ba.squared_length() * bc.squared_length());
@@ -121,7 +122,7 @@ public:
         for(face_descriptor f : faces(mesh_))
         {
             halfedge_descriptor h = halfedge(f, mesh_);
-            typename Kernel::Point_3 points[3];
+            Point points[3];
             points[0] = get(vpmap_, target(h, mesh_));
             points[1] = get(vpmap_, target(next(h, mesh_), mesh_));
             points[2] = get(vpmap_, target(next(next(h, mesh_), mesh_), mesh_));

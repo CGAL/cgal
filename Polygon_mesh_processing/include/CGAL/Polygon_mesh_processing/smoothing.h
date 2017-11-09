@@ -953,28 +953,28 @@ void curvature_flow_smoothing(PolygonMesh& pmesh)
 }
 
 // not documented
-template<typename PolygonMesh>
+template<typename PolygonMesh, typename GeomTraits>
 void angles_evaluation(PolygonMesh& pmesh, const char* filename)
 {
-    internal::Quality_evaluator<PolygonMesh> evaluator(pmesh);
+    internal::Quality_evaluator<PolygonMesh, GeomTraits> evaluator(pmesh);
 
     evaluator.gather_angles();
     evaluator.extract_angles(filename);
 }
 
-template<typename PolygonMesh>
+template<typename PolygonMesh, typename GeomTraits>
 void areas_evaluation(PolygonMesh& pmesh, const char* filename)
 {
-    internal::Quality_evaluator<PolygonMesh> evaluator(pmesh);
+    internal::Quality_evaluator<PolygonMesh, GeomTraits> evaluator(pmesh);
 
     evaluator.measure_areas();
     evaluator.extract_areas(filename);
 }
 
-template<typename PolygonMesh>
+template<typename PolygonMesh, typename GeomTraits>
 void aspect_ratio_evaluation(PolygonMesh& pmesh, const char* filename)
 {
-    internal::Quality_evaluator<PolygonMesh> evaluator(pmesh);
+    internal::Quality_evaluator<PolygonMesh, GeomTraits> evaluator(pmesh);
 
     evaluator.calc_aspect_ratios();
     evaluator.extract_aspect_ratios(filename);
