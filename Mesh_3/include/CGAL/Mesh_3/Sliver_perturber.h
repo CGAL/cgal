@@ -1315,8 +1315,7 @@ perturb_vertex( PVertex pv
     return;
   }
 
-  // <periodic> and what's happening below... ?
-  Point_3 p = cp(pv.vertex()->point());
+  const Bare_point& p = cp(pv.vertex()->point());
   if (!helper_.try_lock_point_no_spin(pv.vertex()->point()) ||
       ! tr_.geom_traits().equal_3_object()(p, cp(pv.vertex()->point())))
   {
