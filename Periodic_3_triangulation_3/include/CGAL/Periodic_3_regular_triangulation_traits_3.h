@@ -90,6 +90,8 @@ public:
   // Required for Periodic_3_mesh_3
   typedef Functor_with_offset_weighted_points_adaptor_3<Self, typename K::Compute_power_distance_to_power_sphere_3>
       Compute_power_distance_to_power_sphere_3;
+  typedef Functor_with_offset_weighted_points_adaptor_3<Self, typename K::Compute_squared_distance_3>
+      Compute_squared_distance_3;
 
   // Operations
   using Base::construct_point_3_object;
@@ -109,6 +111,12 @@ public:
   Compute_power_distance_to_power_sphere_3 compute_power_distance_to_power_sphere_3_object() const {
     return Compute_power_distance_to_power_sphere_3(
       this->Base::compute_power_distance_to_power_sphere_3_object(),
+      construct_point_3_object(), construct_weighted_point_3_object());
+  }
+
+  Compute_squared_distance_3 compute_squared_distance_3_object() const {
+    return Compute_squared_distance_3(
+      this->Base::compute_squared_distance_3_object(),
       construct_point_3_object(), construct_weighted_point_3_object());
   }
 

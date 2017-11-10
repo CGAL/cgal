@@ -612,6 +612,77 @@ public:
     return Base::nearest_power_vertex(canonicalize_point(p), start);
   }
 
+  /// Return the squared distance (note: _NOT_ the power distance) between the
+  /// 'p' and the closest vertex for the power distance.
+  std::pair<Vertex_handle, FT>
+  nearest_power_vertex_with_sq_distance(const Bare_point& p, Cell_handle start) const
+  {
+    // The function below is almost a copy from 'nearest_power_vertex' in P3RT3.
+    // Any change should be mirrored.
+    CGAL_precondition(number_of_vertices() > 1);
+
+    Locate_type lt;
+    int li, lj;
+
+    typename Gt::Compute_squared_distance_3 csd =
+      geom_traits().compute_squared_distance_3_object();
+    typename Gt::Construct_point_3 cp =
+      geom_traits().construct_point_3_object();
+    typename Gt::Construct_weighted_point_3 cwp =
+      geom_traits().construct_weighted_point_3_object();
+
+    Offset query_offset;
+    Cell_handle c = Base::locate(cwp(p), query_offset, lt, li, lj, start);
+
+    // - start with the closest vertex from the located cell.
+    // - repeatedly take the nearest of its incident vertices if any
+    // - if not, we're done.
+
+    // Take the opposite because periodic_locate() returns the offset such that
+    // cell + offset contains 'p' but here we need to move 'p'
+    query_offset = - query_offset;
+
+    Vertex_handle nearest = Base::nearest_vertex_in_cell(c, p, query_offset);
+    const Weighted_point& nearest_wp = this->point(nearest);
+    Offset offset_of_nearest = Base::get_min_dist_offset(p, query_offset, nearest);
+    FT min_sq_dist = csd(p, cp(nearest_wp), query_offset, offset_of_nearest);
+
+    std::vector<Vertex_handle> vs;
+    vs.reserve(32);
+
+    while(true)
+    {
+      Vertex_handle tmp = nearest;
+
+      adjacent_vertices(nearest, std::back_inserter(vs));
+      for(typename std::vector<Vertex_handle>::const_iterator vsit = vs.begin();
+                                                              vsit != vs.end(); ++vsit)
+      {
+        // Can happen in 27-sheeted triangulations composed of few points
+        if((*vsit)->point() == nearest->point())
+          continue;
+
+        const Offset min_dist_offset = this->get_min_dist_offset(p, query_offset, *vsit);
+        if(this->compare_distance(p, (*vsit)->point(), tmp->point(),
+                                  query_offset, min_dist_offset, offset_of_nearest) == SMALLER)
+        {
+          tmp = *vsit;
+          offset_of_nearest = min_dist_offset;
+          const Weighted_point& vswp = this->point(tmp);
+          min_sq_dist = csd(p, cp(vswp), query_offset, min_dist_offset);
+        }
+      }
+
+      if(tmp == nearest)
+        break;
+
+      vs.clear();
+      nearest = tmp;
+    }
+
+    return std::make_pair(nearest, min_sq_dist);
+  }
+
   Cell_handle locate(const Weighted_point& p,
                      Cell_handle start = Cell_handle(),
                      bool* CGAL_assertion_code(could_lock_zone) = NULL) const

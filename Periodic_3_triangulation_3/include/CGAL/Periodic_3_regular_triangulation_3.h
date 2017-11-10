@@ -983,11 +983,28 @@ public:
     Offset query_offset;
     Cell_handle c = locate(p2wp(p), query_offset, lt, li, lj, start);
 
-    // @todo remove that since 'has_on_bounded_side_3_object' is not in RTTraits3
-    CGAL_assertion(geom_traits().has_on_bounded_side_3_object()(
-                     Tetrahedron(this->point(c, 0).point(), this->point(c, 1).point(),
-                                 this->point(c, 2).point(), this->point(c, 3).point()),
-                     construct_point(p, -query_offset)) != CGAL::ON_UNBOUNDED_SIDE);
+#define CGAL_PERIODIC_DEBUG_NEAREST_POWER_VERTEX
+#ifdef CGAL_PERIODIC_DEBUG_NEAREST_POWER_VERTEX
+    std::cout << "nearest power vertex: " << p << std::endl;
+    std::cout << "vertices: " << number_of_vertices() << std::endl;
+    std::cout << "stored vertices: " << this->number_of_stored_vertices() << std::endl;
+    std::cout << "Locate: " << p << std::endl;
+    std::cout << "Cell: " << &*c << std::endl;
+    std::cout << this->point(c, 0) << std::endl;
+    std::cout << this->point(c, 1) << std::endl;
+    std::cout << this->point(c, 2) << std::endl;
+    std::cout << this->point(c, 3) << std::endl;
+    std::cout << "offset query: " << query_offset << std::endl;
+    std::cout << "on bounded side : " << geom_traits().has_on_bounded_side_3_object()(
+                   Tetrahedron(this->point(c, 0).point(), this->point(c, 1).point(),
+                               this->point(c, 2).point(), this->point(c, 3).point()), p) << std::endl;
+    std::cout << "power side: " << geom_traits().power_side_of_bounded_power_sphere_3_object()(
+                   this->point(c, 0), this->point(c, 1),
+                   this->point(c, 2), this->point(c, 3), p2wp(p)) << std::endl;
+    std::cout << "power distance: " << geom_traits().compute_power_distance_to_power_sphere_3_object()(
+                   this->point(c, 0), this->point(c, 1),
+                   this->point(c, 2), this->point(c, 3), p2wp(p)) << std::endl;
+#endif
 
     // - start with the closest vertex from the located cell.
     // - repeatedly take the nearest of its incident vertices if any
@@ -998,19 +1015,42 @@ public:
     query_offset = - query_offset;
 
     Vertex_handle nearest = nearest_vertex_in_cell(c, p, query_offset);
+    Offset offset_of_nearest = get_min_dist_offset(p, query_offset, nearest);
+
+#ifdef CGAL_PERIODIC_DEBUG_NEAREST_POWER_VERTEX
+    std::cout << "nearest vertex in cell : " << &*nearest << " : " << nearest->point() << std::endl;
+    std::cout << "offset_of_nearest: " << offset_of_nearest << std::endl;
+#endif
+
     std::vector<Vertex_handle> vs;
     vs.reserve(32);
     while(true)
     {
       Vertex_handle tmp = nearest;
-      Offset tmp_off = get_min_dist_offset(p, query_offset, tmp);
+#ifdef CGAL_PERIODIC_DEBUG_NEAREST_POWER_VERTEX
+      std::cout << "tmp set to : " << &*nearest << " : " << nearest->point()
+                << " || offset: " << nearest->offset() << std::endl;
+#endif
+
       adjacent_vertices(nearest, std::back_inserter(vs));
       for(typename std::vector<Vertex_handle>::const_iterator vsit = vs.begin();
                                                               vsit != vs.end(); ++vsit)
       {
-        tmp = (compare_distance(p, tmp->point(), (*vsit)->point(),
-                                query_offset, tmp_off, get_min_dist_offset(p, query_offset, *vsit))
-                 == SMALLER) ? tmp : *vsit;
+        // Can happen in 27-sheeted triangulations composed of few points
+        if((*vsit)->point() == nearest->point())
+          continue;
+
+        const Offset min_dist_offset = this->get_min_dist_offset(p, query_offset, *vsit);
+        if(compare_distance(p, (*vsit)->point(), tmp->point(),
+                            query_offset, min_dist_offset, offset_of_nearest) == SMALLER)
+        {
+          tmp = *vsit;
+          offset_of_nearest = min_dist_offset;
+#ifdef CGAL_PERIODIC_DEBUG_NEAREST_POWER_VERTEX
+          std::cout << " Closer adjacent vertex: " << &*tmp << " : " << tmp->point()
+                    << " || offset " << offset_of_nearest << std::endl;
+#endif
+        }
       }
 
       if(tmp == nearest)

@@ -52,6 +52,7 @@
 #  include <boost/math/special_functions/next.hpp> // for float_prior
 #endif
 #include <boost/optional.hpp>
+#include <boost/tuple/tuple.hpp>
 
 #include <algorithm>
 #include <cmath>
@@ -644,8 +645,17 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
     typename Tr::Locate_type lt;
     int li, lj;
     Cell_handle ch = tr.locate(wp0, lt, li, lj);
-    Vertex_handle nearest_vh = tr.nearest_power_vertex(p, ch);
-    FT sq_d = sq_distance(p, cp(nearest_vh->point()));
+
+    Vertex_handle nearest_vh;
+    FT sq_d;
+    boost::tie(nearest_vh, sq_d) = tr.nearest_power_vertex_with_sq_distance(p, ch);
+
+#if CGAL_MESH_3_PROTECTION_DEBUG & 2
+    std::cerr << "Nearest power vertex: " << &*nearest_vh
+                                          << " (" << nearest_vh->point() << ")" << std::endl;
+    std::cerr << "At distance: " << sq_d << std::endl;
+#endif
+
     while ( nearest_vh->point().weight() > sq_d &&
             ! is_special(nearest_vh) )
     {
@@ -667,8 +677,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
       ch = tr.locate(wp0, lt, li, lj, new_vh);
 
       // Iterate
-      nearest_vh = tr.nearest_power_vertex(p, ch);
-      sq_d = sq_distance(p, cp(nearest_vh->point()));
+      boost::tie(nearest_vh, sq_d) = tr.nearest_power_vertex_with_sq_distance(p, ch);
     }
 
     if( is_special(nearest_vh) && nearest_vh->point().weight() > sq_d )
