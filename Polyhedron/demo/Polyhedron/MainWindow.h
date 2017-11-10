@@ -23,10 +23,10 @@ class QTreeView;
 class QMenu;
 class StatisticsThread;
 class StatisticsController;
-class SubViewer;
+struct SubViewer;
 namespace qglviewer
 {
-struct Vec;
+  class Vec;
 }
 namespace CGAL {
 namespace Three{
@@ -41,7 +41,7 @@ class QSortFilterProxyModel;
 
 namespace Ui {
   class MainWindow;
-  struct SubViewer;
+  class SubViewer;
   class Statistics_on_item_dialog;
 }
 namespace CT = CGAL::Three;

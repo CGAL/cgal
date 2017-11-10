@@ -668,7 +668,7 @@ void Scene_surface_mesh_item::draw(CGAL::Three::Viewer_interface *viewer,
     setBuffersInit(viewer, true);
   }
 
-  float near(viewer->camera()->zNear()), far(viewer->camera()->zFar());
+  float l_near(viewer->camera()->zNear()), l_far(viewer->camera()->zFar());
 
 
   if(renderingMode() == Gouraud)
@@ -676,8 +676,8 @@ void Scene_surface_mesh_item::draw(CGAL::Three::Viewer_interface *viewer,
     getTriangleContainer(0)->setComparing(pass > 0);
     getTriangleContainer(0)->setWidth(viewer->width()*1.0f);
     getTriangleContainer(0)->setHeight(viewer->height()*1.0f);
-    getTriangleContainer(0)->setNear(near);
-    getTriangleContainer(0)->setFar(far);
+    getTriangleContainer(0)->setNear(l_near);
+    getTriangleContainer(0)->setFar(l_far);
     getTriangleContainer(0)->setDepthWriting(writing_depth);
     getTriangleContainer(0)->setColor(isSelected() ? selectionColor() : color());
     getTriangleContainer(0)->setSelected(isSelected());
@@ -689,8 +689,8 @@ void Scene_surface_mesh_item::draw(CGAL::Three::Viewer_interface *viewer,
     getTriangleContainer(1)->setComparing(pass > 0);
     getTriangleContainer(1)->setWidth(viewer->width()*1.0f);
     getTriangleContainer(1)->setHeight(viewer->height()*1.0f);
-    getTriangleContainer(1)->setNear(near);
-    getTriangleContainer(1)->setFar(far);
+    getTriangleContainer(1)->setNear(l_near);
+    getTriangleContainer(1)->setFar(l_far);
     getTriangleContainer(1)->setDepthWriting(writing_depth);
     getTriangleContainer(1)->setColor(isSelected() ? selectionColor() : color());
     getTriangleContainer(1)->setSelected(isSelected());

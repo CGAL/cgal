@@ -648,10 +648,13 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
   renderScene(children, viewer, picked_item_IDs, with_names, -1, false, NULL);
   if(!with_names && has_alpha())
   {
-    QOpenGLFramebufferObject* fbos[(int)viewer->total_pass()];
-    QOpenGLFramebufferObject* depth_test[(int)viewer->total_pass()-1];
+    std::vector<QOpenGLFramebufferObject*> fbos;
+    std::vector<QOpenGLFramebufferObject*> depth_test;
     QColor background = viewer->backgroundColor();
 
+    fbos.resize((int)viewer->total_pass());
+    depth_test.resize((int)viewer->total_pass()-1);
+    
     //first pass
     fbos[0] = new QOpenGLFramebufferObject(viewer->width(), viewer->height(),QOpenGLFramebufferObject::Depth, GL_TEXTURE_2D, GL_RGBA32F);
     fbos[0]->bind();
