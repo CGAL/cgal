@@ -32,7 +32,10 @@
 
 namespace CGAL
 {
-  /// Seeding method enumeration
+/*!
+ * \ingroup PkgTSMA
+ * @brief Seeding method enumeration for Variational Shape Approximation algorithm.
+ */
   enum Method {
     /// Random seeding
     Random,
@@ -398,7 +401,7 @@ public:
    * @param cvg_threshold the percentage of error change between two successive runs,
    * should be in range (0, 1).
    * @param max_iterations maximum number of iterations allowed
-   * @param avg_inverval size of error average interval to have smoother convergence curve,
+   * @param avg_interval size of error average interval to have smoother convergence curve,
    * if 0 is assigned, 1 is used instead.
    * @return true if converged before hitting the maximum iterations, false otherwise
    */

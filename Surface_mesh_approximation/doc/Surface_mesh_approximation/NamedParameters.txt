@@ -74,9 +74,9 @@ typename CGAL::Kernel_traits<
 \cgalNPEnd
 
 \cgalNPBegin{init_method} \anchor VSA_init_method
-the selection of seed initialization method, `0` for random, `1` for incremental, `2` for hierarchical\n
-\b Type : \c int \n
-\b Default value is `0`
+the selection of seeding method.\n
+\b Type : \c CGAL::Method \n
+\b Default value is `CGAL::Method::Random`
 \cgalNPEnd
 
 \cgalNPBegin{init_by_number} \anchor VSA_init_by_number
