@@ -26,25 +26,43 @@
 #ifndef CGAL_MESH_3_PROTECT_EDGES_SIZING_FIELD_H
 #define CGAL_MESH_3_PROTECT_EDGES_SIZING_FIELD_H
 
-#include <CGAL/license/Mesh_3.h>
 
+#include <CGAL/license/Mesh_3.h>
 
 #include <CGAL/Mesh_3/config.h>
 
-#include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Mesh_3/io_signature.h>
-#ifndef CGAL_NO_ASSERTIONS
-#  include <boost/math/special_functions/next.hpp> // for float_prior
-#endif
-#include <boost/bind.hpp>
-#include <boost/function_output_iterator.hpp>
-#if ! defined(CGAL_NO_PRECONDITIONS)
-#  include <sstream>
-#endif
 #ifdef CGAL_MESH_3_DUMP_FEATURES_PROTECTION_ITERATIONS
 #include <CGAL/IO/File_binary_mesh_3.h>
 #endif
+#include <CGAL/Mesh_3/utilities.h>
+#include <CGAL/Mesh_3/Triangulation_helpers.h>
+
+#include <CGAL/enum.h>
 #include <CGAL/Has_timestamp.h>
+#include <CGAL/iterator.h>
+#include <CGAL/number_utils.h>
+#include <CGAL/Delaunay_triangulation_3.h>
+
+#include <boost/bind.hpp>
+#include <boost/iterator/transform_iterator.hpp>
+#include <boost/function_output_iterator.hpp>
+#ifndef CGAL_NO_ASSERTIONS
+#  include <boost/math/special_functions/next.hpp> // for float_prior
+#endif
+#include <boost/optional.hpp>
+
+#include <algorithm>
+#include <cmath>
+#include <fstream>
+#include <iterator>
+#include <list>
+#include <sstream>
+#include <set>
+#include <stack>
+#include <string>
+#include <utility>
+#include <vector>
 
 namespace CGAL {
 namespace Mesh_3 {
@@ -67,31 +85,7 @@ namespace internal {
 // That constant has had different values in the Git history: 9, 99, and now 29.
 
 } // end namespace internal
-} // end namespace Mesh_3
-} // end namespace CGAL
 
-#include <cmath>
-#include <algorithm>
-#include <set>
-#include <list>
-#include <vector>
-#include <stack>
-
-#include <boost/iterator/transform_iterator.hpp>
-#include <boost/optional.hpp>
-
-#include <CGAL/Mesh_3/utilities.h>
-#include <CGAL/enum.h>
-#include <CGAL/iterator.h>
-#include <CGAL/number_utils.h>
-#include <CGAL/squared_distance_3.h>
-
-#include <fstream>
-#include <sstream>
-
-namespace CGAL {
-
-namespace Mesh_3 {
 
 template <typename C3t3>
 void debug_dump_c3t3(const std::string filename, const C3t3& c3t3)
