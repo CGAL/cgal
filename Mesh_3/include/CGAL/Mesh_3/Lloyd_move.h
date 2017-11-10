@@ -31,6 +31,7 @@
 
 #include <CGAL/convex_hull_2.h>
 #include <CGAL/ch_graham_andrew.h>
+#include <CGAL/Handle_hash_function.h>
 
 #include <CGAL/Mesh_3/Uniform_sizing_field.h>
 
@@ -179,8 +180,8 @@ private:
     // -----------------------------------
 
     // Stores vertex that have already been used
-    typedef boost::unordered_set<Vertex_handle>              Vertex_container;
-    typedef typename Vertex_container::iterator              VC_it;
+    typedef boost::unordered_set<Vertex_handle, Handle_hash_function> Vertex_container;
+    typedef typename Vertex_container::iterator                       VC_it;
 
     Vertex_container treated_vertices;
 
