@@ -270,6 +270,8 @@ class WorkItem
 {
 public:
   WorkItem() {}
+  virtual ~WorkItem() { }
+
   // Derived class defines the actual work.
   virtual void run() = 0;
   virtual bool less_than(const WorkItem &) const = 0;
