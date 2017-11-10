@@ -31,6 +31,7 @@
 #include <CGAL/Mesh_3/sliver_criteria.h>
 #include <CGAL/Mesh_optimization_return_code.h>
 #include <CGAL/Mesh_3/Null_exuder_visitor.h>
+#include <CGAL/Mesh_3/Triangulation_helpers.h>
 
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Double_map.h>
@@ -43,7 +44,6 @@
 #include <boost/iterator/transform_iterator.hpp>
 #include <boost/optional.hpp>
 #include <boost/type_traits/is_convertible.hpp>
-#include <boost/unordered_set.hpp>
 
 #include <algorithm>
 #include <iomanip> // std::setprecision
@@ -390,6 +390,9 @@ private: // Types
   //  - after_cell_pumped(std::size_t cells_left_number)
   typedef Visitor_                                          Visitor;
 
+  // Helper (for 'get_distance_to_closest_vertex')
+  typedef Triangulation_helpers<Tr>                         Tr_helpers;
+
   using Base::get_lock_data_structure;
 
 public: // methods
@@ -572,58 +575,6 @@ private:
       if( value < sliver_criteria_.sliver_bound() )
         this->cells_queue_insert(cit, value);
     }
-  }
-
-  /**
-   * Returns the squared distance from vh to its closest vertex
-   */
-  FT get_distance_to_closest_vertex(const Vertex_handle& vh,
-                                    const Cell_vector& incident_cells) const
-  {
-    CGAL_precondition(!tr_.is_infinite(vh));
-
-    typedef boost::unordered_set<Vertex_handle>              Vertex_container;
-    typedef typename Vertex_container::iterator              VC_it;
-
-    // There is no need to use tr.min_squared_distance() here because we are computing
-    // distances between 'v' and a neighbor within their common cell, which means
-    // that even if we are using a periodic triangulation, the distance is correctly computed.
-    typename Gt::Compute_squared_distance_3 csqd = tr_.geom_traits().compute_squared_distance_3_object();
-    typename Gt::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
-
-    Vertex_container treated_vertices;
-    FT min_sq_dist = std::numeric_limits<FT>::infinity();
-
-    for(typename Cell_vector::const_iterator cit = incident_cells.begin();
-                                             cit != incident_cells.end();
-                                             ++cit)
-    {
-      const Cell_handle c = (*cit);
-      const int k = (*cit)->index(vh);
-      const Weighted_point& wpvh = tr_.point(c, k);
-
-      // For each vertex of the cell
-      for(int i=1; i<4; ++i)
-      {
-        const int n = (k+i)&3;
-        const Vertex_handle& vn = c->vertex(n);
-
-        std::pair<VC_it, bool> is_insert_succesful = treated_vertices.insert(vn);
-        if(! is_insert_succesful.second) // vertex has already been treated
-          continue;
-
-        if(tr_.is_infinite(vn))
-          continue;
-
-        const Weighted_point& wpvn = tr_.point(c, n);
-        const FT sq_d = csqd(cp(wpvh), cp(wpvn));
-
-        if(sq_d < min_sq_dist)
-          min_sq_dist = sq_d;
-      }
-    }
-
-    return min_sq_dist;
   }
 
 
@@ -1319,7 +1270,9 @@ get_best_weight(const Vertex_handle& v, bool *could_lock_zone) const
 
   FT worst_criterion_value = get_min_value(criterion_values);
   FT best_weight = 0;
-  FT sq_d_v = get_distance_to_closest_vertex(v, incident_cells);
+
+  FT sq_d_v = Tr_helpers().get_distance_to_closest_vertex(
+                c3t3_.triangulation(), v, incident_cells);
 
   // If that boolean is set to false, it means that a facet in the complex
   // is about to be flipped. In that case, the pumping is stopped.

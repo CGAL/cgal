@@ -27,29 +27,50 @@
 
 #include <CGAL/license/Mesh_3.h>
 
+#include <CGAL/internal/Has_nested_type_Bare_point.h>
 
+#include <boost/mpl/if.hpp>
+#include <boost/mpl/identity.hpp>
+#include <boost/unordered_set.hpp>
+
+#include <algorithm>
+#include <iostream>
+#include <iterator>
+#include <limits>
+#include <utility>
 #include <vector>
-#include <CGAL/squared_distance_3.h>
 
 namespace CGAL {
 
 namespace Mesh_3 {
-
 
 template<typename Tr>
 class Triangulation_helpers
 {
   typedef typename Tr::Geom_traits              Gt;
 
-  typedef typename Tr::Bare_point               Bare_point;
-  typedef typename Tr::Weighted_point           Weighted_point;
+  typedef typename Gt::FT                       FT;
   typedef typename Gt::Vector_3                 Vector_3;
+
+  // If `Tr` is not a triangulation that has defined Bare_point,
+  // use Point_3 as defined in the traits class.
+  typedef typename boost::mpl::eval_if_c<
+    CGAL::internal::Has_nested_type_Bare_point<Tr>::value,
+    typename CGAL::internal::Bare_point_type<Tr>,
+    boost::mpl::identity<typename Gt::Point_3>
+  >::type                                       Bare_point;
+
+  // 'Point' is either a bare point or a weighted point, depending on the triangulation.
+  // Since 'Triangulation_helpers' can be templated by an unweighted triangulation,
+  // this is one of the rare cases where we use 'Point'.
+  typedef typename Tr::Point                    Point;
 
   typedef typename Tr::Vertex                   Vertex;
   typedef typename Tr::Vertex_handle            Vertex_handle;
   typedef typename Tr::Cell                     Cell;
   typedef typename Tr::Cell_handle              Cell_handle;
   typedef typename Tr::Cell_iterator            Cell_iterator;
+
   typedef std::vector<Cell_handle>              Cell_vector;
 
   /**
@@ -72,18 +93,18 @@ class Triangulation_helpers
   {
     /// When the requested will be about vh, the returned point will be p
     /// instead of vh->point()
-    Point_getter(const Vertex_handle &vh, const Weighted_point&p)
+    Point_getter(const Vertex_handle &vh, const Point&p)
       : m_vh(vh), m_p(p)
     {}
 
-    const Weighted_point& operator()(const Vertex_handle &vh) const
+    const Point& operator()(const Vertex_handle &vh) const
     {
       return (vh == m_vh ? m_p : vh->point());
     }
 
   private:
     const Vertex_handle m_vh;
-    const Weighted_point &m_p;
+    const Point &m_p;
   };
 
 public:
@@ -98,26 +119,35 @@ public:
   bool no_topological_change(Tr& tr,
                              const Vertex_handle v,
                              const Vector_3& move,
-                             const Weighted_point& p,
+                             const Point& p,
                              Cell_vector& cells_tos) const;
   bool no_topological_change__without_set_point(
                              const Tr& tr,
                              const Vertex_handle v,
-                             const Weighted_point& p,
+                             const Point& p,
                              Cell_vector& cells_tos) const;
 
   bool no_topological_change(Tr& tr,
                              const Vertex_handle v,
                              const Vector_3& move,
-                             const Weighted_point& p) const;
+                             const Point& p) const;
   bool no_topological_change__without_set_point(
                              const Tr& tr,
                              const Vertex_handle v,
-                             const Weighted_point& p) const;
+                             const Point& p) const;
 
   bool inside_protecting_balls(const Tr& tr,
                                const Vertex_handle v,
                                const Bare_point& p) const;
+
+  /**
+   * Returns the squared distance from \c vh to its closest vertex
+   *
+   * \pre `vh` is not the infinite vertex
+   */
+  FT get_distance_to_closest_vertex(const Tr& tr,
+                                    const Vertex_handle& vh,
+                                    const Cell_vector& incident_cells) const;
 
 private:
   /**
@@ -138,14 +168,14 @@ Triangulation_helpers<Tr>::
 no_topological_change(Tr& tr,
                       const Vertex_handle v0,
                       const Vector_3& move,
-                      const Weighted_point& p,
+                      const Point& p,
                       Cell_vector& cells_tos) const
 {
   typename Gt::Construct_opposite_vector_3 cov =
       tr.geom_traits().construct_opposite_vector_3_object();
 
   bool np = true;
-  const Weighted_point fp = tr.point(v0);
+  const Point fp = tr.point(v0);
 
 //#define CGAL_PERIODIC_BACKUP_CHECK
 //#define CGAL_PERIODIC_SIDE_OF_DEBUG
@@ -379,7 +409,7 @@ Triangulation_helpers<Tr>::
 no_topological_change__without_set_point(
   const Tr& tr,
   const Vertex_handle v0,
-  const Weighted_point& p,
+  const Point& p,
   Cell_vector& cells_tos) const
 {
   bool np = true;
@@ -469,7 +499,7 @@ Triangulation_helpers<Tr>::
 no_topological_change(Tr& tr,
                       const Vertex_handle v0,
                       const Vector_3& move,
-                      const Weighted_point& p) const
+                      const Point& p) const
 {
   Cell_vector cells_tos;
   cells_tos.reserve(64);
@@ -483,7 +513,7 @@ Triangulation_helpers<Tr>::
 no_topological_change__without_set_point(
                       const Tr& tr,
                       const Vertex_handle v0,
-                      const Weighted_point& p) const
+                      const Point& p) const
 {
   Cell_vector cells_tos;
   cells_tos.reserve(64);
@@ -503,11 +533,66 @@ inside_protecting_balls(const Tr& tr,
   if(nv->point().weight() > 0)
   {
     typename Tr::Geom_traits::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
-    const Weighted_point& nvwp = tr.point(nv);
+    const Point& nvwp = tr.point(nv);
     return (tr.min_squared_distance(p, cp(nvwp)) <= nv->point().weight());
   }
 
   return false;
+}
+
+
+/// Return the squared distance from vh to its closest vertex
+template<typename Tr>
+typename Triangulation_helpers<Tr>::FT
+Triangulation_helpers<Tr>::
+get_distance_to_closest_vertex(const Tr& tr,
+                               const Vertex_handle& vh,
+                               const Cell_vector& incident_cells) const
+{
+  CGAL_precondition(!tr.is_infinite(vh));
+
+  // @todo simply use the flags 'visited_for_vertex_extractor' ?
+  typedef boost::unordered_set<Vertex_handle>              Vertex_container;
+  typedef typename Vertex_container::iterator              VC_it;
+
+  // There is no need to use tr.min_squared_distance() here because we are computing
+  // distances between 'v' and a neighbor within their common cell, which means
+  // that even if we are using a periodic triangulation, the distance is correctly computed.
+  typename Gt::Compute_squared_distance_3 csqd = tr.geom_traits().compute_squared_distance_3_object();
+  typename Gt::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
+
+  Vertex_container treated_vertices;
+  FT min_sq_dist = std::numeric_limits<FT>::infinity();
+
+  for(typename Cell_vector::const_iterator cit = incident_cells.begin();
+                                           cit != incident_cells.end(); ++cit)
+  {
+    const Cell_handle c = (*cit);
+    const int k = (*cit)->index(vh);
+    const Point& wpvh = tr.point(c, k);
+
+    // For each vertex of the cell
+    for(int i=1; i<4; ++i)
+    {
+      const int n = (k+i)&3;
+      const Vertex_handle& vn = c->vertex(n);
+
+      std::pair<VC_it, bool> is_insert_succesful = treated_vertices.insert(vn);
+      if(! is_insert_succesful.second) // vertex has already been treated
+        continue;
+
+      if(tr.is_infinite(vn))
+        continue;
+
+      const Point& wpvn = tr.point(c, n);
+      const FT sq_d = csqd(cp(wpvh), cp(wpvn));
+
+      if(sq_d < min_sq_dist)
+        min_sq_dist = sq_d;
+    }
+  }
+
+  return min_sq_dist;
 }
 
 
@@ -533,20 +618,20 @@ well_oriented(const Tr& tr,
       Cell_handle cj = c->neighbor(iv);
       int mj = tr.mirror_index(c, iv);
 
-      const Weighted_point& mjwp = tr.point(cj, mj);
-      const Weighted_point& fwp1 = tr.point(c, (iv+1)&3);
-      const Weighted_point& fwp2 = tr.point(c, (iv+2)&3);
-      const Weighted_point& fwp3 = tr.point(c, (iv+3)&3);
+      const Point& mjwp = tr.point(cj, mj);
+      const Point& fwp1 = tr.point(c, (iv+1)&3);
+      const Point& fwp2 = tr.point(c, (iv+2)&3);
+      const Point& fwp3 = tr.point(c, (iv+3)&3);
 
       if(orientation(cp(mjwp), cp(fwp1), cp(fwp2), cp(fwp3)) != CGAL::NEGATIVE)
         return false;
     }
     else
     {
-      const Weighted_point& cwp0 = tr.point(c, 0);
-      const Weighted_point& cwp1 = tr.point(c, 1);
-      const Weighted_point& cwp2 = tr.point(c, 2);
-      const Weighted_point& cwp3 = tr.point(c, 3);
+      const Point& cwp0 = tr.point(c, 0);
+      const Point& cwp1 = tr.point(c, 1);
+      const Point& cwp2 = tr.point(c, 2);
+      const Point& cwp3 = tr.point(c, 3);
 
       if(orientation(cp(cwp0), cp(cwp1), cp(cwp2), cp(cwp3)) != CGAL::POSITIVE)
       return false;
