@@ -1626,9 +1626,8 @@ is_sampling_dense_enough(const Vertex_handle& v1, const Vertex_handle& v2,
               << "arc length is " << arc_length << " and the"
               << " sum of radii is " << size_v1 + size_v2 << std::endl;
 #endif // CGAL_MESH_3_PROTECTION_DEBUG & 1
-    typedef typename Gt::Sphere_3 Sphere_3;
-    if(!do_intersect(Sphere_3(v2->point().point(), v2->point().weight()),
-                     Sphere_3(v1->point().point(), v1->point().weight())))
+
+    if(!do_balls_intersect(v2, v1))
     {
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
       std::cerr << "     And spheres do NOT intersect!\n";
