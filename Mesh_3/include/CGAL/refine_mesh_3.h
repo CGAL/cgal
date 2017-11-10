@@ -475,8 +475,8 @@ CGAL_PRAGMA_DIAG_POP
  *   The new c3t3 keeps only the vertices (as NON-weighted points with their
  *   dimension and Index) of the triangulation. That allows to refine a mesh
  *   which has been exuded.
- * @param mesh_3_various_options is a struct object used to pass
- * non-documented options, for debugging purpose.
+ * @param mesh_3_options is a struct object used to pass non-documented options,
+ *   for debugging purpose.
  */
 template<class C3T3, class MeshDomain, class MeshCriteria>
 void refine_mesh_3_impl(C3T3& c3t3,
@@ -492,9 +492,10 @@ void refine_mesh_3_impl(C3T3& c3t3,
                         const parameters::internal::Manifold_options&
                           manifold_options = parameters::internal::Manifold_options())
 {
-  typedef Mesh_3::Mesher_3<C3T3, MeshCriteria, MeshDomain> Mesher;
+  // Note: this function is almost entirely copied in refine_periodic_3_mesh.h
+  // and any change to this function should likely be ported to the periodic version.
 
-  //TODO : do something with the manifold_options
+  typedef Mesh_3::Mesher_3<C3T3, MeshCriteria, MeshDomain> Mesher;
 
   // Reset c3t3 (i.e. remove weights) if needed
   if ( reset_c3t3 )
