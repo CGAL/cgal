@@ -194,10 +194,13 @@ and <code>src/</code> directories).
   <ol>
     <li> Not storing the points coordinates inside the tree usually 
       generates a lot of cache misses, leading to non-optimal 
-      performance. This is the case when indices are stored inside 
-      the tree, or when the points coordinates are stored in a
-      dynamically allocated array (e.g., <code>CGAL::Epick_d</code>
-      with dynamic dimension).
+      performance. This is the case for example
+      when indices are stored inside the tree, or to a lesser extent when the points
+      coordinates are stored in a dynamically allocated array (e.g., `Epick_d`
+      with dynamic dimension) &mdash; we says "to a lesser extent" because the points
+      are re-created by the kd-tree in a cache-friendly order after its construction,
+      so the coordinates are more likely to be stored in a near-optimal order
+      on the heap.
       In this case, the new EnablePointsCache template parameter of the
       <code>CGAL::Kd_tree</code> class can be set to 
       <code>CGAL::Tag_true</code>. The points coordinates
