@@ -130,14 +130,14 @@ protected:
   void wait_for_all()                               const {}
   void destroy_root_task()                          const {}
   template <typename Func>
-  void enqueue_work(Func, double)                   const {}
+  void enqueue_work(Func, FT)                       const {}
 
 protected:
   Cell_handle extract_cell_handle_from_queue_value(const Queue_value_type &qv) const
   {
     return qv.second;
   }
-  double extract_cell_quality_from_queue_value(const Queue_value_type &qv) const
+  FT extract_cell_quality_from_queue_value(const Queue_value_type &qv) const
   {
     return qv.first;
   }
@@ -155,7 +155,7 @@ protected:
     cells_queue_front()                { return cells_queue_.front(); }
   void cells_queue_pop_front()         { cells_queue_.pop_front(); }
   void cells_queue_clear()             { cells_queue_.clear(); }
-  void cells_queue_insert(const Cell_handle &ch, double quality_value)
+  void cells_queue_insert(const Cell_handle &ch, FT quality_value)
   {
     cells_queue_.insert(ch, quality_value);
   }
@@ -205,7 +205,7 @@ protected:
 
   // A priority queue ordered on Tet quality (SliverCriteria)
   typedef std::multimap<
-    double, std::pair<Cell_handle, unsigned int> >          Tet_priority_queue;
+    FT, std::pair<Cell_handle, unsigned int> >              Tet_priority_queue;
   typedef typename Tet_priority_queue::iterator             Queue_iterator;
   typedef typename Tet_priority_queue::value_type           Queue_value_type;
 
@@ -251,7 +251,7 @@ protected:
   }
 
   template <typename Func>
-  void enqueue_work(Func f, double value) const
+  void enqueue_work(Func f, FT value) const
   {
     CGAL_assertion(m_empty_root_task != 0);
     m_worksharing_ds.enqueue_work(f, value, *m_empty_root_task);
@@ -264,7 +264,7 @@ protected:
   {
     return qv.second.first;
   }
-  double extract_cell_quality_from_queue_value(const Queue_value_type &qv) const
+  FT extract_cell_quality_from_queue_value(const Queue_value_type &qv) const
   {
     return qv.first;
   }
@@ -284,7 +284,7 @@ protected:
     cells_queue_front()                { return cells_queue_.begin(); }
   void cells_queue_pop_front()         { cells_queue_.erase(cells_queue_front()); }
   void cells_queue_clear()             { cells_queue_.clear(); }
-  void cells_queue_insert(const Cell_handle &ch, double quality_value)
+  void cells_queue_insert(const Cell_handle &ch, FT quality_value)
   {
     cells_queue_.insert(std::make_pair(
       quality_value,
@@ -380,10 +380,10 @@ private: // Types
    *  of Facet (viewed from cells inside the star), ordered by the
    *  critial_radius of the point with the cell that lies on the facet, at
    *  the exterior of the pre-star. */
-  typedef CGAL::Double_map<Facet, double>                   Pre_star;
+  typedef CGAL::Double_map<Facet, FT>                       Pre_star;
 
   // Stores the value of facet for the sliver criterion functor
-  typedef std::map<Facet, double>                           Sliver_values;
+  typedef std::map<Facet, FT>                               Sliver_values;
 
   // Visitor class
   // Should define
@@ -402,7 +402,7 @@ public: // methods
    */
   Slivers_exuder(C3T3& c3t3,
                  const SliverCriteria& criterion,
-                 double d = 0.45);
+                 const FT d = 0.45);
 
   /**
    * @brief pumps vertices
@@ -453,7 +453,7 @@ private:
    */
   template <bool pump_vertices_on_surfaces>
   Mesh_optimization_return_code
-  pump_vertices(double criterion_value_limit, Visitor& v);
+  pump_vertices(FT criterion_value_limit, Visitor& v);
 
   /**
    * Pump one vertex
@@ -465,8 +465,8 @@ private:
   /**
    * Returns the best_weight of v
    */
-  double get_best_weight(const Vertex_handle& v,
-                         bool *could_lock_zone = NULL) const;
+  FT get_best_weight(const Vertex_handle& v,
+                     bool *could_lock_zone = NULL) const;
 
   /**
    * Initializes pre_star and criterion_values
@@ -567,7 +567,7 @@ private:
         cit != c3t3_.cells_in_complex_end() ;
         ++cit)
     {
-      const double value = sliver_criteria_(cit);
+      const FT value = sliver_criteria_(cit);
 
       if( value < sliver_criteria_.sliver_bound() )
         this->cells_queue_insert(cit, value);
@@ -577,8 +577,8 @@ private:
   /**
    * Returns the squared distance from vh to its closest vertex
    */
-  double get_distance_to_closest_vertex(const Vertex_handle& vh,
-                                        const Cell_vector& incident_cells) const
+  FT get_distance_to_closest_vertex(const Vertex_handle& vh,
+                                    const Cell_vector& incident_cells) const
   {
     CGAL_precondition(!tr_.is_infinite(vh));
 
@@ -592,7 +592,7 @@ private:
     typename Gt::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
 
     Vertex_container treated_vertices;
-    double min_sq_dist = std::numeric_limits<double>::infinity();
+    FT min_sq_dist = std::numeric_limits<FT>::infinity();
 
     for(typename Cell_vector::const_iterator cit = incident_cells.begin();
                                              cit != incident_cells.end();
@@ -616,7 +616,7 @@ private:
           continue;
 
         const Weighted_point& wpvn = tr_.point(c, n);
-        const double sq_d = CGAL::to_double(csqd(cp(wpvh), cp(wpvn)));
+        const FT sq_d = csqd(cp(wpvh), cp(wpvn));
 
         if(sq_d < min_sq_dist)
           min_sq_dist = sq_d;
@@ -630,7 +630,7 @@ private:
   /**
    * Returns the min value of second element of Ratio
    */
-  double get_min_value(const Sliver_values& criterion_values) const
+  FT get_min_value(const Sliver_values& criterion_values) const
   {
     using boost::make_transform_iterator;
     typedef details::Second_of<Sliver_values> Second_of;
@@ -667,7 +667,7 @@ private:
    * Add a cell \c ch to \c cells_queue
    */
   template <bool pump_vertices_on_surfaces>
-  void add_cell_to_queue(Cell_handle ch, double criterion_value)
+  void add_cell_to_queue(Cell_handle ch, FT criterion_value)
   {
 #ifdef CGAL_LINKED_WITH_TBB
     // Parallel
@@ -725,7 +725,7 @@ private:
         cit != c3t3_.cells_in_complex_end() ;
         ++cit)
     {
-      const double value = sliver_criteria_(cit);
+      const FT value = sliver_criteria_(cit);
 
       if( value < sliver_criteria_.sliver_bound() )
         return false;
@@ -739,7 +739,7 @@ private:
   // For parallel version
   template <bool pump_vertices_on_surfaces>
   void
-  enqueue_task(Cell_handle ch, unsigned int erase_counter, double value);
+  enqueue_task(Cell_handle ch, unsigned int erase_counter, FT value);
 #endif
 
 private:
@@ -841,7 +841,7 @@ private:
   // -----------------------------------
   C3T3& c3t3_;
   Tr& tr_;
-  double sq_delta_;
+  const FT sq_delta_;
 
   int num_of_pumped_vertices_;
   int num_of_ignored_vertices_;
@@ -860,18 +860,18 @@ private:
   // -----------------------------------
 private:
   /**
-   * Verifies that two doubles are near equal
+   * Verifies that two 'FT' are near equal
    */
-  static bool near_equal(const double& d1, const double& d2)
+  static bool near_equal(const FT d1, const FT d2)
   {
-    const double epsilon = 1e-8;
+    const FT epsilon = 1e-8;
     return ( ((d1-d2) >= -1*epsilon) && ((d1-d2) <= epsilon) );
   }
 
   /**
-   * Prints a double
+   * Prints a value
    */
-  static void print_double(const double& d)
+  static void print_FT(const FT d)
   {
     std::cerr << d << " ; ";
   }
@@ -914,7 +914,7 @@ private:
 
 template <typename C3T3, typename SC, typename V_, typename FT>
 Slivers_exuder<C3T3,SC,V_,FT>::
-Slivers_exuder(C3T3& c3t3, const SC& criteria, double d)
+Slivers_exuder(C3T3& c3t3, const SC& criteria, const FT d)
   : Base(c3t3.bbox(),
          Concurrent_mesher_config::get().locking_grid_num_cells_per_axis)
   , c3t3_(c3t3)
@@ -937,7 +937,7 @@ template <typename C3T3, typename SC, typename V_, typename FT>
 template <bool pump_vertices_on_surfaces>
 Mesh_optimization_return_code
 Slivers_exuder<C3T3,SC,V_,FT>::
-pump_vertices(double sliver_criterion_limit,
+pump_vertices(FT sliver_criterion_limit,
               Visitor& visitor)
 {
 #ifdef CGAL_MESH_3_PROFILING
@@ -977,7 +977,7 @@ pump_vertices(double sliver_criterion_limit,
       Queue_value_type front = *(this->cells_queue_front());
       this->cells_queue_pop_front();
       Cell_handle c = this->extract_cell_handle_from_queue_value(front);
-      double q = this->extract_cell_quality_from_queue_value(front);
+      FT q = this->extract_cell_quality_from_queue_value(front);
       unsigned int ec = this->extract_erase_counter_from_queue_value(front);
       // Low quality first (i.e. low value of q)
       enqueue_task<pump_vertices_on_surfaces>(c, ec, q);
@@ -1089,7 +1089,7 @@ pump_vertex(const Vertex_handle& pumped_vertex,
             bool *could_lock_zone)
 {
   // Get best_weight
-  double best_weight = get_best_weight(pumped_vertex, could_lock_zone);
+  FT best_weight = get_best_weight(pumped_vertex, could_lock_zone);
   if (could_lock_zone && *could_lock_zone == false)
     return false;
 
@@ -1144,7 +1144,7 @@ initialize_prestar_and_criterion_values(const Vertex_handle& v,
     // Insert facet in prestar (even if it is not in complex)
     const Cell_handle opposite_cell = opposite_facet.first;
     const int index_in_opposite = opposite_cell->index(c);
-    double power_distance_to_power_sphere =
+    FT power_distance_to_power_sphere =
       tr_.compute_power_distance_to_power_sphere(opposite_facet.first, index_in_opposite);
     pre_star.insert(f, power_distance_to_power_sphere);
   }
@@ -1165,7 +1165,7 @@ expand_prestar(const Cell_handle& cell_to_add,
   Facet start_facet = pre_star.front()->second;
   CGAL_assertion(tr_.mirror_facet(start_facet).first == cell_to_add);
 #ifdef CGAL_MESH_3_DEBUG_SLIVERS_EXUDER
-  double power_distance_to_power_sphere = pre_star.front()->first;
+  FT power_distance_to_power_sphere = pre_star.front()->first;
 #endif
   pre_star.pop_front();
   if ( c3t3_.is_in_complex(cell_to_add) )
@@ -1184,7 +1184,7 @@ expand_prestar(const Cell_handle& cell_to_add,
 
     const Facet current_facet(cell_to_add, i);
     const Facet current_mirror_facet(tr_.mirror_facet(current_facet));
-    double new_power_distance_to_power_sphere = std::numeric_limits<double>::infinity();
+    FT new_power_distance_to_power_sphere = std::numeric_limits<FT>::infinity();
 
     // If current_facet_mirror is in prestar, delete it
     // (it may happen that pre_star contains two facets of the same cell)
@@ -1252,7 +1252,7 @@ expand_prestar(const Cell_handle& cell_to_add,
           // 'new_power_distance_to_power_sphere'
 
           // Ensure that 'new_power_distance_to_power_sphere' has been initialized
-          CGAL_assertion(new_power_distance_to_power_sphere != std::numeric_limits<double>::infinity());
+          CGAL_assertion(new_power_distance_to_power_sphere != std::numeric_limits<FT>::infinity());
           new_weight += new_power_distance_to_power_sphere;
 
           curr_f = current_mirror_facet;
@@ -1272,7 +1272,7 @@ expand_prestar(const Cell_handle& cell_to_add,
         Weighted_point ncr_pwp(cp(pwp), new_weight);
         Tetrahedron_3 tet = tr_.tetrahedron(curr_f, ncr_pwp);
 
-        double new_value = sliver_criteria_(tet);
+        FT new_value = sliver_criteria_(tet);
         criterion_values.insert(std::make_pair(current_facet, new_value));
       }
     }
@@ -1283,7 +1283,7 @@ expand_prestar(const Cell_handle& cell_to_add,
 
 
 template <typename C3T3, typename SC, typename V_, typename FT>
-double
+FT
 Slivers_exuder<C3T3,SC,V_,FT>::
 get_best_weight(const Vertex_handle& v, bool *could_lock_zone) const
 {
@@ -1317,9 +1317,9 @@ get_best_weight(const Vertex_handle& v, bool *could_lock_zone) const
   Sliver_values ratios_copy;
 #endif
 
-  double worst_criterion_value = get_min_value(criterion_values);
-  double best_weight = 0;
-  double sq_d_v = get_distance_to_closest_vertex(v, incident_cells);
+  FT worst_criterion_value = get_min_value(criterion_values);
+  FT best_weight = 0;
+  FT sq_d_v = get_distance_to_closest_vertex(v, incident_cells);
 
   // If that boolean is set to false, it means that a facet in the complex
   // is about to be flipped. In that case, the pumping is stopped.
@@ -1332,7 +1332,7 @@ get_best_weight(const Vertex_handle& v, bool *could_lock_zone) const
         && ! c3t3_.is_in_complex(pre_star.front()->second) )
   {
     // Store critial radius (pre_star will be modified in expand_prestar)
-    double power_distance_to_power_sphere = pre_star.front()->first;
+    FT power_distance_to_power_sphere = pre_star.front()->first;
 
     // expand prestar (insert opposite_cell facets in pre_star)
     Facet link = pre_star.front()->second;
@@ -1348,7 +1348,7 @@ get_best_weight(const Vertex_handle& v, bool *could_lock_zone) const
     // Update best_weight if needed
     if(can_flip)
     {
-      double min_of_pre_star = get_min_value(criterion_values);
+      FT min_of_pre_star = get_min_value(criterion_values);
 
       if( min_of_pre_star > worst_criterion_value )
       {
@@ -1357,7 +1357,7 @@ get_best_weight(const Vertex_handle& v, bool *could_lock_zone) const
 
         // Update best_weight
         CGAL_assertion(!pre_star.empty());
-        double next_r = pre_star.front()->first;
+        FT next_r = pre_star.front()->first;
         best_weight = (power_distance_to_power_sphere + next_r) / 2;
 
 #ifdef CGAL_MESH_3_DEBUG_SLIVERS_EXUDER
@@ -1496,7 +1496,7 @@ restore_cells_and_boundary_facets(
     // the maximum, push it in the cells queue.
     if( c3t3_.is_in_complex(*cit) )
     {
-      double criterion_value = sliver_criteria_(*cit);
+      FT criterion_value = sliver_criteria_(*cit);
 
       if( criterion_value < sliver_criteria_.sliver_bound() )
         add_cell_to_queue<pump_vertices_on_surfaces>(*cit, criterion_value);
@@ -1637,7 +1637,7 @@ template <typename C3T3, typename SC, typename V_, typename FT>
 template <bool pump_vertices_on_surfaces>
 void
 Slivers_exuder<C3T3,SC,V_,FT>::
-enqueue_task(Cell_handle ch, unsigned int erase_counter, double value)
+enqueue_task(Cell_handle ch, unsigned int erase_counter, FT value)
 {
   this->enqueue_work(
     Pump_vertex<Self, pump_vertices_on_surfaces>(
@@ -1713,7 +1713,7 @@ check_pre_star(const Pre_star& pre_star,
       while(!pre_star_copy.empty())
       {
         const Facet f = pre_star_copy.front()->second;
-        const double r = pre_star_copy.front()->first;
+        const FT r = pre_star_copy.front()->first;
         pre_star_copy.pop_front();
         std::cerr << boost::format("extra facet (%1%,%2%) (infinite: %3%, opposite infinite: %4%), power distance: %5%\n")
         % &*f.first % f.second % tr_.is_infinite(f.first) % tr_.is_infinite(f.first->neighbor(f.second))
@@ -1811,8 +1811,8 @@ check_ratios(const Sliver_values& criterion_values,
                      std::back_inserter(internal_facets));
 
   bool result = true;
-  std::vector<double> expected_ratios;
-  std::vector<double> ratio_vector;
+  std::vector<FT> expected_ratios;
+  std::vector<FT> ratio_vector;
 
   for ( typename Sliver_values::const_iterator rit = criterion_values.begin() ;
        rit != criterion_values.end() ;
@@ -1829,7 +1829,7 @@ check_ratios(const Sliver_values& criterion_values,
       continue;
 
     Tetrahedron_3 tet = tr_.tetrahedron(*it, wp);
-    double ratio = sliver_criteria_(tet);
+    FT ratio = sliver_criteria_(tet);
     expected_ratios.push_back(ratio);
 
     bool found = false;
@@ -1856,18 +1856,18 @@ check_ratios(const Sliver_values& criterion_values,
   {
     std::sort(expected_ratios.begin(),expected_ratios.end());
     std::sort(ratio_vector.begin(),ratio_vector.end());
-    std::vector<double> diff;
+    std::vector<FT> diff;
     std::set_difference(expected_ratios.begin(),expected_ratios.end(),
                         ratio_vector.begin(),ratio_vector.end(),
                         std::back_inserter(diff));
 
     std::cerr << "\nExpected criterion_values (size: "
               << expected_ratios.size() << ") [";
-    std::for_each(expected_ratios.begin(), expected_ratios.end(), print_double);
+    std::for_each(expected_ratios.begin(), expected_ratios.end(), print_FT);
     std::cerr << "]\nRatios (size: " << ratio_vector.size() << ") [";
-    std::for_each(ratio_vector.begin(), ratio_vector.end(), print_double);
+    std::for_each(ratio_vector.begin(), ratio_vector.end(), print_FT);
     std::cerr << "]\nDiff:[";
-    std::for_each(diff.begin(),diff.end(), print_double);
+    std::for_each(diff.begin(),diff.end(), print_FT);
     std::cerr << "]\n";
   }
 

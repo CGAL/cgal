@@ -380,7 +380,7 @@ public:
     this->v_offsets.clear();
   }
 
-  double compute_power_distance_to_power_sphere(const Cell_handle& c, const int i) const
+  FT compute_power_distance_to_power_sphere(const Cell_handle& c, const int i) const
   {
     typename Gt::Compute_power_distance_to_power_sphere_3 cr =
       geom_traits().compute_power_distance_to_power_sphere_3_object();
@@ -399,19 +399,19 @@ public:
     const Offset& op3 = this->get_offset(c, 3);
     const Offset& oq = o_vt - o_nb;
 
-    return CGAL::to_double(cr(wp0, wp1, wp2, wp3, wq, op0, op1, op2, op3, oq));
+    return cr(wp0, wp1, wp2, wp3, wq, op0, op1, op2, op3, oq);
   }
 
   // The functions below are needed by Mesh_3 but need a specific implementation
   // for the periodic case because we need to try with different offsets
   // to get a result
-  double compute_power_distance_to_power_sphere(const Cell_handle& c,
-                                                const Vertex_handle v) const
+  FT compute_power_distance_to_power_sphere(const Cell_handle& c,
+                                            const Vertex_handle v) const
   {
     typename Gt::Compute_power_distance_to_power_sphere_3 cr =
       geom_traits().compute_power_distance_to_power_sphere_3_object();
 
-    double min_power_dist = std::numeric_limits<double>::infinity();
+    FT min_power_dist = std::numeric_limits<FT>::infinity();
 
     for(int i = 0; i < 3; ++i) {
       for(int j = 0; j < 3; ++j) {
@@ -427,8 +427,7 @@ public:
           const Offset& op3 = this->get_offset(c, 3);
           const Offset oq(i-1, j-1, k-1);
 
-          double power_dist =
-            CGAL::to_double(cr(wp0, wp1, wp2, wp3, wq, op0, op1, op2, op3, oq));
+          FT power_dist = cr(wp0, wp1, wp2, wp3, wq, op0, op1, op2, op3, oq);
 
           if(power_dist < min_power_dist)
             min_power_dist = power_dist;
