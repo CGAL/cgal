@@ -390,7 +390,7 @@ private: // Types
   //  - after_cell_pumped(std::size_t cells_left_number)
   typedef Visitor_                                          Visitor;
 
-  // Helper (for 'get_distance_to_closest_vertex')
+  // Helper (for 'get_sq_distance_to_closest_vertex')
   typedef Triangulation_helpers<Tr>                         Tr_helpers;
 
   using Base::get_lock_data_structure;
@@ -1271,7 +1271,7 @@ get_best_weight(const Vertex_handle& v, bool *could_lock_zone) const
   FT worst_criterion_value = get_min_value(criterion_values);
   FT best_weight = 0;
 
-  FT sq_d_v = Tr_helpers().get_distance_to_closest_vertex(
+  FT sq_d_v = Tr_helpers().get_sq_distance_to_closest_vertex(
                 c3t3_.triangulation(), v, incident_cells);
 
   // If that boolean is set to false, it means that a facet in the complex

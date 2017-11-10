@@ -519,7 +519,7 @@ insert_corners()
       dt.finite_incident_cells(vh, std::back_inserter(finite_incident_cells));
 
       Dt_helpers helpers;
-      const FT nearest_sq_dist = helpers.get_distance_to_closest_vertex(
+      const FT nearest_sq_dist = helpers.get_sq_distance_to_closest_vertex(
                                    dt, vh, finite_incident_cells);
 
       w = (std::min)(w, nearest_sq_dist / FT(9));

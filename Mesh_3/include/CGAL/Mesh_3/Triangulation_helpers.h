@@ -145,9 +145,9 @@ public:
    *
    * \pre `vh` is not the infinite vertex
    */
-  FT get_distance_to_closest_vertex(const Tr& tr,
-                                    const Vertex_handle& vh,
-                                    const Cell_vector& incident_cells) const;
+  FT get_sq_distance_to_closest_vertex(const Tr& tr,
+                                       const Vertex_handle& vh,
+                                       const Cell_vector& incident_cells) const;
 
 private:
   /**
@@ -545,9 +545,9 @@ inside_protecting_balls(const Tr& tr,
 template<typename Tr>
 typename Triangulation_helpers<Tr>::FT
 Triangulation_helpers<Tr>::
-get_distance_to_closest_vertex(const Tr& tr,
-                               const Vertex_handle& vh,
-                               const Cell_vector& incident_cells) const
+get_sq_distance_to_closest_vertex(const Tr& tr,
+                                  const Vertex_handle& vh,
+                                  const Cell_vector& incident_cells) const
 {
   CGAL_precondition(!tr.is_infinite(vh));
 
