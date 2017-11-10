@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
   std::cerr << "start initialization" << std::endl;
   t0.reset();
   t0.start();
-  l21_vsa.seeding_by_number(
+  l21_vsa.init_by_number(
     static_cast<L21VSA::Method>(init), num_proxies);
   t0.stop();
   std::cerr << "initialization time " << t0.time() << " sec." << std::endl;

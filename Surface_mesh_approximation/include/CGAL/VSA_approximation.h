@@ -326,47 +326,47 @@ public:
   }
 
   /*!
-   * @brief Seeding by targeted number of proxies.
+   * @brief Initialize with targeted number of proxies.
    * @param method seeding method
    * @param num_seed target number of proxies seed
    * @param num_iterations number of re-fitting iterations 
    * in incremental and hierarchical seeding
    * @return number of proxies initialized
    */
-  std::size_t seeding_by_number(
+  std::size_t init_by_number(
     const Method method,
     const std::size_t num_seed,
     const std::size_t num_iterations = 5) {
     switch (method) {
       case Random:
-        return seed_random(num_seed);
+        return init_random(num_seed);
       case Incremental:
-        return seed_incremental(num_seed, num_iterations);
+        return init_incremental(num_seed, num_iterations);
       case Hierarchical:
-        return seed_hierarchical(num_seed, num_iterations);
+        return init_hierarchical(num_seed, num_iterations);
       default:
         return 0;
     }
   }
 
   /*!
-   * @brief Seeding by targeted error drop.
+   * @brief Initialize proxies to targeted error drop.
    * @param method seeding method
    * @param target_drop targeted error drop to initial state, usually in range (0, 1)
    * @param num_iterations number of re-fitting iterations 
    * @return number of proxies initialized
    */
-  std::size_t seeding_by_error(
+  std::size_t init_by_error(
     const Method method,
     const FT target_drop,
     const std::size_t num_iterations = 5) {
     switch (method) {
       case Random:
-        return seed_error_random(target_drop, num_iterations);
+        return init_error_random(target_drop, num_iterations);
       case Incremental:
-        return seed_error_incremental(target_drop, num_iterations);
+        return init_error_incremental(target_drop, num_iterations);
       case Hierarchical:
-        return seed_error_hierarchical(target_drop, num_iterations);
+        return init_error_hierarchical(target_drop, num_iterations);
       default:
         return 0;
     }
@@ -930,7 +930,7 @@ private:
    * @param num_seed number of proxies seed
    * @return number of proxies initialized
    */
-  std::size_t seed_random(const std::size_t num_seed) {
+  std::size_t init_random(const std::size_t num_seed) {
     proxies.clear();
     if (num_faces(*m_pmesh) < num_seed)
       return 0;
@@ -954,7 +954,7 @@ private:
    * before each incremental proxy insertion
    * @return number of proxies initialized
    */
-  std::size_t seed_incremental(const std::size_t num_seed,
+  std::size_t init_incremental(const std::size_t num_seed,
     const std::size_t num_iterations) {
     proxies.clear();
     if (num_faces(*m_pmesh) < num_seed)
@@ -976,7 +976,7 @@ private:
    * before each hierarchical proxy insertion
    * @return number of proxies initialized
    */
-  std::size_t seed_hierarchical(const std::size_t num_seed,
+  std::size_t init_hierarchical(const std::size_t num_seed,
     const std::size_t num_iterations) {
     proxies.clear();
     if (num_faces(*m_pmesh) < num_seed)
@@ -1004,12 +1004,12 @@ private:
   }
 
   /*!
-   * @brief Initialize by targeted error drop.
+   * @brief Initialize by targeted error drop with random seeding.
    * @param target_drop targeted error drop to initial state, usually in range (0, 1)
    * @param num_iterations number of re-fitting iterations 
    * @return number of proxies initialized
    */
-  std::size_t seed_error_random(const FT target_drop,
+  std::size_t init_error_random(const FT target_drop,
     const std::size_t num_iterations) {
     // maximum allowed number of proxies
     const std::size_t max_proxies = num_faces(*m_pmesh) / 3;
@@ -1028,7 +1028,7 @@ private:
     std::size_t target_px = 2;
     do {
       proxies.clear();
-      seed_random(target_px);
+      init_random(target_px);
       for (std::size_t i = 0; i < num_iterations; ++i) {
         partition();
         fit();
@@ -1042,12 +1042,12 @@ private:
   }
 
   /*!
-   * @brief Initialize by targeted error drop.
+   * @brief Initialize by targeted error dropwith incremental seeding.
    * @param target_drop targeted error drop to initial state, usually in range (0, 1)
    * @param num_iterations number of re-fitting iterations 
    * @return number of proxies initialized
    */
-  std::size_t seed_error_incremental(const FT target_drop,
+  std::size_t init_error_incremental(const FT target_drop,
     const std::size_t num_iterations) {
     // maximum allowed number of proxies
     const std::size_t max_proxies = num_faces(*m_pmesh) / 3;
@@ -1077,12 +1077,12 @@ private:
   }
 
   /*!
-   * @brief Initialize by targeted error drop.
+   * @brief Initialize by targeted error drop with hierarchical seeding.
    * @param target_drop targeted error drop to initial state, usually in range (0, 1)
    * @param num_iterations number of re-fitting iterations 
    * @return number of proxies initialized
    */
-  std::size_t seed_error_hierarchical(const FT target_drop,
+  std::size_t init_error_hierarchical(const FT target_drop,
     const std::size_t num_iterations) {
     // maximum allowed number of proxies
     const std::size_t max_proxies = num_faces(*m_pmesh) / 3;

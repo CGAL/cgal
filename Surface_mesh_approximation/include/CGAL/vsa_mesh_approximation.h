@@ -44,9 +44,9 @@ namespace CGAL
  *  \cgalParamEnd
  *  \cgalParamBegin{init_method} the selection of seed initialization method.
  *  \cgalParamEnd
- *  \cgalParamBegin{seeding_by_number} the number of proxies to approximate the geometry.
+ *  \cgalParamBegin{init_by_number} the number of proxies to approximate the geometry.
  *  \cgalParamEnd
- *  \cgalParamBegin{seeding_by_error} the error drop of the approximation.
+ *  \cgalParamBegin{init_by_error} the error drop of the approximation.
  *  \cgalParamEnd
  *  \cgalParamBegin{iterations} the relaxation iterations after seeding.
  *  \cgalParamEnd
@@ -94,15 +94,15 @@ bool vsa_mesh_approximation(const TriangleMesh &tm_in,
 
   // default random initialization
   int init = choose_param(get_param(np, internal_np::init_method), 0);
-  std::size_t num_proxies = choose_param(get_param(np, internal_np::seeding_by_number), 0);
+  std::size_t num_proxies = choose_param(get_param(np, internal_np::init_by_number), 0);
   std::size_t inner_iterations = choose_param(get_param(np, internal_np::inner_iterations), 10);
   if (num_proxies == 0 || num_proxies > num_faces(tm_in)) {
-    FT drop = choose_param(get_param(np, internal_np::seeding_by_error), FT(0.01));
-    vsa_l21.seeding_by_error(
+    FT drop = choose_param(get_param(np, internal_np::init_by_error), FT(0.01));
+    vsa_l21.init_by_error(
       static_cast<typename VSAL21::Method>(init), drop, inner_iterations);
   }
   else {
-    vsa_l21.seeding_by_number(
+    vsa_l21.init_by_number(
       static_cast<typename VSAL21::Method>(init), num_proxies, inner_iterations);
   }
 

@@ -27,7 +27,7 @@ int test() {
   typedef CGAL::Polyhedron_3<K> Polyhedron;
   Polyhedron out_mesh;
   CGAL::vsa_mesh_approximation(tm, out_mesh,
-    CGAL::VSA::parameters::seeding_by_number(6).
+    CGAL::VSA::parameters::init_by_number(6).
       iterations(30).
       inner_iterations(5).
       chord_subdivide(0.5));

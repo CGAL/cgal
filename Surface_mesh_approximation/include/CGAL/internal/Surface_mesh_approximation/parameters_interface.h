@@ -3,8 +3,8 @@ CGAL_add_named_parameter(geom_traits_t, geom_traits, geom_traits)
 
 // approximation parameters
 CGAL_add_named_parameter(init_method_t, init_method, init_method)
-CGAL_add_named_parameter(seeding_by_number_t, seeding_by_number, seeding_by_number)
-CGAL_add_named_parameter(seeding_by_error_t, seeding_by_error, seeding_by_error)
+CGAL_add_named_parameter(init_by_number_t, init_by_number, init_by_number)
+CGAL_add_named_parameter(init_by_error_t, init_by_error, init_by_error)
 CGAL_add_named_parameter(iterations_t, iterations, iterations)
 CGAL_add_named_parameter(inner_iterations_t, inner_iterations, inner_iterations)
 CGAL_add_named_parameter(chord_subdivide_t, chord_subdivide, chord_subdivide)

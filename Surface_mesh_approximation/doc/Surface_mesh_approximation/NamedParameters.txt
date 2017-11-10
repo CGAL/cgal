@@ -34,7 +34,7 @@ See below a sample call of a function that uses the optional BGL named parameter
 vsa_mesh_approximation(input,
        , output
        , CGAL::VSA::parameters::init_method(method)
-       .seeding_by_number(num_proxies)
+       .init_by_number(num_proxies)
        .iterations(num_iterations)
        .anchor_point(std::back_inserter(anchors)));
 \endcode
@@ -79,13 +79,13 @@ the selection of seed initialization method, `0` for random, `1` for incremental
 \b Default value is `0`
 \cgalNPEnd
 
-\cgalNPBegin{seeding_by_number} \anchor VSA_seeding_by_number
+\cgalNPBegin{init_by_number} \anchor VSA_init_by_number
 the number of proxies used to approximate the input mesh.\n
 \b Type : `std::size_t` \n
 \b Default value is `0`
 \cgalNPEnd
 
-\cgalNPBegin{seeding_by_error} \anchor VSA_seeding_by_error
+\cgalNPBegin{init_by_error} \anchor VSA_init_by_error
 the total error drop to approximate the input mesh.\n
 \b Type : `GeomTraits::FT` \n
 \b Default value is `0.01`

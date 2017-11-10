@@ -30,7 +30,7 @@ int main()
   std::map<Polyhedron::Facet_handle, std::size_t> fidxmap;
   boost::associative_property_map<std::map<Polyhedron::Facet_handle, std::size_t> > fpxmap(fidxmap);
   CGAL::vsa_mesh_approximation(mesh, out_mesh,
-    CGAL::VSA::parameters::seeding_by_number(6).
+    CGAL::VSA::parameters::init_by_number(6).
       iterations(30).
       inner_iterations(5).
       chord_subdivide(0.5).

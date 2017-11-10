@@ -51,7 +51,7 @@ int main()
   L21ProxyFitting l21_fitting(mesh);
   vsa_l21.set_metric(l21_metric, l21_fitting);
 
-  vsa_l21.seeding_by_number(L21VSA::Random, 100);
+  vsa_l21.init_by_number(L21VSA::Random, 100);
   std::vector<FT> error;
   for (std::size_t i = 0; i < 30; ++i)
     error.push_back(vsa_l21.run_one_step());

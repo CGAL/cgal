@@ -27,7 +27,7 @@ int main()
 
   // free function interface with named parameters, seperated with dots
   CGAL::vsa_mesh_approximation(input, output,
-    CGAL::VSA::parameters::seeding_by_number(200). // seeding by target number of proxies
+    CGAL::VSA::parameters::init_by_number(200). // seeding by target number of proxies
       init_method(1). // hierarchical init
       iterations(30). // number of relaxation iterations after seeding
       anchor_point(std::back_inserter(anchors)). // get anchor points

@@ -38,7 +38,7 @@ bool test_manifold(const char *file_name, const FT drop = FT(1e-8))
   // approximation, init from error, drop to the target error incrementally
   const std::size_t num_iterations = 20;
   const std::size_t inner_iterations = 5;
-  vsa_l21.seeding_by_error(L21VSA::Incremental, drop, inner_iterations);
+  vsa_l21.init_by_error(L21VSA::Incremental, drop, inner_iterations);
   for (std::size_t i = 0; i < num_iterations; ++i)
     vsa_l21.run_one_step();
   std::cout << "#proxies " << vsa_l21.get_proxies_size() << std::endl;
