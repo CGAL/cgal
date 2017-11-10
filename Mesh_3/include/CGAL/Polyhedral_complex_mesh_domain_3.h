@@ -507,7 +507,7 @@ public:
   /// @cond DEVELOPERS
   template <typename C3t3>
   void add_vertices_to_c3t3_on_patch_without_feature_edges(C3t3& c3t3) const {
-#if CGAL_MESH_3_VERBOSE
+#ifdef CGAL_MESH_3_VERBOSE
     std::cout << "add_vertices_to_c3t3_on_patch_without_feature_edges...";
     std::cout.flush();
 #endif
@@ -637,7 +637,7 @@ public:
         }
       }
     }
-#if CGAL_MESH_3_VERBOSE
+#ifdef CGAL_MESH_3_VERBOSE
     std::cout << "\badd_vertices_to_c3t3_on_patch_without_feature_edges done.";
     std::cout << std::endl;
 #endif
@@ -653,7 +653,7 @@ public:
         first_intersected_primitive(ray);
     }
 
-#if USE_ALL_INTERSECTIONS
+#ifdef USE_ALL_INTERSECTIONS
     boost::optional<AABB_primitive_id> shoot_a_ray_2(const Ray_3 ray) const {
       const Point_3& p = ray.source();
       typedef typename AABB_tree::
@@ -883,7 +883,7 @@ detect_features(FT angle_in_degree,
     initialize_ts(p);
     using internal::Mesh_3::Get_face_index_pmap;
     Get_face_index_pmap<Polyhedron_type> get_face_index_pmap(p);
-#if CGAL_MESH_3_VERBOSE
+#ifdef CGAL_MESH_3_VERBOSE
     std::size_t poly_id = &p-&poly[0];
     std::cerr << "Polyhedron #" << poly_id << " :\n";
     std::cerr << "  material #" << patch_indices[poly_id].first << "\n";
@@ -909,7 +909,7 @@ detect_features(FT angle_in_degree,
   }
   this->patch_id_to_polyhedron_id.resize(nb_of_patch_plus_one);
   this->patch_has_featured_edges.resize(nb_of_patch_plus_one);
-#if CGAL_MESH_3_VERBOSE
+#ifdef CGAL_MESH_3_VERBOSE
   std::cerr << "Number of patches: " << (nb_of_patch_plus_one - 1) << std::endl;
 #endif
   BOOST_FOREACH(Polyhedron_type& p, poly)

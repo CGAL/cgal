@@ -995,10 +995,12 @@ scan_triangulation_impl()
     {
       // Cannot be const, see treat_new_facet signature
       Facet facet = *facet_it;
+#ifdef CGAL_MESH_3_VERBOSE
       std::cerr << "TREAT FACET : " << std::endl
                  << "*" << *facet.first->vertex((facet.second+1)%4)  << std::endl
                 << "  " << *facet.first->vertex((facet.second+2)%4)  << std::endl
                 << "  " << *facet.first->vertex((facet.second+3)%4)  << std::endl;
+#endif
       this->treat_new_facet(facet);
     }
   }
@@ -1562,12 +1564,14 @@ treat_new_facet(Facet& facet)
     {
       insert_bad_facet(facet, *is_facet_bad);
 
+#ifdef CGAL_MESH_3_DEBUG_FACET_CRITERIA
       std::cerr << "INSERT BAD FACET : " << std::endl
                 << "* " << *facet.first->vertex((facet.second+1)%4) << std::endl
                 << "  " << *facet.first->vertex((facet.second+2)%4) << std::endl
                 << "  " << *facet.first->vertex((facet.second+3)%4) << std::endl
                 << "  Surface center: " << get_facet_surface_center(facet) << std::endl
                 << "  Quality = " << is_facet_bad->second << std::endl;
+#endif
     }
   }
   else
