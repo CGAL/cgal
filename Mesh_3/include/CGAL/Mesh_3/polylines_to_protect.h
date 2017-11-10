@@ -376,6 +376,16 @@ polylines_to_protect(const CGAL::Image_3& cgal_image,
             CGAL_assertion(square[0][1].domain != square[1][0].domain);
 case_4:
             // case 4 or case 2-2
+            //
+            // ---------------
+            // |      |      |
+            // |      |      |
+            // |______|______|
+            // |      |      |
+            // |      |      |
+            // |      |      |
+            // ---------------
+            //
             ++case4;
             vertex_descriptor left   = g_manip.split(p00, p01, v00, v01, out00, out01);
             vertex_descriptor right  = g_manip.split(p10, p11, v10, v11, out10, out11);
@@ -398,6 +408,25 @@ case_4:
             }
             if(square[0][1].domain == square[1][0].domain) {
               // diagonal case 1-2-1
+              //
+              // A-------------C
+              // |        |    |
+              // |         \   |
+              // |___       \__|
+              // |   \         |
+              // |    \        |
+              // |     |       |
+              // B-------------A
+              //
+              // two curves: -1 ------------- 0   -1 ------------- 1
+              //               |             |      |        |    |
+              //               |             |      |         \   |
+              //               |___          |      |          \__|
+              //               |   \         |      |             |
+              //               |    \        |      |             |
+              //               |     |       |      |             |
+              //              1 ------------- -1   0 ------------- -1
+              //
               CGAL_assertion(square[0][1].domain == square[1][0].domain);
               CGAL_assertion(square[1][1].domain != square[0][0].domain);
               CGAL_assertion(square[0][1].domain != square[0][0].domain);
@@ -453,6 +482,28 @@ case_4:
               CGAL_assertion(square[0][0].domain != square[1][1].domain);
               CGAL_assertion(square[1][0].domain != square[1][1].domain);
               ++case211;
+              //
+              // A-------------B
+              // |        |    |
+              // |         \   |
+              // |          \__|
+              // |          /  |
+              // |         /   |
+              // |        |    |
+              // A-------------C
+              //
+              // Two curves portions:
+              //
+              //  1 ------------- 0     1 ------------- -1
+              //   |            /|       |       |     |
+              //   |           / |       |        \    |
+              //   |          /  |       |         \   |
+              //   |         /   |       |          \  |
+              //   |        /    |       |           \ |
+              //   |       |     |       |            \|
+              //  1 ------------- -1    1 ------------- 0
+              //
+              // ...and a segment.
               Point_3 midleft =  midpoint(p00, p01);
               Point_3 midright = midpoint(p10, p11);
               Point_3 inter = translate(midleft
@@ -518,6 +569,17 @@ case_4:
               if(square[0][0].domain==square[0][1].domain) {
                 // vertical case 2-2
                 ++case22;
+                // case 2-2
+                //
+                // A-------------B
+                // |      |      |
+                // |      |      |
+                // |      |      |
+                // |      |      |
+                // |      |      |
+                // |      |      |
+                // A-------------B
+                //
                 CGAL_assertion(square[1][0].domain==square[1][1].domain);
                 CGAL_assertion(square[1][0].domain!=square[0][1].domain);
                 vertex_descriptor top    = g_manip.split(p01, p11, v01, v11, out01, out11);
@@ -561,6 +623,16 @@ case_4:
                 CGAL_assertion(square[1][0].domain == value_alone);
               }
               ++case31;
+              //
+              // A-------------A    1 ------------- 1
+              // |             |     |             |
+              // |             |     |             |
+              // |         ____|     |         ____|
+              // |        /    |     |        /    |
+              // |       /     |     |       /     |
+              // |      |      |     |      |      |
+              // A-------------B    1 ------------- -1
+              //
               CGAL_assertion(square[1][0].domain == value_alone);
               CGAL_assertion(square[1][0].domain != square[0][0].domain);
               CGAL_assertion(square[1][1].domain == square[0][0].domain);
