@@ -334,7 +334,10 @@ private:
     typename C3T3::Triangulation::Geom_traits::Construct_point_3 cp =
       c3t3_.triangulation().geom_traits().construct_point_3_object();
 
-    return compute_distance(cp(va->point()), cp(vb->point()));
+    const Weighted_point& wpa = c3t3_.triangulation().point(va);
+    const Weighted_point& wpb = c3t3_.triangulation().point(vb);
+
+    return compute_distance(cp(wpa), cp(wpb));
   }
 
   /// Compute the Euclidean distance between the bare points \c and \c q.
@@ -347,7 +350,7 @@ private:
   /// Return the radius of the ball of vertex \c v.
   FT get_radius(const Vertex_handle& v) const
   {
-    return CGAL::sqrt(v->point().weight());
+    return CGAL::sqrt(c3t3_.triangulation().point(v).weight());
   }
 
   /// Test if a given vertex is a special protecting ball.
