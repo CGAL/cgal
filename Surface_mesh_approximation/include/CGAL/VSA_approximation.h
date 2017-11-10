@@ -32,6 +32,16 @@
 
 namespace CGAL
 {
+  /// Seeding method enumeration
+  enum Method {
+    /// Random seeding
+    Random,
+    /// Incremental seeding
+    Incremental,
+    /// Hierarchical seeding
+    Hierarchical
+  };
+
 /*!
  * \ingroup PkgTSMA
  * @brief Main class for Variational Shape Approximation algorithm.

@@ -25,10 +25,10 @@ int main()
   std::vector<std::size_t> triangles;
   std::vector<Kernel::Point_3> anchors;
 
-  // free function interface with named parameters, seperated with dots
+  // free function interface with named parameters, separated with dots
   CGAL::vsa_mesh_approximation(input, output,
     CGAL::VSA::parameters::init_by_number(200). // seeding by target number of proxies
-      init_method(1). // hierarchical init
+      init_method(CGAL::Method::Hierarchical). // hierarchical init
       iterations(30). // number of relaxation iterations after seeding
       anchor_point(std::back_inserter(anchors)). // get anchor points
       indexed_triangles(std::back_inserter(triangles))); // get indexed triangles
