@@ -122,6 +122,11 @@ public:
   typedef typename MeshDomain::Corner_index         Corner_index;
   typedef typename MeshDomain::Index                Index;
 
+private:
+  typedef typename CGAL::Kernel_traits<MeshDomain>::Kernel   Kernel;
+  typedef Delaunay_triangulation_3<Kernel>                   Dt;
+  typedef Triangulation_helpers<Dt>                          Dt_helpers;
+
 public:
   Protect_edges_sizing_field(C3T3& c3t3,
                              const MeshDomain& domain,
@@ -478,10 +483,6 @@ void
 Protect_edges_sizing_field<C3T3, MD, Sf>::
 insert_corners()
 {
-  // Gt is a traits class for regular triangulations, and Gt::Kernel is its
-  // CGAL kernel.
-  typedef CGAL::Delaunay_triangulation_3<typename Gt::Kernel> Dt;
-
   // Iterate on domain corners
   typedef std::vector< std::pair<Corner_index, Bare_point> > Initial_corners;
   Initial_corners corners;
@@ -508,28 +509,18 @@ insert_corners()
     // corners balls do not intersect
     if(dt.number_of_vertices() >= 2)
     {
-
       typename Dt::Vertex_handle vh;
-      CGAL_assertion_code( bool p_found= )
+      CGAL_assertion_code( bool p_found = )
         dt.is_vertex(p, vh);
       CGAL_assertion(p_found);
-      std::vector<typename Dt::Vertex_handle> vs;
-      vs.reserve(32);
-      dt.finite_adjacent_vertices(vh, std::back_inserter(vs));
-      CGAL_assertion(!vs.empty());
-      typename Dt::Point nearest = vs[0]->point();
-      typename Gt::Compare_distance_3 compare_dist =
-        c3t3_.triangulation().geom_traits().compare_distance_3_object();
-      for (typename std::vector<typename Dt::Vertex_handle>::const_iterator
-             it = vs.begin(); it != vs.end(); ++it)
-      {
-        if(compare_dist(p, (*it)->point(), nearest) == CGAL::SMALLER) {
-          nearest = (*it)->point();
-        }
-      }
-      typename Gt::Compute_squared_distance_3 squared_distance =
-        c3t3_.triangulation().geom_traits().compute_squared_distance_3_object();
-      const FT nearest_sq_dist = squared_distance( nearest, p);
+
+      std::vector<typename Dt::Cell_handle> finite_incident_cells;
+      finite_incident_cells.reserve(64);
+      dt.finite_incident_cells(vh, std::back_inserter(finite_incident_cells));
+
+      Dt_helpers helpers;
+      const FT nearest_sq_dist = helpers.get_distance_to_closest_vertex(
+                                   dt, vh, finite_incident_cells);
 
       w = (std::min)(w, nearest_sq_dist / FT(9));
     }
