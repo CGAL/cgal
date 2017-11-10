@@ -40,6 +40,7 @@
 
 #include <CGAL/enum.h>
 #include <CGAL/Has_timestamp.h>
+#include <CGAL/internal/Has_member_visited.h>
 #include <CGAL/iterator.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/Delaunay_triangulation_3.h>
@@ -519,8 +520,9 @@ insert_corners()
       dt.finite_incident_cells(vh, std::back_inserter(finite_incident_cells));
 
       Dt_helpers helpers;
-      const FT nearest_sq_dist = helpers.get_sq_distance_to_closest_vertex(
-                                   dt, vh, finite_incident_cells);
+      const FT nearest_sq_dist = helpers.template get_sq_distance_to_closest_vertex
+                                   <CGAL_NTS internal::Has_member_visited<typename Dt::Vertex> >(
+                                     dt, vh, finite_incident_cells);
 
       w = (std::min)(w, nearest_sq_dist / FT(9));
     }

@@ -28,10 +28,13 @@
 #include <CGAL/license/Mesh_3.h>
 
 #include <CGAL/internal/Has_nested_type_Bare_point.h>
+#include <CGAL/Handle_hash_function.h>
 
 #include <boost/mpl/if.hpp>
 #include <boost/mpl/identity.hpp>
+#include <boost/type_traits/is_same.hpp>
 #include <boost/unordered_set.hpp>
+#include <boost/utility/enable_if.hpp>
 
 #include <algorithm>
 #include <iostream>
@@ -145,9 +148,18 @@ public:
    *
    * \pre `vh` is not the infinite vertex
    */
+  template<typename Tag>
   FT get_sq_distance_to_closest_vertex(const Tr& tr,
                                        const Vertex_handle& vh,
-                                       const Cell_vector& incident_cells) const;
+                                       const Cell_vector& incident_cells,
+                                       typename boost::enable_if_c<Tag::value>::type* = NULL) const;
+
+  // @todo are the two versions really worth it, I can't even tell the difference...
+  template<typename Tag>
+  FT get_sq_distance_to_closest_vertex(const Tr& tr,
+                                       const Vertex_handle& vh,
+                                       const Cell_vector& incident_cells,
+                                       typename boost::disable_if_c<Tag::value>::type* = NULL) const;
 
 private:
   /**
@@ -540,18 +552,79 @@ inside_protecting_balls(const Tr& tr,
   return false;
 }
 
-
 /// Return the squared distance from vh to its closest vertex
+/// if `Has_visited_for_vertex_extractor` is `true`
 template<typename Tr>
+template<typename Tag>
 typename Triangulation_helpers<Tr>::FT
 Triangulation_helpers<Tr>::
 get_sq_distance_to_closest_vertex(const Tr& tr,
                                   const Vertex_handle& vh,
-                                  const Cell_vector& incident_cells) const
+                                  const Cell_vector& incident_cells,
+                                  typename boost::enable_if_c<Tag::value>::type*) const
 {
   CGAL_precondition(!tr.is_infinite(vh));
 
-  // @todo simply use the flags 'visited_for_vertex_extractor' ?
+  typedef std::vector<Vertex_handle>              Vertex_container;
+
+  // There is no need to use tr.min_squared_distance() here because we are computing
+  // distances between 'v' and a neighbor within their common cell, which means
+  // that even if we are using a periodic triangulation, the distance is correctly computed.
+  typename Gt::Compute_squared_distance_3 csqd = tr.geom_traits().compute_squared_distance_3_object();
+  typename Gt::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
+
+  Vertex_container treated_vertices;
+  FT min_sq_dist = std::numeric_limits<FT>::infinity();
+
+  for(typename Cell_vector::const_iterator cit = incident_cells.begin();
+                                           cit != incident_cells.end(); ++cit)
+  {
+    const Cell_handle c = (*cit);
+    const int k = (*cit)->index(vh);
+    const Point& wpvh = tr.point(c, k);
+
+    // For each vertex of the cell
+    for(int i=1; i<4; ++i)
+    {
+      const int n = (k+i)&3;
+      const Vertex_handle& vn = c->vertex(n);
+
+      if(tr.is_infinite(vn))
+        continue;
+
+      if(vn->visited_for_vertex_extractor)
+        continue;
+
+      vn->visited_for_vertex_extractor = true;
+      treated_vertices.push_back(vn);
+
+      const Point& wpvn = tr.point(c, n);
+      const FT sq_d = csqd(cp(wpvh), cp(wpvn));
+
+      if(sq_d < min_sq_dist)
+        min_sq_dist = sq_d;
+    }
+  }
+
+  for(std::size_t i=0; i < treated_vertices.size(); ++i)
+    treated_vertices[i]->visited_for_vertex_extractor = false;
+
+  return min_sq_dist;
+}
+
+/// Return the squared distance from vh to its closest vertex
+/// if `Has_visited_for_vertex_extractor` is `false`
+template<typename Tr>
+template<typename Tag>
+typename Triangulation_helpers<Tr>::FT
+Triangulation_helpers<Tr>::
+get_sq_distance_to_closest_vertex(const Tr& tr,
+                                  const Vertex_handle& vh,
+                                  const Cell_vector& incident_cells,
+                                  typename boost::disable_if_c<Tag::value>::type*) const
+{
+  CGAL_precondition(!tr.is_infinite(vh));
+
   typedef boost::unordered_set<Vertex_handle>              Vertex_container;
   typedef typename Vertex_container::iterator              VC_it;
 

@@ -35,6 +35,7 @@
 
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Double_map.h>
+#include <CGAL/internal/Has_member_visited.h>
 #include <CGAL/iterator.h>
 #include <CGAL/Real_timer.h>
 
@@ -1271,8 +1272,9 @@ get_best_weight(const Vertex_handle& v, bool *could_lock_zone) const
   FT worst_criterion_value = get_min_value(criterion_values);
   FT best_weight = 0;
 
-  FT sq_d_v = Tr_helpers().get_sq_distance_to_closest_vertex(
-                c3t3_.triangulation(), v, incident_cells);
+  FT sq_d_v = Tr_helpers().template get_sq_distance_to_closest_vertex
+                <CGAL_NTS internal::Has_member_visited<typename Tr::Vertex> >(
+                  c3t3_.triangulation(), v, incident_cells);
 
   // If that boolean is set to false, it means that a facet in the complex
   // is about to be flipped. In that case, the pumping is stopped.
