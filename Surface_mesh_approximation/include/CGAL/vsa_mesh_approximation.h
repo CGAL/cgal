@@ -93,17 +93,17 @@ bool vsa_mesh_approximation(const TriangleMesh &tm_in,
   vsa_l21.set_metric(l21_metric, l21_fitting);
 
   // default random initialization
-  CGAL::Method init = choose_param(get_param(np, internal_np::init_method), CGAL::Method::Random);
+  CGAL::VSA_seeding init = choose_param(get_param(np, internal_np::init_method), CGAL::VSA_seeding::Random);
   std::size_t num_proxies = choose_param(get_param(np, internal_np::init_by_number), 0);
   std::size_t inner_iterations = choose_param(get_param(np, internal_np::inner_iterations), 10);
   if (num_proxies == 0 || num_proxies > num_faces(tm_in)) {
     FT drop = choose_param(get_param(np, internal_np::init_by_error), FT(0.01));
     vsa_l21.init_by_error(
-      static_cast<typename VSAL21::Method>(init), drop, inner_iterations);
+      static_cast<typename CGAL::VSA_seeding>(init), drop, inner_iterations);
   }
   else {
     vsa_l21.init_by_number(
-      static_cast<typename VSAL21::Method>(init), num_proxies, inner_iterations);
+      static_cast<typename CGAL::VSA_seeding>(init), num_proxies, inner_iterations);
   }
 
   std::size_t iterations = choose_param(get_param(np, internal_np::iterations), 10);

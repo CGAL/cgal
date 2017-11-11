@@ -66,7 +66,7 @@ int main()
   l21_vsa.set_metric(l21_metric, l21_fitting);
 
   std::cout << "Seeding by number." << std::endl;
-  l21_vsa.init_by_number(L21VSA::Random, 50);
+  l21_vsa.init_by_number(CGAL::VSA_seeding::Random, 50);
   if (l21_vsa.get_proxies_size() != 50)
     return EXIT_FAILURE;
   for (std::size_t i = 0; i < 10; ++i) {

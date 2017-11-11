@@ -36,7 +36,7 @@ namespace CGAL
  * \ingroup PkgTSMA
  * @brief Seeding method enumeration for Variational Shape Approximation algorithm.
  */
-  enum Method {
+  enum VSA_seeding {
     /// Random seeding
     Random,
     /// Incremental seeding
@@ -77,16 +77,6 @@ public:
     CGAL::L21ProxyFitting<TriangleMesh, VertexPointMap, GeomTraits> >::type ProxyFitting;
   /// Proxy type
   typedef typename ErrorMetric::Proxy Proxy;
-
-  /// Seeding method enumeration
-  enum Method {
-    /// Random seeding
-    Random,
-    /// Incremental seeding
-    Incremental,
-    /// Hierarchical seeding
-    Hierarchical
-  };
 
 // private typedefs and data member
 private:
@@ -347,7 +337,7 @@ public:
    * @return number of proxies initialized
    */
   std::size_t init_by_number(
-    const Method method,
+    const VSA_seeding method,
     const std::size_t num_seed,
     const std::size_t num_iterations = 5) {
     switch (method) {
@@ -370,7 +360,7 @@ public:
    * @return number of proxies initialized
    */
   std::size_t init_by_error(
-    const Method method,
+    const VSA_seeding method,
     const FT target_drop,
     const std::size_t num_iterations = 5) {
     switch (method) {

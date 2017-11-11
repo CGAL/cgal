@@ -108,7 +108,7 @@ int main()
   compact_approx.set_metric(metric, proxy_fitting);
 
   // using 200 proxies to approximate the shape
-  compact_approx.init_by_number(CompactVSA::Hierarchical, 200);
+  compact_approx.init_by_number(CGAL::VSA_seeding::Hierarchical, 200);
   for (std::size_t i = 0; i < 30; ++i)
     compact_approx.run_one_step();
 
