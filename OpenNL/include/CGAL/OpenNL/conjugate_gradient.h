@@ -34,6 +34,8 @@
  *      - check divisions by zero
  *      - added comments
  *      - copied Conjugate Gradient algorithm WITH preconditioner from Graphite 1.9 code
+ *
+ * SPDX-License-Identifier: LGPL-3.0+
  */
 
 #ifndef __OPENNL_CONJUGATE_GRADIENT__

@@ -33,6 +33,8 @@
  *      - DefaultLinearSolverTraits is now a model of the SparseLinearAlgebraTraits_d concept
  *      - Added SymmetricLinearSolverTraits
  *      - copied Jacobi preconditioner from Graphite 1.9 code
+ *
+ * SPDX-License-Identifier: LGPL-3.0+
  */
 
 
