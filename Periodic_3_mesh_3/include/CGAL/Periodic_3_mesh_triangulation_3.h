@@ -128,7 +128,6 @@ public:
   using Base::point;
   using Base::set_point;
   using Base::tds;
-  using Base::tetrahedron;
   using Base::set_offsets;
 #ifndef CGAL_NO_STRUCTURAL_FILTERING
   using Base::inexact_locate;

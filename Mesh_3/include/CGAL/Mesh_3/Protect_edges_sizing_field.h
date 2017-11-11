@@ -102,7 +102,8 @@ void debug_dump_c3t3(const std::string filename, const C3t3& c3t3)
 
 
 template <typename C3T3, typename MeshDomain, typename SizingFunction>
-class Protect_edges_sizing_field : public CGAL::Mesh_3::internal::Debug_messages_tools
+class Protect_edges_sizing_field
+  : public CGAL::Mesh_3::internal::Debug_messages_tools
 {
   typedef Protect_edges_sizing_field          Self;
 
@@ -386,8 +387,11 @@ private:
   /// `minimal_size` if the latter is greater.
   FT query_size(const Bare_point& p, int dim, const Index& index) const
   {
-    if(dim < 0) dim = -1 - dim; // Convert the dimension if it was set to a
-                                // negative value (marker for special balls).
+    // Convert the dimension if it was set to a
+    // negative value (marker for special balls).
+    if(dim < 0)
+      dim = -1 - dim;
+
     const FT s = size_(p, dim, index);
     // if(minimal_size_ != FT() && s < minimal_size_)
     //   return minimal_size_;
@@ -907,7 +911,7 @@ insert_balls_on_edges()
                               compute_distance(p, other_point) / 3);
           vp = smart_insert_point(p,
                                   CGAL::square(p_size),
-                                  1,
+                                  1 /*dim*/,
                                   p_index,
           CGAL::Emptyset_iterator()).first;
         }
@@ -966,8 +970,8 @@ insert_balls(const Vertex_handle& vp,
     c3t3_.triangulation().geom_traits().construct_point_3_object();
 
   // Get size of p & q
-  const Bare_point& p = cp(vp->point());
-  const Bare_point& q = cp(vq->point());
+  const Weighted_point& vpwp = c3t3_.triangulation().point(vp);
+  const Weighted_point& vqwp = c3t3_.triangulation().point(vq);
 
   const FT sp = get_radius(vp);
   const FT sq = get_radius(vq);
@@ -978,7 +982,7 @@ insert_balls(const Vertex_handle& vp,
   const FT pq_length = (vp == vq) ?
     domain_.curve_length(curve_index)
     :
-    domain_.curve_segment_length(p, q, curve_index, orientation);
+    domain_.curve_segment_length(cp(vpwp), cp(vqwp), curve_index, orientation);
 
   // Insert balls
   return
@@ -986,7 +990,6 @@ insert_balls(const Vertex_handle& vp,
     insert_balls(vp, vq, sp, sq, pq_length, orientation, curve_index, out) :
     insert_balls(vq, vp, sq, sp, pq_length, -orientation, curve_index, out);
 }
-
 
 
 template <typename C3T3, typename MD, typename Sf>
@@ -1002,9 +1005,6 @@ insert_balls(const Vertex_handle& vp,
              const Curve_index& curve_index,
              ErasedVeOutIt out)
 {
-  typename C3T3::Triangulation::Geom_traits::Construct_point_3 cp =
-    c3t3_.triangulation().geom_traits().construct_point_3_object();
-
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
   std::cerr << "insert_balls(vp=" << disp_vert(vp) << ",\n"
             << "             vq=" << disp_vert(vq) << ",\n"
@@ -1016,12 +1016,18 @@ insert_balls(const Vertex_handle& vp,
 #endif
   CGAL_precondition(d > 0);
   CGAL_precondition(sp <= sq);
+
+  typename C3T3::Triangulation::Geom_traits::Construct_point_3 cp =
+    c3t3_.triangulation().geom_traits().construct_point_3_object();
+
+  const Weighted_point& vpwp = c3t3_.triangulation().point(vp);
+
 #if ! defined(CGAL_NO_PRECONDITIONS)
   if(sp <= 0) {
     std::stringstream msg;;
     msg.precision(17);
     msg << "Error: the mesh sizing field is null at point (";
-    msg << cp(vp->point()) << ")!";
+    msg << cp(vpwp) << ")!";
     CGAL_precondition_msg(sp > 0, msg.str().c_str());
   }
 #endif // ! CGAL_NO_PRECONDITIONS
@@ -1074,17 +1080,18 @@ insert_balls(const Vertex_handle& vp,
     if(n >= internal::max_nb_vertices_to_reevaluate_size &&
        d >= (internal::max_nb_vertices_to_reevaluate_size * minimal_weight_)) {
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
+      const Weighted_point& vqwp = c3t3_.triangulation().point(vq);
       std::cerr << "Number of to-be-inserted balls is: "
                 << n << "\n  between points ("
-                << vp->point() << ") and (" << vq->point()
+                << vpwp << ") and (" << vqwp
                 << ") (arc length: "
-                << domain_.curve_segment_length(cp(vp->point()),
-                                                cp(vq->point()),
+                << domain_.curve_segment_length(cp(vpwp),
+                                                cp(vqwp),
                                                 curve_index, d_sign)
                 << ")\n";
 #endif
       const Bare_point new_point =
-        domain_.construct_point_on_curve(cp(vp->point()),
+        domain_.construct_point_on_curve(cp(vpwp),
                                          curve_index,
                                          d_sign * d / 2);
       const int dim = 1; // new_point is on edge
@@ -1363,10 +1370,9 @@ do_balls_intersect(const Vertex_handle& va, const Vertex_handle& vb) const
 {
   typename Gt::Construct_sphere_3 sphere =
     c3t3_.triangulation().geom_traits().construct_sphere_3_object();
-
   typename Gt::Do_intersect_3 do_intersect =
     c3t3_.triangulation().geom_traits().do_intersect_3_object();
-  typename C3T3::Triangulation::Geom_traits::Construct_point_3 cp =
+  typename Gt::Construct_point_3 cp =
     c3t3_.triangulation().geom_traits().construct_point_3_object();
 
   const Bare_point& a = cp(va->point());
@@ -1544,9 +1550,7 @@ check_and_fix_vertex_along_edge(const Vertex_handle& v, ErasedVeOutIt out)
   Incident_vertices incident_vertices;
   c3t3_.adjacent_vertices_in_complex(v, std::back_inserter(incident_vertices));
   CGAL_assertion(v->is_special()
-                 || incident_vertices.size() == 0
-                 || incident_vertices.size() == 1
-                 || incident_vertices.size() == 2);
+                 || incident_vertices.size() < 3);
   if(incident_vertices.size() == 0) return out;
   // The size of 'incident_vertices' can be 0 if v is a ball that covers
   // entirely a closed curve.
@@ -1599,10 +1603,10 @@ check_and_fix_vertex_along_edge(const Vertex_handle& v, ErasedVeOutIt out)
 
   // Repopulate edge
   out = analyze_and_repopulate(to_repopulate.begin(),
-             --to_repopulate.end(),
-             curve_index,
+                               --to_repopulate.end(),
+                               curve_index,
                                orientation,
-             out);
+                               out);
 
   return out;
 }
@@ -1618,6 +1622,9 @@ is_sampling_dense_enough(const Vertex_handle& v1, const Vertex_handle& v2,
   using CGAL::Mesh_3::internal::min_intersection_factor;
   CGAL_precondition(c3t3_.curve_index(v1,v2) == curve_index);
 
+  typename C3T3::Triangulation::Geom_traits::Construct_point_3 cp =
+    c3t3_.triangulation().geom_traits().construct_point_3_object();
+
   // Get sizes
   FT size_v1 = get_radius(v1);
   FT size_v2 = get_radius(v2);
@@ -1627,10 +1634,14 @@ is_sampling_dense_enough(const Vertex_handle& v1, const Vertex_handle& v2,
   CGAL_assertion(get_dimension(v2) != 1 ||
                  curve_index == domain_.curve_index(v2->index()));
 
-  FT arc_length = domain_.curve_segment_length(v1->point().point(),
-                                               v2->point().point(),
+  const Weighted_point& v1wp = c3t3_.triangulation().point(v1);
+  const Weighted_point& v2wp = c3t3_.triangulation().point(v2);
+
+  FT arc_length = domain_.curve_segment_length(cp(v1wp),
+                                               cp(v2wp),
                                                curve_index,
                                                orientation);
+
   // Sufficient condition so that the curve portion between v1 and v2 is
   // inside the union of the two balls.
   if(arc_length > (size_v1 + size_v2)) {
@@ -1651,8 +1662,8 @@ is_sampling_dense_enough(const Vertex_handle& v1, const Vertex_handle& v2,
 
     const bool cov = domain_.is_curve_segment_covered(curve_index,
                                                       orientation,
-                                                      v1->point().point(),
-                                                      v2->point().point(),
+                                                      cp(v1wp),
+                                                      cp(v2wp),
                                                       v1->point().weight(),
                                                       v2->point().weight());
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
@@ -1684,19 +1695,20 @@ orientation_of_walk(const Vertex_handle& start,
   typename C3T3::Triangulation::Geom_traits::Construct_point_3 cp =
     c3t3_.triangulation().geom_traits().construct_point_3_object();
 
+  const Weighted_point& start_wp = c3t3_.triangulation().point(start);
+  const Weighted_point& next_wp = c3t3_.triangulation().point(next);
+
   if(domain_.is_loop(curve_index)) {
     // if the curve is a cycle, the direction is the direction passing
     // through the next vertex, and the next-next vertex
-    return
-      (domain_.distance_sign_along_loop
-       (cp(start->point()),
-        cp(next->point()),
-        cp(next_vertex_along_curve(next,start,curve_index)->point()),
-        curve_index));
+    Vertex_handle next_along_curve = next_vertex_along_curve(next,start,curve_index);
+    const Weighted_point& next_along_curve_wp = c3t3_.triangulation().point(next_along_curve);
+
+    return domain_.distance_sign_along_loop(
+             cp(start_wp), cp(next_wp), cp(next_along_curve_wp), curve_index);
   } else {
     // otherwise, the sign is just the sign of the geodesic distance
-    return domain_.distance_sign(cp(start->point()), cp(next->point()),
-                                 curve_index);
+    return domain_.distance_sign(cp(start_wp), cp(next_wp), curve_index);
   }
 }
 
@@ -1933,9 +1945,13 @@ is_sizing_field_correct(const Vertex_handle& v1,
   FT s1 = get_radius(v1);
   FT s2 = get_radius(v2);
   FT s3 = get_radius(v3);
-  FT D = domain_.curve_segment_length(cp(v1->point()), cp(v3->point()),
+  const Weighted_point& wp1 = c3t3_.triangulation().point(v1);
+  const Weighted_point& wp2 = c3t3_.triangulation().point(v2);
+  const Weighted_point& wp3 = c3t3_.triangulation().point(v3);
+
+  FT D = domain_.curve_segment_length(cp(wp1), cp(wp3),
                                       curve_index, orientation);
-  FT d = domain_.curve_segment_length(cp(v1->point()), cp(v2->point()),
+  FT d = domain_.curve_segment_length(cp(wp1), cp(wp2),
                                       curve_index, orientation);
 
   return ( s2 >= (s1 + d/D*(s3-s1)) );
@@ -1962,12 +1978,10 @@ repopulate_edges_around_corner(const Vertex_handle& v, ErasedVeOutIt out)
     // if `v` is incident to a cycle, it might be that the full cycle,
     // including the edge `[next, v]`, has already been processed by
     // `analyze_and_repopulate()` walking in the other direction.
-    if(domain_.is_loop(curve_index) &&
-       !c3t3_.is_in_complex(v, next)) continue;
+    if(domain_.is_loop(curve_index) && !c3t3_.is_in_complex(v, next))
+      continue;
 
-
-    const CGAL::Orientation orientation =
-      orientation_of_walk(v, next, curve_index);
+    const CGAL::Orientation orientation = orientation_of_walk(v, next, curve_index);
 
     // Walk along each incident edge of the corner
     Vertex_vector to_repopulate;
@@ -1987,7 +2001,7 @@ repopulate_edges_around_corner(const Vertex_handle& v, ErasedVeOutIt out)
 
     // Repopulate
     out = analyze_and_repopulate(to_repopulate.begin(), --to_repopulate.end(),
-         curve_index, orientation,
+                                 curve_index, orientation,
                                  out);
   }
 
