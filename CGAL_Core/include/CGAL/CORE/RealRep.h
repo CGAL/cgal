@@ -32,6 +32,7 @@
  *
  * $URL$
  * $Id$
+ * SPDX-License-Identifier: LGPL-3.0+
  ***************************************************************************/
 #ifndef _CORE_REALREP_H_
 #define _CORE_REALREP_H_
