@@ -86,6 +86,7 @@ When we want to add a proxy to approximate the geometry, we have to specify a fa
 \cgalFigureBegin{seeding_method, seeding_method.png}
 Comparison of different seeding methods on a sphere-cube union model, all with \f$ \mathcal{L}^{2,1} \f$ metrics and 20 proxies.
 From left to right are random, incremental and hierarchical seeding respectively.
+Notice the entrapped local minima in the yellow rectangles.
 \cgalFigureEnd
 
 From \cgalFigureRef{seeding_method} we can see the effect of different seeding strategies. Generally speaking, random initialization is random in position, very fast but can be entrapped in local minima areas (left), incremental one focuses on the most distorted region, interleaved with fitting process thus can be pretty slow. Hierarchical initialization gives fitting patches with more evenly distributed fitting errors and the time consumption is somewhere in between the former two.
