@@ -117,9 +117,18 @@ if [ -n "${project_name_demo}" ]; then
   exit 1
 fi
 
-#check header files without license include directive
-echo '.. Checking include directives in header files...'
-file_without_license_include=$(for pkg in `egrep "^GPL" */package_info/*/license.txt -l | awk -F "/" '{print $1}'`; do find ${pkg}/include -type f -name '*.h' | xargs -r egrep -l "^#\s*define\s+CGAL_.*_H\s*$" | xargs -r grep -L "#include <CGAL/license"; done)
+#check header files without SPDX license identifier
+echo '.. Checking SPDX license identifier presence in header files...'
+file_without_license_include=$(for pkg in `find */package_info -name 'license.txt' | awk -F "/" '{print $1}'`; do if [ -e ${pkg}/include ]; then find ${pkg}/include -type f \( -name '*.h' -o -name '*.hpp' \) | xargs -r grep -L "SPDX-License-Identifier"; fi; done)
+if [ -n "${file_without_license_include}" ]; then
+    echo "The following files do not have a SPDX license identifier:"
+    echo ${file_without_license_include}
+    exit 1
+fi
+
+#check GPL header files without license include directive
+echo '.. Checking include directives in GPL header files...'
+file_without_license_include=$(for pkg in `find */package_info -name 'license.txt' | awk -F "/" '{print $1}'`; do if [ -e ${pkg}/include ]; then find ${pkg}/include -type f -name '*.h' | xargs -r egrep -l "^#\s*define\s+CGAL_.*_H\s*$" | xargs -r egrep -l "SPDX-License-Identifier.*[ (]GPL" | xargs -r grep -L "#include <CGAL/license"; fi; done)
 if [ -n "${file_without_license_include}" ]; then
     echo "The following files do not have an include directive of the package license header:"
     echo ${file_without_license_include}
