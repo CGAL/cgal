@@ -688,57 +688,55 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
 
     // Change w in order to be sure that no existing point will be included
     // in (p,w)
-    std::vector<Vertex_handle> vertices_in_conflict_zone;
-    {
-      // fill vertices_in_conflict_zone
-      std::set<Vertex_handle> vertices_in_conflict_zone_set;
-      std::vector<Cell_handle> cells_in_conflicts;
-      Weighted_point wp = cwp(p, w);
-      tr.find_conflicts(wp, ch,
-                        CGAL::Emptyset_iterator(),
-                        std::back_inserter(cells_in_conflicts),
-                        CGAL::Emptyset_iterator());
-
-      for(typename std::vector<Cell_handle>::const_iterator
-            it = cells_in_conflicts.begin(),
-            end = cells_in_conflicts.end(); it != end; ++it)
-      {
-        for(int i = 0, d = tr.dimension(); i <= d; ++i) {
-          const Vertex_handle v = (*it)->vertex(i);
-          if( ! c3t3_.triangulation().is_infinite(v) ) {
-            vertices_in_conflict_zone_set.insert(v);
-          }
-        }
-      }
-      vertices_in_conflict_zone.insert(vertices_in_conflict_zone.end(),
-               vertices_in_conflict_zone_set.begin(),
-               vertices_in_conflict_zone_set.end());
-    }
     FT min_sq_d = w;
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
     typename Tr::Point nearest_point;
 #endif
-    for(typename std::vector<Vertex_handle>::const_iterator
-          it = vertices_in_conflict_zone.begin(),
-          end = vertices_in_conflict_zone.end(); it != end ; ++it )
+
+    // fill vertices_in_conflict_zone
+    std::set<Vertex_handle> vertices_in_conflict_zone_set;
+    std::vector<Cell_handle> cells_in_conflicts;
+    Weighted_point wp = cwp(p, w);
+    tr.find_conflicts(wp, ch,
+                      CGAL::Emptyset_iterator(),
+                      std::back_inserter(cells_in_conflicts),
+                      CGAL::Emptyset_iterator());
+
+    for(typename std::vector<Cell_handle>::const_iterator
+          it = cells_in_conflicts.begin(),
+        end = cells_in_conflicts.end(); it != end; ++it)
     {
-      const FT sq_d = sq_distance(p, cp((*it)->point()));
-      if(minimal_weight_ != Weight() && sq_d < minimal_weight_) {
-        insert_a_special_ball = true;
+      for(int i=0, d=tr.dimension(); i<=d; ++i)
+      {
+        const Vertex_handle v = (*it)->vertex(i);
+        if(c3t3_.triangulation().is_infinite(v))
+          continue;
+        if(!vertices_in_conflict_zone_set.insert(v).second)
+          continue;
+
+        const FT sq_d = tr.min_squared_distance(p, cp(v->point()));
+
+        if(minimal_weight_ != Weight() && sq_d < minimal_weight_) {
+          insert_a_special_ball = true;
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
-        nearest_point = (*it)->point();
+          nearest_point = v->point();
 #endif
-        min_sq_d = minimal_weight_;
-        if( ! is_special(*it) ) {
-          *out++ = *it;
-          ch = change_ball_size(*it, minimal_size_, true)->cell(); // special ball
+          min_sq_d = minimal_weight_;
+          if(! is_special(v))
+          {
+            *out++ = v;
+            ch = change_ball_size(v, minimal_size_, true)->cell(); // special ball
+          }
         }
-      } else {
-        if(sq_d < min_sq_d) {
+        else
+        {
+          if(sq_d < min_sq_d)
+          {
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
-          nearest_point = (*it)->point();
+            nearest_point = v->point();
 #endif
-          min_sq_d = sq_d;
+            min_sq_d = sq_d;
+          }
         }
       }
     }
