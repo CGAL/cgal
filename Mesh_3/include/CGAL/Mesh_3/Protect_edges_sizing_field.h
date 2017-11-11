@@ -1258,9 +1258,11 @@ refine_balls()
 
         // Compute correct size of balls
         const FT ab = compute_distance(va,vb);
-  /// @TOTO pb: get_radius(va) is called several times
-        FT sa_new = (std::min)(ab/distance_divisor, get_radius(va));
-        FT sb_new = (std::min)(ab/distance_divisor, get_radius(vb));
+
+        FT ra = get_radius(va);
+        FT rb = get_radius(vb);
+        FT sa_new = (std::min)(ab/distance_divisor, ra);
+        FT sb_new = (std::min)(ab/distance_divisor, rb);
 
         // In case of va or vb have already been in conflict, keep minimal size
         if ( new_sizes.find(va) != new_sizes.end() )
@@ -1275,7 +1277,7 @@ refine_balls()
 #endif // CGAL_MESH_3_PROTECTION_DEBUG & 16
 
         // Store new_sizes for va and vb
-        if ( sa_new != get_radius(va) ) {
+        if ( sa_new != ra ) {
 #if CGAL_MESH_3_PROTECTION_DEBUG & 16
           std::cerr << "  new_sizes[" << disp_vert(va) << ":"
                     << new_sizes[va] << "\n";
@@ -1283,7 +1285,7 @@ refine_balls()
           new_sizes[va] = sa_new;
         }
 
-        if ( sb_new != get_radius(vb) ) {
+        if ( sb_new != rb ) {
 #if CGAL_MESH_3_PROTECTION_DEBUG & 16
           std::cerr << "  new_sizes[" << disp_vert(vb) << ":"
                     << new_sizes[vb] << "\n";
