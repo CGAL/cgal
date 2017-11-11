@@ -774,7 +774,11 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
       for ( typename Tr::Finite_vertices_iterator it = tr.finite_vertices_begin(),
            end = tr.finite_vertices_end() ; it != end ; ++it )
       {
-        FT sq_d = sq_distance(p, cp(it->point()));
+        // Although 'min_squared_distance' is costly (time-wise) for periodic
+        // triangulations, it does not matter here because a periodic triangulation
+        // is only of dimension less than 3 if it is empty.
+        const Weighted_point& itwp = tr.point(it);
+        FT sq_d = tr.min_squared_distance(p, cp(itwp));
         if ( it->point().weight() > sq_d )
         {
           bool special_ball = false;
@@ -801,7 +805,8 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
     for ( typename Tr::Finite_vertices_iterator it = tr.finite_vertices_begin(),
          end = tr.finite_vertices_end() ; it != end ; ++it )
     {
-      FT sq_d = sq_distance(p, cp(it->point()));
+      const Weighted_point& itwp = tr.point(it);
+      FT sq_d = tr.min_squared_distance(p, cp(itwp));
       if(sq_d < min_sq_d) {
         min_sq_d = sq_d;
         nearest_point = it->point();
