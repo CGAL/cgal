@@ -21,9 +21,6 @@
 #ifndef CGAL_AUTO_LINK_QT_H
 #define CGAL_AUTO_LINK_QT_H
 
-#include <CGAL/license/GraphicsView.h>
-
-
 #include <CGAL/config.h>
 #include <QtCore/qglobal.h>
 

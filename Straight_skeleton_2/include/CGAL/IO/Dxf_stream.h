@@ -24,9 +24,6 @@
 #ifndef CGAL_DXF_STREAM_H
 #define CGAL_DXF_STREAM_H
 
-#include <CGAL/license/Straight_skeleton_2.h>
-
-
 #include <CGAL/basic.h>
 #include <CGAL/Polygon_2.h>
 

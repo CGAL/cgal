@@ -24,9 +24,6 @@
 #ifndef CGAL_ARR_ALGEBRAIC_SEGMENT_TRAITS
 #define CGAL_ARR_ALGEBRAIC_SEGMENT_TRAITS
 
-#include <CGAL/license/Arrangement_on_surface_2.h>
-
-
 #include <CGAL/config.h>
 
 #include <CGAL/Algebraic_kernel_d/flags.h>

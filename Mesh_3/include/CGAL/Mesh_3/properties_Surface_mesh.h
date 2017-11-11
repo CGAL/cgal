@@ -21,7 +21,6 @@
 #ifndef CGAL_MESH_3_PROPERTIES_SURFACE_MESH_H
 #define CGAL_MESH_3_PROPERTIES_SURFACE_MESH_H
 
-#include <CGAL/license/Mesh_3.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Mesh_3/properties.h>
 #include <set>

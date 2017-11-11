@@ -20,8 +20,6 @@
 #ifndef CGAL_IO_PLY_READER_H
 #define CGAL_IO_PLY_READER_H
 
-#include <CGAL/license/Polyhedron.h>
-
 #include <CGAL/IO/read_ply_points.h>
 
 namespace CGAL{

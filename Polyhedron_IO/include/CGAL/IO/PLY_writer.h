@@ -20,8 +20,6 @@
 #ifndef CGAL_IO_PLY_WRITER_H
 #define CGAL_IO_PLY_WRITER_H
 
-#include <CGAL/license/Polyhedron.h>
-
 #include <CGAL/IO/write_ply_points.h>
 
 namespace CGAL{

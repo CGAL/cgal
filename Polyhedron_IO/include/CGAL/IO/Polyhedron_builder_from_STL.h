@@ -20,9 +20,6 @@
 #ifndef CGAL_IO_POLYHEDRON_STL_BUILDER_H
 #define CGAL_IO_POLYHEDRON_STL_BUILDER_H
 
-#include <CGAL/license/Polyhedron.h>
-
-
 #include <CGAL/Modifier_base.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 #include <CGAL/IO/STL_reader.h>
