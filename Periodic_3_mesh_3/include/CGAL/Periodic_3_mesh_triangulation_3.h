@@ -618,7 +618,7 @@ public:
   {
     // The function below is almost a copy from 'nearest_power_vertex' in P3RT3.
     // Any change should be mirrored.
-    CGAL_precondition(number_of_vertices() > 1);
+    CGAL_precondition(number_of_vertices() > 0);
 
     Locate_type lt;
     int li, lj;
