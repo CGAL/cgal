@@ -10,7 +10,7 @@
 
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Pierre Alliez, Lingjie Zhu}
-\cgalPkgDesc{This package implement the Variational Shape Approximation method to approximate an input surface triangle mesh by a simpler triangle surface mesh or triangle soup. The algorithm proceeds by iterative clustering of triangles, and the clustering can initialized randomly, incrementally or hierarchically. The API is flexible and can be extended to user-defined proxies and metrics.}
+\cgalPkgDesc{This package implements the Variational Shape Approximation method to approximate an input surface triangle mesh by a simpler triangle surface mesh or triangle soup. The algorithm proceeds by iterative clustering of triangles, the clustering process being initialized either randomly, incrementally or hierarchically. The API is flexible and can be extended to user-defined geometric proxies and metrics.}
 \cgalPkgManuals{Chapter_Triangulated_Surface_Mesh_Approximation,PkgTSMA}
 \cgalPkgSummaryEnd
 
@@ -28,7 +28,7 @@
 Optional parameters of the functions of this package
 are implemented as BGL named parameters.
 The page \ref namedparameters describes their usage
-and provides a list of the parameters that are used in this package.
+and provides the list of parameters used in this package.
 
 ## Concepts ##
 - `Proxy`
@@ -46,6 +46,6 @@ and provides a list of the parameters that are used in this package.
 - `CGAL::L2ProxyFitting`
 - `CGAL::VSA_approximation`
 
-\todo guarantee manifold output mesh
+\todo add option to guarantee manifold output mesh
 
 */

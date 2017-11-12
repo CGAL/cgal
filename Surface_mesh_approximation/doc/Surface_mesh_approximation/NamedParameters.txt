@@ -7,16 +7,16 @@
 This page contains similar content to the named parameters introduced in \ref PkgPolygonMeshProcessingSummary.
 
 The notion of named parameters was introduced in the BGL.
-You can read about it in the following site: http://www.boost.org/libs/graph/doc/bgl_named_params.html.
-Named parameters allow the user to specify only those parameters which are really needed, by name, making the parameter ordering unimportant.
+Details can be found from: http://www.boost.org/libs/graph/doc/bgl_named_params.html.
+Named parameters allow the user to specify only those parameters which are really needed, by name, making the parameter ordering not required.
 
-Say there is a function `f()` that takes 3 parameters called name, age and gender, and you have variables `n`, `a` and `g` to pass as parameters to that function. Without named parameters, you would call it like this: `f(n,a,g)`, whereas with named parameters, you call it like this: `f(name(n).age(a).gender(g))`.
+Assume a function `f()` that takes 3 parameters referred to as name, age and gender, and variables `n`, `a` and `g` to pass as parameters to that function. Without named parameters, we would call the function as `f(n,a,g)`, whereas with named parameters, we call it as `f(name(n).age(a).gender(g))`.
 
-That is, you give each parameter a name by wrapping it into a function whose name matches that of the parameter. The entire list of named parameters is really a composition of function calls separated by a dot ( .). Thus, if the function takes a mix of mandatory and named parameters, you use a comma to separate the last non-named parameter from the first named parameters, like this:
+More specifically, we give each parameter a name by wrapping it into a function whose name matches that of the parameter. The entire list of named parameters is a composition of function calls separated by a dot ( .). Thus, if the function takes a mix of mandatory and named parameters, we must use a comma to separate the last non-named parameter from the first named parameters, like this:
 
 `f(non_named_par0, non_named_par1, name(n).age(a).gender(g))`
 
-When you use named parameters, the ordering is irrelevant, so `f(name(n).age(a).gender(g))` is equivalent to `f(age(a).gender(g).name(n))`, and you can just omit any named parameter that has a default value.
+When using named parameters, the ordering is irrelevant, so that `f(name(n).age(a).gender(g))` is equivalent to `f(age(a).gender(g).name(n))`, and we can omit any named parameter that has a default value.
 
 The sequence of named parameters should start with `CGAL::VSA::parameters::`.
 
@@ -43,7 +43,7 @@ vsa_mesh_approximation(input,
 
 In this package, all functions optional parameters are implemented as BGL optional named parameters and listed below.
 
-In the following, we assume that the following types are provided as template parameters of surface mesh approximation functions and classes. Note that, for some of these functions, the type is more specific.
+In the following, we assume that the following types are provided as template parameters of surface mesh approximation functions and classes. Note that the type is more specific for some of these functions.
 
 <ul>
 <li>`PolygonMesh` implements a `FaceGraph`
