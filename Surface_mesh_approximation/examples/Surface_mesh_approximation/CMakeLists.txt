@@ -3,7 +3,6 @@
 
 project( Surface_mesh_approximation )
 
-
 cmake_minimum_required(VERSION 2.8.11)
 
 # CGAL and its components
@@ -44,9 +43,9 @@ include_directories( BEFORE ../../include )
 
 include( CGAL_CreateSingleSourceCGALProgram )
 
-create_single_source_cgal_program( "vsa_class_interface_example.cpp" )
-
 create_single_source_cgal_program( "vsa_example.cpp" )
+
+create_single_source_cgal_program( "vsa_class_interface_example.cpp" )
 
 create_single_source_cgal_program( "vsa_metric_example.cpp" )
 

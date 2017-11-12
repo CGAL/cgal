@@ -23,19 +23,20 @@ typedef boost::property_map<Polyhedron, boost::vertex_point_t>::type VertexPoint
 typedef boost::associative_property_map<std::map<Facet_handle, FT> > FacetAreaMap;
 typedef boost::associative_property_map<std::map<Facet_handle, Point> > FacetCenterMap;
 
-// use a point as proxy
+// use point as proxy
 typedef Point PointProxy;
 
-// user defined point-wise compact metric
+// user-defined "compact" error metric
 struct CompactMetric {
   typedef PointProxy Proxy;
 
-  // keeping a precomputed property map to speed up the computation
+  // we keep a precomputed property map to speed up computations
   CompactMetric(const FacetCenterMap &_center_pmap)
     : center_pmap(_center_pmap) {}
 
-  // calculate the error of a facet to a proxy
-  // here is just the Euclidean distance
+  // compute and return error from a facet to a proxy,
+  // defined as the Euclidean distance between
+  // the facet center of mass and proxy point.
   FT operator()(const Facet_handle &f, const Proxy &px) const {
     return FT(std::sqrt(CGAL::to_double(
       CGAL::squared_distance(center_pmap[f], px))));
@@ -48,21 +49,22 @@ struct CompactMetric {
 struct PointProxyFitting {
   typedef PointProxy Proxy;
 
-  // keeping precomputed property maps to speed up the computation
+  // we keep a precomputed property map to speed up computations
   PointProxyFitting(const FacetCenterMap &_center_pmap, const FacetAreaMap &_area_pmap)
     : center_pmap(_center_pmap), area_pmap(_area_pmap) {}
 
-  // a template functor fit a new proxy from a range of facets
+  // template functor to compute a best-fit 
+  // proxy from a range of facets
   template<typename FacetIterator>
   Proxy operator()(const FacetIterator beg, const FacetIterator end) const {
     // fitting center
     Vector center = CGAL::NULL_VECTOR;
-    FT area = FT(0.0);
+    FT sum_areas = FT(0.0);
     for (FacetIterator fitr = beg; fitr != end; ++fitr) {
       center = center + (center_pmap[*fitr] - CGAL::ORIGIN) * area_pmap[*fitr];
-      area += area_pmap[*fitr];
+      sum_areas += area_pmap[*fitr];
     }
-    center = center / area;
+    center = center / sum_areas;
     return CGAL::ORIGIN + center;
   }
 
@@ -74,7 +76,7 @@ typedef CGAL::VSA_approximation<Polyhedron, VertexPointMap,
 
 int main()
 {
-  // create and read Polyhedron
+  // create polyhedral surface and read input mesh
   Polyhedron input;
   std::ifstream file("data/bear.off");
   if (!file || !(file >> input) || input.empty()) {
@@ -107,7 +109,7 @@ int main()
   PointProxyFitting proxy_fitting(center_pmap, area_pmap);
   compact_approx.set_metric(metric, proxy_fitting);
 
-  // using 200 proxies to approximate the shape
+  // approximation via 200 proxies and 30 iterations
   compact_approx.init_by_number(CGAL::VSA_seeding::Hierarchical, 200);
   for (std::size_t i = 0; i < 30; ++i)
     compact_approx.run_one_step();

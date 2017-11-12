@@ -18,7 +18,7 @@ typedef L21VSA::ProxyFitting L21ProxyFitting;
 
 int main()
 {
-  // read Polyhedron
+  // create polyhedral surface and read input mesh
   Polyhedron input;
   std::ifstream file("data/bear.off");
   if (!file || !(file >> input) || input.empty()) {
@@ -29,24 +29,26 @@ int main()
   // create VSA L21 metric approximation algorithm instance
   L21VSA l21_approx(input,
     get(boost::vertex_point, const_cast<Polyhedron &>(input)));
+
   // set error and fitting functors
   L21Metric metric(input);
   L21ProxyFitting proxy_fitting(input);
   l21_approx.set_metric(metric, proxy_fitting);
 
-  // initialize proxies randomly on the mesh
+  // initialize 100 random proxies
   l21_approx.init_by_number(CGAL::VSA_seeding::Random, 100);
   
-  // run the iteration to minimize the error
+  // run 30 iterations to reduce the approximation error
   for (std::size_t i = 0; i < 30; ++i)
     l21_approx.run_one_step();
 
   // add proxies to the one with the maximum fitting error
+  // and run 10 iterations
   l21_approx.add_proxies_furthest(3, 5);
   for (std::size_t i = 0; i < 10; ++i)
     l21_approx.run_one_step();
 
-  // merge and teleport the proxies from local minimal
+  // teleport 2 proxies from local minima
   l21_approx.teleport_proxies(2);
   for (std::size_t i = 0; i < 10; ++i)
     l21_approx.run_one_step();
