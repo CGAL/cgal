@@ -18,8 +18,8 @@ namespace CGAL
  * \ingroup PkgTSMA
  * @brief Plane proxy class for the Variational Shape Approximation algorithm.
  *
- * It is simply a class containing few proxy parameters.
- * It is used as the default proxy for the `L21Metric` and `L2Metric`
+ * Class containing few proxy parameters.
+ * Used as default proxy for the `L21Metric` and `L2Metric`
  *
  * \cgalModels `Proxy`
  *
@@ -75,7 +75,7 @@ class L21Metric
   typedef boost::associative_property_map<std::map<face_descriptor, FT> > FacetAreaMap;
 
 public:
-  // The type define required by the `ErrorMetric` concept
+  // type required by `ErrorMetric` concept
   typedef PlaneProxy Proxy;
 
   // constructor
@@ -141,7 +141,7 @@ class L21Metric<TriangleMesh,
   typedef boost::associative_property_map<std::map<face_descriptor, FT> > FacetAreaMap;
 
 public:
-  // The type define required by the `ErrorMetric` concept
+  // type required by `ErrorMetric` concept
   typedef PlaneProxy Proxy;
 
   // constructor
@@ -206,7 +206,7 @@ class L21Metric<TriangleMesh,
   typedef boost::associative_property_map<std::map<face_descriptor, Vector_3> > FacetNormalMap;
 
 public:
-  // The type define required by the `ErrorMetric` concept
+  // type required by `ErrorMetric` concept
   typedef PlaneProxy Proxy;
 
   // constructor
@@ -267,7 +267,7 @@ class L21Metric<TriangleMesh,
   typedef boost::associative_property_map<std::map<face_descriptor, Vector_3> > FacetNormalMap;
 
 public:
-  // The type define required by the `ErrorMetric` concept
+  // type required by `ErrorMetric` concept
   typedef PlaneProxy Proxy;
 
   // constructor
@@ -338,7 +338,7 @@ class L21ProxyFitting
   typedef boost::associative_property_map<std::map<face_descriptor, FT> > FacetAreaMap;
 
 public:
-  // The type define required by the `ErrorMetric` concept
+  // type required by `ErrorMetric` concept
   typedef PlaneProxy Proxy;
 
   // constructor.
@@ -414,7 +414,7 @@ class L21ProxyFitting<TriangleMesh,
   typedef boost::associative_property_map<std::map<face_descriptor, FT> > FacetAreaMap;
 
 public:
-  // The type define required by the `ErrorMetric` concept
+  // type required by `ErrorMetric` concept
   typedef PlaneProxy Proxy;
 
   // constructor.
@@ -471,7 +471,7 @@ private:
 /*!
  * \ingroup PkgTSMA
  * @brief L2 metric class for the Variational Shape Approximation algorithm.
- * It is simply a functor that takes a facet and a proxy, returns the L2 error between them.
+ * Functor that takes a facet and a proxy, and returns the L2 error between them.
  *
  * \cgalModels `ErrorMetric`
  *
@@ -498,7 +498,7 @@ class L2Metric
   typedef boost::associative_property_map<std::map<face_descriptor, FT> > FacetAreaMap;
 
 public:
-  // The type define required by the `ErrorMetric` concept
+  // type required by `ErrorMetric` concept
   typedef PlaneProxy Proxy;
 
   // constructor
@@ -514,20 +514,20 @@ public:
     }
   }
 
-  // returns the l2 fitting error of a facet f to proxy px.
+  // returns l2 fitting error from facet f to proxy px.
   FT operator()(const face_descriptor &f, const PlaneProxy &px) const {
     halfedge_descriptor he = halfedge(f, *mesh);
     const Point_3 &p0 = point_pmap[source(he, *mesh)];
     const Point_3 &p1 = point_pmap[target(he, *mesh)];
     const Point_3 &p2 = point_pmap[target(next(he, *mesh), *mesh)];
-    FT sq_d0 = CGAL::squared_distance(p0, px.fit_plane);
-    FT sq_d1 = CGAL::squared_distance(p1, px.fit_plane);
-    FT sq_d2 = CGAL::squared_distance(p2, px.fit_plane);
-    FT d0(std::sqrt(CGAL::to_double(sq_d0)));
-    FT d1(std::sqrt(CGAL::to_double(sq_d1)));
-    FT d2(std::sqrt(CGAL::to_double(sq_d2)));
+    const FT sq_d0 = CGAL::squared_distance(p0, px.fit_plane);
+	const FT sq_d1 = CGAL::squared_distance(p1, px.fit_plane);
+	const FT sq_d2 = CGAL::squared_distance(p2, px.fit_plane);
+	const FT d0(std::sqrt(CGAL::to_double(sq_d0)));
+	const FT d1(std::sqrt(CGAL::to_double(sq_d1)));
+	const FT d2(std::sqrt(CGAL::to_double(sq_d2)));
 
-    return (sq_d0 + sq_d1 + sq_d2 + d0 * d1 + d1 * d2 + d2 * d0) * area_pmap[f] / FT(6);
+    return (sq_d0 + sq_d1 + sq_d2 + d0 * d1 + d1 * d2 + d2 * d0) * area_pmap[f] / FT(6.0);
   }
 
 private:
@@ -556,7 +556,7 @@ class L2Metric<TriangleMesh,
   typedef boost::associative_property_map<std::map<face_descriptor, FT> > FacetAreaMap;
 
 public:
-  // The type define required by the `ErrorMetric` concept
+  // type required by `ErrorMetric` concept
   typedef PlaneProxy Proxy;
 
   // constructor
@@ -568,23 +568,23 @@ public:
       const Point_3 &p0 = point_pmap[source(he, tm)];
       const Point_3 &p1 = point_pmap[target(he, tm)];
       const Point_3 &p2 = point_pmap[target(next(he, tm), tm)];
-      FT area(std::sqrt(CGAL::to_double(CGAL::squared_area(p0, p1, p2))));
+      const FT area(std::sqrt(CGAL::to_double(CGAL::squared_area(p0, p1, p2))));
       facet_areas.insert(std::pair<face_descriptor, FT>(f, area));
     }
   }
 
-  // returns the l2 fitting error of a facet f to proxy px.
+  // returns l2 fitting error from facet f to proxy px.
   FT operator()(const face_descriptor &f, const PlaneProxy &px) const {
     halfedge_descriptor he = halfedge(f, *mesh);
     const Point_3 &p0 = point_pmap[source(he, *mesh)];
     const Point_3 &p1 = point_pmap[target(he, *mesh)];
     const Point_3 &p2 = point_pmap[target(next(he, *mesh), *mesh)];
-    FT sq_d0 = CGAL::squared_distance(p0, px.fit_plane);
-    FT sq_d1 = CGAL::squared_distance(p1, px.fit_plane);
-    FT sq_d2 = CGAL::squared_distance(p2, px.fit_plane);
-    FT d0(std::sqrt(CGAL::to_double(sq_d0)));
-    FT d1(std::sqrt(CGAL::to_double(sq_d1)));
-    FT d2(std::sqrt(CGAL::to_double(sq_d2)));
+	const FT sq_d0 = CGAL::squared_distance(p0, px.fit_plane);
+	const FT sq_d1 = CGAL::squared_distance(p1, px.fit_plane);
+	const FT sq_d2 = CGAL::squared_distance(p2, px.fit_plane);
+	const FT d0(std::sqrt(CGAL::to_double(sq_d0)));
+	const FT d1(std::sqrt(CGAL::to_double(sq_d1)));
+	const FT d2(std::sqrt(CGAL::to_double(sq_d2)));
 
     return (sq_d0 + sq_d1 + sq_d2 + d0 * d1 + d1 * d2 + d2 * d0) * area_pmap[f] / FT(6);
   }
@@ -623,14 +623,14 @@ class L2ProxyFitting
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
 
 public:
-  // The type define required by the `ErrorMetric` concept
+  // type required by `ErrorMetric` concept
   typedef PlaneProxy Proxy;
 
   // construct L2 proxy fitting functor from a triangle mesh and the vertex point map.
   L2ProxyFitting(const TriangleMesh &_mesh, const VertexPointMap &_point_pmap)
     : mesh(&_mesh), point_pmap(_point_pmap) {}
 
-  // returns the proxy fitted from a range of facets.
+  // returns proxy fitted from range of facets.
   template <typename FacetIterator>
   Proxy operator()(const FacetIterator beg, const FacetIterator end) const {
     CGAL_assertion(beg != end);
@@ -677,7 +677,7 @@ class L2ProxyFitting<TriangleMesh,
   typedef typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type VertexPointMap;
 
 public:
-  // The type define required by the `ErrorMetric` concept
+  // type required by the `ErrorMetric` concept
   typedef PlaneProxy Proxy;
 
   // construct L2 proxy fitting functor from a triangle mesh.
