@@ -34,9 +34,9 @@ Apart from approximation, it can be viewed as a package for simplification or sh
 
 The VSA method has two key concepts:
 
-- <em>Geometric proxies</em> \f$ P \f$: as a best-fit geometric surrogate;
+- <b>Geometric proxies</b> \f$ P \f$. The parameterized best-fit geometric surrogate of an piece of geometry.
 
-- <em>Shape error metrics</em> \f$ E \f$: to measure how well a proxy fits a piece of geometry \f$ \mathcal{R} \f$.
+- <b>Shape error metrics</b> \f$ E \f$. To measure how well a proxy fits the corresponding geometry.
 
 Given an error metric \f$ E \f$, a desired number of \f$ k \f$ proxies, 
 and an input surface \f$ S \f$, we call <em>optimal shape proxies</em> a set \f$ P \f$ of proxies \f$ P_i \f$ 
@@ -73,15 +73,31 @@ In \cgalFigureRef{relaxation}, we showed the Lloyd optimization iteration on a p
 Optimization on the plane-sphere model with the \f$ \mathcal{L}^{2,1} \f$ metric: (left) random initialization of 6 partitions; (center) after one iteration of optimization; (right) after 8 iterations, the regions settle. The red line represent the proxy normal parameter.
 \cgalFigureEnd
 
-In the package, we provide both two metrics as `CGAL::L2Metric` and `CGAL::L21Metric` respectively. 
-Of course, we are not limited to those two metrics. The algorithm framework is extensible and we could define our own metrics and plug it in as we can see in \ref sma_example3.
+The package provides both two metrics as `CGAL::L2Metric` and `CGAL::L21Metric` respectively. 
+Of course, we are not limited to those two metrics. 
+The algorithm is extensible and we could define our own proxies and metrics and plug it in as we can see in \ref sma_example3.
+
+\subsection sma_init Initialization
+
+To start the algorithm, we have to determine how many proxies we need to approximate the geometry. 
+We can decide the number of proxies by:
+- <b>Target number of proxies</b>. Adding proxies untill the target number is reached.
+- <b>Target error drop</b>. Adding proxies untill the fitting error is drop below the target to the initial fitting error.
+
+The former one is straight-forward and examples of the latter one can be found in \cgalFigureRef{meshing}.
 
 \subsection sma_seeding Seeding
 
-When we want to add a proxy to approximate the geometry, we have to specify a facet as the <em>seed</em> to initialize a proxy. The package provides 3 different seeding methods:
-- <b>Random</b>. The proxy seeds are picked randomly from the geometry.
-- <b>Incremental</b>. Each time a proxy is initialized from a facet seed of the worst region.
-- <b>Hierarchical</b>. The requested number of proxies are dispatched within the current partition, where each region is added with the number of proxies proportional to their fitting error.
+Seeding is used to decide where to insert a new proxy.
+In the implementation, each proxy is always associated with a <em>seed</em> facet. 
+While the proxy parameters are viewed as the center in a geometric error sense, the seed of each proxy is used as the topological start point in the partition process.
+When we want to add one more proxy to drive the approximation error down, 
+we have to specify a facet of the surface as the seed to initialize the proxy parameters.
+
+The package provides 3 different seeding methods:
+- <b>Random</b>. The proxy seeds are picked randomly on the surface mesh.
+- <b>Incremental</b>. Each time a proxy is initialized from a facet in the worst region.
+- <b>Hierarchical</b>. The requested number of proxies are dispatched within current partition, where each region is added with the number of proxies proportional to their fitting error.
 
 \cgalFigureBegin{seeding_method, seeding_method.png}
 Comparison of different seeding methods on a sphere-cube union model, all with \f$ \mathcal{L}^{2,1} \f$ metrics and 20 proxies.
@@ -89,13 +105,11 @@ From left to right are random, incremental and hierarchical seeding respectively
 Notice the entrapped local minima in the yellow rectangles.
 \cgalFigureEnd
 
-From \cgalFigureRef{seeding_method} we can see the effect of different seeding strategies. Generally speaking, random initialization is random in position, very fast but can be entrapped in local minima areas (left), incremental one focuses on the most distorted region, interleaved with fitting process thus can be pretty slow. Hierarchical initialization gives fitting patches with more evenly distributed fitting errors and the time consumption is somewhere in between the former two.
-
-To determine how many proxies do we need to approximate the geometry. The package provides two approaches:
-- <b>Target number of proxies</b>. The seeding process will stop once the target number is reached.
-- <b>Target error drop</b>. The seeding process will stop once the fitting error is drop below the target to the initial fitting error.
-
-The former one is straight-forward and examples of the latter one can be found in \cgalFigureRef{meshing}. Some statistics and comparisons are available in \ref sma_perf.
+From \cgalFigureRef{seeding_method} we can see the effect of different seeding methods to initialize the algorithm with targeted 20 proxies. 
+Generally speaking, random initialization is random in position, very fast but can be entrapped in local minima areas (left), 
+incremental one focuses on the most distorted region, interleaved with fitting process thus can be pretty slow. 
+Hierarchical initialization gives fitting patches with more evenly distributed fitting errors and the time consumption is somewhere in between the former two. 
+Some statistics and comparisons are available in \ref sma_perf.
 
 \subsection sma_operations Refinement Operations
 
