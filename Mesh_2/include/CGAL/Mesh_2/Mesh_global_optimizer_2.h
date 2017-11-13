@@ -307,8 +307,7 @@ private:
     // Find the minimum value
     do
     {
-      if(face->is_in_domain())
-        min_sqr = (std::min)(min_sqr, sq_circumradius(face));
+      min_sqr = (std::min)(min_sqr, sq_circumradius(face));
       face++;
     }
     while(face != end);
