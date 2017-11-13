@@ -17,7 +17,6 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "info_insert_with_zip_iterator.cpp" )
   create_single_source_cgal_program( "regular_3.cpp" )
   create_single_source_cgal_program( "regular_with_info_3.cpp" )
-  create_single_source_cgal_program( "sequential_parallel.cpp" )
   create_single_source_cgal_program( "simple_triangulation_3.cpp" )
   create_single_source_cgal_program( "simplex.cpp" )
 
