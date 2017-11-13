@@ -1719,6 +1719,7 @@ void MainWindow::on_actionSetBackgroundColor_triggered()
   QColor c =  QColorDialog::getColor();
   if(c.isValid()) {
     viewer->setBackgroundColor(c);
+    viewer->update();
   }
 }
 
