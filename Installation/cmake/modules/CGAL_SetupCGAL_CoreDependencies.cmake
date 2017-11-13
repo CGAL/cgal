@@ -51,6 +51,10 @@ endif()
 #   added using :command:`target_link_libraries` with the ``INTERFACE``
 #   keyword, or ``PUBLIC`` otherwise.
 #
+
+#CGAL_Core needs Boost.Thread
+find_package( Boost 1.48 REQUIRED thread system )
+
 function(CGAL_setup_CGAL_Core_dependencies target)
   if(ARGV1 STREQUAL INTERFACE)
     set(keyword INTERFACE)
@@ -59,5 +63,5 @@ function(CGAL_setup_CGAL_Core_dependencies target)
   endif()
   use_CGAL_GMP_support(CGAL_Core ${keyword})
   target_compile_definitions(${target} ${keyword} CGAL_USE_CORE=1)
-  target_link_libraries( CGAL_Core ${keyword} CGAL::CGAL )
+  target_link_libraries( CGAL_Core ${keyword} CGAL::CGAL ${Boost_LIBRARIES})
 endfunction()
