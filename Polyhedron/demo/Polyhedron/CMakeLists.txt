@@ -191,7 +191,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     TextRenderer.cpp
     TextRenderer_moc.cpp
     Polyhedron_demo_plugin_helper.cpp)
-    qt5_use_modules(demo_framework OpenGL Gui Widgets Script Xml)
+    qt5_use_modules(demo_framework OpenGL Gui Widgets Script Xml Svg)
   target_link_libraries(demo_framework
     ${QGLVIEWER_LIBRARIES}
     ${OPENGL_gl_LIBRARY}
