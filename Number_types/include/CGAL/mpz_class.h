@@ -271,6 +271,7 @@ public:
         : public CGAL::unary_function< mpz_class, std::pair< double, double > > {
         std::pair<double, double>
         operator()( const mpz_class& x ) const {
+#if MPFR_VERSION_MAJOR >= 3
 	  MPFR_DECL_INIT (y, 53); /* Assume IEEE-754 */
 	  int r = mpfr_set_z (y, x.get_mpz_t(), MPFR_RNDA);
 	  double i = mpfr_get_d (y, MPFR_RNDA); /* EXACT but can overflow */
@@ -284,6 +285,16 @@ public:
 	      else
 		return std::pair<double, double>(s, i);
 	    }
+#else
+	  mpfr_t y;
+	  mpfr_init2 (y, 53); /* Assume IEEE-754 */
+	  mpfr_set_z (y, x.get_mpz_t(), GMP_RNDD);
+	  double i = mpfr_get_d (y, GMP_RNDD); /* EXACT but can overflow */
+	  mpfr_set_z (y, x.get_mpz_t(), GMP_RNDU);
+	  double s = mpfr_get_d (y, GMP_RNDU); /* EXACT but can overflow */
+	  mpfr_clear (y);
+	  return std::pair<double, double>(i, s);
+#endif
         }
     };
 };
