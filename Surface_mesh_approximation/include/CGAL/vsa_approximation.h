@@ -11,7 +11,7 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
 
-#include <CGAL/VSA_metrics.h>
+#include <CGAL/vsa_metrics.h>
 #include <CGAL/Default.h>
 
 #include <boost/graph/graph_traits.hpp>

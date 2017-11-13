@@ -36,7 +36,7 @@ int main()
   l21_approx.set_metric(metric, proxy_fitting);
 
   // initialize 100 random proxies
-  l21_approx.init_by_number(CGAL::VSA_seeding::Random, 100);
+  l21_approx.init_by_number(CGAL::Random, 100);
   
   // run 30 iterations to reduce the approximation error
   for (std::size_t i = 0; i < 30; ++i)

@@ -30,13 +30,13 @@ typedef CGAL::Timer Timer;
 int main(int argc, char *argv[])
 {
   if (argc < 5)
-    return 1;
+    return EXIT_FAILURE;
 
   Polyhedron mesh;
   std::ifstream input(argv[1]);
   if (!input || !(input >> mesh) || mesh.empty()) {
     std::cerr << "Invalid off file." << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
   std::cerr << "#triangles " << mesh.size_of_facets() << std::endl;
 
@@ -51,7 +51,7 @@ int main(int argc, char *argv[])
 
   int init = std::atoi(argv[2]);
   if (init < 0 || init > 2)
-    return 1;
+    return EXIT_FAILURE;
   const std::size_t num_proxies = std::atoi(argv[3]);
   const std::size_t num_iterations = std::atoi(argv[4]);
   std::cerr << "#init " << init << std::endl;
@@ -86,5 +86,5 @@ int main(int argc, char *argv[])
 
   std::cerr << "total time " << t1.time() << " sec." << std::endl;
 
-  return 0;
+  return EXIT_SUCCESS;
 }

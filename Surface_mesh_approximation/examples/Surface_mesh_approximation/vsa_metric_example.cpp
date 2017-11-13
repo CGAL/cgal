@@ -110,7 +110,7 @@ int main()
   compact_approx.set_metric(metric, proxy_fitting);
 
   // approximation via 200 proxies and 30 iterations
-  compact_approx.init_by_number(CGAL::VSA_seeding::Hierarchical, 200);
+  compact_approx.init_by_number(CGAL::Hierarchical, 200);
   for (std::size_t i = 0; i < 30; ++i)
     compact_approx.run_one_step();
 
