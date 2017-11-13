@@ -16,7 +16,7 @@ function(create_single_source_cgal_program firstfile )
   set(NO_TESTING ${create_single_source_cgal_program_NO_TESTING})
 
   if(NOT IS_ABSOLUTE "${firstfile}")
-    set(firstfile "${CGAL_CURRENT_SOURCE_DIR}/${firstfile}")
+    set(firstfile "${CMAKE_CURRENT_SOURCE_DIR}/${firstfile}")
   endif()
 
   get_filename_component(exe_name ${firstfile} NAME_WE)
