@@ -521,11 +521,11 @@ public:
     const Point_3 &p1 = point_pmap[target(he, *mesh)];
     const Point_3 &p2 = point_pmap[target(next(he, *mesh), *mesh)];
     const FT sq_d0 = CGAL::squared_distance(p0, px.fit_plane);
-	const FT sq_d1 = CGAL::squared_distance(p1, px.fit_plane);
-	const FT sq_d2 = CGAL::squared_distance(p2, px.fit_plane);
-	const FT d0(std::sqrt(CGAL::to_double(sq_d0)));
-	const FT d1(std::sqrt(CGAL::to_double(sq_d1)));
-	const FT d2(std::sqrt(CGAL::to_double(sq_d2)));
+    const FT sq_d1 = CGAL::squared_distance(p1, px.fit_plane);
+    const FT sq_d2 = CGAL::squared_distance(p2, px.fit_plane);
+    const FT d0(std::sqrt(CGAL::to_double(sq_d0)));
+    const FT d1(std::sqrt(CGAL::to_double(sq_d1)));
+    const FT d2(std::sqrt(CGAL::to_double(sq_d2)));
 
     return (sq_d0 + sq_d1 + sq_d2 + d0 * d1 + d1 * d2 + d2 * d0) * area_pmap[f] / FT(6.0);
   }
@@ -579,12 +579,12 @@ public:
     const Point_3 &p0 = point_pmap[source(he, *mesh)];
     const Point_3 &p1 = point_pmap[target(he, *mesh)];
     const Point_3 &p2 = point_pmap[target(next(he, *mesh), *mesh)];
-	const FT sq_d0 = CGAL::squared_distance(p0, px.fit_plane);
-	const FT sq_d1 = CGAL::squared_distance(p1, px.fit_plane);
-	const FT sq_d2 = CGAL::squared_distance(p2, px.fit_plane);
-	const FT d0(std::sqrt(CGAL::to_double(sq_d0)));
-	const FT d1(std::sqrt(CGAL::to_double(sq_d1)));
-	const FT d2(std::sqrt(CGAL::to_double(sq_d2)));
+    const FT sq_d0 = CGAL::squared_distance(p0, px.fit_plane);
+    const FT sq_d1 = CGAL::squared_distance(p1, px.fit_plane);
+    const FT sq_d2 = CGAL::squared_distance(p2, px.fit_plane);
+    const FT d0(std::sqrt(CGAL::to_double(sq_d0)));
+    const FT d1(std::sqrt(CGAL::to_double(sq_d1)));
+    const FT d2(std::sqrt(CGAL::to_double(sq_d2)));
 
     return (sq_d0 + sq_d1 + sq_d2 + d0 * d1 + d1 * d2 + d2 * d0) * area_pmap[f] / FT(6);
   }

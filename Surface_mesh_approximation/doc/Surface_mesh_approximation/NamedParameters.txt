@@ -12,7 +12,7 @@ Named parameters allow the user to specify only those parameters which are reall
 
 Assume a function `f()` that takes 3 parameters referred to as name, age and gender, and variables `n`, `a` and `g` to pass as parameters to that function. Without named parameters, we would call the function as `f(n,a,g)`, whereas with named parameters, we call it as `f(name(n).age(a).gender(g))`.
 
-More specifically, we give each parameter a name by wrapping it into a function whose name matches that of the parameter. The entire list of named parameters is a composition of function calls separated by a dot ( .). Thus, if the function takes a mix of mandatory and named parameters, we must use a comma to separate the last non-named parameter from the first named parameters, like this:
+More specifically, we give each parameter a name by wrapping it into a function whose name matches that of the parameter. The entire list of named parameters is a composition of function calls separated by a dot (.). Thus, if the function takes a mix of mandatory and named parameters, we must use a comma to separate the last non-named parameter from the first named parameters, like this:
 
 `f(non_named_par0, non_named_par1, name(n).age(a).gender(g))`
 

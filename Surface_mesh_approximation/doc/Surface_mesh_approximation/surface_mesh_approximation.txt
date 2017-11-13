@@ -7,7 +7,7 @@ namespace CGAL {
 \authors Pierre Alliez, Lingjie Zhu
 
 \cgalFigureBegin{Approximation_masque_main, masque_vsa.png}
-Running the variational shape approximation on the mask model (62k triangles). 
+Running the variational shape approximation on the mask model (62k triangles) with \f$ \mathcal{L}^{2,1} \f$ metric. 
 Left: partition with 100 planar proxies on the input surface. 
 Right: extracted triangle mesh with less than 250 triangles.
 \cgalFigureEnd
@@ -17,7 +17,7 @@ Right: extracted triangle mesh with less than 250 triangles.
 For many applications ranging from geometry compression to reverse engineering, finding the concise and faithful approximation of an excessively verbose 3D data (in particular, scanned meshes) is beneficial for subsequent processing and may reduce the computational cost dramatically.
 
 This package implements the <em>Variational Shape Approximation</em> \cgalCite{cgal:cad-vsa-04} (VSA) method to approximate an input surface mesh by a simpler triangle surface mesh or triangle soup. Given a triangulated surface mesh, referred to as <em>mesh</em> in the following, VSA leverages the Lloyd's iteration \cgalCite{cgal:l-lsqp-82} 
-to drive the approximation error down between the input surface triangle mesh and a set of geometric proxies. By default the proxies are planar, but the algorithm design is generic for future extensions to non-planar proxies. Two error metrics (L2, L2,1) are provided, but the algorithm is generic to other user-defined metrics.
+to drive the approximation error down between the input surface triangle mesh and a set of geometric proxies. By default the proxies are planar, but the algorithm design is generic for future extensions to non-planar proxies. Two error metrics (\f$ \mathcal{L}^2 \f$, \f$ \mathcal{L}^{2,1} \f$) are provided, but the algorithm is generic to other user-defined metrics.
 
 An overview of the algorithm is provided in \ref sma_approximation.
 
@@ -66,7 +66,7 @@ Figure \cgalFigureRef{relaxation} depicts the Lloyd iteration on the plane-spher
 Lloyd iterations on the plane-sphere model with the \f$ \mathcal{L}^{2,1} \f$ metric: (left) random initialization of 6 proxies; (center) after one iteration; (right) after 8 iterations, the regions settle. The red lines depict the proxy normals.
 \cgalFigureEnd
 
-The package provides both two metrics as `CGAL::L2Metric` and `CGAL::L21Metric`, respectively. The algorithm is not restricted to these  two metrics and can be extended to other proxies and error metrics (see Section \ref sma_example3).
+The package provides both two metrics as `CGAL::L2Metric` and `CGAL::L21Metric`, respectively. The algorithm is not restricted to these two metrics and can be extended to other proxies and error metrics (see Section \ref sma_example3).
 
 \subsection sma_init Initialization
 
@@ -75,7 +75,7 @@ The package provides both two metrics as `CGAL::L2Metric` and `CGAL::L21Metric`,
 The algorithm must be initialized by determining either the number of proxies required to approximate the geometry or the maximum tolerance approximation error. More specifically, we can decide:
 - <b>Target number of proxies</b>. The algorithm adds proxies until the specified target number is met.
 - <b>Target error drop</b>. The algorithm adds proxies until the approximation error is lower than the specified target error.
-Several initialisation examples are provided in \cgalFigureRef{meshing}.
+Several initialization examples are provided in \cgalFigureRef{meshing}.
 
 (TODO: precise whether drop refers to relative drop rate or absolute value)
 
@@ -197,7 +197,7 @@ The following example uses the build-in `CGAL::L2Metric` to approximate the shap
 Comparison of different metrics on the bear model, all with 200 proxies and hierarchical seeding. From left to right: \f$ \mathcal{L}^{2,1} \f$ metric, \f$ \mathcal{L}^2 \f$ metric and compact metric.
 \cgalFigureEnd
 
-The following example defines a point-wise proxy to achieves an isoptric  patch approximation of the shape. The output mesh is depicted in Figure \cgalFigureRef{vsa_metric_comparison}.
+The following example defines a point-wise proxy to achieves an isotropic patch approximation of the shape. The output mesh is depicted in Figure \cgalFigureRef{vsa_metric_comparison}.
 
 \cgalExample{Surface_mesh_approximation/vsa_metric_example.cpp}
 
