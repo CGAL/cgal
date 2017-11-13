@@ -60,7 +60,7 @@ create_single_source_cgal_program( "example_feature.cpp" CXX_FEATURES ${needed_c
 if( OpenCV_FOUND )
   include_directories( ${OpenCV_INCLUDE_DIRS} )
   create_single_source_cgal_program( "example_random_forest.cpp" CXX_FEATURES ${needed_cxx_features} )
-  target_link_libraries( example_random_forest ${OpenCV_LIBS} )
+  target_link_libraries( example_random_forest PRIVATE ${OpenCV_LIBS} )
 else()
   message(STATUS "OpenCV not found, random forest example won't be compiled.")
 endif()
