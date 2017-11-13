@@ -7,60 +7,61 @@ namespace CGAL {
 The class `Delaunay_triangulation_3` represents a three-dimensional 
 Delaunay triangulation. 
 
-\tparam DelaunayTriangulationTraits_3 is the geometric traits class. 
+\tparam Traits is the geometric traits class and must be a model of `DelaunayTriangulationTraits_3`.
 
-\tparam TriangulationDataStructure_3 is the triangulation data structure. 
-It has the default value `Triangulation_data_structure_3<Triangulation_vertex_base_3<DelaunayTriangulationTraits_3>, 
-								  Delaunay_triangulation_cell_base_3<DelaunayTriangulationTraits_3> >`.
-`Default` may be used.
+\tparam TDS is the triangulation data structure and must be a model of `TriangulationDataStructure_3`.
+`Default` may be used, with default type `Triangulation_data_structure_3<Triangulation_vertex_base_3<Traits>,
+                                                                         Delaunay_triangulation_cell_base_3<Traits> >`.
+Any custom type can be used instead of `Triangulation_vertex_base_3`
+and `Delaunay_triangulation_cell_base_3`, provided that they are models of the
+concepts `TriangulationVertexBase_3` and `DelaunayTriangulationCellBase_3`,
+respectively.
 
-\tparam LocationPolicy is a tag which must be a `Location_policy<Tag>`: 
-either `Fast_location` or `Compact_location`. 
-`Fast_location` offers faster (\f$ O(\log n)\f$ time) point 
+\tparam LP is a tag which must be a `Location_policy<Tag>`:
+either `CGAL::Fast_location` or `CGAL::Compact_location`.
+`CGAL::Fast_location` offers faster (\f$ O(\log n)\f$ time) point
 location, which can be beneficial when performing point locations or random 
 point insertions (with no good location hint) in large data sets. 
 It is currently implemented using an additional triangulation 
 hierarchy data structure \cgalCite{cgal:d-dh-02}. 
-The default is `Compact_location`, which saves memory (3-5%) by avoiding the need for this 
+The default is `CGAL::Compact_location`, which saves memory (3-5%) by avoiding the need for this
 separate data structure, and point location is then performed roughly in 
 \f$ O(n^{1/3})\f$ time. 
 If the triangulation is parallel (see user manual), the default compact 
 location policy must be used.
 Note that this argument can also come in second position, which can be useful when 
-the default value for the `TriangulationDataStructure_3` parameter is 
-satisfactory (this is using so-called deduced parameters). 
+the default value for the `TDS` parameter is
+satisfactory (this is achieved using so-called deduced parameters).
 Note that this argument replaces the functionality 
 provided before \cgal 3.6 by `Triangulation_hierarchy_3`. 
 An example of use can be found in the user 
 manual \ref Triangulation3exfastlocation. 
 
-\tparam SurjectiveLockDataStructure is an optional parameter to specify the type of the spatial lock data structure.
-        It is only used if the triangulation data structure used is concurrency-safe (i.e.\ when 
-        `TriangulationDataStructure_3::Concurrency_tag` is `Parallel_tag`).
+\tparam SLDS is an optional parameter to specify the type of the spatial lock data structure.
         It must be a model of the `SurjectiveLockDataStructure` concept,
-        with `Object` being a `Point`.
+        with `Object` being a `Point` (as defined below).
+        It is only used if the triangulation data structure used is concurrency-safe (i.e.\ when 
+        `TDS::Concurrency_tag` is `CGAL::Parallel_tag`).
         The default value is `Spatial_lock_grid_3<Tag_priority_blocking>` if
         the triangulation data structure is concurrency-safe, and `void` otherwise.
         In order to use concurrent operations, the user must provide a 
         reference to a `SurjectiveLockDataStructure`
         instance via the constructor or `Triangulation_3::set_lock_data_structure()`.
 
-If `TriangulationDataStructure_3::Concurrency_tag` is `Parallel_tag`, some operations, 
+If `TDS::Concurrency_tag` is `CGAL::Parallel_tag`, some operations,
 such as insertion/removal of a range of points, are performed in parallel. See 
 the documentation of the operations for more details.
 
+\sa `CGAL::Triangulation_3`
 \sa `CGAL::Regular_triangulation_3` 
 
 */
-template< typename DelaunayTriangulationTraits_3, typename TriangulationDataStructure_3, typename LocationPolicy, typename SurjectiveLockDataStructure >
+template< typename Traits, typename TDS, typename LP, typename SLDS >
 class Delaunay_triangulation_3 : 
-    public Triangulation_3<DelaunayTriangulationTraits_3,
-                           Delaunay_triangulation_3<DelaunayTriangulationTraits_3,
-                                                    TriangulationDataStructure_3,
-                                                    LocationPolicy>::Triangulation_data_structure,
-                           SurjectiveLockDataStructure
-                           >
-                           
+    public Triangulation_3<Traits,
+                           Delaunay_triangulation_3<
+                             Traits, TDS, LP>::Triangulation_data_structure,
+                           SLDS>
 {
 public:
 
@@ -70,13 +71,23 @@ public:
 
 /*!
 
-*/ 
-typedef LocationPolicy Location_policy; 
+*/
+typedef Traits Geom_traits;
+
+/*!
+
+*/
+typedef TDS Triangulation_data_structure;
 
 /*!
 
 */ 
-typedef SurjectiveLockDataStructure Lock_data_structure; 
+typedef LP Location_policy;
+
+/*!
+
+*/ 
+typedef SLDS Lock_data_structure;
 
 /// @}
 
@@ -88,22 +99,22 @@ In addition to those inherited, the following types are defined, for use by the 
 /*!
 
 */ 
-typedef DelaunayTriangulationTraits_3::Line_3 Line; 
+typedef Geom_traits::Line_3 Line;
 
 /*!
 
 */ 
-typedef DelaunayTriangulationTraits_3::Ray_3 Ray; 
+typedef Geom_traits::Ray_3 Ray;
 
 /*!
 
 */ 
-typedef DelaunayTriangulationTraits_3::Plane_3 Plane; 
+typedef Geom_traits::Plane_3 Plane;
 
 /*!
 
 */ 
-typedef DelaunayTriangulationTraits_3::Object_3 Object; 
+typedef Geom_traits::Object_3 Object;
 
 /// @} 
 
@@ -116,9 +127,8 @@ Creates an empty Delaunay triangulation, possibly specifying a traits class
 `lock_ds` is an optional pointer to the lock data structure for parallel operations. It
 must be provided if concurrency is enabled.
 */ 
-Delaunay_triangulation_3 
-(const DelaunayTriangulationTraits_3& traits = DelaunayTriangulationTraits_3(), 
-Lock_data_structure *lock_ds = NULL);
+Delaunay_triangulation_3(const Geom_traits& traits = Geom_traits(),
+                         Lock_data_structure *lock_ds = NULL);
 
 /*!
 Copy constructor. 
@@ -134,16 +144,16 @@ If parallelism is enabled, the points will be inserted in parallel.
 */ 
 template < class InputIterator > 
 Delaunay_triangulation_3 (InputIterator first, InputIterator last, 
-const DelaunayTriangulationTraits_3& traits = DelaunayTriangulationTraits_3(), 
-Lock_data_structure *lock_ds = NULL); 
+                          const Geom_traits& traits = Geom_traits(),
+                          Lock_data_structure *lock_ds = NULL);
 
 /*! 
 Same as before, with last two parameters in reverse order.
 */ 
 template < class InputIterator > 
 Delaunay_triangulation_3 (InputIterator first, InputIterator last, 
-Lock_data_structure *lock_ds, 
-const DelaunayTriangulationTraits_3& traits = DelaunayTriangulationTraits_3()); 
+                          Lock_data_structure *lock_ds,
+                          const Geom_traits& traits = Geom_traits());
 
 /// @} 
 

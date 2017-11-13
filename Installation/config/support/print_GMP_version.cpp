@@ -25,6 +25,8 @@
 // Tests if GMP is available.
 
 #include <iostream>
+#include <cstdio>
+#include <cstddef>
 #include "gmp.h"
 
 int main()

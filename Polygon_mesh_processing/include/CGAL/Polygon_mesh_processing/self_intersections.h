@@ -25,7 +25,7 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_SELF_INTERSECTIONS
 #define CGAL_POLYGON_MESH_PROCESSING_SELF_INTERSECTIONS
 
-#include <CGAL/license/Polygon_mesh_processing.h>
+#include <CGAL/license/Polygon_mesh_processing/predicate.h>
 
 
 #include <CGAL/box_intersection_d.h>
@@ -291,7 +291,7 @@ self_intersections(const TriangleMesh& tmesh, OutputIterator out)
  *
  * @pre `CGAL::is_triangle_mesh(tmesh)`
  *
- * @tparam FaceRange range of `boost::graph_traits<PolygonMesh>::%face_descriptor`,
+ * @tparam FaceRange range of `boost::graph_traits<TriangleMesh>::%face_descriptor`,
  *  model of `Range`.
  * Its iterator type is `RandomAccessIterator`.
  * @tparam TriangleMesh a model of `FaceListGraph`
@@ -336,8 +336,8 @@ self_intersections( const FaceRange& face_range,
   );
 
   typedef typename GetVertexPointMap<TM, NamedParameters>::const_type VertexPointMap;
-  VertexPointMap vpmap = boost::choose_param(get_param(np, vertex_point),
-                                             get_const_property_map(vertex_point, tmesh));
+  VertexPointMap vpmap = boost::choose_param(get_param(np, internal_np::vertex_point),
+                                             get_const_property_map(boost::vertex_point, tmesh));
 
   BOOST_FOREACH(face_descriptor f, face_range)
   {
@@ -357,7 +357,7 @@ self_intersections( const FaceRange& face_range,
   typedef typename GetGeomTraits<TM, NamedParameters>::type GeomTraits;
   CGAL::internal::Intersect_facets<TM,GeomTraits,Box,OutputIterator,VertexPointMap>
     intersect_facets(tmesh, out, vpmap,
-      boost::choose_param(get_param(np, geom_traits), GeomTraits()));
+      boost::choose_param(get_param(np, internal_np::geom_traits), GeomTraits()));
 
   std::ptrdiff_t cutoff = 2000;
   CGAL::box_self_intersection_d(box_ptr.begin(), box_ptr.end(),intersect_facets,cutoff);

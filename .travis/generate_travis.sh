@@ -1,4 +1,10 @@
 #!/bin/bash
+
+CHECK=
+case $1 in
+  --check) CHECK=y;;
+esac
+
 set -e
 cd ../
 
@@ -28,8 +34,7 @@ done
 if [ -f ".travis.yml" ] 
 then
   #copy the current .travis.yml for later check
-	cp ./.travis.yml ./.travis.old
-  rm .travis.yml
+  mv ./.travis.yml ./.travis.old
 fi
 #writes the first part of the file	
 old_IFS=$IFS       
@@ -56,7 +61,7 @@ echo "  - PACKAGE='Polyhedron_demo' " >> .travis.yml
 COPY=0
 for LINE in $(cat "$PWD/.travis/template.txt")
 do
-	if [ "$LINE" = "install: " ]
+	if [ "$LINE" = "compiler: " ]
 	then
 		COPY=1
 	fi
@@ -67,11 +72,19 @@ do
 done
 IFS=$' '
 #check if there are differences between the files
-read -a DIFF <<<$(diff -q ./.travis.yml ./.travis.old)
-if [ "${DIFF[0]}" != "" ]
+if ! cmp -s ./.travis.yml ./.travis.old;
 then
-  echo ".travis.yml has changed"
+    echo ".travis.yml has changed"
+    if [ -n "$CHECK" ]; then
+        echo "You should modify the file .travis/template.txt"
+        exit 1
+    fi
 fi
 #erase old travis
 rm ./.travis.old
 IFS=$old_IFS
+
+# Local Variables:
+# tab-width: 2
+# sh-basic-offset: 2
+# End:

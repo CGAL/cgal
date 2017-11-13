@@ -1,6 +1,8 @@
 /*!
 \example Point_set_processing_3/read_write_xyz_point_set_example.cpp
 \example Point_set_processing_3/read_ply_points_with_colors_example.cpp
+\example Point_set_processing_3/read_las_example.cpp
+\example Point_set_processing_3/write_ply_points_example.cpp
 \example Point_set_processing_3/average_spacing_example.cpp
 \example Point_set_processing_3/scale_estimation_example.cpp
 \example Point_set_processing_3/scale_estimation_2d_example.cpp

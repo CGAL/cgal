@@ -11,7 +11,7 @@ if ( Boost_VERSION GREATER 103400 )
                          Mesh_3_plugin_cgal_code.cpp Meshing_thread.cpp split_polylines.cpp
                          ${meshingUI_FILES})
   target_link_libraries(mesh_3_plugin scene_polyhedron_item scene_polygon_soup_item scene_polylines_item scene_implicit_function_item scene_image_item
-                        scene_c3t3_item ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} )
+                        scene_surface_mesh_item scene_c3t3_item ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} )
 
   set(VTK_LIBS "")
   find_package(VTK QUIET COMPONENTS
@@ -41,7 +41,7 @@ if ( Boost_VERSION GREATER 103400 )
   polyhedron_demo_plugin(mesh_3_optimization_plugin Optimization_plugin
     Optimization_plugin_cgal_code.cpp Optimizer_thread.cpp
     ${meshingUI_FILES})
-  target_link_libraries(mesh_3_optimization_plugin scene_c3t3_item scene_polyhedron_item scene_image_item scene_implicit_function_item )
+  target_link_libraries(mesh_3_optimization_plugin scene_c3t3_item scene_polyhedron_item scene_surface_mesh_item scene_image_item scene_implicit_function_item )
 
 
 
@@ -50,10 +50,6 @@ if ( Boost_VERSION GREATER 103400 )
   else( Boost_VERSION GREATER 103400 )
     message(STATUS "warning: the plugin mesh_3_plugin requires Boost>=1.34.1 and will not be compiled.")
   endif( Boost_VERSION GREATER 103400 )
-
-  polyhedron_demo_plugin(detect_sharp_edges_plugin Detect_sharp_edges_plugin)
-  target_link_libraries(detect_sharp_edges_plugin scene_polyhedron_item)
-  
   qt5_wrap_ui( ribUI_FILES  Rib_dialog.ui)
   polyhedron_demo_plugin(c3t3_rib_exporter_plugin C3t3_rib_exporter_plugin ${ribUI_FILES})
   target_link_libraries(c3t3_rib_exporter_plugin scene_c3t3_item)

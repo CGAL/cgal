@@ -5,6 +5,9 @@
 /// \defgroup PkgTriangulationsTriangulationClasses Triangulation Classes
 /// \ingroup PkgTriangulations
 
+/// \defgroup PkgTriangulationsTraitsClasses Traits Classes
+/// \ingroup PkgTriangulations
+
 /// \defgroup PkgTriangulationsVertexCellClasses Vertex, Face and Cell Classes
 /// \ingroup PkgTriangulations
 
@@ -13,7 +16,7 @@
 \cgalPkgDescriptionBegin{dD Triangulations,PkgTriangulationsSummary}
 \cgalPkgPicture{Hypertriangle.png}
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Samuel Hornus, Olivier Devillers and Clément Jamin}
+\cgalPkgAuthors{Olivier Devillers, Samuel Hornus, and Clément Jamin}
 \cgalPkgDesc{This package provides classes for manipulating 
 triangulations (pure simplicial complexes) in Euclidean spaces whose dimension 
 can be specified at compile-time or at run-time. Specifically, it provides a 
@@ -84,6 +87,7 @@ is opposite to the vertex with the same index.
 
 - `TriangulationTraits`
 - `DelaunayTriangulationTraits`
+- `RegularTriangulationTraits`
 - `TriangulationVertex`
 - `TriangulationFullCell`
 
@@ -93,17 +97,22 @@ The latter two concepts are also abbreviated respectively as `TrVertex` and `TrF
 
 ## Triangulation Data Structure ##
 
-- `CGAL::Triangulation_data_structure<Dimensionality, TriangulationDSVertex, TriangulationDSFullCell>`
-- `CGAL::Triangulation_ds_vertex<TriangulationDataStructure>`
-- `CGAL::Triangulation_ds_full_cell<TriangulationDataStructure, TriangulationDSFullCellStoragePolicy>`
-- `CGAL::Triangulation_face<TriangulationDataStructure>`
+- `CGAL::Triangulation_data_structure<Dimensionality, TriangulationDSVertex_, TriangulationDSFullCell_>`
+- `CGAL::Triangulation_ds_vertex<TriangulationDataStructure_>`
+- `CGAL::Triangulation_ds_full_cell<TriangulationDataStructure_, TriangulationDSFullCellStoragePolicy>`
+- `CGAL::Triangulation_face<TriangulationDataStructure_>`
 
 ## (Geometric) Triangulations ##
 
-- `CGAL::Triangulation<TriangulationTraits, TriangulationDataStructure>`
-- `CGAL::Delaunay_triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>`
-- `CGAL::Triangulation_vertex<TriangulationTraits, Data, TriangulationDSVertex>`
-- `CGAL::Triangulation_full_cell<TriangulationTraits, Data, TriangulationDSFullCell>`
+- `CGAL::Triangulation<TriangulationTraits_, TriangulationDataStructure_>`
+- `CGAL::Delaunay_triangulation<DelaunayTriangulationTraits_, TriangulationDataStructure_>`
+- `CGAL::Regular_triangulation<RegularTriangulationTraits_, TriangulationDataStructure_>`
+- `CGAL::Triangulation_vertex<TriangulationTraits_, Data, TriangulationDSVertex_>`
+- `CGAL::Triangulation_full_cell<TriangulationTraits_, Data, TriangulationDSFullCell_>`
+
+## Traits Classes ##
+
+-  `CGAL::Regular_triangulation_traits_adapter<K>`
 
 ## Enums ##
 

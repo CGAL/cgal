@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Nico Kruithof <Nico@cs.rug.nl>
 
@@ -22,7 +22,6 @@
 #define CGAL_MESH_SKIN_SURFACE_3_H
 
 #include <CGAL/license/Skin_surface_3.h>
-
 
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/marching_tetrahedra_3.h>
@@ -42,14 +41,13 @@ void mesh_skin_surface_3(SkinSurface_3 const &skin_surface, Polyhedron &p)
 //
 //template <class SkinSurface_3, class P_Traits>
 //void mesh_skin_surface_3
-//(SkinSurface_3 const &skin_surface, 
+//(SkinSurface_3 const &skin_surface,
 // Polyhedron_3<P_Traits, Skin_surface_polyhedral_items_3<SkinSurface_3> > &p)
 //{
 //  std::cout << "B" << std::endl;
 //  skin_surface.mesh_skin_surface_3(p);
 //}
 //
-
 
 } //namespace CGAL
 

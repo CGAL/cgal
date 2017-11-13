@@ -706,14 +706,15 @@ is_valid(bool verbose) const
   for ( typename Edge_map::const_iterator it = edges_.begin(),
        end = edges_.end() ; it != end ; ++it )
   {
-    const Bare_point& p = it->right->point().point();
-    const Bare_point& q = it->left->point().point();
-
     typename Tr::Geom_traits::Construct_sphere_3 sphere =
       this->triangulation().geom_traits().construct_sphere_3_object();
-
     typename Tr::Geom_traits::Do_intersect_3 do_intersect =
       this->triangulation().geom_traits().do_intersect_3_object();
+    typename Tr::Geom_traits::Construct_point_3 wp2p =
+      this->triangulation().geom_traits().construct_point_3_object();
+
+    const Bare_point& p = wp2p(it->right->point());
+    const Bare_point& q = wp2p(it->left->point());
 
     const FT& sq_rp = it->right->point().weight();
     const FT& sq_rq = it->left->point().weight();

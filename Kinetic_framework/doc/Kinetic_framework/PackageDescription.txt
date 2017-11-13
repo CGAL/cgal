@@ -80,9 +80,6 @@ Here we list the main classes and concepts provided by the framework to support 
 - `CGAL::Kinetic::Active_objects_listener_helper<ActiveObjectsTable, KDS>`
 - `CGAL::Kinetic::Erase_event<ActiveObjectsTable>`
 - `CGAL::Kinetic::Insert_event<ActiveObjectsTable>`
-- `CGAL::Kinetic::Qt_moving_points_2<Traits, QtWidget_2>`
-- `CGAL::Kinetic::Qt_triangulation_2<KineticTriangulation_2, QtWidget_2, QtMovingPoints_2>`
-- `CGAL::Kinetic::Qt_widget_2<Simulator>`
 - `CGAL::Kinetic::Regular_triangulation_instantaneous_kernel<ActiveObjectsTable, StaticKernel>`
 - `CGAL::Kinetic::Simulator_kds_listener<Listener, KDS>`
 - `CGAL::Kinetic::Simulator_objects_listener<Simulator_listener, KDS>`
@@ -108,7 +105,6 @@ struct My_simulation_traits {
   typedef My_simulation_traits This;
 
   typedef CGAL::Exact_predicates_exact_constructions_kernel Static_kernel;
-  //typedef CGAL::Regular_triangulation_euclidean_traits_3<Static_kernel_base> Static_kernel;
   typedef CGAL::POLYNOMIAL::Polynomial<Static_kernel::FT> Function;
   typedef CGAL::POLYNOMIAL::Sturm_root_stack_traits<Function> Root_stack_traits;
   typedef CGAL::POLYNOMIAL::Sturm_root_stack<Root_stack_traits> Root_stack;

@@ -44,8 +44,8 @@ class Cartesian_kinetic_kernel_base
 {
 public:
   typedef Cartesian_kinetic_kernel_base<Function_kernel_k, This> Base;
-  Cartesian_kinetic_kernel_base(Function_kernel_k pk): k_(pk){};
-  Cartesian_kinetic_kernel_base(){};
+  Cartesian_kinetic_kernel_base(Function_kernel_k pk): k_(pk){}
+  Cartesian_kinetic_kernel_base(){}
 
   //! The type of function used to represent coordinates.
   typedef typename Function_kernel_k::Function Motion_function;
@@ -97,17 +97,11 @@ public:
   /*!
     Takes 4 Point_3.
   */
-  typedef Certificate_generator<This, Cartesian_weighted_orientation_3<This> > Orientation_3;
+  typedef Certificate_generator<This, Cartesian_orientation_3<This> > Orientation_3;
   Orientation_3 orientation_3_object() const
   {
     return Orientation_3(k_);
   }
-
-  /*typedef  Cartesian_orientation_3<This> Orientation_3;
-  Orientation_3 orientation_3_object() const
-  {
-    return Orientation_3(k_);
-    }*/
 
   //! The in_circle test.
   typedef Certificate_generator<This, Cartesian_side_of_oriented_circle_2<This> > Side_of_oriented_circle_2;
@@ -124,7 +118,7 @@ public:
   }
 
   //! The power test for weighted points.
-  typedef Certificate_generator<This, Cartesian_power_test_3<This> > Power_side_of_oriented_power_sphere_3;
+  typedef Certificate_generator<This, Cartesian_power_side_of_oriented_power_sphere_3<This> > Power_side_of_oriented_power_sphere_3;
   Power_side_of_oriented_power_sphere_3 power_side_of_oriented_power_sphere_3_object() const
   {
     return Power_side_of_oriented_power_sphere_3(k_);
@@ -136,12 +130,6 @@ public:
   {
     return Weighted_orientation_3(k_);
   }
-
-  /*typedef  Cartesian_weighted_orientation_3<This> Weighted_orientation_3;
-  Weighted_orientation_3 weighted_orientation_3_object() const
-  {
-    return Weighted_orientation_3();
-    }*/
 
   template <class Arg>
   struct Null_generator {

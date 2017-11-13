@@ -29,7 +29,6 @@ typedef unsigned int uint;
 
 #include <ipelib.h>
 #include <CGAL/Polygon_2.h>
-#include <CGAL/Weighted_point.h>
 #include <CGAL/iterator.h>
 #include <CGAL/Triangulation_2.h>
 #include <CGAL/grabbers.h>

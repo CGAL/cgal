@@ -447,9 +447,9 @@ template <class Traits_, class TopTraits_, class ValidationPolicy>
 {
   typename std::iterator_traits<PolygonIter>::value_type pgn;
   //check validity of all polygons
-  for( ; p_begin != p_end; ++p_begin)
+  for(PolygonIter pitr = p_begin; pitr != p_end; ++pitr)
   {
-    ValidationPolicy::is_valid(*p_begin, *m_traits);
+    ValidationPolicy::is_valid(*pitr, *m_traits);
   }
 
   _insert(p_begin, p_end, pgn);

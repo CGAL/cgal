@@ -402,7 +402,7 @@ int orientation(const Extended_point<RT>& p1,
                              p2.mxD(),p2.nxD(),p2.myD(),p2.nyD(),p2.hwD(),
                              p3.mxD(),p3.nxD(),p3.myD(),p3.nyD(),p3.hwD());
   }
-  catch (Uncertain_conversion_exception) { INCEXCEPTION(or2);
+  catch (Uncertain_conversion_exception&) { INCEXCEPTION(or2);
     res = orientation_coeff2(p1.mx(),p1.nx(),p1.my(),p1.ny(),p1.hw(),
                              p2.mx(),p2.nx(),p2.my(),p2.ny(),p2.hw(),
                              p3.mx(),p3.nx(),p3.my(),p3.ny(),p3.hw());
@@ -414,7 +414,7 @@ int orientation(const Extended_point<RT>& p1,
                              p2.mxD(),p2.nxD(),p2.myD(),p2.nyD(),p2.hwD(),
                              p3.mxD(),p3.nxD(),p3.myD(),p3.nyD(),p3.hwD());
   }
-  catch (Uncertain_conversion_exception) { INCEXCEPTION(or1);
+  catch (Uncertain_conversion_exception&) { INCEXCEPTION(or1);
     res = orientation_coeff1(p1.mx(),p1.nx(),p1.my(),p1.ny(),p1.hw(),
                              p2.mx(),p2.nx(),p2.my(),p2.ny(),p2.hw(),
                              p3.mx(),p3.nx(),p3.my(),p3.ny(),p3.hw());
@@ -426,7 +426,7 @@ int orientation(const Extended_point<RT>& p1,
                              p2.mxD(),p2.nxD(),p2.myD(),p2.nyD(),p2.hwD(),
                              p3.mxD(),p3.nxD(),p3.myD(),p3.nyD(),p3.hwD());
   }
-  catch (Uncertain_conversion_exception) { INCEXCEPTION(or0);
+  catch (Uncertain_conversion_exception&) { INCEXCEPTION(or0);
     res = orientation_coeff0(p1.mx(),p1.nx(),p1.my(),p1.ny(),p1.hw(),
                              p2.mx(),p2.nx(),p2.my(),p2.ny(),p2.hw(),
                              p3.mx(),p3.nx(),p3.my(),p3.ny(),p3.hw());
@@ -451,7 +451,7 @@ int compare_x(const Extended_point<RT>& p1,
   try { INCTOTAL(cmpx1); Protect_FPU_rounding<true> Protection;
     res = compare_expr(p1.mxD(),p1.hwD(),p2.mxD(),p2.hwD());
   }
-  catch (Uncertain_conversion_exception) { INCEXCEPTION(cmpx1);
+  catch (Uncertain_conversion_exception&) { INCEXCEPTION(cmpx1);
     res = compare_expr(p1.mx(),p1.hw(),p2.mx(),p2.hw());
   }
   if ( res != 0 ) return res;
@@ -459,7 +459,7 @@ int compare_x(const Extended_point<RT>& p1,
   try { INCTOTAL(cmpx0); Protect_FPU_rounding<true> Protection;
     res = compare_expr(p1.nxD(),p1.hwD(),p2.nxD(),p2.hwD());
   }
-  catch (Uncertain_conversion_exception) { INCEXCEPTION(cmpx0);
+  catch (Uncertain_conversion_exception&) { INCEXCEPTION(cmpx0);
     res = compare_expr(p1.nx(),p1.hw(),p2.nx(),p2.hw());
   }
   return res;
@@ -476,7 +476,7 @@ int compare_y(const Extended_point<RT>& p1,
   try { INCTOTAL(cmpy1); Protect_FPU_rounding<true> Protection;
     res = compare_expr(p1.myD(),p1.hwD(),p2.myD(),p2.hwD());
   }
-  catch (Uncertain_conversion_exception) { INCEXCEPTION(cmpy1);
+  catch (Uncertain_conversion_exception&) { INCEXCEPTION(cmpy1);
     res = compare_expr(p1.my(),p1.hw(),p2.my(),p2.hw());
   }
   if ( res != 0 ) return res;
@@ -484,7 +484,7 @@ int compare_y(const Extended_point<RT>& p1,
   try { INCTOTAL(cmpy0); Protect_FPU_rounding<true> Protection;
     res = compare_expr(p1.nyD(),p1.hwD(),p2.nyD(),p2.hwD());
   }
-  catch (Uncertain_conversion_exception) { INCEXCEPTION(cmpy0);
+  catch (Uncertain_conversion_exception&) { INCEXCEPTION(cmpy0);
     res = compare_expr(p1.ny(),p1.hw(),p2.ny(),p2.hw());
   }
   return res;
@@ -621,7 +621,7 @@ int compare_pair_dist(
                        p3.mxD(),p3.nxD(),p3.myD(),p3.nyD(),p3.hwD(),
                        p4.mxD(),p4.nxD(),p4.myD(),p4.nyD(),p4.hwD());
   }
-  catch (Uncertain_conversion_exception) { INCEXCEPTION(cmppd2);
+  catch (Uncertain_conversion_exception&) { INCEXCEPTION(cmppd2);
     res = cmppd_coeff2(p1.mx(),p1.nx(),p1.my(),p1.ny(),p1.hw(),
                        p2.mx(),p2.nx(),p2.my(),p2.ny(),p2.hw(),
                        p3.mx(),p3.nx(),p3.my(),p3.ny(),p3.hw(),
@@ -635,7 +635,7 @@ int compare_pair_dist(
                        p3.mxD(),p3.nxD(),p3.myD(),p3.nyD(),p3.hwD(),
                        p4.mxD(),p4.nxD(),p4.myD(),p4.nyD(),p4.hwD());
   }
-  catch (Uncertain_conversion_exception) { INCEXCEPTION(cmppd1);
+  catch (Uncertain_conversion_exception&) { INCEXCEPTION(cmppd1);
     res = cmppd_coeff1(p1.mx(),p1.nx(),p1.my(),p1.ny(),p1.hw(),
                        p2.mx(),p2.nx(),p2.my(),p2.ny(),p2.hw(),
                        p3.mx(),p3.nx(),p3.my(),p3.ny(),p3.hw(),
@@ -649,7 +649,7 @@ int compare_pair_dist(
                        p3.mxD(),p3.nxD(),p3.myD(),p3.nyD(),p3.hwD(),
                        p4.mxD(),p4.nxD(),p4.myD(),p4.nyD(),p4.hwD());
   }
-  catch (Uncertain_conversion_exception) { INCEXCEPTION(cmppd0);
+  catch (Uncertain_conversion_exception&) { INCEXCEPTION(cmppd0);
     res = cmppd_coeff0(p1.mx(),p1.nx(),p1.my(),p1.ny(),p1.hw(),
                        p2.mx(),p2.nx(),p2.my(),p2.ny(),p2.hw(),
                        p3.mx(),p3.nx(),p3.my(),p3.ny(),p3.hw(),
@@ -885,7 +885,7 @@ int orientation(const Extended_direction<RT>& d1,
                      p2.mxD(),p2.nxD(),p2.myD(),p2.nyD(),p2.hwD(),
                      p3.mxD(),p3.nxD(),p3.myD(),p3.nyD(),p3.hwD(),
                      p4.mxD(),p4.nxD(),p4.myD(),p4.nyD(),p4.hwD());
-  } catch (Uncertain_conversion_exception) { INCEXCEPTION(ord2);
+  } catch (Uncertain_conversion_exception&) { INCEXCEPTION(ord2);
     res = coeff2_dor(p1.mx(),p1.nx(),p1.my(),p1.ny(),p1.hw(),
                      p2.mx(),p2.nx(),p2.my(),p2.ny(),p2.hw(),
                      p3.mx(),p3.nx(),p3.my(),p3.ny(),p3.hw(),
@@ -898,7 +898,7 @@ int orientation(const Extended_direction<RT>& d1,
                      p2.mxD(),p2.nxD(),p2.myD(),p2.nyD(),p2.hwD(),
                      p3.mxD(),p3.nxD(),p3.myD(),p3.nyD(),p3.hwD(),
                      p4.mxD(),p4.nxD(),p4.myD(),p4.nyD(),p4.hwD());
-  } catch (Uncertain_conversion_exception) { INCEXCEPTION(ord1);
+  } catch (Uncertain_conversion_exception&) { INCEXCEPTION(ord1);
     res = coeff1_dor(p1.mx(),p1.nx(),p1.my(),p1.ny(),p1.hw(),
                      p2.mx(),p2.nx(),p2.my(),p2.ny(),p2.hw(),
                      p3.mx(),p3.nx(),p3.my(),p3.ny(),p3.hw(),
@@ -910,7 +910,7 @@ int orientation(const Extended_direction<RT>& d1,
                      p2.mxD(),p2.nxD(),p2.myD(),p2.nyD(),p2.hwD(),
                      p3.mxD(),p3.nxD(),p3.myD(),p3.nyD(),p3.hwD(),
                      p4.mxD(),p4.nxD(),p4.myD(),p4.nyD(),p4.hwD());
-  } catch (Uncertain_conversion_exception) { INCEXCEPTION(ord0);
+  } catch (Uncertain_conversion_exception&) { INCEXCEPTION(ord0);
     res = coeff0_dor(p1.mx(),p1.nx(),p1.my(),p1.ny(),p1.hw(),
                      p2.mx(),p2.nx(),p2.my(),p2.ny(),p2.hw(),
                      p3.mx(),p3.nx(),p3.my(),p3.ny(),p3.hw(),

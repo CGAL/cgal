@@ -127,6 +127,15 @@ degree(typename boost::graph_traits<CGAL::Surface_mesh<P> >::vertex_descriptor v
   return sm.degree(v);
 }
 
+
+template <typename P>
+typename boost::graph_traits<CGAL::Surface_mesh<P> >::degree_size_type
+degree(typename boost::graph_traits<CGAL::Surface_mesh<P> >::face_descriptor f,
+       const CGAL::Surface_mesh<P>& sm)
+{
+  return sm.degree(f);
+}
+
          
 template <typename P>
 typename boost::graph_traits<CGAL::Surface_mesh<P> >::degree_size_type
@@ -517,10 +526,10 @@ bool is_valid(const CGAL::Surface_mesh<P>& sm, bool verbose = false)
   return sm.is_valid(verbose);
 }
 
+template<typename P>
+void normalize_border(const CGAL::Surface_mesh<P>&)
+{}
+
 } // namespace CGAL
-
-
-
-
 
 #endif // CGAL_BOOST_GRAPH_TRAITS_SURFACE_MESH_H

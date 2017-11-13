@@ -444,7 +444,7 @@ public:
   Self& operator++() 
   {
     CGAL_assertion(g != NULL);
-    pos = next(pos,*g); 
+    pos = next(pos,*g);
     if ( pos == anchor)
       ++winding;
     return *this;
@@ -820,7 +820,7 @@ private:
  */
 template<typename Graph>
 Iterator_range<Halfedge_around_source_iterator<Graph> >
-halfedges_around_source(typename boost::graph_traits<Graph>::halfedge_descriptor h, Graph& g)
+halfedges_around_source(typename boost::graph_traits<Graph>::halfedge_descriptor h, const Graph& g)
 {
   typedef Halfedge_around_source_iterator<Graph> I;
   return make_range(I(h,g), I(h,g,1));
@@ -832,7 +832,7 @@ halfedges_around_source(typename boost::graph_traits<Graph>::halfedge_descriptor
  */
 template<typename Graph>
 Iterator_range<Halfedge_around_source_iterator<Graph> >
-halfedges_around_source(typename boost::graph_traits<Graph>::vertex_descriptor v, Graph& g)
+halfedges_around_source(typename boost::graph_traits<Graph>::vertex_descriptor v, const Graph& g)
 {
   return halfedges_around_source(opposite(halfedge(v,g),g),g);
 }

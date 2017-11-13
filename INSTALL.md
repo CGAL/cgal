@@ -6,7 +6,7 @@ build-sources attached to the Git repository.
 
 Note that we do not document here what are the dependancies and cmake options that
 are needed to configure CGAL as they are already documented in the
-[installation manual](http://doc.cgal.org/latest/Manual/installation.html).
+[installation manual](https://doc.cgal.org/latest/Manual/installation.html).
 
 Branch Build of CGAL
 ====================

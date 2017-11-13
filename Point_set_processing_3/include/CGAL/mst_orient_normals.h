@@ -493,7 +493,7 @@ create_mst_graph(
 // Public section
 // ----------------------------------------------------------------------------
 
-/// \ingroup PkgPointSetProcessing
+/// \ingroup PkgPointSetProcessingAlgorithms
 /// Orients the normals of the `[first, beyond)` range of points using the propagation
 /// of a seed orientation through a minimum spanning tree of the Riemannian graph [Hoppe92].
 ///

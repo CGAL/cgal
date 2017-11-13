@@ -35,6 +35,7 @@ class Is_degenerate_3
 {
   typedef typename K_base::Ray_3     Ray_3;
   typedef typename K_base::Segment_3 Segment_3;
+  typedef typename K_base::Plane_3 Plane_3;
   typedef typename K_base::Is_degenerate_3 Base;
   typedef typename K_base::Construct_source_3 Construct_source_3;
   typedef typename K_base::Construct_target_3 Construct_target_3;
@@ -70,6 +71,26 @@ public:
   {
     return Equal_3()(Construct_source_3()(r), Construct_second_point_3()(r));
   }
+
+  result_type 
+  operator()(const Plane_3& p) const
+  {
+    CGAL_BRANCH_PROFILER(std::string("semi-static attempts/calls to   : ") +
+                         std::string(CGAL_PRETTY_FUNCTION), tmp);
+
+    Get_approx<Plane_3> get_approx; // Identity functor for all planes
+                                    // but lazy planes
+    double a, b, c;
+
+    if (fit_in_double(get_approx(p).a(), a) && fit_in_double(get_approx(p).b(), b) &&
+        fit_in_double(get_approx(p).c(), c) )
+    {
+      CGAL_BRANCH_PROFILER_BRANCH(tmp);
+      return a == 0 && b == 0 && c == 0;
+    }
+    return Base::operator()(p);
+  }
+
 
 }; // end class Is_degenerate_3
 

@@ -28,10 +28,14 @@ namespace Three {
   class Scene_item;
 
 //! Base class to allow an item to copy properties from another.
+//! Properties reprensent the current state of an item : its color,
+//! the position of its manipulated frame, ...
 class Scene_item_with_properties {
 public:
   virtual ~Scene_item_with_properties(){}
- //!Copies properties from another Scene_item
+ //!\brief Copies properties from another Scene_item.
+ //!
+ //! Override this function to specify what must be copied.
  virtual void copyProperties(Scene_item*)=0; //pure virtual method
 };
 }

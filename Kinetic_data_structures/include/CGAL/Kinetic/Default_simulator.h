@@ -167,7 +167,7 @@ public:
     failure time of that event. Otherwise it is between the last event
     which was processed and the next event to be processed.
   */
-  CGAL_GET(Time, current_time, return cur_time_);
+  CGAL_GET(Time, current_time, return cur_time_)
 
   //! Set the current time to t
   /*!
@@ -279,10 +279,10 @@ public:
     Or end_time() if the queue is empty.
   */
   CGAL_GETNR(Time, next_event_time, return queue_.empty()?
-		  end_time(): Time(queue_.front_priority()));
+             end_time(): Time(queue_.front_priority()))
 
   CGAL_GETNR(Event_key, next_event, return queue_.empty()?
-		  Event_key(): queue_.front());
+             Event_key(): queue_.front())
 
   //! The last time of interest
   /*!
@@ -291,7 +291,7 @@ public:
   CGAL_GETNR(Time, end_time, return  is_forward_?
 		  queue_.end_priority():
 		  std::numeric_limits<Time>::infinity()
-		  );
+      )
 
   //! Set the last time to track events for
   /*!
@@ -349,7 +349,7 @@ public:
   /*!  Events can never occur if their time is past the end time or
     their certificate function has no roots.
   */
-  CGAL_GETNR(Event_key, null_event, return queue_.end_key());
+  CGAL_GETNR(Event_key, null_event, return queue_.end_key())
 
   /*const Event_key& final_event() const {
     return queue_.final_event();
@@ -464,10 +464,10 @@ public:
 
   //! Return the direction of time.
   CGAL_GETNR(CGAL::Sign, direction_of_time, return is_forward_?
-		  CGAL::POSITIVE: CGAL::NEGATIVE);
+      CGAL::POSITIVE: CGAL::NEGATIVE)
 
   //! Return the number of events which has been processed.
-  CGAL_GETNR(unsigned int, current_event_number, return number_of_events_);
+  CGAL_GETNR(unsigned int, current_event_number, return number_of_events_)
 
   
   bool empty() const {
@@ -487,12 +487,12 @@ public:
                #endif*/
              process_next_event();
            }
-	   );
+  )
 
   std::ostream& write(std::ostream &out) const
   {
     out << "Simulator: (" << to_double(current_time())
-	<< "..." << to_double(end_time()) << ")\n";
+        << "..." << to_double(end_time()) << ")\n";
     out << queue_ << std::endl;
     return out;
   }

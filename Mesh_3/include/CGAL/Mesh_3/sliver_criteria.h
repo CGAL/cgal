@@ -96,7 +96,7 @@ public:
     , sliver_bound_(bound)
   {}
 
-  virtual ~Sliver_criterion(){};
+  virtual ~Sliver_criterion(){}
 
 protected:
   const Tr& tr_;
@@ -135,7 +135,7 @@ public:
 
   virtual double operator()(const Tetrahedron_3& t) const
   {
-    return CGAL::to_double(minimum_dihedral_angle(t, Gt()));
+    return CGAL::to_double(minimum_dihedral_angle(t, this->tr_.geom_traits()));
   }
 
   virtual void before_move(const Cell_vector& cells) const
@@ -185,7 +185,7 @@ public:
 
   virtual double operator()(const Tetrahedron_3& t) const
   {
-    return CGAL::to_double(radius_ratio(t, Gt()));
+    return CGAL::to_double(radius_ratio(t, this->tr_.geom_traits()));
   }
 
   virtual void before_move(const Cell_vector& cells) const

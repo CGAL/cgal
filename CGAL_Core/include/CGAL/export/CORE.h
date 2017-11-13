@@ -47,7 +47,8 @@
 // If CGAL_EXPORTS is defined, one are building the CGAL library, and we do
 // not want artificial dll-imports of Core symbols (because of
 // auto-linking).
-#if ( ! defined(CGAL_EXPORTS) ) && defined(CGAL_BUILD_SHARED_LIBS)
+#if ( ! defined(CGAL_EXPORTS) ) && defined(CGAL_BUILD_SHARED_LIBS) \
+  && ( ! defined(CGAL_HEADER_ONLY) )
 
 #  if defined(CGAL_Core_EXPORTS) // defined by CMake or in cpp files of the dll
 

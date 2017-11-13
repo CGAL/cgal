@@ -1130,7 +1130,7 @@ public:
 		this->traversal(query, traversal_traits);
 		return traversal_traits.is_intersection_found();
 	}
-
+#ifndef DOXYGEN_RUNNING //To avoid doxygen to consider definition and declaration as 2 different functions (size_type causes problems)
 	template<typename Tr>
 	template<typename Query>
 	typename AABB_tree<Tr>::size_type
@@ -1149,7 +1149,7 @@ public:
 		this->traversal(query, traversal_traits);
 		return counter;
 	}
-
+#endif
 	template<typename Tr>
 	template<typename Query, typename OutputIterator>
 	OutputIterator

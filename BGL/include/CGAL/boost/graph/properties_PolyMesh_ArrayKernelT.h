@@ -47,27 +47,76 @@ public:
   
   typedef value_type& reference;
   
-  OM_pmap(Mesh& m)
-    : mesh(m)
+  OM_pmap()
   {}
+
+  OM_pmap(Mesh& m)
+    : mesh(&m)
+  {
+    mesh->add_property(h);
+  }
   
   OM_pmap(Mesh& m, H h)
-    : mesh(m), h(h)
-  {}
-  
-  inline friend reference get(const OM_pmap<Mesh,Descriptor,Value>& pm, key_type k)
+    : mesh(&m), h(h)
   {
-    return pm.mesh.property(pm.h,k);
+    mesh->add_property(h);
+  }
+  
+  inline friend reference get(const OM_pmap<Mesh,Descriptor,Value>& pm, 
+                              typename boost::graph_traits<Mesh>::vertex_descriptor k)
+  {
+    return pm.mesh->property(pm.h,k);
   }
 
-  inline friend void put(const OM_pmap<Mesh,Descriptor,Value>& pm, key_type k, const value_type& v)
+  inline friend reference get(const OM_pmap<Mesh,Descriptor,Value>& pm, 
+                         typename boost::graph_traits<Mesh>::face_descriptor k)
   {
-    pm.mesh.property(pm.h,k) = v;
+    return pm.mesh->property(pm.h,k);
+  }
+
+  inline friend reference get(const OM_pmap<Mesh,Descriptor,Value>& pm, 
+                         typename boost::graph_traits<Mesh>::halfedge_descriptor k)
+  {
+    return pm.mesh->property(pm.h,k);
+  }
+
+  inline friend reference get(const OM_pmap<Mesh,Descriptor,Value>& pm, 
+                         typename boost::graph_traits<Mesh>::edge_descriptor k)
+  {
+    typename Mesh::EdgeHandle eh(k.idx());
+    return pm.mesh->property(pm.h,eh);
+  }
+  inline friend void put(const OM_pmap<Mesh,Descriptor,Value>& pm, 
+                         typename boost::graph_traits<Mesh>::vertex_descriptor k,
+                         const value_type& v)
+  {
+    pm.mesh->property(pm.h,k) = v;
+  }
+
+  inline friend void put(const OM_pmap<Mesh,Descriptor,Value>& pm, 
+                         typename boost::graph_traits<Mesh>::face_descriptor k,
+                         const value_type& v)
+  {
+    pm.mesh->property(pm.h,k) = v;
+  }
+
+  inline friend void put(const OM_pmap<Mesh,Descriptor,Value>& pm, 
+                         typename boost::graph_traits<Mesh>::halfedge_descriptor k,
+                         const value_type& v)
+  {
+    pm.mesh->property(pm.h,k) = v;
+  }
+  inline friend void put(const OM_pmap<Mesh,Descriptor,Value>& pm, 
+                         typename boost::graph_traits<Mesh>::edge_descriptor k,
+                         const value_type& v)
+  {
+    typename Mesh::EdgeHandle eh(k.idx());
+    pm.mesh->property(pm.h,eh) = v;
   }
 
   reference operator[](key_type k)
   {
-    return mesh.property(h,k);
+    return mesh->property(h,k);
   }
 
   H handle() const
@@ -80,7 +129,7 @@ public:
     return h;
   }
 
-  Mesh& mesh;
+  Mesh* mesh;
   H h;
 };
 
@@ -116,6 +165,9 @@ public:
   typedef unsigned int                      value_type;
   typedef unsigned int                      reference;
   typedef VEF                              key_type;
+
+  OM_index_pmap()
+  {}
 
   value_type operator[](const key_type& vd) const
   {
@@ -381,6 +433,90 @@ put(boost::vertex_point_t p, OpenMesh::PolyMesh_ArrayKernelT<K>& g,
 
 } // namespace OpenMesh
 
+
+
+namespace CGAL {
+  namespace internal {
+template <typename K, typename V>
+struct dynamic_property_map<OpenMesh::PolyMesh_ArrayKernelT<K>, vertex_property_t<V> >
+{
+  typedef OpenMesh::PolyMesh_ArrayKernelT<K> SM;
+  typedef typename boost::graph_traits<SM>::vertex_descriptor vertex_descriptor;
+  typedef CGAL::OM_pmap<SM,vertex_descriptor, V> type;
+  typedef type const_type;
+};
+
+template <typename K, typename V>
+struct dynamic_property_map<OpenMesh::PolyMesh_ArrayKernelT<K>, halfedge_property_t<V> >
+{
+  typedef OpenMesh::PolyMesh_ArrayKernelT<K> SM;
+  typedef typename boost::graph_traits<SM>::halfedge_descriptor halfedge_descriptor;
+  typedef CGAL::OM_pmap<SM,halfedge_descriptor, V> type;
+  typedef type const_type;
+};
+
+template <typename K, typename V>
+struct dynamic_property_map<OpenMesh::PolyMesh_ArrayKernelT<K>, edge_property_t<V> >
+{
+  typedef OpenMesh::PolyMesh_ArrayKernelT<K> SM;
+  typedef typename boost::graph_traits<SM>::edge_descriptor edge_descriptor;
+  typedef CGAL::OM_pmap<SM,edge_descriptor, V> type;
+  typedef type const_type;
+};
+
+template <typename K, typename V>
+struct dynamic_property_map<OpenMesh::PolyMesh_ArrayKernelT<K>, face_property_t<V> >
+{
+  typedef OpenMesh::PolyMesh_ArrayKernelT<K> SM;
+  typedef typename boost::graph_traits<SM>::face_descriptor face_descriptor;
+  typedef CGAL::OM_pmap<SM,face_descriptor, V> type;
+  typedef type const_type;
+};
+
+
+template <typename K, typename V>
+typename dynamic_property_map<OpenMesh::PolyMesh_ArrayKernelT<K>, vertex_property_t<V> >::const_type
+add_property(vertex_property_t<V>, OpenMesh::PolyMesh_ArrayKernelT<K>& om)
+{
+  typedef OpenMesh::PolyMesh_ArrayKernelT<K> OM;
+  typedef typename boost::graph_traits<OM>::vertex_descriptor vertex_descriptor;
+  return CGAL::OM_pmap<OM,vertex_descriptor, V>(om);
+}
+
+template <typename K, typename V>
+typename dynamic_property_map<OpenMesh::PolyMesh_ArrayKernelT<K>, halfedge_property_t<V> >::const_type
+add_property(halfedge_property_t<V>, OpenMesh::PolyMesh_ArrayKernelT<K>& om)
+{
+  typedef OpenMesh::PolyMesh_ArrayKernelT<K> OM;
+  typedef typename boost::graph_traits<OM>::halfedge_descriptor halfedge_descriptor;
+  return CGAL::OM_pmap<OM,halfedge_descriptor, V>(om);
+}
+
+template <typename K, typename V>
+typename dynamic_property_map<OpenMesh::PolyMesh_ArrayKernelT<K>, edge_property_t<V> >::const_type
+add_property(edge_property_t<V>, OpenMesh::PolyMesh_ArrayKernelT<K>& om)
+{
+  typedef OpenMesh::PolyMesh_ArrayKernelT<K> OM;
+  typedef typename boost::graph_traits<OM>::edge_descriptor edge_descriptor;
+  return CGAL::OM_pmap<OM,edge_descriptor, V>(om);
+}
+
+template <typename K, typename V>
+typename dynamic_property_map<OpenMesh::PolyMesh_ArrayKernelT<K>, face_property_t<V> >::const_type
+add_property(face_property_t<V>, OpenMesh::PolyMesh_ArrayKernelT<K>& om)
+{
+  typedef OpenMesh::PolyMesh_ArrayKernelT<K> OM;
+  typedef typename boost::graph_traits<OM>::face_descriptor face_descriptor;
+  return CGAL::OM_pmap<OM,face_descriptor, V>(om);
+}
+
+template <typename Pmap, typename K>
+void remove_property(Pmap pm, OpenMesh::PolyMesh_ArrayKernelT<K>& om)
+{
+  om.remove_property(pm.handle());
+}
+} // namespace internal
+} // namespace CGAL
 
 
 #endif /* CGAL_PROPERTIES_POLYMESH_ARRAYKERNELT_H */

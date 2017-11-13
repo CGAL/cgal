@@ -128,7 +128,7 @@ int main(int, char *[]) {
 			          rp<F>(r, r.get_int(0,5))),
 	               rp<F>(r, r.get_int(0,5)));
       std::cout << pt << std::endl;
-      tr.active_points_3_table_handle()->insert(pt);
+      tr.active_weighted_points_3_table_handle()->insert(pt);
       ds.audit();
       if (i == 10) {
 	ds.set_has_certificates(true);
@@ -137,7 +137,7 @@ int main(int, char *[]) {
 	tr.simulator_handle()->audit_events();
       }
     }
-    std::cout << *tr.active_points_3_table_handle() << std::endl;
+    std::cout << *tr.active_weighted_points_3_table_handle() << std::endl;
     ds.set_has_certificates(true);
     ds.audit();
     tr.simulator_handle()->set_current_time(tr.simulator_handle()->end_time());

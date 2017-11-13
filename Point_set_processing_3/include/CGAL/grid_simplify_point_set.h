@@ -163,7 +163,7 @@ public:
 
 /// \endcond
 
-/// \ingroup PkgPointSetProcessing
+/// \ingroup PkgPointSetProcessingAlgorithms
 /// Merges points which belong to the same cell of a grid of cell size = `epsilon`.
 ///
 /// This method modifies the order of input points so as to pack all remaining points first,

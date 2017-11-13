@@ -62,20 +62,20 @@ public:
   /// @{
 
   /*!
-    returns \ref CGAL::OBTUSE, \ref CGAL::RIGHT or \ref CGAL::ACUTE depending 
-  on the angle formed by the two vectors `u` and `v`. 
-  */ 
-  Angle operator()(const Kernel::Vector_3&u, 
-                   const Kernel::Vector_3&v); 
+    returns \ref CGAL::OBTUSE, \ref CGAL::RIGHT or \ref CGAL::ACUTE depending
+  on the angle formed by the two vectors `u` and `v`.
+  */
+  Angle operator()(const Kernel::Vector_3&u,
+                   const Kernel::Vector_3&v);
 
   /*!
-    returns \ref CGAL::OBTUSE, \ref CGAL::RIGHT or \ref CGAL::ACUTE depending 
-    on the angle formed by the three points `p`, `q`, `r` (`q` being the vertex of 
+    returns \ref CGAL::OBTUSE, \ref CGAL::RIGHT or \ref CGAL::ACUTE depending
+    on the angle formed by the three points `p`, `q`, `r` (`q` being the vertex of
     the angle). The returned value is the same as `operator()(p - q, r - q)`.
-  */ 
-  Angle operator()(const Kernel::Point_3&p, 
-                   const Kernel::Point_3&q, 
-                   const Kernel::Point_3&r); 
+  */
+  Angle operator()(const Kernel::Point_3&p,
+                   const Kernel::Point_3&q,
+                   const Kernel::Point_3&r);
 
   /*!
     returns \ref CGAL::OBTUSE, \ref CGAL::RIGHT or \ref CGAL::ACUTE depending 
@@ -85,7 +85,16 @@ public:
   Angle operator()(const Kernel::Point_3&p, 
                    const Kernel::Point_3&q, 
                    const Kernel::Point_3&r, 
-                   const Kernel::Point_3&s); 
+                   const Kernel::Point_3&s);   
+
+  /*!
+    returns \ref CGAL::OBTUSE, \ref CGAL::RIGHT or \ref CGAL::ACUTE depending 
+    on the angle formed by the normal of the triangle `pqr` and the vector `v`. 
+  */ 
+  Angle operator()(const Kernel::Point_3&p, 
+                   const Kernel::Point_3&q, 
+                   const Kernel::Point_3&r, 
+                   const Kernel::Vector_3&v); 
   /// @}
 
 }; /* end Kernel::Angle_3 */
@@ -914,8 +923,6 @@ public:
 
 }; /* end Kernel::CompareDistance_3 */
 
-
-
 /*!
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
@@ -923,27 +930,23 @@ public:
   \cgalRefines `AdaptableFunctor` (with three arguments) 
 
   \sa `CGAL::Weighted_point_2<Kernel>`
-  \sa `ComputePowerProduct_3` for the definition of power distance.
+  \sa `ComputePowerProduct_2` for the definition of power distance.
 
 */
-class ComparePowerDistance_2 {
+class ComparePowerDistance_2
+{
 public:
   /// \name Operations
   /// A model of this concept must provide:
   /// @{
 
   /*!
-    compares the power distance between `p` and `q` to the power distance between `p` and `r`.
-
-  */ 
-
-
-  Comparison_result operator()(const Kernel::Point_2& p, 
-                               const Kernel::Weighted_point_2& q, 
-                               const Kernel::Weighted_point_2& r); 
-
-
-
+    compares the power distance between `p` and `q` to the power distance
+    between `p` and `r`.
+  */
+  Comparison_result operator()(const Kernel::Point_2& p,
+                               const Kernel::Weighted_point_2& q,
+                               const Kernel::Weighted_point_2& r);
   /// @}
 };
 
@@ -956,29 +959,22 @@ public:
   \sa `CGAL::Weighted_point_3<Kernel>` 
   \sa `ComputePowerProduct_3` for the definition of power distance.
 */
-class ComparePowerDistance_3 {
+class ComparePowerDistance_3
+{
 public:
-
   /// \name Operations
   /// A model of this concept must provide:
   /// @{
 
   /*!
-    compares the power distance between `p` and `q` to the power distance between `p` and `r`.
-
-  */ 
-  Comparison_result operator()(const Kernel::Point_3& p, 
-                               const Kernel::Weighted_point_3& q, 
-                               const Kernel::Weighted_point_3& r); 
-
-
-
+    compares the power distance between `p` and `q` to the power distance
+    between `p` and `r`.
+  */
+  Comparison_result operator()(const Kernel::Point_3& p,
+                               const Kernel::Weighted_point_3& q,
+                               const Kernel::Weighted_point_3& r);
   /// @}
-
 }; /* end Kernel::ComparePowerDistance_3 */
-
-
-
 
 /*!
   \ingroup PkgKernel23ConceptsFunctionObjects
@@ -1004,7 +1000,9 @@ public:
                                const Kernel::Line_2& l2); 
 
   /*!
-    compares the slopes of the segments `s1` and `s2` 
+    compares the slopes of the segments `s1` and `s2`,
+    where the slope is the variation of the `y`-coordinate
+    from the left to the right endpoint of the segments. 
   */ 
   Comparison_result operator()(const Kernel::Segment_2& s1, 
                                const Kernel::Segment_2& s2); 
@@ -1012,6 +1010,42 @@ public:
   /// @}
 
 }; /* end Kernel::CompareSlope_2 */
+
+
+/*!
+  \ingroup PkgKernel23ConceptsFunctionObjects
+  \cgalConcept
+
+  \cgalRefines `AdaptableFunctor` (with two arguments) 
+
+  \sa `compare_slopes_grp`
+
+*/
+class CompareSlope_3 {
+public:
+
+  /// \name Operations
+  /// A model of this concept must provide:
+  /// @{
+
+
+  /*!
+    compares the slopes of the segments `(p,q)` and `(r,s)`,
+    where the slope is the variation of the `z`-coordinate 
+    from the first to the second point of the segment divided
+    by the length of the segment.
+  */ 
+  Comparison_result operator()(const Kernel::Point_3& p, 
+                               const Kernel::Point_3& q,
+                               const Kernel::Point_3& r, 
+                               const Kernel::Point_3& s); 
+
+
+  /// @}
+
+}; /* end Kernel::CompareSlope_3 */
+
+
 
 /*!
   \ingroup PkgKernel23ConceptsFunctionObjects
@@ -1145,14 +1179,13 @@ public:
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalConcept
 
-\sa `ComputePowerProduct_3` for the definition of orthogonal
-    weighted points
-
 \cgalRefines `AdaptableFunctor`
-\cgalHasModel `Compare_weighted_squared_radius_3`
+
+\sa `ComputePowerProduct_3` for the definition of of orthogonality for power distances.
 
 */
-class CompareWeightedSquaredRadius_3 {
+class CompareWeightedSquaredRadius_3
+{
 public:
   /// \name Operations
   /// A model of this concept must provide:
@@ -2384,13 +2417,13 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \sa `CGAL::Weighted_point_3<Kernel>` 
-  \sa `ComputePowerProduct_3` for the definitions of power distance and orthogonal.
-
   \cgalRefines `AdaptableFunctor` (with five arguments)
 
+  \sa `CGAL::Weighted_point_3<Kernel>`
+  \sa `ComputePowerProduct_3` for the definitions of power distance and orthogonality.
 */
-class ComputePowerDistanceToPowerSphere_3 {
+class ComputePowerDistanceToPowerSphere_3
+{
 public:
   /// \name Operations
   /// A model of this concept must provide:
@@ -2400,50 +2433,12 @@ public:
     returns the squared radius of the sphere centered in `t`
     and orthogonal to the sphere orthogonal to `p`, `q`, `r` ,and `s`. 
   */ 
-  Kernel::FT operator()(const Kernel::Weighted_point_3& p, 
-                        const Kernel::Weighted_point_3& q, 
-                        const Kernel::Weighted_point_3& r, 
-                        const Kernel::Weighted_point_3& s, 
-                        const Kernel::Weighted_point_3& t 
-                        ) const; 
-
-  /// @}
-};
-
-/*!
-\ingroup PkgKernel23ConceptsFunctionObjects
-\cgalConcept
-
-\sa `CGAL::Weighted_point_3<Kernel>`
-\sa `ComputePowerProduct_3` for the definition of orthogonal sphere
-
-\cgalRefines `AdaptableFunctor`
-
-*/
-class ComputeSquaredRadiusSmallestOrthogonalSphere_3 {
-public:
-  /// \name Operations
-  /// A model of this concept must provide:
-  /// @{
-
-  /*!
-  returns the squared radius of the
-  smallest sphere orthogonal to the argument(s).
-  */
-  Kernel::FT operator() (const Kernel::Weighted_point_3& pw,
-                         const Kernel::Weighted_point_3& qw,
-                         const Kernel::Weighted_point_3& rw,
-                         const Kernel::Weighted_point_3& sw) const;
-
-  Kernel::FT operator() (const Kernel::Weighted_point_3& pw,
-                         const Kernel::Weighted_point_3& qw,
-                         const Kernel::Weighted_point_3& rw) const;
-
-  Kernel::FT operator() (const Kernel::Weighted_point_3& pw,
-                         const Kernel::Weighted_point_3& qw) const;
-
-  Kernel::FT operator() (const Kernel::Weighted_point_3& pw) const;
-
+  Kernel::FT operator()(const Kernel::Weighted_point_3& p,
+                        const Kernel::Weighted_point_3& q,
+                        const Kernel::Weighted_point_3& r,
+                        const Kernel::Weighted_point_3& s,
+                        const Kernel::Weighted_point_3& t
+                        ) const;
   /// @}
 };
 
@@ -2451,12 +2446,54 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \sa `CGAL::Weighted_point_3<Kernel>` 
+  \cgalRefines `AdaptableFunctor` (with two arguments)
+
+  \sa `CGAL::Weighted_point_2<Kernel>`
+  \sa `ComputePowerProduct_3`
+*/
+class ComputePowerProduct_2
+{
+public:
+  /// \name Operations
+  /// A model of this concept must provide:
+  /// @{
+
+  /*!
+    returns the power product of `pw` and `qw`.
+    Let\f$ {p}^{(w)} = (p,w_p), p\in\mathbb{R}^2, w_p\in\mathbb{R}\f$ and
+    \f$ {q}^{(w)}=(q,w_q), q\in\mathbb{R}^2, w_q\in\mathbb{R}\f$ be two weighted points.
+
+    The <I>power product</I>, also called <i>power distance</i>
+    between \f$ {p}^{(w)}\f$ and \f$ {q}^{(w)}\f$ is defined as
+    \f[ \Pi({p}^{(w)},{q}^{(w)}) = {\|{p-q}\|^2-w_p-w_q} \f]
+    where \f$ \|{p-q}\|\f$ is the Euclidean distance between \f$ p\f$ and \f$ q\f$.
+
+    The weighted points \f$ {p}^{(w)}\f$ and \f$ {q}^{(w)}\f$
+    are said to be <I>orthogonal</I> iff \f$ \Pi{({p}^{(w)},{q}^{(w)})}
+    = 0\f$.
+
+    Three weighted points have, in 2D, a unique common orthogonal weighted point
+    called the <I>power circle</I>. The <I>power segment</I> will denote the
+    weighted point orthogonal to two weighted points on the line defined by
+    these two points.
+  */
+  Kernel::FT operator()(const Kernel::Weighted_point_2& pw,
+                        const Kernel::Weighted_point_2& qw) const;
+
+  /// @}
+}; /* end Kernel::ComputePowerProduct_2 */
+
+/*!
+  \ingroup PkgKernel23ConceptsFunctionObjects
+  \cgalConcept
 
   \cgalRefines `AdaptableFunctor` (with two arguments)
 
+  \sa `CGAL::Weighted_point_3<Kernel>`
+  \sa `ComputePowerProduct_2`
 */
-class ComputePowerProduct_3 {
+class ComputePowerProduct_3
+{
 public:
   /// \name Operations
   /// A model of this concept must provide:
@@ -2477,7 +2514,7 @@ public:
     are said to be <I>orthogonal</I> iff \f$ \Pi{({p}^{(w)},{q}^{(w)})}
     = 0\f$.
     
-    Four weighted points have a unique common orthogonal weighted point
+    Four weighted points have, in 3D, a unique common orthogonal weighted point
     called the <I>power sphere</I>. The weighted point orthogonal to
     three weighted points in the plane defined by these three points is
     called the <I>power circle</I>. The
@@ -2488,7 +2525,7 @@ public:
                         const Kernel::Weighted_point_3& qw) const; 
 
   /// @}
-};
+}; /* end Kernel::ComputePowerProduct_3 */
 
 /*!
   \ingroup PkgKernel23ConceptsFunctionObjects
@@ -2893,6 +2930,77 @@ public:
   /// @}
 
 }; /* end Kernel::ComputeSquaredRadius_3 */
+
+/*!
+\ingroup PkgKernel23ConceptsFunctionObjects
+\cgalConcept
+
+\sa `CGAL::Weighted_point_2<Kernel>`
+\sa `ComputePowerProduct_2` for the definition of orthogonality for power distances.
+
+\cgalRefines `AdaptableFunctor`
+
+*/
+class ComputeSquaredRadiusSmallestOrthogonalCircle_2
+{
+public:
+  /// \name Operations
+  /// A model of this concept must provide:
+  /// @{
+
+  /*!
+  returns the squared radius of the
+  smallest sphere circle to the argument(s).
+  */
+  Kernel::FT operator() (const Kernel::Weighted_point_2& pw,
+                         const Kernel::Weighted_point_2& qw,
+                         const Kernel::Weighted_point_2& rw) const;
+
+  Kernel::FT operator() (const Kernel::Weighted_point_2& pw,
+                         const Kernel::Weighted_point_2& qw) const;
+
+  Kernel::FT operator() (const Kernel::Weighted_point_2& pw) const;
+
+  /// @}
+}; /* end Kernel::ComputeSquaredRadiusSmallestOrthogonalCircle_2 */
+
+/*!
+\ingroup PkgKernel23ConceptsFunctionObjects
+\cgalConcept
+
+\sa `CGAL::Weighted_point_3<Kernel>`
+\sa `ComputePowerProduct_3` for the definition of of orthogonality for power distances.
+
+\cgalRefines `AdaptableFunctor`
+
+*/
+class ComputeSquaredRadiusSmallestOrthogonalSphere_3
+{
+public:
+  /// \name Operations
+  /// A model of this concept must provide:
+  /// @{
+
+  /*!
+  returns the squared radius of the
+  smallest sphere orthogonal to the argument(s).
+  */
+  Kernel::FT operator() (const Kernel::Weighted_point_3& pw,
+                         const Kernel::Weighted_point_3& qw,
+                         const Kernel::Weighted_point_3& rw,
+                         const Kernel::Weighted_point_3& sw) const;
+
+  Kernel::FT operator() (const Kernel::Weighted_point_3& pw,
+                         const Kernel::Weighted_point_3& qw,
+                         const Kernel::Weighted_point_3& rw) const;
+
+  Kernel::FT operator() (const Kernel::Weighted_point_3& pw,
+                         const Kernel::Weighted_point_3& qw) const;
+
+  Kernel::FT operator() (const Kernel::Weighted_point_3& pw) const;
+
+  /// @}
+}; /* end Kernel::ComputeSquaredRadiusSmallestOrthogonalSphere_3 */
 
 /*!
   \ingroup PkgKernel23ConceptsFunctionObjects
@@ -5772,7 +5880,7 @@ public:
  /*!
     extracts the bare point from the weighted point. 
   */ 
-  Kernel::Point_2 operator()(const CGAL::Weighted_point_2& wp); 
+  Kernel::Point_2 operator()(const Kernel::Weighted_point_2& wp);
 
   ///@}
 
@@ -5802,7 +5910,7 @@ public:
  /*!
     extracts the bare point from the weighted point. 
   */ 
-  Kernel::Point_3 operator()(const CGAL::Weighted_point_3& wp); 
+  Kernel::Point_3 operator()(const Kernel::Weighted_point_3& wp);
 
   ///@}
 
@@ -5918,7 +6026,9 @@ public:
   \sa `CGAL::Weighted_point_2<Kernel>` 
 
 */
-class ConstructRadicalAxis_2 {
+class ConstructRadicalAxis_2
+{
+public:
   /// \name Operations
   /// A model of this concept must provide:
   /// @{
@@ -5926,9 +6036,8 @@ class ConstructRadicalAxis_2 {
   /*!
     returns the radical line of the weighted points. 
   */ 
-  Kernel::Line_2 operator() 
-  (const Kernel::Weighted_point_2& wp1, 
-   const Kernel::Weighted_point_2& wp2); 
+  Kernel::Line_2 operator()(const Kernel::Weighted_point_2& wp1,
+                            const Kernel::Weighted_point_2& wp2);
   /// @}
 };
 
@@ -6957,7 +7066,8 @@ public:
 \sa `CGAL::Weighted_point_2<Kernel>` 
 
 */
-class ConstructWeightedCircumcenter_2 {
+class ConstructWeightedCircumcenter_2
+{
 public:
 
   /// \name Operations
@@ -6967,10 +7077,11 @@ public:
   /*!
     constructs the point which is the center of the smallest orthogonal circle to the input weighted points. 
   */ 
-  Kernel::Point_2 operator()(const Kernel::Weighted_point_2& p, const Kernel::Weighted_point_2& q, const Kernel::Weighted_point_2& s);
+  Kernel::Point_2 operator()(const Kernel::Weighted_point_2& p,
+                             const Kernel::Weighted_point_2& q,
+                             const Kernel::Weighted_point_2& s);
 
 }; /* end Kernel::ConstructWeightedCircumcenter_2 */
-
 
 /*!
   \ingroup PkgKernel23ConceptsFunctionObjects
@@ -6981,9 +7092,9 @@ public:
 \sa `CGAL::Weighted_point_3<Kernel>` 
 
 */
-class ConstructWeightedCircumcenter_3 {
+class ConstructWeightedCircumcenter_3
+{
 public:
-
   /// \name Operations
   /// A model of this concept must provide:
   /// @{
@@ -6991,11 +7102,87 @@ public:
   /*!
     constructs the point which is the center of the smallest orthogonal sphere to the input weighted points. 
   */ 
-  Kernel::Point_3 operator()(const Kernel::Weighted_point_3& p, const Kernel::Weighted_point_3& q, const Kernel::Weighted_point_3& r, const Kernel::Weighted_point_3& s);
+  Kernel::Point_3 operator()(const Kernel::Weighted_point_3& p,
+                             const Kernel::Weighted_point_3& q,
+                             const Kernel::Weighted_point_3& r,
+                             const Kernel::Weighted_point_3& s);
 
 }; /* end Kernel::ConstructWeightedCircumcenter_3 */
 
+/*!
+  \ingroup PkgKernel23ConceptsFunctionObjects
+  \cgalConcept
 
+  \cgalRefines `AdaptableFunctor` (with one argument)
+
+  \sa `CGAL::Weighted_point_2<Kernel>`
+*/
+class ConstructWeightedPoint_2
+{
+public:
+  /// \name Operations
+  /// A model of this concept must provide:
+  /// @{
+
+  /*!
+    introduces a weighted point with Cartesian coordinates
+    \f$ (0,0)\f$ and weight \f$ 0 \f$.
+  */
+  Kernel::Weighted_point_2 operator()(const CGAL::Origin &CGAL::ORIGIN);
+
+ /*!
+    introduces a weighted point with Cartesian coordinates
+    those of \f$ p \f$ and weight \f$ 0 \f$.
+  */
+  Kernel::Weighted_point_2 operator()(const Kernel::Point_2& p);
+
+  /*!
+     introduces a weighted point with Cartesian coordinates
+     those of \f$ p \f$ and weight \f$ w \f$.
+   */
+   Kernel::Weighted_point_2 operator()(const Kernel::Point_2& p, const Kernel::FT& w);
+  ///@}
+
+}; /* end Kernel::ConstructWeightedPoint_2 */
+
+/*!
+  \ingroup PkgKernel23ConceptsFunctionObjects
+  \cgalConcept
+
+  \cgalRefines `AdaptableFunctor` (with one argument)
+
+  \sa `CGAL::Weighted_point_3<Kernel>`
+
+*/
+class ConstructWeightedPoint_3
+{
+public:
+
+  /// \name Operations
+  /// A model of this concept must provide:
+  /// @{
+
+  /*!
+    introduces a weighted point with Cartesian coordinates
+    \f$ (0,0,0)\f$ and weight \f$ 0 \f$.
+  */
+  Kernel::Weighted_point_3 operator()(const CGAL::Origin &CGAL::ORIGIN);
+
+ /*!
+    introduces a weighted point with Cartesian coordinates
+    those of \f$ p \f$ and weight \f$ 0 \f$.
+  */
+  Kernel::Weighted_point_3 operator()(const Kernel::Point_3& p);
+
+  /*!
+     introduces a weighted point with Cartesian coordinates
+     those of \f$ p \f$ and weight \f$ w \f$.
+   */
+   Kernel::Weighted_point_3 operator()(const Kernel::Point_3& p, const Kernel::FT& w);
+
+  ///@}
+
+}; /* end Kernel::ConstructWeightedPoint_3 */
 
 /*!
   \ingroup PkgKernel23ConceptsFunctionObjects
@@ -7013,15 +7200,15 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-
   /*!
-    Let `p` be the plane defined by the points `p`, `q`, 
+    If `p`, `q`, and `s` are collinear, then \ref CGAL::COLLINEAR is returned.
+
+    If not, let `P` be the plane defined by the points `p`, `q`,
     and `r`. Note that the order defines the orientation of 
-    `p`. The function computes the orientation of points `p`, 
-    `q`, and `s` in `p`: Iff `p`, `q`, `s` are 
-    collinear, \ref CGAL::COLLINEAR is returned. Iff `p` and the plane 
-    defined by `p`, `q`, and `s` have the same orientation, 
-    \ref CGAL::POSITIVE is returned; otherwise \ref CGAL::NEGATIVE is returned. 
+    `P`. If `P` and the plane defined by `p`, `q`, and `s`
+    have the same orientation, then \ref CGAL::POSITIVE is returned;
+    otherwise \ref CGAL::NEGATIVE is returned.
+
     \pre `p`, `q`, `r`, and `s` are coplanar and `p`, `q`, and `r` are not collinear. 
   */ 
   Orientation operator()(const Kernel::Point_3&p, 
@@ -7030,12 +7217,14 @@ public:
                          const Kernel::Point_3&s); 
 
   /*!
-    If `p,q,r` are collinear, then \ref CGAL::COLLINEAR is returned. 
-    If not, then `p,q,r` define a plane `p`. The return value in this case is 
-    either \ref CGAL::POSITIVE or \ref CGAL::NEGATIVE, but we don't specify it explicitly. 
-    However, we guarantee that all calls to this predicate over 3 points in `p` 
-    will return a coherent orientation if considered a 2D orientation in `p`. 
-  */ 
+    If `p`, `q`, and `r` are collinear, then \ref CGAL::COLLINEAR is returned.
+
+    If not, let `P` be the plane defined by the points `p`, `q`, and `r`.
+    The return value in this case is either \ref CGAL::POSITIVE or \ref CGAL::NEGATIVE,
+    but we don't specify it explicitly.
+    However, we guarantee that all calls to this predicate over 3 points in `P`
+    will return a coherent orientation if considered as a 2D orientation in `P`.
+  */
   Orientation operator()(const Kernel::Point_3&p, 
                          const Kernel::Point_3&q, 
                          const Kernel::Point_3&r); 
@@ -9014,7 +9203,71 @@ public:
 }; /* end Kernel::OrientedSide_3 */
 
 
+/*!
+\ingroup PkgKernel23ConceptsFunctionObjects
+\cgalConcept
 
+\cgalRefines `AdaptableFunctor` (with four arguments)
+
+\sa `CGAL::Weighted_point_2<Kernel>`
+\sa `ComputePowerProduct_2` for the definition of orthogonality for power distances.
+\sa `PowerSideOfOrientedPowerCircle_2`
+
+*/
+class PowerSideOfBoundedPowerCircle_2
+{
+public:
+
+  /// \name Operations
+  /// A model of this concept must provide:
+  /// @{
+
+  /*!
+    Let \f$ {z(p,q,r)}^{(w)}\f$ be the power circle of the weighted points
+    \f$ (p,q,r)\f$. This method returns:
+
+    - `ON_BOUNDARY` if `t` is orthogonal to \f$ {z(p,q,r)}^{(w)}\f$,
+
+    - `ON_UNBOUNDED_SIDE` if `t` lies outside the bounded circle of
+    center \f$ z(p,q,r)\f$ and radius \f$ \sqrt{ w_{z(p,q,r)}^2 + w_t^2 }\f$
+    (which is equivalent to \f$ \Pi({t}^{(w)},{z(p,q,r)}^{(w)}) > 0\f$),
+
+    - `ON_BOUNDED_SIDE` if `t` lies inside this bounded circle.
+
+    The order of the points `p`, `q`, and `r` does not matter.
+
+    \pre `p`, `q`, and `r` are not collinear.
+
+    If all the points have a weight equal to 0, then
+    `power_side_of_bounded_power_circle_2(p,q,r,t)` ==
+      `side_of_bounded_circle(p,q,r,t)`.
+  */
+  CGAL::Bounded_side
+  operator()(const Kernel::Weighted_point_2 & p,
+             const Kernel::Weighted_point_2 & q,
+             const Kernel::Weighted_point_2 & r,
+             const Kernel::Weighted_point_2 & t);
+
+  /*!
+    returns the sign of the power test of `t` with respect
+    to the smallest circle orthogonal to `p` and `q`.
+
+    \pre `p` and `q` have different bare points.
+  */
+  CGAL::Bounded_side
+  operator()(const Kernel::Weighted_point_2 & p,
+             const Kernel::Weighted_point_2 & q,
+             const Kernel::Weighted_point_2 & t);
+
+  /*!
+    returns the sign of the power test of `t` with respect
+    to the smallest circle orthogonal to `p`.
+  */
+  CGAL::Bounded_side
+  operator()(const Kernel::Weighted_point_2 & p,
+             const Kernel::Weighted_point_2 & t);
+  /// @}
+}; /* end Kernel::PowerSideOfBoundedPowerCircle_2 */
 
 /*!
 \ingroup PkgKernel23ConceptsFunctionObjects
@@ -9023,9 +9276,12 @@ public:
 \cgalRefines `AdaptableFunctor` (with five arguments)
 
 \sa `CGAL::Weighted_point_3<Kernel>`
-\sa `ComputePowerProduct_3` for the definition of orthogonal.
+\sa `ComputePowerProduct_3` for the definition of orthogonality for power distances.
+\sa `PowerSideOfOrientedPowerSphere_3`
+
 */
-class PowerSideOfBoundedPowerSphere_3 {
+class PowerSideOfBoundedPowerSphere_3
+{
 public:
 
   /// \name Operations
@@ -9033,205 +9289,152 @@ public:
   /// @{
 
   /*!
-  returns the sign of the power test of the last weighted point
-  with respect to the smallest sphere orthogonal to the others.
+    Let \f$ {z(p,q,r,s)}^{(w)}\f$ be the power sphere of the weighted points
+    \f$ (p,q,r,s)\f$. This method returns:
 
-  Let \f$ {z(p,q,r,s)}^{(w)}\f$ be the power sphere of the weighted points
-  \f$ (p,q,r,s)\f$. Returns
-  - `ON_BOUNDARY` if `t` is orthogonal to
-  \f$ {z(p,q,r,s)}^{(w)}\f$,
-  - `ON_UNBOUNDED_SIDE` if `t` lies outside the bounded sphere of
-  center \f$ z(p,q,r,s)\f$ and radius \f$ \sqrt{ w_{z(p,q,r,s)}^2 + w_t^2 }\f$
-  (which is equivalent to \f$ \Pi({t}^{(w)},{z(p,q,r,s)}^{(w)} >0\f$)),
-  - `ON_BOUNDED_SIDE` if `t` lies inside this oriented sphere.
+    - `ON_BOUNDARY` if `t` is orthogonal to
+    \f$ {z(p,q,r,s)}^{(w)}\f$,
 
-  \pre `p, q, r, s` are not coplanar.
+    - `ON_UNBOUNDED_SIDE` if `t` lies outside the bounded sphere of
+    center \f$ z(p,q,r,s)\f$ and radius \f$ \sqrt{ w_{z(p,q,r,s)}^2 + w_t^2 }\f$
+    (which is equivalent to \f$ \Pi({t}^{(w)},{z(p,q,r,s)}^{(w)}) >0\f$),
 
-  If all the points have a weight equal to 0, then
-  `power_side_of_bounded_power_sphere_3(p,q,r,s,t)` == `side_of_bounded_sphere(p,q,r,s,t)`.
+    - `ON_BOUNDED_SIDE` if `t` lies inside this bounded sphere.
+
+    The order of the points `p`, `q`, `r`, and `s` does not matter.
+
+    \pre `p, q, r, s` are not coplanar.
+
+    If all the points have a weight equal to 0, then
+    `power_side_of_bounded_power_sphere_3(p,q,r,s,t)` ==
+      `side_of_bounded_sphere(p,q,r,s,t)`.
   */
   CGAL::Bounded_side
-    operator()(const Kernel::Weighted_point_3 & p,
-    const Kernel::Weighted_point_3 & q,
-    const Kernel::Weighted_point_3 & r,
-    const Kernel::Weighted_point_3 & s,
-    const Kernel::Weighted_point_3 & t);
+  operator()(const Kernel::Weighted_point_3 & p,
+             const Kernel::Weighted_point_3 & q,
+             const Kernel::Weighted_point_3 & r,
+             const Kernel::Weighted_point_3 & s,
+             const Kernel::Weighted_point_3 & t);
 
   /*!
-  Analogous to the previous method,
-  with the power sphere \f$ {z(p,q,r)}^{(w)}\f$ of the points \f$ (p,q,r)\f$.
-  \pre `p, q, r` are not collinear.
+    returns the sign of the power test of `t` with respect
+    to the smallest sphere orthogonal to `p`, `q`, and `r`.
 
-  If all the points have a weight equal to 0, then
-  `power_side_of_bounded_power_sphere_3(p,q,r,t)` == `side_of_bounded_sphere(p,q,r,t)`.
+    \pre `p, q, r` are not collinear.
   */
   CGAL::Bounded_side
-    operator()(const Kernel::Weighted_point_3 & p,
-    const Kernel::Weighted_point_3 & q,
-    const Kernel::Weighted_point_3 & r,
-    const Kernel::Weighted_point_3 & t);
+  operator()(const Kernel::Weighted_point_3 & p,
+             const Kernel::Weighted_point_3 & q,
+             const Kernel::Weighted_point_3 & r,
+             const Kernel::Weighted_point_3 & t);
 
   /*!
-   Analogous to the previous method,
-   where \f$ {z(p,q)}^{(w)}\f$ is the
-   power sphere of `p` and `q`.
-   \pre `p` and `q` have different bare points.
+    returns the sign of the power test of `t` with respect
+    to the smallest sphere orthogonal to `p` and `q`.
 
-  If all points have a weight equal to 0, then
-  `power_side_of_bounded_power_sphere_3(p,q,t)` gives the same answer as the kernel predicate
-  `s(p,q).has_on(t)` would give, where `s(p,q)` denotes the
-  segment with endpoints `p` and `q`.
+    \pre `p` and `q` have different bare points.
   */
   CGAL::Bounded_side
-    operator()(const Kernel::Weighted_point_3 & p,
-    const Kernel::Weighted_point_3 & q,
-    const Kernel::Weighted_point_3 & t);
+  operator()(const Kernel::Weighted_point_3 & p,
+             const Kernel::Weighted_point_3 & q,
+             const Kernel::Weighted_point_3 & t);
 
   /*!
-  Analogous to the previous method,
-  where \f$ {z(p)}^{(w)}\f$ of the power sphere of `p`,
-  that is the sphere with the bare point of `p` as center,
-  and \f$ -w_p\f$ as weight.
-
-  When `p` and `q`
-  have equal bare points, then it returns the comparison of the weights
-  (`ON_BOUNDED_SIDE` when `q` is heavier than `p`).
+    returns the sign of the power test of `t` with respect
+    to the smallest sphere orthogonal to `p`.
   */
   CGAL::Bounded_side
-    operator()(const Kernel::Weighted_point_3 & p,
-    const Kernel::Weighted_point_3 & q);
+  operator()(const Kernel::Weighted_point_3 & p,
+             const Kernel::Weighted_point_3 & t);
   /// @}
 
 }; /* end Kernel::PowerSideOfBoundedPowerSphere_3 */
 
-
 /*!
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
+
+  \cgalRefines `AdaptableFunctor` (with four arguments)
 
   \sa `CGAL::Weighted_point_2<Kernel>`
   \sa `ComputePowerProduct_2` for the definition of power distance.
-  
+  \sa `PowerSideOfBoundedPowerCircle_2`
 */
-  class PowerSideOfOrientedPowerCircle_2 {
+class PowerSideOfOrientedPowerCircle_2
+{
   public:
 
   /// \name Operations
   /// A model of this concept must provide:
   /// @{
-
-    /*!
-      power test for points `p`, `q`, `r` and `s`. 
-      \pre the bare points corresponding to `p`, `q`, `r` are not collinear. 
-    */
-
-    Oriented_side operator() ( const Kernel::Weighted_point_2& p,
-                               const Kernel::Weighted_point_2& q,
-                               const Kernel::Weighted_point_2& r,
-                               const Kernel::Weighted_point_2& s);
-
-/*!
-  degenerated power test for collinear points  `p`, `q`, `r`. 
-  \pre  `p` and `q` have different bare points.
-*/
-    Oriented_side operator() (  const Kernel::Weighted_point_2& p,
-                                const Kernel::Weighted_point_2& q,
-                                const Kernel::Weighted_point_2& r);
-/*!
-degenerated power test for weighted points 
-`p` and `q` whose corresponding bare points are identical. 
-\pre `p` and `q` have equal bare points. 
-*/
-Oriented_side operator() ( const Kernel::Weighted_point_2& p,
-                           const Kernel::Weighted_point_2& q); 
-
-  /// @}
-
-  };
-
-/*!
-  \ingroup PkgKernel23ConceptsFunctionObjects
-  \cgalConcept
-
-  \sa `CGAL::Weighted_point_3<Kernel>`
-  \sa `ComputePowerProduct_3` for the definition of power distance.
-
-*/
-  class PowerSideOfOrientedPowerSphere_3 {
-  public:
-  /// \name Operations
-  /// A model of this concept must provide:
-  /// @{
-
-     /*!
-Let \f$ {z(p,q,r,s)}^{(w)}\f$ be the power sphere of the weighted points 
-\f$ (p,q,r,s)\f$. Returns 
-
-- `ON_ORIENTED_BOUNDARY` if `t` is orthogonal to 
-  \f$ {z(p,q,r,s)}^{(w)}\f$, 
-
-- `ON_NEGATIVE_SIDE` if `t` lies outside the oriented sphere of 
-  center \f$ z(p,q,r,s)\f$ and radius \f$ \sqrt{ w_{z(p,q,r,s)}^2 + w_t^2 }\f$ 
-  (which is equivalent to \f$ \Pi({t}^{(w)},{z(p,q,r,s)}^{(w)} >0\f$)), 
-
-- `ON_POSITIVE_SIDE` if `t` lies inside this oriented sphere. 
-
-\pre `p, q, r, s` are not coplanar.
- 
-If all the points have a weight equal to 0, then 
-`power_side_of_oriented_power_sphere_3(p,q,r,s,t)` = `side_of_oriented_sphere(p,q,r,s,t)`. 
- 
-      */ 
-    Oriented_side operator()( const Kernel::Weighted_point_3& p,
-                              const Kernel::Weighted_point_3& q, 
-                              const Kernel::Weighted_point_3& r, 
-                              const Kernel::Weighted_point_3& s, 
-                              const Kernel::Weighted_point_3& t) const;
-  
 
   /*!
-    Analogous to the previous method, for coplanar points, 
-    with the power circle \f$ {z(p,q,r)}^{(w)}\f$. 
-    \pre `p, q, r` are not collinear.
- 
-    If all the points have a weight equal to 0, then 
-    `power_test_3(p,q,r,t)` = `side_of_oriented_circle(p,q,r,t)`. 
+    returns the relative position of point `s` to the oriented power circle
+    defined by `p`, `q`, and `r`.
+
+    The order of the points `p`, `q` and `r` is important,
+    since it determines the orientation of the implicitly
+    constructed power circle.
+
+    \pre the bare points corresponding to `p`, `q`, `r` are not collinear.
+  */
+
+  Oriented_side operator()(const Kernel::Weighted_point_2& p,
+                           const Kernel::Weighted_point_2& q,
+                           const Kernel::Weighted_point_2& r,
+                           const Kernel::Weighted_point_2& s);
+  /// @}
+
+};
+
+/*!
+\ingroup PkgKernel23ConceptsFunctionObjects
+\cgalConcept
+
+\cgalRefines `AdaptableFunctor` (with five arguments)
+
+\sa `CGAL::Weighted_point_3<Kernel>`
+\sa `ComputePowerProduct_3` for the definition of power distance.
+\sa `PowerSideOfBoundedPowerSphere_3`
+
+*/
+class PowerSideOfOrientedPowerSphere_3
+{
+public:
+  /// \name Operations
+  /// A model of this concept must provide:
+  /// @{
+
+  /*!
+    Let \f$ {z(p,q,r,s)}^{(w)}\f$ be the power sphere of the weighted points
+    \f$ (p,q,r,s)\f$. Returns
+
+    - `ON_ORIENTED_BOUNDARY` if `t` is orthogonal to
+      \f$ {z(p,q,r,s)}^{(w)}\f$,
+
+    - `ON_NEGATIVE_SIDE` if `t` lies outside the oriented sphere of
+      center \f$ z(p,q,r,s)\f$ and radius \f$ \sqrt{ w_{z(p,q,r,s)}^2 + w_t^2 }\f$
+      (which is equivalent to \f$ \Pi({t}^{(w)},{z(p,q,r,s)}^{(w)}) > 0 \f$),
+
+    - `ON_POSITIVE_SIDE` if `t` lies inside this oriented sphere.
+
+    The order of the points `p`, `q`, `r` and `s` is important,
+    since it determines the orientation of the implicitly
+    constructed power sphere.
+
+    \pre `p, q, r, s` are not coplanar.
+
+    If all the points have a weight equal to 0, then
+    `power_side_of_oriented_power_sphere_3(p,q,r,s,t)` =
+       `side_of_oriented_sphere(p,q,r,s,t)`.
   */
   Oriented_side operator()( const Kernel::Weighted_point_3& p,
                             const Kernel::Weighted_point_3& q,
                             const Kernel::Weighted_point_3& r,
+                            const Kernel::Weighted_point_3& s,
                             const Kernel::Weighted_point_3& t) const;
-
-  /*!
-    which is the same for collinear points, where \f$ {z(p,q)}^{(w)}\f$ is the 
-    power segment of `p` and `q`. 
-    \pre `p` and `q` have different bare points.
- 
-    If all points have a weight equal to 0, then 
-    `power_side_of_oriented_power_sphere_3(p,q,t)` gives the same answer as the kernel predicate 
-    `s(p,q).has_on(t)` would give, where `s(p,q)` denotes the 
-    segment with endpoints `p` and `q`.
-  */
-
-  Oriented_side operator()( const Kernel::Weighted_point_3& p,
-                            const Kernel::Weighted_point_3& q,
-                            const Kernel::Weighted_point_3& t) const;
-
-  /*!
-    which is the same for equal points, that is when `p` and `q` 
-    have equal coordinates, then it returns the comparison of the weights 
-    (`ON_POSITIVE_SIDE` when `q` is heavier than `p`). 
-    \pre `p` and `q` have equal bare points.
-  */
-
-  Oriented_side operator()( const Kernel::Weighted_point_3& p,
-                            const Kernel::Weighted_point_3& q) const;
-
-
   /// @}
-  };
-
-
+};
 
 /*!
   \ingroup PkgKernel23ConceptsFunctionObjects

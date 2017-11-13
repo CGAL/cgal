@@ -30,7 +30,7 @@ namespace CGAL {
 
 template < typename Base_, typename AK_, typename EK_ >
 struct Cartesian_filter_K : public Base_,
-	private Store_kernel<AK_>, private Store_kernel2<EK_>
+  private Store_kernel<AK_>, private Store_kernel2<EK_>
 {
     CGAL_CONSTEXPR Cartesian_filter_K(){}
     CGAL_CONSTEXPR Cartesian_filter_K(int d):Base_(d){}
@@ -61,11 +61,11 @@ struct Cartesian_filter_K : public Base_,
     template<class T> struct Type : Get_type<Kernel_base,T> {};
 
     template<class T,class D=void,class=typename Get_functor_category<Cartesian_filter_K,T>::type> struct Functor :
-	    Inherit_functor<Kernel_base,T,D> {};
+      Inherit_functor<Kernel_base,T,D> {};
     template<class T,class D> struct Functor<T,D,Predicate_tag> {
-	    typedef typename Get_functor<AK, T>::type AP;
-	    typedef typename Get_functor<EK, T>::type EP;
-	    typedef Filtered_predicate2<EP,AP,C2E,C2A> type;
+      typedef typename Get_functor<AK, T>::type AP;
+      typedef typename Get_functor<EK, T>::type EP;
+      typedef Filtered_predicate2<EP,AP,C2E,C2A> type;
     };
 // TODO:
 //    template<class T> struct Functor<T,No_filter_tag,Predicate_tag> :

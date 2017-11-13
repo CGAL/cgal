@@ -3,7 +3,6 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 
 // Simplification function
 #include <CGAL/Surface_mesh_simplification/edge_collapse.h>
@@ -24,13 +23,18 @@ int main( int argc, char** argv )
   if (argc<3)
   {
     std::cerr << "Usage: " << argv[0] << " input.off minimal_edge_length [out.off]\n";
-    return 1;
+    return EXIT_FAILURE;
   }
 
   Surface_mesh surface_mesh;
 
   std::ifstream is(argv[1]) ; is >> surface_mesh ;
   double threshold = atof(argv[2]);
+
+  if (!CGAL::is_triangle_mesh(surface_mesh)){
+    std::cerr << "Input geometry is not triangulated." << std::endl;
+    return EXIT_FAILURE;
+  }
 
   int r = SMS::edge_collapse
             (surface_mesh
@@ -46,5 +50,5 @@ int main( int argc, char** argv )
 
   std::ofstream os( argc > 3 ? argv[3] : "out.off" ) ; os << surface_mesh ;
 
-  return 0 ;
+  return EXIT_SUCCESS ;
 }

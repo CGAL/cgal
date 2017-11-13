@@ -3,6 +3,7 @@
 
 #include "Scene_polygon_soup_item.h"
 #include "Scene_polyhedron_item.h"
+#include "Scene_surface_mesh_item.h"
 #include <CGAL/Three/Viewer_interface.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
@@ -28,6 +29,8 @@
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include "triangulate_primitive.h"
 #include <CGAL/array.h>
+
+#include <map>
 struct Scene_polygon_soup_item_priv{
 
   typedef Polygon_soup::Polygons::const_iterator Polygons_iterator;
@@ -44,7 +47,11 @@ struct Scene_polygon_soup_item_priv{
   }
   ~Scene_polygon_soup_item_priv()
   {
-    delete soup;
+    if(soup)
+    {
+      delete soup;
+      soup = NULL;
+    }
   }
   void initializeBuffers(CGAL::Three::Viewer_interface *viewer) const;
   void compute_normals_and_vertices(void) const;
@@ -491,8 +498,38 @@ void Scene_polygon_soup_item::init_polygon_soup(std::size_t nb_pts, std::size_t 
 
 
 
-#include <CGAL/IO/generic_print_polyhedron.h>
+//#include <CGAL/IO/generic_print_polyhedron.h>
 #include <iostream>
+template<class PolygonMesh>
+void polygon_mesh_to_soup(PolygonMesh& mesh, Polygon_soup& soup)
+{
+  soup.clear();
+  typedef typename boost::property_map<PolygonMesh, boost::vertex_point_t>::type VPMap;
+  VPMap vpmap = get(boost::vertex_point, mesh);
+  std::map<typename boost::graph_traits<PolygonMesh>::vertex_descriptor, int> vim;
+  int index=0;
+  //fill points
+  for(typename boost::graph_traits<PolygonMesh>::vertex_iterator vit =
+      vertices(mesh).begin(); vit != vertices(mesh).end(); ++vit)
+  {
+    soup.points.push_back(get(vpmap, *vit));
+    vim.insert(std::make_pair(*vit, index++));
+  }
+  //fill triangles
+  for(typename boost::graph_traits<PolygonMesh>::face_iterator fit =
+      faces(mesh).begin(); fit != faces(mesh).end(); ++fit)
+  {
+    Polygon_soup::Polygon_3 polygon;
+    BOOST_FOREACH(typename boost::graph_traits<PolygonMesh>::halfedge_descriptor hd,
+                  CGAL::halfedges_around_face(halfedge(*fit, mesh), mesh))
+    {
+      polygon.push_back(vim[target(hd, mesh)]);
+    }
+    soup.polygons.push_back(polygon);
+  }
+  soup.fill_edges();
+
+}
 
 void Scene_polygon_soup_item::load(Scene_polyhedron_item* poly_item) {
   if(!poly_item) return;
@@ -500,14 +537,19 @@ void Scene_polygon_soup_item::load(Scene_polyhedron_item* poly_item) {
 
   if(!d->soup)
     d->soup = new Polygon_soup;
-
-  Polyhedron_to_polygon_soup_writer writer(d->soup);
-  CGAL::generic_print_polyhedron(std::cerr,
-                                 *poly_item->polyhedron(),
-                                 writer);
+  polygon_mesh_to_soup(*poly_item->polyhedron(), *d->soup);
   invalidateOpenGLBuffers();
 }
 
+void Scene_polygon_soup_item::load(Scene_surface_mesh_item* sm_item) {
+  if(!sm_item) return;
+  if(!sm_item->face_graph()) return;
+
+  if(!d->soup)
+    d->soup = new Polygon_soup;
+  polygon_mesh_to_soup(*sm_item->face_graph(), *d->soup);
+  invalidateOpenGLBuffers();
+}
 void
 Scene_polygon_soup_item::setDisplayNonManifoldEdges(const bool b)
 {
@@ -635,7 +677,7 @@ Scene_polygon_soup_item::exportAsPolyhedron(Polyhedron* out_polyhedron)
 }
 
 bool
-Scene_polygon_soup_item::exportAsSurfaceMesh(CGAL::Surface_mesh<Point_3> *out_surface_mesh)
+Scene_polygon_soup_item::exportAsSurfaceMesh(SMesh *out_surface_mesh)
 {
   orient();
   CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh< CGAL::Surface_mesh<Point_3> >(
@@ -664,7 +706,7 @@ Scene_polygon_soup_item::toolTip() const
     .arg(d->soup->polygons.size())
     .arg(this->renderingModeName())
     .arg(this->color().name());
-    str += QString("<br />Number of isolated vertices : %1<br />").arg(getNbIsolatedvertices());
+    str += QString("<br />Number of isolated vertices: %1<br />").arg(getNbIsolatedvertices());
     return str;
 }
 
@@ -831,18 +873,50 @@ void Scene_polygon_soup_item::load(const std::vector<Point>& points, const std::
     d->oriented = false;
     invalidateOpenGLBuffers();
 }
+
+template <class Point, class Polygon>
+void Scene_polygon_soup_item::load(const std::vector<Point>& points, const std::vector<Polygon>& polygons,
+                                   const std::vector<CGAL::Color>& fcolors,
+                                   const std::vector<CGAL::Color>& vcolors)
+{
+    load (points, polygons);
+
+    d->soup->fcolors.reserve (fcolors.size());
+    std::copy (fcolors.begin(), fcolors.end(), std::back_inserter (d->soup->fcolors));
+    
+    d->soup->vcolors.reserve (vcolors.size());
+    std::copy (vcolors.begin(), vcolors.end(), std::back_inserter (d->soup->vcolors));
+}
 // Force the instanciation of the template function for the types used in the STL_io_plugin. This is needed
 // because the d-pointer forbid the definition in the .h for this function.
 template SCENE_POLYGON_SOUP_ITEM_EXPORT void Scene_polygon_soup_item::load<CGAL::cpp11::array<double, 3>, CGAL::cpp11::array<int, 3> >
 (const std::vector<CGAL::cpp11::array<double, 3> >& points, const std::vector<CGAL::cpp11::array<int, 3> >& polygons);
 template SCENE_POLYGON_SOUP_ITEM_EXPORT void Scene_polygon_soup_item::load<CGAL::Epick::Point_3, std::vector<std::size_t> >
 (const std::vector<CGAL::Epick::Point_3>& points, const std::vector<std::vector<std::size_t> >& polygons);
+template SCENE_POLYGON_SOUP_ITEM_EXPORT void Scene_polygon_soup_item::load<CGAL::Epick::Point_3, std::vector<std::size_t> >
+(const std::vector<CGAL::Epick::Point_3>& points, const std::vector<std::vector<std::size_t> >& polygons,
+ const std::vector<CGAL::Color>& fcolors,
+ const std::vector<CGAL::Color>& vcolors);
 
 // Local Variables:
 // c-basic-offset: 4
 // End:
 
 const Scene_polygon_soup_item::Points& Scene_polygon_soup_item::points() const { return d->soup->points; }
+const Scene_polygon_soup_item::Polygons& Scene_polygon_soup_item::polygons() const { return d->soup->polygons; }
 bool Scene_polygon_soup_item::isDataColored() { return d->soup->fcolors.size()>0 || d->soup->vcolors.size()>0;}
 std::vector<CGAL::Color> Scene_polygon_soup_item::getVColors() const{return d->soup->vcolors;}
 std::vector<CGAL::Color> Scene_polygon_soup_item::getFColors() const{return d->soup->fcolors;}
+
+void Scene_polygon_soup_item::itemAboutToBeDestroyed(Scene_item *item)
+{
+  Scene_item::itemAboutToBeDestroyed(item);
+  if(d && item == this)
+  {
+    if(d->soup)
+    {
+      delete d->soup;
+      d->soup=NULL;
+    }
+  }
+}

@@ -425,7 +425,7 @@ public:
 } //namespace CGAL
 
 #include <boost/graph/graph_concepts.hpp>
-#include <boost/iterator/counting_iterator.hpp>
+#include <CGAL/boost/iterator/counting_iterator.hpp>
 
 namespace boost {
 

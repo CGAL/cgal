@@ -1594,7 +1594,11 @@ public:
   */ 
   void delegate( CGAL::Modifier_base<HDS>& m); 
 
+  
   /// @}
 
 }; /* end Polyhedron_3 */
+
+
+
 } /* end namespace CGAL */

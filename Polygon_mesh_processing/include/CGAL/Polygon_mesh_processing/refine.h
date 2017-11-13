@@ -21,7 +21,7 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_REFINE_H
 #define CGAL_POLYGON_MESH_PROCESSING_REFINE_H
 
-#include <CGAL/license/Polygon_mesh_processing.h>
+#include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
 
 
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
@@ -88,14 +88,14 @@ namespace Polygon_mesh_processing {
     CGAL_precondition(is_triangle_mesh(tmesh) );
 
     typedef typename GetVertexPointMap<TriangleMesh,NamedParameters>::type VPmap;
-    VPmap vpm = choose_param(get_param(np, vertex_point),
+    VPmap vpm = choose_param(get_param(np, internal_np::vertex_point),
                              get_property_map(vertex_point, tmesh));
 
     internal::Refine_Polyhedron_3<TriangleMesh, VPmap> refine_functor(tmesh, vpm);
     refine_functor.refine(faces,
       faces_out,
       vertices_out,
-      choose_param(get_param(np, density_control_factor), CGAL::sqrt(2.)));
+      choose_param(get_param(np, internal_np::density_control_factor), CGAL::sqrt(2.)));
     return std::make_pair(faces_out, vertices_out);
   }
 

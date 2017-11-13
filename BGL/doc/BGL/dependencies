@@ -12,7 +12,10 @@ Surface_mesh
 Surface_mesh_simplification
 Surface_mesh_segmentation
 Surface_mesh_deformation
+Surface_mesh_parameterization
 Property_map
 Nef_3
 Miscellany
 Polygon_mesh_processing
+Combinatorial_map
+Linear_cell_complex

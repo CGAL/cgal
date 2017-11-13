@@ -31,6 +31,12 @@ int main()
   Polyhedron poly;
   std::ifstream input("data/lion-head.off");
   input >> poly;
+
+  if (!CGAL::is_triangle_mesh(poly)){
+    std::cerr << "Input geometry is not triangulated." << std::endl;
+    return EXIT_FAILURE;
+  }
+
   // Create a vector with only one element: the pointer to the polyhedron.
   std::vector<Polyhedron*> poly_ptrs_vector(1, &poly);
 

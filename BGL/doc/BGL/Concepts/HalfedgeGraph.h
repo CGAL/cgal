@@ -23,43 +23,78 @@ A model of `HalfedgeGraph` must have the interior property `vertex_point` attach
 
 \cgalHasModel `CGAL::Polyhedron_3`
 \cgalHasModel `CGAL::Surface_mesh`
-
-\cgalHeading{Notations}
-
-<dl>
-<dt>`G`</dt> 	  <dd>A type that is a model of `HalfedgeGraph`.</dd>
-<dt>`g`</dt> 	  <dd>An object of type `G`.</dd>
-<dt>`u`, `v`</dt> <dd>Vertex descriptors.</dd>
-<dt>`e`</dt> 	  <dd>An edge descriptor.</dd>
-<dt>`h`</dt> 	  <dd>A halfedge descriptor.</dd>
-</dl>
-
-\cgalHeading{Associated Types}
-
-Type                                                      | Description
---------------------------------------------------------- | ------------
-`boost::graph_traits<G>::%halfedge_descriptor`             | A `halfedge_descriptor` corresponds to a halfedge in a graph. Must be `DefaultConstructible`, `Assignable`, `EqualityComparable` and `LessThanComparable`.
-
-
-\cgalHeading{Valid Expressions}
-
-Expression                              | Returns                                                                      | Description  
---------------------------------------- | ---------------------------------------------------------------------------- | -----------
-`edge(h, g)`                            | `edge_descriptor`                                                            | The edge corresponding to `h` and `opposite(h)`.
-`halfedge(e, g)`                        | `halfedge_descriptor`                                                        | One of the halfedges corresponding to `e`.
-`halfedge(v, g)`                        | `halfedge_descriptor`                                                        | A halfedge with target `v`. 
-`halfedge(u, v, g)`                     | `std::pair<halfedge_descriptor,bool>`                                        | The halfedge with source `u` and target `v`. The Boolean is `true`, iff this halfedge exists.
-`opposite(h, g)`                        | `halfedge_descriptor`                                                        | The halfedge with source and target swapped.
-`source(h,g)`                           | `vertex_descriptor`                                                          | The source vertex of `h`.
-`target(h,g)`                           | `vertex_descriptor`                                                          | The target vertex of `h`.
-`next(h, g)`                            | `halfedge_descriptor`                                                        | The next halfedge around its face.
-`prev(h, g)`                            | `halfedge_descriptor`                                                        | The previous halfedge around its face.
-`boost::graph_traits<G>::%null_halfedge()` | `halfedge_descriptor`                                                     | Returns a special halfedge that is not equal to any other halfedge.
-
-\cgalHeading{Invariants}
-
-`halfedge(edge(h,g))==h`
-
-
 */
 class HalfedgeGraph {};
+
+/*! \relates HalfedgeGraph
+returns the edge corresponding to halfedges `h` and `opposite(h,g)`.
+ */
+template <typename HalfedgeGraph>
+boost::graph_traits<HalfedgeGraph>::edge_descriptor
+edge(boost::graph_traits<HalfedgeGraph>::halfedge_descriptor h, const HalfedgeGraph& g);
+
+/*! \relates HalfedgeGraph
+returns one of the halfedges corresponding to `e`.
+ */
+template <typename HalfedgeGraph>
+boost::graph_traits<HalfedgeGraph>::halfedge_descriptor
+halfedge(boost::graph_traits<HalfedgeGraph>::edge_descriptor f, const HalfedgeGraph& g);
+
+/*! \relates HalfedgeGraph
+returns a halfedge with target `v`.
+ */
+template <typename HalfedgeGraph>
+boost::graph_traits<HalfedgeGraph>::halfedge_descriptor
+halfedge(boost::graph_traits<HalfedgeGraph>::vertex_descriptor v, const HalfedgeGraph& g);
+
+
+/*! \relates HalfedgeGraph
+returns the halfedge with source `u` and target `v`. The Boolean is `true`, iff this halfedge exists.
+ */
+template <typename HalfedgeGraph>
+std::pair<boost::graph_traits<HalfedgeGraph>::halfedge_descriptor,bool>
+halfedge(boost::graph_traits<HalfedgeGraph>::vertex_descriptor u,
+         boost::graph_traits<HalfedgeGraph>::vertex_descriptor v,
+         const HalfedgeGraph& g);
+
+/*! \relates HalfedgeGraph
+returns the halfedge with source and target swapped.
+ */
+template <typename HalfedgeGraph>
+boost::graph_traits<HalfedgeGraph>::halfedge_descriptor
+opposite(boost::graph_traits<HalfedgeGraph>::halfedge_descriptor h, const HalfedgeGraph& g);
+
+/*! \relates HalfedgeGraph
+returns the source vertex of `h`.
+ */
+template <typename HalfedgeGraph>
+boost::graph_traits<HalfedgeGraph>::vertex_descriptor
+source(boost::graph_traits<HalfedgeGraph>::halfedge_descriptor h, const HalfedgeGraph& g);
+
+/*! \relates HalfedgeGraph
+returns the target vertex of `h`.
+ */
+template <typename HalfedgeGraph>
+boost::graph_traits<HalfedgeGraph>::vertex_descriptor
+target(boost::graph_traits<HalfedgeGraph>::halfedge_descriptor h, const HalfedgeGraph& g);
+
+/*! \relates HalfedgeGraph
+returns the next halfedge around its face.
+ */
+template <typename HalfedgeGraph>
+boost::graph_traits<HalfedgeGraph>::halfedge_descriptor
+next(boost::graph_traits<HalfedgeGraph>::halfedge_descriptor h, const HalfedgeGraph& g);
+
+/*! \relates HalfedgeGraph
+returns the previous halfedge around its face.
+ */
+template <typename HalfedgeGraph>
+boost::graph_traits<HalfedgeGraph>::halfedge_descriptor
+prev(boost::graph_traits<HalfedgeGraph>::halfedge_descriptor h, const HalfedgeGraph& g);
+
+/*! \relates HalfedgeGraph
+returns a special halfedge that is not equal to any other halfedge.
+ */
+template <typename HalfedgeGraph>
+boost::graph_traits<HalfedgeGraph>::halfedge_descriptor
+null_halfedge();

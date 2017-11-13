@@ -24,7 +24,6 @@
 #include <CGAL/Segment_Delaunay_graph_traits_2.h>
 #include <CGAL/Segment_Delaunay_graph_2.h>
 #include <CGAL/Delaunay_triangulation_2.h>
-#include <CGAL/Regular_triangulation_euclidean_traits_2.h>
 #include <CGAL/Regular_triangulation_2.h>
 #include <CGAL/Object.h>
 #include <CGAL/intersections.h>
@@ -40,8 +39,7 @@ typedef CGAL::Cartesian<double>                                               Ke
 typedef CGAL::Segment_Delaunay_graph_traits_2<Kernel>                         Gt;
 typedef CGAL::Segment_Delaunay_graph_2<Gt>                                    SDG2;
 typedef CGAL::Delaunay_triangulation_2<Kernel>                                Delaunay;
-typedef CGAL::Regular_triangulation_euclidean_traits_2<Kernel,Kernel::FT>     RGt;
-typedef CGAL::Regular_triangulation_2<RGt>                                    Regular;
+typedef CGAL::Regular_triangulation_2<Kernel>                                 Regular;
 //Apollonius
 typedef CGAL::Apollonius_graph_traits_2<Kernel>                               AT;
 typedef CGAL::Apollonius_graph_2<AT>                                          Apollonius;

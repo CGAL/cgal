@@ -63,7 +63,6 @@ struct Triangle_from_face_descriptor_map{
       key_type f)
   {
     typename boost::remove_const<TriangleMesh>::type & tm = *(pmap.m_tm);
-
     CGAL_precondition(halfedge(f,tm) == next(next(next(halfedge(f,tm),tm),tm),tm));
 
     return value_type( get(pmap.m_vpm, target(halfedge(f,tm),tm)),

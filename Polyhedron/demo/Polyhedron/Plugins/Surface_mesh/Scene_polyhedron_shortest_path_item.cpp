@@ -14,16 +14,16 @@ struct Scene_polyhedron_shortest_path_item_priv
 {
   typedef CGAL::Three::Scene_interface::Bbox Bbox;
 
-  typedef boost::property_map<Polyhedron, CGAL::vertex_point_t>::type VertexPointMap;
+  typedef boost::property_map<Face_graph, CGAL::vertex_point_t>::type VertexPointMap;
 
-  typedef boost::graph_traits<Polyhedron> GraphTraits;
+  typedef boost::graph_traits<Face_graph> GraphTraits;
   typedef GraphTraits::face_descriptor face_descriptor;
   typedef GraphTraits::face_iterator face_iterator;
 
-  typedef CGAL::Surface_mesh_shortest_path_traits<Kernel, Polyhedron> Surface_mesh_shortest_path_traits;
+  typedef CGAL::Surface_mesh_shortest_path_traits<Kernel, Face_graph> Surface_mesh_shortest_path_traits;
   typedef CGAL::Surface_mesh_shortest_path<Surface_mesh_shortest_path_traits> Surface_mesh_shortest_path;
   typedef Surface_mesh_shortest_path::Face_location Face_location;
-  typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron, VertexPointMap> AABB_face_graph_primitive;
+  typedef CGAL::AABB_face_graph_triangle_primitive<Face_graph, VertexPointMap> AABB_face_graph_primitive;
   typedef CGAL::AABB_traits<Kernel, AABB_face_graph_primitive> AABB_face_graph_traits;
   typedef CGAL::AABB_tree<AABB_face_graph_traits> AABB_face_graph_tree;
 
@@ -104,7 +104,7 @@ Scene_polyhedron_shortest_path_item::Scene_polyhedron_shortest_path_item()
   d = new Scene_polyhedron_shortest_path_item_priv(this);
 }
 
-Scene_polyhedron_shortest_path_item::Scene_polyhedron_shortest_path_item(Scene_polyhedron_item* polyhedronItem, CGAL::Three::Scene_interface* sceneInterface, Messages_interface* messages, QMainWindow* mainWindow)
+Scene_polyhedron_shortest_path_item::Scene_polyhedron_shortest_path_item(Scene_face_graph_item* polyhedronItem, CGAL::Three::Scene_interface* sceneInterface, Messages_interface* messages, QMainWindow* mainWindow)
   :Scene_polyhedron_item_decorator(polyhedronItem, false)
 { d = new Scene_polyhedron_shortest_path_item_priv(this);
   initialize(polyhedronItem, sceneInterface, messages, mainWindow);
@@ -405,11 +405,13 @@ bool Scene_polyhedron_shortest_path_item_priv::run_point_select(const Ray_3& ray
   }
   else
   {
+    boost::property_map<Face_graph, CGAL::face_index_t>::type fimap
+        = get(CGAL::face_index, *item->polyhedron());
     m_messages->information(QObject::tr("Shortest Paths: Selected Face: %1; Barycentric coordinates: %2 %3 %4")
-      .arg(faceLocation.first->id())
-      .arg(double(faceLocation.second[0]))
-      .arg(double(faceLocation.second[1]))
-      .arg(double(faceLocation.second[2])));
+                            .arg(get(fimap, faceLocation.first))
+                            .arg(double(faceLocation.second[0]))
+        .arg(double(faceLocation.second[1]))
+        .arg(double(faceLocation.second[2])));
     switch (m_selectionMode)
     {
     case INSERT_POINTS_MODE:
@@ -449,9 +451,9 @@ bool Scene_polyhedron_shortest_path_item_priv::run_point_select(const Ray_3& ray
         ensure_shortest_paths_tree();
         
         Scene_polylines_item* polylines = new Scene_polylines_item();
-            
+
         polylines->polylines.push_back(Scene_polylines_item::Polyline());
-            
+
         m_messages->information(QObject::tr("Computing shortest path polyline..."));
 
         QTime time;
@@ -459,12 +461,16 @@ bool Scene_polyhedron_shortest_path_item_priv::run_point_select(const Ray_3& ray
         //~ m_shortestPaths->m_debugOutput=true;
         m_shortestPaths->shortest_path_points_to_source_points(faceLocation.first, faceLocation.second, std::back_inserter(polylines->polylines.back()));
         std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
-        
-        polylines->setName(QObject::tr("%1 (shortest path)").arg(item->polyhedron_item()->name()));
-        polylines->setColor(Qt::red);
-        this->m_sceneInterface->setSelectedItem(-1);
-        this->m_sceneInterface->addItem(polylines);
-        this->m_sceneInterface->changeGroup(polylines, item->parentGroup());
+        if(!polylines->polylines.front().empty())
+        {
+          polylines->setName(QObject::tr("%1 (shortest path)").arg(item->polyhedron_item()->name()));
+          polylines->setColor(Qt::red);
+          this->m_sceneInterface->setSelectedItem(-1);
+          this->m_sceneInterface->addItem(polylines);
+          this->m_sceneInterface->changeGroup(polylines, item->parentGroup());
+        }
+        else
+          delete polylines;
       }
       else
       {
@@ -515,7 +521,7 @@ bool Scene_polyhedron_shortest_path_item::load(const std::string& file_name)
   return true;
 }
 
-bool Scene_polyhedron_shortest_path_item::deferred_load(Scene_polyhedron_item* polyhedronItem, CGAL::Three::Scene_interface* sceneInterface, Messages_interface* messages, QMainWindow* mainWindow)
+bool Scene_polyhedron_shortest_path_item::deferred_load(Scene_face_graph_item* polyhedronItem, CGAL::Three::Scene_interface* sceneInterface, Messages_interface* messages, QMainWindow* mainWindow)
 {
   initialize(polyhedronItem, sceneInterface, messages, mainWindow);
   
@@ -560,7 +566,8 @@ bool Scene_polyhedron_shortest_path_item::deferred_load(Scene_polyhedron_item* p
 bool Scene_polyhedron_shortest_path_item::save(const std::string& file_name) const 
 {
   std::ofstream out(file_name.c_str());
-  
+  boost::property_map<Face_graph, CGAL::face_index_t>::type fimap
+      = get(CGAL::face_index, *polyhedron());
   if (!out)
   { 
     return false; 
@@ -568,14 +575,13 @@ bool Scene_polyhedron_shortest_path_item::save(const std::string& file_name) con
 
   for(Surface_mesh_shortest_path::Source_point_iterator it = d->m_shortestPaths->source_points_begin(); it != d->m_shortestPaths->source_points_end(); ++it)
   { 
-    // std::cout << "Output face location: " << it->first->id() << " , " << it->second << std::endl;
-    out << it->first->id() << " " << it->second[0] << " " << it->second[1] << " " << it->second[3] << std::endl;
+    out << get(fimap, it->first) << " " << it->second[0] << " " << it->second[1] << " " << it->second[3] << std::endl;
   }
 
   return true;
 }
 
-void Scene_polyhedron_shortest_path_item::initialize(Scene_polyhedron_item* polyhedronItem, CGAL::Three::Scene_interface* sceneInterface, Messages_interface* messages, QMainWindow* mainWindow)
+void Scene_polyhedron_shortest_path_item::initialize(Scene_face_graph_item* polyhedronItem, CGAL::Three::Scene_interface* sceneInterface, Messages_interface* messages, QMainWindow* mainWindow)
 {
   d->m_mainWindow = mainWindow;
   d->m_messages = messages;
@@ -599,7 +605,7 @@ bool Scene_polyhedron_shortest_path_item::isFinite() const
   return true;
 }
 
-bool Scene_polyhedron_shortest_path_item::isEmpty() const 
+bool Scene_polyhedron_shortest_path_item::isEmpty() const
 {
   return false;
 }

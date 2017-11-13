@@ -1,14 +1,66 @@
 #!/bin/bash
 set -e
+
+CXX_FLAGS="-DCGAL_NDEBUG"
+
+function build_examples {
+  mkdir -p build-travis
+  cd build-travis
+  cmake -DCGAL_DIR="$ROOT/build" -DCMAKE_CXX_FLAGS_RELEASE="${CXX_FLAGS}" ..
+  make -j2
+}
+
+function build_tests {
+  build_examples
+}
+
+function build_demo {
+  mkdir -p build-travis
+  cd build-travis
+  if [ $NEED_3D = 1 ]; then
+    #install libqglviewer
+    git clone --depth=4 -b v2.6.3 --single-branch https://github.com/GillesDebunne/libQGLViewer.git ./qglviewer
+    pushd ./qglviewer/QGLViewer
+    #use qt5 instead of qt4
+#    export QT_SELECT=5
+    qmake NO_QT_VERSION_SUFFIX=yes
+    make -j2
+    if [ ! -f libQGLViewer.so ]; then
+        echo "libQGLViewer.so not made"
+        exit 1
+    else
+      echo "QGLViewer built successfully"
+    fi
+    #end install qglviewer
+    popd
+  fi
+  EXTRA_CXX_FLAGS=
+  case "$CC" in
+    clang*)
+      EXTRA_CXX_FLAGS="-Werror=inconsistent-missing-override"
+      ;;
+  esac
+  if [ $NEED_3D = 1 ]; then
+    QGLVIEWERROOT=$PWD/qglviewer
+    export QGLVIEWERROOT
+  fi
+  cmake -DCGAL_DIR="$ROOT/build" -DQt5_DIR="/opt/qt55/lib/cmake/Qt5" -DQt5Svg_DIR="/opt/qt55/lib/cmake/Qt5Svg" -DQt5OpenGL_DIR="/opt/qt55/lib/cmake/Qt5OpenGL" -DCGAL_DONT_OVERRIDE_CMAKE_FLAGS:BOOL=ON -DCMAKE_CXX_FLAGS_RELEASE="${CXX_FLAGS} ${EXTRA_CXX_FLAGS}" ..
+  make -j2
+}
+
 IFS=$' '
-ROOT="$PWD/../"
+ROOT="$PWD/.."
 NEED_3D=0
 for ARG in $(echo "$@")
 do
   if [ "$ARG" = "CHECK" ]
 	then
     zsh $ROOT/Scripts/developer_scripts/test_merge_of_branch HEAD
-
+    mkdir -p build-travis
+    pushd build-travis
+    cmake -DCGAL_ENABLE_CHECK_HEADERS=ON -DQt5_DIR="/opt/qt55/lib/cmake/Qt5" ../..
+    make -j2 check_headers
+    popd
   	#parse current matrix and check that no package has been forgotten
 	  old_IFS=$IFS
 	  IFS=$'\n'
@@ -38,6 +90,9 @@ do
 	        exit 1
 	  fi
 	  echo "Matrix is up to date."
+    cd .travis
+    ./generate_travis.sh -c
+    cd ..
     exit 0
 	fi
 	EXAMPLES="$ARG/examples/$ARG"
@@ -53,21 +108,15 @@ do
 	if [ -d "$ROOT/$EXAMPLES" ]
 	then
 	  cd $ROOT/$EXAMPLES
-	  mkdir -p build
-	  cd build
-	  cmake -DCGAL_DIR="$ROOT/build" -DCMAKE_CXX_FLAGS_RELEASE="-DCGAL_NDEBUG" ..
-	  make -j2
+	  build_examples
   elif [ "$ARG" != Polyhedron_demo ]; then
     echo "No example found for $ARG"
 	fi
 
 	if [ -d "$ROOT/$TEST" ]
 	then
-	  cd $ROOT/$TEST
-	  mkdir -p build
-	  cd build
-	  cmake -DCGAL_DIR="$ROOT/build" -DCMAKE_CXX_FLAGS_RELEASE="-DCGAL_NDEBUG" ..
-  	make -j2
+    cd $ROOT/$TEST
+    build_tests
   elif [ "$ARG" != Polyhedron_demo ]; then
     echo "No test found for $ARG"
 	fi
@@ -81,54 +130,21 @@ do
     fi
 	  if [ "$ARG" != Polyhedron ] && [ -d "$ROOT/$DEMO" ]
   	then
-      if [ $NEED_3D = 1 ]; then
-    	  cd $ROOT/$DEMO
-        #install libqglviewer
-        git clone --depth=1 https://github.com/GillesDebunne/libQGLViewer.git ./qglviewer
-        cd ./qglviewer/QGLViewer
-        #use qt5 instead of qt4
-        export QT_SELECT=5
-        qmake NO_QT_VERSION_SUFFIX=yes
-        make -j2
-        if [ ! -f libQGLViewer.so ]; then
-          echo "libQGLViewer.so not made"
-          exit 1
-        else
-          echo "QGLViewer built successfully"
-        fi
-        #end install qglviewer
-      fi
-	    cd $ROOT/$DEMO
-	    mkdir -p build
-	    cd build
-      if [ $NEED_3D = 1 ]; then
-	      cmake -DCGAL_DIR="$ROOT/build" -DQGLVIEWER_INCLUDE_DIR="$ROOT/$DEMO/qglviewer" -DQGLVIEWER_LIBRARIES="$ROOT/$DEMO/qglviewer/QGLViewer/libQGLViewer.so" -DCMAKE_CXX_FLAGS_RELEASE="-DCGAL_NDEBUG" ..
-      else
-        cmake -DCGAL_DIR="$ROOT/build" -DCMAKE_CXX_FLAGS_RELEASE="-DCGAL_NDEBUG" ..
-      fi
-	    make -j2
+      cd $ROOT/$DEMO
+      build_demo
     elif [ "$ARG" != Polyhedron_demo ]; then
       echo "No demo found for $ARG"
 	  fi
   done
   if [ "$ARG" = Polyhedron_demo ]; then
-    cd "$ROOT/Polyhedron/demo/Polyhedron"
-    #install libqglviewer
-    git clone --depth=1 https://github.com/GillesDebunne/libQGLViewer.git ./qglviewer
-    cd ./qglviewer/QGLViewer
-    #use qt5 instead of qt4
-    export QT_SELECT=5
-    qmake NO_QT_VERSION_SUFFIX=yes
-    make -j2
-    if [ ! -f libQGLViewer.so ]; then
-      echo "libQGLViewer.so not made"
-      exit 1
-    fi
-    #end install qglviewer
-    cd "$ROOT/Polyhedron/demo/Polyhedron"
-    mkdir -p ./build
-    cd ./build
-    cmake -DCGAL_DIR="$ROOT/build" -DQGLVIEWER_INCLUDE_DIR="$ROOT/Polyhedron/demo/Polyhedron/qglviewer" -DQGLVIEWER_LIBRARIES="$ROOT/Polyhedron/demo/Polyhedron/qglviewer/QGLViewer/libQGLViewer.so" -DCMAKE_CXX_FLAGS_RELEASE="-DCGAL_NDEBUG" ..
-    make -j2
+    DEMO=Polyhedron/demo/Polyhedron
+    NEED_3D=1
+    cd "$ROOT/$DEMO"
+    build_demo
   fi  
 done
+
+# Local Variables:
+# tab-width: 2
+# sh-basic-offset: 2
+# End:

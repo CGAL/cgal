@@ -23,7 +23,6 @@
 
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
-#include <CGAL/Regular_triangulation_euclidean_traits_2.h>
 #include <CGAL/Regular_triangulation_face_base_2.h>
 #include <CGAL/Regular_triangulation_vertex_base_2.h>
 #include <CGAL/Regular_triangulation_2.h>
@@ -33,16 +32,14 @@
 namespace CGAL_multi_delaunay{
 
 typedef  CGAL::Exact_predicates_inexact_constructions_kernel                        Kernel;
-typedef Kernel::FT                                                                  FT;
 typedef CGAL::Delaunay_triangulation_2<Kernel>                                      Delaunay;
-typedef CGAL::Regular_triangulation_euclidean_traits_2<Kernel,FT>                   Gt;
-typedef CGAL::Regular_triangulation_vertex_base_2<Gt>                               Vb;
-typedef CGAL::Triangulation_vertex_base_with_info_2<std::vector<Kernel::Point_2>,Gt,Vb>   VbI;
-//~ typedef CGAL::Triangulation_vertex_base_with_info_2<std::list<Kernel::Point_2>,Gt,Vb>         VbI;
+typedef CGAL::Regular_triangulation_vertex_base_2<Kernel>                          Vb;
+typedef CGAL::Triangulation_vertex_base_with_info_2<std::vector<Kernel::Point_2>,Kernel,Vb>   VbI;
+//~ typedef CGAL::Triangulation_vertex_base_with_info_2<std::list<Kernel::Point_2>,Kernel,Vb>         VbI;
 typedef CGAL::Regular_triangulation_face_base_2<Kernel  >                           Fb;
 typedef CGAL::Triangulation_data_structure_2<VbI,Fb>                                Tds;
-typedef CGAL::Regular_triangulation_2<Gt,Tds>                                       RegularI;
-typedef CGAL::Regular_triangulation_2<Gt>                                           Regular;
+typedef CGAL::Regular_triangulation_2<Kernel,Tds>                                   RegularI;
+typedef CGAL::Regular_triangulation_2<Kernel>                                       Regular;
 typedef Delaunay::Finite_vertices_iterator                                          itVert;
 typedef RegularI::Finite_vertices_iterator                                          RitVert;
 typedef Delaunay::Vertex_handle                                                     Vertex;

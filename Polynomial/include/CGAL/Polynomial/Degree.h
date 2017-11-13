@@ -37,7 +37,7 @@ template <typename Polynomial > struct Degree;
 // Polynomial musst be at least univariate ! 
 template <typename Coeff_ > 
 struct Degree<Polynomial<Coeff_> >
-  : public std::unary_function< Polynomial<Coeff_> , int  >{
+  : public CGAL::unary_function< Polynomial<Coeff_> , int  >{
   
 private: 
   typedef Polynomial<Coeff_> Polynomial_d;

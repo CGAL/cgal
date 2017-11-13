@@ -50,6 +50,7 @@ public:
   //------
   typedef STraits                                  Storage_traits;
   typedef typename Storage_traits::Geom_traits     Geom_traits;
+  typedef typename Geom_traits::Point_2            Point;
   typedef typename Geom_traits::Site_2             Site_2;
   typedef typename Storage_traits::Storage_site_2  Storage_site_2;
   typedef D_S                                       Data_structure;

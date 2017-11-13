@@ -124,6 +124,7 @@ Returns the previous mode of `s`.
 */
 IO::Mode set_pretty_mode(std::ios& s);
 
+
 /*!
 \ingroup PkgIOstreams
 

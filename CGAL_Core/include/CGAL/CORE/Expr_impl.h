@@ -42,6 +42,7 @@
 
 #include <CGAL/CORE/Expr.h>
 #include <cmath>
+#include <sstream> 
 
 namespace CORE { 
 
@@ -1028,8 +1029,9 @@ void MultRep::computeApproxValue(const extLong& relPrec,
   // handling overflow and underflow
   if (lMSB() >= EXTLONG_BIG || lMSB() <= EXTLONG_SMALL)
   {
-    std::cerr << "lMSB = " << lMSB() << std::endl; // should be in core_error
-    core_error("CORE WARNING: a huge lMSB in AddSubRep",
+    std::ostringstream oss;
+    oss << "CORE WARNING: a huge lMSB in AddSubRep " <<  lMSB();
+    core_error(oss.str(),
 	 	__FILE__, __LINE__, false);
   }
 
@@ -1050,8 +1052,9 @@ void DivRep::computeApproxValue(const extLong& relPrec,
   // handling overflow and underflow
   if (lMSB() >= EXTLONG_BIG || lMSB() <= EXTLONG_SMALL)
   {
-    std::cerr << "lMSB = " << lMSB() << std::endl; // should be in core_error
-    core_error("CORE WARNING: a huge lMSB in AddSubRep",
+    std::ostringstream oss;
+    oss << "CORE WARNING: a huge lMSB in AddSubRep " << lMSB();
+    core_error(oss.str(),
 	 	__FILE__, __LINE__, false);
   }
 

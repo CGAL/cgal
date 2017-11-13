@@ -180,7 +180,7 @@ with the same line as the rightmost edge of the maximization diagram,
 and vice-verse. We can therefore skip the rightmost edges of both
 diagrams.
 
-\cgalExample{Envelope_2/convex_hull.cpp}
+\cgalExample{Envelope_2/convex_hull_2.cpp}
 
 \cgalFigureBegin{env2_figex_circ,ex_circle.png}
 A set of four circles, as constructed in \ref Envelope_2/envelope_circles.cpp. The lower envelope and the upper envelope are shown using thick dashed lines of different colors respectively.

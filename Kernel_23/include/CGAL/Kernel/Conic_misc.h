@@ -29,6 +29,8 @@
 #include <CGAL/number_utils.h>
 #include <CGAL/kernel_assertions.h>
 
+#include <boost/math/special_functions/cbrt.hpp>
+
 namespace CGAL {
 
 template < class R>
@@ -119,8 +121,8 @@ int solve_cubic (NT c3, NT c2, NT c1, NT c0,
 
     if (a == 0) {
         // one real root
-        /***** r1 = cbrt(-b) - g2/3.0; *****/
-        r1 = exp(log(-b)/3.0) - g2/3.0;
+        r1 = boost::math::cbrt(-b) - g2 / 3.0;
+        // r1 = std::exp(std::log(-b) / 3.0) - g2 / 3.0;
         return 1;
     }
 
@@ -128,8 +130,8 @@ int solve_cubic (NT c3, NT c2, NT c1, NT c0,
     NT D  = a*a*a/27.0 + b*b/4.0;
     if (D >= 0.0) {
         // real case
-        /***** NT u = cbrt(-b/2.0 + CGAL_NTS sqrt(D)), *****/
-        NT u = exp(log(-b/2.0 + CGAL_NTS sqrt(D))),
+        NT u = boost::math::cbrt(-b / 2.0 + CGAL_NTS sqrt(D)),
+        // NT u = std::exp(std::log(-b/2.0 + CGAL_NTS sqrt(D)) / 3.0),
                alpha = 1.0 - a/(3.0*u*u);
         if (D == 0) {
             // two distinct real roots

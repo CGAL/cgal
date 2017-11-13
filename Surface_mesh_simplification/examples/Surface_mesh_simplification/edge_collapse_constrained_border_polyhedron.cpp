@@ -4,8 +4,6 @@
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 
 // Simplification function
 #include <CGAL/Surface_mesh_simplification/edge_collapse.h>
@@ -55,17 +53,21 @@ int main( int argc, char** argv )
   Surface_mesh surface_mesh;
 
   if (argc!=2){
-    std::cerr<< "Usage: " << argv[0] << " input.off\n";
-    return 1;
+    std::cerr << "Usage: " << argv[0] << " input.off\n";
+    return EXIT_FAILURE;
   }
 
   std::ifstream is(argv[1]);
   if(!is){
-    std::cerr<< "Filename provided is invalid\n";
-    return 1;
+    std::cerr << "Filename provided is invalid\n";
+    return EXIT_FAILURE;
   }
 
   is >> surface_mesh  ;
+  if (!CGAL::is_triangle_mesh(surface_mesh)){
+    std::cerr << "Input geometry is not triangulated." << std::endl;
+    return EXIT_FAILURE;
+  }
 
   // map used to check that constrained_edges and the points of its vertices
   // are preserved at the end of the simplification
@@ -121,5 +123,5 @@ int main( int argc, char** argv )
   }
   assert( nb_border_edges==0 );
 
-  return 0 ;
+  return EXIT_SUCCESS ;
 }

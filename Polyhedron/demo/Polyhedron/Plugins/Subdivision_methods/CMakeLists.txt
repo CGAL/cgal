@@ -2,4 +2,4 @@ include( polyhedron_demo_macros )
 
 
 polyhedron_demo_plugin(subdivision_methods_plugin Subdivision_methods_plugin)
-target_link_libraries(subdivision_methods_plugin scene_polyhedron_item)
+target_link_libraries(subdivision_methods_plugin scene_polyhedron_item scene_surface_mesh_item)

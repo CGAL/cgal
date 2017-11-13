@@ -1187,6 +1187,13 @@ protected:
 
     // accessor for  low-level arrangement fonctionalities
     CGAL::Arr_accessor<Aos_2> accessor(*arr);
+    // the face field of outer and inner ccb are used in the loop to access the old face an halfedge
+    // used to contribute to. These two vectors are used to delay the association to the new face to
+    // avoid overwriting a field that is still needed
+    typedef std::pair<typename Aos_2::Dcel::Outer_ccb*, typename Aos_2::Dcel::Face*> Outer_ccb_and_face;
+    typedef std::pair<typename Aos_2::Dcel::Inner_ccb*, typename Aos_2::Dcel::Face*> Inner_ccb_and_face;
+    std::vector<Outer_ccb_and_face> outer_ccb_and_new_face_pairs;
+    std::vector<Inner_ccb_and_face> inner_ccb_and_new_face_pairs;
     // update halfedge ccb pointers
     for (Halfedge_iterator itr = arr->halfedges_begin(); itr != arr->halfedges_end(); ++itr)
     {
@@ -1208,11 +1215,12 @@ protected:
         f = *(face_handles[
                 (*uf_faces.find(face_handles[f->id()]))->id()
               ]);
-        if (h->flag()==ON_INNER_CCB || h->flag()==NOT_VISITED)
+        if (h->flag()==ON_INNER_CCB)
         {
-          typename Aos_2::Dcel::Inner_ccb* inner_ccb = inner_ccbs_to_remove.empty()?
+          bool reuse_inner_ccb = !inner_ccbs_to_remove.empty();
+          typename Aos_2::Dcel::Inner_ccb* inner_ccb = !reuse_inner_ccb?
             accessor.new_inner_ccb():inner_ccbs_to_remove.back();
-          if ( !inner_ccbs_to_remove.empty() ) inner_ccbs_to_remove.pop_back();
+          if ( reuse_inner_ccb ) inner_ccbs_to_remove.pop_back();
 
           Halfedge_handle hstart=h;
           do{
@@ -1222,9 +1230,13 @@ protected:
           }while(hstart!=h);
           f->add_inner_ccb(inner_ccb,_halfedge(h));
           inner_ccb->set_halfedge(_halfedge(h));
-          inner_ccb->set_face(f);
+          if (!reuse_inner_ccb)
+            inner_ccb->set_face(f);
+          else
+            inner_ccb_and_new_face_pairs.push_back( std::make_pair(inner_ccb, f) );
         }
         else{
+          // we never create more outer ccb than what was available
           CGAL_assertion(!outer_ccbs_to_remove.empty());
           typename Aos_2::Dcel::Outer_ccb* outer_ccb = outer_ccbs_to_remove.back();
           outer_ccbs_to_remove.pop_back();
@@ -1236,10 +1248,16 @@ protected:
           }while(hstart!=h);
           f->add_outer_ccb(outer_ccb,_halfedge(h));
           outer_ccb->set_halfedge(_halfedge(h));
-          outer_ccb->set_face(f);
+          outer_ccb_and_new_face_pairs.push_back( std::make_pair(outer_ccb, f) );
         }
       }
     }
+
+    // now set the new face for all ccbs
+    BOOST_FOREACH(Outer_ccb_and_face& ccb_and_face, outer_ccb_and_new_face_pairs)
+      ccb_and_face.first->set_face(ccb_and_face.second);
+    BOOST_FOREACH(Inner_ccb_and_face& ccb_and_face, inner_ccb_and_new_face_pairs)
+      ccb_and_face.first->set_face(ccb_and_face.second);
 
     //remove no longer used edges, vertices and faces
     accessor.delete_vertices( vertices_to_remove );

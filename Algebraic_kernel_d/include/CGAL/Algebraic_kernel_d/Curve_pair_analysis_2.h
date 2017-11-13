@@ -480,8 +480,6 @@ public:
                           Curve_analysis_2 c2,
                           CGAL::Degeneracy_strategy strategy
                               = CGAL_ACK_DEFAULT_DEGENERACY_STRATEGY) 
-        throw(CGAL::internal::Zero_resultant_exception<Polynomial_2>,
-              CGAL::internal::Non_generic_position_exception)
         : Base(Rep(kernel,c1, c2, strategy)) 
     {
         
@@ -847,13 +845,11 @@ private:
 private:
 
     // Computes a slice_info object at Algebraic_real_1 \c alpha
-    Slice_info construct_slice_info(Algebraic_real_1 alpha) const
-        throw(CGAL::internal::Non_generic_position_exception);
+    Slice_info construct_slice_info(Algebraic_real_1 alpha) const;
       
 private:
       
-    Status_line_CPA_1 construct_generic_case(size_type i) const 
-        throw(CGAL::internal::Non_generic_position_exception);        
+    Status_line_CPA_1 construct_generic_case(size_type i) const;        
 
 private:
       
@@ -1170,8 +1166,7 @@ private:
 
       
     Status_line_CPA_1 
-        create_event_slice_from_current_intersection_info (size_type i) 
-        const throw(CGAL::internal::Non_generic_position_exception);
+        create_event_slice_from_current_intersection_info (size_type i) const;
 
     Bound x_sheared(Bound x, Bound y,Integer sh) const {
         return x-sh*y;
@@ -1992,8 +1987,7 @@ create_slice_from_slice_info(size_type id,
 template<typename AlgebraicKernelWithAnalysis_2>
 typename Curve_pair_analysis_2<AlgebraicKernelWithAnalysis_2>::Slice_info 
 Curve_pair_analysis_2<AlgebraicKernelWithAnalysis_2>::
-construct_slice_info(Algebraic_real_1 alpha) const
-    throw(CGAL::internal::Non_generic_position_exception) {
+construct_slice_info(Algebraic_real_1 alpha) const {
     
 /*
   #if CGAL_ACK_DEBUG_FLAG
@@ -2074,8 +2068,7 @@ template<typename AlgebraicKernelWithAnalysis_2>
 typename Curve_pair_analysis_2<AlgebraicKernelWithAnalysis_2>
     ::Status_line_CPA_1 
 Curve_pair_analysis_2<AlgebraicKernelWithAnalysis_2>::
-construct_generic_case(size_type i) const 
-    throw(CGAL::internal::Non_generic_position_exception) {
+construct_generic_case(size_type i) const {
     
     Algebraic_real_1 alpha = event_x(i);
     
@@ -2414,8 +2407,7 @@ template<typename AlgebraicKernelWithAnalysis_2>
 typename Curve_pair_analysis_2<AlgebraicKernelWithAnalysis_2>
     ::Status_line_CPA_1 
 Curve_pair_analysis_2<AlgebraicKernelWithAnalysis_2>::
-create_event_slice_from_current_intersection_info (size_type i) 
-    const throw(CGAL::internal::Non_generic_position_exception){
+create_event_slice_from_current_intersection_info (size_type i) const{
 #if CGAL_ACK_DEBUG_FLAG
     CGAL_ACK_DEBUG_PRINT << "Reduce the candidates.." << std::flush;
 #endif

@@ -14,7 +14,6 @@
 //
 // $URL$
 // $Id$
-// 
 //
 // Author(s)     : Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>
 //                 Sylvain Pion
@@ -24,38 +23,22 @@
 
 #include <CGAL/license/Triangulation_2.h>
 
+#define CGAL_DEPRECATED_HEADER "<CGAL/Regular_triangulation_euclidean_traits_2.h>"
+#define CGAL_DEPRECATED_MESSAGE_DETAILS \
+  "The kernel K can be used directly as traits since weighted points and "\
+  "the associated function objects are now part of the concept Kernel."
+#include <CGAL/internal/deprecation_warning.h>
 
-#include <CGAL/basic.h>
+namespace CGAL {
 
-
-namespace CGAL { 
-
-template < class R, class W = typename R::RT>
+template < class K, class W = typename K::RT>
 class Regular_triangulation_euclidean_traits_2
-  : public R
+  : public K
 {
 public:
   Regular_triangulation_euclidean_traits_2() {}
-  Regular_triangulation_euclidean_traits_2(const R& k) : R(k) {}
-
-  typedef R                                     Kernel;
-  typedef R                                     Rep;
-  typedef typename R::FT                        Weight;
-  typedef R                                     Traits;
-  typedef typename R::Point_2                   Bare_point;
-  typedef typename R::Weighted_point_2          Weighted_point_2;
-  typedef Weighted_point_2                      Point_2;
-
-  // This is required for the point() function of vertex base class
-  // to be correctly return a weighted_point;
-  // patch 27/11/00
-  // 18/03/03 I put now the same typedef in Regulat_triangulation_2
-  // for the need of hierarchy
-  // don't know if this is definitive
-  //typedef Weighted_point                        Point_2;
-
+  Regular_triangulation_euclidean_traits_2(const K& k) : K(k) {}
 };
- 
 
 } //namespace CGAL
 

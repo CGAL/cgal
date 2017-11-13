@@ -25,7 +25,7 @@
 
 
 #include <CGAL/internal/corefinement/Combinatorial_map_for_corefinement.h>
-#include <CGAL/Polygon_mesh_processing/connected_components.h>
+#include <CGAL/internal/corefinement/connected_components.h>
 #include <CGAL/internal/corefinement/predicates.h>
 #include <CGAL/internal/corefinement/utils.h>
 #include <CGAL/Side_of_triangle_mesh.h>
@@ -132,7 +132,7 @@ void sew_2_marked_darts( Combinatorial_map_3& final_map,
   if ( final_map.template attribute<0>(dart_1)->point() != nodes[ src_index ] )
     std::swap(dart_1,dart_2);
 
-  int nb_segs=polyline_info.second-1,k=1;
+  int nb_segs=polyline_info.second+1,k=1;
 
   do {
     CGAL_precondition( final_map.template is_sewable<2>(dart_1,dart_2) );

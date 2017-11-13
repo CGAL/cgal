@@ -37,9 +37,6 @@
 
 
 #include <vector>
-#ifdef CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_MULTISET
-# include <set>
-#endif
 
 namespace CGAL { namespace Mesh_3 {
 
@@ -371,42 +368,20 @@ private:
 class WorkBatch
 {
 public:
-
-#ifdef CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_MULTISET
-  typedef std::multiset<WorkItem *, CompareTwoWorkItems> Batch;
-#else
   typedef std::vector<WorkItem *> Batch;
-#endif
-  typedef Batch::const_iterator BatchConstIterator;
-  typedef Batch::iterator       BatchIterator;
+  typedef Batch::const_iterator   BatchConstIterator;
+  typedef Batch::iterator         BatchIterator;
 
   WorkBatch() {}
 
   void add_work_item(WorkItem *p_item)
   {
-#ifdef CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_MULTISET
-    m_batch.insert(p_item);
-#else
     m_batch.push_back(p_item);
-#endif
-  }
-
-  void move_first_elements(WorkBatch &dest, int num_elements)
-  {
-    BatchIterator it = m_batch.begin();
-    BatchIterator it_end = m_batch.end();
-    for (int i = 0 ; i < num_elements && it != it_end ; ++it)
-    {
-      dest.add_work_item(*it);
-    }
-    m_batch.erase(m_batch.begin(), it);
   }
 
   void run()
   {
-#ifdef CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_SORT
     std::sort(m_batch.begin(), m_batch.end(), CompareTwoWorkItems());
-#endif
     BatchIterator it = m_batch.begin();
     BatchIterator it_end = m_batch.end();
     for ( ; it != it_end ; ++it)
@@ -472,7 +447,6 @@ public:
   template <typename Func>
   void enqueue_work(Func f, tbb::task &parent_task) const
   {
-    //WorkItem *p_item = new SimpleFunctorWorkItem<Func>(f);
     WorkItem *p_item = 
       tbb::scalable_allocator<SimpleFunctorWorkItem<Func> >().allocate(1);
     new (p_item) SimpleFunctorWorkItem<Func>(f);
@@ -768,9 +742,6 @@ public:
     workbuffer.add_work_item(p_item);
     if (workbuffer.size() >= NUM_WORK_ITEMS_PER_BATCH)
     {
-      /*WorkBatch wb;
-      workbuffer.move_first_elements(wb, NUM_WORK_ITEMS_PER_BATCH);
-      add_batch_and_enqueue_task(wb, parent_task);*/
       add_batch_and_enqueue_task(workbuffer, parent_task);
       workbuffer.clear();
     }
@@ -779,7 +750,6 @@ public:
   template <typename Func, typename Quality>
   void enqueue_work(Func f, const Quality &quality, tbb::task &parent_task)
   {
-    //WorkItem *p_item = new MeshRefinementWorkItem<Func, Quality>(f, quality);
     WorkItem *p_item = 
       tbb::scalable_allocator<MeshRefinementWorkItem<Func, Quality> >()
       .allocate(1);
@@ -788,9 +758,6 @@ public:
     workbuffer.add_work_item(p_item);
     if (workbuffer.size() >= NUM_WORK_ITEMS_PER_BATCH)
     {
-      /*WorkBatch wb;
-      workbuffer.move_first_elements(wb, NUM_WORK_ITEMS_PER_BATCH);
-      add_batch_and_enqueue_task(wb, parent_task);*/
       add_batch_and_enqueue_task(workbuffer, parent_task);
       workbuffer.clear();
     }

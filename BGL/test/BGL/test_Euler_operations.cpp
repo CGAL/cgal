@@ -381,6 +381,7 @@ int main()
 {
   test_Euler_operations<Polyhedron>();
   test_Euler_operations<SM>();
+  test_Euler_operations<LCC>();
 
 #ifdef CGAL_USE_OPENMESH
   test_Euler_operations<OMesh>();

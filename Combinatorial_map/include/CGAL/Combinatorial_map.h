@@ -289,7 +289,7 @@ namespace CGAL {
       CGAL::cpp11::tuple<> converters;
       Default_converter_dart_info<CMap2, Refs> dartinfoconverter;
       Default_converter_cmap_0attributes_with_point<CMap2, Refs> pointconverter;
-      return copy(amap, converters, dartinfoconverter, pointconverter);
+      copy(amap, converters, dartinfoconverter, pointconverter);
     }
 
     template <typename CMap2, typename Converters>
@@ -297,7 +297,7 @@ namespace CGAL {
     {
       Default_converter_cmap_0attributes_with_point<CMap2, Refs> pointconverter;
       Default_converter_dart_info<CMap2, Refs> dartinfoconverter;
-      return copy(amap, converters, dartinfoconverter, pointconverter);
+      copy(amap, converters, dartinfoconverter, pointconverter);
     }
 
     template <typename CMap2, typename Converters, typename DartInfoConverter>
@@ -305,7 +305,7 @@ namespace CGAL {
               const DartInfoConverter& dartinfoconverter)
     {
       Default_converter_cmap_0attributes_with_point<CMap2, Refs> pointconverter;
-      return copy(amap, converters, dartinfoconverter, pointconverter);
+      copy(amap, converters, dartinfoconverter, pointconverter);
     }
 
     // Copy constructor from a map having exactly the same type.
@@ -534,6 +534,27 @@ namespace CGAL {
       mdarts.erase(adart);
     }
 
+    /** Erase a dart from the list of darts. Restricted version
+     *  which do not delete attribute having no more dart associated.
+     * @param adart the dart to erase.
+     */
+    void restricted_erase_dart(Dart_handle adart)
+    {
+      // 1) We update the number of marked darts.
+      for ( size_type i = 0; i < mnb_used_marks; ++i)
+      {
+        if (is_marked(adart, mused_marks_stack[i]))
+          --mnb_marked_darts[mused_marks_stack[i]];
+      }
+
+      // 2) We update the attribute_ref_counting.
+      Helper::template Foreach_enabled_attributes
+        <internal::Restricted_decrease_attribute_functor<Self> >::run(*this,adart);
+
+      // 3) We erase the dart.
+      mdarts.erase(adart);
+    }
+
     /// @return true if dh points to a used dart (i.e. valid).
     bool is_dart_used(Dart_const_handle dh) const
     { return mdarts.is_used(dh); }
@@ -610,6 +631,31 @@ namespace CGAL {
     }
 
     // Set the handle on the i th attribute
+    // Restricted version which do not use delete attributes when their ref
+    // counting become null, nor that update the dart of attribute.
+    template<unsigned int i>
+    void restricted_set_dart_attribute(Dart_handle dh,
+                                       typename Attribute_handle<i>::type ah)
+    {
+      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+                     "set_dart_attribute<i> called but i-attributes are disabled.");
+
+      if ( this->template attribute<i>(dh)==ah ) return;
+
+      if ( this->template attribute<i>(dh)!=null_handle )
+      {
+        this->template dec_attribute_ref_counting<i>(this->template attribute<i>(dh));
+      }
+
+      Base::template basic_set_dart_attribute<i>(dh, ah);
+
+      if ( ah!=null_handle )
+      {
+        this->template inc_attribute_ref_counting<i>(ah);
+      }
+    }
+
+    // Set the handle on the i th attribute
     template<unsigned int i>
     void set_dart_attribute(Dart_handle dh,
                             typename Attribute_handle<i>::type ah)
@@ -652,6 +698,8 @@ namespace CGAL {
 
       Helper::template Foreach_enabled_attributes
           <internal::Init_attribute_functor<Self> >::run(*this, adart);
+
+      internal::Init_id<Dart_container>::run(mdarts, adart);
     }
     // Initialize a given dart: all beta to null_dart_handle and all
     // attributes to null, marks are given.
@@ -665,6 +713,8 @@ namespace CGAL {
 
       Helper::template Foreach_enabled_attributes
           <internal::Init_attribute_functor<Self> >::run(*this, adart);
+
+      internal::Init_id<Dart_container>::run(mdarts, adart);
     }
 
   public:
@@ -1215,7 +1265,7 @@ namespace CGAL {
         if ( !valid )
         { // We continue the traversal to mark all the darts.
           for ( i=0; i<=dimension; ++i)
-            if (marks[i]!=INVALID_MARK) mark(it,marks[i]);
+            if (marks[i]!=INVALID_MARK) { mark(it,marks[i]); }
         }
         else
         {
@@ -1444,6 +1494,8 @@ namespace CGAL {
      // Reinitialize the ref counting of the new attribute. This is normally
      // not required except if create_attribute is used as "copy contructor".
      this->template init_attribute_ref_counting<i>(res);
+     internal::Init_id<typename Attribute_range<i>::type>::run
+         (this->template attributes<i>(), res);
      return res;
     }
 #else
@@ -1453,8 +1505,12 @@ namespace CGAL {
     {
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
                   "create_attribute<i> but i-attributes are disabled");
-      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
-        (mattribute_containers).emplace();
+      typename Attribute_handle<i>::type res=
+          CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
+                  (mattribute_containers).emplace();
+      internal::Init_id<typename Attribute_range<i>::type>::run
+           (this->template attributes<i>(), res);
+      return res;
     }
     template<unsigned int i, typename T1>
     typename Attribute_handle<i>::type
@@ -1465,7 +1521,11 @@ namespace CGAL {
      typename Attribute_handle<i>::type res=
        CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
         (mattribute_containers).emplace(t1);
+      // Reinitialize the ref counting of the new attribute. This is normally
+      // not required except if create_attribute is used as "copy contructor".
      this->template init_attribute_ref_counting<i>(res);
+     internal::Init_id<typename Attribute_range<i>::type>::run
+          (this->template attributes<i>(), res);
      return res;
     }
     template<unsigned int i, typename T1, typename T2>
@@ -1474,8 +1534,12 @@ namespace CGAL {
     {
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
                   "create_attribute<i> but i-attributes are disabled");
-      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
-        (mattribute_containers).emplace(t1, t2);
+      typename Attribute_handle<i>::type res=
+          CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
+                  (mattribute_containers).emplace(t1, t2);
+      internal::Init_id<typename Attribute_range<i>::type>::run
+           (this->template attributes<i>(), res);
+      return res;
     }
     template<unsigned int i, typename T1, typename T2, typename T3>
     typename Attribute_handle<i>::type
@@ -1483,8 +1547,12 @@ namespace CGAL {
     {
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
                   "create_attribute<i> but i-attributes are disabled");
-      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
-        (mattribute_containers).emplace(t1, t2, t3);
+      typename Attribute_handle<i>::type res=
+          CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
+                  (mattribute_containers).emplace(t1, t2, t3);
+      internal::Init_id<typename Attribute_range<i>::type>::run
+           (this->template attributes<i>(), res);
+      return res;
     }
     template<unsigned int i, typename T1, typename T2, typename T3, typename T4>
     typename Attribute_handle<i>::type
@@ -1492,8 +1560,12 @@ namespace CGAL {
     {
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
                   "create_attribute<i> but i-attributes are disabled");
-      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
-        (mattribute_containers).emplace(t1, t2, t3, t4);
+      typename Attribute_handle<i>::type res=
+          CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
+                  (mattribute_containers).emplace(t1, t2, t3, t4);
+      internal::Init_id<typename Attribute_range<i>::type>::run
+           (this->template attributes<i>(), res);
+      return res;
     }
     template<unsigned int i, typename T1, typename T2, typename T3, typename T4,
              typename T5>
@@ -1503,8 +1575,12 @@ namespace CGAL {
     {
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
                   "create_attribute<i> but i-attributes are disabled");
-      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
-        (mattribute_containers).emplace(t1, t2, t3, t4, t5);
+      typename Attribute_handle<i>::type res=
+          CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
+                  (mattribute_containers).emplace(t1, t2, t3, t4, t5);
+      internal::Init_id<typename Attribute_range<i>::type>::run
+           (this->template attributes<i>(), res);
+      return res;
     }
     template<unsigned int i, typename T1, typename T2, typename T3, typename T4,
              typename T5, typename T6>
@@ -1514,8 +1590,12 @@ namespace CGAL {
     {
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
                   "create_attribute<i> but i-attributes are disabled");
-      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
-        (mattribute_containers).emplace(t1, t2, t3, t4, t5, t6);
+      typename Attribute_handle<i>::type res=
+          CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
+                  (mattribute_containers).emplace(t1, t2, t3, t4, t5, t6);
+      internal::Init_id<typename Attribute_range<i>::type>::run
+           (this->template attributes<i>(), res);
+      return res;
     }
     template<unsigned int i, typename T1, typename T2, typename T3, typename T4,
              typename T5, typename T6, typename T7>
@@ -1525,8 +1605,12 @@ namespace CGAL {
     {
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
                   "create_attribute<i> but i-attributes are disabled");
-      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
-        (mattribute_containers).emplace(t1, t2, t3, t4, t5, t6, t7);
+      typename Attribute_handle<i>::type res=
+          CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
+                  (mattribute_containers).emplace(t1, t2, t3, t4, t5, t6, t7);
+      internal::Init_id<typename Attribute_range<i>::type>::run
+           (this->template attributes<i>(), res);
+      return res;
     }
     template<unsigned int i, typename T1, typename T2, typename T3, typename T4,
              typename T5, typename T6, typename T7, typename T8>
@@ -1536,8 +1620,12 @@ namespace CGAL {
     {
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
                   "create_attribute<i> but i-attributes are disabled");
-      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
-        (mattribute_containers).emplace(t1, t2, t3, t4, t5, t6, t7, t8);
+      typename Attribute_handle<i>::type res=
+          CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
+                  (mattribute_containers).emplace(t1, t2, t3, t4, t5, t6, t7, t8);
+      internal::Init_id<typename Attribute_range<i>::type>::run
+           (this->template attributes<i>(), res);
+      return res;
     }
     template<unsigned int i, typename T1, typename T2, typename T3, typename T4,
              typename T5, typename T6, typename T7, typename T8, typename T9>
@@ -1548,8 +1636,12 @@ namespace CGAL {
     {
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
                   "create_attribute<i> but i-attributes are disabled");
-      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
-        (mattribute_containers).emplace(t1, t2, t3, t4, t5, t6, t7, t8, t9);
+      typename Attribute_handle<i>::type res=
+          CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
+                  (mattribute_containers).emplace(t1, t2, t3, t4, t5, t6, t7, t8, t9);
+      internal::Init_id<typename Attribute_range<i>::type>::run
+           (this->template attributes<i>(), res);
+      return res;
     }
 #endif
 

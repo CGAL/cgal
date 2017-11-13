@@ -257,7 +257,9 @@ int Polynomial<NT>::getbasicterm(string & s, Polynomial<NT> & P){
     string t = s.substr(oldi+1, i -oldi -1);
     P = getpoly(t);
   }else{
+#ifdef CGAL_CORE_TRACE
     std::cout <<"ERROR IN PARSING BASIC TERM" << std::endl;
+#endif
   }
   //i+1 points to the beginning of next syntactic object in the string.
  if(cstr[i+1] == '^'){
@@ -352,8 +354,11 @@ Polynomial<NT> Polynomial<NT>::getpoly(string & s){
 		P += R;
       else if(cstr[oind + 1] == '-')
 		P -= R;
-      else
+      else{
+#ifdef CGAL_CORE_TRACE
 	std::cout << "ERROR IN PARSING POLY! " << std::endl;
+#endif
+      }
     }
 
     return (P);
@@ -677,8 +682,7 @@ Polynomial<NT> Polynomial<NT>::pseudoRemainder (
   tmpB.contract();    // local copy of B
   C = NT(1);  // Initialized to C=1.
   if (B.degree == -1)  {
-    std::cout << "ERROR in Polynomial<NT>::pseudoRemainder :\n" <<
-    "    -- divide by zero polynomial" << std::endl;
+    core_error("ERROR in Polynomial<NT>::pseudoRemainder :\n    -- divide by zero polynomial", __FILE__, __LINE__, false);
     return Polynomial(0);  // Unit Polynomial (arbitrary!)
   }
   if (B.degree > degree) {

@@ -501,7 +501,7 @@ Let <I>E</I> be a set, and <I>p</I> a partial permutation on <I>E</I>. An elemen
 Now we can give the definition of a combinatorial map in any dimension.  Let <I>d</I>\f$ \geq\f$ 0. A <I>d</I>-dimensional combinatorial map (or  <I>d</I>-map) is a (d+1)-tuple <I>M</I>=(<I>D</I>,\f$ \beta_1\f$,...,\f$ \beta_d\f$) where:
 <OL>
 <LI><I>D</I> is a finite set of darts;
-<LI>\f$ \beta_1\f$ is a partial permutation on <I>D</I>;
+<LI>\f$ \beta_1\f$ is a partial permutation on <I>D</I>;  let \f$ \beta_0\f$ denote \f$ \beta_1^{-1}\f$;
 <LI>\f$ \forall \f$ <I>i</I>, 2 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ <I>d</I>, \f$ \beta_i\f$ is a partial involution on <I>D</I> without fixed point;
 <LI>\anchor condcomposition \f$ \forall \f$ <I>i</I>: 0 \f$ \leq \f$ <I>i</I> \f$ \leq\f$ <I>d</I>-2, \f$ \forall \f$ <I>j</I>: 3 \f$ \leq \f$<I>j</I> \f$ \leq \f$ <I>d</I>, <I>i</I>+2 \f$ \leq \f$ <I>j</I>, \f$ \beta_i \f$ \f$ \circ \f$ \f$ \beta_j \f$ is a partial involution.
 </OL>

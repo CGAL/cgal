@@ -206,7 +206,7 @@ vcm_convolve (ForwardIterator first,
 // Public section
 // ----------------------------------------------------------------------------
 
-/// \ingroup PkgPointSetProcessing
+/// \ingroup PkgPointSetProcessingAlgorithms
 /// computes the Voronoi Covariance Measure (VCM) of a point cloud,
 /// a construction that can be used for normal estimation and sharp feature detection.
 ///
@@ -358,7 +358,7 @@ vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input 
 }
 /// @endcond
 
-/// \ingroup PkgPointSetProcessing
+/// \ingroup PkgPointSetProcessingAlgorithms
 /// Estimates normal directions of the points in the range `[first, beyond)`
 /// using the Voronoi Covariance Measure with a radius for the convolution.
 /// The output normals are randomly oriented.
@@ -401,7 +401,7 @@ vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input 
 }
 
 
-/// \ingroup PkgPointSetProcessing
+/// \ingroup PkgPointSetProcessingAlgorithms
 /// Estimates normal directions of the points in the range `[first, beyond)`
 /// using the Voronoi Covariance Measure with a number of neighbors for the convolution.
 /// The output normals are randomly oriented.

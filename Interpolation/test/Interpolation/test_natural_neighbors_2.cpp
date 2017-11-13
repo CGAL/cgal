@@ -12,10 +12,6 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-// 
-//
 // Author(s)     : Naceur MESKINI.
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -23,10 +19,10 @@
 
 #include <CGAL/_test_natural_neighbors_2.cpp>
 
+#include <iostream>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Delaunay_triangulation_2<K>            Dt;
-
 
 int main()
 {

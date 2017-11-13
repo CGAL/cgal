@@ -21,12 +21,13 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_GET_BORDER_H
 #define CGAL_POLYGON_MESH_PROCESSING_GET_BORDER_H
 
-#include <CGAL/license/Polygon_mesh_processing.h>
+#include <CGAL/license/Polygon_mesh_processing/miscellaneous.h>
 
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/foreach.hpp>
 #include <boost/type_traits/is_same.hpp>
+#include <boost/unordered_set.hpp>
 
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
@@ -198,8 +199,8 @@ namespace Polygon_mesh_processing {
     }
 
     //face index map given as a named parameter, or as an internal property map
-    FIMap fim = choose_param(get_param(np, CGAL::face_index),
-                             get_const_property_map(CGAL::face_index, pmesh));
+    FIMap fim = boost::choose_param(get_param(np, internal_np::face_index),
+                                    get_const_property_map(CGAL::face_index, pmesh));
 
     return internal::border_halfedges_impl(faces, fim, out, pmesh, np);
   }
@@ -228,8 +229,35 @@ namespace Polygon_mesh_processing {
       CGAL::Polygon_mesh_processing::parameters::all_default());
   }
 
-}
-} // end of namespace CGAL::Polygon_mesh_processing
+
+  // counts the number of connected components of the boundary of the mesh.
+  //
+  // @tparam PolygonMesh model of `HalfedgeGraph`.
+  //
+  // @param pmesh the polygon mesh to which `faces` belong
+  //
+  template<typename PolygonMesh>
+  unsigned int number_of_borders(const PolygonMesh& pmesh)
+  {
+    typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
+
+    unsigned int border_counter = 0;
+    boost::unordered_set<halfedge_descriptor> visited;
+    BOOST_FOREACH(halfedge_descriptor h, halfedges(pmesh)){
+      if(visited.find(h)== visited.end()){
+        if(is_border(h,pmesh)){
+          ++border_counter;
+          BOOST_FOREACH(halfedge_descriptor haf, halfedges_around_face(h, pmesh)){
+            visited.insert(haf);
+          }
+        }
+      }
+    }
+
+    return border_counter;
+  }
+} // end of namespace Polygon_mesh_processing
+} // end of namespace CGAL
 
 
 #endif //CGAL_POLYGON_MESH_PROCESSING_GET_BORDER_H

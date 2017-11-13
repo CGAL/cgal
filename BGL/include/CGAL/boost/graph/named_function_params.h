@@ -101,17 +101,28 @@ namespace boost{
 } //end of namespace boost
 #endif
 
-namespace CGAL {
+#define CGAL_BGL_NP_TEMPLATE_PARAMETERS T, typename Tag, typename Base
+#define CGAL_BGL_NP_CLASS CGAL::cgal_bgl_named_params<T,Tag,Base>
 
-  enum vertex_is_fixed_t             { vertex_is_fixed             } ;  
-  enum set_cache_policy_t            { set_cache_policy            } ;
-  enum get_cost_policy_t             { get_cost_policy             } ;
-  enum get_cost_policy_params_t      { get_cost_policy_params      } ;
-  enum get_placement_policy_t        { get_placement_policy        } ;
-  enum get_placement_policy_params_t { get_placement_policy_params } ;
-  enum edge_is_constrained_t         { edge_is_constrained        } ;
-  enum edge_is_constrained_params_t  { edge_is_constrained_params } ;
-  
+namespace CGAL {
+namespace internal_np{
+
+// for uniformity we import them in this namespace. Note that
+// it is an import so that if we use the named parameter function
+// from boost it will work
+using boost::vertex_index_t;
+using boost::vertex_index;
+using boost::graph_visitor_t;
+using boost::visitor;
+
+// define enum types and values for new named parameters
+#define CGAL_add_named_parameter(X, Y, Z)            \
+  enum X { Y };
+#include <CGAL/boost/graph/parameters_interface.h>
+#undef CGAL_add_named_parameter
+
+}//internal_np
+
   template <typename T, typename Tag, typename Base = boost::no_property>
   struct cgal_bgl_named_params : boost::bgl_named_params<T, Tag, Base>
   {
@@ -121,235 +132,100 @@ namespace CGAL {
     cgal_bgl_named_params(T v = T()) : base(v) {}
     cgal_bgl_named_params(T v, const Base& b) : base(v, b) {}
 
-    template <typename IndexMap>
-    cgal_bgl_named_params<IndexMap, boost::vertex_index_t, self>
-    vertex_index_map(const IndexMap& p) const 
-    {
-      typedef cgal_bgl_named_params<IndexMap, boost::vertex_index_t, self> Params;
-      return Params(p, *this);
-    }
-    
-    template <typename PointMap>
-    cgal_bgl_named_params<PointMap, vertex_point_t, self>
-    vertex_point_map(const PointMap& p) const 
-    {
-      typedef cgal_bgl_named_params<PointMap, vertex_point_t, self> Params;
-      return Params(p, *this);
-    }
-    
-    template <typename IsFixedMap>
-    cgal_bgl_named_params<IsFixedMap, vertex_is_fixed_t, self>
-    vertex_is_fixed_map(const IsFixedMap& p) const 
-    {
-      typedef cgal_bgl_named_params<IsFixedMap, vertex_is_fixed_t, self> Params;
-      return Params(p, *this);
-    }
-    
-    template <typename IndexMap>
-    cgal_bgl_named_params<IndexMap, boost::edge_index_t, self>
-    edge_index_map(const IndexMap& p) const 
-    {
-      typedef cgal_bgl_named_params<IndexMap, boost::edge_index_t, self> Params;
-      return Params(p, *this);
-    }
-
-      template <typename IndexMap>
-    cgal_bgl_named_params<IndexMap, boost::halfedge_index_t, self>
-    halfedge_index_map(const IndexMap& p) const 
-    {
-      typedef cgal_bgl_named_params<IndexMap, boost::halfedge_index_t, self> Params;
-      return Params(p, *this);
-    }
-
-      template <typename IndexMap>
-    cgal_bgl_named_params<IndexMap, boost::face_index_t, self>
-    face_index_map(const IndexMap& p) const 
-    {
-      typedef cgal_bgl_named_params<IndexMap, boost::face_index_t, self> Params;
-      return Params(p, *this);
-    }
-    
-    template <typename Visitor>
-    cgal_bgl_named_params<Visitor, boost::graph_visitor_t, self>
-    visitor(const Visitor& p) const 
-    {
-      typedef cgal_bgl_named_params<Visitor, boost::graph_visitor_t, self> Params;
-      return Params(p, *this);
-    }
-    
-    template <typename SetCache>
-    cgal_bgl_named_params<SetCache, set_cache_policy_t, self>
-    set_cache(const SetCache& p) const 
-    {
-      typedef cgal_bgl_named_params<SetCache, set_cache_policy_t, self> Params;
-      return Params(p, *this);
-    }
-    
-    template <typename GetCost>
-    cgal_bgl_named_params<GetCost, get_cost_policy_t, self>
-    get_cost(const GetCost& p) const 
-    {
-      typedef cgal_bgl_named_params<GetCost, get_cost_policy_t, self> Params;
-      return Params(p, *this);
-    }
-    
-    template <typename GetCostParams>
-    cgal_bgl_named_params<GetCostParams, get_cost_policy_params_t, self>
-    get_cost_params(const GetCostParams& p) const 
-    {
-      typedef cgal_bgl_named_params<GetCostParams, get_cost_policy_params_t, self> Params;
-      return Params(p, *this);
-    }
-    
-    template <typename GetPlacement>
-    cgal_bgl_named_params<GetPlacement, get_placement_policy_t, self>
-    get_placement(const GetPlacement& p) const 
-    {
-      typedef cgal_bgl_named_params<GetPlacement, get_placement_policy_t, self> Params;
-      return Params(p, *this);
-    }
-    
-    template <typename GetPlacementParams>
-    cgal_bgl_named_params<GetPlacementParams, get_placement_policy_params_t, self>
-    get_placement_params(const GetPlacementParams& p) const 
-    {
-      typedef cgal_bgl_named_params<GetPlacementParams, get_placement_policy_params_t, self> Params;
-      return Params(p, *this);
-    }
-
-    template <typename EdgeIsConstrained>
-    cgal_bgl_named_params<EdgeIsConstrained, edge_is_constrained_t, self>
-    edge_is_constrained_map(const EdgeIsConstrained& em) const
-    {
-      typedef cgal_bgl_named_params<EdgeIsConstrained, edge_is_constrained_t, self> Params;
-      return Params(em, *this);
-    }
-
-    template <typename EdgeIsConstrainedParams>
-    cgal_bgl_named_params<EdgeIsConstrainedParams, edge_is_constrained_params_t, self>
-    edge_is_constrained_map_params(const EdgeIsConstrainedParams& em) const
-    {
-      typedef cgal_bgl_named_params<EdgeIsConstrainedParams, edge_is_constrained_params_t, self> Params;
-      return Params(em, *this);
-    }
+// create the functions for new named parameters and the one imported boost
+// used to concatenate several parameters
+#define CGAL_add_named_parameter(X, Y, Z)                          \
+  template<typename K>                                           \
+  cgal_bgl_named_params<K, internal_np::X, self>                  \
+  Z(const K& k) const                                            \
+  {                                                              \
+    typedef cgal_bgl_named_params<K, internal_np::X, self> Params;\
+    return Params(k, *this);                                     \
+  }
+#include <CGAL/boost/graph/parameters_interface.h>
+#include <CGAL/boost/graph/boost_parameters_interface.h>
+#undef CGAL_add_named_parameter
   };
 
   namespace parameters {
 
-  template <typename IndexMap>
-  cgal_bgl_named_params<IndexMap, boost::vertex_index_t>
-  vertex_index_map(IndexMap const& p) 
-  {
-    typedef cgal_bgl_named_params<IndexMap, boost::vertex_index_t> Params;
-    return Params(p);
+// define free functions for named parameters
+#define CGAL_add_named_parameter(X, Y, Z)        \
+  template <typename K>                        \
+  cgal_bgl_named_params<K, internal_np::X>                  \
+  Z(K const& p)                                \
+  {                                            \
+    typedef cgal_bgl_named_params<K, internal_np::X> Params;\
+    return Params(p);                          \
   }
-  
-  template <typename IndexMap>
-  cgal_bgl_named_params<IndexMap, boost::halfedge_index_t>
-  halfedge_index_map(IndexMap const& p) 
-  {
-    typedef cgal_bgl_named_params<IndexMap, boost::halfedge_index_t> Params;
-    return Params(p);
-  }
-  
-  template <typename IndexMap>
-  cgal_bgl_named_params<IndexMap, boost::face_index_t>
-  face_index_map(IndexMap const& p) 
-  {
-    typedef cgal_bgl_named_params<IndexMap, boost::face_index_t> Params;
-    return Params(p);
-  }
-  
-  template <typename PointMap>
-  cgal_bgl_named_params<PointMap, vertex_point_t>
-  vertex_point_map(PointMap const& p) 
-  {
-    typedef cgal_bgl_named_params<PointMap, vertex_point_t> Params;
-    return Params(p);
-  }
-
-  template <typename IsFixedMap>
-  cgal_bgl_named_params<IsFixedMap, vertex_is_fixed_t>
-  vertex_is_fixed_map(IsFixedMap const& p) 
-  {
-    typedef cgal_bgl_named_params<IsFixedMap, vertex_is_fixed_t> Params;
-    return Params(p);
-  }
-  
-  template <typename IndexMap>
-  cgal_bgl_named_params<IndexMap, boost::edge_index_t>
-  edge_index_map(IndexMap const& pmap) 
-  {
-    typedef cgal_bgl_named_params<IndexMap, boost::edge_index_t> Params;
-    return Params(pmap);
-  }
-
-  template <typename Visitor>
-  cgal_bgl_named_params<Visitor, boost::graph_visitor_t>
-  visitor(const Visitor& p) 
-  {
-    typedef cgal_bgl_named_params<Visitor, boost::graph_visitor_t> Params;
-    return Params(p);
-  }
-
-  template <typename SetCache>
-  cgal_bgl_named_params<SetCache, set_cache_policy_t>
-  set_cache(const SetCache& p) 
-  {
-    typedef cgal_bgl_named_params<SetCache, set_cache_policy_t> Params;
-    return Params(p);
-  }
-  
-  template <typename GetCost>
-  cgal_bgl_named_params<GetCost, get_cost_policy_t>
-  get_cost(const GetCost& p)
-  {
-    typedef cgal_bgl_named_params<GetCost, get_cost_policy_t> Params;
-     return Params(p);
-  }
-
-  template <typename GetCostParams>
-  cgal_bgl_named_params<GetCostParams, get_cost_policy_params_t>
-  get_cost_params(const GetCostParams& p)
-  {
-    typedef cgal_bgl_named_params<GetCostParams, get_cost_policy_params_t> Params;
-    return Params(p);
-  }
-  
-  template <typename GetPlacement>
-  cgal_bgl_named_params<GetPlacement, get_placement_policy_t>
-  get_placement(const GetPlacement& p) 
-  {
-    typedef cgal_bgl_named_params<GetPlacement, get_placement_policy_t> Params;
-    return Params(p);
-  }
-  
-  template <typename GetPlacementParams>
-  cgal_bgl_named_params<GetPlacementParams, get_placement_policy_params_t>
-  get_placement_params(const GetPlacementParams& p)
-  {
-    typedef cgal_bgl_named_params<GetPlacementParams, get_placement_policy_params_t> Params;
-    return Params(p);
-  }
-
-  template <typename EdgeIsConstrained>
-  cgal_bgl_named_params<EdgeIsConstrained, edge_is_constrained_t>
-  edge_is_constrained_map(const EdgeIsConstrained& em)
-  {
-    typedef cgal_bgl_named_params<EdgeIsConstrained, edge_is_constrained_t> Params;
-    return Params(em);
-  }
-
-  template <typename EdgeIsConstrainedParams>
-  cgal_bgl_named_params<EdgeIsConstrainedParams, edge_is_constrained_params_t>
-  edge_is_constrained_map_params(const EdgeIsConstrainedParams& em)
-  {
-    typedef cgal_bgl_named_params<EdgeIsConstrainedParams, edge_is_constrained_params_t> Params;
-    return Params(em);
-  }
+#include <CGAL/boost/graph/parameters_interface.h>
+#include <CGAL/boost/graph/boost_parameters_interface.h>
+#undef CGAL_add_named_parameter
 
   } // namespace parameters
 
+  //helper classes
+  template<typename PolygonMesh, typename PropertyTag>
+  class property_map_selector
+  {
+  public:
+    typedef typename boost::graph_has_property<PolygonMesh, PropertyTag>::type Has_internal_pmap;
+    typedef typename boost::mpl::if_c< Has_internal_pmap::value
+                            , typename boost::property_map<PolygonMesh, PropertyTag>::type
+                            , typename boost::cgal_no_property::type
+    >::type type;
+    typedef typename boost::mpl::if_c< Has_internal_pmap::value
+                            , typename boost::property_map<PolygonMesh, PropertyTag>::const_type
+                            , typename boost::cgal_no_property::const_type
+    >::type const_type;
+
+    type get_pmap(const PropertyTag& p, PolygonMesh& pmesh)
+    {
+      return get_impl(p, pmesh, Has_internal_pmap());
+    }
+
+    const_type get_const_pmap(const PropertyTag& p, const PolygonMesh& pmesh)
+    {
+      return get_const_pmap_impl(p, pmesh, Has_internal_pmap());
+    }
+
+  private:
+    type get_impl(const PropertyTag&, PolygonMesh&, CGAL::Tag_false)
+    {
+      return type(); //boost::cgal_no_property::type
+    }
+    type get_impl(const PropertyTag& p, PolygonMesh& pmesh, CGAL::Tag_true)
+    {
+      return get(p, pmesh);
+    }
+
+    const_type get_const_pmap_impl(const PropertyTag&
+                                 , const PolygonMesh&, CGAL::Tag_false)
+    {
+      return const_type(); //boost::cgal_no_property::type
+    }
+    const_type get_const_pmap_impl(const PropertyTag& p
+                                 , const PolygonMesh& pmesh, CGAL::Tag_true)
+    {
+      return get(p, pmesh);
+    }
+  };
+
+  template<typename PolygonMesh, typename PropertyTag>
+  typename property_map_selector<PolygonMesh, PropertyTag>::type
+  get_property_map(const PropertyTag& p, PolygonMesh& pmesh)
+  {
+    property_map_selector<PolygonMesh, PropertyTag> pms;
+    return pms.get_pmap(p, pmesh);
+  }
+
+  template<typename PolygonMesh, typename PropertyTag>
+  typename property_map_selector<PolygonMesh, PropertyTag>::const_type
+  get_const_property_map(const PropertyTag& p, const PolygonMesh& pmesh)
+  {
+    property_map_selector<PolygonMesh, PropertyTag> pms;
+    return pms.get_const_pmap(p, pmesh);
+  }
 } //namespace CGAL
 
 // partial specializations hate inheritance and we need to repeat

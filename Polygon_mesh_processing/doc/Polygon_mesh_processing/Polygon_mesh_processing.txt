@@ -27,7 +27,7 @@ A polygon mesh can have any number of connected components, and also some self-i
 In this package, a polygon mesh is considered to have the topology of a 2-manifold.
 
 \subsection PMPAPI API
-This package follows the BGL API described in \ref chapterBGL.
+This package follows the BGL API described in \ref PkgBGLSummary.
 It can thus be used either with `Polyhedron_3`, `Surface_mesh`, or
 any class model of the concept `FaceGraph`. Each function or class of this package
 details the requirements on the input polygon mesh.
@@ -342,6 +342,31 @@ iteratively filled, refined and faired to get a faired mesh with no hole.
  Holes in the fork model are filled with triangle patches.
  \cgalFigureEnd
 
+\subsection HFPerformance Performance
+
+The hole filling algorithm has a complexity which depends on the
+number of vertices.  While \cgalCite{liepa2003filling} has a running
+time of \f$ O(n^3)\f$ , \cgalCite{zou2013algorithm} in most cases has
+running time of \f$ O(n \log n)\f$.  We were running
+`triangulate_refine_and_fair_hole()` for the below meshes (and two
+more meshes with smaller holes). The machine used is a PC running
+Windows 10 with an Intel Core i7 CPU clocked at 2.70 GHz. 
+The program has been compiled with Visual C++ 2013 compiler with the O2
+option which maximizes speed.
+
+\cgalFigureBegin{Elephants, elephants-with-holes.png}
+The elephant on the left/right has a hole with 963/7657 vertices.
+\cgalFigureEnd
+
+This takes time
+
+|  # vertices | without Delaunay (sec.) | with Delaunay (sec.)|
+| ----:       | ----:                   | ----:               | 
+  565         | 8.5                     | 0.03                |
+  774         | 21                      | 0.035               |
+  967         | 43                      | 0.06                |
+ 7657         | na                      | 0.4                 |
+
 
 ***************************************
 \section PMPPredicates Predicates
@@ -598,7 +623,7 @@ should be discarded in favour of major connected components.
 
 \subsection CCExample Connected Components Example
 
-The following example shows how to record the connected
+The first example shows how to record the connected
 components of a polygon mesh.
 In particular, we provide an example for the optional parameter \c EdgeConstraintMap,
 a property map that returns information about an edge being a \e constraint or not.
@@ -607,11 +632,17 @@ the propagation of a connected component index to cross it.
 
 \cgalExample{Polygon_mesh_processing/connected_components_example.cpp}
 
+The second example shows how to use the class template `Face_filtered_graph`
+which enables to treat one or several connected components as a face graph.
+
+\cgalExample{Polygon_mesh_processing/face_filtered_graph_example.cpp}
+
+
 \section PMPDistance Approximate Hausdorff Distance
 
 This package provides methods to compute (approximate) distances between meshes and point sets.
 
-The function \link CGAL::Polygon_mesh_processing::approximate_Hausdorff_distance() `approximate_Hausdorff_distance()`\endlink
+The function \link approximate_Hausdorff_distance() `approximate_Hausdorff_distance()`\endlink
 computes an approximation of the Hausdorff distance from a mesh `tm1` to a mesh `tm2`. Given a
 a sampling of `tm1`, it computes the distance to `tm2` of the farthest sample point to `tm2` \cgalCite{cignoni1998metro}.
 The symmetric version (\link CGAL::Polygon_mesh_processing::approximate_symmetric_Hausdorff_distance() `approximate_symmetric_Hausdorff_distance()`\endlink)
@@ -648,6 +679,23 @@ and the distance between the point set and the reconstructed surface is computed
 with the following code:
 
 \snippet Poisson_surface_reconstruction_3/poisson_reconstruction_example.cpp PMP_distance_snippet
+
+\section PMPDetectFeatures Feature Detection
+
+This package provides methods to detect some features of a polygon mesh.
+
+The function `CGAL::Polygon_mesh_processing::sharp_edges_segmentation()`
+detects the sharp edges of a polygon mesh and deduces surface patches and vertices incidences.
+It can be split into three functions : `CGAL::Polygon_mesh_processing::detect_sharp_edges()`, `CGAL::Polygon_mesh_processing::connected_components()`
+and `CGAL::Polygon_mesh_processing::detect_vertex_incident_patches()`,
+that respectively detect the sharp edges, compute the patch indices, and give each of `pmesh` vertices the patch indices of its incident faces.
+
+\subsection DetectFeaturesExample Feature Detection Example
+In the following example, we count how many edges of `pmesh` are incident to two faces
+which normals form an angle smaller than 90 degrees,
+and the number of surface patches that are separated by these edges.
+
+\cgalExample{Polygon_mesh_processing/detect_features_example.cpp}
 
 \section PMPHistory Implementation History
 

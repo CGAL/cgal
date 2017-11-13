@@ -74,7 +74,7 @@ std::istream& file_input(std::istream& is, Tr2 &tr,
     V[i] = tr.tds().create_vertex();
     Vertex1 v;
     if(!(is >> v)) return is;
-    if(!update_vertex(v, *V[i])) { 
+    if(!update_vertex(v, *V[i])) {
       is.setstate(std::ios_base::failbit);
       return is;
     }

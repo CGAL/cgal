@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Efi Fogel          <efif@post.tau.ac.il>
 
@@ -160,7 +160,7 @@ public:
 
   /*! Set the vertex */
   void set_vertex(Arr_vertex_handle vertex) { m_vertex = vertex; }
-  
+
   /*! Set the "marked" flag */
   void set_marked(bool marked) { m_marked = marked; }
 
@@ -217,5 +217,23 @@ struct Arr_polyhedral_sgm_polyhedron_3 :
 };
 
 } //namespace CGAL
+
+//! Make the polyhedron a model of FaceGraph
+namespace boost {
+
+template <typename Sgm, typename Traits>
+struct graph_traits<CGAL::Arr_polyhedral_sgm_polyhedron_3<Sgm, Traits> > :
+  public graph_traits<CGAL::Polyhedron_3
+                      <Traits, CGAL::Arr_polyhedral_sgm_polyhedron_items<Sgm> > >
+{};
+
+template <typename Sgm, typename Traits, typename Tag>
+struct property_map<CGAL::Arr_polyhedral_sgm_polyhedron_3<Sgm, Traits>, Tag> :
+  public property_map<CGAL::Polyhedron_3
+                      <Traits, CGAL::Arr_polyhedral_sgm_polyhedron_items<Sgm> >,
+                      Tag>
+{};
+
+}
 
 #endif

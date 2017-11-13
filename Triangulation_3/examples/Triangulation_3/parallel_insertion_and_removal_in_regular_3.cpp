@@ -10,7 +10,6 @@ int main()
 {
 #ifdef CGAL_LINKED_WITH_TBB
   typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-  typedef K::Point_3                                          Point;
 
   // Regular T3
   typedef CGAL::Triangulation_data_structure_3< 
@@ -19,17 +18,20 @@ int main()
     CGAL::Parallel_tag>                                       Tds;
 
   typedef CGAL::Regular_triangulation_3<K, Tds>               Rt;
+
+  typedef Rt::Bare_point                                      Bare_point;
+  typedef Rt::Weighted_point                                  Weighted_point;
   typedef Rt::Vertex_handle                                   Vertex_handle;
 
   const int NUM_INSERTED_POINTS = 5000;
 
-  CGAL::Random_points_in_cube_3<Point> rnd(1.);
+  CGAL::Random_points_in_cube_3<Bare_point> rnd(1.);
 
   // Construction from a vector of 1,000,000 points
-  std::vector<Point> V;
+  std::vector<Weighted_point> V;
   V.reserve(NUM_INSERTED_POINTS);
   for (int i = 0; i != NUM_INSERTED_POINTS; ++i)
-    V.push_back(*rnd++);
+    V.push_back(Weighted_point(*rnd++));
   
   // Construct the locking data-structure, using the bounding-box of the points
   Rt::Lock_data_structure locking_ds(

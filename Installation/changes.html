@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- $Id$
      $URL$
 -->
@@ -16,7 +16,7 @@
       padding-top: 0.2em;
     }
     code::before, code::after {
-      content: " ";
+      content: " ";
       letter-spacing: -0.2em;
     }
   </style>
@@ -70,7 +70,9 @@
 <td width="28%">
 
 <table CELLSPACING=0>
-<tr><td><a href="#release4.10">4.10</a>&nbsp;<td> (March 2017)
+<tr><td><a href="#release4.12">4.12</a>&nbsp;<td> (April 2018)
+<tr><td><a href="#release4.11">4.11</a>&nbsp;<td> (September 2017)
+<tr><td><a href="#release4.10">4.10</a>&nbsp;<td> (May 2017)
 <tr><td><a href="#release4.9">4.9</a>&nbsp;<td> (September 2016)
 <tr><td><a href="#release4.8">4.8</a>&nbsp;<td> (April 2016)
 <tr><td><a href="#release4.7">4.7</a>&nbsp;<td> (October 2015)
@@ -128,11 +130,437 @@ and <code>src/</code> directories).
 </table>
 
 <HR>
+<h2 id="release4.12">Release 4.12 </h2>
+<div>
+  <p>Release date: April 2018 </p>
+
+  <h3>2D Movable Separability of Sets</h3>
+  <ul>
+    <li><p>A new packaged called "2D Movable Separability of Sets" has been introduced. It handles a class of problems that deal with moving sets of objects in the plane; the challenge is to avoid collisions between the objects while considering different kinds of motions and various definitions of separation.<\p>
+
+      <p>At this point this package consists of the implementations of various predicates and constructions related to castings of polygonal objects. In particular, it can be used to determine whether a feasible mold for a polygonal object does exist. If a mold exists, the package can also be used to compute all possible orientations of the feasible molds and the corresponding motions needed to remove the casted object from the mold.</p>
+    </li>
+  </ul>
+<!-- Installation (and general changes) -->
+<!-- New packages -->
+<h3>Classification (new package)</h3>
+<ul>
+  <li>This package offers an algorithm that classifies a data set into
+  a user-defined set of labels (such as ground, vegetation, buildings,
+  etc.). A flexible API is provided so that users can classify any
+  type of data, compute their own local features on the input data
+  set, and define their own labels.</li>
+</ul>
+<!-- Major and breaking changes -->
+<!-- Arithmetic and Algebra -->
+<!-- Combinatorial Algorithms -->
+<!-- Geometry Kernels -->
+<!-- Convex Hull Algorithms -->
+<!-- Polygons -->
+<!-- Cell Complexes and Polyhedra -->
+<!-- Arrangements -->
+<!-- Triangulations and Delaunay Triangulations -->
+<h3>2D Alpha Shapes</h3>
+<ul>
+  <li> It is now possible to use <code>CGAL::Periodic_2_triangulation_2</code>
+  as underlying triangulation for <code>Alpha_shape_2</code>. </li>
+</ul>
+
+<h3>2D Periodic Triangulations </h3>
+<ul>
+   <li><b>Breaking change</b>:
+   The class <code>Periodic_2_triangulation_hierarchy_vertex_base_2</code>
+   (and its corresponding header) have been removed. Users should directly use the
+   class <code>Triangulation_hierarchy_vertex_base_2</code>, which is identical.</li>
+   <li><b>Breaking change</b>:
+   The functions <code>circumcenter()</code>, <code>side_of_oriented_circle()</code>,
+   and <code>is_extensible_in_1_sheet_h[12]()</code> are related to
+   Delaunay triangulations and have been moved from <code>Periodic_2_triangulation_2</code>
+   to <code>Periodic_2_Delaunay_triangulation_2</code>. </li>
+</ul>
+<!-- Voronoi Diagrams -->
+<!-- Mesh Generation -->
+ <h3>3D Surface Mesh Generation</h3>
+   <ul>
+     <li>
+       Add the function facets_in_complex_2_to_triangle_mesh() 
+       that exports Surface_mesh_complex_2_in_triangulation_3
+       facets into a MutableFaceGraph.
+     </li>
+   </ul>
+  <h3>3D Mesh Generation</h3>
+   <ul>
+     <li>
+       Add the function facets_in_complex_3_to_triangle_mesh() 
+       that exports Mesh_complex_3_in_triangulation_3
+       facets into a MutableFaceGraph.
+     </li>
+   </ul>
+<!-- Surface Reconstruction -->
+<!-- Geometry Processing -->
+<h3>Polygon Mesh Processing</h3>
+<ul>
+  <li> Added new functions for feature detection and feature-guided segmentation:
+    <ul>
+      <li><code>CGAL::Polygon_mesh_processing::detect_sharp_edges()</code></li>
+      <li><code>CGAL::Polygon_mesh_processing::detect_vertex_incident_patches()</code></li>
+      <li><code>CGAL::Polygon_mesh_processing::sharp_edges_segmentation()</code></li>
+    </ul>
+  </li>
+</ul>
+<h3>Point Set Shape Detection</h3>
+<ul>
+  <li>New algorithm: <code>CGAL::Region_growing</code>. This is a
+    deterministic alternative to RANSAC for plane detection.</li>
+  <li><b>Breaking change</b>: the API
+  of <code>CGAL::regularize_planes()</code> is generalized to accept
+  other types of input than the RANSAC output.</li>
+</ul>
+<h3>Point Set Processing</h3>
+<ul>
+  <li><b>Breaking change</b>: the API
+  of <code>CGAL::structure_point_set()</code> is generalized to accept
+  other types of input than the RANSAC output.</li>
+</ul>
+<!-- Spatial Searching and Sorting -->
+<!-- Geometric Optimization -->
+<!-- Interpolation -->
+<!-- Kinetic Data Structures -->
+<!-- Support Library -->
+<!-- Visualization -->
+<!-- Support Library -->
+ <h3>CGAL and the Boost Graph Library (BGL)</h3>
+  <ul>
+    <li>
+      Add helper function <code>CGAL::expand_face_selection_for_removal</code> that
+      expands a face selection to avoid creating a non manifold mesh when removing the selected faces.
+    </li>
+  </ul>
+<!-- end of the div for 4.12 -->
+</div>
+
+<h2 id="release4.11">Release 4.11 </h2>
+<div>
+  <p>Release date: September 2017 </p>
+  <h3>3D Periodic Regular Triangulations (new feature)</h3>
+  <ul>
+    <li>
+      Added the class <code>Periodic_3_regular_triangulation_3</code>,
+      which provides functionality for 3D periodic weighted Delaunay
+      triangulations. The construction is fully dynamic: it provides both
+      point insertion and vertex removal.
+    </li>
+  </ul>
+  <h3>dD Regular Triangulations (new feature)</h3>
+  <ul>
+    <li>
+      Added the class <code>Regular_triangulation</code>, which provides
+      functionality for dD weighted Delaunay triangulations. Note that the
+      removal of points is not yet supported.
+    </li>
+  </ul>
+  <h3>2D and 3D Linear Geometry Kernel (breaking change)</h3>
+  <ul>
+    <li><b>Breaking change</b>: The dangerous implicit conversions between
+      weighted points and points in the concept <code>Kernel</code> have
+      been disabled. Constructors offering to build a weighted point from a
+      point (and reversely) are still requested by the
+      concept <code>Kernel</code> but must now be marked with
+      the <code>explicit</code> specifier.
+    </li>
+    <li><b>Breaking change</b>: The removal of implicit conversions between
+      points and weighted points in the concept <code>Kernel</code> has
+      incidentally created various minor breaking changes in the following
+      packages: 2D Alpha Shapes, 2D and 3D Triangulations, and 3D Mesh
+      Generation. See the full changelog for details.
+    </li>
+  </ul>
+  <h3>Surface Mesh</h3>
+  <ul>
+    <li>
+      <b>Breaking change</b>: <code>operator >>(std::istream&,
+      Surface_mesh&)</code> no longer clears the surface mesh.
+    </li>
+  </ul>
+  <h3>Triangulated Surface Mesh Parameterization (breaking change)</h3>
+  <ul>
+    <li>
+      <b>Breaking change</b>: The package has been rewritten and can operate
+      on any model of the <code>MutableFaceGraph</code> concept. All previous
+      parameterization methods are still offered, although with a different,
+      simpler API.  The documentation has been updated and offers a gentle
+      introduction to the new API.  Users who wish to use the former API must
+      use a version prior to 4.11.
+    </li>
+    <li>
+      <b>Breaking change</b>: The adapter to add virtual seams is now the
+      class <code>CGAL::Seam_mesh</code> in the package <em>CGAL and the
+        BGL</em>.
+    </li>
+    <li>
+      <b>Breaking change</b>: The package has been restructured and most
+      headers have been moved. In a general manner, users should
+      replace <code>&lt;CGAL/XXX.h&gt;</code>
+      with <code>&lt;CGAL/Surface_mesh_parameterization/XXX.h&gt;</code>
+    </li>
+    <li>
+      Add the <em>As Rigid As Possible Parameterization</em> method. This
+      parameterization allows the user to prioritize angle preservation,
+      shape preservation, or a balance of both.
+    </li>
+    <li>
+      Add the <em>Orbifold Tutte Embedding</em> method. This
+      parameterization method allows to parameterize meshes that are
+      topological spheres.
+    </li>
+  </ul>
+  <h3> 3D Surface Subdivision Methods (breaking changes)</h3>
+  <ul>
+    <li>
+      The subdivision algorithms now work on any model of
+      a <code>MutableFaceGraph</code>.  A new API to the subdivision
+      methods is offered, which uses optional named parameters to pass the
+      number of iterations and a vertex property map.
+    </li>
+    <li><b>Breaking change</b>: Removed the
+      headers <code>&lt;CGAL/Subdivision_method_3.h&gt;</code> and
+      <code>&lt;CGAL/Subdivision_mask_3.h&gt;</code>. The headers
+      <code>&lt;CGAL/Subdivision_method_3/subdivision_methods_3.h&gt;</code>
+      and
+      <code>&lt;CGAL/Subdivision_method_3/subdivision_masks_3.h&gt;</code>
+      should respectively be used instead.
+    </li>
+    <li>
+      Sqrt3 subdivision can now handle input surfaces with a border.
+    </li>
+  </ul>
+  <h3>Scale-Space Surface Reconstruction (breaking change)</h3>
+  <ul>
+    <li><b>Breaking change</b>: the API was rewritten to separate the
+      smoothing and meshing algorithm and making it possible for the user
+      to use different ones. The default algorithms used are the same as
+      before this API change, but methods are moved to the
+      classes <code>Weighted_PCA_smoother</code>
+      and <code>Alpha_shape_mesher</code>.</li>
+    <li>Alternative smoothing and meshing methods are
+      provided: <code>Jet_smoother</code>
+      and <code>Advancing_front_mesher</code>.</li>
+  </ul>
+  <h3> 2D Alpha Shapes </h3>
+  <ul>
+    <li><b>Breaking change</b>: Mirrored the concepts of the 2D alpha shape
+      package with those of the 3D Alpha Shapes package. Consequently, a
+      new concept, <code>WeightedAlphaShapeTraits_2</code>, is introduced
+      to provide requirements on the traits class for 2D weighted alpha
+      shapes. All models of the concept <code>Kernel</code> are models of
+      this new concept.
+    </li>
+    <li>
+      The concept <code>AlphaShapeTraits_2</code> now provides requirements
+      on the traits class for 2D basic alpha shapes, and
+      refines <code>DelaunayTriangulationTraits_2</code>.
+    </li>
+  </ul>
+  <h3> Interpolation </h3>
+  <ul>
+    <li><b>Breaking change</b>: The
+    concept <code>GradientFittingTraits</code> now additionally requests a
+    weighted point type <code>Weighted_point_d</code> and a
+    functor <code>Construct_point_d</code>. The model
+    <code>CGAL::Interpolation_gradient_fitting_traits_2</code> has been
+    appropriately modified to still be a model of the
+    concept <code>GradientFittingTraits</code>.
+    </li>
+  </ul>
+  <h3> 2D and 3D Triangulations </h3>
+  <ul>
+    <li><b>Breaking change</b>: Added a new functor
+      requirement, <code>Construct_point_2</code>, to the concepts
+      <code>TriangulationTraits_2</code>
+      and <code>RegularTriangulationTraits_2</code> and a new functor
+      requirement, <code>Construct_point_3</code>, to the concepts
+      <code>TriangulationTraits_3</code>
+      and <code>RegularTriangulationTraits_3</code>.  All models of the
+      concept <code>Kernel</code> already provide these functors.
+    </li>
+    <li><b>Breaking change</b>: Introduced the
+      concepts <code>RegularTriangulationVertexBase_2</code> and
+      <code>RegularTriangulationVertexBase_3</code>. These concepts
+      describe the requirements on classes meant to represent a vertex of a
+      regular triangulation.  Concepts that previously
+      refined <code>TriangulationVertexBase_2</code> or
+      <code>TriangulationVertexBase_3</code> but described in fact a vertex
+      class used in a regular triangulation, such as the
+      concept <code>MeshVertexBase_3</code> in the 3D mesh generation
+      package, now refine the corresponding new regular vertex concept.
+    <li><b>Breaking change</b>:
+      Uniformized the point type across all vertex and cell concepts. The
+      triangulation point type name is now always <code>Point</code>. Note
+      that this does not change the requirements but only the
+      name: <code>Point</code> is still expected to be equal to
+      <code>Traits::Point_[23]</code> for basic and Delaunay triangulations
+      or to
+      <code>Traits::Weighted_point_[23]</code> for regular
+      triangulations. Consequently:
+      <ul>
+        <li>
+          The concept <code>RegularTriangulationVertexBase_2</code> now
+          requests a <code>Point</code> type (equal
+          to <code>Traits::Weighted_point_2</code>)
+        </li>
+        <li>
+          The concept <code>RegularTriangulationCellBase_3</code> now
+          requests a <code>Point</code> type instead of
+          a <code>Weighted_point</code> type (but still equal
+          to <code>Traits::Weighted_point_3</code>)
+        </li>
+        <li>
+          The concept <code>DelaunayTriangulationCellBase_3</code> now
+          requests a <code>Point</code> type instead of
+          a <code>Point_3</code> type (but still equal
+          to <code>Traits::Point_3</code>).
+        </li>
+      </ul>
+    </li>
+    <li>
+      Introduced a new concept,
+      <code>RegularTriangulationCellBaseWithWeightedCircumcenter_3</code>,
+      which describes the requirements on a cell of a regular triangulation
+      that caches its circumcenter. The existing class
+      <code>Regular_triangulation_cell_base_with_weighted_circumcenter_3</code>
+      is the default model of this concept.
+    </li>
+    <li>
+      Added a new 3D traits
+      class, <code>Robust_weighted_circumcenter_filtered_traits_3</code>
+      which provides robust versions of the kernel
+      functors <code>Construct_weighted_circumcenter_3</code>,
+      <code>Compute_squared_radius_3</code>, and
+      <code>Compute_squared_radius_smallest_orthogonal_sphere_3</code>.
+      This class can be used as traits class in the the <code>Mesh_3</code>
+      package to efficiently yet robustly generate 3D meshes.
+    </li>
+    <li>
+      Add a new type of polyhedral domain with features,
+      <code>Polyhedral_complex_mesh_domain_3</code>.
+      The domain is defined by a collection of triangulated surfaces, forming a complex.
+    </li>
+  </ul>
+  <h3>3D Periodic Triangulations</h3>
+  <ul>
+    <li>
+      Added new locate and geometric access functions for 3D periodic
+      triangulations.
+    </li>
+    <li>
+      The class <code>Periodic_3_Delaunay_triangulation_traits_3</code> now
+      inherits <code>Periodic_3_triangulation_traits_3</code>.
+    </li>
+    <li><b>Breaking change</b>: Some geometric access functions
+      in <code>Periodic_3_triangulation_3</code> were renamed.  The
+      introduction of <code>Periodic_3_regular_triangulation_3</code>
+      required to distinguish between functions such
+      as <code>segment()</code> returning a segment of weightless points,
+      or a segment of weighted points. As a general rule, previous
+      geometrical access functions will return objects with point type that
+      of the triangulation (thus, weighted objects when using weighted
+      triangulations) and functions containing <code>construct</code> in
+      the name will always return weightless geometrical objects.
+    </li>
+    <li><b>Breaking change</b>: The
+      concept <code>Periodic_3TriangulationTraits_3</code> now requests a
+      domain getter: <code>get_domain()</code>.
+    </li>
+    <li>
+      Introduced a new
+      concept,
+      <code>RegularTriangulationCellBaseWithWeightedCircumcenter_3</code>,
+      which describes the requirements on a cell of a regular triangulation
+      that caches its circumcenter. The existing class
+      <code>Regular_triangulation_cell_base_with_weighted_circumcenter_3</code>
+      is the default model of this concept.
+    </li>
+  </ul>
+  <h3> 3D Mesh Generation </h3>
+  <ul>
+    <li><b>Breaking change</b>: The type of the surface center in the
+      concept <code>MeshCellBase_3</code> has been changed
+      from <code>Triangulation::Point</code> to
+      <code>TriangulationTraits::Point_3</code> to reflect that it is a
+      weightless point.
+    </li>
+    <li><b>Breaking change</b>: The
+      function <code>invalidate_circumcenter()</code> of the
+      concept <code>MeshCellBase_3</code> is renamed to
+      <code>invalidate_weighted_circumcenter_cache()</code> and moved to
+      the new concept
+      <code>RegularTriangulationCellBaseWithWeightedCircumcenter_3</code>,
+      which the concept <code>MeshCellBase_3</code> now refines.
+    </li>
+  </ul>
+  <h3>Poisson Surface Reconstruction</h3>
+  <ul>
+    <li>A new global
+      function <code>CGAL::poisson_surface_reconstruction_delaunay()</code>
+      is provided in addition to the current class-based API in order to
+      make it easier to use.</li>
+  </ul>
+  <h3>Point Set Processing</h3>
+  <ul>
+    <li>New functions to read from and write to LAS/LAZ files (LIDAR
+    format), with or without taking additional properties into
+    account.</li>
+    <li><b>Breaking change:</b> The API of the PLY function to read
+    points with properties is modified for unification with LAS
+    (see <code>CGAL::read_ply_points_with_properties()</code>). A new
+    function to write PLY with properties is provided
+      (<code>CGAL::write_ply_points_with_properties()</code>).</li>
+  </ul>
+  <h3>Spatial Searching</h3>
+  <ul>
+    <li>
+      Add function <code>Kd_tree::remove(Point)</code>.
+    </li>
+  </ul>
+  <h3>3D Fast Intersection and Distance Computation</h3>
+  <ul>
+    <li>Add a template parameter to <code>AABB_traits</code>
+        for a property map that associates a bounding box to a primitive</li>
+  </ul>
+  <h3>CGAL and the Boost Graph Library</h3>
+  <ul>
+    <li>
+      Add a partial specialization for the
+      class <code>CGAL::Linear_cell_complex_for_combinatorial_map</code> so
+      that it is a model of the graph
+      concepts <code>BidirectionalGraph</code> and
+      <code>EdgeAndVertexListGraph</code> and of the
+      concept <code>MutableFaceGraph</code>. This class can thus now be
+      used in all BGL functions and algorithms.
+    </li>
+    <li>Helper functions to create an icosahedron, a regular prism and a 
+      pyramid have been added.
+    </li>
+    <li>
+      Add class <code>CGAL::Face_filtered_graph</code> that
+      wraps an existing graph and hide all simplices that are not
+      in the selected connected components.
+    </li>
+    <li>
+      Added the
+      class <code>CGAL::Seam_mesh</code>. The <code>Seam_mesh</code> is a
+      graph adaptor which allows to create virtual borders when marking
+      edges as seam edges.
+    </li>
+     <li>Add the functions <code>read_off()</code>
+     and <code>write_off()</code>.
+    </li>
+  </ul>
+</div>
+
 <h2 id="release4.10">Release 4.10 </h2>
 <div>
-  <p>Release date: March 2017 </p>
-
-<!-- Installation (and general changes) -->
+  <p>Release date: May 2017 </p>
 
   <h3>Installation</h3>
   <ul>
@@ -142,90 +570,116 @@ and <code>src/</code> directories).
       CGAL library itself still support C++03 compilers.</li>
     <li>The shell script <code>cgal_create_cmake_script</code> now enables
       C++14 by default.</li>
-    <li>A new mechanism to check which packages of CGAL are used have been added.
-        It is particularly interesting for commercial users to ensure they have a
-        valid commercial license for the packages they used. This can also be used
-        to make sure only LGPL header files are used.
-    </li>
+    <li>A new mechanism to check which packages of CGAL are used have been
+        added.  It is particularly interesting for commercial users to
+        ensure they have a valid commercial license for the packages they
+        used. This can also be used to make sure only LGPL header files are
+        used.</li>
     <li>Because of a bug in the g++ compiler about the C++11
     keyword <code>thread_local</code>, the CGAL_Core library now always
     requires <code>Boost.Thread</code> if the g++ compiler is used.</li>
   </ul>
 
-<!-- New packages -->
   <h3>Generalized Maps (new package)</h3>
   <ul>
     <li>
-      This package implements Generalized Maps in d dimensions. A generalized map is a data structure enabling to represent an orientable or non orientable subdivided object by describing all the cells of the subdivision (for example in 3D vertices, edges, faces, volumes) and all the incidence and adjacency relationships between these cells. This data structure is the generalization of the combinatorial maps in order to be able to represent non orientable objects.</li>     
-    </li>
+      This package implements Generalized Maps in d dimensions. A
+      generalized map is a data structure enabling to represent an
+      orientable or non orientable subdivided object by describing all the
+      cells of the subdivision (for example in 3D vertices, edges, faces,
+      volumes) and all the incidence and adjacency relationships between
+      these cells. This data structure is the generalization of the
+      combinatorial maps in order to be able to represent non orientable
+      objects.</li>
   </ul>
-  <h3>3D Point Set</h3>
+
+  <h3>3D Point Set (new package)</h3>
   <ul>
-    <li>New package providing a flexible data
+    <li>This package provides a flexible data
     structure <code>CGAL::Point_set_3</code> that allows the user to
     easily handle point sets with an arbitrary number of attributes
     (such as normal vectors, colors, labeling, etc.).</li>
   </ul>
-<!-- Major and breaking changes -->
-<h3>Combinatorial Maps and Linear cell complex</h3>
+
+  <h3>Combinatorial Maps and Linear cell complex</h3>
   <ul>
     <li>
-      <b>Breaking change</b>: the requirements of the item class used to customize a combinatorial map and a linear cell complex changed. Instead of defining the type of darts used, you have to define the information you want to add in each dart. You can define the CGAL_CMAP_DART_DEPRECATED macro to keep the old behavior. 
+      <b>Breaking change</b>: the requirements of the item class used to
+      customize a combinatorial map and a linear cell complex
+      changed. Instead of defining the type of darts used, you have to
+      define the information you want to add in each dart. You can define
+      the <code>CGAL_CMAP_DART_DEPRECATED</code> macro to keep the old
+      behavior.
     </li>
   </ul>
 
-<h3>Triangulated Surface Mesh Shortest Paths</h3>
+  <h3>Triangulated Surface Mesh Shortest Paths</h3>
   <ul>
     <li>
-      <b>Breaking change</b>: Rename all functions, types, and enums using <i>barycentric coordinate</i> to <i>barycentric coordinates</i>.
+      <b>Breaking change</b>: Rename all functions, types, and enums
+      using <i>barycentric coordinate</i> to <i>barycentric
+        coordinates</i>.
     </li>
   </ul>
 
-<h3>CGAL and the Boost Graph Library (BGL)</h3>
-<ul>
-  <li>
-    <b>Breaking change</b>: Addition of a free function <code>reserve()</code> in the concept <code>MutableFaceGraph</code>.
-    Models provided by CGAL have been updated.
-  </li>
-</ul>
-<!-- Arithmetic and Algebra -->
-<!-- Combinatorial Algorithms -->
-<!-- Geometry Kernels --> 
- <h3>2D and 3D Linear Geometry Kernel</h3>
+  <h3>CGAL and the Boost Graph Library (BGL)</h3>
   <ul>
+    <li>
+      <b>Breaking change</b>: Addition of a free
+      function <code>reserve()</code> in the
+      concept <code>MutableFaceGraph</code>.  Models provided by CGAL have
+      been updated.
+    </li>
+  </ul>
+
+  <h3>2D and 3D Linear Geometry Kernel</h3>
+  <ul>
+    <li><b>Breaking change</b>: The function <code>compare_slopes()</code> was renamed <code>compare_slope</code>.
+    </li>
     <li>Added a 2D and 3D weighted point class and predicates and constructions.
     </li>
     <li>
       Add functions <code>l_infinity_distance()</code> for 2D and 3D.
     </li>
+    <li>Add a new functor in CGAL Kernel concept to compare the slope of two 3D segments.
+        All models of the Kernel concept now provide the functor <code>Compare_slope_3</code>,
+        and the free function <code>compare_slope()</code> is available.
+    </li>
+    <li>Add an operator in CGAL Kernel concept <code>Angle_3</code> to qualify the angle
+        between the normal of the triangle given by three points, and a vector.
+    </li>
   </ul>
-<!-- Convex Hull Algorithms -->
+
   <h3>3D Convex Hull</h3>
   <ul>
-    <li>The convex hull function can also produce a <code>Surface_mesh</code>,
-        and generally speaking any model of the concept <code>MutableFaceGraph</code></li>
-    <li>The function <code>convex_hull_3_to_polyhedron_3()</code> is deprecated and
-        <code>convex_hull_3_to_face_graph.h</code> should be used instead.</li>
-    <li>The class <code>Convex_hull_traits_3</code> now documents a nested type <code>Polygon_mesh</code>
-        instead of <code>Polyhedron_3</code>. The other nested type is kept for backward compatibility.</li>
-    <li>Remove the function <code>CGAL::convex_hull_incremental_3()</code> deprecated since CGAL 4.6.</li>
+    <li>The convex hull function can also produce
+      a <code>Surface_mesh</code>, and generally speaking any model of the
+      concept <code>MutableFaceGraph</code></li>
+    <li>The function <code>convex_hull_3_to_polyhedron_3()</code> is
+      deprecated and <code>convex_hull_3_to_face_graph.h</code> should be
+      used instead.</li>
+    <li>The class <code>Convex_hull_traits_3</code> now documents a nested
+      type <code>Polygon_mesh</code> instead
+      of <code>Polyhedron_3</code>. The other nested type is kept for
+      backward compatibility.</li>
+    <li>Remove the function <code>CGAL::convex_hull_incremental_3()</code>
+      deprecated since CGAL 4.6.</li>
   </ul>
-<!-- Polygons -->
-<!-- Cell Complexes and Polyhedra -->
+
   <h3>3D Boolean Operations on Nef Polyhedra</h3>
   <ul>
     <li>Add a new constructor from a face graph model</li>
   </ul>
+
   <h3>Linear cell complex</h3>
   <ul>
     <li>
-      Deprecate class <code>Linear_cell_complex</code> which is now renamed <code>Linear_cell_complex_for_combinatorial_map_dart</code>.
+      Deprecate class <code>Linear_cell_complex</code> which is now
+      renamed <code>Linear_cell_complex_for_combinatorial_map_dart</code>.
     </li>
   </ul>
-<!-- Arrangements -->
 
-<!-- Triangulations and Delaunay Triangulations -->
-<h3> 2D Triangulation data structure </h3>
+  <h3> 2D Triangulation data structure </h3>
   <ul>
     <li>
       Add function <code>insert_in_hole</code>.
@@ -234,51 +688,58 @@ and <code>src/</code> directories).
 
  <h3>2D Triangulations</h3>
   <ul>
-    <li><b>Breaking change</b>: Removed the arbitrary dimensional weighted point class.
-      Users must use a version prior to 4.9 if they need this class.</li>
-    <li><b>Breaking change</b>:The number type of weighted points in regular triangulations is no longer
-      a template parameter but the field type of the geometric traits class.
-      Users who need this feature must use a version prior to 4.9</li>
-    <li>The class <code>Regular_triangulation_filtered_traits_2</code> deprecated since CGAL 3.6 has been removed.</li>
-    <li>Deprecate the class <code>Regular_triangulation_euclidean_traits_2</code>, as the
-        weighted point and the function objects for weighted points are part of the concept <code>Kernel</code>/</li>
-    <li>The class <code>Regular_triangulation_2</code> can take a kernel as template argument,
-      that is one no longer has to use <code>Regular_triangulation_euclidea_traits_2</code>,
-      although this still works.</li>
+    <li><b>Breaking change</b>: Removed the arbitrary dimensional weighted
+      point class.  Users must use a version prior to 4.9 if they need this
+      class.</li>
+    <li><b>Breaking change</b>:The number type of weighted points in
+      regular triangulations is no longer a template parameter but the
+      field type of the geometric traits class.  Users who need this
+      feature must use a version prior to 4.9</li>
+    <li>The class <code>Regular_triangulation_filtered_traits_2</code>
+      deprecated since CGAL 3.6 has been removed.</li>
+    <li>Deprecate the
+      class <code>Regular_triangulation_euclidean_traits_2</code>, as the
+      weighted point and the function objects for weighted points are part
+      of the concept <code>Kernel</code>/</li>
+    <li>The class <code>Regular_triangulation_2</code> can take a kernel as
+      template argument, that is one no longer has to
+      use <code>Regular_triangulation_euclidea_traits_2</code>, although
+      this still works.</li>
   </ul>
 
  <h3>3D Triangulations</h3>
   <ul>
-    <li><b>Breaking change</b>: The number type of weighted points in regular triangulations is no longer
-        a template parameter but the field type of the geometric traits class.
-	    Users who need this feature must use a version prior to 4.9.</li>
-    <li>The class <code>Regular_triangulation_filtered_traits_3</code> deprecated since CGAL 3.6 has been removed.</li>
-    <li>Deprecate the class <code>Regular_triangulation_euclidean_traits_3</code>, as the
-        weighted point and the function objects for weighted points are part of the concept <code>Kernel</code>/</li>
-    <li>The class <code>Regular_triangulation_3</code> can take a kernel as template argument,
-      that is one no longer has to use <code>Regular_triangulation_euclidean_traits_3</code>,
-      although this still works.</li>
+    <li><b>Breaking change</b>: The number type of weighted points in
+      regular triangulations is no longer a template parameter but the
+      field type of the geometric traits class.  Users who need this
+      feature must use a version prior to 4.9.</li>
+    <li>The class <code>Regular_triangulation_filtered_traits_3</code>
+      deprecated since CGAL 3.6 has been removed.</li>
+    <li>Deprecate the
+      class <code>Regular_triangulation_euclidean_traits_3</code>, as the
+      weighted point and the function objects for weighted points are part
+      of the concept <code>Kernel</code>/</li>
+    <li>The class <code>Regular_triangulation_3</code> can take a kernel as
+      template argument, that is one no longer has to
+      use <code>Regular_triangulation_euclidean_traits_3</code>, although
+      this still works.</li>
     <li>
-      Add function <code>link_to_face_graph()</code> to copy the set of faces incident to a vertex
-      into a model of <code>FaceGraph</code>.
+      Add function <code>link_to_face_graph()</code> to copy the set of
+      faces incident to a vertex into a model of <code>FaceGraph</code>.
     </li>
   </ul>
-  </ul>
-<!-- Voronoi Diagrams -->
-<!-- Mesh Generation -->
-<h3> 3D Mesh Generation </h3>
+
+  <h3> 3D Mesh Generation </h3>
   <ul>
     <li>
       The constructor <code>CGAL::Polyhedral_mesh_domain_with_features_3(std::string)</code> is deprecated.
     </li>
   </ul>
 
-
-<!-- Surface Reconstruction -->
-<!-- Geometry Processing -->
   <h3>Polygon Mesh Processing</h3>
   <ul>
-    <li>Add fast and robust corefinement and Boolean operation functions for triangulated surface meshes:
+    <li>Add fast and robust corefinement and Boolean operation functions
+      for triangulated surface meshes:
       <ul>
         <li> <code>CGAL::Polygon_mesh_processing::corefine_and_compute_union()</code> </li>
         <li> <code>CGAL::Polygon_mesh_processing::corefine_and_compute_difference()</code> </li>
@@ -289,14 +750,17 @@ and <code>src/</code> directories).
       </ul>
     </li>
     <li>
-     Add functions to compute approximated Hausdorff distances between two meshes, a mesh and a point set, or a point set and a mesh:
-     <code>sample_triangle_mesh()</code>, <code>approximated_Hausdorff_distance()</code>,
+     Add functions to compute approximated Hausdorff distances between two
+     meshes, a mesh and a point set, or a point set and a mesh:
+     <code>sample_triangle_mesh()</code>,
+     <code>approximated_Hausdorff_distance()</code>,
      <code>approximated_symmetric_Hausdorff_distance()</code>,
      <code>max_distance_to_triangle_mesh()</code>,
      <code>max_distance_to_point_set()</code>.
     </li>
     <li>
-    The function <code>CGAL::Polygon_mesh_processing::bbox_3()</code> has been renamed <code>CGAL::Polygon_mesh_processing::bbox()</code>.
+    The function <code>CGAL::Polygon_mesh_processing::bbox_3()</code> has
+    been renamed <code>CGAL::Polygon_mesh_processing::bbox()</code>.
     </li>
   </ul>
 
@@ -310,45 +774,50 @@ and <code>src/</code> directories).
     point sets based on the assumption that they sample a curve in 2D
       or a surface in 3D.</li>
   </ul>
-<!-- Spatial Searching and Sorting -->
-<!-- Geometric Optimization -->
-<!-- Interpolation -->
-<!-- Kinetic Data Structures -->
-<!-- Support Library -->
-<h3>CGAL and the Boost Graph Library (BGL)</h3>
-<ul>
-  <li>
-    Add function <code>CGAL::convert_nef_polyhedron_to_polygon_mesh()</code> to
-    convert a <code>Nef_polyhedron_3</code> to any model of the <code>MutableFaceGraph</code>
-    concept.
-  </li>
-  <li>
-    Add class <code>CGAL::Graph_with_descriptor_with_graph</code> that wraps an existing 
-    graph and provides a reference to the said graph to all of its descriptors.
-  </li>
-</ul>
-<h3>Cone Based Spanners</h3>
-<ul>
-  <li>Add a parameter to compute half Tao graph and half Theta graph.</li>
-  <li>Add an ipelet for this package.</li>
-</ul>
-<h3>Geometric Object Generators</h3>
-<ul>
-  <li>
-    Add point random generators
-    <ul>
-    <li>in a 3D triangle mesh model of the concept <code>FaceListGraph</code> (<code>CGAL::Random_points_in_triangle_mesh_3</code>),</li>
-    <li>on the boundary of a tetrahedral mesh (<code>CGAL::Random_points_in_tetrahedral_mesh_boundary_3</code>),</li>
-    <li>in a tetrahedral mesh (<code>CGAL::Random_points_in_tetrahedral_mesh_3</code>),</li>
-    <li>in a 2D triangle mesh (<code>CGAL::Random_points_in_triangle_mesh_2</code>),</li>
-    <li>in a range of 2D or 3D triangles (<code>CGAL::Random_points_in_triangles_3</code> and <code>CGAL::Random_points_in_triangles_2</code>).</li>
-    <li>on a 3D segment (<code>CGAL::Random_points_on_segment_3</code>).</li>
-    </ul>
-  </li>
-</ul>
-<!-- Visualization -->
 
-<!-- end of the div for 4.10 -->
+  <h3>CGAL and the Boost Graph Library (BGL)</h3>
+  <ul>
+    <li>
+      Add
+      function <code>CGAL::convert_nef_polyhedron_to_polygon_mesh()</code> to
+      convert a <code>Nef_polyhedron_3</code> to any model of
+      the <code>MutableFaceGraph</code> concept.
+    </li>
+    <li>
+      Add class <code>CGAL::Graph_with_descriptor_with_graph</code> that
+      wraps an existing graph and provides a reference to the said graph to
+      all of its descriptors.
+    </li>
+  </ul>
+
+  <h3>Cone Based Spanners</h3>
+  <ul>
+    <li>Add a parameter to compute half Tao graph and half Theta graph.</li>
+    <li>Add an ipelet for this package.</li>
+  </ul>
+
+  <h3>Geometric Object Generators</h3>
+  <ul>
+    <li>
+      Add point random generators
+      <ul>
+        <li>in a 3D triangle mesh model of the
+          concept <code>FaceListGraph</code>
+          (<code>CGAL::Random_points_in_triangle_mesh_3</code>),</li>
+        <li>on the boundary of a tetrahedral mesh
+          (<code>CGAL::Random_points_in_tetrahedral_mesh_boundary_3</code>),</li>
+        <li>in a tetrahedral mesh
+          (<code>CGAL::Random_points_in_tetrahedral_mesh_3</code>),</li>
+        <li>in a 2D triangle mesh
+          (<code>CGAL::Random_points_in_triangle_mesh_2</code>),</li>
+        <li>in a range of 2D or 3D triangles
+          (<code>CGAL::Random_points_in_triangles_3</code>
+          and <code>CGAL::Random_points_in_triangles_2</code>).</li>
+        <li>on a 3D segment
+          (<code>CGAL::Random_points_on_segment_3</code>).</li>
+      </ul>
+    </li>
+  </ul>
 </div>
 
 <h2 id="release4.9">Release 4.9 </h2>
@@ -592,11 +1061,6 @@ and <code>src/</code> directories).
     mesh.</li>
     <li>Add function <code>bbox_3()</code> to compute the bounding box of a
     polygon mesh.</li>
-  </ul>
-  <h3>Surface Mesh Parameterization</h3>
-  <ul>
-    <li><code>LSCM_parameterizer_3</code> now uses by default Eigen instead
-    of OpenNL as a model of <code>SparseLinearAlgebraTraits_d</code>.</li>
   </ul>
   <h3>Point Set Processing</h3>
   <ul>

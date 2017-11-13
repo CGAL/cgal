@@ -58,7 +58,7 @@ public:
     {
       return From_Filtered( Filter_construction(To_Filtered(a1)) );
     }
-    catch (Uncertain_conversion_exception)
+    catch (Uncertain_conversion_exception&)
     {
       Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
       return From_Exact( Exact_construction(To_Exact(a1)) );
@@ -74,7 +74,7 @@ public:
       return From_Filtered( Filter_construction(To_Filtered(a1),
 						To_Filtered(a2)) );
     }
-    catch (Uncertain_conversion_exception)
+    catch (Uncertain_conversion_exception&)
     {
       Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
       return From_Exact( Exact_construction(To_Exact(a1),
@@ -93,7 +93,7 @@ public:
 						To_Filtered(a2),
 						To_Filtered(a3)) );
     }
-    catch (Uncertain_conversion_exception)
+    catch (Uncertain_conversion_exception&)
     {
       Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
       return From_Exact( Exact_construction(To_Exact(a1),

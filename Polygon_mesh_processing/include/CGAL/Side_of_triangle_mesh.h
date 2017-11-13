@@ -22,7 +22,7 @@
 #ifndef CGAL_SIDE_OF_TRIANGLE_MESH_H
 #define CGAL_SIDE_OF_TRIANGLE_MESH_H
 
-#include <CGAL/license/Polygon_mesh_processing.h>
+#include <CGAL/license/Polygon_mesh_processing/miscellaneous.h>
 
 
 #include <CGAL/Polygon_mesh_processing/internal/Side_of_triangle_mesh/Point_inside_vertical_ray_cast.h>
@@ -61,21 +61,40 @@ namespace CGAL {
          `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and
          `GeomTraits::Point_3` as value type.
  *   The default is `typename boost::property_map<TriangleMesh,vertex_point_t>::%type`.
- 
- * \todo Code: Use this class as an implementation detail of Mesh_3's Polyhedral_mesh_domain_3.
-       Remove `TriangleAccessor_3` as well as the concept in Mesh_3 since making `TriangleMesh`
-       a model of `FaceListGraph` will make it useless
-
+ *
+ * \cgalHeading{Implementation Details}
+ * The current implementation is based on the number of triangles intersected by a ray
+ * having the query point as source. The do-intersect predicate used to detect if a triangle
+ * is intersected is able to detect if a triangle is intersected in its
+ * interior or on its boundary. In case it is intersected on its boundary, another ray is picked.
+ * In order to speed queries, the first ray used is an axis aligned one that depends on the extents of the
+ * bbox of the input mesh. In case other rays are needed to conclude, the rays are generated
+ * from a random uniform sampling of a sphere.
  */
 template <class TriangleMesh,
           class GeomTraits,
-          class VertexPointMap = Default >
+          class VertexPointMap = Default
+#ifndef DOXYGEN_RUNNING
+          , class AABBTree = Default
+#endif
+          >
 class Side_of_triangle_mesh
 {
   // typedefs
-  typedef CGAL::AABB_face_graph_triangle_primitive<TriangleMesh, VertexPointMap> Primitive;
-  typedef CGAL::AABB_traits<GeomTraits, Primitive> Traits;
-  typedef CGAL::AABB_tree<Traits> AABB_tree_;
+  template <typename TriangleMesh_,
+            typename GeomTraits_,
+            typename VertexPointMap_>
+  struct AABB_tree_default {
+    typedef CGAL::AABB_face_graph_triangle_primitive<TriangleMesh_,
+                                                     VertexPointMap_> Primitive;
+    typedef CGAL::AABB_traits<GeomTraits_, Primitive> Traits;
+    typedef CGAL::AABB_tree<Traits> type;
+  };
+  typedef typename Default::Lazy_get<AABBTree,
+                                     AABB_tree_default<TriangleMesh,
+                                                       GeomTraits,
+                                                       VertexPointMap>
+                                     >::type AABB_tree_;
   typedef typename GeomTraits::Point_3 Point;
 
   //members

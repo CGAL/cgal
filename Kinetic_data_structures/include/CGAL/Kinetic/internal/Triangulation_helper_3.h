@@ -241,7 +241,7 @@ public:
   template <class Stream>
   void write_edge(const Edge &e, Stream &out) const
   {
-    std::vector<typename Tri::Geom_traits::Point_3> pts;
+    std::vector<typename Tri::Point> pts;
     pts.push_back(vertex(e,0)->point());
     pts.push_back(vertex(e,1)->point());
     std::sort(pts.begin(), pts.end());
@@ -265,7 +265,7 @@ public:
   template <class Stream>
   void write_labeled_facet(const Facet &f, Stream &out) const
   {
-    std::vector<typename Tri::Geom_traits::Point_3> pts;
+    std::vector<typename Tri::Point> pts;
     pts.push_back(vertex(f,0)->point());
     pts.push_back(vertex(f,1)->point());
     pts.push_back(vertex(f,2)->point());
@@ -279,7 +279,7 @@ public:
   template <class Stream>
   void write_labeled_edge(const Edge &e, Stream &out) const
   {
-    std::vector<typename Tri::Geom_traits::Point_3> pts;
+    std::vector<typename Tri::Point> pts;
     pts.push_back(vertex(e,0)->point());
     pts.push_back(vertex(e,1)->point());
     std::sort(pts.begin(), pts.end());

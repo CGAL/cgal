@@ -186,6 +186,11 @@ public:
   typedef unspecified_type Construct_point_2; 
 
   /*!
+    a model of `Kernel::ConstructWeightedPoint_2`
+  */
+  typedef unspecified_type Construct_weighted_point_2;
+
+  /*!
     a model of `Kernel::ConstructVector_2` 
   */ 
   typedef unspecified_type Construct_vector_2; 
@@ -523,6 +528,16 @@ public:
   typedef unspecified_type Compute_squared_radius_2; 
 
   /*!
+    a model of `Kernel::ComputeSquaredRadiusSmallestOrthogonalCircle_2`
+  */
+  typedef unspecified_type Compute_squared_radius_smallest_orthogonal_circle_2;
+
+  /*!
+    a model of `Kernel::ComputePowerProduct_2`
+  */
+  typedef unspecified_type Compute_power_product_2;
+
+  /*!
     a model of `Kernel::ComputeArea_2` 
   */ 
   typedef unspecified_type Compute_area_2; 
@@ -683,6 +698,11 @@ public:
   typedef unspecified_type Power_side_of_oriented_power_circle_2; 
 
   /*!
+    a model of `Kernel::PowerSideOfBoundedPowerCircle_2`
+  */
+  typedef unspecified_type Power_side_of_bounded_power_circle_2;
+
+  /*!
     a model of `Kernel::IsHorizontal_2` 
   */ 
   typedef unspecified_type Is_horizontal_2; 
@@ -798,9 +818,9 @@ public:
   typedef unspecified_type Point_3; 
 
   /*!
-    a model of `Kernel::WeightedPoint_3` 
+    a model of `Kernel::WeightedPoint_3`
   */ 
-  typedef unspecified_type Weighted_point_3; 
+  typedef unspecified_type Weighted_point_3;
 
   /*!
     a model of `Kernel::Vector_3` 
@@ -871,6 +891,11 @@ public:
     a model of `Kernel::ConstructPoint_3` 
   */ 
   typedef unspecified_type Construct_point_3; 
+
+  /*!
+    a model of `Kernel::ConstructWeightedPoint_3`
+  */
+  typedef unspecified_type Construct_weighted_point_3;
 
   /*!
     a model of `Kernel::ConstructVector_3` 
@@ -1409,6 +1434,11 @@ public:
   typedef unspecified_type Compare_xyz_3; 
 
   /*!
+    a model of `Kernel::CompareSlope_3`
+  */
+  typedef unspecified_type Compare_slope_3;
+
+  /*!
     a model of `Kernel::CompareSquaredDistance_3`
   */
   typedef unspecified_type Compare_squared_distance_3;
@@ -1437,11 +1467,6 @@ public:
     a model of `Kernel::ComparePowerDistance_3` 
   */ 
   typedef unspecified_type Compare_power_distance_3; 
-
-  /*!
-    a model of `Kernel::ComparePowerDistanceToPowerSphere_3` 
-  */ 
-  typedef unspecified_type Compare_power_distance_to_power_sphere_3; 
 
   /*!
     a model of `Kernel::Collinear_3` 

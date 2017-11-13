@@ -31,8 +31,7 @@
 #include <CGAL/Kernel_traits.h>
 
 #include <CGAL/Regular_triangulation_3.h>
-#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
-#include <CGAL/Mesh_3/Robust_weighted_circumcenter_filtered_traits_3.h>
+#include <CGAL/Robust_weighted_circumcenter_filtered_traits_3.h>
 
 #include <CGAL/Mesh_vertex_base_3.h>
 #include <CGAL/Compact_mesh_cell_base_3.h>
@@ -45,9 +44,8 @@ namespace CGAL {
     struct Mesh_geom_traits_generator
     {
     private:
-      typedef Robust_weighted_circumcenter_filtered_traits_3<K>
-        Geom_traits;
-      
+      typedef Robust_weighted_circumcenter_filtered_traits_3<K> Geom_traits;
+
     public:
       typedef Geom_traits type;
       typedef type Type;
@@ -71,7 +69,7 @@ template<class MD, class K_, class Concurrency_tag,
 struct Mesh_triangulation_3
 {
 private:
-  typedef typename Default::Get<K_, typename Kernel_traits<MD>::Kernel>::type K;
+  typedef typename Default::Lazy_get<K_, Kernel_traits<MD> >::type K;
 
   typedef typename details::Mesh_geom_traits_generator<K>::type Geom_traits;
 

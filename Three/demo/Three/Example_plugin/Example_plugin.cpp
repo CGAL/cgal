@@ -28,24 +28,24 @@ public :
                       double cx,double cy, double cz);
 
   // Indicates if rendering mode is supported
-  bool supportsRenderingMode(RenderingMode m) const {
+  bool supportsRenderingMode(RenderingMode m) const Q_DECL_OVERRIDE {
     return (m == Flat);
   }
 
   //Displays the item
-  void draw(CGAL::Three::Viewer_interface* viewer) const;
+  void draw(CGAL::Three::Viewer_interface* viewer) const Q_DECL_OVERRIDE;
 
   //Specifies that the buffers need to be initialized again.
   //Is mostly called after a change of geometry in the data.
-  void invalidateOpenGLBuffers();
+  void invalidateOpenGLBuffers() Q_DECL_OVERRIDE;
 
   //fills the std::vector
   void computeElements(double ax,double ay, double az,
                         double bx,double by, double bz,
-                        double cx,double cy, double cz) const;
+                        double cx,double cy, double cz) const Q_DECL_OVERRIDE;
 
-  Scene_item* clone() const {return 0;}
-  QString toolTip() const {return QString();}
+  Scene_item* clone() const Q_DECL_OVERRIDE {return 0;}
+  QString toolTip() const Q_DECL_OVERRIDE {return QString();}
 
 
 private:
@@ -55,7 +55,7 @@ private:
   mutable QOpenGLShaderProgram *program;
   using CGAL::Three::Scene_item::initializeBuffers;
   //Fills the buffers with data. The buffers allow us to give data to the shaders.
-  void initializeBuffers(CGAL::Three::Viewer_interface *viewer)const;
+  void initializeBuffers(CGAL::Three::Viewer_interface *viewer)const Q_DECL_OVERRIDE;
 }; //end of class Scene_triangle_item
 //! [itemdeclaration]
 Scene_triangle_item::Scene_triangle_item(double ax,double ay, double az,
@@ -63,9 +63,6 @@ Scene_triangle_item::Scene_triangle_item(double ax,double ay, double az,
                                          double cx,double cy, double cz)
   :  CGAL::Three::Scene_item(1,1)
 {
-
-  //Color is uniform, no need for a buffer. Changing the color will not re-compute the data
-  is_monochrome = true;
   nb_pos = 0;
   are_buffers_filled = false;
   computeElements(ax, ay, az,
@@ -171,7 +168,7 @@ class Q_DECL_EXPORT Polyhedron_demo_example_plugin :
 
 public :
   // Adds an action to the menu and configures the widget
-  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*) {
+  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*) Q_DECL_OVERRIDE{
     //get the references
     this->scene = scene_interface;
     this->mw = mainWindow;
@@ -184,11 +181,11 @@ public :
       _actions << actionDrawTriangle;
     }
   }
-  bool applicable(QAction*) const
+  bool applicable(QAction*) const Q_DECL_OVERRIDE
   {
     return true;
   }
-  QList<QAction*> actions() const {
+  QList<QAction*> actions() const Q_DECL_OVERRIDE{
     return _actions;
   }
 
@@ -200,6 +197,7 @@ public Q_SLOTS:
     triangle = new Scene_triangle_item(0, 0, 0,
                                        1, 0, 0,
                                        0.5, 0.5, 0);
+    triangle->setName(QString("Basic triangle"));
     scene->addItem(triangle);
   }
 private:

@@ -96,7 +96,7 @@ public:
 	  if (is_certain(res))
 	    return get_certain(res);
 	}
-      catch (Uncertain_conversion_exception) {}
+      catch (Uncertain_conversion_exception&) {}
     }
     CGAL_BRANCH_PROFILER_BRANCH(tmp);
     Protect_FPU_rounding<!Protection> p(CGAL_FE_TONEAREST);
@@ -119,7 +119,7 @@ public:
 	  if (is_certain(res)) \
 	    return get_certain(res); \
 	} \
-      catch (Uncertain_conversion_exception) {} \
+      catch (Uncertain_conversion_exception&) {} \
     } \
     CGAL_BRANCH_PROFILER_BRANCH(tmp); \
     Protect_FPU_rounding<!Protection> p(CGAL_FE_TONEAREST); \

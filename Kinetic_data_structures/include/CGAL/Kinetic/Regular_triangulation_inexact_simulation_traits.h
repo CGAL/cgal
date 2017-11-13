@@ -29,17 +29,15 @@
 #include <CGAL/Kinetic/Handle_degeneracy_function_kernel.h>
 #include <CGAL/Kinetic/Default_simulator.h>
 #include <CGAL/Kinetic/Two_list_pointer_event_queue.h>
-#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 #include <CGAL/Kinetic/Derivitive_filter_function_kernel.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 
 namespace CGAL { namespace Kinetic {
 
 struct Regular_triangulation_inexact_simulation_traits {
   typedef Regular_triangulation_inexact_simulation_traits This;
 
-  typedef CGAL::Regular_triangulation_euclidean_traits_3<CGAL::Exact_predicates_inexact_constructions_kernel> Static_kernel;
+  typedef CGAL::Exact_predicates_inexact_constructions_kernel Static_kernel;
   typedef CGAL::POLYNOMIAL::Polynomial<Static_kernel::FT> Function;
   typedef CGAL::POLYNOMIAL::Root_stack_default_traits<Function> Root_stack_traits;
   typedef CGAL::POLYNOMIAL::Numeric_root_stack<Root_stack_traits> Root_stack;
@@ -54,15 +52,15 @@ struct Regular_triangulation_inexact_simulation_traits {
 
   typedef Active_objects_vector<Kinetic_kernel::Point_1> Active_points_1_table;
   typedef Active_objects_vector<Kinetic_kernel::Point_2> Active_points_2_table;
-  typedef Active_objects_vector<Kinetic_kernel::Weighted_point_3> Active_points_3_table;
-  //typedef Active_objects_vector<Kinetic_kernel::Weighted_point_3> Active_weighted_points_3_table;
+  typedef Active_objects_vector<Kinetic_kernel::Point_3> Active_points_3_table;
+  typedef Active_objects_vector<Kinetic_kernel::Weighted_point_3> Active_weighted_points_3_table;
  
   typedef Regular_triangulation_instantaneous_kernel<This> Instantaneous_kernel;
 
   Active_points_1_table* active_points_1_table_handle() const { return ap1_.get();}
   Active_points_2_table* active_points_2_table_handle() const {return ap2_.get();}
   Active_points_3_table* active_points_3_table_handle() const {return ap3_.get();}
-  //Active_weighted_points_3_table* active_weighted_points_3_table_handle() const {return awp3_.get();}
+  Active_weighted_points_3_table* active_weighted_points_3_table_handle() const {return awp3_.get();}
 
   Simulator* simulator_handle() const { return sim_.get();}
   const Static_kernel& static_kernel_object() const {return k_;}
@@ -73,23 +71,23 @@ struct Regular_triangulation_inexact_simulation_traits {
   }
 
   Regular_triangulation_inexact_simulation_traits(const Simulator::Time &lb,
-						const Simulator::Time &ub): sim_(new Simulator(lb, ub)),
-									    ap1_(new Active_points_1_table()),
-									    ap2_(new Active_points_2_table()),
-									    ap3_(new Active_points_3_table())
-									    //awp3_(new Active_weighted_points_3_table())
-{}
- 
-  
+                                                  const Simulator::Time &ub): sim_(new Simulator(lb, ub)),
+    ap1_(new Active_points_1_table()),
+    ap2_(new Active_points_2_table()),
+    ap3_(new Active_points_3_table()),
+    awp3_(new Active_weighted_points_3_table())
+  { }
+
   bool is_exact() const {
     return true;
   }
+
 protected:
   Simulator::Handle sim_;
   Active_points_1_table::Handle ap1_;
   Active_points_2_table::Handle ap2_;
   Active_points_3_table::Handle ap3_;
-  //Active_weighted_points_3_table::Handle awp3_;
+  Active_weighted_points_3_table::Handle awp3_;
   Static_kernel k_;
   Kinetic_kernel kk_;
   Function_kernel fk_;

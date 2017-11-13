@@ -24,10 +24,13 @@
 
 #include <CGAL/license/Triangulation_3.h>
 
+#define CGAL_DEPRECATED_HEADER "<CGAL/Regular_triangulation_euclidean_traits_3.h>"
+#define CGAL_DEPRECATED_MESSAGE_DETAILS \
+  "The kernel K can be used directly as traits since weighted points and "\
+  "the associated function objects are now part of the concept Kernel."
+#include <CGAL/internal/deprecation_warning.h>
 
 namespace CGAL {
-
-
 
 template < class K_, class Weight = typename K_::RT >
 class Regular_triangulation_euclidean_traits_3
@@ -36,18 +39,8 @@ class Regular_triangulation_euclidean_traits_3
 public:
   Regular_triangulation_euclidean_traits_3() {}
   Regular_triangulation_euclidean_traits_3(const K_& k): K_(k) {}
-
-  typedef K_                                         Kernel;
-  typedef typename K_::FT                            FT;
-  typedef typename K_::Point_3                       Bare_point;
-  typedef typename K_::Weighted_point_3              Weighted_point;
-  typedef Weighted_point                             Weighted_point_3;
-  typedef Weighted_point                             Point_3;
 };
 
-
 } //namespace CGAL
-
-
 
 #endif // CGAL_REGULAR_TRIANGULATION_EUCLIDEAN_TRAITS_3_H

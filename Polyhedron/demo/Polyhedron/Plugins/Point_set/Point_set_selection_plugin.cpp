@@ -205,19 +205,27 @@ public:
     ui_widget.setupUi(dock_widget);
     addDockWidget(dock_widget);
 
-    ui_widget.Add_to_selection_Button->setVisible(false);
-    connect(ui_widget.Selection_tool_combo_box, SIGNAL(currentIndexChanged(int)), 
-            this, SLOT(on_Selection_tool_combo_box_changed(int)));
-    connect(ui_widget.Selection_mode_combo_box, SIGNAL(currentIndexChanged(int)), 
-            this, SLOT(on_Selection_mode_combo_box_changed(int)));
-    connect(ui_widget.Select_all_button,  SIGNAL(clicked()), this, SLOT(on_Select_all_button_clicked()));
-    connect(ui_widget.Clear_button,  SIGNAL(clicked()), this, SLOT(on_Clear_button_clicked()));
-    connect(ui_widget.Invert_selection_button,  SIGNAL(clicked()), this, SLOT(on_Invert_selection_button_clicked()));
-    connect(ui_widget.Erase_selected_points_button,  SIGNAL(clicked()), this, SLOT(on_Erase_selected_points_button_clicked()));
-    connect(ui_widget.Create_point_set_item_button, SIGNAL(clicked()), this, SLOT(on_Create_point_set_item_button_clicked()));
-    connect(ui_widget.Add_to_selection_Button, SIGNAL(clicked()), this, SLOT(select_points()));
-    rectangle = true;
-    selection_mode = 0;
+    // Fill actions of menu
+    ui_widget.menu->setMenu (new QMenu("Point Set Selection Menu", ui_widget.menu));
+    QAction* select_all = ui_widget.menu->menu()->addAction ("Select all points");
+    connect(select_all,  SIGNAL(triggered()), this, SLOT(on_Select_all_button_clicked()));
+    QAction* clear = ui_widget.menu->menu()->addAction ("Clear selection");
+    connect(clear,  SIGNAL(triggered()), this, SLOT(on_Clear_button_clicked()));
+    QAction* invert = ui_widget.menu->menu()->addAction ("Invert selection");
+    connect(invert,  SIGNAL(triggered()), this, SLOT(on_Invert_selection_button_clicked()));
+    QAction* erase = ui_widget.menu->menu()->addAction ("Erase selected points");
+    connect(erase,  SIGNAL(triggered()), this, SLOT(on_Erase_selected_points_button_clicked()));
+    QAction* create = ui_widget.menu->menu()->addAction ("Create point set item from selected points");
+    connect(create, SIGNAL(triggered()), this, SLOT(on_Create_point_set_item_button_clicked()));
+
+    ui_widget.menu->menu()->addSection ("Box selection");
+    add_box = ui_widget.menu->menu()->addAction ("Apply");
+    connect(add_box, SIGNAL(triggered()), this, SLOT(select_points()));
+    add_box->setEnabled(false);
+
+    connect(ui_widget.box, SIGNAL(toggled(bool)), 
+            this, SLOT(on_box_toggled(bool)));
+
     visualizer = NULL;
     edit_box = NULL;
     shift_pressing = false;
@@ -237,7 +245,7 @@ protected:
 
   bool eventFilter(QObject *, QEvent *event) {
     static QImage background;
-    if (dock_widget->isHidden() || !(dock_widget->isActiveWindow()) || ui_widget.Selection_tool_combo_box->currentIndex()==2)
+    if (dock_widget->isHidden() || !(dock_widget->isActiveWindow()) || ui_widget.box->isChecked())
       return false;
     
     Scene_points_with_normal_item* point_set_item
@@ -252,8 +260,12 @@ protected:
       Qt::KeyboardModifiers modifiers = keyEvent->modifiers();
 
       shift_pressing = modifiers.testFlag(Qt::ShiftModifier);
-
+#if QGLVIEWER_VERSION >= 0x020700
+      background = static_cast<CGAL::Three::Viewer_interface*>(*QGLViewer::QGLViewerPool().begin())->grabFramebuffer();
+#else
       background = static_cast<CGAL::Three::Viewer_interface*>(*QGLViewer::QGLViewerPool().begin())->grabFrameBuffer();
+
+#endif
     }
 
     // mouse events
@@ -268,7 +280,7 @@ protected:
 	    if (viewer->camera()->frame()->isSpinning())
 	      viewer->camera()->frame()->stopSpinning();
 	
-	    visualizer = new Scene_point_set_selection_visualizer(rectangle,
+	    visualizer = new Scene_point_set_selection_visualizer(ui_widget.rectangle->isChecked(),
 								  point_set_item->bbox());
 
             visualizer->sample_mouse_path(background);
@@ -314,7 +326,7 @@ protected Q_SLOTS:
 
     Point_set* points = point_set_item->point_set();
 
-    if (selection_mode == 0) // New selection
+    if (ui_widget.new_selection->isChecked())
       points->unselect_all();
     
     QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
@@ -332,7 +344,7 @@ protected Q_SLOTS:
         qglviewer::Vec vp (p.x (), p.y (), p.z ());
         qglviewer::Vec vsp = camera->projectedCoordinatesOf (vp + offset);
         bool now_selected = false;
-        if(ui_widget.Selection_tool_combo_box->currentIndex() != 2)
+        if(!ui_widget.box->isChecked())
           now_selected = visualizer->is_selected (vsp);
         else if(edit_box)
         {
@@ -348,40 +360,34 @@ protected Q_SLOTS:
          }
         }
 
-	// NEW INTERSECTION
-	if (selection_mode == 0)
-	  {
-	    if (now_selected)
-	      selected.push_back (*it);
-	    else
-	      unselected.push_back (*it);
-	  }
-	// UNION
-	else if (selection_mode == 1)
-	  {
-	    if (already_selected || now_selected)
-	      selected.push_back (*it);
-	    else
-	      unselected.push_back (*it);
-	  }
-	// INTERSECTION
-	//  * Unselect point if it was selected and is not anymore
-	else if (selection_mode == 2)
-	  {
-	    if (already_selected && now_selected)
-	      selected.push_back (*it);
-	    else
-	      unselected.push_back (*it);
-	  }
-	// DIFFERENCE
-	//  * Unselect point if it was selected and is now selected
-	else if (selection_mode == 3)
-	  {
-	    if (already_selected && !now_selected)
-	      selected.push_back (*it);
-	    else
-	      unselected.push_back (*it);
-	  }
+	if (ui_widget.new_selection->isChecked())
+        {
+          if (now_selected)
+            selected.push_back (*it);
+          else
+            unselected.push_back (*it);
+        }
+	else if (ui_widget.union_selection->isChecked())
+        {
+          if (already_selected || now_selected)
+            selected.push_back (*it);
+          else
+            unselected.push_back (*it);
+        }
+	else if (ui_widget.intersection->isChecked())
+        {
+          if (already_selected && now_selected)
+            selected.push_back (*it);
+          else
+            unselected.push_back (*it);
+        }
+        else if (ui_widget.diff->isChecked())
+        {
+          if (already_selected && !now_selected)
+            selected.push_back (*it);
+          else
+            unselected.push_back (*it);
+        }
 
       }
 
@@ -532,10 +538,9 @@ public Q_SLOTS:
     QApplication::restoreOverrideCursor();
  }
 
-  void on_Selection_tool_combo_box_changed (int index)
+  void on_box_toggled (bool toggle)
   {
-    rectangle = (index == 0);
-    if(index == 2)
+    if(toggle)
     {
       edit_box = new Scene_edit_box_item(scene);
       edit_box->setRenderingMode(Wireframe);
@@ -545,28 +550,22 @@ public Q_SLOTS:
       scene->addItem(edit_box);
       QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
       viewer->installEventFilter(edit_box);
-      ui_widget.Add_to_selection_Button->setVisible(true);
+      add_box->setEnabled(true);
     }
     else
     {
       if(edit_box)
         scene->erase(scene->item_id(edit_box));
       edit_box = NULL;
-      ui_widget.Add_to_selection_Button->setVisible(false);
+      add_box->setEnabled(false);
     }
 
 
   }
 
-  void on_Selection_mode_combo_box_changed (int index)
-  {
-    selection_mode = index;
-  }
-
   void reset_editbox()
   {
     edit_box = NULL;
-    ui_widget.Add_to_selection_Button->setVisible(false);
   }
 
 private:
@@ -574,9 +573,9 @@ private:
   QAction* actionPointSetSelection;
 
   QDockWidget* dock_widget;
+  QAction* add_box;
+  
   Ui::PointSetSelection ui_widget;
-  bool rectangle;
-  int selection_mode;
   Scene_point_set_selection_visualizer* visualizer;
   bool shift_pressing;
   Scene_edit_box_item* edit_box;

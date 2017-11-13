@@ -21,7 +21,7 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_REPAIR_H
 #define CGAL_POLYGON_MESH_PROCESSING_REPAIR_H
 
-#include <CGAL/license/Polygon_mesh_processing.h>
+#include <CGAL/license/Polygon_mesh_processing/repair.h>
 
 
 #include <set>
@@ -38,6 +38,13 @@
 
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+
+#ifdef CGAL_PMP_REMOVE_DEGENERATE_FACES_DEBUG
+#include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
+#include <CGAL/IO/OFF_reader.h>
+#include <iostream>
+#include <fstream>
+#endif
 
 namespace CGAL{
 namespace Polygon_mesh_processing {
@@ -126,30 +133,7 @@ struct Less_along_ray{
   }
 };
 
-template <class Traits, class TriangleMesh, class VertexPointMap>
-bool is_degenerated(
-  typename boost::graph_traits<TriangleMesh>::halfedge_descriptor hd,
-  TriangleMesh& tmesh,
-  const VertexPointMap& vpmap,
-  const Traits& traits)
-{
-  CGAL_assertion(!is_border(hd, tmesh));
 
-  const typename Traits::Point_3& p1 = get(vpmap, target( hd, tmesh) );
-  const typename Traits::Point_3& p2 = get(vpmap, target(next(hd, tmesh), tmesh) );
-  const typename Traits::Point_3& p3 = get(vpmap, source( hd, tmesh) );
-  return traits.collinear_3_object()(p1, p2, p3);
-}
-
-template <class Traits, class TriangleMesh, class VertexPointMap>
-bool is_degenerated(
-  typename boost::graph_traits<TriangleMesh>::face_descriptor fd,
-  TriangleMesh& tmesh,
-  const VertexPointMap& vpmap,
-  const Traits& traits)
-{
-  return is_degenerated(halfedge(fd,tmesh), tmesh, vpmap, traits);
-}
 
 ///\cond SKIP_IN_MANUAL
 
@@ -163,10 +147,21 @@ degenerate_faces(const TriangleMesh& tm,
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
   BOOST_FOREACH(face_descriptor fd, faces(tm))
   {
-    if ( is_degenerated(fd, tm, vpmap, traits) )
+    if ( is_degenerate_triangle_face(fd, tm, vpmap, traits) )
       *out++=fd;
   }
   return out;
+}
+
+template <class TriangleMesh, class OutputIterator>
+OutputIterator
+degenerate_faces(const TriangleMesh& tm, OutputIterator out)
+{
+  typedef typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::type Vpm;
+  typedef typename boost::property_traits<Vpm>::value_type Point;
+  typedef typename Kernel_traits<Point>::Kernel Kernel;
+
+  return degenerate_faces(tm, get(vertex_point, tm), Kernel(), out);
 }
 
 // this function remove a border edge even if it does not satisfy the link condition.
@@ -366,10 +361,10 @@ std::size_t remove_null_edges(
   typedef typename GT::vertex_descriptor vertex_descriptor;
 
   typedef typename GetVertexPointMap<TM, NamedParameters>::type VertexPointMap;
-  VertexPointMap vpmap = choose_param(get_param(np, vertex_point),
+  VertexPointMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
                                       get_property_map(vertex_point, tmesh));
   typedef typename GetGeomTraits<TM, NamedParameters>::type Traits;
-  Traits traits = choose_param(get_param(np, geom_traits), Traits());
+  Traits traits = choose_param(get_param(np, internal_np::geom_traits), Traits());
 
   std::size_t nb_deg_faces = 0;
 
@@ -380,6 +375,10 @@ std::size_t remove_null_edges(
     if ( traits.equal_3_object()(get(vpmap, target(ed, tmesh)), get(vpmap, source(ed, tmesh))) )
       null_edges_to_remove.insert(ed);
   }
+
+  #ifdef CGAL_PMP_REMOVE_DEGENERATE_FACES_DEBUG
+  std::cout << "Found " << null_edges_to_remove.size() << " null edges.\n";
+  #endif
 
   while (!null_edges_to_remove.empty())
   {
@@ -456,7 +455,7 @@ std::size_t remove_null_edges(
             border.push_back( hd );
           }
         }
-
+      CGAL_assertion( !border.empty() ); // a whole connected component got selected and will disappear (not handled for now)
       // define cc of border halfedges: two halfedges are in the same cc
       // if they are on the border of the cc of non-marked faces.
       typedef CGAL::Union_find<halfedge_descriptor> UF_ds;
@@ -653,7 +652,7 @@ std::size_t remove_null_edges(
 /// @param np optional \ref namedparameters described below
 ///
 /// \cgalNamedParamsBegin
-///    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`. The type of this map is model of `ReadWritePropertyMap`. 
+///    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`. The type of this map is model of `ReadWritePropertyMap`.
 /// If this parameter is omitted, an internal property map for
 /// `CGAL::vertex_point_t` should be available in `TriangleMesh`
 /// \cgalParamEnd
@@ -669,6 +668,8 @@ std::size_t remove_null_edges(
 ///   \cgalParamEnd
 /// \cgalNamedParamsEnd
 ///
+/// \todo the function might not be able to remove all degenerate faces.
+///       We should probably do something with the return type.
 /// \return number of removed degenerate faces
 template <class TriangleMesh, class NamedParameters>
 std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
@@ -687,23 +688,110 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
   typedef typename GT::vertex_descriptor vertex_descriptor;
 
   typedef typename GetVertexPointMap<TM, NamedParameters>::type VertexPointMap;
-  VertexPointMap vpmap = choose_param(get_param(np, vertex_point),
+  VertexPointMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
                                       get_property_map(vertex_point, tmesh));
   typedef typename GetGeomTraits<TM, NamedParameters>::type Traits;
-  Traits traits = choose_param(get_param(np, geom_traits), Traits());
+  Traits traits = choose_param(get_param(np, internal_np::geom_traits), Traits());
 
 // First remove edges of length 0
   std::size_t nb_deg_faces = remove_null_edges(edges(tmesh), tmesh, np);
 
+  #ifdef CGAL_PMP_REMOVE_DEGENERATE_FACES_DEBUG
+  {
+  std::cout <<"Done with null edges.\n";
+  std::ofstream output("/tmp/no_null_edges.off");
+  output << std::setprecision(17) << tmesh << "\n";
+  output.close();
+  }
+  #endif
+
 // Then, remove triangles made of 3 collinear points
   std::set<face_descriptor> degenerate_face_set;
   BOOST_FOREACH(face_descriptor fd, faces(tmesh))
-    if ( is_degenerated(fd, tmesh, vpmap, traits) )
+    if ( is_degenerate_triangle_face(fd, tmesh, vpmap, traits) )
       degenerate_face_set.insert(fd);
   nb_deg_faces+=degenerate_face_set.size();
 
+  // first remove degree 3 vertices that are part of a cap
+  // (only the vertex in the middle of the opposite edge)
+  // This removal does not change the shape of the mesh.
+  if (!degenerate_face_set.empty())
+  {
+    std::set<vertex_descriptor> vertices_to_remove;
+    typename std::set<face_descriptor>::iterator fit=degenerate_face_set.begin();
+    while(fit!=degenerate_face_set.end())
+    {
+      halfedge_descriptor hd=halfedge(*fit, tmesh);
+      const typename Traits::Point_3& p1 = get(vpmap, target(hd, tmesh) );
+      const typename Traits::Point_3& p2 = get(vpmap, target(next(hd, tmesh), tmesh) );
+      const typename Traits::Point_3& p3 = get(vpmap, source(hd, tmesh) );
+
+      CGAL_assertion(p1!=p2 && p1!=p3 && p2!=p3);
+
+      typename Traits::Compare_distance_3 compare_distance = traits.compare_distance_3_object();
+
+      vertex_descriptor vd = boost::graph_traits<TriangleMesh>::null_vertex();
+      if (compare_distance(p1,p2, p1,p3) != CGAL::SMALLER) // p1p2 > p1p3
+      {
+        if (compare_distance(p1,p2, p2,p3) != CGAL::SMALLER) // p1p2 > p2p3
+          // p1p2 is the longest edge, pick p3
+          vd = source(hd, tmesh);
+        else
+          // p2p3 is the longest edge, pick p1
+          vd = target(hd, tmesh);
+      }
+      else
+        if (compare_distance(p1,p3, p2,p3) != CGAL::SMALLER) // p1p3>p2p3
+          // p1p3 is the longest edge, pick p2
+          vd = target(next(hd, tmesh), tmesh);
+        else
+          // p2p3 is the longest edge, pick p1
+          vd = target(hd, tmesh);
+
+      if (degree(vd, tmesh) == 3)
+        vertices_to_remove.insert(vd);
+
+      ++fit;
+    }
+
+    BOOST_FOREACH(vertex_descriptor vd, vertices_to_remove)
+    {
+      halfedge_descriptor hd=halfedge(vd, tmesh);
+      BOOST_FOREACH(halfedge_descriptor hd2, halfedges_around_target(hd, tmesh))
+        if (!is_border(hd2, tmesh))
+          degenerate_face_set.erase( face(hd2, tmesh) );
+      // remove the central vertex and check if the new face is degenerated
+      hd=CGAL::Euler::remove_center_vertex(hd, tmesh);
+      if (is_degenerate_triangle_face(face(hd, tmesh), tmesh, vpmap, traits))
+      {
+        degenerate_face_set.insert( face(hd, tmesh) );
+        /// \todo shall we retest the degree of these vertices?
+      }
+    }
+  }
+
   while (!degenerate_face_set.empty())
   {
+    #ifdef CGAL_PMP_REMOVE_DEGENERATE_FACES_DEBUG
+    std::cout << "Loop on removing deg faces\n";
+    // ensure the mesh is not broken
+    {
+      std::ofstream out("/tmp/out.off");
+      out << tmesh;
+      out.close();
+
+      std::vector<typename Traits::Point_3> points;
+      std::vector<std::vector<std::size_t> > triangles;
+      std::ifstream in("/tmp/out.off");
+      CGAL::read_OFF(in, points, triangles);
+      if (!CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh(triangles))
+      {
+        std::cerr << "ERROR: got a polygon soup!\n";
+        exit(EXIT_FAILURE);
+      }
+    }
+    #endif
+
     face_descriptor fd = *degenerate_face_set.begin();
 
     // look whether an incident triangle is also degenerated
@@ -722,6 +810,9 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
 
     if (!detect_cc_of_degenerate_triangles)
     {
+      #ifdef CGAL_PMP_REMOVE_DEGENERATE_FACES_DEBUG
+      std::cout << "  no degenerate neighbors, using a flip.\n";
+      #endif
       degenerate_face_set.erase(degenerate_face_set.begin());
     // flip the longest edge of the triangle
       const typename Traits::Point_3& p1 = get(vpmap, target( halfedge(fd, tmesh), tmesh) );
@@ -755,13 +846,27 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
         // simply remove the face
         Euler::remove_face(edge_to_flip, tmesh);
       else
-        Euler::flip_edge(edge_to_flip, tmesh);
+      {
+        // condition for the flip to be valid (the edge to be created do not already exists)
+        if ( !halfedge(target(next(edge_to_flip, tmesh), tmesh),
+                       target(next(opposite(edge_to_flip, tmesh), tmesh), tmesh),
+                       tmesh).second )
+        {
+          Euler::flip_edge(edge_to_flip, tmesh);
+        }
+        #ifdef CGAL_PMP_REMOVE_DEGENERATE_FACES_DEBUG
+        else
+          std::cout << "  WARNING: flip is not possible\n";
+        #endif
+      }
     }
     else
     {
     // Process a connected component of degenerate faces
       // get all the faces from the connected component
       // and the boundary edges
+      /// \todo the code below is only working if the set of degenerate faces is a topological disk!
+
       std::set<face_descriptor> cc_faces;
       std::vector<face_descriptor> queue;
       std::vector<halfedge_descriptor> boundary_hedges;
@@ -778,18 +883,20 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
         {
           face_descriptor adjacent_face = face( opposite(hd, tmesh), tmesh );
           if ( adjacent_face==GT::null_face() ||
-               !degenerate_face_set.count(adjacent_face) )
+               degenerate_face_set.count(adjacent_face)==0 )
             boundary_hedges.push_back(hd);
           else
+          {
             if (cc_faces.insert(adjacent_face).second)
-            {
-              inside_hedges.push_back(hd);
               queue.push_back(adjacent_face);
-            }
+            if ( hd < opposite(hd, tmesh) )
+              inside_hedges.push_back(hd);
+          }
         }
       }
 
-      #if 0
+      #ifdef CGAL_PMP_REMOVE_DEGENERATE_FACES_DEBUG
+      std::cout << "  Deal with a cc of " << cc_faces.size() << " degenerate faces.\n";
       /// dump cc_faces
       {
       int id=0;
@@ -837,32 +944,7 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
           inside_vertices.insert( source(hd, tmesh) );
       }
 
-      // update the face and halfedge vertex pointers on the boundary
-      BOOST_FOREACH(halfedge_descriptor h, boundary_hedges)
-      {
-        set_face(h, GT::null_face(), tmesh);
-        set_halfedge(target(h,tmesh), h, tmesh);
-      }
-      // update next/prev pointers of boundary_hedges
-      BOOST_FOREACH(halfedge_descriptor h, boundary_hedges)
-      {
-        halfedge_descriptor next_candidate = next( h, tmesh);
-        while (face(next_candidate, tmesh)!=GT::null_face())
-          next_candidate = next( opposite( next_candidate, tmesh), tmesh);
-        set_next(h, next_candidate, tmesh);
-      }
-      // remove degenerate faces
-      BOOST_FOREACH(face_descriptor f, cc_faces)
-        degenerate_face_set.erase(f);
-      BOOST_FOREACH(face_descriptor f, cc_faces)
-        remove_face(f, tmesh);
-      // remove interior edges
-      BOOST_FOREACH(halfedge_descriptor h, inside_hedges)
-        remove_edge(edge(h, tmesh), tmesh);
-      // remove interior vertices
-      BOOST_FOREACH(vertex_descriptor v, inside_vertices)
-        remove_vertex(v, tmesh);
-
+    // preliminary step to check if the operation is possible
       // sort the boundary points along the common supporting line
       //    we first need a reference point
       typedef Less_vertex_point<TriangleMesh, VertexPointMap, Traits> Less_vertex;
@@ -883,19 +965,149 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
       CGAL_assertion( get( vpmap, *ref_vertices.first)==*sorted_points.begin() );
       CGAL_assertion( get( vpmap, *ref_vertices.second)==*cpp11::prev(sorted_points.end()) );
 
+      const typename Traits::Point_3& xtrm1 = *sorted_points.begin();
+      const typename Traits::Point_3& xtrm2 = *cpp11::prev(sorted_points.end());
+
       // recover halfedges on the hole, bounded by the reference vertices
       std::vector<halfedge_descriptor> side_one, side_two;
-      side_one.push_back( next( halfedge(*ref_vertices.first, tmesh), tmesh) );
-      while( target(side_one.back(), tmesh)!=*ref_vertices.second)
-        side_one.push_back( next(side_one.back(), tmesh) );
-      side_two.push_back( next(side_one.back(), tmesh) );
-      while( target(side_two.back(), tmesh)!=*ref_vertices.first )
-        side_two.push_back( next(side_two.back(), tmesh) );
+
+      // look for the outgoing border halfedge of the first extreme point
+      BOOST_FOREACH(halfedge_descriptor hd, boundary_hedges)
+        if ( get(vpmap, source(hd, tmesh)) == xtrm1 )
+        {
+          side_one.push_back(hd);
+          break;
+        }
+      CGAL_assertion(side_one.size()==1);
+
+      while( get(vpmap, target(side_one.back(), tmesh)) != xtrm2 )
+      {
+        vertex_descriptor prev_vertex = target(side_one.back(), tmesh);
+        BOOST_FOREACH(halfedge_descriptor hd, boundary_hedges)
+          if ( source(hd, tmesh) == prev_vertex )
+          {
+            side_one.push_back(hd);
+            break;
+          }
+      }
+
+      // look for the outgoing border halfedge of the first extreme point
+      BOOST_FOREACH(halfedge_descriptor hd, boundary_hedges)
+        if ( get(vpmap, source(hd, tmesh)) == xtrm2 )
+        {
+          side_two.push_back(hd);
+          break;
+        }
+      CGAL_assertion(side_two.size()==1);
+
+      while( get(vpmap, target(side_two.back(), tmesh)) != xtrm1 )
+      {
+        vertex_descriptor prev_vertex = target(side_two.back(), tmesh);
+        BOOST_FOREACH(halfedge_descriptor hd, boundary_hedges)
+          if ( source(hd, tmesh) == prev_vertex )
+          {
+            side_two.push_back(hd);
+            break;
+          }
+      }
+
+      CGAL_assertion( side_one.size()+side_two.size()==boundary_hedges.size() );
+
       // reverse the order of the second side so as to follow
       // the same order than side one
       std::reverse(side_two.begin(), side_two.end());
       BOOST_FOREACH(halfedge_descriptor& h, side_two)
         h=opposite(h, tmesh);
+
+      CGAL_assertion( source(side_one.front(), tmesh) == *ref_vertices.first );
+      CGAL_assertion( source(side_two.front(), tmesh) == *ref_vertices.first );
+      CGAL_assertion( target(side_one.back(), tmesh) == *ref_vertices.second );
+      CGAL_assertion( target(side_two.back(), tmesh) == *ref_vertices.second );
+
+      // sort halfedges to make binary_search calls in the container
+      std::sort(boundary_hedges.begin(), boundary_hedges.end());
+
+      typename Sorted_point_set::iterator it_pt = cpp11::next(sorted_points.begin()),
+                                                               it_pt_end = cpp11::prev(sorted_points.begin());
+
+      bool non_collapsable = false;
+      typename std::vector<halfedge_descriptor>::iterator side_one_it = side_one.begin();
+      typename std::vector<halfedge_descriptor>::iterator side_two_it = side_two.begin();
+
+      for(;it_pt!=it_pt_end;++it_pt)
+      {
+        vertex_descriptor v2 = target(next(opposite(*side_two_it, tmesh), tmesh), tmesh);
+
+        halfedge_descriptor h1 = next(*side_one_it, tmesh);
+        while( !std::binary_search(boundary_hedges.begin(), boundary_hedges.end(), h1) )
+        {
+          BOOST_FOREACH(halfedge_descriptor h2, halfedges_around_face(h1, tmesh))
+          {
+            CGAL_assertion (!std::binary_search(boundary_hedges.begin(), boundary_hedges.end(), h2));
+
+            if (source(h2, tmesh) == v2)
+            {
+              non_collapsable = true;
+              break;
+            }
+          }
+          if (non_collapsable) break;
+
+          h1=next(opposite(h1, tmesh), tmesh);
+        }
+
+        if (non_collapsable) break;
+
+        CGAL_assertion( get(vpmap, target(*side_one_it, tmesh)) == *it_pt ||
+                        get(vpmap, target(*side_two_it, tmesh)) == *it_pt );
+
+        if ( get(vpmap, target(*side_one_it, tmesh)) == *it_pt )
+          ++side_one_it;
+        if ( get(vpmap, target(*side_two_it, tmesh)) == *it_pt )
+          ++side_two_it;
+      }
+
+      if (non_collapsable){
+        BOOST_FOREACH(face_descriptor f, cc_faces)
+          degenerate_face_set.erase(f);
+        #ifdef CGAL_PMP_REMOVE_DEGENERATE_FACES_DEBUG
+        std::cout << "  WARNING: cannot remove a connected components of degenerate faces.\n";
+        #endif
+        continue;
+      }
+
+    // now proceed to the fix
+      // update the face and halfedge vertex pointers on the boundary
+      BOOST_FOREACH(halfedge_descriptor h, boundary_hedges)
+      {
+        set_face(h, GT::null_face(), tmesh);
+        set_halfedge(target(h,tmesh), h, tmesh);
+      }
+      // update next/prev pointers of boundary_hedges
+      BOOST_FOREACH(halfedge_descriptor h, boundary_hedges)
+      {
+        halfedge_descriptor next_candidate = next( h, tmesh);
+        while (face(next_candidate, tmesh)!=GT::null_face())
+          next_candidate = next( opposite( next_candidate, tmesh), tmesh);
+        set_next(h, next_candidate, tmesh);
+      }
+      // remove degenerate faces
+      BOOST_FOREACH(face_descriptor f, cc_faces)
+      {
+        degenerate_face_set.erase(f);
+        remove_face(f, tmesh);
+      }
+      // remove interior edges
+      BOOST_FOREACH(halfedge_descriptor h, inside_hedges)
+        remove_edge(edge(h, tmesh), tmesh);
+      // remove interior vertices
+      BOOST_FOREACH(vertex_descriptor v, inside_vertices)
+        remove_vertex(v, tmesh);
+
+      #ifdef CGAL_PMP_REMOVE_DEGENERATE_FACES_DEBUG
+      std::cout << "  side_one.size() " << side_one.size() << "\n";
+      std::cout << "  side_two.size() " << side_two.size() << "\n";
+      #endif
 
       CGAL_assertion( source(side_one.front(), tmesh) == *ref_vertices.first );
       CGAL_assertion( source(side_two.front(), tmesh) == *ref_vertices.first );
@@ -941,7 +1153,7 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
           // since we reuse later the halfedge of the first refernce vertex
           // we must set it as we need.
           if ( source(h2,tmesh) == *ref_vertices.first)
-            set_halfedge(*ref_vertices.first, opposite( prev(side_two[hi], tmesh), tmesh), tmesh );
+            set_halfedge(*ref_vertices.first, opposite( h2, tmesh), tmesh );
           // retriangulate the face
           if ( face(h2, tmesh) != GT::null_face())
             Euler::split_face(h2, next(side_two[hi], tmesh), tmesh);
@@ -952,6 +1164,29 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
 
       CGAL_assertion( target(halfedge(*ref_vertices.first, tmesh), tmesh) == *ref_vertices.first );
       CGAL_assertion( face(halfedge(*ref_vertices.first, tmesh), tmesh) == GT::null_face() );
+
+      #ifdef CGAL_PMP_REMOVE_DEGENERATE_FACES_DEBUG
+      {
+        halfedge_descriptor h_side2 = halfedge(*ref_vertices.first, tmesh);
+        halfedge_descriptor h_side1 = next(h_side2, tmesh);
+
+        do
+        {
+          CGAL_assertion( get(vpmap, source(h_side1, tmesh)) == get(vpmap, target(h_side2, tmesh)) );
+          CGAL_assertion( get(vpmap, target(h_side1, tmesh)) == get(vpmap, source(h_side2, tmesh)) );
+
+          if ( target(next(opposite(h_side1, tmesh), tmesh), tmesh) ==
+               target(next(opposite(h_side2, tmesh), tmesh), tmesh) )
+          {
+            CGAL_assertion(!"Forbidden simplification");
+          }
+
+          h_side2 = prev(h_side2, tmesh);
+          h_side1 = next(h_side1, tmesh);
+        }
+        while( target(h_side1, tmesh) != *ref_vertices.second );
+      }
+      #endif
 
       // remove side1 and replace its opposite hedges by those of side2
       halfedge_descriptor h_side2 = halfedge(*ref_vertices.first, tmesh);
@@ -1064,18 +1299,282 @@ struct Is_selected{
 };
 } // end of namespace internal
 
+template <class TriangleMesh, class halfedge_descriptor, class face_descriptor>
+bool remove_self_intersections_one_step(TriangleMesh& tm,
+                                        std::set<face_descriptor>& faces_to_remove,
+                                        std::vector<halfedge_descriptor>& non_filled_hole,
+                                        int step,
+                                        bool verbose)
+{
+  typedef boost::graph_traits<TriangleMesh> graph_traits;
+  typedef typename graph_traits::vertex_descriptor vertex_descriptor;
+  typedef typename graph_traits::edge_descriptor edge_descriptor;
+
+
+  bool no_hole_was_filled=true; // indicates if the filling of all previously
+                                // created holes failed.
+  if (verbose)
+    std::cout << "DEBUG: is_valid(tm)? " << is_valid(tm) << "\n";
+
+  std::vector<halfedge_descriptor> one_halfedge_per_border;
+
+  if(!faces_to_remove.empty() || !non_filled_hole.empty()){
+    // expand the region to be filled
+    internal::Is_selected<face_descriptor> is_selected(faces_to_remove);
+    expand_face_selection(faces_to_remove, tm, step+1, is_selected, Emptyset_iterator());
+    // try to avoid non-manifold vertices (morpho-math)
+    reduce_face_selection(faces_to_remove, tm, 1, is_selected, Emptyset_iterator());
+
+    // now expand holes than were not filled
+    std::vector<halfedge_descriptor> boundary_hedges; // this container will contain the halfedges of
+                                                     // all created holes
+    std::set<halfedge_descriptor> border_created; // track border halfedges that were previously created
+                                                  // to avoid considering them as original mesh border
+                                                  // edges that should be kept
+    BOOST_FOREACH(halfedge_descriptor h, non_filled_hole)
+    {
+      select_incident_faces(halfedges_around_face(h,tm), tm,
+        std::inserter(faces_to_remove, faces_to_remove.begin()) );
+      BOOST_FOREACH(halfedge_descriptor h2, halfedges_around_face(h,tm))
+      {
+        CGAL_assertion(is_border(h2, tm));
+        border_created.insert(h2);
+        if ( is_border(opposite(h2, tm), tm) )
+          boundary_hedges.push_back(h2); // mesh border halfedges should be re-added
+
+      }
+    }
+    non_filled_hole.clear();
+
+    /// save the halfedges that will get on the boundary
+    bool border_edges_found=false; // indicates at least one face incident to
+                                   // the mesh border will be removed. In that
+                                   // case, border halfedges should not be removed.
+
+    // extract the set of halfedges that is on the boundary of the holes to be
+    // made. In addition, we make sure no hole to be created contains a vertex
+    // visited more than once along a hole border (pinched surface)
+    //  We save the size of boundary_hedges to make sur halfedges added
+    // from non_filled_hole are not removed.
+    bool non_manifold_vertex_removed; //here non-manifold is for the 1D polyline
+    std::size_t boundary_hedges_initial_size=boundary_hedges.size();
+    do{
+      non_manifold_vertex_removed=false;
+      boundary_hedges.resize(boundary_hedges_initial_size);
+      BOOST_FOREACH(face_descriptor fh, faces_to_remove)
+      {
+        halfedge_descriptor h = halfedge(fh,tm);
+        for (int i=0;i<3; ++i)
+        {
+          if ( is_border( opposite(h, tm), tm) ){
+            if (!border_created.count(opposite(h, tm))){
+              // only border halfedges that were not created by a previous face
+              // removal should be considered as hole boundary
+              boundary_hedges.push_back(h);
+              border_edges_found=true;
+            }
+          }
+          else
+            if ( !faces_to_remove.count( face( opposite(h, tm), tm) ) )
+              boundary_hedges.push_back(h);
+          h=next(h, tm);
+        }
+      }
+
+      // detect vertices visited more than once along
+      // a hole border. We then remove all faces incident
+      // to such a vertex to force the removal of the vertex.
+      // Actually even if two holes are sharing a vertex, this
+      // vertex will be removed. It is not needed but since
+      // we do not yet have one halfedge per hole it is simpler
+      // and does not harm
+      std::set<vertex_descriptor> border_vertices;
+      BOOST_FOREACH(halfedge_descriptor h, boundary_hedges)
+      {
+        if (!border_vertices.insert(target(h,tm)).second){
+          BOOST_FOREACH(halfedge_descriptor hh, halfedges_around_target(h,tm)){
+            if (!is_border(hh, tm))
+              faces_to_remove.insert(face(hh, tm));
+          }
+          non_manifold_vertex_removed=true;
+        }
+      }
+    }
+    while(non_manifold_vertex_removed);
+
+  /// remove the selection
+    if (border_edges_found){
+      // When at least one face incident to the mesh border is set
+      // to be removed, we should pay attention not to remove
+      // the border halfedge that is part of the mesh.
+
+      // first collect all vertices and edges incident to the faces to remove
+      std::set<vertex_descriptor> vertices_to_remove;
+      std::set<edge_descriptor>  edges_to_remove;
+      BOOST_FOREACH(face_descriptor fh, faces_to_remove)
+      {
+        BOOST_FOREACH(halfedge_descriptor h, halfedges_around_face(halfedge(fh,tm),tm))
+        {
+          if (halfedge(target(h, tm), tm)==h) // limit the number of insertions
+            vertices_to_remove.insert(target(h, tm));
+          edges_to_remove.insert(edge(h,tm));
+        }
+      }
+
+      // detect cycles of input border halfedges:
+      // if such a cycle is found input border halfedges are removed to
+      // remove small border cycle that are imposing a self-intersection
+      // that could not be fixed if kept. (This also prevent small island
+      // if a small hole is incident to the faces to be removed).
+      if (border_edges_found){
+        std::set<halfedge_descriptor> cycles;
+        std::set<halfedge_descriptor>  boundary_set;
+        BOOST_FOREACH(halfedge_descriptor h, boundary_hedges)
+        {
+          if ( is_border(opposite(h, tm), tm) )
+            boundary_set.insert(opposite(h, tm));
+        }
+
+        BOOST_FOREACH(halfedge_descriptor hd, boundary_set)
+        {
+          CGAL_assertion(is_border(hd,tm));
+          if(cycles.count(hd)) continue;
+          halfedge_descriptor nhd=next(hd,tm);
+          bool remove_it=true;
+          do{
+            if (!boundary_set.count(nhd))
+            {
+              remove_it=false;
+              break;
+            }
+            nhd=next(nhd,tm);
+          }
+          while(nhd!=hd);
+          if (remove_it){
+            BOOST_FOREACH(halfedge_descriptor h, halfedges_around_face(hd,tm))
+              cycles.insert(h);
+          }
+        }
+
+        //remove cycle edges
+        if (!cycles.empty())
+        {
+          std::vector<halfedge_descriptor> tmp;
+          tmp.reserve(boundary_hedges.size()-cycles.size());
+          BOOST_FOREACH(halfedge_descriptor h, boundary_hedges)
+          {
+            if (!cycles.count(opposite(h, tm)))
+              tmp.push_back(h);
+          }
+          tmp.swap(boundary_hedges);
+        }
+      }
+
+      // do not remove edges on the boundary of the selection of faces,
+      // nor its vertices
+      BOOST_FOREACH(halfedge_descriptor h, boundary_hedges)
+      {
+        vertices_to_remove.erase(target(h, tm));
+        edges_to_remove.erase(edge(h,tm));
+      }
+      // now remove edges,
+      BOOST_FOREACH(edge_descriptor e, edges_to_remove)
+        remove_edge(e, tm);
+      // and vertices,
+      BOOST_FOREACH(vertex_descriptor vh, vertices_to_remove)
+        remove_vertex(vh, tm);
+      // and finally facets
+      BOOST_FOREACH(face_descriptor f, faces_to_remove)
+        remove_face(f, tm);
+      // set new border_vertices to the boundary and update
+      // the halfedge pointer of the border vertices
+      BOOST_FOREACH(halfedge_descriptor h, boundary_hedges)
+      {
+        set_face(h,graph_traits::null_face(), tm);
+        set_halfedge(target(h, tm), h, tm);
+        set_next(h,h,tm); // set himself as next to track edges of the holes
+      }
+      // update next/prev relationships of the hole
+      BOOST_FOREACH(halfedge_descriptor h, boundary_hedges)
+      {
+        halfedge_descriptor nh=next(opposite(h, tm), tm);
+        while( !is_border(opposite(nh, tm), tm) ||
+                next(opposite(nh, tm), tm) != opposite(nh, tm)) //this part makes sure we consider halfedges of the hole
+        {
+          nh=next(opposite(nh, tm), tm);
+          CGAL_assertion(nh!=h);
+        }
+        CGAL_assertion(next(opposite(nh, tm), tm)==opposite(nh,tm));
+        set_next(opposite(nh, tm), h, tm);
+      }
+    }
+    else
+      /// \todo check whether this is more expensive than the previous code above
+      BOOST_FOREACH(face_descriptor f, faces_to_remove)
+        Euler::remove_face(halfedge(f, tm), tm);
+
+    if (verbose)
+      std::cout << "  DEBUG: " << faces_to_remove.size() << " triangles removed" << std::endl;
+
+    /// now get one halfedge per hole
+    std::set<halfedge_descriptor> visited;
+    BOOST_FOREACH(halfedge_descriptor h, boundary_hedges)
+    {
+      if (visited.insert(h).second)
+      {
+        one_halfedge_per_border.push_back(h);
+        BOOST_FOREACH(halfedge_descriptor hh, halfedges_around_face(h, tm))
+        {
+          CGAL_assertion_code(bool insert_ok =)
+          visited.insert(hh)
+          CGAL_assertion_code(.second);
+          CGAL_assertion(insert_ok || h==hh);
+        }
+      }
+    }
+  }
+
+  if (!one_halfedge_per_border.empty()){
+    BOOST_FOREACH(halfedge_descriptor h, one_halfedge_per_border)
+    {
+      std::size_t nb_new_triangles = 0;
+      Counting_output_iterator out(&nb_new_triangles);
+      triangulate_hole(tm, h, out);
+      if (!nb_new_triangles)
+      {
+        if (verbose)
+          std::cout << "  DEBUG: Failed to fill a hole!!!" << std::endl;
+        non_filled_hole.push_back(h);
+      }
+      else
+        no_hole_was_filled=false;
+    }
+    if (verbose)
+      std::cout << "  DEBUG: Number of holes " << one_halfedge_per_border.size() << std::endl;
+  }
+  else{
+    if (verbose)
+      std::cout << "INFO: Nothing to correct\n";
+  }
+  return no_hole_was_filled;
+}
+
 template <class TriangleMesh>
 bool remove_self_intersections(TriangleMesh& tm, const int max_steps = 7, bool verbose=false)
 {
   typedef boost::graph_traits<TriangleMesh> graph_traits;
   typedef typename graph_traits::halfedge_descriptor halfedge_descriptor;
   typedef typename graph_traits::face_descriptor face_descriptor;
-  typedef typename graph_traits::vertex_descriptor vertex_descriptor;
-  typedef typename graph_traits::edge_descriptor edge_descriptor;
+
+  std::vector<halfedge_descriptor> non_filled_hole;
+
+// first handle the removal of degenerate faces
+  std::set<face_descriptor> deg_faces;
+  degenerate_faces(tm, std::inserter(deg_faces, deg_faces.begin()));
+  remove_self_intersections_one_step(tm, deg_faces, non_filled_hole, 2, verbose);
 
 // Look for self-intersections in the polyhedron and remove them
   int step=-1;
-  std::vector<halfedge_descriptor> non_filled_hole;
   bool no_hole_was_filled=false; // indicates if the filling of all previously
                                  // created holes failed. If true then no new
                                  // self-intersection have been created and
@@ -1090,257 +1589,23 @@ bool remove_self_intersections(TriangleMesh& tm, const int max_steps = 7, bool v
     std::vector<halfedge_descriptor> one_halfedge_per_border;
     if (!no_hole_was_filled)
       self_intersections(tm, std::back_inserter(self_inter));
-    no_hole_was_filled=true;
 
-    if(!self_inter.empty() || !non_filled_hole.empty()){
-      if (verbose)
-        std::cout << "DEBUG: Iterative self-intersection removal step " << step
-                  << " - non_filled_hole.size() = " << non_filled_hole.size() << std::endl;
-      std::set<face_descriptor> faces_to_remove;
-      BOOST_FOREACH(Face_pair fp, self_inter)
-      {
-        faces_to_remove.insert(fp.first);
-        faces_to_remove.insert(fp.second);
-      }
-
-      // expand the region to be filled
-      internal::Is_selected<face_descriptor> is_selected(faces_to_remove);
-      expand_face_selection(faces_to_remove, tm, step+1, is_selected, Emptyset_iterator());
-      // try to avoid non-manifold vertices (morpho-math)
-      reduce_face_selection(faces_to_remove, tm, 1, is_selected, Emptyset_iterator());
-
-      // now expand holes than were not filled
-      std::vector<halfedge_descriptor> boundary_hedges; // this container will contain the halfedges of
-                                                       // all created holes
-      std::set<halfedge_descriptor> border_created; // track border halfedges that were previously created
-                                                    // to avoid considering them as original mesh border
-                                                    // edges that should be kept
-      BOOST_FOREACH(halfedge_descriptor h, non_filled_hole)
-      {
-        select_incident_faces(halfedges_around_face(h,tm), tm,
-          std::inserter(faces_to_remove, faces_to_remove.begin()) );
-        BOOST_FOREACH(halfedge_descriptor h2, halfedges_around_face(h,tm))
-        {
-          CGAL_assertion(is_border(h2, tm));
-          border_created.insert(h2);
-          if ( is_border(opposite(h2, tm), tm) )
-            boundary_hedges.push_back(h2); // mesh border halfedges should be re-added
-
-        }
-      }
-      non_filled_hole.clear();
-
-      /// save the halfedges that will get on the boundary
-      bool border_edges_found=false; // indicates at least one face incident to
-                                     // the mesh border will be removed. In that
-                                     // case, border halfedges should not be removed.
-
-      // extract the set of halfedges that is on the boundary of the holes to be
-      // made. In addition, we make sure no hole to be created contains a vertex
-      // visited more than once along a hole border (pinched surface)
-      //  We save the size of boundary_hedges to make sur halfedges added
-      // from non_filled_hole are not removed.
-      bool non_manifold_vertex_removed; //here non-manifold is for the 1D polyline
-      std::size_t boundary_hedges_initial_size=boundary_hedges.size();
-      do{
-        non_manifold_vertex_removed=false;
-        boundary_hedges.resize(boundary_hedges_initial_size);
-        BOOST_FOREACH(face_descriptor fh, faces_to_remove)
-        {
-          halfedge_descriptor h = fh->halfedge();
-          for (int i=0;i<3; ++i)
-          {
-            if ( is_border( opposite(h, tm), tm) ){
-              if (!border_created.count(opposite(h, tm))){
-                // only border halfedges that were not created by a previous face
-                // removal should be considered as hole boundary
-                boundary_hedges.push_back(h);
-                border_edges_found=true;
-              }
-            }
-            else
-              if ( !faces_to_remove.count( face( opposite(h, tm), tm) ) )
-                boundary_hedges.push_back(h);
-            h=next(h, tm);
-          }
-        }
-
-        // detect vertices visited more than once along
-        // a hole border. We then remove all faces incident
-        // to such a vertex to force the removal of the vertex.
-        // Actually even if two holes are sharing a vertex, this
-        // vertex will be removed. It is not needed but since
-        // we do not yet have one halfedge per hole it is simpler
-        // and does not harm
-        std::set<vertex_descriptor> border_vertices;
-        BOOST_FOREACH(halfedge_descriptor h, boundary_hedges)
-        {
-          if (!border_vertices.insert(h->vertex()).second){
-            BOOST_FOREACH(halfedge_descriptor hh, halfedges_around_target(h,tm)){
-              if (!is_border(hh, tm))
-                faces_to_remove.insert(face(hh, tm));
-            }
-            non_manifold_vertex_removed=true;
-          }
-        }
-      }
-      while(non_manifold_vertex_removed);
-
-    /// remove the selection
-      if (border_edges_found){
-        // When at least one face incident to the mesh border is set
-        // to be removed, we should pay attention not to remove
-        // the border halfedge that is part of the mesh.
-
-        // first collect all vertices and edges incident to the faces to remove
-        std::set<vertex_descriptor> vertices_to_remove;
-        std::set<edge_descriptor>  edges_to_remove;
-        BOOST_FOREACH(face_descriptor fh, faces_to_remove)
-        {
-          BOOST_FOREACH(halfedge_descriptor h, halfedges_around_face(fh->halfedge(),tm))
-          {
-            if (halfedge(target(h, tm), tm)==h) // limit the number of insertions
-              vertices_to_remove.insert(target(h, tm));
-            edges_to_remove.insert(edge(h,tm));
-          }
-        }
-
-        // detect cycles of input border halfedges:
-        // if such a cycle is found input border halfedges are removed to
-        // remove small border cycle that are imposing a self-intersection
-        // that could not be fixed if kept. (This also prevent small island
-        // if a small hole is incident to the faces to be removed).
-        if (border_edges_found){
-          std::set<halfedge_descriptor> cycles;
-          std::set<halfedge_descriptor>  boundary_set;
-          BOOST_FOREACH(halfedge_descriptor h, boundary_hedges)
-          {
-            if ( is_border(opposite(h, tm), tm) )
-              boundary_set.insert(opposite(h, tm));
-          }
-
-          BOOST_FOREACH(halfedge_descriptor hd, boundary_set)
-          {
-            CGAL_assertion(is_border(hd,tm));
-            if(cycles.count(hd)) continue;
-            halfedge_descriptor nhd=next(hd,tm);
-            bool remove_it=true;
-            do{
-              if (!boundary_set.count(nhd))
-              {
-                remove_it=false;
-                break;
-              }
-              nhd=next(nhd,tm);
-            }
-            while(nhd!=hd);
-            if (remove_it){
-              BOOST_FOREACH(halfedge_descriptor h, halfedges_around_face(hd,tm))
-                cycles.insert(h);
-            }
-          }
-
-          //remove cycle edges
-          if (!cycles.empty())
-          {
-            std::vector<halfedge_descriptor> tmp;
-            tmp.reserve(boundary_hedges.size()-cycles.size());
-            BOOST_FOREACH(halfedge_descriptor h, boundary_hedges)
-            {
-              if (!cycles.count(opposite(h, tm)))
-                tmp.push_back(h);
-            }
-            tmp.swap(boundary_hedges);
-          }
-        }
-
-        // do not remove edges on the boundary of the selection of faces,
-        // nor its vertices
-        BOOST_FOREACH(halfedge_descriptor h, boundary_hedges)
-        {
-          vertices_to_remove.erase(target(h, tm));
-          edges_to_remove.erase(edge(h,tm));
-        }
-        // now remove edges,
-        BOOST_FOREACH(edge_descriptor e, edges_to_remove)
-          remove_edge(e, tm);
-        // and vertices,
-        BOOST_FOREACH(vertex_descriptor vh, vertices_to_remove)
-          remove_vertex(vh, tm);
-        // and finally facets
-        BOOST_FOREACH(face_descriptor f, faces_to_remove)
-          remove_face(f, tm);
-        // set new border_vertices to the boundary and update
-        // the halfedge pointer of the border vertices
-        BOOST_FOREACH(halfedge_descriptor h, boundary_hedges)
-        {
-          set_face(h,graph_traits::null_face(), tm);
-          set_halfedge(target(h, tm), h, tm);
-          set_next(h,h,tm); // set himself as next to track edges of the holes
-        }
-        // update next/prev relationships of the hole
-        BOOST_FOREACH(halfedge_descriptor h, boundary_hedges)
-        {
-          halfedge_descriptor nh=next(opposite(h, tm), tm);
-          while( !is_border(opposite(nh, tm), tm) ||
-                  next(opposite(nh, tm), tm) != opposite(nh, tm)) //this part makes sure we consider halfedges of the hole
-          {
-            nh=next(opposite(nh, tm), tm);
-            CGAL_assertion(nh!=h);
-          }
-          CGAL_assertion(next(opposite(nh, tm), tm)==opposite(nh,tm));
-          set_next(opposite(nh, tm), h, tm);
-        }
-      }
-      else
-        /// \todo check whether this is more expensive than the previous code above
-        BOOST_FOREACH(face_descriptor f, faces_to_remove)
-          Euler::remove_face(halfedge(f, tm), tm);
-
-      if (verbose)
-        std::cout << "  DEBUG: " << faces_to_remove.size() << " triangles removed" << std::endl;
-
-      /// now get one halfedge per hole
-      std::set<halfedge_descriptor> visited;
-      BOOST_FOREACH(halfedge_descriptor h, boundary_hedges)
-      {
-        if (visited.insert(h).second)
-        {
-          one_halfedge_per_border.push_back(h);
-          BOOST_FOREACH(halfedge_descriptor hh, halfedges_around_face(h, tm))
-          {
-            CGAL_assertion_code(bool insert_ok =)
-            visited.insert(hh)
-            CGAL_assertion_code(.second);
-            CGAL_assertion(insert_ok || h==hh);
-          }
-        }
-      }
+    std::set<face_descriptor> faces_to_remove;
+    BOOST_FOREACH(Face_pair fp, self_inter)
+    {
+      faces_to_remove.insert(fp.first);
+      faces_to_remove.insert(fp.second);
     }
 
-    if (!one_halfedge_per_border.empty()){
-      BOOST_FOREACH(halfedge_descriptor h, one_halfedge_per_border)
-      {
-        std::size_t nb_new_triangles = 0;
-        Counting_output_iterator out(&nb_new_triangles);
-        triangulate_hole(tm, h, out);
-        if (!nb_new_triangles)
-        {
-          if (verbose)
-            std::cout << "  DEBUG: Failed to fill a hole!!!" << std::endl;
-          non_filled_hole.push_back(h);
-        }
-        else
-          no_hole_was_filled=false;
-      }
-      if (verbose)
-        std::cout << "  DEBUG: Number of holes " << one_halfedge_per_border.size() << std::endl;
-    }
-    else{
-      if (verbose)
-        std::cout << "INFO: All self-intersections were corrected\n";
+    if (verbose)
+      std::cout << "DEBUG: Iterative self-intersection removal step " << step
+                << " - non_filled_hole.size() = " << non_filled_hole.size() << std::endl;
+
+    if ( faces_to_remove.empty() && non_filled_hole.empty() )
       break;
-    }
+
+    no_hole_was_filled =
+      remove_self_intersections_one_step(tm, faces_to_remove, non_filled_hole,step, verbose);
   }
 
   return step<max_steps;

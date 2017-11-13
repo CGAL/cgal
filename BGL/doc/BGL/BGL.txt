@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_CGAL_and_the_Boost_Graph_Library
 \anchor chapterBGL
 \cgalAutoToc
@@ -15,14 +15,14 @@ faces as edges of the dual graph.
 
 The scope of \cgal is geometry and not graph algorithms. Nevertheless, this package
 provides the necessary classes and functions that enable using the
-algorithms of the <A HREF="http://www.boost.org/libs/graph/doc/index.html">Boost Graph Library</A> \cgalCite{cgal:sll-bgl-02} 
+algorithms of the <A HREF="http://www.boost.org/libs/graph/doc/index.html">Boost Graph Library</A> \cgalCite{cgal:sll-bgl-02}
 (\sc{Bgl} for short) with \cgal data structures.
 
 Furthermore, this package extends the \sc{Bgl}
 by introducing concepts such as `HalfedgeGraph` and `FaceGraph`
 allowing to handle *halfedges* and *faces*.
-These concepts reflect the design of the halfedge data structure described 
-in Chapter \ref PkgHDSSummary, with opposite halfedges, and the circular 
+These concepts reflect the design of the halfedge data structure described
+in Chapter \ref PkgHDSSummary, with opposite halfedges, and the circular
 sequence of halfedges around vertices and around faces.
 
 This chapter is organized as follows. Section \ref BGLA  present
@@ -35,12 +35,12 @@ the `HalfedgeGraph` which is an extension to the graph concepts of the \sc{Bgl}.
 
 \section BGLA A Short Introduction to the Boost Graph Library
 
-The algorithms of \sc{Bgl} operate on models of the various <I>graph concepts</I>. 
+The algorithms of \sc{Bgl} operate on models of the various <I>graph concepts</I>.
 The <I>traits class</I> `boost::graph_traits` enable the algorithms determining the types of vertices and edges
 (similar to `std::iterator_traits` for iterators).
 <I>Free functions</I> that operate on graphs enable the algorithms to obtain,
-for example, the source vertex of an edge, or all edges incident to a vertex. The algorithms 
-use <I>property maps</I> to associate information with vertices and edges. 
+for example, the source vertex of an edge, or all edges incident to a vertex. The algorithms
+use <I>property maps</I> to associate information with vertices and edges.
 The algorithms enable <I>visitors</I> to register callbacks that are called
 later on during the execution of the algorithms. Finally, the graph algorithms use
 the <I>named parameter</I> mechanism, which enambles passing the arguments in
@@ -51,19 +51,19 @@ arbitrary order.
 
 \sc{Bgl} introduces several <a href="http://www.boost.org/libs/graph/doc/graph_concepts.html">graph concepts</a>,
 which have different sets of characteristics and requirements.
-For example iterating through all vertices or all edges in a graph, obtaining the outgoing 
+For example iterating through all vertices or all edges in a graph, obtaining the outgoing
 edges of a vertex, or also the in-going edges, inserting vertices and edges into a graph, and removing vertices and edges from a graph.
 
 \subsection BGLTheGraphTraitsClass The Graph Traits Class
 
 An algorithm operating on a graph model determines types with the help of the traits class
-<a href="http://www.boost.org/libs/graph/doc/graph_traits.html">boost::graph_traits</a>.  
+<a href="http://www.boost.org/libs/graph/doc/graph_traits.html">boost::graph_traits</a>.
 Such types are the `vertex_descriptor`,
-which is similar to a vertex handle in \cgal data structures, 
+which is similar to a vertex handle in \cgal data structures,
 the `edge_descriptor` which is similar to the halfedge handle in
 the halfedge data structure and to the type `Edge` in 2D triangulations.
-There are also iterators, such as the `vertex_iterator`, which is similar 
-to a vertex iterator in \cgal data structures, and the `out_edge_iterator`, 
+There are also iterators, such as the `vertex_iterator`, which is similar
+to a vertex iterator in \cgal data structures, and the `out_edge_iterator`,
 which is similar to the edge circulator; it enables to iterate through the edges
 incident to a vertex. The iterators are similar and not equivalent,
 because their value type is a `vertex_descriptor`, whereas in
@@ -79,13 +79,13 @@ boost::graph_traits<Graph>::vertex_descriptor vd;
 
 The algorithms obtain incidence information with the help of global
 functions such as:
-- `std::pair<vertex_iterator,vertex_iterator> vertices(const Graph& g);` for obtaining an iterator range providing access to all the vertices, or 
+- `std::pair<vertex_iterator,vertex_iterator> vertices(const Graph& g);` for obtaining an iterator range providing access to all the vertices, or
 - `int num_vertices(const Graph&);` for obtaining the number of vertices of a graph, or
 - `vertex_descriptor source(edge_descriptor, const Graph&);` for
-obtaining the source vertex of an edge. 
+obtaining the source vertex of an edge.
 
 Note, that the way we have written the types is a simplification, that is in reality
-the signature of the first of the above functions is 
+the signature of the first of the above functions is
 
 \code{.cpp}
 typedef boost::graph_traits<Graph>::vertex_iterator vertex_iterator;
@@ -98,22 +98,22 @@ std::pair<vertex_iterator,vertex_iterator> vertices(const Graph& g);
 Another feature extensively used in \sc{Bgl} is the *property map*,
 which is offered by the <a href="http://www.boost.org/libs/property_map/doc/property_map.html">Boost Property Map Library</a>. Property maps
 are a general purpose interface for mapping key objects to
-corresponding value objects. 
+corresponding value objects.
 
 \sc{Bgl} uses property maps to associate information with vertices and edges.
 This mechanism uses a traits class (`boost::property_traits`) and free
 functions for obtaining (`get`) and writing (`put`) information in vertices,
-edges, and also halfedges and faces for models of the \cgal graph concepts. 
+edges, and also halfedges and faces for models of the \cgal graph concepts.
 For example, \sc{Bgl}
 Dijksta's shortest path algorithm writes the predecessor of each vertex, as
 well as the distance to the source  in such a property map.
- 
+
 Some default property maps are associated with the graph types. They
 are called *internal property maps* and can be retrieved using an
 overload of the function `get()`. For example, pm = get(boost::vertex_index, g)
 returns a property map that associates an index
 in the range `[0, num_vertices(g))` with each vertex of the graph.
-This reduces the number of parameters to pass. 
+This reduces the number of parameters to pass.
 The data itself may be stored in the vertex or the edge, or it may
 be stored in an external data structure, or it may be computed on
 the fly. This is an implementation detail of a particular property map.
@@ -123,7 +123,7 @@ See also the Chapter \ref PkgProperty_mapSummary.
 \subsection BGLVisitors Visitors
 
 Visitors are objects that provide functions that are called at
-specified event points by the algorithm they visit. 
+specified event points by the algorithm they visit.
 
 The functions as well as the event points are algorithm specific. Examples of event points in graph algorithms are when a vertex is traversed the first time, or when all outgoing edges of a vertex are traversed.<BR>
 
@@ -148,9 +148,9 @@ vertex_descriptor s = vertex(A, g);
 dijkstra_shortest_paths(g, s, predecessor_map(&p[0]).distance_map(&d[0]));
 \endcode
 
-In the \sc{Bgl} manual this is called 
+In the \sc{Bgl} manual this is called
 <a href="http://www.boost.org/libs/graph/doc/bgl_named_params.html">named parameters</a>.
-The named parameters in the example use the tags `predecessor_map` and `distance_map` 
+The named parameters in the example use the tags `predecessor_map` and `distance_map`
 and they are concatenated with the dot operator.<BR>
 
 
@@ -204,8 +204,8 @@ More examples can be found in the Chapter
 
 \subsection BGLExampleUsingVerticesandEdgeswithanID Example: Using Vertices, and Edges with an ID
 
-The following example program shows a call to the \sc{Bgl} 
-Kruskal's minimum spanning tree algorithm accessing the `id()` 
+The following example program shows a call to the \sc{Bgl}
+Kruskal's minimum spanning tree algorithm accessing the `id()`
 field stored in a polyhedron vertex.
 
 The main function illustrates the access to the `id()` field.
@@ -246,7 +246,7 @@ passed as argument to the shortest path function.
 
 If the user does not pass explicitly a property map, the graph algorithms
 use the property map returned by the call `get(boost::vertex_index,ft)`.
-This property map assumes that the vertex has a 
+This property map assumes that the vertex has a
 member function `id()` that returns a reference to an int.
 Therefore \cgal offers a class `Triangulation_vertex_base_with_id_2`.
 It is in the users responsibility to set the indices properly.
@@ -261,7 +261,7 @@ for the Delaunay triangulation.
 \cgal offers the graph traits for the arrangement
 itself as well as for its dual graph.
 
-\subsection arr_sssecbgl_primal Example for the Arrangement as Graph 
+\subsection arr_sssecbgl_primal Example for the Arrangement as Graph
 
 Arrangement instances are adapted to <I>boost</I> graphs by specializing the
 `boost:graph_traits` template for `Arrangement_2` instances. The
@@ -283,7 +283,7 @@ vertices and halfedges. Thus, the arrangement graph is a model of the concepts
 `VertexListGraph` and `EdgeListGraph` introduced by \sc{Bgl}.
 At the same time, we use an iterator adapter of the circulator over the
 halfedges incident to a vertex (`Halfedge_around_target_circulator` - see
-Section \ref arr_sssectr_vertex "Traversal Methods for an Arrangement Vertex" 
+Section \ref arr_sssectr_vertex "Traversal Methods for an Arrangement Vertex"
 of the chaper on arrangements), so it is possible to go over the ingoing
 and outgoing edges of a vertex in linear time. Thus, our arrangement graph
 is a model of the concept `BidirectionalGraph` (this concept refines
@@ -331,7 +331,7 @@ the type `double` is used to map vertices to their distances from \f$ v_0\f$.
 
 \cgalExample{BGL_arrangement_2/primal.cpp}
 
-\subsection arr_sssecbgl_dual Example for the Dual of an Arrangement as Graph 
+\subsection arr_sssecbgl_dual Example for the Dual of an Arrangement as Graph
 
 It is possible to give a dual graph representation for an arrangement instance,
 such that each arrangement face corresponds to a graph vertex and two vertices
@@ -349,7 +349,7 @@ is the incident face of its twin halfedge. As two arrangement faces may
 share more than a single edge on their boundary, we allow parallel
 edges in our <I>boost</I> graph. As is the case in the primal graph, the dual
 arrangement graph is also a model of the concepts `VertexListGraph`,
-`EdgeListGraph` and `BidirectionalGraph` (thus also of 
+`EdgeListGraph` and `BidirectionalGraph` (thus also of
 `IncidenceGraph`).
 
 Since we use `Face_handle` objects as the vertex descriptors, we define
@@ -370,18 +370,18 @@ accordingly:
 
 \section BGLExtensions Extensions of the BGL
 
-The previous sections introduced partial specializations 
-and free functions so that several \cgal data structures are adapted as models of some 
+The previous sections introduced partial specializations
+and free functions so that several \cgal data structures are adapted as models of some
 of the \sc{Bgl} graph concepts.
 In this section we define a set of new concepts to extend the
 functionality of \sc{Bgl} in order to match \ref PkgHDSSummary  more
-closely and to enable writing generic algorithms, which operate on data structures that 
+closely and to enable writing generic algorithms, which operate on data structures that
 have faces and halfedges.
 
 
 `HalfedgeGraph` refines
-<a href="http://www.boost.org/libs/graph/doc/BidirectionalGraph.html">`Bidirectional Graph`</a> with operations to accommodate halfedge data structures. 
-Given a halfedge, say `h`, the concept `HalfedgeGraph` requires the provision 
+<a href="http://www.boost.org/libs/graph/doc/BidirectionalGraph.html">`Bidirectional Graph`</a> with operations to accommodate halfedge data structures.
+Given a halfedge, say `h`, the concept `HalfedgeGraph` requires the provision
 of the halfedge opposite to `h`, the halfedge that succeeds `h`,
 and the halfedge that precedes `h`.
 
@@ -403,31 +403,30 @@ which follow the design of \sc{Bgl} as sketched in Section \ref BGLA.
 
 \subsection BGLIteratorsAndCirculators Iterators and Circulators
 
-Starting at a halfedge `h` of a halfedge graph `g`, applying several times `next(h,g)` brings us back 
+Starting at a halfedge `h` of a halfedge graph `g`, applying several times `next(h,g)` brings us back
 to the halfedge where we started. All halfedges traversed on the way are incident to the same face.
 
-Using the composition of the `next(h,g)` and `opposite(h,g)` functions results 
+Using the composition of the `next(h,g)` and `opposite(h,g)` functions results
 in another cycle, namely the cycle of halfedges which are incident to
 the same vertex.
 
 For convenience, two iterator and circulator types enable the traversal of all halfedges
 incident to a given face, and all halfedges having a given vertex as target.
 
-These types  are not part of the concept `HalfedgeGraph`, but they 
+These types  are not part of the concept `HalfedgeGraph`, but they
 are class templates that work for any model of this concept.
 
 \subsection BGLEulerOperations Euler Operations
 
-There are two categories of mutating operations. The first category comprises 
-low level operations that change incidences such as the target vertex of a 
-halfedge. 
-A halfedge graph might turn invalid by the application of inconsistent 
+There are two categories of mutating operations. The first category comprises
+low level operations that change incidences such as the target vertex of a
+halfedge.
+A halfedge graph might turn invalid by the application of inconsistent
 low lever operations.   The second category of operations
 are called <em>%Euler Operations</em>. These are high level operations such
 as adding a center vertex to a face, which means also adding halfedges
-and faces, and updating incidence information. The %Euler operations 
+and faces, and updating incidence information. The %Euler operations
 enable manipulating models of `MutableFaceGraph`.
-
 
 \subsection BGLDual The Dual Graph
 
@@ -452,28 +451,98 @@ using `boost::filtered_graph` as shown in the following example.
 
 \cgalExample{BGL_surface_mesh/surface_mesh_dual.cpp}
 
+\subsection BGLSeamMesh The Seam Mesh
 
-\subsection BGLExampleIncidentVertices Example: Finding Incident Vertices in a HalfedgeGraph
+The class `Seam_mesh` allows to mark edges of a mesh as <em>seam edges</em>
+so that they <em>virtually</em> become border edges when exploring a seam mesh with the BGL API.
+The input mesh is referred to as <em>underlying</em> mesh of the seam mesh.
+We denote `tm` and `sm` the underlying mesh and the seam mesh respectively.
+
+Figure \cgalFigureRef{fig_Seam_mesh_1} shows an example of mesh on which two
+edges, defined by the halfedge pairs `h2-h3` and `h6-h7`, are marked as seams.
+The introduction of virtual borders modifies the elementary BGL graph traversal
+operations: when we circulate around the target of `h7` in the underlying mesh,
+we traverse `h7`, `h1`, `h3`, `h5`, before arriving at `h7` again.
+However, when we circulate in the seam mesh, we traverse `h7`, `h1`, `h3*`,
+before arriving at `h7` again.
+Similarly, if we start at `h3`, we traverse `h3`, `h5`, `h7*`, and `h3` again.
+
+\cgalFigureBegin{fig_Seam_mesh_1, seam_mesh_1.svg}
+A seam mesh with two seam edges `(h2, h3)` and `(h6, h7)`.
+\cgalFigureEnd
+
+A vertex of the underlying mesh may correspond to multiple vertices in the seam mesh.
+For example in Figure \cgalFigureRef{fig_Seam_mesh_1}, the target of `h7` corresponds to two
+vertices in the seam mesh, on either side of the virtual border created by the seam edges.
+For this reason, a vertex `v` of the seam mesh is internally represented as a halfedge `h`
+of the seam mesh. To obtain a canonical definition, the halfedge `h` is defined as the halfedge
+that has `v` as target, that lies on the seam, and that is not a border
+halfedge. The function `target(hd, sm)` will return this halfedge.
+For vertices `v` in the underlying mesh that are not on a seam edge, we choose
+`halfedge(v, tm)` as its canonical halfedge.
+
+\subsubsection BGLSeamMeshTraversal Seam Mesh Traversal
+
+Using the function `next(halfedge_descriptor, FaceGraph)`, we can walk around a face but also around
+a border of a mesh. For the seam mesh `sm` from Figure \cgalFigureRef{fig_Seam_mesh_1},
+we have `opposite(h2, sm) == h3*`, and it holds that `face(h3*, sm) == null_face()`.
+We can walk along this virtual border: starting at `h3*` and repeatedly calling `next(..,sm)`,
+we will traverse `h6*`, `h7*`, `h2*`, before reaching `h3*` again.
+
+All other traversal functions, iterators, and circulators (see \ref PkgBGLIterators) can
+be used on a seam mesh, but their behavior is similarly modified by the (virtual and real)
+border edges of the seam mesh.
+
+\subsubsection BGLSeamMeshNature Seams
+
+A collection of seam edges, or simply a <em>seam</em>, is not necessarily a simple polyline
+as we can see in the next figure:
+<UL>
+<LI>In <em>(a)</em>, the seam forms a tree. Consequently, we pass at a vertex as often as
+there are incident seam edges.
+<LI>In <em>(b)</em>, the seam has a vertex `v` on the border of the underlying mesh.
+While walking along the border of the seam mesh, we leave the border of the underlying mesh
+when we reach `v` and walk on a virtual border until we reach `v` again, from the other side
+of the seam.
+<LI>In <em>(c)</em>, the seam forms a closed polyline. While the first two define a single border,
+a cycle defines two borders and splits the set of faces in two connected components.
+Something similar happens when the seam touches the same border more than once.
+A seam can also connect different borders, potentially changing the genus of the mesh.
+Finally, a seam may have more than one connected component.
+</UL>
+
+\cgalFigureBegin{fig_Seam_mesh_2, seam_mesh_2.svg}
+Walking around a seam <em>(a)</em> with no seam vertex on the real border,
+<em>(b)</em> with a seam vertex on the real border, <em>(c)</em> with a closed polyline.
+Vertices of the seam mesh that are linked by a green dashed segment correspond
+to the same vertex in the underlying mesh.
+\cgalFigureEnd
+
+Seam meshes are for example used in Chapter \ref PkgSurfaceParameterizationSummary.
+
+\subsection BGLExamples Examples
+
+\subsubsection BGLExampleIncidentVertices Example: Finding Incident Vertices in a HalfedgeGraph
 
 The following example shows several functions that enable navigating in a `HalfedgeGraph`.
 We have two implementations of the operation that finds the vertices adjacent to a vertex `v`.
-Let us have a look at the first version. Given a vertex descriptor `vd`, 
-we first call `halfedge(vd,g)` to obtain the halfedge with `vd` as target. 
-Applying `source()` then gives us an adjacent vertex. We then get to the next halfedge 
-with `vd` as target, by first going to the next halfedge around the face, and then 
+Let us have a look at the first version. Given a vertex descriptor `vd`,
+we first call `halfedge(vd,g)` to obtain the halfedge with `vd` as target.
+Applying `source()` then gives us an adjacent vertex. We then get to the next halfedge
+with `vd` as target, by first going to the next halfedge around the face, and then
 going to the opposite halfedge.
 
 The second version does the `%next()` and `%opposite()` jumping with an iterator.
-Note that when calling `source()` we have to dereference `hi`, as the function 
+Note that when calling `source()` we have to dereference `hi`, as the function
 expects a halfedge descriptor and not a halfedge iterator.
 Also note that `halfedges_around_target()` expects a halfedge, and not a vertex.
-This provides the user with the ability to start the traversal at a specific 
-halfedge incident to the input vertex (and not the arbitrary incident halfedge 
+This provides the user with the ability to start the traversal at a specific
+halfedge incident to the input vertex (and not the arbitrary incident halfedge
 stored in the vertex record.)
 
 \cgalExample{BGL_polyhedron_3/incident_vertices.cpp}
 
-\subsection BGLExampleNormalHalfedgeGraph Example: Calculating Facet Normals using HalfedgeGraph
+\subsubsection BGLExampleNormalHalfedgeGraph Example: Calculating Facet Normals using HalfedgeGraph
 
 The following example program shows a simple algorithm for calculating
 facet normals for a polyhedron using the \sc{Bgl} API. A
@@ -483,6 +552,6 @@ is used to to store the calculated normals instead of changing the Polyhedron it
 \cgalExample{BGL_polyhedron_3/normals.cpp}
 
 
-*/ 
+*/
 } /* namespace CGAL */
 

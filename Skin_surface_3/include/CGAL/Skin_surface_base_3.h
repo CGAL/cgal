@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Nico Kruithof <Nico@cs.rug.nl>
 
@@ -22,7 +22,6 @@
 #define CGAL_SKIN_SURFACE_BASE_3_H
 
 #include <CGAL/license/Skin_surface_3.h>
-
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -34,9 +33,6 @@
 #include <boost/random/uniform_smallint.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <boost/shared_ptr.hpp>
-
-// For the Weighted_converter
-#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 
 // Used for the triangulated mixed complex / Voronoi diagram
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
@@ -52,25 +48,38 @@
 #include <CGAL/Skin_surface_refinement_policy_3.h>
 #include <CGAL/subdivide_skin_surface_mesh_3.h>
 
-namespace CGAL { 
+#include <CGAL/internal/Has_nested_type_Bare_point.h>
 
-template <class MixedComplexTraits_3> 
-class Skin_surface_base_3 {
-  typedef MixedComplexTraits_3            Gt;
-  typedef Skin_surface_base_3<Gt>         Self;
-  
+#include <boost/mpl/if.hpp>
+#include <boost/mpl/identity.hpp>
+
+namespace CGAL {
+
+template <class MixedComplexTraits_3>
+class Skin_surface_base_3
+{
+  typedef MixedComplexTraits_3                           Gt;
+  typedef Skin_surface_base_3<Gt>                        Self;
+
 public:
-  typedef MixedComplexTraits_3            Geometric_traits;
-  typedef typename Gt::Weighted_point     Weighted_point;
-  typedef typename Gt::Bare_point         Bare_point;
-  typedef typename Gt::FT                 FT;
+  typedef MixedComplexTraits_3                           Geometric_traits;
+
+  typedef typename Gt::Weighted_point_3                  Weighted_point;
+  typedef typename boost::mpl::eval_if_c<
+    internal::Has_nested_type_Bare_point<Gt>::value,
+    typename internal::Bare_point_type<Gt>,
+    boost::mpl::identity<typename Gt::Point_3>
+  >::type                                                Bare_point;
+
+  typedef typename Gt::FT                                FT;
   // For normal
-  typedef typename Gt::Vector_3           Vector;
-  
-  typedef Regular_triangulation_3<Gt>     Regular;
+  typedef typename Gt::Vector_3                          Vector;
+
+  typedef Regular_triangulation_3<Gt>                    Regular;
 
 private:
   typedef Exact_predicates_inexact_constructions_kernel     Filtered_kernel;
+
 public:
   typedef Skin_surface_quadratic_surface_3<Filtered_kernel> Quadratic_surface;
 
@@ -91,8 +100,8 @@ private:
   typedef typename Regular::Finite_cells_iterator        Finite_cells_iterator;
 
 public:
-  typedef Anchor_point                                  Vertex_info;
-  typedef std::pair<Simplex, boost::shared_ptr<Quadratic_surface> >       Cell_info;
+  typedef Anchor_point                                               Vertex_info;
+  typedef std::pair<Simplex, boost::shared_ptr<Quadratic_surface> >  Cell_info;
 
 private:
   // Triangulated_mixed_complex:
@@ -100,6 +109,7 @@ private:
   typedef Triangulation_vertex_base_with_info_3<Vertex_info, FK>       Vb;
   typedef Triangulation_cell_base_with_info_3<Cell_info, FK>           Cb;
   typedef Triangulation_data_structure_3<Vb,Cb>                        Tds;
+
 public:
   typedef Triangulation_3<FK, Tds>               TMC;
   typedef typename TMC::Geom_traits              TMC_Geom_traits;
@@ -109,103 +119,97 @@ public:
   typedef typename TMC::Cell_handle              TMC_Cell_handle;
   typedef typename TMC::Point                    TMC_Point;
 
-
   // Constructor
   template < class WP_iterator >
   Skin_surface_base_3(WP_iterator begin, WP_iterator end, FT shrink,
                       bool grow_balls = true,
                       Gt gt_ = Gt(), bool _verbose = false);
-  
+
   template <class Polyhedron_3>
   void mesh_surface_3(Polyhedron_3 &p) const;
 
   template <class Polyhedron_3>
   void subdivide_mesh_3(Polyhedron_3 &p) const;
-  
 
-
-  // Access functions:    
+  // Access functions:
   TMC &triangulated_mixed_complex();
   const FT shrink_factor() const { return shrink; }
   Geometric_traits &geometric_traits() const { return gt; }
-  //  TMC &triangulated_mixed_complex() { return _tmc; }
+//  TMC &triangulated_mixed_complex() { return _tmc; }
   Regular &regular() { return _regular; }
 
   // Predicates and constructions
   Sign sign(TMC_Vertex_handle vit) const;
-  
-  Sign sign(const Bare_point &p, 
+
+  Sign sign(const Bare_point &p,
             const TMC_Cell_handle start = TMC_Cell_handle()) const;
-  
-  Sign sign(const Bare_point &p, 
+
+  Sign sign(const Bare_point &p,
             const Cell_info &info) const;
 
   // Uses inexact computations to compute the sign
-  Sign sign_inexact(const Bare_point &p, 
+  Sign sign_inexact(const Bare_point &p,
                     const Cell_info &info) const;
-  
+
   void intersect(TMC_Cell_handle ch, int i, int j, Bare_point &p) const;
-  void intersect(Bare_point &p1, Bare_point &p2, 
+  void intersect(Bare_point &p1, Bare_point &p2,
                  TMC_Cell_handle &s1, TMC_Cell_handle &s2,
                  Bare_point &p) const;
-  
-  void intersect_with_transversal_segment
-    (Bare_point &p,
-     const TMC_Cell_handle &start = TMC_Cell_handle()) const;
 
-  
+  void intersect_with_transversal_segment(
+      Bare_point &p,
+      const TMC_Cell_handle &start = TMC_Cell_handle()) const;
+
   template <class Gt2>
-  static typename Gt2::Bare_point
+  static
+  typename Skin_surface_base_3<Gt2>::Bare_point
   get_weighted_circumcenter(const Simplex &s, Gt2 &traits);
 
-  Vector
-  normal(const Bare_point &p, 
-         TMC_Cell_handle start = TMC_Cell_handle()) const;
+  Vector normal(const Bare_point &p, TMC_Cell_handle start = TMC_Cell_handle()) const;
 
   template <class Gt2>
-  static typename Gt2::Bare_point
+  static
+  typename Skin_surface_base_3<Gt2>::Bare_point
   get_anchor_point(const Anchor_point &anchor, Gt2 &traits);
 
 private:
-  void construct_bounding_box(); 
+  void construct_bounding_box();
 
   template< class Traits >
-  Skin_surface_quadratic_surface_3<Traits> 
-  construct_surface(
-    const Simplex &sim, 
-    const Traits &traits = typename Geometric_traits::Kernel()) const;
+  Skin_surface_quadratic_surface_3<Traits>
+  construct_surface(const Simplex &sim,
+                    const Traits &traits = typename Geometric_traits::Kernel()) const;
 
   Sign compare(Cell_info &info, const Bare_point &p1, const Bare_point &p2) const;
-  Sign compare(Cell_info &info1, const Bare_point &p1, 
+  Sign compare(Cell_info &info1, const Bare_point &p1,
                Cell_info &info2, const Bare_point &p2) const;
-  
-  TMC_Cell_handle
-  locate_in_tmc(const Bare_point &p, 
-                TMC_Cell_handle start = TMC_Cell_handle()) const;
+
+  TMC_Cell_handle locate_in_tmc(const Bare_point &p,
+                                TMC_Cell_handle start = TMC_Cell_handle()) const;
 private:
   FT shrink;
   Geometric_traits gt;
   Regular _regular;
   // Triangulated mixed complex or Voronoi diagram:
   TMC _tmc;
-  
+
   bool verbose;
 };
 
-template <class MixedComplexTraits_3> 
+template <class MixedComplexTraits_3>
 template < class WP_iterator >
 Skin_surface_base_3<MixedComplexTraits_3>::
 Skin_surface_base_3(WP_iterator begin, WP_iterator end, FT shrink_,
                    bool grow_balls,
-                   Gt gt_, bool verbose_) 
-: shrink(shrink_), gt(gt_), verbose(verbose_)
+                   Gt gt_, bool verbose_)
+  : shrink(shrink_), gt(gt_), verbose(verbose_)
 {
   gt.set_shrink(shrink);
   CGAL_assertion(begin != end);
 
   if (grow_balls) {
     for (; begin != end; begin++) {
-      regular().insert(Weighted_point(*begin, begin->weight()/shrink_factor()));
+      regular().insert(gt.construct_weighted_point_3_object()(gt.construct_point_3_object()(*begin), begin->weight()/shrink_factor()));
     }
   } else {
     regular().insert(begin, end);
@@ -220,40 +224,42 @@ Skin_surface_base_3(WP_iterator begin, WP_iterator end, FT shrink_,
   }
 }
 
-template <class MixedComplexTraits_3> 
+template <class MixedComplexTraits_3>
 template <class Polyhedron_3>
 void
 Skin_surface_base_3<MixedComplexTraits_3>::
-mesh_surface_3(Polyhedron_3 &p) const {
+mesh_surface_3(Polyhedron_3 &p) const
+{
   typedef Polyhedron_3 Polyhedron;
 
   typedef Marching_tetrahedra_traits_skin_surface_3<
     Self,
     TMC_Vertex_iterator,
     TMC_Cell_iterator,
-    typename Polyhedron::HalfedgeDS>               Traits;
+    typename Polyhedron::HalfedgeDS>                      Traits;
   typedef Skin_surface_marching_tetrahedra_observer_3<
     TMC_Vertex_iterator,
     TMC_Cell_iterator,
-    Polyhedron>                                    Observer;
+    Polyhedron>                                           Observer;
 
   // Extract the coarse mesh using marching_tetrahedra
   Traits   marching_traits(*this);
   Observer marching_observer;
-  marching_tetrahedra_3(_tmc.finite_vertices_begin(), 
-                        _tmc.finite_vertices_end(), 
-                        _tmc.finite_cells_begin(), 
-                        _tmc.finite_cells_end(), 
-                        p, 
+  marching_tetrahedra_3(_tmc.finite_vertices_begin(),
+                        _tmc.finite_vertices_end(),
+                        _tmc.finite_cells_begin(),
+                        _tmc.finite_cells_end(),
+                        p,
                         marching_traits,
                         marching_observer);
 }
 
-template <class MixedComplexTraits_3> 
+template <class MixedComplexTraits_3>
 template <class Polyhedron_3>
 void
 Skin_surface_base_3<MixedComplexTraits_3>::
-subdivide_mesh_3(Polyhedron_3 &p) const {
+subdivide_mesh_3(Polyhedron_3 &p) const
+{
   typedef Skin_surface_refinement_policy_3<Self, Polyhedron_3> Policy;
   typedef Skin_surface_sqrt3<Self, Polyhedron_3, Policy>       Subdivider;
 
@@ -270,11 +276,11 @@ triangulated_mixed_complex() {
   return _tmc;
 }
 
-template <class MixedComplexTraits_3> 
+template <class MixedComplexTraits_3>
 typename Skin_surface_base_3<MixedComplexTraits_3>::Vector
 Skin_surface_base_3<MixedComplexTraits_3>::
-normal(const Bare_point &p, 
-       TMC_Cell_handle start) const {
+normal(const Bare_point &p, TMC_Cell_handle start) const
+{
   if (start == TMC_Cell_handle()) {
     start = locate_in_tmc(p,start);
   }
@@ -282,10 +288,11 @@ normal(const Bare_point &p,
   return start->info().second->gradient(p);
 }
 
-template <class MixedComplexTraits_3> 
-Sign 
+template <class MixedComplexTraits_3>
+Sign
 Skin_surface_base_3<MixedComplexTraits_3>::
-sign(TMC_Vertex_handle vit) const {
+sign(TMC_Vertex_handle vit) const
+{
   CGAL_assertion(!_tmc.is_infinite(vit));
   TMC_Cell_handle ch = vit->cell();
   if (_tmc.is_infinite(ch)) {
@@ -305,29 +312,32 @@ sign(TMC_Vertex_handle vit) const {
     // Protection is outside the try block as VC8 has the CGAL_CFG_FPU_ROUNDING_MODE_UNWINDING_VC_BUG
     Protect_FPU_rounding<true> P;
     try
-      {
-	Sign result = vit->cell()->info().second->sign(vit->point());
-	if (is_certain(result))
-	  return result;
-      }
-    catch (Uncertain_conversion_exception) {}
+    {
+      Sign result = vit->cell()->info().second->sign(vit->point());
+      if (is_certain(result))
+        return result;
+    }
+    catch (Uncertain_conversion_exception&) {}
   }
   CGAL_BRANCH_PROFILER_BRANCH(tmp);
   Protect_FPU_rounding<false> P(CGAL_FE_TONEAREST);
-  typedef Exact_predicates_exact_constructions_kernel EK;
-  Skin_surface_traits_3<EK> exact_traits(shrink_factor());
 
-  typename Skin_surface_traits_3<EK>::Bare_point p_exact =
-    get_anchor_point(vit->info(), exact_traits);
-  return construct_surface(vit->cell()->info().first, 
-                           EK() ).sign(p_exact);
+  typedef Exact_predicates_exact_constructions_kernel    EK;
+  typedef Skin_surface_traits_3<EK>                      Exact_skin_surface_traits;
+  typedef Skin_surface_base_3<Exact_skin_surface_traits> Exact_skin_surface_base;
+  typedef typename Exact_skin_surface_base::Bare_point   Exact_bare_point;
+
+  Exact_skin_surface_traits exact_traits(shrink_factor());
+  Exact_bare_point p_exact = get_anchor_point(vit->info(), exact_traits);
+
+  return construct_surface(vit->cell()->info().first, EK()).sign(p_exact);
 }
 
-template <class MixedComplexTraits_3> 
-Sign 
+template <class MixedComplexTraits_3>
+Sign
 Skin_surface_base_3<MixedComplexTraits_3>::
-sign(const Bare_point &p, 
-     const TMC_Cell_handle start) const {
+sign(const Bare_point &p, const TMC_Cell_handle start) const
+{
   if (start == TMC_Cell_handle()) {
     return sign(p, locate_in_tmc(p,start)->info());
   } else {
@@ -335,60 +345,55 @@ sign(const Bare_point &p,
   }
 }
 
-template <class MixedComplexTraits_3> 
-Sign 
+template <class MixedComplexTraits_3>
+Sign
 Skin_surface_base_3<MixedComplexTraits_3>::
-sign(const Bare_point &p, const Cell_info &info) const {
+sign(const Bare_point &p, const Cell_info &info) const
+{
   CGAL_BRANCH_PROFILER(std::string(" NGHK: failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
   {
     Protect_FPU_rounding<true> P;
     try
-      {
-	Sign result = sign_inexact(p,info);
-	if (is_certain(result))
-	  return result;
-      }
-  catch (Uncertain_conversion_exception) {}
+    {
+      Sign result = sign_inexact(p,info);
+      if (is_certain(result))
+        return result;
+    }
+    catch (Uncertain_conversion_exception&) {}
   }
   CGAL_BRANCH_PROFILER_BRANCH(tmp);
   Protect_FPU_rounding<false> P(CGAL_FE_TONEAREST);
-  return construct_surface
-    (info.first, 
-     Exact_predicates_exact_constructions_kernel()).sign(p);
+  return construct_surface(info.first,
+                           Exact_predicates_exact_constructions_kernel()).sign(p);
 }
 
-template <class MixedComplexTraits_3> 
-Sign 
+template <class MixedComplexTraits_3>
+Sign
 Skin_surface_base_3<MixedComplexTraits_3>::
 sign_inexact(const Bare_point &p, const Cell_info &info) const {
   return info.second->sign(p);
 }
 
-template <class MixedComplexTraits_3> 
+template <class MixedComplexTraits_3>
 void
 Skin_surface_base_3<MixedComplexTraits_3>::
-intersect(TMC_Cell_handle ch, int i, int j,
-          Bare_point &p) const {
+intersect(TMC_Cell_handle ch, int i, int j, Bare_point &p) const
+{
   Cartesian_converter<FK, Gt> converter;
 
-  Bare_point p1 = converter(ch->vertex(i)->point());
-  Bare_point p2 = converter(ch->vertex(j)->point());
+  Bare_point p1 = gt.construct_point_3_object()(converter(ch->vertex(i)->point()));
+  Bare_point p2 = gt.construct_point_3_object()(converter(ch->vertex(j)->point()));
 
-  return intersect(p1, p2, ch, ch, p); 
+  return intersect(p1, p2, ch, ch, p);
 }
 
-template <class MixedComplexTraits_3> 
-void 
+template <class MixedComplexTraits_3>
+void
 Skin_surface_base_3<MixedComplexTraits_3>::
-intersect(Bare_point &p1, Bare_point &p2, 
+intersect(Bare_point &p1, Bare_point &p2,
           TMC_Cell_handle &s1, TMC_Cell_handle &s2,
           Bare_point &p) const
 {
-  typedef typename Bare_point::R  Traits;
-  typedef typename Traits::FT FT;
-  Cartesian_converter<Traits, 
-    typename Geometric_traits::Bare_point::R> converter;
-
   FT sq_dist = squared_distance(p1,p2);
   // Use value to make the computation robust (endpoints near the surface)
   if (compare(s1->info(), p1, s2->info(), p2) == LARGER) {
@@ -398,7 +403,7 @@ intersect(Bare_point &p1, Bare_point &p2,
 
   while ((s1 != s2) && (sq_dist > 1e-8)) {
     p = midpoint(p1, p2);
-    sp = locate_in_tmc(converter(p), sp);
+    sp = locate_in_tmc(p, sp);
 
     if (sign_inexact(p, sp->info()) == NEGATIVE) { p1 = p; s1 = sp; }
     else { p2 = p; s2 = sp; }
@@ -415,14 +420,13 @@ intersect(Bare_point &p1, Bare_point &p2,
   p = midpoint(p1, p2);
 }
 
-template <class MixedComplexTraits_3> 
+template <class MixedComplexTraits_3>
 void
 Skin_surface_base_3<MixedComplexTraits_3>::
 intersect_with_transversal_segment(
   Bare_point &p,
-  const TMC_Cell_handle &start) const 
+  const TMC_Cell_handle &start) const
 {
-
   typedef typename Geometric_traits::Kernel::Plane_3 Plane;
   typedef typename Geometric_traits::Kernel::Line_3  Line;
 
@@ -430,7 +434,7 @@ intersect_with_transversal_segment(
   if (tet == TMC_Cell_handle()) {
     tet = locate_in_tmc(p, tet);
   }
-  
+
   // get transversal segment:
   Bare_point p1, p2;
 
@@ -445,9 +449,9 @@ intersect_with_transversal_segment(
     }
   }
 
-  Cartesian_converter<FK, typename Geometric_traits::Bare_point::R> converter;
+  Cartesian_converter<FK, typename Bare_point::R> converter;
   Object obj;
-  typename FK::Point_3 tmc_point;
+
   Bare_point tet_pts[4];
   for (int i=0; i<4; i++) {
     tet_pts[i] = converter(tet->vertex(i)->point());
@@ -495,16 +499,13 @@ intersect_with_transversal_segment(
   intersect(p1, p2, tet, tet, p);
 }
 
-template <class MixedComplexTraits_3> 
-void 
+template <class MixedComplexTraits_3>
+void
 Skin_surface_base_3<MixedComplexTraits_3>::
-construct_bounding_box() 
+construct_bounding_box()
 {
   typedef typename Regular::Finite_vertices_iterator Finite_vertices_iterator;
-  typedef typename Regular::Geom_traits       GT;
-  typedef typename GT::Weighted_point         Weighted_point;
-  typedef typename GT::FT                     FT;
-  
+
   Finite_vertices_iterator vit = regular().finite_vertices_begin();
   if (vit != regular().finite_vertices_end()) {
     Bbox_3 bbox = vit->point().bbox();
@@ -520,61 +521,62 @@ construct_bounding_box()
     FT dx = bbox.xmax() - bbox.xmin();
     FT dy = bbox.ymax() - bbox.ymin();
     FT dz = bbox.zmax() - bbox.zmin();
-  
-    Bare_point mid(bbox.xmin() + dx/2, 
-		   bbox.ymin() + dy/2, 
-		   bbox.zmin() + dz/2);
-    FT dr = 
+
+    Bare_point mid(bbox.xmin() + dx/2,
+                   bbox.ymin() + dy/2,
+                   bbox.zmin() + dz/2);
+    FT dr =
       (dx+dy+dz+sqrt(CGAL::to_double(max_weight))+.001) / gt.get_shrink();
 
     Weighted_point wp;
     wp = Weighted_point(Bare_point(mid.x()+dr,
-				   mid.y(),
-				   mid.z()),-1);
+                                   mid.y(),
+                                   mid.z()),-1);
     regular().insert(wp);
     wp = Weighted_point(Bare_point(mid.x()-dr,
-				   mid.y(),
-				   mid.z()),-1);
+                                   mid.y(),
+                                   mid.z()),-1);
     regular().insert(wp);
     wp = Weighted_point(Bare_point(mid.x(),
-				   mid.y()+dr,
-				   mid.z()),-1);
+                                   mid.y()+dr,
+                                   mid.z()),-1);
     regular().insert(wp);
     wp = Weighted_point(Bare_point(mid.x(),
-				   mid.y()-dr,
-				   mid.z()),-1);
+                                   mid.y()-dr,
+                                   mid.z()),-1);
     regular().insert(wp);
     wp = Weighted_point(Bare_point(mid.x(),
-				   mid.y(),
-				   mid.z()+dr),-1);
+                                   mid.y(),
+                                   mid.z()+dr),-1);
     regular().insert(wp);
     wp = Weighted_point(Bare_point(mid.x(),
-				   mid.y(),
-				   mid.z()-dr),-1);
+                                   mid.y(),
+                                   mid.z()-dr),-1);
     regular().insert(wp);
   }
 }
 
-template <class MixedComplexTraits_3> 
+template <class MixedComplexTraits_3>
 template <class Gt2>
-typename Gt2::Bare_point
+typename Skin_surface_base_3<Gt2>::Bare_point
 Skin_surface_base_3<MixedComplexTraits_3>::
-get_anchor_point(const Anchor_point &anchor, Gt2 &traits) {
-  typename Gt2::Bare_point p_del, p_vor;
+get_anchor_point(const Anchor_point &anchor, Gt2 &traits)
+{
+  typename Skin_surface_base_3<Gt2>::Bare_point p_del, p_vor;
   p_del = get_weighted_circumcenter(anchor.first, traits);
   p_vor = get_weighted_circumcenter(anchor.second, traits);
   return traits.construct_anchor_point_3_object()(p_del,p_vor);
 }
 
-template <class MixedComplexTraits_3> 
+template <class MixedComplexTraits_3>
 template< class Traits >
-Skin_surface_quadratic_surface_3<Traits> 
+Skin_surface_quadratic_surface_3<Traits>
 Skin_surface_base_3<MixedComplexTraits_3>::
-construct_surface(const Simplex &sim, const Traits &) const {
-  typedef Skin_surface_quadratic_surface_3<Traits>      Quadratic_surface;
-  typedef Cartesian_converter<
-    typename Geometric_traits::Bare_point::R, Traits>  Converter;
-  typedef typename Traits::Weighted_point_3           Weighted_point;
+construct_surface(const Simplex &sim, const Traits &) const
+{
+  typedef Skin_surface_quadratic_surface_3<Traits>             Quadratic_surface;
+  typedef Cartesian_converter<typename Bare_point::R, Traits>  Converter;
+  typedef typename Traits::Weighted_point_3                    Weighted_point;
 
   Converter conv;
 
@@ -609,37 +611,34 @@ construct_surface(const Simplex &sim, const Traits &) const {
   return Quadratic_surface();
 }
 
-template <class MixedComplexTraits_3> 
+template <class MixedComplexTraits_3>
 Sign
 Skin_surface_base_3<MixedComplexTraits_3>::
-compare(Cell_info &info,
-     const Bare_point &p1,
-     const Bare_point &p2) const {
+compare(Cell_info &info, const Bare_point &p1, const Bare_point &p2) const {
   return compare(info, p1, info, p2);
 }
 
-template <class MixedComplexTraits_3> 
+template <class MixedComplexTraits_3>
 Sign
 Skin_surface_base_3<MixedComplexTraits_3>::
-compare(Cell_info &info1,
-     const Bare_point &p1,
-     Cell_info &info2,
-     const Bare_point &p2) const {
+compare(Cell_info &info1, const Bare_point &p1,
+        Cell_info &info2, const Bare_point &p2) const
+{
   CGAL_BRANCH_PROFILER(std::string(" NGHK: failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
   {
     Protect_FPU_rounding<true> P;
     try
-      {
-	Sign result = CGAL_NTS sign(info1.second->value(p1) -
-				    info2.second->value(p2));
-	if (is_certain(result))
-	  return result;
-      }
-    catch (Uncertain_conversion_exception) {}
+    {
+      Sign result = CGAL_NTS sign(info1.second->value(p1) -
+                                  info2.second->value(p2));
+      if (is_certain(result))
+        return result;
+    }
+    catch (Uncertain_conversion_exception&) {}
   }
   CGAL_BRANCH_PROFILER_BRANCH(tmp);
   Protect_FPU_rounding<false> P(CGAL_FE_TONEAREST);
-    
+
   return CGAL_NTS sign(
     construct_surface(info1.first,
                       Exact_predicates_exact_constructions_kernel()).value(p1) -
@@ -647,11 +646,11 @@ compare(Cell_info &info1,
                       Exact_predicates_exact_constructions_kernel()).value(p2));
 }
 
-template <class MixedComplexTraits_3> 
+template <class MixedComplexTraits_3>
 typename Skin_surface_base_3<MixedComplexTraits_3>::TMC_Cell_handle
 Skin_surface_base_3<MixedComplexTraits_3>::
-locate_in_tmc(const Bare_point &p0, 
-              TMC_Cell_handle start) const {
+locate_in_tmc(const Bare_point &p0, TMC_Cell_handle start) const
+{
   Cartesian_converter<typename Bare_point::R, TMC_Geom_traits> converter_fk;
   TMC_Point p_inexact = converter_fk(p0);
 
@@ -682,7 +681,7 @@ locate_in_tmc(const Bare_point &p0,
 
   // For the remembering stochastic walk,
   // we need to start trying with a random index :
-  boost::rand48 rng;  
+  boost::rand48 rng;
   boost::uniform_smallint<> four(0, 3);
   boost::variate_generator<boost::rand48&, boost::uniform_smallint<> > die4(rng, four);
   int i = die4();
@@ -701,28 +700,29 @@ locate_in_tmc(const Bare_point &p0,
     {
       Protect_FPU_rounding<true> P;
       try {
-	o = TMC_Geom_traits().orientation_3_object()(*pts[0], *pts[1], *pts[2], *pts[3]);
-      } catch (Uncertain_conversion_exception) {
-	Protect_FPU_rounding<false> P(CGAL_FE_TONEAREST);
-	typedef Exact_predicates_exact_constructions_kernel EK;
-	Cartesian_converter<typename Geometric_traits::Bare_point::R, EK> converter_ek;
-	
-	Skin_surface_traits_3<EK> exact_traits(shrink_factor());
-	
-	typename EK::Point_3 e_pts[4];
-	
-	// We know that the 4 vertices of c are positively oriented.
-	// So, in order to test if p is seen outside from one of c's facets,
-	// we just replace the corresponding point by p in the orientation
-	// test.  We do this using the array below.
-	for (int k=0; k<4; k++) {
-	  if (k != i) {
-	    e_pts[k] = get_anchor_point(c->vertex(k)->info(), exact_traits);
-	  } else {
-	    e_pts[k] = converter_ek(p0);
-	  }
-	}
-	o = orientation(e_pts[0], e_pts[1], e_pts[2], e_pts[3]);
+        o = TMC_Geom_traits().orientation_3_object()(*pts[0], *pts[1],
+                                                     *pts[2], *pts[3]);
+      } catch (Uncertain_conversion_exception&) {
+        Protect_FPU_rounding<false> P(CGAL_FE_TONEAREST);
+        typedef Exact_predicates_exact_constructions_kernel EK;
+        Cartesian_converter<typename Bare_point::R, EK> converter_ek;
+
+        Skin_surface_traits_3<EK> exact_traits(shrink_factor());
+
+        typename EK::Point_3 e_pts[4];
+
+        // We know that the 4 vertices of c are positively oriented.
+        // So, in order to test if p is seen outside from one of c's facets,
+        // we just replace the corresponding point by p in the orientation
+        // test.  We do this using the array below.
+        for (int k=0; k<4; k++) {
+          if (k != i) {
+            e_pts[k] = get_anchor_point(c->vertex(k)->info(), exact_traits);
+          } else {
+            e_pts[k] = converter_ek(p0);
+          }
+        }
+        o = orientation(e_pts[0], e_pts[1], e_pts[2], e_pts[3]);
       }
     }
 
@@ -738,64 +738,67 @@ locate_in_tmc(const Bare_point &p0,
     c = next;
     goto try_next_cell;
   }
-  
+
   CGAL_assertion(c->vertex(0) != _tmc.infinite_vertex());
   CGAL_assertion(c->vertex(1) != _tmc.infinite_vertex());
   CGAL_assertion(c->vertex(2) != _tmc.infinite_vertex());
   CGAL_assertion(c->vertex(3) != _tmc.infinite_vertex());
-  
+
   return c;
 }
-  
-template <class MixedComplexTraits_3> 
+
+template <class MixedComplexTraits_3>
 template <class Gt2>
-typename Gt2::Bare_point
+typename Skin_surface_base_3<Gt2>::Bare_point
 Skin_surface_base_3<MixedComplexTraits_3>::
-get_weighted_circumcenter(const Simplex &s, Gt2 &traits) {
+get_weighted_circumcenter(const Simplex &s, Gt2 &traits)
+{
+  typedef typename Skin_surface_base_3<Gt2>::Bare_point  Gt2_Bare_point;
+
   Vertex_handle vh;
   Edge           e;
   Facet          f;
   Cell_handle   ch;
 
-    Cartesian_converter<typename Gt::Bare_point::R, 
-                        typename Gt2::Bare_point::R>  converter;
+  Cartesian_converter<typename Bare_point::R,
+                      typename Gt2_Bare_point::R>  converter;
 
-  typename Gt2::Bare_point result;
+  Gt2_Bare_point result;
   switch(s.dimension()) {
-  case 0: 
+    case 0:
     {
       vh = s;
-      result = converter(vh->point());
+      result = traits.construct_point_3_object()(converter(vh->point()));
       break;
     }
-  case 1:
+    case 1:
     {
       e = s;
       result = traits.construct_weighted_circumcenter_3_object()
-        (converter(e.first->vertex(e.second)->point()),
-         converter(e.first->vertex(e.third)->point()));
+               (converter(e.first->vertex(e.second)->point()),
+                converter(e.first->vertex(e.third)->point()));
       break;
     }
-  case 2: 
+    case 2:
     {
       f = s;
       result = traits.construct_weighted_circumcenter_3_object()
-        (converter(f.first->vertex((f.second+1)&3)->point()),
-         converter(f.first->vertex((f.second+2)&3)->point()),
-         converter(f.first->vertex((f.second+3)&3)->point()));
+               (converter(f.first->vertex((f.second+1)&3)->point()),
+                converter(f.first->vertex((f.second+2)&3)->point()),
+                converter(f.first->vertex((f.second+3)&3)->point()));
       break;
     }
-  case 3: 
+    case 3:
     {
       ch = s;
       result = traits.construct_weighted_circumcenter_3_object()
-        (converter(ch->vertex(0)->point()),
-         converter(ch->vertex(1)->point()),
-         converter(ch->vertex(2)->point()),
-         converter(ch->vertex(3)->point()));
+               (converter(ch->vertex(0)->point()),
+                converter(ch->vertex(1)->point()),
+                converter(ch->vertex(2)->point()),
+                converter(ch->vertex(3)->point()));
       break;
     }
-  default:
+    default:
     {
       CGAL_error();
     }
@@ -803,6 +806,6 @@ get_weighted_circumcenter(const Simplex &s, Gt2 &traits) {
   return result;
 }
 
-} //namespace CGAL 
+} //namespace CGAL
 
 #endif // CGAL_SKIN_SURFACE_BASE_3_H

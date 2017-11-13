@@ -86,7 +86,7 @@ not stored as arcs, but rather as a part of nodes.
 
 The assumption for the forward star representation is that
 the maximum number of arcs per node (except the source
-and the sink) is much less than ARC_BLOCK_SIZE (1024 by default).
+and the sink) is much less than MF_ARC_BLOCK_SIZE (1024 by default).
 
 Both versions have the same interface.
 
@@ -236,8 +236,8 @@ void main()
 	deallocated only when the destructor is called.
 */
 
-#ifndef __BLOCK_H__
-#define __BLOCK_H__
+#ifndef __MAXFLOW_BLOCK_H__
+#define __MAXFLOW_BLOCK_H__
 
 #include <stdlib.h>
 
@@ -454,8 +454,8 @@ private:
 	For description, license, example usage, discussion of graph representation	and memory usage see README.TXT.
 */
 
-#ifndef __GRAPH_H__
-#define __GRAPH_H__
+#ifndef __MAXFLOW_GRAPH_H__
+#define __MAXFLOW_GRAPH_H__
 
 //#include "block.h"
 #include <stdio.h>
@@ -464,9 +464,9 @@ private:
 	added in blocks for memory and time efficiency.
 	Below are numbers of items in blocks
 */
-#define NODE_BLOCK_SIZE 512
-#define ARC_BLOCK_SIZE 1024
-#define NODEPTR_BLOCK_SIZE 128
+#define MF_NODE_BLOCK_SIZE 512
+#define MF_ARC_BLOCK_SIZE 1024
+#define MF_NODEPTR_BLOCK_SIZE 128
 
 template <std::size_t size>
 struct Int_to_ptr;
@@ -547,12 +547,12 @@ private:
   struct arc_reverse_st;
 
   typedef Int_to_ptr< sizeof(void*) >::type INTEGER;
-#define IS_ODD(a) ((INTEGER)(a) & 1)
-#define MAKE_ODD(a)  ((arc_forward *) ((INTEGER)(a) | 1))
-#define MAKE_EVEN(a) ((arc_forward *) ((INTEGER)(a) & (~1)))
-#define MAKE_ODD_REV(a)  ((arc_reverse *) ((INTEGER)(a) | 1))
-#define MAKE_EVEN_REV(a) ((arc_reverse *) ((INTEGER)(a) & (~1)))
-#define POINTER_TO_INTEGER(ptr) ((INTEGER) ptr)
+#define MF_IS_ODD(a) ((INTEGER)(a) & 1)
+#define MF_MAKE_ODD(a)  ((arc_forward *) ((INTEGER)(a) | 1))
+#define MF_MAKE_EVEN(a) ((arc_forward *) ((INTEGER)(a) & (~1)))
+#define MF_MAKE_ODD_REV(a)  ((arc_reverse *) ((INTEGER)(a) | 1))
+#define MF_MAKE_EVEN_REV(a) ((arc_reverse *) ((INTEGER)(a) & (~1)))
+#define MF_POINTER_TO_INTEGER(ptr) ((INTEGER) ptr)
 
 
 
@@ -578,7 +578,7 @@ private:
     arc_reverse_st	*first_in;	/* first incoming arc */
 
     arc_forward_st	*parent;	/* describes node's parent
-									   if IS_ODD(parent) then MAKE_EVEN(parent) points to 'arc_reverse',
+									   if MF_IS_ODD(parent) then MF_MAKE_EVEN(parent) points to 'arc_reverse',
 									   otherwise parent points to 'arc_forward' */
 
     node_st			*next;		/* pointer to the next active node
@@ -593,10 +593,10 @@ private:
   } node;
 
   /* arc structures */
-#define NEIGHBOR_NODE(i, shift) ((node *) ((char *)(i) + (shift)))
-#define NEIGHBOR_NODE_REV(i, shift) ((node *) ((char *)(i) - (shift)))
+#define MF_NEIGHBOR_NODE(i, shift) ((node *) ((char *)(i) + (shift)))
+#define MF_NEIGHBOR_NODE_REV(i, shift) ((node *) ((char *)(i) - (shift)))
   typedef struct arc_forward_st {
-    INTEGER			shift;		/* node_to = NEIGHBOR_NODE(node_from, shift) */
+    INTEGER			shift;		/* node_to = MF_NEIGHBOR_NODE(node_from, shift) */
     captype			r_cap;		/* residual capacity */
     captype			r_rev_cap;	/* residual capacity of the reverse arc*/
   } arc_forward;
@@ -614,10 +614,8 @@ private:
   typedef struct node_block_st {
     node					*current;
     struct node_block_st	*next;
-    node					nodes[NODE_BLOCK_SIZE];
+    node					nodes[MF_NODE_BLOCK_SIZE];
   } node_block;
-
-#define last_node LAST_NODE.LAST_NODE
 
   typedef struct arc_for_block_st {
     char					*start;		/* the actual start address of this block.
@@ -626,7 +624,7 @@ private:
     arc_forward				*current;
     struct arc_for_block_st	*next;
     arc_forward
-    arcs_for[ARC_BLOCK_SIZE]; /* all arcs must be at even addresses */
+    arcs_for[MF_ARC_BLOCK_SIZE]; /* all arcs must be at even addresses */
     union {
       arc_forward			dummy;
       node				*LAST_NODE;	/* used in graph consruction */
@@ -640,7 +638,7 @@ private:
     arc_reverse				*current;
     struct arc_rev_block_st	*next;
     arc_reverse
-    arcs_rev[ARC_BLOCK_SIZE]; /* all arcs must be at even addresses */
+    arcs_rev[MF_ARC_BLOCK_SIZE]; /* all arcs must be at even addresses */
     union {
       arc_reverse			dummy;
       node				*LAST_NODE;	/* used in graph consruction */
@@ -721,7 +719,7 @@ inline Graph::node_id Graph::add_node()
   node *i;
 
   if (!node_block_first
-      || node_block_first->current+1 > &node_block_first->nodes[NODE_BLOCK_SIZE-1]) {
+      || node_block_first->current+1 > &node_block_first->nodes[MF_NODE_BLOCK_SIZE-1]) {
     node_block *next = node_block_first;
     node_block_first = (node_block *) new node_block;
     if (!node_block_first) {
@@ -749,14 +747,14 @@ inline void Graph::add_edge(node_id from, node_id to, captype cap,
 
   if (!arc_for_block_first
       || arc_for_block_first->current+1 >
-      &arc_for_block_first->arcs_for[ARC_BLOCK_SIZE]) {
+      &arc_for_block_first->arcs_for[MF_ARC_BLOCK_SIZE]) {
     arc_for_block *next = arc_for_block_first;
     char *ptr = new char[sizeof(arc_for_block)+1];
     if (!ptr) {
       if (error_function) (*error_function)("Not enough memory!");
       exit(1);
     }
-    if (IS_ODD(ptr)) arc_for_block_first = (arc_for_block *) (ptr + 1);
+    if (MF_IS_ODD(ptr)) arc_for_block_first = (arc_for_block *) (ptr + 1);
     else              arc_for_block_first = (arc_for_block *) ptr;
     arc_for_block_first -> start = ptr;
     arc_for_block_first -> current = & ( arc_for_block_first -> arcs_for[0] );
@@ -765,14 +763,14 @@ inline void Graph::add_edge(node_id from, node_id to, captype cap,
 
   if (!arc_rev_block_first
       || arc_rev_block_first->current+1 >
-      &arc_rev_block_first->arcs_rev[ARC_BLOCK_SIZE]) {
+      &arc_rev_block_first->arcs_rev[MF_ARC_BLOCK_SIZE]) {
     arc_rev_block *next = arc_rev_block_first;
     char *ptr = new char[sizeof(arc_rev_block)+1];
     if (!ptr) {
       if (error_function) (*error_function)("Not enough memory!");
       exit(1);
     }
-    if (IS_ODD(ptr)) arc_rev_block_first = (arc_rev_block *) (ptr + 1);
+    if (MF_IS_ODD(ptr)) arc_rev_block_first = (arc_rev_block *) (ptr + 1);
     else              arc_rev_block_first = (arc_rev_block *) ptr;
     arc_rev_block_first -> start = ptr;
     arc_rev_block_first -> current = & ( arc_rev_block_first -> arcs_rev[0] );
@@ -783,14 +781,14 @@ inline void Graph::add_edge(node_id from, node_id to, captype cap,
   a_rev = arc_rev_block_first -> current ++;
 
   a_rev -> sister = (arc_forward *) from;
-  a_for -> shift  = POINTER_TO_INTEGER(to);
+  a_for -> shift  = MF_POINTER_TO_INTEGER(to);
   a_for -> r_cap = cap;
   a_for -> r_rev_cap = rev_cap;
 
   ((node *)from) -> first_out =
-    (arc_forward *) (POINTER_TO_INTEGER(((node *)from) -> first_out) + 1);
+    (arc_forward *) (MF_POINTER_TO_INTEGER(((node *)from) -> first_out) + 1);
   ((node *)to) -> first_in =
-    (arc_reverse *) (POINTER_TO_INTEGER(((node *)to) -> first_in) + 1);
+    (arc_reverse *) (MF_POINTER_TO_INTEGER(((node *)to) -> first_in) + 1);
 }
 
 inline void Graph::set_tweights(node_id i, captype cap_source, captype cap_sink)
@@ -839,7 +837,7 @@ inline void Graph::prepare_graph()
   /* FIRST STAGE */
   a_rev_tmp->sister = NULL;
   for (a_rev=arc_rev_block_first->current;
-       a_rev<&arc_rev_block_first->arcs_rev[ARC_BLOCK_SIZE]; a_rev++) {
+       a_rev<&arc_rev_block_first->arcs_rev[MF_ARC_BLOCK_SIZE]; a_rev++) {
     a_rev -> sister = NULL;
   }
 
@@ -851,9 +849,9 @@ inline void Graph::prepare_graph()
   for (nb=node_block_first; nb; nb=nb->next) {
     for (i=&nb->nodes[0]; i<nb->current; i++) {
       /* outgoing arcs */
-      k = POINTER_TO_INTEGER(i -> first_out);
-      if (a_for + k > &ab_for->arcs_for[ARC_BLOCK_SIZE]) {
-        if (k > ARC_BLOCK_SIZE) {
+      k = MF_POINTER_TO_INTEGER(i -> first_out);
+      if (a_for + k > &ab_for->arcs_for[MF_ARC_BLOCK_SIZE]) {
+        if (k > MF_ARC_BLOCK_SIZE) {
           if (error_function) (*error_function)("# of arcs per node exceeds block size!");
           exit(1);
         }
@@ -869,7 +867,7 @@ inline void Graph::prepare_graph()
             if (error_function) (*error_function)("Not enough memory!");
             exit(1);
           }
-          if (IS_ODD(ptr)) arc_for_block_first = (arc_for_block *) (ptr + 1);
+          if (MF_IS_ODD(ptr)) arc_for_block_first = (arc_for_block *) (ptr + 1);
           else              arc_for_block_first = (arc_for_block *) ptr;
           arc_for_block_first -> start = ptr;
           arc_for_block_first -> current = & ( arc_for_block_first -> arcs_for[0] );
@@ -885,12 +883,12 @@ inline void Graph::prepare_graph()
       } else i -> parent = (arc_forward *) a_rev_tmp;
       a_for += k;
       i -> first_out = a_for;
-      ab_for -> last_node = i;
+      ab_for -> LAST_NODE.LAST_NODE = i;
 
       /* incoming arcs */
-      k = POINTER_TO_INTEGER(i -> first_in);
-      if (a_rev + k > &ab_rev->arcs_rev[ARC_BLOCK_SIZE]) {
-        if (k > ARC_BLOCK_SIZE) {
+      k = MF_POINTER_TO_INTEGER(i -> first_in);
+      if (a_rev + k > &ab_rev->arcs_rev[MF_ARC_BLOCK_SIZE]) {
+        if (k > MF_ARC_BLOCK_SIZE) {
           if (error_function) (*error_function)("# of arcs per node exceeds block size!");
           exit(1);
         }
@@ -903,7 +901,7 @@ inline void Graph::prepare_graph()
             if (error_function) (*error_function)("Not enough memory!");
             exit(1);
           }
-          if (IS_ODD(ptr)) arc_rev_block_first = (arc_rev_block *) (ptr + 1);
+          if (MF_IS_ODD(ptr)) arc_rev_block_first = (arc_rev_block *) (ptr + 1);
           else              arc_rev_block_first = (arc_rev_block *) ptr;
           arc_rev_block_first -> start = ptr;
           arc_rev_block_first -> current = & ( arc_rev_block_first -> arcs_rev[0] );
@@ -915,7 +913,7 @@ inline void Graph::prepare_graph()
       }
       a_rev += k;
       i -> first_in = a_rev;
-      ab_rev -> last_node = i;
+      ab_rev -> LAST_NODE.LAST_NODE = i;
     }
     /* i is the last node in block */
     i -> first_out = a_for;
@@ -924,14 +922,14 @@ inline void Graph::prepare_graph()
 
   /* SECOND STAGE */
   for (ab_for=arc_for_block_first; ab_for; ab_for=ab_for->next) {
-    ab_for -> current = ab_for -> last_node -> first_out;
+    ab_for -> current = ab_for -> LAST_NODE.LAST_NODE -> first_out;
   }
 
   for ( ab_for=ab_for_first, ab_rev=ab_rev_first;
         ab_for;
         ab_for=ab_for->next, ab_rev=ab_rev->next )
     for ( a_for=&ab_for->arcs_for[0], a_rev=&ab_rev->arcs_rev[0];
-          a_for<&ab_for->arcs_for[ARC_BLOCK_SIZE];
+          a_for<&ab_for->arcs_for[MF_ARC_BLOCK_SIZE];
           a_for++, a_rev++ ) {
       arc_forward *af;
       arc_reverse *ar;
@@ -971,18 +969,18 @@ inline void Graph::prepare_graph()
     }
 
   for (ab_for=arc_for_block_first; ab_for; ab_for=ab_for->next) {
-    i = ab_for -> last_node;
+    i = ab_for -> LAST_NODE.LAST_NODE;
     a_for = i -> first_out;
     ab_for -> current -> shift     = a_for -> shift;
     ab_for -> current -> r_cap     = a_for -> r_cap;
     ab_for -> current -> r_rev_cap = a_for -> r_rev_cap;
-    a_for -> shift = POINTER_TO_INTEGER(ab_for -> current + 1);
+    a_for -> shift = MF_POINTER_TO_INTEGER(ab_for -> current + 1);
     i -> first_out = (arc_forward *) (((char *)a_for) - 1);
   }
 
   /* THIRD STAGE */
   for (ab_rev=arc_rev_block_first; ab_rev; ab_rev=ab_rev->next) {
-    ab_rev -> current = ab_rev -> last_node -> first_in;
+    ab_rev -> current = ab_rev -> LAST_NODE.LAST_NODE -> first_in;
   }
 
   for (nb=node_block_first; nb; nb=nb->next)
@@ -990,20 +988,20 @@ inline void Graph::prepare_graph()
       arc_forward *a_for_first, *a_for_last;
 
       a_for_first = i -> first_out;
-      if (IS_ODD(a_for_first)) {
+      if (MF_IS_ODD(a_for_first)) {
         a_for_first = (arc_forward *) (((char *)a_for_first) + 1);
         a_for_last = (arc_forward *) ((a_for_first ++) -> shift);
       } else a_for_last = (i + 1) -> first_out;
 
       for (a_for=a_for_first; a_for<a_for_last; a_for++) {
-        node *to = NEIGHBOR_NODE(i, a_for -> shift);
+        node *to = MF_NEIGHBOR_NODE(i, a_for -> shift);
         a_rev = -- to -> first_in;
         a_rev -> sister = a_for;
       }
     }
 
   for (ab_rev=arc_rev_block_first; ab_rev; ab_rev=ab_rev->next) {
-    i = ab_rev -> last_node;
+    i = ab_rev -> LAST_NODE.LAST_NODE;
     a_rev = i -> first_in;
     ab_rev -> current -> sister = a_rev -> sister;
     a_rev -> sister = (arc_forward *) (ab_rev -> current + 1);
@@ -1020,10 +1018,10 @@ inline void Graph::prepare_graph()
 /*
 	special constants for node->parent
 */
-#define TERMINAL ( (arc_forward *) 1 )		/* to terminal */
-#define ORPHAN   ( (arc_forward *) 2 )		/* orphan */
+#define MF_TERMINAL ( (arc_forward *) 1 )		/* to terminal */
+#define MF_ORPHAN   ( (arc_forward *) 2 )		/* orphan */
 
-#define INFINITE_D 1000000000		/* infinite distance to the terminal */
+#define MF_INFINITE_D 1000000000		/* infinite distance to the terminal */
 
 /***********************************************************************/
 
@@ -1097,14 +1095,14 @@ inline void Graph::maxflow_init()
       if (i->tr_cap > 0) {
         /* i is connected to the source */
         i -> is_sink = 0;
-        i -> parent = TERMINAL;
+        i -> parent = MF_TERMINAL;
         set_active(i);
         i -> TS = 0;
         i -> DIST = 1;
       } else if (i->tr_cap < 0) {
         /* i is connected to the sink */
         i -> is_sink = 1;
-        i -> parent = TERMINAL;
+        i -> parent = MF_TERMINAL;
         set_active(i);
         i -> TS = 0;
         i -> DIST = 1;
@@ -1131,28 +1129,28 @@ inline void Graph::augment(node *s_start, node *t_start, captype *cap_middle,
   bottleneck = *cap_middle;
   for (i=s_start; ; ) {
     a = i -> parent;
-    if (a == TERMINAL) break;
-    if (IS_ODD(a)) {
-      a = MAKE_EVEN(a);
+    if (a == MF_TERMINAL) break;
+    if (MF_IS_ODD(a)) {
+      a = MF_MAKE_EVEN(a);
       if (bottleneck > a->r_cap) bottleneck = a -> r_cap;
-      i = NEIGHBOR_NODE_REV(i, a -> shift);
+      i = MF_NEIGHBOR_NODE_REV(i, a -> shift);
     } else {
       if (bottleneck > a->r_rev_cap) bottleneck = a -> r_rev_cap;
-      i = NEIGHBOR_NODE(i, a -> shift);
+      i = MF_NEIGHBOR_NODE(i, a -> shift);
     }
   }
   if (bottleneck > i->tr_cap) bottleneck = i -> tr_cap;
   /* 1b - the sink tree */
   for (i=t_start; ; ) {
     a = i -> parent;
-    if (a == TERMINAL) break;
-    if (IS_ODD(a)) {
-      a = MAKE_EVEN(a);
+    if (a == MF_TERMINAL) break;
+    if (MF_IS_ODD(a)) {
+      a = MF_MAKE_EVEN(a);
       if (bottleneck > a->r_rev_cap) bottleneck = a -> r_rev_cap;
-      i = NEIGHBOR_NODE_REV(i, a -> shift);
+      i = MF_NEIGHBOR_NODE_REV(i, a -> shift);
     } else {
       if (bottleneck > a->r_cap) bottleneck = a -> r_cap;
-      i = NEIGHBOR_NODE(i, a -> shift);
+      i = MF_NEIGHBOR_NODE(i, a -> shift);
     }
   }
   if (bottleneck > - i->tr_cap) bottleneck = - i -> tr_cap;
@@ -1164,38 +1162,38 @@ inline void Graph::augment(node *s_start, node *t_start, captype *cap_middle,
   *cap_middle -= bottleneck;
   for (i=s_start; ; ) {
     a = i -> parent;
-    if (a == TERMINAL) break;
-    if (IS_ODD(a)) {
-      a = MAKE_EVEN(a);
+    if (a == MF_TERMINAL) break;
+    if (MF_IS_ODD(a)) {
+      a = MF_MAKE_EVEN(a);
       a -> r_rev_cap += bottleneck;
       a -> r_cap -= bottleneck;
       if (!a->r_cap) {
         /* add i to the adoption list */
-        i -> parent = ORPHAN;
+        i -> parent = MF_ORPHAN;
         np = nodeptr_block -> New();
         np -> ptr = i;
         np -> next = orphan_first;
         orphan_first = np;
       }
-      i = NEIGHBOR_NODE_REV(i, a -> shift);
+      i = MF_NEIGHBOR_NODE_REV(i, a -> shift);
     } else {
       a -> r_cap += bottleneck;
       a -> r_rev_cap -= bottleneck;
       if (!a->r_rev_cap) {
         /* add i to the adoption list */
-        i -> parent = ORPHAN;
+        i -> parent = MF_ORPHAN;
         np = nodeptr_block -> New();
         np -> ptr = i;
         np -> next = orphan_first;
         orphan_first = np;
       }
-      i = NEIGHBOR_NODE(i, a -> shift);
+      i = MF_NEIGHBOR_NODE(i, a -> shift);
     }
   }
   i -> tr_cap -= bottleneck;
   if (!i->tr_cap) {
     /* add i to the adoption list */
-    i -> parent = ORPHAN;
+    i -> parent = MF_ORPHAN;
     np = nodeptr_block -> New();
     np -> ptr = i;
     np -> next = orphan_first;
@@ -1204,38 +1202,38 @@ inline void Graph::augment(node *s_start, node *t_start, captype *cap_middle,
   /* 2b - the sink tree */
   for (i=t_start; ; ) {
     a = i -> parent;
-    if (a == TERMINAL) break;
-    if (IS_ODD(a)) {
-      a = MAKE_EVEN(a);
+    if (a == MF_TERMINAL) break;
+    if (MF_IS_ODD(a)) {
+      a = MF_MAKE_EVEN(a);
       a -> r_cap += bottleneck;
       a -> r_rev_cap -= bottleneck;
       if (!a->r_rev_cap) {
         /* add i to the adoption list */
-        i -> parent = ORPHAN;
+        i -> parent = MF_ORPHAN;
         np = nodeptr_block -> New();
         np -> ptr = i;
         np -> next = orphan_first;
         orphan_first = np;
       }
-      i = NEIGHBOR_NODE_REV(i, a -> shift);
+      i = MF_NEIGHBOR_NODE_REV(i, a -> shift);
     } else {
       a -> r_rev_cap += bottleneck;
       a -> r_cap -= bottleneck;
       if (!a->r_cap) {
         /* add i to the adoption list */
-        i -> parent = ORPHAN;
+        i -> parent = MF_ORPHAN;
         np = nodeptr_block -> New();
         np -> ptr = i;
         np -> next = orphan_first;
         orphan_first = np;
       }
-      i = NEIGHBOR_NODE(i, a -> shift);
+      i = MF_NEIGHBOR_NODE(i, a -> shift);
     }
   }
   i -> tr_cap += bottleneck;
   if (!i->tr_cap) {
     /* add i to the adoption list */
-    i -> parent = ORPHAN;
+    i -> parent = MF_ORPHAN;
     np = nodeptr_block -> New();
     np -> ptr = i;
     np -> next = orphan_first;
@@ -1255,16 +1253,16 @@ inline void Graph::process_source_orphan(node *i)
   arc_reverse *a0_rev, *a0_rev_first, *a0_rev_last;
   arc_forward *a0_min = NULL, *a;
   nodeptr *np;
-  int d, d_min = INFINITE_D;
+  int d, d_min = MF_INFINITE_D;
 
   /* trying to find a new parent */
   a0_for_first = i -> first_out;
-  if (IS_ODD(a0_for_first)) {
+  if (MF_IS_ODD(a0_for_first)) {
     a0_for_first = (arc_forward *) (((char *)a0_for_first) + 1);
     a0_for_last = (arc_forward *) ((a0_for_first ++) -> shift);
   } else a0_for_last = (i + 1) -> first_out;
   a0_rev_first = i -> first_in;
-  if (IS_ODD(a0_rev_first)) {
+  if (MF_IS_ODD(a0_rev_first)) {
     a0_rev_first = (arc_reverse *) (((char *)a0_rev_first) + 1);
     a0_rev_last  = (arc_reverse *) ((a0_rev_first ++) -> sister);
   } else a0_rev_last = (i + 1) -> first_in;
@@ -1272,7 +1270,7 @@ inline void Graph::process_source_orphan(node *i)
 
   for (a0_for=a0_for_first; a0_for<a0_for_last; a0_for++)
     if (a0_for->r_rev_cap) {
-      j = NEIGHBOR_NODE(i, a0_for -> shift);
+      j = MF_NEIGHBOR_NODE(i, a0_for -> shift);
       if (!j->is_sink && (a=j->parent)) {
         /* checking the origin of j */
         d = 0;
@@ -1283,34 +1281,34 @@ inline void Graph::process_source_orphan(node *i)
           }
           a = j -> parent;
           d ++;
-          if (a==TERMINAL) {
+          if (a==MF_TERMINAL) {
             j -> TS = TIME;
             j -> DIST = 1;
             break;
           }
-          if (a==ORPHAN) {
-            d = INFINITE_D;
+          if (a==MF_ORPHAN) {
+            d = MF_INFINITE_D;
             break;
           }
-          if (IS_ODD(a))
-            j = NEIGHBOR_NODE_REV(j, MAKE_EVEN(a) -> shift);
+          if (MF_IS_ODD(a))
+            j = MF_NEIGHBOR_NODE_REV(j, MF_MAKE_EVEN(a) -> shift);
           else
-            j = NEIGHBOR_NODE(j, a -> shift);
+            j = MF_NEIGHBOR_NODE(j, a -> shift);
         }
-        if (d<INFINITE_D) { /* j originates from the source - done */
+        if (d<MF_INFINITE_D) { /* j originates from the source - done */
           if (d<d_min) {
             a0_min = a0_for;
             d_min = d;
           }
           /* set marks along the path */
-          for (j=NEIGHBOR_NODE(i, a0_for->shift); j->TS!=TIME; ) {
+          for (j=MF_NEIGHBOR_NODE(i, a0_for->shift); j->TS!=TIME; ) {
             j -> TS = TIME;
             j -> DIST = d --;
             a = j->parent;
-            if (IS_ODD(a))
-              j = NEIGHBOR_NODE_REV(j, MAKE_EVEN(a) -> shift);
+            if (MF_IS_ODD(a))
+              j = MF_NEIGHBOR_NODE_REV(j, MF_MAKE_EVEN(a) -> shift);
             else
-              j = NEIGHBOR_NODE(j, a -> shift);
+              j = MF_NEIGHBOR_NODE(j, a -> shift);
           }
         }
       }
@@ -1318,7 +1316,7 @@ inline void Graph::process_source_orphan(node *i)
   for (a0_rev=a0_rev_first; a0_rev<a0_rev_last; a0_rev++) {
     a0_for = a0_rev -> sister;
     if (a0_for->r_cap) {
-      j = NEIGHBOR_NODE_REV(i, a0_for -> shift);
+      j = MF_NEIGHBOR_NODE_REV(i, a0_for -> shift);
       if (!j->is_sink && (a=j->parent)) {
         /* checking the origin of j */
         d = 0;
@@ -1329,34 +1327,34 @@ inline void Graph::process_source_orphan(node *i)
           }
           a = j -> parent;
           d ++;
-          if (a==TERMINAL) {
+          if (a==MF_TERMINAL) {
             j -> TS = TIME;
             j -> DIST = 1;
             break;
           }
-          if (a==ORPHAN) {
-            d = INFINITE_D;
+          if (a==MF_ORPHAN) {
+            d = MF_INFINITE_D;
             break;
           }
-          if (IS_ODD(a))
-            j = NEIGHBOR_NODE_REV(j, MAKE_EVEN(a) -> shift);
+          if (MF_IS_ODD(a))
+            j = MF_NEIGHBOR_NODE_REV(j, MF_MAKE_EVEN(a) -> shift);
           else
-            j = NEIGHBOR_NODE(j, a -> shift);
+            j = MF_NEIGHBOR_NODE(j, a -> shift);
         }
-        if (d<INFINITE_D) { /* j originates from the source - done */
+        if (d<MF_INFINITE_D) { /* j originates from the source - done */
           if (d<d_min) {
-            a0_min = MAKE_ODD(a0_for);
+            a0_min = MF_MAKE_ODD(a0_for);
             d_min = d;
           }
           /* set marks along the path */
-          for (j=NEIGHBOR_NODE_REV(i,a0_for->shift); j->TS!=TIME; ) {
+          for (j=MF_NEIGHBOR_NODE_REV(i,a0_for->shift); j->TS!=TIME; ) {
             j -> TS = TIME;
             j -> DIST = d --;
             a = j->parent;
-            if (IS_ODD(a))
-              j = NEIGHBOR_NODE_REV(j, MAKE_EVEN(a) -> shift);
+            if (MF_IS_ODD(a))
+              j = MF_NEIGHBOR_NODE_REV(j, MF_MAKE_EVEN(a) -> shift);
             else
-              j = NEIGHBOR_NODE(j, a -> shift);
+              j = MF_NEIGHBOR_NODE(j, a -> shift);
           }
         }
       }
@@ -1372,13 +1370,13 @@ inline void Graph::process_source_orphan(node *i)
 
     /* process neighbors */
     for (a0_for=a0_for_first; a0_for<a0_for_last; a0_for++) {
-      j = NEIGHBOR_NODE(i, a0_for -> shift);
+      j = MF_NEIGHBOR_NODE(i, a0_for -> shift);
       if (!j->is_sink && (a=j->parent)) {
         if (a0_for->r_rev_cap) set_active(j);
-        if (a!=TERMINAL && a!=ORPHAN && IS_ODD(a)
-            && NEIGHBOR_NODE_REV(j, MAKE_EVEN(a)->shift)==i) {
+        if (a!=MF_TERMINAL && a!=MF_ORPHAN && MF_IS_ODD(a)
+            && MF_NEIGHBOR_NODE_REV(j, MF_MAKE_EVEN(a)->shift)==i) {
           /* add j to the adoption list */
-          j -> parent = ORPHAN;
+          j -> parent = MF_ORPHAN;
           np = nodeptr_block -> New();
           np -> ptr = j;
           if (orphan_last) orphan_last -> next = np;
@@ -1390,12 +1388,12 @@ inline void Graph::process_source_orphan(node *i)
     }
     for (a0_rev=a0_rev_first; a0_rev<a0_rev_last; a0_rev++) {
       a0_for = a0_rev -> sister;
-      j = NEIGHBOR_NODE_REV(i, a0_for -> shift);
+      j = MF_NEIGHBOR_NODE_REV(i, a0_for -> shift);
       if (!j->is_sink && (a=j->parent)) {
         if (a0_for->r_cap) set_active(j);
-        if (a!=TERMINAL && a!=ORPHAN && !IS_ODD(a) && NEIGHBOR_NODE(j, a->shift)==i) {
+        if (a!=MF_TERMINAL && a!=MF_ORPHAN && !MF_IS_ODD(a) && MF_NEIGHBOR_NODE(j, a->shift)==i) {
           /* add j to the adoption list */
-          j -> parent = ORPHAN;
+          j -> parent = MF_ORPHAN;
           np = nodeptr_block -> New();
           np -> ptr = j;
           if (orphan_last) orphan_last -> next = np;
@@ -1415,16 +1413,16 @@ inline void Graph::process_sink_orphan(node *i)
   arc_reverse *a0_rev, *a0_rev_first, *a0_rev_last;
   arc_forward *a0_min = NULL, *a;
   nodeptr *np;
-  int d, d_min = INFINITE_D;
+  int d, d_min = MF_INFINITE_D;
 
   /* trying to find a new parent */
   a0_for_first = i -> first_out;
-  if (IS_ODD(a0_for_first)) {
+  if (MF_IS_ODD(a0_for_first)) {
     a0_for_first = (arc_forward *) (((char *)a0_for_first) + 1);
     a0_for_last = (arc_forward *) ((a0_for_first ++) -> shift);
   } else a0_for_last = (i + 1) -> first_out;
   a0_rev_first = i -> first_in;
-  if (IS_ODD(a0_rev_first)) {
+  if (MF_IS_ODD(a0_rev_first)) {
     a0_rev_first = (arc_reverse *) (((char *)a0_rev_first) + 1);
     a0_rev_last  = (arc_reverse *) ((a0_rev_first ++) -> sister);
   } else a0_rev_last = (i + 1) -> first_in;
@@ -1432,7 +1430,7 @@ inline void Graph::process_sink_orphan(node *i)
 
   for (a0_for=a0_for_first; a0_for<a0_for_last; a0_for++)
     if (a0_for->r_cap) {
-      j = NEIGHBOR_NODE(i, a0_for -> shift);
+      j = MF_NEIGHBOR_NODE(i, a0_for -> shift);
       if (j->is_sink && (a=j->parent)) {
         /* checking the origin of j */
         d = 0;
@@ -1443,34 +1441,34 @@ inline void Graph::process_sink_orphan(node *i)
           }
           a = j -> parent;
           d ++;
-          if (a==TERMINAL) {
+          if (a==MF_TERMINAL) {
             j -> TS = TIME;
             j -> DIST = 1;
             break;
           }
-          if (a==ORPHAN) {
-            d = INFINITE_D;
+          if (a==MF_ORPHAN) {
+            d = MF_INFINITE_D;
             break;
           }
-          if (IS_ODD(a))
-            j = NEIGHBOR_NODE_REV(j, MAKE_EVEN(a) -> shift);
+          if (MF_IS_ODD(a))
+            j = MF_NEIGHBOR_NODE_REV(j, MF_MAKE_EVEN(a) -> shift);
           else
-            j = NEIGHBOR_NODE(j, a -> shift);
+            j = MF_NEIGHBOR_NODE(j, a -> shift);
         }
-        if (d<INFINITE_D) { /* j originates from the sink - done */
+        if (d<MF_INFINITE_D) { /* j originates from the sink - done */
           if (d<d_min) {
             a0_min = a0_for;
             d_min = d;
           }
           /* set marks along the path */
-          for (j=NEIGHBOR_NODE(i, a0_for->shift); j->TS!=TIME; ) {
+          for (j=MF_NEIGHBOR_NODE(i, a0_for->shift); j->TS!=TIME; ) {
             j -> TS = TIME;
             j -> DIST = d --;
             a = j->parent;
-            if (IS_ODD(a))
-              j = NEIGHBOR_NODE_REV(j, MAKE_EVEN(a) -> shift);
+            if (MF_IS_ODD(a))
+              j = MF_NEIGHBOR_NODE_REV(j, MF_MAKE_EVEN(a) -> shift);
             else
-              j = NEIGHBOR_NODE(j, a -> shift);
+              j = MF_NEIGHBOR_NODE(j, a -> shift);
           }
         }
       }
@@ -1478,7 +1476,7 @@ inline void Graph::process_sink_orphan(node *i)
   for (a0_rev=a0_rev_first; a0_rev<a0_rev_last; a0_rev++) {
     a0_for = a0_rev -> sister;
     if (a0_for->r_rev_cap) {
-      j = NEIGHBOR_NODE_REV(i, a0_for -> shift);
+      j = MF_NEIGHBOR_NODE_REV(i, a0_for -> shift);
       if (j->is_sink && (a=j->parent)) {
         /* checking the origin of j */
         d = 0;
@@ -1489,34 +1487,34 @@ inline void Graph::process_sink_orphan(node *i)
           }
           a = j -> parent;
           d ++;
-          if (a==TERMINAL) {
+          if (a==MF_TERMINAL) {
             j -> TS = TIME;
             j -> DIST = 1;
             break;
           }
-          if (a==ORPHAN) {
-            d = INFINITE_D;
+          if (a==MF_ORPHAN) {
+            d = MF_INFINITE_D;
             break;
           }
-          if (IS_ODD(a))
-            j = NEIGHBOR_NODE_REV(j, MAKE_EVEN(a) -> shift);
+          if (MF_IS_ODD(a))
+            j = MF_NEIGHBOR_NODE_REV(j, MF_MAKE_EVEN(a) -> shift);
           else
-            j = NEIGHBOR_NODE(j, a -> shift);
+            j = MF_NEIGHBOR_NODE(j, a -> shift);
         }
-        if (d<INFINITE_D) { /* j originates from the sink - done */
+        if (d<MF_INFINITE_D) { /* j originates from the sink - done */
           if (d<d_min) {
-            a0_min = MAKE_ODD(a0_for);
+            a0_min = MF_MAKE_ODD(a0_for);
             d_min = d;
           }
           /* set marks along the path */
-          for (j=NEIGHBOR_NODE_REV(i,a0_for->shift); j->TS!=TIME; ) {
+          for (j=MF_NEIGHBOR_NODE_REV(i,a0_for->shift); j->TS!=TIME; ) {
             j -> TS = TIME;
             j -> DIST = d --;
             a = j->parent;
-            if (IS_ODD(a))
-              j = NEIGHBOR_NODE_REV(j, MAKE_EVEN(a) -> shift);
+            if (MF_IS_ODD(a))
+              j = MF_NEIGHBOR_NODE_REV(j, MF_MAKE_EVEN(a) -> shift);
             else
-              j = NEIGHBOR_NODE(j, a -> shift);
+              j = MF_NEIGHBOR_NODE(j, a -> shift);
           }
         }
       }
@@ -1532,13 +1530,13 @@ inline void Graph::process_sink_orphan(node *i)
 
     /* process neighbors */
     for (a0_for=a0_for_first; a0_for<a0_for_last; a0_for++) {
-      j = NEIGHBOR_NODE(i, a0_for -> shift);
+      j = MF_NEIGHBOR_NODE(i, a0_for -> shift);
       if (j->is_sink && (a=j->parent)) {
         if (a0_for->r_cap) set_active(j);
-        if (a!=TERMINAL && a!=ORPHAN && IS_ODD(a)
-            && NEIGHBOR_NODE_REV(j, MAKE_EVEN(a)->shift)==i) {
+        if (a!=MF_TERMINAL && a!=MF_ORPHAN && MF_IS_ODD(a)
+            && MF_NEIGHBOR_NODE_REV(j, MF_MAKE_EVEN(a)->shift)==i) {
           /* add j to the adoption list */
-          j -> parent = ORPHAN;
+          j -> parent = MF_ORPHAN;
           np = nodeptr_block -> New();
           np -> ptr = j;
           if (orphan_last) orphan_last -> next = np;
@@ -1550,12 +1548,12 @@ inline void Graph::process_sink_orphan(node *i)
     }
     for (a0_rev=a0_rev_first; a0_rev<a0_rev_last; a0_rev++) {
       a0_for = a0_rev -> sister;
-      j = NEIGHBOR_NODE_REV(i, a0_for -> shift);
+      j = MF_NEIGHBOR_NODE_REV(i, a0_for -> shift);
       if (j->is_sink && (a=j->parent)) {
         if (a0_for->r_rev_cap) set_active(j);
-        if (a!=TERMINAL && a!=ORPHAN && !IS_ODD(a) && NEIGHBOR_NODE(j, a->shift)==i) {
+        if (a!=MF_TERMINAL && a!=MF_ORPHAN && !MF_IS_ODD(a) && MF_NEIGHBOR_NODE(j, a->shift)==i) {
           /* add j to the adoption list */
-          j -> parent = ORPHAN;
+          j -> parent = MF_ORPHAN;
           np = nodeptr_block -> New();
           np -> ptr = j;
           if (orphan_last) orphan_last -> next = np;
@@ -1580,7 +1578,7 @@ inline Graph::flowtype Graph::maxflow()
 
   prepare_graph();
   maxflow_init();
-  nodeptr_block = new DBlock<nodeptr>(NODEPTR_BLOCK_SIZE, error_function);
+  nodeptr_block = new DBlock<nodeptr>(MF_NODEPTR_BLOCK_SIZE, error_function);
 
   while ( 1 ) {
     if ( (i=current_node) ) {
@@ -1595,12 +1593,12 @@ inline Graph::flowtype Graph::maxflow()
     s_start = NULL;
 
     a_for_first = i -> first_out;
-    if (IS_ODD(a_for_first)) {
+    if (MF_IS_ODD(a_for_first)) {
       a_for_first = (arc_forward *) (((char *)a_for_first) + 1);
       a_for_last = (arc_forward *) ((a_for_first ++) -> shift);
     } else a_for_last = (i + 1) -> first_out;
     a_rev_first = i -> first_in;
-    if (IS_ODD(a_rev_first)) {
+    if (MF_IS_ODD(a_rev_first)) {
       a_rev_first = (arc_reverse *) (((char *)a_rev_first) + 1);
       a_rev_last = (arc_reverse *) ((a_rev_first ++) -> sister);
     } else a_rev_last = (i + 1) -> first_in;
@@ -1609,10 +1607,10 @@ inline Graph::flowtype Graph::maxflow()
       /* grow source tree */
       for (a_for=a_for_first; a_for<a_for_last; a_for++)
         if (a_for->r_cap) {
-          j = NEIGHBOR_NODE(i, a_for -> shift);
+          j = MF_NEIGHBOR_NODE(i, a_for -> shift);
           if (!j->parent) {
             j -> is_sink = 0;
-            j -> parent = MAKE_ODD(a_for);
+            j -> parent = MF_MAKE_ODD(a_for);
             j -> TS = i -> TS;
             j -> DIST = i -> DIST + 1;
             set_active(j);
@@ -1625,7 +1623,7 @@ inline Graph::flowtype Graph::maxflow()
           } else if (j->TS <= i->TS &&
                      j->DIST > i->DIST) {
             /* heuristic - trying to make the distance from j to the source shorter */
-            j -> parent = MAKE_ODD(a_for);
+            j -> parent = MF_MAKE_ODD(a_for);
             j -> TS = i -> TS;
             j -> DIST = i -> DIST + 1;
           }
@@ -1634,7 +1632,7 @@ inline Graph::flowtype Graph::maxflow()
         for (a_rev=a_rev_first; a_rev<a_rev_last; a_rev++) {
           a_for = a_rev -> sister;
           if (a_for->r_rev_cap) {
-            j = NEIGHBOR_NODE_REV(i, a_for -> shift);
+            j = MF_NEIGHBOR_NODE_REV(i, a_for -> shift);
             if (!j->parent) {
               j -> is_sink = 0;
               j -> parent = a_for;
@@ -1660,10 +1658,10 @@ inline Graph::flowtype Graph::maxflow()
       /* grow sink tree */
       for (a_for=a_for_first; a_for<a_for_last; a_for++)
         if (a_for->r_rev_cap) {
-          j = NEIGHBOR_NODE(i, a_for -> shift);
+          j = MF_NEIGHBOR_NODE(i, a_for -> shift);
           if (!j->parent) {
             j -> is_sink = 1;
-            j -> parent = MAKE_ODD(a_for);
+            j -> parent = MF_MAKE_ODD(a_for);
             j -> TS = i -> TS;
             j -> DIST = i -> DIST + 1;
             set_active(j);
@@ -1676,7 +1674,7 @@ inline Graph::flowtype Graph::maxflow()
           } else if (j->TS <= i->TS &&
                      j->DIST > i->DIST) {
             /* heuristic - trying to make the distance from j to the sink shorter */
-            j -> parent = MAKE_ODD(a_for);
+            j -> parent = MF_MAKE_ODD(a_for);
             j -> TS = i -> TS;
             j -> DIST = i -> DIST + 1;
           }
@@ -1684,7 +1682,7 @@ inline Graph::flowtype Graph::maxflow()
       for (a_rev=a_rev_first; a_rev<a_rev_last; a_rev++) {
         a_for = a_rev -> sister;
         if (a_for->r_cap) {
-          j = NEIGHBOR_NODE_REV(i, a_for -> shift);
+          j = MF_NEIGHBOR_NODE_REV(i, a_for -> shift);
           if (!j->parent) {
             j -> is_sink = 1;
             j -> parent = a_for;
@@ -1750,5 +1748,21 @@ inline Graph::termtype Graph::what_segment(node_id i)
   if (((node*)i)->parent && !((node*)i)->is_sink) return SOURCE;
   return SINK;
 }
+
+#undef MF_NODE_BLOCK_SIZE
+#undef MF_ARC_BLOCK_SIZE
+#undef MF_NODEPTR_BLOCK_SIZE
+#undef MF_IS_ODD
+#undef MF_MAKE_ODD
+#undef MF_MAKE_EVEN
+#undef MF_MAKE_ODD_REV
+#undef MF_MAKE_EVEN_REV
+#undef MF_POINTER_TO_INTEGER
+#undef MF_NEIGHBOR_NODE
+#undef MF_NEIGHBOR_NODE_REV
+#undef MF_TERMINAL
+#undef MF_ORPHAN
+#undef MF_INFINITE_D
+
 
 #endif

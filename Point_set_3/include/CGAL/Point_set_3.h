@@ -113,23 +113,27 @@ public:
   class Index
   {
     /// \cond SKIP_IN_MANUAL
+  public:
+#ifdef CGAL_POINT_SET_3_USE_STD_SIZE_T_AS_SIZE_TYPE
+    typedef std::size_t size_type;
+#else
+    typedef boost::uint32_t size_type;
+#endif
+  private:
     friend class Point_set_3;
     friend class Properties::Property_container<Point_set_3, Index>;
     template <class> friend class Properties::Property_array;
     template <class> friend struct Property_map;
     friend class std::vector<Index>;
-    std::size_t value;
+    size_type value;
     
-    // Only Point_set_3 and other friend classes are allowed to
-    // instantiate an Index with a specific value
-    Index (const std::size_t& value) : value (value) { }
-    /// \endcond
   public:
-    Index (const Index& index) : value (index) { }
-    Index () : value ((std::size_t)(-1)) { }
+    Index (const Index& index) : value (static_cast<size_type>(index)) { }
+    Index (const std::size_t& value) : value (static_cast<size_type>(value)) { }
+    Index () : value (static_cast<size_type>(-1)) { }
     Index operator= (const Index& index) { value = index.value; return *this; }
     /// \cond SKIP_IN_MANUAL
-    operator std::size_t() const { return value; }
+    operator std::size_t() const { return static_cast<std::size_t>(value); }
     bool operator== (const Index& index) const { return value == index.value; }
     bool operator!= (const Index& index) const { return value != index.value; }
     bool operator<  (const Index& index) const { return value < index.value; }
@@ -312,7 +316,7 @@ public:
   void clear()
   {
     m_base.clear();
-    boost::tie (m_indices, boost::tuples::ignore) = this->add_property_map<Index>("index", (std::size_t)(-1));
+    boost::tie (m_indices, boost::tuples::ignore) = this->add_property_map<Index>("index", typename Index::size_type(-1));
     boost::tie (m_points, boost::tuples::ignore) = this->add_property_map<Point>("point", Point (0., 0., 0.));
     m_nb_removed = 0;
   }
@@ -326,7 +330,7 @@ public:
   void clear_properties()
   {
     Base other;
-    other.template add<Index>("index", (std::size_t)(-1));
+    other.template add<Index>("index", typename Index::size_type(-1));
     other.template add<Point>("point", Point (0., 0., 0.));
     other.resize(m_base.size());
     other.transfer(m_base);
@@ -577,8 +581,7 @@ public:
   */
   void remove (const Index& index)
   {
-    std::swap (index, *(end() - 1));
-    ++ m_nb_removed;
+    remove (m_indices.begin() + index);
   }
 
 

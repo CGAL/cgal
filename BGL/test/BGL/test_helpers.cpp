@@ -59,7 +59,27 @@ int main()
   assert(CGAL::is_hexahedron(hd,m));
   assert(CGAL::is_quad_mesh(m));
   assert(CGAL::is_valid(m));
+  m.clear();
+  CGAL::make_icosahedron<Mesh, Point_3>(m);
+  assert(num_faces(m) == 20);
+  assert(CGAL::is_triangle_mesh(m));
+  assert(CGAL::is_valid(m));
+  m.clear();
+  hd = CGAL::make_pyramid<Mesh, Point_3>(3, m);
+  assert(num_faces(m) == 6);
+  assert(CGAL::is_triangle_mesh(m));
+  assert(CGAL::is_valid(m));
+  m.clear();
+  hd = CGAL::make_regular_prism<Mesh, Point_3>(4, m);
+  assert(num_faces(m) == 16);
+  assert(CGAL::is_triangle_mesh(m));
+  assert(CGAL::is_valid(m));
+  m.clear();
+  CGAL::make_grid(3,3,m);
+  assert(num_faces(m) == 9);
+  assert(CGAL::is_quad_mesh(m));
+  assert(CGAL::is_valid(m));
 
-  std::cerr << "done" << std::endl; 
+  std::cerr << "done" << std::endl;
   return 0;
 }

@@ -19,6 +19,7 @@ CGAL_ipelets
 Circular_kernel_2 
 Circular_kernel_3 
 Circulator 
+Classification 
 Combinatorial_map 
 Cone_spanners_2 
 Convex_decomposition_3 
@@ -86,6 +87,7 @@ Ridges_3
 Scale_space_reconstruction_3 
 Segment_Delaunay_graph_2 
 Segment_Delaunay_graph_Linf_2 
+Set_movable_separability_2 
 Skin_surface_3 
 Snap_rounding_2 
 Solver_interface 

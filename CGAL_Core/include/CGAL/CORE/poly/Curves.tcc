@@ -34,6 +34,7 @@
  * $Id$
  ***************************************************************************/
 
+#include <sstream>
 
 //CONSTRUCTORS FOR THE BIPOLY CLASS
   ////////////////////////////////////////////////////////
@@ -306,7 +307,9 @@ int BiPoly<NT>::getbasicterm(string s, BiPoly<NT> & P){
     Polynomial<NT> q(0, cs);
     P.coeffX.push_back(q);
   }else{
+#ifdef CGAL_CORE_TRACE
     std::cout <<"ERROR IN PARSING BASIC TERM" << std::endl;
+#endif
   }
   //i+1 points to the beginning of next syntaxtic object in the string.
  if(cstr[i+1] == '^'){
@@ -404,8 +407,11 @@ BiPoly<NT> BiPoly<NT>::getbipoly(string s){
 	P += R;
       else if(cstr[oind + 1] == '-')
 	P -= R;
-      else
+      else{
+#ifdef CGAL_CORE_TRACE
 	std::cout << "ERROR IN PARSING BIPOLY! " << std::endl;
+#endif
+      }
     }
 
     return P;
@@ -1337,7 +1343,11 @@ cout <<"Number of roots at " << xCurr << " are " << numRoots<<endl;
       numPoints++;
     }//if
     xCurr += eps;
-if (!xCurr.isExact()) std::cout<<"xCurr has error! xCurr=" << xCurr << std::endl;
+    if (!xCurr.isExact()){
+      std::ostringstream oss;
+      oss << "xCurr has error! xCurr=" << xCurr;
+      core_error(oss.str(), __FILE__, __LINE__, false);
+    }
    }//main while loop
 
    // Need to flush out the final x-interval:

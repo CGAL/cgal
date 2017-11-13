@@ -179,6 +179,7 @@ bool test_get_new_mark()
   if ( !res )
   {
       std::cerr<<"PB we can reserve NB_MARK+1 !! mark, exit."<<std::endl;
+      map.free_mark(mark); // This is never supposed to occur.
       return false;
   }
   

@@ -8,12 +8,12 @@ The class `Regular_triangulation_cell_base_with_weighted_circumcenter_3` derives
 `Cb`, a cell base class of a 3D triangulation.
 It is the default cell base class of regular triangulations.
 
-\tparam RegularTriangulationTraits_3 is the geometric traits class.
+\tparam Traits is the geometric traits class. It must be a model of `RegularTriangulationTraits_3`.
 
 \tparam Cb is a cell base class from which `Regular_triangulation_cell_base_3`
 derives. It must be a model of `TriangulationCellBase_3`. 
 By default, this parameter is instantiated by 
-`Triangulation_cell_base_3<RegularTriangulationTraits_3>`. 
+`Triangulation_cell_base_3<Traits>`.
 
 \cgalModels `RegularTriangulationCellBase_3`
 
@@ -23,39 +23,59 @@ By default, this parameter is instantiated by
 
 */
 
-template< typename RegularTriangulationTraits_3, typename Cb >
-class Regular_triangulation_cell_base_3 : public Cb {
+template< typename Traits, typename Cb >
+class Regular_triangulation_cell_base_3
+  : public Cb
+{
 public:
 
 /// \name Types 
 /// @{
-typedef RegularTriangulationTraits_3::Bare_point Bare_point;
+typedef Traits::Point_3 Point_3;
+
+typedef Traits::Weighted_point_3 Point;
+
+typedef std::list<Point> Point_container;
+
+typedef Point_container::iterator Point_iterator;
+
 /// @}
 
-/*! \name Access function 
+/// \name Hidden points-related functions
+/// Not every weighted point inserted in a regular triangulation necessarily
+/// appears in the trinagulation. If the weight of a point is too small compared
+/// to other points, it might be <I>hidden</I>. These hidden vertices are stored
+/// in a unique corresponding cell (defined through v->cell()). The following
+/// functions provide set and get functionalities.
+/// @{
 
-As a model of the concept `RegularTriangulationCellBase_3`, 
-`Regular_triangulation_cell_base_3` 
-provides a `weighted_circumcenter()` member fonction. 
-
-In this model, the `weighted_circumcenter()` member fonction returns the 
-<b>weighted circumcenter</b> of the cell, computed 
-by the `ConstructWeightedCircumcenter` constructor of the traits class.
-
-Note that this point has no weight.
+/*!
+Returns an iterator pointing to the first hidden point.
 */
+Point_iterator hidden_points_begin();
+
+/*!
+Returns a past-the-end iterator.
+*/
+Point_iterator hidden_points_end();
+
+/*!
+Adds `p` to the set of hidden points of the cell.
+*/
+void hide_point(const Point & p);
+
+/// @}
 
 /// @{
 /*! 
 Returns the weighted circumcenter of the cell.
-Be careful that the return type is `RegularTriangulationTraits_3::Bare_point`,
+Be careful that the return type is `Point_3`,
 and the radius of the weighted 
 circumcenter is not supposed to be computed
 by the constructor `Construct_weighted_circumcenter_3` of the traits
-class, so the returned point has no weight.
+class, hence the returned point has no weight.
 */ 
-const Bare_point& weighted_circumcenter(
-  const RegularTriangulationTraits_3& gt = RegularTriangulationTraits_3()) const; 
+const Point_3& weighted_circumcenter(const Traits& gt = Traits()) const;
 
 /// @}
 

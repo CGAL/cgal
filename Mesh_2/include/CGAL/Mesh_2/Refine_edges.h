@@ -69,7 +69,7 @@ namespace Mesh_2 {
         typedef typename Tr::Edge Result_type;
 
         /** \param tr_ points to the triangulation. */
-        explicit Is_a_constrained_edge(const Tr& tr_) : tr(tr_) {}
+        explicit Is_a_constrained_edge(const Tr& tr_) : tr(tr_), i(-1) {}
 
         bool operator()(const Constrained_edge& ce)
         {
@@ -634,7 +634,7 @@ protected:
 
 private: /** \name DEBUGGING TYPES AND DATAS */
   class From_pair_of_vertex_to_edge 
-    : public std::unary_function<Constrained_edge, Edge>
+    : public CGAL::unary_function<Constrained_edge, Edge>
   {
     Tr& tr;
   public:

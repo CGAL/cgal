@@ -64,7 +64,6 @@ public:
     /// Set 's' as an incident full_cell
     void set_full_cell(Full_cell_handle s) /* Concept */
     {
-        CGAL_precondition( Full_cell_handle() != s );
         full_cell_ = s;
     }
 

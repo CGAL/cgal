@@ -155,15 +155,22 @@ public:
   typedef typename Triangulation::List_faces       List_faces;
   typedef typename Triangulation::List_vertices    List_vertices;
   typedef typename Triangulation::List_constraints List_constraints;
+  typedef typename Triangulation::Constrained_edges_iterator Constrained_edges_iterator;
 
   typedef Pct2_vertex_handle_less_xy<Self>         Vh_less_xy;
   typedef Polyline_constraint_hierarchy_2<Vertex_handle, Vh_less_xy, Point>
                                                    Constraint_hierarchy;
 public:
-  typedef Tag_true                                Constraint_hierarchy_tag;
+  // Tag to mark the presence of a hierarchy of constraints
+  typedef Tag_true                                 Constraint_hierarchy_tag;
+
+  //Tag to distinguish Delaunay from regular triangulations
+  typedef Tag_false                                Weighted_tag;
+
+  // Tag to distinguish periodic triangulations from others
+  typedef Tag_false                                Periodic_tag;
 
   // for user interface with the constraint hierarchy
-
   typedef typename Constraint_hierarchy::Vertex_it 
                                             Vertices_in_constraint_iterator;
   

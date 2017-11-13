@@ -35,11 +35,11 @@ public:
      return QList<QAction*>();
    }
    QString name() const { return "surface_mesh_io_plugin"; }
-   QString nameFilters() const { return "OFF files to Surface_mesh (*.off)"; }
+   QString nameFilters() const { return "OFF files to Surface_mesh (*.off);;Wavefront Surface_mesh OBJ (*.obj)"; }
    bool canLoad() const { return true; }
    CGAL::Three::Scene_item* load(QFileInfo fileinfo) {
-     if(fileinfo.suffix().toLower() != "off") return 0;
-
+     if(fileinfo.suffix().toLower() == "off")
+     {
      // Open file
      std::ifstream in(fileinfo.filePath().toUtf8());
      if(!in) {
@@ -47,7 +47,7 @@ public:
        return NULL;
      }
 
-     Scene_surface_mesh_item::SMesh *surface_mesh = new Scene_surface_mesh_item::SMesh();
+     SMesh *surface_mesh = new SMesh();
      in >> *surface_mesh;
      if(!in || surface_mesh->is_empty())
      {
@@ -69,17 +69,46 @@ public:
      Scene_surface_mesh_item* item = new Scene_surface_mesh_item(surface_mesh);
      item->setName(fileinfo.completeBaseName());
      return item;
+     }
+     else if(fileinfo.suffix().toLower() == "obj")
+     {
+       // Open file
+       std::ifstream in(fileinfo.filePath().toUtf8());
+       if(!in) {
+         std::cerr << "Error! Cannot open file " << (const char*)fileinfo.filePath().toUtf8() << std::endl;
+         return NULL;
+       }
+       Scene_surface_mesh_item* item = new Scene_surface_mesh_item();
+       if(item->load_obj(in))
+         return item;
+     }
+
+     return 0;
 
    }
    bool canSave(const CGAL::Three::Scene_item* ) {
-     return false;
+     return true;
    }
 
-   bool save(const CGAL::Three::Scene_item* , QFileInfo ) {
+   bool save(const CGAL::Three::Scene_item* item, QFileInfo fileinfo) {
+
+     const Scene_surface_mesh_item* sm_item =
+       qobject_cast<const Scene_surface_mesh_item*>(item);
+
+     if(!sm_item)
+       return false;
+
+     std::ofstream out(fileinfo.filePath().toUtf8());
+     out.precision (std::numeric_limits<double>::digits10 + 2);
+
+     if(fileinfo.suffix().toLower() == "off"){
+       return (sm_item && sm_item->save(out));
+     }
+     if(fileinfo.suffix().toLower() == "obj"){
+       return (sm_item && sm_item->save_obj(out));
+     }
      return false;
    }
-
-
 
 private:
    QList<QAction*> _actions;

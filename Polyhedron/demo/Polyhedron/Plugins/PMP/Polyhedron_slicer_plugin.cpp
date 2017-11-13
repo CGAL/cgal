@@ -4,6 +4,7 @@
 #include "Messages_interface.h"
 #include "Scene_plane_item.h"
 #include "Scene_polyhedron_item.h"
+#include "Scene_surface_mesh_item.h"
 #include "Scene_polylines_item.h"
 #include "Scene.h"
 
@@ -36,7 +37,12 @@ class Polyhedron_demo_polyhedron_slicer_plugin :
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 public:
-  bool applicable(QAction*) const { return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex())); }
+  bool applicable(QAction*) const
+  { 
+    return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex())) ||
+           qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex())); 
+  }
+
   void print_message(QString message) { messages->information(message);}
 
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface* m);
@@ -83,7 +89,8 @@ private:
   QDockWidget* dock_widget;
   Ui::Polyhedron_slicer ui_widget;
   
-  void intersection_of_plane_Polyhedra_3_using_AABB_wrapper(Polyhedron& mesh, 
+  template <typename TriangleMesh>
+  void intersection_of_plane_Polyhedra_3_using_AABB_wrapper(TriangleMesh& mesh, 
     const std::vector<Epic_kernel::Plane_3>& planes,
     const std::vector<qglviewer::Vec>& plane_positions,
     std::list<std::vector<Epic_kernel::Point_3> >& polylines);
@@ -213,10 +220,12 @@ bool Polyhedron_demo_polyhedron_slicer_plugin::on_Update_plane_button_clicked() 
 void Polyhedron_demo_polyhedron_slicer_plugin::on_Generate_button_clicked()
 {
   Scene_polyhedron_item* item = getSelectedItem<Scene_polyhedron_item>();
-  if(!item) { 
+  Scene_surface_mesh_item* sm_item = getSelectedItem<Scene_surface_mesh_item>();
+  if(!item && ! sm_item) { 
     print_message("Error: There is no selected Scene_polyhedron_item!");
     return; 
   }
+  QString item_name = (item)?item->name() : sm_item->name();
 
   if(!on_Update_plane_button_clicked()) { return; }
   const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
@@ -246,10 +255,11 @@ void Polyhedron_demo_polyhedron_slicer_plugin::on_Generate_button_clicked()
   }
 
   // construct a bbox for selected polyhedron
-  const CGAL::Three::Scene_interface::Bbox& bbox = item->bbox();
+  const CGAL::Three::Scene_interface::Bbox& bbox = (item)?item->bbox(): sm_item->bbox();
   CGAL::Bbox_3 cgal_bbox(bbox.xmin(), bbox.ymin(), bbox.zmin(),
     bbox.xmax(), bbox.ymax(), bbox.zmax());
-  Polyhedron* poly = item->polyhedron();
+  Polyhedron* poly = (item)?item->polyhedron():NULL;
+  SMesh* smesh = (sm_item)?sm_item->polyhedron():NULL;
 
   // continue generating planes while inside bbox
   std::vector<Epic_kernel::Plane_3> planes;
@@ -283,13 +293,17 @@ void Polyhedron_demo_polyhedron_slicer_plugin::on_Generate_button_clicked()
     Scene_polylines_item* new_polylines_item = new Scene_polylines_item();
     QTime time; time.start();
     // call algorithm and fill polylines in polylines_item
-    intersection_of_plane_Polyhedra_3_using_AABB_wrapper(*poly, planes, plane_positions, new_polylines_item->polylines);
+    if(item){
+      intersection_of_plane_Polyhedra_3_using_AABB_wrapper(*poly, planes, plane_positions, new_polylines_item->polylines);
+    }else{
+      intersection_of_plane_Polyhedra_3_using_AABB_wrapper(*smesh, planes, plane_positions, new_polylines_item->polylines);
+    }
     // set names etc and print timing
     print_message( QString("Done: processed %1 cuts - generated %2 polylines in %3 ms!").
       arg(planes.size()).arg(new_polylines_item->polylines.size()).arg(time.elapsed()) );
 
     new_polylines_item->setName(QString("%1 with %2 cuts").
-      arg(item->name()).arg(planes.size()) );
+      arg(item_name).arg(planes.size()) );
     new_polylines_item->setColor(Qt::green);
     new_polylines_item->setRenderingMode(Wireframe);
     scene->addItem(new_polylines_item);
@@ -308,7 +322,7 @@ void Polyhedron_demo_polyhedron_slicer_plugin::on_Generate_button_clicked()
       Scene_polylines_item* new_polylines_item = new Scene_polylines_item();
       new_polylines_item->polylines.push_back(*it);
       new_polylines_item->setName(QString("%1 with %2 cuts %3").
-        arg(item->name()).arg(planes.size()).arg(counter) );
+        arg(item_name).arg(planes.size()).arg(counter) );
       new_polylines_item->setColor(Qt::green);
       new_polylines_item->setRenderingMode(Wireframe);
       scene->addItem(new_polylines_item);
@@ -334,13 +348,14 @@ void Polyhedron_demo_polyhedron_slicer_plugin::dock_widget_closed() {
   scene->erase(id);
 }
 // this function assumes 'planes' are parallel
+template <typename TriangleMesh>
 void Polyhedron_demo_polyhedron_slicer_plugin::intersection_of_plane_Polyhedra_3_using_AABB_wrapper(
-  Polyhedron& poly, 
+  TriangleMesh& poly, 
   const std::vector<Epic_kernel::Plane_3>& planes,
   const std::vector<qglviewer::Vec>& plane_positions,
   std::list<std::vector<Epic_kernel::Point_3> >& polylines) 
 {
-  CGAL::Polygon_mesh_slicer<Polyhedron, Epic_kernel> slicer(poly);
+  CGAL::Polygon_mesh_slicer<TriangleMesh, Epic_kernel> slicer(poly);
   std::vector<qglviewer::Vec>::const_iterator plane_position_it = plane_positions.begin();
   for(std::vector<Epic_kernel::Plane_3>::const_iterator plane_it = planes.begin(); plane_it != planes.end(); ++plane_it, ++plane_position_it) 
     slicer(*plane_it, std::front_inserter(polylines));

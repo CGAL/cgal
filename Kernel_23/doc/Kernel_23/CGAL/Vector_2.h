@@ -124,13 +124,13 @@ Kernel::FT y() const;
 
 
 /*!
-returns the i'th homogeneous coordinate of `v`, starting with 0. 
+returns the i'th homogeneous coordinate of `v`.
 \pre \f$ 0\leq i \leq2\f$. 
 */ 
 Kernel::RT homogeneous(int i) const; 
 
 /*!
-returns the i'th Cartesian coordinate of `v`, starting at 0. 
+returns the i'th Cartesian coordinate of `v`.
 \pre \f$ 0\leq i \leq1\f$. 
 */ 
 Kernel::FT cartesian(int i) const; 

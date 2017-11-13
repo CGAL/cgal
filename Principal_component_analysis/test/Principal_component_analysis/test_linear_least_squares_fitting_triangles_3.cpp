@@ -1,6 +1,10 @@
 // Example program for the linear_least_square_fitting function on set of triangles in 3D
 #include <CGAL/Cartesian.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
+#ifdef CGAL_EIGEN3_ENABLED
+#include <CGAL/Diagonalize_traits.h>
+#endif
+
 #include <list>
 
 typedef double               FT;
@@ -41,6 +45,23 @@ int main()
   linear_least_squares_fitting_3(triangles.begin(),triangles.end(),plane,centroid,CGAL::Dimension_tag<2>());
   linear_least_squares_fitting_3(triangles.begin(),triangles.end(),plane,centroid,CGAL::Dimension_tag<1>());
   linear_least_squares_fitting_3(triangles.begin(),triangles.end(),plane,centroid,CGAL::Dimension_tag<0>());
+  
+  // If Eigen is available, it's used by default everywhere.
+  // These additional lines test the fallback version
+#ifdef CGAL_EIGEN3_ENABLED
+  linear_least_squares_fitting_3(triangles.begin(),triangles.end(),line,centroid, CGAL::Dimension_tag<2>(),
+                                 Kernel(), CGAL::Diagonalize_traits<FT, 3>());
+  linear_least_squares_fitting_3(triangles.begin(),triangles.end(),line,centroid, CGAL::Dimension_tag<1>(),
+                                 Kernel(), CGAL::Diagonalize_traits<FT, 3>());
+  linear_least_squares_fitting_3(triangles.begin(),triangles.end(),line,centroid, CGAL::Dimension_tag<0>(),
+                                 Kernel(), CGAL::Diagonalize_traits<FT, 3>());
+  linear_least_squares_fitting_3(triangles.begin(),triangles.end(),plane,centroid,CGAL::Dimension_tag<2>(),
+                                 Kernel(), CGAL::Diagonalize_traits<FT, 3>());
+  linear_least_squares_fitting_3(triangles.begin(),triangles.end(),plane,centroid,CGAL::Dimension_tag<1>(),
+                                 Kernel(), CGAL::Diagonalize_traits<FT, 3>());
+  linear_least_squares_fitting_3(triangles.begin(),triangles.end(),plane,centroid,CGAL::Dimension_tag<0>(),
+                                 Kernel(), CGAL::Diagonalize_traits<FT, 3>());
+#endif
   
   return 0;
 }

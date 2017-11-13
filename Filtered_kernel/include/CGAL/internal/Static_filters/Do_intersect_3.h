@@ -51,6 +51,7 @@ class Do_intersect_3
   typedef typename K_base::Ray_3     Ray_3;
   typedef typename K_base::Segment_3 Segment_3;
   typedef typename K_base::Triangle_3 Triangle_3;
+  typedef typename K_base::Sphere_3 Sphere_3;
   typedef typename K_base::Do_intersect_3 Base;
 
 public:
@@ -180,6 +181,118 @@ public:
     return Base::operator()(r,b);
   }
 
+  result_type 
+  operator()(const Bbox_3& b, const Sphere_3 &s) const
+  {
+    return this->operator()(s, b);
+  }
+
+  result_type 
+  operator()(const Sphere_3 &s, const Bbox_3& b) const
+  {
+    CGAL_BRANCH_PROFILER_3(std::string("semi-static failures/attempts/calls to   : ") +
+                           std::string(CGAL_PRETTY_FUNCTION), tmp);
+    
+    Get_approx<Point_3> get_approx; // Identity functor for all points
+    const Point_3& c = s.center();
+    
+    double scx, scy, scz, ssr, bxmin, bymin, bzmin, bxmax, bymax, bzmax;
+
+    if (fit_in_double(get_approx(c).x(), scx) &&
+        fit_in_double(get_approx(c).y(), scy) &&
+        fit_in_double(get_approx(c).z(), scz) &&
+        fit_in_double(s.squared_radius(), ssr) &&
+        fit_in_double(b.xmin(), bxmin) &&
+        fit_in_double(b.ymin(), bymin) &&
+        fit_in_double(b.zmin(), bzmin) &&
+        fit_in_double(b.xmax(), bxmax) &&
+        fit_in_double(b.ymax(), bymax) &&
+        fit_in_double(b.zmax(), bzmax))
+    {
+      CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
+      
+      double distance = 0;
+      double max1 = 0;
+  
+      if(scx < bxmin)
+      {
+        double bxmin_scx = bxmin - scx;
+        max1 = bxmin_scx;
+    
+        distance = square(bxmin_scx);
+      }
+      else if(scx > bxmax)
+      {
+        double scx_bxmax = scx - bxmax;
+        max1 = scx_bxmax;
+
+        distance = square(scx_bxmax);
+      }
+
+      if(scy < bymin)
+      {
+        double bymin_scy = bymin - scy;
+        if(max1 < bymin_scy)
+          max1 = bymin_scy;
+
+        distance += square(bymin_scy);
+      }
+      else if(scy > bymax)
+      {
+        double scy_bymax = scy - bymax;
+        if(max1 < scy_bymax)
+          max1 = scy_bymax;
+
+        distance += square(scy_bymax);
+      }
+
+      if(scz < bzmin)
+      {
+        double bzmin_scz = bzmin - scz;
+        if(max1 < bzmin_scz)
+          max1 = bzmin_scz;
+
+        distance += square(bzmin_scz);
+      }
+      else if(scz > bzmax)
+      {
+        double scz_bzmax = scz - bzmax;
+        if(max1 < scz_bzmax)
+          max1 = scz_bzmax;
+
+        distance += square(scz_bzmax);
+      }
+
+      double double_tmp_result = (distance - ssr);
+      double max2 = CGAL::abs(ssr);
+  
+      if ((max1 < 3.33558365626356687717e-147) || (max2 < 1.11261183279326254436e-293)){
+        CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
+        return Base::operator()(s,b);
+      }
+      if ((max1 > 1.67597599124282407923e+153) || (max2 > 2.80889552322236673473e+306)){
+        CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
+        return Base::operator()(s,b);
+      }
+
+      double eps = 1.99986535548615598560e-15 * (std::max) (max2, (max1 * max1));
+  
+      if (double_tmp_result > eps)
+        return false;
+      else 
+      {
+        if (double_tmp_result < -eps)
+          return true;
+        else {
+          CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
+          return Base::operator()(s,b);
+        }
+      }
+
+      CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
+    }
+    return Base::operator()(s,b);
+  }
 
 
   // Computes the epsilon for Bbox_3_Segment_3_do_intersect.

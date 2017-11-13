@@ -51,7 +51,7 @@ MainWindow::open_file()
   QString fileName = QFileDialog::getOpenFileName(this,
 						  tr("Open Points File"),
 						  "./data",
-						  tr("pts files (*.pts)"));
+                                                  tr("pts files (*.pts)"));
 
   if(! fileName.isEmpty()){
     open(fileName);

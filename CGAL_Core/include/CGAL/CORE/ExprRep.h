@@ -42,6 +42,7 @@
 #include <CGAL/CORE/Real.h>
 #include <CGAL/CORE/Filter.h>
 #include <CGAL/CORE/poly/Sturm.h>
+#include <sstream>
 
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
@@ -51,7 +52,7 @@
 
 namespace CORE { 
 
-#if defined(CORE_DEBUG_BOUND) && !defined(CGAL_HEADER_ONLY)
+#if defined(CGAL_CORE_DEBUG_BOUND) && !defined(CGAL_HEADER_ONLY)
 // These counters are incremented each time each bound is recognized as equal
 // to the best one in computeBound().
 extern unsigned int BFMSS_counter;
@@ -91,7 +92,7 @@ struct NodeInfo {
   bool     flagsComputed;  	///< true if rootBound parameters have been computed
   extLong  knownPrecision; 	///< Precision achieved by current approx value
 
-#ifdef CORE_DEBUG
+#ifdef CGAL_CORE_DEBUG
   extLong relPrecision;
   extLong absPrecision;
   unsigned long numNodes;
@@ -229,7 +230,7 @@ public:
     return nodeInfo->knownPrecision;
   }
 
-#ifdef CORE_DEBUG
+#ifdef CGAL_CORE_DEBUG
   const extLong& relPrecision() const {
     return nodeInfo->relPrecision;
   }
@@ -463,7 +464,7 @@ public:
   /// reset the flag "visited"
   virtual void clearFlag() = 0;
   //@}
-#ifdef CORE_DEBUG
+#ifdef CGAL_CORE_DEBUG
   virtual unsigned long dagSize() = 0;
   virtual void fullClearFlag() = 0;
 #endif
@@ -502,7 +503,7 @@ protected:
   void clearFlag() {
     visited() = false;
   }
-#ifdef CORE_DEBUG
+#ifdef CGAL_CORE_DEBUG
   unsigned long dagSize();
   void fullClearFlag();
 #endif
@@ -746,7 +747,7 @@ protected:
   /// clear visited flag
   void clearFlag();
 
-#ifdef CORE_DEBUG
+#ifdef CGAL_CORE_DEBUG
   unsigned long dagSize();
   void fullClearFlag();
 #endif
@@ -854,7 +855,7 @@ protected:
   /** This is now a misnomer, but historically accurate.
    */
   extLong count();
-#ifdef CORE_DEBUG
+#ifdef CGAL_CORE_DEBUG
   unsigned long dagSize();
   void fullClearFlag();
 #endif
@@ -1024,12 +1025,12 @@ void AddSubRep<Operator>::computeExactFlags() {
   extLong l  = core_max(lf, ls);
   extLong u  = core_max(uf, us);
 
-#ifdef CORE_TRACE
+#ifdef CGAL_CORE_TRACE
   std::cout << "INSIDE Add/sub Rep: " << std::endl;
 #endif
 
   if (Op(sf, ss) != 0) {     // can't possibly cancel out
-#ifdef CORE_TRACE
+#ifdef CGAL_CORE_TRACE
     std::cout << "Add/sub Rep:  Op(sf, ss) non-zero" << std::endl;
 #endif
 
@@ -1037,38 +1038,38 @@ void AddSubRep<Operator>::computeExactFlags() {
     lMSB() = l;            // lMSB = core_min(lf, ls)+1 better
     sign() = sf;
   } else {               // might cancel out
-#ifdef CORE_TRACE
+#ifdef CGAL_CORE_TRACE
     std::cout << "Add/sub Rep:  Op(sf, ss) zero" << std::endl;
 #endif
 
     uMSB() = u + EXTLONG_ONE;
     uMSB() = u;
     if (lf >= us + EXTLONG_TWO) {// one is at least 1 order of magnitude larger
-#ifdef CORE_TRACE
+#ifdef CGAL_CORE_TRACE
       std::cout << "Add/sub Rep:  Can't cancel" << std::endl;
 #endif
 
       lMSB() = lf - EXTLONG_ONE;     // can't possibly cancel out
       sign() = sf;
     } else if (ls >= uf + EXTLONG_TWO) {
-#ifdef CORE_TRACE
+#ifdef CGAL_CORE_TRACE
       std::cout << "Add/sub Rep:  Can't cancel" << std::endl;
 #endif
 
       lMSB() = ls - EXTLONG_ONE;
       sign() = Op(ss);
     } else if (ffVal.isOK()) {// begin filter computation
-#ifdef CORE_TRACE
+#ifdef CGAL_CORE_TRACE
       std::cout << "Add/sub Rep:  filter used" << std::endl;
 #endif
-#ifdef CORE_DEBUG_FILTER
+#ifdef CGAL_CORE_DEBUG_FILTER
       std::cout << "call filter in " << op() << "Rep" << std::endl;
 #endif
       sign() = ffVal.sign();
       lMSB() = ffVal.lMSB();
       uMSB() = ffVal.uMSB();
     } else {			// about the same size, might cancel out
-#ifdef CORE_TRACE
+#ifdef CGAL_CORE_TRACE
       std::cout << "Add/sub Rep:  iteration start" << std::endl;
 #endif
 
@@ -1108,7 +1109,7 @@ void AddSubRep<Operator>::computeExactFlags() {
           sign() = 0;
         }
       } else {  // else do progressive evaluation
-#ifdef CORE_TRACE
+#ifdef CGAL_CORE_TRACE
         std::cout << "Add/sub Rep:  progressive eval" << std::endl;
 #endif
         // Oct 30, 2002: fixed a bug here!  Old versions used relative
@@ -1124,7 +1125,7 @@ void AddSubRep<Operator>::computeExactFlags() {
         extLong ua = lowBound.asLong() + EXTLONG_ONE;
         //   NOTE: ua is allowed to be CORE_INFTY
 	
-#ifdef CORE_DEBUG_BOUND
+#ifdef CGAL_CORE_DEBUG_BOUND
         std::cout << "DebugBound:" << "ua = " << ua << std::endl;
 #endif
         // We initially set the lMSB and sign as if the value is zero:
@@ -1135,7 +1136,7 @@ void AddSubRep<Operator>::computeExactFlags() {
 
         // Now we try to determine the real lMSB and sign,
         // in case it is not really zero:
-#ifdef CORE_TRACE
+#ifdef CGAL_CORE_TRACE
         std::cout << "Upper bound (ua) for iteration is " << ua << std::endl;
 	std::cout << "Starting iteration at i = " << i << std::endl;
 #endif
@@ -1156,7 +1157,7 @@ void AddSubRep<Operator>::computeExactFlags() {
           Real newValue = Op(first->getAppValue(CORE_INFTY, i),
                              second->getAppValue(CORE_INFTY, i));
 
-#ifdef CORE_TRACE
+#ifdef CGAL_CORE_TRACE
 	  if (newValue.getRep().ID() == REAL_BIGFLOAT) 
 	  std::cout << "BigFloat! newValue->rep->ID() = "
 		  << newValue.getRep().ID() << std::endl;
@@ -1180,10 +1181,10 @@ void AddSubRep<Operator>::computeExactFlags() {
             lMSB() = newValue.lMSB();
             uMSB() = newValue.uMSB();
             sign() = newValue.sign();
-#ifdef CORE_DEBUG_BOUND
+#ifdef CGAL_CORE_DEBUG_BOUND
             std::cout << "DebugBound(Exit Loop): " << "i=" << i << std::endl;
 #endif
-#ifdef CORE_TRACE
+#ifdef CGAL_CORE_TRACE
 	    std::cout << "Zero is not in, lMSB() = " << lMSB()
 		    << ", uMSB() = " << uMSB()
 		    << ", sign() = " << sign() << std::endl;
@@ -1200,7 +1201,7 @@ void AddSubRep<Operator>::computeExactFlags() {
             if (get_static_EscapePrecWarning())
               std::cout<< "Escape Precision triggered at "
 		      << get_static_EscapePrec() << " bits" << std::endl;
-#ifdef CORE_DEBUG
+#ifdef CGAL_CORE_DEBUG
             std::cout << "EscapePrecFlags=" << get_static_EscapePrecFlag() << std::endl;
             std::cout << "ua =" << ua  << ",lowBound=" << lowBound << std::endl;
 #endif
@@ -1208,7 +1209,7 @@ void AddSubRep<Operator>::computeExactFlags() {
           }// if
         }// for (long i=1...)
 
-#if defined(CORE_DEBUG_BOUND) && !defined(CGAL_HEADER_ONLY)
+#if defined(CGAL_CORE_DEBUG_BOUND) && !defined(CGAL_HEADER_ONLY)
         rootBoundHitCounter++;
 #endif
 
@@ -1243,8 +1244,9 @@ void AddSubRep<Operator>::computeApproxValue(const extLong& relPrec,
   // handling overflow and underflow
   if (lMSB() >= EXTLONG_BIG || lMSB() <= EXTLONG_SMALL)
   {
-    std::cerr << "lMSB = " << lMSB() << std::endl; // should be in core_error
-    core_error("CORE WARNING: a huge lMSB in AddSubRep",
+    std::ostringstream oss;
+    oss << "CORE WARNING: a huge lMSB in AddSubRep: " << lMSB();
+    core_error(oss.str(),
 	 	__FILE__, __LINE__, false);
   }
 
@@ -1338,7 +1340,7 @@ inline int ExprRep::getExactSign() {
 
   if (!flagsComputed()) {
     degreeBound();
-#ifdef CORE_DEBUG
+#ifdef CGAL_CORE_DEBUG
     dagSize();
     fullClearFlag();
 #endif

@@ -96,6 +96,13 @@ namespace CartesianKernelFunctors {
 		     r.x(), r.y(), r.z(),
 		     s.x(), s.y(), s.z());
     }
+
+    result_type
+    operator()(const Point_3& p, const Point_3& q,
+               const Point_3& r, const Vector_3& n) const
+    {
+      return enum_cast<Angle>(orientation(p,q,r,r+n));
+    }
   };
 
   template <typename K>
@@ -507,8 +514,6 @@ namespace CartesianKernelFunctors {
     }
   };
 
-
-
   template < typename K >
   class Compare_power_distance_2
   {
@@ -517,18 +522,17 @@ namespace CartesianKernelFunctors {
     typedef typename K::Point_2                  Point_2;
     typedef typename K::Comparison_result        Comparison_result;
     
-    typedef Comparison_result   result_type;
+    typedef Comparison_result                    result_type;
     
     Comparison_result operator()(const Point_2& r,
-                                 const Weighted_point_2& q,
-                                 const Weighted_point_2& p) const
+                                 const Weighted_point_2& p,
+                                 const Weighted_point_2& q) const
     {
       return CGAL::compare_power_distanceC2(p.x(), p.y(), p.weight(),
                                             q.x(), q.y(), q.weight(),
                                             r.x(), r.y());
     }
   };
-
 
   template <typename K>
   class Compare_squared_radius_3
@@ -1039,7 +1043,6 @@ namespace CartesianKernelFunctors {
 
   };
 
-  // TODO ...
   template <typename K>
   class Compute_squared_radius_2
   {
@@ -1047,29 +1050,21 @@ namespace CartesianKernelFunctors {
     typedef typename K::Point_2     Point_2;
     typedef typename K::Circle_2    Circle_2;
   public:
-    template<class>
-    struct result {
-      typedef FT type;
-    };
-    
-    template<typename F>
-    struct result<F(Circle_2)> {
-      typedef const FT& type;
-    };
+    typedef FT                      result_type;
 
-    const FT&
+    result_type
     operator()( const Circle_2& c) const
     { return c.rep().squared_radius(); }
 
-    FT
+    result_type
     operator()( const Point_2& /*p*/) const
     { return FT(0); }
 
-    FT
+    result_type
     operator()( const Point_2& p, const Point_2& q) const
     { return squared_radiusC2(p.x(), p.y(), q.x(), q.y()); }
 
-    FT
+    result_type
     operator()( const Point_2& p, const Point_2& q, const Point_2& r) const
     { return squared_radiusC2(p.x(), p.y(), q.x(), q.y(), r.x(), r.y()); }
   };
@@ -1726,7 +1721,6 @@ namespace CartesianKernelFunctors {
     
   };
 
-
   template <typename K>
   class Construct_base_vector_3
   {
@@ -1760,8 +1754,21 @@ namespace CartesianKernelFunctors {
 	
 	if ( CGAL_NTS is_zero(h.c()) )  // parallel to z-axis
 	  return Vector_3(FT(0), FT(0), FT(1));
-	
-	return Vector_3(-h.b(), h.a(), FT(0));
+
+        FT a = CGAL::abs(h.a()),
+          b = CGAL::abs(h.b()),
+          c = CGAL::abs(h.c());
+
+        // to avoid badly defined vectors with coordinates all close
+        // to 0 when the plane is almost horizontal, we ignore the
+        // smallest coordinate instead of always ignoring Z
+        if (CGAL::possibly(a <= b && a <= c))
+          return Vector_3(FT(0), -h.c(), h.b());
+
+        if (CGAL::possibly(b <= a && b <= c))
+          return Vector_3(-h.c(), FT(0), h.a());
+
+        return Vector_3(-h.b(), h.a(), FT(0));
       } else {
 	return cp(co(h), this->operator()(h,1));
       }
@@ -3051,40 +3058,87 @@ namespace CartesianKernelFunctors {
   template <typename K>
   class Construct_weighted_point_2
   {
-    typedef typename K::RT         RT;
-    typedef typename K::Point_2    Point_2;
-    typedef typename K::Weighted_point_2   Weighted_point_2;
+    typedef typename K::FT                  FT;
+    typedef typename K::Point_2             Point_2;
+    typedef typename K::Weighted_point_2    Weighted_point_2;
     typedef typename Weighted_point_2::Rep  Rep;
   public:
-    typedef Weighted_point_2          result_type;
+    typedef Weighted_point_2                result_type;
 
     Rep
-    operator()(Return_base_tag, const Point_2& p, const RT& w) const
+    operator()(Return_base_tag, Origin o) const
+    { return Rep(o); }
+
+    Rep
+    operator()(Return_base_tag, const Point_2& p, const FT& w) const
     { return Rep(p,w); }
 
     Rep
-    operator()(Return_base_tag, const RT& x, const RT& y) const
+    operator()(Return_base_tag, const FT& x, const FT& y) const
     { return Rep(x,y); }
+
+    Weighted_point_2
+    operator()(Origin o) const
+    { return Weighted_point_2(o); }
+
+    Weighted_point_2
+    operator()(const Point_2& p, const FT& w) const
+    { return Weighted_point_2(p,w); }
+
+    Weighted_point_2
+    operator()(const FT& x, const FT& y) const
+    { return Weighted_point_2(x, y); }
+
+    Weighted_point_2
+    operator()(const Point_2& p) const
+    { return Weighted_point_2(p,0); }
+
+    const Weighted_point_2&
+    operator()(const Weighted_point_2 & wp) const
+    { return wp; }
   };
 
   template <typename K>
   class Construct_weighted_point_3
   {
-    typedef typename K::RT         RT;
-    typedef typename K::FT         FT;
-    typedef typename K::Point_3    Point_3;
-    typedef typename K::Weighted_point_3   Weighted_point_3;
+    typedef typename K::FT                  FT;
+    typedef typename K::Point_3             Point_3;
+    typedef typename K::Weighted_point_3    Weighted_point_3;
     typedef typename Weighted_point_3::Rep  Rep;
   public:
-    typedef Weighted_point_3          result_type;
+    typedef Weighted_point_3                result_type;
 
     Rep
-    operator()(Return_base_tag, const Point_3& p, const RT& w) const
+    operator()(Return_base_tag, Origin o) const
+    { return Rep(o); }
+
+    Rep
+    operator()(Return_base_tag, const Point_3& p, const FT& w) const
     { return Rep(p,w); }
 
     Rep
     operator()(Return_base_tag, const FT& x, const FT& y, const FT& z) const
     { return Rep(x,y,z); }
+
+    Weighted_point_3
+    operator()(Origin o) const
+    { return Weighted_point_3(o); }
+
+    Weighted_point_3
+    operator()(const Point_3& p, const FT& w) const
+    { return Rep(p,w); }
+
+    Weighted_point_3
+    operator()(const FT& x, const FT& y, const FT& z) const
+    { return Weighted_point_3(x,y,z); }
+
+    Weighted_point_3
+    operator()(const Point_3& p) const
+    { return Weighted_point_3(p,0); }
+
+    const Weighted_point_3&
+    operator()(const Weighted_point_3& wp) const
+    { return wp; }
   };
 
 
@@ -4078,89 +4132,50 @@ namespace CartesianKernelFunctors {
     }
   };
 
-template < typename K >
-class Power_side_of_oriented_power_sphere_3
-{
-public:
-  typedef typename K::Weighted_point_3                  Weighted_point_3;
-  typedef typename K::Oriented_side                     Oriented_side;
-  typedef Oriented_side    result_type;
+  template < typename K >
+  class Power_side_of_oriented_power_circle_2
+  {
+  public:
+    typedef typename K::Weighted_point_2         Weighted_point_2;
+    typedef typename K::Oriented_side            Oriented_side;
 
-  Oriented_side operator() ( const Weighted_point_3 & p,
-			     const Weighted_point_3 & q,
-			     const Weighted_point_3 & r,
-			     const Weighted_point_3 & s,
-			     const Weighted_point_3 & t) const
-    {
-      return power_side_of_oriented_power_sphereC3(p.x(), p.y(), p.z(), p.weight(),
-                          q.x(), q.y(), q.z(), q.weight(),
-                          r.x(), r.y(), r.z(), r.weight(),
-                          s.x(), s.y(), s.z(), s.weight(),
-                          t.x(), t.y(), t.z(), t.weight());
-    }
+    typedef Oriented_side                        result_type;
 
-  Oriented_side operator() ( const Weighted_point_3 & p,
-			     const Weighted_point_3 & q,
-			     const Weighted_point_3 & r,
-			     const Weighted_point_3 & s) const
-    {
-      return power_side_of_oriented_power_sphereC3(p.x(), p.y(), p.z(), p.weight(),
-                          q.x(), q.y(), q.z(), q.weight(),
-                          r.x(), r.y(), r.z(), r.weight(),
-                          s.x(), s.y(), s.z(), s.weight());
-    }
-
-  Oriented_side operator() ( const Weighted_point_3 & p,
-			     const Weighted_point_3 & q,
-			     const Weighted_point_3 & r) const
-    {
-      return power_side_of_oriented_power_sphereC3(p.x(), p.y(), p.z(), p.weight(),
-                          q.x(), q.y(), q.z(), q.weight(),
-                          r.x(), r.y(), r.z(), r.weight());
-    }
-
-  Oriented_side operator() ( const Weighted_point_3 & p,
-			     const Weighted_point_3 & q) const
-    {
-      return power_side_of_oriented_power_sphereC3(p.weight(),q.weight());
-    }
-};
-
-
-template < typename K >
-class Power_side_of_oriented_power_circle_2
-{
-public:
-  typedef typename K::Weighted_point_2         Weighted_point_2;
-  typedef typename K::Oriented_side            Oriented_side;
-
-  typedef Oriented_side    result_type;
-
-  Oriented_side operator() ( const Weighted_point_2 & p,
-			     const Weighted_point_2 & q,
-			     const Weighted_point_2 & r,
-			     const Weighted_point_2 & t) const
+    Oriented_side operator()(const Weighted_point_2& p,
+                             const Weighted_point_2& q,
+                             const Weighted_point_2& r,
+                             const Weighted_point_2& t) const
     {
       //CGAL_kernel_precondition( ! collinear(p, q, r) );
       return power_side_of_oriented_power_circleC2(p.x(), p.y(), p.weight(),
-                          q.x(), q.y(), q.weight(),
-                          r.x(), r.y(), r.weight(),
-                          t.x(), t.y(), t.weight());
+                                                   q.x(), q.y(), q.weight(),
+                                                   r.x(), r.y(), r.weight(),
+                                                   t.x(), t.y(), t.weight());
     }
 
-  Oriented_side operator() ( const Weighted_point_2 & p,
-			     const Weighted_point_2 & q,
-			     const Weighted_point_2 & t) const
+    // The methods below are currently undocumented because the definition of
+    // orientation is unclear for 2 and 1 point configurations in a 2D space.
+
+    // One should be (very) careful with the order of vertices when using them,
+    // as swapping points will change the result and one must therefore have a
+    // precise idea of what is the positive orientation in the full space.
+    // For example, these functions are (currently) used safely in the regular
+    // triangulations classes because we always call them on vertices of
+    // triangulation cells, which are always positively oriented.
+
+    Oriented_side operator()(const Weighted_point_2& p,
+                             const Weighted_point_2& q,
+                             const Weighted_point_2& t) const
     {
       //CGAL_kernel_precondition( collinear(p, q, r) );
       //CGAL_kernel_precondition( p.point() != q.point() );
       return power_side_of_oriented_power_circleC2(p.point().x(), p.y(), p.weight(),
-                          q.x(), q.y(), q.weight(),
-                          t.x(), t.y(), t.weight());
-    }  
+                                                   q.x(), q.y(), q.weight(),
+                                                   t.x(), t.y(), t.weight());
+    }
 
-  Oriented_side operator() ( const Weighted_point_2 & p,
-			     const Weighted_point_2 & t) const
+    Oriented_side operator()(const Weighted_point_2& p,
+                             const Weighted_point_2& t) const
     {
       //CGAL_kernel_precondition( p.point() == r.point() );
       Comparison_result r = CGAL::compare(p.weight(), t.weight());
@@ -4168,7 +4183,7 @@ public:
       else if (r == SMALLER) return ON_POSITIVE_SIDE;
       return ON_ORIENTED_BOUNDARY;
     }
-};
+  };
 
   template <typename K>
   class Oriented_side_2

@@ -3696,7 +3696,7 @@ _compute_signs(const DHalfedge* he_anchor, boost::mpl::bool_<true>) const
   } while (he_curr != he_end);
 
   // Return the leftmost vertex and its x_index (with respect to he_before).
-  return (std::make_pair(sign(x_index), sign(y_index)));
+  return (std::make_pair(CGAL::sign(x_index), CGAL::sign(y_index)));
 }
 
 // Computes the halfedge that points at the smallest vertex in a closed ccb
@@ -3823,7 +3823,7 @@ _compute_signs_and_min(const DHalfedge* he_anchor,
   } while (he_next != he_end);
 
   // Return the leftmost vertex and the signs.
-  return std::make_pair(std::make_pair(sign(x_index), sign(y_index)), he_min);
+  return std::make_pair(std::make_pair(CGAL::sign(x_index), CGAL::sign(y_index)), he_min);
 }
 
 /* This is the implementation for the case where all 4 boundary sides are

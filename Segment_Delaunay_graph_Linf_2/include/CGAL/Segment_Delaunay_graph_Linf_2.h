@@ -41,9 +41,9 @@
 #include <CGAL/Segment_Delaunay_graph_vertex_base_2.h>
 #include <CGAL/Segment_Delaunay_graph_face_base_2.h>
 #include <CGAL/Triangulation_data_structure_2.h>
+#include <CGAL/internal/TDS_2/edge_list.h>
 
 #include <CGAL/Segment_Delaunay_graph_2/in_place_edge_list.h>
-#include <CGAL/Segment_Delaunay_graph_2/edge_list.h>
 #include <CGAL/Segment_Delaunay_graph_2/Traits_wrapper_2.h>
 #include <CGAL/Segment_Delaunay_graph_2/Constructions_C2.h>
 #include <CGAL/Segment_Delaunay_graph_Linf_2/Constructions_C2.h>
@@ -54,7 +54,7 @@
 #include <CGAL/spatial_sort.h>
 #include <CGAL/Spatial_sort_traits_adapter_2.h>
 
-#include <boost/iterator/counting_iterator.hpp>
+#include <CGAL/boost/iterator/counting_iterator.hpp>
 
 /*
   Conventions:

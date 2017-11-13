@@ -42,7 +42,7 @@ if ( CGAL_FOUND )
 
   create_single_source_cgal_program( will_fail.cpp will_fail_aux.cpp )
   if(BUILD_TESTING)
-    set_property(TEST will_fail PROPERTY WILL_FAIL TRUE)
+    set_property(TEST execution___of__will_fail PROPERTY WILL_FAIL TRUE)
   endif()
 
   find_package( TBB QUIET )

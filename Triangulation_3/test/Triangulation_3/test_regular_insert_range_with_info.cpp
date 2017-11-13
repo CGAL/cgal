@@ -1,3 +1,5 @@
+
+#include "test_dependencies.h"
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Regular_triangulation_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
@@ -117,7 +119,7 @@ void test_zip_iterator(){
 #endif
 }
 
-struct Auto_count : public std::unary_function<const Weighted_point&,std::pair<Weighted_point,unsigned> >{
+struct Auto_count : public CGAL::unary_function<const Weighted_point&,std::pair<Weighted_point,unsigned> >{
   mutable unsigned i;
   Auto_count() : i(0){}
   std::pair<Weighted_point,unsigned> operator()(const Weighted_point& p) const {

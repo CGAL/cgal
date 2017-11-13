@@ -3,6 +3,8 @@
 \ingroup PkgApolloniusGraph2Concepts
 \cgalConcept
 
+\cgalRefines `TriangulationTraits_2`
+
 The concept `ApolloniusGraphTraits_2` provides the traits 
 requirements for the `Apollonius_graph_2` class. In particular, 
 it provides a type `Site_2`, which must be a model of the concept 

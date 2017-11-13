@@ -25,6 +25,7 @@
 #include <CGAL/algorithm.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/circulator.h>
+#include <CGAL/Cartesian_converter.h>
 #include <boost/unordered_map.hpp>
 
 namespace CGAL{
@@ -32,15 +33,16 @@ namespace CGAL{
 namespace nef_to_pm{
 
 // Visitor used to collect and index vertices of a shell
-template<class Nef_polyhedron, class Point_3>
+template<class Nef_polyhedron, class Point_3, class Converter>
 struct Shell_vertex_index_visitor
 {
   typedef boost::unordered_map<typename Nef_polyhedron::Vertex_const_handle, std::size_t> Vertex_index_map;
   std::vector<Point_3>& points;
   Vertex_index_map vertex_indices;
+  const Converter& converter;
 
-  Shell_vertex_index_visitor(std::vector<Point_3>& points)
-    :points(points)
+  Shell_vertex_index_visitor(std::vector<Point_3>& points, const Converter& converter)
+    :points(points), converter(converter)
   {}
 
   void visit(typename Nef_polyhedron::Vertex_const_handle vh)
@@ -48,7 +50,7 @@ struct Shell_vertex_index_visitor
     std::pair<typename Vertex_index_map::iterator, bool> insert_res =
       vertex_indices.insert( std::make_pair(vh, points.size()) );
     if (insert_res.second)
-      points.push_back( vh->point() );
+      points.push_back( converter(vh->point()));
   }
   void visit(typename Nef_polyhedron::Halfedge_const_handle )
   {}
@@ -116,15 +118,16 @@ struct Shell_polygons_visitor
   {}
 };
 
-template <class Point_3, class Nef_polyhedron>
+template <class Point_3, class Nef_polyhedron, class Converter>
 void collect_polygon_mesh_info(
   std::vector<Point_3>& points,
   std::vector< std::vector<std::size_t> >& polygons,
   Nef_polyhedron& nef,
-  typename Nef_polyhedron::Shell_entry_const_iterator shell)
+  typename Nef_polyhedron::Shell_entry_const_iterator shell,
+  const Converter& converter)
 {
   // collect points and set vertex indices
-  Shell_vertex_index_visitor<Nef_polyhedron, Point_3> vertex_index_visitor(points);
+  Shell_vertex_index_visitor<Nef_polyhedron, Point_3, Converter> vertex_index_visitor(points, converter);
   nef.visit_shell_objects(typename Nef_polyhedron::SFace_const_handle(shell), vertex_index_visitor);
 
   // collect polygons
@@ -146,6 +149,10 @@ template <class Nef_polyhedron, class Polygon_mesh>
 void convert_nef_polyhedron_to_polygon_mesh(const Nef_polyhedron& nef, Polygon_mesh& pm)
 {
   typedef typename Nef_polyhedron::Point_3 Point_3;
+  typedef typename boost::property_traits<typename boost::property_map<Polygon_mesh, vertex_point_t>::type>::value_type PM_Point;
+  typedef typename Kernel_traits<PM_Point>::Kernel PM_Kernel;
+  typedef typename Kernel_traits<Point_3>::Kernel Nef_Kernel;
+  typedef Cartesian_converter<Nef_Kernel, PM_Kernel> Converter;
 
   typename Nef_polyhedron::Volume_const_iterator vol_it = nef.volumes_begin(),
                                                  vol_end = nef.volumes_end();
@@ -153,14 +160,15 @@ void convert_nef_polyhedron_to_polygon_mesh(const Nef_polyhedron& nef, Polygon_m
   CGAL_assertion ( vol_it != vol_end );
   ++vol_it; // skip unbounded volume
 
-  std::vector<Point_3> points;
+  std::vector<PM_Point> points;
   std::vector< std::vector<std::size_t> > polygons;
-
+  Converter to_inexact;
   for (;vol_it!=vol_end;++vol_it)
-    nef_to_pm::collect_polygon_mesh_info<Point_3>(points,
+    nef_to_pm::collect_polygon_mesh_info<PM_Point>(points,
                                                   polygons,
                                                   nef,
-                                                  vol_it->shells_begin());
+                                                  vol_it->shells_begin(),
+                                                  to_inexact);
 
   Polygon_mesh_processing::polygon_soup_to_polygon_mesh(points, polygons, pm);
 }

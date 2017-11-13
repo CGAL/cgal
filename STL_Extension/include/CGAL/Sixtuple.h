@@ -27,6 +27,10 @@
 
 #include <CGAL/config.h>
 
+#define CGAL_DEPRECATED_HEADER "<CGAL/Sixtuple.h>"
+#define CGAL_DEPRECATED_MESSAGE_DETAILS "Please use `CGAL::cpp11::array` instead."
+#include <CGAL/internal/deprecation_warning.h>
+
 #ifndef CGAL_NO_DEPRECATED_CODE
 
 namespace CGAL {

@@ -65,6 +65,14 @@ Polyhedron_demo::Polyhedron_demo(int& argc, char **argv,
   mainWindow.setWindowTitle(main_window_title);
   mainWindow.show();
 
+  // On Apple, the first time the application is launched, the menus are unclicable, and
+  // the only way you can fix it is to unfocus and re-focus the application.
+  // This is a hack that makes the application lose the focus after it is started, to force the user
+  // to re-focus it. (source : http://www.alecjacobson.com/weblog/?p=3910)
+#ifdef __APPLE__
+    system("osascript -e 'tell application \"System Events\" "
+      "to keystroke tab using {command down, shift down}'");
+#endif
   if(parser.isSet(use_meta)) {
     mainWindow.setAddKeyFrameKeyboardModifiers(::Qt::MetaModifier);
   }

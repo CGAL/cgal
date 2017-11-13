@@ -2,15 +2,10 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/boost/graph/properties_Polyhedron_3.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
-
 #include <CGAL/Surface_mesh.h>
-#include <CGAL/boost/graph/properties_Surface_mesh.h>
 
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/Polygon_mesh_processing/bbox.h>
-#include <CGAL/Polygon_mesh_processing/stitch_borders.h>
 
 #include <CGAL/Bbox_3.h>
 
@@ -101,6 +96,13 @@ void test_pmesh(const Mesh& pmesh)
     PMP::parameters::geom_traits(K()));
   std::cout << "mesh area (NP) = " << mesh_area_np << std::endl;
   assert(mesh_area_np > 0);
+
+  std::pair<halfedge_descriptor, FT> res = PMP::longest_border(pmesh);
+  if(res.first == boost::graph_traits<Mesh>::null_halfedge()){
+    std::cout << "mesh has no border" << std::endl;
+  } else {
+    std::cout << "longest border has length = " << res.second <<std::endl;
+  }
 
   CGAL::Bbox_3 bb = PMP::bbox(pmesh);
   std::cout << "bbox x[" << bb.xmin() << "; " << bb.xmax() << "]" << std::endl;

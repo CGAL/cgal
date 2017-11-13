@@ -5,13 +5,21 @@ project (Triangulation_3_Demo)
 
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON)
 
 cmake_minimum_required(VERSION 2.8.11)
+if(POLICY CMP0053)
+  cmake_policy(SET CMP0053 OLD)
+endif()
 if(POLICY CMP0043)
   cmake_policy(SET CMP0043 OLD)
 endif()
+if(POLICY CMP0071)
+  cmake_policy(SET CMP0071 NEW)
+endif()
+
 
 find_package(CGAL  COMPONENTS Qt5)
 include(${CGAL_USE_FILE})

@@ -37,6 +37,7 @@ class Polyhedron_demo_io_plugin_interface
 {
 public:
   //!Returns the name of the plugin
+  //!It is used by the loading system.
   virtual QString name() const = 0;
   virtual ~Polyhedron_demo_io_plugin_interface() {}
   /*! The filters for the names of the files that can be used
@@ -44,17 +45,27 @@ public:
    * Example : to filter OFF files : return "OFF files (*.off)"
 */
   virtual QString nameFilters() const = 0;
+  //!Returns only the filters used for saving. The default is `nameFilters()`.
+  //! You must override this function to change its behavior.
   virtual QString saveNameFilters() const {return nameFilters();}
+  //!Returns only the filters used for loading. The default is `nameFilters()`.
+  //! You must override this function to change its behavior.
+  //! If multiple plugins have the same load filters, only once will be kept,
+  //! so be careful not to use one that already exists.
   virtual QString loadNameFilters() const {return nameFilters();}
 
   //! Specifies if the io_plugin is able to load an item or not.
+  //! This must be overriden.
   virtual bool canLoad() const = 0;
   //!  Loads an item from a file.
+  //! This must be overriden.
   virtual Scene_item* load(QFileInfo fileinfo) = 0;
   //!Specifies if the io_plugin can save the item or not.
+  //!This must be overriden.
   virtual bool canSave(const Scene_item*) = 0;
   //!Saves the item in the file corresponding to the path
   //!contained in fileinfo. Returns false if error.
+  //! This must be overriden.
   virtual bool save(const Scene_item*, QFileInfo fileinfo) = 0;
 };
 }

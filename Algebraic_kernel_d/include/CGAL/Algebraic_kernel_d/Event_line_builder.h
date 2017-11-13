@@ -117,7 +117,6 @@ public:
     Event_line_builder(Algebraic_kernel_with_analysis_2* kernel,
                        Curve_analysis_2 curve,
                        Polynomial_2 polynomial)
-        throw(internal::Zero_resultant_exception<Polynomial_2>) 
         : _m_kernel(kernel), curve(curve), polynomial(polynomial)
     {}
 
@@ -151,7 +150,7 @@ public:
     Status_line_1
     create_event_line(int id,Algebraic_real_1 alpha,int arcs_left,int arcs_right,
                       bool root_of_resultant, bool root_of_content,int mult) 
-        throw(CGAL::internal::Non_generic_position_exception) {
+    {
 
         try {
 	
@@ -531,7 +530,7 @@ protected:
 						      int mult,
 						      int arcs_left,
 						      int arcs_right) 
-        throw(CGAL::internal::Non_generic_position_exception) {
+    {
         
         
         Bitstream_traits traits(Bitstream_coefficient_kernel(kernel(),alpha));
@@ -613,7 +612,7 @@ protected:
 			     int k,
 			     const Polynomial_2& der_1,
 			     const Polynomial_2& der_2) 
-        throw(CGAL::internal::Non_generic_position_exception) {
+    {
      
         //Guess the right expression for y
 /*

@@ -54,6 +54,7 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	typedef typename Get_type<Base, Ray_tag>::type	Ray_d;
 	typedef typename Get_type<Base, Iso_box_tag>::type	Iso_box_d;
 	typedef typename Get_type<Base, Aff_transformation_tag>::type	Aff_transformation_d;
+	typedef typename Get_type<Base, Weighted_point_tag>::type	Weighted_point_d;
 	typedef typename Get_functor<Base, Compute_point_cartesian_coordinate_tag>::type Compute_coordinate_d;
 	typedef typename Get_functor<Base, Compare_lexicographically_tag>::type Compare_lexicographically_d;
 	typedef typename Get_functor<Base, Equal_points_tag>::type Equal_d;
@@ -64,16 +65,61 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	typedef typename Get_functor<Base, Less_point_cartesian_coordinate_tag>::type Less_coordinate_d;
 	typedef typename Get_functor<Base, Point_dimension_tag>::type Point_dimension_d;
 	typedef typename Get_functor<Base, Side_of_oriented_sphere_tag>::type Side_of_oriented_sphere_d;
+	typedef typename Get_functor<Base, Power_side_of_power_sphere_tag>::type Power_side_of_power_sphere_d;
+	typedef typename Get_functor<Base, Power_center_tag>::type Power_center_d;
+	typedef typename Get_functor<Base, Power_distance_tag>::type Power_distance_d;
 	typedef typename Get_functor<Base, Contained_in_affine_hull_tag>::type Contained_in_affine_hull_d;
 	typedef typename Get_functor<Base, Construct_flat_orientation_tag>::type Construct_flat_orientation_d;
 	typedef typename Get_functor<Base, In_flat_orientation_tag>::type In_flat_orientation_d;
 	typedef typename Get_functor<Base, In_flat_side_of_oriented_sphere_tag>::type In_flat_side_of_oriented_sphere_d;
+	typedef typename Get_functor<Base, In_flat_power_side_of_power_sphere_tag>::type In_flat_power_side_of_power_sphere_d;
 	typedef typename Get_functor<Base, Point_to_vector_tag>::type Point_to_vector_d;
 	typedef typename Get_functor<Base, Vector_to_point_tag>::type Vector_to_point_d;
+	typedef typename Get_functor<Base, Translated_point_tag>::type Translated_point_d;
 	typedef typename Get_functor<Base, Scaled_vector_tag>::type Scaled_vector_d;
 	typedef typename Get_functor<Base, Difference_of_vectors_tag>::type Difference_of_vectors_d;
 	typedef typename Get_functor<Base, Difference_of_points_tag>::type Difference_of_points_d;
-	typedef typename Get_functor<Base, Construct_ttag<Point_tag> >::type Construct_point_d;
+	//typedef typename Get_functor<Base, Construct_ttag<Point_tag> >::type Construct_point_d;
+	struct Construct_point_d : private Store_kernel<Kernel> {
+	  typedef Kernel R_; // for the macro
+	  CGAL_FUNCTOR_INIT_STORE(Construct_point_d)
+	  typedef typename Get_functor<Base, Construct_ttag<Point_tag> >::type CP;
+	  typedef Point_d result_type;
+	  Point_d operator()(Weighted_point_d const&wp)const{
+	    return typename Get_functor<Base, Point_drop_weight_tag>::type(this->kernel())(wp);
+	  }
+#ifdef CGAL_CXX11
+	  Point_d operator()(Weighted_point_d &wp)const{
+	    return typename Get_functor<Base, Point_drop_weight_tag>::type(this->kernel())(wp);
+	  }
+	  Point_d operator()(Weighted_point_d &&wp)const{
+	    return typename Get_functor<Base, Point_drop_weight_tag>::type(this->kernel())(std::move(wp));
+	  }
+	  Point_d operator()(Weighted_point_d const&&wp)const{
+	    return typename Get_functor<Base, Point_drop_weight_tag>::type(this->kernel())(std::move(wp));
+	  }
+	  template<class...T>
+# if __cplusplus >= 201402L
+	  decltype(auto)
+# else
+	  Point_d
+# endif
+	  operator()(T&&...t)const{
+	    return CP(this->kernel())(std::forward<T>(t)...);
+	    //return CP(this->kernel())(t...);
+	  }
+#else
+# define CGAL_CODE(Z,N,_) template<BOOST_PP_ENUM_PARAMS(N,class T)> \
+	    Point_d operator()(BOOST_PP_ENUM_BINARY_PARAMS(N,T,const&t))const{ \
+	      return CP(this->kernel())(BOOST_PP_ENUM_PARAMS(N,t)); \
+	    }
+	  BOOST_PP_REPEAT_FROM_TO(1,11,CGAL_CODE,_)
+# undef CGAL_CODE
+	  Point_d operator()()const{ \
+	    return CP(this->kernel())(); \
+	  }
+#endif
+	};
 	typedef typename Get_functor<Base, Construct_ttag<Vector_tag> >::type Construct_vector_d;
 	typedef typename Get_functor<Base, Construct_ttag<Segment_tag> >::type Construct_segment_d;
 	typedef typename Get_functor<Base, Construct_ttag<Sphere_tag> >::type Construct_sphere_d;
@@ -83,6 +129,7 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	typedef typename Get_functor<Base, Construct_ttag<Ray_tag> >::type Construct_ray_d;
 	typedef typename Get_functor<Base, Construct_ttag<Iso_box_tag> >::type Construct_iso_box_d;
 	typedef typename Get_functor<Base, Construct_ttag<Aff_transformation_tag> >::type Construct_aff_transformation_d;
+	typedef typename Get_functor<Base, Construct_ttag<Weighted_point_tag> >::type Construct_weighted_point_d;
 	typedef typename Get_functor<Base, Midpoint_tag>::type Midpoint_d;
 	struct Component_accessor_d : private Store_kernel<Kernel> {
 	  typedef Kernel R_; // for the macro
@@ -156,6 +203,7 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	typedef typename Get_functor<Base, Side_of_bounded_circumsphere_tag>::type Side_of_bounded_sphere_d;
 
 	typedef typename Get_functor<Base, Center_of_sphere_tag>::type Center_of_sphere_d;
+	typedef Center_of_sphere_d Construct_center_d; // RangeSearchTraits
 	typedef typename Get_functor<Base, Construct_circumcenter_tag>::type Construct_circumcenter_d;
 	typedef typename Get_functor<Base, Value_at_tag>::type Value_at_d;
 	typedef typename Get_functor<Base, Point_of_sphere_tag>::type Point_of_sphere_d;
@@ -163,6 +211,9 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	typedef typename Get_functor<Base, Linear_base_tag>::type Linear_base_d;
 	typedef typename Get_functor<Base, Construct_min_vertex_tag>::type Construct_min_vertex_d;
 	typedef typename Get_functor<Base, Construct_max_vertex_tag>::type Construct_max_vertex_d;
+
+	typedef typename Get_functor<Base, Point_weight_tag>::type Compute_weight_d;
+	typedef typename Get_functor<Base, Point_drop_weight_tag>::type Point_drop_weight_d;
 
 	//TODO:
 	//typedef ??? Intersect_d;
@@ -180,6 +231,9 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	Point_dimension_d point_dimension_d_object()const{ return Point_dimension_d(*this); }
 	Point_of_sphere_d point_of_sphere_d_object()const{ return Point_of_sphere_d(*this); }
 	Side_of_oriented_sphere_d side_of_oriented_sphere_d_object()const{ return Side_of_oriented_sphere_d(*this); }
+	Power_side_of_power_sphere_d power_side_of_power_sphere_d_object()const{ return Power_side_of_power_sphere_d(*this); }
+	Power_center_d power_center_d_object()const{ return Power_center_d(*this); }
+	Power_distance_d power_distance_d_object()const{ return Power_distance_d(*this); }
 	Side_of_bounded_sphere_d side_of_bounded_sphere_d_object()const{ return Side_of_bounded_sphere_d(*this); }
 	Contained_in_affine_hull_d contained_in_affine_hull_d_object()const{ return Contained_in_affine_hull_d(*this); }
 	Contained_in_linear_hull_d contained_in_linear_hull_d_object()const{ return Contained_in_linear_hull_d(*this); }
@@ -187,8 +241,10 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	Construct_flat_orientation_d construct_flat_orientation_d_object()const{ return Construct_flat_orientation_d(*this); }
 	In_flat_orientation_d in_flat_orientation_d_object()const{ return In_flat_orientation_d(*this); }
 	In_flat_side_of_oriented_sphere_d in_flat_side_of_oriented_sphere_d_object()const{ return In_flat_side_of_oriented_sphere_d(*this); }
+	In_flat_power_side_of_power_sphere_d in_flat_power_side_of_power_sphere_d_object()const{ return In_flat_power_side_of_power_sphere_d(*this); }
 	Point_to_vector_d point_to_vector_d_object()const{ return Point_to_vector_d(*this); }
 	Vector_to_point_d vector_to_point_d_object()const{ return Vector_to_point_d(*this); }
+	Translated_point_d translated_point_d_object()const{ return Translated_point_d(*this); }
 	Scaled_vector_d scaled_vector_d_object()const{ return Scaled_vector_d(*this); }
 	Difference_of_vectors_d difference_of_vectors_d_object()const{ return Difference_of_vectors_d(*this); }
 	Difference_of_points_d difference_of_points_d_object()const{ return Difference_of_points_d(*this); }
@@ -221,6 +277,10 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	Construct_aff_transformation_d construct_aff_transformation_d_object()const{ return Construct_aff_transformation_d(*this); }
 	Construct_min_vertex_d construct_min_vertex_d_object()const{ return Construct_min_vertex_d(*this); }
 	Construct_max_vertex_d construct_max_vertex_d_object()const{ return Construct_max_vertex_d(*this); }
+	Construct_weighted_point_d construct_weighted_point_d_object()const{ return Construct_weighted_point_d(*this); }
+
+	Compute_weight_d compute_weight_d_object()const{ return Compute_weight_d(*this); }
+	Point_drop_weight_d point_drop_weight_d_object()const{ return Point_drop_weight_d(*this); }
 
 	// Dummies for those required functors missing a concept.
 	typedef Null_functor Position_on_line_d;

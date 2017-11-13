@@ -1,10 +1,10 @@
 #include "Scene_nef_polyhedron_item.h"
 #include <CGAL/Three/Viewer_interface.h>
 #include "Scene_polyhedron_item.h"
+#include "Scene_surface_mesh_item.h"
 #include "Nef_type.h"
 #include "Polyhedron_type.h"
 #include <CGAL/Polyhedron_incremental_builder_3.h>
-// #include <CGAL/OFF_to_nef_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/IO/Nef_polyhedron_iostream_3.h>
 #include <CGAL/Inverse_index.h>
@@ -18,6 +18,9 @@
 #include <CGAL/Triangulation_2_projection_traits_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/Triangulation_face_base_with_info_2.h>
+#include <CGAL/boost/graph/convert_nef_polyhedron_to_polygon_mesh.h>
+#include <CGAL/boost/graph/copy_face_graph.h>
+#include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 
 typedef Nef_polyhedron::Traits Traits;
 typedef Nef_polyhedron::Halffacet Facet;
@@ -25,7 +28,7 @@ typedef CGAL::Triangulation_2_projection_traits_3<Traits>   P_traits;
 typedef Nef_polyhedron::Halfedge_const_handle Halfedge_handle;
 struct Face_info {
     Nef_polyhedron::Halfedge_const_handle e[3];
-    bool is_external;
+    int nesting_level;
 };
 typedef CGAL::Triangulation_vertex_base_with_info_2<Halfedge_handle,
 P_traits>        Vb;
@@ -88,6 +91,10 @@ struct Scene_nef_polyhedron_item_priv
   }
 
   void initializeBuffers(CGAL::Three::Viewer_interface *viewer) const;
+  void mark_domains(CDT& ct,
+                    CDT::Face_handle start,
+                    int index,
+                    std::list<CDT::Edge>& border ) const;
   void compute_normals_and_vertices(void) const;
   Nef_polyhedron* nef_poly;
 
@@ -222,6 +229,35 @@ void Scene_nef_polyhedron_item_priv::initializeBuffers(CGAL::Three::Viewer_inter
     }
     item->are_buffers_filled = true;
 }
+void
+Scene_nef_polyhedron_item_priv::mark_domains(CDT& ct,
+                                             CDT::Face_handle start,
+                                             int index,
+                                             std::list<CDT::Edge>& border ) const
+{
+  if(start->info().nesting_level != -1){
+    return;
+  }
+  std::list<CDT::Face_handle> queue;
+  queue.push_back(start);
+  while(! queue.empty()){
+    CDT::Face_handle fh = queue.front();
+    queue.pop_front();
+    if(fh->info().nesting_level == -1){
+      fh->info().nesting_level = index;
+      for(int i = 0; i < 3; i++){
+        CDT::Edge e(fh,i);
+        CDT::Face_handle n = fh->neighbor(i);
+        if(n->info().nesting_level == -1){
+          if(ct.is_constrained(e)) border.push_back(e);
+          else queue.push_back(n);
+        }
+      }
+    }
+  }
+}
+
+
 void Scene_nef_polyhedron_item_priv::compute_normals_and_vertices(void) const
 {
     QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -273,81 +309,79 @@ void Scene_nef_polyhedron_item_priv::compute_normals_and_vertices(void) const
                     } while( ++hc != he );
 
                     cdt.insert_constraint(previous, first);
-
-                    // sets mark is_external
-                    for(CDT::All_faces_iterator
-                        fit = cdt.all_faces_begin(),
-                        end = cdt.all_faces_end();
-                        fit != end; ++fit)
-                    {
-                        fit->info().is_external = false;
-
-                    }
-                    //check if the facet is external or internal
-                    std::queue<CDT::Face_handle> face_queue;
-                    face_queue.push(cdt.infinite_vertex()->face());
-
-                    while(! face_queue.empty() ) {
-                        CDT::Face_handle fh = face_queue.front();
-                        face_queue.pop();
-                        if(fh->info().is_external) continue;
-                        fh->info().is_external = true;
-                        for(int i = 0; i <3; ++i) {
-                            if(!cdt.is_constrained(std::make_pair(fh, i)))
-                            {
-                                face_queue.push(fh->neighbor(i));
-                            }
-                        }
-
-                    }
-                    //iterates on the internal faces to add the vertices to the positions
-                    //and the normals to the appropriate vectors
-
-                    for(CDT::Finite_faces_iterator
-                        ffit = cdt.finite_faces_begin(),
-                        end = cdt.finite_faces_end();
-                        ffit != end; ++ffit)
-                    {
-
-
-                        if(ffit->info().is_external){ continue;}
-                        for(int i = 0; i<3; i++)
-                        {
-                            positions_facets.push_back(CGAL::to_double(ffit->vertex(i)->point().x())+offset.x);
-                            positions_facets.push_back(CGAL::to_double(ffit->vertex(i)->point().y())+offset.y);
-                            positions_facets.push_back(CGAL::to_double(ffit->vertex(i)->point().z())+offset.z);
-
-                        }
-
-
-
-                        Nef_polyhedron::Vector_3 v = f->plane().orthogonal_vector();
-                        GLdouble normal[3];
-                        normal[0] = CGAL::to_double(v.x());
-                        normal[1] = CGAL::to_double(v.y());
-                        normal[2] = CGAL::to_double(v.z());
-                        GLdouble norm = normal[0]*normal[0]
-                                + normal[1]*normal[1]
-                                + normal[2]*normal[2];
-                        norm = CGAL::sqrt(norm);
-                        normal[0] /= norm;
-                        normal[1] /= norm;
-                        normal[2] /= norm;
-
-                        normals.push_back(normal[0]);
-                        normals.push_back(normal[1]);
-                        normals.push_back(normal[2]);
-
-                        normals.push_back(normal[0]);
-                        normals.push_back(normal[1]);
-                        normals.push_back(normal[2]);
-
-                        normals.push_back(normal[0]);
-                        normals.push_back(normal[1]);
-                        normals.push_back(normal[2]);
-
-                    }
                 }
+            }
+            // sets mark is_external
+            for(CDT::All_faces_iterator
+                fit = cdt.all_faces_begin(),
+                end = cdt.all_faces_end();
+                fit != end; ++fit)
+            {
+                fit->info().nesting_level = -1;
+
+            }
+
+            //check if the facet is external or internal
+            std::queue<CDT::Face_handle> face_queue;
+            face_queue.push(cdt.infinite_vertex()->face());
+
+            std::list<CDT::Edge> border;
+            mark_domains(cdt, cdt.infinite_face(), 0, border);
+            while(! border.empty()){
+              CDT::Edge e = border.front();
+              border.pop_front();
+              CDT::Face_handle n = e.first->neighbor(e.second);
+              if(n->info().nesting_level == -1){
+                mark_domains(cdt, n, e.first->info().nesting_level+1, border);
+              }
+            }
+
+            //iterates on the internal faces to add the vertices to the positions
+            //and the normals to the appropriate vectors
+
+            for(CDT::Finite_faces_iterator
+                ffit = cdt.finite_faces_begin(),
+                end = cdt.finite_faces_end();
+                ffit != end; ++ffit)
+            {
+
+
+                if(ffit->info().nesting_level%2 != 1){ continue;}
+                for(int i = 0; i<3; i++)
+                {
+                    positions_facets.push_back(CGAL::to_double(ffit->vertex(i)->point().x())+offset.x);
+                    positions_facets.push_back(CGAL::to_double(ffit->vertex(i)->point().y())+offset.y);
+                    positions_facets.push_back(CGAL::to_double(ffit->vertex(i)->point().z())+offset.z);
+
+                }
+
+
+
+                Nef_polyhedron::Vector_3 v = f->plane().orthogonal_vector();
+                GLdouble normal[3];
+                normal[0] = CGAL::to_double(v.x());
+                normal[1] = CGAL::to_double(v.y());
+                normal[2] = CGAL::to_double(v.z());
+                GLdouble norm = normal[0]*normal[0]
+                        + normal[1]*normal[1]
+                        + normal[2]*normal[2];
+                norm = CGAL::sqrt(norm);
+                normal[0] /= norm;
+                normal[1] /= norm;
+                normal[2] /= norm;
+
+                normals.push_back(normal[0]);
+                normals.push_back(normal[1]);
+                normals.push_back(normal[2]);
+
+                normals.push_back(normal[0]);
+                normals.push_back(normal[1]);
+                normals.push_back(normal[2]);
+
+                normals.push_back(normal[0]);
+                normals.push_back(normal[1]);
+                normals.push_back(normal[2]);
+
             }
         }
 
@@ -453,7 +487,7 @@ Scene_nef_polyhedron_item::toolTip() const
         return QString();
 
     return QObject::tr("<p><b>%1</b> (mode: %5, color: %6)<br />"
-                       "<i>Nef_3 polyhedron</i></p>"
+                       "<i>Nef_polyhedron_3</i></p>"
                        "<p>Number of vertices: %2<br />"
                        "Number of edges: %3<br />"
                        "Number of facets: %4<br />"
@@ -539,6 +573,11 @@ void Scene_nef_polyhedron_item::drawPoints(CGAL::Three::Viewer_interface* viewer
 
 Nef_polyhedron*
 Scene_nef_polyhedron_item::nef_polyhedron() {
+    return d->nef_poly;
+}
+
+Nef_polyhedron*
+Scene_nef_polyhedron_item::nef_polyhedron()const {
     return d->nef_poly;
 }
 
@@ -646,30 +685,55 @@ bool Scene_nef_polyhedron_item::is_simple() const
 {
     return d->nef_poly->is_simple();
 }
-
-// [static]
-Scene_nef_polyhedron_item* 
-Scene_nef_polyhedron_item::from_polyhedron(Scene_polyhedron_item* item)
+template<typename FaceGraph>
+struct Halfedge_index_pmap
 {
-    Polyhedron* poly = item->polyhedron();
-    if(!poly) return 0;
 
-    Exact_polyhedron exact_poly;
-    to_exact(*poly, exact_poly);
-    Nef_polyhedron* nef_poly = new Nef_polyhedron(exact_poly);
-    exact_poly.clear();
+};
 
-    return new Scene_nef_polyhedron_item(nef_poly);
+template<typename FaceGraph>
+struct Face_index_pmap
+{
+
+};
+// [static]
+Scene_nef_polyhedron_item*
+Scene_nef_polyhedron_item::from_polygon_mesh(Scene_polyhedron_item *item)
+{
+  //return from_templated_polygon_mesh(item);
+  Polyhedron* poly = item->polyhedron();
+  if(!poly) return 0;
+  CGAL::Polyhedron_3<Exact_Kernel> exact_poly;
+  CGAL::copy_face_graph(*poly, exact_poly);
+  Nef_polyhedron* nef_poly = new Nef_polyhedron(exact_poly);
+
+  return new Scene_nef_polyhedron_item(nef_poly);
 }
 
-Scene_polyhedron_item*
-Scene_nef_polyhedron_item::convert_to_polyhedron() const {
-    Exact_polyhedron exact_poly;
-    d->nef_poly->convert_to_Polyhedron(exact_poly);
-    Polyhedron* poly = new Polyhedron;
-    from_exact(exact_poly, *poly);
-    exact_poly.clear();
-    return new Scene_polyhedron_item(poly);
+Scene_nef_polyhedron_item*
+Scene_nef_polyhedron_item::from_polygon_mesh(Scene_surface_mesh_item* item)
+{
+  SMesh* sm = item->polyhedron();
+  if(!sm) return 0;
+  CGAL::Surface_mesh<Exact_Kernel::Point_3> exact_sm;
+  CGAL::copy_face_graph(*sm, exact_sm);
+  Nef_polyhedron* nef_poly = new Nef_polyhedron(exact_sm);
+
+  return new Scene_nef_polyhedron_item(nef_poly);
+}
+Scene_polyhedron_item* Scene_nef_polyhedron_item::convert_to_polyhedron() const
+{
+  Polyhedron* poly = new Polyhedron();
+  CGAL::convert_nef_polyhedron_to_polygon_mesh(*this->nef_polyhedron(), *poly);
+  CGAL::Polygon_mesh_processing::triangulate_faces(*poly);
+  return new Scene_polyhedron_item(poly);
+}
+Scene_surface_mesh_item* Scene_nef_polyhedron_item::convert_to_surface_mesh() const
+{
+  SMesh* poly = new SMesh();
+  CGAL::convert_nef_polyhedron_to_polygon_mesh(*this->nef_polyhedron(), *poly);
+  CGAL::Polygon_mesh_processing::triangulate_faces(*poly);
+  return new Scene_surface_mesh_item(poly);
 }
 
 Scene_nef_polyhedron_item&

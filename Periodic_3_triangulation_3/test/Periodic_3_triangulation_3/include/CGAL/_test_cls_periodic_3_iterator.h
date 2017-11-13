@@ -265,12 +265,12 @@ _test_triangulation_iterator( const Triangulation &T )
     Cell_iterator Cit2;
     Cit = T.cells_begin();
     Cit2=Cit;
-    assert(T.tetrahedron(T.periodic_tetrahedron(Cit))
-	   ==T.tetrahedron(T.periodic_tetrahedron(Cit2)));
+    assert(T.construct_tetrahedron(T.periodic_tetrahedron(Cit))
+     == T.construct_tetrahedron(T.periodic_tetrahedron(Cit2)));
     Cit++ ; Cit-- ; ++Cit ; --Cit ;
     assert(Cit==Cit2);
-    assert(T.tetrahedron(T.periodic_tetrahedron(Cit))
-	   ==T.tetrahedron(T.periodic_tetrahedron(Cit2)));
+    assert(T.construct_tetrahedron(T.periodic_tetrahedron(Cit))
+     == T.construct_tetrahedron(T.periodic_tetrahedron(Cit2)));
   }
   {
     Facet_iterator Fit2;

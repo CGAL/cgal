@@ -4,6 +4,9 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON)
 cmake_minimum_required(VERSION 2.8.11)
+if(POLICY CMP0053)
+  cmake_policy(SET CMP0053 OLD)
+endif()
 if(POLICY CMP0043)
   cmake_policy(SET CMP0043 OLD)
 endif()
@@ -34,7 +37,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 
   polyhedron_demo_plugin(example_plugin Example_plugin)
   
-  qt5_wrap_ui( basicUI_FILES Basic_dialog_plugin.ui  )
+  qt5_wrap_ui( basicUI_FILES Basic_dialog.ui  )
   polyhedron_demo_plugin(basic_plugin Basic_plugin ${basicUI_FILES})
 
   qt5_wrap_ui( dockUI_FILES Basic_dock_widget.ui )

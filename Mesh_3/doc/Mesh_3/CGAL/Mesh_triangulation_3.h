@@ -21,6 +21,16 @@ and defaults to `Mesh_vertex_base_3<Gt, MD>`.
 \tparam Cell_base must be a model of `MeshCellBase_3` or `Default`
 and defaults to `Compact_mesh_cell_base_3<Gt, MD>`.
 
+\warning To improve the robustness of the meshing process, the input traits `Gt`
+         is wrapped with the traits class `Robust_weighted_circumcenter_filtered_traits_3`.
+         The class `Robust_weighted_circumcenter_filtered_traits_3<Gt>` upgrades the functors
+         models of `Kernel::ConstructWeightedCircumcenter_3`, `Kernel::ComputeSquaredRadius_3`,
+         and `Kernel::ComputeSquaredRadiusSmallestOrthogonalSphere_3` that are
+         provided by `Gt` to use exact computations when the geometric configuration
+         is close to degenerate (e.g. almost coplanar points). <br>
+         Users should therefore be aware that the traits class of the triangulation
+         will have type `Robust_weighted_circumcenter_filtered_traits_3<Gt>`.
+
 \sa `make_mesh_3()`
 \sa `Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveSegmentIndex>`
 

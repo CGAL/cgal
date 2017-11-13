@@ -32,26 +32,32 @@
 namespace CGAL {
 
   
-template < class Gt, class Fb_ = Default,class ExactAlphaComparisonTag =Tag_false >
-class Alpha_shape_face_base_2 : public Default::Get<Fb_, Triangulation_face_base_2<Gt> >::type
+template <class Gt,
+          class Fb_ = Default,
+          class ExactAlphaComparisonTag = Tag_false,
+          class Weighted_tag = Tag_false>
+class Alpha_shape_face_base_2
+  : public Default::Get<Fb_, Triangulation_face_base_2<Gt> >::type
 {
   typedef typename Default::Get<Fb_, Triangulation_face_base_2<Gt> >::type Fb;
-  typedef typename Fb::Triangulation_data_structure  TDS;
-public:
-  typedef TDS                                Triangulation_data_structure;
-  typedef typename TDS::Vertex_handle        Vertex_handle;
-  typedef typename TDS::Face_handle          Face_handle;
 
-  typedef typename internal::Alpha_nt_selector_2<Gt,ExactAlphaComparisonTag>::Type_of_alpha Type_of_alpha;
-  typedef Type_of_alpha FT;
-  typedef Triple<Type_of_alpha, Type_of_alpha, Type_of_alpha> Interval_3;
+public:
+  typedef typename Fb::Vertex_handle                          Vertex_handle;
+  typedef typename Fb::Face_handle                            Face_handle;
 
   template < typename TDS2 >
   struct Rebind_TDS {
-    typedef typename Fb::template Rebind_TDS<TDS2>::Other    Fb2;
-    typedef Alpha_shape_face_base_2<Gt,Fb2,ExactAlphaComparisonTag>         Other;
+    typedef typename Fb::template Rebind_TDS<TDS2>::Other     Fb2;
+    typedef Alpha_shape_face_base_2<
+      Gt, Fb2, ExactAlphaComparisonTag, Weighted_tag>         Other;
   };
 
+  typedef typename internal::Alpha_nt_selector_2<
+    Gt, ExactAlphaComparisonTag, Weighted_tag>::Type_of_alpha Type_of_alpha;
+  typedef Type_of_alpha                                       NT;
+
+  typedef Type_of_alpha FT;
+  typedef Triple<Type_of_alpha, Type_of_alpha, Type_of_alpha> Interval_3;
 
 private:
   Interval_3 vec_edge[3];

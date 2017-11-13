@@ -25,10 +25,12 @@
 #include <boost/graph/properties.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/foreach.hpp>
+#include <CGAL/Dynamic_property_map.h>
 
 #include <CGAL/basic.h>
 #include <string>
 
+ 
 /// Boost Namespace
 namespace boost {
 
@@ -54,15 +56,7 @@ enum halfedge_external_index_t   { halfedge_external_index   } ;
 enum face_index_t            { face_index            };
 enum face_external_index_t   { face_external_index   } ;
 
-  template <typename T>
-  struct vertex_property_t
-  {
-    vertex_property_t(const std::string s, const T& t = T())
-      : s(s), t(t)
-    {}
-    std::string s;
-    T t;
-  };
+
 
 template<typename Graph, typename PropertyTag>
 struct graph_has_property : CGAL::Tag_false {};
@@ -104,7 +98,6 @@ using boost::face_index_t;
 using boost::face_index;
 using boost::face_external_index_t;
 using boost::face_external_index;
-using boost::vertex_property_t;
 } // CGAL
 
 namespace CGAL{
@@ -227,7 +220,9 @@ void init_halfedge_indices(PolygonMesh& pm, HalfedgeIndexMap hid)
                               >::type >::type() );
 }
 
-} } //end of namespace CGAL::helpers
+} //namespace helpers
+
+} // namespace CGAL
 
 
 #endif // CGAL_BOOST_GRAPH_BGL_PROPERTIES_H

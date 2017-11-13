@@ -362,7 +362,7 @@ public:
   \sa `Kernel::ConstructLiftedPoint_3` 
   \sa `Kernel::ConstructMidpoint_2` 
   \sa `Kernel::ConstructPointOn_2` 
-  \sa `Kernel::ConstructPoint_2` 
+  \sa `Kernel::ConstructPoint_2`
   \sa `Kernel::ConstructProjectedPoint_2` 
   \sa `Kernel::ConstructProjectedXYPoint_2` 
   \sa `Kernel::ConstructTranslatedPoint_2` 
@@ -786,11 +786,15 @@ A type representing weighted points in two dimensions.
 \cgalRefines Assignable
 \cgalRefines DefaultConstructible
 
-\sa `CGAL::Weighted_point_2<Kernel>`
+\cgalHasModel `CGAL::Weighted_point_2<Kernel>`
 
-\sa `ConstructPoint_2`
+\sa `ConstructWeightedPoint_2`
 \sa `ComparePowerDistance_2`
+\sa `ComputePowerProduct_2`
+\sa `ComputeSquaredRadiusSmallestOrthogonalCircle_2`
+\sa `ConstructRadicalAxis_2`
 \sa `ConstructWeightedCircumcenter_2`
+\sa `PowerSideOfBoundedPowerCircle_2`
 \sa `PowerSideOfOrientedPowerCircle_2`
 
 */
@@ -798,7 +802,6 @@ class WeightedPoint_2 {
 public:
 
 }; /* end Kernel::WeightedPoint_2 */
-
 
 
 /*!
@@ -811,12 +814,13 @@ A type representing weighted points in three dimensions.
 \cgalRefines Assignable
 \cgalRefines DefaultConstructible
 
-\sa `CGAL::Weighted_point_3<Kernel>` 
+\cgalHasModel `CGAL::Weighted_point_3<Kernel>`
 
-\sa `ConstructPoint_3`
+\sa `ConstructWeightedPoint_3`
 \sa `ComparePowerDistance_3`
 \sa `ComputePowerDistanceToPowerSphere_3`
 \sa `ComputePowerProduct_3`
+\sa `ComputeSquaredRadiusSmallestOrthogonalSphere_3`
 \sa `ConstructWeightedCircumcenter_3`
 \sa `PowerSideOfBoundedPowerSphere_3`
 \sa `PowerSideOfOrientedPowerSphere_3`

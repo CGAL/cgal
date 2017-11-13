@@ -33,7 +33,6 @@
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/Robust_construction.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 
 namespace CGAL {
 
@@ -41,8 +40,7 @@ template < typename K >
 class Robust_construct_weighted_circumcenter_3
 {
 public:
-  typedef Exact_predicates_exact_constructions_kernel EK2;
-  typedef Regular_triangulation_euclidean_traits_3<EK2> EK;
+  typedef Exact_predicates_exact_constructions_kernel EK;
 
   typedef typename K::Weighted_point_3               Weighted_point_3;
   typedef typename K::Bare_point                     Bare_point;
@@ -50,8 +48,8 @@ public:
 
   typedef Bare_point       result_type;
 
-  typedef Cartesian_converter<typename K::Kernel, EK2>  To_exact;
-  typedef Cartesian_converter<EK2, typename K::Kernel>  Back_from_exact;
+  typedef Cartesian_converter<typename K::Kernel, EK>  To_exact;
+  typedef Cartesian_converter<EK, typename K::Kernel>  Back_from_exact;
   
 
   Bare_point operator() ( const Weighted_point_3 & p,

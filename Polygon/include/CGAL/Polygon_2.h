@@ -35,6 +35,7 @@
 #include <list>
 #include <iterator>
 
+#include <CGAL/algorithm.h>
 #include <CGAL/circulator.h>
 #include <CGAL/enum.h>
 
@@ -313,7 +314,7 @@ class Polygon_2 {
       return orientation_2(d_container.begin(), d_container.end(), traits);
     }
 
-    /// Returns `POSITIVE_SIDE`, or `NEGATIVE_SIDE`,
+    /// Returns `ON_POSITIVE_SIDE`, or `ON_NEGATIVE_SIDE`,
     /// or `ON_ORIENTED_BOUNDARY`, depending on where point
     /// `q` is. 
     /// \pre `p.is_simple()`.
@@ -423,7 +424,10 @@ class Polygon_2 {
 
     /// Returns a (const) reference to the `i`-th vertex.
     const Point_2& vertex(std::size_t i) const
-      { return *(d_container.begin() + i); }
+      {
+        CGAL_precondition( i < d_container.size() );
+        return *(cpp11::next(d_container.begin(), i));
+      }
 
 
     /// Returns a (const) reference to the `i`-th vertex.
@@ -432,7 +436,7 @@ class Polygon_2 {
 
     /// Returns the `i`-th edge.
     Segment_2 edge(std::size_t i) const
-      { return *(edges_begin() + i); }
+      { return *(cpp11::next(edges_begin(), i)); }
 
     /// @}
 

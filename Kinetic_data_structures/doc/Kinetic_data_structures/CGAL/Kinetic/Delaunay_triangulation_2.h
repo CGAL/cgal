@@ -12,9 +12,6 @@ triangulation it is maintaining.
 
 Note that the Delaunay triangulation is fully dynamic as it tracks points added to and removed from the `Kinetic::ActiveObjectsTable`. 
 
-The class `Kinetic::Qt_triangulation_2<KineticTriangulation_2, QtWidget_2, QtMovingPoints_2>` displays a kinetic Delaunay 
-triangulation using the Qt widget. 
-
 This class is a good example of a simple, but non-trivial, kinetic 
 data structure. 
 

@@ -8,7 +8,8 @@
 #include "CGAL/Three/Scene_group_item.h"
 #include "Scene_plane_item.h"
 
-//This plugin crates an action in Operations that displays "Hello World" in the 'console' dockwidet.
+//This plugin crates an action in Operations that displays the name of the selected item,
+//adds a scene_plane_item to the scene, and adds the selected item and the plane to a new group.
 class BasicItemPlugin :
     public QObject,
     public CGAL::Three::Polyhedron_demo_plugin_interface
@@ -19,27 +20,27 @@ class BasicItemPlugin :
 public:
   //! [applicable]
   //This plugin is only applicable if there is exactly one selected item.
-  bool applicable(QAction*) const
+  bool applicable(QAction*) const Q_DECL_OVERRIDE
   {
     return scene->selectionIndices().size() ==1;
   }
   //! [applicable]
   //the list of the actions of the plugin.
-  QList<QAction*> actions() const
+  QList<QAction*> actions() const Q_DECL_OVERRIDE
   {
     return _actions;
   }
   //this acts like a constructor for the plugin. It gets the references to the mainwindow and the scene, and connects the action.
-  void init(QMainWindow* mw, CGAL::Three::Scene_interface* sc, Messages_interface* mi)
+  void init(QMainWindow* mw, CGAL::Three::Scene_interface* sc, Messages_interface* mi) Q_DECL_OVERRIDE
   {
     //gets the reference to the message interface, to display text in the console widget
     this->messageInterface = mi;
     //get the references
     this->scene = sc;
-    this->mw = mainWindow;
+    this->mw = mw;
 
     //creates the action
-    QAction *actionHelloWorld= new QAction(QString("Hello World"), mw);
+    QAction *actionHelloWorld= new QAction(QString("Create a group"), mw);
     //specifies the subMenu
     actionHelloWorld->setProperty("submenuName", "Basic");
     //links the action

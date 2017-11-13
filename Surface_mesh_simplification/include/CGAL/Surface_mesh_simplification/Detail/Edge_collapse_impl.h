@@ -551,7 +551,7 @@ template<class M, class SP, class VIM, class VPM,class EIM,class ECTM, class CF,
 bool EdgeCollapse<M,SP,VIM,VPM,EIM,ECTM,CF,PF,V>::are_shared_triangles_valid( Point const& p0, Point const& p1, Point const& p2, Point const& p3 ) const
 {
   bool rR = false ;
-  
+
   Vector e01 = Traits().construct_vector_3_object()(p0,p1) ;
   Vector e02 = Traits().construct_vector_3_object()(p0,p2) ;
   Vector e03 = Traits().construct_vector_3_object()(p0,p3) ;
@@ -586,7 +586,7 @@ bool EdgeCollapse<M,SP,VIM,VPM,EIM,ECTM,CF,PF,V>::are_shared_triangles_valid( Po
     else
     {
       CGAL_ECMS_TRACE(4,"\n      lhs: " << n_to_string(( l0123 * l0123 ) / ( l012 * l023 )) << " <= rhs: " << mcMaxDihedralAngleCos2 ) ;
-      
+    
       if ( ( l0123 * l0123 ) <= mcMaxDihedralAngleCos2 * ( l012 * l023 ) )
       {
         rR = true ;
@@ -596,6 +596,7 @@ bool EdgeCollapse<M,SP,VIM,VPM,EIM,ECTM,CF,PF,V>::are_shared_triangles_valid( Po
   
   return rR ;
 }
+
 
 // Returns the directed halfedge connecting v0 to v1, if exists.
 template<class M, class SP, class VIM, class VPM,class EIM,class ECTM, class CF,class PF,class V>
@@ -653,11 +654,12 @@ template<class M, class SP, class VIM, class VPM,class EIM,class ECTM, class CF,
 bool EdgeCollapse<M,SP,VIM,VPM,EIM,ECTM,CF,PF,V>::Is_collapse_geometrically_valid( Profile const& aProfile, Placement_type k0)
 {
   bool rR = true ;
-  
+
+
+
   CGAL_ECMS_TRACE(3,"Testing geometrical collapsabilty of v0-v1=E" << get(Edge_index_map,aProfile.v0_v1()) );
   if ( k0 )
   {
-    //
     // Use the current link to extract all local triangles incident to 'vx' in the collapsed mesh (which at this point doesn't exist yet)
     //
     typedef typename Profile::vertex_descriptor_vector::const_iterator link_iterator ;

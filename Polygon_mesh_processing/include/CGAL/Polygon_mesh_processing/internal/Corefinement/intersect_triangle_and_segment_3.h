@@ -21,7 +21,7 @@
 #ifndef CGAL_INTERNAL_PMP_INTERSECT_TRIANGLE_AND_SEGMENT_3_H
 #define CGAL_INTERNAL_PMP_INTERSECT_TRIANGLE_AND_SEGMENT_3_H
 
-#include <CGAL/license/Polygon_mesh_processing.h>
+#include <CGAL/license/Polygon_mesh_processing/corefinement.h>
 
 
 #include <boost/graph/graph_traits.hpp>

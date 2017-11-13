@@ -129,7 +129,7 @@ compute_average_spacing(const typename Kernel::Point_3& query, ///< 3D point who
 // Public section
 // ----------------------------------------------------------------------------
 
-/// \ingroup PkgPointSetProcessing
+/// \ingroup PkgPointSetProcessingAlgorithms
 /// Computes average spacing from k nearest neighbors.
 ///
 /// \pre `k >= 2.`

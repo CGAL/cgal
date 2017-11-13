@@ -34,7 +34,6 @@
 #include <CGAL/Exact_rational.h>
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-//#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 
 namespace CGAL { namespace Kinetic {
 
@@ -45,7 +44,6 @@ struct Exact_simulation_traits {
 #else
   typedef CGAL::Exact_predicates_exact_constructions_kernel Static_kernel;
 #endif
-  //typedef CGAL::Regular_triangulation_euclidean_traits_3<Static_kernel_base> Static_kernel;
   typedef CGAL::POLYNOMIAL::Polynomial<Static_kernel::FT> Function;
   typedef CGAL::POLYNOMIAL::Sturm_root_stack_traits<Function> Root_stack_traits;
   typedef CGAL::POLYNOMIAL::Sturm_root_stack<Root_stack_traits> Root_stack;
@@ -61,14 +59,14 @@ struct Exact_simulation_traits {
   typedef Active_objects_vector<Kinetic_kernel::Point_1> Active_points_1_table;
   typedef Active_objects_vector<Kinetic_kernel::Point_2> Active_points_2_table;
   typedef Active_objects_vector<Kinetic_kernel::Point_3> Active_points_3_table;
-  // typedef Active_objects_vector<Kinetic_kernel::Weighted_point_3> Active_weighted_points_3_table;
+  typedef Active_objects_vector<Kinetic_kernel::Weighted_point_3> Active_weighted_points_3_table;
  
   typedef CGAL::Kinetic::Default_instantaneous_kernel<This> Instantaneous_kernel;
 
   Active_points_1_table* active_points_1_table_handle() const { return ap1_.get();}
   Active_points_2_table* active_points_2_table_handle() const {return ap2_.get();}
   Active_points_3_table* active_points_3_table_handle() const {return ap3_.get();}
-  //Active_weighted_points_3_table* active_weighted_points_3_table_handle() const {return awp3_.get();}
+  Active_weighted_points_3_table* active_weighted_points_3_table_handle() const {return awp3_.get();}
 
   Simulator* simulator_handle() const { return sim_.get();}
   const Static_kernel& static_kernel_object() const {return k_;}
@@ -79,12 +77,12 @@ struct Exact_simulation_traits {
   }
 
   Exact_simulation_traits(const Simulator::Time &lb,
-			  const Simulator::Time &ub): sim_(new Simulator(lb, ub)),
-						      ap1_(new Active_points_1_table()),
-						      ap2_(new Active_points_2_table()),
-						      ap3_(new Active_points_3_table())
-						      //awp3_(new Active_weighted_points_3_table())
-{}
+                          const Simulator::Time &ub): sim_(new Simulator(lb, ub)),
+    ap1_(new Active_points_1_table()),
+    ap2_(new Active_points_2_table()),
+    ap3_(new Active_points_3_table()),
+    awp3_(new Active_weighted_points_3_table())
+  {}
  
   
   bool is_exact() const {
@@ -95,7 +93,7 @@ protected:
   Active_points_1_table::Handle ap1_;
   Active_points_2_table::Handle ap2_;
   Active_points_3_table::Handle ap3_;
-  //Active_weighted_points_3_table::Handle awp3_;
+  Active_weighted_points_3_table::Handle awp3_;
   Static_kernel k_;
   Kinetic_kernel kk_;
   Function_kernel fk_;

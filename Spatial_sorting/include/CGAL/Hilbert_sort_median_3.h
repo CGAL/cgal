@@ -32,7 +32,7 @@ namespace internal {
 
     template <class K, int x>
     struct Hilbert_cmp_3<K,x,true>
-        : public std::binary_function<typename K::Point_3,
+        : public CGAL::binary_function<typename K::Point_3,
                                       typename K::Point_3, bool>
     {
         typedef typename K::Point_3 Point;
@@ -46,7 +46,7 @@ namespace internal {
 
     template <class K>
     struct Hilbert_cmp_3<K,0,false>
-        : public std::binary_function<typename K::Point_3,
+        : public CGAL::binary_function<typename K::Point_3,
                                       typename K::Point_3, bool>
     {
         typedef typename K::Point_3 Point;
@@ -60,7 +60,7 @@ namespace internal {
 
     template <class K>
     struct Hilbert_cmp_3<K,1,false>
-        : public std::binary_function<typename K::Point_3,
+        : public CGAL::binary_function<typename K::Point_3,
                                       typename K::Point_3, bool>
     {
         typedef typename K::Point_3 Point;
@@ -74,7 +74,7 @@ namespace internal {
 
     template <class K>
     struct Hilbert_cmp_3<K,2,false>
-        : public std::binary_function<typename K::Point_3,
+        : public CGAL::binary_function<typename K::Point_3,
                                       typename K::Point_3, bool>
     {
         typedef typename K::Point_3 Point;

@@ -27,25 +27,27 @@ public:
 
   ~Scene_spheres_item();
 
-  bool isFinite() const { return false; }
-  bool isEmpty() const { return false; }
-  Scene_item* clone() const {return 0;}
-  QString toolTip() const;
-  bool supportsRenderingMode(RenderingMode m) const {
+  bool isFinite() const Q_DECL_OVERRIDE{ return false; }
+  bool isEmpty() const Q_DECL_OVERRIDE{ return false; }
+  Scene_item* clone() const Q_DECL_OVERRIDE{return 0;}
+  QString toolTip() const Q_DECL_OVERRIDE;
+  bool supportsRenderingMode(RenderingMode m) const Q_DECL_OVERRIDE{
     return (m == Gouraud || m == Wireframe);
   }
-  void compute_bbox() const { _bbox = Bbox(); }
+  void compute_bbox() const Q_DECL_OVERRIDE{ _bbox = Bbox(); }
   void add_sphere(const CGAL::Sphere_3<Kernel> &sphere, CGAL::Color = CGAL::Color(120,120,120));
   void clear_spheres();
   void setPrecision(int prec);
 
-  void draw(CGAL::Three::Viewer_interface* viewer) const;
-  void drawEdges(CGAL::Three::Viewer_interface* viewer) const;
-  void invalidateOpenGLBuffers();
+  void draw(CGAL::Three::Viewer_interface* viewer) const Q_DECL_OVERRIDE;
+  void drawEdges(CGAL::Three::Viewer_interface* viewer) const Q_DECL_OVERRIDE;
+  void invalidateOpenGLBuffers() Q_DECL_OVERRIDE;
   void computeElements() const;
   void setPlane(Kernel::Plane_3 p_plane);
   void setToolTip(QString s);
-
+  void setColor(QColor c) Q_DECL_OVERRIDE;
+Q_SIGNALS:
+  void on_color_changed();
 protected:
   friend struct Scene_spheres_item_priv;
   Scene_spheres_item_priv* d;

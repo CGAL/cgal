@@ -44,6 +44,6 @@
 - `CGAL::Surface_mesh_simplification::LindstromTurk_cost<ECM>`
 - `CGAL::Surface_mesh_simplification::LindstromTurk_placement<ECM>`
 - `CGAL::Surface_mesh_simplification::Constrained_placement<Placement,ECM>`
-
+- `CGAL::Surface_mesh_simplification::Bounded_normal_change_placement<Placement>`
 */
 

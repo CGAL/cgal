@@ -949,7 +949,7 @@ public:
     CGAL_For_all(fcirc, fend)
     {
       Face_handle f = fcirc;
-      copy_neighbors(f, s, cvmap, cfmap);
+      copy_neighbors(f, s, cfmap);
     }
 
     // make copy homeomorphic to S^2
@@ -984,12 +984,11 @@ public:
   }
 
   void copy_neighbors(
-    Face_handle f, Vertex_handle v, Vertex_handle_map& vmap,
+    Face_handle f, Vertex_handle v,
     Face_handle_map& fmap) const
   {
     int i = f->index(v);
     Face_handle cf = fmap[f];
-    Vertex_handle cv = vmap[v];
 
     if (fmap.find(f->neighbor(i)) != fmap.end()) {
       Face_handle fi = f->neighbor(i);

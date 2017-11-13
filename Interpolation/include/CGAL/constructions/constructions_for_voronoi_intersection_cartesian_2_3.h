@@ -29,50 +29,50 @@ namespace CGAL {
 template < class RT>
 void
 plane_centered_circumcenter_translateC3(const RT &ax, const RT &ay,
-					const RT &az,
-					const RT &nx, const RT &ny,
-					const RT &nz,
-					const RT &qx, const RT &qy,
-					const RT &qz,
-					const RT &rx, const RT &ry,
-					const RT &rz,
-					RT &x, RT &y, RT &z)
+                                        const RT &az,
+                                        const RT &nx, const RT &ny,
+                                        const RT &nz,
+                                        const RT &qx, const RT &qy,
+                                        const RT &qz,
+                                        const RT &rx, const RT &ry,
+                                        const RT &rz,
+                                        RT &x, RT &y, RT &z)
 {
   RT den = RT(2) * determinant(nx,qx,rx,
-				     ny,qy,ry,
-				     nz,qz,rz);
+                               ny,qy,ry,
+                               nz,qz,rz);
   // The 3 points aren't collinear.
   // Hopefully, this is already checked at the upper level.
   CGAL_assertion ( den != RT(0) );
 
   RT q2 = CGAL_NTS square(qx) + CGAL_NTS square(qy) +
-    CGAL_NTS square(qz);
+          CGAL_NTS square(qz);
   RT r2 = CGAL_NTS square(rx) + CGAL_NTS square(ry) +
-    CGAL_NTS square(rz);
+          CGAL_NTS square(rz);
   RT na = nx*ax + ny*ay + nz*az;
   na *= RT(2.0);
 
   x =   determinant(ny,nz,na,
-			  qy,qz,q2,
-			  ry,rz,r2)/ den ;
+                    qy,qz,q2,
+                    ry,rz,r2)/ den ;
 
   y = - determinant(nx,nz,na,
-			  qx,qz,q2,
-			  rx,rz,r2)/ den ;
+                    qx,qz,q2,
+                    rx,rz,r2)/ den ;
 
   z =   determinant(nx,ny,na,
-			  qx,qy,q2,
-			  rx,ry,r2)/ den ;
+                    qx,qy,q2,
+                    rx,ry,r2)/ den ;
 }
 
 template < class RT>
 void
 plane_centered_circumcenterC3(const RT &ax, const RT &ay, const RT &az,
-			      const RT &nx, const RT &ny, const RT &nz,
-			      const RT &px, const RT &py, const RT &pz,
-			      const RT &qx, const RT &qy, const RT &qz,
-			      const RT &rx, const RT &ry, const RT &rz,
-			      RT &x, RT &y, RT &z)
+                              const RT &nx, const RT &ny, const RT &nz,
+                              const RT &px, const RT &py, const RT &pz,
+                              const RT &qx, const RT &qy, const RT &qz,
+                              const RT &rx, const RT &ry, const RT &rz,
+                              RT &x, RT &y, RT &z)
 {
   // resolution of the system (where we note c the center)
   //
@@ -83,10 +83,10 @@ plane_centered_circumcenterC3(const RT &ax, const RT &ay, const RT &az,
   //method:
   // - tranlation of p to the origin.
   plane_centered_circumcenter_translateC3(ax-px, ay-py, az-pz,
-					  nx, ny, nz,
-					  qx-px, qy-py,qz-pz,
-					  rx-px, ry-py,rz-pz,
-					  x, y, z);
+                                          nx, ny, nz,
+                                          qx-px, qy-py,qz-pz,
+                                          rx-px, ry-py,rz-pz,
+                                          x, y, z);
   x+=px;
   y+=py;
   z+=pz;
@@ -95,13 +95,13 @@ plane_centered_circumcenterC3(const RT &ax, const RT &ay, const RT &az,
 template < class RT>
 void
 bisector_plane_intersection_translateC3(const RT &ax, const RT &ay,
-					const RT &az,
-					const RT &nx, const RT &ny,
-					const RT &nz,
-					const RT &qx, const RT &qy,
-					const RT &qz, const RT& den,
-					RT &x1, RT &y1, RT &x2, RT
-					&y2, bool& swapped)
+                                        const RT &az,
+                                        const RT &nx, const RT &ny,
+                                        const RT &nz,
+                                        const RT &qx, const RT &qy,
+                                        const RT &qz, const RT& den,
+                                        RT &x1, RT &y1, RT &x2, RT
+                                        &y2, bool& swapped)
 {
   // c: a point on l must be the center of a sphere passing
   // through p and q, c lies in h. 2 equations:
@@ -113,7 +113,7 @@ bisector_plane_intersection_translateC3(const RT &ax, const RT &ay,
   // where RT den = RT(2.0) * determinant(qx,qy,nx, ny);
 
   RT q2 = CGAL_NTS square(qx) + CGAL_NTS square(qy)
-    + CGAL_NTS square(qz);
+          + CGAL_NTS square(qz);
   RT na = nx*ax + ny*ay + nz*az;
   na *= RT(2.0);
 
@@ -134,39 +134,39 @@ bisector_plane_intersection_translateC3(const RT &ax, const RT &ay,
   // if not: permutation of p1 and p2
   if((sign_of_determinant(qx,qy,qz, x1,y1,RT(0),x2 ,y2,RT(1))
       * CGAL_NTS sign (-na)) > 0 )
-    {
-      RT x3(x1),y3(y1);
-      x1 =x2;
-      y1 =y2;
-      x2 = x3;
-      y2 = y3;
-      swapped =true;
-    }
+  {
+    RT x3(x1),y3(y1);
+    x1 =x2;
+    y1 =y2;
+    x2 = x3;
+    y2 = y3;
+    swapped =true;
+  }
 }
 
 template < class RT>
 void
 bisector_plane_intersection_permuteC3(const RT &ax, const RT &ay,
-				      const RT &az,
-				      const RT &nx, const RT &ny,
-				      const RT &nz,
-				      const RT &px, const RT &py,
-				      const RT &pz,
-				      const RT &qx, const RT &qy,
-				      const RT &qz,
-				      const RT &den,
-				      RT &x1, RT &y1, RT& z1,
-				      RT &x2, RT &y2, RT& z2)
+                                      const RT &az,
+                                      const RT &nx, const RT &ny,
+                                      const RT &nz,
+                                      const RT &px, const RT &py,
+                                      const RT &pz,
+                                      const RT &qx, const RT &qy,
+                                      const RT &qz,
+                                      const RT &den,
+                                      RT &x1, RT &y1, RT& z1,
+                                      RT &x2, RT &y2, RT& z2)
 {
   //translation of p to the origin
   bool swapped =false;
   CGAL_precondition((nx!=RT(0) ||  ny!=RT(0)) && (qx!=px || qy!=py)
-		    &&den!=RT(0));
+                    &&den!=RT(0));
 
   bisector_plane_intersection_translateC3(ax-px, ay-py, az-pz,
-					  nx, ny, nz,
-					  qx-px, qy-py,qz-pz,den,
-					  x1, y1,x2,y2,swapped);
+                                          nx, ny, nz,
+                                          qx-px, qy-py,qz-pz,den,
+                                          x1, y1,x2,y2,swapped);
   // re-translation of the origin to p:
   x1+=px;
   y1+=py;
@@ -183,11 +183,11 @@ bisector_plane_intersection_permuteC3(const RT &ax, const RT &ay,
 template < class RT>
 void
 bisector_plane_intersectionC3(const RT &ax, const RT &ay, const RT &az,
-			      const RT &nx, const RT &ny, const RT &nz,
-			      const RT &px, const RT &py, const RT &pz,
-			      const RT &qx, const RT &qy, const RT &qz,
-			      RT &x1, RT &y1, RT& z1,
-			      RT &x2, RT &y2, RT& z2)
+                              const RT &nx, const RT &ny, const RT &nz,
+                              const RT &px, const RT &py, const RT &pz,
+                              const RT &qx, const RT &qy, const RT &qz,
+                              RT &x1, RT &y1, RT& z1,
+                              RT &x2, RT &y2, RT& z2)
 {
   // constructs the line l = (p1,p2)= ((x1,y1,z1),(x2,y2,z2))
   // the intersection line between the bisector of (p,q) and
@@ -208,22 +208,22 @@ bisector_plane_intersectionC3(const RT &ax, const RT &ay, const RT &az,
     //den==0 <=> projections of (qx,qy) and (nx,ny) are identical
     //intersection with z=0/z=1
     bisector_plane_intersection_permuteC3(ax,ay,az,nx,ny,nz,px,py,pz,
-					  qx,qy,qz,den,
-					  x1,y1,z1,x2,y2,z2);
+                                          qx,qy,qz,den,
+                                          x1,y1,z1,x2,y2,z2);
   else{
     den = RT(2.0) * determinant(qy-py,qz-pz,ny,nz);
     if ((ny!=0 ||  nz!=0) && (qy!=py || qz!=pz) && den!=RT(0))
       //intersection with x=0/x=1 => permutations
       bisector_plane_intersection_permuteC3(ay,az,ax,ny,nz,nx,py,pz,px,
-					    qy,qz,qx,den,
-					    y1,z1,x1,y2,z2,x2);
+                                            qy,qz,qx,den,
+                                            y1,z1,x1,y2,z2,x2);
     else{
       den = RT(2.0) * determinant(qz-pz,qx-px,nz,nx);
       CGAL_assertion((nx!=0 ||  nz!=0) && (qx!=px || qz!=pz) && den!=RT(0));
       //intersection with y=0/y=1 => permutations
       bisector_plane_intersection_permuteC3(az,ax,ay,nz,nx,ny,pz,px,py,
-					    qz,qx,qy,den,
-					    z1,x1,y1,z2,x2,y2);
+                                            qz,qx,qy,den,
+                                            z1,x1,y1,z2,x2,y2);
     }
   }
 }

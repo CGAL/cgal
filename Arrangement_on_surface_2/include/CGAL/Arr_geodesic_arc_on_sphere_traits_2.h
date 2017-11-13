@@ -2936,7 +2936,7 @@ public:
     CGAL_precondition(!kernel.equal_3_object()(source, target));
     CGAL_precondition(!kernel.equal_3_object()
                       (kernel.construct_opposite_direction_3_object()(source),
-                       target));
+                       static_cast<const Direction_3&>(target)));
     this->m_normal = this->construct_normal_3(source, target);
 
     // Check whether one of the endpoints coincides with a pole: */

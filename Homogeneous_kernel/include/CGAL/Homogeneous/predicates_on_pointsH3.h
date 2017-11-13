@@ -130,7 +130,7 @@ less_z(const PointH3<R> &p, const PointH3<R> &q)
 
 template <class RT>
 Oriented_side
-power_testH3(
+power_side_of_oriented_power_sphereH3(
              const RT &phx, const RT &phy, const RT &phz, const RT &phw, const Quotient<RT> &pwt,
              const RT &qhx, const RT &qhy, const RT &qhz, const RT &qhw, const Quotient<RT> &qwt,
              const RT &rhx, const RT &rhy, const RT &rhz, const RT &rhw, const Quotient<RT> &rwt,

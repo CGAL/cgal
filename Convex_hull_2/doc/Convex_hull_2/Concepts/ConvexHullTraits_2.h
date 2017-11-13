@@ -89,6 +89,15 @@ is smaller!
 */ 
 typedef unspecified_type Less_rotate_ccw_2; 
 
+/*!
+Predicate object type that must provide
+`Orientation operator()(Point_2 e, Point_2 p,Point_2 q)`,
+that returns `CGAL::LEFT_TURN`, if `r` lies to the left of the oriented line `l`
+defined by `p` and `q`, returns `CGAL::RIGHT_TURN` if `r` lies to the right of `l`,
+and returns `CGAL::COLLINEAR` if `r` lies on `l`.
+*/
+typedef unspecified_type Orientation_2;
+
 /// @} 
 
 /// \name Creation 
@@ -136,6 +145,11 @@ Less_rotate_ccw_2 less_rotate_ccw_2_object( );
 
 */ 
 Left_turn_2 left_turn_2_object(); 
+
+/*!
+
+*/
+Orientation_2 orientation_2_object();
 
 /// @}
 

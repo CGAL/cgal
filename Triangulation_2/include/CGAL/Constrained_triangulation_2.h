@@ -36,7 +36,7 @@
 #include <CGAL/squared_distance_2.h>
 
 #include <boost/mpl/if.hpp>
-
+#include <boost/iterator/filter_iterator.hpp>
 namespace CGAL {
 
 struct No_intersection_tag{};
@@ -86,6 +86,25 @@ public:
   typedef typename Triangulation::Vertex_circulator Vertex_circulator;
   typedef typename Triangulation::Line_face_circulator Line_face_circulator;
 
+  struct Is_constrained {
+    const Constrained_triangulation& ct;
+
+    Is_constrained(const Constrained_triangulation& ct)
+      : ct(ct)
+    {}
+
+    template <typename E>
+    bool operator()(const E& e) const
+    {
+      return ct.is_constrained(e);
+    }
+  };
+
+  typedef boost::filter_iterator<Is_constrained,
+                                 typename Triangulation::All_edges_iterator>
+                                                     Constrained_edges_iterator;
+
+
 #ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
   using Triangulation::number_of_vertices;
   using Triangulation::cw;
@@ -122,8 +141,13 @@ public:
   typedef std::list<Constraint>              List_constraints;
 
   // Tag to mark the presence of a hierarchy of constraints
- typedef Tag_false                           Constraint_hierarchy_tag;
-   
+  typedef Tag_false                          Constraint_hierarchy_tag;
+
+  //Tag to distinguish Delaunay from regular triangulations
+  typedef Tag_false                          Weighted_tag;
+
+  // Tag to distinguish periodic triangulations from others
+  typedef Tag_false                          Periodic_tag;
 
   class Less_edge;
   typedef std::set<Edge,Less_edge> Edge_set;
@@ -158,6 +182,23 @@ public:
 
   //TODO Is that destructor correct ?
   virtual ~Constrained_triangulation_2() {}
+
+
+  Constrained_edges_iterator constrained_edges_begin() const
+  {
+    Is_constrained pred(*this);
+    return Constrained_edges_iterator(pred,
+                                      this->all_edges_begin(),
+                                      this->all_edges_end());
+  }
+
+  Constrained_edges_iterator constrained_edges_end() const
+  {
+    Is_constrained pred(*this);
+    return Constrained_edges_iterator(pred,
+                                      this->all_edges_end(),
+                                      this->all_edges_end());
+  }
 
   // INSERTION
   Vertex_handle insert(const Point& p, 
@@ -360,7 +401,7 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb, OutputIterator out)
   
 
   class Less_edge 
-    :  public std::binary_function<Edge, Edge, bool>
+    :  public CGAL::binary_function<Edge, Edge, bool>
   {
   public:
     Less_edge() {}

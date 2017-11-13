@@ -64,7 +64,11 @@ create_single_source_cgal_program( "segmentation_from_sdf_values_example.cpp" )
 create_single_source_cgal_program( "segmentation_via_sdf_values_example.cpp" )
 
 create_single_source_cgal_program( "segmentation_with_facet_ids_example.cpp" )
+
 create_single_source_cgal_program( "segmentation_from_sdf_values_SM_example.cpp")
+create_single_source_cgal_program( "segmentation_from_sdf_values_LCC_example.cpp")
+
+create_single_source_cgal_program( "extract_segmentation_into_mesh_example.cpp")
 
 if(OpenMesh_FOUND)
   create_single_source_cgal_program( "segmentation_from_sdf_values_OpenMesh_example.cpp" )

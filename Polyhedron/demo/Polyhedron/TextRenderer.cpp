@@ -1,5 +1,7 @@
 #include <CGAL/Three/TextRenderer.h>
 #include <CGAL/Three/Scene_item.h>
+#include <CGAL/Three/Scene_print_item_interface.h>
+#include "Scene_polyhedron_selection_item.h"
 void TextRenderer::draw(CGAL::Three::Viewer_interface *viewer)
 {
     QPainter *painter = viewer->getPainter();
@@ -9,7 +11,12 @@ void TextRenderer::draw(CGAL::Three::Viewer_interface *viewer)
     qglviewer::Camera* camera = viewer->camera();
     //Display the items textItems
     Q_FOREACH(TextListItem* list, textItems)
-      if(list->item() == scene->item(scene->mainSelectionIndex()))
+    {
+      CGAL::Three::Scene_print_item_interface* item =
+      qobject_cast<CGAL::Three::Scene_print_item_interface*>(scene->item(scene->mainSelectionIndex()));
+      if( item &&
+          item->shouldDisplayIds(list->item())
+         )
         Q_FOREACH(TextItem* item, list->textList())
         {
           qglviewer::Vec src(item->position().x(), item->position().y(),item->position().z());
@@ -31,6 +38,7 @@ void TextRenderer::draw(CGAL::Three::Viewer_interface *viewer)
             painter->drawText(rect, item->text());
           }
         }
+    }
 
     //Display the local TextItems
     Q_FOREACH(TextItem* item, local_textItems)

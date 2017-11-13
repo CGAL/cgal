@@ -2,6 +2,7 @@
 varying highp vec4 color;
 varying highp vec4 fP; 
 varying highp vec3 fN;
+varying highp float dist[6];
 uniform highp vec4 light_pos;  
 uniform highp vec4 light_diff; 
 uniform highp vec4 light_spec; 
@@ -9,7 +10,18 @@ uniform highp vec4 light_amb;
 uniform highp float spec_power ; 
 uniform int is_two_side; 
 uniform bool is_selected;
+uniform bool is_clipbox_on;
 void main(void) {
+
+if(is_clipbox_on)
+  if(dist[0]>0 ||
+     dist[1]>0 ||
+     dist[2]>0 ||
+     dist[3]>0 ||
+     dist[4]>0 ||
+     dist[5]>0)
+    discard;
+
    highp vec3 L = light_pos.xyz - fP.xyz;
    highp vec3 V = -fP.xyz;
    highp vec3 N;

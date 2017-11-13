@@ -13,15 +13,14 @@ with some additional attributes (a color for example) tuned for a specific
 application. 
 
 
-\tparam TriangulationTraits_3 is the geometric traits class 
- which provides the point type `Weighted_point_3`. 
+\tparam Traits is the geometric traits class and must be a model of `RegularTriangulationTraits_3`.
 Users of the geometric triangulations are strongly advised to use the same 
-geometric traits class `TriangulationTraits_3` as the one used for 
-`Triangulation_3`. This way, the point type defined by the base vertex is 
+geometric traits class as the one used in `Regular_triangulation_3`.
+This way, the point type defined by the base vertex is
 the same as the point type defined by the geometric traits class. 
 
-\tparam TriangulationDSVertexBase_3_ is a combinatorial vertex base class from which 
-`RegularTriangulation_vertex_base_3` derives.
+\tparam TDSVb is a combinatorial vertex base class from which
+`Regular_triangulation_vertex_base_3` derives.
 It must be a model of the `TriangulationDSVertexBase_3` concept.
 It has the default value `Triangulation_ds_vertex_base_3<TDS>`.
 
@@ -32,8 +31,8 @@ It has the default value `Triangulation_ds_vertex_base_3<TDS>`.
 \sa `CGAL::Triangulation_vertex_base_with_info_3` 
 
 */
-template< typename TriangulationTraits_3, typename TriangulationDSVertexBase_3_ >
-class Regular_triangulation_vertex_base_3 : public TriangulationDSVertexBase_3_ {
+template< typename Traits, typename TDSVb >
+class Regular_triangulation_vertex_base_3 : public TDSVb {
 public:
 
 /// \name Types 
@@ -42,7 +41,7 @@ public:
 /*!
 
 */ 
-typedef TriangulationTraits_3::Weighted_point_3 Point; 
+typedef Traits::Weighted_point_3 Point;
 
 /// @}
 

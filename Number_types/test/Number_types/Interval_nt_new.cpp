@@ -113,16 +113,16 @@ int main() {
         // OVERLAP
         I=Interval(1,3);
         J=Interval(2,4); // TODO: must explicitly convert to bool to get exception
-        CGAL_catch_error((bool)(I==J),CGAL::Uncertain_conversion_exception);
-        CGAL_catch_error((bool)(I!=J),CGAL::Uncertain_conversion_exception);
-        CGAL_catch_error((bool)(I< J),CGAL::Uncertain_conversion_exception);
-        CGAL_catch_error((bool)(I> J),CGAL::Uncertain_conversion_exception);
-        CGAL_catch_error((bool)(I<=J),CGAL::Uncertain_conversion_exception);  
-        CGAL_catch_error((bool)(I>=J),CGAL::Uncertain_conversion_exception);
-        CGAL_catch_error((bool)(J> I),CGAL::Uncertain_conversion_exception);
-        CGAL_catch_error((bool)(J> I),CGAL::Uncertain_conversion_exception);
-        CGAL_catch_error((bool)(J>=I),CGAL::Uncertain_conversion_exception);
-        CGAL_catch_error((bool)(J<=I),CGAL::Uncertain_conversion_exception);
+        CGAL_catch_error((bool)(I==J),CGAL::Uncertain_conversion_exception&);
+        CGAL_catch_error((bool)(I!=J),CGAL::Uncertain_conversion_exception&);
+        CGAL_catch_error((bool)(I< J),CGAL::Uncertain_conversion_exception&);
+        CGAL_catch_error((bool)(I> J),CGAL::Uncertain_conversion_exception&);
+        CGAL_catch_error((bool)(I<=J),CGAL::Uncertain_conversion_exception&);
+        CGAL_catch_error((bool)(I>=J),CGAL::Uncertain_conversion_exception&);
+        CGAL_catch_error((bool)(J> I),CGAL::Uncertain_conversion_exception&);
+        CGAL_catch_error((bool)(J> I),CGAL::Uncertain_conversion_exception&);
+        CGAL_catch_error((bool)(J>=I),CGAL::Uncertain_conversion_exception&);
+        CGAL_catch_error((bool)(J<=I),CGAL::Uncertain_conversion_exception&);
 
         // I<=J
         I=Interval(1,2);
@@ -131,12 +131,12 @@ int main() {
         assert( (J>=I));
         assert(!(I> J));
         assert(!(J< I));
-        CGAL_catch_error((bool)(I==J),CGAL::Uncertain_conversion_exception);
-        CGAL_catch_error((bool)(I!=J),CGAL::Uncertain_conversion_exception);
-        CGAL_catch_error((bool)(I< J),CGAL::Uncertain_conversion_exception);
-        CGAL_catch_error((bool)(J> I),CGAL::Uncertain_conversion_exception);
-        CGAL_catch_error((bool)(I>=J),CGAL::Uncertain_conversion_exception);
-        CGAL_catch_error((bool)(J<=I),CGAL::Uncertain_conversion_exception);
+        CGAL_catch_error((bool)(I==J),CGAL::Uncertain_conversion_exception&);
+        CGAL_catch_error((bool)(I!=J),CGAL::Uncertain_conversion_exception&);
+        CGAL_catch_error((bool)(I< J),CGAL::Uncertain_conversion_exception&);
+        CGAL_catch_error((bool)(J> I),CGAL::Uncertain_conversion_exception&);
+        CGAL_catch_error((bool)(I>=J),CGAL::Uncertain_conversion_exception&);
+        CGAL_catch_error((bool)(J<=I),CGAL::Uncertain_conversion_exception&);
 
         // degenerated I
         I=Interval(1,1);
@@ -151,12 +151,12 @@ int main() {
         // "I==J"
         I=Interval(1,2);
         J=Interval(1,2);
-        CGAL_catch_error((bool)(I==J),CGAL::Uncertain_conversion_exception);
-        CGAL_catch_error((bool)(I!=J),CGAL::Uncertain_conversion_exception);
-        CGAL_catch_error((bool)(I< J),CGAL::Uncertain_conversion_exception);
-        CGAL_catch_error((bool)(I> J),CGAL::Uncertain_conversion_exception);
-        CGAL_catch_error((bool)(I>=J),CGAL::Uncertain_conversion_exception);
-        CGAL_catch_error((bool)(I<=J),CGAL::Uncertain_conversion_exception);
+        CGAL_catch_error((bool)(I==J),CGAL::Uncertain_conversion_exception&);
+        CGAL_catch_error((bool)(I!=J),CGAL::Uncertain_conversion_exception&);
+        CGAL_catch_error((bool)(I< J),CGAL::Uncertain_conversion_exception&);
+        CGAL_catch_error((bool)(I> J),CGAL::Uncertain_conversion_exception&);
+        CGAL_catch_error((bool)(I>=J),CGAL::Uncertain_conversion_exception&);
+        CGAL_catch_error((bool)(I<=J),CGAL::Uncertain_conversion_exception&);
     }
     {// external functions on Intervals
      // functions (abs, square, sqrt, pow)

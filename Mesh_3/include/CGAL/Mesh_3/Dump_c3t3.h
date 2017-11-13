@@ -105,6 +105,9 @@ struct Dump_c3t3<C3t3, false> {
 
 template <typename C3t3>
 void dump_c3t3_edges(const C3t3& c3t3, std::string prefix) {
+  typename C3t3::Triangulation::Geom_traits::Construct_point_3 wp2p =
+    c3t3.triangulation().geom_traits().construct_point_3_object();
+
   std::ofstream file((prefix+".polylines.txt").c_str());
   file.precision(17);
   for(typename C3t3::Edges_in_complex_iterator
@@ -115,8 +118,8 @@ void dump_c3t3_edges(const C3t3& c3t3, std::string prefix) {
     const typename C3t3::Triangulation::Cell_handle c = edge_it->first;
     const int i = edge_it->second;
     const int j = edge_it->third;
-    file << "2 " << c->vertex(i)->point().point()
-         << " "  << c->vertex(j)->point().point() << "\n";
+    file << "2 " << wp2p(c->vertex(i)->point())
+         << " "  << wp2p(c->vertex(j)->point()) << "\n";
   }
 }
 template <typename C3t3>

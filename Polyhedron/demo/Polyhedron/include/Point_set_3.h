@@ -127,6 +127,14 @@ public:
   const_iterator end() const { return this->m_indices.end(); }
   std::size_t size() const { return this->m_base.size(); }
 
+  void reset_indices()
+  {
+    unselect_all();
+    
+    for (std::size_t i = 0; i < this->m_base.size(); ++ i)
+      this->m_indices[i] = i;
+  }
+  
   bool add_radius()
   {
     bool out = false;
@@ -176,7 +184,7 @@ public:
       {
         boost::tie (m_fred, found) = this->template property_map<double>("r");
         if (!found)
-          return false;
+          return get_las_colors();
       }
 
     boost::tie (m_fgreen, found) = this->template property_map<double>("green");
@@ -197,6 +205,51 @@ public:
     return true;
   }
 
+  bool get_las_colors()
+  {
+    bool found = false;
+    
+    typedef typename Base::template Property_map<unsigned short> Ushort_map;
+    Ushort_map red, green, blue;
+    
+    boost::tie (red, found) = this->template property_map<unsigned short>("R");
+    if (!found)
+      return false;
+
+    boost::tie (green, found) = this->template property_map<unsigned short>("G");
+    if (!found)
+      return false;
+
+    boost::tie (blue, found) = this->template property_map<unsigned short>("B");
+    if (!found)
+      return false;
+
+    unsigned int bit_short_to_char = 0;
+    for (iterator it = begin(); it != end(); ++ it)
+      if (get(red, *it) > 255
+          || get(green, *it) > 255
+          || get(blue, *it) > 255)
+        {
+          bit_short_to_char = 8;
+          break;
+        }
+
+    m_red = this->template add_property_map<unsigned char>("r").first;
+    m_green = this->template add_property_map<unsigned char>("g").first;
+    m_blue = this->template add_property_map<unsigned char>("b").first;
+    for (iterator it = begin(); it != end(); ++ it)
+      {
+        put (m_red, *it, (unsigned char)((get(red, *it) >> bit_short_to_char)));
+        put (m_green, *it, (unsigned char)((get(green, *it) >> bit_short_to_char)));
+        put (m_blue, *it, (unsigned char)((get(blue, *it) >> bit_short_to_char)));
+      }
+    this->remove_property_map(red);
+    this->remove_property_map(green);
+    this->remove_property_map(blue);
+    
+    return true;
+  }
+
   bool has_colors() const
   {
     return (m_blue != Byte_map() || m_fblue != Double_map());
@@ -207,13 +260,36 @@ public:
     return (m_blue != Byte_map());
   }
     
+  void remove_colors()
+  {
+    if (m_blue != Byte_map())
+      {
+        this->template remove_property_map<unsigned char>(m_red);
+        this->template remove_property_map<unsigned char>(m_green);
+        this->template remove_property_map<unsigned char>(m_blue);
+      }
+    if (m_fblue != Double_map())
+      {
+        this->template remove_property_map<double>(m_fred);
+        this->template remove_property_map<double>(m_fgreen);
+        this->template remove_property_map<double>(m_fblue);
+      }
+  }
+  
   double red (const Index& index) const
   { return (m_red == Byte_map()) ? m_fred[index]  : double(m_red[index]) / 255.; }
   double green (const Index& index) const
   { return (m_green == Byte_map()) ? m_fgreen[index]  : double(m_green[index]) / 255.; }
   double blue (const Index& index) const
   { return (m_blue == Byte_map()) ? m_fblue[index]  : double(m_blue[index]) / 255.; }
+  void set_color (const Index& index, unsigned char r, unsigned char g, unsigned char b)
+  {
+    m_red[index] = r;
+    m_green[index] = g;
+    m_blue[index] = b;
+  }
 
+    
   
   iterator first_selected() { return this->m_indices.end() - this->m_nb_removed; }
   const_iterator first_selected() const { return this->m_indices.end() - this->m_nb_removed; }

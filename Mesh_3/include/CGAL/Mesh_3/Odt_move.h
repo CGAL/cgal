@@ -50,7 +50,8 @@ class Odt_move
   typedef typename Tr::Cell_handle Cell_handle;
   typedef typename Tr::Vertex_handle Vertex_handle;
   typedef typename Tr::Facet Facet;
-  typedef typename Tr::Point Point_3;
+  typedef typename Tr::Weighted_point Weighted_point;
+  typedef typename Tr::Bare_point Bare_point;
   
   typedef typename std::vector<Cell_handle>   Cell_vector;
   typedef typename std::vector<Vertex_handle> Vertex_vector;
@@ -58,7 +59,7 @@ class Odt_move
   
   typedef typename Gt::FT FT;
   typedef typename Gt::Vector_3 Vector_3;
-  
+
 public:
   typedef SizingField Sizing_field;
   
@@ -74,14 +75,17 @@ public:
     }
     
     // Compute move
-    typename Gt::Construct_vector_3 vector =
-      Gt().construct_vector_3_object();
-    
     const Tr& tr = c3t3.triangulation();
+
+    typename Gt::Construct_vector_3 vector =
+      tr.geom_traits().construct_vector_3_object();
+    typename Gt::Construct_point_3 cp =
+      tr.geom_traits().construct_point_3_object();
+
     Vector_3 move = CGAL::NULL_VECTOR;
     FT sum_volume(0);
-       
-    const Point_3& p = v->point();
+
+    const Bare_point p = cp(v->point());
     
     for ( typename Cell_vector::const_iterator cit = incident_cells.begin() ;
          cit != incident_cells.end() ;
@@ -94,8 +98,8 @@ public:
         continue;
       
       // Get points
-      Point_3 circumcenter = tr.dual(cell);
-      
+      Bare_point circumcenter = tr.dual(cell);
+
       // Compute move
       Vector_3 p_circum = vector(p,circumcenter);
       FT volume = volume_quadrature(cell, tr, sizing_field);
@@ -128,12 +132,11 @@ private:
                        const Sizing_field& sizing_field) const
   {
     typename Gt::Compute_volume_3 volume =
-    Gt().compute_volume_3_object();
-    
+        tr.geom_traits().compute_volume_3_object();
     typename Gt::Construct_centroid_3 centroid =
-    Gt().construct_centroid_3_object();
+        tr.geom_traits().construct_centroid_3_object();
     
-    Point_3 c = centroid(tr.tetrahedron(cell));
+    Bare_point c = centroid(tr.tetrahedron(cell));
     FT s = sizing_field(c,std::make_pair(cell,true));
     CGAL_assertion(!is_zero(s));
 
@@ -200,7 +203,7 @@ private:
 //      Vector_3 facet_normal = area * normal_outside(*fit, c3t3);
 //      
 //      // Sq length
-//      FT sq_length_sum = sq_length_facet_quadrature(v, *fit, sizing_field);       
+//      FT sq_length_sum = sq_length_facet_quadrature(v, *fit, tr, sizing_field);
 //      
 //      // Move
 //      move = move + sq_length_sum * facet_normal;
@@ -216,12 +219,11 @@ private:
 //                     const Sizing_field& sizing_field) const
 //  {
 //    typename Gt::Compute_area_3 area =
-//      Gt().compute_area_3_object();
-//    
+//        tr.geom_traits().compute_area_3_object();
 //    typename Gt::Construct_centroid_3 centroid =
-//      Gt().construct_centroid_3_object();
-//    
-//    Point_3 c = centroid(tr.triangle(facet));
+//        tr.geom_traits().construct_centroid_3_object();
+//
+//    Bare_point c = centroid(tr.triangle(facet));
 //    FT s = sizing_field(c, facet.first->vertex(0));
 //    
 //    return ( area(tr.triangle(facet)) / (s*s) );
@@ -230,16 +232,16 @@ private:
 //  // 1-point at segment midpoint
 //  FT sq_length_quadrature(const Vertex_handle& v1,
 //                          const Vertex_handle& v2,
+//                          const Tr& tr,
 //                          const Sizing_field& sizing_field) const
 //  {
 //    typename Gt::Compute_squared_distance_3 sq_distance =
-//      Gt().compute_squared_distance_3_object();
-//    
+//      tr.geom_traits().compute_squared_distance_3_object();
 //    typename Gt::Construct_midpoint_3 midpoint =
-//      Gt().construct_midpoint_3_object();
-//    
-//    Point_3 c = midpoint(v1->point(), v2->point());
-//    FT s = sizing_field(c,v1);
+//      tr.geom_traits().construct_midpoint_3_object();
+//
+//    Bare_point c = midpoint(v1->point(), v2->point());
+//    FT s = sizing_field(c, v1);
 //    
 //    return ( sq_distance(v1->point(), v2->point()) / s );
 //  }
@@ -247,6 +249,7 @@ private:
 //  
 //  FT sq_length_facet_quadrature(const Vertex_handle& v,
 //                                const Facet& f,
+//                                const Tr& tr,
 //                                const Sizing_field& sizing_field) const
 //  {
 //    // get indices
@@ -263,8 +266,8 @@ private:
 //    
 //    const Vertex_handle& v2 = f.first->vertex(k2);
 //    const Vertex_handle& v3 = f.first->vertex(k3);
-//    FT sqd_v2 = sq_length_quadrature(v, v2, sizing_field);
-//    FT sqd_v3 = sq_length_quadrature(v, v3, sizing_field);
+//    FT sqd_v2 = sq_length_quadrature(v, v2, tr, sizing_field);
+//    FT sqd_v3 = sq_length_quadrature(v, v3, tr, sizing_field);
 //    
 //    return (sqd_v2 + sqd_v3);
 //  }
@@ -273,8 +276,8 @@ private:
 //  Vector_3 normal_outside(const Facet& f, const C3T3& c3t3) const
 //  {
 //    typename Gt::Construct_normal_3 normal =
-//      Gt().construct_normal_3_object();
-//    
+//      c3t3.triangulation().geom_traits().construct_normal_3_object();
+//
 //    const Cell_handle& cell = f.first;
 //    const int& i = f.second;
 //    
@@ -290,9 +293,9 @@ private:
 //    if ( ! c3t3.is_in_complex(cell) )
 //      std::swap(k1,k2);
 //    
-//    const Point_3& p1 = cell->vertex(k1)->point();
-//    const Point_3& p2 = cell->vertex(k2)->point();
-//    const Point_3& p3 = cell->vertex(k3)->point();
+//    const Weighted_point& p1 = cell->vertex(k1)->point();
+//    const Weighted_point& p2 = cell->vertex(k2)->point();
+//    const Weighted_point& p3 = cell->vertex(k3)->point();
 //    
 //    return normal(p1,p2,p3);
 //  }

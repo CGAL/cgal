@@ -43,7 +43,7 @@ template<>
 struct Mesh_geom_traits_generator<K_e_e>
 {
 private:
-  typedef Regular_triangulation_euclidean_traits_3<K_e_e> Geom_traits;
+  typedef K_e_e Geom_traits;
 
 public:
   typedef Geom_traits type;

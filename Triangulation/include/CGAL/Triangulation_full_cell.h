@@ -69,22 +69,6 @@ public:
     Triangulation_full_cell(const Self & s)
         : Base(s), data_(s.data_)  {}
 
-    Point circumcenter() const
-    {
-        TriangulationTraits pct;
-        Vertex_handle_const_iterator vhit = vertices_begin();
-        while( vhit != vertices_end() )
-        {
-            if( *vhit == Vertex_const_handle() )
-            {
-                CGAL_warning_msg(false, "too few points; can not compute circumcenter.");
-                return Point();
-            }
-            ++vhit;
-        }
-        return pct.center_of_sphere_d_object()(points_begin(), points_end());
-    }
-
     const Data & data() const
     {
         return data_;

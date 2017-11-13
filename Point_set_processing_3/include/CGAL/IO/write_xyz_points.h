@@ -34,7 +34,7 @@ namespace CGAL {
 
 
 //===================================================================================
-/// \ingroup PkgPointSetProcessing
+/// \ingroup PkgPointSetProcessingIO
 /// Saves the [first, beyond) range of points (positions + normals) to a .xyz ASCII stream.
 /// The function writes for each point a line with the x y z position
 /// followed by the nx ny nz normal.
@@ -131,7 +131,7 @@ write_xyz_points_and_normals(
 
 
 //===================================================================================
-/// \ingroup PkgPointSetProcessing
+/// \ingroup PkgPointSetProcessingIO
 /// Saves the [first, beyond) range of points (positions only) to a .xyz ASCII stream.
 /// The function writes for each point a line with the x y z position.
 ///

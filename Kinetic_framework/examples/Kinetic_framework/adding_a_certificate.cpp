@@ -60,14 +60,14 @@ struct My_simulation_traits {
   typedef CGAL::Kinetic::Active_objects_vector<Kinetic_kernel::Point_1> Active_points_1_table;
   typedef CGAL::Kinetic::Active_objects_vector<Kinetic_kernel::Point_2> Active_points_2_table;
   typedef CGAL::Kinetic::Active_objects_vector<Kinetic_kernel::Point_3> Active_points_3_table;
-  // typedef Active_objects_vector<Kinetic_kernel::Weighted_point_3> Active_weighted_points_3_table;
+  typedef CGAL::Kinetic::Active_objects_vector<Kinetic_kernel::Weighted_point_3> Active_weighted_points_3_table;
 
   typedef CGAL::Kinetic::Default_instantaneous_kernel<This> Instantaneous_kernel;
 
   Active_points_1_table* active_points_1_table_handle() const { return ap1_.get();}
   Active_points_2_table* active_points_2_table_handle() const {return ap2_.get();}
   Active_points_3_table* active_points_3_table_handle() const {return ap3_.get();}
-  //Active_weighted_points_3_table* active_weighted_points_3_table_handle() const {return awp3_.get();}
+  Active_weighted_points_3_table* active_weighted_points_3_table_handle() const {return awp3_.get();}
 
   Simulator* simulator_handle() const { return sim_.get();}
   const Static_kernel& static_kernel_object() const {return k_;}
@@ -78,10 +78,11 @@ struct My_simulation_traits {
   }
 
   My_simulation_traits(const Simulator::Time &lb,
-		       const Simulator::Time &ub): sim_(new Simulator(lb, ub)),
-						   ap1_(new Active_points_1_table()),
-						   ap2_(new Active_points_2_table()),
-						   ap3_(new Active_points_3_table())
+                       const Simulator::Time &ub): sim_(new Simulator(lb, ub)),
+    ap1_(new Active_points_1_table()),
+    ap2_(new Active_points_2_table()),
+    ap3_(new Active_points_3_table()),
+    awp3_(new Active_weighted_points_3_table())
   {}
 
 
@@ -93,7 +94,7 @@ protected:
   Active_points_1_table::Handle ap1_;
   Active_points_2_table::Handle ap2_;
   Active_points_3_table::Handle ap3_;
-  //Active_weighted_points_3_table::Handle awp3_;
+  Active_weighted_points_3_table::Handle awp3_;
   Static_kernel k_;
   Kinetic_kernel kk_;
   Function_kernel fk_;

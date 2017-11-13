@@ -4,6 +4,7 @@ STL_Extension
 Algebraic_foundations
 Convex_hull_3
 Circulator
+Spatial_sorting
 Stream_support
 Triangulation_2
 TDS_3

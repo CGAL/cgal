@@ -28,11 +28,14 @@
 
 #include <boost/iterator/transform_iterator.hpp>
 
+#include <OpenMesh/Core/IO/MeshIO.hh>
+
 #include <CGAL/boost/graph/properties_PolyMesh_ArrayKernelT.h>
 #include <CGAL/boost/graph/internal/OM_iterator_from_circulator.h>
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/Iterator_range.h>
 #include <CGAL/boost/graph/helpers.h>
+#include <CGAL/boost/graph/io.h>
 #include <CGAL/assertions.h>
 
 #include <OpenMesh/Core/Mesh/PolyMesh_ArrayKernelT.hh>
@@ -46,45 +49,6 @@
 #  pragma warning(disable:4267)
 #endif
 namespace CGAL { namespace internal {
-
-
-template<typename Halfedge_handle>
-class OMesh_edge {
-public:
-  OMesh_edge() : halfedge_() {}
-  explicit OMesh_edge(const Halfedge_handle& h) : halfedge_(h) {}
-  Halfedge_handle halfedge() const { return halfedge_; }
-  bool is_valid() const { return halfedge_.is_valid(); }
-
-  bool
-  operator==(const OMesh_edge& other) {
-    if(halfedge_ == other.halfedge_) {
-      return true;
-    } else if(halfedge_ != Halfedge_handle()) {
-      return opposite() == other.halfedge_;
-    } else {
-      return false;
-    }
-  }
-
-  bool operator<(const OMesh_edge& other) const
-  { 
-    return this->idx() < other.idx();
-  }
-
-  bool
-  operator!=(const OMesh_edge& other) { return !(*this == other); }
-
-  Halfedge_handle
-  opposite() const { return Halfedge_handle((halfedge_.idx() & 1) ? halfedge_.idx()-1 : halfedge_.idx()+1); }
-
-  OMesh_edge
-  opposite_edge() const { return OMesh_edge(Halfedge_handle((halfedge_.idx() & 1) ? halfedge_.idx()-1 : halfedge_.idx()+1)); }
-
-  unsigned int idx() const { return halfedge_.idx() / 2; }
-private:
-  Halfedge_handle halfedge_;
-};
 
 template <typename Halfedge_handle, typename OMeshEdge>
 struct Convert_omesh_edge
@@ -206,6 +170,15 @@ degree(typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::vertex
        const OpenMesh::PolyMesh_ArrayKernelT<K>& sm)
 {
   return sm.valence(v);
+}
+
+
+template <typename K>
+typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::degree_size_type
+degree(typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::face_descriptor f,
+       const OpenMesh::PolyMesh_ArrayKernelT<K>& sm)
+{
+  return sm.valence(f);
 }
 
          
@@ -680,6 +653,20 @@ void clear(OpenMesh::PolyMesh_ArrayKernelT<K>& sm)
   CGAL_postcondition(num_edges(sm) == 0);
   CGAL_postcondition(num_vertices(sm) == 0);
   CGAL_postcondition(num_faces(sm) == 0);
+}
+
+
+template<typename K>
+bool read_off(std::istream& is, OpenMesh::PolyMesh_ArrayKernelT<K>& sm)
+{
+  return OpenMesh::IO::read_mesh(sm, is, ".OFF");
+}
+
+
+template<typename K>
+bool write_off(std::ostream& os, OpenMesh::PolyMesh_ArrayKernelT<K>& sm)
+{
+  return OpenMesh::IO::write_mesh(sm, os, ".OFF");
 }
 
 }

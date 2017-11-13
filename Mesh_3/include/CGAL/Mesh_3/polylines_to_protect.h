@@ -317,7 +317,8 @@ case_4:
             vertex_descriptor right  = g_manip.split(p10, p11, out10, out11);
             vertex_descriptor top    = g_manip.split(p01, p11, out01, out11);
             vertex_descriptor bottom = g_manip.split(p00, p10, out00, out10);
-            vertex_descriptor vmid   = g_manip.get_vertex(midpoint(p00, p11));
+
+            vertex_descriptor vmid = g_manip.get_vertex(midpoint(p00, p11));
             g_manip.try_add_edge(left   , vmid);
             g_manip.try_add_edge(right  , vmid);
             g_manip.try_add_edge(top    , vmid);

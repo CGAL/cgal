@@ -78,6 +78,7 @@ public:
   typedef typename Ctr::Face_handle   Face_handle;
   typedef typename Ctr::Edge          Edge;
   typedef typename Ctr::Finite_faces_iterator Finite_faces_iterator;
+  typedef typename Ctr::Constrained_edges_iterator Constrained_edges_iterator;
   typedef typename Ctr::Face_circulator       Face_circulator;
   typedef typename Ctr::size_type             size_type;
   typedef typename Ctr::Locate_type           Locate_type;
@@ -88,6 +89,12 @@ public:
   typedef typename Ctr::List_constraints List_constraints;
   typedef typename Ctr::Less_edge less_edge;
   typedef typename Ctr::Edge_set Edge_set;
+
+  //Tag to distinguish Delaunay from regular triangulations
+  typedef Tag_false Weighted_tag;
+
+  // Tag to distinguish periodic triangulations from others
+  typedef Tag_false Periodic_tag;
 
 #ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
   using Ctr::geom_traits;

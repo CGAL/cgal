@@ -4,8 +4,8 @@
 \cgalConcept
 
 The vertex base used by the geometric triangulation must store a point. 
-So we list here the additional requirements compared to a vertex base usable 
-for the triangulation data structure. 
+We list here the additional requirements compared to a vertex base usable
+for the triangulation data structure.
 
 \cgalRefines `TriangulationDSVertexBase_3` 
 

@@ -96,7 +96,7 @@ class Mesh_sizing_field
 {
   // Types
   typedef typename Tr::Geom_traits   Gt;
-  typedef typename Tr::Point         Point_3;
+  typedef typename Tr::Bare_point Bare_point;
   typedef typename Gt::FT            FT;
 
   typedef typename Tr::Vertex_handle      Vertex_handle;
@@ -115,43 +115,43 @@ public:
   /**
    * Fill sizing field, using size associated to point in \c value_map
    */
-  void fill(const std::map<Point_3, FT>& value_map);
+  void fill(const std::map<Bare_point, FT>& value_map);
 
   /**
    * Returns size at point \c p.
    */
-  FT operator()(const Point_3& p) const
+  FT operator()(const Bare_point& p) const
   { return this->operator()(p, this->get_last_cell()); }
 
   /**
    * Returns size at point \c p, using \c v to accelerate \c p location
    * in triangulation
    */
-  FT operator()(const Point_3& p, const Vertex_handle& v) const
+  FT operator()(const Bare_point& p, const Vertex_handle& v) const
   { return this->operator()(p,v->cell()); }
 
   /**
    * Returns size at point \c p.
    */
-  FT operator()(const Point_3& p, const Cell_handle& c) const;
+  FT operator()(const Bare_point& p, const Cell_handle& c) const;
 
   /**
    * Returns size at point \c p. Assumes that p is the centroid of c.
    */
-  FT operator()(const Point_3& p, const std::pair<Cell_handle,bool>& c) const;
+  FT operator()(const Bare_point& p, const std::pair<Cell_handle,bool>& c) const;
 
 private:
   /**
    * Returns size at point \c p, by interpolation into tetrahedron.
    */
-  FT interpolate_on_cell_vertices(const Point_3& p,
+  FT interpolate_on_cell_vertices(const Bare_point& p,
                                   const Cell_handle& cell) const;
 
   /**
    * Returns size at point \c p, by interpolation into facet (\c cell is assumed
    * to be an infinite cell).
    */
-  FT interpolate_on_facet_vertices(const Point_3& p,
+  FT interpolate_on_facet_vertices(const Bare_point& p,
                                    const Cell_handle& cell) const;
 
 private:
@@ -172,7 +172,7 @@ Mesh_sizing_field(Tr& tr)
 template <typename Tr, bool B>
 void
 Mesh_sizing_field<Tr,B>::
-fill(const std::map<Point_3, FT>& value_map)
+fill(const std::map<Bare_point, FT>& value_map)
 {
   typedef typename Tr::Finite_vertices_iterator  Fvi;
 
@@ -180,8 +180,8 @@ fill(const std::map<Point_3, FT>& value_map)
         vit != tr_.finite_vertices_end() ;
         ++ vit )
   {
-    typename std::map<Point_3, FT>::const_iterator find_result =
-      value_map.find(vit->point());
+    typename std::map<Bare_point, FT>::const_iterator find_result =
+      value_map.find(tr_.geom_traits().construct_point_3_object()(vit->point()));
 
     if ( find_result != value_map.end() )
     {
@@ -198,16 +198,19 @@ fill(const std::map<Point_3, FT>& value_map)
 template <typename Tr, bool B>
 typename Mesh_sizing_field<Tr,B>::FT
 Mesh_sizing_field<Tr,B>::
-operator()(const Point_3& p, const Cell_handle& c) const
+operator()(const Bare_point& p, const Cell_handle& c) const
 {
+  typename Gt::Construct_weighted_point_3 p2wp =
+      tr_.geom_traits().construct_weighted_point_3_object();
+
 #ifdef CGAL_MESH_3_SIZING_FIELD_INEXACT_LOCATE
   //use the inexact locate (much faster than locate) to get a hint
   //and then use locate to check whether p is really inside hint
   // if not, an exact locate will be performed
-  Cell_handle hint = tr_.inexact_locate(p,c);
-  const Cell_handle cell = tr_.locate(p, hint);
+  Cell_handle hint = tr_.inexact_locate(p2wp(p),c);
+  const Cell_handle cell = tr_.locate(p2wp(p), hint);
 #else
-  const Cell_handle cell = tr_.locate(p,c);
+  const Cell_handle cell = tr_.locate(p2wp(p),c);
 #endif
   this->set_last_cell(cell);
 
@@ -221,7 +224,7 @@ operator()(const Point_3& p, const Cell_handle& c) const
 template <typename Tr, bool B>
 typename Mesh_sizing_field<Tr,B>::FT
 Mesh_sizing_field<Tr,B>::
-operator()(const Point_3&, const std::pair<Cell_handle,bool>& c) const
+operator()(const Bare_point&, const std::pair<Cell_handle,bool>& c) const
 {
   // Assumes that p is the centroid of c
   const Cell_handle& cell = c.first;
@@ -239,10 +242,10 @@ operator()(const Point_3&, const std::pair<Cell_handle,bool>& c) const
 template <typename Tr, bool B>
 typename Mesh_sizing_field<Tr,B>::FT
 Mesh_sizing_field<Tr,B>::
-interpolate_on_cell_vertices(const Point_3& p, const Cell_handle& cell) const
+interpolate_on_cell_vertices(const Bare_point& p, const Cell_handle& cell) const
 {
-  typename Gt::Compute_volume_3 volume =
-    Gt().compute_volume_3_object();
+  typename Gt::Compute_volume_3 volume = tr_.geom_traits().compute_volume_3_object();
+  typename Gt::Construct_point_3 wp2p = tr_.geom_traits().construct_point_3_object();
 
   // Interpolate value using tet vertices values
   const FT& va = cell->vertex(0)->meshing_info();
@@ -250,10 +253,10 @@ interpolate_on_cell_vertices(const Point_3& p, const Cell_handle& cell) const
   const FT& vc = cell->vertex(2)->meshing_info();
   const FT& vd = cell->vertex(3)->meshing_info();
 
-  const Point_3& a = cell->vertex(0)->point();
-  const Point_3& b = cell->vertex(1)->point();
-  const Point_3& c = cell->vertex(2)->point();
-  const Point_3& d = cell->vertex(3)->point();
+  const Bare_point& a = wp2p(cell->vertex(0)->point());
+  const Bare_point& b = wp2p(cell->vertex(1)->point());
+  const Bare_point& c = wp2p(cell->vertex(2)->point());
+  const Bare_point& d = wp2p(cell->vertex(3)->point());
 
   const FT abcp = CGAL::abs(volume(a,b,c,p));
   const FT abdp = CGAL::abs(volume(a,d,b,p));
@@ -272,11 +275,11 @@ interpolate_on_cell_vertices(const Point_3& p, const Cell_handle& cell) const
 template <typename Tr, bool B>
 typename Mesh_sizing_field<Tr,B>::FT
 Mesh_sizing_field<Tr,B>::
-interpolate_on_facet_vertices(const Point_3& p, const Cell_handle& cell) const
+interpolate_on_facet_vertices(const Bare_point& p, const Cell_handle& cell) const
 {
-  typename Gt::Compute_area_3 area =
-    Gt().compute_area_3_object();
+  typename Gt::Compute_area_3 area =  tr_.geom_traits().compute_area_3_object();
 
+  typename Gt::Construct_point_3 wp2p = tr_.geom_traits().construct_point_3_object();
   // Find infinite vertex and put it in k0
   int k0 = 0;
   int k1 = 1;
@@ -295,9 +298,9 @@ interpolate_on_facet_vertices(const Point_3& p, const Cell_handle& cell) const
   const FT& vb = cell->vertex(k2)->meshing_info();
   const FT& vc = cell->vertex(k3)->meshing_info();
 
-  const Point_3& a = cell->vertex(k1)->point();
-  const Point_3& b = cell->vertex(k2)->point();
-  const Point_3& c = cell->vertex(k3)->point();
+  const Bare_point& a = wp2p(cell->vertex(k1)->point());
+  const Bare_point& b = wp2p(cell->vertex(k2)->point());
+  const Bare_point& c = wp2p(cell->vertex(k3)->point());
 
   const FT abp = area(a,b,p);
   const FT acp = area(a,c,p);

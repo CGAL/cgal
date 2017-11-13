@@ -214,7 +214,6 @@
 //#include <CGAL/Mesher_level_visitors.h>
 //#include <CGAL/Meshes/Filtered_multimap_container.h>
 //#include <CGAL/Meshes/Triangulation_mesher_level_traits_3.h>
-//#include <CGAL/Mesh_3/Creator_weighted_point_3.h>
 //#include <CGAL/Mesh_3/global_parameters.h>
 //#include <CGAL/Mesh_3/Mesher_3.h>
 //#include <CGAL/Mesh_3/mesh_standard_cell_criteria.h>
@@ -225,7 +224,6 @@
 //#include <CGAL/Mesh_3/Refine_facets_3.h>
 //#include <CGAL/Mesh_3/Refine_tets_visitor.h>
 //#include <CGAL/Mesh_3/Robust_intersection_traits_3.h>
-//#include <CGAL/Mesh_3/Robust_weighted_circumcenter_filtered_traits_3.h>
 //#include <CGAL/Mesh_3/Triangle_accessor_primitive.h>
 //#include <CGAL/Mesh_3/utilities.h>
 //#include <CGAL/Mesh_cell_base_3.h>
@@ -249,7 +247,6 @@
 //#include <CGAL/predicates/Regular_triangulation_rtH3.h>
 //#include <CGAL/Profile_counter.h>
 //#include <CGAL/Regular_triangulation_cell_base_3.h>
-//#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 #include <CGAL/representation_tags.h>
 #include <CGAL/Robust_construction.h>
 #include <CGAL/Simple_cartesian.h>
@@ -274,7 +271,7 @@
 #include <CGAL/tuple.h>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/utility.h>
-#include <CGAL/Weighted_point.h>
+//#include <CGAL/Weighted_point.h>
 
 // Mesh_3
 /*#include <CGAL_demo/Viewer.h>

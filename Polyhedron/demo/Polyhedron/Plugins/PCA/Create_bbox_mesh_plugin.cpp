@@ -3,64 +3,18 @@
 #include <CGAL/Three/Scene_item.h>
 #include <CGAL/Three/Scene_interface.h>
 #include <CGAL/gl.h>
-#include <CGAL/Polyhedron_incremental_builder_3.h>
 
 #include <QAction>
 #include <QMainWindow>
 #include <QApplication>
 
 #include "Scene_polyhedron_item.h"
+#include "Scene_surface_mesh_item.h"
 #include "Polyhedron_type.h"
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 
 
-const int cube[][3] = { { 0, 1, 3 },
-                        { 3, 1, 2 },
-                        { 0, 4, 1 },
-                        { 1, 4, 5 },
-                        { 3, 2, 7 },
-                        { 7, 2, 6 },
-                        { 4, 0, 3 },
-                        { 7, 4, 3 },
-                        { 6, 4, 7 },
-                        { 6, 5, 4 },
-                        { 1, 5, 6 },
-                        { 2, 1, 6 } };
-
 using namespace CGAL::Three;
-
-struct Build_bbox_mesh : 
-  public CGAL::Modifier_base<Polyhedron::HalfedgeDS>
-{
-  Scene_interface::Bbox bbox;
-  typedef Polyhedron::HalfedgeDS HDS;
-
-public:
-  Build_bbox_mesh(Scene_interface::Bbox b) : bbox(b) {}
-
-  void operator()( HDS& hds) {
-    CGAL::Polyhedron_incremental_builder_3<HDS> B( hds, true);
-    B.begin_surface( 8, 12, 24);
-    typedef HDS::Vertex   Vertex;
-    typedef Vertex::Point Point;
-    B.add_vertex( Point( bbox.xmin(), bbox.ymin(), bbox.zmin())); // -1 -1 -1
-    B.add_vertex( Point( bbox.xmin(), bbox.ymax(), bbox.zmin())); // -1 1 -1
-    B.add_vertex( Point( bbox.xmax(), bbox.ymax(), bbox.zmin())); // 1 1 -1
-    B.add_vertex( Point( bbox.xmax(), bbox.ymin(), bbox.zmin())); // 1 -1 -1
-    B.add_vertex( Point( bbox.xmin(), bbox.ymin(), bbox.zmax())); // -1 -1 1
-    B.add_vertex( Point( bbox.xmin(), bbox.ymax(), bbox.zmax())); // -1 1 1
-    B.add_vertex( Point( bbox.xmax(), bbox.ymax(), bbox.zmax())); // 1 1 1
-    B.add_vertex( Point( bbox.xmax(), bbox.ymin(), bbox.zmax())); // 1 -1 1
-    for(int i = 0; i < 12; ++i) {
-      B.begin_facet();
-      B.add_vertex_to_facet( cube[i][0]);
-      B.add_vertex_to_facet( cube[i][1]);
-      B.add_vertex_to_facet( cube[i][2]);
-      B.end_facet();
-    }
-    B.end_surface();
-  }
-};
 
 class Create_bbox_mesh_plugin : 
   public QObject,
@@ -95,6 +49,7 @@ public Q_SLOTS:
 
 private:
   Scene_interface* scene;
+  QMainWindow* mw;
   QAction* actionBbox;
   QAction* actionExtendedBbox;
 
@@ -103,6 +58,7 @@ private:
 void Create_bbox_mesh_plugin::init(QMainWindow* mainWindow, Scene_interface* scene_interface, Messages_interface*)
 {
   scene = scene_interface;
+  mw = mainWindow;
   actionBbox = new QAction(tr("Create &Bbox Mesh"), mainWindow);
   actionBbox->setObjectName("createBboxMeshAction");
   connect(actionBbox, SIGNAL(triggered()),
@@ -150,13 +106,20 @@ bbox = Scene_interface::Bbox(
     bbox.ymax() + delta_y,
     bbox.zmax() + delta_z);
   }
-
-  Polyhedron p;
   
-  Build_bbox_mesh b(bbox);
-  p.delegate(b);
+  Scene_item* item;
+  Kernel::Iso_cuboid_3 ic(bbox);
+  if(mw->property("is_polyhedorn_mode").toBool()){
+    Polyhedron* p = new Polyhedron;
+    CGAL::make_hexahedron(ic[0], ic[1], ic[2], ic[3], ic[4], ic[5], ic[6], ic[7],*p);
+    item = new Scene_polyhedron_item(p);
+  } else {
+    SMesh* p = new SMesh;
+    CGAL::make_hexahedron(ic[0], ic[1], ic[2], ic[3], ic[4], ic[5], ic[6], ic[7],*p);
 
-  Scene_item* item = new Scene_polyhedron_item(p);
+    item = new Scene_surface_mesh_item(p);
+  }
+
   item->setName("Scene bbox mesh");
   item->setRenderingMode(Wireframe);
   scene->addItem(item);

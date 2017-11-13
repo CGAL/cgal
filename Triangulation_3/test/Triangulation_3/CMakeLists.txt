@@ -34,9 +34,21 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "test_regular_insert_range_with_info.cpp" )
   create_single_source_cgal_program( "test_regular_remove_3.cpp" )
   create_single_source_cgal_program( "test_regular_traits_3.cpp" )
+  create_single_source_cgal_program( "test_RT_cell_base_with_weighted_circumcenter_3.cpp" )
+  create_single_source_cgal_program( "test_robust_weighted_circumcenter.cpp" )
   create_single_source_cgal_program( "test_simplex_3.cpp" )
   create_single_source_cgal_program( "test_static_filters.cpp" )
   create_single_source_cgal_program( "test_triangulation_3.cpp" )
+
+  if(BUILD_TESTING)
+    set_tests_properties(
+        execution___of__test_delaunay_hierarchy_3
+        execution___of__test_delaunay_hierarchy_3_old
+        execution___of__test_regular_as_delaunay_3
+        execution___of__test_triangulation_3
+        execution___of__test_delaunay_3
+      PROPERTIES RESOURCE_LOCK Triangulation_3_Tests_IO)
+  endif()
 
 else()
   

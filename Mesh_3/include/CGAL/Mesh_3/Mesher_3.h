@@ -147,6 +147,7 @@ public:
 #endif
   typedef typename C3T3::Triangulation              Triangulation;
   typedef typename Triangulation::Point             Point;
+  typedef typename Triangulation::Bare_point        Bare_point;
   typedef typename Kernel_traits<Point>::Kernel     Kernel;
   typedef typename Kernel::Vector_3                 Vector;
   typedef typename MeshDomain::Index                Index;
@@ -262,6 +263,16 @@ private:
   /// The container of the resulting mesh
   C3T3& r_c3t3_;
 
+  enum Refinement_stage {
+    NOT_INITIALIZED,
+    REFINE_FACETS,
+    REFINE_FACETS_AND_EDGES,
+    REFINE_FACETS_AND_EDGES_AND_VERTICES,
+    REFINE_ALL
+  };
+
+  Refinement_stage refinement_stage;
+
 private:
   // Disabled copy constructor
   Mesher_3(const Self& src);
@@ -331,6 +342,12 @@ Mesher_3<C3T3,MC,MD>::refine_mesh(std::string dump_after_refine_surface_prefix)
   WallClockTimer t;
 #endif
   facets_mesher_.refine(facets_visitor_);
+  facets_mesher_.scan_edges();
+  refinement_stage = REFINE_FACETS_AND_EDGES;
+  facets_mesher_.refine(facets_visitor_);
+  facets_mesher_.scan_vertices();
+  refinement_stage = REFINE_FACETS_AND_EDGES_AND_VERTICES;
+  facets_mesher_.refine(facets_visitor_);
 #ifdef CGAL_MESH_3_PROFILING
   double facet_ref_time = t.elapsed();
   std::cerr << "==== Facet refinement: " << facet_ref_time << " seconds ===="
@@ -362,6 +379,7 @@ Mesher_3<C3T3,MC,MD>::refine_mesh(std::string dump_after_refine_surface_prefix)
 
   // Then scan volume and refine it
   cells_mesher_.scan_triangulation();
+  refinement_stage = REFINE_ALL;
 #ifdef CGAL_MESH_3_PROFILING
   std::cerr << "Refining cells..." << std::endl;
   t.reset();
@@ -429,6 +447,7 @@ Mesher_3<C3T3,MC,MD>::refine_mesh(std::string dump_after_refine_surface_prefix)
   dump_c3t3(r_c3t3_, dump_after_refine_surface_prefix);
   std::cerr << "Start volume scan...";
   cells_mesher_.scan_triangulation();
+  refinement_stage = REFINE_ALL;
   std::cerr << "end scan. [Bad tets:" << cells_mesher_.size() << "]";
   std::cerr << std::endl << std::endl;
   elapsed_time += timer.time();
@@ -531,12 +550,13 @@ initialize()
 #  ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
       std::cerr << "Adding points on a far sphere (radius = " << radius <<")...";
 #  endif
-      Random_points_on_sphere_3<Point> random_point(radius);
+      Random_points_on_sphere_3<Bare_point> random_point(radius);
       const int NUM_PSEUDO_INFINITE_VERTICES = static_cast<int>(
         float(tbb::task_scheduler_init::default_num_threads())
         * Concurrent_mesher_config::get().num_pseudo_infinite_vertices_per_core);
       for (int i = 0 ; i < NUM_PSEUDO_INFINITE_VERTICES ; ++i, ++random_point)
-        r_c3t3_.add_far_point(r_c3t3_.triangulation().geom_traits().construct_translated_point_3_object()(*random_point, center));
+        r_c3t3_.add_far_point(r_c3t3_.triangulation().geom_traits().construct_weighted_point_3_object()
+                              (r_c3t3_.triangulation().geom_traits().construct_translated_point_3_object()(*random_point, center)));
     
 #  ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
       std::cerr << "done." << std::endl;
@@ -551,6 +571,7 @@ initialize()
 
     // Scan triangulation
     facets_mesher_.scan_triangulation();
+    refinement_stage = REFINE_FACETS;
 
     // From now on, we're multi-thread
     r_c3t3_.triangulation().set_lock_data_structure(get_lock_data_structure());
@@ -610,7 +631,7 @@ initialize()
 
     // Scan triangulation
     facets_mesher_.scan_triangulation();
-
+    refinement_stage = REFINE_FACETS;
   }
 }
 
@@ -648,12 +669,27 @@ one_step()
 
     if ( facets_mesher_.is_algorithm_done() )
     {
-      facets_visitor_.activate();
-      cells_mesher_.scan_triangulation();
+      switch(refinement_stage) {
+      case REFINE_FACETS:
+        facets_mesher_.scan_edges();
+        refinement_stage = REFINE_FACETS_AND_EDGES;
+        if (!facets_mesher_.is_algorithm_done()) break;
+        CGAL_FALLTHROUGH;
+      case REFINE_FACETS_AND_EDGES:
+        facets_mesher_.scan_vertices();
+        refinement_stage = REFINE_FACETS_AND_EDGES_AND_VERTICES;
+        if (!facets_mesher_.is_algorithm_done()) break;
+        CGAL_FALLTHROUGH;
+      default:
+        facets_visitor_.activate();
+        cells_mesher_.scan_triangulation();
+        refinement_stage = REFINE_ALL;
+      }
     }
   }
   else
   {
+    CGAL_assertion(refinement_stage == REFINE_ALL);
     cells_mesher_.one_step(cells_visitor_);
   }
 }

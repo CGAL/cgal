@@ -21,11 +21,12 @@
 #define CGAL_SPLIT_GRAPH_INTO_POLYLINES
 
 #include <map> 
-#include <set> 
+#include <vector>
+#include <utility>
 #include <boost/foreach.hpp>
 #include <boost/graph/adjacency_list.hpp>
-#include <iostream>
 #include <CGAL/assertions.h>
+#include <CGAL/tags.h>
 
 namespace CGAL {
 
@@ -291,7 +292,7 @@ split_graph_into_polylines(const Graph& graph,
   std::set<vertex_descriptor, G_copy_less> terminal(g_copy_less);
 
   BOOST_FOREACH(vertex_descriptor v, vertices(g_copy)){
-    typename graph_traits<Graph>::degree_size_type n = degree(v, g_copy);
+    typename graph_traits<G_copy>::degree_size_type n = degree(v, g_copy);
     if ( n == 1 ) terminal.insert(v);
     if ( n ==0 ){
       //isolated vertex
@@ -318,10 +319,11 @@ split_graph_into_polylines(const Graph& graph,
       polyline_visitor.add_node(g_copy[v]);
       internal::bgl_sgip_maybe_call_visitor_add_edge(polyline_visitor,
                                                      g_copy[*b]);
+      if (degree(v, g_copy)==1)
+        terminal.erase(v);
       remove_edge(b, g_copy);
       u = v;
     }
-    terminal.erase(u);
     polyline_visitor.end_polyline();
   }
 

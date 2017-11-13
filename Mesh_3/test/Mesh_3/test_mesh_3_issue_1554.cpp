@@ -21,25 +21,31 @@ typedef CGAL::Sequential_tag Concurrency_tag;
 #endif
 
 // Triangulation
-typedef CGAL::Mesh_triangulation_3<Mesh_domain,CGAL::Default,Concurrency_tag>::type Tr;
+typedef CGAL::Mesh_triangulation_3<Mesh_domain,
+                                   CGAL::Default,
+                                   Concurrency_tag>::type  Tr;
+typedef Tr::Geom_traits                                    Gt;
 
-typedef CGAL::Mesh_complex_3_in_triangulation_3<
-  Tr,Mesh_domain::Corner_index,Mesh_domain::Curve_segment_index> C3t3;
-typedef Tr::Geom_traits Gt;
+typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr,
+                                                Mesh_domain::Corner_index,
+                                                Mesh_domain::Curve_segment_index> C3t3;
+
 // Criteria
 typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
 
 // To avoid verbose function and named parameters call
 using namespace CGAL::parameters;
 
-Gt::Construct_weighted_circumcenter_3 w_circumcenter = Gt().construct_weighted_circumcenter_3_object();
-
-K::Point_3 wc_circumcenter(Tr::Cell_handle ch, bool force_exact = false) {
-  return w_circumcenter(ch->vertex(0)->point(),
-                        ch->vertex(1)->point(),
-                        ch->vertex(2)->point(),
-                        ch->vertex(3)->point(), force_exact
-                        );
+template < class ConstructWCircumcenter >
+Tr::Bare_point wc_circumcenter(Tr::Cell_handle ch,
+                               ConstructWCircumcenter construct_w_circumcenter,
+                               bool force_exact = false)
+{
+  return construct_w_circumcenter(ch->vertex(0)->point(),
+                                  ch->vertex(1)->point(),
+                                  ch->vertex(2)->point(),
+                                  ch->vertex(3)->point(),
+                                  force_exact);
 }
 
 int main(int argc, char*argv[])
@@ -63,6 +69,9 @@ int main(int argc, char*argv[])
   
   // Mesh generation
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, no_perturb(), no_exude());
+
+  Gt::Construct_weighted_circumcenter_3 w_circumcenter =
+      c3t3.triangulation().geom_traits().construct_weighted_circumcenter_3_object();
 
   int return_code = 0;
   for(C3t3::Cells_in_complex_iterator cit = c3t3.cells_in_complex_begin();
@@ -88,8 +97,8 @@ int main(int argc, char*argv[])
         K::Point_3 b = nch->vertex(n_i)->point().point();
         std::cout << a << "\n";
         std::cout << b << "\n";
-        std::cout << "    " << wc_circumcenter(ch, true) << std::endl;
-        std::cout << "    " << wc_circumcenter(nch, true) << std::endl;
+        std::cout << "    " << wc_circumcenter(ch, w_circumcenter, true) << std::endl;
+        std::cout << "    " << wc_circumcenter(nch, w_circumcenter, true) << std::endl;
       }
     }
   }

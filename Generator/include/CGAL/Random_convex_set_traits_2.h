@@ -45,7 +45,7 @@ struct Random_convex_set_traits_2 : public Kernel {
   { return _origin; }
 
   struct Max_coordinate
-  : public std::unary_function< Point_2, FT >
+  : public CGAL::unary_function< Point_2, FT >
   {
     FT
     operator()( const Point_2& p) const
@@ -55,7 +55,7 @@ struct Random_convex_set_traits_2 : public Kernel {
   };
 
   struct Sum
-  : public std::binary_function< Point_2, Point_2, Point_2 >
+  : public CGAL::binary_function< Point_2, Point_2, Point_2 >
   {
     Point_2
     operator()( const Point_2& p, const Point_2& q) const
@@ -63,7 +63,7 @@ struct Random_convex_set_traits_2 : public Kernel {
   };
 
   struct Scale
-  : public std::binary_function< Point_2, FT, Point_2 >
+  : public CGAL::binary_function< Point_2, FT, Point_2 >
   {
     Point_2
     operator()( const Point_2& p, const FT& k) const
@@ -71,7 +71,7 @@ struct Random_convex_set_traits_2 : public Kernel {
   };
 
   struct Angle_less
-  : public std::binary_function< Point_2, Point_2, bool >
+  : public CGAL::binary_function< Point_2, Point_2, bool >
   {
     bool
     operator()( const Point_2& p, const Point_2& q) const

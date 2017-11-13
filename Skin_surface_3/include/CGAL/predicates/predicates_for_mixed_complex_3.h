@@ -25,6 +25,7 @@
 #include <CGAL/license/Skin_surface_3.h>
 
 
+#include <CGAL/number_utils.h>
 #include <CGAL/determinant.h>
 #include <CGAL/enum.h>
 

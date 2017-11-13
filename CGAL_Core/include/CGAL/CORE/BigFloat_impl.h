@@ -137,7 +137,7 @@ BigFloatRep::BigFloatRep(double d) : m(0), err(0), exp(0) {
       exp--;
       stop++;
     }
-#ifdef CORE_DEBUG
+#ifdef CGAL_CORE_DEBUG
     CGAL_assertion (s >= 0);
 #endif
 
@@ -277,7 +277,7 @@ void BigFloatRep::normal() {
 	                     // bits of error
     long f = chunkFloor(--le); // f is roughly equal to floor(le/CHUNK_BIT)
     long bits_f = bits(f);   // f chunks will have bits_f many bits
-#ifdef CORE_DEBUG
+#ifdef CGAL_CORE_DEBUG
     CGAL_assertion (bits_f >= 0);
 #endif
 
@@ -305,7 +305,7 @@ void BigFloatRep::bigNormal(BigInt& bigErr) {
   } else {
     long f = chunkFloor(--le);
     long bits_f = bits(f);
-#ifdef CORE_DEBUG
+#ifdef CGAL_CORE_DEBUG
     CGAL_assertion(bits_f >= 0);
 #endif
 
@@ -684,7 +684,7 @@ void BigFloatRep::sqrt(const BigFloatRep& x, const extLong& a, const BigFloat& A
         } else {                  //  p > 0
           m = chunkShift(z.m, chunkCeil(p));
           long r = CHUNK_BIT - 1 - (p + CHUNK_BIT - 1) % CHUNK_BIT;
-#ifdef CORE_DEBUG
+#ifdef CGAL_CORE_DEBUG
           CGAL_assertion(r >= 0);
 #endif
 
@@ -727,7 +727,7 @@ void BigFloatRep::sqrt(const BigFloatRep& x, const extLong& a, const BigFloat& A
         } else {         //  q > 0
           m = chunkShift(z.m, chunkCeil(q));
           long r = CHUNK_BIT - 1 - (q + CHUNK_BIT - 1) % CHUNK_BIT;
-#ifdef CORE_DEBUG
+#ifdef CGAL_CORE_DEBUG
           CGAL_assertion(r >= 0);
 #endif
 
@@ -961,7 +961,7 @@ BigFloatRep::toDecimal(unsigned int width, bool Scientific) const {
     }
     decOut.isScientific = false;
   }
-#ifdef CORE_DEBUG
+#ifdef CGAL_CORE_DEBUG
   CGAL_assertion(decOut.noSignificant >= 0);
 #endif
 
@@ -1025,7 +1025,7 @@ void BigFloatRep :: fromString(const char *str, extLong prec ) {
   // i.e., input is A/10^{e10}.
   else {
     e = str + strlen(str);
-#ifdef CORE_DEBUG
+#ifdef CGAL_CORE_DEBUG
     CGAL_assertion(*e == '\0');
 #endif
 
@@ -1116,7 +1116,7 @@ std::istream& BigFloatRep :: operator >>(std::istream& i) {
       p = str + size;
       size *= 2;
     }
-#ifdef CORE_DEBUG
+#ifdef CGAL_CORE_DEBUG
     CGAL_assertion((p-str) < size);
 #endif
 
@@ -1142,7 +1142,7 @@ std::istream& BigFloatRep :: operator >>(std::istream& i) {
     p = str + len;
   }
 
-#ifdef CORE_DEBUG
+#ifdef CGAL_CORE_DEBUG
   CGAL_assertion(p - str < size);
 #endif
 
@@ -1229,7 +1229,7 @@ BigInt BigFloatRep::toBigInt() const {
   long le = clLg(err);
   if (le == -1)
     le = 0;
-#ifdef CORE_DEBUG
+#ifdef CGAL_CORE_DEBUG
   CGAL_assertion (le >= 0);
 #endif
 
@@ -1249,7 +1249,7 @@ long BigFloatRep :: toLong() const {
   // convert a BigFloat to a long integer, rounded toward -\infty.
   long e2 = bits(exp);
   long le = clLg(err);
-#ifdef CORE_DEBUG
+#ifdef CGAL_CORE_DEBUG
   CGAL_assertion (le >= 0);
 #endif
 

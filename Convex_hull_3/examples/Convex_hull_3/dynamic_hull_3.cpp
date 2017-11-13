@@ -7,7 +7,7 @@
 
 #include <list>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel      K;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel     K;
 typedef K::Point_3                                              Point_3;
 typedef CGAL::Delaunay_triangulation_3<K>                       Delaunay;
 typedef Delaunay::Vertex_handle                                 Vertex_handle;

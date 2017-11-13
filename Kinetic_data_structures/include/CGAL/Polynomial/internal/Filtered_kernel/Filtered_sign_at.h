@@ -46,7 +46,7 @@ NTT &t, const Kernel &k)
     if (v.inf() >0) return POSITIVE;
     else if (v.sup() < 0) return NEGATIVE;
     else if (v.inf()==v.sup()) {
-        return sign(v);
+        return CGAL::sign(v);
     }
     else {
 //std::cout << "Falling back on exact.\n";
@@ -54,7 +54,7 @@ NTT &t, const Kernel &k)
 //typename CGAL::NT_converter<NTT, typename Kernel::Exact_kernel::Function::NT> ec;
         typename Kernel::Exact_kernel::NT et= k.exact_function_converter_object().nt_converter()(t);
 
-        return sign(fh.exact_function().value_at(et));
+        return CGAL::sign(fh.exact_function().value_at(et));
     };
 }
 

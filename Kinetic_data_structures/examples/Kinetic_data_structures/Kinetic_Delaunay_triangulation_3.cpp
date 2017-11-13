@@ -15,16 +15,16 @@ int main()
     Traits::Simulator::Handle sp= tr.simulator_handle();
 
     std::ifstream in("data/points_3");
+    CGAL_assertion(in.good());
+
     in >> *tr.active_points_3_table_handle();
+    CGAL_assertion(!in.fail());
 
     kdel.set_has_certificates(true);
 
     sp->set_current_time(sp->end_time());
 
     std::cout << "Processed " << sp->current_event_number() << " events.\n";
-
-    /*std::copy(kdel.visitor().events_begin(), kdel.visitor().events_end(),
-      std::ostream_iterator<std::string>(std::cout, "\n"));*/
 
     return EXIT_SUCCESS;
 }

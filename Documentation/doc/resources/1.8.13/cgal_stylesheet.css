@@ -178,51 +178,8 @@ div.groupText {
     font: 200% Tahoma, Arial,sans-serif;
 }
 
-/* fix the back button by hacking the layout */
-/* this becomes unnecessary with the latest doxygen, r834 */
-#top {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: 1;
-}
-
-#footer {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-}
-
-#doc-content {
-    /* this is the header/footer padding */
-    /* so the content does not hide behind them */
-    padding-top: 91px;
-    padding-bottom: 32px;
-    overflow: visible;
-}
-
-#side-nav {
-    position: fixed;
-}
-
 #titlearea {
     background: white;
-}
-
-/* this adjusts the anchors inside the doc-content div by the height of */
-/* the header. this is necessary because anchors are not adjusted by the */
-/* height of the position: fixed top div. */
-#doc-content a.anchor {
-    position: absolute; 
-    padding-top: 91px; 
-    margin-top: -91px;
-}
-
-#doc-content .anchor {
-    padding-top: 91px; 
-    margin-top: -91px;
 }
 
 #MSearchResultsWindow {

@@ -24,16 +24,15 @@
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
+#define CGAL_DEPRECATED_HEADER "<CGAL/Arr_vertex_map.h>"
+#define CGAL_REPLACEMENT_HEADER "<CGAL/Arr_vertex_index_map.h>"
+#include <CGAL/internal/deprecation_warning.h>
+
+#include <CGAL/Arr_vertex_index_map.h>
 
 /*! \file
  * Definition of the Arr_vertex_index_map<Arrangement> class.
  */
-
-#if (defined __GNUC__)
-  #warning Arr_vertex_map.h is DEPRECATED, please include Arr_vertex_index_map.h instead
-#elif (defined _MSC_VER)
-  #pragma message("Arr_vertex_map.h is DEPRECATED, please include Arr_vertex_index_map.h instead")
-#endif
 
 #include <CGAL/Arr_vertex_index_map.h>
 

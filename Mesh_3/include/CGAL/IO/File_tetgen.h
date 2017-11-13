@@ -90,7 +90,7 @@ output_to_tetgen(std::string filename,
   typedef typename Tr::Finite_vertices_iterator Finite_vertices_iterator;
   typedef typename Tr::Vertex_handle Vertex_handle;
   typedef typename Tr::Cell_handle Cell_handle;
-  typedef typename Tr::Point Point_3;
+  typedef typename Tr::Weighted_point Weighted_point;
   typedef typename Tr::Facet Facet;
 
   const Tr& tr = c3t3.triangulation();
@@ -117,7 +117,7 @@ output_to_tetgen(std::string filename,
         end = tr.finite_vertices_end();
       vit != end; ++vit)
   {
-    const Point_3& p = vit->point();
+    const Weighted_point& p = vit->point();
     const double x = CGAL::to_double(p.x());
     const double y = CGAL::to_double(p.y());
     const double z = CGAL::to_double(p.z());

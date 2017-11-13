@@ -60,6 +60,16 @@ namespace CGAL
     struct Get_dart_info<T, true>
     { typedef typename Convert_void<typename T::Dart_info>::type type; };
 
+    // Get the type Darts_with_id as inner type of T.
+    // If T::Darts_with_id is not defined or if T::Darts_widh_id is Tag_false
+    BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_darts_with_id,Darts_with_id,false)
+    template<typename T, bool typedefined=Has_darts_with_id<T>::value >
+    struct Get_darts_with_id
+    { typedef CGAL::Tag_false type; };
+    template<typename T>
+    struct Get_darts_with_id<T, true>
+    { typedef CGAL::Tag_true type; };
+
     // Get the type Attributes defined as inner type of T.
     // If T::Attributes is not defined, defined CGAL::cpp11::tuple<> as type.
     BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_attributes_tuple,Attributes,false)

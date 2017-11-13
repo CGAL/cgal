@@ -67,6 +67,8 @@ namespace CGAL {
     /// \cond SKIP_IN_MANUAL
     template <class T>
     friend class Efficient_RANSAC;
+    template <class T>
+    friend class Region_growing;
     template<class PointAccessor>
     friend class internal::Octree;
     /// \endcond
@@ -94,8 +96,7 @@ namespace CGAL {
       m_upper_bound((std::numeric_limits<FT>::min)()),
       m_score(0),
       m_sum_expected_value(0),
-      m_nb_subset_used(0),
-      m_has_connected_component(false) {
+      m_nb_subset_used(0) {
     }
 
     virtual ~Shape_base() {}
@@ -137,10 +138,6 @@ namespace CGAL {
       if (indices.size() == 0)
         return 0;
 
-      if (m_has_connected_component)
-        return m_score;
-
-      m_has_connected_component = true;
       if (!this->supports_connected_component())
         return connected_component_kdTree(indices, cluster_epsilon);
       
@@ -171,7 +168,7 @@ namespace CGAL {
         u = (u < 0) ? 0 : (((std::size_t)u >= u_extent) ? (int)u_extent - 1 : u);
         v = (v < 0) ? 0 : (((std::size_t)v >= v_extent) ? (int)v_extent - 1 : v);
 
-        bitmap[v * int(u_extent) + u] = true;
+        bitmap[size_t(v) * u_extent + size_t(u)] = true;
       }
 
       // Iterate through the bitmap
@@ -254,7 +251,7 @@ namespace CGAL {
         u = (u < 0) ? 0 : (((std::size_t)u >= u_extent) ? (int)u_extent - 1 : u);
         v = (v < 0) ? 0 : (((std::size_t)v >= v_extent) ? (int)v_extent - 1 : v);
 
-        count[bitmap[v * int(u_extent) + u]]++;
+        count[bitmap[size_t(v) * u_extent + size_t(u)]]++;
       }
 
       // Find largest component. Start at index 2 as 0/1 are reserved for
@@ -274,7 +271,7 @@ namespace CGAL {
         u = (u < 0) ? 0 : (((std::size_t)u >= u_extent) ? (int)u_extent - 1 : u);
         v = (v < 0) ? 0 : (((std::size_t)v >= v_extent) ? (int)v_extent - 1 : v);
 
-        if (bitmap[v * int(u_extent) + u] == largest)
+        if (bitmap[size_t(v) * u_extent + size_t(u)] == largest)
           comp_indices.push_back(indices[i]);
       }
 
@@ -298,8 +295,6 @@ namespace CGAL {
       typedef CGAL::Kd_tree<Search_traits_adapter> Kd_Tree;
       typedef CGAL::Fuzzy_sphere<Search_traits_adapter> Fuzzy_sphere;
 
-      m_has_connected_component = true;
-      
       std::vector<Point_and_size_t> pts;
       std::vector<std::size_t> label_map;
       pts.resize(indices.size());
@@ -551,6 +546,26 @@ namespace CGAL {
       (void)max;
     }
 
+    void compute(const std::vector<std::size_t>& indices,
+                 Input_iterator first,
+                 Traits traits,
+                 Point_map point_pmap,
+                 Normal_map normal_pmap,
+                 FT epsilon,
+                 FT normal_threshold) {
+      if (indices.size() < minimum_sample_size())
+        return;
+
+      m_first = first;
+      m_traits = traits;
+      m_point_pmap = point_pmap;
+      m_normal_pmap = normal_pmap;
+      m_epsilon = epsilon;
+      m_normal_threshold = normal_threshold;
+
+      create_shape(indices);
+    }
+    
     void compute(const std::set<std::size_t>& indices,
                  Input_iterator first,
                  Traits traits,
@@ -693,7 +708,6 @@ namespace CGAL {
     //count the number of subset used so far for the score,
     //and thus indicate the next one to use
     std::size_t m_nb_subset_used;
-    bool m_has_connected_component;
 
     Input_iterator m_first;
 

@@ -117,6 +117,22 @@
 #  define BOOST_NO_CXX11_VARIADIC_TEMPLATES
 #endif
 
+// workaround for the bug https://svn.boost.org/trac10/ticket/12534
+// That bug was introduced in Boost 1.62 and fixed in 1.63.
+#if BOOST_VERSION >= 106200 && BOOSTS_VERSION < 106300
+#  include <boost/container/flat_map.hpp>
+#endif
+
+// Hack: Boost<1.55 does not detect correctly the C++11 features of ICC.
+// We declare by hand two features that we need (variadic templates and
+// rvalue references).
+#if defined(__INTEL_COMPILER) && defined(__GXX_EXPERIMENTAL_CXX0X__)
+#  undef BOOST_NO_VARIADIC_TEMPLATES
+#  undef BOOST_NO_CXX11_VARIADIC_TEMPLATES
+#  undef BOOST_NO_RVALUE_REFERENCES
+#  undef BOOST_NO_CXX11_RVALUE_REFERENCES
+#endif
+
 #include <CGAL/version.h>
 
 //----------------------------------------------------------------------//
@@ -249,6 +265,15 @@
 #if defined(BOOST_NO_CXX11_HDR_FUNCTIONAL) || BOOST_VERSION < 105000
 #define CGAL_CFG_NO_STD_HASH 1
 #endif
+
+
+//----------------------------------------------------------------------//
+//  As std::unary_function and std::binary_function are deprecated
+//  we use internally equivalent class templates from
+// <CGAL/functional.h>.
+//----------------------------------------------------------------------//
+
+#include <CGAL/functional.h>
 
 //----------------------------------------------------------------------//
 //  auto-link the CGAL library on platforms that support it
@@ -627,7 +652,7 @@ typedef const void * Nullptr_t;   // Anticipate C++0x's std::nullptr_t
 
 /// Macro `CGAL_pragma_warning`.
 #ifdef BOOST_MSVC
-#  define CGAL_pragma_warning(desc) _Pragma(CGAL_STRINGIZE(CGAL_WARNING(desc)))
+#  define CGAL_pragma_warning(desc) __pragma(CGAL_WARNING(desc))
 #else // not BOOST_MSVC
 #  define CGAL_pragma_warning(desc) _Pragma(CGAL_STRINGIZE(CGAL_WARNING(desc)))
 #endif // not BOOST_MSVC

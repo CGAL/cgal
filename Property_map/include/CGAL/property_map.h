@@ -39,6 +39,36 @@ namespace CGAL {
 
 /// \cond SKIP_DOXYGEN
 
+/// This class is almost the same as boost::static_property_map
+/// The difference is that it is writable, although put() does nothing
+template <typename K, typename V>
+class Static_property_map
+{
+public:
+  typedef K key_type;
+  typedef V value_type;
+  typedef const V& reference;
+  typedef boost::read_write_property_map_tag category;
+
+private:
+  V v;
+
+public:
+  Static_property_map(V pv)
+    :v(pv){}
+  inline friend
+  value_type
+  get(const Static_property_map& pm, const key_type&)
+  {
+    return pm.v;
+  }
+
+  inline friend
+  void
+  put(Static_property_map&, const key_type&, const value_type&)
+  {}
+};
+
 
 template <typename PM1, typename PM2>
 class OR_property_map {
@@ -242,7 +272,7 @@ template <typename Pair>
 struct Second_of_pair_property_map
 {
   typedef Pair key_type; ///< typedef to `Pair`
-  typedef typename Pair::second_type value_type; ///< typedef to `Pair::first_type`
+  typedef typename Pair::second_type value_type; ///< typedef to `Pair::second_type`
   typedef const value_type& reference; ///< typedef to `value_type&`
   typedef boost::lvalue_property_map_tag category; ///< boost::lvalue_property_map_tag
 
@@ -408,6 +438,28 @@ make_property_map(const std::vector<T>& v)
   return make_property_map(&v[0]);
 }
 
+/// \ingroup PkgProperty_map
+/// Property map that only returns the default value type
+/// \cgalModels `ReadablePropertyMap`
+template<class InputIterator, class ValueType>
+struct Default_property_map{
+  const ValueType default_value;
+  
+  typedef typename InputIterator::value_type key_type;
+  typedef boost::readable_property_map_tag category;
+
+  Default_property_map(const ValueType& default_value = ValueType()) : default_value (default_value) { }
+  
+  /// Free function to use a get the value from an iterator using Input_iterator_property_map.
+  inline friend ValueType
+  get (const Default_property_map&, const key_type&){ return ValueType(); }
+};
+
+
+/// \endcond
+
 } // namespace CGAL
+
+
 
 #endif // CGAL_POINT_SET_PROPERTY_MAP_H

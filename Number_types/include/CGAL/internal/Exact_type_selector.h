@@ -57,11 +57,13 @@ namespace CGAL { namespace internal {
 
 // Two classes which tell the prefered "exact number types" corresponding to a type.
 
-// The default template chooses Gmpq, or leda_rational, or Quotient<MP_Float>.
+// The default template chooses mpq_class, Gmpq, leda_rational, or Quotient<MP_Float>.
 // It should support the built-in types.
 template < typename >
 struct Exact_field_selector
-#ifdef CGAL_USE_GMP
+#ifdef CGAL_USE_GMPXX
+{ typedef mpq_class Type; };
+#elif defined(CGAL_USE_GMP)
 { typedef Gmpq Type; };
 #elif defined(CGAL_USE_LEDA)
 { typedef leda_rational Type; };

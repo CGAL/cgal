@@ -136,6 +136,12 @@ The resulting mesh is output as a subcomplex of a 3D Delaunay triangulation,
 in a class providing various iterators
 on mesh elements.
 
+\subsection Mesh_3OutputFaceGraph Output FaceGraph
+
+This \cgal component also provides a function to convert the reconstructed mesh to a `FaceGraph`:
+
+- `facets_in_complex_3_to_triangle_mesh()`
+
 The 3D triangulation provides approximations of the
 subdomains, surface patches and curve segments
 and corners, according to the restricted
@@ -654,13 +660,27 @@ Right : the output mesh with added 1D-features at the intersection of subdomains
 \subsubsection Mesh_33DPolyhedralDomains 3D Polyhedral Domains
 
 The following code produces a 3D mesh for a domain
-defined by polyhedral surfaces. \cgalFigureRef{figurepolyhedral_domain} 
+defined by a polyhedral surface. \cgalFigureRef{figurepolyhedral_domain} 
 shows the resulting mesh.
 
 \cgalExample{Mesh_3/mesh_polyhedral_domain.cpp}
 
 \cgalFigureBegin{figurepolyhedral_domain,polyhedral_domain.jpg,polyhedral_domain_2.jpg}
-View of 3D meshes produced from a polyhedral domain. (i) is a view of file out_1.mesh and (ii) is a view of file out_2.mesh. Code from subsection \ref Mesh_3_subsection_examples_polyhedral generates these files."
+View of 3D meshes produced from a polyhedral domain. (i) is a view of file out_1.mesh and (ii) is a view of file out_2.mesh. Code from subsection \ref Mesh_3_subsection_examples_polyhedral generates these files.
+\cgalFigureEnd
+
+\subsubsection Mesh_33DSurfaceInsidePolyhedralDomain Remeshing a Polyhedral Domain with Surfaces
+
+In the following example we have a "bounding polyhedron" which defines the meshing domain and two surfaces inside this domain. 
+The surfaces inside the domain may be closed surfaces as well as surfaces with boundaries. In the case of a closed surface
+the volume delimited by this surface is also considered as inside the domain. 
+previous subsection.
+
+ 
+\cgalExample{Mesh_3/mesh_polyhedral_domain_with_surface_inside.cpp}
+
+\cgalFigureBegin{figurepolyhedral_domain_with_surface,polyhedral_domain_with_surface.jpg}
+View of 3D meshes produced from a polyhedral domain with a nested surface.
 \cgalFigureEnd
 
 \subsubsection Mesh_3RemeshingPolyhedralSurface Remeshing a Polyhedral Surface
@@ -894,16 +914,16 @@ the edges of the 1D-mesh corresponding to the 1D-features.
 
 The rest of the example is similar to \ref Mesh_3/mesh_3D_image.cpp.
 
-\cgalFigureRef{mesh3protectionimage3D} shows the results with or with the
+\cgalFigureRef{mesh3protectionimage3D} shows the results without or with the
 protection of the 1D-features.
 
 \cgalFigureAnchor{mesh3protectionimage3D}
 <center>
 <table border=0>
 <tr>
-  <td><img border="0" src="./no-protection.png"></td>
-  <td><img border="0" src="./protection-box.png"></td>
-  <td><img border="0" src="./protection-all.png"></td>
+<td><img border="0" src="./no-protection.png"></td>
+<td><img border="0" src="./protection-box.png"></td>
+<td><img border="0" src="./protection-all.png"></td>
 </tr>
 </table>
 </center>
@@ -916,6 +936,42 @@ Middle: the mesh with only the 1D-features computed by
 Right: the mesh with added 1D-features in the interior of the bounding box
 of the image.
 \cgalFigureCaptionEnd
+
+\subsubsection Mesh_3PolyhedralComplex Polyhedral complex
+
+The following example shows how to generate a mesh from a polyhedral complex
+that forms a bounded domain.
+The domain is defined by a group of polyhedral surfaces that are conformal.
+For each facet of the input polyhedral surfaces,
+the ids of incident subdomains are known.
+The input surfaces intersect along polylines that are considered as sharp features,
+and protected as for all domain types in this Section. 
+
+\cgalExample{Mesh_3/mesh_polyhedral_complex.cpp}
+
+\cgalFigureRef{mesh3protectionComplex} shows the results without or with the
+protection of the 1D-features.
+
+\cgalFigureAnchor{mesh3protectionComplex}
+<center>
+<table border=0>
+<tr>
+  <td><img border="0" src="./no-protection-complex.png"></td>
+  <td><img border="0" src="./protection-complex.png"></td>
+</tr>
+</table>
+</center>
+\cgalFigureCaptionBegin{mesh3protectionComplex}
+Left: the mesh without any call to `%detect_features()`.
+The mesh is overrefined next to sharp features, because the mesher tries to
+reach the target `facet_distance`, by inserting centers of surface Delaunay
+balls, that are not likely to be on sharp edges.
+
+Right: the mesh with added 1D-features along sharp edges and edges shared
+by at least two of the input polyhedral surfaces forming the complex.
+\cgalFigureCaptionEnd
+
+
 
 \subsection Mesh_3TuningMeshOptimization Tuning Mesh Optimization
 

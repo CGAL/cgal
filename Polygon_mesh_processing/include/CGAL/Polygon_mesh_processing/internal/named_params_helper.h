@@ -21,7 +21,7 @@
 #ifndef CGAL_NAMED_PARAMETERS_HELPERS_H
 #define CGAL_NAMED_PARAMETERS_HELPERS_H
 
-#include <CGAL/license/Polygon_mesh_processing.h>
+#include <CGAL/license/Polygon_mesh_processing/core.h>
 
 
 #include <CGAL/Kernel_traits.h>
@@ -42,52 +42,6 @@ public:
   typedef typename boost::property_traits<PMap>::value_type type;
 };
 
-template<typename PolygonMesh, typename PropertyTag>
-class property_map_selector
-{
-public:
-  typedef typename boost::graph_has_property<PolygonMesh, PropertyTag>::type Has_internal_pmap;
-  typedef typename boost::mpl::if_c< Has_internal_pmap::value
-                          , typename boost::property_map<PolygonMesh, PropertyTag>::type
-                          , typename boost::cgal_no_property::type
-  >::type type;
-  typedef typename boost::mpl::if_c< Has_internal_pmap::value
-                          , typename boost::property_map<PolygonMesh, PropertyTag>::const_type
-                          , typename boost::cgal_no_property::const_type
-  >::type const_type;
-
-  type get_pmap(const PropertyTag& p, PolygonMesh& pmesh)
-  {
-    return get_impl(p, pmesh, Has_internal_pmap());
-  }
-
-  const_type get_const_pmap(const PropertyTag& p, const PolygonMesh& pmesh)
-  {
-    return get_const_pmap_impl(p, pmesh, Has_internal_pmap());
-  }
-
-private:
-  type get_impl(const PropertyTag&, PolygonMesh&, CGAL::Tag_false)
-  {
-    return type(); //boost::cgal_no_property::type
-  }
-  type get_impl(const PropertyTag& p, PolygonMesh& pmesh, CGAL::Tag_true)
-  {
-    return get(p, pmesh);
-  }
-
-  const_type get_const_pmap_impl(const PropertyTag&
-                               , const PolygonMesh&, CGAL::Tag_false)
-  {
-    return const_type(); //boost::cgal_no_property::type
-  }
-  const_type get_const_pmap_impl(const PropertyTag& p
-                               , const PolygonMesh& pmesh, CGAL::Tag_true)
-  {
-    return get(p, pmesh);
-  }
-};
-
 template<typename PolygonMesh, typename NamedParameters>
 class GetVertexPointMap
 {
@@ -97,12 +51,12 @@ class GetVertexPointMap
     DefaultVPMap;
 public:
   typedef typename boost::lookup_named_param_def<
-    boost::vertex_point_t,
+    internal_np::vertex_point_t,
     NamedParameters,
     DefaultVPMap
   > ::type  type;
   typedef typename boost::lookup_named_param_def<
-    boost::vertex_point_t,
+    internal_np::vertex_point_t,
     NamedParameters,
     DefaultVPMap_const
   > ::type  const_type;
@@ -118,7 +72,7 @@ public:
   typedef typename CGAL::Kernel_traits<Point>::Kernel Kernel;
 };
 
-template<typename PolygonMesh, typename NamedParameters = pmp_bgl_named_params<bool, all_default_t> >
+template<typename PolygonMesh, typename NamedParameters = pmp_bgl_named_params<bool, internal_np::all_default_t> >
 class GetGeomTraits
 {
   typedef typename boost::graph_has_property<PolygonMesh, boost::vertex_point_t>::type
@@ -132,27 +86,11 @@ class GetGeomTraits
 
 public:
   typedef typename boost::lookup_named_param_def <
-    CGAL::geom_traits_t,
+    internal_np::geom_traits_t,
     NamedParameters,
     DefaultKernel
   > ::type  type;
 };
-
-template<typename PolygonMesh, typename PropertyTag>
-typename property_map_selector<PolygonMesh, PropertyTag>::type
-get_property_map(const PropertyTag& p, PolygonMesh& pmesh)
-{
-  property_map_selector<PolygonMesh, PropertyTag> pms;
-  return pms.get_pmap(p, pmesh);
-}
-
-template<typename PolygonMesh, typename PropertyTag>
-typename property_map_selector<PolygonMesh, PropertyTag>::const_type
-get_const_property_map(const PropertyTag& p, const PolygonMesh& pmesh)
-{
-  property_map_selector<PolygonMesh, PropertyTag> pms;
-  return pms.get_const_pmap(p, pmesh);
-}
 
 template<typename PolygonMesh, typename NamedParameters>
 class GetFaceIndexMap
@@ -161,12 +99,12 @@ class GetFaceIndexMap
   typedef typename property_map_selector<PolygonMesh, boost::face_index_t>::const_type DefaultMap_const;
 public:
   typedef typename boost::lookup_named_param_def <
-    boost::face_index_t,
+    internal_np::face_index_t,
     NamedParameters,
     DefaultMap
   > ::type  type;
   typedef typename boost::lookup_named_param_def <
-    boost::face_index_t,
+    internal_np::face_index_t,
     NamedParameters,
     DefaultMap_const
   > ::type  const_type;
@@ -180,7 +118,7 @@ class GetVertexIndexMap
   typedef typename property_map_selector<PolygonMesh, boost::vertex_index_t>::type DefaultMap;
 public:
   typedef typename boost::lookup_named_param_def <
-    boost::vertex_index_t,
+    internal_np::vertex_index_t,
     NamedParameters,
     DefaultMap
   > ::type  type;
@@ -203,7 +141,7 @@ class GetFaceNormalMap
 public:
   typedef DummyNormalPmap NoMap;
   typedef typename boost::lookup_named_param_def <
-    CGAL::face_normal_t,
+    internal_np::face_normal_t,
     NamedParameters,
     DummyNormalPmap//default
   > ::type  type;
@@ -214,7 +152,7 @@ class GetSolver
 {
 public:
   typedef typename boost::lookup_named_param_def <
-    CGAL::sparse_linear_solver_t,
+    internal_np::sparse_linear_solver_t,
     NamedParameters,
     DefaultSolver
   > ::type type;

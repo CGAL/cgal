@@ -11,8 +11,8 @@ namespace CGAL {
 \image html alphashape.png 
 \image latex alphashape.png 
 
-Assume we are given a set \f$ S\f$ of points in 2D or 3D and we'd like to
-have something like "the shape formed by these points." This is
+Assume we are given a set \f$ S\f$ of points in 2D or 3D and we would like to
+have something like "the shape formed by these points". This is
 quite a vague notion and there are probably many possible
 interpretations, the \f$ \alpha\f$-shape being one of them. Alpha shapes
 can be used for shape reconstruction from a dense unorganized set of
@@ -23,50 +23,51 @@ As mentioned in Edelsbrunner's and M&uuml;cke's paper \cgalCite{em-tdas-94},
 one can intuitively think of an \f$ \alpha\f$-shape as the
 following. Imagine a huge mass of ice-cream making up the space \f$ \mathbb{R}^3\f$
 and containing the points as "hard" chocolate pieces. Using one of
-these sphere-formed ice-cream spoons we carve out all parts of the
+these sphere-formed ice-cream spoons, we carve out all parts of the
 ice-cream block we can reach without bumping into chocolate pieces,
 thereby even carving out holes in the inside (e.g. parts not reachable
 by simply moving the spoon from the outside). We will eventually end
 up with a (not necessarily convex) object bounded by caps, arcs and
 points. If we now straighten all "round" faces to triangles and line
 segments, we have an intuitive description of what is called the
-\f$ \alpha\f$-shape of \f$ S\f$. Here's an example for this process in 2D (where
-our ice-cream spoon is simply a circle):
+\f$ \alpha\f$-shape of \f$ S\f$. The drawing above provides an example
+of this process in 2D (where our ice-cream spoon is simply a circle).
 
-And what is \f$ \alpha\f$ in the game? \f$ \alpha\f$ is the squared radius of the
+Alpha shapes depend on a parameter \f$ \alpha\f$ after which they are named.
+In the ice-cream analogy above, \f$ \alpha\f$ is the squared radius of the
 carving spoon. A very small value will allow us to eat up all of the
 ice-cream except the chocolate points themselves. Thus we already see
 that the \f$ \alpha\f$-shape degenerates to the point-set \f$ S\f$ for
 \f$ \alpha \rightarrow 0\f$. On the other hand, a huge value of \f$ \alpha\f$
 will prevent us even from moving the spoon between two points since
-it's way too large. So we will never spoon up ice-cream lying in the
-inside of the convex hull of \f$ S\f$, and hence the \f$ \alpha\f$-shape for
-\f$ \alpha \rightarrow \infty\f$ is the convex hull of \f$ S\f$.
+it is too large. So we will never spoon up the ice-cream lying in the
+inside of the convex hull of \f$ S\f$. Hence, the alpha shape becomes
+the convex hull of \f$ S\f$ as \f$ \alpha \rightarrow \infty\f$.
 
 \cgal offers 2D and 3D alpha shapes. The GUDHI library offers a
 <a href="http://gudhi.gforge.inria.fr/doc/latest/group__alpha__complex.html"> dD Alpha complex</a>.
-
 
 \section Alpha_shapes_2Definitions Definitions
 
 We distinguish two versions of alpha shapes. <I>Basic alpha shapes</I>
 are based on the Delaunay triangulation. <I>Weighted alpha shapes</I>
-are based on its generalization, the regular triangulation, replacing
-the euclidean distance by the power to weighted points.
+are based on its generalization, the regular triangulation
+(cf. Section \ref Section_2D_Triangulations_Regular "Regular Triangulations"),
+replacing the euclidean distance by the power to weighted points.
 
 There is a close connection between alpha shapes and the underlying
 triangulations. More precisely, the \f$ \alpha\f$-complex of \f$ S\f$ is a
 subcomplex of this triangulation of \f$ S\f$, containing the \f$ \alpha\f$-exposed
-\f$ k\f$-simplices, \f$ 0 \leq k \leq d\f$. A simplex is \f$ \alpha\f$-exposed, if there is an
+\f$ k\f$-simplices, \f$ 0 \leq k \leq d\f$. A simplex is said to be \f$ \alpha\f$-exposed, if there is an
 open disk (resp. ball) of radius \f$ \sqrt{\alpha}\f$ through the vertices of the
 simplex that does not contain any other point of \f$ S\f$, for the metric used in
 the computation of the underlying triangulation. The corresponding
 \f$ \alpha\f$-shape is defined as the underlying interior space of the
 \f$ \alpha\f$-complex (see \cgalCite{em-tdas-94}).
 
-In general, an \f$ \alpha\f$-complex is a non-connected and non-pure polytope, it
-means, that one \f$ k\f$-simplex, \f$ 0 \leq k \leq d-1\f$ is not necessary adjacent to
-a \f$ (k+1)\f$-simplex.
+In general, an \f$ \alpha\f$-complex is a non-connected and non-pure polytope,
+meaning that one \f$ k\f$-simplex, with \f$ 0 \leq k \leq d-1\f$, is not necessarily
+adjacent to a \f$ (k+1)\f$-simplex.
 
 The \f$ \alpha\f$-shapes of \f$ S\f$ form a discrete family, even though they
 are defined for all real numbers \f$ \alpha\f$ with \f$ 0 \leq \alpha
@@ -105,12 +106,12 @@ but not incident/incident to a triangle of the \f$ \alpha\f$-complex.
 Finally, it provides a function to determine the \f$ \alpha\f$-value
 such that the \f$ \alpha\f$-shape satisfies the following two properties,
 or at least the second one if there is no such \f$ \alpha\f$ that both
-are satisfied:
-
-(i) The number of components equals a number of your choice and
-
-(ii) all data points are either on the boundary or in the interior of the regularized version of 
-the \f$ \alpha\f$-shape (no singular edges).<BR>
+are satisfied: <br>
+<ol>
+<li> the number of components equals a number of your choice, and
+<li> all data points are either on the boundary or in the interior of the regularized version of
+the \f$ \alpha\f$-shape (no singular edges).
+</ol>
 
 The current implementation is static, that is after its construction
 points cannot be inserted or removed.
@@ -118,30 +119,51 @@ points cannot be inserted or removed.
 \section I1_SectDtClass2D Concepts and Models 
 
 We currently do not specify concepts for the underlying triangulation
-type. Models that work for a basic alpha-shape are the classes
-`Delaunay_triangulation_2` and 
+type. Models that work for a basic alpha shape are the classes
+`Delaunay_triangulation_2`, `Periodic_2_Delaunay_triangulation_2`, and
 `Triangulation_hierarchy_2` templated with a Delaunay
-triangulation. A model that works for a weighted alpha-shape is 
+triangulation. A model that works for a weighted alpha shape is
 the class `Regular_triangulation_2`.
 
-The triangulation needs a geometric traits class as argument.
-The requirements of this class are described in the 
-concept `AlphaShapeTraits_2` for which
-the \cgal kernels
-and `Weighted_alpha_shape_euclidean_traits_2` are models.
+\subsection AlphaShape2D_ConceptAndModelsAlphaShapes Alpha Shapes
 
-There are no requirements on the triangulation data structure.
-However it must be parameterized with 
-vertex and face classes, which are model of the concepts
-`AlphaShapeVertex_2` and `AlphaShapeFace_2`,
-by default the classes `Alpha_shape_vertex_base_2<Gt>` 
-and `Alpha_shape_face_base_2<Gt>`.
+The triangulation needs a geometric traits class as argument.
+The requirements of this class are described in the concepts `AlphaShapeTraits_2`
+in the non-weighted case and `WeightedAlphaShapeTraits_2` in the weighted case.
+All \cgal kernels are models of both concepts.
+
+The triangulation data structure of the triangulation
+has to be a model of the concept `TriangulationDataStructure_2`,
+and it must be parameterized with
+vertex and face classes which are models of the concepts
+`AlphaShapeVertex_2` and `AlphaShapeFace_2`.
+The classes `Alpha_shape_vertex_base_2<Gt, Vb>` and `Alpha_shape_face_base_2<Gt, Fb>`
+are models of these concepts and can be used for all type of alpha shapes,
+provided that the template parameters `Vb` and `Fb` are appropriately chosen,
+as we shall see in the following section.
+
+\subsection AlphaShape2D_ConceptAndModelsTDS Triangulation data structure
+
+Additional requirements are put when using weighted or
+periodic triangulations as underlying triangulation:
+<ul>
+<li> When using a weighted triangulation (`Regular_triangulation_2`), the vertex
+and face classes must respectively be models to both `AlphaShapeVertex_2` and
+`RegularTriangulationVertexBase_2`, and to both
+`AlphaShapeFace_2` and `RegularTriangulationFaceBase_2`
+(see example: \ref I1_SectWeightedAS2D).
+<li> When using a periodic triangulation (`Periodic_2_Delaunay_triangulation_2`),
+the vertex and face classes must respectively be models to both `AlphaShapeVertex_2`
+and `Periodic_2TriangulationVertexBase_2`,
+and to both `AlphaShapeFace_2` and `Periodic_2TriangulationFaceBase_2`
+(see example: \ref AlphaShape_2DExampleForPeriodicAlphaShapes).
+</ul>
 
 \section Alpha_shapes_2Examples Examples
 
-\subsection I1_SectClassicAS2D Example for Basic Alpha-Shapes 
+\subsection I1_SectClassicAS2D Example for Basic Alpha Shapes
 
-The basic alpha shape needs a Delaunay triangulation as
+The basic alpha shape requires a Delaunay triangulation as
 underlying triangulation `Dt`. The Delaunay triangulation class is
 parameterized with a geometric and a triangulation data structure traits.
 
@@ -150,20 +172,52 @@ For the geometric traits class we can use a \cgal kernel.
 For the triangulation data structure traits, we have to
 choose the vertex and face classes needed for alpha shapes,
 namely `Alpha_shape_vertex_base_2<Gt, Vb>` and `Alpha_shape_face_base_2<Gt,Fb>`.
-As default vertex and face type they use `Triangulation_vertex_base_2<Gt>`
-and `Triangulation_face_base_2<Gt>` respectively.
+The parameter `Vb` and `Fb` must be filled by classes that are models of the
+`TriangulationVertexBase_2` and `TriangulationFaceBase_2` concepts. The classes
+`Triangulation_vertex_base_2<Gt>` and `Triangulation_face_base_2<Gt>` fit these
+requirements.
 
+The example below illustrates how to construct a basic alpha shape.
+Note that `Triangulation_vertex_base_2<Gt>` and `Triangulation_face_base_2<Gt>`
+are the default parameters for `Vb` and `Fb` in the classes
+`Alpha_shape_vertex_base_2<Gt, Vb>` and `Alpha_shape_face_base_2<Gt,Fb>`. They
+are thus omitted in the code below.
 \cgalExample{Alpha_shapes_2/ex_alpha_shapes_2.cpp}
 
+\subsection I1_SectWeightedAS2D Example for Weighted Alpha Shapes
 
-\subsection I1_SectWeightedAS2D Example for Weighted Alpha-Shapes 
+A weighted alpha shape requires a regular triangulation as
+underlying triangulation `Dt`.
+Here again, we can use the vertex and face `Alpha_shape_vertex_base_2<Gt, Vb>`
+and `Alpha_shape_face_base_2<Gt,Fb>`, but for weighted alpha shapes, `Vb` and `Fb`
+must be models of the concepts `RegularTriangulationVertexBase_2` and
+`RegularTriangulationFaceBase_2`. The classes `Regular_triangulation_vertex_base_2<Gt>`
+`Regular_triangulation_face_base_2<Gt>` fit these requirements.
 
-A weighted alpha shape, needs a regular triangulation as
-underlying triangulation `Dt`, and it needs a particular
-face class, namely `Regular_triangulation_face_base_2<Gt>`.
 Note that there is no special weighted alpha shape class.
 
+The example below illustrates how to construct a weighted alpha shape.
 \cgalExample{Alpha_shapes_2/ex_weighted_alpha_shapes_2.cpp}
+
+\subsection AlphaShape_2DExampleForPeriodicAlphaShapes Example for Periodic Alpha Shapes
+The following example shows how to use a periodic Delaunay
+triangulation as underlying triangulation for the alpha shape computation.
+
+In order to define the original domain and to benefit from the
+built-in heuristic optimizations of the periodic triangulation computation,
+it is recommended to first construct the triangulation and
+then construct the alpha shape from it. The alpha
+shape constructor that takes a point range can be used as well but in
+this case the original domain cannot be specified and the default unit
+cube will be chosen and no optimizations will be used.
+
+It is also recommended to switch the triangulation to 1-sheeted
+covering if possible. Note that a periodic triangulation in 9-sheeted
+covering space is degenerate. In this case, an exact constructions
+kernel needs to be used to compute the alpha shapes. Otherwise the
+results will suffer from round-off problems.
+
+\cgalExample{Alpha_shapes_2/ex_periodic_alpha_shapes_2.cpp}
 
 */ 
 } /* namespace CGAL */

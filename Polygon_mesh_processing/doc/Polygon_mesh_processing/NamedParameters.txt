@@ -144,13 +144,41 @@ algorithm.\n
 \cgalNPEnd
 
 \cgalNPBegin{ edge_is_constrained_map } \anchor PMP_edge_is_constrained_map
-the property map containing information about edges of the input polygon mesh being constrained or not.\n
+the property map containing information about edges of the input polygon mesh being marked or not.\n
+In `CGAL::Polygon_mesh_processing::isotropic_remeshing()` and `CGAL::Polygon_mesh_processing::connected_components()`,
+the marked edges are constrained.\n
 \b Type : a class model of `ReadWritePropertyMap` with
 `boost::graph_traits<PolygonMesh>::%edge_descriptor` as key type and
 `bool` as value type. It should be default constructible.\n
 \b Default : if this parameter is omitted,
 a default property map where no edge is constrained is provided.
 \cgalNPEnd
+
+\cgalNPBegin{ vertex_incident_patches_map } \anchor PMP_vertex_incident_patches_map
+the property map containing the surface patches incident to each vertex of the input polygon mesh.\n
+\b Type : a class model of `LvaluePropertyMap` with
+`boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type. Its value type
+must be a container of `boost::property_traits<PatchIdMap>::%value_type` and have a function `insert()`.
+A `std::set` or a `boost::unordered_set` are recommended, as a patch index may be
+inserted several times.\n
+\b Default value is \code boost::get(CGAL::vertex_incident_patches_t, pmesh)\endcode
+\cgalNPEnd
+
+\cgalNPBegin{ first_index } \anchor PMP_first_index
+The index of the first surface patch.\n
+\b Type : `std::size_t`\n
+\b Default : 1
+\cgalNPEnd
+
+\cgalNPBegin{ vertex_feature_degree_map } \anchor PMP_vertex_feature_degree_map
+the property map containing the number of feature edges being incident to the vertices of the polygon mesh `pmesh`.\n
+\b Type : a class model of `ReadWritePropertyMap` with
+`boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and
+`int` as value type. It should be default constructible.\n
+\b Default value is \code boost::get(CGAL::vertex_feature_degree_t(), pmesh)\endcode
+\cgalNPEnd
+
+
 
 \cgalNPBegin{ vertex_is_constrained_map } \anchor PMP_vertex_is_constrained_map
 the property map containing information about vertices of the input polygon mesh being constrained or not.
@@ -317,6 +345,26 @@ Monte-Carlo methods.
 \n
 \b Type : `double` \n
 \b Default value is `0`
+\cgalNPEnd
+
+\cgalNPBegin{do_project} \anchor PMP_do_project
+Parameter used in `random_perturbation()` to set whether vertices should be re-projected
+to the input surface after their geometric perturbation.
+\n
+\b Type : `bool` \n
+\b Default value is `true`
+\cgalNPEnd
+
+\cgalNPBegin{random_seed} \anchor PMP_random_seed
+Parameter used in `random_perturbation()` to choose a seed to initialize
+the random number generator `CGAL::Random()`.
+If this parameter is not provided,
+the random number generator is initialized with `CGAL::Random()`,
+and perturbation is not deterministic
+(i.e. not reproducible from one run to the other).
+\n
+\b Type : `unsigned int` \n
+\b Default is that this variable is not set
 \cgalNPEnd
 
 \cgalNPTableEnd

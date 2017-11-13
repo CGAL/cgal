@@ -5,3 +5,5 @@ Triangulation_3
 Alpha_shapes_3
 Spatial_searching
 Solver_interface
+Advancing_front_surface_reconstruction
+Point_set_processing_3

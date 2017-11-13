@@ -18,7 +18,22 @@ message( "== CMake setup (DONE) ==\n" )
 # Enable testing with BUILD_TESTING
 option(BUILD_TESTING "Build the testing tree." OFF)
 include(CTest)
+if(BUILD_TESTING AND NOT POLICY CMP0064)
+  message(FATAL_ERROR "CGAL support of CTest requires CMake version 3.4 or later.
+The variable BUILD_TESTING must be set of OFF.")
+endif()
 
 # and finally start actual build
 add_subdirectory( Installation )
 add_subdirectory( Documentation/doc)
+
+if(NOT TARGET uninstall)
+  configure_file(
+      ${CMAKE_CURRENT_SOURCE_DIR}/cmake_uninstall.cmake.in
+      ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake
+      IMMEDIATE @ONLY)
+
+  add_custom_target(uninstall
+      COMMAND ${CMAKE_COMMAND} -P
+      ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
+endif()

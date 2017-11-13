@@ -70,6 +70,9 @@ can be omitted: if Eigen 3 (or greater) is available and
 `Eigen_diagonalize_traits` is provided. Otherwise, the internal
 implementation `Diagonalize_traits` is used.
 
+\note This function is significantly faster when using
+`Eigen_diagonalize_traits` and it is strongly advised to use this
+model.
 
 \cgalHeading{Requirements}
 
@@ -113,6 +116,10 @@ can be omitted: if Eigen 3 (or greater) is available and
 `CGAL_EIGEN3_ENABLED` is defined then an overload using
 `Eigen_diagonalize_traits` is provided. Otherwise, the internal
 implementation `Diagonalize_traits` is used.
+
+\note This function is significantly faster when using
+`Eigen_diagonalize_traits` and it is strongly advised to use this
+model.
 
 \cgalHeading{Requirements}
 

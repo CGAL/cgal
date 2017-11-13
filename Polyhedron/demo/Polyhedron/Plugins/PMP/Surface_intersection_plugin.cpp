@@ -1,7 +1,13 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polygon_mesh_processing/intersection.h>
+
+#ifdef USE_SURFACE_MESH
+#include "Kernel_type.h"
+#include "Scene_surface_mesh_item.h"
+#else
 #include "Scene_polyhedron_item.h"
 #include "Polyhedron_type.h"
+#endif
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 
 #include "Scene_polylines_item.h"
@@ -15,6 +21,13 @@
 #include <QApplication>
 #include <QTime>
 #include <QMessageBox>
+
+#ifdef USE_SURFACE_MESH
+typedef Scene_surface_mesh_item Scene_face_graph_item;
+#else
+typedef Scene_polyhedron_item Scene_face_graph_item;
+#endif
+
 
 using namespace CGAL::Three;
 namespace PMP = CGAL::Polygon_mesh_processing;
@@ -30,11 +43,9 @@ class Polyhedron_demo_intersection_plugin :
 public:
 
   bool applicable(QAction*) const {
-    int nb_selected=0;
-    Q_FOREACH(CGAL::Three::Scene_interface::Item_id index, scene->selectionIndices())
-      if ( qobject_cast<Scene_polyhedron_item*>(scene->item(index)) )
-        ++nb_selected;
-    return nb_selected==2;
+    return scene->selectionIndices().size() == 2 &&
+      qobject_cast<Scene_face_graph_item*>(scene->item(scene->selectionIndices().first())) &&
+      qobject_cast<Scene_face_graph_item*>(scene->item(scene->selectionIndices().last()));
   }
 
   QList<QAction*> actions() const {
@@ -63,11 +74,11 @@ public Q_SLOTS:
 
 void Polyhedron_demo_intersection_plugin::intersection()
 {
-  Scene_polyhedron_item* itemA = NULL;
+  Scene_face_graph_item* itemA = NULL;
   Q_FOREACH(CGAL::Three::Scene_interface::Item_id index, scene->selectionIndices())
   {
-    Scene_polyhedron_item* itemB =
-      qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+    Scene_face_graph_item* itemB =
+      qobject_cast<Scene_face_graph_item*>(scene->item(index));
 
     if(itemB)
     {
