@@ -12,9 +12,12 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 typedef boost::property_map<Polyhedron, boost::vertex_point_t>::type VertexPointMap;
 
-typedef CGAL::VSA_approximation<Polyhedron, VertexPointMap> L21VSA;
-typedef L21VSA::ErrorMetric L21Metric;
-typedef L21VSA::ProxyFitting L21ProxyFitting;
+
+typedef CGAL::VSA_approximation<Polyhedron, VertexPointMap> VSA;
+
+// default L21 metric 
+typedef VSA::ErrorMetric L21_metric;
+typedef VSA::ProxyFitting L21_proxy_fitting;
 
 int main()
 {
@@ -26,7 +29,7 @@ int main()
     return EXIT_FAILURE;
   }
 
-  // create VSA L21 metric approximation algorithm instance
+  // create VSA approximation algorithm instance
   L21VSA l21_approx(input,
     get(boost::vertex_point, const_cast<Polyhedron &>(input)));
 
@@ -53,7 +56,7 @@ int main()
   for (std::size_t i = 0; i < 10; ++i)
     l21_approx.run_one_step();
 
-  // extract the approximation polyhedron
+  // mesh and output final polyhedral surface
   Polyhedron output;
   l21_approx.meshing(output);
 

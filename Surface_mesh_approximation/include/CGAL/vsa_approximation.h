@@ -286,7 +286,7 @@ public:
   /*!
    * Set the mesh for approximation and rebuild the internal data structure.
    * @pre @a _mesh.is_pure_triangle()
-   * @param _mesh `CGAL TriangleMesh` on which approximation operate.
+   * @param _mesh `CGAL TriangleMesh` on which approximation operates.
    * @param _point_pmap vertex point map of the mesh
    */
   void set_mesh(const TriangleMesh &_mesh, const VertexPointMap &_point_pmap) {
@@ -310,6 +310,8 @@ public:
    * Rebuild the internal data structure.
    */
   void rebuild() {
+
+	// cleanup
     proxies.clear();
     px_planes.clear();
     anchors.clear();
@@ -318,7 +320,8 @@ public:
 
     if (!m_pmesh)
       return;
-    // rebuild inter data structure
+
+    // rebuild internal data structure
     internal_fidx_map.clear();
     BOOST_FOREACH(face_descriptor f, faces(*m_pmesh))
       internal_fidx_map[f] = 0;
