@@ -98,10 +98,50 @@ function(CGAL_setup_CGAL_dependencies target)
   endif()
 
   use_CGAL_Boost_support(${target} ${keyword})
+
   foreach(dir ${CGAL_INCLUDE_DIRS})
     target_include_directories(${target} ${keyword}
       $<BUILD_INTERFACE:${dir}>)
   endforeach()
   target_include_directories(${target} ${keyword}
     $<INSTALL_INTERFACE:include/CGAL>)
+
+  # Now setup compilation flags
+  if(MSVC)
+    target_compile_options(${target} ${keyword}
+      "-D_CRT_SECURE_NO_DEPRECATE;-D_SCL_SECURE_NO_DEPRECATE;-D_CRT_SECURE_NO_WARNINGS;-D_SCL_SECURE_NO_WARNINGS"
+      "/fp:strict"
+      "/fp:except-"
+      "/wd4503"  # Suppress warnings C4503 about "decorated name length exceeded"
+      "/bigobj"  # Use /bigobj by default
+      )
+  elseif(CMAKE_CXX_COMPILER_ID MATCHES "Intel")
+    message( STATUS "Using Intel Compiler. Adding -fp-model strict" )
+    if(WIN32)
+      target_compile_options(${target} ${keyword} "/fp:strict")
+    else()
+      target_compile_options(${target} ${keyword} "-fp-model strict")
+    endif()
+  elseif(CMAKE_CXX_COMPILER_ID MATCHES "SunPro")
+    message( STATUS "Using SunPro compiler, using STLPort 4." )
+    target_compile_options(${target} ${keyword}
+      "-features=extensions;-library=stlport4;-D_GNU_SOURCE")
+    target_link_libraries(${target} ${keyword} "-library=stlport4")
+  elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+    if ( RUNNING_CGAL_AUTO_TEST )
+      target_compile_options(${target} ${keyword} "-Wall")
+    endif()
+    if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 3)
+      message( STATUS "Using gcc version 4 or later. Adding -frounding-math" )
+      target_compile_options(${target} ${keyword} "-frounding-math")
+    endif()
+    if ( "${GCC_VERSION}" MATCHES "^4.2" )
+      message( STATUS "Using gcc version 4.2. Adding -fno-strict-aliasing" )
+      target_compile_options(${target} ${keyword} "-fno-strict-aliasing" )
+    endif()
+    if ( "${CMAKE_SYSTEM_PROCESSOR}" MATCHES "alpha" )
+      message( STATUS "Using gcc on alpha. Adding -mieee -mfp-rounding-mode=d" )
+      target_compile_options(${target} ${keyword} "-mieee -mfp-rounding-mode=d" )
+    endif()
+  endif()
 endfunction()
