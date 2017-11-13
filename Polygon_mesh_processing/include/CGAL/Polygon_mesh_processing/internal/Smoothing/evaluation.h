@@ -46,6 +46,7 @@ class Quality_evaluator
 
     typedef typename GeomTraits::Point_3 Point;
     typedef typename GeomTraits::Vector_3 Vector;
+    typedef typename GeomTraits::Line_3 Line;
     typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
     typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
     typedef typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::type VertexPointMap;
@@ -132,8 +133,7 @@ public:
 
             for(int i=0; i<3; ++i)
             {
-                double alt = CGAL::sqrt(CGAL::squared_distance(points[(0+i)%3],
-                                      typename Kernel::Line_3(points[(1+i)%3], points[(2+i)%3])));
+                double alt = CGAL::sqrt(CGAL::squared_distance(points[(0+i)%3], Line(points[(1+i)%3], points[(2+i)%3])));
                 double edge =  CGAL::sqrt(CGAL::squared_distance(points[(1+i)%3], points[(2+i)%3]));
                 if(alt < min_alt) { min_alt = alt; }
                 if(edge > longest_edge) { longest_edge = edge; }
