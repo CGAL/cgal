@@ -21,8 +21,8 @@
 #ifndef CGAL_VERSION_H
 #define CGAL_VERSION_H
 
-#define CGAL_VERSION 4.9-I-900
-#define CGAL_VERSION_NR 1040900900
+#define CGAL_VERSION 4.12-dev
+#define CGAL_VERSION_NR 1041200000
 #define CGAL_SVN_REVISION 99999
 
 #include <CGAL/version_macros.h>
