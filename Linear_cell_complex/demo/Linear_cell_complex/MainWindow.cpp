@@ -153,7 +153,6 @@ void MainWindow::connectVolumeListHandlers()
 void MainWindow::update_operations_entries(bool show)
 {
   actionImportOFF->setEnabled(show);
-  actionAddOFF->setEnabled(show);
   actionImport3DTDS->setEnabled(show);
   actionCompute_Voronoi_3D->setEnabled(show);
   actionClear->setEnabled(show);
@@ -246,7 +245,7 @@ void MainWindow::on_actionLoad_triggered ()
 
   if (!fileName.isEmpty ())
   {
-    load(fileName, true);
+    load(fileName, false);
   }
 }
 
@@ -259,7 +258,7 @@ void MainWindow::on_actionImportOFF_triggered ()
 
   if (!fileName.isEmpty ())
   {
-    load_off (fileName, true);
+    load_off (fileName, false);
   }
 }
 
@@ -272,7 +271,7 @@ void MainWindow::on_actionImportMoka_triggered()
 
   if (!fileName.isEmpty ())
   {
-    load_moka(fileName, true);
+    load_moka(fileName, false);
   }
 }
 
@@ -285,22 +284,9 @@ void MainWindow::on_actionImport3DTDS_triggered ()
 
   if (!fileName.isEmpty ())
   {
-    load_3DTDS (fileName, true);
+    load_3DTDS (fileName, false);
     statusBar ()->showMessage (QString ("Import 3DTDS file") + fileName,
                                DELAY_STATUSMSG);
-  }
-}
-
-void MainWindow::on_actionAddOFF_triggered()
-{
-  QString fileName = QFileDialog::getOpenFileName (this,
-                                                   tr ("Add OFF"),
-                                                   "./off",
-                                                   tr ("off files (*.off)"));
-
-  if (!fileName.isEmpty ())
-  {
-    load_off (fileName, false);
   }
 }
 
@@ -467,7 +453,7 @@ void MainWindow::load_moka(const QString & fileName, bool clear)
 
 #ifdef CGAL_PROFILE_LCC_DEMO
   timer.stop();
-  std::cout<<"Time to load off "<<qPrintable(fileName)<<": "
+  std::cout<<"Time to load moka "<<qPrintable(fileName)<<": "
            <<timer.time()<<" seconds."<<std::endl;
 #endif
 
@@ -478,10 +464,10 @@ void MainWindow::load_moka(const QString & fileName, bool clear)
   QApplication::restoreOverrideCursor ();
 
   if (clear)
-    statusBar ()->showMessage (QString ("Load off file") + fileName,
+    statusBar ()->showMessage (QString ("Load moka file") + fileName,
                                DELAY_STATUSMSG);
   else
-    statusBar ()->showMessage (QString ("Add off file") + fileName,
+    statusBar ()->showMessage (QString ("Add moka file") + fileName,
                                DELAY_STATUSMSG);
   Q_EMIT (sceneChanged ());
 }
