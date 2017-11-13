@@ -27,6 +27,9 @@
 #include <boost/type_traits/common_type.hpp>
 // ... but we kind of have to :-(
 #include <boost/multiprecision/cpp_int.hpp>
+#ifdef CGAL_USE_GMP
+#include <boost/multiprecision/gmp.hpp>
+#endif
 
 // TODO: work on the coercions (end of the file)
 
@@ -467,6 +470,18 @@ public:
       return in;
     }
 };
+#ifdef CGAL_USE_GMP
+template <>
+class Input_rep<boost::multiprecision::gmp_rational> : public IO_rep_is_specialized {
+    boost::multiprecision::gmp_rational& q;
+public:
+    Input_rep(boost::multiprecision::gmp_rational& qq) : q(qq) {}
+    std::istream& operator()(std::istream& in) const {
+      internal::read_float_or_quotient<boost::multiprecision::gmp_int,boost::multiprecision::gmp_rational>(in, q);
+      return in;
+    }
+};
+#endif
 
 // Copied from leda_rational.h
 namespace internal {
@@ -479,6 +494,13 @@ namespace internal {
   {
     internal::read_float_or_quotient<boost::multiprecision::cpp_int,boost::multiprecision::cpp_rational>(is, et);
   }
+#ifdef CGAL_USE_GMP
+  template <>
+  inline void read_float_or_quotient(std::istream & is, boost::multiprecision::gmp_rational& et)
+  {
+    internal::read_float_or_quotient<boost::multiprecision::gmp_int,boost::multiprecision::gmp_rational>(is, et);
+  }
+#endif
 } // namespace internal
 
 } //namespace CGAL

@@ -22,6 +22,9 @@
 
 #include <CGAL/boost_mp.h>
 #include <boost/multiprecision/cpp_int.hpp>
+#ifdef CGAL_USE_GMP
+#include <boost/multiprecision/gmp.hpp>
+#endif
 
 // FIXME: the could be several kernels based on Boost.Multiprecision.
 
