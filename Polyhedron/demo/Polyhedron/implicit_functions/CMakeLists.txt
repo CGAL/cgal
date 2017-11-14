@@ -23,7 +23,7 @@ set( QT_USE_QTXML    TRUE )
 set( QT_USE_QTMAIN   TRUE )
 set( QT_USE_QTSCRIPT  TRUE )
 set( QT_USE_QTOPENGL  TRUE )
-find_package(Qt5 QUIET COMPONENTS Xml Script OpenGL ScriptTools )
+find_package(Qt5 QUIET COMPONENTS Script OpenGL ScriptTools )
 
 
 if(CGAL_Qt5_FOUND AND Qt5_FOUND)
@@ -50,7 +50,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
     add_file_dependencies( ${plugin_implementation_base_name}.moc "${CMAKE_CURRENT_SOURCE_DIR}/${plugin_implementation_base_name}.cpp" )
 
     add_library(${plugin_name} MODULE ${option} ${plugin_implementation_base_name}.moc ${plugin_implementation_base_name}.cpp ${other_sources})
-    qt5_use_modules(${plugin_name} Widgets Script OpenGL Gui Xml)
+    qt5_use_modules(${plugin_name} Widgets Script OpenGL Gui)
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${plugin_name} )
     # Link with Qt
     target_link_libraries( ${plugin_name} ${QT_LIBRARIES} )

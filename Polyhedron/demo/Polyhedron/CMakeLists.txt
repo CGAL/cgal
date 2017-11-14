@@ -58,7 +58,7 @@ include( ${CGAL_USE_FILE} )
 
 find_package(Qt5
              QUIET
-             COMPONENTS            OpenGL Script Svg Xml
+             COMPONENTS            OpenGL Script
              OPTIONAL_COMPONENTS   ScriptTools)
 
 # Find OpenGL
@@ -147,8 +147,8 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   qt5_add_resources(gl_splat_rc GlSplat/glsplat.qrc)
   add_library(gl_splat SHARED
       GlSplat/GlSplat.cpp GlSplat/Shader.cpp ${gl_splat_rc})
-  qt5_use_modules(gl_splat OpenGL Gui Xml)
-  target_link_libraries(gl_splat ${OPENGL_gl_LIBRARY})
+  qt5_use_modules(gl_splat OpenGL Gui)
+  target_link_libraries(gl_splat ${OPENGL_gl_LIBRARY} ${QGLVIEWER_LIBRARIES})
 
   find_path(CGAL_THREE_HEADERS_PATH
     NAME CGAL/Three/Scene_item.h
@@ -191,7 +191,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     TextRenderer.cpp
     TextRenderer_moc.cpp
     Polyhedron_demo_plugin_helper.cpp)
-    qt5_use_modules(demo_framework OpenGL Gui Widgets Script Xml Svg)
+    qt5_use_modules(demo_framework OpenGL Gui Widgets Script)
   target_link_libraries(demo_framework
     ${QGLVIEWER_LIBRARIES}
     ${OPENGL_gl_LIBRARY}
@@ -214,17 +214,17 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     ${OPENGL_glu_LIBRARY}
     gl_splat
     )
-  qt5_use_modules(scene_basic_objects OpenGL Gui Xml Script Widgets)
+  qt5_use_modules(scene_basic_objects OpenGL Gui Script Widgets)
 
   add_library(scene_color_ramp SHARED Color_ramp.cpp)
   qt5_use_modules(scene_color_ramp Core)
 
   add_library(point_dialog SHARED Show_point_dialog.cpp Show_point_dialog.ui ${Show_point_dialogUI_FILES})
-  qt5_use_modules(point_dialog OpenGL Gui Xml Script Widgets)
+  qt5_use_modules(point_dialog OpenGL Gui Script Widgets)
 
   macro(add_item item_name)
     add_library(${item_name} SHARED ${ARGN})
-    qt5_use_modules(${item_name} OpenGL Gui Xml Script Widgets)
+    qt5_use_modules(${item_name} OpenGL Gui Script Widgets)
     target_link_libraries(${item_name} demo_framework ${CGAL_LIBRARIES} ${Boost_LIBRARIES})
   endmacro(add_item)
 
@@ -279,10 +279,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   if(EIGEN3_FOUND )
     add_item(scene_textured_polyhedron_item Scene_textured_polyhedron_item.cpp texture.cpp)
-    qt5_use_modules( scene_textured_polyhedron_item Svg )
     add_item(scene_textured_surface_mesh_item Scene_textured_surface_mesh_item.cpp texture.cpp)
-    qt5_use_modules( scene_textured_surface_mesh_item Svg )
-
     qt5_wrap_ui( editionUI_FILES Plugins/Surface_mesh_deformation/Deform_mesh.ui )
     add_item(scene_edit_polyhedron_item Plugins/Surface_mesh_deformation/Scene_edit_polyhedron_item.cpp
            ${editionUI_FILES})
@@ -333,7 +330,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES}
     ${FileLoaderDialogUI_files} ${MainWindowUI_files} ${PreferencesUI_FILES} ${statisticsUI_FILES})
   target_link_libraries(polyhedron_demo demo_framework point_dialog)
-  qt5_use_modules(polyhedron_demo Gui OpenGL Xml Widgets Script Svg )
+  qt5_use_modules(polyhedron_demo Gui OpenGL Widgets Script)
   add_executable  ( Polyhedron_3 Polyhedron_3.cpp )
   target_link_libraries( Polyhedron_3 polyhedron_demo )
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS Polyhedron_3 )
@@ -370,7 +367,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 # Exporting
 #
   if(TARGET CGAL_Qt5)
-    export(TARGETS CGAL CGAL_Qt5 FILE polyhedron_demo_targets.cmake NAMESPACE Polyhedron_)
+    export(TARGETS CGAL CGAL_Qt5 CGAL_ImageIO FILE polyhedron_demo_targets.cmake NAMESPACE Polyhedron_)
   else()
     export(TARGETS FILE polyhedron_demo_targets.cmake NAMESPACE Polyhedron_)
   endif()
