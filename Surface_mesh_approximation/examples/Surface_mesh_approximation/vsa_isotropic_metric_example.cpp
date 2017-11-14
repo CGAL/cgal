@@ -24,7 +24,7 @@ typedef boost::associative_property_map<std::map<Facet_handle, FT> > FacetAreaMa
 typedef boost::associative_property_map<std::map<Facet_handle, Point> > FacetCenterMap;
 
 // use point as proxy
-typedef Point PointProxy;
+typedef Point PointProxy; // TOFIX: CGAL capitalization -> Point_proxy (everywhere)
 
 // user-defined "compact" error metric
 struct CompactMetric {
@@ -71,8 +71,9 @@ struct PointProxyFitting {
   const FacetCenterMap center_pmap;
   const FacetAreaMap area_pmap;
 };
-typedef CGAL::VSA_approximation<Polyhedron, VertexPointMap,
-  CompactMetric, PointProxyFitting> CompactVSA;
+
+typedef CGAL::VSA::Mesh_approximation<Polyhedron, VertexPointMap,
+  CompactMetric, PointProxyFitting> Approximation;
 
 int main()
 {
@@ -101,18 +102,17 @@ int main()
   FacetCenterMap center_pmap(facet_centers);
 
   // create compact metric approximation algorithm instance
-  CompactVSA compact_approx(input,
+  Approximation approx(input,
     get(boost::vertex_point, const_cast<Polyhedron &>(input)));
 
   // construct metric and fitting functors
   CompactMetric metric(center_pmap);
   PointProxyFitting proxy_fitting(center_pmap, area_pmap);
-  compact_approx.set_metric(metric, proxy_fitting);
+  approx.set_metric(metric, proxy_fitting);
 
   // approximation via 200 proxies and 30 iterations
-  compact_approx.init_by_number(CGAL::Hierarchical, 200);
-  for (std::size_t i = 0; i < 30; ++i)
-    compact_approx.run_one_step();
+  approx.init_by_number(CGAL::Hierarchical, 200);
+  approx.run(30);
 
   return EXIT_SUCCESS;
 }

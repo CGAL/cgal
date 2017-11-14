@@ -13,52 +13,52 @@ typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 typedef boost::property_map<Polyhedron, boost::vertex_point_t>::type VertexPointMap;
 
 
-typedef CGAL::VSA_approximation<Polyhedron, VertexPointMap> VSA;
+typedef CGAL::VSA::Mesh_approximation<Polyhedron, VertexPointMap> Mesh_approximation;
 
-// default L21 metric 
-typedef VSA::ErrorMetric L21_metric;
-typedef VSA::ProxyFitting L21_proxy_fitting;
+// L21 error metric 
+typedef VSA::L21_error_metric  Metric;
+typedef VSA::L21_proxy_fitting Proxy_fitting;
 
 int main()
 {
   // create polyhedral surface and read input mesh
   Polyhedron input;
-  std::ifstream file("data/bear.off");
+  std::ifstream file("data/mask.off");
   if (!file || !(file >> input) || input.empty()) {
     std::cerr << "Invalid off file." << std::endl;
     return EXIT_FAILURE;
   }
 
   // create VSA approximation algorithm instance
-  VSA l21_approx(input,
+  Mesh_approximation approx(input,
     get(boost::vertex_point, const_cast<Polyhedron &>(input)));
 
   // set error and fitting functors
-  L21_metric metric(input);
-  L21_proxy_fitting proxy_fitting(input);
-  l21_approx.set_metric(metric, proxy_fitting);
+  Metric metric(input);
+  Proxy_fitting proxy_fitting(input);
+  approx.set_metric(metric, proxy_fitting);
 
   // initialize 100 random proxies
-  l21_approx.init_by_number(CGAL::Random, 100);
+  approx.init_by_number(CGAL::Random, 100);
   
-  // run 30 iterations to reduce the approximation error
-  for (std::size_t i = 0; i < 30; ++i)
-    l21_approx.run_one_step();
+  // run 30 iterations 
+  approx.run(30);
 
-  // add proxies to the one with the maximum fitting error
-  // and run 10 iterations
-  l21_approx.add_proxies_furthest(3, 5);
-  for (std::size_t i = 0; i < 10; ++i)
-    l21_approx.run_one_step();
+  // add 3 proxies to the one with the maximum fitting error
+  // run 5 iterations between each addition
+  approx.add_proxies_furthest(3, 5);
 
-  // teleport 2 proxies from local minima
-  l21_approx.teleport_proxies(2);
-  for (std::size_t i = 0; i < 10; ++i)
-    l21_approx.run_one_step();
+  // run 10 iterations
+  approx.run(10);
+
+  // teleport 2 proxies to tunnel out of local minima
+  // run 5 iterations between each teleport
+  l21_approx.teleport_proxies(2, 5);
+  approx.run(10);
 
   // mesh and output final polyhedral surface
   Polyhedron output;
-  l21_approx.extract_mesh(output);
+  approx.meshing(output);
 
   return EXIT_SUCCESS;
 }
