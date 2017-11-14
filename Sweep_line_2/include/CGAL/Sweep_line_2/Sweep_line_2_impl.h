@@ -865,22 +865,39 @@ _create_overlapping_curve(const X_monotone_curve_2& overlap_cv,
     left_event->remove_curve_from_right(c2);
 
   // Allocate the new Subcurve for the overlap
-  Subcurve* overlap_sc;
+  Subcurve* overlap_sc=NULL;
   if (all_leaves_diff.empty())
   {
-    CGAL_SL_PRINT_TEXT("Allocate a new subcurve for the overlap (no common subcurves)");
-    CGAL_SL_PRINT_EOL();
-    // no duplicate only one curve is needed
-    overlap_sc = this->m_subCurveAlloc.allocate(1);
-    this->m_subCurveAlloc.construct(overlap_sc, this->m_masterSubcurve);
-    overlap_sc->set_hint(this->m_statusLine.end());
-    overlap_sc->init(overlap_cv);
-    overlap_sc->set_left_event(left_event);
-    overlap_sc->set_right_event(right_event);
-    m_overlap_subCurves.push_back(overlap_sc);
-    // sets the two originating subcurves of overlap_sc
-    overlap_sc->set_originating_subcurve1(c1);
-    overlap_sc->set_originating_subcurve2(c2);
+    // first check that an equivalent curve is not already in left_event
+    for (Subcurve_iterator iter = left_event->right_curves_begin(); iter != left_event->right_curves_end();
+     ++iter)
+    {
+      if ( (*iter)->has_same_leaves(c1, c2) )
+      {
+        CGAL_SL_PRINT_TEXT("Reuse overlapping curve ");
+        CGAL_SL_PRINT_CURVE(*iter);
+        CGAL_SL_PRINT_EOL();
+        overlap_sc=*iter;
+        break;
+      }
+    }
+
+    if (overlap_sc==NULL)
+    {
+      CGAL_SL_PRINT_TEXT("Allocate a new subcurve for the overlap (no common subcurves)");
+      CGAL_SL_PRINT_EOL();
+      // no duplicate only one curve is needed
+      overlap_sc = this->m_subCurveAlloc.allocate(1);
+      this->m_subCurveAlloc.construct(overlap_sc, this->m_masterSubcurve);
+      overlap_sc->set_hint(this->m_statusLine.end());
+      overlap_sc->init(overlap_cv);
+      overlap_sc->set_left_event(left_event);
+      overlap_sc->set_right_event(right_event);
+      m_overlap_subCurves.push_back(overlap_sc);
+      // sets the two originating subcurves of overlap_sc
+      overlap_sc->set_originating_subcurve1(c1);
+      overlap_sc->set_originating_subcurve2(c2);
+    }
   }
   else{
     CGAL_SL_PRINT_TEXT("Allocate new subcurves for the overlap (common subcurves)");

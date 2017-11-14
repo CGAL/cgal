@@ -229,6 +229,32 @@ public:
     return true;
   }
 
+  /*! Check if the two hierarchies (s1+s2 considered as an overlapping curve not already created) contain the same leaf nodes. */
+  bool has_same_leaves(Self* s1, Self* s2)
+  {
+    std::list<Self*> my_leaves;
+    std::list<Self*> other_leaves;
+
+    this->template all_leaves<Self>(std::back_inserter(my_leaves));
+    s1->template all_leaves<Self>(std::back_inserter(other_leaves));
+    s2->template all_leaves<Self>(std::back_inserter(other_leaves));
+
+    typename std::list<Self*>::iterator iter;
+    for (iter = my_leaves.begin(); iter != my_leaves.end(); ++iter) {
+      if (std::find(other_leaves.begin(), other_leaves.end(), *iter) ==
+          other_leaves.end())
+        return false;
+    }
+
+    for (iter = other_leaves.begin(); iter != other_leaves.end(); ++iter) {
+      if (std::find(my_leaves.begin(), my_leaves.end(), *iter) ==
+          my_leaves.end())
+        return false;
+    }
+
+    return true;
+  }
+
   /*! Check if the two hierarchies contain a common leaf node. */
   bool has_common_leaf(Self *s)
   {
