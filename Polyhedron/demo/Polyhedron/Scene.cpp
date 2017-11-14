@@ -654,7 +654,7 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
 
     fbos.resize((int)viewer->total_pass());
     depth_test.resize((int)viewer->total_pass()-1);
-    
+
     //first pass
     fbos[0] = new QOpenGLFramebufferObject(viewer->width(), viewer->height(),QOpenGLFramebufferObject::Depth, GL_TEXTURE_2D, GL_RGBA32F);
     fbos[0]->bind();
@@ -666,7 +666,8 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
                          0.0f,
                          0.0f,
                          0.0f);
-    viewer->glClear(GL_COLOR_BUFFER_BIT);
+    viewer->glClearDepth(1);
+    viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     renderScene(children, viewer, picked_item_IDs, false, 0,false, NULL);
     fbos[0]->release();
     depth_test[0] = new QOpenGLFramebufferObject(viewer->width(), viewer->height(),QOpenGLFramebufferObject::Depth, GL_TEXTURE_2D, GL_RGBA32F);
@@ -679,7 +680,8 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
                          0.0f,
                          0.0f,
                          0.0f);
-    viewer->glClear(GL_COLOR_BUFFER_BIT);
+    viewer->glClearDepth(1);
+    viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     renderScene(children, viewer, picked_item_IDs, false, 0,true, NULL);
     depth_test[0]->release();
 
@@ -696,7 +698,8 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
                            0.0f,
                            0.0f,
                            0.0f);
-      viewer->glClear(GL_COLOR_BUFFER_BIT);
+      viewer->glClearDepth(1);
+      viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
       renderWireScene(children, viewer, picked_item_IDs, false);
       renderPointScene(children, viewer, picked_item_IDs, false);
       renderScene(children, viewer, picked_item_IDs, false, i, false, depth_test[i-1]);
@@ -712,7 +715,8 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
                            0.0f,
                            0.0f,
                            0.0f);
-      viewer->glClear(GL_COLOR_BUFFER_BIT);
+      viewer->glClearDepth(1);
+      viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
       renderScene(children, viewer, picked_item_IDs, false, i, true, depth_test[i-1]);
       depth_test[i]->release();
     }
@@ -729,7 +733,8 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
                          0.0f,
                          0.0f,
                          0.0f);
-    viewer->glClear(GL_COLOR_BUFFER_BIT);
+    viewer->glClearDepth(1);
+    viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     renderScene(children, viewer, picked_item_IDs, false, (int)viewer->total_pass()-1, false, depth_test[(int)viewer->total_pass()-2]);
     fbos[(int)viewer->total_pass()-1]->release();
 
