@@ -71,7 +71,7 @@ public:
   template <bool has_transformed_distance_from_coordinates = has_transformed_distance_from_coordinates<Distance>::value>
   FT
   transformed_distance_from_coordinates(
-    const typename Query_item& q,
+    const Query_item& q,
     Point const& p,
     typename std::vector<FT>::const_iterator it_coord_begin,
     typename std::vector<FT>::const_iterator it_coord_end)
@@ -82,7 +82,7 @@ public:
   template <>
   FT
   transformed_distance_from_coordinates<true>(
-    const typename Query_item& q,
+    const Query_item& q,
     Point const& p,
     typename std::vector<FT>::const_iterator it_coord_begin,
     typename std::vector<FT>::const_iterator it_coord_end)
@@ -95,7 +95,7 @@ public:
   template <bool has_interruptible_distance_computation = has_interruptible_transformed_distance<Distance>::value>
   FT
   interruptible_transformed_distance(
-    const typename Query_item& q,
+    const Query_item& q,
     Point const& p,
     typename std::vector<FT>::const_iterator it_coord_begin,
     typename std::vector<FT>::const_iterator it_coord_end,
@@ -107,7 +107,7 @@ public:
   template <>
   FT
   interruptible_transformed_distance<true>(
-    const typename Query_item& q,
+    const Query_item& q,
     Point const& p,
     typename std::vector<FT>::const_iterator it_coord_begin,
     typename std::vector<FT>::const_iterator it_coord_end,
@@ -122,7 +122,7 @@ public:
   template <bool has_interruptible_distance_computation = has_interruptible_transformed_distance<Distance>::value>
   FT
   interruptible_transformed_distance(
-    const typename Query_item& q,
+    const Query_item& q,
     Point const& p,
     FT)
   {
@@ -132,7 +132,7 @@ public:
   template <>
   FT
   interruptible_transformed_distance<true>(
-    const typename Query_item& q,
+    const Query_item& q,
     Point const& p,
     FT stop_if_geq_to_this)
   {
