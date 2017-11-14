@@ -40,8 +40,13 @@ and an input surface \f$ S \f$, we denote by <em>optimal shape proxies</em> a se
 \f[ E(\mathcal{R}, P) = \sum_{i = 1..k} E(\mathcal{R}_i, P_i). \f]
 
 By casting the approximation problem into an optimal discrete clustering one, the algorithm leverages the effective Lloyd algorithm \cgalCite{cgal:cad-vsa-04} to drive the total error down iteratively. 
-More specifically, during every iteration, all triangle facets are first partitioned into \f$ k \f$ connected regions by assigning each facet to its nearest proxy, which is referred to as the <em>partition process</em>. 
-Then, the algorithm updates each proxy \f$ P_i \f$ parameters with the corresponding region \f$ R_i \f$, which is referred to as the <em>fitting process</em>. The iteration is repeated until a stopping criterion is met.
+More specifically, during each iteration two different steps are conducted, for the \f$ m \f$th iteration:
+- <b>Partition process</b>. Firstly, all triangle facets are partitioned into \f$ k \f$ connected regions \f$ \{ R^{m}_1, \cdots, R^{m}_k \} \f$ by assigning each facet to its nearest proxy \f$ P^{m-1}_i \f$.
+- <b>Fitting process</b>. Then, the algorithm fits a proxy and update the parameters \f$ P^{m}_i \f$ from the corresponding region \f$ R^{m}_i \f$.
+
+For a sequence of iteration with the fitting error \f$ \{ E^1, \cdots, E^m \} \f$, the iteration is repeated until one of the stopping criteria is met:
+- The maximum number of iteration is reached: \f$ m >= max\_iterations \f$.
+- No significant error change between two iterations: \f$ (E^{m-1} - E^{m}) / E^{m-1} < converge\_threshold \f$.
 
 \subsection sma_metrics Metrics and Proxies
 
@@ -72,17 +77,20 @@ The package provides both two metrics as `CGAL::L2Metric` and `CGAL::L21Metric`,
 
 (TODO: discuss choice of naming as initialization may confuse with seeding)
 
+<!-- As indicated in the previous section, the iteration needs a set of initial proxies \f$ \{ P_1^0, \cdots, P_k^0 \} \f$.  -->
+
 The algorithm must be initialized by determining either the number of proxies required to approximate the geometry or the maximum tolerance approximation error. More specifically, we can decide:
 - <b>Target number of proxies</b>. The algorithm adds proxies until the specified target number is met.
-- <b>Target error drop</b>. The algorithm adds proxies until the approximation error is lower than the specified target error.
-Several initialization examples are provided in \cgalFigureRef{meshing}.
+- <b>Absolute error value</b>. The algorithm adds proxies until the approximation error is below the specified value. (WIP)
+- <b>Target relative error drop</b>. We start from the proxy fitted from the first facet of the surface with the fitting error \f$ \hat E \f$. The algorithm adds proxies until the approximation error drops below the specified percentage \f$ target\_drop * \hat E \f$.
+
+Different initialization examples are provided in \cgalFigureRef{meshing}.
 
 (TODO: precise whether drop refers to relative drop rate or absolute value)
 
-
 \subsection sma_seeding Seeding
 
-Seeding is used to decide where to insert a new proxy.
+Seeding is used to decide how to insert a new proxy.
 In the implementation, each proxy is always associated with a <em>seed</em> facet. 
 While the proxy parameters are viewed as the center in a geometric error sense, the seed of each proxy is used as the topological start point in the partition process.
 When we want to add one more proxy to drive the approximation error down, 
