@@ -19,6 +19,11 @@ if(CGAL_CTEST_DISPLAY_MEM_AND_TIME)
   endif()
 endif()
 
+if(ANDROID)
+  set(ANDROID_DIR_PREFIX /data/local/tmp/)
+  find_program(adb_executable adb)
+endif()
+
 # Process a list, and replace items contains a file pattern (like
 # `*.off`) by the sublist that corresponds to the globbing of the
 # pattern in the directory `${CGAL_CURRENT_SOURCE_DIR}`.
@@ -78,7 +83,7 @@ function(cgal_setup_test_properties test_name)
     APPEND PROPERTY LABELS "${PROJECT_NAME}")
   #      message(STATUS "  working dir: ${CGAL_CURRENT_SOURCE_DIR}")
   set_property(TEST "${test_name}"
-    PROPERTY WORKING_DIRECTORY ${CGAL_CURRENT_SOURCE_DIR})
+    PROPERTY WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
   if(exe_name)
     set_property(TEST "${test_name}"
       APPEND PROPERTY DEPENDS "compilation_of__${exe_name}")
@@ -86,20 +91,47 @@ function(cgal_setup_test_properties test_name)
 
   if(POLICY CMP0066) # CMake 3.7 or later
     if(NOT TEST ${PROJECT_NAME}_SetupFixture)
-      add_test(NAME ${PROJECT_NAME}_SetupFixture
-        COMMAND
-        ${CMAKE_COMMAND} -E copy_directory
-        ${CMAKE_CURRENT_SOURCE_DIR}
-        ${CMAKE_CURRENT_BINARY_DIR}/__exec_test_dir
-        )
+      if(ANDROID)
+        add_test(NAME ${PROJECT_NAME}_SetupFixture
+          COMMAND
+          ${adb_executable} push
+          ${CMAKE_CURRENT_SOURCE_DIR}
+          ${ANDROID_DIR_PREFIX}${PROJECT_NAME}
+          )
+        add_test(NAME ${PROJECT_NAME}_copy_GMP_MPFR
+          COMMAND
+          ${adb_executable} push
+          ${GMP_LIBRARIES} ${MPFR_LIBRARIES}
+          ${ANDROID_DIR_PREFIX}${PROJECT_NAME}
+          )
+        set_property(TEST ${PROJECT_NAME}_copy_GMP_MPFR
+          APPEND PROPERTY DEPENDS ${PROJECT_NAME}_SetupFixture)
+        set_property(TEST ${PROJECT_NAME}_copy_GMP_MPFR
+          PROPERTY FIXTURES_SETUP ${PROJECT_NAME})
+      else()
+        add_test(NAME ${PROJECT_NAME}_SetupFixture
+          COMMAND
+          ${CMAKE_COMMAND} -E copy_directory
+          ${CMAKE_CURRENT_SOURCE_DIR}
+          ${CMAKE_CURRENT_BINARY_DIR}/__exec_test_dir
+          )
+      endif()
       set_property(TEST ${PROJECT_NAME}_SetupFixture
         PROPERTY FIXTURES_SETUP ${PROJECT_NAME})
 
-      add_test(NAME ${PROJECT_NAME}_CleanupFixture
-        COMMAND
-        ${CMAKE_COMMAND} -E remove_directory
-        ${CMAKE_CURRENT_BINARY_DIR}/__exec_test_dir
-        )
+      if(ANDROID)
+        add_test(NAME ${PROJECT_NAME}_CleanupFixture
+          COMMAND
+          ${adb_executable} shell rm -rf
+          ${ANDROID_DIR_PREFIX}${PROJECT_NAME}
+          )
+      else()
+        add_test(NAME ${PROJECT_NAME}_CleanupFixture
+          COMMAND
+          ${CMAKE_COMMAND} -E remove_directory
+          ${CMAKE_CURRENT_BINARY_DIR}/__exec_test_dir
+          )
+      endif()
       set_property(TEST ${PROJECT_NAME}_CleanupFixture
         PROPERTY FIXTURES_CLEANUP ${PROJECT_NAME})
 
@@ -107,15 +139,26 @@ function(cgal_setup_test_properties test_name)
         ${PROJECT_NAME}_CleanupFixture ${PROJECT_NAME}_SetupFixture
         APPEND PROPERTY LABELS "${PROJECT_NAME}")
     endif()
-    set_tests_properties("${test_name}"
-      PROPERTIES
-      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/__exec_test_dir
-      FIXTURES_REQUIRED "${PROJECT_NAME}")
+    if(NOT ANDROID)
+      set_property(TEST "${test_name}"
+        PROPERTY
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/__exec_test_dir)
+    endif()
+    set_property(TEST "${test_name}"
+      APPEND PROPERTY FIXTURES_REQUIRED "${PROJECT_NAME}")
     if(exe_name)
       set_property(TEST ${test_name}
         APPEND PROPERTY FIXTURES_REQUIRED "${exe_name}")
       set_property(TEST "compilation_of__${exe_name}"
         PROPERTY FIXTURES_SETUP "${exe_name}")
+      if(ANDROID)
+        add_test(NAME "push_of__${exe_name}"
+          COMMAND ${adb_executable} push $<TARGET_FILE:${exe_name}> ${ANDROID_DIR_PREFIX}${PROJECT_NAME}/${exe_name})
+        set_property(TEST "push_of__${exe_name}"
+          APPEND PROPERTY FIXTURES_SETUP "${exe_name}")
+        set_property(TEST "push_of__${exe_name}"
+          APPEND PROPERTY DEPENDS "compilation_of__${exe_name}")
+      endif()
     endif()
   endif() # end CMake 3.7 or later
 endfunction(cgal_setup_test_properties)
@@ -145,6 +188,8 @@ function(cgal_add_test exe_name)
       COMMAND ${TIME_COMMAND} ${CMAKE_COMMAND}
       -DCMD:STRING=$<TARGET_FILE:${exe_name}>
       -DCIN:STRING=${cin_file}
+      -DANDROID_DIR_PREFIX=${ANDROID_DIR_PREFIX}
+      -DPROJECT_NAME=${PROJECT_NAME}
       -P "${CGAL_MODULES_DIR}/run_test_with_cin.cmake")
     #	message(STATUS "add test: ${exe_name} < ${cin_file}")
   else()
@@ -171,7 +216,11 @@ function(cgal_add_test exe_name)
       endif()
     endif()
     #	message(STATUS "add test: ${exe_name} ${ARGS}")
-    add_test(NAME ${test_name} COMMAND ${TIME_COMMAND} $<TARGET_FILE:${exe_name}> ${ARGS})
+    if(ANDROID)
+      add_test(NAME ${test_name} COMMAND ${TIME_COMMAND} ${adb_executable} shell cd ${ANDROID_DIR_PREFIX}${PROJECT_NAME} && LD_LIBRARY_PATH=${ANDROID_DIR_PREFIX}${PROJECT_NAME} ${ANDROID_DIR_PREFIX}${PROJECT_NAME}/${exe_name} ${ARGS})
+    else()
+      add_test(NAME ${test_name} COMMAND ${TIME_COMMAND} $<TARGET_FILE:${exe_name}> ${ARGS})
+    endif()
   endif()
   cgal_setup_test_properties(${test_name} ${exe_name})
   return()
