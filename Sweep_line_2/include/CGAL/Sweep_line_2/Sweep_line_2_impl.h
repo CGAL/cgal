@@ -512,17 +512,25 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_intersect(Subcurve* c1,
       else{
         CGAL_SL_PRINT_TEXT("Overlap with common ancestors");
         CGAL_SL_PRINT_EOL();
+
+        // iteratively create the final overlapping (geometric) curve.
+        // This is needed rather than simply computing the intersection of
+        // the last curves of first_parent and second_parent as some traits
+        // classes (such as Arr_curve_data_traits_2) override the Intersect_2
+        // functor and expects the curve to have no common ancesters
+        // (Arr_curve_data_traits_2 is used in the testsuite to sum up
+        //  the overlapping degree of a curve)
         X_monotone_curve_2 xc = first_parent->last_curve();
         for (typename Subcurve_vector::iterator sc_it=all_leaves_diff.begin();
              sc_it!=all_leaves_diff.end(); ++sc_it)
         {
           std::vector<CGAL::Object> inter_res;
-          vector_inserter vi(inter_res) ;
-          vector_inserter vi_end(inter_res);
+          ;
 
-          this->m_traits->intersect_2_object()(xc, (*sc_it)->last_curve(), vi);
-          // SL_SAYS: we need to check that the following assertions are always valid
-          CGAL_assertion(inter_res.empty() || inter_res.size()==1);
+          this->m_traits->intersect_2_object()(xc,
+                                               (*sc_it)->last_curve(),
+                                               vector_inserter(inter_res));
+          CGAL_assertion(inter_res.size()==1);
           CGAL_assertion( CGAL::object_cast< X_monotone_curve_2 >(&inter_res.front())!=NULL );
           xc = *CGAL::object_cast< X_monotone_curve_2 >(&inter_res.front());
         }
