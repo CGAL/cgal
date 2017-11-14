@@ -22,20 +22,20 @@ int main()
 
   // output polyhedral surface and indexed triangle mesh
   Polyhedron output;
-  std::vector<std::size_t> triangles;
-  std::vector<Kernel::Point_3> points;
+  std::vector<std::vector< std::size_t> > triangles; // contains triplets of indices
+  std::vector< Kernel::Point_3 > points;
 
   // free function interface with named parameters
   bool valid_polyhedron = CGAL::VSA::mesh_approximation(input, 
+	  std::back_inserter(points), 
+	  std::back_inserter(triangles),
 	  CGAL::VSA::parameters::init_method(CGAL::VSA::Hierarchical). // hierarchical init
 	  refine_until_proxies(200). // refine until target number of proxies
       iterations(30). // number of relaxation iterations after seeding
-      anchor_points(std::back_inserter(points)). // get anchor points
-      indexed_triangles(std::back_inserter(triangles)). // get indexed triangles
-	  output); // output to polyhedron, if 2-manifold and oriented
+	  output_mesh(output)); // output to polyhedron, if 2-manifold and oriented
 
   std::cout << "#anchor points: " << points.size() << std::endl;
-  std::cout << "#triangles: " << triangles.size() / 3 << std::endl;
+  std::cout << "#triangles: " << triangles.size() << std::endl;
 
   if (valid_polyhedron)
 	  std::cout << "oriented 2-manifold output." << std::endl;
