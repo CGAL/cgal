@@ -120,7 +120,7 @@ public:
   void resetFov();
 Q_SIGNALS:
   void sendMessage(QString);
-  void GLinit();
+  void doneInitGL(CGAL::Three::Viewer_interface*);
 public Q_SLOTS:
   //!Prompt a dialog to set the lighting values for this viewer;
   void setLighting_clicked();

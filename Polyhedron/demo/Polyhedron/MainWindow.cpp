@@ -2346,7 +2346,8 @@ void MainWindow::on_actionAdd_Viewer_triggered()
   updateViewerBbox(viewer2, true, min, max);
   viewer2->camera()->interpolateToFitScene();
   viewer2->setObjectName("viewer2");
-  scene->newViewer(viewer2);
+  connect(viewer2, SIGNAL(doneInitGL(CGAL::Three::Viewer_interface*)),
+          scene, SLOT(newViewer(CGAL::Three::Viewer_interface*)));
   SubViewer* sub_viewer = new SubViewer(this, viewer2);
   ui->viewerLayout->addWidget(sub_viewer);
   setupViewer(viewer2, sub_viewer);

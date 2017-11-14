@@ -212,7 +212,7 @@ public Q_SLOTS:
   void setItemA(int i);
   //!Sets the item_B as the item at index i .
   void setItemB(int i);
-
+  void newViewer(CGAL::Three::Viewer_interface*);
 Q_SIGNALS:
   //generated automatically by moc
   //! Emit this to mark `modelindex` as selected in the Geometric Objects view.
@@ -296,7 +296,6 @@ private:
   void initGL(CGAL::Three::Viewer_interface* viewer);
 
 public:
-  void newViewer(CGAL::Three::Viewer_interface*);
   void removeViewer(CGAL::Three::Viewer_interface*);
 
 }; // end class Scene

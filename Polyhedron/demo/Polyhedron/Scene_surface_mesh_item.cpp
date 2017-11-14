@@ -659,7 +659,9 @@ void Scene_surface_mesh_item::draw(CGAL::Three::Viewer_interface *viewer,
                                    bool writing_depth,
                                    QOpenGLFramebufferObject* fbo)
 {
-  if(!isWriting() && !isInit())
+  if(viewer->objectName() == QString("viewer2"))
+    int i = 0;
+  if(!isWriting() && !isInit() && viewer->context()->isValid())
     initGL();
   if (!isWriting() && getBuffersFilled() &&
      ! getBuffersInit(viewer))

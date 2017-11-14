@@ -25,6 +25,7 @@ class Viewer_impl {
 public:
   CGAL::Three::Scene_draw_interface* scene;
   Viewer *viewer;
+  Viewer *shareViewer;
   bool antialiasing;
   bool twosides;
   bool macro_mode;
@@ -130,7 +131,7 @@ public:
     fpsString=Viewer::tr("%1Hz", "Frames per seconds, in Hertz").arg("?");
     distance_is_displayed = false;
     is_d_pressed = false;
-    total_pass = 5;
+    total_pass = 4;
   }
   void makeArrow(double R, int prec, qglviewer::Vec from, qglviewer::Vec to, qglviewer::Vec color, AxisData &data);
   //!Clears the distance display
@@ -218,6 +219,7 @@ Viewer::Viewer(QWidget* parent,
 {
   d = new Viewer_impl;
   d->viewer = this;
+  d->shareViewer = sharedWidget;
   d->is_sharing = true;
   d->antialiasing = antialiasing;
   this->setProperty("draw_two_sides", false);
@@ -307,7 +309,13 @@ void Viewer::initializeGL()
     }
     CGAL_warning_msg(created && context()->isValid(), "The openGL context initialization failed "
                                                       "and the default context (2.0) will be used" );
-    makeCurrent();
+  }
+  else
+  {
+    context()->setFormat(d->shareViewer->format());
+    context()->create();
+  }
+  makeCurrent();
 #else
     QGLFormat format;
     format.setVersion(4,3);
@@ -326,20 +334,11 @@ void Viewer::initializeGL()
     {
       d->is_ogl_4_3 = true;
       d->_recentFunctions = new QOpenGLFunctions_4_3_Compatibility();
+      this->setContext(new_context);
     }
     CGAL_warning_msg(created && new_context->isValid(), "The openGL context initialization failed "
                                                         "and the default context (2.0) will be used" );
-    this->setContext(new_context);
-    new_context->setFormat(format);
-    created = new_context->create();
-    d->is_ogl_4_3 = false;
   }
-  else
-  {
-    d->is_ogl_4_3 = true;
-    d->_recentFunctions = new QOpenGLFunctions_4_3_Compatibility();
-  }
-  GLinit();
   context()->makeCurrent();
 #endif
   QGLViewer::initializeGL();
@@ -540,6 +539,7 @@ void Viewer::initializeGL()
 
   d->painter = new QPainter();
   d->initialized = true;
+  doneInitGL(this);
 }
 
 
