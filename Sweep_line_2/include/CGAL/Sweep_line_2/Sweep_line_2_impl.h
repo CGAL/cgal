@@ -504,7 +504,7 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_intersect(Subcurve* c1,
         _add_curve_to_right(left_event, first_parent);
         right_event->add_curve_to_left(first_parent);
 
-        this->m_visitor->found_overlap(c1, c2, first_parent); // SL_SAYS check with Efi
+        this->m_visitor->found_overlap(c1, c2, first_parent);
 
         CGAL_SL_PRINT_END_EOL("computing intersection");
         return;
@@ -828,7 +828,6 @@ _create_overlapping_curve(const X_monotone_curve_2& overlap_cv,
   Arr_parameter_space  ps_y_l =
     this->m_traits->parameter_space_in_y_2_object()(overlap_cv, ARR_MIN_END);
   if ((ps_x_l != ARR_INTERIOR) || (ps_y_l != ARR_INTERIOR)) {
-    // SL_SAYS check with Efi
     CGAL_assertion(c1->left_event() == c2->left_event());
     left_event=(Event*)(c1->left_event());
   }
@@ -844,7 +843,6 @@ _create_overlapping_curve(const X_monotone_curve_2& overlap_cv,
   Arr_parameter_space  ps_y_r =
     this->m_traits->parameter_space_in_y_2_object()(overlap_cv, ARR_MAX_END);
   if ((ps_x_r != ARR_INTERIOR) || (ps_y_r != ARR_INTERIOR)) {
-    // SL_SAYS check with Efi
     CGAL_assertion(c1->right_event() == c2->right_event());
     right_event = (Event*)(c1->right_event());
   }
@@ -855,7 +853,7 @@ _create_overlapping_curve(const X_monotone_curve_2& overlap_cv,
 
   if (!c1->is_start_point(left_event))
   {
-    // here we do no add a curve on the left if there wasn't a curve before
+    // here we do not add a curve on the left if there wasn't a curve before
     // it might happen that a curve will be added on the left while
     // it should have been an overlapping curve (that will be detected
     // upon handling of an event with no left curve).
@@ -918,7 +916,7 @@ _create_overlapping_curve(const X_monotone_curve_2& overlap_cv,
                                                          sc_it!=all_leaves_diff.end();
                                                          ++sc_it)
     {
-      overlap_sc = this->m_subCurveAlloc.allocate(1); // SL_SAYS: allocate all at once?
+      overlap_sc = this->m_subCurveAlloc.allocate(1);
       this->m_subCurveAlloc.construct(overlap_sc, this->m_masterSubcurve);
       overlap_sc->set_hint(this->m_statusLine.end());
       overlap_sc->init(overlap_cv);
