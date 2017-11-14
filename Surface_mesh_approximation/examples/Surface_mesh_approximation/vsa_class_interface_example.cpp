@@ -30,12 +30,12 @@ int main()
   }
 
   // create VSA approximation algorithm instance
-  L21VSA l21_approx(input,
+  VSA l21_approx(input,
     get(boost::vertex_point, const_cast<Polyhedron &>(input)));
 
   // set error and fitting functors
-  L21Metric metric(input);
-  L21ProxyFitting proxy_fitting(input);
+  L21_metric metric(input);
+  L21_proxy_fitting proxy_fitting(input);
   l21_approx.set_metric(metric, proxy_fitting);
 
   // initialize 100 random proxies
@@ -58,7 +58,7 @@ int main()
 
   // mesh and output final polyhedral surface
   Polyhedron output;
-  l21_approx.meshing(output);
+  l21_approx.extract_mesh(output);
 
   return EXIT_SUCCESS;
 }

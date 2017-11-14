@@ -45,7 +45,7 @@ bool test_manifold(const char *file_name, const FT drop = FT(1e-8))
 
   // meshing
   Polyhedron mesh_out;
-  if (vsa_l21.meshing(mesh_out)) {
+  if (vsa_l21.extract_mesh(mesh_out)) {
     std::cout << "Succeeded." << std::endl;
     return true;
   }

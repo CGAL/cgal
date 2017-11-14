@@ -94,7 +94,7 @@ int main()
   // extract the approximation polyhedron
   std::cout << "meshing" << std::endl;
   Polyhedron out_mesh;
-  if (l2_approx.meshing(out_mesh, FT(0.5), true))
+  if (l2_approx.extract_mesh(out_mesh, FT(0.5), true))
     std::cout << "manifold." << std::endl;
   else
     std::cout << "non-manifold" << std::endl;

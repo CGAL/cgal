@@ -125,7 +125,7 @@ bool vsa_mesh_approximation(const TriangleMesh &tm_in,
   get_proxy_map(vsa_l21, fproxymap);
 
   FT split_criterion = choose_param(get_param(np, internal_np::chord_subdivide), FT(1));
-  const bool is_manifold = vsa_l21.meshing(tm_out, split_criterion);
+  const bool is_manifold = vsa_l21.extract_mesh(tm_out, split_criterion);
 
   typedef typename boost::lookup_named_param_def<
     internal_np::anchor_vertex_t,

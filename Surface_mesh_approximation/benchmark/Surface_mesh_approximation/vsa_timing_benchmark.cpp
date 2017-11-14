@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
   Polyhedron mesh_out;
   t0.reset();
   t0.start();
-  l21_vsa.meshing(mesh_out);
+  l21_vsa.extract_mesh(mesh_out);
   t0.stop();
   std::cerr << "meshing time " << t0.time() << " sec." << std::endl;
 

@@ -311,7 +311,7 @@ public:
    */
   void rebuild() {
 
-	// cleanup
+    // cleanup
     proxies.clear();
     px_planes.clear();
     anchors.clear();
@@ -806,7 +806,7 @@ public:
   }
 
   /*!
-   * @brief Meshing, choose the default area weighted or the PCA plane fitting.
+   * @brief Extract mesh, choose the default area weighted or the PCA plane fitting.
    * @tparam PolyhedronSurface should be `CGAL::Polyhedron_3`
    * @param[out] tm_out output triangle mesh
    * @param split_criterion boundary approximation recursively split criterion
@@ -814,7 +814,7 @@ public:
    * @return true if output triangle mesh is manifold,false otherwise.
    */
   template <typename PolyhedronSurface>
-  bool meshing(PolyhedronSurface &tm_out, const FT split_criterion = FT(0.2), bool pca_plane = false) {
+  bool extract_mesh(PolyhedronSurface &tm_out, const FT split_criterion = FT(0.2), bool pca_plane = false) {
     // initialize all vertex anchor status
     enum Vertex_status { NO_ANCHOR = -1 };
     BOOST_FOREACH(vertex_descriptor v, vertices(*m_pmesh))
