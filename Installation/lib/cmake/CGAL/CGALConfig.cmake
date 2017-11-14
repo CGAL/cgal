@@ -14,6 +14,8 @@ get_filename_component(CGAL_CONFIG_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
 
 set(CGAL_HEADER_ONLY TRUE)
 
+set( CGAL_REQUESTED_COMPONENTS ${CGAL_FIND_COMPONENTS} )
+
 # Save the current source directory. That variable can be changed by
 # a `CMakeLists.txt`, for `CMakeLists.txt` files that are created in
 # the binary directory.
@@ -75,6 +77,7 @@ endforeach()
 # Define the CGAL targets and theirs CGAL:: aliases
 #
 foreach(cgal_lib CGAL CGAL_Core CGAL_ImageIO CGAL_Qt5)
+  set(WITH_${cgal_lib} TRUE)
   if(${cgal_lib}_FOUND AND NOT TARGET ${cgal_lib})
     add_library(${cgal_lib} INTERFACE)
     if(NOT TARGET CGAL::${cgal_lib})
