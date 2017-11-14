@@ -449,22 +449,33 @@ public:
     m_leftCurves.erase(left_iter, m_leftCurves.end());
   }
 
-  bool is_right_curve_bigger(Subcurve* c1, Subcurve* c2)
+  bool is_right_curve_bigger(Subcurve* c1, Subcurve* c2, const Traits_2* tr)
   {
+    bool found_c1=false, found_c2=false;
     Subcurve_iterator   iter;
     for (iter = m_rightCurves.begin(); iter != m_rightCurves.end(); ++iter) {
-      if ((*iter == c1) ||
-          (static_cast<Subcurve*>((*iter)->originating_subcurve1()) == c1) ||
-          (static_cast<Subcurve*>((*iter)->originating_subcurve2()) == c1))
-        return false;
+      if (!found_c1 && ( (*iter == c1) ||
+          (static_cast<Subcurve*>(*iter)->are_all_leaves_contained(c1))))
+      {
+        if (found_c2)
+          return true;
+        else
+          found_c1=true;
+      }
 
-      if ((*iter == c2) ||
-          (static_cast<Subcurve*>((*iter)->originating_subcurve1()) == c2) ||
-          (static_cast<Subcurve*>((*iter)->originating_subcurve2()) == c2))
-        return true;
+      if (!found_c2 && ( (*iter == c2) ||
+          (static_cast<Subcurve*>(*iter)->are_all_leaves_contained(c2))))
+      {
+        if (found_c1)
+          return false;
+        else
+          found_c2=true;
+      }
     }
+    CGAL_assertion(!found_c1 || !found_c2);
 
-    return true;
+    return tr->compare_y_at_x_right_2_object()
+             (c1->last_curve(), c2->last_curve(), m_point) == LARGER;
   }
 
   /*! Check if the two curves are negihbors to the left of the event. */

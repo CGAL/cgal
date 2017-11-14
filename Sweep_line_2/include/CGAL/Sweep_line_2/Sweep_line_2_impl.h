@@ -710,7 +710,7 @@ _create_intersection_point(const Point_2& xp,
       // The multiplicity of the intersection point is unkown or undefined:
       _add_curve_to_right(e, c1);
       _add_curve_to_right(e, c2);
-      if (e->is_right_curve_bigger(c1, c2)) std::swap(c1, c2);
+      if (e->is_right_curve_bigger(c1, c2, this->m_traits)) std::swap(c1, c2);
     }
     else {
       if ((multiplicity % 2) == 1) {
@@ -757,7 +757,7 @@ _create_intersection_point(const Point_2& xp,
         }
       }
     }
-    if (e->is_right_curve_bigger(c1, c2)) std::swap(c1, c2);
+    if (e->is_right_curve_bigger(c1, c2, this->m_traits)) std::swap(c1, c2);
 
     CGAL_SL_PRINT_EVENT_INFO(e);
   }
@@ -951,7 +951,7 @@ _create_overlapping_curve(const X_monotone_curve_2& overlap_cv,
   this->m_visitor->found_overlap(c1, c2, overlap_sc);
 
   if (!c1->is_end_point(right_event) && !c2->is_end_point(right_event))
-    if (right_event->is_right_curve_bigger(c1, c2))
+    if (right_event->is_right_curve_bigger(c1, c2, this->m_traits))
       std::swap(c1, c2);
 
   if (event_on_overlap != NULL && event_on_overlap!=left_event)
