@@ -201,11 +201,8 @@ private:
           builder.add_vertex_to_facet(*(itr + 2));
           builder.end_facet();
         }
-        else {
-          builder.end_surface();
+        else
           is_manifold = false;
-          return;
-        }
       }
       builder.end_surface();
     }
@@ -806,12 +803,14 @@ public:
   }
 
   /*!
-   * @brief Extract mesh, choose the default area weighted or the PCA plane fitting.
+   * @brief Extract the approximated surface mesh.
+   * @note If the extracted surface mesh contains non-manifold facets, 
+   * they are not built into the output polyhedron.
    * @tparam PolyhedronSurface should be `CGAL::Polyhedron_3`
    * @param[out] tm_out output triangle mesh
    * @param split_criterion boundary approximation recursively split criterion
-   * @param pca_plane if use PCA plane fitting method
-   * @return true if output triangle mesh is manifold,false otherwise.
+   * @param pca_plane true if use PCA plane fitting, otherwise use the default area averaged plane parameters
+   * @return true if the extracted surface mesh is manifold, false otherwise.
    */
   template <typename PolyhedronSurface>
   bool extract_mesh(PolyhedronSurface &tm_out, const FT split_criterion = FT(0.2), bool pca_plane = false) {
