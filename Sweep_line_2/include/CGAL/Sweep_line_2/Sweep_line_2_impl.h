@@ -742,6 +742,15 @@ _create_intersection_point(const Point_2& xp,
       _add_curve_to_right(e, c2);
       e->set_intersection();
       this->m_visitor->update_event(e, c1, c2, false);
+
+      if (multiplicity==0)
+      {
+        if (e->is_right_curve_bigger(c1, c2, this->m_traits)) std::swap(c1, c2);
+      }
+      else
+      {
+        if (multiplicity%2==1) std::swap(c1, c2);
+      }
     }
     else {
       if (!c1->is_end_point(e) && c2->is_end_point(e)) {
@@ -757,7 +766,7 @@ _create_intersection_point(const Point_2& xp,
         }
       }
     }
-    if (e->is_right_curve_bigger(c1, c2, this->m_traits)) std::swap(c1, c2);
+
 
     CGAL_SL_PRINT_EVENT_INFO(e);
   }
