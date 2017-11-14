@@ -304,6 +304,7 @@ public:
   typedef EK_   Exact_kernel;
   typedef E2A_  E2A;
 
+  typedef Lazy_kernel_generic_base<EK_, AK_, E2A_, Kernel_> BaseClass;
   template < typename Kernel2 >
   struct Base { typedef Lazy_kernel_base<Exact_kernel, Approximate_kernel, E2A, Kernel2>  Type; };
 
@@ -319,7 +320,164 @@ public:
 
   // typedef void Compute_z_3; // to detect where .z() is called
   // typedef void Construct_point_3; // to detect where the ctor is called
+
+  struct Construct_point_2 : public BaseClass::Construct_point_2
+  {
+#ifndef CGAL_CFG_MATCHING_BUG_6
+    using BaseClass::Construct_point_2::operator();
+#else // CGAL_CFG_MATCHING_BUG_6
+
+#ifdef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
+  template <class T> 
+    Point_2 operator()(const T& t) const
+    {
+      return BaseClass().construct_point_2_object()(t);
+    }
+
+    template <class T1, class T2> 
+    Point_2 operator()(const T1& t1, const T2& t2) const
+    {
+      return BaseClass().construct_point_2_object()(t1, t2);
+    }
+    
+    template <class T1, class T2, class T3> 
+    Point_2 operator()(const T1& t1, const T2& t2, const T3& t3) const
+    {
+      return BaseClass().construct_point_2_object()(t1, t2, t3);
+    }
+    
+    template <class T1, class T2, class T3, class T4> 
+    Point_2 operator()(const T1& t1, const T2& t2, const T3& t3, const T4& t4) const
+    {
+      return BaseClass().construct_point_2_object()(t1, t2, t3, t4);
+    }
+#else    
+    template <class ...  T> 
+    Point_2 operator()(const T& ...t) const
+    {
+      return BaseClass().construct_point_2_object()(t...);
+    }
+#endif // CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
+    
+#endif // CGAL_CFG_MATCHING_BUG_6
+    
+    typename Kernel_::Point_2 operator()(const typename Kernel_::Point_2& p) const
+    {
+      return p;
+    }
+
+    
+    typename Kernel_::Point_2 operator()(const typename Kernel_::Weighted_point_2& p) const
+    {
+      typedef Lazy_rep_3<typename Approximate_kernel::Weighted_point_2,
+                         typename Exact_kernel::Weighted_point_2,
+                         typename Approximate_kernel::Construct_weighted_point_2,
+                         typename Exact_kernel::Construct_weighted_point_2,
+                         E2A_,
+                         Return_base_tag,
+                         typename Kernel_::Point_2,
+                         CGAL::Lazy_exact_nt<class CGAL::Gmpq>
+                         > LR;
+
+      
+      LR * lr = dynamic_cast<LR*>(p.ptr());
+      if(lr){
+        return lr->l1;
+      }
+      CGAL_assertion(false);
+      return BaseClass().construct_point_2_object()(p);
+    }
+    
+  };
+
   
+  struct Construct_point_3 : public BaseClass::Construct_point_3
+  {
+    typedef typename Kernel_::Point_3 Point_3;
+#if 0 // ndef CGAL_CFG_MATCHING_BUG_6
+  using BaseClass::Construct_point_3::operator();
+#else // CGAL_CFG_MATCHING_BUG_6
+
+#ifdef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
+  template <class T> 
+    Point_3 operator()(const T& t) const
+    {
+      return BaseClass().construct_point_3_object()(t);
+    }
+
+    template <class T1, class T2> 
+    Point_3 operator()(const T1& t1, const T2& t2) const
+    {
+      return BaseClass().construct_point_3_object()(t1, t2);
+    }
+    
+    template <class T1, class T2, class T3> 
+    Point_3 operator()(const T1& t1, const T2& t2, const T3& t3) const
+    {
+      return BaseClass().construct_point_3_object()(t1, t2, t3);
+    }
+    
+    template <class T1, class T2, class T3, class T4> 
+    Point_3 operator()(const T1& t1, const T2& t2, const T3& t3, const T4& t4) const
+    {
+      return BaseClass().construct_point_3_object()(t1, t2, t3, t4);
+    }
+    template <class T1, class T2, class T3, class T4, class T5> 
+    Point_3 operator()(const T1& t1, const T2& t2, const T3& t3, const T4& t4, const T5& t5) const
+    {
+      return BaseClass().construct_point_3_object()(t1, t2, t3, t4, t5);
+    }
+#else    
+    template <class ...  T> 
+    Point_3 operator()(const T& ...t) const
+    {
+      return BaseClass().construct_point_3_object()(t...);
+    }
+#endif // CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
+    
+#endif // CGAL_CFG_MATCHING_BUG_6
+    
+    typename Kernel_::Point_3 operator()(const typename Kernel_::Point_3& p) const
+    {
+      return p;
+    }
+    
+    typename Kernel_::Point_3 operator()(const typename Kernel_::Weighted_point_3& p) const
+    {
+      typedef Lazy_rep_3<typename Approximate_kernel::Weighted_point_3,
+                         typename Exact_kernel::Weighted_point_3,
+                         typename Approximate_kernel::Construct_weighted_point_3,
+                         typename Exact_kernel::Construct_weighted_point_3,
+                         E2A_,
+                         Return_base_tag,
+                         typename Kernel_::Point_3,
+                         CGAL::Lazy_exact_nt<class CGAL::Gmpq>
+                         > LR;
+
+      
+      LR * lr = dynamic_cast<LR*>(p.ptr());
+      if(lr){
+        return lr->l1;
+      }
+      CGAL_assertion(false);
+      return BaseClass().construct_point_3_object()(p);
+    }
+    
+  };
+
+  
+  Construct_point_2 construct_point_2_object() const
+  {
+    return Construct_point_2();
+  }
+
+  Construct_point_3 construct_point_3_object() const
+  {
+    return Construct_point_3();
+  }
+  
+
+
   Assign_2
   assign_2_object() const
   { return Assign_2(); }

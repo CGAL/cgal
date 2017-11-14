@@ -420,7 +420,7 @@ public:
 
 #define CGAL_LAZY_REP(z, n, d)                                               \
   template< typename AT, typename ET, typename AC, typename EC, typename E2A, BOOST_PP_ENUM_PARAMS(n, typename L)> \
-class Lazy_rep_##n :public Lazy_rep< AT, \
+struct Lazy_rep_##n :public Lazy_rep< AT, \
                                      ET, \
                                      E2A >,                             \
                     private EC                                          \
@@ -429,9 +429,9 @@ class Lazy_rep_##n :public Lazy_rep< AT, \
   const EC& ec() const { return *this; } \
 public: \
   void update_exact() const { \
-    this->et = new ET(ec()( BOOST_PP_ENUM(n, CGAL_LEXACT, _) ) ); \
-    this->at = E2A()(*(this->et));                           \
-    BOOST_PP_REPEAT(n, CGAL_PRUNE_TREE, _) \
+    this->et = new ET(ec()( BOOST_PP_ENUM(n, CGAL_LEXACT, _) ) );   \
+    this->at = E2A()(*(this->et));                                 \
+     BOOST_PP_REPEAT(n, CGAL_PRUNE_TREE, _)                   \
   } \
   Lazy_rep_##n(const AC& ac, const EC&, BOOST_PP_ENUM(n, CGAL_LARGS, _)) \
     : Lazy_rep<AT, ET, E2A>(ac( BOOST_PP_ENUM(n, CGAL_LN, CGAL::approx) )), BOOST_PP_ENUM(n, CGAL_LINIT, _) \
@@ -784,7 +784,7 @@ public :
     ptr()->print_dag(os, level);
   }
 
-private:
+  //private:
 
   // We have a static variable for optimizing the default constructor,
   // which is in particular heavily used for pruning DAGs.
