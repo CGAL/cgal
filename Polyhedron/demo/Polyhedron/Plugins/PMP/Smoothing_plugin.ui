@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>837</width>
-    <height>708</height>
+    <width>731</width>
+    <height>482</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -22,60 +22,36 @@
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_4">
        <item>
-        <widget class="QGroupBox" name="Parameters_groupBox">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="layoutDirection">
-          <enum>Qt::LeftToRight</enum>
-         </property>
-         <property name="title">
-          <string>Parameters</string>
-         </property>
-         <widget class="QWidget" name="layoutWidget">
-          <property name="geometry">
-           <rect>
-            <x>10</x>
-            <y>30</y>
-            <width>718</width>
-            <height>56</height>
-           </rect>
-          </property>
-          <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout">
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout">
-             <item>
-              <widget class="QLabel" name="gd_precision_label">
-               <property name="text">
-                <string>Gradient descent precision:</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QDoubleSpinBox" name="gd_dSpinBox">
-               <property name="decimals">
-                <number>4</number>
-               </property>
-              </widget>
-             </item>
-            </layout>
+            <widget class="QLabel" name="gd_precision_label">
+             <property name="text">
+              <string>Gradient descent precision:</string>
+             </property>
+            </widget>
            </item>
            <item>
-            <widget class="QCheckBox" name="use_weights_checkBox">
-             <property name="layoutDirection">
-              <enum>Qt::RightToLeft</enum>
-             </property>
-             <property name="text">
-              <string>use weights</string>
+            <widget class="QDoubleSpinBox" name="gd_dSpinBox">
+             <property name="decimals">
+              <number>4</number>
              </property>
             </widget>
            </item>
           </layout>
-         </widget>
-        </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="use_weights_checkBox">
+           <property name="layoutDirection">
+            <enum>Qt::RightToLeft</enum>
+           </property>
+           <property name="text">
+            <string>use weights</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item>
         <widget class="QSplitter" name="splitter">
@@ -236,29 +212,67 @@
       <property name="title">
        <string>Shape smoothing</string>
       </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_4">
-       <item>
-        <widget class="QPushButton" name="Curvature_Button">
-         <property name="text">
-          <string>Apply curvature flow algorithm</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_3">
-         <item>
-          <widget class="QLabel" name="iterations_label_2">
-           <property name="text">
-            <string>Iterations:</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QSpinBox" name="curv_iterations_spinBox"/>
-         </item>
-        </layout>
-       </item>
-      </layout>
+      <widget class="QWidget" name="">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>40</y>
+         <width>691</width>
+         <height>33</height>
+        </rect>
+       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <item>
+         <widget class="QPushButton" name="MCF_Button">
+          <property name="text">
+           <string>MCF</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="iterations_mcf">
+          <property name="layoutDirection">
+           <enum>Qt::LeftToRight</enum>
+          </property>
+          <property name="text">
+           <string>Iterations:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="curv_iterations_spinBox"/>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>70</y>
+         <width>691</width>
+         <height>33</height>
+        </rect>
+       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout_4">
+        <item>
+         <widget class="QPushButton" name="modified_MCF_button">
+          <property name="text">
+           <string>Modified MCF</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="iterations_mcf_2">
+          <property name="text">
+           <string>Iterations:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="curv_iterations_spinBox_2"/>
+        </item>
+       </layout>
+      </widget>
      </widget>
     </item>
    </layout>
