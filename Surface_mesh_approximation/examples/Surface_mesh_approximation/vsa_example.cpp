@@ -12,7 +12,7 @@ typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 
 int main()
 {
-  // create polyhedral surface and read input mesh 
+  // create polyhedral surface and read input surface triangle mesh 
   Polyhedron input;
   std::ifstream file("data/bear.off");
   if (!file || !(file >> input) || input.empty()) {
@@ -20,21 +20,25 @@ int main()
     return EXIT_FAILURE;
   }
 
-  // output polyhedral surface and triangle soup
+  // output polyhedral surface and indexed triangle mesh
   Polyhedron output;
   std::vector<std::size_t> triangles;
   std::vector<Kernel::Point_3> anchors;
 
-  // free function interface with named parameters, separated with dots
-  CGAL::vsa_mesh_approximation(input, output,
-    CGAL::VSA::parameters::init_by_number(200). // seeding by target number of proxies
-      init_method(CGAL::Hierarchical). // hierarchical init
+  // free function interface with named parameters
+  bool valid_polyhedron = CGAL::VSA::mesh_approximation(input, 
+	  CGAL::VSA::parameters::init_method(CGAL::Hierarchical). // hierarchical init
+	  refine_until(200). // refine until target number of proxies
       iterations(30). // number of relaxation iterations after seeding
-      anchor_point(std::back_inserter(anchors)). // get anchor vertices
-      indexed_triangles(std::back_inserter(triangles))); // get indexed triangles
+      anchor_points(std::back_inserter(anchors)). // get anchor vertices
+      indexed_triangles(std::back_inserter(triangles)). // get indexed triangles
+	  output); // output to polyhedron, if 2-manifold and oriented
 
   std::cout << "#anchor vertices: " << anchors.size() << std::endl;
   std::cout << "#triangles: " << triangles.size() << std::endl;
+
+  if (valid_polyhedron)
+	  std::cout << "oriented 2-manifold output." << std::endl;
 
   return EXIT_SUCCESS;
 }
