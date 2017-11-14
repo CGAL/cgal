@@ -784,7 +784,6 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
       int id = picked_item_IDs[depths.first()];
       setSelectedItemIndex(id);
       viewer->setSelectedName(id);
-
     }
     Q_EMIT(itemPicked(index_map.key(mainSelectionIndex())));
   }

@@ -237,18 +237,6 @@ MainWindow::MainWindow(QWidget* parent)
   connect(scene, SIGNAL(restoreCollapsedState()),
           this, SLOT(restoreCollapseState()));
 
-  connect(viewer, SIGNAL(selected(int)),
-          this, SLOT(selectSceneItem(int)));
-  connect(viewer, SIGNAL(selectedPoint(double, double, double)),
-          this, SLOT(showSelectedPoint(double, double, double)));
-
-  connect(viewer, SIGNAL(selectionRay(double, double, double,
-                                      double, double, double)),
-          scene, SIGNAL(selectionRay(double, double, double,
-                                     double, double, double)));
-
-  connect(viewer, SIGNAL(sendMessage(QString)),
-          this, SLOT(information(QString)));
 
   // The contextMenuPolicy of infoLabel is now the default one, so that one
   // can easily copy-paste its text.
@@ -2326,6 +2314,19 @@ void MainWindow::setupViewer(Viewer* viewer, SubViewer* subviewer=NULL)
 
   connect(viewer, SIGNAL(requestContextMenu(QPoint)),
           this, SLOT(contextMenuRequested(QPoint)));
+  connect(viewer, SIGNAL(selected(int)),
+          this, SLOT(selectSceneItem(int)));
+  connect(viewer, SIGNAL(selectedPoint(double, double, double)),
+          this, SLOT(showSelectedPoint(double, double, double)));
+
+  connect(viewer, SIGNAL(selectionRay(double, double, double,
+                                      double, double, double)),
+          scene, SIGNAL(selectionRay(double, double, double,
+                                     double, double, double)));
+
+  connect(viewer, SIGNAL(sendMessage(QString)),
+          this, SLOT(information(QString)));
+
 }
 
 void MainWindow::on_actionAdd_Viewer_triggered()
