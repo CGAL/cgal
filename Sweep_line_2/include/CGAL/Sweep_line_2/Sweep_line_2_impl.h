@@ -373,6 +373,7 @@ _remove_curve_from_status_line(Subcurve* leftCurve, bool remove_for_good)
   Status_line_iterator sliter = leftCurve->hint();
   this->m_status_line_insert_hint = sliter;
   ++(this->m_status_line_insert_hint);
+  leftCurve->set_hint(this->m_statusLine.end());
 
   if (! remove_for_good) {
     // the subcurve is not removed for good, so we dont need to intersect

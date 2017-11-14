@@ -589,6 +589,7 @@ _remove_curve_from_status_line(Subcurve* sc)
   // The position of the next event can be right after the deleted subcurve.
   m_status_line_insert_hint = sl_iter;
   ++m_status_line_insert_hint;
+  sc->set_hint(m_statusLine.end());
 
   // Erase the subcurve from the status line.
   CGAL_SL_PRINT_ERASE(*sl_iter);
