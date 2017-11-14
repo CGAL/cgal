@@ -166,24 +166,42 @@ The input of the algorithm is expected to be:
 
 \subsection sma_example1 Free Function
 
-The function parameters are provided through \ref namedparameters. 
+The following example calls the free function `CGAL::vsa_mesh_approximation()` on the input triangle mesh with default `CGAL::L21Metric`.
+
+\cgalExample{Surface_mesh_approximation/vsa_example.cpp}
+
+Note that the function parameters are provided through \ref namedparameters. 
 To set the non-default parameter values, we just need to call the functions with the name of the required parameters connected by a dot in an arbitrary order like:
 
 \code
+// input: input triangle surface mesh
+// output: output polyhedron surface mesh
+typedef CGAL::Simple_cartesian<double> Kernel;
+typedef CGAL::PlaneProxy<Kernel> PlaneProxy;
+typedef std::map<face_descriptor, std::size_t> FIndexMap;
+typedef boost::associative_property_map<FIndexMap> FProxyPMap;
+FIndexMap fidx_map;
+BOOST_FOREACH(face_discreptor f, faces(input))
+  fidx_map[f] = 0;
+// facet proxy index property map
+FProxyPMap fpxmap(fidx_map);
+// plane proxies;
+std::vector<PlaneProxy> proxies;
 vsa_mesh_approximation(input, output,
         CGAL::VSA::parameters::init_by_error(err_drop) // init the algorithm by target error drop
        .init_method(method) // set proxy seeding method in the initialization
        .iterations(num_iterations) // set number of fitting iterations after initialization
        .chord_subdivide(sub_thre) // set boundary subdivision threshold
-       .facet_proxy_map(fpxmap) // output facet partition map
-       .proxies(px_out_itr)); // output proxies
+       .facet_proxy_map(fpxmap) // get facet partition map
+       .proxies(std::back_inserter(proxies))); // get proxies
+// render the partition
+...
+// render proxies
+...
 \endcode
 
-The following example calls the free function `CGAL::vsa_mesh_approximation()` on the input triangle mesh with default `CGAL::L21Metric`.
+With the facet proxy index map and the output proxies, we render the partition and the proxy parameters as illustrated in \cgalFigureRef{relaxation}, etc. Obviously, the package can also be used as a partition algorithm:
 
-\cgalExample{Surface_mesh_approximation/vsa_example.cpp}
-
-As stated before, the package can also be used as a partition algorithm:
 \code
 // fpxmap: the output facet partition map
 vsa_mesh_approximation(input, output,
