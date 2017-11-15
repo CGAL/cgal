@@ -201,14 +201,14 @@ and <code>src/</code> directories).
       are re-created by the kd-tree in a cache-friendly order after its construction,
       so the coordinates are more likely to be stored in a near-optimal order
       on the heap.
-      In this case, the new EnablePointsCache template parameter of the
-      <code>CGAL::Kd_tree</code> class can be set to 
+      In these cases, the new <code>EnablePointsCache</code> template parameter of the
+      <code>CGAL::Kd_tree</code> class can be set to
       <code>CGAL::Tag_true</code>. The points coordinates
       will then be cached in an optimal way. This will increase memory
       consumption but provides better search performance. See the updated
       <code>GeneralDistance</code> and <code>FuzzyQueryItem</code>
       concepts for additional requirements when using such a cache.
-    </li>
+</li>
     <li> In most cases (e.g., Euclidean distance), the distance computation
       algorithm knows before its end that the distance will be greater
       than or equal to some given value. This is used in the (orthogonal)
