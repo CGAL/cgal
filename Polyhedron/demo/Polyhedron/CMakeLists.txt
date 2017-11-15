@@ -45,8 +45,6 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 include_directories( BEFORE ./ ./include ../../include ./CGAL_demo )
 list(INSERT CMAKE_MODULE_PATH 0 "${CMAKE_CURRENT_SOURCE_DIR}")
 
-add_subdirectory( implicit_functions )
-
 # Find CGAL
 
 option( POLYHEDRON_QTSCRIPT_DEBUGGER 
@@ -132,7 +130,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   qt5_wrap_ui( Show_point_dialogUI_FILES Show_point_dialog.ui )
   qt5_wrap_ui( ViewerUI_FILES  ImageInterface.ui)
   qt5_generate_moc( "File_loader_dialog.h" "${CMAKE_CURRENT_BINARY_DIR}/File_loader_dialog_moc.cpp" )
-  add_file_dependencies( File_loader_dialog_moc.cpp "${CMAKE_CURRENT_SOURCE_DIR}/File_loader_dialog.h" )
 
   include( ${CMAKE_CURRENT_SOURCE_DIR}/polyhedron_demo_macros.cmake )
 
@@ -141,7 +138,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   qt5_add_resources(gl_splat_rc GlSplat/glsplat.qrc)
   add_library(gl_splat SHARED
     GlSplat/GlSplat.cpp GlSplat/Shader.cpp ${gl_splat_rc})
-  target_link_libraries(gl_splat PRIVATE Qt5::OpenGL Qt5::Gui)
+  target_link_libraries(gl_splat PUBLIC ${QGLVIEWER_LIBRARIES} Qt5::OpenGL Qt5::Gui)
   target_link_libraries(gl_splat PRIVATE ${OPENGL_gl_LIBRARY} ${QGLVIEWER_LIBRARIES})
 
   find_path(CGAL_THREE_HEADERS_PATH
@@ -360,6 +357,9 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   FOREACH(SUB_DIR ${DEMO_PLUGINS})
       add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/Plugins/${SUB_DIR}")
   ENDFOREACH()
+
+  add_subdirectory( implicit_functions )
+
 
 #
 # Exporting
