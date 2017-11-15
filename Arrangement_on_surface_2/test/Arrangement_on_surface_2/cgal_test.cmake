@@ -156,18 +156,16 @@ function(cgal_arr_2_add_target exe_name source_file)
   target_compile_options(${name} PRIVATE ${flags})
   cgal_debug_message(STATUS "#      -> target ${name} with TESTSUITE_CXXFLAGS: ${flags}")
 
-  add_test(NAME "compilation_of__${name}"
-    COMMAND ${TIME_COMMAND} "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target "${name}")
-  set_property(TEST "compilation_of__${name}"
-    APPEND PROPERTY LABELS "${PROJECT_NAME}")
+  if(BUILD_TESTING)
+    cgal_add_compilation_test(${name})
+  endif(BUILD_TESTING)
 
   # Add a compatibility-mode with the shell script `cgal_test_base`
   if(NOT TARGET ${exe_name})
     create_single_source_cgal_program( "${source_file}" NO_TESTING)
-    add_test(NAME "compilation_of__${exe_name}"
-      COMMAND ${TIME_COMMAND} "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target "${exe_name}")
-    set_property(TEST "compilation_of__${exe_name}"
-      APPEND PROPERTY LABELS "${PROJECT_NAME}")
+    if(BUILD_TESTING)
+      cgal_add_compilation_test(${exe_name})
+    endif(BUILD_TESTING)
   endif()
 endfunction()
 
@@ -180,11 +178,17 @@ endfunction()
 function(run_test_with_flags)
   # ${ARGV0} - executable name
   # ${ARGV1} - test substring name
+  if(NOT BUILD_TESTING)
+    return()
+  endif()
   cgal_debug_message(STATUS "# run_test_with_flags(${ARGN})")
   cgal_add_test(${ARGV0}_${suffix} ${ARGV0} ${ARGV0}.${ARGV1})
 endfunction()
 
 function(run_test_alt name datafile)
+  if(NOT BUILD_TESTING)
+    return()
+  endif()
   if(suffix)
     set(name ${name}_${suffix})
   endif()
@@ -220,7 +224,9 @@ function(compile_and_run)
   cgal_debug_message(STATUS "# compile_and_run(${ARGN})")
 #  message("   successful compilation of ${name}")
   cgal_arr_2_add_target(${name} ${name}.cpp)
-  cgal_add_test(${name})
+  if(BUILD_TESTING)
+    cgal_add_test(${name})
+  endif()
 endfunction()
 
 function(execute_commands_old_structure data_dir traits_type_name)
