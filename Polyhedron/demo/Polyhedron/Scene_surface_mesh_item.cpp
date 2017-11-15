@@ -873,6 +873,39 @@ void delete_aabb_tree(Scene_surface_mesh_item* item)
 Scene_surface_mesh_item::~Scene_surface_mesh_item()
 {
   delete_aabb_tree(this);
+  QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+  if(viewer)
+  {
+    CGAL::Three::Viewer_interface* v = qobject_cast<CGAL::Three::Viewer_interface*>(viewer);
+
+    //Clears the targeted Id
+    if(d)
+    {
+      BOOST_FOREACH(TextItem* item, d->targeted_id)
+          v->textRenderer()->removeText(item);
+    }
+    //Remove vertices textitems
+    if(d->textVItems)
+    {
+      v->textRenderer()->removeTextList(d->textVItems);
+      delete d->textVItems;
+      d->textVItems=NULL;
+    }
+    //Remove edges textitems
+    if(d->textEItems)
+    {
+      v->textRenderer()->removeTextList(d->textEItems);
+      delete d->textEItems;
+      d->textEItems=NULL;
+    }
+    //Remove faces textitems
+    if(d->textFItems)
+    {
+      v->textRenderer()->removeTextList(d->textFItems);
+      delete d->textFItems;
+      d->textFItems=NULL;
+    }
+  }
   delete d;
 }
 SMesh* Scene_surface_mesh_item::polyhedron() { return d->smesh_; }
