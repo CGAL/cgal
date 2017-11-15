@@ -3,6 +3,8 @@ if(CGAL_add_test_included)
 endif(CGAL_add_test_included)
 set(CGAL_add_test_included TRUE)
 
+include(CTest)
+
 if(POLICY CMP0064)
   cmake_policy(SET CMP0064 NEW)
 endif()
