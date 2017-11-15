@@ -242,10 +242,10 @@ namespace boost {
     typedef size_type faces_size_type;
     typedef size_type degree_size_type;
 
-  // nulls
-  static vertex_descriptor   null_vertex() { return vertex_descriptor(); }
-  static face_descriptor     null_face()   { return face_descriptor(); }
-  static halfedge_descriptor     null_halfedge()   { return halfedge_descriptor(); }
+    // nulls
+    static vertex_descriptor   null_vertex() { return vertex_descriptor(); }
+    static face_descriptor     null_face()   { return face_descriptor(); }
+    static halfedge_descriptor     null_halfedge()   { return halfedge_descriptor(); }
   };
 
 
