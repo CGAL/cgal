@@ -453,7 +453,7 @@ namespace Polygon_mesh_processing {
 * @tparam TriangleMesh a model of `FaceListGraph` and `MutableFaceGraph` .
 * @tparam NamedParameters a sequence of \ref namedparameters
 *
-* @param tm a triangulated `TriangleMesh`
+* @param tm a closed triangulated `TriangleMesh`
 * @param orient_positively indicates if the output mesh should be oriented positively (`true`) or negatively (`false`).
 * default value is true.
 * A closed polygon mesh is considered to have a positive orientation if the normal vectors
@@ -487,6 +487,7 @@ void orient(TriangleMesh& tm, bool orient_positively, const NamedParameters& np)
 
   if (!is_triangle_mesh(tm)) return ;
   if (!is_valid(tm)) return ;
+  if (!is_closed(tm)) return;
   Vpm vpm = boost::choose_param(get_param(np, internal_np::vertex_point),
                                 get_const_property_map(boost::vertex_point, tm));
 

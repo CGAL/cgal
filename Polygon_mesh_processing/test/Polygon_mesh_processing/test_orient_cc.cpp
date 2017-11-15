@@ -74,13 +74,18 @@ bool test_orientation(TriangleMesh& tm, bool is_positive, const NamedParameters&
 int main()
 {
 
+<<<<<<< HEAD
   std::ifstream input("data-coref/nested_cubes_invalid_volume.off");
+=======
+  std::ifstream input("data/Volume_nested_spheres.off");
+>>>>>>> 5bf8e4d86b... Add requirement close for orient function
   assert(input);
-  SMesh sm1, sm2, sm3, sm4;
+  SMesh sm1, sm2, sm3, sm4, volume;
   input >> sm1;
   sm2 = sm1;
   sm3 = sm1;
   sm4 = sm1;
+  volume = sm1;
   PMP::orient(sm1);
   if(!test_orientation(sm1, true, PMP::parameters::all_default()))
     return 1;
@@ -109,10 +114,6 @@ int main()
     return 1;
 
 
-  SMesh volume;
-  std::ifstream input2("data/Volume_nested_spheres.off");
-  assert(input);
-  input2 >> volume;
 
   PMP::orient_to_bound_a_volume(volume, true);
   if( !PMP::does_bound_a_volume(volume))
