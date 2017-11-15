@@ -224,7 +224,7 @@ public Q_SLOTS:
 
     qglviewer::Camera* camera = viewer->camera();
     const FaceGraph& poly = *poly_item->polyhedron();
-
+    viewer->makeCurrent();
     std::set<fg_face_descriptor> face_sel;
     boost::property_map<FaceGraph,CGAL::vertex_point_t>::const_type vpmap = get(boost::vertex_point, poly);
     //select all faces if their screen projection is inside the lasso
