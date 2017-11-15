@@ -32,7 +32,10 @@ void smooth_shape(PolygonMesh& mesh, int nb_iter)
 
 // demo API, undocumented
 template<typename PolygonMesh>
-void solve_mcf_system(PolygonMesh& mesh, int nb_iter, Eigen::SparseMatrix<double>& stiffness_matrix)
+void solve_mcf_system(PolygonMesh& mesh, 
+	const double time, 
+	const int nb_iter, 
+	Eigen::SparseMatrix<double>& stiffness_matrix)
 {
 
   // VPmap type
@@ -41,9 +44,9 @@ void solve_mcf_system(PolygonMesh& mesh, int nb_iter, Eigen::SparseMatrix<double
 
   internal::Shape_smoother<PolygonMesh, VertexPointMap> smoother(mesh, vpmap);
 
-  for(unsigned int t=0; t<nb_iter; ++t)
+  for(unsigned int t = 0; t < nb_iter; ++t)
   {
-    smoother.solve_system(stiffness_matrix);
+    smoother.solve_system(stiffness_matrix, time);
   }
 
 }

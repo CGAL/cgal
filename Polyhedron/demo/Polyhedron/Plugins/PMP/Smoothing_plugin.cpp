@@ -203,7 +203,10 @@ public Q_SLOTS:
 
         //unsigned int nb_iter = ui_widget.curv_iterations_spinBox->value();
         unsigned int nb_iter = 1;
-        curvature_flow_smoothing(pmesh, parameters::number_of_iterations(nb_iter));
+		unsigned int itime = ui_widget.time_spinBox->value();
+		const double time = itime * 1e-6;
+		std::cout << "time: " << time << std::endl;
+		curvature_flow_smoothing(pmesh, time, parameters::number_of_iterations(nb_iter));
 
         poly_item->invalidateOpenGLBuffers();
         Q_EMIT poly_item->itemChanged();
@@ -222,6 +225,8 @@ public Q_SLOTS:
                     * poly_item->polyhedron() :
                     * selection_item->polyhedron();
 
+		unsigned int itime = ui_widget.time_spinBox->value();
+		const double time = itime * 1e-6;
 
         QApplication::setOverrideCursor(Qt::WaitCursor);
 
@@ -234,7 +239,7 @@ public Q_SLOTS:
             is_stiffness_matrix_setup = true;
         }
         // todo: pass nb_iter as named parameter
-        solve_mcf_system(pmesh, nb_iter, stiffness_matrix);
+        solve_mcf_system(pmesh, time, nb_iter, stiffness_matrix);
 
 
         poly_item->invalidateOpenGLBuffers();

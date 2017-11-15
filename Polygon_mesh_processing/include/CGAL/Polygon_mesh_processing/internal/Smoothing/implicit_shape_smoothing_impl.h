@@ -177,7 +177,7 @@ public:
   }
 
 
-  void solve_system(Eigen::SparseMatrix<double>& L)
+  void solve_system(Eigen::SparseMatrix<double>& L, const double time)
   {
 
     //gather_constrained_vertices();
@@ -191,7 +191,7 @@ public:
     Vector Xz(nb_vert_);
 
 
-    compute_coeff_matrix(A, L);
+    compute_coeff_matrix(A, L, time);
 
     //apply_constraints(A);
 
@@ -361,7 +361,7 @@ private:
 
 
 
-    void compute_coeff_matrix(Matrix& A, Eigen_matrix& L)
+    void compute_coeff_matrix(Matrix& A, Eigen_matrix& L, const double time)
     {
       //Eigen_matrix L = get_stiffness_matrix();
 
@@ -375,14 +375,7 @@ private:
       export_eigen_matrix(D, "data/D");
 
 
-      double delta = 0.001;
-
-
-      //Eigen_matrix D(L.rows(), L.cols());
-      //D.setIdentity();
-
-
-      Eigen_matrix Ae = D - delta * L;
+      Eigen_matrix Ae = D - time * L;
 
 
       fill_sparse_matrix(A, Ae);
