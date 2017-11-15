@@ -427,8 +427,8 @@ public:
                                 X_monotone_curve_2>::type
     construct_opposite(const X_monotone_curve_2& cv) const
     {
-      X_monotone_curve_2 new_cv = m_base.construct_opposite_2_object()(cv);
-      new_cv.set_data(cv.data());
+      X_monotone_curve_2 new_cv(m_base.construct_opposite_2_object()(cv),
+                                cv.data());
       return new_cv;
     }
 
