@@ -746,15 +746,6 @@ protected:
       } 
     } 
  
-    template<typename Triangle_3>
-    bool get_next_triangle(Triangle_3& tr) {
-      while(fi != ct.finite_faces_end() && visited[fi] == false) ++fi;
-      if(fi == ct.finite_faces_end()) return false;
-      tr = Triangle_3(fi->vertex(0)->point(), fi->vertex(1)->point(), fi->vertex(2)->point());
-      ++fi;
-      return true;
-    }
-
     bool same_orientation(Plane_3 p1) const {
       if(p1.a() != 0)
 	return CGAL::sign(p1.a()) == CGAL::sign(supporting_plane.a());
