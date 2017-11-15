@@ -23,22 +23,23 @@ int main()
   }
 
   Polyhedron out_mesh;
-  std::vector<std::size_t> tris;
+  std::vector<std::vector<std::size_t> > tris;
   std::vector<Kernel::Point_3> anchor_pos;
   std::list<Polyhedron::Vertex_handle> anchor_vtx;
-  std::vector<CGAL::PlaneProxy<Kernel> > proxies;
+  std::vector<CGAL::VSA::Plane_proxy<Kernel> > proxies;
   std::map<Polyhedron::Facet_handle, std::size_t> fidxmap;
   boost::associative_property_map<std::map<Polyhedron::Facet_handle, std::size_t> > fpxmap(fidxmap);
-  CGAL::vsa_mesh_approximation(mesh, out_mesh,
+  CGAL::VSA::mesh_approximation(mesh,
+    std::back_inserter(anchor_pos),
+    std::back_inserter(tris),
     CGAL::VSA::parameters::init_by_number(6).
       iterations(30).
       inner_iterations(5).
       chord_subdivide(0.5).
       facet_proxy_map(fpxmap).
       anchor_vertex(std::back_inserter(anchor_vtx)).
-      anchor_point(std::back_inserter(anchor_pos)).
-      indexed_triangles(std::back_inserter(tris)).
-      proxies(std::back_inserter(proxies)));
+      proxies(std::back_inserter(proxies)).
+      output_mesh(&out_mesh));
 
   std::cout << "#tris " << tris.size() << std::endl;
   std::cout << "#anchor_pos " << anchor_pos.size() << std::endl;

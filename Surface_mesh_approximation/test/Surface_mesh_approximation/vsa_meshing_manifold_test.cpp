@@ -11,11 +11,11 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::FT FT;
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
-typedef boost::property_map<Polyhedron, boost::vertex_point_t>::type VertexPointMap;
+typedef boost::property_map<Polyhedron, boost::vertex_point_t>::type Vertex_point_map;
 
-typedef CGAL::VSA_approximation<Polyhedron, VertexPointMap> L21VSA;
-typedef L21VSA::ErrorMetric L21Metric;
-typedef L21VSA::ProxyFitting L21ProxyFitting;
+typedef CGAL::VSA::Mesh_approximation<Polyhedron, Vertex_point_map> L21_approx;
+typedef L21_approx::Error_metric L21_metric;
+typedef L21_approx::Proxy_fitting L21_proxy_fitting;
 
 bool test_manifold(const char *file_name, const FT drop = FT(1e-8))
 {
@@ -28,24 +28,23 @@ bool test_manifold(const char *file_name, const FT drop = FT(1e-8))
 
   std::cout << "Testing \"" << file_name << '\"' << std::endl;
   // algorithm instance
-  L21VSA vsa_l21(mesh,
+  L21_approx approx(mesh,
     get(boost::vertex_point, const_cast<Polyhedron &>(mesh)));
 
-  L21Metric l21_metric(mesh);
-  L21ProxyFitting l21_fitting(mesh);
-  vsa_l21.set_metric(l21_metric, l21_fitting);
+  L21_metric error_metric(mesh);
+  L21_proxy_fitting proxy_fitting(mesh);
+  approx.set_metric(error_metric, proxy_fitting);
 
   // approximation, init from error, drop to the target error incrementally
   const std::size_t num_iterations = 20;
   const std::size_t inner_iterations = 5;
-  vsa_l21.init_by_error(CGAL::Incremental, drop, inner_iterations);
-  for (std::size_t i = 0; i < num_iterations; ++i)
-    vsa_l21.run_one_step();
-  std::cout << "#proxies " << vsa_l21.get_proxies_size() << std::endl;
+  approx.init_by_error(CGAL::VSA::Incremental, drop, inner_iterations);
+  approx.run(num_iterations);
+  std::cout << "#proxies " << approx.get_proxies_size() << std::endl;
 
   // meshing
   Polyhedron mesh_out;
-  if (vsa_l21.extract_mesh(mesh_out)) {
+  if (approx.extract_mesh(mesh_out)) {
     std::cout << "Succeeded." << std::endl;
     return true;
   }

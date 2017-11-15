@@ -18,15 +18,15 @@ typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 typedef Polyhedron::Facet_handle Facet_handle;
 typedef Polyhedron::Halfedge_handle Halfedge_handle;
 typedef Polyhedron::Facet_iterator Facet_iterator;
-typedef boost::associative_property_map<std::map<Facet_handle, FT> > FacetAreaMap;
-typedef boost::associative_property_map<std::map<Facet_handle, Point> > FacetCenterMap;
-typedef boost::property_map<Polyhedron, boost::vertex_point_t>::type VertexPointMap;
+typedef boost::associative_property_map<std::map<Facet_handle, FT> > Facet_area_map;
+typedef boost::associative_property_map<std::map<Facet_handle, Point> > Facet_center_map;
+typedef boost::property_map<Polyhedron, boost::vertex_point_t>::type Vertex_point_map;
 
 // user defined point-wise compact metric
-struct CompactMetric {
+struct Compact_metric {
   typedef Point Proxy;
 
-  CompactMetric(const FacetCenterMap &_center_pmap)
+  Compact_metric(const Facet_center_map &_center_pmap)
     : center_pmap(_center_pmap) {}
 
   FT operator()(const Facet_handle &f, const Proxy &px) const {
@@ -34,13 +34,13 @@ struct CompactMetric {
       CGAL::squared_distance(center_pmap[f], px))));
   }
 
-  const FacetCenterMap center_pmap;
+  const Facet_center_map center_pmap;
 };
 
-struct PointProxyFitting {
+struct Point_proxy_fitting {
   typedef Point Proxy;
 
-  PointProxyFitting(const FacetCenterMap &_center_pmap, const FacetAreaMap &_area_pmap)
+  Point_proxy_fitting(const Facet_center_map &_center_pmap, const Facet_area_map &_area_pmap)
     : center_pmap(_center_pmap), area_pmap(_area_pmap) {}
 
   template<typename FacetIterator>
@@ -56,11 +56,11 @@ struct PointProxyFitting {
     return CGAL::ORIGIN + center;
   }
 
-  const FacetCenterMap center_pmap;
-  const FacetAreaMap area_pmap;
+  const Facet_center_map center_pmap;
+  const Facet_area_map area_pmap;
 };
-typedef CGAL::VSA_approximation<Polyhedron, VertexPointMap,
-  CompactMetric, PointProxyFitting> CompactVSA;
+typedef CGAL::VSA::Mesh_approximation<Polyhedron, Vertex_point_map,
+  Compact_metric, Point_proxy_fitting> Compact_approx;
 
 /**
  * This file tests the user defined metric.
@@ -86,29 +86,28 @@ int main()
     facet_areas.insert(std::pair<Facet_handle, FT>(fitr, area));
     facet_centers.insert(std::pair<Facet_handle, Point>(fitr, CGAL::centroid(p0, p1, p2)));
   }
-  FacetAreaMap area_pmap(facet_areas);
-  FacetCenterMap center_pmap(facet_centers);
+  Facet_area_map area_pmap(facet_areas);
+  Facet_center_map center_pmap(facet_centers);
 
   // create compact metric approximation algorithm instance
   std::cout << "create compact vas instance" << std::endl;
-  CompactVSA compact_approx(mesh,
+  Compact_approx approx(mesh,
     get(boost::vertex_point, const_cast<Polyhedron &>(mesh)));
 
-  CompactMetric metric(center_pmap);
-  PointProxyFitting proxy_fitting(center_pmap, area_pmap);
-  compact_approx.set_metric(metric, proxy_fitting);
+  Compact_metric error_metric(center_pmap);
+  Point_proxy_fitting proxy_fitting(center_pmap, area_pmap);
+  approx.set_metric(error_metric, proxy_fitting);
 
   std::cout << "random init and run" << std::endl;
-  compact_approx.init_by_number(CGAL::Random, 20);
-  for (std::size_t i = 0; i < 20; ++i)
-    compact_approx.run_one_step();
-  if (compact_approx.get_proxies_size() != 20)
+  approx.init_by_number(CGAL::VSA::Random, 20);
+  approx.run(20);
+  if (approx.get_proxies_size() != 20)
     return EXIT_FAILURE;
 
   // extract the approximation polyhedron
   std::cout << "meshing" << std::endl;
   Polyhedron out_mesh;
-  if (compact_approx.extract_mesh(out_mesh))
+  if (approx.extract_mesh(out_mesh))
     std::cout << "manifold." << std::endl;
   else
     std::cout << "non-manifold" << std::endl;

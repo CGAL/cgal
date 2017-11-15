@@ -11,11 +11,11 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::FT FT;
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
-typedef boost::property_map<Polyhedron, boost::vertex_point_t>::type VertexPointMap;
+typedef boost::property_map<Polyhedron, boost::vertex_point_t>::type Vertex_point_map;
 
-typedef CGAL::VSA_approximation<Polyhedron, VertexPointMap> L21VSA;
-typedef L21VSA::ErrorMetric L21Metric;
-typedef L21VSA::ProxyFitting L21ProxyFitting;
+typedef CGAL::VSA::Mesh_approximation<Polyhedron, Vertex_point_map> L21_approx;
+typedef L21_approx::Error_metric L21_metric;
+typedef L21_approx::Proxy_fitting L21_proxy_fitting;
 
 bool check_strict_ordering(const std::vector<FT> &error)
 {
@@ -44,17 +44,17 @@ int main()
   }
 
   // algorithm instance
-  L21VSA vsa_l21(mesh,
+  L21_approx approx(mesh,
     get(boost::vertex_point, const_cast<Polyhedron &>(mesh)));
 
-  L21Metric l21_metric(mesh);
-  L21ProxyFitting l21_fitting(mesh);
-  vsa_l21.set_metric(l21_metric, l21_fitting);
+  L21_metric error_metric(mesh);
+  L21_proxy_fitting proxy_fitting(mesh);
+  approx.set_metric(error_metric, proxy_fitting);
 
-  vsa_l21.init_by_number(CGAL::Random, 100);
+  approx.init_by_number(CGAL::VSA::Random, 100);
   std::vector<FT> error;
   for (std::size_t i = 0; i < 30; ++i)
-    error.push_back(vsa_l21.run_one_step());
+    error.push_back(approx.run());
 
   if (check_strict_ordering(error)) {
     std::cout << "Pass the decrease test." << std::endl;

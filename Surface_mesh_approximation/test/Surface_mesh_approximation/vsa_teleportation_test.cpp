@@ -19,13 +19,13 @@ typedef Polyhedron::Facet_handle Facet_handle;
 typedef Polyhedron::Facet_iterator Facet_iterator;
 typedef Polyhedron::Halfedge_handle Halfedge_handle;
 
-typedef boost::property_map<Polyhedron, boost::vertex_point_t>::type VertexPointMap;
-typedef boost::associative_property_map<std::map<Facet_handle, std::size_t> > FacetProxyMap;
+typedef boost::property_map<Polyhedron, boost::vertex_point_t>::type Vertex_point_map;
+typedef boost::associative_property_map<std::map<Facet_handle, std::size_t> > Facet_proxy_map;
 
-typedef CGAL::VSA_approximation<Polyhedron, VertexPointMap> L21VSA;
-typedef L21VSA::ErrorMetric L21Metric;
-typedef L21VSA::ProxyFitting L21ProxyFitting;
-typedef L21VSA::Proxy L21Proxy;
+typedef CGAL::VSA::Mesh_approximation<Polyhedron, Vertex_point_map> L21_approx;
+typedef L21_approx::Error_metric L21_metric;
+typedef L21_approx::Proxy_fitting L21_proxy_fitting;
+typedef L21_approx::Proxy Plane_proxies;
 
 #define CGAL_VSA_TEST_TOLERANCE 1e-8
 
@@ -59,28 +59,27 @@ int main()
   std::cout << "Teleportation test." << std::endl;
 
   // algorithm instance
-  L21Metric l21_metric(mesh);
-  L21ProxyFitting l21_fitting(mesh);
-  L21VSA l21_vsa(mesh,
+  L21_metric error_metric(mesh);
+  L21_proxy_fitting proxy_fitting(mesh);
+  L21_approx approx(mesh,
     get(boost::vertex_point, const_cast<Polyhedron &>(mesh)));
-  l21_vsa.set_metric(l21_metric, l21_fitting);
+  approx.set_metric(error_metric, proxy_fitting);
 
   std::cout << "Seeding by number." << std::endl;
-  l21_vsa.init_by_number(CGAL::Random, 50);
-  if (l21_vsa.get_proxies_size() != 50)
+  approx.init_by_number(CGAL::VSA::Random, 50);
+  if (approx.get_proxies_size() != 50)
     return EXIT_FAILURE;
   for (std::size_t i = 0; i < 10; ++i) {
-    l21_vsa.partition();
-    l21_vsa.fit();
+    approx.partition();
+    approx.fit();
   }
 
   // teleport until merge test failed
   std::vector<FT> error;
   std::size_t count = 0;
-  while(l21_vsa.teleport_proxies(1) == 1) {
+  while(approx.teleport_proxies(1) == 1) {
     FT sum_err(0);
-    for (std::size_t i = 0; i < 10; ++i)
-      sum_err += l21_vsa.run_one_step();
+    sum_err += approx.run(10);
     error.push_back(sum_err / FT(10));
     ++count;
   }
@@ -94,10 +93,10 @@ int main()
   std::map<Facet_handle, std::size_t> internal_fidxmap;
   for (Facet_iterator fitr = mesh.facets_begin(); fitr != mesh.facets_end(); ++fitr)
     internal_fidxmap[fitr] = 0;
-  FacetProxyMap fproxymap(internal_fidxmap);
-  l21_vsa.get_proxy_map(fproxymap);
-  std::vector<L21Proxy> proxies;
-  l21_vsa.get_proxies(std::back_inserter(proxies));
+  Facet_proxy_map fproxymap(internal_fidxmap);
+  approx.get_proxy_map(fproxymap);
+  std::vector<Plane_proxies> proxies;
+  approx.get_proxies(std::back_inserter(proxies));
 
   CGAL::Bbox_3 bbox = CGAL::bbox_3(mesh.points_begin(), mesh.points_end());
   const FT ymin = bbox.ymin(), ymax = bbox.ymax(), yrange = ymax - ymin;

@@ -413,7 +413,7 @@ public:
 
       FT avg_err(0);
       for (std::size_t i = 0; i < avg_interval; ++i)
-        avg_err += run_one_step();
+        avg_err += run();
       avg_err /= FT(avg_interval);
 
       drop_pct = (pre_err - avg_err) / pre_err;

@@ -11,11 +11,11 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
-typedef boost::property_map<Polyhedron, boost::vertex_point_t>::type VertexPointMap;
+typedef boost::property_map<Polyhedron, boost::vertex_point_t>::type Vertex_point_map;
 
-typedef CGAL::VSA_approximation<Polyhedron, VertexPointMap> L21VSA;
-typedef L21VSA::ErrorMetric L21Metric;
-typedef L21VSA::ProxyFitting L21ProxyFitting;
+typedef CGAL::VSA::Mesh_approximation<Polyhedron, Vertex_point_map> L21_apporx;
+typedef L21_apporx::Error_metric L21_metric;
+typedef L21_apporx::Proxy_fitting L21_proxy_fitting;
 
 typedef CGAL::Timer Timer;
 
@@ -41,13 +41,13 @@ int main(int argc, char *argv[])
   std::cerr << "#triangles " << mesh.size_of_facets() << std::endl;
 
   // algorithm instance
-  L21VSA l21_vsa(mesh,
+  L21_apporx approx(mesh,
     get(boost::vertex_point, const_cast<Polyhedron &>(mesh)));
 
   // set metric error and fitting functors
-  L21Metric l21_metric(mesh);
-  L21ProxyFitting l21_fitting(mesh);
-  l21_vsa.set_metric(l21_metric, l21_fitting);
+  L21_metric error_metric(mesh);
+  L21_proxy_fitting proxy_fitting(mesh);
+  approx.set_metric(error_metric, proxy_fitting);
 
   int init = std::atoi(argv[2]);
   if (init < 0 || init > 2)
@@ -64,23 +64,22 @@ int main(int argc, char *argv[])
   std::cerr << "start initialization" << std::endl;
   t0.reset();
   t0.start();
-  l21_vsa.init_by_number(
-    static_cast<CGAL::VSA_seeding>(init), num_proxies);
+  approx.init_by_number(
+    static_cast<CGAL::VSA::Seeding>(init), num_proxies);
   t0.stop();
   std::cerr << "initialization time " << t0.time() << " sec." << std::endl;
 
   std::cerr << "start relaxation" << std::endl;
   t0.reset();
   t0.start();
-  for (std::size_t i = 0; i < num_iterations; ++i)
-    l21_vsa.run_one_step();
+  approx.run(num_iterations);
   t0.stop();
   std::cerr << "relaxation time " << t0.time() << " sec." << std::endl;
 
   Polyhedron mesh_out;
   t0.reset();
   t0.start();
-  l21_vsa.extract_mesh(mesh_out);
+  approx.extract_mesh(mesh_out);
   t0.stop();
   std::cerr << "meshing time " << t0.time() << " sec." << std::endl;
 
