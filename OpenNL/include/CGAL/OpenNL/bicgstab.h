@@ -35,6 +35,8 @@
  *      - added comments and traces
  *      - copied BICGSTAB algorithm WITH preconditioner from Graphite 1.9 code
  *
+ * $URL$
+ * $Id$
  * SPDX-License-Identifier: LGPL-3.0+
  */
 

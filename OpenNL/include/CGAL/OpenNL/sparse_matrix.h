@@ -32,6 +32,8 @@
  *      - Added OpenNL namespace
  *      - SparseMatrix is now a model of the SparseLinearAlgebraTraits_d::Matrix concept
  *
+ * $URL$
+ * $Id$
  * SPDX-License-Identifier: LGPL-3.0+
 */
 

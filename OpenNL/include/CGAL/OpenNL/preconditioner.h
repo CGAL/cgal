@@ -32,6 +32,8 @@
  *      - copied Jacobi preconditioner from Graphite 1.9 code
  *      - Added OpenNL namespace
  *
+ * $URL$
+ * $Id$
  * SPDX-License-Identifier: LGPL-3.0+
  */
 

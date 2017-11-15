@@ -34,6 +34,8 @@
  *      - Added SymmetricLinearSolverTraits
  *      - copied Jacobi preconditioner from Graphite 1.9 code
  *
+ * $URL$
+ * $Id$
  * SPDX-License-Identifier: LGPL-3.0+
  */
 

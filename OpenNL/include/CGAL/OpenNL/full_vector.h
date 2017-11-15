@@ -33,6 +33,8 @@
  *      - FullVector is now a model of the SparseLinearAlgebraTraits_d::Vector concept
  *      - Coefficients are initialized with zeros
  *
+ * $URL$
+ * $Id$
  * SPDX-License-Identifier: LGPL-3.0+
  */
 
