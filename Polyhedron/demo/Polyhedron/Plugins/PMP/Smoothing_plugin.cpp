@@ -119,6 +119,7 @@ public:
         ui_widget.iterations_spinBox->setSingleStep(1);
         ui_widget.iterations_spinBox->setMinimum(1);
 
+        /*
         ui_widget.curv_iterations_spinBox->setValue(1);
         ui_widget.curv_iterations_spinBox->setSingleStep(1);
         ui_widget.curv_iterations_spinBox->setMinimum(1);
@@ -126,6 +127,7 @@ public:
         ui_widget.curv_iterations_spinBox_2->setValue(1);
         ui_widget.curv_iterations_spinBox_2->setSingleStep(1);
         ui_widget.curv_iterations_spinBox_2->setMinimum(1);
+        */
     }
 
 
@@ -167,8 +169,7 @@ public Q_SLOTS:
         {
             unsigned int nb_iter = ui_widget.Angle_spinBox->value();
             //bool use_weights = ui_widget.use_weights_checkBox->isChecked();
-            angle_smoothing(pmesh,
-                            parameters::number_of_iterations(nb_iter));
+            angle_smoothing(pmesh, parameters::number_of_iterations(nb_iter));
 
             poly_item->invalidateOpenGLBuffers();
             Q_EMIT poly_item->itemChanged();
@@ -176,11 +177,9 @@ public Q_SLOTS:
 
         if(ui_widget.Area_checkBox->isChecked())
         {
-            std::cout<<"Area_checkBox\n";
             unsigned int nb_iter = ui_widget.Area_spinBox->value();
             //double gd_precision = ui_widget.gd_dSpinBox->value();
-            area_smoothing(pmesh,
-                           parameters::number_of_iterations(nb_iter));
+            area_smoothing(pmesh, parameters::number_of_iterations(nb_iter));
 
             poly_item->invalidateOpenGLBuffers();
             Q_EMIT poly_item->itemChanged();
@@ -202,9 +201,9 @@ public Q_SLOTS:
 
         QApplication::setOverrideCursor(Qt::WaitCursor);
 
-        unsigned int nb_iter = ui_widget.curv_iterations_spinBox->value();
-        curvature_flow_smoothing(pmesh,
-                                 parameters::number_of_iterations(nb_iter));
+        //unsigned int nb_iter = ui_widget.curv_iterations_spinBox->value();
+        unsigned int nb_iter = 1;
+        curvature_flow_smoothing(pmesh, parameters::number_of_iterations(nb_iter));
 
         poly_item->invalidateOpenGLBuffers();
         Q_EMIT poly_item->itemChanged();
@@ -226,7 +225,8 @@ public Q_SLOTS:
 
         QApplication::setOverrideCursor(Qt::WaitCursor);
 
-        unsigned int nb_iter = ui_widget.curv_iterations_spinBox_2->value();
+        //unsigned int nb_iter = ui_widget.curv_iterations_spinBox_2->value();
+        unsigned int nb_iter = 1;
 
         if(!is_stiffness_matrix_setup)
         {

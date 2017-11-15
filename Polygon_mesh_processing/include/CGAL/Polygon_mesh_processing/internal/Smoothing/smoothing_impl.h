@@ -165,14 +165,14 @@ public:
 #endif
     }
 
-    void area_relaxation(const double& precision)
+    void area_relaxation(const double& tolerance)
     {
         std::size_t moved_points = 0;
         BOOST_FOREACH(vertex_descriptor v, vrange_)
         {
              if(!is_border(v, mesh_) && !is_constrained(v))
              {
-                 if (gradient_descent(v, precision))
+                 if (gradient_descent(v, tolerance))
                      moved_points++;
              }
         }
@@ -465,7 +465,7 @@ private:
 
     // gradient descent
     // ----------------
-    bool gradient_descent(const vertex_descriptor& v, const double& precision)
+    bool gradient_descent(const vertex_descriptor& v, const double& tolerance)
     {
         bool move_flag;
         double x, y, z, x_new, y_new, z_new, drdx, drdy, drdz;
@@ -481,14 +481,14 @@ private:
             return false;
 
         double energy_new = 0;
-        double relative_energy = precision + 1;
+        double relative_energy = 1;
         unsigned int t = 1;
         double eta0 = 0.01;
         //double power_t = 0.25;
         double t0 = 0.001;
         double eta = eta0 / (1 + t0*t);
 
-        while(relative_energy > precision)
+        while(relative_energy > tolerance)
         {
             drdx=0, drdy=0, drdz=0;
             compute_derivatives(drdx, drdy, drdz, v, S_av);

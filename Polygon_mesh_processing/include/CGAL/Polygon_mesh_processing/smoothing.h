@@ -364,7 +364,7 @@ void area_smoothing(PolygonMesh& pmesh, const FaceRange& faces, const NamedParam
     unsigned int nb_iterations = choose_param(get_param(np, internal_np::number_of_iterations), 1);
 
     //gradient descent precision
-    double gd_precision = choose_param(get_param(np, internal_np::gradient_descent_precision), 0.001);
+    double gd_precision = choose_param(get_param(np, internal_np::gradient_descent_precision), 0.000001);
 
     internal::Compatible_remesher<PolygonMesh, VertexPointMap, VCMap, ECMap, GeomTraits>
             remesher(pmesh, vpmap, vcmap, ecmap);

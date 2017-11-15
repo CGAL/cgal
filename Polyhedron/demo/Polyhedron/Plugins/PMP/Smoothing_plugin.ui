@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>590</width>
-    <height>387</height>
+    <width>570</width>
+    <height>383</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,50 +19,38 @@
      <rect>
       <x>10</x>
       <y>230</y>
-      <width>571</width>
+      <width>551</width>
       <height>121</height>
      </rect>
     </property>
     <property name="title">
      <string>Shape smoothing</string>
     </property>
-    <widget class="QWidget" name="layoutWidget">
+    <widget class="QPushButton" name="MCF_Button">
      <property name="geometry">
       <rect>
-       <x>10</x>
+       <x>160</x>
        <y>40</y>
-       <width>551</width>
-       <height>33</height>
+       <width>211</width>
+       <height>30</height>
       </rect>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout_3">
-      <item>
-       <widget class="QPushButton" name="MCF_Button">
-        <property name="text">
-         <string>MCF</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
+     <property name="text">
+      <string>MCF</string>
+     </property>
     </widget>
-    <widget class="QWidget" name="layoutWidget">
+    <widget class="QPushButton" name="modified_MCF_button">
      <property name="geometry">
       <rect>
-       <x>10</x>
+       <x>160</x>
        <y>80</y>
-       <width>551</width>
-       <height>33</height>
+       <width>211</width>
+       <height>30</height>
       </rect>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout_4">
-      <item>
-       <widget class="QPushButton" name="modified_MCF_button">
-        <property name="text">
-         <string>Modified MCF</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
+     <property name="text">
+      <string>Modified MCF</string>
+     </property>
     </widget>
    </widget>
    <widget class="QGroupBox" name="Mesh_groupBox">
@@ -70,7 +58,7 @@
      <rect>
       <x>10</x>
       <y>0</y>
-      <width>571</width>
+      <width>551</width>
       <height>227</height>
      </rect>
     </property>
@@ -82,7 +70,7 @@
       <rect>
        <x>10</x>
        <y>30</y>
-       <width>551</width>
+       <width>531</width>
        <height>183</height>
       </rect>
      </property>
