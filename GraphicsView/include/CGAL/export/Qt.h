@@ -13,15 +13,13 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Andreas Fabri
 
 #ifndef CGAL_QT_EXPORT_H
 #define CGAL_QT_EXPORT_H
-
-#include <CGAL/license/GraphicsView.h>
-
 
 #include <CGAL/config.h>
 #include <CGAL/export/helpers.h>

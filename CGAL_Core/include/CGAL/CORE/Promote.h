@@ -34,6 +34,7 @@
  *
  * $Source: /home/exact/cvsroot/exact/corelib/inc/CORE/Promote.h,v $
  * $Revision$ $Date$
+ * SPDX-License-Identifier: LGPL-3.0+
  ***************************************************************************/
 
 #ifndef __PROMOTE_H__

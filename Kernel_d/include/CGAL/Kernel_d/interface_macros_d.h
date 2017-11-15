@@ -17,7 +17,8 @@
 //
 // $URL: svn+ssh://scm.gforge.inria.fr/svn/cgal/branches/CGAL-3.3-branch/Kernel_23/include/CGAL/Kernel/interface_macros.h $
 // $Id: interface_macros.h 34893 2006-10-24 05:24:31Z spion $
-// 
+//
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Herve Bronnimann, Sylvain Pion, Susan Hert
 

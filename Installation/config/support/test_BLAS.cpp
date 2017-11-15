@@ -13,6 +13,8 @@
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
+// $ID$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Laurent Saboret
 

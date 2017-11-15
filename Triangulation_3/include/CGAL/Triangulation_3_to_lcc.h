@@ -14,15 +14,13 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
 
 #ifndef CGAL_TRIANGULATION_3_TO_LCC_H
 #define CGAL_TRIANGULATION_3_TO_LCC_H
-
-#include <CGAL/license/Triangulation_3.h>
-
 
 #include <CGAL/assertions.h>
 #include <map>

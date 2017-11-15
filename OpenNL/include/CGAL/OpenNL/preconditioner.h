@@ -31,6 +31,8 @@
  *  Laurent Saboret 2006: Changes for CGAL:
  *      - copied Jacobi preconditioner from Graphite 1.9 code
  *      - Added OpenNL namespace
+ *
+ * SPDX-License-Identifier: LGPL-3.0+
  */
 
 #ifndef __OPENNL_PRECONDITIONER__

@@ -13,13 +13,12 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Andreas Fabri and Maxime Gimeno
 
 #ifndef CGAL_IO_OBJ_READER_H
 #define CGAL_IO_OBJ_READER_H
-
-#include <CGAL/license/Polyhedron.h>
 
 #include <istream>
 #include <vector>

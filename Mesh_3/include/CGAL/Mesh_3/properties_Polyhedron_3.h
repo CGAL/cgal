@@ -13,6 +13,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Andreas Fabri
@@ -20,7 +21,6 @@
 #ifndef CGAL_MESH_3_PROPERTIES_POLYHEDRON_3_H
 #define CGAL_MESH_3_PROPERTIES_POLYHEDRON_3_H
 
-#include <CGAL/license/Mesh_3.h>
 #include <CGAL/Mesh_3/properties.h>
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
 

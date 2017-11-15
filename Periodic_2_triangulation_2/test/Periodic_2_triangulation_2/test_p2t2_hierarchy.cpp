@@ -12,9 +12,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://mcaroli@scm.gforge.inria.fr/svn/cgal/trunk/Periodic_2_triangulation_2/test/Periodic_2_triangulation_2/test_periodic_2_delaunay_2.cpp $
-// $Id: test_periodic_2_delaunay_2.cpp 48874 2009-04-22 12:54:28Z mcaroli $
-//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Nico Kruithof <Nico@nghk.nl>
 //                 Manuel Caroli

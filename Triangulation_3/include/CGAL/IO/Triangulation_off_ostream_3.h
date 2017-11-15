@@ -14,14 +14,13 @@
 //
 // $URL:  $
 // $Id:  $
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Clement Jamin
 
 
 #ifndef CGAL_TRIANGULATION_OFF_OSTREAM_3_H
 #define CGAL_TRIANGULATION_OFF_OSTREAM_3_H
-
-#include <CGAL/license/Triangulation.h>
 
 #include <CGAL/Triangulation_3.h>
 #include <sstream>
