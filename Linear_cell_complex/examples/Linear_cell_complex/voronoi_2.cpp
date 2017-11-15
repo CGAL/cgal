@@ -8,7 +8,7 @@
 
 
 #ifdef CGAL_USE_BASIC_VIEWER
-#include "CGAL/Linear_cell_complex_viewer_qt.h"
+#include <CGAL/Linear_cell_complex_viewer_qt.h>
 #endif
 
 // This example works both with cmap and gmap as combinatorial data structure.

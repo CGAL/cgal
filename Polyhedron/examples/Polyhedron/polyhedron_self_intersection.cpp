@@ -9,7 +9,7 @@
 #include <vector>
 
 #ifdef CGAL_USE_BASIC_VIEWER
-#include "polyhedron_viewer_qt.h"
+#include "CGAL/Polyhedron_viewer_qt.h"
 #endif
 
 using std::cerr;
