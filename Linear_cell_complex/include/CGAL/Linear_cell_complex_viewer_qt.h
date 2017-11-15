@@ -145,10 +145,10 @@ protected:
     CGAL::Color c=ColorFunctor::run(lcc, dh);
 
     if (c.red()<60 || c.green()<60 || c.blue()<60)
-      mono_face_begin();
+      mono_face_begin(); // TODO REMOVE LATER
     else
     {
-      // c=CGAL::Color(100,100,100);
+      // c=CGAL::Color(100,255,100);
       colored_face_begin(c);
     }
 
@@ -178,7 +178,7 @@ protected:
         add_mono_segment(p1, p2);
       else
       {
-        c=CGAL::Color(100,100,100);
+        // c=CGAL::Color(100,100,100);
         add_colored_segment(p1, p2, c); // TODO REMOVE LATER
       }
     }
@@ -193,7 +193,7 @@ protected:
     if (c.red()<60 || c.green()<60 || c.blue()<60)
       add_mono_point(p);
     else
-    { //c=CGAL::Color(100,100,100);
+    { // c=CGAL::Color(255,100,100);
       add_colored_point(p, c); // TODO REMOVE LATER
     }
   }

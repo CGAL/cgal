@@ -20,7 +20,7 @@
 #ifndef CGAL_POLYHEDRON_VIEWER_QT_H
 #define CGAL_POLYHEDRON_VIEWER_QT_H
 
-#include "basic_viewer.h"
+#include <CGAL/Qt/Basic_viewer.h>
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/Random.h>
 

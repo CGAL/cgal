@@ -694,10 +694,9 @@ protected:
 
     rendering_program_p_l.release();
 
+    // 3) FACE SHADER
     rendering_program_face.bind();
 
-    // 3) FACE SHADER
-    
     // 3.1) Mono faces
     vao[VAO_MONO_FACES].bind();
 
@@ -840,7 +839,6 @@ protected:
     rendering_program_face.setUniformValue(lightLocation[4], shininess);
     rendering_program_face.setUniformValue(mvpLocation[0], mvpMatrix);
     rendering_program_face.setUniformValue(mvLocation, mvMatrix);
-
     rendering_program_face.release();
 
     rendering_program_p_l.bind();
@@ -858,16 +856,24 @@ protected:
     QColor color;
     attrib_buffers(this);
 
-    for (unsigned int i=0; i<arrays[COLOR_SEGMENTS].size(); i+=3)
+    /* for (unsigned int i=0; i<arrays[COLOR_SEGMENTS].size(); i+=3)
     { std::cout<<"color "<<i/3<<": "<<arrays[COLOR_SEGMENTS][i]<<", "
               <<arrays[COLOR_SEGMENTS][i+1]<<", "
              <<arrays[COLOR_SEGMENTS][i+2]<<std::endl;}
+    std::cout<<"################################"<<std::endl; */
+
+    /* for (unsigned int i=0; i<arrays[COLOR_POINTS].size(); i+=3)
+    { std::cout<<"color "<<i/3<<": "<<arrays[COLOR_POINTS][i]<<", "
+              <<arrays[COLOR_POINTS][i+1]<<", "
+             <<arrays[COLOR_POINTS][i+2]<<std::endl;}
     std::cout<<"################################"<<std::endl;
+*/
 
     if(m_draw_vertices)
     {
-      vao[VAO_MONO_POINTS].bind();
       rendering_program_p_l.bind();
+
+      vao[VAO_MONO_POINTS].bind();
       color.setRgbF((double)m_vertices_mono_color.red()/(double)255,
                     (double)m_vertices_mono_color.green()/(double)255,
                     (double)m_vertices_mono_color.blue()/(double)255);
@@ -875,11 +881,9 @@ protected:
       rendering_program_p_l.setAttributeValue("color",color);
       ::glPointSize(m_size_points);
       glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(arrays[POS_MONO_POINTS].size()/3));
-      rendering_program_p_l.release();
       vao[VAO_MONO_POINTS].release();
 
       vao[VAO_COLORED_POINTS].bind();
-      rendering_program_p_l.bind();
       if (m_use_mono_color)
       {
         color.setRgbF((double)m_vertices_mono_color.red()/(double)255,
@@ -894,27 +898,26 @@ protected:
       }
       ::glPointSize(m_size_points);
       glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(arrays[POS_COLORED_POINTS].size()/3));
-      rendering_program_p_l.release();
       vao[VAO_COLORED_POINTS].release();
+
+      rendering_program_p_l.release();
     }
 
     if(m_draw_edges)
     {
-      vao[VAO_MONO_SEGMENTS].bind();
       rendering_program_p_l.bind();
+
+      vao[VAO_MONO_SEGMENTS].bind();
       color.setRgbF((double)m_edges_mono_color.red()/(double)255,
                     (double)m_edges_mono_color.green()/(double)255,
                     (double)m_edges_mono_color.blue()/(double)255);
-      rendering_program_p_l.disableAttributeArray("color");
+      // rendering_program_p_l.disableAttributeArray("color");
       rendering_program_p_l.setAttributeValue("color",color);
       ::glLineWidth(m_size_edges);
       glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(arrays[POS_MONO_SEGMENTS].size()/3));
-      rendering_program_p_l.release();
       vao[VAO_MONO_SEGMENTS].release();
 
-      attrib_buffers(this);
       vao[VAO_COLORED_SEGMENTS].bind();
-      rendering_program_p_l.bind();
       if (m_use_mono_color)
       {
         color.setRgbF((double)m_edges_mono_color.red()/(double)255,
@@ -929,25 +932,25 @@ protected:
       }
       ::glLineWidth(m_size_edges);
       glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(arrays[POS_COLORED_SEGMENTS].size()/3));
-      rendering_program_p_l.release();
       vao[VAO_COLORED_SEGMENTS].release();
+
+      rendering_program_p_l.release();
     }
 
     if (m_draw_faces)
     {
-      vao[VAO_MONO_FACES].bind();
       rendering_program_face.bind();
+
+      vao[VAO_MONO_FACES].bind();
       color.setRgbF((double)m_faces_mono_color.red()/(double)255,
                     (double)m_faces_mono_color.green()/(double)255,
                     (double)m_faces_mono_color.blue()/(double)255);
-      rendering_program_face.disableAttributeArray("color");
+      //rendering_program_face.disableAttributeArray("color");
       rendering_program_face.setAttributeValue("color",color);
       glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(arrays[POS_MONO_FACES].size()/3));
-      rendering_program_face.release();
       vao[VAO_MONO_FACES].release();
 
       vao[VAO_COLORED_FACES].bind();
-      rendering_program_face.bind();
       if (m_use_mono_color)
       {
         color.setRgbF((double)m_faces_mono_color.red()/(double)255,
@@ -961,8 +964,9 @@ protected:
         rendering_program_face.enableAttributeArray("color");
       }
       glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(arrays[POS_COLORED_FACES].size()/3));
-      rendering_program_face.release();
       vao[VAO_COLORED_FACES].release();
+
+      rendering_program_face.release();
     }
   }
 
