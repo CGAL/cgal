@@ -12,7 +12,7 @@ face.
 
 `boost::graph_traits<FaceGraph>::%face_descriptor`
 A face descriptor corresponds to a unique face in an abstract graph instance.
-A face descriptor must be `DefaultConstructible`, `Assignable`, and `EqualityComparable`. 
+A face descriptor must be `DefaultConstructible`, `Assignable`, `EqualityComparable`, and `Hashable`. 
 
 \cgalRefines `HalfedgeGraph`
 \cgalHasModel `CGAL::Polyhedron_3`

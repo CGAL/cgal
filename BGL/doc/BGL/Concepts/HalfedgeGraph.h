@@ -17,9 +17,19 @@ iterators and circulators for these halfedge cycles.
 
 <h4>Associated Types:</h4>
 
+
+`boost::graph_traits<HalfedgeGraph>::%vertex_descriptor`
+A vertex descriptor corresponds to a unique vertex in an abstract graph instance.
+A vertex descriptor must be `DefaultConstructible`, `Assignable`, `EqualityComparable`, and `Hashable`. 
+
 `boost::graph_traits<HalfedgeGraph>::%halfedge_descriptor`
+
 A halfedge descriptor corresponds to a unique halfedge in an abstract graph instance.
-A halfedge descriptor must be `DefaultConstructible`, `Assignable`, and `EqualityComparable`. 
+A halfedge descriptor must be `DefaultConstructible`, `Assignable`, `EqualityComparable`, and `Hashable`. 
+
+`boost::graph_traits<HalfedgeGraph>::%edge_descriptor`
+An edge descriptor corresponds to a unique edge in an abstract graph instance.
+An edge descriptor must be `DefaultConstructible`, `Assignable`, `EqualityComparable`, and `Hashable`. 
 
 \cgalRefines <A HREF="http://www.boost.org/libs/graph/doc/IncidenceGraph.html">`IncidenceGraph`</A>
 \cgalRefines <A HREF="http://www.boost.org/libs/graph/doc/PropertyGraph.html">`PropertyGraph`</A>
