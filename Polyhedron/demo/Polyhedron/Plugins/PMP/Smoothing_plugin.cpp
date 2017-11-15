@@ -65,7 +65,6 @@ public:
         connect(ui_widget.Run_convergence_button,  SIGNAL(clicked()), this, SLOT(on_Run_convergence_clicked()));
 
 
-
     }
 
     QList<QAction*> actions() const
@@ -99,6 +98,7 @@ public:
         ui_widget.Area_spinBox->setSingleStep(1);
         ui_widget.Area_spinBox->setMinimum(1);
 
+        /*
         ui_widget.gd_dSpinBox->setSingleStep(0.0001);
         ui_widget.gd_dSpinBox->setDecimals(4);
         ui_widget.gd_dSpinBox->setMinimum(0.0001);
@@ -113,6 +113,7 @@ public:
 
         ui_widget.gd_precision_label->setToolTip("Tradeoff between precision and speed. Less is more precise.");
         ui_widget.distance_label->setToolTip("Tradeoff between precision and speed. Less is more precise.");
+        */
 
         ui_widget.iterations_spinBox->setValue(20);
         ui_widget.iterations_spinBox->setSingleStep(1);
@@ -134,10 +135,14 @@ public Q_SLOTS:
         dock_widget->show();
         dock_widget->raise();
 
+        // needed?
         const Scene_interface::Item_id index = scene->mainSelectionIndex();
         Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(index));
 
-        if(poly_item)
+        Scene_polyhedron_selection_item* selection_item =
+          qobject_cast<Scene_polyhedron_selection_item*>(scene->item(index));
+
+        if(poly_item || selection_item)
         {
             init_ui();
         }
@@ -146,18 +151,24 @@ public Q_SLOTS:
     void on_Apply_by_type_clicked()
     {
         const Scene_interface::Item_id index = scene->mainSelectionIndex();
+
         Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(index));
-        Polyhedron& pmesh = *poly_item->polyhedron();
+
+        Scene_polyhedron_selection_item* selection_item =
+          qobject_cast<Scene_polyhedron_selection_item*>(scene->item(index));
+
+        Polyhedron& pmesh = (poly_item != NULL) ?
+                    * poly_item->polyhedron() :
+                    * selection_item->polyhedron();
 
         QApplication::setOverrideCursor(Qt::WaitCursor);
 
         if(ui_widget.Angle_checkBox->isChecked())
         {
             unsigned int nb_iter = ui_widget.Angle_spinBox->value();
-            bool use_weights = ui_widget.use_weights_checkBox->isChecked();
+            //bool use_weights = ui_widget.use_weights_checkBox->isChecked();
             angle_smoothing(pmesh,
-                            parameters::number_of_iterations(nb_iter).
-                            use_weights(use_weights));
+                            parameters::number_of_iterations(nb_iter));
 
             poly_item->invalidateOpenGLBuffers();
             Q_EMIT poly_item->itemChanged();
@@ -165,11 +176,11 @@ public Q_SLOTS:
 
         if(ui_widget.Area_checkBox->isChecked())
         {
+            std::cout<<"Area_checkBox\n";
             unsigned int nb_iter = ui_widget.Area_spinBox->value();
-            double gd_precision = ui_widget.gd_dSpinBox->value();
+            //double gd_precision = ui_widget.gd_dSpinBox->value();
             area_smoothing(pmesh,
-                           parameters::number_of_iterations(nb_iter).
-                           gradient_descent_precision(gd_precision));
+                           parameters::number_of_iterations(nb_iter));
 
             poly_item->invalidateOpenGLBuffers();
             Q_EMIT poly_item->itemChanged();
@@ -182,7 +193,12 @@ public Q_SLOTS:
     {
         const Scene_interface::Item_id index = scene->mainSelectionIndex();
         Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(index));
-        Polyhedron& pmesh = *poly_item->polyhedron();
+        Scene_polyhedron_selection_item* selection_item =
+          qobject_cast<Scene_polyhedron_selection_item*>(scene->item(index));
+
+        Polyhedron& pmesh = (poly_item != NULL) ?
+                    * poly_item->polyhedron() :
+                    * selection_item->polyhedron();
 
         QApplication::setOverrideCursor(Qt::WaitCursor);
 
@@ -200,21 +216,22 @@ public Q_SLOTS:
     {
         const Scene_interface::Item_id index = scene->mainSelectionIndex();
         Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(index));
-        Polyhedron& pmesh = *poly_item->polyhedron();
+        Scene_polyhedron_selection_item* selection_item =
+          qobject_cast<Scene_polyhedron_selection_item*>(scene->item(index));
+
+        Polyhedron& pmesh = (poly_item != NULL) ?
+                    * poly_item->polyhedron() :
+                    * selection_item->polyhedron();
+
 
         QApplication::setOverrideCursor(Qt::WaitCursor);
 
         unsigned int nb_iter = ui_widget.curv_iterations_spinBox_2->value();
 
-        std::cout<<"is_stiffness_matrix_setup= "<<is_stiffness_matrix_setup<<std::endl;
-
         if(!is_stiffness_matrix_setup)
         {
             setup_mcf_system(pmesh, nb_iter, stiffness_matrix);
             is_stiffness_matrix_setup = true;
-
-            std::cout<<"STIFFNESS OK."<<std::endl;
-
         }
         // todo: pass nb_iter as named parameter
         solve_mcf_system(pmesh, nb_iter, stiffness_matrix);
@@ -230,27 +247,29 @@ public Q_SLOTS:
     {
         const Scene_interface::Item_id index = scene->mainSelectionIndex();
         Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(index));
-        Polyhedron& pmesh = *poly_item->polyhedron();
+        Scene_polyhedron_selection_item* selection_item =
+          qobject_cast<Scene_polyhedron_selection_item*>(scene->item(index));
+
+        Polyhedron& pmesh = (poly_item != NULL) ?
+                    * poly_item->polyhedron() :
+                    * selection_item->polyhedron();
 
         QApplication::setOverrideCursor(Qt::WaitCursor);
 
         unsigned int nb_iter = ui_widget.iterations_spinBox->value();
         double dist = ui_widget.dist_dSpinBox->value();
-        double gd_precision = ui_widget.gd_dSpinBox->value();
-        bool use_weights = ui_widget.use_weights_checkBox->isChecked();
+        //double gd_precision = ui_widget.gd_dSpinBox->value();
+        //bool use_weights = ui_widget.use_weights_checkBox->isChecked();
 
         compatible_smoothing(pmesh,
                              parameters::number_of_iterations(nb_iter).
-                             distance_precision(dist).
-                             gradient_descent_precision(gd_precision).
-                             use_weights(use_weights));
+                             distance_precision(dist));
 
         poly_item->invalidateOpenGLBuffers();
         Q_EMIT poly_item->itemChanged();
 
         QApplication::restoreOverrideCursor();
     }
-
 
 
 
