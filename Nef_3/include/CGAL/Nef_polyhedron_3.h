@@ -683,13 +683,15 @@ protected:
     CT ct;
     CGAL::Unique_hash_map<Face_handle, bool> visited;
     CGAL::Unique_hash_map<CTVertex_handle, Vertex_const_handle> ctv2v;
-    Finite_face_iterator fi;
+    Halffacet_const_handle f;
     Plane_3 supporting_plane;
 
   public:
     Triangulation_handler2(Halffacet_const_handle f) : 
-      visited(false), supporting_plane(f->plane()) {
+      visited(false), supporting_plane(f->plane()), f(f) {}
 
+    template<typename PIB, typename Index>
+    void handle_triangles(PIB& pib, Index& VI) {
       Halffacet_cycle_const_iterator fci;
       for(fci=f->facet_cycles_begin(); fci!=f->facet_cycles_end(); ++fci) {
 	if(fci.is_shalfedge()) {
@@ -731,31 +733,8 @@ protected:
       CGAL_assertion(!ct.is_infinite(first));
       traverse_triangulation(first, first->index(opposite));
 
-      fi = ct.finite_faces_begin();
-    }
+      Finite_face_iterator fi = ct.finite_faces_begin();
 
-    void traverse_triangulation(Face_handle f, int parent) {
-      visited[f] = true;
-      if(!ct.is_constrained(Edge(f,ct.cw(parent))) && !visited[f->neighbor(ct.cw(parent))]) {
-	Face_handle child(f->neighbor(ct.cw(parent)));
-	traverse_triangulation(child, child->index(f));
-      } 
-      if(!ct.is_constrained(Edge(f,ct.ccw(parent))) && !visited[f->neighbor(ct.ccw(parent))]) {
-	Face_handle child(f->neighbor(ct.ccw(parent)));
-	traverse_triangulation(child, child->index(f));
-      } 
-    } 
- 
-    bool same_orientation(Plane_3 p1) const {
-      if(p1.a() != 0)
-	return CGAL::sign(p1.a()) == CGAL::sign(supporting_plane.a());
-      if(p1.b() != 0)
-	return CGAL::sign(p1.b()) == CGAL::sign(supporting_plane.b());
-      return CGAL::sign(p1.c()) == CGAL::sign(supporting_plane.c());
-    }
-
-    template<typename PIB, typename Index>
-    void handle_triangles(PIB& pib, Index& VI) {
       while(fi != ct.finite_faces_end() && visited[fi] == false) ++fi;
       while(fi != ct.finite_faces_end()) {
 	Plane_3 plane(fi->vertex(0)->point(),
@@ -776,6 +755,26 @@ protected:
 	  ++fi;
 	} while(fi != ct.finite_faces_end() && visited[fi] == false);
       }
+    }
+
+    void traverse_triangulation(Face_handle f, int parent) {
+      visited[f] = true;
+      if(!ct.is_constrained(Edge(f,ct.cw(parent))) && !visited[f->neighbor(ct.cw(parent))]) {
+	Face_handle child(f->neighbor(ct.cw(parent)));
+	traverse_triangulation(child, child->index(f));
+      }
+      if(!ct.is_constrained(Edge(f,ct.ccw(parent))) && !visited[f->neighbor(ct.ccw(parent))]) {
+	Face_handle child(f->neighbor(ct.ccw(parent)));
+	traverse_triangulation(child, child->index(f));
+      }
+    }
+
+    bool same_orientation(Plane_3 p1) const {
+      if(p1.a() != 0)
+	return CGAL::sign(p1.a()) == CGAL::sign(supporting_plane.a());
+      if(p1.b() != 0)
+	return CGAL::sign(p1.b()) == CGAL::sign(supporting_plane.b());
+      return CGAL::sign(p1.c()) == CGAL::sign(supporting_plane.c());
     }
   };
  
