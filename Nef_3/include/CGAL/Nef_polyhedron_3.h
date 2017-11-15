@@ -732,11 +732,9 @@ protected:
 
       CGAL_assertion(!ct.is_infinite(first));
       traverse_triangulation(first, first->index(opposite));
-
-      Finite_face_iterator fi = ct.finite_faces_begin();
-
-      while(fi != ct.finite_faces_end() && visited[fi] == false) ++fi;
-      while(fi != ct.finite_faces_end()) {
+    Finite_face_iterator fi;
+    for(fi=ct.finite_faces_begin();fi!=ct.finite_faces_end(); ++fi) {
+       if(visited[fi] == false) continue;
 	Plane_3 plane(fi->vertex(0)->point(),
 		      fi->vertex(1)->point(),
 		      fi->vertex(2)->point());
@@ -751,9 +749,6 @@ protected:
 	  pib.add_vertex_to_facet(VI[ctv2v[fi->vertex(1)]]);
 	}
 	pib.end_facet();
-	do {
-	  ++fi;
-	} while(fi != ct.finite_faces_end() && visited[fi] == false);
       }
     }
 
