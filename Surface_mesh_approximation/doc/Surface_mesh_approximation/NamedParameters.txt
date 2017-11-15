@@ -79,6 +79,12 @@ the selection of seeding method.\n
 \b Default value is `CGAL::Method::Random`
 \cgalNPEnd
 
+\cgalNPBegin{refine_until_proxies} \anchor VSA_refine_until_proxies
+the number of proxies used to approximate the input mesh.\n
+\b Type : `std::size_t` \n
+\b Default value is `0`
+\cgalNPEnd
+
 \cgalNPBegin{init_by_number} \anchor VSA_init_by_number
 the number of proxies used to approximate the input mesh.\n
 \b Type : `std::size_t` \n
@@ -136,6 +142,12 @@ an `OutputIterator` to write anchor point in.\n
 \cgalNPBegin{indexed_triangles} \anchor VSA_indexed_triangles
 an `OutputIterator` to write the approximation triangles in.\n
 \b Type : a class model of `OutputIterator` with `std::size_t` value type.\n
+\b Default : if this parameter is omitted, no output operation performed
+\cgalNPEnd
+
+\cgalNPBegin{output_mesh} \anchor VSA_output_mesh
+a pointer to `CGAL::Polyhedron_3` to write the approximated surface mesh constructed from the indexed triangles.\n
+\b Type : a pointer to `CGAL::Polyhedron_3`\n
 \b Default : if this parameter is omitted, no output operation performed
 \cgalNPEnd
 
