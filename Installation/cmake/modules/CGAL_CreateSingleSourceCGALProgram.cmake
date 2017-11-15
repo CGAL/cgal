@@ -3,7 +3,7 @@ if(CGAL_CreateSingleSourceCGALProgram_included)
 endif(CGAL_CreateSingleSourceCGALProgram_included)
 set(CGAL_CreateSingleSourceCGALProgram_included TRUE)
 
-include(CGAL_add_test)
+include(${CMAKE_CURRENT_LIST_DIR}/CGAL_add_test.cmake)
 include(CMakeParseArguments)
 
 function(create_single_source_cgal_program firstfile )

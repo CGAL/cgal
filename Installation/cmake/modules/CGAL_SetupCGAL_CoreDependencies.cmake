@@ -30,7 +30,7 @@ set(CGAL_SetupCGAL_CoreDependencies_included TRUE)
 #    Set to `TRUE` if the dependencies of `CGAL_Core` were found.
 
 if(NOT CGAL_DISABLE_GMP)
-  include(CGAL_SetupGMP)
+  include(${CMAKE_CURRENT_LIST_DIR}/CGAL_SetupGMP.cmake)
   if(GMP_FOUND)
     set(CGAL_Core_FOUND TRUE)
   endif()

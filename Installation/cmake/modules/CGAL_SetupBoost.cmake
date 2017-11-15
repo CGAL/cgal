@@ -15,7 +15,7 @@ if ( CGAL_Boost_Setup )
 endif()
 set ( CGAL_Boost_Setup TRUE )
 
-include(CGAL_TweakFindBoost)
+include(${CMAKE_CURRENT_LIST_DIR}/CGAL_TweakFindBoost.cmake)
 
   set ( CGAL_requires_Boost_libs TRUE )
   if ( DEFINED  MSVC_VERSION AND "${MSVC_VERSION}" GREATER 1800)

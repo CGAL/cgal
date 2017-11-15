@@ -95,4 +95,4 @@ function(CGAL_setup_CGAL_Qt5_dependencies target)
   target_link_libraries( ${target} ${keyword} Qt5::OpenGL Qt5::Svg ${OPENGL_LIBRARIES})
 endfunction()
 
-include(Use_CGAL_Qt5_headers)
+include(${CMAKE_CURRENT_LIST_DIR}/Use_CGAL_Qt5_headers.cmake)

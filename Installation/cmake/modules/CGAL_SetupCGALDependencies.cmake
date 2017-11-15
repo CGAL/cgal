@@ -38,18 +38,18 @@ set(CGAL_SetupCGALDependencies_included TRUE)
 # ^^^^^^^^^^^^
 #   - :module:`CGAL_SetupGMP`
 if(NOT CGAL_DISABLE_GMP)
-  include(CGAL_SetupGMP)
+  include(${CMAKE_CURRENT_LIST_DIR}/CGAL_SetupGMP.cmake)
 endif()
 
 #.rst:
 #   - :module:`CGAL_SetupLEDA`
 if(WITH_LEDA)
-  include(CGAL_SetupLEDA)
+  include(${CMAKE_CURRENT_LIST_DIR}/CGAL_SetupLEDA.cmake)
 endif()
 
 #.rst:
 #   - :module:`CGAL_SetupBoost`
-include(CGAL_SetupBoost)
+include(${CMAKE_CURRENT_LIST_DIR}/CGAL_SetupBoost.cmake)
 
 #.rst:
 # Result Variables
