@@ -30,6 +30,7 @@
 
 #include <list>
 #include <boost/utility/enable_if.hpp>
+#include <boost/mpl/has_xxx.hpp>
 
 #include <CGAL/Object.h>
 #include <CGAL/tags.h>
@@ -241,19 +242,11 @@ public:
   private:
     const Base_traits_2& m_base;
 
-    /*! Helper class template to find out whether the base geometry traits has
-     * a nested type named Are_mergeable_2.
+    /*! Generate a helper class template to find out whether the base geometry
+     * traits has a nested type named Are_mergeable_2.
      */
-    template <typename T>
-    struct has_are_mergeable_2 {
-      typedef char yes[1];
-      typedef char no[2];
-
-      template<typename U> static yes& test(typename U::Are_mergeable_2*);
-      template<typename U> static no& test(...);
-
-      static const bool value = (sizeof(test<T>(0)) == sizeof(yes));
-    };
+    BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_are_mergeable_2,
+                                      Are_mergeable_2, false)
 
     /*! Implementation of the predicate in case the base geometry traits class
      * has a nested type named Are_mergeable_2.
@@ -312,19 +305,10 @@ public:
   private:
     const Base_traits_2& m_base;
 
-    /*! Helper class template to find out whether the base geometry traits has
-     * a nested type named Merge_2.
+    /*! Generate a helper class template to find out whether the base geometry
+     * traits has a nested type named Merge_2.
      */
-    template <typename T>
-    struct has_merge_2 {
-      typedef char yes[1];
-      typedef char no[2];
-
-      template<typename U> static yes& test(typename U::Merge_2*);
-      template<typename U> static no& test(...);
-
-      static const bool value = (sizeof(test<T>(0)) == sizeof(yes));
-    };
+    BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_merge_2, Are_mergeable_2, false)
 
     /*! Implementation of the predicate in case the base geometry traits class
      * has a nested type named Merge_2.
@@ -405,19 +389,11 @@ public:
   private:
     const Base_traits_2& m_base;
 
-    /*! Helper class template to find out whether the base geometry traits has
-     * a nested type named Construct_opposite_2.
+    /*! Generate a helper class template to find out whether the base geometry
+     * traits has a nested type named Construct_opposite_2.
      */
-    template <typename T>
-    struct has_construct_opposite_2 {
-      typedef char yes[1];
-      typedef char no[2];
-
-      template<typename U> static yes& test(typename U::Construct_opposite_2*);
-      template<typename U> static no& test(...);
-
-      static const bool value = (sizeof(test<T>(0)) == sizeof(yes));
-    };
+    BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_construct_opposite_2,
+                                      Construct_opposite_2, false)
 
     /*! Implementation of the predicate in case the base geometry traits class
      * has a nested type named Construct_opposite_2.
