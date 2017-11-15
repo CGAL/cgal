@@ -193,6 +193,8 @@ function(cgal_add_test exe_name)
       -DANDROID_DIR_PREFIX=${ANDROID_DIR_PREFIX}
       -DPROJECT_NAME=${PROJECT_NAME}
       -P "${CGAL_MODULES_DIR}/run_test_with_cin.cmake")
+    set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+      APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${cin_file})
     #	message(STATUS "add test: ${exe_name} < ${cin_file}")
   else()
     if(NOT ARGS AND NOT cgal_add_test_TEST_NAME)
@@ -215,6 +217,8 @@ function(cgal_add_test exe_name)
 	  list(APPEND ARGS ${CMD_LINE_ARGS})
         endforeach()
         expand_list_with_globbing(ARGS)
+        set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+          APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${cmd_file})
       endif()
     endif()
     #	message(STATUS "add test: ${exe_name} ${ARGS}")
