@@ -350,7 +350,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
           0);
 
         m_available_octree_sizes[s] = subsetSize;
-        m_direct_octrees[s]->createTree();
+        m_direct_octrees[s]->createTree(m_options.cluster_epsilon);
 
         remainingPoints -= subsetSize;
       }
@@ -358,7 +358,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
       m_global_octree = new Indexed_octree(
         m_traits, m_input_iterator_first, m_input_iterator_beyond,
         m_point_pmap, m_normal_pmap);
-      m_global_octree->createTree();
+      m_global_octree->createTree(m_options.cluster_epsilon);
 
       return true;
     }
@@ -435,6 +435,8 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
       const Parameters &options = Parameters()
       ///< %Parameters for shape detection.
                 ) {
+      m_options = options;
+
       // No shape types for detection or no points provided, exit
       if (m_shape_factories.size() == 0 ||
           (m_input_iterator_beyond - m_input_iterator_first) == 0)
@@ -460,8 +462,6 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
           (bbox.xmax() - bbox.xmin()) * (bbox.xmax() - bbox.xmin())
         + (bbox.ymax() - bbox.ymin()) * (bbox.ymax() - bbox.ymin()) 
         + (bbox.zmax() - bbox.zmin()) * (bbox.zmax() - bbox.zmin()));
-
-      m_options = options;
 
       // Epsilon or cluster_epsilon have been set by the user?
       // If not, derive from bounding box diagonal
@@ -502,6 +502,11 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
 
       std::size_t generated_candidates = 0;
       std::size_t failed_candidates = 0;
+      std::size_t limit_failed_candidates = (std::max)(std::size_t(10000),
+                                                       std::size_t(m_input_iterator_beyond
+                                                                   - m_input_iterator_first)
+                                                       / std::size_t(100));
+
       bool force_exit = false;
       bool keep_searching = true;
       
@@ -565,8 +570,10 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
                 }
             }
 
-            if (failed_candidates >= 10000)
+            if (failed_candidates >= limit_failed_candidates)
+            {
               force_exit = true;
+            }
             
             keep_searching = (stop_probability(m_options.min_points,
               m_num_available_points - num_invalid, 
@@ -673,6 +680,12 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
             const std::vector<std::size_t> &indices_points_best_candidate =
               best_candidate->indices_of_assigned_points();
 
+            // update generated candidates to reflect removal of points
+            generated_candidates = std::size_t(std::pow (1.f - (indices_points_best_candidate.size() /
+                                                                float(m_num_available_points - num_invalid)), 3.f)
+                                               * generated_candidates);
+
+            //2.3 Remove the points from the subtrees
             for (std::size_t i = 0;i<indices_points_best_candidate.size();i++) {
               m_shape_index[indices_points_best_candidate.at(i)] =
                 int(m_extracted_shapes->size()) - 1;
@@ -692,9 +705,6 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
               }
             }
 
-            //2.3 Remove the points from the subtrees        
-
-            generated_candidates--;
             failed_candidates = 0;
             best_expected = 0;
 
