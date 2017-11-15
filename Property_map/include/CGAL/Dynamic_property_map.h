@@ -49,22 +49,20 @@ struct Dynamic_property_map {
     }
   }
 
-
   friend reference get(const Dynamic_property_map& m, const key_type& k)
   {
     typename Map::const_iterator it = m.map_->find(k);
     if(it == m.map_->end()){
+      (*(const_cast<Dynamic_property_map&>(m).map_))[k] = m.default_value();
       return m.default_value();
     }
     return it->second;
   }
 
 
-  friend void put(Dynamic_property_map& m, const key_type& k, const value_type& v)
+  friend void put(const Dynamic_property_map& m, const key_type& k, const value_type& v)
   {
-    if(v != m.default_value()){
-      (*(m.map_))[k] = v;
-    }
+    (*(m.map_))[k] = v;
   }
 
   
@@ -191,7 +189,7 @@ add_property(face_property_t<T> prop, const G&)
   return internal::Dynamic_property_map<face_descriptor,T>(prop.t);
 }
 
-template<class G, class T, typename Descriptor>
+template<typename G, typename Descriptor, typename T>
 void remove_property(
   internal::Dynamic_property_map<Descriptor, T> pm,
   const G&)
