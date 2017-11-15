@@ -454,7 +454,7 @@ namespace Polygon_mesh_processing {
 * @tparam NamedParameters a sequence of \ref namedparameters
 *
 * @param tm a triangulated `TriangleMesh`
-* @param orient_outward indicates if the output mesh should be oriented positively (`true`) or negatively (`false`).
+* @param orient_positively indicates if the output mesh should be oriented positively (`true`) or negatively (`false`).
 * default value is true.
 * A closed polygon mesh is considered to have a positive orientation if the normal vectors
 * to all its faces point outside the domain bounded by the polygon mesh.
@@ -474,7 +474,7 @@ namespace Polygon_mesh_processing {
 * \cgalNamedParamsEnd
 */
 template<class TriangleMesh, class NamedParameters>
-void orient_connected_components(TriangleMesh& tm, bool orient_outward, const NamedParameters& np)
+void orient(TriangleMesh& tm, bool orient_positively, const NamedParameters& np)
 {
   typedef boost::graph_traits<TriangleMesh> Graph_traits;
   typedef typename Graph_traits::vertex_descriptor vertex_descriptor;
@@ -527,10 +527,8 @@ void orient_connected_components(TriangleMesh& tm, bool orient_outward, const Na
   //orient ccs outward
   for(std::size_t id=0; id<nb_cc; ++id)
   {
-    if((!internal::is_outward_oriented(xtrm_vertices[id], tm, np)
-        && orient_outward)
-       || (internal::is_outward_oriented(xtrm_vertices[id], tm, np)
-           && !orient_outward))
+    if(internal::is_outward_oriented(xtrm_vertices[id], tm, np)
+        != orient_positively)
     {
       reverse_face_orientations(ccs[id], tm);
     }
@@ -538,22 +536,22 @@ void orient_connected_components(TriangleMesh& tm, bool orient_outward, const Na
 }
 
 template<class TriangleMesh>
-void orient_connected_components(TriangleMesh& tm, bool orient_outward)
+void orient(TriangleMesh& tm, bool orient_positively)
 {
-  orient_connected_components(tm, orient_outward, parameters::all_default());
+  orient(tm, orient_positively, parameters::all_default());
 }
 
 template<class TriangleMesh>
-void orient_connected_components(TriangleMesh& tm)
+void orient(TriangleMesh& tm)
 {
-  orient_connected_components(tm, true, parameters::all_default());
+  orient(tm, true, parameters::all_default());
 }
 
 
 /** \ingroup PMP_orientation_grp
  *
  * orients the connected components of `tm` to make it bound a volume.
- * See \ref coref_def_subsec for details.
+ * See \ref coref_def_subsec for a precise definition.
  *
  * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`.
  *                      If `TriangleMesh` has an internal property map for `CGAL::face_index_t`,
@@ -561,8 +559,9 @@ void orient_connected_components(TriangleMesh& tm)
  * @tparam NamedParameters a sequence of \ref namedparameters
  *
  * @param tm a closed triangulated surface mesh
- * @param orient_outward decides if the outer component should be oriented outward or
- * inward.
+ * @param orient_outward decides if the outer components should be oriented outward or
+ * inward. In this specific case, inwards means that the infinity will be considered
+ * as inside the volume bounded by `tm`.
  * @param np optional sequence of \ref namedparameters among the ones listed below
  *
  * \cgalNamedParamsBegin
@@ -576,9 +575,10 @@ void orient_connected_components(TriangleMesh& tm)
  *   \cgalParamEnd
  * \cgalNamedParamsEnd
  *
+ * \see `CGAL::Polygon_mesh_processing::does_bound_a_volume()`
  */
 template <class TriangleMesh, class NamedParameters>
-void orient_volume_connected_components(TriangleMesh& tm,
+void orient_to_bound_a_volume(TriangleMesh& tm,
                                         const bool orient_outward,
                                         const NamedParameters& np)
 {
@@ -649,9 +649,9 @@ void orient_volume_connected_components(TriangleMesh& tm,
 }
 
 template <class TriangleMesh>
-void orient_volume_connected_components(TriangleMesh& tm, const bool orient_outward)
+void orient_to_bound_a_volume(TriangleMesh& tm, const bool orient_outward)
 {
-  orient_volume_connected_components(tm, orient_outward, parameters::all_default());
+  orient_to_bound_a_volume(tm, orient_outward, parameters::all_default());
 }
 } // namespace Polygon_mesh_processing
 } // namespace CGAL

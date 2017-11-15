@@ -81,7 +81,7 @@ int main()
   sm2 = sm1;
   sm3 = sm1;
   sm4 = sm1;
-  PMP::orient_connected_components(sm1);
+  PMP::orient(sm1);
   if(!test_orientation(sm1, true, PMP::parameters::all_default()))
     return 1;
   typedef boost::property_map<SMesh, CGAL::vertex_point_t>::type Ppmap;
@@ -89,20 +89,20 @@ int main()
   Ppmap vpmap2 = get(CGAL::vertex_point, sm2);
   Fidmap fidmap2 = get(CGAL::face_index, sm2);
 
-  PMP::orient_connected_components(sm2, true, PMP::parameters::vertex_point_map(vpmap2)
+  PMP::orient(sm2, true, PMP::parameters::vertex_point_map(vpmap2)
                                    .face_index_map(fidmap2));
   if(!test_orientation(sm2, true, PMP::parameters::vertex_point_map(vpmap2)
                        .face_index_map(fidmap2)))
     return 1;
 
-  PMP::orient_connected_components(sm3, false);
+  PMP::orient(sm3, false);
   if(!test_orientation(sm3, false, PMP::parameters::all_default()))
     return 1;
 
   Ppmap vpmap4 = get(CGAL::vertex_point, sm4);
   Fidmap fidmap4 = get(CGAL::face_index, sm4);
 
-  PMP::orient_connected_components(sm4, false, PMP::parameters::vertex_point_map(vpmap4)
+  PMP::orient(sm4, false, PMP::parameters::vertex_point_map(vpmap4)
                                    .face_index_map(fidmap4));
   if(!test_orientation(sm4, false, PMP::parameters::vertex_point_map(vpmap4)
                        .face_index_map(fidmap4)))
@@ -114,7 +114,7 @@ int main()
   assert(input);
   input2 >> volume;
 
-  PMP::orient_volume_connected_components(volume, true);
+  PMP::orient_to_bound_a_volume(volume, true);
   if( !PMP::does_bound_a_volume(volume))
     return 1;
 

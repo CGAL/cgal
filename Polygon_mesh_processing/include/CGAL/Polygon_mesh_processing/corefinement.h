@@ -149,6 +149,7 @@ bool recursive_does_bound_a_volume(const TriangleMesh& tm,
  *   \cgalParamEnd
  * \cgalNamedParamsEnd
  *
+ * \see `CGAL::Polygon_mesh_processing::orient_to_bound_a_volume()`
  */
 template <class TriangleMesh, class NamedParameters>
 bool does_bound_a_volume(const TriangleMesh& tm, const NamedParameters& np)
