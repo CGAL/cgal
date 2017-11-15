@@ -138,7 +138,10 @@ protected:
     
     CGAL::Color c=ColorFunctor::run(lcc, dh);
 
-    face_begin(c);
+    if (c.red()<60 || c.green()<60 || c.blue()<60)
+      mono_face_begin();
+    else
+      colored_face_begin(c);
 
     cur=dh;
     do
@@ -159,14 +162,14 @@ protected:
     if ( d2!=NULL )
     {
       Local_point p2 = geomutils.get_point(lcc, d2);
-      add_segment(p1, p2);
+      add_mono_segment(p1, p2);
     }
   }
 
   void compute_vertex(Dart_const_handle dh, bool& empty)
   {
     Local_point p = geomutils.get_point(lcc, dh);
-    add_point(p);
+    add_mono_point(p);
   }
 
   void compute_elements()
