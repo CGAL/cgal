@@ -65,17 +65,18 @@ Returns the squared Euclidean distance between `q` and `p`.
 FT transformed_distance(Query_item q, Point_d p) const; 
 
 /*!
-Returns the transformed distance between `q` and the point whose coordinates
-are contained in the range [`begin`, `end`).
+Returns the transformed distance between `q` and the point whose Cartesian 
+coordinates are contained in the range [`begin`, `end`).
 */
 template <typename Coord_iterator>
 FT transformed_distance_from_coordinates(
   Query_item q, Coord_iterator begin, Coord_iterator end) const;
 
 /*!
-Returns the transformed distance between `q` and the point whose coordinates
-are contained in the range [`begin`, `end`), or any value \f$ \geq \f$
-`stop_if_geq_to_this` if the transformed distance is \f$ \geq \f$ `stop_if_geq_to_this`.
+Returns the transformed distance between `q` and the point whose Cartesian
+coordinates are contained in the range [`begin`, `end`), or any value 
+\f$ \geq \f$ `stop_if_geq_to_this` if the transformed distance is 
+\f$ \geq \f$ `stop_if_geq_to_this`.
 */
 template <typename Coord_iterator>
 FT interruptible_transformed_distance(
