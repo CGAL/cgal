@@ -56,7 +56,7 @@ namespace VSA {
  */
 template <typename TriangleMesh,
   typename NamedParameters>
-bool mesh_segmentation(const TriangleMesh &tm_in, const NamedParameters &np)
+void mesh_segmentation(const TriangleMesh &tm_in, const NamedParameters &np)
 {
   using boost::get_param;
   using boost::choose_param;
@@ -68,7 +68,7 @@ bool mesh_segmentation(const TriangleMesh &tm_in, const NamedParameters &np)
   VPMap point_pmap = choose_param(get_param(np, internal_np::vertex_point),
     get_property_map(vertex_point, const_cast<TriangleMesh &>(tm_in)));
 
-  typedef CGAL::VSA_approximation<TriangleMesh, VPMap> VSAL21;
+  typedef CGAL::VSA::Mesh_approximation<TriangleMesh, VPMap> VSAL21;
   typedef typename VSAL21::ErrorMetric L21Metric;
   typedef typename VSAL21::ProxyFitting L21ProxyFitting;
 
@@ -78,22 +78,21 @@ bool mesh_segmentation(const TriangleMesh &tm_in, const NamedParameters &np)
   vsa_l21.set_metric(l21_metric, l21_fitting);
 
   // default random initialization
-  CGAL::VSA_seeding init = choose_param(get_param(np, internal_np::init_method), CGAL::Random);
+  CGAL::VSA::Seeding init = choose_param(get_param(np, internal_np::init_method), CGAL::VSA::Random);
   std::size_t num_proxies = choose_param(get_param(np, internal_np::refine_until_proxies), 0);
   std::size_t inner_iterations = choose_param(get_param(np, internal_np::inner_iterations), 10);
   if (num_proxies == 0 || num_proxies > num_faces(tm_in)) {
     FT drop = choose_param(get_param(np, internal_np::init_by_error), FT(0.01));
     vsa_l21.init_by_error(
-      static_cast<typename CGAL::VSA_seeding>(init), drop, inner_iterations);
+      static_cast<typename CGAL::VSA::Seeding>(init), drop, inner_iterations);
   }
   else {
     vsa_l21.init_by_number(
-      static_cast<typename CGAL::VSA_seeding>(init), num_proxies, inner_iterations);
+      static_cast<typename CGAL::VSA::Seeding>(init), num_proxies, inner_iterations);
   }
 
-  std::size_t iterations = choose_param(get_param(np, internal_np::iterations), 10);
-  for (std::size_t i = 0; i < iterations; ++i)
-    vsa_l21.run_one_step();
+  const std::size_t iterations = choose_param(get_param(np, internal_np::iterations), 10);
+  vsa_l21.run(iterations);
 
 #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
   std::cout << "#px = " << num_proxies
@@ -116,8 +115,6 @@ bool mesh_segmentation(const TriangleMesh &tm_in, const NamedParameters &np)
   ProxiesOutItr pxies_out_itr = choose_param(
     get_param(np, internal_np::proxies), internal_np::vsa_no_output);
   get_proxies(vsa_l21, pxies_out_itr);
-
-  return is_manifold;
 }
 
 } // end namespace VSA

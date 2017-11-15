@@ -30,13 +30,14 @@
 #include <iostream>
 #endif
 
-namespace CGAL
-{
+namespace CGAL {
+namespace VSA {
+
 /*!
  * \ingroup PkgTSMA
  * @brief Seeding method enumeration for Variational Shape Approximation algorithm.
  */
-  enum VSA_seeding {
+  enum Seeding {
     /// Random seeding
     Random,
     /// Incremental seeding
@@ -59,7 +60,7 @@ template <typename TriangleMesh,
   typename ErrorMetric_ = CGAL::Default,
   typename ProxyFitting_ = CGAL::Default,
   typename GeomTraits_ = CGAL::Default>
-class VSA_approximation {
+class Mesh_approximation {
 // public typedefs
 public:
   // Default typdefs
@@ -179,21 +180,22 @@ private:
   template <typename HDS>
   class TrianglePolyhedronBuilder : public CGAL::Modifier_base<HDS> {
     const std::vector<Point_3> &vtxs;
-    const std::vector<std::size_t> &tris;
+    const std::vector<std::vector<std::size_t> > &tris;
   public:
     bool is_manifold;
     TrianglePolyhedronBuilder(const std::vector<Point_3> &_vtxs,
-      const std::vector<std::size_t> &_tris)
+      const std::vector<std::vector<std::size_t> > &_tris)
       : vtxs(_vtxs), tris(_tris), is_manifold(true) {}
 
     void operator()(HDS &hds) {
       CGAL::Polyhedron_incremental_builder_3<HDS> builder(hds, true);
       typedef typename HDS::Vertex Vertex;
       typedef typename Vertex::Point Point;
-      builder.begin_surface(vtxs.size(), tris.size() / 3);
+      builder.begin_surface(vtxs.size(), tris.size());
       BOOST_FOREACH(const Point_3 &v, vtxs)
         builder.add_vertex(Point(v));
-      for (std::vector<std::size_t>::const_iterator itr = tris.begin(); itr != tris.end(); itr += 3) {
+      BOOST_FOREACH(const std::vector<std::size_t> &t, tris) {
+        std::vector<std::size_t>::const_iterator itr = t.begin();
         if (builder.test_facet(itr, itr + 3)) {
           builder.begin_facet();
           builder.add_vertex_to_facet(*itr);
@@ -240,14 +242,14 @@ private:
   // All borders cycles.
   std::vector<Border> borders;
   // The indexed triangle approximation.
-  std::vector<std::size_t> tris;
+  std::vector<std::vector<std::size_t> > tris;
 
 //member functions
 public:
   /*!
    * %Default constructor.
    */
-  VSA_approximation() :
+  Mesh_approximation() :
     m_pmesh(NULL),
     fit_error(NULL),
     proxy_fitting(NULL),
@@ -265,7 +267,7 @@ public:
    * @param _mesh `CGAL TriangleMesh` on which approximation operate.
    * @param _point_pmap vertex point map of the mesh
    */
-  VSA_approximation(const TriangleMesh &_mesh,
+  Mesh_approximation(const TriangleMesh &_mesh,
     const VertexPointMap &_point_pmap) :
     m_pmesh(&_mesh),
     point_pmap(_point_pmap),
@@ -337,7 +339,7 @@ public:
    * @return number of proxies initialized
    */
   std::size_t init_by_number(
-    const VSA_seeding method,
+    const Seeding method,
     const std::size_t num_seed,
     const std::size_t num_iterations = 5) {
     switch (method) {
@@ -360,7 +362,7 @@ public:
    * @return number of proxies initialized
    */
   std::size_t init_by_error(
-    const VSA_seeding method,
+    const Seeding method,
     const FT target_drop,
     const std::size_t num_iterations = 5) {
     switch (method) {
@@ -376,12 +378,15 @@ public:
   }
 
   /*!
-   * @brief Run the the partitioning and fitting process by one step.
+   * @brief Run the the partitioning and fitting process.
+   * @param num_iterations number of iteration.
    * @return the total fitting error of current partition to the proxies.
    */
-  FT run_one_step() {
-    partition();
-    fit();
+  FT run(std::size_t num_iterations = 1) {
+    for (std::size_t i = 0; i < num_iterations; ++i) {
+      partition();
+      fit();
+    }
 
     return compute_fitting_error();
   }
@@ -898,14 +903,15 @@ public:
   }
 
   /*!
-   * @brief Get the indexed triangles, one triplet of integers per triangles, and that the integers refer to the anchor point indexes.
-   * @tparam OutputIterator output iterator with std::size_t as value type
+   * @brief Get the indexed triangles,
+   * one triplet of integers per triangles, which refers to the anchor point indexes.
+   * @tparam OutputIterator output iterator with std::vector<size_t> as value type
    * @param out_itr output iterator
    */
   template <typename OutputIterator>
   void get_indexed_triangles(OutputIterator out_itr) const {
-    BOOST_FOREACH(const std::size_t &i, tris)
-      *out_itr++ = i;
+    BOOST_FOREACH(const std::vector<std::size_t> &t, tris)
+      *out_itr++ = t;
   }
 
   /*!
@@ -1509,9 +1515,11 @@ private:
       int j = global_vtag_map[to_sgv_map[target(he, *m_pmesh)]];
       int k = global_vtag_map[to_sgv_map[target(next(he, *m_pmesh), *m_pmesh)]];
       if (i != j && i != k && j != k) {
-        tris.push_back(static_cast<std::size_t>(i));
-        tris.push_back(static_cast<std::size_t>(j));
-        tris.push_back(static_cast<std::size_t>(k));
+        std::vector<std::size_t> t;
+        t.push_back(static_cast<std::size_t>(i));
+        t.push_back(static_cast<std::size_t>(j));
+        t.push_back(static_cast<std::size_t>(k));
+        tris.push_back(t);
       }
     }
   }
@@ -1797,6 +1805,7 @@ private:
   }
 };
 
+} // end namespace VSA
 } // end namespace CGAL
 
 #endif // CGAL_SURFACE_MESH_APPROXIMATION_VSA_APPROXIMATION_H

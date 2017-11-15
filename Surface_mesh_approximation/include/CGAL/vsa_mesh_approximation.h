@@ -36,6 +36,8 @@ namespace VSA {
  * @param[out] apts_out_itr anchor points output iterator
  * @param[out] tris_out_itr indexed triangles output iterator
  * @param np optional sequence of \ref namedparameters among the ones listed below
+ * @return true if the indexed triangles construct a 2-manifold and oriented surface, 
+ * only then the output mesh is valid
  *
  * \cgalNamedParamsBegin
  *  \cgalParamBegin{geom_traits} a geometric traits class instance, model of `Kernel`.
@@ -87,7 +89,7 @@ bool mesh_approximation(const TriangleMesh &tm_in,
   VPMap point_pmap = choose_param(get_param(np, internal_np::vertex_point),
     get_property_map(vertex_point, const_cast<TriangleMesh &>(tm_in)));
 
-  typedef CGAL::VSA_approximation<TriangleMesh, VPMap> VSAL21;
+  typedef CGAL::VSA::Mesh_approximation<TriangleMesh, VPMap> VSAL21;
   typedef typename VSAL21::ErrorMetric L21Metric;
   typedef typename VSAL21::ProxyFitting L21ProxyFitting;
 
@@ -97,22 +99,21 @@ bool mesh_approximation(const TriangleMesh &tm_in,
   vsa_l21.set_metric(l21_metric, l21_fitting);
 
   // default random initialization
-  CGAL::VSA_seeding init = choose_param(get_param(np, internal_np::init_method), CGAL::Random);
+  CGAL::VSA::Seeding init = choose_param(get_param(np, internal_np::init_method), CGAL::VSA::Random);
   std::size_t num_proxies = choose_param(get_param(np, internal_np::refine_until_proxies), 0);
   std::size_t inner_iterations = choose_param(get_param(np, internal_np::inner_iterations), 10);
   if (num_proxies == 0 || num_proxies > num_faces(tm_in)) {
     FT drop = choose_param(get_param(np, internal_np::init_by_error), FT(0.01));
     vsa_l21.init_by_error(
-      static_cast<typename CGAL::VSA_seeding>(init), drop, inner_iterations);
+      static_cast<typename CGAL::VSA::Seeding>(init), drop, inner_iterations);
   }
   else {
     vsa_l21.init_by_number(
-      static_cast<typename CGAL::VSA_seeding>(init), num_proxies, inner_iterations);
+      static_cast<typename CGAL::VSA::Seeding>(init), num_proxies, inner_iterations);
   }
 
-  std::size_t iterations = choose_param(get_param(np, internal_np::iterations), 10);
-  for (std::size_t i = 0; i < iterations; ++i)
-    vsa_l21.run_one_step();
+  const std::size_t iterations = choose_param(get_param(np, internal_np::iterations), 10);
+  vsa_l21.run(iterations);
 
 #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
   std::cout << "#px = " << num_proxies
@@ -130,9 +131,9 @@ bool mesh_approximation(const TriangleMesh &tm_in,
 
   typedef CGAL::Polyhedron_3<GeomTraits> PolyhedronSurface;
   PolyhedronSurface tmp_poly;
-  PolyhedronSurface &tm_out = choose_param(get_param(np, internal_np::output_mesh), tmp_poly);
+  PolyhedronSurface * const tm_out = choose_param(get_param(np, internal_np::output_mesh), &tmp_poly);
   FT split_criterion = choose_param(get_param(np, internal_np::chord_subdivide), FT(1));
-  const bool is_manifold = vsa_l21.extract_mesh(tm_out, split_criterion);
+  const bool is_manifold = vsa_l21.extract_mesh(*tm_out, split_criterion);
 
   typedef typename boost::lookup_named_param_def<
     internal_np::anchor_vertex_t,
@@ -145,7 +146,7 @@ bool mesh_approximation(const TriangleMesh &tm_in,
   // get anchor points
   get_anchor_points(vsa_l21, apts_out_itr);
 
-  // get indexed tirangles
+  // get indexed triangles
   get_indexed_triangles(vsa_l21, tris_out_itr);
 
   typedef typename boost::lookup_named_param_def <

@@ -16,8 +16,8 @@ typedef boost::property_map<Polyhedron, boost::vertex_point_t>::type VertexPoint
 typedef CGAL::VSA::Mesh_approximation<Polyhedron, VertexPointMap> Mesh_approximation;
 
 // L21 error metric 
-typedef VSA::L21_error_metric  Metric;
-typedef VSA::L21_proxy_fitting Proxy_fitting;
+typedef Mesh_approximation::L21_error_metric Metric;
+typedef Mesh_approximation::L21_proxy_fitting Proxy_fitting;
 
 int main()
 {
@@ -39,7 +39,7 @@ int main()
   approx.set_metric(metric, proxy_fitting);
 
   // initialize 100 random proxies
-  approx.init_by_number(CGAL::Random, 100);
+  approx.init_by_number(CGAL::VSA::Random, 100);
   
   // run 30 iterations 
   approx.run(30);
@@ -53,12 +53,12 @@ int main()
 
   // teleport 2 proxies to tunnel out of local minima
   // run 5 iterations between each teleport
-  l21_approx.teleport_proxies(2, 5);
+  approx.teleport_proxies(2, 5);
   approx.run(10);
 
   // mesh and output final polyhedral surface
   Polyhedron output;
-  approx.meshing(output);
+  approx.extract_mesh(output);
 
   return EXIT_SUCCESS;
 }

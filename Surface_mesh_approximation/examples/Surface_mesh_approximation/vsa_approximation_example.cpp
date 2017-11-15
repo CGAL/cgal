@@ -33,7 +33,7 @@ int main()
     refine_until_proxies(200). // refine until target number of proxies
     iterations(30). // number of relaxation iterations after seeding
     // output to polyhedron
-    output_mesh(output)); // valid only if the indexed triangles construct a 2-manifold and oriented surface
+    output_mesh(&output)); // valid only if the indexed triangles construct a 2-manifold and oriented surface
 
   std::cout << "#anchor points: " << points.size() << std::endl;
   std::cout << "#triangles: " << triangles.size() << std::endl;
