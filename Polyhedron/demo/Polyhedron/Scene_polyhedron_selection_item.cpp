@@ -190,7 +190,7 @@ void Scene_polyhedron_selection_item_priv::initializeBuffers(CGAL::Three::Viewer
     program->enableAttributeArray("normals");
     program->setAttributeBuffer("normals",GL_FLOAT,0,3);
     item->buffers[NormalFacets].release();
-
+    program->disableAttributeArray("colors");
     item->vaos[Facets]->release();
     program->release();
 
@@ -207,7 +207,7 @@ void Scene_polyhedron_selection_item_priv::initializeBuffers(CGAL::Three::Viewer
     program->enableAttributeArray("vertex");
     program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
     item->buffers[VertexEdges].release();
-
+    program->disableAttributeArray("colors");
     program->release();
 
     item->vaos[Edges]->release();
@@ -225,9 +225,10 @@ void Scene_polyhedron_selection_item_priv::initializeBuffers(CGAL::Three::Viewer
     program->enableAttributeArray("vertex");
     program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
     item->buffers[VertexPoints].release();
+    program->disableAttributeArray("colors");
+    item->vaos[Points]->release();
     program->release();
 
-    item->vaos[Points]->release();
   }
 
   nb_facets = positions_facets.size();
@@ -270,7 +271,7 @@ void Scene_polyhedron_selection_item_priv::initialize_temp_buffers(CGAL::Three::
     program->enableAttributeArray("normals");
     program->setAttributeBuffer("normals",GL_FLOAT,0,3);
     item->buffers[NormalTempFacets].release();
-
+    program->disableAttributeArray("colors");
     item->vaos[TempFacets]->release();
     program->release();
   }
@@ -286,7 +287,7 @@ void Scene_polyhedron_selection_item_priv::initialize_temp_buffers(CGAL::Three::
     program->enableAttributeArray("vertex");
     program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
     item->buffers[VertexTempEdges].release();
-
+    program->disableAttributeArray("colors");
     program->release();
 
     item->vaos[TempEdges]->release();
@@ -320,6 +321,7 @@ void Scene_polyhedron_selection_item_priv::initialize_temp_buffers(CGAL::Three::
     program->enableAttributeArray("colors");
     program->setAttributeBuffer("colors",GL_FLOAT,0,3);
     item->buffers[ColorFixedPoints].release();
+    program->disableAttributeArray("colors");
     item->vaos[FixedPoints]->release();
 
     program->release();
@@ -366,7 +368,7 @@ void Scene_polyhedron_selection_item_priv::initialize_HL_buffers(CGAL::Three::Vi
     program->enableAttributeArray("normals");
     program->setAttributeBuffer("normals",GL_FLOAT,0,3);
     item->buffers[NormalHLFacets].release();
-
+    program->disableAttributeArray("colors");
     item->vaos[HLFacets]->release();
     program->release();
 
@@ -383,7 +385,7 @@ void Scene_polyhedron_selection_item_priv::initialize_HL_buffers(CGAL::Three::Vi
     program->enableAttributeArray("vertex");
     program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
     item->buffers[VertexHLEdges].release();
-
+    program->disableAttributeArray("colors");
     program->release();
 
     item->vaos[HLEdges]->release();
@@ -401,7 +403,7 @@ void Scene_polyhedron_selection_item_priv::initialize_HL_buffers(CGAL::Three::Vi
     program->enableAttributeArray("vertex");
     program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
     item->buffers[VertexHLPoints].release();
-
+    program->disableAttributeArray("colors");
     program->release();
 
     item->vaos[HLPoints]->release();

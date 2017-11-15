@@ -204,7 +204,7 @@ public Q_SLOTS:
       // paint with mouse move event
       QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
       qglviewer::Camera* camera = viewer->camera();
-
+      viewer->makeCurrent();
       bool found = false;
       const qglviewer::Vec& point = camera->pointUnderPixel(paint_pos, found) - offset;
       if(found)
