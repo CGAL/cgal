@@ -745,16 +745,18 @@ protected:
       }
     }
 
+    void descend_triangulation(Face_handle f, int i) {
+        Face_handle h=f->neighbor(i);
+        if(!ct.is_constrained(Edge(f,i)) && !visited[h]) {
+                Face_handle child(h);
+                traverse_triangulation(child,child->index(f));
+        }
+    }
+
     void traverse_triangulation(Face_handle f, int parent) {
-      visited[f] = true;
-      if(!ct.is_constrained(Edge(f,ct.cw(parent))) && !visited[f->neighbor(ct.cw(parent))]) {
-	Face_handle child(f->neighbor(ct.cw(parent)));
-	traverse_triangulation(child, child->index(f));
-      }
-      if(!ct.is_constrained(Edge(f,ct.ccw(parent))) && !visited[f->neighbor(ct.ccw(parent))]) {
-	Face_handle child(f->neighbor(ct.ccw(parent)));
-	traverse_triangulation(child, child->index(f));
-      }
+       visited[f]=true;
+       descend_triangulation(f,ct.cw(parent));
+       descend_triangulation(f,ct.ccw(parent));
     }
 
     bool same_orientation(Plane_3 p1) const {
