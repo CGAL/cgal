@@ -57,39 +57,39 @@ namespace VSA {
  */
 template <typename TriangleMesh,
   typename VertexPointMap,
-  typename ErrorMetric_ = CGAL::Default,
-  typename ProxyFitting_ = CGAL::Default,
-  typename GeomTraits_ = CGAL::Default>
+  typename ErrorMetric = CGAL::Default,
+  typename ProxyFitting = CGAL::Default,
+  typename GeomTraits = CGAL::Default>
 class Mesh_approximation {
 // public typedefs
 public:
-  // Default typdefs
+  // Default typedefs
   /// Geometric trait type
   typedef typename CGAL::Default::Get<
-    GeomTraits_,
+    GeomTraits,
     typename Kernel_traits<
       typename boost::property_traits<VertexPointMap>::value_type
-    >::Kernel >::type GeomTraits;
+    >::Kernel >::type Geom_traits;
   /// ErrorMetric type
-  typedef typename CGAL::Default::Get<ErrorMetric_,
-    CGAL::L21Metric<TriangleMesh, VertexPointMap, false, GeomTraits> >::type ErrorMetric;
+  typedef typename CGAL::Default::Get<ErrorMetric,
+    CGAL::VSA::L21_metric<TriangleMesh, VertexPointMap, false, Geom_traits> >::type Error_metric;
   /// ProxyFitting type
-  typedef typename CGAL::Default::Get<ProxyFitting_,
-    CGAL::L21ProxyFitting<TriangleMesh, VertexPointMap, GeomTraits> >::type ProxyFitting;
+  typedef typename CGAL::Default::Get<ProxyFitting,
+    CGAL::VSA::L21_proxy_fitting<TriangleMesh, VertexPointMap, Geom_traits> >::type Proxy_fitting;
   /// Proxy type
-  typedef typename ErrorMetric::Proxy Proxy;
+  typedef typename Error_metric::Proxy Proxy;
 
 // private typedefs and data member
 private:
-  // GeomTraits typedefs
-  typedef typename GeomTraits::FT FT;
-  typedef typename GeomTraits::Point_3 Point_3;
-  typedef typename GeomTraits::Vector_3 Vector_3;
-  typedef typename GeomTraits::Plane_3 Plane_3;
-  typedef typename GeomTraits::Construct_vector_3 Construct_vector_3;
-  typedef typename GeomTraits::Construct_scaled_vector_3 Construct_scaled_vector_3;
-  typedef typename GeomTraits::Construct_sum_of_vectors_3 Construct_sum_of_vectors_3;
-  typedef typename GeomTraits::Compute_scalar_product_3 Compute_scalar_product_3;
+  // Geom_traits typedefs
+  typedef typename Geom_traits::FT FT;
+  typedef typename Geom_traits::Point_3 Point_3;
+  typedef typename Geom_traits::Vector_3 Vector_3;
+  typedef typename Geom_traits::Plane_3 Plane_3;
+  typedef typename Geom_traits::Construct_vector_3 Construct_vector_3;
+  typedef typename Geom_traits::Construct_scaled_vector_3 Construct_scaled_vector_3;
+  typedef typename Geom_traits::Construct_sum_of_vectors_3 Construct_sum_of_vectors_3;
+  typedef typename Geom_traits::Compute_scalar_product_3 Compute_scalar_product_3;
 
   // graph_traits typedefs
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
@@ -216,9 +216,9 @@ private:
   // The mesh vertex point map.
   VertexPointMap point_pmap;
   // The error metric.
-  const ErrorMetric *fit_error;
+  const Error_metric *fit_error;
   // The proxy fitting functor.
-  const ProxyFitting *proxy_fitting;
+  const Proxy_fitting *proxy_fitting;
 
   Construct_vector_3 vector_functor;
   Construct_scaled_vector_3 scale_functor;
@@ -255,7 +255,7 @@ public:
     proxy_fitting(NULL),
     fproxy_map(internal_fidx_map),
     vanchor_map(internal_vidx_map) {
-    GeomTraits traits;
+    Geom_traits traits;
     vector_functor = traits.construct_vector_3_object();
     scale_functor = traits.construct_scaled_vector_3_object();
     sum_functor = traits.construct_sum_of_vectors_3_object();
@@ -275,7 +275,7 @@ public:
     proxy_fitting(NULL),
     fproxy_map(internal_fidx_map),
     vanchor_map(internal_vidx_map) {
-    GeomTraits traits;
+    Geom_traits traits;
     vector_functor = traits.construct_vector_3_object();
     scale_functor = traits.construct_scaled_vector_3_object();
     sum_functor = traits.construct_sum_of_vectors_3_object();
@@ -299,8 +299,8 @@ public:
    * @param _error_metric a `ErrorMetric` functor.
    * @param _proxy_fitting a `ProxyFitting` functor.
    */
-  void set_metric(const ErrorMetric &_error_metric,
-    const ProxyFitting &_proxy_fitting) {
+  void set_metric(const Error_metric &_error_metric,
+    const Proxy_fitting &_proxy_fitting) {
     fit_error = &_error_metric;
     proxy_fitting = &_proxy_fitting;
   }
@@ -1783,7 +1783,7 @@ private:
   Plane_3 fit_plane_pca(const FacetIterator &beg, const FacetIterator &end) {
     CGAL_assertion(beg != end);
 
-    typedef typename GeomTraits::Triangle_3 Triangle_3;
+    typedef typename Geom_traits::Triangle_3 Triangle_3;
     std::list<Triangle_3> tri_list;
     for (FacetIterator fitr = beg; fitr != end; ++fitr) {
       halfedge_descriptor he = halfedge(*fitr, *m_pmesh);

@@ -61,20 +61,20 @@ void mesh_segmentation(const TriangleMesh &tm_in, const NamedParameters &np)
   using boost::get_param;
   using boost::choose_param;
 
-  typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type GeomTraits;
-  typedef typename GeomTraits::FT FT;
+  typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type Geom_traits;
+  typedef typename Geom_traits::FT FT;
 
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::type VPMap;
   VPMap point_pmap = choose_param(get_param(np, internal_np::vertex_point),
     get_property_map(vertex_point, const_cast<TriangleMesh &>(tm_in)));
 
   typedef CGAL::VSA::Mesh_approximation<TriangleMesh, VPMap> VSAL21;
-  typedef typename VSAL21::ErrorMetric L21Metric;
-  typedef typename VSAL21::ProxyFitting L21ProxyFitting;
+  typedef typename VSAL21::Error_metric L21_metric;
+  typedef typename VSAL21::Proxy_fitting L21_proxy_fitting;
 
   VSAL21 vsa_l21(tm_in, point_pmap);
-  L21Metric l21_metric(tm_in);
-  L21ProxyFitting l21_fitting(tm_in);
+  L21_metric l21_metric(tm_in);
+  L21_proxy_fitting l21_fitting(tm_in);
   vsa_l21.set_metric(l21_metric, l21_fitting);
 
   // default random initialization

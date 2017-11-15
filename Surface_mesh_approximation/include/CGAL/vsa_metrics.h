@@ -12,8 +12,9 @@
 #include <map>
 #include <list>
 
-namespace CGAL
-{
+namespace CGAL {
+namespace VSA {
+
 /*!
  * \ingroup PkgTSMA
  * @brief Plane proxy class for the Variational Shape Approximation algorithm.
@@ -26,7 +27,7 @@ namespace CGAL
  * @tparam GeomTraits geometric traits
  */
 template <typename GeomTraits>
-class PlaneProxy
+class Plane_proxy
 {
   typedef typename GeomTraits::Vector_3 Vector_3;
   typedef typename GeomTraits::Plane_3 Plane_3;
@@ -58,8 +59,8 @@ template <typename TriangleMesh,
     = typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type,
   bool with_area_weighing = true,
   typename GeomTraits = typename TriangleMesh::Traits,
-  typename PlaneProxy = CGAL::PlaneProxy<GeomTraits> >
-class L21Metric
+  typename PlaneProxy = CGAL::VSA::Plane_proxy<GeomTraits> >
+class L21_metric
 {
   typedef typename GeomTraits::FT FT;
   typedef typename GeomTraits::Vector_3 Vector_3;
@@ -79,7 +80,7 @@ public:
   typedef PlaneProxy Proxy;
 
   // constructor
-  L21Metric(const TriangleMesh &tm, const VertexPointMap &point_pmap)
+  L21_metric(const TriangleMesh &tm, const VertexPointMap &point_pmap)
     : normal_pmap(facet_normals), area_pmap(facet_areas) {
     GeomTraits traits;
     scalar_product_functor = traits.compute_scalar_product_3_object();
@@ -120,7 +121,7 @@ template <typename TriangleMesh,
   bool with_area_weighing,
   typename GeomTraits,
   typename PlaneProxy>
-class L21Metric<TriangleMesh,
+class L21_metric<TriangleMesh,
   typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type,
   with_area_weighing,
   GeomTraits,
@@ -145,7 +146,7 @@ public:
   typedef PlaneProxy Proxy;
 
   // constructor
-  L21Metric(const TriangleMesh &tm)
+  L21_metric(const TriangleMesh &tm)
     : normal_pmap(facet_normals), area_pmap(facet_areas) {
     GeomTraits traits;
     scalar_product_functor = traits.compute_scalar_product_3_object();
@@ -187,7 +188,7 @@ template <typename TriangleMesh,
   typename VertexPointMap,
   typename GeomTraits,
   typename PlaneProxy>
-class L21Metric<TriangleMesh,
+class L21_metric<TriangleMesh,
   VertexPointMap,
   false,
   GeomTraits,
@@ -210,7 +211,7 @@ public:
   typedef PlaneProxy Proxy;
 
   // constructor
-  L21Metric(const TriangleMesh &tm, const VertexPointMap &point_pmap)
+  L21_metric(const TriangleMesh &tm, const VertexPointMap &point_pmap)
     : normal_pmap(facet_normals) {
     GeomTraits traits;
     scalar_product_functor = traits.compute_scalar_product_3_object();
@@ -247,7 +248,7 @@ private:
 template <typename TriangleMesh,
   typename GeomTraits,
   typename PlaneProxy>
-class L21Metric<TriangleMesh,
+class L21_metric<TriangleMesh,
   typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type,
   false,
   GeomTraits,
@@ -271,7 +272,7 @@ public:
   typedef PlaneProxy Proxy;
 
   // constructor
-  L21Metric(const TriangleMesh &tm)
+  L21_metric(const TriangleMesh &tm)
     : normal_pmap(facet_normals) {
     GeomTraits traits;
     scalar_product_functor = traits.compute_scalar_product_3_object();
@@ -322,8 +323,8 @@ template <typename TriangleMesh,
   typename VertexPointMap
     = typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type,
   typename GeomTraits = typename TriangleMesh::Traits,
-  typename PlaneProxy = CGAL::PlaneProxy<GeomTraits> >
-class L21ProxyFitting
+  typename PlaneProxy = CGAL::VSA::Plane_proxy<GeomTraits> >
+class L21_proxy_fitting
 {
   typedef typename GeomTraits::FT FT;
   typedef typename GeomTraits::Vector_3 Vector_3;
@@ -342,7 +343,7 @@ public:
   typedef PlaneProxy Proxy;
 
   // constructor.
-  L21ProxyFitting(const TriangleMesh &tm, const VertexPointMap &point_pmap)
+  L21_proxy_fitting(const TriangleMesh &tm, const VertexPointMap &point_pmap)
     : normal_pmap(facet_normals), area_pmap(facet_areas) {
     GeomTraits traits;
     sum_functor = traits.construct_sum_of_vectors_3_object();
@@ -395,7 +396,7 @@ private:
 template <typename TriangleMesh,
   typename GeomTraits,
   typename PlaneProxy>
-class L21ProxyFitting<TriangleMesh,
+class L21_proxy_fitting<TriangleMesh,
   typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type,
   GeomTraits,
   PlaneProxy>
@@ -418,7 +419,7 @@ public:
   typedef PlaneProxy Proxy;
 
   // constructor.
-  L21ProxyFitting(const TriangleMesh &tm)
+  L21_proxy_fitting(const TriangleMesh &tm)
     : normal_pmap(facet_normals), area_pmap(facet_areas) {
     GeomTraits traits;
     sum_functor = traits.construct_sum_of_vectors_3_object();
@@ -486,8 +487,8 @@ template <typename TriangleMesh,
   typename VertexPointMap
     = typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type,
   typename GeomTraits = typename TriangleMesh::Traits,
-  typename PlaneProxy = CGAL::PlaneProxy<GeomTraits> >
-class L2Metric
+  typename PlaneProxy = CGAL::VSA::Plane_proxy<GeomTraits> >
+class L2_metric
 {
   typedef typename GeomTraits::FT FT;
   typedef typename GeomTraits::Point_3 Point_3;
@@ -502,7 +503,7 @@ public:
   typedef PlaneProxy Proxy;
 
   // constructor
-  L2Metric(const TriangleMesh &tm, const VertexPointMap &_point_pmap)
+  L2_metric(const TriangleMesh &tm, const VertexPointMap &_point_pmap)
     : mesh(&tm), area_pmap(facet_areas), point_pmap(_point_pmap) {
     BOOST_FOREACH(face_descriptor f, faces(tm)) {
       const halfedge_descriptor he = halfedge(f, tm);
@@ -515,7 +516,7 @@ public:
   }
 
   // returns l2 fitting error from facet f to proxy px.
-  FT operator()(const face_descriptor &f, const PlaneProxy &px) const {
+  FT operator()(const face_descriptor &f, const Proxy &px) const {
     halfedge_descriptor he = halfedge(f, *mesh);
     const Point_3 &p0 = point_pmap[source(he, *mesh)];
     const Point_3 &p1 = point_pmap[target(he, *mesh)];
@@ -541,7 +542,7 @@ private:
 template <typename TriangleMesh,
   typename GeomTraits,
   typename PlaneProxy>
-class L2Metric<TriangleMesh,
+class L2_metric<TriangleMesh,
   typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type,
   GeomTraits,
   PlaneProxy>
@@ -560,7 +561,7 @@ public:
   typedef PlaneProxy Proxy;
 
   // constructor
-  L2Metric(const TriangleMesh &tm)
+  L2_metric(const TriangleMesh &tm)
     : mesh(&tm), area_pmap(facet_areas),
     point_pmap(get(boost::vertex_point, const_cast<TriangleMesh &>(tm))) {
     BOOST_FOREACH(face_descriptor f, faces(tm)) {
@@ -574,7 +575,7 @@ public:
   }
 
   // returns l2 fitting error from facet f to proxy px.
-  FT operator()(const face_descriptor &f, const PlaneProxy &px) const {
+  FT operator()(const face_descriptor &f, const Proxy &px) const {
     halfedge_descriptor he = halfedge(f, *mesh);
     const Point_3 &p0 = point_pmap[source(he, *mesh)];
     const Point_3 &p1 = point_pmap[target(he, *mesh)];
@@ -615,8 +616,8 @@ template <typename TriangleMesh,
   typename VertexPointMap
     = typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type,
   typename GeomTraits = typename TriangleMesh::Traits,
-  typename PlaneProxy = CGAL::PlaneProxy<GeomTraits> >
-class L2ProxyFitting
+  typename PlaneProxy = CGAL::VSA::Plane_proxy<GeomTraits> >
+class L2_proxy_fitting
 {
   typedef typename GeomTraits::Point_3 Point_3;
   typedef typename GeomTraits::Triangle_3 Triangle_3;
@@ -627,7 +628,7 @@ public:
   typedef PlaneProxy Proxy;
 
   // construct L2 proxy fitting functor from a triangle mesh and the vertex point map.
-  L2ProxyFitting(const TriangleMesh &_mesh, const VertexPointMap &_point_pmap)
+  L2_proxy_fitting(const TriangleMesh &_mesh, const VertexPointMap &_point_pmap)
     : mesh(&_mesh), point_pmap(_point_pmap) {}
 
   // returns proxy fitted from range of facets.
@@ -664,7 +665,7 @@ private:
 template <typename TriangleMesh,
   typename GeomTraits,
   typename PlaneProxy>
-class L2ProxyFitting<TriangleMesh,
+class L2_proxy_fitting<TriangleMesh,
   typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type,
   GeomTraits,
   PlaneProxy>
@@ -681,7 +682,7 @@ public:
   typedef PlaneProxy Proxy;
 
   // construct L2 proxy fitting functor from a triangle mesh.
-  L2ProxyFitting(const TriangleMesh &_mesh)
+  L2_proxy_fitting(const TriangleMesh &_mesh)
     : mesh(&_mesh),
     point_pmap(get(boost::vertex_point, const_cast<TriangleMesh &>(_mesh))) {}
 
@@ -715,6 +716,7 @@ private:
   const VertexPointMap point_pmap;
 };
 
+} // end namespace VSA
 } // end namespace CGAL
 
 #endif // CGAL_SURFACE_MESH_APPROXIMATION_VSA_METRICS_H

@@ -19,19 +19,19 @@ typedef Polyhedron::Facet_handle Facet_handle;
 typedef Polyhedron::Halfedge_handle Halfedge_handle;
 typedef Polyhedron::Facet_iterator Facet_iterator;
 
-typedef boost::property_map<Polyhedron, boost::vertex_point_t>::type VertexPointMap;
-typedef boost::associative_property_map<std::map<Facet_handle, FT> > FacetAreaMap;
-typedef boost::associative_property_map<std::map<Facet_handle, Point> > FacetCenterMap;
+typedef boost::property_map<Polyhedron, boost::vertex_point_t>::type Vertex_point_map;
+typedef boost::associative_property_map<std::map<Facet_handle, FT> > Facet_area_map;
+typedef boost::associative_property_map<std::map<Facet_handle, Point> > Facet_center_map;
 
 // use point as proxy
-typedef Point PointProxy; // TOFIX: CGAL capitalization -> Point_proxy (everywhere)
+typedef Point Point_proxy;
 
 // user-defined "compact" error metric
-struct CompactMetric {
-  typedef PointProxy Proxy;
+struct Compact_metric {
+  typedef Point_proxy Proxy;
 
   // we keep a precomputed property map to speed up computations
-  CompactMetric(const FacetCenterMap &_center_pmap)
+  Compact_metric(const Facet_center_map &_center_pmap)
     : center_pmap(_center_pmap) {}
 
   // compute and return error from a facet to a proxy,
@@ -42,15 +42,15 @@ struct CompactMetric {
       CGAL::squared_distance(center_pmap[f], px))));
   }
 
-  const FacetCenterMap center_pmap;
+  const Facet_center_map center_pmap;
 };
 
 // proxy fitting functor
-struct PointProxyFitting {
-  typedef PointProxy Proxy;
+struct Point_proxy_fitting {
+  typedef Point_proxy Proxy;
 
   // we keep a precomputed property map to speed up computations
-  PointProxyFitting(const FacetCenterMap &_center_pmap, const FacetAreaMap &_area_pmap)
+  Point_proxy_fitting(const Facet_center_map &_center_pmap, const Facet_area_map &_area_pmap)
     : center_pmap(_center_pmap), area_pmap(_area_pmap) {}
 
   // template functor to compute a best-fit 
@@ -68,12 +68,12 @@ struct PointProxyFitting {
     return CGAL::ORIGIN + center;
   }
 
-  const FacetCenterMap center_pmap;
-  const FacetAreaMap area_pmap;
+  const Facet_center_map center_pmap;
+  const Facet_area_map area_pmap;
 };
 
-typedef CGAL::VSA::Mesh_approximation<Polyhedron, VertexPointMap,
-  CompactMetric, PointProxyFitting> Approximation;
+typedef CGAL::VSA::Mesh_approximation<Polyhedron, Vertex_point_map,
+  Compact_metric, Point_proxy_fitting> Approximation;
 
 int main()
 {
@@ -98,16 +98,16 @@ int main()
     facet_areas.insert(std::pair<Facet_handle, FT>(fitr, area));
     facet_centers.insert(std::pair<Facet_handle, Point>(fitr, barycenter));
   }
-  FacetAreaMap area_pmap(facet_areas);
-  FacetCenterMap center_pmap(facet_centers);
+  Facet_area_map area_pmap(facet_areas);
+  Facet_center_map center_pmap(facet_centers);
 
   // create compact metric approximation algorithm instance
   Approximation approx(input,
     get(boost::vertex_point, const_cast<Polyhedron &>(input)));
 
   // construct metric and fitting functors
-  CompactMetric metric(center_pmap);
-  PointProxyFitting proxy_fitting(center_pmap, area_pmap);
+  Compact_metric metric(center_pmap);
+  Point_proxy_fitting proxy_fitting(center_pmap, area_pmap);
   approx.set_metric(metric, proxy_fitting);
 
   // approximation via 200 proxies and 30 iterations
