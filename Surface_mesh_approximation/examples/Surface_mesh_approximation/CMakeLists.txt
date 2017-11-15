@@ -43,10 +43,13 @@ include_directories( BEFORE ../../include )
 
 include( CGAL_CreateSingleSourceCGALProgram )
 
-create_single_source_cgal_program( "vsa_example.cpp" )
+create_single_source_cgal_program( "vsa_approximation_example.cpp" )
 
 create_single_source_cgal_program( "vsa_class_interface_example.cpp" )
 
-create_single_source_cgal_program( "vsa_metric_example.cpp" )
+create_single_source_cgal_program( "vsa_isotropic_metric_example.cpp" )
 
+create_single_source_cgal_program( "vsa_segmentation_example.cpp" )
+
+create_single_source_cgal_program( "vsa_simple_approximation_example.cpp" )
 
