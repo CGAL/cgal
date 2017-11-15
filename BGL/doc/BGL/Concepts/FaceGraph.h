@@ -10,7 +10,7 @@ face.
 
 <h4>Associated Types:</h4>
 
-`boost::graph_traits<FaceGraph>::face_descriptor`
+`boost::graph_traits<FaceGraph>::%face_descriptor`
 A face descriptor corresponds to a unique face in an abstract graph instance.
 A face descriptor must be `DefaultConstructible`, `Assignable`, and `EqualityComparable`. 
 

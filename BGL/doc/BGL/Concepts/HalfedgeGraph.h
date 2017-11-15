@@ -17,7 +17,7 @@ iterators and circulators for these halfedge cycles.
 
 <h4>Associated Types:</h4>
 
-`boost::graph_traits<HalfedgeGraph>::halfedge_descriptor`
+`boost::graph_traits<HalfedgeGraph>::%halfedge_descriptor`
 A halfedge descriptor corresponds to a unique halfedge in an abstract graph instance.
 A halfedge descriptor must be `DefaultConstructible`, `Assignable`, and `EqualityComparable`. 
 
