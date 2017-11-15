@@ -49,10 +49,6 @@ else( ACTIVATE_CONCURRENT_TRIANGULATION_3 )
   endif( LINK_WITH_TBB )
 endif()
 
-if( TBB_FOUND )
-  include(${TBB_USE_FILE})
-endif()
-
 if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND )
 
   include_directories (${QGLVIEWER_INCLUDE_DIR})
@@ -71,12 +67,14 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_
                     PreferenceDlg.cpp
                     Scene.cpp ${uis} ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES})
 
-  qt5_use_modules(T3_demo Xml OpenGL Svg)
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS T3_demo )
 
-  target_link_libraries( T3_demo ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
-  target_link_libraries( T3_demo ${QT_LIBRARIES} ${QGLVIEWER_LIBRARIES} ${TBB_LIBRARIES})
-  target_link_libraries( T3_demo ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY})
+  target_link_libraries( T3_demo PRIVATE ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
+  target_link_libraries( T3_demo PRIVATE Qt5::OpenGL ${QGLVIEWER_LIBRARIES})
+  target_link_libraries( T3_demo PRIVATE ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY})
+  if(TBB_FOUND)
+    CGAL_target_use_TBB(T3_demo)
+  endif()
 
 else( CGAL_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND )
 
