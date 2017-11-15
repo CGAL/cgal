@@ -98,17 +98,17 @@ private:
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
 
   // internal typedefs
-  typedef boost::associative_property_map<std::map<vertex_descriptor, int> > VertexAnchorMap;
+  typedef boost::associative_property_map<std::map<vertex_descriptor, int> > Vertex_anchor_map;
 
-  typedef std::vector<halfedge_descriptor> ChordVector;
-  typedef typename ChordVector::iterator ChordVectorIterator;
+  typedef std::vector<halfedge_descriptor> Chord_vector;
+  typedef typename Chord_vector::iterator Chord_vector_iterator;
 
 #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
 public:
 #endif
   // The proxy wrapper for approximation.
-  struct ProxyWrapper {
-    ProxyWrapper(const Proxy &_p, const face_descriptor &_s)
+  struct Proxy_wrapper {
+    Proxy_wrapper(const Proxy &_p, const face_descriptor &_s)
       : px(_p), seed(_s), err(0) {}
 
     Proxy px; // parameterized proxy
@@ -120,8 +120,8 @@ private:
 #endif
 
   // The proxy fitting plane for meshing.
-  struct ProxyPlane {
-    ProxyPlane(const Plane_3 &_p, const Vector_3 &_n, const FT &_a)
+  struct Proxy_plane {
+    Proxy_plane(const Plane_3 &_p, const Vector_3 &_n, const FT &_a)
       : plane(_p), normal(_n), area(_a) {}
 
     Plane_3 plane;
@@ -130,11 +130,11 @@ private:
   };
 
   // The facet candidate to be queued.
-  struct FacetToIntegrate {
-    FacetToIntegrate(const face_descriptor &_f, const std::size_t &_px, const FT &_err)
+  struct Facet_to_integrate {
+    Facet_to_integrate(const face_descriptor &_f, const std::size_t &_px, const FT &_err)
       : f(_f), px(_px), err(_err) {}
 
-    bool operator<(const FacetToIntegrate &rhs) const {
+    bool operator<(const Facet_to_integrate &rhs) const {
       return err > rhs.err;
     }
 
@@ -144,12 +144,12 @@ private:
   };
 
   // Proxy error with its index.
-  struct ProxyError {
-    ProxyError(const std::size_t &_px, const FT &_err)
+  struct Proxy_error {
+    Proxy_error(const std::size_t &_px, const FT &_err)
       : px(_px), err(_err) {}
 
     // in ascending order
-    bool operator<(const ProxyError &rhs) const {
+    bool operator<(const Proxy_error &rhs) const {
       return err < rhs.err;
     }
 
@@ -178,12 +178,12 @@ private:
 
   // Triangle polyhedron builder.
   template <typename HDS>
-  class TrianglePolyhedronBuilder : public CGAL::Modifier_base<HDS> {
+  class Triangle_polyhedron_builder : public CGAL::Modifier_base<HDS> {
     const std::vector<Point_3> &vtxs;
     const std::vector<std::vector<std::size_t> > &tris;
   public:
     bool is_manifold;
-    TrianglePolyhedronBuilder(const std::vector<Point_3> &_vtxs,
+    Triangle_polyhedron_builder(const std::vector<Point_3> &_vtxs,
       const std::vector<std::vector<std::size_t> > &_tris)
       : vtxs(_vtxs), tris(_tris), is_manifold(true) {}
 
@@ -230,12 +230,12 @@ private:
   boost::associative_property_map<std::map<face_descriptor, std::size_t> > fproxy_map;
   // The attached anchor index of a vertex.
   std::map<vertex_descriptor, int> internal_vidx_map;
-  VertexAnchorMap vanchor_map;
+  Vertex_anchor_map vanchor_map;
 
   // Proxies.
-  std::vector<ProxyWrapper> proxies;
+  std::vector<Proxy_wrapper> proxies;
   // Proxy planes
-  std::vector<ProxyPlane> px_planes;
+  std::vector<Proxy_plane> px_planes;
 
   // All anchors.
   std::vector<Anchor> anchors;
@@ -438,7 +438,7 @@ public:
     BOOST_FOREACH(face_descriptor f, faces(*m_pmesh))
       fproxy_map[f] = CGAL_NOT_TAGGED_ID;
 
-    std::priority_queue<FacetToIntegrate> facet_pqueue;
+    std::priority_queue<Facet_to_integrate> facet_pqueue;
     for (std::size_t i = 0; i < proxies.size(); ++i) {
       face_descriptor f = proxies[i].seed;
       fproxy_map[f] = i;
@@ -446,21 +446,21 @@ public:
       BOOST_FOREACH(face_descriptor fadj, faces_around_face(halfedge(f, *m_pmesh), *m_pmesh)) {
         if (fadj != boost::graph_traits<TriangleMesh>::null_face()
             && fproxy_map[fadj] == CGAL_NOT_TAGGED_ID) {
-          facet_pqueue.push(FacetToIntegrate(
+          facet_pqueue.push(Facet_to_integrate(
             fadj, i, (*fit_error)(fadj, proxies[i].px)));
         }
       }
     }
 
     while (!facet_pqueue.empty()) {
-      const FacetToIntegrate c = facet_pqueue.top();
+      const Facet_to_integrate c = facet_pqueue.top();
       facet_pqueue.pop();
       if (fproxy_map[c.f] == CGAL_NOT_TAGGED_ID) {
         fproxy_map[c.f] = c.px;
         BOOST_FOREACH(face_descriptor fadj, faces_around_face(halfedge(c.f, *m_pmesh), *m_pmesh)) {
           if (fadj != boost::graph_traits<TriangleMesh>::null_face()
             && fproxy_map[fadj] == CGAL_NOT_TAGGED_ID) {
-            facet_pqueue.push(FacetToIntegrate(
+            facet_pqueue.push(Facet_to_integrate(
             fadj, c.px, (*fit_error)(fadj, proxies[c.px].px)));
           }
         }
@@ -522,9 +522,9 @@ public:
     const FT sum_error = compute_fitting_error();
     const FT avg_error = sum_error / FT(static_cast<double>(num_proxies));
 
-    std::vector<ProxyError> px_error;
+    std::vector<Proxy_error> px_error;
     for (std::size_t i = 0; i < proxies.size(); ++i)
-      px_error.push_back(ProxyError(i, proxies[i].err));
+      px_error.push_back(Proxy_error(i, proxies[i].err));
     // sort partition by error
     std::sort(px_error.begin(), px_error.end());
 
@@ -553,7 +553,7 @@ public:
     else {
       // residual from previous proxy in range (-0.5, 0.5] * avg_error
       FT residual(0);
-      BOOST_FOREACH(const ProxyError &pxe, px_error) {
+      BOOST_FOREACH(const Proxy_error &pxe, px_error) {
         // add error residual from previous proxy
         // to_add maybe negative but greater than -0.5
         FT to_add = (residual + pxe.err) / avg_error;
@@ -748,7 +748,7 @@ public:
       BOOST_FOREACH(face_descriptor f, px_facets[pxj])
         merged_patch.push_back(f);
 
-      ProxyWrapper pxw = fit_new_proxy(merged_patch.begin(), merged_patch.end());
+      Proxy_wrapper pxw = fit_new_proxy(merged_patch.begin(), merged_patch.end());
       FT sum_error(0);
       BOOST_FOREACH(face_descriptor f, merged_patch)
         sum_error += (*fit_error)(f, pxw.px);
@@ -857,19 +857,19 @@ public:
    */
   template <typename OutputIterator>
   void get_proxies(OutputIterator out_itr) const {
-    BOOST_FOREACH(const ProxyWrapper &pxw, proxies)
+    BOOST_FOREACH(const Proxy_wrapper &pxw, proxies)
       *out_itr++ = pxw.px;
   }
 
 #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
   /*!
    * @brief Get the wrapped proxies.
-   * @tparam OutputIterator output iterator with ProxyWrapper as value type
+   * @tparam OutputIterator output iterator with Proxy_wrapper as value type
    * @param out_itr output iterator
    */
   template <typename OutputIterator>
   void get_wrapped_proxies(OutputIterator out_itr) const {
-    BOOST_FOREACH(const ProxyWrapper &pxw, proxies)
+    BOOST_FOREACH(const Proxy_wrapper &pxw, proxies)
       *out_itr++ = pxw;
   }
 #endif
@@ -926,7 +926,7 @@ public:
       const halfedge_descriptor he_mark = bitr->he_head;
       halfedge_descriptor he = he_mark;
       do {
-        ChordVector chord;
+        Chord_vector chord;
         walk_to_next_anchor(he, chord);
         bdr.push_back(vanchor_map[target(he, *m_pmesh)]);
       } while(he != he_mark);
@@ -1177,7 +1177,7 @@ private:
    * @param end container end
    */
   template<typename FacetIterator>
-  ProxyWrapper fit_new_proxy(const FacetIterator &beg, const FacetIterator &end) {
+  Proxy_wrapper fit_new_proxy(const FacetIterator &beg, const FacetIterator &end) {
     CGAL_assertion(beg != end);
 
     // use proxy_fitting functor to fit proxy parameters
@@ -1195,7 +1195,7 @@ private:
       }
     }
 
-    return ProxyWrapper(px, seed);
+    return Proxy_wrapper(px, seed);
   }
 
   /*!
@@ -1204,12 +1204,12 @@ private:
    * 2. Set seed.
    * @param face_descriptor facet
    */
-  ProxyWrapper fit_new_proxy(const face_descriptor &f) {
+  Proxy_wrapper fit_new_proxy(const face_descriptor &f) {
     std::vector<face_descriptor> fvec(1, f);
     // fit proxy parameters
     Proxy px = (*proxy_fitting)(fvec.begin(), fvec.end());
 
-    return ProxyWrapper(px, f);
+    return Proxy_wrapper(px, f);
   }
 
   /*!
@@ -1217,7 +1217,7 @@ private:
    * @return total fitting error
    */
   FT compute_fitting_error() {
-    BOOST_FOREACH(ProxyWrapper &pxw, proxies)
+    BOOST_FOREACH(Proxy_wrapper &pxw, proxies)
       pxw.err = FT(0);
     BOOST_FOREACH(face_descriptor f, faces(*m_pmesh)) {
       std::size_t pxidx = fproxy_map[f];
@@ -1225,7 +1225,7 @@ private:
     }
 
     FT sum_error(0);
-    BOOST_FOREACH(const ProxyWrapper &pxw, proxies)
+    BOOST_FOREACH(const Proxy_wrapper &pxw, proxies)
       sum_error += pxw.err;
 
     return sum_error;
@@ -1261,7 +1261,7 @@ private:
       }
       norm = scale_functor(norm, FT(1.0 / std::sqrt(CGAL::to_double(norm.squared_length()))));
 
-      px_planes.push_back(ProxyPlane(fit_plane, norm, area));
+      px_planes.push_back(Proxy_plane(fit_plane, norm, area));
     }
   }
 
@@ -1314,7 +1314,7 @@ private:
 
       const halfedge_descriptor he_mark = he_start;
       do {
-        ChordVector chord;
+        Chord_vector chord;
         walk_to_next_anchor(he_start, chord);
         borders.back().num_anchors += subdivide_chord(chord.begin(), chord.end(), split_criterion);
 
@@ -1322,7 +1322,7 @@ private:
         std::cerr << "#chord_anchor " << borders.back().num_anchors << std::endl;
 #endif
 
-        for (ChordVectorIterator citr = chord.begin(); citr != chord.end(); ++citr)
+        for (Chord_vector_iterator citr = chord.begin(); citr != chord.end(); ++citr)
           he_candidates.erase(*citr);
       } while (he_start != he_mark);
     }
@@ -1345,7 +1345,7 @@ private:
       Point_3 pt_end = pt_begin;
 
       halfedge_descriptor he = he_mark;
-      ChordVector chord;
+      Chord_vector chord;
       std::size_t count = 0;
       do {
         walk_to_next_border_halfedge(he);
@@ -1370,7 +1370,7 @@ private:
       Vector_3 chord_vec = vector_functor(pt_begin, pt_end);
       chord_vec = scale_functor(chord_vec,
         FT(1.0 / std::sqrt(CGAL::to_double(chord_vec.squared_length()))));
-      for (ChordVectorIterator citr = chord.begin(); citr != chord.end(); ++citr) {
+      for (Chord_vector_iterator citr = chord.begin(); citr != chord.end(); ++citr) {
         Vector_3 vec = vector_functor(pt_begin, point_pmap[target(*citr, *m_pmesh)]);
         vec = CGAL::cross_product(chord_vec, vec);
         FT dist(std::sqrt(CGAL::to_double(vec.squared_length())));
@@ -1481,7 +1481,7 @@ private:
       const halfedge_descriptor he_mark = bdr.he_head;
       halfedge_descriptor he = he_mark;
       do {
-        ChordVector chord;
+        Chord_vector chord;
         walk_to_next_anchor(he, chord);
 
         std::vector<FT> vdist;
@@ -1498,7 +1498,7 @@ private:
         const int anchorleft = vanchor_map[source(chord.front(), *m_pmesh)];
         const int anchorright = vanchor_map[target(chord.back(), *m_pmesh)];
         typename std::vector<FT>::iterator ditr = vdist.begin() + 1;
-        for (typename ChordVector::iterator hitr = chord.begin();
+        for (typename Chord_vector::iterator hitr = chord.begin();
           hitr != chord.end() - 1; ++hitr, ++ditr) {
           if (*ditr < half_chord_len)
             global_vtag_map[to_sgv_map[target(*hitr, *m_pmesh)]] = anchorleft;
@@ -1543,7 +1543,7 @@ private:
    * @param[in/out] he_start starting region border halfedge pointing to a vertex associated with an anchor
    * @param[out] chord recorded path chord
    */
-  void walk_to_next_anchor(halfedge_descriptor &he_start, ChordVector &chord) const {
+  void walk_to_next_anchor(halfedge_descriptor &he_start, Chord_vector &chord) const {
     do {
       walk_to_next_border_halfedge(he_start);
       chord.push_back(he_start);
@@ -1572,8 +1572,8 @@ private:
    * @return the number of anchors of the chord apart from the first one
    */
   std::size_t subdivide_chord(
-    const ChordVectorIterator &chord_begin,
-    const ChordVectorIterator &chord_end,
+    const Chord_vector_iterator &chord_begin,
+    const Chord_vector_iterator &chord_end,
     const FT thre) {
     const std::size_t chord_size = std::distance(chord_begin, chord_end);
     const halfedge_descriptor he_first = *chord_begin;
@@ -1586,7 +1586,7 @@ private:
       return 1;
 
     bool if_subdivide = false;
-    ChordVectorIterator chord_max;
+    Chord_vector_iterator chord_max;
     const Point_3 &pt_begin = point_pmap[source(he_first, *m_pmesh)];
     const Point_3 &pt_end = point_pmap[target(he_last, *m_pmesh)];
     if (anchor_first == anchor_last) {
@@ -1594,7 +1594,7 @@ private:
       CGAL_assertion(chord_size > 2);
 
       FT dist_max(0.0);
-      for (ChordVectorIterator citr = chord_begin; citr != chord_end; ++citr) {
+      for (Chord_vector_iterator citr = chord_begin; citr != chord_end; ++citr) {
         FT dist = CGAL::squared_distance(pt_begin, point_pmap[target(*citr, *m_pmesh)]);
         dist = FT(std::sqrt(CGAL::to_double(dist)));
         if (dist > dist_max) {
@@ -1611,7 +1611,7 @@ private:
       FT chord_len(std::sqrt(CGAL::to_double(chord_vec.squared_length())));
       chord_vec = scale_functor(chord_vec, FT(1.0) / chord_len);
 
-      for (ChordVectorIterator citr = chord_begin; citr != chord_end; ++citr) {
+      for (Chord_vector_iterator citr = chord_begin; citr != chord_end; ++citr) {
         Vector_3 vec = vector_functor(pt_begin, point_pmap[target(*citr, *m_pmesh)]);
         vec = CGAL::cross_product(chord_vec, vec);
         FT dist(std::sqrt(CGAL::to_double(vec.squared_length())));
@@ -1731,7 +1731,7 @@ private:
       vtx.push_back(a.pos);
 
     typedef typename PolyhedronSurface::HalfedgeDS HDS;
-    TrianglePolyhedronBuilder<HDS> tpbuilder(vtx, tris);
+    Triangle_polyhedron_builder<HDS> tpbuilder(vtx, tris);
     poly.delegate(tpbuilder);
 
     return tpbuilder.is_manifold;
