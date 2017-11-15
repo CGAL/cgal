@@ -39,6 +39,7 @@
 
 #include <vector>
 #include <cstdlib>
+#include <queue>
 
 #define NB_VBO_BUFFERS 8
 #define NB_VAO_BUFFERS 4
