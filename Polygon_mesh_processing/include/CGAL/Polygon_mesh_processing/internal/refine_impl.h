@@ -169,7 +169,7 @@ private:
     collect_interior_edges(faces, border_edges, interior_edges, included_map);
     collect_interior_edges(new_faces, border_edges, interior_edges, included_map);
 
-    #ifndef CGAL_PMP_REFINE_DEBUG
+    #ifdef CGAL_PMP_REFINE_DEBUG
     std::cerr << "Test " << interior_edges.size() << " edges " << std::endl;
     #endif
     //do not just use std::set (included_map) for iteration, the order effects the output (we like to make it deterministic)
@@ -180,7 +180,7 @@ private:
       }
     }
 
-    #ifndef CGAL_PMP_REFINE_DEBUG
+    #ifdef CGAL_PMP_REFINE_DEBUG
     std::cerr  << "|flips| = " << flips << std::endl;
     #endif
     return flips > 0;
