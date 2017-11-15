@@ -8,6 +8,10 @@
 #include <algorithm>
 #include <vector>
 
+#ifdef CGAL_USE_BASIC_VIEWER
+#include "polyhedron_viewer_qt.h"
+#endif
+
 using std::cerr;
 using std::endl;
 using std::cout;
@@ -155,5 +159,10 @@ int main() {
     intersection( P);
     cerr << "Intersection       : " << user_time.time() << " seconds." << endl;
     write_off();
+
+#ifdef CGAL_USE_BASIC_VIEWER
+  display(P);
+#endif // CGAL_USE_BASIC_VIEWER
+
     return 0;
 }
