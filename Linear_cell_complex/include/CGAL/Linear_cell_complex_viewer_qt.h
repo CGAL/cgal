@@ -14,14 +14,13 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 
-#ifndef CGAL_LCC_3_VIEWER_QT_H
-#define CGAL_LCC_3_VIEWER_QT_H
+#ifndef CGAL_LCC_VIEWER_QT_H
+#define CGAL_LCC_VIEWER_QT_H
 
-#include "basic_viewer.h"
+#include "CGAL/Qt/Basic_viewer.h"
 #include <CGAL/Linear_cell_complex.h>
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/Random.h>
@@ -29,6 +28,20 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Local_kernel;
 typedef Local_kernel::Point_3  Local_point;
 typedef Local_kernel::Vector_3 Local_vector;
+
+
+CGAL::Color get_random_color(CGAL::Random& random)
+{
+  CGAL::Color res;
+  do
+  {
+    res=CGAL::Color(random.get_int(0,256),
+                    random.get_int(0,256),
+                    random.get_int(0,256));
+  }
+  while(res.red()==255 && res.green()==255 && res.blue()==255);
+  return res;
+}
 
 // Default color functor; user can change it to have its own face color
 struct DefaultColorFunctor
@@ -42,15 +55,7 @@ struct DefaultColorFunctor
 
     // Here dh is the smaller dart of its face
     CGAL::Random random(alcc.darts().index(dh));
-    CGAL::Color res;
-    do
-    {
-      res=CGAL::Color(random.get_int(0,256),
-                      random.get_int(0,256),
-                      random.get_int(0,256));
-    }
-    while(res.red()==255 && res.green()==255 && res.blue()==255);
-    return res;
+    return get_random_color(random);
   }
 };
 
@@ -142,7 +147,10 @@ protected:
     if (c.red()<60 || c.green()<60 || c.blue()<60)
       mono_face_begin();
     else
+    {
+      // c=CGAL::Color(100,100,100);
       colored_face_begin(c);
+    }
 
     cur=dh;
     do
@@ -158,19 +166,36 @@ protected:
 
   void compute_edge(Dart_const_handle dh)
   {
+    CGAL::Random random((unsigned long int)&*dh);
+    CGAL::Color c=get_random_color(random); // TODO REMOVE LATER
+
     Local_point p1 = geomutils.get_point(lcc, dh);
     Dart_const_handle d2 = lcc.other_extremity(dh);
-    if ( d2!=NULL )
+    if (d2!=NULL)
     {
       Local_point p2 = geomutils.get_point(lcc, d2);
-      add_mono_segment(p1, p2);
+      if (c.red()<60 || c.green()<60 || c.blue()<60)
+        add_mono_segment(p1, p2);
+      else
+      {
+        c=CGAL::Color(100,100,100);
+        add_colored_segment(p1, p2, c); // TODO REMOVE LATER
+      }
     }
   }
 
-  void compute_vertex(Dart_const_handle dh, bool& empty)
+  void compute_vertex(Dart_const_handle dh)
   {
+    CGAL::Random random((unsigned long int)&*dh);  // TODO REMOVE LATER
+    CGAL::Color c=get_random_color(random);
+
     Local_point p = geomutils.get_point(lcc, dh);
-    add_mono_point(p);
+    if (c.red()<60 || c.green()<60 || c.blue()<60)
+      add_mono_point(p);
+    else
+    { //c=CGAL::Color(100,100,100);
+      add_colored_point(p, c); // TODO REMOVE LATER
+    }
   }
 
   void compute_elements()
@@ -181,8 +206,6 @@ protected:
     unsigned int markedges    = lcc.get_new_mark();
     unsigned int markvertices = lcc.get_new_mark();
 
-    bool empty = true;
-    
     for (typename LCC::Dart_range::const_iterator it=lcc.darts().begin(),
          itend=lcc.darts().end(); it!=itend; ++it )
     {
@@ -200,7 +223,7 @@ protected:
 
       if ( !lcc.is_marked(it, markvertices) )
       {
-        compute_vertex(it, empty);
+        compute_vertex(it);
         CGAL::mark_cell<LCC, 0>(lcc, it, markvertices);
       }
     }
@@ -223,10 +246,10 @@ protected:
 };
 
   
-template<class LCC, class ColorFunctor=DefaultColorFunctor>
-void display_lcc(const LCC& alcc,
-                 const char* title="",
-                 bool nofill=false)
+template<class LCC, class ColorFunctor>
+void display(const LCC& alcc,
+             const char* title="",
+             bool nofill=false)
 {
   int argc=1;
 
@@ -239,4 +262,10 @@ void display_lcc(const LCC& alcc,
   app.exec();
 }
 
-#endif // CGAL_LCC_3_VIEWER_QT_H
+template<class LCC>
+void display(const LCC& alcc,
+             const char* title="",
+             bool nofill=false)
+{ return display<LCC, DefaultColorFunctor>(alcc, title, nofill); }
+
+#endif // CGAL_LCC_VIEWER_QT_H

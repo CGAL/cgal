@@ -5,9 +5,8 @@
 #include <iostream>
 #include <fstream>
 
-/* If you want to use a viewer, you can use one qglviewer. */
 #ifdef CGAL_USE_BASIC_VIEWER
-#include "linear_cell_complex_3_viewer_qt.h"
+#include <CGAL/Linear_cell_complex_viewer_qt.h>
 #endif
 
 /* // If you want to use exact constructions.
@@ -61,7 +60,7 @@ void display_voronoi(LCC_3& alcc, Dart_handle adart)
                                           << std::endl;
 
 #ifdef CGAL_USE_BASIC_VIEWER
-  display_lcc(alcc);
+  display(alcc);
 #endif // CGAL_USE_BASIC_VIEWER
 }
 

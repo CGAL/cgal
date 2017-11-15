@@ -2,9 +2,9 @@
 #include <CGAL/Linear_cell_complex_for_generalized_map.h>
 #include <vector>
 
-/* If you want to use a viewer, you can use qglviewer. */
+
 #ifdef CGAL_USE_BASIC_VIEWER
-#include "linear_cell_complex_3_viewer_qt.h"
+#include "CGAL/Linear_cell_complex_viewer_qt.h"
 #endif
 
 typedef CGAL::Linear_cell_complex_for_combinatorial_map<3> LCC_3_cmap;
@@ -55,7 +55,7 @@ void run_test()
                       lcc.other_orientation(lcc.template opposite<2>(lcc.previous(dh3))));
 
 #ifdef CGAL_USE_BASIC_VIEWER
-  display_lcc(lcc);
+  display(lcc);
 #endif // CGAL_USE_BASIC_VIEWER
 
   lcc.insert_cell_1_in_cell_2(lcc.next(dh1),
@@ -76,7 +76,7 @@ void run_test()
                                          << lcc.is_valid() << std::endl;
   
 #ifdef CGAL_USE_BASIC_VIEWER
-  display_lcc(lcc);
+  display(lcc);
 #endif // CGAL_USE_BASIC_VIEWER
 }
 

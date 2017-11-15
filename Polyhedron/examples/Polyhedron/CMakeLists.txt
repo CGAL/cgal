@@ -10,13 +10,14 @@ cmake_minimum_required(VERSION 2.8.10)
 # based on qt. Just uncomment the following two lines, plus the lines qt5_use_modules below
 
 find_package(CGAL COMPONENTS Qt5)
-include("CMakeBasicViewerQt.inc")
+
 # If you don't want to visualize, use the following line (otherwise comment it)
 # find_package(CGAL QUIET)
 
 if ( CGAL_FOUND )
 
   include( ${CGAL_USE_FILE} )
+  find_package(CGALBasicViewer)
 
   include( CGAL_CreateSingleSourceCGALProgram )
 

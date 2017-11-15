@@ -17,11 +17,7 @@ find_package(OpenGL     REQUIRED)
 add_definitions(${QT_DEFINITIONS})
 add_definitions(-DQT_NO_KEYWORDS)
 
-include_directories( ${QGLVIEWER_INCLUDE_DIR} )
-add_definitions(${QGLVIEWER_DEFINITIONS})
-
-set (BASIC_VIEWER_LIBRARIES ${QT_LIBRARIES} ${QGLVIEWER_LIBRARIES}
-                          ${OPENGL_gl_LIBRARY}) # ${OPENGL_glu_LIBRARY}
+set (BASIC_VIEWER_LIBRARIES ${QT_LIBRARIES} )
 
 set(BASIC_VIEWER_MODULES Xml OpenGL)
 
