@@ -697,21 +697,14 @@ protected:
 	if(fci.is_shalfedge()) {
           SHalfedge_around_facet_const_circulator sfc(fci), send(sfc);
 	  CGAL_For_all(sfc,send) {
-            CGAL_NEF_TRACEN("  insert point" << sfc->source()->source()->point());
-	    CTVertex_handle ctv = ct.insert(sfc->source()->source()->point());
-	    ctv2v[ctv] = sfc->source()->source();
-          }
-        }
-      }
-
-      for(fci=f->facet_cycles_begin(); fci!=f->facet_cycles_end(); ++fci) {
-	if(fci.is_shalfedge()) {
-          SHalfedge_around_facet_const_circulator sfc(fci), send(sfc);
-	  CGAL_For_all(sfc,send) {
-            CGAL_NEF_TRACEN("  insert constraint" << sfc->source()->source()->point()
-	                     << "->" << sfc->source()->twin()->source()->point());
-	    ct.insert_constraint(sfc->source()->source()->point(),
-	                         sfc->source()->twin()->source()->point());
+            Vertex_const_handle v=sfc->source()->source();
+            CGAL_NEF_TRACEN("  insert point" << v->point());
+	    CTVertex_handle ctv = ct.insert(v->point());
+	    ctv2v[ctv] = v;
+            Vertex_const_handle t=sfc->source()->twin()->source();
+            CGAL_NEF_TRACEN("  insert constraint" << v->point()
+	                     << "->" << t->point());
+	    ct.insert_constraint(v->point(),t->point());
           }
         }
       }
