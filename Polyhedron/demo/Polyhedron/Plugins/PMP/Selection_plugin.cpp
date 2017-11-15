@@ -91,13 +91,32 @@ public:
     mw = mainWindow;
     scene = scene_interface;
     messages = m;
-    actionSelection = new QAction(tr("Selection"), mw);
+    actionSelection = new QAction(
+#ifdef USE_SURFACE_MESH
+          QString("Surface Mesh Selection")
+#else
+          tr("Polyhedron Selection")
+#endif
+          , mw);
     connect(actionSelection, SIGNAL(triggered()), this, SLOT(selection_action()));
     last_mode = 0;
-    dock_widget = new QDockWidget("Selection", mw);
+    dock_widget = new QDockWidget(
+      #ifdef USE_SURFACE_MESH
+                "Surface Mesh Selection"
+      #else
+                "Polyhedron Selection"
+      #endif
+          , mw);
     dock_widget->setVisible(false);
-
     ui_widget.setupUi(dock_widget);
+    dock_widget->setWindowTitle(tr(
+#ifdef USE_SURFACE_MESH
+                                  "Surface Mesh Selection"
+#else
+                                  "Polyhedron Selection"
+#endif
+                                  ));
+
     addDockWidget(dock_widget);
 
     connect(ui_widget.Select_all_button,  SIGNAL(clicked()), this, SLOT(on_Select_all_button_clicked()));
@@ -293,9 +312,15 @@ public Q_SLOTS:
   }
   // Create selection item for selected polyhedron item
   void on_Create_selection_item_button_clicked() {
-    Scene_face_graph_item* poly_item = getSelectedItem<Scene_face_graph_item>();
+    Scene_face_graph_item* poly_item = qobject_cast<Scene_face_graph_item*>(scene->item(scene->mainSelectionIndex()));
     if(!poly_item) {
-      print_message("Error: there is no selected polyhedron item!");
+      print_message("Error: there is no selected "
+              #ifdef USE_SURFACE_MESH
+                        "Surface_mesh "
+              #else
+                        "Polyhedron "
+              #endif
+                    "item!");
       return; 
     }
     // all other arrangements (putting inside selection_item_map), setting names etc,
