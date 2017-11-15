@@ -323,6 +323,10 @@ public:
 
   struct Construct_point_2 : public BaseClass::Construct_point_2
   {
+    typedef typename Kernel_::FT FT;
+    typedef typename Kernel_::Point_2 Point_2;
+    typedef typename Kernel_::Weighted_point_2 Weighted_point_2;
+    
 #ifndef CGAL_CFG_MATCHING_BUG_6
     using BaseClass::Construct_point_2::operator();
 #else // CGAL_CFG_MATCHING_BUG_6
@@ -361,13 +365,13 @@ public:
     
 #endif // CGAL_CFG_MATCHING_BUG_6
     
-    typename Kernel_::Point_2 operator()(const typename Kernel_::Point_2& p) const
+    const Point_2& operator()(const Point_2& p) const
     {
       return p;
     }
 
     
-    typename Kernel_::Point_2 operator()(const typename Kernel_::Weighted_point_2& p) const
+    Point_2 operator()(const Weighted_point_2& p) const
     {
       typedef Lazy_rep_3<typename Approximate_kernel::Weighted_point_2,
                          typename Exact_kernel::Weighted_point_2,
@@ -375,8 +379,8 @@ public:
                          typename Exact_kernel::Construct_weighted_point_2,
                          E2A_,
                          Return_base_tag,
-                         typename Kernel_::Point_2,
-                         CGAL::Lazy_exact_nt<class CGAL::Gmpq>
+                         Point_2,
+                         FT
                          > LR;
 
       
@@ -393,8 +397,11 @@ public:
   
   struct Construct_point_3 : public BaseClass::Construct_point_3
   {
+    typedef typename Kernel_::FT FT;
     typedef typename Kernel_::Point_3 Point_3;
-#if 0 // ndef CGAL_CFG_MATCHING_BUG_6
+    typedef typename Kernel_::Weighted_point_3 Weighted_point_3;
+    
+#ifndef CGAL_CFG_MATCHING_BUG_6
   using BaseClass::Construct_point_3::operator();
 #else // CGAL_CFG_MATCHING_BUG_6
 
@@ -437,12 +444,12 @@ public:
     
 #endif // CGAL_CFG_MATCHING_BUG_6
     
-    typename Kernel_::Point_3 operator()(const typename Kernel_::Point_3& p) const
+    const Point_3& operator()(const Point_3& p) const
     {
       return p;
     }
     
-    typename Kernel_::Point_3 operator()(const typename Kernel_::Weighted_point_3& p) const
+    Point_3 operator()(const Weighted_point_3& p) const
     {
       typedef Lazy_rep_3<typename Approximate_kernel::Weighted_point_3,
                          typename Exact_kernel::Weighted_point_3,
@@ -450,8 +457,8 @@ public:
                          typename Exact_kernel::Construct_weighted_point_3,
                          E2A_,
                          Return_base_tag,
-                         typename Kernel_::Point_3,
-                         CGAL::Lazy_exact_nt<class CGAL::Gmpq>
+                         Point_3,
+                         FT
                          > LR;
 
       
