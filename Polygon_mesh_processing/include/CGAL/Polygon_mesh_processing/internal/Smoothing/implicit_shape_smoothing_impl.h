@@ -168,8 +168,8 @@ public:
   }
 
 
-  void solve_system(Eigen_matrix& stiffness_matrix)
-  //void solve_system(Eigen::SparseMatrix<double>& L, const double time)
+  //void solve_system(Eigen_matrix& stiffness_matrix)
+  void solve_system(Eigen::SparseMatrix<double>& L, const double time)
   {
 
     Eigen_matrix A(nb_vert_, nb_vert_);
@@ -182,14 +182,9 @@ public:
     Eigen_vector Xy(nb_vert_);
     Eigen_vector Xz(nb_vert_);
 
-   // compute_coeff_matrix(A, L, time);
-    compute_coeff_matrix(A, stiffness_matrix);
+    compute_coeff_matrix(A, L, time);
 
     compute_rhs(bx, by, bz);
-
-    std::cout<<"bx= "<<bx<<std::endl;
-    std::cout<<"by= "<<by<<std::endl;
-    std::cout<<"bz= "<<bz<<std::endl;
 
 
     Eigen_solver solver;
@@ -349,8 +344,8 @@ private:
 
 
 
-    //void compute_coeff_matrix(Matrix& A, Eigen_matrix& L, const double time)
-    void compute_coeff_matrix(Eigen_matrix& A, Eigen_matrix& L)
+    void compute_coeff_matrix(Eigen_matrix& A, Eigen_matrix& L, const double time)
+    //void compute_coeff_matrix(Eigen_matrix& A, Eigen_matrix& L)
     {
 
       //export_eigen_matrix(L, "data/L");
@@ -362,7 +357,8 @@ private:
       //export_eigen_matrix(D, "data/D");
 
 
-      double delta = 0.001;
+      std::cout<<"time= "<<time<<std::endl;
+      double delta = time;
 
 
       //Eigen_matrix D(L.rows(), L.cols());

@@ -238,6 +238,7 @@ public Q_SLOTS:
         //unsigned int nb_iter = ui_widget.curv_iterations_spinBox_2->value();
         unsigned int nb_iter = 1;
 
+        /*
         if(!is_stiffness_matrix_setup)
         {
             setup_mcf_system(pmesh, nb_iter, stiffness_matrix);
@@ -246,6 +247,9 @@ public Q_SLOTS:
         // todo: pass nb_iter as named parameter
         solve_mcf_system(pmesh, time, nb_iter, stiffness_matrix);
 
+        */
+
+        smooth_shape(pmesh, time, nb_iter);
 
         poly_item->invalidateOpenGLBuffers();
         Q_EMIT poly_item->itemChanged();

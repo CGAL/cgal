@@ -11,7 +11,7 @@ namespace Polygon_mesh_processing {
 
 
 template<typename PolygonMesh>
-void smooth_shape(PolygonMesh& mesh, int nb_iter)
+void smooth_shape(PolygonMesh& mesh, const double time, std::size_t nb_iter)
 {
 
   // VPmap type
@@ -23,9 +23,9 @@ void smooth_shape(PolygonMesh& mesh, int nb_iter)
   Eigen::SparseMatrix<double> stiffness_matrix;
   stiffness_matrix = smoother.calc_stiff_matrix();
 
-  for(unsigned int t=0; t<nb_iter; ++t)
+  for(std::size_t t=0; t<nb_iter; ++t)
   {
-    smoother.solve_system(stiffness_matrix);
+    smoother.solve_system(stiffness_matrix, time);
   }
 
 }

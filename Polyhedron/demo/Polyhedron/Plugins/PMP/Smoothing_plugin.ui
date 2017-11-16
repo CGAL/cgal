@@ -55,7 +55,7 @@
     <widget class="QSpinBox" name="time_spinBox">
      <property name="geometry">
       <rect>
-       <x>380</x>
+       <x>400</x>
        <y>80</y>
        <width>61</width>
        <height>31</height>
