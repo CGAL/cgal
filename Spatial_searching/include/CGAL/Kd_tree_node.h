@@ -294,7 +294,7 @@ namespace CGAL {
     // ... or if it exists
     template <typename FuzzyQueryItem>
     bool contains(
-      const typename FuzzyQueryItem& q,
+      const FuzzyQueryItem& q,
       Point_d const& p,
       typename std::vector<FT>::const_iterator it_coord_begin,
       typename std::vector<FT>::const_iterator it_coord_end,
