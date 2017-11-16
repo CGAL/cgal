@@ -143,6 +143,12 @@ if ( CGAL_FOUND )
     add_to_cached_list(CGAL_EXECUTABLE_TARGETS simple_triangulation)
     target_link_libraries(simple_triangulation ${IPE_LIBRARIES})
 
+    include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
+
+    foreach(target ${CGAL_IPELETS} simple_triangulation)
+      cgal_add_compilation_test(${target})
+    endforeach()
+
   else()
     message(STATUS "NOTICE: This program requires the Ipe include files and library, and will not be compiled.")
   endif()

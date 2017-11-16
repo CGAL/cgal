@@ -102,6 +102,14 @@ target_link_libraries( Regular_triangulation_2 ${QT_LIBRARIES} )
 # Link with CGAL
 target_link_libraries( Regular_triangulation_2 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
 
+include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
+foreach(target
+    Constrained_Delaunay_triangulation_2
+    Delaunay_triangulation_2
+    Regular_triangulation_2)
+  cgal_add_compilation_test(${target})
+endforeach()
+
 else()
 
   message(STATUS "NOTICE: This demo requires CGAL and Qt5, and will not be compiled.")

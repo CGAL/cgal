@@ -83,4 +83,6 @@ target_link_libraries(Linear_cell_complex_3_demo ${QT_LIBRARIES}
 target_link_libraries(Linear_cell_complex_3_demo ${OPENGL_gl_LIBRARY}
                                                  ${OPENGL_glu_LIBRARY} )
 
+include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
+cgal_add_compilation_test(Linear_cell_complex_3_demo)
 endif()
