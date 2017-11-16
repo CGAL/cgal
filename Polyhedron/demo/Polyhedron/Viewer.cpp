@@ -1376,10 +1376,13 @@ void Viewer::paintEvent(QPaintEvent *)
 
 void Viewer::paintGL()
 {
+  makeCurrent();
   if (!d->painter->isActive())
     d->painter->begin(this);
   d->painter->beginNativePainting();
   glClearColor(backgroundColor().redF(), backgroundColor().greenF(), backgroundColor().blueF(), 1.0);
+  glClearDepth(1.0f);
+  glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 
   //set the default frustum
   GLdouble d_mat[16];
@@ -1393,6 +1396,7 @@ void Viewer::paintGL()
   postDraw();
   d->painter->endNativePainting();
   d->painter->end();
+  doneCurrent();
 }
 
 void Viewer::postDraw()
