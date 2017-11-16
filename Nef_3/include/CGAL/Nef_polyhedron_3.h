@@ -67,6 +67,7 @@
 #include <CGAL/Projection_traits_yz_3.h>
 #include <CGAL/Projection_traits_xz_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
+#include <CGAL/Triangulation_face_base_with_info_2.h>
 #include <CGAL/Constrained_triangulation_face_base_2.h>
 #include <list>
 
@@ -672,7 +673,8 @@ protected:
   class Triangulation_handler2 {
 
     typedef typename CGAL::Triangulation_vertex_base_with_info_2<Vertex_const_handle,Kernel> Vb;
-    typedef typename CGAL::Constrained_triangulation_face_base_2<Kernel>     Fb;
+    typedef typename CGAL::Triangulation_face_base_with_info_2<bool,Kernel> Info;
+    typedef typename CGAL::Constrained_triangulation_face_base_2<Kernel,Info>     Fb;
     typedef typename CGAL::Triangulation_data_structure_2<Vb,Fb>             TDS;
     typedef typename CGAL::Constrained_triangulation_2<Kernel,TDS>           CT;
 
@@ -683,13 +685,12 @@ protected:
     typedef typename CT::Edge                  Edge;
 
     CT ct;
-    CGAL::Unique_hash_map<Face_handle, bool> visited;
     Halffacet_const_handle f;
     Plane_3 supporting_plane;
 
   public:
     Triangulation_handler2(Halffacet_const_handle f) : 
-      visited(false), supporting_plane(f->plane()), f(f) {}
+      supporting_plane(f->plane()), f(f) {}
 
     template<typename PIB, typename Index>
     void handle_triangles(PIB& pib, Index& VI) {
@@ -728,7 +729,7 @@ protected:
       traverse_triangulation(first, first->index(opposite));
     Finite_face_iterator fi;
     for(fi=ct.finite_faces_begin();fi!=ct.finite_faces_end(); ++fi) {
-       if(visited[fi] == false) continue;
+       if(fi->info() == false) continue;
 	   CTVertex_handle p=fi->vertex(0);
 	   CTVertex_handle q=fi->vertex(1);
 	   CTVertex_handle r=fi->vertex(2);
@@ -752,14 +753,14 @@ protected:
 
     void descend_triangulation(Face_handle f, int i) {
         Face_handle h=f->neighbor(i);
-        if(!ct.is_constrained(Edge(f,i)) && !visited[h]) {
+        if(!ct.is_constrained(Edge(f,i)) && !h->info()) {
                 Face_handle child(h);
                 traverse_triangulation(child,child->index(f));
         }
     }
 
     void traverse_triangulation(Face_handle f, int parent) {
-       visited[f]=true;
+       f->info() = true;
        descend_triangulation(f,ct.cw(parent));
        descend_triangulation(f,ct.ccw(parent));
     }
