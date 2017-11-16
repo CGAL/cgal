@@ -729,18 +729,21 @@ protected:
     Finite_face_iterator fi;
     for(fi=ct.finite_faces_begin();fi!=ct.finite_faces_end(); ++fi) {
        if(visited[fi] == false) continue;
-	Plane_3 plane(fi->vertex(0)->point(),
-		      fi->vertex(1)->point(),
-		      fi->vertex(2)->point());
+	   CTVertex_handle p=fi->vertex(0);
+	   CTVertex_handle q=fi->vertex(1);
+	   CTVertex_handle r=fi->vertex(2);
+	Plane_3 plane(p->point(),
+		      q->point(),
+		      r->point());
 	pib.begin_facet();
 	if(same_orientation(plane)) {
-	  pib.add_vertex_to_facet(VI[ctv2v[fi->vertex(0)]]);
-	  pib.add_vertex_to_facet(VI[ctv2v[fi->vertex(1)]]);
-	  pib.add_vertex_to_facet(VI[ctv2v[fi->vertex(2)]]);
+	  pib.add_vertex_to_facet(VI[ctv2v[p]]);
+	  pib.add_vertex_to_facet(VI[ctv2v[q]]);
+	  pib.add_vertex_to_facet(VI[ctv2v[r]]);
 	} else {
-	  pib.add_vertex_to_facet(VI[ctv2v[fi->vertex(0)]]);
-	  pib.add_vertex_to_facet(VI[ctv2v[fi->vertex(2)]]);
-	  pib.add_vertex_to_facet(VI[ctv2v[fi->vertex(1)]]);
+	  pib.add_vertex_to_facet(VI[ctv2v[p]]);
+	  pib.add_vertex_to_facet(VI[ctv2v[r]]);
+	  pib.add_vertex_to_facet(VI[ctv2v[q]]);
 	}
 	pib.end_facet();
       }
