@@ -77,7 +77,7 @@ Surface_mesh_segmentation Triangulated Surface Mesh Segmentation
 Surface_mesh_shortest_path Triangulated Surface Mesh Shortest Paths
 Surface_mesh_simplification Triangulated Surface Mesh Simplification
 Surface_mesh_skeletonization Triangulated Surface Mesh Skeletonization
-Sweep_line_2 2D Intersection of Curves
+Surface_sweep_2 2D Intersection of Curves
 TDS_2 2D Triangulation Data Structure
 TDS_3 3D Triangulation Data Structure
 Three Three
