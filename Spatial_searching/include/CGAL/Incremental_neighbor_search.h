@@ -442,12 +442,8 @@ namespace CGAL {
 	}
 
 
-        template<bool use_cache>
-        bool search_in_leaf(typename Tree::Leaf_node_const_handle node, bool search_furthest);
-
         // With cache
-        template<>
-        bool search_in_leaf<true>(typename Tree::Leaf_node_const_handle node, bool search_furthest)
+        bool search_in_leaf(typename Tree::Leaf_node_const_handle node, Tag_true, bool search_furthest)
         {
           typename Tree::iterator it_node_point = node->begin(), it_node_point_end = node->end();
           typename std::vector<FT>::const_iterator cache_point_begin = m_tree.cache_begin() + m_dim*(it_node_point - m_tree.begin());
@@ -486,8 +482,7 @@ namespace CGAL {
         }
 
         // Without cache
-        template<>
-        bool search_in_leaf<false>(typename Tree::Leaf_node_const_handle node, bool search_furthest)
+        bool search_in_leaf(typename Tree::Leaf_node_const_handle node, Tag_false, bool search_furthest)
         {
           typename Tree::iterator it_node_point = node->begin(), it_node_point_end = node->end();
 
@@ -495,7 +490,7 @@ namespace CGAL {
           {
             number_of_items_visited++;
             FT distance_to_query_point =
-              orthogonal_distance_instance.transformed_distance(query_point, *it_node_point);
+              distance.transformed_distance(query_point, *it_node_point);
 
             Point_with_transformed_distance *NN_Candidate =
               new Point_with_transformed_distance(*it_node_point, distance_to_query_point);
@@ -606,8 +601,8 @@ namespace CGAL {
               static_cast<typename Tree::Leaf_node_const_handle>(N);
 	    number_of_leaf_nodes_visited++;
 	    if (node->size() > 0) {
-              next_neighbour_found =
-                search_in_leaf<internal::Has_points_cache<Tree, internal::has_Enable_points_cache<Tree>::type::value>::value>(node, !search_nearest_neighbour);
+              typename internal::Has_points_cache<Tree, internal::has_Enable_points_cache<Tree>::type::value>::type dummy;
+              next_neighbour_found = search_in_leaf(node, dummy, !search_nearest_neighbour);
 	    }
 	  }   // next_neighbour_found or priority queue is empty
 	  // in the latter case also the item priority queue is empty

@@ -58,11 +58,9 @@ public:
 
     typename SearchTraits::Construct_cartesian_const_iterator_d construct_it = 
       m_tree.traits().construct_cartesian_const_iterator_d_object();
-    m_dim = static_cast<int>(std::distance(
-      construct_it(this->query_object), construct_it(this->query_object, 0)));
 
     compute_neighbors_general(tree.root(),tree.bounding_box());
-    if (sorted) this->queue.sort();    
+    if (sorted) this->queue.sort();
   };
 
 private:  
@@ -70,7 +68,6 @@ private:
   using Base::branch;
 
   internal::Distance_helper<Distance, SearchTraits> m_distance_helper;
-  int m_dim;
   Tree const& m_tree;
 
   void 
@@ -144,23 +141,21 @@ private:
       this->number_of_leaf_nodes_visited++;
       if (node->size() > 0)
       {
-        if (this->search_nearest)
-          search_nearest_in_leaf<internal::Has_points_cache<Tree, internal::has_Enable_points_cache<Tree>::type::value>::value>(node);
+        typename internal::Has_points_cache<Tree, internal::has_Enable_points_cache<Tree>::type::value>::type dummy;
+        if (this->search_nearest) 
+          search_nearest_in_leaf(node, dummy);
         else
-          search_furthest_in_leaf<internal::Has_points_cache<Tree, internal::has_Enable_points_cache<Tree>::type::value>::value>(node);
+          search_furthest_in_leaf(node, dummy);
       }
     }
   }
 
-  template<bool use_cache>
-  void search_nearest_in_leaf(typename Tree::Leaf_node_const_handle node);
-
   // With cache
-  template<>
-  void search_nearest_in_leaf<true>(typename Tree::Leaf_node_const_handle node)
+  void search_nearest_in_leaf(typename Tree::Leaf_node_const_handle node, Tag_true)
   {
     typename Tree::iterator it_node_point = node->begin(), it_node_point_end = node->end();
-    typename std::vector<FT>::const_iterator cache_point_begin = m_tree.cache_begin() + m_dim*(it_node_point - m_tree.begin());
+    int dim = m_tree.dim();
+    typename std::vector<FT>::const_iterator cache_point_begin = m_tree.cache_begin() + dim*(it_node_point - m_tree.begin());
     // As long as the queue is not full, the node is just inserted
     for (; !this->queue.full() && it_node_point != it_node_point_end; ++it_node_point)
     {
@@ -168,10 +163,10 @@ private:
 
       FT distance_to_query_object =
         m_distance_helper.transformed_distance_from_coordinates(
-          this->query_object, *it_node_point, cache_point_begin, cache_point_begin + m_dim);
+          this->query_object, *it_node_point, cache_point_begin, cache_point_begin + dim);
       this->queue.insert(std::make_pair(&(*it_node_point), distance_to_query_object));
 
-      cache_point_begin += m_dim;
+      cache_point_begin += dim;
     }
     // Now that the queue is full, we can gain time by keeping track
     // of the current worst distance to interrupt the distance computation earlier
@@ -182,7 +177,7 @@ private:
 
       FT distance_to_query_object =
         m_distance_helper.interruptible_transformed_distance(
-          this->query_object, *it_node_point, cache_point_begin, cache_point_begin + m_dim, worst_dist);
+          this->query_object, *it_node_point, cache_point_begin, cache_point_begin + dim, worst_dist);
 
       if (distance_to_query_object < worst_dist)
       {
@@ -190,13 +185,12 @@ private:
         worst_dist = this->queue.top().second;
       }
 
-      cache_point_begin += m_dim;
+      cache_point_begin += dim;
     }
   }
 
   // Without cache
-  template<>
-  void search_nearest_in_leaf<false>(typename Tree::Leaf_node_const_handle node)
+  void search_nearest_in_leaf(typename Tree::Leaf_node_const_handle node, Tag_false)
   {
     typename Tree::iterator it_node_point = node->begin(), it_node_point_end = node->end();
     // As long as the queue is not full, the node is just inserted
@@ -228,15 +222,12 @@ private:
   }
 
 
-  template<bool use_cache>
-  void search_furthest_in_leaf(typename Tree::Leaf_node_const_handle node);
-
   // With cache
-  template<>
-  void search_furthest_in_leaf<true>(typename Tree::Leaf_node_const_handle node)
+  void search_furthest_in_leaf(typename Tree::Leaf_node_const_handle node, Tag_true)
   {
     typename Tree::iterator it_node_point = node->begin(), it_node_point_end = node->end();
-    typename std::vector<FT>::const_iterator cache_point_begin = m_tree.cache_begin() + m_dim*(it_node_point - m_tree.begin());
+    int dim = m_tree.dim();
+    typename std::vector<FT>::const_iterator cache_point_begin = m_tree.cache_begin() + dim*(it_node_point - m_tree.begin());
     // In furthest search mode, the interruptible distance cannot be used to optimize
     for (; it_node_point != it_node_point_end; ++it_node_point)
     {
@@ -244,16 +235,15 @@ private:
 
       FT distance_to_query_object =
         m_distance_helper.transformed_distance_from_coordinates(
-          this->query_object, *it_node_point, cache_point_begin, cache_point_begin + m_dim);
+          this->query_object, *it_node_point, cache_point_begin, cache_point_begin + dim);
       this->queue.insert(std::make_pair(&(*it_node_point), distance_to_query_object));
 
-      cache_point_begin += m_dim;
+      cache_point_begin += dim;
     }
   }
 
   // Without cache
-  template<>
-  void search_furthest_in_leaf<false>(typename Tree::Leaf_node_const_handle node)
+  void search_furthest_in_leaf(typename Tree::Leaf_node_const_handle node, Tag_false)
   {
     typename Tree::iterator it_node_point = node->begin(), it_node_point_end = node->end();
     // In furthest search mode, the interruptible distance cannot be used to optimize

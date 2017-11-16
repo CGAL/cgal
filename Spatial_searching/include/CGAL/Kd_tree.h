@@ -318,6 +318,12 @@ public:
     built_ = true;
   }
 
+  // Only correct when build() has been called
+  int dim() const
+  {
+    return dim_;
+  }
+
 private:
   //any call to this function is for the moment not threadsafe
   void const_build() const {
