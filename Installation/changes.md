@@ -12,7 +12,7 @@ Release date: April 2018
     introduced. It handles a class of problems that deal with moving
     sets of objects in the plane; the challenge is to avoid collisions
     between the objects while considering different kinds of motions and
-    various definitions of separation.&lt;\\p&gt;
+    various definitions of separation.
 
     At this point this package consists of the implementations of
     various predicates and constructions related to castings of
