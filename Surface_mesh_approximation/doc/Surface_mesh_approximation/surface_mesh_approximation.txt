@@ -192,7 +192,7 @@ CGAL::VSA::mesh_approximation(input, output,
         CGAL::VSA::parameters::init_by_error(err_drop) // init the algorithm by target error drop
        .init_method(method) // set proxy seeding method in the initialization
        .iterations(num_iterations) // set number of fitting iterations after initialization
-       .chord_subdivide(sub_thre) // set boundary subdivision threshold
+       .mesh_chord_error(sub_thre) // set boundary approximation error threshold when meshing
        .facet_proxy_map(fpxmap) // get facet partition map
        .proxies(std::back_inserter(proxies))); // get proxies
 // render the partition

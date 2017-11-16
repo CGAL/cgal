@@ -8,7 +8,7 @@ CGAL_add_named_parameter(init_by_number_t, init_by_number, init_by_number)
 CGAL_add_named_parameter(init_by_error_t, init_by_error, init_by_error)
 CGAL_add_named_parameter(iterations_t, iterations, iterations)
 CGAL_add_named_parameter(inner_iterations_t, inner_iterations, inner_iterations)
-CGAL_add_named_parameter(chord_subdivide_t, chord_subdivide, chord_subdivide)
+CGAL_add_named_parameter(mesh_chord_error_t, mesh_chord_error, mesh_chord_error)
 
 // output parameters
 CGAL_add_named_parameter(facet_proxy_map_t, facet_proxy_map, facet_proxy_map)

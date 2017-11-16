@@ -58,7 +58,7 @@ namespace VSA {
  *  \cgalParamEnd
  *  \cgalParamBegin{inner_iterations} the relaxation iterations when seeding.
  *  \cgalParamEnd
- *  \cgalParamBegin{chord_subdivide} the threshold of chord subdivision.
+ *  \cgalParamBegin{mesh_chord_error} the threshold of chord approximation when meshing.
  *  \cgalParamEnd
  *  \cgalParamBegin{face_proxy_map} a property map containing the assigned proxy index of each face of `tm_in`
  *  \cgalParamEnd
@@ -132,8 +132,8 @@ bool mesh_approximation(const TriangleMesh &tm_in,
   typedef CGAL::Polyhedron_3<Geom_traits> PolyhedronSurface;
   PolyhedronSurface tmp_poly;
   PolyhedronSurface * const tm_out = choose_param(get_param(np, internal_np::output_mesh), &tmp_poly);
-  FT split_criterion = choose_param(get_param(np, internal_np::chord_subdivide), FT(1));
-  const bool is_manifold = vsa_l21.extract_mesh(*tm_out, split_criterion);
+  FT chord_error = choose_param(get_param(np, internal_np::mesh_chord_error), FT(1));
+  const bool is_manifold = vsa_l21.extract_mesh(*tm_out, chord_error);
 
   typedef typename boost::lookup_named_param_def<
     internal_np::anchor_vertex_t,

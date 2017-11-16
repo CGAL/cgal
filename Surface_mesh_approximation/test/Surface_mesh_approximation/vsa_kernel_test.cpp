@@ -32,7 +32,7 @@ int test() {
     CGAL::VSA::parameters::init_by_number(6).
       iterations(30).
       inner_iterations(5).
-      chord_subdivide(0.5).
+      mesh_chord_error(0.5).
       output_mesh(&out_mesh));
 
   return EXIT_SUCCESS;

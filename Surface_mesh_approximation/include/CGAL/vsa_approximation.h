@@ -813,12 +813,12 @@ public:
    * they are not built into the output polyhedron.
    * @tparam PolyhedronSurface should be `CGAL::Polyhedron_3`
    * @param[out] tm_out output triangle mesh
-   * @param split_criterion boundary approximation recursively split criterion
+   * @param chord_error boundary approximation recursively split criterion
    * @param pca_plane true if use PCA plane fitting, otherwise use the default area averaged plane parameters
    * @return true if the extracted surface mesh is manifold, false otherwise.
    */
   template <typename PolyhedronSurface>
-  bool extract_mesh(PolyhedronSurface &tm_out, const FT split_criterion = FT(0.2), bool pca_plane = false) {
+  bool extract_mesh(PolyhedronSurface &tm_out, const FT chord_error = FT(0.2), bool pca_plane = false) {
     // initialize all vertex anchor status
     enum Vertex_status { NO_ANCHOR = -1 };
     BOOST_FOREACH(vertex_descriptor v, vertices(*m_pmesh))
@@ -831,7 +831,7 @@ public:
     init_proxy_planes(pca_plane);
 
     find_anchors();
-    find_edges(split_criterion);
+    find_edges(chord_error);
     add_anchors();
     pseudo_CDT();
 
@@ -1300,10 +1300,10 @@ private:
   }
 
   /*!
-   * @brief Finds and approximates the edges connecting the anchors.
-   * @param split_criterion edge approximation recursive split creterion
+   * @brief Finds and approximates the chord connecting the anchors.
+   * @param chord_error boundary chord approximation recursive split creterion
    */
-  void find_edges(const FT split_criterion) {
+  void find_edges(const FT chord_error) {
     // collect candidate halfedges in a set
     std::set<halfedge_descriptor> he_candidates;
     BOOST_FOREACH(halfedge_descriptor h, halfedges(*m_pmesh)) {
@@ -1332,7 +1332,7 @@ private:
       do {
         Chord_vector chord;
         walk_to_next_anchor(he_start, chord);
-        borders.back().num_anchors += subdivide_chord(chord.begin(), chord.end(), split_criterion);
+        borders.back().num_anchors += subdivide_chord(chord.begin(), chord.end(), chord_error);
 
 #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
         std::cerr << "#chord_anchor " << borders.back().num_anchors << std::endl;

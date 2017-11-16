@@ -35,7 +35,7 @@ int main()
     CGAL::VSA::parameters::init_by_number(6).
       iterations(30).
       inner_iterations(5).
-      chord_subdivide(0.5).
+      mesh_chord_error(0.5).
       facet_proxy_map(fpxmap).
       anchor_vertex(std::back_inserter(anchor_vtx)).
       proxies(std::back_inserter(proxies)).
