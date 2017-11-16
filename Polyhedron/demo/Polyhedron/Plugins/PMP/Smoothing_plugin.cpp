@@ -203,10 +203,15 @@ public Q_SLOTS:
 
         //unsigned int nb_iter = ui_widget.curv_iterations_spinBox->value();
         unsigned int nb_iter = 1;
+
+        shape_smoothing(pmesh, parameters::number_of_iterations(nb_iter));
+
+        /*
 		unsigned int itime = ui_widget.time_spinBox->value();
 		const double time = itime * 1e-6;
 		std::cout << "time: " << time << std::endl;
 		curvature_flow_smoothing(pmesh, time, parameters::number_of_iterations(nb_iter));
+        */
 
         poly_item->invalidateOpenGLBuffers();
         Q_EMIT poly_item->itemChanged();

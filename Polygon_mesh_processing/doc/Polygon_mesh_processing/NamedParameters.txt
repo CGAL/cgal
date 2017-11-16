@@ -375,6 +375,13 @@ so that small angles carry more weight.
 \b Default is `false`
 \cgalNPEnd
 
+\cgalNPBegin{avoid_singularities} \anchor PMP_avoid_singularities
+Parameter used in `shape_remeshing()` to indicate convergence to a sphere.
+\n
+\b Type : `bool` \n
+\b Default is `false`
+\cgalNPEnd
+
 \cgalNPBegin{gradient_descent_precision} \anchor PMP_gradient_descent_precision
 Parameter used in `area_remeshing()` to set precision to be met while the relative energy
 between iterations of each triagle is minimized. Triangle energy is defined based on its area compared to the

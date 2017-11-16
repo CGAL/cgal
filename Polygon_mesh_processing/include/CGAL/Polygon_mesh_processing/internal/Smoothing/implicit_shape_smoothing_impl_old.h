@@ -126,12 +126,18 @@ private:
   // vertex index map
   typedef typename boost::property_map<PolygonMesh, boost::vertex_index_t>::type IndexMap;
 
-  // Eigen sparse system
+  //CGAL Sparse solver
+  typedef typename CGAL::Eigen_sparse_matrix<double>::EigenType CEigenMatrix;
+
+  typedef CGAL::Eigen_solver_traits< Eigen::SimplicialLDLT< CEigenMatrix > > Solver_traits;
+  //typedef CGAL::Eigen_solver_traits<> Solver_traits; //BicGSTAB
+
+  typedef typename Solver_traits::Matrix Matrix;
+  typedef typename Solver_traits::Vector Vector;
+
+  // Eigen sparse matrix & vector
   typedef typename Eigen::SparseMatrix<double> Eigen_matrix;
   typedef typename Eigen::SparseVector<double> Eigen_vector;
-
-  //typedef typename Eigen::BiCGSTAB<Eigen_matrix> Eigen_solver;
-  typedef typename Eigen::SimplicialLDLT<Eigen_matrix> Eigen_solver;
 
 
 
@@ -147,6 +153,9 @@ private:
     Incident_area<PolygonMesh> inc_areas_calculator_;
 
     std::size_t nb_vert_;
+
+    // linear solver
+    Solver_traits solver_;
 
     // constrained vertices
     std::unordered_set<vertex_descriptor> constrained_vertices_;
@@ -168,53 +177,55 @@ public:
   }
 
 
-  void solve_system(Eigen_matrix& stiffness_matrix)
-  //void solve_system(Eigen::SparseMatrix<double>& L, const double time)
+  void solve_system(Eigen::SparseMatrix<double>& L)
   {
 
-    Eigen_matrix A(nb_vert_, nb_vert_);
+    //gather_constrained_vertices();
 
-    Eigen_vector bx(nb_vert_);
-    Eigen_vector by(nb_vert_);
-    Eigen_vector bz(nb_vert_);
-
-    Eigen_vector Xx(nb_vert_);
-    Eigen_vector Xy(nb_vert_);
-    Eigen_vector Xz(nb_vert_);
-
-   // compute_coeff_matrix(A, L, time);
-    compute_coeff_matrix(A, stiffness_matrix);
-
-    compute_rhs(bx, by, bz);
-
-    std::cout<<"bx= "<<bx<<std::endl;
-    std::cout<<"by= "<<by<<std::endl;
-    std::cout<<"bz= "<<bz<<std::endl;
+    Matrix A(nb_vert_, nb_vert_);
+    Vector Bx(nb_vert_);
+    Vector By(nb_vert_);
+    Vector Bz(nb_vert_);
+    Vector Xx(nb_vert_);
+    Vector Xy(nb_vert_);
+    Vector Xz(nb_vert_);
 
 
-    Eigen_solver solver;
-    solver.compute(A);
+    compute_coeff_matrix(A, L);
 
-    // todo : solve once
-    Xx = solver.solve(bx);
-    Xy = solver.solve(by);
-    Xz = solver.solve(bz);
+    //apply_constraints(A);
 
-    if(solver.info() != Eigen::Success)
+
+    //extract_matrix(A);
+
+
+    compute_rhs(Bx, By, Bz);
+
+    //extract_vectors(Bx,By,Bz);
+
+
+    NT dx, dy, dz;
+    if(!solver_.linear_solver(A, Bx, Xx, dx) ||
+       !solver_.linear_solver(A, By, Xy, dy) ||
+       !solver_.linear_solver(A, Bz, Xz, dz) )
     {
-      std::cerr<<"Not Solved!\n";
-      return;
+        std::cerr<<"Could not solve linear system!"<<nl;
+        bool solved = false;
+        CGAL_assertion(solved);
     }
 
+    //extract_vectors(Xx,Xy,Xz);
 
+    //translate_centroid(Xx, Xy, Xz);
+    //extract_vectors(Xx,Xy,Xz);
 
-    // normalize area
     NT surface_area = area(faces(mesh_), mesh_);
     std::cout << "area= " << surface_area << nl;
     std::cout << "area sqrt= " << CGAL::sqrt(surface_area) << nl;
 
 
     normalize_area(Xx, Xy, Xz);
+    //extract_vectors(Xx, Xy, Xz);
 
     update_map(Xx, Xy, Xz);
 
@@ -349,17 +360,19 @@ private:
 
 
 
-    //void compute_coeff_matrix(Matrix& A, Eigen_matrix& L, const double time)
-    void compute_coeff_matrix(Eigen_matrix& A, Eigen_matrix& L)
+
+    void compute_coeff_matrix(Matrix& A, Eigen_matrix& L)
     {
-
-      //export_eigen_matrix(L, "data/L");
-
+      //Eigen_matrix L = get_stiffness_matrix();
 
       //Eigen_matrix L = stiff_matrix();
+
+      export_eigen_matrix(L, "data/L");
+
+      //Eigen_matrix D = get_mass_matrix();
       Eigen_matrix D = mass_matrix();
 
-      //export_eigen_matrix(D, "data/D");
+      export_eigen_matrix(D, "data/D");
 
 
       double delta = 0.001;
@@ -369,13 +382,17 @@ private:
       //D.setIdentity();
 
 
-      A = D - delta * L;
+      Eigen_matrix Ae = D - delta * L;
 
+
+      fill_sparse_matrix(A, Ae);
+
+      A.assemble_matrix();
 
     }
 
 
-    void compute_rhs(Eigen_vector& bx, Eigen_vector& by, Eigen_vector& bz)
+    void compute_rhs(Vector& Bx, Vector& By, Vector& Bz)
     {
 
       Eigen_vector Xx(nb_vert_);
@@ -391,21 +408,52 @@ private:
         Xz.coeffRef(index) = p.z();
       }
 
+
       //Eigen_matrix D = get_mass_matrix();
       Eigen_matrix D = mass_matrix();
+
 
 
       //Eigen_matrix D(Bx.rows(), Bx.rows());
       //D.setIdentity();
 
-      bx = D * Xx;
-      by = D * Xy;
-      bz = D * Xz;
+
+      Eigen_vector Bxe = D * Xx;
+      Eigen_vector Bye = D * Xy;
+      Eigen_vector Bze = D * Xz;
+
+
+      fill_sparse_vector(Bx, Bxe);
+      fill_sparse_vector(By, Bye);
+      fill_sparse_vector(Bz, Bze);
 
     }
 
 
+    // -------------- COPY TO SPARSE SYSTEM ---------- //
+    void fill_sparse_matrix(Matrix&A, Eigen_matrix& Ae)
+    {
+      CGAL_assertion(A.row_dimension() == Ae.rows() &&
+                     A.column_dimension() == Ae.cols());
 
+      // this is not great
+      for(std::size_t i=0; i<Ae.rows(); ++i)
+      {
+        for(std::size_t j=0; j<Ae.cols(); ++j)
+        {
+          A.set_coef(i, j, Ae.coeff(i, j), true);
+        }
+      }
+    }
+
+    void fill_sparse_vector(Vector& V, Eigen_vector& Ve)
+    {
+      CGAL_assertion(V.rows() == Ve.rows());
+      for(std::size_t i= 0; i<Ve.rows(); ++i)
+      {
+        V[i] = Ve.coeff(i);
+      }
+    }
 
 
     // ---------------- CONSTRAINS ---------------- //
@@ -420,7 +468,6 @@ private:
       }
     }
 
-    /*
     void apply_constraints(Matrix& A)
     { // to be called after gather_constrained_vertices()
 
@@ -435,7 +482,36 @@ private:
         //  A.set_coef(i, j, 0);
       }
     }
-    */
+
+
+    // -------------- EXTRACT : to move to debug file----------------- //
+    void extract_matrix(Matrix& A)
+    {
+        std::ofstream out("data/mat.dat");
+        for(int i=0; i < A.row_dimension(); ++i)
+        {
+            for(int j=0; j < A.column_dimension(); ++j)
+            {
+                NT val = A.get_coef(i, j);
+                out<<val<<" ";
+            }
+            out<<nl;
+        }
+        out.close();
+    }
+
+    void extract_vectors(Vector& Vx, Vector& Vy, Vector& Vz)
+    {
+      CGAL_assertion(Vx.rows() == Vy.rows());
+      CGAL_assertion(Vx.rows() == Vz.rows());
+
+      std::ofstream out("data/vecs.dat");
+      for(int j=0; j < Vx.dimension(); ++j)
+      {
+          out<<Vx[j]<<"\t"<<Vy[j]<<"\t"<<Vz[j]<<"\t"<<nl;
+      }
+      out.close();
+    }
 
     void export_eigen_matrix(Eigen_matrix& A, const char* filename)
     {
@@ -465,7 +541,6 @@ private:
       return Triangle(get(vpmap_, v1), get(vpmap_, v2), get(vpmap_, v3));
     }
 
-    /*
     void translate_centroid(Vector& Xx, Vector& Xy, Vector& Xz)
     {
 
@@ -488,28 +563,37 @@ private:
       }
 
     }
-    */
 
-    void normalize_area(Eigen_vector& Xx, Eigen_vector& Xy, Eigen_vector& Xz)
+    void normalize_area(Vector& Xx, Vector& Xy, Vector& Xz)
     {
 
       NT surface_area = area(faces(mesh_), mesh_);
 
-      Xx /= CGAL::sqrt(surface_area);
-      Xy /= CGAL::sqrt(surface_area);
-      Xz /= CGAL::sqrt(surface_area);
+      for(std::size_t i=0; i < Xx.rows(); ++i)
+      {
+        Xx[i] /= CGAL::sqrt(surface_area);
+        Xy[i] /= CGAL::sqrt(surface_area);
+        Xz[i] /= CGAL::sqrt(surface_area);
+      }
+
+
+      /*
+      Xx /= surface_area;
+      Xy /= surface_area;
+      Xz /= surface_area;
+      */
 
     }
 
 
-    void update_map(Eigen_vector& Xx, Eigen_vector& Xy, Eigen_vector& Xz)
+    void update_map(Vector& Xx, Vector& Xy, Vector& Xz)
     {
         for (vertex_descriptor v : vertices(mesh_))
         {
             int index = get(vimap_, v);
-            NT x_new = Xx.coeffRef(index);
-            NT y_new = Xy.coeffRef(index);
-            NT z_new = Xz.coeffRef(index);
+            NT x_new = Xx[index];
+            NT y_new = Xy[index];
+            NT z_new = Xz[index];
             put(vpmap_, v, Point(x_new, y_new, z_new));
         }
     }
