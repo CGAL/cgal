@@ -178,7 +178,6 @@ protected:
         add_mono_segment(p1, p2);
       else
       {
-        // c=CGAL::Color(100,100,100);
         add_colored_segment(p1, p2, c); // TODO REMOVE LATER
       }
     }
@@ -193,7 +192,7 @@ protected:
     if (c.red()<60 || c.green()<60 || c.blue()<60)
       add_mono_point(p);
     else
-    { // c=CGAL::Color(255,100,100);
+    {
       add_colored_point(p, c); // TODO REMOVE LATER
     }
   }
@@ -201,7 +200,7 @@ protected:
   void compute_elements()
   {
     clear();
-    
+
     unsigned int markfaces    = lcc.get_new_mark();
     unsigned int markedges    = lcc.get_new_mark();
     unsigned int markvertices = lcc.get_new_mark();

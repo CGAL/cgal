@@ -67,37 +67,6 @@ const char vertex_source_color[] =
     "}"
   };
 
-//Vertex source code
-/* const char fragment_source_mono[] =
-  {
-    "#version 120 \n"
-    "varying highp vec4 fP; \n"
-    "varying highp vec3 fN; \n"
-    "uniform highp vec4 color; \n"
-    "uniform vec4 light_pos;  \n"
-    "uniform vec4 light_diff; \n"
-    "uniform vec4 light_spec; \n"
-    "uniform vec4 light_amb;  \n"
-    "uniform float spec_power ; \n"
-    
-    "void main(void) { \n"
-    
-    "   vec3 L = light_pos.xyz - fP.xyz; \n"
-    "   vec3 V = -fP.xyz; \n"
-    
-    "   vec3 N = normalize(fN); \n"
-    "   L = normalize(L); \n"
-    "   V = normalize(V); \n"
-    
-    "   vec3 R = reflect(-L, N); \n"
-    "   vec4 diffuse = max(dot(N,L), 0.0) * light_diff * color; \n"
-    "   vec4 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec; \n"
-    
-    "gl_FragColor = light_amb*color + diffuse  ; \n"
-    "} \n"
-    "\n"
-    }; */
-
 const char fragment_source_color[] =
   {
     "#version 120 \n"
@@ -141,7 +110,7 @@ const char vertex_source_p_l[] =
     "   gl_Position = mvp_matrix * vertex;\n"
     "}"
   };
-//Vertex source code
+
 const char fragment_source_p_l[] =
   {
     "#version 120 \n"
@@ -227,7 +196,6 @@ public:
     m_are_buffers_initialized(false),
     m_face_started(false)
   {
-    arrays.resize(LAST_INDEX);
     if (title[0]==0)
       setWindowTitle("CGAL Basic Viewer");
     else
@@ -600,25 +568,22 @@ protected:
 
   void initialize_buffers()
   {
-    int bufn = 0;
-
     rendering_program_p_l.bind();
 
     // 1) POINT SHADER
 
     // 1.1) Mono points
     vao[VAO_MONO_POINTS].bind();
-
+    
+    int bufn = 0;
     assert(bufn<NB_VBO_BUFFERS);
     buffers[bufn].bind();
     buffers[bufn].allocate(arrays[POS_MONO_POINTS].data(),
                            static_cast<int>(arrays[POS_MONO_POINTS].size()*sizeof(float)));
-    vertexLocation[VAO_MONO_POINTS] = rendering_program_p_l.attributeLocation("vertex");
-    rendering_program_p_l.enableAttributeArray(vertexLocation[VAO_MONO_POINTS]);
-    rendering_program_p_l.setAttributeBuffer(vertexLocation[VAO_MONO_POINTS],GL_FLOAT,0,3);
+    rendering_program_p_l.enableAttributeArray("vertex");
+    rendering_program_p_l.setAttributeBuffer("vertex",GL_FLOAT,0,3);
 
     buffers[bufn].release();
-    ++bufn;
 
     rendering_program_p_l.disableAttributeArray("color");
     
@@ -627,17 +592,16 @@ protected:
     // 1.2) Color points
     vao[VAO_COLORED_POINTS].bind();
 
+    ++bufn;
     assert(bufn<NB_VBO_BUFFERS);
     buffers[bufn].bind();
     buffers[bufn].allocate(arrays[POS_COLORED_POINTS].data(),
                            static_cast<int>(arrays[POS_COLORED_POINTS].size()*sizeof(float)));
-    vertexLocation[VAO_COLORED_POINTS] = rendering_program_p_l.attributeLocation("vertex");
-    rendering_program_p_l.enableAttributeArray(vertexLocation[VAO_COLORED_POINTS]);
-    rendering_program_p_l.setAttributeBuffer(vertexLocation[VAO_COLORED_POINTS],GL_FLOAT,0,3);
-
+    rendering_program_p_l.enableAttributeArray("vertex");
+    rendering_program_p_l.setAttributeBuffer("vertex",GL_FLOAT,0,3);
     buffers[bufn].release();
-    ++bufn;    
 
+    ++bufn;    
     assert(bufn<NB_VBO_BUFFERS);
     buffers[bufn].bind();
     buffers[bufn].allocate(arrays[COLOR_POINTS].data(),
@@ -649,20 +613,19 @@ protected:
     vao[VAO_COLORED_POINTS].release();
 
     // 2) SEGMENT SHADER
-
+    
     // 2.1) Mono segments
     vao[VAO_MONO_SEGMENTS].bind();
-
+    
+    ++bufn;    
     assert(bufn<NB_VBO_BUFFERS);
     buffers[bufn].bind();
     buffers[bufn].allocate(arrays[POS_MONO_SEGMENTS].data(),
                            static_cast<int>(arrays[POS_MONO_SEGMENTS].size()*sizeof(float)));
-    vertexLocation[VAO_MONO_SEGMENTS] = rendering_program_p_l.attributeLocation("vertex");
-    rendering_program_p_l.enableAttributeArray(vertexLocation[VAO_MONO_SEGMENTS]);
-    rendering_program_p_l.setAttributeBuffer(vertexLocation[VAO_MONO_SEGMENTS],GL_FLOAT,0,3);
+    rendering_program_p_l.enableAttributeArray("vertex");
+    rendering_program_p_l.setAttributeBuffer("vertex",GL_FLOAT,0,3);
 
     buffers[bufn].release();
-    ++bufn;
 
     rendering_program_p_l.disableAttributeArray("color");
 
@@ -670,18 +633,18 @@ protected:
 
     // 1.2) Color segments
     vao[VAO_COLORED_SEGMENTS].bind();
-
+    
+    ++bufn;
     assert(bufn<NB_VBO_BUFFERS);
     buffers[bufn].bind();
     buffers[bufn].allocate(arrays[POS_COLORED_SEGMENTS].data(),
                            static_cast<int>(arrays[POS_COLORED_SEGMENTS].size()*sizeof(float)));
-    vertexLocation[VAO_COLORED_SEGMENTS] = rendering_program_p_l.attributeLocation("vertex");
-    rendering_program_p_l.enableAttributeArray(vertexLocation[VAO_COLORED_SEGMENTS]);
-    rendering_program_p_l.setAttributeBuffer(vertexLocation[VAO_COLORED_SEGMENTS],GL_FLOAT,0,3);
+    rendering_program_p_l.enableAttributeArray("vertex");
+    rendering_program_p_l.setAttributeBuffer("vertex",GL_FLOAT,0,3);
 
     buffers[bufn].release();
-    ++bufn;
 
+    ++bufn;
     assert(bufn<NB_VBO_BUFFERS);
     buffers[bufn].bind();
     buffers[bufn].allocate(arrays[COLOR_SEGMENTS].data(),
@@ -691,9 +654,9 @@ protected:
     buffers[bufn].release();
 
     vao[VAO_COLORED_SEGMENTS].release();
-
+    
     rendering_program_p_l.release();
-
+    
     // 3) FACE SHADER
     rendering_program_face.bind();
 
@@ -701,18 +664,18 @@ protected:
     vao[VAO_MONO_FACES].bind();
 
     // 3.1.1) points of the mono faces
+    ++bufn;
     assert(bufn<NB_VBO_BUFFERS);
     buffers[bufn].bind();
     buffers[bufn].allocate(arrays[POS_MONO_FACES].data(),
                            static_cast<int>(arrays[POS_MONO_FACES].size()*sizeof(float)));
-    vertexLocation[VAO_MONO_FACES] = rendering_program_face.attributeLocation("vertex");
-    rendering_program_face.enableAttributeArray(vertexLocation[VAO_MONO_FACES]);
-    rendering_program_face.setAttributeBuffer(vertexLocation[VAO_MONO_FACES],GL_FLOAT,0,3);
+    rendering_program_face.enableAttributeArray("vertex");
+    rendering_program_face.setAttributeBuffer("vertex",GL_FLOAT,0,3);
 
     buffers[bufn].release();
-    ++bufn;
     
     // 3.1.2) normals of the mono faces
+    ++bufn;
     assert(bufn<NB_VBO_BUFFERS);
     buffers[bufn].bind();
     if (m_flatShading)
@@ -727,34 +690,31 @@ protected:
                                     static_cast<int>(arrays[SMOOTH_NORMAL_MONO_FACES].size()*
                                                        sizeof(float)));
     }
-    normalsLocation = rendering_program_face.attributeLocation("normal");
-    rendering_program_face.enableAttributeArray(normalsLocation);
-    rendering_program_face.setAttributeBuffer(normalsLocation,GL_FLOAT,0,3);
+    rendering_program_face.enableAttributeArray("normal");
+    rendering_program_face.setAttributeBuffer("normal",GL_FLOAT,0,3);
     
     buffers[bufn].release();
-    ++bufn;
 
     // 3.1.3) color of the mono faces
     rendering_program_face.disableAttributeArray("color");
-    
     vao[VAO_MONO_FACES].release();
 
     // 3.2) Color faces
     vao[VAO_COLORED_FACES].bind();
   
     // 3.2.1) points of the color faces    
+    ++bufn;
     assert(bufn<NB_VBO_BUFFERS);
     buffers[bufn].bind();
     buffers[bufn].allocate(arrays[POS_COLORED_FACES].data(),
                            static_cast<int>(arrays[POS_COLORED_FACES].size()*sizeof(float)));
-    vertexLocation[VAO_COLORED_FACES] = rendering_program_face.attributeLocation("vertex");
-    rendering_program_face.enableAttributeArray(vertexLocation[VAO_COLORED_FACES]);
-    rendering_program_face.setAttributeBuffer(vertexLocation[VAO_COLORED_FACES],GL_FLOAT,0,3);
+    rendering_program_face.enableAttributeArray("vertex");
+    rendering_program_face.setAttributeBuffer("vertex",GL_FLOAT,0,3);
       
     buffers[bufn].release();
-    ++bufn;
     
     // 3.2.2) normals of the color faces
+    ++bufn;
     assert(bufn<NB_VBO_BUFFERS);
     buffers[bufn].bind();
     if (m_flatShading)
@@ -769,14 +729,13 @@ protected:
                                     static_cast<int>(arrays[SMOOTH_NORMAL_COLORED_FACES].size()*
                                                      sizeof(float)));
     }
-    normalsLocation = rendering_program_face.attributeLocation("normal");
-    rendering_program_face.enableAttributeArray(normalsLocation);
-    rendering_program_face.setAttributeBuffer(normalsLocation,GL_FLOAT,0,3);
+    rendering_program_face.enableAttributeArray("normal");
+    rendering_program_face.setAttributeBuffer("normal",GL_FLOAT,0,3);
     
     buffers[bufn].release();
-    ++bufn;
     
     // 3.2.3) colors of the faces
+    ++bufn;
     assert(bufn<NB_VBO_BUFFERS);
     buffers[bufn].bind();
     buffers[bufn].allocate(arrays[COLOR_FACES].data(),
@@ -785,12 +744,11 @@ protected:
     rendering_program_face.setAttributeBuffer("color",GL_FLOAT,0,3);
     
     buffers[bufn].release();
-    ++bufn;
-
+    
     vao[VAO_COLORED_FACES].release();
-
+    
     rendering_program_face.release();
-
+    
     m_are_buffers_initialized = true;
   }
 
@@ -824,8 +782,9 @@ protected:
     GLfloat shininess =  1.0f;
 
     rendering_program_face.bind();
-    mvpLocation[0] = rendering_program_face.uniformLocation("mvp_matrix");
-    mvLocation = rendering_program_face.uniformLocation("mv_matrix");
+    int mvpLocation = rendering_program_face.uniformLocation("mvp_matrix");
+    int mvLocation = rendering_program_face.uniformLocation("mv_matrix");
+    int lightLocation[5];
     lightLocation[0] = rendering_program_face.uniformLocation("light_pos");
     lightLocation[1] = rendering_program_face.uniformLocation("light_diff");
     lightLocation[2] = rendering_program_face.uniformLocation("light_spec");
@@ -837,13 +796,13 @@ protected:
     rendering_program_face.setUniformValue(lightLocation[2], specular);
     rendering_program_face.setUniformValue(lightLocation[3], m_ambient_color);
     rendering_program_face.setUniformValue(lightLocation[4], shininess);
-    rendering_program_face.setUniformValue(mvpLocation[0], mvpMatrix);
+    rendering_program_face.setUniformValue(mvpLocation, mvpMatrix);
     rendering_program_face.setUniformValue(mvLocation, mvMatrix);
     rendering_program_face.release();
-
+     
     rendering_program_p_l.bind();
-    mvpLocation[1] = rendering_program_p_l.uniformLocation("mvp_matrix");
-    rendering_program_p_l.setUniformValue(mvpLocation[1], mvpMatrix);
+    int mvpLocation2 = rendering_program_p_l.uniformLocation("mvp_matrix");
+    rendering_program_p_l.setUniformValue(mvpLocation2, mvpMatrix);
     rendering_program_p_l.release();
   }
 
@@ -856,19 +815,6 @@ protected:
     QColor color;
     attrib_buffers(this);
 
-    /* for (unsigned int i=0; i<arrays[COLOR_SEGMENTS].size(); i+=3)
-    { std::cout<<"color "<<i/3<<": "<<arrays[COLOR_SEGMENTS][i]<<", "
-              <<arrays[COLOR_SEGMENTS][i+1]<<", "
-             <<arrays[COLOR_SEGMENTS][i+2]<<std::endl;}
-    std::cout<<"################################"<<std::endl; */
-
-    /* for (unsigned int i=0; i<arrays[COLOR_POINTS].size(); i+=3)
-    { std::cout<<"color "<<i/3<<": "<<arrays[COLOR_POINTS][i]<<", "
-              <<arrays[COLOR_POINTS][i+1]<<", "
-             <<arrays[COLOR_POINTS][i+2]<<std::endl;}
-    std::cout<<"################################"<<std::endl;
-*/
-
     if(m_draw_vertices)
     {
       rendering_program_p_l.bind();
@@ -877,12 +823,11 @@ protected:
       color.setRgbF((double)m_vertices_mono_color.red()/(double)255,
                     (double)m_vertices_mono_color.green()/(double)255,
                     (double)m_vertices_mono_color.blue()/(double)255);
-      // rendering_program_p_l.disableAttributeArray("color");
       rendering_program_p_l.setAttributeValue("color",color);
       ::glPointSize(m_size_points);
       glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(arrays[POS_MONO_POINTS].size()/3));
       vao[VAO_MONO_POINTS].release();
-
+      
       vao[VAO_COLORED_POINTS].bind();
       if (m_use_mono_color)
       {
@@ -911,7 +856,6 @@ protected:
       color.setRgbF((double)m_edges_mono_color.red()/(double)255,
                     (double)m_edges_mono_color.green()/(double)255,
                     (double)m_edges_mono_color.blue()/(double)255);
-      // rendering_program_p_l.disableAttributeArray("color");
       rendering_program_p_l.setAttributeValue("color",color);
       ::glLineWidth(m_size_edges);
       glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(arrays[POS_MONO_SEGMENTS].size()/3));
@@ -936,7 +880,7 @@ protected:
 
       rendering_program_p_l.release();
     }
-
+    
     if (m_draw_faces)
     {
       rendering_program_face.bind();
@@ -945,7 +889,6 @@ protected:
       color.setRgbF((double)m_faces_mono_color.red()/(double)255,
                     (double)m_faces_mono_color.green()/(double)255,
                     (double)m_faces_mono_color.blue()/(double)255);
-      //rendering_program_face.disableAttributeArray("color");
       rendering_program_face.setAttributeValue("color",color);
       glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(arrays[POS_MONO_FACES].size()/3));
       vao[VAO_MONO_FACES].release();
@@ -967,7 +910,7 @@ protected:
       vao[VAO_COLORED_FACES].release();
 
       rendering_program_face.release();
-    }
+      }
   }
 
   virtual void init()
@@ -1252,10 +1195,10 @@ private:
     END_NORMAL,
     LAST_INDEX=END_NORMAL
   };
-  std::vector<std::vector<float> > arrays; //[LAST_INDEX];
+  std::vector<float> arrays[LAST_INDEX];
 
   static const unsigned int NB_VBO_BUFFERS=(END_POS-BEGIN_POS)+
-      (END_COLOR-BEGIN_COLOR);
+    (END_COLOR-BEGIN_COLOR)+2; // +2 for 2 vectors of normals
 
   QGLBuffer buffers[NB_VBO_BUFFERS];
 
@@ -1270,13 +1213,6 @@ private:
       NB_VAO_BUFFERS
     };
   QOpenGLVertexArrayObject vao[NB_VAO_BUFFERS];
-
-  //Shaders elements
-  int vertexLocation[NB_VAO_BUFFERS];
-  int normalsLocation;
-  int mvpLocation[2];
-  int mvLocation;
-  int lightLocation[5];
 
   QOpenGLShaderProgram rendering_program_face;
   QOpenGLShaderProgram rendering_program_p_l;
