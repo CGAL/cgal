@@ -47,16 +47,14 @@ namespace Polygon_mesh_processing {
 
 /*!
 * \ingroup PMP_meshing_grp
-* @brief smoothes a triangulated region of a polygon mesh.
-* This function imrpoves the angles between triangle edges by moving not
-* constrained vertices so that each pair of adjacent angles becomes equal.
-* Optionally, small angles may carry more weight than larger ones. Projection
-* to the initial surface is performed as a last step.
+* smoothes a triangulated region of a polygon mesh using angle based criteria.
+* This function improves the angles of triangle faces by iteratively moving non
+* constrained vertices.
+* A weighted scheme is also proposed to favorise the removal of small angles.
+* Optionally, the points are reprojected after each iteration.
 *
+* @todo Make the projection of poinst optional
 * @tparam PolygonMesh model of `MutableFaceGraph`.
-*         The descriptor types `boost::graph_traits<PolygonMesh>::%face_descriptor`
-*         and `boost::graph_traits<PolygonMesh>::%halfedge_descriptor` must be
-*         models of `Hashable`.
 *         If `PolygonMesh` has an internal property map for `CGAL::face_index_t`,
 *         and no `face_index_map` is given
 *         as a named parameter, then the internal one should be initialized.
@@ -210,16 +208,13 @@ void angle_smoothing(PolygonMesh& pmesh)
 
 /*!
 * \ingroup PMP_meshing_grp
-* @brief uses triangle area as a criterion for smoothing.
-* This function imrpoves the overall distribution of points over a mesh area
-* by trying to form triangles as uniform as possible. Use of many iterations of area equalization alone
-* for remeshing may result in long and skinny triangles. Vertices are moved towards equalizing adjacent triangle
-* areas using gradient descent.
+* smoothes a triangulated region of a polygon mesh using area based criteria.
+* This function tries to make the area distribution of triangle as uniform as possible
+* by moving non constrained vertices.
+* Optionally, the points are reprojected after each iteration.
+* @todo make the reprojected optional
 *
 * @tparam PolygonMesh model of `MutableFaceGraph`.
-*         The descriptor types `boost::graph_traits<PolygonMesh>::%face_descriptor`
-*         and `boost::graph_traits<PolygonMesh>::%halfedge_descriptor` must be
-*         models of `Hashable`.
 *         If `PolygonMesh` has an internal property map for `CGAL::face_index_t`,
 *         and no `face_index_map` is given
 *         as a named parameter, then the internal one should be initialized.
@@ -372,16 +367,12 @@ void area_smoothing(PolygonMesh& pmesh)
 
 /*!
 * \ingroup PMP_meshing_grp
-* @brief smoothes a triangulated region of a polygon mesh.
-* This function imrpoves the overall mesh quality by using sequentially angle,
-* area, and again angle criteria for each iteration until convergence. Convergence is realized based on
-* the hausdorff distance of the mesh between previous and current iteration or until
-* a specified maximum number of iterations.
+* smoothes a triangulated region of a polygon mesh using area and angle based criteria.
+* Each iteration alternates a call to `angle_smoothing()`, `area_smoothing()`, and `angle_smoothing()`.
+* Convergence is realized based on the Hausdorff distance of the mesh between previous
+* and current iteration or until a specified maximum number of iterations.
 *
 * @tparam PolygonMesh model of `MutableFaceGraph`.
-*         The descriptor types `boost::graph_traits<PolygonMesh>::%face_descriptor`
-*         and `boost::graph_traits<PolygonMesh>::%halfedge_descriptor` must be
-*         models of `Hashable`.
 *         If `PolygonMesh` has an internal property map for `CGAL::face_index_t`,
 *         and no `face_index_map` is given
 *         as a named parameter, then the internal one should be initialized.
@@ -393,6 +384,7 @@ void area_smoothing(PolygonMesh& pmesh)
 * @param faces the range of triangular faces defining one or several surface patches to be smoothed.
 * @param np optional sequence of \ref namedparameters among the ones listed below.
 *
+* @todo remove Hausdorff and use ratio between max (or mean?) displacement
 * \cgalNamedParamsBegin
 *  \cgalParamBegin{geom_traits} a geometric traits class instance, model of `Kernel`.
 *    Exact constructions kernels are not supported by this function.
@@ -415,7 +407,7 @@ void area_smoothing(PolygonMesh& pmesh)
 *  \cgalParamEnd
 *  \cgalParamBegin{use_weights} If `true`, small angles carry more weight than larger ones.
 *  \cgalParamEnd
-*  \cgalParamBegin{distance_precision} The Hausdorff distance between the mesh of the previous and the curent iteration.
+*  \cgalParamBegin{distance_precision} The Hausdorff distance between the current mesh and the mesh at the iteration.
 *    Defaults to 0.01.
 *  \cgalParamEnd
 * \cgalNamedParamsEnd
@@ -570,8 +562,7 @@ void compatible_smoothing(PolygonMesh& pmesh)
 
 /*!
 * \ingroup PMP_meshing_grp
-* @brief smooths the overall shape of the mesh by using
-* the mean curvature flow to calculate and apply an operator to mesh vertices.
+* smooths the overall shape of the mesh by using the mean curvature flow.
 * The effect depends only on the curvature of each area.
 *
 * @tparam PolygonMesh model of `MutableFaceGraph`.
