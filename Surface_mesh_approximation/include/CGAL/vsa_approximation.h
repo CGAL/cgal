@@ -331,6 +331,23 @@ public:
   }
 
   /*!
+   * @brief Initialize the algorithm with both maximum number of proxies
+   * and minmum error drop stop criteria. The first criterion met stops the seeding.
+   * @param method seeding method
+   * @param max_nb_proxies maximum target number of proxies
+   * @param min_error_drop minimum error drop
+   * @param num_iterations number of re-fitting iterations 
+   * in incremental and hierarchical seeding
+   * @return number of proxies initialized
+   */
+  std::size_t init(const Seeding method,
+    const std::size_t max_nb_proxies,
+    const FT min_error_drop,
+    const std::size_t num_iterations = 5) {
+    return 0;
+  }
+
+  /*!
    * @brief Initialize with targeted number of proxies.
    * @param method seeding method
    * @param num_seed target number of proxies seed

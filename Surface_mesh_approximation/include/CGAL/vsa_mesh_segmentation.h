@@ -11,7 +11,9 @@
 
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/property_map.h>
+
 #include <boost/graph/graph_traits.hpp>
+#include <boost/optional.hpp>
 
 namespace CGAL {
 namespace VSA {
@@ -66,38 +68,49 @@ void mesh_segmentation(const TriangleMesh &tm_in, const NamedParameters &np)
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type Geom_traits;
   typedef typename Geom_traits::FT FT;
 
-  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::type VPMap;
-  VPMap point_pmap = choose_param(get_param(np, internal_np::vertex_point),
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::type Vertex_point_map;
+  Vertex_point_map point_pmap = choose_param(get_param(np, internal_np::vertex_point),
     get_property_map(vertex_point, const_cast<TriangleMesh &>(tm_in)));
 
-  typedef CGAL::VSA::Mesh_approximation<TriangleMesh, VPMap> VSAL21;
-  typedef typename VSAL21::Error_metric L21_metric;
-  typedef typename VSAL21::Proxy_fitting L21_proxy_fitting;
+  typedef CGAL::VSA::Mesh_approximation<TriangleMesh, Vertex_point_map> L21_approx;
+  typedef typename L21_approx::Error_metric L21_metric;
+  typedef typename L21_approx::Proxy_fitting L21_proxy_fitting;
 
-  VSAL21 vsa_l21(tm_in, point_pmap);
+  L21_approx approx(tm_in, point_pmap);
   L21_metric l21_metric(tm_in);
   L21_proxy_fitting l21_fitting(tm_in);
-  vsa_l21.set_metric(l21_metric, l21_fitting);
+  approx.set_metric(l21_metric, l21_fitting);
 
   // default random initialization
-  CGAL::VSA::Seeding init = choose_param(get_param(np, internal_np::init_method), CGAL::VSA::Random);
-  std::size_t num_proxies = choose_param(get_param(np, internal_np::max_nb_proxies), 0);
+  CGAL::VSA::Seeding method = choose_param(
+    get_param(np, internal_np::init_method), CGAL::VSA::Hierarchical);
+  boost::optional<std::size_t> max_nb_proxies = choose_param(
+    get_param(np, internal_np::max_nb_proxies), boost::optional<std::size_t>());
+  boost::optional<FT> min_error_drop = choose_param(
+    get_param(np, internal_np::min_error_drop), boost::optional<FT>());
   std::size_t inner_iterations = choose_param(get_param(np, internal_np::inner_iterations), 10);
-  if (num_proxies == 0 || num_proxies > num_faces(tm_in)) {
-    FT drop = choose_param(get_param(np, internal_np::min_error_drop), FT(0.01));
-    vsa_l21.init_by_error(
-      static_cast<typename CGAL::VSA::Seeding>(init), drop, inner_iterations);
+  if (max_nb_proxies && !min_error_drop) {
+    if (*max_nb_proxies < num_faces(tm_in))
+      approx.init_by_number(method, *max_nb_proxies, inner_iterations);
+    else {
+#ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
+      std::cerr << "Error: max_nb_proxies out of range." << std::endl;
+#endif
+      return;
+    }
   }
-  else {
-    vsa_l21.init_by_number(
-      static_cast<typename CGAL::VSA::Seeding>(init), num_proxies, inner_iterations);
-  }
+  else if (!max_nb_proxies && min_error_drop)
+    approx.init_by_error(method, *min_error_drop, inner_iterations);
+  else if (max_nb_proxies && min_error_drop)
+    approx.init(method, *max_nb_proxies, *min_error_drop, inner_iterations);
+  else // default by minimum error drop of 10%
+    approx.init_by_error(method, FT(0.1), inner_iterations);
 
   const std::size_t iterations = choose_param(get_param(np, internal_np::iterations), 10);
-  vsa_l21.run(iterations);
+  approx.run(iterations);
 
 #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
-  std::cout << "#px = " << num_proxies
+  std::cout << "#px = " << approx.get_proxies_sizes()
     << ", #itr = " << iterations
     << ", #inner_itr = " << inner_iterations << std::endl;
 #endif
@@ -108,7 +121,7 @@ void mesh_segmentation(const TriangleMesh &tm_in, const NamedParameters &np)
     internal_np::vsa_no_output_t>::type FPMap;
   FPMap fproxymap = choose_param(
     get_param(np, internal_np::facet_proxy_map), internal_np::vsa_no_output);
-  get_proxy_map(vsa_l21, fproxymap);
+  get_proxy_map(approx, fproxymap);
 
   typedef typename boost::lookup_named_param_def <
     internal_np::proxies_t,
@@ -116,7 +129,7 @@ void mesh_segmentation(const TriangleMesh &tm_in, const NamedParameters &np)
     internal_np::vsa_no_output_t>::type ProxiesOutItr;
   ProxiesOutItr pxies_out_itr = choose_param(
     get_param(np, internal_np::proxies), internal_np::vsa_no_output);
-  get_proxies(vsa_l21, pxies_out_itr);
+  get_proxies(approx, pxies_out_itr);
 }
 
 } // end namespace VSA
