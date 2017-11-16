@@ -130,8 +130,8 @@ private:
   typedef typename Eigen::SparseMatrix<double> Eigen_matrix;
   typedef typename Eigen::VectorXd Eigen_vector;
 
-  //typedef typename Eigen::BiCGSTAB<Eigen_matrix> Eigen_solver;
-  typedef typename Eigen::SimplicialLDLT<Eigen_matrix> Eigen_solver;
+  typedef typename Eigen::BiCGSTAB<Eigen_matrix, Eigen::IncompleteLUT<double> > Eigen_solver;
+  // typedef typename Eigen::SimplicialLDLT<Eigen_matrix> Eigen_solver;
 
 
 
@@ -182,19 +182,29 @@ public:
     Eigen_vector Xy(nb_vert_);
     Eigen_vector Xz(nb_vert_);
 
+	std::cout << "compute coefficients...";
     compute_coeff_matrix(A, L, time);
+	std::cout << "done" << std::endl;
 
-    compute_rhs(bx, by, bz);
+	std::cout << "rhs...";
+	compute_rhs(bx, by, bz);
+	std::cout << "done" << std::endl;
 
 
 	// Cholesky factorization
-    Eigen_solver solver; 
-    solver.compute(A);
+	std::cout << "compute ...";
+	Eigen_solver solver;
+	solver.compute(A);
+	std::cout << "done" << std::endl;
+	// solver.analyzePattern(A);
+    // solver.factorize(A);
 
     // back-substitution
-    Xx = solver.solve(bx);
+	std::cout << "solve...";
+	Xx = solver.solve(bx);
     Xy = solver.solve(by);
     Xz = solver.solve(bz);
+	std::cout << "done" << std::endl;
 
     if(solver.info() != Eigen::Success)
     {
