@@ -98,6 +98,11 @@ public:
         ui_widget.Area_spinBox->setSingleStep(1);
         ui_widget.Area_spinBox->setMinimum(1);
 
+        ui_widget.Angle_spinBox_2->setValue(1);
+        ui_widget.Angle_spinBox_2->setSingleStep(1);
+        ui_widget.Angle_spinBox_2->setMinimum(1);
+
+
         /*
         ui_widget.gd_dSpinBox->setSingleStep(0.0001);
         ui_widget.gd_dSpinBox->setDecimals(4);
@@ -184,6 +189,18 @@ public Q_SLOTS:
             poly_item->invalidateOpenGLBuffers();
             Q_EMIT poly_item->itemChanged();
         }
+
+        if(ui_widget.Angle_checkBox_2->isChecked())
+        {
+            unsigned int nb_iter = ui_widget.Angle_spinBox_2->value();
+            //double gd_precision = ui_widget.gd_dSpinBox->value();
+            angle_smoothing(pmesh, parameters::number_of_iterations(nb_iter));
+
+            poly_item->invalidateOpenGLBuffers();
+            Q_EMIT poly_item->itemChanged();
+        }
+
+
 
         QApplication::restoreOverrideCursor();
     }

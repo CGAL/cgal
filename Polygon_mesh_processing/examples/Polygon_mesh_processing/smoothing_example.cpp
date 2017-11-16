@@ -5,14 +5,16 @@
 #include <CGAL/Surface_mesh.h>
 
 #include <CGAL/Polygon_mesh_processing/smoothing.h>
+#include <CGAL/Polygon_mesh_processing/shape_smoothing.h>
 
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Surface_mesh<K::Point_3> Mesh;
 
-int main(int argc, char* argv[]){
+int main(){
 
-    const char* filename = "data/eight.off";
+    namespace PMP = CGAL::Polygon_mesh_processing;
+    const char* filename = "data/dino-coarse.off";
     std::ifstream input(filename);
 
     Mesh mesh;
@@ -21,9 +23,22 @@ int main(int argc, char* argv[]){
         return 1;
     }
 
-    CGAL::Polygon_mesh_processing::compatible_smoothing(mesh);
+    CGAL::Polygon_mesh_processing::angles_evaluation<Mesh, K>(mesh, "data/angles_before.dat");
+    CGAL::Polygon_mesh_processing::areas_evaluation<Mesh, K>(mesh, "data/areas_before.dat");
+    //CGAL::Polygon_mesh_processing::aspect_ratio_evaluation(mesh, "data/aspect_ratios_before.dat");
 
-    std::ofstream output("data/eight_smoothed.off");
+    //CGAL::Polygon_mesh_processing::compatible_smoothing(mesh, PMP::parameters::protect_constraints(true));
+
+    double time = 10 * 1e-6;
+    //CGAL::Polygon_mesh_processing::smooth_shape(mesh, time, 1);
+
+    CGAL::Polygon_mesh_processing::area_smoothing(mesh);
+
+    CGAL::Polygon_mesh_processing::angles_evaluation<Mesh, K>(mesh, "data/angles_after.dat");
+    CGAL::Polygon_mesh_processing::areas_evaluation<Mesh, K>(mesh, "data/areas_after.dat");
+    //CGAL::Polygon_mesh_processing::aspect_ratio_evaluation(mesh, "data/aspect_ratios_after.dat");
+
+    std::ofstream output("data/dino_smoothed.off");
     output << mesh;
     output.close();
 

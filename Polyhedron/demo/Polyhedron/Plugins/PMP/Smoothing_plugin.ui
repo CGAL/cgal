@@ -76,9 +76,9 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>0</y>
+      <y>-4</y>
       <width>551</width>
-      <height>227</height>
+      <height>241</height>
      </rect>
     </property>
     <property name="title">
@@ -88,9 +88,9 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>30</y>
+       <y>10</y>
        <width>531</width>
-       <height>183</height>
+       <height>221</height>
       </rect>
      </property>
      <property name="orientation">
@@ -145,9 +145,6 @@
            </property>
           </widget>
          </item>
-         <item row="5" column="1">
-          <widget class="QSpinBox" name="Angle_spinBox"/>
-         </item>
          <item row="5" column="0">
           <widget class="QCheckBox" name="Angle_checkBox">
            <property name="sizePolicy">
@@ -160,6 +157,25 @@
             <string>angles</string>
            </property>
           </widget>
+         </item>
+         <item row="5" column="1">
+          <widget class="QSpinBox" name="Angle_spinBox"/>
+         </item>
+         <item row="7" column="0">
+          <widget class="QCheckBox" name="Angle_checkBox_2">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>angles</string>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="1">
+          <widget class="QSpinBox" name="Angle_spinBox_2"/>
          </item>
         </layout>
        </item>
