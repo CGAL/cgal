@@ -218,6 +218,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     target_link_libraries(${item_name}
       PUBLIC demo_framework ${CGAL_LIBRARIES} ${Boost_LIBRARIES}
       Qt5::OpenGL Qt5::Gui Qt5::Script Qt5::Widgets)
+    cgal_add_compilation_test(${item_name})
   endmacro(add_item)
 
   add_item(scene_c2t3_item Scene_c2t3_item.cpp)
@@ -329,6 +330,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   add_executable  ( Polyhedron_3 Polyhedron_3.cpp )
   target_link_libraries( Polyhedron_3 PRIVATE polyhedron_demo )
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS Polyhedron_3 )
+  cgal_add_compilation_test(polyhedron_demo)
 
   if( POLYHEDRON_QTSCRIPT_DEBUGGER )
     if(TARGET Qt5::ScriptTools)

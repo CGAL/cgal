@@ -62,3 +62,12 @@ target_link_libraries(Regular_triangulation_2
   PRIVATE CGAL::CGAL CGAL::CGAL_Qt5 CGAL::CGAL_Qt5_extras Qt5::Widgets)
 
 add_to_cached_list( CGAL_EXECUTABLE_TARGETS Regular_triangulation_2 )
+
+include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
+foreach(target 
+    Constrained_Delaunay_triangulation_2
+    Delaunay_triangulation_2
+    Regular_triangulation_2)
+  cgal_add_compilation_test(${target})
+endforeach()
+

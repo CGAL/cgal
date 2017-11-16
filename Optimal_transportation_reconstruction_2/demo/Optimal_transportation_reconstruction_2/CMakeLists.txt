@@ -102,6 +102,8 @@ if(CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND)
     
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS Otr2_demo )
 
+  include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
+  cgal_add_compilation_test(Otr2_demo)
 else (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND )
 
   set(OTR2_MISSING_DEPS "")

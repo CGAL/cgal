@@ -45,6 +45,9 @@ target_link_libraries( Stream_lines_2 ${QT_LIBRARIES} )
 # Link with CGAL
 target_link_libraries( Stream_lines_2 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
 
+include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
+cgal_add_compilation_test(Stream_lines_2)
+
 else()
 
   message(STATUS "NOTICE: This demo requires CGAL and Qt5, and will not be compiled.")

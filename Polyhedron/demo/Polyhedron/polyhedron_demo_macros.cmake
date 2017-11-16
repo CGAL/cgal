@@ -1,4 +1,5 @@
 include(AddFileDependencies)
+include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
 
   macro(polyhedron_demo_plugin plugin_name plugin_implementation_base_name)
     list_split(option ARGN_TAIL ${ARGN} )
@@ -25,6 +26,7 @@ include(AddFileDependencies)
     set_property(TARGET ${plugin_name}
       PROPERTY LIBRARY_OUTPUT_DIRECTORY
       "${CGAL_POLYHEDRON_DEMO_PLUGINS_DIR}")
+    cgal_add_compilation_test(${plugin_name})
 
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${plugin_name} )
     # Link with Qt

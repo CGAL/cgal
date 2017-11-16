@@ -77,6 +77,8 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND CGAL_Core_FOUND)
 
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS arrangement_2 )
 
+  include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
+  cgal_add_compilation_test(arrangement_2)
 else()
 
   message(STATUS "NOTICE: This demo requires CGAL, CGAL-Core and Qt5, and will not be compiled.")

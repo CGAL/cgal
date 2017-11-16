@@ -76,6 +76,9 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_
     CGAL_target_use_TBB(T3_demo)
   endif()
 
+  include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
+  cgal_add_compilation_test(T3_demo)
+
 else( CGAL_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND )
 
   set(TRIANGULATION_3_MISSING_DEPS "")

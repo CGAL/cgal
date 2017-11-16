@@ -121,6 +121,9 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND CGAL_ImageIO_FOUND)
 
     target_link_libraries( ${prj} ${QT_LIBRARIES} ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} ${VTK_LIBS})
 
+    include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
+    cgal_add_compilation_test(${prj})
+
   else( QGLVIEWER_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND OPENGL_GLU_FOUND )
     message(STATUS "NOTICE: This demo needs libQGLViewer, and will not be compiled.")
   endif( QGLVIEWER_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND OPENGL_GLU_FOUND )

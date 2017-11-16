@@ -59,7 +59,9 @@ function(create_single_source_cgal_program firstfile )
 
     if(NOT NO_TESTING)
       cgal_add_test(${exe_name})
-    endif(NOT NO_TESTING)
+    else()
+      cgal_add_test(${exe_name} NO_EXECUTION)
+    endif()
 
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${exe_name} )
 

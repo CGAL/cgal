@@ -124,7 +124,7 @@ function(cgal_add_test exe_name)
   cgal_add_compilation_test(${exe_name})
 
   cmake_parse_arguments("cgal_add_test" # prefix
-    ""                                  # optional arguments
+    "NO_EXECUTION"                      # optional arguments
     "TEST_NAME"                         # single arguments
     "ARGUMENTS"                         # multivalue arguments
     ${ARGN})
@@ -135,7 +135,7 @@ function(cgal_add_test exe_name)
     set(test_name "execution___of__${exe_name}")
   endif()
 #  message("  test_name: ${test_name}")
-  if(TEST ${test_name})
+  if(cgal_add_test_NO_EXECUTION OR TEST ${test_name})
     return()
   endif()
 #  message("Add test ${test_name}")
@@ -196,4 +196,7 @@ function(cgal_add_test exe_name)
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
   set_property(TEST "${test_name}"
     APPEND PROPERTY LABELS "${PROJECT_NAME}")
+endfunction()
+
+function(CGAL_add_compilation_tests_for_all_targets)
 endfunction()
