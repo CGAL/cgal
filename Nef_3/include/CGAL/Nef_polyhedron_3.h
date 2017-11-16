@@ -678,6 +678,7 @@ protected:
     typedef typename CT::Face_handle           Face_handle;
     typedef typename CT::Vertex_handle         CTVertex_handle;
     typedef typename CT::Finite_faces_iterator Finite_face_iterator;
+    typedef typename CT::Face_circulator       Face_circulator;
     typedef typename CT::Edge                  Edge;
 
     CT ct;
@@ -712,16 +713,16 @@ protected:
 
       CGAL_NEF_TRACEN("number of finite triangles " << ct.number_of_faces());
 
-      typename CT::Face_handle infinite = ct.infinite_face();
-      typename CT::Vertex_handle ctv = infinite->vertex(1);
+      Face_handle infinite = ct.infinite_face();
+      CTVertex_handle ctv = infinite->vertex(1);
       if(ct.is_infinite(ctv)) ctv = infinite->vertex(2);
       CGAL_assertion(!ct.is_infinite(ctv));
 
-      typename CT::Face_handle opposite;
-      typename CT::Face_circulator vc(ctv,infinite);
+      Face_handle opposite;
+      Face_circulator vc(ctv,infinite);
       do { opposite = vc++;
-      } while(!ct.is_constrained(typename CT::Edge(vc,vc->index(opposite))));
-      typename CT::Face_handle first = vc;
+      } while(!ct.is_constrained(Edge(vc,vc->index(opposite))));
+      Face_handle first = vc;
 
       CGAL_assertion(!ct.is_infinite(first));
       traverse_triangulation(first, first->index(opposite));
