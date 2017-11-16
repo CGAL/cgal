@@ -694,7 +694,9 @@ protected:
 
   void sample_mouse_path()
   {
+
     CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(*QGLViewer::QGLViewerPool().begin());
+    viewer->makeCurrent();
     const QPoint& p = viewer->mapFromGlobal(QCursor::pos());
     contour_2d.push_back (Kernel::Point_2 (p.x(), p.y()));
 

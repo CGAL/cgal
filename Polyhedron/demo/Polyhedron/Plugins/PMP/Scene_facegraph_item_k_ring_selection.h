@@ -613,7 +613,7 @@ protected:
   void sample_mouse_path()
   {
     CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(*QGLViewer::QGLViewerPool().begin());
-    viewer->makeCurrent();
+    //viewer->makeCurrent();
     const QPoint& p = viewer->mapFromGlobal(QCursor::pos());
     contour_2d.push_back (FG_Traits::Point_2 (p.x(), p.y()));
 
@@ -633,8 +633,9 @@ protected:
 #endif
 
       painter->begin(viewer);
-      painter->drawImage(QPoint(0,0), image);
       painter->setPen(pen);
+      painter->drawImage(QPoint(0,0), image);
+      painter->drawText(QRect(0,0, 400,400), Qt::AlignCenter, "Qt");
       for(std::size_t i=0; i<polyline->size(); ++i)
       {
         Polyline_2 poly = (*polyline)[i];
@@ -646,7 +647,8 @@ protected:
       }
       painter->end();
     }
-    viewer->doneCurrent();
+
+    //viewer->doneCurrent();
   }
   void apply_path()
   {
