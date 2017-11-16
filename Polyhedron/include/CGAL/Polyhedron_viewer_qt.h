@@ -1,4 +1,4 @@
-// Copyright (c) 2011 CNRS and LIRIS' Establishments (France).
+// Copyright (c) 2017 CNRS and LIRIS' Establishments (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
@@ -21,12 +21,7 @@
 #define CGAL_POLYHEDRON_VIEWER_QT_H
 
 #include <CGAL/Qt/Basic_viewer.h>
-#include <CGAL/Cartesian_converter.h>
 #include <CGAL/Random.h>
-
-typedef CGAL::Exact_predicates_inexact_constructions_kernel Local_kernel;
-typedef Local_kernel::Point_3  Local_point;
-typedef Local_kernel::Vector_3 Local_vector;
 
 // Default color functor; user can change it to have its own face color
 struct DefaultColorFunctor
@@ -63,10 +58,10 @@ class SimplePolyhedronViewerQt : public Basic_viewer
   
 public:
   /// Construct the viewer.
-  /// @param alcc the lcc to view
+  /// @param apoly the polyhedron to view
   /// @param title the title of the window
   /// @param anofaces if true, do not draw faces (faces are not computed; this can be
-  ///        usefull for very big LCC where this time could be long)
+  ///        usefull for very big object where this time could be long)
   SimplePolyhedronViewerQt(const Polyhedron& apoly, const char* title="", bool anofaces=false) :
     Base(title),
     poly(apoly),
@@ -103,11 +98,14 @@ protected:
   void compute_elements()
   {
     clear();
-    
-    for(typename Polyhedron::Facet_const_iterator f=poly.facets_begin(); f!=poly.facets_end(); f++)
+
+    if (!m_nofaces)
     {
-      if (f!=boost::graph_traits<Polyhedron>::null_face())
-      { compute_face(f); }
+      for(typename Polyhedron::Facet_const_iterator f=poly.facets_begin(); f!=poly.facets_end(); f++)
+      {
+        if (f!=boost::graph_traits<Polyhedron>::null_face())
+        { compute_face(f); }
+      }
     }
 
     for ( typename Polyhedron::Halfedge_const_iterator e=poly.halfedges_begin(); e!=poly.halfedges_end(); ++e)

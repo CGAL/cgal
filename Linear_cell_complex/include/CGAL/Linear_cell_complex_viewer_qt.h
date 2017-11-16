@@ -93,7 +93,7 @@ public:
   /// @param alcc the lcc to view
   /// @param title the title of the window
   /// @param anofaces if true, do not draw faces (faces are not computed; this can be
-  ///        usefull for very big LCC where this time could be long)
+  ///        usefull for very big object where this time could be long)
   SimpleLCCViewerQt(const LCC& alcc, const char* title="", bool anofaces=false) :
     Base(title),
     lcc(alcc),

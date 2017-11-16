@@ -10,12 +10,11 @@ if(NOT POLICY CMP0070 AND POLICY CMP0053)
 endif()
 
 # If you want to visualize a linear cell complex, you can use the following viewer
-# based on qt. Just uncomment the following two lines, plus the lines qt5_use_modules below
-
-find_package(CGAL COMPONENTS Qt5)
+# based on qt. Just uncomment the following line, plus the line find_package(CGALBasicViewer) below
+# find_package(CGAL COMPONENTS Qt5)
 
 # If you don't want to visualize, use the following line (otherwise comment it)
-# find_package(CGAL QUIET)
+find_package(CGAL QUIET)
 
 # For Gprof.
 # ADD_DEFINITIONS("-pg")
@@ -26,7 +25,7 @@ find_package(CGAL COMPONENTS Qt5)
 
 if ( CGAL_FOUND )
   include( ${CGAL_USE_FILE} )
-  find_package(CGALBasicViewer)
+  # find_package(CGALBasicViewer)
 
   include( CGAL_CreateSingleSourceCGALProgram )
   include_directories(BEFORE ../../include)
