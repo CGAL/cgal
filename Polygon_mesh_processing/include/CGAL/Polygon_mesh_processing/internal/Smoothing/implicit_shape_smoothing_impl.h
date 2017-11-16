@@ -171,7 +171,6 @@ public:
   //void solve_system(Eigen_matrix& stiffness_matrix)
   void solve_system(Eigen::SparseMatrix<double>& L, const double time)
   {
-
     Eigen_matrix A(nb_vert_, nb_vert_);
 
     Eigen_vector bx(nb_vert_);
@@ -182,33 +181,33 @@ public:
     Eigen_vector Xy(nb_vert_);
     Eigen_vector Xz(nb_vert_);
 
-	std::cout << "compute coefficients...";
+	std::cerr << "compute coefficients...";
     compute_coeff_matrix(A, L, time);
-	std::cout << "done" << std::endl;
+	std::cerr << "done" << std::endl;
 
-	std::cout << "rhs...";
+	std::cerr << "rhs...";
 	compute_rhs(bx, by, bz);
-	std::cout << "done" << std::endl;
+	std::cerr << "done" << std::endl;
 
 
 	// Cholesky factorization
-	std::cout << "compute ...";
+	std::cerr << "compute ...";
 	Eigen_solver solver;
 	solver.compute(A);
-	std::cout << "done" << std::endl;
+	std::cerr << "done" << std::endl;
 	// solver.analyzePattern(A);
     // solver.factorize(A);
 
     // back-substitution
-	std::cout << "solve...";
+	std::cerr << "solve...";
 	Xx = solver.solve(bx);
     Xy = solver.solve(by);
     Xz = solver.solve(bz);
-	std::cout << "done" << std::endl;
+	std::cerr << "done" << std::endl;
 
     if(solver.info() != Eigen::Success)
     {
-      std::cerr<<"Not Solved!\n";
+      std::cerr << "Not Solved!" << std::endl;
       return;
     }
 
@@ -297,9 +296,13 @@ private:
       return C;
     }
 
-    Eigen_matrix stiff_matrix()
+    Eigen_matrix stiff_matrix() // TOFIX: pass reference to matrix
     {
-      Eigen_matrix mat(nb_vert_, nb_vert_);
+      Eigen_matrix mat(nb_vert_, nb_vert_); // TOFIX
+
+	  // TOFIX: very slow way to fill the matrx 
+	  // avoid matrix C!! and use triplets
+	  // read http://eigen.tuxfamily.org/dox/group__TutorialSparse.html#TutorialSparseFilling
 
       // cot values
       Eigen_matrix C = cot_entries();

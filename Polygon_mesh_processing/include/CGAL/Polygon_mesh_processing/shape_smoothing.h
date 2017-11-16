@@ -21,7 +21,10 @@ void smooth_shape(PolygonMesh& mesh, const double time, std::size_t nb_iter)
   internal::Shape_smoother<PolygonMesh, VertexPointMap> smoother(mesh, vpmap);
 
   Eigen::SparseMatrix<double> stiffness_matrix;
-  stiffness_matrix = smoother.calc_stiff_matrix();
+
+  std::cerr << "compute stiffness matrix...";
+  stiffness_matrix = smoother.calc_stiff_matrix(); // TOFIX: avoid copy
+  std::cerr << "done" << std::endl;
 
   for(std::size_t t=0; t<nb_iter; ++t)
   {
