@@ -66,6 +66,7 @@
 #include <CGAL/Projection_traits_xy_3.h>
 #include <CGAL/Projection_traits_yz_3.h>
 #include <CGAL/Projection_traits_xz_3.h>
+#include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/Constrained_triangulation_face_base_2.h>
 #include <list>
 
@@ -670,7 +671,7 @@ protected:
   template<typename Kernel>
   class Triangulation_handler2 {
 
-    typedef typename CGAL::Triangulation_vertex_base_2<Kernel>               Vb;
+    typedef typename CGAL::Triangulation_vertex_base_with_info_2<Vertex_const_handle,Kernel> Vb;
     typedef typename CGAL::Constrained_triangulation_face_base_2<Kernel>     Fb;
     typedef typename CGAL::Triangulation_data_structure_2<Vb,Fb>             TDS;
     typedef typename CGAL::Constrained_triangulation_2<Kernel,TDS>           CT;
@@ -683,7 +684,6 @@ protected:
 
     CT ct;
     CGAL::Unique_hash_map<Face_handle, bool> visited;
-    CGAL::Unique_hash_map<CTVertex_handle, Vertex_const_handle> ctv2v;
     Halffacet_const_handle f;
     Plane_3 supporting_plane;
 
@@ -701,7 +701,7 @@ protected:
             Vertex_const_handle v=sfc->source()->source();
             CGAL_NEF_TRACEN("  insert point" << v->point());
 	    CTVertex_handle ctv = ct.insert(v->point());
-	    ctv2v[ctv] = v;
+	    ctv->info() = v;
             Vertex_const_handle t=sfc->source()->twin()->source();
             CGAL_NEF_TRACEN("  insert constraint" << v->point()
 	                     << "->" << t->point());
@@ -735,15 +735,16 @@ protected:
 	Plane_3 plane(p->point(),
 		      q->point(),
 		      r->point());
+
 	pib.begin_facet();
 	if(same_orientation(plane)) {
-	  pib.add_vertex_to_facet(VI[ctv2v[p]]);
-	  pib.add_vertex_to_facet(VI[ctv2v[q]]);
-	  pib.add_vertex_to_facet(VI[ctv2v[r]]);
+	  pib.add_vertex_to_facet(VI[p->info()]);
+	  pib.add_vertex_to_facet(VI[q->info()]);
+	  pib.add_vertex_to_facet(VI[r->info()]);
 	} else {
-	  pib.add_vertex_to_facet(VI[ctv2v[p]]);
-	  pib.add_vertex_to_facet(VI[ctv2v[r]]);
-	  pib.add_vertex_to_facet(VI[ctv2v[q]]);
+	  pib.add_vertex_to_facet(VI[p->info()]);
+	  pib.add_vertex_to_facet(VI[r->info()]);
+	  pib.add_vertex_to_facet(VI[q->info()]);
 	}
 	pib.end_facet();
       }
