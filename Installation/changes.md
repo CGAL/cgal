@@ -59,7 +59,7 @@ Release date: April 2018
 -   Add the function facets\_in\_complex\_3\_to\_triangle\_mesh() that
     exports Mesh\_complex\_3\_in\_triangulation\_3 facets into a
     MutableFaceGraph.
--   **Breaking change:**The concept `MeshDomainWithFeatures_3` has been
+-   **Breaking change:** The concept `MeshDomainWithFeatures_3` has been
     modified, to improve the performance and the reliability of the
     sampling of 1D curves of the domain.
 -   Add the ability to ensure that the output mesh surface describes a
