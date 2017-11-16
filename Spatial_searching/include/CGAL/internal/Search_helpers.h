@@ -64,11 +64,9 @@ class Distance_helper
 public:
 
   Distance_helper(Distance const& distance, SearchTraits const& traits)
-    : m_distance(distance), m_traits(traits)
+    : m_distance(distance), m_tdfc(m_distance), m_itd(traits, distance, m_tdfc)
   {}
 
-  // If transformed_distance_from_coordinates does not exist in `Distance`
-  template <bool has_transformed_distance_from_coordinates = has_transformed_distance_from_coordinates<Distance>::value>
   FT
   transformed_distance_from_coordinates(
     const Query_item& q,
@@ -76,75 +74,154 @@ public:
     typename std::vector<FT>::const_iterator it_coord_begin,
     typename std::vector<FT>::const_iterator it_coord_end)
   {
-    return m_distance.transformed_distance(q, p);
-  }
-  // ... or if it exists
-  template <>
-  FT
-  transformed_distance_from_coordinates<true>(
-    const Query_item& q,
-    Point const& p,
-    typename std::vector<FT>::const_iterator it_coord_begin,
-    typename std::vector<FT>::const_iterator it_coord_end)
-  {
-    return m_distance.transformed_distance_from_coordinates(q, it_coord_begin, it_coord_end);
+    return m_tdfc(q, p, it_coord_begin, it_coord_end);
   }
 
-  // *** Version with cache ***
-  // If interruptible_transformed_distance does not exist in `Distance`
-  template <bool has_interruptible_distance_computation = has_interruptible_transformed_distance<Distance>::value>
+  FT
+  interruptible_transformed_distance(
+    const Query_item& q,
+    Point const& p,
+    FT stop_if_geq_to_this)
+  {
+    return m_itd(q, p, stop_if_geq_to_this);
+  }
+
   FT
   interruptible_transformed_distance(
     const Query_item& q,
     Point const& p,
     typename std::vector<FT>::const_iterator it_coord_begin,
     typename std::vector<FT>::const_iterator it_coord_end,
-    FT)
-  {
-    return transformed_distance_from_coordinates(q, p, it_coord_begin, it_coord_end);
-  }
-  // ... or if it exists
-  template <>
-  FT
-  interruptible_transformed_distance<true>(
-    const Query_item& q,
-    Point const& p,
-    typename std::vector<FT>::const_iterator it_coord_begin,
-    typename std::vector<FT>::const_iterator it_coord_end,
     FT stop_if_geq_to_this)
   {
-    return m_distance.interruptible_transformed_distance(
-      q, it_coord_begin, it_coord_end, stop_if_geq_to_this);
-  }
-
-  // *** Version without cache ***
-  // If interruptible_transformed_distance does not exist in `Distance`
-  template <bool has_interruptible_distance_computation = has_interruptible_transformed_distance<Distance>::value>
-  FT
-  interruptible_transformed_distance(
-    const Query_item& q,
-    Point const& p,
-    FT)
-  {
-    return m_distance.transformed_distance(q, p);
-  }
-  // ... or if it exists
-  template <>
-  FT
-  interruptible_transformed_distance<true>(
-    const Query_item& q,
-    Point const& p,
-    FT stop_if_geq_to_this)
-  {
-    typename SearchTraits::Construct_cartesian_const_iterator_d construct_it = m_traits.construct_cartesian_const_iterator_d_object();
-    return m_distance.interruptible_transformed_distance(
-      q, construct_it(p), construct_it(p, 0), stop_if_geq_to_this);
+    return m_itd(q, p, it_coord_begin, it_coord_end, stop_if_geq_to_this);
   }
 
 private:
-  Distance     const& m_distance;
-  SearchTraits const& m_traits;
 
+  // If transformed_distance_from_coordinates does not exist in `Distance`
+  template <bool has_transformed_distance_from_coordinates>
+  class Transformed_distance_from_coordinates
+  {
+  public:
+    Transformed_distance_from_coordinates(Distance const& distance)
+      : m_distance(distance) 
+    {}
+
+    FT operator() (
+      const Query_item& q,
+      Point const& p,
+      typename std::vector<FT>::const_iterator it_coord_begin,
+      typename std::vector<FT>::const_iterator it_coord_end) const
+    {
+      return m_distance.transformed_distance(q, p);
+    }
+
+  private:
+    Distance const& m_distance;
+  };
+  // ... or if it exists
+  template <>
+  class Transformed_distance_from_coordinates<true>
+  {
+  public:
+    Transformed_distance_from_coordinates(Distance const& distance)
+      : m_distance(distance)
+    {}
+
+    FT operator() (
+      const Query_item& q,
+      Point const& p,
+      typename std::vector<FT>::const_iterator it_coord_begin,
+      typename std::vector<FT>::const_iterator it_coord_end) const
+    {
+      return m_distance.transformed_distance_from_coordinates(q, it_coord_begin, it_coord_end);
+    }
+
+  private:
+    Distance const& m_distance;
+  };
+
+  // If interruptible_transformed_distance does not exist in `Distance`
+  template <bool has_interruptible_transformed_distance>
+  class Interruptible_transformed_distance
+  {
+  public:
+    typedef Transformed_distance_from_coordinates<
+      has_transformed_distance_from_coordinates<Distance>::value> Tdfc;
+
+    Interruptible_transformed_distance(
+      SearchTraits const&, Distance const& distance, Tdfc const& tdfc)
+      : m_distance(distance), m_ref_to_tdfc(tdfc)
+    {}
+
+    FT operator() (
+      const Query_item& q,
+      Point const& p,
+      FT) const
+    {
+      return m_distance.transformed_distance(q, p);
+    }
+
+    FT operator() (
+      const Query_item& q,
+      Point const& p,
+      typename std::vector<FT>::const_iterator it_coord_begin,
+      typename std::vector<FT>::const_iterator it_coord_end,
+      FT) const
+    {
+      return m_ref_to_tdfc(q, p, it_coord_begin, it_coord_end);
+    }
+
+  private:
+    Distance const& m_distance;
+    Tdfc const& m_ref_to_tdfc;
+  };
+  // ... or if it exists
+  template <>
+  class Interruptible_transformed_distance<true>
+  {
+  public:
+    typedef Transformed_distance_from_coordinates<
+      has_transformed_distance_from_coordinates<Distance>::value> Tdfc;
+
+    Interruptible_transformed_distance(
+      SearchTraits const& traits, Distance const& distance, Tdfc const&)
+    : m_traits(traits), m_distance(distance)
+    {}
+
+    FT operator() (
+      const Query_item& q,
+      Point const& p,
+      FT stop_if_geq_to_this) const
+    {
+      typename SearchTraits::Construct_cartesian_const_iterator_d construct_it =
+        m_traits.construct_cartesian_const_iterator_d_object();
+      return m_distance.interruptible_transformed_distance(
+        q, construct_it(p), construct_it(p, 0), stop_if_geq_to_this);
+    }
+
+    FT operator() (
+      const Query_item& q,
+      Point const& p,
+      typename std::vector<FT>::const_iterator it_coord_begin,
+      typename std::vector<FT>::const_iterator it_coord_end,
+      FT stop_if_geq_to_this) const
+    {
+      return m_distance.interruptible_transformed_distance(
+        q, it_coord_begin, it_coord_end, stop_if_geq_to_this);
+    }
+
+  private:
+    SearchTraits const& m_traits;
+    Distance const& m_distance;
+  };
+
+  Distance     const& m_distance;
+  Transformed_distance_from_coordinates<
+    has_transformed_distance_from_coordinates<Distance>::value> m_tdfc;
+  Interruptible_transformed_distance<
+    has_interruptible_transformed_distance<Distance>::value> m_itd;
 }; // Distance_helper
 
 
