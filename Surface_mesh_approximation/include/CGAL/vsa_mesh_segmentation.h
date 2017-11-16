@@ -42,7 +42,9 @@ namespace VSA {
  *  \cgalParamEnd
  *  \cgalParamBegin{init_method} the selection of seed initialization method.
  *  \cgalParamEnd
- *  \cgalParamBegin{refine_until_proxies} refine until the number of proxies is reached.
+ *  \cgalParamBegin{max_nb_proxies} the maximum number of proxies is reached.
+ *  \cgalParamEnd
+ *  \cgalParamBegin{min_error_drop} the minimum error drop of the approximation.
  *  \cgalParamEnd
  *  \cgalParamBegin{iterations} the relaxation iterations after seeding.
  *  \cgalParamEnd
@@ -79,10 +81,10 @@ void mesh_segmentation(const TriangleMesh &tm_in, const NamedParameters &np)
 
   // default random initialization
   CGAL::VSA::Seeding init = choose_param(get_param(np, internal_np::init_method), CGAL::VSA::Random);
-  std::size_t num_proxies = choose_param(get_param(np, internal_np::refine_until_proxies), 0);
+  std::size_t num_proxies = choose_param(get_param(np, internal_np::max_nb_proxies), 0);
   std::size_t inner_iterations = choose_param(get_param(np, internal_np::inner_iterations), 10);
   if (num_proxies == 0 || num_proxies > num_faces(tm_in)) {
-    FT drop = choose_param(get_param(np, internal_np::init_by_error), FT(0.01));
+    FT drop = choose_param(get_param(np, internal_np::min_error_drop), FT(0.01));
     vsa_l21.init_by_error(
       static_cast<typename CGAL::VSA::Seeding>(init), drop, inner_iterations);
   }

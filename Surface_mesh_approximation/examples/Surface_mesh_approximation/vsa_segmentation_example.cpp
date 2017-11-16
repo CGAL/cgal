@@ -23,7 +23,7 @@ int main()
   // free function interface with named parameters
   CGAL::VSA::mesh_segmentation(input,
     CGAL::VSA::parameters::init_method(CGAL::VSA::Hierarchical). // hierarchical init
-    refine_until_proxies(200). // refine until target number of proxies
+    max_nb_proxies(200). // refine until target number of proxies
     iterations(30)); // number of relaxation iterations after seeding
 
   return EXIT_SUCCESS;

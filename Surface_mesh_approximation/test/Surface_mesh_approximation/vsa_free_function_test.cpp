@@ -32,7 +32,7 @@ int main()
   CGAL::VSA::mesh_approximation(mesh,
     std::back_inserter(anchor_pos),
     std::back_inserter(tris),
-    CGAL::VSA::parameters::init_by_number(6).
+    CGAL::VSA::parameters::max_nb_proxies(6).
       iterations(30).
       inner_iterations(5).
       mesh_chord_error(0.5).

@@ -29,7 +29,7 @@ int test() {
   CGAL::VSA::mesh_approximation(tm,
     CGAL::internal_np::vsa_no_output,
     CGAL::internal_np::vsa_no_output,
-    CGAL::VSA::parameters::init_by_number(6).
+    CGAL::VSA::parameters::max_nb_proxies(6).
       iterations(30).
       inner_iterations(5).
       mesh_chord_error(0.5).

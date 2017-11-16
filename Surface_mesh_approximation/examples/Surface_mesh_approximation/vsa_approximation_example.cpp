@@ -30,7 +30,7 @@ int main()
     std::back_inserter(points),
     std::back_inserter(triangles),
     CGAL::VSA::parameters::init_method(CGAL::VSA::Hierarchical). // hierarchical init
-    refine_until_proxies(200). // refine until target number of proxies
+    max_nb_proxies(200). // target number of proxies
     iterations(30). // number of relaxation iterations after seeding
     // output to polyhedron
     output_mesh(&output)); // valid only if the indexed triangles construct a 2-manifold and oriented surface

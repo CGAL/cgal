@@ -189,7 +189,7 @@ Facet_proxy_pmap fpxmap(fidx_map);
 // plane proxies;
 std::vector<Plane_proxy> proxies;
 CGAL::VSA::mesh_approximation(input, output,
-        CGAL::VSA::parameters::init_by_error(err_drop) // init the algorithm by target error drop
+        CGAL::VSA::parameters::min_error_drop(err_drop) // init the algorithm by target error drop
        .init_method(method) // set proxy seeding method in the initialization
        .iterations(num_iterations) // set number of fitting iterations after initialization
        .mesh_chord_error(sub_thre) // set boundary approximation error threshold when meshing
