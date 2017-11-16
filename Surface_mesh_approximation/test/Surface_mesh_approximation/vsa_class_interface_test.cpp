@@ -99,6 +99,11 @@ int main()
   std::cout << "get outputs" << std::endl;
   approx.get_proxy_map(proxy_pmap);
 
+  for (std::size_t i = 0; i < approx.get_proxies_size(); ++i) {
+    std::list<Facet_handle> patch;
+    approx.get_proxy_region(i, std::back_inserter(patch));
+  }
+
   std::vector<Plane_proxy> proxies;
   approx.get_proxies(std::back_inserter(proxies));
 

@@ -851,6 +851,22 @@ public:
   }
 
   /*!
+   * @brief Get the facet region of the specified proxy.
+   * @tparam OutputIterator output iterator with `boost::graph_traits<TriangleMesh>::%face_descriptor` as value type
+   * @param px_idx proxy index
+   * @param out_itr output iterator
+   */
+  template <typename OutputIterator>
+  void get_proxy_region(const std::size_t px_idx, OutputIterator out_itr) const {
+    if (px_idx >= proxies.size())
+      return;
+
+    BOOST_FOREACH(face_descriptor f, faces(*m_pmesh))
+      if (fproxy_map[f] == px_idx)
+        *out_itr++ = f;
+  }
+
+  /*!
    * @brief Get the proxies.
    * @tparam OutputIterator output iterator with Proxy as value type
    * @param out_itr output iterator
