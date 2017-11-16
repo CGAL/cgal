@@ -14,6 +14,8 @@
 //
 // SPDX-License-Identifier: GPL-3.0+
 //
+// $URL$
+// $Id$
 // Author(s)     : Tran Kai Frank DA
 //                 Andreas Fabri <Andreas.Fabri@geometryfactory.com>
 

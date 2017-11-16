@@ -9,6 +9,8 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
 //
+// $URL$
+// $Id$
 // SPDX-License-Identifier: BSL-1.0
 //
 
