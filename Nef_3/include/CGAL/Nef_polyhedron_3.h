@@ -673,10 +673,10 @@ protected:
   class Triangulation_handler2 {
 
     typedef typename CGAL::Triangulation_vertex_base_with_info_2<Vertex_const_handle,Kernel> Vb;
-    typedef typename CGAL::Triangulation_face_base_with_info_2<bool,Kernel> Info;
-    typedef typename CGAL::Constrained_triangulation_face_base_2<Kernel,Info>     Fb;
-    typedef typename CGAL::Triangulation_data_structure_2<Vb,Fb>             TDS;
-    typedef typename CGAL::Constrained_triangulation_2<Kernel,TDS>           CT;
+    typedef typename CGAL::Triangulation_face_base_with_info_2<bool,Kernel>                  Info;
+    typedef typename CGAL::Constrained_triangulation_face_base_2<Kernel,Info>                Fb;
+    typedef typename CGAL::Triangulation_data_structure_2<Vb,Fb>                             TDS;
+    typedef typename CGAL::Constrained_triangulation_2<Kernel,TDS>                           CT;
 
     typedef typename CT::Face_handle           Face_handle;
     typedef typename CT::Vertex_handle         CTVertex_handle;
@@ -694,61 +694,62 @@ protected:
 
     template<typename PIB, typename Index>
     void handle_triangles(PIB& pib, Index& VI) {
-      Halffacet_cycle_const_iterator fci;
-      for(fci=f->facet_cycles_begin(); fci!=f->facet_cycles_end(); ++fci) {
-	if(fci.is_shalfedge()) {
-          SHalfedge_around_facet_const_circulator sfc(fci), send(sfc);
-	  CGAL_For_all(sfc,send) {
-            Vertex_const_handle v=sfc->source()->source();
-            CGAL_NEF_TRACEN("  insert point" << v->point());
-	    CTVertex_handle ctv = ct.insert(v->point());
-	    ctv->info() = v;
-            Vertex_const_handle t=sfc->source()->twin()->source();
-            CGAL_NEF_TRACEN("  insert constraint" << v->point()
-	                     << "->" << t->point());
-	    ct.insert_constraint(v->point(),t->point());
-          }
-        }
-      }
-      CGAL_assertion(ct.is_valid());
+        Halffacet_cycle_const_iterator fci;
+        for(fci=f->facet_cycles_begin(); fci!=f->facet_cycles_end(); ++fci) {
+                if(fci.is_shalfedge()) {
+                        SHalfedge_around_facet_const_circulator sfc(fci), send(sfc);
+                        CGAL_For_all(sfc,send) {
+                            Vertex_const_handle v=sfc->source()->source();
+                            CGAL_NEF_TRACEN("  insert point" << v->point());
+                            CTVertex_handle ctv = ct.insert(v->point());
+                            ctv->info() = v;
+                            Vertex_const_handle t=sfc->source()->twin()->source();
+                            CGAL_NEF_TRACEN("  insert constraint" << v->point()
+                                            << "->" << t->point());
+                            ct.insert_constraint(v->point(),t->point());
+                        }
+                    }
+            }
+        CGAL_assertion(ct.is_valid());
 
-      CGAL_NEF_TRACEN("number of finite triangles " << ct.number_of_faces());
+        CGAL_NEF_TRACEN("number of finite triangles " << ct.number_of_faces());
 
-      Face_handle infinite = ct.infinite_face();
-      CTVertex_handle ctv = infinite->vertex(1);
-      if(ct.is_infinite(ctv)) ctv = infinite->vertex(2);
-      CGAL_assertion(!ct.is_infinite(ctv));
+        Face_handle infinite = ct.infinite_face();
+        CTVertex_handle ctv = infinite->vertex(1);
+        if(ct.is_infinite(ctv)) ctv = infinite->vertex(2);
+        CGAL_assertion(!ct.is_infinite(ctv));
 
-      Face_handle opposite;
-      Face_circulator vc(ctv,infinite);
-      do { opposite = vc++;
-      } while(!ct.is_constrained(Edge(vc,vc->index(opposite))));
-      Face_handle first = vc;
+        Face_handle opposite;
+        Face_circulator vc(ctv,infinite);
+        do { opposite = vc++;
+        } while(!ct.is_constrained(Edge(vc,vc->index(opposite))));
+        Face_handle first = vc;
 
-      CGAL_assertion(!ct.is_infinite(first));
-      traverse_triangulation(first, first->index(opposite));
-    Finite_face_iterator fi;
-    for(fi=ct.finite_faces_begin();fi!=ct.finite_faces_end(); ++fi) {
-       if(fi->info() == false) continue;
-	   CTVertex_handle p=fi->vertex(0);
-	   CTVertex_handle q=fi->vertex(1);
-	   CTVertex_handle r=fi->vertex(2);
-	Plane_3 plane(p->point(),
-		      q->point(),
-		      r->point());
+        CGAL_assertion(!ct.is_infinite(first));
+        traverse_triangulation(first, first->index(opposite));
 
-	pib.begin_facet();
-	if(same_orientation(plane)) {
-	  pib.add_vertex_to_facet(VI[p->info()]);
-	  pib.add_vertex_to_facet(VI[q->info()]);
-	  pib.add_vertex_to_facet(VI[r->info()]);
-	} else {
-	  pib.add_vertex_to_facet(VI[p->info()]);
-	  pib.add_vertex_to_facet(VI[r->info()]);
-	  pib.add_vertex_to_facet(VI[q->info()]);
-	}
-	pib.end_facet();
-      }
+        Finite_face_iterator fi;
+        for(fi=ct.finite_faces_begin();fi!=ct.finite_faces_end(); ++fi) {
+                if(fi->info() == false) continue;
+                CTVertex_handle p=fi->vertex(0);
+                CTVertex_handle q=fi->vertex(1);
+                CTVertex_handle r=fi->vertex(2);
+                Plane_3 plane(p->point(),
+                              q->point(),
+                              r->point());
+
+                pib.begin_facet();
+                if(same_orientation(plane)) {
+                        pib.add_vertex_to_facet(VI[p->info()]);
+                        pib.add_vertex_to_facet(VI[q->info()]);
+                        pib.add_vertex_to_facet(VI[r->info()]);
+                    } else {
+                        pib.add_vertex_to_facet(VI[p->info()]);
+                        pib.add_vertex_to_facet(VI[r->info()]);
+                        pib.add_vertex_to_facet(VI[q->info()]);
+                    }
+                pib.end_facet();
+            }
     }
 
     void descend_triangulation(Face_handle f, int i) {
@@ -766,11 +767,11 @@ protected:
     }
 
     bool same_orientation(Plane_3 p1) const {
-      if(p1.a() != 0)
-	return CGAL::sign(p1.a()) == CGAL::sign(supporting_plane.a());
-      if(p1.b() != 0)
-	return CGAL::sign(p1.b()) == CGAL::sign(supporting_plane.b());
-      return CGAL::sign(p1.c()) == CGAL::sign(supporting_plane.c());
+        if(p1.a() != 0)
+            return CGAL::sign(p1.a()) == CGAL::sign(supporting_plane.a());
+        if(p1.b() != 0)
+            return CGAL::sign(p1.b()) == CGAL::sign(supporting_plane.b());
+        return CGAL::sign(p1.c()) == CGAL::sign(supporting_plane.c());
     }
   };
  
