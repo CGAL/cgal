@@ -1,4 +1,4 @@
-// Copyright (c) 2011 CNRS and LIRIS' Establishments (France).
+// Copyright (c) 2017 CNRS and LIRIS' Establishments (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
@@ -21,14 +21,7 @@
 #define CGAL_LCC_VIEWER_QT_H
 
 #include "CGAL/Qt/Basic_viewer.h"
-#include <CGAL/Linear_cell_complex.h>
-#include <CGAL/Cartesian_converter.h>
 #include <CGAL/Random.h>
-
-typedef CGAL::Exact_predicates_inexact_constructions_kernel Local_kernel;
-typedef Local_kernel::Point_3  Local_point;
-typedef Local_kernel::Vector_3 Local_vector;
-
 
 CGAL::Color get_random_color(CGAL::Random& random)
 {
@@ -63,47 +56,26 @@ template<class LCC, int dim=LCC::ambient_dimension>
 struct Geom_utils;
 
 template<class LCC>
-struct Geom_utils<LCC,3>
+struct Geom_utils<LCC, 3>
 {
-  Local_point get_point(const LCC& lcc,
-                        typename LCC::Vertex_attribute_const_handle vh)
-  { return converter(lcc.point_of_vertex_attribute(vh)); }
-
-  Local_point get_point(const LCC& lcc, typename LCC::Dart_const_handle dh)
-  { return converter(lcc.point(dh)); }
-
-  Local_vector get_vertex_normal(const LCC& lcc,
-                                 typename LCC::Dart_const_handle dh)
+  static typename LCC::Vector get_vertex_normal(const LCC& lcc,
+                                                typename LCC::Dart_const_handle dh)
   {
-    Local_vector n = converter(CGAL::compute_normal_of_cell_0<LCC>(lcc,dh));
+    typename LCC::Vector n = CGAL::compute_normal_of_cell_0<LCC>(lcc,dh);
     n = n/(CGAL::sqrt(n*n));
     return n;
   }
-protected:
-  CGAL::Cartesian_converter<typename LCC::Traits, Local_kernel> converter;
 };
 
 template<class LCC>
-struct Geom_utils<LCC,2>
+struct Geom_utils<LCC, 2>
 {
-  Local_point get_point(const LCC& lcc,
-                        typename LCC::Vertex_attribute_const_handle vh)
+  static typename LCC::Vector get_vertex_normal(const LCC&,
+                                                typename LCC::Dart_const_handle)
   {
-    Local_point p(converter(lcc.point_of_vertex_attribute(vh).x()),0,
-                  converter(lcc.point_of_vertex_attribute(vh).y()));
-    return p;
+    typename LCC::Vector res=CGAL::NULL_VECTOR;
+    return res;
   }
-
-  Local_point get_point(const LCC& lcc, typename LCC::Dart_const_handle dh)
-  { return get_point(lcc, lcc.vertex_attribute(dh)); }
-
-  Local_vector get_vertex_normal(const LCC&, typename LCC::Dart_const_handle)
-  {
-    Local_vector n(0,-1,0);
-    return n;
-  }
-protected:
-  CGAL::Cartesian_converter<typename LCC::Traits, Local_kernel> converter;
 };
 
 // Viewer class for LCC 
@@ -112,6 +84,9 @@ class SimpleLCCViewerQt : public Basic_viewer
 {
   typedef Basic_viewer Base;
   typedef typename LCC::Dart_const_handle Dart_const_handle;
+  typedef typename LCC::Traits Kernel;
+  typedef typename Kernel::Point Point;
+  typedef typename Kernel::Vector Vector;
   
 public:
   /// Construct the viewer.
@@ -128,7 +103,6 @@ public:
   }
 
 protected:
-  
   void compute_face(Dart_const_handle dh)
   {
     // We fill only closed faces.
@@ -155,8 +129,8 @@ protected:
     cur=dh;
     do
     {
-      add_point_in_face(geomutils.get_point(lcc, cur),
-                        geomutils.get_vertex_normal(lcc, cur));
+      add_point_in_face(lcc.point(cur),
+                        Geom_utils<LCC>::get_vertex_normal(lcc, cur));
       cur=lcc.next(cur);
     }
     while(cur!=dh);
@@ -169,11 +143,11 @@ protected:
     CGAL::Random random((unsigned long int)&*dh);
     CGAL::Color c=get_random_color(random); // TODO REMOVE LATER
 
-    Local_point p1 = geomutils.get_point(lcc, dh);
+    Point p1 = lcc.point(dh);
     Dart_const_handle d2 = lcc.other_extremity(dh);
     if (d2!=NULL)
     {
-      Local_point p2 = geomutils.get_point(lcc, d2);
+      Point p2 = lcc.point(d2);
       if (c.red()<60 || c.green()<60 || c.blue()<60)
         add_mono_segment(p1, p2);
       else
@@ -188,7 +162,7 @@ protected:
     CGAL::Random random((unsigned long int)&*dh);  // TODO REMOVE LATER
     CGAL::Color c=get_random_color(random);
 
-    Local_point p = geomutils.get_point(lcc, dh);
+    Point p = lcc.point(dh);
     if (c.red()<60 || c.green()<60 || c.blue()<60)
       add_mono_point(p);
     else
@@ -241,7 +215,6 @@ protected:
 protected:
   const LCC& lcc;
   bool m_nofaces;
-  Geom_utils<LCC> geomutils;
 };
 
   

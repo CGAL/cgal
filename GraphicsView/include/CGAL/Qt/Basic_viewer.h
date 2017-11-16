@@ -1,4 +1,4 @@
-// Copyright (c) 2011 CNRS and LIRIS' Establishments (France).
+// Copyright (c) 2017 CNRS and LIRIS' Establishments (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
@@ -36,6 +36,7 @@
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Constrained_triangulation_plus_2.h>
 #include <CGAL/Qt/CreateOpenGLContext.h>
+#include <CGAL/Cartesian_converter.h>
 
 #include <vector>
 #include <cstdlib>
@@ -45,6 +46,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel Local_kernel;
 typedef Local_kernel::Point_3  Local_point;
 typedef Local_kernel::Vector_3 Local_vector;
 
+//------------------------------------------------------------------------------
 const char vertex_source_color[] =
   {
     "#version 120 \n"
@@ -120,7 +122,7 @@ const char fragment_source_p_l[] =
     "} \n"
     "\n"
   };
-
+//------------------------------------------------------------------------------
 namespace internal {
   template <class Point, class Vector>
   void newell_single_step_3(const Point& p, const Point& q, Vector& n)
@@ -133,23 +135,73 @@ namespace internal {
                n.y()+((p.z()-q.z())*(p.x()+q.x())),
                n.z()+((p.x()-q.x())*(p.y()+q.y())));
     }
-} // End namespace internal
 
-template <class K>
-typename K::Vector_3 compute_normal_of_face(const std::vector<typename K::Point_3>& points)
-{
-  typename K::Vector_3 normal(CGAL::NULL_VECTOR);
-  unsigned int nb = 0;
-  for (std::size_t i=0; i<points.size(); ++i)
+  Local_vector compute_normal_of_face(const std::vector<Local_point>& points)
   {
-    internal::newell_single_step_3(points[i], points[(i+1)%points.size()], normal);
-    ++nb;
+    Local_vector normal(CGAL::NULL_VECTOR);
+    unsigned int nb = 0;
+    for (std::size_t i=0; i<points.size(); ++i)
+    {
+      newell_single_step_3(points[i], points[(i+1)%points.size()], normal);
+      ++nb;
+    }
+    
+    assert(nb>0);
+    return (typename Local_kernel::Construct_scaled_vector_3()(normal, 1.0/nb));
   }
 
-  assert(nb>0);
-  return (typename K::Construct_scaled_vector_3()(normal, 1.0/nb));
-}
+  template<int dim>
+  struct Geom_utils;
 
+  template<>
+  struct Geom_utils<3>
+  {
+    template<typename KPoint>
+    static Local_point get_local_point(const KPoint& p)
+    {
+      CGAL::Cartesian_converter<typename CGAL::Kernel_traits<KPoint>::Kernel, Local_kernel> converter;
+      return converter(p);
+    }
+
+    template<typename KVector>
+    static Local_vector get_local_vector(const KVector& v)
+    {
+      CGAL::Cartesian_converter<typename CGAL::Kernel_traits<KVector>::Kernel, Local_kernel> converter;
+      return converter(v);
+    }
+  };
+
+  template<>
+  struct Geom_utils<2>
+  {
+    template<typename KPoint>
+    static Local_point get_local_point(const KPoint& p)
+    {
+      CGAL::Cartesian_converter<typename CGAL::Kernel_traits<KPoint>::Kernel, Local_kernel> converter;
+      return Local_point(converter(p.x()),0,converter(p.y()));
+    }
+
+    template<typename KVector>
+    static Local_vector get_local_vector(const KVector& v)
+    {
+      CGAL::Cartesian_converter<typename CGAL::Kernel_traits<KVector>::Kernel, Local_kernel> converter;
+      return Local_vector(converter(v.x()),0,converter(v.y()));
+    }
+  };
+
+  template<typename KPoint>
+  Local_point get_local_point(const KPoint& p)
+  {
+    return Geom_utils<CGAL::Ambient_dimension<KPoint>::value>::get_local_point(p);
+  }
+
+  template<typename KVector>
+  Local_vector get_local_vector(const KVector& v)
+  {
+    return Geom_utils<CGAL::Ambient_dimension<KVector>::value>::get_local_vector(v);
+  }
+} // End namespace internal
+//------------------------------------------------------------------------------
 class Basic_viewer : public QGLViewer, public QOpenGLFunctions_2_1
 {
   struct Vertex_info
@@ -228,48 +280,26 @@ public:
   bool is_empty() const
   { return m_empty; }
   
-  void add_point(const Local_point& p, std::vector<float>& point_vector)
-  {
-    point_vector.push_back(p.x());
-    point_vector.push_back(p.y());
-    point_vector.push_back(p.z());
-
-    if (is_empty())
-    { bb=p.bbox(); m_empty=false; }
-    else
-    { bb=bb+p.bbox(); }
-  }
-
-  void add_color(const CGAL::Color& acolor, std::vector<float>& color_vector)
-  {
-    color_vector.push_back((float)acolor.red()/(float)255);
-    color_vector.push_back((float)acolor.green()/(float)255);
-    color_vector.push_back((float)acolor.blue()/(float)255);
-  }
-
-  void add_normal(const Local_vector& n, std::vector<float>& normal_vector)
-  {
-    normal_vector.push_back(n.x());
-    normal_vector.push_back(n.y());
-    normal_vector.push_back(n.z());
-  }
-  
-  void add_mono_point(const Local_point& p)
+  template<typename KPoint>
+  void add_mono_point(const KPoint& p)
   { add_point(p, arrays[POS_MONO_POINTS]); }
 
-  void add_colored_point(const Local_point& p, const CGAL::Color& acolor)
+  template<typename KPoint>
+  void add_colored_point(const KPoint& p, const CGAL::Color& acolor)
   {
     add_point(p, arrays[POS_COLORED_POINTS]);
     add_color(acolor, arrays[COLOR_POINTS]);
   }
   
-  void add_mono_segment(const Local_point& p1, const Local_point& p2)
+  template<typename KPoint>
+  void add_mono_segment(const KPoint& p1, const KPoint& p2)
   {
     add_point(p1, arrays[POS_MONO_SEGMENTS]);
     add_point(p2, arrays[POS_MONO_SEGMENTS]);
   }
   
-  void add_colored_segment(const Local_point& p1, const Local_point& p2,
+  template<typename KPoint>
+  void add_colored_segment(const KPoint& p1, const KPoint& p2,
                            const CGAL::Color& acolor)
   {
     add_point(p1, arrays[POS_COLORED_SEGMENTS]);
@@ -306,10 +336,12 @@ public:
   /// Add a point at the end of the current face
   /// With this method, it is not possible to use the Gourod shading.
   /// @param p the point to add
-  bool add_point_in_face(const Local_point& p)
+  template<typename KPoint>
+  bool add_point_in_face(const KPoint& kp)
   {
     if (!m_face_started) return false;
-    
+
+    Local_point p=internal::get_local_point(kp);
     if (points_of_face.empty() || points_of_face.back()!=p)
     {
       points_of_face.push_back(p);
@@ -321,13 +353,14 @@ public:
   /// Add a point at the end of the current face
   /// @param p the point to add
   /// @p_normal the vertex normal in this point (for Gourod shading)
-  void add_point_in_face(const Local_point& p, const Local_vector& p_normal)
+  template<typename KPoint, typename KVector>
+  void add_point_in_face(const KPoint& p, const KVector& p_normal)
   {
     if (!m_face_started) return;
     
     if (add_point_in_face(p))
     {
-      vertex_normals_for_face.push_back(p_normal);
+      vertex_normals_for_face.push_back(internal::get_local_vector(p_normal));
     }
   }
 
@@ -346,7 +379,7 @@ public:
       return;
     }
     
-    Local_vector normal=compute_normal_of_face<Local_kernel>(points_of_face);
+    Local_vector normal=internal::compute_normal_of_face(points_of_face);
 
     if (points_of_face.size()==3) // Triangle: no need to triangulate
     {
@@ -514,6 +547,35 @@ public:
   }
   
 protected:
+  template<typename KPoint>
+  void add_point(const KPoint& kp, std::vector<float>& point_vector)
+  {
+    Local_point p=internal::get_local_point(kp);
+    point_vector.push_back(p.x());
+    point_vector.push_back(p.y());
+    point_vector.push_back(p.z());
+
+    if (is_empty())
+    { bb=p.bbox(); m_empty=false; }
+    else
+    { bb=bb+p.bbox(); }
+  }
+
+  void add_color(const CGAL::Color& acolor, std::vector<float>& color_vector)
+  {
+    color_vector.push_back((float)acolor.red()/(float)255);
+    color_vector.push_back((float)acolor.green()/(float)255);
+    color_vector.push_back((float)acolor.blue()/(float)255);
+  }
+
+  template<typename KVector>
+  void add_normal(const KVector& kv, std::vector<float>& normal_vector)
+  {
+    Local_vector n=internal::get_local_vector(kv);
+    normal_vector.push_back(n.x());
+    normal_vector.push_back(n.y());
+    normal_vector.push_back(n.z());
+  }  
   
   void compile_shaders()
   {

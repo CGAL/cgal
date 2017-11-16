@@ -51,62 +51,12 @@ struct DefaultColorFunctor
   }
 };
 
-template<class Polyhedron>
-struct Geom_utils_polyhedron
-{
-  typedef typename Polyhedron::Traits K;
-  
-  Local_point get_point(const Polyhedron&, typename Polyhedron::Halfedge_const_handle he)
-  { return converter(he->vertex()->point()); }
-
-  Local_vector get_face_normal(const Polyhedron&,
-                               typename Polyhedron::Halfedge_const_handle he)
-  {
-    Local_vector normal=CGAL::NULL_VECTOR;
-    typename Polyhedron::Halfedge_const_handle end=he;
-    unsigned int nb=0;
-    do
-    {
-      internal::newell_single_step_3(he->vertex()->point(), he->next()->vertex()->point(), normal);
-      ++nb;
-      he=he->next();
-    }
-    while (he!=end);
-    assert(nb>0);
-    return (typename K::Construct_scaled_vector_3()(normal, 1.0/nb));
-  }
-  
-  Local_vector get_vertex_normal(const Polyhedron& poly,
-                                 typename Polyhedron::Halfedge_const_handle he)
-  {
-    Local_vector normal=CGAL::NULL_VECTOR;
-    typename Polyhedron::Halfedge_const_handle end=he;
-    do
-    {
-      if (!he->is_border())
-      {
-        Local_vector n=get_face_normal(poly, he);
-        normal=typename K::Construct_sum_of_vectors_3()(normal, n);
-      }
-      he=he->next()->opposite();
-    }
-    while (he!=end);
-    
-    if (!typename K::Equal_3()(normal, CGAL::NULL_VECTOR))
-    { normal=(typename K::Construct_scaled_vector_3()(normal,
-                                                      1.0/CGAL::sqrt(normal.squared_length()))); }
-    
-    return normal;
-  }
-protected:
-  CGAL::Cartesian_converter<typename Polyhedron::Traits, Local_kernel> converter;
-};
-
 // Viewer class for Polyhedron
 template<class Polyhedron, class ColorFunctor>
 class SimplePolyhedronViewerQt : public Basic_viewer
 {
   typedef Basic_viewer Base;
+  typedef typename Polyhedron::Traits Kernel;
   typedef typename Polyhedron::Halfedge_const_handle Halfedge_const_handle;
   typedef typename Polyhedron::Vertex_const_handle Vertex_const_handle;
   typedef typename Polyhedron::Facet_const_handle Facet_const_handle;
@@ -126,7 +76,6 @@ public:
   }
 
 protected:
-  
   void compute_face(Facet_const_handle fh)
   {
     CGAL::Color c=ColorFunctor::run(poly, fh);
@@ -134,8 +83,8 @@ protected:
     Halfedge_const_handle he=fh->facet_begin();
     do
     {
-      add_point_in_face(geomutils.get_point(poly, he),
-                        geomutils.get_vertex_normal(poly, he));
+      add_point_in_face(he->vertex()->point(),
+                        get_vertex_normal(he));
       he=he->next();
     }
     while (he!=fh->facet_begin());
@@ -144,16 +93,12 @@ protected:
 
   void compute_edge(Halfedge_const_handle he)
   {
-    Local_point p1 = geomutils.get_point(poly, he);
-    Local_point p2 = geomutils.get_point(poly, he->opposite());
-    add_mono_segment(p1, p2);
+    add_mono_segment(he->vertex()->point(),
+                     he->opposite()->vertex()->point());
   } 
 
   void compute_vertex(Vertex_const_handle vh)
-  {
-    Local_point p = geomutils.get_point(poly, vh->halfedge());
-    add_mono_point(p);
-  }
+  { add_mono_point(vh->point()); }
 
   void compute_elements()
   {
@@ -182,9 +127,47 @@ protected:
   }
 
 protected:
+  typename Kernel::Vector_3 get_face_normal(Halfedge_const_handle he)
+  {
+    typename Kernel::Vector_3 normal=CGAL::NULL_VECTOR;
+    Halfedge_const_handle end=he;
+    unsigned int nb=0;
+    do
+    {
+      internal::newell_single_step_3(he->vertex()->point(), he->next()->vertex()->point(), normal);
+      ++nb;
+      he=he->next();
+    }
+    while (he!=end);
+    assert(nb>0);
+    return (typename Kernel::Construct_scaled_vector_3()(normal, 1.0/nb));
+  }
+  
+  typename Kernel::Vector_3 get_vertex_normal(Halfedge_const_handle he)
+  {
+    typename Kernel::Vector_3 normal=CGAL::NULL_VECTOR;
+    Halfedge_const_handle end=he;
+    do
+    {
+      if (!he->is_border())
+      {
+        typename Kernel::Vector_3 n=get_face_normal(he);
+        normal=typename Kernel::Construct_sum_of_vectors_3()(normal, n);
+      }
+      he=he->next()->opposite();
+    }
+    while (he!=end);
+    
+    if (!typename Kernel::Equal_3()(normal, CGAL::NULL_VECTOR))
+    { normal=(typename Kernel::Construct_scaled_vector_3()(normal,
+                                                           1.0/CGAL::sqrt(normal.squared_length()))); }
+    
+    return normal;
+  }
+
+protected:
   const Polyhedron& poly;
   bool m_nofaces;
-  Geom_utils_polyhedron<Polyhedron> geomutils;
 };
 
   
