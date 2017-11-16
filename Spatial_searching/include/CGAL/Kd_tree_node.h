@@ -207,7 +207,7 @@ namespace CGAL {
           static_cast<Leaf_node_const_handle>(this);
         if (node->size() > 0)
         {
-          internal::Has_points_cache<Kdt, internal::has_Enable_points_cache<Kdt>::type::value>::type dummy;
+          typename internal::Has_points_cache<Kdt, internal::has_Enable_points_cache<Kdt>::type::value>::type dummy;
           search_in_leaf(node, q, tree_points_begin, cache_begin, dim, it, dummy);
         }
       }
@@ -247,7 +247,7 @@ namespace CGAL {
           static_cast<Leaf_node_const_handle>(this);
 	if (node->size()>0)
         {
-          internal::Has_points_cache<Kdt, internal::has_Enable_points_cache<Kdt>::type::value>::type dummy;
+          typename internal::Has_points_cache<Kdt, internal::has_Enable_points_cache<Kdt>::type::value>::type dummy;
           result = search_any_point_in_leaf(node, q, tree_points_begin, cache_begin, dim, dummy);
         }
       }
