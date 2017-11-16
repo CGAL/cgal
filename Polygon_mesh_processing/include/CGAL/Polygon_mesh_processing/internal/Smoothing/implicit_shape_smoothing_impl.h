@@ -128,7 +128,7 @@ private:
 
   // Eigen sparse system
   typedef typename Eigen::SparseMatrix<double> Eigen_matrix;
-  typedef typename Eigen::SparseVector<double> Eigen_vector;
+  typedef typename Eigen::VectorXd Eigen_vector;
 
   //typedef typename Eigen::BiCGSTAB<Eigen_matrix> Eigen_solver;
   typedef typename Eigen::SimplicialLDLT<Eigen_matrix> Eigen_solver;
@@ -187,10 +187,11 @@ public:
     compute_rhs(bx, by, bz);
 
 
-    Eigen_solver solver;
+	// Cholesky factorization
+    Eigen_solver solver; 
     solver.compute(A);
 
-    // todo : solve once
+    // back-substitution
     Xx = solver.solve(bx);
     Xy = solver.solve(by);
     Xz = solver.solve(bz);
