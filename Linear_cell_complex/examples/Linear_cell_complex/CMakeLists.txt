@@ -16,11 +16,11 @@ ADD_DEFINITIONS("-std=c++11")
 # If you want to visualize a linear cell complex, you can use the following viewer
 # based on qt. Just uncomment the following two lines, plus the lines qt5_use_modules below
 
-find_package(CGAL COMPONENTS Qt5)
-include("CMakeBasicViewerQt.inc")
+# find_package(CGAL COMPONENTS Qt5)
+# include("CMakeBasicViewerQt.inc")
 
 # If you don't want to visualize, use the following line (otherwise comment it)
-# find_package(CGAL QUIET)
+find_package(CGAL QUIET)
 
 # For Gprof.
 # ADD_DEFINITIONS("-pg")
