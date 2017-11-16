@@ -20,7 +20,7 @@
 #ifndef CGAL_LCC_VIEWER_QT_H
 #define CGAL_LCC_VIEWER_QT_H
 
-#include "CGAL/Qt/Basic_viewer.h"
+#include "CGAL/Qt/Basic_viewer_qt.h"
 #include <CGAL/Random.h>
 
 CGAL::Color get_random_color(CGAL::Random& random)
@@ -80,9 +80,9 @@ struct Geom_utils<LCC, 2>
 
 // Viewer class for LCC 
 template<class LCC, class ColorFunctor>
-class SimpleLCCViewerQt : public Basic_viewer
+class SimpleLCCViewerQt : public Basic_viewer_qt
 {
-  typedef Basic_viewer Base;
+  typedef Basic_viewer_qt Base;
   typedef typename LCC::Dart_const_handle Dart_const_handle;
   typedef typename LCC::Traits Kernel;
   typedef typename Kernel::Point Point;
@@ -119,11 +119,11 @@ protected:
     CGAL::Color c=ColorFunctor::run(lcc, dh);
 
     if (c.red()<60 || c.green()<60 || c.blue()<60)
-      mono_face_begin(); // TODO REMOVE LATER
+      face_begin(); // TODO REMOVE LATER
     else
     {
       // c=CGAL::Color(100,255,100);
-      colored_face_begin(c);
+      face_begin(c);
     }
 
     cur=dh;
@@ -149,10 +149,10 @@ protected:
     {
       Point p2 = lcc.point(d2);
       if (c.red()<60 || c.green()<60 || c.blue()<60)
-        add_mono_segment(p1, p2);
+        add_segment(p1, p2);
       else
       {
-        add_colored_segment(p1, p2, c); // TODO REMOVE LATER
+        add_segment(p1, p2, c); // TODO REMOVE LATER
       }
     }
   }
@@ -164,10 +164,10 @@ protected:
 
     Point p = lcc.point(dh);
     if (c.red()<60 || c.green()<60 || c.blue()<60)
-      add_mono_point(p);
+      add_point(p);
     else
     {
-      add_colored_point(p, c); // TODO REMOVE LATER
+      add_point(p, c); // TODO REMOVE LATER
     }
   }
 

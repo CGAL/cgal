@@ -20,7 +20,7 @@
 #ifndef CGAL_POLYHEDRON_VIEWER_QT_H
 #define CGAL_POLYHEDRON_VIEWER_QT_H
 
-#include <CGAL/Qt/Basic_viewer.h>
+#include <CGAL/Qt/Basic_viewer_qt.h>
 #include <CGAL/Random.h>
 
 // Default color functor; user can change it to have its own face color
@@ -48,9 +48,9 @@ struct DefaultColorFunctor
 
 // Viewer class for Polyhedron
 template<class Polyhedron, class ColorFunctor>
-class SimplePolyhedronViewerQt : public Basic_viewer
+class SimplePolyhedronViewerQt : public Basic_viewer_qt
 {
-  typedef Basic_viewer Base;
+  typedef Basic_viewer_qt Base;
   typedef typename Polyhedron::Traits Kernel;
   typedef typename Polyhedron::Halfedge_const_handle Halfedge_const_handle;
   typedef typename Polyhedron::Vertex_const_handle Vertex_const_handle;
@@ -74,7 +74,7 @@ protected:
   void compute_face(Facet_const_handle fh)
   {
     CGAL::Color c=ColorFunctor::run(poly, fh);
-    colored_face_begin(c);
+    face_begin(c);
     Halfedge_const_handle he=fh->facet_begin();
     do
     {
@@ -88,12 +88,16 @@ protected:
 
   void compute_edge(Halfedge_const_handle he)
   {
-    add_mono_segment(he->vertex()->point(),
-                     he->opposite()->vertex()->point());
+    add_segment(he->vertex()->point(),
+                he->opposite()->vertex()->point());
+    // We can use add_segment(p1, p2, c) with c a CGAL::Color to add a colored segment
   } 
 
   void compute_vertex(Vertex_const_handle vh)
-  { add_mono_point(vh->point()); }
+  {
+    add_point(vh->point());
+    // We can use add_point(p, c) with c a CGAL::Color to add a colored point
+  }
 
   void compute_elements()
   {

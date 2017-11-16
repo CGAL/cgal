@@ -20,7 +20,7 @@
 #ifndef CGAL_SURFACE_MESH_VIEWER_QT_H
 #define CGAL_SURFACE_MESH_VIEWER_QT_H
 
-#include <CGAL/Qt/Basic_viewer.h>
+#include <CGAL/Qt/Basic_viewer_qt.h>
 #include <CGAL/Random.h>
 
 // Default color functor; user can change it to have its own face color
@@ -47,9 +47,9 @@ struct DefaultColorFunctor
 };
 
 template<class SM, class ColorFunctor>
-class SimpleSurfaceMeshViewerQt : public Basic_viewer
+class SimpleSurfaceMeshViewerQt : public Basic_viewer_qt
 {
-  typedef Basic_viewer Base;
+  typedef Basic_viewer_qt Base;
   typedef typename SM::Point Point;
   typedef typename CGAL::Kernel_traits<Point>::Kernel Kernel;
   typedef typename SM::Vertex_index vertex_descriptor;
@@ -75,7 +75,7 @@ protected:
   void compute_face(face_descriptor fh)
   {
     CGAL::Color c=ColorFunctor::run(sm, fh);
-    colored_face_begin(c);
+    face_begin(c);
     halfedge_descriptor hd=sm.halfedge(fh);
     do
     {
@@ -88,12 +88,12 @@ protected:
 
   void compute_edge(edge_descriptor e)
   {
-    add_mono_segment(sm.point(sm.source(sm.halfedge(e))),
-                     sm.point(sm.target(sm.halfedge(e))));
+    add_segment(sm.point(sm.source(sm.halfedge(e))),
+                sm.point(sm.target(sm.halfedge(e))));
   } 
 
   void compute_vertex(vertex_descriptor vh)
-  { add_mono_point(sm.point(vh)); }
+  { add_point(sm.point(vh)); }
 
   void compute_elements()
   {

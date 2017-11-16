@@ -17,8 +17,8 @@
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 
-#ifndef CGAL_BASIC_VIEWER_H
-#define CGAL_BASIC_VIEWER_H
+#ifndef CGAL_BASIC_VIEWER_QT_H
+#define CGAL_BASIC_VIEWER_QT_H
 
 #include <QApplication>
 #include <QKeyEvent>
@@ -30,17 +30,11 @@
 #include <QGLBuffer>
 #include <QOpenGLShaderProgram>
 
-#include <CGAL/Triangulation_2_projection_traits_3.h>
-#include <CGAL/Triangulation_vertex_base_with_info_2.h>
-#include <CGAL/Triangulation_face_base_with_info_2.h>
-#include <CGAL/Constrained_Delaunay_triangulation_2.h>
-#include <CGAL/Constrained_triangulation_plus_2.h>
-#include <CGAL/Qt/CreateOpenGLContext.h>
-#include <CGAL/Cartesian_converter.h>
-
 #include <vector>
 #include <cstdlib>
-#include <queue>
+
+#include <CGAL/Buffer_for_vao.h>
+#include <CGAL/Qt/CreateOpenGLContext.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Local_kernel;
 typedef Local_kernel::Point_3  Local_point;
@@ -123,114 +117,11 @@ const char fragment_source_p_l[] =
     "\n"
   };
 //------------------------------------------------------------------------------
-namespace internal {
-  template <class Point, class Vector>
-  void newell_single_step_3(const Point& p, const Point& q, Vector& n)
-  {
-    // Compute normal of the face by using Newell's method: for each edge PQ
-    // Nx += (Py - Qy) * (Pz + Qz);
-    // Ny += (Pz - Qz) * (Px + Qx);
-    // Nz += (Px - Qx) * (Py + Qy);
-    n = Vector(n.x()+((p.y()-q.y())*(p.z()+q.z())),
-               n.y()+((p.z()-q.z())*(p.x()+q.x())),
-               n.z()+((p.x()-q.x())*(p.y()+q.y())));
-    }
-
-  Local_vector compute_normal_of_face(const std::vector<Local_point>& points)
-  {
-    Local_vector normal(CGAL::NULL_VECTOR);
-    unsigned int nb = 0;
-    for (std::size_t i=0; i<points.size(); ++i)
-    {
-      newell_single_step_3(points[i], points[(i+1)%points.size()], normal);
-      ++nb;
-    }
-    
-    assert(nb>0);
-    return (typename Local_kernel::Construct_scaled_vector_3()(normal, 1.0/nb));
-  }
-
-  template<int dim>
-  struct Geom_utils;
-
-  template<>
-  struct Geom_utils<3>
-  {
-    template<typename KPoint>
-    static Local_point get_local_point(const KPoint& p)
-    {
-      CGAL::Cartesian_converter<typename CGAL::Kernel_traits<KPoint>::Kernel, Local_kernel> converter;
-      return converter(p);
-    }
-
-    template<typename KVector>
-    static Local_vector get_local_vector(const KVector& v)
-    {
-      CGAL::Cartesian_converter<typename CGAL::Kernel_traits<KVector>::Kernel, Local_kernel> converter;
-      return converter(v);
-    }
-  };
-
-  template<>
-  struct Geom_utils<2>
-  {
-    template<typename KPoint>
-    static Local_point get_local_point(const KPoint& p)
-    {
-      CGAL::Cartesian_converter<typename CGAL::Kernel_traits<KPoint>::Kernel, Local_kernel> converter;
-      return Local_point(converter(p.x()),0,converter(p.y()));
-    }
-
-    template<typename KVector>
-    static Local_vector get_local_vector(const KVector& v)
-    {
-      CGAL::Cartesian_converter<typename CGAL::Kernel_traits<KVector>::Kernel, Local_kernel> converter;
-      return Local_vector(converter(v.x()),0,converter(v.y()));
-    }
-  };
-
-  template<typename KPoint>
-  Local_point get_local_point(const KPoint& p)
-  {
-    return Geom_utils<CGAL::Ambient_dimension<KPoint>::value>::get_local_point(p);
-  }
-
-  template<typename KVector>
-  Local_vector get_local_vector(const KVector& v)
-  {
-    return Geom_utils<CGAL::Ambient_dimension<KVector>::value>::get_local_vector(v);
-  }
-} // End namespace internal
-//------------------------------------------------------------------------------
-class Basic_viewer : public QGLViewer, public QOpenGLFunctions_2_1
+class Basic_viewer_qt : public QGLViewer, public QOpenGLFunctions_2_1
 {
-  struct Vertex_info
-  {
-    Local_vector v;
-  };
-
-  struct Face_info
-  {
-    bool exist_edge[3];
-    bool is_external;
-    bool is_process;
-  };
-
-  typedef CGAL::Triangulation_2_projection_traits_3<CGAL::Exact_predicates_inexact_constructions_kernel> P_traits;
-  typedef CGAL::Triangulation_vertex_base_with_info_2<Vertex_info, P_traits> Vb;
-
-  typedef CGAL::Triangulation_face_base_with_info_2<Face_info, P_traits> Fb1;
-
-  typedef CGAL::Constrained_triangulation_face_base_2<P_traits, Fb1>    Fb;
-  typedef CGAL::Triangulation_data_structure_2<Vb,Fb>                   TDS;
-  // typedef CGAL::No_intersection_tag                                     Itag;
-  typedef CGAL::Exact_predicates_tag                                    Itag;
-  typedef CGAL::Constrained_Delaunay_triangulation_2<P_traits, TDS,
-                                                     Itag>              CDT;
-
 public:
   // Constructor/Destructor
-  Basic_viewer(const char* title="") :
+  Basic_viewer_qt(const char* title="") :
     QGLViewer(CGAL::Qt::createOpenGLContext()),
     m_draw_vertices(true),
     m_draw_edges(true),
@@ -238,7 +129,6 @@ public:
     m_flatShading(true),
     m_use_mono_color(false),
     m_inverse_normal(false),
-    m_empty(true),
     m_size_points(7.),
     m_size_edges(3.1),    
     m_vertices_mono_color(51, 51, 178),
@@ -246,7 +136,30 @@ public:
     m_faces_mono_color(180, 125, 200),
     m_ambient_color(0.6f, 0.5f, 0.5f, 0.5f),
     m_are_buffers_initialized(false),
-    m_face_started(false)
+    m_buffer_for_mono_points(&arrays[POS_MONO_POINTS],
+                             &m_bounding_box,
+                             NULL, NULL, NULL),
+    m_buffer_for_colored_points(&arrays[POS_COLORED_POINTS],
+                                &m_bounding_box,
+                                &arrays[COLOR_POINTS],
+                                NULL, NULL),
+    m_buffer_for_mono_segments(&arrays[POS_MONO_SEGMENTS],
+                               &m_bounding_box,
+                               NULL, NULL, NULL),
+    m_buffer_for_colored_segments(&arrays[POS_COLORED_SEGMENTS],
+                                  &m_bounding_box,
+                                  &arrays[COLOR_SEGMENTS],
+                                  NULL, NULL),
+    m_buffer_for_mono_faces(&arrays[POS_MONO_FACES],
+                            &m_bounding_box,
+                            NULL,
+                            &arrays[FLAT_NORMAL_MONO_FACES],
+                            &arrays[SMOOTH_NORMAL_MONO_FACES]),
+    m_buffer_for_colored_faces(&arrays[POS_COLORED_FACES],
+                               &m_bounding_box,
+                               &arrays[COLOR_FACES], 
+                               &arrays[FLAT_NORMAL_COLORED_FACES],
+                               &arrays[SMOOTH_NORMAL_COLORED_FACES])
   {
     if (title[0]==0)
       setWindowTitle("CGAL Basic Viewer");
@@ -254,15 +167,9 @@ public:
       setWindowTitle(title);
 
     resize(500, 450);
-
-    if ( is_empty() )
-    {
-      bb=Local_point(CGAL::ORIGIN).bbox();
-      bb=bb + Local_point(1,1,1).bbox(); // To avoid a warning from Qglviewer
-    }
   }
 
-  ~Basic_viewer()
+  ~Basic_viewer_qt()
   {
     for (int i=0; i<NB_VBO_BUFFERS; ++i)
       buffers[i].destroy();
@@ -274,309 +181,96 @@ public:
   void clear()
   {
     for (unsigned int i=0; i<LAST_INDEX; ++i)
-    { arrays[i].clear(); }    
+    { arrays[i].clear(); }
+
+    m_bounding_box=CGAL::Bbox_3();
   }
 
   bool is_empty() const
-  { return m_empty; }
+  {
+    return (m_buffer_for_mono_points.is_empty() &&
+            m_buffer_for_colored_points.is_empty() &&
+            m_buffer_for_mono_segments.is_empty() &&
+            m_buffer_for_colored_segments.is_empty() &&
+            m_buffer_for_mono_faces.is_empty() &&
+            m_buffer_for_colored_faces.is_empty());
+  }
+  
+  const CGAL::Bbox_3& bounding_box() const
+  { return m_bounding_box; }
   
   template<typename KPoint>
-  void add_mono_point(const KPoint& p)
-  { add_point(p, arrays[POS_MONO_POINTS]); }
+  void add_point(const KPoint& p)
+  { m_buffer_for_mono_points.add_point(p); }
 
   template<typename KPoint>
-  void add_colored_point(const KPoint& p, const CGAL::Color& acolor)
-  {
-    add_point(p, arrays[POS_COLORED_POINTS]);
-    add_color(acolor, arrays[COLOR_POINTS]);
-  }
+  void add_point(const KPoint& p, const CGAL::Color& acolor)
+  { m_buffer_for_colored_points.add_point(p, acolor); } 
   
   template<typename KPoint>
-  void add_mono_segment(const KPoint& p1, const KPoint& p2)
-  {
-    add_point(p1, arrays[POS_MONO_SEGMENTS]);
-    add_point(p2, arrays[POS_MONO_SEGMENTS]);
-  }
+  void add_segment(const KPoint& p1, const KPoint& p2)
+  { m_buffer_for_mono_segments.add_segment(p1, p2); }
   
   template<typename KPoint>
-  void add_colored_segment(const KPoint& p1, const KPoint& p2,
-                           const CGAL::Color& acolor)
-  {
-    add_point(p1, arrays[POS_COLORED_SEGMENTS]);
-    add_point(p2, arrays[POS_COLORED_SEGMENTS]);
-    add_color(acolor, arrays[COLOR_SEGMENTS]);
-    add_color(acolor, arrays[COLOR_SEGMENTS]);
-  }
+  void add_segment(const KPoint& p1, const KPoint& p2,
+                   const CGAL::Color& acolor)
+  { m_buffer_for_colored_segments.add_segment(p1, p2, acolor); } 
 
+  bool is_a_face_started() const
+  {
+    return m_buffer_for_mono_faces.is_a_face_started() ||
+      m_buffer_for_colored_faces.is_a_face_started();
+  }
+  
   void face_begin()
   {
-    if (m_face_started)
+    if (is_a_face_started())
     {
       std::cerr<<"You cannot start a new face before to finish the previous one."<<std::endl;
-      return;
     }
-    
-    m_face_started=true;
-  }
+    else
+    { m_buffer_for_mono_faces.face_begin(); }
+  } 
 
-  void mono_face_begin()
+  void face_begin(const CGAL::Color& acolor)
   {
-    m_started_face_is_colored=false;
-    face_begin();
+    if (is_a_face_started())
+    {
+      std::cerr<<"You cannot start a new face before to finish the previous one."<<std::endl;
+    }
+    else
+    { m_buffer_for_colored_faces.face_begin(acolor); }
   }
 
-  /// Start a new face, with a given color.
-  void colored_face_begin(const CGAL::Color& acolor)
-  {
-    color_of_face=acolor;
-    m_started_face_is_colored=true;
-    face_begin();
-  }
-
-  /// Add a point at the end of the current face
-  /// With this method, it is not possible to use the Gourod shading.
-  /// @param p the point to add
   template<typename KPoint>
   bool add_point_in_face(const KPoint& kp)
   {
-    if (!m_face_started) return false;
-
-    Local_point p=internal::get_local_point(kp);
-    if (points_of_face.empty() || points_of_face.back()!=p)
-    {
-      points_of_face.push_back(p);
-      return true;
-    }
+    if (m_buffer_for_mono_faces.is_a_face_started())
+    { return m_buffer_for_mono_faces.add_point_in_face(kp); }
+    else if (m_buffer_for_colored_faces.is_a_face_started())
+    { return m_buffer_for_colored_faces.add_point_in_face(kp); }
     return false;
   }
   
-  /// Add a point at the end of the current face
-  /// @param p the point to add
-  /// @p_normal the vertex normal in this point (for Gourod shading)
   template<typename KPoint, typename KVector>
-  void add_point_in_face(const KPoint& p, const KVector& p_normal)
+  bool add_point_in_face(const KPoint& kp, const KVector& p_normal)
   {
-    if (!m_face_started) return;
-    
-    if (add_point_in_face(p))
-    {
-      vertex_normals_for_face.push_back(internal::get_local_vector(p_normal));
-    }
+    if (m_buffer_for_mono_faces.is_a_face_started())
+    { return m_buffer_for_mono_faces.add_point_in_face(kp, p_normal); }
+    else if (m_buffer_for_colored_faces.is_a_face_started())
+    { return m_buffer_for_colored_faces.add_point_in_face(kp, p_normal); }
+    return false;
   }
 
-  /// End the face: compute the triangulation.
   void face_end()
   {
-    if (points_of_face.size()<3)
-    {
-      std::cout<<"PB: you try to triangulate a face with "<<points_of_face.size()<<" vertices."
-               <<std::endl;
-      
-      m_face_started=false;
-      points_of_face.clear();
-      vertex_normals_for_face.clear();
-
-      return;
-    }
-    
-    Local_vector normal=internal::compute_normal_of_face(points_of_face);
-
-    if (points_of_face.size()==3) // Triangle: no need to triangulate
-    {
-      for (int i=0; i<3; ++i)
-      {
-        // The point
-        add_point(points_of_face[i], arrays[m_started_face_is_colored?
-                                            POS_COLORED_FACES:
-                                            POS_MONO_FACES]);
-
-        // Its color
-        if (m_started_face_is_colored)
-        { add_color(color_of_face, arrays[COLOR_FACES]); }
-
-        // Its flat normal
-        add_normal(normal, arrays[m_started_face_is_colored?
-                                            FLAT_NORMAL_COLORED_FACES:
-                                            FLAT_NORMAL_MONO_FACES]);
-
-        // Its smoth normal (if given by the user)
-        if (vertex_normals_for_face.size()==3)
-        { // Here we have 3 vertex normals; we can use Gourod
-          add_normal(vertex_normals_for_face[i], arrays[m_started_face_is_colored?
-                                                        SMOOTH_NORMAL_COLORED_FACES:
-                                                        SMOOTH_NORMAL_MONO_FACES]);
-        }
-        else
-        { // Here user does not provide all vertex normals: we use face normal istead
-          // and thus we will not be able to use Gourod
-         add_normal(normal, arrays[m_started_face_is_colored?
-                                   SMOOTH_NORMAL_COLORED_FACES:
-                                   SMOOTH_NORMAL_MONO_FACES]);
-        }
-      }
-    }
-    // TODO CASE OF 4 POINTS ? PB HOW TO FIND (EASILY) THE TWO POINTS TO LINK ?
-    // else if (points_of_face.size()==4)
-    else
-    { // More than 3 points: we triangulate
-      try
-      {
-        P_traits cdt_traits(normal);
-        CDT cdt(cdt_traits);
-
-        bool with_vertex_normal=(vertex_normals_for_face.size()==points_of_face.size());
-
-        // (1) We insert all the edges as contraint in the CDT.
-        typename CDT::Vertex_handle previous=NULL, first=NULL;
-        for (int i=0; i<points_of_face.size(); ++i)
-        {
-          typename CDT::Vertex_handle vh = cdt.insert(points_of_face[i]);
-          if(first==NULL)
-          { first=vh; }
-
-          if (with_vertex_normal)
-          { vh->info().v=vertex_normals_for_face[i]; }
-          else
-          { vh->info().v=normal; }
-
-          if(previous!=NULL && previous!=vh)
-          { cdt.insert_constraint(previous, vh); }
-          previous=vh;
-        }
-
-        if (previous!=NULL && previous!=first)
-          cdt.insert_constraint(previous, first);
-
-        // (2) We mark all external triangles
-        // (2.1) We initialize is_external and is_process values 
-        for(typename CDT::All_faces_iterator fit = cdt.all_faces_begin(),
-              fitend = cdt.all_faces_end(); fit!=fitend; ++fit)
-        {
-          fit->info().is_external = true;
-          fit->info().is_process = false;
-        }
-        // (2.2) We check if the facet is external or internal
-        std::queue<typename CDT::Face_handle> face_queue;
-        typename CDT::Face_handle face_internal = NULL;
-        if (cdt.infinite_vertex()->face()!=NULL)
-          face_queue.push(cdt.infinite_vertex()->face());
-        while(! face_queue.empty() )
-        {
-          typename CDT::Face_handle fh = face_queue.front();
-          face_queue.pop();
-          if(!fh->info().is_process)
-          {
-            fh->info().is_process = true;
-            for(int i=0; i<3; ++i)
-            {
-              if(!cdt.is_constrained(std::make_pair(fh, i)))
-              {
-                if (fh->neighbor(i)!=NULL)
-                  face_queue.push(fh->neighbor(i));
-              }
-              else if (face_internal==NULL)
-              {
-                face_internal = fh->neighbor(i);
-              }
-            }
-          }
-        }
-
-        if ( face_internal!=NULL )
-          face_queue.push(face_internal);
-        
-        while(! face_queue.empty() )
-        {
-          typename CDT::Face_handle fh = face_queue.front();
-          face_queue.pop();
-          if(!fh->info().is_process)
-          {
-            fh->info().is_process = true;
-            fh->info().is_external = false;
-            for(int i=0; i<3; ++i)
-            {
-              if(!cdt.is_constrained(std::make_pair(fh, i)))
-              {
-                if (fh->neighbor(i)!=NULL)
-                  face_queue.push(fh->neighbor(i));
-              }
-            }
-          }
-        }
-
-        // (3) Now we iterates on the internal faces to add the vertices to the
-        //     positions and the normals to the appropriate vectors
-        for(typename CDT::Finite_faces_iterator ffit=cdt.finite_faces_begin(),
-              ffitend = cdt.finite_faces_end(); ffit!=ffitend; ++ffit)
-        {
-          if(!ffit->info().is_external)
-          {
-            for(int i=0; i<3; ++i)
-            {
-              // The point
-              add_point(ffit->vertex(i)->point(), arrays[m_started_face_is_colored?
-                                                         POS_COLORED_FACES:
-                                                         POS_MONO_FACES]);
-
-              // Its color
-              if (m_started_face_is_colored)
-              { add_color(color_of_face, arrays[COLOR_FACES]); }
-              
-              // Its flat normal
-              add_normal(normal, arrays[m_started_face_is_colored?
-                                        FLAT_NORMAL_COLORED_FACES:
-                                        FLAT_NORMAL_MONO_FACES]);
-
-              // Its smoth normal (if given by the user)
-              add_normal(ffit->vertex(i)->info().v, arrays[m_started_face_is_colored?
-                                                           SMOOTH_NORMAL_COLORED_FACES:
-                                                           SMOOTH_NORMAL_MONO_FACES]);
-            }
-          }
-        }
-      }
-      catch(...)
-      { // Triangulation crash: the face is not filled
-        std::cout<<"Catch: face not filled."<<std::endl;
-      }
-    }
-
-    m_face_started=false;
-    points_of_face.clear();
-    vertex_normals_for_face.clear();
+    if (m_buffer_for_mono_faces.is_a_face_started())
+    { m_buffer_for_mono_faces.face_end(); }
+    else if (m_buffer_for_colored_faces.is_a_face_started())
+    { return m_buffer_for_colored_faces.face_end(); }
   }
-  
+
 protected:
-  template<typename KPoint>
-  void add_point(const KPoint& kp, std::vector<float>& point_vector)
-  {
-    Local_point p=internal::get_local_point(kp);
-    point_vector.push_back(p.x());
-    point_vector.push_back(p.y());
-    point_vector.push_back(p.z());
-
-    if (is_empty())
-    { bb=p.bbox(); m_empty=false; }
-    else
-    { bb=bb+p.bbox(); }
-  }
-
-  void add_color(const CGAL::Color& acolor, std::vector<float>& color_vector)
-  {
-    color_vector.push_back((float)acolor.red()/(float)255);
-    color_vector.push_back((float)acolor.green()/(float)255);
-    color_vector.push_back((float)acolor.blue()/(float)255);
-  }
-
-  template<typename KVector>
-  void add_normal(const KVector& kv, std::vector<float>& normal_vector)
-  {
-    Local_vector n=internal::get_local_vector(kv);
-    normal_vector.push_back(n.x());
-    normal_vector.push_back(n.y());
-    normal_vector.push_back(n.z());
-  }  
-  
   void compile_shaders()
   {
     rendering_program_face.removeAllShaders();
@@ -840,7 +534,18 @@ protected:
                         0.0f,
                         1.0f );
 
-    QVector4D position((bb.xmax()-bb.xmin())/2, (bb.ymax()-bb.ymin())/2,bb.zmax(), 0.0 );
+    CGAL::Bbox_3 bb;
+    if (bb==bounding_box()) // Case of "empty" bounding box
+    {    
+      bb=Local_point(CGAL::ORIGIN).bbox();
+      bb=bb + Local_point(1,1,1).bbox(); // To avoid a warning from Qglviewer
+    }
+    else
+    { bb=bounding_box(); }
+    
+    QVector4D position((bb.xmax()-bb.xmin())/2,
+                       (bb.ymax()-bb.ymin())/2,
+                       bb.zmax(), 0.0);
     GLfloat shininess =  1.0f;
 
     rendering_program_face.bind();
@@ -1016,6 +721,14 @@ protected:
 
     compile_shaders();
 
+    CGAL::Bbox_3 bb;
+    if (bb==bounding_box()) // Case of "empty" bounding box
+    {    
+      bb=Local_point(CGAL::ORIGIN).bbox();
+      bb=bb + Local_point(1,1,1).bbox(); // To avoid a warning from Qglviewer
+    }
+    else
+    { bb=bounding_box(); }
     this->camera()->setSceneBoundingBox(qglviewer::Vec(bb.xmin(),
                                                        bb.ymin(),
                                                        bb.zmin()),
@@ -1231,7 +944,7 @@ private:
   QVector4D   m_ambient_color;
 
   bool m_are_buffers_initialized;
-  CGAL::Bbox_3 bb;
+  CGAL::Bbox_3 m_bounding_box;
   
   // The following enum gives the indices of different elements of arrays vectors.
   enum
@@ -1259,12 +972,19 @@ private:
   };
   std::vector<float> arrays[LAST_INDEX];
 
+  Buffer_for_vao<float> m_buffer_for_mono_points;
+  Buffer_for_vao<float> m_buffer_for_colored_points;
+  Buffer_for_vao<float> m_buffer_for_mono_segments;
+  Buffer_for_vao<float> m_buffer_for_colored_segments;
+  Buffer_for_vao<float> m_buffer_for_mono_faces;
+  Buffer_for_vao<float> m_buffer_for_colored_faces;
+  
   static const unsigned int NB_VBO_BUFFERS=(END_POS-BEGIN_POS)+
     (END_COLOR-BEGIN_COLOR)+2; // +2 for 2 vectors of normals
 
   QGLBuffer buffers[NB_VBO_BUFFERS];
 
-  // The following enum gives the indices of differents vao.
+  // The following enum gives the indices of the differents vao.
   enum 
     { VAO_MONO_POINTS=0,
       VAO_COLORED_POINTS,
@@ -1278,13 +998,6 @@ private:
 
   QOpenGLShaderProgram rendering_program_face;
   QOpenGLShaderProgram rendering_program_p_l;
-
-  // Local variables, used when we started a new face.
-  bool m_face_started;
-  bool m_started_face_is_colored;
-  std::vector<Local_point> points_of_face;
-  std::vector<Local_vector> vertex_normals_for_face;
-  CGAL::Color color_of_face;
 };
 
-#endif // CGAL_BASIC_VIEWER_H
+#endif // CGAL_BASIC_VIEWER_QT_H
