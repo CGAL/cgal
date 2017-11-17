@@ -277,8 +277,8 @@ public:
   typedef typename GeomTraits::Equal_3 Equal_3;
   Equal_3 equal_3_object() const { return GeomTraits().equal_3_object(); }
 
+/// \cond SKIP_IN_MANUAL
   /**
-   * @internal
    * @brief Sorts [first,beyond[
    * @param first iterator on first element
    * @param beyond iterator on beyond element
@@ -316,6 +316,7 @@ public:
         }
       }
   };
+/// \endcond
 
   Sort_primitives sort_primitives_object() const {return Sort_primitives(*this);}
 
