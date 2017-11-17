@@ -157,16 +157,15 @@ public:
   {}
 #endif
 
-  /// \internal
+/// \cond SKIP_IN_MANUAL
   typedef internal::Cstr_shared_data<FaceGraph, Base, Triangle_property_map, Point_property_map, OneFaceGraphPerTree> Cstr_shared_data;
-  /// \internal
   static
   typename Cstr_shared_data::Shared_data
   construct_shared_data(const FaceGraph& graph)
   {
     return Cstr_shared_data::construct_shared_data(const_cast<FaceGraph&>(graph));
   }
-
+/// \endcond
   static
   typename Cstr_shared_data::Shared_data
   construct_shared_data(const FaceGraph& graph, const VertexPointPMap_& vpm)

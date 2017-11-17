@@ -365,7 +365,7 @@ private:
 
 
 /**
- * \internal
+ * \cond SKIP_IN_MANUAL
  * Robust_circumcenter_filtered_traits_3
  * overrides construct_circumcenter_3_object() and compute_squared_radius_3_object()
  * to get robust ones when called on slivers.
@@ -389,7 +389,7 @@ struct Robust_circumcenter_filtered_traits_3
   { return Compute_squared_radius_3(); }
 
 };  // end class Robust_circumcenter_filtered_traits_3
-
+/// \endcond
 
 }  // end namespace CGAL
 

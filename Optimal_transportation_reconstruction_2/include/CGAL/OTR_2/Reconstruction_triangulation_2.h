@@ -58,7 +58,7 @@
 namespace CGAL {
 namespace OTR_2 {
 
-/// \internal
+/// \cond SKIP_IN_MANUAL
 ///  The Reconstruction_triangulation_2 class
 ///  provides the reconstruction simplex as well as the transportation plan.
 /// - Each vertex stores a normal vector.
@@ -1120,6 +1120,7 @@ public:
   }
 };
 
+/// \endcond
 } } //namespace CGAL
 
 #undef CGAL_EPS

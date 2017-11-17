@@ -170,15 +170,15 @@ public:
             Point_property_map(const_cast<HalfedgeGraph*>(&graph)) ){}
   #endif
 
-  /// \internal
+/// \cond SKIP_IN_MANUAL
   typedef internal::Cstr_shared_data<HalfedgeGraph, Base, Segment_property_map, Point_property_map, OneHalfedgeGraphPerTree> Cstr_shared_data;
-  /// \internal
   static
   typename Cstr_shared_data::Shared_data
   construct_shared_data(const HalfedgeGraph& graph)
   {
     return Cstr_shared_data::construct_shared_data(const_cast<HalfedgeGraph&>(graph));
   }
+/// \endcond
 
   static
   typename Cstr_shared_data::Shared_data

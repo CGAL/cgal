@@ -562,7 +562,7 @@ public:
 
 	public:
 
-    /// \internal
+/// \cond SKIP_IN_MANUAL
 		template <class Query, class Traversal_traits>
 		void traversal(const Query& query, Traversal_traits& traits) const
 		{
@@ -578,7 +578,6 @@ public:
 			}
 		}
 
-    /// \internal
     template <class Traversal_traits>
     void traversal(const AABB_tree_with_join &other_tree, Traversal_traits &traits) const
     {
@@ -595,6 +594,7 @@ public:
           // TODO not implemented yet, cannot happen with two polygons
       }
     }
+/// \endcond
 
 	private:
 		typedef AABB_node_with_join<AABBTraits> Node;

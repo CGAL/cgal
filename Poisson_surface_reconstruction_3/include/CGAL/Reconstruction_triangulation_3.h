@@ -43,7 +43,7 @@
 
 namespace CGAL {
 
-/// \internal
+/// \cond SKIP_IN_MANUAL
 /// The Reconstruction_vertex_base_3 class is the default
 /// vertex class of the Reconstruction_triangulation_3 class.
 ///
@@ -140,7 +140,7 @@ private:
 }; // end of Reconstruction_vertex_base_3
 
 
-/// \internal
+
 /// Helper class:
 /// Reconstruction_triangulation_default_geom_traits_3
 /// changes in a geometric traits class the Point_3 type to
@@ -154,7 +154,7 @@ struct Reconstruction_triangulation_default_geom_traits_3 : public BaseGt
 };
 
 
-/// \internal
+
 /// The Reconstruction_triangulation_3 class
 /// provides the interface requested by the Poisson_reconstruction_function class:
 /// - Each vertex stores a normal vector.
@@ -497,6 +497,7 @@ public:
 
 }; // end of Reconstruction_triangulation_3
 
+/// \endcond
 } //namespace CGAL
 
 #endif // CGAL_IMPLICIT_FCT_DELAUNAY_TRIANGULATION_H

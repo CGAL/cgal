@@ -31,7 +31,7 @@
 namespace CGAL {
 
 
-/// \internal
+/// \cond SKIP_IN_MANUAL
 /// The Lightweight_vector_3 class represents a 3D vector (oriented).
 /// The purpose of this class is to save memory as the actual vector 
 /// is allocated only when needed.
@@ -216,6 +216,7 @@ private:
 };
 
 
+/// \endcond
 } //namespace CGAL
 
 #endif //CGAL_LIGHTWEIGHT_VECTOR_3_H

@@ -602,7 +602,7 @@ public:
 
 	public:
 
-    /// \internal
+/// \cond SKIP_IN_MANUAL
 		template <class Query, class Traversal_traits>
 		void traversal(const Query& query, Traversal_traits& traits) const
 		{
@@ -617,7 +617,7 @@ public:
 				root_node()->template traversal<Traversal_traits,Query>(query, traits, m_primitives.size());
 			}
 		}
-
+/// \endcond
 	private:
 		typedef AABB_node<AABBTraits> Node;
 
