@@ -22,9 +22,9 @@ int main()
 
   // output polyhedral surface and indexed triangle mesh
   Polyhedron output;
-  std::vector<std::vector<std::size_t> > triangles; // contains triplets of indices
   std::vector<Kernel::Point_3> points;
-
+  std::vector<std::vector<std::size_t> > triangles; // triplets of indices
+  
   // free function interface with named parameters
   bool valid_polyhedron = CGAL::VSA::mesh_approximation(input,
     std::back_inserter(points),

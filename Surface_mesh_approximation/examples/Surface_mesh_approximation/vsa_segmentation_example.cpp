@@ -20,6 +20,8 @@ int main()
     return EXIT_FAILURE;
   }
 
+  // TODO: get output indexed face set
+
   // free function interface with named parameters
   CGAL::VSA::mesh_segmentation(input,
     CGAL::VSA::parameters::init_method(CGAL::VSA::Hierarchical). // hierarchical init
