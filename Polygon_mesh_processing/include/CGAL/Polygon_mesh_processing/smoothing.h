@@ -249,7 +249,7 @@ void angle_smoothing(PolygonMesh& pmesh)
 *  \cgalParamBegin{gradient_descent_precision} The precision which is met during gradient descent refers to
 *    the relative energy between iterations of each triangle element which is minimized
 *    while one of its vertices is being moved. Triangle energy is defined based on its area compared to
-*    the average area of all triangles adjacent to the vertex that is being moved.  Defaults to 0.001.
+*    the average area of all triangles adjacent to the vertex that is being moved.  Defaults to 1e-4.
 *  \cgalParamEnd
 * \cgalNamedParamsEnd
 */
@@ -305,7 +305,7 @@ void area_smoothing(const FaceRange& faces, PolygonMesh& pmesh, const NamedParam
     unsigned int nb_iterations = choose_param(get_param(np, internal_np::number_of_iterations), 1);
 
     //gradient descent precision
-    double gd_precision = choose_param(get_param(np, internal_np::gradient_descent_precision), 0.000001);
+    double gd_precision = choose_param(get_param(np, internal_np::gradient_descent_precision), 0.0001);
 
     internal::Compatible_remesher<PolygonMesh, VertexPointMap, VCMap, ECMap, GeomTraits>
             remesher(pmesh, vpmap, vcmap, ecmap);
