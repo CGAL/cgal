@@ -1,3 +1,9 @@
+#option :
+# DESTINATION the path where the release is create, default is /tmp
+# PUBLIC=[ON/OFF] indicates if a public release should be built
+# INTERNAL=[ON/OFF] indicates if an internal release should be built
+# VERBOSE=[ON/OFF] makes the script more verbose
+
 if (NOT EXISTS ${CMAKE_BINARY_DIR}/Installation/include/CGAL/version.h)
   message(FATAL_ERROR "Cannot find Installation/include/CGAL/version.h. Make sure you are at the root of a CGAL branch")
 endif()
@@ -47,7 +53,7 @@ foreach(pkg ${files})
     # append the prefix
     foreach(f ${pkg_files})
       get_filename_component(fname ${f} NAME)
-      if (NOT "${fname}" STREQUAL "TODO") # skip TODO files and unwanted directories
+      if (NOT "${fname}" STREQUAL "TODO") # skip TODO files
         #make sure the target destination dir exists
         set(afile ${pkg_dir}/${f})
         get_filename_component(afile_dir_tmp ${afile} PATH)
@@ -63,7 +69,7 @@ foreach(pkg ${files})
   endif()
 endforeach()
 
-
+# removal of extra directories and files
 file(REMOVE_RECURSE ${release_dir}/doc/fig_src)
 file(REMOVE_RECURSE ${release_dir}/benchmark)
 file(REMOVE_RECURSE ${release_dir}/archive)
