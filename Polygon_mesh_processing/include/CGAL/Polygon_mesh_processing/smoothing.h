@@ -91,7 +91,7 @@ namespace Polygon_mesh_processing {
 * \cgalNamedParamsEnd
 */
 template<typename PolygonMesh, typename FaceRange, typename NamedParameters>
-void angle_smoothing(const FaceRange& faces, PolygonMesh& pmesh,  const NamedParameters& np)
+void smooth_angles(const FaceRange& faces, PolygonMesh& pmesh,  const NamedParameters& np)
 {
     using boost::choose_param;
     using boost::get_param;
@@ -195,15 +195,15 @@ void angle_smoothing(const FaceRange& faces, PolygonMesh& pmesh,  const NamedPar
 }
 
 template<typename PolygonMesh, typename NamedParameters>
-void angle_smoothing(PolygonMesh& pmesh, const NamedParameters& np)
+void smooth_angles(PolygonMesh& pmesh, const NamedParameters& np)
 {
-    angle_smoothing(faces(pmesh), pmesh, np);
+    smooth_angles(faces(pmesh), pmesh, np);
 }
 
 template<typename PolygonMesh>
-void angle_smoothing(PolygonMesh& pmesh)
+void smooth_angles(PolygonMesh& pmesh)
 {
-    angle_smoothing(faces(pmesh), pmesh, parameters::all_default());
+    smooth_angles(faces(pmesh), pmesh, parameters::all_default());
 }
 
 /*!
@@ -254,7 +254,7 @@ void angle_smoothing(PolygonMesh& pmesh)
 * \cgalNamedParamsEnd
 */
 template<typename PolygonMesh, typename FaceRange, typename NamedParameters>
-void area_smoothing(const FaceRange& faces, PolygonMesh& pmesh, const NamedParameters& np)
+void smooth_areas(const FaceRange& faces, PolygonMesh& pmesh, const NamedParameters& np)
 {
     using boost::choose_param;
     using boost::get_param;
@@ -354,15 +354,15 @@ void area_smoothing(const FaceRange& faces, PolygonMesh& pmesh, const NamedParam
 }
 
 template<typename PolygonMesh, typename NamedParameters>
-void area_smoothing(PolygonMesh& pmesh, const NamedParameters& np)
+void smooth_areas(PolygonMesh& pmesh, const NamedParameters& np)
 {
-    area_smoothing(faces(pmesh), pmesh, np);
+    smooth_areas(faces(pmesh), pmesh, np);
 }
 
 template<typename PolygonMesh>
-void area_smoothing(PolygonMesh& pmesh)
+void smooth_areas(PolygonMesh& pmesh)
 {
-    area_smoothing(faces(pmesh), pmesh, parameters::all_default());
+    smooth_areas(faces(pmesh), pmesh, parameters::all_default());
 }
 
 /*!
@@ -467,7 +467,7 @@ void compatible_smoothing(const FaceRange& faces, PolygonMesh& pmesh, const Name
     bool use_weights = choose_param(get_param(np, internal_np::use_weights), true);
 
     // gradient descent precision
-    double gd_precision = choose_param(get_param(np, internal_np::gradient_descent_precision), 0.001);
+    double gd_precision = choose_param(get_param(np, internal_np::gradient_descent_precision), 0.0001);
 
     // convergence precision
     double dist_precision = choose_param(get_param(np, internal_np::distance_precision), 0.01);
@@ -581,8 +581,6 @@ void compatible_smoothing(PolygonMesh& pmesh)
 * @param np optional sequence of \ref namedparameters among the ones listed below.
 *
 * \cgalNamedParamsBegin
-*  \cgalParamBegin{avoid_singularities} True or false flag to indicate converge to a sphere.
-*  \cgalParamEnd
 *  \cgalParamBegin{geom_traits} a geometric traits class instance, model of `Kernel`.
 *    Exact constructions kernels are not supported by this function.
 *  \cgalParamEnd
@@ -605,7 +603,7 @@ void compatible_smoothing(PolygonMesh& pmesh)
 * \cgalNamedParamsEnd
 */
 template<typename PolygonMesh, typename FaceRange, typename NamedParameters>
-void shape_smoothing(const FaceRange& faces, PolygonMesh& pmesh, const NamedParameters& np)
+void smooth_curvature_flow(const FaceRange& faces, PolygonMesh& pmesh, const NamedParameters& np)
 {
     using boost::choose_param;
     using boost::get_param;
@@ -712,15 +710,15 @@ void shape_smoothing(const FaceRange& faces, PolygonMesh& pmesh, const NamedPara
 }
 
 template<typename PolygonMesh, typename NamedParameters>
-void shape_smoothing(PolygonMesh& pmesh, const NamedParameters& np)
+void smooth_curvature_flow(PolygonMesh& pmesh, const NamedParameters& np)
 {
-    shape_smoothing(faces(pmesh), pmesh, np);
+    smooth_curvature_flow(faces(pmesh), pmesh, np);
 }
 
 template<typename PolygonMesh>
-void shape_smoothing(PolygonMesh& pmesh)
+void smooth_curvature_flow(PolygonMesh& pmesh)
 {
-    shape_smoothing(pmesh, parameters::all_default());
+    smooth_curvature_flow(pmesh, parameters::all_default());
 }
 
 // not documented
