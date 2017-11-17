@@ -31,8 +31,7 @@ struct Linear_cell_complex_bgl_min_items
 \sa `CGAL::Linear_cell_complex_min_item`
 
 */
-class Linear_cell_complex_bgl_min_items {
-public:
+struct Linear_cell_complex_bgl_min_items {
 
 /// @}
 

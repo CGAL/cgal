@@ -33,8 +33,7 @@ const-pointer `const B*`, where `B` is a model of the
 
 */
 template< typename BoxHandle >
-class Box_traits_d {
-public:
+struct Box_traits_d {
 
 /// \name Creation 
 /// @{

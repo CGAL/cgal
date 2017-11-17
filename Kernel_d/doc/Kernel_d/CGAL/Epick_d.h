@@ -46,8 +46,7 @@ icc 15 work.
 
 */
 template< typename DimensionTag >
-class Epick_d {
-public:
+struct Epick_d {
 /*!
 represents a point in the Euclidean space
 \cgalModels `DefaultConstructible`

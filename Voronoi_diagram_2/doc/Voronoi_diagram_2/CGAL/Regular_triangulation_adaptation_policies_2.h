@@ -22,8 +22,7 @@ edges of zero length.
 
 */
 template< typename RT2 >
-class Regular_triangulation_caching_degeneracy_removal_policy_2 {
-public:
+struct Regular_triangulation_caching_degeneracy_removal_policy_2 {
 
 /// \name Types 
 /// @{
@@ -60,8 +59,7 @@ i.e., it has no Voronoi edges of zero length.
 
 */
 template< typename RT2 >
-class Regular_triangulation_degeneracy_removal_policy_2 {
-public:
+struct Regular_triangulation_degeneracy_removal_policy_2 {
 
 /// \name Types 
 /// @{

@@ -13,7 +13,7 @@ The class `Kinetic::Sort_event_log_visitor` provides a model of
 
 */
 
-class Sort_event_log_visitor {
+struct Sort_event_log_visitor {
 
 }; /* end Kinetic::Sort_event_log_visitor */
 } /* end namespace Kinetic */

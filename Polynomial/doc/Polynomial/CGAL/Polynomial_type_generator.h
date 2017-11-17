@@ -14,8 +14,7 @@ This class template provides a convenient way to obtain the type representing a 
 
 */
 template< typename T, typename d >
-class Polynomial_type_generator {
-public:
+struct Polynomial_type_generator {
 
 /// \name Types 
 /// @{

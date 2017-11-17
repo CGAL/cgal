@@ -32,8 +32,7 @@ recycle the allocated memory (per thread) is included but disabled at
 the moment.
 */
 
-class Mpzf {
-public:
+struct Mpzf {
 
 /// \name Creation
 /// @{

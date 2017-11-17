@@ -28,8 +28,7 @@ that copy objects intensively.
 
 */
 template< typename FieldNumberType >
-class Simple_cartesian {
-public:
+struct Simple_cartesian {
 
 /// \name Types 
 /// @{
