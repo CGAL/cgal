@@ -160,36 +160,38 @@ public:
       nb_vert_(static_cast<int>(vertices(mesh).size()))
   {  }
 
-
-  Eigen_matrix calc_stiff_matrix()
+  void setup_system(Eigen_matrix& A, Eigen_matrix& L, Eigen_matrix& D,
+                    Eigen_vector& bx, Eigen_vector& by, Eigen_vector& bz,
+                    const double& time)
   {
-    Eigen_matrix L = stiff_matrix();
-    return L;
-  }
 
+    calc_mass_matrix(D);
 
-  //void solve_system(Eigen_matrix& stiffness_matrix)
-  void solve_system(Eigen::SparseMatrix<double>& L, const double time)
-  {
-    Eigen_matrix A(nb_vert_, nb_vert_);
+    // todo : assert L, D sizes
 
-    Eigen_vector bx(nb_vert_);
-    Eigen_vector by(nb_vert_);
-    Eigen_vector bz(nb_vert_);
+    std::cout<<"mass matrix= "<<D<<std::endl;
 
-    Eigen_vector Xx(nb_vert_);
-    Eigen_vector Xy(nb_vert_);
-    Eigen_vector Xz(nb_vert_);
+    std::cerr << "compute coefficient matrix...";
+    compute_coeff_matrix(A, L, D, time);
 
-    std::cerr << "compute coefficients...";
-      compute_coeff_matrix(A, L, time);
+    std::cout<<"mass matrix= "<<A<<std::endl;
+
     std::cerr << "done" << std::endl;
 
     std::cerr << "rhs...";
-    compute_rhs(bx, by, bz);
+    compute_rhs(bx, by, bz, D);
+
+
     std::cerr << "done" << std::endl;
+  }
 
 
+
+  //void solve_system(Eigen_matrix& stiffness_matrix)
+  void solve_system(Eigen_matrix& A,
+                    Eigen_vector& Xx, Eigen_vector& Xy, Eigen_vector& Xz,
+                    Eigen_vector& bx, Eigen_vector& by, Eigen_vector& bz)
+  {
     // Cholesky factorization
     std::cerr << "compute ...";
     Eigen_solver solver;
@@ -201,8 +203,8 @@ public:
       // back-substitution
     std::cerr << "solve...";
     Xx = solver.solve(bx);
-      Xy = solver.solve(by);
-      Xz = solver.solve(bz);
+    Xy = solver.solve(by);
+    Xz = solver.solve(bz);
     std::cerr << "done" << std::endl;
 
     if(solver.info() != Eigen::Success)
@@ -211,7 +213,45 @@ public:
       return;
     }
 
+  }
 
+  void calc_stiff_matrix(Eigen_matrix& mat)
+  {
+
+    //mat.resize(nb_vert_, nb_vert_);
+
+  // TOFIX: very slow way to fill the matrx
+  // avoid matrix C!! and use triplets
+  // read http://eigen.tuxfamily.org/dox/group__TutorialSparse.html#TutorialSparseFilling
+
+    // cot values
+    Eigen_matrix C = cot_entries(); //TODO
+
+    for(face_descriptor f : faces(mesh_))
+    {
+      for(halfedge_descriptor hi : halfedges_around_face(halfedge(f, mesh_), mesh_))
+      {
+        vertex_descriptor v_source = source(hi, mesh_);
+        vertex_descriptor v_target = target(hi, mesh_);
+        auto i_source = vimap_[v_source];
+        auto i_target = vimap_[v_target];
+
+        auto cot_val = C.coeff(i_source, i_target);
+        // i,j
+        mat.coeffRef(i_source, i_target) += cot_val; // why not (i,j)
+        // j,i
+        mat.coeffRef(i_target, i_source) += cot_val;
+        //diagonal
+        mat.coeffRef(i_source, i_source) -= cot_val;
+        mat.coeffRef(i_target, i_target) -= cot_val;
+      }
+    }
+
+  }
+
+  void update_mesh(Eigen_vector& Xx, Eigen_vector& Xy, Eigen_vector& Xz)
+  {
+    update_map(Xx, Xy, Xz);
 
     // normalize area
     NT surface_area = area(faces(mesh_), mesh_);
@@ -226,53 +266,10 @@ public:
     surface_area = area(faces(mesh_), mesh_);
     std::cout << "surface_area normalized= " << surface_area << nl;
 
-
   }
 
 
 private:
-
-     // ----------- LINEAR SYSTEM -------- //
-    Eigen_matrix get_stiffness_matrix()
-    {
-      Eigen_matrix mat(nb_vert_, nb_vert_);
-      for(vertex_descriptor vi : vertices(mesh_))
-      {
-        NT sum_Lik = 0;
-        for(halfedge_descriptor h : halfedges_around_source(vi, mesh_))
-        {
-          NT Lij = weight_calculator_(h);
-          sum_Lik -= Lij;
-          vertex_descriptor vj = target(h, mesh_);
-          mat.coeffRef(vimap_[vi], vimap_[vj]) = Lij;
-        }
-
-        mat.coeffRef(vimap_[vi], vimap_[vi]) = sum_Lik;
-      }
-
-      return mat;
-    }
-
-    Eigen_matrix get_mass_matrix()
-    {
-      Eigen_matrix mat(nb_vert_, nb_vert_);
-      for(vertex_descriptor vi : vertices(mesh_))
-      {
-        NT sum_Dik = 0;
-        for(halfedge_descriptor h : halfedges_around_source(vi, mesh_))
-        {
-          NT Dij = inc_areas_calculator_(h) / 12.0;
-          sum_Dik += Dij;
-          vertex_descriptor vj = target(h, mesh_);
-          mat.coeffRef(vimap_[vi], vimap_[vj]) = Dij;
-        }
-
-        mat.coeffRef(vimap_[vi], vimap_[vi]) = sum_Dik;
-      }
-
-      return mat;
-    }
-
 
     Eigen_matrix cot_entries()
     {
@@ -296,122 +293,72 @@ private:
       return C;
     }
 
-    Eigen_matrix stiff_matrix() // TOFIX: pass reference to matrix
+
+
+
+    void calc_mass_matrix(Eigen_matrix& D)
     {
-      Eigen_matrix mat(nb_vert_, nb_vert_); // TOFIX
-
-	  // TOFIX: very slow way to fill the matrx 
-	  // avoid matrix C!! and use triplets
-	  // read http://eigen.tuxfamily.org/dox/group__TutorialSparse.html#TutorialSparseFilling
-
-      // cot values
-      Eigen_matrix C = cot_entries();
+      //D.resize(nb_vert_, nb_vert_);
 
       for(face_descriptor f : faces(mesh_))
       {
-        for(halfedge_descriptor hi : halfedges_around_face(halfedge(f, mesh_), mesh_))
-        {
-          vertex_descriptor v_source = source(hi, mesh_);
-          vertex_descriptor v_target = target(hi, mesh_);
-          auto i_source = vimap_[v_source];
-          auto i_target = vimap_[v_target];
-
-          auto cot_val = C.coeff(i_source, i_target);
-          // i,j
-          mat.coeffRef(i_source, i_target) += cot_val; // why not (i,j)
-          // j,i
-          mat.coeffRef(i_target, i_source) += cot_val;
-          //diagonal
-          mat.coeffRef(i_source, i_source) -= cot_val;
-          mat.coeffRef(i_target, i_target) -= cot_val;
-        }
-      }
-
-      return mat;
-    }
-
-
-    Eigen_matrix mass_matrix()
-    {
-      Eigen_matrix mat(nb_vert_, nb_vert_);
-      for(face_descriptor f : faces(mesh_))
-      {
-
         double area = face_area(f, mesh_);
-
         for(vertex_descriptor v : vertices_around_face(halfedge(f, mesh_), mesh_))
         {
           auto indx = vimap_[v];
-          mat.coeffRef(indx, indx) += 2.0 * area;
+          D.coeffRef(indx, indx) += 2.0 * area;
         }
-
       }
 
-      //export_eigen_matrix(mat, "data/D");
-
-      mat /= 12.0;
-
-      //export_eigen_matrix(mat, "data/D12");
-
-      return mat;
+      D /= 12.0;
     }
 
 
 
-    void compute_coeff_matrix(Eigen_matrix& A, Eigen_matrix& L, const double time)
-    //void compute_coeff_matrix(Eigen_matrix& A, Eigen_matrix& L)
+    void compute_coeff_matrix(Eigen_matrix& A, Eigen_matrix& L, Eigen_matrix& D, const double time)
     {
 
-      //export_eigen_matrix(L, "data/L");
-
-
-      //Eigen_matrix L = stiff_matrix();
-      Eigen_matrix D = mass_matrix();
-
-      //export_eigen_matrix(D, "data/D");
-
-
-      std::cout<<"time= "<<time<<std::endl;
       double delta = time;
-
 
       //Eigen_matrix D(L.rows(), L.cols());
       //D.setIdentity();
 
-
+      //A.resize(nb_vert_, nb_vert_);
       A = D - delta * L;
 
 
     }
 
 
-    void compute_rhs(Eigen_vector& bx, Eigen_vector& by, Eigen_vector& bz)
+    void compute_rhs(Eigen_vector& bx, Eigen_vector& by, Eigen_vector& bz,
+                     Eigen_matrix& D)
     {
-
-      Eigen_vector Xx(nb_vert_);
-      Eigen_vector Xy(nb_vert_);
-      Eigen_vector Xz(nb_vert_);
+      //bx.resize(nb_vert_);
+      //by.resize(nb_vert_);
+      //bz.resize(nb_vert_);
 
       for(vertex_descriptor vi : vertices(mesh_))
       {
         int index = vimap_[vi];
         Point p = get(vpmap_, vi);
-        Xx.coeffRef(index) = p.x();
-        Xy.coeffRef(index) = p.y();
-        Xz.coeffRef(index) = p.z();
+        bx.coeffRef(index) = p.x();
+        by.coeffRef(index) = p.y();
+        bz.coeffRef(index) = p.z();
       }
 
-      //Eigen_matrix D = get_mass_matrix();
-      Eigen_matrix D = mass_matrix();
-
+      //calc_mass_matrix(D);
 
       //Eigen_matrix D(Bx.rows(), Bx.rows());
       //D.setIdentity();
 
-      bx = D * Xx;
-      by = D * Xy;
-      bz = D * Xz;
+      bx = D * bx;
+      by = D * by;
+      bz = D * bz;
 
+
+      std::cout<<"bx= "<<bx<<std::endl;
+      std::cout<<"by= "<<by<<std::endl;
+      std::cout<<"bz= "<<bz<<std::endl;
     }
 
 
