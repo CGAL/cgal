@@ -623,6 +623,8 @@ public:
     // Any change should be mirrored.
     CGAL_precondition(number_of_vertices() > 0);
 
+    Bare_point canonical_p = canonicalize_point(p);
+
     Locate_type lt;
     int li, lj;
 
@@ -634,7 +636,7 @@ public:
       geom_traits().construct_weighted_point_3_object();
 
     Offset query_offset;
-    Cell_handle c = Base::locate(cwp(p), query_offset, lt, li, lj, start);
+    Cell_handle c = Base::locate(cwp(canonical_p), query_offset, lt, li, lj, start);
 
     // - start with the closest vertex from the located cell.
     // - repeatedly take the nearest of its incident vertices if any
