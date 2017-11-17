@@ -48,21 +48,18 @@ foreach(pkg ${files})
     foreach(f ${pkg_files})
       get_filename_component(fname ${f} NAME)
       if (NOT "${fname}" STREQUAL "TODO") # skip TODO files and unwanted directories
-        list(APPEND all_files ${pkg_dir}/${f})
+        #make sure the target destination dir exists
+        set(afile ${pkg_dir}/${f})
+        get_filename_component(afile_dir_tmp ${afile} PATH)
+        string(REPLACE "${pkg_dir}" "" afile_dir ${afile_dir_tmp})
+        if(NOT IS_DIRECTORY ${release_dir}/${afile_dir})
+          file(MAKE_DIRECTORY ${release_dir}/${afile_dir})
+        endif()
+        #copy the file
+        file(COPY ${afile} DESTINATION ${release_dir}/${afile_dir})
       endif()
     endforeach()
 
-    # now copy them
-    foreach(afile ${all_files})
-      # get the path and remove the package part
-      get_filename_component(afile_dir_tmp ${afile} PATH)
-      string(REPLACE "${pkg_dir}" "" afile_dir ${afile_dir_tmp})
-      if(NOT IS_DIRECTORY ${release_dir}/${afile_dir})
-        file(MAKE_DIRECTORY ${release_dir}/${afile_dir})
-      endif()
-
-      file(COPY ${afile} DESTINATION ${release_dir}/${afile_dir})
-    endforeach()
   endif()
 endforeach()
 
