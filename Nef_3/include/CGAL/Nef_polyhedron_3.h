@@ -734,9 +734,7 @@ protected:
                 CTVertex_handle p=fi->vertex(0);
                 CTVertex_handle q=fi->vertex(1);
                 CTVertex_handle r=fi->vertex(2);
-                Plane_3 plane(p->point(),
-                              q->point(),
-                              r->point());
+                Plane_3 plane(p->point(),q->point(),r->point());
 
                 pib.begin_facet();
                 if(same_orientation(plane)) {
