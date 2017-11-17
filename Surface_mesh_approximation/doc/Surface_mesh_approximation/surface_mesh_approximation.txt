@@ -75,7 +75,7 @@ Figure \cgalFigureRef{seeding_method} depicts the effect of different seeding me
 
 \subsection sma_operations Operations
 
-For interactive use, the approach can yield better approximations of the geometry and tunnel out of local minima via additional operations:
+For interactive use, the approach can yield better approximations of the geometry via adding/removing proxies and tunnelling out of local minima via additional operations:
 - <b>Merging</b>. Merging two adjacent regions.
 - <b>Splitting</b>. Splitting larger region into smaller ones to reduce the error. It is a reverse operation to merging.
 - <b>Adding</b>. Adding a proxy to further reduce the approximation error. As for the seeding process, we can choose between either incremental or hierarchical addition.
@@ -85,9 +85,9 @@ For interactive use, the approach can yield better approximations of the geometr
 Operations on the sphere-cube union model. Left: partition of 20 randomly initialized proxies after 10 iterations. Right: result after one merging and one teleportation operation.
 \cgalFigureEnd
 
-As depicted in \cgalFigureRef{operations}, teleportation provides a means to relocate a local minimum region entrapped in the planar plart (left) to the most needed regions on the sphere (right). In \ref sma_example3, the class interface is used to control the approximation process with above operations.
+As depicted in Figure \cgalFigureRef{operations}, teleportation provides a means to relocate a local minimum region entrapped in the planar plart (left) to the most needed regions on the sphere (right). In \ref sma_example3, the class interface is used to control the approximation process with above operations.
 
-\subsection sma_extraction Mesh Extraction
+\subsection sma_construction Mesh Construction
 
 This package implements the meshing algorithm described in \cgalCite{cgal:cad-vsa-04}. More specifically, it attaches an anchor point to each intersection vertex and approximate the boundary of the geometry partition. Each polygon boundary is then triangulated and assembled to produce the output mesh. As there is no guarantee that the output mesh is 2-manifold and oriented, the main input is an indexed triangle set, and additional output is possible in the form of a polyhedral surface mesh. 
 
@@ -101,7 +101,7 @@ In \cgalFigureRef{meshing}, the bear model is approximated through \f$ \mathcal{
 The anchor points (black) are attached to the corresponding vertex on the mesh (white). 
 The red lines connecting the anchor points approximate the boundary of each region.
 
-When approximate the boundary of the proxy region, the recursive chord-length subdividing technique described in \cgalCite{cgal:cad-vsa-04} is used to give better approximation as illustrated in \cgalFigureRef{meshing}. More specifically, we add an extra anchor point when the furthest vertex of distance \f$ d \f$ on the boundary arc \f$ (\mathbf{a}, \mathbf{b}) \f$ is too far away. The subdivision criterion is defined as: \f[ d\cdot sin(\mathbf{N}_i,\mathbf{N}_j)/\Vert(\mathbf{a}, \mathbf{b})\Vert, \f]
+When approximate the boundary of the proxy region, the recursive chord-length subdividing technique described in \cgalCite{cgal:cad-vsa-04} is yield better approximations, as illustrated in \cgalFigureRef{meshing}. More specifically, we add an extra anchor point when the furthest vertex of distance \f$ d \f$ on the boundary arc \f$ (\mathbf{a}, \mathbf{b}) \f$ is too far away. The subdivision criterion is defined as: \f[ d\cdot sin(\mathbf{N}_i,\mathbf{N}_j)/\Vert(\mathbf{a}, \mathbf{b})\Vert, \f]
 where \f$ \mathbf{N}_i,\mathbf{N}_j \f$ is the normal of the proxies separated by the boundary arc \f$ (\mathbf{a}, \mathbf{b}) \f$. If the angle between proxy \f$ P_i \f$ and \f$ P_j \f$ is rather small, even a coarse approximation will do as it does not add geometric information on the shape. 
 On the contrary, when there is a large angle in between the two proxies, a more accurate discretization is desirable. \cgalCite{cgal:cad-vsa-04}
 
