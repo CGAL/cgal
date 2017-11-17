@@ -48,7 +48,7 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_
     ${QGLVIEWER_LIBRARIES} )
 
   include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
-  cgal_add_compilation_test(Alpha_shapes_3)
+  cgal_add_compilation_test(Alpha_shape_3)
 
   include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
   cgal_add_compilation_test(Alpha_shapes_3)

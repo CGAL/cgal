@@ -52,7 +52,8 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   add_executable  ( PCA_demo PCA_demo.cpp ${UI_FILES} ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES})
 
   target_link_libraries( PCA_demo PRIVATE
-    CGAL::CGAL CGAL::CGAL_Qt5 Qt5::Gui )
+    CGAL::CGAL CGAL::CGAL_Qt5 Qt5::Gui
+    ${QGLVIEWER_LIBRARIES} )
 
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS PCA_demo )
 
