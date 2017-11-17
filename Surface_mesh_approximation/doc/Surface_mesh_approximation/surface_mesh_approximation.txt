@@ -16,52 +16,25 @@ Right: extracted triangle mesh with less than 250 triangles.
 
 For many applications ranging from geometry compression to reverse engineering, finding the concise and faithful approximation of an excessively verbose 3D data (in particular, scanned meshes) is beneficial for subsequent processing and may reduce the computational cost dramatically.
 
-This package implements the <em>Variational Shape Approximation</em> \cgalCite{cgal:cad-vsa-04} (VSA) method to approximate an input surface mesh by a simpler indexed face set or polyhedral surface mesh. Given a triangulated surface mesh, referred to as <em>mesh</em> in the following, VSA leverages the Lloyd's clustering iteration \cgalCite{cgal:l-lsqp-82} to drive the approximation error down between the input surface triangle mesh and a set of geometric proxies. By default the proxies are planar, but the algorithm design is generic for future extensions to non-planar proxies. Two error metrics (\f$ \mathcal{L}^2 \f$, \f$ \mathcal{L}^{2,1} \f$) are provided, and the algorithm is generic to other user-defined metrics.
+This package implements the <em>Variational Shape Approximation</em> \cgalCite{cgal:cad-vsa-04} (VSA) method to approximate an input surface mesh by a simpler indexed face set or polyhedral surface mesh. 
 
-An overview of the algorithm is provided in \ref sma_approximation.
+Given an input surface triangle mesh, VSA leverages a discrete clustering algorithm to approximate it by a set of local simple shapes referred to as proxies. Each cluster is represented as a connected set of triangles of the input mesh, and the output mesh is constructed by generating a triangle approximation of the clusters. The approximation error is one-side, defined between the clusters and their associated proxies.
 
-This package offers both the approximation and mesh extraction functionalities. They can be accessed through a free function or a more advanced flexible class interface with customizable steps and parameters. Apart from approximation, the package can be used for shape segmentation via another free function to access the clustering partition.
+By default the proxies are planar, but the algorithm design is generic for future extensions to non-planar proxies. Two error metrics (\f$ \mathcal{L}^2 \f$, \f$ \mathcal{L}^{2,1} \f$) are provided, and the algorithm is generic to other user-defined metrics.
+
+This package offers both the approximation and mesh construction functionalities. They can be accessed through the free function `CGAL::VSA::mesh_approximation()`, which runs a fully automated version of the algorithm:
+
+\cgalExample{Surface_mesh_approximation/vsa_simple_approximation_example.cpp}
+
+A class interface is also provided for advanced users, with interactive capabilities during clustering and customization in terms of error and proxies. Apart from approximation, the package can be used for shape segmentation via another free function to access the clustering partition.
+
 
 \section sma_overview Overview
 
-\subsection sma_approximation Variational Shape Approximation
+\subsection sma_clustering Clustering
 
-The VSA method has two key concepts:
 
-- <b>Geometric proxies</b> \f$ P \f$. The parameterized best-fit geometric surrogates of a piece of surface geometry.
-
-- <b>Shape error metrics</b> \f$ E \f$. To measure how well a proxy approximates the corresponding geometry.
-
-Given an error metric \f$ E \f$, a desired number of \f$ k \f$ proxies, 
-and an input surface \f$ S \f$, we denote by <em>optimal shape proxies</em> a set \f$ P \f$ of proxies \f$ P_i \f$ associated to the regions \f$ R_i\f$ of a partition \f$ \mathcal{R} \f$ of \f$ S \f$ that minimizes the total fitting error \cgalCite{cgal:cad-vsa-04}:
-
-\f[ E(\mathcal{R}, P) = \sum_{i = 1..k} E(\mathcal{R}_i, P_i). \f]
-
-By casting the approximation problem into an optimal discrete clustering one, the algorithm leverages the effective Lloyd algorithm \cgalCite{cgal:cad-vsa-04} to drive the total error down iteratively. 
-More specifically, during each iteration two different steps are conducted, for the \f$ m \f$th iteration:
-- <b>Partition process</b>. Firstly, all triangle facets are partitioned into \f$ k \f$ connected regions \f$ \{ R^{m}_1, \cdots, R^{m}_k \} \f$ by assigning each facet to its nearest proxy \f$ P^{m-1}_i \f$.
-- <b>Fitting process</b>. Then, the algorithm fits a proxy and update the parameters \f$ P^{m}_i \f$ from the corresponding region \f$ R^{m}_i \f$.
-
-For a sequence of iteration with the fitting error \f$ \{ E^1, \cdots, E^m \} \f$, the iteration is repeated until one of the stopping criteria is met:
-- The maximum number of iteration is reached: \f$ m >= max\_iterations \f$.
-- No significant error change between two iterations: \f$ (E^{m-1} - E^{m}) / E^{m-1} < converge\_threshold \f$.
-
-\subsection sma_metrics Metrics and Proxies
-
-Intuitively, each region \f$ \mathcal{R}_i \f$ of a partition \f$ \mathcal{R} \f$ can be summarily represented to first order as an "average" point \f$ X_i \f$ and an "average" normal \f$ N_i \f$. 
-We denote such local representative pair \f$ P_i = (X_i, N_i) \f$, a <em>planar proxy</em> of the associated region. In the package, we provide such a planar proxy as `CGAL::VSA::Plane_proxy`.
-
-Defining an appropriate error metric is the key ingredient for the algorithm. 
-The \f$ \mathcal{L}^2 \f$ metric is defined as:
-\f[ \mathcal{L}^2(\mathcal{R}_i, P_i) = \iint_{x \in \mathcal{R}_i}\Vert x - \Pi_i(x)\Vert^2 dx. \f] where \f$ \Pi_i(\cdot) \f$ denotes the orthogonal projection of the argument onto the proxy plane passing through \f$ X_i \f$ and normal to \f$ N_i \f$. The \f$ \mathcal{L}^2 \f$ metric tries to match the input shape through approximation of the geometric position. 
-
-In the paper \cgalCite{cgal:cad-vsa-04}, the author proposed the \f$ \mathcal{L}^{2,1} \f$ metrics, arguing that the normals are fundamental to the visual interpretation of the shape. The \f$ \mathcal{L}^{2,1} \f$ is defined as: \f[ \mathcal{L}^{2,1}(\mathcal{R}_i, P_i) = \iint_{x \in \mathcal{R}_i}\Vert \mathbf{n}(x) - \mathbf{n}_i\Vert^2 dx. \f]
-
-The \f$ \mathcal{L}^{2,1} \f$ is numerically superior to \f$ \mathcal{L}^2 \f$ in several ways:
-- The anisotropy of the surface is better captured.
-- Finding the best normal proxy is as simple as averaging the normals.
-
-Figure \cgalFigureRef{relaxation} depicts the Lloyd iteration on the plane-sphere model with the \f$ \mathcal{L}^{2,1} \f$ metric.
+Figure \cgalFigureRef{relaxation} depicts the Lloyd clustering iteration on the plane-sphere model with the \f$ \mathcal{L}^{2,1} \f$ metric.
 
 \cgalFigureBegin{relaxation, relaxation.png}
 Lloyd iterations on the plane-sphere model with the \f$ \mathcal{L}^{2,1} \f$ metric: (left) random initialization of 6 proxies; (center) after one iteration; (right) after 8 iterations, the regions settle. The red lines depict the proxy normals.
@@ -153,7 +126,7 @@ The input of the algorithm is expected to be:
 
 The following example calls the free function `CGAL::VSA::mesh_approximation()` on the input triangle mesh with default `CGAL::VSA::L21_metric`.
 
-\cgalExample{Surface_mesh_approximation/vsa_simple_approximation_example.cpp}
+\cgalExample{Surface_mesh_approximation/vsa_approximation_example.cpp}
 
 Note that the function parameters are provided through \ref namedparameters. To set the non-default parameter values, we need to call the functions with the name of the required parameters connected by a dot in an arbitrary order as follows:
 
@@ -258,6 +231,44 @@ plane-sphere |    6,826    |           tbd             |           tbd         |
 bear         |   20,188    |           tbd             |           tbd         | tbd
 masque       |   62,467    |           tbd             |           tbd         | tbd
 </center> -->
+
+\section sma_background
+
+The VSA method has two key geometric concepts:
+
+- <b>Proxies</b> \f$ P \f$. The parameterized best-fit geometric surrogates of a piece of surface geometry.
+
+- <b>Error metrics</b> \f$ E \f$. To measure how well a proxy approximates the corresponding geometry.
+
+Given an error metric \f$ E \f$, a desired number of \f$ k \f$ proxies, 
+and an input surface \f$ S \f$, we denote by <em>optimal shape proxies</em> a set \f$ P \f$ of proxies \f$ P_i \f$ associated to the regions \f$ R_i\f$ of a partition \f$ \mathcal{R} \f$ of \f$ S \f$ that minimizes the total fitting error \cgalCite{cgal:cad-vsa-04}:
+
+\f[ E(\mathcal{R}, P) = \sum_{i = 1..k} E(\mathcal{R}_i, P_i). \f]
+
+By casting the approximation problem into an optimal discrete clustering one, the algorithm leverages the effective Lloyd algorithm \cgalCite{cgal:cad-vsa-04} to drive the total error down iteratively. 
+More specifically, during each iteration two different steps are conducted, for the \f$ m \f$th iteration:
+- <b>Partition process</b>. Firstly, all triangle facets are partitioned into \f$ k \f$ connected regions \f$ \{ R^{m}_1, \cdots, R^{m}_k \} \f$ by assigning each facet to its nearest proxy \f$ P^{m-1}_i \f$.
+- <b>Fitting process</b>. Then, the algorithm fits a proxy and update the parameters \f$ P^{m}_i \f$ from the corresponding region \f$ R^{m}_i \f$.
+
+For a sequence of iteration with the fitting error \f$ \{ E^1, \cdots, E^m \} \f$, the iteration is repeated until one of the stopping criteria is met:
+- The maximum number of iteration is reached: \f$ m >= max\_iterations \f$.
+- No significant error change between two iterations: \f$ (E^{m-1} - E^{m}) / E^{m-1} < converge\_threshold \f$.
+
+\subsection sma_metrics Metrics and Proxies
+
+Intuitively, each region \f$ \mathcal{R}_i \f$ of a partition \f$ \mathcal{R} \f$ can be summarily represented to first order as an "average" point \f$ X_i \f$ and an "average" normal \f$ N_i \f$. 
+We denote such local representative pair \f$ P_i = (X_i, N_i) \f$, a <em>planar proxy</em> of the associated region. In the package, we provide such a planar proxy as `CGAL::VSA::Plane_proxy`.
+
+Defining an appropriate error metric is the key ingredient for the algorithm. 
+The \f$ \mathcal{L}^2 \f$ metric is defined as:
+\f[ \mathcal{L}^2(\mathcal{R}_i, P_i) = \iint_{x \in \mathcal{R}_i}\Vert x - \Pi_i(x)\Vert^2 dx. \f] where \f$ \Pi_i(\cdot) \f$ denotes the orthogonal projection of the argument onto the proxy plane passing through \f$ X_i \f$ and normal to \f$ N_i \f$. The \f$ \mathcal{L}^2 \f$ metric tries to match the input shape through approximation of the geometric position. 
+
+In the paper \cgalCite{cgal:cad-vsa-04}, the author proposed the \f$ \mathcal{L}^{2,1} \f$ metrics, arguing that the normals are fundamental to the visual interpretation of the shape. The \f$ \mathcal{L}^{2,1} \f$ is defined as: \f[ \mathcal{L}^{2,1}(\mathcal{R}_i, P_i) = \iint_{x \in \mathcal{R}_i}\Vert \mathbf{n}(x) - \mathbf{n}_i\Vert^2 dx. \f]
+
+The \f$ \mathcal{L}^{2,1} \f$ is numerically superior to \f$ \mathcal{L}^2 \f$ in several ways:
+- The anisotropy of the surface is better captured.
+- Finding the best normal proxy is as simple as averaging the normals.
+
 
 \section sma_history Design and Implementation History
 
