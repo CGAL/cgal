@@ -19,9 +19,11 @@
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <boost/graph/subgraph.hpp>
 #include <boost/foreach.hpp>
+#include <boost/optional.hpp>
 
 #include <vector>
 #include <cmath>
+#include <cstdlib>
 #include <map>
 #include <queue>
 #include <iterator>
@@ -344,28 +346,37 @@ public:
     const std::size_t max_nb_proxies,
     const FT min_error_drop,
     const std::size_t num_iterations = 5) {
-    return 0;
+    switch (method) {
+      case Random:
+        return init_random(max_nb_proxies, min_error_drop);
+      case Incremental:
+        return init_incremental(max_nb_proxies, num_iterations, min_error_drop);
+      case Hierarchical:
+        return init_hierarchical(max_nb_proxies, num_iterations, min_error_drop);
+      default:
+        return 0;
+    }
   }
 
   /*!
    * @brief Initialize with targeted number of proxies.
    * @param method seeding method
-   * @param num_seed target number of proxies seed
-   * @param num_iterations number of re-fitting iterations 
+   * @param max_nb_proxies target maximum number of proxies
+   * @param num_iterations number of re-fitting iterations
    * in incremental and hierarchical seeding
    * @return number of proxies initialized
    */
   std::size_t init_by_number(
     const Seeding method,
-    const std::size_t num_seed,
+    const std::size_t max_nb_proxies,
     const std::size_t num_iterations = 5) {
     switch (method) {
       case Random:
-        return init_random(num_seed);
+        return init_random(max_nb_proxies);
       case Incremental:
-        return init_incremental(num_seed, num_iterations);
+        return init_incremental(max_nb_proxies, num_iterations);
       case Hierarchical:
-        return init_hierarchical(num_seed, num_iterations);
+        return init_hierarchical(max_nb_proxies, num_iterations);
       default:
         return 0;
     }
@@ -971,37 +982,77 @@ public:
 private:
   /*!
    * @brief Random initialize proxies.
-   * @param num_seed number of proxies seed
+   * With both maximum number of proxies and minimum error drop stop criteria,
+   * the first met criterion tops the seeding.
+   * @note To ensure the randomness, call `std::srand()` beforehand.
+   * @param max_nb_proxies maximum number of proxies
+   * @param min_error_drop minimum error drop
    * @return number of proxies initialized
    */
-  std::size_t init_random(const std::size_t num_seed) {
-    proxies.clear();
-    if (num_faces(*m_pmesh) < num_seed)
+  std::size_t init_random(const std::size_t max_nb_proxies,
+    const boost::optional<FT> min_error_drop = boost::optional<FT>(),
+    const std::size_t num_iterations = 5) {
+    const std::size_t nbf = num_faces(*m_pmesh);
+    if (nbf < max_nb_proxies)
       return 0;
 
-    const std::size_t interval = num_faces(*m_pmesh) / num_seed;
-    std::size_t index = 0;
-    BOOST_FOREACH(face_descriptor f, faces(*m_pmesh)) {
-      if ((index++) % interval == 0) {
-        proxies.push_back(fit_new_proxy(f));
-      }
-      if (proxies.size() >= num_seed)
-        break;
+    proxies.clear();
+    // fill a temporary vector of facets
+    std::vector<face_descriptor> facets;
+    facets.reserve(nbf);
+    BOOST_FOREACH(face_descriptor f, faces(*m_pmesh))
+      facets.push_back(f);
+    // random shuffle
+    for (std::size_t i = 0; i < nbf; ++i) {
+      // swap jth element with a random one
+      std::size_t r = static_cast<std::size_t>(
+        static_cast<double>(std::rand()) / static_cast<double>(RAND_MAX) * 
+        static_cast<double>(nbf - 1));
+      face_descriptor tmp = facets[r];
+      facets[r] = facets[i];
+      facets[i] = tmp;
     }
+
+    if (!min_error_drop) {
+      // reach to the number of proxies
+      for (std::size_t i = 0; i < max_nb_proxies; ++i)
+        proxies.push_back(fit_new_proxy(facets[i]));
+    }
+    else {
+      // reach to the minimum error drop before reaching to the number of proxies
+      proxies.push_back(fit_new_proxy(*(faces(*m_pmesh).first)));
+      BOOST_FOREACH(face_descriptor f, faces(*m_pmesh))
+        fproxy_map[f] = 0;
+      const FT initial_err = compute_fitting_error();
+
+      FT error_drop(1.0);
+      for (std::size_t i = 1; i <= max_nb_proxies && error_drop > *min_error_drop; ++i) {
+        proxies.clear();
+        for (std::size_t j = 0; j < i; ++j)
+          proxies.push_back(fit_new_proxy(facets[j]));
+        const FT err = run(num_iterations);
+        error_drop = err / initial_err;
+      }
+    }
+
     return proxies.size();
   }
 
   /*!
    * @brief Incremental initialize proxies.
-   * @param num_seed number of proxies seed
+   * With both maximum number of proxies and minimum error drop stop criteria,
+   * the first met criterion tops the seeding.
+   * @param max_nb_proxies maximum number of proxies
    * @param num_iterations number of re-fitting iterations 
+   * @param min_error_drop minimum error drop // TODO
    * before each incremental proxy insertion
    * @return number of proxies initialized
    */
-  std::size_t init_incremental(const std::size_t num_seed,
-    const std::size_t num_iterations) {
+  std::size_t init_incremental(const std::size_t max_nb_proxies,
+    const std::size_t num_iterations,
+    const FT min_error_drop = FT(1.0)) {
     proxies.clear();
-    if (num_faces(*m_pmesh) < num_seed)
+    if (num_faces(*m_pmesh) < max_nb_proxies)
       return 0;
     
     // initialize a proxy and the proxy map to prepare for the insertion
@@ -1009,21 +1060,25 @@ private:
     BOOST_FOREACH(face_descriptor f, faces(*m_pmesh))
       fproxy_map[f] = 0;
 
-    add_proxies_furthest(num_seed - 1, num_iterations);
+    add_proxies_furthest(max_nb_proxies - 1, num_iterations);
     return proxies.size();
   }
 
   /*!
    * @brief Hierarchical initialize proxies.
-   * @param num_seed number of proxies seed
+   * With both maximum number of proxies and minimum error drop stop criteria,
+   * the first met criterion tops the seeding.
+   * @param max_nb_proxies maximum number of proxies
    * @param num_iterations number of re-fitting iterations 
+   * @param min_error_drop minimum error drop // TODO
    * before each hierarchical proxy insertion
    * @return number of proxies initialized
    */
-  std::size_t init_hierarchical(const std::size_t num_seed,
-    const std::size_t num_iterations) {
+  std::size_t init_hierarchical(const std::size_t max_nb_proxies,
+    const std::size_t num_iterations,
+    const FT min_error_drop = FT(1.0)) {
     proxies.clear();
-    if (num_faces(*m_pmesh) < num_seed)
+    if (num_faces(*m_pmesh) < max_nb_proxies)
       return 0;
     
     // initialize 2 proxy
@@ -1032,7 +1087,7 @@ private:
     proxies.push_back(fit_new_proxy(*fitr));
     proxies.push_back(fit_new_proxy(*(++fitr)));
 
-    while (proxies.size() < num_seed) {
+    while (proxies.size() < max_nb_proxies) {
       for (std::size_t i = 0; i < num_iterations; ++i) {
         partition();
         fit();
@@ -1041,7 +1096,7 @@ private:
       // add proxies by error diffusion
       const std::size_t num_proxies = proxies.size();
       const std::size_t num_proxies_to_be_added =
-        (num_proxies * 2 < num_seed) ? num_proxies : (num_seed - num_proxies);
+        (num_proxies * 2 < max_nb_proxies) ? num_proxies : (max_nb_proxies - num_proxies);
       add_proxies_error_diffusion(num_proxies_to_be_added);
     }
     return proxies.size();
