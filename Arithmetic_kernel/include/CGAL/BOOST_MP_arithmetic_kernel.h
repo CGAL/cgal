@@ -32,18 +32,38 @@ namespace CGAL {
 /** \ingroup CGAL_Arithmetic_kernel
  *  \brief The Boost.Multiprecision set of exact number types
  */
-struct BOOST_MP_arithmetic_kernel : internal::Arithmetic_kernel_base {
+struct BOOST_cpp_arithmetic_kernel : internal::Arithmetic_kernel_base {
   typedef boost::multiprecision::cpp_int Integer;
   typedef boost::multiprecision::cpp_rational Rational;
 };
+#ifdef CGAL_USE_GMP
+struct BOOST_gmp_arithmetic_kernel : internal::Arithmetic_kernel_base {
+  typedef boost::multiprecision::gmp_int Integer;
+  typedef boost::multiprecision::gmp_rational Rational;
+};
+#endif
 
-template <class B1, boost::multiprecision::expression_template_option E1>
-struct Get_arithmetic_kernel<boost::multiprecision::number<B1, E1> > {
-  typedef BOOST_MP_arithmetic_kernel Arithmetic_kernel;
-};
 template <class T1, class T2, class T3, class T4, class T5>
-struct Get_arithmetic_kernel<boost::multiprecision::detail::expression<T1,T2,T3,T4,T5> > {
-  typedef BOOST_MP_arithmetic_kernel Arithmetic_kernel;
+struct Get_arithmetic_kernel<boost::multiprecision::detail::expression<T1,T2,T3,T4,T5> >
+: Get_arithmetic_kernel<boost::multiprecision::detail::expression<T1,T2,T3,T4,T5>::result_type> {};
+
+template <>
+struct Get_arithmetic_kernel<boost::multiprecision::cpp_int> {
+  typedef BOOST_cpp_arithmetic_kernel Arithmetic_kernel;
 };
+template <>
+struct Get_arithmetic_kernel<boost::multiprecision::cpp_rational> {
+  typedef BOOST_cpp_arithmetic_kernel Arithmetic_kernel;
+};
+#ifdef CGAL_USE_GMP
+template <>
+struct Get_arithmetic_kernel<boost::multiprecision::gmp_int> {
+  typedef BOOST_gmp_arithmetic_kernel Arithmetic_kernel;
+};
+template <>
+struct Get_arithmetic_kernel<boost::multiprecision::gmp_rational> {
+  typedef BOOST_gmp_arithmetic_kernel Arithmetic_kernel;
+};
+#endif
 } //namespace CGAL
 #endif
