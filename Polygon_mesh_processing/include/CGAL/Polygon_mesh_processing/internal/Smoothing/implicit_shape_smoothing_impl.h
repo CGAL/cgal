@@ -181,29 +181,29 @@ public:
     Eigen_vector Xy(nb_vert_);
     Eigen_vector Xz(nb_vert_);
 
-	std::cerr << "compute coefficients...";
-    compute_coeff_matrix(A, L, time);
-	std::cerr << "done" << std::endl;
+    std::cerr << "compute coefficients...";
+      compute_coeff_matrix(A, L, time);
+    std::cerr << "done" << std::endl;
 
-	std::cerr << "rhs...";
-	compute_rhs(bx, by, bz);
-	std::cerr << "done" << std::endl;
+    std::cerr << "rhs...";
+    compute_rhs(bx, by, bz);
+    std::cerr << "done" << std::endl;
 
 
-	// Cholesky factorization
-	std::cerr << "compute ...";
-	Eigen_solver solver;
-	solver.compute(A);
-	std::cerr << "done" << std::endl;
-	// solver.analyzePattern(A);
-    // solver.factorize(A);
+    // Cholesky factorization
+    std::cerr << "compute ...";
+    Eigen_solver solver;
+    solver.compute(A);
+    std::cerr << "done" << std::endl;
+    // solver.analyzePattern(A);
+      // solver.factorize(A);
 
-    // back-substitution
-	std::cerr << "solve...";
-	Xx = solver.solve(bx);
-    Xy = solver.solve(by);
-    Xz = solver.solve(bz);
-	std::cerr << "done" << std::endl;
+      // back-substitution
+    std::cerr << "solve...";
+    Xx = solver.solve(bx);
+      Xy = solver.solve(by);
+      Xz = solver.solve(bz);
+    std::cerr << "done" << std::endl;
 
     if(solver.info() != Eigen::Success)
     {
