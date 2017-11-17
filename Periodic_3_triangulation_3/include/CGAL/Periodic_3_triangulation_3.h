@@ -308,7 +308,8 @@ public:
   }
 
   /// Clears the triangulation and initializes it again.
-  virtual void clear_covering_data() {}//= 0;
+  virtual void clear_covering_data() { }
+
   void clear()
   {
     _tds.clear();

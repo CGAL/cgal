@@ -418,6 +418,11 @@ public:
     }
   }
 
+  virtual void clear_covering_data()
+  {
+    cells_with_too_big_orthoball.clear();
+  }
+
   virtual void update_cover_data_after_setting_domain ()
   {
     orthosphere_radius_threshold = FT(0.015625) * (domain().xmax() - domain().xmin())
