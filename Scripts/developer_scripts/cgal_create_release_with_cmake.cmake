@@ -12,10 +12,13 @@ file(READ "${CMAKE_BINARY_DIR}/Installation/include/CGAL/version.h" version_file
 string(REGEX MATCH "define CGAL_VERSION (.*)\n#define CGAL_VERSION_NR" CGAL_VERSION_FOUND "${version_file_content}")
 
 if (CGAL_VERSION_FOUND)
-  SET(CGAL_VERSION "${CMAKE_MATCH_1}")  
+  set(CGAL_VERSION "${CMAKE_MATCH_1}")
+  set (GITHUB_PREFIX "https://github.com/CGAL/cgal/blob/releases/CGAL-${CGAL_VERSION}")
 else()
   message(FATAL_ERROR "Cannot extract CGAL version number.")
 endif()
+
+
 
 if (NOT DEFINED DESTINATION)
   SET(DESTINATION "/tmp")
@@ -61,8 +64,17 @@ foreach(pkg ${files})
         if(NOT IS_DIRECTORY ${release_dir}/${afile_dir})
           file(MAKE_DIRECTORY ${release_dir}/${afile_dir})
         endif()
-        #copy the file
-        file(COPY ${afile} DESTINATION ${release_dir}/${afile_dir})
+
+        #copy the file (replace $URL$ and $ID$ for *.h and *.hpp)
+        get_filename_component(fext ${fname} EXT)
+        if ("${fext}" STREQUAL ".h" OR "${fext}" STREQUAL ".hpp")
+          file(READ "${pkg_dir}/${f}" file_content)
+          string(REPLACE "$URL$" "${GITHUB_PREFIX}/${pkg}/${f}" file_content ${file_content})
+          string(REPLACE "$Id$" "This file is from the release ${CGAL_VERSION} of CGAL" file_content ${file_content})
+          file(WRITE ${release_dir}/${afile_dir}/${fname} ${file_content})
+        else()
+          file(COPY ${afile} DESTINATION ${release_dir}/${afile_dir})
+        endif()
       endif()
     endforeach()
 
