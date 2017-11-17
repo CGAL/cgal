@@ -293,6 +293,7 @@ void Scene_polyhedron_selection_item_priv::initialize_temp_buffers(CGAL::Three::
     program->enableAttributeArray("vertex");
     program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
     item->buffers[VertexTempPoints].release();
+    program->disableAttributeArray("colors");
     item->vaos[TempPoints]->release();
 
     item->vaos[FixedPoints]->bind();

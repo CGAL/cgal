@@ -365,6 +365,7 @@ public Q_SLOTS:
       // highlight with mouse move event
       QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
       qglviewer::Camera* camera = viewer->camera();
+      viewer->makeCurrent();
       bool found = false;
       const qglviewer::Vec& point = camera->pointUnderPixel(hl_pos, found) - offset;
       if(found)
