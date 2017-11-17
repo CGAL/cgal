@@ -53,7 +53,7 @@ namespace Polygon_mesh_processing {
 * A weighted scheme is also proposed to favorise the removal of small angles.
 * Optionally, the points are reprojected after each iteration.
 *
-* @todo Make the projection of poinst optional
+* @todo Make the projection of points optional.
 * @tparam PolygonMesh model of `MutableFaceGraph`.
 *         If `PolygonMesh` has an internal property map for `CGAL::face_index_t`,
 *         and no `face_index_map` is given
@@ -212,7 +212,7 @@ void angle_smoothing(PolygonMesh& pmesh)
 * This function tries to make the area distribution of triangle as uniform as possible
 * by moving non constrained vertices.
 * Optionally, the points are reprojected after each iteration.
-* @todo make the reprojected optional
+* @todo make the reprojection optional.
 *
 * @tparam PolygonMesh model of `MutableFaceGraph`.
 *         If `PolygonMesh` has an internal property map for `CGAL::face_index_t`,
@@ -368,7 +368,7 @@ void area_smoothing(PolygonMesh& pmesh)
 /*!
 * \ingroup PMP_meshing_grp
 * smoothes a triangulated region of a polygon mesh using area and angle based criteria.
-* Each iteration alternates a call to `angle_smoothing()`, `area_smoothing()`, and `angle_smoothing()`.
+* Each iteration alternates a call to `smooth_angles()`, `smooth_areas()`, and `smooth_angles()`.
 * Convergence is realized based on the Hausdorff distance of the mesh between previous
 * and current iteration or until a specified maximum number of iterations.
 *
@@ -384,7 +384,7 @@ void area_smoothing(PolygonMesh& pmesh)
 * @param faces the range of triangular faces defining one or several surface patches to be smoothed.
 * @param np optional sequence of \ref namedparameters among the ones listed below.
 *
-* @todo remove Hausdorff and use ratio between max (or mean?) displacement
+* @todo remove Hausdorff and use ratio between max (or mean?) displacement.
 * \cgalNamedParamsBegin
 *  \cgalParamBegin{geom_traits} a geometric traits class instance, model of `Kernel`.
 *    Exact constructions kernels are not supported by this function.

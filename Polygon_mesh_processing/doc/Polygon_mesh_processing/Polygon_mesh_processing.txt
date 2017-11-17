@@ -143,11 +143,10 @@ especially for meshes with highly irregular connectivity. As such, area smoothin
 distribution of the vertices over the area that is being smoothed.
 
 For shape smoothing, `CGAL::Polygon_mesh_processing::smooth_curvature_flow()`
-takes into account the mean curvature flow to calculate a weighted barycenter towards which vertices move incrementally.
-Shape smoothing using the curvature flow is based on Desbrun et al \cgalCite{cgal:dmsb-ifamdcf-99}.
-The algorihm uses the mean curvature flow to translate surface vertices by moving along the surface normal with a speed equal to the mean curvature of the area that is being smoothed. This means that vertices on sharp corners slide faster and also if the surface is flat around a vertex, this vertex will not move (zero curvature). 
+takes into account the mean curvature flow to calculate a weighted barycenter towards which vertices move incrementally. Shape smoothing using the curvature flow is based on Desbrun et al \cgalCite{cgal:dmsb-ifamdcf-99}.
+The algorihm uses the mean curvature flow to calculate the translation of surface vertices along the surface normal with a speed equal to the mean curvature of the area that is being smoothed. This means that vertices on sharp corners slide faster and also if the surface is flat around a vertex, this vertex will not move (zero curvature). 
 
-`CGAL::Polygon_mesh_processing::smooth_modified_curvature_flow()` may be used to apply a modified algorithm based on the mean curvature flow that slows down the evolution in cylindrical regions, and thus avoiding the formation of undesirable neck pinches. The algorithm converges gradually to a sphere.
+`CGAL::Polygon_mesh_processing::smooth_modified_curvature_flow()` may be used to apply a modified algorithm based on the mean curvature flow that slows down the evolution in cylindrical regions, and thus avoiding the formation of undesirable neck pinches. The algorithm is based on Kazhdan et al \cgalCite{cgal:dmsb-ifamdcf-99} and the smoothed surface converges to a conformal parameterization of the surface onto a sphere
 
 
 \cgalFigureBegin{smooth_sphere, smooth_sphere.png}
