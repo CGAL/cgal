@@ -551,12 +551,6 @@ message( "== Generate version files (DONE) ==\n")
 #
 #--------------------------------------------------------------------------------------------------
  
-message("== Set up flags ==")
-
-include(CGAL_SetupFlags)
-
-message("== Set up flags (DONE) ==\n")
-
 message("== Detect external libraries ==")
 
 # this is the place to tell which external libs are supporting

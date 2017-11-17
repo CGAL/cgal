@@ -18,7 +18,6 @@ if(NOT USE_CGAL_FILE_INCLUDED)
   set(USE_CGAL_FILE_INCLUDED 1)
 
   include(${CMAKE_CURRENT_LIST_DIR}/CGAL_Common.cmake)
-  include(${CMAKE_CURRENT_LIST_DIR}/CGAL_SetupFlags.cmake)
   include(${CMAKE_CURRENT_LIST_DIR}/CGAL_GeneratorSpecificSettings.cmake)
   include(${CMAKE_CURRENT_LIST_DIR}/CGAL_TweakFindBoost.cmake)
 
