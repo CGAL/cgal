@@ -35,6 +35,9 @@
 #include <CGAL/Triangulation_cell_base_with_info_3.h>
 #include <CGAL/Regular_triangulation_3.h>
 #include <CGAL/Regular_triangulation_cell_base_3.h>
+#include <CGAL/Regular_triangulation_cell_base_with_weighted_circumcenter_3.h>
+#include <CGAL/Periodic_3_triangulation_3.h>
+#include <CGAL/Periodic_3_regular_triangulation_3.h>
 #include <boost/variant.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <utility>
@@ -68,6 +71,7 @@ struct Get_io_signature_aux<T, false>
 {
   std::string operator()() const
   {
+    std::cerr << "Type without signature: " << typeid(T).name() << std::endl;
     return std::string();
   }
 }; // end template partial specialization Get_io_signature_aux<T, false>
@@ -218,6 +222,32 @@ Get_io_signature<Regular_triangulation_3<Gt, Tds> >
 };
 #endif
 
+#ifdef CGAL_PERIODIC_3_TRIANGULATION_3_H
+template <class Gt, class Tds>
+struct
+Get_io_signature<Periodic_3_triangulation_3<Gt, Tds> >
+{
+  std::string operator()() {
+    return std::string("Periodic_3_triangulation_3(") +
+      Get_io_signature<typename Tds::Vertex::Point>()() +
+      ",Vb(" + Get_io_signature<typename Tds::Vertex>()() +
+      "),Cb(" + Get_io_signature<typename Tds::Cell>()() +
+      "))";
+  }
+};
+#endif
+
+#ifdef CGAL_PERIODIC_3_REGULAR_TRIANGULATION_3_H
+template <class Gt, class Tds>
+struct
+Get_io_signature<Periodic_3_regular_triangulation_3<Gt, Tds> >
+{
+  std::string operator()() {
+    return Get_io_signature<Periodic_3_triangulation_3<Gt, Tds> >()();
+  }
+};
+#endif
+
 #ifdef CGAL_TRIANGULATION_VERTEX_BASE_3_H
 template <class Gt, class Vb>
 struct Get_io_signature<Triangulation_vertex_base_3<Gt, Vb> >
@@ -279,6 +309,17 @@ Get_io_signature<Regular_triangulation_cell_base_3<Gt, Cb, Container> >
 {
   std::string operator()() {
     return "RTcb_3";
+  }
+};
+#endif
+
+#ifdef CGAL_REGULAR_TRIANGULATION_CELL_BASE_WITH_CIRCUMCENTER_3_H
+template <class Gt, class Cb>
+struct
+Get_io_signature<Regular_triangulation_cell_base_with_weighted_circumcenter_3<Gt, Cb> >
+{
+  std::string operator()() {
+    return "RTWWCcb_3";
   }
 };
 #endif

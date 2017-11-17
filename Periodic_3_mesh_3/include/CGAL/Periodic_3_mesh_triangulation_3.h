@@ -35,6 +35,7 @@
 // vertex and cell bases
 #include <CGAL/Mesh_vertex_base_3.h>
 #include <CGAL/Mesh_cell_base_3.h>
+#include <CGAL/Mesh_3/io_signature.h>
 
 #include <CGAL/assertions.h>
 #include <CGAL/array.h>
@@ -132,6 +133,8 @@ public:
 #ifndef CGAL_NO_STRUCTURAL_FILTERING
   using Base::inexact_locate;
 #endif
+
+  static std::string io_signature() { return Get_io_signature<Base>()(); }
 
   /// Constructor
   Periodic_3_regular_triangulation_3_mesher_3(const Iso_cuboid& domain = Iso_cuboid(0,0,0,1,1,1),
