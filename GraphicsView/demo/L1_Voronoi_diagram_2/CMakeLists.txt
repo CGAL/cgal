@@ -45,6 +45,9 @@ target_link_libraries( L1_voronoi_diagram_2 PRIVATE
 include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
 cgal_add_compilation_test(L1_voronoi_diagram_2)
 
+include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
+cgal_add_compilation_test(L1_voronoi_diagram_2)
+
 else()
 
   message(STATUS "NOTICE: This demo requires CGAL and Qt5, and will not be compiled.")

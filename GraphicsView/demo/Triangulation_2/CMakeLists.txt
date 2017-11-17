@@ -64,7 +64,7 @@ target_link_libraries(Regular_triangulation_2
 add_to_cached_list( CGAL_EXECUTABLE_TARGETS Regular_triangulation_2 )
 
 include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
-foreach(target 
+foreach(target
     Constrained_Delaunay_triangulation_2
     Delaunay_triangulation_2
     Regular_triangulation_2)

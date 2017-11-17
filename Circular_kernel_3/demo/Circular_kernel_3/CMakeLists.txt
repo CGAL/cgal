@@ -31,6 +31,9 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_
   include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
   cgal_add_compilation_test(Circular_kernel_3)
 
+  include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
+  cgal_add_compilation_test(Circular_kernel_3)
+
 else()
 
   message(STATUS "NOTICE: This demo requires CGAL, the QGLViewer, OpenGL and Qt5, and will not be compiled.")
