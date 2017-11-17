@@ -43,6 +43,7 @@ public:
   QTimer messageTimer;
   QOpenGLFunctions_4_3_Compatibility* _recentFunctions;
   bool is_ogl_4_3;
+  bool is_2d_selection_mode;
 
   //! Holds useful data to draw the axis system
   struct AxisData
@@ -79,6 +80,7 @@ public:
   bool i_is_pressed;
   bool initialized;
   bool z_is_pressed;
+  QImage static_image;
   //!Draws the distance between two selected points.
   void showDistance(QPoint);
   qglviewer::Vec APoint;
@@ -251,6 +253,7 @@ void Viewer::initializeGL()
   format.setStencilBufferSize(8);
   format.setVersion(4,3);
   format.setProfile(QSurfaceFormat::CompatibilityProfile);
+  format.setSamples(0);
   context()->setFormat(format);
   bool created = context()->create();
   if(!created || context()->format().profile() != QSurfaceFormat::CompatibilityProfile) {
@@ -1379,22 +1382,28 @@ void Viewer::paintGL()
   makeCurrent();
   if (!d->painter->isActive())
     d->painter->begin(this);
-  d->painter->beginNativePainting();
-  glClearColor(backgroundColor().redF(), backgroundColor().greenF(), backgroundColor().blueF(), 1.0);
-  glClearDepth(1.0f);
-  glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-
-  //set the default frustum
-  GLdouble d_mat[16];
-  this->camera()->getProjectionMatrix(d_mat);
-  //Convert the GLdoubles matrices in GLfloats
-  for (int i=0; i<16; ++i)
+  if(d->is_2d_selection_mode)
+  {
+    d->painter->drawImage(QPoint(0,0), d->static_image);
+  }
+  else
+  {
+    d->painter->beginNativePainting();
+    glClearColor(backgroundColor().redF(), backgroundColor().greenF(), backgroundColor().blueF(), 1.0);
+    glClearDepth(1.0f);
+    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+    //set the default frustum
+    GLdouble d_mat[16];
+    this->camera()->getProjectionMatrix(d_mat);
+    //Convert the GLdoubles matrices in GLfloats
+    for (int i=0; i<16; ++i)
       d->projectionMatrix.data()[i] = GLfloat(d_mat[i]);
 
-  preDraw();
-  draw();
-  postDraw();
-  d->painter->endNativePainting();
+    preDraw();
+    draw();
+    postDraw();
+    d->painter->endNativePainting();
+  }
   d->painter->end();
   doneCurrent();
 }
@@ -1859,4 +1868,14 @@ void Viewer_impl::drawGrid(qreal size, int nbSubdivisions)
 
 }
 QOpenGLFunctions_4_3_Compatibility* Viewer::openGL_4_3_functions() { return d->_recentFunctions; }
- #include "Viewer.moc"
+
+void Viewer::set2DSelectionMode(bool b) { d->is_2d_selection_mode = b; }
+
+void Viewer::setStaticImage(QImage image) { d->static_image = image; }
+
+const QImage& Viewer:: staticImage() const { return d->static_image; }
+
+
+
+
+#include "Viewer.moc"

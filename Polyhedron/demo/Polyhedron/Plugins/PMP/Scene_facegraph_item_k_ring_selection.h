@@ -354,6 +354,7 @@ public Q_SLOTS:
       break;
     }
     contour_2d.clear();
+    qobject_cast<CGAL::Three::Viewer_interface*>(viewer)->set2DSelectionMode(false);
   }
 
   void highlight()
@@ -613,29 +614,24 @@ protected:
   void sample_mouse_path()
   {
     CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(*QGLViewer::QGLViewerPool().begin());
-    //viewer->makeCurrent();
+    viewer->makeCurrent();
     const QPoint& p = viewer->mapFromGlobal(QCursor::pos());
     contour_2d.push_back (FG_Traits::Point_2 (p.x(), p.y()));
-
     if (update_polyline ())
     {
       //update draw
-      QPainter *painter = viewer->getPainter();
       QPen pen;
       pen.setColor(QColor(Qt::green));
       pen.setWidth(3);
       //Create a QImage of the screen and paint the lasso on top of it
-
 #if QGLVIEWER_VERSION >= 0x020700
       QImage image = viewer->grabFramebuffer();
 #else
       QImage image = viewer->grabFrameBuffer();
 #endif
-
-      painter->begin(viewer);
+      QPainter *painter = new QPainter(&image);
+      //painter->begin(&image);
       painter->setPen(pen);
-      painter->drawImage(QPoint(0,0), image);
-      painter->drawText(QRect(0,0, 400,400), Qt::AlignCenter, "Qt");
       for(std::size_t i=0; i<polyline->size(); ++i)
       {
         Polyline_2 poly = (*polyline)[i];
@@ -646,10 +642,14 @@ protected:
           }
       }
       painter->end();
-    }
+      delete painter;
+      viewer->set2DSelectionMode(true);
+      viewer->setStaticImage(image);
+      viewer->update();
 
-    //viewer->doneCurrent();
+    }
   }
+
   void apply_path()
   {
     update_polyline ();

@@ -81,14 +81,13 @@ public:
   void render(QImage& image) const {
 
     CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(*QGLViewer::QGLViewerPool().begin());
-    QPainter *painter = viewer->getPainter();
+
     QPen pen;
     pen.setColor(QColor(Qt::green));
     pen.setWidth(5);
+    QImage temp(image);
 
-
-    painter->begin(viewer);
-    painter->drawImage(QPoint(0,0), image);
+    QPainter *painter = new QPainter(&temp);
     painter->setPen(pen);
     for(std::size_t i=0; i<polyline->size(); ++i)
     {
@@ -100,6 +99,10 @@ public:
         }
     }
     painter->end();
+    delete painter;
+    viewer->set2DSelectionMode(true);
+    viewer->setStaticImage(temp);
+    viewer->update();
   }
 
   Polyline_2& poly() const
@@ -729,6 +732,7 @@ protected:
 	select_points();
 	visualizer = NULL;
 	QApplication::restoreOverrideCursor();
+        static_cast<CGAL::Three::Viewer_interface*>(*QGLViewer::QGLViewerPool().begin())->set2DSelectionMode(false);
 	return true;
       }
     // Update selection
