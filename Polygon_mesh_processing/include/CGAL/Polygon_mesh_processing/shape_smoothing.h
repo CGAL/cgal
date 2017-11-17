@@ -14,8 +14,10 @@ namespace Polygon_mesh_processing {
 /*!
 * \ingroup PMP_meshing_grp
 * smooths the overall shape of the mesh by using a modified algorithm based on the mean curvature flow.
-* The effect depends only on the curvature of each area.
+* The effect depends only on the curvature of each area and the convergence is achieved to a conformal map of the initial surface
+* to a sphere.
 *
+* @todo modify the time parameter and elaborate on the number of iterations.
 * @tparam PolygonMesh model of `MutableFaceGraph`.
 *         The descriptor types `boost::graph_traits<PolygonMesh>::%face_descriptor`
 *         and `boost::graph_traits<PolygonMesh>::%halfedge_descriptor` must be
@@ -86,7 +88,7 @@ void smooth_modified_curvature_flow(PolygonMesh& mesh, const double& time, std::
   std::cerr << "compute stiffness matrix...";
   smoother.calc_stiff_matrix(stiffness_matrix);
 
-  std::cout<<"stiffness matrix= "<<stiffness_matrix<<std::endl;
+  //std::cout<<"stiffness matrix= "<<stiffness_matrix<<std::endl;
 
   std::cerr << "done" << std::endl;
 

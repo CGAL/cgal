@@ -169,14 +169,14 @@ public:
 
     // todo : assert L, D sizes
 
-    std::cout<<"mass matrix= "<<D<<std::endl;
+    //std::cout<<"mass matrix= "<<D<<std::endl;
 
-    std::cerr << "compute coefficient matrix...";
+    //std::cerr << "compute coefficient matrix...";
     compute_coeff_matrix(A, L, D, time);
 
-    std::cout<<"mass matrix= "<<A<<std::endl;
+    //std::cout<<"mass matrix= "<<A<<std::endl;
 
-    std::cerr << "done" << std::endl;
+    //std::cerr << "done" << std::endl;
 
     std::cerr << "rhs...";
     compute_rhs(bx, by, bz, D);
@@ -356,9 +356,9 @@ private:
       bz = D * bz;
 
 
-      std::cout<<"bx= "<<bx<<std::endl;
-      std::cout<<"by= "<<by<<std::endl;
-      std::cout<<"bz= "<<bz<<std::endl;
+      //std::cout<<"bx= "<<bx<<std::endl;
+      //std::cout<<"by= "<<by<<std::endl;
+      //std::cout<<"bz= "<<bz<<std::endl;
     }
 
 
