@@ -6,11 +6,7 @@ namespace CGAL {
 \cgalAutoToc
 \authors Pierre Alliez, Lingjie Zhu
 
-\cgalFigureBegin{Approximation_masque_main, masque_vsa.png}
-Running the variational shape approximation on the mask model (62k triangles) with \f$ \mathcal{L}^{2,1} \f$ metric. 
-Left: partition with 100 planar proxies on the input surface. 
-Right: extracted triangle mesh with less than 250 triangles.
-\cgalFigureEnd
+
 
 \section sma_introduction Introduction
 
@@ -19,6 +15,10 @@ For many applications ranging from geometry compression to reverse engineering, 
 This package implements the <em>Variational Shape Approximation</em> \cgalCite{cgal:cad-vsa-04} (VSA) method to approximate an input surface mesh by a simpler indexed face set or polyhedral surface mesh. 
 
 Given an input surface triangle mesh, VSA leverages a discrete clustering algorithm to approximate it by a set of local simple shapes referred to as proxies. Each cluster is represented as a connected set of triangles of the input mesh, and the output mesh is constructed by generating a triangle approximation of the clusters. The approximation error is one-side, defined between the clusters and their associated proxies.
+
+\cgalFigureBegin{Approximation_teaser, teaser.png}
+Variational shape approximation on two models with the \f$ \mathcal{L}^{2,1} \f$ error metric. From left to right: partition of the input surface triangle mesh, anchor vertices and edges, and output triangle mesh. The partition is optimized via discrete clustering of the input triangles, so as to minimize the approximation error from the clusters to planar proxies (not shown). 
+\cgalFigureEnd
 
 By default the proxies are planar, but the algorithm design is generic for future extensions to non-planar proxies. Two error metrics (\f$ \mathcal{L}^2 \f$, \f$ \mathcal{L}^{2,1} \f$) are provided, and the algorithm is generic to other user-defined metrics.
 
@@ -45,7 +45,7 @@ The package provides both two metrics as `CGAL::VSA::L2_metric` and `CGAL::VSA::
 
 <!-- As discussed above, the iteration needs a set of initial proxies \f$ \{ P_1^0, \cdots, P_k^0 \} \f$.  -->
 
-The algorithm must be initialized by determining either the maximum number of proxies required to approximate the geometry or the minimum error drop rate between two iterations. More specifically, we can decide:
+The clustering algorithm must be initialized by determining either the maximum number of proxies required to approximate the geometry or the minimum error drop rate between two iterations. More specifically, we can decide:
 - <b>Maximum number of proxies</b>. The algorithm adds proxies until the specified target number is met.
 - <b>Minimum error drop</b>. We start from the proxy fitted from the first facet of the surface with the fitting error \f$ \hat E \f$. The algorithm adds proxies until the approximation error drops below the specified percentage \f$ target\_drop * \hat E \f$, between two iterations.
 
@@ -100,7 +100,7 @@ In \cgalFigureRef{meshing}, the bear model is approximated through \f$ \mathcal{
 The anchor points (black) are attached to the corresponding vertex on the mesh (white). 
 The red lines connecting the anchor points approximate the boundary of each region.
 
-When approximate the boundary of the proxy region, the recursive chord-length subdividing technique described in \cgalCite{cgal:cad-vsa-04} is yield better approximations, as illustrated in \cgalFigureRef{meshing}. More specifically, we add an extra anchor point when the furthest vertex of distance \f$ d \f$ on the boundary arc \f$ (\mathbf{a}, \mathbf{b}) \f$ is too far away. The subdivision criterion is defined as: \f[ d\cdot sin(\mathbf{N}_i,\mathbf{N}_j)/\Vert(\mathbf{a}, \mathbf{b})\Vert, \f]
+When approximating the boundary of the proxy region, the recursive chord-length subdividing technique described in \cgalCite{cgal:cad-vsa-04} yields better approximations, as illustrated by \cgalFigureRef{meshing}. More specifically, we add an extra anchor point when the furthest vertex of distance \f$ d \f$ on the boundary arc \f$ (\mathbf{a}, \mathbf{b}) \f$ is too far away. The subdivision criterion is defined as: \f[ d\cdot sin(\mathbf{N}_i,\mathbf{N}_j)/\Vert(\mathbf{a}, \mathbf{b})\Vert, \f]
 where \f$ \mathbf{N}_i,\mathbf{N}_j \f$ is the normal of the proxies separated by the boundary arc \f$ (\mathbf{a}, \mathbf{b}) \f$. If the angle between proxy \f$ P_i \f$ and \f$ P_j \f$ is rather small, even a coarse approximation will do as it does not add geometric information on the shape. 
 On the contrary, when there is a large angle in between the two proxies, a more accurate discretization is desirable. \cgalCite{cgal:cad-vsa-04}
 
@@ -129,7 +129,7 @@ The following example calls the free function `CGAL::VSA::mesh_approximation()` 
 
 Note that the function parameters are provided through \ref namedparameters. To set the non-default parameter values we need to call the functions with the required parameters, connected by a dot and in an arbitrary order, as follows:
 
-TODO: add output indexed face set to the code
+TODO: add output indexed face set to the code below
 
 \code
 // input: input triangle surface mesh
@@ -152,17 +152,13 @@ CGAL::VSA::mesh_approximation(input,
        .mesh_chord_error(sub_thre) // set boundary approximation error threshold when meshing
        .facet_proxy_map(fpxmap) // get facet partition map
        .proxies(std::back_inserter(proxies))); // get proxies
-// render the partition
-...
-// render proxies
-...
 \endcode
 
 The facet proxy index map and the output proxies provide a means to access the partition and the proxy parameters as illustrated by \cgalFigureRef{relaxation}. 
 
 \subsection sma_example2 Free Function Segmentation
 
-The package can be used for segmenting via the free function `CGAL::VSA::mesh_segmentation()`, with the default `CGAL::VSA::L21_metric` approximation:
+The package can be used for segmenting the input mesh via the free function `CGAL::VSA::mesh_segmentation()`, with the default `CGAL::VSA::L21_metric` approximation:
 
 \cgalExample{Surface_mesh_approximation/vsa_segmentation_example.cpp}
 
@@ -249,8 +245,6 @@ More specifically, during each iteration two different steps are conducted, for 
 For a sequence of iteration with the fitting error \f$ \{ E^1, \cdots, E^m \} \f$, the iteration is repeated until one of the stopping criteria is met:
 - The maximum number of iteration is reached: \f$ m >= max\_iterations \f$.
 - No significant error change between two iterations: \f$ (E^{m-1} - E^{m}) / E^{m-1} < converge\_threshold \f$.
-
-\subsection sma_metrics Metrics and Proxies
 
 Intuitively, each region \f$ \mathcal{R}_i \f$ of a partition \f$ \mathcal{R} \f$ can be summarily represented to first order as an "average" point \f$ X_i \f$ and an "average" normal \f$ N_i \f$. 
 We denote such local representative pair \f$ P_i = (X_i, N_i) \f$, a <em>planar proxy</em> of the associated region. In the package, we provide such a planar proxy as `CGAL::VSA::Plane_proxy`.
