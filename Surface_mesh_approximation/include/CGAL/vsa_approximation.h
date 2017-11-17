@@ -973,7 +973,7 @@ public:
         Chord_vector chord;
         walk_to_next_anchor(he, chord);
         bdr.push_back(vanchor_map[target(he, *m_pmesh)]);
-      } while(he != he_mark);
+      } while (he != he_mark);
       *out_itr++ = bdr;
     }
   }
@@ -999,19 +999,7 @@ private:
     proxies.clear();
     // fill a temporary vector of facets
     std::vector<face_descriptor> facets;
-    facets.reserve(nbf);
-    BOOST_FOREACH(face_descriptor f, faces(*m_pmesh))
-      facets.push_back(f);
-    // random shuffle
-    for (std::size_t i = 0; i < nbf; ++i) {
-      // swap jth element with a random one
-      std::size_t r = static_cast<std::size_t>(
-        static_cast<double>(std::rand()) / static_cast<double>(RAND_MAX) * 
-        static_cast<double>(nbf - 1));
-      face_descriptor tmp = facets[r];
-      facets[r] = facets[i];
-      facets[i] = tmp;
-    }
+    random_shuffle_facets(facets);
 
     if (!min_error_drop) {
       // reach to the number of proxies
@@ -1020,11 +1008,7 @@ private:
     }
     else {
       // reach to the minimum error drop before reaching to the number of proxies
-      proxies.push_back(fit_new_proxy(*(faces(*m_pmesh).first)));
-      BOOST_FOREACH(face_descriptor f, faces(*m_pmesh))
-        fproxy_map[f] = 0;
-      const FT initial_err = compute_fitting_error();
-
+      const FT initial_err = init_from_first_facet();
       FT error_drop(1.0);
       for (std::size_t i = 1; i <= max_nb_proxies && error_drop > *min_error_drop; ++i) {
         proxies.clear();
@@ -1115,13 +1099,7 @@ private:
     if (max_proxies < 1)
       return 0;
 
-    // initialize a proxy and the proxy map to prepare for the insertion
-    proxies.clear();
-    proxies.push_back(fit_new_proxy(*(faces(*m_pmesh).first)));
-    BOOST_FOREACH(face_descriptor f, faces(*m_pmesh))
-      fproxy_map[f] = 0;
-    const FT initial_err = compute_fitting_error();
-
+    const FT initial_err = init_from_first_facet();
     FT sum_err(0);
     FT drop(0);
     std::size_t target_px = 2;
@@ -1135,7 +1113,7 @@ private:
       sum_err = compute_fitting_error();
       target_px *= 2;
       drop = sum_err / initial_err;
-    } while(drop > target_drop && proxies.size() < max_proxies);
+    } while (drop > target_drop && proxies.size() < max_proxies);
 
     return proxies.size();
   }
@@ -1154,12 +1132,7 @@ private:
       return 0;
 
     // initialize a proxy and the proxy map to prepare for the insertion
-    proxies.clear();
-    proxies.push_back(fit_new_proxy(*(faces(*m_pmesh).first)));
-    BOOST_FOREACH(face_descriptor f, faces(*m_pmesh))
-      fproxy_map[f] = 0;
-    const FT initial_err = compute_fitting_error();
-
+    const FT initial_err = init_from_first_facet();
     FT sum_err(0);
     FT drop(0);
     do {
@@ -1189,12 +1162,7 @@ private:
       return 0;
 
     // initialize a proxy and the proxy map to prepare for the insertion
-    proxies.clear();
-    proxies.push_back(fit_new_proxy(*(faces(*m_pmesh).first)));
-    BOOST_FOREACH(face_descriptor f, faces(*m_pmesh))
-      fproxy_map[f] = 0;
-    const FT initial_err = compute_fitting_error();
-
+    const FT initial_err = init_from_first_facet();
     FT sum_err(0);
     FT drop(0);
     std::size_t target_px = 1;
@@ -1207,7 +1175,7 @@ private:
       sum_err = compute_fitting_error();
       target_px *= 2;
       drop = sum_err / initial_err;
-    } while(drop > target_drop && proxies.size() < max_proxies);
+    } while (drop > target_drop && proxies.size() < max_proxies);
 
     return proxies.size();
   }
@@ -1298,6 +1266,41 @@ private:
     Proxy px = (*proxy_fitting)(fvec.begin(), fvec.end());
 
     return Proxy_wrapper(px, f);
+  }
+
+  /*!
+   * @brief Random shuffle the surface facets into an empty vector.
+   */
+  void random_shuffle_facets(std::vector<face_descriptor> &facets) {
+    facets.reserve(nbf);
+    const std::size_t nbf = num_faces(*m_pmesh);
+    BOOST_FOREACH(face_descriptor f, faces(*m_pmesh))
+      facets.push_back(f);
+    // random shuffle
+    for (std::size_t i = 0; i < nbf; ++i) {
+      // swap ith element with a random one
+      std::size_t r = static_cast<std::size_t>(
+        static_cast<double>(std::rand()) / static_cast<double>(RAND_MAX) * 
+        static_cast<double>(nbf - 1));
+      face_descriptor tmp = facets[r];
+      facets[r] = facets[i];
+      facets[i] = tmp;
+    }
+  }
+
+  /*!
+   * @brief Initialize a proxy from the first facet of the surface.
+   * @note This process invalidate all existing data, only used for initial state.
+   * Coarse approximation iteration is not performed, because it's inaccurate anyway
+   * and may cause serious degenerate cases(e.g. a standard cube mode).
+   * @return initial fitting error
+   */
+  FT init_from_first_facet() {
+    proxies.clear();
+    proxies.push_back(fit_new_proxy(*(faces(*m_pmesh).first)));
+    BOOST_FOREACH(face_descriptor f, faces(*m_pmesh))
+      fproxy_map[f] = 0;
+    return compute_fitting_error();
   }
 
   /*!
@@ -1444,7 +1447,7 @@ private:
             pt_end = point_pmap[target(he, *m_pmesh)];
           ++count;
         }
-      } while(he != he_mark);
+      } while (he != he_mark);
 
       // anchor count may be increased to more than 2 afterwards
       // due to the new anchors added by the neighboring border (< 2 anchors)
@@ -1593,7 +1596,7 @@ private:
           else
             global_vtag_map[to_sgv_map[target(*hitr, *m_pmesh)]] = anchorright;
         }
-      } while(he != he_mark);
+      } while (he != he_mark);
     }
 
     // collect triangles
