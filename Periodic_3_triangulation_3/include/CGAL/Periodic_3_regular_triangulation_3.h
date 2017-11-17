@@ -1142,6 +1142,9 @@ public:
              geom_traits().construct_point_3_object()(v->point()), v->cell()) == v;
   }
 
+  // To use the function below, the offset 'o' must be appropriately chosen
+  // because we then only consider positive offsets from 'vh'. See example
+  // of use in nearest_power_vertex()
   Offset get_min_dist_offset(const Bare_point& p, const Offset & o,
                              const Vertex_handle vh) const
   {

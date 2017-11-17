@@ -853,7 +853,9 @@ Periodic_3_Delaunay_triangulation_3<GT,Tds>::nearest_vertex(const Point& p,
   return get_original_vertex(nearest);
 }
 
-// just trying the eight possibilities
+// To use the function below, the offset 'o' must be appropriately chosen
+// because we then only consider positive offsets from 'vh'. See example
+// of use in nearest_power_vertex()
 template < class GT, class Tds >
 typename Periodic_3_Delaunay_triangulation_3<GT,Tds>::Offset
 Periodic_3_Delaunay_triangulation_3<GT,Tds>::get_min_dist_offset(
