@@ -52,10 +52,13 @@ function(create_single_source_cgal_program firstfile )
       set(NO_TESTING TRUE)
     endif()
 
-    if(NOT NO_TESTING)
-      cgal_add_test(${exe_name})
-    else()
-      cgal_add_test(${exe_name} NO_EXECUTION)
+    if(POLICY CMP0064)
+      # CMake 3.4 or later
+      if(NOT NO_TESTING)
+        cgal_add_test(${exe_name})
+      else()
+        cgal_add_test(${exe_name} NO_EXECUTION)
+      endif()
     endif()
 
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${exe_name} )

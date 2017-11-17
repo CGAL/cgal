@@ -3,11 +3,19 @@ if(CGAL_add_test_included)
 endif(CGAL_add_test_included)
 set(CGAL_add_test_included TRUE)
 
+if(NOT POLICY CMP0064)
+  # CMake <= 3.3
+  if(BUILD_TESTING)
+    message(WARNING
+      "CGAL CTest support requires CMake 3.4 or later.\n"
+      "You must either disable BUILD_TESTING or upgrade CMake.")
+  endif()
+  return()
+endif()
+
 include(CTest)
 
-if(POLICY CMP0064)
-  cmake_policy(SET CMP0064 NEW)
-endif()
+cmake_policy(SET CMP0064 NEW)
 
 include(CMakeParseArguments)
 
@@ -68,7 +76,7 @@ function(expand_list_with_globbing list_name)
 endfunction()
 
 function(cgal_add_compilation_test exe_name)
-  if(TEST compilation_of__${exe_name})
+  if(NOT POLICY CMP0064 OR TEST compilation_of__${exe_name})
     return()
   endif()
   add_test(NAME "compilation_of__${exe_name}"
@@ -180,7 +188,7 @@ function(cgal_add_test exe_name)
     set(test_name "execution___of__${exe_name}")
   endif()
 #  message("  test_name: ${test_name}")
-  if(cgal_add_test_NO_EXECUTION OR TEST ${test_name})
+  if(cgal_add_test_NO_EXECUTION OR NOT POLICY CMP0064 OR TEST ${test_name})
     return()
   endif()
 #  message("Add test ${test_name}")
