@@ -1012,7 +1012,7 @@ public:
 
     // Take the opposite because periodic_locate() returns the offset such that
     // cell + offset contains 'p' but here we need to move 'p'
-    query_offset = - query_offset;
+    query_offset = this->combine_offsets(Offset(), -query_offset);
 
     Vertex_handle nearest = nearest_vertex_in_cell(c, p, query_offset);
     Offset offset_of_nearest = get_min_dist_offset(p, query_offset, nearest);
@@ -1148,13 +1148,13 @@ public:
   Offset get_min_dist_offset(const Bare_point& p, const Offset & o,
                              const Vertex_handle vh) const
   {
-    // @todo same changes in P3DT3
+    // @todo apply the same changes to P3DT3
     Offset mdo = get_offset(vh);
     Offset min = combine_offsets(mdo, Offset(0, 0, 0));
 
-    for(int i=0; i<2; ++i) {
-      for(int j=0; j<2; ++j) {
-        for(int k=0; k<2; ++k)
+    for(int i=0; i<=1; ++i) {
+      for(int j=0; j<=1; ++j) {
+        for(int k=0; k<=1; ++k)
         {
           if(i==0 && j==0 && k==0)
             continue;
@@ -1169,15 +1169,19 @@ public:
     return min;
   }
 
-  Vertex_handle nearest_vertex_in_cell(const Cell_handle& c, const Bare_point& p,
-                                       const Offset & o) const
+  Vertex_handle nearest_vertex_in_cell(const Cell_handle& c,
+                                       const Bare_point& p, const Offset & o) const
   {
     CGAL_triangulation_precondition(number_of_vertices() != 0);
     Vertex_handle nearest = c->vertex(0);
-    for(int i=1; i<4; i++) {
-      nearest = (compare_distance(p,nearest->point(),c->vertex(i)->point(),
-        o,get_offset(c,c->index(nearest)),get_offset(c,i)) == SMALLER) ?
-        nearest : c->vertex(i);
+    for(int i=1; i<4; i++)
+    {
+      if(compare_distance(p, nearest->point(), c->vertex(i)->point(),
+                          o, get_offset(c,c->index(nearest)), get_offset(c,i))
+           == LARGER)
+      {
+        nearest = c->vertex(i);
+      }
     }
     return nearest;
   }

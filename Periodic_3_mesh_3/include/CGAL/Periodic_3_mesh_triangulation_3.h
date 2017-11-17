@@ -644,12 +644,20 @@ public:
 
     // Take the opposite because periodic_locate() returns the offset such that
     // cell + offset contains 'p' but here we need to move 'p'
-    query_offset = - query_offset;
+    query_offset = this->combine_offsets(Offset(), -query_offset);
 
-    Vertex_handle nearest = Base::nearest_vertex_in_cell(c, p, query_offset);
+    Vertex_handle nearest = Base::nearest_vertex_in_cell(c, canonical_p, query_offset);
     const Weighted_point& nearest_wp = this->point(nearest);
-    Offset offset_of_nearest = Base::get_min_dist_offset(p, query_offset, nearest);
-    FT min_sq_dist = csd(p, cp(nearest_wp), query_offset, offset_of_nearest);
+    Offset offset_of_nearest = Base::get_min_dist_offset(canonical_p, query_offset, nearest);
+    FT min_sq_dist = csd(canonical_p, cp(nearest_wp), query_offset, offset_of_nearest);
+
+    std::cout << "seeking nearest to " << canonical_p << std::endl;
+    std::cout << "query offset: " << query_offset << std::endl;
+    std::cout << "so point: " << this->construct_point(canonical_p, query_offset) << std::endl;
+    std::cout << "nearest: " << nearest->point() << std::endl;
+    std::cout << "initial min offset: " << offset_of_nearest << std::endl;
+    std::cout << "so point: " << this->construct_point(nearest->point(), offset_of_nearest) << std::endl;
+    std::cout << "giving a distance of: " << min_sq_dist << std::endl;
 
     std::vector<Vertex_handle> vs;
     vs.reserve(32);
@@ -666,14 +674,17 @@ public:
         if((*vsit)->point() == nearest->point())
           continue;
 
-        const Offset min_dist_offset = this->get_min_dist_offset(p, query_offset, *vsit);
-        if(this->compare_distance(p, (*vsit)->point(), tmp->point(),
+        const Offset min_dist_offset = this->get_min_dist_offset(canonical_p, query_offset, *vsit);
+        if(this->compare_distance(canonical_p, (*vsit)->point(), tmp->point(),
                                   query_offset, min_dist_offset, offset_of_nearest) == SMALLER)
         {
           tmp = *vsit;
           offset_of_nearest = min_dist_offset;
           const Weighted_point& vswp = this->point(tmp);
-          min_sq_dist = csd(p, cp(vswp), query_offset, min_dist_offset);
+          min_sq_dist = csd(canonical_p, cp(vswp), query_offset, min_dist_offset);
+          std::cout << "new closest: " << tmp->point()
+                    << " offset: " << offset_of_nearest << std::endl
+                    << " sq dist: " << min_sq_dist << std::endl;
         }
       }
 
