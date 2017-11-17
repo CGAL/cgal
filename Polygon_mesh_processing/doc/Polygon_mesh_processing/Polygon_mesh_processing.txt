@@ -158,7 +158,7 @@ Mesh smoothing. (a) Input mesh.
 Histograms of angles, areas and aspect ratios before (red) and after (green) mesh smoothing. The aspect ratio is defined as the ratio between the longest edge and the minimum altitude of a triangle.
 \cgalFigureEnd
 
-\cgalFigureBegin{dino_teaser, dino-teaser.png}
+\cgalFigureBegin{dino_teaser, dino-teaser.jpg}
 Shape smoothing on a dinoseur model using the mean curvature flow. The resulted smoothed shape is colored white.
 \cgalFigureEnd
 

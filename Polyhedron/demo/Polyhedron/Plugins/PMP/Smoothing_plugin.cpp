@@ -174,7 +174,7 @@ public Q_SLOTS:
         {
             unsigned int nb_iter = ui_widget.Angle_spinBox->value();
             //bool use_weights = ui_widget.use_weights_checkBox->isChecked();
-            angle_smoothing(pmesh, parameters::number_of_iterations(nb_iter));
+            smooth_angles(pmesh, parameters::number_of_iterations(nb_iter));
 
             poly_item->invalidateOpenGLBuffers();
             Q_EMIT poly_item->itemChanged();
@@ -184,7 +184,7 @@ public Q_SLOTS:
         {
             unsigned int nb_iter = ui_widget.Area_spinBox->value();
             //double gd_precision = ui_widget.gd_dSpinBox->value();
-            area_smoothing(pmesh, parameters::number_of_iterations(nb_iter));
+            smooth_areas(pmesh, parameters::number_of_iterations(nb_iter));
 
             poly_item->invalidateOpenGLBuffers();
             Q_EMIT poly_item->itemChanged();
@@ -194,7 +194,7 @@ public Q_SLOTS:
         {
             unsigned int nb_iter = ui_widget.Angle_spinBox_2->value();
             //double gd_precision = ui_widget.gd_dSpinBox->value();
-            angle_smoothing(pmesh, parameters::number_of_iterations(nb_iter));
+            smooth_angles(pmesh, parameters::number_of_iterations(nb_iter));
 
             poly_item->invalidateOpenGLBuffers();
             Q_EMIT poly_item->itemChanged();
@@ -221,7 +221,7 @@ public Q_SLOTS:
         //unsigned int nb_iter = ui_widget.curv_iterations_spinBox->value();
         unsigned int nb_iter = 1;
 
-        shape_smoothing(pmesh, parameters::number_of_iterations(nb_iter));
+        smooth_curvature_flow(pmesh, parameters::number_of_iterations(nb_iter));
 
         /*
 		unsigned int itime = ui_widget.time_spinBox->value();
@@ -249,24 +249,26 @@ public Q_SLOTS:
 
 		unsigned int itime = ui_widget.time_spinBox->value();
 		const double time = itime * 1e-6;
-
-        QApplication::setOverrideCursor(Qt::WaitCursor);
-
         //unsigned int nb_iter = ui_widget.curv_iterations_spinBox_2->value();
         unsigned int nb_iter = 1;
 
-        /*
+        std::cout<<"setting up stiffness matrix..."<<std::endl;
+
+        QApplication::setOverrideCursor(Qt::WaitCursor);
+
         if(!is_stiffness_matrix_setup)
         {
-            setup_mcf_system(pmesh, nb_iter, stiffness_matrix);
+            std::cout<<"!is_stiffness_matrix_setup"<<std::endl;
+            setup_mcf_system(pmesh, stiffness_matrix_);
             is_stiffness_matrix_setup = true;
         }
-        // todo: pass nb_iter as named parameter
-        solve_mcf_system(pmesh, time, nb_iter, stiffness_matrix);
 
-        */
+        std::cout<<"stiffness_matrix_: "<<stiffness_matrix_<<std::endl;
 
-        smooth_shape(pmesh, time, nb_iter);
+
+        solve_mcf_system(pmesh, time, nb_iter, stiffness_matrix_);
+
+
 
         poly_item->invalidateOpenGLBuffers();
         Q_EMIT poly_item->itemChanged();
@@ -309,7 +311,7 @@ private:
     QDockWidget* dock_widget;
     Ui::Smoothing ui_widget;
 
-    Eigen::SparseMatrix<double> stiffness_matrix;
+    Eigen::SparseMatrix<double> stiffness_matrix_;
     bool is_stiffness_matrix_setup = false;
 
 

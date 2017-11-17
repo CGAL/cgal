@@ -169,20 +169,20 @@ public:
 
     // todo : assert L, D sizes
 
-    //std::cout<<"mass matrix= "<<D<<std::endl;
+    std::cout<<"mass matrix= "<<D<<std::endl;
 
-    //std::cerr << "compute coefficient matrix...";
+    std::cerr << "compute coefficient matrix...";
     compute_coeff_matrix(A, L, D, time);
 
     //std::cout<<"mass matrix= "<<A<<std::endl;
 
-    //std::cerr << "done" << std::endl;
+    std::cerr << "done" << std::endl;
 
     std::cerr << "rhs...";
     compute_rhs(bx, by, bz, D);
 
 
-    std::cerr << "done" << std::endl;
+    std::cerr << "done setup system" << std::endl;
   }
 
 
@@ -227,6 +227,7 @@ public:
     // cot values
     Eigen_matrix C = cot_entries(); //TODO
 
+    std::cout<<"OK cot entries.\n";
     for(face_descriptor f : faces(mesh_))
     {
       for(halfedge_descriptor hi : halfedges_around_face(halfedge(f, mesh_), mesh_))
@@ -315,7 +316,7 @@ private:
 
 
 
-    void compute_coeff_matrix(Eigen_matrix& A, Eigen_matrix& L, Eigen_matrix& D, const double time)
+    void compute_coeff_matrix(Eigen_matrix& A, Eigen_matrix& L, Eigen_matrix& D, const double& time)
     {
 
       double delta = time;

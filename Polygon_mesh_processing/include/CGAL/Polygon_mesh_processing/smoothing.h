@@ -30,6 +30,7 @@
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
 #include <CGAL/Polygon_mesh_processing/distance.h>
+#define CGAL_PMP_SMOOTHING_VERBOSE
 
 #ifdef CGAL_PMP_SMOOTHING_VERBOSE
 #include <CGAL/Timer.h>

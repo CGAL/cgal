@@ -14,7 +14,7 @@ typedef CGAL::Surface_mesh<K::Point_3> Mesh;
 int main(){
 
     namespace PMP = CGAL::Polygon_mesh_processing;
-    const char* filename = "data/dino.off";
+    const char* filename = "data/pig.off";
     std::ifstream input(filename);
 
     Mesh mesh;
@@ -35,9 +35,10 @@ int main(){
     */
     unsigned int nb_iter2 = 1;
     const double time = 10;
-    CGAL::Polygon_mesh_processing::smooth_modified_curvature_flow(mesh, time, nb_iter2);
+    CGAL::Polygon_mesh_processing::smooth_modified_curvature_flow(faces(mesh), mesh,
+                                                                  CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter2));
 
-    std::ofstream output2("data/dino_smoothed_to_sphere.off");
+    std::ofstream output2("data/pig_smoothed_to_sphere.off");
     output2 << mesh;
     output2.close();
 
