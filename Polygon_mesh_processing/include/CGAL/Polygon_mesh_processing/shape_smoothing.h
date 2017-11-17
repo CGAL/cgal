@@ -56,21 +56,21 @@ namespace Polygon_mesh_processing {
 * \cgalNamedParamsEnd
 */
 template<typename PolygonMesh, typename FaceRange, typename NamedParameters>
-void smooth_modified_curvature_flow(const FaceRange& faces, PolygonMesh& mesh, const NamedParameters& np)
+void smooth_modified_curvature_flow(const FaceRange& faces, PolygonMesh& pmesh, const NamedParameters& np)
 {
   using boost::choose_param;
   using boost::get_param;
 
   // VPmap type
   typedef typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::type VertexPointMap;
-  VertexPointMap vpmap = get(CGAL::vertex_point, mesh);
+  VertexPointMap vpmap = get(CGAL::vertex_point, pmesh);
 
 
   // nb_iterations
   unsigned int nb_iterations = choose_param(get_param(np, internal_np::number_of_iterations), 1);
 
 
-  std::size_t n = static_cast<int>(vertices(mesh).size());
+  std::size_t n = static_cast<int>(vertices(pmesh).size());
 
   typedef typename Eigen::VectorXd Eigen_vector;
   typedef typename Eigen::SparseMatrix<double> Eigen_matrix;
@@ -87,7 +87,7 @@ void smooth_modified_curvature_flow(const FaceRange& faces, PolygonMesh& mesh, c
 
   // use resize
 
-  internal::Shape_smoother<PolygonMesh, VertexPointMap> smoother(mesh, vpmap);
+  internal::Shape_smoother<PolygonMesh, VertexPointMap> smoother(pmesh, vpmap);
 
   std::cerr << "compute stiffness matrix...";
   smoother.calc_stiff_matrix(stiffness_matrix);

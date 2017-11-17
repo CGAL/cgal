@@ -92,7 +92,7 @@ namespace Polygon_mesh_processing {
 * \cgalNamedParamsEnd
 */
 template<typename PolygonMesh, typename FaceRange, typename NamedParameters>
-void smooth_angles(const FaceRange& faces, PolygonMesh& pmesh,  const NamedParameters& np)
+void smooth_angles(const FaceRange& faces, PolygonMesh& pmesh, const NamedParameters& np)
 {
     using boost::choose_param;
     using boost::get_param;
