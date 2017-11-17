@@ -58,12 +58,11 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_
 
   add_executable  ( Periodic_Lloyd_3 Periodic_Lloyd_3.qhc Periodic_Lloyd_3.cpp MainWindow.cpp Viewer.cpp ${uis}  ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES})
 
-  qt5_use_modules(Periodic_Lloyd_3 Xml Script Help OpenGL Svg)
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS Periodic_Lloyd_3 )
 
-  target_link_libraries( Periodic_Lloyd_3 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
-  target_link_libraries( Periodic_Lloyd_3 ${QT_LIBRARIES} ${QGLVIEWER_LIBRARIES} )
-  target_link_libraries( Periodic_Lloyd_3 ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY})
+  target_link_libraries( Periodic_Lloyd_3 PRIVATE
+    CGAL::CGAL CGAL::CGAL_Qt5 Qt5::OpenGL Qt5::Help
+    ${QGLVIEWER_LIBRARIES} )
 
   include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
   cgal_add_compilation_test(Periodic_Lloyd_3)

@@ -22,13 +22,11 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_
 
   add_executable (Circular_kernel_3 Circular_kernel_3.cpp Viewer.cpp ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES})
 
-  qt5_use_modules( Circular_kernel_3 Xml Script OpenGL)
-
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS Circular_kernel_3 )
 
-  target_link_libraries( Circular_kernel_3 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
-  target_link_libraries( Circular_kernel_3 ${QT_LIBRARIES} ${QGLVIEWER_LIBRARIES} )
-  target_link_libraries( Circular_kernel_3 ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY})
+  target_link_libraries( Circular_kernel_3 PRIVATE
+    CGAL::CGAL CGAL::CGAL_Qt5
+    Qt5::OpenGL Qt5::Gui ${QGLVIEWER_LIBRARIES} )
 
   include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
   cgal_add_compilation_test(Circular_kernel_3)

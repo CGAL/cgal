@@ -97,8 +97,6 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND CGAL_ImageIO_FOUND)
 
     add_executable  ( ${prj}  ${sources} ${uis} ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES})
 
-    qt5_use_modules(${prj} OpenGL Xml Svg)
-
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${prj} )
 
     set(VTK_LIBS "")
@@ -116,10 +114,10 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND CGAL_ImageIO_FOUND)
       message(STATUS "For reading Dicom files install VTK first")
     endif()
 
-    # Link the executable to CGAL and third-party libraries
-    target_link_libraries( ${prj} ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
-
-    target_link_libraries( ${prj} ${QT_LIBRARIES} ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} ${VTK_LIBS})
+    target_link_libraries( ${prj} PRIVATE
+      CGAL::CGAL CGAL::CGAL_Qt5 CGAL::CGAL_ImageIO
+      ${QGLVIEWER_LIBRARIES}
+      ${VTK_LIBS} )
 
     include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
     cgal_add_compilation_test(${prj})

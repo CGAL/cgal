@@ -31,8 +31,6 @@ find_path(CIMG_INCLUDE_DIR
           DOC "Path to the header of the CImg library")
 
 if (CIMG_INCLUDE_DIR)
-  add_definitions(-DCGAL_USE_CIMG)
-  include_directories(${CIMG_INCLUDE_DIR})
   MESSAGE(STATUS "CImg library found, the demo can load point set from image files.")
 else()
   MESSAGE(STATUS "CImg library was not found, the demo will not be able to load point set from image files. "
@@ -79,24 +77,18 @@ if(CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND)
 
   add_executable  ( Otr2_demo ${SRCS} ${CGAL_Qt5_MOC_FILES} ${UI_FILES} ${CGAL_Qt5_RESOURCE_FILES})
   
-  qt5_use_modules(Otr2_demo OpenGL)
-
-  # Link with Qt libraries
-  target_link_libraries( Otr2_demo ${QT_LIBRARIES} )
-
-  # Link with CGAL
-  target_link_libraries( Otr2_demo ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
-
-  # Link with OpenGL
-  target_link_libraries( Otr2_demo ${OPENGL_gl_LIBRARY} )
+  target_link_libraries( Otr2_demo PRIVATE
+    CGAL::CGAL CGAL::CGAL_Qt5 Qt5::Gui Qt5::OpenGL )
   
   # Link with pthread if necessary
   if (CIMG_INCLUDE_DIR)
+    target_compile_definitions( Otr2_demo PRIVATE -DCGAL_USE_CIMG )
+    target_include_directories( Otr2_demo PRIVATE ${CIMG_INCLUDE_DIR} )
     # Is pthread around? If yes, we need to link against it
     set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
     find_package (Threads)
     if (CMAKE_USE_PTHREADS_INIT)
-      target_link_libraries( Otr2_demo ${CMAKE_THREAD_LIBS_INIT} )
+      target_link_libraries( Otr2_demo PRIVATE ${CMAKE_THREAD_LIBS_INIT} )
     endif()
   endif()
     
