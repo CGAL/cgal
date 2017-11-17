@@ -712,6 +712,10 @@ protected:
             }
         CGAL_assertion(ct.is_valid());
 
+        Finite_face_iterator fi;
+        for(fi=ct.finite_faces_begin();fi!=ct.finite_faces_end(); ++fi)
+            fi->info() = false; // Mark faces unvisited
+
         CGAL_NEF_TRACEN("number of finite triangles " << ct.number_of_faces());
 
         Face_handle infinite = ct.infinite_face();
@@ -728,9 +732,8 @@ protected:
         CGAL_assertion(!ct.is_infinite(first));
         traverse_triangulation(first, first->index(opposite));
 
-        Finite_face_iterator fi;
         for(fi=ct.finite_faces_begin();fi!=ct.finite_faces_end(); ++fi) {
-                if(fi->info() == false) continue;
+                if(!fi->info()) continue; // Skip unvisited faces
                 CTVertex_handle p=fi->vertex(0);
                 CTVertex_handle q=fi->vertex(1);
                 CTVertex_handle r=fi->vertex(2);
@@ -759,7 +762,7 @@ protected:
     }
 
     void traverse_triangulation(Face_handle f, int parent) {
-       f->info() = true;
+       f->info() = true; // Mark face as visited
        descend_triangulation(f,ct.cw(parent));
        descend_triangulation(f,ct.ccw(parent));
     }
