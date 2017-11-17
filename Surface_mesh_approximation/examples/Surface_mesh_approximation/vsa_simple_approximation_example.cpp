@@ -3,8 +3,6 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/vsa_mesh_approximation.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
@@ -15,25 +13,20 @@ int main()
   // create polyhedral surface and read input surface triangle mesh 
   Polyhedron input;
   std::ifstream file("data/mask.off");
-  if (!file || !(file >> input) || input.empty()) {
-    std::cerr << "Invalid off file." << std::endl;
-    return EXIT_FAILURE;
-  }
+  file >> input;
 
-  // output polyhedral surface and indexed triangle mesh
-  Polyhedron output;
+
+  // The output will be an indexed triangle mesh
   std::vector<Kernel::Point_3> points;
-  std::vector<std::vector<std::size_t> > triangles; // triplets of indices
-  
+ 
   // free function interface with named parameters
-  bool valid_polyhedron = CGAL::VSA::mesh_approximation(input,
-    std::back_inserter(points),
-    std::back_inserter(triangles),
-    CGAL::VSA::parameters::init_method(CGAL::VSA::Hierarchical). // hierarchical init
-    max_nb_proxies(200). // refine until target number of proxies
-    iterations(30));
+  CGAL::VSA::mesh_approximation(input,
+                                std::back_inserter(points),
+                                std::back_inserter(triangles),
+                                CGAL::VSA::parameters::max_nb_proxies(200));
+    
 
-  std::cout << "#anchor points: " << points.size() << std::endl;
+  std::cout << "#vertices: " << points.size() << std::endl;
   std::cout << "#triangles: " << triangles.size() << std::endl;
 
   return EXIT_SUCCESS;
