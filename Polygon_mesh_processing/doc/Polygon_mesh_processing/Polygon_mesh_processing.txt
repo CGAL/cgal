@@ -128,40 +128,41 @@ While mesh smoothing is achieved by improving the quality of the triangulated el
 shape smoothing is designed to be "intrinsic", depending as little as possible to the discretization
 and smoothing the shape alone without optimizing the mesh elements.
 
-For mesh smoothing, `CGAL::Polygon_mesh_processing::angle_smoothing()` may be used to
-move vertices so that the angles of its incident edges equalize and `CGAL::Polygon_mesh_processing::area_smoothing()` may be used to
-move vertices so that the areas of adjacent triangles equalize. Angle and area smoothing are used combined in
-`CGAL::Polygon_mesh_processing::compatible_smoothing()` which smooths the mesh until convergence is achieved.
-For shape smoothing, `CGAL::Polygon_mesh_processing::curvature_flow()`
-takes into account the mean curvature to calculate a weighted barycenter towards which vertices move incrementally.
-In all cases border vertices are considered constrained and do not move at any step of the procedure.
-Also, new vertices are not inserted while mesh or shape smoothing, although degenerate faces are removed as a first step
-before the smoothing.
+For mesh smoothing, `CGAL::Polygon_mesh_processing::smooth_angles()` may be used to
+move vertices so that incident edges equalize and `CGAL::Polygon_mesh_processing::smooth_areas()` may be used to
+move vertices so that the areas of adjacent triangles tend to equalize. Angle and area smoothing are used combined in
+`CGAL::Polygon_mesh_processing::compatible_smoothing()` which smoothes the mesh until convergence is achieved.
+Border vertices are considered constrained and do not move at any step of the procedure.
+New vertices are not inserted, although degenerate faces are removed as a first step before the smoothing.
 
 Angle and area smoothing algorithms are based on Surazhsky and Gotsman \cgalCite{cgal:sg-hqct-04}. When mesh connectivity
-is highly irregular, angle smoothing may be used with angle weights so that small angles carry
-more weight and with almost the same computational cost per iteration convergence may be achieved faster.
+is highly irregular, angle weights may be considered so that small angles carry
+more weight and convergence while smoothing angles may be achieved faster.
 Area smoothing, since it considers only triangle areas as a smoothing criterion, may result in long and skinny triangles,
 especially for meshes with highly irregular connectivity. As such, area smoothing is guaranteed to improve the spatial
-distribution of the vertices over the area that is being remeshed.
+distribution of the vertices over the area that is being smoothed.
 
-The curvature flow algorithm for shape smoothing is based on Desbrun et al \cgalCite{cgal:dmsb-ifamdcf-99}.
-Curvature flow smoothes the surface by moving along the surface normal with a speed equal to the mean curvature of the
-area that is being smoothed. This means that if the surface is flat around a vertex, this vertex will not move (zero curvature).
-Curvature flow smoothing offers best results in closed surface meshes, where vertices slide according to the curvature
-and smooth the shape while the overall volume is being kept constant.
+For shape smoothing, `CGAL::Polygon_mesh_processing::smooth_curvature_flow()`
+takes into account the mean curvature flow to calculate a weighted barycenter towards which vertices move incrementally.
+Shape smoothing using the curvature flow is based on Desbrun et al \cgalCite{cgal:dmsb-ifamdcf-99}.
+The algorihm uses the mean curvature flow to translate surface vertices by moving along the surface normal with a speed equal to the mean curvature of the area that is being smoothed. This means that vertices on sharp corners slide faster and also if the surface is flat around a vertex, this vertex will not move (zero curvature). 
 
-\cgalFigureBegin{elephants_and_histograms, elephants_and_histograms.png}
-Mesh smoothing. (a) Elephant before mesh smoothing and
-(b) elephant after applying compatible smoothing for 20 iterations.
-and histograms of their aspect ratios beneath them. Aspect ratio is defined as the ratio
-of the largest altidute of a triangle to the length of its shortest edge.
+`CGAL::Polygon_mesh_processing::smooth_modified_curvature_flow()` may be used to apply a modified algorithm based on the mean curvature flow that slows down the evolution in cylindrical regions, and thus avoiding the formation of undesirable neck pinches. The algorithm converges gradually to a sphere.
+
+
+\cgalFigureBegin{smooth_sphere, smooth_sphere.png}
+Mesh smoothing. (a) Input mesh.
+(b) Result from mesh smoothing after 10 iterations.
 \cgalFigureEnd
 
-\cgalFigureBegin{mannequins, mannequins.png}
-Shape smoothing. (a) Devil before shape smoothing and
-(b) the devil after applying the curvature flow algorithm.
+\cgalFigureBegin{histograms, histograms.png}
+Histograms of angles, areas and aspect ratios before (red) and after (green) mesh smoothing. The aspect ratio is defined as the ratio between the longest edge and the minimum altitude of a triangle.
 \cgalFigureEnd
+
+\cgalFigureBegin{dino_teaser, dino-teaser.png}
+Shape smoothing on a dinoseur model using the mean curvature flow. The resulted smoothed shape is colored white.
+\cgalFigureEnd
+
 
 \subsection MeshingExamples Meshing Examples
 
