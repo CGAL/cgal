@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
@@ -124,7 +125,7 @@ private:
 };
 template < class Cell >
 struct Cell_min
-: public std::unary_function< Cell, typename Cell::Value >
+: public CGAL::unary_function< Cell, typename Cell::Value >
 {
   typename Cell::Value
   operator()( const Cell& c) const
@@ -133,7 +134,7 @@ struct Cell_min
 
 template < class Cell >
 struct Cell_max
-: public std::unary_function< Cell, typename Cell::Value > {
+: public CGAL::unary_function< Cell, typename Cell::Value > {
 
   Cell_max( int offset) : ofs( offset) {}
 

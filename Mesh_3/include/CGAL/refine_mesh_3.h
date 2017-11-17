@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Stephane Tayeb
@@ -33,6 +34,7 @@
 #include <CGAL/Mesh_3/Dump_c3t3.h>
 #include <CGAL/Mesh_3/global_parameters.h>
 #include <CGAL/Mesh_3/Mesher_3.h>
+#include <CGAL/Mesh_error_code.h>
 #include <CGAL/optimize_mesh_3.h>
 
 namespace CGAL {
@@ -177,6 +179,25 @@ namespace parameters {
       , Global_optimization_options_base() {}
     };
 
+    // Manifold
+    struct Manifold_options {
+      enum {
+        NON_MANIFOLD = 0,
+        MANIFOLD_WITH_BOUNDARY = 8,
+        NO_BOUNDARY = 16,
+        MANIFOLD = 24
+      };
+      
+      Manifold_options(const int topology)
+        : mesh_topology(topology)
+      {}
+      Manifold_options()
+        : mesh_topology(NON_MANIFOLD)
+      {}
+
+      int mesh_topology;
+    };
+
     // Various Mesh_3 option
     struct Mesh_3_options {
       Mesh_3_options() 
@@ -188,6 +209,8 @@ namespace parameters {
         , dump_after_exude_prefix()
         , number_of_initial_points()
         , nonlinear_growth_of_balls(false)
+        , maximal_number_of_vertices(0)
+        , pointer_to_error_code(0)
       {}
 
       std::string dump_after_init_prefix;
@@ -198,6 +221,8 @@ namespace parameters {
       std::string dump_after_exude_prefix;
       int number_of_initial_points;
       bool nonlinear_growth_of_balls;
+      std::size_t maximal_number_of_vertices;
+      Mesh_error_code* pointer_to_error_code;
 
     }; // end struct Mesh_3_options
 
@@ -288,7 +313,38 @@ CGAL_MESH_3_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
   }
   
   inline internal::Lloyd_options no_lloyd() { return internal::Lloyd_options(false); }
-  
+
+  // -----------------------------------
+  // Manifold options ------------------
+  // -----------------------------------
+  BOOST_PARAMETER_FUNCTION((internal::Manifold_options), manifold_options, tag,
+                           (optional
+                            (mesh_topology_, (int), -1)
+                           )
+                          )
+  {
+    internal::Manifold_options options;
+    options.mesh_topology = mesh_topology_;
+    return options;
+  }
+
+  inline internal::Manifold_options manifold()
+  {
+    return internal::Manifold_options(
+            internal::Manifold_options::MANIFOLD);
+  }
+  inline internal::Manifold_options manifold_with_boundary()
+  {
+    return internal::Manifold_options(
+            internal::Manifold_options::MANIFOLD_WITH_BOUNDARY);
+  }
+  inline internal::Manifold_options non_manifold()
+  {
+    return internal::Manifold_options(
+            internal::Manifold_options::NON_MANIFOLD);
+  }
+
+  // -----------------------------------
   // Mesh options
   // -----------------------------------
 
@@ -304,6 +360,8 @@ CGAL_MESH_3_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
                             (dump_after_perturb_prefix_, (std::string), "" )
                             (dump_after_exude_prefix_, (std::string), "" )
                             (number_of_initial_points_, (int), -1)
+                            (maximal_number_of_vertices_, (std::size_t), 0)
+                            (pointer_to_error_code_, (Mesh_error_code*), ((Mesh_error_code*)0))
                             )
                            )
   { 
@@ -316,6 +374,8 @@ CGAL_MESH_3_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
     options.dump_after_perturb_prefix=dump_after_perturb_prefix_;
     options.dump_after_exude_prefix=dump_after_exude_prefix_;
     options.number_of_initial_points=number_of_initial_points_;
+    options.maximal_number_of_vertices=maximal_number_of_vertices_;
+    options.pointer_to_error_code=pointer_to_error_code_;
 
     return options;
   }
@@ -358,6 +418,7 @@ CGAL_MESH_3_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
   BOOST_PARAMETER_NAME( lloyd_param )
   BOOST_PARAMETER_NAME( reset_param )
   BOOST_PARAMETER_NAME( mesh_options_param )
+  BOOST_PARAMETER_NAME( manifold_options_param )
 
 CGAL_PRAGMA_DIAG_POP
 } // end namespace parameters
@@ -381,6 +442,8 @@ BOOST_PARAMETER_FUNCTION(
       (reset_param, (parameters::Reset), parameters::reset_c3t3())
       (mesh_options_param, (parameters::internal::Mesh_3_options), 
                            parameters::internal::Mesh_3_options())
+      (manifold_options_param, (parameters::internal::Manifold_options),
+                           parameters::internal::Manifold_options())
     )
   )
 )
@@ -393,7 +456,8 @@ BOOST_PARAMETER_FUNCTION(
                             odt_param,
                             lloyd_param,
                             reset_param(),
-                            mesh_options_param);
+                            mesh_options_param,
+                            manifold_options_param);
 }
 
 CGAL_PRAGMA_DIAG_POP
@@ -426,9 +490,13 @@ void refine_mesh_3_impl(C3T3& c3t3,
                         const parameters::internal::Lloyd_options& lloyd,
                         bool reset_c3t3,
                         const parameters::internal::Mesh_3_options& 
-                          mesh_options = parameters::internal::Mesh_3_options())
+                          mesh_options = parameters::internal::Mesh_3_options(),
+                        const parameters::internal::Manifold_options&
+                          manifold_options = parameters::internal::Manifold_options())
 {
   typedef Mesh_3::Mesher_3<C3T3, MeshCriteria, MeshDomain> Mesher;
+
+  //TODO : do something with the manifold_options
 
   // Reset c3t3 (i.e. remove weights) if needed
   if ( reset_c3t3 )
@@ -444,7 +512,9 @@ void refine_mesh_3_impl(C3T3& c3t3,
   dump_c3t3(c3t3, mesh_options.dump_after_init_prefix);
 
   // Build mesher and launch refinement process
-  Mesher mesher (c3t3, domain, criteria);
+  Mesher mesher (c3t3, domain, criteria, manifold_options.mesh_topology,
+                 mesh_options.maximal_number_of_vertices,
+                 mesh_options.pointer_to_error_code);
   double refine_time = mesher.refine_mesh(mesh_options.dump_after_refine_surface_prefix);
   c3t3.clear_manifold_info();
 

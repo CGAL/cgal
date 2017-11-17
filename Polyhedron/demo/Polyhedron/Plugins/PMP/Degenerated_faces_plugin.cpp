@@ -46,11 +46,11 @@ public:
   {
     mw = mainWindow;
     scene = scene_interface;
-    QAction *actionDegenFaces = new QAction(tr("Select Degenerated Faces and Their Boundary Edges"), mw);
+    QAction *actionDegenFaces = new QAction(tr("Select Degenerate Faces and Their Boundary Edges"), mw);
     actionDegenFaces->setProperty("subMenuName", "Polygon Mesh Processing");
     connect(actionDegenFaces, SIGNAL(triggered()), this, SLOT(on_actionDegenFaces_triggered()));
 
-    QAction *actionDegenEdges = new QAction(tr("Select Degenerated Edges and Their Boundary Vertices"), mw);
+    QAction *actionDegenEdges = new QAction(tr("Select Degenerate Edges and Their Boundary Vertices"), mw);
     actionDegenEdges->setProperty("subMenuName", "Polygon Mesh Processing");
     connect(actionDegenEdges, SIGNAL(triggered()), this, SLOT(on_actionDegenEdges_triggered()));
 
@@ -154,10 +154,10 @@ void Degenerated_faces_plugin::on_actionDegenFaces_triggered()
       found = true;
     }
   }
-  if(!found)
-    QMessageBox::information(mw, tr("No degenerated triangle"),
-                             tr("None of the selected surfaces has degenerated triangle faces."));
   QApplication::restoreOverrideCursor();
+  if(!found)
+    QMessageBox::information(mw, tr("No degenerate triangle"),
+                             tr("None of the selected surfaces has degenerate triangle faces."));
 }
 
 void Degenerated_faces_plugin::on_actionDegenEdges_triggered()
@@ -202,10 +202,10 @@ void Degenerated_faces_plugin::on_actionDegenEdges_triggered()
       found = true;
     }
   }
-  if(!found)
-    QMessageBox::information(mw, tr("No degenerated edge"),
-                             tr("None of the selected surfaces has degenerated edges."));
   QApplication::restoreOverrideCursor();
+  if(!found)
+    QMessageBox::information(mw, tr("No degenerate edge"),
+                             tr("None of the selected surfaces has degenerate edges."));
 }
 
 #include "Degenerated_faces_plugin.moc"

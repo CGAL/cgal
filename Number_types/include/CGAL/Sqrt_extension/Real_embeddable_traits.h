@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Michael Hemmer   <hemmer@mpi-inf.mpg.de>
@@ -35,7 +36,7 @@ class Real_embeddable_traits< Sqrt_extension<COEFF, ROOT, ACDE_TAG,FP_TAG> >
   typedef Sqrt_extension<COEFF, ROOT, ACDE_TAG,FP_TAG> Type;
 
     class Sgn
-        : public std::unary_function< Type, ::CGAL::Sign >{
+        : public CGAL::unary_function< Type, ::CGAL::Sign >{
     public:
         ::CGAL::Sign operator()( const Type& x ) const {
             return x.sign();
@@ -43,7 +44,7 @@ class Real_embeddable_traits< Sqrt_extension<COEFF, ROOT, ACDE_TAG,FP_TAG> >
     };
     
     class Compare
-        : public std::binary_function< Type, Type, Comparison_result > {
+        : public CGAL::binary_function< Type, Type, Comparison_result > {
     public:
         Comparison_result operator()( const Type& x, const Type& y) const {
             // must be from the same extension 
@@ -63,7 +64,7 @@ class Real_embeddable_traits< Sqrt_extension<COEFF, ROOT, ACDE_TAG,FP_TAG> >
     };
 
     class To_interval
-      : public std::unary_function< Type, std::pair< double, double > > {
+      : public CGAL::unary_function< Type, std::pair< double, double > > {
       public:
         std::pair<double,double> operator()(const Type& x) const {
             return x.to_interval();
@@ -71,7 +72,7 @@ class Real_embeddable_traits< Sqrt_extension<COEFF, ROOT, ACDE_TAG,FP_TAG> >
     };
 
     class To_double
-      : public std::unary_function< Type, double > {
+      : public CGAL::unary_function< Type, double > {
       public:
         // The main problem here is, that even tough the total
         // expression fits into double, one of the coefficients

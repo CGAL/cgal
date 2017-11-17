@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Ron Wein     <wein@post.tau.ac.il>
@@ -425,7 +426,7 @@ public:
 } //namespace CGAL
 
 #include <boost/graph/graph_concepts.hpp>
-#include <boost/iterator/counting_iterator.hpp>
+#include <CGAL/boost/iterator/counting_iterator.hpp>
 
 namespace boost {
 

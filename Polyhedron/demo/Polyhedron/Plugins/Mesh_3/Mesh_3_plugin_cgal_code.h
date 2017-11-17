@@ -9,14 +9,7 @@
 #include "Meshing_thread.h"
 #include "Scene_surface_mesh_item.h"
 
-namespace CGAL
-{
-template<typename Graph_>
-struct Graph_with_descriptor_with_graph;
-}
 class Scene_surface_mesh_item;
-
-typedef CGAL::Graph_with_descriptor_with_graph<SMesh> SMwgd;
 
 struct Mesh_parameters;
 namespace CGAL { namespace Three {
@@ -43,9 +36,9 @@ Meshing_thread* cgal_code_mesh_3(const Polyhedron* pMesh,
                                  const bool surface_only,
                                  CGAL::Three::Scene_interface* scene);
 
-Meshing_thread* cgal_code_mesh_3(const SMwgd* pMesh,
+Meshing_thread* cgal_code_mesh_3(const SMesh* pMesh,
                                  const Polylines_container& polylines,
-                                 const SMwgd* pBoundingMesh,
+                                 const SMesh* pBoundingMesh,
                                  QString filename,
                                  const double facet_angle,
                                  const double facet_sizing,

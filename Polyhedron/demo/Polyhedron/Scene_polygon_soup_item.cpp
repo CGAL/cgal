@@ -3,6 +3,7 @@
 
 #include "Scene_polygon_soup_item.h"
 #include "Scene_polyhedron_item.h"
+#include "Scene_surface_mesh_item.h"
 #include <CGAL/Three/Viewer_interface.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
@@ -28,6 +29,8 @@
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include "triangulate_primitive.h"
 #include <CGAL/array.h>
+
+#include <map>
 struct Scene_polygon_soup_item_priv{
 
   typedef Polygon_soup::Polygons::const_iterator Polygons_iterator;
@@ -495,8 +498,38 @@ void Scene_polygon_soup_item::init_polygon_soup(std::size_t nb_pts, std::size_t 
 
 
 
-#include <CGAL/IO/generic_print_polyhedron.h>
+//#include <CGAL/IO/generic_print_polyhedron.h>
 #include <iostream>
+template<class PolygonMesh>
+void polygon_mesh_to_soup(PolygonMesh& mesh, Polygon_soup& soup)
+{
+  soup.clear();
+  typedef typename boost::property_map<PolygonMesh, boost::vertex_point_t>::type VPMap;
+  VPMap vpmap = get(boost::vertex_point, mesh);
+  std::map<typename boost::graph_traits<PolygonMesh>::vertex_descriptor, int> vim;
+  int index=0;
+  //fill points
+  for(typename boost::graph_traits<PolygonMesh>::vertex_iterator vit =
+      vertices(mesh).begin(); vit != vertices(mesh).end(); ++vit)
+  {
+    soup.points.push_back(get(vpmap, *vit));
+    vim.insert(std::make_pair(*vit, index++));
+  }
+  //fill triangles
+  for(typename boost::graph_traits<PolygonMesh>::face_iterator fit =
+      faces(mesh).begin(); fit != faces(mesh).end(); ++fit)
+  {
+    Polygon_soup::Polygon_3 polygon;
+    BOOST_FOREACH(typename boost::graph_traits<PolygonMesh>::halfedge_descriptor hd,
+                  CGAL::halfedges_around_face(halfedge(*fit, mesh), mesh))
+    {
+      polygon.push_back(vim[target(hd, mesh)]);
+    }
+    soup.polygons.push_back(polygon);
+  }
+  soup.fill_edges();
+
+}
 
 void Scene_polygon_soup_item::load(Scene_polyhedron_item* poly_item) {
   if(!poly_item) return;
@@ -504,14 +537,19 @@ void Scene_polygon_soup_item::load(Scene_polyhedron_item* poly_item) {
 
   if(!d->soup)
     d->soup = new Polygon_soup;
-
-  Polyhedron_to_polygon_soup_writer writer(d->soup);
-  CGAL::generic_print_polyhedron(std::cerr,
-                                 *poly_item->polyhedron(),
-                                 writer);
+  polygon_mesh_to_soup(*poly_item->polyhedron(), *d->soup);
   invalidateOpenGLBuffers();
 }
 
+void Scene_polygon_soup_item::load(Scene_surface_mesh_item* sm_item) {
+  if(!sm_item) return;
+  if(!sm_item->face_graph()) return;
+
+  if(!d->soup)
+    d->soup = new Polygon_soup;
+  polygon_mesh_to_soup(*sm_item->face_graph(), *d->soup);
+  invalidateOpenGLBuffers();
+}
 void
 Scene_polygon_soup_item::setDisplayNonManifoldEdges(const bool b)
 {

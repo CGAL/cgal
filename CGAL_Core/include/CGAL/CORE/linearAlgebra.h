@@ -16,8 +16,9 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. 
  *                                                                           
  *                                                                           
- * $URL$                                                                     
- * $Id$                                                                      
+ * $URL$
+ * $Id$
+ * SPDX-License-Identifier: LGPL-3.0+
  ***************************************************************************/
 /******************************************************************
  * Core Library Version 1.7, August 2004

@@ -1,6 +1,6 @@
 #!/bin/zsh
 
-cd /srv/CGAL/www/Members/testsuite
+cd /srv/CGAL/www/testsuite
 
 if [ -z "$1" -o -z "$2" ]; then
   printf "Example usage: %s 4.5-I-149 4.6-Ic-30 [DIFF_OPTION]...\n" "$0"

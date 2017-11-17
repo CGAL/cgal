@@ -10,7 +10,6 @@ target_link_libraries(io_implicit_function_plugin scene_implicit_function_item)
 polyhedron_demo_plugin(nef_io_plugin Nef_io_plugin)
 target_link_libraries(nef_io_plugin  scene_nef_polyhedron_item)
 
-qt5_wrap_ui( statisticsPolyhedronUI_FILES Statistics_on_polyhedron_dialog.ui)
 polyhedron_demo_plugin(off_plugin OFF_io_plugin)
 target_link_libraries(off_plugin scene_polyhedron_item scene_polygon_soup_item scene_points_with_normal_item)
 

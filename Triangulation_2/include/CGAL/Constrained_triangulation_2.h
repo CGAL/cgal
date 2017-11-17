@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Mariette Yvinec, Jean-Daniel Boissonnat
@@ -141,8 +142,13 @@ public:
   typedef std::list<Constraint>              List_constraints;
 
   // Tag to mark the presence of a hierarchy of constraints
- typedef Tag_false                           Constraint_hierarchy_tag;
-   
+  typedef Tag_false                          Constraint_hierarchy_tag;
+
+  //Tag to distinguish Delaunay from regular triangulations
+  typedef Tag_false                          Weighted_tag;
+
+  // Tag to distinguish periodic triangulations from others
+  typedef Tag_false                          Periodic_tag;
 
   class Less_edge;
   typedef std::set<Edge,Less_edge> Edge_set;
@@ -396,7 +402,7 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb, OutputIterator out)
   
 
   class Less_edge 
-    :  public std::binary_function<Edge, Edge, bool>
+    :  public CGAL::binary_function<Edge, Edge, bool>
   {
   public:
     Less_edge() {}

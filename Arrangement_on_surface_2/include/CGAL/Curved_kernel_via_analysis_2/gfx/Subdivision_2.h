@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Pavel Emeliyanenko <asm@mpi-sb.mpg.de>
 //
@@ -26,8 +27,6 @@
 
 #ifndef CGAL_CKVA_SUBDIVISION_2_H
 #define CGAL_CKVA_SUBDIVISION_2_H 1
-
-#include <CGAL/license/Arrangement_on_surface_2.h>
 
 #warning this file is considered obsolete
 

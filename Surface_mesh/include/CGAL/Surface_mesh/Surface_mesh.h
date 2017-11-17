@@ -11,6 +11,10 @@
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
 //
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
+//
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
@@ -198,7 +202,7 @@ namespace CGAL {
 
         SM_Edge_index() : halfedge_(-1) { }
 
-        SM_Edge_index(size_type idx) : halfedge_(idx * 2) { }
+        explicit SM_Edge_index(size_type idx) : halfedge_(idx * 2) { }
 
         explicit SM_Edge_index(SM_Halfedge_index he) : halfedge_(he) { }
 
@@ -1098,9 +1102,9 @@ public:
         hconn_[hi].prev_halfedge_ = Halfedge_index(size_type(hconn_[hi].prev_halfedge_)+nh);
       }
     }
-    size_type nil = -1;
-    if(other.vertices_freelist_ != nil){
-      if(vertices_freelist_ != nil){
+    size_type inf_value = -1;
+    if(other.vertices_freelist_ != inf_value){
+      if(vertices_freelist_ != inf_value){
         Vertex_index vi(nv+other.vertices_freelist_);
         Halfedge_index inf(-1);
         while(vconn_[vi].halfedge_ != inf){
@@ -1110,8 +1114,8 @@ public:
       }
       vertices_freelist_ = nv + other.vertices_freelist_; 
     }
-    if(other.faces_freelist_ != nil){
-      if(faces_freelist_ != nil){
+    if(other.faces_freelist_ != inf_value){
+      if(faces_freelist_ != inf_value){
         Face_index fi(nf+other.faces_freelist_);
         Halfedge_index inf(-1);
         while(fconn_[fi].halfedge_ != inf){
@@ -1121,8 +1125,8 @@ public:
       }
       faces_freelist_ = nf + other.faces_freelist_; 
     }
-    if(other.edges_freelist_ != nil){
-      if(edges_freelist_ != nil){
+    if(other.edges_freelist_ != inf_value){
+      if(edges_freelist_ != inf_value){
         Halfedge_index hi((nh>>1)+other.edges_freelist_);
         Halfedge_index inf(-1);
         while(hconn_[hi].next_halfedge_ != inf){
@@ -2632,7 +2636,7 @@ namespace std {
 
   template <>
   struct hash<CGAL::SM_Halfedge_index >
-    : public std::unary_function<CGAL::SM_Halfedge_index, std::size_t> {
+    : public CGAL::unary_function<CGAL::SM_Halfedge_index, std::size_t> {
 
     std::size_t operator()(const CGAL::SM_Halfedge_index& i) const
     {
@@ -2642,7 +2646,7 @@ namespace std {
 
   template <>
   struct hash<CGAL::SM_Vertex_index >
-    : public std::unary_function<CGAL::SM_Vertex_index, std::size_t>  {
+    : public CGAL::unary_function<CGAL::SM_Vertex_index, std::size_t>  {
 
     std::size_t operator()(const CGAL::SM_Vertex_index& i) const
     {
@@ -2652,7 +2656,7 @@ namespace std {
 
   template <>
   struct hash<CGAL::SM_Face_index > 
-    : public std::unary_function<CGAL::SM_Face_index, std::size_t> {
+    : public CGAL::unary_function<CGAL::SM_Face_index, std::size_t> {
 
     std::size_t operator()(const CGAL::SM_Face_index& i) const
     {
@@ -2662,7 +2666,7 @@ namespace std {
 
   template <>
   struct hash<CGAL::SM_Edge_index >
-    : public std::unary_function<CGAL::SM_Edge_index, std::size_t>  {
+    : public CGAL::unary_function<CGAL::SM_Edge_index, std::size_t>  {
 
     std::size_t operator()(const CGAL::SM_Edge_index& i) const
     {

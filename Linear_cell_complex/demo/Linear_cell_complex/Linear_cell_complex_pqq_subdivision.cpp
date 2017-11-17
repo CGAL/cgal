@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr> 
 //		   Jérémy Girerd-Rey <jeremy.girerd-rey@etu.univ-lyon1.fr>

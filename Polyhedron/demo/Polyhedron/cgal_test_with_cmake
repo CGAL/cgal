@@ -128,6 +128,7 @@ scene_textured_polyhedron_item \
 basic_generator_plugin \
 c3t3_io_plugin \
 camera_positions_plugin \
+classification_plugin \
 clip_polyhedron_plugin \
 convex_hull_plugin \
 corefinement_plugin \
@@ -168,6 +169,7 @@ nef_io_plugin \
 nef_plugin \
 off_plugin \
 off_to_nef_plugin \
+offset_meshing_plugin \
 orient_soup_plugin \
 parameterization_plugin \
 pca_plugin \

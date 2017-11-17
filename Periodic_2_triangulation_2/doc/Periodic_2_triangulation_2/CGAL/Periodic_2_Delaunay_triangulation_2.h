@@ -184,6 +184,17 @@ public:
   Vertex_handle nearest_vertex(Point p,
                                Face_handle f = Face_handle());
 
+  /*!
+  Returns on which side of the circumcircle of face `f` lies
+  the point `p`. The circle is assumed to be counterclockwise
+  oriented, so its positive
+  side correspond to its bounded side.
+  This predicate is available only if the corresponding predicates on
+  points is provided in the geometric traits class.
+  */
+  Oriented_side
+  side_of_oriented_circle(Face_handle f, const Point & p);
+
 /// @}
 
 /// \name
@@ -238,6 +249,13 @@ public:
 /// \name Voronoi diagram
 /// The following member functions provide the elements of the dual Voronoi diagram.
 /// @{
+
+  /*!
+  Compute the circumcenter of the face pointed to by f. This function
+  is available only if the corresponding function is provided in the
+  geometric traits.
+  */
+  Point circumcenter(Face_handle f) const;
 
   /*!
   Returns the center of the circle circumscribed to face `f`.

@@ -14,18 +14,17 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Philipp Möller and Sebastien Loriot
 
 #ifndef CGAL_CIRCULAR_KERNEL_2_INTERSECTION_TRAITS_H
 #define CGAL_CIRCULAR_KERNEL_2_INTERSECTION_TRAITS_H
-
-#include <CGAL/license/Circular_kernel_2.h>
-
 
 //this include is needed to know the value of CGAL_INTERSECTION_VERSION
 #include <CGAL/Intersection_traits.h>

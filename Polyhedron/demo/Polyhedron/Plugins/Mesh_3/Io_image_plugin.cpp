@@ -93,7 +93,7 @@ public Q_SLOTS:
     getPixel(e->pos());
   }
 Q_SIGNALS:
-  void x(int);
+  void x(QString);
 
 public:
   void setIC(const IntConverter& x) { ic = x; fc = boost::optional<DoubleConverter>(); }
@@ -111,9 +111,9 @@ private:
     viewer->glReadPixels(e.x(), vp[3] - e.y(), 1, 1, GL_RGB, GL_FLOAT, data);
 
     if(fc) {
-      Q_EMIT x( (*fc)(data[0]) );
+      Q_EMIT x(QString::number((*fc)(data[0]), 'f', 6 ));
     } else if(ic) {
-      Q_EMIT x( (*ic)(data[0]) );
+      Q_EMIT x( QString::number((*ic)(data[0]) ));
     }
   }
 };
@@ -536,12 +536,12 @@ private:
       QHBoxLayout* vbox = new QHBoxLayout(vlabels);
       vbox->setAlignment(Qt::AlignLeft);
       QLabel* text = new QLabel(vlabels);
-      text->setText("Isovalue at point:");
+      text->setText("Value of that pixel:");
       QLabel* help = new QLabel(vlabels);
       help->setText("Cut planes for the selected image:");
       QLabel* x = new QLabel(vlabels);
 
-      connect(&pxr_, SIGNAL(x(int)), x, SLOT(setNum(int)));
+      connect(&pxr_, SIGNAL(x(QString)), x, SLOT(setText(QString)));
 
       layout->addWidget(help); vbox->addWidget(text); vbox->addWidget(x);
       controlDockWidget->setWidget(content);
@@ -560,6 +560,7 @@ private:
     //Control widgets creation
     QLayout* layout = createOrGetDockLayout();
     QRegExpValidator* validator = new QRegExpValidator(QRegExp("\\d*"), this);
+    bool show_sliders = true;
     if(x_control == NULL)
     {
       x_control = new QWidget;
@@ -583,6 +584,7 @@ private:
       x_box->addWidget(label);
       x_box->addWidget(x_slider);
       x_box->addWidget(x_cubeLabel);
+      show_sliders &= seg_img->image()->xdim() > 1;
     }
 
     if(y_control == NULL)
@@ -607,6 +609,7 @@ private:
       y_box->addWidget(label);
       y_box->addWidget(y_slider);
       y_box->addWidget(y_cubeLabel);
+      show_sliders &= seg_img->image()->ydim() > 1;
     }
 
     if(z_control == NULL)
@@ -631,7 +634,12 @@ private:
       z_box->addWidget(label);
       z_box->addWidget(z_slider);
       z_box->addWidget(z_cubeLabel);
+      show_sliders &= seg_img->image()->zdim() > 1;
     }
+    x_control->setEnabled(show_sliders);
+    y_control->setEnabled(show_sliders);
+    z_control->setEnabled(show_sliders);
+
     if(!(seg_img == NULL)) {
       const CGAL::Image_3* img = seg_img->image();
       CGAL_IMAGE_IO_CASE(img->image(), this->launchAdders<Word>(seg_img, seg_img->name()))
@@ -832,6 +840,7 @@ private Q_SLOTS:
     }
     Controls c = group_map[sel_itm];
     current_control = &group_map[sel_itm];
+    bool show_sliders = true;
     // x line
     if(c.x_item != NULL)
     {
@@ -851,6 +860,7 @@ private Q_SLOTS:
 
       x_box->addWidget(x_slider);
       x_box->addWidget(x_cubeLabel);
+      show_sliders &= x_slider->maximum() > 0;
     }
     //y line
     if(c.y_item != NULL)
@@ -870,6 +880,7 @@ private Q_SLOTS:
       y_slider->setValue(c.y_value);
       y_box->addWidget(y_slider);
       y_box->addWidget(y_cubeLabel);
+      show_sliders &= y_slider->maximum() > 0;
     }
     // z line
     if(c.z_item != NULL)
@@ -889,7 +900,11 @@ private Q_SLOTS:
       z_slider->setValue(c.z_value);
       z_box->addWidget(z_slider);
       z_box->addWidget(z_cubeLabel);
+      show_sliders &= z_slider->maximum() > 0;
     }
+      x_control->setEnabled(show_sliders);
+      y_control->setEnabled(show_sliders);
+      z_control->setEnabled(show_sliders);
   }
 //Keeps the position of the planes for the next time
   void set_value()

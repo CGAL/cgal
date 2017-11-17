@@ -75,7 +75,7 @@ do
 	  cd ..
   	for f in *
 	  do
-	    if [ -d  "$f/examples/$f" ] || [ -d  "$f/test/$f" ] || [ -d  "$f/demo/$f" ]
+	    if [ -d  "$f/package_info/$f" ]
 	        then
 	                PACKAGES+="$f "
 	        fi
@@ -87,6 +87,7 @@ do
 	  then
 	        echo "The matrix and the actual package list differ : ."
 					echo ${DIFFERENCE[*]}
+            echo "You should run generate_travis.sh."
 	        exit 1
 	  fi
 	  echo "Matrix is up to date."

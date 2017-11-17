@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s) : Simon Giraudot
 
@@ -33,6 +34,7 @@
 #include <CGAL/value_type_traits.h>
 #include <CGAL/point_set_processing_assertions.h>
 #include <CGAL/Kernel_traits.h>
+#include <CGAL/IO/io.h>
 
 #include <boost/version.hpp>
 #include <boost/cstdint.hpp>
@@ -164,13 +166,24 @@ namespace internal {
       stream >> s;
       c = static_cast<unsigned char>(s);
     }
+    
+    void read_ascii (std::istream& stream, float& t) const
+    {
+      stream >> iformat(t);
+    }
 
+    void read_ascii (std::istream& stream, double& t) const
+    {
+      stream >> iformat(t);
+    }
+    
     // Default template when Type is not a char type
     template <typename Type>
     void read_ascii (std::istream& stream, Type& t) const
     {
       stream >> t;
     }
+    
     
     template <typename Type>
     Type read (std::istream& stream) const
@@ -270,6 +283,7 @@ namespace internal {
     std::vector<PLY_read_number*> m_point_properties;
     std::vector<PLY_read_number*> m_face_properties;
     std::vector<PLY_read_number*>* m_properties;
+    std::string m_comments;
 
   public:
     std::size_t m_nb_points;
@@ -282,6 +296,8 @@ namespace internal {
     {
       m_properties = &m_face_properties;
     }
+
+    const std::string& comments() const { return m_comments; }
 
     template <typename Stream>
     bool init (Stream& stream)
@@ -390,19 +406,19 @@ namespace internal {
                   
                   continue;
                 }
-              else
-                reading_vertices = false;
-            
-              // ignore comments and properties (if not in element
-              // vertex - cf below - properties are useless in our case)
-              if (keyword == "comment" || keyword == "property")
-                continue;
-
+              else if (keyword == "comment")
+                {
+                  std::string str = iss.str();
+                  if (str.size() > 8)
+                    {
+                      std::copy (str.begin() + 8, str.end(), std::back_inserter (m_comments));
+                      m_comments += "\n";
+                    }
+                }
               // When end_header is reached, stop loop and begin reading points
-              if (keyword == "end_header")
+              else if (keyword == "end_header")
                 break;
-            
-              if (keyword == "element")
+              else if (keyword == "element")
                 {
                   std::string type;
                   std::size_t number;

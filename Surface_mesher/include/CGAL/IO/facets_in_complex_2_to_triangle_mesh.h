@@ -17,6 +17,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s) : Maxime Gimeno, Pierre Alliez
 #ifndef CGAL_FACETS_IN_COMPLEX_2_TO_TRIANGLE_MESH_H
@@ -52,7 +53,7 @@ void facets_in_complex_2_to_triangle_mesh(const C2T3& c2t3, TriangleMesh& graph)
   typedef typename boost::property_traits<VertexPointMap>::value_type Point_3;
   typedef typename C2T3::Triangulation Tr;
   typedef typename Tr::Vertex_handle Vertex_handle;
-  typedef typename Tr::Vertex_iterator Vertex_iterator;
+  typedef typename Tr::Finite_vertices_iterator Vertex_iterator;
   typedef typename Tr::Geom_traits::Vector_3 Vector;
   typedef typename Tr::Edge Edge;
   typedef typename Tr::Facet Facet;
@@ -129,8 +130,8 @@ void facets_in_complex_2_to_triangle_mesh(const C2T3& c2t3, TriangleMesh& graph)
     int inum = 0;
     //add vertices
     std::vector<typename boost::graph_traits<TriangleMesh>::vertex_descriptor> vertices;
-    for(Vertex_iterator vit = tr.vertices_begin();
-        vit != tr.vertices_end();
+    for(Vertex_iterator vit = tr.finite_vertices_begin();
+        vit != tr.finite_vertices_end();
         ++vit)
     {
 

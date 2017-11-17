@@ -12,8 +12,13 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s)     : Sébastien Loriot <sebastien.loriot@geometryfactory.com>
 //                 Mael Rouxel-Labbé
+
 #ifndef CGAL_INTERNAL_LAZY_ALPHA_NT_2_H
 #define CGAL_INTERNAL_LAZY_ALPHA_NT_2_H
 

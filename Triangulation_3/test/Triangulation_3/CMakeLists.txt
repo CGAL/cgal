@@ -40,6 +40,16 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "test_static_filters.cpp" )
   create_single_source_cgal_program( "test_triangulation_3.cpp" )
 
+  if(BUILD_TESTING)
+    set_tests_properties(
+        execution___of__test_delaunay_hierarchy_3
+        execution___of__test_delaunay_hierarchy_3_old
+        execution___of__test_regular_as_delaunay_3
+        execution___of__test_triangulation_3
+        execution___of__test_delaunay_3
+      PROPERTIES RESOURCE_LOCK Triangulation_3_Tests_IO)
+  endif()
+
 else()
   
     message(STATUS "This program requires the CGAL library, and will not be compiled.")

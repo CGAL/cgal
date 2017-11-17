@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Hans Tangelder (<hanst@cs.uu.nl>)
@@ -34,7 +35,7 @@
 namespace CGAL {
 
   template <class Construct_cartesian_const_iterator_d, class P, class T>
-  struct set_bounds_from_pointer : public std::unary_function<P, void> {
+  struct set_bounds_from_pointer : public CGAL::unary_function<P, void> {
     int dim;
     T *lower;
     T *upper;

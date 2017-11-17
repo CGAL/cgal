@@ -15,6 +15,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Laurent Rineau
@@ -35,7 +36,7 @@
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 
 #include <CGAL/Mesh_3/Polyline_with_context.h>
-#include <CGAL/Polygon_mesh_processing/Detect_features_in_polyhedra.h>
+#include <CGAL/Polygon_mesh_processing/detect_features.h>
 #include <CGAL/Mesh_3/properties_Polyhedron_3.h>
 
 #include <CGAL/enum.h>
@@ -112,11 +113,17 @@ struct Angle_tester
 template <typename Polyhedron>
 struct Is_featured_edge {
   const Polyhedron* polyhedron;
-  Is_featured_edge() : polyhedron(0) {} // required by boost::filtered_graph
-  Is_featured_edge(const Polyhedron& polyhedron) : polyhedron(&polyhedron) {}
+  typename boost::property_map<Polyhedron, edge_is_feature_t>::type eifm;
+  Is_featured_edge()
+    : polyhedron(0)
+  {} // required by boost::filtered_graph
+
+  Is_featured_edge(const Polyhedron& polyhedron)
+    : polyhedron(&polyhedron), eifm(get(edge_is_feature,polyhedron))
+  {}
 
   bool operator()(typename boost::graph_traits<Polyhedron>::edge_descriptor e) const {
-    return halfedge(e, *polyhedron)->is_feature_edge();
+    return get(eifm, e);
   }
 }; // end Is_featured_edge<Polyhedron>
 
@@ -262,31 +269,39 @@ class Polyhedral_complex_mesh_domain_3
       Polyhedral_mesh_domain_3< Polyhedron,
                                 IGT_,
                                 CGAL::Default,
-                                Tag_true,   //Use_patch_id_tag
+                                int,   //Use_patch_id_tag
                                 Tag_true > >//Use_exact_intersection_tag
 {
-  /// @cond DEVELOPERS
-protected:
-  typedef boost::adjacency_list<
-    boost::setS, // this avoids parallel edges
-    boost::vecS,
-    boost::undirectedS,
-    typename Polyhedron::Point,
-    typename Polyhedron::Vertex::Set_of_indices> Featured_edges_copy_graph;
-
-private:
-  typedef IGT_ IGT;
-  typedef Polyhedral_mesh_domain_3<Polyhedron, IGT_, CGAL::Default,
-                                   Tag_true, Tag_true >       BaseBase;
-  typedef Polyhedral_complex_mesh_domain_3<IGT_, Polyhedron>  Self;
-  /// @endcond
-
 public:
   /// The base class
   typedef Mesh_domain_with_polyline_features_3<
     Polyhedral_mesh_domain_3<
       Polyhedron, IGT_, CGAL::Default,
-      Tag_true, Tag_true > > Base;
+      int, Tag_true > > Base;
+  /// @cond DEVELOPERS
+private:
+  typedef IGT_ IGT;
+  typedef Polyhedral_mesh_domain_3<Polyhedron, IGT_, CGAL::Default,
+                                   int, Tag_true >       BaseBase;
+  typedef Polyhedral_complex_mesh_domain_3<IGT_, Polyhedron>  Self;
+
+protected:
+  typedef typename Base::Surface_patch_index Patch_id;
+  typedef typename boost::property_map<Polyhedron,
+                                       CGAL::vertex_incident_patches_t<Patch_id>
+                                       >::type VIPMap;
+  typedef typename boost::property_traits<VIPMap>::value_type Set_of_indices;
+
+  typedef boost::adjacency_list<
+    boost::setS, // this avoids parallel edges
+    boost::vecS,
+    boost::undirectedS,
+    typename IGT::Point_3,
+    Set_of_indices> Featured_edges_copy_graph;
+
+  /// @endcond
+
+public:
   /*!
   Numerical type.
   */
@@ -299,7 +314,7 @@ public:
   /// @{
   /// The types are `int` or types compatible with `int`.
   typedef typename Base::Corner_index         Corner_index;
-  typedef typename Base::Curve_segment_index  Curve_segment_index;
+  typedef typename Base::Curve_index          Curve_index;
   typedef typename Base::Surface_patch_index  Surface_patch_index;
   typedef typename Base::Subdomain_index      Subdomain_index;
   /// @}
@@ -307,7 +322,6 @@ public:
   /// @cond DEVELOPERS
   typedef typename Base::Ray_3                Ray_3;
   typedef typename Base::Index                Index;
-  typedef Surface_patch_index Patch_id;
 
   typedef typename Base::Subdomain            Subdomain;
   typedef typename Base::Bounding_box         Bounding_box;
@@ -325,7 +339,7 @@ public:
   typedef CGAL::Tag_true           Has_features;
 
   typedef std::vector<Point_3> Bare_polyline;
-  typedef Mesh_3::Polyline_with_context<Surface_patch_index, Curve_segment_index,
+  typedef Mesh_3::Polyline_with_context<Surface_patch_index, Curve_index,
                                         Bare_polyline > Polyline_with_context;
   /// @endcond
 
@@ -509,6 +523,12 @@ public:
     const std::size_t nb_of_extra_vertices_per_patch = 20;
     std::vector<std::vector<Vertex_const_handle> >
       several_vertices_on_patch(nb_of_patch_plus_one);
+
+    // For a patch, a "free" vertex is a vertex that is not on a feature,
+    // and with a point that is not inside the set of protecting balls.
+    std::vector<std::size_t> nb_of_free_vertices_on_patch(nb_of_patch_plus_one);
+
+    // First path to count of the number of free vertices per patch...
     BOOST_FOREACH(const Polyhedron& p, this->stored_polyhedra)
     {
       for (typename Polyhedron::Vertex_const_iterator
@@ -517,28 +537,65 @@ public:
       {
         if (vit->is_feature_vertex()) { continue; }
         const Patch_id patch_id = vit->halfedge()->face()->patch_id();
-        CGAL_assertion(static_cast<std::size_t>(patch_id) <= nb_of_patch_plus_one);
+        CGAL_assertion(std::size_t(patch_id) <= nb_of_patch_plus_one);
         typename Tr::Vertex_handle tr_v = tr.nearest_power_vertex(vit->point());
         if (tr_v != typename Tr::Vertex_handle()) {
           typedef typename IGT::Sphere_3 Sphere_3;
           const Sphere_3 sphere(tr_v->point().point(), tr_v->point().weight());
-          if (!sphere.has_on_negative_side(vit->point())) continue;
+          if (!sphere.has_on_unbounded_side(vit->point())) continue;
         }
-        if (several_vertices_on_patch[patch_id].size() <
-          nb_of_extra_vertices_per_patch)
+        ++nb_of_free_vertices_on_patch[patch_id];
+      }
+    }
+    std::vector<std::size_t>
+      needed_vertices_on_patch = nb_of_free_vertices_on_patch;
+    for(std::size_t i = 0, end = needed_vertices_on_patch.size(); i < end; ++i)
+    {
+      needed_vertices_on_patch[i] = (std::min)(nb_of_extra_vertices_per_patch,
+                                               needed_vertices_on_patch[i]);
+    }
+    // Then a second path to fill `several_vertices_on_patch`...
+    // The algorithm is adapted from SGI `random_sample_n`:
+    //   https://www.sgi.com/tech/stl/random_sample_n.html
+    BOOST_FOREACH(const Polyhedron& p, this->stored_polyhedra)
+    {
+      for (typename Polyhedron::Vertex_const_iterator
+        vit = p.vertices_begin(), end = p.vertices_end();
+        vit != end; ++vit)
+      {
+        if (vit->is_feature_vertex()) { continue; }
+        const Patch_id patch_id = vit->halfedge()->face()->patch_id();
+        CGAL_assertion(std::size_t(patch_id) <= nb_of_patch_plus_one);
+
+        // If needed_vertices_on_patch is null, no need to proceed with the
+        // rest of the loop.
+        if(needed_vertices_on_patch[patch_id] == 0) continue;
+
+        typename Tr::Vertex_handle tr_v = tr.nearest_power_vertex(vit->point());
+        if (tr_v != typename Tr::Vertex_handle()) {
+          typedef typename IGT::Sphere_3 Sphere_3;
+          const Sphere_3 sphere(tr_v->point().point(), tr_v->point().weight());
+          if (!sphere.has_on_unbounded_side(vit->point())) continue;
+        }
+
+        // here we have a new free vertex on patch #`patch_id`
+
+        if(random.uniform_smallint(
+               boost::uint32_t(0),
+               boost::uint32_t(nb_of_free_vertices_on_patch[patch_id]))
+           < boost::uint32_t(needed_vertices_on_patch[patch_id]))
         {
           several_vertices_on_patch[patch_id].push_back(vit);
+          --needed_vertices_on_patch[patch_id];
         }
-        else {
-          int i = random.uniform_smallint(0,
-            static_cast<int>(nb_of_extra_vertices_per_patch - 1));
-          several_vertices_on_patch[patch_id][i] = vit;
-        }
+        --nb_of_free_vertices_on_patch[patch_id];
       }
     }
     for (Patch_id patch_id = 1; std::size_t(patch_id) < nb_of_patch_plus_one;
       ++patch_id)
     {
+      CGAL_assertion(several_vertices_on_patch[patch_id].size()
+                     <= nb_of_extra_vertices_per_patch);
       if (this->patch_has_featured_edges.test(patch_id)) {
         if (!several_vertices_on_patch[patch_id].empty()) {
           Vertex_const_handle v =
@@ -662,14 +719,15 @@ public:
         if(!opt)
           return Subdomain();
         else {
-          typename Polyhedron::Facet_const_handle fh = *opt;
-          if(fh == AABB_primitive_id()) continue; // loop
+          if(AABB_primitive_id() == *opt) continue; // loop
+          Surface_patch_index face_id = r_domain_.make_surface_index(*opt);
           const std::pair<Subdomain_index, Subdomain_index>& pair =
-            r_domain_.incident_subdomains_indices(fh->patch_id());
-          typename Polyhedron::Halfedge_const_handle he = fh->halfedge();
-          const Point_3& a = he->vertex()->point();
-          const Point_3& b = he->next()->vertex()->point();
-          const Point_3& c = he->next()->next()->vertex()->point();
+            r_domain_.incident_subdomains_indices(face_id);
+          const typename IGT::Triangle_3 triangle =
+            BaseBase::template Primitive_type<Polyhedron_type>::datum(*opt);
+          const Point_3& a = triangle[0];
+          const Point_3& b = triangle[1];
+          const Point_3& c = triangle[2];
           switch(orientation(a, b, c, p)) {
           case NEGATIVE: // inner region
             return pair.first == 0 ?
@@ -714,8 +772,7 @@ protected:
   std::vector<std::pair<Subdomain_index, Subdomain_index> > patch_indices;
   std::vector<std::size_t> patch_id_to_polyhedron_id;
   boost::dynamic_bitset<> patch_has_featured_edges;
-  typedef typename Polyhedron::Vertex_handle Vertex_handle;
-  std::vector<std::vector<Vertex_handle> > several_vertices_on_patch;
+  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
   std::vector<Surface_patch_index> boundary_patches_ids;
   std::vector<std::size_t> inside_polyhedra_ids;
   std::vector<std::size_t> boundary_polyhedra_ids;
@@ -736,23 +793,32 @@ void
 Polyhedral_complex_mesh_domain_3<GT_,P_,TA_>::
 initialize_ts(Polyhedron_type& p) const
 {
+  typedef Polyhedron_type Polyhedron;
+  typedef typename boost::property_map<Polyhedron,vertex_time_stamp_t>::type Vtmap;
+  typedef typename boost::property_map<Polyhedron,halfedge_time_stamp_t>::type Htmap;
+  typedef typename boost::property_map<Polyhedron,face_time_stamp_t>::type Ftmap;
+  Vtmap vtm = get(vertex_time_stamp,p);
+  Htmap htm = get(halfedge_time_stamp,p);
+  Ftmap ftm = get(face_time_stamp,p);
+
   std::size_t ts = 0;
-  for(typename Polyhedron_type::Vertex_iterator v = p.vertices_begin(),
-      end = p.vertices_end() ; v != end ; ++v)
+  typedef boost::graph_traits<Polyhedron> Graph_traits;
+  BOOST_FOREACH(typename Graph_traits::vertex_descriptor vd, vertices(p))
   {
-    v->set_time_stamp(ts++);
+    put(vtm,vd,ts++);
   }
-  for(typename Polyhedron_type::Facet_iterator fit = p.facets_begin(),
-       end = p.facets_end() ; fit != end ; ++fit )
+
+  BOOST_FOREACH(typename Graph_traits::face_descriptor fd, faces(p))
   {
-    fit->set_time_stamp(ts++);
+    put(ftm,fd,ts++);
   }
-  for(typename Polyhedron_type::Halfedge_iterator hit = p.halfedges_begin(),
-       end = p.halfedges_end() ; hit != end ; ++hit )
+
+  BOOST_FOREACH(typename Graph_traits::halfedge_descriptor hd, halfedges(p))
   {
-    hit->set_time_stamp(ts++);
+    put(htm,hd,ts++);
   }
 }
+
 
 template < typename GT_, typename P_, typename TA_>
 void
@@ -780,18 +846,39 @@ detect_features(FT angle_in_degree,
 
   typedef Featured_edges_copy_graph G_copy;
   G_copy g_copy;
-  typedef typename boost::graph_traits<G_copy>::vertex_descriptor vertex_descriptor;
-  typedef std::map<typename Polyhedron_type::Point,
-                   vertex_descriptor> P2vmap;
+  typedef typename boost::graph_traits<G_copy>::vertex_descriptor
+                                                      graph_vertex_descriptor;
+  typedef std::map<typename IGT::Point_3,
+                   graph_vertex_descriptor> P2vmap;
   // TODO: replace this map by and unordered_map
   P2vmap p2vmap;
 
+  typedef typename boost::graph_traits<Polyhedron_type>::vertex_descriptor
+                                                            vertex_descriptor;
+  typedef typename boost::graph_traits<Polyhedron_type>::face_descriptor
+                                                              face_descriptor;
+  typedef typename boost::graph_traits<Polyhedron_type>::halfedge_descriptor
+                                                          halfedge_descriptor;
+
+  typedef typename boost::property_map<Polyhedron_type,
+                                       CGAL::face_patch_id_t<Patch_id>
+                                       >::type                        PIDMap;
+  typedef typename boost::property_map<Polyhedron_type,
+                                       CGAL::vertex_incident_patches_t<Patch_id>
+                                       >::type                        VIPMap;
+  typedef typename boost::property_map<Polyhedron_type,
+                                       CGAL::edge_is_feature_t
+                                       >::type                        EIFMap;
+  typedef typename boost::property_map<Polyhedron_type,
+                                       CGAL::vertex_feature_degree_t
+                                       >::type                        VFDMap;
   namespace PMP = CGAL::Polygon_mesh_processing;
-  PMP::Detect_features_in_polyhedra<Polyhedron_type, Surface_patch_index> detect_features;
+  std::size_t nb_of_patch_plus_one = 1;
   BOOST_FOREACH(Polyhedron_type& p, poly)
   {
     initialize_ts(p);
-
+    using internal::Mesh_3::Get_face_index_pmap;
+    Get_face_index_pmap<Polyhedron_type> get_face_index_pmap(p);
 #if CGAL_MESH_3_VERBOSE
     std::size_t poly_id = &p-&poly[0];
     std::cerr << "Polyhedron #" << poly_id << " :\n";
@@ -800,59 +887,48 @@ detect_features(FT angle_in_degree,
 #endif // CGAL_MESH_3_VERBOSE
 
     // Get sharp features
-    detect_features.detect_sharp_edges(p, angle_in_degree);
-    detect_features.detect_surface_patches(p);
-    detect_features.detect_vertices_incident_patches(p);
+    PIDMap pid_map = get(face_patch_id_t<Patch_id>(), p);
+    VIPMap vip_map = get(vertex_incident_patches_t<Patch_id>(), p);
+    EIFMap eif = get(CGAL::edge_is_feature, p);
+    VFDMap vertex_feature_degree_map = get(CGAL::vertex_feature_degree, p);
+    nb_of_patch_plus_one +=PMP::sharp_edges_segmentation(p, angle_in_degree
+      , eif
+      , pid_map
+      , PMP::parameters::first_index(nb_of_patch_plus_one)
+      .face_index_map(get_face_index_pmap(p))
+      .vertex_incident_patches_map(vip_map)
+      .vertex_feature_degree_map(vertex_feature_degree_map));
 
     internal::Mesh_3::Is_featured_edge<Polyhedron_type> is_featured_edge(p);
 
     add_featured_edges_to_graph(p, is_featured_edge, g_copy, p2vmap);
   }
-  const std::size_t nb_of_patch_plus_one =
-    detect_features.maximal_surface_patch_index()+1;
   this->patch_id_to_polyhedron_id.resize(nb_of_patch_plus_one);
   this->patch_has_featured_edges.resize(nb_of_patch_plus_one);
-  this->several_vertices_on_patch.resize(nb_of_patch_plus_one);
 #if CGAL_MESH_3_VERBOSE
   std::cerr << "Number of patches: " << (nb_of_patch_plus_one - 1) << std::endl;
 #endif
   BOOST_FOREACH(Polyhedron_type& p, poly)
   {
+    PIDMap pid_map = get(face_patch_id_t<Patch_id>(), p);
+    EIFMap eif = get(CGAL::edge_is_feature, p);
     const std::size_t polyhedron_id = &p - &poly[0];
-    BOOST_FOREACH(typename Polyhedron_type::Facet_const_handle fh, faces(p))
+    BOOST_FOREACH(face_descriptor f, faces(p))
     {
-      patch_id_to_polyhedron_id[fh->patch_id()] = polyhedron_id;
+      patch_id_to_polyhedron_id[get(pid_map, f)] = polyhedron_id;
     }
-    for(typename Polyhedron_type::Halfedge_iterator
-          heit = p.halfedges_begin(), end  = p.halfedges_end();
-        heit != end; ++heit)
+    BOOST_FOREACH(halfedge_descriptor he, halfedges(p)) 
     {
-      if(is_border(heit, p) || !heit->is_feature_edge()) continue;
-      patch_has_featured_edges.set(heit->face()->patch_id());
+      if(is_border(he, p) || !get(eif, edge(he, p))) continue;
+      patch_has_featured_edges.set(get(pid_map, face(he, p)));
     }
-    for(typename Polyhedron_type::Vertex_iterator
-          vit = p.vertices_begin(), end  = p.vertices_end();
-        vit != end; ++vit)
+    VFDMap vertex_feature_degree_map = get(CGAL::vertex_feature_degree, p);
+    BOOST_FOREACH(vertex_descriptor v, vertices(p))
     {
-      if( vit->is_feature_vertex() ) { continue; }
-      const Patch_id patch_id = vit->halfedge()->face()->patch_id();
+      if( get(vertex_feature_degree_map, v) != 0 ) { continue; }
+      const Patch_id patch_id = get(pid_map, face(halfedge(v, p), p));
       if(patch_has_featured_edges.test(patch_id)) continue;
-      several_vertices_on_patch[patch_id].push_back(vit);
     }
-  }
-  for(Patch_id patch_id = 1; std::size_t(patch_id) < nb_of_patch_plus_one;
-      ++patch_id)
-  {
-    CGAL_assertion(patch_has_featured_edges.test(patch_id) ==
-                   several_vertices_on_patch[patch_id].empty() );
-    if(several_vertices_on_patch[patch_id].empty()) continue;
-    std::random_shuffle(several_vertices_on_patch[patch_id].begin(),
-                        several_vertices_on_patch[patch_id].end());
-    if(several_vertices_on_patch[patch_id].size()>20)
-      several_vertices_on_patch[patch_id].resize(20);
-#if __cplusplus > 201103L
-    several_vertices_on_patch.shrink_to_fit();
-#endif
   }
   if (!dont_protect)
     add_features_from_split_graph_into_polylines(g_copy);
@@ -892,8 +968,8 @@ merge_duplicated_points(const PointSet& duplicated_points)
       HVcirc itend = it;
       do {
         if(!it->is_border()) {
-          CGAL_assertion(static_cast<std::size_t>(it->face()->patch_id())
-                         < this->nb_of_patch_plus_one());
+          CGAL_assertion(std::size_t(it->face()->patch_id()) <
+                         this->nb_of_patch_plus_one());
           patches.insert(Pt_patch_pair(Point_and_mesh(vit->point(), &p),
                                        it->face()->patch_id()));
         }
@@ -918,12 +994,12 @@ merge_duplicated_points(const PointSet& duplicated_points)
     // loop will end with the first iterator when the point differs from
     // the point of the range).
     Patch_iterator it = range_begin;
-    CGAL_assertion(static_cast<std::size_t>(it->second) < new_ids.size());
+    CGAL_assertion(std::size_t(it->second) < new_ids.size());
     Patch_id min_id_around_p = new_ids[it->second];
     ++it;
     for (; it != patches.end() && it->first == range_begin->first; ++it)
     {
-      CGAL_assertion(static_cast<std::size_t>(it->second) < new_ids.size());
+      CGAL_assertion(std::size_t(it->second) < new_ids.size());
       min_id_around_p = (std::min)(min_id_around_p, new_ids[it->second]);
     }
     const Patch_iterator range_end = it;
@@ -931,7 +1007,7 @@ merge_duplicated_points(const PointSet& duplicated_points)
     // In a second loop on the equal-range, update new_ids around p
     for (it = range_begin; it != range_end; ++it)
     {
-      CGAL_assertion(static_cast<std::size_t>(it->second) < new_ids.size());
+      CGAL_assertion(std::size_t(it->second) < new_ids.size());
       new_ids[it->second] = min_id_around_p;
     }
     pit = range_end;
@@ -983,6 +1059,8 @@ add_featured_edges_to_graph(const Polyhedron_type& p,
                             Featured_edges_copy_graph& g_copy,
                             P2vmap& p2vmap)
 {
+  typedef Polyhedron_type Polyhedron;
+  typedef Patch_id P_id;
   typedef boost::filtered_graph<Polyhedron_type,
                                 Edge_predicate > Featured_edges_graph;
   Featured_edges_graph orig_graph(p, pred);
@@ -996,29 +1074,34 @@ add_featured_edges_to_graph(const Polyhedron_type& p,
 
   const Featured_edges_graph& graph = orig_graph;
 
+  typedef typename boost::property_map<Polyhedron,vertex_point_t>::const_type Vpm;
+  Vpm vpm = get(vertex_point, p);
   BOOST_FOREACH(Graph_vertex_descriptor v, vertices(graph)){
     vertex_descriptor vc;
-    typename P2vmap::iterator it = p2vmap.find(v->point());
+    typename P2vmap::iterator it = p2vmap.find(get(vpm,v));
     if(it == p2vmap.end()) {
       vc = add_vertex(g_copy);
-      g_copy[vc] = v->point();
-      p2vmap[v->point()] = vc;
+      g_copy[vc] = get(vpm, v);
+      p2vmap[get(vpm,v)] = vc;
     }
   }
 
+  typedef typename boost::property_map<Polyhedron,face_patch_id_t<P_id> >::type Face_patch_id_pmap;
+  Face_patch_id_pmap fpm = get(face_patch_id_t<P_id>(),p);
+
   BOOST_FOREACH(Graph_edge_descriptor e, edges(graph)){
-    vertex_descriptor vs = p2vmap[source(e,graph)->point()];
-    vertex_descriptor vt = p2vmap[target(e,graph)->point()];
+    vertex_descriptor vs = p2vmap[get(vpm,source(e,graph))];
+    vertex_descriptor vt = p2vmap[get(vpm,target(e,graph))];
     CGAL_warning_msg(vs != vt, "ignore self loop");
     if(vs != vt) {
       const std::pair<edge_descriptor, bool> pair = add_edge(vs,vt,g_copy);
-      typename Polyhedron_type::Halfedge_handle he = halfedge(e, p);
+      typename boost::graph_traits<Polyhedron>::halfedge_descriptor he = halfedge(e, p);
       if(!is_border(he, p)) {
-        g_copy[pair.first].insert(he->face()->patch_id());;
+        g_copy[pair.first].insert(get(fpm, face(he,p)));
       }
-      he = he->opposite();
+      he = opposite(he,p);
       if(!is_border(he, p)) {
-        g_copy[pair.first].insert(he->face()->patch_id());;
+        g_copy[pair.first].insert(get(fpm, face(he,p)));
       }
     }
   }
@@ -1036,12 +1119,16 @@ void
 Polyhedral_complex_mesh_domain_3<GT_,P_,TA_>::
 reindex_patches(const std::vector<Surf_p_index>& map)
 {
+  typedef typename boost::graph_traits<Polyhedron_type>::face_descriptor
+    Face_descriptor;
   for(std::size_t i = 0, end = stored_polyhedra.size(); i < end; ++i) {
     Polyhedron_type& poly = stored_polyhedra[i];
-    for(typename Polyhedron_type::Facet_iterator fit = poly.facets_begin(),
-          end = poly.facets_end(); fit != end; ++fit)
+    typename boost::property_map<Polyhedron_type,
+                                 face_patch_id_t<Patch_id> >::type
+      face_pid_pmap = get(face_patch_id_t<Patch_id>(), poly);
+    BOOST_FOREACH(Face_descriptor fd, faces(poly))
     {
-      fit->set_patch_id(map[fit->patch_id()]);
+      put(face_pid_pmap, fd, map[get(face_pid_pmap, fd)]);
     }
   }
   BOOST_FOREACH(Surface_patch_index& id,

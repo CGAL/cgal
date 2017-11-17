@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Sebastien Loriot
@@ -132,8 +133,10 @@ bool recursive_does_bound_a_volume(const TriangleMesh& tm,
  *                      as a named parameter, then it must be initialized.
  * @tparam NamedParameters a sequence of \ref namedparameters
  *
- * @param tm a triangulated surface mesh
+ * @param tm a closed triangulated surface mesh
  * @param np optional sequence of \ref namedparameters among the ones listed below
+ *
+ * @pre `CGAL::is_closed(tm)`
  *
  * \cgalNamedParamsBegin
  *   \cgalParamBegin{vertex_point_map}
@@ -142,9 +145,7 @@ bool recursive_does_bound_a_volume(const TriangleMesh& tm,
  *     `CGAL::vertex_point_t` should be available in `TriangleMesh`
  *   \cgalParamEnd
  *   \cgalParamBegin{face_index_map}
- *     a property map containing the index of each face of `tm1` (`tm2`).
- *     Note that if the property map is writable, the indices of the faces
- *     of `tm1` and `tm2` will be set after the corefinement is done.
+ *     a property map containing the index of each face of `tm`.
  *   \cgalParamEnd
  * \cgalNamedParamsEnd
  *
@@ -454,7 +455,10 @@ boolean_operation(      TriangleMesh& tm1,
   *   \cgalParamBegin{edge_is_constrained_map} a property map containing the
   *     constrained-or-not status of each edge of `tm1` (`tm2`).
   *   \cgalParamEnd
-  *   \cgalParamBegin{face_index_map} a property map containing the index of each face of `tm1` (`tm2`) \cgalParamEnd
+  *   \cgalParamBegin{face_index_map} a property map containing the index of each face of `tm1` (`tm2`).
+  *     Note that if the property map is writable, the indices of the faces
+  *     of `tm1` and `tm2` will be set after the corefinement is done.
+  *   \cgalParamEnd
   * \cgalNamedParamsEnd
   *
   * @param np_out optional sequence of \ref namedparameters among the ones listed below

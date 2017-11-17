@@ -20,6 +20,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s) : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //             Sylvain Pion
@@ -29,9 +30,6 @@
 
 #ifndef CGAL_SPHERICAL_KERNEL_TYPE_EQUALITY_WRAPPER_H
 #define CGAL_SPHERICAL_KERNEL_TYPE_EQUALITY_WRAPPER_H
-
-#include <CGAL/license/Circular_kernel_3.h>
-
 
 #include <CGAL/user_classes.h>
 #include <CGAL/Circular_arc_point_3.h>

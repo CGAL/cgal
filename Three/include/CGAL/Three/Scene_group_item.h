@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Maxime Gimeno
@@ -181,6 +182,7 @@ public :
      if(isChildLocked(item))
       return;
      update_group_number(item,0);
+     item->moveToGroup(0);
      children.removeOne(item);
     }
     //!Moves a child up in the list.

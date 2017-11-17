@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Authors: Weisheng Si, Quincy Tse
@@ -57,7 +58,7 @@ namespace CGAL {
  *
  */
 template <typename Kernel_, typename Graph_>
-class  Less_by_direction_2 : public std::binary_function <typename Graph_::vertex_descriptor,
+class  Less_by_direction_2 : public CGAL::binary_function <typename Graph_::vertex_descriptor,
         typename Graph_::vertex_descriptor, bool> {
 
 public:

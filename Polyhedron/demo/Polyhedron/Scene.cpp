@@ -102,6 +102,8 @@ Scene::replaceItem(Scene::Item_id index, CGAL::Three::Scene_item* item, bool emi
             this, SLOT(itemChanged()));
     connect(item, SIGNAL(itemVisibilityChanged()),
             this, SLOT(itemVisibilityChanged()));
+    connect(item, SIGNAL(redraw()),
+            this, SLOT(callDraw()));
     CGAL::Three::Scene_group_item* group =
             qobject_cast<CGAL::Three::Scene_group_item*>(m_entries[index]);
     if(group)
@@ -591,33 +593,30 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
       if(!with_names && item_should_be_skipped_in_draw(&item)) continue;
       if(item.visible())
       {
-        if(item.renderingMode() == Flat || item.renderingMode() == FlatPlusEdges )
-        {
-          if(with_names) {
-            glClearDepth(1.0);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-          }
-          viewer->glEnable(GL_LIGHTING);
-          viewer->glPointSize(2.f);
-          viewer->glLineWidth(1.0f);
+        if(with_names) {
+          glClearDepth(1.0);
+          glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        }
+        viewer->glEnable(GL_LIGHTING);
+        viewer->glPointSize(2.f);
+        viewer->glLineWidth(1.0f);
 
-          viewer->glShadeModel(GL_SMOOTH);
+        viewer->glShadeModel(GL_SMOOTH);
 
-          if(viewer)
-            trans_item->drawTransparent(viewer);
-          else
-            item.draw();
+        if(viewer)
+          trans_item->drawTransparent(viewer);
+        else
+          item.draw();
 
-          if(with_names) {
+        if(with_names) {
 
-            //    read depth buffer at pick location;
-            float depth = 1.0;
-            glReadPixels(picked_pixel.x(),viewer->camera()->screenHeight()-1-picked_pixel.y(),1,1,GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
-            if (depth != 1.0)
-            {
-              //add object to list of picked objects;
-              picked_item_IDs[depth] = index;
-            }
+          //    read depth buffer at pick location;
+          float depth = 1.0;
+          glReadPixels(picked_pixel.x(),viewer->camera()->screenHeight()-1-picked_pixel.y(),1,1,GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+          if (depth != 1.0)
+          {
+            //add object to list of picked objects;
+            picked_item_IDs[depth] = index;
           }
         }
       }

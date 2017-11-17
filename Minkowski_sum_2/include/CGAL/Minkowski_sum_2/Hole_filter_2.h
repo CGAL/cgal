@@ -12,6 +12,10 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s): Sebastian Morr    <sebastian@morr.cc>
 
 #ifndef CGAL_MINKOWSKI_SUM_HOLE_FILTER_2_H

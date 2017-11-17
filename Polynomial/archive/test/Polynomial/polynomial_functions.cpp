@@ -21,6 +21,7 @@
 // CGAL_release   : $Name:  $
 // Revision      : $Revision$
 // Revision_date : $Date$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Eric Berberich <eric@mpi-inf.mpg.de>
 //                 Arno Eigenwillig <arno@mpi-inf.mpg.de>

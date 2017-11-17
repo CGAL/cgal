@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Laurent RINEAU, Maxime Gimeno
@@ -71,7 +72,6 @@ public:
    PROGRAM_C3T3_EDGES,          //! Used to render the edges of a c3t3_item. It discards any fragment on a side of a plane, meaning that nothing is displayed on this side of the plane. Not affected by light.
    PROGRAM_CUTPLANE_SPHERES,    //! Used to render the spheres of an item with a cut plane.
    PROGRAM_SPHERES,             //! Used to render one or several spheres.
-   PROGRAM_C3T3_TETS,           //! Used to render the tetrahedra of the intersection of a c3t3_item.
    PROGRAM_FLAT,                /** Used to render flat shading without pre computing normals*/
    PROGRAM_OLD_FLAT,            /** Used to render flat shading without pre computing normals without geometry shader*/
    NB_OF_PROGRAMS               //! Holds the number of different programs in this enum.

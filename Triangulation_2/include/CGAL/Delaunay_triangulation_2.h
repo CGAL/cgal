@@ -12,6 +12,10 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s)     : Mariette Yvinec
 //               : Olivier Devillers  (remove)
 //               : Pedro de Castro (displacement)
@@ -69,6 +73,12 @@ public:
   typedef typename Triangulation::Finite_vertices_iterator
                                                         Finite_vertices_iterator;
   typedef typename Triangulation::All_faces_iterator    All_faces_iterator;
+
+  //Tag to distinguish Delaunay from regular triangulations
+  typedef Tag_false                                     Weighted_tag;
+
+  // Tag to distinguish periodic triangulations from others
+  typedef Tag_false                                     Periodic_tag;
 
 #ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
   using Triangulation::side_of_oriented_circle;

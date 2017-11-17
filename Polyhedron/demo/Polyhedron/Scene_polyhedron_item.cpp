@@ -447,7 +447,7 @@ void Scene_polyhedron_item_priv::triangulate_convex_facet(Facet_iterator f,
     idx_faces.push_back(static_cast<unsigned int>(he->vertex()->id()));
     idx_faces.push_back(static_cast<unsigned int>(next(he, *poly)->vertex()->id()));
 
-    if(!no_flat || !is_recent )
+    if(is_multicolor || !no_flat || !is_recent )
     {
       push_back_xyz(p0+offset, positions_facets);
       push_back_xyz(p1+offset, positions_facets);
@@ -514,7 +514,7 @@ Scene_polyhedron_item_priv::triangulate_facet(Scene_polyhedron_item::Facet_itera
     idx_faces.push_back(static_cast<unsigned int>(triangulation.v2v[ffit->vertex(1)]->id()));
     idx_faces.push_back(static_cast<unsigned int>(triangulation.v2v[ffit->vertex(2)]->id()));
 
-    if(!no_flat || !is_recent)
+    if(is_multicolor || !no_flat || !is_recent)
     {
       push_back_xyz(ffit->vertex(0)->point()+offset, positions_facets);
       push_back_xyz(ffit->vertex(1)->point()+offset, positions_facets);
@@ -535,7 +535,7 @@ void
 Scene_polyhedron_item_priv::initialize_buffers(CGAL::Three::Viewer_interface* viewer) const
 {
     //vao containing the data for the facets
-    if(!viewer->isOpenGL_4_3() && !no_flat)
+    if((!viewer->isOpenGL_4_3() && !no_flat )|| is_multicolor)
     {
       //flat
       if(viewer->property("draw_two_sides").toBool())
@@ -588,6 +588,8 @@ Scene_polyhedron_item_priv::initialize_buffers(CGAL::Three::Viewer_interface* vi
   //gouraud
   item->vaos[Gouraud_Facets]->bind();
   item->buffers[Edges_vertices].bind();
+  item->buffers[Edges_vertices].allocate(positions_lines.data(),
+                                         static_cast<int>(positions_lines.size()*sizeof(float)));
   program->enableAttributeArray("vertex");
   program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
   item->buffers[Edges_vertices].release();
@@ -601,6 +603,8 @@ Scene_polyhedron_item_priv::initialize_buffers(CGAL::Three::Viewer_interface* vi
   if(is_multicolor)
   {
     item->buffers[Facets_color].bind();
+    item->buffers[Facets_color].allocate(color_facets.data(),
+                                                static_cast<int>(color_facets.size()*sizeof(float)));
     program->enableAttributeArray("colors");
     program->setAttributeBuffer("colors",GL_FLOAT,0,3);
     item->buffers[Facets_color].release();
@@ -611,7 +615,7 @@ Scene_polyhedron_item_priv::initialize_buffers(CGAL::Three::Viewer_interface* vi
   }
   item->vaos[Gouraud_Facets]->release();
   program->release();
-  if(viewer->isOpenGL_4_3())
+  if(viewer->isOpenGL_4_3() && !is_multicolor)
   {
     //modern flat
     program = item->getShaderProgram(Scene_polyhedron_item::PROGRAM_FLAT, viewer);
@@ -622,10 +626,6 @@ Scene_polyhedron_item_priv::initialize_buffers(CGAL::Three::Viewer_interface* vi
     program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
     item->buffers[Edges_vertices].release();
 
-    item->buffers[Facets_normals_gouraud].bind();
-    program->enableAttributeArray("normals");
-    program->setAttributeBuffer("normals",GL_FLOAT,0,3);
-    item->buffers[Facets_normals_gouraud].release();
     if(is_multicolor)
     {
       item->buffers[Facets_color].bind();
@@ -647,8 +647,6 @@ Scene_polyhedron_item_priv::initialize_buffers(CGAL::Three::Viewer_interface* vi
     item->vaos[Edges]->bind();
 
     item->buffers[Edges_vertices].bind();
-    item->buffers[Edges_vertices].allocate(positions_lines.data(),
-                                           static_cast<int>(positions_lines.size()*sizeof(float)));
     program->enableAttributeArray("vertex");
     program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
     item->buffers[Edges_vertices].release();
@@ -699,7 +697,7 @@ Scene_polyhedron_item_priv::compute_normals_and_vertices(const bool is_recent,
                                                          const bool colors_only,
                                                          const bool draw_two_sides) const
 {
-  bool add_flat_data = !is_recent || !no_flat;
+  bool add_flat_data = is_multicolor || (!is_recent || !no_flat);
   const qglviewer::Vec v_offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -1254,7 +1252,7 @@ void Scene_polyhedron_item::draw(CGAL::Three::Viewer_interface* viewer) const {
         compute_bbox();
     }
 
-    if(viewer->isOpenGL_4_3() &&
+    if(!d->is_multicolor && viewer->isOpenGL_4_3() &&
        (renderingMode() == Flat || renderingMode() == FlatPlusEdges))
     {
         vaos[Scene_polyhedron_item_priv::Gouraud_Facets]->bind();
@@ -1274,7 +1272,7 @@ void Scene_polyhedron_item::draw(CGAL::Three::Viewer_interface* viewer) const {
         d->program->release();
         vaos[Scene_polyhedron_item_priv::Gouraud_Facets]->release();
     }
-    else if(!viewer->isOpenGL_4_3()&&
+    else if((d->is_multicolor || !viewer->isOpenGL_4_3()) &&
             (renderingMode() == Flat || renderingMode() == FlatPlusEdges))
     {
       vaos[Scene_polyhedron_item_priv::Facets]->bind();

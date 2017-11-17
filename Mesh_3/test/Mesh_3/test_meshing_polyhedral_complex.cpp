@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Jane Tournois
@@ -61,7 +62,7 @@ struct Polyhedral_complex_tester : public Tester<K>
     typedef CGAL::Mesh_complex_3_in_triangulation_3<
       Tr,
       typename Mesh_domain::Corner_index,
-      typename Mesh_domain::Curve_segment_index> C3t3;
+      typename Mesh_domain::Curve_index> C3t3;
     typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
 
     //Input

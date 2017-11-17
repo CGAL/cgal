@@ -1,7 +1,7 @@
 #include <CGAL/Cartesian_d.h>
 #include <CGAL/spatial_sort.h>
 #include <CGAL/Spatial_sort_traits_adapter_d.h>
-#include <boost/iterator/counting_iterator.hpp>
+#include <CGAL/boost/iterator/counting_iterator.hpp>
 #include <vector>
 
 typedef CGAL::Cartesian_d<double>           Kernel;

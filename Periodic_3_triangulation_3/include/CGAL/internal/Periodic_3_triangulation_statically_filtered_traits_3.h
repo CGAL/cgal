@@ -12,6 +12,10 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s)     : Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
 //                 Manuel Caroli <Manuel.Caroli@sophia.inria.fr>
 
@@ -42,7 +46,7 @@ public:
   { }
 
   typedef internal::Static_filters_predicates::Periodic_3_orientation_3<
-            K, typename Base::Orientation_3> Orientation_3;
+            Self, typename Base::Orientation_3> Orientation_3;
 
   Orientation_3 orientation_3_object() const {
     return Orientation_3(&this->_domain,

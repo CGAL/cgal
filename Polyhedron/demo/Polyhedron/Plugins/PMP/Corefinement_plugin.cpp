@@ -217,6 +217,7 @@ private:
       break;
       case CRF_MINUS_OP:
         std::swap(first_item, item);
+	CGAL_FALLTHROUGH;
       case CRF_MINUS:
         P = *first_item->polyhedron(), Q = *item->polyhedron();
         if (! PMP::corefine_and_compute_difference(P, Q, *new_poly) )

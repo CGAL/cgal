@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Nico Kruithof <Nico@nghk.nl>
 
@@ -38,6 +39,7 @@ class Periodic_2_triangulation_face_base_2
 {
   typedef Fb                                            Base;
   typedef typename Base::Triangulation_data_structure   Tds;
+
 public:
   typedef Gt                                            Geom_traits;
   typedef Tds                                           Triangulation_data_structure;

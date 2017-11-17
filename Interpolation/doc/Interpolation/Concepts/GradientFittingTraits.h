@@ -37,6 +37,11 @@ which the function is defined and interpolated.
 typedef unspecified_type Point_d; 
 
 /*!
+The weighted point type.
+*/
+typedef unspecified_type Weighted_point_d;
+
+/*!
 The corresponding vector type. 
 */ 
 typedef unspecified_type Vector_d; 
@@ -54,6 +59,16 @@ multiplication of `tr` with `v`.
 
 */ 
 typedef unspecified_type Aff_transformation_d; 
+
+/*!
+A constructor object for `Point_d`.
+Provides :
+
+`Point_d operator() (Point_d p)` which simply returns `p`
+
+`Point_d operator() (Weighted_point wp)` which returns the bare point contained in `wp`.
+*/
+typedef unspecified_type Construct_point_d;
 
 /*!
 A constructor object for 

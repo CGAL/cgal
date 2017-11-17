@@ -17,7 +17,7 @@ typedef CGAL::Mesh_polyhedron_3<K>::type Polyhedron;
 // Triangulation
 typedef CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
 typedef CGAL::Mesh_complex_3_in_triangulation_3<
-  Tr,Mesh_domain::Corner_index,Mesh_domain::Curve_segment_index> C3t3;
+  Tr,Mesh_domain::Corner_index,Mesh_domain::Curve_index> C3t3;
 
 // Criteria
 typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;

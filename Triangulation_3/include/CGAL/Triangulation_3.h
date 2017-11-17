@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //                 Sylvain Pion
@@ -531,9 +532,10 @@ public:
   typedef const value_type&             const_reference;
 
   //Tag to distinguish triangulations with weighted_points
-  typedef Tag_false  Weighted_tag;
+  typedef Tag_false                     Weighted_tag;
 
-
+  // Tag to distinguish periodic triangulations from others
+  typedef Tag_false                     Periodic_tag;
 
   enum Locate_type {
     VERTEX=0,

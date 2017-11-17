@@ -55,9 +55,10 @@ of the vertex `vd`.
 void vertex_node(vertex_descriptor vd, Point_3& pt);
 
 /*!
-
 computes the edge-point `ept` and the vertex-point `vpt`
-based on the neighborhood of the border edge `hd`.
+based on the neighborhood of the border edge of `hd`. `hd` is not
+a border halfedge (its opposite is) and `vpt` corresponds to the
+target vertex of `hd`.
 */
 void border_node(halfedge_descriptor hd, Point_3& ept, Point_3& vpt);
 

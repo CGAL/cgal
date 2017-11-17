@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Stefan Schirra, Sylvain Pion, Michael Hoffmann
@@ -1043,7 +1044,6 @@ namespace CartesianKernelFunctors {
 
   };
 
-  // TODO ...
   template <typename K>
   class Compute_squared_radius_2
   {
@@ -1051,29 +1051,21 @@ namespace CartesianKernelFunctors {
     typedef typename K::Point_2     Point_2;
     typedef typename K::Circle_2    Circle_2;
   public:
-    template<class>
-    struct result {
-      typedef FT type;
-    };
-    
-    template<typename F>
-    struct result<F(Circle_2)> {
-      typedef const FT& type;
-    };
+    typedef FT                      result_type;
 
-    const FT&
+    result_type
     operator()( const Circle_2& c) const
     { return c.rep().squared_radius(); }
 
-    FT
+    result_type
     operator()( const Point_2& /*p*/) const
     { return FT(0); }
 
-    FT
+    result_type
     operator()( const Point_2& p, const Point_2& q) const
     { return squared_radiusC2(p.x(), p.y(), q.x(), q.y()); }
 
-    FT
+    result_type
     operator()( const Point_2& p, const Point_2& q, const Point_2& r) const
     { return squared_radiusC2(p.x(), p.y(), q.x(), q.y(), r.x(), r.y()); }
   };

@@ -1,12 +1,17 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/algorithm.h>
-#include <CGAL/Delaunay_triangulation_2.h>
-#include <CGAL/Alpha_shape_2.h>
 
-#include <iostream>
+#include <CGAL/Alpha_shape_2.h>
+#include <CGAL/Alpha_shape_vertex_base_2.h>
+#include <CGAL/Alpha_shape_face_base_2.h>
+#include <CGAL/Delaunay_triangulation_2.h>
+
+#include <CGAL/algorithm.h>
+#include <CGAL/assertions.h>
+
 #include <fstream>
-#include <vector>
+#include <iostream>
 #include <list>
+#include <vector>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel  K;
 

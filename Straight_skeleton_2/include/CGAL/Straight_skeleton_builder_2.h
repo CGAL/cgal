@@ -14,6 +14,7 @@
 
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
@@ -212,7 +213,7 @@ private :
   
   typedef std::vector<MultinodePtr> MultinodeVector ;
 
-  struct Halfedge_ID_compare : std::binary_function<bool,Halfedge_handle,Halfedge_handle>
+  struct Halfedge_ID_compare : CGAL::binary_function<bool,Halfedge_handle,Halfedge_handle>
   {
     bool operator() ( Halfedge_handle const& aA, Halfedge_handle const& aB ) const
     {
@@ -229,7 +230,7 @@ public:
 private :
 
   
-  class Event_compare : public std::binary_function<bool,EventPtr,EventPtr>
+  class Event_compare : public CGAL::binary_function<bool,EventPtr,EventPtr>
   {
   public:
 

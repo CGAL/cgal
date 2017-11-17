@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 
 #ifndef CGAL_ATOMIC_H
 #define CGAL_ATOMIC_H

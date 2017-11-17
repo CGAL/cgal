@@ -1,6 +1,7 @@
 //#define CGAL_PMP_REMESHING_VERBOSE
 //#define CGAL_PMP_REMESHING_DEBUG
 //#define CGAL_PMP_REMESHING_VERY_VERBOSE
+//#define CGAL_PMP_REMESHING_VERBOSE_PROGRESS
 
 #include <QtCore/qglobal.h>
 
@@ -8,10 +9,14 @@
 
 #ifdef USE_SURFACE_MESH
 #include "Scene_surface_mesh_item.h"
+#include <CGAL/Mesh_3/properties_Surface_mesh.h>
 #else
 #include "Scene_polyhedron_item.h"
 #include "Polyhedron_type.h"
+#include <CGAL/Mesh_3/properties_Polyhedron_3.h>
 #endif
+
+#include <CGAL/Mesh_3/properties.h>
 
 #include "Scene_polyhedron_selection_item.h"
 
@@ -341,11 +346,25 @@ public Q_SLOTS:
       typedef boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
       typedef boost::graph_traits<FaceGraph>::face_descriptor face_descriptor;
 
-      const FaceGraph& pmesh = (poly_item != NULL)
+      FaceGraph& pmesh = (poly_item != NULL)
         ? *poly_item->polyhedron()
         : *selection_item->polyhedron();
 
      reset_face_ids(pmesh);
+
+     Patch_id_pmap fpmap = get(CGAL::face_patch_id_t<int>(), pmesh);
+     bool fpmap_valid = false;
+     {
+       BOOST_FOREACH(face_descriptor f, faces(pmesh))
+       {
+         if (get(fpmap, f) != 1)
+         {
+           fpmap_valid = true;
+           break;/*1 is the default value for both Surface_mesh and Polyhedron*/
+         }
+       }
+     }
+
       if (selection_item)
       {
         if (edges_only)
@@ -378,11 +397,8 @@ public Q_SLOTS:
           else
             std::cout << "No selected or boundary edges to be split" << std::endl;
         }
-        else
+        else //not edges_only
         {
-          if (selection_item->selected_facets.empty() &&
-            (!selection_item->selected_edges.empty() || !selection_item->selected_vertices.empty()))
-          {
             if(protect &&
                !CGAL::Polygon_mesh_processing::internal::constraints_are_short_enough(
                  *selection_item->polyhedron(),
@@ -399,40 +415,100 @@ public Q_SLOTS:
               return;
             }
 
-            CGAL::Polygon_mesh_processing::isotropic_remeshing(
-              faces(*selection_item->polyhedron())
-              , target_length
-              , *selection_item->polyhedron()
-              , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
-              .protect_constraints(protect)
-              .edge_is_constrained_map(selection_item->constrained_edges_pmap())
-              .relax_constraints(smooth_features)
-              .number_of_relaxation_steps(nb_smooth)
-              .vertex_is_constrained_map(selection_item->constrained_vertices_pmap())
-
-              .face_patch_map(get(CGAL::face_patch_id_t<int>(), *selection_item->polyhedron())));
-          }
-          else
-            CGAL::Polygon_mesh_processing::isotropic_remeshing(
-              selection_item->selected_facets
-              , target_length
-              , *selection_item->polyhedron()
-              , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
-              .protect_constraints(protect)
-              .edge_is_constrained_map(selection_item->constrained_edges_pmap())
-              .relax_constraints(smooth_features)
-              .number_of_relaxation_steps(nb_smooth)
-              .vertex_is_constrained_map(selection_item->constrained_vertices_pmap())
-              .face_patch_map(get(CGAL::face_patch_id_t<int>(), *selection_item->polyhedron())));
+            if (selection_item->selected_facets.empty() && !selection_item->isEmpty())
+            {
+              if (fpmap_valid)
+                CGAL::Polygon_mesh_processing::isotropic_remeshing(faces(*selection_item->polyhedron())
+                   , target_length
+                   , *selection_item->polyhedron()
+                   , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
+                   .protect_constraints(protect)
+                   .edge_is_constrained_map(selection_item->constrained_edges_pmap())
+                   .relax_constraints(smooth_features)
+                   .number_of_relaxation_steps(nb_smooth)
+                   .vertex_is_constrained_map(selection_item->constrained_vertices_pmap())
+                   .face_patch_map(fpmap));
+              else
+                CGAL::Polygon_mesh_processing::isotropic_remeshing(faces(*selection_item->polyhedron())
+                   , target_length
+                   , *selection_item->polyhedron()
+                   , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
+                   .protect_constraints(protect)
+                   .edge_is_constrained_map(selection_item->constrained_edges_pmap())
+                   .relax_constraints(smooth_features)
+                   .number_of_relaxation_steps(nb_smooth)
+                   .vertex_is_constrained_map(selection_item->constrained_vertices_pmap()));
+            }
+            else //selected_facets not empty
+            {
+              if (fpmap_valid)
+                CGAL::Polygon_mesh_processing::isotropic_remeshing(selection_item->selected_facets
+                  , target_length
+                  , *selection_item->polyhedron()
+                  , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
+                  .protect_constraints(protect)
+                  .edge_is_constrained_map(selection_item->constrained_edges_pmap())
+                  .relax_constraints(smooth_features)
+                  .number_of_relaxation_steps(nb_smooth)
+                  .vertex_is_constrained_map(selection_item->constrained_vertices_pmap())
+                  .face_patch_map(fpmap));
+              else
+                CGAL::Polygon_mesh_processing::isotropic_remeshing(selection_item->selected_facets
+                  , target_length
+                  , *selection_item->polyhedron()
+                  , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
+                  .protect_constraints(protect)
+                  .edge_is_constrained_map(selection_item->constrained_edges_pmap())
+                  .relax_constraints(smooth_features)
+                  .number_of_relaxation_steps(nb_smooth)
+                  .vertex_is_constrained_map(selection_item->constrained_vertices_pmap()));
+            }
         }
 #ifdef USE_SURFACE_MESH
+        SMesh mesh_ = *selection_item->polyhedron();
+        std::vector<bool> are_edges_removed;
+        are_edges_removed.resize(mesh_.number_of_edges()+mesh_.number_of_removed_edges());
+        std::vector<bool> are_edges_constrained;
+        are_edges_constrained.resize(are_edges_removed.size());
+        for(std::size_t i=0; i< are_edges_removed.size(); ++i)
+        {
+          are_edges_removed[i] = mesh_.is_removed(SMesh::Edge_index(static_cast<int>(i)));
+          if(!are_edges_removed[i])
+            are_edges_constrained[i] = get(selection_item->constrained_edges_pmap(), SMesh::Edge_index(static_cast<int>(i)));
+        }
+
+
+        int i0, i1,
+            nE(mesh_.number_of_edges()+mesh_.number_of_removed_edges());
+
+        //get constrained values in order.
+        if (nE > 0)
+        {
+          i0=0;  i1=nE-1;
+          while (1)
+          {
+            // find first removed and last un-removed
+            while (!are_edges_removed[i0] && i0 < i1) ++i0;
+            while ( are_edges_removed[i1] && i0 < i1) --i1;
+            if (i0 >= i1) break;
+
+            // swap
+            std::swap(are_edges_constrained[i0], are_edges_constrained[i1]);
+            std::swap(are_edges_removed[i0], are_edges_removed[i1]);
+          }
+          // remember new size
+          nE = are_edges_removed[i0] ? i0 : i0+1;
+        }
         selection_item->polyhedron_item()->setColor(
               selection_item->polyhedron_item()->color());
-        selection_item->polyhedron_item()->setItemIsMulticolor(false);
+        selection_item->polyhedron_item()->setItemIsMulticolor(fpmap_valid);
         selection_item->polyhedron_item()->polyhedron()->collect_garbage();
-#else
-        if(!selection_item->polyhedron_item()->isItemMulticolor())
+        //fix constrained_edges_map
+        for(int i=0; i< nE; ++i)
         {
+          Scene_polyhedron_selection_item::Is_constrained_map<Scene_polyhedron_selection_item::Selection_set_edge>
+              pmap = selection_item->constrained_edges_pmap();
+          put(pmap, SMesh::Edge_index(i), are_edges_constrained[i]);
         }
 #endif
         selection_item->poly_item_changed();
@@ -475,22 +551,36 @@ public Q_SLOTS:
           }
           Scene_polyhedron_selection_item::Is_constrained_map<Edge_set> ecm(&edges_to_protect);
 
-          CGAL::Polygon_mesh_processing::isotropic_remeshing(
-           faces(*poly_item->polyhedron())
-         , target_length
-         , *poly_item->polyhedron()
-         , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
-         .protect_constraints(protect)
-         .number_of_relaxation_steps(nb_smooth)
-         .face_patch_map(get(CGAL::face_patch_id_t<int>(), *poly_item->polyhedron()))
-         .edge_is_constrained_map(ecm)
-         .relax_constraints(smooth_features));
+          if (fpmap_valid)
+            CGAL::Polygon_mesh_processing::isotropic_remeshing(
+                 faces(*poly_item->polyhedron())
+               , target_length
+               , *poly_item->polyhedron()
+               , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
+               .protect_constraints(protect)
+               .number_of_relaxation_steps(nb_smooth)
+               .edge_is_constrained_map(ecm)
+               .relax_constraints(smooth_features)
+               .face_patch_map(fpmap));
+          else
+            CGAL::Polygon_mesh_processing::isotropic_remeshing(
+                 faces(*poly_item->polyhedron())
+               , target_length
+               , *poly_item->polyhedron()
+               , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
+               .protect_constraints(protect)
+               .number_of_relaxation_steps(nb_smooth)
+               .edge_is_constrained_map(ecm)
+               .relax_constraints(smooth_features));
+
         }
         //destroys the patch_id_map for the Surface_mesh_item to avoid assertions.
 #ifdef USE_SURFACE_MESH
-        poly_item->setItemIsMulticolor(false);
+        poly_item->resetColors();
+
 #endif
         poly_item->invalidateOpenGLBuffers();
+
         Q_EMIT poly_item->itemChanged();
       }
       else{
@@ -602,7 +692,7 @@ public Q_SLOTS:
     {
 #ifdef USE_SURFACE_MESH
       //destroys the patch_id_map for the Surface_mesh_item to avoid assertions.
-      poly_item->setItemIsMulticolor(false);
+      poly_item->resetColors();
 #endif
       poly_item->invalidateOpenGLBuffers();
       Q_EMIT poly_item->itemChanged();

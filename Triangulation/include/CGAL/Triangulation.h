@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)    : Samuel Hornus
 
@@ -182,6 +183,12 @@ public:
         Finite_full_cell_const_iterator;
     typedef boost::filter_iterator<Finiteness_predicate, Facet_iterator>
         Finite_facet_iterator;
+
+    //Tag to distinguish Delaunay from regular triangulations
+    typedef Tag_false                               Weighted_tag;
+
+    // Tag to distinguish periodic triangulations from others
+    typedef Tag_false                               Periodic_tag;
 
 protected: // DATA MEMBERS
 

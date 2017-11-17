@@ -123,6 +123,7 @@ struct Scene_points_with_normal_item_priv
       NbOfVbos
   };
   Point_set* m_points;
+  std::string m_comments;
   QAction* actionDeleteSelection;
   QAction* actionResetSelection;
   QAction* actionSelectDuplicatedPoints;
@@ -572,7 +573,9 @@ bool Scene_points_with_normal_item::read_las_point_set(std::istream& stream)
 bool Scene_points_with_normal_item::write_las_point_set(std::ostream& stream) const
 {
   Q_ASSERT(d->m_points != NULL);
-
+  
+  d->m_points->reset_indices();
+  
   return stream &&
     CGAL::write_las_point_set (stream, *(d->m_points));
 }
@@ -587,7 +590,7 @@ bool Scene_points_with_normal_item::read_ply_point_set(std::istream& stream)
   d->m_points->clear();
 
   bool ok = stream &&
-    CGAL::read_ply_point_set (stream, *(d->m_points)) &&
+    CGAL::read_ply_point_set (stream, *(d->m_points), &(d->m_comments)) &&
             !isEmpty();
 
   std::cerr << d->m_points->info();
@@ -596,7 +599,9 @@ bool Scene_points_with_normal_item::read_ply_point_set(std::istream& stream)
     setRenderingMode(PointsPlusNormals);
   if (d->m_points->check_colors())
     std::cerr << "-> Point set has colors" << std::endl;
-  
+
+  std::cerr << "[Comments from PLY input]" << std::endl << d->m_comments;
+
   invalidateOpenGLBuffers();
   return ok;
 }
@@ -606,12 +611,15 @@ bool Scene_points_with_normal_item::write_ply_point_set(std::ostream& stream, bo
 {
   Q_ASSERT(d->m_points != NULL);
 
+  d->m_points->reset_indices();
+  
   if (!stream)
     return false;
 
   if (binary)
     CGAL::set_binary_mode (stream);
-  stream << *(d->m_points);
+
+  CGAL::write_ply_point_set (stream, *(d->m_points), &(d->m_comments));
 
   return true;
 }
@@ -636,6 +644,8 @@ bool Scene_points_with_normal_item::write_off_point_set(std::ostream& stream) co
 {
   Q_ASSERT(d->m_points != NULL);
 
+  d->m_points->reset_indices();
+
   return stream &&
     CGAL::write_off_point_set (stream, *(d->m_points));
 }
@@ -659,6 +669,8 @@ bool Scene_points_with_normal_item::read_xyz_point_set(std::istream& stream)
 bool Scene_points_with_normal_item::write_xyz_point_set(std::ostream& stream) const
 {
   Q_ASSERT(d->m_points != NULL);
+
+  d->m_points->reset_indices();
 
   return stream &&
     CGAL::write_xyz_point_set (stream, *(d->m_points));
@@ -822,6 +834,16 @@ const Point_set* Scene_points_with_normal_item::point_set() const
   return d->m_points;
 }
 
+// Gets wrapped point set
+std::string& Scene_points_with_normal_item::comments()
+{
+  return d->m_comments;
+}
+const std::string& Scene_points_with_normal_item::comments() const
+{
+  return d->m_comments;
+}
+
 bool
 Scene_points_with_normal_item::isEmpty() const
 {
@@ -927,10 +949,13 @@ QMenu* Scene_points_with_normal_item::contextMenu()
         d->actionSelectDuplicatedPoints = menu->addAction(tr("Select duplicated points"));
         d->actionSelectDuplicatedPoints->setObjectName("actionSelectDuplicatedPoints");
         connect(d->actionSelectDuplicatedPoints, SIGNAL(triggered()),this, SLOT(selectDuplicates()));
-
+        QAction* resetColorsAction = menu->addAction(tr("Make Unicolor"));
+        resetColorsAction->setObjectName("resetColorsAction");
+        connect(resetColorsAction, &QAction::triggered, this, &Scene_points_with_normal_item::resetColors);
         menu->setProperty(prop_name, true);
     }
-
+    QAction* actionColor = menu->findChild<QAction*>(tr("resetColorsAction"));
+    actionColor->setVisible(d->m_points->has_colors());
     if (isSelectionEmpty())
     {
         d->actionDeleteSelection->setDisabled(true);
@@ -1062,4 +1087,11 @@ void Scene_points_with_normal_item::setPointSize(int size)
 void Scene_points_with_normal_item::setNormalSize(int size)
 {
   d->normal_Slider->setValue(size);
+}
+
+void Scene_points_with_normal_item::resetColors()
+{
+  d->m_points->remove_colors();
+  invalidateOpenGLBuffers();
+  redraw();
 }

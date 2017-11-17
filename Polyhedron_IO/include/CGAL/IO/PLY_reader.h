@@ -13,13 +13,12 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Simon Giraudot
 
 #ifndef CGAL_IO_PLY_READER_H
 #define CGAL_IO_PLY_READER_H
-
-#include <CGAL/license/Polyhedron.h>
 
 #include <CGAL/IO/read_ply_points.h>
 
@@ -32,7 +31,8 @@ namespace CGAL{
     read_PLY_faces (std::istream& in,
                     PLY::PLY_reader& reader,
                     std::vector< Polygon_3 >& polygons,
-                    std::vector< Color_rgb >& fcolors)
+                    std::vector< Color_rgb >& fcolors,
+                    const char* vertex_indices_tag)
     {
       std::size_t faces_read = 0;
 
@@ -60,7 +60,7 @@ namespace CGAL{
         {
           PLY::process_properties (reader, new_face,
                                    std::make_pair (CGAL::make_nth_of_tuple_property_map<0>(new_face),
-                                                   PLY_property<std::vector<Integer> >("vertex_indices")),
+                                                   PLY_property<std::vector<Integer> >(vertex_indices_tag)),
                                    std::make_pair (CGAL::make_nth_of_tuple_property_map<1>(new_face),
                                                    PLY_property<boost::uint8_t>(rtag.c_str())),
                                    std::make_pair (CGAL::make_nth_of_tuple_property_map<2>(new_face),
@@ -73,7 +73,7 @@ namespace CGAL{
         else
           PLY::process_properties (reader, new_face,
                                    std::make_pair (CGAL::make_nth_of_tuple_property_map<0>(new_face),
-                                                   PLY_property<std::vector<Integer> >("vertex_indices")));
+                                                   PLY_property<std::vector<Integer> >(vertex_indices_tag)));
 
         polygons.push_back (Polygon_3(get<0>(new_face).size()));
         for (std::size_t i = 0; i < get<0>(new_face).size(); ++ i)
@@ -82,7 +82,7 @@ namespace CGAL{
         ++ faces_read;
       }
 
-      return in.good();
+      return !in.bad();
     }
 
   }
@@ -132,9 +132,16 @@ namespace CGAL{
     reader.read_faces();
 
     if (reader.does_tag_exist<std::vector<boost::int32_t> > ("vertex_indices"))
-      return internal::read_PLY_faces<boost::int32_t> (in, reader, polygons, dummy);
-    else if (reader.does_tag_exist<std::vector<boost::uint32_t> > ("vertex_indices"))
-      return internal::read_PLY_faces<boost::uint32_t> (in, reader, polygons, dummy);
+      return internal::read_PLY_faces<boost::int32_t> (in, reader, polygons, dummy, "vertex_indices");
+
+    if (reader.does_tag_exist<std::vector<boost::uint32_t> > ("vertex_indices"))
+      return internal::read_PLY_faces<boost::uint32_t> (in, reader, polygons, dummy, "vertex_indices");
+
+    if (reader.does_tag_exist<std::vector<boost::int32_t> > ("vertex_index"))
+      return internal::read_PLY_faces<boost::int32_t> (in, reader, polygons, dummy, "vertex_index");
+
+    if (reader.does_tag_exist<std::vector<boost::uint32_t> > ("vertex_index"))
+      return internal::read_PLY_faces<boost::uint32_t> (in, reader, polygons, dummy, "vertex_index");
 
     std::cerr << "Error: can't find vertex indices in PLY input" << std::endl;
     return false;
@@ -210,9 +217,16 @@ namespace CGAL{
     reader.read_faces();
     
     if (reader.does_tag_exist<std::vector<boost::int32_t> > ("vertex_indices"))
-      return internal::read_PLY_faces<boost::int32_t> (in, reader, polygons, fcolors);
-    else if (reader.does_tag_exist<std::vector<boost::uint32_t> > ("vertex_indices"))
-      return internal::read_PLY_faces<boost::uint32_t> (in, reader, polygons, fcolors);
+      return internal::read_PLY_faces<boost::int32_t> (in, reader, polygons, fcolors, "vertex_indices");
+
+    if (reader.does_tag_exist<std::vector<boost::uint32_t> > ("vertex_indices"))
+      return internal::read_PLY_faces<boost::uint32_t> (in, reader, polygons, fcolors, "vertex_indices");
+
+    if (reader.does_tag_exist<std::vector<boost::int32_t> > ("vertex_index"))
+      return internal::read_PLY_faces<boost::int32_t> (in, reader, polygons, fcolors, "vertex_index");
+
+    if (reader.does_tag_exist<std::vector<boost::uint32_t> > ("vertex_index"))
+      return internal::read_PLY_faces<boost::uint32_t> (in, reader, polygons, fcolors, "vertex_index");
 
     std::cerr << "Error: can't find vertex indices in PLY input" << std::endl;
     return false;

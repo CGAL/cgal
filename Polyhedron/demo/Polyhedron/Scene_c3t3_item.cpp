@@ -75,7 +75,7 @@ public :
   {
    //vao containing the data for the facets
     {
-      program = getShaderProgram(PROGRAM_C3T3_TETS, viewer);
+      program = getShaderProgram(PROGRAM_C3T3, viewer);
       program->bind();
 
       vaos[Facets]->bind();
@@ -133,11 +133,14 @@ public :
   {
     if(is_fast)
       return;
+    const Kernel::Plane_3& plane = qobject_cast<Scene_c3t3_item*>(this->parent())->plane();
     vaos[Facets]->bind();
-    program = getShaderProgram(PROGRAM_C3T3_TETS);
-    attribBuffers(viewer, PROGRAM_C3T3_TETS);
+    program = getShaderProgram(PROGRAM_C3T3);
+    attribBuffers(viewer, PROGRAM_C3T3);
     program->bind();
     float shrink_factor = qobject_cast<Scene_c3t3_item*>(this->parent())->getShrinkFactor();
+    QVector4D cp(-plane.a(), -plane.b(), -plane.c(), -plane.d());
+    program->setUniformValue("cutplane", cp);
     program->setUniformValue("shrink_factor", shrink_factor);
     // positions_poly is also used for the faces in the cut plane
     // and changes when the cut plane is moved
@@ -269,9 +272,9 @@ struct Scene_c3t3_item_priv {
   {
     init_default_values();
     tet_Slider = new QSlider(Qt::Horizontal);
-    tet_Slider->setValue(100);
     tet_Slider->setMinimum(0);
     tet_Slider->setMaximum(100);
+    tet_Slider->setValue(100);
     invalidate_stats();
   }
   Scene_c3t3_item_priv(const C3t3& c3t3_, Scene_c3t3_item* item)
@@ -285,9 +288,9 @@ struct Scene_c3t3_item_priv {
   {
     init_default_values();
     tet_Slider = new QSlider(Qt::Horizontal);
-    tet_Slider->setValue(100);
     tet_Slider->setMinimum(0);
     tet_Slider->setMaximum(100);
+    tet_Slider->setValue(100);
     invalidate_stats();
   }
   ~Scene_c3t3_item_priv()
@@ -1421,7 +1424,7 @@ void Scene_c3t3_item_priv::computeIntersection(const Primitive& facet)
   Tr::Cell_handle ch = facet.id().first;
   if(intersected_cells.find(ch) == intersected_cells.end())
   {
-    QColor c = this->colors_subdomains[ch->subdomain_index()].darker(150);
+    QColor c = this->colors_subdomains[ch->subdomain_index()].light(50);
 
     const Tr::Bare_point& pa = wp2p(ch->vertex(0)->point());
     const Tr::Bare_point& pb = wp2p(ch->vertex(1)->point());
@@ -1446,9 +1449,10 @@ void Scene_c3t3_item_priv::computeIntersection(const Primitive& facet)
         const Tr::Bare_point& pc = wp2p(nh->vertex(2)->point());
         const Tr::Bare_point& pd = wp2p(nh->vertex(3)->point());
 
-        QColor c = this->colors_subdomains[nh->subdomain_index()].darker(150);
+        QColor c = this->colors_subdomains[nh->subdomain_index()].light(50);
 
         CGAL::Color color(c.red(), c.green(), c.blue());
+
         intersection->addTriangle(pb, pa, pc, color);
         intersection->addTriangle(pa, pb, pd, color);
         intersection->addTriangle(pa, pd, pc, color);
@@ -1511,6 +1515,7 @@ void Scene_c3t3_item_priv::computeSpheres()
         vvit = incident_vertices.begin(), end = incident_vertices.end();
         vvit != end; ++vvit)
     {
+      if(c3t3.triangulation().is_infinite(*vvit)) continue;
       if(Geom_traits::Sphere_3(wp2p(vit->point()),
                                vit->point().weight()).bounded_side(wp2p((*vvit)->point()))
          == CGAL::ON_BOUNDED_SIDE)

@@ -13,13 +13,12 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Simon Giraudot
 
 #ifndef CGAL_IO_PLY_WRITER_H
 #define CGAL_IO_PLY_WRITER_H
-
-#include <CGAL/license/Polyhedron.h>
 
 #include <CGAL/IO/write_ply_points.h>
 

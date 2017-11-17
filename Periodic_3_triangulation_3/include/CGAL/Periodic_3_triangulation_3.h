@@ -12,6 +12,10 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //                 Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
 //                 Nico Kruithof <Nico.Kruithof@sophia.inria.fr>
@@ -201,7 +205,11 @@ public:
   typedef Point                                value_type;
   typedef const value_type&                    const_reference;
 
-  typedef Tag_false Weighted_tag;
+  //Tag to distinguish regular triangulations from others
+  typedef Tag_false                            Weighted_tag;
+
+  // Tag to distinguish periodic triangulations from others
+  typedef Tag_true                             Periodic_tag;
 
 public:
   enum Iterator_type {

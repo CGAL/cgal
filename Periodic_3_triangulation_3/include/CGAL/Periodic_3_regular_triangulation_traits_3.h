@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Monique Teillaud <Monique.Teillaud@inria.fr>
@@ -25,7 +26,7 @@
 
 #include <CGAL/license/Periodic_3_triangulation_3.h>
 
-#include <CGAL/internal/Functor_with_offset_weighted_points_adaptor.h>
+#include <CGAL/internal/Functor_with_offset_weighted_points_adaptor_3.h>
 #include <CGAL/internal/Periodic_3_construct_weighted_point_3.h>
 #include <CGAL/Periodic_3_offset_3.h>
 #include <CGAL/Periodic_3_triangulation_traits_3.h>
@@ -68,23 +69,23 @@ public:
   typedef Periodic_3_construct_weighted_point_3<Self, typename K::Construct_weighted_point_3>
       Construct_weighted_point_3;
 
-  typedef Functor_with_offset_weighted_points_adaptor<Self, typename K::Power_side_of_oriented_power_sphere_3>
+  typedef Functor_with_offset_weighted_points_adaptor_3<Self, typename K::Power_side_of_oriented_power_sphere_3>
       Power_side_of_oriented_power_sphere_3;
-  typedef Functor_with_offset_weighted_points_adaptor<Self, typename K::Compare_weighted_squared_radius_3>
+  typedef Functor_with_offset_weighted_points_adaptor_3<Self, typename K::Compare_weighted_squared_radius_3>
       Compare_weighted_squared_radius_3;
-  typedef Functor_with_offset_weighted_points_adaptor<Self, typename K::Compare_power_distance_3>
+  typedef Functor_with_offset_weighted_points_adaptor_3<Self, typename K::Compare_power_distance_3>
       Compare_power_distance_3;
 
   // Undocumented, requried for Is_Gabriel (Alpha shapes)
-  typedef Functor_with_offset_weighted_points_adaptor<Self, typename K::Power_side_of_bounded_power_sphere_3>
+  typedef Functor_with_offset_weighted_points_adaptor_3<Self, typename K::Power_side_of_bounded_power_sphere_3>
       Power_side_of_bounded_power_sphere_3;
 
   // Required for Periodic_3_regular_remove_traits
-  typedef Functor_with_offset_weighted_points_adaptor<Self, typename K::Coplanar_orientation_3>
+  typedef Functor_with_offset_weighted_points_adaptor_3<Self, typename K::Coplanar_orientation_3>
        Coplanar_orientation_3;
 
   // When dual operations are used
-  typedef Functor_with_offset_weighted_points_adaptor<Self, typename K::Construct_weighted_circumcenter_3>
+  typedef Functor_with_offset_weighted_points_adaptor_3<Self, typename K::Construct_weighted_circumcenter_3>
       Construct_weighted_circumcenter_3;
 
   // Operations
@@ -132,7 +133,7 @@ public:
 
 template<typename K,
          typename Off = CGAL::Periodic_3_offset_3,
-         bool Has_filtered_predicates = K::Has_filtered_predicates>
+         bool Has_filtered_predicates = internal::Has_filtered_predicates<K>::value>
 class Periodic_3_regular_triangulation_traits_3;
 
 } // namespace CGAL

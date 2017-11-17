@@ -11,6 +11,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Sebastien Loriot
 // This predicates was generated using the fpg tool written by Andreas Meyer.

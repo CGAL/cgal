@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)    : Samuel Hornus
 
@@ -90,11 +91,10 @@ public: // PUBLIC NESTED TYPES
   //Tag to distinguish triangulations with weighted_points
   typedef Tag_false                                 Weighted_tag;
 
-protected: // DATA MEMBERS
-
+  // Tag to distinguish periodic triangulations from others
+  typedef Tag_false                                 Periodic_tag;
 
 public:
-
     typedef typename Base::Rotor Rotor;
     using Base::maximal_dimension;
     using Base::are_incident_full_cells_valid;

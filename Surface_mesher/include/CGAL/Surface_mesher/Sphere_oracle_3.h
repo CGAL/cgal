@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Laurent RINEAU
@@ -201,7 +202,7 @@ namespace CGAL {
         return Object();
       } // end private_intersection
 
-      struct Lambda_between_0_and_1 : public std::unary_function<FT, bool> 
+      struct Lambda_between_0_and_1 : public CGAL::unary_function<FT, bool> 
       {
         bool operator()(const FT x) const
         {
@@ -209,7 +210,7 @@ namespace CGAL {
         }
       };
         
-      struct Lambda_positive : public std::unary_function<FT, bool> 
+      struct Lambda_positive : public CGAL::unary_function<FT, bool> 
       {
         bool operator()(const FT x) const
         {
@@ -217,7 +218,7 @@ namespace CGAL {
         }
       };
         
-      struct Always_true : public std::unary_function<FT, bool> 
+      struct Always_true : public CGAL::unary_function<FT, bool> 
       {
         bool operator()(const FT) const
         {

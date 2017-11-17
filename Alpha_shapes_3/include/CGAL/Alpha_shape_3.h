@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Tran Kai Frank DA <Frank.Da@sophia.inria.fr>
 //                 Andreas Fabri <Andreas.Fabri@geometryfactory.com>
@@ -25,28 +25,28 @@
 
 #include <CGAL/license/Alpha_shapes_3.h>
 
+#include <CGAL/internal/Lazy_alpha_nt_3.h>
+#include <CGAL/Alpha_shape_cell_base_3.h> // for Alpha_status
 
 #include <CGAL/basic.h>
-
-#include <set>
-#include <map>
-#include <list>
-#include <vector>
-#include <algorithm>
-#include <utility>
-#include <iostream>
-
-#include <CGAL/Triangulation_utils_3.h>
+#include <CGAL/Compact_container.h>
+#include <CGAL/iterator.h>
 #include <CGAL/Object.h>
 #include <CGAL/Unique_hash_map.h>
-#include <CGAL/Compact_container.h>
-#include <CGAL/Alpha_shape_vertex_base_3.h>
-#include <CGAL/Alpha_shape_cell_base_3.h>
-#include <CGAL/internal/Lazy_alpha_nt_3.h>
-#include <CGAL/iterator.h>
 #ifdef CGAL_USE_GEOMVIEW
 #include <CGAL/IO/Geomview_stream.h>  // TBC
 #endif
+#include <CGAL/Triangulation_utils_3.h>
+
+#include <boost/type_traits/is_same.hpp>
+
+#include <algorithm>
+#include <iostream>
+#include <map>
+#include <list>
+#include <set>
+#include <utility>
+#include <vector>
 
 //-------------------------------------------------------------------
 namespace CGAL {
@@ -106,11 +106,20 @@ public:
   typedef typename Dt::Geom_traits                  Gt;
   typedef typename Dt::Triangulation_data_structure Tds;
 
+  // The Exact Comparison Tag cannot be used in conjonction with periodic triangulations
+  // because the periodic triangulations' point() function return a temporary
+  // value while the lazy predicate evaluations that are used when the Exact tag
+  // is set to true rely on a permanent and safe access to the points.
+  CGAL_static_assertion(
+   (boost::is_same<ExactAlphaComparisonTag, Tag_false>::value) ||
+   (boost::is_same<typename Dt::Periodic_tag, Tag_false>::value));
+
   //extra the type used for representing alpha according to ExactAlphaComparisonTag
   typedef typename internal::Alpha_nt_selector_3<Gt,ExactAlphaComparisonTag,typename Dt::Weighted_tag>::Type_of_alpha  NT;
   typedef typename internal::Alpha_nt_selector_3<Gt,ExactAlphaComparisonTag,typename Dt::Weighted_tag>::Compute_squared_radius_3 Compute_squared_radius_3;
   typedef NT      FT;
   typedef typename Gt::FT Coord_type;
+
   //checks whether tags are correctly set in Vertex and Cell classes
   CGAL_static_assertion( (boost::is_same<NT,typename Dt::Cell::NT>::value) );
   CGAL_static_assertion( (boost::is_same<NT,typename Dt::Vertex::Alpha_status::NT>::value) );
@@ -1798,43 +1807,46 @@ Alpha_shape_3<Dt,EACT>::find_optimal_alpha(size_type nb_components) const
   std::ptrdiff_t half;
 
   while (len > 0)
+  {
+    half = len / 2;
+    middle = first + half;
+
+#ifdef CGAL_DEBUG_ALPHA_SHAPE_3
+    std::cerr << "first : " << *first
+              << " last : "
+              << ((first+len != last) ? *(first+len) : *(last-1))
+              << " mid : " << *middle
+              << " nb comps : " << number_of_solid_components(*middle)
+              << std::endl;
+#endif
+    if (number_of_solid_components(*middle) > nb_components)
     {
-      half = len / 2;
-      middle = first + half;
-
- /*      //#ifdef DEBUG */
-/*       std::cerr << "first : " << *first  */
-/* 		<< " last : "  */
-/* 		<< ((first+len != last) ? *(first+len) : *(last-1)) */
-/* 		<< " mid : " << *middle  */
-/* 		<< " nb comps : " << number_of_solid_components(*middle)  */
-/* 		<< std::endl; */
-/*       //#endif // DEBUG */
-
-      if (number_of_solid_components(*middle) > nb_components)
-	{
-	  first = middle + 1;
-	  len = len - half -1; 
-	} 
-      else // number_of_solid_components(*middle) <= nb_components
-	{
-	  len = half;
-	}
+      first = middle + 1;
+      len = len - half -1;
     }
+    else // number_of_solid_components(*middle) <= nb_components
+    {
+      len = half;
+    }
+  }
 
- /*  std::cerr << "a la fin " << std::endl */
-/* 	    << "first : " << *first  */
-/* 	    << " nb comps : " << number_of_solid_components(*first) */
-/* 	    << std::endl; */
-/*   if ((first+1) < alpha_end())  */
-/*     std::cerr << "first+1 " << *(first+1)  */
-/* 	      << " nb comps : " << number_of_solid_components(*(first+1)) */
-/* 	      << std::endl; */
-/*   std::cerr << std::endl; */
+#ifdef CGAL_DEBUG_ALPHA_SHAPE_3
+  std::cerr << "In the end: " << std::endl
+            << "first : " << *first
+            << " nb comps : " << number_of_solid_components(*first)
+            << std::endl;
+  if ((first+1) < alpha_end())
+    std::cerr << "first+1 " << *(first+1)
+              << " nb comps : " << number_of_solid_components(*(first+1))
+              << std::endl;
+  std::cerr << std::endl;
+#endif
 
-  if (number_of_solid_components(*first) <= nb_components ) return first;
-  else return first+1;
-}  	
+  if (number_of_solid_components(*first) <= nb_components )
+    return first;
+  else
+    return first+1;
+}
 
 //----------------------------------------------------------------------
 

@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Sebastien Loriot and Ilker O. Yaz
@@ -73,13 +74,28 @@ namespace CGAL {
  */
 template <class TriangleMesh,
           class GeomTraits,
-          class VertexPointMap = Default >
+          class VertexPointMap = Default
+#ifndef DOXYGEN_RUNNING
+          , class AABBTree = Default
+#endif
+          >
 class Side_of_triangle_mesh
 {
   // typedefs
-  typedef CGAL::AABB_face_graph_triangle_primitive<TriangleMesh, VertexPointMap> Primitive;
-  typedef CGAL::AABB_traits<GeomTraits, Primitive> Traits;
-  typedef CGAL::AABB_tree<Traits> AABB_tree_;
+  template <typename TriangleMesh_,
+            typename GeomTraits_,
+            typename VertexPointMap_>
+  struct AABB_tree_default {
+    typedef CGAL::AABB_face_graph_triangle_primitive<TriangleMesh_,
+                                                     VertexPointMap_> Primitive;
+    typedef CGAL::AABB_traits<GeomTraits_, Primitive> Traits;
+    typedef CGAL::AABB_tree<Traits> type;
+  };
+  typedef typename Default::Lazy_get<AABBTree,
+                                     AABB_tree_default<TriangleMesh,
+                                                       GeomTraits,
+                                                       VertexPointMap>
+                                     >::type AABB_tree_;
   typedef typename GeomTraits::Point_3 Point;
 
   //members

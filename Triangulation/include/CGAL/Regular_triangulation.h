@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Clement Jamin
 
@@ -95,11 +96,10 @@ public: // PUBLIC NESTED TYPES
   //Tag to distinguish Delaunay from Regular triangulations
   typedef Tag_true                                Weighted_tag;
 
-protected: // DATA MEMBERS
-
+  // Tag to distinguish periodic triangulations from others
+  typedef Tag_false                               Periodic_tag;
 
 public:
-
   typedef typename Base::Point Weighted_point;
   typedef typename Base::Rotor Rotor;
   using Base::maximal_dimension;
@@ -834,7 +834,7 @@ Regular_triangulation<Traits, TDS>
         }
       }
       // Otherwise, we apply the "normal" algorithm
-
+      CGAL_FALLTHROUGH;
       // !NO break here!
     }
     default:
@@ -930,7 +930,7 @@ Regular_triangulation<Traits, TDS>
           return v;
       }
       // Otherwise, we apply the "normal" algorithm
-
+      CGAL_FALLTHROUGH;
       // !NO break here!
       }
     default:

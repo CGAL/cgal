@@ -13,6 +13,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Fernando Cacciola <fernando.cacciola@geometryfactory.com>
 //
@@ -34,7 +35,9 @@ namespace Surface_mesh_simplification
 class Midpoint_placement
 {
 public:
-    
+
+  typedef ECM_ ECM;
+  
   Midpoint_placement()
   {}
   

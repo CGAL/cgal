@@ -12,9 +12,14 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
+// $URL$
+// $Id$
+// SPDX-License-Identifier: LGPL-3.0+
+//
 // Author(s) : Andreas Fabri
 //
 // Warning: this file is generated, see include/CGAL/licence/README.md
+
 
 #ifndef CGAL_LICENSE_SET_MOVABLE_SEPARABILITY_2_H
 #define CGAL_LICENSE_SET_MOVABLE_SEPARABILITY_2_H
@@ -46,12 +51,14 @@ You get this error, as you defined CGAL_LICENSE_ERROR."
 #else // no CGAL_SET_MOVABLE_SEPARABILITY_2_COMMERCIAL_LICENSE
 
 #  if defined(CGAL_LICENSE_WARNING)
-     CGAL_pragma_warning("You use the CGAL 2D Movable Separability of Sets package under "
-                         "the terms of the GPLv3+.")
+     CGAL_pragma_warning("\nThe macro CGAL_SET_MOVABLE_SEPARABILITY_2_COMMERCIAL_LICENSE is not defined."
+                          "\nYou use the CGAL 2D Movable Separability of Sets package under "
+                          "the terms of the GPLv3+.")
 #  endif // CGAL_LICENSE_WARNING
 
 #  ifdef CGAL_LICENSE_ERROR
-#    error "You use the CGAL 2D Movable Separability of Sets package under the terms of \
+#    error "The macro CGAL_SET_MOVABLE_SEPARABILITY_2_COMMERCIAL_LICENSE is not defined.\
+ You use the CGAL 2D Movable Separability of Sets package under the terms of \
 the GPLv3+. You get this error, as you defined CGAL_LICENSE_ERROR."
 #  endif // CGAL_LICENSE_ERROR
 

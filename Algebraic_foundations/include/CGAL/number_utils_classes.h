@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
@@ -101,7 +102,7 @@ struct Is_zero :
 namespace internal {
 template <class NT, class Compare> struct Compare_base: public Compare {};
 template <class NT> struct Compare_base<NT,Null_functor>
-  :public std::binary_function< NT, NT, Comparison_result > {
+  :public CGAL::binary_function< NT, NT, Comparison_result > {
   Comparison_result operator()( const NT& x, const NT& y) const
   {
     if (x < y) return SMALLER;

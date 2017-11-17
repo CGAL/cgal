@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Nico Kruithof <Nico.Kruithof@sophia.inria.fr>
@@ -26,7 +27,7 @@
 #include <CGAL/license/Periodic_3_triangulation_3.h>
 
 #include <CGAL/internal/Periodic_3_construct_point_3.h>
-#include <CGAL/internal/Functor_with_offset_points_adaptor.h>
+#include <CGAL/internal/Functor_with_offset_points_adaptor_3.h>
 #include <CGAL/Periodic_3_offset_3.h>
 #include <CGAL/Periodic_3_triangulation_traits_3.h>
 
@@ -68,23 +69,23 @@ public:
   { }
 
   // Delaunay specific predicates
-  typedef Functor_with_offset_points_adaptor<Self, typename K::Side_of_oriented_sphere_3>
+  typedef Functor_with_offset_points_adaptor_3<Self, typename K::Side_of_oriented_sphere_3>
       Side_of_oriented_sphere_3;
-  typedef Functor_with_offset_points_adaptor<Self, typename K::Compare_distance_3>
+  typedef Functor_with_offset_points_adaptor_3<Self, typename K::Compare_distance_3>
       Compare_distance_3;
 
   // Required for Periodic_3_Delaunay_triangulation_remove_traits
-  typedef Functor_with_offset_points_adaptor<Self, typename K::Coplanar_orientation_3>
+  typedef Functor_with_offset_points_adaptor_3<Self, typename K::Coplanar_orientation_3>
       Coplanar_orientation_3;
-  typedef Functor_with_offset_points_adaptor<Self, typename K::Coplanar_side_of_bounded_circle_3>
+  typedef Functor_with_offset_points_adaptor_3<Self, typename K::Coplanar_side_of_bounded_circle_3>
       Coplanar_side_of_bounded_circle_3;
 
   // When is_Gabriel is used
-   typedef Functor_with_offset_points_adaptor<Self, typename K::Side_of_bounded_sphere_3>
+   typedef Functor_with_offset_points_adaptor_3<Self, typename K::Side_of_bounded_sphere_3>
        Side_of_bounded_sphere_3;
 
   // Delaunay specific constructions
-  typedef Functor_with_offset_points_adaptor<Self, typename K::Construct_circumcenter_3>
+  typedef Functor_with_offset_points_adaptor_3<Self, typename K::Construct_circumcenter_3>
       Construct_circumcenter_3;
 
   using Base::construct_point_3_object;

@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Michael Hemmer   <hemmer@mpi-inf.mpg.de>
@@ -48,7 +49,7 @@ class Sqrt_extension_bfi_cache {
   typedef typename Coercion_traits<ROOT,BFI>::Cast Cast;
   typedef typename Algebraic_structure_traits<BFI>::Sqrt Sqrt; 
 
-  struct Creator : public std::unary_function<BFI,Input> {
+  struct Creator : public CGAL::unary_function<BFI,Input> {
     BFI operator()(const Input& pair){
       return Sqrt()(Cast()(pair.second)); 
     }

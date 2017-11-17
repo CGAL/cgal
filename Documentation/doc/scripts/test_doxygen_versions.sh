@@ -42,7 +42,7 @@ cd $TEMP #scripts
 echo "Building reference documentation..."
 mkdir -p ./build_doc
 cd ./build_doc
-cmake -DCGAL_GENERATE_XML=ON -DDOXYGEN_EXECUTABLE="$PATH_TO_1" ../..  1> /dev/null
+cmake -DCGAL_DOC_RELEASE=ON -DCGAL_GENERATE_XML=ON -DDOXYGEN_EXECUTABLE="$PATH_TO_1" ../..  1> /dev/null
 make -j$NB_CORES doc  &> /dev/null
 echo "done."
 cd ../ #scripts
@@ -59,6 +59,7 @@ if [ -z $PATH_TO_2 ] || [ $(basename $PATH_TO_2) != "doxygen" ] || [ ! -e $PATH_
   echo "No second path detected. Cloning Doxygen master branch..."
   git clone https://github.com/doxygen/doxygen.git doxygen_master  1> /dev/null
   cd doxygen_master
+  git pull  https://github.com/lrineau/doxygen.git 1> /dev/null
   MASTER_DESCRIBE=$(git describe --tags)
   mkdir -p build
   cd build
@@ -75,7 +76,7 @@ mv ./build_doc ./doc_dir
 echo "Building second documentation..."
 mkdir -p build_doc
 cd ./build_doc
-cmake -DCGAL_GENERATE_XML=ON -DDOXYGEN_EXECUTABLE="$PATH_TO_2" ../..  1> /dev/null
+cmake -DCGAL_DOC_RELEASE=ON -DCGAL_GENERATE_XML=ON -DDOXYGEN_EXECUTABLE="$PATH_TO_2" ../..  1> /dev/null
 make -j$NB_CORES doc  &> /dev/null
 echo "done."
 cd ../ #scripts
@@ -100,7 +101,7 @@ mv ./build_doc ./doc_master
 rm -rf ./doc_dir
 mkdir ./doc_dir
 cd ./doc_dir
-cmake -DCGAL_DOC_CREATE_LOGS="true" -DDOXYGEN_EXECUTABLE="$PATH_TO_1" ../..  1> /dev/null
+cmake -DCGAL_DOC_RELEASE=ON -DCGAL_DOC_CREATE_LOGS="true" -DDOXYGEN_EXECUTABLE="$PATH_TO_1" ../..  1> /dev/null
 echo "Building reference documentation with postprocessing..."
 make -j$NB_CORES doc  &> /dev/null
 make -j$NB_CORES doc  &> /dev/null
@@ -122,7 +123,7 @@ fi
 
 #update overview
 
-python ./testsuite.py --output-dir $PWD/doc_dir/doc_output/ --doc-log-dir $PWD/doc_dir/doc_log/ \
+python ${PWD}/testsuite.py --output-dir $PWD/doc_dir/doc_output/ --doc-log-dir $PWD/doc_dir/doc_log/ \
   --publish $PUBLISH_DIR --diff $PWD/diff.txt --master-dir $PWD/doc_master/doc_output/ \
   --cgal-version "$CGAL_NAME" --do-copy-results --version-to-keep 10 --doxygen-version "$DOXYGEN_1" --master-describe "$MASTER_DESCRIBE"
 

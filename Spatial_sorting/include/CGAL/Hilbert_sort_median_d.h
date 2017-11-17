@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     :  Olivier Devillers
 
@@ -33,7 +34,7 @@ namespace internal {
 
     template <class K>
     struct Hilbert_cmp_d
-        : public std::binary_function<typename K::Point_d,
+        : public CGAL::binary_function<typename K::Point_d,
                                       typename K::Point_d, bool>
     {
         typedef typename K::Point_d Point;

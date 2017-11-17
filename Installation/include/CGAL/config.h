@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Wieger Wesselink 
@@ -258,6 +259,15 @@
 #if defined(BOOST_NO_CXX11_HDR_FUNCTIONAL) || BOOST_VERSION < 105000
 #define CGAL_CFG_NO_STD_HASH 1
 #endif
+
+
+//----------------------------------------------------------------------//
+//  As std::unary_function and std::binary_function are deprecated
+//  we use internally equivalent class templates from
+// <CGAL/functional.h>.
+//----------------------------------------------------------------------//
+
+#include <CGAL/functional.h>
 
 //----------------------------------------------------------------------//
 //  auto-link the CGAL library on platforms that support it

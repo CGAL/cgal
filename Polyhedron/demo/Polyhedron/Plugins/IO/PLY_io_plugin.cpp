@@ -87,8 +87,9 @@ Polyhedron_demo_ply_plugin::load(QFileInfo fileinfo) {
       if (keyword == "element")
       {
         std::string type;
-        if (iss >> type)
-          if (type == "face")
+        int nb;
+        if (iss >> type >> nb)
+          if (type == "face" && nb > 0)
           {
             input_is_mesh = true;
             break;
@@ -183,7 +184,7 @@ bool Polyhedron_demo_ply_plugin::save(const CGAL::Three::Scene_item* item, QFile
   if (!ok)
     return false;
   
-  std::ofstream out(fileinfo.filePath().toUtf8().data());
+  std::ofstream out(fileinfo.filePath().toUtf8().data(), std::ios::binary);
   out.precision (std::numeric_limits<double>::digits10 + 2);
   
   // This plugin supports point sets

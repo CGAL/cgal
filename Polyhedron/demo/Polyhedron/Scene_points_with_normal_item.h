@@ -76,6 +76,10 @@ public:
   Point_set*       point_set();
   const Point_set* point_set() const;
 
+  // Gets PLY comments (empty if point set not originated from PLY input)
+  std::string& comments();
+  const std::string& comments() const;
+
   // Gets dimensions
   virtual bool isFinite() const Q_DECL_OVERRIDE { return true; }
   virtual bool isEmpty() const Q_DECL_OVERRIDE;
@@ -109,7 +113,7 @@ public Q_SLOTS:
   void itemAboutToBeDestroyed(Scene_item *) Q_DECL_OVERRIDE;
   void setPointSize(int size);
   void setNormalSize(int size);
-
+  void resetColors();
 // Data
 protected:
   friend struct Scene_points_with_normal_item_priv;

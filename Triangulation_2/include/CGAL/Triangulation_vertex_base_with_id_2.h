@@ -13,15 +13,13 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Andreas Fabri, Fernando Cacciola
 
 #ifndef CGAL_TRIANGULATION_VERTEX_BASE_WITH_ID_2_H
 #define CGAL_TRIANGULATION_VERTEX_BASE_WITH_ID_2_H
-
-#include <CGAL/license/Triangulation_2.h>
-
 
 #include <CGAL/Triangulation_vertex_base_2.h>
 

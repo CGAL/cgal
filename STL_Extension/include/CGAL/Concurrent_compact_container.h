@@ -12,8 +12,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL:  $
-// $Id:  $
+// $URL$
+// $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Clement Jamin
 
@@ -1024,7 +1025,7 @@ namespace std {
   
   template < class CCC, bool Const >
   struct hash<CGAL::CCC_internal::CCC_iterator<CCC, Const> >
-    : public std::unary_function<CGAL::CCC_internal::CCC_iterator<CCC, Const>, std::size_t> {
+    : public CGAL::unary_function<CGAL::CCC_internal::CCC_iterator<CCC, Const>, std::size_t> {
 
     std::size_t operator()(const CGAL::CCC_internal::CCC_iterator<CCC, Const>& i) const
     {

@@ -13,8 +13,8 @@
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
-// $Id$ $Date$
-// 
+// $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Daniel Russel <drussel@alumni.princeton.edu>
 

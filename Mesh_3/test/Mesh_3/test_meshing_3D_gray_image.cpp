@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Laurent Rineau, Jane Tournois
@@ -97,7 +98,9 @@ public:
     C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
                                         no_perturb(),
                                         no_exude(),
-      mesh_3_options(number_of_initial_points = 30));
+      mesh_3_options(number_of_initial_points = 30),
+      non_manifold()
+      );
 
     // Verify
     this->verify_c3t3_volume(c3t3, 1236086 * 0.95, 1236086 * 1.05);

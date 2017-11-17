@@ -495,6 +495,11 @@ void Volume_plane<T>::draw(Viewer_interface *viewer) const {
   if(!are_buffers_filled)
       initializeBuffers(viewer);
   mvp = mvp*f;
+  //hide spheres if only 1 plane.
+  if(aDim() <= 1 ||
+     bDim() <= 1 ||
+     cDim() <=1)
+    return;
   vaos[0]->bind();
   spheres_program = getShaderProgram(PROGRAM_SPHERES, viewer);
   attribBuffers(viewer, PROGRAM_SPHERES);

@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
@@ -48,17 +49,19 @@ public:
   typedef typename K::FT                                FT;
   typedef typename K::Point_3                           Point_3;
   typedef typename K::Iso_cuboid_3                      Iso_cuboid_3;
-  typedef CGAL::Periodic_3_offset_3                     Offset;
-
-public:
-  const Iso_cuboid_3 * _dom;
+  typedef typename K::Periodic_3_offset_3               Offset;
 
 public:
   typedef typename Base::result_type  result_type;
 
+private:
+  const Iso_cuboid_3 * _dom;
+
+public:
   Periodic_3_side_of_oriented_sphere_3(const Iso_cuboid_3 * dom,
                                        const Side_of_oriented_sphere_3_base& sop3)
-      : Base(sop3), _dom(dom) { }
+      : Base(sop3), _dom(dom)
+  { }
 
   Oriented_side
   operator()(const Point_3 &p, const Point_3 &q, const Point_3 &r,

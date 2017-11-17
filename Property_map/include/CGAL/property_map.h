@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Andreas Fabri and Laurent Saboret
 
@@ -44,10 +45,13 @@ namespace CGAL {
 template <typename K, typename V>
 class Static_property_map
 {
+public:
   typedef K key_type;
   typedef V value_type;
   typedef const V& reference;
   typedef boost::read_write_property_map_tag category;
+
+private:
   V v;
 
 public:
@@ -435,6 +439,28 @@ make_property_map(const std::vector<T>& v)
   return make_property_map(&v[0]);
 }
 
+/// \ingroup PkgProperty_map
+/// Property map that only returns the default value type
+/// \cgalModels `ReadablePropertyMap`
+template<class InputIterator, class ValueType>
+struct Default_property_map{
+  const ValueType default_value;
+  
+  typedef typename InputIterator::value_type key_type;
+  typedef boost::readable_property_map_tag category;
+
+  Default_property_map(const ValueType& default_value = ValueType()) : default_value (default_value) { }
+  
+  /// Free function to use a get the value from an iterator using Input_iterator_property_map.
+  inline friend ValueType
+  get (const Default_property_map&, const key_type&){ return ValueType(); }
+};
+
+
+/// \endcond
+
 } // namespace CGAL
+
+
 
 #endif // CGAL_POINT_SET_PROPERTY_MAP_H

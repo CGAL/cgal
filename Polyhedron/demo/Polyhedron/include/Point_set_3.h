@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Laurent Saboret, Nader Salman, Gael Guennebaud, Simon Giraudot
@@ -127,6 +128,14 @@ public:
   const_iterator end() const { return this->m_indices.end(); }
   std::size_t size() const { return this->m_base.size(); }
 
+  void reset_indices()
+  {
+    unselect_all();
+    
+    for (std::size_t i = 0; i < this->m_base.size(); ++ i)
+      this->m_indices[i] = i;
+  }
+  
   bool add_radius()
   {
     bool out = false;

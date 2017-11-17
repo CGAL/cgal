@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Michael Kerber <mkerber@mpi-inf.mpg.de>
@@ -49,7 +50,7 @@ template <typename Coefficient_> struct Bitstream_coefficient_kernel {
         return Is_zero();
     }
 
-    struct Convert_to_bfi : public std::unary_function
+    struct Convert_to_bfi : public CGAL::unary_function
         <Coefficient,Bigfloat_interval> {
         
         Bigfloat_interval operator() (Coefficient c) const {

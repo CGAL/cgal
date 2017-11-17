@@ -218,7 +218,7 @@ struct Fake_mesh_domain {
   typedef CGAL::Tag_true Has_features;
   typedef int Subdomain_index;
   typedef std::pair<int,int> Surface_patch_index;
-  typedef int Curve_segment_index;
+  typedef int Curve_index;
   typedef int Corner_index;
   typedef boost::variant<Subdomain_index,Surface_patch_index> Index;
 };
@@ -231,7 +231,7 @@ typedef CGAL::Regular_triangulation_3<Fake_gt, Fake_tds> Fake_tr;
 typedef CGAL::Mesh_complex_3_in_triangulation_3<
   Fake_tr,
   Fake_mesh_domain::Corner_index,
-  Fake_mesh_domain::Curve_segment_index> Fake_c3t3;
+  Fake_mesh_domain::Curve_index> Fake_c3t3;
 
 template <class Vb = CGAL::Triangulation_vertex_base_3<Kernel> >
 struct Fake_CDT_3_vertex_base : public Vb

@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Sven Oesau, Yannick Verdie, Clément Jamin, Pierre Alliez
@@ -277,10 +278,22 @@ namespace CGAL {
       // | 3.| 2.|
       // +---+---+
       // z max before z min, then y max before y min, then x max before x min
-      void createTree() {
+      void createTree(double cluster_epsilon_for_max_level_recomputation = -1.) {
         buildBoundingCube();
         std::size_t count = 0;
         m_max_level = 0;
+
+        if (cluster_epsilon_for_max_level_recomputation > 0.)
+        {
+          FT bbox_diagonal = (FT) CGAL::sqrt(
+            (m_bBox.xmax() - m_bBox.xmin()) * (m_bBox.xmax() - m_bBox.xmin())
+            + (m_bBox.ymax() - m_bBox.ymin()) * (m_bBox.ymax() - m_bBox.ymin()) 
+            + (m_bBox.zmax() - m_bBox.zmin()) * (m_bBox.zmax() - m_bBox.zmin()));
+
+          m_set_max_level = std::size_t (std::log (bbox_diagonal
+                                                    / cluster_epsilon_for_max_level_recomputation)
+                                         / std::log (2.0));
+        }
 
         std::stack<Cell *> stack;
         m_root = new Cell(0, this->size() - 1, m_center, 0);
@@ -622,12 +635,12 @@ namespace CGAL {
       }
         
       const Bbox_3 &buildBoundingCube() {
-        FT min[] = {(std::numeric_limits<FT>::max)(),
-                    (std::numeric_limits<FT>::max)(),
-                    (std::numeric_limits<FT>::max)()};
-        FT max[] = {(std::numeric_limits<FT>::min)(),
-                    (std::numeric_limits<FT>::min)(),
-                    (std::numeric_limits<FT>::min)()};
+        FT min[] = {std::numeric_limits<FT>::infinity(),
+                    std::numeric_limits<FT>::infinity(),
+                    std::numeric_limits<FT>::infinity()};
+        FT max[] = {-std::numeric_limits<FT>::infinity(),
+                    -std::numeric_limits<FT>::infinity(),
+                    -std::numeric_limits<FT>::infinity()};
 
         for (std::size_t i = 0;i<this->size();i++) {
           Point_3 p = get(m_point_pmap, *this->at(i));

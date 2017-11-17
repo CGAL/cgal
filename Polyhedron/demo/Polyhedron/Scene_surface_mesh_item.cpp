@@ -84,6 +84,7 @@ struct Scene_surface_mesh_item_priv{
     idx_data_(other.d->idx_data_),
     idx_edge_data_(other.d->idx_edge_data_)
   {
+    //smesh_->collect_garbage();
     item = parent;
     has_feature_edges = false;
     invalidate_stats();
@@ -193,7 +194,7 @@ struct Scene_surface_mesh_item_priv{
   mutable SMesh::Property_map<face_descriptor,int> fpatch_id_map;
   mutable SMesh::Property_map<vertex_descriptor,int> v_selection_map;
   mutable SMesh::Property_map<face_descriptor,int> f_selection_map;
-  mutable SMesh::Property_map<halfedge_descriptor, bool> h_is_feature_map;
+  mutable SMesh::Property_map<boost::graph_traits<SMesh>::edge_descriptor, bool> e_is_feature_map;
 
   Color_vector colors_;
   double volume, area;
@@ -224,10 +225,17 @@ Scene_surface_mesh_item::Scene_surface_mesh_item(const Scene_surface_mesh_item& 
   : CGAL::Three::Scene_item(Scene_surface_mesh_item_priv::NbOfVbos,Scene_surface_mesh_item_priv::NbOfVaos)
 {
   d = new Scene_surface_mesh_item_priv(other, this);
-  are_buffers_filled = false;
+  d->floated = false;
+
+  d->has_vcolors = false;
+  d->has_fcolors = false;
+  d->checkFloat();
   d->textVItems = new TextListItem(this);
   d->textEItems = new TextListItem(this);
   d->textFItems = new TextListItem(this);
+
+  are_buffers_filled = false;
+  invalidateOpenGLBuffers();
 }
 
 void Scene_surface_mesh_item::standard_constructor(SMesh* sm)
@@ -289,9 +297,9 @@ void Scene_surface_mesh_item_priv::addFlatData(Point p, EPICK::Vector_3 n, CGAL:
 {
   const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
 
-  flat_vertices.push_back((cgal_gl_data)p.x()+offset[0]);
-  flat_vertices.push_back((cgal_gl_data)p.y()+offset[1]);
-  flat_vertices.push_back((cgal_gl_data)p.z()+offset[2]);
+  flat_vertices.push_back((cgal_gl_data)(p.x()+offset[0]));
+  flat_vertices.push_back((cgal_gl_data)(p.y()+offset[1]));
+  flat_vertices.push_back((cgal_gl_data)(p.z()+offset[2]));
 
   flat_normals.push_back((cgal_gl_data)n.x());
   flat_normals.push_back((cgal_gl_data)n.y());
@@ -382,7 +390,7 @@ void Scene_surface_mesh_item_priv::compute_elements()
     idx_edge_data_.push_back(source(ed, *smesh_));
     idx_edge_data_.push_back(target(ed, *smesh_));
     if(has_feature_edges &&
-       get(h_is_feature_map, halfedge(ed, *smesh_)) )
+       get(e_is_feature_map, ed) )
     {
       idx_feature_edge_data_.push_back(source(ed, *smesh_));
       idx_feature_edge_data_.push_back(target(ed, *smesh_));
@@ -423,9 +431,9 @@ void Scene_surface_mesh_item_priv::compute_elements()
       BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(fd, *smesh_),*smesh_))
       {
         Point p = positions[source(hd, *smesh_)];
-        flat_vertices.push_back((cgal_gl_data)p.x()+offset.x);
-        flat_vertices.push_back((cgal_gl_data)p.y()+offset.y);
-        flat_vertices.push_back((cgal_gl_data)p.z()+offset.z);
+        flat_vertices.push_back((cgal_gl_data)(p.x()+offset.x));
+        flat_vertices.push_back((cgal_gl_data)(p.y()+offset.y));
+        flat_vertices.push_back((cgal_gl_data)(p.z()+offset.z));
 
         EPICK::Vector_3 n = fnormals[fd];
         flat_normals.push_back((cgal_gl_data)n.x());
@@ -508,9 +516,9 @@ void Scene_surface_mesh_item_priv::compute_elements()
     BOOST_FOREACH(vertex_descriptor vd, vertices(*smesh_))
     {
       Point p = positions[vd];
-      smooth_vertices.push_back((cgal_gl_data)p.x()+offset.x);
-      smooth_vertices.push_back((cgal_gl_data)p.y()+offset.y);
-      smooth_vertices.push_back((cgal_gl_data)p.z()+offset.z);
+      smooth_vertices.push_back((cgal_gl_data)(p.x()+offset.x));
+      smooth_vertices.push_back((cgal_gl_data)(p.y()+offset.y));
+      smooth_vertices.push_back((cgal_gl_data)(p.z()+offset.z));
 
       EPICK::Vector_3 n = vnormals[vd];
       smooth_normals.push_back((cgal_gl_data)n.x());
@@ -865,6 +873,39 @@ void delete_aabb_tree(Scene_surface_mesh_item* item)
 Scene_surface_mesh_item::~Scene_surface_mesh_item()
 {
   delete_aabb_tree(this);
+  QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+  if(viewer)
+  {
+    CGAL::Three::Viewer_interface* v = qobject_cast<CGAL::Three::Viewer_interface*>(viewer);
+
+    //Clears the targeted Id
+    if(d)
+    {
+      BOOST_FOREACH(TextItem* item, d->targeted_id)
+          v->textRenderer()->removeText(item);
+    }
+    //Remove vertices textitems
+    if(d->textVItems)
+    {
+      v->textRenderer()->removeTextList(d->textVItems);
+      delete d->textVItems;
+      d->textVItems=NULL;
+    }
+    //Remove edges textitems
+    if(d->textEItems)
+    {
+      v->textRenderer()->removeTextList(d->textEItems);
+      delete d->textEItems;
+      d->textEItems=NULL;
+    }
+    //Remove faces textitems
+    if(d->textFItems)
+    {
+      v->textRenderer()->removeTextList(d->textFItems);
+      delete d->textFItems;
+      d->textFItems=NULL;
+    }
+  }
   delete d;
 }
 SMesh* Scene_surface_mesh_item::polyhedron() { return d->smesh_; }
@@ -1176,11 +1217,28 @@ void Scene_surface_mesh_item::setItemIsMulticolor(bool b)
     d->fpatch_id_map = d->smesh_->add_property_map<face_descriptor,int>("f:patch_id", 1).first;
     d->has_fcolors = true;
   }
-  else if(d->smesh_->property_map<face_descriptor,int>("f:patch_id").second)
+  else
   {
-    d->fpatch_id_map = d->smesh_->property_map<face_descriptor,int>("f:patch_id").first;
-    d->smesh_->remove_property_map(d->fpatch_id_map);
-    d->has_fcolors = false;
+    if(d->smesh_->property_map<face_descriptor,int>("f:patch_id").second)
+    {
+      d->fpatch_id_map = d->smesh_->property_map<face_descriptor,int>("f:patch_id").first;
+      d->smesh_->remove_property_map(d->fpatch_id_map);
+      d->has_fcolors = false;
+    }
+    if(d->smesh_->property_map<face_descriptor, CGAL::Color >("f:color").second)
+    {
+     SMesh::Property_map<face_descriptor, CGAL::Color> pmap =
+         d->smesh_->property_map<face_descriptor, CGAL::Color >("f:color").first;
+         d->smesh_->remove_property_map(pmap);
+      d->has_fcolors = false;
+    }
+    if(d->smesh_->property_map<vertex_descriptor, CGAL::Color >("v:color").second)
+    {
+      SMesh::Property_map<vertex_descriptor, CGAL::Color> pmap =
+          d->smesh_->property_map<vertex_descriptor, CGAL::Color >("v:color").first;
+          d->smesh_->remove_property_map(pmap);
+      d->has_vcolors = false;
+    }
   }
 }
 
@@ -1188,7 +1246,7 @@ void Scene_surface_mesh_item::show_feature_edges(bool b)
 {
   if(b)
   {
-    d->h_is_feature_map = d->smesh_->add_property_map<halfedge_descriptor,bool>("h:is_feature").first;
+    d->e_is_feature_map = d->smesh_->add_property_map<boost::graph_traits<SMesh>::edge_descriptor,bool>("e:is_feature").first;
     invalidateOpenGLBuffers();
     itemChanged();
   }

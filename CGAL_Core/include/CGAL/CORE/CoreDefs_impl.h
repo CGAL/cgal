@@ -30,6 +30,7 @@
  *
  * $URL$
  * $Id$
+ * SPDX-License-Identifier: LGPL-3.0+
  ***************************************************************************/
 
 #include "CGAL/CORE/CoreDefs.h"

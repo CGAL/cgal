@@ -44,6 +44,11 @@ public:
     return nb_of_feature_edges != 0;
   }
 
+  void clear_incident_patches()
+  {
+    indices.clear();
+  }
+
   void add_incident_patch(const Patch_id& i) {
     indices.insert(i);
   }
@@ -65,11 +70,16 @@ public:
     return indices;
   }
 
+  Set_of_indices&
+  incident_patches_ids_set() {
+    return indices;
+  }
+
   std::size_t& id()       { return mID; }
   std::size_t  id() const { return mID; }
 
-  Polyhedron_demo_vertex() : Pdv_base(), mID(-1), nb_of_feature_edges(0) {}
-  Polyhedron_demo_vertex(const Point& p) : Pdv_base(p), mID(-1), nb_of_feature_edges(0) {}
+  Polyhedron_demo_vertex() : Pdv_base(), mID(-1), time_stamp_(-1), nb_of_feature_edges(0) {}
+  Polyhedron_demo_vertex(const Point& p) : Pdv_base(p), mID(-1), time_stamp_(-1), nb_of_feature_edges(0) {}
 };
 
 template <class Refs, class Tprev, class Tvertex, class Tface>

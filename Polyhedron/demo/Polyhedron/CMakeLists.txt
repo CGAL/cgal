@@ -1,21 +1,21 @@
 # This is the CMake script for compiling the CGAL Polyhedron demo.
 
 project( Polyhedron_Demo )
+
+cmake_minimum_required(VERSION 3.1)
+if(NOT POLICY CMP0070 AND POLICY CMP0053)
+  # Only set CMP0053 to OLD with CMake<3.10, otherwise there is a warning.
+  cmake_policy(SET CMP0053 OLD)
+endif()
+if(POLICY CMP0071)
+  cmake_policy(SET CMP0071 NEW)
+endif()
+
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON)
-cmake_minimum_required(VERSION 3.1)
-if(POLICY CMP0053)
-  cmake_policy(SET CMP0053 OLD)
-endif()
-if(POLICY CMP0043)
-  cmake_policy(SET CMP0043 OLD)
-endif()
-if(POLICY CMP0071)
-  cmake_policy(SET CMP0071 NEW)
-endif()
 
 list(FIND CMAKE_CXX_COMPILE_FEATURES cxx_generalized_initializers has_cpp11)
 if(has_cpp11 LESS 0)
@@ -26,13 +26,6 @@ endif()
 # Use C++11 for this directory and its sub-directories.
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
-
-# Compatibility with CMake 3.0
-if(POLICY CMP0042)
-  # Do not enable the use of MACOSX_RPATH
-  # http://www.cmake.org/cmake/help/v3.0/policy/CMP0042.html
-  cmake_policy(SET CMP0042 OLD)
-endif()
 
 #Defines flags to emulate windows behavior for linking error generation
 if(CMAKE_CXX_COMPILER_ID EQUAL Clang OR CMAKE_COMPILER_IS_GNUCC  OR CMAKE_COMPILER_IS_GNUCXX)
@@ -239,7 +232,9 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   add_item(scene_c3t3_item Scene_c3t3_item.cpp)
   target_link_libraries(scene_c3t3_item scene_polyhedron_item scene_polygon_soup_item scene_basic_objects ${TBB_LIBRARIES})
   add_item(scene_polyhedron_item Scene_polyhedron_item.cpp)
-  add_item(scene_polyhedron_transform_item Plugins/PCA/Scene_polyhedron_transform_item.cpp )
+  add_item(scene_polyhedron_transform_item Plugins/PCA/Scene_facegraph_transform_item.cpp )
+  add_item(scene_sm_transform_item Plugins/PCA/Scene_facegraph_transform_item.cpp )
+  target_compile_definitions(scene_sm_transform_item PUBLIC "-DCGAL_USE_SURFACE_MESH" )
   add_item(scene_edit_box_item Plugins/PCA/Scene_edit_box_item.cpp )
   add_item(scene_image_item Scene_image_item.cpp)
   add_item(scene_surface_mesh_item Scene_surface_mesh_item.cpp)
@@ -248,7 +243,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   target_compile_definitions(scene_mcf_sm_item PUBLIC "-DUSE_SURFACE_MESH" )
 
   # special
-  target_link_libraries(scene_polyhedron_transform_item scene_polyhedron_item)
 
   add_item(scene_polylines_item Scene_polylines_item.cpp)
   target_link_libraries(scene_polylines_item scene_basic_objects)
@@ -300,7 +294,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   target_link_libraries(scene_implicit_function_item scene_color_ramp)
 
   add_item(scene_polygon_soup_item Scene_polygon_soup_item.cpp)
-  target_link_libraries(scene_polygon_soup_item scene_polyhedron_item)
+  target_link_libraries(scene_polygon_soup_item scene_polyhedron_item scene_surface_mesh_item)
 
   add_item(scene_nef_polyhedron_item Scene_nef_polyhedron_item.cpp)
   target_link_libraries(scene_nef_polyhedron_item scene_polyhedron_item scene_surface_mesh_item)

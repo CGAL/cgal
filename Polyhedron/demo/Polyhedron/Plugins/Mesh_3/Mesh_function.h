@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Stephane Tayeb
@@ -52,15 +53,11 @@ namespace internal{
 //general case for polyhedron
 template<class Domain>
 struct Get_facet_patch_id_selector {
-  Get_facet_patch_id_selector(const Domain&)
-  {}
   typedef CGAL::Default type;
 };
 //specialization for surface_mesh
 template<>
 struct Get_facet_patch_id_selector<Polyhedral_mesh_domain_sm> {
-  Get_facet_patch_id_selector(const Polyhedral_mesh_domain_sm&)
-  {}
   typedef CGAL::Mesh_3::Get_facet_patch_id_sm<Polyhedral_mesh_domain_sm> type;
 };
 }//end internal
@@ -276,27 +273,23 @@ edge_criteria(double edge_size, Mesh_fnt::Polyhedral_domain_tag)
       <
       Kernel
       , Domain
-      , Set_of_patch_ids
       , typename Domain::AABB_tree
       , CGAL::Default
       , typename internal::Get_facet_patch_id_selector<Domain>::type
       > Mesh_sizing_field; // type of sizing field for 0D and 1D features
     typedef std::vector<Set_of_patch_ids> Patches_ids_vector;
-    typedef typename Domain::Curve_segment_index Curve_segment_index;
-    const Curve_segment_index max_index = domain_->maximal_curve_segment_index();
+    typedef typename Domain::Curve_index Curve_index;
+    const Curve_index max_index = domain_->maximal_curve_index();
     Patches_ids_vector* patches_ids_vector_p =
       new Patches_ids_vector(max_index+1);
-    for(Curve_segment_index curve_id = 1; curve_id <= max_index; ++curve_id)
+    for(Curve_index curve_id = 1; curve_id <= max_index; ++curve_id)
     {
       (*patches_ids_vector_p)[curve_id] = domain_->get_incidences(curve_id);
     }
     Mesh_sizing_field* sizing_field_ptr =
       new Mesh_sizing_field(edge_size,
-                            domain_->corners_incidences_map().begin(),
-                            domain_->corners_incidences_map().end(),
                             domain_->aabb_tree(),
-                            *domain_,
-                            *patches_ids_vector_p);
+                            *domain_);
     // The sizing field object, as well as the `patch_ids_vector` are
     // allocated on the heap, and the following `boost::any` object,
     // containing two shared pointers, is used to make the allocated
@@ -326,8 +319,7 @@ launch()
   Mesh_criteria criteria(edge_criteria(p_.edge_sizing, Tag()),
                          Facet_criteria(p_.facet_angle,
                                         p_.facet_sizing,
-                                        p_.facet_approx,
-                                        topology(p_.manifold)),
+                                        p_.facet_approx),
                          Cell_criteria(p_.tet_shape,
                                        p_.tet_sizing));
 
@@ -335,7 +327,8 @@ launch()
   initialize(criteria, Tag());
 
   // Build mesher and launch refinement process
-  mesher_ = new Mesher(c3t3_, *domain_, criteria);
+  mesher_ = new Mesher(c3t3_, *domain_, criteria,
+                       topology(p_.manifold) & CGAL::MANIFOLD);
 
 #ifdef CGAL_MESH_3_PROFILING
   CGAL::Real_timer t;

@@ -12,6 +12,10 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //                 Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
 //                 Andreas Fabri <Andreas.Fabri@sophia.inria.fr>
@@ -113,6 +117,12 @@ public:
   typedef typename Base::Periodic_segment_iterator  Periodic_segment_iterator;
   typedef typename Base::Periodic_tetrahedron_iterator  Periodic_tetrahedron_iterator;
   //@}
+
+  //Tag to distinguish Delaunay from Regular triangulations
+  typedef Tag_false                             Weighted_tag;
+
+  // Tag to distinguish periodic triangulations from others
+  typedef Tag_true                              Periodic_tag;
 
 #ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
   using Base::cw;

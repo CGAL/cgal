@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Michael Kerber <mkerber@mpi-inf.mpg.de>
@@ -111,7 +112,7 @@ template<typename Comparable>
 };
 
 template<typename Comparable> struct Compare_for_vert_line_map
-  : public std::binary_function<Comparable,Comparable,bool> {
+  : public CGAL::binary_function<Comparable,Comparable,bool> {
     
   BOOST_MPL_HAS_XXX_TRAIT_DEF(T)
   BOOST_MPL_HAS_XXX_TRAIT_DEF(Handle_policy)

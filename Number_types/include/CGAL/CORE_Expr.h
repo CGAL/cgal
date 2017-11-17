@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Sylvain Pion, Michael Hemmer
@@ -41,7 +42,7 @@ template <> class Algebraic_structure_traits< CORE::Expr >
     typedef Tag_true            Is_numerical_sensitive;
 
     class Sqrt
-      : public std::unary_function< Type, Type > {
+      : public CGAL::unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
           return CORE::sqrt( x );
@@ -49,7 +50,7 @@ template <> class Algebraic_structure_traits< CORE::Expr >
     };
 
     class Kth_root
-      : public std::binary_function<int, Type, Type> {
+      : public CGAL::binary_function<int, Type, Type> {
       public:
         Type operator()( int k,
                                         const Type& x) const {
@@ -128,7 +129,7 @@ template <> class Real_embeddable_traits< CORE::Expr >
   : public INTERN_RET::Real_embeddable_traits_base< CORE::Expr , CGAL::Tag_true > {
   public:
     class Abs
-      : public std::unary_function< Type, Type > {
+      : public CGAL::unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
             return CORE::abs( x );
@@ -136,7 +137,7 @@ template <> class Real_embeddable_traits< CORE::Expr >
     };
 
     class Sgn
-      : public std::unary_function< Type, ::CGAL::Sign > {
+      : public CGAL::unary_function< Type, ::CGAL::Sign > {
       public:
         ::CGAL::Sign operator()( const Type& x ) const {
           return (::CGAL::Sign) CORE::sign( x );
@@ -144,7 +145,7 @@ template <> class Real_embeddable_traits< CORE::Expr >
     };
 
     class Compare
-      : public std::binary_function< Type, Type,
+      : public CGAL::binary_function< Type, Type,
                                 Comparison_result > {
       public:
         Comparison_result operator()( const Type& x,
@@ -158,7 +159,7 @@ template <> class Real_embeddable_traits< CORE::Expr >
     };
 
     class To_double
-      : public std::unary_function< Type, double > {
+      : public CGAL::unary_function< Type, double > {
       public:
         double operator()( const Type& x ) const {
           x.approx(53,1075);
@@ -167,7 +168,7 @@ template <> class Real_embeddable_traits< CORE::Expr >
     };
 
     class To_interval
-      : public std::unary_function< Type, std::pair< double, double > > {
+      : public CGAL::unary_function< Type, std::pair< double, double > > {
       public:
         std::pair<double, double> operator()( const Type& x ) const {
             std::pair<double,double> result;
