@@ -556,8 +556,9 @@ insert_point(const Bare_point& p, const Weight& w, int dim, const Index& index,
 {
   using CGAL::Mesh_3::internal::weight_modifier;
 
-  if(dim < 0) dim = -1 - dim; // Convert the dimension if it was set to a
-                              // negative value (marker for special balls).
+  // Convert the dimension if it was set to a negative value (marker for special balls).
+  if(dim < 0)
+    dim = -1 - dim;
 
   typedef typename Tr::size_type size_type;
   CGAL_USE_TYPE(size_type);
@@ -597,8 +598,9 @@ insert_point(const Bare_point& p, const Weight& w, int dim, const Index& index,
   default:
     std::cerr << " ERROR dim=" << dim << " index=";
   }
-  std::cerr  << CGAL::oformat(index) << std::endl;
-  if(v == Vertex_handle()) std::cerr << "  HIDDEN!\n";
+  std::cerr << CGAL::oformat(index) << std::endl;
+  if(v == Vertex_handle())
+    std::cerr << "  HIDDEN!\n";
   std::cerr << "The weight was " << w << std::endl;
 #endif // CGAL_MESH_3_PROTECTION_DEBUG
 
@@ -636,10 +638,8 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
   typename Gt::Construct_weighted_point_3 cwp =
     tr.geom_traits().construct_weighted_point_3_object();
 
-  bool add_handle_to_unchecked = false; /// add or not the new vertex to
-                                        /// the set 'unchecked_vertices'
-  bool insert_a_special_ball = false; /// will be passed to the function
-                                      /// this->insert_point
+  bool add_handle_to_unchecked = false; // add or not the new vertex to the set 'unchecked_vertices'
+  bool insert_a_special_ball = false; // will be passed to the function this->insert_point
 
   const Weighted_point wp0 = cwp(p); // with weight 0, used for locate()
 
@@ -654,13 +654,19 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
     FT sq_d;
     boost::tie(nearest_vh, sq_d) = tr.nearest_power_vertex_with_sq_distance(p, ch);
 
-#if CGAL_MESH_3_PROTECTION_DEBUG & 2
-    std::cerr << "Nearest power vertex: " << &*nearest_vh
-                                          << " (" << nearest_vh->point() << ")" << std::endl;
-    std::cerr << "At distance: " << sq_d << std::endl;
+#ifdef PERIODIC_HACK
+    CGAL_assertion(nearest_vh != Vertex_handle());
+    typename Tr::Offset off;
+    c3t3_.triangulation().get_vertex(nearest_vh, nearest_vh, off);
 #endif
 
-    while ( nearest_vh->point().weight() > sq_d &&
+#if CGAL_MESH_3_PROTECTION_DEBUG & 2
+    std::cerr << "Nearest power vertex of (" << p << ") is "
+              << &*nearest_vh << " (" << c3t3_.triangulation().point(nearest_vh) << ") "
+              << "at distance: " << sq_d << std::endl;
+#endif
+
+    while ( c3t3_.triangulation().point(nearest_vh).weight() > sq_d &&
             ! is_special(nearest_vh) )
     {
       CGAL_assertion( minimal_size_ > 0 || sq_d > 0 );
@@ -684,7 +690,8 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
       boost::tie(nearest_vh, sq_d) = tr.nearest_power_vertex_with_sq_distance(p, ch);
     }
 
-    if( is_special(nearest_vh) && nearest_vh->point().weight() > sq_d )
+    if( is_special(nearest_vh) &&
+        c3t3_.triangulation().point(nearest_vh).weight() > sq_d )
     {
       w = minimal_weight_;
       insert_a_special_ball = true;
@@ -737,7 +744,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
           if(sq_d < min_sq_d)
           {
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
-            nearest_point = v->point();
+            nearest_point = c3t3_.triangulation().point(v);
 #endif
             min_sq_d = sq_d;
           }
@@ -783,7 +790,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
         // is only of dimension less than 3 if it is empty.
         const Weighted_point& itwp = tr.point(it);
         FT sq_d = tr.min_squared_distance(p, cp(itwp));
-        if ( it->point().weight() > sq_d )
+        if ( c3t3_.triangulation().point(it).weight() > sq_d )
         {
           bool special_ball = false;
           if(minimal_weight_ != Weight() && sq_d > minimal_weight_) {
@@ -813,9 +820,10 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
       FT sq_d = tr.min_squared_distance(p, cp(itwp));
       if(sq_d < min_sq_d) {
         min_sq_d = sq_d;
-        nearest_point = it->point();
+        nearest_point = c3t3_.triangulation().point(it);
       }
     }
+
     if ( w > min_sq_d )
     {
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
@@ -838,11 +846,13 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
     w = w_max;
     add_handle_to_unchecked = true;
   }
+
   if( w < minimal_weight_) {
     w = minimal_weight_;
     insert_a_special_ball = true;
   }
   Vertex_handle v = insert_point(p,w,dim,index, insert_a_special_ball);
+
   /// @TODO `insert_point` does insert in unchecked_vertices anyway!
   if ( add_handle_to_unchecked ) { unchecked_vertices_.insert(v); }
 
@@ -913,7 +923,7 @@ insert_balls_on_edges()
                                   CGAL::square(p_size),
                                   1 /*dim*/,
                                   p_index,
-          CGAL::Emptyset_iterator()).first;
+                                  CGAL::Emptyset_iterator()).first;
         }
         // No 'else' because in that case 'is_vertex(..)' already filled
         // the variable 'vp'.
@@ -948,9 +958,11 @@ get_vertex_corner_from_point(const Bare_point& p, const Index&) const
   // Get vertex_handle associated to corner (dim=0) point
   Vertex_handle v;
   CGAL_assertion_code( bool q_found = )
-  c3t3_.triangulation().is_vertex(cwp(p), v);
+
   // Let the weight be 0, because is_vertex only locates the point, and
   // check that the location type is VERTEX.
+  c3t3_.triangulation().is_vertex(cwp(p), v);
+
   CGAL_assertion( q_found );
   return v;
 }
@@ -982,13 +994,13 @@ insert_balls(const Vertex_handle& vp,
   const FT pq_length = (vp == vq) ?
     domain_.curve_length(curve_index)
     :
-    domain_.curve_segment_length(cp(vpwp), cp(vqwp), curve_index, orientation);
+    domain_.curve_segment_length(vpp, vqp, curve_index, orientation);
 
   // Insert balls
   return
     (sp <= sq) ?
-    insert_balls(vp, vq, sp, sq, pq_length, orientation, curve_index, out) :
-    insert_balls(vq, vp, sq, sp, pq_length, -orientation, curve_index, out);
+      insert_balls(vp, vq, sp, sq, pq_length, orientation, curve_index, out) :
+      insert_balls(vq, vp, sq, sp, pq_length, -orientation, curve_index, out);
 }
 
 
@@ -1677,6 +1689,7 @@ is_sampling_dense_enough(const Vertex_handle& v1, const Vertex_handle& v2,
   }
 
   const FT distance_v1v2 = compute_distance(v1,v2);
+
   // Ensure size_v1 > size_v2
   if ( size_v1 < size_v2 ) { std::swap(size_v1, size_v2); }
 
@@ -1723,8 +1736,8 @@ walk_along_edge(const Vertex_handle& start, const Vertex_handle& next,
 {
 #if CGAL_MESH_3_PROTECTION_DEBUG & 4
   if(!c3t3_.is_in_complex(start, next)) {
-    std::cerr << "ERROR: the edge ( " << start->point() << " , "
-              << next->point() << " ) is not in complex!\n";
+    std::cerr << "ERROR: the edge ( " << c3t3_.triangulation().point(start) << " , "
+              << c3t3_.triangulation().point(next) << " ) is not in complex!\n";
     dump_c3t3(c3t3_, "dump-bug");
     dump_c3t3_edges(c3t3_, "dump-bug-c3t3");
   }
@@ -1736,8 +1749,7 @@ walk_along_edge(const Vertex_handle& start, const Vertex_handle& next,
 
   // Walk along edge since a corner is encountered or the balls of previous
   // and current intersects enough
-  while ( ! is_sampling_dense_enough(previous, current,
-                                     curve_index, orientation) )
+  while ( ! is_sampling_dense_enough(previous, current, curve_index, orientation) )
   {
     *out++ = current;
 
@@ -1748,8 +1760,7 @@ walk_along_edge(const Vertex_handle& start, const Vertex_handle& next,
     }
 
     // Get next vertex along edge
-    Vertex_handle next =
-      next_vertex_along_curve(current,previous,curve_index);
+    Vertex_handle next = next_vertex_along_curve(current,previous,curve_index);
     previous = current;
     current = next;
   }
@@ -1833,7 +1844,7 @@ repopulate(InputIterator begin, InputIterator last,
     std::cerr << "Removal of ";
     if(is_special(*current)) std::cerr << "SPECIAL ";
     std::cerr << "protecting ball "
-              << (*current)->point();
+              << c3t3_.triangulation().point((*current));
     switch(get_dimension(*current)) {
     case 0:
       std::cerr << " on corner #";

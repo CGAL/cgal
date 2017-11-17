@@ -131,12 +131,9 @@ void refine_periodic_3_mesh_3_impl(C3T3& c3t3,
   dump_c3t3(c3t3, mesh_options.dump_after_init_prefix);
 
   // Odt
-  if ( odt )
+  if(odt)
   {
-    std::cout << "odt" << std::endl;
-
-    odt_optimize_mesh_3(c3t3,
-                        domain,
+    odt_optimize_mesh_3(c3t3, domain,
                         parameters::time_limit = odt.time_limit(),
                         parameters::max_iteration_number = odt.max_iteration_number(),
                         parameters::convergence = odt.convergence(),
@@ -144,32 +141,29 @@ void refine_periodic_3_mesh_3_impl(C3T3& c3t3,
   }
 
   // Lloyd
-  if ( lloyd )
+  if(lloyd)
   {
-    std::cout << "lloyd" << std::endl;
-
-    lloyd_optimize_mesh_3(c3t3,
-                          domain,
+    lloyd_optimize_mesh_3(c3t3, domain,
                           parameters::time_limit = lloyd.time_limit(),
                           parameters::max_iteration_number = lloyd.max_iteration_number(),
                           parameters::convergence = lloyd.convergence(),
                           parameters::freeze_bound = lloyd.bound());
   }
 
-  if( odt || lloyd) {
+  if( odt || lloyd)
+  {
     dump_c3t3(c3t3, mesh_options.dump_after_glob_opt_prefix);
   }
 
   // Perturbation
-  if ( perturb )
+  if(perturb)
   {
     double perturb_time_limit = refine_time;
 
-    if ( perturb.is_time_limit_set() )
+    if(perturb.is_time_limit_set())
       perturb_time_limit = perturb.time_limit();
 
-    perturb_mesh_3(c3t3,
-                   domain,
+    perturb_mesh_3(c3t3, domain,
                    parameters::time_limit = perturb_time_limit,
                    parameters::sliver_bound = perturb.bound());
 
@@ -177,11 +171,11 @@ void refine_periodic_3_mesh_3_impl(C3T3& c3t3,
   }
 
   // Exudation
-  if ( exude )
+  if(exude)
   {
     double exude_time_limit = refine_time;
 
-    if ( exude.is_time_limit_set() )
+    if(exude.is_time_limit_set())
       exude_time_limit = exude.time_limit();
 
     exude_mesh_3(c3t3,
@@ -190,6 +184,10 @@ void refine_periodic_3_mesh_3_impl(C3T3& c3t3,
 
     dump_c3t3(c3t3, mesh_options.dump_after_perturb_prefix);
   }
+
+  CGAL_expensive_postcondition(c3t3.triangulation().tds().is_valid());
+  CGAL_expensive_postcondition(c3t3.triangulation().is_valid());
+  CGAL_expensive_postcondition(c3t3.is_valid());
 }
 
 } // end namespace CGAL

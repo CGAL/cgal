@@ -1000,7 +1000,7 @@ public:
     std::cout << this->point(c, 2) << std::endl;
     std::cout << this->point(c, 3) << std::endl;
     std::cout << "offset query: " << query_offset << std::endl;
-    std::cout << "on bounded side : " << geom_traits().has_on_bounded_side_3_object()(
+    std::cout << "bounded side : " << geom_traits().bounded_side_3_object()(
                    Tetrahedron(this->point(c, 0).point(), this->point(c, 1).point(),
                                this->point(c, 2).point(), this->point(c, 3).point()), p) << std::endl;
     std::cout << "power side: " << geom_traits().power_side_of_bounded_power_sphere_3_object()(

@@ -781,7 +781,7 @@ public:
 //    if(is_1_cover())
     return point(periodic_point(c, idx), cp);
 
-    // @todo figure out everything below
+    // @todo figure out everything below and clean it if useless
     Offset vec_off[4];
     for(int i=0; i<4; i++)
       vec_off[i] = periodic_point(c,i).second;
@@ -2343,6 +2343,7 @@ try_next_cell:
     CGAL_triangulation_assertion(false);
   }
   lo = off_query;
+
   return c;
 }
 
@@ -3454,8 +3455,8 @@ Periodic_3_triangulation_3<GT,TDS>::convert_to_1_sheeted_covering()
 
     bool to_delete, has_simplifiable_offset;
     Virtual_vertex_map_it vvmit;
-    // First iteration over all cells: Mark the cells that are to delete.
-    // Cells are to delete if they cannot be translated anymore in the
+    // First iteration over all cells: Mark the cells that are to be deleted.
+    // Cells will be deleted if they cannot be translated anymore in the
     // direction of one of the axes without yielding negative offsets.
     for( Cell_iterator it = all_cells_begin();
     it != all_cells_end(); ++it ) {
@@ -3474,8 +3475,7 @@ Periodic_3_triangulation_3<GT,TDS>::convert_to_1_sheeted_covering()
             // if it->vertex(i) lies outside the original domain:
           } else {
             // The cell can certainly be deleted if the offset contains a 2
-            to_delete = to_delete
-                || (vvmit->second.second[j] == 2);
+            to_delete = to_delete || (vvmit->second.second[j] == 2);
             // The cell can be moved into one direction only if the offset of
             // all for vertices is >=1 for this direction. Since we already
             // tested for 2 it is sufficient to test here for 1.
@@ -4067,7 +4067,7 @@ inline void Periodic_3_triangulation_3<GT, TDS>::get_vertex(
   Virtual_vertex_map_it it = virtual_vertices.find(vh_i);
 
   if(it == virtual_vertices.end()) {
-    // if ch->vertex(i) is not contained in virtual_vertices, then it is in
+    // if 'vh_i' is not contained in virtual_vertices, then it is in
     // the original domain.
     vh = vh_i;
     CGAL_triangulation_assertion(vh != Vertex_handle());
