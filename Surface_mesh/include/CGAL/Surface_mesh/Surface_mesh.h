@@ -594,7 +594,7 @@ public:
   typedef Iterator_range<Face_around_face_iterator> Face_around_face_range;
 #endif
 
-    /// @cond CGAL_BEGIN_END
+    /// @cond SKIP_IN_MANUAL
     /// Start iterator for vertices.
     Vertex_iterator vertices_begin() const
     {
@@ -615,7 +615,7 @@ public:
     }
 
 
-    /// @cond CGAL_BEGIN_END
+    /// @cond SKIP_IN_MANUAL
     /// Start iterator for halfedges.
     Halfedge_iterator halfedges_begin() const
     {
@@ -636,7 +636,7 @@ public:
     }
 
 
-    /// @cond CGAL_BEGIN_END
+    /// @cond SKIP_IN_MANUAL
     /// Start iterator for edges.
     Edge_iterator edges_begin() const
     {
@@ -658,7 +658,7 @@ public:
     }
 
 
-    /// @cond CGAL_BEGIN_END
+    /// @cond SKIP_IN_MANUAL
     /// Start iterator for faces.
     Face_iterator faces_begin() const
     {
@@ -779,7 +779,7 @@ public:
   /// @}
 #endif
 
-  /// @cond CGAL_DOCUMENT_INTERNALS
+  /// @cond SKIP_IN_MANUAL
   // typedefs which make it easier to write the partial specialisation of boost::graph_traits
 
   typedef Vertex_index   vertex_index;
@@ -1231,7 +1231,7 @@ public:
     void collect_garbage();
 
 
-    /// @cond CGAL_DOCUMENT_INTERNALS
+    /// @cond SKIP_IN_MANUAL
     /// removes unused memory from vectors. This shrinks the storage
     /// of all properties to the minimal required size.
     /// \attention Invalidates all existing references to properties.
@@ -1247,7 +1247,7 @@ public:
 
     ///@}
 
-    /// @cond CGAL_DOCUMENT_INTERNALS
+    /// @cond SKIP_IN_MANUAL
     ///
     /// \name Simple Validity Checks
     ///
@@ -1488,7 +1488,7 @@ public:
         return hconn_[h].prev_halfedge_;
     }
 
-    /// @cond CGAL_DOCUMENT_INTERNALS
+    /// @cond SKIP_IN_MANUAL
     // sets the next halfedge of `h` within the face to `nh`.
     void set_next_only(Halfedge_index h, Halfedge_index nh)
     {
@@ -1839,7 +1839,7 @@ private: //--------------------------------------------------- property handling
       (Property_selector<I>(this)()).template remove<T>(p);
     }
 
-    /// @cond CGAL_DOCUMENT_INTERNALS
+    /// @cond SKIP_IN_MANUAL
     /// returns the std::type_info of the value type of the
     /// property identified by `name`.  `typeid(void)` if `name`
     /// does not identify any property.
@@ -1876,7 +1876,7 @@ private: //--------------------------------------------------- property handling
     Point&
     point(Vertex_index v) { return vpoint_[v]; }
 
-    /// @cond CGAL_DOCUMENT_INTERNALS
+    /// @cond SKIP_IN_MANUAL
     /// prints property statistics to the stream `out`. The output is human-readable but
     /// not machine-friendly.  
     ///
@@ -2028,7 +2028,7 @@ private: //------------------------------------------------------- private data
   }
 
 
-/// @cond CGAL_DOCUMENT_INTERNALS
+/// @cond SKIP_IN_MANUAL
 
   inline std::istream& sm_skip_comments( std::istream& in) {
       char c;
@@ -2303,7 +2303,7 @@ clear()
 }
 
 //-----------------------------------------------------------------------------
-/// @cond CGAL_DOCUMENT_INTERNALS
+/// @cond SKIP_IN_MANUAL
 template <typename P>
 void
 Surface_mesh<P>::
@@ -2393,7 +2393,7 @@ adjust_incoming_halfedge(Vertex_index v)
 
 //-----------------------------------------------------------------------------
 
- /// @cond CGAL_DOCUMENT_INTERNALS
+ /// @cond SKIP_IN_MANUAL
 
 template <typename P>
 template <typename Range>

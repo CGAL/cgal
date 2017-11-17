@@ -30,7 +30,7 @@
 #include <CGAL/internal/corefinement/Combinatorial_map_output_builder.h>
 
 namespace CGAL{
-/** \cond */
+/** \cond SKIP_IN_MANUAL  */
 namespace internal{
   
 template <class HDS>
@@ -455,7 +455,7 @@ public:
     }
   }
   
-  /** \cond */
+  /** \cond SKIP_IN_MANUAL */
   static std::string get_type_str(const std::string& Pname,const std::string& Qname,int i)
   {
     switch (i)

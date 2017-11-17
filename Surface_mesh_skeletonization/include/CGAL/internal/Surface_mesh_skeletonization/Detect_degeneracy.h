@@ -24,7 +24,7 @@
 #include <CGAL/license/Surface_mesh_skeletonization.h>
 
 
-/// @cond CGAL_DOCUMENT_INTERNAL
+/// @cond SKIP_IN_MANUAL
 
 /**
  * @file Detect_degeneracy.h

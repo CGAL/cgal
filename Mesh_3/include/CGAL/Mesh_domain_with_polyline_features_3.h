@@ -50,7 +50,7 @@
 
 namespace CGAL {
 
-/// @cond DEVELOPERS
+/// @cond SKIP_IN_MANUAL
 namespace internal {
 namespace Mesh_3 {
 
@@ -621,7 +621,7 @@ of the base class.
 /// \name Operations
 /// @{
 
-  /// @cond DEVELOPERS
+  /// @cond SKIP_IN_MANUAL
   /// @{
   /// Overloads where the last parameter \c out is not
   /// `CGAL::Emptyset_iterator()`.
@@ -657,7 +657,7 @@ of the base class.
   add_features(InputIterator first, InputIterator end)
   { add_features(first, end, CGAL::Emptyset_iterator()); }
 
-  /// @cond DEVELOPERS
+  /// @cond SKIP_IN_MANUAL
   /// Undocumented function, kept for backward-compatibility with existing
   /// code
   template <typename InputIterator>
@@ -766,7 +766,7 @@ of the base class.
   Corner_index corner_index(const Index& index) const
   { return boost::get<Corner_index>(index); }
 
-  /// @cond DEVELOPERS
+  /// @cond SKIP_IN_MANUAL
 #ifndef CGAL_NO_DEPRECATED_CODE
   CGAL_DEPRECATED_MSG("deprecated: use curve_index() instead")
   Curve_index curve_segment_index(const Index& index) const {
@@ -841,7 +841,7 @@ private:
   Edges_incidences edges_incidences_;
 
 public:
-  /// @cond DEVELOPERS
+  /// @cond SKIP_IN_MANUAL
   typedef CGAL::AABB_tree<AABB_curves_traits> Curves_AABB_tree;
   typedef std::set<Surface_patch_index> Set_of_patch_ids;
   typedef std::map<Point_3, Set_of_patch_ids> Corners_incidence_map;
@@ -1031,7 +1031,7 @@ add_features(InputIterator first, InputIterator end,
   return indices_out;
 }
 
-/// @cond DEVELOPERS
+/// @cond SKIP_IN_MANUAL
 namespace details {
 
 template <typename PolylineWithContext>
@@ -1099,7 +1099,7 @@ add_features_and_incidences(InputIterator first, InputIterator end,
   return indices_out;
 }
 
-/// @cond DEVELOPERS
+/// @cond SKIP_IN_MANUAL
 template <class MD_>
 typename Mesh_domain_with_polyline_features_3<MD_>::FT
 Mesh_domain_with_polyline_features_3<MD_>::
@@ -1205,7 +1205,7 @@ get_corner_incident_curves(Corner_index id,
 }
 /// @endcond
 
-/// @cond DEVELOPERS
+/// @cond SKIP_IN_MANUAL
 namespace internal { namespace Mesh_3 {
 
 template <typename MDwPF_, bool curve_id_is_streamable>
@@ -1274,7 +1274,7 @@ operator()(std::ostream& os, Point p, typename MDwPF_::Curve_index id,
 }} // end namespaces internal::Mesh_3:: and internal::
 /// @endcond
 
-/// @cond DEVELOPERS
+/// @cond SKIP_IN_MANUAL
 template <class MD_>
 void
 Mesh_domain_with_polyline_features_3<MD_>::
@@ -1340,7 +1340,7 @@ compute_corners_incidences()
   }
 }
 
-/// @cond DEVELOPERS
+/// @cond SKIP_IN_MANUAL
 template <class MD_>
 const typename Mesh_domain_with_polyline_features_3<MD_>::Surface_patch_index_set&
 Mesh_domain_with_polyline_features_3<MD_>::
@@ -1374,7 +1374,7 @@ register_corner(const Point_3& p, const Curve_index& curve_index)
   corners_tmp_incidences_[index].insert(curve_index);
 }
 
-/// @cond DEVELOPERS
+/// @cond SKIP_IN_MANUAL
 template <class MD_>
 template <typename InputIterator>
 typename Mesh_domain_with_polyline_features_3<MD_>::Curve_index

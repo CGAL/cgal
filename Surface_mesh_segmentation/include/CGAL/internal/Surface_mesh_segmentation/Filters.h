@@ -25,7 +25,7 @@
 #include <CGAL/license/Surface_mesh_segmentation.h>
 
 
-/// @cond CGAL_DOCUMENT_INTERNAL
+/// @cond SKIP_IN_MANUAL
 /**
  * @file Filters.h
  * @brief This file contains 2 filtering methods, which can be used as a template parameter for CGAL::internal::Surface_mesh_segmentation.

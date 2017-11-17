@@ -57,7 +57,7 @@
 
 
 namespace CGAL {
-/// @cond DEVELOPERS
+/// @cond SKIP_IN_MANUAL
 namespace internal {
 namespace Mesh_3 {
 
@@ -278,7 +278,7 @@ public:
     Polyhedral_mesh_domain_3<
       Polyhedron, IGT_, CGAL::Default,
       int, Tag_true > > Base;
-  /// @cond DEVELOPERS
+  /// @cond SKIP_IN_MANUAL
 private:
   typedef IGT_ IGT;
   typedef Polyhedral_mesh_domain_3<Polyhedron, IGT_, CGAL::Default,
@@ -319,7 +319,7 @@ public:
   typedef typename Base::Subdomain_index      Subdomain_index;
   /// @}
 
-  /// @cond DEVELOPERS
+  /// @cond SKIP_IN_MANUAL
   typedef typename Base::Ray_3                Ray_3;
   typedef typename Base::Index                Index;
 
@@ -384,7 +384,7 @@ public:
     this->build();
   }
 
-  /// @cond DEVELOPERS
+  /// @cond SKIP_IN_MANUAL
   Polyhedral_complex_mesh_domain_3
     (
     CGAL::Random* p_rng = NULL
@@ -398,7 +398,7 @@ public:
   }
   /// @endcond
 
-  /// @cond DEVELOPERS
+  /// @cond SKIP_IN_MANUAL
   /*!
   * construct_initial_points_object() is one of the very first functions called
   * when make_mesh_3 starts
@@ -433,7 +433,7 @@ public:
     detect_features(angle_bound, stored_polyhedra, false/*do protect*/);
   }
 
-  /// @cond DEVELOPERS
+  /// @cond SKIP_IN_MANUAL
   void detect_borders(std::vector<Polyhedron_type>& p, const bool dont_protect);
   /// @endcond
   /*!
@@ -445,7 +445,7 @@ public:
     detect_borders(stored_polyhedra, false/*do protect*/);
   }
 
-  /// @cond DEVELOPERS
+  /// @cond SKIP_IN_MANUAL
   template <typename Surf_p_index>
   void reindex_patches(const std::vector<Surf_p_index>& map);
 
@@ -505,7 +505,7 @@ public:
   }
   /// @endcond
 
-  /// @cond DEVELOPERS
+  /// @cond SKIP_IN_MANUAL
   template <typename C3t3>
   void add_vertices_to_c3t3_on_patch_without_feature_edges(C3t3& c3t3) const {
 #if CGAL_MESH_3_VERBOSE
@@ -749,7 +749,7 @@ public:
   /// @endcond
 
 protected:
-  /// @cond DEVELOPERS
+  /// @cond SKIP_IN_MANUAL
   void initialize_ts(Polyhedron_type& p) const;
 
   void add_features_from_split_graph_into_polylines(Featured_edges_copy_graph& graph);
@@ -767,7 +767,7 @@ protected:
   /// @endcond
 
 protected:
-  /// @cond DEVELOPERS
+  /// @cond SKIP_IN_MANUAL
   std::vector<Polyhedron> stored_polyhedra;
   std::vector<std::pair<Subdomain_index, Subdomain_index> > patch_indices;
   std::vector<std::size_t> patch_id_to_polyhedron_id;
@@ -787,7 +787,7 @@ private:
 };  // end class Polyhedral_complex_mesh_domain_3
 
 
-///@cond DEVELOPERS
+///@cond SKIP_IN_MANUAL
 template < typename GT_, typename P_, typename TA_>
 void
 Polyhedral_complex_mesh_domain_3<GT_,P_,TA_>::

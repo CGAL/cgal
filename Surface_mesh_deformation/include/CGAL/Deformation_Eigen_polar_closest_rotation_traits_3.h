@@ -37,7 +37,7 @@ namespace CGAL {
     public Deformation_Eigen_closest_rotation_traits_3{
   public:
 
-    /// \cond SKIP_FROM_MANUAL
+    /// \cond SKIP_IN_MANUAL
 
     /// Computes closest rotation to `m` and places it into `R`
     void compute_close_rotation(const Matrix& m, Matrix& R)

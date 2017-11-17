@@ -20,7 +20,7 @@
 
 #include <CGAL/license/Surface_mesh_deformation.h>
 
-/// @cond CGAL_DOCUMENT_INTERNAL
+/// @cond SKIP_IN_MANUAL
 
 namespace CGAL {
 namespace internal {

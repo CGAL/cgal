@@ -710,7 +710,7 @@ make_tetrahedron(const P& p0, const P& p1, const P& p2, const P& p3, Graph& g)
   return opposite(h2,g);
 }
 
-/// \cond SKIP_IN_DOC
+/// \cond SKIP_IN_MANUAL
 template <class Traits, class TriangleMesh, class VertexPointMap>
 bool is_degenerate_triangle_face(
   typename boost::graph_traits<TriangleMesh>::halfedge_descriptor hd,

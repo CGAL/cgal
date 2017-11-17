@@ -42,7 +42,7 @@ namespace Properties {
 ///
 /// @{
 
-/// @cond CGAL_DOCUMENT_INTERNALS
+/// @cond SKIP_IN_MANUAL
 class Base_property_array
 {
 public:
@@ -93,7 +93,7 @@ protected:
 
 //== CLASS DEFINITION =========================================================
 
-/// @cond CGAL_DOCUMENT_INTERNALS
+/// @cond SKIP_IN_MANUAL
 
 template <class T>
 class Property_array : public Base_property_array
@@ -200,7 +200,7 @@ private:
 
 //== CLASS DEFINITION =========================================================
 
-/// @cond CGAL_DOCUMENT_INTERNALS
+/// @cond SKIP_IN_MANUAL
 
 template<typename, typename>
 class Property_container;
@@ -210,7 +210,7 @@ class Property_container;
 
 
 //== CLASS DEFINITION =========================================================
-/// @cond CGAL_DOCUMENT_INTERNALS
+/// @cond SKIP_IN_MANUAL
 
 template<typename Ref_class, typename Key>
 class Property_container
@@ -449,7 +449,7 @@ private:
 ///
 template <class I, class T, class CRTP_derived_class>
 class Property_map_base
-/// @cond CGAL_DOCUMENT_INTERNALS
+/// @cond SKIP_IN_MANUAL
   : public boost::put_get_helper< 
            typename Property_array<T>::reference,
            CRTP_derived_class>
@@ -482,7 +482,7 @@ public:
 #endif
 
 public:
-/// @cond CGAL_DOCUMENT_INTERNALS
+/// @cond SKIP_IN_MANUAL
     Property_map_base(Property_array<T>* p=NULL) : parray_(p) {}
 
     void reset()

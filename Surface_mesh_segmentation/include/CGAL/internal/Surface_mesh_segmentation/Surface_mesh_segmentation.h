@@ -46,7 +46,7 @@
 
 namespace CGAL
 {
-/// @cond CGAL_DOCUMENT_INTERNAL
+/// @cond SKIP_IN_MANUAL
 namespace internal
 {
 

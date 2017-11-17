@@ -34,7 +34,7 @@ namespace CGAL {
 class Deformation_Eigen_closest_rotation_traits_3{
 public:
 
-  /// \cond SKIP_FROM_MANUAL
+  /// \cond SKIP_IN_MANUAL
   typedef Eigen::Matrix3d Matrix;
   typedef Eigen::Vector3d Vector;
 

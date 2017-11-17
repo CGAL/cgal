@@ -14,7 +14,9 @@ parameter is substituted with a model of this concept.
              `ArrangementConstructXMonotoneCurveTraits_2`
 
 \cgalHasModel `CGAL::Arr_conic_traits_2<RatKernel,AlgKernel,NtTraits>`
-\cond \cgalHasModel `CGAL::Arr_geodesic_arc_on_sphere_traits_2` \endcond
+\cond SKIP_IN_MANUAL
+\cgalHasModel `CGAL::Arr_geodesic_arc_on_sphere_traits_2`
+\endcond
 \cgalHasModel `CGAL::Arr_linear_traits_2<Kernel>`
 \cgalHasModel `CGAL::Arr_non_caching_segment_traits_2<Kernel>`
 \cgalHasModel `CGAL::Arr_segment_traits_2<Kernel>`

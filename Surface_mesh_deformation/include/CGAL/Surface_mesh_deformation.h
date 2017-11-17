@@ -60,7 +60,7 @@ enum Deformation_algorithm_tag
   SRE_ARAP         /**< use smooth rotation enhanced As-rigid-as-possible */
 };
 
-/// @cond CGAL_DOCUMENT_INTERNAL
+/// @cond SKIP_IN_MANUAL
 namespace internal {
 template<class TriangleMesh, Deformation_algorithm_tag deformation_algorithm_tag>
 struct Types_selectors;
@@ -364,7 +364,7 @@ private:
 // Public methods
 public:
 
-  /// \cond SKIP_FROM_MANUAL
+  /// \cond SKIP_IN_MANUAL
   //vertex_point_map set by default
   Surface_mesh_deformation(Triangle_mesh& triangle_mesh,
                            Vertex_index_map vertex_index_map,

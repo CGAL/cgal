@@ -28,7 +28,7 @@
 namespace CGAL
 {
 
-/// @cond CGAL_DOCUMENT_INTERNAL
+/// @cond SKIP_IN_MANUAL
 
 /**
  * @class Special case for ray/segment-triangle

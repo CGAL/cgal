@@ -25,7 +25,7 @@
 #include <CGAL/license/Surface_mesh_segmentation.h>
 
 
-/// @cond CGAL_DOCUMENT_INTERNAL
+/// @cond SKIP_IN_MANUAL
 
 /**
  * @file Disk_samplers.h

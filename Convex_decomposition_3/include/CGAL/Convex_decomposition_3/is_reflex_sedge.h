@@ -31,7 +31,7 @@
 
 namespace CGAL {
 
-/// @cond SKIP
+/// @cond SKIP_IN_MANUAL
 
 /*
   int is_reflex_edge(Halfedge_handle e) {    

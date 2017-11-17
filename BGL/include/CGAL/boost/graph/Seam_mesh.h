@@ -596,7 +596,7 @@ public:
   ///
   ///@{
 
-  /// @cond CGAL_BEGIN_END
+  /// @cond SKIP_IN_MANUAL
   /// Start iterator for vertices.
   vertex_iterator vertices_begin() const
   {
@@ -621,7 +621,7 @@ public:
     return make_range(beg, end);
   }
 
-  /// @cond CGAL_BEGIN_END
+  /// @cond SKIP_IN_MANUAL
   /// Start iterator for halfedges.
   halfedge_iterator halfedges_begin() const
   {
@@ -647,7 +647,7 @@ public:
     return make_range(beg, end);
   }
 
-  /// @cond CGAL_BEGIN_END
+  /// @cond SKIP_IN_MANUAL
   /// Start iterator for edges.
   edge_iterator edges_begin() const
   {
@@ -672,7 +672,7 @@ public:
     return make_range(beg, end);
   }
 
-  /// @cond CGAL_BEGIN_END
+  /// @cond SKIP_IN_MANUAL
   /// Start iterator for faces.
   face_iterator faces_begin() const
   {

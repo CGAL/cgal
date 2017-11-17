@@ -362,7 +362,7 @@ private:
 #if !defined(NDEBUG)
 public:
 
-  /// \cond
+  /// \cond SKIP_IN_MANUAL
 
   std::size_t peak_node_count()
   {
@@ -411,7 +411,7 @@ public:
 
 public:
 
-  /// \cond
+  /// \cond SKIP_IN_MANUAL
 
   /// This is just a placeholder for a proper debug output verbosity switch method
   bool m_debugOutput;
@@ -2047,7 +2047,7 @@ public:
 
   /// @}
 
-  /// \cond
+  /// \cond SKIP_IN_MANUAL
 
   ~Surface_mesh_shortest_path()
   {
@@ -2462,7 +2462,7 @@ public:
     return point(f, location, m_graph, m_vertexPointMap, m_traits);
   }
 
-  /// \cond
+  /// \cond SKIP_IN_MANUAL
 
   static Point_3 point(face_descriptor f, Barycentric_coordinates location, const Triangle_mesh& tm, const Traits& traits = Traits())
   {
@@ -2493,7 +2493,7 @@ public:
     return point(edge, t, m_graph, m_vertexPointMap, m_traits);
   }
 
-  /// \cond
+  /// \cond SKIP_IN_MANUAL
 
   static Point_3 point(halfedge_descriptor edge, FT t, const Triangle_mesh& tm, const Traits& traits = Traits())
   {
@@ -2539,7 +2539,7 @@ public:
     return face_location(vertex, m_graph, m_traits);
   }
 
-  /// \cond
+  /// \cond SKIP_IN_MANUAL
 
   static Face_location face_location(vertex_descriptor vertex, const Triangle_mesh& tm, const Traits& traits = Traits())
   {
@@ -2571,7 +2571,7 @@ public:
     return face_location(he, t, m_graph, m_traits);
   }
 
-  /// \cond
+  /// \cond SKIP_IN_MANUAL
 
   static Face_location face_location(halfedge_descriptor he, FT t, const Triangle_mesh& tm, const Traits& traits = Traits())
   {
@@ -2616,7 +2616,7 @@ public:
     return locate<AABBTraits>(p, m_graph, m_vertexPointMap, m_traits);
   }
 
-  /// \cond
+  /// \cond SKIP_IN_MANUAL
 
   template <class AABBTraits>
   static Face_location locate(const Point_3& location, const Triangle_mesh& tm,
@@ -2646,7 +2646,7 @@ public:
     return locate(p, tree, m_graph, m_vertexPointMap, m_traits);
   }
 
-  /// \cond
+  /// \cond SKIP_IN_MANUAL
 
   template <class AABBTraits>
   static Face_location locate(const Point_3& location, const AABB_tree<AABBTraits>& tree, const Triangle_mesh& tm, Vertex_point_map vertexPointMap, const Traits& traits = Traits())
@@ -2681,7 +2681,7 @@ public:
     return locate<AABBTraits>(ray, m_graph, m_vertexPointMap, m_traits);
   }
 
-  /// \cond
+  /// \cond SKIP_IN_MANUAL
 
   template <class AABBTraits>
   static Face_location locate(const Ray_3& ray, const Triangle_mesh& tm,
@@ -2712,7 +2712,7 @@ public:
     return locate(ray, tree, m_graph, m_vertexPointMap, m_traits);
   }
 
-  /// \cond
+  /// \cond SKIP_IN_MANUAL
 
   template <class AABBTraits>
   static Face_location locate(const Ray_3& ray, const AABB_tree<AABBTraits>& tree, const Triangle_mesh& tm, Vertex_point_map vertexPointMap, const Traits& traits = Traits())
@@ -2791,7 +2791,7 @@ public:
     build_aabb_tree(m_graph, outTree, vertexPointMap);
   }
 
-  /// \cond
+  /// \cond SKIP_IN_MANUAL
 
   template <class AABBTraits>
   static void build_aabb_tree(const Triangle_mesh& tm, AABB_tree<AABBTraits>& outTree,

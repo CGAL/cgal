@@ -32,7 +32,7 @@
 namespace CGAL
 {
 
-/// @cond CGAL_DOCUMENT_INTERNAL
+/// @cond SKIP_IN_MANUAL
 template<typename GeomTraits, typename AABB_primitive, bool fast_bbox_intersection>
 class AABB_traits_SDF :
   public AABB_traits<GeomTraits, AABB_primitive>

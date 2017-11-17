@@ -24,7 +24,7 @@
 
 #include <CGAL/license/Polygon_mesh_processing/core.h>
 
-/// @cond CGAL_DOCUMENT_INTERNAL
+/// @cond SKIP_IN_MANUAL
 
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/Kernel/global_functions_3.h>

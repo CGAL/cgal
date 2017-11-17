@@ -154,7 +154,7 @@ struct Skel_polyhedron_items_3: CGAL::Polyhedron_items_with_id_3 {
 ///      >
 /// \endcode
 ///
-/// @cond CGAL_DOCUMENT_INTERNAL
+/// @cond SKIP_IN_MANUAL
 /// @tparam Degeneracy_algorithm_tag
 ///         tag for selecting the degeneracy detection algorithm
 /// @endcond
@@ -196,7 +196,7 @@ public:
   >::type SolverTraits;
   #endif
 
-  /// @cond CGAL_DOCUMENT_INTERNAL
+  /// @cond SKIP_IN_MANUAL
   typedef typename Traits::Point_3                                             Point;
   typedef typename Traits::Vector_3                                             Vector;
 
@@ -504,7 +504,7 @@ public:
     m_omega_P = value;
   }
 
-  /// \cond SKIP_FROM_MANUAL
+  /// \cond SKIP_IN_MANUAL
   void set_zero_TH(double value)
   {
     m_zero_TH = value;
@@ -517,7 +517,7 @@ public:
 
   /// \endcond
 
-  /// @cond CGAL_DOCUMENT_INTERNAL
+  /// @cond SKIP_IN_MANUAL
 
   /**
    * Get the positions of fixed(degenerate) points.

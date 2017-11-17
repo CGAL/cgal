@@ -38,7 +38,7 @@
 
 namespace CGAL {
 
-/// \cond SKIP_DOXYGEN
+/// \cond SKIP_IN_MANUAL
 
 /// This class is almost the same as boost::static_property_map
 /// The difference is that it is writable, although put() does nothing
