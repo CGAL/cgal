@@ -21,10 +21,10 @@
 #include <boost/foreach.hpp>
 #include <boost/optional.hpp>
 
+#include <boost/unordered_map.hpp>
 #include <vector>
 #include <cmath>
-#include <cstdlib>
-#include <map>
+
 #include <queue>
 #include <iterator>
 
@@ -100,7 +100,7 @@ private:
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
 
   // internal typedefs
-  typedef boost::associative_property_map<std::map<vertex_descriptor, int> > Vertex_anchor_map;
+  typedef boost::associative_property_map<boost::unordered_map<vertex_descriptor, int> > Vertex_anchor_map;
 
   typedef std::vector<halfedge_descriptor> Chord_vector;
   typedef typename Chord_vector::iterator Chord_vector_iterator;
@@ -228,10 +228,10 @@ private:
   Compute_scalar_product_3 scalar_product_functor;
 
   // The facet proxy index map.
-  std::map<face_descriptor, std::size_t> internal_fidx_map;
-  boost::associative_property_map<std::map<face_descriptor, std::size_t> > fproxy_map;
+  boost::unordered_map<face_descriptor, std::size_t> internal_fidx_map;
+  boost::associative_property_map<boost::unordered_map<face_descriptor, std::size_t> > fproxy_map;
   // The attached anchor index of a vertex.
-  std::map<vertex_descriptor, int> internal_vidx_map;
+  boost::unordered_map<vertex_descriptor, int> internal_vidx_map;
   Vertex_anchor_map vanchor_map;
 
   // Proxies.
@@ -1495,7 +1495,7 @@ private:
     typedef typename SubGraph::vertex_descriptor sg_vertex_descriptor;
     typedef std::vector<sg_vertex_descriptor> VertexVector;
 
-    typedef std::map<vertex_descriptor, sg_vertex_descriptor> VertexMap;
+    typedef boost::unordered_map<vertex_descriptor, sg_vertex_descriptor> VertexMap;
     typedef boost::associative_property_map<VertexMap> ToSGVertexMap;
     VertexMap vmap;
     ToSGVertexMap to_sgv_map(vmap);

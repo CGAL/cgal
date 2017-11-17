@@ -9,7 +9,7 @@
 #include <CGAL/linear_least_squares_fitting_3.h>
 #include <boost/graph/graph_traits.hpp>
 
-#include <map>
+#include <boost/unordered_map.hpp>
 #include <list>
 
 namespace CGAL {
@@ -72,8 +72,8 @@ class L21_metric
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
 
-  typedef boost::associative_property_map<std::map<face_descriptor, Vector_3> > FacetNormalMap;
-  typedef boost::associative_property_map<std::map<face_descriptor, FT> > FacetAreaMap;
+  typedef boost::associative_property_map<boost::unordered_map<face_descriptor, Vector_3> > FacetNormalMap;
+  typedef boost::associative_property_map<boost::unordered_map<face_descriptor, FT> > FacetAreaMap;
 
 public:
   // type required by `ErrorMetric` concept
@@ -107,8 +107,8 @@ public:
   }
 
 private:
-  std::map<face_descriptor, Vector_3> facet_normals;
-  std::map<face_descriptor, FT> facet_areas;
+  boost::unordered_map<face_descriptor, Vector_3> facet_normals;
+  boost::unordered_map<face_descriptor, FT> facet_areas;
   const FacetNormalMap normal_pmap;
   const FacetAreaMap area_pmap;
   Construct_scaled_vector_3 scale_functor;
@@ -138,8 +138,8 @@ class L21_metric<TriangleMesh,
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
 
   typedef typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type VertexPointMap;
-  typedef boost::associative_property_map<std::map<face_descriptor, Vector_3> > FacetNormalMap;
-  typedef boost::associative_property_map<std::map<face_descriptor, FT> > FacetAreaMap;
+  typedef boost::associative_property_map<boost::unordered_map<face_descriptor, Vector_3> > FacetNormalMap;
+  typedef boost::associative_property_map<boost::unordered_map<face_descriptor, FT> > FacetAreaMap;
 
 public:
   // type required by `ErrorMetric` concept
@@ -174,8 +174,8 @@ public:
   }
 
 private:
-  std::map<face_descriptor, Vector_3> facet_normals;
-  std::map<face_descriptor, FT> facet_areas;
+  boost::unordered_map<face_descriptor, Vector_3> facet_normals;
+  boost::unordered_map<face_descriptor, FT> facet_areas;
   const FacetNormalMap normal_pmap;
   const FacetAreaMap area_pmap;
   Construct_scaled_vector_3 scale_functor;
@@ -204,7 +204,7 @@ class L21_metric<TriangleMesh,
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
 
-  typedef boost::associative_property_map<std::map<face_descriptor, Vector_3> > FacetNormalMap;
+  typedef boost::associative_property_map<boost::unordered_map<face_descriptor, Vector_3> > FacetNormalMap;
 
 public:
   // type required by `ErrorMetric` concept
@@ -237,7 +237,7 @@ public:
   }
 
 private:
-  std::map<face_descriptor, Vector_3> facet_normals;
+  boost::unordered_map<face_descriptor, Vector_3> facet_normals;
   const FacetNormalMap normal_pmap;
   Construct_scaled_vector_3 scale_functor;
   Compute_scalar_product_3 scalar_product_functor;
@@ -265,7 +265,7 @@ class L21_metric<TriangleMesh,
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
 
   typedef typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type VertexPointMap;
-  typedef boost::associative_property_map<std::map<face_descriptor, Vector_3> > FacetNormalMap;
+  typedef boost::associative_property_map<boost::unordered_map<face_descriptor, Vector_3> > FacetNormalMap;
 
 public:
   // type required by `ErrorMetric` concept
@@ -298,7 +298,7 @@ public:
   }
 
 private:
-  std::map<face_descriptor, Vector_3> facet_normals;
+  boost::unordered_map<face_descriptor, Vector_3> facet_normals;
   const FacetNormalMap normal_pmap;
   Construct_scaled_vector_3 scale_functor;
   Compute_scalar_product_3 scalar_product_functor;
@@ -335,8 +335,8 @@ class L21_proxy_fitting
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
 
-  typedef boost::associative_property_map<std::map<face_descriptor, Vector_3> > FacetNormalMap;
-  typedef boost::associative_property_map<std::map<face_descriptor, FT> > FacetAreaMap;
+  typedef boost::associative_property_map<boost::unordered_map<face_descriptor, Vector_3> > FacetNormalMap;
+  typedef boost::associative_property_map<boost::unordered_map<face_descriptor, FT> > FacetAreaMap;
 
 public:
   // type required by `ErrorMetric` concept
@@ -384,8 +384,8 @@ public:
   }
 
 private:
-  std::map<face_descriptor, Vector_3> facet_normals;
-  std::map<face_descriptor, FT> facet_areas;
+  boost::unordered_map<face_descriptor, Vector_3> facet_normals;
+  boost::unordered_map<face_descriptor, FT> facet_areas;
   const FacetNormalMap normal_pmap;
   const FacetAreaMap area_pmap;
   Construct_scaled_vector_3 scale_functor;
@@ -411,8 +411,8 @@ class L21_proxy_fitting<TriangleMesh,
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
 
   typedef typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type VertexPointMap;
-  typedef boost::associative_property_map<std::map<face_descriptor, Vector_3> > FacetNormalMap;
-  typedef boost::associative_property_map<std::map<face_descriptor, FT> > FacetAreaMap;
+  typedef boost::associative_property_map<boost::unordered_map<face_descriptor, Vector_3> > FacetNormalMap;
+  typedef boost::associative_property_map<boost::unordered_map<face_descriptor, FT> > FacetAreaMap;
 
 public:
   // type required by `ErrorMetric` concept
@@ -461,8 +461,8 @@ public:
   }
 
 private:
-  std::map<face_descriptor, Vector_3> facet_normals;
-  std::map<face_descriptor, FT> facet_areas;
+  boost::unordered_map<face_descriptor, Vector_3> facet_normals;
+  boost::unordered_map<face_descriptor, FT> facet_areas;
   const FacetNormalMap normal_pmap;
   const FacetAreaMap area_pmap;
   Construct_scaled_vector_3 scale_functor;
@@ -496,7 +496,7 @@ class L2_metric
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
 
-  typedef boost::associative_property_map<std::map<face_descriptor, FT> > FacetAreaMap;
+  typedef boost::associative_property_map<boost::unordered_map<face_descriptor, FT> > FacetAreaMap;
 
 public:
   // type required by `ErrorMetric` concept
@@ -533,7 +533,7 @@ public:
 
 private:
   const TriangleMesh *mesh;
-  std::map<face_descriptor, FT> facet_areas;
+  boost::unordered_map<face_descriptor, FT> facet_areas;
   const FacetAreaMap area_pmap;
   const VertexPointMap point_pmap;
 };
@@ -554,7 +554,7 @@ class L2_metric<TriangleMesh,
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
 
   typedef typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type VertexPointMap;
-  typedef boost::associative_property_map<std::map<face_descriptor, FT> > FacetAreaMap;
+  typedef boost::associative_property_map<boost::unordered_map<face_descriptor, FT> > FacetAreaMap;
 
 public:
   // type required by `ErrorMetric` concept
@@ -592,7 +592,7 @@ public:
 
 private:
   const TriangleMesh *mesh;
-  std::map<face_descriptor, FT> facet_areas;
+  boost::unordered_map<face_descriptor, FT> facet_areas;
   const FacetAreaMap area_pmap;
   const VertexPointMap point_pmap;
 };
