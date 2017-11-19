@@ -98,30 +98,15 @@ bool mesh_approximation(const TriangleMesh &tm_in,
   L21_proxy_fitting l21_fitting(tm_in);
   approx.set_metric(l21_metric, l21_fitting);
 
-  // default random initialization
+  // default hierarchical initialization
   CGAL::VSA::Seeding method = choose_param(
     get_param(np, internal_np::init_method), CGAL::VSA::Hierarchical);
   boost::optional<std::size_t> max_nb_proxies = choose_param(
     get_param(np, internal_np::max_nb_proxies), boost::optional<std::size_t>());
   boost::optional<FT> min_error_drop = choose_param(
     get_param(np, internal_np::min_error_drop), boost::optional<FT>());
-  std::size_t inner_iterations = choose_param(get_param(np, internal_np::inner_iterations), 10);
-  if (max_nb_proxies && !min_error_drop) {
-    if (*max_nb_proxies < num_faces(tm_in))
-      approx.init_by_number(method, *max_nb_proxies, inner_iterations);
-    else {
-#ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
-      std::cerr << "Error: max_nb_proxies out of range." << std::endl;
-#endif
-      return false;
-    }
-  }
-  else if (!max_nb_proxies && min_error_drop)
-    approx.init_by_error(method, *min_error_drop, inner_iterations);
-  else if (max_nb_proxies && min_error_drop)
-    approx.init(method, *max_nb_proxies, *min_error_drop, inner_iterations);
-  else // default by minimum error drop of 10%
-    approx.init_by_error(method, FT(0.1), inner_iterations);
+  std::size_t inner_iterations = choose_param(get_param(np, internal_np::inner_iterations), 5);
+  approx.init(method, max_nb_proxies, min_error_drop, inner_iterations);
 
   const std::size_t iterations = choose_param(get_param(np, internal_np::iterations), 10);
   approx.run(iterations);
