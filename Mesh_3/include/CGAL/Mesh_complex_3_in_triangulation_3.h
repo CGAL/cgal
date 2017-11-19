@@ -745,7 +745,7 @@ is_valid(bool verbose) const
 
     if ( ! do_intersect(sphere(p, sq_rp), sphere(q, sq_rq)) )
     {
-      std::cerr << "Point p[" << disp_vert(it->right) << "], dim=" << it->right->in_dimension()
+      std::cerr << "Points p[" << disp_vert(it->right) << "], dim=" << it->right->in_dimension()
                 << " and q[" << disp_vert(it->left) << "], dim=" << it->left->in_dimension()
                 << " form an edge but do not intersect !\n";
       return false;
