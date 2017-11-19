@@ -47,7 +47,9 @@ and provides the list of parameters used in this package.
 - `CGAL::VSA::L2_proxy_fitting`
 - `CGAL::VSA::Mesh_approximation`
 
-\todo add option to guarantee manifold and oriented output mesh
+\todo add option to enforce guarantee of 2-manifold and oriented output mesh
 \todo add traits class to design custom proxies
+\todo add function in the class interface to optimize, after meshing, the anchor point locations to minimize a user-defined metric (two-sided L1, two-sided L2, Wasserstein distance, etc).
+\todo add simulated annealing and combined operations to reach better minima.  
 
 */
