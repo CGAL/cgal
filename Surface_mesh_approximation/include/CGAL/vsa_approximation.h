@@ -411,16 +411,7 @@ public:
     const Seeding method,
     const std::size_t max_nb_proxies,
     const std::size_t num_iterations = 5) {
-    switch (method) {
-      case Random:
-        return init_random(max_nb_proxies);
-      case Incremental:
-        return init_incremental(max_nb_proxies, num_iterations);
-      case Hierarchical:
-        return init_hierarchical(max_nb_proxies, num_iterations);
-      default:
-        return 0;
-    }
+    return init(method, max_nb_proxies, boost::none, num_iterations);
   }
 
   /*!
@@ -434,18 +425,7 @@ public:
     const Seeding method,
     const FT target_drop,
     const std::size_t num_iterations = 5) {
-    // implicit maximum number of proxies constraint
-    const std::size_t nb_px = num_faces(*m_pmesh) / 3;
-    switch (method) {
-      case Random:
-        return init_error_random(nb_px, target_drop, num_iterations);
-      case Incremental:
-        return init_error_incremental(nb_px, target_drop, num_iterations);
-      case Hierarchical:
-        return init_error_hierarchical(nb_px, target_drop, num_iterations);
-      default:
-        return 0;
-    }
+    return init(method, boost::none, target_drop, num_iterations);
   }
 
   /*!
