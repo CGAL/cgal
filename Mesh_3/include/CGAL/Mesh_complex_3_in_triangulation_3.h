@@ -65,7 +65,7 @@ private:
 
 public:
   typedef typename Base::size_type                        size_type;
-  
+
   typedef typename Tr::Point                              Point;
   typedef typename Base::Edge                             Edge;
   typedef typename Base::Facet                            Facet;
@@ -156,7 +156,7 @@ public:
   using Base::remove_from_complex;
   using Base::triangulation;
   using Base::set_surface_patch_index;
-    
+
 
 
   /**
@@ -223,7 +223,7 @@ public:
   {
     far_vertices_.push_back(triangulation().insert(p));
   }
-  
+
   void add_far_point(Vertex_handle vh)
   {
     far_vertices_.push_back(vh);
@@ -251,7 +251,7 @@ public:
           Facet mirror_facet = tr.mirror_facet(std::make_pair(c, i));
           if (is_in_complex(mirror_facet))
           {
-            set_surface_patch_index(c, i, 
+            set_surface_patch_index(c, i,
                                     surface_patch_index(mirror_facet));
             c->set_facet_surface_center(i,
               mirror_facet.first->get_facet_surface_center(mirror_facet.second));
@@ -263,7 +263,7 @@ public:
           Facet mirror_facet = tr.mirror_facet(std::make_pair(c, i_inf));
           if (is_in_complex(mirror_facet))
           {
-            set_surface_patch_index(c, i_inf, 
+            set_surface_patch_index(c, i_inf,
                                     surface_patch_index(mirror_facet));
           }
         }*/
