@@ -20,27 +20,25 @@ namespace VSA {
 
 /*!
  * \ingroup PkgTSMA
- * @brief variational shape approximation a triangulated mesh.
- * This function approximate the input triangulated mesh by fitting it with proxies.
+ * @brief variational shape approximation of a triangle surface mesh.
+ * This function approximates the input mesh by fitting it with proxies.
  *
  * @tparam TriangleMesh model of `FaceGraph`.
  *         The descriptor types `boost::graph_traits<TriangleMesh>::%face_descriptor`
  *         and `boost::graph_traits<TriangleMesh>::%halfedge_descriptor` must be
  *         models of `Hashable`.
  *         If `TriangleMesh` has an internal property map for `CGAL::face_index_t`,
- *         and no `face_index_map` is given
- *         as a named parameter, then the internal one should be initialized
+ *         and no `face_index_map` is given as a named parameter, then the internal one should be initialized.
  * @tparam AnchorPointOutItr a class model of `OutputIterator` with `GeomTraits::Point_3` value type
  * @tparam IndexedTrisOutItr a class model of `OutputIterator` with `std::vector<std::size_t>` value type
  * @tparam NamedParameters a sequence of \ref namedparameters
  *
  * @param tm_in a triangle surface mesh to be approximated
- * @param[out] apts_out_itr anchor points output iterator
- * @param[out] tris_out_itr indexed triangles output iterator
+ * @param[out] apts_out_itr output iterator over anchor points 
+ * @param[out] tris_out_itr output iterator over indexed triangles (triplets of integers referring to anchor points)
  * @param np optional sequence of \ref namedparameters among the ones listed below
- * @return true if the indexed triangles construct a 2-manifold and oriented surface, 
- * only then the output mesh is valid
- *
+ * @return true if the indexed triangles represent a valid 2-manifold, oriented surface mesh, and false otherwise. 
+  *
  * \cgalNamedParamsBegin
  *  \cgalParamBegin{geom_traits} a geometric traits class instance, model of `Kernel`.
  *    Exact constructions kernels are not supported by this function.
@@ -48,25 +46,25 @@ namespace VSA {
  *  \cgalParamBegin{vertex_point_map} the property map with the points associated
  *    to the vertices of `tm_in`. Instance of a class model of `ReadWritePropertyMap`.
  *  \cgalParamEnd
- *  \cgalParamBegin{init_method} the selection of seed initialization method.
+ *  \cgalParamBegin{init_method} selection of initialization method.
  *  \cgalParamEnd
- *  \cgalParamBegin{max_nb_proxies} the maximum number of proxies to approximate the geometry.
+ *  \cgalParamBegin{max_nb_proxies} maximum number of proxies to approximate the geometry.
  *  \cgalParamEnd
- *  \cgalParamBegin{min_error_drop} the minimum error drop of the approximation.
+ *  \cgalParamBegin{min_error_drop} minimum error drop of the approximation, expressed in ratio between two iterations of proxy addition.
  *  \cgalParamEnd
- *  \cgalParamBegin{iterations} the relaxation iterations after seeding.
+ *  \cgalParamBegin{iterations} number of relaxation iterations after seeding.
  *  \cgalParamEnd
- *  \cgalParamBegin{inner_iterations} the relaxation iterations when seeding.
+ *  \cgalParamBegin{inner_iterations} number of relaxation iterations during seeding.
  *  \cgalParamEnd
- *  \cgalParamBegin{mesh_chord_error} the threshold of chord approximation when meshing.
+ *  \cgalParamBegin{mesh_chord_error} maximum chord approximation error use for mesh construction.
  *  \cgalParamEnd
- *  \cgalParamBegin{face_proxy_map} a property map containing the assigned proxy index of each face of `tm_in`
+ *  \cgalParamBegin{face_proxy_map} property map containing the assigned proxy index of each face of input mesh `tm_in`
  *  \cgalParamEnd
- *  \cgalParamBegin{proxies} the plane proxies
+ *  \cgalParamBegin{proxies} output iterator over proxies
  *  \cgalParamEnd
- *  \cgalParamBegin{anchor_vertex} the anchor verteices output iterator
+ *  \cgalParamBegin{anchor_vertices} output iterator over anchor vertices, on the input mesh `tm_in`
  *  \cgalParamEnd
- *  \cgalParamBegin{output_mesh} the constructed polyhedron surface from the indexed triangles
+ *  \cgalParamBegin{output_mesh} polyhedral surface mesh derived from the indexed facet set. the polyhedron is not empty only when the indexed face set represents a 2-manifold, oriented surface triangle mesh.
  *  \cgalParamEnd
  * \cgalNamedParamsEnd
  */
@@ -128,15 +126,15 @@ bool mesh_approximation(const TriangleMesh &tm_in,
   typedef CGAL::Polyhedron_3<Geom_traits> PolyhedronSurface;
   PolyhedronSurface tmp_poly;
   PolyhedronSurface * const tm_out = choose_param(get_param(np, internal_np::output_mesh), &tmp_poly);
-  FT chord_error = choose_param(get_param(np, internal_np::mesh_chord_error), FT(1));
+  const FT chord_error = choose_param(get_param(np, internal_np::mesh_chord_error), FT(1.0));
   const bool is_manifold = approx.extract_mesh(*tm_out, chord_error);
 
   typedef typename boost::lookup_named_param_def<
-    internal_np::anchor_vertex_t,
+    internal_np::anchor_vertices_t,
     NamedParameters,
     internal_np::vsa_no_output_t>::type AnchorVertexOutItr;
   AnchorVertexOutItr avtx_out_itr = choose_param(
-    get_param(np, internal_np::anchor_vertex) , internal_np::vsa_no_output);
+    get_param(np, internal_np::anchor_vertices) , internal_np::vsa_no_output);
   get_anchor_vertices(approx, avtx_out_itr);
 
   // get anchor points
