@@ -335,26 +335,67 @@ public:
   /*!
    * @brief Initialize the algorithm with both maximum number of proxies
    * and minmum error drop stop criteria. The first criterion met stops the seeding.
+   * Parameters out of range are ignored.
    * @param method seeding method
-   * @param max_nb_proxies maximum target number of proxies
-   * @param min_error_drop minimum error drop
+   * @param max_nb_proxies maximum target number of proxies,
+   * should be in range (0, num_faces(_mesh) / 3)
+   * @param min_error_drop minimum error drop,
+   * should be in range (0.0, 1.0)
    * @param num_iterations number of re-fitting iterations 
    * in incremental and hierarchical seeding
    * @return number of proxies initialized
    */
-  std::size_t init(const Seeding method,
-    const std::size_t max_nb_proxies,
-    const FT min_error_drop,
+  std::size_t init(const Seeding method = Hierarchical,
+    const boost::optional<std::size_t> max_nb_proxies = boost::optional<std::size_t>(),
+    const boost::optional<FT> min_error_drop = boost::optional<FT>(),
     const std::size_t num_iterations = 5) {
-    switch (method) {
-      case Random:
-        return init_random(max_nb_proxies, min_error_drop);
-      case Incremental:
-        return init_incremental(max_nb_proxies, num_iterations, min_error_drop);
-      case Hierarchical:
-        return init_hierarchical(max_nb_proxies, num_iterations, min_error_drop);
-      default:
-        return 0;
+    // maximum number of proxies internally, maybe better choice?
+    const std::size_t nb_px = num_faces(*m_pmesh) / 3;
+
+    if (min_error_drop && *min_error_drop > FT(0.0) && *min_error_drop < FT(1.0)) {
+      // as long as minimum error is specified and valid
+      // maximum number of proxies always exist, no matter specified or not or out of range
+      // there is always a maximum number of proxies explicitly (max_nb_proxies) or implicitly (nb_px)
+      std::size_t max_nb_px_adjusted = nb_px;
+      if (max_nb_proxies && *max_nb_proxies < nb_px && *max_nb_proxies > 0)
+        max_nb_px_adjusted = *max_nb_proxies;
+      switch (method) {
+        case Random:
+          return init_error_random(max_nb_px_adjusted, *min_error_drop, num_iterations);
+        case Incremental:
+          return init_error_incremental(max_nb_px_adjusted, *min_error_drop, num_iterations);
+        case Hierarchical:
+          return init_error_hierarchical(max_nb_px_adjusted, *min_error_drop, num_iterations);
+        default:
+          return 0;
+      }
+    }
+    else if (max_nb_proxies && *max_nb_proxies < nb_px && *max_nb_proxies > 0) {
+      // no valid min_error_drop provided, only max_nb_proxies
+      switch (method) {
+        case Random:
+          return init_random(*max_nb_proxies);
+        case Incremental:
+          return init_incremental(*max_nb_proxies, num_iterations);
+        case Hierarchical:
+          return init_hierarchical(*max_nb_proxies, num_iterations);
+        default:
+          return 0;
+      }
+    }
+    else {
+      // both parameters are unspecified or out of range
+      const FT e(0.1);
+      switch (method) {
+        case Random:
+          return init_error_random(nb_px, e, num_iterations);
+        case Incremental:
+          return init_error_incremental(nb_px, e, num_iterations);
+        case Hierarchical:
+          return init_error_hierarchical(nb_px, e, num_iterations);
+        default:
+          return 0;
+      }
     }
   }
 
@@ -393,13 +434,15 @@ public:
     const Seeding method,
     const FT target_drop,
     const std::size_t num_iterations = 5) {
+    // implicit maximum number of proxies constraint
+    const std::size_t nb_px = num_faces(*m_pmesh) / 3;
     switch (method) {
       case Random:
-        return init_error_random(target_drop, num_iterations);
+        return init_error_random(nb_px, target_drop, num_iterations);
       case Incremental:
-        return init_error_incremental(target_drop, num_iterations);
+        return init_error_incremental(nb_px, target_drop, num_iterations);
       case Hierarchical:
-        return init_error_hierarchical(target_drop, num_iterations);
+        return init_error_hierarchical(nb_px, target_drop, num_iterations);
       default:
         return 0;
     }
@@ -981,90 +1024,57 @@ public:
 // private member functions
 private:
   /*!
-   * @brief Random initialize proxies.
-   * With both maximum number of proxies and minimum error drop stop criteria,
-   * the first met criterion tops the seeding.
+   * @brief Random initialize proxies to target number of proxies.
    * @note To ensure the randomness, call `std::srand()` beforehand.
-   * @param max_nb_proxies maximum number of proxies
-   * @param min_error_drop minimum error drop
+   * @param max_nb_proxies maximum number of proxies, 
+   * should be in range (0, num_faces(*m_pmesh))
    * @return number of proxies initialized
    */
-  std::size_t init_random(const std::size_t max_nb_proxies,
-    const boost::optional<FT> min_error_drop = boost::optional<FT>(),
-    const std::size_t num_iterations = 5) {
-    const std::size_t nbf = num_faces(*m_pmesh);
-    if (nbf < max_nb_proxies)
-      return 0;
-
+  std::size_t init_random(const std::size_t max_nb_proxies) {
     proxies.clear();
     // fill a temporary vector of facets
     std::vector<face_descriptor> facets;
     random_shuffle_facets(facets);
 
-    if (!min_error_drop) {
-      // reach to the number of proxies
-      for (std::size_t i = 0; i < max_nb_proxies; ++i)
-        proxies.push_back(fit_new_proxy(facets[i]));
-    }
-    else {
-      // reach to the minimum error drop before reaching to the number of proxies
-      const FT initial_err = init_from_first_facet();
-      FT error_drop(1.0);
-      for (std::size_t i = 1; i <= max_nb_proxies && error_drop > *min_error_drop; ++i) {
-        proxies.clear();
-        for (std::size_t j = 0; j < i; ++j)
-          proxies.push_back(fit_new_proxy(facets[j]));
-        const FT err = run(num_iterations);
-        error_drop = err / initial_err;
-      }
-    }
+    // reach to the number of proxies
+    for (std::size_t i = 0; i < max_nb_proxies; ++i)
+      proxies.push_back(fit_new_proxy(facets[i]));
 
     return proxies.size();
   }
 
   /*!
-   * @brief Incremental initialize proxies.
-   * With both maximum number of proxies and minimum error drop stop criteria,
-   * the first met criterion tops the seeding.
-   * @param max_nb_proxies maximum number of proxies
+   * @brief Incremental initialize proxies to target number of proxies.
+   * @param max_nb_proxies maximum number of proxies, 
+   * should be in range (0, num_faces(*m_pmesh))
    * @param num_iterations number of re-fitting iterations 
-   * @param min_error_drop minimum error drop // TODO
    * before each incremental proxy insertion
    * @return number of proxies initialized
    */
   std::size_t init_incremental(const std::size_t max_nb_proxies,
-    const std::size_t num_iterations,
-    const FT min_error_drop = FT(1.0)) {
+    const std::size_t num_iterations) {
     proxies.clear();
-    if (num_faces(*m_pmesh) < max_nb_proxies)
-      return 0;
-    
     // initialize a proxy and the proxy map to prepare for the insertion
     proxies.push_back(fit_new_proxy(*(faces(*m_pmesh).first)));
     BOOST_FOREACH(face_descriptor f, faces(*m_pmesh))
       fproxy_map[f] = 0;
 
     add_proxies_furthest(max_nb_proxies - 1, num_iterations);
+
     return proxies.size();
   }
 
   /*!
-   * @brief Hierarchical initialize proxies.
-   * With both maximum number of proxies and minimum error drop stop criteria,
-   * the first met criterion tops the seeding.
-   * @param max_nb_proxies maximum number of proxies
+   * @brief Hierarchical initialize proxies to target number of proxies.
+   * @param max_nb_proxies maximum number of proxies, 
+   * should be in range (0, num_faces(*m_pmesh))
    * @param num_iterations number of re-fitting iterations 
-   * @param min_error_drop minimum error drop // TODO
    * before each hierarchical proxy insertion
    * @return number of proxies initialized
    */
   std::size_t init_hierarchical(const std::size_t max_nb_proxies,
-    const std::size_t num_iterations,
-    const FT min_error_drop = FT(1.0)) {
+    const std::size_t num_iterations) {
     proxies.clear();
-    if (num_faces(*m_pmesh) < max_nb_proxies)
-      return 0;
-    
     // initialize 2 proxy
     typename boost::graph_traits<TriangleMesh>::face_iterator
       fitr = faces(*m_pmesh).first;
@@ -1083,23 +1093,25 @@ private:
         (num_proxies * 2 < max_nb_proxies) ? num_proxies : (max_nb_proxies - num_proxies);
       add_proxies_error_diffusion(num_proxies_to_be_added);
     }
+    
     return proxies.size();
   }
 
   /*!
-   * @brief Initialize by targeted error drop with random seeding.
-   * @param target_drop targeted error drop to initial state, usually in range (0, 1)
+   * @brief Randomly initialize proxies
+   * with both maximum number of proxies and minimum error drop stop criteria,
+   * The first criterion met stops the seeding.
+   * @note To ensure the randomness, call `std::srand()` beforehand.
+   * @param max_nb_proxies maximum number of proxies, should be in range (0, num_faces(_mesh) / 3)
+   * @param min_error_drop minimum error drop, should be in range (0.0, 1.0)
    * @param num_iterations number of re-fitting iterations 
    * @return number of proxies initialized
    */
-  std::size_t init_error_random(const FT target_drop,
+  std::size_t init_error_random(const std::size_t max_nb_proxies,
+    const FT min_error_drop,
     const std::size_t num_iterations) {
-    // maximum allowed number of proxies
-    const std::size_t max_proxies = num_faces(*m_pmesh) / 3;
-    if (max_proxies < 1)
-      return 0;
-
-    const FT initial_err = init_from_first_facet();
+    init_from_first_facet();
+    const FT initial_err = compute_fitting_error();
     FT sum_err(0);
     FT drop(0);
     std::size_t target_px = 2;
@@ -1113,26 +1125,26 @@ private:
       sum_err = compute_fitting_error();
       target_px *= 2;
       drop = sum_err / initial_err;
-    } while (drop > target_drop && proxies.size() < max_proxies);
+    } while (drop > min_error_drop && proxies.size() < max_nb_proxies);
 
     return proxies.size();
   }
 
   /*!
-   * @brief Initialize by targeted error dropwith incremental seeding.
-   * @param target_drop targeted error drop to initial state, usually in range (0, 1)
+   * @brief Incrementally initialize proxies
+   * with both maximum number of proxies and minimum error drop stop criteria,
+   * The first criterion met stops the seeding.
+   * @param max_nb_proxies maximum number of proxies, should be in range (0, num_faces(_mesh) / 3)
+   * @param min_error_drop minimum error drop, should be in range (0.0, 1.0)
    * @param num_iterations number of re-fitting iterations 
    * @return number of proxies initialized
    */
-  std::size_t init_error_incremental(const FT target_drop,
+  std::size_t init_error_incremental(const std::size_t max_nb_proxies,
+    const FT min_error_drop,
     const std::size_t num_iterations) {
-    // maximum allowed number of proxies
-    const std::size_t max_proxies = num_faces(*m_pmesh) / 3;
-    if (max_proxies < 1)
-      return 0;
-
     // initialize a proxy and the proxy map to prepare for the insertion
-    const FT initial_err = init_from_first_facet();
+    init_from_first_facet();
+    const FT initial_err = compute_fitting_error();
     FT sum_err(0);
     FT drop(0);
     do {
@@ -1143,26 +1155,26 @@ private:
       }
       sum_err = compute_fitting_error();
       drop = sum_err / initial_err;
-    } while (drop > target_drop && proxies.size() < max_proxies);
+    } while (drop > min_error_drop && proxies.size() < max_nb_proxies);
 
     return proxies.size();
   }
 
   /*!
-   * @brief Initialize by targeted error drop with hierarchical seeding.
-   * @param target_drop targeted error drop to initial state, usually in range (0, 1)
+   * @brief Hierarchically initialize proxies
+   * with both maximum number of proxies and minimum error drop stop criteria,
+   * The first criterion met stops the seeding.
+   * @param max_nb_proxies maximum number of proxies, should be in range (0, num_faces(_mesh) / 3)
+   * @param min_error_drop minimum error drop, should be in range (0.0, 1.0)
    * @param num_iterations number of re-fitting iterations 
    * @return number of proxies initialized
    */
-  std::size_t init_error_hierarchical(const FT target_drop,
+  std::size_t init_error_hierarchical(const std::size_t max_nb_proxies,
+    const FT min_error_drop,
     const std::size_t num_iterations) {
-    // maximum allowed number of proxies
-    const std::size_t max_proxies = num_faces(*m_pmesh) / 3;
-    if (max_proxies < 1)
-      return 0;
-
     // initialize a proxy and the proxy map to prepare for the insertion
-    const FT initial_err = init_from_first_facet();
+    init_from_first_facet();
+    const FT initial_err = compute_fitting_error();
     FT sum_err(0);
     FT drop(0);
     std::size_t target_px = 1;
@@ -1175,7 +1187,7 @@ private:
       sum_err = compute_fitting_error();
       target_px *= 2;
       drop = sum_err / initial_err;
-    } while (drop > target_drop && proxies.size() < max_proxies);
+    } while (drop > min_error_drop && proxies.size() < max_nb_proxies);
 
     return proxies.size();
   }
@@ -1272,8 +1284,8 @@ private:
    * @brief Random shuffle the surface facets into an empty vector.
    */
   void random_shuffle_facets(std::vector<face_descriptor> &facets) {
-    facets.reserve(nbf);
     const std::size_t nbf = num_faces(*m_pmesh);
+    facets.reserve(nbf);
     BOOST_FOREACH(face_descriptor f, faces(*m_pmesh))
       facets.push_back(f);
     // random shuffle
@@ -1293,14 +1305,12 @@ private:
    * @note This process invalidate all existing data, only used for initial state.
    * Coarse approximation iteration is not performed, because it's inaccurate anyway
    * and may cause serious degenerate cases(e.g. a standard cube mode).
-   * @return initial fitting error
    */
-  FT init_from_first_facet() {
+  void init_from_first_facet() {
     proxies.clear();
     proxies.push_back(fit_new_proxy(*(faces(*m_pmesh).first)));
     BOOST_FOREACH(face_descriptor f, faces(*m_pmesh))
       fproxy_map[f] = 0;
-    return compute_fitting_error();
   }
 
   /*!
