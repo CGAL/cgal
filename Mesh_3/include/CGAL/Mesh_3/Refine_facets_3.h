@@ -995,7 +995,7 @@ scan_triangulation_impl()
     {
       // Cannot be const, see treat_new_facet signature
       Facet facet = *facet_it;
-#ifdef CGAL_MESH_3_VERBOSE
+#ifdef CGAL_MESH_3_DEBUG_FACET_CRITERIA
       std::cerr << "TREAT FACET : " << std::endl
                  << "*" << *facet.first->vertex((facet.second+1)%4)  << std::endl
                 << "  " << *facet.first->vertex((facet.second+2)%4)  << std::endl
