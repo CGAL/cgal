@@ -14,6 +14,7 @@
 #include <CGAL/vsa_metrics.h>
 #include <CGAL/Default.h>
 
+#include <boost/unordered_map.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
@@ -21,12 +22,11 @@
 #include <boost/foreach.hpp>
 #include <boost/optional.hpp>
 
-#include <boost/unordered_map.hpp>
 #include <vector>
-#include <cmath>
-
 #include <queue>
 #include <iterator>
+#include <cmath>
+#include <cstdlib>
 
 #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
 #include <iostream>

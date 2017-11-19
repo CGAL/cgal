@@ -18,13 +18,13 @@ int main()
 
   // The output will be an indexed triangle mesh
   std::vector<Kernel::Point_3> points;
+  std::vector<std::vector<std::size_t> > triangles;
  
   // free function interface with named parameters
   CGAL::VSA::mesh_approximation(input,
                                 std::back_inserter(points),
                                 std::back_inserter(triangles),
                                 CGAL::VSA::parameters::max_nb_proxies(200));
-    
 
   std::cout << "#vertices: " << points.size() << std::endl;
   std::cout << "#triangles: " << triangles.size() << std::endl;
