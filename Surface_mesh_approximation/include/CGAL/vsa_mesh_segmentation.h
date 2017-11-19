@@ -22,6 +22,9 @@ namespace VSA {
  * \ingroup PkgTSMA
  * @brief variational shape approximation segmentation a triangulated mesh.
  * This function segment the input triangulated mesh by the variational shape approximation algorithm.
+ * It fills a property map which associates a segment-id (in [0, number_of_segments -1])
+ * or a proxy-id (in [0, number_of_proxies-1]) to each facet.
+ * A segment is a set of connected facets which are placed under the same proxy patch (see \cgalFigureRef{relaxation}).
  *
  * @tparam TriangleMesh model of `FaceGraph`.
  *         The descriptor types `boost::graph_traits<TriangleMesh>::%face_descriptor`
@@ -30,9 +33,12 @@ namespace VSA {
  *         If `TriangleMesh` has an internal property map for `CGAL::face_index_t`,
  *         and no `face_index_map` is given
  *         as a named parameter, then the internal one should be initialized
+ * @tparam SegmentPropertyMap a ReadWritePropertyMap with
+ * `boost::graph_traits<TriangleMesh>::%face_descriptor` as key and `std::size_t` as value type
  * @tparam NamedParameters a sequence of \ref namedparameters
  *
  * @param tm_in a triangulated surface mesh to be segmented
+ * @param[out] segment_ids the segment or proxy id of each facet
  * @param np optional sequence of \ref namedparameters among the ones listed below
  *
  * \cgalNamedParamsBegin
@@ -59,8 +65,10 @@ namespace VSA {
  * \cgalNamedParamsEnd
  */
 template <typename TriangleMesh,
+  typename SegmentPropertyMap,
   typename NamedParameters>
-void mesh_segmentation(const TriangleMesh &tm_in, const NamedParameters &np)
+void mesh_segmentation(const TriangleMesh &tm_in,
+  const SegmentPropertyMap segment_ids, const NamedParameters &np)
 {
   using boost::get_param;
   using boost::choose_param;
@@ -99,6 +107,8 @@ void mesh_segmentation(const TriangleMesh &tm_in, const NamedParameters &np)
     << ", #itr = " << iterations
     << ", #inner_itr = " << inner_iterations << std::endl;
 #endif
+
+  approx.get_proxy_map(segment_ids);
 
   typedef typename boost::lookup_named_param_def<
     internal_np::facet_proxy_map_t,
