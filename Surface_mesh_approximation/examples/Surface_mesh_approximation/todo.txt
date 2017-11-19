@@ -1,6 +1,0 @@
-Examples:
-- free function for approximation, with only indexed triangles as output
-- free function for approximation, with polyhedron set as output
-- free function for segmentation, with segmentation as output
-- class interface
-  - 

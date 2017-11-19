@@ -10,40 +10,38 @@ namespace CGAL {
 
 \section sma_introduction Introduction
 
-For many applications ranging from geometry compression to reverse engineering, finding the concise and faithful approximation of an excessively verbose 3D data (in particular, scanned meshes) is beneficial for subsequent processing and may reduce the computational cost dramatically.
+For many applications ranging from reverse engineering to computational engineering, finding the concise and faithful approximation of an excessively verbose 3D data (in particular, scanned meshes) is beneficial for subsequent processing and may reduce the computational cost dramatically.
 
 This package implements the <em>Variational Shape Approximation</em> \cgalCite{cgal:cad-vsa-04} (VSA) method to approximate an input surface mesh by a simpler indexed face set or polyhedral surface mesh. 
 
-Given an input surface triangle mesh, VSA leverages a discrete clustering algorithm to approximate it by a set of local simple shapes referred to as proxies. Each cluster is represented as a connected set of triangles of the input mesh, and the output mesh is constructed by generating a triangle approximation of the clusters. The approximation error is one-side, defined between the clusters and their associated proxies.
+Given an input surface triangle mesh, VSA leverages a discrete clustering algorithm to approximate it by a set of local simple shapes referred to as proxies. Each cluster is represented as a connected set of triangles of the input mesh, and the output mesh is constructed by generating a triangle mesh approximation of the clusters. 
+By default the proxies are planar, and the algorithm design is generic for future extensions to non-planar proxies. 
+The approximation error is one-side, defined between the clusters and their associated proxies. Two error metrics (\f$ \mathcal{L}^2 \f$, \f$ \mathcal{L}^{2,1} \f$) are provided via the classes `CGAL::VSA::L2_metric` and `CGAL::VSA::L21_metric`, and the algorithm design is generic to other user-defined metrics.
+
 
 \cgalFigureBegin{Approximation_teaser, teaser.png}
 Variational shape approximation on two models with the \f$ \mathcal{L}^{2,1} \f$ error metric. From left to right: partition of the input surface triangle mesh, anchor vertices and edges, and output triangle mesh. The partition is optimized via discrete clustering of the input triangles, so as to minimize the approximation error from the clusters to planar proxies (not shown). 
 \cgalFigureEnd
 
-By default the proxies are planar, but the algorithm design is generic for future extensions to non-planar proxies. Two error metrics (\f$ \mathcal{L}^2 \f$, \f$ \mathcal{L}^{2,1} \f$) are provided, and the algorithm is generic to other user-defined metrics.
-
 This package offers both the approximation and mesh construction functionalities. They can be accessed through the free function `CGAL::VSA::mesh_approximation()`, which runs a fully automated version of the algorithm:
 
 \cgalExample{Surface_mesh_approximation/vsa_simple_approximation_example.cpp}
 
-A class interface is also provided for advanced users, with interactive capabilities during clustering and customization in terms of error and proxies. Apart from approximation, the package can be used for shape segmentation via another free function to access the clustering partition.
-
+A class interface is also provided for advanced users, with interactive capabilities during clustering and customization in terms of error and proxies. Apart from approximation, the package can be used for shape segmentation via another free function which provides access to the clustering partition.
 
 \section sma_overview Overview
 
 \subsection sma_clustering Clustering
 
-Figure \cgalFigureRef{relaxation} depicts the Lloyd clustering iteration on the plane-sphere model with the \f$ \mathcal{L}^{2,1} \f$ metric.
+Figure \cgalFigureRef{relaxation} depicts several Lloyd clustering iterations on the plane-sphere model with planar proxies and the \f$ \mathcal{L}^{2,1} \f$ metric.
 
 \cgalFigureBegin{relaxation, relaxation.png}
-Lloyd iterations on the plane-sphere model with the \f$ \mathcal{L}^{2,1} \f$ metric: (left) random initialization of 6 proxies; (center) after one iteration; (right) after 8 iterations, the regions settle. The red lines depict the proxy normals.
+Lloyd iterations on the plane-sphere model with planar proxies and the \f$ \mathcal{L}^{2,1} \f$ metric: (left) random initialization of 6 proxies; (center) after one iteration; (right) after 8 iterations, the regions settle. The red lines depict the proxy normals.
 \cgalFigureEnd
-
-The package provides both two metrics as `CGAL::VSA::L2_metric` and `CGAL::VSA::L21_metric`, respectively. The algorithm is not restricted to these two metrics and can be extended to other proxies and error metrics (see Section \ref sma_example4).
 
 \subsection sma_init Initialization
 
-<!-- As discussed above, the iteration needs a set of initial proxies \f$ \{ P_1^0, \cdots, P_k^0 \} \f$.  -->
+<!-- As discussed above, the clustering iteration requires a set of initial proxies \f$ \{ P_1^0, \cdots, P_k^0 \} \f$.  -->
 
 The clustering algorithm must be initialized by determining either the maximum number of proxies required to approximate the geometry or the minimum error drop rate between two iterations. More specifically, we can decide:
 - <b>Maximum number of proxies</b>. The algorithm adds proxies until the specified target number is met.
@@ -65,12 +63,12 @@ The package provides 3 different seeding methods:
 (TODO: precise formula used and justify)
 
 \cgalFigureBegin{seeding_method, seeding_method.png}
-Comparison of different seeding methods on a sphere-cube union model, all with \f$ \mathcal{L}^{2,1} \f$ metrics and 20 proxies.
+Comparison of different seeding methods on the sphere-cube model, all with \f$ \mathcal{L}^{2,1} \f$ metrics and 20 proxies.
 From left to right: random, incremental and hierarchical seeding.
 Notice the entrapped local minima in the yellow rectangles.
 \cgalFigureEnd
 
-Figure \cgalFigureRef{seeding_method} depicts the effect of different seeding methods to initialize the algorithm with 20 proxies. Random initialization is random in choice of facets, very fast but can be entrapped in local minima areas espeically on shapes with regions surrounded by sharp creases (left). Incremental initialization adds proxies one by one, focusing on the most distorted region. It can thus be slow due to the interleaving with the clustering process. Hierarchical initialization yields fitting patches with more evenly distributed fitting errors, hence time consumption is somewhere in between the former two. Some statistics and comparisons are available in \ref sma_perf.
+Figure \cgalFigureRef{seeding_method} depicts the effect of different seeding methods to initialize the algorithm with 20 proxies. Random initialization randomly selects a set of input triangle facets as proxy seeds. It is very fast but the subsequent clustering process can be entrapped in local minima, especially on shapes with regions surrounded by sharp creases (left). Incremental initialization adds the proxies one by one at the most distorted region, interleaved with several inner iterations of clustering. It can thus be slow due to the interleaving with the clustering process. Hierarchical initialization adds proxies in a hierarchical refinement sequence, so as the generate clustering refions with more evenly distributed fitting errors. Time consumption is somewhere in-between the former two. Some statistics and comparisons are available in \ref sma_perf.
 
 \subsection sma_operations Operations
 
