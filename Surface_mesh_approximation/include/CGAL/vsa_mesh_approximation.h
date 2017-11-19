@@ -58,13 +58,14 @@ namespace VSA {
  *  \cgalParamEnd
  *  \cgalParamBegin{mesh_chord_error} maximum chord approximation error use for mesh construction.
  *  \cgalParamEnd
- *  \cgalParamBegin{face_proxy_map} property map containing the assigned proxy index of each face of input mesh `tm_in`
+ *  \cgalParamBegin{face_proxy_map} property map containing the assigned proxy index of each face of input mesh `tm_in`.
  *  \cgalParamEnd
- *  \cgalParamBegin{proxies} output iterator over proxies
+ *  \cgalParamBegin{proxies} output iterator over proxies.
  *  \cgalParamEnd
- *  \cgalParamBegin{anchor_vertices} output iterator over anchor vertices, on the input mesh `tm_in`
+ *  \cgalParamBegin{anchor_vertices} output iterator over anchor vertices, defined on the input mesh `tm_in`. 
  *  \cgalParamEnd
- *  \cgalParamBegin{output_mesh} polyhedral surface mesh derived from the indexed facet set. the polyhedron is not empty only when the indexed face set represents a 2-manifold, oriented surface triangle mesh.
+ *  \cgalParamBegin{output_mesh} polyhedral surface mesh derived from the indexed facet set. The polyhedron is not empty only 
+ *  when the indexed face set represents a 2-manifold, oriented surface triangle mesh.
  *  \cgalParamEnd
  * \cgalNamedParamsEnd
  */
