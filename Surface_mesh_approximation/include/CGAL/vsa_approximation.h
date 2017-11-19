@@ -266,7 +266,7 @@ public:
 
   /*!
    * Initialize and prepare for the approximation.
-   * @param _mesh `CGAL TriangleMesh` on which approximation operate.
+   * @param _mesh `CGAL TriangleMesh` on which approximation operates.
    * @param _point_pmap vertex point map of the mesh
    */
   Mesh_approximation(const TriangleMesh &_mesh,
@@ -417,7 +417,7 @@ public:
   /*!
    * @brief Initialize proxies to targeted error drop.
    * @param method seeding method
-   * @param target_drop targeted error drop to initial state, usually in range (0, 1)
+   * @param target_drop targeted error drop to initial state, in range (0, 1)
    * @param num_iterations number of re-fitting iterations 
    * @return number of proxies initialized
    */
@@ -429,9 +429,9 @@ public:
   }
 
   /*!
-   * @brief Run the the partitioning and fitting process.
-   * @param num_iterations number of iteration.
-   * @return the total fitting error of current partition to the proxies.
+   * @brief Run the partitioning and fitting processes.
+   * @param num_iterations number of iterations.
+   * @return the total total fitting error of current partition to the proxies.
    */
   FT run(std::size_t num_iterations = 1) {
     for (std::size_t i = 0; i < num_iterations; ++i) {
@@ -1299,13 +1299,13 @@ private:
    */
   FT compute_fitting_error() {
     BOOST_FOREACH(Proxy_wrapper &pxw, proxies)
-      pxw.err = FT(0);
+      pxw.err = FT(0.0);
     BOOST_FOREACH(face_descriptor f, faces(*m_pmesh)) {
       std::size_t pxidx = fproxy_map[f];
       proxies[pxidx].err += (*fit_error)(f, proxies[pxidx].px);
     }
 
-    FT sum_error(0);
+    FT sum_error= FT(0.0);
     BOOST_FOREACH(const Proxy_wrapper &pxw, proxies)
       sum_error += pxw.err;
 
@@ -1327,15 +1327,16 @@ private:
         fit_plane_pca(px_patch.begin(), px_patch.end()) :
           fit_plane_area_averaged(px_patch.begin(), px_patch.end());
 
-      Vector_3 norm = CGAL::NULL_VECTOR;
-      FT area(0);
+	  FT area = FT(0.0);
+	  Vector_3 norm = CGAL::NULL_VECTOR;
+
       BOOST_FOREACH(face_descriptor f, px_patch) {
         halfedge_descriptor he = halfedge(f, *m_pmesh);
         const Point_3 &p0 = point_pmap[source(he, *m_pmesh)];
         const Point_3 &p1 = point_pmap[target(he, *m_pmesh)];
         const Point_3 &p2 = point_pmap[target(next(he, *m_pmesh), *m_pmesh)];
-        FT farea(std::sqrt(CGAL::to_double(CGAL::squared_area(p0, p1, p2))));
-        Vector_3 fnorm = CGAL::unit_normal(p0, p1, p2);
+        const FT farea(std::sqrt(CGAL::to_double(CGAL::squared_area(p0, p1, p2))));
+		const Vector_3 fnorm = CGAL::unit_normal(p0, p1, p2);
 
         norm = sum_functor(norm, scale_functor(fnorm, farea));
         area += farea;
@@ -1649,7 +1650,7 @@ private:
    * @brief Subdivides a chord recursively in range [@a chord_begin, @a chord_end).
    * @param chord_begin begin iterator of the chord
    * @param chord_end end iterator of the chord
-   * @param thre the recursive split threshold
+   * @param the recursive split threshold
    * @return the number of anchors of the chord apart from the first one
    */
   std::size_t subdivide_chord(
@@ -1732,7 +1733,7 @@ private:
   }
 
   /*!
-   * @brief Check if the target vertex of a halfedge is attached with an anchor.
+   * @brief Return true if the target vertex of a halfedge is attached with an anchor, and false otherwise.
    * @param he halfedge
    */
   bool is_anchor_attached(const halfedge_descriptor &he) const {
@@ -1783,14 +1784,14 @@ private:
         px_set.insert(fproxy_map[face(h, *m_pmesh)]);
     }
 
-    // construct an anchor from vertex and the incident proxies
-    FT avgx(0), avgy(0), avgz(0), sum_area(0);
+    // construct an anchor from vertex and its incident proxies
+    FT avgx(0), avgy(0), avgz(0), sum_area(0); // TOFIX
     const Point_3 vtx_pt = point_pmap[v];
     for (std::set<std::size_t>::iterator pxitr = px_set.begin();
       pxitr != px_set.end(); ++pxitr) {
       std::size_t px_idx = *pxitr;
       Point_3 proj = px_planes[px_idx].plane.projection(vtx_pt);
-      FT area = px_planes[px_idx].area;
+      FT area = px_planes[px_idx].area; // TOFIX: use Vector and CGAL::ORIGIN + vector
       avgx += proj.x() * area;
       avgy += proj.y() * area;
       avgz += proj.z() * area;
