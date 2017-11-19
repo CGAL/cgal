@@ -1021,7 +1021,6 @@ private:
     // reach to the number of proxies
     for (std::size_t i = 0; i < max_nb_proxies; ++i)
       proxies.push_back(fit_new_proxy(facets[i]));
-
     run(num_iterations);
 
     return proxies.size();
@@ -1037,11 +1036,8 @@ private:
    */
   std::size_t init_incremental(const std::size_t max_nb_proxies,
     const std::size_t num_iterations) {
-    proxies.clear();
     // initialize a proxy and the proxy map to prepare for the insertion
-    proxies.push_back(fit_new_proxy(*(faces(*m_pmesh).first)));
-    BOOST_FOREACH(face_descriptor f, faces(*m_pmesh))
-      fproxy_map[f] = 0;
+    init_from_first_facet();
 
     add_proxies_furthest(max_nb_proxies - 1, num_iterations);
 
@@ -1052,32 +1048,27 @@ private:
    * @brief Hierarchical initialize proxies to target number of proxies.
    * @param max_nb_proxies maximum number of proxies, 
    * should be in range (0, num_faces(*m_pmesh))
-   * @param num_iterations number of re-fitting iterations 
+   * @param num_iterations number of re-fitting iterations
    * before each hierarchical proxy insertion
    * @return number of proxies initialized
    */
   std::size_t init_hierarchical(const std::size_t max_nb_proxies,
     const std::size_t num_iterations) {
-    proxies.clear();
-    // initialize 2 proxy
-    typename boost::graph_traits<TriangleMesh>::face_iterator
-      fitr = faces(*m_pmesh).first;
-    proxies.push_back(fit_new_proxy(*fitr));
-    proxies.push_back(fit_new_proxy(*(++fitr)));
+    // initialize a proxy and the proxy map to prepare for the insertion
+    init_from_first_facet();
 
     while (proxies.size() < max_nb_proxies) {
-      for (std::size_t i = 0; i < num_iterations; ++i) {
-        partition();
-        fit();
-      }
-
+      // try to double current number of proxies each time
+      std::size_t target_px = proxies.size();
+      if (target_px * 2 > max_nb_proxies)
+        target_px = max_nb_proxies;
+      else
+        target_px *= 2;
       // add proxies by error diffusion
-      const std::size_t num_proxies = proxies.size();
-      const std::size_t num_proxies_to_be_added =
-        (num_proxies * 2 < max_nb_proxies) ? num_proxies : (max_nb_proxies - num_proxies);
-      add_proxies_error_diffusion(num_proxies_to_be_added);
+      add_proxies_error_diffusion(target_px - proxies.size());
+      run(num_iterations);
     }
-    
+
     return proxies.size();
   }
 
@@ -1284,7 +1275,8 @@ private:
 
   /*!
    * @brief Initialize a proxy from the first facet of the surface.
-   * @note This process invalidate all existing data, only used for initial state.
+   * @note This function clears proxy vector and set facet proxy map to initial state,
+   * intended only for bootstrapping initialization.
    * Coarse approximation iteration is not performed, because it's inaccurate anyway
    * and may cause serious degenerate cases(e.g. a standard cube mode).
    */
