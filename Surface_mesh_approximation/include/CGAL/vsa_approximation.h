@@ -111,7 +111,7 @@ public:
   // The proxy wrapper for approximation.
   struct Proxy_wrapper {
     Proxy_wrapper(const Proxy &_p, const face_descriptor &_s)
-      : px(_p), seed(_s), err(0) {}
+      : px(_p), seed(_s), err(0.0) {}
 
     Proxy px; // parameterized proxy
     face_descriptor seed; // proxy seed
@@ -361,11 +361,11 @@ public:
         max_nb_px_adjusted = *max_nb_proxies;
       switch (method) {
         case Random:
-          return init_error_random(max_nb_px_adjusted, *min_error_drop, num_iterations);
+          return init_random_error(max_nb_px_adjusted, *min_error_drop, num_iterations);
         case Incremental:
-          return init_error_incremental(max_nb_px_adjusted, *min_error_drop, num_iterations);
+          return init_incremental_error(max_nb_px_adjusted, *min_error_drop, num_iterations);
         case Hierarchical:
-          return init_error_hierarchical(max_nb_px_adjusted, *min_error_drop, num_iterations);
+          return init_hierarchical_error(max_nb_px_adjusted, *min_error_drop, num_iterations);
         default:
           return 0;
       }
@@ -388,11 +388,11 @@ public:
       const FT e(0.1);
       switch (method) {
         case Random:
-          return init_error_random(nb_px, e, num_iterations);
+          return init_random_error(nb_px, e, num_iterations);
         case Incremental:
-          return init_error_incremental(nb_px, e, num_iterations);
+          return init_incremental_error(nb_px, e, num_iterations);
         case Hierarchical:
-          return init_error_hierarchical(nb_px, e, num_iterations);
+          return init_hierarchical_error(nb_px, e, num_iterations);
         default:
           return 0;
       }
@@ -456,20 +456,20 @@ public:
     std::size_t avg_interval = 3) {
     if (avg_interval == 0)
       avg_interval = 1;
-    FT drop_pct(0);
+    FT drop_pct(0.0);
     FT pre_err = compute_fitting_error();
     for (std::size_t itr_count = 0; itr_count < max_iterations; itr_count += avg_interval) {
-      if (pre_err == FT(0))
+      if (pre_err == FT(0.0))
         return true;
 
-      FT avg_err(0);
+      FT avg_err(0.0);
       for (std::size_t i = 0; i < avg_interval; ++i)
         avg_err += run();
       avg_err /= FT(avg_interval);
 
       drop_pct = (pre_err - avg_err) / pre_err;
       // the error may fluctuates
-      if (drop_pct < FT(0))
+      if (drop_pct < FT(0.0))
         drop_pct = -drop_pct;
       if (drop_pct < cvg_threshold)
         return true;
@@ -596,14 +596,14 @@ public:
         FT to_add = (residual + px_size[i]) / avg_facet;
         FT floor_to_add = FT(std::floor(CGAL::to_double(to_add)));
         FT q_to_add = FT(CGAL::to_double(
-          ((to_add - floor_to_add) > FT(0.5)) ? (floor_to_add + FT(1)) : floor_to_add));
+          ((to_add - floor_to_add) > FT(0.5)) ? (floor_to_add + FT(1.0)) : floor_to_add));
         residual = (to_add - q_to_add) * avg_facet;
         num_to_add[i] = static_cast<std::size_t>(CGAL::to_double(q_to_add));
       }
     }
     else {
       // residual from previous proxy in range (-0.5, 0.5] * avg_error
-      FT residual(0);
+      FT residual(0.0);
       BOOST_FOREACH(const Proxy_error &pxe, px_error) {
         // add error residual from previous proxy
         // to_add maybe negative but greater than -0.5
@@ -611,7 +611,7 @@ public:
         // floor_to_add maybe negative but no less than -1
         FT floor_to_add = FT(std::floor(CGAL::to_double(to_add)));
         FT q_to_add = FT(CGAL::to_double(
-          ((to_add - floor_to_add) > FT(0.5)) ? (floor_to_add + FT(1)) : floor_to_add));
+          ((to_add - floor_to_add) > FT(0.5)) ? (floor_to_add + FT(1.0)) : floor_to_add));
         residual = (to_add - q_to_add) * avg_error;
         num_to_add[pxe.px] = static_cast<std::size_t>(CGAL::to_double(q_to_add));
       }
@@ -729,14 +729,14 @@ public:
    */
   FT merge(std::size_t px0, std::size_t px1) {
     if (px0 >= proxies.size() || px1 >= proxies.size() || px0 == px1)
-      return FT(0);
+      return FT(0.0);
 
     // ensure px0 < px1
     if (px0 > px1)
       std::swap(px0, px1);
 
     // merge px1 to px0
-    FT err_sum(0);
+    FT err_sum(0.0);
     std::list<face_descriptor> merged_patch;
     BOOST_FOREACH(face_descriptor f, faces(*m_pmesh)) {
       std::size_t px_idx = fproxy_map[f];
@@ -755,7 +755,7 @@ public:
         --fproxy_map[f];
     }
 
-    FT err_merged(0);
+    FT err_merged(0.0);
     BOOST_FOREACH(face_descriptor f, merged_patch)
       err_merged += (*fit_error)(f, proxies[px0].px);
 
@@ -781,7 +781,7 @@ public:
 
     // find best merge
     MergedPair merged_set;
-    FT min_merged_error = FT(0);
+    FT min_merged_error = FT(0.0);
     bool first_merge = true;
     BOOST_FOREACH(edge_descriptor e, edges(*m_pmesh)) {
       if (CGAL::is_border(e, *m_pmesh))
@@ -800,7 +800,7 @@ public:
         merged_patch.push_back(f);
 
       Proxy_wrapper pxw = fit_new_proxy(merged_patch.begin(), merged_patch.end());
-      FT sum_error(0);
+      FT sum_error(0.0);
       BOOST_FOREACH(face_descriptor f, merged_patch)
         sum_error += (*fit_error)(f, pxw.px);
       merged_set.insert(ProxyPair(pxi, pxj));
@@ -821,7 +821,7 @@ public:
         if (max_error < proxies[i].err)
           max_error = proxies[i].err;
       }
-      const FT merge_thre = max_error / FT(2);
+      const FT merge_thre = max_error / FT(2.0);
       const FT increase = min_merged_error - (proxies[px_enlarged].err + proxies[px_merged].err);
       if (increase > merge_thre)
         return false;
@@ -839,10 +839,10 @@ public:
    */
   FT split(const std::size_t px, const std::size_t n = 2) {
     if (px >= proxies.size())
-      return FT(0);
+      return FT(0.0);
 
     std::size_t count = 1;
-    FT sum_err(0);
+    FT sum_err(0.0);
     BOOST_FOREACH(face_descriptor f, faces(*m_pmesh)) {
       if (count >= n)
         break;
@@ -1013,11 +1013,11 @@ private:
    */
   std::size_t init_random(const std::size_t max_nb_proxies,
     const std::size_t num_iterations) {
-    proxies.clear();
     // fill a temporary vector of facets
     std::vector<face_descriptor> facets;
     random_shuffle_facets(facets);
 
+    proxies.clear();
     // reach to the number of proxies
     for (std::size_t i = 0; i < max_nb_proxies; ++i)
       proxies.push_back(fit_new_proxy(facets[i]));
@@ -1037,7 +1037,7 @@ private:
   std::size_t init_incremental(const std::size_t max_nb_proxies,
     const std::size_t num_iterations) {
     // initialize a proxy and the proxy map to prepare for the insertion
-    init_from_first_facet();
+    bootstrap_from_first_facet();
 
     add_proxies_furthest(max_nb_proxies - 1, num_iterations);
 
@@ -1055,7 +1055,7 @@ private:
   std::size_t init_hierarchical(const std::size_t max_nb_proxies,
     const std::size_t num_iterations) {
     // initialize a proxy and the proxy map to prepare for the insertion
-    init_from_first_facet();
+    bootstrap_from_first_facet();
 
     while (proxies.size() < max_nb_proxies) {
       // try to double current number of proxies each time
@@ -1082,14 +1082,14 @@ private:
    * @param num_iterations number of re-fitting iterations 
    * @return number of proxies initialized
    */
-  std::size_t init_error_random(const std::size_t max_nb_proxies,
+  std::size_t init_random_error(const std::size_t max_nb_proxies,
     const FT min_error_drop,
     const std::size_t num_iterations) {
     // fill a temporary vector of facets
     std::vector<face_descriptor> facets;
     random_shuffle_facets(facets);
 
-    init_from_first_facet();
+    bootstrap_from_first_facet();
     const FT initial_err = compute_fitting_error();
     FT error_drop = min_error_drop * FT(2.0);
     while (proxies.size() < max_nb_proxies && error_drop > min_error_drop) {
@@ -1118,11 +1118,11 @@ private:
    * @param num_iterations number of re-fitting iterations 
    * @return number of proxies initialized
    */
-  std::size_t init_error_incremental(const std::size_t max_nb_proxies,
+  std::size_t init_incremental_error(const std::size_t max_nb_proxies,
     const FT min_error_drop,
     const std::size_t num_iterations) {
     // initialize a proxy and the proxy map to prepare for the insertion
-    init_from_first_facet();
+    bootstrap_from_first_facet();
     const FT initial_err = compute_fitting_error();
     FT error_drop = min_error_drop * FT(2.0);
     while (proxies.size() < max_nb_proxies && error_drop > min_error_drop) {
@@ -1143,11 +1143,11 @@ private:
    * @param num_iterations number of re-fitting iterations 
    * @return number of proxies initialized
    */
-  std::size_t init_error_hierarchical(const std::size_t max_nb_proxies,
+  std::size_t init_hierarchical_error(const std::size_t max_nb_proxies,
     const FT min_error_drop,
     const std::size_t num_iterations) {
     // initialize a proxy and the proxy map to prepare for the insertion
-    init_from_first_facet();
+    bootstrap_from_first_facet();
     const FT initial_err = compute_fitting_error();
     FT error_drop = min_error_drop * FT(2.0);
     while (proxies.size() < max_nb_proxies && error_drop > min_error_drop) {
@@ -1280,7 +1280,7 @@ private:
    * Coarse approximation iteration is not performed, because it's inaccurate anyway
    * and may cause serious degenerate cases(e.g. a standard cube mode).
    */
-  void init_from_first_facet() {
+  void bootstrap_from_first_facet() {
     proxies.clear();
     proxies.push_back(fit_new_proxy(*(faces(*m_pmesh).first)));
     BOOST_FOREACH(face_descriptor f, faces(*m_pmesh))
@@ -1299,7 +1299,7 @@ private:
       proxies[pxidx].err += (*fit_error)(f, proxies[pxidx].px);
     }
 
-    FT sum_error= FT(0.0);
+    FT sum_error(0.0);
     BOOST_FOREACH(const Proxy_wrapper &pxw, proxies)
       sum_error += pxw.err;
 
@@ -1321,9 +1321,8 @@ private:
         fit_plane_pca(px_patch.begin(), px_patch.end()) :
           fit_plane_area_averaged(px_patch.begin(), px_patch.end());
 
-	  FT area = FT(0.0);
-	  Vector_3 norm = CGAL::NULL_VECTOR;
-
+      Vector_3 norm = CGAL::NULL_VECTOR;
+      FT area(0.0);
       BOOST_FOREACH(face_descriptor f, px_patch) {
         halfedge_descriptor he = halfedge(f, *m_pmesh);
         const Point_3 &p0 = point_pmap[source(he, *m_pmesh)];
@@ -1521,7 +1520,7 @@ private:
       global_vtag_map[superv] = 0;
       BOOST_FOREACH(sg_vertex_descriptor v, vpatch) {
         if (is_anchor_attached(v, global_vanchor_map))
-          add_edge(superv, v, FT(0), gmain);
+          add_edge(superv, v, FT(0.0), gmain);
       }
       vpatch.push_back(superv);
     }
@@ -1561,7 +1560,7 @@ private:
         walk_to_next_anchor(he, chord);
 
         std::vector<FT> vdist;
-        vdist.push_back(FT(0));
+        vdist.push_back(FT(0.0));
         BOOST_FOREACH(halfedge_descriptor h, chord) {
           FT elen = global_eweight_map[edge(
             to_sgv_map[source(h, *m_pmesh)],
@@ -1570,7 +1569,7 @@ private:
           vdist.push_back(vdist.back() + elen);
         }
 
-        FT half_chord_len = vdist.back() / FT(2);
+        FT half_chord_len = vdist.back() / FT(2.0);
         const int anchorleft = vanchor_map[source(chord.front(), *m_pmesh)];
         const int anchorright = vanchor_map[target(chord.back(), *m_pmesh)];
         typename std::vector<FT>::iterator ditr = vdist.begin() + 1;
@@ -1778,8 +1777,8 @@ private:
         px_set.insert(fproxy_map[face(h, *m_pmesh)]);
     }
 
-    // construct an anchor from vertex and its incident proxies
-    FT avgx(0), avgy(0), avgz(0), sum_area(0); // TOFIX
+    // construct an anchor from vertex and the incident proxies
+    FT avgx(0.0), avgy(0.0), avgz(0.0), sum_area(0.0);
     const Point_3 vtx_pt = point_pmap[v];
     for (std::set<std::size_t>::iterator pxitr = px_set.begin();
       pxitr != px_set.end(); ++pxitr) {
@@ -1826,7 +1825,7 @@ private:
     // area average normal and centroid
     Vector_3 norm = CGAL::NULL_VECTOR;
     Vector_3 cent = CGAL::NULL_VECTOR;
-    FT sum_area(0);
+    FT sum_area(0.0);
     for (FacetIterator fitr = beg; fitr != end; ++fitr) {
       const halfedge_descriptor he = halfedge(*fitr, *m_pmesh);
       const Point_3 &p0 = point_pmap[source(he, *m_pmesh)];
@@ -1843,7 +1842,7 @@ private:
     }
     norm = scale_functor(norm,
       FT(1.0 / std::sqrt(CGAL::to_double(norm.squared_length()))));
-    cent = scale_functor(cent, FT(1) / sum_area);
+    cent = scale_functor(cent, FT(1.0) / sum_area);
 
     return Plane_3(CGAL::ORIGIN + cent, norm);
   }
