@@ -374,7 +374,7 @@ public:
       // no valid min_error_drop provided, only max_nb_proxies
       switch (method) {
         case Random:
-          return init_random(*max_nb_proxies);
+          return init_random(*max_nb_proxies, num_iterations);
         case Incremental:
           return init_incremental(*max_nb_proxies, num_iterations);
         case Hierarchical:
@@ -1008,9 +1008,11 @@ private:
    * @note To ensure the randomness, call `std::srand()` beforehand.
    * @param max_nb_proxies maximum number of proxies, 
    * should be in range (0, num_faces(*m_pmesh))
+   * @param num_iterations number of re-fitting iterations 
    * @return number of proxies initialized
    */
-  std::size_t init_random(const std::size_t max_nb_proxies) {
+  std::size_t init_random(const std::size_t max_nb_proxies,
+    const std::size_t num_iterations) {
     proxies.clear();
     // fill a temporary vector of facets
     std::vector<face_descriptor> facets;
@@ -1019,6 +1021,8 @@ private:
     // reach to the number of proxies
     for (std::size_t i = 0; i < max_nb_proxies; ++i)
       proxies.push_back(fit_new_proxy(facets[i]));
+
+    run(num_iterations);
 
     return proxies.size();
   }
@@ -1090,22 +1094,26 @@ private:
   std::size_t init_error_random(const std::size_t max_nb_proxies,
     const FT min_error_drop,
     const std::size_t num_iterations) {
+    // fill a temporary vector of facets
+    std::vector<face_descriptor> facets;
+    random_shuffle_facets(facets);
+
     init_from_first_facet();
     const FT initial_err = compute_fitting_error();
-    FT sum_err(0);
-    FT drop(0);
-    std::size_t target_px = 2;
-    do {
+    FT error_drop = min_error_drop * FT(2.0);
+    while (proxies.size() < max_nb_proxies && error_drop > min_error_drop) {
+      // try to double current number of proxies each time
+      std::size_t target_px = proxies.size();
+      if (target_px * 2 > max_nb_proxies)
+        target_px = max_nb_proxies;
+      else
+        target_px *= 2;
       proxies.clear();
-      init_random(target_px);
-      for (std::size_t i = 0; i < num_iterations; ++i) {
-        partition();
-        fit();
-      }
-      sum_err = compute_fitting_error();
-      target_px *= 2;
-      drop = sum_err / initial_err;
-    } while (drop > min_error_drop && proxies.size() < max_nb_proxies);
+      for (std::size_t j = 0; j < target_px; ++j)
+        proxies.push_back(fit_new_proxy(facets[j]));
+      const FT err = run(num_iterations);
+      error_drop = err / initial_err;
+    }
 
     return proxies.size();
   }
@@ -1125,17 +1133,12 @@ private:
     // initialize a proxy and the proxy map to prepare for the insertion
     init_from_first_facet();
     const FT initial_err = compute_fitting_error();
-    FT sum_err(0);
-    FT drop(0);
-    do {
+    FT error_drop = min_error_drop * FT(2.0);
+    while (proxies.size() < max_nb_proxies && error_drop > min_error_drop) {
       add_proxy_furthest();
-      for (std::size_t i = 0; i < num_iterations; ++i) {
-        partition();
-        fit();
-      }
-      sum_err = compute_fitting_error();
-      drop = sum_err / initial_err;
-    } while (drop > min_error_drop && proxies.size() < max_nb_proxies);
+      const FT err = run(num_iterations);
+      error_drop = err / initial_err;
+    }
 
     return proxies.size();
   }
@@ -1155,19 +1158,18 @@ private:
     // initialize a proxy and the proxy map to prepare for the insertion
     init_from_first_facet();
     const FT initial_err = compute_fitting_error();
-    FT sum_err(0);
-    FT drop(0);
-    std::size_t target_px = 1;
-    do {
-      add_proxies_error_diffusion(target_px);
-      for (std::size_t i = 0; i < num_iterations; ++i) {
-        partition();
-        fit();
-      }
-      sum_err = compute_fitting_error();
-      target_px *= 2;
-      drop = sum_err / initial_err;
-    } while (drop > min_error_drop && proxies.size() < max_nb_proxies);
+    FT error_drop = min_error_drop * FT(2.0);
+    while (proxies.size() < max_nb_proxies && error_drop > min_error_drop) {
+      // try to double current number of proxies each time
+      std::size_t target_px = proxies.size();
+      if (target_px * 2 > max_nb_proxies)
+        target_px = max_nb_proxies;
+      else
+        target_px *= 2;
+      add_proxies_error_diffusion(target_px - proxies.size());
+      const FT err = run(num_iterations);
+      error_drop = err / initial_err;
+    }
 
     return proxies.size();
   }
