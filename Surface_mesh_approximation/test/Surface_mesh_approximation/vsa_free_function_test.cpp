@@ -34,8 +34,8 @@ int main()
     std::back_inserter(points),
     std::back_inserter(triangles),
     CGAL::VSA::parameters::max_nb_proxies(6).
-      iterations(30).
-      inner_iterations(5).
+      nb_of_iterations(30).
+      nb_of_relaxations(5).
       mesh_chord_error(0.5).
       facet_proxy_map(fpxmap).
       anchor_vertices(std::back_inserter(anchors)).

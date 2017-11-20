@@ -29,13 +29,13 @@ See below a sample call of a function that uses the optional BGL named parameter
 // output : output polyhedron mesh
 // method : seed initialization method
 // num_proxies : number of proxies used to approximate the geometry
-// num_iterations : number of relaxation iterations
+// num_iterations : number of iterations after initialization
 // anchors : the container to store the anchor points
 vsa_mesh_approximation(input,
        , output
        , CGAL::VSA::parameters::init_method(method)
        .max_nb_proxies(num_proxies)
-       .iterations(num_iterations)
+       .nb_of_iterations(num_iterations)
        .anchor_points(std::back_inserter(anchors)));
 \endcode
 
@@ -91,14 +91,14 @@ the minimum total error drop to approximate the input mesh.\n
 \b Default value is `0.01`
 \cgalNPEnd
 
-\cgalNPBegin{iterations} \anchor VSA_iterations
-the number of iterations of relaxation after seeding.\n
+\cgalNPBegin{nb_of_iterations} \anchor VSA_nb_of_iterations
+the number of partitioning and fitting iterations after initialization.\n
 \b Type : `std::size_t` \n
 \b Default value is `10`
 \cgalNPEnd
 
-\cgalNPBegin{inner_iterations} \anchor VSA_inner_iterations
-the number of iterations of relaxation interleaved within seeding.\n
+\cgalNPBegin{nb_of_relaxations} \anchor VSA_nb_of_relaxations
+the number of relaxations interleaved within initialization seeding.\n
 \b Type : `std::size_t` \n
 \b Default value is `10`
 \cgalNPEnd

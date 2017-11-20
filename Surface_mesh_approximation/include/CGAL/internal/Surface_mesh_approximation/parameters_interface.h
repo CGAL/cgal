@@ -5,8 +5,8 @@ CGAL_add_named_parameter(geom_traits_t, geom_traits, geom_traits)
 CGAL_add_named_parameter(init_method_t, init_method, init_method)
 CGAL_add_named_parameter(max_nb_proxies_t, max_nb_proxies, max_nb_proxies)
 CGAL_add_named_parameter(min_error_drop_t, min_error_drop, min_error_drop)
-CGAL_add_named_parameter(iterations_t, iterations, iterations)
-CGAL_add_named_parameter(inner_iterations_t, inner_iterations, inner_iterations)
+CGAL_add_named_parameter(nb_of_iterations_t, nb_of_iterations, nb_of_iterations)
+CGAL_add_named_parameter(nb_of_relaxations_t, nb_of_relaxations, nb_of_relaxations)
 CGAL_add_named_parameter(mesh_chord_error_t, mesh_chord_error, mesh_chord_error)
 
 // output parameters

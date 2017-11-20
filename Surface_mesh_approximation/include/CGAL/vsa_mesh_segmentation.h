@@ -45,22 +45,22 @@ namespace VSA {
  *  \cgalParamBegin{geom_traits} a geometric traits class instance, model of `Kernel`.
  *    Exact constructions kernels are not supported by this function.
  *  \cgalParamEnd
- *  \cgalParamBegin{vertex_point_map} the property map with the points associated
+ *  \cgalParamBegin{vertex_point_map} property map with the points associated
  *    to the vertices of `tm_in`. Instance of a class model of `ReadWritePropertyMap`.
  *  \cgalParamEnd
- *  \cgalParamBegin{init_method} the selection of seed initialization method.
+ *  \cgalParamBegin{init_method} selection of seed initialization method.
  *  \cgalParamEnd
- *  \cgalParamBegin{max_nb_proxies} the maximum number of proxies is reached.
+ *  \cgalParamBegin{max_nb_proxies} maximum number of proxies to approximate the geometry.
  *  \cgalParamEnd
- *  \cgalParamBegin{min_error_drop} the minimum error drop of the approximation.
+ *  \cgalParamBegin{min_error_drop} minimum error drop of the approximation.
  *  \cgalParamEnd
- *  \cgalParamBegin{iterations} the relaxation iterations after seeding.
+ *  \cgalParamBegin{nb_of_iterations} number of partitioning and fitting iterations after initialization.
  *  \cgalParamEnd
- *  \cgalParamBegin{inner_iterations} the relaxation iterations when seeding.
+ *  \cgalParamBegin{nb_of_relaxations} number of relaxations interleaved within initialization seeding.
  *  \cgalParamEnd
- *  \cgalParamBegin{face_proxy_map} a property map containing the assigned proxy index of each face of `tm_in`
+ *  \cgalParamBegin{face_proxy_map} property map containing the assigned proxy index of each face of `tm_in`
  *  \cgalParamEnd
- *  \cgalParamBegin{proxies} the plane proxies
+ *  \cgalParamBegin{proxies} output iterator over proxies
  *  \cgalParamEnd
  * \cgalNamedParamsEnd
  */
@@ -96,16 +96,16 @@ void mesh_segmentation(const TriangleMesh &tm_in,
     get_param(np, internal_np::max_nb_proxies), boost::optional<std::size_t>());
   boost::optional<FT> min_error_drop = choose_param(
     get_param(np, internal_np::min_error_drop), boost::optional<FT>());
-  std::size_t inner_iterations = choose_param(get_param(np, internal_np::inner_iterations), 5);
-  approx.init(method, max_nb_proxies, min_error_drop, inner_iterations);
+  std::size_t nb_of_relaxations = choose_param(get_param(np, internal_np::nb_of_relaxations), 5);
+  approx.init(method, max_nb_proxies, min_error_drop, nb_of_relaxations);
 
-  const std::size_t iterations = choose_param(get_param(np, internal_np::iterations), 10);
-  approx.run(iterations);
+  const std::size_t nb_of_iterations = choose_param(get_param(np, internal_np::nb_of_iterations), 10);
+  approx.run(nb_of_iterations);
 
 #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
   std::cout << "#px = " << approx.get_proxies_sizes()
-    << ", #itr = " << iterations
-    << ", #inner_itr = " << inner_iterations << std::endl;
+    << ", #itr = " << nb_of_iterations
+    << ", #relx = " << nb_of_relaxations << std::endl;
 #endif
 
   approx.get_proxy_map(segment_ids);

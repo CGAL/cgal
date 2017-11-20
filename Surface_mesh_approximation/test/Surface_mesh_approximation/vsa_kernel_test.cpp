@@ -30,8 +30,8 @@ int test() {
     CGAL::internal_np::vsa_no_output,
     CGAL::internal_np::vsa_no_output,
     CGAL::VSA::parameters::max_nb_proxies(6).
-      iterations(30).
-      inner_iterations(5).
+      nb_of_iterations(30).
+      nb_of_relaxations(5).
       mesh_chord_error(0.5).
       output_mesh(&out_mesh));
 

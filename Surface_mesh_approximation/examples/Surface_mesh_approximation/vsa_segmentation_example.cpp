@@ -32,7 +32,7 @@ int main()
     fpxmap, // output indexed face set
     CGAL::VSA::parameters::init_method(CGAL::VSA::Hierarchical). // hierarchical init
     max_nb_proxies(200). // refine until target number of proxies
-    iterations(30)); // number of relaxation iterations after seeding
+    nb_of_iterations(30)); // number of iterations after initialization
 
   return EXIT_SUCCESS;
 }

@@ -52,9 +52,9 @@ namespace VSA {
  *  \cgalParamEnd
  *  \cgalParamBegin{min_error_drop} minimum error drop of the approximation, expressed in ratio between two iterations of proxy addition.
  *  \cgalParamEnd
- *  \cgalParamBegin{iterations} number of relaxation iterations after seeding.
+ *  \cgalParamBegin{nb_of_iterations} number of partitioning and fitting iterations after initialization.
  *  \cgalParamEnd
- *  \cgalParamBegin{inner_iterations} number of relaxation iterations during seeding.
+ *  \cgalParamBegin{nb_of_relaxations} number of relaxations interleaved within initialization seeding.
  *  \cgalParamEnd
  *  \cgalParamBegin{mesh_chord_error} maximum chord approximation error use for mesh construction.
  *  \cgalParamEnd
@@ -104,16 +104,16 @@ bool mesh_approximation(const TriangleMesh &tm_in,
     get_param(np, internal_np::max_nb_proxies), boost::optional<std::size_t>());
   boost::optional<FT> min_error_drop = choose_param(
     get_param(np, internal_np::min_error_drop), boost::optional<FT>());
-  std::size_t inner_iterations = choose_param(get_param(np, internal_np::inner_iterations), 5);
-  approx.init(method, max_nb_proxies, min_error_drop, inner_iterations);
+  std::size_t nb_of_relaxations = choose_param(get_param(np, internal_np::nb_of_relaxations), 5);
+  approx.init(method, max_nb_proxies, min_error_drop, nb_of_relaxations);
 
-  const std::size_t iterations = choose_param(get_param(np, internal_np::iterations), 10);
-  approx.run(iterations);
+  const std::size_t nb_of_iterations = choose_param(get_param(np, internal_np::nb_of_iterations), 10);
+  approx.run(nb_of_iterations);
 
 #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
   std::cout << "#px = " << approx.get_proxies_size()
-    << ", #itr = " << iterations
-    << ", #inner_itr = " << inner_iterations << std::endl;
+    << ", #itr = " << nb_of_iterations
+    << ", #relx = " << nb_of_relaxations << std::endl;
 #endif
 
   typedef typename boost::lookup_named_param_def<
