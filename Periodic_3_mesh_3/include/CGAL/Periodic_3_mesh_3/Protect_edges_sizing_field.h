@@ -17,15 +17,30 @@
 // $Id$
 //
 //
-// Author(s)     : Stephane Tayeb, Laurent Rineau
+// Author(s)     : Stephane Tayeb, Laurent Rineau, Mael Rouxel-Labbé
 //
 //******************************************************************************
 // File Description :
 //******************************************************************************
 
+// Intentionally the same include guard as Mesh_3's
 #ifndef CGAL_MESH_3_PROTECT_EDGES_SIZING_FIELD_H
 #define CGAL_MESH_3_PROTECT_EDGES_SIZING_FIELD_H
 
+// periodic:
+// - probably need a periodic domain with polylines that does pre-treatment
+// - Mesh_3 meshing_traits
+// - how to avoid dummy points creating tiny weights ? could brute force a
+//   "sq_distance_to_min_weighted_point", but it's nasty... Maybe simply push
+//   them away during the pre-treatment phase: insert > treat > protect.
+//   Or, if a new point has a dummy point in its sphere, insert the new point, try
+//   to remove the dummy.
+// - should the canonical map take into account the curve index ?
+// - User manual with drawings on what sharp features are allowed
+// - Polyhedral domains ?
+// - remove+insert could potentially switch to 27 copies, you gotta check for
+//   it before moving points!
+// - Null_subdomain_index shenanigans to carry from Mesh_3.
 
 #include <CGAL/license/Mesh_3.h>
 
@@ -52,6 +67,7 @@
 #  include <boost/math/special_functions/next.hpp> // for float_prior
 #endif
 #include <boost/optional.hpp>
+#include <boost/unordered_map.hpp>
 #include <boost/tuple/tuple.hpp>
 
 #include <algorithm>
@@ -341,18 +357,17 @@ private:
   /// Compute the Euclidean distance between the bare points of \c va and \c vb.
   FT compute_distance(const Vertex_handle& va, const Vertex_handle& vb) const
   {
-    typename C3T3::Triangulation::Geom_traits::Construct_point_3 cp =
-      c3t3_.triangulation().geom_traits().construct_point_3_object();
+    const Bare_point& pa = canonical_vertex_to_non_periodic_position.at(va);
+    const Bare_point& pb = canonical_vertex_to_non_periodic_position.at(vb);
 
-    const Weighted_point& wpa = c3t3_.triangulation().point(va);
-    const Weighted_point& wpb = c3t3_.triangulation().point(vb);
-
-    return compute_distance(cp(wpa), cp(wpb));
+    return compute_distance(pa, pb);
   }
 
   /// Compute the Euclidean distance between the bare points \c and \c q.
   FT compute_distance(const Bare_point& p, const Bare_point& q) const
   {
+    // No need to call min_squared_distance() because 'p' and 'q' have been
+    // built to have proper respective positions in space
     return CGAL::sqrt(c3t3_.triangulation().geom_traits().
                         compute_squared_distance_3_object()(p,q));
   }
@@ -418,6 +433,7 @@ private:
   Weight minimal_weight_;
   std::set<Curve_index> treated_edges_;
   std::set<Vertex_handle> unchecked_vertices_;
+  boost::unordered_map<Vertex_handle, Bare_point> canonical_vertex_to_non_periodic_position;
   int refine_balls_iteration_nb;
   bool nonlinear_growth_of_balls;
 };
@@ -446,8 +462,8 @@ void
 Protect_edges_sizing_field<C3T3, MD, Sf>::
 operator()(const bool refine)
 {
-  // This file is only meant to be used with non-periodic triangulations
-  CGAL_assertion(!(boost::is_same<typename Tr::Periodic_tag, CGAL::Tag_true>::value));
+  // This file is only meant to be used with periodic triangulations
+  CGAL_assertion((boost::is_same<typename Tr::Periodic_tag, CGAL::Tag_true>::value));
 
 #ifdef CGAL_MESH_3_VERBOSE
   std::cerr << "Inserting protection balls..." << std::endl
@@ -478,7 +494,12 @@ operator()(const bool refine)
     std::cerr << "refine_balls() done. Nb of points in triangulation: "
               << c3t3_.triangulation().number_of_vertices() << std::endl;
 #endif
-    CGAL_assertion(minimal_size_ > 0 || c3t3_.is_valid());
+
+    // The assertion below is disabled because c3t3.is_valid() may return false
+    // positive for periodic triangulations, specifically because of the line:
+    // ' if ( ! do_intersect(sphere(p, sq_rp), sphere(q, sq_rq)) ) ... '
+    // which does not take periodicity into account
+//    CGAL_assertion(minimal_size_ > 0 || c3t3_.is_valid());
  }
 
   // debug_dump_c3t3("dump-mesh-after-protect_edges.binary.cgal", c3t3_);
@@ -553,6 +574,7 @@ insert_corners()
     // As C3t3::add_to_complex modifies the 'in_dimension' of the vertex,
     // we need to backup and re-set the 'is_special' marker after.
     const bool special_ball = is_special(v);
+    std::cout << "Adding: " << c3t3_.triangulation().point(v) << " to complex" << std::endl;
     c3t3_.add_to_complex(v,cit->first);
     if(special_ball) {
       set_special(v);
@@ -593,6 +615,14 @@ insert_point(const Bare_point& p, const Weight& w, int dim, const Index& index,
   CGAL_assertion ( Vertex_handle() != v );
   CGAL_assertion ( lt == Tr::VERTEX ||
                    c3t3_.triangulation().number_of_vertices() == (nb_vertices_before+1) );
+
+  // add the full space position
+  canonical_vertex_to_non_periodic_position[v] = p;
+
+#ifdef PERIODIC_HACK
+  typename Tr::Offset off;
+  c3t3_.triangulation().get_vertex(v, v, off);
+#endif
 
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
   std::cerr << "Insertion of ";
@@ -648,8 +678,10 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
 #endif
   const Tr& tr = c3t3_.triangulation();
 
-  typename Gt::Compute_squared_distance_3 sq_distance =
-    tr.geom_traits().compute_squared_distance_3_object();
+#if CGAL_MESH_3_PROTECTION_DEBUG & 2
+  std::cout << " Triangulation has " << tr.number_of_vertices() << " vertices" << std::endl;
+#endif
+
   typename Gt::Construct_point_3 cp =
     tr.geom_traits().construct_point_3_object();
   typename Gt::Construct_weighted_point_3 cwp =
@@ -667,8 +699,15 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
     int li, lj;
     Cell_handle ch = tr.locate(wp0, lt, li, lj);
 
-    Vertex_handle nearest_vh = tr.nearest_power_vertex(p, ch);
-    FT sq_d = sq_distance(p, cp(tr.point(nearest_vh)));
+    Vertex_handle nearest_vh;
+    FT sq_d;
+    boost::tie(nearest_vh, sq_d) = tr.nearest_power_vertex_with_sq_distance(p, ch);
+
+#ifdef PERIODIC_HACK
+    CGAL_assertion(nearest_vh != Vertex_handle());
+    typename Tr::Offset off;
+    c3t3_.triangulation().get_vertex(nearest_vh, nearest_vh, off);
+#endif
 
 #if CGAL_MESH_3_PROTECTION_DEBUG & 2
     std::cerr << "Nearest power vertex of (" << p << ") is "
@@ -696,8 +735,13 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
       ch = tr.locate(wp0, lt, li, lj, new_vh);
 
       // Iterate
-      nearest_vh = tr.nearest_power_vertex(p, ch);
-      sq_d = sq_distance(p, cp(tr.point(nearest_vh)));
+      boost::tie(nearest_vh, sq_d) = tr.nearest_power_vertex_with_sq_distance(p, ch);
+      CGAL_assertion(nearest_vh != Vertex_handle());
+
+#ifdef PERIODIC_HACK
+      typename Tr::Offset off;
+      c3t3_.triangulation().get_vertex(nearest_vh, nearest_vh, off);
+#endif
     }
 
     if( is_special(nearest_vh) &&
@@ -728,7 +772,13 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
     {
       for(int i=0, d=tr.dimension(); i<=d; ++i)
       {
-        const Vertex_handle v = (*it)->vertex(i);
+        Vertex_handle v = (*it)->vertex(i);
+
+#ifdef PERIODIC_HACK
+        typename Tr::Offset off;
+        c3t3_.triangulation().get_vertex(v,v,off);
+#endif
+
         if(c3t3_.triangulation().is_infinite(v))
           continue;
         if(!vertices_in_conflict_zone_set.insert(v).second)
@@ -794,9 +844,11 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
       for ( typename Tr::Finite_vertices_iterator it = tr.finite_vertices_begin(),
            end = tr.finite_vertices_end() ; it != end ; ++it )
       {
-        // Although 'min_squared_distance' is costly (time-wise) for periodic
-        // triangulations, it does not matter here because a periodic triangulation
-        // is only of dimension less than 3 if it is empty.
+        // Code below is not adapted to periodic and periodic should never be there:
+        // either it's empty and has dimension -2 or it has at least one point
+        // and its dimension is 3.
+        CGAL_assertion(!(boost::is_same<typename Tr::Periodic_tag, CGAL::Tag_true>::value));
+
         const Weighted_point& itwp = tr.point(it);
         FT sq_d = tr.min_squared_distance(p, cp(itwp));
         if ( c3t3_.triangulation().point(it).weight() > sq_d )
@@ -825,6 +877,9 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
     for ( typename Tr::Finite_vertices_iterator it = tr.finite_vertices_begin(),
          end = tr.finite_vertices_end() ; it != end ; ++it )
     {
+      // See above.
+      CGAL_assertion(!(boost::is_same<typename Tr::Periodic_tag, CGAL::Tag_true>::value));
+
       const Weighted_point& itwp = tr.point(it);
       FT sq_d = tr.min_squared_distance(p, cp(itwp));
       if(sq_d < min_sq_d) {
@@ -892,6 +947,7 @@ insert_balls_on_edges()
     {
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
       std::cerr << "** treat curve #" << curve_index << std::endl;
+      std::cerr << "is it a loop? " << domain_.is_loop(curve_index) << std::endl;
 #endif
       const Bare_point& p = CGAL::cpp11::get<1>(*fit).first;
       const Bare_point& q = CGAL::cpp11::get<2>(*fit).first;
@@ -972,6 +1028,11 @@ get_vertex_corner_from_point(const Bare_point& p, const Index&) const
   // check that the location type is VERTEX.
   c3t3_.triangulation().is_vertex(cwp(p), v);
 
+#ifdef PERIODIC_HACK
+  typename Tr::Offset off;
+  c3t3_.triangulation().get_vertex(v, v, off);
+#endif
+
   CGAL_assertion( q_found );
   return v;
 }
@@ -987,12 +1048,9 @@ insert_balls(const Vertex_handle& vp,
              const CGAL::Orientation orientation,
              ErasedVeOutIt out)
 {
-  typename C3T3::Triangulation::Geom_traits::Construct_point_3 cp =
-    c3t3_.triangulation().geom_traits().construct_point_3_object();
-
   // Get size of p & q
-  const Weighted_point& vpwp = c3t3_.triangulation().point(vp);
-  const Weighted_point& vqwp = c3t3_.triangulation().point(vq);
+  const Bare_point& vpp = canonical_vertex_to_non_periodic_position.at(vp);
+  const Bare_point& vqp = canonical_vertex_to_non_periodic_position.at(vq);
 
   const FT sp = get_radius(vp);
   const FT sq = get_radius(vq);
@@ -1003,7 +1061,7 @@ insert_balls(const Vertex_handle& vp,
   const FT pq_length = (vp == vq) ?
     domain_.curve_length(curve_index)
     :
-    domain_.curve_segment_length(cp(vpwp), cp(vqwp), curve_index, orientation);
+    domain_.curve_segment_length(vpp, vqp, curve_index, orientation);
 
   // Insert balls
   return
@@ -1034,21 +1092,21 @@ insert_balls(const Vertex_handle& vp,
             << "             d=" << d << ",\n"
             << "             d_sign=" << d_sign << ",\n"
             << "             curve_index=" << curve_index << ")\n";
+  std::cerr << "nonlinear growth? " << std::boolalpha << nonlinear_growth_of_balls << '\n'
+            << "refine_balls_iteration_nb: " << refine_balls_iteration_nb << '\n'
+            << "max_nb_vertices_to_reevaluate_size" << internal::max_nb_vertices_to_reevaluate_size << std::endl;
 #endif
   CGAL_precondition(d > 0);
   CGAL_precondition(sp <= sq);
 
-  typename C3T3::Triangulation::Geom_traits::Construct_point_3 cp =
-    c3t3_.triangulation().geom_traits().construct_point_3_object();
-
-  const Weighted_point& vpwp = c3t3_.triangulation().point(vp);
+  const Bare_point& vpp = canonical_vertex_to_non_periodic_position.at(vp);
 
 #if ! defined(CGAL_NO_PRECONDITIONS)
   if(sp <= 0) {
     std::stringstream msg;;
     msg.precision(17);
     msg << "Error: the mesh sizing field is null at point (";
-    msg << cp(vpwp) << ")!";
+    msg << vpp << ")!";
     CGAL_precondition_msg(sp > 0, msg.str().c_str());
   }
 #endif // ! CGAL_NO_PRECONDITIONS
@@ -1101,18 +1159,18 @@ insert_balls(const Vertex_handle& vp,
     if(n >= internal::max_nb_vertices_to_reevaluate_size &&
        d >= (internal::max_nb_vertices_to_reevaluate_size * minimal_weight_)) {
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
-      const Weighted_point& vqwp = c3t3_.triangulation().point(vq);
+      const Bare_point& vqp = canonical_vertex_to_non_periodic_position.at(vq);
       std::cerr << "Number of to-be-inserted balls is: "
                 << n << "\n  between points ("
-                << vpwp << ") and (" << vqwp
+                << vpp << ") and (" << vqp
                 << ") (arc length: "
-                << domain_.curve_segment_length(cp(vpwp),
-                                                cp(vqwp),
+                << domain_.curve_segment_length(vpp,
+                                                vqp,
                                                 curve_index, d_sign)
                 << ")\n";
 #endif
       const Bare_point new_point =
-        domain_.construct_point_on_curve(cp(vpwp),
+        domain_.construct_point_on_curve(vpp,
                                          curve_index,
                                          d_sign * d / 2);
       const int dim = 1; // new_point is on edge
@@ -1128,7 +1186,8 @@ insert_balls(const Vertex_handle& vp,
                            dim,
                            index,
                            out);
-      const Vertex_handle new_vertex = pair.first;
+      Vertex_handle new_vertex = pair.first;
+
       out = pair.second;
       const FT sn = get_radius(new_vertex);
       if(sp <= sn) {
@@ -1166,7 +1225,7 @@ insert_balls(const Vertex_handle& vp,
   FT d_signF = static_cast<FT>(d_sign);
   FT pt_dist = d_signF * norm_step_size;
   Vertex_handle prev = vp;
-  const Bare_point& p = cp(vp->point());
+  const Bare_point& p = canonical_vertex_to_non_periodic_position.at(vp);
 
   // if ( (0 == n) &&
   //      ( (d >= sp+sq) || !is_sampling_dense_enough(vp, vq) ) )
@@ -1213,7 +1272,9 @@ insert_balls(const Vertex_handle& vp,
     out = pair.second;
 
     // Add edge to c3t3
-    if(!c3t3_.is_in_complex(prev, new_vertex)) {
+    if(!c3t3_.is_in_complex(prev, new_vertex))
+    {
+      std::cout << "add to complex1: " << prev->point() << " " << new_vertex->point() << std::endl;
       c3t3_.add_to_complex(prev, new_vertex, curve_index);
     }
     prev = new_vertex;
@@ -1231,7 +1292,9 @@ insert_balls(const Vertex_handle& vp,
   // then (prev,vp) == (prev,vq)
   if ( vp != vq || n > 1 )
   {
-    if(!c3t3_.is_in_complex(prev, vq)) {
+    if(!c3t3_.is_in_complex(prev, vq))
+    {
+      std::cout << "add to complex2: " << prev->point() << " " << vq->point() << std::endl;
       c3t3_.add_to_complex(prev, vq, curve_index);
     }
   }
@@ -1249,6 +1312,14 @@ refine_balls()
   dump_c3t3_edges(c3t3_, "dump-before-refine_balls");
 #endif
   Triangulation& tr = c3t3_.triangulation();
+
+  // verbose............
+  std::cout << "Refine balls! " << std::endl;
+  std::cout << c3t3_.number_of_vertices_in_complex() << std::endl;
+  typename C3T3::Vertices_in_complex_iterator vicit = c3t3_.vertices_in_complex_begin();
+  for(; vicit!=c3t3_.vertices_in_complex_end(); ++vicit)
+    std::cout << "corner: " << &*vicit << " p: " << (*vicit).point() << std::endl;
+  // verbose............
 
   // Loop
   bool restart = true;
@@ -1276,10 +1347,32 @@ refine_balls()
     for(typename Tr::Finite_edges_iterator eit = tr.finite_edges_begin(),
         end = tr.finite_edges_end(); eit != end; ++eit)
     {
-      const Vertex_handle& va = eit->first->vertex(eit->second);
-      const Vertex_handle& vb = eit->first->vertex(eit->third);
+      Vertex_handle va = eit->first->vertex(eit->second);
+      Vertex_handle vb = eit->first->vertex(eit->third);
 
-      // If those vertices are not adjacent
+      // below is done to ignore dummy points (inserted before protection for efficiency)
+      if(get_radius(va) == 0. || get_radius(vb) == 0.)
+      {
+#ifndef PERIODIC_HACK
+        CGAL_assertion(false);
+#endif
+        continue;
+      }
+
+#ifdef PERIODIC_HACK
+      typename Tr::Offset off;
+      c3t3_.triangulation().get_vertex(va, va, off);
+      c3t3_.triangulation().get_vertex(vb, vb, off);
+#endif
+
+#if CGAL_MESH_3_PROTECTION_DEBUG & 16
+      std::cerr << "Treat edge: " << c3t3_.triangulation().point(va) << " || "
+                                  << c3t3_.triangulation().point(vb) << std::endl;
+      std::cerr << "Intersecting edges ? " << do_balls_intersect(va, vb) << std::endl;
+#endif
+
+      // If those vertices are not adjacent in the complex but still intersect,
+      // must reduce the balls size
       if( non_adjacent_but_intersect(va, vb) )
       {
         using CGAL::Mesh_3::internal::distance_divisor;
@@ -1291,6 +1384,13 @@ refine_balls()
         FT rb = get_radius(vb);
         FT sa_new = (std::min)(ab/distance_divisor, ra);
         FT sb_new = (std::min)(ab/distance_divisor, rb);
+
+#if CGAL_MESH_3_PROTECTION_DEBUG & 16
+        std::cerr << "ab: " << ab << std::endl;
+        std::cout << "distance divisor: " << distance_divisor << std::endl;
+        std::cerr << "ra | rb: " << ra << " " << rb << std::endl;
+        std::cerr << "sa_new | sb_new: " << sa_new << " " << sb_new << std::endl;
+#endif
 
         // In case of va or vb have already been in conflict, keep minimal size
         if ( new_sizes.find(va) != new_sizes.end() )
@@ -1375,6 +1475,9 @@ bool
 Protect_edges_sizing_field<C3T3, MD, Sf>::
 non_adjacent_but_intersect(const Vertex_handle& va, const Vertex_handle& vb) const
 {
+  CGAL_precondition(va != vb);
+  CGAL_precondition(c3t3_.triangulation().point(va) != c3t3_.triangulation().point(vb));
+
   if ( ! c3t3_.is_in_complex(va,vb) )
   {
     return do_balls_intersect(va, vb);
@@ -1383,26 +1486,27 @@ non_adjacent_but_intersect(const Vertex_handle& va, const Vertex_handle& vb) con
   return false;
 }
 
-
 template <typename C3T3, typename MD, typename Sf>
 bool
 Protect_edges_sizing_field<C3T3, MD, Sf>::
 do_balls_intersect(const Vertex_handle& va, const Vertex_handle& vb) const
 {
-  typename Gt::Construct_sphere_3 sphere =
-    c3t3_.triangulation().geom_traits().construct_sphere_3_object();
-  typename Gt::Do_intersect_3 do_intersect =
-    c3t3_.triangulation().geom_traits().do_intersect_3_object();
   typename Gt::Construct_point_3 cp =
     c3t3_.triangulation().geom_traits().construct_point_3_object();
 
-  const Bare_point& a = cp(c3t3_.triangulation().point(va));
-  const Bare_point& b = cp(c3t3_.triangulation().point(vb));
+  // Using the vertex->full space position map is not enough: a sphere at 0.9
+  // with radius 0.1 does intersect a sphere at 1.1 (i.e. 0.1) with radius 0.1.
+  // --> need min_squared_distance
+  const Bare_point& pa = cp(c3t3_.triangulation().point(va));
+  const Bare_point& pb = cp(c3t3_.triangulation().point(vb));
 
-  const FT& sq_ra = va->point().weight();
-  const FT& sq_rb = vb->point().weight();
+  CGAL_precondition(va != vb && pa != pb);
 
-  return do_intersect(sphere(a, sq_ra), sphere(b, sq_rb));
+  const FT& sq_ra = c3t3_.triangulation().point(va).weight();
+  const FT& sq_rb = c3t3_.triangulation().point(vb).weight();
+
+  return (c3t3_.triangulation().min_squared_distance(pa, pb) <=
+            CGAL::square(CGAL::sqrt(sq_ra) + CGAL::sqrt(sq_rb)));
 }
 
 template <typename C3T3, typename MD, typename Sf>
@@ -1437,18 +1541,16 @@ change_ball_size(const Vertex_handle& v, const FT squared_size, const bool speci
   }
 
   // Store point data
-  typename Gt::Construct_point_3 cp =
-    c3t3_.triangulation().geom_traits().construct_point_3_object();
-
   Index index = c3t3_.index(v);
   int dim = get_dimension(v);
-  Bare_point p = cp(v->point());
+  Bare_point p = canonical_vertex_to_non_periodic_position.at(v);
 
   // Remove v from the set of corners
   boost::optional<Corner_index> corner_index = boost::make_optional(false, Corner_index());
   if ( c3t3_.is_in_complex(v) )
   {
     corner_index = c3t3_.corner_index(v);
+    std::cout << "removing " << c3t3_.triangulation().point(v) << " from complex" << std::endl;
     c3t3_.remove_from_complex(v);
   }
 
@@ -1473,8 +1575,8 @@ change_ball_size(const Vertex_handle& v, const FT squared_size, const bool speci
   CGAL_assertion( (! special_ball) || is_special(new_v) );
 
   // TODO: ensure that this condition is always satisfied (Pedro's code ?)
-  CGAL_assertion(v==new_v);
-  //new_v->set_meshing_info(size*size);
+  //  CGAL_assertion(v==new_v); @tmp
+  //  new_v->set_meshing_info(w);
 
   // Restore v in corners
   if ( corner_index )
@@ -1493,6 +1595,7 @@ change_ball_size(const Vertex_handle& v, const FT squared_size, const bool speci
        end = incident_vertices.end() ; it != end ; ++it )
   {
     // Restore connectivity in c3t3
+    std::cout << "add to complex4: " << new_v->point() << " " << it->first->point() << std::endl;
     c3t3_.add_to_complex(new_v, it->first, it->second);
   }
 
@@ -1533,11 +1636,53 @@ check_and_repopulate_edges()
 
   unchecked_vertices_.clear();
 
+  std::cout << "check_and_repopulate_edges " << std::endl;
+  std::cout << c3t3_.number_of_vertices_in_complex() << " corners" << std::endl;
+  std::cout << c3t3_.triangulation().number_of_vertices() << " vertices" << std::endl;
+
+#ifdef PERIODIC_HACK
+  typename C3T3::Vertices_in_complex_iterator vicit = c3t3_.vertices_in_complex_begin();
+  for(; vicit!=c3t3_.vertices_in_complex_end(); ++vicit)
+  {
+    std::cout << "corner: " << &*vicit
+              << " p: " << c3t3_.triangulation().point(vicit) << std::endl;
+    std::cout << "incident cell: " << &*(vicit->cell()) << std::endl;
+
+    if(c3t3_.triangulation().dimension() == 3)
+    {
+      for(int i=0; i<4; ++i)
+      {
+        if(!c3t3_.triangulation().is_infinite(vicit->cell(), i))
+          std::cout << " -> " << c3t3_.triangulation().point(vicit->cell(), i) << std::endl;
+        else
+          std::cout << " -> infinite vertex" << std::endl;
+      }
+    }
+  }
+#endif
+
   // Fix edges
   while ( !vertices.empty() )
   {
     Vertex_handle v = *vertices.begin();
     vertices.erase(vertices.begin());
+    std::cout << "check_and_repopulate_edges: " << &*v
+              << " p: " << c3t3_.triangulation().point(v) << std::endl;
+    std::cout << "is corner: " << std::boolalpha << c3t3_.is_in_complex(v) << std::endl;
+    std::cout << "incident cell: " << &*(v->cell()) << std::endl;
+
+#ifdef PERIODIC_HACK
+    if(c3t3_.triangulation().dimension() == 3)
+    {
+      for(int i=0; i<=c3t3_.triangulation().dimension(); ++i)
+      {
+        if(!c3t3_.triangulation().is_infinite(v->cell(), i))
+          std::cout << " -> " << c3t3_.triangulation().point(v->cell(), i) << std::endl;
+        else
+          std::cout << " -> infinite vertex" << std::endl;
+      }
+    }
+#endif
 
     details::Erase_element_from_set<Vertices> erase_from_vertices(vertices);
 
@@ -1567,31 +1712,41 @@ check_and_fix_vertex_along_edge(const Vertex_handle& v, ErasedVeOutIt out)
     return repopulate_edges_around_corner(v, out);
   }
 
+  std::cout << "not a corner... ?" << std::endl;
+
   // Get incident vertices along c3t3 edge
   Incident_vertices incident_vertices;
   c3t3_.adjacent_vertices_in_complex(v, std::back_inserter(incident_vertices));
-  CGAL_assertion(v->is_special()
-                 || incident_vertices.size() < 3);
-  if(incident_vertices.size() == 0) return out;
+
   // The size of 'incident_vertices' can be 0 if v is a ball that covers
   // entirely a closed curve.
   // The size can also be 1 if the curve is a cycle, and the temporary
   // mesh is only two balls on the cycle: then each ball has only one
   // neighbor.
+  CGAL_assertion(v->is_special() || incident_vertices.size() < 3);
 
-  const Curve_index& curve_index = incident_vertices.front().second;
-  CGAL_assertion(incident_vertices.back().second== curve_index);
+  if(incident_vertices.size() == 0)
+    return out;
+
+  typename Incident_vertices::const_iterator ivb = incident_vertices.begin();
+  typename Incident_vertices::const_iterator ivl = --(incident_vertices.end());
+
+  std::cout << incident_vertices.size() << " incident vertices" << std::endl;
+  std::cout << "ivb: " << *(ivb->first) << " // " << ivb->second << std::endl;
+  std::cout << "ivl: " << *(ivl->first) << " // " << ivl->second << std::endl;
+
+  const Curve_index& curve_index = ivb->second;
+  CGAL_assertion(ivl->second == curve_index);
 
   // Walk along edge to find the edge piece which is not correctly sampled
   typedef std::list<Vertex_handle> Vertex_list;
   Vertex_list to_repopulate;
   to_repopulate.push_front(v);
 
-  const Vertex_handle& previous = incident_vertices.front().first;
-  const Vertex_handle& next = incident_vertices.back().first;
+  const Vertex_handle& previous = ivb->first;
+  const Vertex_handle& next = ivl->first;
 
-  const CGAL::Orientation orientation =
-    orientation_of_walk(v, next, curve_index);
+  const CGAL::Orientation orientation = orientation_of_walk(v, next, curve_index);
 
   // Walk following direction (v,previous)
   walk_along_edge(v, previous, curve_index, -orientation,
@@ -1643,9 +1798,6 @@ is_sampling_dense_enough(const Vertex_handle& v1, const Vertex_handle& v2,
   using CGAL::Mesh_3::internal::min_intersection_factor;
   CGAL_precondition(c3t3_.curve_index(v1,v2) == curve_index);
 
-  typename C3T3::Triangulation::Geom_traits::Construct_point_3 cp =
-    c3t3_.triangulation().geom_traits().construct_point_3_object();
-
   // Get sizes
   FT size_v1 = get_radius(v1);
   FT size_v2 = get_radius(v2);
@@ -1655,11 +1807,11 @@ is_sampling_dense_enough(const Vertex_handle& v1, const Vertex_handle& v2,
   CGAL_assertion(get_dimension(v2) != 1 ||
                  curve_index == domain_.curve_index(v2->index()));
 
-  const Weighted_point& v1wp = c3t3_.triangulation().point(v1);
-  const Weighted_point& v2wp = c3t3_.triangulation().point(v2);
+  const Bare_point& v1p = canonical_vertex_to_non_periodic_position.at(v1);
+  const Bare_point& v2p = canonical_vertex_to_non_periodic_position.at(v2);
 
-  FT arc_length = domain_.curve_segment_length(cp(v1wp),
-                                               cp(v2wp),
+  FT arc_length = domain_.curve_segment_length(v1p,
+                                               v2p,
                                                curve_index,
                                                orientation);
 
@@ -1683,10 +1835,10 @@ is_sampling_dense_enough(const Vertex_handle& v1, const Vertex_handle& v2,
 
     const bool cov = domain_.is_curve_segment_covered(curve_index,
                                                       orientation,
-                                                      cp(v1wp),
-                                                      cp(v2wp),
-                                                      v1->point().weight(),
-                                                      v2->point().weight());
+                                                      v1p,
+                                                      v2p,
+                                                      c3t3_.triangulation().point(v1).weight(),
+                                                      c3t3_.triangulation().point(v2).weight());
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
     if(cov) {
       std::cerr << "      But the curve is locally covered\n";
@@ -1714,23 +1866,25 @@ orientation_of_walk(const Vertex_handle& start,
                     const Vertex_handle& next,
                     Curve_index curve_index) const
 {
-  typename C3T3::Triangulation::Geom_traits::Construct_point_3 cp =
-    c3t3_.triangulation().geom_traits().construct_point_3_object();
+#if CGAL_MESH_3_PROTECTION_DEBUG & 4
+  std::cerr << "orientation_of_walk(" << start->point() << ", "
+            << next->point() << ")" << std::endl;
+#endif
 
-  const Weighted_point& start_wp = c3t3_.triangulation().point(start);
-  const Weighted_point& next_wp = c3t3_.triangulation().point(next);
+  const Bare_point& start_p = canonical_vertex_to_non_periodic_position.at(start);
+  const Bare_point& next_p = canonical_vertex_to_non_periodic_position.at(next);
 
   if(domain_.is_loop(curve_index)) {
     // if the curve is a cycle, the direction is the direction passing
     // through the next vertex, and the next-next vertex
     Vertex_handle next_along_curve = next_vertex_along_curve(next,start,curve_index);
-    const Weighted_point& next_along_curve_wp = c3t3_.triangulation().point(next_along_curve);
+    const Bare_point& next_along_curve_wp = canonical_vertex_to_non_periodic_position.at(next_along_curve);
 
     return domain_.distance_sign_along_loop(
-             cp(start_wp), cp(next_wp), cp(next_along_curve_wp), curve_index);
+             start_p, next_p, next_along_curve_wp, curve_index);
   } else {
     // otherwise, the sign is just the sign of the geodesic distance
-    return domain_.distance_sign(cp(start_wp), cp(next_wp), curve_index);
+    return domain_.distance_sign(start_p, next_p, curve_index);
   }
 }
 
@@ -1743,6 +1897,11 @@ walk_along_edge(const Vertex_handle& start, const Vertex_handle& next,
                 const CGAL::Orientation orientation,
                 ErasedVeOutIt out) const
 {
+#if CGAL_MESH_3_PROTECTION_DEBUG & 4
+  std::cerr << "walk_along_edge(" << start->point() << ", " << next->point()
+            << ", orientation: " << orientation << ")" << std::endl;
+#endif
+
 #if CGAL_MESH_3_PROTECTION_DEBUG & 4
   if(!c3t3_.is_in_complex(start, next)) {
     std::cerr << "ERROR: the edge ( " << c3t3_.triangulation().point(start) << " , "
@@ -1798,15 +1957,26 @@ next_vertex_along_curve(const Vertex_handle& start,
                     incident_vertices.end(),
                     boost::bind(&Incident_vertices::value_type::second, _1) != curve_index),
      incident_vertices.end());
+
+//  typename Incident_vertices::const_iterator iv = incident_vertices.begin();
+//  while(iv!=incident_vertices.end())
+//  {
+//    typename Incident_vertices::const_iterator iv2 = iv++;
+//    if(iv2->second != curve_index)
+//      incident_vertices.erase(iv2);
+//  }
+
   CGAL_assertion(incident_vertices.size() == 2);
 
-  if ( incident_vertices.front().first == previous )
+  typename Incident_vertices::const_iterator ivb = incident_vertices.begin();
+  if ( ivb->first == previous )
   {
-    return incident_vertices.back().first;
+    typename Incident_vertices::const_iterator ivl = --(incident_vertices.end());
+    return ivl->first;
   }
   else
   {
-    return incident_vertices.front().first;
+    return ivb->first;
   }
 }
 
@@ -1959,20 +2129,15 @@ is_sizing_field_correct(const Vertex_handle& v1,
                         const Curve_index& curve_index,
                         const CGAL::Orientation orientation) const
 {
-  typename C3T3::Triangulation::Geom_traits::Construct_point_3 cp =
-    c3t3_.triangulation().geom_traits().construct_point_3_object();
-
   FT s1 = get_radius(v1);
   FT s2 = get_radius(v2);
   FT s3 = get_radius(v3);
-  const Weighted_point& wp1 = c3t3_.triangulation().point(v1);
-  const Weighted_point& wp2 = c3t3_.triangulation().point(v2);
-  const Weighted_point& wp3 = c3t3_.triangulation().point(v3);
+  const Bare_point& p1 = canonical_vertex_to_non_periodic_position.at(v1);
+  const Bare_point& p2 = canonical_vertex_to_non_periodic_position.at(v2);
+  const Bare_point& p3 = canonical_vertex_to_non_periodic_position.at(v3);
 
-  FT D = domain_.curve_segment_length(cp(wp1), cp(wp3),
-                                      curve_index, orientation);
-  FT d = domain_.curve_segment_length(cp(wp1), cp(wp2),
-                                      curve_index, orientation);
+  FT D = domain_.curve_segment_length(p1, p3, curve_index, orientation);
+  FT d = domain_.curve_segment_length(p1, p2, curve_index, orientation);
 
   return ( s2 >= (s1 + d/D*(s3-s1)) );
 }
@@ -1986,14 +2151,24 @@ repopulate_edges_around_corner(const Vertex_handle& v, ErasedVeOutIt out)
 {
   CGAL_precondition(c3t3_.is_in_complex(v));
 
+  std::cout << "repopulate_edges_around_corner: " << c3t3_.triangulation().point(v) << std::endl;
+
   Incident_vertices incident_vertices;
   c3t3_.adjacent_vertices_in_complex(v, std::back_inserter(incident_vertices));
 
   for ( typename Incident_vertices::iterator vit = incident_vertices.begin(),
        vend = incident_vertices.end() ; vit != vend ; ++vit )
   {
-    const Vertex_handle& next = vit->first;
-    const Curve_index& curve_index = vit->second;
+    std::cout << "adjacent point: " << *(vit->first) << std::endl;
+
+    Vertex_handle next = vit->first;
+
+#ifdef PERIODIC_HACK
+    typename Tr::Offset off;
+    c3t3_.triangulation().get_vertex(next, next, off);
+#endif
+
+    const Curve_index curve_index = vit->second;
 
     // if `v` is incident to a cycle, it might be that the full cycle,
     // including the edge `[next, v]`, has already been processed by
