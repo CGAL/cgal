@@ -245,10 +245,11 @@ namespace CGAL {
 	Kd_tree_rectangle<FT,D> b_upper(b);
 	node->split_bbox(b, b_upper);
 
-	if (q.inner_range_intersects(b))
+	if (q.inner_range_intersects(b)) {
 	  result = node->lower()->search_any_point(q,b);
-        if(result)
-          return result;
+	  if(result)
+	    return result;
+	}
 	if (q.inner_range_intersects(b_upper))
 	  result = node->upper()->search_any_point(q,b_upper);
       }
