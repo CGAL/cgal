@@ -24,8 +24,6 @@
 #ifndef CGAL_EUCLIDEAN_DISTANCE_H
 #define CGAL_EUCLIDEAN_DISTANCE_H
 
-//#define DISABLE_OPTIONAL_FUNCTIONS // disable cache + interruptible optimizations // CJTODO: remove this debug code
-
 #include <CGAL/license/Spatial_searching.h>
 
 
@@ -64,61 +62,6 @@ namespace CGAL {
 
     // default constructor
     Euclidean_distance(const SearchTraits& traits_=SearchTraits()):traits(traits_) {}
-
-#ifdef DISABLE_OPTIONAL_FUNCTIONS
-
-    inline FT transformed_distance(const Query_item& q, const Point_d& p) const {
-      return transformed_distance(q, p, D());
-    }
-
-    //Dynamic version for runtime dimension
-    inline FT transformed_distance(const Query_item& q, const Point_d& p, Dynamic_dimension_tag) const {
-      FT distance = FT(0);
-      typename SearchTraits::Construct_cartesian_const_iterator_d construct_it = traits.construct_cartesian_const_iterator_d_object();
-      typename SearchTraits::Cartesian_const_iterator_d qit = construct_it(q),
-        qe = construct_it(q, 1), pit = construct_it(p);
-      for (; qit != qe; qit++, pit++) {
-        distance += ((*qit) - (*pit))*((*qit) - (*pit));
-      }
-      return distance;
-    }
-
-    //Generic version for DIM > 3
-    template < int DIM >
-    inline FT transformed_distance(const Query_item& q, const Point_d& p, Dimension_tag<DIM>) const {
-      FT distance = FT(0);
-      typename SearchTraits::Construct_cartesian_const_iterator_d construct_it = traits.construct_cartesian_const_iterator_d_object();
-      typename SearchTraits::Cartesian_const_iterator_d qit = construct_it(q),
-        qe = construct_it(q, 1), pit = construct_it(p);
-      for (; qit != qe; qit++, pit++) {
-        distance += ((*qit) - (*pit))*((*qit) - (*pit));
-      }
-      return distance;
-    }
-
-    //DIM = 2 loop unrolled
-    inline FT transformed_distance(const Query_item& q, const Point_d& p, Dimension_tag<2>) const {
-      typename SearchTraits::Construct_cartesian_const_iterator_d construct_it = traits.construct_cartesian_const_iterator_d_object();
-      typename SearchTraits::Cartesian_const_iterator_d qit = construct_it(q), pit = construct_it(p);
-      FT distance = square(*qit - *pit);
-      qit++; pit++;
-      distance += square(*qit - *pit);
-      return distance;
-    }
-
-    //DIM = 3 loop unrolled
-    inline FT transformed_distance(const Query_item& q, const Point_d& p, Dimension_tag<3>) const {
-      typename SearchTraits::Construct_cartesian_const_iterator_d construct_it = traits.construct_cartesian_const_iterator_d_object();
-      typename SearchTraits::Cartesian_const_iterator_d qit = construct_it(q), pit = construct_it(p);
-      FT distance = square(*qit - *pit);
-      qit++; pit++;
-      distance += square(*qit - *pit);
-      qit++; pit++;
-      distance += square(*qit - *pit);
-      return distance;
-    }
-
-#else // !DISABLE_OPTIONAL_FUNCTIONS
 
     inline FT transformed_distance(const Query_item& q, const Point_d& p) const
     {
@@ -228,7 +171,6 @@ namespace CGAL {
       }
       return distance;
     }
-#endif
 
 	inline FT min_distance_to_rectangle(const Query_item& q,
 					    const Kd_tree_rectangle<FT,D>& r) const {
