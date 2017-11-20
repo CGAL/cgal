@@ -664,15 +664,8 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
     int li, lj;
     Cell_handle ch = tr.locate(wp0, lt, li, lj);
 
-    Vertex_handle nearest_vh;
-    FT sq_d;
-    boost::tie(nearest_vh, sq_d) = tr.nearest_power_vertex_with_sq_distance(p, ch);
-
-#ifdef PERIODIC_HACK
-    CGAL_assertion(nearest_vh != Vertex_handle());
-    typename Tr::Offset off;
-    c3t3_.triangulation().get_vertex(nearest_vh, nearest_vh, off);
-#endif
+    Vertex_handle nearest_vh = tr.nearest_power_vertex(p, ch);
+    FT sq_d = sq_distance(p, cp(tr.point(nearest_vh)));
 
 #if CGAL_MESH_3_PROTECTION_DEBUG & 2
     std::cerr << "Nearest power vertex of (" << p << ") is "
@@ -700,7 +693,8 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
       ch = tr.locate(wp0, lt, li, lj, new_vh);
 
       // Iterate
-      boost::tie(nearest_vh, sq_d) = tr.nearest_power_vertex_with_sq_distance(p, ch);
+      nearest_vh = tr.nearest_power_vertex(p, ch);
+      sq_d = sq_distance(p, cp(tr.point(nearest_vh)));
     }
 
     if( is_special(nearest_vh) &&
@@ -1006,7 +1000,7 @@ insert_balls(const Vertex_handle& vp,
   const FT pq_length = (vp == vq) ?
     domain_.curve_length(curve_index)
     :
-    domain_.curve_segment_length(vpp, vqp, curve_index, orientation);
+    domain_.curve_segment_length(cp(vpwp), cp(vqwp), curve_index, orientation);
 
   // Insert balls
   return
@@ -1399,8 +1393,8 @@ do_balls_intersect(const Vertex_handle& va, const Vertex_handle& vb) const
   typename Gt::Construct_point_3 cp =
     c3t3_.triangulation().geom_traits().construct_point_3_object();
 
-  const Bare_point& a = cp(va->point());
-  const Bare_point& b = cp(vb->point());
+  const Bare_point& a = cp(c3t3_.triangulation().point(va));
+  const Bare_point& b = cp(c3t3_.triangulation().point(vb));
 
   const FT& sq_ra = va->point().weight();
   const FT& sq_rb = vb->point().weight();
