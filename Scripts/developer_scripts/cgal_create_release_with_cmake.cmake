@@ -70,7 +70,16 @@ foreach(pkg ${files})
         if ("${fext}" STREQUAL ".h" OR "${fext}" STREQUAL ".hpp")
           file(READ "${pkg_dir}/${f}" file_content)
           string(REPLACE "$URL$" "$URL: ${GITHUB_PREFIX}/${pkg}/${f} $" file_content ${file_content})
-          string(REPLACE "$Id$" "This file is from the release ${CGAL_VERSION} of CGAL" file_content ${file_content})
+          if(EXISTS ${CMAKE_BINARY_DIR}/.git)
+            execute_process(
+              COMMAND git --git-dir=${CMAKE_BINARY_DIR}/.git --work-tree=${CMAKE_BINARY_DIR} log -n1 "--format=format:%h %aI %an"
+              RESULT_VARIABLE RESULT_VAR
+              OUTPUT_VARIABLE OUT_VAR
+              )
+            string(REPLACE "$Id$" "$Id: ${fname} ${OUT_VAR}" file_content ${file_content})
+          else()
+            string(REPLACE "$Id$" "This file is from the release ${CGAL_VERSION} of CGAL" file_content ${file_content})
+          endif()
           file(WRITE ${release_dir}/${afile_dir}/${fname} ${file_content})
         else()
           file(COPY ${afile} DESTINATION ${release_dir}/${afile_dir})
