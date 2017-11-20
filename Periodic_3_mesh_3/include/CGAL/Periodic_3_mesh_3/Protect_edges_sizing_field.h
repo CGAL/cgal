@@ -35,7 +35,6 @@
 //   them away during the pre-treatment phase: insert > treat > protect.
 //   Or, if a new point has a dummy point in its sphere, insert the new point, try
 //   to remove the dummy.
-// - should the canonical map take into account the curve index ?
 // - User manual with drawings on what sharp features are allowed
 // - Polyhedral domains ?
 // - remove+insert could potentially switch to 27 copies, you gotta check for

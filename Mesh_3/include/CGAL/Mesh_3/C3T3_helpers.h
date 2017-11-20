@@ -3337,13 +3337,11 @@ project_on_surface_aux(const Bare_point& p,
   const Vector_3 projection_scaled_vector =
     scale(projection_vector, CGAL::sqrt(sq_dist / sq_proj_length));
 
-  // @todo switch to ray/line ?
   const Bare_point source = translate(p, projection_scaled_vector);
   const Bare_point target = translate(p, - projection_scaled_vector);
 
   const Segment_3 proj_segment(source, target);
 
-  // @todo only possible thing seems to be p==ref, so... just check that much earlier ?
   if ( is_degenerate(proj_segment) )
     return ref_point;
 

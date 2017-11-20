@@ -781,7 +781,6 @@ public:
 //    if(is_1_cover())
     return point(periodic_point(c, idx), cp);
 
-    // @todo figure out everything below and clean it if useless
     Offset vec_off[4];
     for(int i=0; i<4; i++)
       vec_off[i] = periodic_point(c,i).second;
