@@ -12,7 +12,7 @@
 #include <CGAL/IO/Medit_IO.h>
 #include <CGAL/Implicit_periodic_3_mesh_domain_3.h>
 #include <CGAL/make_periodic_3_mesh_3.h>
-#include <CGAL/optimize_periodic_mesh_3.h>
+#include <CGAL/optimize_periodic_3_mesh_3.h>
 #include <CGAL/Periodic_3_mesh_triangulation_3.h>
 
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
