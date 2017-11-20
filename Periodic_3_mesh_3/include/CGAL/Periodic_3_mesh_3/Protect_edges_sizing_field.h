@@ -619,11 +619,6 @@ insert_point(const Bare_point& p, const Weight& w, int dim, const Index& index,
   // add the full space position
   canonical_vertex_to_non_periodic_position[v] = p;
 
-#ifdef PERIODIC_HACK
-  typename Tr::Offset off;
-  c3t3_.triangulation().get_vertex(v, v, off);
-#endif
-
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
   std::cerr << "Insertion of ";
   if(special_ball)
@@ -702,12 +697,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
     Vertex_handle nearest_vh;
     FT sq_d;
     boost::tie(nearest_vh, sq_d) = tr.nearest_power_vertex_with_sq_distance(p, ch);
-
-#ifdef PERIODIC_HACK
     CGAL_assertion(nearest_vh != Vertex_handle());
-    typename Tr::Offset off;
-    c3t3_.triangulation().get_vertex(nearest_vh, nearest_vh, off);
-#endif
 
 #if CGAL_MESH_3_PROTECTION_DEBUG & 2
     std::cerr << "Nearest power vertex of (" << p << ") is "
@@ -737,11 +727,6 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
       // Iterate
       boost::tie(nearest_vh, sq_d) = tr.nearest_power_vertex_with_sq_distance(p, ch);
       CGAL_assertion(nearest_vh != Vertex_handle());
-
-#ifdef PERIODIC_HACK
-      typename Tr::Offset off;
-      c3t3_.triangulation().get_vertex(nearest_vh, nearest_vh, off);
-#endif
     }
 
     if( is_special(nearest_vh) &&
@@ -773,11 +758,6 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
       for(int i=0, d=tr.dimension(); i<=d; ++i)
       {
         Vertex_handle v = (*it)->vertex(i);
-
-#ifdef PERIODIC_HACK
-        typename Tr::Offset off;
-        c3t3_.triangulation().get_vertex(v,v,off);
-#endif
 
         if(c3t3_.triangulation().is_infinite(v))
           continue;
@@ -1027,11 +1007,6 @@ get_vertex_corner_from_point(const Bare_point& p, const Index&) const
   // Let the weight be 0, because is_vertex only locates the point, and
   // check that the location type is VERTEX.
   c3t3_.triangulation().is_vertex(cwp(p), v);
-
-#ifdef PERIODIC_HACK
-  typename Tr::Offset off;
-  c3t3_.triangulation().get_vertex(v, v, off);
-#endif
 
   CGAL_assertion( q_found );
   return v;
@@ -1352,18 +1327,7 @@ refine_balls()
 
       // below is done to ignore dummy points (inserted before protection for efficiency)
       if(get_radius(va) == 0. || get_radius(vb) == 0.)
-      {
-#ifndef PERIODIC_HACK
-        CGAL_assertion(false);
-#endif
         continue;
-      }
-
-#ifdef PERIODIC_HACK
-      typename Tr::Offset off;
-      c3t3_.triangulation().get_vertex(va, va, off);
-      c3t3_.triangulation().get_vertex(vb, vb, off);
-#endif
 
 #if CGAL_MESH_3_PROTECTION_DEBUG & 16
       std::cerr << "Treat edge: " << c3t3_.triangulation().point(va) << " || "
@@ -1636,11 +1600,11 @@ check_and_repopulate_edges()
 
   unchecked_vertices_.clear();
 
+  // verbose
   std::cout << "check_and_repopulate_edges " << std::endl;
   std::cout << c3t3_.number_of_vertices_in_complex() << " corners" << std::endl;
   std::cout << c3t3_.triangulation().number_of_vertices() << " vertices" << std::endl;
 
-#ifdef PERIODIC_HACK
   typename C3T3::Vertices_in_complex_iterator vicit = c3t3_.vertices_in_complex_begin();
   for(; vicit!=c3t3_.vertices_in_complex_end(); ++vicit)
   {
@@ -1659,19 +1623,20 @@ check_and_repopulate_edges()
       }
     }
   }
-#endif
+  // end verbose
 
   // Fix edges
   while ( !vertices.empty() )
   {
     Vertex_handle v = *vertices.begin();
     vertices.erase(vertices.begin());
+
+    // verbose
     std::cout << "check_and_repopulate_edges: " << &*v
               << " p: " << c3t3_.triangulation().point(v) << std::endl;
     std::cout << "is corner: " << std::boolalpha << c3t3_.is_in_complex(v) << std::endl;
     std::cout << "incident cell: " << &*(v->cell()) << std::endl;
 
-#ifdef PERIODIC_HACK
     if(c3t3_.triangulation().dimension() == 3)
     {
       for(int i=0; i<=c3t3_.triangulation().dimension(); ++i)
@@ -1682,7 +1647,7 @@ check_and_repopulate_edges()
           std::cout << " -> infinite vertex" << std::endl;
       }
     }
-#endif
+    // end verbose
 
     details::Erase_element_from_set<Vertices> erase_from_vertices(vertices);
 
@@ -2162,12 +2127,6 @@ repopulate_edges_around_corner(const Vertex_handle& v, ErasedVeOutIt out)
     std::cout << "adjacent point: " << *(vit->first) << std::endl;
 
     Vertex_handle next = vit->first;
-
-#ifdef PERIODIC_HACK
-    typename Tr::Offset off;
-    c3t3_.triangulation().get_vertex(next, next, off);
-#endif
-
     const Curve_index curve_index = vit->second;
 
     // if `v` is incident to a cycle, it might be that the full cycle,
