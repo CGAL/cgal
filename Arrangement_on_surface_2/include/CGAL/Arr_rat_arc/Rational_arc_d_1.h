@@ -57,11 +57,11 @@ namespace Arr_rational_arc {
 //        Denominator(x)
 //
 // where Numerator and Denominator are polynomial with integer (or rational) coefficients.
-// The class is templated with two parameters: 
+// The class is templated with two parameters:
 // Algebraic_kernel: An algebraic kernel for the intersection points of the curves
 //
 // This class serves as the base for the classes:
-// Rational_arc_d_1 (a general, not necessarily continuous arc) 
+// Rational_arc_d_1 (a general, not necessarily continuous arc)
 // Continuous_rational_arc_d_1 (a continuous portion of a rational function).
 //--------------------------------------------------------------------------//
 
@@ -88,13 +88,13 @@ public:
   typedef typename Base_rational_arc_ds_1::Coefficient      Coefficient;
   typedef typename Base_rational_arc_ds_1::Arithmetic_kernel
                                                             Arithmetic_kernel;
-  typedef typename Base_rational_arc_ds_1::Rational         Rational; 
+  typedef typename Base_rational_arc_ds_1::Rational         Rational;
   typedef typename Base_rational_arc_ds_1::Integer          Integer;
   typedef typename Base_rational_arc_ds_1::Algebraic_real_1 Algebraic_real_1;
   typedef typename Base_rational_arc_ds_1::Algebraic_vector Algebraic_vector;
   typedef typename Base_rational_arc_ds_1::Multiplicity_vector
                                                             Multiplicity_vector;
-  
+
   typedef std::vector<Rational>                             Rat_vector;
 
   typedef Polynomial_traits_d<Polynomial_1>                 Polynomial_traits_1;
@@ -102,13 +102,13 @@ public:
   typedef typename Base_rational_arc_ds_1::Solve_1          Solve_1;
   typedef typename Algebraic_kernel::Bound                  Bound;
   typedef Algebraic_structure_traits<Polynomial_1>          AT_poly;
-  
+
   typedef Polynomial<Rational>                              Poly_rat_1;
   typedef Polynomial_traits_d<Poly_rat_1>                   PT_rat_1;
   typedef Fraction_traits <Poly_rat_1>                      FT_poly_rat_1;
 
   typedef Algebraic_point_2                                 Point_2;
-  
+
   CGAL_static_assertion((boost::is_same<Integer, Coefficient>::value));
   CGAL_static_assertion((boost::is_same<Polynomial_1,
                        typename FT_poly_rat_1::Numerator_type>::value));
@@ -125,7 +125,7 @@ public:
   {
     return cache.get_rational_function(rat);
   }
-  const Rational_function_pair get_rational_pair(const Rational_function& f, 
+  const Rational_function_pair get_rational_pair(const Rational_function& f,
                                                  const Rational_function& g,
                                                  const Cache& cache) const
   {
@@ -159,11 +159,11 @@ public:
     IS_CONTINUOUS = 512,
     IS_VALID = 1024
   };
- 
-  Rational_function _f;    // The rational function 
+
+  Rational_function _f;    // The rational function
   Algebraic_point_2   _ps;   // The source point.
   Algebraic_point_2   _pt;   // The target point.
-  int     _info;   // A set of Boolean flags. 
+  int     _info;   // A set of Boolean flags.
 
 public:
   //------------
@@ -175,11 +175,11 @@ public:
   Base_rational_arc_d_1() :
     _info(0)
   {}
- 
+
   //---------------------------------------------------------------------------
   // Constructor of a whole polynomial curve defined by pcoeffs - the rational
   // coefficients of the polynomial p(x).
-  
+
   Base_rational_arc_d_1(const Polynomial_1& P, const Cache& cache) :
     _info(0)
   {
@@ -195,14 +195,14 @@ public:
                                                                  pcoeffs.end()));
     Integer denom_int;
     typename FT_poly_rat_1::Decompose()(num_rat, _numer, denom_int);
-        
+
     _init(_numer,denom_int,cache);
   }
 
   void _init(const Polynomial_1& P,const Integer& Q_int,const Cache& cache)
   {
     CGAL_precondition(!CGAL::is_zero(Q_int));
-    //set rational function 
+    //set rational function
     Polynomial_1 Q= typename Polynomial_traits_1::Construct_polynomial()(Q_int);
     _f = get_rational_function(P, Q, cache);
 
@@ -216,18 +216,18 @@ public:
     const int    deg_num(CGAL::degree(P));
     Integer lead_coeff(CGAL::leading_coefficient(Q));
     CGAL::Sign   lead_sign(CGAL::sign(lead_coeff));
-  
+
     if (deg_num > 0)
     {
       // Check if the degree is even or odd and check the sign of the leading
       // coefficient of the polynomial.
-   
+
       CGAL_assertion(lead_sign != CGAL::ZERO);
 
       if (deg_num % 2 == 0)
       {
         // Polynomial of an even degree.
-        if (lead_sign == CGAL::NEGATIVE) 
+        if (lead_sign == CGAL::NEGATIVE)
           _info = (_info | SRC_AT_Y_MINUS_INFTY | TRG_AT_Y_MINUS_INFTY);
         else
           _info = (_info | SRC_AT_Y_PLUS_INFTY | TRG_AT_Y_PLUS_INFTY);
@@ -255,10 +255,10 @@ public:
     _info = (_info | IS_CONTINUOUS);
     _info = (_info | IS_VALID);
 
-  }  
+  }
 
   //---------------------------------------------------------------------------
-  //Constructor of a polynomial ray, defined by y = p(x), 
+  //Constructor of a polynomial ray, defined by y = p(x),
   //for x_s <= x if the ray is directed to the right, or
   //for x_s >= x if it is directed to the left.
   //param pcoeffs The rational coefficients of the polynomial p(x).
@@ -283,7 +283,7 @@ public:
                                                                  pcoeffs.end()));
     Integer denom_int;
     typename FT_poly_rat_1::Decompose()(num_rat, _numer, denom_int);
-    
+
     _init(_numer, denom_int, x_s, dir_right, cache);
   }
 
@@ -291,7 +291,7 @@ public:
              const Algebraic_real_1& x_s, bool dir_right,const Cache& cache)
   {
     CGAL_precondition(!CGAL::is_zero(Q_int));
-    //set rational function 
+    //set rational function
     Polynomial_1 Q = typename Polynomial_traits_1::Construct_polynomial()(Q_int);
     _f = get_rational_function(P,Q,cache);
 
@@ -343,7 +343,7 @@ public:
       // In the case of a constant polynomial it is possible to set a finite
       // y-coordinate for the target point.
       // x coordinate is 0 although in practice is +-oo
-      _pt = Algebraic_point_2(get_rational_function(P, Q, cache), 
+      _pt = Algebraic_point_2(get_rational_function(P, Q, cache),
                               Algebraic_real_1());
     }
 
@@ -371,23 +371,23 @@ public:
                         const Algebraic_real_1& x_s,const Algebraic_real_1& x_t,
                         const Cache& cache):
     _info(0)
-  {    
+  {
     // Set the numerator & denominator polynomials.
     Polynomial_1 _numer;
     Poly_rat_1 num_rat(typename PT_rat_1::Construct_polynomial()(pcoeffs.begin(),
                                                                  pcoeffs.end()));
     Integer denom_int;
     typename FT_poly_rat_1::Decompose()(num_rat, _numer, denom_int);
-    
+
     _init(_numer, denom_int, x_s, x_t, cache);
-  }    
+  }
 
   void _init(const Polynomial_1& P,const Integer& Q_int,
              const Algebraic_real_1& x_s,const Algebraic_real_1& x_t,
              const Cache& cache)
   {
     CGAL_precondition(!CGAL::is_zero(Q_int));
-    //set rational function 
+    //set rational function
     Polynomial_1 Q = typename Polynomial_traits_1::Construct_polynomial()(Q_int);
     _f = get_rational_function(P, Q, cache);
 
@@ -402,7 +402,7 @@ public:
     // Set the endpoints.
     _ps=Algebraic_point_2(_f,x_s);
     _pt=Algebraic_point_2(_f,x_t);
-    
+
     // Mark that the arc is continuous and valid.
     _info = (_info | IS_CONTINUOUS);
     _info = (_info | IS_VALID);
@@ -440,16 +440,16 @@ public:
 
     _init(_numer,_denom,cache);
   }
-  void _init(const Polynomial_1& P_, const Polynomial_1& Q_, const Cache& cache) 
+  void _init(const Polynomial_1& P_, const Polynomial_1& Q_, const Cache& cache)
   {
     CGAL_precondition(!CGAL::is_zero(Q_));
-    //set rational function 
+    //set rational function
     // Set the numerator & denominator polynomials.
 
     Polynomial_1 P;
     Polynomial_1 Q;
     _canonicalize(P_, Q_, P, Q);
-                     
+
     _f = get_rational_function(P, Q, cache);
 
     // Mark that the endpoints of the rational functions are unbounded (the
@@ -458,7 +458,7 @@ public:
     _info = (_info | TRG_AT_X_PLUS_INFTY);
     _info = (_info | IS_DIRECTED_RIGHT);
 
-    
+
     // Analyze the bahaviour of the rational function at x = -oo (the source).
     Algebraic_real_1          y0;
     const Arr_parameter_space inf_s = _analyze_at_minus_infinity(P, Q, y0);
@@ -487,7 +487,7 @@ public:
 
   //---------------------------------------------------------------------------
   //Constructor of a ray of a rational function, defined by y = p(x)/q(x),
-  //for x_s <= x if the ray is directed to the right, or 
+  //for x_s <= x if the ray is directed to the right, or
   //for x_s >= x if the ray is directed to the left.
   //param pcoeffs The rational coefficients of the polynomial p(x).
   //param qcoeffs The rational coefficients of the polynomial q(x).
@@ -526,10 +526,10 @@ public:
 
   void _init(const Polynomial_1& P_, const Polynomial_1& Q_,
              const Algebraic_real_1& x_s, bool dir_right,
-             const Cache& cache) 
+             const Cache& cache)
   {
     CGAL_precondition(!CGAL::is_zero(Q_));
-    //set rational function 
+    //set rational function
     Polynomial_1 P;
     Polynomial_1 Q;
     _canonicalize(P_,Q_,P,Q);
@@ -547,7 +547,7 @@ public:
     }
 
 
-    //The source point has a bounded x-coordinate. 
+    //The source point has a bounded x-coordinate.
     _ps = Algebraic_point_2(_f, x_s);
     //check if the source point lies next to a pole.
     if (typename Algebraic_kernel::Sign_at_1()(Q, x_s) != CGAL::ZERO)
@@ -578,8 +578,8 @@ public:
       // The target point is at x = -oo.
       inf_t =_analyze_at_minus_infinity(P, Q, y0);
     }
-  
-    if (inf_t == ARR_BOTTOM_BOUNDARY) 
+
+    if (inf_t == ARR_BOTTOM_BOUNDARY)
       _info = (_info | TRG_AT_Y_MINUS_INFTY);
     else if (inf_t == ARR_TOP_BOUNDARY)
       _info = (_info | TRG_AT_Y_PLUS_INFTY);
@@ -634,7 +634,7 @@ public:
              const Cache& cache)
   {
     CGAL_precondition(!CGAL::is_zero(Q_));
-    //set rational function 
+    //set rational function
     Polynomial_1 P;
     Polynomial_1 Q;
     _canonicalize(P_, Q_, P, Q);
@@ -662,7 +662,7 @@ public:
       std::pair<CGAL::Sign, CGAL::Sign>  signs = _analyze_near_pole(x_s);
       const CGAL::Sign sign_s =
         ((_info & IS_DIRECTED_RIGHT) != 0) ? signs.second : signs.first;
-   
+
       if (sign_s == CGAL::NEGATIVE)
         _info = (_info | SRC_AT_Y_MINUS_INFTY);
       else
@@ -701,7 +701,7 @@ public:
   //-----------------------------
   // Accessing the arc properties
   //-----------------------------
- 
+
   //-----------------------------------------------------------------
   //Get the numerator polynomial of the underlying rational function.
   const Polynomial_1& numerator() const
@@ -759,9 +759,9 @@ public:
   //Get the source point
   const Algebraic_point_2& source() const
   {
-    CGAL_precondition((_info & IS_VALID) != 0 &&
-                      source_parameter_space_in_x() == ARR_INTERIOR &&
-                      source_parameter_space_in_y() == ARR_INTERIOR);
+    CGAL_precondition((_info & IS_VALID) != 0);
+    CGAL_precondition(source_parameter_space_in_x() == ARR_INTERIOR);
+    CGAL_precondition(source_parameter_space_in_y() == ARR_INTERIOR);
     return (_ps);
   }
 
@@ -769,8 +769,8 @@ public:
   //Get the x-coordinate of the source point
   Algebraic_real_1 source_x() const
   {
-    CGAL_precondition((_info & IS_VALID) != 0 &&
-                      source_parameter_space_in_x() == ARR_INTERIOR);
+    CGAL_precondition((_info & IS_VALID) != 0);
+    CGAL_precondition(source_parameter_space_in_x() == ARR_INTERIOR);
     return (_ps.x());
   }
 
@@ -788,9 +788,9 @@ public:
   //Get the target point
   const Algebraic_point_2& target() const
   {
-    CGAL_precondition((_info & IS_VALID) != 0 &&
-                      target_boundary_in_x() == ARR_INTERIOR &&
-                      target_boundary_in_y() == ARR_INTERIOR);
+    CGAL_precondition((_info & IS_VALID) != 0);
+    CGAL_precondition(target_boundary_in_x() == ARR_INTERIOR);
+    CGAL_precondition(target_boundary_in_y() == ARR_INTERIOR);
     return (_pt);
   }
 
@@ -798,8 +798,8 @@ public:
   //Get the x-coordinate of the target point
   Algebraic_real_1 target_x() const
   {
-    CGAL_precondition((_info & IS_VALID) != 0 &&
-                      target_boundary_in_x() == ARR_INTERIOR);
+    CGAL_precondition((_info & IS_VALID) != 0);
+    CGAL_precondition(target_boundary_in_x() == ARR_INTERIOR);
     return (_pt.x());
   }
 
@@ -856,16 +856,16 @@ public:
   //Get the x_value of the right endpoint
   const Algebraic_real_1& right_x() const
   {
-    CGAL_precondition((_info & IS_VALID) != 0 &&
-        right_parameter_space_in_x() == ARR_INTERIOR );
+    CGAL_precondition((_info & IS_VALID) != 0);
+    CGAL_precondition(right_parameter_space_in_x() == ARR_INTERIOR );
     return ((_info & IS_DIRECTED_RIGHT) ? _pt.x() : _ps.x());
   }
   //---------------------
   //Get the left endpoint
   const Algebraic_point_2& left() const
   {
-    CGAL_precondition(left_parameter_space_in_x() == ARR_INTERIOR &&
-        left_parameter_space_in_y() == ARR_INTERIOR);
+    CGAL_precondition(left_parameter_space_in_x() == ARR_INTERIOR);
+    CGAL_precondition(left_parameter_space_in_y() == ARR_INTERIOR);
     return ((_info & IS_DIRECTED_RIGHT) ? _ps : _pt);
   }
 
@@ -873,8 +873,8 @@ public:
   //Get the right endpoint
   const Algebraic_point_2& right() const
   {
-    CGAL_precondition(right_parameter_space_in_x() == ARR_INTERIOR &&
-        right_parameter_space_in_y() == ARR_INTERIOR);
+    CGAL_precondition(right_parameter_space_in_x() == ARR_INTERIOR);
+    CGAL_precondition(right_parameter_space_in_y() == ARR_INTERIOR);
     return ((_info & IS_DIRECTED_RIGHT) ? _pt : _ps);
   }
 
@@ -927,7 +927,7 @@ public:
 //       ARR_INTERIOR;
 //     Algebraic_real_1 left,right;
 //     if (left_parameter_space == ARR_INTERIOR)
-//       left = 
+//       left =
 //         (left_parameter_space_in_x()!= ARR_INTERIOR)     ? arc.left_x():
 //         (arc.left_parameter_space_in_x()!= ARR_INTERIOR) ? left_x() :
 //         (arc.left_x() < left_x())                 ? left_x() :
@@ -939,7 +939,7 @@ public:
 //         arc.right_x();
 //     if (left > right)
 //       return false;
-  
+
 //     //check if the base functions are equal
 //     if (_has_same_base (arc))
 //       return true;
@@ -947,15 +947,15 @@ public:
 //         get_rational_function(arc._numer,arc._denom));
 //     return rat_pair.is_intersecting_in_range(left_parameter_space,left,right_parameter_space,right);
 //   }
-  
+
   //--------------------------------------------------------
-  //Split the arc into two at a given pole. 
-  //The function returns the sub-arc to the left of the pole 
+  //Split the arc into two at a given pole.
+  //The function returns the sub-arc to the left of the pole
   //and sets (*this) to be the right sub-arc.
   //param x0 The x-coordinate of the pole.
   //precondition x0 lies in the interior of the arc.
   //return The sub-arc to the left of the pole.
-   
+
   Self split_at_pole(const Algebraic_real_1& x0)
   {
     // Analyze the behaviour of the function near the given pole.
@@ -995,7 +995,7 @@ public:
         c1._info = (c1._info | SRC_AT_Y_MINUS_INFTY);
       else
         c1._info = (c1._info | SRC_AT_Y_PLUS_INFTY);
-  
+
       this->_pt = p0;
       this->_info = (this->_info & ~TRG_INFO_BITS);
       if (sign_right == CGAL::NEGATIVE)
@@ -1009,11 +1009,11 @@ public:
 
     return (c1);
   }
-  
+
   //---------------
   //name Predicates
   //---------------
- 
+
 
   //---------------------------------------------------------------------------
   //Get the relative position of the point with respect to the rational arc.
@@ -1037,7 +1037,7 @@ public:
     return rat_pair.compare_f_g_at(p.x());
   }
   //---------------------------------------------------------------------------
-  //Compare the x-coordinate of a vertical asymptote of the arc 
+  //Compare the x-coordinate of a vertical asymptote of the arc
   //(one of its ends) and the given point.
   Comparison_result compare_end(Arr_curve_end ce,
                                 const Algebraic_point_2& p) const
@@ -1045,8 +1045,8 @@ public:
     Algebraic_real_1 x0;
 
     if (ce == ARR_MIN_END) {
-      CGAL_assertion(left_parameter_space_in_x() == ARR_INTERIOR &&
-                     left_parameter_space_in_y() != ARR_INTERIOR);
+      CGAL_assertion(left_parameter_space_in_x() == ARR_INTERIOR);
+      CGAL_assertion(left_parameter_space_in_y() != ARR_INTERIOR);
       if ((_info & IS_DIRECTED_RIGHT) != 0)
         x0 = _ps.x();
       else
@@ -1054,8 +1054,8 @@ public:
     }
     else
     {
-      CGAL_assertion(right_parameter_space_in_x() == ARR_INTERIOR &&
-                     right_parameter_space_in_y() != ARR_INTERIOR);
+      CGAL_assertion(right_parameter_space_in_x() == ARR_INTERIOR);
+      CGAL_assertion(right_parameter_space_in_y() != ARR_INTERIOR);
       if ((_info & IS_DIRECTED_RIGHT) != 0)
         x0 = _pt.x();
       else
@@ -1070,7 +1070,7 @@ public:
 
     return ((ce == ARR_MIN_END) ?  LARGER : SMALLER);
   }
-  
+
   //------------------------------------------------------------------
   //Compare the x-coordinate of a vertical asymptotes of the two arcs.
   //approaching from the same direction
@@ -1104,7 +1104,7 @@ public:
     if (_has_same_base(arc))
       return CGAL::EQUAL;
     Rational_function_pair rat_pair = get_rational_pair(_f,arc._f,cache);
-    
+
     CGAL::Comparison_result comp_f_g_y =
       rat_pair.compare_f_g_at(x,ce == ARR_MAX_END ?
                               CGAL::NEGATIVE : CGAL::POSITIVE);
@@ -1121,8 +1121,8 @@ public:
   }
 
   //------------------------------------------------------------------
-  //Compare the x-coordinate of a vertical asymptotes of the two arcs.   
-  Comparison_result compare_ends(Arr_curve_end ind1,const Self& arc, 
+  //Compare the x-coordinate of a vertical asymptotes of the two arcs.
+  Comparison_result compare_ends(Arr_curve_end ind1,const Self& arc,
                                  Arr_curve_end ind2, const Cache& cache) const
   {
     // Get the x-coordinates of the first vertical asymptote.
@@ -1130,8 +1130,8 @@ public:
 
     if (ind1 == ARR_MIN_END)
     {
-      CGAL_assertion(left_parameter_space_in_x() == ARR_INTERIOR &&
-                     left_parameter_space_in_y() != ARR_INTERIOR);
+      CGAL_assertion(left_parameter_space_in_x() == ARR_INTERIOR);
+      CGAL_assertion(left_parameter_space_in_y() != ARR_INTERIOR);
       if ((_info & IS_DIRECTED_RIGHT) != 0)
         x1 = _ps.x();
       else
@@ -1139,8 +1139,8 @@ public:
     }
     else
     {
-      CGAL_assertion(right_parameter_space_in_x() == ARR_INTERIOR &&
-                     right_parameter_space_in_y() != ARR_INTERIOR);
+      CGAL_assertion(right_parameter_space_in_x() == ARR_INTERIOR);
+      CGAL_assertion(right_parameter_space_in_y() != ARR_INTERIOR);
       if ((_info & IS_DIRECTED_RIGHT) != 0)
         x1 = _pt.x();
       else
@@ -1152,8 +1152,8 @@ public:
 
     if (ind2 == ARR_MIN_END)
     {
-      CGAL_assertion(arc.left_parameter_space_in_x() == ARR_INTERIOR &&
-                     arc.left_parameter_space_in_y() != ARR_INTERIOR);
+      CGAL_assertion(arc.left_parameter_space_in_x() == ARR_INTERIOR);
+      CGAL_assertion(arc.left_parameter_space_in_y() != ARR_INTERIOR);
       if ((arc._info & IS_DIRECTED_RIGHT) != 0)
         x2 = arc._ps.x();
       else
@@ -1161,8 +1161,8 @@ public:
     }
     else
     {
-      CGAL_assertion(arc.right_parameter_space_in_x() == ARR_INTERIOR &&
-                     arc.right_parameter_space_in_y() != ARR_INTERIOR);
+      CGAL_assertion(arc.right_parameter_space_in_x() == ARR_INTERIOR);
+      CGAL_assertion(arc.right_parameter_space_in_y() != ARR_INTERIOR);
       if ((arc._info & IS_DIRECTED_RIGHT) != 0)
         x2 = arc._pt.x();
       else
@@ -1188,13 +1188,13 @@ public:
     if (_has_same_base(arc))
       return CGAL::EQUAL;
     Rational_function_pair rat_pair = get_rational_pair(_f,arc._f,cache);
-    
+
     CGAL::Comparison_result comp_f_g_y =
       rat_pair.compare_f_g_at(x1, ind1 == ARR_MAX_END ?
                               CGAL::NEGATIVE : CGAL::POSITIVE);
     if( ind1 == ARR_MAX_END)
     {
-      CGAL_postcondition(ind2 == ARR_MAX_END); 
+      CGAL_postcondition(ind2 == ARR_MAX_END);
       CGAL_postcondition(right_parameter_space_in_y() ==
                          arc.right_parameter_space_in_y());
       return (right_parameter_space_in_y() == ARR_BOTTOM_BOUNDARY) ?
@@ -1202,7 +1202,7 @@ public:
     }
     else
     {
-      CGAL_postcondition(ind2 == ARR_MIN_END); 
+      CGAL_postcondition(ind2 == ARR_MIN_END);
       CGAL_postcondition(left_parameter_space_in_y() ==
                          arc.left_parameter_space_in_y());
       return (left_parameter_space_in_y() == ARR_BOTTOM_BOUNDARY) ?
@@ -1211,7 +1211,7 @@ public:
   }
 
   //------------------------------------------------------------------
-  // Compare the slopes of the arc with another given arc 
+  // Compare the slopes of the arc with another given arc
   // at their given intersection point.
   // param cv The given arc.
   // param p The intersection point.
@@ -1224,7 +1224,7 @@ public:
   // deleted!!!
 
   //------------------------------------------------------------------
-  // Compare the two arcs at a given intersection point 
+  // Compare the two arcs at a given intersection point
   // param arc The given arc
   // param p  The intersection point
   // param to_left to check to the left or to the right of intersection point
@@ -1237,8 +1237,8 @@ public:
                                             const Algebraic_point_2& p,
                                             bool to_left, const Cache& cache) const
   {
-    CGAL_precondition(this->point_position(p,cache) == CGAL::EQUAL &&
-                      arc.point_position(p,cache)   == CGAL::EQUAL);
+    CGAL_precondition(this->point_position(p,cache) == CGAL::EQUAL);
+    CGAL_precondition(arc.point_position(p,cache)   == CGAL::EQUAL);
 
     //check if the base functions are equal
     if (_has_same_base(arc))
@@ -1260,8 +1260,8 @@ public:
   Comparison_result compare_at_minus_infinity(const Self& arc,
                                               const Cache& cache) const
   {
-    CGAL_precondition(left_parameter_space_in_x() == ARR_LEFT_BOUNDARY &&
-                      arc.left_parameter_space_in_x() == ARR_LEFT_BOUNDARY);
+    CGAL_precondition(left_parameter_space_in_x() == ARR_LEFT_BOUNDARY);
+    CGAL_precondition(arc.left_parameter_space_in_x() == ARR_LEFT_BOUNDARY);
 
     //check if the base functions are equal
     if (_has_same_base(arc))
@@ -1283,8 +1283,8 @@ public:
   Comparison_result compare_at_plus_infinity(const Self& arc,
                                              const Cache& cache) const
   {
-    CGAL_precondition(right_parameter_space_in_x() == ARR_RIGHT_BOUNDARY &&
-                      arc.right_parameter_space_in_x() == ARR_RIGHT_BOUNDARY);
+    CGAL_precondition(right_parameter_space_in_x() == ARR_RIGHT_BOUNDARY);
+    CGAL_precondition(arc.right_parameter_space_in_x() == ARR_RIGHT_BOUNDARY);
 
     //check if the base functions are equal
     if (_has_same_base(arc))
@@ -1379,8 +1379,8 @@ public:
              left_parameter_space_in_y() == ARR_INTERIOR &&
              arc.right_parameter_space_in_x() == ARR_INTERIOR &&
              arc.right_parameter_space_in_y() == ARR_INTERIOR &&
-             //CGAL::equal(left_x(), arc.right_x())));  
-             (left_x() == arc.right_x())));  
+             //CGAL::equal(left_x(), arc.right_x())));
+             (left_x() == arc.right_x())));
   }
   //------------------------------------
   //Constructions of points and curves
@@ -1410,16 +1410,16 @@ public:
 
     if ((_info & IS_CONTINUOUS) != 0)
       arc._info = (arc._info | IS_CONTINUOUS);
-     
+
     return (arc);
   }
 
   //------------------------
   // Print the rational arc.
   std::ostream& print(std::ostream& os) const
-  {    
+  {
     // Print y as a rational function of x.
-    os << "y = (";    
+    os << "y = (";
     Base_rational_arc_ds_1::print_polynomial(os, this->numerator(), 'x');
     os << ") / (";
     Base_rational_arc_ds_1::print_polynomial(os, this->denominator(), 'x');
@@ -1427,7 +1427,7 @@ public:
 
     // Print the definition range.
     Arr_parameter_space      inf_x = source_parameter_space_in_x();
-    if (inf_x == ARR_LEFT_BOUNDARY) 
+    if (inf_x == ARR_LEFT_BOUNDARY)
       os << "(-oo";
     else if (inf_x == ARR_RIGHT_BOUNDARY)
       os << "(+oo";
@@ -1439,7 +1439,7 @@ public:
     os << ", ";
 
     inf_x = target_boundary_in_x();
-    if (inf_x == ARR_LEFT_BOUNDARY) 
+    if (inf_x == ARR_LEFT_BOUNDARY)
       os << "-oo)";
     else if (inf_x == ARR_RIGHT_BOUNDARY)
       os << "+oo)";
@@ -1453,7 +1453,7 @@ public:
 
 protected:
 
- 
+
   //-------------------------------
   //Auxiliary (protected) functions.
   //-------------------------------
@@ -1484,7 +1484,7 @@ protected:
     }
     return;
   }
-  
+
   //--------------------------------------------------------------------------
   // Check if the given x-value is in the x-range of the arc.
   // param x The x-value.
@@ -1492,7 +1492,7 @@ protected:
   //                       source point.
   // param eq_trg Output: Is this value equal to the x-coordinate of the
   //                       target point.
-   
+
   bool _is_in_x_range(const Algebraic_real_1& x, bool& eq_src,
                       bool& eq_trg) const
   {
@@ -1512,29 +1512,29 @@ protected:
 
         if (res1 == SMALLER)
           return false;
-         
+
         if (res1 == EQUAL)
         {
           eq_src = true;
           return true;
         }
       }
-       
+
       // Compare to the right endpoint (the target in this case).
       if ((_info & TRG_AT_X_PLUS_INFTY) != 0)
         return true;
 
       const Comparison_result  res2 = CGAL::compare(x, _pt.x());
-       
+
       if (res2 == LARGER)
         return false;
-        
+
       if (res2 == EQUAL)
         eq_trg = true;
 
       return true;
     }
-     
+
     // Compare to the left endpoint (the target in this case).
     if ((_info & TRG_AT_X_MINUS_INFTY) != 0)
     {
@@ -1546,31 +1546,31 @@ protected:
 
       if (res1 == SMALLER)
         return false;
-         
+
       if (res1 == EQUAL)
       {
         eq_trg = true;
         return true;
       }
     }
-       
+
     // Compare to the right endpoint (the source in this case).
     if ((_info & SRC_AT_X_PLUS_INFTY) != 0)
       return true;
 
     const Comparison_result  res2 = CGAL::compare(x, _ps.x());
-       
+
     if (res2 == LARGER)
       return false;
-        
+
     if (res2 == EQUAL)
       eq_src = true;
-     
+
     return true;
   }
 
   //----------------------------------------------------------
-  // Check if the given x-value is in the x-range of the arc, 
+  // Check if the given x-value is in the x-range of the arc,
   // excluding its open ends.
   bool _is_in_true_x_range(const Algebraic_real_1& x) const
   {
@@ -1591,12 +1591,12 @@ protected:
     // If we reached here, the value is in the true x-range of the arc.
     return true;
   }
- 
+
   //------------------------------------------------------------------------
   // Check if the underlying rational function is the same in the given arc.
   //  param arc The given arc.
   //   return true if arc's underlying rational function is the same
-  //       as of *this; 
+  //       as of *this;
   //   false otherwise.
 
   bool _has_same_base(const Self& arc) const
@@ -1611,10 +1611,10 @@ protected:
   //    {
   //      bool same_source(true);
   //      bool same_target(true);
-  //      if (  (this->source_parameter_space_in_x () == ARR_INTERIOR) && 
+  //      if (  (this->source_parameter_space_in_x () == ARR_INTERIOR) &&
   //          (this->source_parameter_space_in_y () == ARR_INTERIOR) )
   //        same_source = (this->source() == arc.source());
-  //      if (  (this->target_boundary_in_x () == ARR_INTERIOR) && 
+  //      if (  (this->target_boundary_in_x () == ARR_INTERIOR) &&
   //          (this->target_boundary_in_y () == ARR_INTERIOR) )
   //        same_target = (this->target() == arc.target());
   //      return (same_source && same_target);
@@ -1683,7 +1683,7 @@ protected:
     // Get the leading coefficients.
     Integer p_lead(CGAL::leading_coefficient(P));
     Integer q_lead(CGAL::leading_coefficient(Q));
-     
+
     if (deg_p == deg_q)
       {
         // We have a horizontal asymptote.
@@ -1714,11 +1714,11 @@ protected:
     bool                                           eq_src, eq_trg;
     typename std::list<Algebraic_real_1>::const_iterator  x_iter;
 
-    //solve for roots without caring for multiplicity 
+    //solve for roots without caring for multiplicity
     //hence the usage of the bool var
 
     std::copy(_f.poles().begin(),_f.poles().end(),std::back_inserter (q_roots));
-  
+
     // Go over the roots and check whether they lie in the x-range of the arc.
     for (x_iter = q_roots.begin(); x_iter != q_roots.end(); ++x_iter)
     {
@@ -1744,7 +1744,7 @@ protected:
   }
 
   //---------------------------------------------------------------------
-  // Check whether the arc is continuous. 
+  // Check whether the arc is continuous.
   bool _is_continuous()
   {
     // Compute the roots of the denominator polynomial, and make sure
@@ -1780,7 +1780,7 @@ protected:
   //{
   //  // Get the degree.
   //  const int    deg = CGAL::degree(poly);
-  // 
+  //
   //  Integer     coeff;
   //  CGAL::Sign  sgn;
   //  int         k;
@@ -1792,7 +1792,7 @@ protected:
   //    }
 
   //  for (k = deg; k >= 0; k--)
-  //    { 
+  //    {
   //      //coeff = pt::Get_coefficient()(poly, k);
   //      coeff = CGAL::get_coefficient(poly, k);
   //
@@ -1804,7 +1804,7 @@ protected:
   //        os << " - " << -coeff;
   //      else
   //        continue;
-  //   
+  //
   //      if (k > 1)
   //        os << '*' << var << '^' << k;
   //      else if (k == 1)
@@ -1819,7 +1819,7 @@ protected:
 //-------------------------------
 //! Exporter for rational arcs.
 template <typename Algebraic_kernel_>
-std::ostream& operator<<(std::ostream& os, 
+std::ostream& operator<<(std::ostream& os,
                          const Base_rational_arc_d_1<Algebraic_kernel_> & arc)
 {
   return (arc.print(os));
@@ -1838,12 +1838,12 @@ public:
 
 public:
   typedef Algebraic_kernel_                             Algebraic_kernel;
-  
+
   typedef Continuous_rational_arc_d_1<Algebraic_kernel> Self;
   typedef Base_rational_arc_d_1<Algebraic_kernel>       Base;
 
   typedef typename Base::Integer                        Integer;
-  typedef typename Base::Rational                       Rational; 
+  typedef typename Base::Rational                       Rational;
   typedef typename Base::Algebraic_real_1               Algebraic_real_1;
   typedef typename Base::Algebraic_point_2              Algebraic_point_2;
   typedef typename Base::Polynomial_1                   Polynomial_1;
@@ -1902,13 +1902,13 @@ public:
    *                  or to the left (to -oo).
    */
   Continuous_rational_arc_d_1(const Polynomial_1& P,
-                              const Algebraic_real_1& x_s, 
+                              const Algebraic_real_1& x_s,
                               bool dir_right, const Cache& cache) :
     Base(P, x_s, dir_right,cache)
   {}
 
   Continuous_rational_arc_d_1(const Rat_vector& pcoeffs,
-                              const Algebraic_real_1& x_s, 
+                              const Algebraic_real_1& x_s,
                               bool dir_right, const Cache& cache) :
     Base(pcoeffs, x_s, dir_right,cache)
   {}
@@ -1999,7 +1999,7 @@ public:
   }
 
   /*!
-   * Constructor of a bounded rational arc, defined by y = p(x)/q(x), 
+   * Constructor of a bounded rational arc, defined by y = p(x)/q(x),
    * where: x_min <= x <= x_max.
    * \param pcoeffs The rational coefficients of the polynomial p(x).
    * \param qcoeffs The rational coefficients of the polynomial q(x).
@@ -2037,7 +2037,7 @@ public:
 
   /// \name Constructions of points and curves.
   //@{
-      
+
   /*!
    * Compute the intersections with the given arc.
    * \param arc The given intersecting arc.
@@ -2048,8 +2048,10 @@ public:
   OutputIterator intersect(const Self& arc, OutputIterator oi,
                            const Cache& cache) const
   {
-    CGAL_precondition(this->is_valid() && this->is_continuous());
-    CGAL_precondition(arc.is_valid() && arc.is_continuous());
+    CGAL_precondition(this->is_valid());
+    CGAL_precondition(this->is_continuous());
+    CGAL_precondition(arc.is_valid());
+    CGAL_precondition(arc.is_continuous());
 
     if (this->equals(arc))
     {
@@ -2059,12 +2061,12 @@ public:
     }
 
     if (this->_has_same_base(arc))
-    {      
+    {
       // Get the left and right endpoints of (*this) and their information
       // bits.
-      const Algebraic_point_2&   left1 = (this->is_directed_right() ? 
+      const Algebraic_point_2&   left1 = (this->is_directed_right() ?
                                           this->_ps : this->_pt);
-      const Algebraic_point_2&   right1 = (this->is_directed_right() ? 
+      const Algebraic_point_2&   right1 = (this->is_directed_right() ?
                                            this->_pt : this->_ps);
       int      info_left1, info_right1;
 
@@ -2144,7 +2146,7 @@ public:
       Arr_parameter_space  inf_r2 = arc.right_parameter_space_in_x();
       Algebraic_point_2    p_right;
       int                  info_right;
-      
+
       if (inf_r1 == ARR_INTERIOR && inf_r2 == ARR_INTERIOR)
       {
         // Let p_right be the rightmost of the two right endpoints.
@@ -2191,9 +2193,9 @@ public:
         {
           // We have a single overlapping point. Just make sure this point
           // is not at y = -/+ oo.
-          if (info_left && 
+          if (info_left &&
               (this->SRC_AT_Y_MINUS_INFTY | this->SRC_AT_Y_PLUS_INFTY) == 0 &&
-              info_right && 
+              info_right &&
               (this->SRC_AT_Y_MINUS_INFTY | this->SRC_AT_Y_PLUS_INFTY) == 0)
           {
             Intersection_point_2  ip(p_left, 0);
@@ -2214,13 +2216,13 @@ public:
       overlap_arc._pt = p_right;
 
       overlap_arc._info = ((info_left) | (info_right << 4) |
-                           this->IS_DIRECTED_RIGHT | this->IS_CONTINUOUS | 
+                           this->IS_DIRECTED_RIGHT | this->IS_CONTINUOUS |
                            this->IS_VALID);
 
       *oi++ = make_object(overlap_arc);
       return (oi);
     }
-    
+
     // We wish to find the intersection points between:
     //
     //   y = p1(x)/q1(x)    and     y = p2(x)/q2(x)
@@ -2230,7 +2232,7 @@ public:
 
     Rational_function_pair rat_pair =
       this->get_rational_pair(this->_f, arc._f, cache);
-    
+
     typename Algebraic_vector::const_iterator  x_iter;
     typename Multiplicity_vector::const_iterator  m_iter;
 
@@ -2256,7 +2258,7 @@ public:
 
     return (oi);
   }
-  
+
   /*!
    * Split the arc into two at a given split point.
    * \param p The split point.
@@ -2266,7 +2268,8 @@ public:
    */
   void split(const Algebraic_point_2& p, Self& c1, Self& c2, const Cache& CGAL_assertion_code(cache)) const
   {
-    CGAL_precondition(this->is_valid() && this->is_continuous());
+    CGAL_precondition(this->is_valid());
+    CGAL_precondition(this->is_continuous());
 
     // Make sure that p lies on the interior of the arc.
     CGAL_precondition(this->point_position(p,cache) == EQUAL &&
@@ -2305,8 +2308,10 @@ public:
    */
   void merge(const Self& arc)
   {
-    CGAL_precondition(this->is_valid() && this->is_continuous());
-    CGAL_precondition(arc.is_valid() && arc.is_continuous());
+    CGAL_precondition(this->is_valid());
+    CGAL_precondition(this->is_continuous());
+    CGAL_precondition(arc.is_valid());
+    CGAL_precondition(arc.is_continuous());
     CGAL_precondition(this->can_merge_with(arc));
 
     // Check if we should extend the arc to the left or to the right.
@@ -2330,7 +2335,7 @@ public:
             this->_info = (this->_info | this->TRG_AT_X_MINUS_INFTY);
           else if (arc.right_parameter_space_in_x() == ARR_RIGHT_BOUNDARY)
             this->_info = (this->_info | this->TRG_AT_X_PLUS_INFTY);
-          
+
           if (arc.right_parameter_space_in_y() == ARR_BOTTOM_BOUNDARY)
             this->_info = (this->_info | this->TRG_AT_Y_MINUS_INFTY);
           else if (arc.right_parameter_space_in_y() == ARR_TOP_BOUNDARY)
@@ -2364,11 +2369,11 @@ public:
     }
     else
     {
-      CGAL_precondition(this->left_parameter_space_in_x() == ARR_INTERIOR &&
-                        this->left_parameter_space_in_y() == ARR_INTERIOR &&
-                        arc.right_parameter_space_in_x() == ARR_INTERIOR &&
-                        arc.right_parameter_space_in_y() == ARR_INTERIOR &&
-                        (this->left().x() == arc.right().x()));
+      CGAL_precondition(this->left_parameter_space_in_x() == ARR_INTERIOR);
+      CGAL_precondition(this->left_parameter_space_in_y() == ARR_INTERIOR);
+      CGAL_precondition(arc.right_parameter_space_in_x() == ARR_INTERIOR);
+      CGAL_precondition(arc.right_parameter_space_in_y() == ARR_INTERIOR);
+      CGAL_precondition(this->left().x() == arc.right().x());
 
       // Extend the arc to the left.
       if ((this->_info & this->IS_DIRECTED_RIGHT) != 0)
@@ -2419,7 +2424,7 @@ public:
   }
   //@}
 
-  
+
 };
 
 //*! \class Rational_arc_2
@@ -2431,19 +2436,19 @@ class Rational_arc_d_1 : public Base_rational_arc_d_1<Algebraic_kernel_>
 {
 public:
   typedef Algebraic_kernel_                             Algebraic_kernel;
-  
+
   typedef Rational_arc_d_1<Algebraic_kernel>            Self;
   typedef Base_rational_arc_d_1<Algebraic_kernel>       Base;
   typedef Continuous_rational_arc_d_1<Algebraic_kernel> Continuous_arc;
 
   typedef typename Base::Integer                        Integer;
-  typedef typename Base::Rational                       Rational; 
+  typedef typename Base::Rational                       Rational;
   typedef typename Base::Algebraic_real_1               Algebraic_real_1;
   typedef typename Base::Algebraic_point_2              Algebraic_point_2;
   typedef typename Base::Polynomial_1                   Polynomial_1;
- 
+
   typedef typename Base::Rat_vector                     Rat_vector;
- 
+
   typedef typename Base::Cache                          Cache;
 
   /// \name Constrcution methods.
@@ -2477,12 +2482,12 @@ public:
    * \param dir_right Is the ray directed to the right (to +oo)
    *                  or to the left (to -oo).
    */
-  Rational_arc_d_1(const Polynomial_1& P, const Algebraic_real_1& x_s, 
+  Rational_arc_d_1(const Polynomial_1& P, const Algebraic_real_1& x_s,
                    bool dir_right, const Cache& cache) :
     Base(P, x_s, dir_right,cache)
   {}
 
-  Rational_arc_d_1(const Rat_vector& pcoeffs, const Algebraic_real_1& x_s, 
+  Rational_arc_d_1(const Rat_vector& pcoeffs, const Algebraic_real_1& x_s,
                    bool dir_right, const Cache& cache) :
     Base(pcoeffs, x_s, dir_right,cache)
   {}
@@ -2495,12 +2500,12 @@ public:
    * \param x_t The x-coordinate of the target point.
    * \pre The two x-coordinates must not be equal.
    */
-  Rational_arc_d_1(const Polynomial_1& P, const Algebraic_real_1& x_s, 
+  Rational_arc_d_1(const Polynomial_1& P, const Algebraic_real_1& x_s,
                    const Algebraic_real_1& x_t, const Cache& cache) :
     Base(P, x_s, x_t, cache)
   {}
 
-  Rational_arc_d_1(const Rat_vector& pcoeffs, const Algebraic_real_1& x_s, 
+  Rational_arc_d_1(const Rat_vector& pcoeffs, const Algebraic_real_1& x_s,
                    const Algebraic_real_1& x_t,const Cache& cache) :
     Base(pcoeffs, x_s, x_t, cache)
   {}
@@ -2538,9 +2543,9 @@ public:
                    const Algebraic_real_1& x_s, bool dir_right, const Cache& cache) :
     Base(pcoeffs, qcoeffs, x_s, dir_right, cache)
   {}
-  
+
   /*!
-   * Constructor of a bounded rational arc, defined by y = p(x)/q(x), 
+   * Constructor of a bounded rational arc, defined by y = p(x)/q(x),
    * where: x_min <= x <= x_max.
    * \param pcoeffs The rational coefficients of the polynomial p(x).
    * \param qcoeffs The rational coefficients of the polynomial q(x).
@@ -2607,4 +2612,3 @@ public:
 }       //namespace CGAL {
 
 #endif //CGAL_RATIONAL_ARC_D_1_H
-

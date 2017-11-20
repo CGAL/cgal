@@ -1,0 +1,16 @@
+\documentclass[12pt]{standalone}
+\input{header}
+\pagestyle{empty}
+\begin{document}
+  \psset{treevshift=0,unit=1em,xunit=2em,yunit=1em,everytree={},etcratio=.75,triratio=.5}
+     \jtree[everylabel=\sl,xunit=70pt,arrows=->]
+     \! = {\psframebox{\concept{ArrangementLeftSideTraits\_2}}}
+        <4wideleft>[scaleby=2.44 1]{\psframebox{\concept{ArrangementOpenLeftTraits\_2}}}@ult !ult
+        ^<left>[scaleby=1.37 1]{\psframebox{\concept{ArrangemenClosedLeftTraits\_2}}}@urt !urt
+        ^<right>[scaleby=1.11 1]{\psframebox{\concept{ArrangemenContractedLeftTraits\_2}}}@ubt !ubt
+        ^<4wideright>[scaleby=2.44 1]{\psframebox{\concept{ArrangemenIdentifiedLeftTraits\_2}}}@utt !utt
+        .
+      \endjtree
+  \psset{treevshift=0,unit=1cm,xunit=1cm,yunit=1cm,everytree={},
+         etcratio=.75,triratio=.5}
+\end{document}

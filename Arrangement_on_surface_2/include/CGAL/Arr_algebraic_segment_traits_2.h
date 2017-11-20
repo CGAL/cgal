@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Michael Kerber    <mkerber@mpi-inf.mpg.de>
 //
@@ -37,26 +37,26 @@
 
 namespace CGAL {
 
-template< class Coefficient_ > 
+template< class Coefficient_ >
 class Arr_algebraic_segment_traits_2 {
-    
+
 public:
 
     enum Site_of_point {
         POINT_IN_INTERIOR = 0,
         MIN_ENDPOINT = -1,
         MAX_ENDPOINT = 1 };
-    
+
     // Template argument
-    
+
     typedef Coefficient_ Coefficient;
-    
+
     // 'derivation'
     typedef CGAL::Algebraic_kernel_d_1< Coefficient > Algebraic_kernel_d_1;
 
-    typedef CGAL::Algebraic_curve_kernel_2< Algebraic_kernel_d_1 > 
+    typedef CGAL::Algebraic_curve_kernel_2< Algebraic_kernel_d_1 >
         Algebraic_kernel_d_2;
-    
+
     typedef CGAL::Curved_kernel_via_analysis_2< Algebraic_kernel_d_2 > CKvA_2;
 
     typedef  CGAL::Arr_algebraic_segment_traits_2<Coefficient> Self;
@@ -71,18 +71,18 @@ public:
     // Assignement operator
     const Self& operator= (const Self& s)
         {return s;}
-    
+
     // public types
-    
+
     typedef typename Algebraic_kernel_d_2::Algebraic_real_1 Algebraic_real_1;
     typedef typename Algebraic_kernel_d_2::Bound Bound;
 
     typedef typename Algebraic_kernel_d_2::Polynomial_2 Polynomial_2;
 
     /// public types for ArrangementTraits_2
-    
+
     typedef typename Algebraic_kernel_d_2::Curve_analysis_2 Curve_2;
-    
+
     typedef typename CKvA_2::Arc_2 X_monotone_curve_2;
 
     typedef typename CKvA_2::Point_2 Point_2;
@@ -90,7 +90,7 @@ public:
 
     typedef typename CKvA_2::Has_left_category Has_left_category;
     typedef typename CKvA_2::Has_merge_category Has_merge_category;
-    typedef typename CKvA_2::Has_do_intersect_category 
+    typedef typename CKvA_2::Has_do_intersect_category
       Has_do_intersect_category;
 
     typedef typename CKvA_2::Left_side_category Left_side_category;
@@ -125,7 +125,7 @@ public:
         return CKvA_2::instance().parameter_space_in_y_2_object();
     }
 
-    typedef typename CKvA_2::Compare_y_near_boundary_2 
+    typedef typename CKvA_2::Compare_y_near_boundary_2
        Compare_y_near_boundary_2;
     Compare_y_near_boundary_2 compare_y_near_boundary_2_object() const {
         return CKvA_2::instance().compare_y_near_boundary_2_object();
@@ -136,14 +136,14 @@ public:
         return CKvA_2::instance().parameter_space_in_x_2_object();
     }
 
-    typedef typename CKvA_2::Compare_x_at_limit_2 Compare_x_at_limit_2;
-    Compare_x_at_limit_2 compare_x_at_limit_2_object() const {
-        return CKvA_2::instance().compare_x_at_limit_2_object();
+    typedef typename CKvA_2::Compare_x_on_boundary_2 Compare_x_on_boundary_2;
+    Compare_x_on_boundary_2 compare_x_on_boundary_2_object() const {
+        return CKvA_2::instance().compare_x_on_boundary_2_object();
     }
 
-    typedef typename CKvA_2::Compare_x_near_limit_2  Compare_x_near_limit_2;
-    Compare_x_near_limit_2 compare_x_near_limit_2_object() const {
-        return CKvA_2::instance().compare_x_near_limit_2_object();
+    typedef typename CKvA_2::Compare_x_near_boundary_2 Compare_x_near_boundary_2;
+    Compare_x_near_boundary_2 compare_x_near_boundary_2_object() const {
+        return CKvA_2::instance().compare_x_near_boundary_2_object();
     }
 
     typedef typename CKvA_2::Construct_min_vertex_2 Construct_min_vertex_2;
@@ -160,7 +160,7 @@ public:
     Construct_opposite_2 construct_opposite_2_object() const {
         return CKvA_2::instance().construct_opposite_2_object();
     }
-  
+
     typedef typename CKvA_2::Is_vertical_2 Is_vertical_2;
     Is_vertical_2 is_vertical_2_object() const {
         return CKvA_2::instance().is_vertical_2_object();
@@ -180,7 +180,7 @@ public:
     Compare_y_at_x_right_2 compare_y_at_x_right_2_object() const {
         return CKvA_2::instance().compare_y_at_x_right_2_object();
     }
-    
+
     typedef typename CKvA_2::Intersect_2 Intersect_2;
     Intersect_2 intersect_2_object() const {
         return CKvA_2::instance().intersect_2_object();
@@ -218,11 +218,11 @@ public:
         return Construct_point_2(&CKvA_2::instance());
     }
 
-    
-    class Construct_x_monotone_segment_2 : public 
+
+    class Construct_x_monotone_segment_2 : public
     CGAL::internal::Curved_kernel_via_analysis_2_Functors::
     Curved_kernel_via_analysis_2_functor_base< CKvA_2 > {
-        
+
     public:
 
         typedef CGAL::internal::Curved_kernel_via_analysis_2_Functors::
@@ -239,7 +239,7 @@ public:
             branch_numbers_and_vertical(Curve_2 cv, Point_2 p) const {
 
             Equal_2 equal = this->_ckva()->equal_2_object();
-            
+
             Algebraic_real_1 x = p.x();
             int no;
             bool is_event;
@@ -264,7 +264,7 @@ public:
         // abbrevation for convenience
         bool is_one_one(Curve_2 cv, Point_2 p) const {
 
-            std::pair<std::pair<int,int>,bool> branches 
+            std::pair<std::pair<int,int>,bool> branches
                 = branch_numbers_and_vertical(cv,p);
             return branches.first.first==1 && branches.first.second==1
                 && !branches.second;
@@ -272,28 +272,28 @@ public:
         }
 
         template<typename OutputIterator> OutputIterator
-        x_monotone_segment (Curve_2 cv, 
-                            Point_2 p, 
+        x_monotone_segment (Curve_2 cv,
+                            Point_2 p,
                             boost::optional<Point_2> start,
                             boost::optional<Point_2> end,
                             OutputIterator out) const {
-            
+
             //CGAL_assertion(is_one_one(cv,p));
 
             std::list<X_monotone_curve_2> segs;
 
-            Is_on_2 on_arc 
+            Is_on_2 on_arc
                 = this->_ckva()->is_on_2_object();
-            Construct_min_vertex_2 left 
+            Construct_min_vertex_2 left
                 = this->_ckva()->construct_min_vertex_2_object();
-            Construct_max_vertex_2 right 
+            Construct_max_vertex_2 right
                 = this->_ckva()->construct_max_vertex_2_object();
             Equal_2 equal = this->_ckva()->equal_2_object();
 
             std::vector<CGAL::Object> arcs;
-            this->_ckva()->make_x_monotone_2_object() 
+            this->_ckva()->make_x_monotone_2_object()
                 (cv,std::back_inserter(arcs));
-            typename std::vector<CGAL::Object>::const_iterator 
+            typename std::vector<CGAL::Object>::const_iterator
                 it = arcs.begin(),helper;
             X_monotone_curve_2 it_seg;
             CGAL::assign(it_seg,*it);
@@ -305,10 +305,10 @@ public:
                 it++;
                 CGAL::assign(it_seg,*it);
             }
-            
+
             bool left_on_arc = start && on_arc(start.get(),it_seg);
             bool right_on_arc = end && on_arc(end.get(),it_seg);
-            
+
             if( left_on_arc && right_on_arc ) {
                 segs.push_back(it_seg.trim(start.get(),end.get()));
             }
@@ -335,14 +335,14 @@ public:
                         segs.push_back(split1);
                     }
                 }
-            } 
+            }
             if( (!left_on_arc) && (!right_on_arc)) {
                 segs.push_back(it_seg);
             }
             helper=it; // for later usage
-            
+
             if(! left_on_arc) {
-                
+
                 Point_2 point_it;
                 while(true) {
                     if(it_seg.is_finite(CGAL::ARR_MIN_END) &&
@@ -397,16 +397,16 @@ public:
                     }
                 }
             }
-                    
+
             std::copy(segs.begin(),segs.end(),out);
             return out;
-            
+
         }
 
     public:
-        
+
         template<typename OutputIterator> OutputIterator
-            operator() (Curve_2 cv, 
+            operator() (Curve_2 cv,
                         Point_2 p,
                         Site_of_point site_of_p,
                         OutputIterator out) const {
@@ -415,7 +415,7 @@ public:
             } else if(site_of_p==MIN_ENDPOINT) {
                 return x_monotone_segment(cv,
                                        p,
-                                       boost::optional<Point_2>(p), 
+                                       boost::optional<Point_2>(p),
                                        boost::none,
                                        out);
             }
@@ -423,18 +423,18 @@ public:
             return x_monotone_segment(cv,
                                    p,
                                    boost::none,
-                                   boost::optional<Point_2>(p), 
+                                   boost::optional<Point_2>(p),
                                    out);
         }
 
 
         template<typename OutputIterator> OutputIterator
-            operator() (Curve_2 cv, 
+            operator() (Curve_2 cv,
                         Point_2 end_left,
                         Point_2 end_right,
                         OutputIterator out) const {
-                    
-            
+
+
 
             CGAL_assertion((branch_numbers_and_vertical(cv,end_left).
                             first.second==1 &&
@@ -456,19 +456,19 @@ public:
                        (branch_numbers_and_vertical(cv,end_right).
                         first.first==0 &&
                         branch_numbers_and_vertical(cv,end_right).second)) {
-                        Compare_x_2 equal_x 
+                        Compare_x_2 equal_x
                             = this->_ckva()->compare_x_2_object(); )
                     CGAL_assertion(equal_x(end_left,end_right)==CGAL::EQUAL);
             CGAL_assertion_code(});
-            
-            
+
+
             if( (branch_numbers_and_vertical(cv,end_left).
                  first.second==0 &&
                  branch_numbers_and_vertical(cv,end_left).second) ||
                 (branch_numbers_and_vertical(cv,end_left).
                  first.second==1 &&
                  !branch_numbers_and_vertical(cv,end_left).second)) {
-                
+
                 return x_monotone_segment
                     (cv,
                      end_left,
@@ -491,15 +491,15 @@ public:
 	  if(same_x) {
             Algebraic_real_1 x = p.x();
             Polynomial_2 f = Polynomial_2(x.polynomial());
-            Curve_2 cv 
+            Curve_2 cv
 	      = this->_ckva()->kernel().construct_curve_2_object() (f);
             *out++=typename CKvA_2::Arc_2(p,q,cv);
 	    return out;
 	  }
 	  Algebraic_real_1 px
 	    =this->_ckva()->kernel().compute_x_2_object()(p.xy()),
-	    py=this->_ckva()->kernel().compute_y_2_object()(p.xy()), 
-	    qx=this->_ckva()->kernel().compute_x_2_object()(q.xy()), 
+	    py=this->_ckva()->kernel().compute_y_2_object()(p.xy()),
+	    qx=this->_ckva()->kernel().compute_x_2_object()(q.xy()),
 	    qy=this->_ckva()->kernel().compute_y_2_object()(q.xy());
 	  bool p_rat=px.is_rational() && py.is_rational();
 	  bool q_rat=qx.is_rational() && qy.is_rational();
@@ -530,7 +530,7 @@ public:
 			     Polynomial_1(term_at_y_int));
 	    Curve_2 curve=this->_ckva()->kernel().construct_curve_2_object()
 	      (pol);
-            
+
 	    CGAL_assertion(this->_ckva()->is_on_2_object()(p,curve));
 	    CGAL_assertion(this->_ckva()->is_on_2_object()(q,curve));
 	    return this->operator()(curve,p,q,out);
@@ -539,18 +539,18 @@ public:
 	  return out;
 	}
     };
-    
-    Construct_x_monotone_segment_2 construct_x_monotone_segment_2_object() 
+
+    Construct_x_monotone_segment_2 construct_x_monotone_segment_2_object()
         const {
         return Construct_x_monotone_segment_2(&CKvA_2::instance());
     }
 
 /*
-    
-    class Construct_vertical_segment_2 : public 
+
+    class Construct_vertical_segment_2 : public
     CGAL::internal::Curved_kernel_via_analysis_2_Functors::
     Curved_kernel_via_analysis_2_functor_base< CKvA_2 > {
-        
+
     public:
 
         typedef CGAL::internal::Curved_kernel_via_analysis_2_Functors::
@@ -564,12 +564,12 @@ public:
         X_monotone_curve_2 operator() (Point_2 p, Point_2 q) {
             Algebraic_real_1 x = p.x();
             Polynomial_2 f = Polynomial_2(x.polynomial());
-            Curve_2 cv 
+            Curve_2 cv
                 = this->_ckva()->kernel().construct_curve_2_object() (f);
             return typename CKvA_2::Arc_2(p,q,cv);
         }
 
-        
+
         template<typename OutputIterator> OutputIterator
             operator() (Point_2 p,
                         Site_of_point site_of_p) const {
@@ -584,17 +584,17 @@ public:
             }
             CGAL_assertion(site_of_p==MAX_ENDPOINT);
             return typename CKvA_2::Arc_2(p,ARR_MAX_END,cv);
-                            
+
         }
     };
 
     Construct_vertical_segment_2 construct_vertical_segment_2_object() const {
         return Construct_vertical_segment_2(&CKvA_2::instance());
     }
-  
-*/      
 
-    class Construct_curve_2 : public 
+*/
+
+    class Construct_curve_2 : public
     CGAL::internal::Curved_kernel_via_analysis_2_Functors::
     Curved_kernel_via_analysis_2_functor_base< CKvA_2 > {
 
@@ -615,44 +615,44 @@ public:
     }
 
 
-    
 
-    
+
+
 /*
 
   // additional functionality (for not introducing a "general" arc)
 
   class Connect_points_2 {
 
-    
+
     template< class OutputIterator >
-    OutputIterator operator() (Curve_2, Point_2, Point_2, ..., 
+    OutputIterator operator() (Curve_2, Point_2, Point_2, ...,
                                OutputIterator) {
 
-      
+
       while (false || true) {
         *oi++ = X_monotone_curve_2(...);
       }
-      
+
       return oi;
     }
 
     template< class OutputIterator >
     OutputIterator operator() (Curve_2, Point_2, Point_2, int, ...,
                                OutputIterator) {
-      
-      
+
+
       while (false || true) {
         *oi++ = X_monotone_curve_2(...);
       }
-      
+
       return oi;
     }
 
   };
 
 */
- 
+
 };
 
 } //namespace CGAL

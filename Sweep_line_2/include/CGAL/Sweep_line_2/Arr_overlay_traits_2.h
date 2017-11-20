@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 //                 Ron Wein <wein@post.tau.ac.il>
@@ -53,24 +53,24 @@ public:
   typedef ArrangementRed_                           Arrangement_red_2;
   typedef ArrangementBlue_                          Arrangement_blue_2;
 
-  typedef typename Arrangement_red_2::Face_const_handle 
+  typedef typename Arrangement_red_2::Face_const_handle
                                                     Face_handle_red;
   typedef typename Arrangement_blue_2::Face_const_handle
                                                     Face_handle_blue;
 
-  typedef typename Arrangement_red_2::Halfedge_const_handle 
+  typedef typename Arrangement_red_2::Halfedge_const_handle
                                                     Halfedge_handle_red;
   typedef typename Arrangement_blue_2::Halfedge_const_handle
                                                     Halfedge_handle_blue;
 
-  typedef typename Arrangement_red_2::Vertex_const_handle 
+  typedef typename Arrangement_red_2::Vertex_const_handle
                                                     Vertex_handle_red;
   typedef typename Arrangement_blue_2::Vertex_const_handle
                                                     Vertex_handle_blue;
 
   typedef typename Traits_2::X_monotone_curve_2     Base_x_monotone_curve_2;
   typedef typename Traits_2::Point_2                Base_point_2;
-  typedef typename Traits_2::Multiplicity           Multiplicity; 
+  typedef typename Traits_2::Multiplicity           Multiplicity;
 
   typedef typename Traits_2::Compare_x_2            Base_compare_x_2;
   typedef typename Traits_2::Compare_xy_2           Base_compare_xy_2;
@@ -101,7 +101,7 @@ public:
    */
   typedef Tag_false                                 Has_left_category;
   typedef Tag_false                                 Has_merge_category;
-  
+
   // The color of a feature.
   enum Color {
     RED,          // From the "red" arrangement.
@@ -116,7 +116,7 @@ public:
   typedef boost::variant<Halfedge_handle_blue, Vertex_handle_blue,
                          Face_handle_blue>          Cell_handle_blue;
   typedef boost::optional<Cell_handle_blue>         Optional_cell_blue;
-      
+
   template <typename Handle_red>
   Optional_cell_red make_optional_cell_red(Handle_red handle_red)
   { return boost::make_optional(Cell_handle_red(handle_red)); }
@@ -124,7 +124,7 @@ public:
   template <typename Handle_blue>
   Optional_cell_red make_optional_cell_blue(Handle_blue handle_blue)
   { return boost::make_optional(Cell_handle_blue(handle_blue)); }
-  
+
 private:
   const Traits_2* m_base_traits;        // The base traits object.
 
@@ -151,7 +151,7 @@ public:
 
   public:
     /*! Default constructor. */
-    Ex_x_monotone_curve_2() : 
+    Ex_x_monotone_curve_2() :
       m_base_xcv(),
       m_red_halfedge_handle(),
       m_blue_halfedge_handle()
@@ -193,7 +193,7 @@ public:
     /*! Get the red halfedge handle. */
     Halfedge_handle_red red_halfedge_handle() const
     { return m_red_halfedge_handle; }
-    
+
     /*! Get the blue halfedge handle. */
     Halfedge_handle_blue blue_halfedge_handle() const
     { return m_blue_halfedge_handle; }
@@ -229,14 +229,14 @@ public:
       if ((m_blue_halfedge_handle != null_blue_he) &&
           (m_red_halfedge_handle == null_red_he))
         return BLUE;
-      
+
       // Overlap, return the RB_OVERLAP color:
-      CGAL_assertion((m_red_halfedge_handle != null_red_he) && 
+      CGAL_assertion((m_red_halfedge_handle != null_red_he) &&
                      (m_blue_halfedge_handle != null_blue_he));
       return RB_OVERLAP;
     }
   }; // nested class Ex_x_monotone_curve_2 - END
-  
+
   typedef Ex_x_monotone_curve_2                     X_monotone_curve_2;
 
   // For debugging purposes:
@@ -246,7 +246,7 @@ public:
     os << xcv.base();
     return os;
   }
- 
+
   /*! \class
    * Nested extension of the point type.
    */
@@ -321,7 +321,7 @@ public:
     /*! Obtain the blue cell handle or NULL if it doesn't exist. */
     const Cell_handle_blue* blue_cell_handle() const
     { return m_blue_cell ? &(*m_blue_cell) : NULL; }
-    
+
     /*! Obtain the red vertex handle or NULL if it doesn't exist. */
     const Vertex_handle_red* red_vertex_handle() const
     {
@@ -363,7 +363,7 @@ public:
     //! Allow its functor obtaining function calling the protected constructor.
     friend class Arr_overlay_traits_2<Traits_2,
                                       Arrangement_red_2, Arrangement_blue_2>;
-    
+
   public:
     template<class OutputIterator>
     OutputIterator operator()(const X_monotone_curve_2& xcv1,
@@ -373,7 +373,7 @@ public:
       // In case the curves originate from the same arrangement, they are
       // obviously interior-disjoint.
       if (xcv1.color() == xcv2.color()) return oi;
-      
+
       if ((xcv1.color() == RB_OVERLAP) || (xcv2.color() == RB_OVERLAP))
         return oi;
 
@@ -431,7 +431,7 @@ public:
         m_base_tr->intersect_2_object()(xcv2.base(), xcv1.base(), oi);
 
       // Convert objects that are associated with Base_x_monotone_curve_2 to
-      // the exteneded X_monotone_curve_2. 
+      // the exteneded X_monotone_curve_2.
       while (oi != oi_end) {
         base_ipt = object_cast<std::pair<Base_point_2, unsigned int> >(&(*oi));
 
@@ -467,10 +467,10 @@ public:
           // We have a red-blue overlap, so we mark the curve accordingly.
           Halfedge_handle_red        red_he;
           Halfedge_handle_blue       blue_he;
-          
+
           if (xcv1.color() == RED) {
             red_he = xcv1.red_halfedge_handle();
-            
+
             // Overlap can occur only between curves from a different color.
             CGAL_assertion(xcv2.color() == BLUE);
             blue_he = xcv2.blue_halfedge_handle();
@@ -481,7 +481,7 @@ public:
             red_he = xcv2.red_halfedge_handle();
             blue_he = xcv1.blue_halfedge_handle();
           }
-          
+
           *oi++ = CGAL::make_object(X_monotone_curve_2(*overlap_xcv,
                                                        red_he, blue_he));
         }
@@ -499,7 +499,7 @@ public:
   class Split_2 {
   protected:
     //! The base operator.
-    Base_split_2    m_base_split;
+    Base_split_2 m_base_split;
 
     /*! Constructor.
      * The constructor is declared protected to allow only the functor
@@ -511,7 +511,7 @@ public:
     //! Allow its functor obtaining function calling the protected constructor.
     friend class Arr_overlay_traits_2<Traits_2,
                                       Arrangement_red_2, Arrangement_blue_2>;
-    
+
   public:
     void operator()(const X_monotone_curve_2& xcv, const Point_2& p,
                     X_monotone_curve_2& c1, X_monotone_curve_2& c2)
@@ -553,9 +553,9 @@ public:
     //! Allow its functor obtaining function calling the protected constructor.
     friend class Arr_overlay_traits_2<Traits_2,
                                       Arrangement_red_2, Arrangement_blue_2>;
-    
+
   public:
-    Point_2 operator()(const X_monotone_curve_2& xcv) 
+    Point_2 operator()(const X_monotone_curve_2& xcv)
     {
       // Create the objects that wrap the arrangement vertex.
       // Note that the halfedges associated with the curves are always
@@ -585,11 +585,11 @@ public:
   /*! Obtain a Construct_min_vertex_2 functor object. */
   Construct_min_vertex_2 construct_min_vertex_2_object() const
   {
-    return 
+    return
       Construct_min_vertex_2(m_base_traits->construct_min_vertex_2_object(),
                              m_base_traits->equal_2_object());
   }
- 
+
   /*! A functor that obtains the right endpoint of an x-monotone curve. */
   class Construct_max_vertex_2 {
   protected:
@@ -611,7 +611,7 @@ public:
     //! Allow its functor obtaining function calling the protected constructor.
     friend class Arr_overlay_traits_2<Traits_2,
                                       Arrangement_red_2, Arrangement_blue_2>;
-    
+
   public:
     Point_2 operator()(const X_monotone_curve_2& xcv) const
     {
@@ -623,14 +623,14 @@ public:
       Optional_cell_blue blue_cell;
 
       if ((xcv.color() == RED) || (xcv.color() == RB_OVERLAP))
-        red_cell = 
+        red_cell =
           (! xcv.red_halfedge_handle()->source()->is_at_open_boundary() &&
            m_base_equal(base_p, xcv.red_halfedge_handle()->source()->point())) ?
           boost::make_optional(Cell_handle_red(xcv.red_halfedge_handle()->source())) :
           boost::make_optional(Cell_handle_red(xcv.red_halfedge_handle()));
-      
+
       if ((xcv.color() == BLUE) || (xcv.color() == RB_OVERLAP))
-        blue_cell = 
+        blue_cell =
           (! xcv.blue_halfedge_handle()->source()->is_at_open_boundary() &&
            m_base_equal(base_p, xcv.blue_halfedge_handle()->source()->point())) ?
           boost::make_optional(Cell_handle_blue(xcv.blue_halfedge_handle()->source())) :
@@ -664,7 +664,7 @@ public:
     //! Allow its functor obtaining function calling the protected constructor.
     friend class Arr_overlay_traits_2<Traits_2,
                                       Arrangement_red_2, Arrangement_blue_2>;
-    
+
   public:
     bool operator()(const X_monotone_curve_2& xcv) const
     { return m_base_is_vert(xcv.base()); }
@@ -692,7 +692,7 @@ public:
     //! Allow its functor obtaining function calling the protected constructor.
     friend class Arr_overlay_traits_2<Traits_2,
                                       Arrangement_red_2, Arrangement_blue_2>;
-    
+
   public:
     bool operator()(const Point_2& p1, const Point_2& p2) const
     { return m_base_equal(p1.base(), p2.base()); }
@@ -705,7 +705,7 @@ public:
   /*! Obtain a Equal_2 functor object. */
   Equal_2 equal_2_object() const
   { return Equal_2(m_base_traits->equal_2_object()); }
-  
+
   /*! A functor that compares the x-coordinates of two points */
   class Compare_x_2 {
   protected:
@@ -722,7 +722,7 @@ public:
     //! Allow its functor obtaining function calling the protected constructor.
     friend class Arr_overlay_traits_2<Traits_2,
                                       Arrangement_red_2, Arrangement_blue_2>;
-    
+
   public:
     Comparison_result operator()(const Point_2& p1, const Point_2& p2) const
     { return m_base_cmp_x(p1.base(), p2.base()); }
@@ -748,7 +748,7 @@ public:
     //! Allow its functor obtaining function calling the protected constructor.
     friend class Arr_overlay_traits_2<Traits_2,
                                       Arrangement_red_2, Arrangement_blue_2>;
-    
+
   public:
     Comparison_result operator()(const Point_2& p1, const Point_2& p2) const
     {
@@ -766,7 +766,7 @@ public:
       // - the points are not equal if the corresponding handles are not equal.
       // - if the corresponding handles are equal, the points must be equal
       //   but this holds for any two points.
-      
+
       if ((vr1 && vb1) || (vr2 && vb2))
         // In case of an overlapping vertex, just perform the comparison.
         return (m_base_cmp_xy(p1.base(), p2.base()));
@@ -804,7 +804,7 @@ public:
     //! Allow its functor obtaining function calling the protected constructor.
     friend class Arr_overlay_traits_2<Traits_2,
                                       Arrangement_red_2, Arrangement_blue_2>;
-    
+
   public:
     Comparison_result operator()(const Point_2& p,
                                  const X_monotone_curve_2& xcv) const
@@ -821,7 +821,7 @@ public:
   class Compare_y_at_x_right_2 {
   protected:
     //! The base operator.
-    Base_compare_y_at_x_right_2    m_base_cmp_y_at_x_right;
+    Base_compare_y_at_x_right_2 m_base_cmp_y_at_x_right;
 
     /*! Constructor.
      * The constructor is declared protected to allow only the functor
@@ -835,7 +835,7 @@ public:
     //! Allow its functor obtaining function calling the protected constructor.
     friend class Arr_overlay_traits_2<Traits_2,
                                       Arrangement_red_2, Arrangement_blue_2>;
-    
+
   public:
     Comparison_result operator()(const X_monotone_curve_2& xcv1,
                                  const X_monotone_curve_2& xcv2,
@@ -846,7 +846,7 @@ public:
   /*! Obtain a Construct_min_vertex_2 functor object. */
   Compare_y_at_x_right_2 compare_y_at_x_right_2_object() const
   {
-    return 
+    return
       Compare_y_at_x_right_2(m_base_traits->compare_y_at_x_right_2_object());
   }
 
@@ -866,11 +866,11 @@ public:
      * constructing it.
      */
     Parameter_space_in_x_2(const Traits_2* tr) : m_base(tr) {}
- 
+
     //! Allow its functor obtaining function calling the protected constructor.
     friend class Arr_overlay_traits_2<Traits_2,
                                       Arrangement_red_2, Arrangement_blue_2>;
-    
+
   public:
     Arr_parameter_space operator()(const X_monotone_curve_2& xcv,
                                    Arr_curve_end ce) const
@@ -885,8 +885,8 @@ public:
 
   /*! Obtain an Parameter_space_in_x_2 functor object. */
   Parameter_space_in_x_2 parameter_space_in_x_2_object() const
-  { return Parameter_space_in_x_2(m_base_traits); } 
- 
+  { return Parameter_space_in_x_2(m_base_traits); }
+
   /*! A function object that determines whether an x-monotone curve or a
    * point coincide with the vertical identification curve.
    */
@@ -901,22 +901,22 @@ public:
      * constructing it.
      */
     Is_on_x_identification_2(const Traits_2* tr) : m_base(tr) {}
- 
+
     //! Allow its functor obtaining function calling the protected constructor.
     friend class Arr_overlay_traits_2<Traits_2,
                                       Arrangement_red_2, Arrangement_blue_2>;
-    
+
   public:
-    Arr_parameter_space operator()(const Point_2& p) const
+    bool operator()(const Point_2& p) const
     { return m_base->is_on_x_identification_2_object()(p.base()); }
 
-    Arr_parameter_space operator()(const X_monotone_curve_2& xcv) const
+    bool operator()(const X_monotone_curve_2& xcv) const
     { return m_base->is_on_x_identification_2_object()(xcv.base()); }
   };
 
   /*! Obtain an Is_on_x_identification_2 functor object. */
   Is_on_x_identification_2 is_on_x_identification_2_object() const
-  { return Is_on_x_identification_2(m_base_traits); } 
+  { return Is_on_x_identification_2(m_base_traits); }
 
   /*! A functor that compares the y-values of pointss on the
    * boundary of the parameter space.
@@ -938,12 +938,12 @@ public:
     //! Allow its functor obtaining function calling the protected constructor.
     friend class Arr_overlay_traits_2<Traits_2,
                                       Arrangement_red_2, Arrangement_blue_2>;
-    
+
   public:
     Comparison_result operator()(const Point_2& pt1, const Point_2& pt2) const
     { return m_base->compare_y_on_boundary_2_object()(pt1.base(), pt2.base()); }
   };
-  
+
   /*! Obtain a Compare_y_on_boundary_2 functor. */
   Compare_y_on_boundary_2 compare_y_on_boundary_2_object() const
   { return Compare_y_on_boundary_2(m_base_traits); }
@@ -968,10 +968,10 @@ public:
     //! Allow its functor obtaining function calling the protected constructor.
     friend class Arr_overlay_traits_2<Traits_2,
                                       Arrangement_red_2, Arrangement_blue_2>;
-    
+
   public:
     Comparison_result operator()(const X_monotone_curve_2& xcv1,
-                                 const X_monotone_curve_2& xcv2, 
+                                 const X_monotone_curve_2& xcv2,
                                  Arr_curve_end ce) const
     {
       // If the traits class does not support open curves, we just
@@ -980,14 +980,14 @@ public:
                                                         xcv2.base(), ce);
     }
   };
-  
+
   /*! Obtain a Compare_y_near_boundary_2 functor. */
   Compare_y_near_boundary_2 compare_y_near_boundary_2_object() const
   { return Compare_y_near_boundary_2(m_base_traits); }
-  
+
 
   // bottom-top
-  
+
   /*! A functor that determines whether an endpoint of an x-monotone arc lies
    * on a boundary of the parameter space along the y axis.
    */
@@ -1002,11 +1002,11 @@ public:
      * constructing it.
      */
     Parameter_space_in_y_2(const Traits_2* tr) : m_base(tr) {}
-   
+
     //! Allow its functor obtaining function calling the protected constructor.
     friend class Arr_overlay_traits_2<Traits_2,
                                       Arrangement_red_2, Arrangement_blue_2>;
-    
+
   public:
     Arr_parameter_space operator()(const X_monotone_curve_2& xcv,
                                    Arr_curve_end ce) const
@@ -1021,7 +1021,7 @@ public:
 
   /*! Obtain an Parameter_space_in_y_2 functor object. */
   Parameter_space_in_y_2 parameter_space_in_y_2_object() const
-  { return Parameter_space_in_y_2(m_base_traits); } 
+  { return Parameter_space_in_y_2(m_base_traits); }
 
   /*! A function object that determines whether an x-monotone curve or a
    * point coincide with the vertical identification curve.
@@ -1037,98 +1037,22 @@ public:
      * constructing it.
      */
     Is_on_y_identification_2(const Traits_2* tr) : m_base(tr) {}
- 
+
     //! Allow its functor obtaining function calling the protected constructor.
     friend class Arr_overlay_traits_2<Traits_2,
                                       Arrangement_red_2, Arrangement_blue_2>;
-    
+
   public:
-    Arr_parameter_space operator()(const Point_2& p) const
+    bool operator()(const Point_2& p) const
     { return m_base->is_on_y_identification_2_object()(p.base()); }
 
-    Arr_parameter_space operator()(const X_monotone_curve_2& xcv) const
+    bool operator()(const X_monotone_curve_2& xcv) const
     { return m_base->is_on_y_identification_2_object()(xcv.base()); }
   };
 
   /*! Obtain an Is_on_y_identification_2 functor object. */
   Is_on_y_identification_2 is_on_y_identification_2_object() const
-  { return Is_on_y_identification_2(m_base_traits); } 
-
-  /*! A functor that compares the x-limits of curve ends on the
-   * boundary of the parameter space.
-   */
-  class Compare_x_at_limit_2 {
-  protected:
-    //! The base traits.
-    const Traits_2* m_base;
-
-    /*! Constructor.
-     * \param base The base traits class. It must be passed, to handle the
-     *             case it is not stateless (e.g., it stores data).
-     * The constructor is declared protected to allow only the functor
-     * obtaining function, which is a member of the nesting class,
-     * constructing it.
-     */
-    Compare_x_at_limit_2(const Traits_2* base) : m_base(base) {}
-
-    //! Allow its functor obtaining function calling the protected constructor.
-    friend class Arr_overlay_traits_2<Traits_2,
-                                      Arrangement_red_2, Arrangement_blue_2>;
-    
-  public:
-    Comparison_result operator()(const Point_2& p,
-                                 const X_monotone_curve_2& xcv,
-                                 Arr_curve_end ce) const
-    { return m_base->compare_x_at_limit_2_object()(p.base(), xcv.base(), ce); }
-
-    Comparison_result operator()(const X_monotone_curve_2& xcv1,
-                                 Arr_curve_end ce1,
-                                 const X_monotone_curve_2& xcv2,
-                                 Arr_curve_end ce2) const
-    {
-      return m_base->compare_x_at_limit_2_object()(xcv1.base(), ce1,
-                                                   xcv2.base(), ce2);
-    }
-  };
-
-  /*! Obtain a Compare_x_at_limit_2 functor. */
-  Compare_x_at_limit_2 compare_x_at_limit_2_object() const
-  { return Compare_x_at_limit_2(m_base_traits); }
-
-  /*! A functor that compares the x-coordinates of curve ends near the
-   * boundary of the parameter space.
-   */
-  class Compare_x_near_limit_2 {
-  protected:
-    //! The base traits.
-    const Traits_2* m_base;
-
-    /*! Constructor.
-     * \param base The base traits class. It must be passed, to handle the
-     *             case it is not stateless (e.g., it stores data).
-     * The constructor is declared protected to allow only the functor
-     * obtaining function, which is a member of the nesting class,
-     * constructing it.
-     */
-    Compare_x_near_limit_2(const Traits_2* base) : m_base(base) {}
-
-    //! Allow its functor obtaining function calling the protected constructor.
-    friend class Arr_overlay_traits_2<Traits_2,
-                                      Arrangement_red_2, Arrangement_blue_2>;
-    
-  public:
-    Comparison_result operator()(const X_monotone_curve_2& xcv1,
-                                 const X_monotone_curve_2& xcv2,
-                                 Arr_curve_end ce) const
-    {
-      return m_base->compare_x_near_limit_2_object()(xcv1.base(), xcv2.base(),
-                                                     ce);
-    }
-  };
-
-  /*! Obtain a Compare_x_near_limit_2 functor. */
-  Compare_x_near_limit_2 compare_x_near_limit_2_object() const
-  { return Compare_x_near_limit_2(m_base_traits); }
+  { return Is_on_y_identification_2(m_base_traits); }
 
   /*! A functor that compares the y-values of pointss on the
    * boundary of the parameter space.
@@ -1150,7 +1074,7 @@ public:
     //! Allow its functor obtaining function calling the protected constructor.
     friend class Arr_overlay_traits_2<Traits_2,
                                       Arrangement_red_2, Arrangement_blue_2>;
-    
+
   public:
     Comparison_result operator()(const Point_2& pt1, const Point_2& pt2) const
     { return m_base->compare_x_on_boundary_2_object()(pt1.base(), pt2.base()); }
@@ -1172,7 +1096,7 @@ public:
                                                       xcv2.base(), ce2);
     }
   };
-  
+
   /*! Obtain a Compare_x_on_boundary_2 functor. */
   Compare_x_on_boundary_2 compare_x_on_boundary_2_object() const
   { return Compare_x_on_boundary_2(m_base_traits); }
@@ -1197,13 +1121,14 @@ public:
     //! Allow its functor obtaining function calling the protected constructor.
     friend class Arr_overlay_traits_2<Traits_2,
                                       Arrangement_red_2, Arrangement_blue_2>;
-    
+
   public:
     Comparison_result operator()(const X_monotone_curve_2& xcv1,
                                  const X_monotone_curve_2& xcv2,
                                  Arr_curve_end ce) const
     {
-      return m_base->compare_x_near_boundary_2_object()(xcv1.base(), xcv2.base(),
+      return m_base->compare_x_near_boundary_2_object()(xcv1.base(),
+                                                        xcv2.base(),
 							ce);
     }
   };
