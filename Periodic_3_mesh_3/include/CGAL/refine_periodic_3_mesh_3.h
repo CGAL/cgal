@@ -12,7 +12,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// Author(s)     : Mikhail Bogdanov
+// Author(s)     : Stephane Tayeb,
+//                 Mikhail Bogdanov
 //
 #ifndef CGAL_REFINE_PERIODIC_3_MESH_3_H
 #define CGAL_REFINE_PERIODIC_3_MESH_3_H

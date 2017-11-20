@@ -780,6 +780,17 @@ public:
    */
   template <typename ForwardIterator>
   void rebuild_restricted_delaunay(ForwardIterator first_cell,
+                                   ForwardIterator last_cell)
+  {
+    Moving_vertices_set mvs;
+    return rebuild_restricted_delaunay(first_cell, last_cell, mvs);
+  }
+
+  /**
+   * Rebuilds restricted Delaunay
+   */
+  template <typename ForwardIterator>
+  void rebuild_restricted_delaunay(ForwardIterator first_cell,
                                    ForwardIterator last_cell,
                                    Moving_vertices_set& moving_vertices);
 
