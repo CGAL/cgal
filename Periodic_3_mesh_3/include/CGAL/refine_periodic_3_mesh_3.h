@@ -100,6 +100,10 @@ void refine_periodic_3_mesh_3_impl(C3T3& c3t3,
                                    const parameters::internal::Manifold_options&
                                      manifold_options = parameters::internal::Manifold_options())
 {
+  // 'refine_periodic_3_mesh_3' does not insert dummy points, so the triangulation
+  // must already be 1-sheeted prior to calls to this function.
+  CGAL_precondition(c3t3.triangulation().is_1_cover());
+
   typedef Mesh_3::Mesher_3<C3T3, MeshCriteria, MeshDomain> Mesher;
 
   // Reset c3t3 (i.e. remove weights) if needed
