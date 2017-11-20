@@ -30,14 +30,16 @@ C3T3 c3t3 = CGAL::make_periodic_3_mesh_3<C3T3>(domain,criteria);
 CGAL::refine_periodic_3_mesh_3(c3t3, domain, new_criteria);
 \endcode
 
-Please note that we guarantee the result if and only if the domain does
-not change from one refinement to the next one.
+Note that the triangulation must form at all times a simplicial complex within
+a single copy of the domain. It is the responsability of the user to provide
+a triangulation that satisfies this condition when calling the refinement
+function `refine_periodic_3_mesh_3`.
 
 \tparam  C3T3 is required to be a model of the concept `MeshComplex_3InTriangulation_3`.
 The argument `c3t3` is passed by reference as this object is modified
 by the refinement process. As the refinement process only adds points
 to the triangulation, all vertices of the triangulation of `c3t3` remain in the
-mesh during the refinement process. Object `c3t3` can be used to insert
+mesh during the refinement process. The object `c3t3` can be used to insert
 specific points in the domain to ensure that they will be contained in the
 final triangulation.
 The type `C3T3` is in particular required to provide a nested type
@@ -47,9 +49,9 @@ triangulation `C3T3::Triangulation` are required to be models of the
 concepts `MeshVertexBase_3` and `Periodic_3TriangulationDSVertexBase_3`, and of
 the concepts `MeshCellBase_3` and `Periodic_3TriangulationDSCellBase_3`, respectively.
 
-\tparam MeshDomain is required to be a model of
+\tparam Periodic_3MeshDomain is required to be a model of
 the concept `Periodic_3MeshDomain_3` or of the refined concept
-`MeshDomainWithFeatures_3` if 0 and 1-dimensional features
+`Periodic_3MeshDomainWithFeatures_3` if 0 and 1-dimensional features
 of the input complex have to be accurately represented in the mesh.
 The argument `domain` is the sole link through which the domain
 to be discretized is known by the mesh generation algorithm.
@@ -73,26 +75,26 @@ to generate appropriate value of this parameter.
 
 \cgalHeading{Named Parameters}
 - <b>`lloyd`</b>  `parameters::lloyd()` and `parameters::no_lloyd()` are designed to
-trigger or not a call to `lloyd_optimize_mesh_3()` function and to set the
+trigger or not a call to `lloyd_optimize_periodic_3_mesh_3()` function and to set the
 parameters of this optimizer. If one parameter is not set, the default value of
-`lloyd_optimize_mesh_3()` is used for this parameter.
+`lloyd_optimize_periodic_3_mesh_3()` is used for this parameter.
 
 - <b>`odt`</b> `parameters::odt()` and `parameters::no_odt()` are designed to
-trigger or not a call to `odt_optimize_mesh_3()` function and
+trigger or not a call to `odt_optimize_periodic_3_mesh_3()` function and
 to set the parameters of this optimizer.
 If one parameter is not set, the default value of
-`odt_optimize_mesh_3()` is used for this parameter.
+`odt_optimize_periodic_3_mesh_3()` is used for this parameter.
 
 - <b>`perturb`</b> `parameters::perturb()` and `parameters::no_perturb()`
-are designed to trigger or not a call to `perturb_mesh_3()` function and
+are designed to trigger or not a call to `perturb_periodic_3_mesh_3()` function and
 to set the parameters of this optimizer. If one parameter is not set, the default value of
-`perturb_mesh_3()` is used for this parameter, except for the time bound which is set to be
+`perturb_periodic_3_mesh_3()` is used for this parameter, except for the time bound which is set to be
 equal to the refinement CPU time.
 
 - <b>`exude`</b> `parameters::exude()` and `parameters::no_exude()` are designed to
-trigger or not a call to `exude_mesh_3()` function and to override to set the
+trigger or not a call to `exude_periodic_3_mesh_3()` function and to override to set the
 parameters of this optimizer. If one parameter is not set, the default value of
-`exude_mesh_3()` is used for this parameter, except for the time bound which is set to be
+`exude_periodic_3_mesh_3()` is used for this parameter, except for the time bound which is set to be
 equal to the refinement CPU time.
 
 The optimization parameters can be passed in arbitrary order. If one parameter
@@ -112,11 +114,10 @@ optimization processes.
 
 \sa `CGAL::make_periodic_3_mesh_3()`
 \sa `CGAL::refine_mesh_3()`
-
-\sa `CGAL::exude_mesh_3()`
-\sa `CGAL::perturb_mesh_3()`
-\sa `CGAL::lloyd_optimize_mesh_3()`
-\sa `CGAL::odt_optimize_mesh_3()`
+\sa `CGAL::exude_periodic_3_mesh_3()`
+\sa `CGAL::perturb_periodic_3_mesh_3()`
+\sa `CGAL::lloyd_optimize_periodic_3_mesh_3()`
+\sa `CGAL::odt_optimize_periodic_3_mesh_3()`
 \sa `CGAL::parameters::exude`
 \sa `CGAL::parameters::no_exude`
 \sa `CGAL::parameters::perturb`
@@ -127,10 +128,10 @@ optimization processes.
 \sa `CGAL::parameters::no_odt`
 */
 template <class C3T3,
-          class MeshDomain,
+          class Periodic_3MeshDomain,
           class MeshCriteria>
 void refine_periodic_3_mesh_3(C3T3& c3t3,
-    MeshDomain mesh_domain,
+    Periodic_3MeshDomain mesh_domain,
     MeshCriteria mesh_criteria,
     parameters::internal::Lloyd_options lloyd = parameters::no_lloyd(),
     parameters::internal::Odt_options odt = parameters::no_odt(),

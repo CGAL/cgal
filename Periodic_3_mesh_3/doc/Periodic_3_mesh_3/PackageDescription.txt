@@ -67,10 +67,12 @@ mesh generator with periodic triangulations.
 
 The \ref PkgPeriodic_3_mesh_3 package relies entirely on the \ref PkgMesh_3Concepts
 and the \ref PkgMesh_3SecondaryConcepts described in the \ref PkgMesh_3Summary package.
-The following concept is essentially identical to the concept `MeshDomain_3`
-in the \ref PkgMesh_3Summary package but is nevertheless defined for clarity:
+The following concepts are essentially identical to the concepts `MeshDomain_3`
+and `MeshDomainWithFeatures_3` in the \ref PkgMesh_3Summary package
+but are nevertheless defined for clarity:
 
 - `Periodic_3MeshDomain_3`
+- `Periodic_3MeshDomainWithFeatures_3`
 
 ## Classes ##
 
@@ -91,6 +93,15 @@ separated by the zero-level of an implicit function:
 The following functions handle the generation of a periodic mesh:
 - `CGAL::make_periodic_3_mesh_3`
 - `CGAL::refine_periodic_3_mesh_3`
+- `CGAL::exude_periodic_3_mesh_3`
+- `CGAL::perturb_periodic_3_mesh_3`
+- `CGAL::lloyd_optimize_periodic_3_mesh_3`
+- `CGAL::odt_optimize_periodic_3_mesh_3`
+
+## Classes and functions of `Mesh_3` ##
+
+Many classes and functions used by this package are defined within the `Mesh_3`
+package, see \ref PkgMesh_3MeshClasses, \ref PkgMesh_3Domains, and \ref PkgMesh_3Parameters.
 
 */
 

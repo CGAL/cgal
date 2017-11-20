@@ -6,7 +6,7 @@ namespace CGAL {
 The class `Periodic_3_mesh_triangulation_3` is a metafunctor which provides
 the triangulation type to be used for the 3D periodic triangulation embedding the mesh.
 
-\tparam MD must be a model of `Periodic_3MeshDomain_3`.
+\tparam MD must be a model of `Periodic_3MeshDomain_3` or `Periodic_3MeshDomainWithFeatures_3`.
 
 \tparam Gt must be a model of `RegularTriangulationTraits_3`.
 `Default` may be used, with default value `Kernel_traits<MD>::%Kernel`.

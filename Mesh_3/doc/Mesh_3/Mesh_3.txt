@@ -204,7 +204,6 @@ sampled with points and covered by protecting balls centered on the sample point
 in such a way that :
 
 -no three balls intersect 
-
 -no pair of balls centered on different 1-features intersect.
 
 The triangulation embedding the mesh is in fact 
@@ -216,7 +215,6 @@ is then launched as before except that refinement points
 are no longer circumcenters but are 
 weighted circumcenters.
 All Steiner vertices inserted by the refinement process are given a zero weight.
-
 The method guarantees:
 
 1) that each segment joining
