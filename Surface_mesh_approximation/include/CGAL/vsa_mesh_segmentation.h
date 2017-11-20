@@ -99,7 +99,13 @@ void mesh_segmentation(const TriangleMesh &tm_in,
   std::size_t nb_of_relaxations = choose_param(get_param(np, internal_np::nb_of_relaxations), 5);
   approx.init(method, max_nb_proxies, min_error_drop, nb_of_relaxations);
 
-  const std::size_t nb_of_iterations = choose_param(get_param(np, internal_np::nb_of_iterations), 10);
+  // reasonable default number of iterations
+  std::size_t nb_of_iterations_default = max_nb_proxies ? num_faces(tm_in) / *max_nb_proxies : 30;
+  nb_of_iterations_default = (std::min)((std::max)(
+    nb_of_iterations_default, static_cast<std::size_t>(20)), static_cast<std::size_t>(60));
+  const std::size_t nb_of_iterations = choose_param(
+    get_param(np, internal_np::nb_of_iterations), nb_of_iterations_default);
+
   approx.run(nb_of_iterations);
 
 #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
