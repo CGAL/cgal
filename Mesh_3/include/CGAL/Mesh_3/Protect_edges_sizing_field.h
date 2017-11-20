@@ -226,7 +226,8 @@ private:
                           const Vertex_handle& vb) const;
 
   /// Change the size of the ball of the vertex \c v.
-  Vertex_handle change_ball_size(const Vertex_handle& v, const FT size,
+  Vertex_handle change_ball_size(const Vertex_handle& v,
+                                 const FT squared_size,
                                  const bool special_ball = false);
 
 
@@ -682,8 +683,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
 
       // Adapt size
       *out++ = nearest_vh;
-      Vertex_handle new_vh = change_ball_size(nearest_vh, CGAL::sqrt(sq_d),
-                                              special_ball);
+      Vertex_handle new_vh = change_ball_size(nearest_vh, sq_d, special_ball);
       ch = tr.locate(wp0, lt, li, lj, new_vh);
 
       // Iterate
@@ -736,7 +736,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
           if(! is_special(v))
           {
             *out++ = v;
-            ch = change_ball_size(v, minimal_size_, true)->cell(); // special ball
+            ch = change_ball_size(v, minimal_weight_, true)->cell(); // special ball
           }
         }
         else
@@ -801,7 +801,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
           }
           if( ! is_special(it) ) {
             *out++ = it;
-            change_ball_size(it, CGAL::sqrt(sq_d), special_ball);
+            change_ball_size(it, sq_d, special_ball);
             restart = true;
           }
           break;
@@ -1332,13 +1332,13 @@ refine_balls()
       // Set size of the ball to new value
       if(minimal_size_ != FT() && new_size < minimal_size_) {
         if(!is_special(v)) {
-          change_ball_size(v,minimal_size_,true); // special ball
+          change_ball_size(v, minimal_weight_, true); // special ball
 
           // Loop will have to be run again
           restart = true;
         }
       } else {
-        change_ball_size(v,new_size);
+        change_ball_size(v, CGAL::square(new_size));
 
         // Loop will have to be run again
         restart = true;
@@ -1399,11 +1399,12 @@ do_balls_intersect(const Vertex_handle& va, const Vertex_handle& vb) const
 template <typename C3T3, typename MD, typename Sf>
 typename Protect_edges_sizing_field<C3T3, MD, Sf>::Vertex_handle
 Protect_edges_sizing_field<C3T3, MD, Sf>::
-change_ball_size(const Vertex_handle& v, const FT size, const bool special_ball)
+change_ball_size(const Vertex_handle& v, const FT squared_size, const bool special_ball)
 {
+  Weight w(squared_size);
+
   // Check if there is something to do
-  Weight w = CGAL::square(size);
-  // if(v->point().weight() == w)
+  // if(c3t3_.triangulation().point(v).weight() == w)
   // { return v; }
 
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
@@ -1411,7 +1412,7 @@ change_ball_size(const Vertex_handle& v, const FT size, const bool special_ball)
             << " dim=" << c3t3_.in_dimension(v)
             << " index=" << CGAL::oformat(c3t3_.index(v))
             << " ,\n"
-            << "                 size=" << size
+            << "                 (squared) size=" << w
             << ", special_ball=" << std::boolalpha << special_ball << std::endl;
 #endif
 
