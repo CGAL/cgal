@@ -979,12 +979,11 @@ public:
     if(number_of_vertices() == 0)
       return Vertex_handle();
 
-    Locate_type lt;
-    int li, lj;
-
     typename Gt::Construct_weighted_point_3 p2wp =
       geom_traits().construct_weighted_point_3_object();
 
+    Locate_type lt;
+    int li, lj;
     Offset query_offset;
     Cell_handle c = locate(p2wp(p), query_offset, lt, li, lj, start);
 
@@ -1045,7 +1044,7 @@ public:
         if((*vsit)->point() == nearest->point())
           continue;
 
-        const Offset min_dist_offset = this->get_min_dist_offset(p, query_offset, *vsit);
+        const Offset min_dist_offset = get_min_dist_offset(p, query_offset, *vsit);
         if(compare_distance(p, (*vsit)->point(), tmp->point(),
                             query_offset, min_dist_offset, offset_of_nearest) == SMALLER)
         {
@@ -1153,7 +1152,6 @@ public:
   Offset get_min_dist_offset(const Bare_point& p, const Offset & o,
                              const Vertex_handle vh) const
   {
-    // @todo apply the same changes to P3DT3
     Offset mdo = get_offset(vh);
     Offset min = combine_offsets(mdo, Offset(0, 0, 0));
 

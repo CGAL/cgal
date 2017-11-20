@@ -819,29 +819,43 @@ Periodic_3_Delaunay_triangulation_3<GT,Tds>::nearest_vertex(const Point& p,
 
   Locate_type lt;
   int li, lj;
-  Cell_handle c = locate(p, lt, li, lj, start);
+  Offset query_offset;
+  Cell_handle c = locate(p, query_offset, lt, li, lj, start);
+
   if(lt == Base::VERTEX)
     return c->vertex(li);
 
-  const Conflict_tester tester(p, this);
-  Offset o = combine_offsets(Offset(), get_location_offset(tester,c));
+  // Take the opposite because periodic_locate() returns the offset such that
+  // cell + offset contains 'p' but here we need to move 'p'
+  query_offset = this->combine_offsets(Offset(), -query_offset);
 
   // - start with the closest vertex from the located cell.
   // - repeatedly take the nearest of its incident vertices if any
   // - if not, we're done.
-  Vertex_handle nearest = nearest_vertex_in_cell(c, p, o);
+  Vertex_handle nearest = nearest_vertex_in_cell(c, p, query_offset);
+  Offset offset_of_nearest = get_min_dist_offset(p, query_offset, nearest);
+
   std::vector<Vertex_handle> vs;
   vs.reserve(32);
   while(true)
   {
     Vertex_handle tmp = nearest;
-    Offset tmp_off = get_min_dist_offset(p,o,tmp);
     adjacent_vertices(nearest, std::back_inserter(vs));
     for(typename std::vector<Vertex_handle>::const_iterator
          vsit = vs.begin(); vsit != vs.end(); ++vsit)
-      tmp = (compare_distance(p,tmp->point(),(*vsit)->point(),
-                              o,tmp_off,get_min_dist_offset(p,o,*vsit))
-             == SMALLER) ? tmp : *vsit;
+    {
+      // Can happen in 27-sheeted triangulations composed of few points
+      if((*vsit)->point() == nearest->point())
+        continue;
+
+      const Offset min_dist_offset = get_min_dist_offset(p, query_offset, *vsit);
+      if(compare_distance(p, (*vsit)->point(), tmp->point(),
+                          query_offset, min_dist_offset, offset_of_nearest) == SMALLER)
+      {
+        tmp = *vsit;
+        offset_of_nearest = min_dist_offset;
+      }
+    }
 
     if(tmp == nearest)
       break;
@@ -862,36 +876,23 @@ Periodic_3_Delaunay_triangulation_3<GT,Tds>::get_min_dist_offset(
     const Point& p, const Offset& o, const Vertex_handle vh) const
 {
   Offset mdo = get_offset(vh);
-  Offset min_off = Offset(0,0,0);
-  min_off = (compare_distance(p, vh->point(), vh->point(),
-                              o, combine_offsets(mdo,min_off),
-                                 combine_offsets(mdo,Offset(0,0,1)))
-             == SMALLER ? min_off : Offset(0,0,1) );
-  min_off = (compare_distance(p, vh->point(), vh->point(),
-                              o, combine_offsets(mdo,min_off),
-                                 combine_offsets(mdo,Offset(0,1,0)))
-             == SMALLER ? min_off : Offset(0,1,0) );
-  min_off = (compare_distance(p, vh->point(), vh->point(),
-                              o, combine_offsets(mdo,min_off),
-                                 combine_offsets(mdo,Offset(0,1,1)))
-             == SMALLER ? min_off : Offset(0,1,1) );
-  min_off = (compare_distance(p, vh->point(), vh->point(),
-                              o, combine_offsets(mdo,min_off),
-                                 combine_offsets(mdo,Offset(1,0,0)))
-             == SMALLER ? min_off : Offset(1,0,0) );
-  min_off = (compare_distance(p, vh->point(), vh->point(),
-                              o, combine_offsets(mdo,min_off),
-                                 combine_offsets(mdo,Offset(1,0,1)))
-             == SMALLER ? min_off : Offset(1,0,1) );
-  min_off = (compare_distance(p, vh->point(), vh->point(),
-                              o, combine_offsets(mdo,min_off),
-                                 combine_offsets(mdo,Offset(1,1,0)))
-             == SMALLER ? min_off : Offset(1,1,0) );
-  min_off = (compare_distance(p, vh->point(), vh->point(),
-                              o, combine_offsets(mdo,min_off),
-                                 combine_offsets(mdo,Offset(1,1,1)))
-             == SMALLER ? min_off : Offset(1,1,1) );
-  return combine_offsets(mdo,min_off);
+  Offset min = combine_offsets(mdo, Offset(0, 0, 0));
+
+  for(int i=0; i<=1; ++i) {
+    for(int j=0; j<=1; ++j) {
+      for(int k=0; k<=1; ++k)
+      {
+        if(i==0 && j==0 && k==0)
+          continue;
+
+        Offset loc_off = combine_offsets(mdo, Offset(i, j, k));
+        if(compare_distance(p, vh->point(), vh->point(), o, min, loc_off) == LARGER)
+          min = loc_off;
+      }
+    }
+  }
+
+  return min;
 }
 
 /// Returns the finite vertex of the cell c which is the closest to p.
