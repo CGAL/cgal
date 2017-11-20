@@ -105,10 +105,10 @@ lloyd_optimize_mesh_3(c3t3,
 template<typename C3T3, typename MeshDomain_3>
 Mesh_optimization_return_code
 lloyd_optimize_mesh_3(C3T3& c3t3, MeshDomain_3 domain, 
-double parameters::time_limit=0,
-std::size_t parameters::max_iteration_number=0,
-double parameters::convergence=0.02,
-double parameters::freeze_bound = 0.01,
-bool parameters::do_freeze=true);
+                      double parameters::time_limit=0,
+                      std::size_t parameters::max_iteration_number=0,
+                      double parameters::convergence=0.02,
+                      double parameters::freeze_bound = 0.01,
+                      bool parameters::do_freeze=true);
 
 } /* namespace CGAL */

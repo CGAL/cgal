@@ -84,8 +84,8 @@ perturb_mesh_3(c3t3,
 template<typename C3T3, typename MeshDomain_3>
 Mesh_optimization_return_code
 perturb_mesh_3(C3T3& c3t3,
-MeshDomain_3 domain,
-double parameters::time_limit=0,
-double parameters::sliver_bound=0);
+               MeshDomain_3 domain,
+               double parameters::time_limit=0,
+               double parameters::sliver_bound=0);
 
 } /* namespace CGAL */
