@@ -473,7 +473,7 @@ compute_face_face_intersection( const FaceRange& face_range1,
  * \ingroup PMP_corefinement_grp
  * reports all the pairs of segments and faces intersecting between
  * a triangulated surface mesh and a polyline.
- * \attention If a polyline vertex intersects a face or another polyline, the intersection will
+ * \attention If a polyline vertex intersects a face, the intersection will
  * be reported twice (even more if it is on a vertex, edge, or point).
  * This function depends on the package \ref PkgBoxIntersectionDSummary
  *
@@ -1315,14 +1315,13 @@ namespace internal{
 template<class TriangleMeshRange
          , typename OutputIterator
          , class NamedParametersRange
-         , class NamedParameter
          >
 struct Mesh_callback
 {
   typedef typename boost::range_value<TriangleMeshRange>::type TriangleMesh;
+  typedef typename boost::range_value<NamedParametersRange>::type NamedParameter;
   typedef typename GetGeomTraits<TriangleMesh, NamedParameter>::type GT;
-  typedef typename boost::range_value<NamedParametersRange>::type VertexPointMapNP;
-  typedef typename GetVertexPointMap<TriangleMesh, VertexPointMapNP>::const_type VPM;
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameter>::const_type VPM;
   typedef CGAL::AABB_face_graph_triangle_primitive<TriangleMesh, VPM> Primitive;
   typedef CGAL::AABB_traits<GT, Primitive> Traits;
   typedef CGAL::AABB_tree<Traits> AABBTree;
@@ -1334,7 +1333,6 @@ struct Mesh_callback
   OutputIterator m_iterator;
   const bool& test_volume;
   const NamedParametersRange& nps;
-  const NamedParameter& np;
   std::vector<AABBTree*> trees;
 
   std::vector<std::vector<CGAL::Point_3<GT> > > points_of_interest;
@@ -1342,10 +1340,9 @@ struct Mesh_callback
   Mesh_callback(const TriangleMeshRange& meshes,
                 OutputIterator iterator,
                 const bool& test_volume,
-                const NamedParametersRange& nps,
-                const NamedParameter& np)
+                const NamedParametersRange& nps)
     : meshes(meshes), m_iterator(iterator),
-      test_volume(test_volume), nps(nps), np(np)
+      test_volume(test_volume), nps(nps)
   {
     int size = std::distance(meshes.begin(), meshes.end());
     trees = std::vector<AABBTree*>(size, NULL);
@@ -1439,7 +1436,7 @@ struct Mesh_callback
     VPM vpm2 = choose_param(get_param(*(nps.begin() + mesh_id_2), internal_np::vertex_point),
                             get_const_property_map(CGAL::vertex_point, *b2->info()));
 
-    GT gt = choose_param(get_param(np, internal_np::geom_traits), GT());
+    GT gt = choose_param(get_param(*nps.begin(), internal_np::geom_traits), GT());
 
     //surfacic test
     if(Polygon_mesh_processing::do_intersect(*b1->info(),
@@ -1454,6 +1451,8 @@ struct Mesh_callback
     //volumic test
     else if(test_volume)
     {
+      if(!CGAL::do_overlap(b1->bbox(), b2->bbox()))
+        return;
       if(is_mesh1_in_mesh2(*b1->info(), *b2->info(), mesh_id_1, mesh_id_2, vpm1, vpm2, gt))
         *m_iterator++ = std::make_pair(mesh_id_1, mesh_id_2);
       else if(is_mesh1_in_mesh2(*b2->info(), *b1->info(), mesh_id_2, mesh_id_1, vpm2, vpm1, gt))
@@ -1476,17 +1475,16 @@ namespace Polygon_mesh_processing{
  * \tparam OutputIterator an output iterator in which `std::pair<std::size_t, std::size_t>`
  *                        can be put.
  * \tparam NamedParametersRange a range of named parameters.
- * \tparam namedParameter a namedparameter.
  *
  * \param range the range of `TriangleMesh`
  * \param out the OutputIterator that will be filled.
  * \param test_volume indicates if inclusions should be tested. Those inclusions do not depend on the orientation of the meshes.
  * \param np_vpms an optional range of `vertex_point_map` namedparameters containing the `VertexPointMap` of each mesh in `range`, in the same order.
+ * the first namedparameter of the range may contain a custom `geom_traits` for the whole range of meshes.
  * if this parameter is omitted, then an internal property map for
  *   `CGAL::vertex_point_t` should be available in every `TriangleMesh` of `range`.
  * All the `VertexPointMap`s must be of the same type.
- * \param np an optional `geom_traits` namedparameter containing the `Geom_traits` used by the meshes in `range`.
- * The default value for this parameter is `CGAL::Kernel_traits<Point>::Kernel`, where `Point` is the
+ * The default value for `geom_traits` is `CGAL::Kernel_traits<Point>::Kernel`, where `Point` is the
  * value type of the `VertexPointMap` of the first mesh of the range.
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tmesh`.
@@ -1498,13 +1496,11 @@ namespace Polygon_mesh_processing{
 
 template <class TriangleMeshRange
           , class OutputIterator
-          , class NamedParametersRange
-          , class NamedParameter>
+          , class NamedParametersRange>
 OutputIterator get_intersections_in_range(const TriangleMeshRange& range,
                                           OutputIterator out,
                                           const bool& test_volume,
-                                          NamedParametersRange np_vpms,
-                                          NamedParameter np)
+                                          NamedParametersRange np_vpms)
 {
   typedef typename TriangleMeshRange::const_iterator TriangleMeshIterator;
 
@@ -1523,7 +1519,7 @@ OutputIterator get_intersections_in_range(const TriangleMeshRange& range,
 
   //get all the pairs of meshes intersecting (no strict inclusion test)
   std::ptrdiff_t cutoff = 2000;
-  CGAL::internal::Mesh_callback<TriangleMeshRange, OutputIterator, NamedParametersRange, NamedParameter> callback(range, out, test_volume, np_vpms, np);
+  CGAL::internal::Mesh_callback<TriangleMeshRange, OutputIterator, NamedParametersRange> callback(range, out, test_volume, np_vpms);
   CGAL::box_self_intersection_d(boxes_ptr.begin(), boxes_ptr.end(),
                                 callback, cutoff);
   return callback.m_iterator;
@@ -1542,7 +1538,7 @@ OutputIterator get_intersections_in_range(const TriangleMeshRange& range,
   {
     nps.push_back(parameters::all_default);
   }
-  return get_intersections_in_range(range, out, test_volume, nps, parameters::all_default);
+  return get_intersections_in_range(range, out, test_volume, nps);
 }
 
 /**
