@@ -10,6 +10,12 @@ if(NOT POLICY CMP0064)
       "CGAL CTest support requires CMake 3.4 or later.\n"
       "You must either disable BUILD_TESTING or upgrade CMake.")
   endif()
+
+  # Add a fake function to avoid CMake errors
+  function(cgal_add_compilation_test)
+  endfunction()
+
+  # Then return, to exit the file
   return()
 endif()
 
