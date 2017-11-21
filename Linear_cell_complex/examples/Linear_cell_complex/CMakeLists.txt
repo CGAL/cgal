@@ -11,8 +11,6 @@ if(POLICY CMP0043)
   cmake_policy(SET CMP0043 OLD)
 endif()
 
-ADD_DEFINITIONS("-std=c++11")
-
 # If you want to visualize a linear cell complex, you can use the following viewer
 # based on qt. Just uncomment the following two lines, plus the lines qt5_use_modules below
 
