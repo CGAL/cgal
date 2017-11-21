@@ -42,7 +42,6 @@
 #include <CGAL/triangulation_assertions.h>
 
 #include <CGAL/array.h>
-#include <CGAL/internal/Exact_type_selector.h>
 #include <CGAL/NT_converter.h>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/use.h>
@@ -611,7 +610,7 @@ public:
     return construct_point(pp.first, pp.second);
   }
 
-  Periodic_point_3 exact_construct_periodic_point(const Point_3& p) const
+  Periodic_point_3 construct_periodic_point_exact(const Point_3& p) const
   {
     typedef typename Geometric_traits::Kernel                    K;
     typedef typename Exact_kernel_selector<K>::Exact_kernel      EK;
@@ -742,7 +741,7 @@ public:
     {
       // approximate construction does not manage
       had_to_use_exact = true;
-      pp = exact_construct_periodic_point(p);
+      pp = construct_periodic_point_exact(p);
     }
 
     return pp;

@@ -35,10 +35,13 @@
 // vertex and cell bases
 #include <CGAL/Mesh_vertex_base_3.h>
 #include <CGAL/Mesh_cell_base_3.h>
-#include <CGAL/Mesh_3/io_signature.h>
 
-#include <CGAL/assertions.h>
 #include <CGAL/array.h>
+#include <CGAL/assertions.h>
+#include <CGAL/Cartesian_converter.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Kernel_traits.h>
+#include <CGAL/Mesh_3/io_signature.h>
 #include <CGAL/tags.h>
 
 #include <iostream>
@@ -917,17 +920,105 @@ public:
     return make_object(s);
   }
 
-  void dual_segment(const Facet& facet, Bare_point& p, Bare_point& q) const {
-    Segment s = construct_segment(Base::dual(facet));
-    p = s.source();
-    q = s.target();
-    return;
+  void dual_segment(const Facet& facet, Bare_point& p, Bare_point& q) const
+  {
+    typename Base::Periodic_segment_3 ps = Base::dual(facet);
+    p = construct_point(ps[0]);
+    q = construct_point(ps[1]);
   }
 
   void dual_segment_exact(const Facet& facet, Bare_point& p, Bare_point& q) const
   {
-    // @fixme (below is not exact)
-    return dual_segment(facet, p, q);
+    typedef typename Kernel_traits<Bare_point>::Kernel           K;
+    typedef Exact_predicates_exact_constructions_kernel          EK;
+
+    typedef Cartesian_converter<K, EK>                           To_exact;
+    typedef Cartesian_converter<EK,K>                            Back_from_exact;
+
+    typedef CGAL::Periodic_3_regular_triangulation_traits_3<EK>  Exact_Rt;
+    typedef typename Exact_Rt::Point_3                           EPoint_3;
+
+    To_exact to_exact;
+    Back_from_exact back_from_exact;
+
+    Exact_Rt etraits(to_exact(domain()));
+    const typename EK::Iso_cuboid_3& dom = etraits.get_domain();
+
+    Exact_Rt::Construct_weighted_circumcenter_3 exact_weighted_circumcenter =
+      etraits.construct_weighted_circumcenter_3_object();
+    Exact_Rt::Construct_point_3 exact_construct_point =
+      etraits.construct_point_3_object();
+
+    Cell_handle c = facet.first;
+    const int i = facet.second;
+    Cell_handle n = c->neighbor(i);
+
+    EPoint_3 exact_wc1 = exact_weighted_circumcenter(
+                           to_exact(c->vertex(0)->point()), to_exact(c->vertex(1)->point()),
+                           to_exact(c->vertex(2)->point()), to_exact(c->vertex(3)->point()),
+                           get_offset(c, 0), get_offset(c, 1),
+                           get_offset(c, 2), get_offset(c, 3));
+    EPoint_3 exact_wc2 = exact_weighted_circumcenter(
+                           to_exact(n->vertex(0)->point()), to_exact(n->vertex(1)->point()),
+                           to_exact(n->vertex(2)->point()), to_exact(n->vertex(3)->point()),
+                           get_offset(n, 0), get_offset(n, 1),
+                           get_offset(n, 2), get_offset(n, 3));
+    typename EK::Point_3 dp;
+
+    // get the offset of the first weighted circumcenter
+    Offset transl_wc1;
+    while(true) /* while not in */
+    {
+      dp = etraits.construct_point_3_object()(exact_wc1, transl_wc1);
+
+      if(dp.x() < dom.xmin())
+        transl_wc1.x() += 1;
+      else if(dp.y() < dom.ymin())
+        transl_wc1.y() += 1;
+      else if(dp.z() < dom.zmin())
+        transl_wc1.z() += 1;
+      else if(!(dp.x() < dom.xmax()))
+        transl_wc1.x() -= 1;
+      else if(!(dp.y() < dom.ymax()))
+        transl_wc1.y() -= 1;
+      else if(!(dp.z() < dom.zmax()))
+        transl_wc1.z() -= 1;
+      else
+        break;
+    }
+
+    // get the offset of the second weighted circumcenter
+    Offset transl_wc2;
+    while(true) /* while not in */
+    {
+      dp = etraits.construct_point_3_object()(exact_wc2, transl_wc2);
+
+      if(dp.x() < dom.xmin())
+        transl_wc2.x() += 1;
+      else if(dp.y() < dom.ymin())
+        transl_wc2.y() += 1;
+      else if(dp.z() < dom.zmin())
+        transl_wc2.z() += 1;
+      else if(!(dp.x() < dom.xmax()))
+        transl_wc2.x() -= 1;
+      else if(!(dp.y() < dom.ymax()))
+        transl_wc2.y() -= 1;
+      else if(!(dp.z() < dom.zmax()))
+        transl_wc2.z() -= 1;
+      else
+        break;
+    }
+
+    Offset off = this->neighbor_offset(c, i, n);
+    Offset o1 = -transl_wc1;
+    Offset o2 = this->combine_offsets(-transl_wc2, -off);
+    Offset cumm_off((std::min)(o1.x(), o2.x()),
+                    (std::min)(o1.y(), o2.y()),
+                    (std::min)(o1.z(), o2.z()));
+    EPoint_3 ewc1 = exact_construct_point(exact_wc1, transl_wc1);
+    EPoint_3 ewc2 = exact_construct_point(exact_wc2, transl_wc2);
+    p = back_from_exact(exact_construct_point(ewc1, o1 - cumm_off));
+    q = back_from_exact(exact_construct_point(ewc2, o2 - cumm_off));
   }
 
   // dual rays are impossible in a periodic triangulation since there are no

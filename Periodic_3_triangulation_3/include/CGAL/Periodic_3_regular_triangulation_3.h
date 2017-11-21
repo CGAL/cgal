@@ -25,15 +25,17 @@
 #include <CGAL/internal/Periodic_3_regular_triangulation_remove_traits_3.h>
 
 #include <CGAL/Periodic_3_triangulation_3.h>
+#include <CGAL/Periodic_3_triangulation_ds_vertex_base_3.h>
+#include <CGAL/Periodic_3_triangulation_ds_cell_base_3.h>
+#include <CGAL/Regular_triangulation_3.h>
 #include <CGAL/Regular_triangulation_vertex_base_3.h>
 #include <CGAL/Regular_triangulation_cell_base_3.h>
-#include <CGAL/internal/Has_nested_type_Bare_point.h>
 
 #include <CGAL/enum.h>
-#include <CGAL/Regular_triangulation_3.h>
+#include <CGAL/internal/boost/function_property_map.hpp>
+#include <CGAL/internal/Has_nested_type_Bare_point.h>
 #include <CGAL/spatial_sort.h>
 #include <CGAL/utility.h>
-#include <CGAL/internal/boost/function_property_map.hpp>
 
 #include <boost/mpl/if.hpp>
 #include <boost/mpl/identity.hpp>
