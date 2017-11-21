@@ -155,7 +155,7 @@ void refine_periodic_3_mesh_3_impl(C3T3& c3t3,
                           parameters::freeze_bound = lloyd.bound());
   }
 
-  if( odt || lloyd)
+  if(odt || lloyd)
   {
     dump_c3t3(c3t3, mesh_options.dump_after_glob_opt_prefix);
   }

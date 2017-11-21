@@ -989,7 +989,6 @@ public:
     Offset query_offset;
     Cell_handle c = locate(p2wp(p), query_offset, lt, li, lj, start);
 
-#define CGAL_PERIODIC_DEBUG_NEAREST_POWER_VERTEX
 #ifdef CGAL_PERIODIC_DEBUG_NEAREST_POWER_VERTEX
     std::cout << "nearest power vertex: " << p << std::endl;
     std::cout << "vertices: " << number_of_vertices() << std::endl;

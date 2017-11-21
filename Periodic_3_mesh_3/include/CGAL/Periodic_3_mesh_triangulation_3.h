@@ -478,13 +478,6 @@ public:
   {
     Weighted_point canonical_p = canonicalize_point(p);
 
-//    std::cout << "Pside_of_power_sphere with at " << &*c << std::endl
-//              << "                              " << &*(c->vertex(0)) << " : " << c->vertex(0)->point() << std::endl
-//              << "                              " << &*(c->vertex(1)) << " : " << c->vertex(1)->point() << std::endl
-//              << "                              " << &*(c->vertex(2)) << " : " << c->vertex(2)->point() << std::endl
-//              << "                              " << &*(c->vertex(3)) << " : " << c->vertex(3)->point() << std::endl
-//              << " Foreign: " << p << std::endl;
-
     Bounded_side bs = ON_UNBOUNDED_SIDE;
     for(int i = 0; i < 3; ++i) {
       for(int j = 0; j < 3; ++j) {
@@ -513,9 +506,6 @@ public:
     const Bare_point cp = canonicalize_point(p);
     const Bare_point cq = canonicalize_point(q);
 
-//    std::cout << "minsqd: " << p << " // " << q << std::endl;
-//    std::cout << "canon: " << cp << " // " << cq << std::endl;
-
     FT min_sq_dist = std::numeric_limits<FT>::infinity();
 
     for(int i = 0; i < 3; ++i) {
@@ -529,7 +519,6 @@ public:
       }
     }
 
-//    std::cout << "minsqdt: " << min_sq_dist << std::endl;
     return min_sq_dist;
   }
 
@@ -653,14 +642,6 @@ public:
     const Weighted_point& nearest_wp = this->point(nearest);
     Offset offset_of_nearest = Base::get_min_dist_offset(canonical_p, query_offset, nearest);
     FT min_sq_dist = csd(canonical_p, cp(nearest_wp), query_offset, offset_of_nearest);
-
-    std::cout << "seeking nearest to " << canonical_p << std::endl;
-    std::cout << "query offset: " << query_offset << std::endl;
-    std::cout << "so point: " << this->construct_point(canonical_p, query_offset) << std::endl;
-    std::cout << "nearest: " << nearest->point() << std::endl;
-    std::cout << "initial min offset: " << offset_of_nearest << std::endl;
-    std::cout << "so point: " << this->construct_point(nearest->point(), offset_of_nearest) << std::endl;
-    std::cout << "giving a distance of: " << min_sq_dist << std::endl;
 
     std::vector<Vertex_handle> vs;
     vs.reserve(32);
