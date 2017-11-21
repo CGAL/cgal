@@ -49,7 +49,11 @@ The clustering algorithm must be initialized by determining either the maximum n
 - <b>Maximum number of proxies</b>. The algorithm adds proxies until the specified target number is met.
 - <b>Minimum error drop</b>. We start from the proxy fitted from the first facet of the surface with the fitting error \f$ \hat E \f$. The algorithm adds proxies until the approximation error drops below the specified percentage \f$ target\_drop * \hat E \f$, between two iterations.
 
-Different initialization examples are provided in \cgalFigureRef{meshing}.
+\cgalFigureBegin{nb_proxies, nb_proxies.png}
+Using different number of proxies to approximate the plane-sphere model. From left to right: 8, 14, 20 proxies. On the right most is the number_of_proxies to error curve.
+\cgalFigureEnd
+
+In figure \cgalFigureRef{nb_proxies}, if we specify the minimum error drop to 10% (yellow dash lines), we will end up with 12 proxies on the plane-sphere model. Different initialization examples are provided in \cgalFigureRef{meshing}.
 
 \subsection sma_seeding Seeding
 

@@ -409,6 +409,10 @@ public:
       partition();
       fit();
     }
+#ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
+    static std::size_t count = 0;
+    std::cerr << '#' << count++ << ": " << compute_fitting_error() << std::endl;
+#endif
   }
 
   /*!
@@ -530,19 +534,16 @@ public:
    * @pre current facet proxy map is valid
    * @note after the addition, the facet proxy map remains valid
    * @param num_proxies number of proxies to be added
-   * @param num_iterations number of re-fitting iterations
+   * @param nb_iterations number of re-fitting iterations
    * @return number of proxies added
    */
   std::size_t add_proxies_furthest(const std::size_t num_proxies,
-    const std::size_t num_iterations = 5) {
+    const std::size_t nb_iterations = 5) {
     std::size_t num_added = 0;
     for (; num_added < num_proxies; ++num_added) {
       if (!add_proxy_furthest())
         break;
-      for (std::size_t i = 0; i < num_iterations; ++i) {
-        partition();
-        fit();
-      }
+      run(nb_iterations);
     }
     return num_added;
   }
@@ -696,10 +697,7 @@ public:
 
       num_teleported++;
       // coarse re-fitting
-      for (std::size_t i = 0; i < num_iterations; ++i) {
-        partition();
-        fit();
-      }
+      run(num_iterations);
 
 #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
       std::cerr << "teleported" << std::endl;
