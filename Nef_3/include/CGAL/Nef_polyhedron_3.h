@@ -798,10 +798,7 @@ protected:
 	CGAL_NEF_TRACEN("Build_polyhedron: visit facet " << opposite_facet->plane());
  
 	CGAL_assertion(Infi_box::is_standard(opposite_facet->plane()));
-	
-	SHalfedge_const_handle se;
-	Halffacet_cycle_const_iterator fc;
-     	
+
 	Halffacet_const_handle f = opposite_facet->twin();
 
         if(needs_triangulation(f)) {
@@ -824,14 +821,14 @@ protected:
 	} else {
 
 	  B.begin_facet();
-	  fc = f->facet_cycles_begin();
-	  se = SHalfedge_const_handle(fc);
-	  CGAL_assertion(se!=0);
-	  SHalfedge_around_facet_const_circulator hc_start(se);
-	  SHalfedge_around_facet_const_circulator hc_end(hc_start);
-	  CGAL_For_all(hc_start,hc_end) {
-	    CGAL_NEF_TRACEN("   add vertex " << hc_start->source()->center_vertex()->point());
-	    B.add_vertex_to_facet(VI[hc_start->source()->center_vertex()]);
+          Halffacet_cycle_const_iterator fc = f->facet_cycles_begin();
+          SHalfedge_const_handle se(fc);
+          CGAL_assertion(se != 0);
+          SHalfedge_around_facet_const_circulator hc(se),he(hc);
+          CGAL_For_all(hc,he) {
+            Vertex_const_handle cv = hc->source()->center_vertex();
+            CGAL_NEF_TRACEN("   add vertex " << cv->point());
+            B.add_vertex_to_facet(VI[cv]);
 	  }
 	  B.end_facet();
 	}
