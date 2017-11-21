@@ -39,6 +39,8 @@ Figure \cgalFigureRef{relaxation} depicts several Lloyd clustering iterations on
 Lloyd iterations on the plane-sphere model with planar proxies and the \f$ \mathcal{L}^{2,1} \f$ metric: (left) random initialization of 6 proxies; (center) after one iteration; (right) after 8 iterations, the regions settle. The red lines depict the proxy normals.
 \cgalFigureEnd
 
+On the right side of the figure is the fitting error curve at each iteration. After 8 iterations, the error barely changes. Based on this observation, we assume that the iteration converges if the error change of current iteration to the last one is less than a threshold (indicated by two green dash lines).
+
 \subsection sma_init Initialization
 
 <!-- As discussed above, the clustering iteration requires a set of initial proxies \f$ \{ P_1^0, \cdots, P_k^0 \} \f$.  -->
