@@ -402,16 +402,13 @@ public:
 
   /*!
    * @brief Run the partitioning and fitting processes.
-   * @param num_iterations number of iterations.
-   * @return the total total fitting error of current partition to the proxies.
+   * @param nb_iterations number of iterations.
    */
-  FT run(std::size_t num_iterations = 1) {
-    for (std::size_t i = 0; i < num_iterations; ++i) {
+  void run(std::size_t nb_iterations = 1) {
+    for (std::size_t i = 0; i < nb_iterations; ++i) {
       partition();
       fit();
     }
-
-    return compute_fitting_error();
   }
 
   /*!
@@ -435,9 +432,11 @@ public:
         return true;
 
       FT avg_err(0.0);
-      for (std::size_t i = 0; i < avg_interval; ++i)
-        avg_err += run();
-      avg_err /= FT(avg_interval);
+      for (std::size_t i = 0; i < avg_interval; ++i) {
+        run();
+        avg_err += compute_fitting_error();
+      }
+      avg_err /= static_cast<FT>(avg_interval);
 
       drop_pct = (pre_err - avg_err) / pre_err;
       // the error may fluctuates
@@ -450,6 +449,25 @@ public:
     }
 
     return false;
+  }
+
+  /*!
+   * @brief Computes fitting error of current partition to the proxies.
+   * @return total fitting error
+   */
+  FT compute_fitting_error() {
+    BOOST_FOREACH(Proxy_wrapper &pxw, proxies)
+      pxw.err = FT(0.0);
+    BOOST_FOREACH(face_descriptor f, faces(*m_pmesh)) {
+      std::size_t pxidx = fproxy_map[f];
+      proxies[pxidx].err += (*fit_error)(f, proxies[pxidx].px);
+    }
+
+    FT sum_error(0.0);
+    BOOST_FOREACH(const Proxy_wrapper &pxw, proxies)
+      sum_error += pxw.err;
+
+    return sum_error;
   }
 
   /*!
@@ -1074,7 +1092,8 @@ private:
       proxies.clear();
       for (std::size_t j = 0; j < target_px; ++j)
         proxies.push_back(fit_new_proxy(facets[j]));
-      const FT err = run(num_iterations);
+      run(num_iterations);
+      const FT err = compute_fitting_error();
       error_drop = err / initial_err;
     }
 
@@ -1099,7 +1118,8 @@ private:
     FT error_drop = min_error_drop * FT(2.0);
     while (proxies.size() < max_nb_proxies && error_drop > min_error_drop) {
       add_proxy_furthest();
-      const FT err = run(num_iterations);
+      run(num_iterations);
+      const FT err = compute_fitting_error();
       error_drop = err / initial_err;
     }
 
@@ -1130,7 +1150,8 @@ private:
       else
         target_px *= 2;
       add_proxies_error_diffusion(target_px - proxies.size());
-      const FT err = run(num_iterations);
+      run(num_iterations);
+      const FT err = compute_fitting_error();
       error_drop = err / initial_err;
     }
 
@@ -1257,25 +1278,6 @@ private:
     proxies.push_back(fit_new_proxy(*(faces(*m_pmesh).first)));
     BOOST_FOREACH(face_descriptor f, faces(*m_pmesh))
       fproxy_map[f] = 0;
-  }
-
-  /*!
-   * @brief Computes fitting error of a current partition and proxies.
-   * @return total fitting error
-   */
-  FT compute_fitting_error() {
-    BOOST_FOREACH(Proxy_wrapper &pxw, proxies)
-      pxw.err = FT(0.0);
-    BOOST_FOREACH(face_descriptor f, faces(*m_pmesh)) {
-      std::size_t pxidx = fproxy_map[f];
-      proxies[pxidx].err += (*fit_error)(f, proxies[pxidx].px);
-    }
-
-    FT sum_error(0.0);
-    BOOST_FOREACH(const Proxy_wrapper &pxw, proxies)
-      sum_error += pxw.err;
-
-    return sum_error;
   }
 
   /*!

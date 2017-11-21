@@ -79,8 +79,9 @@ int main()
   std::size_t count = 0;
   while(approx.teleport_proxies(1) == 1) {
     FT sum_err(0);
-    sum_err += approx.run(10);
-    error.push_back(sum_err / FT(10));
+    approx.run(10);
+    sum_err += approx.compute_fitting_error();
+    error.push_back(sum_err / FT(10.0));
     ++count;
   }
   std::cout << "#teleportation " << count << std::endl;
