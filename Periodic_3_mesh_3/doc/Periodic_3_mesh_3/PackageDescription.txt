@@ -17,12 +17,6 @@
 /// and `refine_periodic_3_mesh_3()`. Other functions are provided to optimize
 /// an existing periodic mesh.
 
-/// \defgroup PkgPeriodic_3_mesh_3Parameters Parameter Functions
-/// \ingroup PkgPeriodic_3_mesh_3
-
-/// \defgroup PkgPeriodic_3_mesh_3Enum Enumerations
-/// \ingroup PkgPeriodic_3_mesh_3
-
 /*!
 \addtogroup PkgPeriodic_3_mesh_3
 \cgalPkgDescriptionBegin{3D Periodic Mesh Generation,PkgPeriodic_3_mesh_3Summary}
