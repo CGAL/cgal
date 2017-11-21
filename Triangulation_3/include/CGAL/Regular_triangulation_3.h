@@ -48,8 +48,9 @@
 #include <CGAL/internal/Has_nested_type_Bare_point.h>
 #include <CGAL/internal/boost/function_property_map.hpp>
 
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Cartesian_converter.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Kernel_traits.h>
 #include <CGAL/result_of.h>
 
 #ifndef CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
@@ -1724,7 +1725,7 @@ void
 Regular_triangulation_3<Gt,Tds,Lds>::
 dual_segment_exact(const Facet& facet, Bare_point& p, Bare_point&q) const
 {
-  typedef typename Gt::Kernel                                  K;
+  typedef typename Kernel_traits<Bare_point>::Kernel           K;
   typedef Exact_predicates_exact_constructions_kernel          EK;
   typedef Cartesian_converter<K, EK>                           To_exact;
   typedef Cartesian_converter<EK,K>                            Back_from_exact;
@@ -1781,7 +1782,7 @@ dual_ray_exact(const Facet& facet, Ray& ray) const
     std::swap(ind[0], ind[1]);
 
   // exact part
-  typedef typename Gt::Kernel                                  K;
+  typedef typename Kernel_traits<Bare_point>::Kernel           K;
   typedef Exact_predicates_exact_constructions_kernel          EK;
   typedef Cartesian_converter<K, EK>                           To_exact;
   typedef Cartesian_converter<EK,K>                            Back_from_exact;
@@ -2390,7 +2391,7 @@ template <class RegularTriangulation_3>
 class Regular_triangulation_3<Gt, Tds, Lds>::Vertex_remover
 {
   typedef RegularTriangulation_3                          Regular;
-  typedef typename Gt::Weighted_point_3                   Weighted_point;
+  typedef typename Regular::Weighted_point                Weighted_point;
 
 public:
   typedef typename std::vector<Weighted_point>::iterator  Hidden_points_iterator;
