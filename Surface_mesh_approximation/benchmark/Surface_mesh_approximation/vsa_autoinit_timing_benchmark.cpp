@@ -60,8 +60,8 @@ int main(int argc, char *argv[])
   Timer t;
   std::cerr << "start initialization" << std::endl;
   t.start();
-  approx.init_by_error(
-    static_cast<CGAL::VSA::Seeding>(init), tol, iterations);
+  approx.init(
+    static_cast<CGAL::VSA::Seeding>(init), boost::none, tol, iterations);
   t.stop();
   std::cerr << "initialization time " << t.time() << " sec." << std::endl;
   std::cerr << "#proxies " << approx.get_proxies_size() << std::endl;

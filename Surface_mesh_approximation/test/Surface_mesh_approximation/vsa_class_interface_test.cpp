@@ -53,7 +53,7 @@ int main()
 
   // random init and run
   std::cout << "random init and run" << std::endl;
-  approx.init_by_number(CGAL::VSA::Random, 10);
+  approx.init(CGAL::VSA::Random, 10);
   approx.run(10);
   if (approx.get_proxies_size() != 10)
     return EXIT_FAILURE;
@@ -125,7 +125,7 @@ int main()
   approx.rebuild();
   if (approx.get_proxies_size() != 0)
     return EXIT_FAILURE;
-  approx.init_by_error(CGAL::VSA::Hierarchical, drop, iterations);
+  approx.init(CGAL::VSA::Hierarchical, boost::none, drop, iterations);
   approx.run(10);
   std::cout << "#proxies " << approx.get_proxies_size() << std::endl;
 
@@ -133,7 +133,7 @@ int main()
   approx.rebuild();
   if (approx.get_proxies_size() != 0)
     return EXIT_FAILURE;
-  approx.init_by_error(CGAL::VSA::Incremental, drop, iterations);
+  approx.init(CGAL::VSA::Incremental, boost::none, drop, iterations);
   approx.run(10);
   std::cout << "#proxies " << approx.get_proxies_size() << std::endl;
 

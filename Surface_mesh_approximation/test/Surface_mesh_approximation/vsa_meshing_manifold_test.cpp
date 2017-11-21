@@ -38,7 +38,7 @@ bool test_manifold(const char *file_name, const FT drop = FT(1e-8))
   // approximation, init from error, drop to the target error incrementally
   const std::size_t num_iterations = 20;
   const std::size_t inner_iterations = 5;
-  approx.init_by_error(CGAL::VSA::Incremental, drop, inner_iterations);
+  approx.init(CGAL::VSA::Incremental, boost::none, drop, inner_iterations);
   approx.run(num_iterations);
   std::cout << "#proxies " << approx.get_proxies_size() << std::endl;
 

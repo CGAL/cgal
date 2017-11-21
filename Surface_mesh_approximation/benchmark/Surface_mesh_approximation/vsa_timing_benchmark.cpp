@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
   std::cerr << "start initialization" << std::endl;
   t0.reset();
   t0.start();
-  approx.init_by_number(
+  approx.init(
     static_cast<CGAL::VSA::Seeding>(init), num_proxies);
   t0.stop();
   std::cerr << "initialization time " << t0.time() << " sec." << std::endl;

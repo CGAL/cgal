@@ -99,7 +99,7 @@ int main()
   approx.set_metric(error_metric, proxy_fitting);
 
   std::cout << "random init and run" << std::endl;
-  approx.init_by_number(CGAL::VSA::Random, 20);
+  approx.init(CGAL::VSA::Random, 20);
   approx.run(20);
   if (approx.get_proxies_size() != 20)
     return EXIT_FAILURE;

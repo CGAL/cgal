@@ -36,7 +36,7 @@ int main()
   approx.set_metric(metric, proxy_fitting);
 
   // initialize 100 random proxies
-  approx.init_by_number(CGAL::VSA::Random, 100);
+  approx.init(CGAL::VSA::Random, 100);
   
   // run 30 iterations 
   approx.run(30);

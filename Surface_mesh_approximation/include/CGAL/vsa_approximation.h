@@ -400,35 +400,6 @@ public:
   }
 
   /*!
-   * @brief Initialize with targeted number of proxies.
-   * @param method seeding method
-   * @param max_nb_proxies target maximum number of proxies
-   * @param num_iterations number of re-fitting iterations
-   * in incremental and hierarchical seeding
-   * @return number of proxies initialized
-   */
-  std::size_t init_by_number(
-    const Seeding method,
-    const std::size_t max_nb_proxies,
-    const std::size_t num_iterations = 5) {
-    return init(method, max_nb_proxies, boost::none, num_iterations);
-  }
-
-  /*!
-   * @brief Initialize proxies to targeted error drop.
-   * @param method seeding method
-   * @param target_drop targeted error drop to initial state, in range (0, 1)
-   * @param num_iterations number of re-fitting iterations 
-   * @return number of proxies initialized
-   */
-  std::size_t init_by_error(
-    const Seeding method,
-    const FT target_drop,
-    const std::size_t num_iterations = 5) {
-    return init(method, boost::none, target_drop, num_iterations);
-  }
-
-  /*!
    * @brief Run the partitioning and fitting processes.
    * @param num_iterations number of iterations.
    * @return the total total fitting error of current partition to the proxies.

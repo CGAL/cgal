@@ -66,7 +66,7 @@ int main()
   approx.set_metric(error_metric, proxy_fitting);
 
   std::cout << "Seeding by number." << std::endl;
-  approx.init_by_number(CGAL::VSA::Random, 50);
+  approx.init(CGAL::VSA::Random, 50);
   if (approx.get_proxies_size() != 50)
     return EXIT_FAILURE;
   for (std::size_t i = 0; i < 10; ++i) {

@@ -40,7 +40,7 @@ bool test_shape(const char *file_name, const std::size_t target_num_proxies)
   const FT drop(1e-8);
   const std::size_t num_iterations = 20;
   const std::size_t inner_iterations = 10;
-  approx.init_by_error(CGAL::VSA::Incremental, drop, inner_iterations);
+  approx.init(CGAL::VSA::Incremental, boost::none, drop, inner_iterations);
   approx.run(num_iterations);
 
   // eliminate redundant area (local minima) by merging

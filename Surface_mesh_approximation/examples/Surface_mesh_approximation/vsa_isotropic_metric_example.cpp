@@ -109,7 +109,7 @@ int main()
   approx.set_metric(metric, proxy_fitting);
 
   // approximation via 200 proxies and 30 iterations
-  approx.init_by_number(CGAL::VSA::Hierarchical, 200);
+  approx.init(CGAL::VSA::Hierarchical, 200);
   approx.run(30);
 
   return EXIT_SUCCESS;
