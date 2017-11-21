@@ -6,6 +6,7 @@
 
 /// \defgroup PkgPeriodic_3_mesh_3MeshClasses Mesh Classes
 /// \ingroup PkgPeriodic_3_mesh_3
+/// The classes in this group are the main classes involved in the mesh generation process.
 
 /// \defgroup PkgPeriodic_3_mesh_3Domains Domain Classes
 /// \ingroup PkgPeriodic_3_mesh_3

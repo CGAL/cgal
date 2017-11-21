@@ -10,6 +10,7 @@
 
 /// \defgroup PkgMesh_3MeshClasses Mesh Classes
 /// \ingroup PkgMesh_3
+/// The classes in this group are the main classes involved in the mesh generation process.
 
 /// \defgroup PkgMesh_3Domains Domain Classes
 /// \ingroup PkgMesh_3
