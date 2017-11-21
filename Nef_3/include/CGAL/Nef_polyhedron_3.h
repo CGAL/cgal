@@ -787,12 +787,11 @@ protected:
 
       const Object_index<Vertex_const_iterator>& VI;
       Polyhedron_incremental_builder_3<HDS>& B;
-      const SNC_const_decorator& D;
       
     public:
       Visitor(Polyhedron_incremental_builder_3<HDS>& BB,
 	      const SNC_const_decorator& sd,
-	      Object_index<Vertex_const_iterator>& vi) : VI(vi), B(BB), D(sd){}
+              Object_index<Vertex_const_iterator>& vi) : VI(vi), B(BB) {}
 
       void visit(Halffacet_const_handle opposite_facet) {
 
