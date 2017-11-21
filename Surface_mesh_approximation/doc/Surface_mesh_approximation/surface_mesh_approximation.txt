@@ -69,9 +69,7 @@ The package provides 3 different seeding methods:
 (TODO: precise formula used and justify)
 
 \cgalFigureBegin{seeding_method, seeding_method.png}
-Comparison of different seeding methods on the sphere-cube model, all with \f$ \mathcal{L}^{2,1} \f$ metrics and 20 proxies.
-From left to right: random, incremental and hierarchical seeding.
-Notice the entrapped local minima in the yellow rectangles.
+Comparison of different seeding methods on the sphere-cube model. From left to right: initial partition (\f$ \mathcal{L}^{2,1} \f$ metrics and 20 proxies), add 5 proxy seeds (red facets) with random, incremental hierarchical methods respectively.
 \cgalFigureEnd
 
 Figure \cgalFigureRef{seeding_method} depicts the effect of different seeding methods to initialize the algorithm with 20 proxies. Random initialization randomly selects a set of input triangle facets as proxy seeds. It is very fast but the subsequent clustering process can be entrapped in local minima, especially on shapes with regions surrounded by sharp creases (left). Incremental initialization adds the proxies one by one at the most distorted region, interleaved with several inner iterations of clustering. It can thus be slow due to the interleaving with the clustering process. Hierarchical initialization adds proxies in a hierarchical refinement sequence, so as the generate clustering refions with more evenly distributed fitting errors. Time consumption is somewhere in-between the former two. Some statistics and comparisons are available in \ref sma_perf.
