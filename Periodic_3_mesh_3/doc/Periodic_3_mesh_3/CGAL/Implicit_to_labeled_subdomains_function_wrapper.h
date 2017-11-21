@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
 \ingroup PkgPeriodic_3_mesh_3Domains
 
-The class `Implicit_to_labeled_subdomains_function_wrapper` is an helper class
+The class `Implicit_to_labeled_subdomains_function_wrapper` is a helper class
 designed to wrap an implicit function which describes a domain by
 [`p` is inside if `f(p)<0`] to a function that takes its values into `{1, 2}` and
 thus describes a multidomain.

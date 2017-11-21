@@ -589,7 +589,7 @@ insert_point(const Bare_point& p, const Weight& w, int dim, const Index& index,
   const typename Tr::Cell_handle ch = c3t3_.triangulation().locate(wp, lt, li, lj);
   Vertex_handle v = c3t3_.triangulation().insert(wp, lt, ch, li, lj);
 
-  // If point insertion created an hidden ball, fail
+  // If point insertion created a hidden ball, fail
   CGAL_assertion ( Vertex_handle() != v );
   CGAL_assertion ( lt == Tr::VERTEX ||
                    c3t3_.triangulation().number_of_vertices() == (nb_vertices_before+1) );

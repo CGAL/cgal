@@ -106,7 +106,7 @@ private:
                                    const CCell_handle& cell) const;
   
   /**
-   * Returns an hint for \c p location.
+   * Returns a hint for \c p location.
    */
   CCell_handle get_hint(const Weighted_point& p) const
   { return last_cell_; }

@@ -321,7 +321,7 @@ protected:
              bool *could_lock_zone = NULL) const = 0;
 
   /**
-   * @brief an helper function which returns the amplitude of perturbation
+   * @brief a helper function which returns the amplitude of perturbation
    */
   FT compute_perturbation_sq_amplitude(const Vertex_handle& v,
                                        const C3T3& c3t3,
