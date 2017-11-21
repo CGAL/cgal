@@ -625,9 +625,6 @@ of the base class.
   /// @cond DEVELOPERS
   /// @{
 
-  /// Add a 0-dimensional feature in the domain.
-  Corner_index add_corner(const Point_3& p);
-
   /// Overloads where the last parameter \c out is not `CGAL::Emptyset_iterator()`.
   template <typename InputIterator, typename IndicesOutputIterator>
   IndicesOutputIterator
@@ -635,6 +632,9 @@ of the base class.
               IndicesOutputIterator out  /*= CGAL::Emptyset_iterator()*/);
   /// @}
   /// @endcond
+
+  /// Add a 0-dimensional feature in the domain.
+  Corner_index add_corner(const Point_3& p);
 
   /*!
     Add 0-dimensional features in the domain. The value type of `InputIterator` must

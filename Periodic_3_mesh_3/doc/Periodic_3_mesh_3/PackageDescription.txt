@@ -44,7 +44,7 @@ flexibility that is offered in the \ref PkgMesh_3Summary package.}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
-### Efficiently computing periodic meshes ###
+### Relation to the 3D Mesh Generation Package ###
 
 A periodic mesh extends, by definition, infinitely in space. To avoid storing and
 manipulating duplicate points, well-chosen "dummy" points are inserted
@@ -59,13 +59,13 @@ Since this mesh generator only supports traditional (non-periodic) domains,
 it must be provided adapted oracles to handle the periodicity of the input domain
 and of the mesh.
 This package provides the necessary tools to be able to use %CGAL's three-dimensional
-mesh generator with periodic triangulations.
+mesh generator with %CGAL's periodic triangulations.
 
 \cgalClassifedRefPages
 
 ## Concepts ##
 
-The \ref PkgPeriodic_3_mesh_3 package relies entirely on the \ref PkgMesh_3Concepts
+This package relies entirely on the \ref PkgMesh_3Concepts
 and the \ref PkgMesh_3SecondaryConcepts described in the \ref PkgMesh_3Summary package.
 The following concepts are essentially identical to the concepts `MeshDomain_3`
 and `MeshDomainWithFeatures_3` in the \ref PkgMesh_3Summary package
@@ -76,8 +76,8 @@ but are nevertheless defined for clarity:
 
 ## Classes ##
 
-The following class provides the interface between CGAL's periodic triangulation
-and CGAL's three-dimensional mesh generator:
+The following class provides the interface between %CGAL's periodic triangulation
+and %CGAL's three-dimensional mesh generator:
 - `CGAL::Periodic_3_mesh_triangulation_3<MD, K, Vertex_base, Cell_base>`
 
 The following classes are models of the periodic domain concept:
@@ -91,14 +91,14 @@ separated by the zero-level of an implicit function:
 ## Function Templates ##
 
 The following functions handle the generation of a periodic mesh:
-- `CGAL::make_periodic_3_mesh_3`
-- `CGAL::refine_periodic_3_mesh_3`
-- `CGAL::exude_periodic_3_mesh_3`
-- `CGAL::perturb_periodic_3_mesh_3`
-- `CGAL::lloyd_optimize_periodic_3_mesh_3`
-- `CGAL::odt_optimize_periodic_3_mesh_3`
+- `CGAL::make_periodic_3_mesh_3()`
+- `CGAL::refine_periodic_3_mesh_3()`
+- `CGAL::exude_periodic_3_mesh_3()`
+- `CGAL::perturb_periodic_3_mesh_3()`
+- `CGAL::lloyd_optimize_periodic_3_mesh_3()`
+- `CGAL::odt_optimize_periodic_3_mesh_3()`
 
-## Classes and functions of `Mesh_3` ##
+## Classes and Functions of `Mesh_3` ##
 
 Many classes and functions used by this package are defined within the `Mesh_3`
 package, see \ref PkgMesh_3MeshClasses, \ref PkgMesh_3Domains, and \ref PkgMesh_3Parameters.

@@ -57,7 +57,7 @@ by a mesh optimization phase to remove slivers and provide a good quality mesh.
 \subsection Periodic_3_mesh_3Mesh_3 Relation to the 3D Mesh Generation Package
 
 This package is fundamentally linked to the package \ref PkgMesh_3Summary,
-refered from now on as "the Mesh_3 package", or simple `Mesh_3`.
+referred from now on as "the Mesh_3 package", or simply `Mesh_3`.
 
 A periodic mesh extends, by definition, infinitely in space. To avoid storing and
 manipulating duplicate points, well-chosen "dummy" points are inserted
@@ -72,7 +72,7 @@ Since `Mesh_3` only supports traditional (non-periodic) domains,
 it must be provided adapted oracles to handle the periodicity of the input domain
 and of the mesh.
 This package provides these necessary tools to be able to use %CGAL's three-dimensional
-mesh generator with periodic triangulations.
+mesh generator with %CGAL's 3D periodic triangulations.
 
 \subsection Periodic_3_mesh_3InputDomain Input Domain
 
@@ -206,8 +206,8 @@ A periodic 3D mesh generation process is launched through a call
 to one of the two following functions:
 
 \code{.cpp}
-template <class C3T3, class Periodic_3MeshDomain_3, class MeshCriteria>
-C3T3 make_periodic_3_mesh_3(Periodic_3MeshDomain_3 domain,
+template <class C3T3, class PeriodicMeshDomain, class MeshCriteria>
+C3T3 make_periodic_3_mesh_3(MeshDomain domain,
                             MeshCriteria criteria,
                             parameters::internal::Features_options features = parameters::features(domain),
                             parameters::internal::Lloyd_options lloyd = parameters::no_lloyd(),
@@ -215,9 +215,9 @@ C3T3 make_periodic_3_mesh_3(Periodic_3MeshDomain_3 domain,
                             parameters::internal::Perturb_options perturb = parameters::perturb(),
                             parameters::internal::Exude_options exude = parameters::exude());
 
-template <class C3T3, class Periodic_3MeshDomain_3, class MeshCriteria>
+template <class C3T3, class MeshDomain, class MeshCriteria>
 void refine_periodic_3_mesh_3(C3T3& c3t3,
-                              Periodic_3MeshDomain_3 domain,
+                              PeriodicMeshDomain domain,
                               MeshCriteria criteria,
                               parameters::internal::Lloyd_options lloyd = parameters::no_lloyd(),
                               parameters::internal::Odt_options odt = parameters::no_odt(),
@@ -230,7 +230,7 @@ of the input domain, while the function `refine_periodic_3_mesh_3()` refines
 an existing periodic mesh of the input domain.
 
 \warning The triangulation must form at all times a simplicial complex within
-a single copy of the domain. It is the responsability of the user to provide
+a single copy of the domain. It is the responsibility of the user to provide
 a triangulation that satisfies this condition when calling the refinement
 function `refine_periodic_3_mesh_3`.
 
@@ -252,9 +252,9 @@ base classes are respectively models of the concepts `MeshVertexBase_3` and
 
 \subsection Periodic_3_mesh_3TheDomainOracleandtheFeaturesParameter The Domain Oracle and the Features Parameter
 
-The template parameter `Periodic_3MeshDomain_3` is required to be a model of
+The template parameter `PeriodicMeshDomain` is required to be a model of
 the concept `Periodic_3MeshDomain_3`. The argument `domain` of type
-`Periodic_3MeshDomain_3` is the sole link through which the periodic domain
+`PeriodicMeshDomain` is the sole link through which the periodic domain
 to be discretized is known by the mesh generation algorithm.
 
 This concept provides, among others, member functions to test whether or not
@@ -263,6 +263,29 @@ in the affirmative.
 The `Periodic_3MeshDomain_3` concept adds member functions which given a query point
 tell whether the point lies inside or outside the domain and in which subdomain
 the point lies, if inside.
+
+If the domain description includes 0 and 1-dimensional features
+that have to be accurately represented in the final mesh,
+the template parameter `PeriodicMeshDomain` is required to be
+of a model of the refined concept `Periodic_3MeshDomainWithFeatures_3`.
+The concept `Periodic_3MeshDomainWithFeatures_3` mainly provides the incidence
+graph of 0, 1 and 2-dimensional features, and a member function to construct
+sample points on curves.
+
+Using the parameter of type `Features`, the user
+whose domain is a model of `Periodic_3MeshDomainWithFeatures_3`
+can choose to have the corners and curves of the domain
+represented in the mesh or not.
+The type `Features` of this parameter is an internal undescribed type.
+The library provides functions to construct appropriate values of that type.
+<UL>
+<LI>`parameters::features(domain)` sets `features` according to the domain,
+i.e.\ 0 and 1-dimensional features are taken into account if `domain` is a
+`MeshDomainWithFeatures_3`
+<LI>`parameters::no_features()` prevents the representation
+of 0 and 1-dimensional features in the mesh. This is useful to get a smooth and rough approximation
+of a domain with features.
+</UL>
 
 \subsection Periodic_3_mesh_3TheMeshingCriteria The Meshing Criteria
 
@@ -372,8 +395,8 @@ It uses `Implicit_multi_domain_to_labeling_function_wrapper` as model
 of `ImplicitFunction`, which is required by `Labeled_periodic_3_mesh_domain_3`.
 
 The set of subdomains is given by a vector of vector of signs.
-Each subdomain corresponds to a sign vector [s1, s2, ..., sn],
-where si is the sign of the function fi(p) at a point p of the subdomain.
+Each subdomain corresponds to a sign vector `[s1, s2, ..., sn]`,
+where `si` is the sign of the function `fi(p)` at a point `p` of the subdomain.
 
 \cgalFigureRef{figure_multi_domain_periodic} shows a view and a cut view of the resulting mesh.
 
@@ -392,9 +415,9 @@ domain. We add by hand the intersection of the spheres as a sharp feature.
 One of the edge of the cylinder is protected.
 \cgalFigureEnd
 
-\cgalExample{Periodic_3_mesh_3/mesh_sphere_with_balls.cpp}
+\cgalExample{Periodic_3_mesh_3/mesh_implicit_shape_with_protection.cpp}
 
-\subsection Periodic_3_mesh_3ComplexExamples Further examples
+\subsection Periodic_3_mesh_3ComplexExamples Further Examples
 Advanced use cases can be found in Section \ref Mesh_3_section_examples of the `Mesh_3` package.
 It is straightforward to adapt these examples to periodic settings.
 
@@ -402,7 +425,7 @@ It is straightforward to adapt these examples to periodic settings.
 
 \subsection Periodic_3_mesh_3TheoreticalFoundations Theoretical Foundations
 
-For the theoretical fundations of the mesh generation process, see Section
+For the theoretical foundations of the mesh generation process, see Section
 \ref Mesh_3TheoreticalFoundations of the package `Mesh_3`.
 
 \subsection Periodic_3_mesh_3ImplementationHistory Implementation History

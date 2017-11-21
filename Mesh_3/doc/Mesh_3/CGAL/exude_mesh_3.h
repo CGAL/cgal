@@ -31,7 +31,7 @@ a CPU time limit after which the optimization process is stopped. This time is
 measured using the `Real_timer` class.
 The default value is 0 and means that there is no time limit.
 
-- <b>`parameters::sliver_bound`</b> is designed to give, in degree, a targeted
+- <b>`parameters::sliver_bound`</b> is designed to give, in degrees, a targeted
 lower bound on dihedral angles of mesh cells.
 The exudation process considers in turn all the mesh cells
 that have a smallest dihedral angle less than `sliver_bound`

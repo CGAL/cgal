@@ -13,7 +13,7 @@ the concept `Periodic_3MeshDomainWithFeatures_3` also exposes 0 and 1-dimensiona
 The exposed features of the domain are respectively called subdomains, surface patches,
  curves and corners according to their respective dimensions 3, 2, 1, and 0.
 
-From a syntaxic point of view, it defines exactly the same requirement
+From a syntactic point of view, it defines exactly the same requirement
 as the concept `MeshDomainWithFeatures_3` and thus `Periodic_3MeshDomainWithFeatures_3`
 refines `MeshDomainWithFeatures_3` without any additional requirement.
 However, the oracle must take into account the periodicity of the domain.

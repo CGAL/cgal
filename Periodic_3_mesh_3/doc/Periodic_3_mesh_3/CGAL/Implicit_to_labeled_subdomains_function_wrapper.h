@@ -5,11 +5,11 @@ namespace CGAL {
 
 The class `Implicit_to_labeled_subdomains_function_wrapper` is an helper class
 designed to wrap an implicit function which describes a domain by
-[p is inside if f(p)<0] to a function that takes its values into {1, 2} and
+[`p` is inside if `f(p)<0`] to a function that takes its values into `{1, 2}` and
 thus describes a multidomain.
 
-Note that for the 3D mesh generator [f(p)=0] means that p is outside the domain.
-Since this wrapper has values into {1, 2}, both the interior and the exterior of
+Note that for the 3D mesh generator [`f(p)=0`] means that p is outside the domain.
+Since this wrapper has values into `{1, 2}`, both the interior and the exterior of
 the periodic domain domain described by the input implicit function are meshed,
 thus yielding a periodic mesh of the entire fundamental domain.
 

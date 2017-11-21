@@ -46,7 +46,7 @@ int main(int argc, char* argv[])
                          cell_radius_edge_ratio=2, cell_size=7);
 
   // Mesh generation and optimization in one call (sliver_bound is the
-  // targeted dihedral angle in degree)
+  // targeted dihedral angle in degrees)
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
                                       no_exude(),
                                       perturb(sliver_bound=10, time_limit=15));

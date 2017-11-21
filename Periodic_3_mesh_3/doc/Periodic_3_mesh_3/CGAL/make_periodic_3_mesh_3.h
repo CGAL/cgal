@@ -33,15 +33,15 @@ triangulation `C3T3::Triangulation` are required to be models of the
 concepts `MeshVertexBase_3` and `Periodic_3TriangulationDSVertexBase_3`, and of
 the concepts `MeshCellBase_3` and `Periodic_3TriangulationDSCellBase_3`, respectively.
 
-\tparam Periodic_3MeshDomain is required to be a model of the concept `Periodic_3MeshDomain_3`,
+\tparam MD is required to be a model of the concept `Periodic_3MeshDomain_3`,
 or of the refined concept `Periodic_3MeshDomainWithFeatures_3` if the domain has corners
 and curve segments that need to be accurately represented in the mesh.
 The argument `domain` is the sole link through which the domain
 to be discretized is known by the mesh generation algorithm.
 
-\tparam MeshCriteria has to be a model of the concept
+\tparam MC has to be a model of the concept
 `MeshCriteria_3`, or a model of the refined concept `MeshCriteriaWithFeatures_3` if the domain has exposed features.
-The argument `criteria` of type `MeshCriteria` specifies the size and shape
+The argument `criteria` of type `MC` specifies the size and shape
 requirements for mesh tetrahedra and surface facets. These criteria
 form the rules which drive the refinement process. All mesh elements
 satisfy those criteria at the end of the refinement process.
@@ -135,11 +135,11 @@ optimization processes.
 */
 
 template <class C3T3,
-          class Periodic_3MeshDomain,
-          class MeshCriteria>
+          class MD,
+          class MC>
 C3T3 make_periodic_3_mesh_3(
-    Periodic_3MeshDomain domain,
-    MeshCriteria criteria,
+    MD domain,
+    MC criteria,
     parameters::internal::Features_options features = parameters::features(domain),
     parameters::internal::Lloyd_options lloyd = parameters::no_lloyd(),
     parameters::internal::Odt_options odt = parameters::no_odt(),
