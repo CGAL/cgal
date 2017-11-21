@@ -804,11 +804,7 @@ protected:
      	
 	Halffacet_const_handle f = opposite_facet->twin();
 
-	SHalfedge_around_facet_const_circulator 
-	  sfc1(f->facet_cycles_begin()), sfc2(sfc1);
-	
-	if(++f->facet_cycles_begin() != f->facet_cycles_end() ||
-	   ++(++(++sfc1)) != sfc2) {
+        if(needs_triangulation(f)) {
 	  Vector_3 orth = f->plane().orthogonal_vector();
 	  int c = CGAL::abs(orth[0]) > CGAL::abs(orth[1]) ? 0 : 1;
 	  c = CGAL::abs(orth[2]) > CGAL::abs(orth[c]) ? 2 : c;
@@ -839,6 +835,14 @@ protected:
 	  }
 	  B.end_facet();
 	}
+      }
+
+      inline bool needs_triangulation(Halffacet_const_handle f)
+      {
+          SHalfedge_around_facet_const_circulator
+            sfc1(f->facet_cycles_begin()), sfc2(sfc1);
+          return ++f->facet_cycles_begin() != f->facet_cycles_end() ||
+                  ++(++(++sfc1)) != sfc2;
       }
 
       void visit(SFace_const_handle) {}
