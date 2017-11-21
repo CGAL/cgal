@@ -46,15 +46,15 @@ namespace VSA {
  *  \cgalParamBegin{vertex_point_map} the property map with the points associated
  *    to the vertices of `tm_in`. Instance of a class model of `ReadWritePropertyMap`.
  *  \cgalParamEnd
- *  \cgalParamBegin{init_method} selection of initialization method.
+ *  \cgalParamBegin{seeding_method} selection of seeding method.
  *  \cgalParamEnd
  *  \cgalParamBegin{max_nb_proxies} maximum number of proxies to approximate the geometry.
  *  \cgalParamEnd
  *  \cgalParamBegin{min_error_drop} minimum error drop of the approximation, expressed in ratio between two iterations of proxy addition.
  *  \cgalParamEnd
- *  \cgalParamBegin{nb_of_iterations} number of partitioning and fitting iterations after initialization.
+ *  \cgalParamBegin{nb_of_iterations} number of partitioning and fitting iterations after seeding.
  *  \cgalParamEnd
- *  \cgalParamBegin{nb_of_relaxations} number of relaxations interleaved within initialization seeding.
+ *  \cgalParamBegin{nb_of_relaxations} number of relaxations interleaved within seeding.
  *  \cgalParamEnd
  *  \cgalParamBegin{mesh_chord_error} maximum chord approximation error use for mesh construction.
  *  \cgalParamEnd
@@ -97,9 +97,9 @@ bool mesh_approximation(const TriangleMesh &tm_in,
   L21_proxy_fitting l21_fitting(tm_in);
   approx.set_metric(l21_metric, l21_fitting);
 
-  // default hierarchical initialization
+  // default hierarchical seeding
   CGAL::VSA::Seeding method = choose_param(
-    get_param(np, internal_np::init_method), CGAL::VSA::Hierarchical);
+    get_param(np, internal_np::seeding_method), CGAL::VSA::Hierarchical);
   boost::optional<std::size_t> max_nb_proxies = choose_param(
     get_param(np, internal_np::max_nb_proxies), boost::optional<std::size_t>());
   boost::optional<FT> min_error_drop = choose_param(

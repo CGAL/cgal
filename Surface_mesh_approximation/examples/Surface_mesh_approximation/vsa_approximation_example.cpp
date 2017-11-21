@@ -27,7 +27,7 @@ int main()
   bool valid_polyhedron = CGAL::VSA::mesh_approximation(input,
     std::back_inserter(points),
     std::back_inserter(triangles),
-    CGAL::VSA::parameters::init_method(CGAL::VSA::Hierarchical). // hierarchical init
+    CGAL::VSA::parameters::seeding_method(CGAL::VSA::Hierarchical). // hierarchical seeding
     max_nb_proxies(200). // target number of proxies
     nb_of_iterations(30). // number of iterations after initialization
     // output to polyhedron

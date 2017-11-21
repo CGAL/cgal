@@ -30,7 +30,7 @@ int main()
   // free function interface with named parameters
   CGAL::VSA::mesh_segmentation(input,
     fpxmap, // output indexed face set
-    CGAL::VSA::parameters::init_method(CGAL::VSA::Hierarchical). // hierarchical init
+    CGAL::VSA::parameters::seeding_method(CGAL::VSA::Hierarchical). // hierarchical seeding
     max_nb_proxies(200). // refine until target number of proxies
     nb_of_iterations(30)); // number of iterations after initialization
 

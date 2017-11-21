@@ -33,7 +33,7 @@ See below a sample call of a function that uses the optional BGL named parameter
 // anchors : the container to store the anchor points
 vsa_mesh_approximation(input,
        , output
-       , CGAL::VSA::parameters::init_method(method)
+       , CGAL::VSA::parameters::seeding_method(method)
        .max_nb_proxies(num_proxies)
        .nb_of_iterations(num_iterations)
        .anchor_points(std::back_inserter(anchors)));
@@ -73,7 +73,7 @@ typename CGAL::Kernel_traits<
 \b Default value is \code boost::get(CGAL::vertex_point, pmesh)\endcode
 \cgalNPEnd
 
-\cgalNPBegin{init_method} \anchor VSA_init_method
+\cgalNPBegin{seeding_method} \anchor VSA_seeding_method
 the selection of seeding method.\n
 \b Type : \c CGAL::Method \n
 \b Default value is `CGAL::Method::Random`
@@ -92,13 +92,13 @@ the minimum total error drop to approximate the input mesh.\n
 \cgalNPEnd
 
 \cgalNPBegin{nb_of_iterations} \anchor VSA_nb_of_iterations
-the number of partitioning and fitting iterations after initialization.\n
+the number of partitioning and fitting iterations after seeding.\n
 \b Type : `std::size_t` \n
 \b Default value is `10`
 \cgalNPEnd
 
 \cgalNPBegin{nb_of_relaxations} \anchor VSA_nb_of_relaxations
-the number of relaxations interleaved within initialization seeding.\n
+the number of relaxations interleaved within seeding.\n
 \b Type : `std::size_t` \n
 \b Default value is `10`
 \cgalNPEnd
