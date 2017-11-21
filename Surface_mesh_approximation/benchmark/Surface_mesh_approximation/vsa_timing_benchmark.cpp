@@ -22,7 +22,7 @@ typedef CGAL::Timer Timer;
 /**
  * This file is a timing benchmark of each phase.
  * With different configuration:
-   1. initialization
+   1. seeding method
    2. number of proxies
    3. number of iterations
  * TODO: error
@@ -49,32 +49,32 @@ int main(int argc, char *argv[])
   L21_proxy_fitting proxy_fitting(mesh);
   approx.set_metric(error_metric, proxy_fitting);
 
-  int init = std::atoi(argv[2]);
-  if (init < 0 || init > 2)
+  int method = std::atoi(argv[2]);
+  if (method < 0 || method > 2)
     return EXIT_FAILURE;
-  const std::size_t num_proxies = std::atoi(argv[3]);
-  const std::size_t num_iterations = std::atoi(argv[4]);
-  std::cerr << "#init " << init << std::endl;
-  std::cerr << "#num_proxies " << num_proxies << std::endl;
-  std::cerr << "#num_iterations " << num_iterations << std::endl;
+  const std::size_t nb_proxies = std::atoi(argv[3]);
+  const std::size_t nb_iterations = std::atoi(argv[4]);
+  std::cerr << "#method " << method << std::endl;
+  std::cerr << "#nb_proxies " << nb_proxies << std::endl;
+  std::cerr << "#nb_iterations " << nb_iterations << std::endl;
 
   Timer t0, t1;
   t1.start();
 
-  std::cerr << "start initialization" << std::endl;
+  std::cerr << "start seeding" << std::endl;
   t0.reset();
   t0.start();
-  approx.init(
-    static_cast<CGAL::VSA::Seeding>(init), num_proxies);
+  approx.seeding(
+    static_cast<CGAL::VSA::Seeding>(method), nb_proxies);
   t0.stop();
-  std::cerr << "initialization time " << t0.time() << " sec." << std::endl;
+  std::cerr << "seeding time " << t0.time() << " sec." << std::endl;
 
-  std::cerr << "start relaxation" << std::endl;
+  std::cerr << "start iterations" << std::endl;
   t0.reset();
   t0.start();
-  approx.run(num_iterations);
+  approx.run(nb_iterations);
   t0.stop();
-  std::cerr << "relaxation time " << t0.time() << " sec." << std::endl;
+  std::cerr << "iterations time " << t0.time() << " sec." << std::endl;
 
   Polyhedron mesh_out;
   t0.reset();

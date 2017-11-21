@@ -35,8 +35,8 @@ int main()
   Proxy_fitting proxy_fitting(input);
   approx.set_metric(metric, proxy_fitting);
 
-  // initialize 100 random proxies
-  approx.init(CGAL::VSA::Random, 100);
+  // seeding 100 random proxies
+  approx.seeding(CGAL::VSA::Random, 100);
   
   // run 30 iterations 
   approx.run(30);

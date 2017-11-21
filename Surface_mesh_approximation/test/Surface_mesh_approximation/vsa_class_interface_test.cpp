@@ -51,9 +51,9 @@ int main()
   L2_proxy_fitting proxy_fitting(mesh);
   approx.set_metric(error_metric, proxy_fitting);
 
-  // random init and run
-  std::cout << "random init and run" << std::endl;
-  approx.init(CGAL::VSA::Random, 10);
+  // random seeding and run
+  std::cout << "random seeding and run" << std::endl;
+  approx.seeding(CGAL::VSA::Random, 10);
   approx.run(10);
   if (approx.get_proxies_size() != 10)
     return EXIT_FAILURE;
@@ -121,19 +121,19 @@ int main()
 
   const FT drop(0.001);
   const std::size_t iterations = 5;
-  std::cout << "rebuild and hierarchical init" << std::endl;
+  std::cout << "rebuild and hierarchical seeding" << std::endl;
   approx.rebuild();
   if (approx.get_proxies_size() != 0)
     return EXIT_FAILURE;
-  approx.init(CGAL::VSA::Hierarchical, boost::none, drop, iterations);
+  approx.seeding(CGAL::VSA::Hierarchical, boost::none, drop, iterations);
   approx.run(10);
   std::cout << "#proxies " << approx.get_proxies_size() << std::endl;
 
-  std::cout << "rebuild and incremental init" << std::endl;
+  std::cout << "rebuild and incremental seeding" << std::endl;
   approx.rebuild();
   if (approx.get_proxies_size() != 0)
     return EXIT_FAILURE;
-  approx.init(CGAL::VSA::Incremental, boost::none, drop, iterations);
+  approx.seeding(CGAL::VSA::Incremental, boost::none, drop, iterations);
   approx.run(10);
   std::cout << "#proxies " << approx.get_proxies_size() << std::endl;
 

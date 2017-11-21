@@ -51,7 +51,7 @@ int main()
   L21_proxy_fitting proxy_fitting(mesh);
   approx.set_metric(error_metric, proxy_fitting);
 
-  approx.init(CGAL::VSA::Random, 100);
+  approx.seeding(CGAL::VSA::Random, 100);
   std::vector<FT> error;
   for (std::size_t i = 0; i < 30; ++i)
     error.push_back(approx.run());

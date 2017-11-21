@@ -333,22 +333,23 @@ public:
   }
 
   /*!
-   * @brief Initialize the algorithm with both maximum number of proxies
-   * and minmum error drop stop criteria. The first criterion met stops the seeding.
+   * @brief Initialize the seeds with both maximum number of proxies
+   * and minmum error drop stop criteria.
+   * The first criterion met stops the seeding.
    * Parameters out of range are ignored.
    * @param method seeding method
    * @param max_nb_proxies maximum target number of proxies,
    * should be in range (0, num_faces(_mesh) / 3)
    * @param min_error_drop minimum error drop,
    * should be in range (0.0, 1.0)
-   * @param num_iterations number of re-fitting iterations 
+   * @param nb_relaxations number of interleaved refitting relaxations
    * in incremental and hierarchical seeding
    * @return number of proxies initialized
    */
-  std::size_t init(const Seeding method = Hierarchical,
+  std::size_t seeding(const Seeding method = Hierarchical,
     const boost::optional<std::size_t> max_nb_proxies = boost::optional<std::size_t>(),
     const boost::optional<FT> min_error_drop = boost::optional<FT>(),
-    const std::size_t num_iterations = 5) {
+    const std::size_t nb_relaxations = 5) {
     // maximum number of proxies internally, maybe better choice?
     const std::size_t nb_px = num_faces(*m_pmesh) / 3;
 
@@ -361,11 +362,11 @@ public:
         max_nb_px_adjusted = *max_nb_proxies;
       switch (method) {
         case Random:
-          return init_random_error(max_nb_px_adjusted, *min_error_drop, num_iterations);
+          return init_random_error(max_nb_px_adjusted, *min_error_drop, nb_relaxations);
         case Incremental:
-          return init_incremental_error(max_nb_px_adjusted, *min_error_drop, num_iterations);
+          return init_incremental_error(max_nb_px_adjusted, *min_error_drop, nb_relaxations);
         case Hierarchical:
-          return init_hierarchical_error(max_nb_px_adjusted, *min_error_drop, num_iterations);
+          return init_hierarchical_error(max_nb_px_adjusted, *min_error_drop, nb_relaxations);
         default:
           return 0;
       }
@@ -374,11 +375,11 @@ public:
       // no valid min_error_drop provided, only max_nb_proxies
       switch (method) {
         case Random:
-          return init_random(*max_nb_proxies, num_iterations);
+          return init_random(*max_nb_proxies, nb_relaxations);
         case Incremental:
-          return init_incremental(*max_nb_proxies, num_iterations);
+          return init_incremental(*max_nb_proxies, nb_relaxations);
         case Hierarchical:
-          return init_hierarchical(*max_nb_proxies, num_iterations);
+          return init_hierarchical(*max_nb_proxies, nb_relaxations);
         default:
           return 0;
       }
@@ -388,11 +389,11 @@ public:
       const FT e(0.1);
       switch (method) {
         case Random:
-          return init_random_error(nb_px, e, num_iterations);
+          return init_random_error(nb_px, e, nb_relaxations);
         case Incremental:
-          return init_incremental_error(nb_px, e, num_iterations);
+          return init_incremental_error(nb_px, e, nb_relaxations);
         case Hierarchical:
-          return init_hierarchical_error(nb_px, e, num_iterations);
+          return init_hierarchical_error(nb_px, e, nb_relaxations);
         default:
           return 0;
       }

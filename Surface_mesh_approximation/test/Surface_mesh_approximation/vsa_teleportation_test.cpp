@@ -45,7 +45,7 @@ bool check_strict_ordering(const std::vector<FT> &error)
 
 /**
  * This file tests the teleportation functionality on a plane-sphere shape.
- * We initialize random first, then verify that teleporting all (most) planes
+ * We seed randomly first, then verify that teleporting all (most) planes
  * from planar part to the spherical one and lower the error.
  */
 int main()
@@ -66,7 +66,7 @@ int main()
   approx.set_metric(error_metric, proxy_fitting);
 
   std::cout << "Seeding by number." << std::endl;
-  approx.init(CGAL::VSA::Random, 50);
+  approx.seeding(CGAL::VSA::Random, 50);
   if (approx.get_proxies_size() != 50)
     return EXIT_FAILURE;
   for (std::size_t i = 0; i < 10; ++i) {

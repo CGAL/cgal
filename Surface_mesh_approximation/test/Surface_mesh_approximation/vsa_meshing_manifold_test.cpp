@@ -35,10 +35,10 @@ bool test_manifold(const char *file_name, const FT drop = FT(1e-8))
   L21_proxy_fitting proxy_fitting(mesh);
   approx.set_metric(error_metric, proxy_fitting);
 
-  // approximation, init from error, drop to the target error incrementally
+  // approximation, seeding from error, drop to the target error incrementally
   const std::size_t num_iterations = 20;
   const std::size_t inner_iterations = 5;
-  approx.init(CGAL::VSA::Incremental, boost::none, drop, inner_iterations);
+  approx.seeding(CGAL::VSA::Incremental, boost::none, drop, inner_iterations);
   approx.run(num_iterations);
   std::cout << "#proxies " << approx.get_proxies_size() << std::endl;
 

@@ -21,9 +21,9 @@ typedef L21_approx::Proxy_fitting L21_proxy_fitting;
 typedef CGAL::Timer Timer;
 
 /**
- * This file is a timing benchmark of the automatic initialization.
+ * This file is a timing benchmark of the automatic seeding.
  * With different configuration:
-   1. initialization
+   1. seeding method
    2. error drop tolerance
  */
 int main(int argc, char *argv[])
@@ -48,22 +48,22 @@ int main(int argc, char *argv[])
   L21_proxy_fitting proxy_fitting(mesh);
   approx.set_metric(error_metric, proxy_fitting);
 
-  int init = std::atoi(argv[2]);
-  if (init < 0 || init > 2)
+  int method = std::atoi(argv[2]);
+  if (method < 0 || method > 2)
     return EXIT_FAILURE;
-  const FT tol(std::atof(argv[3]));
-  int iterations = std::atoi(argv[4]);
-  std::cerr << "#init " << init << std::endl;
-  std::cerr << "#tolerance " << tol << std::endl;
-  std::cerr << "#iterations " << iterations << std::endl;
+  const FT error_drop(std::atof(argv[3]));
+  int nb_relaxations = std::atoi(argv[4]);
+  std::cerr << "#method " << method << std::endl;
+  std::cerr << "#error_drop " << error_drop << std::endl;
+  std::cerr << "#nb_relaxations " << nb_relaxations << std::endl;
 
   Timer t;
-  std::cerr << "start initialization" << std::endl;
+  std::cerr << "start seeding" << std::endl;
   t.start();
-  approx.init(
-    static_cast<CGAL::VSA::Seeding>(init), boost::none, tol, iterations);
+  approx.seeding(
+    static_cast<CGAL::VSA::Seeding>(method), boost::none, error_drop, nb_relaxations);
   t.stop();
-  std::cerr << "initialization time " << t.time() << " sec." << std::endl;
+  std::cerr << "seeding time " << t.time() << " sec." << std::endl;
   std::cerr << "#proxies " << approx.get_proxies_size() << std::endl;
 
   return EXIT_SUCCESS;

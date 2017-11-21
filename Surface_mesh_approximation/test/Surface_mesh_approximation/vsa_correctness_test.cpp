@@ -35,12 +35,12 @@ bool test_shape(const char *file_name, const std::size_t target_num_proxies)
   L21_proxy_fitting proxy_fitting(mesh);
   approx.set_metric(error_metric, proxy_fitting);
 
-  // approximation, init from error, drop to the target error incrementally
+  // approximation, seeding from error, drop to the target error incrementally
   // should reach targeted number of proxies gradually
   const FT drop(1e-8);
   const std::size_t num_iterations = 20;
   const std::size_t inner_iterations = 10;
-  approx.init(CGAL::VSA::Incremental, boost::none, drop, inner_iterations);
+  approx.seeding(CGAL::VSA::Incremental, boost::none, drop, inner_iterations);
   approx.run(num_iterations);
 
   // eliminate redundant area (local minima) by merging

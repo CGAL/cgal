@@ -98,8 +98,8 @@ int main()
   Point_proxy_fitting proxy_fitting(center_pmap, area_pmap);
   approx.set_metric(error_metric, proxy_fitting);
 
-  std::cout << "random init and run" << std::endl;
-  approx.init(CGAL::VSA::Random, 20);
+  std::cout << "random seeding and run" << std::endl;
+  approx.seeding(CGAL::VSA::Random, 20);
   approx.run(20);
   if (approx.get_proxies_size() != 20)
     return EXIT_FAILURE;

@@ -97,7 +97,7 @@ void mesh_segmentation(const TriangleMesh &tm_in,
   boost::optional<FT> min_error_drop = choose_param(
     get_param(np, internal_np::min_error_drop), boost::optional<FT>());
   std::size_t nb_of_relaxations = choose_param(get_param(np, internal_np::nb_of_relaxations), 5);
-  approx.init(method, max_nb_proxies, min_error_drop, nb_of_relaxations);
+  approx.seeding(method, max_nb_proxies, min_error_drop, nb_of_relaxations);
 
   // reasonable default number of iterations
   std::size_t nb_of_iterations_default = max_nb_proxies ? num_faces(tm_in) / *max_nb_proxies : 30;
