@@ -16,18 +16,18 @@ message( STATUS "USING Qt5_VERSION = '${Qt5Core_VERSION_STRING}'" )
 
 include(Use_CGAL_Qt5_headers)
 
-collect_cgal_library( CGAL_Qt5 "")
+if(NOT CGAL_HEADER_ONLY)
+  collect_cgal_library( CGAL_Qt5 "${CGAL_Qt5_MOC_FILES};${CGAL_Qt5_RESOURCE_FILES}")
+else()
+  collect_cgal_library( CGAL_Qt5 "")
+  target_link_libraries( CGAL_Qt5 INTERFACE CGAL_Qt5_extras)
+endif()
 
 if(CGAL_HEADER_ONLY)
   set(keyword "INTERFACE")
 endif()
 
 CGAL_setup_CGAL_Qt5_dependencies( CGAL_Qt5 ${keyword})
-
-if(NOT CGAL_HEADER_ONLY)
-  target_link_libraries( CGAL_Qt5 PRIVATE CGAL_Qt5_extras)
-endif()
-
 
 if(COMMAND add_config_flag)
   set( CGAL_HAS_QT5 TRUE )
