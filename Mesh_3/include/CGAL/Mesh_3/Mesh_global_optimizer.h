@@ -828,7 +828,6 @@ compute_moves(Moving_vertices_set& moving_vertices)
         {
           const Weighted_point& position = tr_.point(oldv);
           Bare_point new_position = translate(cp(position), move);
-//          std::cout << "new position: " << new_position << std::endl;
           size = sizing_field_(new_position, oldv);
         }
 
@@ -884,7 +883,6 @@ compute_move(const Vertex_handle& v)
 
   // Get move from move function
   Vector_3 move = move_function_(v, incident_cells, c3t3_, sizing_field_);
-//  std::cout << "move from lloyd: " << move << std::endl;
 
   FT local_sq_size = min_circumradius_sq_length(v, incident_cells);
   if ( FT(0) == local_sq_size )
@@ -895,16 +893,11 @@ compute_move(const Vertex_handle& v)
   {
     const Weighted_point& position = tr_.point(v);
     Bare_point new_position = translate(cp(position), move);
-//    std::cout << "new pos before projection: " << new_position << std::endl;
     Bare_point projected_new_position = helper_.project_on_surface(v, new_position);
-//    std::cout << "projected: " << projected_new_position << std::endl;
     move = vector(cp(position), projected_new_position);
   }
 
   FT local_move_sq_ratio = sq_length(move) / local_sq_size;
-
-//  std::cout << "optimizing point: " << position << std::endl;
-//  std::cout << "moving with: " << move << std::endl;
 
   // Move point only if the displacement is big enough w.r.t. the local size
   if ( local_move_sq_ratio < sq_freeze_ratio_ )

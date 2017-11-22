@@ -1220,7 +1220,7 @@ expand_prestar(const Cell_handle& cell_to_add,
 
         // With 'new_weight' only, the point is only orthogonal to the power sphere,
         // so we add a little bit more weight to make sure that 'pwp' is in conflict.
-        new_weight += 1e5 * std::numeric_limits<FT>::epsilon(); // @fixme epsilon alone is not enough
+        new_weight += 1e5 * std::numeric_limits<FT>::epsilon(); // 'epsilon' alone is not enough
         Weighted_point ncr_pwp(cp(pwp), new_weight);
         Tetrahedron_3 tet = tr_.tetrahedron(curr_f, ncr_pwp);
 

@@ -83,9 +83,11 @@ public:
                       const C3T3& c3t3,
                       const Sizing_field& sizing_field = Sizing_field() ) const
   {
-//    std::cout << "computing move of: " << &*v
-//              << " pos: " << c3t3.triangulation().point(v)
-//              << " dim: " << c3t3.in_dimension(v) << std::endl;
+#ifdef CGAL_MESH_3_OPTIMIZER_DEBUG_VERBOSE
+    std::cout << "computing move of: " << &*v
+              << " pos: " << c3t3.triangulation().point(v)
+              << " dim: " << c3t3.in_dimension(v) << std::endl;
+#endif
 
     switch ( c3t3.in_dimension(v) )
     {
