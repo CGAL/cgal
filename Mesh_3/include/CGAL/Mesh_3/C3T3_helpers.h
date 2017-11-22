@@ -3392,6 +3392,8 @@ get_least_square_surface_plane(const Vertex_handle& v,
     tr_.finite_incident_facets(v, std::back_inserter(facets));
   }
 
+  const Weighted_point& position = tr_.point(v);
+
   // Get adjacent surface points
   std::vector<Bare_point> surface_point_vector;
   typename Facet_vector::iterator fit = facets.begin(), fend = facets.end();
@@ -3404,8 +3406,12 @@ get_least_square_surface_plane(const Vertex_handle& v,
       const Cell_handle& cell = fit->first;
       const int& i = fit->second;
 
-      // @fixme really ugly
-      const Weighted_point& position = tr_.point(v);
+      // In the case of a periodic triangulation, the incident facets of a point
+      // do not necessarily have the same offsets. Worse, the surface centers
+      // might not have the same offset as their facet. Thus, no solution except
+      // calling a function 'get_closest_point(p, q)' that simply returns q
+      // for a non-periodic triangulation, and checks all possible offsets for
+      // periodic triangulations
       const Bare_point& bp = tr_.get_closest_point(cp(position),
                                                    cell->get_facet_surface_center(i));
       surface_point_vector.push_back(bp);

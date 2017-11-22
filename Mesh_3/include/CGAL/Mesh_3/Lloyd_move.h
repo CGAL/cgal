@@ -271,6 +271,8 @@ private:
     std::vector<Bare_point> points;
     points.reserve(64);
 
+    const Weighted_point& position = tr.point(v);
+
     // Get c3t3's facets incident to v, and add their surface delaunay ball
     // center to output
     for ( typename Facet_vector::iterator fit = incident_facets.begin() ;
@@ -283,8 +285,12 @@ private:
       const Cell_handle& cell = fit->first;
       const int& i = fit->second;
 
-      // @fixme 'get_closest_point' is really ugly
-      const Weighted_point& position = tr.point(v);
+      // In the case of a periodic triangulation, the incident facets of a point
+      // do not necessarily have the same offsets. Worse, the surface centers
+      // might not have the same offset as their facet. Thus, no solution except
+      // calling a function 'get_closest_point(p, q)' that simply returns q
+      // for a non-periodic triangulation, and checks all possible offsets for
+      // periodic triangulations
       points.push_back(tr.get_closest_point(cp(position),
                                             cell->get_facet_surface_center(i)));
     }
