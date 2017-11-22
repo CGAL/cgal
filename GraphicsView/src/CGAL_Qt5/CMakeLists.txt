@@ -14,13 +14,10 @@ endif()
 
 message( STATUS "USING Qt5_VERSION = '${Qt5Core_VERSION_STRING}'" )
 
-include(Use_CGAL_Qt5_headers)
-
 if(NOT CGAL_HEADER_ONLY)
-  collect_cgal_library( CGAL_Qt5 "${CGAL_Qt5_MOC_FILES};${CGAL_Qt5_RESOURCE_FILES}")
+  collect_cgal_library( CGAL_Qt5 "${_CGAL_Qt5_MOC_FILES_private};${_CGAL_Qt5_RESOURCE_FILES_private}")
 else()
   collect_cgal_library( CGAL_Qt5 "")
-  target_link_libraries( CGAL_Qt5 INTERFACE CGAL_Qt5_extras)
 endif()
 
 if(CGAL_HEADER_ONLY)
