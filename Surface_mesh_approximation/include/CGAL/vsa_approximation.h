@@ -32,6 +32,8 @@
 #include <iostream>
 #endif
 
+#define CGAL_VSA_INVALID_TAG std::numeric_limits<std::size_t>::max()
+
 namespace CGAL {
 namespace VSA {
 
@@ -100,7 +102,7 @@ private:
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
 
   // internal typedefs
-  typedef boost::associative_property_map<boost::unordered_map<vertex_descriptor, int> > Vertex_anchor_map;
+  typedef boost::associative_property_map<boost::unordered_map<vertex_descriptor, std::size_t> > Vertex_anchor_map;
 
   typedef std::vector<halfedge_descriptor> Chord_vector;
   typedef typename Chord_vector::iterator Chord_vector_iterator;
@@ -231,7 +233,7 @@ private:
   boost::unordered_map<face_descriptor, std::size_t> internal_fidx_map;
   boost::associative_property_map<boost::unordered_map<face_descriptor, std::size_t> > fproxy_map;
   // The attached anchor index of a vertex.
-  boost::unordered_map<vertex_descriptor, int> internal_vidx_map;
+  boost::unordered_map<vertex_descriptor, std::size_t> internal_vidx_map;
   Vertex_anchor_map vanchor_map;
 
   // Proxies.
@@ -325,11 +327,12 @@ public:
     // rebuild internal data structure
     internal_fidx_map.clear();
     BOOST_FOREACH(face_descriptor f, faces(*m_pmesh))
-      internal_fidx_map[f] = 0;
+      internal_fidx_map[f] = CGAL_VSA_INVALID_TAG;
 
     internal_vidx_map.clear();
     BOOST_FOREACH(vertex_descriptor v, vertices(*m_pmesh))
-      internal_vidx_map.insert(std::pair<vertex_descriptor, int>(v, 0));
+      internal_vidx_map.insert(
+        std::pair<vertex_descriptor, std::size_t>(v, CGAL_VSA_INVALID_TAG));
   }
 
   /*!
@@ -479,9 +482,8 @@ public:
    * Propagates the proxy seed facets and floods the whole mesh to minimize the fitting error.
    */
   void partition() {
-#define CGAL_NOT_TAGGED_ID std::numeric_limits<std::size_t>::max()
     BOOST_FOREACH(face_descriptor f, faces(*m_pmesh))
-      fproxy_map[f] = CGAL_NOT_TAGGED_ID;
+      fproxy_map[f] = CGAL_VSA_INVALID_TAG;
 
     std::priority_queue<Facet_to_integrate> facet_pqueue;
     for (std::size_t i = 0; i < proxies.size(); ++i) {
@@ -490,7 +492,7 @@ public:
 
       BOOST_FOREACH(face_descriptor fadj, faces_around_face(halfedge(f, *m_pmesh), *m_pmesh)) {
         if (fadj != boost::graph_traits<TriangleMesh>::null_face()
-            && fproxy_map[fadj] == CGAL_NOT_TAGGED_ID) {
+            && fproxy_map[fadj] == CGAL_VSA_INVALID_TAG) {
           facet_pqueue.push(Facet_to_integrate(
             fadj, i, (*fit_error)(fadj, proxies[i].px)));
         }
@@ -500,18 +502,17 @@ public:
     while (!facet_pqueue.empty()) {
       const Facet_to_integrate c = facet_pqueue.top();
       facet_pqueue.pop();
-      if (fproxy_map[c.f] == CGAL_NOT_TAGGED_ID) {
+      if (fproxy_map[c.f] == CGAL_VSA_INVALID_TAG) {
         fproxy_map[c.f] = c.px;
         BOOST_FOREACH(face_descriptor fadj, faces_around_face(halfedge(c.f, *m_pmesh), *m_pmesh)) {
           if (fadj != boost::graph_traits<TriangleMesh>::null_face()
-            && fproxy_map[fadj] == CGAL_NOT_TAGGED_ID) {
+            && fproxy_map[fadj] == CGAL_VSA_INVALID_TAG) {
             facet_pqueue.push(Facet_to_integrate(
             fadj, c.px, (*fit_error)(fadj, proxies[c.px].px)));
           }
         }
       }
     }
-#undef CGAL_NOT_TAGGED_ID
   }
 
   /*!
@@ -859,9 +860,8 @@ public:
   template <typename PolyhedronSurface>
   bool extract_mesh(PolyhedronSurface &tm_out, const FT chord_error = FT(0.2), bool pca_plane = false) {
     // initialize all vertex anchor status
-    enum Vertex_status { NO_ANCHOR = -1 };
     BOOST_FOREACH(vertex_descriptor v, vertices(*m_pmesh))
-      internal_vidx_map[v] = static_cast<int>(NO_ANCHOR);
+      internal_vidx_map[v] = CGAL_VSA_INVALID_TAG;
     anchors.clear();
     borders.clear();
     tris.clear();
@@ -872,7 +872,7 @@ public:
     find_anchors();
     find_edges(chord_error);
     add_anchors();
-    pseudo_CDT();
+    pseudo_cdt();
 
     return build_polyhedron_surface(tm_out);
   }
@@ -1433,14 +1433,17 @@ private:
   }
 
   /*!
-   * @brief Runs the pseudo Constrained Delaunay Triangulation at each region, and stores the extracted indexed triangles in @a tris.
+   * @brief Runs the pseudo Constrained Delaunay Triangulation at each proxy region,
+   * and stores the extracted indexed triangles in @a tris.
+   * @pre all anchors are found, i.e. all boundary cycles have been visited
+   * and attached with at least 3 anchors.
    */
-  void pseudo_CDT() {
+  void pseudo_cdt() {
     // subgraph attached with vertex anchor status and edge weight
-    typedef boost::property<boost::vertex_index1_t, int,
-      boost::property<boost::vertex_index2_t, int> > VertexProperty;
+    typedef boost::property<boost::vertex_index1_t, std::size_t,
+      boost::property<boost::vertex_index2_t, std::size_t> > VertexProperty;
     typedef boost::property<boost::edge_weight_t, FT,
-      boost::property<boost::edge_index_t, int> > EdgeProperty;
+      boost::property<boost::edge_index_t, std::size_t> > EdgeProperty;
     typedef boost::subgraph<boost::adjacency_list<
       boost::listS, boost::vecS,
       boost::undirectedS,
@@ -1486,10 +1489,10 @@ private:
         vertex_patches[p].push_back(to_sgv_map[v]);
     }
     BOOST_FOREACH(VertexVector &vpatch, vertex_patches) {
-      // add a super vertex connecting to its boundary anchors into the main graph
+      // add a super vertex connecting to its boundary anchors in each patch
       const sg_vertex_descriptor superv = add_vertex(gmain);
-      global_vanchor_map[superv] = 0;
-      global_vtag_map[superv] = 0;
+      global_vanchor_map[superv] = CGAL_VSA_INVALID_TAG;
+      global_vtag_map[superv] = CGAL_VSA_INVALID_TAG;
       BOOST_FOREACH(sg_vertex_descriptor v, vpatch) {
         if (is_anchor_attached(v, global_vanchor_map))
           add_edge(superv, v, FT(0.0), gmain);
@@ -1516,6 +1519,9 @@ private:
 
       // backtrack to the anchor and tag each vertex in the local patch graph
       BOOST_FOREACH(sg_vertex_descriptor v, vertices(glocal)) {
+        // skip the added super source vertex in the patch
+        if (v == source)
+          continue;
         sg_vertex_descriptor curr = v;
         while (!is_anchor_attached(curr, local_vanchor_map))
           curr = pred[curr];
@@ -1542,8 +1548,8 @@ private:
         }
 
         FT half_chord_len = vdist.back() / FT(2.0);
-        const int anchorleft = vanchor_map[source(chord.front(), *m_pmesh)];
-        const int anchorright = vanchor_map[target(chord.back(), *m_pmesh)];
+        const std::size_t anchorleft = vanchor_map[source(chord.front(), *m_pmesh)];
+        const std::size_t anchorright = vanchor_map[target(chord.back(), *m_pmesh)];
         typename std::vector<FT>::iterator ditr = vdist.begin() + 1;
         for (typename Chord_vector::iterator hitr = chord.begin();
           hitr != chord.end() - 1; ++hitr, ++ditr) {
@@ -1558,14 +1564,14 @@ private:
     // collect triangles
     BOOST_FOREACH(face_descriptor f, faces(*m_pmesh)) {
       halfedge_descriptor he = halfedge(f, *m_pmesh);
-      int i = global_vtag_map[to_sgv_map[source(he, *m_pmesh)]];
-      int j = global_vtag_map[to_sgv_map[target(he, *m_pmesh)]];
-      int k = global_vtag_map[to_sgv_map[target(next(he, *m_pmesh), *m_pmesh)]];
+      std::size_t i = global_vtag_map[to_sgv_map[source(he, *m_pmesh)]];
+      std::size_t j = global_vtag_map[to_sgv_map[target(he, *m_pmesh)]];
+      std::size_t k = global_vtag_map[to_sgv_map[target(next(he, *m_pmesh), *m_pmesh)]];
       if (i != j && i != k && j != k) {
         std::vector<std::size_t> t;
-        t.push_back(static_cast<std::size_t>(i));
-        t.push_back(static_cast<std::size_t>(j));
-        t.push_back(static_cast<std::size_t>(k));
+        t.push_back(i);
+        t.push_back(j);
+        t.push_back(k);
         tris.push_back(t);
       }
     }
@@ -1715,7 +1721,7 @@ private:
   bool is_anchor_attached(
     const typename boost::property_traits<VertexAnchorIndexMap>::key_type &v,
     const VertexAnchorIndexMap &vertex_anchor_map) const {
-    return vertex_anchor_map[v] >= 0;
+    return vertex_anchor_map[v] != CGAL_VSA_INVALID_TAG;
   }
 
   /*!
@@ -1723,7 +1729,7 @@ private:
    * @param vtx vertex
    */
   void attach_anchor(const vertex_descriptor &vtx) {
-    vanchor_map[vtx] = static_cast<int>(anchors.size());
+    vanchor_map[vtx] = anchors.size();
     anchors.push_back(Anchor(vtx, compute_anchor_position(vtx)));
   }
 
@@ -1854,5 +1860,7 @@ private:
 
 } // end namespace VSA
 } // end namespace CGAL
+
+#undef CGAL_VSA_INVALID_TAG
 
 #endif // CGAL_SURFACE_MESH_APPROXIMATION_VSA_APPROXIMATION_H
