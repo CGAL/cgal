@@ -100,8 +100,8 @@ Transform {
 		aosMarkedEdgeIndex 100
 		aosMarkedVertexIndex 0 1
 		aosMarkedVertexStyle "none"
-		coord DEF COORD ExactCoordinate {
-		  ratPoint [-1 1 0, -1 0 -1, -1 -1 0, -1 0 1]
+		coord DEF COORD EpecCoordinate {
+		  exactPoint [-1 1 0, -1 0 -1, -1 -1 0, -1 0 1]
 		}
 		# pointIndex [6 7]
 		curveIndex [0 1, 1 2, 2 3, 3 0]
@@ -129,8 +129,8 @@ Transform {
 		aosMarkedEdgeIndex 100
 		aosMarkedVertexIndex 1
 		aosMarkedVertexStyle "none"
-		coord DEF COORD ExactCoordinate {
-		  ratPoint [-1 1 0, -1 0 0, -2 -1 0, -1 0 1, -2 1 2]
+		coord DEF COORD EpecCoordinate {
+		  exactPoint [-1 1 0, -1 0 0, -2 -1 0, -1 0 1, -2 1 2]
 		}
 		# pointIndex [6 7]
 		curveIndex [0 1, 1 2, 2 3, 3 4, 4 0]
@@ -163,7 +163,14 @@ Transform {
 	      }
 	    }
 	    Shape {
-	      appearance USE AXES_APP
+              appearance DEF AXES_APP Appearance {
+                material Material {
+                  # ambientIntensity 1
+                  diffuseColor 0.4 0.4 0.4
+                  # specularColor 0.3 0.3 0.3
+                  # transparency 0.0001
+                }
+              }
 	      geometry Sphere {
     	        center 0 0 -1
 	        radius 0.05
@@ -225,20 +232,13 @@ Transform {
 	}
        ]
     }
-    
+
     # The axes:
     DEF AXES Transform {
       scale 0.1 0.1 0.1
       children [
 	Shape {
-	  appearance DEF AXES_APP Appearance {
-	    material Material {
-	      # ambientIntensity 1
-	      diffuseColor 0.4 0.4 0.4
-	      # specularColor 0.3 0.3 0.3
-	      # transparency 0.0001
-	    }
-	  }
+          appearance USE AXES_APP
 	  geometry Sphere { radius 0.1 }
 	}
 	DEF CS_AXIS Transform {

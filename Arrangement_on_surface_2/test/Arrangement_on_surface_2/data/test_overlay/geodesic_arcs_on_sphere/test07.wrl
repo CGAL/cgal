@@ -99,11 +99,11 @@ Transform {
 		aosMarkedEdgeIndex 100
 		aosMarkedVertexIndex 100
 		aosMarkedVertexStyle "none"
-		coord ExactCoordinate {
-		  ratPoint [0 0 -1 0 0 1]
+		coord EpecCoordinate {
+		  exactPoint [0 0 -1 0 0 1]
 		}
-		normal ExactNormal {
-		  ratVector [2 -1 0, -1 0 0] 
+		normal EpecNormal {
+		  exactVector [2 -1 0, -1 0 0]
 		}
 		# pointIndex [6 7]
 		curveIndex [0 1 0 1]
@@ -133,18 +133,18 @@ Transform {
 		aosMarkedEdgeIndex 100
 		aosMarkedVertexIndex 100
 		aosMarkedVertexStyle "none"
-		coord ExactCoordinate {
-		  ratPoint [0 0 -1 0 0 1]
+		coord EpecCoordinate {
+		  exactPoint [0 0 -1 0 0 1]
 		}
-		normal ExactNormal {
-		  ratVector [-2 -1 0, 1 0 0]
+		normal EpecNormal {
+		  exactVector [-2 -1 0, 1 0 0]
 		}
 		# pointIndex [6 7]
 		curveIndex [0 1 0 1]
 		normalIndex[0 1]
 	      }
 	    }
-	    
+
 	   ]
 	}
        ]
@@ -171,7 +171,14 @@ Transform {
 	      }
 	    }
 	    Shape {
-	      appearance USE AXES_APP
+              appearance DEF AXES_APP Appearance {
+                material Material {
+                  # ambientIntensity 1
+                  diffuseColor 0.4 0.4 0.4
+                  # specularColor 0.3 0.3 0.3
+                  # transparency 0.0001
+                }
+              }
 	      geometry Sphere {
     	        center 0 0 -1
 	        radius 0.05
@@ -194,8 +201,7 @@ Transform {
 	    endCap TRUE
 	    loop FALSE
 	    crossSectionRadius 0.01
-	    spine [
-		   0 0 1,
+	    spine [0 0 1,
 		   -0.0980171 0 0.995185,
 		   -0.19509 0 0.980785,
 		   -0.290285 0 0.95694,
@@ -233,20 +239,13 @@ Transform {
 	}
        ]
     }
-    
+
     # The axes:
     DEF AXES Transform {
       scale 0.1 0.1 0.1
       children [
 	Shape {
-	  appearance DEF AXES_APP Appearance {
-	    material Material {
-	      # ambientIntensity 1
-	      diffuseColor 0.4 0.4 0.4
-	      # specularColor 0.3 0.3 0.3
-	      # transparency 0.0001
-	    }
-	  }
+          appearance USE AXES_APP
 	  geometry Sphere { radius 0.1 }
 	}
 	DEF CS_AXIS Transform {
