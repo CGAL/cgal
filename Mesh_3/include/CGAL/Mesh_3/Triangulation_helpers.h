@@ -28,7 +28,7 @@
 #include <CGAL/license/Mesh_3.h>
 
 #include <CGAL/internal/Has_nested_type_Bare_point.h>
-#include <CGAL/Handle_hash_function.h>
+#include <CGAL/internal/Mesh_3/Timestamp_hash_function.h>
 
 #include <boost/mpl/if.hpp>
 #include <boost/mpl/identity.hpp>
@@ -625,8 +625,9 @@ get_sq_distance_to_closest_vertex(const Tr& tr,
 {
   CGAL_precondition(!tr.is_infinite(vh));
 
-  typedef boost::unordered_set<Vertex_handle>              Vertex_container;
-  typedef typename Vertex_container::iterator              VC_it;
+  typedef CGAL::Mesh_3::internal::Timestamp_hash_function<Vertex_handle> Hash_fct;
+  typedef boost::unordered_set<Vertex_handle, Hash_fct>                  Vertex_container;
+  typedef typename Vertex_container::iterator                            VC_it;
 
   // There is no need to use tr.min_squared_distance() here because we are computing
   // distances between 'v' and a neighbor within their common cell, which means

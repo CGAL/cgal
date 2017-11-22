@@ -67,7 +67,7 @@ void facets_in_complex_3_to_triangle_mesh(const C3T3& c3t3, TriangleMesh& graph)
 
   typedef typename C3T3::Facets_in_complex_iterator                      Ficit;
 
-  typedef CGAL::internal::Mesh_3::Timestamp_hash_function<Vertex_handle> Hash_fct;
+  typedef CGAL::Mesh_3::internal::Timestamp_hash_function<Vertex_handle> Hash_fct;
   typedef boost::unordered_map<Vertex_handle, int, Hash_fct>             VHmap;
 
   typedef CGAL::cpp11::array<int, 3>                                     Face;

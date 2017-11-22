@@ -28,8 +28,8 @@
 #include <iterator>
 
 namespace CGAL {
-namespace internal {
 namespace Mesh_3 {
+namespace internal {
 
 // Hash function for unordered sets/maps with keys of type Vertex_handle
 template <typename Vertex_handle>
@@ -55,7 +55,7 @@ struct Timestamp_hash_function
 };
 
 } // namespace internal
-} // namespace Mesh_3
 } // namespace CGAL
+} // namespace Mesh_3
 
 #endif // CGAL_TIMESTAMP_HASH_FUNCTION_H

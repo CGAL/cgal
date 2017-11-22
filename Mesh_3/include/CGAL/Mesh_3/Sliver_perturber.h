@@ -1105,7 +1105,7 @@ build_priority_queue(const FT& sliver_bound, PQueue& pqueue) const
 
   int pqueue_size = 0;
 
-  typedef CGAL::internal::Mesh_3::Timestamp_hash_function<Vertex_handle> Hash_fct;
+  typedef CGAL::Mesh_3::internal::Timestamp_hash_function<Vertex_handle> Hash_fct;
   typedef boost::unordered_map<Vertex_handle, PVertex, Hash_fct>         M;
 
   M vpm;
