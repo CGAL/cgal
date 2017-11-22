@@ -55,7 +55,7 @@ struct Timestamp_hash_function
 };
 
 } // namespace internal
-} // namespace CGAL
 } // namespace Mesh_3
+} // namespace CGAL
 
 #endif // CGAL_TIMESTAMP_HASH_FUNCTION_H
