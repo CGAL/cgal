@@ -80,20 +80,17 @@ In figure \cgalFigureRef{nb_proxies}, if we specify the minimum error drop to 10
 
 \subsection sma_operations Operations
 
-For interactive use, the approach can yield better approximations of the geometry via adding/removing proxies and tunnelling out of local minima via additional operations:
+For interactive use, the approach can yield better approximations of the geometry via adding/removing proxies and tunneling out of local minima via additional operations:
 - <b>Merging</b>. Merging two adjacent regions.
-- <b>Splitting</b>. Splitting regions into smaller ones to reduce the error, by adding one or several proxies. 
-% precise whether general N-section is possible or just bisection.
-- <b>Adding</b>. Adding a proxy to further reduce the approximation error. As for the seeding process, addition can be performed incrementally or hierarchically. 
-% precise if several proxy additions is possible.
-- <b>Teleportation</b>. It is a combination of merging and adding proxies: merging the pair of adjacent region and adding a proxy seed to the worst region. More specifically, the pair of regions whose merging realizes the smallest error after merging and local re-fitting, is selected for merging. The teleport operation can temporarily either decrease or increase the total approximation error.
-% explain whether teleport is performed even when the error increases. Say whether a force mode is available.  
+- <b>Splitting</b>. Splitting one region into smaller ones to reduce the error. By default it's bisection and N-section is also possible. Firstly, we select the request number of facet seeds from the region then perform the refitting process confined to the region.
+- <b>Adding</b>. Adding one or more proxies to further reduce the approximation error. As for the seeding process, addition can be performed incrementally or hierarchically, as shown in figure \cgalFigureRef{seeding_method}.
+- <b>Teleportation</b>. It is a combination of merging and adding proxies: merging the pair of adjacent regions and adding a proxy seed to the worst region. More specifically, the pair of regions whose merging realizes the smallest error after merging and local re-fitting, is selected for merging. In practice, the teleport operation can temporarily either decrease or increase the total approximation error. We provide an optional heuristic test if the teleportation is worth it: whether the error added by a (simulated) deletion is smaller than half of the error of the worst region. If this test fails, no teleportation is necessary.
 
 \cgalFigureBegin{operations, operations.png}
-Operations on the sphere-cube union model. Left: partition of 20 randomly initialized proxies after 10 iterations. Right: result after one merging and one teleportation operation.
+Operations on the sphere-cube union model. Upper row: merging (9 proxies) and the reverse bisection splitting (10 partitions) on the confined region. Lower row: one teleportation operation of merging and adding a facet seed, the sphere is approximated with one more proxy.
 \cgalFigureEnd
 
-As depicted in Figure \cgalFigureRef{operations}, teleportation provides a means to relocate a local minimum region entrapped in the planar plart (left) to the most needed regions on the sphere (right). In \ref sma_example3, the class interface is used to control the approximation process through the aforementioned  operations.
+As depicted in Figure \cgalFigureRef{operations}, teleportation provides a means to relocate a local minimum region entrapped in the planar plart (left) to the most needed regions on the sphere (right). In \ref sma_example3, the class interface is used to control the approximation process through the aforementioned operations.
 
 \subsection sma_meshing Meshing
 

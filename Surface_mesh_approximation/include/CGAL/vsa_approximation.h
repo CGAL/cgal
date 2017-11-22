@@ -705,8 +705,9 @@ public:
   }
 
   /*!
-   * @brief Find the best two regions to merge.
-   * TODO: define 'best', it is minimum merged sum error now
+   * @brief Simulate merging and local re-fitting of all two adjacent proxies
+   * and find the best two regions to merge.
+   * Currently, the 'best' is defined as the minimum merged sum error among all adjacent pairs.
    * @param px_enlarged the proxy to be enlarged
    * @param px_merged the proxy to be merged
    * @param if_test set true to activate the merge test
