@@ -55,9 +55,6 @@ FT schwarz_p(const Point& p) {
 
 int main(int argc, char** argv)
 {
-//  std::freopen("/home/mrouxell/log.txt", "w", stdout);
-//  std::freopen("/home/mrouxell/log.txt", "w", stderr);
-
   // 'int' because the 'schwarz_p' function is periodic over the domain only if
   // the length of the side of the domain is an integer
   int domain_size = 1;
