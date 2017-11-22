@@ -126,6 +126,7 @@ public:
   using Base::incident_edges;
   using Base::incident_facets;
   using Base::insert_dummy_points;
+  using Base::is_vertex;
   using Base::number_of_vertices;
   using Base::periodic_triangle;
   using Base::periodic_tetrahedron;
@@ -599,6 +600,11 @@ public:
   ///
   /// \sa `CGAL::Regular_triangulation_3::locate`
   /// @{
+  bool is_vertex(const Weighted_point& p, Vertex_handle& v) const
+  {
+    return Base::is_vertex(canonicalize_point(p), v);
+  }
+
   Vertex_handle nearest_power_vertex(const Bare_point& p, Cell_handle start) const
   {
     return Base::nearest_power_vertex(canonicalize_point(p), start);
