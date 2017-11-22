@@ -57,7 +57,7 @@ namespace CGAL {
 /// As periodic triangulations are parallelized, a lot of these functions will
 /// become obsolete.
 template<class Gt, class Tds>
-class Periodic_3_regular_triangulation_3_mesher_3
+class Periodic_3_regular_triangulation_3_wrapper
   : public Periodic_3_regular_triangulation_3<Gt, Tds>
 {
 public:
@@ -140,8 +140,8 @@ public:
   static std::string io_signature() { return Get_io_signature<Base>()(); }
 
   /// Constructor
-  Periodic_3_regular_triangulation_3_mesher_3(const Iso_cuboid& domain = Iso_cuboid(0,0,0,1,1,1),
-                                              const Geom_traits& gt = Geom_traits())
+  Periodic_3_regular_triangulation_3_wrapper(const Iso_cuboid& domain = Iso_cuboid(0,0,0,1,1,1),
+                                             const Geom_traits& gt = Geom_traits())
     : Base(domain, gt)
   {
   }
@@ -1052,7 +1052,7 @@ class Periodic_3_mesh_triangulation_3
 
   // Triangulation and tds
   typedef Triangulation_data_structure_3<Vertex_base, Cell_base> Tds;
-  typedef Periodic_3_regular_triangulation_3_mesher_3<Geom_traits, Tds> Triangulation;
+  typedef Periodic_3_regular_triangulation_3_wrapper<Geom_traits, Tds> Triangulation;
 
 public:
   typedef Triangulation type;
