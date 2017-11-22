@@ -652,15 +652,6 @@ public:
     return AFTER;
   }
 
-  // @fixme, below can't be defined there because TriangulationTraits_3 does not
-  // require the following construction
-
-  // Undocumented, needed for Mesh_3 (because of Periodic_3_mesh_3)
-  typename Geom_traits::FT min_squared_distance(const Point_3& p, const Point_3& q) const
-  {
-    return geom_traits().compute_squared_distance_3_object()(p, q);
-  }
-
   // used as functor in std::sort in Delaunay and regular triangulations
   struct Perturbation_order
   {

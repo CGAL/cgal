@@ -905,11 +905,6 @@ public:
                                        const Weighted_point& q,
                                        const Weighted_point& r) const;
 
-  double compute_power_distance_to_power_sphere(const Cell_handle c,
-                                                const int i) const;
-  double compute_power_distance_to_power_sphere(const Cell_handle c,
-                                                const Vertex_handle v) const;
-
   Vertex_handle nearest_power_vertex_in_cell(const Bare_point& p,
                                              Cell_handle c)  const;
 
@@ -2164,40 +2159,6 @@ greater_or_equal_power_distance(const Bare_point& p,
                                 const Weighted_point& r) const
 {
   return ! less_power_distance(p, q, r);
-}
-
-// @fixme, below can't be defined there because RegularTriangulationTraits_3
-// does not require the following construction
-
-// Undocumented, needed for Mesh_3 (because of Periodic_3_mesh_3)
-// \pre c->neighbor(i) is finite
-template < class Gt, class Tds, class Lds >
-double
-Regular_triangulation_3<Gt,Tds,Lds>::
-compute_power_distance_to_power_sphere(const Cell_handle c,
-                                       const int i) const
-{
-  Cell_handle nc = c->neighbor(i);
-  CGAL_precondition(!is_infinite(nc));
-  Vertex_handle v = nc->vertex(nc->index(c));
-
-  return compute_power_distance_to_power_sphere(c, v);
-}
-
-template < class Gt, class Tds, class Lds >
-double
-Regular_triangulation_3<Gt,Tds,Lds>::
-compute_power_distance_to_power_sphere(const Cell_handle c,
-                                       const Vertex_handle v) const
-{
-  typedef typename Geom_traits::Compute_power_distance_to_power_sphere_3 Critical_radius;
-
-  Critical_radius critical_radius =
-      geom_traits().compute_power_distance_to_power_sphere_3_object();
-
-  return CGAL::to_double(critical_radius(point(c, 0), point(c, 1),
-                                         point(c, 2), point(c, 3),
-                                         point(v)));
 }
 
 template < class Gt, class Tds, class Lds >
