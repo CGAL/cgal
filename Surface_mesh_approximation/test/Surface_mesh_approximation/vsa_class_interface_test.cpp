@@ -82,8 +82,8 @@ int main()
   // split proxy 0 into 2 proxies
   // precondition: proxy 0 should have more than 2 facets
   std::cout << "spliting" << std::endl;
-  approx.split(0);
-  approx.run(10);
+  if (!approx.split(0, 2, 10))
+    return EXIT_FAILURE;
   if (approx.get_proxies_size() != 17)
     return EXIT_FAILURE;
 

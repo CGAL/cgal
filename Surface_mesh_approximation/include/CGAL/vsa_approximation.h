@@ -773,31 +773,61 @@ public:
   }
 
   /*!
-   * @brief Split one proxy by default bisection, but N-section is also possible
-   * No re-fitting performed and the proxy map is maintained.
-   * @param px proxy index
-   * @param n split section
-   * @return change of error
+   * @brief Split one proxy area by default bisection, but N-section is also possible.
+   * @pre valid facet proxy map
+   * @param px_idx proxy index
+   * @param n number of split sections
+   * @param nb_relaxations number of relaxation on the confined proxy area
+   * @return true if split succeeds, false otherwise
    */
-  FT split(const std::size_t px, const std::size_t n = 2) {
-    if (px >= proxies.size())
-      return FT(0.0);
+  bool split(const std::size_t px_idx,
+    const std::size_t n = 2,
+    const std::size_t nb_relaxations = 10) {
+    if (px_idx >= proxies.size() || n < 2)
+      return false;
 
+    // collect confined proxy area
+    std::vector<face_descriptor> confined_area;
+    BOOST_FOREACH(face_descriptor f, faces(*m_pmesh))
+      if (fproxy_map[f] == px_idx)
+        confined_area.push_back(f);
+    // not enough facets to split
+    if (n > confined_area.size())
+      return false;
+
+    // a copy of confined proxies
+    std::vector<Proxy_wrapper> confined_proxies;
+    confined_proxies.push_back(proxies[px_idx]);
+
+    // select seed facets in the confiend area
     std::size_t count = 1;
-    FT sum_err(0.0);
-    BOOST_FOREACH(face_descriptor f, faces(*m_pmesh)) {
+    BOOST_FOREACH(face_descriptor f, confined_area) {
       if (count >= n)
         break;
 
-      if (fproxy_map[f] == px && f != proxies[px].seed) {
-        sum_err += (*fit_error)(f, proxies[px].px);
+      if (fproxy_map[f] == px_idx && f != proxies[px_idx].seed) {
         fproxy_map[f] = proxies.size();
         proxies.push_back(fit_new_proxy(f, proxies.size()));
         ++count;
+        // copy
+        confined_proxies.push_back(proxies.back());
       }
     }
 
-    return sum_err;
+    // relaxation on confined area and proxies
+    for (std::size_t i = 0; i < nb_relaxations; ++i) {
+      BOOST_FOREACH(face_descriptor f, confined_area)
+        fproxy_map[f] = CGAL_VSA_INVALID_TAG;
+
+      partition(confined_proxies.begin(), confined_proxies.end());
+      fit(confined_proxies.begin(), confined_proxies.end());
+    }
+
+    // copy back
+    BOOST_FOREACH(const Proxy_wrapper &pxw, confined_proxies)
+      proxies[pxw.idx] = pxw;
+
+    return true;
   }
 
   /*!
