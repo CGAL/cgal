@@ -118,7 +118,6 @@ private:
   struct Extract_point :
     public CGAL::unary_function<typename Tr::Vertex, Weighted_point>
   {
-    // <periodic>
     Weighted_point operator()(const typename Tr::Vertex& v) const { return v.point(); }
   };
   

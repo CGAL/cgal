@@ -36,8 +36,12 @@
 #include <CGAL/Regular_triangulation_3.h>
 #include <CGAL/Regular_triangulation_cell_base_3.h>
 #include <CGAL/Regular_triangulation_cell_base_with_weighted_circumcenter_3.h>
+
+#ifdef CGAL_PERIODIC_3_MESH_3_CONFIG_H
 #include <CGAL/Periodic_3_triangulation_3.h>
 #include <CGAL/Periodic_3_regular_triangulation_3.h>
+#endif
+
 #include <boost/variant.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <utility>
