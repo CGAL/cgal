@@ -28,11 +28,71 @@
 
 #include <CGAL/refine_periodic_3_mesh_3.h>
 
+#include <CGAL/assertions.h>
 #include <CGAL/make_mesh_3.h>
+#include <CGAL/Mesh_3/C3T3_helpers.h>
 
+#include <boost/iterator/transform_iterator.hpp>
 #include <boost/parameter/preprocessor.hpp>
 
+#include <iterator>
+
 namespace CGAL {
+
+namespace internal {
+namespace Periodic_3_mesh_3 {
+
+template<typename C3T3>
+void give_dummy_points_artificial_index(C3T3& c3t3)
+{
+  CGAL_precondition(c3t3.triangulation().is_1_cover());
+
+  typedef typename C3T3::Triangulation::Vertex_iterator       Vertex_iterator;
+
+  for(Vertex_iterator vit = c3t3.triangulation().vertices_begin();
+                      vit != c3t3.triangulation().vertices_end(); ++vit)
+  {
+    std::cout << "dummy point: " << vit->point() << std::endl;
+    vit->set_index(-10); // @fixme
+  }
+}
+
+// C3t3_initializer: initialize c3t3
+template < typename C3T3,
+           typename MeshDomain,
+           typename MeshCriteria,
+           bool MeshDomainHasHasFeatures,
+           typename HasFeatures = int>
+class C3t3_initializer
+  : public CGAL::internal::Mesh_3::C3t3_initializer<
+      C3T3, MeshDomain, MeshCriteria, MeshDomainHasHasFeatures, HasFeatures>
+{
+  typedef CGAL::internal::Mesh_3::C3t3_initializer<
+            C3T3, MeshDomain, MeshCriteria,
+            MeshDomainHasHasFeatures, HasFeatures>              Base;
+
+public:
+  void operator()(C3T3& c3t3,
+                  const MeshDomain& domain,
+                  const MeshCriteria& criteria,
+                  bool with_features,
+                  bool nonlinear = false,
+                  const int nb_initial_points = -1)
+  {
+    c3t3.triangulation().set_domain(domain.periodic_bounding_box());
+    c3t3.triangulation().insert_dummy_points();
+
+    give_dummy_points_artificial_index(c3t3);
+
+    // Call the basic initialization from c3t3, which handles features and
+    // adds a bunch of points on the surface
+    Base::operator()(c3t3, domain, criteria, with_features,
+                     nonlinear, nb_initial_points);
+  }
+};
+
+} // namespace Periodic_3_mesh_3
+} // namespace internal
 
 // -----------------------------------
 // make_periodic_3_mesh_3 stuff
@@ -121,156 +181,24 @@ BOOST_PARAMETER_FUNCTION(
   (deduced
    (optional
     (features_param, (parameters::internal::Features_options), parameters::features(domain))
-    (exude_param, (parameters::internal::Exude_options), parameters::no_exude()) // another default parameter distinct from Mesh_3
-    (perturb_param, (parameters::internal::Perturb_options), parameters::no_perturb()) // another default parameter distinct from Mesh_3
+    (exude_param, (parameters::internal::Exude_options), parameters::exude())
+    (perturb_param, (parameters::internal::Perturb_options), parameters::perturb())
     (odt_param, (parameters::internal::Odt_options), parameters::no_odt())
     (lloyd_param, (parameters::internal::Lloyd_options), parameters::no_lloyd())
     (mesh_options_param, (parameters::internal::Mesh_3_options),
                          parameters::internal::Mesh_3_options())
+    (manifold_options_param, (parameters::internal::Manifold_options),
+                             parameters::internal::Manifold_options())
     )
    )
   )
 {
   make_periodic_3_mesh_3_impl(c3t3, domain, criteria,
                               exude_param, perturb_param, odt_param, lloyd_param,
-                              features_param.features());
+                              features_param.features(), mesh_options_param,
+                              manifold_options_param);
 }
 CGAL_PRAGMA_DIAG_POP
-
-template<class C3T3, class MeshDomain>
-void init_triangulation(C3T3& c3t3, MeshDomain& domain)
-{
-  typedef typename C3T3::Triangulation Tr;
-
-  Tr& tr = c3t3.triangulation();
-  tr.set_domain(domain.periodic_bounding_box());
-
-  init_default_triangulation_vertices(c3t3, domain);
-
-  init_domain(c3t3, domain);
-}
-
-/**
- * @brief If the triangulation of a complex contains any vertices, then
- *  we initialize them with the proper information
- */
-template<class C3T3, class MD>
-void init_default_triangulation_vertices(C3T3& c3t3, const MD& oracle)
-{
-  typedef typename C3T3::Triangulation Tr;
-  typedef typename Tr::Finite_vertices_iterator Finite_vertices_iterator;
-
-  typedef typename MD::Subdomain Subdomain;
-  typedef typename MD::Is_in_domain Is_in_domain;
-
-  typename Tr::Geom_traits::Construct_point_3 wp2p =
-      c3t3.triangulation().geom_traits().construct_point_3_object();
-
-  // test whether a point is in domain
-  Is_in_domain is_in_domain = oracle.is_in_domain_object();
-  Tr& tr = c3t3.triangulation();
-
-  // go over the vertices
-  for(Finite_vertices_iterator vertex_it = tr.finite_vertices_begin();
-      vertex_it != tr.finite_vertices_end();
-      ++vertex_it) {
-
-    // test
-    const Subdomain subdomain = is_in_domain(wp2p(vertex_it->point()));
-
-    // if the point is inside
-    if(subdomain) {
-      // set the index that is equal to the index of the subdomain
-      c3t3.set_index(vertex_it, oracle.index_from_subdomain_index(*subdomain));
-
-      // mark the dimension, by construction it's 3
-      vertex_it->set_dimension(3);
-    }
-  }
-}
-
-template<class C3T3, class MD>
-void init_domain(C3T3& c3t3, MD& oracle)
-{
-  typedef typename C3T3::Triangulation Tr;
-  typedef typename Tr::Finite_vertices_iterator Finite_vertices_iterator;
-
-  Tr& tr = c3t3.triangulation();
-
-  typename Tr::Geom_traits::Construct_point_3 wp2p =
-    tr.geom_traits().construct_point_3_object();
-
-  // At this point, the triangulation contains the dummy points.
-  // Mark them all as corners so they are kept throughout the refinement.
-  // [ Does that really matter ? @fixme ]
-
-  for(Finite_vertices_iterator vertex_it = tr.finite_vertices_begin();
-      vertex_it != tr.finite_vertices_end(); ++vertex_it) {
-    oracle.add_corner(wp2p(vertex_it->point()));
-  }
-}
-
-template<class C3T3, class MeshDomain>
-void projection_of_external_points_of_surface(C3T3& c3t3, const MeshDomain& domain)
-{
-  typedef typename C3T3::Vertex_handle Vertex_handle;
-  typedef std::set<Vertex_handle> Vertex_set;
-
-  Vertex_set vertex_set;
-
-  find_points_to_project(c3t3, std::insert_iterator<Vertex_set>(vertex_set, vertex_set.begin()));
-
-  std::cout << "nb of points to project" << vertex_set.size() << std::endl;
-  projection_of_points(c3t3, domain, vertex_set.begin(), vertex_set.end());
-}
-
-template<class C3T3, class OutputIterator>
-void find_points_to_project(C3T3& c3t3, OutputIterator vertices)
-{
-  typedef typename C3T3::Vertex_handle Vertex_handle;
-  typedef typename C3T3::Cell_handle Cell_handle;
-
-  for(typename C3T3::Facets_in_complex_iterator face_it = c3t3.facets_in_complex_begin();
-      face_it != c3t3.facets_in_complex_end();
-      ++face_it) {
-
-    int ind = face_it->second;
-    Cell_handle c = face_it->first;
-
-    for(int i = 1; i < 4; i++) {
-      Vertex_handle v = c->vertex((ind+i)&3);
-
-      if(0 == c3t3.index(v)) {
-        *vertices++ = v;
-      }
-    }
-  }
-}
-
-template<class C3T3, class MeshDomain, class InputIterator>
-void projection_of_points(C3T3& c3t3,
-                          const MeshDomain& domain,
-                          InputIterator vertex_begin,
-                          InputIterator vertex_end)
-{
-  typedef typename C3T3::Triangulation::Point Point;
-  typedef typename C3T3::Vertex_handle Vertex_handle;
-
-  Mesh_3::C3T3_helpers<C3T3, MeshDomain> helper(c3t3, domain);
-
-  for(InputIterator it = vertex_begin; it != vertex_end; ++it) {
-    Point new_point = helper.project_on_surface((*it)->point(),*it);
-
-    std::cout << "squared distance from dummy to surface: " << CGAL::squared_distance(new_point, (*it)->point()) << std::endl;
-
-    if( new_point != Point()) {
-      //Vertex_handle new_vertex = c3t3.triangulation().insert(new_point);
-      Vertex_handle new_vertex = helper.update_mesh(new_point, *it);
-
-      c3t3.set_dimension(new_vertex, 2);
-    }
-  }
-}
 
 /**
  * @brief This function meshes the domain defined by mesh_traits
@@ -297,12 +225,21 @@ void make_periodic_3_mesh_3_impl(C3T3& c3t3,
                                  const parameters::internal::Manifold_options&
                                    manifold_options = parameters::internal::Manifold_options())
 {
-  // Initialize the periodic triangulation
-  init_triangulation(c3t3, const_cast<MeshDomain&>(domain));
+  // Initialize c3t3
+  internal::Periodic_3_mesh_3::C3t3_initializer<
+    C3T3, MeshDomain, MeshCriteria,
+    internal::Mesh_3::has_Has_features<MeshDomain>::value>()(c3t3,
+                                                             domain,
+                                                             criteria,
+                                                             with_features,
+                                                             mesh_options.nonlinear_growth_of_balls,
+                                                             mesh_options.number_of_initial_points);
 
-  return make_mesh_3_impl(c3t3, domain, criteria,
-                          exude, perturb, odt, lloyd, with_features,
-                          mesh_options, manifold_options);
+  // Build mesher and launch refinement process
+  refine_periodic_3_mesh_3(c3t3, domain, criteria,
+                           exude, perturb, odt, lloyd,
+                           parameters::no_reset_c3t3(), // do not reset c3t3 as we just created it
+                           mesh_options, manifold_options);
 }
 
 }  // end namespace CGAL

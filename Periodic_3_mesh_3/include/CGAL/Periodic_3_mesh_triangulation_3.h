@@ -144,7 +144,6 @@ public:
                                               const Geom_traits& gt = Geom_traits())
     : Base(domain, gt)
   {
-    insert_dummy_points();
   }
 
   /// Concurrency related
@@ -190,7 +189,6 @@ public:
   void set_domain(const Iso_cuboid& domain)
   {
     Base::set_domain(domain);
-    insert_dummy_points();
   }
 
   Bare_point snap_to_domain_border(const Bare_point& p) const

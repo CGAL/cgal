@@ -23,14 +23,117 @@
 #include <CGAL/Mesh_3/config.h>
 #include <CGAL/Periodic_3_mesh_3/config.h>
 
-#include <CGAL/refine_mesh_3.h>
+#include <CGAL/internal/Mesh_3/Timestamp_hash_function.h>
+#include <CGAL/Mesh_3/C3T3_helpers.h>
 #include <CGAL/Mesh_3/Dump_c3t3.h>
+#include <CGAL/Mesh_3/Triangulation_helpers.h>
+#include <CGAL/refine_mesh_3.h>
 
 #include <boost/parameter/preprocessor.hpp>
+#include <boost/unordered_set.hpp>
 
 #include <algorithm>
 
 namespace CGAL {
+
+namespace internal {
+
+template<class C3T3, class MeshDomain>
+void project_dummy_points_of_surface(C3T3& c3t3, const MeshDomain& domain)
+{
+  typedef typename C3T3::Vertex_handle                                   Vertex_handle;
+  typedef CGAL::Mesh_3::internal::Timestamp_hash_function<Vertex_handle> Hash_fct;
+  typedef boost::unordered_set<Vertex_handle, Hash_fct>                  Vertex_container;
+
+  Vertex_container vertex_container;
+  find_points_to_project(c3t3, std::insert_iterator<Vertex_container>(vertex_container, vertex_container.begin()));
+
+  std::cout << "nb of points to project: " << vertex_container.size() << std::endl;
+  project_points(c3t3, domain, vertex_container.begin(), vertex_container.end());
+}
+
+template<class C3T3, class OutputIterator>
+void find_points_to_project(C3T3& c3t3, OutputIterator vertices)
+{
+  typedef typename C3T3::Vertex_handle Vertex_handle;
+  typedef typename C3T3::Cell_handle Cell_handle;
+
+  // Don't project all dummy points, but simply the ones that are involved in
+  // surface facets of the c3t3.
+  for(typename C3T3::Facets_in_complex_iterator face_it = c3t3.facets_in_complex_begin();
+                                                face_it != c3t3.facets_in_complex_end();
+                                                ++face_it)
+  {
+    int ind = face_it->second;
+    Cell_handle c = face_it->first;
+
+    for(int i = 1; i < 4; i++) {
+      Vertex_handle v = c->vertex((ind+i)&3);
+
+      typename C3T3::Index index = c3t3.index(v);
+      if(const int* i = boost::get<int>(&index))
+      {
+        // @tmp deal with indices properly
+        if(*i == -10)
+          *vertices++ = v;
+      }
+    }
+  }
+}
+
+template<class C3T3, class MeshDomain, class InputIterator>
+void project_points(C3T3& c3t3,
+                    const MeshDomain& domain,
+                    InputIterator vertex_begin,
+                    InputIterator vertex_end)
+{
+  typedef typename C3T3::Vertex_handle         Vertex_handle;
+
+  typedef typename C3T3::Triangulation         Tr;
+
+  typedef typename Tr::Bare_point              Bare_point;
+  typedef typename Tr::Weighted_point          Weighted_point;
+  typedef typename Tr::Geom_traits::Vector_3   Vector_3;
+  typedef typename Tr::Geom_traits::FT         FT;
+
+  typename C3T3::Triangulation::Geom_traits::Construct_point_3 cp =
+    c3t3.triangulation().geom_traits().construct_point_3_object();
+
+  CGAL::Mesh_3::C3T3_helpers<C3T3, MeshDomain> helper(c3t3, domain);
+  CGAL::Mesh_3::Triangulation_helpers<Tr> tr_helpers;
+
+  for(InputIterator it = vertex_begin; it != vertex_end; ++it)
+  {
+    Vertex_handle vh = *it;
+
+    const Weighted_point& vh_wp = c3t3.triangulation().point(vh);
+    const Bare_point& vh_p = cp(vh_wp);
+    const Bare_point new_point = helper.project_on_surface(vh, vh_p);
+    CGAL_assertion(new_point != Bare_point());
+
+    std::cout << "vh: " << &*vh << std::endl;
+    std::cout << "vhp: " << vh_p << std::endl;
+    std::cout << "projected: " << new_point << std::endl;
+
+    const FT sq_d = CGAL::squared_distance(new_point, vh_p);
+    std::cout << "squared distance from dummy to surface: " << sq_d << std::endl;
+
+    // skip tiny moves for efficiency
+    if(sq_d < 1e-10) // @todo some (proper) check on the distance here...
+      continue;
+
+    // Do not project if the projected point is in a protection ball
+    if(tr_helpers.inside_protecting_balls(c3t3.triangulation(), vh, new_point))
+      continue;
+
+    const Vector_3 move(vh_p, new_point);
+    Vertex_handle new_vertex = helper.update_mesh(vh, move);
+    if(new_vertex != vh) // if the move has been performed
+      c3t3.set_dimension(new_vertex, 2);
+  }
+}
+
+} // namespace internal
 
 // see <CGAL/config.h>
 CGAL_PRAGMA_DIAG_PUSH
@@ -128,10 +231,12 @@ void refine_periodic_3_mesh_3_impl(C3T3& c3t3,
   double refine_time = mesher.refine_mesh(mesh_options.dump_after_refine_surface_prefix);
   c3t3.clear_manifold_info();
 
-  // <periodic> below is the only difference with refine_mesh_3_impl. What does
-  // it do and can it be removed ? (I guess something related to the initial grid)
-  // try to project bad vertices
-  //projection_of_external_points_of_surface(c3t3, domain);
+  CGAL_expensive_postcondition(c3t3.triangulation().tds().is_valid());
+  CGAL_expensive_postcondition(c3t3.triangulation().is_valid());
+  CGAL_expensive_postcondition(c3t3.is_valid());
+
+  // Project dummy points on the surface to lessen their influence on the output
+  internal::project_dummy_points_of_surface(c3t3, domain);
 
   dump_c3t3(c3t3, mesh_options.dump_after_init_prefix);
 
