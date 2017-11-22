@@ -69,10 +69,7 @@ int main()
   approx.seeding(CGAL::VSA::Random, 50);
   if (approx.get_proxies_size() != 50)
     return EXIT_FAILURE;
-  for (std::size_t i = 0; i < 10; ++i) {
-    approx.partition();
-    approx.fit();
-  }
+  approx.run(10);
 
   // teleport until merge test failed
   std::vector<FT> error;

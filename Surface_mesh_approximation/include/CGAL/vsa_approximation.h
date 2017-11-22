@@ -478,58 +478,6 @@ public:
   }
 
   /*!
-   * @brief Partition the geometry with current proxies.
-   * Propagates the proxy seed facets and floods the whole mesh to minimize the fitting error.
-   */
-  void partition() {
-    BOOST_FOREACH(face_descriptor f, faces(*m_pmesh))
-      fproxy_map[f] = CGAL_VSA_INVALID_TAG;
-
-    std::priority_queue<Facet_to_integrate> facet_pqueue;
-    for (std::size_t i = 0; i < proxies.size(); ++i) {
-      face_descriptor f = proxies[i].seed;
-      fproxy_map[f] = i;
-
-      BOOST_FOREACH(face_descriptor fadj, faces_around_face(halfedge(f, *m_pmesh), *m_pmesh)) {
-        if (fadj != boost::graph_traits<TriangleMesh>::null_face()
-            && fproxy_map[fadj] == CGAL_VSA_INVALID_TAG) {
-          facet_pqueue.push(Facet_to_integrate(
-            fadj, i, (*fit_error)(fadj, proxies[i].px)));
-        }
-      }
-    }
-
-    while (!facet_pqueue.empty()) {
-      const Facet_to_integrate c = facet_pqueue.top();
-      facet_pqueue.pop();
-      if (fproxy_map[c.f] == CGAL_VSA_INVALID_TAG) {
-        fproxy_map[c.f] = c.px;
-        BOOST_FOREACH(face_descriptor fadj, faces_around_face(halfedge(c.f, *m_pmesh), *m_pmesh)) {
-          if (fadj != boost::graph_traits<TriangleMesh>::null_face()
-            && fproxy_map[fadj] == CGAL_VSA_INVALID_TAG) {
-            facet_pqueue.push(Facet_to_integrate(
-            fadj, c.px, (*fit_error)(fadj, proxies[c.px].px)));
-          }
-        }
-      }
-    }
-  }
-
-  /*!
-   * @brief Refitting of current partitioning, update proxy parameters.
-   * Calculates and updates the fitting proxies of current partition.
-   */
-  void fit() {
-    std::vector<std::list<face_descriptor> > px_facets(proxies.size());
-    BOOST_FOREACH(face_descriptor f, faces(*m_pmesh))
-      px_facets[fproxy_map[f]].push_back(f);
-
-    // update proxy parameters and seed
-    for (std::size_t i = 0; i < proxies.size(); ++i)
-      proxies[i] = fit_new_proxy(px_facets[i].begin(), px_facets[i].end());
-  }
-
-  /*!
    * @brief Add proxies to the worst regions one by one.
    * The re-fitting is performed after each proxy is inserted.
    * @pre current facet proxy map is valid
@@ -1154,6 +1102,58 @@ private:
     }
 
     return proxies.size();
+  }
+
+  /*!
+   * @brief Partition the geometry with current proxies.
+   * Propagates the proxy seed facets and floods the whole mesh to minimize the fitting error.
+   */
+  void partition() {
+    BOOST_FOREACH(face_descriptor f, faces(*m_pmesh))
+      fproxy_map[f] = CGAL_VSA_INVALID_TAG;
+
+    std::priority_queue<Facet_to_integrate> facet_pqueue;
+    for (std::size_t i = 0; i < proxies.size(); ++i) {
+      face_descriptor f = proxies[i].seed;
+      fproxy_map[f] = i;
+
+      BOOST_FOREACH(face_descriptor fadj, faces_around_face(halfedge(f, *m_pmesh), *m_pmesh)) {
+        if (fadj != boost::graph_traits<TriangleMesh>::null_face()
+            && fproxy_map[fadj] == CGAL_VSA_INVALID_TAG) {
+          facet_pqueue.push(Facet_to_integrate(
+            fadj, i, (*fit_error)(fadj, proxies[i].px)));
+        }
+      }
+    }
+
+    while (!facet_pqueue.empty()) {
+      const Facet_to_integrate c = facet_pqueue.top();
+      facet_pqueue.pop();
+      if (fproxy_map[c.f] == CGAL_VSA_INVALID_TAG) {
+        fproxy_map[c.f] = c.px;
+        BOOST_FOREACH(face_descriptor fadj, faces_around_face(halfedge(c.f, *m_pmesh), *m_pmesh)) {
+          if (fadj != boost::graph_traits<TriangleMesh>::null_face()
+            && fproxy_map[fadj] == CGAL_VSA_INVALID_TAG) {
+            facet_pqueue.push(Facet_to_integrate(
+            fadj, c.px, (*fit_error)(fadj, proxies[c.px].px)));
+          }
+        }
+      }
+    }
+  }
+
+  /*!
+   * @brief Refitting of current partitioning, update proxy parameters.
+   * Calculates and updates the fitting proxies of current partition.
+   */
+  void fit() {
+    std::vector<std::list<face_descriptor> > px_facets(proxies.size());
+    BOOST_FOREACH(face_descriptor f, faces(*m_pmesh))
+      px_facets[fproxy_map[f]].push_back(f);
+
+    // update proxy parameters and seed
+    for (std::size_t i = 0; i < proxies.size(); ++i)
+      proxies[i] = fit_new_proxy(px_facets[i].begin(), px_facets[i].end());
   }
 
   /*!
