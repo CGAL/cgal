@@ -1140,7 +1140,7 @@ private:
   }
 
   /*!
-   * @brief Partition the area tagged with CGAL_VSA_INVALID_TAG with proxies.
+   * @brief Partition the area tagged with CGAL_VSA_INVALID_TAG with proxies, global facet proxy map is updated.
    * Propagates the proxy seed facets and floods the tagged area to minimize the fitting error.
    * @tparam ProxyWrapperIterator forward iterator with Proxy_wrapper as value type
    * @param beg iterator point to the first element
@@ -1179,7 +1179,7 @@ private:
   }
 
   /*!
-   * @brief Refitting and update specified proxies.
+   * @brief Refitting and update input range of proxies.
    * @tparam ProxyWrapperIterator forward iterator with Proxy_wrapper as value type
    * @param beg iterator point to the first element
    * @param end iterator point to the one past the last element
@@ -1193,7 +1193,7 @@ private:
     // update proxy parameters and seed
     for (ProxyWrapperIterator pxw_itr = beg; pxw_itr != end; ++pxw_itr) {
       const std::size_t px_idx = pxw_itr->idx;
-      proxies[px_idx] = fit_new_proxy(px_facets[px_idx].begin(), px_facets[px_idx].end(), px_idx);
+      *pxw_itr = fit_new_proxy(px_facets[px_idx].begin(), px_facets[px_idx].end(), px_idx);
     }
   }
 
