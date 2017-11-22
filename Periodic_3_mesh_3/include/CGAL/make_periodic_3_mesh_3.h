@@ -26,7 +26,6 @@
 #include <CGAL/Periodic_3_mesh_3/config.h>
 #include <CGAL/Mesh_3/global_parameters.h>
 
-#include <CGAL/Mesh_domain_holder_with_corners_3.h>
 #include <CGAL/refine_periodic_3_mesh_3.h>
 
 #include <CGAL/make_mesh_3.h>
@@ -46,12 +45,8 @@ namespace CGAL {
 template <typename C3T3, typename MD, typename MC, typename ... T>
 C3T3 make_periodic_3_mesh_3(const MD& md, const MC& mc, const T& ...t)
 {
-  typedef CGAL::Mesh_domain_holder_with_corners_3<MD> MDH;
-
   C3T3 c3t3;
-  MDH mdh(md);
-
-  make_periodic_3_mesh_3_bp(c3t3,mdh,mc,t...);
+  make_periodic_3_mesh_3_bp(c3t3,md,mc,t...);
   return c3t3;
 }
 #else
@@ -59,36 +54,24 @@ C3T3 make_periodic_3_mesh_3(const MD& md, const MC& mc, const T& ...t)
 template <typename C3T3, typename MD, typename MC>
 C3T3 make_periodic_3_mesh_3(const MD& md, const MC& mc)
 {
-  typedef CGAL::Mesh_domain_holder_with_corners_3<MD> MDH;
-
   C3T3 c3t3;
-  MDH mdh(md);
-
-  make_periodic_3_mesh_3_bp(c3t3,mdh,mc);
+  make_periodic_3_mesh_3_bp(c3t3,md,mc);
   return c3t3;
 }
 
 template <typename C3T3, typename MD, typename MC, typename Arg1>
 C3T3 make_periodic_3_mesh_3(const MD& md, const MC& mc, const Arg1& a1)
 {
-  typedef CGAL::Mesh_domain_holder_with_corners_3<MD> MDH;
-
   C3T3 c3t3;
-  MDH mdh(md);
-
-  make_periodic_3_mesh_3_bp(c3t3,mdh,mc,a1);
+  make_periodic_3_mesh_3_bp(c3t3,md,mc,a1);
   return c3t3;
 }
 
 template <typename C3T3, typename MD, typename MC, typename Arg1, typename Arg2>
 C3T3 make_periodic_3_mesh_3(const MD& md, const MC& mc, const Arg1& a1, const Arg2& a2)
 {
-  typedef CGAL::Mesh_domain_holder_with_corners_3<MD> MDH;
-
   C3T3 c3t3;
-  MDH mdh(md);
-
-  make_periodic_3_mesh_3_bp(c3t3,mdh,mc,a1,a2);
+  make_periodic_3_mesh_3_bp(c3t3,md,mc,a1,a2);
   return c3t3;
 }
 
@@ -97,12 +80,8 @@ template <typename C3T3, typename MD, typename MC,
 C3T3 make_periodic_3_mesh_3(const MD& md, const MC& mc, const Arg1& a1, const Arg2& a2,
                             const Arg3& a3)
 {
-  typedef CGAL::Mesh_domain_holder_with_corners_3<MD> MDH;
-
   C3T3 c3t3;
-  MDH mdh(md);
-
-  make_periodic_3_mesh_3_bp(c3t3,mdh,mc,a1,a2,a3);
+  make_periodic_3_mesh_3_bp(c3t3,md,mc,a1,a2,a3);
   return c3t3;
 }
 
@@ -111,12 +90,8 @@ template <typename C3T3, typename MD, typename MC,
 C3T3 make_periodic_3_mesh_3(const MD& md, const MC& mc, const Arg1& a1, const Arg2& a2,
                             const Arg3& a3, const Arg4& a4)
 {
-  typedef CGAL::Mesh_domain_holder_with_corners_3<MD> MDH;
-
   C3T3 c3t3;
-  MDH mdh(md);
-
-  make_periodic_3_mesh_3_bp(c3t3,mdh,mc,a1,a2,a3,a4);
+  make_periodic_3_mesh_3_bp(c3t3,md,mc,a1,a2,a3,a4);
   return c3t3;
 }
 
@@ -127,12 +102,8 @@ C3T3 make_periodic_3_mesh_3(const MD& md, const MC& mc,
                             const Arg1& a1, const Arg2& a2, const Arg3& a3,
                             const Arg4& a4, const Arg5& a5)
 {
-  typedef CGAL::Mesh_domain_holder_with_corners_3<MD> MDH;
-
   C3T3 c3t3;
-  MDH mdh(md);
-
-  make_periodic_3_mesh_3_bp(c3t3,mdh,mc,a1,a2,a3,a4,a5);
+  make_periodic_3_mesh_3_bp(c3t3,md,mc,a1,a2,a3,a4,a5);
   return c3t3;
 }
 #endif
