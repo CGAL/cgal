@@ -94,11 +94,11 @@ void facets_in_complex_3_to_triangle_mesh(const C3T3& c3t3, TriangleMesh& graph)
     {
       typename VHmap::iterator map_entry;
       bool is_new;
-      Vertex_handle v = c->vertex((s+i)&3);
       std::size_t id(-1);
+      Vertex_handle v = c->vertex((s+i)&3);
+      CGAL_assertion(v != Vertex_handle() && !c3t3.triangulation().is_infinite(v));
 
       boost::tie(map_entry, is_new) = vh_to_ids.insert(std::make_pair(v, inum));
-
       if(is_new)
       {
         const Weighted_point& p = c3t3.triangulation().point(c, (s+i)&3);
