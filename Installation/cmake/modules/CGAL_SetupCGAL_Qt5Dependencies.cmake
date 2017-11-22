@@ -46,15 +46,15 @@ endif()
 
 include(${CMAKE_CURRENT_LIST_DIR}/CGAL_Qt5_moc_and_resource_files.cmake)
 
-if(NOT TARGET CGAL_Qt5_extras)
-  add_library(CGAL_Qt5_extras STATIC ${_CGAL_Qt5_MOC_FILES_private} ${_CGAL_Qt5_RESOURCE_FILES_private})
-  set_target_properties(CGAL_Qt5_extras PROPERTIES
+if(NOT TARGET CGAL_Qt5_moc_and_resources)
+  add_library(CGAL_Qt5_moc_and_resources STATIC ${_CGAL_Qt5_MOC_FILES_private} ${_CGAL_Qt5_RESOURCE_FILES_private})
+  set_target_properties(CGAL_Qt5_moc_and_resources PROPERTIES
     POSITION_INDEPENDENT_CODE TRUE
     EXCLUDE_FROM_ALL TRUE)
-  target_link_libraries(CGAL_Qt5_extras CGAL::CGAL Qt5::Widgets Qt5::OpenGL Qt5::Svg)
+  target_link_libraries(CGAL_Qt5_moc_and_resources CGAL::CGAL Qt5::Widgets Qt5::OpenGL Qt5::Svg)
 
-  add_library(CGAL::CGAL_Qt5_extras ALIAS CGAL_Qt5_extras)
-  add_library(CGAL::Qt5_extras ALIAS CGAL_Qt5_extras)
+  add_library(CGAL::CGAL_Qt5_moc_and_resources ALIAS CGAL_Qt5_moc_and_resources)
+  add_library(CGAL::Qt5_moc_and_resources ALIAS CGAL_Qt5_moc_and_resources)
 endif()
 
 #.rst:
@@ -107,7 +107,7 @@ function(CGAL_setup_CGAL_Qt5_dependencies target)
   target_include_directories( ${target} SYSTEM ${keyword} ${OPENGL_INCLUDE_DIR})
   target_link_libraries( ${target} ${keyword} CGAL::CGAL)
   if(CGAL_HEADER_ONLY)
-    target_link_libraries( ${target} ${keyword} CGAL::Qt5_extras)
+    target_link_libraries( ${target} ${keyword} CGAL::Qt5_moc_and_resources)
   endif()
   target_link_libraries( ${target} ${keyword} Qt5::OpenGL Qt5::Svg ${OPENGL_LIBRARIES})
 endfunction()
