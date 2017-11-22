@@ -589,10 +589,9 @@ get_sq_distance_to_closest_vertex(const Tr& tr,
       const int n = (k+i)&3;
       const Vertex_handle& vn = c->vertex(n);
 
-      if(tr.is_infinite(vn))
-        continue;
-
-      if(vn->visited_for_vertex_extractor)
+      if(vn == Vertex_handle() ||
+         tr.is_infinite(vn) ||
+         vn->visited_for_vertex_extractor)
         continue;
 
       vn->visited_for_vertex_extractor = true;
