@@ -405,13 +405,17 @@ public:
   }
 
   /*!
-   * @brief Run the partitioning and fitting processes.
+   * @brief Run the partitioning and fitting processes on the whole surface.
    * @param nb_iterations number of iterations.
    */
   void run(std::size_t nb_iterations = 1) {
     for (std::size_t i = 0; i < nb_iterations; ++i) {
-      partition();
-      fit();
+      // tag the whole surface
+      BOOST_FOREACH(face_descriptor f, faces(*m_pmesh))
+        fproxy_map[f] = CGAL_VSA_INVALID_TAG;
+
+      partition(proxies.begin(), proxies.end());
+      fit(proxies.begin(), proxies.end());
     }
 #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
     static std::size_t count = 0;
@@ -1106,23 +1110,24 @@ private:
   }
 
   /*!
-   * @brief Partition the geometry with current proxies.
-   * Propagates the proxy seed facets and floods the whole mesh to minimize the fitting error.
+   * @brief Partition the area tagged with CGAL_VSA_INVALID_TAG with proxies.
+   * Propagates the proxy seed facets and floods the tagged area to minimize the fitting error.
+   * @tparam ProxyWrapperIterator forward iterator with Proxy_wrapper as value type
+   * @param beg iterator point to the first element
+   * @param end iterator point to the one past the last element
    */
-  void partition() {
-    BOOST_FOREACH(face_descriptor f, faces(*m_pmesh))
-      fproxy_map[f] = CGAL_VSA_INVALID_TAG;
-
+  template<typename ProxyWrapperIterator>
+  void partition(const ProxyWrapperIterator beg, const ProxyWrapperIterator end) {
     std::priority_queue<Facet_to_integrate> facet_pqueue;
-    for (std::size_t i = 0; i < proxies.size(); ++i) {
-      face_descriptor f = proxies[i].seed;
-      fproxy_map[f] = i;
+    for (ProxyWrapperIterator pxw_itr = beg; pxw_itr != end; ++pxw_itr) {
+      face_descriptor f = pxw_itr->seed;
+      fproxy_map[f] = pxw_itr->idx;
 
       BOOST_FOREACH(face_descriptor fadj, faces_around_face(halfedge(f, *m_pmesh), *m_pmesh)) {
         if (fadj != boost::graph_traits<TriangleMesh>::null_face()
             && fproxy_map[fadj] == CGAL_VSA_INVALID_TAG) {
           facet_pqueue.push(Facet_to_integrate(
-            fadj, i, (*fit_error)(fadj, proxies[i].px)));
+            fadj, pxw_itr->idx, (*fit_error)(fadj, pxw_itr->px)));
         }
       }
     }
@@ -1144,17 +1149,22 @@ private:
   }
 
   /*!
-   * @brief Refitting of current partitioning, update proxy parameters.
-   * Calculates and updates the fitting proxies of current partition.
+   * @brief Refitting and update specified proxies.
+   * @tparam ProxyWrapperIterator forward iterator with Proxy_wrapper as value type
+   * @param beg iterator point to the first element
+   * @param end iterator point to the one past the last element
    */
-  void fit() {
+  template<typename ProxyWrapperIterator>
+  void fit(const ProxyWrapperIterator beg, const ProxyWrapperIterator end) {
     std::vector<std::list<face_descriptor> > px_facets(proxies.size());
     BOOST_FOREACH(face_descriptor f, faces(*m_pmesh))
       px_facets[fproxy_map[f]].push_back(f);
 
     // update proxy parameters and seed
-    for (std::size_t i = 0; i < proxies.size(); ++i)
-      proxies[i] = fit_new_proxy(px_facets[i].begin(), px_facets[i].end(), i);
+    for (ProxyWrapperIterator pxw_itr = beg; pxw_itr != end; ++pxw_itr) {
+      const std::size_t px_idx = pxw_itr->idx;
+      proxies[px_idx] = fit_new_proxy(px_facets[px_idx].begin(), px_facets[px_idx].end(), px_idx);
+    }
   }
 
   /*!
