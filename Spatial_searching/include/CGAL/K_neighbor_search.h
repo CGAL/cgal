@@ -39,7 +39,7 @@ class K_neighbor_search;
 template <class SearchTraits, 
           class Distance= typename internal::Spatial_searching_default_distance<SearchTraits>::type,
           class Splitter= Sliding_midpoint<SearchTraits> ,
-          class Tree= Kd_tree<SearchTraits, Splitter, Tag_true> >
+          class Tree= Kd_tree<SearchTraits, Splitter, Tag_true, Tag_false> >
 class K_neighbor_search: public internal::K_neighbor_search<SearchTraits,Distance,Splitter,Tree>
 {
   typedef  internal::K_neighbor_search<SearchTraits,Distance,Splitter,Tree> Base;

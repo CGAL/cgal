@@ -41,7 +41,7 @@ namespace CGAL {
   template <class SearchTraits, 
             class Distance_=typename internal::Spatial_searching_default_distance<SearchTraits>::type,
             class Splitter_ = Sliding_midpoint<SearchTraits>,
-            class Tree_=Kd_tree<SearchTraits, Splitter_, Tag_false> >
+            class Tree_=Kd_tree<SearchTraits, Splitter_, Tag_false, Tag_false> >
   class Incremental_neighbor_search { 
 
   public:
