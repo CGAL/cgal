@@ -66,17 +66,25 @@ list(APPEND CMAKE_MODULE_PATH ${CGAL_MODULES_DIR})
 include( ${CGAL_MODULES_DIR}/CGAL_SCM.cmake )
 CGAL_detect_git(${CGAL_CONFIG_DIR}/../../../..)
 
+set(CGAL_LIBRARIES CGAL)
+foreach(comp ${CGAL_FIND_COMPONENTS})
+  if(NOT comp MATCHES "Core|ImageIO|Qt5")
+    message(FATAL_ERROR "The requested CGAL component ${comp} does not exist!")
+  endif()
+  list(APPEND CGAL_LIBRARIES CGAL_${comp})
+endforeach()
+
 #
 # Search for all dependencies
 #
-foreach(cgal_lib CGAL CGAL_Core CGAL_ImageIO CGAL_Qt5)
+foreach(cgal_lib ${CGAL_LIBRARIES})
   include(CGAL_Setup${cgal_lib}Dependencies)
 endforeach()
 
 #
 # Define the CGAL targets and theirs CGAL:: aliases
 #
-foreach(cgal_lib CGAL CGAL_Core CGAL_ImageIO CGAL_Qt5)
+foreach(cgal_lib ${CGAL_LIBRARIES})
   set(WITH_${cgal_lib} TRUE)
   if(${cgal_lib}_FOUND AND NOT TARGET ${cgal_lib})
     add_library(${cgal_lib} INTERFACE)
@@ -90,7 +98,7 @@ endforeach()
 # `CGAL_Setup${cgal_lib}Dependencies` files
 include(CGAL_setup_target_dependencies)
 
-foreach(cgal_lib CGAL CGAL_Core CGAL_ImageIO CGAL_Qt5)
+foreach(cgal_lib ${CGAL_LIBRARIES})
   if(${cgal_lib}_FOUND)
     CGAL_setup_target_dependencies(${cgal_lib} INTERFACE)
   endif()
