@@ -112,10 +112,11 @@ public:
 #endif
   // The proxy wrapper for approximation.
   struct Proxy_wrapper {
-    Proxy_wrapper(const Proxy &_p, const face_descriptor &_s)
-      : px(_p), seed(_s), err(0.0) {}
+    Proxy_wrapper(const Proxy &p, const std::size_t &i, const face_descriptor &s)
+      : px(p), idx(i), seed(s), err(0.0) {}
 
     Proxy px; // parameterized proxy
+    std::size_t idx; // proxy index, maintained to be the same as its position in proxies vector
     face_descriptor seed; // proxy seed
     FT err; // proxy fitting error
   };
@@ -571,7 +572,7 @@ public:
         continue;
 
       if (num_to_add[px_id] > 0) {
-        proxies.push_back(fit_new_proxy(f));
+        proxies.push_back(fit_new_proxy(f, proxies.size()));
         --num_to_add[px_id];
         ++num_added;
       }
@@ -639,9 +640,9 @@ public:
           merged_patch.push_back(f);
         }
       }
-      proxies[px_enlarged] = fit_new_proxy(merged_patch.begin(), merged_patch.end());
+      proxies[px_enlarged] = fit_new_proxy(merged_patch.begin(), merged_patch.end(), px_enlarged);
       // replace the merged proxy position to the newly teleported proxy
-      proxies[px_merged] = fit_new_proxy(tele_to);
+      proxies[px_merged] = fit_new_proxy(tele_to, px_merged);
       fproxy_map[tele_to] = px_merged;
 
       num_teleported++;
@@ -659,18 +660,15 @@ public:
   /*!
    * @brief Merge two specified adjacent regions.
    * The overall re-fitting is not performed and the proxy map is maintained.
-   * @pre two proxies must be adjacent
+   * @pre two proxies must be adjacent, and px0 < px1 < proxies.size()
    * @param px0 the enlarged proxy
    * @param px1 the merged proxy
    * @return change of error
    */
-  FT merge(std::size_t px0, std::size_t px1) {
-    if (px0 >= proxies.size() || px1 >= proxies.size() || px0 == px1)
-      return FT(0.0);
-
+  FT merge(const std::size_t px0, const std::size_t px1) {
     // ensure px0 < px1
-    if (px0 > px1)
-      std::swap(px0, px1);
+    if (px0 >= px1 || px1 >= proxies.size())
+      return FT(0.0);
 
     // merge px1 to px0
     FT err_sum(0.0);
@@ -683,10 +681,13 @@ public:
         merged_patch.push_back(f);
       }
     }
-    proxies[px0] = fit_new_proxy(merged_patch.begin(), merged_patch.end());
+    proxies[px0] = fit_new_proxy(merged_patch.begin(), merged_patch.end(), px0);
 
+    // erase px1 and maintain proxy index
     proxies.erase(proxies.begin() + px1);
-    // update facet proxy map
+    for (std::size_t i = 0; i < proxies.size(); ++i)
+      proxies[i].idx = i;
+    // keep facet proxy map valid
     BOOST_FOREACH(face_descriptor f, faces(*m_pmesh)) {
       if (fproxy_map[f] > px1)
         --fproxy_map[f];
@@ -736,7 +737,7 @@ public:
       BOOST_FOREACH(face_descriptor f, px_facets[pxj])
         merged_patch.push_back(f);
 
-      Proxy_wrapper pxw = fit_new_proxy(merged_patch.begin(), merged_patch.end());
+      Proxy_wrapper pxw = fit_new_proxy(merged_patch.begin(), merged_patch.end(), CGAL_VSA_INVALID_TAG);
       FT sum_error(0.0);
       BOOST_FOREACH(face_descriptor f, merged_patch)
         sum_error += (*fit_error)(f, pxw.px);
@@ -787,7 +788,7 @@ public:
       if (fproxy_map[f] == px && f != proxies[px].seed) {
         sum_err += (*fit_error)(f, proxies[px].px);
         fproxy_map[f] = proxies.size();
-        proxies.push_back(fit_new_proxy(f));
+        proxies.push_back(fit_new_proxy(f, proxies.size()));
         ++count;
       }
     }
@@ -956,7 +957,7 @@ private:
     proxies.clear();
     // reach to the number of proxies
     for (std::size_t i = 0; i < max_nb_proxies; ++i)
-      proxies.push_back(fit_new_proxy(facets[i]));
+      proxies.push_back(fit_new_proxy(facets[i], proxies.size()));
     run(num_iterations);
 
     return proxies.size();
@@ -1037,7 +1038,7 @@ private:
         target_px *= 2;
       proxies.clear();
       for (std::size_t j = 0; j < target_px; ++j)
-        proxies.push_back(fit_new_proxy(facets[j]));
+        proxies.push_back(fit_new_proxy(facets[j], proxies.size()));
       run(num_iterations);
       const FT err = compute_fitting_error();
       error_drop = err / initial_err;
@@ -1153,7 +1154,7 @@ private:
 
     // update proxy parameters and seed
     for (std::size_t i = 0; i < proxies.size(); ++i)
-      proxies[i] = fit_new_proxy(px_facets[i].begin(), px_facets[i].end());
+      proxies[i] = fit_new_proxy(px_facets[i].begin(), px_facets[i].end(), i);
   }
 
   /*!
@@ -1195,7 +1196,7 @@ private:
       return false;
 
     fproxy_map[fworst] = proxies.size();
-    proxies.push_back(fit_new_proxy(fworst));
+    proxies.push_back(fit_new_proxy(fworst, proxies.size()));
 
     return true;
   }
@@ -1207,9 +1208,13 @@ private:
    * @tparam FacetIterator face_descriptor container iterator
    * @param beg container begin
    * @param end container end
+   * @param px_idx proxy index
+   * @return fitted proxy wrapped with internal data
    */
   template<typename FacetIterator>
-  Proxy_wrapper fit_new_proxy(const FacetIterator &beg, const FacetIterator &end) {
+  Proxy_wrapper fit_new_proxy(const FacetIterator &beg,
+    const FacetIterator &end,
+    const std::size_t &px_idx) {
     CGAL_assertion(beg != end);
 
     // use proxy_fitting functor to fit proxy parameters
@@ -1227,7 +1232,7 @@ private:
       }
     }
 
-    return Proxy_wrapper(px, seed);
+    return Proxy_wrapper(px, px_idx, seed);
   }
 
   /*!
@@ -1235,17 +1240,20 @@ private:
    * 1. Fit proxy parameters from one facet.
    * 2. Set seed.
    * @param face_descriptor facet
+   * @param px_idx proxy index
+   * @return fitted proxy wrapped with internal data
    */
-  Proxy_wrapper fit_new_proxy(const face_descriptor &f) {
+  Proxy_wrapper fit_new_proxy(const face_descriptor &f, const std::size_t &px_idx) {
     std::vector<face_descriptor> fvec(1, f);
     // fit proxy parameters
     Proxy px = (*proxy_fitting)(fvec.begin(), fvec.end());
 
-    return Proxy_wrapper(px, f);
+    return Proxy_wrapper(px, px_idx, f);
   }
 
   /*!
    * @brief Random shuffle the surface facets into an empty vector.
+   * @param[out] facets shuffled facets vector
    */
   void random_shuffle_facets(std::vector<face_descriptor> &facets) {
     const std::size_t nbf = num_faces(*m_pmesh);
@@ -1273,7 +1281,7 @@ private:
    */
   void bootstrap_from_first_facet() {
     proxies.clear();
-    proxies.push_back(fit_new_proxy(*(faces(*m_pmesh).first)));
+    proxies.push_back(fit_new_proxy(*(faces(*m_pmesh).first), proxies.size()));
     BOOST_FOREACH(face_descriptor f, faces(*m_pmesh))
       fproxy_map[f] = 0;
   }
