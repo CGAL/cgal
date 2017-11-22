@@ -103,6 +103,6 @@ endif()
 
 if(OpenMesh_FOUND)
   create_single_source_cgal_program("remeshing_test_P_SM_OM.cpp" )
-  target_link_libraries( remeshing_test_P_SM_OM ${OPENMESH_LIBRARIES} )
+  target_link_libraries( remeshing_test_P_SM_OM PRIVATE ${OPENMESH_LIBRARIES} )
 endif()
 
