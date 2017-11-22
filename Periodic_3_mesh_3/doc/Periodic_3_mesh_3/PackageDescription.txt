@@ -39,7 +39,7 @@ flexibility that is offered in the \ref PkgMesh_3Summary package.}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
-### Relation to the 3D Mesh Generation Package ###
+### Relation to the 3D Mesh Generation and 3D Periodic Triangulations Packages ###
 
 A periodic mesh extends, by definition, infinitely in space. To avoid storing and
 manipulating duplicate points, well-chosen "dummy" points are inserted
@@ -53,8 +53,8 @@ the three-dimensional mesh generator of %CGAL (see package: \ref PkgMesh_3Summar
 Since this mesh generator only supports traditional (non-periodic) domains,
 it must be provided adapted oracles to handle the periodicity of the input domain
 and of the mesh.
-This package provides the necessary tools to be able to use %CGAL's three-dimensional
-mesh generator with %CGAL's periodic triangulations.
+This package provides these necessary tools to be able to use %CGAL's three-dimensional
+mesh generator with %CGAL's 3D periodic triangulations.
 
 \cgalClassifedRefPages
 
