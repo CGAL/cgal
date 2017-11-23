@@ -58,8 +58,6 @@ namespace VSA {
  *  \cgalParamEnd
  *  \cgalParamBegin{nb_of_relaxations} number of relaxations interleaved within seeding.
  *  \cgalParamEnd
- *  \cgalParamBegin{face_proxy_map} property map containing the assigned proxy index of each face of `tm_in`
- *  \cgalParamEnd
  *  \cgalParamBegin{proxies} output iterator over proxies
  *  \cgalParamEnd
  * \cgalNamedParamsEnd
@@ -115,14 +113,6 @@ void mesh_segmentation(const TriangleMesh &tm_in,
 #endif
 
   approx.get_proxy_map(segment_ids);
-
-  typedef typename boost::lookup_named_param_def<
-    internal_np::facet_proxy_map_t,
-    NamedParameters,
-    internal_np::vsa_no_output_t>::type FPMap;
-  FPMap fproxymap = choose_param(
-    get_param(np, internal_np::facet_proxy_map), internal_np::vsa_no_output);
-  get_proxy_map(approx, fproxymap);
 
   typedef typename boost::lookup_named_param_def <
     internal_np::proxies_t,

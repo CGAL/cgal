@@ -25,18 +25,21 @@ The sequence of named parameters should start with `CGAL::VSA::parameters::`.
 See below a sample call of a function that uses the optional BGL named parameters.
 
 \code
-// input : input triangle mesh to be approximated
-// output : output polyhedron mesh
-// method : seed initialization method
-// num_proxies : number of proxies used to approximate the geometry
-// num_iterations : number of iterations after initialization
-// anchors : the container to store the anchor points
-vsa_mesh_approximation(input,
-       , output
-       , CGAL::VSA::parameters::seeding_method(method)
-       .max_nb_proxies(num_proxies)
-       .nb_of_iterations(num_iterations)
-       .anchor_points(std::back_inserter(anchors)));
+// input: input triangle mesh to be approximated
+// output: output polyhedron mesh
+// points: output anchor points
+// triangles: output triplets of indexed triangles
+// method: seed initialization method
+// nb_proxies: number of proxies used to approximate the geometry
+// nb_iterations: number of iterations after initialization
+
+CGAL::VSA::mesh_approximation(input,
+    std::back_inserter(points),
+    std::back_inserter(triangles),
+    CGAL::VSA::parameters::seeding_method(method).
+        max_nb_proxies(nb_proxies).
+        nb_of_iterations(nb_iterations).
+        output_mesh(&output));
 \endcode
 
 \cgalHeading{List of Available Named Parameters}
@@ -75,32 +78,32 @@ typename CGAL::Kernel_traits<
 
 \cgalNPBegin{seeding_method} \anchor VSA_seeding_method
 the selection of seeding method.\n
-\b Type : \c CGAL::Method \n
-\b Default value is `CGAL::Method::Random`
+\b Type : \c CGAL::Seeding \n
+\b Default value is `CGAL::Seeding::Hierarchical`
 \cgalNPEnd
 
 \cgalNPBegin{max_nb_proxies} \anchor VSA_max_nb_proxies
 the maximum number of proxies used to approximate the input mesh.\n
-\b Type : `std::size_t` \n
-\b Default value is `0`
+\b Type : `boost::optional<std::size_t>` \n
+\b Default value is `boost::none`
 \cgalNPEnd
 
 \cgalNPBegin{min_error_drop} \anchor VSA_min_error_drop
 the minimum total error drop to approximate the input mesh.\n
-\b Type : `GeomTraits::FT` \n
-\b Default value is `0.01`
+\b Type : `boost::optional<GeomTraits::FT>` \n
+\b Default value is `0.1`
 \cgalNPEnd
 
 \cgalNPBegin{nb_of_iterations} \anchor VSA_nb_of_iterations
 the number of partitioning and fitting iterations after seeding.\n
 \b Type : `std::size_t` \n
-\b Default value is `10`
+\b Default value is `std::min(std::max(nb_of_facets / max_nb_proxies, 20), 60)`
 \cgalNPEnd
 
 \cgalNPBegin{nb_of_relaxations} \anchor VSA_nb_of_relaxations
 the number of relaxations interleaved within seeding.\n
 \b Type : `std::size_t` \n
-\b Default value is `10`
+\b Default value is `5`
 \cgalNPEnd
 
 \cgalNPBegin{mesh_chord_error} \anchor VSA_mesh_chord_error
@@ -111,7 +114,7 @@ the chord subdivision threshold used in the meshing step.\n
 
 \cgalNPBegin{face_proxy_map} \anchor VSA_face_proxy_map
 the property map outputs the proxy index of each face of the input polygon mesh.\n
-\b Type: a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and the value type `std::size_t`
+\b Type: a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and the value type `std::size_t`\n
 \b Default : if this parameter is omitted, no output operation performed
 \cgalNPEnd
 
@@ -127,20 +130,8 @@ an `OutputIterator` to write anchor vertices in.\n
 \b Default : if this parameter is omitted, no output operation performed
 \cgalNPEnd
 
-\cgalNPBegin{anchor_points} \anchor VSA_anchor_points
-an `OutputIterator` to write anchor points in.\n
-\b Type : a class model of `OutputIterator` with `GeomTraits::Point_3` value type.\n
-\b Default : if this parameter is omitted, no output operation performed
-\cgalNPEnd
-
-\cgalNPBegin{indexed_triangles} \anchor VSA_indexed_triangles
-an `OutputIterator` to write the approximation triangles in.\n
-\b Type : a class model of `OutputIterator` with `std::size_t` value type.\n
-\b Default : if this parameter is omitted, no output operation performed
-\cgalNPEnd
-
 \cgalNPBegin{output_mesh} \anchor VSA_output_mesh
-a pointer to `CGAL::Polyhedron_3` to write the approximated surface mesh constructed from the indexed triangles.\n
+a pointer to `CGAL::Polyhedron_3` to write the approximated surface mesh, constructed from the indexed triangles.\n
 \b Type : a pointer to `CGAL::Polyhedron_3`\n
 \b Default : if this parameter is omitted, no output operation performed
 \cgalNPEnd

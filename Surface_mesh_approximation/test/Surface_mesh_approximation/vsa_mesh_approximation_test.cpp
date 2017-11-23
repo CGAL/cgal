@@ -33,13 +33,14 @@ int main()
   CGAL::VSA::mesh_approximation(mesh,
     std::back_inserter(points),
     std::back_inserter(triangles),
-    CGAL::VSA::parameters::max_nb_proxies(6).
+    CGAL::VSA::parameters::seeding_method(CGAL::VSA::Incremental).
+      max_nb_proxies(6).
       nb_of_iterations(30).
       nb_of_relaxations(5).
       mesh_chord_error(0.5).
       facet_proxy_map(fpxmap).
-      anchor_vertices(std::back_inserter(anchors)).
       proxies(std::back_inserter(proxies)).
+      anchor_vertices(std::back_inserter(anchors)).
       output_mesh(&out_mesh));
 
   std::cout << "#triangles " << triangles.size() << std::endl;
