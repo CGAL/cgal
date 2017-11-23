@@ -160,36 +160,9 @@ The following example calls the free function `CGAL::VSA::mesh_approximation()` 
 
 \cgalExample{Surface_mesh_approximation/vsa_approximation_example.cpp}
 
-Note that the function parameters are provided through \ref namedparameters. Setting the non-default parameter values requires calling the functions with the required parameters, connected by a dot and in an arbitrary order. The following code snippet shows a different configuration of parameters and retrieve the indexed face proxy map and the proxies:
+Note that the function parameters are provided through \ref namedparameters. Setting the non-default parameter values requires calling the functions with the required parameters, connected by a dot and in an arbitrary order. The following example shows a different configuration of parameters and retrieve the indexed face proxy map and the proxies:
 
-\code
-// input: input triangle surface mesh
-// points: output points of indexed triangle mesh
-// triangles: output triplets of indexed triangle mesh
-
-typedef CGAL::VSA::Plane_proxy<Kernel> Plane_proxy;
-typedef boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
-typedef std::map<face_descriptor, std::size_t> Facet_index_map;
-typedef boost::associative_property_map<Facet_index_map> Facet_proxy_pmap;
-
-Facet_index_map fidx_map;
-BOOST_FOREACH(face_descriptor f, faces(input))
-  fidx_map[f] = 0;
-// facet proxy index property map
-Facet_proxy_pmap fpxmap(fidx_map);
-
-// plane proxies;
-std::vector<Plane_proxy> proxies;
-
-CGAL::VSA::mesh_approximation(input,
-        std::back_inserter(points),
-        std::back_inserter(triangles),
-        CGAL::VSA::parameters::min_error_drop(0.05). // seeding with minimum error drop
-        nb_of_iterations(40). // set number of clustering iterations after seeding
-        mesh_chord_error(0.3). // set chord approximation error threshold when meshing
-        facet_proxy_map(fpxmap). // get facet partition map
-        proxies(std::back_inserter(proxies))); // get proxies
-\endcode
+\cgalExample{Surface_mesh_approximation/vsa_approximation_2_example.cpp}
 
 The facet proxy index map and the output proxies provide a means to access the partition and the proxy parameters as illustrated by \cgalFigureRef{relaxation}. 
 
