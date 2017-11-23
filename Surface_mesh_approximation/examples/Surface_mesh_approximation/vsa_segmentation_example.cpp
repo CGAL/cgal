@@ -31,8 +31,9 @@ int main()
   CGAL::VSA::mesh_segmentation(input,
     fpxmap, // output indexed face set
     CGAL::VSA::parameters::seeding_method(CGAL::VSA::Hierarchical). // hierarchical seeding
-    max_nb_proxies(200). // refine until target number of proxies
-    nb_of_iterations(30)); // number of iterations after initialization
+    max_nb_proxies(200). // both maximum number of proxies stop criterion,
+    min_error_drop(0.05). // and minimum error drop stop criterion are specified
+    nb_of_iterations(30)); // number of iterations after seeding
 
   return EXIT_SUCCESS;
 }

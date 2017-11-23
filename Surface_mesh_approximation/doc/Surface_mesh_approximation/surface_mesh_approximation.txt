@@ -73,14 +73,14 @@ To determine when to stop adding more proxies, we can specify either the maximum
 Using different number of proxies to approximate the plane-sphere model. From left to right: 8, 14, 20 proxies. On the right most is the number_of_proxies to error curve.
 \cgalFigureEnd
 
-In figure \cgalFigureRef{nb_proxies}, if we specify the minimum error drop to 10% (yellow dash lines), we will end up with 12 proxies on the plane-sphere model. If both are provided, the first met criterion stops the seeding. Different seeding examples are provided in \cgalFigureRef{meshing}.
+In Figure \cgalFigureRef{nb_proxies}, if we specify the minimum error drop to 10% (yellow dash lines), we will end up with 12 proxies on the plane-sphere model. If both are provided, the first met criterion stops the seeding. Different seeding examples are provided in \cgalFigureRef{meshing}.
 
 \subsection sma_operations Operations
 
 For interactive use, the approach can yield better approximations of the geometry via adding/removing proxies and tunneling out of local minima via additional operations:
 - <b>Merging</b>. Merging two adjacent regions.
 - <b>Splitting</b>. Splitting one region into smaller ones to reduce the error. By default it's bisection and N-section is also possible. Firstly, we select the request number of facet seeds from the region then perform the refitting process confined to the region.
-- <b>Adding</b>. Adding one or more proxies to further reduce the approximation error. As for the seeding process, addition can be performed incrementally or hierarchically, as shown in figure \cgalFigureRef{seeding_method}.
+- <b>Adding</b>. Adding one or more proxies to further reduce the approximation error. As for the seeding process, addition can be performed incrementally or hierarchically, as shown in Figure \cgalFigureRef{seeding_method}.
 - <b>Teleportation</b>. It is a combination of merging and adding proxies: merging the pair of adjacent regions and adding a proxy seed to the worst region. More specifically, the pair of regions whose merging realizes the smallest error after merging and local re-fitting, is selected for merging. In practice, the teleport operation can temporarily either decrease or increase the total approximation error. We provide an optional heuristic test if the teleportation is worth it: whether the error added by a (simulated) deletion is smaller than half of the error of the worst region. If this test fails, no teleportation is necessary.
 
 \cgalFigureBegin{operations, operations.png}
@@ -99,7 +99,7 @@ Discrete constrained triangulation. The triangulation process first constructs c
 
 \subsubsection sma_anchors Anchors
 
-More specifically, it first generates a set of so-called anchor vertices as follows: an anchor vertex is generated for each corner vertex of the clustering partition. A corner vertex of the input mesh exhibits adjacency to three regions for inner vertices, or two regions for boundary vertices. Walking along the region boundary (counterclockwise), <em>chord</em> is the halfedges connecting end to end from one anchor to the next one. One boundary cycle consists of several pieces of chords. Note that for a connected region with holes, it has more than one boundary cycles (figure \cgalFigureRef{operations}, planar part before teleportation).
+More specifically, it first generates a set of so-called anchor vertices as follows: an anchor vertex is generated for each corner vertex of the clustering partition. A corner vertex of the input mesh exhibits adjacency to three regions for inner vertices, or two regions for boundary vertices. Walking along the region boundary (counterclockwise), <em>chord</em> is the halfedges connecting end to end from one anchor to the next one. One boundary cycle consists of several pieces of chords. Note that for a connected region with holes, it has more than one boundary cycles (Figure \cgalFigureRef{operations}, planar part before teleportation).
 
 \subsubsection sma_subdivision Subdivision
 
@@ -118,7 +118,7 @@ Varying the chord error. From left to right: clustering partition, and meshing w
 An illustration of additional anchors. From left to right: starting from a partition (grey) with a hole (while) and two encircled regions (green and blue), we add a starting anchor (orange disk) to the boundary cycle (red dash line) without any anchor (2nd), subdivide the circular chord (3rd, the number indicates the level of recursion) and add anchors to the boundary cycle with less than 2 anchors (4th, red dash lines).
 \cgalFigureEnd
 
-For a boundary cycle without any anchor (like a hole, figure \cgalFigureRef{operations}), we add a starting anchor to the boundary. Then subdivide this circular chord to ensure that every boundary cycle has at least 2 anchors (i.e. every chord is connecting 2 different anchors, figure \cgalFigureRef{anchors}). Finally, we add additional anchors to ensure that at least three anchor vertices are generated on every boundary cycle.
+For a boundary cycle without any anchor (like a hole, Figure \cgalFigureRef{operations}), we add a starting anchor to the boundary. Then subdivide this circular chord to ensure that every boundary cycle has at least 2 anchors (i.e. every chord is connecting 2 different anchors, Figure \cgalFigureRef{anchors}). Finally, we add additional anchors to ensure that at least three anchor vertices are generated on every boundary cycle.
 
 \subsubsection sma_mesh_extraction Mesh Extraction
 
@@ -135,9 +135,6 @@ Notice the boundary subdivision in the black rectangle area.
 \cgalFigureEnd
 
 As there is no guarantee that the output mesh is 2-manifold and oriented, the main input is an indexed triangle set. Additional output is possible in the form of a polyhedral surface mesh when the indexed triangle set represents a 2-manifold, oriented mesh. 
-
-
-
 
 \subsection sma_api API
 
@@ -163,31 +160,35 @@ The following example calls the free function `CGAL::VSA::mesh_approximation()` 
 
 \cgalExample{Surface_mesh_approximation/vsa_approximation_example.cpp}
 
-Note that the function parameters are provided through \ref namedparameters. Setting the non-default parameter values requires calling the functions with the required parameters, connected by a dot and in an arbitrary order, as follows:
-
-TODO: add output indexed face set to the code below, and verify that it compiles.
+Note that the function parameters are provided through \ref namedparameters. Setting the non-default parameter values requires calling the functions with the required parameters, connected by a dot and in an arbitrary order. The following code snippet shows a different configuration of parameters and retrieve the indexed face proxy map and the proxies:
 
 \code
 // input: input triangle surface mesh
-// output: indexed face set
-typedef CGAL::Simple_cartesian<double> Kernel;
-typedef CGAL::VSA::Plane_proxy<Kernel::VSA> Plane_proxy;
+// points: output points of indexed triangle mesh
+// triangles: output triplets of indexed triangle mesh
+
+typedef CGAL::VSA::Plane_proxy<Kernel> Plane_proxy;
+typedef boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
 typedef std::map<face_descriptor, std::size_t> Facet_index_map;
 typedef boost::associative_property_map<Facet_index_map> Facet_proxy_pmap;
+
 Facet_index_map fidx_map;
-BOOST_FOREACH(face_discriptor f, faces(input))
+BOOST_FOREACH(face_descriptor f, faces(input))
   fidx_map[f] = 0;
 // facet proxy index property map
 Facet_proxy_pmap fpxmap(fidx_map);
+
 // plane proxies;
 std::vector<Plane_proxy> proxies;
-CGAL::VSA::mesh_approximation(input, 
-        CGAL::VSA::parameters::min_error_drop(err_drop) // init the algorithm by target error drop
-       .seeding_method(method) // set proxy seeding method
-       .iterations(num_iterations) // set number of fitting iterations after seeding
-       .mesh_chord_error(sub_thre) // set boundary approximation error threshold when meshing
-       .facet_proxy_map(fpxmap) // get facet partition map
-       .proxies(std::back_inserter(proxies))); // get proxies
+
+CGAL::VSA::mesh_approximation(input,
+        std::back_inserter(points),
+        std::back_inserter(triangles),
+        CGAL::VSA::parameters::min_error_drop(0.05). // seeding with minimum error drop
+        nb_of_iterations(40). // set number of clustering iterations after seeding
+        mesh_chord_error(0.3). // set chord approximation error threshold when meshing
+        facet_proxy_map(fpxmap). // get facet partition map
+        proxies(std::back_inserter(proxies))); // get proxies
 \endcode
 
 The facet proxy index map and the output proxies provide a means to access the partition and the proxy parameters as illustrated by \cgalFigureRef{relaxation}. 

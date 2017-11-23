@@ -28,8 +28,8 @@ int main()
     std::back_inserter(points),
     std::back_inserter(triangles),
     CGAL::VSA::parameters::seeding_method(CGAL::VSA::Hierarchical). // hierarchical seeding
-    max_nb_proxies(200). // target number of proxies
-    nb_of_iterations(30). // number of iterations after initialization
+    max_nb_proxies(200). // seeding with maximum number of proxies
+    nb_of_iterations(30). // number of clustering iterations after seeding
     // output to polyhedron
     output_mesh(&output)); // valid only if the indexed triangles construct a 2-manifold and oriented surface
 
