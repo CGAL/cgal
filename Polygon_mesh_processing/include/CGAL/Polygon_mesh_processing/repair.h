@@ -1488,7 +1488,6 @@ bool remove_self_intersections_one_step(TriangleMesh& tm,
       // remove small border cycle that are imposing a self-intersection
       // that could not be fixed if kept. (This also prevent small island
       // if a small hole is incident to the faces to be removed).
-      if (border_edges_found){
         std::set<halfedge_descriptor> cycles;
         std::set<halfedge_descriptor>  boundary_set;
         BOOST_FOREACH(halfedge_descriptor h, boundary_hedges)
@@ -1530,7 +1529,6 @@ bool remove_self_intersections_one_step(TriangleMesh& tm,
           }
           tmp.swap(boundary_hedges);
         }
-      }
 
       // do not remove edges on the boundary of the selection of faces,
       // nor its vertices
