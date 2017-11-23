@@ -1346,7 +1346,7 @@ struct Is_selected{
   {}
 
   friend bool get(Is_selected is, Descriptor d){
-    return is.selection.count(d);
+    return (is.selection.count(d) == 1);
   }
 
   friend void put(Is_selected is, Descriptor d, bool b){
