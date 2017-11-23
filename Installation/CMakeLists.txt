@@ -550,7 +550,9 @@ message( "== Generate version files (DONE) ==\n")
 #                                    -= External libraries =-
 #
 #--------------------------------------------------------------------------------------------------
- 
+
+include( CGAL_display_flags )
+
 message("== Detect external libraries ==")
 
 # this is the place to tell which external libs are supporting
