@@ -742,9 +742,9 @@ propagating_flip(Face_handle f,int i, int depth)
 
   Face_handle ni = f->neighbor(i);
   flip(f, i); // flip for constrained triangulations
-  propagating_flip(f,i);
+  propagating_flip(f,i, depth+1);
   i = ni->index(f->vertex(i));
-  propagating_flip(ni,i);
+  propagating_flip(ni,i, depth+1);
 #endif
 }
 #else 

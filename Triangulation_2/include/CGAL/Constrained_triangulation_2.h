@@ -649,45 +649,53 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb)
 // if a vertex vc of t lies on segment ab
 // or if ab intersect some constrained edges
 {
-  CGAL_triangulation_precondition( vaa != vbb);
-  Vertex_handle vi;
+  std::stack<std::pair<Vertex_handle, Vertex_handle> > stack;
+  stack.push(std::make_pair(vaa,vbb));
 
-  Face_handle fr;
-  int i;
-  if(includes_edge(vaa,vbb,vi,fr,i)) {
-    mark_constraint(fr,i);
-    if (vi != vbb)  {
-      insert_constraint(vi,vbb);
+  while(! stack.empty()){
+    boost::tie(vaa,vbb) = stack.top();
+    stack.pop();
+    CGAL_triangulation_precondition( vaa != vbb);
+    Vertex_handle vi;
+
+    Face_handle fr;
+    int i;
+    if(includes_edge(vaa,vbb,vi,fr,i)) {
+      mark_constraint(fr,i);
+      if (vi != vbb)  {
+        stack.push(std::make_pair(vi,vbb));
+      }
+      continue;
     }
-    return;
-  }
       
-  List_faces intersected_faces;
-  List_edges conflict_boundary_ab, conflict_boundary_ba;
+    List_faces intersected_faces;
+    List_edges conflict_boundary_ab, conflict_boundary_ba;
      
-  bool intersection  = find_intersected_faces( vaa, vbb,
-			                       intersected_faces,
-					       conflict_boundary_ab,
-					       conflict_boundary_ba,
-					       vi);
-  if ( intersection) {
-    if (vi != vaa && vi != vbb) {
-      insert_constraint(vaa,vi); 
-      insert_constraint(vi,vbb); 
-     }
-    else insert_constraint(vaa,vbb);
-    return;
-  }
+    bool intersection  = find_intersected_faces( vaa, vbb,
+                                                 intersected_faces,
+                                                 conflict_boundary_ab,
+                                                 conflict_boundary_ba,
+                                                 vi);
+    if ( intersection) {
+      if (vi != vaa && vi != vbb) {
+        stack.push(std::make_pair(vaa,vi));
+        stack.push(std::make_pair(vi,vbb));
+      }
+      else{
+        stack.push(std::make_pair(vaa,vbb));
+      }
+      continue;
+    }
 
-  //no intersection
-  triangulate_hole(intersected_faces,
-		   conflict_boundary_ab,
-		   conflict_boundary_ba);
+    //no intersection
+    triangulate_hole(intersected_faces,
+                     conflict_boundary_ab,
+                     conflict_boundary_ba);
 
-  if (vi != vbb) {
-    insert_constraint(vi,vbb); 
+    if (vi != vbb) {
+      stack.push(std::make_pair(vi,vbb));
+    }
   }
-  return;
 
 }
 
