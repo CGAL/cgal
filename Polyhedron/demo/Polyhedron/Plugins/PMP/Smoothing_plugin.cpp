@@ -64,7 +64,6 @@ public:
         connect(ui_widget.modified_MCF_button ,  SIGNAL(clicked()), this, SLOT(on_Apply_mMCF_clicked()));
         connect(ui_widget.Run_convergence_button,  SIGNAL(clicked()), this, SLOT(on_Run_convergence_clicked()));
 
-
     }
 
     QList<QAction*> actions() const
@@ -111,11 +110,6 @@ public:
 
         ui_widget.use_weights_checkBox->setChecked(true);
 
-        ui_widget.dist_dSpinBox->setValue(0.01);
-        ui_widget.dist_dSpinBox->setSingleStep(0.0001);
-        ui_widget.dist_dSpinBox->setDecimals(4);
-        ui_widget.dist_dSpinBox->setMinimum(0.0001);
-
         ui_widget.gd_precision_label->setToolTip("Tradeoff between precision and speed. Less is more precise.");
         ui_widget.distance_label->setToolTip("Tradeoff between precision and speed. Less is more precise.");
         */
@@ -123,16 +117,6 @@ public:
         ui_widget.iterations_spinBox->setValue(20);
         ui_widget.iterations_spinBox->setSingleStep(1);
         ui_widget.iterations_spinBox->setMinimum(1);
-
-        /*
-        ui_widget.curv_iterations_spinBox->setValue(1);
-        ui_widget.curv_iterations_spinBox->setSingleStep(1);
-        ui_widget.curv_iterations_spinBox->setMinimum(1);
-
-        ui_widget.curv_iterations_spinBox_2->setValue(1);
-        ui_widget.curv_iterations_spinBox_2->setSingleStep(1);
-        ui_widget.curv_iterations_spinBox_2->setMinimum(1);
-        */
     }
 
 
@@ -199,7 +183,6 @@ public Q_SLOTS:
             poly_item->invalidateOpenGLBuffers();
             Q_EMIT poly_item->itemChanged();
         }
-
 
 
         QApplication::restoreOverrideCursor();
@@ -282,6 +265,13 @@ public Q_SLOTS:
         Q_EMIT poly_item->itemChanged();
 
         QApplication::restoreOverrideCursor();
+
+
+
+        // update viewport
+
+
+
     }
 
     void on_Run_convergence_clicked()

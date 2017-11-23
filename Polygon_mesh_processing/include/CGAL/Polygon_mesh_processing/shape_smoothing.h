@@ -91,6 +91,13 @@ void smooth_modified_curvature_flow(const FaceRange& faces, PolygonMesh& pmesh, 
 
   std::cerr << "compute stiffness matrix...";
   smoother.calc_stiff_matrix(stiffness_matrix);
+
+
+  /*std::ofstream out("data/stiff_matrix.dat");
+  out<<stiffness_matrix<<std::endl;
+  out.close();*/
+
+
   std::cerr << "done" << std::endl;
 
 
@@ -99,6 +106,11 @@ void smooth_modified_curvature_flow(const FaceRange& faces, PolygonMesh& pmesh, 
   for(std::size_t t=0; t<nb_iterations; ++t)
   {
     smoother.setup_system(A, stiffness_matrix, mass_matrix, bx, by, bz, time);
+
+    /*std::ofstream out("data/mass_matrix.dat");
+    out<<mass_matrix<<std::endl;
+    out.close();*/
+
     smoother.solve_system(A, Xx, Xy, Xz, bx, by, bz);
     smoother.update_mesh(Xx, Xy, Xz);
   }

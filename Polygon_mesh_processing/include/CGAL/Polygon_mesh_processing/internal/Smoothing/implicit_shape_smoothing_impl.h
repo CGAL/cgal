@@ -216,16 +216,15 @@ public:
   void calc_stiff_matrix(Eigen_matrix& mat)
   {
 
-    //mat.resize(nb_vert_, nb_vert_);
-
   // TOFIX: very slow way to fill the matrx
   // avoid matrix C!! and use triplets
   // read http://eigen.tuxfamily.org/dox/group__TutorialSparse.html#TutorialSparseFilling
 
-    // cot values
-    Eigen_matrix C = cot_entries(); //TODO
+    typedef Eigen::Triplet<double> Triplet;
+    std::vector<Triplet> tripletList;
+    tripletList.reserve(8 * nb_vert_);
+    // todo: calculate exactly how many non zero entries ther will be.
 
-    std::cout<<"OK cot entries.\n";
     for(face_descriptor f : faces(mesh_))
     {
       for(halfedge_descriptor hi : halfedges_around_face(halfedge(f, mesh_), mesh_))
@@ -235,17 +234,16 @@ public:
         auto i_source = vimap_[v_source];
         auto i_target = vimap_[v_target];
 
-        auto cot_val = C.coeff(i_source, i_target);
-        // i,j
-        mat.coeffRef(i_source, i_target) += cot_val; // why not (i,j)
-        // j,i
-        mat.coeffRef(i_target, i_source) += cot_val;
-        //diagonal
-        mat.coeffRef(i_source, i_source) -= cot_val;
-        mat.coeffRef(i_target, i_target) -= cot_val;
+        NT Lij = weight_calculator_(hi);
+
+        tripletList.push_back(Triplet(i_source, i_target, Lij));
+        tripletList.push_back(Triplet(i_target, i_source, Lij));
+        tripletList.push_back(Triplet(i_source, i_source, -Lij));
+        tripletList.push_back(Triplet(i_target, i_target, -Lij));
       }
     }
 
+    mat.setFromTriplets(tripletList.begin(), tripletList.end());
   }
 
   void update_mesh(Eigen_vector& Xx, Eigen_vector& Xy, Eigen_vector& Xz)
@@ -269,30 +267,6 @@ public:
 
 
 private:
-
-    Eigen_matrix cot_entries()
-    {
-      Eigen_matrix C(nb_vert_, nb_vert_);
-
-      for(vertex_descriptor v : vertices(mesh_))
-      {
-        for(halfedge_descriptor h : halfedges_around_source(v, mesh_))
-        {
-          NT Lij = weight_calculator_(h);
-
-          vertex_descriptor v_source = source(h, mesh_);
-          vertex_descriptor v_target = target(h, mesh_);
-          auto i_source = vimap_[v_source];
-          auto i_target = vimap_[v_target];
-
-          C.coeffRef(i_source, i_target) = Lij;
-        }
-      }
-
-      return C;
-    }
-
-
 
 
     void calc_mass_matrix(Eigen_matrix& D)
