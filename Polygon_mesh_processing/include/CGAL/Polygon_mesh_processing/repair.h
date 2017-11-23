@@ -1486,24 +1486,24 @@ bool remove_self_intersections_one_step(TriangleMesh& tm,
         std::cout << is_valid(tm) << "\n";
       }
       // now remove edges,
-      BOOST_FOREACH(edge_descriptor e, edges_to_remove)
+      for(edge_descriptor e : edges_to_remove)
         remove_edge(e, tm);
       // and vertices,
-      BOOST_FOREACH(vertex_descriptor vh, vertices_to_remove)
+      for(vertex_descriptor vh : vertices_to_remove)
         remove_vertex(vh, tm);
       // and finally facets
-      BOOST_FOREACH(face_descriptor f, faces_to_remove)
+      for(face_descriptor f : faces_to_remove)
         remove_face(f, tm);
       // set new border_vertices to the boundary and update
       // the halfedge pointer of the border vertices
-      BOOST_FOREACH(halfedge_descriptor h, boundary_hedges)
+      for(halfedge_descriptor h : boundary_hedges)
       {
         set_face(h,graph_traits::null_face(), tm);
         set_halfedge(target(h, tm), h, tm);
         set_next(h,h,tm); // set himself as next to track edges of the holes
       }
       // update next/prev relationships of the hole
-      BOOST_FOREACH(halfedge_descriptor h, boundary_hedges)
+      for(halfedge_descriptor h : boundary_hedges)
       {
         halfedge_descriptor nh=next(opposite(h, tm), tm);
         while( !is_border(opposite(nh, tm), tm) ||
@@ -1518,7 +1518,7 @@ bool remove_self_intersections_one_step(TriangleMesh& tm,
     }
     else
       /// \todo check whether this is more expensive than the previous code above
-      BOOST_FOREACH(face_descriptor f, faces_to_remove)
+      for(face_descriptor f : faces_to_remove)
         Euler::remove_face(halfedge(f, tm), tm);
 
     if (verbose)
@@ -1526,12 +1526,12 @@ bool remove_self_intersections_one_step(TriangleMesh& tm,
 
     /// now get one halfedge per hole
     std::set<halfedge_descriptor> visited;
-    BOOST_FOREACH(halfedge_descriptor h, boundary_hedges)
+    for(halfedge_descriptor h : boundary_hedges)
     {
       if (visited.insert(h).second)
       {
         one_halfedge_per_border.push_back(h);
-        BOOST_FOREACH(halfedge_descriptor hh, halfedges_around_face(h, tm))
+        for(halfedge_descriptor hh : halfedges_around_face(h, tm))
         {
           CGAL_assertion_code(bool insert_ok =)
           visited.insert(hh)
@@ -1543,7 +1543,7 @@ bool remove_self_intersections_one_step(TriangleMesh& tm,
   }
 
   if (!one_halfedge_per_border.empty()){
-    BOOST_FOREACH(halfedge_descriptor h, one_halfedge_per_border)
+    for(halfedge_descriptor h : one_halfedge_per_border)
     {
       std::size_t nb_new_triangles = 0;
       Counting_output_iterator out(&nb_new_triangles);
