@@ -1,7 +1,7 @@
 #version 120
 attribute highp vec4 vertex;
-attribute highp vec3 normal;
-attribute highp vec3 color_facets;
+attribute highp vec3 normals;
+attribute highp vec3 colors;
 attribute highp vec2 v_texCoord; 
 
 uniform highp mat4 mvp_matrix;
@@ -19,7 +19,7 @@ varying highp vec2 f_texCoord;
 void main(void) 
 { 
    vec4 P = mv_matrix * vertex; 
-   vec3 N = mat3(mv_matrix)* normal; 
+   vec3 N = mat3(mv_matrix)* normals;
    vec3 L = light_pos.xyz - P.xyz; 
    N = normalize(N); 
    L = normalize(L); 
@@ -29,6 +29,6 @@ void main(void)
    else 
        diffuse = max(dot(N,L), 0.0) * light_diff.xyz; 
    f_texCoord = v_texCoord; 
-   fColors = color_facets * (light_amb.xyz + diffuse);
+   fColors = colors * (light_amb.xyz + diffuse);
    gl_Position =  mvp_matrix * f_matrix * vertex; 
 }  

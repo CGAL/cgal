@@ -874,7 +874,21 @@ void Viewer::bindUniformValues(int program_name) const {
       program->setUniformValue("clipbox1", clipbox1);
       program->setUniformValue("clipbox2", clipbox2);
     }
-    switch(program_name)
+    if(program->property("hasLight").toBool())
+    {
+      program->setUniformValue("light_pos", d->lighting.position);
+      program->setUniformValue("light_diff",d->lighting.diffuse);
+      program->setUniformValue("light_spec", d->lighting.specular);
+      program->setUniformValue("light_amb", d->lighting.ambient);
+      program->setUniformValue("spec_power", d->lighting.shininess);
+      program->setUniformValue("is_two_side", is_both_sides);
+      program->setUniformValue("mv_matrix", mv_mat);
+    }
+    if(program->property("hasFMatrix").toBool())
+      program->setUniformValue("f_matrix",f_mat);
+    if(program->property("hasTexture").toBool())
+      program->setUniformValue("s_texture",f_mat);
+ /*   switch(program_name)
     {
     case PROGRAM_WITH_LIGHT:
     case PROGRAM_C3T3:
@@ -893,7 +907,7 @@ void Viewer::bindUniformValues(int program_name) const {
         program->setUniformValue("is_two_side", is_both_sides);
         break;
     }
-    switch(program_name)
+   switch(program_name)
     {
     case PROGRAM_WITH_LIGHT:
     case PROGRAM_C3T3:
@@ -919,7 +933,7 @@ void Viewer::bindUniformValues(int program_name) const {
     case PROGRAM_NO_SELECTION:
         program->setUniformValue("f_matrix",f_mat);
         break;
-    }
+    }*/
     program->release();
 }
 
@@ -1268,49 +1282,117 @@ QOpenGLShaderProgram* Viewer::declare_program(int name,
 }
 QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
 {
-    switch(name)
-    {
-    case PROGRAM_C3T3:
-      return declare_program(name, ":/cgal/Polyhedron_3/resources/shader_c3t3.v" , ":/cgal/Polyhedron_3/resources/shader_c3t3.f");
-        break;
-    case PROGRAM_C3T3_EDGES:
-      return declare_program(name, ":/cgal/Polyhedron_3/resources/shader_c3t3_edges.v" , ":/cgal/Polyhedron_3/resources/shader_c3t3_edges.f");
-        break;
-    case PROGRAM_WITH_LIGHT:
-      return declare_program(name, ":/cgal/Polyhedron_3/resources/shader_with_light.v" , ":/cgal/Polyhedron_3/resources/shader_with_light.f");
-        break;
-    case PROGRAM_WITHOUT_LIGHT:
-      return declare_program(name, ":/cgal/Polyhedron_3/resources/shader_without_light.v" , ":/cgal/Polyhedron_3/resources/shader_without_light.f");
-       break;
-    case PROGRAM_NO_SELECTION:
-      return declare_program(name, ":/cgal/Polyhedron_3/resources/shader_without_light.v" , ":/cgal/Polyhedron_3/resources/shader_no_light_no_selection.f");
-        break;
-    case PROGRAM_WITH_TEXTURE:
-      return declare_program(name, ":/cgal/Polyhedron_3/resources/shader_with_texture.v" , ":/cgal/Polyhedron_3/resources/shader_with_texture.f");
-      break;
-    case PROGRAM_PLANE_TWO_FACES:
-      return declare_program(name, ":/cgal/Polyhedron_3/resources/shader_without_light.v" , ":/cgal/Polyhedron_3/resources/shader_plane_two_faces.f");
-        break;
-    case PROGRAM_WITH_TEXTURED_EDGES:
-      return declare_program(name, ":/cgal/Polyhedron_3/resources/shader_with_textured_edges.v" , ":/cgal/Polyhedron_3/resources/shader_with_textured_edges.f");
-        break;
-    case PROGRAM_INSTANCED:
-      return declare_program(name, ":/cgal/Polyhedron_3/resources/shader_instanced.v" , ":/cgal/Polyhedron_3/resources/shader_with_light.f");
-        break;
-    case PROGRAM_INSTANCED_WIRE:
-      return declare_program(name, ":/cgal/Polyhedron_3/resources/shader_instanced.v" , ":/cgal/Polyhedron_3/resources/shader_without_light.f");
-        break;
-    case PROGRAM_CUTPLANE_SPHERES:
-      return declare_program(name, ":/cgal/Polyhedron_3/resources/shader_c3t3_spheres.v" , ":/cgal/Polyhedron_3/resources/shader_c3t3.f");
-     break;
-    case PROGRAM_SPHERES:
-      return declare_program(name, ":/cgal/Polyhedron_3/resources/shader_spheres.v" , ":/cgal/Polyhedron_3/resources/shader_with_light.f");
-      break;
-    case PROGRAM_FLAT:
-      return declare_program(name, ":/cgal/Polyhedron_3/resources/shader_flat.v", ":/cgal/Polyhedron_3/resources/shader_flat.f");
-    case PROGRAM_OLD_FLAT:
-      return declare_program(name, ":/cgal/Polyhedron_3/resources/shader_with_light.v", ":/cgal/Polyhedron_3/resources/shader_old_flat.f");
-      break;
+  switch(name)
+  {
+  case PROGRAM_C3T3:
+  {
+    QOpenGLShaderProgram* program = declare_program(name, ":/cgal/Polyhedron_3/resources/shader_c3t3.v" , ":/cgal/Polyhedron_3/resources/shader_c3t3.f");
+    program->setProperty("hasLight", true);
+    program->setProperty("hasNormals", true);
+    program->setProperty("hasCutPlane", true);
+    program->setProperty("hasTransparency", true);
+    return program;
+  }
+  case PROGRAM_C3T3_EDGES:
+  {
+    QOpenGLShaderProgram* program = declare_program(name, ":/cgal/Polyhedron_3/resources/shader_c3t3_edges.v" , ":/cgal/Polyhedron_3/resources/shader_c3t3_edges.f");
+    program->setProperty("hasCutPlane", true);
+    return program;
+  }
+  case PROGRAM_WITH_LIGHT:
+  {
+    QOpenGLShaderProgram* program = declare_program(name, ":/cgal/Polyhedron_3/resources/shader_with_light.v" , ":/cgal/Polyhedron_3/resources/shader_with_light.f");
+    program->setProperty("hasLight", true);
+    program->setProperty("hasNormals", true);
+    program->setProperty("hasTransparency", true);
+    return program;
+  }
+  case PROGRAM_WITHOUT_LIGHT:
+  {
+    QOpenGLShaderProgram* program = declare_program(name, ":/cgal/Polyhedron_3/resources/shader_without_light.v" , ":/cgal/Polyhedron_3/resources/shader_without_light.f");
+    program->setProperty("hasFMatrix", true);
+    return program;
+  }
+  case PROGRAM_NO_SELECTION:
+  {
+    QOpenGLShaderProgram* program = declare_program(name, ":/cgal/Polyhedron_3/resources/shader_without_light.v" , ":/cgal/Polyhedron_3/resources/shader_no_light_no_selection.f");
+    program->setProperty("hasFMatrix", true);
+    return program;
+  }
+  case PROGRAM_WITH_TEXTURE:
+  {
+    QOpenGLShaderProgram* program = declare_program(name, ":/cgal/Polyhedron_3/resources/shader_with_texture.v" , ":/cgal/Polyhedron_3/resources/shader_with_texture.f");
+    program->setProperty("hasLight", true);
+    program->setProperty("hasNormals", true);
+    program->setProperty("hasFMatrix", true);
+    program->setProperty("hasTexture", true);
+    return program;
+  }
+  case PROGRAM_PLANE_TWO_FACES:
+  {
+    QOpenGLShaderProgram* program = declare_program(name, ":/cgal/Polyhedron_3/resources/shader_without_light.v" , ":/cgal/Polyhedron_3/resources/shader_plane_two_faces.f");
+    program->setProperty("hasLight", true);
+    program->setProperty("hasNormals", true);
+    return program;
+  }
+  case PROGRAM_WITH_TEXTURED_EDGES:
+  {
+    QOpenGLShaderProgram* program = declare_program(name, ":/cgal/Polyhedron_3/resources/shader_with_textured_edges.v" , ":/cgal/Polyhedron_3/resources/shader_with_textured_edges.f");
+    program->setProperty("hasFMatrix", true);
+    program->setProperty("hasTexture", true);
+    return program;
+  }
+  case PROGRAM_INSTANCED:
+  {
+    QOpenGLShaderProgram* program = declare_program(name, ":/cgal/Polyhedron_3/resources/shader_instanced.v" , ":/cgal/Polyhedron_3/resources/shader_with_light.f");
+    program->setProperty("hasLight", true);
+    program->setProperty("hasNormals", true);
+    program->setProperty("isInstanced", true);
+    return program;
+  }
+  case PROGRAM_INSTANCED_WIRE:
+  {
+    QOpenGLShaderProgram* program = declare_program(name, ":/cgal/Polyhedron_3/resources/shader_instanced.v" , ":/cgal/Polyhedron_3/resources/shader_without_light.f");
+    program->setProperty("hasLight", true);
+    program->setProperty("hasNormals", true);
+    program->setProperty("hasBarycenter", true);
+    program->setProperty("isInstanced", true);
+  }
+  case PROGRAM_CUTPLANE_SPHERES:
+  {
+    QOpenGLShaderProgram* program = declare_program(name, ":/cgal/Polyhedron_3/resources/shader_c3t3_spheres.v" , ":/cgal/Polyhedron_3/resources/shader_c3t3.f");
+    program->setProperty("hasLight", true);
+    program->setProperty("hasNormals", true);
+    program->setProperty("hasBarycenter", true);
+    program->setProperty("hasRadius", true);
+    program->setProperty("isInstanced", true);
+    return program;
+  }
+  case PROGRAM_SPHERES:
+  {
+    QOpenGLShaderProgram* program = declare_program(name, ":/cgal/Polyhedron_3/resources/shader_spheres.v" , ":/cgal/Polyhedron_3/resources/shader_with_light.f");
+    program->setProperty("hasLight", true);
+    program->setProperty("hasNormals", true);
+    program->setProperty("hasBarycenter", true);
+    program->setProperty("hasRadius", true);
+    program->setProperty("hasTransparency", true);
+    program->setProperty("isInstanced", true);
+    return program;
+  }
+  case PROGRAM_FLAT:
+  {
+    QOpenGLShaderProgram* program = declare_program(name, ":/cgal/Polyhedron_3/resources/shader_flat.v", ":/cgal/Polyhedron_3/resources/shader_flat.f");
+    program->setProperty("hasLight", true);
+    program->setProperty("hasNormals", true);
+    return program;
+  }
+  case PROGRAM_OLD_FLAT:
+  {
+    QOpenGLShaderProgram* program = declare_program(name, ":/cgal/Polyhedron_3/resources/shader_with_light.v", ":/cgal/Polyhedron_3/resources/shader_old_flat.f");
+    program->setProperty("hasLight", true);
+    program->setProperty("hasNormals", true);
+    return program;
+  }
 
     default:
         std::cerr<<"ERROR : Program not found."<<std::endl;

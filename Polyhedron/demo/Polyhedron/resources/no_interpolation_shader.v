@@ -1,7 +1,7 @@
 #version 430 core
 
 in vec4 vertex;
-in vec3 normal;
+in vec3 normals;
 in vec4 inColor;
 
 out VS_OUT
@@ -18,6 +18,6 @@ void main(void)
 {
    vs_out.out_color=inColor;
    vs_out.fP = mv_matrix * vertex;
-   vs_out.fN = mat3(mv_matrix)* normal;
+   vs_out.fN = mat3(mv_matrix)* normals;
    gl_Position = mvp_matrix * vertex;
 }

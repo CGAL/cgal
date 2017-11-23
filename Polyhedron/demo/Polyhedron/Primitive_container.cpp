@@ -48,24 +48,6 @@ void Primitive_container::bindUniformValues(CGAL::Three::Viewer_interface* viewe
     viewer->getShaderProgram(d->program_id)->setUniformValue("is_selected", true);
   else
     viewer->getShaderProgram(d->program_id)->setUniformValue("is_selected", false);
-
-  QColor c = d->color;
-  if(d->program_id == Viewer_interface::PROGRAM_WITH_TEXTURE)
-  {
-    if(d->is_selected) c = c.lighter(120);
-    viewer->getShaderProgram(d->program_id)->setAttributeValue
-        ("color_facets",
-         c.redF(),
-         c.greenF(),
-         c.blueF());
-  }
-  else if(d->program_id == Viewer_interface::PROGRAM_WITH_TEXTURED_EDGES)
-  {
-    if(d->is_selected) c = c.lighter(50);
-    viewer->getShaderProgram(d->program_id)->setUniformValue
-        ("color_lines",
-         QVector3D(c.redF(), c.greenF(), c.blueF()));
-  }
   viewer->getShaderProgram(d->program_id)->release();
 }
 

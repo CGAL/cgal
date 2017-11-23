@@ -48,110 +48,70 @@ Triangle_container::Triangle_container(int program, bool indexed)
 void Triangle_container::initGL( Viewer_interface* viewer)
 {
   viewer->makeCurrent();
+  if(!getVao(viewer))
+    setVao(viewer, new Vao(viewer->getShaderProgram(getProgram())));
   if(isDataIndexed())
   {
-    switch(getProgram())
-    {
-    case VI::PROGRAM_WITHOUT_LIGHT:
-    case VI::PROGRAM_WITH_LIGHT:
-    {
-      if(!getVbo(Smooth_vertices))
-        setVbo(Smooth_vertices,
-            new Vbo("vertex", Vbo::GEOMETRY));
-      if(!getVbo(Vertex_indices))
-        setVbo(Vertex_indices,
-            new Vbo("indices",
-                    Vbo::GEOMETRY,
-                    QOpenGLBuffer::IndexBuffer));
-      if(!getVao(viewer))
-        setVao(viewer, new Vao(viewer->getShaderProgram(getProgram())));
-      getVao(viewer)->addVbo(getVbo(Smooth_vertices));
-      getVao(viewer)->addVbo(getVbo(Vertex_indices));
-    }
-      break;
-    default:
-      Q_UNUSED(viewer);
-      break;
-    }
-    switch(getProgram())
-    {
-    case VI::PROGRAM_WITH_LIGHT:
+    if(!getVbo(Smooth_vertices))
+      setVbo(Smooth_vertices,
+             new Vbo("vertex", Vbo::GEOMETRY));
+    if(!getVbo(Vertex_indices))
+      setVbo(Vertex_indices,
+             new Vbo("indices",
+                     Vbo::GEOMETRY,
+                     QOpenGLBuffer::IndexBuffer));
+    getVao(viewer)->addVbo(getVbo(Smooth_vertices));
+    getVao(viewer)->addVbo(getVbo(Vertex_indices));
+
+    if(viewer->getShaderProgram(getProgram())->property("hasNormals").toBool())
     {
       if(!getVbo(Smooth_normals))
         setVbo(Smooth_normals,
-            new Vbo("normals",
-                    Vbo::NORMALS));
-      if(!getVbo(VColors))
-        setVbo(VColors,
-            new Vbo("colors",
-                    Vbo::COLORS,
-                    QOpenGLBuffer::VertexBuffer, GL_FLOAT, 0, 4));
+               new Vbo("normals",
+                       Vbo::NORMALS));
       getVao(viewer)->addVbo(getVbo(Smooth_normals));
-      getVao(viewer)->addVbo(getVbo(VColors));
     }
-      break;
-    default:
-      Q_UNUSED(viewer);
-      break;
-    }
+    if(!getVbo(VColors))
+      setVbo(VColors,
+             new Vbo("colors",
+                     Vbo::COLORS,
+                     QOpenGLBuffer::VertexBuffer, GL_FLOAT, 0, 4));
+    getVao(viewer)->addVbo(getVbo(VColors));
   }
   else
   {
-    switch(getProgram())
+    if(!getVbo(Flat_vertices))
     {
-
-    case VI::PROGRAM_WITH_LIGHT:
-    case VI::PROGRAM_C3T3:
-    //case VI::PROGRAM_C3T3_TETS:
-    case VI::PROGRAM_SPHERES:
-    case VI::PROGRAM_CUTPLANE_SPHERES:
-    {
-      if(!getVbo(Flat_vertices))
-      {
-        setVbo(Flat_vertices,
-            new Vbo("vertex",
-                    Vbo::GEOMETRY));
-      }
-      if(!getVbo(Flat_normals))
-        setVbo(Flat_normals,
-            new Vbo("normals",
-                    Vbo::NORMALS));
-      if(!getVbo(FColors))
-        setVbo(FColors,
-            new Vbo("colors",
-                    Vbo::COLORS,
-                    QOpenGLBuffer::VertexBuffer, GL_FLOAT, 0, 4));
-      setVao(viewer, new Vao(viewer->getShaderProgram(getProgram())));
-      getVao(viewer)->addVbo(getVbo(Flat_vertices));
-      getVao(viewer)->addVbo(getVbo(Flat_normals));
-      getVao(viewer)->addVbo(getVbo(FColors));
-
+      setVbo(Flat_vertices,
+             new Vbo("vertex",
+                     Vbo::GEOMETRY));
     }
-      break;
-    default:
-      Q_UNUSED(viewer);
-      break;
-    }
-    switch(getProgram())
+    getVao(viewer)->addVbo(getVbo(Flat_vertices));
+    if(viewer->getShaderProgram(getProgram())->property("hasNormals").toBool())
     {
-    case VI::PROGRAM_C3T3:
-      //case VI::PROGRAM_C3T3_TETS:
-    case VI::PROGRAM_SPHERES:
-    case VI::PROGRAM_CUTPLANE_SPHERES:
+    if(!getVbo(Flat_normals))
+      setVbo(Flat_normals,
+             new Vbo("normals",
+                     Vbo::NORMALS));
+    getVao(viewer)->addVbo(getVbo(Flat_normals));
+    }
+    if(!getVbo(FColors))
+      setVbo(FColors,
+             new Vbo("colors",
+                     Vbo::COLORS,
+                     QOpenGLBuffer::VertexBuffer, GL_FLOAT, 0, 4));
+    getVao(viewer)->addVbo(getVbo(FColors));
+
+    if(viewer->getShaderProgram(getProgram())->property("hasBarycenter").toBool())
     {
       if(!getVbo(Facet_barycenters))
         setVbo(Facet_barycenters,
-            new Vbo("barycenter",
-                    Vbo::GEOMETRY));
+               new Vbo("barycenter",
+                       Vbo::GEOMETRY));
       getVao(viewer)->addVbo(getVbo(Facet_barycenters));
     }
-      break;
-    default:
-      Q_UNUSED(viewer);
-      break;
-    }
-    if(getProgram() == VI::PROGRAM_SPHERES
-       || getProgram() == VI::PROGRAM_CUTPLANE_SPHERES)
+
+    if(viewer->getShaderProgram(getProgram())->property("hasRadius").toBool())
     {
       if(!getVbo(Radius))
         setVbo(Radius,
@@ -178,7 +138,7 @@ void Triangle_container::draw(Viewer_interface* viewer,
     if(is_color_uniform)
       getVao(viewer)->program->setAttributeValue("colors", getColor());
     getVbo(Vertex_indices)->bind();
-    if(getProgram() == VI::PROGRAM_WITH_LIGHT)
+    if(getVao(viewer)->program->property("hasTransparency").toBool())
     {
       getVao(viewer)->program->setUniformValue("comparing", d->comparing);
       getVao(viewer)->program->setUniformValue("width", d->width);
@@ -198,17 +158,11 @@ void Triangle_container::draw(Viewer_interface* viewer,
   else
   {
     getVao(viewer)->bind();
-    if(getProgram() == VI::PROGRAM_C3T3)
-      getVao(viewer)->program->setUniformValue("shrink_factor", d->shrink_factor);
-    if(getProgram() == VI::PROGRAM_C3T3
-       || getProgram() == VI::PROGRAM_CUTPLANE_SPHERES)
+    if(getVao(viewer)->program->property("hasCutPlane").toBool())
       getVao(viewer)->program->setUniformValue("cutplane", d->plane);
     if(is_color_uniform)
       getVao(viewer)->program->setAttributeValue("colors", getColor());
-    getVao(viewer)->program->setUniformValue("alpha", d->alpha);
-    if(getProgram() == VI::PROGRAM_WITH_LIGHT
-       || getProgram() == VI::PROGRAM_SPHERES
-       || getProgram() == VI::PROGRAM_C3T3)
+    if(getVao(viewer)->program->property("hasTransparency").toBool())
     {
       getVao(viewer)->program->setUniformValue("comparing", d->comparing);
       getVao(viewer)->program->setUniformValue("width", d->width);
@@ -216,11 +170,11 @@ void Triangle_container::draw(Viewer_interface* viewer,
       getVao(viewer)->program->setUniformValue("near", d->m_near);
       getVao(viewer)->program->setUniformValue("far", d->m_far);
       getVao(viewer)->program->setUniformValue("writing", d->writing);
+      getVao(viewer)->program->setUniformValue("alpha", d->alpha);
       if( fbo)
         viewer->glBindTexture(GL_TEXTURE_2D, fbo->texture());
     }
-    if(getProgram() == VI::PROGRAM_SPHERES
-       || getProgram() == VI::PROGRAM_CUTPLANE_SPHERES)
+    if(getVao(viewer)->program->property("isInstanced").toBool())
     {
       viewer->glDrawArraysInstanced(GL_TRIANGLES, 0,
                                     static_cast<GLsizei>(getFlatDataSize()/3),
@@ -240,12 +194,13 @@ void Triangle_container::draw(Viewer_interface* viewer,
 void Triangle_container::initializeBuffers(Viewer_interface *viewer)
 {
   Primitive_container::initializeBuffers(viewer);
-  if(getProgram() == VI::PROGRAM_SPHERES
-     || getProgram() == VI::PROGRAM_CUTPLANE_SPHERES)
+  if(getVao(viewer)->program->property("isInstanced").toBool())
   {
     getVao(viewer)->bind();
-    viewer->glVertexAttribDivisor(getVao(viewer)->program->attributeLocation("barycenter"), 1);
-    viewer->glVertexAttribDivisor(getVao(viewer)->program->attributeLocation("radius"), 1);
+    if(getVao(viewer)->program->property("hasBarycenter").toBool())
+      viewer->glVertexAttribDivisor(getVao(viewer)->program->attributeLocation("barycenter"), 1);
+    if(getVao(viewer)->program->property("hasRadius").toBool())
+      viewer->glVertexAttribDivisor(getVao(viewer)->program->attributeLocation("radius"), 1);
     viewer->glVertexAttribDivisor(getVao(viewer)->program->attributeLocation("colors"), 1);
     getVao(viewer)->release();
   }
