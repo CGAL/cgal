@@ -148,6 +148,10 @@
 #  include <CGAL/compiler_config.h>
 #endif
 
+#if BOOST_MSVC && CGAL_TEST_SUITE
+#  include <CGAL/Testsuite/vc_debug_hook.h
+#endif
+
 //----------------------------------------------------------------------//
 //  Support for DLL on Windows (CGAL_EXPORT macro)
 //----------------------------------------------------------------------//
