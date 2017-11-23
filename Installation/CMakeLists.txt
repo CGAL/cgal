@@ -551,7 +551,17 @@ message( "== Generate version files (DONE) ==\n")
 #
 #--------------------------------------------------------------------------------------------------
 
-include( CGAL_display_flags )
+if( RUNNING_CGAL_AUTO_TEST )
+  message("== Set up flags ==")
+
+  # Ugly hack to be compatible with current CGAL testsuite process (as of
+  # Nov. 2017). -- Laurent Rineau
+  include(CGAL_SetupFlags)
+
+  message("== Set up flags (DONE) ==\n")
+else()
+  include( CGAL_display_flags )
+endif()
 
 message("== Detect external libraries ==")
 
