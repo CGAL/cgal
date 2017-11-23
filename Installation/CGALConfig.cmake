@@ -1,5 +1,5 @@
 # 
-# This file points to the CGALConfig.cmake for a pure header-only
+# This file points to the CGALConfig.cmake for a header-only
 # CGAL installation.
 #
 

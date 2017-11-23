@@ -1,12 +1,12 @@
 # 
-# This file is the CGALConfig.cmake for a pure header-only CGAL installation
+# This file is the CGALConfig.cmake for a header-only CGAL installation
 #
 
 if(CGALConfig_included)
   return()
 endif()
 
-message(STATUS "Using pure header-only CGAL")
+message(STATUS "Using header-only CGAL")
 
 set(CGALConfig_included TRUE)
 
@@ -105,7 +105,7 @@ foreach(cgal_lib ${CGAL_LIBRARIES})
 endforeach()
 
 target_compile_definitions(CGAL INTERFACE CGAL_HEADER_ONLY=1)
-target_compile_definitions(CGAL INTERFACE CGAL_HEADER_ONLY_STEP_2=1)
+
 
 #
 #

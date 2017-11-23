@@ -139,7 +139,7 @@
 //  platform specific workaround flags (CGAL_CFG_...)
 //----------------------------------------------------------------------//
 
-#if CGAL_HEADER_ONLY_STEP_2
+#if CGAL_HEADER_ONLY
 #  include <CGAL/internal/enable_third_party_libraries.h>
 #  if(BOOST_MSVC)
 #    include <CGAL/MSVC_compiler_config.h>

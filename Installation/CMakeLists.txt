@@ -36,7 +36,7 @@ if(CMAKE_MAJOR_VERSION GREATER 2)
   # In header only mode, we use INTERFACE libraries, which was introduced in cmake 3.0.
   # Thus this option is only enabled for cmake >= 3.0.
 
-  if (CGAL_HEADER_ONLY OR CGAL_HEADER_ONLY_STEP_2)
+  if (CGAL_HEADER_ONLY)
     set(CGAL_HEADER_ONLY TRUE CACHE BOOL "Enable cgal header only" FORCE)
     add_definitions(-DCGAL_HEADER_ONLY)
   endif()
@@ -666,7 +666,7 @@ option( CGAL_ENABLE_PRECONFIG "Select to allow to preconfiguration of external l
 # this; e.g. in MPFI/RS in Algebraic_kernel_d. For these cases CGAL
 # and the example/test must be configured with MPFI (just one is not sufficient)
 
-if(NOT CGAL_HEADER_ONLY_STEP_2)
+if(NOT CGAL_HEADER_ONLY)
   include(CGAL_SetupDependencies)
 endif()
 
@@ -678,7 +678,7 @@ message("== Detect external libraries (DONE) ==\n")
 #
 #--------------------------------------------------------------------------------------------------
 
-if(NOT CGAL_HEADER_ONLY_STEP_2)
+if(NOT CGAL_HEADER_ONLY)
 # The variables set are the #defines expected by compiler_config.h
 # Note: CMake will not notice when files are added or removed
 # but this is probably OK for the installation procedure.
@@ -740,7 +740,7 @@ endif()
 
 message("== Write compiler_config.h (DONE) ==\n")
 
-endif(NOT CGAL_HEADER_ONLY_STEP_2)
+endif(NOT CGAL_HEADER_ONLY)
 
 #--------------------------------------------------------------------------------------------------
 #
@@ -847,7 +847,12 @@ if (CGAL_BRANCH_BUILD AND CGAL_REPORT_DUPLICATE_FILES )
 
 endif()
 
-create_CGALconfig_files()
+if(NOT CGAL_HEADER_ONLY)
+  create_CGALconfig_files()
+else()
+  configure_file("${CGAL_MODULES_DIR}/CGALConfig_binary_header_only.cmake.in"
+    "${CMAKE_BINARY_DIR}/CGALConfig.cmake"  @ONLY)
+endif()
 
 #--------------------------------------------------------------------------------------------------
 #
@@ -892,7 +897,7 @@ if ( ZLIB_IN_AUXILIARY )
 endif()
 
 
-if(NOT CGAL_HEADER_ONLY_STEP_2)
+if(NOT CGAL_HEADER_ONLY)
   install(FILES
     ${CMAKE_BINARY_DIR}/CGALConfigVersion.cmake
     ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake
