@@ -11,7 +11,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 
 /**
- * This file tests the VSA free function API.
+ * This file tests the free function CGAL::VSA::mesh_approximation.
  */
 int main()
 {
