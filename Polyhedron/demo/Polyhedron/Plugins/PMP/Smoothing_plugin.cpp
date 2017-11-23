@@ -247,27 +247,35 @@ public Q_SLOTS:
                     * poly_item->polyhedron() :
                     * selection_item->polyhedron();
 
+
+        if(previously_selected_index != index)
+        {
+            is_stiffness_matrix_setup = false;
+            previously_selected_index = index;
+        }
+
+
+
 		unsigned int itime = ui_widget.time_spinBox->value();
 		const double time = itime * 1e-6;
         //unsigned int nb_iter = ui_widget.curv_iterations_spinBox_2->value();
         unsigned int nb_iter = 1;
 
-        std::cout<<"setting up stiffness matrix..."<<std::endl;
+        //std::cout<<"setting up stiffness matrix..."<<std::endl;
 
         QApplication::setOverrideCursor(Qt::WaitCursor);
 
         if(!is_stiffness_matrix_setup)
         {
-            std::cout<<"!is_stiffness_matrix_setup"<<std::endl;
+            std::cout<<"!is_stiffness_matrix_setup= "<<is_stiffness_matrix_setup<<std::endl;
             setup_mcf_system(pmesh, stiffness_matrix_);
             is_stiffness_matrix_setup = true;
         }
 
-        std::cout<<"stiffness_matrix_: "<<stiffness_matrix_<<std::endl;
+       // std::cout<<"stiffness_matrix_: "<<stiffness_matrix_<<std::endl;
 
 
         solve_mcf_system(pmesh, time, nb_iter, stiffness_matrix_);
-
 
 
         poly_item->invalidateOpenGLBuffers();
@@ -312,7 +320,9 @@ private:
     Ui::Smoothing ui_widget;
 
     Eigen::SparseMatrix<double> stiffness_matrix_;
-    bool is_stiffness_matrix_setup = false;
+    bool is_stiffness_matrix_setup = false; // not needed..
+
+    Scene_interface::Item_id previously_selected_index = -1;
 
 
 

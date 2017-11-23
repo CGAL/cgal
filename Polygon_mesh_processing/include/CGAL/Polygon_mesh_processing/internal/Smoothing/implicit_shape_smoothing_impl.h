@@ -169,7 +169,7 @@ public:
 
     // todo : assert L, D sizes
 
-    std::cout<<"mass matrix= "<<D<<std::endl;
+    //std::cout<<"mass matrix= "<<D<<std::endl;
 
     std::cerr << "compute coefficient matrix...";
     compute_coeff_matrix(A, L, D, time);
@@ -186,8 +186,6 @@ public:
   }
 
 
-
-  //void solve_system(Eigen_matrix& stiffness_matrix)
   void solve_system(Eigen_matrix& A,
                     Eigen_vector& Xx, Eigen_vector& Xy, Eigen_vector& Xz,
                     Eigen_vector& bx, Eigen_vector& by, Eigen_vector& bz)
