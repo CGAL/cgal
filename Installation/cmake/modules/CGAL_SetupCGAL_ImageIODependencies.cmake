@@ -62,7 +62,7 @@ function(CGAL_setup_CGAL_ImageIO_dependencies target)
     target_include_directories( CGAL_ImageIO SYSTEM ${keyword} ${ZLIB_INCLUDE_DIRS})
     target_link_libraries( CGAL_ImageIO ${keyword} ${ZLIB_LIBRARIES})
 
-    target_compile_definitions( CGAL_ImageIO ${keyword} "-DCGAL_USE_ZLIB")
+    target_compile_definitions( CGAL_ImageIO ${keyword} CGAL_USE_ZLIB=1)
     if(NOT ARGV1 STREQUAL INTERFACE)
       set_target_properties(CGAL_ImageIO PROPERTIES CGAL_TARGET_USES_ZLIB TRUE)
     endif()
