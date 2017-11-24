@@ -549,6 +549,12 @@ public:
     return rq;
   }
 
+  Weighted_point get_closest_point(const Weighted_point& wp, const Weighted_point& wq) const
+  {
+    typename Gt::Construct_point_3 cp = geom_traits().construct_point_3_object();
+    return Weighted_point(get_closest_point(cp(wp), cp(wq)), wq.weight());
+  }
+
   // Warning: This is a periodic version that computes the smallest possible
   // distances between p and q, and between p and r FOR ALL POSSIBLE OFFSETS
   // before comparing these distances.
