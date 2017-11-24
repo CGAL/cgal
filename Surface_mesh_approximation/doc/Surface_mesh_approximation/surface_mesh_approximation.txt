@@ -110,7 +110,7 @@ To measure \f$ d \f$ in a relative way to the chord length (also independent to 
 Optionally, we can also add a dihedral angle weight \f$ sin(\mathbf{N}_i,\mathbf{N}_j) \f$ to the criterion, where \f$ \mathbf{N}_i,\mathbf{N}_j \f$ is the normal of the proxies separated by the boundary arc \f$ (\mathbf{a}, \mathbf{b}) \f$. If the angle between proxy \f$ P_i \f$ and \f$ P_j \f$ is rather small, even a coarse approximation will do as it does not add geometric information on the shape. Trivial non-circular chords (less than 4 edges) are not subdivided.
 
 \cgalFigureBegin{chord, chord.png}
-Varying the chord error. From left to right: clustering partition, and meshing with decreasing chord error. The boundaries of the partition are approximated with increasing accuracy.
+Varying the chord error. From left to right: clustering partition, and meshing with decreasing absolute chord error 5, 3 and 1 without dihedral angle weight. The boundaries of the partition (red lines) are approximated with increasing accuracy.
 \cgalFigureEnd
 
 \subsubsection sma_additional_anchors Additional Anchors
