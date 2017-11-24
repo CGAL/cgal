@@ -24,7 +24,7 @@ namespace VSA {
  * This function segment the input triangulated mesh by the variational shape approximation algorithm.
  * It fills a property map which associates a segment-id (in [0, number_of_segments -1])
  * or a proxy-id (in [0, number_of_proxies-1]) to each facet.
- * A segment is a set of connected facets which are placed under the same proxy patch (see \cgalFigureRef{relaxation}).
+ * A segment is a set of connected facets which are placed under the same proxy patch (see \cgalFigureRef{iterations}).
  *
  * @tparam TriangleMesh model of `FaceGraph`.
  *         The descriptor types `boost::graph_traits<TriangleMesh>::%face_descriptor`

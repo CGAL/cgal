@@ -28,11 +28,17 @@ A class interface is also provided for advanced users, with interactive capabili
 
 \section sma_overview Overview
 
+\cgalFigureBegin{workflow, workflow.png}
+Workflow of the approximation process in the free functions.
+\cgalFigureEnd
+
+Figure \cgalFigureRef{workflow} shows the workflow of the approximation algorithm in the free function APIs. Major parts are described below.
+
 \subsection sma_clustering Clustering
 
-Figure \cgalFigureRef{relaxation} depicts several Lloyd clustering iterations on the plane-sphere model with planar proxies and the \f$ \mathcal{L}^{2,1} \f$ metric.
+Figure \cgalFigureRef{iterations} depicts several Lloyd clustering iterations on the plane-sphere model with planar proxies and the \f$ \mathcal{L}^{2,1} \f$ metric.
 
-\cgalFigureBegin{relaxation, relaxation.png}
+\cgalFigureBegin{iterations, iterations.png}
 Discrete Lloyd iterations on the plane-sphere model with planar proxies and the \f$ \mathcal{L}^{2,1} \f$ metric: (left) random seeding of 6 proxies; (center) after one iteration; (right) after 8 iterations, the regions settle. The red lines depict the proxy normals drawn at the seed facets.
 \cgalFigureEnd
 
@@ -44,7 +50,7 @@ Each proxy is always associated with a <em>seed</em> triangle facet in the input
 
 \subsubsection sma_method Method
 
-To start the clustering iterations, we need a set of initial proxies. Starting from a single partition fitted with one proxy initialized from the first facet of the input mesh, we add more and more proxies to drive the error down gradually.
+To start the clustering iterations, we need a set of initial proxies. Starting from a single partition fitted with one proxy initialized from the first facet of the input mesh, we add more and more proxies to drive the error down gradually. Usually, after adding some proxies, we perform several inner clustering iterations, which is referred as <em>relaxation</em> in seeding.
 
 Suppose we have a clustering of \f$n\f$ partitions with errors \f$ \{E_k\}_{k=1\cdots n} \f$, and we want \f$m\f$ more proxies, the package provides 3 different seeding methods:
 - <b>Random</b>. \f$m\f$ seed facets are picked randomly on the surface.
@@ -61,7 +67,7 @@ and the remaining error is added to the next proxy error in order to keep the to
 Comparison of seeding methods on the sphere-cube model. From left to right: initial partition (\f$ \mathcal{L}^{2,1} \f$ metrics and 20 proxies), add 5 proxy seeds (red facets) with random, incremental and hierarchical methods respectively.
 \cgalFigureEnd
 
-Figure \cgalFigureRef{seeding_method} depicts the effect of different seeding methods. Random initialization randomly selects a set of input triangle facets as proxy seeds. It is very fast but the subsequent clustering process can be entrapped in local minima, especially on shapes with regions surrounded by sharp creases (left rectangle). Incremental initialization adds the proxies one by one at the most distorted region, interleaved with several inner iterations of clustering. It can thus be slow due to the interleaving with the clustering process. Hierarchical initialization adds proxies in a hierarchical refinement sequence, so as the generate clustering refions with more evenly distributed fitting errors. Time consumption is somewhere in-between the former two. Some statistics and comparisons are available in \ref sma_perf.
+Figure \cgalFigureRef{seeding_method} depicts the effect of different seeding methods. Random initialization randomly selects a set of input triangle facets as proxy seeds. It is very fast but the subsequent clustering process can be entrapped in local minima, especially on shapes with regions surrounded by sharp creases (left rectangle). Incremental initialization adds the proxies one by one at the most distorted region. It can thus be slow due to the considerable amount of interleaved relaxation iterations. Hierarchical initialization doubles the number of proxies in a hierarchical refinement sequence, so as the generate clustering regions with more evenly distributed fitting errors. Time consumption is somewhere in-between the former two. Some statistics and comparisons are available in \ref sma_perf.
 
 \subsubsection sma_stop Stop Criteria
 
@@ -87,7 +93,7 @@ For interactive use, the approach can yield better approximations of the geometr
 Operations on the sphere-cube union model. Upper row: merging (9 proxies) and the reverse bisection splitting (10 partitions) on the confined region. Lower row: one teleportation operation of merging and adding a facet seed, the sphere is approximated with one more proxy.
 \cgalFigureEnd
 
-As depicted in Figure \cgalFigureRef{operations}, teleportation provides a means to relocate a local minimum region entrapped in the planar plart (left) to the most needed regions on the sphere (right). In \ref sma_example3, the class interface is used to control the approximation process through the aforementioned operations.
+As depicted in Figure \cgalFigureRef{operations}, teleportation provides a means to relocate a local minimum region entrapped in the planar part (left) to the most needed regions on the sphere (right). In \ref sma_example3, the class interface is used to control the approximation process through the aforementioned operations.
 
 \subsection sma_meshing Meshing
 
@@ -165,7 +171,7 @@ Note that the function parameters are provided through \ref namedparameters. Set
 
 \cgalExample{Surface_mesh_approximation/vsa_approximation_2_example.cpp}
 
-The facet proxy index map and the output proxies provide a means to access the partition and the proxy parameters as illustrated by \cgalFigureRef{relaxation}. 
+The facet proxy index map and the output proxies provide a means to access the partition and the proxy parameters as illustrated by \cgalFigureRef{iterations}. 
 
 \subsection sma_example2 Free Function Segmentation
 
@@ -215,7 +221,7 @@ Runtime in seconds with target error drop of different seeding method. The bench
         0.02       |  1.415/256 |  35.171/192 | 1.428/256
 </center>
 
-Runtime of 3 phases of the algorithm in seconds: seeding, relaxation and meshing. The seeding method is hierarchical with target number of proxies.
+Runtime of 3 phases of the algorithm in seconds: seeding, clustering iteration and meshing. The seeding method is hierarchical with target number of proxies.
 
 <center>
     Model    | \#Triangles | \#Proxies | \#Iterations | Seeding | Relaxation | Meshing | Total
