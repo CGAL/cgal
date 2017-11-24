@@ -99,7 +99,7 @@ void Triangle_container::initGL( Viewer_interface* viewer)
       setVbo(FColors,
              new Vbo("colors",
                      Vbo::COLORS,
-                     QOpenGLBuffer::VertexBuffer, GL_FLOAT, 0, 4));
+                     QOpenGLBuffer::VertexBuffer, GL_FLOAT, 0, 3));
     getVao(viewer)->addVbo(getVbo(FColors));
 
     if(viewer->getShaderProgram(getProgram())->property("hasBarycenter").toBool())
