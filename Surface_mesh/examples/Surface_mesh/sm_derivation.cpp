@@ -2,6 +2,7 @@
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
+#include <CGAL/Polygon_mesh_processing/bbox.h>
 
 typedef CGAL::Simple_cartesian<double> K;
 typedef K::Point_3 Point_3;
@@ -25,17 +26,20 @@ namespace boost {
 
   template <typename T>
   struct property_map<My::Mesh, T>
-  {
-    typedef typename property_map<My::Mesh::Base, T>::type type;
-    typedef typename property_map<My::Mesh::Base, T>::const_type const_type;
-  };
+    : public boost::property_map<My::Mesh::Base, T>
+  {};
+  
+  template <typename T>
+  struct graph_has_property<My::Mesh, T>
+    : public boost::graph_has_property<My::Mesh::Base, T>
+  {};
 };
 
 
 int main()
 {
   My::Mesh mesh;
-  CGAL::make_triangle(Point_3(0,0,0), Point_3(1,0,0), Point_3(0,1,0), mesh);
+  CGAL::make_triangle(Point_3(0,0,0), Point_3(1,0,0), Point_3(1,1,1), mesh);
   typedef boost::graph_traits<My::Mesh>::vertex_descriptor vertex_descriptor;
 
   typedef boost::property_map<My::Mesh,CGAL::vertex_point_t>::type Point_property_map;
@@ -43,10 +47,11 @@ int main()
 
   for(vertex_descriptor vd : vertices(mesh)){
     if (vd != boost::graph_traits<My::Mesh>::null_vertex()){
-      std::cout << vd << << " at " << get(ppm, vd) << std::endl;
+      std::cout << vd << " at " << get(ppm, vd) << std::endl;
     }
   }
-
+  std::cout << CGAL::Polygon_mesh_processing::bbox(mesh) << std::endl;
+  
   return 0;
 }
 
