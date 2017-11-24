@@ -133,7 +133,7 @@ bool mesh_approximation(const TriangleMesh &tm_in,
   typedef CGAL::Polyhedron_3<Geom_traits> PolyhedronSurface;
   PolyhedronSurface tmp_poly;
   PolyhedronSurface * const tm_out = choose_param(get_param(np, internal_np::output_mesh), &tmp_poly);
-  const FT chord_error = choose_param(get_param(np, internal_np::mesh_chord_error), FT(1.0));
+  const FT chord_error = choose_param(get_param(np, internal_np::mesh_chord_error), FT(5.0));
   const bool is_manifold = approx.extract_mesh(*tm_out, chord_error);
 
   typedef typename boost::lookup_named_param_def<

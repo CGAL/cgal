@@ -249,6 +249,9 @@ private:
   // The indexed triangle approximation.
   std::vector<std::vector<std::size_t> > tris;
 
+  // meshing parameters
+  FT average_edge_length;
+
 //member functions
 public:
   /*!
@@ -259,7 +262,8 @@ public:
     fit_error(NULL),
     proxy_fitting(NULL),
     fproxy_map(internal_fidx_map),
-    vanchor_map(internal_vidx_map) {
+    vanchor_map(internal_vidx_map),
+    average_edge_length(0.0) {
     Geom_traits traits;
     vector_functor = traits.construct_vector_3_object();
     scale_functor = traits.construct_scaled_vector_3_object();
@@ -279,7 +283,8 @@ public:
     fit_error(NULL),
     proxy_fitting(NULL),
     fproxy_map(internal_fidx_map),
-    vanchor_map(internal_vidx_map) {
+    vanchor_map(internal_vidx_map),
+    average_edge_length(0.0) {
     Geom_traits traits;
     vector_functor = traits.construct_vector_3_object();
     scale_functor = traits.construct_scaled_vector_3_object();
@@ -314,7 +319,6 @@ public:
    * Rebuild the internal data structure.
    */
   void rebuild() {
-
     // cleanup
     proxies.clear();
     px_planes.clear();
@@ -334,6 +338,16 @@ public:
     BOOST_FOREACH(vertex_descriptor v, vertices(*m_pmesh))
       internal_vidx_map.insert(
         std::pair<vertex_descriptor, std::size_t>(v, CGAL_VSA_INVALID_TAG));
+
+    // compute average edge length
+    FT sum(0.0);
+    BOOST_FOREACH(edge_descriptor e, edges(*m_pmesh)) {
+      const vertex_descriptor vs = source(e, *m_pmesh);
+      const vertex_descriptor vt = target(e, *m_pmesh);
+      sum += FT(std::sqrt(CGAL::to_double(
+        CGAL::squared_distance(point_pmap[vs], point_pmap[vt]))));
+    }
+    average_edge_length = sum / num_edges(*m_pmesh);
   }
 
   /*!
@@ -838,11 +852,18 @@ public:
    * @tparam PolyhedronSurface should be `CGAL::Polyhedron_3`
    * @param[out] tm_out output triangle mesh
    * @param chord_error boundary approximation recursively split criterion
+   * @param is_relative_to_chord true if the chord_error is relative to the the chord length (relative sense),
+   * otherwise it's relative to the average edge length (absolute sense).
+   * @param with_dihedral_angle true if add dihedral angle weight to the distance, false otherwise
    * @param pca_plane true if use PCA plane fitting, otherwise use the default area averaged plane parameters
    * @return true if the extracted surface mesh is manifold, false otherwise.
    */
   template <typename PolyhedronSurface>
-  bool extract_mesh(PolyhedronSurface &tm_out, const FT chord_error = FT(0.2), bool pca_plane = false) {
+  bool extract_mesh(PolyhedronSurface &tm_out,
+    const FT chord_error = FT(5.0),
+    const bool is_relative_to_chord = false,
+    const bool with_dihedral_angle = false,
+    const bool pca_plane = false) {
     // initialize all vertex anchor status
     BOOST_FOREACH(vertex_descriptor v, vertices(*m_pmesh))
       internal_vidx_map[v] = CGAL_VSA_INVALID_TAG;
@@ -854,7 +875,7 @@ public:
     init_proxy_planes(pca_plane);
 
     find_anchors();
-    find_edges(chord_error);
+    find_edges(chord_error, is_relative_to_chord, with_dihedral_angle);
     add_anchors();
     pseudo_cdt();
 
@@ -1382,8 +1403,13 @@ private:
   /*!
    * @brief Finds and approximates the chord connecting the anchors.
    * @param chord_error boundary chord approximation recursive split creterion
+   * @param is_relative_to_chord true if the chord_error is relative to the the chord length (relative sense),
+   * otherwise it's relative to the average edge length (absolute sense).
+   * @param with_dihedral_angle true if add dihedral angle weight to the distance, false otherwise
    */
-  void find_edges(const FT chord_error) {
+  void find_edges(const FT chord_error,
+    const bool is_relative_to_chord,
+    const bool with_dihedral_angle) {
     // collect candidate halfedges in a set
     std::set<halfedge_descriptor> he_candidates;
     BOOST_FOREACH(halfedge_descriptor h, halfedges(*m_pmesh)) {
@@ -1412,7 +1438,8 @@ private:
       do {
         Chord_vector chord;
         walk_to_next_anchor(he_start, chord);
-        borders.back().num_anchors += subdivide_chord(chord.begin(), chord.end(), chord_error);
+        borders.back().num_anchors += subdivide_chord(chord.begin(), chord.end(),
+          chord_error, is_relative_to_chord, with_dihedral_angle);
 
 #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
         std::cerr << "#chord_anchor " << borders.back().num_anchors << std::endl;
@@ -1670,13 +1697,18 @@ private:
    * @brief Subdivides a chord recursively in range [@a chord_begin, @a chord_end).
    * @param chord_begin begin iterator of the chord
    * @param chord_end end iterator of the chord
-   * @param the recursive split threshold
+   * @param chord_error the chord recursive split error threshold
+   * @param is_relative_to_chord true if the chord_error is relative to the the chord length (relative sense),
+   * otherwise it's relative to the average edge length (absolute sense).
+   * @param with_dihedral_angle true if add dihedral angle weight to the distance, false otherwise
    * @return the number of anchors of the chord apart from the first one
    */
   std::size_t subdivide_chord(
     const Chord_vector_iterator &chord_begin,
     const Chord_vector_iterator &chord_end,
-    const FT thre) {
+    const FT chord_error,
+    const bool is_relative_to_chord,
+    const bool with_dihedral_angle) {
     const std::size_t chord_size = std::distance(chord_begin, chord_end);
     const halfedge_descriptor he_first = *chord_begin;
     const halfedge_descriptor he_last = *(chord_end - 1);
@@ -1723,19 +1755,28 @@ private:
         }
       }
 
-      // suppose the proxy normal angle is acute
-      std::size_t px_left = fproxy_map[face(he_first, *m_pmesh)];
-      std::size_t px_right = px_left;
-      if (!CGAL::is_border(opposite(he_first, *m_pmesh), *m_pmesh))
-        px_right = fproxy_map[face(opposite(he_first, *m_pmesh), *m_pmesh)];
-      FT norm_sin(1.0);
-      if (!CGAL::is_border(opposite(he_first, *m_pmesh), *m_pmesh)) {
-        Vector_3 vec = CGAL::cross_product(
-          px_planes[px_left].normal, px_planes[px_right].normal);
-        norm_sin = FT(std::sqrt(CGAL::to_double(scalar_product_functor(vec, vec))));
+      FT criterion = dist_max;
+      if (is_relative_to_chord)
+        criterion /= chord_len;
+      else
+        criterion /= average_edge_length;
+
+      if (with_dihedral_angle) {
+        // suppose the proxy normal angle is acute
+        std::size_t px_left = fproxy_map[face(he_first, *m_pmesh)];
+        std::size_t px_right = px_left;
+        if (!CGAL::is_border(opposite(he_first, *m_pmesh), *m_pmesh))
+          px_right = fproxy_map[face(opposite(he_first, *m_pmesh), *m_pmesh)];
+        FT norm_sin(1.0);
+        if (!CGAL::is_border(opposite(he_first, *m_pmesh), *m_pmesh)) {
+          Vector_3 vec = CGAL::cross_product(
+            px_planes[px_left].normal, px_planes[px_right].normal);
+          norm_sin = FT(std::sqrt(CGAL::to_double(scalar_product_functor(vec, vec))));
+        }
+        criterion *= norm_sin;
       }
-      FT criterion = dist_max * norm_sin / chord_len;
-      if (criterion > thre)
+
+      if (criterion > chord_error)
         if_subdivide = true;
     }
 
@@ -1743,10 +1784,12 @@ private:
       // subdivide at the most remote vertex
       attach_anchor(*chord_max);
 
-      std::size_t num0 = subdivide_chord(chord_begin, chord_max + 1, thre);
-      std::size_t num1 = subdivide_chord(chord_max + 1, chord_end, thre);
+      const std::size_t num_left = subdivide_chord(chord_begin, chord_max + 1,
+        chord_error, is_relative_to_chord, with_dihedral_angle);
+      const std::size_t num_right = subdivide_chord(chord_max + 1, chord_end,
+        chord_error, is_relative_to_chord, with_dihedral_angle);
 
-      return num0 + num1;
+      return num_left + num_right;
     }
 
     return 1;

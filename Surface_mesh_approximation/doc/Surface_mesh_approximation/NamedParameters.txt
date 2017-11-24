@@ -109,7 +109,7 @@ the number of relaxations interleaved within seeding.\n
 \cgalNPBegin{mesh_chord_error} \anchor VSA_mesh_chord_error
 the chord subdivision threshold used in the meshing step.\n
 \b Type : `GeomTraits::FT` \n
-\b Default value is `1`
+\b Default value is `5.0`
 \cgalNPEnd
 
 \cgalNPBegin{face_proxy_map} \anchor VSA_face_proxy_map
