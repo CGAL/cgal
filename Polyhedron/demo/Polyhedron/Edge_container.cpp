@@ -110,12 +110,13 @@ void Edge_container::draw(Viewer_interface *viewer,
 
 {
   bindUniformValues(viewer);
-
   if(isDataIndexed())
   {
     getVao(viewer)->bind();
     if(is_color_uniform)
       getVao(viewer)->program->setAttributeValue("colors", getColor());
+    if(getVao(viewer)->program->property("hasFMatrix").toBool())
+      getVao(viewer)->program->setUniformValue("f_matrix", getFrameMatrix());
     getVbo(Indices)->bind();
     viewer->glDrawElements(GL_LINES, static_cast<GLuint>(getIdxSize()),
                            GL_UNSIGNED_INT, 0);
@@ -129,6 +130,8 @@ void Edge_container::draw(Viewer_interface *viewer,
       getVao(viewer)->program->setAttributeValue("colors", getColor());
     if(viewer->getShaderProgram(getProgram())->property("hasCutPlane").toBool())
       getVao(viewer)->program->setUniformValue("cutplane", d->plane);
+    if(getVao(viewer)->program->property("hasFMatrix").toBool())
+      getVao(viewer)->program->setUniformValue("f_matrix", getFrameMatrix());
     if(viewer->getShaderProgram(getProgram())->property("isInstanced").toBool())
     {
       viewer->glDrawArraysInstanced(GL_LINES, 0,

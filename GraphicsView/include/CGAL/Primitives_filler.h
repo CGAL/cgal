@@ -146,6 +146,14 @@ public:
     m_face_started = false;
     m_data_is_indexed = true;
   }
+  void setSegmentsVector( std::vector<float>* p_segments_vector){ segments_vector = p_segments_vector; }
+  void setSegmentColorVector( std::vector<float>* p_segment_color_vector){ segment_color_vector = p_segment_color_vector; }
+  void setFacesVector( std::vector<float>* p_faces_vector){ faces_vector = p_faces_vector;}
+  void setFlatNormalVector( std::vector<float>* p_flat_normal_vector){ flat_normal_vector = p_flat_normal_vector;}
+  void setSmoothNormalVector( std::vector<float>* p_smooth_normal_vector){smooth_normal_vector = p_smooth_normal_vector;}
+  void setFaceColorVector( std::vector<float>* p_face_color_vector){face_color_vector = p_face_color_vector;}
+  void setIdxSegmentsVector( std::vector<unsigned int>* p_idx_segments_vector){idx_segments_vector = p_idx_segments_vector;}
+  void setIdxFacesVector( std::vector<unsigned int>* p_idx_faces_vector) { idx_faces_vector = p_idx_faces_vector;}
 
   template<typename KPoint, typename KVector>
   void add_indexed_point(const KPoint& kp,

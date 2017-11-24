@@ -887,7 +887,7 @@ void Viewer::bindUniformValues(int program_name) const {
     if(program->property("hasFMatrix").toBool())
       program->setUniformValue("f_matrix",f_mat);
     if(program->property("hasTexture").toBool())
-      program->setUniformValue("s_texture",f_mat);
+      program->setUniformValue("s_texture",0);
  /*   switch(program_name)
     {
     case PROGRAM_WITH_LIGHT:

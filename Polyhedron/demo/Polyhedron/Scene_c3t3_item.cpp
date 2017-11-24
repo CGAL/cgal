@@ -32,6 +32,8 @@
 #include <CGAL/Three/Triangle_container.h>
 #include <CGAL/Three/Edge_container.h>
 
+#include <CGAL/Primitives_filler.h>
+
 typedef CGAL::AABB_triangulation_3_triangle_primitive<Kernel,C3t3> Primitive;
 typedef CGAL::AABB_traits<Kernel, Primitive> Traits;
 typedef CGAL::AABB_tree<Traits> Tree;
@@ -62,14 +64,12 @@ public :
       std::vector<float> *p_vertices,
       std::vector<float> *p_normals,
       std::vector<float> *p_edges,
-      std::vector<float> *p_colors,
-      std::vector<float> *p_bary)
+      std::vector<float> *p_colors)
   {
     vertices = p_vertices;
     normals = p_normals;
     edges = p_edges;
     colors = p_colors;
-    barycenters = p_bary;
   }
 
   void allocate()
@@ -84,8 +84,6 @@ public :
                                       static_cast<int>(normals->size()*sizeof(float)));
     getTriangleContainer(0)->allocate(Tri::FColors, colors->data(),
                                       static_cast<int>(colors->size()*sizeof(float)));
-    getTriangleContainer(0)->allocate(Tri::Facet_barycenters, barycenters->data(),
-                                      static_cast<int>(barycenters->size()*sizeof(float)));
     getTriangleContainer(0)->setFlatDataSize( vertices->size());
 
     getEdgeContainer(0)->reset_vbos(ALL);
@@ -226,11 +224,6 @@ public :
       colors->push_back((float)color.red()/255);
       colors->push_back((float)color.green()/255);
       colors->push_back((float)color.blue()/255);
-      colors->push_back(1.0f);
-
-      barycenters->push_back((pa[0]+pb[0]+pc[0])/3.0);
-      barycenters->push_back((pa[1]+pb[1]+pc[1])/3.0);
-      barycenters->push_back((pa[2]+pb[2]+pc[2])/3.0);
     }
   }
   void compute_bbox() const{}
@@ -245,7 +238,6 @@ private:
   mutable std::vector<float> *normals;
   mutable std::vector<float> *edges;
   mutable std::vector<float> *colors;
-  mutable std::vector<float> *barycenters;
   mutable QOpenGLShaderProgram *program;
   mutable bool is_fast;
 }; //end of class Scene_triangle_item
@@ -342,12 +334,7 @@ struct Scene_c3t3_item_priv {
     QGuiApplication::restoreOverrideCursor();
   }
   void reset_cut_plane();
-  void draw_triangle(const Tr::Bare_point& pa,
-                     const Tr::Bare_point& pb,
-                     const Tr::Bare_point& pc) const;
-  void draw_triangle_edges(const Tr::Bare_point& pa,
-                           const Tr::Bare_point& pb,
-                           const Tr::Bare_point& pc) const;
+
   void draw_triangle_edges_cnc(const Tr::Bare_point& pa,
                                const Tr::Bare_point& pb,
                                const Tr::Bare_point& pc) const;
@@ -428,7 +415,6 @@ struct Scene_c3t3_item_priv {
   mutable std::vector<float> positions_grid;
   mutable std::size_t grid_size;
   mutable std::vector<float> positions_poly;
-  mutable std::vector<float> positions_barycenter;
 
   mutable std::vector<float> normals;
   mutable std::vector<float> f_colors;
@@ -1066,74 +1052,8 @@ void Scene_c3t3_item::drawPoints(CGAL::Three::Viewer_interface * viewer)
 
 }
 
-void Scene_c3t3_item_priv::draw_triangle(const Tr::Bare_point& pa,
-                                         const Tr::Bare_point& pb,
-                                         const Tr::Bare_point& pc) const
-{
-#undef darker
-  Geom_traits::Vector_3 n = cross_product(pb - pa, pc - pa);
-  n = n / CGAL::sqrt(n*n);
-  const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
-
-  for (int i = 0; i<3; i++)
-  {
-    normals.push_back(n.x());
-    normals.push_back(n.y());
-    normals.push_back(n.z());
-  }
-  positions_poly.push_back(pa.x()+offset.x);
-  positions_poly.push_back(pa.y()+offset.y);
-  positions_poly.push_back(pa.z()+offset.z);
-
-  positions_poly.push_back(pb.x()+offset.x);
-  positions_poly.push_back(pb.y()+offset.y);
-  positions_poly.push_back(pb.z()+offset.z);
-
-  positions_poly.push_back(pc.x()+offset.x);
-  positions_poly.push_back(pc.y()+offset.y);
-  positions_poly.push_back(pc.z()+offset.z);
-
-  for(int i=0; i<3; ++i)
-  {
-   positions_barycenter.push_back((pa[0]+pb[0]+pc[0])/3.0);
-   positions_barycenter.push_back((pa[1]+pb[1]+pc[1])/3.0);
-   positions_barycenter.push_back((pa[2]+pb[2]+pc[2])/3.0);
-  }
 
 
-}
-
-void Scene_c3t3_item_priv::draw_triangle_edges(const Tr::Bare_point& pa,
-                                               const Tr::Bare_point& pb,
-                                               const Tr::Bare_point& pc) const
-{
-#undef darker
-  const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
-  positions_lines.push_back(pa.x()+offset.x);
-  positions_lines.push_back(pa.y()+offset.y);
-  positions_lines.push_back(pa.z()+offset.z);
-
-  positions_lines.push_back(pb.x()+offset.x);
-  positions_lines.push_back(pb.y()+offset.y);
-  positions_lines.push_back(pb.z()+offset.z);
-
-  positions_lines.push_back(pb.x()+offset.x);
-  positions_lines.push_back(pb.y()+offset.y);
-  positions_lines.push_back(pb.z()+offset.z);
-
-  positions_lines.push_back(pc.x()+offset.x);
-  positions_lines.push_back(pc.y()+offset.y);
-  positions_lines.push_back(pc.z()+offset.z);
-
-  positions_lines.push_back(pc.x()+offset.x);
-  positions_lines.push_back(pc.y()+offset.y);
-  positions_lines.push_back(pc.z()+offset.z);
-
-  positions_lines.push_back(pa.x()+offset.x);
-  positions_lines.push_back(pa.y()+offset.y);
-  positions_lines.push_back(pa.z()+offset.z);
-
-}
 void Scene_c3t3_item_priv::draw_triangle_edges_cnc(const Tr::Bare_point& pa,
                                                    const Tr::Bare_point& pb,
                                                    const Tr::Bare_point& pc) const
@@ -1318,8 +1238,6 @@ void Scene_c3t3_item::initializeBuffers(CGAL::Three::Viewer_interface *viewer)
   d->normals.shrink_to_fit();
   d->f_colors.clear();
   d->f_colors.shrink_to_fit();
-  d->positions_barycenter.clear();
-  d->positions_barycenter.shrink_to_fit();
 }
 
 
@@ -1394,7 +1312,6 @@ void Scene_c3t3_item_priv::computeIntersections()
   normals.clear();
   f_colors.clear();
   positions_lines.clear();
-  positions_barycenter.clear();
   const Geom_traits::Plane_3& plane = item->plane(offset);
   tree.all_intersected_primitives(plane,
         boost::make_function_output_iterator(ComputeIntersection(*this)));
@@ -1502,10 +1419,19 @@ void Scene_c3t3_item_priv::computeElements(Scene_c3t3_item::Gl_data_names name)
     }
   }
 
+  const qglviewer::Vec o= static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+  Geom_traits::Vector_3 offset(o.x, o.y, o.z);
   //The facets
   {
     Geom_traits::Construct_point_3 wp2p
       = c3t3.triangulation().geom_traits().construct_point_3_object();
+    CGAL::Primitive_filler filler(
+          &positions_lines,
+          NULL,
+          &positions_poly,
+          &normals,
+          NULL,
+          &f_colors);
 
     for (C3t3::Facet_iterator
       fit = c3t3.facets_begin(),
@@ -1514,19 +1440,30 @@ void Scene_c3t3_item_priv::computeElements(Scene_c3t3_item::Gl_data_names name)
     {
       const Tr::Cell_handle& cell = fit->first;
       const int& index = fit->second;
-      const Tr::Bare_point& pa = wp2p(cell->vertex((index + 1) & 3)->point());
-      const Tr::Bare_point& pb = wp2p(cell->vertex((index + 2) & 3)->point());
-      const Tr::Bare_point& pc = wp2p(cell->vertex((index + 3) & 3)->point());
-
-      QColor color = colors[cell->surface_patch_index(index)];
-      f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blueF());f_colors.push_back(1.0f);
-      f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blueF());f_colors.push_back(1.0f);
-      f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blueF());f_colors.push_back(1.0f);
+      const Tr::Bare_point& pa = wp2p(cell->vertex((index + 1) & 3)->point()) + offset;
+      const Tr::Bare_point& pb = wp2p(cell->vertex((index + 2) & 3)->point()) + offset;
+      const Tr::Bare_point& pc = wp2p(cell->vertex((index + 3) & 3)->point()) + offset;
+      QColor c= colors[cell->surface_patch_index(index)];
+      CGAL::Color color(c.red(), c.green(), c.blue());
+      Geom_traits::Vector_3 n = cross_product(pb - pa, pc - pa);
+      n = n / CGAL::sqrt(n*n);
       if ((index % 2 == 1) == c3t3.is_in_complex(cell))
-        draw_triangle(pb, pa, pc);
-      else draw_triangle(pa, pb, pc);
-      draw_triangle_edges(pa, pb, pc);
+      {
+        filler.colored_face_begin(color, -n);
+      }
+      else
+      {
+        filler.colored_face_begin(color, n);
+      }
+      filler.add_point_in_face(pa);
+      filler.add_point_in_face(pb);
+      filler.add_point_in_face(pc);
+      filler.face_end();
+      filler.add_mono_segment(pa, pb);
+      filler.add_mono_segment(pb, pc);
+      filler.add_mono_segment(pc, pa);
     }
+    filler.setSegmentsVector(&positions_lines_not_in_complex);
     //the cells not in the complex
     for(C3t3::Triangulation::Cell_iterator
         cit = c3t3.triangulation().finite_cells_begin(),
@@ -1545,14 +1482,17 @@ void Scene_c3t3_item_priv::computeElements(Scene_c3t3_item::Gl_data_names name)
           }
         if(!has_far_point)
         {
-          const Tr::Bare_point& p1 = wp2p(cit->vertex(0)->point());
-          const Tr::Bare_point& p2 = wp2p(cit->vertex(1)->point());
-          const Tr::Bare_point& p3 = wp2p(cit->vertex(2)->point());
-          const Tr::Bare_point& p4 = wp2p(cit->vertex(3)->point());
-          draw_triangle_edges_cnc(p1, p2, p4);
-          draw_triangle_edges_cnc(p1, p3, p4);
-          draw_triangle_edges_cnc(p2, p3, p4);
-          draw_triangle_edges_cnc(p1, p2, p3);
+          const Tr::Bare_point& p1 = wp2p(cit->vertex(0)->point()) + offset;
+          const Tr::Bare_point& p2 = wp2p(cit->vertex(1)->point()) + offset;
+          const Tr::Bare_point& p3 = wp2p(cit->vertex(2)->point()) + offset;
+          const Tr::Bare_point& p4 = wp2p(cit->vertex(3)->point()) + offset;
+          filler.add_mono_segment(p1, p2);
+          filler.add_mono_segment(p2, p4);
+          filler.add_mono_segment(p4, p1);
+
+          filler.add_mono_segment(p1, p3);
+          filler.add_mono_segment(p3, p4);
+          filler.add_mono_segment(p2, p3);
         }
       }
     }
@@ -1564,8 +1504,6 @@ void Scene_c3t3_item_priv::computeElements(Scene_c3t3_item::Gl_data_names name)
                                           static_cast<int>(normals.size()*sizeof(float)));
   item->getTriangleContainer(0)->allocate(Tri::FColors, f_colors.data(),
                                           static_cast<int>(f_colors.size()*sizeof(float)));
-  item->getTriangleContainer(0)->allocate(Tri::Facet_barycenters, positions_barycenter.data(),
-                                          static_cast<int>(positions_barycenter.size()*sizeof(float)));
   item->getEdgeContainer(Scene_c3t3_item::Grid)->allocate(Ed::Vertices, positions_grid.data(),
                                                           static_cast<int>(positions_grid.size()*sizeof(float)));
   item->getEdgeContainer(Scene_c3t3_item::Edges)->allocate(Ed::Vertices, positions_lines.data(),
@@ -1668,8 +1606,7 @@ void Scene_c3t3_item::show_intersection(bool b)
     d->intersection->init_vectors(&d->positions_poly,
                                   &d->normals,
                                   &d->positions_lines,
-                                  &d->f_colors,
-                                  &d->positions_barycenter);
+                                  &d->f_colors);
     d->intersection->setName("Intersection tetrahedra");
     d->intersection->setRenderingMode(renderingMode());
     connect(d->intersection, SIGNAL(destroyed()), this, SLOT(reset_intersection_item()));
