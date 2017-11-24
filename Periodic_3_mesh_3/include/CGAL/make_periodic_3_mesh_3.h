@@ -32,7 +32,6 @@
 #include <CGAL/make_mesh_3.h>
 #include <CGAL/Mesh_3/C3T3_helpers.h>
 
-#include <boost/iterator/transform_iterator.hpp>
 #include <boost/parameter/preprocessor.hpp>
 
 #include <iterator>

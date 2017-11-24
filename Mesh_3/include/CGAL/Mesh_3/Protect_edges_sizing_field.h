@@ -23,9 +23,13 @@
 // File Description :
 //******************************************************************************
 
+// -----------------------------------------------------------------------------
+// Note: this file was forked for Periodic_3_mesh_3 (with the same name) due to
+// periodic requires noticeable changes. Bug fixes / changes should be mirrored.
+// -----------------------------------------------------------------------------
+
 #ifndef CGAL_MESH_3_PROTECT_EDGES_SIZING_FIELD_H
 #define CGAL_MESH_3_PROTECT_EDGES_SIZING_FIELD_H
-
 
 #include <CGAL/license/Mesh_3.h>
 
@@ -100,7 +104,6 @@ void debug_dump_c3t3(const std::string filename, const C3t3& c3t3)
   CGAL::set_binary_mode(out);
   out << c3t3;
 }
-
 
 template <typename C3T3, typename MeshDomain, typename SizingFunction>
 class Protect_edges_sizing_field

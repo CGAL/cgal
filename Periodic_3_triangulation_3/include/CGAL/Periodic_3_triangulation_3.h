@@ -3192,13 +3192,15 @@ inline void Periodic_3_triangulation_3<GT,TDS>::make_hole(Vertex_handle v,
  */
 template < class GT, class TDS >
 template < class PointRemover, class Conflict_tester, class CoverManager>
-inline void Periodic_3_triangulation_3<GT,TDS>::remove(
-    Vertex_handle v, PointRemover& r,
-    Conflict_tester& t, CoverManager& cover_manager)
+inline void
+Periodic_3_triangulation_3<GT,TDS>::
+remove(Vertex_handle v, PointRemover& r, Conflict_tester& t, CoverManager& cover_manager)
 {
   CGAL_expensive_precondition(is_vertex(v));
-  std::vector<Vertex_handle> vhrem;
-  if(!is_1_cover()) {
+
+  if(!is_1_cover())
+  {
+    std::vector<Vertex_handle> vhrem;
     if(number_of_vertices() == 1) {
       clear();
       return;
@@ -3216,10 +3218,12 @@ inline void Periodic_3_triangulation_3<GT,TDS>::remove(
       CGAL_triangulation_expensive_assertion(is_valid());
     }
     periodic_remove(v,r, cover_manager);
-  } else {
-    periodic_remove(v,r, cover_manager);
+  }
+  else
+  {
+    periodic_remove(v, r, cover_manager);
     if(!is_1_cover())
-      remove(v,r, t, cover_manager);
+      remove(v, r, t, cover_manager);
   }
 }
 
@@ -3239,8 +3243,10 @@ inline void Periodic_3_triangulation_3<GT,TDS>::remove(
  */
 template < class GT, class TDS >
 template < class PointRemover, class CoverManager >
-inline void Periodic_3_triangulation_3<GT,TDS>::periodic_remove(
-    Vertex_handle v, PointRemover& remover, CoverManager& cover_manager)
+inline bool
+Periodic_3_triangulation_3<GT,TDS>::
+periodic_remove(Vertex_handle v, PointRemover& remover, CoverManager& cover_manager,
+                const bool abort_if_cover_change)
 {
   // Construct the set of vertex triples on the boundary
   // with the facet just behind

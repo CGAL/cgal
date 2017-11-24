@@ -1049,7 +1049,7 @@ _side_of_sphere(const Cell_handle& c, const Point& q,
   Periodic_point pts[5] = {std::make_pair(p0,o0), std::make_pair(p1,o1),
                            std::make_pair(p2,o2), std::make_pair(p3,o3),
                            std::make_pair(q,oq)};
-  const Periodic_point *points[5] ={&pts[0],&pts[1],&pts[2],&pts[3],&pts[4]};
+  const Periodic_point *points[5] = {&pts[0],&pts[1],&pts[2],&pts[3],&pts[4]};
 
   std::sort(points, points+5, typename Base::Perturbation_order(this));
 

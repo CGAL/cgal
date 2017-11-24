@@ -782,8 +782,8 @@ public:
 public:
   /** @name Geometric access functions */
   /// @{
-  // The following functions allow to change the position of a vertex.
-  // It does not check the validity of the mesh.
+  // The following functions change the position of a vertex.
+  // They do not check the validity of the mesh.
   void set_point(const Vertex_handle v,
                  const Vector& move,
                  const Weighted_point& new_position)
