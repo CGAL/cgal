@@ -148,7 +148,7 @@ private:
 
   typedef std::vector<std::pair<Curve_index,Bare_point> >    Incident_edges;
   typedef std::vector<Vertex_handle>                         Vertex_vector;
-  typedef std::vector<std::pair<Vertex_handle,Curve_index> > Incident_vertices;
+  typedef std::vector<std::pair<Vertex_handle,Curve_index> > Adjacent_vertices;
 
 public:
   Protect_edges_sizing_field(C3T3& c3t3,
@@ -644,7 +644,7 @@ template <typename C3T3, typename MD, typename Sf>
 bool
 Protect_edges_sizing_field<C3T3, MD, Sf>::
 change_ball_size_with_dummy_scaffholding(Vertex_handle& v, const FT w, bool is_special,
-                                                const Weighted_point& dummy_point)
+                                         const Weighted_point& dummy_point)
 {
 #ifdef CGAL_PERIODIC_3_MESH_3_DEBUG_DUMMY_TREATMENT
   std::cout << "Changing ball size with scaffholding dummy pt: " << dummy_point << std::endl;
@@ -992,7 +992,7 @@ insert_corners()
     // Insert corner with ball (dim is zero because p is a corner)
     Vertex_handle v = smart_insert_point(p, w, 0, p_index,
                                          CGAL::Emptyset_iterator()).first;
-    CGAL_assertion(v != Vertex_handle());
+    CGAL_postcondition(v != Vertex_handle());
 
     // As C3t3::add_to_complex modifies the 'in_dimension' of the vertex,
     // we need to backup and re-set the 'is_special' marker after.
@@ -1759,7 +1759,7 @@ refine_balls()
         using CGAL::Mesh_3::internal::distance_divisor;
 
         // Compute correct size of balls
-        const FT ab = compute_distance(va,vb);
+        const FT ab = compute_distance(va, vb);
 
         FT ra = get_radius(va);
         FT rb = get_radius(vb);
@@ -1867,7 +1867,7 @@ non_adjacent_but_intersect(const Vertex_handle& va, const Vertex_handle& vb) con
   CGAL_precondition(va != vb);
   CGAL_precondition(c3t3_.triangulation().point(va) != c3t3_.triangulation().point(vb));
 
-  if(! c3t3_.is_in_complex(va,vb))
+  if(! c3t3_.is_in_complex(va, vb))
   {
     return do_balls_intersect(va, vb);
   }
@@ -1928,12 +1928,12 @@ change_ball_size(Vertex_handle& v, const FT squared_size, const bool special_bal
   }
 
   // Get incident vertices along c3t3 edge
-  Incident_vertices incident_vertices;
-  c3t3_.adjacent_vertices_in_complex(v, std::back_inserter(incident_vertices));
+  Adjacent_vertices adjacent_vertices;
+  c3t3_.adjacent_vertices_in_complex(v, std::back_inserter(adjacent_vertices));
 
   // Remove incident edges from complex
-  for(typename Incident_vertices::iterator vit = incident_vertices.begin(),
-       vend = incident_vertices.end() ; vit != vend ; ++vit)
+  for(typename Adjacent_vertices::iterator vit = adjacent_vertices.begin(),
+       vend = adjacent_vertices.end() ; vit != vend ; ++vit)
   {
     c3t3_.remove_from_complex(v, vit->first);
   }
@@ -1971,8 +1971,8 @@ change_ball_size(Vertex_handle& v, const FT squared_size, const bool special_bal
       c3t3_.add_to_complex(v, *corner_index);
 
     // Restore connectivity in c3t3
-    for(typename Incident_vertices::iterator it = incident_vertices.begin(),
-         end = incident_vertices.end() ; it != end ; ++it)
+    for(typename Adjacent_vertices::iterator it = adjacent_vertices.begin(),
+         end = adjacent_vertices.end() ; it != end ; ++it)
     {
       c3t3_.add_to_complex(v, it->first, it->second);
     }
@@ -2018,8 +2018,8 @@ change_ball_size(Vertex_handle& v, const FT squared_size, const bool special_bal
   }
 
   // Restore c3t3 edges
-  for(typename Incident_vertices::iterator it = incident_vertices.begin(),
-       end = incident_vertices.end() ; it != end ; ++it)
+  for(typename Adjacent_vertices::iterator it = adjacent_vertices.begin(),
+       end = adjacent_vertices.end() ; it != end ; ++it)
   {
     // Restore connectivity in c3t3
     std::cout << "add to complex4: " << new_v->point() << " " << it->first->point() << std::endl;
@@ -2057,11 +2057,11 @@ check_and_repopulate_edges()
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
   std::cerr << "check_and_repopulate_edges()\n";
 #endif
+
   typedef std::set<Vertex_handle> Vertices;
   Vertices vertices;
   std::copy(unchecked_vertices_.begin(), unchecked_vertices_.end(),
-             std::inserter(vertices,vertices.begin()));
-
+            std::inserter(vertices,vertices.begin()));
   unchecked_vertices_.clear();
 
   // verbose
@@ -2125,26 +2125,24 @@ check_and_fix_vertex_along_edge(const Vertex_handle& v, ErasedVeOutIt out)
     return repopulate_edges_around_corner(v, out);
   }
 
-  std::cout << "not a corner... ?" << std::endl;
-
   // Get incident vertices along c3t3 edge
-  Incident_vertices incident_vertices;
-  c3t3_.adjacent_vertices_in_complex(v, std::back_inserter(incident_vertices));
+  Adjacent_vertices adjacent_vertices;
+  c3t3_.adjacent_vertices_in_complex(v, std::back_inserter(adjacent_vertices));
 
-  // The size of 'incident_vertices' can be 0 if v is a ball that covers
+  // The size of 'adjacent_vertices' can be 0 if v is a ball that covers
   // entirely a closed curve.
   // The size can also be 1 if the curve is a cycle, and the temporary
   // mesh is only two balls on the cycle: then each ball has only one
   // neighbor.
-  CGAL_assertion(v->is_special() || incident_vertices.size() < 3);
+  CGAL_assertion(v->is_special() || adjacent_vertices.size() < 3);
 
-  if(incident_vertices.size() == 0)
+  if(adjacent_vertices.size() == 0)
     return out;
 
-  typename Incident_vertices::const_iterator ivb = incident_vertices.begin();
-  typename Incident_vertices::const_iterator ivl = --(incident_vertices.end());
+  typename Adjacent_vertices::const_iterator ivb = adjacent_vertices.begin();
+  typename Adjacent_vertices::const_iterator ivl = --(adjacent_vertices.end());
 
-  std::cout << incident_vertices.size() << " incident vertices" << std::endl;
+  std::cout << adjacent_vertices.size() << " incident vertices" << std::endl;
   std::cout << "ivb: " << *(ivb->first) << " // " << ivb->second << std::endl;
   std::cout << "ivl: " << *(ivl->first) << " // " << ivl->second << std::endl;
 
@@ -2368,29 +2366,29 @@ next_vertex_along_curve(const Vertex_handle& start,
   CGAL_precondition(domain_.is_loop(curve_index) ||
                      (! c3t3_.is_in_complex(start)));
 
-  Incident_vertices incident_vertices;
-  c3t3_.adjacent_vertices_in_complex(start, std::back_inserter(incident_vertices));
+  Adjacent_vertices adjacent_vertices;
+  c3t3_.adjacent_vertices_in_complex(start, std::back_inserter(adjacent_vertices));
 
-  incident_vertices.erase
-    (std::remove_if(incident_vertices.begin(),
-                    incident_vertices.end(),
-                    boost::bind(&Incident_vertices::value_type::second, _1) != curve_index),
-     incident_vertices.end());
+  adjacent_vertices.erase
+    (std::remove_if(adjacent_vertices.begin(),
+                    adjacent_vertices.end(),
+                    boost::bind(&Adjacent_vertices::value_type::second, _1) != curve_index),
+     adjacent_vertices.end());
 
-//  typename Incident_vertices::const_iterator iv = incident_vertices.begin();
-//  while(iv!=incident_vertices.end())
+//  typename Adjacent_vertices::const_iterator iv = adjacent_vertices.begin();
+//  while(iv!=adjacent_vertices.end())
 //  {
-//    typename Incident_vertices::const_iterator iv2 = iv++;
+//    typename Adjacent_vertices::const_iterator iv2 = iv++;
 //    if(iv2->second != curve_index)
-//      incident_vertices.erase(iv2);
+//      adjacent_vertices.erase(iv2);
 //  }
 
-  CGAL_assertion(incident_vertices.size() == 2);
+  CGAL_assertion(adjacent_vertices.size() == 2);
 
-  typename Incident_vertices::const_iterator ivb = incident_vertices.begin();
+  typename Adjacent_vertices::const_iterator ivb = adjacent_vertices.begin();
   if(ivb->first == previous)
   {
-    typename Incident_vertices::const_iterator ivl = --(incident_vertices.end());
+    typename Adjacent_vertices::const_iterator ivl = --(adjacent_vertices.end());
     return ivl->first;
   }
   else
@@ -2405,7 +2403,7 @@ template <typename InputIterator, typename ErasedVeOutIt>
 ErasedVeOutIt
 Protect_edges_sizing_field<C3T3, MD, Sf>::
 repopulate(InputIterator begin, InputIterator last,
-           const Curve_index& index,
+           const Curve_index& curve_index,
            const CGAL::Orientation orientation,
            ErasedVeOutIt out)
 {
@@ -2413,7 +2411,7 @@ repopulate(InputIterator begin, InputIterator last,
   std::cerr << "repopulate(begin=" << disp_vert(*begin) << "\n"
             << "           last=" << disp_vert(*last)  << "\n"
             << "           distance(begin, last)=" << std::distance(begin, last) << ",\n"
-            << "           index=" << CGAL::oformat(index) << ",\n"
+            << "           curve_index=" << CGAL::oformat(curve_index) << ",\n"
             << "           orientation=" << orientation << ")\n";
 #endif
   CGAL_assertion(std::distance(begin,last) >= 0);
@@ -2453,7 +2451,7 @@ repopulate(InputIterator begin, InputIterator last,
       std::cerr << " on curve #";
       break;
     default:
-      std::cerr << " ERROR dim=" << get_dimension(*current)  << " index=";
+      std::cerr << " ERROR dim=" << get_dimension(*current)  << " curve_index=";
     }
     std::cerr  << CGAL::oformat(c3t3_.index(*current)) << std::endl;
 #endif // CGAL_MESH_3_PROTECTION_DEBUG
@@ -2471,7 +2469,7 @@ template <typename InputIterator, typename ErasedVeOutIt>
 ErasedVeOutIt
 Protect_edges_sizing_field<C3T3, MD, Sf>::
 analyze_and_repopulate(InputIterator begin, InputIterator last,
-                       const Curve_index& index,
+                       const Curve_index& curve_index,
                        const CGAL::Orientation orientation,
                        ErasedVeOutIt out)
 {
@@ -2479,7 +2477,7 @@ analyze_and_repopulate(InputIterator begin, InputIterator last,
   std::cerr << "analyze_and_repopulate(begin=" << disp_vert(*begin) << "\n"
             << "                       last=" << disp_vert(*last) << "\n"
             << "                       distance(begin, last)=" << std::distance(begin, last) << ",\n"
-            << "                       index=" << CGAL::oformat(index) << ",\n"
+            << "                       curve_index=" << CGAL::oformat(curve_index) << ",\n"
             << "                       orientation=" << orientation << ")\n";
 #endif
   CGAL_assertion(std::distance(begin,last) >= 0);
@@ -2513,7 +2511,7 @@ analyze_and_repopulate(InputIterator begin, InputIterator last,
     // if(prevprev, prev, current) is ok, then go one step forward, i.e. check
     // (prevprevprev, prevprev, current)
     while(!ch_stack.empty() &&
-          is_sizing_field_correct(*ch_stack.top(),*previous,*current, index, orientation))
+          is_sizing_field_correct(*ch_stack.top(),*previous,*current, curve_index, orientation))
     {
       previous = ch_stack.top();
       ch_stack.pop();
@@ -2536,7 +2534,7 @@ analyze_and_repopulate(InputIterator begin, InputIterator last,
     InputIterator next = ch_stack.top();
     ch_stack.pop();
     // Iterators are on the reverse order in the stack, thus use [next,current]
-    out = repopulate(next, current, index, orientation, out);
+    out = repopulate(next, current, curve_index, orientation, out);
     current = next;
   }
   return out;
@@ -2575,11 +2573,11 @@ repopulate_edges_around_corner(const Vertex_handle& v, ErasedVeOutIt out)
 
   std::cout << "repopulate_edges_around_corner: " << c3t3_.triangulation().point(v) << std::endl;
 
-  Incident_vertices incident_vertices;
-  c3t3_.adjacent_vertices_in_complex(v, std::back_inserter(incident_vertices));
+  Adjacent_vertices adjacent_vertices;
+  c3t3_.adjacent_vertices_in_complex(v, std::back_inserter(adjacent_vertices));
 
-  for(typename Incident_vertices::iterator vit = incident_vertices.begin(),
-       vend = incident_vertices.end() ; vit != vend ; ++vit)
+  for(typename Adjacent_vertices::iterator vit = adjacent_vertices.begin(),
+       vend = adjacent_vertices.end() ; vit != vend ; ++vit)
   {
     std::cout << "adjacent point: " << *(vit->first) << std::endl;
 
