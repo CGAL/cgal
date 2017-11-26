@@ -1,4 +1,4 @@
-#define CGAL_IDENTIFICATION_XY 2
+#define CGAL_SL_VERBOSE 1
 
 // Testing the spherical gaussian map
 #include <iostream>
@@ -10,7 +10,15 @@
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel       Kernel;
 typedef Kernel::Point_3                                         Point_3;
-typedef CGAL::Arr_polyhedral_sgm_traits<Kernel>                 Gm_traits;
+
+#if 0
+typedef CGAL::Arr_polyhedral_sgm_traits<Kernel, -8, 6>          Gm_traits;
+#elif 0
+typedef CGAL::Arr_polyhedral_sgm_traits<Kernel, -11, 7>         Gm_traits;
+#else
+typedef CGAL::Arr_polyhedral_sgm_traits<Kernel, -1, 0>          Gm_traits;
+#endif
+
 typedef CGAL::Arr_polyhedral_sgm<Gm_traits>                     Gm;
 typedef CGAL::Arr_polyhedral_sgm_polyhedron_3<Gm, Kernel>       Gm_polyhedron;
 typedef CGAL::Arr_polyhedral_sgm_initializer<Gm, Gm_polyhedron> Gm_initializer;
@@ -26,6 +34,7 @@ int main()
   };
   Gm_polyhedron P1;
   P1.make_tetrahedron(points[0], points[1], points[2], points[3]);
+  std::cout << P1 << std::endl;
   Gm gm1;
   Gm_initializer gm_initializer1(gm1);
   gm_initializer1(P1);
