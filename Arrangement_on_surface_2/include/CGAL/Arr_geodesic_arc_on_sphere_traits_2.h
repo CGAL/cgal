@@ -42,14 +42,6 @@
 
 namespace CGAL {
 
-#define CGAL_X_MINUS_1_Y_0      0
-#define CGAL_X_MINUS_8_Y_6      1
-#define CGAL_X_MINUS_11_Y_7     2
-
-#ifndef CGAL_IDENTIFICATION_XY
-#define CGAL_IDENTIFICATION_XY  CGAL_X_MINUS_1_Y_0
-#endif
-
 template <typename Kernel> class Arr_x_monotone_geodesic_arc_on_sphere_3;
 template <typename Kernel> class Arr_geodesic_arc_on_sphere_3;
 template <typename Kernel> class Arr_extended_direction_3;
@@ -86,7 +78,7 @@ public:
   typedef unsigned int                                    Multiplicity;
 
   /*! Default constructor */
-  Arr_geodesic_arc_on_sphere_traits_2(){}
+  Arr_geodesic_arc_on_sphere_traits_2() {}
 
 protected:
   typedef typename Kernel::FT                   FT;
@@ -743,6 +735,9 @@ public:
       cv.set_target(target);
       Direction_3 normal = m_traits.construct_normal_3(source, target);
       cv.set_normal(normal);
+      cv.set_is_full(false);
+      cv.set_is_degenerate(false);
+      cv.set_is_empty(false);
 
       if (source.is_max_boundary()) {
         cv.set_is_vertical(true);
@@ -1460,9 +1455,7 @@ public:
     Arr_parameter_space operator()(const X_monotone_curve_2& xcv,
                                    Arr_curve_end ce) const
     {
-
       CGAL_precondition(!m_traits.is_on_y_identification_2_object()(xcv));
-
       // vertical, but not on identification!
       if (xcv.is_vertical()) return ARR_INTERIOR;
 
@@ -2267,7 +2260,6 @@ public:
                                         const Point_2 r2_3,
                                         const Direction_3& normal,
                                         bool vertical,
-                                        const Direction_2& start,
                                         const In_between& in_between,
                                         Project project,
                                         OutputIterator oi) const
@@ -2280,42 +2272,151 @@ public:
       Direction_2 r1 = project(r1_3);
       Direction_2 l2 = project(l2_3);
       Direction_2 r2 = project(r2_3);
+      // std::cout << "l1: " << l1 << ", r1: " << r1 << std::endl
+      //           << "l2: " << l2 << ", r2: " << r2 << std::endl;
 
-      if (equal(l1, l2)) {
-        const Point_2& trg = (in_between(r1, l2, r2)) ? r1_3 : r2_3;
-        X_monotone_curve_2 xc(l1_3, trg, normal, vertical, true);
+      // Handle full circles first
+      if (equal(l1, r1)) {
+        bool is_full = equal(l2, r2);
+        X_monotone_curve_2 xc(l2_3, r2_3, normal, vertical, true, is_full);
         *oi++ = make_object(xc);
         return oi;
       }
 
-      bool l1_eq_start = equal(l1, start);
-      bool l2_eq_start = equal(l2, start);
+      if (equal(l2, r2)) {
+        CGAL_assertion(! equal(l1, r1));        // already handled above
+        X_monotone_curve_2 xc(l1_3, r1_3, normal, vertical, true);
+        *oi++ = make_object(xc);
+        return oi;
+      }
 
-      if (l1_eq_start || (!l2_eq_start && in_between(l1, start, l2))) {
-        // The following applies only to full circles:
-        if (l1_eq_start && equal(r2, start))
-          *oi++ = make_object(Point_2_pair(r2_3, 1));
-        if (in_between(r1, l1, l2)) return oi;      // no intersection
-        if (equal(r1, l2)) {
-          *oi++ = make_object(Point_2_pair(r1_3, 1));
+      // Handle coincidences
+      // First source and second target coincide
+      if (equal(l1, r2)) {
+        // 1. l1 = r2 < r1 < l2 < l1 | One intersection
+        // 2. l1 = r2 < r1 = l2 < l1 | Two intersections
+        // 3. l1 = r2 < l2 < r1 < l1 | One intersection and one overlap
+        // 4. l1 = r2 < l2 < r1 = l1 | One overlap (handled above)
+        if (in_between(r1, r2, l2)) {
+          // If the intersection point lies on the identification curve, this
+          // intersection point should be ignored (see below). However, it
+          // cannot occur.
+          *oi++ = make_object(Point_2_pair(l1_3, 1));
           return oi;
         }
-        const Point_2& trg = (in_between(r1, l2, r2)) ? r1_3 : r2_3;
-        X_monotone_curve_2 xc(l2_3, trg, normal, vertical, true);
+        if (equal(r1, l2)) {
+          // Case 2. This can happen only if one of the intersection points
+          // lies on the identification curve, and this points should be
+          // ignored.
+          if (! m_traits.is_on_y_identification_2_object()(l1_3)) {
+            *oi++ = make_object(Point_2_pair(l1_3, 1));
+            return oi;
+          }
+          CGAL_assertion(! m_traits.is_on_y_identification_2_object()(l2_3));
+          *oi++ = make_object(Point_2_pair(l2_3, 1));
+          return oi;
+        }
+        CGAL_assertion(in_between(r1, l2, r2));
+        // Case 3. This can happen only the intersection point lies on the
+        // identification curve; in this case this point should be ignored.
+        CGAL_assertion(m_traits.is_on_y_identification_2_object()(l1_3));
+        X_monotone_curve_2 xc(l2_3, r1_3, normal, vertical, true);
         *oi++ = make_object(xc);
         return oi;
       }
-      CGAL_assertion(l2_eq_start || in_between(l2, start, l1));
-      // The following applies only to full circles:
-      if (l2_eq_start && equal(r1, start))
-        *oi++ = make_object(Point_2_pair(r1_3, 1));
-      if (in_between(r2, l2, l1)) return oi;      // no intersection
-      if (equal(r2, l1)) {
-        *oi++ = make_object(Point_2_pair(r2_3, 1));
+
+      // Second source and first target coincide
+      if (equal(r1, l2)) {
+        // 1. l1 < r1 = l2 < r2 < l1 | One intersection
+        // 2. l1 < r1 = l2 < r2 = l1 | Two intersections (handled above)
+        // 3. l1 < r2 < r1 = l2 < l1 | One intersection and one overlap
+        // 4. l1 < r2 = r1 = l2 < l1 | One overlap (handled above)
+        if (in_between(r2, r1, l1)) {
+          // If the intersection point lies on the identification curve, this
+          // intersection point should be ignored (see below). However, it
+          // cannot occur.
+          *oi++ = make_object(Point_2_pair(l2_3, 1));
+          return oi;
+        }
+        // Case 3. This can happen only the intersection point lies on the
+        // identification curve; in this case this point should be ignored.
+        CGAL_assertion(in_between(r2, l1, r1));
+        CGAL_assertion(m_traits.is_on_y_identification_2_object()(l2_3));
+        X_monotone_curve_2 xc(l1_3, r2_3, normal, vertical, true);
+        *oi++ = make_object(xc);
         return oi;
       }
-      const Point_2& trg = (in_between(r1, l2, r2)) ? r1_3 : r2_3;
-      X_monotone_curve_2 xc(l1_3, trg, normal, vertical, true);
+
+      // First source and second source
+      if (equal(l1, l2)) {
+        // 1. l1 == l2 < r1 < r2
+        // 2. l1 == l2 < r1 = r2
+        // 3. l1 == l2 < r2 < r1
+        if (in_between(r1, l2, r2) || equal(r1, r2)) {
+          // Cases 1 & 2
+          X_monotone_curve_2 xc(l1_3, r1_3, normal, vertical, true);
+          *oi++ = make_object(xc);
+          return oi;
+        }
+        // Case 3
+        CGAL_assertion(in_between(r2, l2, r1));
+        X_monotone_curve_2 xc(l2_3, r2_3, normal, vertical, true);
+        *oi++ = make_object(xc);
+        return oi;
+      }
+
+      // First target and second target
+      if (equal(r1, r2)) {
+        // 1. r1 == r2 < l1 < l2
+        // 2. r1 == r2 < l1 = l2 (handled above)
+        // 3. r1 == r2 < l2 < l1
+        if (in_between(l1, r2, l2)) {
+          // Cases 1
+          X_monotone_curve_2 xc(l2_3, r2_3, normal, vertical, true);
+          *oi++ = make_object(xc);
+          return oi;
+        }
+        // Case 3
+        CGAL_assertion(in_between(l1, l2, l2));
+        X_monotone_curve_2 xc(l1_3, r1_3, normal, vertical, true);
+        *oi++ = make_object(xc);
+        return oi;
+      }
+
+      // Handle no-coincidences. 6 cases are left:
+      // 1. l1 < r1 < l2 < r2 | No overlaps
+      // 2. l1 < r1 < r2 < l2 | One overlap (entire l1,r1)
+      // 3. l1 < l2 < r1 < r2 | One overlap (l2,r1)
+      // 4. l1 < l2 < r2 < r1 | One overlap (entire l2,r2)
+      // 5. l1 < r2 < r1 < l2 | One overlap (l1,r2)
+      // 6. l1 < r2 < l2 < r1 | Two overlaps (l1,r2)(l2,r1) impossible!
+
+      if (in_between(l1, r2, r1)) {
+        // Handle case 1, 2, and 3
+        if (in_between(l2, r1, r2)) return oi;  // case 1
+        if (in_between(l2, r2, l1)) {
+          // Case 2
+          X_monotone_curve_2 xc(l1_3, r1_3, normal, vertical, true);
+          *oi++ = make_object(xc);
+          return oi;
+        }
+        // Case 3
+        X_monotone_curve_2 xc(l2_3, r1_3, normal, vertical, true);
+        *oi++ = make_object(xc);
+        return oi;
+      }
+
+      // Case 6 cannot occur. Two x-monotone curves cannot overlap twice.
+      CGAL_assertion(! in_between(l2, r2, r1));
+
+      // Case 4
+      if (in_between(l1, r1, l2)) {
+        X_monotone_curve_2 xc(l2_3, r2_3, normal, vertical, true);
+        *oi++ = make_object(xc);
+        return oi;
+      }
+      // Case 5
+      X_monotone_curve_2 xc(l1_3, r2_3, normal, vertical, true);
       *oi++ = make_object(xc);
       return oi;
     }
@@ -2404,6 +2505,8 @@ public:
                               const X_monotone_curve_2& xc2,
                               OutputIterator oi) const
     {
+      // std::cout << "xc1: " << xc1 << std::endl
+      //           << "xc2: " << xc2 << std::endl;
       CGAL_precondition(!xc1.is_degenerate());
       CGAL_precondition(!xc2.is_degenerate());
 
@@ -2474,14 +2577,12 @@ public:
             // The endpoints reside in the positive x-halfspace:
             return compute_intersection(xc1.left(), xc1.right(),
                                         xc2.left(), xc2.right(),
-                                        normal, true, Traits::neg_y_2(),
-                                        ccib, project, oi);
+                                        normal, true, ccib, project, oi);
           }
           // The endpoints reside in the negative x-halfspace:
           return compute_intersection(xc1.left(), xc1.right(),
                                       xc2.left(), xc2.right(),
-                                      normal, true, Traits::neg_y_2(),
-                                      cib, project, oi);
+                                      normal, true, cib, project, oi);
         }
 
         // The arcs are not vertical:
@@ -2490,8 +2591,7 @@ public:
           (plane_is_positive) ? normal1 : opposite_normal1;
         return compute_intersection(xc1.left(), xc1.right(),
                                     xc2.left(), xc2.right(),
-                                    normal, false, Traits::identification_xy(),
-                                    ccib, Traits::project_xy, oi);
+                                    normal, false, ccib, Traits::project_xy, oi);
       }
 
       Vector_3 v =
@@ -2768,203 +2868,202 @@ public:
 #endif
 };
 
-  /*! Represent an extended 3D direction that is used in turn to represent a
-   * spherical-arc endpoint. The extended data consists of two flags that
-   * indicate whether the point is on the x and on a y boundaries,
-   * respectively.
-   */
-  template <typename Kernel>
-  class Arr_extended_direction_3 : public Kernel::Direction_3 {
-  public:
-    typedef typename Kernel::FT                           FT;
-    typedef typename Kernel::Direction_3                  Direction_3;
+/*! Represent an extended 3D direction that is used in turn to represent a
+ * spherical-arc endpoint. The extended data consists of two flags that
+ * indicate whether the point is on the x and on a y boundaries,
+ * respectively.
+ */
+template <typename Kernel>
+class Arr_extended_direction_3 : public Kernel::Direction_3 {
+public:
+  typedef typename Kernel::FT                           FT;
+  typedef typename Kernel::Direction_3                  Direction_3;
 
-    /*! Enumeration of discontinuity type */
-    enum Location_type {
-      NO_BOUNDARY_LOC = 0,
-      MIN_BOUNDARY_LOC,
-      MID_BOUNDARY_LOC,
-      MAX_BOUNDARY_LOC
-    };
-
-  private:
-    typedef typename Kernel::Direction_2                  Direction_2;
-
-    /*! The point discontinuity type */
-    Location_type m_location;
-
-    inline Sign x_sign(Direction_3 d) const { return CGAL::sign(d.dx()); }
-
-    inline Sign y_sign(Direction_3 d) const { return CGAL::sign(d.dy()); }
-
-    inline Sign z_sign(Direction_3 d) const { return CGAL::sign(d.dz()); }
-
-  public:
-    /*! Default constructor */
-    Arr_extended_direction_3() :
-      Direction_3(0, 0, 1),
-      m_location(MAX_BOUNDARY_LOC)
-    {}
-
-    /*! Constructor */
-    Arr_extended_direction_3(const Direction_3& dir, Location_type location) :
-      Direction_3(dir),
-      m_location(location)
-    {}
-
-    /*! Copy constructor */
-    Arr_extended_direction_3(const Arr_extended_direction_3& other) :
-      Direction_3(static_cast<const Direction_3&>(other))
-    { m_location = other.discontinuity_type(); }
-
-    /*! Assignment operator */
-    Arr_extended_direction_3& operator=(const Arr_extended_direction_3& other)
-    {
-      *(static_cast<Direction_3*>(this)) = static_cast<const Direction_3&>(other);
-      m_location = other.discontinuity_type();
-      return (*this);
-    }
-
-    /*! Set the location of the point.
-     */
-    void set_location(Location_type location) { m_location = location; }
-
-    /*! Obtain the location of the point.
-     */
-    Location_type location() const { return m_location; }
-
-    /*! Obtain the discontinuity type of the point.
-     * \todo deprecate this one; use the above instead.
-     */
-    Location_type discontinuity_type() const
-    { return m_location; }
-
-    bool is_no_boundary() const { return (m_location == NO_BOUNDARY_LOC); }
-
-    bool is_min_boundary() const { return (m_location == MIN_BOUNDARY_LOC); }
-
-    bool is_mid_boundary() const { return (m_location == MID_BOUNDARY_LOC); }
-
-    bool is_max_boundary() const { return (m_location == MAX_BOUNDARY_LOC); }
+  /*! Enumeration of discontinuity type */
+  enum Location_type {
+    NO_BOUNDARY_LOC = 0,
+    MIN_BOUNDARY_LOC,
+    MID_BOUNDARY_LOC,
+    MAX_BOUNDARY_LOC
   };
 
-  /*! A Representation of an x-monotone great circular arc embedded on a sphere,
-   * as used by the Arr_geodesic_arc_on_sphere_traits_2 traits-class
-   * An x-monotone great circular arc cannot cross the closed hemi-circle arc of
-   * discontinuity, defined as the longitude that lies in the zx-plane, and is
-   * contained in the open halfspace (x > 0).
-   * \todo At this point such an arc cannot have an angle of 180 degrees.
-   * \todo It is always directed from its source to its target.
+private:
+  typedef typename Kernel::Direction_2                  Direction_2;
+
+  /*! The point discontinuity type */
+  Location_type m_location;
+
+  inline Sign x_sign(Direction_3 d) const { return CGAL::sign(d.dx()); }
+
+  inline Sign y_sign(Direction_3 d) const { return CGAL::sign(d.dy()); }
+
+  inline Sign z_sign(Direction_3 d) const { return CGAL::sign(d.dz()); }
+
+public:
+  /*! Default constructor */
+  Arr_extended_direction_3() :
+    Direction_3(0, 0, 1),
+    m_location(MAX_BOUNDARY_LOC)
+  {}
+
+  /*! Constructor */
+  Arr_extended_direction_3(const Direction_3& dir, Location_type location) :
+    Direction_3(dir),
+    m_location(location)
+  {}
+
+  /*! Copy constructor */
+  Arr_extended_direction_3(const Arr_extended_direction_3& other) :
+    Direction_3(static_cast<const Direction_3&>(other))
+  { m_location = other.discontinuity_type(); }
+
+  /*! Assignment operator */
+  Arr_extended_direction_3& operator=(const Arr_extended_direction_3& other)
+  {
+    *(static_cast<Direction_3*>(this)) = static_cast<const Direction_3&>(other);
+    m_location = other.discontinuity_type();
+    return (*this);
+  }
+
+  /*! Set the location of the point.
    */
-  template <typename Kernel_>
-  class Arr_x_monotone_geodesic_arc_on_sphere_3 {
-  public:
-    typedef Kernel_                                    Kernel;
-    typedef typename Kernel::Direction_3                Direction_3;
-    typedef typename Kernel::Plane_3                    Plane_3;
-    typedef typename Kernel::Vector_3                   Vector_3;
-    typedef typename Kernel::Direction_2                Direction_2;
+  void set_location(Location_type location) { m_location = location; }
 
-  protected:
-    // For some reason compilation under Windows fails without the qualifier
-    typedef CGAL::Arr_extended_direction_3<Kernel>      Arr_extended_direction_3;
+  /*! Obtain the location of the point.
+   */
+  Location_type location() const { return m_location; }
 
-    /*! The source point of the arc. */
-    Arr_extended_direction_3 m_source;
+  /*! Obtain the discontinuity type of the point.
+   * \todo deprecate this one; use the above instead.
+   */
+  Location_type discontinuity_type() const { return m_location; }
 
-    /*! The target point of the arc. */
-    Arr_extended_direction_3 m_target;
+  bool is_no_boundary() const { return (m_location == NO_BOUNDARY_LOC); }
 
-    /*! The direction of the plane that contains the arc. */
-    Direction_3 m_normal;
+  bool is_min_boundary() const { return (m_location == MIN_BOUNDARY_LOC); }
 
-    /*! The arc is vertical. */
-    bool m_is_vertical;
+  bool is_mid_boundary() const { return (m_location == MID_BOUNDARY_LOC); }
 
-    /*! Target (lexicographically) larger than source. */
-    bool m_is_directed_right;
+  bool is_max_boundary() const { return (m_location == MAX_BOUNDARY_LOC); }
+};
 
-    /*! The arc is a full circle. */
-    bool m_is_full;
+/*! A Representation of an x-monotone great circular arc embedded on a sphere,
+ * as used by the Arr_geodesic_arc_on_sphere_traits_2 traits-class
+ * An x-monotone great circular arc cannot cross the closed hemi-circle arc of
+ * discontinuity, defined as the longitude that lies in the zx-plane, and is
+ * contained in the open halfspace (x > 0).
+ * \todo At this point such an arc cannot have an angle of 180 degrees.
+ * \todo It is always directed from its source to its target.
+ */
+template <typename Kernel_>
+class Arr_x_monotone_geodesic_arc_on_sphere_3 {
+public:
+  typedef Kernel_                                    Kernel;
+  typedef typename Kernel::Direction_3                Direction_3;
+  typedef typename Kernel::Plane_3                    Plane_3;
+  typedef typename Kernel::Vector_3                   Vector_3;
+  typedef typename Kernel::Direction_2                Direction_2;
 
-    /* The arc is degenerate - it consists of a single point. */
-    bool m_is_degenerate;
+protected:
+  // For some reason compilation under Windows fails without the qualifier
+  typedef CGAL::Arr_extended_direction_3<Kernel>      Arr_extended_direction_3;
 
-    /*! The arc is empty. */
-    bool m_is_empty;
+  /*! The source point of the arc. */
+  Arr_extended_direction_3 m_source;
 
-    inline Sign x_sign(Direction_3 d) const { return CGAL::sign(d.dx()); }
+  /*! The target point of the arc. */
+  Arr_extended_direction_3 m_target;
 
-    inline Sign y_sign(Direction_3 d) const { return CGAL::sign(d.dy()); }
+  /*! The direction of the plane that contains the arc. */
+  Direction_3 m_normal;
 
-    inline Sign z_sign(Direction_3 d) const { return CGAL::sign(d.dz()); }
+  /*! The arc is vertical. */
+  bool m_is_vertical;
 
-  public:
-    /*! Default constructor - constructs an empty arc */
-    Arr_x_monotone_geodesic_arc_on_sphere_3() :
-      m_is_vertical(false),
-      m_is_directed_right(false),
-      m_is_full(false),
-      m_is_degenerate(false),
-      m_is_empty(true)
-    {}
+  /*! Target (lexicographically) larger than source. */
+  bool m_is_directed_right;
 
-    /*! Constructor
-     * \param src the source point of the arc
-     * \param trg the target point of the arc
-     * \param plane the plane that contains the arc
-     * \param is_vertical is the arc vertical ?
-     * \param is_directed_right is the arc directed from left to right?
-     * \param is_full is the arc a full circle?
-     * \param is_degenerate is the arc degenerate (single point)?
-     * \pre Both endpoint lie on the given plane.
-     */
-    Arr_x_monotone_geodesic_arc_on_sphere_3
-    (const Arr_extended_direction_3& src,
-     const Arr_extended_direction_3& trg,
-     const Direction_3& normal,
-     bool is_vertical, bool is_directed_right,
-     bool is_full = false, bool is_degenerate = false, bool is_empty = false) :
-      m_source(src),
-      m_target(trg),
-      m_normal(normal),
-      m_is_vertical(is_vertical),
-      m_is_directed_right(is_directed_right),
-      m_is_full(is_full),
-      m_is_degenerate(is_degenerate),
-      m_is_empty(is_empty)
-    {}
+  /*! The arc is a full circle. */
+  bool m_is_full;
 
-    /*! Copy constructor
-     * \param other the other arc
-     */
-    Arr_x_monotone_geodesic_arc_on_sphere_3
-    (const Arr_x_monotone_geodesic_arc_on_sphere_3& other)
-    {
-      m_source = other.m_source;
-      m_target = other.m_target;
-      m_normal = other.m_normal;
-      m_is_vertical = other.m_is_vertical;
-      m_is_directed_right = other.m_is_directed_right;
-      m_is_full = other.m_is_full;
-      m_is_degenerate = other.m_is_degenerate;
-      m_is_empty = other.m_is_empty;
-    }
+  /* The arc is degenerate - it consists of a single point. */
+  bool m_is_degenerate;
 
-    /*! Assignment operator */
-    Arr_x_monotone_geodesic_arc_on_sphere_3& operator=
-    (const Arr_x_monotone_geodesic_arc_on_sphere_3& other)
-    {
-      m_source = other.m_source;
-      m_target = other.m_target;
-      m_normal = other.m_normal;
-      m_is_vertical = other.m_is_vertical;
-      m_is_directed_right = other.m_is_directed_right;
-      m_is_full = other.m_is_full;
-      m_is_degenerate = other.m_is_degenerate;
-      m_is_empty = other.m_is_empty;
-      return (*this);
-    }
+  /*! The arc is empty. */
+  bool m_is_empty;
+
+  inline Sign x_sign(Direction_3 d) const { return CGAL::sign(d.dx()); }
+
+  inline Sign y_sign(Direction_3 d) const { return CGAL::sign(d.dy()); }
+
+  inline Sign z_sign(Direction_3 d) const { return CGAL::sign(d.dz()); }
+
+public:
+  /*! Default constructor - constructs an empty arc */
+  Arr_x_monotone_geodesic_arc_on_sphere_3() :
+    m_is_vertical(false),
+    m_is_directed_right(false),
+    m_is_full(false),
+    m_is_degenerate(false),
+    m_is_empty(true)
+  {}
+
+  /*! Constructor
+   * \param src the source point of the arc
+   * \param trg the target point of the arc
+   * \param plane the plane that contains the arc
+   * \param is_vertical is the arc vertical ?
+   * \param is_directed_right is the arc directed from left to right?
+   * \param is_full is the arc a full circle?
+   * \param is_degenerate is the arc degenerate (single point)?
+   * \pre Both endpoint lie on the given plane.
+   */
+  Arr_x_monotone_geodesic_arc_on_sphere_3
+  (const Arr_extended_direction_3& src,
+   const Arr_extended_direction_3& trg,
+   const Direction_3& normal,
+   bool is_vertical, bool is_directed_right,
+   bool is_full = false, bool is_degenerate = false, bool is_empty = false) :
+    m_source(src),
+    m_target(trg),
+    m_normal(normal),
+    m_is_vertical(is_vertical),
+    m_is_directed_right(is_directed_right),
+    m_is_full(is_full),
+    m_is_degenerate(is_degenerate),
+    m_is_empty(is_empty)
+  {}
+
+  /*! Copy constructor
+   * \param other the other arc
+   */
+  Arr_x_monotone_geodesic_arc_on_sphere_3
+  (const Arr_x_monotone_geodesic_arc_on_sphere_3& other)
+  {
+    m_source = other.m_source;
+    m_target = other.m_target;
+    m_normal = other.m_normal;
+    m_is_vertical = other.m_is_vertical;
+    m_is_directed_right = other.m_is_directed_right;
+    m_is_full = other.m_is_full;
+    m_is_degenerate = other.m_is_degenerate;
+    m_is_empty = other.m_is_empty;
+  }
+
+  /*! Assignment operator */
+  Arr_x_monotone_geodesic_arc_on_sphere_3& operator=
+  (const Arr_x_monotone_geodesic_arc_on_sphere_3& other)
+  {
+    m_source = other.m_source;
+    m_target = other.m_target;
+    m_normal = other.m_normal;
+    m_is_vertical = other.m_is_vertical;
+    m_is_directed_right = other.m_is_directed_right;
+    m_is_full = other.m_is_full;
+    m_is_degenerate = other.m_is_degenerate;
+    m_is_empty = other.m_is_empty;
+    return (*this);
+  }
 
   /*! Construct a full spherical_arc from a common endpoint and a plane
    * \param plane the containing plane.
@@ -3225,108 +3324,6 @@ public:
   {
     CGAL_precondition(this->has_on(src));
     CGAL_precondition(this->has_on(trg));
-  }
-
-  /*! Construct a spherical_arc from two endpoint directions. It is assumed
-   * that the arc is the one with the smaller angle among the two.
-   * 1. Find out whether the arc is x-monotone.
-   * 2. If it is x-monotone,
-   *    2.1 Find out whether it is vertical, and
-   *    2.2 whether the target is larger than the source (directed right).
-   * The arc is vertical, iff
-   * 1. one of its endpoint direction pierces a pole, or
-   * 2. the projections onto the xy-plane coincide.
-   * \param source the source point.
-   * \param target the target point.
-   * \pre the source and target cannot be equal.
-   * \pre the source and target cannot be the opoosite of each other.
-   */
-  Arr_geodesic_arc_on_sphere_3(const Arr_extended_direction_3& source,
-                               const Arr_extended_direction_3& target)
-  {
-    this->set_source(source);
-    this->set_target(target);
-    this->set_is_full(false);
-    this->set_is_degenerate(false);
-    this->set_is_empty(false);
-
-    typedef Arr_geodesic_arc_on_sphere_traits_2<Kernel>         Traits;
-    typedef typename Kernel::Direction_2                        Direction_2;
-    typedef typename Kernel::Direction_3                        Direction_3;
-
-    Kernel kernel;
-    CGAL_precondition(!kernel.equal_3_object()(source, target));
-    CGAL_precondition(!kernel.equal_3_object()
-                      (kernel.construct_opposite_direction_3_object()(source),
-                       static_cast<const Direction_3&>(target)));
-    this->m_normal = this->construct_normal_3(source, target);
-
-    // Check whether one of the endpoints coincides with a pole: */
-    if (source.is_max_boundary()) {
-      this->set_is_vertical(true);
-      this->set_is_directed_right(false);
-      set_is_x_monotone(true);
-      return;
-    }
-    if (source.is_min_boundary()) {
-      this->set_is_vertical(true);
-      this->set_is_directed_right(true);
-      set_is_x_monotone(true);
-      return;
-    }
-    if (target.is_max_boundary()) {
-      this->set_is_vertical(true);
-      this->set_is_directed_right(true);
-      set_is_x_monotone(true);
-      return;
-    }
-    if (target.is_min_boundary()) {
-      this->set_is_vertical(true);
-      this->set_is_directed_right(false);
-      set_is_x_monotone(true);
-      return;
-    }
-
-    // None of the enpoints coincide with a pole:
-    Direction_3 normal = this->m_normal;
-    if (z_sign(normal) == ZERO) {
-      // The arc is vertical
-      this->set_is_vertical(true);
-      bool s_is_positive, t_is_positive, plane_is_positive;
-      CGAL::Sign xsign = x_sign(normal);
-      if (xsign == ZERO) {
-        s_is_positive = x_sign(source) == POSITIVE;
-        t_is_positive = x_sign(target) == POSITIVE;
-        plane_is_positive = y_sign(normal) == NEGATIVE;
-      } else {
-        s_is_positive = y_sign(source) == POSITIVE;
-        t_is_positive = y_sign(target) == POSITIVE;
-        plane_is_positive = xsign == POSITIVE;
-      }
-      set_is_x_monotone(s_is_positive == t_is_positive);
-      bool ccw = ((plane_is_positive && s_is_positive) ||
-                  (!plane_is_positive && !s_is_positive));
-      this->set_is_directed_right(ccw);
-      return;
-    }
-
-    // The arc is not vertical!
-    this->set_is_vertical(false);
-    Direction_2 s = Traits::project_xy(source);
-    Direction_2 t = Traits::project_xy(target);
-    Orientation orient = Traits::orientation(s, t);
-
-    const Direction_2& d = Traits::identification_xy();
-    if (orient == LEFT_TURN) {
-      this->set_is_directed_right(true);
-      set_is_x_monotone(!kernel.counterclockwise_in_between_2_object()(d, s, t));
-      return;
-    }
-
-    // (orient == RIGHT_TURN)
-    this->set_is_directed_right(false);
-    set_is_x_monotone(!kernel.counterclockwise_in_between_2_object()(d, t, s));
-    return;
   }
 
   /*! Construct a spherical_arc from two endpoint directions contained
