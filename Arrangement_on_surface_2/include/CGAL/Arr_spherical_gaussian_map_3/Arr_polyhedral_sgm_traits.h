@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Efi Fogel          <efif@post.tau.ac.il>
 
@@ -52,30 +52,32 @@ namespace CGAL {
  * in turn, represents a Gaussian map, which is a unique dual representation
  * of a polytope.
  */
-template <typename T_Kernel>
+template <typename Kernel_, int atan_x = -1, int atan_y = 0>
 class Arr_polyhedral_sgm_traits :
 #if defined(CGAL_ARR_TRACING_TRAITS)
-  public Arr_tracing_traits_2<Arr_geodesic_arc_on_sphere_traits_2<T_Kernel> >
+  public Arr_tracing_traits_2<
+    Arr_geodesic_arc_on_sphere_traits_2<Kernel_, atan_x, atan_y> >
 #elif defined(CGAL_ARR_COUNTING_TRAITS)
-  public Arr_counting_traits_2<Arr_geodesic_arc_on_sphere_traits_2<T_Kernel> >
+  public Arr_counting_traits_2<
+    Arr_geodesic_arc_on_sphere_traits_2<Kernel_, atan_x, atan_y> >
 #else
-  public Arr_geodesic_arc_on_sphere_traits_2<T_Kernel>
+  public Arr_geodesic_arc_on_sphere_traits_2<Kernel_, atan_x, atan_y>
 #endif
 {
 public:
-  typedef T_Kernel                                      Kernel;
-  typedef typename Kernel::Point_3                      Point_3;
-  typedef typename Kernel::Vector_3                     Vector_3;
+  typedef Kernel_                                                     Kernel;
+  typedef typename Kernel::Point_3                                    Point_3;
+  typedef typename Kernel::Vector_3                                   Vector_3;
 
 protected:
 #if defined(CGAL_ARR_TRACING_TRAITS)
-  typedef Arr_tracing_traits_2<Arr_geodesic_arc_on_sphere_traits_2<Kernel> >
-                                                        Base;
+  typedef Arr_tracing_traits_2<
+    Arr_geodesic_arc_on_sphere_traits_2<Kernel, atan_x, atan_y> >     Base;
 #elif defined(CGAL_ARR_COUNTING_TRAITS)
-  typedef Arr_counting_traits_2<Arr_geodesic_arc_on_sphere_traits_2<Kernel> >
-                                                        Base;
+  typedef Arr_counting_traits_2<
+    Arr_geodesic_arc_on_sphere_traits_2<Kernel, atan_x, atan_y> >     Base;
 #else
-  typedef Arr_geodesic_arc_on_sphere_traits_2<Kernel>   Base;
+  typedef Arr_geodesic_arc_on_sphere_traits_2<Kernel, atan_x, atan_y> Base;
 #endif
 
 public:
