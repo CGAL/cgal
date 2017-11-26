@@ -297,7 +297,6 @@ _init_curve_end(const X_monotone_curve_2& cv, Arr_curve_end ind, Subcurve* sc)
   // Get the parameter space of the curve end.
   Arr_parameter_space ps_x = m_traits->parameter_space_in_x_2_object()(cv, ind);
   Arr_parameter_space ps_y = m_traits->parameter_space_in_y_2_object()(cv, ind);
-
   // Create the corresponding event and push it into the event queue.
   std::pair<Event*, bool> pair_res;
 
@@ -346,23 +345,7 @@ void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_left_curves()
     // update the m_status_line_insert_hint and m_is_event_on_above members).
     // We also notify the visitor on the new event we are about to handle.
     _handle_event_without_left_curves();
-
-    if (m_currentEvent->is_closed()) {
-      if (m_is_event_on_above) {
-        // The current event is on the interior of existing curve on the
-        // status line. Since the basic sweep does not allow intersections,
-        // this is possible  only if the event is an isolated query point.
-        CGAL_assertion(! m_currentEvent->has_right_curves() &&
-                        m_currentEvent->is_query());
-
-        //m_is_event_on_above = true;
-        m_visitor->before_handle_event(m_currentEvent);
-      }
-      else
-        m_visitor->before_handle_event(m_currentEvent);
-    }
-    else
-      m_visitor->before_handle_event(m_currentEvent);
+    m_visitor->before_handle_event(m_currentEvent);
 
     // Nothing else to do (no left curves).
     CGAL_SL_PRINT_END_EOL("handling left curves");
@@ -436,6 +419,8 @@ _handle_event_without_left_curves()
     // We are still sweeping the left boundary, so by the way we have ordered
     // the events in the queue, we know that the new event should be placed
     // above all other subcurves in the status line.
+    // \todo EF, now that we allow curves to overlap with the identification
+    // curve, the above does not hold any longer.
     m_status_line_insert_hint = m_statusLine.end();
   }
   else {
