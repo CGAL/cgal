@@ -3241,6 +3241,9 @@ template <typename GeomTraits, typename TopTraits>
 void Arrangement_on_surface_2<GeomTraits, TopTraits>::
 _relocate_isolated_vertices_in_new_face(DHalfedge* new_he)
 {
+#if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
+  std::cout << "Aos_2: _relocate_isolated_vertices_in_new_face" << std::endl;
+#endif
   // The given halfedge points to the new face, while its twin points to the
   // old face (the one that has just been split).
   DFace* new_face = (new_he->is_on_inner_ccb()) ?
@@ -3284,6 +3287,11 @@ template <typename GeomTraits, typename TopTraits>
 void Arrangement_on_surface_2<GeomTraits, TopTraits>::
 _relocate_in_new_face(DHalfedge* new_he)
 {
+#if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
+  std::cout << "Aos_2 _relocate_in_new_face" << std::endl;
+  std::cout << "HeCv: " << new_he->curve() << std::endl;
+  std::cout << "HeDi: " << new_he->direction() << std::endl;
+#endif
   _relocate_inner_ccbs_in_new_face(new_he);
   _relocate_isolated_vertices_in_new_face(new_he);
 }
