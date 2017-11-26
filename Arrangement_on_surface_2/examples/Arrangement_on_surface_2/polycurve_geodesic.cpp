@@ -1,8 +1,6 @@
 //! \file examples/Arrangement_on_surface_2/polycurve_geodesic.cpp
 // Constructing an arrangement of polygeodesics.
 
-#define CGAL_IDENTIFICATION_XY 2
-
 #include <vector>
 #include <list>
 
