@@ -90,22 +90,6 @@ template <typename Approximation>
 void get_anchor_vertices(const Approximation &, internal_np::vsa_no_output_t) {}
 
 template <typename Approximation, typename OutputIterator>
-void get_anchor_points(const Approximation &approx, OutputIterator out_itr) {
-  approx.get_anchor_points(out_itr);
-}
-
-template <typename Approximation>
-void get_anchor_points(const Approximation &, internal_np::vsa_no_output_t) {}
-
-template <typename Approximation, typename OutputIterator>
-void get_indexed_triangles(const Approximation &approx, OutputIterator out_itr) {
-  approx.get_indexed_triangles(out_itr);
-}
-
-template <typename Approximation>
-void get_indexed_triangles(const Approximation &, internal_np::vsa_no_output_t) {}
-
-template <typename Approximation, typename OutputIterator>
 void get_proxies(const Approximation &approx, OutputIterator out_itr) {
   approx.get_proxies(out_itr);
 }

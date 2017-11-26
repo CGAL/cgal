@@ -1371,7 +1371,7 @@ private:
         const Point_3 &p1 = point_pmap[target(he, *m_pmesh)];
         const Point_3 &p2 = point_pmap[target(next(he, *m_pmesh), *m_pmesh)];
         const FT farea(std::sqrt(CGAL::to_double(CGAL::squared_area(p0, p1, p2))));
-		const Vector_3 fnorm = CGAL::unit_normal(p0, p1, p2);
+        const Vector_3 fnorm = CGAL::unit_normal(p0, p1, p2);
 
         norm = sum_functor(norm, scale_functor(fnorm, farea));
         area += farea;

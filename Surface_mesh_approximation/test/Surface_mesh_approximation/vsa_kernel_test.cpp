@@ -26,9 +26,12 @@ int test() {
 
   typedef CGAL::Polyhedron_3<K> Polyhedron;
   Polyhedron out_mesh;
+  std::vector<typename K::Point_3> points;
+  std::vector<std::vector<std::size_t> > triangles;
+
   CGAL::VSA::mesh_approximation(tm,
-    CGAL::internal_np::vsa_no_output,
-    CGAL::internal_np::vsa_no_output,
+    std::back_inserter(points),
+    std::back_inserter(triangles),
     CGAL::VSA::parameters::max_nb_proxies(6).
       nb_of_iterations(30).
       nb_of_relaxations(5).

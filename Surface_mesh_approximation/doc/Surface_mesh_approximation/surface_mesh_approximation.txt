@@ -224,7 +224,7 @@ Runtime in seconds with target error drop of different seeding method. The bench
 Runtime of 3 phases of the algorithm in seconds: seeding, clustering iteration and meshing. The seeding method is hierarchical with target number of proxies.
 
 <center>
-    Model    | \#Triangles | \#Proxies | \#Iterations | Seeding | Relaxation | Meshing | Total
+    Model    | \#Triangles | \#Proxies | \#Iterations | Seeding | Clustering | Meshing | Total
 ----------:  | ---------:  | -------:  | ----------:  | -----:  | --------:  | -----:  | ----:
 plane-sphere |    6,826    |     20    |       20     |   0.17  |    0.228   | 0.044   | 0.442
 bear         |   20,188    |    200    |       20     |  1.194  |    0.784   | 0.128   | 2.006

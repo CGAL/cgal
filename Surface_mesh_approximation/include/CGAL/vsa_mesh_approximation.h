@@ -136,6 +136,12 @@ bool mesh_approximation(const TriangleMesh &tm_in,
   const FT chord_error = choose_param(get_param(np, internal_np::mesh_chord_error), FT(5.0));
   const bool is_manifold = approx.extract_mesh(*tm_out, chord_error);
 
+  // get anchor points
+  approx.get_anchor_points(apts_out_itr);
+
+  // get indexed triangles
+  approx.get_indexed_triangles(tris_out_itr);
+
   typedef typename boost::lookup_named_param_def<
     internal_np::anchor_vertices_t,
     NamedParameters,
@@ -143,12 +149,6 @@ bool mesh_approximation(const TriangleMesh &tm_in,
   AnchorVertexOutItr avtx_out_itr = choose_param(
     get_param(np, internal_np::anchor_vertices) , internal_np::vsa_no_output);
   get_anchor_vertices(approx, avtx_out_itr);
-
-  // get anchor points
-  get_anchor_points(approx, apts_out_itr);
-
-  // get indexed triangles
-  get_indexed_triangles(approx, tris_out_itr);
 
   typedef typename boost::lookup_named_param_def <
     internal_np::proxies_t,
