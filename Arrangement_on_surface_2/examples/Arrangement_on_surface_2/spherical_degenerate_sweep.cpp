@@ -1,9 +1,9 @@
 //! \file examples/Arrangement_on_surface_2/spherical_degenerate_sweep.cpp
 // Using the global aggregated insertion function.
 
-//#define CGAL_SL_VERBOSE 0
-
-//#define CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE 0
+// #define CGAL_SL_VERBOSE 0
+// #define CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE 1
+// #define CGAL_ARR_CONSTRUCTION_SL_VISITOR_VERBOSE 1
 
 #include <vector>
 
@@ -16,7 +16,15 @@
 
 typedef CGAL::Exact_rational                               Number_type;
 typedef CGAL::Cartesian<Number_type>                       Kernel;
-typedef CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel>  Geom_traits_2;
+
+#if 0
+typedef CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel, -8, 6>  Geom_traits_2;
+#elif 0
+typedef CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel, -11, 7> Geom_traits_2;
+#else
+typedef CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel, -1, 0>  Geom_traits_2;
+#endif
+
 typedef Geom_traits_2::Point_2                             Point_2;
 typedef Geom_traits_2::X_monotone_curve_2                  X_monotone_curve_2;
 typedef CGAL::Arr_spherical_topology_traits_2<Geom_traits_2> Topol_traits_2;
@@ -54,16 +62,16 @@ int main()
   CGAL_assertion(xcv_sp1.is_vertical());
   CGAL_assertion(xcv_sp2.is_vertical());
   CGAL_assertion(xcv_sp3.is_vertical());
-  xcvs.push_back(xcv_sp1);
-  xcvs.push_back(xcv_sp2);
-  xcvs.push_back(xcv_sp3);
+  xcvs.push_back(xcv_sp1);      // 0
+  xcvs.push_back(xcv_sp2);      // 1
+  xcvs.push_back(xcv_sp3);      // 2
 
   X_monotone_curve_2 xcv_12 = ctr_xcv(p1, p2);
   X_monotone_curve_2 xcv_23 = ctr_xcv(p2, p3);
   CGAL_assertion(!xcv_12.is_vertical());
   CGAL_assertion(!xcv_23.is_vertical());
-  xcvs.push_back(xcv_12);
-  xcvs.push_back(xcv_23);
+  xcvs.push_back(xcv_12);       // 3
+  xcvs.push_back(xcv_23);       // 4
 
   X_monotone_curve_2 xcv_np1 = ctr_xcv(np, p1);
   X_monotone_curve_2 xcv_np2 = ctr_xcv(np, p2);
@@ -71,9 +79,9 @@ int main()
   CGAL_assertion(xcv_np1.is_vertical());
   CGAL_assertion(xcv_np2.is_vertical());
   CGAL_assertion(xcv_np3.is_vertical());
-  xcvs.push_back(xcv_np1);
-  xcvs.push_back(xcv_np2);
-  xcvs.push_back(xcv_np3);
+  xcvs.push_back(xcv_np1);      // 5
+  xcvs.push_back(xcv_np2);      // 6
+  xcvs.push_back(xcv_np3);      // 7
 
   unsigned subsetsp = (1 << points.size());
   std::cout << "#subsets points: " << subsetsp << std::endl;
@@ -126,5 +134,6 @@ int main()
       std::cout << std::endl;
     }
   }
+
   return 0;
 }
