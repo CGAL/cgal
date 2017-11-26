@@ -144,7 +144,7 @@ public:
    * Note that its boundary conditions must be set beforehand
    * using set_parameter_space_in_x/y().
    */
-  Comparison_result operator() (const Point_2& pt1, const Event* e2) const
+  Comparison_result operator()(const Point_2& pt1, const Event* e2) const
   {
     // REMARK: use m_ps_x and m_ps_y as set from outside! do not rely on pt here anymore
     Arr_parameter_space ps_x1 = m_ps_x;
@@ -393,7 +393,7 @@ private:
                            Arr_parameter_space ps_x2,
                            Arr_parameter_space ps_y2) const {
 
-#if 0
+#if 1
     CGAL::set_pretty_mode(std::cout);
     std::cout << std::endl << "FUNCTOR pt1-cv2" << std::endl;
     std::cout << "pt1  : " << pt1 << std::endl;
@@ -408,9 +408,12 @@ private:
       // same x-partition
       if (ps_x1 != ARR_INTERIOR) {
         // 1L2L, 1R2R
-        // second point must be accessible, as pt1 is an isolated point on the SAME left/right side
-        const Point_2& pt2 = m_traits->construct_vertex_at_curve_end_2_object()(cv2, ind2);
-        Comparison_result res = m_traits->compare_y_on_boundary_2_object() (pt1, pt2);
+        // second point must be accessible, as pt1 is an isolated point on the
+        // SAME left/right side
+        const Point_2& pt2 =
+          m_traits->construct_vertex_at_curve_end_2_object()(cv2, ind2);
+        Comparison_result res =
+          m_traits->compare_y_on_boundary_2_object() (pt1, pt2);
         //std::cout << "res1 " << res << std::endl;
         return res;
       }
@@ -418,13 +421,16 @@ private:
       if ((ps_y1 == ARR_INTERIOR) && (ps_y2 == ARR_INTERIOR)) {
         // both are y-interior, too 1I2I:
         // second point must be accessible, as curve-end is INTERIOR
-        const Point_2& pt2 = m_traits->construct_vertex_at_curve_end_2_object()(cv2, ind2);
+        const Point_2& pt2 =
+          m_traits->construct_vertex_at_curve_end_2_object()(cv2, ind2);
         Comparison_result res = m_traits->compare_xy_2_object()(pt1, pt2);
         //std::cout << "res2 " << res << std::endl;
         return res;
-      } else {
+      }
+      else {
         // at least one of pt1 or cv2 lies on a boundary
-        Comparison_result res = m_traits->compare_x_point_curve_end_2_object() (pt1, cv2, ind2);
+        Comparison_result res =
+          m_traits->compare_x_point_curve_end_2_object()(pt1, cv2, ind2);
         if (res != EQUAL) {
           //std::cout << "res3 " << res << std::endl;
           return res;
