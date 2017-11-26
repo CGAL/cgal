@@ -95,6 +95,12 @@ public:
   typedef typename internal::Arr_complete_right_side_category<Traits_2>::Category
                                                     Right_side_category;
 
+  // Used by:
+  // 1. parameter_space_in_x
+  typedef typename Arr_two_sides_category<Left_side_category,
+                                          Right_side_category>::result
+    Left_or_right_sides_category;
+
   /* Overlay is implemented as sweep-line visitor. The sweep-line algorithm
    * never uses Compare_y_at_x_left_2, and it never performs merging of curves.
    * Thus, AreMergeable_2 and Merge_2 are not needed either.
@@ -874,13 +880,81 @@ public:
   public:
     Arr_parameter_space operator()(const X_monotone_curve_2& xcv,
                                    Arr_curve_end ce) const
-    { return m_base->parameter_space_in_x_2_object()(xcv.base(), ce); }
+    {
+      // The function is implemented based on the tag dispatching
+      // If the traits class does not support special boundaries, we just
+      // return ARR_INTERIOR.
+      return parameter_space_in_x(xcv, ce, Left_or_right_sides_category());
+    }
 
     Arr_parameter_space operator()(const Point_2& p) const
-    { return m_base->parameter_space_in_x_2_object()(p.base()); }
+    {
+      // The function is implemented based on the tag dispatching
+      // If the traits class does not support special boundaries, we just
+      // return ARR_INTERIOR.
+      return parameter_space_in_x(p, Left_or_right_sides_category());
+    }
 
     Arr_parameter_space operator()(const X_monotone_curve_2& xcv) const
     { return m_base->parameter_space_in_x_2_object()(xcv.base()); }
+
+  private:
+    /*! Implementation of the operator() in case the base should be used. */
+    Arr_parameter_space parameter_space_in_x(const X_monotone_curve_2& xcv,
+                                             Arr_curve_end ind,
+                                             Arr_has_identified_side_tag) const
+    {
+      // If the curve completely lies on the left-right identification, return
+      // ARR_LEFT_BOUNDARY as an arbitrary but consistent choice.
+      if (m_base->is_on_y_identification_2_object()(xcv))
+        return ARR_LEFT_BOUNDARY;
+      return (m_base->parameter_space_in_x_2_object()(xcv, ind));
+    }
+
+    /*! Implementation of the operator() in case the base should be used. */
+    Arr_parameter_space parameter_space_in_x(const X_monotone_curve_2& xcv,
+                                             Arr_curve_end ind,
+                                             Arr_boundary_cond_tag) const
+    { return (m_base->parameter_space_in_x_2_object()(xcv, ind)); }
+
+    /*! Implementation of the operator() in case the dummy should be used. */
+    Arr_parameter_space parameter_space_in_x(const X_monotone_curve_2&,
+                                             Arr_curve_end,
+                                             Arr_all_sides_oblivious_tag) const
+    {
+      /*! \todo ideally we should call CGAL_error() here and avoid invocation
+       * of the functor for traits classes that have oblivious boundary
+       * conditions
+       */
+      return ARR_INTERIOR;
+    }
+
+     /*! Implementation of the operator() in case the base should be used. */
+    Arr_parameter_space parameter_space_in_x(const Point_2& p,
+                                             Arr_has_identified_side_tag) const
+    {
+      // if the point lies on the left-right identification, return
+      // ARR_LEFT_BOUNDARY as an arbitrary but consistent choice
+      if (m_base->is_on_y_identification_2_object()(p))
+        return ARR_LEFT_BOUNDARY;
+      return m_base->parameter_space_in_x_2_object()(p);
+    }
+
+    /*! Implementation of the operator() in case the base should be used. */
+    Arr_parameter_space parameter_space_in_x(const Point_2& p,
+                                             Arr_boundary_cond_tag) const
+    { return m_base->parameter_space_in_x_2_object()(p); }
+
+    /*! Implementation of the operator() in case the dummy should be used. */
+    Arr_parameter_space parameter_space_in_x(const Point_2&,
+                                             Arr_all_sides_oblivious_tag) const
+    {
+      /*! \todo ideally we should call CGAL_error() here and avoid invocation
+       * of the functor for traits classes that have oblivious boundary
+       * conditions
+       */
+      return ARR_INTERIOR;
+    }
   };
 
   /*! Obtain an Parameter_space_in_x_2 functor object. */
