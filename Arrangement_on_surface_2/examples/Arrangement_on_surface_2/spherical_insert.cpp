@@ -8,8 +8,11 @@
 #include <list>
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel    Kernel;
-// typedef CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel, -1, 0>
+#if 0
+typedef CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel, -1, 0>
+#else
 typedef CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel, -8, 6>
+#endif
                                                              Geom_traits_2;
 typedef Geom_traits_2::Point_2                               Point_2;
 typedef Geom_traits_2::X_monotone_curve_2                    X_monotone_curve_2;
@@ -39,8 +42,10 @@ int main()
   arcs.push_back(ctr_xcv(ctr_p(-1, 0, 0), ctr_p(0, -1, 0)));
   arcs.push_back(ctr_xcv(ctr_p(0, 0, -1), ctr_p(1, 0, 0)));
   arcs.push_back(ctr_xcv(ctr_p(0, 1, 0), ctr_p(0, 0, -1)));
+  arcs.push_back(ctr_xcv(ctr_p(-1, 0, 0), ctr_p(0, 0, 1)));
+  arcs.push_back(ctr_xcv(ctr_p(-1, 0, 0), ctr_p(0, 0, -1)));
 
-#if 0
+#if 1
   // insert_non_intersecting_curves (arr, arcs.begin(), arcs.end());
   // insert_x_monotone_curves (arr, arcs.begin(), arcs.end());
   CGAL::insert(arr, arcs.begin(), arcs.end());
