@@ -775,12 +775,29 @@ public:
      * \return the boundary type
      */
     Arr_parameter_space operator()(const X_monotone_curve_2& xcv,
-                             Arr_curve_end ce) const
+                                   Arr_curve_end ce) const
     {
       if (!m_enabled) return m_object(xcv, ce);
       std::cout << "parameter_space_in_x" << std::endl
                 << "  ce: " << ce << ", xcv: " << xcv << std::endl;
       Arr_parameter_space bt = m_object(xcv, ce);
+      std::cout << "  result: " << bt << std::endl;
+      return bt;
+    }
+
+    /*! A functor that obtains the parameter space at a point along the x-axis.
+     * Every non-interior point is assumed to lie on the left-right
+     * identification.
+     * Points at the poles additionally lie on the bottom or top boundary.
+     * \param p the point.
+     * \return the parameter space at p.
+     */
+    Arr_parameter_space operator()(const Point_2& p) const
+    {
+      if (!m_enabled) return m_object(p);
+      std::cout << "parameter_space_in_x" << std::endl
+                << "  p: " << p << std::endl;
+      Arr_parameter_space bt = m_object(p);
       std::cout << "  result: " << bt << std::endl;
       return bt;
     }
@@ -801,12 +818,12 @@ public:
     /*! Operate
      * \param p1 the point.
      */
-    Comparison_result operator()(const Point_2& p) const
+    bool operator()(const Point_2& p) const
     {
       if (!m_enabled) return m_object(p);
       std::cout << "is_on_x_identification" << std::endl
                 << "  p: " << p << std::endl;
-      Comparison_result cr = m_object(p);
+      bool cr = m_object(p);
       std::cout << "  result: " << cr << std::endl;
       return cr;
     }
@@ -814,12 +831,12 @@ public:
     /*! Operate
      * \param xcv1 the curve
      */
-    Comparison_result operator()(const X_monotone_curve_2& xcv) const
+    bool operator()(const X_monotone_curve_2& xcv) const
     {
       if (!m_enabled) return m_object(xcv);
       std::cout << "is_on_x_identification" << std::endl
                 << "  xcv: " << xcv << std::endl;
-      Comparison_result cr = m_object(xcv);
+      bool cr = m_object(xcv);
       std::cout << "  result: " << cr << std::endl;
       return cr;
     }
@@ -951,12 +968,12 @@ public:
     /*! Operate
      * \param p1 the point.
      */
-    Comparison_result operator()(const Point_2& p) const
+    bool operator()(const Point_2& p) const
     {
       if (!m_enabled) return m_object(p);
       std::cout << "is_on_y_identification" << std::endl
                 << "  p: " << p << std::endl;
-      Comparison_result cr = m_object(p);
+      bool cr = m_object(p);
       std::cout << "  result: " << cr << std::endl;
       return cr;
     }
@@ -964,12 +981,12 @@ public:
     /*! Operate
      * \param xcv1 the curve
      */
-    Comparison_result operator()(const X_monotone_curve_2& xcv) const
+    bool operator()(const X_monotone_curve_2& xcv) const
     {
       if (!m_enabled) return m_object(xcv);
       std::cout << "is_on_y_identification" << std::endl
                 << "  xcv: " << xcv << std::endl;
-      Comparison_result cr = m_object(xcv);
+      bool cr = m_object(xcv);
       std::cout << "  result: " << cr << std::endl;
       return cr;
     }
