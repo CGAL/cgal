@@ -1,6 +1,3 @@
-// #define CGAL_ARR_GEODESIC_ARC_ON_SPHERE_DETAILS 1
-// #define CGAL_SL_VERBOSE 1
-
 //! \file examples/Arrangement_on_surface_2/spherical_overlay.cpp
 // Overlay of two arrangements embedded on the sphere.
 
@@ -10,7 +7,6 @@
 #include <CGAL/Arr_spherical_topology_traits_2.h>
 #include <CGAL/Arr_overlay_2.h>
 #include <CGAL/Arr_default_overlay_traits.h>
-#include <CGAL/Arr_tracing_traits_2.h>
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel    Kernel;
 typedef CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel>    Geom_traits_2;
