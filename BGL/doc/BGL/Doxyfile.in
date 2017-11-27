@@ -17,6 +17,7 @@ INPUT += ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/Euler_operations.h \
 EXAMPLE_PATH               =  ${CGAL_Surface_mesh_skeletonization_EXAMPLE_DIR} \
                               ${CGAL_Surface_mesh_segmentation_EXAMPLE_DIR} \
                               ${CGAL_Polygon_mesh_processing_EXAMPLE_DIR} \
+                              ${CGAL_Property_map_EXAMPLE_DIR} \
                               ${CGAL_BGL_EXAMPLE_DIR}
 
 ALIASES +=  "bgllink{1}=<a href=\"http://www.boost.org/libs/graph/doc/\1.html\"><code>\1</code></a>"

@@ -184,6 +184,9 @@ Valid Expression  |  returns                                   | Description
 /// \defgroup PkgBGLProperties Properties
 /// \ingroup PkgBGL
 
+/// \defgroup PkgBGLPropertiesDynamic Dynamic Properties
+/// \ingroup PkgBGL
+
 /// \defgroup PkgBGLHelper Helper Classes
 /// \ingroup PkgBGL
 
@@ -201,6 +204,12 @@ Valid Expression  |  returns                                   | Description
 
 /// \defgroup PkgBGLEulerOperations Euler Operations
 /// \ingroup PkgBGL
+
+
+/*!
+\addtogroup PkgBGLPropertiesDynamic
+The dynamic property tags enable to associate information to simplices of a `FaceGraph` on the fly.
+*/
 
 /*!
 \addtogroup PkgBGLHelper

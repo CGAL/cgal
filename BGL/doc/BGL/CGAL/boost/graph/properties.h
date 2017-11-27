@@ -36,4 +36,56 @@ enum vertex_point_t { vertex_point };
 
 
 /// @}
-}
+} // namespace boost
+
+namespace CGAL {
+
+
+/// @{
+
+  /// \ingroup PkgBGLPropertiesDynamic
+/// Dynamic vertex property tag
+/// \tparam T the value type of the vertex property
+template <typename T>
+struct vertex_property_t
+{
+  /// \param s the name of the property
+  vertex_property_t(const std::string s);
+};
+
+  /// \ingroup PkgBGLPropertiesDynamic
+/// Dynamic halfedge property tag
+/// \tparam T the value type of the halfedge property
+template <typename T>
+struct halfedge_property_t
+{
+  /// \param s the name of the property
+  halfedge_property_t(const std::string s);
+};
+  
+/// \ingroup PkgBGLPropertiesDynamic
+/// Helper class to obtain the type of the dynamic property map for a graph type and a dynamic property tag
+/// \tparam G must be a model of
+/// \tparam D must be a model of DynamicPropertyTag
+template <typename G, typename D>
+struct dynamic_property_map<G, D>
+{
+  /// The type of the dynamic property map
+  typedef unspecified_type type;
+};
+
+/// \ingroup PkgBGLPropertiesDynamic
+/// adds a dynamic property map to `g`
+template <typename T, typename G>
+typename dynamic_property_map<G,vertex_property_t<T> >::const_type
+add_property(vertex_property_t<T> prop, const G& g);
+
+  
+/// \ingroup PkgBGLPropertiesDynamic
+/// removes a dynamic property map assocated to `g`
+template<typename G, typename D>
+void remove_property(D dpm,
+                     const G&);
+
+/// @}
+} // namespace CGAL
