@@ -25,7 +25,7 @@
 
 #include <boost/shared_ptr.hpp>
 
-#define CGAL_CLASSIFICATION_IMAGE_SIZE_LIMIT 10000000
+#define CGAL_CLASSIFICATION_IMAGE_SIZE_LIMIT 100000000
 
 namespace CGAL {
 namespace Classification {
