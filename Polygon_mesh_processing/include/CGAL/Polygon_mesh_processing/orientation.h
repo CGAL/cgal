@@ -454,12 +454,8 @@ namespace Polygon_mesh_processing {
 * @tparam NamedParameters a sequence of \ref namedparameters
 *
 * @param tm a closed triangulated `TriangleMesh`
-* @param orient_positively indicates if the output mesh should be oriented positively (`true`) or negatively (`false`).
+* @param orient_outward indicates if the output mesh should be oriented outward (`true`) or inward (`false`).
 * default value is true.
-* A closed polygon mesh is considered to have a positive orientation if the normal vectors
-* to all its faces point outside the domain bounded by the polygon mesh.
-* The normal vector to each face is chosen pointing on the side of the face
-* where its sequence of vertices is seen counterclockwise.
 * @param np optional sequence of \ref namedparameters among the ones listed below
 *
 * \cgalNamedParamsBegin
@@ -474,7 +470,7 @@ namespace Polygon_mesh_processing {
 * \cgalNamedParamsEnd
 */
 template<class TriangleMesh, class NamedParameters>
-void orient(TriangleMesh& tm, bool orient_positively, const NamedParameters& np)
+void orient(TriangleMesh& tm, bool orient_outward, const NamedParameters& np)
 {
   typedef boost::graph_traits<TriangleMesh> Graph_traits;
   typedef typename Graph_traits::vertex_descriptor vertex_descriptor;
@@ -529,7 +525,7 @@ void orient(TriangleMesh& tm, bool orient_positively, const NamedParameters& np)
   for(std::size_t id=0; id<nb_cc; ++id)
   {
     if(internal::is_outward_oriented(xtrm_vertices[id], tm, np)
-        != orient_positively)
+        != orient_outward)
     {
       reverse_face_orientations(ccs[id], tm);
     }
@@ -537,9 +533,9 @@ void orient(TriangleMesh& tm, bool orient_positively, const NamedParameters& np)
 }
 
 template<class TriangleMesh>
-void orient(TriangleMesh& tm, bool orient_positively)
+void orient(TriangleMesh& tm, bool orient_outward)
 {
-  orient(tm, orient_positively, parameters::all_default());
+  orient(tm, orient_outward, parameters::all_default());
 }
 
 template<class TriangleMesh>
