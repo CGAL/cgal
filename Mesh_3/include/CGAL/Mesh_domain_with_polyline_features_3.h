@@ -1232,11 +1232,10 @@ get_incidences(Curve_index id,
                IndicesOutputIterator indices_out) const
 {
   typename Edges_incidences::const_iterator it = edges_incidences_.find(id);
-
-  if(it == edges_incidences_.end()) return indices_out;
+  if(it == edges_incidences_.end())
+    return indices_out;
 
   const Surface_patch_index_set& incidences = it->second;
-
   return std::copy(incidences.begin(), incidences.end(), indices_out);
 }
 
@@ -1248,6 +1247,9 @@ get_corner_incidences(Corner_index id,
                       IndicesOutputIterator indices_out) const
 {
   typename Corners_incidences::const_iterator it = corners_incidences_.find(id);
+  if(it == corners_incidences_.end())
+    return indices_out;
+
   const Surface_patch_index_set& incidences = it->second;
   return std::copy(incidences.begin(), incidences.end(), indices_out);
 }
@@ -1259,8 +1261,10 @@ Mesh_domain_with_polyline_features_3<MD_>::
 get_corner_incident_curves(Corner_index id,
                            IndicesOutputIterator indices_out) const
 {
-  typename Corners_tmp_incidences::const_iterator it =
-    corners_tmp_incidences_.find(id);
+  typename Corners_tmp_incidences::const_iterator it = corners_tmp_incidences_.find(id);
+  if(it == corners_tmp_incidences_.end())
+    return indices_out;
+
   const std::set<Curve_index>& incidences = it->second;
   return std::copy(incidences.begin(), incidences.end(), indices_out);
 }
