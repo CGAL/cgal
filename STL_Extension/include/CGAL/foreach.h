@@ -23,11 +23,17 @@
 
 #include <CGAL/config.h>
 
+#ifndef DOXYGEN_RUNNING
 #if BOOST_VERSION >= 105100 && !defined(BOOST_NO_CXX11_RANGE_BASED_FOR)
 #define CGAL_FOREACH(A,B) for(A : B)
 #else
 #include <CGAL/foreach.h>
 #define CGAL_FOREACH(A,B) CGAL_FOREACH(A, B)
 #endif
-
+#else
+/// \ingroup  PkgStlExtension
+/// If the version of `boost` is at least 1.51 and the compiler used support range-based for loops
+/// introduced with \cpp11, use it; otherwise fallback onto `BOOST_FOREACH`.
+#define CGAL_FOREACH(A,B)
+#endif
 #endif
