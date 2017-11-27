@@ -73,7 +73,7 @@ typename boost::property_map<Mesh, CGAL::face_index_t>::type fim
   = get(CGAL::face_index, mesh);
 
 unsigned int id = 0;
-BOOST_FOREACH(face_descriptor f, faces(mesh))
+CGAL_FOREACH(face_descriptor f, faces(mesh))
 {
   put(fim, f, id++);
 }
@@ -126,7 +126,7 @@ split_identical_edges(
   typedef boost::graph_traits<TriangleMesh> GT;
   typedef typename GT::halfedge_descriptor halfedge_descriptor;
 
-  BOOST_FOREACH(const Point_3& p, points)
+  CGAL_FOREACH(const Point_3& p, points)
   {
     // split the edge
     halfedge_descriptor new_hd=CGAL::Euler::split_edge(hd,tm);
@@ -172,7 +172,7 @@ void split_long_duplicated_edge(const HedgeRange& hedge_range,
   CGAL_assertion_code(Point_3 tgt = get(pmap, target(hd, *p.second));)
 
   // split the edges and collect faces to triangulate
-  BOOST_FOREACH(const Pair& h_and_p, hedge_range)
+  CGAL_FOREACH(const Pair& h_and_p, hedge_range)
   {
     halfedge_descriptor hc=h_and_p.first;
     TriangleMesh* polyc = h_and_p.second;
@@ -257,10 +257,10 @@ public:
       CGAL::vertex_point_t>::type PointPMap;
     MapType duplicated_edges;
 
-    BOOST_FOREACH(Scene_facegraph_item* poly_item, selection){
+    CGAL_FOREACH(Scene_facegraph_item* poly_item, selection){
       FaceGraph& pmesh = *poly_item->polyhedron();
       PointPMap pmap = get(boost::vertex_point, pmesh);
-      BOOST_FOREACH(edge_descriptor ed, edges(pmesh)){
+      CGAL_FOREACH(edge_descriptor ed, edges(pmesh)){
         halfedge_descriptor hd = halfedge(ed,pmesh);
         Point_3 p = get(pmap, source(hd,pmesh)), q = get(pmap, target(hd,pmesh));
         Segment_3 s = CGAL::make_sorted_pair(p,q);
@@ -273,11 +273,11 @@ public:
     // consistently split duplicate edges and triangulate incident faces
     typedef std::pair<face_descriptor, FaceGraph*> Face_and_poly;
     std::set< Face_and_poly > faces_to_triangulate;
-    BOOST_FOREACH(const MapType::value_type& p, duplicated_edges)
+    CGAL_FOREACH(const MapType::value_type& p, duplicated_edges)
       if (p.second.size()>1){
         //collect faces to retriangulate
         typedef std::pair<halfedge_descriptor, FaceGraph*> Pair_type;
-        BOOST_FOREACH(const Pair_type& h_and_p, p.second)
+        CGAL_FOREACH(const Pair_type& h_and_p, p.second)
         {
           halfedge_descriptor hc=h_and_p.first;
           FaceGraph* polyc = h_and_p.second;
@@ -293,7 +293,7 @@ public:
       }
     // now retriangulate
     namespace PMP=CGAL::Polygon_mesh_processing;
-    BOOST_FOREACH(Face_and_poly f_and_p, faces_to_triangulate)
+    CGAL_FOREACH(Face_and_poly f_and_p, faces_to_triangulate)
       PMP::triangulate_face(f_and_p.first, *f_and_p.second);
   }
 
@@ -355,7 +355,7 @@ public Q_SLOTS:
      Patch_id_pmap fpmap = get(CGAL::face_patch_id_t<int>(), pmesh);
      bool fpmap_valid = false;
      {
-       BOOST_FOREACH(face_descriptor f, faces(pmesh))
+       CGAL_FOREACH(face_descriptor f, faces(pmesh))
        {
          if (get(fpmap, f) != 1)
          {
@@ -370,7 +370,7 @@ public Q_SLOTS:
         if (edges_only)
         {
           std::vector<edge_descriptor> edges;
-          BOOST_FOREACH(edge_descriptor e, selection_item->selected_edges)
+          CGAL_FOREACH(edge_descriptor e, selection_item->selected_edges)
           {
             if (selection_item->selected_facets.find(face(halfedge(e, pmesh), pmesh))
                  != selection_item->selected_facets.end()
@@ -378,9 +378,9 @@ public Q_SLOTS:
                  != selection_item->selected_facets.end())
               edges.push_back(e);
           }
-          BOOST_FOREACH(face_descriptor f, selection_item->selected_facets)
+          CGAL_FOREACH(face_descriptor f, selection_item->selected_facets)
           {
-            BOOST_FOREACH(halfedge_descriptor he, halfedges_around_face(halfedge(f, pmesh), pmesh))
+            CGAL_FOREACH(halfedge_descriptor he, halfedges_around_face(halfedge(f, pmesh), pmesh))
             {
               if (selection_item->selected_facets.find(face(opposite(he, pmesh), pmesh))
                   == selection_item->selected_facets.end())
@@ -525,7 +525,7 @@ public Q_SLOTS:
             pmesh,
             std::back_inserter(border));
           std::vector<edge_descriptor> border_edges;
-          BOOST_FOREACH(halfedge_descriptor h, border)
+          CGAL_FOREACH(halfedge_descriptor h, border)
             border_edges.push_back(edge(h, pmesh));
 
           if (!border_edges.empty())
@@ -603,7 +603,7 @@ public Q_SLOTS:
     bool smooth_features = true;
 
     std::vector<Scene_facegraph_item*> selection;
-    BOOST_FOREACH(int index, scene->selectionIndices())
+    CGAL_FOREACH(int index, scene->selectionIndices())
     {
       Scene_facegraph_item* poly_item =
         qobject_cast<Scene_facegraph_item*>(scene->item(index));
@@ -673,7 +673,7 @@ public Q_SLOTS:
 
     Remesh_polyhedron_item remesher(edges_only,
       target_length, nb_iter, protect, smooth_features);
-    BOOST_FOREACH(Scene_facegraph_item* poly_item, selection)
+    CGAL_FOREACH(Scene_facegraph_item* poly_item, selection)
     {
       QTime time;
       time.start();
@@ -688,7 +688,7 @@ public Q_SLOTS:
     std::cout << "Remeshing of all selected items done in "
       << total_time << " ms" << std::endl;
 
-    BOOST_FOREACH(Scene_facegraph_item* poly_item, selection)
+    CGAL_FOREACH(Scene_facegraph_item* poly_item, selection)
     {
 #ifdef USE_SURFACE_MESH
       //destroys the patch_id_map for the Surface_mesh_item to avoid assertions.
@@ -732,7 +732,7 @@ private:
           , *poly_item->polyhedron()
           , std::back_inserter(border));
         std::vector<edge_descriptor> border_edges;
-        BOOST_FOREACH(halfedge_descriptor h, border)
+        CGAL_FOREACH(halfedge_descriptor h, border)
           border_edges.push_back(edge(h, *poly_item->polyhedron()));
 
         CGAL::Polygon_mesh_processing::split_long_edges(

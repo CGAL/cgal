@@ -22,7 +22,7 @@
 #include <QGLViewer/qglviewer.h>
 
 #include <boost/function_output_iterator.hpp>
-#include <boost/foreach.hpp>
+#include <CGAL/foreach.h>
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
@@ -1196,7 +1196,7 @@ void Scene_c3t3_item::export_facets_in_complex()
   Geom_traits::Construct_point_3 wp2p
     = c3t3().triangulation().geom_traits().construct_point_3_object();
 
-  BOOST_FOREACH(C3t3::Vertex_handle v, vertex_set)
+  CGAL_FOREACH(C3t3::Vertex_handle v, vertex_set)
   {
     points[index] = wp2p(v->point());
     indices.insert(std::make_pair(v, index));

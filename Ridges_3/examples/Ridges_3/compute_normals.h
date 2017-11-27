@@ -3,7 +3,7 @@
 
 #include <CGAL/boost/graph/helpers.h>
 
-#include <boost/foreach.hpp>
+#include <CGAL/foreach.h>
 
 template <typename TriangleMesh, typename FaceVectorMap, typename Kernel>
 const typename Kernel::Vector_3 
@@ -46,7 +46,7 @@ void compute_facets_normals(const TriangleMesh& tm,
 
   typedef typename boost::property_map<TriangleMesh,CGAL::vertex_point_t>::const_type VPM;
   VPM vpm = get(CGAL::vertex_point,tm);
-  BOOST_FOREACH(typename boost::graph_traits<TriangleMesh>::face_descriptor f, faces(tm)){
+  CGAL_FOREACH(typename boost::graph_traits<TriangleMesh>::face_descriptor f, faces(tm)){
     typename boost::graph_traits<TriangleMesh>::halfedge_descriptor h = halfedge(f,tm);
     Vector_3 normal = 
       CGAL::cross_product(get(vpm, target(h,tm)) -

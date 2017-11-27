@@ -15,7 +15,7 @@
 #include <iostream>
 #include <fstream>
 
-#include <boost/foreach.hpp>
+#include <CGAL/foreach.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 
@@ -33,8 +33,8 @@ int main(int argc, char** argv )
   std::vector<vertex_descriptor> V;
   std::ifstream in((argc>1)?argv[1]:"in.off");
   CGAL::read_off(in, mesh);
-  BOOST_FOREACH(vertex_descriptor vd, vertices(mesh)){
-    BOOST_FOREACH(halfedge_descriptor hd, CGAL::halfedges_around_target(vd,mesh)){
+  CGAL_FOREACH(vertex_descriptor vd, vertices(mesh)){
+    CGAL_FOREACH(halfedge_descriptor hd, CGAL::halfedges_around_target(vd,mesh)){
       if(! CGAL::is_border(edge(hd,mesh),mesh)){
         CGAL::Euler::flip_edge(hd,mesh);
         CGAL::write_off((argc>2)?argv[2]:"out.off", mesh);

@@ -6,7 +6,7 @@
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <fstream>
 #include <QVariant>
-#include <boost/foreach.hpp>
+#include <CGAL/foreach.h>
 #include <QMessageBox>
 using namespace CGAL::Three;
 class Polyhedron_demo_polylines_io_plugin :
@@ -169,9 +169,9 @@ bool Polyhedron_demo_polylines_io_plugin::save(const CGAL::Three::Scene_item* it
 
   QStringList metadata = item->property("polylines metadata").toStringList();
 
-  BOOST_FOREACH(const Polyline& polyline, poly_item->polylines) {
+  CGAL_FOREACH(const Polyline& polyline, poly_item->polylines) {
     out << polyline.size();
-    BOOST_FOREACH(const Point_3& p, polyline) {
+    CGAL_FOREACH(const Point_3& p, polyline) {
       out << " " << p.x() << " " << p.y() << " " << p.z();
     }
     if(!metadata.isEmpty()) {

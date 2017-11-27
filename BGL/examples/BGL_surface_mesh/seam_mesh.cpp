@@ -11,7 +11,7 @@
 #include <fstream>
 #include <vector>
 
-#include <boost/foreach.hpp>
+#include <CGAL/foreach.h>
 
 typedef CGAL::Simple_cartesian<double>                       Kernel;
 typedef Kernel::Point_3                                      Point;
@@ -72,43 +72,43 @@ int main(int argc, char* argv[])
   std::cout << "opposite of seam halfedge in seam mesh: " << opposite(bhd, mesh) << std::endl;
 
   std::cout << "vertices on one of the seams" << std::endl;
-  BOOST_FOREACH(halfedge_descriptor hd,
+  CGAL_FOREACH(halfedge_descriptor hd,
                 halfedges_around_face(opposite(bhd, mesh), mesh)){
     std::cout << target(hd.tmhd, sm) << " ";
   }
   std::cout << std::endl;
 
   std::cout << "vertices around " << target(smhd , sm) << " in (base) mesh" << std::endl;
-  BOOST_FOREACH(SM_halfedge_descriptor hd, halfedges_around_target(smhd, sm)){
+  CGAL_FOREACH(SM_halfedge_descriptor hd, halfedges_around_target(smhd, sm)){
     std::cout << source(hd, sm) << " ";
   }
   std::cout << std::endl;
 
   std::cout << "vertices around " << target(bhd , mesh) << " in seam mesh" << std::endl;
-  BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_target(bhd, mesh)){
+  CGAL_FOREACH(halfedge_descriptor hd, halfedges_around_target(bhd, mesh)){
     std::cout << source(hd.tmhd, sm) << " ";
   }
   std::cout << std::endl;
 
   std::cout << "vertices around " << source(smhd , sm) << " in (base) mesh" << std::endl;
-  BOOST_FOREACH(SM_halfedge_descriptor hd,
+  CGAL_FOREACH(SM_halfedge_descriptor hd,
                 halfedges_around_source(source(smhd, sm), sm)){
      std::cout << target(hd, sm) << " ";
   }
   std::cout << std::endl;
 
   std::cout << "vertices around " << source(bhd , mesh) << " in seam mesh" << std::endl;
-  BOOST_FOREACH(halfedge_descriptor hd,
+  CGAL_FOREACH(halfedge_descriptor hd,
                 halfedges_around_source(source(bhd, mesh), mesh)){
     std::cout << target(hd.tmhd, sm) << " ";
   }
   std::cout << std::endl;
 
   std::cout << "vertices around vertices in seam mesh" << std::endl;
-  BOOST_FOREACH(vertex_descriptor vd, vertices(mesh)){
+  CGAL_FOREACH(vertex_descriptor vd, vertices(mesh)){
     halfedge_descriptor hd = halfedge(vd, mesh);
     std::cout << " " << vd << " has incident vertices:" << std::endl;
-    BOOST_FOREACH(halfedge_descriptor hd2, halfedges_around_target(hd, mesh)){
+    CGAL_FOREACH(halfedge_descriptor hd2, halfedges_around_target(hd, mesh)){
       std::cout << "  " << hd2;
     }
     std::cout << std::endl;
@@ -118,19 +118,19 @@ int main(int argc, char* argv[])
   std::cout << "the (base) mesh has: " << num_halfedges(sm) << " halfedges" << std::endl;
   std::cout << "the seam mesh has: " << num_halfedges(mesh) << " halfedges" << std::endl;
   std::cout << "halfedges in (base) mesh" << std::endl;
-  BOOST_FOREACH(SM_halfedge_descriptor hd, halfedges(sm)){
+  CGAL_FOREACH(SM_halfedge_descriptor hd, halfedges(sm)){
      std::cout << hd << " ";
   }
   std::cout << std::endl;
 
   std::cout << "halfedges in seam mesh" << std::endl;
-  BOOST_FOREACH(halfedge_descriptor hd, halfedges(mesh)){
+  CGAL_FOREACH(halfedge_descriptor hd, halfedges(mesh)){
      std::cout << hd << " ";
   }
   std::cout << std::endl;
 
   std::cout << "faces of the base and seam meshes" << std::endl;
-  BOOST_FOREACH(face_descriptor fd, faces(mesh)){
+  CGAL_FOREACH(face_descriptor fd, faces(mesh)){
     std::cout << fd << " ";
   }
   std::cout << std::endl;

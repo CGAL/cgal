@@ -398,7 +398,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::dock_widget_visibility_changed(bool
           CGAL::is_triangle_mesh(*poly_item->face_graph()))
       {
         bool is_valid = true;
-        BOOST_FOREACH(boost::graph_traits<Face_graph>::face_descriptor fd, faces(*poly_item->face_graph()))
+        CGAL_FOREACH(boost::graph_traits<Face_graph>::face_descriptor fd, faces(*poly_item->face_graph()))
         {
           if (CGAL::is_degenerate_triangle_face(fd,
                                  *poly_item->face_graph(),

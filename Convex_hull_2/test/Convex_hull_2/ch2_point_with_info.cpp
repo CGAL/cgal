@@ -4,7 +4,7 @@
 #include <CGAL/convex_hull_traits_2.h>
 #include <CGAL/boost/iterator/counting_iterator.hpp>
 
-#include <boost/foreach.hpp>
+#include <CGAL/foreach.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_2 Point_2;
@@ -122,7 +122,7 @@ int main()
                        boost::counting_iterator<std::size_t>(input_points.size()),
                        std::back_inserter(result), CH_traits_for_point_ids<K>(input_points) );
 
-  BOOST_FOREACH(std::size_t i, result)
+  CGAL_FOREACH(std::size_t i, result)
   {
     std::cout << input_points[i] << " - " << i << "\n";
   }

@@ -11,7 +11,7 @@
 #include <CGAL/Unique_hash_map.h>
 
 #include <boost/array.hpp>
-#include <boost/foreach.hpp>
+#include <CGAL/foreach.h>
 #include <boost/unordered_set.hpp>
 
 #include <cstdlib>

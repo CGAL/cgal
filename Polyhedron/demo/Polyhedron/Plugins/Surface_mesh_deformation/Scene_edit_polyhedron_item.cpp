@@ -4,7 +4,7 @@
 #include "Scene_edit_polyhedron_item.h"
 #include "Scene_spheres_item.h"
 #include <CGAL/Three/Viewer_interface.h>
-#include <boost/foreach.hpp>
+#include <CGAL/foreach.h>
 #include <algorithm>
 #include <QTime>
 
@@ -646,7 +646,7 @@ void Scene_edit_polyhedron_item_priv::apply_reset_drawing_data(Mesh* mesh, M_Def
   typedef typename boost::property_map<Mesh, boost::vertex_point_t>::type VertexPointMap;
   VertexPointMap vpmap = get(boost::vertex_point, *mesh);
 
-  BOOST_FOREACH(mesh_vd vb, vertices(*mesh))
+  CGAL_FOREACH(mesh_vd vb, vertices(*mesh))
   {
     typename VertexPointMap::reference p = get(vpmap, vb);
     positions[counter * 3] = p.x();
@@ -663,7 +663,7 @@ void Scene_edit_polyhedron_item_priv::apply_reset_drawing_data(Mesh* mesh, M_Def
   counter = 0;
   Id_setter id_getter(mesh);
 
-  BOOST_FOREACH(mesh_fd fb, faces(*mesh))
+  CGAL_FOREACH(mesh_fd fb, faces(*mesh))
   {
     tris[counter * 3] = static_cast<unsigned int>(id_getter.get_id(target(halfedge(fb, *mesh), *mesh)));
     tris[counter * 3 + 1] = static_cast<unsigned int>(id_getter.get_id(target(next(halfedge(fb, *mesh), *mesh), *mesh)));
@@ -707,7 +707,7 @@ void Scene_edit_polyhedron_item_priv::compute_normals_and_vertices(Mesh* mesh)
     typedef typename boost::property_map<Mesh, boost::vertex_point_t>::type VertexPointMap;
     VertexPointMap pmap = get(boost::vertex_point, *mesh);
 
-    BOOST_FOREACH(mesh_vd vd, fs.get_deform_mesh(mesh)->roi_vertices())
+    CGAL_FOREACH(mesh_vd vd, fs.get_deform_mesh(mesh)->roi_vertices())
     {
         if(!fs.get_deform_mesh(mesh)->is_control_vertex(vd))
         {
@@ -950,7 +950,7 @@ struct Is_constrained_map<Polyhedron>
   Is_constrained_map( std::vector<int>* vec, Polyhedron* mesh)
   {
     icmap = new std::map<poly_vertex_descriptor,int>();
-    BOOST_FOREACH(mesh_vd v, vertices(*mesh))
+    CGAL_FOREACH(mesh_vd v, vertices(*mesh))
     {
       (*icmap)[v] = (*vec)[v->id()];
     }
@@ -1047,7 +1047,7 @@ void Scene_edit_polyhedron_item_priv::remesh(Mesh* mesh)
       hgb_data != fs.get_ctrl_vertex_frame_map(mesh).end(); ++hgb_data)
   {
     std::vector<mesh_vd> group;
-    BOOST_FOREACH(mesh_vd vd, hgb_data->ctrl_vertices_group)
+    CGAL_FOREACH(mesh_vd vd, hgb_data->ctrl_vertices_group)
     {
         constrained_vec[item->id_setter->get_id(vd)] = id_group;
     }
@@ -1058,14 +1058,14 @@ void Scene_edit_polyhedron_item_priv::remesh(Mesh* mesh)
   std::map<mesh_fd, std::size_t> patch_map;
   ROI_faces_pmap<Mesh> roi_faces_pmap(&patch_map, mesh);
   //initialize face-patch_id map
-  BOOST_FOREACH(mesh_vd v, fs.get_deform_mesh(mesh)->roi_vertices())
+  CGAL_FOREACH(mesh_vd v, fs.get_deform_mesh(mesh)->roi_vertices())
   {
-    BOOST_FOREACH(mesh_fd fv, CGAL::faces_around_target(halfedge(v, g), g))
+    CGAL_FOREACH(mesh_fd fv, CGAL::faces_around_target(halfedge(v, g), g))
     {
       if(fv == boost::graph_traits<Mesh>::null_face())
         continue;
       bool add_face=true;
-      BOOST_FOREACH(mesh_vd vfd, CGAL::vertices_around_face(halfedge(fv,g),g))
+      CGAL_FOREACH(mesh_vd vfd, CGAL::vertices_around_face(halfedge(fv,g),g))
         if (roi_vertices.count(vfd)==0)
           add_face=false;
       if(add_face)
@@ -1088,7 +1088,7 @@ void Scene_edit_polyhedron_item_priv::remesh(Mesh* mesh)
   // estimate the target_length using the perimeter of the region to remesh
   bool automatic_target_length = !ui_widget->remeshingEdgeLengthInput_checkBox->isChecked();
   double estimated_target_length = 0.;
-  BOOST_FOREACH(mesh_fd f, faces(*mesh))
+  CGAL_FOREACH(mesh_fd f, faces(*mesh))
       item->id_setter->set_id(f, id++);
 
   std::set<mesh_ed> roi_border;
@@ -1098,7 +1098,7 @@ void Scene_edit_polyhedron_item_priv::remesh(Mesh* mesh)
   if (automatic_target_length)
   {
     double sum_len = 0.;
-    BOOST_FOREACH(mesh_ed e, roi_border)
+    CGAL_FOREACH(mesh_ed e, roi_border)
     {
       mesh_hd h = halfedge(e, g);
       sum_len += CGAL::sqrt(CGAL::squared_distance(
@@ -1150,7 +1150,7 @@ void Scene_edit_polyhedron_item_priv::remesh(Mesh* mesh)
 
 //fill control_groups
   id_group = -1;
-  BOOST_FOREACH( mesh_vd v, vertices(*mesh) )
+  CGAL_FOREACH( mesh_vd v, vertices(*mesh) )
   {
     id_group = get_control_number(v, icm);
     if(id_group == -1)
@@ -1162,16 +1162,16 @@ void Scene_edit_polyhedron_item_priv::remesh(Mesh* mesh)
   for(std::size_t i=0; i<control_groups.size() ; i++)
   {
     item->create_ctrl_vertices_group();
-    BOOST_FOREACH(mesh_vd vd, control_groups[i]){
+    CGAL_FOREACH(mesh_vd vd, control_groups[i]){
       item->insert_control_vertex<Mesh>(vd, mesh);
     }
   }
 
-  BOOST_FOREACH(mesh_fd f, faces(g))
+  CGAL_FOREACH(mesh_fd f, faces(g))
   {
     if (get(roi_faces_pmap, f) == 0/*false*/)
       continue;
-    BOOST_FOREACH(mesh_hd h, halfedges_around_face(halfedge(f, g), g))
+    CGAL_FOREACH(mesh_hd h, halfedges_around_face(halfedge(f, g), g))
     {
       mesh_vd v = target(h, g);
       item->insert_roi_vertex<Mesh>(v, mesh);
@@ -1265,7 +1265,7 @@ void Scene_edit_polyhedron_item_priv::expand_or_reduce(int steps, Mesh* mesh)
     original_size = fs.get_active_group(mesh)->ctrl_vertices_group.size();
   else
     original_size = fs.get_deform_mesh(mesh)->roi_vertices().size();
-  BOOST_FOREACH(mesh_vd v,fs.get_deform_mesh(mesh)->roi_vertices())
+  CGAL_FOREACH(mesh_vd v,fs.get_deform_mesh(mesh)->roi_vertices())
   {
     if(ctrl_active)
     {
@@ -2232,7 +2232,7 @@ void Scene_edit_polyhedron_item::save_roi(const char* file_name) const
   if(d->poly_item)
   {
     out << d->deform_mesh->roi_vertices().size() << std::endl;
-    BOOST_FOREACH(poly_vertex_descriptor vd, d->deform_mesh->roi_vertices())
+    CGAL_FOREACH(poly_vertex_descriptor vd, d->deform_mesh->roi_vertices())
     {
       out << vd->id() << " ";
     }
@@ -2241,7 +2241,7 @@ void Scene_edit_polyhedron_item::save_roi(const char* file_name) const
   {
     Id_setter id_getter(d->sm_item->polyhedron());
     out << d->deform_sm_mesh->roi_vertices().size() << std::endl;
-    BOOST_FOREACH(sm_vertex_descriptor vd, d->deform_sm_mesh->roi_vertices())
+    CGAL_FOREACH(sm_vertex_descriptor vd, d->deform_sm_mesh->roi_vertices())
     {
       out << id_getter.get_id(vd) << " ";
     }
@@ -2514,7 +2514,7 @@ bool Scene_edit_polyhedron_item::activate_closest_manipulated_frame(int x, int y
 void Scene_edit_polyhedron_item::update_normals() {
   if(d->poly_item)
   {
-    BOOST_FOREACH(poly_vertex_descriptor vd, d->deform_mesh->roi_vertices())
+    CGAL_FOREACH(poly_vertex_descriptor vd, d->deform_mesh->roi_vertices())
     {
       std::size_t id = vd->id();
       const Polyhedron::Traits::Vector_3& n =
@@ -2527,7 +2527,7 @@ void Scene_edit_polyhedron_item::update_normals() {
   }
   else
   {
-    BOOST_FOREACH(sm_vertex_descriptor vd, d->deform_sm_mesh->roi_vertices())
+    CGAL_FOREACH(sm_vertex_descriptor vd, d->deform_sm_mesh->roi_vertices())
     {
       std::size_t id = id_setter->get_id(vd);
       const Polyhedron::Traits::Vector_3& n =

@@ -218,7 +218,7 @@ private:
     boost::unordered_set<fg_halfedge_descriptor> visited;
     boost::property_map<Face_graph,CGAL::vertex_point_t>::type vpm = get(CGAL::vertex_point,poly);
 
-    BOOST_FOREACH(fg_halfedge_descriptor hd, halfedges(poly)){
+    CGAL_FOREACH(fg_halfedge_descriptor hd, halfedges(poly)){
       if(is_border(hd, poly) && visited.find(hd) == visited.end()){
         polyline_data_list.push_back(Polyline_data());
         Polyline_data& polyline_data = polyline_data_list.back();
@@ -229,7 +229,7 @@ private:
         qglviewer::Vec center;
         int counter = 0;
         fg_halfedge_descriptor hf_around_facet;
-        BOOST_FOREACH(hf_around_facet, halfedges_around_face(hd,poly)){
+        CGAL_FOREACH(hf_around_facet, halfedges_around_face(hd,poly)){
           CGAL_assertion(visited.find(hf_around_facet) == visited.end());
           visited.insert(hf_around_facet);
           const Point_3& p = get(vpm,target(hf_around_facet, poly));
@@ -276,7 +276,7 @@ private:
 #else
       boost::property_map<Face_graph,CGAL::vertex_point_t>::type vpm = get(CGAL::vertex_point,poly);
       /* use polyline points to measure distance - might hurt performance for large holes */
-      BOOST_FOREACH(fg_halfedge_descriptor hf_around_facet, halfedges_around_face(it->halfedge,poly)){
+      CGAL_FOREACH(fg_halfedge_descriptor hf_around_facet, halfedges_around_face(it->halfedge,poly)){
         const Point_3& p_1 = get(vpm,target(hf_around_facet,poly));
         const qglviewer::Vec& pos_it_1 = camera->projectedCoordinatesOf(qglviewer::Vec(p_1.x(), p_1.y(), p_1.z()));
         const Point_3& p_2 = get(vpm,target(opposite(hf_around_facet,poly),poly));
@@ -757,7 +757,7 @@ void Polyhedron_demo_hole_filling_plugin::on_Fill_from_selection_button() {
   boost::unordered_set<fg_halfedge_descriptor> buffer;
   //check if all selected edges are boder
   //to do check that the seection is closed
-  BOOST_FOREACH(fg_edge_descriptor ed, edge_selection->selected_edges)
+  CGAL_FOREACH(fg_edge_descriptor ed, edge_selection->selected_edges)
   {
     fg_halfedge_descriptor h(halfedge(ed, *poly));
     if(! is_border(h,*poly))
@@ -781,7 +781,7 @@ void Polyhedron_demo_hole_filling_plugin::on_Fill_from_selection_button() {
   while(!buffer.empty())
   {
     bool found = false;
-    BOOST_FOREACH(fg_halfedge_descriptor h, buffer)
+    CGAL_FOREACH(fg_halfedge_descriptor h, buffer)
     {
       //if h and c_e share a point
       if(target(h, *poly) == target(c_e,*poly) ||

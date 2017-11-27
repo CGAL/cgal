@@ -9,7 +9,7 @@
 #include <CGAL/Polygon_mesh_processing/bbox.h>
 
 #include <CGAL/Timer.h>
-#include <boost/foreach.hpp>
+#include <CGAL/foreach.h>
 
 // this can produce false negatives
 // mesh should be pure triangle
@@ -36,12 +36,12 @@ void generate_near_boundary(const PolygonMesh& mesh,
   // put vertices
   vertex_descriptor vd;
 
-  BOOST_FOREACH(vertex_descriptor vb, vertices(mesh)) {
+  CGAL_FOREACH(vertex_descriptor vb, vertices(mesh)) {
     points.push_back(ppmap[vb]);
     on_boundary.push_back(true);
   }
   // sample middle of edges
-  BOOST_FOREACH(edge_descriptor eb, edges(mesh)) {
+  CGAL_FOREACH(edge_descriptor eb, edges(mesh)) {
     halfedge_descriptor hd = halfedge(eb, mesh);
     const Point& p0 = ppmap[target(hd, mesh)];
     const Point& p1 = ppmap[target(opposite(hd, mesh), mesh)];
@@ -59,7 +59,7 @@ void generate_near_boundary(const PolygonMesh& mesh,
     on_boundary.push_back(has_on);
   }
   // sample middle of facets
-  BOOST_FOREACH(face_descriptor fb, faces(mesh)) {
+  CGAL_FOREACH(face_descriptor fb, faces(mesh)) {
     const Point& p0 = ppmap[target(halfedge(fb, mesh), mesh)];
     const Point& p1 = ppmap[target(next(halfedge(fb, mesh), mesh), mesh)];
     const Point& p2 = ppmap[target(prev(halfedge(fb, mesh), mesh), mesh)];

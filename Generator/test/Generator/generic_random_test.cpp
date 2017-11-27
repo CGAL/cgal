@@ -76,7 +76,7 @@ int test_triangles_2()
   // Check that we have really created 100 points.
   assert( points.size() == 100);
 
-  BOOST_FOREACH(Point_2 p, points)
+  CGAL_FOREACH(Point_2 p, points)
   {
     bool on_quad = p.x() > -0.01 && p.x() < 0.51
         && p.y() > -0.01 && p.y() < 0.51;
@@ -112,7 +112,7 @@ int test_triangles_3()
   // Check that we have really created 100 points.
   assert( points.size() == 100);
 
-  BOOST_FOREACH(Point_3 p, points)
+  CGAL_FOREACH(Point_3 p, points)
   {
     bool on_front = p.z() < 0.01 && p.z()> -0.01
         && p.x() > -0.01 && p.x() < 0.51
@@ -262,7 +262,7 @@ int main()
                   polyhedron);
   boost::graph_traits<Polyhedron>::halfedge_descriptor facets[6];
   int i = 0;
-  BOOST_FOREACH(boost::graph_traits<Polyhedron>::face_descriptor fd, faces(polyhedron))
+  CGAL_FOREACH(boost::graph_traits<Polyhedron>::face_descriptor fd, faces(polyhedron))
     facets[i++] = halfedge(fd, polyhedron);
 
   for(int i=0; i<6; ++i)

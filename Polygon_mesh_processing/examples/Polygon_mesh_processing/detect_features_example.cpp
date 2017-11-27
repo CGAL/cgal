@@ -37,7 +37,7 @@ int main(int argc, char* argv[])
                                     PMP::parameters::vertex_incident_patches_map(vip));
 
   std::size_t nb_sharp_edges = 0;
-  BOOST_FOREACH(boost::graph_traits<Mesh>::edge_descriptor e, edges(mesh))
+  CGAL_FOREACH(boost::graph_traits<Mesh>::edge_descriptor e, edges(mesh))
   {
     if(get(eif, e))
       ++nb_sharp_edges;

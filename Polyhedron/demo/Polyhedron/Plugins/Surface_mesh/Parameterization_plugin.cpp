@@ -49,7 +49,7 @@
 #include <CGAL/Surface_mesh_parameterization/parameterize.h>
 
 
-#include <boost/foreach.hpp>
+#include <CGAL/foreach.h>
 #include <boost/unordered_map.hpp>
 #include <boost/unordered_set.hpp>
 #include <boost/container/flat_map.hpp>
@@ -633,7 +633,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
   if(is_seamed)
   {
     //create a textured_polyhedron edges selection from the ids of the corresponding vertices
-    BOOST_FOREACH(P_edge_descriptor ed, sel_item->selected_edges)
+    CGAL_FOREACH(P_edge_descriptor ed, sel_item->selected_edges)
     {
       Polyhedron::Vertex_handle a(source(ed, *pMesh)), b(target(ed, *pMesh));
 
@@ -655,7 +655,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
     }
     qDebug() << sel_item->selected_edges.size() << ", " << seam_edges.size();
     //fill seam mesh pmaps
-    BOOST_FOREACH(T_edge_descriptor ed, seam_edges)
+    CGAL_FOREACH(T_edge_descriptor ed, seam_edges)
     {
       T_halfedge_descriptor hd = halfedge(ed, tMesh);
       T_vertex_descriptor svd(source(hd, tMesh)), tvd(target(hd, tMesh));
@@ -672,7 +672,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
   // map the cones from the selection plugin to the textured polyhedron
   boost::unordered_set<T_vertex_descriptor> unordered_cones;
   if(method == PARAM_OTE) {
-    BOOST_FOREACH(P_vertex_descriptor vd, sel_item->selected_vertices) {
+    CGAL_FOREACH(P_vertex_descriptor vd, sel_item->selected_vertices) {
       Polyhedron::Vertex_handle pvd(vd);
       Textured_polyhedron::Vertex_iterator it = tMesh.vertices_begin(),
           end = tMesh.vertices_end();
@@ -696,7 +696,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
     //create a textured_polyhedron edges selection from the ids of the corresponding vertices
     typedef boost::property_map<Base_face_graph, boost::halfedge_index_t>::type HIDMap;
     HIDMap hidmap = get(boost::halfedge_index, tMesh);
-    BOOST_FOREACH(P_edge_descriptor ed, sel_item->selected_edges)
+    CGAL_FOREACH(P_edge_descriptor ed, sel_item->selected_edges)
     {
       boost::graph_traits<Face_graph>::vertex_descriptor a(source(ed, *pMesh)), b(target(ed, *pMesh));
 
@@ -719,7 +719,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
     }
     qDebug() << sel_item->selected_edges.size() << ", " << seam_edges.size();
     //fill seam mesh pmaps
-    BOOST_FOREACH(T_edge_descriptor ed, seam_edges)
+    CGAL_FOREACH(T_edge_descriptor ed, seam_edges)
     {
       T_halfedge_descriptor hd = halfedge(ed, tMesh);
       T_vertex_descriptor svd(source(hd, tMesh)), tvd(target(hd, tMesh));
@@ -736,7 +736,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
   // map the cones from the selection plugin to the textured polyhedron
   boost::unordered_set<T_vertex_descriptor> unordered_cones;
   if(method == PARAM_OTE) {
-    BOOST_FOREACH(P_vertex_descriptor vd, sel_item->selected_vertices) {
+    CGAL_FOREACH(P_vertex_descriptor vd, sel_item->selected_vertices) {
       boost::graph_traits<Face_graph>::vertex_descriptor pvd(vd);
       boost::graph_traits<Textured_face_graph>::vertex_iterator it = vertices(tMesh).begin(),
           end = vertices(tMesh).end();
@@ -808,14 +808,14 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
     s_halfedge_descriptor bhd; // a halfedge on the (possibly virtual) border
     boost::unordered_set<s_halfedge_descriptor> visited;
     FT result_len = 0;
-    BOOST_FOREACH(s_halfedge_descriptor hd, border)
+    CGAL_FOREACH(s_halfedge_descriptor hd, border)
     {
       assert(is_border(hd, sMesh));
 
       if(visited.find(hd) == visited.end())
       {
         FT len = 0;
-        BOOST_FOREACH(s_halfedge_descriptor haf, halfedges_around_face(hd, sMesh))
+        CGAL_FOREACH(s_halfedge_descriptor haf, halfedges_around_face(hd, sMesh))
         {
           len += PMP::edge_length(haf, sMesh);
           visited.insert(haf);
@@ -834,7 +834,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
     VPMap vpmap =get(boost::vertex_point, tMesh);
 
     // collect the border edges for that connected component
-    BOOST_FOREACH(s_halfedge_descriptor haf, halfedges_around_face(bhd, sMesh))
+    CGAL_FOREACH(s_halfedge_descriptor haf, halfedges_around_face(bhd, sMesh))
     {
         uv_borders[current_component].push_back(get(vpmap, source(haf, tMesh)).x());
         uv_borders[current_component].push_back(get(vpmap, source(haf, tMesh)).y());

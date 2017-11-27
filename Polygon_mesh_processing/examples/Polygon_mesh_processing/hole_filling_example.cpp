@@ -5,7 +5,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include <boost/foreach.hpp>
+#include <CGAL/foreach.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Polyhedron_3<Kernel>     Polyhedron;
@@ -27,7 +27,7 @@ int main(int argc, char* argv[])
 
   // Incrementally fill the holes
   unsigned int nb_holes = 0;
-  BOOST_FOREACH(Halfedge_handle h, halfedges(poly))
+  CGAL_FOREACH(Halfedge_handle h, halfedges(poly))
   {
     if(h->is_border())
     {

@@ -18,7 +18,7 @@
 #include <CGAL/Timer.h>
 
 #include <functional>
-#include <boost/foreach.hpp>
+#include <CGAL/foreach.h>
 #include <boost/iterator/transform_iterator.hpp>
 
 #include <fstream>
@@ -124,10 +124,10 @@ int main(int argc, char* argv[])
     slicer(K::Plane_3(Point_3(0,0,zmin+delta*i), Vector_3(0,0,1)), std::back_inserter(polylines));
     t.stop();
     polycount += polylines.size();
-    BOOST_FOREACH(Polyline pl, polylines){
+    CGAL_FOREACH(Polyline pl, polylines){
       vertex_count += pl.size();
       out << pl.size();
-      BOOST_FOREACH(Point_3 p, pl){
+      CGAL_FOREACH(Point_3 p, pl){
         out << " " << p;
       }
       out << std::endl;

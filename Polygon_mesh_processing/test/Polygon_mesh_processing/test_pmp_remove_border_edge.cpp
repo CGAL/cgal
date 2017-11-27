@@ -23,7 +23,7 @@ void test_middle_edge()
   typename GT::halfedge_descriptor h=GT::null_halfedge();
   Point src(0.75, 1, 0);
   Point tgt(1.5, 1, 0);
-  BOOST_FOREACH(h, halfedges(tm))
+  CGAL_FOREACH(h, halfedges(tm))
   {
     if( get(CGAL::vertex_point, tm, source(h,tm)) == src &&
         get(CGAL::vertex_point, tm, target(h,tm)) == tgt )
@@ -49,7 +49,7 @@ void test_edge_border_case1()
   typename GT::halfedge_descriptor h=GT::null_halfedge();
   Point src(0, 0, 0);
   Point tgt(1.5, 0, 0);
-  BOOST_FOREACH(h, halfedges(tm))
+  CGAL_FOREACH(h, halfedges(tm))
   {
     if( get(CGAL::vertex_point, tm, source(h,tm)) == src &&
         get(CGAL::vertex_point, tm, target(h,tm)) == tgt )
@@ -75,7 +75,7 @@ void test_edge_border_case2()
   typename GT::halfedge_descriptor h=GT::null_halfedge();
   Point src(3, 1, 0);
   Point tgt(3, 0, 0);
-  BOOST_FOREACH(h, halfedges(tm))
+  CGAL_FOREACH(h, halfedges(tm))
   {
     if( get(CGAL::vertex_point, tm, source(h,tm)) == src &&
         get(CGAL::vertex_point, tm, target(h,tm)) == tgt )

@@ -15,7 +15,7 @@
 
 #include <CGAL/Timer.h>
 
-#include <boost/foreach.hpp>
+#include <CGAL/foreach.h>
 #include <boost/unordered_map.hpp>
 
 #include <fstream>
@@ -86,7 +86,7 @@ int main(int argc, char * argv[])
     SMP::internal::compute_shortest_paths_between_cones(sm, cone_sm_vds, seam_edges);
 
     // Add the seams to the seam mesh
-    BOOST_FOREACH(SM_edge_descriptor e, seam_edges) {
+    CGAL_FOREACH(SM_edge_descriptor e, seam_edges) {
       mesh.add_seam(source(e, sm), target(e, sm));
     }
   }
@@ -98,7 +98,7 @@ int main(int argc, char * argv[])
   Indices indices;
   boost::associative_property_map<Indices> vimap(indices);
   int counter = 0;
-  BOOST_FOREACH(vertex_descriptor vd, vertices(mesh)) {
+  CGAL_FOREACH(vertex_descriptor vd, vertices(mesh)) {
     put(vimap, vd, counter++);
   }
 

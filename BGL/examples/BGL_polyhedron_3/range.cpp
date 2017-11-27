@@ -1,7 +1,7 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Iterator_range.h>
-#include <boost/foreach.hpp>
+#include <CGAL/foreach.h>
 
 
 #include <iostream>
@@ -43,8 +43,8 @@ void fct(const Polyhedron& p)
   }
 #endif
   
-  std::cout << "BOOST_FOREACH" << std::endl;
-  BOOST_FOREACH(vertex_descriptor vd, vr){
+  std::cout << "CGAL_FOREACH" << std::endl;
+  CGAL_FOREACH(vertex_descriptor vd, vr){
     std::cout << vd->point() << std::endl;
   }
   

@@ -108,7 +108,7 @@ void set_vcolors(SMesh* smesh, std::vector<CGAL::Color> colors)
   boost::tie(vcolors, created) = smesh->add_property_map<SMesh::Vertex_index,CGAL::Color>("v:color",CGAL::Color(0,0,0));
   assert(colors.size()==smesh->number_of_vertices());
   int color_id = 0;
-  BOOST_FOREACH(vertex_descriptor vd, vertices(*smesh))
+  CGAL_FOREACH(vertex_descriptor vd, vertices(*smesh))
       vcolors[vd] = colors[color_id++];
 }
 
@@ -122,7 +122,7 @@ void set_fcolors(SMesh* smesh, std::vector<CGAL::Color> colors)
    boost::tie(fcolors, created) = smesh->add_property_map<SMesh::Face_index,CGAL::Color>("f:color",CGAL::Color(0,0,0));
   assert(colors.size()==smesh->number_of_faces());
   int color_id = 0;
-  BOOST_FOREACH(face_descriptor fd, faces(*smesh))
+  CGAL_FOREACH(face_descriptor fd, faces(*smesh))
       fcolors[fd] = colors[color_id++];
 }
 
@@ -212,7 +212,7 @@ void Polyhedron_demo_orient_soup_plugin::orientSM()
 
 void Polyhedron_demo_orient_soup_plugin::shuffle()
 {
-  BOOST_FOREACH(CGAL::Three::Scene_interface::Item_id index, scene->selectionIndices())
+  CGAL_FOREACH(CGAL::Three::Scene_interface::Item_id index, scene->selectionIndices())
   {
     Scene_polygon_soup_item* soup_item =
         qobject_cast<Scene_polygon_soup_item*>(scene->item(index));

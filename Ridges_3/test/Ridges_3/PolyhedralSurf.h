@@ -13,7 +13,7 @@
 #include <vector>
 #include <list>
 
-#include <boost/foreach.hpp>
+#include <CGAL/foreach.h>
 
 //----------------------------------------------------------------
 // A redefined items class for the Polyhedron_3 with

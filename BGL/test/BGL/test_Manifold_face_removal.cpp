@@ -29,7 +29,7 @@ int main()
 
   std::vector<face_descriptor> faces_to_remove;
   int index = 0;
-  BOOST_FOREACH(face_descriptor fh, faces(sm))
+  CGAL_FOREACH(face_descriptor fh, faces(sm))
   {
     if(index_set.count(index)==0)
       is_selected_map[fh]=false;
@@ -46,7 +46,7 @@ int main()
                                     boost::make_assoc_property_map(is_selected_map));
 
   index=0;
-  BOOST_FOREACH(face_descriptor fh, faces(sm))
+  CGAL_FOREACH(face_descriptor fh, faces(sm))
   {
     if (is_selected_map[fh])
     {

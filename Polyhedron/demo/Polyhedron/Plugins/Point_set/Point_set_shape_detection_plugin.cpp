@@ -35,7 +35,7 @@
 #include <QtPlugin>
 #include <QMessageBox>
 
-#include <boost/foreach.hpp>
+#include <CGAL/foreach.h>
 #include <boost/function_output_iterator.hpp>
 
 #include "ui_Point_set_shape_detection_plugin.h"
@@ -246,7 +246,7 @@ private:
     std::map<Kernel::Point_3, QColor> color_map;
     
     int index = 0;
-    BOOST_FOREACH(boost::shared_ptr<typename Shape_detection::Shape> shape, shape_detection.shapes())
+    CGAL_FOREACH(boost::shared_ptr<typename Shape_detection::Shape> shape, shape_detection.shapes())
     {
       CGAL::Shape_detection_3::Cylinder<Traits> *cyl;
       cyl = dynamic_cast<CGAL::Shape_detection_3::Cylinder<Traits> *>(shape.get());
@@ -258,7 +258,7 @@ private:
         
       Scene_points_with_normal_item *point_item = new Scene_points_with_normal_item;
       
-      BOOST_FOREACH(std::size_t i, shape->indices_of_assigned_points())
+      CGAL_FOREACH(std::size_t i, shape->indices_of_assigned_points())
         point_item->point_set()->insert(points->point(*(points->begin()+i)));
       
       unsigned char r, g, b;
@@ -272,7 +272,7 @@ private:
       std::size_t nb_colored_pts = 0;
       if (dialog.generate_colored_point_set())
       {
-        BOOST_FOREACH(std::size_t i, shape->indices_of_assigned_points())
+        CGAL_FOREACH(std::size_t i, shape->indices_of_assigned_points())
         {
           Point_set::iterator it = colored_item->point_set()->insert(points->point(*(points->begin()+i)));
           ++ nb_colored_pts;

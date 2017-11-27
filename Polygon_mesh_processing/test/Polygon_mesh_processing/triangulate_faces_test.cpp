@@ -5,7 +5,7 @@
 
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 
-#include <boost/foreach.hpp>
+#include <CGAL/foreach.h>
 
 #include <fstream>
 
@@ -75,7 +75,7 @@ test_triangulate_face()
   }
 
   unsigned int nb = 0;
-  BOOST_FOREACH(typename boost::graph_traits<Surface_mesh>::face_descriptor fit, faces(mesh))
+  CGAL_FOREACH(typename boost::graph_traits<Surface_mesh>::face_descriptor fit, faces(mesh))
   {
     if (nb > 4)
       break;

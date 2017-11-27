@@ -13,7 +13,7 @@
 #include "Scene_polylines_item.h"
 #include "Scene_points_with_normal_item.h"
 #include "Messages_interface.h"
-#include <boost/foreach.hpp>
+#include <CGAL/foreach.h>
 
 #include <QString>
 #include <QAction>

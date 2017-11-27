@@ -6,7 +6,7 @@
 #include <CGAL/internal/corefinement/connected_components.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 
-#include <boost/foreach.hpp>
+#include <CGAL/foreach.h>
 
 #include <fstream>
 #include <set>
@@ -79,9 +79,9 @@ int main()
 // check all vertices are seen exactly once
 {
   std::set<vertex_descriptor> visited;
-  BOOST_FOREACH(vertex_desc v, vertices(skeleton))
+  CGAL_FOREACH(vertex_desc v, vertices(skeleton))
   {
-    BOOST_FOREACH(vertex_descriptor vd, skeleton[v].vertices)
+    CGAL_FOREACH(vertex_descriptor vd, skeleton[v].vertices)
       if (!visited.insert(vd).second)
       {
         std::cerr << "A vertex was seen twice!\n";
@@ -89,7 +89,7 @@ int main()
       }
   }
 
-  BOOST_FOREACH(vertex_descriptor vd, vertices(mesh))
+  CGAL_FOREACH(vertex_descriptor vd, vertices(mesh))
   {
     if (!visited.count(vd))
     {
@@ -112,7 +112,7 @@ int main()
     vertex_desc cur = qu.front();
     qu.pop();
 
-    BOOST_FOREACH(edge_desc ed, in_edges(cur, skeleton))
+    CGAL_FOREACH(edge_desc ed, in_edges(cur, skeleton))
     {
       vertex_desc next = source(ed, skeleton);
       if (visited.insert(next).second)
@@ -120,7 +120,7 @@ int main()
     }
   }
 
-  BOOST_FOREACH(vertex_desc vd, vertices(skeleton))
+  CGAL_FOREACH(vertex_desc vd, vertices(skeleton))
   {
     if (!visited.count(vd))
     {

@@ -5,7 +5,7 @@
 #include  <algorithm> // std::sort
 #include <boost/shared_ptr.hpp>
 #include <fstream>
-#include <boost/foreach.hpp>
+#include <CGAL/foreach.h>
 
 #include <CGAL/Bbox_3.h>
 
@@ -934,7 +934,7 @@ void Volume::display_surface_mesher_result()
     std::ofstream points_out("initial-points.off");
     points_out.precision(18);
     points_out << "OFF\n" << c2t3.triangulation().number_of_vertices() << " 0 0\n";
-    BOOST_FOREACH(const Tr::Vertex& v,
+    CGAL_FOREACH(const Tr::Vertex& v,
                   std::make_pair(c2t3.triangulation().vertices_begin(),
                                  c2t3.triangulation().vertices_end()))
     {

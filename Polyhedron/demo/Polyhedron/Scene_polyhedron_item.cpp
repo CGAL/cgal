@@ -36,7 +36,7 @@
 #include <QMenu>
 #include <QAction>
 
-#include <boost/foreach.hpp>
+#include <CGAL/foreach.h>
 #include "triangulate_primitive.h"
 #include "Color_map.h"
 #include "id_printing.h"
@@ -105,7 +105,7 @@ struct Scene_polyhedron_item_priv{
   ~Scene_polyhedron_item_priv()
   {
     delete poly;
-    BOOST_FOREACH(TextItem* it, targeted_id)
+    CGAL_FOREACH(TextItem* it, targeted_id)
       delete it;
   }
 
@@ -275,7 +275,7 @@ void* Scene_polyhedron_item_priv::get_aabb_tree()
           new Input_facets_AABB_tree();
       typedef Polyhedron::Traits	    Kernel;
       int index =0;
-      BOOST_FOREACH( Polyhedron::Facet_iterator f, faces(*poly))
+      CGAL_FOREACH( Polyhedron::Facet_iterator f, faces(*poly))
       {
         if (CGAL::is_degenerate_triangle_face(f, *poly, get(CGAL::vertex_point, *poly), Kernel()))
           continue;
@@ -924,7 +924,7 @@ Scene_polyhedron_item::~Scene_polyhedron_item()
       //Clears the targeted Id
       if(d)
       {
-        BOOST_FOREACH(TextItem* item, d->targeted_id)
+        CGAL_FOREACH(TextItem* item, d->targeted_id)
             v->textRenderer()->removeText(item);
       }
       //Remove vertices textitems
@@ -1671,7 +1671,7 @@ QString Scene_polyhedron_item::computeStats(int type)
   {
     typedef boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
     int i = 0;
-    BOOST_FOREACH(face_descriptor f, faces(*(d->poly))){
+    CGAL_FOREACH(face_descriptor f, faces(*(d->poly))){
       f->id() = i++;
     }
     boost::vector_property_map<int,
@@ -2119,7 +2119,7 @@ void Scene_polyhedron_item::zoomToPosition(const QPoint &point, CGAL::Three::Vie
             xmin(std::numeric_limits<double>::infinity()), ymin(std::numeric_limits<double>::infinity()), zmin(std::numeric_limits<double>::infinity()),
             xmax(-std::numeric_limits<double>::infinity()), ymax(-std::numeric_limits<double>::infinity()), zmax(-std::numeric_limits<double>::infinity());
         int total(0);
-        BOOST_FOREACH(Polyhedron::Vertex_handle vh, vertices_around_face(selected_fh->halfedge(), *d->poly))
+        CGAL_FOREACH(Polyhedron::Vertex_handle vh, vertices_around_face(selected_fh->halfedge(), *d->poly))
         {
           x+=vh->point().x();
           y+=vh->point().y();

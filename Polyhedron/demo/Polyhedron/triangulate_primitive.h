@@ -55,7 +55,7 @@ public:
                   const double item_diag)
   {
     std::vector<PointAndId> idPoints;
-    BOOST_FOREACH(halfedge_descriptor he_circ, halfedges_around_face( halfedge(fd, *poly), *poly))
+    CGAL_FOREACH(halfedge_descriptor he_circ, halfedges_around_face( halfedge(fd, *poly), *poly))
     {
       PointAndId idPoint;
       idPoint.point = get(boost::vertex_point,*poly,source(he_circ, *poly));
@@ -73,7 +73,7 @@ public:
                     const double item_diag)
   {
    std::vector<PointAndId> idPoints;
-   BOOST_FOREACH(halfedge_descriptor he_circ, halfedges_around_face( halfedge(fd, *poly), *poly))
+   CGAL_FOREACH(halfedge_descriptor he_circ, halfedges_around_face( halfedge(fd, *poly), *poly))
    {
     PointAndId idPoint;
     idPoint.point = get(boost::vertex_point,*poly,source(he_circ, *poly));
@@ -123,7 +123,7 @@ private:
     // Iterate the points of the facet and decide if they must be inserted in the CDT
     typename Kernel::FT x(0), y(0), z(0);
 
-    BOOST_FOREACH(PointAndId idPoint, idPoints)
+    CGAL_FOREACH(PointAndId idPoint, idPoints)
     {
      x += idPoint.point.x();
      y += idPoint.point.y();
@@ -205,7 +205,7 @@ private:
 
      double min_sq_dist = CGAL::square(0.0001*item_diag);
      // Iterate the points of the facet and decide if they must be inserted in the CDT
-     BOOST_FOREACH(PointAndId idPoint, idPoints)
+     CGAL_FOREACH(PointAndId idPoint, idPoints)
      {
       typename CDT::Vertex_handle vh;
       //Always insert the first point, then only insert
@@ -244,7 +244,7 @@ private:
      {
        cdt->insert_constraint(last_inserted, first);
      }
-     BOOST_FOREACH(typename Kernel::Point_3 point, more_points)
+     CGAL_FOREACH(typename Kernel::Point_3 point, more_points)
      {
        cdt->insert(point);
      }

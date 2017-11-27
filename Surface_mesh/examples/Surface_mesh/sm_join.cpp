@@ -3,7 +3,7 @@
 #include <iostream>
 #include <fstream>
 
-#include <boost/foreach.hpp>
+#include <CGAL/foreach.h>
 
 typedef CGAL::Simple_cartesian<double>                       Kernel;
 typedef Kernel::Point_3                                      Point;
@@ -30,7 +30,7 @@ int main(int argc, char* argv[])
   sm1 += sm2;
 
  
-  BOOST_FOREACH(vertex_descriptor vd , vertices(sm1)){
+  CGAL_FOREACH(vertex_descriptor vd , vertices(sm1)){
     std::cerr << vd << " " <<  name1[vd] <<std::endl;
   }
   

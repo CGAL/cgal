@@ -7,7 +7,7 @@
 #include <vector>
 #include <fstream>
 
-#include <boost/foreach.hpp>
+#include <CGAL/foreach.h>
 
 // Types
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
@@ -46,7 +46,7 @@ int main (int , char**) {
     double threshold = 0.16;
     std::ofstream output("points_on_edges.xyz");
     int i = 0;
-    BOOST_FOREACH(const PointVectorPair& p, points)
+    CGAL_FOREACH(const PointVectorPair& p, points)
     {
       if (CGAL::vcm_is_on_feature_edge(cov[i], threshold))
           output << p.first << "\n";

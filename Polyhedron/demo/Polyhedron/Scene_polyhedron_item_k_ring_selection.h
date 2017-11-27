@@ -254,9 +254,9 @@ public Q_SLOTS:
 
     std::set<poly_face_descriptor> face_sel;
     //select all faces if their screen projection is inside the lasso
-    BOOST_FOREACH(poly_face_descriptor f, faces(poly))
+    CGAL_FOREACH(poly_face_descriptor f, faces(poly))
     {
-      BOOST_FOREACH(poly_vertex_descriptor v, CGAL::vertices_around_face(f->halfedge(), poly))
+      CGAL_FOREACH(poly_vertex_descriptor v, CGAL::vertices_around_face(f->halfedge(), poly))
       {
         qglviewer::Vec vp(v->point().x(), v->point().y(), v->point().z());
         qglviewer::Vec vsp = camera->projectedCoordinatesOf(vp+offset);
@@ -277,7 +277,7 @@ public Q_SLOTS:
     CGAL::Polygon_mesh_processing::border_halfedges(face_sel, poly, std::back_inserter(boundary_edges));
     std::vector<bool> mark(edges(poly).size(), false);
     Is_selected_edge_property_map spmap(mark);
-    BOOST_FOREACH(poly_halfedge_descriptor h, boundary_edges)
+    CGAL_FOREACH(poly_halfedge_descriptor h, boundary_edges)
       put(spmap, edge(h, poly), true);
 
     boost::property_map<Polyhedron, boost::face_external_index_t>::type fim
@@ -295,7 +295,7 @@ public Q_SLOTS:
           .face_index_map(fim));
     std::vector<bool> is_cc_done(nb_cc, false);
 
-    BOOST_FOREACH(poly_face_descriptor f, face_sel)
+    CGAL_FOREACH(poly_face_descriptor f, face_sel)
     {
 
       int cc_id = get(fccmap, f);
@@ -305,7 +305,7 @@ public Q_SLOTS:
       }
       double x(0), y(0), z(0);
       int total(0);
-      BOOST_FOREACH(poly_halfedge_descriptor hafc, halfedges_around_face(halfedge(f,poly), poly))
+      CGAL_FOREACH(poly_halfedge_descriptor hafc, halfedges_around_face(halfedge(f,poly), poly))
       {
         poly_vertex_descriptor vd = target(hafc,poly);
         x+=vd->point().x(); y+=vd->point().y(); z+=vd->point().z();
@@ -327,7 +327,7 @@ public Q_SLOTS:
         is_cc_done[cc_id] = true;
       }
     }
-    BOOST_FOREACH(poly_face_descriptor f, faces(poly))
+    CGAL_FOREACH(poly_face_descriptor f, faces(poly))
     {
       if(is_cc_done[get(fccmap, f)])
         final_sel.insert(f);
@@ -340,9 +340,9 @@ public Q_SLOTS:
     case Active_handle::EDGE:
     {
       std::set<poly_edge_descriptor> e_sel;
-      BOOST_FOREACH(poly_face_descriptor f, final_sel)
+      CGAL_FOREACH(poly_face_descriptor f, final_sel)
       {
-        BOOST_FOREACH(poly_halfedge_descriptor h, CGAL::halfedges_around_face(halfedge(f,poly), poly))
+        CGAL_FOREACH(poly_halfedge_descriptor h, CGAL::halfedges_around_face(halfedge(f,poly), poly))
         {
           poly_vertex_descriptor vd = target(h,poly);
           qglviewer::Vec vp1(vd->point().x(), vd->point().y(), vd->point().z());
@@ -360,9 +360,9 @@ public Q_SLOTS:
     case Active_handle::VERTEX:
     {
       std::set<poly_vertex_descriptor> v_sel;
-      BOOST_FOREACH(poly_face_descriptor f, final_sel)
+      CGAL_FOREACH(poly_face_descriptor f, final_sel)
       {
-        BOOST_FOREACH(poly_vertex_descriptor v, CGAL::vertices_around_face(f->halfedge(), poly))
+        CGAL_FOREACH(poly_vertex_descriptor v, CGAL::vertices_around_face(f->halfedge(), poly))
         {
           qglviewer::Vec vp(v->point().x(), v->point().y(), v->point().z());
           qglviewer::Vec vsp = camera->projectedCoordinatesOf(vp+offset);

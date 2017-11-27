@@ -166,10 +166,10 @@ void Polyhedron_demo_kernel_plugin::on_actionKernel_triggered()
       Dual dual(convex_hull);
       
       std::map<dual_vertex_descriptor,Point> vpm; 
-      BOOST_FOREACH(boost::graph_traits<Polyhedron>::face_descriptor fd, faces(convex_hull)){  
+      CGAL_FOREACH(boost::graph_traits<Polyhedron>::face_descriptor fd, faces(convex_hull)){  
         Point points[3];
         int i = 0;
-        BOOST_FOREACH(boost::graph_traits<Polyhedron>::vertex_descriptor vd, 
+        CGAL_FOREACH(boost::graph_traits<Polyhedron>::vertex_descriptor vd, 
                       vertices_around_face(halfedge(fd,convex_hull),convex_hull)){
           points[i++] = get(CGAL::vertex_point,convex_hull,vd);
         }

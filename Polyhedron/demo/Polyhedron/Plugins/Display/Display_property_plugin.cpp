@@ -337,7 +337,7 @@ private Q_SLOTS:
 
         std::vector<float> local_angles;
         local_angles.reserve(degree(*fit, smesh));
-        BOOST_FOREACH(halfedge_descriptor hd,
+        CGAL_FOREACH(halfedge_descriptor hd,
                       halfedges_around_face(halfedge(*fit, smesh),smesh))
         {
           halfedge_descriptor hdn = next(hd, smesh);
@@ -623,7 +623,7 @@ private:
         pmap = get(boost::vertex_point, mesh);
     std::vector<double> corner_areas(degree(f, mesh));
     std::vector<EPICK::Vector_3> edges;
-    BOOST_FOREACH(halfedge_descriptor hd, CGAL::halfedges_around_face(halfedge(f, mesh), mesh))
+    CGAL_FOREACH(halfedge_descriptor hd, CGAL::halfedges_around_face(halfedge(f, mesh), mesh))
     {
       edges.push_back(EPICK::Vector_3(get(pmap, source(hd, mesh)), get(pmap, target(hd, mesh))));
     }

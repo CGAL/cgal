@@ -33,7 +33,7 @@
 #else
 /// \ingroup  PkgStlExtension
 /// If the version of `boost` is at least 1.51 and the compiler used support range-based for loops
-/// introduced with \cpp11, use it; otherwise fallback onto `BOOST_FOREACH`.
+/// introduced with \cpp11, use it; otherwise fallback onto `CGAL_FOREACH`.
 #define CGAL_FOREACH(A,B)
 #endif
 #endif

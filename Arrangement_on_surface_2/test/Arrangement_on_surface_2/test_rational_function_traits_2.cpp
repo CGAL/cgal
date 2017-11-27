@@ -19,7 +19,7 @@ int main()
 #include <CGAL/Arr_rational_function_traits_2.h>   //Traits
 #include <CGAL/Arrangement_2.h>                    //Arrangement
 #include <CGAL/Surface_sweep_2_algorithms.h>
-#include <boost/foreach.hpp>
+#include <CGAL/foreach.h>
 
 typedef CGAL::CORE_arithmetic_kernel::Integer      Number_type;
 typedef CGAL::Algebraic_kernel_d_1<Number_type>    AK1;
@@ -302,19 +302,19 @@ int main()
       curves.push_back(construct_curve_2(x*x*x));
       curves.push_back(construct_curve_2(x*x*x, x*x-2));
 
-      BOOST_FOREACH(const Curve_2& curve, curves){
+      CGAL_FOREACH(const Curve_2& curve, curves){
         assert(CGAL::degree(curve.numerator()) >= 0);
       }
       CGAL::compute_subcurves(curves.begin(),curves.end(),
                               std::back_inserter(xcurves),false,traits);
-      BOOST_FOREACH(const X_monotone_curve_2& xcurve, xcurves) {
+      CGAL_FOREACH(const X_monotone_curve_2& xcurve, xcurves) {
         assert(CGAL::degree(xcurve.numerator()) >= 0);
       }
 
       CGAL::compute_intersection_points(curves.begin(),curves.end(),
                                         std::back_inserter(points), false,
                                         traits);
-      BOOST_FOREACH(const Point_2& point, points) {
+      CGAL_FOREACH(const Point_2& point, points) {
         assert(CGAL::degree(point.numerator()) >= 0);
       }
     }
@@ -332,18 +332,18 @@ int main()
       curves.push_back(construct_curve_2(x*x*x, x*x-2));
 
       traits.cleanup_cache();
-      BOOST_FOREACH(const Curve_2& curve, curves){
+      CGAL_FOREACH(const Curve_2& curve, curves){
         assert(CGAL::degree(curve.numerator()) >= 0);
       }
       CGAL::compute_subcurves(curves.begin(), curves.end(),
                               std::back_inserter(xcurves), false, traits);
-      BOOST_FOREACH(const X_monotone_curve_2& xcurve, xcurves) {
+      CGAL_FOREACH(const X_monotone_curve_2& xcurve, xcurves) {
         assert(CGAL::degree(xcurve.numerator()) >= 0);
       }
       CGAL::compute_intersection_points(curves.begin(), curves.end(),
                                         std::back_inserter(points), false,
                                         traits);
-      BOOST_FOREACH(const Point_2& point, points) {
+      CGAL_FOREACH(const Point_2& point, points) {
         assert(CGAL::degree(point.numerator()) >= 0);
       }
 

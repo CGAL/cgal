@@ -4,7 +4,7 @@
 #include <fstream>
 
 #include <boost/graph/connected_components.hpp>
-#include <boost/foreach.hpp>
+#include <CGAL/foreach.h>
 
 typedef CGAL::Simple_cartesian<double>                       Kernel;
 typedef Kernel::Point_3                                      Point;
@@ -23,7 +23,7 @@ int main(int argc, char* argv[])
 
   int num = connected_components(sm, ccmap);
   std::cout  << num << " connected components" << std::endl;
-  BOOST_FOREACH(vertex_descriptor v, vertices(sm)){
+  CGAL_FOREACH(vertex_descriptor v, vertices(sm)){
     std::cout  << v << " is in component " << ccmap[v] << std::endl;
   }
   

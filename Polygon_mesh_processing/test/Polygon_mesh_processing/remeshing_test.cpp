@@ -16,7 +16,7 @@
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
 
 #include <CGAL/Timer.h>
-#include <boost/foreach.hpp>
+#include <CGAL/foreach.h>
 #include <fstream>
 #include <vector>
 #include <cstdlib>

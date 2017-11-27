@@ -5,7 +5,7 @@
 #include "Polyhedron_type.h"
 #include "SMesh_type.h"
 
-#include <boost/foreach.hpp>
+#include <CGAL/foreach.h>
 #include <boost/array.hpp>
 
 #include <iostream>

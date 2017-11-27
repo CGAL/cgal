@@ -112,11 +112,11 @@ void Polyhedron_demo_self_intersection_plugin::on_actionSelfIntersection_trigger
         selection_item->selected_facets.insert(fb->second);
 
         //add the edges
-        BOOST_FOREACH(halfedge_descriptor he_circ, halfedges_around_face( halfedge(fb->first, *mesh), *mesh))
+        CGAL_FOREACH(halfedge_descriptor he_circ, halfedges_around_face( halfedge(fb->first, *mesh), *mesh))
         {
           selection_item->selected_edges.insert(edge(he_circ, *mesh));
         }
-        BOOST_FOREACH(halfedge_descriptor he_circ, halfedges_around_face( halfedge(fb->second, *mesh), *mesh))
+        CGAL_FOREACH(halfedge_descriptor he_circ, halfedges_around_face( halfedge(fb->second, *mesh), *mesh))
         {
           selection_item->selected_edges.insert(edge(he_circ, *mesh));
         }

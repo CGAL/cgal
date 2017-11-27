@@ -7,7 +7,7 @@
 #include <CGAL/random_polygon_2.h>
 
 #include <iostream>
-#include <boost/foreach.hpp>
+#include <CGAL/foreach.h>
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
 typedef Kernel::Segment_2 Segment_2;
@@ -96,7 +96,7 @@ void print_polygons(std::ostream& out, const Polygon_set_2& polygon_set)
 {
   std::vector<Polygon_with_holes_2> polygons_wh(polygon_set.number_of_polygons_with_holes());
   polygon_set.polygons_with_holes(&polygons_wh[0]);
-  BOOST_FOREACH(Polygon_with_holes_2& polygon_wh, polygons_wh)
+  CGAL_FOREACH(Polygon_with_holes_2& polygon_wh, polygons_wh)
   {
     print_polygon(out, polygon_wh.outer_boundary());
     for(Polygon_with_holes_2::Hole_const_iterator it=polygon_wh.holes_begin();
@@ -125,7 +125,7 @@ int main( int  argc , char ** argv )
   build_segments(all_segments);
 
   std::ofstream out("polygons_grid.cgal");
-  BOOST_FOREACH(const Segment_2& s, all_segments)
+  CGAL_FOREACH(const Segment_2& s, all_segments)
   {
     out   << "2 " << s.source() << " 0"
           << "  " << s.target() << " 0\n";

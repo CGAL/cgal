@@ -566,7 +566,7 @@ void Basic_generator_plugin::generateSphere()
                                                   precision);
   VPMap vpmap = get(CGAL::vertex_point, sphere);
   //emplace the points back on the sphere
-  BOOST_FOREACH(typename boost::graph_traits<typename Facegraph_item::Face_graph>::vertex_descriptor vd, vertices(sphere))
+  CGAL_FOREACH(typename boost::graph_traits<typename Facegraph_item::Face_graph>::vertex_descriptor vd, vertices(sphere))
   {
     Kernel::Vector_3 vec(get(vpmap, vd), center);
     vec = radius*vec/CGAL::sqrt(vec.squared_length());

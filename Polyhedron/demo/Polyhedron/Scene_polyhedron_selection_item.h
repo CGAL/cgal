@@ -27,7 +27,7 @@
 #include <CGAL/Three/Viewer_interface.h>
 
 #include <fstream>
-#include <boost/foreach.hpp>
+#include <CGAL/foreach.h>
 #include <boost/unordered_set.hpp>
 #include <boost/property_map/vector_property_map.hpp>
 
@@ -313,7 +313,7 @@ public:
     for(Selection_set_facet::const_iterator f_it = selected_facets.begin(); 
         f_it != selected_facets.end(); ++f_it) {
       fg_face_descriptor fd = *f_it;
-      BOOST_FOREACH(fg_halfedge_descriptor he, halfedges_around_face(halfedge(fd,*polyhedron()),*polyhedron())){
+      CGAL_FOREACH(fg_halfedge_descriptor he, halfedges_around_face(halfedge(fd,*polyhedron()),*polyhedron())){
         if(item_bbox) { *item_bbox = *item_bbox + get(vpm,target(he,*polyhedron())).bbox(); }
         else          {  item_bbox = get(vpm,target(he,*polyhedron())).bbox(); }
     
@@ -375,12 +375,12 @@ public:
     std::vector<fg_vertex_descriptor> all_vertices;
     all_vertices.reserve(num_vertices(*polyhedron()));
 
-    BOOST_FOREACH(fg_vertex_descriptor vb, vertices(*polyhedron()))
+    CGAL_FOREACH(fg_vertex_descriptor vb, vertices(*polyhedron()))
       { all_vertices.push_back(vb); }
     
     std::vector<fg_face_descriptor> all_facets;
     all_facets.reserve(num_faces(*polyhedron()));
-    BOOST_FOREACH(fg_face_descriptor fb, faces(*polyhedron()))
+    CGAL_FOREACH(fg_face_descriptor fb, faces(*polyhedron()))
       { all_facets.push_back(fb); }
 
     std::vector<fg_edge_descriptor> all_edges(edges(*polyhedron()).first, edges(*polyhedron()).second);
@@ -646,7 +646,7 @@ public:
     tr.update_indices();
     std::vector<bool> mark(tr.size(),false);
 
-    BOOST_FOREACH(Handle h,tr.container())
+    CGAL_FOREACH(Handle h,tr.container())
     {
       std::size_t id = tr.id(h);
       mark[id]=true;
@@ -679,7 +679,7 @@ public:
     tr.update_indices();
     std::vector<bool> mark(tr.size(),false);
 
-    BOOST_FOREACH(Handle h,tr.container())
+    CGAL_FOREACH(Handle h,tr.container())
       mark[tr.id(h)]=true;
 
     typedef typename boost::property_map<Face_graph,Tag>::type PM;
@@ -749,7 +749,7 @@ public:
     // Note: might be a more performance wise solution
     // assign sequential id to vertices neighbor to selected facets
     for(Selection_set_facet::iterator fb = selected_facets.begin(); fb != selected_facets.end(); ++fb) {
-      BOOST_FOREACH(fg_halfedge_descriptor hb, halfedges_around_face(halfedge(*fb,*polyhedron()),*polyhedron())){
+      CGAL_FOREACH(fg_halfedge_descriptor hb, halfedges_around_face(halfedge(*fb,*polyhedron()),*polyhedron())){
         put(vertex_selection_map(),target(hb,*polyhedron()), 0);
       }
     }
@@ -759,7 +759,7 @@ public:
     VPmap vpm = get(CGAL::vertex_point, *polyhedron());
     unsigned int counter = 1;
     for(Selection_set_facet::iterator fb = selected_facets.begin(); fb != selected_facets.end(); ++fb) {
-      BOOST_FOREACH(fg_halfedge_descriptor hb, halfedges_around_face(halfedge(*fb,*polyhedron()),*polyhedron())){
+      CGAL_FOREACH(fg_halfedge_descriptor hb, halfedges_around_face(halfedge(*fb,*polyhedron()),*polyhedron())){
         if(get(vertex_selection_map(), target(hb,*polyhedron())) == 0) {
           put(vertex_selection_map(),target(hb,*polyhedron()), counter++); 
           points.push_back(get(vpm,target(hb,*polyhedron())));
@@ -770,7 +770,7 @@ public:
     std::vector<std::vector<std::size_t> > polygons(selected_facets.size());
     counter = 0;
     for(Selection_set_facet::iterator fb = selected_facets.begin(); fb != selected_facets.end(); ++fb, ++counter) {
-      BOOST_FOREACH(fg_halfedge_descriptor hb, halfedges_around_face(halfedge(*fb,*polyhedron()),*polyhedron()))
+      CGAL_FOREACH(fg_halfedge_descriptor hb, halfedges_around_face(halfedge(*fb,*polyhedron()),*polyhedron()))
       {
         polygons[counter].push_back(get(vertex_selection_map(),target(hb,*polyhedron())) -1);
       }
@@ -786,7 +786,7 @@ public:
     CGAL::detect_sharp_edges(polyhedron(), angle);
 
     boost::property_map<Face_graph,CGAL::edge_is_feature_t>::type is_feature = get(CGAL::edge_is_feature,*polyhedron());
-    BOOST_FOREACH(fg_edge_descriptor e, edges(*polyhedron()))
+    CGAL_FOREACH(fg_edge_descriptor e, edges(*polyhedron()))
     {
       if (get(is_feature,e))
         selected_edges.insert(e);
@@ -935,7 +935,7 @@ template<typename HandleRange>
                        Scene_polyhedron_selection_item> tr(this);
       tr.update_indices();
       std::vector<bool> mark(tr.size(), false);
-      BOOST_FOREACH(fg_edge_descriptor e, selected_edges)
+      CGAL_FOREACH(fg_edge_descriptor e, selected_edges)
         mark[tr.id(e)] = true;
       std::vector<fg_face_descriptor> selected_cc;
       typedef typename boost::property_map<Face_graph,boost::edge_index_t>::type PM;
@@ -966,7 +966,7 @@ public:
     for (unsigned int i = 0; i < mark.size(); ++i)
       mark[i] = false;
 
-    BOOST_FOREACH(fg_edge_descriptor e, selected_edges)
+    CGAL_FOREACH(fg_edge_descriptor e, selected_edges)
       mark[tr.id(e)] = true;
 
     return Is_selected_property_map<fg_edge_descriptor, Face_graph_edge_index_pm>(mark, get(boost::edge_index,*polyhedron()));

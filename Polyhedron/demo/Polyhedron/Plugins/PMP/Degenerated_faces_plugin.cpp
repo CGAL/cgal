@@ -84,7 +84,7 @@ bool isDegen(Mesh* mesh, std::vector<typename boost::graph_traits<Mesh>::face_de
   typedef typename boost::property_traits<Vpm>::value_type Point;
   typedef typename CGAL::Kernel_traits<Point>::Kernel Kernel;
   //filter non-triangle_faces
-  BOOST_FOREACH(FaceDescriptor f, faces(*mesh))
+  CGAL_FOREACH(FaceDescriptor f, faces(*mesh))
   {
     if(is_triangle(halfedge(f, *mesh), *mesh)
        && is_degenerate_triangle_face(f, *mesh, get(boost::vertex_point, *mesh), Kernel()) )
@@ -102,7 +102,7 @@ bool isDegen(Mesh* mesh, std::vector<typename boost::graph_traits<Mesh>::edge_de
   typedef typename CGAL::Kernel_traits<Point>::Kernel Kernel;
   Vpm vpm = get(boost::vertex_point, *mesh);
 
-  BOOST_FOREACH(HalfedgeDescriptor h, halfedges(*mesh))
+  CGAL_FOREACH(HalfedgeDescriptor h, halfedges(*mesh))
   {
     Point s(get(vpm, source(h, *mesh))),
         t(get(vpm, target(h, *mesh)));
@@ -140,7 +140,7 @@ void Degenerated_faces_plugin::on_actionDegenFaces_triggered()
       for(std::vector<Face_descriptor>::iterator fb = facets.begin();
           fb != facets.end(); ++fb) {
         selection_item->selected_facets.insert(*fb);
-        BOOST_FOREACH(halfedge_descriptor h, halfedges_around_face(halfedge(*fb, *pMesh), *pMesh))
+        CGAL_FOREACH(halfedge_descriptor h, halfedges_around_face(halfedge(*fb, *pMesh), *pMesh))
         {
           selection_item->selected_edges.insert(edge(h, *selection_item->polyhedron()));
         }

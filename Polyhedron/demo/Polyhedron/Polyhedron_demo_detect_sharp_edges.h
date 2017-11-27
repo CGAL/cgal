@@ -12,7 +12,7 @@ namespace CGAL
   {
     typename boost::property_map<Polyhedron,edge_is_feature_t>::type if_pm =
         get(CGAL::edge_is_feature, *pMesh);
-    BOOST_FOREACH(typename boost::graph_traits<Polyhedron>::edge_descriptor ed, edges(*pMesh))
+    CGAL_FOREACH(typename boost::graph_traits<Polyhedron>::edge_descriptor ed, edges(*pMesh))
     {
       put(if_pm,ed,false);
     }

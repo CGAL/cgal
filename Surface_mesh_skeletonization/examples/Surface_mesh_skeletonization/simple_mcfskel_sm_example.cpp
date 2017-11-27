@@ -4,7 +4,7 @@
 
 #include <fstream>
 
-#include <boost/foreach.hpp>
+#include <CGAL/foreach.h>
 
 typedef CGAL::Simple_cartesian<double>                        Kernel;
 typedef Kernel::Point_3                                       Point;
@@ -40,7 +40,7 @@ int main(int argc, char* argv[])
 
   // Output all the edges of the skeleton.
   std::ofstream output("skel-sm.cgal");
-  BOOST_FOREACH(Skeleton_edge e, edges(skeleton))
+  CGAL_FOREACH(Skeleton_edge e, edges(skeleton))
   {
     const Point& s = skeleton[source(e, skeleton)].point;
     const Point& t = skeleton[target(e, skeleton)].point;
@@ -50,8 +50,8 @@ int main(int argc, char* argv[])
 
   // Output skeleton points and the corresponding surface points
   output.open("correspondance-sm.cgal");
-  BOOST_FOREACH(Skeleton_vertex v, vertices(skeleton))
-    BOOST_FOREACH(vertex_descriptor vd, skeleton[v].vertices)
+  CGAL_FOREACH(Skeleton_vertex v, vertices(skeleton))
+    CGAL_FOREACH(vertex_descriptor vd, skeleton[v].vertices)
       output << "2 " << skeleton[v].point << "  " << get(CGAL::vertex_point, tmesh, vd)  << "\n";
 
 

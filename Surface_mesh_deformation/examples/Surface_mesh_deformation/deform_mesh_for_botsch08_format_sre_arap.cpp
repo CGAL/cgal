@@ -1,7 +1,7 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polyhedron_items_with_id_3.h>
-#include <boost/foreach.hpp>
+#include <CGAL/foreach.h>
 #include <CGAL/Surface_mesh_deformation.h>
 
 #include <fstream>
@@ -80,7 +80,7 @@ int main(int argc,char** argv)
 
   std::cout << "Setting target positions\n";
   Kernel::Aff_transformation_3 aff(m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23);
-  BOOST_FOREACH(vertex_descriptor vd, control_vertices)
+  CGAL_FOREACH(vertex_descriptor vd, control_vertices)
   {
     Surface_mesh_deformation::Point pos = vd->point().transform(aff);
     deform_mesh.set_target_position(vd, pos);

@@ -1,6 +1,6 @@
 #include <vector>
 
-#include <boost/foreach.hpp>
+#include <CGAL/foreach.h>
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
@@ -51,7 +51,7 @@ int main()
   }
 
   // or the same again, but directly with a range based loop
-  BOOST_FOREACH(vertex_descriptor vd,vertices_around_face(m.halfedge(f), m)){
+  CGAL_FOREACH(vertex_descriptor vd,vertices_around_face(m.halfedge(f), m)){
     std::cout << vd << std::endl;
   } 
     

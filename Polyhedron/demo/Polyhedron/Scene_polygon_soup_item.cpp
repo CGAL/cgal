@@ -277,7 +277,7 @@ Scene_polygon_soup_item_priv::triangulate_polygon(Polygons_iterator pit, int pol
     {
      FT::PointAndId pid = pid_stack.back();
      pid_stack.pop_back();
-     BOOST_FOREACH(FT::PointAndId poai, pid_stack)
+     CGAL_FOREACH(FT::PointAndId poai, pid_stack)
      {
       if (pid.point== poai.point)
       {
@@ -433,7 +433,7 @@ Scene_polygon_soup_item_priv::compute_normals_and_vertices() const{
     }
 
     //Non manifold edges
-    BOOST_FOREACH(const Polygon_soup::Edge& edge,
+    CGAL_FOREACH(const Polygon_soup::Edge& edge,
                     soup->non_manifold_edges)
     {
 
@@ -520,7 +520,7 @@ void polygon_mesh_to_soup(PolygonMesh& mesh, Polygon_soup& soup)
       faces(mesh).begin(); fit != faces(mesh).end(); ++fit)
   {
     Polygon_soup::Polygon_3 polygon;
-    BOOST_FOREACH(typename boost::graph_traits<PolygonMesh>::halfedge_descriptor hd,
+    CGAL_FOREACH(typename boost::graph_traits<PolygonMesh>::halfedge_descriptor hd,
                   CGAL::halfedges_around_face(halfedge(*fit, mesh), mesh))
     {
       polygon.push_back(vim[target(hd, mesh)]);
@@ -595,11 +595,11 @@ Scene_polygon_soup_item::orient()
   //first skip degenerate polygons
   Polygon_soup::Polygons valid_polygons;
   valid_polygons.reserve(d->soup->polygons.size());
-  BOOST_FOREACH(Polygon_soup::Polygon_3& polygon, d->soup->polygons)
+  CGAL_FOREACH(Polygon_soup::Polygon_3& polygon, d->soup->polygons)
   {
     std::set<std::size_t> vids;
     bool to_remove=false;
-    BOOST_FOREACH(std::size_t id, polygon)
+    CGAL_FOREACH(std::size_t id, polygon)
     {
       if (!vids.insert(id).second){
         to_remove=true;
@@ -859,7 +859,7 @@ void Scene_polygon_soup_item::load(const std::vector<Point>& points, const std::
 
     /// add points
     d->soup->points.reserve(points.size());
-    BOOST_FOREACH(const Point& p, points)
+    CGAL_FOREACH(const Point& p, points)
             d->soup->points.push_back( Point_3(p[0], p[1], p[2]) );
 
     /// add polygons

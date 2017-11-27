@@ -5,7 +5,7 @@
 #include <fstream>
 
 #include <boost/graph/connected_components.hpp>
-#include <boost/foreach.hpp>
+#include <CGAL/foreach.h>
 
 typedef CGAL::Simple_cartesian<double>                       Kernel;
 typedef Kernel::Point_3                                      Point;
