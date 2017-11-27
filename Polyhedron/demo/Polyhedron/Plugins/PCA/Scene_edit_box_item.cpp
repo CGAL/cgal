@@ -769,10 +769,9 @@ double Scene_edit_box_item::point(short i, short j) const
   return (d->frame->inverseCoordinatesOf(pos))[j];
 }
 
-void Scene_edit_box_item::highlight()
+void Scene_edit_box_item::highlight(Viewer_interface *viewer)
 {
   d->ready_to_hl = true;
-  Viewer_interface* viewer = dynamic_cast<Viewer_interface*>(*QGLViewer::QGLViewerPool().begin());
   viewer->makeCurrent();
   int type = -1, id = -1;
   //pick
@@ -999,7 +998,7 @@ bool Scene_edit_box_item::eventFilter(QObject *obj, QEvent *event)
 {
   if(!visible())
     return false;
-  QGLViewer* viewer = qobject_cast<QGLViewer*>(obj);
+  CGAL::Three::Viewer_interface* viewer = qobject_cast<CGAL::Three::Viewer_interface*>(obj);
   if(!viewer)
     return false;
   if(event->type() == QEvent::MouseButtonPress)
@@ -1085,7 +1084,10 @@ bool Scene_edit_box_item::eventFilter(QObject *obj, QEvent *event)
       }
       d->ready_to_hl= true;
       d->picked_pixel = e->pos();
-      QTimer::singleShot(0, this, SLOT(highlight()));
+      QTimer::singleShot(0, this,
+                         [this, viewer](){
+        highlight(viewer);
+      });
     }
     else if(e->modifiers() == Qt::ControlModifier &&
             e->buttons() == Qt::LeftButton)
