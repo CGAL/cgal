@@ -1,7 +1,3 @@
-#include "GlSplat/GlSplat.h"
-
-
-
 #include "config.h"
 #include "Scene.h"
 
@@ -12,6 +8,7 @@
 
 #include  <CGAL/Three/Scene_item.h>
 #include <CGAL/Three/Scene_print_item_interface.h>
+#include <CGAL/Three/Viewer_interface.h>
 
 
 #include <QObject>
@@ -28,13 +25,6 @@
 #include <QAbstractProxyModel>
 #include <QMimeData>
 
-GlSplat::SplatRenderer* Scene::ms_splatting = 0;
-int Scene::ms_splattingCounter = 0;
-GlSplat::SplatRenderer* Scene::splatting()
-{
-    assert(ms_splatting!=0 && "A Scene object must be created before requesting the splatting object");
-    return ms_splatting;
-}
 
 Scene::Scene(QObject* parent)
     : QStandardItemModel(parent),
@@ -47,9 +37,6 @@ Scene::Scene(QObject* parent)
                                       double, double, double)),
             this, SLOT(setSelectionRay(double, double, double,
                                        double, double, double)));
-    if(ms_splatting==0)
-        ms_splatting  = new GlSplat::SplatRenderer();
-    ms_splattingCounter++;
     picked = false;
     gl_init = false;
 
@@ -278,8 +265,6 @@ Scene::~Scene()
     }
     m_entries.clear();
 
-    if((--ms_splattingCounter)==0)
-        delete ms_splatting;
 }
 
 CGAL::Three::Scene_item*
@@ -323,7 +308,6 @@ Scene::duplicate(Item_id index)
 
 void Scene::initializeGL(CGAL::Three::Viewer_interface* viewer)
 {
-    ms_splatting->init();
 
     //Setting the light options
 
@@ -389,9 +373,7 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
 {
     QMap<float, int> picked_item_IDs;
     if(with_names)
-      viewer->glEnable(GL_DEPTH_TEST);
-    if(!ms_splatting->viewer_is_set)
-        ms_splatting->setViewer(viewer);
+    viewer->glEnable(GL_DEPTH_TEST);
     if(!gl_init)
         initializeGL(viewer);
     // Flat/Gouraud OpenGL drawing
@@ -546,47 +528,6 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
                     //add object to list of picked objects;
                     picked_item_IDs[depth] = index;
                 }
-            }
-
-            if(!with_names)
-            {
-                viewer->glDepthFunc(GL_LESS);
-                // Splatting
-                if(!with_names && ms_splatting->isSupported())
-                {
-                    ms_splatting->beginVisibilityPass();
-                    for(int index = 0; index < m_entries.size(); ++index)
-                    {
-                        CGAL::Three::Scene_item& item = *m_entries[index];
-                        if(!with_names && item_should_be_skipped_in_draw(&item)) continue;
-                        if(item.visible() && item.renderingMode() == Splatting)
-                        {
-
-                          if(viewer)
-                          {
-                             item.drawSplats(viewer);
-                          }
-                          else
-                              item.drawSplats();
-                        }
-
-                    }
-                    ms_splatting->beginAttributePass();
-                    for(int index = 0; index < m_entries.size(); ++index)
-                    {  CGAL::Three::Scene_item& item = *m_entries[index];
-                        if(item.visible() && item.renderingMode() == Splatting)
-                        {
-                            viewer->glColor4d(item.color().redF(), item.color().greenF(), item.color().blueF(), item.color().alphaF());
-                            if(viewer)
-                                item.drawSplats(viewer);
-                            else
-                                item.drawSplats();
-                        }
-                    }
-                    ms_splatting->finalize();
-                }
-                else
-                    item.drawSplats();
             }
         }
     }
@@ -807,7 +748,6 @@ Scene::setData(const QModelIndex &index,
         RenderingMode rendering_mode = static_cast<RenderingMode>(value.toInt());
         // Find next supported rendering mode
         while ( ! item->supportsRenderingMode(rendering_mode)
-      //          || (rendering_mode==Splatting && !Scene::splatting()->isSupported())
                 )
         {
             rendering_mode = static_cast<RenderingMode>( (rendering_mode+1) % NumberOfRenderingMode );

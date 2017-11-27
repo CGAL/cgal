@@ -69,7 +69,7 @@ public :
   }
   // Indicates if rendering mode is supported
   bool supportsRenderingMode(RenderingMode m) const {
-    return (m != Gouraud && m != PointsPlusNormals && m != Splatting && m != Points && m != ShadedPoints);
+    return (m != Gouraud && m != PointsPlusNormals && m != Points && m != ShadedPoints);
   }
   void initialize_buffers(CGAL::Three::Viewer_interface *viewer)
   {
