@@ -1,5 +1,5 @@
 #include <iostream>
-
+#include <boost/foreach.hpp>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polygon_mesh_processing/bbox.h>
@@ -45,7 +45,7 @@ int main()
   typedef boost::property_map<My::Mesh,CGAL::vertex_point_t>::type Point_property_map;
   Point_property_map ppm = get(CGAL::vertex_point, mesh);
 
-  for(vertex_descriptor vd : vertices(mesh)){
+  BOOST_FOREACH(vertex_descriptor vd , vertices(mesh)){
     if (vd != boost::graph_traits<My::Mesh>::null_vertex()){
       std::cout << vd << " at " << get(ppm, vd) << std::endl;
     }
