@@ -7,7 +7,7 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
-typedef typename boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
+typedef boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
 typedef boost::unordered_map<face_descriptor, std::size_t> Facet_index_map;
 typedef boost::associative_property_map<Facet_index_map> Facet_proxy_pmap;
 
