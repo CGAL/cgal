@@ -22,13 +22,40 @@
 #define CGAL_FOREACH_H
 
 #include <CGAL/config.h>
+#include <CGAL/Iterator_range.h>
 
 #ifndef DOXYGEN_RUNNING
 #if BOOST_VERSION >= 105100 && !defined(BOOST_NO_CXX11_RANGE_BASED_FOR)
-#define CGAL_FOREACH(A,B) for(A : B)
+
+namespace CGAL{
+namespace for_range_loop{
+
+template <class T>
+Iterator_range<T>
+make_range(const std::pair<T,T>& p)
+{
+  return CGAL::make_range(p);
+}
+
+template <class T>
+Iterator_range<T>
+make_range(std::pair<T,T>& p)
+{
+  return CGAL::make_range(p);
+}
+
+template<class T>
+constexpr T&& make_range( T&& t )
+{
+  return std::forward<T>(t);
+}
+
+} }
+
+#define CGAL_FOREACH(A,B) for(A : CGAL::for_range_loop::make_range(B))
 #else
 #include <CGAL/foreach.h>
-#define CGAL_FOREACH(A,B) CGAL_FOREACH(A, B)
+#define CGAL_FOREACH(A,B) BOOST_FOREACH(A, B)
 #endif
 #else
 /// \ingroup  PkgStlExtension
