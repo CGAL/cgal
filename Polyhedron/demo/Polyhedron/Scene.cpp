@@ -600,7 +600,11 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
         continue;
 
       if(!with_names && item_should_be_skipped_in_draw(&item)) continue;
-      if(item.visible())
+      if(item.visible() &&
+         (item.renderingMode() == Flat ||
+         item.renderingMode() ==FlatPlusEdges ||
+          item.renderingMode() == Gouraud)
+         )
       {
         if(with_names) {
           viewer->glClearDepth(1.0);

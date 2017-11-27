@@ -773,6 +773,7 @@ void Scene_edit_box_item::highlight()
 {
   d->ready_to_hl = true;
   Viewer_interface* viewer = dynamic_cast<Viewer_interface*>(*QGLViewer::QGLViewerPool().begin());
+  viewer->makeCurrent();
   int type = -1, id = -1;
   //pick
   if(!d->selection_on)
@@ -910,6 +911,7 @@ void Scene_edit_box_item::highlight()
 void Scene_edit_box_item::clearHL()
 {
   Viewer_interface* viewer = dynamic_cast<Viewer_interface*>(*QGLViewer::QGLViewerPool().begin());
+  viewer->makeCurrent();
   d->hl_normal.clear();
   d->hl_vertex.clear();
 
@@ -1275,6 +1277,7 @@ double Scene_edit_box_item_priv::applyZ(int id, double z, double dirz)
 //type : 0 = vertex, 1 = edge, 2 = face
 void Scene_edit_box_item_priv::picking(int& type, int& id, Viewer_interface *viewer)
 {
+  viewer->makeCurrent();
   type = -1;
   id = -1;
   int deviceWidth = viewer->camera()->screenWidth();

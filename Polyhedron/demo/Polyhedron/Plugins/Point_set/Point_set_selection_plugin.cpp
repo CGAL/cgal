@@ -997,13 +997,14 @@ public Q_SLOTS:
   {
     if(toggle)
     {
+      QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+      qobject_cast<Viewer_interface*>(viewer)->set2DSelectionMode(false);
       edit_box = new Scene_edit_box_item(scene);
       edit_box->setRenderingMode(Wireframe);
       edit_box->setName("Selection Box");
       connect(edit_box, &Scene_edit_box_item::aboutToBeDestroyed,
               this, &Polyhedron_demo_point_set_selection_plugin::reset_editbox);
       scene->addItem(edit_box);
-      QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
       viewer->installEventFilter(edit_box);
       add_box->setEnabled(true);
     }
