@@ -70,7 +70,8 @@ Features are defined as scalar fields that associates each input item with a spe
 ## Classifiers ##
 
 - `CGAL::Classification::Sum_of_weighted_features_classifier`
-- `CGAL::Classification::Random_forest_classifier`
+- `CGAL::Classification::ETHZ_random_forest_classifier`
+- `CGAL::Classification::OpenCV_random_forest_classifier`
 
 ## Data Structures ##
 
@@ -103,6 +104,7 @@ Features are defined as scalar fields that associates each input item with a spe
 - `CGAL::Classification::Feature::Linearity`
 - `CGAL::Classification::Feature::Omnivariance`
 - `CGAL::Classification::Feature::Planarity`
+- `CGAL::Classification::Feature::Simple_feature<InputRange, PropertyMap>`
 - `CGAL::Classification::Feature::Sphericity`
 - `CGAL::Classification::Feature::Sum_eigenvalues`
 - `CGAL::Classification::Feature::Surface_variation`

@@ -60,6 +60,9 @@ class OpenCV_random_forest_classifier
 
 public:
   
+  /// \name Constructor
+  /// @{
+  
 /*!
   \brief Instantiate the classifier using the sets of `labels` and `features`.
 
@@ -99,6 +102,24 @@ public:
 #endif
   }
   /// \endcond
+  
+  /// @}
+
+  /// \name Parameters
+  /// @{
+  
+  void set_max_depth (int max_depth) { m_max_depth = max_depth; }
+  void set_min_sample_count (int min_sample_count) { m_min_sample_count = min_sample_count; }
+  void set_max_categories (int max_categories) { m_max_categories = max_categories; }
+  void set_max_number_of_trees_in_the_forest (int max_number_of_trees_in_the_forest)
+  { m_max_number_of_trees_in_the_forest = max_number_of_trees_in_the_forest; }
+  void set_forest_accuracy (float forest_accuracy) { m_forest_accuracy = forest_accuracy; }
+  
+  
+  /// @}
+
+  /// \name Training
+  /// @{
   
   /*!
     \brief Runs the training algorithm.
@@ -191,13 +212,8 @@ public:
 
   }
 
-  void set_max_depth (int max_depth) { m_max_depth = max_depth; }
-  void set_min_sample_count (int min_sample_count) { m_min_sample_count = min_sample_count; }
-  void set_max_categories (int max_categories) { m_max_categories = max_categories; }
-  void set_max_number_of_trees_in_the_forest (int max_number_of_trees_in_the_forest)
-  { m_max_number_of_trees_in_the_forest = max_number_of_trees_in_the_forest; }
-  void set_forest_accuracy (float forest_accuracy) { m_forest_accuracy = forest_accuracy; }
-  
+  /// @}
+
   /// \cond SKIP_IN_MANUAL
   void operator() (std::size_t item_index, std::vector<float>& out) const
   {
@@ -232,12 +248,35 @@ public:
 
 #endif
   }
+  /// \endcond
 
+  /// \name Input/Output
+  /// @{
+
+
+  /*!
+    \brief Saves the current configuration in the file named `filename`.
+
+    This allows to easily save and recover a specific classification
+    configuration.
+
+    The output file is written in an XML format that is readable by
+    the `load_configuration()` method.
+  */
   void save_configuration (const char* filename)
   {
     rtree->save(filename);
   }
 
+  /*!
+    \brief Loads a configuration from the file named `filename`.
+
+    The input file should be in the XML format written by the
+    `save_configuration()` method. The feature set of the classifier
+    should contain the exact same features in the exact same order as
+    the ones present when the file was generated using
+    `save_configuration()`.
+  */
   void load_configuration (const char* filename)
   {
 #if (CV_MAJOR_VERSION < 3)
@@ -249,7 +288,7 @@ public:
     rtree = cv::ml::StatModel::load<cv::ml::RTrees> (filename);
 #endif
   }
-  /// \endcond
+
 
 };
 
