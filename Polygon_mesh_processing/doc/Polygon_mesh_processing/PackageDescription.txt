@@ -108,6 +108,8 @@ and provides a list of the parameters that are used in this package.
 ## Predicate Functions ##
 - `CGAL::Polygon_mesh_processing::does_self_intersect()`
 - `CGAL::Polygon_mesh_processing::self_intersections()`
+- \link PMP_predicates_grp `CGAL::Polygon_mesh_processing::do_intersect()` \endlink
+- `CGAL::Polygon_mesh_processing::intersecting_meshes()`
 
 ## Orientation Functions ##
 - `CGAL::Polygon_mesh_processing::is_outward_oriented()`
@@ -142,9 +144,6 @@ and provides a list of the parameters that are used in this package.
 - `CGAL::Polygon_mesh_processing::corefine()`
 - `CGAL::Polygon_mesh_processing::surface_intersection()`
 - `CGAL::Polygon_mesh_processing::does_bound_a_volume()`
-
-## Intersection Detection Functions ##
-- \link PMP_predicates_grp `CGAL::Polygon_mesh_processing::do_intersect()` \endlink
 
 ## Geometric Measure Functions ##
 - \link measure_grp `CGAL::Polygon_mesh_processing::face_area()` \endlink

@@ -1464,7 +1464,7 @@ struct Mesh_callback
 
 namespace Polygon_mesh_processing{
 /*!
- * \ingroup PMP_corefinement_grp
+ * \ingroup PMP_predicates_grp
  * detects and reports all the pair of meshes intersecting in `range`. The results are
  * returned in an output iterator with value type `std::pair<std::size_t, std::size_t>`, containing the indices (in the input range)
  * of the triangle meshes that intersect with each other. If `test_volume` is `true`, volumic intersections
@@ -1497,7 +1497,7 @@ namespace Polygon_mesh_processing{
 template <class TriangleMeshRange
           , class OutputIterator
           , class NamedParametersRange>
-OutputIterator get_intersections_in_range(const TriangleMeshRange& range,
+OutputIterator intersecting_meshes(const TriangleMeshRange& range,
                                           OutputIterator out,
                                           const bool& test_volume,
                                           NamedParametersRange np_vpms)
@@ -1527,7 +1527,7 @@ OutputIterator get_intersections_in_range(const TriangleMeshRange& range,
 
 template <class TriangleMeshRange
           , class OutputIterator>
-OutputIterator get_intersections_in_range(const TriangleMeshRange& range,
+OutputIterator intersecting_meshes(const TriangleMeshRange& range,
                                           OutputIterator out,
                                           bool test_volume = false)
 {
@@ -1538,7 +1538,7 @@ OutputIterator get_intersections_in_range(const TriangleMeshRange& range,
   {
     nps.push_back(parameters::all_default);
   }
-  return get_intersections_in_range(range, out, test_volume, nps);
+  return intersecting_meshes(range, out, test_volume, nps);
 }
 
 /**
