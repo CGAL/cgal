@@ -128,6 +128,7 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
   d->shader_programs.resize(NB_OF_PROGRAMS);
   d->offset = qglviewer::Vec(0,0,0);
   d->textRenderer = new TextRenderer();
+  d->is_2d_selection_mode = false;
   connect( d->textRenderer, SIGNAL(sendMessage(QString,int)),
            this, SLOT(printMessage(QString,int)) );
   connect(&d->messageTimer, SIGNAL(timeout()), SLOT(hideMessage()));
