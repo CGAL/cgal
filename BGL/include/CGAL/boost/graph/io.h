@@ -22,7 +22,7 @@
 #define CGAL_BOOST_GRAPH_IO_H
 
 #include <boost/container/flat_map.hpp>
-#include <boost/foreach.hpp>
+#include <CGAL/foreach.h>
 
 #include <iostream>
 #include <algorithm>
@@ -56,14 +56,14 @@ bool write_off(std::ostream& os,
   os << "OFF\n" << nv << " " << nf << " 0\n";
   boost::container::flat_map<vertex_descriptor,vertices_size_type> reindex;
   int n = 0;
-  BOOST_FOREACH(vertex_descriptor v, vertices(g)){
+  CGAL_FOREACH(vertex_descriptor v, vertices(g)){
     os << get(vpm,v) << '\n';
     reindex[v]=n++;
   }
   
-  BOOST_FOREACH(face_descriptor f, faces(g)){
+  CGAL_FOREACH(face_descriptor f, faces(g)){
     os << degree(f,g);
-    BOOST_FOREACH(vertex_descriptor v, vertices_around_face(halfedge(f,g),g)){
+    CGAL_FOREACH(vertex_descriptor v, vertices_around_face(halfedge(f,g),g)){
       os << " " << reindex[v];
     }
     os << '\n';
@@ -225,16 +225,16 @@ bool write_inp(std::ostream& os,
   os << "*Part, name=" << name << "\n*Node\n";
   boost::container::flat_map<vertex_descriptor,vertices_size_type> reindex;
   int n = 1;
-  BOOST_FOREACH(vertex_descriptor v, vertices(g)){
+  CGAL_FOREACH(vertex_descriptor v, vertices(g)){
     Point_3 p =  get(vpm,v);
     os << n << ", " << p.x() << ", " << p.y() << ", " << p.z() << '\n';
     reindex[v]=n++;
   }
   n = 1;
   os << "*Element, type=" << type << std::endl;
-  BOOST_FOREACH(face_descriptor f, faces(g)){
+  CGAL_FOREACH(face_descriptor f, faces(g)){
     os << n++;
-    BOOST_FOREACH(vertex_descriptor v, vertices_around_face(halfedge(f,g),g)){
+    CGAL_FOREACH(vertex_descriptor v, vertices_around_face(halfedge(f,g),g)){
       os << ", " << reindex[v];
     }
     os << '\n';

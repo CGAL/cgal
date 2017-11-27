@@ -36,7 +36,7 @@
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/iterator.h>
 
-#include <boost/foreach.hpp>
+#include <CGAL/foreach.h>
 #include <boost/unordered_set.hpp>
 #include <boost/dynamic_bitset.hpp>
 namespace CGAL {
@@ -87,7 +87,7 @@ namespace internal{
     CGAL_assertion(v_max == target(min_slope_he, pmesh));
 
     typename GT::Compare_slope_3 compare_slope = gt.compare_slope_3_object();
-    BOOST_FOREACH(halfedge_descriptor he, halfedges_around_target(v_max, pmesh))
+    CGAL_FOREACH(halfedge_descriptor he, halfedges_around_target(v_max, pmesh))
     {
       CGAL_assertion(v_max == target(min_slope_he, pmesh));
       CGAL_assertion(v_max == target(he, pmesh));
@@ -253,7 +253,7 @@ void reverse_face_orientations(PolygonMesh& pmesh)
 {
   typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
-  BOOST_FOREACH(face_descriptor fd, faces(pmesh)){
+  CGAL_FOREACH(face_descriptor fd, faces(pmesh)){
     reverse_orientation(halfedge(fd,pmesh),pmesh);
   }
   // Note: A border edge is now parallel to its opposite edge.
@@ -261,7 +261,7 @@ void reverse_face_orientations(PolygonMesh& pmesh)
   // reorient the associated hole and search again until no border
   // edge with that property exists any longer. Then, all holes are
   // reoriented.
-  BOOST_FOREACH(halfedge_descriptor h, halfedges(pmesh)){
+  CGAL_FOREACH(halfedge_descriptor h, halfedges(pmesh)){
     if ( is_border(h,pmesh) &&
          target(h,pmesh) == target(opposite(h,pmesh),pmesh)){
       reverse_orientation(h, pmesh);
@@ -281,22 +281,22 @@ void reverse_face_orientations_of_mesh_with_polylines(PolygonMesh& pmesh)
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
 
   // reverse the orientation of each face
-  BOOST_FOREACH(face_descriptor fd, faces(pmesh))
+  CGAL_FOREACH(face_descriptor fd, faces(pmesh))
     reverse_orientation(halfedge(fd,pmesh),pmesh);
 
   //extract all border cycles
   boost::unordered_set<halfedge_descriptor> already_seen;
   std::vector<halfedge_descriptor> border_cycles;
-  BOOST_FOREACH(halfedge_descriptor h, halfedges(pmesh))
+  CGAL_FOREACH(halfedge_descriptor h, halfedges(pmesh))
     if ( is_border(h,pmesh) && already_seen.insert(h).second )
     {
       border_cycles.push_back(h);
-      BOOST_FOREACH(halfedge_descriptor h2, halfedges_around_face(h,pmesh))
+      CGAL_FOREACH(halfedge_descriptor h2, halfedges_around_face(h,pmesh))
         already_seen.insert(h2);
     }
 
   // now reverse the border cycles
-  BOOST_FOREACH(halfedge_descriptor h, border_cycles)
+  CGAL_FOREACH(halfedge_descriptor h, border_cycles)
     reverse_orientation(h, pmesh);
 }
 
@@ -315,7 +315,7 @@ void reverse_face_orientations(const FaceRange& face_range, PolygonMesh& pmesh)
 {
   typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
-  BOOST_FOREACH(face_descriptor fd, face_range){
+  CGAL_FOREACH(face_descriptor fd, face_range){
     reverse_orientation(halfedge(fd,pmesh),pmesh);
   }
 
@@ -324,8 +324,8 @@ void reverse_face_orientations(const FaceRange& face_range, PolygonMesh& pmesh)
   // reorient the associated hole and search again until no border
   // edge with that property exists any longer. Then, all holes are
   // reoriented.
-  BOOST_FOREACH(face_descriptor fd, face_range)
-    BOOST_FOREACH(halfedge_descriptor hd,
+  CGAL_FOREACH(face_descriptor fd, face_range)
+    CGAL_FOREACH(halfedge_descriptor hd,
                   halfedges_around_face(halfedge(fd, pmesh), pmesh))
     {
       halfedge_descriptor ohd = opposite(hd, pmesh);

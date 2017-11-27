@@ -23,7 +23,7 @@
 
 #include <CGAL/license/Surface_mesh_parameterization.h>
 
-#include <boost/foreach.hpp>
+#include <CGAL/foreach.h>
 #include "boost/tuple/tuple.hpp"
 #include <boost/unordered_set.hpp>
 
@@ -67,7 +67,7 @@ public:
   void operator()(face_descriptor fd)
   {
     halfedge_descriptor hd = halfedge(fd, mesh);
-    BOOST_FOREACH(vertex_descriptor vd, vertices_around_face(hd, mesh)) {
+    CGAL_FOREACH(vertex_descriptor vd, vertices_around_face(hd, mesh)) {
       vertices.insert(vd);
     }
 
@@ -88,7 +88,7 @@ struct Index_map_filler
 
   void operator()(const face_descriptor& fd)
   {
-    BOOST_FOREACH(vertex_descriptor vd,
+    CGAL_FOREACH(vertex_descriptor vd,
                   vertices_around_face(halfedge(fd, mesh), mesh)) {
       typename Map::iterator it;
       bool new_element;

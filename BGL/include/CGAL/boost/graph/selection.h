@@ -22,7 +22,7 @@
 #define CGAL_BOOST_GRAPH_KTH_SIMPLICIAL_NEIGHBORHOOD_H
 
 #include <boost/graph/graph_traits.hpp>
-#include <boost/foreach.hpp>
+#include <CGAL/foreach.h>
 #include <CGAL/boost/graph/iterator.h>
 #include <boost/unordered_set.hpp>
 
@@ -44,9 +44,9 @@ extract_selection_boundary(
   typedef typename GT::face_descriptor face_descriptor;
   typedef typename GT::halfedge_descriptor halfedge_descriptor;
 
-  BOOST_FOREACH(face_descriptor fd, face_range)
+  CGAL_FOREACH(face_descriptor fd, face_range)
   {
-    BOOST_FOREACH(  halfedge_descriptor h,
+    CGAL_FOREACH(  halfedge_descriptor h,
                     halfedges_around_face(halfedge(fd, fg), fg) )
     {
       halfedge_descriptor opp_hd = opposite(h, fg);
@@ -113,7 +113,7 @@ expand_face_selection(
 
     //collect faces around the target vertex of the selection boundary halfedges
     std::set<face_descriptor> new_selection_set;
-    BOOST_FOREACH(halfedge_descriptor hd, selection_boundary_halfedges)
+    CGAL_FOREACH(halfedge_descriptor hd, selection_boundary_halfedges)
     {
       face_descriptor fd=face(hd, fg);
       while( !get(is_selected,fd) )
@@ -127,7 +127,7 @@ expand_face_selection(
 
     // extract unique selection
     std::vector<face_descriptor> new_selection;
-    BOOST_FOREACH(face_descriptor fd, new_selection_set)
+    CGAL_FOREACH(face_descriptor fd, new_selection_set)
     {
       *out++=fd;
       new_selection.push_back(fd);
@@ -183,7 +183,7 @@ reduce_face_selection(
 
     //collect faces around the target vertex of the selection boundary halfedges
     std::set<face_descriptor> elements_to_remove;
-    BOOST_FOREACH(halfedge_descriptor hd, selection_boundary_halfedges)
+    CGAL_FOREACH(halfedge_descriptor hd, selection_boundary_halfedges)
     {
       hd = opposite(hd, fg);
       face_descriptor fd=face( hd, fg );
@@ -196,7 +196,7 @@ reduce_face_selection(
     }
 
     /// update is-selected attribute and output iterator
-    BOOST_FOREACH(face_descriptor fd, elements_to_remove)
+    CGAL_FOREACH(face_descriptor fd, elements_to_remove)
     {
       *out++=fd;
       put( is_selected, fd, false );
@@ -204,7 +204,7 @@ reduce_face_selection(
 
     // update the set of currently selected faces
     std::vector<face_descriptor> new_selection;
-    BOOST_FOREACH(face_descriptor fd, current_selection)
+    CGAL_FOREACH(face_descriptor fd, current_selection)
       if ( !elements_to_remove.count(fd) )
         new_selection.push_back(fd);
     current_selection.swap(new_selection);
@@ -238,7 +238,7 @@ select_incident_faces(
 
   //collect faces around the target vertex of the selection boundary halfedges
   std::set<face_descriptor> selection_set;
-  BOOST_FOREACH(halfedge_descriptor hd, hedges)
+  CGAL_FOREACH(halfedge_descriptor hd, hedges)
   {
     halfedge_descriptor first = hd;
     face_descriptor fd=face(hd, fg);
@@ -293,15 +293,15 @@ expand_edge_selection(
 
     //collect adjacent edges not already selected
     std::set<edge_descriptor> new_selection_set;
-    BOOST_FOREACH(edge_descriptor ed, current_selection)
+    CGAL_FOREACH(edge_descriptor ed, current_selection)
     {
       halfedge_descriptor hdi=halfedge(ed,fg);
-      BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_source( hdi, fg))
+      CGAL_FOREACH(halfedge_descriptor hd, halfedges_around_source( hdi, fg))
       {
         edge_descriptor ned=edge(hd, fg);
         if (!get(is_selected, ned)) new_selection_set.insert(ned);
       }
-      BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_target( hdi, fg))
+      CGAL_FOREACH(halfedge_descriptor hd, halfedges_around_target( hdi, fg))
       {
         edge_descriptor ned=edge(hd, fg);
         if (!get(is_selected, ned)) new_selection_set.insert(ned);
@@ -310,7 +310,7 @@ expand_edge_selection(
 
     // extract unique selection
     std::vector<edge_descriptor> new_selection;
-    BOOST_FOREACH(edge_descriptor ed, new_selection_set)
+    CGAL_FOREACH(edge_descriptor ed, new_selection_set)
     {
       *out++=ed;
       new_selection.push_back(ed);
@@ -356,10 +356,10 @@ reduce_edge_selection(
 
   // extract the set of vertices on the border
   std::set<vertex_descriptor> unique_vertex_set;
-  BOOST_FOREACH(edge_descriptor ed, selection)
+  CGAL_FOREACH(edge_descriptor ed, selection)
   {
     halfedge_descriptor hd=halfedge(ed,fg);
-    BOOST_FOREACH(halfedge_descriptor nhd, halfedges_around_source( hd, fg))
+    CGAL_FOREACH(halfedge_descriptor nhd, halfedges_around_source( hd, fg))
     {
       edge_descriptor ned=edge(nhd, fg);
       if (!get(is_selected, ned)){
@@ -367,7 +367,7 @@ reduce_edge_selection(
         break;
       }
     }
-    BOOST_FOREACH(halfedge_descriptor nhd, halfedges_around_target( hd, fg))
+    CGAL_FOREACH(halfedge_descriptor nhd, halfedges_around_target( hd, fg))
     {
       edge_descriptor ned=edge(nhd, fg);
       if (!get(is_selected, ned)){
@@ -385,8 +385,8 @@ reduce_edge_selection(
     //collect incident edges selected
     std::set<edge_descriptor> edges_to_deselect;
     unique_vertex_set.clear();
-    BOOST_FOREACH(vertex_descriptor vd, current_selection_border)
-      BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_target( halfedge(vd,fg), fg))
+    CGAL_FOREACH(vertex_descriptor vd, current_selection_border)
+      CGAL_FOREACH(halfedge_descriptor hd, halfedges_around_target( halfedge(vd,fg), fg))
       {
         edge_descriptor ed = edge(hd, fg);
         if (get(is_selected, ed)){
@@ -396,7 +396,7 @@ reduce_edge_selection(
       }
 
     // extract unique selection
-    BOOST_FOREACH(edge_descriptor ed, edges_to_deselect)
+    CGAL_FOREACH(edge_descriptor ed, edges_to_deselect)
     {
       *out++=ed;
       put( is_selected, ed, false );
@@ -445,13 +445,13 @@ expand_vertex_selection(
 
     //collect adjacent vertices not already selected
     std::set<vertex_descriptor> new_selection_set;
-    BOOST_FOREACH(vertex_descriptor vd, current_selection)
-      BOOST_FOREACH(vertex_descriptor nvd, vertices_around_target( halfedge(vd,fg), fg))
+    CGAL_FOREACH(vertex_descriptor vd, current_selection)
+      CGAL_FOREACH(vertex_descriptor nvd, vertices_around_target( halfedge(vd,fg), fg))
         if (!get(is_selected, nvd)) new_selection_set.insert(nvd);
 
     // extract unique selection
     std::vector<vertex_descriptor> new_selection;
-    BOOST_FOREACH(vertex_descriptor vd, new_selection_set)
+    CGAL_FOREACH(vertex_descriptor vd, new_selection_set)
     {
       *out++=vd;
       new_selection.push_back(vd);
@@ -495,8 +495,8 @@ reduce_vertex_selection(
 
   // collect vertices incident to a selected one
   std::set<vertex_descriptor> unique_vertex_set;
-  BOOST_FOREACH(vertex_descriptor vd, selection)
-    BOOST_FOREACH(vertex_descriptor nvd, vertices_around_target( halfedge(vd,fg), fg))
+  CGAL_FOREACH(vertex_descriptor vd, selection)
+    CGAL_FOREACH(vertex_descriptor nvd, vertices_around_target( halfedge(vd,fg), fg))
         if (!get(is_selected, nvd)) unique_vertex_set.insert(nvd);
 
   std::vector<vertex_descriptor> current_selection_border(unique_vertex_set.begin(), unique_vertex_set.end());
@@ -506,13 +506,13 @@ reduce_vertex_selection(
 
     //collect adjacent vertices selected
     std::set<vertex_descriptor> vertices_to_deselect;
-    BOOST_FOREACH(vertex_descriptor vd, current_selection_border)
-      BOOST_FOREACH(vertex_descriptor nvd, vertices_around_target( halfedge(vd,fg), fg))
+    CGAL_FOREACH(vertex_descriptor vd, current_selection_border)
+      CGAL_FOREACH(vertex_descriptor nvd, vertices_around_target( halfedge(vd,fg), fg))
         if (get(is_selected, nvd)) vertices_to_deselect.insert(nvd);
 
     // extract unique selection
     std::vector<vertex_descriptor> new_selection_border;
-    BOOST_FOREACH(vertex_descriptor vd, vertices_to_deselect)
+    CGAL_FOREACH(vertex_descriptor vd, vertices_to_deselect)
     {
       *out++=vd;
       new_selection_border.push_back(vd);
@@ -556,7 +556,7 @@ void expand_face_selection_for_removal(const FaceRange& faces_to_be_deleted,
   boost::unordered_set<vertex_descriptor> vertices_queue;
 
   // collect vertices belonging to at least a triangle that will be removed
-  BOOST_FOREACH(face_descriptor fd, faces_to_be_deleted)
+  CGAL_FOREACH(face_descriptor fd, faces_to_be_deleted)
   {
     halfedge_descriptor h = halfedge(fd, tm);
     vertices_queue.insert( target(h, tm) );
@@ -609,7 +609,7 @@ void expand_face_selection_for_removal(const FaceRange& faces_to_be_deleted,
       if (next_around_vertex==start)
         break;
 
-      BOOST_FOREACH(halfedge_descriptor f_hd, faces_traversed)
+      CGAL_FOREACH(halfedge_descriptor f_hd, faces_traversed)
       {
         assert(target(f_hd, tm) == vd);
         put(is_selected, face(f_hd, tm), true);

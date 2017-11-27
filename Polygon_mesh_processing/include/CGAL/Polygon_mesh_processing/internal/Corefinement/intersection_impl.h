@@ -35,7 +35,7 @@
 #include <CGAL/Polygon_mesh_processing/internal/Corefinement/intersect_triangle_and_segment_3.h>
 #include <CGAL/utility.h>
 
-#include <boost/foreach.hpp>
+#include <CGAL/foreach.h>
 #include <boost/unordered_map.hpp>
 #include <boost/unordered_set.hpp>
 #include <boost/dynamic_bitset.hpp>
@@ -198,7 +198,7 @@ class Intersection_of_triangle_meshes
 
     face_boxes.reserve(num_faces(tm_f));
     face_boxes_ptr.reserve(num_faces(tm_f));
-    BOOST_FOREACH(face_descriptor fd, faces(tm_f))
+    CGAL_FOREACH(face_descriptor fd, faces(tm_f))
     {
       halfedge_descriptor h=halfedge(fd,tm_f);
       face_boxes.push_back( Box(
@@ -211,7 +211,7 @@ class Intersection_of_triangle_meshes
 
     edge_boxes.reserve(num_edges(tm_e));
     edge_boxes_ptr.reserve(num_edges(tm_e));
-    BOOST_FOREACH(edge_descriptor ed, edges(tm_e))
+    CGAL_FOREACH(edge_descriptor ed, edges(tm_e))
     {
       halfedge_descriptor h=halfedge(ed,tm_e);
       edge_boxes.push_back( Box(
@@ -263,7 +263,7 @@ class Intersection_of_triangle_meshes
 
     face_boxes.reserve(num_faces(tm));
     face_boxes_ptr.reserve(num_faces(tm));
-    BOOST_FOREACH(face_descriptor fd, faces(tm))
+    CGAL_FOREACH(face_descriptor fd, faces(tm))
     {
       halfedge_descriptor h=halfedge(fd,tm);
       face_boxes.push_back( Box(
@@ -276,7 +276,7 @@ class Intersection_of_triangle_meshes
 
     edge_boxes.reserve(num_edges(tm));
     edge_boxes_ptr.reserve(num_edges(tm));
-    BOOST_FOREACH(edge_descriptor ed, edges(tm))
+    CGAL_FOREACH(edge_descriptor ed, edges(tm))
     {
       halfedge_descriptor h=halfedge(ed,tm);
       edge_boxes.push_back( Box(
@@ -440,7 +440,7 @@ class Intersection_of_triangle_meshes
                               const TriangleMesh& tm1,
                               const TriangleMesh& tm2)
   {
-    BOOST_FOREACH(halfedge_descriptor h_2,
+    CGAL_FOREACH(halfedge_descriptor h_2,
                   halfedges_around_target(vertex_intersected,tm2))
     {
       cip_handle_case_edge(node_id,fset,edge,h_2,tm1,tm2);
@@ -461,7 +461,7 @@ class Intersection_of_triangle_meshes
                                          ? stm_edge_to_ltm_faces
                                          : ltm_edge_to_stm_faces;
 
-    BOOST_FOREACH(halfedge_descriptor h_1,
+    CGAL_FOREACH(halfedge_descriptor h_1,
                   halfedges_around_target(v_1,tm1))
     {
       add_intersection_point_to_face_and_all_edge_incident_faces(face(f_2,tm2),h_1,tm2,tm1,node_id);
@@ -484,7 +484,7 @@ class Intersection_of_triangle_meshes
                                          ? stm_edge_to_ltm_faces
                                          : ltm_edge_to_stm_faces;
 
-    BOOST_FOREACH(halfedge_descriptor h_1,
+    CGAL_FOREACH(halfedge_descriptor h_1,
                   halfedges_around_target(v_1,tm1))
     {
       typename Edge_to_faces::iterator it_ets=tm1_edge_to_tm2_faces.find(edge(h_1,tm1));
@@ -507,7 +507,7 @@ class Intersection_of_triangle_meshes
                                          ? stm_edge_to_ltm_faces
                                          : ltm_edge_to_stm_faces;
 
-    BOOST_FOREACH(halfedge_descriptor h_1,
+    CGAL_FOREACH(halfedge_descriptor h_1,
                   halfedges_around_target(v_1,tm1))
     {
       typename Edge_to_faces::iterator it_ets=tm1_edge_to_tm2_faces.find(edge(h_1,tm1));
@@ -533,7 +533,7 @@ class Intersection_of_triangle_meshes
     typedef std::map<Key,Node_id> Coplanar_node_map;
     Coplanar_node_map coplanar_node_map;
 
-    BOOST_FOREACH(const Face_pair& face_pair, coplanar_faces)
+    CGAL_FOREACH(const Face_pair& face_pair, coplanar_faces)
     {
       face_descriptor f1=face_pair.first;
       face_descriptor f2=face_pair.second;
@@ -548,7 +548,7 @@ class Intersection_of_triangle_meshes
       std::size_t nb_pts=inter_pts.size();
       std::vector<Node_id> cpln_nodes; cpln_nodes.reserve(nb_pts);
 
-      BOOST_FOREACH(const Cpl_inter_pt& ipt, inter_pts)
+      CGAL_FOREACH(const Cpl_inter_pt& ipt, inter_pts)
       {
         Node_id node_id;
         bool is_new_node;
@@ -919,7 +919,7 @@ class Intersection_of_triangle_meshes
         to_erase.push_back(it);
     }
 
-    BOOST_FOREACH(typename Faces_to_nodes_map::iterator it, to_erase)
+    CGAL_FOREACH(typename Faces_to_nodes_map::iterator it, to_erase)
       f_to_node.erase(it);
   }
 

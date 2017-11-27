@@ -46,7 +46,7 @@
 
 #include <boost/next_prior.hpp> // for boost::prior and boost::next
 #include <boost/variant.hpp>
-#include <boost/foreach.hpp>
+#include <CGAL/foreach.h>
 
 namespace CGAL {
 
@@ -1137,7 +1137,7 @@ Mesh_domain_with_polyline_features_3<MD_>::
 reindex_patches(const std::vector<Surf_p_index>& map,
                 IncidenceMap& incidence_map)
 {
-  BOOST_FOREACH(typename IncidenceMap::value_type& pair,
+  CGAL_FOREACH(typename IncidenceMap::value_type& pair,
                 incidence_map)
   {
     Surface_patch_index_set& patch_index_set = pair.second;
@@ -1218,7 +1218,7 @@ operator()(std::ostream& os, Point p, typename MDwPF_::Curve_index id,
 {
   os << "Corner #" << id << " (" << p
      << ") is incident to the following curves: {";
-  BOOST_FOREACH(typename MDwPF_::Curve_index curve_index,
+  CGAL_FOREACH(typename MDwPF_::Curve_index curve_index,
                 corners_tmp_incidences_of_id)
   {
     os << " " << curve_index;
@@ -1250,7 +1250,7 @@ operator()(std::ostream& os, Point p, typename MDwPF_::Curve_index id,
 {
   os << "Corner #" << id << " (" << p
      << ") is incident to the following patches: {";
-  BOOST_FOREACH(typename MDwPF_::Surface_patch_index i,
+  CGAL_FOREACH(typename MDwPF_::Surface_patch_index i,
                 corners_incidences_of_id)
   {
     os << " " << i;
@@ -1325,7 +1325,7 @@ compute_corners_incidences()
     Surface_patch_index_set& incidences = corners_incidences_[id];
     // That should be an empty set.
 
-    BOOST_FOREACH(Curve_index curve_index, corner_tmp_incidences)
+    CGAL_FOREACH(Curve_index curve_index, corner_tmp_incidences)
     {
       get_incidences(curve_index,
                      std::inserter(incidences,

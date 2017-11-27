@@ -50,7 +50,7 @@
 #include <boost/type_traits/is_base_of.hpp>
 #include <boost/type_traits/is_floating_point.hpp>
 
-#include <boost/foreach.hpp>
+#include <CGAL/foreach.h>
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
 
 #include <boost/dynamic_bitset.hpp>
@@ -1039,7 +1039,7 @@ class Intersection_of_Polyhedra_3{
         std::vector<Box> boxes;
         boxes.reserve(m_reported_facets.size());
 
-        BOOST_FOREACH(Facet_handle fh, m_reported_facets)
+        CGAL_FOREACH(Facet_handle fh, m_reported_facets)
         {
           boxes.push_back( Box( fh->halfedge()->vertex()->point().bbox() +
                                 fh->halfedge()->next()->vertex()->point().bbox() +
@@ -1126,7 +1126,7 @@ class Intersection_of_Polyhedra_3{
     #endif // not DO_NOT_HANDLE_COPLANAR_FACETS
 
     typedef std::pair<const Box*,const Box*> Type_pair;
-    BOOST_FOREACH(const Type_pair& p, intersecting_bboxes)
+    CGAL_FOREACH(const Type_pair& p, intersecting_bboxes)
       inter_functor(p.first, p.second);
   #else
     CGAL::box_intersection_d( facet_box_ptr.begin(), facet_box_ptr.end(),

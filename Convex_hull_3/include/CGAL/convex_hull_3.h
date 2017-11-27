@@ -322,7 +322,7 @@ void coplanar_3_hull(InputIterator first, InputIterator beyond,
   typedef typename Graph_traits::face_descriptor face_descriptor;
   std::vector<vertex_descriptor> vertices;
   vertices.reserve(CH_2.size());
-  BOOST_FOREACH(const Point_3& p, CH_2){
+  CGAL_FOREACH(const Point_3& p, CH_2){
     vertices.push_back(add_vertex(P));
     put(vpm, vertices.back(),p);
   }

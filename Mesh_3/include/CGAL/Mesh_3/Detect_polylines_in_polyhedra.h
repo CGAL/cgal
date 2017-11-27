@@ -31,7 +31,7 @@
 #include <CGAL/Default.h>
 
 #include <algorithm>
-#include <boost/foreach.hpp>
+#include <CGAL/foreach.h>
 #include <boost/mpl/if.hpp>
 
 namespace CGAL { namespace Mesh_3 {
@@ -79,7 +79,7 @@ struct Detect_polylines {
   static 
   void display_set(std::ostream& stream, Set_of_indices set) {
     stream << "( ";
-    BOOST_FOREACH(typename Set_of_indices::value_type i, set) {
+    CGAL_FOREACH(typename Set_of_indices::value_type i, set) {
       display_index(stream, i);
       stream << " ";
     }
@@ -180,12 +180,12 @@ struct Detect_polylines {
 #ifdef CGAL_MESH_3_PROTECTION_DEBUG
         std::cerr << "New corner vertex " << v->point() << std::endl;
         std::cerr << "  indices were: ";
-        BOOST_FOREACH(typename Set_of_indices::value_type i,
+        CGAL_FOREACH(typename Set_of_indices::value_type i,
                       set_of_indices_of_current_edge) {
           std::cerr << i << " ";
         }
         std::cerr << "\n           now: ";
-        BOOST_FOREACH(typename Set_of_indices::value_type i,
+        CGAL_FOREACH(typename Set_of_indices::value_type i,
                       set_of_indices_of_next_edge) {
           std::cerr << i << " ";
         }

@@ -26,7 +26,7 @@
 
 
 #include <boost/graph/graph_traits.hpp>
-#include <boost/foreach.hpp>
+#include <CGAL/foreach.h>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/unordered_set.hpp>
 
@@ -55,9 +55,9 @@ namespace Polygon_mesh_processing {
       // the bool is true if the halfedge stored is the one of the face,
       // false if it is its opposite
       std::map<halfedge_descriptor, bool> border;
-      BOOST_FOREACH(face_descriptor f, faces)
+      CGAL_FOREACH(face_descriptor f, faces)
       {
-        BOOST_FOREACH(halfedge_descriptor h,
+        CGAL_FOREACH(halfedge_descriptor h,
           halfedges_around_face(halfedge(f, pmesh), pmesh))
         {
           //halfedge_descriptor is model of `LessThanComparable`
@@ -71,7 +71,7 @@ namespace Polygon_mesh_processing {
       }
       //copy them in out
       typedef typename std::map<halfedge_descriptor, bool>::value_type HD_bool;
-      BOOST_FOREACH(const HD_bool& hd, border)
+      CGAL_FOREACH(const HD_bool& hd, border)
       {
         if (!hd.second) // to get the border halfedge (which is not on the face)
           *out++ = hd.first;
@@ -123,11 +123,11 @@ namespace Polygon_mesh_processing {
       }
 
       std::vector<bool> present(num_faces(pmesh), false);
-      BOOST_FOREACH(face_descriptor fd, faces)
+      CGAL_FOREACH(face_descriptor fd, faces)
         present[get(fmap, fd)] = true;
 
-      BOOST_FOREACH(face_descriptor fd, faces)
-        BOOST_FOREACH(halfedge_descriptor hd,
+      CGAL_FOREACH(face_descriptor fd, faces)
+        CGAL_FOREACH(halfedge_descriptor hd,
                       halfedges_around_face(halfedge(fd, pmesh), pmesh))
        {
          halfedge_descriptor opp=opposite(hd, pmesh);
@@ -213,7 +213,7 @@ namespace Polygon_mesh_processing {
   {
     typedef PolygonMesh PM;
     typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
-    BOOST_FOREACH(halfedge_descriptor hd, halfedges(pmesh))
+    CGAL_FOREACH(halfedge_descriptor hd, halfedges(pmesh))
       if (is_border(hd, pmesh))
         *out++ = hd;
     return out;
@@ -244,11 +244,11 @@ namespace Polygon_mesh_processing {
 
     unsigned int border_counter = 0;
     boost::unordered_set<halfedge_descriptor> visited;
-    BOOST_FOREACH(halfedge_descriptor h, halfedges(pmesh)){
+    CGAL_FOREACH(halfedge_descriptor h, halfedges(pmesh)){
       if(visited.find(h)== visited.end()){
         if(is_border(h,pmesh)){
           ++border_counter;
-          BOOST_FOREACH(halfedge_descriptor haf, halfedges_around_face(h, pmesh)){
+          CGAL_FOREACH(halfedge_descriptor haf, halfedges_around_face(h, pmesh)){
             visited.insert(haf);
           }
         }

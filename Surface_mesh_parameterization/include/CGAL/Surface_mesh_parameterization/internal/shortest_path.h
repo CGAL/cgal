@@ -25,7 +25,7 @@
 
 #include <CGAL/assertions.h>
 
-#include <boost/foreach.hpp>
+#include <CGAL/foreach.h>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/unordered_map.hpp>
@@ -59,13 +59,13 @@ void output_shortest_paths_to_selection_file(const TriangleMesh& mesh,
   boost::unordered_map<vertex_descriptor, int> index_map;
 
   int counter = 0;
-  BOOST_FOREACH(vertex_descriptor vd, vertices(mesh)) {
+  CGAL_FOREACH(vertex_descriptor vd, vertices(mesh)) {
     index_map[vd] = counter++;
   }
 
   os << std::endl /* vertices */ << std::endl /* faces */;
 
-  BOOST_FOREACH(edge_descriptor ed, seams) {
+  CGAL_FOREACH(edge_descriptor ed, seams) {
     // could be made more efficient...
     os << index_map[source(ed, mesh)] << " " << index_map[target(ed, mesh)] << " ";
   }

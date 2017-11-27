@@ -23,7 +23,7 @@
 
 #include <CGAL/tuple.h>
 #include <utility>
-#include <boost/foreach.hpp>
+#include <CGAL/foreach.h>
 
 namespace CGAL {
 

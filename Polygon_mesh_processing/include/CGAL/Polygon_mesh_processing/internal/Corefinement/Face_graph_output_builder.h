@@ -161,7 +161,7 @@ class Face_graph_output_builder
     if ( is_node_of_degree_one.test(src_id) )
     {
       bool res=true;
-      BOOST_FOREACH(halfedge_descriptor h, halfedges_around_source(hedge, tm))
+      CGAL_FOREACH(halfedge_descriptor h, halfedges_around_source(hedge, tm))
         if (is_border(h, tm))
         {
           res = false;
@@ -171,7 +171,7 @@ class Face_graph_output_builder
     }
     if ( is_node_of_degree_one.test(tgt_id) )
     {
-      BOOST_FOREACH(halfedge_descriptor h, halfedges_around_target(hedge, tm))
+      CGAL_FOREACH(halfedge_descriptor h, halfedges_around_target(hedge, tm))
         if (is_border(h, tm))
           return false;
       return true;
@@ -253,7 +253,7 @@ class Face_graph_output_builder
   void mark_edges(const EdgeMarkMap& edge_mark_map,
                  const std::vector<edge_descriptor>& edges)
   {
-    BOOST_FOREACH(edge_descriptor ed, edges)
+    CGAL_FOREACH(edge_descriptor ed, edges)
       put(edge_mark_map, ed, true);
   }
 
@@ -291,7 +291,7 @@ class Face_graph_output_builder
     std::vector<edge_descriptor> edges;
     edges.reserve(edge_map.size());
     typedef std::pair<const edge_descriptor, Node_id_pair> Pair;
-    BOOST_FOREACH(const Pair& p, edge_map)
+    CGAL_FOREACH(const Pair& p, edge_map)
       edges.push_back(p.first);
 
     CGAL_assertion(tuple_id < 4 && tuple_id >= 0);
@@ -539,9 +539,9 @@ public:
       else
         ++epp_it;
     }
-    BOOST_FOREACH(edge_descriptor ed, inter_edges_to_remove1)
+    CGAL_FOREACH(edge_descriptor ed, inter_edges_to_remove1)
       intersection_edges1.erase(ed);
-    BOOST_FOREACH(edge_descriptor ed, inter_edges_to_remove2)
+    CGAL_FOREACH(edge_descriptor ed, inter_edges_to_remove2)
       intersection_edges2.erase(ed);
 
     // (1) Assign a patch id to each facet indicating in which connected
@@ -557,7 +557,7 @@ public:
                                 .face_index_map(fids1));
 
     std::vector <std::size_t> tm1_patch_sizes(nb_patches_tm1, 0);
-    BOOST_FOREACH(std::size_t i, tm1_patch_ids)
+    CGAL_FOREACH(std::size_t i, tm1_patch_ids)
       if(i!=NID)
         ++tm1_patch_sizes[i];
     // ... for tm2
@@ -571,7 +571,7 @@ public:
                                 .face_index_map(fids2));
 
     std::vector <std::size_t> tm2_patch_sizes(nb_patches_tm2, 0);
-    BOOST_FOREACH(std::size_t i, tm2_patch_ids)
+    CGAL_FOREACH(std::size_t i, tm2_patch_ids)
       if(i!=NID)
         ++tm2_patch_sizes[i];
 
@@ -944,7 +944,7 @@ public:
 
       Inside_poly_test inside_tm2(tm2, vpm2);
 
-      BOOST_FOREACH(face_descriptor f, faces(tm1))
+      CGAL_FOREACH(face_descriptor f, faces(tm1))
       {
         std::size_t patch_id=tm1_patch_ids[ get(fids1, f) ];
         if ( patch_status_not_set_tm1.test( patch_id ) )
@@ -988,7 +988,7 @@ public:
                                 ? ON_UNBOUNDED_SIDE : ON_BOUNDED_SIDE;
 
       Inside_poly_test inside_tm1(tm1, vpm1);
-      BOOST_FOREACH(face_descriptor f, faces(tm2))
+      CGAL_FOREACH(face_descriptor f, faces(tm2))
       {
         std::size_t patch_id=tm2_patch_ids[ get(fids2, f) ];
         if ( patch_status_not_set_tm2.test( patch_id ) )
@@ -1205,7 +1205,7 @@ public:
     }
 
     /// first handle operations in a mesh that is neither tm1 nor tm2
-    BOOST_FOREACH(Boolean_operation operation, out_of_place_operations)
+    CGAL_FOREACH(Boolean_operation operation, out_of_place_operations)
     {
       TriangleMesh& output = *(*desired_output[operation]);
       CGAL_assertion(&tm1!=&output && &tm2!=&output);

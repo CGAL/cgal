@@ -30,7 +30,7 @@
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/circulator.h>
 
-#include <boost/foreach.hpp>
+#include <CGAL/foreach.h>
 #include <boost/function_output_iterator.hpp>
 #include <boost/property_map/property_map.hpp>
 #include <boost/unordered_map.hpp>
@@ -86,7 +86,7 @@ void output_uvmap_to_off(const TriangleMesh& mesh,
     halfedge_descriptor hd = halfedge(fd, mesh);
 
     os << "3";
-    BOOST_FOREACH(vertex_descriptor vd, vertices_around_face(hd, mesh)){
+    CGAL_FOREACH(vertex_descriptor vd, vertices_around_face(hd, mesh)){
       os << " " << renumbering_vector[get(vimap, vd)];
     }
     os << '\n';
@@ -120,16 +120,16 @@ void output_uvmap_to_off(const TriangleMesh& mesh,
   std::ostringstream out_vertices, out_faces;
   std::size_t vertices_counter = 0, faces_counter = 0;
 
-  BOOST_FOREACH(vertex_descriptor vd, vertices){
+  CGAL_FOREACH(vertex_descriptor vd, vertices){
     put(vimap, vd, vertices_counter++);
     out_vertices << get(uvmap, vd) << " 0" << '\n';
   }
 
-  BOOST_FOREACH(face_descriptor fd, faces){
+  CGAL_FOREACH(face_descriptor fd, faces){
     halfedge_descriptor hd = halfedge(fd, mesh);
 
     out_faces << "3";
-    BOOST_FOREACH(vertex_descriptor vd, vertices_around_face(hd, mesh)){
+    CGAL_FOREACH(vertex_descriptor vd, vertices_around_face(hd, mesh)){
       out_faces << " " << get(vimap, vd);
     }
     out_faces << '\n';

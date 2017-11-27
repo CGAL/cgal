@@ -181,7 +181,7 @@ template<typename GT,
                  VNFEMap vnfe)
 {
   // Initialize vertices
-  BOOST_FOREACH(typename boost::graph_traits<PolygonMesh>::vertex_descriptor vd,
+  CGAL_FOREACH(typename boost::graph_traits<PolygonMesh>::vertex_descriptor vd,
                 vertices(pmesh))
   {
     put(vnfe, vd, 0);
@@ -189,7 +189,7 @@ template<typename GT,
   FT cos_angle ( std::cos(CGAL::to_double(angle_in_deg) * CGAL_PI / 180.) );
 
   // Detect sharp edges
-  BOOST_FOREACH(typename boost::graph_traits<PolygonMesh>::edge_descriptor ed, edges(pmesh))
+  CGAL_FOREACH(typename boost::graph_traits<PolygonMesh>::edge_descriptor ed, edges(pmesh))
   {
     typename boost::graph_traits<PolygonMesh>::halfedge_descriptor he = halfedge(ed,pmesh);
     if(is_border_edge(he,pmesh)
@@ -220,7 +220,7 @@ template<typename GT,
   FT cos_angle ( std::cos(CGAL::to_double(angle_in_deg) * CGAL_PI / 180.) );
 
   // Detect sharp edges
-  BOOST_FOREACH(edge_descriptor ed, edges(pmesh))
+  CGAL_FOREACH(edge_descriptor ed, edges(pmesh))
   {
     halfedge_descriptor he = halfedge(ed,pmesh);
     if(is_border(he,pmesh)
@@ -323,7 +323,7 @@ void detect_vertex_incident_patches(PolygonMesh& pmesh,
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor    vertex_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor  halfedge_descriptor;
 
-  BOOST_FOREACH(vertex_descriptor vit,vertices(pmesh))
+  CGAL_FOREACH(vertex_descriptor vit,vertices(pmesh))
   {
     // Look only at feature vertices
     if( ! get(edge_is_feature_map, edge(halfedge(vit, pmesh), pmesh) ))
@@ -332,7 +332,7 @@ void detect_vertex_incident_patches(PolygonMesh& pmesh,
     // Loop on incident facets of vit
     typename VertexIncidentPatchesMap::value_type&
       id_set = vertex_incident_patches_map[vit];
-    BOOST_FOREACH(halfedge_descriptor he, halfedges_around_target(vit,pmesh))
+    CGAL_FOREACH(halfedge_descriptor he, halfedges_around_target(vit,pmesh))
     {
       if( ! is_border(he,pmesh) )
       {

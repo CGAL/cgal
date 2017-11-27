@@ -35,7 +35,7 @@
 #include <CGAL/array.h>
 
 #include <boost/dynamic_bitset.hpp>
-#include <boost/foreach.hpp>
+#include <CGAL/foreach.h>
 #include <boost/optional.hpp>
 #include <boost/unordered_map.hpp>
 
@@ -131,13 +131,13 @@ public:
     std::map<Vertex_handle,std::size_t> vertex_indices;
 
     //insert interior vertices
-    BOOST_FOREACH( Vertex_handle vh, interior_vertices){
+    CGAL_FOREACH( Vertex_handle vh, interior_vertices){
       B.add_vertex( vh->point() );
       vertex_indices.insert( std::make_pair(vh, index++) );
     }
 
     //insert border vertices : TODO WE SHOULD GET THEM FROM hds
-    BOOST_FOREACH(Halfedge_handle h, patch_border_halfedges)
+    CGAL_FOREACH(Halfedge_handle h, patch_border_halfedges)
     {
       if( vertex_indices.insert( std::make_pair(h->vertex(),index) ).second ){
         B.add_vertex( h->vertex()->point() );
@@ -149,7 +149,7 @@ public:
       }
     }
 
-    BOOST_FOREACH(Face_handle fh, facets)
+    CGAL_FOREACH(Face_handle fh, facets)
     {
       B.begin_facet();
       B.add_vertex_to_facet( vertex_indices[ this->first_vertex(fh) ] );
@@ -444,7 +444,7 @@ public:
     std::vector<Halfedge_handle> interior_vertex_halfedges;
 
     //insert interior halfedges and create interior vertices
-    BOOST_FOREACH(Halfedge_handle h, interior_halfedges){
+    CGAL_FOREACH(Halfedge_handle h, interior_halfedges){
       Halfedge_handle new_h = hds.edges_push_back( *h );
       Qhedge_to_Phedge[ h ] = new_h;
       // put new halfedges on the border of the mesh
@@ -472,7 +472,7 @@ public:
     }
 
     //create facets and connect halfedges
-    BOOST_FOREACH(Face_handle f, facets)
+    CGAL_FOREACH(Face_handle f, facets)
     {
       Halfedge_handle hedges[]={
         first_hedge(f), second_hedge(f), third_hedge(f)
@@ -502,7 +502,7 @@ public:
     // pointer to be set
     std::vector<Halfedge_handle> border_halfedges_source_to_link;
     std::vector<Halfedge_handle> border_halfedges_target_to_link;
-    BOOST_FOREACH(Halfedge_handle h, interior_halfedges)
+    CGAL_FOREACH(Halfedge_handle h, interior_halfedges)
       if (h->is_border_edge())
       {
         if (!h->is_border()) h=h->opposite();
@@ -529,7 +529,7 @@ public:
       }
     // now the step (ii) we look for the candidate halfedge by turning around
     // the vertex in the direction of the interior of the patch
-    BOOST_FOREACH(Halfedge_handle h, border_halfedges_target_to_link)
+    CGAL_FOREACH(Halfedge_handle h, border_halfedges_target_to_link)
     {
       Halfedge_handle candidate=h->opposite()->prev()->opposite();
       CGAL_assertion_code(Halfedge_handle start=candidate);
@@ -540,7 +540,7 @@ public:
       h->HBase::set_next(candidate);
       decorator.set_prev(candidate,h);
     }
-    BOOST_FOREACH(Halfedge_handle h, border_halfedges_source_to_link)
+    CGAL_FOREACH(Halfedge_handle h, border_halfedges_source_to_link)
     {
       Halfedge_handle candidate=h->opposite()->next()->opposite();
       while (!candidate->is_border())
@@ -551,7 +551,7 @@ public:
 
     // For all interior vertices, update the vertex pointer
     // of all but the vertex halfedge
-    BOOST_FOREACH(Halfedge_handle h, interior_vertex_halfedges)
+    CGAL_FOREACH(Halfedge_handle h, interior_vertex_halfedges)
     {
       Vertex_handle v=h->vertex();
       Halfedge_handle next_around_vertex=h;
@@ -564,7 +564,7 @@ public:
 
     // For all patch boundary vertices, update the vertex pointer
     // of all but the vertex halfedge
-    BOOST_FOREACH(Halfedge_handle qhedge, patch_border_halfedges)
+    CGAL_FOREACH(Halfedge_handle qhedge, patch_border_halfedges)
     {
       //check for a halfedge pointing inside an already imported patch
       Halfedge_handle h = get_hedge(qhedge);
@@ -648,11 +648,11 @@ public:
 
     // put the halfedges on the boundary of the patch on the boundary of the polyhedron
     Face_handle border;
-    BOOST_FOREACH(Halfedge_handle h, patch_border_halfedges)
+    CGAL_FOREACH(Halfedge_handle h, patch_border_halfedges)
       decorator.set_face(h, border);
 
     // set next/prev relationship of border halfedges
-    BOOST_FOREACH(Halfedge_handle h, patch_border_halfedges)
+    CGAL_FOREACH(Halfedge_handle h, patch_border_halfedges)
     {
       Halfedge_handle next=h->next();
       while(!next->is_border())
@@ -667,7 +667,7 @@ public:
     // prev pointer set correctly. To fix that, we consider all interior edges
     // and check for one that is on the border of the patch and that is incident
     // to a border vertex and use it to get the missing prev pointer.
-    BOOST_FOREACH(Halfedge_handle h, interior_halfedges)
+    CGAL_FOREACH(Halfedge_handle h, interior_halfedges)
       if(h->is_border_edge())
       {
         if (h->is_border()) h=h->opposite();
@@ -688,11 +688,11 @@ public:
       }
 
     //now remove the simplices
-    BOOST_FOREACH(Halfedge_handle h, interior_halfedges)
+    CGAL_FOREACH(Halfedge_handle h, interior_halfedges)
       hds.edges_erase(h);
-    BOOST_FOREACH(Face_handle f, facets)
+    CGAL_FOREACH(Face_handle f, facets)
       hds.faces_erase(f);
-    BOOST_FOREACH(Vertex_handle v, interior_vertices)
+    CGAL_FOREACH(Vertex_handle v, interior_vertices)
       hds.vertices_erase(v);
   }
 };
@@ -732,18 +732,18 @@ public:
   {
     CGAL::HalfedgeDS_decorator<HDS> decorator(hds);
     //remove the simplices
-    BOOST_FOREACH(Halfedge_handle h, interior_halfedges)
+    CGAL_FOREACH(Halfedge_handle h, interior_halfedges)
       hds.edges_erase(h);
     // There is no shared halfedge between duplicated patches even
     // if they were before the duplication. Thus the erase that follows is safe.
     // However remember that vertices were not duplicated which is why their
     // removal is not handled here (still in use or to be removed in
     // remove_unused_polylines())
-    BOOST_FOREACH(Halfedge_handle h, border_halfedges)
+    CGAL_FOREACH(Halfedge_handle h, border_halfedges)
       hds.edges_erase(h);
-    BOOST_FOREACH(Face_handle f, facets)
+    CGAL_FOREACH(Face_handle f, facets)
       hds.faces_erase(f);
-    BOOST_FOREACH(Vertex_handle v, interior_vertices)
+    CGAL_FOREACH(Vertex_handle v, interior_vertices)
       hds.vertices_erase(v);
   }
 };
@@ -790,7 +790,7 @@ public:
 
     // put the halfedges on the boundary of the patch on the boundary of the polyhedron
     Face_handle border;
-    BOOST_FOREACH(Halfedge_handle h, patch_border_halfedges)
+    CGAL_FOREACH(Halfedge_handle h, patch_border_halfedges)
     {
       Halfedge_handle new_hedge = hds.edges_push_back(*h);
       new_patch_border.push_back(new_hedge);
@@ -800,7 +800,7 @@ public:
     }
 
     // update next/prev pointer of new hedges in case it is one of the new hedges
-    BOOST_FOREACH(Halfedge_handle h, new_patch_border)
+    CGAL_FOREACH(Halfedge_handle h, new_patch_border)
     {
       if ( h->next()->is_border() ){
         h->HBase::set_next( old_to_new[h->next()] );
@@ -809,7 +809,7 @@ public:
     }
 
     // set next/prev pointers on the border of the neighbor patch
-    BOOST_FOREACH(Halfedge_handle h, patch_border_halfedges)
+    CGAL_FOREACH(Halfedge_handle h, patch_border_halfedges)
     {
       Halfedge_handle next=h->next();
       // check if not already done
@@ -840,7 +840,7 @@ public:
 
     //update next/prev relationship inside the patch
     //to have a correct connectivity, and update facet halfedge pointer
-    BOOST_FOREACH(Halfedge_handle h, new_patch_border)
+    CGAL_FOREACH(Halfedge_handle h, new_patch_border)
     {
       if ( h->prev()->next() != h )
         h->prev()->HBase::set_next( h );
@@ -850,7 +850,7 @@ public:
     }
 
     // update next/prev pointers on the border of the patch
-    BOOST_FOREACH(Halfedge_handle h, new_patch_border)
+    CGAL_FOREACH(Halfedge_handle h, new_patch_border)
     {
       h=h->opposite();
       //set next pointer if not already set
@@ -1011,19 +1011,19 @@ struct Patch_container{
     out << " " << patch.facets.size() << " 0\n";
     std::map<typename Polyhedron::Vertex_handle, int> vertexid;
     int id=0;
-    BOOST_FOREACH(typename Polyhedron::Vertex_handle vh, patch.interior_vertices)
+    CGAL_FOREACH(typename Polyhedron::Vertex_handle vh, patch.interior_vertices)
     {
       vertexid[vh]=id++;
       out << vh->point() << "\n";
     }
 
-    BOOST_FOREACH(typename Polyhedron::Halfedge_handle hh, patch.patch_border_halfedges)
+    CGAL_FOREACH(typename Polyhedron::Halfedge_handle hh, patch.patch_border_halfedges)
     {
       vertexid[hh->vertex()]=id++;
       out << hh->vertex()->point() << "\n";
     }
 
-    BOOST_FOREACH(typename Polyhedron::Facet_handle fh, patch.facets)
+    CGAL_FOREACH(typename Polyhedron::Facet_handle fh, patch.facets)
     {
       out << "3 " << vertexid[fh->halfedge()->vertex()] <<
              " "  << vertexid[fh->halfedge()->next()->vertex()] <<
@@ -1211,7 +1211,7 @@ private:
                      i = patches_to_remove.find_next(i))
     {
       Patch_description& patch=patches_of_P[i];
-      BOOST_FOREACH(Halfedge_handle h, patch.patch_border_halfedges)
+      CGAL_FOREACH(Halfedge_handle h, patch.patch_border_halfedges)
       {
         if (h->is_border() && h->opposite()->is_border()){
           vertices_to_remove.insert(h->vertex());
@@ -1221,10 +1221,10 @@ private:
       }
     }
 
-    BOOST_FOREACH(Vertex_handle vh, vertices_to_remove)
+    CGAL_FOREACH(Vertex_handle vh, vertices_to_remove)
     {
       bool to_remove=true;
-      BOOST_FOREACH(Halfedge_handle h, halfedges_around_target(vh,*P_ptr))
+      CGAL_FOREACH(Halfedge_handle h, halfedges_around_target(vh,*P_ptr))
         if (!h->is_border() || !h->opposite()->is_border())
         {
           to_remove=false;
@@ -1236,7 +1236,7 @@ private:
       if (to_remove)
         remove_vertex(vh,*P_ptr);
     }
-    BOOST_FOREACH(Halfedge_handle hh, edges_to_remove)
+    CGAL_FOREACH(Halfedge_handle hh, edges_to_remove)
       remove_edge(edge(hh,*P_ptr),*P_ptr);
   }
 
@@ -1385,7 +1385,7 @@ private:
        Polygon_mesh_processing::reverse_face_orientations_of_mesh_with_polylines(*P_ptr);
        // here we need to update the mapping to use the correct border
        // halfedges while appending the patches from Q
-       BOOST_FOREACH(typename Edge_map::value_type& v, Qhedge_to_Phedge)
+       CGAL_FOREACH(typename Edge_map::value_type& v, Qhedge_to_Phedge)
         v.second=v.second->opposite();
      }
 
@@ -1769,7 +1769,7 @@ public:
         ++epp_it;
     }
 
-    BOOST_FOREACH(Halfedge_const_handle h, border_edges_to_remove)
+    CGAL_FOREACH(Halfedge_const_handle h, border_edges_to_remove)
       border_halfedges.erase(h);
 
     // (1) Assign a patch id to each facet indicating in which connected
@@ -2338,7 +2338,7 @@ public:
     }
 
     /// first handle operations in a polyhedron that is neither P nor Q
-    BOOST_FOREACH(Boolean_operation operation, out_of_place_operations)
+    CGAL_FOREACH(Boolean_operation operation, out_of_place_operations)
     {
       Polyhedron* ouput_ptr = *desired_output[operation];
       CGAL_assertion(P_ptr!=ouput_ptr && Q_ptr!=ouput_ptr);
@@ -2362,7 +2362,7 @@ public:
         border_halfedges,
         std::back_inserter(shared_halfedges)
       );
-      BOOST_FOREACH(Halfedge_handle h, shared_halfedges){
+      CGAL_FOREACH(Halfedge_handle h, shared_halfedges){
         put(edge_mark_pmap, std::make_pair(h,ouput_ptr),true);
         put(edge_mark_pmap, std::make_pair(h->opposite(),ouput_ptr),true);
       }

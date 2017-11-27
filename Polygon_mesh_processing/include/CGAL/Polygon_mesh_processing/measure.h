@@ -182,7 +182,7 @@ namespace Polygon_mesh_processing {
               , const NamedParameters& np)
   {
     typename GetGeomTraits<PolygonMesh, NamedParameters>::type::FT result = 0.;
-    BOOST_FOREACH(typename boost::graph_traits<PolygonMesh>::halfedge_descriptor haf,
+    CGAL_FOREACH(typename boost::graph_traits<PolygonMesh>::halfedge_descriptor haf,
                   halfedges_around_face(h, pmesh))
     {
       result += edge_length(haf, pmesh, np);
@@ -249,11 +249,11 @@ namespace Polygon_mesh_processing {
     boost::unordered_set<halfedge_descriptor> visited;
     halfedge_descriptor result_halfedge = boost::graph_traits<PolygonMesh>::null_halfedge();
     FT result_len = 0;
-    BOOST_FOREACH(halfedge_descriptor h, halfedges(pmesh)){
+    CGAL_FOREACH(halfedge_descriptor h, halfedges(pmesh)){
       if(visited.find(h)== visited.end()){
         if(is_border(h,pmesh)){
           FT len = 0;
-          BOOST_FOREACH(halfedge_descriptor haf, halfedges_around_face(h, pmesh)){
+          CGAL_FOREACH(halfedge_descriptor haf, halfedges_around_face(h, pmesh)){
             len += edge_length(haf, pmesh, np);
             visited.insert(haf);
           }
@@ -396,7 +396,7 @@ namespace Polygon_mesh_processing {
   {
     typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
     typename GetGeomTraits<TriangleMesh, CGAL_PMP_NP_CLASS>::type::FT result = 0.;
-    BOOST_FOREACH(face_descriptor f, face_range)
+    CGAL_FOREACH(face_descriptor f, face_range)
     {
       result += face_area(f, tmesh, np);
       exact(result);
@@ -515,7 +515,7 @@ volume(const TriangleMesh& tmesh, const CGAL_PMP_NP_CLASS& np)
   typename CGAL::Kernel_traits<typename property_map_value<TriangleMesh,
     CGAL::vertex_point_t>::type>::Kernel::Compute_volume_3 cv3;
 
-  BOOST_FOREACH(face_descriptor f, faces(tmesh))
+  CGAL_FOREACH(face_descriptor f, faces(tmesh))
   {
     volume += cv3(origin,
       get(vpm, target(halfedge(f, tmesh), tmesh)),

@@ -36,7 +36,7 @@
 #include <CGAL/Labeled_image_mesh_domain_3.h> // for
                                               // CGAL::Null_subdomain_index
 #include <boost/utility.hpp> // for boost::prior
-#include <boost/foreach.hpp>
+#include <CGAL/foreach.h>
 
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Orthogonal_incremental_neighbor_search.h>
@@ -88,10 +88,10 @@ struct Polyline_visitor
 #if CGAL_MESH_3_PROTECTION_DEBUG > 1
     std::ofstream og("polylines_graph.polylines.txt");
     og.precision(17);
-    BOOST_FOREACH(const std::vector<P>& poly, polylines)
+    CGAL_FOREACH(const std::vector<P>& poly, polylines)
     {
       og << poly.size() << " ";
-      BOOST_FOREACH(const P& p, poly)
+      CGAL_FOREACH(const P& p, poly)
         og << p << " ";
       og << std::endl;
     }
@@ -189,7 +189,7 @@ void snap_graph_vertices(Graph& graph,
   }
   if(tree.size() == 0) return;
 
-  BOOST_FOREACH(typename boost::graph_traits<Graph>::vertex_descriptor v,
+  CGAL_FOREACH(typename boost::graph_traits<Graph>::vertex_descriptor v,
                 vertices(graph))
   {
     const typename K::Point_3 p = graph[v];

@@ -27,7 +27,7 @@
 #include <CGAL/Surface_mesh_parameterization/internal/kernel_traits.h>
 #include <CGAL/Surface_mesh_parameterization/Error_code.h>
 
-#include <boost/foreach.hpp>
+#include <CGAL/foreach.h>
 
 #include <cfloat>
 #include <climits>
@@ -106,7 +106,7 @@ public:
   {
     if(vertices_given) {
       bool found_min = false, found_max = false;
-      BOOST_FOREACH(vertex_descriptor vd, vertices) {
+      CGAL_FOREACH(vertex_descriptor vd, vertices) {
         if(vd == vxmin) {
           found_min = true;
           if(found_max) break;
@@ -140,7 +140,7 @@ public:
     double ymax = -std::numeric_limits<double>::infinity();
     double zmax = -std::numeric_limits<double>::infinity();
 
-    BOOST_FOREACH(vertex_descriptor vd, vertices) {
+    CGAL_FOREACH(vertex_descriptor vd, vertices) {
       const Point_3& position = get(ppmap,vd);
 
       xmin = (std::min)(position.x(), xmin);
@@ -235,7 +235,7 @@ public:
     double vmin = std::numeric_limits<double>::infinity();
     double vmax = -std::numeric_limits<double>::infinity();
 
-    BOOST_FOREACH(vertex_descriptor vd, vertices) {
+    CGAL_FOREACH(vertex_descriptor vd, vertices) {
       const Point_3& position = get(ppmap, vd);
       Vector_3 position_as_vector = position - Point_3(0, 0, 0);
 

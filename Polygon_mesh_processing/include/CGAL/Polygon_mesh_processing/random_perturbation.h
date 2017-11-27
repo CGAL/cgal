@@ -35,7 +35,7 @@
 
 #include <CGAL/Random.h>
 
-#include <boost/foreach.hpp>
+#include <CGAL/foreach.h>
 
 #ifdef CGAL_PMP_RANDOM_PERTURBATION_VERBOSE
 #include <CGAL/Timer.h>
@@ -87,7 +87,7 @@ namespace internal {
     typename GT::Construct_translated_point_3 translate
       = gt.construct_translated_point_3_object();
 
-    BOOST_FOREACH(vertex_descriptor v, vrange)
+    CGAL_FOREACH(vertex_descriptor v, vrange)
     {
       if (!get(vcmap, v) && !is_border(v, tmesh))
       {

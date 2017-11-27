@@ -22,7 +22,7 @@
 #define CGAL_BOOST_GRAPH_HELPERS_H
 
 
-#include <boost/foreach.hpp>
+#include <CGAL/foreach.h>
 #include <boost/range/empty.hpp>
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/properties.h>
@@ -103,7 +103,7 @@ template <typename FaceGraph>
 bool is_closed(const FaceGraph& g)
 {
   typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
-  BOOST_FOREACH(halfedge_descriptor hd, halfedges(g)){
+  CGAL_FOREACH(halfedge_descriptor hd, halfedges(g)){
     if(is_border(hd,g)){
       return false;
     }
@@ -130,7 +130,7 @@ template <typename FaceGraph>
 {
   typedef typename boost::graph_traits<FaceGraph>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
-  BOOST_FOREACH(vertex_descriptor vd, vertices(g)){
+  CGAL_FOREACH(vertex_descriptor vd, vertices(g)){
     halfedge_descriptor hd = halfedge(vd,g);
     if((hd == boost::graph_traits<FaceGraph>::null_halfedge()) ||
        (! is_bivalent(hd,g))){
@@ -160,7 +160,7 @@ template <typename FaceGraph>
 {
   typedef typename boost::graph_traits<FaceGraph>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
-  BOOST_FOREACH(vertex_descriptor vd, vertices(g)){
+  CGAL_FOREACH(vertex_descriptor vd, vertices(g)){
     halfedge_descriptor hd = halfedge(vd,g);
     if((hd == boost::graph_traits<FaceGraph>::null_halfedge()) ||
        (! is_trivalent(halfedge(hd,g),g))){
@@ -206,7 +206,7 @@ template <typename FaceGraph>
   bool is_triangle_mesh(const FaceGraph& g)  
 {
   typedef typename boost::graph_traits<FaceGraph>::face_descriptor face_descriptor;
-  BOOST_FOREACH(face_descriptor fd, faces(g)){
+  CGAL_FOREACH(face_descriptor fd, faces(g)){
     if(! is_triangle(halfedge(fd,g),g)){
       return false;
     }
@@ -250,7 +250,7 @@ template <typename FaceGraph>
   bool is_quad_mesh(const FaceGraph& g)  
 {
     typedef typename boost::graph_traits<FaceGraph>::face_descriptor face_descriptor;
-  BOOST_FOREACH(face_descriptor fd, faces(g)){
+  CGAL_FOREACH(face_descriptor fd, faces(g)){
     if(! is_quad(halfedge(fd,g),g)){
       return false;
     }
@@ -362,17 +362,17 @@ bool is_valid_polygon_mesh(const FaceGraph& g)
   typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
   typedef typename boost::graph_traits<FaceGraph>::vertex_descriptor   vertex_descriptor;
   typedef typename boost::graph_traits<FaceGraph>::face_descriptor     face_descriptor;
-  BOOST_FOREACH(vertex_descriptor v, vertices(g)){
+  CGAL_FOREACH(vertex_descriptor v, vertices(g)){
     if(! is_valid_vertex_descriptor(v,g)){
       return false;
     }
   }
-  BOOST_FOREACH(halfedge_descriptor h, halfedges(g)){
+  CGAL_FOREACH(halfedge_descriptor h, halfedges(g)){
     if(! is_valid_halfedge_descriptor(h,g)){
       return false;
     }
   }
-  BOOST_FOREACH(face_descriptor f, faces(g)){
+  CGAL_FOREACH(face_descriptor f, faces(g)){
     if(! is_valid_face_descriptor(f,g)){
       return false;
     }
@@ -1123,13 +1123,13 @@ clear_impl(FaceGraph& g)
   typedef typename boost::graph_traits<FaceGraph>::edge_descriptor     edge_descriptor;
   typedef typename boost::graph_traits<FaceGraph>::vertex_descriptor   vertex_descriptor;
   typedef typename boost::graph_traits<FaceGraph>::face_descriptor     face_descriptor;
-  BOOST_FOREACH(edge_descriptor ed, edges(g)) {
+  CGAL_FOREACH(edge_descriptor ed, edges(g)) {
     remove_edge(ed, g);
   }
-  BOOST_FOREACH(vertex_descriptor vd, vertices(g)) {
+  CGAL_FOREACH(vertex_descriptor vd, vertices(g)) {
     remove_vertex(vd, g);
   }
-  BOOST_FOREACH(face_descriptor fd, faces(g)) {
+  CGAL_FOREACH(face_descriptor fd, faces(g)) {
     remove_face(fd, g);
   }
 }

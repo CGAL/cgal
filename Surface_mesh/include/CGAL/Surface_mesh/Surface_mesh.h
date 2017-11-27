@@ -41,7 +41,7 @@
 #include <boost/cstdint.hpp>
 #include <boost/array.hpp>
 #include <boost/iterator/iterator_facade.hpp>
-#include <boost/foreach.hpp>
+#include <CGAL/foreach.h>
 #include <CGAL/property_map.h>
 #include <CGAL/Iterator_range.h>
 #include <CGAL/circulator.h>
@@ -510,7 +510,7 @@ public:
     ///
     /// Each range `R` in this section has a nested type `R::iterator`, 
     /// is convertible to `std:pair<R::iterator,R::iterator>`, so that one can use `boost::tie()`,
-    /// and can be used with `BOOST_FOREACH()`, as well as with the C++11 range based for-loop.
+    /// and can be used with `CGAL_FOREACH()`, as well as with the C++11 range based for-loop.
 
     ///@{
 
@@ -1727,7 +1727,7 @@ public:
   /// of the surface mesh.
   void set_vertex_halfedge_to_border_halfedge()
   {
-    BOOST_FOREACH(Halfedge_index h, halfedges()){
+    CGAL_FOREACH(Halfedge_index h, halfedges()){
       if(is_border(h)){
           set_halfedge(target(h),h);
         }
@@ -1998,7 +1998,7 @@ private: //------------------------------------------------------- private data
     std::vector<int> reindex;
     reindex.resize(sm.num_vertices());
     int n = 0;
-    BOOST_FOREACH(Vertex_index v, sm.vertices()){
+    CGAL_FOREACH(Vertex_index v, sm.vertices()){
       os << sm.point(v);
       if(has_vcolors)
       {
@@ -2009,9 +2009,9 @@ private: //------------------------------------------------------- private data
       reindex[v]=n++;
     }
 
-    BOOST_FOREACH(Face_index f, sm.faces()){
+    CGAL_FOREACH(Face_index f, sm.faces()){
       os << sm.degree(f);
-      BOOST_FOREACH(Vertex_index v, CGAL::vertices_around_face(sm.halfedge(f),sm)){
+      CGAL_FOREACH(Vertex_index v, CGAL::vertices_around_face(sm.halfedge(f),sm)){
         os << " " << reindex[v];
       }
       if(has_fcolors)

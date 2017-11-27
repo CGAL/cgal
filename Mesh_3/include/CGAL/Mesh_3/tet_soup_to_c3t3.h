@@ -36,7 +36,7 @@
 #include <boost/array.hpp>
 #include <boost/unordered_set.hpp>
 #include <boost/unordered_map.hpp>
-#include <boost/foreach.hpp>
+#include <CGAL/foreach.h>
 
 
 namespace CGAL
@@ -302,7 +302,7 @@ bool build_triangulation(Tr& tr,
   tr.tds().clear(); // not tr.clear() since it calls tr.init() which we don't want
 
   build_vertices<Tr>(tr, points, vertex_handle_vector);
-  BOOST_FOREACH(Vertex_handle vh, vertex_handle_vector)
+  CGAL_FOREACH(Vertex_handle vh, vertex_handle_vector)
   {
     vh->set_dimension(-1);
   }

@@ -38,7 +38,7 @@
 #endif
 #include <CGAL/OpenNL/linear_solver.h>
 
-#include <boost/foreach.hpp>
+#include <CGAL/foreach.h>
 #include <boost/function_output_iterator.hpp>
 #include <boost/unordered_set.hpp>
 
@@ -246,7 +246,7 @@ public:
     // Fill the matrix for the other vertices
     solver.begin_system();
 
-    BOOST_FOREACH(face_descriptor fd, ccfaces) {
+    CGAL_FOREACH(face_descriptor fd, ccfaces) {
       // Create two lines in the linear system per triangle (one for u, one for v)
       status = setup_triangle_relations(solver, mesh, fd, vimap);
       if (status != OK)
@@ -265,7 +265,7 @@ public:
     // Copy X coordinates into the (u,v) pair of each vertex
     //set_mesh_uv_from_system(mesh, solver, uvmap);
 
-    BOOST_FOREACH(vertex_descriptor vd, ccvertices) {
+    CGAL_FOREACH(vertex_descriptor vd, ccvertices) {
       int index = get(vimap,vd);
       NT u = solver.variable(2 * index).value();
       NT v = solver.variable(2 * index + 1).value();
@@ -289,7 +289,7 @@ private:
                                           VertexIndexMap vimap,
                                           VertexParameterizedMap vpmap) const
   {
-    BOOST_FOREACH(vertex_descriptor v, ccvertices) {
+    CGAL_FOREACH(vertex_descriptor v, ccvertices) {
       // Get vertex index in sparse linear system
       int index = get(vimap, v);
 

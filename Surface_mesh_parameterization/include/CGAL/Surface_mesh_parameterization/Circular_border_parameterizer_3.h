@@ -29,7 +29,7 @@
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/number_utils.h>
 
-#include <boost/foreach.hpp>
+#include <CGAL/foreach.h>
 
 #include <cmath>
 
@@ -96,7 +96,7 @@ private:
                            halfedge_descriptor bhd) const
   {
     NT len = 0.0;
-    BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(bhd, mesh)) {
+    CGAL_FOREACH(halfedge_descriptor hd, halfedges_around_face(bhd, mesh)) {
       len += compute_edge_length(mesh, source(hd, mesh), target(hd, mesh));
     }
     return len;
@@ -150,7 +150,7 @@ public:
     const NT tmp = 2 * CGAL_PI / total_len;
     NT len = 0.0; // current position on circle in [0, total_len]
 
-    BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(bhd, mesh)) {
+    CGAL_FOREACH(halfedge_descriptor hd, halfedges_around_face(bhd, mesh)) {
       vertex_descriptor vd = source(hd, mesh);
       NT angle = len * tmp; // current position on the circle in radians
 

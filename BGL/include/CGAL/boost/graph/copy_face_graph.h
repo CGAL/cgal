@@ -68,7 +68,7 @@ void copy_face_graph_impl(const SourceMesh& sm, TargetMesh& tm,
   tm_face_descriptor tm_null_face = boost::graph_traits<TargetMesh>::null_face();
 
   //insert halfedges and create each vertex when encountering its halfedge
-  BOOST_FOREACH(sm_edge_descriptor sm_e, edges(sm))
+  CGAL_FOREACH(sm_edge_descriptor sm_e, edges(sm))
   {
     tm_edge_descriptor tm_e = add_edge(tm);
     sm_halfedge_descriptor sm_h = halfedge(sm_e, sm), sm_h_opp = opposite(sm_h, sm);
@@ -113,7 +113,7 @@ void copy_face_graph_impl(const SourceMesh& sm, TargetMesh& tm,
     }
   }
   //create faces and connect halfedges
-  BOOST_FOREACH(sm_face_descriptor sm_f, faces(sm))
+  CGAL_FOREACH(sm_face_descriptor sm_f, faces(sm))
   {
     tm_face_descriptor tm_f = add_face(tm);
     *f2f++=std::make_pair(sm_f, tm_f);
@@ -123,7 +123,7 @@ void copy_face_graph_impl(const SourceMesh& sm, TargetMesh& tm,
     set_halfedge(tm_f, tm_h_prev, tm);
 
     CGAL_precondition(*halfedges_around_face(sm_h_i, sm).first == sm_h_i);
-    BOOST_FOREACH(sm_halfedge_descriptor sm_h, halfedges_around_face(sm_h_i, sm))
+    CGAL_FOREACH(sm_halfedge_descriptor sm_h, halfedges_around_face(sm_h_i, sm))
     {
       tm_halfedge_descriptor tm_h = get(hmap, sm_h);
       set_next(tm_h_prev, tm_h, tm);
@@ -143,7 +143,7 @@ void copy_face_graph_impl(const SourceMesh& sm, TargetMesh& tm,
 
     tm_halfedge_descriptor tm_h_prev = tm_h;
     CGAL_precondition(*halfedges_around_face(sm_border_halfedges[i], sm).first == sm_border_halfedges[i]);
-    BOOST_FOREACH(sm_halfedge_descriptor sm_h,
+    CGAL_FOREACH(sm_halfedge_descriptor sm_h,
                   halfedges_around_face(next(sm_border_halfedges[i], sm), sm))
     {
       CGAL_assertion(next(tm_h_prev, tm) == boost::graph_traits<TargetMesh>::null_halfedge());

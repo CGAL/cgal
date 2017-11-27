@@ -43,7 +43,7 @@
   #include <CGAL/Mesh_3/Profiling_tools.h>
 #endif
 
-#include <boost/foreach.hpp>
+#include <CGAL/foreach.h>
 #include <boost/range/begin.hpp>
 #include <boost/range/end.hpp>
 #include <boost/optional.hpp>
@@ -3521,7 +3521,7 @@ try_lock_and_get_incident_cells(const Vertex_handle& v,
 
         if (!try_lock_element(next)) // LOCK
         {
-          BOOST_FOREACH(Cell_handle& ch,
+          CGAL_FOREACH(Cell_handle& ch,
             std::make_pair(cells.begin(), cells.end()))
           {
             ch->tds_data().clear();
@@ -3538,7 +3538,7 @@ try_lock_and_get_incident_cells(const Vertex_handle& v,
       }
       ++head;
     } while(head != tail);
-    BOOST_FOREACH(Cell_handle& ch, std::make_pair(cells.begin(), cells.end()))
+    CGAL_FOREACH(Cell_handle& ch, std::make_pair(cells.begin(), cells.end()))
     {
       ch->tds_data().clear();
     }
@@ -3558,7 +3558,7 @@ try_lock_and_get_incident_cells(const Vertex_handle& v,
   bool ret = try_lock_and_get_incident_cells(v, tmp_cells);
   if (ret)
   {
-    BOOST_FOREACH(Cell_handle& ch,
+    CGAL_FOREACH(Cell_handle& ch,
                   std::make_pair(tmp_cells.begin(), tmp_cells.end()))
     {
       if (filter(ch))
@@ -3903,7 +3903,7 @@ get_surface_boundary(const Vertex_handle& moving_vertex,
 
   // std::cerr.precision(17);
   // std::cerr << "boundary { ";
-  // BOOST_FOREACH(const typename Facet_boundary::value_type& v,
+  // CGAL_FOREACH(const typename Facet_boundary::value_type& v,
   //               boundary)
   // {
   //   std::cerr << "(" << v.first.first->point() << ", " << v.first.second->point() << ", " << v.second.first << ") ";

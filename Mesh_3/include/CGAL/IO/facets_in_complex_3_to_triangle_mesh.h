@@ -114,11 +114,11 @@ void facets_in_complex_3_to_triangle_mesh(const C3T3& c3t3, TriangleMesh& graph)
   //first skip degenerate polygons
   std::vector<Polygon_3> valid_polygons;
   valid_polygons.reserve(polygons.size());
-  BOOST_FOREACH(Polygon_3& polygon, polygons)
+  CGAL_FOREACH(Polygon_3& polygon, polygons)
   {
     std::set<std::size_t> vids;
     bool to_remove=false;
-    BOOST_FOREACH(std::size_t id, polygon)
+    CGAL_FOREACH(std::size_t id, polygon)
     {
       if (!vids.insert(id).second){
         to_remove=true;

@@ -45,7 +45,7 @@
 #include <CGAL/Boolean_set_operations_2/Ccb_curve_iterator.h>
 #include <CGAL/Union_find.h>
 
-#include <boost/foreach.hpp>
+#include <CGAL/foreach.h>
 
 /*!
   \file   Gps_on_surface_base_2.h
@@ -1092,7 +1092,7 @@ protected:
 
       // update halfedge flag according to the flag of the twin halfedge
       // or if the outer ccb of the cc was set
-      BOOST_FOREACH(Halfedge_handle h, halfedges_that_was_on_an_outer_ccb)
+      CGAL_FOREACH(Halfedge_handle h, halfedges_that_was_on_an_outer_ccb)
       {
         if (h->flag()!=NOT_VISITED) continue;
         std::size_t face_master_id=(*uf_faces.find(face_handles[h->face()->id()]))->id();
@@ -1181,9 +1181,9 @@ protected:
       }
 
       //collect for reuse/removal all inner and outer ccbs
-      BOOST_FOREACH(void* ptr, (*it)->_outer_ccbs())
+      CGAL_FOREACH(void* ptr, (*it)->_outer_ccbs())
         outer_ccbs_to_remove.push_back( static_cast<typename Aos_2::Dcel::Halfedge*>(ptr)->outer_ccb() );
-      BOOST_FOREACH(void* ptr, (*it)->_inner_ccbs())
+      CGAL_FOREACH(void* ptr, (*it)->_inner_ccbs())
         inner_ccbs_to_remove.push_back( static_cast<typename Aos_2::Dcel::Halfedge*>(ptr)->inner_ccb() );
       (*it)->_outer_ccbs().clear();
       (*it)->_inner_ccbs().clear();
@@ -1258,9 +1258,9 @@ protected:
     }
 
     // now set the new face for all ccbs
-    BOOST_FOREACH(Outer_ccb_and_face& ccb_and_face, outer_ccb_and_new_face_pairs)
+    CGAL_FOREACH(Outer_ccb_and_face& ccb_and_face, outer_ccb_and_new_face_pairs)
       ccb_and_face.first->set_face(ccb_and_face.second);
-    BOOST_FOREACH(Inner_ccb_and_face& ccb_and_face, inner_ccb_and_new_face_pairs)
+    CGAL_FOREACH(Inner_ccb_and_face& ccb_and_face, inner_ccb_and_new_face_pairs)
       ccb_and_face.first->set_face(ccb_and_face.second);
 
     //remove no longer used edges, vertices and faces

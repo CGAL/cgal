@@ -28,7 +28,7 @@
 
 #include <CGAL/boost/graph/properties.h>
 
-#include <boost/foreach.hpp>
+#include <CGAL/foreach.h>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/unordered_set.hpp>
 
@@ -273,7 +273,7 @@ bool check_input_validity(const SeamMesh& mesh,
   // count how many times vertices on a seam appear
   boost::unordered_map<TM_vertex_descriptor, int> seam_vertices_counter;
 
-  BOOST_FOREACH(halfedge_descriptor hdaf, halfedges_around_face(bhd, mesh)) {
+  CGAL_FOREACH(halfedge_descriptor hdaf, halfedges_around_face(bhd, mesh)) {
     CGAL_precondition(mesh.has_on_seam(hdaf));
     TM_vertex_descriptor tm_vds = source(hdaf, mesh.mesh());
     TM_vertex_descriptor tm_vdt = target(hdaf, mesh.mesh());
@@ -371,7 +371,7 @@ Error_code read_cones(const TriangleMesh& pm, std::ifstream& in,
 
   for(std::size_t i=0; i<cones.size(); ++i) {
     int counter = 0;
-    BOOST_FOREACH(TM_vertex_descriptor vd, vertices(pm)) {
+    CGAL_FOREACH(TM_vertex_descriptor vd, vertices(pm)) {
       if(counter == cones[i]) {
         cone_vds_in_tm[i] = vd;
         break;
@@ -429,7 +429,7 @@ bool locate_cones(const SeamMesh& mesh,
 
   for(std::size_t i=0; i<cvdss; ++i) {
     TM_vertex_descriptor smvd = cone_tm_vds[i];
-    BOOST_FOREACH(vertex_descriptor vd, vertices(mesh)) {
+    CGAL_FOREACH(vertex_descriptor vd, vertices(mesh)) {
       if(get(ppmap, vd) == get(pm_ppmap, smvd)) {
         Cone_type ct;
         if(i == 0)
@@ -472,7 +472,7 @@ bool locate_unordered_cones(const SeamMesh& mesh,
 
   // find a vertex on the seam
   vertex_descriptor vertex_on_seam;
-  BOOST_FOREACH(vertex_descriptor vd, vertices(mesh)) {
+  CGAL_FOREACH(vertex_descriptor vd, vertices(mesh)) {
     if(mesh.has_on_seam(vd)) {
       vertex_on_seam = vd;
       break;
@@ -494,7 +494,7 @@ bool locate_unordered_cones(const SeamMesh& mesh,
   // walk on the seam and mark if we encounter a cone
   vertex_descriptor end = vertex_on_seam;
   do {
-    BOOST_FOREACH(TM_vertex_descriptor smvd, cone_tm_vds) {
+    CGAL_FOREACH(TM_vertex_descriptor smvd, cone_tm_vds) {
       if(get(ppmap, vertex_on_seam) == get(pm_ppmap, smvd)) { // the seam mesh vertex is a cone
 
         // we have encountered a cone. Must check if the cone is a Unique_cone

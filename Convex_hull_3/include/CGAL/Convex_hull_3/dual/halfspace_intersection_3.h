@@ -39,7 +39,7 @@
 
 #include <boost/unordered_map.hpp>
 #include <boost/type_traits/is_floating_point.hpp>
-#include <boost/foreach.hpp>
+#include <CGAL/foreach.h>
 
 namespace CGAL
 {
@@ -148,7 +148,7 @@ namespace CGAL
             
             typename boost::property_map<Polyhedron, vertex_point_t>::const_type vpmap  = get(CGAL::vertex_point, P);
 
-            BOOST_FOREACH(face_descriptor fd, faces(P))
+            CGAL_FOREACH(face_descriptor fd, faces(P))
                 {
                   halfedge_descriptor h = halfedge(fd,P), done(h);
                   Point const& p1 = get(vpmap, target(h,P));

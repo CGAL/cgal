@@ -26,8 +26,8 @@
 #if BOOST_VERSION >= 105100 && !defined(BOOST_NO_CXX11_RANGE_BASED_FOR)
 #define CGAL_FOREACH(A,B) for(A : B)
 #else
-#include <boost/foreach.hpp>
-#define CGAL_FOREACH(A,B) BOOST_FOREACH(A, B)
+#include <CGAL/foreach.h>
+#define CGAL_FOREACH(A,B) CGAL_FOREACH(A, B)
 #endif
 
 #endif

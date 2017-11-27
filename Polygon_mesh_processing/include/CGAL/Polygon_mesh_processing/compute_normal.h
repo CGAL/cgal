@@ -187,7 +187,7 @@ compute_face_normals(const PolygonMesh& pmesh
   typedef typename GetGeomTraits<PolygonMesh,NamedParameters>::type Kernel;
 
   typename boost::graph_traits<PolygonMesh>::face_descriptor f;
-  BOOST_FOREACH(f, faces(pmesh)){
+  CGAL_FOREACH(f, faces(pmesh)){
     typename Kernel::Vector_3 vec = compute_face_normal(f, pmesh, np);
     put(fnm, f, vec);
   }
@@ -306,7 +306,7 @@ compute_vertex_normals(const PolygonMesh& pmesh
   typedef typename GetGeomTraits<PolygonMesh,NamedParameters>::type Kernel;
 
   typename boost::graph_traits<PolygonMesh>::vertex_descriptor v;
-  BOOST_FOREACH(v, vertices(pmesh)){
+  CGAL_FOREACH(v, vertices(pmesh)){
     typename Kernel::Vector_3 vec = compute_vertex_normal(v, pmesh, np);
     put(vnm, v, vec);
   }

@@ -32,7 +32,7 @@
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
-#include <boost/foreach.hpp>
+#include <CGAL/foreach.h>
 
 namespace CGAL {
 
@@ -80,7 +80,7 @@ namespace CGAL {
 
       halfedge_descriptor h0 = *(halfedges(pmesh).first);
       CGAL::Bbox_3 bb = get(vpm, target(h0, pmesh)).bbox();
-      BOOST_FOREACH(halfedge_descriptor h, halfedges(pmesh))
+      CGAL_FOREACH(halfedge_descriptor h, halfedges(pmesh))
       {
         bb += get_bbox( get(vpm, target(h, pmesh)) );
       }
@@ -217,7 +217,7 @@ namespace CGAL {
       typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
 
       CGAL::Bbox_3 bb;
-      BOOST_FOREACH(halfedge_descriptor h,
+      CGAL_FOREACH(halfedge_descriptor h,
                     halfedges_around_face(halfedge(fd, pmesh), pmesh))
       {
         bb += get_bbox( get(vpm, target(h, pmesh)) );

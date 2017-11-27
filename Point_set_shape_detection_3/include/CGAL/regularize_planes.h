@@ -37,7 +37,7 @@
 #include <CGAL/centroid.h>
 #include <CGAL/squared_distance_3.h>
 
-#include <boost/foreach.hpp>
+#include <CGAL/foreach.h>
 
 
 namespace CGAL {

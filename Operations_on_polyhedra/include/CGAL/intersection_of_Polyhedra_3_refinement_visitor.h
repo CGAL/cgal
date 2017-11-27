@@ -35,7 +35,7 @@
 #include <CGAL/property_map.h>
 #include <boost/optional.hpp>
 #include <boost/next_prior.hpp>
-#include <boost/foreach.hpp>
+#include <CGAL/foreach.h>
 
 #include <fstream>
 #include <sstream>
@@ -1131,7 +1131,7 @@ public:
     typedef std::pair< const std::pair<int,int>,
                        std::pair< std::map<Polyhedron*,Halfedge_handle>,
                                   std::pair<bool,int> > >  Complicated_pair;
-    BOOST_FOREACH(
+    CGAL_FOREACH(
       Complicated_pair& p,
       an_edge_per_polyline)
     {

@@ -90,7 +90,7 @@ clip_open_impl(      TriangleMesh& tm,
   /// \todo clipper has been modified, this is not robust if inexact constructions are used
   CGAL::Side_of_triangle_mesh<TriangleMesh, GeomTraits, Vpm>
     side_of(clipper, vpm_c);
-  BOOST_FOREACH(face_descriptor f, faces(tm))
+  CGAL_FOREACH(face_descriptor f, faces(tm))
   {
     std::size_t cc_id = face_cc[ get(fid_map, f) ];
     if ( !cc_not_handled.test(cc_id) ) continue;
@@ -99,7 +99,7 @@ clip_open_impl(      TriangleMesh& tm,
     for(int i=0;i<3;++i)
     {
       bool no_marked_edge=true;
-      BOOST_FOREACH(halfedge_descriptor h2, halfedges_around_target(h, tm))
+      CGAL_FOREACH(halfedge_descriptor h2, halfedges_around_target(h, tm))
         if ( get(ecm, edge(h2, tm)) ){
           no_marked_edge=false;
           break;

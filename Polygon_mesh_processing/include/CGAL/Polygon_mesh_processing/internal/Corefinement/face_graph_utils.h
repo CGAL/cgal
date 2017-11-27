@@ -52,7 +52,7 @@ template<class G,
          class EdgeMarkMap>
 void mark_all_edges(G& tm, EdgeMarkMap& edge_mark_map)
 {
-  BOOST_FOREACH(typename boost::graph_traits<G>::edge_descriptor ed,
+  CGAL_FOREACH(typename boost::graph_traits<G>::edge_descriptor ed,
                 edges(tm))
   {
     put(edge_mark_map, ed, true);
@@ -70,7 +70,7 @@ void unmark_edges(      G& tm,
                         EdgeMarkMap& edge_mark_map,
                   const HalfedgeRange& hedges)
 {
-  BOOST_FOREACH(typename boost::graph_traits<G>::halfedge_descriptor hd, hedges)
+  CGAL_FOREACH(typename boost::graph_traits<G>::halfedge_descriptor hd, hedges)
     put(edge_mark_map, edge(hd, tm), false);
 }
 
@@ -127,7 +127,7 @@ void copy_edge_mark(G& g,
                     const EdgeMarkMapIn & edge_mark_map_in,
                           EdgeMarkMapOut& edge_mark_map_out)
 {
-  BOOST_FOREACH(typename boost::graph_traits<G>::edge_descriptor ed, edges(g))
+  CGAL_FOREACH(typename boost::graph_traits<G>::edge_descriptor ed, edges(g))
     if(get(edge_mark_map_in, ed))
       put(edge_mark_map_out, ed, true);
 }
@@ -183,7 +183,7 @@ triangulate_a_face(
   //insert the intersection point interior to the face inside the mesh and
   //save their vertex_descriptor
   CGAL_assertion( node_ids.size()== std::set<Node_id>(node_ids.begin(), node_ids.end()).size() );
-  BOOST_FOREACH(Node_id node_id, node_ids)
+  CGAL_FOREACH(Node_id node_id, node_ids)
   {
     vertex_descriptor v=add_vertex(tm);
     new_node_visitor.new_vertex_added(node_id, v, tm);
@@ -337,12 +337,12 @@ void extract_patch_simplices(
   typedef typename GT::vertex_descriptor vertex_descriptor;
   typedef typename GT::face_descriptor face_descriptor;
 
-  BOOST_FOREACH(face_descriptor f, faces(pm))
+  CGAL_FOREACH(face_descriptor f, faces(pm))
   {
     if ( patch_ids[ get(fids, f) ]==patch_id )
     {
       patch_faces.push_back( f );
-      BOOST_FOREACH(halfedge_descriptor h,
+      CGAL_FOREACH(halfedge_descriptor h,
                     halfedges_around_face(halfedge(f, pm),pm))
       {
         if ( !is_intersection_edge.count(edge(h, pm)) )
@@ -357,14 +357,14 @@ void extract_patch_simplices(
   }
 
   std::set<vertex_descriptor> border_vertices;
-  BOOST_FOREACH(halfedge_descriptor h, shared_edges)
+  CGAL_FOREACH(halfedge_descriptor h, shared_edges)
   {
     border_vertices.insert( target(h,pm) );
     // if the model is not closed i.e. patch_border_halfedge is not cycle-only
     border_vertices.insert( source(h,pm) );
   }
 
-  BOOST_FOREACH(halfedge_descriptor h, interior_edges)
+  CGAL_FOREACH(halfedge_descriptor h, interior_edges)
   {
     if ( !border_vertices.count( target(h,pm) ) )
       interior_vertices.insert( target(h,pm) );
@@ -426,19 +426,19 @@ struct Patch_container{
     out << " " << patch.faces.size() << " 0\n";
     std::map<vertex_descriptor, int> vertexid;
     int id=0;
-    BOOST_FOREACH(vertex_descriptor vh, patch.interior_vertices)
+    CGAL_FOREACH(vertex_descriptor vh, patch.interior_vertices)
     {
       vertexid[vh]=id++;
       out << get(vertex_point, pm, vh) << "\n";
     }
 
-    BOOST_FOREACH(halfedge_descriptor hh, patch.shared_edges)
+    CGAL_FOREACH(halfedge_descriptor hh, patch.shared_edges)
     {
       vertexid[target(hh, pm)]=id++;
       out << get(vertex_point, pm, target(hh, pm)) << "\n";
     }
 
-    BOOST_FOREACH(face_descriptor f, patch.faces)
+    CGAL_FOREACH(face_descriptor f, patch.faces)
     {
       out << "3 " << vertexid[source(halfedge(f,pm),pm)] <<
              " "  << vertexid[target(halfedge(f,pm),pm)] <<
@@ -737,7 +737,7 @@ void append_patches_to_triangle_mesh(
     std::vector<halfedge_descriptor> interior_vertex_halfedges;
 
     //insert interior halfedges and create interior vertices
-    BOOST_FOREACH(halfedge_descriptor h, patch.interior_edges)
+    CGAL_FOREACH(halfedge_descriptor h, patch.interior_edges)
     {
       edge_descriptor new_edge = add_edge(output), ed = edge(h,tm);
 
@@ -777,7 +777,7 @@ void append_patches_to_triangle_mesh(
     }
 
     //create faces and connect halfedges
-    BOOST_FOREACH(face_descriptor f, patch.faces)
+    CGAL_FOREACH(face_descriptor f, patch.faces)
     {
       cpp11::array<halfedge_descriptor,3> hedges = helper.halfedges(f);
 
@@ -805,7 +805,7 @@ void append_patches_to_triangle_mesh(
     // pointer to be set
     std::vector<halfedge_descriptor> border_halfedges_source_to_link;
     std::vector<halfedge_descriptor> border_halfedges_target_to_link;
-    BOOST_FOREACH(halfedge_descriptor h, patch.interior_edges)
+    CGAL_FOREACH(halfedge_descriptor h, patch.interior_edges)
       if (is_border_edge(h,tm))
       {
         if (!is_border(h, tm)) h=opposite(h, tm);
@@ -833,7 +833,7 @@ void append_patches_to_triangle_mesh(
       }
     // now the step (ii) we look for the candidate halfedge by turning around
     // the vertex in the direction of the interior of the patch
-    BOOST_FOREACH(halfedge_descriptor h_out, border_halfedges_target_to_link)
+    CGAL_FOREACH(halfedge_descriptor h_out, border_halfedges_target_to_link)
     {
       halfedge_descriptor candidate =
         opposite(prev(opposite(h_out, output), output), output);
@@ -844,7 +844,7 @@ void append_patches_to_triangle_mesh(
       }
       set_next(h_out, candidate, output);
     }
-    BOOST_FOREACH(halfedge_descriptor h_out, border_halfedges_source_to_link)
+    CGAL_FOREACH(halfedge_descriptor h_out, border_halfedges_source_to_link)
     {
       halfedge_descriptor candidate =
       opposite(next(opposite(h_out, output), output), output);
@@ -855,7 +855,7 @@ void append_patches_to_triangle_mesh(
 
     // For all interior vertices, update the vertex pointer
     // of all but the vertex halfedge
-    BOOST_FOREACH(halfedge_descriptor h_out, interior_vertex_halfedges)
+    CGAL_FOREACH(halfedge_descriptor h_out, interior_vertex_halfedges)
     {
       vertex_descriptor v = target(h_out, output);
       halfedge_descriptor next_around_vertex=h_out;
@@ -868,7 +868,7 @@ void append_patches_to_triangle_mesh(
 
     // For all patch boundary vertices, update the vertex pointer
     // of all but the vertex halfedge
-    BOOST_FOREACH(halfedge_descriptor h, patch.shared_edges)
+    CGAL_FOREACH(halfedge_descriptor h, patch.shared_edges)
     {
       //check for a halfedge pointing inside an already imported patch
       halfedge_descriptor h_out = helper.get_hedge(h);
@@ -1024,7 +1024,7 @@ void disconnect_patches(
     // to be duplicated on the boundary
     std::vector<face_descriptor> face_backup;
     face_backup.reserve( nb_shared_edges );
-    BOOST_FOREACH(halfedge_descriptor h, patch.shared_edges)
+    CGAL_FOREACH(halfedge_descriptor h, patch.shared_edges)
     {
       face_backup.push_back( face(h, tm1) );
       set_face(h, GT::null_face(), tm1);
@@ -1035,7 +1035,7 @@ void disconnect_patches(
     std::vector<halfedge_descriptor> shared_next, shared_prev;
     shared_next.reserve( nb_shared_edges );
     shared_prev.reserve( nb_shared_edges );
-    BOOST_FOREACH(halfedge_descriptor h, patch.shared_edges)
+    CGAL_FOREACH(halfedge_descriptor h, patch.shared_edges)
     {
       halfedge_descriptor nxt=next(h, tm1);
       while(!is_border(nxt, tm1))
@@ -1076,7 +1076,7 @@ void disconnect_patches(
     }
 
     // update next/prev pointer of new hedges in case it is one of the new hedges
-    BOOST_FOREACH(halfedge_descriptor h, new_patch_border)
+    CGAL_FOREACH(halfedge_descriptor h, new_patch_border)
       if (is_border(next(h, tm1), tm1))
         set_next(h, old_to_new[next(h,tm1)], tm1);
 
@@ -1089,7 +1089,7 @@ void disconnect_patches(
     }
 
     // update next/prev pointers on the border of the patch
-    BOOST_FOREACH(halfedge_descriptor h, new_patch_border)
+    CGAL_FOREACH(halfedge_descriptor h, new_patch_border)
     {
       halfedge_descriptor h_opp = opposite(h, tm1);
       //set next pointer if not already set
@@ -1247,11 +1247,11 @@ remove_patches(TriangleMesh& tm,
     Patch_description<TriangleMesh>& patch=patches[i];
 
     // put the halfedges on the boundary of the patch on the boundary of tm
-    BOOST_FOREACH(halfedge_descriptor h, patch.shared_edges)
+    CGAL_FOREACH(halfedge_descriptor h, patch.shared_edges)
       set_face(h, GT::null_face(), tm);
 
     // set next/prev relationship of border halfedges
-    BOOST_FOREACH(halfedge_descriptor h, patch.shared_edges)
+    CGAL_FOREACH(halfedge_descriptor h, patch.shared_edges)
     {
       halfedge_descriptor nxt=next(h, tm);
       while(!is_border(nxt,tm))
@@ -1269,7 +1269,7 @@ remove_patches(TriangleMesh& tm,
     // prev pointer set correctly. To fix that, we consider all interior edges
     // and check for one that is on the border of the patch and that is incident
     // to a border vertex and use it to get the missing prev pointer.
-    BOOST_FOREACH(halfedge_descriptor h, patch.interior_edges)
+    CGAL_FOREACH(halfedge_descriptor h, patch.interior_edges)
       if(is_border_edge(h, tm))
       {
         if (is_border(h, tm)) h=opposite(h, tm);
@@ -1289,11 +1289,11 @@ remove_patches(TriangleMesh& tm,
       }
 
      //now remove the simplices
-    BOOST_FOREACH(halfedge_descriptor h, patch.interior_edges)
+    CGAL_FOREACH(halfedge_descriptor h, patch.interior_edges)
       remove_edge(edge(h, tm), tm);
-    BOOST_FOREACH(face_descriptor f, patch.faces)
+    CGAL_FOREACH(face_descriptor f, patch.faces)
       remove_face(f, tm);
-    BOOST_FOREACH(vertex_descriptor v, patch.interior_vertices)
+    CGAL_FOREACH(vertex_descriptor v, patch.interior_vertices)
       remove_vertex(v, tm);
   }
 }
@@ -1337,7 +1337,7 @@ void compute_inplace_operation(
       reverse_face_orientations_of_mesh_with_polylines(tm1);
     // here we need to update the mapping to use the correct border
     // halfedges while appending the patches from tm2
-    BOOST_FOREACH(typename EdgeMap::value_type& v, tm2_edge_to_tm1_edge)
+    CGAL_FOREACH(typename EdgeMap::value_type& v, tm2_edge_to_tm1_edge)
       v.second=edge(opposite(halfedge(v.second, tm1), tm1), tm1);
   }
 
@@ -1472,7 +1472,7 @@ void remove_unused_polylines(
                    i = patches_to_remove.find_next(i))
   {
     Patch_description<TriangleMesh>& patch=patches[i];
-    BOOST_FOREACH(halfedge_descriptor h, patch.shared_edges)
+    CGAL_FOREACH(halfedge_descriptor h, patch.shared_edges)
     {
       if (is_border(h, tm) && is_border(opposite(h, tm), tm)){
         vertices_to_remove.insert(target(h, tm));
@@ -1482,10 +1482,10 @@ void remove_unused_polylines(
     }
   }
 
-  BOOST_FOREACH(vertex_descriptor v, vertices_to_remove)
+  CGAL_FOREACH(vertex_descriptor v, vertices_to_remove)
   {
     bool to_remove=true;
-    BOOST_FOREACH(halfedge_descriptor h, halfedges_around_target(v,tm))
+    CGAL_FOREACH(halfedge_descriptor h, halfedges_around_target(v,tm))
       if (!is_border(h, tm) || !is_border(opposite(h,tm),tm))
       {
         to_remove=false;
@@ -1497,7 +1497,7 @@ void remove_unused_polylines(
     if (to_remove)
       remove_vertex(v,tm);
   }
-  BOOST_FOREACH(edge_descriptor e, edges_to_remove)
+  CGAL_FOREACH(edge_descriptor e, edges_to_remove)
     remove_edge(e,tm);
 }
 
@@ -1523,18 +1523,18 @@ void remove_disconnected_patches(
     // that could be marked because they retrieve a previously set property
     unmark_edges(tm, edge_mark_map, patch.interior_edges);
 
-    BOOST_FOREACH(halfedge_descriptor h, patch.interior_edges)
+    CGAL_FOREACH(halfedge_descriptor h, patch.interior_edges)
       remove_edge(edge(h, tm), tm);
     // There is no shared halfedge between duplicated patches even
     // if they were before the duplication. Thus the erase that follows is safe.
     // However remember that vertices were not duplicated which is why their
     // removal is not handled here (still in use or to be removed in
     // remove_unused_polylines())
-    BOOST_FOREACH(halfedge_descriptor h, patch.shared_edges)
+    CGAL_FOREACH(halfedge_descriptor h, patch.shared_edges)
       remove_edge(edge(h, tm), tm);
-    BOOST_FOREACH(face_descriptor f, patch.faces)
+    CGAL_FOREACH(face_descriptor f, patch.faces)
       remove_face(f, tm);
-    BOOST_FOREACH(vertex_descriptor v, patch.interior_vertices)
+    CGAL_FOREACH(vertex_descriptor v, patch.interior_vertices)
       remove_vertex(v, tm);
   }
 }

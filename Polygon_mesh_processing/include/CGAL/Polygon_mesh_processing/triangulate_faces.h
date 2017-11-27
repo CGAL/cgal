@@ -38,7 +38,7 @@
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
 #include <boost/range/size.hpp>
-#include <boost/foreach.hpp>
+#include <CGAL/foreach.h>
 
 #include <queue>
 #include <vector>
@@ -267,13 +267,13 @@ public:
     facets.reserve(std::distance(boost::begin(face_range), boost::end(face_range)));
 
     //only consider non-triangular faces
-    BOOST_FOREACH(face_descriptor fit, face_range)
+    CGAL_FOREACH(face_descriptor fit, face_range)
       if ( next( next( halfedge(fit, pmesh), pmesh), pmesh)
         !=       prev( halfedge(fit, pmesh), pmesh) )
         facets.push_back(fit);
 
     // Iterates on the vector of face descriptors
-    BOOST_FOREACH(face_descriptor f, facets)
+    CGAL_FOREACH(face_descriptor f, facets)
     {
      if(!this->triangulate_face(f, pmesh))
        result = false;
@@ -291,7 +291,7 @@ public:
     CGAL_assertion(!is_border(h, pmesh));
     face_descriptor fd = face(h, pmesh);
 
-    BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(h, pmesh))
+    CGAL_FOREACH(halfedge_descriptor hd, halfedges_around_face(h, pmesh))
     {
       CGAL::internal::set_border(hd, pmesh);
     }

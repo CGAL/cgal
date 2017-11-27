@@ -31,7 +31,7 @@
 #include <boost/bimap.hpp>
 #include <boost/bimap/unordered_set_of.hpp>
 #include <boost/bimap/multiset_of.hpp>
-#include <boost/foreach.hpp>
+#include <CGAL/foreach.h>
 #include <boost/mpl/has_xxx.hpp>
 #include <CGAL/Mesh_facet_topology.h>
 
@@ -411,7 +411,7 @@ public:
     std::cerr << "   -> found " << n << " bad vertices\n";
 #  ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
     std::cerr << "Bad vertices queue:\n";
-    BOOST_FOREACH(Vertex_handle v2, m_bad_vertices)
+    CGAL_FOREACH(Vertex_handle v2, m_bad_vertices)
     {
       std::cerr << v2->point() << std::endl;
     }
@@ -477,7 +477,7 @@ public:
         const Vertex_handle& v = *m_bad_vertices.begin();
 #ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
         std::cerr << "Bad vertices queue:\n";
-        BOOST_FOREACH(Vertex_handle v2, m_bad_vertices)
+        CGAL_FOREACH(Vertex_handle v2, m_bad_vertices)
         {
           std::cerr << v2->point() << std::endl;
         }

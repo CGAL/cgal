@@ -1952,7 +1952,7 @@ public:
 
         if (!this->try_lock_cell(next)) // LOCK
         {
-          BOOST_FOREACH(Cell_handle& ch,
+          CGAL_FOREACH(Cell_handle& ch,
             std::make_pair(cells.begin(), cells.end()))
           {
             ch->tds_data().clear();
@@ -1968,7 +1968,7 @@ public:
       }
       ++head;
     } while(head != tail);
-    BOOST_FOREACH(Cell_handle& ch, std::make_pair(cells.begin(), cells.end()))
+    CGAL_FOREACH(Cell_handle& ch, std::make_pair(cells.begin(), cells.end()))
     {
       ch->tds_data().clear();
     }
@@ -2005,7 +2005,7 @@ public:
 
         if (!this->try_lock_cell(next)) // LOCK
         {
-          BOOST_FOREACH(Cell_handle& ch,
+          CGAL_FOREACH(Cell_handle& ch,
             std::make_pair(cells.begin(), cells.end()))
           {
             ch->tds_data().clear();
@@ -2023,7 +2023,7 @@ public:
     } while(head != tail);
 
     std::set<Vertex_handle> tmp_vertices;
-    BOOST_FOREACH(Cell_handle& ch, std::make_pair(cells.begin(), cells.end()))
+    CGAL_FOREACH(Cell_handle& ch, std::make_pair(cells.begin(), cells.end()))
     {
       ch->tds_data().clear();
       for (int i = 0;  i < 4; ++i)
@@ -3675,13 +3675,13 @@ insert_in_conflict(const Point & p,
 
         if (*could_lock_zone == false)
         {
-          BOOST_FOREACH(Cell_handle& ch,
+          CGAL_FOREACH(Cell_handle& ch,
             std::make_pair(cells.begin(), cells.end()))
           {
             ch->tds_data().clear();
           }
 
-          BOOST_FOREACH(Facet& f,
+          CGAL_FOREACH(Facet& f,
             std::make_pair(facets.begin(), facets.end()))
           {
             f.first->neighbor(f.second)->tds_data().clear();
