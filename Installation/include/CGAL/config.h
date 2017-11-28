@@ -149,7 +149,7 @@
 #endif
 
 #if BOOST_MSVC && CGAL_TEST_SUITE
-#  include <CGAL/Testsuite/vc_debug_hook.h
+#  include <CGAL/Testsuite/vc_debug_hook.h>
 #endif
 
 //----------------------------------------------------------------------//
