@@ -159,12 +159,12 @@ struct NodeInfo {
 //  Members: private: int refCount,
 //            public:  NodeInfo* nodeInfo,
 //                     filteredFp ffVal.
-class ExprRep {
+class CGAL_CORE_EXPORT ExprRep {
 public:
   /// \name Constructor and Destructor
   //@{
   /// default constructor
-  CGAL_CORE_EXPORT ExprRep();
+  ExprRep();
   /// virtual destructor for this base class
   virtual ~ExprRep() {
     if (nodeInfo != NULL) // This check is only for optimization.
@@ -196,8 +196,8 @@ public:
   /// \name Helper Functions
   //@{
   /// Get the approximate value
-  CGAL_CORE_EXPORT const Real & getAppValue(const extLong& relPrec = get_static_defRelPrec(),
-                                            const extLong& absPrec = get_static_defAbsPrec());
+  const Real & getAppValue(const extLong& relPrec = get_static_defRelPrec(),
+                           const extLong& absPrec = get_static_defAbsPrec());
   /// Get the sign.
   int getSign();
   int getExactSign();
@@ -472,7 +472,7 @@ public:
 
 /// \class ConstRep
 /// \brief constant node
-class ConstRep : public ExprRep {
+class CGAL_CORE_EXPORT ConstRep : public ExprRep {
 public:
   /// \name Constructors and Destructor
   //@{
@@ -485,20 +485,20 @@ public:
   /// \name Debug Functions
   //@{
   /// print debug information in list mode
-  CGAL_CORE_EXPORT void debugList(int level, int depthLimit) const;
+  void debugList(int level, int depthLimit) const;
   /// print debug information in tree mode
-  CGAL_CORE_EXPORT void debugTree(int level, int indent, int depthLimit) const;
+  void debugTree(int level, int indent, int depthLimit) const;
   //@}
 protected:
   /// initialize nodeInfo
-  CGAL_CORE_EXPORT virtual void initNodeInfo();
+  virtual void initNodeInfo();
   /// return operator in string
   const std::string op() const {
     return "C";
   }
   /// count returns the degree of current node
   //extLong count() { return d_e(); }
-  CGAL_CORE_EXPORT extLong count();
+  extLong count();
   /// clear visited flag
   void clearFlag() {
     visited() = false;
