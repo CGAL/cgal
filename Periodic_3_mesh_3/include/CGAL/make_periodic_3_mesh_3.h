@@ -52,7 +52,7 @@ void give_dummy_points_artificial_index(C3T3& c3t3)
                       vit != c3t3.triangulation().vertices_end(); ++vit)
   {
     std::cout << "dummy point: " << vit->point() << std::endl;
-    vit->set_index(-10); // @fixme
+    c3t3.set_index(vit, 0);
   }
 }
 
