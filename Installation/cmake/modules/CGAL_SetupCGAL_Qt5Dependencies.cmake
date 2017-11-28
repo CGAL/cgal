@@ -10,7 +10,6 @@
 # .. code-block:: cmake
 #
 #    find_package(Qt5 QUIET COMPONENTS OpenGL Svg)
-#    find_package(OpenGL QUIET)
 #
 # and defines the variable :variable:`CGAL_Qt5_FOUND` and the function
 # :command:`CGAL_setup_CGAL_Qt5_dependencies`.
@@ -25,9 +24,7 @@ set(CGAL_SetupCGAL_Qt5Dependencies_included TRUE)
 # Used Modules
 # ^^^^^^^^^^^^
 #   - :module:`Qt5Config`
-#   - :module:`FindOpenGL`
 find_package(Qt5 QUIET COMPONENTS OpenGL Svg)
-find_package(OpenGL QUIET)
 
 set(CGAL_Qt5_MISSING_DEPS "")
 if(NOT Qt5OpenGL_FOUND)
@@ -38,9 +35,6 @@ if(NOT Qt5Svg_FOUND)
 endif()
 if(NOT Qt5_FOUND)
   set(CGAL_Qt5_MISSING_DEPS "${CGAL_Qt5_MISSING_DEPS} Qt5")
-endif()
-if(NOT OPENGL_FOUND)
-  set(CGAL_Qt5_MISSING_DEPS "${CGAL_Qt5_MISSING_DEPS} OpenGL")
 endif()
 
 
@@ -71,9 +65,6 @@ if(NOT CGAL_Qt5_MISSING_DEPS)
 endif()
 
 #get_property(QT_UIC_EXECUTABLE TARGET Qt5::uic PROPERTY LOCATION)
-#message( STATUS "OpenGL include:      ${OPENGL_INCLUDE_DIR}" )
-#message( STATUS "OpenGL libraries:    ${OPENGL_LIBRARIES}" )
-#message( STATUS "OpenGL definitions:  ${OPENGL_DEFINITIONS}" )
 #message( STATUS "Qt5Core include:     ${Qt5Core_INCLUDE_DIRS}" )
 #message( STATUS "Qt5 libraries:       ${Qt5Core_LIBRARIES} ${Qt5Gui_LIBRARIES} ${Qt5Svg_LIBRARIES} ${Qt5OpenGL_LIBRARIES}" )
 #message( STATUS "Qt5Core definitions: ${Qt5Core_DEFINITIONS}" )
@@ -105,11 +96,10 @@ function(CGAL_setup_CGAL_Qt5_dependencies target)
   if($ENV{CGAL_FAKE_PUBLIC_RELEASE})
     target_compile_definitions( ${target} ${keyword} CGAL_FAKE_PUBLIC_RELEASE=1 )
   endif()
-  target_include_directories( ${target} SYSTEM ${keyword} ${OPENGL_INCLUDE_DIR})
   target_link_libraries( ${target} ${keyword} CGAL::CGAL)
   if(CGAL_HEADER_ONLY)
     target_link_libraries( ${target} ${keyword} CGAL::Qt5_moc_and_resources)
   endif()
-  target_link_libraries( ${target} ${keyword} Qt5::OpenGL Qt5::Svg ${OPENGL_LIBRARIES})
+  target_link_libraries( ${target} ${keyword} Qt5::OpenGL Qt5::Svg)
 endfunction()
 

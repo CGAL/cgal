@@ -17,16 +17,13 @@ include( ${CGAL_USE_FILE} )
 # Find Qt5 itself
 find_package(Qt5 QUIET COMPONENTS Xml OpenGL Help Core)
 
-# Find OpenGL
-find_package(OpenGL)
-
 # Find QGLViewer
 if(Qt5_FOUND)
   add_definitions(-DQT_NO_KEYWORDS)
   find_package(QGLViewer)
 endif(Qt5_FOUND)
 
-if (CGAL_FOUND AND CGAL_Qt5_FOUND AND OPENGL_FOUND AND Qt5_FOUND AND QGLVIEWER_FOUND AND TARGET Qt5::qcollectiongenerator)
+if (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND QGLVIEWER_FOUND AND TARGET Qt5::qcollectiongenerator)
 
    include_directories( ${QGLVIEWER_INCLUDE_DIR} )
 
@@ -84,10 +81,6 @@ else ()
 
   if(NOT Qt5_FOUND)
     set(PERIODIC_TRIANGULATION_MISSING_DEPS "Qt5, ${PERIODIC_TRIANGULATION_MISSING_DEPS}")
-  endif()
-
-  if(NOT OPENGL_FOUND)
-    set(PERIODIC_TRIANGULATION_MISSING_DEPS "OpenGL, ${PERIODIC_TRIANGULATION_MISSING_DEPS}")
   endif()
 
   if(NOT QGLVIEWER_FOUND)

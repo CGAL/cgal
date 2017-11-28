@@ -304,7 +304,6 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
       endif()
 
       if (${component} STREQUAL "Qt5")
-        find_package(OpenGL QUIET)
         find_package(Qt5 COMPONENTS OpenGL Gui Core Script ScriptTools QUIET)
       endif()
 
@@ -341,7 +340,6 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
 
           if (${component} STREQUAL "Qt5")
             set(CGAL_${component}_FOUND TRUE)
-            find_package(OpenGL QUIET)
             find_package(Qt5 COMPONENTS OpenGL Gui Core Script ScriptTools QUIET)
           endif()
           ####message( STATUS "External library ${vlib} after find")

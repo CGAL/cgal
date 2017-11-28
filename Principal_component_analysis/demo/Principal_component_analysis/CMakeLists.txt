@@ -23,15 +23,12 @@ include( ${CGAL_USE_FILE} )
 # Find Qt5 itself
 find_package(Qt5 QUIET COMPONENTS Xml Script OpenGL)
 
-# Find OpenGL
-find_package(OpenGL)
-
 # Find QGLViewer
 if(Qt5_FOUND)
   find_package(QGLViewer )
 endif(Qt5_FOUND)
 
-if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
+if(CGAL_Qt5_FOUND AND Qt5_FOUND AND QGLVIEWER_FOUND)
 
   include_directories ( ${QGLVIEWER_INCLUDE_DIR} )
 
@@ -60,7 +57,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
   cgal_add_compilation_test(PCA_demo)
 
-else (CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
+else (CGAL_Qt5_FOUND AND Qt5_FOUND AND QGLVIEWER_FOUND)
 
   set(PCA_MISSING_DEPS "")
 
@@ -72,14 +69,10 @@ else (CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     set(PCA_MISSING_DEPS "Qt5, ${PCA_MISSING_DEPS}")
   endif()
 
-  if(NOT OPENGL_FOUND)
-    set(PCA_MISSING_DEPS "OpenGL, ${PCA_MISSING_DEPS}")
-  endif()
-
   if(NOT QGLVIEWER_FOUND)
     set(PCA_MISSING_DEPS "QGLViewer, ${PCA_MISSING_DEPS}")
   endif()
 
   message(STATUS "NOTICE: This demo requires ${PCA_MISSING_DEPS} and will not be compiled.")
 
-endif (CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
+endif (CGAL_Qt5_FOUND AND Qt5_FOUND AND QGLVIEWER_FOUND)

@@ -21,9 +21,6 @@ if(Qt5_FOUND)
   add_definitions(-DQT_NO_KEYWORDS)
 endif(Qt5_FOUND)
 
-# Find OpenGL
-find_package(OpenGL)
-
 # Find CImg
 find_path(CIMG_INCLUDE_DIR
           NAMES CImg.h
@@ -37,7 +34,7 @@ else()
                  "Try setting the environment variable CIMG_INC_DIR to point to the path of the directory containing CImg.h.")
 endif()
 
-if(CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND)
+if(CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND)
 
   set(
   SRCS 
@@ -96,7 +93,7 @@ if(CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND)
 
   include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
   cgal_add_compilation_test(Otr2_demo)
-else (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND )
+else (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND )
 
   set(OTR2_MISSING_DEPS "")
 
@@ -112,10 +109,6 @@ else (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND )
     set(OTR2_MISSING_DEPS "Qt5.4, ${OTR2_MISSING_DEPS}")
   endif()
 
-  if(NOT OPENGL_FOUND)
-    set(OTR2_MISSING_DEPS "OpenGL, ${OTR2_MISSING_DEPS}")
-  endif()
-
   message(STATUS "NOTICE: This demo requires ${OTR2_MISSING_DEPS}and will not be compiled.")
 
-endif (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND)
+endif (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND)

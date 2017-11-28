@@ -40,13 +40,12 @@ include(${CGAL_USE_FILE})
 
 find_package(Qt5 QUIET COMPONENTS Xml Script OpenGL Svg)
 
-find_package(OpenGL)
 find_package(QGLViewer)
 
 if ( NOT (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND
-      OPENGL_FOUND AND QGLVIEWER_FOUND) )
+      QGLVIEWER_FOUND) )
 
-  MESSAGE(STATUS "NOTICE: This demo requires CGAL, QGLViewer, OpenGL "
+  MESSAGE(STATUS "NOTICE: This demo requires CGAL, QGLViewer, "
     "and Qt5, and will not be compiled.")
 
 else()
