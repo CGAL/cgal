@@ -209,9 +209,11 @@ private:
       return tr.can_be_converted_to_1_sheet();
     }
 
-    bool update_cover_data_during_management (Cell_handle new_ch, const std::vector<Cell_handle>& new_cells)
+    bool update_cover_data_during_management(Cell_handle new_ch,
+                                             const std::vector<Cell_handle>& new_cells,
+                                             const bool abort_if_cover_change)
     {
-      return tr.update_cover_data_during_management(new_ch, new_cells);
+      return tr.update_cover_data_during_management(new_ch, new_cells, abort_if_cover_change);
     }
   };
 
@@ -423,12 +425,18 @@ public:
   }
 
   bool update_cover_data_during_management(Cell_handle new_ch,
-                                           const std::vector<Cell_handle>& new_cells)
+                                           const std::vector<Cell_handle>& new_cells,
+                                           const bool abort_if_cover_change)
   {
-    for(int i=0; i < 4; i++) {
-      for(int j=0; j < 4; j++) {
-        if(j==i) continue;
-        if(&*(new_ch->vertex(i)) > &*(new_ch->vertex(j))) continue;
+    for(int i=0; i < 4; i++)
+    {
+      for(int j=0; j < 4; j++)
+      {
+        if(j==i)
+          continue;
+
+        if(&*(new_ch->vertex(i)) > &*(new_ch->vertex(j)))
+          continue;
 
         Point p1 = construct_point(new_ch->vertex(i)->point(),
                                    get_offset(new_ch, i));
@@ -436,19 +444,24 @@ public:
                                    get_offset(new_ch, j));
         Vertex_handle v_no = new_ch->vertex(i);
 
-        if(squared_distance(p1, p2) > edge_length_threshold) {
+        if(squared_distance(p1, p2) > edge_length_threshold)
+        {
           // If the cell does not fulfill the edge-length criterion
           // revert all changes to the triangulation and transform it
           // to a triangulation in the needed covering space.
-          if(is_1_cover()) {
+          if(is_1_cover())
+          {
+            if(abort_if_cover_change)
+              return true;
+
             tds().delete_cells(new_cells.begin(), new_cells.end());
             convert_to_27_sheeted_covering();
             return true;
           }
           else if(find(too_long_edges[v_no].begin(),
                        too_long_edges[v_no].end(),
-                       new_ch->vertex(j))
-                  == too_long_edges[v_no].end()) {
+                       new_ch->vertex(j)) == too_long_edges[v_no].end())
+          {
             too_long_edges[v_no].push_back(new_ch->vertex(j));
             too_long_edge_counter++;
           }
@@ -538,6 +551,11 @@ public:
 public:
   /** @name Removal */ //@{
   void remove(Vertex_handle v);
+
+  // Undocumented function that tries to remove 'v' but only does so if removal
+  // does not make the triangulation become 27-sheeted. Useful for P3M3.
+  // \pre the triangulation is 1-sheeted
+  bool remove_if_no_cover_change(Vertex_handle v);
 
   template < typename InputIterator >
   std::ptrdiff_t remove(InputIterator first, InputIterator beyond)
@@ -949,6 +967,40 @@ void Periodic_3_Delaunay_triangulation_3<Gt,Tds>::remove(Vertex_handle v)
 
   Base::remove(v, remover, ct, cover_manager);
   CGAL_triangulation_expensive_assertion(is_valid());
+}
+
+// Undocumented function that tries to remove 'v' but only does so if removal
+// does not make the triangulation become 27-sheeted. Useful for P3M3.
+// \pre the triangulation is 1-sheeted
+template < class Gt, class Tds >
+bool
+Periodic_3_Delaunay_triangulation_3<Gt,Tds>::
+remove_if_no_cover_change(Vertex_handle v)
+{
+  CGAL_triangulation_precondition(this->is_1_cover());
+
+  // Since we are in a 1-sheet configuration, we can call directly periodic_remove()
+  // and don't need the conflict tester. The rest is copied from above.
+
+  typedef CGAL::Periodic_3_Delaunay_triangulation_remove_traits_3< Gt > P3removeT;
+  typedef CGAL::Delaunay_triangulation_3< P3removeT > Euclidean_triangulation;
+  typedef Vertex_remover< Euclidean_triangulation > Remover;
+
+  P3removeT remove_traits(domain());
+  Euclidean_triangulation tmp(remove_traits);
+  Remover remover(this, tmp);
+  Cover_manager cover_manager(*this);
+
+  if(!Base::periodic_remove(v, remover, cover_manager, true /*abort if cover change*/))
+  {
+    std::cerr << "Warning: removing " << &*v << " (" << v->point() << ") would change cover" << std::endl;
+    std::cerr << "Aborted removal." << std::endl;
+    return false; // removing would cause a cover change
+  }
+
+  CGAL_triangulation_expensive_postcondition(is_valid());
+  CGAL_triangulation_postcondition(this->is_1_cover());
+  return true; // successfully removed the vertex
 }
 
 template < class Gt, class Tds >

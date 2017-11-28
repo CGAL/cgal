@@ -210,8 +210,11 @@ public:
       return tr.can_be_converted_to_1_sheet();
     }
 
-    bool update_cover_data_during_management (Cell_handle new_ch, const std::vector<Cell_handle>& new_cells) {
-      return tr.update_cover_data_during_management(new_ch, new_cells);
+    bool update_cover_data_during_management (Cell_handle new_ch,
+                                              const std::vector<Cell_handle>& new_cells,
+                                              const bool abort_if_cover_change)
+    {
+      return tr.update_cover_data_during_management(new_ch, new_cells, abort_if_cover_change);
     }
   };
 
@@ -388,7 +391,9 @@ public:
     return cells_with_too_big_orthoball.empty();
   }
 
-  bool update_cover_data_during_management (Cell_handle new_ch, const std::vector<Cell_handle>& new_cells)
+  bool update_cover_data_during_management (Cell_handle new_ch,
+                                            const std::vector<Cell_handle>& new_cells,
+                                            const bool abort_if_cover_change)
   {
     bool result = false;
 
@@ -396,6 +401,9 @@ public:
     {
       if(is_1_cover())
       {
+        if(abort_if_cover_change)
+          return true;
+
         tds().delete_cells(new_cells.begin(), new_cells.end());
         this->convert_to_27_sheeted_covering();
         result = true;
@@ -597,7 +605,45 @@ public:
       insert(*hi);
     }
 
-    CGAL_triangulation_expensive_assertion(is_valid());
+    CGAL_triangulation_expensive_postcondition(is_valid());
+  }
+
+  // Undocumented function that tries to remove 'v' but only does so if removal
+  // does not make the triangulation become 27-sheeted. Useful for P3M3.
+  // \pre the triangulation is 1-sheeted
+  bool remove_if_no_cover_change(Vertex_handle v)
+  {
+    CGAL_triangulation_precondition(this->is_1_cover());
+
+    // Since we are in a 1-sheet configuration, we can call directly periodic_remove()
+    // and don't need the conflict tester. The rest is copied from above.
+
+    typedef CGAL::Periodic_3_regular_triangulation_remove_traits_3< Gt > P3removeT;
+    typedef CGAL::Regular_triangulation_3< P3removeT > Euclidean_triangulation;
+    typedef Vertex_remover< Euclidean_triangulation > Remover;
+
+    P3removeT remove_traits(domain());
+    Euclidean_triangulation tmp(remove_traits);
+    Remover remover(this, tmp);
+    Cover_manager cover_manager(*this);
+
+    if(!Tr_Base::periodic_remove(v, remover, cover_manager, true /*abort if cover change*/))
+    {
+      std::cerr << "Warning: removing " << &*v << " (" << v->point() << ") would change cover" << std::endl;
+      std::cerr << "Aborted removal." << std::endl;
+      return false; // removing would cause a cover change
+    }
+
+    // Re-insert the points that v was hiding.
+    for(typename Remover::Hidden_points_iterator hi = remover.hidden_points_begin();
+                                                 hi != remover.hidden_points_end(); ++hi)
+    {
+      insert(*hi);
+    }
+
+    CGAL_triangulation_expensive_postcondition(is_valid());
+    CGAL_triangulation_postcondition(this->is_1_cover());
+    return true; // successfully removed the vertex
   }
 
 public:

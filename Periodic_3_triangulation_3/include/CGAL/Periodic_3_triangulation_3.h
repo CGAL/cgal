@@ -1473,13 +1473,14 @@ private:
 
   void make_hole(Vertex_handle v, std::map<Vertex_triple,Facet>& outer_map,
                  std::vector<Cell_handle>& hole);
-
-  template < class PointRemover, class CoverManager >
-  void periodic_remove(Vertex_handle v, PointRemover& remover, CoverManager& cover_manager);
   //@}
 
 protected:
   /** @name Removal */ //@{
+  template < class PointRemover, class CoverManager >
+  bool periodic_remove(Vertex_handle v, PointRemover& remover, CoverManager& cover_manager,
+                       const bool abort_if_cover_change = false);
+
   template < class PointRemover, class CT, class CoverManager >
   void remove(Vertex_handle v, PointRemover& remover, CT& ct, CoverManager& cover_manager);
   //@}
@@ -3379,8 +3380,18 @@ periodic_remove(Vertex_handle v, PointRemover& remover, CoverManager& cover_mana
                         vh_off_map[vmap[i_ch->vertex(3)]]);
 
     // Update the edge length management
-    if(cover_manager.update_cover_data_during_management(new_ch, new_cells))
-        return;
+    if(cover_manager.update_cover_data_during_management(new_ch, new_cells,
+                                                         abort_if_cover_change))
+    {
+      // If we have switched to 27-sheet, 'new_ch' has already been cleaned up,
+      // but we must clean it if we have aborted a 27-sheet conversion.
+      if(is_1_cover() && abort_if_cover_change)
+        _tds.delete_cell(new_ch);
+
+      CGAL_triangulation_expensive_postcondition(_tds.is_valid());
+
+      return false; // removing would cause / caused a cover change
+    }
 
     // The neighboring relation needs to be stored temporarily in
     // nr_vec. It cannot be applied directly because then we could not
@@ -3429,6 +3440,7 @@ periodic_remove(Vertex_handle v, PointRemover& remover, CoverManager& cover_mana
   _tds.delete_vertex(v);
   _tds.delete_cells(hole.begin(), hole.end());
   CGAL_triangulation_expensive_assertion(is_valid());
+  return true; // sucessfully removed the vertex
 }
 
 // ############################################################################
