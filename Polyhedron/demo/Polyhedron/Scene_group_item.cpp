@@ -186,13 +186,13 @@ void Scene_group_item::renderChildren(Viewer_interface *viewer,
   }
 }
 
-void Scene_group_item::drawEdges(CGAL::Three::Viewer_interface* viewer)
+void Scene_group_item::drawEdges(CGAL::Three::Viewer_interface* )
 {
   if(!isInit())
     initGL();
 }
 
-void Scene_group_item::drawPoints(CGAL::Three::Viewer_interface* viewer)
+void Scene_group_item::drawPoints(CGAL::Three::Viewer_interface* )
 {
   if(!isInit())
     initGL();

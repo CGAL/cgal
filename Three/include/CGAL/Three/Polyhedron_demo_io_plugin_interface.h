@@ -41,7 +41,7 @@ class Polyhedron_demo_io_plugin_interface
 public:
   //!\brief Returns the name of the plugin
   //!
-  //!It is used by the loading system.
+  //!It is used by the loading system.m
   virtual QString name() const = 0;
   virtual ~Polyhedron_demo_io_plugin_interface() {}
   /*! The filters for the names of the files that can be used
@@ -70,7 +70,7 @@ public:
   //! \param mw the application `MainWindow`. Mostly used for getting the `is_polyhedron_mode` property.
   //! \return the loaded `Scene_item`
   //!
-  virtual Scene_item* load(QFileInfo fileinfo, CGAL::Three::Scene_interface* scene, QMainWindow* mw) = 0;
+  virtual Scene_item* load(QFileInfo fileinfo) = 0;
   //!Specifies if the io_plugin can save the item or not.
   //!This must be overriden.
   virtual bool canSave(const Scene_item*) = 0;

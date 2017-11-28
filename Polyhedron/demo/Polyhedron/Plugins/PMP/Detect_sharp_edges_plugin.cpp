@@ -6,6 +6,7 @@
 #include <QtPlugin>
 
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
+#include <CGAL/Three/Three.h>
 
 #ifdef USE_SURFACE_MESH
 #include "Scene_surface_mesh_item.h"
@@ -41,9 +42,9 @@ class Polyhedron_demo_detect_sharp_edges_plugin :
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 public:
-  void init(QMainWindow* mainWindow, Scene_interface* scene_interface, Messages_interface*) {
-    this->scene = scene_interface;
-    this->mw = mainWindow;
+  void init() {
+    scene = CGAL::Three::Three::scene();
+    mw = CGAL::Three::Three::mainWindow();
     actionSharEdges = new QAction("Detect Sharp Features", mw);
     actionSharEdges->setObjectName("detectSharpFeaturesAction");
     if(actionSharEdges) {

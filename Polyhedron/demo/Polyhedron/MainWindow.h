@@ -5,6 +5,7 @@
 
 #include <QtOpenGL/qgl.h>
 #include <CGAL/Qt/DemosMainWindow.h>
+#include <CGAL/Three/Three.h>
 
 #include <QScriptEngine>
 #include <QScriptable>
@@ -48,8 +49,6 @@ namespace CT = CGAL::Three;
 
 #include "Polyhedron_type_fwd.h"
 
-#include "Messages_interface.h"
-
 /*!
  * \brief The main window of the applicatipon.
  *
@@ -58,11 +57,11 @@ namespace CT = CGAL::Three;
 
 class MAINWINDOW_EXPORT MainWindow : 
   public CGAL::Qt::DemosMainWindow,
-  public Messages_interface,
+  public CT::Three,
   protected QScriptable
 {
   Q_OBJECT
-  Q_INTERFACES(Messages_interface)
+  //Q_INTERFACES(CT::Three)
 public:
   //! \brief Global state of the application.
   //!
@@ -431,8 +430,8 @@ private:
   //!Called when "Add new group" in the file menu is triggered.
   QAction* actionAddToGroup;
   QAction* actionResetDefaultLoaders;
-  void print_message(QString message) { messages->information(message); }
-  Messages_interface* messages;
+  CGAL::Three::Three* three;
+  void print_message(QString message) { three->information(message); }
 
   QDialog *statistics_dlg;
   Ui::Statistics_on_item_dialog* statistics_ui;

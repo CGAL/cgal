@@ -179,6 +179,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   add_library(demo_framework SHARED
     Scene.cpp
     Viewer.cpp
+    Three.cpp
     ${ViewerUI_FILES}
     ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES}
     Viewer_interface_moc.cpp
@@ -331,6 +332,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   add_library(polyhedron_demo SHARED
     MainWindow.cpp
     Polyhedron_demo.cpp
+    #Three.cpp
     File_loader_dialog_moc.cpp
     ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES}
     ${FileLoaderDialogUI_files} ${MainWindowUI_files} ${PreferencesUI_FILES} ${statisticsUI_FILES} ${SubViewerUI_files})

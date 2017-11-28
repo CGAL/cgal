@@ -4,6 +4,7 @@
 #include "MainWindow.h"
 #include "Scene.h"
 #include "Viewer.h"
+#include <CGAL/Three/Three.h>
 #include <CGAL/Three/Scene_item.h>
 #include <CGAL/Three/TextRenderer.h>
 #include <CGAL/Three/exceptions.h>
@@ -137,6 +138,7 @@ MainWindow::MainWindow(QWidget* parent)
   ui = new Ui::MainWindow;
   ui->setupUi(this);
   menuBar()->setNativeMenuBar(false);
+  CGAL::Three::Three::s_mainwindow = this;
   this->setProperty("helpText", QString("    "));
   ui->infoDockWidget->setProperty("helpText", QString("This is the info widget. It is not entirely useless, I swear."));
   ui->sceneDockWidget->setProperty("helpText", QString("This is the Scene view. It does stuff when you click on it. Sometimes."));
@@ -155,6 +157,7 @@ MainWindow::MainWindow(QWidget* parent)
   viewer = ui->viewer;
   viewer->setObjectName("viewer");
   scene = new Scene(this);
+  CGAL::Three::Three::s_scene = scene;
   setupViewer(viewer, 0);
   new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_R), this, SLOT(recenterViewer()));
 
@@ -654,7 +657,7 @@ bool MainWindow::initPlugin(QObject* obj)
   if(plugin) {
     // Call plugin's init() method
     obj->setParent(this);
-    plugin->init(this, this->scene, this);
+    plugin->init();
     plugins << qMakePair(plugin, obj->objectName());
 #ifdef QT_SCRIPT_LIB
     QScriptValue objectValue =
@@ -1043,7 +1046,7 @@ Scene_item* MainWindow::loadItem(QFileInfo fileinfo, CGAL::Three::Polyhedron_dem
   }
   QApplication::setOverrideCursor(Qt::WaitCursor);
   CGAL::Three::Scene_item* item = NULL;
-  item = loader->load(fileinfo, scene, this);
+  item = loader->load(fileinfo);
   QApplication::restoreOverrideCursor();
   if(!item) {
     std::cerr<<QString("Could not load item from file %1 using plugin %2")

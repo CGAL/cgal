@@ -46,7 +46,7 @@ public:
   //! \brief Initializes the plugin
   //! This function acts like a constructor. This is where the attributes must be initialized.
   //! The Message_interface allows to print warnings or errors on the screen and the `Console` widget.
-  virtual void init(QMainWindow* , CGAL::Three::Scene_interface* , Messages_interface*) = 0;
+  virtual void init() = 0;
 
   //! \brief Indicates if an action is usable or not.
   //! This function usually tests the type of the selected item to determine if `action` can be applied to it,

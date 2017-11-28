@@ -1357,6 +1357,7 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
     program->setProperty("hasNormals", true);
     program->setProperty("hasBarycenter", true);
     program->setProperty("isInstanced", true);
+    return program;
   }
   case PROGRAM_CUTPLANE_SPHERES:
   {
