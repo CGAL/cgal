@@ -31,14 +31,34 @@ typedef Classification::Feature_handle                                          
 typedef Classification::Label_set                                               Label_set;
 typedef Classification::Feature_set                                             Feature_set;
 
-typedef Classification::OpenCV_random_forest_classifier Classifier;
-
 typedef Classification::Point_set_feature_generator<Kernel, Point_set, Pmap>    Feature_generator;
 
 
 int main (int argc, char** argv)
 {
-  std::string filename (argc > 1 ? argv[1] : "data/b9_training.ply");
+  std::string filename = "data/b9_training.ply";
+  bool use_opencv = false;
+  
+  if (argc > 1)
+  {
+    if (std::string(argv[1]) == "-cv")
+    {
+      use_opencv = true;
+      if (argc > 2)
+        filename = argv[2];
+    }
+    else
+      filename = argv[1];
+  }
+
+#ifndef CGAL_LINKED_WITH_OPENCV  
+  if (use_opencv)
+  {
+    std::cerr << "OpenCV not available, exiting." << std::endl;
+    return EXIT_SUCCESS;
+  }
+#endif
+
   std::ifstream in (filename.c_str(), std::ios::binary);
   Point_set pts;
 
@@ -75,23 +95,51 @@ int main (int argc, char** argv)
   Label_handle vegetation = labels.add ("vegetation");
   Label_handle roof = labels.add ("roof");
 
-  Classifier classifier (labels, features);
-  
-  std::cerr << "Training" << std::endl;
-  t.reset();
-  t.start();
-  classifier.train (ground_truth);
-  t.stop();
-  std::cerr << "Done in " << t.time() << " second(s)" << std::endl;
-
-  t.reset();
-  t.start();
   std::vector<int> label_indices(pts.size(), -1);
-  Classification::classify_with_graphcut<CGAL::Sequential_tag>
-    (pts, pts.point_map(), labels, classifier,
-     generator.neighborhood().k_neighbor_query(12),
-     0.2f, 1, label_indices);
-  t.stop();
+  
+#ifdef CGAL_LINKED_WITH_OPENCV  
+  if (use_opencv)
+  {
+    std::cerr << "Using OpenCV Random Forest Classifier" << std::endl;
+    Classification::OpenCV_random_forest_classifier classifier (labels, features);
+  
+    std::cerr << "Training" << std::endl;
+    t.reset();
+    t.start();
+    classifier.train (ground_truth);
+    t.stop();
+    std::cerr << "Done in " << t.time() << " second(s)" << std::endl;
+
+    t.reset();
+    t.start();
+    Classification::classify_with_graphcut<CGAL::Sequential_tag>
+      (pts, pts.point_map(), labels, classifier,
+       generator.neighborhood().k_neighbor_query(12),
+       0.2f, 1, label_indices);
+    t.stop();
+  }
+  else
+#endif
+  {
+    std::cerr << "Using ETHZ Random Forest Classifier" << std::endl;
+    Classification::ETHZ_random_forest_classifier classifier (labels, features);
+  
+    std::cerr << "Training" << std::endl;
+    t.reset();
+    t.start();
+    classifier.train (ground_truth);
+    t.stop();
+    std::cerr << "Done in " << t.time() << " second(s)" << std::endl;
+
+    t.reset();
+    t.start();
+    Classification::classify_with_graphcut<CGAL::Sequential_tag>
+      (pts, pts.point_map(), labels, classifier,
+       generator.neighborhood().k_neighbor_query(12),
+       0.2f, 1, label_indices);
+    t.stop();
+  }
+  
   std::cerr << "Classification with graphcut done in " << t.time() << " second(s)" << std::endl;
 
   std::cerr << "Precision, recall, F1 scores and IoU:" << std::endl;

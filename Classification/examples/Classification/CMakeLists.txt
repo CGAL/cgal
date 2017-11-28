@@ -21,7 +21,7 @@ include( ${CGAL_USE_FILE} )
 
 
 # Boost and its components
-find_package( Boost REQUIRED )
+find_package( Boost REQUIRED COMPONENTS serialization iostreams)
 
 if ( NOT Boost_FOUND )
 
@@ -55,11 +55,17 @@ endif()
 create_single_source_cgal_program( "example_generation_and_training.cpp" CXX_FEATURES ${needed_cxx_features} )
 create_single_source_cgal_program( "example_feature.cpp" CXX_FEATURES ${needed_cxx_features} )
 
-if( OpenCV_FOUND )
-  include_directories( ${OpenCV_INCLUDE_DIRS} )
-  create_single_source_cgal_program( "example_random_forest.cpp" CXX_FEATURES ${needed_cxx_features} )
-  target_link_libraries( example_random_forest PRIVATE ${OpenCV_LIBS} )
-else()
-  message(STATUS "OpenCV not found, random forest example won't be compiled.")
+if (Boost_SERIALIZATION_FOUND AND Boost_IOSTREAMS_FOUND)
+  if( OpenCV_FOUND )
+    message(STATUS "Found OpenCV ${OpenCV_VERSION}")
+    include_directories( ${OpenCV_INCLUDE_DIRS} )
+    create_single_source_cgal_program( "example_random_forest.cpp" CXX_FEATURES ${needed_cxx_features} )
+    target_link_libraries( example_random_forest ${OpenCV_LIBS} ${Boost_SERIALIZATION_LIBRARY} ${Boost_IOSTREAMS_LIBRARY})
+    target_compile_definitions(example_random_forest PUBLIC "-DCGAL_LINKED_WITH_OPENCV")
+  else()
+    create_single_source_cgal_program( "example_random_forest.cpp" CXX_FEATURES ${needed_cxx_features} )
+    target_link_libraries( example_random_forest ${Boost_SERIALIZATION_LIBRARY} ${Boost_IOSTREAMS_LIBRARY})
+    message(STATUS "OpenCV not found, random forest example won't have OpenCV classifier.")
+  endif()
 endif()
 
