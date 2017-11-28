@@ -4,7 +4,6 @@
 #include "Volume_plane_interface.h"
 
 #include <QApplication>
-#include <CGAL/gl.h>
 struct Volume_plane_intersection_priv
 {
   Volume_plane_intersection_priv(float x, float y, float z, Volume_plane_intersection* parent)

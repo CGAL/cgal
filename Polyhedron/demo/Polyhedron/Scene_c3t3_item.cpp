@@ -15,7 +15,6 @@
 
 #include <map>
 #include <vector>
-#include <CGAL/gl.h>
 #include <CGAL/Three/Scene_interface.h>
 #include <CGAL/Real_timer.h>
 

@@ -1,7 +1,6 @@
 #ifndef _GL_RENDER_EDGES_
 #define _GL_RENDER_EDGES_
 
-#include <CGAL/gl.h>
 
 template <class Polyhedron>
 void gl_render_edges(Polyhedron& polyhedron)

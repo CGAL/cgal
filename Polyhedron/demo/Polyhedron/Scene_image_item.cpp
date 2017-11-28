@@ -4,7 +4,6 @@
 #include "Image_type.h"
 #include <QColor>
 #include <map>
-#include <CGAL/gl.h>
 #include <CGAL/ImageIO.h>
 #include <CGAL/use.h>
 
