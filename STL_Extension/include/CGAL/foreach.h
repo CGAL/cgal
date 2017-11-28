@@ -61,7 +61,7 @@ constexpr T&& make_range( T&& t )
 
 #define CGAL_FOREACH(A,B) for(A : CGAL::for_range_loop::make_range(B))
 #else
-#include <CGAL/foreach.h>
+#include <boost/foreach.hpp>
 #define CGAL_FOREACH(A,B) BOOST_FOREACH(A, B)
 #endif
 #else
