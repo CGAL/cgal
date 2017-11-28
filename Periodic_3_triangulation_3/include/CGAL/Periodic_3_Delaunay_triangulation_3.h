@@ -1118,19 +1118,19 @@ _side_of_sphere(const Cell_handle& c, const Point& q,
     Orientation o;
     if(points[i] == &pts[3] &&
         (o = orientation(p0, p1, p2, q, o0, o1, o2, oq)) != COPLANAR ) {
-      return (Bounded_side) o;
+      return enum_cast<Bounded_side>(o);
     }
     if(points[i] == &pts[2] &&
         (o = orientation(p0, p1, q, p3, o0, o1, oq, o3)) != COPLANAR ) {
-      return (Bounded_side) o;
+      return enum_cast<Bounded_side>(o);
     }
     if(points[i] == &pts[1] &&
         (o = orientation(p0, q, p2, p3, o0, oq, o2, o3)) != COPLANAR ) {
-      return (Bounded_side) o;
+      return enum_cast<Bounded_side>(o);
     }
     if(points[i] == &pts[0] &&
         (o = orientation(q, p1, p2 ,p3, oq, o1, o2, o3)) != COPLANAR ) {
-      return (Bounded_side) o;
+      return enum_cast<Bounded_side>(o);
     }
   }
 
