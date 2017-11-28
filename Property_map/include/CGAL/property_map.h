@@ -456,14 +456,14 @@ struct Default_property_map{
   get (const Default_property_map&, const key_type&){ return ValueType(); }
 };
 
+/// \ingroup PkgProperty_map
 /// Read-write Property map turning a set (such a `std::set`,
 /// `boost::unordered_set`, `std::unordered_set`) into a property map
 /// associating a Boolean to the value type of the set. The function `get` will
 /// return `true` if the key is inside the set and `false` otherwise. The `put`
 /// function will insert an element in the set if `true` is passed and erase it
 /// otherwise.
-///
-/// `operator()(key k)` calling the get function with `k`
+/// \cgalModels `ReadWritePropertyMap`
 template<class Set>
 struct Boolean_property_map
 {
@@ -475,8 +475,8 @@ struct Boolean_property_map
   Set* set_ptr;
   /// Constructor taking a copy of the set. Note that `set_` must be valid
   /// while the property map is in use.
-  Boolean_property_map() : set_ptr(NULL) {}
   Boolean_property_map(Set& set_) : set_ptr(&set_) {}
+  Boolean_property_map() : set_ptr(NULL) {}
 
   friend bool get(const Boolean_property_map<Set>& pm, const key_type& k)
   {
