@@ -773,7 +773,14 @@ insert_subconstraint(Vertex_handle vaa,
   // insert the subconstraint [vaa vbb] 
   // it will eventually be splitted into several subconstraints
 {
-  CGAL_triangulation_precondition( vaa != vbb);
+  std::stack<std::pair<Vertex_handle, Vertex_handle> > stack;
+  stack.push(std::make_pair(vaa,vbb));
+
+  while(! stack.empty()){
+    boost::tie(vaa,vbb) = stack.top();
+    stack.pop();
+    CGAL_triangulation_precondition( vaa != vbb);
+  
   Vertex_handle vi;
 
   Face_handle fr;
@@ -782,7 +789,7 @@ insert_subconstraint(Vertex_handle vaa,
     this->mark_constraint(fr,i);
     if (vi != vbb)  {
       hierarchy.split_constraint(vaa,vbb,vi);
-      insert_subconstraint(vi,vbb, out);
+      stack.push(std::make_pair(vi,vbb));
     }
     return;
   }
@@ -800,10 +807,10 @@ insert_subconstraint(Vertex_handle vaa,
   if ( intersection) {
     if (vi != vaa && vi != vbb) {
       hierarchy.split_constraint(vaa,vbb,vi);
-      insert_subconstraint(vaa,vi, out); 
-      insert_subconstraint(vi,vbb, out); 
+      stack.push(std::make_pair(vaa,vi)); 
+      stack.push(std::make_pair(vi,vbb)); 
      }
-    else insert_subconstraint(vaa,vbb,out);  
+    else stack.push(std::make_pair(vaa,vbb));  
 
     
     return;
@@ -846,9 +853,9 @@ insert_subconstraint(Vertex_handle vaa,
 
   if (vi != vbb) {
     hierarchy.split_constraint(vaa,vbb,vi);
-    insert_subconstraint(vi,vbb, out); 
+    stack.push(std::make_pair(vi,vbb)); 
   }
-  return;
+  }
 }
 
 
