@@ -156,11 +156,7 @@ Once this is done, remeshing is run on all the surface, with protection of const
 <b>Corefinement</b> Given two triangulated surface meshes, the <i>corefinement</i>
 operation consists in refining both meshes so that their intersection polylines
 are a subset of edges in both refined meshes.
-
-<b> Autorefinement</b> Given a triangulated surface mesh, the <i>autorefinement</i>
-operation consists in refining the mesh by inserting the result of the intersection
-of each pair of non edge-adjacent triangles into the corresponding triangle faces,
-keeping the mesh triangulated.
+\todo more information on coplanar patches.
 
 \cgalFigureBegin{coref_fig, corefine.png}
 Corefinement of two triangulated surface meshes. (Left) Input meshes; (Right)
@@ -201,19 +197,6 @@ intersection of the input meshes will be marked as constrained. In addition,
 if an edge that was marked as constrained is split during the corefinement,
 sub-edges will be marked as constrained as well.
 
-\subsection coref_autoref_subsec Autorefinement
-The autorefinement of a triangulated surface mesh can be done using the function
-`CGAL::Polygon_mesh_processing::autorefine()`. It takes as input the
-triangulated surface mesh to autorefine.
-If a constrained edge map is provided, edges belonging to the
-self-intersection of the input mesh will be marked as constrained. In addition,
-if an edge that was marked as constrained is split during the autorefinement,
-sub-edges will be marked as constrained as well.
-As a byproduct, the function `CGAL::Polygon_mesh_processing::autorefine_and_remove_self_intersections()`
-will use the autorefinement of a triangle mesh to try to fix its self-intersections
-by removing some patches bounded by self-intersection edges and by stitching
-those edges.
-
 \subsection coref_bolop_subsec Boolean Operations
 
 \cgalFigureBegin{boolop_fig, bool_op.png}
@@ -252,8 +235,8 @@ possible, the input mesh will nevertheless be corefined.
 
 
 \subsection coref_valid_subsec Kernel and Validity of the Output
-The autorefinement and corefinement operations (which is also internally used in the three
-Boolean operations) will correctly change the topology of the input surface meshes
+The corefinement operation (which is also internally used in the three
+Boolean operations) will correctly change the topology of the input surface mesh
 if the point type used in the point property maps of the input meshes is
 from a \cgal Kernel with exact predicates. If that kernel does not
 have exact constructions, the embedding of the output surface mesh might

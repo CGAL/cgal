@@ -670,6 +670,7 @@ corefine_and_compute_difference(      TriangleMesh& tm1,
   functor(CGAL::Emptyset_iterator(), throw_on_self_intersection, true);
 }
 
+namespace experimental {
 /**
  * \ingroup PMP_corefinement_grp
  * \link coref_def_subsec autorefines \endlink `tm`. Refines a triangle mesh
@@ -809,6 +810,8 @@ corefine_and_compute_difference(      TriangleMesh& tm1,
 
   return ob.all_self_intersection_fixed();
 }
+
+}// end of namespace experimental
 
 // overload with default named parameters
 ///// corefine_and_compute_union /////
@@ -954,6 +957,7 @@ corefine(           TriangleMesh& tm1,
 }
 
 ///// autorefine /////
+namespace experimental {
 template <class TriangleMesh>
 void
 autorefine(TriangleMesh& tm)
@@ -970,6 +974,8 @@ autorefine_and_remove_self_intersections(TriangleMesh& tm)
   using namespace CGAL::Polygon_mesh_processing::parameters;
   return autorefine_and_remove_self_intersections(tm, all_default());
 }
+
+} // end of namespace experimental
 
 } }  // end of namespace CGAL::Polygon_mesh_processing
 

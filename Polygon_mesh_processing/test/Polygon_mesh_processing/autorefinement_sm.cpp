@@ -27,8 +27,8 @@ int main(int argc, char* argv[])
   std::cout << "Test surface_self_intersection\n";
   std::vector< std::vector<K::Point_3> >polylines;
 
-  PMP::surface_self_intersection(mesh, std::back_inserter(polylines));
-  
+  PMP::experimental::surface_self_intersection(mesh, std::back_inserter(polylines));
+
   //dump polylines
   std::ofstream output("intersection_polylines.cgal");
   BOOST_FOREACH(const std::vector<K::Point_3>& polyline, polylines)
@@ -40,7 +40,7 @@ int main(int argc, char* argv[])
   output.close();
 
   std::cout << "Number of vertices before autorefinement " << num_vertices(mesh) << "\n";
-  PMP::autorefine(mesh);
+  PMP::experimental::autorefine(mesh);
   std::cout << "Number of vertices after autorefinement " << num_vertices(mesh) << "\n";
 
   output.open("mesh_autorefined.off");
@@ -51,7 +51,7 @@ int main(int argc, char* argv[])
   mesh.clear();
   input >> mesh;
   std::cout << "Number of vertices before self-intersection removal " << num_vertices(mesh) << "\n";
-  if (!PMP::autorefine_and_remove_self_intersections(mesh))
+  if (!PMP::experimental::autorefine_and_remove_self_intersections(mesh))
     std::cout << "WARNING: Cannot remove all self-intersections\n";
   std::cout << "Number of vertices after self-intersection removal " << num_vertices(mesh) << "\n";
 

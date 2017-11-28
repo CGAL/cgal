@@ -99,6 +99,7 @@ surface_intersection(const TriangleMesh& tm1,
   return polyline_output;
 }
 
+namespace experimental {
 /**
  * \ingroup PMP_corefinement_grp
  * computes the autointersection of triangles of `tm`. The output is a
@@ -147,6 +148,9 @@ surface_self_intersection(const TriangleMesh& tm,
   return polyline_output;
 }
 
+} //end of namespace experimental
+
+
 template <class OutputIterator,
           class TriangleMesh >
 OutputIterator
@@ -162,6 +166,7 @@ surface_intersection(const TriangleMesh& tm1,
   );
 }
 
+namespace experimental {
 template <class OutputIterator,
           class TriangleMesh >
 OutputIterator
@@ -172,6 +177,7 @@ surface_self_intersection(const TriangleMesh& tm,
     CGAL::Polygon_mesh_processing::parameters::all_default()
   );
 }
+} //end of namespace experimental
 
 } } //end of namespace CGAL::Polygon_mesh_processing
 

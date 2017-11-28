@@ -28,7 +28,7 @@ void test(const char* fname, std::size_t nb_polylines, std::size_t total_nb_poin
 
 // Testing surface_self_intersection()
   std::vector< std::vector<K::Point_3> >polylines;
-  PMP::surface_self_intersection(mesh, std::back_inserter(polylines));
+  PMP::experimental::surface_self_intersection(mesh, std::back_inserter(polylines));
   assert(polylines.size() == nb_polylines);
   std::size_t total_nb_pt=0;
   BOOST_FOREACH(const std::vector<K::Point_3>& polyline, polylines)
@@ -36,14 +36,14 @@ void test(const char* fname, std::size_t nb_polylines, std::size_t total_nb_poin
   assert(total_nb_points == total_nb_pt);
 
 // Testing autorefine()
-  PMP::autorefine(mesh);
+  PMP::experimental::autorefine(mesh);
   assert( nb_vertices_after_autorefine==num_vertices(mesh));
 
 // Testing autorefine_and_remove_self_intersections()
   input.open(fname);
   mesh.clear();
   input >> mesh;
-  bool res=PMP::autorefine_and_remove_self_intersections(mesh);
+  bool res=PMP::experimental::autorefine_and_remove_self_intersections(mesh);
   assert(res==all_fixed);
   assert( nb_vertices_after_fix==num_vertices(mesh));
 }
