@@ -44,6 +44,13 @@ make_range(std::pair<T,T>& p)
   return CGAL::make_range(p);
 }
 
+template <class T>
+Iterator_range<T>
+make_range(std::pair<T,T>&& p)
+{
+  return CGAL::make_range(p);
+}
+
 template<class T>
 constexpr T&& make_range( T&& t )
 {
