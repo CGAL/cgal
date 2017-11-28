@@ -118,8 +118,8 @@ void project_points(C3T3& c3t3,
     const FT sq_d = CGAL::squared_distance(new_point, vh_p);
     std::cout << "squared distance from dummy to surface: " << sq_d << std::endl;
 
-    // skip tiny moves for efficiency
-    if(sq_d < 1e-10) // @todo some (proper) check on the distance here...
+    // Skip tiny moves for efficiency
+    if(sq_d < 1e-10) // arbitrary value, maybe compare it to the surface distance criterium ?
       continue;
 
     // Do not project if the projected point is in a protection ball
@@ -128,7 +128,7 @@ void project_points(C3T3& c3t3,
 
     const Vector_3 move(vh_p, new_point);
     Vertex_handle new_vertex = helper.update_mesh(vh, move);
-    if(new_vertex != vh) // if the move has been performed
+    if(new_vertex != vh) // if the move has successfully been performed
       c3t3.set_dimension(new_vertex, 2);
   }
 }
@@ -234,11 +234,14 @@ void refine_periodic_3_mesh_3_impl(C3T3& c3t3,
   CGAL_expensive_postcondition(c3t3.triangulation().tds().is_valid());
   CGAL_expensive_postcondition(c3t3.triangulation().is_valid());
   CGAL_expensive_postcondition(c3t3.is_valid());
+  dump_c3t3(c3t3, mesh_options.dump_after_init_prefix);
 
   // Project dummy points on the surface to lessen their influence on the output
   internal::project_dummy_points_of_surface(c3t3, domain);
 
-  dump_c3t3(c3t3, mesh_options.dump_after_init_prefix);
+  CGAL_expensive_postcondition(c3t3.triangulation().tds().is_valid());
+  CGAL_expensive_postcondition(c3t3.triangulation().is_valid());
+  CGAL_expensive_postcondition(c3t3.is_valid());
 
   // Odt
   if(odt)

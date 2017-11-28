@@ -281,8 +281,7 @@ protected:
 
   std::size_t cells_queue_size() const { return cells_queue_.size(); }
   bool cells_queue_empty()       const { return cells_queue_.empty(); }
-  Queue_iterator
-    cells_queue_front()                { return cells_queue_.begin(); }
+  Queue_iterator cells_queue_front()   { return cells_queue_.begin(); }
   void cells_queue_pop_front()         { cells_queue_.erase(cells_queue_front()); }
   void cells_queue_clear()             { cells_queue_.clear(); }
   void cells_queue_insert(const Cell_handle &ch, FT quality_value)
@@ -668,8 +667,8 @@ private:
   }
 
   /**
-   * Returns true if all cells of mesh have a sliver_criteria_ value greater
-   * than sliver_bound_
+   * Returns `true` if all cells of mesh have a sliver_criteria_ value greater
+   * than `sliver_bound_`
    */
   bool check_sliver_bound() const
   {
