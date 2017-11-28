@@ -654,7 +654,7 @@ void Scene_surface_mesh_item_priv::initializeBuffers(CGAL::Three::Viewer_interfa
 
 void Scene_surface_mesh_item::draw(CGAL::Three::Viewer_interface *viewer) const
 {
-  glShadeModel(GL_SMOOTH);
+  viewer->glShadeModel(GL_SMOOTH);
   if(!are_buffers_filled)
   {
     d->compute_elements();
@@ -673,8 +673,8 @@ void Scene_surface_mesh_item::draw(CGAL::Three::Viewer_interface *viewer) const
       d->program->setAttributeValue("is_selected", false);
     if(!d->has_vcolors)
       d->program->setAttributeValue("colors", this->color());
-    glDrawElements(GL_TRIANGLES, static_cast<GLuint>(d->idx_data_.size()),
-                   GL_UNSIGNED_INT, d->idx_data_.data());
+    viewer->glDrawElements(GL_TRIANGLES, static_cast<GLuint>(d->idx_data_.size()),
+                           GL_UNSIGNED_INT, d->idx_data_.data());
     vaos[Scene_surface_mesh_item_priv::Smooth_facets]->release();
   }
   else
@@ -686,7 +686,7 @@ void Scene_surface_mesh_item::draw(CGAL::Three::Viewer_interface *viewer) const
       d->program->setAttributeValue("is_selected", false);
     if(!d->has_fcolors)
       d->program->setAttributeValue("colors", this->color());
-    glDrawArrays(GL_TRIANGLES,0,static_cast<GLsizei>(d->nb_flat/3));
+    viewer->glDrawArrays(GL_TRIANGLES,0,static_cast<GLsizei>(d->nb_flat/3));
     vaos[Scene_surface_mesh_item_priv::Flat_facets]->release();
   }
 
@@ -709,15 +709,15 @@ void Scene_surface_mesh_item::drawEdges(CGAL::Three::Viewer_interface *viewer) c
    d->program->setUniformValue("is_selected", true);
  else
    d->program->setUniformValue("is_selected", false);
- glDrawElements(GL_LINES, static_cast<GLuint>(d->idx_edge_data_.size()),
-                GL_UNSIGNED_INT, d->idx_edge_data_.data());
+ viewer->glDrawElements(GL_LINES, static_cast<GLuint>(d->idx_edge_data_.size()),
+                        GL_UNSIGNED_INT, d->idx_edge_data_.data());
 
  if(d->has_feature_edges)
  {
    d->program->setAttributeValue("colors", Qt::red);
    d->program->setUniformValue("is_selected", false);
-   glDrawElements(GL_LINES, static_cast<GLuint>(d->idx_feature_edge_data_.size()),
-                  GL_UNSIGNED_INT, d->idx_feature_edge_data_.data());
+   viewer->glDrawElements(GL_LINES, static_cast<GLuint>(d->idx_feature_edge_data_.size()),
+                          GL_UNSIGNED_INT, d->idx_feature_edge_data_.data());
  }
  vaos[Scene_surface_mesh_item_priv::Edges]->release();
  d->program->release();
@@ -739,8 +739,8 @@ void Scene_surface_mesh_item::drawPoints(CGAL::Three::Viewer_interface *viewer) 
    d->program->setAttributeValue("is_selected", true);
  else
    d->program->setAttributeValue("is_selected", false);
- glDrawElements(GL_POINTS, static_cast<GLuint>(d->idx_edge_data_.size()),
-                GL_UNSIGNED_INT, d->idx_edge_data_.data());
+ viewer->glDrawElements(GL_POINTS, static_cast<GLuint>(d->idx_edge_data_.size()),
+                        GL_UNSIGNED_INT, d->idx_edge_data_.data());
  vaos[Scene_surface_mesh_item_priv::Edges]->release();
  d->program->release();
 }

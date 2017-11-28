@@ -10,6 +10,10 @@ endif()
 if(POLICY CMP0071)
   cmake_policy(SET CMP0071 NEW)
 endif()
+if(POLICY CMP0072)
+  # About the use of OpenGL
+  cmake_policy(SET CMP0072 NEW)
+endif()
 
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -139,7 +143,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   add_library(gl_splat SHARED
     GlSplat/GlSplat.cpp GlSplat/Shader.cpp ${gl_splat_rc})
   target_link_libraries(gl_splat PUBLIC ${QGLVIEWER_LIBRARIES} Qt5::OpenGL Qt5::Gui)
-  target_link_libraries(gl_splat PRIVATE ${OPENGL_gl_LIBRARY} ${QGLVIEWER_LIBRARIES})
+  target_link_libraries(gl_splat PRIVATE ${OPENGL_LIBRARIES} ${QGLVIEWER_LIBRARIES})
 
   find_path(CGAL_THREE_HEADERS_PATH
     NAME CGAL/Three/Scene_item.h
@@ -185,8 +189,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   target_link_libraries(demo_framework
     PUBLIC Qt5::OpenGL Qt5::Widgets Qt5::Gui Qt5::Script
     ${QGLVIEWER_LIBRARIES}
-    ${OPENGL_gl_LIBRARY}
-    ${OPENGL_glu_LIBRARY}
     gl_splat
     )
   if(CGAL_HEADER_ONLY)
@@ -202,8 +204,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     demo_framework
     ${CGAL_LIBRARIES}
     ${QGLVIEWER_LIBRARIES}
-    ${OPENGL_gl_LIBRARY}
-    ${OPENGL_glu_LIBRARY}
     gl_splat
     Qt5::OpenGL Qt5::Gui Qt5::Script Qt5::Widgets)
   add_library(scene_color_ramp SHARED Color_ramp.cpp)
@@ -344,8 +344,8 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   # Link with CGAL
   target_link_libraries( Polyhedron_3 PUBLIC ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
 
-  # Link with libQGLViewer, OpenGL
-  target_link_libraries( Polyhedron_3 PUBLIC ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY})
+  # Link with libQGLViewer
+  target_link_libraries( Polyhedron_3 PUBLIC ${QGLVIEWER_LIBRARIES})
 
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS Polyhedron_3 )
 
