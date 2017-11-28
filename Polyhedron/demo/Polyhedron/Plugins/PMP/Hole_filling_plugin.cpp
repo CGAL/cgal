@@ -228,16 +228,15 @@ private:
 
         qglviewer::Vec center;
         int counter = 0;
-        fg_halfedge_descriptor hf_around_facet;
-        CGAL_FOREACH(hf_around_facet, halfedges_around_face(hd,poly)){
-          CGAL_assertion(visited.find(hf_around_facet) == visited.end());
-          visited.insert(hf_around_facet);
-          const Point_3& p = get(vpm,target(hf_around_facet, poly));
+        CGAL_FOREACH(fg_halfedge_descriptor hl, halfedges_around_face(hd,poly)){
+          CGAL_assertion(visited.find(hl) == visited.end());
+          visited.insert(hl);
+          const Point_3& p = get(vpm,target(hl, poly));
           polyline_data.polyline->polylines.front().push_back(p);
           center += qglviewer::Vec(p.x(), p.y(), p.z());
           ++counter;
         }
-        hf_around_facet = *halfedges_around_face(hd,poly).first;
+        fg_halfedge_descriptor hf_around_facet = *halfedges_around_face(hd,poly).first;
         polyline_data.polyline->polylines.front().push_back(get(vpm,target(hf_around_facet,poly)));
         polyline_data.position = center / counter;
       }
