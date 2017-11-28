@@ -80,7 +80,9 @@ For more details about how these different features can help to identify one lab
 Finally, if the input data set has additional properties, these can also be used as features. For example, \cgal provides the following features:
 
 - [Echo_scatter](@ref CGAL::Classification::Feature::Echo_scatter) uses the number of returns (echo) provided by most LIDAR scanners if available;
-- [Hsv](@ref CGAL::Classification::Feature::Hsv) uses input color information if available.
+- [Hsv](@ref CGAL::Classification::Feature::Hsv) uses input color information if available;
+- [Simple_feature](@ref CGAL::Classification::Feature::Simple_feature) uses any property map applicable to the input range and whose value type is castable to `float` (useful if an additional property of the input set should be used as is, for example and `intensity` measurement).
+
 
 In the following code snippet, a subset of these features are instantiated. Note that all the predefined features can also be automatically generated in multiple scales (see \ref Classification_feature_generator).
 
@@ -117,7 +119,7 @@ The following snippet shows how to use the feature generator:
 
 %Classification relies on a classifier: this classifier is an object that, from the set of values taken by the features at an input item, computes the energy that measures the likelihood of an input item to belong to one label or another. A model of the concept `CGAL::Classification::Classifier` must take the index of an input item and store the energies associated to each label in a vector. If a classifier returns the value 0 for a pair of label and input item, it means that this item belongs to this label with certainty; large values mean that this item is not likely to belong to this label.
 
-\cgal provides two models for this concept, [Sum_of_weighted_features_classifier](@ref CGAL::Classification::Sum_of_weighted_features_classifier) and [Random_forest_classifier](@ref CGAL::Classification::Random_forest_classifier).
+\cgal provides three models for this concept, [Sum_of_weighted_features_classifier](@ref CGAL::Classification::Sum_of_weighted_features_classifier), [ETHZ_random_forest_classifier](@ref CGAL::Classification::ETHZ_random_forest_classifier) and [OpenCV_random_forest_classifier](@ref CGAL::Classification::OpenCV_random_forest_classifier).
 
 To perform classification based on these classifiers, please refer to \ref Classification_classification_functions.
 
@@ -194,22 +196,43 @@ Figure \cgalFigureRef{Classification_sowf_result_fig} shows an example of output
 Example of classification on a point set with medium noise and outliers (left: input, right: output). _Ground_ is orange, _roofs_ are pink, _vegetation_ is green. Outliers are classified with an additional label _outlier_ in black.
 \cgalFigureEnd
 
+\subsection Classification_ETHZ_random_forest ETHZ Random Forest
 
-\subsection Classification_random_forest Random Forest
-
-This second classifier is [Random_forest_classifier](@ref CGAL::Classification::Random_forest_classifier).
-It uses the \ref thirdpartyOpenCV library, more specifically the
-[Random Trees](http://docs.opencv.org/2.4/modules/ml/doc/random_trees.html)
-package. This classifier uses a ground truth training set to construct several
-decision trees that are then used to assign a label to each input
-item.
+\cgal provides [ETHZ_random_forest_classifier](@ref CGAL::Classification::ETHZ_random_forest_classifier),
+a classifier based on the Random Forest Template Library developed by
+Stefan Walk at ETH Zurich \cgalCite{cgal:w-erftl-14}. This classifier
+uses a ground truth training set to construct several decision trees
+that are then used to assign a label to each input item.
 
 This classifier cannot be set up by hand and requires a ground truth
-training set. The training algorithm is faster but usually requires a
-higher number of inliers than the previous classifier.
+training set. The training algorithm is significantly faster but
+usually requires a higher number of inliers than the previous
+classifier. The training algorithm uses more memory at runtime and the
+configuration files are larger than those produced by
+[Sum_of_weighted_features_classifier](@ref CGAL::Classification::Sum_of_weighted_features_classifier),
+but the output quality is usually significantly better, especially in
+the cases where many labels are used (more than five).
 
 An [example](\ref Classification_example_random_forest) shows how to
-use this classifier.  For more details about the method, please refer
+use this classifier. For more details about the algorithm, please refer
+to README provided in the [ETH Zurich's code archive](https://www.ethz.ch/content/dam/ethz/special-interest/baug/igp/photogrammetry-remote-sensing-dam/documents/sourcecode-and-datasets/Random%20Forest/rforest.zip).
+
+\subsection Classification_OpenCV_random_forest OpenCV Random Forest
+
+This last classifier is [OpenCV_random_forest_classifier](@ref CGAL::Classification::OpenCV_random_forest_classifier).
+It uses the \ref thirdpartyOpenCV library, more specifically the
+[Random Trees](http://docs.opencv.org/2.4/modules/ml/doc/random_trees.html)
+package.
+
+Note that this classifier usually produces results with a lower
+quality than [ETHZ_random_forest_classifier](@ref CGAL::Classification::ETHZ_random_forest_classifier).
+
+It is provided for the sake of completeness and for testing purposes,
+but if you are not sure what to use, we advise using the ETHZ Random
+Forest instead.
+
+An [example](\ref Classification_example_random_forest) shows how to
+use this classifier. For more details about the algorithm, please refer
 to [the official documentation](http://docs.opencv.org/2.4/modules/ml/doc/random_trees.html)
 of OpenCV.
 
@@ -375,7 +398,7 @@ The following example:
 
 \subsection Classification_example_random_forest Random Forest
 
-The following example shows how to use the classifier [Random_forest_classifier](@ref CGAL::Classification::Random_forest_classifier) using an input training set.
+The following example shows how to use classifiers [OpenCV_random_forest_classifier](@ref CGAL::Classification::OpenCV_random_forest_classifier) using an input training set.
 
 \cgalExample{Classification/example_random_forest.cpp}
 
