@@ -21,10 +21,9 @@ include(${CGAL_USE_FILE})
 
 find_package(Qt5 QUIET COMPONENTS Xml Script OpenGL Svg)
 
-find_package(OpenGL)
 find_package(QGLViewer)
 
-if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND )
+if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND QGLVIEWER_FOUND )
 
   add_definitions(-DQT_NO_KEYWORDS)
 
@@ -55,6 +54,6 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_
 
 else()
 
-  message(STATUS "NOTICE: This demo requires CGAL, the QGLViewer, OpenGL and Qt5, and will not be compiled.")
+  message(STATUS "NOTICE: This demo requires CGAL, the QGLViewer, and Qt5, and will not be compiled.")
 
 endif()
