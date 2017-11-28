@@ -106,5 +106,5 @@ if(OpenMesh_FOUND)
   target_link_libraries( test_Face_filtered_graph PRIVATE ${OPENMESH_LIBRARIES})
   target_link_libraries( test_graph_traits PRIVATE ${OPENMESH_LIBRARIES} )
   target_link_libraries( test_Properties PRIVATE ${OPENMESH_LIBRARIES})
+  target_link_libraries( test_bgl_read_write PRIVATE ${OPENMESH_LIBRARIES})
 endif()
-
