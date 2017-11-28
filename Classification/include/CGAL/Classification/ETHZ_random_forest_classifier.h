@@ -132,7 +132,7 @@ public:
     std::vector<float> ft;
     
     for (std::size_t i = 0; i < ground_truth.size(); ++ i)
-      if (ground_truth[i] != std::size_t(-1))
+      if (ground_truth[i] != -1)
       {
         for (std::size_t f = 0; f < m_features.size(); ++ f)
           ft.push_back(m_features[f]->value(i));
