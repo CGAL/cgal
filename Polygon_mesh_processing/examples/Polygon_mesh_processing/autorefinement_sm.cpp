@@ -56,7 +56,7 @@ int main(int argc, char* argv[])
   std::cout << "Number of vertices after self-intersection removal " << num_vertices(mesh) << "\n";
 
   output.open("mesh_fixed.off");
-  output << mesh;
+  output << std::setprecision(17) << mesh;
   output.close();
 
   return 0;
