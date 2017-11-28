@@ -44,19 +44,6 @@ if(NOT OPENGL_FOUND)
 endif()
 
 
-include(${CMAKE_CURRENT_LIST_DIR}/CGAL_Qt5_moc_and_resource_files.cmake)
-
-if(NOT TARGET CGAL_Qt5_moc_and_resources)
-  add_library(CGAL_Qt5_moc_and_resources STATIC ${_CGAL_Qt5_MOC_FILES_private} ${_CGAL_Qt5_RESOURCE_FILES_private})
-  set_target_properties(CGAL_Qt5_moc_and_resources PROPERTIES
-    POSITION_INDEPENDENT_CODE TRUE
-    EXCLUDE_FROM_ALL TRUE)
-  target_link_libraries(CGAL_Qt5_moc_and_resources CGAL::CGAL Qt5::Widgets Qt5::OpenGL Qt5::Svg)
-
-  add_library(CGAL::CGAL_Qt5_moc_and_resources ALIAS CGAL_Qt5_moc_and_resources)
-  add_library(CGAL::Qt5_moc_and_resources ALIAS CGAL_Qt5_moc_and_resources)
-endif()
-
 #.rst:
 # Result Variables
 # ^^^^^^^^^^^^^^^^
@@ -67,6 +54,20 @@ endif()
 #
 if(NOT CGAL_Qt5_MISSING_DEPS)
   set(CGAL_Qt5_FOUND TRUE)
+
+  include(${CMAKE_CURRENT_LIST_DIR}/CGAL_Qt5_moc_and_resource_files.cmake)
+
+  if(NOT TARGET CGAL_Qt5_moc_and_resources)
+    add_library(CGAL_Qt5_moc_and_resources STATIC ${_CGAL_Qt5_MOC_FILES_private} ${_CGAL_Qt5_RESOURCE_FILES_private})
+    set_target_properties(CGAL_Qt5_moc_and_resources PROPERTIES
+      POSITION_INDEPENDENT_CODE TRUE
+      EXCLUDE_FROM_ALL TRUE)
+    target_link_libraries(CGAL_Qt5_moc_and_resources CGAL::CGAL Qt5::Widgets Qt5::OpenGL Qt5::Svg)
+
+    add_library(CGAL::CGAL_Qt5_moc_and_resources ALIAS CGAL_Qt5_moc_and_resources)
+    add_library(CGAL::Qt5_moc_and_resources ALIAS CGAL_Qt5_moc_and_resources)
+  endif()
+
 endif()
 
 #get_property(QT_UIC_EXECUTABLE TARGET Qt5::uic PROPERTY LOCATION)
