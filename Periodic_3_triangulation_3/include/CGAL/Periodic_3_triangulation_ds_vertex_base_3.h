@@ -92,10 +92,10 @@ public:
   // Using 'visited_for_vertex_extractor' below allows to avoid using sets while
   // gathering incident/adjacent elements, instead simply marking vertices when
   // they are visited.
-  // IMPORTANT: this should only be used when using a nice 1-cover periodic
-  // triangulation. Otherwise, the same vertex might appear multiple times with
-  // different offsets but will be ignored because it will already have been
-  // marked, and bugs appear...
+  // IMPORTANT: this should only be used when sure that the triangulation is
+  // _always_ a 1-cover periodic triangulation. Otherwise, the same vertex might
+  // appear multiple times with different offsets but will be ignored because
+  // it will already have been marked, and bugs appear...
 #ifdef CGAL_PERIODIC_TRIANGULATION_USE_VISITED_VERTEX_BOOLEAN
   // The typedef and the bool are used by Triangulation_data_structure::Vertex_extractor
   // The names are choosen complicated so that we do not have to document them
