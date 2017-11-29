@@ -8,11 +8,13 @@ maintain faces described by halfedges, to provide access from a face to
 an incident halfedge, and to provide access from a halfedge to its incident
 face. 
 
-<h4>Associated Types:</h4>
+\cgalAssociatedTypesBegin
 
-`boost::graph_traits<FaceGraph>::%face_descriptor`
-A face descriptor corresponds to a unique face in an abstract graph instance.
+\cgalAssociatedTypeBegin{boost::graph_traits<FaceGraph>::%face_descriptor} A face descriptor corresponds to a unique face in an abstract graph instance.
 A face descriptor must be `DefaultConstructible`, `Assignable`, `EqualityComparable`, and `Hashable`. 
+\cgalAssociatedTypeEnd
+
+\cgalAssociatedTypesEnd
 
 \cgalRefines `HalfedgeGraph`
 \cgalHasModel `CGAL::Polyhedron_3`
