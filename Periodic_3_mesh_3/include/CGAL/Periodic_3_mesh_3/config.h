@@ -19,6 +19,12 @@
 #ifndef CGAL_PERIODIC_3_MESH_3_CONFIG_H
 #define CGAL_PERIODIC_3_MESH_3_CONFIG_H
 
+#include <CGAL/Mesh_3/config.h>
+
+// Since we are sure that we are always in 1-cover, we can use the visited
+// memory boolean in the vertex base
+#define CGAL_PERIODIC_TRIANGULATION_USE_VISITED_VERTEX_BOOLEAN
+
 // Avoid optimisations of Mesh_3
 #define CGAL_NO_STRUCTURAL_FILTERING
 #ifdef CGAL_MESH_3_SIZING_FIELD_INEXACT_LOCATE
