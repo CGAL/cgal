@@ -9,7 +9,7 @@
 \cgalPkgPicture{sma-pkg-small.png}
 
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Pierre Alliez, Lingjie Zhu}
+\cgalPkgAuthors{Pierre Alliez, David Cohen-Steiner, Lingjie Zhu}
 \cgalPkgDesc{This package implements the Variational Shape Approximation method to approximate an input surface triangle mesh by a simpler indexed face set or polyhedral surface mesh. The algorithm proceeds by iterative clustering of triangles, the clustering process being initialized either randomly, incrementally or hierarchically. The API is flexible and can be extended to user-defined error metrics.}
 \cgalPkgManuals{Chapter_Triangulated_Surface_Mesh_Approximation,PkgTSMA}
 \cgalPkgSummaryEnd
