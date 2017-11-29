@@ -185,6 +185,9 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
     /// @}
 
   private:
+
+    struct Empty_callback { bool operator()() const { return true; } };
+    
     typedef internal::Octree<internal::DirectPointAccessor<Traits> >
       Direct_octree;
     typedef internal::Octree<internal::IndexedPointAccessor<Traits> >
@@ -425,17 +428,33 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
 
     /// \name Detection 
     /// @{
+
+    /// \cond SKIP_IN_MANUAL
+    bool detect (const Parameters& options = Parameters())
+    {
+      return detect<Empty_callback> (options);
+    }
+    /// \endcond
+
     /*! 
       Performs the shape detection. Shape types considered during the detection
       are those registered using `add_shape_factory()`.
 
+      \tparam Callback can be omitted if the algorithm should be run
+      without any callback. `Callback` must be a functor providing
+      `bool operator()() const`. This functor is called regularly when the
+      algorithm is running. If it returns `true`, then the algorithm
+      continues its execution normally; if it returns `false`, the
+      algorithm is stopped. Note that this interruption may leave the
+      class in an invalid state.
+
       \return `true` if shape types have been registered and
               input data has been set. Otherwise, `false` is returned.
     */ 
-    bool detect(
-      const Parameters &options = Parameters()
-      ///< %Parameters for shape detection.
-                ) {
+    template <typename Callback>
+    bool detect(const Parameters &options, ///< %Parameters for shape detection.
+                const Callback& callback = Callback()) ///< Functor for callback mechanism.
+    {
       m_options = options;
 
       // No shape types for detection or no points provided, exit
@@ -448,6 +467,9 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
           return false;
       }
 
+      if (!callback())
+        return false;
+      
       // Reset data structures possibly used by former search
       m_extracted_shapes = 
         boost::make_shared<std::vector<boost::shared_ptr<Shape> > >();
@@ -533,6 +555,9 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
                 m_shape_index,
                 required_samples);
 
+              if (!callback())
+                return false;
+      
             } while (m_shape_index[first_sample] != -1 || !done);
 
             generated_candidates++;
@@ -540,6 +565,8 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
             //add candidate for each type of primitives
             for(typename std::vector<Shape *(*)()>::iterator it =
               m_shape_factories.begin(); it != m_shape_factories.end(); it++)	{
+                if (!callback())
+                  return false;
                 Shape *p = (Shape *) (*it)();
                 //compute the primitive and says if the candidate is valid
                 p->compute(indices,
@@ -603,6 +630,9 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
         Shape *best_candidate = 
           get_best_candidate(candidates, m_num_available_points - num_invalid);
 
+        if (!callback())
+          return false;
+        
         // If search is done and the best candidate is too small, we are done.
         if (!keep_searching && best_candidate->m_score < m_options.min_points)
           break;
@@ -623,6 +653,8 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
         best_candidate->connected_component(best_candidate->m_indices,
                                             m_options.cluster_epsilon);
         
+        if (!callback())
+          return false;
         // check score against min_points and clear out candidates if too low
         if (best_candidate->indices_of_assigned_points().size() <
           m_options.min_points) 
@@ -639,6 +671,9 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
           delete best_candidate;
           best_candidate = NULL;
 
+          if (!callback())
+            return false;
+          
           // Trimming candidates list
           std::size_t empty = 0, occupied = 0;
           while (empty < candidates.size()) {
@@ -662,6 +697,9 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
           }
 
           candidates.resize(empty);
+
+          if (!callback())
+            return false;
         }
         else
           if (stop_probability((std::size_t) best_candidate->expected_value(),
@@ -677,6 +715,9 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
             m_extracted_shapes->push_back(
                                     boost::shared_ptr<Shape>(best_candidate));
 
+            if (!callback())
+              return false;
+            
             //2. remove the points
             const std::vector<std::size_t> &indices_points_best_candidate =
               best_candidate->indices_of_assigned_points();
@@ -709,6 +750,9 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
             failed_candidates = 0;
             best_expected = 0;
 
+            if (!callback())
+              return false;
+            
             std::vector<std::size_t> subset_sizes(m_num_subsets);
             subset_sizes[0] = m_available_octree_sizes[0];
             for (std::size_t i = 1;i<m_num_subsets;i++) {
@@ -737,6 +781,9 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
               }
             }
   
+            if (!callback())
+              return false;
+            
             std::size_t start = 0, end = candidates.size() - 1;
             while (start < end) {
               while (candidates[start] && start < end) start++;
@@ -753,6 +800,10 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
   
             candidates.resize(end);
           }
+
+        if (!callback())
+          return false;
+        
         keep_searching = (stop_probability(m_options.min_points,
             m_num_available_points - num_invalid,
             generated_candidates, 

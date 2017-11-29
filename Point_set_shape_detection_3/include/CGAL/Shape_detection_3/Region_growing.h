@@ -169,7 +169,9 @@ shape. The implementation follows \cgalCite{cgal:lm-clscm-12}.
 
     
   private:
-
+    
+    struct Empty_callback { bool operator()() const { return true; } };
+    
     class My_point_map
     {
       Input_iterator input_iterator_first;
@@ -456,13 +458,32 @@ shape. The implementation follows \cgalCite{cgal:lm-clscm-12}.
 
     /// \name Detection 
     /// @{
+
+    /// \cond SKIP_IN_MANUAL
+    bool detect (const Parameters& options = Parameters())
+    {
+      return detect<Empty_callback> (options);
+    }
+    /// \endcond
+
+    
     /*! 
       Performs the shape detection.
 
+      \tparam Callback can be omitted if the algorithm should be run
+      without any callback. `Callback` must be a functor providing
+      `bool operator()() const`. This functor is called regularly when the
+      algorithm is running. If it returns `true`, then the algorithm
+      continues its execution normally; if it returns `false`, the
+      algorithm is stopped. Note that this interruption may leave the
+      class in an invalid state.
+
       \return `true` if shape types have been registered and
               input data has been set. Otherwise, `false` is returned.
-    */ 
-    bool detect(const Parameters &options = Parameters()) ///< %Parameters for shape detection.
+    */
+    template <typename Callback>
+    bool detect(const Parameters &options, ///< %Parameters for shape detection.
+                const Callback& callback = Callback()) ///< Functor for callback mechanism.
     {
       // No shape types for detection or no points provided, exit
       if (m_shape_factories.size() == 0 ||
@@ -513,6 +534,9 @@ shape. The implementation follows \cgalCite{cgal:lm-clscm-12}.
       //Initialization structures
       int class_index = -1;
 
+      if (!callback())
+        return false;
+      
       std::vector<std::size_t> neighbors;
 
       std::vector<std::size_t> sorted_indices (m_num_total_points);
@@ -534,6 +558,9 @@ shape. The implementation follows \cgalCite{cgal:lm-clscm-12}.
       
       for (std::size_t I = 0; I < m_num_total_points; ++ I)
       {
+        if (!callback())
+          return false;
+
         std::size_t i = sorted_indices[I];
         
         Input_iterator it = m_input_iterator_first + i;
