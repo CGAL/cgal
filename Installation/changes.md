@@ -90,6 +90,8 @@ Release date: April 2018
     alternative to RANSAC for plane detection.
 -   **Breaking change**: the API of `CGAL::regularize_planes()` is
     generalized to accept other types of input than the RANSAC output.
+-   Add a callback mechanism for both `CGAL::Efficient_RANSAC` and
+    `CGAL::Region_growing`.
 
 ### Point Set Processing
 
