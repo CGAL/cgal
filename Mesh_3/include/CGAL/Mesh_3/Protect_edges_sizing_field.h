@@ -832,8 +832,8 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
     for ( typename Tr::Finite_vertices_iterator it = tr.finite_vertices_begin(),
          end = tr.finite_vertices_end() ; it != end ; ++it )
     {
-      const Weighted_point& itwp = tr.point(it);
-      FT sq_d = tr.min_squared_distance(p, cp(itwp));
+      const Weighted_point& it_wp = tr.point(it);
+      FT sq_d = tr.min_squared_distance(p, cp(it_wp));
       if(sq_d < min_sq_d) {
         min_sq_d = sq_d;
         nearest_point = c3t3_.triangulation().point(it);
@@ -998,8 +998,8 @@ insert_balls(const Vertex_handle& vp,
     c3t3_.triangulation().geom_traits().construct_point_3_object();
 
   // Get size of p & q
-  const Weighted_point& vpwp = c3t3_.triangulation().point(vp);
-  const Weighted_point& vqwp = c3t3_.triangulation().point(vq);
+  const Weighted_point& vp_wp = c3t3_.triangulation().point(vp);
+  const Weighted_point& vq_wp = c3t3_.triangulation().point(vq);
 
   const FT sp = get_radius(vp);
   const FT sq = get_radius(vq);
@@ -1010,7 +1010,7 @@ insert_balls(const Vertex_handle& vp,
   const FT pq_length = (vp == vq) ?
     domain_.curve_length(curve_index)
     :
-    domain_.curve_segment_length(cp(vpwp), cp(vqwp), curve_index, orientation);
+    domain_.curve_segment_length(cp(vp_wp), cp(vq_wp), curve_index, orientation);
 
   // Insert balls
   return
@@ -1048,14 +1048,14 @@ insert_balls(const Vertex_handle& vp,
   typename C3T3::Triangulation::Geom_traits::Construct_point_3 cp =
     c3t3_.triangulation().geom_traits().construct_point_3_object();
 
-  const Weighted_point& vpwp = c3t3_.triangulation().point(vp);
+  const Weighted_point& vp_wp = c3t3_.triangulation().point(vp);
 
 #if ! defined(CGAL_NO_PRECONDITIONS)
   if(sp <= 0) {
     std::stringstream msg;;
     msg.precision(17);
     msg << "Error: the mesh sizing field is null at point (";
-    msg << cp(vpwp) << ")!";
+    msg << cp(vp_wp) << ")!";
     CGAL_precondition_msg(sp > 0, msg.str().c_str());
   }
 #endif // ! CGAL_NO_PRECONDITIONS
@@ -1108,18 +1108,18 @@ insert_balls(const Vertex_handle& vp,
     if(n >= internal::max_nb_vertices_to_reevaluate_size &&
        d >= (internal::max_nb_vertices_to_reevaluate_size * minimal_weight_)) {
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
-      const Weighted_point& vqwp = c3t3_.triangulation().point(vq);
+      const Weighted_point& vq_wp = c3t3_.triangulation().point(vq);
       std::cerr << "Number of to-be-inserted balls is: "
                 << n << "\n  between points ("
-                << vpwp << ") and (" << vqwp
+                << vp_wp << ") and (" << vq_wp
                 << ") (arc length: "
-                << domain_.curve_segment_length(cp(vpwp),
-                                                cp(vqwp),
+                << domain_.curve_segment_length(cp(vp_wp),
+                                                cp(vq_wp),
                                                 curve_index, d_sign)
                 << ")\n";
 #endif
       const Bare_point new_point =
-        domain_.construct_point_on_curve(cp(vpwp),
+        domain_.construct_point_on_curve(cp(vp_wp),
                                          curve_index,
                                          d_sign * d / 2);
       const int dim = 1; // new_point is on edge

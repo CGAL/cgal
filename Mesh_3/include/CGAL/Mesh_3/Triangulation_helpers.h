@@ -149,7 +149,7 @@ public:
    *
    * \pre `vh` is not the infinite vertex
    */
-  template<typename Tag>
+  template<typename Tag> // Two versions to distinguish using 'Has_visited_for_vertex_extractor'
   FT get_sq_distance_to_closest_vertex(const Tr& tr,
                                        const Vertex_handle& vh,
                                        const Cell_vector& incident_cells,

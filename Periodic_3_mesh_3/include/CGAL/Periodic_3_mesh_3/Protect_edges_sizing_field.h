@@ -1268,14 +1268,14 @@ try_to_move_close_dummy_vertex(Vertex_handle& protection_vertex,
   typename Gt::Compute_squared_distance_3 csd =
     c3t3_.triangulation().geom_traits().compute_squared_distance_3_object();
 
-  const Weighted_point& pvwp = c3t3_.triangulation().point(protection_vertex);
-  const Weighted_point& dvwp = c3t3_.triangulation().point(dummy_vertex);
-  const Weighted_point canonical_dvwp = c3t3_.triangulation().get_closest_point(pvwp, dvwp);
-  CGAL_precondition(pvwp != canonical_dvwp);
+  const Weighted_point& pv_wp = c3t3_.triangulation().point(protection_vertex);
+  const Weighted_point& dv_wp = c3t3_.triangulation().point(dummy_vertex);
+  const Weighted_point canonical_dv_wp = c3t3_.triangulation().get_closest_point(pv_wp, dv_wp);
+  CGAL_precondition(pv_wp != canonical_dv_wp);
 
-  Vector_3 dir(cp(pvwp), cp(canonical_dvwp));
+  Vector_3 dir(cp(pv_wp), cp(canonical_dv_wp));
   dir /= CGAL::sqrt(dir * dir);
-  FT sq_dist = csd(cp(pvwp), cp(canonical_dvwp));
+  FT sq_dist = csd(cp(pv_wp), cp(canonical_dv_wp));
 
   // First direction to move is the corner-dummy line.
   if(move_dummy_vertex_away_from_corner_with_direction(protection_vertex, dummy_vertex,

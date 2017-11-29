@@ -23,17 +23,19 @@
 
 #include <CGAL/license/Mesh_3.h>
 
-
 #include <CGAL/Mesh_3/search_for_connected_components_in_labeled_image.h>
-
-#include <iostream>
-#include <queue>
 #include <CGAL/Mesh_3/squared_distance_Point_3_Triangle_3.h>
+#include <CGAL/make_mesh_3.h>
+
+#include <CGAL/enum.h>
 #include <CGAL/iterator.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/Image_3.h>
-#include <CGAL/make_mesh_3.h>
+
 #include <boost/foreach.hpp>
+
+#include <iostream>
+#include <queue>
 
 template <typename Point>
 struct Get_point
