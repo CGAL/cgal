@@ -791,7 +791,7 @@ insert_subconstraint(Vertex_handle vaa,
       hierarchy.split_constraint(vaa,vbb,vi);
       stack.push(std::make_pair(vi,vbb));
     }
-    return;
+    continue;
   }
       
   List_faces intersected_faces;
@@ -812,8 +812,7 @@ insert_subconstraint(Vertex_handle vaa,
      }
     else stack.push(std::make_pair(vaa,vbb));  
 
-    
-    return;
+    continue;
   }
 
 
