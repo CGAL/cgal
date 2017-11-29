@@ -432,23 +432,23 @@ public:
   /// compute the sign, uMSB, lMSB, etc.
   virtual void computeExactFlags() = 0;
   /// compute the minimal root bound
-  CGAL_CORE_EXPORT extLong computeBound();
+  extLong computeBound();
   /// driver function to approximate
-  CGAL_CORE_EXPORT void approx(const extLong& relPrec, const extLong& absPrec);
+  void approx(const extLong& relPrec, const extLong& absPrec);
   /// compute an approximate value satifying the specified precisions
   virtual void computeApproxValue(const extLong&, const extLong&) = 0;
   /// Test whether the current approx. value satisfies [relPrec, absPrec]
-  CGAL_CORE_EXPORT bool withinKnownPrecision(const extLong&, const extLong&);
+  bool withinKnownPrecision(const extLong&, const extLong&);
   //@}
 
   /// \name Misc Functions
   //@{
   /// reduce current node
-  CGAL_CORE_EXPORT void reduceToBigRat(const BigRat&);
+  void reduceToBigRat(const BigRat&);
   /// reduce current node
-  CGAL_CORE_EXPORT void reduceTo(const ExprRep*);
+  void reduceTo(const ExprRep*);
   /// reduce current node to zero
-  CGAL_CORE_EXPORT void reduceToZero();
+  void reduceToZero();
   /// return operator string
   virtual const std::string op() const {
     return "UNKNOWN";
@@ -458,7 +458,7 @@ public:
   /// \name Degree Bound Functions
   //@{
   /// compute "d_e" based on # of sqrts
-  CGAL_CORE_EXPORT extLong degreeBound();
+  extLong degreeBound();
   /// count actually computes the degree bound of current node.
   virtual extLong count() = 0;
   /// reset the flag "visited"
