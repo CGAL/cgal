@@ -361,9 +361,9 @@ Here follows what this gives for a file under the GPL :
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://pmoeller@scm.gforge.inria.fr/svn/cgal/branches/features/doxy-port-pmoeller/Developers_manual/doc_tex/Developers_manual/code_format.tex $
-// $Id: code_format.tex 70968 2012-08-02 12:55:15Z pmoeller $
-// 
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //                 Sylvain Pion
@@ -391,9 +391,9 @@ Here follows what this gives for a file under the LGPL :
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://pmoeller@scm.gforge.inria.fr/svn/cgal/branches/features/doxy-port-pmoeller/Developers_manual/doc_tex/Developers_manual/code_format.tex $
-// $Id: code_format.tex 70968 2012-08-02 12:55:15Z pmoeller $
-// 
+// $URL$
+// $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Herve Bronnimann, Sylvain Pion
 \endcode
