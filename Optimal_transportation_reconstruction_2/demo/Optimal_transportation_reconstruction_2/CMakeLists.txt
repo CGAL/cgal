@@ -39,6 +39,7 @@ if(CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND)
   set(
   SRCS 
   glviewer.cpp 
+  scene.cpp
   Otr2_demo.cpp 
   window.cpp 
   render.cpp 
@@ -76,6 +77,8 @@ if(CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND)
   
   target_link_libraries( Otr2_demo PRIVATE
     CGAL::CGAL CGAL::CGAL_Qt5 Qt5::Gui Qt5::OpenGL )
+  qt5_use_modules(Otr2_demo OpenGL)
+
   
   # Link with pthread if necessary
   if (CIMG_INCLUDE_DIR)
@@ -93,6 +96,7 @@ if(CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND)
 
   include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
   cgal_add_compilation_test(Otr2_demo)
+
 else (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND )
 
   set(OTR2_MISSING_DEPS "")

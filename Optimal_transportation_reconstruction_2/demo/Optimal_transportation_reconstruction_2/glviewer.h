@@ -3,12 +3,13 @@
 
 // Qt
 #include <QOpenGLWidget>
+#include <QOpenGLFunctions_2_1>
 #include <QPaintEvent>
 
 // local
 #include "scene.h"
 
-class GlViewer : public QOpenGLWidget
+class GlViewer : public QOpenGLWidget, public QOpenGLFunctions_2_1
 {
     Q_OBJECT
     
