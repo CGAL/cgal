@@ -168,7 +168,6 @@ void initialize_triangulation_from_labeled_image(C3T3& c3t3,
         // This would cause trouble to optimizers
         // check pi will not be hidden
         typename Tr::Locate_type lt;
-        Cell_handle c;
         int li, lj;
         Cell_handle pi_cell = tr.locate(pi, lt, li, lj);
         if(lt != Tr::OUTSIDE_AFFINE_HULL) {
