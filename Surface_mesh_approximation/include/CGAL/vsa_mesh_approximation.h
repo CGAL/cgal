@@ -56,7 +56,7 @@ namespace VSA {
  *  \cgalParamEnd
  *  \cgalParamBegin{nb_of_relaxations} number of relaxations interleaved within seeding.
  *  \cgalParamEnd
- *  \cgalParamBegin{mesh_chord_error} maximum chord approximation error use for mesh construction.
+ *  \cgalParamBegin{mesh_chord_error} maximum chord approximation error used for meshing.
  *  \cgalParamEnd
  *  \cgalParamBegin{face_proxy_map} property map containing the assigned proxy index of each face of input mesh `tm_in`.
  *  \cgalParamEnd
