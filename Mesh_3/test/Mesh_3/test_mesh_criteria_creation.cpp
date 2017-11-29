@@ -50,7 +50,7 @@ int main()
   // Init facet
   Tr::Bare_point facet_circum =
     tr.geom_traits().construct_weighted_circumcenter_3_object()(
-      tr.point(ch, k+1), tr.point(ch, k+2), tr.point(ch, k+3);
+      tr.point(ch, k+1), tr.point(ch, k+2), tr.point(ch, k+3));
 
   ch->set_surface_patch_index(k,surf_index);
   ch->set_facet_surface_center(k,facet_circum);
