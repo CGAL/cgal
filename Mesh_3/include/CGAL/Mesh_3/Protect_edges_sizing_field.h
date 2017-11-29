@@ -25,7 +25,7 @@
 
 // -----------------------------------------------------------------------------
 // Note: this file was forked for Periodic_3_mesh_3 (with the same name) due to
-// periodic requires noticeable changes. Bug fixes / changes should be mirrored.
+// periodic requiring noticeable changes. Bug fixes / changes should be mirrored.
 // -----------------------------------------------------------------------------
 
 #ifndef CGAL_MESH_3_PROTECT_EDGES_SIZING_FIELD_H
