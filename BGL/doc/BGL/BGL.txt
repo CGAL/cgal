@@ -419,24 +419,28 @@ are class templates that work for any model of this concept.
 
 \subsection BGLProperties Properties and Dynamic Properties
 
-As the concepts `FaceGraph`  adds the notion of halfedges and faces,
+As the concepts `FaceGraph` adds the notion of halfedges and faces,
 as well as a geometric embedding of the vertices, we have to add
 property tags such as `face_index_t` and `vertex_point_t`.
 
-We further add <em>dynamic property maps</em> that enable the user
+We further add <em>dynamic properties</em> that enable the user
 to add properties to vertices, halfedges, edges, and faces on the fly.
-For mesh classes such as `Surface_mesh` and meshes from OpenMesh
-this creates the internal property maps offered by these classes.
-For `Polyhedron_3` this creates an `unordered_map`.
+The life time of a dynamic property is bound to the life time
+of the property map, that is it used reference counting and
+deletes the property if no property map refers to it.
 
-Dynamic property tags such as `vertex_property_t` are a generalization of
+Dynamic property tags such as `dynamic_vertex_property_t` are a generalization of
 `boost::vertex_index_t`, as they have a template parameter for the
-value type of the dynamic property map.
+value type of the dynamic property map, and a default value.
 
-Just as `boost::property_map<G>::type` provides support for obtaining the
-type of a property map for a vertex index, or a vertex point, the class
-`dynamic_property_map` provides support for obtaining the type
-of a dynamic property map for a given graph type and a dynamic property tag.
+`boost::property_map<G,T>::type` is used to obtain the 
+type of the dynamic property map for a graph `g` of type `G`, for a
+dynamic property tag `T`.
+
+As for ordinary properties, the function `%get()` is overloaded and
+serves for retrieving a property map for a given graph and dynamic
+property tag, as well as for retrieving a value for a given key and
+property map.
 
 \cgalExample{Property_map/dynamic_properties.cpp}
 

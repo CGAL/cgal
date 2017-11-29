@@ -199,7 +199,7 @@ Valid Expression  |  returns                                   | Description
 /// \defgroup PkgBGLSelectionFct Selection Functions
 /// \ingroup PkgBGL
 
-/// \defgroup PkgBGLAdaptors Graph adaptors
+/// \defgroup PkgBGLAdaptors Graph Adaptors
 /// \ingroup PkgBGL
 
 /// \defgroup PkgBGLEulerOperations Euler Operations
@@ -242,7 +242,7 @@ the same vertex.
 For convenience, two iterator and circulator types enable iterating through all the halfedges
 incident to a given face, and all the halfedges having a given vertex as target.
 
-All functions are in the header file `<CGAL/boost/graph/iterator.h>
+All functions are in the header file `<CGAL/boost/graph/iterator.h>`
 */
 
 /*!

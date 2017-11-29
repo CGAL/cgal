@@ -47,45 +47,41 @@ namespace CGAL {
 /// Dynamic vertex property tag
 /// \tparam T the value type of the vertex property
 template <typename T>
-struct vertex_property_t
+struct dynamic_vertex_property_t
 {
-  /// \param s the name of the property
-  vertex_property_t(const std::string s);
+  /// \param default the default value of the property
+  dynamic_vertex_property_t(const T& default = T());
 };
 
-  /// \ingroup PkgBGLPropertiesDynamic
+/// \ingroup PkgBGLPropertiesDynamic
 /// Dynamic halfedge property tag
 /// \tparam T the value type of the halfedge property
 template <typename T>
-struct halfedge_property_t
+struct dynamic_halfedge_property_t
 {
-  /// \param s the name of the property
-  halfedge_property_t(const std::string s);
+  /// \param default the default value of the property
+  dynamic_halfedge_property_t(const T& default = T());
 };
   
 /// \ingroup PkgBGLPropertiesDynamic
-/// Helper class to obtain the type of the dynamic property map for a graph type and a dynamic property tag
-/// \tparam G must be a model of
-/// \tparam D must be a model of DynamicPropertyTag
-template <typename G, typename D>
-struct dynamic_property_map<G, D>
+/// Dynamic edge property tag
+/// \tparam T the value type of the edge property
+template <typename T>
+struct dynamic_edge_property_t
 {
-  /// The type of the dynamic property map
-  typedef unspecified_type type;
+  /// \param default the default value of the property
+  dynamic_edge_property_t(const T& default = T());
 };
-
+ 
 /// \ingroup PkgBGLPropertiesDynamic
-/// adds a dynamic property map to `g`
-template <typename T, typename G>
-typename dynamic_property_map<G,vertex_property_t<T> >::const_type
-add_property(vertex_property_t<T> prop, const G& g);
-
-  
-/// \ingroup PkgBGLPropertiesDynamic
-/// removes a dynamic property map assocated to `g`
-template<typename G, typename D>
-void remove_property(D dpm,
-                     const G&);
+/// Dynamic face property tag
+/// \tparam T the value type of the face property
+template <typename T>
+struct dynamic_face_property_t
+{
+  /// \param default the default value of the property
+  dynamic_face_property_t(const T& default = T());
+};
 
 /// @}
 } // namespace CGAL
