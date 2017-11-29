@@ -18,7 +18,8 @@
 #ifndef CGAL_BOOST_MP_H
 #define CGAL_BOOST_MP_H
 
-#if BOOST_VERSION >= 105300
+#if BOOST_VERSION >= 105300 && !defined CGAL_DO_NOT_USE_BOOST_MP
+#define CGAL_USE_BOOST_MP 1
 
 #include <CGAL/number_type_basic.h>
 #include <CGAL/Modular_traits.h>
@@ -472,12 +473,12 @@ public:
 };
 #ifdef CGAL_USE_GMP
 template <>
-class Input_rep<boost::multiprecision::gmp_rational> : public IO_rep_is_specialized {
-    boost::multiprecision::gmp_rational& q;
+class Input_rep<boost::multiprecision::mpq_rational> : public IO_rep_is_specialized {
+    boost::multiprecision::mpq_rational& q;
 public:
-    Input_rep(boost::multiprecision::gmp_rational& qq) : q(qq) {}
+    Input_rep(boost::multiprecision::mpq_rational& qq) : q(qq) {}
     std::istream& operator()(std::istream& in) const {
-      internal::read_float_or_quotient<boost::multiprecision::gmp_int,boost::multiprecision::gmp_rational>(in, q);
+      internal::read_float_or_quotient<boost::multiprecision::mpz_int,boost::multiprecision::mpq_rational>(in, q);
       return in;
     }
 };
@@ -496,9 +497,9 @@ namespace internal {
   }
 #ifdef CGAL_USE_GMP
   template <>
-  inline void read_float_or_quotient(std::istream & is, boost::multiprecision::gmp_rational& et)
+  inline void read_float_or_quotient(std::istream & is, boost::multiprecision::mpq_rational& et)
   {
-    internal::read_float_or_quotient<boost::multiprecision::gmp_int,boost::multiprecision::gmp_rational>(is, et);
+    internal::read_float_or_quotient<boost::multiprecision::mpz_int,boost::multiprecision::mpq_rational>(is, et);
   }
 #endif
 } // namespace internal

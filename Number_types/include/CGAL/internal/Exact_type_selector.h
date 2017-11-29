@@ -33,6 +33,7 @@
 #include <CGAL/Quotient.h>
 #include <CGAL/Lazy_exact_nt.h>
 
+#include <CGAL/boost_mp.h>
 #ifdef CGAL_USE_GMP
 #  include <CGAL/Gmpz.h>
 #  include <CGAL/Gmpq.h>
@@ -65,9 +66,15 @@ struct Exact_field_selector
 #ifdef CGAL_USE_GMPXX
 { typedef mpq_class Type; };
 #elif defined(CGAL_USE_GMP)
+# if defined(CGAL_USE_BOOST_MP)
+{ typedef boost::multiprecision::gmp_rational Type; };
+# else
 { typedef Gmpq Type; };
+# endif
 #elif defined(CGAL_USE_LEDA)
 { typedef leda_rational Type; };
+#elif defined(CGAL_USE_BOOST_MP)
+{ typedef boost::multiprecision::cpp_rational Type; };
 #else
 { typedef Quotient<MP_Float> Type; };
 #endif
