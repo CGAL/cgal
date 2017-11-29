@@ -671,18 +671,18 @@ public:
                                                               vsit != vs.end(); ++vsit)
       {
         // Can happen in 27-sheeted triangulations composed of few points
-        if((*vsit)->point() == nearest->point())
+        if(point(*vsit) == point(nearest))
           continue;
 
         const Offset min_dist_offset = this->get_min_dist_offset(canonical_p, query_offset, *vsit);
-        if(this->compare_distance(canonical_p, (*vsit)->point(), tmp->point(),
+        if(this->compare_distance(canonical_p, point(*vsit), point(tmp),
                                   query_offset, min_dist_offset, offset_of_nearest) == SMALLER)
         {
           tmp = *vsit;
           offset_of_nearest = min_dist_offset;
           const Weighted_point& vswp = this->point(tmp);
           min_sq_dist = csd(canonical_p, cp(vswp), query_offset, min_dist_offset);
-          std::cout << "new closest: " << tmp->point()
+          std::cout << "new closest: " << point(tmp)
                     << " offset: " << offset_of_nearest << std::endl
                     << " sq dist: " << min_sq_dist << std::endl;
         }
@@ -951,13 +951,13 @@ public:
     Cell_handle n = c->neighbor(i);
 
     EPoint_3 exact_wc1 = exact_weighted_circumcenter(
-                           to_exact(c->vertex(0)->point()), to_exact(c->vertex(1)->point()),
-                           to_exact(c->vertex(2)->point()), to_exact(c->vertex(3)->point()),
+                           to_exact(point(c->vertex(0))), to_exact(point(c->vertex(1))),
+                           to_exact(point(c->vertex(2))), to_exact(point(c->vertex(3))),
                            get_offset(c, 0), get_offset(c, 1),
                            get_offset(c, 2), get_offset(c, 3));
     EPoint_3 exact_wc2 = exact_weighted_circumcenter(
-                           to_exact(n->vertex(0)->point()), to_exact(n->vertex(1)->point()),
-                           to_exact(n->vertex(2)->point()), to_exact(n->vertex(3)->point()),
+                           to_exact(point(n->vertex(0))), to_exact(point(n->vertex(1))),
+                           to_exact(point(n->vertex(2))), to_exact(point(n->vertex(3))),
                            get_offset(n, 0), get_offset(n, 1),
                            get_offset(n, 2), get_offset(n, 3));
     typename EK::Point_3 dp;

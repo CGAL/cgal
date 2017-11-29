@@ -1173,7 +1173,7 @@ insert_balls(const Vertex_handle& vp,
   FT d_signF = static_cast<FT>(d_sign);
   FT pt_dist = d_signF * norm_step_size;
   Vertex_handle prev = vp;
-  const Bare_point& p = cp(vp->point());
+  const Bare_point& p = cp(c3t3_.triangulation().point(vp));
 
   // if ( (0 == n) &&
   //      ( (d >= sp+sq) || !is_sampling_dense_enough(vp, vq) ) )
@@ -1447,7 +1447,7 @@ change_ball_size(const Vertex_handle& v, const FT squared_size, const bool speci
 
   Index index = c3t3_.index(v);
   int dim = get_dimension(v);
-  Bare_point p = cp(v->point());
+  Bare_point p = cp(c3t3_.triangulation().point(v)); // intentional copy
 
   // Remove v from the set of corners
   boost::optional<Corner_index> corner_index = boost::make_optional(false, Corner_index());

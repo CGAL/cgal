@@ -126,7 +126,7 @@ struct Tester
     std::cerr << name << ":[" ;
 
     for ( int i=0; i<4 ; ++i )
-      std::cerr << "[" << c->vertex(i)->point() << "]";
+      std::cerr << "[" << c3t3_.triangulation().point(c, i) << "]";
 
     std::cerr << "] ";
   }
@@ -138,7 +138,7 @@ struct Tester
     for ( int i=0; i<4 ; ++i )
     {
       if ( i != f.second )
-        std::cerr << "[" << f.first->vertex(i)->point() << "]";
+        std::cerr << "[" << c3t3_.triangulation().point(f.first, i) << "]";
     }
 
     std::cerr << "] ";

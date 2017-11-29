@@ -466,9 +466,10 @@ private:
     typename Gt::Construct_point_3 cp =
       c3t3_.triangulation().geom_traits().construct_point_3_object();
 
-    // using v->point() on purpose to get something that is already canonical
-    return CGAL::sqrt(c3t3_.triangulation().min_squared_distance(cp(va->point()),
-                                                                 cp(vb->point())));
+    const Weighted_point& wpa = c3t3_.triangulation().point(va);
+    const Weighted_point& wpb = c3t3_.triangulation().point(vb);
+
+    return CGAL::sqrt(c3t3_.triangulation().min_squared_distance(cp(wpa), cp(wpb)));
   }
 
   /// Return the radius of the ball of vertex \c v.
@@ -542,7 +543,7 @@ private:
       for(; ccmcit!=ccmcend; ++ccmcit)
       {
         std::cerr << "  Vertex: " << &*(ccmcit->first)
-                  << " canonical pos: " << ccmcit->first->point() << std::endl;
+                  << " canonical pos: " << c3t3_.triangulation().point(ccmcit->first) << std::endl;
         const Domain_pts_container& vpts = ccmcit->second;
         typename Domain_pts_container::const_iterator ptit = vpts.begin();
         for(; ptit!=vpts.end(); ++ptit)
@@ -1316,9 +1317,7 @@ try_to_solve_close_dummy_point(Vertex_handle& protection_vertex,
 
 #if CGAL_MESH_3_PROTECTION_DEBUG & 2
       std::cerr << "Dummy vertex: " << c3t3_.triangulation().point(dummy_vertex) << " is too close "
-            << "to vertex: " << protection_vertex->point() << " (at distance: "
-            << CGAL::squared_distance(dummy_vertex->point().point(),
-                                      protection_vertex->point().point()) << ")" << std::endl;
+            << "to vertex: " << c3t3_.triangulation().point(protection_vertex) << std::endl;
 #endif
 
   if(try_to_remove_close_dummy_vertex(protection_vertex, dummy_vertex, intended_weight))
@@ -1602,7 +1601,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
       CGAL_assertion(nearest_sq_dist > 0.);
 
       // Use some scaffholding to safely to remove the dummy.
-      Weighted_point close_pt(v->point());
+      Weighted_point close_pt(tr.point(v));
       Vector_3 rnd_direction(1., 0., 0.); // arbitrary direction
 
       typename Gt::Construct_translated_point_3 translate =
@@ -1758,7 +1757,8 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
     std::cerr << "smart_insert_point: weight " << w
               << " reduced to " << min_sq_distance
-              << "\n (near existing point: " << nearest_vertex->point() << ")\n";
+              << "\n (near existing point: "
+              << c3t3_.triangulation().point(nearest_vertex) << ")\n";
 
     Index nearest_vertex_index = c3t3_.index(nearest_vertex);
     i = boost::get<int>(&nearest_vertex_index);
@@ -2762,8 +2762,9 @@ orientation_of_walk(const Vertex_handle& start,
                     Curve_index curve_index) const
 {
 #if CGAL_MESH_3_PROTECTION_DEBUG & 4
-  std::cerr << "orientation_of_walk(" << start->point() << ", "
-            << next->point() << ")" << std::endl;
+  std::cerr << "orientation_of_walk("
+            << c3t3_.triangulation().point(start) << ", "
+            << c3t3_.triangulation().point(next) << ")" << std::endl;
 #endif
 
   Bare_point start_p, next_p;
@@ -2799,7 +2800,9 @@ walk_along_edge(const Vertex_handle& start, const Vertex_handle& next,
                 ErasedVeOutIt out) const
 {
 #if CGAL_MESH_3_PROTECTION_DEBUG & 4
-  std::cerr << "walk_along_edge(" << start->point() << ", " << next->point()
+  std::cerr << "walk_along_edge("
+            << c3t3_.triangulation().point(start) << ", "
+            << c3t3_.triangulation().point(next)
             << ", orientation: " << orientation << ")" << std::endl;
 #endif
 

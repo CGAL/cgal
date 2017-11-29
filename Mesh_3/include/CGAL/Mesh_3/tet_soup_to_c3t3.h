@@ -101,7 +101,7 @@ void build_finite_cells(Tr& tr,
   typedef typename Tr::Cell_handle                              Cell_handle;
 
   CGAL_assertion_code(
-    typename Tr::Geom_traits::Construct_point_3 wp2p =
+    typename Tr::Geom_traits::Construct_point_3 cp =
       tr.geom_traits().construct_point_3_object();
   )
 
@@ -121,8 +121,8 @@ void build_finite_cells(Tr& tr,
     }
 
     // this assertion also tests for degeneracy
-    CGAL_assertion(CGAL::orientation(wp2p(vs[0]->point()), wp2p(vs[1]->point()),
-                                     wp2p(vs[2]->point()), wp2p(vs[3]->point()))
+    CGAL_assertion(CGAL::orientation(cp(tr.point(vs[0])), cp(tr.point(vs[1])),
+                                     cp(tr.point(vs[2])), cp(tr.point(vs[3])))
                      == POSITIVE);
 
     Cell_handle c = tr.tds().create_cell(vs[0], vs[1], vs[2], vs[3]);

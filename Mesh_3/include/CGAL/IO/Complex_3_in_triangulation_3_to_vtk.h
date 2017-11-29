@@ -61,7 +61,7 @@ output_c3t3_to_vtk_unstructured_grid(const C3T3& c3t3,
       ++vit)
   {
     typedef typename Triangulation::Weighted_point Weighted_point;
-    const Weighted_point& p = vit->point();
+    const Weighted_point& p = tr.point(vit);
     vtk_points->InsertNextPoint(CGAL::to_double(p.x()),
                                 CGAL::to_double(p.y()),
                                 CGAL::to_double(p.z()));

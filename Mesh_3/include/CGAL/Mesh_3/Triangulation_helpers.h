@@ -305,7 +305,7 @@ no_topological_change(Tr& tr,
 
       if(tr.is_infinite(c->vertex(j)))
       {
-        if(tr.side_of_power_sphere(c, cj->vertex(mj)->point(), false)
+        if(tr.side_of_power_sphere(c, tr.point(cj->vertex(mj)), false)
            != CGAL::ON_UNBOUNDED_SIDE)
         {
           np = false;
@@ -314,16 +314,7 @@ no_topological_change(Tr& tr,
       }
       else
       {
-#ifdef CGAL_PERIODIC_CELL_VERBOSE
-        std::cout << "--- inprogress" << std::endl;
-        std::cout << "Cj: " << &*cj << std::endl
-                  << cj->vertex(0)->point() << " Off: " << cj->offset(0) << " tra: " << tr.point(cj, 0) << std::endl
-                  << cj->vertex(1)->point() << " Off: " << cj->offset(1) << " tra: " << tr.point(cj, 1) << std::endl
-                  << cj->vertex(2)->point() << " Off: " << cj->offset(2) << " tra: " << tr.point(cj, 2) << std::endl
-                  << cj->vertex(3)->point() << " Off: " << cj->offset(3) << " tra: " << tr.point(cj, 3) << std::endl
-                  << "fifth: " << tr.point(c, j) << std::endl;
-#endif
-        if(tr.side_of_power_sphere(cj, c->vertex(j)->point(), false)
+        if(tr.side_of_power_sphere(cj, tr.point(c->vertex(j)), false)
            != CGAL::ON_UNBOUNDED_SIDE)
         {
           np = false;

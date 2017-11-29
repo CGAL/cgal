@@ -231,7 +231,7 @@ private:
     switch(points.size())
     {
       case 0: // could happen if there is an isolated surface point into mesh
-      case 1: // don't do anything, as v->point() is already on the surface
+      case 1: // don't do anything, as the point is already on the surface
       {
         return CGAL::NULL_VECTOR;
         break;
@@ -531,7 +531,7 @@ private:
 
   /**
    * Turn around the edge \c edge and add the values computed from tets made by
-   * v->point() and the circumcenters of cells incident to \c edge.
+   * `v` and the circumcenters of cells incident to \c edge.
    *
    * Note that this function abundantly uses dual() calls and using a cell base
    * which stores the circumcenter thus improves its efficiency.

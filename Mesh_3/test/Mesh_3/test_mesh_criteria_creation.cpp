@@ -50,8 +50,8 @@ int main()
   // Init facet
   Tr::Bare_point facet_circum =
     tr.geom_traits().construct_weighted_circumcenter_3_object()(
-      ch->vertex(k+1)->point(), ch->vertex(k+2)->point(), ch->vertex(k+3)->point());
-  
+      tr.point(ch, k+1), tr.point(ch, k+2), tr.point(ch, k+3);
+
   ch->set_surface_patch_index(k,surf_index);
   ch->set_facet_surface_center(k,facet_circum);
   ch->set_facet_surface_center_index(k,index);
@@ -102,11 +102,11 @@ int main()
   // -----------------------------------
   typedef Tr::Geom_traits::FT FT;
   Tr::Geom_traits::Compute_squared_radius_3 squared_radius = tr.geom_traits().compute_squared_radius_3_object();
-  Tr::Geom_traits::Construct_point_3 wp2p = tr.geom_traits().construct_point_3_object();
+  Tr::Geom_traits::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
 
-  FT radius_facet = CGAL::sqrt(squared_radius(wp2p(ch->vertex(k+1)->point()),
-                                              wp2p(ch->vertex(k+2)->point()),
-                                              wp2p(ch->vertex(k+3)->point())));
+  FT radius_facet = CGAL::sqrt(squared_radius(cp(tr.point(ch, k+1)),
+                                              cp(tr.point(ch, k+2)),
+                                              cp(tr.point(ch, k+3))));
 
   FT facet_size_ok = radius_facet*FT(10);
   FT facet_size_nok = radius_facet/FT(10);
@@ -159,10 +159,10 @@ int main()
   // -----------------------------------
   // Test cell criteria
   // -----------------------------------
-  FT radius_cell = CGAL::sqrt(squared_radius(wp2p(ch->vertex(0)->point()),
-                                             wp2p(ch->vertex(1)->point()),
-                                             wp2p(ch->vertex(2)->point()),
-                                             wp2p(ch->vertex(3)->point())));
+  FT radius_cell = CGAL::sqrt(squared_radius(cp(tr.point(ch, 0)),
+                                             cp(tr.point(ch, 1)),
+                                             cp(tr.point(ch, 2)),
+                                             cp(tr.point(ch, 3))));
 
   FT cell_size_ok = radius_cell*FT(10);
   FT cell_size_nok = radius_cell/FT(10);

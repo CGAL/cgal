@@ -956,13 +956,13 @@ update_mesh(const Moves_vector& moves,
       {
         FT size = cpp11::get<2>(*it);
 
-        // Move point
 #ifdef CGAL_MESH_3_OPTIMIZER_VERBOSE
-        std::cout << "Moving: " << it - moves.begin()
+        std::cout << "Moving #" << it - moves.begin()
                   << " addr: " << &*v
-                  << " pt: " << v->point()
-                  << " to: " << v->point().point() + move << std::endl;
+                  << " pt: " << tr_.point(v)
+                  << " move: " << move << std::endl;
 #endif
+        // Move point
         Vertex_handle new_v = helper_.move_point(v, move, outdated_cells, moving_vertices);
 
         // Restore size in meshing_info data

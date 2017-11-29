@@ -790,7 +790,7 @@ output_to_medit(std::ostream& os,
        ++vit)
   {
     V[vit] = inum++;
-    Weighted_point p = vit->point();
+    Weighted_point p = tr.point(vit);
     os << CGAL::to_double(p.x()) << ' '
        << CGAL::to_double(p.y()) << ' '
        << CGAL::to_double(p.z()) << ' '
