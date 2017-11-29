@@ -125,22 +125,24 @@ public:
                  CGAL::Bbox_3* bbox=NULL,
                  std::vector<T>* color=NULL,
                  std::vector<T>* flat_normal=NULL,
-                 std::vector<T>* gourod_normal=NULL) :
+                 std::vector<T>* gourod_normal=NULL,
+                 std::vector<std::size_t>& point_indices=NULL) :
     m_pos_buffer(pos),
     m_bb(bbox),
     m_color_buffer(color),
     m_flat_normal_buffer(flat_normal),
     m_gourod_normal_buffer(gourod_normal),
-    m_face_started(false),
-    m_data_is_indexed(false)
+    m_point_indices(point_indices),
+    m_face_started(false)
   {}
 
   void clear()
   {
     m_pos_buffer->clear();
-    if (m_color_buffer!=NULL) { m_color_buffer->clear(); }
-    if (m_flat_normal_buffer!=NULL) { m_flat_normal_buffer->clear(); }
+    if (m_color_buffer!=NULL)         { m_color_buffer->clear(); }
+    if (m_flat_normal_buffer!=NULL)   { m_flat_normal_buffer->clear(); }
     if (m_gourod_normal_buffer!=NULL) { m_gourod_normal_buffer->clear(); }
+    if (m_point_indices!=NULL)        { m_point_indices->clear(); }
   }
 
   bool is_empty() const
@@ -156,7 +158,7 @@ public:
   { return m_gourod_normal_buffer!=NULL; }
 
   bool is_data_indexed() const
-  { return m_data_is_indexed; }
+  { return m_point_indices!=NULL; }
 
   // 1.1) Add a point, without color.
   template<typename KPoint>
