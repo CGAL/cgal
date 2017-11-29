@@ -126,13 +126,13 @@ public:
                  std::vector<T>* color=NULL,
                  std::vector<T>* flat_normal=NULL,
                  std::vector<T>* gourod_normal=NULL,
-                 std::vector<std::size_t>& point_indices=NULL) :
+                 std::vector<std::size_t>& indices=NULL) :
     m_pos_buffer(pos),
     m_bb(bbox),
     m_color_buffer(color),
     m_flat_normal_buffer(flat_normal),
     m_gourod_normal_buffer(gourod_normal),
-    m_point_indices(point_indices),
+    m_index_buffer(indices),
     m_face_started(false)
   {}
 
@@ -142,11 +142,17 @@ public:
     if (m_color_buffer!=NULL)         { m_color_buffer->clear(); }
     if (m_flat_normal_buffer!=NULL)   { m_flat_normal_buffer->clear(); }
     if (m_gourod_normal_buffer!=NULL) { m_gourod_normal_buffer->clear(); }
-    if (m_point_indices!=NULL)        { m_point_indices->clear(); }
+    if (m_index_buffer!=NULL)         { m_index_buffer->clear(); }
   }
 
   bool is_empty() const
-  { return m_pos_buffer->empty(); }
+  {
+    return m_pos_buffer->empty() &&
+      (m_color_buffer!=NULL || m_color_buffer->empty()) &&
+      (m_flat_normal_buffer!=NULL || m_flat_normal_buffer->empty()) &&
+      (m_gourod_normal_buffer!=NULL || m_gourod_normal_buffer->empty()) &&
+      (m_index_buffer!=NULL || m_index_buffer->empty());
+  }
 
   bool has_color() const
   { return m_color_buffer!=NULL; }
@@ -157,14 +163,13 @@ public:
   bool has_gourod_normal() const
   { return m_gourod_normal_buffer!=NULL; }
 
-  bool is_data_indexed() const
-  { return m_point_indices!=NULL; }
+  bool has_indices() const
+  { return m_index_buffer!=NULL; }
 
   // 1.1) Add a point, without color.
   template<typename KPoint>
   void add_point(const KPoint& kp)
   {
-    CGAL_assertion(!is_data_indexed());
     CGAL_assertion(m_pos_buffer!=NULL);
     Local_point p=internal::get_local_point(kp);
     m_pos_buffer->push_back(p.x());
@@ -687,9 +692,7 @@ protected:
   std::vector<float>* m_color_buffer;
   std::vector<float>* m_flat_normal_buffer;
   std::vector<float>* m_gourod_normal_buffer;
-
-  bool m_data_is_indexed;
-  std::vector<unsigned int>* m_point_index;
+  std::vector<unsigned int>* m_index_buffer;
 
   CGAL::Bbox_3* m_bb;
   
