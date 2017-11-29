@@ -55,4 +55,5 @@ include( CGAL_CreateSingleSourceCGALProgram )
 create_single_source_cgal_program( "mesh_implicit_multi_domain.cpp" )
 create_single_source_cgal_program( "mesh_implicit_shape.cpp" )
 create_single_source_cgal_program( "mesh_implicit_shape_with_subdomains.cpp" )
-
+create_single_source_cgal_program( "mesh_implicit_shape_with_protection.cpp" )
+create_single_source_cgal_program( "mesh_two_spheres_with_balls.cpp" )

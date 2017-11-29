@@ -23,6 +23,10 @@
 
 #include <algorithm>
 #include <cmath>
+#include <fstream>
+#include <iostream>
+#include <list>
+#include <vector>
 
 namespace P3M3_IO = CGAL::Periodic_3_mesh_3::IO;
 
@@ -32,6 +36,8 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel         K;
 // Domain
 typedef K::FT                                                       FT;
 typedef K::Point_3                                                  Point;
+typedef K::Iso_cuboid_3                                             Iso_cuboid;
+
 typedef FT (Function)(const Point&);
 typedef CGAL::Mesh_domain_with_polyline_features_3<
           CGAL::Implicit_periodic_3_mesh_domain_3<Function,K> >     Mesh_domain;
@@ -52,106 +58,80 @@ typedef CGAL::Mesh_criteria_3<Tr>                                   Mesh_criteri
 // To avoid verbose function and named parameters call
 using namespace CGAL::parameters;
 
-// A pythagoras triple
-static const FT r = 0.6;
+// Periodic domain
+static const int domain_size = 1;
+static const Iso_cuboid periodic_domain = Iso_cuboid(0, 0, 0, domain_size, domain_size, domain_size);
 
-static const FT mx = 0.26;
-static const FT Mx = 0.74;
-static const FT my = 0.26;
-static const FT My = 0.74;
-
-// Function
-static Tr dummy_tr; // default constructs a iso_cuboid (0,0,0,1,1,1)
-
+// Used to artifically create a periodic function.
+static const Tr dummy_tr(periodic_domain);
 Point canonicalize_point(const Point& p)
 {
-  Point canonical_p = dummy_tr.robust_canonicalize_point(p);
-
-  CGAL_postcondition( !(canonical_p.x() < 0) && (canonical_p.x() < 1) );
-  CGAL_postcondition( !(canonical_p.y() < 0) && (canonical_p.y() < 1) );
-  CGAL_postcondition( !(canonical_p.z() < 0) && (canonical_p.z() < 1) );
-  return canonical_p;
+  // Compute the representative of 'p' in the fundamental domain
+  return dummy_tr.canonicalize_point(p);
 }
 
-FT sphere_function(const Point& p)
+// Implicit function
+static const FT cx = 0.5, cy = 0.5, cz = 0.5;
+static const FT scale = 0.9;
+FT cone_function(const Point& p)
 {
-  return CGAL::squared_distance(canonicalize_point(p), Point(0.5, 0.5, 0.5)) - r*r;
+  const Point& cp = canonicalize_point(p);
+  const FT x = cp.x(), y = cp.y(), z = cp.z();
+
+  if (((x-cx)*(x-cx) + (y-cy)*(y-cy)) > scale * (z-cz)*(z-cz))
+    return 1; // outside
+  else
+    return -1; // inside
 }
 
-void fill_sphere_polylines(Polylines& polylines)
+// To obtain a good looking mesh at the base of the cone, we protect the base circle
+void cone_polylines(Polylines& polylines)
 {
+  const FT z = 0.;
+  const FT radius_at_z = CGAL::sqrt(scale * cz * cz);
+
   Polyline_3 polyline;
-
   for(int i = 0; i < 360; ++i)
   {
-    Point p(0., 0.5 + 0.33 * std::cos(i*CGAL_PI/180), 0.5 + 0.33 * std::sin(i*CGAL_PI/180));
-    std::cout << "Adding " << p << " to polyline" << std::endl;
-    polyline.push_back(p);
+    polyline.push_back(Point(0.5 + radius_at_z * std::sin(i*CGAL_PI/180),
+                             0.5 + radius_at_z * std::cos(i*CGAL_PI/180),
+                             z));
   }
   polyline.push_back(polyline.front()); // close the line
 
   polylines.push_back(polyline);
 }
 
-FT squary_cylinder_function(const Point& p)
-{
-  if(p.x() < mx || p.x() > Mx ) return 1;
-  if(p.y() < my || p.y() > My ) return 1;
-  return -1;
-}
-
-void fill_squary_cylinder_polylines(Polylines& polylines, const FT edge_length)
-{
-  Polyline_3 polyline;
-
-  polyline.push_back(Point(mx, mx, 0.));
-  polyline.push_back(Point(mx, mx, 1. - 0.5 * edge_length));
-  polylines.push_back(polyline);
-
-  polyline.clear();
-  polyline.push_back(Point(mx, my, 0.));
-  polyline.push_back(Point(Mx, my, 0.));
-  polyline.push_back(Point(Mx, My, 0.));
-  polyline.push_back(Point(mx, My, 0.));
-  polyline.push_back(Point(mx, my, 0.));
-  polylines.push_back(polyline);
-}
-
 int main()
 {
-  int domain_size = 1;
-
-  // Domain (Warning: Sphere_3 constructor uses squared radius !)
-  Mesh_domain domain(squary_cylinder_function,
+  // Domain
+  Mesh_domain domain(cone_function,
                      CGAL::Iso_cuboid_3<K>(0, 0, 0, domain_size, domain_size, domain_size));
 
   // Mesh criteria
-  FT edge_length = 5 * r * sin(CGAL_PI/180.);
-  const FT max_size = 0.125 * FT(domain_size) - 1e-10;
-  edge_length = (std::min)(edge_length, max_size);
-
-  Mesh_criteria criteria(edge_size = edge_length,
+  Mesh_criteria criteria(edge_size = 0.02 * domain_size,
                          facet_angle = 0.05 * domain_size,
                          facet_size = 0.02 * domain_size,
                          cell_radius_edge_ratio = 2, cell_size = 0.5);
 
-  // Create edge that we want to preserve
+  // Create the features that we want to preserve
   Polylines polylines;
+  cone_polylines(polylines);
 
-  // fill_sphere_polylines(polylines);
-  fill_squary_cylinder_polylines(polylines, edge_length);
-
-  // Insert edge in domain
+  // Insert the features in the domain
   domain.add_features(polylines.begin(), polylines.end());
 
-  // Mesh generation with feature preservation
-  C3t3 c3t3_bis = CGAL::make_periodic_3_mesh_3<C3t3>(domain, criteria
-                                                     //,no_exude(), no_perturb()
-                                                     );
+  // Insert a corner to make sure the apex of the cone is present in the mesh
+  domain.add_corner(Point(0.5, 0.5, 0.5));
+
+  // Mesh generation with feature preservation (and no optimizers)
+  C3t3 c3t3_bis = CGAL::make_periodic_3_mesh_3<C3t3>(domain, criteria, manifold(),
+                                                     no_exude(), no_perturb());
 
   // Output
-  std::ofstream medit_file_bis("towers.mesh");
+  std::ofstream medit_file_bis("output_protected_implicit_shape.mesh");
   P3M3_IO::write_complex_to_medit(medit_file_bis, c3t3_bis);
 
+  std::cout << "EXIT SUCCESS" << std::endl;
   return 0;
 }
