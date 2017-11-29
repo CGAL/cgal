@@ -6,7 +6,11 @@
 #  QGLVIEWER_LIBRARIES - Link these to use QGLViewer
 #  QGLVIEWER_DEFINITIONS - Compiler switches required for using QGLViewer
 #
-
+if(POLICY CMP0072)
+  # About the use of OpenGL
+  cmake_policy(SET CMP0072 NEW)
+endif()
+find_package(OpenGL QUIET)
 find_package(Qt5 QUIET COMPONENTS OpenGL Xml)
 
 # first look in user defined locations
@@ -52,9 +56,9 @@ endif()
 
 if(QGLVIEWER_LIBRARY_RELEASE)
   if(QGLVIEWER_LIBRARY_DEBUG)
-    set(QGLVIEWER_LIBRARIES_ Qt5::Xml Qt5::OpenGL optimized ${QGLVIEWER_LIBRARY_RELEASE} debug ${QGLVIEWER_LIBRARY_DEBUG})
+    set(QGLVIEWER_LIBRARIES_ Qt5::Xml Qt5::OpenGL ${OPENGL_LIBRARIES} optimized ${QGLVIEWER_LIBRARY_RELEASE} debug ${QGLVIEWER_LIBRARY_DEBUG})
   else()
-    set(QGLVIEWER_LIBRARIES_ Qt5::Xml Qt5::OpenGL ${QGLVIEWER_LIBRARY_RELEASE})
+    set(QGLVIEWER_LIBRARIES_ Qt5::Xml Qt5::OpenGL ${OPENGL_LIBRARIES} ${QGLVIEWER_LIBRARY_RELEASE})
   endif()
 
   set(QGLVIEWER_LIBRARIES ${QGLVIEWER_LIBRARIES_} CACHE FILEPATH "The QGLViewer library")
