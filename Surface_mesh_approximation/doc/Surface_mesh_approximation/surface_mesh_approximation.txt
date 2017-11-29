@@ -14,7 +14,7 @@ This package implements the <em>Variational Shape Approximation</em> \cgalCite{c
 
 Given an input surface triangle mesh, %VSA leverages a discrete clustering algorithm to approximate it by a set of local simple shapes referred to as proxies. Each cluster is represented as a connected set of triangles of the input mesh, and the output mesh is constructed by generating a triangle mesh approximation of the clusters. 
 By default the proxies are planar, and the algorithm design is generic for future extensions to non-planar proxies. 
-The approximation error is one-side, defined between the clusters and their associated proxies. Two error metrics (\f$ \mathcal{L}^2 \f$, \f$ \mathcal{L}^{2,1} \f$) are provided via the classes `CGAL::VSA::L2_metric` and `CGAL::VSA::L21_metric`, and the algorithm design is generic to other user-defined metrics.
+The approximation error is one-sided, defined between the clusters and their associated proxies. Two error metrics (\f$ \mathcal{L}^2 \f$, \f$ \mathcal{L}^{2,1} \f$) are provided via the classes `CGAL::VSA::L2_metric` and `CGAL::VSA::L21_metric`, and the algorithm design is generic to other user-defined metrics.
 
 \cgalFigureBegin{Approximation_teaser, teaser.png}
 Variational shape approximation on two models with the \f$ \mathcal{L}^{2,1} \f$ error metric. From left to right: partition of the input surface triangle mesh, anchor vertices and edges, and output triangle mesh. The partition is optimized via discrete clustering of the input triangles, so as to minimize the approximation error from the clusters to planar proxies (not shown). 
@@ -67,7 +67,7 @@ and the remaining error is added to the next proxy error in order to keep the to
 Comparison of seeding methods on the sphere-cube model. From left to right: initial partition (\f$ \mathcal{L}^{2,1} \f$ metrics and 20 proxies), add 5 proxy seeds (red facets) with random, incremental and hierarchical methods respectively.
 \cgalFigureEnd
 
-Figure \cgalFigureRef{seeding_method} depicts the effect of different seeding methods. Random initialization randomly selects a set of input triangle facets as proxy seeds. It is very fast but the subsequent clustering process can be entrapped in local minima, especially on shapes with regions surrounded by sharp creases (left rectangle). Incremental initialization adds the proxies one by one at the most distorted region. It can thus be slow due to the considerable amount of interleaved relaxation iterations. Hierarchical initialization doubles the number of proxies in a hierarchical refinement sequence, so as the generate clustering regions with more evenly distributed fitting errors. Time consumption is somewhere in-between the former two. Some statistics and comparisons are available in \ref sma_perf.
+Figure \cgalFigureRef{seeding_method} depicts the effect of different seeding methods. Random initialization randomly selects a set of input triangle facets as proxy seeds. It is very fast but the subsequent clustering process can be entrapped in local minima, especially on shapes with regions surrounded by sharp creases (left rectangle). Incremental initialization adds the proxies one by one at the most distorted region. It can thus be slow due to the large number of interleaved relaxation iterations. Hierarchical initialization repeatedly doubles the number of proxies in a hierarchical refinement sequence, so as to generate clustering regions with more evenly distributed fitting errors. Time consumption is somewhere in-between the former two. Some statistics and comparisons are available in \ref sma_perf.
 
 \subsubsection sma_stop Stop Criteria
 
@@ -76,10 +76,10 @@ To determine when to stop adding more proxies, we can specify either the maximum
 - <b>Minimum error drop</b>. Starting from the proxy fitted from the first facet of the surface with the fitting error \f$ \hat E \f$, the algorithm adds proxies until the approximation error drops below the specified percentage \f$ target\_drop * \hat E \f$.
 
 \cgalFigureBegin{nb_proxies, nb_proxies.png}
-Using different number of proxies to approximate the plane-sphere model. From left to right: 8, 14, 20 proxies. On the right most is the number_of_proxies to error curve.
+Using different number of proxies to approximate the plane-sphere model. From left to right: 8, 14, 20 proxies. We plot right the error against the number of proxies.
 \cgalFigureEnd
 
-In Figure \cgalFigureRef{nb_proxies}, if we specify the minimum error drop to 10% (yellow dash lines), we will end up with 12 proxies on the plane-sphere model. If both are provided, the first met criterion stops the seeding. Different seeding examples are provided in \cgalFigureRef{meshing}.
+As depicted by Figure \cgalFigureRef{nb_proxies}, specifying a minimum error drop of 10% (yellow dash lines) as stopping criterion, yields 12 proxies on the plane-sphere model. When both criteria are provided, the first criterion met stops the seeding. Different seeding examples are depicted by Figure \cgalFigureRef{meshing}.
 
 \subsection sma_operations Operations
 
@@ -97,7 +97,7 @@ As depicted in Figure \cgalFigureRef{operations}, teleportation provides a means
 
 \subsection sma_meshing Meshing
 
-This package implements the meshing algorithm described in \cgalCite{cgal:cad-vsa-04} by generating a triangle mesh  approximation of the clustering partition. Intuitively, the triangulation is generated by computing a discrete analog of a constrained 2D Delaunay triangulation, where distances are measured on the graph of the input triangulation.
+This package implements the meshing algorithm described in \cgalCite{cgal:cad-vsa-04} by generating a triangle mesh approximation of the clustering partition. Intuitively, the triangulation is generated by computing a discrete analog of a constrained 2D Delaunay triangulation, where distances are measured on the graph of the input triangulation.
 
 \cgalFigureBegin{triangulation, triangulation.png}
 Discrete constrained triangulation. The triangulation process first constructs constrained edges between anchor vertices, by 'flooding' along the interface edges (black arrows, upper left). It then floods the inner vertices (black arrows, upper right). Triangles (lower left) are formed by connecting the sources of the flooding process (red triangle, lower right).
@@ -105,7 +105,7 @@ Discrete constrained triangulation. The triangulation process first constructs c
 
 \subsubsection sma_anchors Anchors
 
-More specifically, it first generates a set of so-called anchor vertices as follows: an anchor vertex is generated for each corner vertex of the clustering partition. A corner vertex of the input mesh exhibits adjacency to three regions for inner vertices, or two regions for boundary vertices. Walking along the region boundary (counterclockwise), <em>chord</em> is the halfedges connecting end to end from one anchor to the next one. One boundary cycle consists of several pieces of chords. Note that for a connected region with holes, it has more than one boundary cycles (Figure \cgalFigureRef{operations}, planar part before teleportation).
+More specifically, it first generates a set of so-called anchor vertices as follows: an anchor vertex is generated for each corner vertex of the clustering partition. A corner vertex of the input mesh exhibits adjacency to three regions for inner vertices, or two regions for boundary vertices. Walking along the region boundary (counterclockwise), <em>chord</em> is the halfedges connecting end to end from one anchor to the next one. One boundary cycle consists of several pieces of chords. Note that a connected region with holes yields several boundary cycles (Figure \cgalFigureRef{operations}, planar part before teleportation).
 
 \subsubsection sma_subdivision Subdivision
 
@@ -122,7 +122,7 @@ Varying the chord error. From left to right: clustering partition, and meshing w
 \subsubsection sma_additional_anchors Additional Anchors
 
 \cgalFigureBegin{anchors, anchors.png}
-An illustration of additional anchors. From left to right: starting from a partition (grey) with a hole (while) and two encircled regions (green and blue), we add a starting anchor (orange disk) to the boundary cycle (red dash line) without any anchor (2nd), subdivide the circular chord (3rd, the number indicates the level of recursion) and add anchors to the boundary cycle with less than 2 anchors (4th, red dash lines).
+Adding anchors. From left to right: starting from a partition (grey) with a hole (while) and two encircled regions (green and blue), we add a starting anchor (orange disk) to the boundary cycle (red dash line) without any anchor (2nd), subdivide the circular chord (3rd, the number indicates the level of recursion) and add anchors to the boundary cycle with less than 2 anchors (4th, red dash lines).
 \cgalFigureEnd
 
 For a boundary cycle without any anchor (like a hole, Figure \cgalFigureRef{operations}), we add a starting anchor to the boundary. Then subdivide this circular chord to ensure that every boundary cycle has at least 2 anchors (i.e. every chord is connecting 2 different anchors, Figure \cgalFigureRef{anchors}). Finally, we add additional anchors to ensure that at least three anchor vertices are generated on every boundary cycle.
