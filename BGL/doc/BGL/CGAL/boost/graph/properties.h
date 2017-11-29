@@ -51,6 +51,9 @@ struct dynamic_vertex_property_t
 {
   /// \param default the default value of the property
   dynamic_vertex_property_t(const T& default = T());
+
+  /// returns the default value
+  const T& default() const;
 };
 
 /// \ingroup PkgBGLPropertiesDynamic
@@ -61,6 +64,9 @@ struct dynamic_halfedge_property_t
 {
   /// \param default the default value of the property
   dynamic_halfedge_property_t(const T& default = T());
+  
+  /// returns the default value
+  const T& default() const;
 };
   
 /// \ingroup PkgBGLPropertiesDynamic
@@ -71,6 +77,9 @@ struct dynamic_edge_property_t
 {
   /// \param default the default value of the property
   dynamic_edge_property_t(const T& default = T());
+  
+  /// returns the default value
+  const T& default() const;
 };
  
 /// \ingroup PkgBGLPropertiesDynamic
@@ -81,6 +90,9 @@ struct dynamic_face_property_t
 {
   /// \param default the default value of the property
   dynamic_face_property_t(const T& default = T());
+  
+  /// returns the default value
+  const T& default() const;
 };
 
 /// @}
