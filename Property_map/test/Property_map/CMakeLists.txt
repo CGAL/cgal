@@ -53,7 +53,7 @@ include( CGAL_CreateSingleSourceCGALProgram )
 
 create_single_source_cgal_program( "dynamic_property_map.cpp" )
 
-create_single_source_cgal_program( "dynamic_properties.cpp" )
+create_single_source_cgal_program( "dynamic_properties_test.cpp" )
 
 if(OpenMesh_FOUND)
         target_link_libraries( dynamic_properties ${OPENMESH_LIBRARIES} )
