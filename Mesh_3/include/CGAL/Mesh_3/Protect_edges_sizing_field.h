@@ -363,7 +363,11 @@ private:
   /// Return the radius of the ball of vertex \c v.
   FT get_radius(const Vertex_handle& v) const
   {
-    return CGAL::sqrt(c3t3_.triangulation().point(v).weight());
+    typename Gt::Compute_weight_3 cw =
+      c3t3_.triangulation().geom_traits().compute_weight_3_object();
+
+    const Weighted_point& v_wp = c3t3_.triangulation().point(v);
+    return CGAL::sqrt(cw(v_wp));
   }
 
   /// Test if a given vertex is a special protecting ball.
@@ -653,6 +657,8 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
 
   typename Gt::Compute_squared_distance_3 sq_distance =
     tr.geom_traits().compute_squared_distance_3_object();
+  typename Gt::Compare_weighted_squared_radius_3 cwsr =
+    tr.geom_traits().compare_weighted_squared_radius_3_object();
   typename Gt::Construct_point_3 cp =
     tr.geom_traits().construct_point_3_object();
   typename Gt::Construct_weighted_point_3 cwp =
@@ -679,7 +685,8 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
               << "at distance: " << sq_d << std::endl;
 #endif
 
-    while ( c3t3_.triangulation().point(nearest_vh).weight() > sq_d &&
+    // if sq_d < nearest_vh's weight
+    while ( cwsr(c3t3_.triangulation().point(nearest_vh), - sq_d) == CGAL::SMALLER &&
             ! is_special(nearest_vh) )
     {
       CGAL_assertion( minimal_size_ > 0 || sq_d > 0 );
@@ -704,7 +711,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
     }
 
     if( is_special(nearest_vh) &&
-        c3t3_.triangulation().point(nearest_vh).weight() > sq_d )
+        cwsr(c3t3_.triangulation().point(nearest_vh), - sq_d) == CGAL::SMALLER )
     {
       w = minimal_weight_;
       insert_a_special_ball = true;
@@ -797,9 +804,9 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
       for ( typename Tr::Finite_vertices_iterator it = tr.finite_vertices_begin(),
            end = tr.finite_vertices_end() ; it != end ; ++it )
       {
-        const Weighted_point& itwp = tr.point(it);
-        FT sq_d = tr.min_squared_distance(p, cp(itwp));
-        if ( c3t3_.triangulation().point(it).weight() > sq_d )
+        const Weighted_point& it_wp = tr.point(it);
+        FT sq_d = tr.min_squared_distance(p, cp(it_wp));
+        if ( cwsr(it_wp, - sq_d) == CGAL::SMALLER )
         {
           bool special_ball = false;
           if(minimal_weight_ != Weight() && sq_d > minimal_weight_) {
@@ -1395,14 +1402,12 @@ do_balls_intersect(const Vertex_handle& va, const Vertex_handle& vb) const
     c3t3_.triangulation().geom_traits().do_intersect_3_object();
   typename Gt::Construct_point_3 cp =
     c3t3_.triangulation().geom_traits().construct_point_3_object();
+  typename Gt::Compute_weight_3 cw =
+    c3t3_.triangulation().geom_traits().compute_weight_3_object();
 
-  const Bare_point& a = cp(c3t3_.triangulation().point(va));
-  const Bare_point& b = cp(c3t3_.triangulation().point(vb));
-
-  const FT& sq_ra = va->point().weight();
-  const FT& sq_rb = vb->point().weight();
-
-  return do_intersect(sphere(a, sq_ra), sphere(b, sq_rb));
+  const Weighted_point& wa = c3t3_.triangulation().point(va);
+  const Weighted_point& wb = c3t3_.triangulation().point(vb);
+  return do_intersect(sphere(cp(wa), cw(wa)), sphere(cp(wb), cw(wb)));
 }
 
 template <typename C3T3, typename MD, typename Sf>
@@ -1643,8 +1648,10 @@ is_sampling_dense_enough(const Vertex_handle& v1, const Vertex_handle& v2,
   using CGAL::Mesh_3::internal::min_intersection_factor;
   CGAL_precondition(c3t3_.curve_index(v1,v2) == curve_index);
 
-  typename C3T3::Triangulation::Geom_traits::Construct_point_3 cp =
+  typename Gt::Construct_point_3 cp =
     c3t3_.triangulation().geom_traits().construct_point_3_object();
+  typename Gt::Compute_weight_3 cw =
+    c3t3_.triangulation().geom_traits().compute_weight_3_object();
 
   // Get sizes
   FT size_v1 = get_radius(v1);
@@ -1655,11 +1662,11 @@ is_sampling_dense_enough(const Vertex_handle& v1, const Vertex_handle& v2,
   CGAL_assertion(get_dimension(v2) != 1 ||
                  curve_index == domain_.curve_index(v2->index()));
 
-  const Weighted_point& v1wp = c3t3_.triangulation().point(v1);
-  const Weighted_point& v2wp = c3t3_.triangulation().point(v2);
+  const Weighted_point& v1_wp = c3t3_.triangulation().point(v1);
+  const Weighted_point& v2_wp = c3t3_.triangulation().point(v2);
 
-  FT arc_length = domain_.curve_segment_length(cp(v1wp),
-                                               cp(v2wp),
+  FT arc_length = domain_.curve_segment_length(cp(v1_wp),
+                                               cp(v2_wp),
                                                curve_index,
                                                orientation);
 
@@ -1683,10 +1690,8 @@ is_sampling_dense_enough(const Vertex_handle& v1, const Vertex_handle& v2,
 
     const bool cov = domain_.is_curve_segment_covered(curve_index,
                                                       orientation,
-                                                      cp(v1wp),
-                                                      cp(v2wp),
-                                                      v1->point().weight(),
-                                                      v2->point().weight());
+                                                      cp(v1_wp), cp(v2_wp),
+                                                      cw(v1_wp), cw(v2_wp));
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
     if(cov) {
       std::cerr << "      But the curve is locally covered\n";

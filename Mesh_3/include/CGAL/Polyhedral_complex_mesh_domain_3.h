@@ -514,13 +514,18 @@ public:
     CGAL::Random random(0);
 
     typedef typename C3t3::Triangulation                  Tr;
+    typedef typename Tr::Weighted_point                   Weighted_point;
     typedef typename IGT::Sphere_3                        Sphere_3;
     typedef typename Polyhedron::Vertex_const_handle      Vertex_const_handle;
 
     Tr& tr = c3t3.triangulation();
 
-    typename Tr::Geom_traits::Construct_weighted_point_3 cwp
-      = tr.geom_traits().construct_weighted_point_3_object();
+    typename Tr::Geom_traits::Compute_weight_3 cw =
+      tr.geom_traits().compute_weight_3_object();
+    typename Tr::Geom_traits::Construct_point_3 cp =
+      tr.geom_traits().construct_point_3_object();
+    typename Tr::Geom_traits::Construct_weighted_point_3 cwp =
+      tr.geom_traits().construct_weighted_point_3_object();
 
     const std::size_t nb_of_patch_plus_one = this->nb_of_patch_plus_one();
     const std::size_t nb_of_extra_vertices_per_patch = 20;
@@ -544,7 +549,8 @@ public:
         typename Tr::Vertex_handle tr_v = tr.nearest_power_vertex(vit->point());
         if (tr_v != typename Tr::Vertex_handle())
         {
-          const Sphere_3 sphere(tr_v->point().point(), tr_v->point().weight());
+          const Weighted_point& trv_wp = tr.point(tr_v);
+          const Sphere_3 sphere(cp(trv_wp), cw(trv_wp));
           if (!sphere.has_on_unbounded_side(vit->point()))
             continue;
         }
@@ -576,10 +582,12 @@ public:
         if(needed_vertices_on_patch[patch_id] == 0) continue;
 
         typename Tr::Vertex_handle tr_v = tr.nearest_power_vertex(vit->point());
-        if (tr_v != typename Tr::Vertex_handle()) {
-          typedef typename IGT::Sphere_3 Sphere_3;
-          const Sphere_3 sphere(tr_v->point().point(), tr_v->point().weight());
-          if (!sphere.has_on_unbounded_side(vit->point())) continue;
+        if (tr_v != typename Tr::Vertex_handle())
+        {
+          const Weighted_point& trv_wp = tr.point(tr_v);
+          const Sphere_3 sphere(cp(trv_wp), cw(trv_wp));
+          if (!sphere.has_on_unbounded_side(vit->point()))
+            continue;
         }
 
         // here we have a new free vertex on patch #`patch_id`

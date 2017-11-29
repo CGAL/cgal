@@ -689,10 +689,7 @@ bool
 Mesh_complex_3_in_triangulation_3<Tr,CI_,CSI_>::
 is_valid(bool verbose) const
 {
-  typedef typename Tr::Bare_point              Bare_point;
   typedef typename Tr::Weighted_point          Weighted_point;
-  typedef typename Tr::Weighted_point::Weight  Weight;
-  typedef Weight                               FT;
 
   std::map<Vertex_handle, int> vertex_map;
 
@@ -728,22 +725,19 @@ is_valid(bool verbose) const
   for ( typename Edge_map::const_iterator it = edges_.begin(),
        end = edges_.end() ; it != end ; ++it )
   {
+    typename Tr::Geom_traits::Compute_weight_3 cw =
+      this->triangulation().geom_traits().compute_weight_3_object();
+    typename Tr::Geom_traits::Construct_point_3 cp =
+      this->triangulation().geom_traits().construct_point_3_object();
     typename Tr::Geom_traits::Construct_sphere_3 sphere =
       this->triangulation().geom_traits().construct_sphere_3_object();
     typename Tr::Geom_traits::Do_intersect_3 do_intersect =
       this->triangulation().geom_traits().do_intersect_3_object();
-    typename Tr::Geom_traits::Construct_point_3 cp =
-      this->triangulation().geom_traits().construct_point_3_object();
 
     const Weighted_point& itrwp = this->triangulation().point(it->right);
     const Weighted_point& itlwp = this->triangulation().point(it->left);
-    const Bare_point& p = cp(itrwp);
-    const Bare_point& q = cp(itlwp);
 
-    const FT& sq_rp = it->right->point().weight();
-    const FT& sq_rq = it->left->point().weight();
-
-    if ( ! do_intersect(sphere(p, sq_rp), sphere(q, sq_rq)) )
+    if ( ! do_intersect(sphere(cp(itrwp), cw(itrwp)), sphere(cp(itlwp), cw(itlwp))) )
     {
       std::cerr << "Points p[" << disp_vert(it->right) << "], dim=" << it->right->in_dimension()
                 << " and q[" << disp_vert(it->left) << "], dim=" << it->left->in_dimension()

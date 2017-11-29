@@ -27,6 +27,7 @@
 
 #include <CGAL/license/Mesh_3.h>
 
+#include <CGAL/enum.h>
 #include <CGAL/internal/Has_nested_type_Bare_point.h>
 #include <CGAL/internal/Mesh_3/Timestamp_hash_function.h>
 
@@ -541,12 +542,17 @@ inside_protecting_balls(const Tr& tr,
                         const Vertex_handle v,
                         const Bare_point& p) const
 {
+  typename Gt::Compare_weighted_squared_radius_3 cwsr =
+    tr.geom_traits().compare_weighted_squared_radius_3_object();
+
   Vertex_handle nv = tr.nearest_power_vertex(p, v->cell());
-  if(nv->point().weight() > 0)
+  const Point& nvwp = tr.point(nv);
+  if(cwsr(nvwp, FT(0)) == CGAL::SMALLER)
   {
     typename Tr::Geom_traits::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
     const Point& nvwp = tr.point(nv);
-    return (tr.min_squared_distance(p, cp(nvwp)) <= nv->point().weight());
+    // 'true' if the distance between 'p' and 'nv' is smaller or equal than the weight of 'nv'
+    return (cwsr(nvwp , - tr.min_squared_distance(p, cp(nvwp))) != CGAL::LARGER);
   }
 
   return false;

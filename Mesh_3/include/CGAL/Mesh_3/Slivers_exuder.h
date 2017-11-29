@@ -35,6 +35,7 @@
 
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Double_map.h>
+#include <CGAL/enum.h>
 #include <CGAL/internal/Has_member_visited.h>
 #include <CGAL/iterator.h>
 #include <CGAL/Real_timer.h>
@@ -1044,8 +1045,12 @@ pump_vertex(const Vertex_handle& pumped_vertex,
   if (could_lock_zone && *could_lock_zone == false)
     return false;
 
-  // If best_weight < pumped_vertex weight, nothing to do
-  if ( best_weight > pumped_vertex->point().weight() )
+  typename Gt::Compare_weighted_squared_radius_3 compare_sq_radius =
+    tr_.geom_traits().compare_weighted_squared_radius_3_object();
+
+  // If best_weight <= pumped_vertex weight, nothing to do
+  const Weighted_point& pumped_vertex_wp = tr_.point(pumped_vertex);
+  if ( compare_sq_radius(pumped_vertex_wp, - best_weight) == CGAL::LARGER ) // best_weight > v's weight
   {
     typename Gt::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
 
@@ -1110,6 +1115,7 @@ expand_prestar(const Cell_handle& cell_to_add,
                Pre_star& pre_star,
                Sliver_values& criterion_values) const
 {
+  typename Gt::Compute_weight_3 cw = tr_.geom_traits().compute_weight_3_object();
   typename Gt::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
 
   // Delete first facet of pre_star
@@ -1194,7 +1200,7 @@ expand_prestar(const Cell_handle& cell_to_add,
         // where the function 'tetrahedron(Facet, Weighted_point)' requires
         // the cell of the facet to be in conflict with the point to determine
         // the correct offset of the weighted point (to get a correct tetrahedron).
-        FT new_weight = pwp.weight();
+        FT new_weight = cw(pwp);
         Facet curr_f;
 
         if(! tr_.is_infinite(current_mirror_cell))
@@ -1323,7 +1329,11 @@ get_best_weight(const Vertex_handle& v, bool *could_lock_zone) const
   } // end while(... can pump...)
 
 #ifdef CGAL_MESH_3_DEBUG_SLIVERS_EXUDER
-  if ( best_weight > v->point().weight() )
+  typename Gt::Compare_weighted_squared_radius_3 compare_sq_radius =
+    tr_.geom_traits().compare_weighted_squared_radius_3_object();
+
+  const Weighted_point& vwp = tr_.point(v);
+  if ( compare_sq_radius(vwp, - best_weight) == CGAL::LARGER ) // best_weight > v's weight
   {
     typename Gt::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
     const Weighted_point& wpv = tr_.point(v);

@@ -1732,7 +1732,8 @@ is_encroached_facet_refinable(Facet& facet) const
 
   typename Gt::Compute_squared_radius_smallest_orthogonal_sphere_3 sq_radius =
     r_tr_.geom_traits().compute_squared_radius_smallest_orthogonal_sphere_3_object();
-
+  typename Gt::Compute_weight_3 cw =
+    r_tr_.geom_traits().compute_weight_3_object();
   typename Gt::Compare_weighted_squared_radius_3 compare =
     r_tr_.geom_traits().compare_weighted_squared_radius_3_object();
 
@@ -1746,18 +1747,21 @@ is_encroached_facet_refinable(Facet& facet) const
   // Get number of weighted points, and ensure that they will be accessible
   // using k1...ki, if i is the number of weighted points.
   int wp_nb = 0;
-  if(c->vertex(k1)->point().weight() > FT(0))
+  const Weighted_point& wpk1 = r_tr_.point(c, k1);
+  if(compare(wpk1, FT(0)) == CGAL::SMALLER)
   {
     ++wp_nb;
   }
 
-  if(c->vertex(k2)->point().weight() > FT(0))
+  const Weighted_point& wpk2 = r_tr_.point(c, k2);
+  if(compare(wpk2, FT(0)) == CGAL::SMALLER)
   {
     if ( 0 == wp_nb ) { std::swap(k1,k2); }
     ++wp_nb;
   }
 
-  if(c->vertex(k3)->point().weight() > FT(0))
+  const Weighted_point& wpk3 = r_tr_.point(c, k3);
+  if(compare(wpk3, FT(0)) == CGAL::SMALLER)
   {
     if ( 0 == wp_nb ) { std::swap(k1,k3); }
     if ( 1 == wp_nb ) { std::swap(k2,k3); }
@@ -1776,7 +1780,7 @@ is_encroached_facet_refinable(Facet& facet) const
     case 1:
     {
       FT r = (std::max)(sq_radius(p1,p2),sq_radius(p1,p3));
-      if ( r < min_ratio*p1.weight() ) { return false; }
+      if ( r < min_ratio * cw(p1) ) { return false; }
       break;
     }
 
@@ -1785,8 +1789,8 @@ is_encroached_facet_refinable(Facet& facet) const
       bool do_spheres_intersect = (compare(p1,p2,FT(0)) != CGAL::LARGER);
       if ( do_spheres_intersect )
       {
-        FT r13 = sq_radius(p1,p3) / p1.weight();
-        FT r23 = sq_radius(p2,p3) / p2.weight();
+        FT r13 = sq_radius(p1,p3) / cw(p1);
+        FT r23 = sq_radius(p2,p3) / cw(p1);
         FT r = (std::max)(r13,r23);
 
         if ( r < min_ratio ) { return false; }

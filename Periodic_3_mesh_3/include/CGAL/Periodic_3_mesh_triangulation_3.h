@@ -221,9 +221,12 @@ public:
 
   Weighted_point snap_to_domain_border(const Weighted_point& p) const
   {
-    const Bare_point snapped_p = snap_to_domain_border(
-                                   geom_traits().construct_point_3_object()(p));
-    return geom_traits().construct_weighted_point_3_object()(snapped_p, p.weight());
+    typename Gt::Compute_weight_3 cw = geom_traits().compute_weight_3_object();
+
+    const Bare_point snapped_p =
+      snap_to_domain_border(geom_traits().construct_point_3_object()(p));
+
+    return geom_traits().construct_weighted_point_3_object()(snapped_p, cw(p));
   }
 
   /// transform a bare point (living anywhere in space) into the canonical
@@ -551,8 +554,11 @@ public:
 
   Weighted_point get_closest_point(const Weighted_point& wp, const Weighted_point& wq) const
   {
+    typename Gt::Compute_weight_3 cw = geom_traits().compute_weight_3_object();
     typename Gt::Construct_point_3 cp = geom_traits().construct_point_3_object();
-    return Weighted_point(get_closest_point(cp(wp), cp(wq)), wq.weight());
+    typename Gt::Construct_weighted_point_3 cwp = geom_traits().construct_weighted_point_3_object();
+
+    return cwp(get_closest_point(cp(wp), cp(wq)), cw(wq));
   }
 
   // Warning: This is a periodic version that computes the smallest possible

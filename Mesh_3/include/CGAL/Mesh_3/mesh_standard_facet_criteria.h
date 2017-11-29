@@ -664,11 +664,13 @@ public:
     typedef typename Tr::Geom_traits    Gt;
     typedef typename Tr::Weighted_point Weighted_point;
     typedef typename Tr::Cell_handle    Cell_handle;
-    
-    typename Gt::Compare_weighted_squared_radius_3 compare =
-      tr.geom_traits().compare_weighted_squared_radius_3_object();
+
     typename Gt::Compute_squared_radius_smallest_orthogonal_sphere_3 sq_radius =
       tr.geom_traits().compute_squared_radius_smallest_orthogonal_sphere_3_object();
+    typename Gt::Compute_weight_3 cw =
+      tr.geom_traits().compute_weight_3_object();
+    typename Gt::Compare_weighted_squared_radius_3 compare =
+      tr.geom_traits().compare_weighted_squared_radius_3_object();
 
     const Cell_handle& c = fh.first;
     const int& k = fh.second;
@@ -679,19 +681,22 @@ public:
     
     // Get number of weighted points, and ensure that they will be accessible
     // using k1...ki, if i is the number of weighted points.
-    if(c->vertex(k1)->point().weight() > FT(0))
-    { 
+    const Weighted_point& wpk1 = tr.point(c, k1);
+    if(compare(wpk1, FT(0)) == CGAL::SMALLER)
+    {
       ++wp_nb_;
     }
-    
-    if(c->vertex(k2)->point().weight() > FT(0))
-    { 
+
+    const Weighted_point& wpk2 = tr.point(c, k2);
+    if(compare(wpk2, FT(0)) == CGAL::SMALLER)
+    {
       if ( 0 == wp_nb_ ) { std::swap(k1,k2); }
       ++wp_nb_;
     }
-    
-    if(c->vertex(k3)->point().weight() > FT(0))
-    { 
+
+    const Weighted_point& wpk3 = tr.point(c, k3);
+    if(compare(wpk3, FT(0)) == CGAL::SMALLER)
+    {
       if ( 0 == wp_nb_ ) { std::swap(k1,k3); }
       if ( 1 == wp_nb_ ) { std::swap(k2,k3); }
       ++wp_nb_;
@@ -707,14 +712,14 @@ public:
       case 1:
       {
         FT r = (std::max)(sq_radius(p1,p2),sq_radius(p1,p3));
-        ratio_ = r / p1.weight();
+        ratio_ = r / cw(p1);
         break;
       }
         
       case 2:
       {
-        FT r13 = sq_radius(p1,p3) / p1.weight();
-        FT r23 = sq_radius(p2,p3) / p2.weight();
+        FT r13 = sq_radius(p1,p3) / cw(p1);
+        FT r23 = sq_radius(p2,p3) / cw(p2);
         ratio_ = (std::max)(r13, r23);
         
         do_spheres_intersect_ = (compare(p1,p2,FT(0)) != CGAL::LARGER);

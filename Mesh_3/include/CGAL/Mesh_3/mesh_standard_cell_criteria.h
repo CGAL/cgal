@@ -408,11 +408,13 @@ public:
     , ratio_(0)
     , size_ratio_(0.5*0.5*4.)
   {
-    typename Gt::Compute_squared_radius_smallest_orthogonal_sphere_3 sq_radius =
-      tr.geom_traits().compute_squared_radius_smallest_orthogonal_sphere_3_object();
     typename Gt::Compare_weighted_squared_radius_3 compare =
       tr.geom_traits().compare_weighted_squared_radius_3_object();
-    
+    typename Gt::Compute_weight_3 cw =
+      tr.geom_traits().compute_weight_3_object();
+    typename Gt::Compute_squared_radius_smallest_orthogonal_sphere_3 sq_radius =
+      tr.geom_traits().compute_squared_radius_smallest_orthogonal_sphere_3_object();
+
     int k1 = 0;
     int k2 = 1;
     int k3 = 2;
@@ -420,26 +422,30 @@ public:
     
     // Get number of weighted points, and ensure that they will be accessible
     // using k1...ki, if i is the number of weighted points.
-    if(ch->vertex(k1)->point().weight() > FT(0))
-    { 
+    const Weighted_point& wpk1 = tr.point(ch, k1);
+    if(compare(wpk1, FT(0)) == CGAL::SMALLER) // 0 < wpk1's weight
+    {
       ++wp_nb_;
     }
-    
-    if(ch->vertex(k2)->point().weight() > FT(0))
-    { 
+
+    const Weighted_point& wpk2 = tr.point(ch, k2);
+    if(compare(wpk2, FT(0)) == CGAL::SMALLER)
+    {
       if ( 0 == wp_nb_ ) { std::swap(k1,k2); }
       ++wp_nb_;
     }
-    
-    if(ch->vertex(k3)->point().weight() > FT(0))
-    { 
+
+    const Weighted_point& wpk3 = tr.point(ch, k3);
+    if(compare(wpk3, FT(0)) == CGAL::SMALLER)
+    {
       if ( 0 == wp_nb_ ) { std::swap(k1,k3); }
       if ( 1 == wp_nb_ ) { std::swap(k2,k3); }
       ++wp_nb_;
     }
-    
-    if(ch->vertex(k4)->point().weight() > FT(0))
-    { 
+
+    const Weighted_point& wpk4 = tr.point(ch, k4);
+    if(compare(wpk4, FT(0)) == CGAL::SMALLER)
+    {
       if ( 0 == wp_nb_ ) { std::swap(k1,k4); }
       if ( 1 == wp_nb_ ) { std::swap(k2,k4); }
       if ( 2 == wp_nb_ ) { std::swap(k3,k4); }
@@ -459,7 +465,7 @@ public:
         FT r13 = sq_radius(p1,p3);
         FT r14 = sq_radius(p1,p4);
         FT r = (std::max)((std::max)(r12,r13),r14);
-        ratio_ = r / p1.weight();
+        ratio_ = r / cw(p1);
         break;
       }
         
@@ -467,10 +473,10 @@ public:
       {
         FT r13 = sq_radius(p1,p3);
         FT r14 = sq_radius(p1,p4);
-        FT r1 = (std::max)(r13,r14) / p1.weight();
+        FT r1 = (std::max)(r13,r14) / cw(p1);
         FT r23 = sq_radius(p2,p3);
         FT r24 = sq_radius(p2,p4);
-        FT r2 = (std::max)(r23,r24) / p2.weight();
+        FT r2 = (std::max)(r23,r24) / cw(p2);
         ratio_ = (std::max)(r1,r2);
         
         do_spheres_intersect_ = (compare(p1,p2,FT(0)) != CGAL::LARGER);
@@ -479,9 +485,9 @@ public:
         
       case 3:
       {
-        FT r14 = sq_radius(p1,p4) / p1.weight();
-        FT r24 = sq_radius(p2,p4) / p2.weight();
-        FT r34 = sq_radius(p3,p4) / p3.weight();
+        FT r14 = sq_radius(p1,p4) / cw(p1);
+        FT r24 = sq_radius(p2,p4) / cw(p2);
+        FT r34 = sq_radius(p3,p4) / cw(p3);
         ratio_ = (std::max)((std::max)(r14,r24),r34);
         
         do_spheres_intersect_ = (compare(p1,p2,p3,FT(0)) != CGAL::LARGER);

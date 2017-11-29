@@ -29,7 +29,7 @@
 
 #include <CGAL/license/Mesh_3.h>
 
-
+#include <CGAL/enum.h>
 #include <CGAL/tags.h>
 #include <CGAL/Mesh_3/Has_features.h>
 #include <boost/type_traits/is_same.hpp>
@@ -46,12 +46,19 @@ bool has_non_protecting_weights(const Triangulation& tr,
   bool with_features =
     boost::is_same<Has_features<MeshDomain>, CGAL::Tag_true>::value;
 
+  typedef typename Triangulation::FT                FT;
+  typedef typename Triangulation::Weighted_point    Weighted_point;
+
+  typename Triangulation::Geom_traits::Compare_weighted_squared_radius_3 cwsr =
+    tr.geom_traits().compare_weighted_squared_radius_3_object();
+
   for (typename Triangulation::Finite_vertices_iterator
         vv = tr.finite_vertices_begin();
         vv != tr.finite_vertices_end();
         ++vv)
   {
-    if (vv->point().weight() != 0.)
+    const Weighted_point& vv_wp = tr.point(vv);
+    if (cwsr(vv_wp, FT(0)) != CGAL::EQUAL)
     {
       if (with_features && vv->in_dimension() > 1)
         return true;

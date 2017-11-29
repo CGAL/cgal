@@ -52,8 +52,9 @@ public:
   typedef Handle Cell_handle;
 
   typedef typename Tr::Bare_point      Bare_point;
-  typedef typename Tr::Weighted_point Weighted_point;
+  typedef typename Tr::Weighted_point  Weighted_point;
   typedef typename Tr::Geom_traits     Gt;
+  typedef typename Gt::FT              FT;
 
   int nb_weighted_points;
   std::vector<Weighted_point> points;
@@ -66,6 +67,8 @@ public:
   Cell_criteria_visitor_with_balls(const Tr& tr, const Cell_handle& ch)
     : Base(tr, ch)
   {
+    typename Gt::Compare_weighted_squared_radius_3 compare_sq_radius =
+      tr.geom_traits().compare_weighted_squared_radius_3_object();
     typename Gt::Squared_radius_orthogonal_sphere sq_radius_ortho_sphere =
       tr.geom_traits().compute_squared_radius_smallest_orthogonal_sphere_3_object();
 
@@ -74,10 +77,10 @@ public:
     const Weighted_point& r = tr.point(ch, 2);
     const Weighted_point& s = tr.point(ch, 3);
 
-    if(p.weight() > 0) points.push_back(p);
-    if(q.weight() > 0) points.push_back(q);
-    if(r.weight() > 0) points.push_back(r);
-    if(s.weight() > 0) points.push_back(s);
+    if(compare_sq_radius(p, FT(0)) == CGAL::SMALLER) points.push_back(p);
+    if(compare_sq_radius(q, FT(0)) == CGAL::SMALLER) points.push_back(q);
+    if(compare_sq_radius(r, FT(0)) == CGAL::SMALLER) points.push_back(r);
+    if(compare_sq_radius(s, FT(0)) == CGAL::SMALLER) points.push_back(s);
 
     nb_weighted_points = (int)points.size();
 

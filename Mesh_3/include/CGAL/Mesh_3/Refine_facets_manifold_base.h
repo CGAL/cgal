@@ -131,12 +131,13 @@ private:
   FT compute_sq_distance_to_facet_center(const Facet& f,
                                          const Vertex_handle v) const
   {
+    typename GT::Compute_weight_3 cw = this->r_tr_.geom_traits().compute_weight_3_object();
     typename GT::Construct_point_3 cp = this->r_tr_.geom_traits().construct_point_3_object();
 
     const Bare_point& fcenter = f.first->get_facet_surface_center(f.second);
     const Weighted_point& wp = this->r_tr_.point(v);
 
-    return this->r_tr_.min_squared_distance(fcenter, cp(wp)) - v->point().weight();
+    return this->r_tr_.min_squared_distance(fcenter, cp(wp)) - cw(wp);
   }
 
   Facet

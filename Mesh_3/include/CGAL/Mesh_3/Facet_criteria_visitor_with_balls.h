@@ -59,6 +59,7 @@ public:
   typedef typename Tr::Bare_point      Bare_point;
   typedef typename Tr::Weighted_point  Weighted_point;
   typedef typename Tr::Geom_traits     Gt;
+  typedef typename Gt::FT              FT;
 
   int wp_nb_;
   double radius_ortho_shpere;
@@ -75,6 +76,10 @@ public:
     , radius_ortho_shpere(0.)
     , ratio(0.)
   {
+    typename Gt::Compare_weighted_squared_radius_3 compare_sq_radius =
+      tr.geom_traits().compare_weighted_squared_radius_3_object();
+    typename Gt::Compute_weight_3 cw =
+      tr.geom_traits().compute_weight_3_object();
     typename Gt::Construct_point_3 cp =
       tr.geom_traits().construct_point_3_object();
     typename Gt::Squared_radius_orthogonal_sphere sq_radius_ortho_sphere =
@@ -84,9 +89,9 @@ public:
     Weighted_point wp2 = tr.point(fh.first, (fh.second+2)&3);
     Weighted_point wp3 = tr.point(fh.first, (fh.second+3)&3);
 
-    if(wp1.weight() > 0) { ++wp_nb_; }
-    if(wp2.weight() > 0) { ++wp_nb_; }
-    if(wp3.weight() > 0) { ++wp_nb_; }
+    if(compare_sq_radius(wp1, FT(0)) == CGAL::SMALLER) { ++wp_nb_; }
+    if(compare_sq_radius(wp2, FT(0)) == CGAL::SMALLER) { ++wp_nb_; }
+    if(compare_sq_radius(wp3, FT(0)) == CGAL::SMALLER) { ++wp_nb_; }
 
     switch ( wp_nb_ )
     {
@@ -95,12 +100,12 @@ public:
         radius_ortho_shpere = sq_radius_ortho_sphere(wp1, wp2, wp3);
       }
       break;
-          
+
     case 2:
       {
-        if ( wp3.weight() > 0 )
+        if(compare_sq_radius(wp3, FT(0)) == CGAL::SMALLER)
         {
-          if ( wp1.weight() > 0 ) { std::swap(p2, wp3); }
+          if(compare_sq_radius(wp1, FT(0)) == CGAL::SMALLER) { std::swap(wp2, wp3); }
           else { std::swap(wp1, wp3); }
         }
 
@@ -109,20 +114,20 @@ public:
         double f_size1 = CGAL::squared_distance(cp(wp1), cp(wp3));
         double f_size2 = CGAL::squared_distance(cp(wp2), cp(wp3));
 
-        ratio = (f_size1 < f_size2) ? f_size1 / wp1.weight()
-                                    : f_size2 / wp2.weight();
+        ratio = (f_size1 < f_size2) ? f_size1 / cw(wp1)
+                                    : f_size2 / cw(wp2);
       }
       break;
           
     case 1:
       {
-        if ( wp2.weight() > 0 ) { std::swap(wp1, wp2); }
-        else if ( wp3.weight() > 0 ) { std::swap(wp1, wp3); }
+        if(compare_sq_radius(wp2, FT(0)) == CGAL::SMALLER) { std::swap(wp1, wp2); }
+        else if(compare_sq_radius(wp3, FT(0)) == CGAL::SMALLER) { std::swap(wp1, wp3); }
 
         double f_size = (std::min)(CGAL::squared_distance(cp(wp1), cp(wp2)),
                                    CGAL::squared_distance(cp(wp1), cp(wp3)));
 
-        ratio = f_size / wp1.weight();
+        ratio = f_size / cw(wp1);
       }
       break;
           

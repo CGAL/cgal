@@ -85,6 +85,7 @@ void initialize_triangulation_from_labeled_image(C3T3& c3t3,
 {
   typedef typename C3T3::Triangulation       Tr;
   typedef typename Tr::Geom_traits           Gt;
+  typedef typename Gt::FT                    FT;
   typedef typename Tr::Weighted_point        Weighted_point;
   typedef typename Tr::Bare_point            Bare_point;
   typedef typename Tr::Segment               Segment_3;
@@ -97,8 +98,12 @@ void initialize_triangulation_from_labeled_image(C3T3& c3t3,
 
   Tr& tr = c3t3.triangulation();
 
-  typename Gt::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
-  typename Gt::Construct_weighted_point_3 cwp = tr.geom_traits().construct_weighted_point_3_object();
+  typename Gt::Compare_weighted_squared_radius_3 cwsr =
+    tr.geom_traits().compare_weighted_squared_radius_3_object();
+  typename Gt::Construct_point_3 cp =
+    tr.geom_traits().construct_point_3_object();
+  typename Gt::Construct_weighted_point_3 cwp =
+    tr.geom_traits().construct_weighted_point_3_object();
 
   if(protect_features) {
     init_tr_from_labeled_image_call_init_features
@@ -193,18 +198,20 @@ void initialize_triangulation_from_labeled_image(C3T3& c3t3,
           for (typename Tr::Finite_vertices_iterator vit = tr.finite_vertices_begin();
                vit != tr.finite_vertices_end(); ++vit)
           {
-            if (vit->point().weight() > 0.)
+            const Weighted_point& wp = tr.point(vit);
+            if (cwsr(wp, FT(0)) == CGAL::SMALLER) // 0 < wp's weight
               conflict_vertices.push_back(vit);
           }
         }
         bool pi_inside_protecting_sphere = false;
         BOOST_FOREACH(Vertex_handle cv, conflict_vertices)
         {
-          if (cv->point().weight() == 0.)
+          const Weighted_point& cvwp = tr.point(cv);
+          if (cwsr(cvwp, FT(0)) == CGAL::EQUAL) // 0 == wp's weight
             continue;
 
-          const Weighted_point& cvwp = tr.point(cv);
-          if (tr.min_squared_distance(bpi, cp(cvwp)) <= cv->point().weight())
+          // if the (squared) distance between bpi and cv is smaller or equal than cv's weight
+          if (cwsr(cvwp, - tr.min_squared_distance(bpi, cp(cvwp))) != CGAL::LARGER)
           {
             pi_inside_protecting_sphere = true;
             break;

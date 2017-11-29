@@ -81,6 +81,8 @@ public:
   /*!
   A constructor object that must provide the function operators:
 
+  `bool operator()(Point_3 p, FT w)`
+
   `bool operator()(Point_3 p, Point_3 q, FT w)`
 
   `bool operator()(Point_3 p, Point_3 q, Point_3 r, FT w)`
@@ -182,6 +184,15 @@ public:
   `p`, `q`, `r`, and `s` and of the tetrahedron `t`.
   */
   typedef unspecified_type Compute_volume_3;
+
+  /*!
+  A constructor object that must provide the function operators:
+
+  `FT operator()(Weighted_point_3 p)`
+
+  which returns the weight of the weighted point `p`.
+  */
+  typedef unspecified_type Compute_weight_3;
 
   /*!
   A constructor object that must provide the function operator:
@@ -381,6 +392,11 @@ public:
 
   */
   Compute_volume_3 compute_volume_3_object();
+
+  /*!
+
+  */
+  Compute_weight_3 compute_weight_3_object();
 
   /*!
 
