@@ -549,7 +549,8 @@ void  QP_solver<Q, ET, Tags>::
 init_solution__b_C(Tag_true)
 {
   b_C.reserve(qp_m);
-  std::copy(qp_b, qp_b+qp_m, std::back_inserter(b_C));
+  std::transform(qp_b, qp_b+qp_m, std::back_inserter(b_C),
+      typename Coercion_traits<ET,B_entry>::Cast());
 }
 
 template < typename Q, typename ET, typename Tags >  inline                                 // has ineq.
@@ -559,9 +560,11 @@ init_solution__b_C(Tag_false)
   b_C.insert(b_C.end(), l, et0);
   B_by_index_accessor  b_accessor(qp_b); // todo kf: is there some boost
 					 // replacement for this accessor?
-  std::copy(B_by_index_iterator(C.begin(), b_accessor),
-	    B_by_index_iterator(C.end  (), b_accessor),
-	    b_C.begin());
+  typedef typename std::iterator_traits<B_by_index_iterator>::value_type RT;
+  std::transform(B_by_index_iterator(C.begin(), b_accessor),
+		 B_by_index_iterator(C.end  (), b_accessor),
+		 b_C.begin(),
+		 typename Coercion_traits<ET,RT>::Cast());
 }
 
 // initial solution
