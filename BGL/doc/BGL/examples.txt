@@ -19,5 +19,5 @@
 \example Surface_mesh_skeletonization/simple_mcfskel_example.cpp
 \example Surface_mesh_segmentation/extract_segmentation_into_mesh_example.cpp
 \example Polygon_mesh_processing/face_filtered_graph_example.cpp
-èxample Property_map/dynamic_properties.cpp
+\example Property_map/dynamic_properties.cpp
 */
