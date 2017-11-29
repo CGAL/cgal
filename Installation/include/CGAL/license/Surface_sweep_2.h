@@ -21,8 +21,8 @@
 // Warning: this file is generated, see include/CGAL/licence/README.md
 
 
-#ifndef CGAL_LICENSE_SWEEP_LINE_2_H
-#define CGAL_LICENSE_SWEEP_LINE_2_H
+#ifndef CGAL_LICENSE_SURFACE_SWEEP_2_H
+#define CGAL_LICENSE_SURFACE_SWEEP_2_H
 
 #include <CGAL/config.h>
 #include <CGAL/license.h>
@@ -30,9 +30,9 @@
 
 
 
-#ifdef CGAL_SWEEP_LINE_2_COMMERCIAL_LICENSE
+#ifdef CGAL_SURFACE_SWEEP_2_COMMERCIAL_LICENSE
 
-#  if CGAL_SWEEP_LINE_2_COMMERCIAL_LICENSE < CGAL_RELEASE_DATE
+#  if CGAL_SURFACE_SWEEP_2_COMMERCIAL_LICENSE < CGAL_RELEASE_DATE
 
 #    if defined(CGAL_LICENSE_WARNING)
 
@@ -46,22 +46,22 @@ of the 2D Intersection of Curves package. \
 You get this error, as you defined CGAL_LICENSE_ERROR."
 #    endif // CGAL_LICENSE_ERROR
 
-#  endif // CGAL_SWEEP_LINE_2_COMMERCIAL_LICENSE < CGAL_RELEASE_DATE
+#  endif // CGAL_SURFACE_SWEEP_2_COMMERCIAL_LICENSE < CGAL_RELEASE_DATE
 
-#else // no CGAL_SWEEP_LINE_2_COMMERCIAL_LICENSE
+#else // no CGAL_SURFACE_SWEEP_2_COMMERCIAL_LICENSE
 
 #  if defined(CGAL_LICENSE_WARNING)
-     CGAL_pragma_warning("\nThe macro CGAL_SWEEP_LINE_2_COMMERCIAL_LICENSE is not defined."
+     CGAL_pragma_warning("\nThe macro CGAL_SURFACE_SWEEP_2_COMMERCIAL_LICENSE is not defined."
                           "\nYou use the CGAL 2D Intersection of Curves package under "
                           "the terms of the GPLv3+.")
 #  endif // CGAL_LICENSE_WARNING
 
 #  ifdef CGAL_LICENSE_ERROR
-#    error "The macro CGAL_SWEEP_LINE_2_COMMERCIAL_LICENSE is not defined.\
+#    error "The macro CGAL_SURFACE_SWEEP_2_COMMERCIAL_LICENSE is not defined.\
  You use the CGAL 2D Intersection of Curves package under the terms of \
 the GPLv3+. You get this error, as you defined CGAL_LICENSE_ERROR."
 #  endif // CGAL_LICENSE_ERROR
 
-#endif // no CGAL_SWEEP_LINE_2_COMMERCIAL_LICENSE
+#endif // no CGAL_SURFACE_SWEEP_2_COMMERCIAL_LICENSE
 
-#endif // CGAL_LICENSE_CHECK_SWEEP_LINE_2_H
+#endif // CGAL_LICENSE_CHECK_SURFACE_SWEEP_2_H

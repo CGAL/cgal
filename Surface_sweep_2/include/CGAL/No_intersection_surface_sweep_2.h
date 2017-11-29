@@ -20,8 +20,8 @@
 //             Efi Fogel <efifogel@gmail.com>
 //               (based on old version by Tali Zvi)
 
-#ifndef CGAL_BASIC_SWEEP_LINE_2_H
-#define CGAL_BASIC_SWEEP_LINE_2_H
+#ifndef CGAL_NO_INTERSECTION_SURFACE_SWEEP_2_H
+#define CGAL_NO_INTERSECTION_SURFACE_SWEEP_2_H
 
 /*! \file
  *

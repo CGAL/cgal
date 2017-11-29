@@ -120,7 +120,7 @@ Surface_mesh_shortest_path
 Surface_mesh_simplification
 Surface_mesh_skeletonization
 Surface_mesher
-Sweep_line_2
+Surface_sweep_2
 TDS_2
 TDS_3
 Testsuite
