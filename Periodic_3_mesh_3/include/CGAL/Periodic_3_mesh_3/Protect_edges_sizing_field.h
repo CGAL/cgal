@@ -27,13 +27,26 @@
 #ifndef CGAL_MESH_3_PROTECT_EDGES_SIZING_FIELD_H
 #define CGAL_MESH_3_PROTECT_EDGES_SIZING_FIELD_H
 
-// periodic:
-// - probably need a periodic domain with polylines that does pre-treatment
+#define CGAL_PERIODIC_PROTECTION_ATTEMPT_TO_REMOVE_DUMMY_PTS
+
+// @todo:
 // - User manual with drawings on what sharp features are allowed
-// - Polyhedral domains ?
-// - remove+insert could potentially switch to 27 copies, you gotta check for
-//   it before moving points!
 // - Null_subdomain_index shenanigans to carry from Mesh_3.
+// - remove+insert could potentially switch to 27 copies, you gotta check for
+//   it before moving points (optimizers)!
+// - Ensure that exuder weights are greater/smaller than allowed
+
+// - .weight(), .point() in P3T3 / (P3)M3
+
+// Main differences with Mesh_3's version:
+// - A map [Vertex_handle] --> [position described in the domain] because
+//   this position might not be in the canonical domain and might be different from
+//   curve to curve.
+// - change_ball_size()'s signature is different: it can return false if we failed
+//   to change the ball size (if the triangulation cover changes during the process).
+// - Dummy point processing to avoid overrefinement.
+// - Various minor improvements over the original code, which should be brought back.
+// - No wonky indentation!
 
 #include <CGAL/license/Mesh_3.h>
 

@@ -77,7 +77,7 @@ canonicalize_tetrahedron(const typename Triangulation::Periodic_tetrahedron& pt)
 
 // Writing a restricted Delaunay triangulation to the .mesh file format, which
 // can be visualized using medit.
-// Writing the triangulation to 8 domains.
+// By default, 7 copies are used, for a total of 8 instances of the domains.
 template <class Stream, class C3t3>
 Stream& write_complex_to_medit(Stream& out, C3t3& c3t3,
                                unsigned occurence_count = 8)

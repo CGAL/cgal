@@ -11,16 +11,15 @@ While the concept `Periodic_3MeshDomain_3` only exposes the 2-dimensional and
 3-dimensional features of the periodic domain through different queries,
 the concept `Periodic_3MeshDomainWithFeatures_3` also exposes 0 and 1-dimensional features.
 The exposed features of the domain are respectively called subdomains, surface patches,
- curves and corners according to their respective dimensions 3, 2, 1, and 0.
+curves, and corners according to their respective dimensions 3, 2, 1, and 0.
 
-From a syntactic point of view, it defines exactly the same requirement
-as the concept `MeshDomainWithFeatures_3` and thus `Periodic_3MeshDomainWithFeatures_3`
-refines `MeshDomainWithFeatures_3` without any additional requirement.
-However, the oracle must take into account the periodicity of the domain.
+From a syntactic point of view, `Periodic_3MeshDomainWithFeatures_3`
+refines `MeshDomainWithFeatures_3`. However, the various requirements from
+`MeshDomainWithFeatures_3` must also take into account the periodicity of the domain.
 
-The class `CGAL::Mesh_domain_with_polyline_features_3` is a model of the concept
-`MeshDomainWithFeatures_3` and thus wrapping any model of `Periodic_3MeshDomain`
-with `CGAL::Mesh_domain_with_polyline_features_3` gives a model of `Periodic_3MeshDomainWithFeatures_3`.
+Wrapping any model of `Periodic_3MeshDomain` with the class
+`CGAL::Mesh_domain_with_polyline_features_3` gives a model
+of `Periodic_3MeshDomainWithFeatures_3`.
 
 \cgalHasModel `CGAL::Mesh_domain_with_polyline_features_3<
                  CGAL::Implicit_periodic_3_mesh_domain_3<Function,BGT> >`
@@ -31,7 +30,17 @@ with `CGAL::Mesh_domain_with_polyline_features_3` gives a model of `Periodic_3Me
 \sa `CGAL::refine_periodic_3_mesh_3()`
 */
 
-class Periodic_3MeshDomainWithFeatures_3 {
+class Periodic_3MeshDomainWithFeatures_3
+{
+  /*!
+  Returns the indices of the curves incident to the corner `id`, if any.
+
+  \tparam IndicesOutputIterator must meet the requirements of `OutputIterator`,
+                                with value type `Curve_index`.
+  */
+  template <typename IndicesOutputIterator>
+  IndicesOutputIterator
+  get_corner_incident_curves(Corner_index id, IndicesOutputIterator out);
 
 /// @}
 
