@@ -67,7 +67,7 @@ struct Exact_field_selector
 { typedef mpq_class Type; };
 #elif defined(CGAL_USE_GMP)
 # if defined(CGAL_USE_BOOST_MP)
-{ typedef boost::multiprecision::gmp_rational Type; };
+{ typedef boost::multiprecision::mpq_rational Type; };
 # else
 { typedef Gmpq Type; };
 # endif
