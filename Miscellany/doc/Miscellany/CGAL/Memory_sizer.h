@@ -18,8 +18,7 @@ two member functions return 0.
 
 */
 
-class Memory_sizer {
-public:
+struct Memory_sizer {
 
 /// \name Types 
 /// @{

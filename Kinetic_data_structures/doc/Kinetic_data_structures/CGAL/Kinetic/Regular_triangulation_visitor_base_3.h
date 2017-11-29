@@ -13,8 +13,7 @@ want to implement a few methods from `Kinetic::RegularTriangulationVisitor_3`.
 
 */
 
-class Regular_triangulation_visitor_base_3 {
-public:
+struct Regular_triangulation_visitor_base_3 {
 
 /// \name Creation 
 /// @{

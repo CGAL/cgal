@@ -17,8 +17,7 @@ to the meshing process. It should be a model of the two concepts
 
 */
 template< typename IGT >
-class Mesh_polyhedron_3 {
-public:
+struct Mesh_polyhedron_3 {
 
 /// \name Types 
 /// @{

@@ -34,8 +34,7 @@ will print at exit:
 
 */
 
-class Profile_counter {
-public:
+struct Profile_counter {
 
 /// \name Creation 
 /// @{

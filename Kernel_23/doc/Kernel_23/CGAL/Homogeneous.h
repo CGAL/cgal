@@ -26,8 +26,7 @@ This model of a kernel uses reference counting.
 
 */
 template< typename RingNumberType >
-class Homogeneous {
-public:
+struct Homogeneous {
 
 /// \name Types 
 /// @{

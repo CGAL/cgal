@@ -9,8 +9,7 @@ for the function `random_convex_set_2()`.
 
 */
 template< typename Kernel >
-class Random_convex_set_traits_2 {
-public:
+struct Random_convex_set_traits_2 {
 
 /// \name Types 
 /// @{

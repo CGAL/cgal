@@ -18,8 +18,7 @@ Note that the default argument used for `K` when <I>d</I> > 3 does not use exact
 
 */
 template< typename d, typename K >
-class Linear_cell_complex_traits : public K {
-public:
+struct Linear_cell_complex_traits : public K {
 
 /// \name Constants
 /// @{

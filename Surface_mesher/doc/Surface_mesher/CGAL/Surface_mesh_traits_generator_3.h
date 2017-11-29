@@ -29,8 +29,7 @@ level images (`Gray_level_image_3<FT, Point>`).
 
 */
 template< typename Surface >
-class Surface_mesh_traits_generator_3 {
-public:
+struct Surface_mesh_traits_generator_3 {
 
 /*!
 A model of the concept `SurfaceMeshTraits_3`. 
