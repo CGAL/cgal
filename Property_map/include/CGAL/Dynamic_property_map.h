@@ -135,7 +135,6 @@ struct dynamic_vertex_property_t
   dynamic_vertex_property_t(const T& t = T())
     : t(t)
   {}
-  std::string s;
   T t;
 };
 
@@ -146,7 +145,6 @@ struct dynamic_halfedge_property_t
   dynamic_halfedge_property_t(const T& t = T())
     : t(t)
   {}
-  std::string s;
   T t;
 };
 
@@ -156,7 +154,6 @@ struct dynamic_edge_property_t
   dynamic_edge_property_t(const T& t = T())
     : t(t)
   {}
-  std::string s;
   T t;
 };
 
@@ -167,7 +164,6 @@ struct dynamic_face_property_t
   dynamic_face_property_t(const T& t = T())
     : t(t)
   {}
-  std::string s;
   T t;
 };
 

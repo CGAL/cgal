@@ -43,7 +43,7 @@ namespace CGAL {
 
 /// @{
 
-  /// \ingroup PkgBGLPropertiesDynamic
+/// \ingroup PkgBGLPropertiesDynamic
 /// Dynamic vertex property tag
 /// \tparam T the value type of the vertex property
 template <typename T>
