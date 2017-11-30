@@ -21,6 +21,8 @@
 #ifndef CGAL_PROPERTIES_SURFACE_MESH_H
 #define CGAL_PROPERTIES_SURFACE_MESH_H
 
+#ifndef DOXYGEN_RUNNING
+
 #include <CGAL/license/Surface_mesh.h>
 
 
@@ -385,6 +387,6 @@ remove_property(Pmap pm, CGAL::Surface_mesh<P>& sm)
 
 } // namespace CGAL
 
-
+#endif // DOXYGEN_RUNNING
 
 #endif /* CGAL_PROPERTIES_SURFACE_MESH_H */

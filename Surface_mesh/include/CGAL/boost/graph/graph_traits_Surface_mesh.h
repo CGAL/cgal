@@ -20,6 +20,8 @@
 #ifndef CGAL_BOOST_GRAPH_TRAITS_SURFACE_MESH_H
 #define CGAL_BOOST_GRAPH_TRAITS_SURFACE_MESH_H
 
+#ifndef DOXYGEN_RUNNING
+
 #include <CGAL/license/Surface_mesh.h>
 
 
@@ -531,5 +533,7 @@ void normalize_border(const CGAL::Surface_mesh<P>&)
 {}
 
 } // namespace CGAL
+
+#endif // DOXYGEN_RUNNING
 
 #endif // CGAL_BOOST_GRAPH_TRAITS_SURFACE_MESH_H

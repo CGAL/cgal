@@ -101,6 +101,8 @@ namespace CGAL {
   }  
 } // namespace CGAL
 
+#ifndef DOXYGEN_RUNNING
+
 namespace boost {
   
   template <typename X> 
@@ -130,5 +132,8 @@ namespace boost {
   {
     typedef T type;
   };
-}
+} // namespace boost
+
+#endif // DOXYGEN_RUNNING
+
 #endif // CGAL_ITERATOR_RANGE_H

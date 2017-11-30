@@ -21,6 +21,7 @@
 
 #include <CGAL/license/Surface_mesh.h>
 
+#ifndef DOXYGEN_RUNNING
 
 #include <vector>
 #include <string>
@@ -561,6 +562,8 @@ private:
 } // Properties
 
 } // CGAL
+
+#endif // DOXYGEN_RUNNING
 
 //=============================================================================
 #endif // CGAL_SURFACE_MESH_PROPERTY_H
