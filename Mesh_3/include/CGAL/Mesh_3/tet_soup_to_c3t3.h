@@ -116,8 +116,8 @@ void build_finite_cells(Tr& tr,
     {
       CGAL_precondition(static_cast<std::size_t>(tet[j]) < tr.number_of_vertices() &&
                         tet[j] >= 0);
-      vertex_handle_vector[tet[j] + 1]->set_dimension(3);
-      vs[j] = vertex_handle_vector[tet[j] + 1];
+      vertex_handle_vector.at(tet[j] + 1)->set_dimension(3);
+      vs[j] = vertex_handle_vector.at(tet[j] + 1);
       CGAL_postcondition(vs[j] != Vertex_handle());
     }
 
@@ -144,9 +144,9 @@ void build_finite_cells(Tr& tr,
       if(border_facets.size() !=0)
       {
         boost::array<int,3> facet;
-        facet[0]=tet[(j+ 1) % 4];
-        facet[1]=tet[(j+ 2) % 4];
-        facet[2]=tet[(j+ 3) % 4];
+        facet[0]=tet[(j+1) % 4];
+        facet[1]=tet[(j+2) % 4];
+        facet[2]=tet[(j+3) % 4];
         //find the circular permutation that puts the smallest index in the first place.
         int n0 = (std::min)((std::min)(facet[0],facet[1]), facet[2]);
         int k=0;
@@ -343,6 +343,7 @@ bool build_triangulation_from_file(std::istream& is,
 
   CGAL_assertion(dim == 3);
 
+  std::cout << "Reading .mesh file..." << std::endl;
   while(is >> word && word != "End")
   {
     if(word == "Vertices")
@@ -364,9 +365,9 @@ bool build_triangulation_from_file(std::istream& is,
         int n1, n2, n3, surface_patch_id;
         is >> n1 >> n2 >> n3 >> surface_patch_id;
         Facet facet;
-        facet[0] =n1 -1;
-        facet[1] =n2 -1;
-        facet[2] =n3 -1;
+        facet[0] = n1-1;
+        facet[1] = n2-1;
+        facet[2] = n3-1;
         //find the circular permutation that puts the smallest index in the first place.
         int n0 = (std::min)((std::min)(facet[0],facet[1]), facet[2]);
         int k=0;
@@ -399,6 +400,11 @@ bool build_triangulation_from_file(std::istream& is,
       }
     }
   }
+
+  std::cout << points.size() << " points" << std::endl;
+  std::cout << border_facets.size() << " border facets" << std::endl;
+  std::cout << finite_cells.size() << " cells" << std::endl;
+
   if(finite_cells.empty())
   {
     return false;
