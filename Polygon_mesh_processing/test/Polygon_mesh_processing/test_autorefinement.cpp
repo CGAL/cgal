@@ -53,5 +53,5 @@ int main(int argc, const char** argv)
   // file 0 0 4 1 4
   for (int i=0;i<(argc-1)/6; ++i)
     test(argv[1+6*i], atoi(argv[1+6*i+1]), atoi(argv[1+6*i+2]),
-         atoi(argv[1+6*i+3]), atoi(argv[1+6*i+4]), atoi(argv[1+6*i+5]));
+         atoi(argv[1+6*i+3]), atoi(argv[1+6*i+4])==0?false:true, atoi(argv[1+6*i+5]));
 }
