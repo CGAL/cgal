@@ -406,7 +406,7 @@ public:
     return _tds.number_of_vertices();
   }
 
-protected:
+public:
   bool is_1_cover() const
   {
     bool flag;
