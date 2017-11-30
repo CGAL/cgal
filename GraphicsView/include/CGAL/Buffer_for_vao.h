@@ -117,42 +117,49 @@ namespace internal {
   }
 } // End namespace internal
 //------------------------------------------------------------------------------
-template<typename T>
+template<typename BufferType=float, typename IndexType=std::size_t>
 class Buffer_for_vao
 {
 public:
-  Buffer_for_vao(std::vector<T>* pos,
+  Buffer_for_vao(std::vector<BufferType>* pos=NULL,
+                 std::vector<IndexType>* indices=NULL,
                  CGAL::Bbox_3* bbox=NULL,
-                 std::vector<T>* color=NULL,
-                 std::vector<T>* flat_normal=NULL,
-                 std::vector<T>* gourod_normal=NULL,
-                 std::vector<std::size_t>& indices=NULL) :
+                 std::vector<BufferType>* color=NULL,
+                 std::vector<BufferType>* flat_normal=NULL,
+                 std::vector<BufferType>* gourod_normal=NULL) :
     m_pos_buffer(pos),
+    m_index_buffer(indices),
     m_bb(bbox),
     m_color_buffer(color),
     m_flat_normal_buffer(flat_normal),
     m_gourod_normal_buffer(gourod_normal),
-    m_index_buffer(indices),
     m_face_started(false)
   {}
 
   void clear()
   {
-    m_pos_buffer->clear();
+    if (m_pos_buffer!=NULL)           { m_pos_buffer->clear(); }
     if (m_color_buffer!=NULL)         { m_color_buffer->clear(); }
+    if (m_index_buffer!=NULL)         { m_index_buffer->clear(); }
     if (m_flat_normal_buffer!=NULL)   { m_flat_normal_buffer->clear(); }
     if (m_gourod_normal_buffer!=NULL) { m_gourod_normal_buffer->clear(); }
-    if (m_index_buffer!=NULL)         { m_index_buffer->clear(); }
   }
 
   bool is_empty() const
   {
-    return m_pos_buffer->empty() &&
+    return
+      (m_pos_buffer!=NULL && m_pos_buffer->empty()) &&
       (m_color_buffer!=NULL || m_color_buffer->empty()) &&
       (m_flat_normal_buffer!=NULL || m_flat_normal_buffer->empty()) &&
       (m_gourod_normal_buffer!=NULL || m_gourod_normal_buffer->empty()) &&
       (m_index_buffer!=NULL || m_index_buffer->empty());
   }
+
+  bool has_position() const
+  { return m_pos_buffer!=NULL; }
+
+  bool has_indices() const
+  { return m_index_buffer!=NULL; }
 
   bool has_color() const
   { return m_color_buffer!=NULL; }
@@ -163,14 +170,12 @@ public:
   bool has_gourod_normal() const
   { return m_gourod_normal_buffer!=NULL; }
 
-  bool has_indices() const
-  { return m_index_buffer!=NULL; }
-
-  // 1.1) Add a point, without color.
+  // 1.1) Add a point, without color. Return the index of the added point.
   template<typename KPoint>
-  void add_point(const KPoint& kp)
+  std::size_t add_point(const KPoint& kp)
   {
-    CGAL_assertion(m_pos_buffer!=NULL);
+    if (!has_position()) return (std::size_t)-1;
+    
     Local_point p=internal::get_local_point(kp);
     m_pos_buffer->push_back(p.x());
     m_pos_buffer->push_back(p.y());
@@ -178,53 +183,41 @@ public:
 
     if (m_bb!=NULL)
     { (*m_bb)=(*m_bb)+p.bbox(); }
+
+    return m_pos_buffer->size()-3;
   }
 
   // 1.2) Add a point, with color.
   template<typename KPoint>
   void add_point(const KPoint& kp, const CGAL::Color& c)
   {
-    CGAL_assertion(!is_data_indexed());
     add_point(kp);
     add_color(c);
   }
 
   // 1.3) Add an indexed point, without color.
-  template<typename KPoint, typename KVector>
-  void add_indexed_point(const KPoint& kp,
-                         unsigned int index)
+  template<typename T>
+  void add_indexed_point(T index)
   {
-    CGAL_assertion(is_data_indexed());
-    Local_point p = internal::get_local_point(kp);
-    m_points_vector.push_back(p);
-    m_point_index_map[p]=index;
+    if (!has_indices()) return;
+    
+    m_index_buffer->push_back((IndexType)index);
   }
 
-  // 1.3) Add an indexed point, with color.
-  template<typename KPoint, typename KVector>
-  void add_indexed_point(const KPoint& kp,
-                         unsigned int index,
-                         const CGAL::Color& color)
+  // 1.4) Add an indexed point, with color.
+  template<typename T>
+  void add_indexed_point(T index, const CGAL::Color& c)
   {
-    CGAL_assertion(is_data_indexed());
-    add_indexed_point(kp, index);
-    add_color(color);
+    add_indexed_point(index);
+    add_color(c);
   }
 
   // 2.1) Add a segment, without color.
   template<typename KPoint>
   void add_segment(const KPoint& kp1, const KPoint& kp2)
   {
-    if (is_data_indexed())
-    {
-      add_point(kp1);
-      add_point(kp2);
-    }
-    else
-    {
-      m_point_index->push_back(m_point_index_map[p1]);
-      m_point_index->push_back(m_point_index_map[p2]);
-    }
+    add_point(kp1);
+    add_point(kp2);
   }
   
   // 2.2) Add a segment, with color.
@@ -236,10 +229,28 @@ public:
     add_color(c);
   }
 
-  // 3.1) Add a face, without color, without normal.
+  // 2.3) Add an indexed segment, without color.
+  template<typename T>
+  void add_indexed_segment(T index1, T index2)
+  {
+    add_indexed_point(index1);
+    add_indexed_point(index2);
+  }
+  
+  // 2.4) Add an indexed segment, with color.
+  template<typename T>
+  void add_indexed_segment(T index1, T index2, const CGAL::Color& c)
+  {
+    add_indexed_segment(index1, index2);
+    add_color(c);
+    add_color(c);
+  }
+
+  /// @return true iff a face has begun.
   bool is_a_face_started() const
   { return m_face_started; }
   
+  // 3.1) Add a face, without color, without normal.
   void face_begin()
   { face_begin_internal(false, false); }
 
@@ -267,22 +278,6 @@ public:
     face_begin_internal(true, true);
   }
 
-  /// Add a point at the end of the current face
-  /// @param p the point to add
-  /// @p_normal the vertex normal at this point (for Gourod shading)
-  template<typename KPoint, typename KVector>
-  bool add_point_in_face(const KPoint& p, const KVector& p_normal)
-  {
-    if (!is_a_face_started()) return false;
-    
-    if (add_point_in_face(p))
-    {
-      m_vertex_normals_for_face.push_back(internal::get_local_vector(p_normal));
-      return true;
-    }
-    return false;
-  }
-
   /// Add a point at the end of the current face, without giving the vertex normal.
   /// When this method is used, it is not possible to use the Gourod shading.
   /// @param p the point to add
@@ -300,6 +295,49 @@ public:
     return false;
   }
   
+  /// Add a point at the end of the current face
+  /// @param p the point to add
+  /// @p_normal the vertex normal at this point (for Gourod shading)
+  template<typename KPoint, typename KVector>
+  bool add_point_in_face(const KPoint& kp, const KVector& p_normal)
+  {
+    if (add_point_in_face(kp))
+    {
+      m_vertex_normals_for_face.push_back(internal::get_local_vector(p_normal));
+      return true;
+    }
+    return false;
+  }
+
+  /// Add an indexed point at the end of the current face, without giving the vertex normal.
+  /// When this method is used, it is not possible to use the Gourod shading.
+  /// Note that we still need the point itself, in order to triangulate the face when necessary.
+  template<typename T, typename KPoint>
+  bool add_indexed_point_in_face(T index, const KPoint& kp)
+  {
+    if (add_point_in_face(kp))
+    {
+      m_indices_of_points_of_face.push_back(index);
+      return true;
+    }
+    return false;
+  }
+  
+  /// Add a point at the end of the current face
+  /// @param index the index of the point to add
+  /// @param p the point to add
+  /// @p_normal the vertex normal at this point (for Gourod shading)
+  template<typename T, typename KPoint, typename KVector>
+  bool add_indexed_point_in_face(T index, const KPoint& kp, const KVector& p_normal)
+  {
+    if (add_point_in_face(kp, p_normal))
+    {
+      m_indices_of_points_of_face.push_back(index);
+      return true;
+    }
+    return false;
+  }
+  
   /// End the face: compute the triangulation.
   void face_end()
   {
@@ -307,7 +345,7 @@ public:
 
     if (m_points_of_face.size()<3)
     {
-      std::cout<<"PB: you try to triangulate a face with "<<m_points_of_face.size()<<" vertices."
+      std::cerr<<"PB: you try to triangulate a face with "<<m_points_of_face.size()<<" vertices."
                <<std::endl;
       
       m_face_started=false;
@@ -316,18 +354,35 @@ public:
 
       return;
     }
+
+    if (m_indices_of_points_of_face.size()>0 &&
+        m_indices_of_points_of_face.size()!=m_points_of_face.size())
+    {
+      std::cerr<<"PB: you mixed some add_point_in_face(...) and some add_indexed_point_in_face(...)"
+               <<" for a same face. Indices for this face are ignored."<<std::endl;
+      m_indices_of_points_of_face.clear();
+    }
+
+    if (m_vertex_normals_for_face.size()>0 &&
+        m_vertex_normals_for_face.size()!=m_points_of_face.size())
+    {
+      std::cerr<<"PB: you only gave some vertex normals (and not all) for a same face. "
+               <<" All vertex normal are ignored and thus it is not possible to use Gourod shading for this face."
+               <<std::endl;
+      m_vertex_normals_for_face.clear();
+    }
     
     Local_vector normal=(m_started_face_has_normal?m_normal_of_face:
                          internal::compute_normal_of_face(m_points_of_face));
 
-    if (m_points_of_face.size()==3) // Triangle: no need to triangulate
-    { triangular_face_end_internal(normal); }
-    else if (is_current_face_convex())
+    if (m_points_of_face.size()==3)
+    { triangular_face_end_internal(normal); } // Triangle: no need to triangulate
+    else if (is_current_face_convex(normal))
     {
       if (m_points_of_face.size()==4)
-      { convex_quadrangular_face_end_internal(normal); }
-      else
-      { convex_face_end_internal(normal); }
+      { convex_quadrangular_face_end_internal(normal); } // Convex quad
+      else 
+      { convex_face_end_internal(normal); } // Convex face with > 4 vertices
     }
     else
     { // Non convex and more than 3 points: we triangulate
@@ -335,8 +390,6 @@ public:
     }
 
     m_face_started=false;
-    m_points_of_face.clear();
-    m_vertex_normals_for_face.clear();
   }
 
 protected:
@@ -351,23 +404,27 @@ protected:
     m_face_started=true;
     m_started_face_is_colored=has_color;
     m_started_face_has_normal=has_normal;
+
+    m_points_of_face.clear();
+    m_vertex_normals_for_face.clear();
+    m_indices_of_points_of_face.clear();
   }
 
   void triangular_face_end_internal(const Local_vector& normal)
   {
     for (int i=0; i<3; ++i)
     {
-        // Add the position of the point, possibly with its color
+      add_point(m_points_of_face[i]); // Add the position of the point
       if (m_started_face_is_colored)
-      { add_point(m_points_of_face[i], m_color_of_face); }
-      else
-      { add_point(m_points_of_face[i]); }
-      
-      // Add the flat normal
-      add_flat_normal(normal);
+      { add_color(m_color_of_face); } // Add the color      
+      add_flat_normal(normal); // Add the flat normal
+
+      // If user gave vertex indices
+      if (m_indices_of_points_of_face.size()>0)
+      { add_indexed_point(m_indices_of_points_of_face[i]); }
       
       // Its smooth normal (if given by the user)
-      if (m_vertex_normals_for_face.size()==3)
+      if (m_vertex_normals_for_face.size()>0)
       { // Here we have 3 vertex normals; we can use Gourod
         add_gourod_normal(m_vertex_normals_for_face[i]);
       }
@@ -381,78 +438,81 @@ protected:
   
   void convex_quadrangular_face_end_internal(const Local_vector& normal)
   {
-    if(faces_vector)
+    // (1) add points
+    add_point(m_points_of_face[0]);
+    add_point(m_points_of_face[1]);
+    add_point(m_points_of_face[2]);
+
+    add_point(m_points_of_face[0]);
+    add_point(m_points_of_face[2]);
+    add_point(m_points_of_face[3]);
+
+    // (2) Add indices when they exist
+    if (m_indices_of_points_of_face.size()>0)
     {
-      add_point(points_of_face[0], *faces_vector);
-      add_point(points_of_face[1], *faces_vector);
-      add_point(points_of_face[2], *faces_vector);
+      add_indexed_point(m_indices_of_points_of_face[0]);
+      add_indexed_point(m_indices_of_points_of_face[1]);
+      add_indexed_point(m_indices_of_points_of_face[2]);
       
-      add_point(points_of_face[0], *faces_vector);
-      add_point(points_of_face[2], *faces_vector);
-      add_point(points_of_face[3], *faces_vector);
+      add_indexed_point(m_indices_of_points_of_face[0]);
+      add_indexed_point(m_indices_of_points_of_face[2]);
+      add_indexed_point(m_indices_of_points_of_face[3]);
     }
-    else if(idx_faces_vector)
+
+    // (3) Add flat and smooth normals and color
+    for(unsigned int i=0; i<6; ++i)
     {
-      idx_faces_vector->push_back(point_index_map[ points_of_face[0] ]);
-      idx_faces_vector->push_back(point_index_map[ points_of_face[1] ]);
-      idx_faces_vector->push_back(point_index_map[ points_of_face[2] ]);
+      if (m_started_face_is_colored)
+      { add_color(m_color_of_face); }
+
+      add_flat_normal(normal);
       
-      idx_faces_vector->push_back(point_index_map[ points_of_face[0] ]);
-      idx_faces_vector->push_back(point_index_map[ points_of_face[2] ]);
-      idx_faces_vector->push_back(point_index_map[ points_of_face[3] ]);
+      if (m_vertex_normals_for_face.size()>0)
+      { add_gourod_normal(m_vertex_normals_for_face[i]); }
+      else
+      { add_gourod_normal(normal); }
     }
-    if(!m_data_is_indexed)
-      for(int i=0; i<6; ++i)
-      {
-        if (face_color_vector && m_started_face_is_colored)
-          add_color(color_of_face, *face_color_vector);
-        if(flat_normal_vector)
-          add_normal(normal_for_face, *flat_normal_vector);
-        if (smooth_normal_vector
-            && vertex_normals_for_face.size()==4)
-          add_normal(vertex_normals_for_face[0], *smooth_normal_vector);
-        else if (smooth_normal_vector)
-          add_normal(normal_for_face, *smooth_normal_vector);
-      }
   }
   
   void convex_face_end_internal(const Local_vector& normal)
   {
-    Local_point p0,p1,p2;
-    std::size_t id;
-    for(id = 1; id<points_of_face.size()-1; ++id)
+    for(std::size_t i=1; i<m_points_of_face.size()-1; ++i)
     {
-      
-      p0 = points_of_face[0];
-      p1 = points_of_face[id];
-      p2 = points_of_face[id+1];
-      if(faces_vector)
+      Local_point& p0 = m_points_of_face[0];
+      Local_point& p1 = m_points_of_face[i];
+      Local_point& p2 = m_points_of_face[i+1];
+
+      // (1) add points
+      add_point(p0);
+      add_point(p1);
+      add_point(p2);
+
+      // (2) Add indices when they exist
+      if (m_indices_of_points_of_face.size()>0)
       {
-        add_point(p0, *faces_vector);
-        add_point(p1, *faces_vector);
-        add_point(p2, *faces_vector);
+        add_indexed_point(m_indices_of_points_of_face[0]);
+        add_indexed_point(m_indices_of_points_of_face[i]);
+        add_indexed_point(m_indices_of_points_of_face[i+1]);
       }
-      else if(idx_faces_vector)
+
+      // (3) Add flat normal and color
+      for(unsigned int j=0; j<3; ++j)
       {
-        idx_faces_vector->push_back(point_index_map[p0]);
-        idx_faces_vector->push_back(point_index_map[p1]);
-        idx_faces_vector->push_back(point_index_map[p2]);
+        if (m_started_face_is_colored)
+        { add_color(m_color_of_face); }
+
+        add_flat_normal(normal);
+
+        if (m_vertex_normals_for_face.size()==0)
+        { add_gourod_normal(normal); } // No smooth normal, we use the flat one instead
       }
-      
-      if(!m_data_is_indexed)
+
+      // (4) Add smooth normals if they exist
+      if (m_vertex_normals_for_face.size()>0)
       {
-        if (face_color_vector && m_started_face_is_colored)
-          for (int i = 0; i<6; ++i)
-          {
-            add_color(color_of_face, *face_color_vector);
-          }
-        if(flat_normal_vector)
-          add_normal(normal_for_face, *flat_normal_vector);
-        if (smooth_normal_vector
-            && vertex_normals_for_face.size()==4)
-          add_normal(vertex_normals_for_face[0], *smooth_normal_vector);
-        else if (smooth_normal_vector)
-          add_normal(normal_for_face, *smooth_normal_vector);
+        add_gourod_normal(m_vertex_normals_for_face[0]);
+        add_gourod_normal(m_vertex_normals_for_face[i]);
+        add_gourod_normal(m_vertex_normals_for_face[i+1]);
       }
     }
   }
@@ -468,7 +528,7 @@ protected:
       
       // (1) We insert all the edges as contraint in the CDT.
       typename CDT::Vertex_handle previous=NULL, first=NULL;
-      for (int i=0; i<m_points_of_face.size(); ++i)
+      for (unsigned int i=0; i<m_points_of_face.size(); ++i)
       {
         typename CDT::Vertex_handle vh = cdt.insert(m_points_of_face[i]);
         if(first==NULL)
@@ -478,6 +538,9 @@ protected:
         { vh->info().v=m_vertex_normals_for_face[i]; }
         else
         { vh->info().v=normal; }
+
+        if (m_indices_of_points_of_face.size()>0)
+        { vh->info().index=m_indices_of_points_of_face[i]; }
         
         if(previous!=NULL && previous!=vh)
         { cdt.insert_constraint(previous, vh); }
@@ -485,7 +548,7 @@ protected:
       }
       
       if (previous!=NULL && previous!=first)
-        cdt.insert_constraint(previous, first);
+      { cdt.insert_constraint(previous, first); }
       
       // (2) We mark all external triangles
       // (2.1) We initialize is_external and is_process values 
@@ -499,8 +562,8 @@ protected:
       std::queue<typename CDT::Face_handle> face_queue;
       typename CDT::Face_handle face_internal = NULL;
       if (cdt.infinite_vertex()->face()!=NULL)
-        face_queue.push(cdt.infinite_vertex()->face());
-      while(! face_queue.empty() )
+      { face_queue.push(cdt.infinite_vertex()->face()); }
+      while(!face_queue.empty())
       {
         typename CDT::Face_handle fh = face_queue.front();
         face_queue.pop();
@@ -512,7 +575,7 @@ protected:
             if(!cdt.is_constrained(std::make_pair(fh, i)))
             {
               if (fh->neighbor(i)!=NULL)
-                face_queue.push(fh->neighbor(i));
+              { face_queue.push(fh->neighbor(i)); }
             }
             else if (face_internal==NULL)
             {
@@ -523,9 +586,9 @@ protected:
       }
       
       if ( face_internal!=NULL )
-        face_queue.push(face_internal);
+      { face_queue.push(face_internal); }
       
-      while(! face_queue.empty() )
+      while(!face_queue.empty())
       {
         typename CDT::Face_handle fh = face_queue.front();
         face_queue.pop();
@@ -533,19 +596,19 @@ protected:
         {
           fh->info().is_process = true;
           fh->info().is_external = false;
-          for(int i=0; i<3; ++i)
+          for(unsigned int i=0; i<3; ++i)
           {
             if(!cdt.is_constrained(std::make_pair(fh, i)))
             {
               if (fh->neighbor(i)!=NULL)
-                face_queue.push(fh->neighbor(i));
+              { face_queue.push(fh->neighbor(i)); }
             }
           }
         }
       }
       
-      // (3) Now we iterates on the internal faces to add the vertices to the
-      //     positions and the normals to the appropriate vectors
+      // (3) Now we iterates on the internal faces to add the vertices 
+      //     and the normals to the appropriate vectors
       for(typename CDT::Finite_faces_iterator ffit=cdt.finite_faces_begin(),
             ffitend = cdt.finite_faces_end(); ffit!=ffitend; ++ffit)
       {
@@ -553,16 +616,21 @@ protected:
         {
           for(int i=0; i<3; ++i)
           {
-            // Add the position of the point, possibly with its color
-            if (m_started_face_is_colored)
-            { add_point(ffit->vertex(i)->point(), m_color_of_face); }
-            else
-            { add_point(ffit->vertex(i)->point()); }
+            // (1) add point
+            add_point(ffit->vertex(i)->point());
             
-            // Add the flat normal
+            // (2) Add indices when they exist
+            if (m_indices_of_points_of_face.size()>0)
+            { add_indexed_point(ffit->vertex(i)->info().index); }
+
+            // (3) Add face color
+            if (m_started_face_is_colored)
+            { add_color(m_color_of_face); }
+            
+            // (4) Add flat normal 
             add_flat_normal(normal);
             
-            // Its smoth normal (if given by the user)
+            // (5) Add smooth normals (or flat if smooth normals do not exist)
             add_gourod_normal(ffit->vertex(i)->info().v);
           }
         }
@@ -570,70 +638,66 @@ protected:
     }
     catch(...)
     { // Triangulation crash: the face is not filled
-      std::cout<<"Catch: face not filled."<<std::endl;
+      std::cerr<<"Catch: face not filled."<<std::endl;
     }
   }
-  
-    bool is_current_face_convex()(const Local_vector& N)
-   {
 
-     typedef Local_kernel::Orientation Orientation;
-     Orientation orientation;
-     Local_vector normal = N;
-     bool normal_is_ok;
-     std::size_t id = 0;
-     do{
-       normal_is_ok = true;
-       //Initializes the facet orientation
+  /// @return true iff the current face is convex
+  bool is_current_face_convex(const Local_vector& N) const
+  {
+    typedef Local_kernel::Orientation Orientation;
+    Orientation orientation;
+    Local_vector normal=N;
+    bool normal_is_ok=true;
+    std::size_t id=0;
+    do
+    {
+      normal_is_ok=true;
+      //Initializes the facet orientation
+      
+      const Local_point& S=m_points_of_face[id];
+      const Local_point& T=m_points_of_face[id+1];
+      Local_vector V1=Local_vector((T-S).x(), (T-S).y(), (T-S).z());
 
-       Local_point S,T;
-       S = facet[id];
-       T = facet[id+1];
-       Local_vector V1 = Local_vector((T-S).x(), (T-S).y(), (T-S).z());
-       S = T;
-       T = facet[id+2];
-       Local_vector V2 = Local_vector((T-S).x(), (T-S).y(), (T-S).z());
-
-       if(normal == Local_vector(0,0,0))
-         normal_is_ok = false;
-       if(normal_is_ok)
-       {
-         orientation = Local_kernel::Orientation_3()(V1, V2, normal);
-         if( orientation == CGAL::COPLANAR )
-           normal_is_ok = false;
-       }
-       //Checks if the normal is good : if the normal is null
-       // or if it is coplanar to the facet, we need another one.
-       if(!normal_is_ok)
-       {
-         normal = CGAL::cross_product(V1,V2);
-       }
-
-     }while( ++id != facet.size() && !normal_is_ok);
-     //if no good normal can be found, stop here.
-     if (!normal_is_ok)
-       return false;
-
-     //computes convexness
-
-     //re-initializes he_end;
-
-     for(id=0; id<facet.size(); ++id)
-     {
-       Local_point S,T;
-       S = facet[id%facet.size()];
-       T = facet[(id+1)%facet.size()];
-       Local_vector V1 = Local_vector((T-S).x(), (T-S).y(), (T-S).z());
-       S = T;
-       T = facet[(id+2)%facet.size()];
-       Local_vector V2 = Local_vector((T-S).x(), (T-S).y(), (T-S).z());
-       Orientation res = Local_kernel::Orientation_3()(V1, V2, normal) ;
-
-       if(res!= orientation && res != CGAL::ZERO)
-         return false;
+      const Local_point& U=m_points_of_face[id+2];
+      Local_vector V2=Local_vector((U-T).x(), (U-T).y(), (U-T).z());
+      
+      if(normal==Local_vector(0,0,0))
+      { normal_is_ok=false; }
+      else
+      {
+        orientation=Local_kernel::Orientation_3()(V1, V2, normal);
+        if(orientation==CGAL::COPLANAR)
+        { normal_is_ok=false; }
+      }
+      //Checks if the normal is good : if the normal is null
+      // or if it is coplanar to the facet, we need another one.
+      if(!normal_is_ok)
+      { normal=CGAL::cross_product(V1,V2); }
      }
-     return true;
-   }
+    while(++id!=m_points_of_face.size() && !normal_is_ok);
+    
+    //if no good normal can be found, stop here.
+    if (!normal_is_ok)
+    { return false; } 
+
+    //computes convexness
+    for(id=0; id<m_points_of_face.size(); ++id)
+    {
+      const Local_point& S=m_points_of_face[id];
+      const Local_point& T=m_points_of_face[(id+1)%m_points_of_face.size()];      
+      Local_vector V1=Local_vector((T-S).x(), (T-S).y(), (T-S).z());
+      
+      const Local_point& U=m_points_of_face[(id+2)%m_points_of_face.size()];
+      Local_vector V2=Local_vector((U-T).x(), (U-T).y(), (U-T).z());
+
+      Orientation res=Local_kernel::Orientation_3()(V1, V2, normal) ;
+      if(res!= orientation && res!=CGAL::ZERO)
+      { return false; }
+    }
+    
+    return true;
+  }
 
   void add_color(const CGAL::Color& acolor)
   {
@@ -670,6 +734,7 @@ protected:
   struct Vertex_info
   {
     Local_vector v;
+    std::size_t index;
   };
 
   struct Face_info
@@ -688,11 +753,11 @@ protected:
   typedef CGAL::Constrained_Delaunay_triangulation_2<P_traits, TDS, Itag>    CDT;
 
 protected:
-  std::vector<float>* m_pos_buffer;
-  std::vector<float>* m_color_buffer;
-  std::vector<float>* m_flat_normal_buffer;
-  std::vector<float>* m_gourod_normal_buffer;
-  std::vector<unsigned int>* m_index_buffer;
+  std::vector<BufferType>* m_pos_buffer;
+  std::vector<IndexType>* m_index_buffer;
+  std::vector<BufferType>* m_color_buffer;
+  std::vector<BufferType>* m_flat_normal_buffer;
+  std::vector<BufferType>* m_gourod_normal_buffer;
 
   CGAL::Bbox_3* m_bb;
   
@@ -702,6 +767,7 @@ protected:
   bool m_started_face_has_normal;
   std::vector<Local_point> m_points_of_face;
   std::vector<Local_vector> m_vertex_normals_for_face;
+  std::vector<std::size_t> m_indices_of_points_of_face;
   CGAL::Color m_color_of_face;
   Local_vector m_normal_of_face;
 };
