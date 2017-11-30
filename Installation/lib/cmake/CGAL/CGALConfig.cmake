@@ -114,4 +114,7 @@ target_compile_definitions(CGAL INTERFACE CGAL_HEADER_ONLY=1)
 include(${CGAL_MODULES_DIR}/CGAL_CreateSingleSourceCGALProgram.cmake)
 include(${CGAL_MODULES_DIR}/CGAL_Macros.cmake)
 
+# Temporary? Change the CMAKE module path
+cgal_setup_module_path()
+
 set(CGAL_USE_FILE ${CGAL_MODULES_DIR}/UseCGAL.cmake)

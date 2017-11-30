@@ -145,3 +145,6 @@ set(CGAL_DISABLE_GMP "@CGAL_DISABLE_GMP@")
 
 include(${CGAL_MODULES_DIR}/CGAL_CreateSingleSourceCGALProgram.cmake)
 include(${CGAL_MODULES_DIR}/CGAL_Macros.cmake)
+
+# Temporary? Change the CMAKE module path
+cgal_setup_module_path()
