@@ -204,15 +204,19 @@ void initialize_triangulation_from_labeled_image(C3T3& c3t3,
               conflict_vertices.push_back(vit);
           }
         }
+
         bool pi_inside_protecting_sphere = false;
         BOOST_FOREACH(Vertex_handle cv, conflict_vertices)
         {
-          const Weighted_point& cvwp = tr.point(cv);
-          if (cwsr(cvwp, FT(0)) == CGAL::EQUAL) // 0 == wp's weight
+          if(tr.is_infinite(cv))
+            continue;
+
+          const Weighted_point& cv_wp = tr.point(cv);
+          if (cwsr(cv_wp, FT(0)) == CGAL::EQUAL) // 0 == wp's weight
             continue;
 
           // if the (squared) distance between bpi and cv is smaller or equal than cv's weight
-          if (cwsr(cvwp, - tr.min_squared_distance(bpi, cp(cvwp))) != CGAL::LARGER)
+          if (cwsr(cv_wp, - tr.min_squared_distance(bpi, cp(cv_wp))) != CGAL::LARGER)
           {
             pi_inside_protecting_sphere = true;
             break;
