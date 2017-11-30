@@ -20,21 +20,8 @@
 #ifndef CGAL_LCC_VIEWER_QT_H
 #define CGAL_LCC_VIEWER_QT_H
 
-#include "CGAL/Qt/Basic_viewer_qt.h"
+#include <CGAL/Qt/Basic_viewer_qt.h>
 #include <CGAL/Random.h>
-
-CGAL::Color get_random_color(CGAL::Random& random)
-{
-  CGAL::Color res;
-  do
-  {
-    res=CGAL::Color(random.get_int(0,256),
-                    random.get_int(0,256),
-                    random.get_int(0,256));
-  }
-  while(res.red()==255 && res.green()==255 && res.blue()==255);
-  return res;
-}
 
 // Default color functor; user can change it to have its own face color
 struct DefaultColorFunctor
@@ -216,7 +203,6 @@ protected:
   const LCC& lcc;
   bool m_nofaces;
 };
-
   
 template<class LCC, class ColorFunctor>
 void display(const LCC& alcc,

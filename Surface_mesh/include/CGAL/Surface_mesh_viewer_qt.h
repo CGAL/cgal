@@ -34,15 +34,7 @@ struct DefaultColorFunctor
       return CGAL::Color(100, 125, 200); // R G B between 0-255
 
     CGAL::Random random(fh);
-    CGAL::Color res;
-    do
-    {
-      res=CGAL::Color(random.get_int(0,256),
-                      random.get_int(0,256),
-                      random.get_int(0,256));
-    }
-    while(res.red()==255 && res.green()==255 && res.blue()==255);
-    return res;
+    return get_random_color(random);
   }
 };
 
