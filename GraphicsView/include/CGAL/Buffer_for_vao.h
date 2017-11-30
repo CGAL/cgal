@@ -75,6 +75,11 @@ namespace internal {
       CGAL::Cartesian_converter<K, Local_kernel> converter;
       return Local_point(converter(p.x()), 0, converter(p.y()));
     }
+    static Local_point get_local_point(const typename K::Weighted_point_2& p)
+    {
+      typename K::Point_2 lp(p);
+      return Geom_utils<K>::get_local_point(lp);
+    }
     static Local_point get_local_point(const typename K::Point_3& p)
     {
       CGAL::Cartesian_converter<K, Local_kernel> converter;
@@ -103,6 +108,8 @@ namespace internal {
   {
     static Local_point get_local_point(const typename Local_kernel::Point_2& p)
     { return Local_point(p.x(), 0, p.y()); }
+    static Local_point get_local_point(const typename Local_kernel::Weighted_point_2& p)
+    { return Local_point(p.point().x(), 0, p.point().y());}
     static const Local_point & get_local_point(const typename Local_kernel::Point_3& p)
     { return p; }
     static Local_point get_local_point(const typename Local_kernel::Weighted_point_3& p)
