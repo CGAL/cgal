@@ -248,7 +248,15 @@ public:
       return canonicalize_point(sp);
     }
 
-    return construct_point(pbp);
+    Bare_point canonical_p = construct_point(pbp);
+    CGAL_postcondition( !(canonical_p.x() < domain().xmin()) &&
+                         (canonical_p.x() < domain().xmax()) );
+    CGAL_postcondition( !(canonical_p.y() < domain().ymin()) &&
+                         (canonical_p.y() < domain().ymax()) );
+    CGAL_postcondition( !(canonical_p.z() < domain().zmin()) &&
+                         (canonical_p.z() < domain().zmax()) );
+
+    return canonical_p;
   }
 
   Bare_point canonicalize_point(const Bare_point& p) const
