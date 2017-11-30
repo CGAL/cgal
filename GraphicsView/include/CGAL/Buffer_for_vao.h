@@ -17,8 +17,8 @@
 //
 // Author(s)     :
 
-#ifndef CGAL_BUFFER_FOR_VAO_H
-#define CGAL_BUFFER_FOR_VAO_H
+#ifndef CGAL_VBO_BUFFER_FILLER_H
+#define CGAL_VBO_BUFFER_FILLER_H
 
 #include <CGAL/Triangulation_2_projection_traits_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
@@ -65,57 +65,70 @@ namespace internal {
     return (typename Local_kernel::Construct_scaled_vector_3()(normal, 1.0/nb));
   }
 
-  template<int dim>
-  struct Geom_utils;
-
-  template<>
-  struct Geom_utils<3>
+  ////////////////////////////////////////////////////////////////
+  // Structs to transform any CGAL point/vector into a Local_point/Local_vector
+  template<typename K>
+  struct Geom_utils
   {
-    template<typename KPoint>
-    static Local_point get_local_point(const KPoint& p)
+    static Local_point get_local_point(const typename K::Point_2& p)
     {
-      CGAL::Cartesian_converter<typename CGAL::Kernel_traits<KPoint>::Kernel, Local_kernel> converter;
+      CGAL::Cartesian_converter<K, Local_kernel> converter;
+      return Local_point(converter(p.x()), 0, converter(p.y()));
+    }
+    static Local_point get_local_point(const typename K::Point_3& p)
+    {
+      CGAL::Cartesian_converter<K, Local_kernel> converter;
       return converter(p);
     }
-
-    template<typename KVector>
-    static Local_vector get_local_vector(const KVector& v)
+    static Local_point get_local_point(const typename K::Weighted_point_3& p)
     {
-      CGAL::Cartesian_converter<typename CGAL::Kernel_traits<KVector>::Kernel, Local_kernel> converter;
+      typename K::Point_3 lp(p);
+      return Geom_utils<K>::get_local_point(lp);
+    }
+    static Local_vector get_local_vector(const typename K::Vector_2& v)
+    {
+      CGAL::Cartesian_converter<K, Local_kernel> converter;
+      return Local_vector(converter(v.x()), 0, converter(v.y()));
+    }
+    static Local_vector get_local_vector(const typename K::Vector_3& v)
+    {
+      CGAL::Cartesian_converter<K, Local_kernel> converter;
       return converter(v);
     }
   };
 
+  // Specialization for Local_kernel, because there is no need of convertion here.
   template<>
-  struct Geom_utils<2>
+  struct Geom_utils<Local_kernel>
   {
-    template<typename KPoint>
-    static Local_point get_local_point(const KPoint& p)
-    {
-      CGAL::Cartesian_converter<typename CGAL::Kernel_traits<KPoint>::Kernel, Local_kernel> converter;
-      return Local_point(converter(p.x()),0,converter(p.y()));
-    }
+    static Local_point get_local_point(const typename Local_kernel::Point_2& p)
+    { return Local_point(p.x(), 0, p.y()); }
+    static const Local_point & get_local_point(const typename Local_kernel::Point_3& p)
+    { return p; }
+    static Local_point get_local_point(const typename Local_kernel::Weighted_point_3& p)
+    { return Local_point(p);}
+    static Local_vector get_local_vector(const typename Local_kernel::Vector_2& v)
+    { return Local_vector(v.x(), 0, v.y()); }
+    static const Local_vector& get_local_vector(const typename Local_kernel::Vector_3& v)
+    { return v; }
+  };    
 
-    template<typename KVector>
-    static Local_vector get_local_vector(const KVector& v)
-    {
-      CGAL::Cartesian_converter<typename CGAL::Kernel_traits<KVector>::Kernel, Local_kernel> converter;
-      return Local_vector(converter(v.x()),0,converter(v.y()));
-    }
-  };
-
+  ////////////////////////////////////////////////////////////////
+  // Global function to simplify function calls.
   template<typename KPoint>
   Local_point get_local_point(const KPoint& p)
   {
-    return Geom_utils<CGAL::Ambient_dimension<KPoint>::value>::get_local_point(p);
+    return Geom_utils<typename CGAL::Kernel_traits<KPoint>::Kernel>::
+      get_local_point(p);
   }
-
   template<typename KVector>
   Local_vector get_local_vector(const KVector& v)
   {
-    return Geom_utils<CGAL::Ambient_dimension<KVector>::value>::get_local_vector(v);
+    return Geom_utils<typename CGAL::Kernel_traits<KVector>::Kernel>::
+      get_local_vector(v);
   }
 } // End namespace internal
+
 //------------------------------------------------------------------------------
 template<typename BufferType=float, typename IndexType=std::size_t>
 class Buffer_for_vao
@@ -126,23 +139,23 @@ public:
                  CGAL::Bbox_3* bbox=NULL,
                  std::vector<BufferType>* color=NULL,
                  std::vector<BufferType>* flat_normal=NULL,
-                 std::vector<BufferType>* gourod_normal=NULL) :
+                 std::vector<BufferType>* gouraud_normal=NULL) :
     m_pos_buffer(pos),
     m_index_buffer(indices),
     m_bb(bbox),
     m_color_buffer(color),
     m_flat_normal_buffer(flat_normal),
-    m_gourod_normal_buffer(gourod_normal),
+    m_gouraud_normal_buffer(gouraud_normal),
     m_face_started(false)
   {}
 
   void clear()
   {
-    if (m_pos_buffer!=NULL)           { m_pos_buffer->clear(); }
-    if (m_color_buffer!=NULL)         { m_color_buffer->clear(); }
-    if (m_index_buffer!=NULL)         { m_index_buffer->clear(); }
-    if (m_flat_normal_buffer!=NULL)   { m_flat_normal_buffer->clear(); }
-    if (m_gourod_normal_buffer!=NULL) { m_gourod_normal_buffer->clear(); }
+    if (m_pos_buffer!=NULL)            { m_pos_buffer->clear(); }
+    if (m_color_buffer!=NULL)          { m_color_buffer->clear(); }
+    if (m_index_buffer!=NULL)          { m_index_buffer->clear(); }
+    if (m_flat_normal_buffer!=NULL)    { m_flat_normal_buffer->clear(); }
+    if (m_gouraud_normal_buffer!=NULL) { m_gouraud_normal_buffer->clear(); }
   }
 
   bool is_empty() const
@@ -151,7 +164,7 @@ public:
       (m_pos_buffer!=NULL && m_pos_buffer->empty()) &&
       (m_color_buffer!=NULL || m_color_buffer->empty()) &&
       (m_flat_normal_buffer!=NULL || m_flat_normal_buffer->empty()) &&
-      (m_gourod_normal_buffer!=NULL || m_gourod_normal_buffer->empty()) &&
+      (m_gouraud_normal_buffer!=NULL || m_gouraud_normal_buffer->empty()) &&
       (m_index_buffer!=NULL || m_index_buffer->empty());
   }
 
@@ -167,8 +180,8 @@ public:
   bool has_flat_normal() const
   { return m_flat_normal_buffer!=NULL; }
   
-  bool has_gourod_normal() const
-  { return m_gourod_normal_buffer!=NULL; }
+  bool has_gouraud_normal() const
+  { return m_gouraud_normal_buffer!=NULL; }
 
   // 1.1) Add a point, without color. Return the index of the added point.
   template<typename KPoint>
@@ -177,9 +190,7 @@ public:
     if (!has_position()) return (std::size_t)-1;
     
     Local_point p=internal::get_local_point(kp);
-    m_pos_buffer->push_back(p.x());
-    m_pos_buffer->push_back(p.y());
-    m_pos_buffer->push_back(p.z());
+    add_point_in_buffer(p, *m_pos_buffer);
 
     if (m_bb!=NULL)
     { (*m_bb)=(*m_bb)+p.bbox(); }
@@ -200,16 +211,7 @@ public:
   void add_indexed_point(T index)
   {
     if (!has_indices()) return;
-    
     m_index_buffer->push_back((IndexType)index);
-  }
-
-  // 1.4) Add an indexed point, with color.
-  template<typename T>
-  void add_indexed_point(T index, const CGAL::Color& c)
-  {
-    add_indexed_point(index);
-    add_color(c);
   }
 
   // 2.1) Add a segment, without color.
@@ -235,15 +237,6 @@ public:
   {
     add_indexed_point(index1);
     add_indexed_point(index2);
-  }
-  
-  // 2.4) Add an indexed segment, with color.
-  template<typename T>
-  void add_indexed_segment(T index1, T index2, const CGAL::Color& c)
-  {
-    add_indexed_segment(index1, index2);
-    add_color(c);
-    add_color(c);
   }
 
   /// @return true iff a face has begun.
@@ -279,7 +272,7 @@ public:
   }
 
   /// Add a point at the end of the current face, without giving the vertex normal.
-  /// When this method is used, it is not possible to use the Gourod shading.
+  /// When this method is used, it is not possible to use the Gouraud shading.
   /// @param p the point to add
   template<typename KPoint>
   bool add_point_in_face(const KPoint& kp)
@@ -297,7 +290,7 @@ public:
   
   /// Add a point at the end of the current face
   /// @param p the point to add
-  /// @p_normal the vertex normal at this point (for Gourod shading)
+  /// @p_normal the vertex normal at this point (for Gouraud shading)
   template<typename KPoint, typename KVector>
   bool add_point_in_face(const KPoint& kp, const KVector& p_normal)
   {
@@ -310,27 +303,13 @@ public:
   }
 
   /// Add an indexed point at the end of the current face, without giving the vertex normal.
-  /// When this method is used, it is not possible to use the Gourod shading.
+  /// When Indexation is used, it is not possible to use flat shading or multiple colors 
+  /// for face sor edges.
   /// Note that we still need the point itself, in order to triangulate the face when necessary.
   template<typename T, typename KPoint>
   bool add_indexed_point_in_face(T index, const KPoint& kp)
   {
     if (add_point_in_face(kp))
-    {
-      m_indices_of_points_of_face.push_back(index);
-      return true;
-    }
-    return false;
-  }
-  
-  /// Add a point at the end of the current face
-  /// @param index the index of the point to add
-  /// @param p the point to add
-  /// @p_normal the vertex normal at this point (for Gourod shading)
-  template<typename T, typename KPoint, typename KVector>
-  bool add_indexed_point_in_face(T index, const KPoint& kp, const KVector& p_normal)
-  {
-    if (add_point_in_face(kp, p_normal))
     {
       m_indices_of_points_of_face.push_back(index);
       return true;
@@ -367,7 +346,8 @@ public:
         m_vertex_normals_for_face.size()!=m_points_of_face.size())
     {
       std::cerr<<"PB: you only gave some vertex normals (and not all) for a same face. "
-               <<" All vertex normal are ignored and thus it is not possible to use Gourod shading for this face."
+               <<"All vertex normal are ignored and thus it is not possible to use Gouraud "
+               <<"shading for this face."
                <<std::endl;
       m_vertex_normals_for_face.clear();
     }
@@ -392,6 +372,96 @@ public:
     m_face_started=false;
   }
 
+  /// adds `kp` coordinates to `buffer`
+  template<typename KPoint>
+  static void add_point_in_buffer(const KPoint& kp, std::vector<float>& buffer)
+  {
+    Local_point p=internal::get_local_point(kp);
+    buffer.push_back(p.x());
+    buffer.push_back(p.y());
+    buffer.push_back(p.z());
+  }
+
+  /// adds `kv` coordinates to `buffer`
+  template<typename KVector>
+  static void add_normal_in_buffer(const KVector& kv, std::vector<float>& buffer)
+  {
+    Local_vector n=internal::get_local_vector(kv);
+    buffer.push_back(n.x());
+    buffer.push_back(n.y());
+    buffer.push_back(n.z());
+  }
+
+  ///adds `acolor` RGB components to `buffer`
+  static void add_color_in_buffer(const CGAL::Color& acolor, std::vector<float>& buffer)
+  {
+    buffer.push_back((float)acolor.red()/(float)255);
+    buffer.push_back((float)acolor.green()/(float)255);
+    buffer.push_back((float)acolor.blue()/(float)255);
+  }
+
+  /// @return true iff the points of 'facet' form a convex face
+  static bool is_facet_convex(const std::vector<Local_point>& facet,
+                              const Local_vector& N)
+  {
+    typedef Local_kernel::Orientation Orientation;
+    Orientation orientation;
+    Local_vector normal = N;
+    bool normal_is_ok;
+    std::size_t id = 0;
+    do{
+      normal_is_ok = true;
+      //Initializes the facet orientation
+
+      Local_point S,T;
+      S = facet[id];
+      T = facet[id+1];
+      Local_vector V1 = Local_vector((T-S).x(), (T-S).y(), (T-S).z());
+      S = T;
+      T = facet[id+2];
+      Local_vector V2 = Local_vector((T-S).x(), (T-S).y(), (T-S).z());
+
+      if(normal == Local_vector(0,0,0))
+        normal_is_ok = false;
+      if(normal_is_ok)
+      {
+        orientation = Local_kernel::Orientation_3()(V1, V2, normal);
+        if( orientation == CGAL::COPLANAR )
+          normal_is_ok = false;
+      }
+      //Checks if the normal is good : if the normal is null
+      // or if it is coplanar to the facet, we need another one.
+      if(!normal_is_ok)
+      {
+        normal = CGAL::cross_product(V1,V2);
+      }
+
+    }while( ++id != facet.size() && !normal_is_ok);
+    //if no good normal can be found, stop here.
+    if (!normal_is_ok)
+      return false;
+
+    //computes convexness
+
+    //re-initializes he_end;
+
+    for(id=0; id<facet.size(); ++id)
+    {
+      Local_point S,T;
+      S = facet[id%facet.size()];
+      T = facet[(id+1)%facet.size()];
+      Local_vector V1 = Local_vector((T-S).x(), (T-S).y(), (T-S).z());
+      S = T;
+      T = facet[(id+2)%facet.size()];
+      Local_vector V2 = Local_vector((T-S).x(), (T-S).y(), (T-S).z());
+      Orientation res = Local_kernel::Orientation_3()(V1, V2, normal) ;
+
+      if(res!= orientation && res != CGAL::ZERO)
+        return false;
+    }
+    return true;
+  }
+
 protected:
   void face_begin_internal(bool has_color, bool has_normal)
   {
@@ -414,40 +484,34 @@ protected:
   {
     for (int i=0; i<3; ++i)
     {
-      add_point(m_points_of_face[i]); // Add the position of the point
+      // If user gave vertex indices
+      if (m_indices_of_points_of_face.size()>0)
+      { 
+	add_indexed_point(m_indices_of_points_of_face[i]); 
+	}
+      else
+      {
+        add_point(m_points_of_face[i]); // Add the position of the point
       if (m_started_face_is_colored)
       { add_color(m_color_of_face); } // Add the color      
       add_flat_normal(normal); // Add the flat normal
-
-      // If user gave vertex indices
-      if (m_indices_of_points_of_face.size()>0)
-      { add_indexed_point(m_indices_of_points_of_face[i]); }
-      
       // Its smooth normal (if given by the user)
       if (m_vertex_normals_for_face.size()>0)
-      { // Here we have 3 vertex normals; we can use Gourod
-        add_gourod_normal(m_vertex_normals_for_face[i]);
+      { // Here we have 3 vertex normals; we can use Gouraud
+        add_gouraud_normal(m_vertex_normals_for_face[i]);
       }
       else
       { // Here user does not provide all vertex normals: we use face normal istead
-        // and thus we will not be able to use Gourod
-        add_gourod_normal(normal);
+        // and thus we will not be able to use Gouraud
+        add_gouraud_normal(normal);
+      }
       }
     }
   }
   
   void convex_quadrangular_face_end_internal(const Local_vector& normal)
   {
-    // (1) add points
-    add_point(m_points_of_face[0]);
-    add_point(m_points_of_face[1]);
-    add_point(m_points_of_face[2]);
-
-    add_point(m_points_of_face[0]);
-    add_point(m_points_of_face[2]);
-    add_point(m_points_of_face[3]);
-
-    // (2) Add indices when they exist
+    // Add indices when they exist
     if (m_indices_of_points_of_face.size()>0)
     {
       add_indexed_point(m_indices_of_points_of_face[0]);
@@ -458,19 +522,30 @@ protected:
       add_indexed_point(m_indices_of_points_of_face[2]);
       add_indexed_point(m_indices_of_points_of_face[3]);
     }
-
-    // (3) Add flat and smooth normals and color
-    for(unsigned int i=0; i<6; ++i)
+    else
     {
-      if (m_started_face_is_colored)
-      { add_color(m_color_of_face); }
+      // (1) add points
+      add_point(m_points_of_face[0]);
+      add_point(m_points_of_face[1]);
+      add_point(m_points_of_face[2]);
 
-      add_flat_normal(normal);
-      
-      if (m_vertex_normals_for_face.size()>0)
-      { add_gourod_normal(m_vertex_normals_for_face[i]); }
-      else
-      { add_gourod_normal(normal); }
+      add_point(m_points_of_face[0]);
+      add_point(m_points_of_face[2]);
+      add_point(m_points_of_face[3]);
+
+      // (2) Add flat and smooth normals and color
+      for(unsigned int i=0; i<6; ++i)
+      {
+        if (m_started_face_is_colored)
+        { add_color(m_color_of_face); }
+
+        add_flat_normal(normal);
+
+        if (m_vertex_normals_for_face.size()>0)
+        { add_gouraud_normal(m_vertex_normals_for_face[i]); }
+        else
+        { add_gouraud_normal(normal); }
+      }
     }
   }
   
@@ -478,41 +553,43 @@ protected:
   {
     for(std::size_t i=1; i<m_points_of_face.size()-1; ++i)
     {
-      Local_point& p0 = m_points_of_face[0];
-      Local_point& p1 = m_points_of_face[i];
-      Local_point& p2 = m_points_of_face[i+1];
-
-      // (1) add points
-      add_point(p0);
-      add_point(p1);
-      add_point(p2);
-
-      // (2) Add indices when they exist
+      // Add indices when they exist
       if (m_indices_of_points_of_face.size()>0)
       {
         add_indexed_point(m_indices_of_points_of_face[0]);
         add_indexed_point(m_indices_of_points_of_face[i]);
         add_indexed_point(m_indices_of_points_of_face[i+1]);
       }
-
-      // (3) Add flat normal and color
-      for(unsigned int j=0; j<3; ++j)
+      else
       {
-        if (m_started_face_is_colored)
-        { add_color(m_color_of_face); }
+        Local_point& p0 = m_points_of_face[0];
+        Local_point& p1 = m_points_of_face[i];
+        Local_point& p2 = m_points_of_face[i+1];
 
-        add_flat_normal(normal);
+        // (1) add points
+        add_point(p0);
+        add_point(p1);
+        add_point(p2);
 
-        if (m_vertex_normals_for_face.size()==0)
-        { add_gourod_normal(normal); } // No smooth normal, we use the flat one instead
-      }
+        // (2) Add flat normal and color
+        for(unsigned int j=0; j<3; ++j)
+        {
+          if (m_started_face_is_colored)
+          { add_color(m_color_of_face); }
 
-      // (4) Add smooth normals if they exist
-      if (m_vertex_normals_for_face.size()>0)
-      {
-        add_gourod_normal(m_vertex_normals_for_face[0]);
-        add_gourod_normal(m_vertex_normals_for_face[i]);
-        add_gourod_normal(m_vertex_normals_for_face[i+1]);
+          add_flat_normal(normal);
+
+          if (m_vertex_normals_for_face.size()==0)
+          { add_gouraud_normal(normal); } // No smooth normal, we use the flat one instead
+        }
+
+        // (3) Add smooth normals if they exist
+        if (m_vertex_normals_for_face.size()>0)
+        {
+          add_gouraud_normal(m_vertex_normals_for_face[0]);
+          add_gouraud_normal(m_vertex_normals_for_face[i]);
+          add_gouraud_normal(m_vertex_normals_for_face[i+1]);
+        }
       }
     }
   }
@@ -614,24 +691,25 @@ protected:
       {
         if(!ffit->info().is_external)
         {
-          for(int i=0; i<3; ++i)
-          {
-            // (1) add point
-            add_point(ffit->vertex(i)->point());
-            
-            // (2) Add indices when they exist
+          for(unsigned int i=0; i<3; ++i)
+          {            
+            // Add indices when they exist
             if (m_indices_of_points_of_face.size()>0)
             { add_indexed_point(ffit->vertex(i)->info().index); }
+            else
+            {
+              // (1) add point
+              add_point(ffit->vertex(i)->point());
+              // (2) Add face color
+              if (m_started_face_is_colored)
+              { add_color(m_color_of_face); }
 
-            // (3) Add face color
-            if (m_started_face_is_colored)
-            { add_color(m_color_of_face); }
-            
-            // (4) Add flat normal 
-            add_flat_normal(normal);
-            
-            // (5) Add smooth normals (or flat if smooth normals do not exist)
-            add_gourod_normal(ffit->vertex(i)->info().v);
+              // (3) Add flat normal
+              add_flat_normal(normal);
+
+              // (4) Add smooth normals (or flat if smooth normals do not exist)
+              add_gouraud_normal(ffit->vertex(i)->info().v);
+            }
           }
         }
       }
@@ -645,89 +723,28 @@ protected:
   /// @return true iff the current face is convex
   bool is_current_face_convex(const Local_vector& N) const
   {
-    typedef Local_kernel::Orientation Orientation;
-    Orientation orientation;
-    Local_vector normal=N;
-    bool normal_is_ok=true;
-    std::size_t id=0;
-    do
-    {
-      normal_is_ok=true;
-      //Initializes the facet orientation
-      
-      const Local_point& S=m_points_of_face[id];
-      const Local_point& T=m_points_of_face[id+1];
-      Local_vector V1=Local_vector((T-S).x(), (T-S).y(), (T-S).z());
-
-      const Local_point& U=m_points_of_face[id+2];
-      Local_vector V2=Local_vector((U-T).x(), (U-T).y(), (U-T).z());
-      
-      if(normal==Local_vector(0,0,0))
-      { normal_is_ok=false; }
-      else
-      {
-        orientation=Local_kernel::Orientation_3()(V1, V2, normal);
-        if(orientation==CGAL::COPLANAR)
-        { normal_is_ok=false; }
-      }
-      //Checks if the normal is good : if the normal is null
-      // or if it is coplanar to the facet, we need another one.
-      if(!normal_is_ok)
-      { normal=CGAL::cross_product(V1,V2); }
-     }
-    while(++id!=m_points_of_face.size() && !normal_is_ok);
-    
-    //if no good normal can be found, stop here.
-    if (!normal_is_ok)
-    { return false; } 
-
-    //computes convexness
-    for(id=0; id<m_points_of_face.size(); ++id)
-    {
-      const Local_point& S=m_points_of_face[id];
-      const Local_point& T=m_points_of_face[(id+1)%m_points_of_face.size()];      
-      Local_vector V1=Local_vector((T-S).x(), (T-S).y(), (T-S).z());
-      
-      const Local_point& U=m_points_of_face[(id+2)%m_points_of_face.size()];
-      Local_vector V2=Local_vector((U-T).x(), (U-T).y(), (U-T).z());
-
-      Orientation res=Local_kernel::Orientation_3()(V1, V2, normal) ;
-      if(res!= orientation && res!=CGAL::ZERO)
-      { return false; }
-    }
-    
-    return true;
+    return is_facet_convex(m_points_of_face, N);
   }
 
   void add_color(const CGAL::Color& acolor)
   {
     if (m_color_buffer!=NULL)
-    {
-      m_color_buffer->push_back((float)acolor.red()/(float)255);
-      m_color_buffer->push_back((float)acolor.green()/(float)255);
-      m_color_buffer->push_back((float)acolor.blue()/(float)255);
-    }
+    { add_color_in_buffer(acolor, *m_color_buffer); }
   }
   
   template<typename KVector>
-  void add_normal_in_buffer(const KVector& kv, std::vector<float>* buffer)
+  void add_flat_normal(const KVector& kv)
   {
-    if (buffer!=NULL)
-    {
-      Local_vector n=internal::get_local_vector(kv);
-      buffer->push_back(n.x());
-      buffer->push_back(n.y());
-      buffer->push_back(n.z());
-    }
+    if(m_flat_normal_buffer != NULL)
+    { add_normal_in_buffer(kv, *m_flat_normal_buffer); }
   }
 
   template<typename KVector>
-  void add_flat_normal(const KVector& kv)
-  { add_normal_in_buffer(kv, m_flat_normal_buffer); }
-
-  template<typename KVector>
-  void add_gourod_normal(const KVector& kv)
-  { add_normal_in_buffer(kv, m_gourod_normal_buffer); }
+  void add_gouraud_normal(const KVector& kv)
+  {
+    if(m_gouraud_normal_buffer != NULL)
+    { add_normal_in_buffer(kv, *m_gouraud_normal_buffer); }
+  }
 
 protected:
   // Types usefull for triangulation
@@ -757,7 +774,7 @@ protected:
   std::vector<IndexType>* m_index_buffer;
   std::vector<BufferType>* m_color_buffer;
   std::vector<BufferType>* m_flat_normal_buffer;
-  std::vector<BufferType>* m_gourod_normal_buffer;
+  std::vector<BufferType>* m_gouraud_normal_buffer;
 
   CGAL::Bbox_3* m_bb;
   
@@ -772,4 +789,4 @@ protected:
   Local_vector m_normal_of_face;
 };
 
-#endif // CGAL_BUFFER_FOR_VAO_H
+#endif // CGAL_VBO_BUFFER_FILLER_H

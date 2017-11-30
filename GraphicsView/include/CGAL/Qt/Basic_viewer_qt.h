@@ -35,6 +35,7 @@
 
 #include <CGAL/Buffer_for_vao.h>
 #include <CGAL/Qt/CreateOpenGLContext.h>
+#include <CGAL/Random.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Local_kernel;
 typedef Local_kernel::Point_3  Local_point;
@@ -117,6 +118,19 @@ const char fragment_source_p_l[] =
     "\n"
   };
 //------------------------------------------------------------------------------
+inline CGAL::Color get_random_color(CGAL::Random& random)
+{
+  CGAL::Color res;
+  do
+  {
+    res=CGAL::Color(random.get_int(0,256),
+                    random.get_int(0,256),
+                    random.get_int(0,256));
+  }
+  while(res.red()==255 && res.green()==255 && res.blue()==255);
+  return res;
+}
+//------------------------------------------------------------------------------
 class Basic_viewer_qt : public QGLViewer, public QOpenGLFunctions_2_1
 {
 public:
@@ -137,25 +151,31 @@ public:
     m_ambient_color(0.6f, 0.5f, 0.5f, 0.5f),
     m_are_buffers_initialized(false),
     m_buffer_for_mono_points(&arrays[POS_MONO_POINTS],
+                             NULL,
                              &m_bounding_box,
                              NULL, NULL, NULL),
     m_buffer_for_colored_points(&arrays[POS_COLORED_POINTS],
+                                NULL,
                                 &m_bounding_box,
                                 &arrays[COLOR_POINTS],
                                 NULL, NULL),
     m_buffer_for_mono_segments(&arrays[POS_MONO_SEGMENTS],
+                               NULL,
                                &m_bounding_box,
                                NULL, NULL, NULL),
     m_buffer_for_colored_segments(&arrays[POS_COLORED_SEGMENTS],
+                                  NULL,
                                   &m_bounding_box,
                                   &arrays[COLOR_SEGMENTS],
                                   NULL, NULL),
     m_buffer_for_mono_faces(&arrays[POS_MONO_FACES],
+                            NULL,
                             &m_bounding_box,
                             NULL,
                             &arrays[FLAT_NORMAL_MONO_FACES],
                             &arrays[SMOOTH_NORMAL_MONO_FACES]),
     m_buffer_for_colored_faces(&arrays[POS_COLORED_FACES],
+                               NULL,
                                &m_bounding_box,
                                &arrays[COLOR_FACES], 
                                &arrays[FLAT_NORMAL_COLORED_FACES],
