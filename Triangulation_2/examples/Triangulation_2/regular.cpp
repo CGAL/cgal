@@ -3,6 +3,10 @@
 
 #include <fstream>
 
+#ifdef CGAL_USE_BASIC_VIEWER
+#include <CGAL/Triangulation_2_viewer_qt.h>
+#endif
+
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Regular_triangulation_2<K> Regular_triangulation;
 
@@ -24,5 +28,10 @@ int main()
    std::cout << rt.number_of_vertices() << std::endl;
    std::cout << "number of hidden vertices :  " ;
    std::cout << rt.number_of_hidden_vertices() << std::endl;
+
+#ifdef CGAL_USE_BASIC_VIEWER
+  display(rt);
+#endif // CGAL_USE_BASIC_VIEWER
+
    return 0;
 }
