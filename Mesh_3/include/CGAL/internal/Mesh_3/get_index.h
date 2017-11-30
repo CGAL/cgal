@@ -35,10 +35,10 @@
 #include <CGAL/IO/io.h>
 
 namespace CGAL {
-namespace internal {
 namespace Mesh_3 {
-  
-  
+namespace internal {
+
+
 template <typename T, typename Boost_variant>
 const T& get_index(const Boost_variant& x,
                    typename boost::disable_if<boost::is_same<T, Boost_variant> >::type * = 0)
@@ -167,8 +167,8 @@ struct Write_mesh_domain_index<Mesh_domain, false> {
 
 
 
-}
-}
-}
+} // end namespace internal
+} // end namespace Mesh_3
+} // end namespace CGAL
 
 #endif

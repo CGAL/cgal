@@ -67,7 +67,7 @@ void init_tr_from_labeled_image_call_init_features(C3T3& c3t3,
                                                    const MeshCriteria& criteria,
                                                    CGAL::Tag_true)
 {
-  CGAL::internal::Mesh_3::init_c3t3_with_features(c3t3,
+  CGAL::Mesh_3::internal::init_c3t3_with_features(c3t3,
                                                   domain,
                                                   criteria);
   std::cout << c3t3.triangulation().number_of_vertices()
@@ -110,7 +110,7 @@ void initialize_triangulation_from_labeled_image(C3T3& c3t3,
   if(protect_features) {
     init_tr_from_labeled_image_call_init_features
       (c3t3, domain, criteria,
-       CGAL::internal::Mesh_3::Has_features<Mesh_domain>());
+       CGAL::Mesh_3::internal::Has_features<Mesh_domain>());
   }
 
   const double max_v = (std::max)((std::max)(image.vx(),
@@ -250,7 +250,7 @@ void initialize_triangulation_from_labeled_image(C3T3& c3t3,
   {
     std::cout << "  not enough points: triangulation.dimension() == "
               << c3t3.triangulation().dimension() << std::endl;
-    CGAL::internal::Mesh_3::init_c3t3(c3t3, domain, criteria, 20);
+    CGAL::Mesh_3::internal::init_c3t3(c3t3, domain, criteria, 20);
     std::cout << "  -> " << tr.number_of_vertices() << " initial points." << std::endl;
   }
 }

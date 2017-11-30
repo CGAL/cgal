@@ -198,7 +198,7 @@ polylines_to_protect(const CGAL::Image_3& cgal_image,
   const int image_dims[3] = { xdim, ydim, zdim };
 
   Graph graph;
-  internal::Mesh_3::Graph_manipulations<Graph, Point_3> g_manip(graph);
+  Mesh_3::internal::Graph_manipulations<Graph, Point_3> g_manip(graph);
 
   std::size_t
     case4 = 0, // 4 colors
@@ -571,7 +571,7 @@ polylines_to_protect(std::vector<std::vector<P> >& polylines,
   typedef typename std::iterator_traits<PolylineInputIterator>::value_type Polyline;
 
   Graph graph;
-  internal::Mesh_3::Graph_manipulations<Graph, Point_3> g_manip(graph);
+  Mesh_3::internal::Graph_manipulations<Graph, Point_3> g_manip(graph);
 
   for (PolylineInputIterator poly_it = existing_polylines_begin;
        poly_it != existing_polylines_end; ++poly_it)

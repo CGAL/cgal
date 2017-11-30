@@ -110,7 +110,7 @@ namespace parameters {
   {
     typedef typename internal::Domain_features_generator<
       MeshDomain,
-      CGAL::internal::Mesh_3::has_Has_features<MeshDomain>::value > Generator;
+      CGAL::Mesh_3::internal::has_Has_features<MeshDomain>::value > Generator;
 
     return Generator()();
   }
@@ -134,8 +134,8 @@ CGAL_PRAGMA_DIAG_POP
 // -----------------------------------
 // Initialize c3t3 stuff
 // -----------------------------------
-namespace internal {
 namespace Mesh_3 {
+namespace internal {
 
 template < typename C3T3, typename MeshDomain, typename MeshCriteria >
 void
@@ -315,7 +315,8 @@ struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_false >
   }
 };
 
-}} // end namespace internal::Mesh_3
+} // end namespace internal
+} // end namespace Mesh_3
 
 
 // -----------------------------------
@@ -456,11 +457,11 @@ void make_mesh_3_impl(C3T3& c3t3,
 #endif
 
   // Initialize c3t3
-  internal::Mesh_3::C3t3_initializer<
+  Mesh_3::internal::C3t3_initializer<
     C3T3,
     MeshDomain,
     MeshCriteria,
-    internal::Mesh_3::has_Has_features<MeshDomain>::value > () (c3t3,
+    Mesh_3::internal::has_Has_features<MeshDomain>::value > () (c3t3,
             domain,
             criteria,
             with_features,

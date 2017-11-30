@@ -37,9 +37,8 @@
 #include <iterator>
 
 namespace CGAL {
-
-namespace internal {
 namespace Periodic_3_mesh_3 {
+namespace internal {
 
 template<typename C3T3>
 void give_dummy_points_artificial_index(C3T3& c3t3)
@@ -56,21 +55,36 @@ void give_dummy_points_artificial_index(C3T3& c3t3)
   }
 }
 
+template <typename C3T3, typename MeshDomain, typename MeshCriteria>
+void init_c3t3_with_features(C3T3& c3t3,
+                             const MeshDomain& domain,
+                             const MeshCriteria& criteria,
+                             bool nonlinear = false)
+{
+  typedef typename MeshCriteria::Edge_criteria                                Edge_criteria;
+  typedef Mesh_3::internal::Edge_criteria_sizing_field_wrapper<Edge_criteria> Sizing_field;
+
+  CGAL::Periodic_3_mesh_3::Protect_edges_sizing_field<C3T3, MeshDomain, Sizing_field>
+    protect_edges(c3t3, domain, Sizing_field(criteria.edge_criteria_object()));
+  protect_edges.set_nonlinear_growth_of_balls(nonlinear);
+
+  protect_edges(true);
+}
+
 // C3t3_initializer: initialize c3t3
 template < typename C3T3,
            typename MeshDomain,
            typename MeshCriteria,
            bool MeshDomainHasHasFeatures,
            typename HasFeatures = int>
-class C3t3_initializer
-  : public CGAL::internal::Mesh_3::C3t3_initializer<
+struct C3t3_initializer_base
+  : public CGAL::Mesh_3::internal::C3t3_initializer<
       C3T3, MeshDomain, MeshCriteria, MeshDomainHasHasFeatures, HasFeatures>
 {
-  typedef CGAL::internal::Mesh_3::C3t3_initializer<
+  typedef CGAL::Mesh_3::internal::C3t3_initializer<
             C3T3, MeshDomain, MeshCriteria,
             MeshDomainHasHasFeatures, HasFeatures>              Base;
 
-public:
   void operator()(C3T3& c3t3,
                   const MeshDomain& domain,
                   const MeshCriteria& criteria,
@@ -80,7 +94,6 @@ public:
   {
     c3t3.triangulation().set_domain(domain.periodic_bounding_box());
     c3t3.triangulation().insert_dummy_points();
-
     give_dummy_points_artificial_index(c3t3);
 
     // Call the basic initialization from c3t3, which handles features and
@@ -92,6 +105,7 @@ public:
 
 } // namespace Periodic_3_mesh_3
 } // namespace internal
+} // namespace Periodic_3_mesh_3
 
 // -----------------------------------
 // make_periodic_3_mesh_3 stuff
@@ -225,9 +239,9 @@ void make_periodic_3_mesh_3_impl(C3T3& c3t3,
                                    manifold_options = parameters::internal::Manifold_options())
 {
   // Initialize c3t3
-  internal::Periodic_3_mesh_3::C3t3_initializer<
+  Periodic_3_mesh_3::internal::C3t3_initializer<
     C3T3, MeshDomain, MeshCriteria,
-    internal::Mesh_3::has_Has_features<MeshDomain>::value>()(c3t3,
+    Mesh_3::internal::has_Has_features<MeshDomain>::value>()(c3t3,
                                                              domain,
                                                              criteria,
                                                              with_features,

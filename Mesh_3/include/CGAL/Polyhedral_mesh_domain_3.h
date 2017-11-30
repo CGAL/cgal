@@ -127,11 +127,10 @@ struct IGT_generator<Gt,CGAL::Tag_false>
 };
 
 }  // end namespace details
-
 }  // end namespace Mesh_3
 
-
-namespace internal { namespace Mesh_3 {
+namespace Mesh_3 {
+namespace internal {
 
 template <typename Polyhedron_type,
           bool = boost::graph_has_property<Polyhedron_type,
@@ -168,8 +167,8 @@ private:
   Map face_ids;
 };
 
-} // end namespace Mesh_3
 } // end namespace internal
+} // end namespace Mesh_3
 
 /**
  * @class Polyhedral_mesh_domain_3

@@ -57,8 +57,8 @@
 
 namespace CGAL {
 /// @cond DEVELOPERS
-namespace internal {
 namespace Mesh_3 {
+namespace internal {
 
 template <typename Graph>
 void dump_graph_edges(std::ostream& out, const Graph& g)
@@ -202,8 +202,8 @@ struct Extract_polyline_with_context_visitor
 };
 
 
-} // end CGAL::internal::Mesh_3
-} // end CGAL::internal
+} // end namespace internal
+} // end namespace Mesh_3
 
 /// @endcond
 
@@ -889,7 +889,7 @@ detect_features(FT angle_in_degree,
   BOOST_FOREACH(Polyhedron_type& p, poly)
   {
     initialize_ts(p);
-    using internal::Mesh_3::Get_face_index_pmap;
+    using Mesh_3::internal::Get_face_index_pmap;
     Get_face_index_pmap<Polyhedron_type> get_face_index_pmap(p);
 #ifdef CGAL_MESH_3_VERBOSE
     std::size_t poly_id = &p-&poly[0];
@@ -911,7 +911,7 @@ detect_features(FT angle_in_degree,
       .vertex_incident_patches_map(vip_map)
       .vertex_feature_degree_map(vertex_feature_degree_map));
 
-    internal::Mesh_3::Is_featured_edge<Polyhedron_type> is_featured_edge(p);
+    Mesh_3::internal::Is_featured_edge<Polyhedron_type> is_featured_edge(p);
 
     add_featured_edges_to_graph(p, is_featured_edge, g_copy, p2vmap);
   }
@@ -1034,12 +1034,12 @@ add_features_from_split_graph_into_polylines(Featured_edges_copy_graph& g_copy)
 {
   std::vector<Polyline_with_context> polylines;
 
-  internal::Mesh_3::Extract_polyline_with_context_visitor<
+  Mesh_3::internal::Extract_polyline_with_context_visitor<
     Polyhedral_complex_mesh_domain_3,
     Polyline_with_context,
     Featured_edges_copy_graph
     > visitor(g_copy, polylines);
-  internal::Mesh_3::Angle_tester<GT_> angle_tester;
+  Mesh_3::internal::Angle_tester<GT_> angle_tester;
   split_graph_into_polylines(g_copy, visitor, angle_tester);
 
   this->add_features_with_context(polylines.begin(),
@@ -1120,7 +1120,7 @@ add_featured_edges_to_graph(const Polyhedron_type& p,
 
 #if CGAL_MESH_3_PROTECTION_DEBUG > 1
   {// DEBUG
-    internal::Mesh_3::dump_graph_edges("edges-graph.polylines.txt", g_copy);
+    Mesh_3::internal::dump_graph_edges("edges-graph.polylines.txt", g_copy);
   }
 #endif
 }

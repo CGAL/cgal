@@ -35,8 +35,8 @@
 #include <boost/type_traits/is_same.hpp>
 
 namespace CGAL {
-namespace internal {
 namespace Mesh_3 {
+namespace internal {
 
 
 template<typename Triangulation, typename MeshDomain>
@@ -68,9 +68,9 @@ bool has_non_protecting_weights(const Triangulation& tr,
 }
 
 
-}//end namespace Mesh_3
-}//end namespace internal
-}//end namespace CGAL
+} // end namespace internal
+} // end namespace Mesh_3
+} // end namespace CGAL
 
 #endif //CGAL_INTERNAL_MESH_3_CHECK_WEIGHTS_H
 
