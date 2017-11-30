@@ -170,7 +170,7 @@ shape. The implementation follows \cgalCite{cgal:lm-clscm-12}.
     
   private:
     
-    struct Empty_callback { bool operator()() const { return true; } };
+    struct Empty_callback { bool operator()(double) const { return true; } };
     
     class My_point_map
     {
@@ -472,11 +472,12 @@ shape. The implementation follows \cgalCite{cgal:lm-clscm-12}.
 
       \tparam Callback can be omitted if the algorithm should be run
       without any callback. `Callback` must be a functor providing
-      `bool operator()() const`. This functor is called regularly when the
-      algorithm is running. If it returns `true`, then the algorithm
-      continues its execution normally; if it returns `false`, the
-      algorithm is stopped. Note that this interruption may leave the
-      class in an invalid state.
+      `bool operator()(double) const`. This functor is called
+      regularly when the algorithm is running: the current advancement
+      (between 0. and 1.) is passed as parameter. If it returns
+      `true`, then the algorithm continues its execution normally; if
+      it returns `false`, the algorithm is stopped. Note that this
+      interruption may leave the class in an invalid state.
 
       \return `true` if shape types have been registered and
               input data has been set. Otherwise, `false` is returned.
@@ -534,7 +535,7 @@ shape. The implementation follows \cgalCite{cgal:lm-clscm-12}.
       //Initialization structures
       int class_index = -1;
 
-      if (!callback())
+      if (!callback(0.))
         return false;
       
       std::vector<std::size_t> neighbors;
@@ -555,10 +556,11 @@ shape. The implementation follows \cgalCite{cgal:lm-clscm-12}.
       std::vector<std::size_t> index_container;
       std::vector<std::size_t> index_container_former_ring;
       std::set<std::size_t> index_container_current_ring;
-      
-      for (std::size_t I = 0; I < m_num_total_points; ++ I)
+
+      std::size_t num_to_test = 1 + m_num_total_points - m_options.min_points;
+      for (std::size_t I = 0; I < num_to_test; ++ I)
       {
-        if (!callback())
+        if (!callback(1. - (m_num_available_points / double(m_num_total_points))))
           return false;
 
         std::size_t i = sorted_indices[I];

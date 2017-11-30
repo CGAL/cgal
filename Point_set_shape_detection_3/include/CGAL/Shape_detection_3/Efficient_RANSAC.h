@@ -186,7 +186,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
 
   private:
 
-    struct Empty_callback { bool operator()() const { return true; } };
+    struct Empty_callback { bool operator()(double) const { return true; } };
     
     typedef internal::Octree<internal::DirectPointAccessor<Traits> >
       Direct_octree;
@@ -442,11 +442,12 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
 
       \tparam Callback can be omitted if the algorithm should be run
       without any callback. `Callback` must be a functor providing
-      `bool operator()() const`. This functor is called regularly when the
-      algorithm is running. If it returns `true`, then the algorithm
-      continues its execution normally; if it returns `false`, the
-      algorithm is stopped. Note that this interruption may leave the
-      class in an invalid state.
+      `bool operator()(double) const`. This functor is called
+      regularly when the algorithm is running: the current advancement
+      (between 0. and 1.) is passed as parameter. If it returns
+      `true`, then the algorithm continues its execution normally; if
+      it returns `false`, the algorithm is stopped. Note that this
+      interruption may leave the class in an invalid state.
 
       \return `true` if shape types have been registered and
               input data has been set. Otherwise, `false` is returned.
@@ -467,7 +468,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
           return false;
       }
 
-      if (!callback())
+      if (!callback(0.))
         return false;
       
       // Reset data structures possibly used by former search
@@ -555,7 +556,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
                 m_shape_index,
                 required_samples);
 
-              if (!callback())
+              if (!callback(num_invalid / double(m_num_total_points)))
                 return false;
       
             } while (m_shape_index[first_sample] != -1 || !done);
@@ -565,7 +566,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
             //add candidate for each type of primitives
             for(typename std::vector<Shape *(*)()>::iterator it =
               m_shape_factories.begin(); it != m_shape_factories.end(); it++)	{
-                if (!callback())
+                if (!callback(num_invalid / double(m_num_total_points)))
                   return false;
                 Shape *p = (Shape *) (*it)();
                 //compute the primitive and says if the candidate is valid
@@ -630,7 +631,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
         Shape *best_candidate = 
           get_best_candidate(candidates, m_num_available_points - num_invalid);
 
-        if (!callback())
+        if (!callback(num_invalid / double(m_num_total_points)))
           return false;
         
         // If search is done and the best candidate is too small, we are done.
@@ -653,7 +654,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
         best_candidate->connected_component(best_candidate->m_indices,
                                             m_options.cluster_epsilon);
         
-        if (!callback())
+        if (!callback(num_invalid / double(m_num_total_points)))
           return false;
         // check score against min_points and clear out candidates if too low
         if (best_candidate->indices_of_assigned_points().size() <
@@ -671,7 +672,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
           delete best_candidate;
           best_candidate = NULL;
 
-          if (!callback())
+          if (!callback(num_invalid / double(m_num_total_points)))
             return false;
           
           // Trimming candidates list
@@ -698,7 +699,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
 
           candidates.resize(empty);
 
-          if (!callback())
+          if (!callback(num_invalid / double(m_num_total_points)))
             return false;
         }
         else
@@ -715,7 +716,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
             m_extracted_shapes->push_back(
                                     boost::shared_ptr<Shape>(best_candidate));
 
-            if (!callback())
+            if (!callback(num_invalid / double(m_num_total_points)))
               return false;
             
             //2. remove the points
@@ -750,7 +751,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
             failed_candidates = 0;
             best_expected = 0;
 
-            if (!callback())
+            if (!callback(num_invalid / double(m_num_total_points)))
               return false;
             
             std::vector<std::size_t> subset_sizes(m_num_subsets);
@@ -781,7 +782,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
               }
             }
   
-            if (!callback())
+            if (!callback(num_invalid / double(m_num_total_points)))
               return false;
             
             std::size_t start = 0, end = candidates.size() - 1;
@@ -801,7 +802,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
             candidates.resize(end);
           }
 
-        if (!callback())
+        if (!callback(num_invalid / double(m_num_total_points)))
           return false;
         
         keep_searching = (stop_probability(m_options.min_points,

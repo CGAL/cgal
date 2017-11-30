@@ -35,13 +35,13 @@ struct Timeout_callback
   mutable int nb;
   mutable CGAL::Timer timer;
   const double limit;
-
+  
   Timeout_callback(double limit) : nb(0), limit(limit)
   {
     timer.start();
   }
   
-  bool operator()() const
+  bool operator()(double advancement) const
   {
     // Avoid calling time() at every single iteration, which could
     // impact performances very badly
@@ -52,7 +52,8 @@ struct Timeout_callback
     // If the limit is reach, interrupt the algorithm
     if (timer.time() > limit)
     {
-      std::cerr << "Algorithm was too long, exiting." << std::endl;
+      std::cerr << "Algorithm was too long, exiting ("
+                << 100. * advancement << "% done)" << std::endl;
       return false;
     }
 
