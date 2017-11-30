@@ -1,4 +1,5 @@
 // Copyright (c) 2014 INRIA Sophia-Antipolis (France).
+// Copyright (c) 2017 GeometryFactory (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -12,10 +13,14 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s)     : Aymeric Pellé
 //
-#ifndef CGAL_LABELED_PERIODIC_3_MESH_DOMAIN_3_H
-#define CGAL_LABELED_PERIODIC_3_MESH_DOMAIN_3_H
+#ifndef CGAL_PERIODIC_3_MESH_3_LABELED_PERIODIC_3_MESH_DOMAIN_3_H
+#define CGAL_PERIODIC_3_MESH_3_LABELED_PERIODIC_3_MESH_DOMAIN_3_H
 
 #include <CGAL/license/Periodic_3_mesh_3.h>
 
@@ -399,4 +404,4 @@ private:
 
 } // namespace CGAL
 
-#endif // CGAL_LABELED_PERIODIC_3_MESH_DOMAIN_3_H
+#endif // CGAL_PERIODIC_3_MESH_3_LABELED_PERIODIC_3_MESH_DOMAIN_3_H

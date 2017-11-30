@@ -1,4 +1,5 @@
-// Copyright (c) 2009, 2017 INRIA Sophia-Antipolis (France).
+// Copyright (c) 2009, 2014 INRIA Sophia-Antipolis (France).
+// Copyright (c) 2017 GeometryFactory (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -12,14 +13,20 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// Author(s)     : Stéphane Tayeb, Mikhail Bogdanov
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
+//
+// Author(s)     : Stéphane Tayeb,
+//                 Mikhail Bogdanov,
+//                 Mael Rouxel-Labbé
 //
 //******************************************************************************
 // File Description : make_periodic_3_mesh_3 function definition.
 //******************************************************************************
 
-#ifndef CGAL_MAKE_PERIODIC_3_MESH_3_H
-#define CGAL_MAKE_PERIODIC_3_MESH_3_H
+#ifndef CGAL_PERIODIC_3_MESH_3_MAKE_PERIODIC_3_MESH_3_H
+#define CGAL_PERIODIC_3_MESH_3_MAKE_PERIODIC_3_MESH_3_H
 
 #include <CGAL/license/Periodic_3_mesh_3.h>
 
@@ -314,6 +321,6 @@ void make_periodic_3_mesh_3_impl(C3T3& c3t3,
                            mesh_options, manifold_options);
 }
 
-}  // end namespace CGAL
+} // end namespace CGAL
 
-#endif // CGAL_MAKE_PERIODIC_3_MESH_3_H
+#endif // CGAL_PERIODIC_3_MESH_3_MAKE_PERIODIC_3_MESH_3_H

@@ -13,11 +13,17 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s)     : Aymeric Pellé
 //                 Mael Rouxel-Labbé
 
 #ifndef CGAL_PERIODIC_3_MESH_3_CONFIG_H
 #define CGAL_PERIODIC_3_MESH_3_CONFIG_H
+
+#include <CGAL/license/Periodic_3_mesh_3.h>
 
 #include <CGAL/Mesh_3/config.h>
 
