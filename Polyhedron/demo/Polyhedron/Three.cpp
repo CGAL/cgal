@@ -27,7 +27,3 @@ Three::Three()
   Three::s_three = this;
 }
 
-Three::~Three()
-  {
-    delete s_three;
-  }

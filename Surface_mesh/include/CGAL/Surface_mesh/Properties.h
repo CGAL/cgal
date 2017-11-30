@@ -508,6 +508,8 @@ public:
     /// Access the property associated with the key \c i.
     reference operator[](const I& i)
     {
+      if(parray_ == NULL)
+        int i=0;
       CGAL_assertion(parray_ != NULL);
       return (*parray_)[i];
     }

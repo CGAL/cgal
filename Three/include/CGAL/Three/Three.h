@@ -17,7 +17,7 @@ class THREE_EXPORT Three{
 public:
 
   Three();
-  virtual ~Three();
+  virtual ~Three(){}
   virtual void warning(QString) = 0;
   virtual void error(QString) = 0;
   virtual void information(QString) = 0;

@@ -5,6 +5,7 @@
 #include <CGAL/IO/File_avizo.h>
 #include <iostream>
 #include <fstream>
+#include <CGAL/Three/Three.h>
 
 #include <QMessageBox>
 
@@ -23,7 +24,7 @@ public:
   QString saveNameFilters() const { return "binary files (*.cgal);;ascii (*.mesh);;maya (*.ma);;avizo (*.am);;OFF files (*.off)"; }
   QString loadNameFilters() const { return "binary files (*.cgal);;ascii (*.mesh)"; }
   bool canLoad() const;
-  CGAL::Three::Scene_item* load(QFileInfo fileinfo, Scene_interface *scene, QMainWindow *);
+  CGAL::Three::Scene_item* load(QFileInfo fileinfo);
 
   bool canSave(const CGAL::Three::Scene_item*);
   bool save(const CGAL::Three::Scene_item*, QFileInfo fileinfo);
@@ -31,7 +32,6 @@ public:
 private:
   bool try_load_other_binary_format(std::istream& in, C3t3& c3t3);
   bool try_load_a_cdt_3(std::istream& in, C3t3& c3t3);
-  CGAL::Three::Scene_interface* scene;
 };
 
 
@@ -41,7 +41,7 @@ bool Polyhedron_demo_c3t3_binary_io_plugin::canLoad() const {
 
 
 CGAL::Three::Scene_item*
-Polyhedron_demo_c3t3_binary_io_plugin::load(QFileInfo fileinfo, CGAL::Three::Scene_interface* scene, QMainWindow* ) {
+Polyhedron_demo_c3t3_binary_io_plugin::load(QFileInfo fileinfo) {
 
     // Open file
     std::ifstream in(fileinfo.filePath().toUtf8(),
@@ -51,7 +51,7 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(QFileInfo fileinfo, CGAL::Three::Sce
                 << (const char*)fileinfo.filePath().toUtf8() << std::endl;
       return NULL;
     }
-    Scene_c3t3_item* item = new Scene_c3t3_item(scene);
+    Scene_c3t3_item* item = new Scene_c3t3_item(Three::scene());
     if(fileinfo.suffix().toLower() == "cgal")
     {
         item->setName(fileinfo.baseName());
@@ -85,9 +85,8 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(QFileInfo fileinfo, CGAL::Three::Sce
       in.open(fileinfo.filePath().toUtf8(), std::ios_base::in);//not binary
       CGAL_assertion(!(!in));
 
-      Scene_c3t3_item* item = new Scene_c3t3_item(scene);
+      Scene_c3t3_item* item = new Scene_c3t3_item(Three::scene());
       item->setName(fileinfo.baseName());
-      item->setScene(scene);
       item->set_valid(false);
 
       if(CGAL::build_triangulation_from_file<C3t3::Triangulation, true>(in, item->c3t3().triangulation()))

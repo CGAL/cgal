@@ -1425,13 +1425,29 @@ void Scene_c3t3_item_priv::computeElements(Scene_c3t3_item::Gl_data_names name)
   {
     Geom_traits::Construct_point_3 wp2p
       = c3t3.triangulation().geom_traits().construct_point_3_object();
-    CGAL::Primitive_filler filler(
-          &positions_lines,
-          NULL,
-          &positions_poly,
-          &normals,
-          NULL,
-          &f_colors);
+    CGAL::Bbox_3 bbox;
+    Buffer_for_vao<float, unsigned int> face_filler(
+          &positions_poly,  //pos
+          NULL,              //indices
+          &bbox,   //bbox
+          &f_colors,          //color
+          &normals,              //flat normal
+          NULL);        //gouraud normal
+    Buffer_for_vao<float, unsigned int> edge_filler(
+          &positions_lines,  //pos
+          NULL,              //indices
+          NULL,   //bbox
+          NULL,          //color
+          NULL,              //flat normal
+          NULL);        //gouraud normal
+
+    Buffer_for_vao<float, unsigned int> cnc_filler(
+          &positions_lines_not_in_complex,  //pos
+          NULL,              //indices
+          NULL,   //bbox
+          NULL,          //color
+          NULL,              //flat normal
+          NULL);        //gouraud normal
 
     for (C3t3::Facet_iterator
       fit = c3t3.facets_begin(),
@@ -1449,21 +1465,20 @@ void Scene_c3t3_item_priv::computeElements(Scene_c3t3_item::Gl_data_names name)
       n = n / CGAL::sqrt(n*n);
       if ((index % 2 == 1) == c3t3.is_in_complex(cell))
       {
-        filler.colored_face_begin(color, -n);
+        face_filler.face_begin(color, -n);
       }
       else
       {
-        filler.colored_face_begin(color, n);
+        face_filler.face_begin(color, n);
       }
-      filler.add_point_in_face(pa);
-      filler.add_point_in_face(pb);
-      filler.add_point_in_face(pc);
-      filler.face_end();
-      filler.add_mono_segment(pa, pb);
-      filler.add_mono_segment(pb, pc);
-      filler.add_mono_segment(pc, pa);
+      face_filler.add_point_in_face(pa);
+      face_filler.add_point_in_face(pb);
+      face_filler.add_point_in_face(pc);
+      face_filler.face_end();
+      edge_filler.add_segment(pa, pb);
+      edge_filler.add_segment(pb, pc);
+      edge_filler.add_segment(pc, pa);
     }
-    filler.setSegmentsVector(&positions_lines_not_in_complex);
     //the cells not in the complex
     for(C3t3::Triangulation::Cell_iterator
         cit = c3t3.triangulation().finite_cells_begin(),
@@ -1486,13 +1501,13 @@ void Scene_c3t3_item_priv::computeElements(Scene_c3t3_item::Gl_data_names name)
           const Tr::Bare_point& p2 = wp2p(cit->vertex(1)->point()) + offset;
           const Tr::Bare_point& p3 = wp2p(cit->vertex(2)->point()) + offset;
           const Tr::Bare_point& p4 = wp2p(cit->vertex(3)->point()) + offset;
-          filler.add_mono_segment(p1, p2);
-          filler.add_mono_segment(p2, p4);
-          filler.add_mono_segment(p4, p1);
+          cnc_filler.add_segment(p1, p2);
+          cnc_filler.add_segment(p2, p4);
+          cnc_filler.add_segment(p4, p1);
 
-          filler.add_mono_segment(p1, p3);
-          filler.add_mono_segment(p3, p4);
-          filler.add_mono_segment(p2, p3);
+          cnc_filler.add_segment(p1, p3);
+          cnc_filler.add_segment(p3, p4);
+          cnc_filler.add_segment(p2, p3);
         }
       }
     }

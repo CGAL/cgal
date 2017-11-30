@@ -324,6 +324,7 @@ void Scene_surface_mesh_item_priv::addFlatData(Point p, EPICK::Vector_3 n, CGAL:
   }
 }
 
+#include <CGAL/Primitives_filler.h>
 void Scene_surface_mesh_item_priv::compute_elements(Scene_item::Gl_data_names name)const
 {
 
@@ -368,12 +369,31 @@ void Scene_surface_mesh_item_priv::compute_elements(Scene_item::Gl_data_names na
 
   idx_data_.reserve(num_faces(*smesh_) * 3);
 
-  typedef CGAL::Primitive_filler CPF;
+  typedef Buffer_for_vao<float, unsigned int> CPF;
   typedef boost::graph_traits<SMesh>::face_descriptor face_descriptor;
   typedef boost::graph_traits<SMesh>::halfedge_descriptor halfedge_descriptor;
   typedef boost::graph_traits<SMesh>::edge_descriptor edge_descriptor;
 
-  if(name.testFlag(Scene_item::GEOMETRY))
+//  if(name.testFlag(Scene_item::ALL))
+//  {
+    Buffer_for_vao<float, unsigned int> filler(
+                                                NULL,
+                                                &idx_data_
+                                                //bbox
+                                                //color
+                                                //flat   normals
+          );                                    //smooth normals
+    BOOST_FOREACH(face_descriptor fd, faces(*smesh_))
+    {
+      filler.face_begin();
+      BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(fd, *smesh_),*smesh_))
+      {
+        SMesh::Vertex_index vi = target(hd, *smesh_);
+        filler.add_indexed_point_in_face(vi, positions[vi]);
+      }
+      filler.face_end();
+    }
+ /* else if(name.testFlag(Scene_item::GEOMETRY))
   {
     BOOST_FOREACH(face_descriptor fd, faces(*smesh_))
     {
@@ -450,7 +470,7 @@ void Scene_surface_mesh_item_priv::compute_elements(Scene_item::Gl_data_names na
      colors_.empty()){
     initialize_colors();
   }
-
+*/
 
 //compute the Flat data
 
@@ -458,7 +478,7 @@ void Scene_surface_mesh_item_priv::compute_elements(Scene_item::Gl_data_names na
   flat_normals.clear();
   f_colors.clear();
 
-  BOOST_FOREACH(face_descriptor fd, faces(*smesh_))
+ /* BOOST_FOREACH(face_descriptor fd, faces(*smesh_))
   {
     if(is_triangle(halfedge(fd,*smesh_),*smesh_))
     {
@@ -467,12 +487,12 @@ void Scene_surface_mesh_item_priv::compute_elements(Scene_item::Gl_data_names na
         if(name.testFlag(Scene_item::GEOMETRY))
         {
           Point p = positions[source(hd, *smesh_)] + offset;
-          CPF::add_point(p, flat_vertices);
+          CPF::add_point_in_buffer(p, flat_vertices);
         }
         if(name.testFlag(Scene_item::NORMALS))
         {
           EPICK::Vector_3 n = fnormals[fd];
-          CPF::add_normal(n, flat_normals);
+          CPF::add_normal_in_buffer(n, flat_normals);
         }
         if(name.testFlag(Scene_item::COLORS))
         {
@@ -480,12 +500,12 @@ void Scene_surface_mesh_item_priv::compute_elements(Scene_item::Gl_data_names na
           {
             QColor c = item->color_vector()[fpatch_id_map[fd]];
             CGAL::Color color(c.red(), c.green(), c.blue());
-            CPF::add_color(color, f_colors);
+            CPF::add_color_in_buffer(color, f_colors);
           }
           else if(has_fcolors)
           {
             CGAL::Color c = fcolors[fd];
-            CPF::add_color(c, f_colors);
+            CPF::add_color_in_buffer(c, f_colors);
           }
         }
       }
@@ -561,7 +581,7 @@ void Scene_surface_mesh_item_priv::compute_elements(Scene_item::Gl_data_names na
       v_colors.push_back((float)c.green()/255);
       v_colors.push_back((float)c.blue()/255);
     }
-  }
+  }*/
 
   if(floated &&
      (name.testFlag(Scene_item::GEOMETRY)|| name.testFlag(Scene_item::NORMALS)))
@@ -571,12 +591,12 @@ void Scene_surface_mesh_item_priv::compute_elements(Scene_item::Gl_data_names na
       if(name.testFlag(Scene_item::GEOMETRY))
       {
         Point p = positions[vd] + offset;
-        CPF::add_point(p, smooth_vertices);
+        CPF::add_point_in_buffer(p, smooth_vertices);
       }
       if(name.testFlag(Scene_item::NORMALS))
       {
         EPICK::Vector_3 n = vnormals[vd];
-        CPF::add_normal(n, smooth_normals);
+        CPF::add_normal_in_buffer(n, smooth_normals);
       }
     }
   }
