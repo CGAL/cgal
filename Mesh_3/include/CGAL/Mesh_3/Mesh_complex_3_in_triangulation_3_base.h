@@ -292,7 +292,7 @@ public:
       default :
 #ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
         std::cerr << "singular edge...\n";
-        std::cerr << v->point() << std::endl;
+        std::cerr << tr_.point(v) << std::endl;
 #endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
         return SINGULAR;
       }
@@ -303,13 +303,13 @@ public:
     if(nb_components > 1) {
 #ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
       std::cerr << "singular vertex: nb_components=" << nb_components << std::endl;
-      std::cerr << v->point() << std::endl;
+      std::cerr << tr_.point(v) << std::endl;
 #endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
       return SINGULAR;
     }
     else { // REGULAR OR BOUNDARY
 #ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
-      std::cerr << "regular or boundary: " << v->point() << std::endl;
+      std::cerr << "regular or boundary: " << tr_.point(v) << std::endl;
 #endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
       if (number_of_boundary_incident_edges != 0)
         return BOUNDARY;
@@ -934,7 +934,7 @@ Mesh_complex_3_in_triangulation_3_base<Tr,Ct>::add_to_complex(
         if (j != i) {
 #ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
           if(cell->vertex(j)->is_c2t3_cache_valid())
-            std::cerr << "(" << cell->vertex(j)->point() << ")->invalidate_c2t3_cache()\n";
+            std::cerr << "(" << tr_.point(cell, j) << ")->invalidate_c2t3_cache()\n";
 #endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
           cell->vertex(j)->invalidate_c2t3_cache();
         }
@@ -985,7 +985,7 @@ Mesh_complex_3_in_triangulation_3_base<Tr,Ct>::remove_from_complex(const Facet& 
         if (j != facet.second) {
 #ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
           if(cell->vertex(j)->is_c2t3_cache_valid())
-            std::cerr << "(" << cell->vertex(j)->point() << ")->invalidate_c2t3_cache()\n";
+            std::cerr << "(" << tr_.point(cell, j) << ")->invalidate_c2t3_cache()\n";
 #endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
           cell->vertex(j)->invalidate_c2t3_cache();
         }
@@ -1009,12 +1009,12 @@ bbox() const
   }
 
   typename Tr::Finite_vertices_iterator vit = tr_.finite_vertices_begin();
-  Bbox_3 result = (vit++)->point().bbox();
+  Bbox_3 result = tr_.point(vit++).bbox();
 
   for(typename Tr::Finite_vertices_iterator end = tr_.finite_vertices_end();
       vit != end ; ++vit)
   {
-    result = result + vit->point().bbox();
+    result = result + tr_.point(vit).bbox();
   }
 
   return result;

@@ -66,7 +66,7 @@ private:
 
 public:
   typedef typename Base::size_type                        size_type;
-  
+
   typedef typename Tr::Point                              Point;
   typedef typename Base::Edge                             Edge;
   typedef typename Base::Facet                            Facet;
@@ -157,7 +157,7 @@ public:
   using Base::remove_from_complex;
   using Base::triangulation;
   using Base::set_surface_patch_index;
-    
+
 
 
   /**
@@ -224,7 +224,7 @@ public:
   {
     far_vertices_.push_back(triangulation().insert(p));
   }
-  
+
   void add_far_point(Vertex_handle vh)
   {
     far_vertices_.push_back(vh);
@@ -252,7 +252,7 @@ public:
           Facet mirror_facet = tr.mirror_facet(std::make_pair(c, i));
           if (is_in_complex(mirror_facet))
           {
-            set_surface_patch_index(c, i, 
+            set_surface_patch_index(c, i,
                                     surface_patch_index(mirror_facet));
             c->set_facet_surface_center(i,
               mirror_facet.first->get_facet_surface_center(mirror_facet.second));
@@ -264,7 +264,7 @@ public:
           Facet mirror_facet = tr.mirror_facet(std::make_pair(c, i_inf));
           if (is_in_complex(mirror_facet))
           {
-            set_surface_patch_index(c, i_inf, 
+            set_surface_patch_index(c, i_inf,
                                     surface_patch_index(mirror_facet));
           }
         }*/
@@ -289,6 +289,10 @@ public:
    * Returns the number of corners of c3t3
    */
   size_type number_of_vertices_in_complex() const
+  {
+    return corners_.size();
+  }
+  size_type number_of_corners() const
   {
     return corners_.size();
   }
@@ -619,10 +623,10 @@ Mesh_complex_3_in_triangulation_3(const Self& rhs)
     const Vertex_handle& vb = it->left;
 
     Vertex_handle new_va;
-    this->triangulation().is_vertex(va->point(), new_va);
+    this->triangulation().is_vertex(rhs.triangulation().point(va), new_va);
 
     Vertex_handle new_vb;
-    this->triangulation().is_vertex(vb->point(), new_vb);
+    this->triangulation().is_vertex(rhs.triangulation().point(vb), new_vb);
 
     this->add_to_complex(make_internal_edge(new_va,new_vb), it->info);
   }
@@ -632,7 +636,7 @@ Mesh_complex_3_in_triangulation_3(const Self& rhs)
        end = rhs.corners_.end() ; it != end ; ++it )
   {
     Vertex_handle new_v;
-    this->triangulation().is_vertex(it->first->point(), new_v);
+    this->triangulation().is_vertex(rhs.triangulation().point(it->first), new_v);
     this->add_to_complex(new_v, it->second);
   }
 
@@ -686,9 +690,7 @@ bool
 Mesh_complex_3_in_triangulation_3<Tr,CI_,CSI_>::
 is_valid(bool verbose) const
 {
-  typedef typename Tr::Point::Point    Bare_point;
-  typedef typename Tr::Point::Weight   Weight;
-  typedef Weight FT;
+  typedef typename Tr::Weighted_point          Weighted_point;
 
   std::map<Vertex_handle, int> vertex_map;
 
@@ -713,7 +715,7 @@ is_valid(bool verbose) const
     {
       if(verbose)
         std::cerr << "Validity error: vertex " << (void*)(&*vit->first)
-                  << " (" << vit->first->point() << ") "
+                  << " (" << this->triangulation().point(vit->first) << ") "
                   << "is not a corner (dimension " << vit->first->in_dimension()
                   << ") but has " << vit->second << " neighbor(s)!\n";
       return false;
@@ -724,22 +726,21 @@ is_valid(bool verbose) const
   for ( typename Edge_map::const_iterator it = edges_.begin(),
        end = edges_.end() ; it != end ; ++it )
   {
+    typename Tr::Geom_traits::Compute_weight_3 cw =
+      this->triangulation().geom_traits().compute_weight_3_object();
+    typename Tr::Geom_traits::Construct_point_3 cp =
+      this->triangulation().geom_traits().construct_point_3_object();
     typename Tr::Geom_traits::Construct_sphere_3 sphere =
       this->triangulation().geom_traits().construct_sphere_3_object();
     typename Tr::Geom_traits::Do_intersect_3 do_intersect =
       this->triangulation().geom_traits().do_intersect_3_object();
-    typename Tr::Geom_traits::Construct_point_3 wp2p =
-      this->triangulation().geom_traits().construct_point_3_object();
 
-    const Bare_point& p = wp2p(it->right->point());
-    const Bare_point& q = wp2p(it->left->point());
+    const Weighted_point& itrwp = this->triangulation().point(it->right);
+    const Weighted_point& itlwp = this->triangulation().point(it->left);
 
-    const FT& sq_rp = it->right->point().weight();
-    const FT& sq_rq = it->left->point().weight();
-
-    if ( ! do_intersect(sphere(p, sq_rp), sphere(q, sq_rq)) )
+    if ( ! do_intersect(sphere(cp(itrwp), cw(itrwp)), sphere(cp(itlwp), cw(itlwp))) )
     {
-      std::cerr << "Point p[" << disp_vert(it->right) << "], dim=" << it->right->in_dimension()
+      std::cerr << "Points p[" << disp_vert(it->right) << "], dim=" << it->right->in_dimension()
                 << " and q[" << disp_vert(it->left) << "], dim=" << it->left->in_dimension()
                 << " form an edge but do not intersect !\n";
       return false;

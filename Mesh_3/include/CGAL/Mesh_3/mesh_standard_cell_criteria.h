@@ -78,23 +78,28 @@ protected:
     return new Self(*this);
   }
 
-  virtual Badness do_is_bad(const Cell_handle& ch) const
+  virtual Badness do_is_bad(const Tr& tr, const Cell_handle& ch) const
   {
-    typedef typename Tr::Bare_point     Bare_point;
     typedef typename Tr::Geom_traits    Geom_traits;
+    typedef typename Tr::Bare_point     Bare_point;
+    typedef typename Tr::Weighted_point Weighted_point;
 
-    typedef typename Geom_traits::Compute_squared_radius_3 Radius;
     typedef typename Geom_traits::Compute_squared_distance_3 Distance;
-    typedef typename Geom_traits::Construct_point_3 Construct_point_3;
+    typedef typename Geom_traits::Compute_squared_radius_3   Radius;
+    typedef typename Geom_traits::Construct_point_3          Construct_point_3;
 
-    Radius sq_radius = Geom_traits().compute_squared_radius_3_object();
-    Distance distance = Geom_traits().compute_squared_distance_3_object();
-    Construct_point_3 wp2p = Geom_traits().construct_point_3_object();
+    Distance distance = tr.geom_traits().compute_squared_distance_3_object();
+    Radius sq_radius = tr.geom_traits().compute_squared_radius_3_object();
+    Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
 
-    const Bare_point& p = wp2p(ch->vertex(0)->point());
-    const Bare_point& q = wp2p(ch->vertex(1)->point());
-    const Bare_point& r = wp2p(ch->vertex(2)->point());
-    const Bare_point& s = wp2p(ch->vertex(3)->point());
+    const Weighted_point& wp = tr.point(ch, 0);
+    const Weighted_point& wq = tr.point(ch, 1);
+    const Weighted_point& wr = tr.point(ch, 2);
+    const Weighted_point& ws = tr.point(ch, 3);
+    const Bare_point& p = cp(wp);
+    const Bare_point& q = cp(wq);
+    const Bare_point& r = cp(wr);
+    const Bare_point& s = cp(ws);
 
     const FT size = sq_radius(p, q, r, s);
 
@@ -164,21 +169,25 @@ protected:
     return new Self(*this);
   }
 
-  virtual Badness do_is_bad(const Cell_handle& ch) const
+  virtual Badness do_is_bad(const Tr& tr, const Cell_handle& ch) const
   {
-    typedef typename Tr::Bare_point  Bare_point;
-    typedef typename Tr::Geom_traits Geom_traits;
+    typedef typename Tr::Geom_traits     Geom_traits;
+    typedef typename Tr::Bare_point      Bare_point;
+    typedef typename Tr::Weighted_point  Weighted_point;
 
     typedef typename Geom_traits::Compute_squared_radius_3 Radius;
-    typedef typename Geom_traits::Construct_point_3 Construct_point_3;
+    typedef typename Geom_traits::Construct_point_3        Construct_point_3;
+    Radius sq_radius = tr.geom_traits().compute_squared_radius_3_object();
+    Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
 
-    Radius sq_radius = Geom_traits().compute_squared_radius_3_object();
-    Construct_point_3 wp2p = Geom_traits().construct_point_3_object();
-
-    const Bare_point& p = wp2p(ch->vertex(0)->point());
-    const Bare_point& q = wp2p(ch->vertex(1)->point());
-    const Bare_point& r = wp2p(ch->vertex(2)->point());
-    const Bare_point& s = wp2p(ch->vertex(3)->point());
+    const Weighted_point& wp = tr.point(ch, 0);
+    const Weighted_point& wq = tr.point(ch, 1);
+    const Weighted_point& wr = tr.point(ch, 2);
+    const Weighted_point& ws = tr.point(ch, 3);
+    const Bare_point& p = cp(wp);
+    const Bare_point& q = cp(wq);
+    const Bare_point& r = cp(wr);
+    const Bare_point& s = cp(ws);
 
     const FT size = sq_radius(p, q, r, s);
 
@@ -235,25 +244,28 @@ protected:
     return new Self(*this);
   }
   
-  virtual Badness do_is_bad(const Cell_handle& ch) const
+  virtual Badness do_is_bad(const Tr& tr, const Cell_handle& ch) const
   {
-    typedef typename Tr::Bare_point    Bare_point;
-    typedef typename Tr::Geom_traits   Geom_traits;
+    typedef typename Tr::Geom_traits      Geom_traits;
+    typedef typename Tr::Bare_point       Bare_point;
+    typedef typename Tr::Weighted_point   Weighted_point;
 
     typedef typename Geom_traits::Compute_squared_radius_3 Radius;
-    typedef typename Geom_traits::Construct_point_3 Construct_point_3;
+    typedef typename Geom_traits::Construct_point_3        Construct_point_3;
+    Radius sq_radius = tr.geom_traits().compute_squared_radius_3_object();
+    Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
 
-    Radius sq_radius = Geom_traits().compute_squared_radius_3_object();
-    Construct_point_3 wp2p = Geom_traits().construct_point_3_object();
-
-    const Bare_point& p = wp2p(ch->vertex(0)->point());
-    const Bare_point& q = wp2p(ch->vertex(1)->point());
-    const Bare_point& r = wp2p(ch->vertex(2)->point());
-    const Bare_point& s = wp2p(ch->vertex(3)->point());
+    const Weighted_point& wp = tr.point(ch, 0);
+    const Weighted_point& wq = tr.point(ch, 1);
+    const Weighted_point& wr = tr.point(ch, 2);
+    const Weighted_point& ws = tr.point(ch, 3);
+    const Bare_point& p = cp(wp);
+    const Bare_point& q = cp(wq);
+    const Bare_point& r = cp(wr);
+    const Bare_point& s = cp(ws);
 
     const FT size = sq_radius(p, q, r, s);
-    const FT sq_bound = CGAL::square( size_(ch->weighted_circumcenter(),
-                                            3,
+    const FT sq_bound = CGAL::square( size_(tr.dual(ch), 3,
                                             Index(ch->subdomain_index())) );
     
     if ( size > sq_bound )
@@ -311,7 +323,7 @@ protected:
     return new Self(*this);
   }
 
-  virtual Badness do_is_bad(const Cell_handle& ch) const
+  virtual Badness do_is_bad(const Tr& /*tr*/, const Cell_handle& ch) const
   {
     typedef typename Tr::Vertex_handle Vertex_handle;
 
@@ -390,19 +402,20 @@ public:
   typedef Handle                  Cell_handle;
   
   // Constructor
-  Cell_criteria_visitor_with_features(const Cell_handle& ch)
-    : Base(ch)
+  Cell_criteria_visitor_with_features(const Tr& tr, const Cell_handle& ch)
+    : Base(tr, ch)
     , wp_nb_(0)
     , do_spheres_intersect_(false)
     , ratio_(0)
     , size_ratio_(0.5*0.5*4.)
   {
-    typename Gt::Compute_squared_radius_smallest_orthogonal_sphere_3 sq_radius =
-      Gt().compute_squared_radius_smallest_orthogonal_sphere_3_object();
-    
     typename Gt::Compare_weighted_squared_radius_3 compare =
-      Gt().compare_weighted_squared_radius_3_object();
-    
+      tr.geom_traits().compare_weighted_squared_radius_3_object();
+    typename Gt::Compute_weight_3 cw =
+      tr.geom_traits().compute_weight_3_object();
+    typename Gt::Compute_squared_radius_smallest_orthogonal_sphere_3 sq_radius =
+      tr.geom_traits().compute_squared_radius_smallest_orthogonal_sphere_3_object();
+
     int k1 = 0;
     int k2 = 1;
     int k3 = 2;
@@ -410,36 +423,40 @@ public:
     
     // Get number of weighted points, and ensure that they will be accessible
     // using k1...ki, if i is the number of weighted points.
-    if(ch->vertex(k1)->point().weight() > FT(0))
-    { 
+    const Weighted_point& wpk1 = tr.point(ch, k1);
+    if(compare(wpk1, FT(0)) == CGAL::SMALLER) // 0 < wpk1's weight
+    {
       ++wp_nb_;
     }
-    
-    if(ch->vertex(k2)->point().weight() > FT(0))
-    { 
+
+    const Weighted_point& wpk2 = tr.point(ch, k2);
+    if(compare(wpk2, FT(0)) == CGAL::SMALLER)
+    {
       if ( 0 == wp_nb_ ) { std::swap(k1,k2); }
       ++wp_nb_;
     }
-    
-    if(ch->vertex(k3)->point().weight() > FT(0))
-    { 
+
+    const Weighted_point& wpk3 = tr.point(ch, k3);
+    if(compare(wpk3, FT(0)) == CGAL::SMALLER)
+    {
       if ( 0 == wp_nb_ ) { std::swap(k1,k3); }
       if ( 1 == wp_nb_ ) { std::swap(k2,k3); }
       ++wp_nb_;
     }
-    
-    if(ch->vertex(k4)->point().weight() > FT(0))
-    { 
+
+    const Weighted_point& wpk4 = tr.point(ch, k4);
+    if(compare(wpk4, FT(0)) == CGAL::SMALLER)
+    {
       if ( 0 == wp_nb_ ) { std::swap(k1,k4); }
       if ( 1 == wp_nb_ ) { std::swap(k2,k4); }
       if ( 2 == wp_nb_ ) { std::swap(k3,k4); }
       ++wp_nb_;
     }
     
-    const Weighted_point& p1 = ch->vertex(k1)->point();
-    const Weighted_point& p2 = ch->vertex(k2)->point();
-    const Weighted_point& p3 = ch->vertex(k3)->point();
-    const Weighted_point& p4 = ch->vertex(k4)->point();
+    const Weighted_point& p1 = tr.point(ch, k1);
+    const Weighted_point& p2 = tr.point(ch, k2);
+    const Weighted_point& p3 = tr.point(ch, k3);
+    const Weighted_point& p4 = tr.point(ch, k4);
     
     switch ( wp_nb_ )
     {
@@ -449,7 +466,7 @@ public:
         FT r13 = sq_radius(p1,p3);
         FT r14 = sq_radius(p1,p4);
         FT r = (std::max)((std::max)(r12,r13),r14);
-        ratio_ = r / p1.weight();
+        ratio_ = r / cw(p1);
         break;
       }
         
@@ -457,10 +474,10 @@ public:
       {
         FT r13 = sq_radius(p1,p3);
         FT r14 = sq_radius(p1,p4);
-        FT r1 = (std::max)(r13,r14) / p1.weight();
+        FT r1 = (std::max)(r13,r14) / cw(p1);
         FT r23 = sq_radius(p2,p3);
         FT r24 = sq_radius(p2,p4);
-        FT r2 = (std::max)(r23,r24) / p2.weight();
+        FT r2 = (std::max)(r23,r24) / cw(p2);
         ratio_ = (std::max)(r1,r2);
         
         do_spheres_intersect_ = (compare(p1,p2,FT(0)) != CGAL::LARGER);
@@ -469,9 +486,9 @@ public:
         
       case 3:
       {
-        FT r14 = sq_radius(p1,p4) / p1.weight();
-        FT r24 = sq_radius(p2,p4) / p2.weight();
-        FT r34 = sq_radius(p3,p4) / p3.weight();
+        FT r14 = sq_radius(p1,p4) / cw(p1);
+        FT r24 = sq_radius(p2,p4) / cw(p2);
+        FT r34 = sq_radius(p3,p4) / cw(p3);
         ratio_ = (std::max)((std::max)(r14,r24),r34);
         
         do_spheres_intersect_ = (compare(p1,p2,p3,FT(0)) != CGAL::LARGER);

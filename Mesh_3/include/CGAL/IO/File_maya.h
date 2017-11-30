@@ -117,7 +117,7 @@ output_to_maya(std::ostream& os,
       || !surfaceOnly)
     {
       V[vit] = num_vertices++;
-      Weighted_point p = vit->point();
+      Weighted_point p = tr.point(vit);
       vertices_sstr << "    " << CGAL::to_double(p.x()) << " " << CGAL::to_double(p.y()) << " " << CGAL::to_double(p.z()) << std::endl;
     }
   }
@@ -172,7 +172,7 @@ output_to_maya(std::ostream& os,
       {
         const Vertex_handle& vh = fit->first->vertex(i);
         indices[j] = V[vh];
-        //points[j] = vh->point();
+        //points[j] = tr.point(fit->first, i);
       }
     
       // Reverse triangle orientation?
@@ -231,7 +231,7 @@ output_to_maya(std::ostream& os,
         {
           const Vertex_handle& vh = cit->vertex(i);
           indices[j] = V[vh];
-          //points[j] = vh->point();
+          //points[j] = tr.point(cit, i);
         }
     
         // Reverse triangle orientation?

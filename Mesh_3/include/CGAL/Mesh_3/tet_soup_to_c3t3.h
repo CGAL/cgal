@@ -28,13 +28,10 @@
 
 #include <CGAL/license/Mesh_3.h>
 
-
+#include <CGAL/assertions.h>
 #include <CGAL/IO/File_medit.h>
 
-#include <CGAL/assertions.h>
-
 #include <boost/array.hpp>
-#include <boost/unordered_set.hpp>
 #include <boost/unordered_map.hpp>
 #include <boost/foreach.hpp>
 
@@ -63,8 +60,7 @@ void build_vertices(Tr& tr,
 template<class Tr>
 void add_facet_to_incident_cells_map(const typename Tr::Cell_handle c, int i,
                                      boost::unordered_map<std::set<typename Tr::Vertex_handle>,
-                                     std::vector<std::pair<typename Tr::Cell_handle,
-                                     int> > >& incident_cells_map)
+                                     std::vector<std::pair<typename Tr::Cell_handle, int> > >& incident_cells_map)
 {
   typedef typename Tr::Vertex_handle                                Vertex_handle;
   typedef typename Tr::Cell_handle                                  Cell_handle;
@@ -97,8 +93,7 @@ void build_finite_cells(Tr& tr,
                         const std::vector<boost::array<int,5> >& finite_cells,
                         const std::vector<typename Tr::Vertex_handle>& vertex_handle_vector,
                         boost::unordered_map<std::set<typename Tr::Vertex_handle>,
-                        std::vector<std::pair<typename Tr::Cell_handle,
-                        int> > >& incident_cells_map,
+                        std::vector<std::pair<typename Tr::Cell_handle, int> > >& incident_cells_map,
                         const std::map<boost::array<int,3>, int>& border_facets)
 {
   typedef boost::array<int, 5>              Tet_with_ref; // 4 ids + 1 reference
@@ -107,7 +102,7 @@ void build_finite_cells(Tr& tr,
   typedef typename Tr::Cell_handle                              Cell_handle;
 
   CGAL_assertion_code(
-    typename Tr::Geom_traits::Construct_point_3 wp2p =
+    typename Tr::Geom_traits::Construct_point_3 cp =
       tr.geom_traits().construct_point_3_object();
   )
 
@@ -127,8 +122,8 @@ void build_finite_cells(Tr& tr,
     }
 
     // this assertion also tests for degeneracy
-    CGAL_assertion(CGAL::orientation(wp2p(vs[0]->point()), wp2p(vs[1]->point()),
-                                     wp2p(vs[2]->point()), wp2p(vs[3]->point()))
+    CGAL_assertion(CGAL::orientation(cp(tr.point(vs[0])), cp(tr.point(vs[1])),
+                                     cp(tr.point(vs[2])), cp(tr.point(vs[3])))
                      == POSITIVE);
 
     Cell_handle c = tr.tds().create_cell(vs[0], vs[1], vs[2], vs[3]);
