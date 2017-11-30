@@ -4,7 +4,6 @@
 #define CGAL_MESH_3_DEBUG_FACET_CRITERIA
 #define CGAL_MESH_3_DEBUG_CELL_CRITERIA
 
-#include <CGAL/Mesh_3/config.h>
 #include <CGAL/Periodic_3_mesh_3/config.h>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>

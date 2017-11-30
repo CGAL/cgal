@@ -6,7 +6,6 @@
 //#define CGAL_MESH_3_DEBUG_SLIVERS_EXUDER
 #define CGAL_MESH_3_PROTECTION_DEBUG 1111
 
-#include <CGAL/Mesh_3/config.h>
 #include <CGAL/Periodic_3_mesh_3/config.h>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
