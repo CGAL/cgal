@@ -269,7 +269,7 @@ self_intersections(const TriangleMesh& tmesh
 #ifdef DOXYGEN_RUNNING
                  , const NamedParameters& np)
 #else
-                 , const pmp_bgl_named_params<P,T,R>& np)
+                 , const cgal_bgl_named_params<P,T,R>& np)
 #endif
 {
   return self_intersections(faces(tmesh), tmesh, out, np);
