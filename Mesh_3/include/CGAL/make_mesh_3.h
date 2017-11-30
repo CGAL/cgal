@@ -191,12 +191,11 @@ private:
   const EdgeCriteria& ec_;
 };
 
-template < typename C3T3, typename MeshDomain, typename MeshCriteria >
-void
-init_c3t3_with_features(C3T3& c3t3,
-                        const MeshDomain& domain,
-                        const MeshCriteria& criteria,
-                        bool nonlinear = false)
+template < typename C3T3, typename MeshDomain, typename MeshCriteria>
+void init_c3t3_with_features(C3T3& c3t3,
+                             const MeshDomain& domain,
+                             const MeshCriteria& criteria,
+                             bool nonlinear = false)
 {
   typedef typename MeshCriteria::Edge_criteria Edge_criteria;
   typedef Edge_criteria_sizing_field_wrapper<Edge_criteria> Sizing_field;
@@ -208,6 +207,27 @@ init_c3t3_with_features(C3T3& c3t3,
   protect_edges(true);
 }
 
+// This class is only used as base for specializations of C3t3_initializer
+// when MeshDomain::Has_features is a valid type and is defined to CGAL::Tag_true
+//
+// Its purpose is to make the protection process virtual because Periodic_3_mesh_3
+// handles sharp features differently and has its own 'init_c3t3_with_features()' function,
+// but everything else is identical.
+template < typename C3T3, typename MeshDomain, typename MeshCriteria>
+struct C3t3_initializer_base
+{
+  virtual ~C3t3_initializer_base() { }
+
+  // Not calling 'init_c3t3_with_features' directly to leave it as a free function
+  // outside of the C3T3_initializer class
+  virtual void initialize_features(C3T3& c3t3,
+                                   const MeshDomain& domain,
+                                   const MeshCriteria& criteria,
+                                   bool nonlinear = false)
+  {
+    return Mesh_3::internal::init_c3t3_with_features(c3t3, domain, criteria, nonlinear);
+  }
+};
 
 // C3t3_initializer: initialize c3t3
 template < typename C3T3,
@@ -215,7 +235,7 @@ template < typename C3T3,
            typename MeshCriteria,
            bool MeshDomainHasHasFeatures,
            typename HasFeatures = int>
-struct C3t3_initializer {};
+struct C3t3_initializer { };
 
 // Partial specialization of C3t3_initializer
 // Handle cases where MeshDomain::Has_features is not a valid type
@@ -261,7 +281,10 @@ struct C3t3_initializer < C3T3, MD, MC, true, HasFeatures >
 // to CGAL::Tag_true
 template < typename C3T3, typename MD, typename MC >
 struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_true >
+  : public C3t3_initializer_base < C3T3, MD, MC >
 {
+  virtual ~C3t3_initializer() { }
+
   void operator()(C3T3& c3t3,
                   const MD& domain,
                   const MC& criteria,
@@ -270,7 +293,7 @@ struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_true >
                   const int nb_initial_points = -1)
   {
     if ( with_features ) {
-      init_c3t3_with_features(c3t3,domain,criteria,nonlinear);
+      this->initialize_features(c3t3, domain, criteria, nonlinear);
 
       // If c3t3 initialization is not sufficient (may happen if there is only
       // a planar curve as feature for example), add some surface points

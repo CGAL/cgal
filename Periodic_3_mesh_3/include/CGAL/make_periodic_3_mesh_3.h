@@ -24,13 +24,13 @@
 #include <CGAL/license/Periodic_3_mesh_3.h>
 
 #include <CGAL/Periodic_3_mesh_3/config.h>
-#include <CGAL/Mesh_3/global_parameters.h>
-
+#include <CGAL/Periodic_3_mesh_3/Protect_edges_sizing_field.h>
 #include <CGAL/refine_periodic_3_mesh_3.h>
 
 #include <CGAL/assertions.h>
 #include <CGAL/make_mesh_3.h>
 #include <CGAL/Mesh_3/C3T3_helpers.h>
+#include <CGAL/Mesh_3/global_parameters.h>
 
 #include <boost/parameter/preprocessor.hpp>
 
@@ -72,11 +72,11 @@ void init_c3t3_with_features(C3T3& c3t3,
 }
 
 // C3t3_initializer: initialize c3t3
-template < typename C3T3,
-           typename MeshDomain,
-           typename MeshCriteria,
-           bool MeshDomainHasHasFeatures,
-           typename HasFeatures = int>
+template <typename C3T3,
+          typename MeshDomain,
+          typename MeshCriteria,
+          bool MeshDomainHasHasFeatures,
+          typename HasFeatures = int>
 struct C3t3_initializer_base
   : public CGAL::Mesh_3::internal::C3t3_initializer<
       C3T3, MeshDomain, MeshCriteria, MeshDomainHasHasFeatures, HasFeatures>
@@ -103,7 +103,66 @@ struct C3t3_initializer_base
   }
 };
 
-} // namespace Periodic_3_mesh_3
+template <typename C3T3,
+          typename MeshDomain,
+          typename MeshCriteria,
+          bool MeshDomainHasHasFeatures,
+          typename HasFeatures = int>
+struct C3t3_initializer
+  : public C3t3_initializer_base<C3T3, MeshDomain, MeshCriteria, MeshDomainHasHasFeatures, HasFeatures>
+{
+  typedef C3t3_initializer_base<C3T3, MeshDomain, MeshCriteria,
+                                MeshDomainHasHasFeatures, HasFeatures> Base;
+
+  void operator()(C3T3& c3t3, const MeshDomain& domain, const MeshCriteria& criteria,
+                  bool with_features, bool nonlinear = false, const int nb_initial_points = -1)
+  {
+    return Base::operator()(c3t3, domain, criteria, with_features, nonlinear, nb_initial_points);
+  }
+};
+
+// Specialization when the mesh domain has 'Has_features'
+template <typename C3T3,
+          typename MeshDomain,
+          typename MeshCriteria,
+          typename HasFeatures>
+struct C3t3_initializer<C3T3, MeshDomain, MeshCriteria, true, HasFeatures>
+{
+  void operator()(C3T3& c3t3, const MeshDomain& domain, const MeshCriteria& criteria,
+                  bool with_features, bool nonlinear = false, const int nb_initial_points = -1)
+  {
+    C3t3_initializer<C3T3, MeshDomain, MeshCriteria, true, typename MeshDomain::Has_features>()
+        (c3t3, domain, criteria, with_features, nonlinear, nb_initial_points);
+  }
+};
+
+// Specialization when the mesh domain has 'Has_features' and it's set to CGAL::Tag_true
+template < typename C3T3,
+           typename MeshDomain,
+           typename MeshCriteria>
+struct C3t3_initializer<C3T3, MeshDomain, MeshCriteria, true, CGAL::Tag_true>
+  : public C3t3_initializer_base<C3T3, MeshDomain, MeshCriteria, true, CGAL::Tag_true>
+{
+  typedef C3t3_initializer_base<C3T3, MeshDomain, MeshCriteria, true, CGAL::Tag_true> Base;
+
+  virtual ~C3t3_initializer() { }
+
+  // this override will be used when initialize_features() is called, in make_mesh_3.h
+  virtual void initialize_features(C3T3& c3t3,
+                                   const MeshDomain& domain,
+                                   const MeshCriteria& criteria,
+                                   bool nonlinear = false)
+  {
+    return Periodic_3_mesh_3::internal::init_c3t3_with_features(c3t3, domain, criteria, nonlinear);
+  }
+
+  void operator()(C3T3& c3t3, const MeshDomain& domain, const MeshCriteria& criteria,
+                  bool with_features, bool nonlinear = false, const int nb_initial_points = -1)
+  {
+    return Base::operator()(c3t3, domain, criteria, with_features, nonlinear, nb_initial_points);
+  }
+};
+
 } // namespace internal
 } // namespace Periodic_3_mesh_3
 
@@ -122,6 +181,7 @@ C3T3 make_periodic_3_mesh_3(const MD& md, const MC& mc, const T& ...t)
   make_periodic_3_mesh_3_bp(c3t3,md,mc,t...);
   return c3t3;
 }
+
 #else
 
 template <typename C3T3, typename MD, typename MC>

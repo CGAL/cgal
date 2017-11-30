@@ -31,9 +31,6 @@
   #undef CGAL_MESH_3_SIZING_FIELD_INEXACT_LOCATE
 #endif
 
-// to be sure that we include it before Mesh_3's version
-#include <CGAL/Periodic_3_mesh_3/Protect_edges_sizing_field.h>
-
 //#warning "Structural filtering is disabled because this feature isn't compatible with some periodic traits!"
 /*
  * It's a temporary solution.

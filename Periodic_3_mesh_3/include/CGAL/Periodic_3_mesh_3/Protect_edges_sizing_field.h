@@ -23,9 +23,8 @@
 // File Description :
 //******************************************************************************
 
-// Intentionally the same include guard as Mesh_3's
-#ifndef CGAL_MESH_3_PROTECT_EDGES_SIZING_FIELD_H
-#define CGAL_MESH_3_PROTECT_EDGES_SIZING_FIELD_H
+#ifndef CGAL_PERIODIC_3_MESH_3_PROTECT_EDGES_SIZING_FIELD_H
+#define CGAL_PERIODIC_3_MESH_3_PROTECT_EDGES_SIZING_FIELD_H
 
 #define CGAL_PERIODIC_PROTECTION_ATTEMPT_TO_REMOVE_DUMMY_PTS
 
@@ -48,15 +47,14 @@
 // - Various minor improvements over the original code, which should be brought back.
 // - No wonky indentation!
 
-#include <CGAL/license/Mesh_3.h>
-
-#include <CGAL/Mesh_3/config.h>
+#include <CGAL/license/Periodic_3_mesh_3.h>
 
 #include <CGAL/internal/Mesh_3/Timestamp_hash_function.h>
 #include <CGAL/Mesh_3/io_signature.h>
 #ifdef CGAL_MESH_3_DUMP_FEATURES_PROTECTION_ITERATIONS
 #include <CGAL/IO/File_binary_mesh_3.h>
 #endif
+#include <CGAL/Mesh_3/Protect_edges_sizing_field.h>
 #include <CGAL/Mesh_3/utilities.h>
 #include <CGAL/Mesh_3/Triangulation_helpers.h>
 
@@ -92,40 +90,7 @@
 #include <vector>
 
 namespace CGAL {
-namespace Mesh_3 {
-namespace internal {
-
-const double min_intersection_factor = .4; // (1-alpha)
-const double weight_modifier = .81; //0.9025;//0.81;
-const double distance_divisor = 2.1;
-const int max_nb_vertices_to_reevaluate_size = 10;
-
-// for the origins of `refine_balls_max_nb_of_loops`, that dates from the
-// very beginning of this file:
-//
-//     commit e9b3ff3e5730dab319a8cd581e3eb191559c98db
-//     Author: Stéphane Tayeb <Stephane.Tayeb@sophia.inria.fr>
-//     Date:   Tue Apr 20 14:53:11 2010 +0000
-//
-//         Add draft of _with_features classes.
-//
-// That constant has had different values in the Git history: 9, 99, and now 29.
-const int refine_balls_max_nb_of_loops = 29;
-
-} // end namespace internal
-
-
-template <typename C3t3>
-void debug_dump_c3t3(const std::string filename, const C3t3& c3t3)
-{
-  std::cerr << "Dump current mesh to " << filename << std::endl;
-  std::ofstream out(filename.c_str(),
-                    std::ios_base::out|std::ios_base::binary);
-  out << "binary CGAL c3t3 " << CGAL::Get_io_signature<C3t3>()() << "\n";
-  CGAL::set_binary_mode(out);
-  out << c3t3;
-}
-
+namespace Periodic_3_mesh_3 {
 
 template <typename C3T3, typename MeshDomain, typename SizingFunction>
 class Protect_edges_sizing_field
@@ -157,10 +122,10 @@ private:
 
   typedef Periodic_3_Delaunay_triangulation_traits_3<Kernel> DtGt;
   typedef Periodic_3_Delaunay_triangulation_3<DtGt>          Dt;
-  typedef Triangulation_helpers<Dt>                          Dt_helpers;
+  typedef Mesh_3::Triangulation_helpers<Dt>                  Dt_helpers;
   typedef typename Dt::Vertex_handle                         Dt_Vertex_handle;
 
-  typedef Triangulation_helpers<Tr>                          Tr_helpers;
+  typedef Mesh_3::Triangulation_helpers<Tr>                  Tr_helpers;
 
   typedef std::vector<std::pair<Curve_index,Bare_point> >    Incident_edges;
   typedef std::vector<Vertex_handle>                         Vertex_vector;
@@ -2005,7 +1970,7 @@ insert_balls(const Vertex_handle& vp,
             << "             curve_index=" << curve_index << ")\n";
   std::cerr << "nonlinear growth? " << std::boolalpha << nonlinear_growth_of_balls << '\n'
             << "refine_balls_iteration_nb: " << refine_balls_iteration_nb << '\n'
-            << "max_nb_vertices_to_reevaluate_size" << internal::max_nb_vertices_to_reevaluate_size << std::endl;
+            << "max_nb_vertices_to_reevaluate_size" << Mesh_3::internal::max_nb_vertices_to_reevaluate_size << std::endl;
 #endif
   CGAL_precondition(d > 0);
   CGAL_precondition(sp <= sq);
@@ -2069,8 +2034,8 @@ insert_balls(const Vertex_handle& vp,
     // protecting balls is a linear interpolation of the size of protecting
     // balls at corner. When the curve segment is long enough, pick a point
     // at the middle and choose a new size.
-    if(n >= internal::max_nb_vertices_to_reevaluate_size &&
-       d >= (internal::max_nb_vertices_to_reevaluate_size * minimal_weight_))
+    if(n >= Mesh_3::internal::max_nb_vertices_to_reevaluate_size &&
+       d >= (Mesh_3::internal::max_nb_vertices_to_reevaluate_size * minimal_weight_))
     {
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
       std::cerr << "Number of to-be-inserted balls is: "
@@ -3106,8 +3071,8 @@ repopulate_edges_around_corner(const Vertex_handle& v, ErasedVeOutIt out)
   return out;
 }
 
-} // end namespace Mesh_3
+} // end namespace Periodic_3_mesh_3
 
 } //namespace CGAL
 
-#endif // CGAL_MESH_3_PROTECT_EDGES_SIZING_FIELD_H
+#endif // CGAL_PERIODIC_3_MESH_3_PROTECT_EDGES_SIZING_FIELD_H
