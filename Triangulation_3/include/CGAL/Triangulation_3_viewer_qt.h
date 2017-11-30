@@ -20,34 +20,21 @@
 #ifndef CGAL_T3_VIEWER_QT_H
 #define CGAL_T3_VIEWER_QT_H
 
-#include "CGAL/Qt/Basic_viewer_qt.h"
+#include <CGAL/Qt/Basic_viewer_qt.h>
 #include <CGAL/Random.h>
-
-CGAL::Color get_random_color(CGAL::Random& random)
-{
-  CGAL::Color res;
-  do
-  {
-    res=CGAL::Color(random.get_int(0,256),
-                    random.get_int(0,256),
-                    random.get_int(0,256));
-  }
-  while(res.red()==255 && res.green()==255 && res.blue()==255);
-  return res;
-}
 
 // Default color functor; user can change it to have its own face color
 struct DefaultColorFunctor
 {
   template<typename T3>
   static CGAL::Color run(const T3& at3,
-                         typename LCC::Dart_const_handle dh)
+                         const typename T3::Finite_facets_iterator* fh)
   {
-    if (dh==alcc.null_handle) // use to get the mono color
+    if (fh==NULL) // use to get the mono color
       return CGAL::Color(100, 125, 200); // R G B between 0-255
 
     // Here dh is the smaller dart of its face
-    CGAL::Random random(alcc.darts().index(dh));
+    CGAL::Random random((unsigned long int)(&*((*fh)->first))+(*fh)->second);
     return get_random_color(random);
   }
 };
@@ -56,18 +43,20 @@ struct DefaultColorFunctor
 template<class T3, class ColorFunctor>
 class SimpleTriangulation3ViewerQt : public Basic_viewer_qt
 {
-  typedef Basic_viewer_qt Base;
-  typedef typename LCC::Traits Kernel;
-  typedef typename T3::Cell_handle    Cell_handle;
-  typedef typename T3::Point          Point;
-  
+  typedef Basic_viewer_qt                 Base;
+  typedef typename T3::Vertex_handle Vertex_const_handle;
+  typedef typename T3::Finite_edges_iterator  Edge_const_handle;
+  typedef typename T3::Finite_facets_iterator Facet_const_handle;
+  typedef typename T3::Cell_handle         Cell_handle;
+  typedef typename T3::Point               Point;
+ 
 public:
   /// Construct the viewer.
   /// @param at3 the t3 to view
   /// @param title the title of the window
   /// @param anofaces if true, do not draw faces (faces are not computed; this can be
   ///        usefull for very big object where this time could be long)
-  SimpleLCCViewerQt(const T3& at3, const char* title="", bool anofaces=false) :
+  SimpleTriangulation3ViewerQt(const T3& at3, const char* title="", bool anofaces=false) :
     Base(title),
     t3(at3),
     m_nofaces(anofaces)
@@ -78,83 +67,39 @@ public:
 protected:
   void compute_face(Facet_const_handle fh)
   {
-    /*    // We fill only closed faces.
-    Dart_const_handle cur=dh;
-    Dart_const_handle min=dh;
-    do
-    {
-      if (!lcc.is_next_exist(cur)) return; // open face=>not filled
-      if (cur<min) min=cur;
-      cur=lcc.next(cur);
-    }
-    while(cur!=dh);
+    CGAL::Color c=ColorFunctor::run(t3, &fh);
+    face_begin(c);
+
+    add_point_in_face(fh->first->vertex((fh->second+1)%4)->point());
+    add_point_in_face(fh->first->vertex((fh->second+2)%4)->point());
+    add_point_in_face(fh->first->vertex((fh->second+3)%4)->point());
     
-    CGAL::Color c=ColorFunctor::run(lcc, dh);
-
-    if (c.red()<60 || c.green()<60 || c.blue()<60)
-      face_begin(); // TODO REMOVE LATER
-    else
-    {
-      // c=CGAL::Color(100,255,100);
-      face_begin(c);
-    }
-
-    cur=dh;
-    do
-    {
-      add_point_in_face(lcc.point(cur),
-                        Geom_utils<LCC>::get_vertex_normal(lcc, cur));
-      cur=lcc.next(cur);
-    }
-    while(cur!=dh);
-    */
     face_end();
   }
 
   void compute_edge(Edge_const_handle eh)
   {
-    /*    CGAL::Random random((unsigned long int)&*dh);
-    CGAL::Color c=get_random_color(random); // TODO REMOVE LATER
-
-    Point p1 = lcc.point(dh);
-    Dart_const_handle d2 = lcc.other_extremity(dh);
-    if (d2!=NULL)
-    {
-      Point p2 = lcc.point(d2);
-      if (c.red()<60 || c.green()<60 || c.blue()<60)
-        add_segment(p1, p2);
-      else
-      {
-        add_segment(p1, p2, c); // TODO REMOVE LATER
-      }
-      }*/
+    add_segment(eh->first->vertex(eh->second)->point(),
+                eh->first->vertex(eh->third)->point());
   }
 
   void compute_vertex(Vertex_const_handle vh)
-  {
-    /*    CGAL::Random random((unsigned long int)&*dh);  // TODO REMOVE LATER
-    CGAL::Color c=get_random_color(random);
-
-    Point p = lcc.point(dh);
-    if (c.red()<60 || c.green()<60 || c.blue()<60)
-      add_point(p);
-    else
-    {
-      add_point(p, c); // TODO REMOVE LATER
-      }*/
-  }
+  { add_point(vh->point()); }
 
   void compute_elements()
   {
     clear();
 
-    for (typename T3::Finite_facets_iterator it=t3.finite_facets_begin(); it!=t3.finite_facets_end(); ++it)
+    for (typename T3::Finite_facets_iterator it=t3.finite_facets_begin();
+         it!=t3.finite_facets_end(); ++it)
     { compute_face(it); } 
 
-    for (typename T3::Finite_edges_iterator it=t3.finite_edges_begin(); it!=t3.finite_edges_end(); ++it)
+    for (typename T3::Finite_edges_iterator it=t3.finite_edges_begin();
+         it!=t3.finite_edges_end(); ++it)
     { compute_edge(it); } 
 
-    for (typename T3::Finite_vertices_iterator it=t3.finitevertices_begin(); it!=t3.finite_vertices_end(); ++it)
+    for (typename T3::Finite_vertices_iterator it=t3.finite_vertices_begin();
+         it!=t3.finite_vertices_end(); ++it)
     { compute_vertex(it); } 
   }
 

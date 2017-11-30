@@ -3,6 +3,10 @@
 #include <cassert>
 #include <vector>
 
+#ifdef CGAL_USE_BASIC_VIEWER
+#include <CGAL/Triangulation_3_viewer_qt.h>
+#endif
+
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
 typedef K::FT                                          Weight;
@@ -39,6 +43,10 @@ int main()
   assert( T.dimension() == 3 );
 
   std::cout << "Number of vertices : " << T.number_of_vertices() << std::endl;
+
+#ifdef CGAL_USE_BASIC_VIEWER
+  display(T);
+#endif // CGAL_USE_BASIC_VIEWER
 
   // removal of all vertices
   int count = 0;
