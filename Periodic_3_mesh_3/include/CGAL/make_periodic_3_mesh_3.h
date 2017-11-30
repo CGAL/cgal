@@ -41,7 +41,7 @@ namespace Periodic_3_mesh_3 {
 namespace internal {
 
 template<typename C3T3>
-void give_dummy_points_artificial_index(C3T3& c3t3)
+void mark_dummy_points(C3T3& c3t3)
 {
   CGAL_precondition(c3t3.triangulation().is_1_cover());
 
@@ -50,7 +50,6 @@ void give_dummy_points_artificial_index(C3T3& c3t3)
   for(Vertex_iterator vit = c3t3.triangulation().vertices_begin();
                       vit != c3t3.triangulation().vertices_end(); ++vit)
   {
-    std::cout << "dummy point: " << c3t3.triangulation().point(vit) << std::endl;
     c3t3.set_index(vit, 0);
   }
 }
@@ -94,7 +93,7 @@ struct C3t3_initializer_base
   {
     c3t3.triangulation().set_domain(domain.periodic_bounding_box());
     c3t3.triangulation().insert_dummy_points();
-    give_dummy_points_artificial_index(c3t3);
+    mark_dummy_points(c3t3);
 
     // Call the basic initialization from c3t3, which handles features and
     // adds a bunch of points on the surface
