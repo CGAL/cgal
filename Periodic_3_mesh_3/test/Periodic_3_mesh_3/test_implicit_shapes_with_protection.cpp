@@ -143,7 +143,7 @@ void fill_squary_cylinder_polylines(Polylines& polylines)
   polylines.push_back(polyline);
 }
 
-void test_squary_cylinder()
+void test_protected_squary_cylinder()
 {
   int domain_size = 1;
   Mesh_domain domain(squary_cylinder_function,
@@ -250,7 +250,7 @@ void fill_squary_cylinder_polylines_2(Polylines& polylines)
   polylines.push_back(polyline);
 }
 
-void test_squary_cylinder_2()
+void test_protected_squary_cylinder_2()
 {
   int domain_size = 1;
   Mesh_domain domain(squary_cylinder_function_2,

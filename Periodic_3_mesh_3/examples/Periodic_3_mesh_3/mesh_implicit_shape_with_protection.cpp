@@ -70,7 +70,7 @@ Point canonicalize_point(const Point& p)
 }
 
 // Implicit function
-static const FT cx = 0.5, cy = 0.5, cz = 0.5;
+static const FT cx = 0.51, cy = 0.51, cz = 0.5;
 static const FT scale = 0.9;
 FT cone_function(const Point& p)
 {
@@ -92,8 +92,8 @@ void cone_polylines(Polylines& polylines)
   Polyline_3 polyline;
   for(int i = 0; i < 360; ++i)
   {
-    polyline.push_back(Point(0.5 + radius_at_z * std::sin(i*CGAL_PI/180),
-                             0.5 + radius_at_z * std::cos(i*CGAL_PI/180),
+    polyline.push_back(Point(cx + radius_at_z * std::sin(i*CGAL_PI/180),
+                             cy + radius_at_z * std::cos(i*CGAL_PI/180),
                              z));
   }
   polyline.push_back(polyline.front()); // close the line
@@ -121,14 +121,18 @@ int main()
   domain.add_features(polylines.begin(), polylines.end());
 
   // Insert a corner to make sure the apex of the cone is present in the mesh
-  domain.add_corner(Point(0.5, 0.5, 0.5));
+  domain.add_corner(Point(0.51, 0.51, 0.5));
 
-  // Mesh generation with feature preservation (and no optimizers)
-  C3t3 c3t3_bis = CGAL::make_periodic_3_mesh_3<C3t3>(domain, criteria, manifold(),
+  // Mesh generation WITHOUT feature preservation (and no optimizers)
+  C3t3 c3t3 = CGAL::make_periodic_3_mesh_3<C3t3>(domain, criteria, no_features(),
+                                                 no_exude(), no_perturb());
+  std::ofstream medit_file("output_implicit_shape_without_protection.mesh");
+  P3M3_IO::write_complex_to_medit(medit_file, c3t3);
+
+  // Mesh generation WITH feature preservation (and no optimizers)
+  C3t3 c3t3_bis = CGAL::make_periodic_3_mesh_3<C3t3>(domain, criteria, features(),
                                                      no_exude(), no_perturb());
-
-  // Output
-  std::ofstream medit_file_bis("output_protected_implicit_shape.mesh");
+  std::ofstream medit_file_bis("output_implicit_shape_with_protection.mesh");
   P3M3_IO::write_complex_to_medit(medit_file_bis, c3t3_bis);
 
   std::cout << "EXIT SUCCESS" << std::endl;

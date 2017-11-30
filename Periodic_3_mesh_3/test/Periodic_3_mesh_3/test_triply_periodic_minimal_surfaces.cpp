@@ -7,10 +7,10 @@
 #include <CGAL/make_periodic_3_mesh_3.h>
 #include <CGAL/Periodic_3_mesh_triangulation_3.h>
 
+#include <CGAL/functional.h>
 #include <CGAL/Implicit_to_labeling_function_wrapper.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/Mesh_criteria_3.h>
-#include <CGAL/Mesh_domain_with_polyline_features_3.h>
 
 #include <algorithm>
 #include <cmath>
@@ -33,8 +33,7 @@ typedef FT (*Function)(const Point&);
 typedef CGAL::Implicit_multi_domain_to_labeling_function_wrapper<Function> Labeling_function;
 
 // Domain
-typedef CGAL::Labeled_periodic_3_mesh_domain_3<Labeling_function, K> Periodic_labeled_mesh_domain;
-typedef CGAL::Mesh_domain_with_polyline_features_3<Periodic_labeled_mesh_domain> Periodic_mesh_domain;
+typedef CGAL::Labeled_periodic_3_mesh_domain_3<Labeling_function, K> Periodic_mesh_domain;
 
 // Triangulation
 typedef CGAL::Periodic_3_mesh_triangulation_3<Periodic_mesh_domain>::type  Tr;
@@ -158,7 +157,8 @@ FT split_p (const Point& p) {
           - 0.4 * (cx + cy + cz);
 }
 
-struct Segments_function : public std::unary_function<Point, FT>
+struct Segments_function
+  : public CGAL::unary_function<Point, FT>
 {
   typedef std::vector<Segment> Segments;
 
@@ -244,9 +244,9 @@ int main(int, char**)
   v_vps["in-out"] = make_vps_in_out();
 
   std::vector<unsigned> v_ncopy;
-  v_ncopy.push_back(1);
+//  v_ncopy.push_back(1);
   v_ncopy.push_back(4);
-  v_ncopy.push_back(8);
+//  v_ncopy.push_back(8);
 
   for (std::map<std::string, Function>::iterator iter = functions.begin();
        iter != functions.end(); ++iter)

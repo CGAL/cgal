@@ -43,7 +43,7 @@ typedef CGAL::Mesh_criteria_3<Tr>                         Periodic_mesh_criteria
 // To avoid verbose function and named parameters call
 using namespace CGAL::parameters;
 
-// Function
+// Implicit functions
 FT sphere_function_1 (const Point& p)
 { return CGAL::squared_distance(p, Point(0.5, 0.5, 0.5)) - 0.15; }
 
