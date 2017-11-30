@@ -148,3 +148,9 @@ include(${CGAL_MODULES_DIR}/CGAL_Macros.cmake)
 
 # Temporary? Change the CMAKE module path
 cgal_setup_module_path()
+
+if( RUNNING_CGAL_AUTO_TEST )
+  # Ugly hack to be compatible with current CGAL testsuite process (as of
+  # Nov. 2017). -- Laurent Rineau
+  include(CGAL_SetupFlags)
+endif()
