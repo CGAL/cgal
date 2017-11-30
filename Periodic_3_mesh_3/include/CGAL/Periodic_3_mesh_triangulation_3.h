@@ -910,12 +910,14 @@ public:
   }
   /// @}
 
-  /// Remove function
-  void remove(Vertex_handle v,
+  /// Remove functions
+  bool remove(Vertex_handle v,
               bool* CGAL_assertion_code(could_lock_zone) = NULL)
   {
     CGAL_assertion(could_lock_zone == NULL);
-    return Base::remove(v);
+    bool b = Base::remove_if_no_cover_change(v);
+    CGAL_postcondition(this->is_1_cover()); // do not ever allow cover change
+    return b;
   }
 
   /// Dual computations
