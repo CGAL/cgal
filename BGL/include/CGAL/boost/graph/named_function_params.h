@@ -92,7 +92,6 @@ using boost::visitor;
 #define CGAL_add_named_parameter(X, Y, Z)            \
   enum X { Y };
 #include <CGAL/boost/graph/parameters_interface.h>
-#include <CGAL/Polygon_mesh_processing/internal/parameters_interface.h>
 #undef CGAL_add_named_parameter
 
 }//internal_np
@@ -124,7 +123,6 @@ using boost::visitor;
   }
 #include <CGAL/boost/graph/parameters_interface.h>
 #include <CGAL/boost/graph/boost_parameters_interface.h>
-#include <CGAL/Polygon_mesh_processing/internal/parameters_interface.h>
 #undef CGAL_add_named_parameter
   };
 
@@ -157,7 +155,6 @@ namespace parameters {
   }
 #include <CGAL/boost/graph/parameters_interface.h>
 #include <CGAL/boost/graph/boost_parameters_interface.h>
-#include <CGAL/Polygon_mesh_processing/internal/parameters_interface.h>
 #undef CGAL_add_named_parameter
 
   } // namespace parameters
