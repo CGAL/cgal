@@ -23,6 +23,9 @@
 #include <CGAL/Qt/Basic_viewer_qt.h>
 #include <CGAL/Random.h>
 
+namespace CGAL
+{
+  
 // Default color functor; user can change it to have its own face color
 struct DefaultColorFunctor
 {
@@ -81,10 +84,12 @@ public:
   /// @param title the title of the window
   /// @param anofaces if true, do not draw faces (faces are not computed; this can be
   ///        usefull for very big object where this time could be long)
-  SimpleLCCViewerQt(const LCC& alcc, const char* title="", bool anofaces=false) :
+  SimpleLCCViewerQt(const LCC& alcc, const char* title="", bool anofaces=false,
+                    const ColorFunctor& fcolor=ColorFunctor()) :
     Base(title),
     lcc(alcc),
-    m_nofaces(anofaces)
+    m_nofaces(anofaces),
+    m_fcolor(fcolor)
   {
     compute_elements();
   }
@@ -103,15 +108,8 @@ protected:
     }
     while(cur!=dh);
     
-    CGAL::Color c=ColorFunctor::run(lcc, dh);
-
-    if (c.red()<60 || c.green()<60 || c.blue()<60)
-      face_begin(); // TODO REMOVE LATER
-    else
-    {
-      // c=CGAL::Color(100,255,100);
-      face_begin(c);
-    }
+    CGAL::Color c=m_fcolor.run(lcc, dh);
+    face_begin(c);
 
     cur=dh;
     do
@@ -127,36 +125,14 @@ protected:
 
   void compute_edge(Dart_const_handle dh)
   {
-    CGAL::Random random((unsigned long int)&*dh);
-    CGAL::Color c=get_random_color(random); // TODO REMOVE LATER
-
     Point p1 = lcc.point(dh);
     Dart_const_handle d2 = lcc.other_extremity(dh);
     if (d2!=NULL)
-    {
-      Point p2 = lcc.point(d2);
-      if (c.red()<60 || c.green()<60 || c.blue()<60)
-        add_segment(p1, p2);
-      else
-      {
-        add_segment(p1, p2, c); // TODO REMOVE LATER
-      }
-    }
+    { add_segment(p1, lcc.point(d2)); }
   }
 
   void compute_vertex(Dart_const_handle dh)
-  {
-    CGAL::Random random((unsigned long int)&*dh);  // TODO REMOVE LATER
-    CGAL::Color c=get_random_color(random);
-
-    Point p = lcc.point(dh);
-    if (c.red()<60 || c.green()<60 || c.blue()<60)
-      add_point(p);
-    else
-    {
-      add_point(p, c); // TODO REMOVE LATER
-    }
-  }
+  { add_point(lcc.point(dh)); }
 
   void compute_elements()
   {
@@ -195,26 +171,28 @@ protected:
 
   virtual void keyPressEvent(QKeyEvent *e)
   {
-    const Qt::KeyboardModifiers modifiers = e->modifiers();
+    // const ::Qt::KeyboardModifiers modifiers = e->modifiers();
     Base::keyPressEvent(e);
   }
 
 protected:
   const LCC& lcc;
   bool m_nofaces;
+  const ColorFunctor& m_fcolor;
 };
   
 template<class LCC, class ColorFunctor>
 void display(const LCC& alcc,
-             const char* title="",
-             bool nofill=false)
+             const char* title="LCC Viewer",
+             bool nofill=false,
+             const ColorFunctor& fcolor=ColorFunctor())
 {
   int argc=1;
 
   const char* argv[2]={"lccviewer","\0"};
   QApplication app(argc,const_cast<char**>(argv));
 
-  SimpleLCCViewerQt<LCC, ColorFunctor> mainwindow(alcc, title, nofill);
+  SimpleLCCViewerQt<LCC, ColorFunctor> mainwindow(alcc, title, nofill, fcolor);
   mainwindow.show();
 
   app.exec();
@@ -222,8 +200,10 @@ void display(const LCC& alcc,
 
 template<class LCC>
 void display(const LCC& alcc,
-             const char* title="",
+             const char* title="LCC Viewer",
              bool nofill=false)
 { return display<LCC, DefaultColorFunctor>(alcc, title, nofill); }
+
+} // End namespace CGAL
 
 #endif // CGAL_LCC_VIEWER_QT_H

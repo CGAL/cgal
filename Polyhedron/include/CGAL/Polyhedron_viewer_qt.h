@@ -23,6 +23,9 @@
 #include <CGAL/Qt/Basic_viewer_qt.h>
 #include <CGAL/Random.h>
 
+namespace CGAL
+{
+  
 // Default color functor; user can change it to have its own face color
 struct DefaultColorFunctor
 {
@@ -54,10 +57,13 @@ public:
   /// @param title the title of the window
   /// @param anofaces if true, do not draw faces (faces are not computed; this can be
   ///        usefull for very big object where this time could be long)
-  SimplePolyhedronViewerQt(const Polyhedron& apoly, const char* title="", bool anofaces=false) :
+  SimplePolyhedronViewerQt(const Polyhedron& apoly, const char* title="",
+                           bool anofaces=false,
+                           const ColorFunctor& fcolor=ColorFunctor()) :
     Base(title),
     poly(apoly),
-    m_nofaces(anofaces)
+    m_nofaces(anofaces),
+    m_fcolor(fcolor)
   {
     compute_elements();
   }
@@ -65,7 +71,7 @@ public:
 protected:
   void compute_face(Facet_const_handle fh)
   {
-    CGAL::Color c=ColorFunctor::run(poly, fh);
+    CGAL::Color c=m_fcolor.run(poly, fh);
     face_begin(c);
     Halfedge_const_handle he=fh->facet_begin();
     do
@@ -97,26 +103,29 @@ protected:
 
     if (!m_nofaces)
     {
-      for(typename Polyhedron::Facet_const_iterator f=poly.facets_begin(); f!=poly.facets_end(); f++)
+      for(typename Polyhedron::Facet_const_iterator f=poly.facets_begin();
+          f!=poly.facets_end(); f++)
       {
         if (f!=boost::graph_traits<Polyhedron>::null_face())
         { compute_face(f); }
       }
     }
 
-    for ( typename Polyhedron::Halfedge_const_iterator e=poly.halfedges_begin(); e!=poly.halfedges_end(); ++e)
+    for ( typename Polyhedron::Halfedge_const_iterator e=poly.halfedges_begin();
+          e!=poly.halfedges_end(); ++e)
     {
       if (e<e->opposite())
       { compute_edge(e); }
     }
 
-    for ( typename Polyhedron::Vertex_const_iterator v=poly.vertices_begin(); v!=poly.vertices_end(); ++v)
+    for ( typename Polyhedron::Vertex_const_iterator v=poly.vertices_begin();
+          v!=poly.vertices_end(); ++v)
     { compute_vertex(v); }
   }
 
   virtual void keyPressEvent(QKeyEvent *e)
   {
-    const Qt::KeyboardModifiers modifiers = e->modifiers();
+    // const ::Qt::KeyboardModifiers modifiers = e->modifiers();
     Base::keyPressEvent(e);
   }
 
@@ -128,7 +137,9 @@ protected:
     unsigned int nb=0;
     do
     {
-      internal::newell_single_step_3(he->vertex()->point(), he->next()->vertex()->point(), normal);
+      internal::newell_single_step_3(he->vertex()->point(),
+                                     he->next()->vertex()->point(),
+                                     normal);
       ++nb;
       he=he->next();
     }
@@ -153,8 +164,8 @@ protected:
     while (he!=end);
     
     if (!typename Kernel::Equal_3()(normal, CGAL::NULL_VECTOR))
-    { normal=(typename Kernel::Construct_scaled_vector_3()(normal,
-                                                           1.0/CGAL::sqrt(normal.squared_length()))); }
+    { normal=(typename Kernel::Construct_scaled_vector_3()
+              (normal, 1.0/CGAL::sqrt(normal.squared_length()))); }
     
     return normal;
   }
@@ -162,20 +173,22 @@ protected:
 protected:
   const Polyhedron& poly;
   bool m_nofaces;
+  const ColorFunctor& m_fcolor;
 };
-
   
 template<class Polyhedron, class ColorFunctor>
 void display(const Polyhedron& apoly,
-             const char* title="",
-             bool nofill=false)
+             const char* title="Polyhedron Viewer",
+             bool nofill=false,
+             const ColorFunctor& fcolor=ColorFunctor())
 {
   int argc=1;
 
-  const char* argv[2]={"polyhedron viewer","\0"};
+  const char* argv[2]={"polyhedron_viewer","\0"};
   QApplication app(argc,const_cast<char**>(argv));
 
-  SimplePolyhedronViewerQt<Polyhedron, ColorFunctor> mainwindow(apoly, title, nofill);
+  SimplePolyhedronViewerQt<Polyhedron, ColorFunctor>
+    mainwindow(apoly, title, nofill, fcolor);
   mainwindow.show();
 
   app.exec();
@@ -183,8 +196,10 @@ void display(const Polyhedron& apoly,
 
 template<class Polyhedron>
 void display(const Polyhedron& apoly,
-             const char* title="",
+             const char* title="Polyhedron Viewer",
              bool nofill=false)
 { return display<Polyhedron, DefaultColorFunctor>(apoly, title, nofill); }
+
+} // End namespace CGAL
 
 #endif // CGAL_POLYHEDRON_VIEWER_QT_H

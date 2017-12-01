@@ -23,6 +23,9 @@
 #include <CGAL/Qt/Basic_viewer_qt.h>
 #include <CGAL/Random.h>
 
+namespace CGAL
+{
+  
 // Default color functor; user can change it to have its own face color
 struct DefaultColorFunctor
 {
@@ -55,10 +58,13 @@ public:
   /// @param title the title of the window
   /// @param anofaces if true, do not draw faces (faces are not computed; this can be
   ///        usefull for very big object where this time could be long)
-  SimpleSurfaceMeshViewerQt(const SM& amesh, const char* title="", bool anofaces=false) :
+  SimpleSurfaceMeshViewerQt(const SM& amesh, const char* title="",
+                            bool anofaces=false,
+                            const ColorFunctor& fcolor=ColorFunctor()) :
     Base(title),
     sm(amesh),
-    m_nofaces(anofaces)
+    m_nofaces(anofaces),
+    m_fcolor(fcolor)
   {
     compute_elements();
   }
@@ -66,7 +72,7 @@ public:
 protected:
   void compute_face(face_descriptor fh)
   {
-    CGAL::Color c=ColorFunctor::run(sm, fh);
+    CGAL::Color c=m_fcolor.run(sm, fh);
     face_begin(c);
     halfedge_descriptor hd=sm.halfedge(fh);
     do
@@ -93,23 +99,26 @@ protected:
 
     if (!m_nofaces)
     {
-      for (typename SM::Face_range::iterator f=sm.faces().begin(); f!=sm.faces().end(); ++f)
+      for (typename SM::Face_range::iterator f=sm.faces().begin();
+           f!=sm.faces().end(); ++f)
       {
         if (*f!=boost::graph_traits<SM>::null_face())
         { compute_face(*f); }
       }
     }
     
-    for (typename SM::Edge_range::iterator e=sm.edges().begin(); e!=sm.edges().end(); ++e)
+    for (typename SM::Edge_range::iterator e=sm.edges().begin();
+         e!=sm.edges().end(); ++e)
     { compute_edge(*e); }
 
-    for (typename SM::Vertex_range::iterator v=sm.vertices().begin(); v!=sm.vertices().end(); ++v)
+    for (typename SM::Vertex_range::iterator v=sm.vertices().begin();
+         v!=sm.vertices().end(); ++v)
     { compute_vertex(*v); }
   }
 
   virtual void keyPressEvent(QKeyEvent *e)
   {
-    const Qt::KeyboardModifiers modifiers = e->modifiers();
+    // const ::Qt::KeyboardModifiers modifiers = e->modifiers();
     Base::keyPressEvent(e);
   }
 
@@ -147,8 +156,8 @@ protected:
     while (he!=end);
     
     if (!typename Kernel::Equal_3()(normal, CGAL::NULL_VECTOR))
-    { normal=(typename Kernel::Construct_scaled_vector_3()(normal,
-                                                           1.0/CGAL::sqrt(normal.squared_length()))); }
+    { normal=(typename Kernel::Construct_scaled_vector_3()
+              (normal, 1.0/CGAL::sqrt(normal.squared_length()))); }
     
     return normal;
   }
@@ -156,20 +165,22 @@ protected:
 protected:
   const SM& sm;
   bool m_nofaces;
+  const ColorFunctor& m_fcolor;
 };
-
   
 template<class SM, class ColorFunctor>
 void display(const SM& amesh,
-             const char* title="",
-             bool nofill=false)
+             const char* title="Surface Mesh Viewer",
+             bool nofill=false,
+             const ColorFunctor& fcolor=ColorFunctor())
 {
   int argc=1;
 
-  const char* argv[2]={"Surface mesh viewer","\0"};
+  const char* argv[2]={"surface_mesh_viewer","\0"};
   QApplication app(argc,const_cast<char**>(argv));
 
-  SimpleSurfaceMeshViewerQt<SM, ColorFunctor> mainwindow(amesh, title, nofill);
+  SimpleSurfaceMeshViewerQt<SM, ColorFunctor> mainwindow(amesh, title,
+                                                         nofill, fcolor);
   mainwindow.show();
 
   app.exec();
@@ -177,8 +188,10 @@ void display(const SM& amesh,
 
 template<class SM>
 void display(const SM& amesh,
-             const char* title="",
+             const char* title="Surface Mesh Viewer",
              bool nofill=false)
 { return display<SM, DefaultColorFunctor>(amesh, title, nofill); }
+
+} // End namespace CGAL
 
 #endif // CGAL_SURFACE_MESH_VIEWER_QT_H

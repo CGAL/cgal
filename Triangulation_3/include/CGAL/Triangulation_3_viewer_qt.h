@@ -23,6 +23,9 @@
 #include <CGAL/Qt/Basic_viewer_qt.h>
 #include <CGAL/Random.h>
 
+namespace CGAL
+{
+  
 // Default color functor; user can change it to have its own face color
 struct DefaultColorFunctor
 {
@@ -56,10 +59,13 @@ public:
   /// @param title the title of the window
   /// @param anofaces if true, do not draw faces (faces are not computed; this can be
   ///        usefull for very big object where this time could be long)
-  SimpleTriangulation3ViewerQt(const T3& at3, const char* title="", bool anofaces=false) :
+  SimpleTriangulation3ViewerQt(const T3& at3, const char* title="",
+                               bool anofaces=false,
+                               const ColorFunctor& fcolor=ColorFunctor()) :
     Base(title),
     t3(at3),
-    m_nofaces(anofaces)
+    m_nofaces(anofaces),
+    m_fcolor(fcolor)
   {
     compute_elements();
   }
@@ -67,7 +73,7 @@ public:
 protected:
   void compute_face(Facet_const_handle fh)
   {
-    CGAL::Color c=ColorFunctor::run(t3, &fh);
+    CGAL::Color c=m_fcolor.run(t3, &fh);
     face_begin(c);
 
     add_point_in_face(fh->first->vertex((fh->second+1)%4)->point());
@@ -105,27 +111,29 @@ protected:
 
   virtual void keyPressEvent(QKeyEvent *e)
   {
-    const Qt::KeyboardModifiers modifiers = e->modifiers();
+    // const ::Qt::KeyboardModifiers modifiers = e->modifiers();
     Base::keyPressEvent(e);
   }
 
 protected:
   const T3& t3;
   bool m_nofaces;
+  const ColorFunctor& m_fcolor;
 };
-
   
 template<class T3, class ColorFunctor>
 void display(const T3& at3,
-             const char* title="",
-             bool nofill=false)
+             const char* title="T3 Viewer",
+             bool nofill=false,
+             const ColorFunctor& fcolor=ColorFunctor())
 {
   int argc=1;
 
-  const char* argv[2]={"T3 viewer","\0"};
+  const char* argv[2]={"t3_viewer","\0"};
   QApplication app(argc,const_cast<char**>(argv));
 
-  SimpleTriangulation3ViewerQt<T3, ColorFunctor> mainwindow(at3, title, nofill);
+  SimpleTriangulation3ViewerQt<T3, ColorFunctor> mainwindow(at3, title,
+                                                            nofill, fcolor);
   mainwindow.show();
 
   app.exec();
@@ -133,8 +141,10 @@ void display(const T3& at3,
 
 template<class T3>
 void display(const T3& at3,
-             const char* title="",
+             const char* title="T3 Viewer",
              bool nofill=false)
 { return display<T3, DefaultColorFunctor>(at3, title, nofill); }
+
+} // End namespace CGAL
 
 #endif // CGAL_T3_VIEWER_QT_H
