@@ -1613,6 +1613,29 @@ enqueue_task(Cell_handle ch, unsigned int erase_counter, FT value)
 
 
 #ifdef CGAL_MESH_3_DEBUG_SLIVERS_EXUDER
+template <typename Pre_star>
+void print_pre_stars(Pre_star pre_star_1, Pre_star pre_star_2)
+{
+  std::cout << "Stars: " << std::endl;
+  while(!pre_star_1.empty() && !pre_star_2.empty())
+  {
+    std::cout << "F: " << &*((pre_star_1.front()->second).first)
+                       << " " << pre_star_1.front()->second.second
+              << " S: " << pre_star_1.front()->first
+              << " |||||| "
+              << "F: " << &*((pre_star_2.front()->second).first)
+                       << " " << pre_star_2.front()->second.second
+              << " S: " << pre_star_2.front()->first
+              << std::endl;
+    if(pre_star_1.front()->second != pre_star_2.front()->second ||
+       pre_star_1.front()->first != pre_star_2.front()->first)
+      std::cout << "Warning!" << std::endl;
+
+    pre_star_1.pop_front();
+    pre_star_2.pop_front();
+  }
+}
+
 template <typename C3T3, typename SC, typename V_, typename FT>
 template <class Input_facet_it>
 bool
@@ -1652,7 +1675,8 @@ check_pre_star(const Pre_star& pre_star,
         Facet f2 = pre_star2.front()->second;
         pre_star2.pop_front();
         pre_star_copy.pop_front();
-        if ( pre_star_copy.front()->second == f2 && pre_star2.front()->second == f1 )
+        if (!pre_star_copy.empty() && !pre_star2.empty() &&
+            pre_star_copy.front()->second == f2 && pre_star2.front()->second == f1 )
         {
           // It's ok
           pre_star2.pop_front();
