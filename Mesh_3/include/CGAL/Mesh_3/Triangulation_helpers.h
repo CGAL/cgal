@@ -156,7 +156,7 @@ public:
                                        const Cell_vector& incident_cells,
                                        typename boost::enable_if_c<Tag::value>::type* = NULL) const;
 
-  // @todo are the two versions really worth it, I can't even tell the difference...
+  // @todo are the two versions really worth it, I can't tell the difference from a time POV...
   template<typename Tag>
   FT get_sq_distance_to_closest_vertex(const Tr& tr,
                                        const Vertex_handle& vh,

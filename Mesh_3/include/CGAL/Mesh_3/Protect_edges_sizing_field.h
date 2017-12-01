@@ -460,7 +460,7 @@ void
 Protect_edges_sizing_field<C3T3, MD, Sf>::
 operator()(const bool refine)
 {
-  // This file is only meant to be used with non-periodic triangulations
+  // This class is only meant to be used with non-periodic triangulations
   CGAL_assertion(!(boost::is_same<typename Tr::Periodic_tag, CGAL::Tag_true>::value));
 
 #ifdef CGAL_MESH_3_VERBOSE

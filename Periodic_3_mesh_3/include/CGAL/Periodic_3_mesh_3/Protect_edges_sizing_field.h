@@ -574,7 +574,7 @@ void
 Protect_edges_sizing_field<C3T3, MD, Sf>::
 operator()(const bool refine)
 {
-  // This file is only meant to be used with periodic triangulations
+  // This class is only meant to be used with periodic triangulations
   CGAL_assertion((boost::is_same<typename Tr::Periodic_tag, CGAL::Tag_true>::value));
 
 #ifdef CGAL_MESH_3_VERBOSE
@@ -613,7 +613,7 @@ operator()(const bool refine)
 #endif
 
     // The assertion below is disabled because c3t3.is_valid() may return false
-    // positive for periodic triangulations, specifically because of the line:
+    // positives for periodic triangulations, specifically because of the line:
     // ' if(! do_intersect(sphere(p, sq_rp), sphere(q, sq_rq))) ... '
     // which does not take periodicity into account
 //    CGAL_assertion(minimal_size_ > 0 || c3t3_.is_valid());
@@ -957,7 +957,7 @@ get_positions_with_unknown_orientation(const Vertex_handle v1,
                                        const Vertex_handle v2,
                                        const Curve_index& curve_index) const
 {
-  // We don't know the orientation ! This is problematic if a vertex corresponds
+  // We don't know the orientation! This is problematic if a vertex corresponds
   // to two points (extremity of a periodic loop).
   CGAL::Orientation orientation = CGAL::ZERO;
   return get_positions(v1, v2, curve_index, orientation);
@@ -3152,8 +3152,8 @@ repopulate_edges_around_corner(const Vertex_handle& v, ErasedVeOutIt out)
   return out;
 }
 
-} // end namespace Periodic_3_mesh_3
+} // namespace Periodic_3_mesh_3
 
-} //namespace CGAL
+} // namespace CGAL
 
 #endif // CGAL_PERIODIC_3_MESH_3_PROTECT_EDGES_SIZING_FIELD_H
