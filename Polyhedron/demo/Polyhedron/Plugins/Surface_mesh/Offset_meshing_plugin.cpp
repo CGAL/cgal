@@ -240,7 +240,7 @@ void Polyhedron_demo_offset_meshing_plugin::offset_meshing()
   else
     return;
 
-  double diag = scene->len_diagonal();
+  double diag = scene->bboxDiagonalLength();
   double offset_value = QInputDialog::getDouble(mw,
                                                 QString("Choose Offset Value"),
                                                 QString("Offset Value (use negative number for inset)"),

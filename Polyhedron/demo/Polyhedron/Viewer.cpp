@@ -888,52 +888,6 @@ void Viewer::bindUniformValues(int program_name) const {
       program->setUniformValue("f_matrix",f_mat);
     if(program->property("hasTexture").toBool())
       program->setUniformValue("s_texture",0);
- /*   switch(program_name)
-    {
-    case PROGRAM_WITH_LIGHT:
-    case PROGRAM_C3T3:
-    case PROGRAM_PLANE_TWO_FACES:
-    case PROGRAM_INSTANCED:
-    case PROGRAM_WITH_TEXTURE:
-    case PROGRAM_CUTPLANE_SPHERES:
-    case PROGRAM_SPHERES:
-    case PROGRAM_OLD_FLAT:
-    case PROGRAM_FLAT:
-        program->setUniformValue("light_pos", d->lighting.position);
-        program->setUniformValue("light_diff",d->lighting.diffuse);
-        program->setUniformValue("light_spec", d->lighting.specular);
-        program->setUniformValue("light_amb", d->lighting.ambient);
-        program->setUniformValue("spec_power", d->lighting.shininess);
-        program->setUniformValue("is_two_side", is_both_sides);
-        break;
-    }
-   switch(program_name)
-    {
-    case PROGRAM_WITH_LIGHT:
-    case PROGRAM_C3T3:
-    case PROGRAM_PLANE_TWO_FACES:
-    case PROGRAM_INSTANCED:
-    case PROGRAM_CUTPLANE_SPHERES:
-    case PROGRAM_SPHERES:
-    case PROGRAM_OLD_FLAT:
-    case PROGRAM_FLAT:
-      program->setUniformValue("mv_matrix", mv_mat);
-      break;
-    case PROGRAM_WITHOUT_LIGHT:
-      program->setUniformValue("f_matrix",f_mat);
-      break;
-    case PROGRAM_WITH_TEXTURE:
-      program->setUniformValue("mv_matrix", mv_mat);
-      program->setUniformValue("s_texture",0);
-      program->setUniformValue("f_matrix",f_mat);
-      break;
-    case PROGRAM_WITH_TEXTURED_EDGES:
-        program->setUniformValue("s_texture",0);
-        break;
-    case PROGRAM_NO_SELECTION:
-        program->setUniformValue("f_matrix",f_mat);
-        break;
-    }*/
     program->release();
 }
 

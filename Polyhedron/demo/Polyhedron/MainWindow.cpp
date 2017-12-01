@@ -400,7 +400,7 @@ void MainWindow::evaluate_script(QString script,
                                  const bool quiet) {
   QScriptContext* context = script_engine->currentContext();
   QScriptValue object = context->activationObject();
-  QScriptValue former_current_filename = object.property("current_filename");;
+  QScriptValue former_current_filename = object.property("current_filename");
   object.setProperty("current_filename", filename);
 
   QScriptValue value = script_engine->evaluate(script, filename);
@@ -835,8 +835,8 @@ void MainWindow::updateViewersBboxes(bool recenter)
 }
 void MainWindow::computeViewerBBox(qglviewer::Vec& min, qglviewer::Vec& max)
 {
-  const Scene::Bbox bbox = scene->bbox();
-  const Scene::Bbox all_bbox = scene->bbox(true);
+  const Scene::Bbox bbox = scene->visibleBbox();
+  const Scene::Bbox all_bbox = scene->bbox();
   const double xmin = bbox.xmin();
   const double ymin = bbox.ymin();
   const double zmin = bbox.zmin();
@@ -855,20 +855,19 @@ void MainWindow::computeViewerBBox(qglviewer::Vec& min, qglviewer::Vec& max)
 
   min = qglviewer::Vec(xmin, ymin, zmin);
   max= qglviewer::Vec(xmax, ymax, zmax);
-qglviewer::Vec amin(axmin, aymin, azmin),
-    amax(axmax, aymax, azmax);
-  qglviewer::Vec bbox_center((xmin+xmax)/2, (ymin+ymax)/2, (zmin+zmax)/2),
-  abbox_center((axmin+axmax)/2, (aymin+aymax)/2, (azmin+azmax)/2);
+
+  qglviewer::Vec abbox_center((axmin+axmax)/2, (aymin+aymax)/2, (azmin+azmax)/2),
+      bbox_center((xmin+xmax)/2, (ymin+ymax)/2, (zmin+zmax)/2);
 
   qglviewer::Vec offset(0,0,0);
 
-  double l_dist = (std::max)((std::abs)(abbox_center.x - viewer->offset().x),
-                             (std::max)((std::abs)(abbox_center.y - viewer->offset().y),
-                                        (std::abs)(abbox_center.z - viewer->offset().z)));
+  double l_dist = (std::max)((std::abs)(bbox_center.x - viewer->offset().x),
+                             (std::max)((std::abs)(bbox_center.y - viewer->offset().y),
+                                        (std::abs)(bbox_center.z - viewer->offset().z)));
   if((std::log2)(l_dist) > 13.0 )
     for(int i=0; i<3; ++i)
     {
-      offset[i] = -abbox_center[i];
+      offset[i] = -bbox_center[i];
 
     }
   if(offset != viewer->offset())
@@ -930,7 +929,7 @@ CGAL::Three::Polyhedron_demo_io_plugin_interface* MainWindow::findLoader(const Q
                               .arg(loader_name).toStdString()) ;
 }
 
-bool MainWindow::file_matches_filter(const QString& filters,
+bool MainWindow::file_matches_filter(const QStringList& filters,
                                      const QString& filename )
 {
   QFileInfo fileinfo(filename);
@@ -939,8 +938,7 @@ bool MainWindow::file_matches_filter(const QString& filters,
   //match all filters between ()
   QRegExp all_filters_rx("\\((.*)\\)");
 
-  QStringList split_filters = filters.split(";;");
-  Q_FOREACH(const QString& filter, split_filters) {
+  Q_FOREACH(const QString& filter, filters) {
     //extract filters
     if ( all_filters_rx.indexIn(filter)!=-1 ){
       Q_FOREACH(const QString& pattern,all_filters_rx.cap(1).split(' ')){
@@ -1371,7 +1369,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 {
     for(int i=0; i<plugins.size(); i++)
     {
-      plugins[i].first->closure();
+      plugins[i].first->shutdown();
     }
   writeSettings();
   event->accept();
@@ -1442,7 +1440,7 @@ void MainWindow::on_actionLoad_triggered()
   FilterPluginMap filterPluginMap;
 
   Q_FOREACH(CGAL::Three::Polyhedron_demo_io_plugin_interface* plugin, io_plugins) {
-    QStringList split_filters = plugin->loadNameFilters().split(";;");
+    QStringList split_filters = plugin->loadNameFilters();
     Q_FOREACH(const QString& filter, split_filters) {
       FilterPluginMap::iterator it = filterPluginMap.find(filter);
       if(it != filterPluginMap.end()) {
@@ -1517,14 +1515,14 @@ void MainWindow::on_actionSaveAs_triggered()
   Q_FOREACH(CGAL::Three::Polyhedron_demo_io_plugin_interface* plugin, io_plugins) {
     if(plugin->canSave(item)) {
       canSavePlugins << plugin;
-      filters += plugin->saveNameFilters();
+      filters.append(plugin->saveNameFilters());
     }
   }
   QString ext;
   if(!filters.isEmpty())
   {
     QRegExp extensions("\\(\\*\\..+\\)");
-    extensions.indexIn(filters.first().split(";;").first());
+    extensions.indexIn(filters.first());
     ext = extensions.cap();
     filters << tr("All files (*)");
   }
@@ -1611,17 +1609,6 @@ void MainWindow::on_actionShowHide_triggered()
   }
 }
 
-void MainWindow::on_actionSetPolyhedronA_triggered()
-{
-  int i = getSelectedSceneItemIndex();
-  scene->setItemA(i);
-}
-
-void MainWindow::on_actionSetPolyhedronB_triggered()
-{
-  int i = getSelectedSceneItemIndex();
-  scene->setItemB(i);
-}
 void MainWindow::on_actionPreferences_triggered()
 {
   QDialog dialog(this);
@@ -1760,6 +1747,8 @@ void MainWindow::setAddKeyFrameKeyboardModifiers(::Qt::KeyboardModifiers m)
 
 void MainWindow::on_actionRecenterScene_triggered()
 {
+  scene->computeBbox();
+  scene->computeVisibleBbox();
   qglviewer::Vec min, max;
   computeViewerBBox(min, max);
   Q_FOREACH(QGLViewer* v, QGLViewer::QGLViewerPool())
@@ -1819,7 +1808,7 @@ void MainWindow::makeNewGroup()
 {
         Scene_group_item * group =
             new Scene_group_item(QString("New group"), scene);
-    scene->addItem(group, false);
+    scene->addItem(group);
 }
 
 void MainWindow::on_upButton_pressed()
@@ -1970,18 +1959,15 @@ void MainWindow::on_actionMaxTextItemsDisplayed_triggered()
 void MainWindow::resetHeader()
 {
   sceneView->header()->setStretchLastSection(false);
-  scene->invisibleRootItem()->setColumnCount(6);
+  scene->invisibleRootItem()->setColumnCount(5);
   sceneView->header()->resizeSection(Scene::LockColumn,
                                      sceneView->header()->fontMetrics().width(QString("_State_")));
   sceneView->header()->setSectionResizeMode(Scene::NameColumn, QHeaderView::Stretch);
   sceneView->header()->setSectionResizeMode(Scene::ColorColumn, QHeaderView::Fixed);
   sceneView->header()->setSectionResizeMode(Scene::RenderingModeColumn, QHeaderView::ResizeToContents);
-  sceneView->header()->setSectionResizeMode(Scene::ABColumn, QHeaderView::Fixed);
   sceneView->header()->setSectionResizeMode(Scene::VisibleColumn, QHeaderView::Fixed);
   sceneView->header()->resizeSection(Scene::ColorColumn, sceneView->header()->fontMetrics().width("_#_"));
   sceneView->resizeColumnToContents(Scene::RenderingModeColumn);
-  sceneView->header()->resizeSection(Scene::ABColumn,
-                                     sceneView->header()->fontMetrics().width(QString("_AB_")));
   sceneView->header()->resizeSection(Scene::VisibleColumn,
                                      sceneView->header()->fontMetrics().width(QString("_View_")));
 }
@@ -2107,7 +2093,7 @@ void ReloadingController::handleResults(CT::Scene_item* item)
   if(property_item)
     property_item->copyProperties(original);
   original->doneReading();
-  scene->replaceItem(scene->item_id(original), item, true);
+  scene->replaceItem(scene->itemId(original), item);
   original->deleteLater();
   finish(true);
 }
@@ -2151,8 +2137,7 @@ void LoadingController::handleResults(CT::Scene_item* item)
      || group->getChildrenIds().size() == 0)
     item->setColor(colors_[counter-1]);
 
-  scene->addItem(item,
-                 counter == input.size());
+  scene->addItem(item);
 
   if(group
      && group->getChildrenIds().size() > 0)
@@ -2161,7 +2146,7 @@ void LoadingController::handleResults(CT::Scene_item* item)
   }
   if(counter == input.size())
   {
-    mw->selectSceneItem(scene->item_id(item));
+    mw->selectSceneItem(scene->itemId(item));
     finished();
   }
 }
@@ -2364,11 +2349,14 @@ void MainWindow::on_actionAdd_Viewer_triggered()
 
 void MainWindow::recenterViewer()
 {
+  scene->computeBbox();
+  scene->computeVisibleBbox();
   qglviewer::Vec min, max;
   computeViewerBBox(min, max);
   Viewer* target = qobject_cast<Viewer*>(childAt(cursor().pos()));
   if(target)
   {
+    scene->computeBbox();
     updateViewerBbox(target, true, min, max);
     target->camera()->interpolateToFitScene();
   }

@@ -282,7 +282,7 @@ private Q_SLOTS:
     }
     perform();
   }
-  void closure()
+  void shutdown()
   {
     dock_widget->hide();
   }

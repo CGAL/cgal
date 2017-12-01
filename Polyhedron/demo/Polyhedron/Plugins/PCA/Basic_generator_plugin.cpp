@@ -142,7 +142,7 @@ public Q_SLOTS:
   void on_actionPolyline_triggered();
   void on_generate_clicked();
   void on_tab_changed();
-  void closure(){ dock_widget->hide(); }
+  void shutdown(){ dock_widget->hide(); }
 private:
   QList<QAction*> _actions;
   GeneratorWidget* dock_widget;

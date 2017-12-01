@@ -236,7 +236,7 @@ public:
 
 
   }
-  virtual void closure()
+  virtual void shutdown()
   {
     dock_widget->hide();
   }
@@ -555,7 +555,7 @@ public Q_SLOTS:
     else
     {
       if(edit_box)
-        scene->erase(scene->item_id(edit_box));
+        scene->erase(scene->itemId(edit_box));
       edit_box = NULL;
       add_box->setEnabled(false);
     }

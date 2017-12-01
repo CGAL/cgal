@@ -217,7 +217,7 @@ public:
               SLOT(update_plugin(int)));
     }
   }
-  virtual void closure()
+  virtual void shutdown()
   {
     dock_widget->hide();
     close_classification();

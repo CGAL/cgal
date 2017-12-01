@@ -131,7 +131,7 @@ public :
   QList<QAction*> actions() const {
     return QList<QAction*>() << actionClipPolyhedra;
   }
-  void closure() {
+  void shutdown() {
     dock_widget->hide();
   }
   template<typename Mesh, typename Item>

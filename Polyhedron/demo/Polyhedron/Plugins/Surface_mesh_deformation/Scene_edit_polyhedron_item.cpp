@@ -1874,7 +1874,7 @@ void Scene_edit_polyhedron_item::ShowAsSphere(bool b)
       d->spheres->setName("ROI spheres");
       d->spheres->setRenderingMode(Gouraud);
       connect(d->spheres, SIGNAL(destroyed()), this, SLOT(reset_spheres()));
-      scene->setSelectedItem(scene->item_id(this));
+      scene->setSelectedItem(scene->itemId(this));
       scene->addItem(d->spheres);
       scene->changeGroup(d->spheres, this);
       lockChild(d->spheres);
@@ -1886,7 +1886,7 @@ void Scene_edit_polyhedron_item::ShowAsSphere(bool b)
       d->spheres_ctrl->setName("Control spheres");
       d->spheres_ctrl->setRenderingMode(Gouraud);
       connect(d->spheres_ctrl, &QObject::destroyed, this, Reset_spheres_ctrl(d) );
-      scene->setSelectedItem(scene->item_id(this));
+      scene->setSelectedItem(scene->itemId(this));
       scene->addItem(d->spheres_ctrl);
       scene->changeGroup(d->spheres_ctrl, this);
       lockChild(d->spheres_ctrl);
@@ -1899,13 +1899,13 @@ void Scene_edit_polyhedron_item::ShowAsSphere(bool b)
     {
       unlockChild(d->spheres);
       removeChild(d->spheres);
-      scene->erase(scene->item_id(d->spheres));
+      scene->erase(scene->itemId(d->spheres));
     }
     if(d->spheres_ctrl!=0)
     {
       unlockChild(d->spheres_ctrl);
       removeChild(d->spheres_ctrl);
-      scene->erase(scene->item_id(d->spheres_ctrl));
+      scene->erase(scene->itemId(d->spheres_ctrl));
     }
   }
 }

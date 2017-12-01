@@ -62,7 +62,7 @@ public:
   // Function for displaying meta-data of the item
   virtual QString toolTip() const Q_DECL_OVERRIDE;
 
-  virtual void invalidate() Q_DECL_OVERRIDE;
+  virtual void invalidate(Gl_data_names) Q_DECL_OVERRIDE;
 
   // Indicate if rendering mode is supported
   virtual bool supportsRenderingMode(RenderingMode m) const Q_DECL_OVERRIDE;

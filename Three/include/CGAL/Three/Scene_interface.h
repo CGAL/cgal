@@ -75,27 +75,26 @@ public:
   //! An item's index is its position in the Geometric Objects list.
   typedef int Item_id;
   virtual ~Scene_interface() {};
-  //!Adds `item` to the Geometric Objects list.
+  //! Adds `item` to the Geometric Objects list.
+  //! The scene then takes ownership of `item`.
   //! If `update_bbox` is `true`, the whole bbox of the scene is re-computed,
   //! along with the global offset.
   //!@returns the index of the new item.
-  virtual Item_id addItem(CGAL::Three::Scene_item* item, bool update_bbox = true) = 0;
+  virtual Item_id addItem(CGAL::Three::Scene_item* item) = 0;
   //! \brief Replaces an item by a new one in the scene.
   //! The item which id is `id` is replaced by `item`.
-  //! The first one is deleted and gives its index to the second one.
-  //! If emit_item_about_to_be_destroyed is true, emits
-  //! an itemAboutToBeDestroyed signal.
+  //! The first one is destroyed and gives its index to the second one.
   //!@returns a pointer to the old item.
-  virtual Scene_item* replaceItem(Item_id id, CGAL::Three::Scene_item* item, bool emit_item_about_to_be_destroyed = false) = 0;
+  virtual Scene_item* replaceItem(Item_id id, CGAL::Three::Scene_item* item) = 0;
   //!Moves item to the targeted group.
   virtual void changeGroup(CGAL::Three::Scene_item* item, CGAL::Three::Scene_group_item* target_group) = 0;
 
-  /*! Erases an item in the list.
+  /*! Erases an item in the list and destroy it.
    * @returns the index of the item just before the one that is erased,
    * or just after.
    * @returns -1 if the list is empty.*/
   virtual Item_id erase(Item_id) = 0;
-  /*! Deletes the items with the target indices.
+  /*! Erase the items with the target indices and destroy them.
    * @returns the index of the polyhedron just before the
    * one that is erased, or just after. Returns -1 if
    * the list is empty.
@@ -116,7 +115,7 @@ public:
   virtual CGAL::Three::Scene_item* item(Item_id id) const = 0;
   //!\brief The id of `item`
   //! @returns the id of the specified item.
-  virtual Item_id item_id(CGAL::Three::Scene_item* item) const = 0;
+  virtual Item_id itemId(CGAL::Three::Scene_item* item) const = 0;
   //!\brief The currently selected item's index.
   //!@returns the currently selected item's index.
   //!@returns -1 if none or several items are selected
@@ -124,43 +123,41 @@ public:
   //!The id of the currently selected item.
   //!@returns the list of currently selected items indices.
   virtual QList<Item_id> selectionIndices() const = 0;
-  //!Item_A is designated with the column A/B in the Geometric Objetcts widget.
-  //!@returns the index of the Item_A
-  virtual Item_id selectionAindex() const = 0;
-  //!Item_B is designated with the column A/B in the Geometric Objetcts widget.
-  //!@returns the index of the Item_B
-  virtual Item_id selectionBindex() const = 0;
 
   //!\brief The scene's Bbox
-  //!\param all detemines if the items that are not visible
-  //! should be taken into account in the resulting Bbox.
-  //! `true` means they should.
   //!@returns the scene's bounding box
   //! @see Scene_interface::Bbox
-  virtual Bbox bbox(bool all = false) const = 0;
+  virtual Bbox bbox() const = 0;
+  //!\brief The Bbox of the visible items of the Bbox.
+  //!@returns the scene's bounding box, computed only for currently visible items.
+  //! @see Scene_interface::Bbox
+  virtual Bbox visibleBbox() const = 0;
   //!The length of the diagonal of the scene's Bbox
   //!@returns the length of the bounding box's diagonal.
-  virtual double len_diagonal() const = 0;
+  virtual double bboxDiagonalLength() const = 0;
 
 public:
   //! Updates the information about the `i`th item in the
   //! Geometric Objects list and redraws the scene.
   //!
-  //! This is called for example when an item's color is changed,
-  //! to update the color quad.
+  //! This should be called when the tooltip, graphical Tooltip,
+  //! visibility, name or color of an existing item is changed.
   virtual void itemChanged(Item_id i) = 0;
   //! Updates the information about `item` in the
   //! Geometric Objects list and redraws the scene.
   //!
-  //! This is called for example when an item's color is changed,
-  //! to update the color quad.
+  //! This should be called when the tooltip, graphical Tooltip,
+  //! visibility, name or color of an existing item is changed.
   virtual void itemChanged(CGAL::Three::Scene_item* item) = 0;
-  //! Re computes the scene Bbox without recentering it. This allows to keep an
+  //! Called when the visibility of an item has changed to re compute
+  //! the scene Bbox without recentering it. This allows to keep an
   //! adapted frustum without moving the camera.
   virtual void itemVisibilityChanged(CGAL::Three::Scene_item*) = 0;
   //! Clears the current selection then sets the selected item to the target index.
   //! Used to update the selection in the Geometric Objects view.
-  virtual void setSelectedItem(Item_id) = 0;  
+  virtual void setSelectedItem(Item_id) = 0;
+  //! Sets the target list of indices as the selected indices and returns it.
+  virtual QList<int> setSelectedItemsList(QList<int> l ) = 0;
 }; // end interface Scene_interface
 }
 }

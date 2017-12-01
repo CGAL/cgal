@@ -10,7 +10,7 @@
 #include "Scene_surface_mesh_item.h"
 
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
-#include "Messages_interface.h"
+#include <CGAL/Three/Three.h>
 using namespace CGAL::Three;
 class Polyhedron_demo_orient_soup_plugin : 
   public QObject,
@@ -21,17 +21,15 @@ class Polyhedron_demo_orient_soup_plugin :
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 public:
-  void init(QMainWindow* mainWindow,
-            CGAL::Three::Scene_interface* scene_interface,
-            Messages_interface* m);
+  void init();
   bool applicable(QAction* action) const {
-    Q_FOREACH(CGAL::Three::Scene_interface::Item_id index, scene->selectionIndices()) {
-      if(qobject_cast<Scene_polygon_soup_item*>(scene->item(index)))
+    Q_FOREACH(CGAL::Three::Scene_interface::Item_id index, Three::scene()->selectionIndices()) {
+      if(qobject_cast<Scene_polygon_soup_item*>(Three::scene()->item(index)))
         return true;
       else
         if (action==actionShuffle &&
-            (qobject_cast<Scene_polyhedron_item*>(scene->item(index))
-            ||qobject_cast<Scene_surface_mesh_item*>(scene->item(index)))
+            (qobject_cast<Scene_polyhedron_item*>(Three::scene()->item(index))
+            ||qobject_cast<Scene_surface_mesh_item*>(Three::scene()->item(index)))
             )
           return true;
     }
@@ -50,9 +48,6 @@ private:
   template<class Item>
   void apply_shuffle(Item* item,
                      const CGAL::Three::Scene_interface::Item_id& index);
-  CGAL::Three::Scene_interface* scene;
-  Messages_interface* messages;
-  QMainWindow* mw;
   QAction* actionOrientPoly;
   QAction* actionOrientSM;
   QAction* actionShuffle;
@@ -60,31 +55,26 @@ private:
 
 }; // end Polyhedron_demo_orient_soup_plugin
 
-void Polyhedron_demo_orient_soup_plugin::init(QMainWindow* mainWindow,
-                                              CGAL::Three::Scene_interface* scene_interface,
-                                              Messages_interface* m)
+void Polyhedron_demo_orient_soup_plugin::init()
 {
-  scene = scene_interface;
-  mw = mainWindow;
-  messages = m;
-  actionOrientPoly = new QAction(tr("&Orient Polygon Soup (as a polyhedron)"), mainWindow);
+  actionOrientPoly = new QAction(tr("&Orient Polygon Soup (as a polyhedron)"), Three::mainWindow());
   actionOrientPoly->setObjectName("actionOrientPoly");
   actionOrientPoly->setProperty("subMenuName", "Polygon Mesh Processing");
   connect(actionOrientPoly, SIGNAL(triggered()),
           this, SLOT(orientPoly()));
-  actionOrientSM = new QAction(tr("&Orient Polygon Soup (as a surface_mesh)"), mainWindow);
+  actionOrientSM = new QAction(tr("&Orient Polygon Soup (as a surface_mesh)"), Three::mainWindow());
   actionOrientSM->setObjectName("actionOrientSM");
   actionOrientSM->setProperty("subMenuName", "Polygon Mesh Processing");
   connect(actionOrientSM, SIGNAL(triggered()),
           this, SLOT(orientSM()));
 
-  actionShuffle = new QAction(tr("&Shuffle Polygon Soup"), mainWindow);
+  actionShuffle = new QAction(tr("&Shuffle Polygon Soup"), Three::mainWindow());
   actionShuffle->setProperty("subMenuName", "Polygon Mesh Processing");
   connect(actionShuffle, SIGNAL(triggered()),
           this, SLOT(shuffle()));
 
   actionDisplayNonManifoldEdges = new QAction(tr("Display Non Manifold Edges"),
-                                              mainWindow);
+                                              Three::mainWindow());
   actionDisplayNonManifoldEdges->setProperty("subMenuName", "View");
   connect(actionDisplayNonManifoldEdges, SIGNAL(triggered()),
           this, SLOT(displayNonManifoldEdges()));
@@ -128,15 +118,15 @@ void set_fcolors(SMesh* smesh, std::vector<CGAL::Color> colors)
 
 void Polyhedron_demo_orient_soup_plugin::orientPoly()
 {
-  Q_FOREACH(CGAL::Three::Scene_interface::Item_id index, scene->selectionIndices())
+  Q_FOREACH(CGAL::Three::Scene_interface::Item_id index, Three::scene()->selectionIndices())
   {
     Scene_polygon_soup_item* item =
-      qobject_cast<Scene_polygon_soup_item*>(scene->item(index));
+      qobject_cast<Scene_polygon_soup_item*>(Three::scene()->item(index));
 
     if(item)
     {
       if(!item->orient()) {
-         QMessageBox::information(mw, tr("Not orientable without self-intersections"),
+         QMessageBox::information(Three::mainWindow(), tr("Not orientable without self-intersections"),
                                       tr("The polygon soup \"%1\" is not directly orientable."
                                          " Some vertices have been duplicated and some self-intersections"
                                          " have been created.")
@@ -150,34 +140,34 @@ void Polyhedron_demo_orient_soup_plugin::orientPoly()
           poly_item->setColor(item->color());
           poly_item->setRenderingMode(item->renderingMode());
           poly_item->setVisible(item->visible());
-          poly_item->invalidateOpenGLBuffers();
+          poly_item->invalidate(Scene_item::ALL);
           poly_item->setProperty("source filename", item->property("source filename"));
           poly_item->setProperty("loader_name", item->property("loader_name"));
-          scene->replaceItem(index, poly_item);
+          Three::scene()->replaceItem(index, poly_item);
           item->deleteLater();
         } else {
-          item->invalidateOpenGLBuffers();
-          scene->itemChanged(item);
+          item->invalidate(Scene_item::ALL);
+          Three::scene()->itemChanged(item);
         }
     }
     else{
-      messages->warning(tr("This function is only applicable on polygon soups."));
+      Three::messages()->warning(tr("This function is only applicable on polygon soups."));
     }
   }
 }
 
 void Polyhedron_demo_orient_soup_plugin::orientSM()
 {
-  Q_FOREACH(CGAL::Three::Scene_interface::Item_id index, scene->selectionIndices())
+  Q_FOREACH(CGAL::Three::Scene_interface::Item_id index, Three::scene()->selectionIndices())
   {
     Scene_polygon_soup_item* item =
-      qobject_cast<Scene_polygon_soup_item*>(scene->item(index));
+      qobject_cast<Scene_polygon_soup_item*>(Three::scene()->item(index));
 
     if(item)
     {
       //     qDebug()  << tr("I have the item %1\n").arg(item->name());
       if(!item->orient()) {
-         QMessageBox::information(mw, tr("Not orientable without self-intersections"),
+         QMessageBox::information(Three::mainWindow(), tr("Not orientable without self-intersections"),
                                       tr("The polygon soup \"%1\" is not directly orientable."
                                          " Some vertices have been duplicated and some self-intersections"
                                          " have been created.")
@@ -196,26 +186,26 @@ void Polyhedron_demo_orient_soup_plugin::orientSM()
           sm_item->setVisible(item->visible());
           sm_item->setProperty("source filename", item->property("source filename"));
           sm_item->setProperty("loader_name", item->property("loader_name"));
-          scene->replaceItem(index, sm_item);
+          Three::scene()->replaceItem(index, sm_item);
           item->deleteLater();
         } else {
-          item->invalidateOpenGLBuffers();
-          scene->itemChanged(item);
+          item->invalidate(Scene_item::ALL);
+          Three::scene()->itemChanged(item);
         }
       QApplication::restoreOverrideCursor();
     }
     else{
-      messages->warning(tr("This function is only applicable on polygon soups."));
+      Three::messages()->warning(tr("This function is only applicable on polygon soups."));
     }
   }
 }
 
 void Polyhedron_demo_orient_soup_plugin::shuffle()
 {
-  BOOST_FOREACH(CGAL::Three::Scene_interface::Item_id index, scene->selectionIndices())
+  BOOST_FOREACH(CGAL::Three::Scene_interface::Item_id index, Three::scene()->selectionIndices())
   {
     Scene_polygon_soup_item* soup_item =
-        qobject_cast<Scene_polygon_soup_item*>(scene->item(index));
+        qobject_cast<Scene_polygon_soup_item*>(Three::scene()->item(index));
 
     if(soup_item) {
       QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -225,13 +215,13 @@ void Polyhedron_demo_orient_soup_plugin::shuffle()
     }
 
     Scene_polyhedron_item* poly_item =
-        qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+        qobject_cast<Scene_polyhedron_item*>(Three::scene()->item(index));
     if(poly_item) {
       apply_shuffle(poly_item, index);
       continue;
     }
     Scene_surface_mesh_item* sm_item =
-        qobject_cast<Scene_surface_mesh_item*>(scene->item(index));
+        qobject_cast<Scene_surface_mesh_item*>(Three::scene()->item(index));
     if(sm_item) {
       apply_shuffle(sm_item, index);
     }
@@ -251,23 +241,23 @@ void Polyhedron_demo_orient_soup_plugin::apply_shuffle( Item* root_item,
   item->load(root_item);
   item->shuffle_orientations();
   item->setColor(root_item->color());
-  scene->replaceItem(index, item);
+  Three::scene()->replaceItem(index, item);
   delete root_item;
   QApplication::restoreOverrideCursor();
 }
 
 void Polyhedron_demo_orient_soup_plugin::displayNonManifoldEdges()
 {
-  const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
+  const CGAL::Three::Scene_interface::Item_id index = Three::scene()->mainSelectionIndex();
   
   Scene_polygon_soup_item* item =
-    qobject_cast<Scene_polygon_soup_item*>(scene->item(index));
+    qobject_cast<Scene_polygon_soup_item*>(Three::scene()->item(index));
 
   if(item)
   {
     QApplication::setOverrideCursor(Qt::WaitCursor);
     item->setDisplayNonManifoldEdges(!item->displayNonManifoldEdges());
-    scene->itemChanged(item);
+    Three::scene()->itemChanged(item);
     QApplication::restoreOverrideCursor();
   }
 }

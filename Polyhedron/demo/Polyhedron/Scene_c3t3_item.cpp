@@ -1602,7 +1602,7 @@ void Scene_c3t3_item::show_spheres(bool b)
     else if (!b && d->spheres!=NULL)
     {
       unlockChild(d->spheres);
-      scene->erase(scene->item_id(d->spheres));
+      scene->erase(scene->itemId(d->spheres));
     }
     Q_EMIT redraw();
   }
@@ -1630,7 +1630,7 @@ void Scene_c3t3_item::show_intersection(bool b)
   else if (!b && d->intersection!=NULL)
   {
     unlockChild(d->intersection);
-    scene->erase(scene->item_id(d->intersection));
+    scene->erase(scene->itemId(d->intersection));
   }
   Q_EMIT redraw();
 

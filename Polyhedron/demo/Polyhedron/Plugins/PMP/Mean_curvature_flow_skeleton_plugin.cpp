@@ -161,7 +161,7 @@ public:
             this, SLOT(on_actionItemAboutToBeDestroyed(CGAL::Three::Scene_item*)));
   }
 
-  virtual void closure()
+  virtual void shutdown()
   {
     dockWidget->hide();
   }
@@ -339,7 +339,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionMCFSkeleton_t
 {
   dockWidget->show();
   dockWidget->raise();
-  double diag = scene->len_diagonal();
+  double diag = scene->bboxDiagonalLength();
   init_ui(diag);
   getMCFItem();
 }
@@ -352,7 +352,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_checkbox_toggled(bo
 
 void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionUpdateBBox(bool)
 {
-  double diag = scene->len_diagonal();
+  double diag = scene->bboxDiagonalLength();
   ui->min_edge_length->setValue(0.002 * diag);
 }
 
@@ -437,7 +437,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
   Scene_item* parent = scene->item(item->InputMeshItemIndex);
   if(parent)
     parent->setVisible(false);
-  scene->setSelectedItem(scene->item_id(item));
+  scene->setSelectedItem(scene->itemId(item));
 
   QApplication::restoreOverrideCursor();
 }
@@ -505,7 +505,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionContract()
 
   update_meso_skeleton(item);
   QApplication::restoreOverrideCursor();
-  scene->setSelectedItem(scene->item_id(item));
+  scene->setSelectedItem(scene->itemId(item));
 }
 
 void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionCollapse()
@@ -531,7 +531,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionCollapse()
 
   update_meso_skeleton(item);
   QApplication::restoreOverrideCursor();
-  scene->setSelectedItem(scene->item_id(item));
+  scene->setSelectedItem(scene->itemId(item));
 }
 
 void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSplit()
@@ -557,7 +557,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSplit()
 
   update_meso_skeleton(item);
   QApplication::restoreOverrideCursor();
-  scene->setSelectedItem(scene->item_id(item));
+  scene->setSelectedItem(scene->itemId(item));
 }
 
 void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionDegeneracy()
@@ -607,7 +607,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionDegeneracy()
   update_meso_skeleton(item);
   scene->item(item->fixedPointsItemIndex)->invalidateOpenGLBuffers();
   scene->itemChanged(item->fixedPointsItemIndex);
-  scene->setSelectedItem(scene->item_id(item));
+  scene->setSelectedItem(scene->itemId(item));
   QApplication::restoreOverrideCursor();
 }
 
@@ -628,7 +628,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionRun()
   Scene_face_graph_item* contracted_item = NULL;
 if(item->contractedItemIndex != -1)
     contracted_item = qobject_cast<Scene_face_graph_item*>(scene->item(item->contractedItemIndex));
-scene->setSelectedItem(scene->item_id(item));
+scene->setSelectedItem(scene->itemId(item));
 //todo : create a new contracted item
 if(!contracted_item)
 {
@@ -730,7 +730,7 @@ if(!contracted_item)
 #endif
 
   update_meso_skeleton(item);
-  scene->setSelectedItem(scene->item_id(item));
+  scene->setSelectedItem(scene->itemId(item));
   QApplication::restoreOverrideCursor();
 }
 
@@ -790,7 +790,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
     scene->item(item->InputMeshItemIndex)->setPointsMode();
     scene->itemChanged(item->InputMeshItemIndex);
   }
-  scene->setSelectedItem(scene->item_id(item));
+  scene->setSelectedItem(scene->itemId(item));
   // update scene
   QApplication::restoreOverrideCursor();
 }
@@ -842,7 +842,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConverge()
   scene->item(item->fixedPointsItemIndex)->invalidateOpenGLBuffers();
   scene->itemChanged(item->fixedPointsItemIndex);
   update_meso_skeleton(item);
-  scene->setSelectedItem(scene->item_id(item));
+  scene->setSelectedItem(scene->itemId(item));
 
   QApplication::restoreOverrideCursor();
 }
@@ -895,7 +895,7 @@ Polyhedron_demo_mean_curvature_flow_skeleton_plugin::createContractedItem(Scene_
   item->contractedItemIndex = scene->addItem(contracted_item);
   scene->changeGroup(contracted_item, item);
   item->lockChild(contracted_item);
-  scene->setSelectedItem(scene->item_id(item));
+  scene->setSelectedItem(scene->itemId(item));
 
 }
 
@@ -926,8 +926,8 @@ Polyhedron_demo_mean_curvature_flow_skeleton_plugin::getMCFItem()
                                                QString("%1 (mcf)").arg(item->name()));
       connect(item, &Scene_face_graph_item::aboutToBeDestroyed,
               [mcf, this]{
-        if(scene->item_id(mcf) != -1){
-          scene->erase(scene->item_id(mcf));
+        if(scene->itemId(mcf) != -1){
+          scene->erase(scene->itemId(mcf));
       }});
       scene->setSelectedItem(scene->addItem(mcf));
       item->setVisible(false);

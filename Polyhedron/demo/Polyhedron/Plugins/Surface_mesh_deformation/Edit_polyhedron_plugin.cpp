@@ -42,7 +42,7 @@ public:
   }
 
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*);
-  virtual void closure()
+  virtual void shutdown()
   {
     dock_widget->hide();
   }
@@ -596,7 +596,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::updateSelectionItems(Scene_facegrap
       if(!ui_widget.RemeshingCheckBox->isChecked())
         sel_item->setVisible(true);
       else
-        scene->erase(scene->item_id(sel_item));
+        scene->erase(scene->itemId(sel_item));
     }
 
   }

@@ -46,7 +46,7 @@ public:
   void print_message(QString message) { messages->information(message);}
 
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface* m);
-  virtual void closure()
+  virtual void shutdown()
   {
     dock_widget->hide();
   }
@@ -343,7 +343,7 @@ void Polyhedron_demo_polyhedron_slicer_plugin::item_about_to_be_destroyed(CGAL::
 
 void Polyhedron_demo_polyhedron_slicer_plugin::dock_widget_closed() {
   CGAL_assertion(plane_item != NULL);
-  CGAL::Three::Scene_interface::Item_id id = scene->item_id(plane_item);
+  CGAL::Three::Scene_interface::Item_id id = scene->itemId(plane_item);
   plane_item = NULL;
   scene->erase(id);
 }

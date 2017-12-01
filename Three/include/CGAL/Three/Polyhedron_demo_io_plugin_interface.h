@@ -48,23 +48,23 @@ public:
    * by the plugin.
    * Example : to filter OFF files : return "OFF files (*.off)"
 */
-  virtual QString nameFilters() const = 0;
+  virtual QStringList nameFilters() const = 0;
   //!Returns only the filters used for saving. The default is `nameFilters()`.
   //! You must override this function to change its behavior.
-  virtual QString saveNameFilters() const {return nameFilters();}
+  virtual QStringList saveNameFilters() const {return nameFilters();}
   //!Returns only the filters used for loading. The default is `nameFilters()`.
   //! You must override this function to change its behavior.
   //! If multiple plugins have the same load filters, only once will be kept,
   //! so be careful not to use one that already exists.
-  virtual QString loadNameFilters() const {return nameFilters();}
+  virtual QStringList loadNameFilters() const {return nameFilters();}
 
-  //! Specifies if the io_plugin is able to load an item or not.
-  //! This must be overriden.
+  //! Specifies if the io_plugin is able to load files or not.
+
   virtual bool canLoad() const = 0;
 
   //! \brief Loads an item from a file.
   //!
-  //! //! This must be overriden.
+  //!
   //! \param fileinfo the path to the item file.
   //! \param scene the `Scene_interface` that will hold the item. Mostly used for group_items.
   //! \param mw the application `MainWindow`. Mostly used for getting the `is_polyhedron_mode` property.
@@ -76,7 +76,7 @@ public:
   virtual bool canSave(const Scene_item*) = 0;
   //!Saves the item in the file corresponding to the path
   //!contained in fileinfo. Returns false if error.
-  //! This must be overriden.
+
   virtual bool save(const Scene_item*, QFileInfo fileinfo) = 0;
 };
 }

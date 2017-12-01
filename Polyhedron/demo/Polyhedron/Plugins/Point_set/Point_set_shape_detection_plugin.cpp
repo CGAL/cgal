@@ -340,7 +340,7 @@ private:
                 poly_item->setRenderingMode (Flat);
                 
                 scene->addItem(poly_item);
-                if(scene->item_id(groups[0]) == -1)
+                if(scene->itemId(groups[0]) == -1)
                   scene->addItem(groups[0]);
                 scene->changeGroup(poly_item, groups[0]);
               }
@@ -351,7 +351,7 @@ private:
                 sm_item->setRenderingMode (Flat);
                 
                 scene->addItem(sm_item);
-                if(scene->item_id(groups[0]) == -1)
+                if(scene->itemId(groups[0]) == -1)
                   scene->addItem(groups[0]);
                 scene->changeGroup(sm_item, groups[0]);
               }
@@ -375,7 +375,7 @@ private:
         scene->addItem(point_item);
         if (dynamic_cast<CGAL::Shape_detection_3::Cylinder<Traits> *>(shape.get()))
         {
-          if(scene->item_id(groups[1]) == -1)
+          if(scene->itemId(groups[1]) == -1)
              scene->addItem(groups[1]);
           scene->changeGroup(point_item, groups[1]);
         }
@@ -387,25 +387,25 @@ private:
           for(Point_set::iterator it = point_item->point_set()->begin(); it != point_item->point_set()->end(); ++it)
             point_item->point_set()->normal(*it) = plane->plane_normal();
 
-          if(scene->item_id(groups[0]) == -1)
+          if(scene->itemId(groups[0]) == -1)
              scene->addItem(groups[0]);
           scene->changeGroup(point_item, groups[0]);
         }
         else if (dynamic_cast<CGAL::Shape_detection_3::Cone<Traits> *>(shape.get()))
         {
-          if(scene->item_id(groups[3]) == -1)
+          if(scene->itemId(groups[3]) == -1)
              scene->addItem(groups[3]);
           scene->changeGroup(point_item, groups[3]);
         }
         else if (dynamic_cast<CGAL::Shape_detection_3::Torus<Traits> *>(shape.get()))
         {
-          if(scene->item_id(groups[2]) == -1)
+          if(scene->itemId(groups[2]) == -1)
              scene->addItem(groups[2]);
           scene->changeGroup(point_item, groups[2]);
         }
         else if (dynamic_cast<CGAL::Shape_detection_3::Sphere<Traits> *>(shape.get()))
         {
-          if(scene->item_id(groups[4]) == -1)
+          if(scene->itemId(groups[4]) == -1)
              scene->addItem(groups[4]);
           scene->changeGroup(point_item, groups[4]);
         }

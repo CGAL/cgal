@@ -21,7 +21,10 @@ class SurfaceMeshIoPlugin :
 public:
 
    QString name() const { return "surface_mesh_io_plugin"; }
-   QString nameFilters() const { return "OFF files to Surface_mesh (*.off);;Wavefront Surface_mesh OBJ (*.obj)"; }
+   QStringList nameFilters() const {
+     return QStringList() << QString("OFF files to Surface_mesh (*.off)")
+                        << QString("Wavefront Surface_mesh OBJ (*.obj)");
+   }
    bool canLoad() const { return true; }
    CGAL::Three::Scene_item* load(QFileInfo fileinfo) {
      if(fileinfo.suffix().toLower() == "off")

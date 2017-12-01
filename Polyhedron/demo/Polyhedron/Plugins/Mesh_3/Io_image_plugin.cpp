@@ -265,7 +265,7 @@ public:
   QList<QAction*> actions() const {
     return QList<QAction*>() << planeSwitch;
   }
-  virtual void closure()
+  virtual void shutdown()
   {
       QDockWidget* controlDockWidget = mw->findChild<QDockWidget*>("volumePlanesControl");
       if(controlDockWidget)
@@ -745,7 +745,7 @@ private Q_SLOTS:
     //Scene* true_scene = dynamic_cast<Scene*>(scene);
     Scene_image_item* img = (Scene_image_item*)item->property("img").value<void*>();
     if(img)
-      scene->setSelectedItem(scene->item_id(img));
+      scene->setSelectedItem(scene->itemId(img));
   }
   //updates the msgBox
   void update_msgBox()
@@ -791,7 +791,7 @@ private Q_SLOTS:
       //try to re-connect to another group
       if(!group_map.isEmpty())
       {
-        int id = scene->item_id(group_map.keys().first());
+        int id = scene->itemId(group_map.keys().first());
         connect_controls(id);
       }
   }
@@ -814,15 +814,15 @@ private Q_SLOTS:
         Q_FOREACH(Scene_item* child, group->getChildren())
         {
           group->unlockChild(child);
-          deletion.append(scene->item_id(child));
+          deletion.append(scene->itemId(child));
         }
-        deletion.append(scene->item_id(group));
+        deletion.append(scene->itemId(group));
         scene->erase(deletion);
       }
     //try to re-connect to another group
     if(!group_map.isEmpty())
     {
-      int id = scene->item_id(group_map.keys().first());
+      int id = scene->itemId(group_map.keys().first());
       connect_controls(id);
     }
   }
@@ -848,7 +848,7 @@ private Q_SLOTS:
       Volume_plane_interface* x_plane = qobject_cast<Volume_plane_interface*>(c.x_item);
       if(x_slider)
         delete x_slider;
-      x_slider = new Plane_slider(x_plane->translationVector(), scene->item_id(x_plane), scene, x_plane->manipulatedFrame(),
+      x_slider = new Plane_slider(x_plane->translationVector(), scene->itemId(x_plane), scene, x_plane->manipulatedFrame(),
                                   Qt::Horizontal, x_control);
       x_slider->setRange(0, (x_plane->cDim() - 1) * 100);
       connect(x_slider, SIGNAL(realChange(int)), this, SLOT(setXNum(int)));
@@ -869,7 +869,7 @@ private Q_SLOTS:
       Volume_plane_interface* y_plane = qobject_cast<Volume_plane_interface*>(c.y_item);
       if(y_slider)
         delete y_slider;
-      y_slider = new Plane_slider(y_plane->translationVector(), scene->item_id(y_plane), scene, y_plane->manipulatedFrame(),
+      y_slider = new Plane_slider(y_plane->translationVector(), scene->itemId(y_plane), scene, y_plane->manipulatedFrame(),
                                   Qt::Horizontal, z_control);
       y_slider->setRange(0, (y_plane->cDim() - 1) * 100);
       connect(y_slider, SIGNAL(realChange(int)), this, SLOT(setYNum(int)));
@@ -889,7 +889,7 @@ private Q_SLOTS:
       Volume_plane_interface* z_plane = qobject_cast<Volume_plane_interface*>(c.z_item);
       if(z_slider)
         delete z_slider;
-      z_slider = new Plane_slider(z_plane->translationVector(), scene->item_id(z_plane), scene, z_plane->manipulatedFrame(),
+      z_slider = new Plane_slider(z_plane->translationVector(), scene->itemId(z_plane), scene, z_plane->manipulatedFrame(),
                                   Qt::Horizontal, z_control);
       z_slider->setRange(0, (z_plane->cDim() - 1) * 100);
       connect(z_slider, SIGNAL(realChange(int)), this, SLOT(setZNum(int)));

@@ -112,7 +112,7 @@ public:
     autoConnectActions();
   }
 
-  virtual void closure()
+  virtual void shutdown()
   {
     dock_widget->hide();
   }
@@ -161,7 +161,7 @@ void Polyhedron_demo_shortest_path_plugin::item_about_to_be_destroyed(CGAL::Thre
       {
         Scene_polyhedron_shortest_path_item* shortestPathItem = found->second;
         m_shortestPathsMap.erase(found);
-        scene->erase(scene->item_id(shortestPathItem));
+        scene->erase(scene->itemId(shortestPathItem));
       }
     }
 

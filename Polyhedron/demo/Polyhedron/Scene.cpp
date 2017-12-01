@@ -29,9 +29,7 @@
 
 Scene::Scene(QObject* parent)
     : QStandardItemModel(parent),
-      selected_item(-1),
-      item_A(-1),
-      item_B(-1)
+      selected_item(-1)
 {
 
     connect(this, SIGNAL(selectionRay(double, double, double,
@@ -44,7 +42,7 @@ Scene::Scene(QObject* parent)
 
 }
 Scene::Item_id
-Scene::addItem(CGAL::Three::Scene_item* item, bool update_bbox)
+Scene::addItem(CGAL::Three::Scene_item* item)
 {
     m_entries.push_back(item);
     Item_id id = m_entries.size() - 1;
@@ -56,13 +54,13 @@ Scene::addItem(CGAL::Three::Scene_item* item, bool update_bbox)
     connect(item, SIGNAL(redraw()),
             this, SLOT(callDraw()));
     QList<QStandardItem*> list;
-    for(int i=0; i<6; i++)
+    for(int i=0; i<5; i++)
     {
         list<<new QStandardItem();
         list.at(i)->setEditable(false);
     }
     invisibleRootItem()->appendRow(list);
-    for(int i=0; i<6; i++){
+    for(int i=0; i<5; i++){
         index_map[list.at(i)->index()] = m_entries.size() -1;
     }
     children.push_back(id);
@@ -71,21 +69,22 @@ Scene::addItem(CGAL::Three::Scene_item* item, bool update_bbox)
             qobject_cast<CGAL::Three::Scene_group_item*>(item);
     if(group)
         addGroup(group);
-    if(update_bbox
-       && item->isFinite()
+
+    if(item->isFinite()
        && !item->isEmpty()
-       && bbox() != last_bbox
+       && (last_visible_bbox + item->bbox()) != last_visible_bbox
        )
     {
+      last_bbox = last_bbox + item->bbox();
+      last_visible_bbox = last_visible_bbox + item->bbox();
       Q_EMIT updated_bbox(true);
-      last_bbox = bbox();
       Q_EMIT updated();
     }
     return id;
 }
 
 CGAL::Three::Scene_item*
-Scene::replaceItem(Scene::Item_id index, CGAL::Three::Scene_item* item, bool emit_item_about_to_be_destroyed)
+Scene::replaceItem(Scene::Item_id index, CGAL::Three::Scene_item* item)
 {
     if(index < 0 || index >= m_entries.size())
         return 0;
@@ -132,9 +131,7 @@ Scene::replaceItem(Scene::Item_id index, CGAL::Three::Scene_item* item, bool emi
       Q_EMIT updated_bbox(true);
     }
 
-    if(emit_item_about_to_be_destroyed) {
-      Q_EMIT itemAboutToBeDestroyed(item);
-    }
+    Q_EMIT itemAboutToBeDestroyed(item);
 
     Q_EMIT updated();
     group =
@@ -158,7 +155,7 @@ Scene::erase(Scene::Item_id index)
     return -1;
   if(qobject_cast<Scene_group_item*>(item))
   {
-    setSelectedItemsList(QList<Scene_interface::Item_id>()<<item_id(item));
+    setSelectedItemsList(QList<Scene_interface::Item_id>()<<itemId(item));
     return erase(selectionIndices());
   }
   if(item->parentGroup()
@@ -173,7 +170,7 @@ Scene::erase(Scene::Item_id index)
     item->parentGroup()->removeChild(item);
 
   //removes the item from all groups that contain it
-  Item_id removed_item = item_id(item);
+  Item_id removed_item = itemId(item);
   children.removeAll(removed_item);
   indexErased(removed_item);
   m_entries.removeAll(item);
@@ -214,7 +211,7 @@ Scene::erase(QList<int> indices)
       continue;
     if(item->parentGroup()
        && item->parentGroup()->isChildLocked(item))
-      if(!indices.contains(item_id(item->parentGroup())))
+      if(!indices.contains(itemId(item->parentGroup())))
         continue;
     if(!to_be_removed.contains(item))
       to_be_removed.push_back(item);
@@ -223,7 +220,7 @@ Scene::erase(QList<int> indices)
   Q_FOREACH(Scene_item* item, to_be_removed) {
     if(item->parentGroup())
       item->parentGroup()->removeChild(item);
-    Item_id removed_item = item_id(item);
+    Item_id removed_item = itemId(item);
     children.removeAll(removed_item);
     indexErased(removed_item);
     m_entries.removeAll(item);
@@ -261,7 +258,7 @@ void Scene::remove_item_from_groups(Scene_item* item)
     if(group)
     {
         group->removeChild(item);
-        children.push_back(item_id(item));
+        children.push_back(itemId(item));
     }
 }
 Scene::~Scene()
@@ -280,7 +277,7 @@ Scene::item(Item_id index) const
 }
 
 Scene::Item_id
-Scene::item_id(CGAL::Three::Scene_item* scene_item) const
+Scene::itemId(CGAL::Three::Scene_item* scene_item) const
 {
     return m_entries.indexOf(scene_item);
 }
@@ -841,17 +838,6 @@ Scene::data(const QModelIndex &index, int role) const
             return ::Qt::AlignCenter;
         }
         break;
-    case ABColumn:
-        if(role == ::Qt::DisplayRole) {
-            if(id == item_A)
-                return "A";
-            if(id == item_B)
-                return "B";
-        }
-        else if(role == ::Qt::TextAlignmentRole) {
-            return ::Qt::AlignLeft;
-        }
-        break;
     case VisibleColumn:
         if(role == ::Qt::DisplayRole || role == ::Qt::EditRole)
             return m_entries.value(id)->visible();
@@ -881,9 +867,6 @@ Scene::headerData ( int section, ::Qt::Orientation orientation, int role ) const
                 break;
             case RenderingModeColumn:
                 return tr("Mode");
-            case ABColumn:
-                return tr("A/B");
-                break;
             case VisibleColumn:
                 return tr("View");
                 break;
@@ -894,9 +877,6 @@ Scene::headerData ( int section, ::Qt::Orientation orientation, int role ) const
         else if(role == ::Qt::ToolTipRole) {
             if(section == RenderingModeColumn) {
                 return tr("Rendering mode (points/wireframe/flat/flat+edges/Gouraud)");
-            }
-            else if(section == ABColumn) {
-                return tr("Selection A/Selection B");
             }
         }
     }
@@ -1019,7 +999,7 @@ bool Scene::dropMimeData(const QMimeData * /*data*/,
           if(item->parentGroup())
           {
             item->parentGroup()->removeChild(item);
-            children.push_back(item_id(item));
+            children.push_back(itemId(item));
           }
         }
         redraw_model();
@@ -1100,25 +1080,17 @@ QList<int> Scene::selectionIndices() const {
     return selected_items_list;
 }
 
-int Scene::selectionAindex() const {
-    return item_A;
-}
-
-int Scene::selectionBindex() const {
-    return item_B;
-}
-
 QItemSelection Scene::createSelection(int i)
 {
 
     return QItemSelection(index_map.keys(i).at(0),
-                          index_map.keys(i).at(5));
+                          index_map.keys(i).at(4));
 }
 
 QItemSelection Scene::createSelectionAll()
 {
     return QItemSelection(index_map.keys(0).at(0),
-                          index_map.keys(m_entries.size() - 1).at(5));
+                          index_map.keys(m_entries.size() - 1).at(4));
 }
 
 void Scene::itemChanged()
@@ -1155,6 +1127,7 @@ void Scene::itemVisibilityChanged(CGAL::Three::Scene_item* item)
   if(item->isFinite()
      && !item->isEmpty())
   {
+    computeVisibleBbox();
     //does not recenter
     Q_EMIT updated_bbox(false);
   }
@@ -1216,27 +1189,6 @@ bool SceneDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
         }
         else if(event->type() == QEvent::MouseButtonDblClick) {
             return true; // block double-click
-        }
-        return false;
-        break;
-    case Scene::ABColumn:
-        if (event->type() == QEvent::MouseButtonPress) {
-            if(id == scene->item_B) {
-                scene->item_A = id;
-                scene->item_B = -1;
-            }
-            else if(id == scene->item_A) {
-                scene->item_B = id;
-                scene->item_A = -1;
-            }
-            else if(scene->item_A == -1) {
-                scene->item_A = id;
-            }
-            else {
-                scene->item_B = id;
-            }
-            scene->dataChanged(scene->createIndex(0, 0),
-                               scene->createIndex(scene->rowCount() - 1, 0));
         }
         return false;
         break;
@@ -1328,52 +1280,70 @@ void Scene::setSelectionRay(double orig_x,
                           dir_z);
 }
 
-void Scene::setItemA(int i)
+void Scene::computeBbox()
 {
-    item_A = i;
-    if(item_A == item_B)
-    {
-        item_B = -1;
+  if(m_entries.empty())
+  {
+    last_bbox = Bbox(0,0,0,0,0,0);
+    return;
+  }
+
+  bool bbox_initialized = false;
+  Bbox bbox = Bbox(0,0,0,0,0,0);
+  Q_FOREACH(CGAL::Three::Scene_item* item, m_entries)
+  {
+    if(item->isFinite() && !item->isEmpty() ) {
+      if(bbox_initialized) {
+
+        bbox = bbox + item->bbox();
+      }
+      else {
+        bbox = item->bbox();
+        bbox_initialized = true;
+
+      }
     }
-  Q_EMIT dataChanged(this->createIndex(0, ABColumn),
-                     this->createIndex(m_entries.size()-1, ABColumn));
+
+  }
+  last_bbox = bbox;
 }
 
-void Scene::setItemB(int i)
+void Scene::computeVisibleBbox()
 {
-    item_B = i;
-    if(item_A == item_B)
-    {
-        item_A = -1;
+  if(m_entries.empty())
+  {
+    last_visible_bbox = Bbox(0,0,0,0,0,0);
+    return;
+  }
+
+  bool bbox_initialized = false;
+  Bbox bbox = Bbox(0,0,0,0,0,0);
+  Q_FOREACH(CGAL::Three::Scene_item* item, m_entries)
+  {
+    if(item->isFinite() && !item->isEmpty() && item->visible()) {
+      if(bbox_initialized) {
+
+        bbox = bbox + item->bbox();
+      }
+      else {
+        bbox = item->bbox();
+        bbox_initialized = true;
+
+      }
     }
-  Q_EMIT updated();
-  Q_EMIT dataChanged(this->createIndex(0, ABColumn),
-                     this->createIndex(m_entries.size()-1, ABColumn));
+
+  }
+  last_visible_bbox = bbox;
 }
 
-Scene::Bbox Scene::bbox(bool all) const
+Scene::Bbox Scene::bbox() const
 {
-    if(m_entries.empty())
-        return Bbox(0,0,0,0,0,0);
+    return last_bbox;
+}
 
-    bool bbox_initialized = false;
-    Bbox bbox = Bbox(0,0,0,0,0,0);
-    Q_FOREACH(CGAL::Three::Scene_item* item, m_entries)
-    {
-        if(item->isFinite() && !item->isEmpty() && (all || item->visible())) {
-            if(bbox_initialized) {
-
-                bbox = bbox + item->bbox();
-            }
-            else {
-                bbox = item->bbox();
-                bbox_initialized = true;
-
-            }
-        }
-
-    }
-    return bbox;
+Scene::Bbox Scene::visibleBbox() const
+{
+    return last_visible_bbox;
 }
 
 QList<Scene_item*> Scene::item_entries() const
@@ -1401,11 +1371,11 @@ void Scene::changeGroup(Scene_item *item, CGAL::Three::Scene_group_item *target_
       if(item->parentGroup()->isChildLocked(item))
         return;
       item->parentGroup()->removeChild(item);
-      children.push_back(item_id(item));
+      children.push_back(itemId(item));
     }
     else
     {
-      children.removeAll(item_id(item));
+      children.removeAll(itemId(item));
     }
     //add the item to the target group
     target_group->addChild(item);
@@ -1512,14 +1482,14 @@ void Scene::organize_items(Scene_item* item, QStandardItem* root, int loop)
     if(item->hasGroup() <= loop)
     {
         QList<QStandardItem*> list;
-        for(int i=0; i<6; i++)
+        for(int i=0; i<5; i++)
         {
             list<<new QStandardItem();
             list.at(i)->setEditable(false);
 
         }
         root->appendRow(list);
-        for(int i=0; i<6; i++){
+        for(int i=0; i<5; i++){
             index_map[list.at(i)->index()] = m_entries.indexOf(item);
         }
         CGAL::Three::Scene_group_item* group =

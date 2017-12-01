@@ -131,7 +131,7 @@ public Q_SLOTS:
   //! Collapses a group.
   void setCollapsed(QModelIndex);
   //! checks if a file matches `filters`
-  bool file_matches_filter(const QString& filters, const QString& filename);
+  bool file_matches_filter(const QStringList &filters, const QString& filename);
   void reset_default_loaders();
   //!Prints a dialog containing statistics on the selected polyhedrons.
   void statisticsOnItem();
@@ -334,11 +334,6 @@ protected Q_SLOTS:
   void on_actionShowHide_triggered();
   //!Pops a dialog to change the max TextItems
   void on_actionMaxTextItemsDisplayed_triggered();
-  // Select A/B
-  //!Sets the selected item as item_A.
-  void on_actionSetPolyhedronA_triggered();
-  //!Sets the selected item as Item_B.
-  void on_actionSetPolyhedronB_triggered();
 
   //Preferences edition
   //!Opens the Preferences dialog.

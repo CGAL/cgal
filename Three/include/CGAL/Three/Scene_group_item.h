@@ -225,7 +225,7 @@ public :
         return;
       update_group_number(item,0);
       item->moveToGroup(0);
-      children.removeOne(scene->item_id(item));
+      children.removeOne(scene->itemId(item));
     }
     //!Removes a Scene_item from the list of children using its index.
     //!@see getChildren() @see addChild()

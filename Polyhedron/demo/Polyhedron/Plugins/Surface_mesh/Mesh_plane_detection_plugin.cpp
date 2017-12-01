@@ -61,7 +61,7 @@ class Polyhedron_demo_mesh_plane_detection_plugin :
 
     autoConnectActions();
   }
-  virtual void closure()
+  virtual void shutdown()
   {
   }
     

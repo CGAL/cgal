@@ -23,7 +23,7 @@ bool Scene_group_item::isFinite() const
 bool Scene_group_item::isEmpty() const {
   Q_FOREACH(Scene_interface::Item_id id, children)
     if(!getChild(id)->isEmpty()){
-      return true;
+      return false;
     }
   return true;
 }
@@ -56,7 +56,7 @@ void Scene_group_item::addChild(Scene_interface::Item_id new_id)
 
 void Scene_group_item::addChild(Scene_item* new_item)
 {  
-  addChild(scene->item_id(new_item));
+  addChild(scene->itemId(new_item));
 }
 
 void Scene_group_item::update_group_number(Scene_item * new_item, int n)
@@ -201,7 +201,7 @@ void Scene_group_item::drawPoints(CGAL::Three::Viewer_interface* )
 
 void Scene_group_item::lockChild(Scene_item *child)
 {
-  lockChild(scene->item_id(child));
+  lockChild(scene->itemId(child));
 }
 
 void Scene_group_item::lockChild(Scene_interface::Item_id id)
@@ -219,7 +219,7 @@ void Scene_group_item::unlockChild(Scene_interface::Item_id id)
 }
 void Scene_group_item::unlockChild(Scene_item *child)
 {
-  unlockChild(scene->item_id(child));
+  unlockChild(scene->itemId(child));
 }
 bool Scene_group_item::isChildLocked(Scene_interface::Item_id id)
 {
@@ -230,7 +230,7 @@ bool Scene_group_item::isChildLocked(Scene_interface::Item_id id)
  }
 bool Scene_group_item::isChildLocked(Scene_item *child)
 {
-  return isChildLocked(scene->item_id(child));
+  return isChildLocked(scene->itemId(child));
 }
 
 void Scene_group_item::setAlpha(int )

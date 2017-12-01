@@ -44,7 +44,7 @@ public:
   bool applicable(QAction*) const {
     return scene->numberOfEntries() > 0;
     }
-  void closure()
+  void shutdown()
    {
      dock_widget->hide();
    }

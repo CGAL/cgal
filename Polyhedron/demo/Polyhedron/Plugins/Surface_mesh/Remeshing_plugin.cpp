@@ -81,7 +81,7 @@ void Polyhedron_demo_remeshing_plugin::remesh()
             &dialog, SLOT(accept()));
     connect(ui.buttonBox, SIGNAL(rejected()),
             &dialog, SLOT(reject()));
-    double diag = scene->len_diagonal();
+    double diag = scene->bboxDiagonalLength();
 
     ui.sizing->setDecimals(4);
     ui.sizing->setRange(diag * 10e-6, // min

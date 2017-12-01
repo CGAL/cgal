@@ -54,13 +54,20 @@ public:
   //! @returns \c true if `action` can be called in the current state, \c false
   //! otherwise
   virtual bool applicable(QAction* action) const = 0;
-  //!Contains all the plugin's actions.
+  //!\brief Contains all the plugin's actions.
+  //!
+  //! It is possible to order your actions in submenus by giving them a Qt dynamic property like follows:
+  //!
+  //! yourAction->setProperty("subMenuName", "`name`");
+  //!
+  //! where `name` is the name of your submenu.If `name` is of the form `menu/submenu/../submenu`,
+  //! then it will create submenus in your submenu accordingly.
   virtual QList<QAction*> actions() const = 0;
   //!\brief Is called when the application is closed.
   //! Override this function if you need to perform a specific action
   //! when the application is closed, like hide the widgets if you don't want
   //! their visibility to be saved.
-  virtual void closure() {
+  virtual void shutdown() {
  }
 protected :
 };

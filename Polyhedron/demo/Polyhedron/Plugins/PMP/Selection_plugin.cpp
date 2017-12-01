@@ -148,7 +148,7 @@ public:
       connect(scene, SIGNAL(newItem(int)), this, SLOT(new_item_created(int)));
     } 
   }
-  virtual void closure()
+  virtual void shutdown()
   {
     dock_widget->hide();
   }
@@ -178,8 +178,8 @@ public Q_SLOTS:
   // not process selection events)
   void isCurrentlySelected(Scene_facegraph_item_k_ring_selection* item)
   {
-    if(scene->item_id(selection_item_map.find(item->poly_item)->second) == scene->mainSelectionIndex() ||
-       scene->item_id(item->poly_item)== scene->mainSelectionIndex() )
+    if(scene->itemId(selection_item_map.find(item->poly_item)->second) == scene->mainSelectionIndex() ||
+       scene->itemId(item->poly_item)== scene->mainSelectionIndex() )
       item->setCurrentlySelected(true);
     else
       item->setCurrentlySelected(false);
@@ -854,7 +854,7 @@ public Q_SLOTS:
       for(Selection_item_map::iterator begin = res.first; begin != res.second; ) {
         Scene_polyhedron_selection_item* selection_item = begin->second;
         selection_item_map.erase(begin++); // first erase from map, because scene->erase will cause a call to this function
-        scene->erase( scene->item_id(selection_item) );
+        scene->erase( scene->itemId(selection_item) );
       }
     }
     // if polyhedron selection item

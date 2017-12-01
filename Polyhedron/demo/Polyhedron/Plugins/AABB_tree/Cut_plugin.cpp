@@ -1115,9 +1115,9 @@ public Q_SLOTS:
       if(facet_trees.empty())
       {
         if(plane_item)
-          scene->erase(scene->item_id(plane_item));
+          scene->erase(scene->itemId(plane_item));
         if(edges_item)
-          scene->erase(scene->item_id(edges_item));
+          scene->erase(scene->itemId(edges_item));
       }
       else
       {
@@ -1143,9 +1143,9 @@ public Q_SLOTS:
       if(facet_sm_trees.empty())
       {
         if(plane_item)
-          scene->erase(scene->item_id(plane_item));
+          scene->erase(scene->itemId(plane_item));
         if(edges_item)
-          scene->erase(scene->item_id(edges_item));
+          scene->erase(scene->itemId(edges_item));
       }
       else
       {
@@ -1313,7 +1313,7 @@ void Polyhedron_demo_cut_plugin::createCutPlane() {
   if(updating)
   {
     type = plane_item->cutPlaneType();
-    plane_id = scene->item_id(plane_item);
+    plane_id = scene->itemId(plane_item);
   }
 
   plane_item = new Scene_aabb_plane_item(scene);
@@ -1396,7 +1396,7 @@ void Polyhedron_demo_cut_plugin::SignedFacets() {
   plane_item->invalidateOpenGLBuffers();
   if(edges_item)
   {
-    scene->erase(scene->item_id(edges_item));
+    scene->erase(scene->itemId(edges_item));
     edges_item = NULL;
   }
   QApplication::restoreOverrideCursor();
@@ -1410,7 +1410,7 @@ void Polyhedron_demo_cut_plugin::UnsignedFacets() {
   plane_item->invalidateOpenGLBuffers();
   if(edges_item)
   {
-    scene->erase(scene->item_id(edges_item));
+    scene->erase(scene->itemId(edges_item));
     edges_item = NULL;
   }
   QApplication::restoreOverrideCursor();
@@ -1423,7 +1423,7 @@ void Polyhedron_demo_cut_plugin::UnsignedEdges() {
   plane_item->invalidateOpenGLBuffers();
   if(edges_item)
   {
-    scene->erase(scene->item_id(edges_item));
+    scene->erase(scene->itemId(edges_item));
     edges_item = NULL;
   }
   QApplication::restoreOverrideCursor();

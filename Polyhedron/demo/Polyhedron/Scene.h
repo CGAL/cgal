@@ -49,14 +49,13 @@ public:
                  ColorColumn,
                  RenderingModeColumn,
                  VisibleColumn,
-                 ABColumn,
-                 LastColumn = ABColumn,
+                 LastColumn = VisibleColumn,
                  NumberOfColumns = LastColumn + 1};
   Scene(QObject*  parent);
   ~Scene();
-  int addItem(CGAL::Three::Scene_item* item, bool update_bbox = true) Q_DECL_OVERRIDE;
+  int addItem(CGAL::Three::Scene_item* item) Q_DECL_OVERRIDE;
   void changeGroup(CGAL::Three::Scene_item* item, CGAL::Three::Scene_group_item* target_group) Q_DECL_OVERRIDE;
-  CGAL::Three::Scene_item* replaceItem(int index, CGAL::Three::Scene_item* item, bool emit_item_about_to_be_destroyed = false) Q_DECL_OVERRIDE;
+  CGAL::Three::Scene_item* replaceItem(int index, CGAL::Three::Scene_item* item) Q_DECL_OVERRIDE;
   Q_INVOKABLE int erase(int) Q_DECL_OVERRIDE;
 
   int erase(QList<int>) Q_DECL_OVERRIDE;
@@ -67,8 +66,7 @@ public:
   // returns the list of items.
   const QList<CGAL::Three::Scene_item*>& entries() const { return m_entries; }
   Q_INVOKABLE CGAL::Three::Scene_item* item(int) const Q_DECL_OVERRIDE;
-  int item_id(CGAL::Three::Scene_item*) const Q_DECL_OVERRIDE;
-
+  int itemId(CGAL::Three::Scene_item*) const Q_DECL_OVERRIDE;
   //! \todo Replace Index based selection functionality with those
   //! functions.
   ///@{
@@ -80,8 +78,6 @@ public:
 
   int mainSelectionIndex() const Q_DECL_OVERRIDE;
   QList<int> selectionIndices() const Q_DECL_OVERRIDE;
-  int selectionAindex() const Q_DECL_OVERRIDE;
-  int selectionBindex() const Q_DECL_OVERRIDE;
   void initializeGL(CGAL::Three::Viewer_interface*) Q_DECL_OVERRIDE;
   void setPickedPixel(const QPoint &p) Q_DECL_OVERRIDE {picked_pixel = p;}
   void draw(CGAL::Three::Viewer_interface*) Q_DECL_OVERRIDE;
@@ -96,8 +92,11 @@ public:
   //!Re-computes the primitiveIds for `item`
   void updatePrimitiveIds(Viewer_interface *, Scene_item *item) Q_DECL_OVERRIDE;
   bool testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer) Q_DECL_OVERRIDE;
-  Bbox bbox(bool all = false) const Q_DECL_OVERRIDE;
-  double len_diagonal() const Q_DECL_OVERRIDE
+  Bbox bbox() const Q_DECL_OVERRIDE;
+  Bbox visibleBbox() const Q_DECL_OVERRIDE;
+  void computeBbox();
+  void computeVisibleBbox();
+  double bboxDiagonalLength() const Q_DECL_OVERRIDE
   {
     Bbox box = bbox();
     double dx = box.xmax() - box.xmin();
@@ -186,7 +185,7 @@ public Q_SLOTS:
     }
   }
   //! Sets the target list of indices as the selected indices.
-  QList<int> setSelectedItemsList(QList<int> l )
+  QList<int> setSelectedItemsList(QList<int> l )Q_DECL_OVERRIDE
   {
     Q_FOREACH(int i,l)
     {
@@ -208,10 +207,6 @@ public Q_SLOTS:
   // Accessors (setters)
   //!Sets the item at index i to visible or not visible.
   void setItemVisible(int, bool b);
-  //!Sets the item_A as the item at index i .
-  void setItemA(int i);
-  //!Sets the item_B as the item at index i .
-  void setItemB(int i);
   void newViewer(CGAL::Three::Viewer_interface*);
 Q_SIGNALS:
   //generated automatically by moc
@@ -280,10 +275,6 @@ private:
   int selected_item;
   //List of indices of the currently selected items.
   QList<int> selected_items_list;
-  //Index of the item_A.
-  int item_A;
-  //Index of the item_B.
-  int item_B;
   QPoint picked_pixel;
   bool gl_init;
   QMap<QModelIndex, int> index_map;
@@ -293,6 +284,7 @@ private:
   float points[18];
   float uvs[12];
   Bbox last_bbox;
+  Bbox last_visible_bbox;
   void initGL(CGAL::Three::Viewer_interface* viewer);
 
 public:

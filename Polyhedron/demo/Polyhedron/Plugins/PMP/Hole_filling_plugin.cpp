@@ -342,7 +342,7 @@ public:
 
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface* m);
 
-  virtual void closure()
+  virtual void shutdown()
   {
     dock_widget->hide();
   }
@@ -468,7 +468,7 @@ void Polyhedron_demo_hole_filling_plugin::item_about_to_be_destroyed(CGAL::Three
   if(poly_item) {
     // erase assoc polylines item
     if(Scene_hole_visualizer* hole_visualizer = get_hole_visualizer(poly_item))
-      scene->erase( scene->item_id( hole_visualizer ) );
+      scene->erase( scene->itemId( hole_visualizer ) );
     visualizers.remove(poly_item);
     // close accept-reject dialog if it is open
     if(last_active_item == poly_item) {
@@ -490,7 +490,7 @@ void Polyhedron_demo_hole_filling_plugin::dock_widget_closed() {
   {
     Scene_hole_visualizer* hole_visualizer = qobject_cast<Scene_hole_visualizer*>(scene->item(i));
     if(hole_visualizer) {
-      scene->erase( scene->item_id(hole_visualizer) );
+      scene->erase( scene->itemId(hole_visualizer) );
     }
   }
   on_Accept_button();
@@ -641,7 +641,7 @@ void Polyhedron_demo_hole_filling_plugin::on_Reject_button() {
 void Polyhedron_demo_hole_filling_plugin::hole_visualizer_changed() {
   Scene_hole_visualizer* hole_visualizer = qobject_cast<Scene_hole_visualizer*>(this->sender());
   if(hole_visualizer && hole_visualizer->polyline_data_list.empty()) {
-    scene->erase( scene->item_id(hole_visualizer));
+    scene->erase( scene->itemId(hole_visualizer));
     visualizers.remove(hole_visualizer->poly_item);
   }
 }

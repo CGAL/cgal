@@ -80,7 +80,7 @@ public:
     
   }
 
-  virtual void closure()
+  virtual void shutdown()
   {
     dock_widget->hide();
   }

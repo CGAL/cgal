@@ -196,7 +196,7 @@ public Q_SLOTS:
     //Only one alpha_shape item at the same time
     if(as_item)
     {
-      scene->erase(scene->item_id(as_item));
+      scene->erase(scene->itemId(as_item));
       as_item = NULL;
     }
     ps_item->setVisible(false);
@@ -254,7 +254,7 @@ public Q_SLOTS:
       dock_widget->poly_itemPushButton->setEnabled(true);
     }
   }
-  void closure() Q_DECL_OVERRIDE
+  void shutdown() Q_DECL_OVERRIDE
   {
     dock_widget->hide();
   }

@@ -105,7 +105,7 @@ public:
         connect(ui_widget.Partition_button,  SIGNAL(clicked()), this, SLOT(on_Partition_button_clicked()));
         connect(ui_widget.SDF_button,  SIGNAL(clicked()), this, SLOT(on_SDF_button_clicked()));
     }
-    virtual void closure()
+    virtual void shutdown()
     {
       dock_widget->hide();
     }
@@ -263,7 +263,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::apply_SDF_button_clicked(Facegrap
   }
   else {
     item->invalidate(Scene_item::COLORS);
-    Three::scene()->itemChanged(Three::scene()->item_id(item));
+    Three::scene()->itemChanged(Three::scene()->itemId(item));
   }
   QApplication::restoreOverrideCursor();
 }
@@ -349,7 +349,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::apply_Partition_button_clicked(Fa
   }
   else {
     item->invalidate(Scene_item::COLORS);
-    Three::scene()->itemChanged(Three::scene()->item_id(item));
+    Three::scene()->itemChanged(Three::scene()->itemId(item));
   }
 
   QApplication::restoreOverrideCursor();

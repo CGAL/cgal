@@ -248,6 +248,7 @@ Scene_polylines_item::Scene_polylines_item(CGAL::Three::Scene_interface* scene)
     d->spheres = NULL;
     setEdgeContainer(0, new Edge_container(VI::PROGRAM_NO_SELECTION,
                                    false));
+    getEdgeContainer(0)->setFrameMatrix(QMatrix4x4());
     invalidate();
 
 }
@@ -479,7 +480,7 @@ void Scene_polylines_item::change_corner_radii(double r) {
         else if (r<=0 && d->spheres!=NULL)
         {
           unlockChild(d->spheres);
-          scene->erase(scene->item_id(d->spheres));
+          scene->erase(scene->itemId(d->spheres));
         }
     Q_EMIT itemChanged();
     }

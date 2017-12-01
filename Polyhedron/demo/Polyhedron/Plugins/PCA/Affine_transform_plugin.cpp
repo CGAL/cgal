@@ -233,7 +233,7 @@ public:
   void start(Scene_points_with_normal_item*);
 #endif
   void end();
-  void closure()
+  void shutdown()
   {
     dock_widget->hide();
   }

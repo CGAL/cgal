@@ -419,7 +419,7 @@ public:
     return false;
   }
 
-  void closure()
+  void shutdown()
   {
     dock_widget->hide();
   }

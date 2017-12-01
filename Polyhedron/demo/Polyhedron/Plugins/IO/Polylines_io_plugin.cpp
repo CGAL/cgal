@@ -3,16 +3,16 @@
 #include <QMainWindow>
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
-#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <fstream>
 #include <QVariant>
 #include <boost/foreach.hpp>
 #include <QMessageBox>
+#include <CGAL/Three/Three.h>
 using namespace CGAL::Three;
 class Polyhedron_demo_polylines_io_plugin :
   public QObject,
   public Polyhedron_demo_io_plugin_interface,
-  public Polyhedron_demo_plugin_helper
+  public Polyhedron_demo_plugin_interface
 {
   Q_OBJECT
     Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface CGAL::Three::Polyhedron_demo_io_plugin_interface)
@@ -25,18 +25,13 @@ public:
     // See http://stackoverflow.com/questions/9995421/gcc-woverloaded-virtual-warnings
 
     //! Configures the widget
-    void init(QMainWindow* mainWindow,
-              CGAL::Three::Scene_interface* scene_interface,
-              Messages_interface*) {
-      //get the references
-      this->scene = scene_interface;
-      this->mw = mainWindow;
+    void init() {
       //creates and link the actions
-      actionJoin_polylines= new QAction(tr("Join Selected Polylines"), mainWindow);
+      actionJoin_polylines= new QAction(tr("Join Selected Polylines"), Three::mainWindow());
       actionJoin_polylines->setProperty("subMenuName", "Operations on Polylines");
       actionJoin_polylines->setObjectName("actionJoinPolylines");
 
-      actionSplit_polylines= new QAction(tr("Split Selected Polylines"), mainWindow);
+      actionSplit_polylines= new QAction(tr("Split Selected Polylines"), Three::mainWindow());
       actionSplit_polylines->setProperty("subMenuName", "Operations on Polylines");
       actionSplit_polylines->setObjectName("actionSplitPolylines");
       connect(actionSplit_polylines, &QAction::triggered, this, &Polyhedron_demo_polylines_io_plugin::split);
@@ -44,17 +39,17 @@ public:
 
     }
   QString name() const { return "polylines_io_plugin"; }
-  QString nameFilters() const { return "Polylines files (*.polylines.txt *.cgal)"; }
+  QStringList nameFilters() const { return QStringList() << QString("Polylines files (*.polylines.txt *.cgal)"); }
   bool canLoad() const;
-  CGAL::Three::Scene_item* load(QFileInfo fileinfo, CGAL::Three::Scene_interface* scene, QMainWindow*);
+  CGAL::Three::Scene_item* load(QFileInfo fileinfo);
 
   bool canSave(const CGAL::Three::Scene_item*);
   bool save(const CGAL::Three::Scene_item*, QFileInfo fileinfo);
   bool applicable(QAction* a) const {
     bool all_polylines_selected = true;
-    Q_FOREACH(int index, scene->selectionIndices())
+    Q_FOREACH(int index, Three::scene()->selectionIndices())
     {
-      if (!qobject_cast<Scene_polylines_item*>(scene->item(index)))
+      if (!qobject_cast<Scene_polylines_item*>(Three::scene()->item(index)))
       {
         all_polylines_selected = false;
       }
@@ -62,10 +57,10 @@ public:
 
     if(a==actionSplit_polylines)
       return (all_polylines_selected &&
-              scene->selectionIndices().size() == 1);
+              Three::scene()->selectionIndices().size() == 1);
     else if(a==actionJoin_polylines)
       return (all_polylines_selected &&
-              scene->selectionIndices().size() > 1);
+              Three::scene()->selectionIndices().size() > 1);
     else
       return false;
   }
@@ -91,7 +86,7 @@ bool Polyhedron_demo_polylines_io_plugin::canLoad() const {
 
 
 CGAL::Three::Scene_item*
-Polyhedron_demo_polylines_io_plugin::load(QFileInfo fileinfo, Scene_interface *scene, QMainWindow *) {
+Polyhedron_demo_polylines_io_plugin::load(QFileInfo fileinfo) {
   // Open file
   std::ifstream ifs(fileinfo.filePath().toUtf8());
   if(!ifs) {
@@ -130,7 +125,7 @@ Polyhedron_demo_polylines_io_plugin::load(QFileInfo fileinfo, Scene_interface *s
     if(ifs.bad() || ifs.fail()) return 0;
   }
   if(counter == 0) return 0;
-  Scene_polylines_item* item = new Scene_polylines_item(scene);
+  Scene_polylines_item* item = new Scene_polylines_item(Three::scene());
   item->polylines = polylines;
   item->setName(fileinfo.baseName());
   item->setColor(Qt::black);
@@ -183,21 +178,21 @@ bool Polyhedron_demo_polylines_io_plugin::save(const CGAL::Three::Scene_item* it
 
 void Polyhedron_demo_polylines_io_plugin::split()
 {
-  Scene_polylines_item* item = qobject_cast<Scene_polylines_item*>(scene->item(scene->mainSelectionIndex()));
-  Scene_group_item* group = new Scene_group_item("Splitted Polylines", scene);
-  scene->addItem(group);
+  Scene_polylines_item* item = qobject_cast<Scene_polylines_item*>(Three::scene()->item(Three::scene()->mainSelectionIndex()));
+  Scene_group_item* group = new Scene_group_item("Splitted Polylines", Three::scene());
+  Three::scene()->addItem(group);
   group->setColor(item->color());
   int i=0;
   Q_FOREACH(Scene_polylines_item::Polyline polyline, item->polylines)
   {
     Scene_polylines_item::Polylines_container container;
     container.push_back(polyline);
-    Scene_polylines_item *new_polyline = new Scene_polylines_item(scene);
+    Scene_polylines_item *new_polyline = new Scene_polylines_item(Three::scene());
     new_polyline->polylines = container;
     new_polyline->setColor(item->color());
     new_polyline->setName(QString("Splitted %1 #%2").arg(item->name()).arg(i++));
-    scene->addItem(new_polyline);
-    scene->changeGroup(new_polyline, group);
+    Three::scene()->addItem(new_polyline);
+    Three::scene()->changeGroup(new_polyline, group);
   }
 }
 
@@ -205,11 +200,11 @@ void Polyhedron_demo_polylines_io_plugin::join()
 {
 
   std::vector<Scene_polylines_item*> items;
-  items.resize(scene->selectionIndices().size());
-  for(int i = 0; i < scene->selectionIndices().size(); ++i)
-    items[i] = qobject_cast<Scene_polylines_item*>(scene->item(scene->selectionIndices().at(i)));
+  items.resize(Three::scene()->selectionIndices().size());
+  for(int i = 0; i < Three::scene()->selectionIndices().size(); ++i)
+    items[i] = qobject_cast<Scene_polylines_item*>(Three::scene()->item(Three::scene()->selectionIndices().at(i)));
 
-  Scene_polylines_item* new_polyline= new Scene_polylines_item(scene);
+  Scene_polylines_item* new_polyline= new Scene_polylines_item(Three::scene());
   Scene_polylines_item::Polylines_container container;
   Q_FOREACH(Scene_polylines_item* item, items)
   {
@@ -224,7 +219,7 @@ void Polyhedron_demo_polylines_io_plugin::join()
   new_polyline->polylines = container;
   new_polyline->setColor(QColor(Qt::black));
   new_polyline->setName(QString("Joined from %1 items").arg(items.size()));
-  scene->addItem(new_polyline);
+  Three::scene()->addItem(new_polyline);
 }
 
 #include "Polylines_io_plugin.moc"
