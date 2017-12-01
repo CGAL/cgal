@@ -30,7 +30,7 @@ int main()
    std::cout << rt.number_of_hidden_vertices() << std::endl;
 
 #ifdef CGAL_USE_BASIC_VIEWER
-  display(rt);
+   CGAL::display(rt);
 #endif // CGAL_USE_BASIC_VIEWER
 
    return 0;
