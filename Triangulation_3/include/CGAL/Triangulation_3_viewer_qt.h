@@ -141,7 +141,7 @@ void display(const T3& at3,
 
 template<class T3>
 void display(const T3& at3,
-             const char* title="T3 Viewer",
+             const char* title="t3_viewer",
              bool nofill=false)
 { return display<T3, DefaultColorFunctor>(at3, title, nofill); }
 
