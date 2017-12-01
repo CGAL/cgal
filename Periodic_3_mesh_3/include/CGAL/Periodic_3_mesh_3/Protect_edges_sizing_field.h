@@ -2292,7 +2292,7 @@ refine_balls()
 #endif
     ++refine_balls_iteration_nb;
     restart = false;
-    std::map<Vertex_handle, FT> new_sizes;
+    boost::unordered_map<Vertex_handle, FT, Hash_fct> new_sizes;
 
     for(typename Tr::Finite_edges_iterator eit = tr.finite_edges_begin(),
         end = tr.finite_edges_end(); eit != end; ++eit)

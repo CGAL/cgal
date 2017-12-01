@@ -23,11 +23,13 @@
 
 #include <CGAL/license/Mesh_3.h>
 
+#include <CGAL/array.h>
+#include <CGAL/Hash_handles_with_or_without_timestamps.h>
 
-#include <map>
+#include <boost/unordered_map.hpp>
+
 #include <sstream>
 
-#include <CGAL/array.h>
 
 namespace CGAL {
 
@@ -35,23 +37,21 @@ namespace internal {
 
 namespace mesh_3_export {
 
-template <typename C3T3>
+template <typename C3T3, typename Vertex_map>
 std::size_t get_vertex_index(const C3T3& c3t3,
                              typename C3T3::Vertex_handle v,
-                             std::map<typename C3T3::Vertex_handle, std::size_t>& V,
+                             Vertex_map& V,
                              std::size_t& inum,
                              std::stringstream& vertex_buffer)
 {
   typedef typename C3T3::Triangulation                   Tr;
   typedef typename Tr::Geom_traits                       Gt;
-  typedef typename Tr::Vertex_handle                     Vertex_handle;
 
   const Tr& tr = c3t3.triangulation();
 
   typename Gt::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
 
-  std::pair<typename std::map<Vertex_handle, std::size_t>::iterator, bool> res =
-    V.insert(std::make_pair(v, inum));
+  std::pair<typename Vertex_map::iterator, bool> res = V.insert(std::make_pair(v, inum));
 
   if (res.second)
   {
@@ -71,9 +71,10 @@ output_boundary_of_c3t3_to_off(const C3T3& c3t3,
 {
   typedef typename C3T3::Triangulation Triangulation;
   typedef typename Triangulation::Vertex_handle Vertex_handle;
+  typedef CGAL::Hash_handles_with_or_without_timestamps Hash_fct;
 
-  std::map<Vertex_handle, std::size_t> V;
-  
+  boost::unordered_map<Vertex_handle, std::size_t, Hash_fct> V;
+
   std::size_t inum = 0; 
   std::size_t nfacets = 0;
   cpp0x::array<std::size_t,3> indices={{0,0,0}};
@@ -117,8 +118,9 @@ output_facets_in_complex_to_off(const C3T3& c3t3,
 {
   typedef typename C3T3::Triangulation Triangulation;
   typedef typename Triangulation::Vertex_handle Vertex_handle;
+  typedef CGAL::Hash_handles_with_or_without_timestamps Hash_fct;
 
-  std::map<Vertex_handle, std::size_t> V;
+  boost::unordered_map<Vertex_handle, std::size_t, Hash_fct> V;
 
   std::size_t inum = 0;
   std::size_t nfacets = 0;

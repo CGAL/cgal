@@ -29,20 +29,18 @@
 
 #include <CGAL/license/Mesh_3.h>
 
-
-
 #include <CGAL/iterator.h>
-
+#include <CGAL/Hash_handles_with_or_without_timestamps.h>
 #include <CGAL/Mesh_3/utilities.h>
 #include <CGAL/Mesh_3/Mesh_complex_3_in_triangulation_3_base.h>
+#include <CGAL/internal/Mesh_3/Boundary_of_subdomain_of_complex_3_in_triangulation_3_to_off.h>
 
-#include <map>
 #include <boost/bimap/bimap.hpp>
 #include <boost/bimap/multiset_of.hpp>
 #include <boost/iterator/transform_iterator.hpp>
 #include <boost/iterator/iterator_adaptor.hpp>
 #include <boost/mpl/if.hpp>
-#include <CGAL/internal/Mesh_3/Boundary_of_subdomain_of_complex_3_in_triangulation_3_to_off.h>
+#include <boost/unordered_map.hpp>
 
 namespace CGAL {
 
@@ -75,6 +73,8 @@ public:
   typedef CornerIndex                                     Corner_index;
   typedef CurveIndex                                      Curve_index;
 
+  typedef CGAL::Hash_handles_with_or_without_timestamps   Hash_fct;
+
 #ifndef CGAL_NO_DEPRECATED_CODE
   typedef CurveIndex Curve_segment_index;
 #endif
@@ -98,7 +98,10 @@ private:
   typedef typename Edge_map::value_type               Internal_edge;
 
   // Type to store the corners
-  typedef std::map<Vertex_handle,Corner_index>        Corner_map;
+  typedef boost::unordered_map<Vertex_handle,
+                               Corner_index,
+                               Hash_fct>              Corner_map;
+
   // Type to store far vertices
   typedef std::vector<Vertex_handle>                  Far_vertices_vec;
 
@@ -690,9 +693,10 @@ bool
 Mesh_complex_3_in_triangulation_3<Tr,CI_,CSI_>::
 is_valid(bool verbose) const
 {
-  typedef typename Tr::Weighted_point          Weighted_point;
+  typedef typename Tr::Weighted_point                         Weighted_point;
+  typedef boost::unordered_map<Vertex_handle, int, Hash_fct>  Vertex_map;
 
-  std::map<Vertex_handle, int> vertex_map;
+  Vertex_map vertex_map;
 
   // Fill map counting neighbor number for each vertex of an edge
   for ( typename Edge_map::const_iterator it = edges_.begin(),
@@ -708,7 +712,7 @@ is_valid(bool verbose) const
   }
 
   // Verify that each vertex has 2 neighbors if it's not a corner
-  for ( typename std::map<Vertex_handle, int>::iterator vit = vertex_map.begin(),
+  for ( typename Vertex_map::iterator vit = vertex_map.begin(),
        vend = vertex_map.end() ; vit != vend ; ++vit )
   {
     if ( vit->first->in_dimension() != 0 && vit->second != 2 )

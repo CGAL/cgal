@@ -37,12 +37,16 @@
 #include <CGAL/IO/File_medit.h>
 #include <CGAL/IO/File_maya.h>
 #include <CGAL/Bbox_3.h>
-#include <iostream>
-#include <fstream>
 #include <CGAL/Mesh_3/io_signature.h>
 #include <CGAL/Union_find.h>
+#include <CGAL/Hash_handles_with_or_without_timestamps.h>
 
 #include <boost/functional/hash.hpp>
+#include <boost/unordered_map.hpp>
+
+#include <iostream>
+#include <fstream>
+
 
 #ifdef CGAL_LINKED_WITH_TBB
   #include <tbb/atomic.h>
@@ -150,6 +154,8 @@ public:
   typedef typename Tr::Facet            Facet;
   typedef typename Tr::Edge             Edge;
   typedef typename Tr::size_type        size_type;
+
+  typedef CGAL::Hash_handles_with_or_without_timestamps Hash_fct;
 
   // Indices types
   typedef typename Tr::Cell::Subdomain_index      Subdomain_index;
@@ -630,8 +636,9 @@ private:
       }
     }
 
-    typedef std::map<Vertex_handle,
-                     typename Union_find<Facet>::handle> Vertex_set_map;
+    typedef boost::unordered_map<Vertex_handle,
+                                 typename Union_find<Facet>::handle,
+                                 Hash_fct>    Vertex_set_map;
     typedef typename Vertex_set_map::iterator Vertex_set_map_iterator;
 
     Vertex_set_map vsmap;
