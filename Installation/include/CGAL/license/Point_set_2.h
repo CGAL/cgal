@@ -12,9 +12,14 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
+// $URL$
+// $Id$
+// SPDX-License-Identifier: LGPL-3.0+
+//
 // Author(s) : Andreas Fabri
 //
 // Warning: this file is generated, see include/CGAL/licence/README.md
+
 
 #ifndef CGAL_LICENSE_POINT_SET_2_H
 #define CGAL_LICENSE_POINT_SET_2_H

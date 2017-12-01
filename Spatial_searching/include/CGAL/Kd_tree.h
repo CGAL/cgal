@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Hans Tangelder (<hanst@cs.uu.nl>),
 //               : Waqar Khan <wkhan@mpi-inf.mpg.de>

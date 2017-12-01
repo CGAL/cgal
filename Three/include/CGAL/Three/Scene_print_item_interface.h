@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Maxime GIMENO
 
@@ -62,7 +63,7 @@ public:
   //!
   //! The default behavior is to only display ids of the currently selected item (\see mainSelectionIndex()).
   //! This function allows to override this behavior.
-  //! @param tets_item the currently tested TextListItem.
+  //! @param test_item the currently tested TextListItem.
   //! \return true if this item should display its ids when `test_item` is tested.
   virtual bool shouldDisplayIds(CGAL::Three::Scene_item* test_item)const = 0;
 };

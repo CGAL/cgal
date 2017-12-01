@@ -14,6 +14,9 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
+//
+// Author(s)     : Laurent Rineau
 
 #ifndef CGAL_MESH_ERROR_CODE_H
 #define CGAL_MESH_ERROR_CODE_H

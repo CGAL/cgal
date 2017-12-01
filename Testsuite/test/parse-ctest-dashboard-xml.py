@@ -88,7 +88,6 @@ for label, tests in tests_per_label.items():
         with open_file_create_dir(test_report_filename.format(dir=label,
                                                               tester="me",
                                                               platform="Mon Linux"), 'w') as label_report:
-            print("Label {}".format(label))
             print("""
 ------------------------------------------------------------------
 - Error output from platform {platform}

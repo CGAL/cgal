@@ -62,8 +62,7 @@ For example, passing `Location_policy<Compact>` as parameter to
 
 */
 template< typename Tag >
-class Location_policy {
-public:
+struct Location_policy {
 
 
 }; /* end Location_policy */

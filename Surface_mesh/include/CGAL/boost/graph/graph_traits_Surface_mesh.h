@@ -13,6 +13,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Andreas Fabri, Philipp Moeller
@@ -23,7 +24,6 @@
 #ifndef DOXYGEN_RUNNING
 
 #include <CGAL/license/Surface_mesh.h>
-
 
 // include this to avoid a VC15 warning
 #include <CGAL/boost/graph/named_function_params.h>

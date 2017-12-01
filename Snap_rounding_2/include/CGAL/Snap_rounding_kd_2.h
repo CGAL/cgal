@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // author(s)     : Eli Packer <elip@post.tau.ac.il>,

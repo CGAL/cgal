@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Laurent Rineau
@@ -23,9 +24,6 @@
 
 #ifndef CGAL_SURFACE_MESHER_PROFILE_COUNTER_H
 #define CGAL_SURFACE_MESHER_PROFILE_COUNTER_H
-
-#include <CGAL/license/Surface_mesher.h>
-
 
 #include <CGAL/Profile_counter.h>
 

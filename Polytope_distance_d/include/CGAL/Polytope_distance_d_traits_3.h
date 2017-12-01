@@ -18,15 +18,13 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Sven Schoenherr <sven@inf.ethz.ch>
 
 #ifndef CGAL_POLYTOPE_DISTANCE_D_TRAITS_3_H
 #define CGAL_POLYTOPE_DISTANCE_D_TRAITS_3_H
-
-#include <CGAL/license/Polytope_distance_d.h>
-
 
 // includes
 #  include <CGAL/Optimisation/Access_dimension_3.h>

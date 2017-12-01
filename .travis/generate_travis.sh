@@ -19,7 +19,7 @@ INDEX=0
 i=0
 for f in *
 do
-  if [ -d  "$f/examples/$f" ] || [ -d  "$f/test/$f" ] || [ -d  "$f/demo/$f" ]
+  if [ -d  "$f/package_info/$f" ]
 	then
 		PACKAGES[$INDEX]+="$f "
 		i=$[i+1]

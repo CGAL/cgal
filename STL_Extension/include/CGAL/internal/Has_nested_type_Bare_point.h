@@ -13,6 +13,10 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
+// $URL$
+// $Id$
+// SPDX-License-Identifier: LGPL-3.0+
+//
 // Author(s)     : Jane Tournois
 
 #ifndef CGAL_HAS_NESTED_TYPE_BARE_POINT_H

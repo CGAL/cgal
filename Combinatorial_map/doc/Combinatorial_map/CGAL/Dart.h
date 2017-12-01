@@ -10,8 +10,7 @@ The class `Dart` represents a <I>d</I>D dart in a combinatorial map.
   
 */  
 template< typename d, typename CMap >
-class Dart {
-public:
+struct Dart {
 /*!
 
 */

@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Pavel Emeliyanenko <asm@mpi-sb.mpg.de>
 //
@@ -28,9 +29,6 @@
 
 #ifndef CGAL_CKVA_CURVE_RENDERER_FACADE_H
 #define CGAL_CKVA_CURVE_RENDERER_FACADE_H
-
-#include <CGAL/license/Arrangement_on_surface_2.h>
-
 
 // do not compile curve renderer code (for fast debugging)
 //#define CGAL_CKVA_DUMMY_RENDERER

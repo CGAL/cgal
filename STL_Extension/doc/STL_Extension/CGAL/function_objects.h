@@ -18,8 +18,7 @@ its argument.
 
 */
 template< typename Arg, typename Result >
-class Cast_function_object {
-public:
+struct Cast_function_object {
 
 
 
@@ -1026,8 +1025,7 @@ The class `Dereference` dereferences a pointer
 
 */
 template< typename Value >
-class Dereference {
-public:
+struct Dereference {
 
 
 /*!
@@ -1098,8 +1096,7 @@ The class `Get_address` gets the address of an lvalue
 
 */
 template< typename Value >
-class Get_address {
-public:
+struct Get_address {
 
 
 /*!
@@ -1168,8 +1165,7 @@ on `Value`.
 
 */
 template< typename Value >
-class Identity {
-public:
+struct Identity {
 
 
 /*!
@@ -1239,8 +1235,7 @@ The class `Project_facet` calls the member function
 
 */
 template< typename Node >
-class Project_facet {
-public:
+struct Project_facet {
 
 
 /*!
@@ -1310,8 +1305,7 @@ The class `Project_next` calls the member function
 
 */
 template< typename Node >
-class Project_next {
-public:
+struct Project_next {
 
 
 /*!
@@ -1379,8 +1373,7 @@ The class `Project_next_opposite` calls the member functions
 
 */
 template< typename Node >
-class Project_next_opposite {
-public:
+struct Project_next_opposite {
 
 
 /*!
@@ -1451,8 +1444,7 @@ The class `Project_normal` calls the member function
 
 */
 template< typename Node >
-class Project_normal {
-public:
+struct Project_normal {
 
 
 /*!
@@ -1523,8 +1515,7 @@ The class `Project_opposite_prev` calls the member functions
 
 */
 template< typename Node >
-class Project_opposite_prev {
-public:
+struct Project_opposite_prev {
 
 
 /*!
@@ -1595,8 +1586,7 @@ The class `Project_plane` calls the member function
 
 */
 template< typename Node >
-class Project_plane {
-public:
+struct Project_plane {
 
 
 /*!
@@ -1666,8 +1656,7 @@ The class `Project_point` calls the member function
 
 */
 template< typename Node >
-class Project_point {
-public:
+struct Project_point {
 
 
 /*!
@@ -1737,8 +1726,7 @@ The class `Project_prev` calls the member function
 
 */
 template< typename Node >
-class Project_prev {
-public:
+struct Project_prev {
 
 
 /*!
@@ -1808,8 +1796,7 @@ The class `Project_vertex` calls the member function
 
 */
 template< typename Node >
-class Project_vertex {
-public:
+struct Project_vertex {
 
 
 /*!

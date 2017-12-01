@@ -34,6 +34,7 @@
  *
  * $URL$
  * $Id$
+ * SPDX-License-Identifier: LGPL-3.0+
  ***************************************************************************/
 
 // We need to include BigFloat.h here because there is a circular dependency

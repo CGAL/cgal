@@ -25,8 +25,7 @@ struct Generic_map_min_items
 \sa `Generalized_map<d,Items,Alloc>`
 
 */
-class Generic_map_min_items {
-public:
+struct Generic_map_min_items {
 
 /// @}
 

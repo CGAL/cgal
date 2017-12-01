@@ -14,15 +14,13 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Andreas Fabri, Stefan Schirra, Sylvain Pion
 
 #ifndef CGAL_NEF_POLYNOMIAL_FWD_H
 #define CGAL_NEF_POLYNOMIAL_FWD_H
-
-#include <CGAL/license/Nef_2.h>
-
 
 #include <CGAL/enum.h>
 
