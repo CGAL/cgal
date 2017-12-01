@@ -1109,6 +1109,7 @@ change_ball_size_with_dummy_scaffholding(Vertex_handle& v, const FT w, bool is_s
 #endif
       if(!change_ball_size(v, previous_weight, is_special)) // restore the weight
       {
+        std::cerr << "Error: failed to remove scaffholding dummy point" << std::endl;
         CGAL_assertion(false); // do not allow the weight restoration to fail
       }
     }
@@ -1210,8 +1211,8 @@ try_to_move_dummy_vertex(const Vertex_handle dummy_vertex,
     // If we didn't manage to remove the old position, remove the new position
     if(!try_to_remove_dummy_vertex(new_dummy))
     {
-      // Do not allow failure in removing the new point
-      CGAL_assertion(false);
+      std::cerr << "Error: failed to remove scaffholding dummy point" << std::endl;
+      CGAL_assertion(false); // Do not allow failure in removing the new point
     }
     return false;
   }
@@ -1295,6 +1296,7 @@ move_dummy_vertex_away_from_corner_with_direction(Vertex_handle& protection_vert
         // 'change_ball_size_with_dummy_scaffholding()' re-inserts the initial dummy point on failure
         if(!try_to_remove_dummy_vertex(moved_dummy_vertex))
         {
+          std::cerr << "Error: Failed to remove moved dummy vertex" << std::endl;
           CGAL_assertion(false); // do not allow the removal of the moved vertex to fail
         }
         continue;
@@ -1307,6 +1309,7 @@ move_dummy_vertex_away_from_corner_with_direction(Vertex_handle& protection_vert
 #endif
       if(try_to_remove_dummy_vertex(moved_dummy_vertex))
       {
+        std::cout << "Error: Failed to remove moved dummy vertex" << std::endl;
         CGAL_assertion(false); // do not allow the removal of the moved vertex to fail
       }
       continue;
@@ -2489,7 +2492,7 @@ change_ball_size(Vertex_handle& v, const FT squared_size, const bool special_bal
 
   // Store point data
   int dim = get_dimension(v);
-  const Bare_point& p = cp(c3t3_.triangulation().point(v));
+  const Bare_point p = cp(c3t3_.triangulation().point(v)); // intentional copy
 
   // Remove v from the set of corners
   boost::optional<Corner_index> corner_index = boost::make_optional(false, Corner_index());
