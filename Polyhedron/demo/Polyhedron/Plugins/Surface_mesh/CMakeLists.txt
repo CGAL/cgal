@@ -8,10 +8,10 @@ if(EIGEN3_FOUND)
   if(CGAL_Core_FOUND)
     qt5_wrap_ui( parameterizationUI_FILES Parameterization_widget.ui ARAP_dialog.ui OTE_dialog.ui)
     polyhedron_demo_plugin(parameterization_plugin Parameterization_plugin ${parameterizationUI_FILES})
-    target_link_libraries(parameterization_plugin PUBLIC ${CGAL_Core_LIBRARY} ${CGAL_Core_3RD_PARTY_LIBRARIES} scene_polyhedron_item scene_textured_polyhedron_item scene_polyhedron_selection_item)
+    target_link_libraries(parameterization_plugin PUBLIC CGAL::CGAL_Core scene_polyhedron_item scene_textured_polyhedron_item scene_polyhedron_selection_item)
 
     polyhedron_demo_plugin(parameterization_sm_plugin Parameterization_plugin ${parameterizationUI_FILES})
-    target_link_libraries(parameterization_sm_plugin PUBLIC ${CGAL_Core_LIBRARY} ${CGAL_Core_3RD_PARTY_LIBRARIES} scene_surface_mesh_item scene_textured_surface_mesh_item scene_surface_mesh_selection_item)
+    target_link_libraries(parameterization_sm_plugin PUBLIC CGAL::CGAL_Core scene_surface_mesh_item scene_textured_surface_mesh_item scene_surface_mesh_selection_item)
     target_compile_definitions(parameterization_sm_plugin PUBLIC "-DUSE_SURFACE_MESH" )
 
   else(CGAL_Core_FOUND)
