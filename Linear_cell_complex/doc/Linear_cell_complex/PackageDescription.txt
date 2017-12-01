@@ -19,6 +19,14 @@
 /// \defgroup PkgLinearCellComplexOperations Operations for Linear Cell Complex
 /// \ingroup PkgLinearCellComplex
 
+/*! Display.
+  \code
+   #include <CGAL/Display_linear_cell_complex.h>
+  \endcode
+*/
+/// \defgroup PkgDisplayLinearCellComplex Display a Linear Cell Complex
+/// \ingroup PkgLinearCellComplex
+
 
 /*!
 \addtogroup PkgLinearCellComplex
@@ -65,6 +73,9 @@
 ### Operations for Linear cell complex ###
 - `CGAL::compute_normal_of_cell_0<LCC>`
 - `CGAL::compute_normal_of_cell_2<LCC>`
+
+### Display a Linear cell complex ###
+- `CGAL::display<LCC>`
 
 */
 
