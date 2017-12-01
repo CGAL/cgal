@@ -37,9 +37,8 @@
 #include <CGAL/Qt/CreateOpenGLContext.h>
 #include <CGAL/Random.h>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel Local_kernel;
-typedef Local_kernel::Point_3  Local_point;
-typedef Local_kernel::Vector_3 Local_vector;
+namespace CGAL
+{
 
 //------------------------------------------------------------------------------
 const char vertex_source_color[] =
@@ -132,7 +131,11 @@ inline CGAL::Color get_random_color(CGAL::Random& random)
 }
 //------------------------------------------------------------------------------
 class Basic_viewer_qt : public QGLViewer, public QOpenGLFunctions_2_1
-{
+{  
+  typedef CGAL::Exact_predicates_inexact_constructions_kernel Local_kernel;
+  typedef Local_kernel::Point_3  Local_point;
+  typedef Local_kernel::Vector_3 Local_vector;
+
 public:
   // Constructor/Destructor
   Basic_viewer_qt(const char* title="") :
@@ -145,9 +148,9 @@ public:
     m_inverse_normal(false),
     m_size_points(7.),
     m_size_edges(3.1),    
-    m_vertices_mono_color(51, 51, 178),
-    m_edges_mono_color(51, 51, 148),
-    m_faces_mono_color(180, 125, 200),
+    m_vertices_mono_color(200, 60, 60),
+    m_edges_mono_color(0, 0, 0),
+    m_faces_mono_color(60, 60, 200),
     m_ambient_color(0.6f, 0.5f, 0.5f, 0.5f),
     m_are_buffers_initialized(false),
     m_buffer_for_mono_points(&arrays[POS_MONO_POINTS],
@@ -218,7 +221,7 @@ public:
   
   const CGAL::Bbox_3& bounding_box() const
   { return m_bounding_box; }
-  
+
   template<typename KPoint>
   void add_point(const KPoint& p)
   { m_buffer_for_mono_points.add_point(p); }
@@ -707,21 +710,21 @@ protected:
     initializeOpenGLFunctions();
 
     // Define 'Control+Q' as the new exit shortcut (default was 'Escape')
-    setShortcut(EXIT_VIEWER, Qt::CTRL+Qt::Key_Q);
+    setShortcut(EXIT_VIEWER, ::Qt::CTRL+::Qt::Key_Q);
 
     // Add custom key description (see keyPressEvent).
-    setKeyDescription(Qt::Key_E, "Toggles edges display");
-    setKeyDescription(Qt::Key_F, "Toggles faces display");
-    setKeyDescription(Qt::Key_G, "Switch between flat/Gouraud shading display");
-    setKeyDescription(Qt::Key_M, "Toggles mono color for all faces");
-    setKeyDescription(Qt::Key_N, "Inverse direction of normals");
-    setKeyDescription(Qt::Key_V, "Toggles vertices display");
-    setKeyDescription(Qt::Key_Plus, "Increase size of edges");
-    setKeyDescription(Qt::Key_Minus, "Decrease size of edges");
-    setKeyDescription(Qt::Key_Plus+Qt::ControlModifier, "Increase size of vertices");
-    setKeyDescription(Qt::Key_Minus+Qt::ControlModifier, "Decrease size of vertices");
-    setKeyDescription(Qt::Key_PageDown, "Increase light (all colors, use shift/alt/ctrl for one rgb component)");
-    setKeyDescription(Qt::Key_PageUp, "Decrease light (all colors, use shift/alt/ctrl for one rgb component)");
+    setKeyDescription(::Qt::Key_E, "Toggles edges display");
+    setKeyDescription(::Qt::Key_F, "Toggles faces display");
+    setKeyDescription(::Qt::Key_G, "Switch between flat/Gouraud shading display");
+    setKeyDescription(::Qt::Key_M, "Toggles mono color for all faces");
+    setKeyDescription(::Qt::Key_N, "Inverse direction of normals");
+    setKeyDescription(::Qt::Key_V, "Toggles vertices display");
+    setKeyDescription(::Qt::Key_Plus, "Increase size of edges");
+    setKeyDescription(::Qt::Key_Minus, "Decrease size of edges");
+    setKeyDescription(::Qt::Key_Plus+::Qt::ControlModifier, "Increase size of vertices");
+    setKeyDescription(::Qt::Key_Minus+::Qt::ControlModifier, "Decrease size of vertices");
+    setKeyDescription(::Qt::Key_PageDown, "Increase light (all colors, use shift/alt/ctrl for one rgb component)");
+    setKeyDescription(::Qt::Key_PageUp, "Decrease light (all colors, use shift/alt/ctrl for one rgb component)");
 
     // Light default parameters
     ::glLineWidth(m_size_edges);
@@ -770,21 +773,21 @@ protected:
   
   virtual void keyPressEvent(QKeyEvent *e)
   {
-    const Qt::KeyboardModifiers modifiers = e->modifiers();
+    const ::Qt::KeyboardModifiers modifiers = e->modifiers();
 
-    if ((e->key()==Qt::Key_E) && (modifiers==Qt::NoButton))
+    if ((e->key()==::Qt::Key_E) && (modifiers==::Qt::NoButton))
     {
       m_draw_edges=!m_draw_edges;
       displayMessage(QString("Draw edges=%1.").arg(m_draw_edges?"true":"false"));
       update();
     }
-    else if ((e->key()==Qt::Key_F) && (modifiers==Qt::NoButton))
+    else if ((e->key()==::Qt::Key_F) && (modifiers==::Qt::NoButton))
     {
       m_draw_faces=!m_draw_faces;
       displayMessage(QString("Draw faces=%1.").arg(m_draw_faces?"true":"false"));
       update();
     }
-    else if ((e->key()==Qt::Key_G) && (modifiers==Qt::NoButton))
+    else if ((e->key()==::Qt::Key_G) && (modifiers==::Qt::NoButton))
     {
       m_flatShading=!m_flatShading;
       if (m_flatShading)
@@ -794,13 +797,13 @@ protected:
       initialize_buffers();
       update();
     }
-    else if ((e->key()==Qt::Key_M) && (modifiers==Qt::NoButton))
+    else if ((e->key()==::Qt::Key_M) && (modifiers==::Qt::NoButton))
     {
       m_use_mono_color=!m_use_mono_color;
       displayMessage(QString("Mono color=%1.").arg(m_use_mono_color?"true":"false"));
       update();
     }
-    else if ((e->key()==Qt::Key_N) && (modifiers==Qt::NoButton))
+    else if ((e->key()==::Qt::Key_N) && (modifiers==::Qt::NoButton))
     {
       m_inverse_normal=!m_inverse_normal;
       displayMessage(QString("Inverse normal=%1.").arg(m_inverse_normal?"true":"false"));
@@ -808,37 +811,37 @@ protected:
       initialize_buffers();
       update();
     }
-    else if ((e->key()==Qt::Key_V) && (modifiers==Qt::NoButton))
+    else if ((e->key()==::Qt::Key_V) && (modifiers==::Qt::NoButton))
     {
       m_draw_vertices=!m_draw_vertices;
       displayMessage(QString("Draw vertices=%1.").arg(m_draw_vertices?"true":"false"));
       update();
     }
-    else if ((e->key()==Qt::Key_Plus) && (!modifiers.testFlag(Qt::ControlModifier))) // No ctrl
+    else if ((e->key()==::Qt::Key_Plus) && (!modifiers.testFlag(::Qt::ControlModifier))) // No ctrl
     {
       m_size_edges+=.5;
       displayMessage(QString("Size of edges=%1.").arg(m_size_edges));
       update();
     }
-    else if ((e->key()==Qt::Key_Minus) && (!modifiers.testFlag(Qt::ControlModifier))) // No ctrl
+    else if ((e->key()==::Qt::Key_Minus) && (!modifiers.testFlag(::Qt::ControlModifier))) // No ctrl
     {
       if (m_size_edges>.5) m_size_edges-=.5;
       displayMessage(QString("Size of edges=%1.").arg(m_size_edges));
       update();
     }
-    else if ((e->key()==Qt::Key_Plus) && (modifiers.testFlag(Qt::ControlModifier)))
+    else if ((e->key()==::Qt::Key_Plus) && (modifiers.testFlag(::Qt::ControlModifier)))
     {
       m_size_points+=.5;
       displayMessage(QString("Size of points=%1.").arg(m_size_points));
       update();
     }
-    else if ((e->key()==Qt::Key_Minus) && (modifiers.testFlag(Qt::ControlModifier)))
+    else if ((e->key()==::Qt::Key_Minus) && (modifiers.testFlag(::Qt::ControlModifier)))
     {
       if (m_size_points>.5) m_size_points-=.5;
       displayMessage(QString("Size of points=%1.").arg(m_size_points));
       update();
     }
-    else if ((e->key()==Qt::Key_PageUp) && (modifiers==Qt::NoButton))
+    else if ((e->key()==::Qt::Key_PageUp) && (modifiers==::Qt::NoButton))
     {
       m_ambient_color.setX(m_ambient_color.x()+.1);
       if (m_ambient_color.x()>1.) m_ambient_color.setX(1.);
@@ -850,7 +853,7 @@ protected:
                      arg(m_ambient_color.x()).arg(m_ambient_color.y()).arg(m_ambient_color.z()));
       update();
     }
-    else if ((e->key()==Qt::Key_PageDown) && (modifiers==Qt::NoButton))
+    else if ((e->key()==::Qt::Key_PageDown) && (modifiers==::Qt::NoButton))
     {
       m_ambient_color.setX(m_ambient_color.x()-.1);
       if (m_ambient_color.x()<0.) m_ambient_color.setX(0.);
@@ -862,7 +865,7 @@ protected:
                      arg(m_ambient_color.x()).arg(m_ambient_color.y()).arg(m_ambient_color.z()));
       update();
     }
-    else if ((e->key()==Qt::Key_PageUp) && (modifiers==Qt::ShiftModifier))
+    else if ((e->key()==::Qt::Key_PageUp) && (modifiers==::Qt::ShiftModifier))
     {
       m_ambient_color.setX(m_ambient_color.x()+.1);
       if (m_ambient_color.x()>1.) m_ambient_color.setX(1.);
@@ -870,7 +873,7 @@ protected:
                      arg(m_ambient_color.x()).arg(m_ambient_color.y()).arg(m_ambient_color.z()));
       update();
     }
-    else if ((e->key()==Qt::Key_PageUp) && (modifiers==Qt::AltModifier))
+    else if ((e->key()==::Qt::Key_PageUp) && (modifiers==::Qt::AltModifier))
     {
       m_ambient_color.setY(m_ambient_color.y()+.1);
       if (m_ambient_color.y()>1.) m_ambient_color.setY(1.);
@@ -878,7 +881,7 @@ protected:
                      arg(m_ambient_color.x()).arg(m_ambient_color.y()).arg(m_ambient_color.z()));
       update();
     }
-    else if ((e->key()==Qt::Key_PageUp) && (modifiers==Qt::ControlModifier))
+    else if ((e->key()==::Qt::Key_PageUp) && (modifiers==::Qt::ControlModifier))
     {
       m_ambient_color.setZ(m_ambient_color.z()+.1);
       if (m_ambient_color.z()>1.) m_ambient_color.setZ(1.);
@@ -886,7 +889,7 @@ protected:
                      arg(m_ambient_color.x()).arg(m_ambient_color.y()).arg(m_ambient_color.z()));
       update();
     }
-    else if ((e->key()==Qt::Key_PageDown) && (modifiers==Qt::ShiftModifier))
+    else if ((e->key()==::Qt::Key_PageDown) && (modifiers==::Qt::ShiftModifier))
     {
       m_ambient_color.setX(m_ambient_color.x()-.1);
       if (m_ambient_color.x()<0.) m_ambient_color.setX(0.);
@@ -894,7 +897,7 @@ protected:
                      arg(m_ambient_color.x()).arg(m_ambient_color.y()).arg(m_ambient_color.z()));
       update();
     }
-    else if ((e->key()==Qt::Key_PageDown) && (modifiers==Qt::AltModifier))
+    else if ((e->key()==::Qt::Key_PageDown) && (modifiers==::Qt::AltModifier))
     {
       m_ambient_color.setY(m_ambient_color.y()-.1);
       if (m_ambient_color.y()<0.) m_ambient_color.setY(0.);
@@ -902,7 +905,7 @@ protected:
                      arg(m_ambient_color.x()).arg(m_ambient_color.y()).arg(m_ambient_color.z()));
       update();
     }
-    else if ((e->key()==Qt::Key_PageDown) && (modifiers==Qt::ControlModifier))
+    else if ((e->key()==::Qt::Key_PageDown) && (modifiers==::Qt::ControlModifier))
     {
       m_ambient_color.setZ(m_ambient_color.z()-.1);
       if (m_ambient_color.z()<0.) m_ambient_color.setZ(0.);
@@ -1019,5 +1022,7 @@ private:
   QOpenGLShaderProgram rendering_program_face;
   QOpenGLShaderProgram rendering_program_p_l;
 };
+
+} // End namespace CGAL
 
 #endif // CGAL_BASIC_VIEWER_QT_H
