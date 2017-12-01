@@ -137,18 +137,9 @@ private:
 private:
   // below could be a set of point pointers
   typedef std::set<Bare_point>                               Domain_pts_container;
-
   typedef boost::unordered_map<Vertex_handle,
                                Domain_pts_container,
                                Hash_fct>                     Curve_correspondence_map;
-
-  // The correspondence map is a map that keeps track of the position of the points
-  // in the domain class, which might differ due to periodicity. For example,
-  // someone might be using the unit cube as periodic domain and add the vertex(1,0,0)
-  // as corner. If 'v' is the vertex handle of that corner, we have v->point() = (0,0,0).
-  //
-  // This map must be kept perfectly up to date: removing a vertex from the triangulation
-  // means that the correspondence must be removed in the map too.
   typedef std::map<Curve_index, Curve_correspondence_map>    Correspondence_map;
 
   typedef typename Curve_correspondence_map::iterator        CCMit;
@@ -168,16 +159,17 @@ private:
   /// Dump the dummy vertices to a file.
   void dump_dummy_points(const std::string filename) const;
 
-  /// Try to remove a vertex that corresponds to a dummy point from the triangulation.
+  /// Attempt to remove a vertex that corresponds to a dummy point from the triangulation.
   /// Failure happens when the removal of that vertex would cause the triangulation
   /// to switch to 27-sheets.
   bool try_to_remove_dummy_vertex(const Vertex_handle dummy_vertex) const;
 
   /// Given a maximal weight 'intended_weight', compute the maximal squared size (weight)
-  /// of the protection ball at 'protection_vertex'.
+  /// of the protection ball at 'protection_vertex' such that the ball does not contain
+  /// any foreign point.
   FT get_maximum_weight(const Vertex_handle protection_vertex, const FT intended_weight) const;
 
-  /// Try to change the ball size of 'v'. The difference from 'change_ball_size()' is
+  /// Attempt to change the ball size of 'v'. The difference with 'change_ball_size()' is
   /// that the dummy point 'dummy_point' is inserted in the triangulation before
   /// size change and removed after. This is done to try to keep the triangulation
   /// in a 1-cover mode.
@@ -206,12 +198,12 @@ private:
                                                          const Vector_3& dir,
                                                          const FT min_sq_dist);
 
-  /// Try to grow the ball at 'protection_vertex' by moving a close dummy vertex.
+  /// Attempt to grow the ball at 'protection_vertex' by moving a close dummy vertex.
   bool try_to_move_close_dummy_vertex(Vertex_handle& protection_vertex,
                                       const Vertex_handle dummy_vertex,
                                       const FT intended_weight);
 
-  /// Try to grow the ball at 'protection_vertex' by removing or moving a close dummy vertex.
+  /// Attempt to grow the ball at 'protection_vertex' by removing or moving a close dummy vertex.
   bool try_to_solve_close_dummy_point(Vertex_handle& protection_vertex,
                                       Vertex_handle dummy_vertex,
                                       FT intended_weight);
@@ -230,7 +222,7 @@ private:
   Vertex_handle get_vertex_corner_from_point(const Bare_point& p,
                                              const Index& p_index) const;
 
-  /// Inserts point(p,w) into the triangulation and set its dimension to \c dim
+  /// Insert point(p,w) into the triangulation and set its dimension to \c dim
   /// and its index to \c index.
   /// The handle of the newly created vertex is returned.
   template <typename Curve_index_container>
@@ -495,320 +487,46 @@ private:
     return s;
   }
 
-  void dump_correspondence_map() const
-  {
-    typename Correspondence_map::const_iterator cmcit = canonical_vertex_to_non_periodic_position.begin(),
-                                                cmcend = canonical_vertex_to_non_periodic_position.end();
-    for(; cmcit!= cmcend; ++cmcit)
-    {
-      std::cerr << "Curve " << cmcit->first << std::endl;
-      const Curve_correspondence_map& cmap = cmcit->second;
-      typename Curve_correspondence_map::const_iterator ccmcit = cmap.begin(),
-                                                        ccmcend = cmap.end();
-      for(; ccmcit!=ccmcend; ++ccmcit)
-      {
-        std::cerr << "  Vertex: " << &*(ccmcit->first)
-                  << " canonical pos: " << c3t3_.triangulation().point(ccmcit->first) << std::endl;
-        const Domain_pts_container& vpts = ccmcit->second;
-        typename Domain_pts_container::const_iterator ptit = vpts.begin();
-        for(; ptit!=vpts.end(); ++ptit)
-          std::cerr << "    Point: " << *ptit << std::endl;
-      }
-    }
-  }
+  /// Output the correspondence map (see definition near class member).
+  void dump_correspondence_map() const;
 
   template<typename Curve_index_container>
   void insert_in_correspondence_map(const Vertex_handle v,
                                     const Bare_point& p,
                                     const Curve_index_container& curve_indices,
-                                    typename Curve_index_container::const_iterator* /*sfinae*/ = NULL)
-  {
-    CGAL_precondition(c3t3_.triangulation().geom_traits().construct_point_3_object()(
-                        c3t3_.triangulation().point(v)) ==
-                          c3t3_.triangulation().canonicalize_point(p));
-
-    typename Curve_index_container::const_iterator cicit = curve_indices.begin(),
-                                                   ciend = curve_indices.end();
-    for(; cicit!=ciend; ++cicit)
-      insert_in_correspondence_map(v, p, *cicit);
-  }
+                                    typename Curve_index_container::const_iterator* /*sfinae*/ = NULL);
 
   void insert_in_correspondence_map(const Vertex_handle v,
                                     const Bare_point& p,
-                                    const Curve_index& curve_index)
-  {
-#if CGAL_MESH_3_PROTECTION_DEBUG & 2
-    std::cerr << "insert_in_correspondence_map: " << &*v
-              << " pos: " << p
-              << " index: " << curve_index << std::endl;
-#endif
-
-    // Get the correspondence map of the correct index
-    Curve_correspondence_map& cmap =
-      canonical_vertex_to_non_periodic_position[curve_index];
-
-    // Try to insert
-    Domain_pts_container bps;
-    bps.insert(p);
-    std::pair<CCMit, bool> is_insert_successful = cmap.insert(std::make_pair(v, bps));
-
-    if(!is_insert_successful.second) // already existed in the cmap
-    {
-      Domain_pts_container& v_bps = is_insert_successful.first->second;
-
-#if CGAL_MESH_3_PROTECTION_DEBUG & 4
-      std::cerr << "Point already existed for this curve, "
-                << "at position: " << *(v_bps.begin()) << std::endl;
-#endif
-
-      CGAL_assertion(v_bps.size() == 1);
-      v_bps.insert(p);
-    }
-
-    // points of a loop can only have one position
-    CGAL_assertion_code(const Domain_pts_container& v_bps = is_insert_successful.first->second;)
-    CGAL_assertion(v_bps.size() == 1 ||
-                   (!domain_.is_loop(curve_index) && v_bps.size() == 2));
-  }
+                                    const Curve_index& curve_index);
 
   void remove_from_correspondence_map(const Vertex_handle v,
-                                      const Curve_index& curve_index)
-  {
-    typename Correspondence_map::iterator cmap_it =
-      canonical_vertex_to_non_periodic_position.find(curve_index);
-    CGAL_precondition(cmap_it != canonical_vertex_to_non_periodic_position.end());
-
-    Curve_correspondence_map& cmap = cmap_it->second;
-    CCMcit v_in_cmap = cmap.find(v);
-    CGAL_precondition(v_in_cmap != cmap.end());
-
-    // Only corners can have 2 different positions and we should never be removing corners.
-    CGAL_assertion_code(const Domain_pts_container& v_bps = v_in_cmap->second;)
-    CGAL_assertion(v_bps.size() == 1);
-
-    cmap.erase(v_in_cmap);
-  }
+                                      const Curve_index& curve_index);
 
   Bare_point get_position(const Vertex_handle v1,
-                          const Curve_index& curve_index) const
-  {
-    typename Correspondence_map::const_iterator cmap_it =
-      canonical_vertex_to_non_periodic_position.find(curve_index);
-    CGAL_precondition(cmap_it != canonical_vertex_to_non_periodic_position.end());
-    const Curve_correspondence_map& cmap = cmap_it->second;
-
-    CCMcit v1_in_cmap = cmap.find(v1);
-    CGAL_precondition(v1_in_cmap != cmap.end());
-
-    // this is the 'get_position' for a loop, so there can only be one position
-    // per vertex.
-    const Domain_pts_container& v1_bps = v1_in_cmap->second;
-    CGAL_assertion(v1_bps.size() == 1);
-
-    return *(v1_bps.begin());
-  }
+                          const Curve_index& curve_index) const;
 
   std::pair<Bare_point, Bare_point>
   get_positions_with_vertex_at_extremity(const Bare_point& known_point,
                                          const Domain_pts_container& extremity_points,
                                          const bool inverted_return_order,
                                          const Curve_index& curve_index,
-                                         const CGAL::Orientation orientation) const
-  {
-#if CGAL_MESH_3_PROTECTION_DEBUG & 2
-    std::cerr << "get_positions_with_vertex_at_extremity()" << std::endl
-              << "known_point: " << known_point << " on curve " << CGAL::oformat(curve_index)
-              << " orientation: " << orientation
-              << " inverted order ? " << std::boolalpha << inverted_return_order << std::endl;
-#endif
-
-    CGAL_precondition(known_point != Bare_point());
-    CGAL_precondition(!domain_.is_loop(curve_index));
-    CGAL_precondition(extremity_points.size() == 2);
-
-    // 'known_point' is a point on the curve, 'extremity_vertex' is the vertex that
-    // corresponds to the corner that is both the beginning and (periodically)
-    // the end of the curve with index 'curve_index'.
-
-    const Bare_point& extr_pt = *(extremity_points.begin());
-    const Bare_point& other_extr_pt = *(--extremity_points.end());
-    CGAL_assertion(known_point != extr_pt);
-
-#if CGAL_MESH_3_PROTECTION_DEBUG & 4
-    std::cerr << "extr/other: " << extr_pt << " // " << other_extr_pt << std::endl;
-#endif
-
-    // Check for unknown orientation, which is indicated by a 'Zero'
-    if(orientation == CGAL::ZERO)
-    {
-      // Three things:
-      // - The only moment where we need to know positions without knowing orientation
-      //   is when we are looking at edges of the mesh.
-      // - We are in 1-cover and thus the edges of the mesh are small (no cycles, etc).
-      // - We are in this function because one of the vertex 'v' corresponds to
-      //   two points 'p1' and 'p2' (it's an extremity of a non-loop) on the curve
-      //   of index 'curve_index'.
-      // ==> the known point is necessarily much closer to one of the points 'p1' or 'p2'
-      //     (because the edges are small).
-      // ==> the point we seek is the extremity that is closest to the known point.
-
-      const FT distance_to_extr_pt =
-        domain_.curve_segment_length(known_point, extr_pt, curve_index,
-                                     domain_.distance_sign(known_point, extr_pt, curve_index));
-      const FT distance_to_other_extr_pt =
-        domain_.curve_segment_length(known_point, other_extr_pt, curve_index,
-                                     domain_.distance_sign(known_point, other_extr_pt, curve_index));
-
-#if CGAL_MESH_3_PROTECTION_DEBUG & 4
-      std::cerr << "distances: " << distance_to_extr_pt << " // "
-                << distance_to_other_extr_pt << std::endl;
-#endif
-
-      CGAL_assertion(distance_to_extr_pt != distance_to_other_extr_pt);
-
-      if(std::abs(distance_to_extr_pt) > std::abs(distance_to_other_extr_pt))
-      {
-        // 'other_extr_pt' is closer
-        if(inverted_return_order)
-          return std::make_pair(other_extr_pt, known_point);
-        else
-          return std::make_pair(known_point, other_extr_pt);
-      }
-      else
-      {
-        // 'extr_pt' is closer
-        if(inverted_return_order)
-          return std::make_pair(extr_pt, known_point);
-        else
-          return std::make_pair(known_point, extr_pt);
-      }
-    }
-
-    // Case where the orientation is known
-    CGAL::Orientation distance_sign;
-    if(inverted_return_order)
-      distance_sign = domain_.distance_sign(extr_pt, known_point, curve_index);
-    else
-      distance_sign = domain_.distance_sign(known_point, extr_pt, curve_index);
-
-    if(distance_sign == orientation)
-    {
-      if(inverted_return_order)
-        return std::make_pair(extr_pt, known_point);
-      else
-        return std::make_pair(known_point, extr_pt);
-    }
-    else // it's the other extremity
-    {
-      if(inverted_return_order)
-        return std::make_pair(other_extr_pt, known_point);
-      else
-        return std::make_pair(known_point, other_extr_pt);
-    }
-  }
+                                         const CGAL::Orientation orientation) const;
 
   std::pair<Bare_point, Bare_point> get_positions(const Vertex_handle v1,
                                                   const Vertex_handle v2,
                                                   const Curve_index& curve_index,
-                                                  const CGAL::Orientation orientation) const
-  {
-#if CGAL_MESH_3_PROTECTION_DEBUG & 2
-    std::cerr << "get positions: " << &*v1 << " " << &*v2
-              << " in curve " << curve_index << " and orientation: " << orientation << std::endl;
-#endif
-
-    typename Correspondence_map::const_iterator cmap_it =
-      canonical_vertex_to_non_periodic_position.find(curve_index);
-    CGAL_precondition(cmap_it != canonical_vertex_to_non_periodic_position.end());
-    const Curve_correspondence_map& cmap = cmap_it->second;
-
-    CCMcit v1_in_cmap = cmap.find(v1);
-    CCMcit v2_in_cmap = cmap.find(v2);
-
-    CGAL_precondition(v1_in_cmap != cmap.end());
-    CGAL_precondition(v2_in_cmap != cmap.end());
-
-    const Domain_pts_container& v1_bps = v1_in_cmap->second;
-    const Domain_pts_container& v2_bps = v2_in_cmap->second;
-    CGAL_precondition(v1_bps.size() == 1 || v1_bps.size() == 2);
-    CGAL_precondition(v2_bps.size() == 1 || v2_bps.size() == 2);
-
-    bool found_p1 = false, found_p2 = false;
-    Bare_point p1, p2;
-
-    if(v1_bps.size() == 1)
-    {
-      found_p1 = true;
-      p1 = *(v1_bps.begin());
-    }
-
-    if(v2_bps.size() == 1)
-    {
-      found_p2 = true;
-      p2 = *(v2_bps.begin());
-    }
-
-    if(found_p1 && found_p2)
-      return std::make_pair(p1, p2);
-
-    if(!found_p1 && !found_p2)
-    {
-      // A vertex can only correspond to two points if it is an extremity
-      // that is the same periodically. Additionally, a curve only has two extremities.
-      CGAL_assertion(v1 == v2);
-
-      // Return two different points, with the correct orientation.
-      p1 = *(v1_bps.begin());
-      p2 = *(--v1_bps.end());
-      CGAL_assertion(p1 != p2);
-
-      CGAL::Orientation distance_sign = domain_.distance_sign(p1, p2, curve_index);
-      if(distance_sign == orientation)
-        return std::make_pair(p1, p2);
-      else
-        return std::make_pair(p2, p1);
-    }
-
-    // If we're here, only one point has been found, and the other corresponds
-    // to an extremity of a curve that has the same beginning and end periodically
-    // (seen by the fact that the vertex corresponds to two points).
-    if(!found_p1)
-    {
-      return get_positions_with_vertex_at_extremity(p2, v1_bps, true /*inverted return order*/,
-                                                    curve_index, orientation);
-    }
-    else
-    {
-      CGAL_assertion(!found_p2);
-      return get_positions_with_vertex_at_extremity(p1, v2_bps, false /*inverted return order*/,
-                                                    curve_index, orientation);
-    }
-  }
+                                                  const CGAL::Orientation orientation) const;
 
   std::pair<Bare_point, Bare_point> get_positions_with_unknown_orientation(const Vertex_handle v1,
                                                                            const Vertex_handle v2,
-                                                                           const Curve_index& curve_index) const
-  {
-    // We don't know the orientation ! This is problematic if a vertex corresponds
-    // to two points (extremity of a periodic loop).
-    CGAL::Orientation orientation = CGAL::ZERO;
-    return get_positions(v1, v2, curve_index, orientation);
-  }
+                                                                           const Curve_index& curve_index) const;
 
   boost::tuple<Bare_point, Bare_point, Bare_point> get_positions(const Vertex_handle v1,
                                                                  const Vertex_handle v2,
                                                                  const Vertex_handle v3,
                                                                  const Curve_index& curve_index,
-                                                                 const CGAL::Orientation orientation) const
-  {
-    Bare_point p1, p2_check, p2, p3;
-
-    boost::tie(p1, p2) = get_positions(v1, v2, curve_index, orientation);
-    boost::tie(p2_check, p3) = get_positions(v2, v3, curve_index, orientation);
-    CGAL_assertion(p2_check == p2);
-
-    return boost::make_tuple(p1, p2, p3);
-  }
+                                                                 const CGAL::Orientation orientation) const;
 
 private:
   C3T3& c3t3_;
@@ -818,9 +536,17 @@ private:
   Weight minimal_weight_;
   std::set<Curve_index> treated_edges_;
   Vertex_set unchecked_vertices_;
-  Correspondence_map canonical_vertex_to_non_periodic_position;
   int refine_balls_iteration_nb;
   bool nonlinear_growth_of_balls;
+
+  // The correspondence map is a map that keeps track of the position of the points
+  // in the domain class, which might differ due to periodicity. For example,
+  // someone might be using the unit cube as periodic domain and add the vertex(1,0,0)
+  // as corner. If 'v' is the vertex handle of that corner, we have v->point() = (0,0,0).
+  //
+  // This map must be kept perfectly up to date: removing a vertex from the triangulation
+  // means that the correspondence must be removed in the map too.
+  Correspondence_map vertex_handle_to_full_space_position;
 };
 
 
@@ -835,6 +561,7 @@ Protect_edges_sizing_field(C3T3& c3t3, const MD& domain,
   , minimal_weight_(CGAL::square(minimal_size))
   , refine_balls_iteration_nb(0)
   , nonlinear_growth_of_balls(false)
+  , vertex_handle_to_full_space_position()
 {
 #ifndef CGAL_MESH_3_NO_PROTECTION_NON_LINEAR
   set_nonlinear_growth_of_balls();
@@ -904,7 +631,361 @@ operator()(const bool refine)
   CGAL_expensive_postcondition(c3t3_.is_valid());
 }
 
+template <typename C3T3, typename MD, typename Sf>
+void
+Protect_edges_sizing_field<C3T3, MD, Sf>::
+dump_correspondence_map() const
+{
+  typename Correspondence_map::const_iterator cmcit = vertex_handle_to_full_space_position.begin(),
+                                              cmcend = vertex_handle_to_full_space_position.end();
+  for(; cmcit!= cmcend; ++cmcit)
+  {
+    std::cerr << "Curve " << cmcit->first << std::endl;
+    const Curve_correspondence_map& cmap = cmcit->second;
+    typename Curve_correspondence_map::const_iterator ccmcit = cmap.begin(),
+                                                      ccmcend = cmap.end();
+    for(; ccmcit!=ccmcend; ++ccmcit)
+    {
+      std::cerr << "  Vertex: " << &*(ccmcit->first)
+                << " canonical pos: " << c3t3_.triangulation().point(ccmcit->first) << std::endl;
+      const Domain_pts_container& vpts = ccmcit->second;
+      typename Domain_pts_container::const_iterator ptit = vpts.begin();
+      for(; ptit!=vpts.end(); ++ptit)
+        std::cerr << "    Point: " << *ptit << std::endl;
+    }
+  }
+}
 
+
+template <typename C3T3, typename MD, typename Sf>
+template<typename Curve_index_container>
+void
+Protect_edges_sizing_field<C3T3, MD, Sf>::
+insert_in_correspondence_map(const Vertex_handle v,
+                             const Bare_point& p,
+                             const Curve_index_container& curve_indices,
+                             typename Curve_index_container::const_iterator* /*sfinae*/)
+{
+  CGAL_precondition(c3t3_.triangulation().geom_traits().construct_point_3_object()(
+                      c3t3_.triangulation().point(v)) ==
+                        c3t3_.triangulation().canonicalize_point(p));
+
+  typename Curve_index_container::const_iterator cicit = curve_indices.begin(),
+                                                 ciend = curve_indices.end();
+  for(; cicit!=ciend; ++cicit)
+    insert_in_correspondence_map(v, p, *cicit);
+}
+
+
+template <typename C3T3, typename MD, typename Sf>
+void
+Protect_edges_sizing_field<C3T3, MD, Sf>::
+insert_in_correspondence_map(const Vertex_handle v,
+                             const Bare_point& p,
+                             const Curve_index& curve_index)
+{
+#if CGAL_MESH_3_PROTECTION_DEBUG & 2
+  std::cerr << "insert_in_correspondence_map: " << &*v
+            << " pos: " << p
+            << " index: " << curve_index << std::endl;
+#endif
+
+  // Get the correspondence map of the correct index
+  Curve_correspondence_map& cmap =
+    vertex_handle_to_full_space_position[curve_index];
+
+  // Try to insert
+  Domain_pts_container bps;
+  bps.insert(p);
+  std::pair<CCMit, bool> is_insert_successful = cmap.insert(std::make_pair(v, bps));
+
+  if(!is_insert_successful.second) // already existed in the cmap
+  {
+    Domain_pts_container& v_bps = is_insert_successful.first->second;
+
+#if CGAL_MESH_3_PROTECTION_DEBUG & 4
+    std::cerr << "Point already existed for this curve, "
+              << "at position: " << *(v_bps.begin()) << std::endl;
+#endif
+
+    CGAL_assertion(v_bps.size() == 1);
+    v_bps.insert(p);
+  }
+
+  // points of a loop can only have one full-space position
+  CGAL_assertion_code(const Domain_pts_container& v_bps = is_insert_successful.first->second;)
+  CGAL_assertion(v_bps.size() == 1 ||
+                 (!domain_.is_loop(curve_index) && v_bps.size() == 2));
+}
+
+template <typename C3T3, typename MD, typename Sf>
+void
+Protect_edges_sizing_field<C3T3, MD, Sf>::
+remove_from_correspondence_map(const Vertex_handle v,
+                               const Curve_index& curve_index)
+{
+  typename Correspondence_map::iterator cmap_it =
+    vertex_handle_to_full_space_position.find(curve_index);
+  CGAL_precondition(cmap_it != vertex_handle_to_full_space_position.end());
+
+  Curve_correspondence_map& cmap = cmap_it->second;
+  CCMcit v_in_cmap = cmap.find(v);
+  CGAL_precondition(v_in_cmap != cmap.end());
+
+  // Only corners can have 2 different full-space positions and we should never be removing corners.
+  CGAL_assertion_code(const Domain_pts_container& v_bps = v_in_cmap->second;)
+  CGAL_assertion(v_bps.size() == 1);
+
+  cmap.erase(v_in_cmap);
+}
+
+
+template <typename C3T3, typename MD, typename Sf>
+typename Protect_edges_sizing_field<C3T3, MD, Sf>::Bare_point
+Protect_edges_sizing_field<C3T3, MD, Sf>::
+get_position(const Vertex_handle v1,
+             const Curve_index& curve_index) const
+{
+  typename Correspondence_map::const_iterator cmap_it =
+    vertex_handle_to_full_space_position.find(curve_index);
+  CGAL_precondition(cmap_it != vertex_handle_to_full_space_position.end());
+  const Curve_correspondence_map& cmap = cmap_it->second;
+
+  CCMcit v1_in_cmap = cmap.find(v1);
+  CGAL_precondition(v1_in_cmap != cmap.end());
+
+  // this is the 'get_position' for a loop, so there can only be one position
+  // per vertex.
+  const Domain_pts_container& v1_bps = v1_in_cmap->second;
+  CGAL_assertion(v1_bps.size() == 1);
+
+  return *(v1_bps.begin());
+}
+
+
+template <typename C3T3, typename MD, typename Sf>
+std::pair<typename Protect_edges_sizing_field<C3T3, MD, Sf>::Bare_point,
+          typename Protect_edges_sizing_field<C3T3, MD, Sf>::Bare_point>
+Protect_edges_sizing_field<C3T3, MD, Sf>::
+get_positions_with_vertex_at_extremity(const Bare_point& known_point,
+                                       const Domain_pts_container& extremity_points,
+                                       const bool inverted_return_order,
+                                       const Curve_index& curve_index,
+                                       const CGAL::Orientation orientation) const
+{
+#if CGAL_MESH_3_PROTECTION_DEBUG & 2
+  std::cerr << "get_positions_with_vertex_at_extremity()" << std::endl
+            << "known_point: " << known_point << " on curve " << CGAL::oformat(curve_index)
+            << " orientation: " << orientation
+            << " inverted order ? " << std::boolalpha << inverted_return_order << std::endl;
+#endif
+
+  CGAL_precondition(known_point != Bare_point());
+  CGAL_precondition(!domain_.is_loop(curve_index));
+  CGAL_precondition(extremity_points.size() == 2);
+
+  // 'known_point' is a point on the curve, 'extremity_vertex' is the vertex that
+  // corresponds to the corner that is both the beginning and (periodically)
+  // the end of the curve with index 'curve_index'.
+
+  const Bare_point& extr_pt = *(extremity_points.begin());
+  const Bare_point& other_extr_pt = *(--extremity_points.end());
+  CGAL_assertion(known_point != extr_pt);
+
+#if CGAL_MESH_3_PROTECTION_DEBUG & 4
+  std::cerr << "extr/other: " << extr_pt << " // " << other_extr_pt << std::endl;
+#endif
+
+  // Check for unknown orientation, which is indicated by a 'Zero'
+  if(orientation == CGAL::ZERO)
+  {
+    // Three things:
+    // - The only moment where we need to know positions without knowing orientation
+    //   is when we are walking on edges of the mesh.
+    // - We are in 1-cover and thus the edges of the mesh are small (no cycles, etc).
+    // - We are in this function because one of the vertex 'v' corresponds to
+    //   two points 'p1' and 'p2' (it's an extremity of a non-loop) on the curve
+    //   of index 'curve_index'.
+    // ==> the known point is necessarily much closer to one of the points 'p1' or 'p2'
+    //     (because the edges are small).
+    // ==> the point we seek is the extremity that is closest to the known point.
+
+    const FT distance_to_extr_pt =
+      domain_.curve_segment_length(known_point, extr_pt, curve_index,
+                                   domain_.distance_sign(known_point, extr_pt, curve_index));
+    const FT distance_to_other_extr_pt =
+      domain_.curve_segment_length(known_point, other_extr_pt, curve_index,
+                                   domain_.distance_sign(known_point, other_extr_pt, curve_index));
+
+#if CGAL_MESH_3_PROTECTION_DEBUG & 4
+    std::cerr << "distances: " << distance_to_extr_pt << " // "
+              << distance_to_other_extr_pt << std::endl;
+#endif
+
+    CGAL_assertion(distance_to_extr_pt != distance_to_other_extr_pt);
+
+    if(std::abs(distance_to_extr_pt) > std::abs(distance_to_other_extr_pt))
+    {
+      // 'other_extr_pt' is closer
+      if(inverted_return_order)
+        return std::make_pair(other_extr_pt, known_point);
+      else
+        return std::make_pair(known_point, other_extr_pt);
+    }
+    else
+    {
+      // 'extr_pt' is closer
+      if(inverted_return_order)
+        return std::make_pair(extr_pt, known_point);
+      else
+        return std::make_pair(known_point, extr_pt);
+    }
+  }
+
+  // Case where the orientation is known
+  CGAL::Orientation distance_sign;
+  if(inverted_return_order)
+    distance_sign = domain_.distance_sign(extr_pt, known_point, curve_index);
+  else
+    distance_sign = domain_.distance_sign(known_point, extr_pt, curve_index);
+
+  if(distance_sign == orientation)
+  {
+    if(inverted_return_order)
+      return std::make_pair(extr_pt, known_point);
+    else
+      return std::make_pair(known_point, extr_pt);
+  }
+  else // it's the other extremity
+  {
+    if(inverted_return_order)
+      return std::make_pair(other_extr_pt, known_point);
+    else
+      return std::make_pair(known_point, other_extr_pt);
+  }
+}
+
+
+template <typename C3T3, typename MD, typename Sf>
+std::pair<typename Protect_edges_sizing_field<C3T3, MD, Sf>::Bare_point,
+          typename Protect_edges_sizing_field<C3T3, MD, Sf>::Bare_point>
+Protect_edges_sizing_field<C3T3, MD, Sf>::
+get_positions(const Vertex_handle v1,
+              const Vertex_handle v2,
+              const Curve_index& curve_index,
+              const CGAL::Orientation orientation) const
+{
+#if CGAL_MESH_3_PROTECTION_DEBUG & 2
+  std::cerr << "get positions: " << &*v1 << " " << &*v2
+            << " in curve " << curve_index << " and orientation: " << orientation << std::endl;
+#endif
+
+  typename Correspondence_map::const_iterator cmap_it =
+    vertex_handle_to_full_space_position.find(curve_index);
+  CGAL_precondition(cmap_it != vertex_handle_to_full_space_position.end());
+  const Curve_correspondence_map& cmap = cmap_it->second;
+
+  CCMcit v1_in_cmap = cmap.find(v1);
+  CCMcit v2_in_cmap = cmap.find(v2);
+
+  CGAL_precondition(v1_in_cmap != cmap.end());
+  CGAL_precondition(v2_in_cmap != cmap.end());
+
+  const Domain_pts_container& v1_bps = v1_in_cmap->second;
+  const Domain_pts_container& v2_bps = v2_in_cmap->second;
+  CGAL_precondition(v1_bps.size() == 1 || v1_bps.size() == 2);
+  CGAL_precondition(v2_bps.size() == 1 || v2_bps.size() == 2);
+
+  bool found_p1 = false, found_p2 = false;
+  Bare_point p1, p2;
+
+  if(v1_bps.size() == 1)
+  {
+    found_p1 = true;
+    p1 = *(v1_bps.begin());
+  }
+
+  if(v2_bps.size() == 1)
+  {
+    found_p2 = true;
+    p2 = *(v2_bps.begin());
+  }
+
+  if(found_p1 && found_p2)
+    return std::make_pair(p1, p2);
+
+  if(!found_p1 && !found_p2)
+  {
+    // A vertex can only correspond to two points if it is an extremity
+    // that is the same periodically. Additionally, a curve only has two extremities.
+    CGAL_assertion(v1 == v2);
+
+    // Return two different points, with the correct orientation.
+    p1 = *(v1_bps.begin());
+    p2 = *(--v1_bps.end());
+    CGAL_assertion(p1 != p2);
+
+    CGAL::Orientation distance_sign = domain_.distance_sign(p1, p2, curve_index);
+    if(distance_sign == orientation)
+      return std::make_pair(p1, p2);
+    else
+      return std::make_pair(p2, p1);
+  }
+
+  // If we're here, only one point has been found, and the other corresponds
+  // to an extremity of a curve that has the same beginning and end periodically
+  // (seen by the fact that the vertex corresponds to two points).
+  if(!found_p1)
+  {
+    return get_positions_with_vertex_at_extremity(p2, v1_bps, true /*inverted return order*/,
+                                                  curve_index, orientation);
+  }
+  else
+  {
+    CGAL_assertion(!found_p2);
+    return get_positions_with_vertex_at_extremity(p1, v2_bps, false /*inverted return order*/,
+                                                  curve_index, orientation);
+  }
+}
+
+
+template <typename C3T3, typename MD, typename Sf>
+std::pair<typename Protect_edges_sizing_field<C3T3, MD, Sf>::Bare_point,
+          typename Protect_edges_sizing_field<C3T3, MD, Sf>::Bare_point>
+Protect_edges_sizing_field<C3T3, MD, Sf>::
+get_positions_with_unknown_orientation(const Vertex_handle v1,
+                                       const Vertex_handle v2,
+                                       const Curve_index& curve_index) const
+{
+  // We don't know the orientation ! This is problematic if a vertex corresponds
+  // to two points (extremity of a periodic loop).
+  CGAL::Orientation orientation = CGAL::ZERO;
+  return get_positions(v1, v2, curve_index, orientation);
+}
+
+
+template <typename C3T3, typename MD, typename Sf>
+boost::tuple<typename Protect_edges_sizing_field<C3T3, MD, Sf>::Bare_point,
+             typename Protect_edges_sizing_field<C3T3, MD, Sf>::Bare_point,
+             typename Protect_edges_sizing_field<C3T3, MD, Sf>::Bare_point>
+Protect_edges_sizing_field<C3T3, MD, Sf>::
+get_positions(const Vertex_handle v1,
+              const Vertex_handle v2,
+              const Vertex_handle v3,
+              const Curve_index& curve_index,
+              const CGAL::Orientation orientation) const
+{
+  Bare_point p1, p2_check, p2, p3;
+
+  boost::tie(p1, p2) = get_positions(v1, v2, curve_index, orientation);
+  boost::tie(p2_check, p3) = get_positions(v2, v3, curve_index, orientation);
+  CGAL_assertion(p2_check == p2);
+
+  return boost::make_tuple(p1, p2, p3);
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
 template <typename C3T3, typename MD, typename Sf>
 void
 Protect_edges_sizing_field<C3T3, MD, Sf>::
