@@ -371,6 +371,12 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   else()
     export(TARGETS FILE polyhedron_demo_targets.cmake NAMESPACE Polyhedron_)
   endif()
+  if(TARGET CGAL_Qt5_moc_and_resources)
+    export(
+      TARGETS CGAL_Qt5_moc_and_resources
+      NAMESPACE Polyhedron_
+      APPEND FILE polyhedron_demo_targets.cmake)
+  endif()
   export(
     TARGETS
     demo_framework
