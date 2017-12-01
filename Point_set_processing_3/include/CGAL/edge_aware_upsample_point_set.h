@@ -26,7 +26,7 @@
 
 #include <CGAL/property_map.h>
 #include <CGAL/point_set_processing_assertions.h>
-#include <CGAL/internal/Rich_grid.h>
+#include <CGAL/Point_set_processing_3/internal/Rich_grid.h>
 #include <CGAL/Real_timer.h>
 #include <CGAL/Memory_sizer.h>
 #include <CGAL/compute_average_spacing.h>

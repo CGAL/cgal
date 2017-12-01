@@ -25,7 +25,7 @@
 #include <CGAL/license/Point_set_processing_3.h>
 
 
-#include <CGAL/internal/Voronoi_covariance_3/voronoi_covariance_3.h>
+#include <CGAL/Point_set_processing_3/internal/Voronoi_covariance_3/voronoi_covariance_3.h>
 
 #include <CGAL/property_map.h>
 #include <CGAL/Delaunay_triangulation_3.h>
