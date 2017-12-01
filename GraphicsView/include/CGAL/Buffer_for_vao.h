@@ -33,12 +33,12 @@
 #include <queue>
 #include <boost/unordered_map.hpp>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel Local_kernel;
-typedef Local_kernel::Point_3  Local_point;
-typedef Local_kernel::Vector_3 Local_vector;
-
 namespace CGAL
 {
+  typedef CGAL::Exact_predicates_inexact_constructions_kernel Local_kernel;
+  typedef Local_kernel::Point_3  Local_point;
+  typedef Local_kernel::Vector_3 Local_vector;
+
 //------------------------------------------------------------------------------
 namespace internal
 {
@@ -414,60 +414,44 @@ public:
   static bool is_facet_convex(const std::vector<Local_point>& facet,
                               const Local_vector& N)
   {
-    typedef Local_kernel::Orientation Orientation;
-    Orientation orientation;
-    Local_vector normal = N;
-    bool normal_is_ok;
-    std::size_t id = 0;
-    do{
-      normal_is_ok = true;
-      //Initializes the facet orientation
+    Local_kernel::Orientation orientation;
+    std::size_t id=0;
+    do
+    {
+      Local_point& S=facet[id];
+      Local_point& T=facet[id+1];
+      Local_vector V1=Local_vector((T-S).x(), (T-S).y(), (T-S).z());
 
-      Local_point S,T;
-      S = facet[id];
-      T = facet[id+1];
-      Local_vector V1 = Local_vector((T-S).x(), (T-S).y(), (T-S).z());
-      S = T;
-      T = facet[id+2];
-      Local_vector V2 = Local_vector((T-S).x(), (T-S).y(), (T-S).z());
+      Local_point& U=facet[id+2];
+      Local_vector V2=Local_vector((U-T).x(), (U-T).y(), (U-T).z());
 
-      if(normal == Local_vector(0,0,0))
-        normal_is_ok = false;
-      if(normal_is_ok)
-      {
-        orientation = Local_kernel::Orientation_3()(V1, V2, normal);
-        if( orientation == CGAL::COPLANAR )
-          normal_is_ok = false;
-      }
-      //Checks if the normal is good : if the normal is null
-      // or if it is coplanar to the facet, we need another one.
-      if(!normal_is_ok)
-      {
-        normal = CGAL::cross_product(V1,V2);
-      }
+      orientation = Local_kernel::Orientation_3()(V1, V2, normal);
+      // Is it possible that orientation==COPLANAR ? Maybe if V1 or V2 is very small ?
+    }
+    while(++id!=facet.size() &&
+          (orientation==CGAL::COPLANAR || orientation==CGAL::ZERO));
 
-    }while( ++id != facet.size() && !normal_is_ok);
-    //if no good normal can be found, stop here.
-    if (!normal_is_ok)
-      return false;
+    //Here, all orientations were COPLANAR. Not sure this case is possible,
+    // but we stop here.
+    if (orientation==CGAL::COPLANAR)
+    { return false; }
 
-    //computes convexness
-
-    //re-initializes he_end;
-
+    // Now we compute convexness
     for(id=0; id<facet.size(); ++id)
     {
-      Local_point S,T;
-      S = facet[id%facet.size()];
-      T = facet[(id+1)%facet.size()];
-      Local_vector V1 = Local_vector((T-S).x(), (T-S).y(), (T-S).z());
-      S = T;
-      T = facet[(id+2)%facet.size()];
-      Local_vector V2 = Local_vector((T-S).x(), (T-S).y(), (T-S).z());
-      Orientation res = Local_kernel::Orientation_3()(V1, V2, normal) ;
+      Local_point& S=facet[id];
+      Local_point& T=facet[id+1];
+      Local_vector V1=Local_vector((T-S).x(), (T-S).y(), (T-S).z());
+      
+      Local_point& U=facet[id+2];
+      Local_vector V2=Local_vector((U-T).x(), (U-T).y(), (U-T).z());
+      
+      orientation = Local_kernel::Orientation_3()(V1, V2, normal);
 
-      if(res!= orientation && res != CGAL::ZERO)
-        return false;
+      Local_kernel::Orientation res=Local_kernel::Orientation_3()(V1, V2, normal) ;
+
+      if(res!=CGAL::ZERO && res!=CGAL::COPLANAR && res!=orientation)
+      { return false; }
     }
     return true;
   }
