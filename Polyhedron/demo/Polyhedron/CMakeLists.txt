@@ -191,7 +191,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     Scene_group_item_moc.cpp
     TextRenderer.cpp
     TextRenderer_moc.cpp
-    Polyhedron_demo_plugin_helper.cpp
     Scene_item_rendering_helper.cpp
     Scene_item_rendering_helper_moc.cpp
     Primitive_container.cpp)

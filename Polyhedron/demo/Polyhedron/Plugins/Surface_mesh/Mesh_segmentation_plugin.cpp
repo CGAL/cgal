@@ -1,4 +1,3 @@
-#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 
 #include "ui_Mesh_segmentation_widget.h"
@@ -24,7 +23,7 @@
 #include <CGAL/property_map.h>
 #include <CGAL/Mesh_3/properties_Polyhedron_3.h>
 #include <CGAL/Mesh_3/properties_Surface_mesh.h>
-
+#include <CGAL/Three/Three.h>
 void set_color_read_only(Scene_polyhedron_item* poly)
 { poly->set_color_vector_read_only(true); }
 
@@ -63,7 +62,7 @@ private:
 using namespace CGAL::Three;
 class Polyhedron_demo_mesh_segmentation_plugin :
     public QObject,
-    public Polyhedron_demo_plugin_helper
+    public Polyhedron_demo_plugin_interface
 {
     Q_OBJECT
     Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
@@ -80,30 +79,28 @@ public:
 
     bool applicable(QAction*) const {
       return
-        qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex()))
-          || qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex()));
+        qobject_cast<Scene_polyhedron_item*>(Three::scene()->item(Three::scene()->mainSelectionIndex()))
+          || qobject_cast<Scene_surface_mesh_item*>(Three::scene()->item(Three::scene()->mainSelectionIndex()));
     }
 
-    void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*) {
-        this->scene = scene_interface;
-        this->mw = mainWindow;
-        actionSegmentation = new QAction("Mesh Segmentation", mw);
+    void init() {
+        actionSegmentation = new QAction("Mesh Segmentation", Three::mainWindow());
         actionSegmentation->setProperty("subMenuName", "Triangulated Surface Mesh Segmentation");
         actionSegmentation->setObjectName("actionSegmentation");
 
         // adding slot for itemAboutToBeDestroyed signal, aim is removing item from item-functor map.
 
-        if( Scene* scene = dynamic_cast<Scene*>(scene_interface) ) {
-            connect(scene, SIGNAL(itemAboutToBeDestroyed(CGAL::Three::Scene_item*)), this, SLOT(itemAboutToBeDestroyed(CGAL::Three::Scene_item*)));
+        if( Scene* t_scene = dynamic_cast<Scene*>(Three::scene()) ) {
+            connect(t_scene, SIGNAL(itemAboutToBeDestroyed(CGAL::Three::Scene_item*)), this, SLOT(itemAboutToBeDestroyed(CGAL::Three::Scene_item*)));
         }
         init_color_map_sdf();
         init_color_map_segmentation();
-        autoConnectActions();
+        Three::autoConnectActions(this);
 
-        dock_widget = new QDockWidget("Mesh segmentation parameters", mw);
+        dock_widget = new QDockWidget("Mesh segmentation parameters", Three::mainWindow());
         dock_widget->setVisible(false); // do not show at the beginning
         ui_widget.setupUi(dock_widget);
-        mw->addDockWidget(Qt::LeftDockWidgetArea, dock_widget);
+        Three::mainWindow()->addDockWidget(Qt::LeftDockWidgetArea, dock_widget);
 
         connect(ui_widget.Partition_button,  SIGNAL(clicked()), this, SLOT(on_Partition_button_clicked()));
         connect(ui_widget.SDF_button,  SIGNAL(clicked()), this, SLOT(on_SDF_button_clicked()));
@@ -257,30 +254,30 @@ void Polyhedron_demo_mesh_segmentation_plugin::apply_SDF_button_clicked(Facegrap
   pair->first->setName(tr("(SDF-%1-%2)").arg(number_of_rays).arg(ui_widget.Cone_angle_spin_box->value()));
 
   if(create_new_item) {
-      Scene::Item_id index = scene->addItem(pair->first);
+      Scene::Item_id index = Three::scene()->addItem(pair->first);
       item->setVisible(false);
-      scene->itemChanged(item);
-      pair->first->invalidateOpenGLBuffers();
-      scene->itemChanged(pair->first);
-      scene->setSelectedItem(index);
+      Three::scene()->itemChanged(item);
+      //pair->first->invalidate(Scene_item::ALL);
+      Three::scene()->itemChanged(pair->first);
+      Three::scene()->setSelectedItem(index);
   }
   else {
-    item->invalidateOpenGLBuffers();
-    scene->itemChanged(scene->item_id(item));
+    item->invalidate(Scene_item::COLORS);
+    Three::scene()->itemChanged(Three::scene()->item_id(item));
   }
   QApplication::restoreOverrideCursor();
 }
 void Polyhedron_demo_mesh_segmentation_plugin::on_SDF_button_clicked()
 {
-  CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
-  Scene_polyhedron_item* item = qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+  CGAL::Three::Scene_interface::Item_id index = Three::scene()->mainSelectionIndex();
+  Scene_polyhedron_item* item = qobject_cast<Scene_polyhedron_item*>(Three::scene()->item(index));
   if(item)
   {
     apply_SDF_button_clicked(item);
     return;
   }
 
-  Scene_surface_mesh_item* sm_item = qobject_cast<Scene_surface_mesh_item*>(scene->item(index));
+  Scene_surface_mesh_item* sm_item = qobject_cast<Scene_surface_mesh_item*>(Three::scene()->item(index));
   if(sm_item)
     apply_SDF_button_clicked(sm_item);
 }
@@ -343,29 +340,29 @@ void Polyhedron_demo_mesh_segmentation_plugin::apply_Partition_button_clicked(Fa
   pair->first->setName(tr("(Segmentation-%1-%2)").arg(number_of_clusters).arg(smoothness));
 
   if(create_new_item) {
-      Scene::Item_id index = scene->addItem(pair->first);
+      Scene::Item_id index = Three::scene()->addItem(pair->first);
       item->setVisible(false);
-      scene->itemChanged(item);
-      pair->first->invalidateOpenGLBuffers();
-      scene->itemChanged(pair->first);
-      scene->setSelectedItem(index);
+      Three::scene()->itemChanged(item);
+      //pair->first->invalidateOpenGLBuffers();
+      Three::scene()->itemChanged(pair->first);
+      Three::scene()->setSelectedItem(index);
   }
   else {
-    item->invalidateOpenGLBuffers();
-    scene->itemChanged(scene->item_id(item));
+    item->invalidate(Scene_item::COLORS);
+    Three::scene()->itemChanged(Three::scene()->item_id(item));
   }
 
   QApplication::restoreOverrideCursor();
 }
 void Polyhedron_demo_mesh_segmentation_plugin::on_Partition_button_clicked()
 {
-  CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
-  Scene_polyhedron_item* item = qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+  CGAL::Three::Scene_interface::Item_id index = Three::scene()->mainSelectionIndex();
+  Scene_polyhedron_item* item = qobject_cast<Scene_polyhedron_item*>(Three::scene()->item(index));
   if(item) {
     apply_Partition_button_clicked(item);
     return;
   }
-  Scene_surface_mesh_item* sm_item = qobject_cast<Scene_surface_mesh_item*>(scene->item(index));
+  Scene_surface_mesh_item* sm_item = qobject_cast<Scene_surface_mesh_item*>(Three::scene()->item(index));
   if(sm_item)
     apply_Partition_button_clicked(sm_item);
 }
