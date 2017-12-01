@@ -36,8 +36,8 @@ namespace Periodic_3_mesh_3 {
 
 namespace IO {
 
-// helper function moving periodic triangles in some canonical positions
-// in order to get a surface with fewer "holes"
+// Helper functions moving periodic elements in some canonical positions
+// in order to get a surface with fewer "holes". Unused for now.
 template<class Triangulation>
 typename Triangulation::Periodic_triangle
 canonicalize_triangle(const typename Triangulation::Periodic_triangle& pt)
@@ -79,21 +79,20 @@ canonicalize_tetrahedron(const typename Triangulation::Periodic_tetrahedron& pt)
                           std::make_pair(pt[3].first, o3 - diff_off));
 }
 
-// Writing a restricted Delaunay triangulation to the .mesh file format, which
-// can be visualized using medit.
-// By default, 7 copies are used, for a total of 8 instances of the domains.
+// Writing a periodic triangulation to the .mesh file format, which can be visualized
+// using medit. By default, 7 copies are used, for a total of 8 instances of the domains.
 template <class Stream, class C3t3>
 Stream& write_complex_to_medit(Stream& out, C3t3& c3t3,
                                unsigned occurence_count = 8)
 {
-  // if:
-  // -"1": only draws a single instance of the domain
-  // -"2": draws 2 occurences of the domain, displaying an additional domain on
-  //       the (Ox) axis
-  // -"4": draws 4 occurences of the domain, displaying an additional domain on
-  //       the (Ox) and (Oy) axes
-  // -"8": draws 3 occurences of the domain, displaying an additional domain on
-  //       the (Ox), (Oy), and (Oz) axes
+  // if occurence_count equals:
+  // "1" --> only draws a single instance of the domain.
+  // "2" --> draws 2 occurences of the domain, displaying an additional domain
+  //         on the (Ox) axis.
+  // "4" --> draws 4 occurences of the domain, displaying an additional domain
+  //         on the (Ox) and (Oy) axes.
+  // "8" --> draws 3 occurences of the domain, displaying an additional domain
+  //         on the (Ox), (Oy), and (Oz) axes.
   CGAL_precondition(occurence_count == 1 || occurence_count == 2 ||
                     occurence_count == 4 || occurence_count == 8);
 
@@ -104,6 +103,7 @@ Stream& write_complex_to_medit(Stream& out, C3t3& c3t3,
   typedef typename Tr::Weighted_point            Weighted_point;
 
   typedef typename C3t3::Vertex_handle           Vertex_handle;
+  typedef typename C3t3::Cell_handle             Cell_handle;
 
   typedef typename Tr::Vertex_iterator           Vertex_iterator;
   typedef typename C3t3::Facet_iterator          Facet_iterator;
@@ -118,32 +118,34 @@ Stream& write_complex_to_medit(Stream& out, C3t3& c3t3,
   int Oy_rn = 1 + (((occurence_count - 1) >> 1) & 1);
   int Oz_rn = 1 + (((occurence_count - 1) >> 2) & 1);
 
+  std::cout << "Ozzy: " << Ox_rn << " " << Oy_rn << " " << Oz_rn << std::endl;
+
   int number_of_vertices = static_cast<int>(tr.number_of_vertices());
   int number_of_facets = static_cast<int>(c3t3.number_of_facets());
   int number_of_cells = static_cast<int>(c3t3.number_of_cells());
 
   out << std::setprecision(17);
 
+  int medit_number_of_vertices = (Ox_rn + 1) * (Oy_rn + 1) * (Oz_rn + 1) * number_of_vertices;
+
   out << "MeshVersionFormatted 1\n"
       << "Dimension 3\n"
-      << "Vertices\n"
-      << (Ox_rn + 1) * (Oy_rn + 1) * (Oz_rn + 1) * number_of_vertices
-      << std::endl;
+      << "Vertices\n" << medit_number_of_vertices << std::endl;
 
-  // Build the set of points that are needed to draw all canonical elements.
+  // Build the set of points that is needed to draw all the elements.
 
   // On each axis, we repeat n+1 times the point, where 'n' is the number of
   // instances of the mesh that will be printed over that axis. This is because
   // a cell 'c' might have point(c,i) that is equal to v with an offset 2
 
   boost::unordered_map<Vertex_handle, int> V;
-  int inum = 1;
+  int inum = 1; // '1' because medit ids start at 1
 
-  for(int i=0; i<=Oz_rn; i++)
+  for(int i=0; i<=Oz_rn; ++i)
   {
-    for(int j=0; j<=Oy_rn; j++)
+    for(int j=0; j<=Oy_rn; ++j)
     {
-      for(int k=0; k<=Ox_rn; k++)
+      for(int k=0; k<=Ox_rn; ++k)
       {
         for(Vertex_iterator vit = tr.vertices_begin(); vit != tr.vertices_end(); ++vit)
         {
@@ -151,7 +153,7 @@ Stream& write_complex_to_medit(Stream& out, C3t3& c3t3,
             V[vit] = inum++;
 
           const Offset off(k, j, i);
-          const Weighted_point& p = vit->point();
+          const Weighted_point& p = tr.point(vit);
           const Bare_point bp = tr.construct_point(p, off);
 
           int id;
@@ -170,22 +172,21 @@ Stream& write_complex_to_medit(Stream& out, C3t3& c3t3,
     }
   }
 
-  out << "Triangles\n"
-      << occurence_count * number_of_facets
-      << std::endl;
-  for(unsigned j=0; j<occurence_count; j++)
+  out << "Triangles\n" << occurence_count * number_of_facets << std::endl;
+  for(unsigned j=0; j<occurence_count; ++j)
   {
     for(Facet_iterator fit = c3t3.facets_begin(); fit != c3t3.facets_end(); ++fit)
     {
-      for (int i=0; i<4; i++)
+      for(int i=0; i<4; ++i)
       {
-        if (i == fit->second)
+        if(i == fit->second)
           continue;
 
-        Vertex_handle v = (*fit).first->vertex(i);
+        Cell_handle c = fit->first;
+        Vertex_handle v = c->vertex(i);
         const Offset off = tr.int_to_off(j);
         const Offset combined_off = tr.combine_offsets(
-                                      off, tr.int_to_off((*fit).first->offset(i)));
+                                      off, tr.int_to_off(c->offset(i)));
         const int vector_offset = combined_off.x() +
                                   combined_off.y() * (Ox_rn + 1) +
                                   combined_off.z() * (Ox_rn + 1) * (Oy_rn + 1);
@@ -195,25 +196,31 @@ Stream& write_complex_to_medit(Stream& out, C3t3& c3t3,
     }
   }
 
-  out << "Tetrahedra\n"
-      << occurence_count * number_of_cells
-      << std::endl;
-  for(unsigned j=0; j<occurence_count; j++)
+  out << "Tetrahedra\n" << occurence_count * number_of_cells << std::endl;
+  for(int i=0; i<Oz_rn; ++i)
   {
-    for(Cell_iterator cit = c3t3.cells_begin(); cit !=c3t3.cells_end(); cit++)
+    for(int j=0; j<Oy_rn; ++j)
     {
-      for(int i=0; i<4; ++i)
+      for(int k=0; k<Ox_rn; ++k)
       {
-        const Offset off = tr.int_to_off(j);
-        const Offset combined_off = tr.combine_offsets(
-                                      off, tr.int_to_off(cit->offset(i)));
-        const int vector_offset = combined_off.x() +
-                                  combined_off.y() * (Ox_rn + 1) +
-                                  combined_off.z() * (Ox_rn + 1) * (Oy_rn + 1);
+        const Offset off(k, j, i);
+        for(Cell_iterator cit = c3t3.cells_begin(); cit !=c3t3.cells_end(); ++cit)
+        {
+          for(int i=0; i<4; ++i)
+          {
+            const Offset combined_off = tr.combine_offsets(
+                                          off, tr.int_to_off(cit->offset(i)));
+            const int vector_offset = combined_off.x() +
+                                      combined_off.y() * (Ox_rn + 1) +
+                                      combined_off.z() * (Ox_rn + 1) * (Oy_rn + 1);
 
-        out << vector_offset * number_of_vertices + V[cit->vertex(i)] << " ";
+            const int id = vector_offset * number_of_vertices + V[cit->vertex(i)];
+            CGAL_assertion(id <= medit_number_of_vertices);
+            out << id << " ";
+          }
+          out << cit->subdomain_index() << '\n';
+        }
       }
-      out << cit->subdomain_index() << '\n';
     }
   }
 
