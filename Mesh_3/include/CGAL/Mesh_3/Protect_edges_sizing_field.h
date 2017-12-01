@@ -45,6 +45,7 @@
 
 #include <CGAL/enum.h>
 #include <CGAL/Has_timestamp.h>
+#include <CGAL/Hash_handles_with_or_without_timestamps.h>
 #include <CGAL/internal/Has_member_visited.h>
 #include <CGAL/iterator.h>
 #include <CGAL/number_utils.h>
@@ -58,6 +59,8 @@
 #endif
 #include <boost/optional.hpp>
 #include <boost/tuple/tuple.hpp>
+#include <boost/unordered_map.hpp>
+#include <boost/unordered_set.hpp>
 
 #include <algorithm>
 #include <cmath>
@@ -151,6 +154,9 @@ private:
   typedef std::vector<std::pair<Curve_index,Bare_point> >    Incident_edges;
   typedef std::vector<Vertex_handle>                         Vertex_vector;
   typedef std::vector<std::pair<Vertex_handle,Curve_index> > Incident_vertices;
+
+  typedef CGAL::Hash_handles_with_or_without_timestamps      Hash_fct;
+  typedef boost::unordered_set<Vertex_handle, Hash_fct>      Vertex_set;
 
 private:
   /// Insert corners of the mesh.
@@ -425,7 +431,7 @@ private:
   FT minimal_size_;
   Weight minimal_weight_;
   std::set<Curve_index> treated_edges_;
-  std::set<Vertex_handle> unchecked_vertices_;
+  Vertex_set unchecked_vertices_;
   int refine_balls_iteration_nb;
   bool nonlinear_growth_of_balls;
 };
@@ -725,7 +731,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
 #endif
 
     // fill vertices_in_conflict_zone
-    std::set<Vertex_handle> vertices_in_conflict_zone_set;
+    Vertex_set vertices_in_conflict_zone_set;
     std::vector<Cell_handle> cells_in_conflicts;
     Weighted_point wp = cwp(p, w);
     tr.find_conflicts(wp, ch,
@@ -1279,7 +1285,7 @@ refine_balls()
 #endif
     ++refine_balls_iteration_nb;
     restart = false;
-    std::map<Vertex_handle, FT> new_sizes;
+    boost::unordered_map<Vertex_handle, FT, Hash_fct> new_sizes;
 
     for(typename Tr::Finite_edges_iterator eit = tr.finite_edges_begin(),
         end = tr.finite_edges_end(); eit != end; ++eit)
@@ -1532,8 +1538,7 @@ check_and_repopulate_edges()
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
   std::cerr << "check_and_repopulate_edges()\n";
 #endif
-  typedef std::set<Vertex_handle> Vertices;
-  Vertices vertices;
+  Vertex_set vertices;
   std::copy( unchecked_vertices_.begin(), unchecked_vertices_.end(),
              std::inserter(vertices,vertices.begin()) );
 
@@ -1545,7 +1550,7 @@ check_and_repopulate_edges()
     Vertex_handle v = *vertices.begin();
     vertices.erase(vertices.begin());
 
-    details::Erase_element_from_set<Vertices> erase_from_vertices(vertices);
+    details::Erase_element_from_set<Vertex_set> erase_from_vertices(vertices);
 
     check_and_fix_vertex_along_edge(v,
       boost::make_function_output_iterator(erase_from_vertices));

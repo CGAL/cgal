@@ -37,6 +37,8 @@
 #include <CGAL/Origin.h>
 #include <CGAL/Mesh_optimization_return_code.h>
 #include <CGAL/Mesh_3/Null_global_optimizer_visitor.h>
+
+#include <CGAL/Hash_handles_with_or_without_timestamps.h>
 #include <CGAL/iterator.h>
 #include <CGAL/tuple.h>
 
@@ -240,11 +242,12 @@ class Mesh_global_optimizer
   typedef typename Gt::FT               FT;
   typedef typename Gt::Vector_3         Vector_3;
 
-  typedef typename std::vector<Cell_handle>                 Cell_vector;
-  typedef typename std::vector<Vertex_handle>               Vertex_vector;
-  typedef typename std::set<Vertex_handle>                  Vertex_set;
-  typedef typename Base::Moves_vector                       Moves_vector;
-  typedef typename Base::Nb_frozen_points_type              Nb_frozen_points_type;
+  typedef typename std::vector<Cell_handle>                      Cell_vector;
+  typedef typename std::vector<Vertex_handle>                    Vertex_vector;
+  typedef Hash_handles_with_or_without_timestamps                Hash_fct;
+  typedef typename boost::unordered_set<Vertex_handle, Hash_fct> Vertex_set;
+  typedef typename Base::Moves_vector                            Moves_vector;
+  typedef typename Base::Nb_frozen_points_type                   Nb_frozen_points_type;
 
 #ifdef CGAL_INTRUSIVE_LIST
   typedef Intrusive_list<Cell_handle>   Outdated_cell_set;

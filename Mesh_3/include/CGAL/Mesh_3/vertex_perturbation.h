@@ -1250,6 +1250,9 @@ protected:
   typedef typename Tr::Bare_point                     Bare_point;
   typedef typename Tr::Weighted_point                 Weighted_point;
 
+  typedef CGAL::Hash_handles_with_or_without_timestamps Hash_fct;
+  typedef boost::unordered_set<Vertex_handle, Hash_fct> Vertex_set;
+
 public:
   /**
    * @brief constructor
@@ -1340,7 +1343,7 @@ private:
     // Initialize loop variables
     bool criterion_improved = false;
     Vertex_handle moving_vertex = v;
-    std::set<Vertex_handle> mod_vertices;
+    Vertex_set mod_vertices;
 
     // TODO: use no_topo_change to compute new_angle without moving everything
     unsigned int try_nb = 0;

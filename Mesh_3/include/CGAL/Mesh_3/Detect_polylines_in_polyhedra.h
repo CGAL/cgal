@@ -25,19 +25,22 @@
 
 #include <CGAL/license/Mesh_3.h>
 
-
 #include <CGAL/Mesh_3/Detect_polylines_in_polyhedra_fwd.h>
-#include <CGAL/Compare_handles_with_or_without_timestamps.h>
 #include <CGAL/Default.h>
+#include <CGAL/Hash_handles_with_or_without_timestamps.h>
 
-#include <algorithm>
 #include <boost/foreach.hpp>
 #include <boost/mpl/if.hpp>
+#include <boost/unordered_map.hpp>
+#include <boost/unordered_set.hpp>
+
+#include <algorithm>
 
 namespace CGAL { namespace Mesh_3 {
 
 template <typename Polyhedron>
-struct Detect_polylines {
+struct Detect_polylines
+{
   typedef typename Polyhedron::Traits Geom_traits;
   typedef typename Geom_traits::Point_3 Point_3;
   typedef typename Polyhedron::Halfedge_const_handle Halfedge_const_handle;
@@ -45,14 +48,14 @@ struct Detect_polylines {
   typedef typename Polyhedron::Vertex_const_handle Vertex_const_handle;
   typedef typename Polyhedron::Vertex_handle Vertex_handle;
   typedef typename Polyhedron::size_type size_type;
-  typedef CGAL::Compare_handles_with_or_without_timestamps Compare_handles;
 
-  typedef std::set<Vertex_handle, Compare_handles> Vertices_set;
-  typedef std::map<Vertex_handle, 
-                   size_type,                    
-                   Compare_handles> Vertices_counter;
+  typedef CGAL::Hash_handles_with_or_without_timestamps   Hash_fct;
+  typedef boost::unordered_set<Vertex_handle, Hash_fct>   Vertices_set;
+  typedef boost::unordered_map<Vertex_handle,
+                               size_type,
+                               Hash_fct>                  Vertices_counter;
 
-  typedef std::set<Halfedge_handle, Compare_handles> Feature_edges_set;
+  typedef boost::unordered_set<Halfedge_handle, Hash_fct> Feature_edges_set;
 
   Feature_edges_set edges_to_consider;
   Vertices_set corner_vertices;
@@ -114,7 +117,7 @@ struct Detect_polylines {
   static Halfedge_handle canonical(Halfedge_handle he)
   {
     const Halfedge_handle& op = he->opposite();
-    if(Compare_handles()(he, op))
+    if(Hash_fct()(he, op))
       return he;
     else 
       return op;

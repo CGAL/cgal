@@ -49,7 +49,6 @@
 
 #include <CGAL/license/Periodic_3_mesh_3.h>
 
-#include <CGAL/internal/Mesh_3/Timestamp_hash_function.h>
 #include <CGAL/Mesh_3/io_signature.h>
 #ifdef CGAL_MESH_3_DUMP_FEATURES_PROTECTION_ITERATIONS
 #include <CGAL/IO/File_binary_mesh_3.h>
@@ -60,6 +59,7 @@
 
 #include <CGAL/enum.h>
 #include <CGAL/Has_timestamp.h>
+#include <CGAL/Hash_handles_with_or_without_timestamps.h>
 #include <CGAL/internal/Has_member_visited.h>
 #include <CGAL/iterator.h>
 #include <CGAL/number_utils.h>
@@ -131,16 +131,16 @@ private:
   typedef std::vector<Vertex_handle>                         Vertex_vector;
   typedef std::vector<std::pair<Vertex_handle,Curve_index> > Adjacent_vertices;
 
-  typedef CGAL::Mesh_3::internal::Timestamp_hash_function<Vertex_handle> Hash_fct;
-  typedef boost::unordered_set<Vertex_handle, Hash_fct>                  Vertex_set;
+  typedef CGAL::Hash_handles_with_or_without_timestamps      Hash_fct;
+  typedef boost::unordered_set<Vertex_handle, Hash_fct>      Vertex_set;
 
 private:
-  // @todo below could be a set of point pointers I guess
-  typedef std::set<Bare_point>                                           Domain_pts_container;
+  // below could be a set of point pointers
+  typedef std::set<Bare_point>                               Domain_pts_container;
 
   typedef boost::unordered_map<Vertex_handle,
                                Domain_pts_container,
-                               Hash_fct>                                 Curve_correspondence_map;
+                               Hash_fct>                     Curve_correspondence_map;
 
   // The correspondence map is a map that keeps track of the position of the points
   // in the domain class, which might differ due to periodicity. For example,
@@ -149,10 +149,10 @@ private:
   //
   // This map must be kept perfectly up to date: removing a vertex from the triangulation
   // means that the correspondence must be removed in the map too.
-  typedef std::map<Curve_index, Curve_correspondence_map>                Correspondence_map;
+  typedef std::map<Curve_index, Curve_correspondence_map>    Correspondence_map;
 
-  typedef typename Curve_correspondence_map::iterator                    CCMit;
-  typedef typename Curve_correspondence_map::const_iterator              CCMcit;
+  typedef typename Curve_correspondence_map::iterator        CCMit;
+  typedef typename Curve_correspondence_map::const_iterator  CCMcit;
 
 public:
   Protect_edges_sizing_field(C3T3& c3t3,

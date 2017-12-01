@@ -51,7 +51,7 @@
 #include <CGAL/Mesh_3/Null_perturber_visitor.h>
 #include <CGAL/Mesh_3/sliver_criteria.h>
 #include <CGAL/Has_timestamp.h>
-#include <CGAL/internal/Mesh_3/Timestamp_hash_function.h>
+#include <CGAL/Hash_handles_with_or_without_timestamps.h>
 
 #include <CGAL/Mesh_3/Concurrent_mesher_config.h>
 #include <CGAL/Mesh_3/Worksharing_data_structures.h>
@@ -1106,8 +1106,8 @@ build_priority_queue(const FT& sliver_bound, PQueue& pqueue) const
 
   int pqueue_size = 0;
 
-  typedef CGAL::Mesh_3::internal::Timestamp_hash_function<Vertex_handle> Hash_fct;
-  typedef boost::unordered_map<Vertex_handle, PVertex, Hash_fct>         M;
+  typedef CGAL::Hash_handles_with_or_without_timestamps            Hash_fct;
+  typedef boost::unordered_map<Vertex_handle, PVertex, Hash_fct>   M;
 
   M vpm;
   for ( typename Tr::Finite_cells_iterator cit = tr_.finite_cells_begin();

@@ -27,9 +27,9 @@
 
 #include <CGAL/array.h>
 #include <CGAL/boost/graph/Euler_operations.h>
+#include <CGAL/Hash_handles_with_or_without_timestamps.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
-#include <CGAL/internal/Mesh_3/Timestamp_hash_function.h>
 
 #include <boost/unordered_map.hpp>
 #include <boost/tuple/tuple.hpp>
@@ -68,7 +68,7 @@ void facets_in_complex_3_to_triangle_mesh(const C3T3& c3t3, TriangleMesh& graph)
 
   typedef typename C3T3::Facets_in_complex_iterator                      Ficit;
 
-  typedef CGAL::Mesh_3::internal::Timestamp_hash_function<Vertex_handle> Hash_fct;
+  typedef CGAL::Hash_handles_with_or_without_timestamps                  Hash_fct;
   typedef boost::unordered_map<Vertex_handle, int, Hash_fct>             VHmap;
 
   typedef CGAL::cpp11::array<int, 3>                                     Face;

@@ -29,9 +29,9 @@
 #include <CGAL/license/Mesh_3.h>
 
 #include <CGAL/Mesh_3/config.h>
-#include <CGAL/internal/Mesh_3/Timestamp_hash_function.h>
 #include <CGAL/Mesh_3/Uniform_sizing_field.h>
 
+#include <CGAL/Hash_handles_with_or_without_timestamps.h>
 #include <CGAL/convex_hull_2.h>
 #include <CGAL/ch_graham_andrew.h>
 
@@ -186,9 +186,9 @@ private:
     // -----------------------------------
 
     // Stores vertex that have already been used
-    typedef CGAL::Mesh_3::internal::Timestamp_hash_function<Vertex_handle> Hash_fct;
-    typedef boost::unordered_set<Vertex_handle, Hash_fct>                  Vertex_container;
-    typedef typename Vertex_container::iterator                            VC_it;
+    typedef CGAL::Hash_handles_with_or_without_timestamps   Hash_fct;
+    typedef boost::unordered_set<Vertex_handle, Hash_fct>   Vertex_container;
+    typedef typename Vertex_container::iterator             VC_it;
 
     Vertex_container treated_vertices;
 

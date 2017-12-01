@@ -34,6 +34,7 @@
 
 #include <CGAL/linear_least_squares_fitting_3.h>
 #include <CGAL/Mesh_3/Triangulation_helpers.h>
+#include <CGAL/Hash_handles_with_or_without_timestamps.h>
 #include <CGAL/tuple.h>
 #include <CGAL/iterator.h>
 #include <CGAL/array.h>
@@ -660,7 +661,9 @@ class C3T3_helpers
 
   typedef std::vector<Facet>                          Facet_vector;
   typedef std::vector<Vertex_handle>                  Vertex_vector;
-  typedef std::set<Vertex_handle>                     Vertex_set;
+
+  typedef CGAL::Hash_handles_with_or_without_timestamps Hash_fct;
+  typedef boost::unordered_set<Vertex_handle, Hash_fct> Vertex_set;
 
 #ifdef CGAL_INTRUSIVE_LIST
   typedef Intrusive_list<Cell_handle>                 Outdated_cell_set;
@@ -1276,7 +1279,7 @@ private:
 
   class Facet_updater
   {
-    std::set<Vertex_handle>& vertex_to_proj;
+    Vertex_set& vertex_to_proj;
     C3T3& c3t3_;
     Update_c3t3& c3t3_updater_;
 
@@ -1284,9 +1287,7 @@ private:
     typedef Facet& reference;
     typedef const Facet& const_reference;
 
-    Facet_updater(C3T3& c3t3,
-      std::set<Vertex_handle>& vertex_to_proj,
-      Update_c3t3& c3t3_updater_)
+    Facet_updater(C3T3& c3t3, Vertex_set& vertex_to_proj, Update_c3t3& c3t3_updater_)
       : vertex_to_proj(vertex_to_proj), c3t3_(c3t3), c3t3_updater_(c3t3_updater_)
     {}
 
@@ -2689,7 +2690,7 @@ rebuild_restricted_delaunay(OutdatedCells& outdated_cells,
   // Updates cells
   // Note: ~58% of rebuild_restricted_delaunay time
 
-  std::set<Vertex_handle> vertex_to_proj;
+  Vertex_set vertex_to_proj;
 
 # ifdef CGAL_LINKED_WITH_TBB
   // Parallel
@@ -2769,7 +2770,7 @@ rebuild_restricted_delaunay(OutdatedCells& outdated_cells,
   // Note: ~0% of rebuild_restricted_delaunay time
   // TODO : iterate to be sure no interior vertice become on the surface
   // because of move ?
-  for ( typename std::set<Vertex_handle>::iterator it = vertex_to_proj.begin() ;
+  for ( typename Vertex_set::iterator it = vertex_to_proj.begin() ;
        it != vertex_to_proj.end() ;
        ++it )
   {
@@ -3747,7 +3748,7 @@ fill_modified_vertices(InputIterator cells_begin,
                        const Vertex_handle& vertex,
                        OutputIterator out) const
 {
-  std::set<Vertex_handle> already_inserted_vertices;
+  Vertex_set already_inserted_vertices;
   // Dont insert vertex in out
   already_inserted_vertices.insert(vertex);
 

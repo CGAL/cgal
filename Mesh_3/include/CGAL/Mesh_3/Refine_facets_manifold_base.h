@@ -24,16 +24,20 @@
 
 #include <CGAL/license/Mesh_3.h>
 
+#include <CGAL/Mesh_facet_topology.h>
 
+#include <CGAL/Hash_handles_with_or_without_timestamps.h>
 #include <CGAL/utility.h>
-#include <set>
-#include <vector>
+
 #include <boost/bimap.hpp>
 #include <boost/bimap/unordered_set_of.hpp>
 #include <boost/bimap/multiset_of.hpp>
 #include <boost/foreach.hpp>
 #include <boost/mpl/has_xxx.hpp>
-#include <CGAL/Mesh_facet_topology.h>
+#include <boost/unordered_set.hpp>
+
+#include <set>
+#include <vector>
 
 namespace CGAL {
 
@@ -88,8 +92,11 @@ protected:
                           ::boost::bimaps::multiset_of<int> >    Bad_edges;
   typedef typename Bad_edges::value_type                         Bad_edge;
 
+  typedef CGAL::Hash_handles_with_or_without_timestamps          Hash_fct;
+  typedef boost::unordered_set<Vertex_handle, Hash_fct>          Vertex_set;
+
   mutable Bad_edges m_bad_edges;
-  mutable std::set<Vertex_handle> m_bad_vertices;
+  mutable Vertex_set m_bad_vertices;
 
   mutable bool m_manifold_info_initialized;
   mutable bool m_bad_vertices_initialized;

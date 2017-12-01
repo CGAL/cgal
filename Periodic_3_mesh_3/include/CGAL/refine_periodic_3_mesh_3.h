@@ -29,11 +29,12 @@
 #include <CGAL/Mesh_3/config.h>
 #include <CGAL/Periodic_3_mesh_3/config.h>
 
-#include <CGAL/internal/Mesh_3/Timestamp_hash_function.h>
 #include <CGAL/Mesh_3/C3T3_helpers.h>
 #include <CGAL/Mesh_3/Dump_c3t3.h>
 #include <CGAL/Mesh_3/Triangulation_helpers.h>
 #include <CGAL/refine_mesh_3.h>
+
+#include <CGAL/Hash_handles_with_or_without_timestamps.h>
 
 #include <boost/parameter/preprocessor.hpp>
 #include <boost/unordered_set.hpp>
@@ -47,9 +48,9 @@ namespace internal {
 template<class C3T3, class MeshDomain>
 void project_dummy_points_of_surface(C3T3& c3t3, const MeshDomain& domain)
 {
-  typedef typename C3T3::Vertex_handle                                   Vertex_handle;
-  typedef CGAL::Mesh_3::internal::Timestamp_hash_function<Vertex_handle> Hash_fct;
-  typedef boost::unordered_set<Vertex_handle, Hash_fct>                  Vertex_container;
+  typedef typename C3T3::Vertex_handle                     Vertex_handle;
+  typedef CGAL::Hash_handles_with_or_without_timestamps    Hash_fct;
+  typedef boost::unordered_set<Vertex_handle, Hash_fct>    Vertex_container;
 
   Vertex_container vertex_container;
   find_points_to_project(c3t3, std::insert_iterator<Vertex_container>(vertex_container, vertex_container.begin()));
