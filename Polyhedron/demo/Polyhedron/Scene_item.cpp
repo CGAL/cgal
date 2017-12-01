@@ -181,7 +181,7 @@ void CGAL::Three::Scene_item::selection_changed(bool b)
     setSelected(true);
     d->was_selected = true;
     redraw();
-    QTimer::singleShot(500, [this]{setSelected(false); redraw();});
+    QTimer::singleShot(500, this, [this]{setSelected(false); redraw();});
   }
   else{
     if(!b)
