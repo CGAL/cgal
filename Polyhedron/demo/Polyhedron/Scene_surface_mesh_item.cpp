@@ -105,6 +105,7 @@ struct Scene_surface_mesh_item_priv{
                                                  true));
     item->setEdgeContainer(0, new Edge_container(VI::PROGRAM_WITHOUT_LIGHT,
                                                  true));
+    item->getEdgeContainer(0)->setFrameMatrix(QMatrix4x4());
     has_feature_edges = false;
     invalidate_stats();
     vertices_displayed = true;
@@ -127,6 +128,7 @@ struct Scene_surface_mesh_item_priv{
                                                  true));
     item->setEdgeContainer(0, new Edge_container(VI::PROGRAM_WITHOUT_LIGHT,
                                                  true));
+    item->getEdgeContainer(0)->setFrameMatrix(QMatrix4x4());
     has_feature_edges = false;
     invalidate_stats();
     vertices_displayed = true;
@@ -374,26 +376,7 @@ void Scene_surface_mesh_item_priv::compute_elements(Scene_item::Gl_data_names na
   typedef boost::graph_traits<SMesh>::halfedge_descriptor halfedge_descriptor;
   typedef boost::graph_traits<SMesh>::edge_descriptor edge_descriptor;
 
-//  if(name.testFlag(Scene_item::ALL))
-//  {
-    Buffer_for_vao<float, unsigned int> filler(
-                                                NULL,
-                                                &idx_data_
-                                                //bbox
-                                                //color
-                                                //flat   normals
-          );                                    //smooth normals
-    BOOST_FOREACH(face_descriptor fd, faces(*smesh_))
-    {
-      filler.face_begin();
-      BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(fd, *smesh_),*smesh_))
-      {
-        SMesh::Vertex_index vi = target(hd, *smesh_);
-        filler.add_indexed_point_in_face(vi, positions[vi]);
-      }
-      filler.face_end();
-    }
- /* else if(name.testFlag(Scene_item::GEOMETRY))
+if(name.testFlag(Scene_item::GEOMETRY))
   {
     BOOST_FOREACH(face_descriptor fd, faces(*smesh_))
     {
@@ -470,7 +453,6 @@ void Scene_surface_mesh_item_priv::compute_elements(Scene_item::Gl_data_names na
      colors_.empty()){
     initialize_colors();
   }
-*/
 
 //compute the Flat data
 
@@ -478,7 +460,7 @@ void Scene_surface_mesh_item_priv::compute_elements(Scene_item::Gl_data_names na
   flat_normals.clear();
   f_colors.clear();
 
- /* BOOST_FOREACH(face_descriptor fd, faces(*smesh_))
+  BOOST_FOREACH(face_descriptor fd, faces(*smesh_))
   {
     if(is_triangle(halfedge(fd,*smesh_),*smesh_))
     {
@@ -581,7 +563,7 @@ void Scene_surface_mesh_item_priv::compute_elements(Scene_item::Gl_data_names na
       v_colors.push_back((float)c.green()/255);
       v_colors.push_back((float)c.blue()/255);
     }
-  }*/
+  }
 
   if(floated &&
      (name.testFlag(Scene_item::GEOMETRY)|| name.testFlag(Scene_item::NORMALS)))
