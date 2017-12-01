@@ -412,17 +412,17 @@ public:
 
   /// @return true iff the points of 'facet' form a convex face
   static bool is_facet_convex(const std::vector<Local_point>& facet,
-                              const Local_vector& N)
+                              const Local_vector& normal)
   {
     Local_kernel::Orientation orientation;
     std::size_t id=0;
     do
     {
-      Local_point& S=facet[id];
-      Local_point& T=facet[id+1];
+      const Local_point& S=facet[id];
+      const Local_point& T=facet[id+1];
       Local_vector V1=Local_vector((T-S).x(), (T-S).y(), (T-S).z());
 
-      Local_point& U=facet[id+2];
+      const Local_point& U=facet[id+2];
       Local_vector V2=Local_vector((U-T).x(), (U-T).y(), (U-T).z());
 
       orientation = Local_kernel::Orientation_3()(V1, V2, normal);
@@ -439,11 +439,11 @@ public:
     // Now we compute convexness
     for(id=0; id<facet.size(); ++id)
     {
-      Local_point& S=facet[id];
-      Local_point& T=facet[id+1];
+      const Local_point& S=facet[id];
+      const Local_point& T=facet[id+1];
       Local_vector V1=Local_vector((T-S).x(), (T-S).y(), (T-S).z());
       
-      Local_point& U=facet[id+2];
+      const Local_point& U=facet[id+2];
       Local_vector V2=Local_vector((U-T).x(), (U-T).y(), (U-T).z());
       
       orientation = Local_kernel::Orientation_3()(V1, V2, normal);
@@ -535,8 +535,8 @@ protected:
 
         add_flat_normal(normal);
 
-        if (m_vertex_normals_for_face.size()>0)
-        { add_gouraud_normal(normal); }          
+        if (m_vertex_normals_for_face.size()==0)
+        { add_gouraud_normal(normal); }   
       }
 
       if (m_vertex_normals_for_face.size()>0)
