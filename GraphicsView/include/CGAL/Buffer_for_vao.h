@@ -37,8 +37,11 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel Local_kernel;
 typedef Local_kernel::Point_3  Local_point;
 typedef Local_kernel::Vector_3 Local_vector;
 
+namespace CGAL
+{
 //------------------------------------------------------------------------------
-namespace internal {
+namespace internal
+{
   template <class Point, class Vector>
   void newell_single_step_3(const Point& p, const Point& q, Vector& n)
   {
@@ -549,9 +552,18 @@ protected:
         add_flat_normal(normal);
 
         if (m_vertex_normals_for_face.size()>0)
-        { add_gouraud_normal(m_vertex_normals_for_face[i]); }
-        else
-        { add_gouraud_normal(normal); }
+        { add_gouraud_normal(normal); }          
+      }
+
+      if (m_vertex_normals_for_face.size()>0)
+      {
+        add_gouraud_normal(m_vertex_normals_for_face[0]);
+        add_gouraud_normal(m_vertex_normals_for_face[1]);
+        add_gouraud_normal(m_vertex_normals_for_face[2]);
+        
+        add_gouraud_normal(m_vertex_normals_for_face[0]);
+        add_gouraud_normal(m_vertex_normals_for_face[2]);
+        add_gouraud_normal(m_vertex_normals_for_face[3]);
       }
     }
   }
@@ -795,5 +807,7 @@ protected:
   CGAL::Color m_color_of_face;
   Local_vector m_normal_of_face;
 };
+
+} // End namespace CGAL
 
 #endif // CGAL_VBO_BUFFER_FILLER_H
