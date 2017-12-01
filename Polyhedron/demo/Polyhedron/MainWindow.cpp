@@ -61,14 +61,14 @@
 #  include <QScriptValue>
 #include "Color_map.h"
 using namespace CGAL::Three;
-QScriptValue 
-myScene_itemToScriptValue(QScriptEngine *engine, 
+QScriptValue
+myScene_itemToScriptValue(QScriptEngine *engine,
                           CGAL::Three::Scene_item* const &in)
-{ 
-  return engine->newQObject(in); 
+{
+  return engine->newQObject(in);
 }
 
-void myScene_itemFromScriptValue(const QScriptValue &object, 
+void myScene_itemFromScriptValue(const QScriptValue &object,
                                  CGAL::Three::Scene_item* &out)
 {
   out = qobject_cast<CGAL::Three::Scene_item*>(object.toQObject());
@@ -170,7 +170,7 @@ MainWindow::MainWindow(QWidget* parent)
   // setup connections
   connect(scene, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex & )),
           this, SLOT(updateInfo()));
-  
+
   connect(scene, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex & )),
           this, SLOT(updateDisplayInfo()));
 
@@ -195,15 +195,15 @@ MainWindow::MainWindow(QWidget* parent)
   connect(scene, SIGNAL(itemPicked(const QModelIndex &)),
           this, SLOT(recenterSceneView(const QModelIndex &)));
 
-  connect(sceneView->selectionModel(), 
+  connect(sceneView->selectionModel(),
           SIGNAL(selectionChanged ( const QItemSelection & , const QItemSelection & ) ),
           this, SLOT(updateInfo()));
 
-  connect(sceneView->selectionModel(), 
+  connect(sceneView->selectionModel(),
           SIGNAL(selectionChanged ( const QItemSelection & , const QItemSelection & ) ),
           this, SLOT(updateDisplayInfo()));
 
-  connect(sceneView->selectionModel(), 
+  connect(sceneView->selectionModel(),
           SIGNAL(selectionChanged ( const QItemSelection & , const QItemSelection & ) ),
           this, SLOT(selectionChanged()));
 
@@ -229,7 +229,7 @@ MainWindow::MainWindow(QWidget* parent)
   connect(viewer, SIGNAL(selectedPoint(double, double, double)),
           this, SLOT(showSelectedPoint(double, double, double)));
 
-  connect(viewer, SIGNAL(selectionRay(double, double, double, 
+  connect(viewer, SIGNAL(selectionRay(double, double, double,
                                       double, double, double)),
           scene, SIGNAL(selectionRay(double, double, double,
                                      double, double, double)));
@@ -278,7 +278,7 @@ MainWindow::MainWindow(QWidget* parent)
   // Recent files menu
   this->addRecentFiles(ui->menuFile, ui->actionQuit);
   connect(this, SIGNAL(openRecentFile(QString)),
-	  this, SLOT(open(QString)));
+          this, SLOT(open(QString)));
 
   // Reset the "Operation menu"
   clearMenu(ui->menuOperations);
@@ -292,7 +292,7 @@ MainWindow::MainWindow(QWidget* parent)
 #  ifdef QT_SCRIPTTOOLS_LIB
   QScriptEngineDebugger* debugger = new QScriptEngineDebugger(this);
   debugger->setObjectName("qt script debugger");
-  QAction* debuggerMenuAction = 
+  QAction* debuggerMenuAction =
     menuBar()->addMenu(debugger->createStandardMenu());
   debuggerMenuAction->setText(tr("Qt Script &Debug"));
   for(unsigned int i = 0; i < 9; ++i)
@@ -308,7 +308,7 @@ MainWindow::MainWindow(QWidget* parent)
 #  endif // QT_SCRIPTTOOLS_LIB
   QScriptValue fun = script_engine->newFunction(myPrintFunction);
   script_engine->globalObject().setProperty("print", fun);
-  
+
   //  evaluate_script("print('hello', 'world', 'from QtScript!')");
   QScriptValue mainWindowObjectValue = script_engine->newQObject(this);
   script_engine->globalObject().setProperty("main_window", mainWindowObjectValue);
@@ -529,7 +529,9 @@ bool MainWindow::load_plugin(QString fileName, bool blacklisted)
       if(blacklisted)
       {
         if ( plugin_blacklist.contains(name) ){
-          qDebug("### Ignoring plugin \"%s\".", qPrintable(fileName));
+          pluginsStatus_map[name] = QString("ignored");
+          //qDebug("### Ignoring plugin \"%s\".", qPrintable(fileName));
+          PathNames_map[fileinfo.absoluteDir().absolutePath()].push_back(name);
           return true;
         }
       }
@@ -543,13 +545,19 @@ bool MainWindow::load_plugin(QString fileName, bool blacklisted)
         bool init1 = initPlugin(obj);
         bool init2 = initIOPlugin(obj);
         if (!init1 && !init2)
-          qdebug << "not for this program";
+        {
+          //qdebug << "not for this program";
+          pluginsStatus_map[name] = QString("Not for this program.");
+        }
         else
-          qdebug << "success";
+          //qdebug << "success";
+          pluginsStatus_map[name] = QString("success");
       }
       else {
-        qdebug << "error: " << qPrintable(loader.errorString());
+        //qdebug << "error: " << qPrintable(loader.errorString());
+        pluginsStatus_map[name] = loader.errorString();
       }
+      PathNames_map[fileinfo.absoluteDir().absolutePath()].push_back(name);
       return true;
     }
     return false;
@@ -599,7 +607,7 @@ void MainWindow::loadPlugins()
   }
   QString env_path = qgetenv("POLYHEDRON_DEMO_PLUGINS_PATH");
   if(!env_path.isEmpty()) {
-    Q_FOREACH (QString pluginsDir, 
+    Q_FOREACH (QString pluginsDir,
                env_path.split(":", QString::SkipEmptyParts)) {
       QDir dir(pluginsDir);
       if(dir.isReadable())
@@ -618,10 +626,6 @@ void MainWindow::loadPlugins()
       {
         if(load_plugin(abs_name, true))
         {
-          QString name = QFileInfo(fileName).fileName();
-          name.remove(QRegExp("^lib"));
-          name.remove(QRegExp("\\..*"));
-          PathNames_map[pluginsDir.absolutePath()].push_back(name);
           loaded.insert(abs_name);
         }
       }
@@ -680,7 +684,7 @@ bool MainWindow::initPlugin(QObject* obj)
     }
     return true;
   }
-  else 
+  else
     return false;
 }
 
@@ -692,7 +696,7 @@ bool MainWindow::initIOPlugin(QObject* obj)
     io_plugins << plugin;
     return true;
   }
-  else 
+  else
     return false;
 }
 
@@ -837,7 +841,7 @@ void MainWindow::updateViewerBBox(bool recenter = true)
   const double zmax = bbox.zmax();
 
 
-  qglviewer::Vec 
+  qglviewer::Vec
     vec_min(xmin, ymin, zmin),
     vec_max(xmax, ymax, zmax),
     bbox_center((xmin+xmax)/2, (ymin+ymax)/2, (zmin+zmax)/2);
@@ -881,7 +885,7 @@ void MainWindow::updateViewerBBox(bool recenter = true)
 void MainWindow::reloadItem() {
   QAction* sender_action = qobject_cast<QAction*>(sender());
   if(!sender_action) return;
-  
+
   Scene_item* item = (Scene_item*)sender_action->data().value<void*>();
   if(!item) {
     std::cerr << "Cannot reload item: "
@@ -977,7 +981,7 @@ void MainWindow::open(QString filename)
   if(!program.isEmpty())
   {
     {
-      QTextStream(stderr) << "Execution of script \"" 
+      QTextStream(stderr) << "Execution of script \""
                           << filename << "\"\n";
                           // << filename << "\", with following content:\n"
                           // << program;
@@ -1001,9 +1005,9 @@ void MainWindow::open(QString filename)
   QStringList selected_items;
   QStringList all_items;
 
-  QMap<QString,QString>::iterator dfs_it = 
+  QMap<QString,QString>::iterator dfs_it =
     default_plugin_selection.find( fileinfo.completeSuffix() );
-  
+
   if ( dfs_it==default_plugin_selection.end() )
   {
     // collect all io_plugins and offer them to load if the file extension match one name filter
@@ -1017,10 +1021,10 @@ void MainWindow::open(QString filename)
   }
   else
     selected_items << *dfs_it;
-  
+
   bool ok;
   std::pair<QString, bool> load_pair;
-  
+
   switch( selected_items.size() )
   {
     case 1:
@@ -1036,7 +1040,7 @@ void MainWindow::open(QString filename)
 
   viewer->makeCurrent();
   if(!ok || load_pair.first.isEmpty()) { return; }
-  
+
   if (load_pair.second)
   {
     connect(actionResetDefaultLoaders, SIGNAL(triggered()),
@@ -1044,8 +1048,8 @@ void MainWindow::open(QString filename)
     default_plugin_selection[fileinfo.completeSuffix()]=load_pair.first;
     insertActionBeforeLoadPlugin(ui->menuFile, actionResetDefaultLoaders);
   }
-  
-  
+
+
   QSettings settings;
   settings.setValue("OFF open directory",
                     fileinfo.absoluteDir().absolutePath());
@@ -1063,7 +1067,7 @@ void MainWindow::open(QString filename)
 }
 
 bool MainWindow::open(QString filename, QString loader_name) {
-  QFileInfo fileinfo(filename); 
+  QFileInfo fileinfo(filename);
   boost::optional<CGAL::Three::Scene_item*> item_opt;
   CGAL::Three::Scene_item* item = 0;
   try {
@@ -1140,7 +1144,7 @@ void MainWindow::showSelectedPoint(double x, double y, double z)
   static double x_prev = 0;
   static double y_prev = 0;
   static double z_prev = 0;
-  double dist = std::sqrt((x-x_prev)*(x-x_prev) + (y-y_prev)*(y-y_prev) + (z-z_prev)*(z-z_prev)); 
+  double dist = std::sqrt((x-x_prev)*(x-x_prev) + (y-y_prev)*(y-y_prev) + (z-z_prev)*(z-z_prev));
   information(QString("Selected point: (%1, %2, %3) distance to previous: %4").
               arg(x, 0, 'g', 10).
               arg(y, 0, 'g', 10).
@@ -1177,7 +1181,7 @@ void MainWindow::selectAll()
 {
   QItemSelection s =
     proxyModel->mapSelectionFromSource(scene->createSelectionAll());
-  sceneView->selectionModel()->select(s, 
+  sceneView->selectionModel()->select(s,
                                       QItemSelectionModel::ClearAndSelect);
 }
 
@@ -1351,7 +1355,7 @@ void MainWindow::updateDisplayInfo() {
   CGAL::Three::Scene_item* item = scene->item(getSelectedSceneItemIndex());
   if(item)
     ui->displayLabel->setPixmap(item->graphicalToolTip());
-  else 
+  else
     ui->displayLabel->clear();
 
 }
@@ -1359,7 +1363,7 @@ void MainWindow::updateDisplayInfo() {
 void MainWindow::readSettings()
 {
     QSettings settings;
-    // enable anti-aliasing 
+    // enable anti-aliasing
     ui->actionAntiAliasing->setChecked(settings.value("antialiasing", false).toBool());
     // read plugin blacklist
     QStringList blacklist=settings.value("plugin_blacklist",QStringList()).toStringList();
@@ -1372,7 +1376,7 @@ void MainWindow::writeSettings()
   this->writeState("MainWindow");
   {
     QSettings settings;
-    settings.setValue("antialiasing", 
+    settings.setValue("antialiasing",
                       ui->actionAntiAliasing->isChecked());
     //setting plugin blacklist
     QStringList blacklist;
@@ -1424,8 +1428,8 @@ bool MainWindow::loadScript(QFileInfo info)
   program = script_file.readAll();
   if(!program.isEmpty())
   {
-    QTextStream(stderr) 
-      << "Execution of script \"" 
+    QTextStream(stderr)
+      << "Execution of script \""
       << filename << "\"\n";
     evaluate_script(program, filename);
     return true;
@@ -1441,7 +1445,7 @@ void MainWindow::throw_exception() {
     }, this, __FILE__, __LINE__);
 }
 
-void MainWindow::on_actionLoadScript_triggered() 
+void MainWindow::on_actionLoadScript_triggered()
 {
 #if defined(QT_SCRIPT_LIB)
   QString filename = QFileDialog::getOpenFileName(
@@ -1463,7 +1467,7 @@ void MainWindow::on_actionLoad_triggered()
 
   typedef QMap<QString, CGAL::Three::Polyhedron_demo_io_plugin_interface*> FilterPluginMap;
   FilterPluginMap filterPluginMap;
-  
+
   Q_FOREACH(CGAL::Three::Polyhedron_demo_io_plugin_interface* plugin, io_plugins) {
     QStringList split_filters = plugin->loadNameFilters().split(";;");
     Q_FOREACH(const QString& filter, split_filters) {
@@ -1488,9 +1492,9 @@ void MainWindow::on_actionLoad_triggered()
 
   if(dialog.exec() != QDialog::Accepted) { return; }
   viewer->update();
-  FilterPluginMap::iterator it = 
+  FilterPluginMap::iterator it =
     filterPluginMap.find(dialog.selectedNameFilter());
-  
+
   CGAL::Three::Polyhedron_demo_io_plugin_interface* selectedPlugin = NULL;
 
   if(it != filterPluginMap.end()) {
@@ -1567,7 +1571,7 @@ void MainWindow::on_actionSaveAs_triggered()
   ext.chop(1);
   //remove `(*.`
   ext = ext.right(ext.size()-3);
-  QString filename = 
+  QString filename =
     QFileDialog::getSaveFileName(this,
                                  caption,
                                  QString("%1.%2").arg(item->name()).arg(ext),
@@ -1661,10 +1665,13 @@ void MainWindow::on_actionPreferences_triggered()
     prefdiag.smRadioButton->setChecked(true);
   connect(prefdiag.polyRadioButton, &QRadioButton::toggled,
           this, &MainWindow::set_facegraph_mode_adapter);
-  
+
   //QStandardItemModel* iStandardModel = new QStandardItemModel(this);
 
   std::vector<QTreeWidgetItem*> items;
+  QBrush successBrush(QColor(Qt::green)),
+      errorBrush(QColor(Qt::red)),
+      ignoredBrush(QColor(Qt::lightGray));
 
   //add blacklisted plugins
   Q_FOREACH (QString path, PathNames_map.keys())
@@ -1679,15 +1686,27 @@ void MainWindow::on_actionPreferences_triggered()
     {
       QTreeWidgetItem *item = new QTreeWidgetItem(pluginItem);
       item->setText(1, name);
-      if(plugin_blacklist.contains(name))
+      if(plugin_blacklist.contains(name)){
         item->setCheckState(0, Qt::Checked);
-      else
+      }
+      else{
         item->setCheckState(0, Qt::Unchecked);
+      }
+      if(pluginsStatus_map[name] == QString("success"))
+        item->setBackground(1, successBrush);
+      else if(pluginsStatus_map[name] == QString("ignored")){
+        item->setBackground(1, ignoredBrush);
+        item->setToolTip(1, QString("This plugin is currently blacklisted, so it has been ignored."));
+      }
+      else{
+        item->setBackground(1, errorBrush);
+        item->setToolTip(1, pluginsStatus_map[name]);
+      }
       items.push_back(item);
     }
   }
   dialog.exec();
-  
+
   if ( dialog.result() )
   {
     plugin_blacklist.clear();

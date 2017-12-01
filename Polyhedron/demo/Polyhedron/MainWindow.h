@@ -389,6 +389,7 @@ private:
   /// plugin black-list
   QSet<QString> plugin_blacklist;
   QMap<QString, std::vector<QString> > PathNames_map; //For each non-empty plugin directory, contains a vector of plugin names
+  QMap<QString, QString > pluginsStatus_map; //For each non-empty plugin directory, contains a vector of plugin names
   Scene* scene;
   Viewer* viewer;
   QSortFilterProxyModel* proxyModel;
