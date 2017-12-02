@@ -32,7 +32,7 @@ A class interface is also provided for advanced users, with interactive capabili
 Workflow of the approximation process in the free functions.
 \cgalFigureEnd
 
-Figure \cgalFigureRef{workflow} shows the workflow of the approximation algorithm in the free function APIs. Major parts are described below.
+Figure \cgalFigureRef{workflow} shows the workflow of the approximation algorithm in the free function APIs. The main steps of the workflow are described below.
 
 \subsection sma_clustering Clustering
 
@@ -50,10 +50,10 @@ Each proxy is always associated with a <em>seed</em> triangle facet in the input
 
 \subsubsection sma_method Method
 
-To start the clustering iterations, we need a set of initial proxies. Starting from a single partition fitted with one proxy initialized from the first facet of the input mesh, we add more and more proxies to drive the error down gradually. After adding some proxies, we perform several inner clustering iterations, which is referred as <em>relaxation</em> in seeding.
+To start the clustering iterations, we need an initial set of proxies. The default (hierarchical) approach generates one proxy per connected component, seeded at arbitrarily chosen facets. It then adds more proxies in batches in order to drive the error down. After each batch of proxies added, it performs several inner clustering iterations, which is referred to as <em>relaxation</em> in the seeding step.
 
-Assume a clustering of \f$n\f$ partitions with errors \f$ \{E_k\}_{k=1\cdots n} \f$, and we want \f$m\f$ more proxies. We provide 3 different seeding methods:
-- <b>Random</b>. \f$m\f$ seed facets are picked randomly on the surface.
+Assume a clustering partition of \f$n\f$ regions with errors \f$ \{E_k\}_{k=1\cdots n} \f$, and we wish to add \f$m\f$ proxies. We provide 3 different seeding methods:
+- <b>Random</b>. \f$m\f$ seed facets are picked randomly on the surface, excluding the current seed facets.
 - <b>Incremental</b>. Each new proxy is initialized from a facet of the worse region matching the largest approximation error. The facet itself is chosen as the one realizing the largest error in its region.
 - <b>Hierarchical</b>. \f$m\f$ seed facets are dispatched within the current partition, where each partition is refined with a number of proxies chosen in accordance to their fitting error:
   - calculate total error \f$ E_{total} \f$, then average error \f$ E_{avg} = E_{total} / m \f$ (assuming that each new proxy shares the same amount of error)
