@@ -10,7 +10,7 @@ typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 
 int main()
 {
-  // create polyhedral surface and read input surface triangle mesh 
+  // read input surface triangle mesh 
   Polyhedron input;
   std::ifstream file("data/mask.off");
   if (!file || !(file >> input) || input.empty()) {
@@ -18,7 +18,7 @@ int main()
     return EXIT_FAILURE;
   }
 
-  // output polyhedral surface and indexed triangle mesh
+  // output polyhedral surface and indexed face set
   Polyhedron output;
   std::vector<Kernel::Point_3> points;
   std::vector<std::vector<std::size_t> > triangles; // triplets of indices
@@ -31,13 +31,13 @@ int main()
     max_nb_proxies(200). // seeding with maximum number of proxies
     nb_of_iterations(30). // number of clustering iterations after seeding
     // output to polyhedron
-    output_mesh(&output)); // valid only if the indexed triangles construct a 2-manifold and oriented surface
+    output_mesh(&output)); // valid when the indexed face set represents a 2-manifold, oriented surface
 
   std::cout << "#anchor points: " << points.size() << std::endl;
   std::cout << "#triangles: " << triangles.size() << std::endl;
 
   if (valid_polyhedron)
-    std::cout << "oriented 2-manifold output." << std::endl;
+    std::cout << "oriented, 2-manifold output." << std::endl;
 
   return EXIT_SUCCESS;
 }

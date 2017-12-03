@@ -18,7 +18,7 @@ typedef Mesh_approximation::Proxy_fitting Proxy_fitting;
 
 int main()
 {
-  // create polyhedral surface and read input mesh
+  // read input surface triangle mesh
   Polyhedron input;
   std::ifstream file("data/mask.off");
   if (!file || !(file >> input) || input.empty()) {
@@ -26,7 +26,7 @@ int main()
     return EXIT_FAILURE;
   }
 
-  // create VSA approximation algorithm instance
+  // create VSA algorithm instance
   Mesh_approximation approx(input,
     get(boost::vertex_point, const_cast<Polyhedron &>(input)));
 

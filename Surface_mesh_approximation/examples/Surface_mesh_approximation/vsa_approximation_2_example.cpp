@@ -14,7 +14,7 @@ typedef boost::associative_property_map<Facet_index_map> Facet_proxy_pmap;
 
 int main()
 {
-  // create polyhedral surface and read input surface triangle mesh 
+  // read input surface triangle mesh 
   Polyhedron input;
   std::ifstream file("data/mask.off");
   if (!file || !(file >> input) || input.empty()) {
@@ -32,7 +32,7 @@ int main()
     fidx_map[f] = 0;
   Facet_proxy_pmap fpxmap(fidx_map);
 
-  // output plane proxies;
+  // output planar proxies
   std::vector<Plane_proxy> proxies;
 
   // free function interface with named parameters

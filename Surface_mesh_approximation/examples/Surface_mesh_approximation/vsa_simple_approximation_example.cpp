@@ -10,11 +10,10 @@ typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 
 int main()
 {
-  // create polyhedral surface and read input surface triangle mesh 
+  // read input surface triangle mesh 
   Polyhedron input;
   std::ifstream file("data/mask.off");
   file >> input;
-
 
   // The output will be an indexed triangle mesh
   std::vector<Kernel::Point_3> points;

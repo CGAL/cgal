@@ -24,16 +24,19 @@ int main()
   Facet_index_map fidx_map;
   BOOST_FOREACH(face_descriptor f, faces(input))
     fidx_map[f] = 0;
+
   // facet proxy index property map
   Facet_proxy_pmap fpxmap(fidx_map);
 
   // free function interface with named parameters
   CGAL::VSA::mesh_segmentation(input,
-    fpxmap, // output indexed face set
+    fpxmap, // output segmentation
     CGAL::VSA::parameters::seeding_method(CGAL::VSA::Hierarchical). // hierarchical seeding
-    max_nb_proxies(200). // both maximum number of proxies stop criterion,
-    min_error_drop(0.05). // and minimum error drop stop criterion are specified
+    max_nb_proxies(200). // first stop criterion
+    min_error_drop(0.05). // second stop criterion
     nb_of_iterations(30)); // number of iterations after seeding
+
+  // TODO: retrieve segments of the segmentation
 
   return EXIT_SUCCESS;
 }
