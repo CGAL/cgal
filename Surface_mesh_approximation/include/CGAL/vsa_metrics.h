@@ -74,47 +74,44 @@ class L21_metric
 
   typedef CGAL::internal::face_property_t<Vector_3> Face_normal_tag;
   typedef CGAL::internal::face_property_t<FT> Face_area_tag;
-  typedef typename CGAL::internal::dynamic_property_map<TriangleMesh, Face_normal_tag >::type FacetNormalMap;
-  typedef typename CGAL::internal::dynamic_property_map<TriangleMesh, Face_area_tag >::type FacetAreaMap;
+  typedef typename CGAL::internal::dynamic_property_map<TriangleMesh, Face_normal_tag >::type Face_normal_map;
+  typedef typename CGAL::internal::dynamic_property_map<TriangleMesh, Face_area_tag >::type Face_area_map;
 
 public:
   // type required by `ErrorMetric` concept
   typedef PlaneProxy Proxy;
 
   // constructor
-  L21_metric(const TriangleMesh &tm, const VertexPointMap &point_pmap)
-    : normal_pmap(), area_pmap() {
+  L21_metric(const TriangleMesh &tm, const VertexPointMap &vpoint_map) {
     GeomTraits traits;
     scalar_product_functor = traits.compute_scalar_product_3_object();
     sum_functor = traits.construct_sum_of_vectors_3_object();
     scale_functor = traits.construct_scaled_vector_3_object();
     
-    normal_pmap = CGAL::internal::add_property(Face_normal_tag("VSA-face_normal"),
-                                               const_cast<TriangleMesh&>(tm));
-    area_pmap = CGAL::internal::add_property(Face_area_tag("VSA-face_area"),
-                                               const_cast<TriangleMesh&>(tm));
+    fnormal_map = CGAL::internal::add_property(Face_normal_tag("VSA-face_normal"),
+      const_cast<TriangleMesh &>(tm));
+    farea_map = CGAL::internal::add_property(Face_area_tag("VSA-face_area"),
+      const_cast<TriangleMesh &>(tm));
     // construct internal facet normal & area map
     BOOST_FOREACH(face_descriptor f, faces(tm)) {
       const halfedge_descriptor he = halfedge(f, tm);
-      const Point_3 &p0 = point_pmap[source(he, tm)];
-      const Point_3 &p1 = point_pmap[target(he, tm)];
-      const Point_3 &p2 = point_pmap[target(next(he, tm), tm)];
-      Vector_3 normal = CGAL::unit_normal(p0, p1, p2);
-      put(normal_pmap, f, normal);
-      FT area(std::sqrt(CGAL::to_double(CGAL::squared_area(p0, p1, p2))));
-      put(area_pmap, f, area);
+      const Point_3 &p0 = vpoint_map[source(he, tm)];
+      const Point_3 &p1 = vpoint_map[target(he, tm)];
+      const Point_3 &p2 = vpoint_map[target(next(he, tm), tm)];
+      put(fnormal_map, f, CGAL::unit_normal(p0, p1, p2));
+      put(farea_map, f, std::sqrt(CGAL::to_double(CGAL::squared_area(p0, p1, p2))));
     }
   }
 
   // returns L21 error of a facet f to a proxy px.
   FT operator()(const face_descriptor &f, const Proxy &px) const {
-    Vector_3 v = sum_functor(get(normal_pmap, f), scale_functor(px.normal, FT(-1)));
-    return get(area_pmap, f) * scalar_product_functor(v, v);
+    Vector_3 v = sum_functor(get(fnormal_map, f), scale_functor(px.normal, FT(-1.0)));
+    return get(farea_map, f) * scalar_product_functor(v, v);
   }
 
 private:
-  FacetNormalMap normal_pmap;
-  FacetAreaMap area_pmap;
+  Face_normal_map fnormal_map;
+  Face_area_map farea_map;
   Construct_scaled_vector_3 scale_functor;
   Compute_scalar_product_3 scalar_product_functor;
   Construct_sum_of_vectors_3 sum_functor;
@@ -145,49 +142,46 @@ class L21_metric<TriangleMesh,
 
   typedef CGAL::internal::face_property_t<Vector_3> Face_normal_tag;
   typedef CGAL::internal::face_property_t<FT> Face_area_tag;
-  typedef typename CGAL::internal::dynamic_property_map<TriangleMesh, Face_normal_tag >::type FacetNormalMap;
-  typedef typename CGAL::internal::dynamic_property_map<TriangleMesh, Face_area_tag >::type FacetAreaMap;
+  typedef typename CGAL::internal::dynamic_property_map<TriangleMesh, Face_normal_tag >::type Face_normal_map;
+  typedef typename CGAL::internal::dynamic_property_map<TriangleMesh, Face_area_tag >::type Face_area_map;
 
 public:
   // type required by `ErrorMetric` concept
   typedef PlaneProxy Proxy;
 
   // constructor
-  L21_metric(const TriangleMesh &tm)
-    : normal_pmap(), area_pmap() {
+  L21_metric(const TriangleMesh &tm) {
     GeomTraits traits;
     scalar_product_functor = traits.compute_scalar_product_3_object();
     sum_functor = traits.construct_sum_of_vectors_3_object();
     scale_functor = traits.construct_scaled_vector_3_object();
 
-    normal_pmap = CGAL::internal::add_property(Face_normal_tag("VSA-face_normal"),
-                                               const_cast<TriangleMesh&>(tm));
-    area_pmap = CGAL::internal::add_property(Face_area_tag("VSA-face_area"),
-                                               const_cast<TriangleMesh&>(tm));
+    fnormal_map = CGAL::internal::add_property(Face_normal_tag("VSA-face_normal"),
+      const_cast<TriangleMesh &>(tm));
+    farea_map = CGAL::internal::add_property(Face_area_tag("VSA-face_area"),
+      const_cast<TriangleMesh &>(tm));
     
     // construct internal facet normal & area map
-    VertexPointMap point_pmap = get(boost::vertex_point, const_cast<TriangleMesh &>(tm));
+    VertexPointMap vpoint_map = get(boost::vertex_point, const_cast<TriangleMesh &>(tm));
     BOOST_FOREACH(face_descriptor f, faces(tm)) {
       const halfedge_descriptor he = halfedge(f, tm);
-      const Point_3 &p0 = point_pmap[source(he, tm)];
-      const Point_3 &p1 = point_pmap[target(he, tm)];
-      const Point_3 &p2 = point_pmap[target(next(he, tm), tm)];
-      Vector_3 normal = CGAL::unit_normal(p0, p1, p2);
-      put(normal_pmap, f, normal);
-      FT area(std::sqrt(CGAL::to_double(CGAL::squared_area(p0, p1, p2))));
-          put(area_pmap, f, area);
+      const Point_3 &p0 = vpoint_map[source(he, tm)];
+      const Point_3 &p1 = vpoint_map[target(he, tm)];
+      const Point_3 &p2 = vpoint_map[target(next(he, tm), tm)];
+      put(fnormal_map, f, CGAL::unit_normal(p0, p1, p2));
+      put(farea_map, f, std::sqrt(CGAL::to_double(CGAL::squared_area(p0, p1, p2))));
     }
   }
 
   // returns L21 error of a facet f to a proxy px.
   FT operator()(const face_descriptor &f, const Proxy &px) const {
-    Vector_3 v = sum_functor(get(normal_pmap, f), scale_functor(px.normal, FT(-1)));
-    return get(area_pmap, f) * scalar_product_functor(v, v);
+    Vector_3 v = sum_functor(get(fnormal_map, f), scale_functor(px.normal, FT(-1.0)));
+    return get(farea_map, f) * scalar_product_functor(v, v);
   }
 
 private:
-  FacetNormalMap normal_pmap;
-  FacetAreaMap area_pmap;
+  Face_normal_map fnormal_map;
+  Face_area_map farea_map;
   Construct_scaled_vector_3 scale_functor;
   Compute_scalar_product_3 scalar_product_functor;
   Construct_sum_of_vectors_3 sum_functor;
@@ -215,43 +209,40 @@ class L21_metric<TriangleMesh,
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
 
   typedef CGAL::internal::face_property_t<Vector_3> Face_normal_tag;
-  typedef typename CGAL::internal::dynamic_property_map<TriangleMesh, Face_normal_tag >::type FacetNormalMap;
+  typedef typename CGAL::internal::dynamic_property_map<TriangleMesh, Face_normal_tag >::type Face_normal_map;
 
 public:
   // type required by `ErrorMetric` concept
   typedef PlaneProxy Proxy;
 
   // constructor
-  L21_metric(const TriangleMesh &tm, const VertexPointMap &point_pmap)
-    : normal_pmap() {
+  L21_metric(const TriangleMesh &tm, const VertexPointMap &vpoint_map) {
     GeomTraits traits;
     scalar_product_functor = traits.compute_scalar_product_3_object();
     sum_functor = traits.construct_sum_of_vectors_3_object();
     scale_functor = traits.construct_scaled_vector_3_object();
 
-    normal_pmap = CGAL::internal::add_property(Face_normal_tag("VSA-face_normal"),
-                                               const_cast<TriangleMesh&>(tm));
+    fnormal_map = CGAL::internal::add_property(Face_normal_tag("VSA-face_normal"),
+      const_cast<TriangleMesh &>(tm));
     
     // construct internal facet normal map
     BOOST_FOREACH(face_descriptor f, faces(tm)) {
       const halfedge_descriptor he = halfedge(f, tm);
-      const Point_3 &p0 = point_pmap[source(he, tm)];
-      const Point_3 &p1 = point_pmap[target(he, tm)];
-      const Point_3 &p2 = point_pmap[target(next(he, tm), tm)];
-      Vector_3 normal = CGAL::unit_normal(p0, p1, p2);
-      put(normal_pmap, f, normal);
-      FT area(std::sqrt(CGAL::to_double(CGAL::squared_area(p0, p1, p2))));
+      const Point_3 &p0 = vpoint_map[source(he, tm)];
+      const Point_3 &p1 = vpoint_map[target(he, tm)];
+      const Point_3 &p2 = vpoint_map[target(next(he, tm), tm)];
+      put(fnormal_map, f, CGAL::unit_normal(p0, p1, p2));
     }
   }
 
   // returns L21 error of a facet f to a proxy px.
   FT operator()(const face_descriptor &f, const Proxy &px) const {
-    Vector_3 v = sum_functor(get(normal_pmap,f), scale_functor(px.normal, FT(-1)));
+    Vector_3 v = sum_functor(get(fnormal_map,f), scale_functor(px.normal, FT(-1.0)));
     return scalar_product_functor(v, v);
   }
 
 private:
-  FacetNormalMap normal_pmap;
+  Face_normal_map fnormal_map;
   Construct_scaled_vector_3 scale_functor;
   Compute_scalar_product_3 scalar_product_functor;
   Construct_sum_of_vectors_3 sum_functor;
@@ -280,43 +271,41 @@ class L21_metric<TriangleMesh,
   typedef typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type VertexPointMap;
 
   typedef CGAL::internal::face_property_t<Vector_3> Face_normal_tag;
-  typedef typename CGAL::internal::dynamic_property_map<TriangleMesh, Face_normal_tag >::type FacetNormalMap;
+  typedef typename CGAL::internal::dynamic_property_map<TriangleMesh, Face_normal_tag >::type Face_normal_map;
 
 public:
   // type required by `ErrorMetric` concept
   typedef PlaneProxy Proxy;
 
   // constructor
-  L21_metric(const TriangleMesh &tm)
-    : normal_pmap() {
+  L21_metric(const TriangleMesh &tm) {
     GeomTraits traits;
     scalar_product_functor = traits.compute_scalar_product_3_object();
     sum_functor = traits.construct_sum_of_vectors_3_object();
     scale_functor = traits.construct_scaled_vector_3_object();
 
-    normal_pmap = CGAL::internal::add_property(Face_normal_tag("VSA-face_normal"),
-                                               const_cast<TriangleMesh&>(tm));
+    fnormal_map = CGAL::internal::add_property(Face_normal_tag("VSA-face_normal"),
+      const_cast<TriangleMesh &>(tm));
     
     // construct internal facet normal map
-    VertexPointMap point_pmap = get(boost::vertex_point, const_cast<TriangleMesh &>(tm));
+    VertexPointMap vpoint_map = get(boost::vertex_point, const_cast<TriangleMesh &>(tm));
     BOOST_FOREACH(face_descriptor f, faces(tm)) {
       const halfedge_descriptor he = halfedge(f, tm);
-      const Point_3 &p0 = point_pmap[source(he, tm)];
-      const Point_3 &p1 = point_pmap[target(he, tm)];
-      const Point_3 &p2 = point_pmap[target(next(he, tm), tm)];
-      Vector_3 normal = CGAL::unit_normal(p0, p1, p2);
-      put(normal_pmap, f, normal);
+      const Point_3 &p0 = vpoint_map[source(he, tm)];
+      const Point_3 &p1 = vpoint_map[target(he, tm)];
+      const Point_3 &p2 = vpoint_map[target(next(he, tm), tm)];
+      put(fnormal_map, f, CGAL::unit_normal(p0, p1, p2));
     }
   }
 
   // returns L21 error of a facet f to a proxy px.
   FT operator()(const face_descriptor &f, const Proxy &px) const {
-    Vector_3 v = sum_functor(get(normal_pmap,f), scale_functor(px.normal, FT(-1)));
+    Vector_3 v = sum_functor(get(fnormal_map,f), scale_functor(px.normal, FT(-1.0)));
     return scalar_product_functor(v, v);
   }
 
 private:
-  FacetNormalMap normal_pmap;
+  Face_normal_map fnormal_map;
   Construct_scaled_vector_3 scale_functor;
   Compute_scalar_product_3 scalar_product_functor;
   Construct_sum_of_vectors_3 sum_functor;
@@ -354,35 +343,32 @@ class L21_proxy_fitting
 
   typedef CGAL::internal::face_property_t<Vector_3> Face_normal_tag;
   typedef CGAL::internal::face_property_t<FT> Face_area_tag;
-  typedef typename CGAL::internal::dynamic_property_map<TriangleMesh, Face_normal_tag >::type FacetNormalMap;
-  typedef typename CGAL::internal::dynamic_property_map<TriangleMesh, Face_area_tag >::type FacetAreaMap;
+  typedef typename CGAL::internal::dynamic_property_map<TriangleMesh, Face_normal_tag >::type Face_normal_map;
+  typedef typename CGAL::internal::dynamic_property_map<TriangleMesh, Face_area_tag >::type Face_area_map;
 
 public:
   // type required by `ErrorMetric` concept
   typedef PlaneProxy Proxy;
 
   // constructor.
-  L21_proxy_fitting(const TriangleMesh &tm, const VertexPointMap &point_pmap)
-    : normal_pmap(), area_pmap() {
+  L21_proxy_fitting(const TriangleMesh &tm, const VertexPointMap &vpoint_map) {
     GeomTraits traits;
     sum_functor = traits.construct_sum_of_vectors_3_object();
     scale_functor = traits.construct_scaled_vector_3_object();
 
-    normal_pmap = CGAL::internal::add_property(Face_normal_tag("VSA-face_normal"),
-                                               const_cast<TriangleMesh&>(tm));
-    area_pmap = CGAL::internal::add_property(Face_area_tag("VSA-face_area"),
-                                               const_cast<TriangleMesh&>(tm));
+    fnormal_map = CGAL::internal::add_property(Face_normal_tag("VSA-face_normal"),
+      const_cast<TriangleMesh &>(tm));
+    farea_map = CGAL::internal::add_property(Face_area_tag("VSA-face_area"),
+      const_cast<TriangleMesh &>(tm));
     
     // construct internal facet normal & area map
     BOOST_FOREACH(face_descriptor f, faces(tm)) {
       const halfedge_descriptor he = halfedge(f, tm);
-      const Point_3 &p0 = point_pmap[source(he, tm)];
-      const Point_3 &p1 = point_pmap[target(he, tm)];
-      const Point_3 &p2 = point_pmap[target(next(he, tm), tm)];
-      Vector_3 normal = CGAL::unit_normal(p0, p1, p2);
-      put(normal_pmap, f, normal);
-      FT area(std::sqrt(CGAL::to_double(CGAL::squared_area(p0, p1, p2))));
-      put(area_pmap, f, area);
+      const Point_3 &p0 = vpoint_map[source(he, tm)];
+      const Point_3 &p1 = vpoint_map[target(he, tm)];
+      const Point_3 &p2 = vpoint_map[target(next(he, tm), tm)];
+      put(fnormal_map, f, CGAL::unit_normal(p0, p1, p2));
+      put(farea_map, f, std::sqrt(CGAL::to_double(CGAL::squared_area(p0, p1, p2))));
     }
   }
 
@@ -395,7 +381,7 @@ public:
     Vector_3 norm = CGAL::NULL_VECTOR;
     for (FacetIterator fitr = beg; fitr != end; ++fitr) {
       norm = sum_functor(norm,
-                         scale_functor(get(normal_pmap, *fitr), get(area_pmap, *fitr)));
+        scale_functor(get(fnormal_map, *fitr), get(farea_map, *fitr)));
     }
     norm = scale_functor(norm,
       FT(1.0 / std::sqrt(CGAL::to_double(norm.squared_length()))));
@@ -408,8 +394,8 @@ public:
   }
 
 private:
-  FacetNormalMap normal_pmap;
-  FacetAreaMap area_pmap;
+  Face_normal_map fnormal_map;
+  Face_area_map farea_map;
   Construct_scaled_vector_3 scale_functor;
   Construct_sum_of_vectors_3 sum_functor;
 };
@@ -436,35 +422,33 @@ class L21_proxy_fitting<TriangleMesh,
 
   typedef CGAL::internal::face_property_t<Vector_3> Face_normal_tag;
   typedef CGAL::internal::face_property_t<FT> Face_area_tag;
-  typedef typename CGAL::internal::dynamic_property_map<TriangleMesh, Face_normal_tag >::type FacetNormalMap;
-  typedef typename CGAL::internal::dynamic_property_map<TriangleMesh, Face_area_tag >::type FacetAreaMap;
+  typedef typename CGAL::internal::dynamic_property_map<TriangleMesh, Face_normal_tag >::type Face_normal_map;
+  typedef typename CGAL::internal::dynamic_property_map<TriangleMesh, Face_area_tag >::type Face_area_map;
 
 public:
   // type required by `ErrorMetric` concept
   typedef PlaneProxy Proxy;
 
   // constructor.
-  L21_proxy_fitting(const TriangleMesh &tm)
-    : normal_pmap(), area_pmap() {
+  L21_proxy_fitting(const TriangleMesh &tm) {
     GeomTraits traits;
     sum_functor = traits.construct_sum_of_vectors_3_object();
     scale_functor = traits.construct_scaled_vector_3_object();
 
-    normal_pmap = CGAL::internal::add_property(Face_normal_tag("VSA-face_normal"),
-                                               const_cast<TriangleMesh&>(tm));
-    area_pmap = CGAL::internal::add_property(Face_area_tag("VSA-face_area"),
-                                               const_cast<TriangleMesh&>(tm));
+    fnormal_map = CGAL::internal::add_property(Face_normal_tag("VSA-face_normal"),
+      const_cast<TriangleMesh &>(tm));
+    farea_map = CGAL::internal::add_property(Face_area_tag("VSA-face_area"),
+      const_cast<TriangleMesh &>(tm));
+
     // construct internal facet normal & area map
-    VertexPointMap point_pmap = get(boost::vertex_point, const_cast<TriangleMesh &>(tm));
+    VertexPointMap vpoint_map = get(boost::vertex_point, const_cast<TriangleMesh &>(tm));
     BOOST_FOREACH(face_descriptor f, faces(tm)) {
       const halfedge_descriptor he = halfedge(f, tm);
-      const Point_3 &p0 = point_pmap[source(he, tm)];
-      const Point_3 &p1 = point_pmap[target(he, tm)];
-      const Point_3 &p2 = point_pmap[target(next(he, tm), tm)];
-      Vector_3 normal = CGAL::unit_normal(p0, p1, p2);
-      put(normal_pmap, f, normal);
-      FT area(std::sqrt(CGAL::to_double(CGAL::squared_area(p0, p1, p2))));
-      put(area_pmap, f, area);
+      const Point_3 &p0 = vpoint_map[source(he, tm)];
+      const Point_3 &p1 = vpoint_map[target(he, tm)];
+      const Point_3 &p2 = vpoint_map[target(next(he, tm), tm)];
+      put(fnormal_map, f, CGAL::unit_normal(p0, p1, p2));
+      put(farea_map, f, std::sqrt(CGAL::to_double(CGAL::squared_area(p0, p1, p2))));
     }
   }
 
@@ -477,7 +461,7 @@ public:
     Vector_3 norm = CGAL::NULL_VECTOR;
     for (FacetIterator fitr = beg; fitr != end; ++fitr) {
       norm = sum_functor(norm,
-                         scale_functor(get(normal_pmap, *fitr), get(area_pmap, *fitr)));
+                         scale_functor(get(fnormal_map, *fitr), get(farea_map, *fitr)));
     }
     norm = scale_functor(norm,
       FT(1.0 / std::sqrt(CGAL::to_double(norm.squared_length()))));
@@ -490,8 +474,8 @@ public:
   }
 
 private:
-  FacetNormalMap normal_pmap;
-  FacetAreaMap area_pmap;
+  Face_normal_map fnormal_map;
+  Face_area_map farea_map;
   Construct_scaled_vector_3 scale_functor;
   Construct_sum_of_vectors_3 sum_functor;
 };
@@ -524,34 +508,33 @@ class L2_metric
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
 
   typedef CGAL::internal::face_property_t<FT> Face_area_tag;
-  typedef typename CGAL::internal::dynamic_property_map<TriangleMesh, Face_area_tag >::type FacetAreaMap;
+  typedef typename CGAL::internal::dynamic_property_map<TriangleMesh, Face_area_tag >::type Face_area_map;
 
 public:
   // type required by `ErrorMetric` concept
   typedef PlaneProxy Proxy;
 
   // constructor
-  L2_metric(const TriangleMesh &tm, const VertexPointMap &_point_pmap)
-    : mesh(&tm), area_pmap(), point_pmap(_point_pmap) {
-    area_pmap = CGAL::internal::add_property(Face_area_tag("VSA-face_area"),
-      const_cast<TriangleMesh &>(*mesh));
+  L2_metric(const TriangleMesh &tm_, const VertexPointMap &vpoint_map_)
+    : tm(&tm_), vpoint_map(vpoint_map_) {
+    farea_map = CGAL::internal::add_property(Face_area_tag("VSA-face_area"),
+      const_cast<TriangleMesh &>(*tm));
 
-    BOOST_FOREACH(face_descriptor f, faces(*mesh)) {
-      const halfedge_descriptor he = halfedge(f, *mesh);
-      const Point_3 &p0 = point_pmap[source(he, *mesh)];
-      const Point_3 &p1 = point_pmap[target(he, *mesh)];
-      const Point_3 &p2 = point_pmap[target(next(he, *mesh), *mesh)];
-      put(area_pmap, f,
-        std::sqrt(CGAL::to_double(CGAL::squared_area(p0, p1, p2))));
+    BOOST_FOREACH(face_descriptor f, faces(*tm)) {
+      const halfedge_descriptor he = halfedge(f, *tm);
+      const Point_3 &p0 = vpoint_map[source(he, *tm)];
+      const Point_3 &p1 = vpoint_map[target(he, *tm)];
+      const Point_3 &p2 = vpoint_map[target(next(he, *tm), *tm)];
+      put(farea_map, f, std::sqrt(CGAL::to_double(CGAL::squared_area(p0, p1, p2))));
     }
   }
 
   // returns l2 fitting error from facet f to proxy px.
   FT operator()(const face_descriptor &f, const Proxy &px) const {
-    halfedge_descriptor he = halfedge(f, *mesh);
-    const Point_3 &p0 = point_pmap[source(he, *mesh)];
-    const Point_3 &p1 = point_pmap[target(he, *mesh)];
-    const Point_3 &p2 = point_pmap[target(next(he, *mesh), *mesh)];
+    halfedge_descriptor he = halfedge(f, *tm);
+    const Point_3 &p0 = vpoint_map[source(he, *tm)];
+    const Point_3 &p1 = vpoint_map[target(he, *tm)];
+    const Point_3 &p2 = vpoint_map[target(next(he, *tm), *tm)];
     const FT sq_d0 = CGAL::squared_distance(p0, px.fit_plane);
     const FT sq_d1 = CGAL::squared_distance(p1, px.fit_plane);
     const FT sq_d2 = CGAL::squared_distance(p2, px.fit_plane);
@@ -559,13 +542,13 @@ public:
     const FT d1(std::sqrt(CGAL::to_double(sq_d1)));
     const FT d2(std::sqrt(CGAL::to_double(sq_d2)));
 
-    return (sq_d0 + sq_d1 + sq_d2 + d0 * d1 + d1 * d2 + d2 * d0) * get(area_pmap, f) / FT(6.0);
+    return (sq_d0 + sq_d1 + sq_d2 + d0 * d1 + d1 * d2 + d2 * d0) * get(farea_map, f) / FT(6.0);
   }
 
 private:
-  const TriangleMesh *mesh;
-  const VertexPointMap point_pmap;
-  FacetAreaMap area_pmap;
+  const TriangleMesh *tm;
+  const VertexPointMap vpoint_map;
+  Face_area_map farea_map;
 };
 
 // specialization
@@ -586,34 +569,33 @@ class L2_metric<TriangleMesh,
   typedef typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type VertexPointMap;
 
   typedef CGAL::internal::face_property_t<FT> Face_area_tag;
-  typedef typename CGAL::internal::dynamic_property_map<TriangleMesh, Face_area_tag >::type FacetAreaMap;
+  typedef typename CGAL::internal::dynamic_property_map<TriangleMesh, Face_area_tag >::type Face_area_map;
 
 public:
   // type required by `ErrorMetric` concept
   typedef PlaneProxy Proxy;
 
   // constructor
-  L2_metric(const TriangleMesh &tm)
-    : mesh(&tm), area_pmap(),
-    point_pmap(get(boost::vertex_point, const_cast<TriangleMesh &>(tm))) {
-    area_pmap = CGAL::internal::add_property(Face_area_tag("VSA-face_area"),
-      const_cast<TriangleMesh &>(*mesh));
-    BOOST_FOREACH(face_descriptor f, faces(*mesh)) {
-      const halfedge_descriptor he = halfedge(f, *mesh);
-      const Point_3 &p0 = point_pmap[source(he, *mesh)];
-      const Point_3 &p1 = point_pmap[target(he, *mesh)];
-      const Point_3 &p2 = point_pmap[target(next(he, *mesh), *mesh)];
-      put(area_pmap, f,
-        std::sqrt(CGAL::to_double(CGAL::squared_area(p0, p1, p2))));
+  L2_metric(const TriangleMesh &tm_)
+    : tm(&tm_), vpoint_map(get(boost::vertex_point, const_cast<TriangleMesh &>(tm_))) {
+    farea_map = CGAL::internal::add_property(Face_area_tag("VSA-face_area"),
+      const_cast<TriangleMesh &>(*tm));
+
+    BOOST_FOREACH(face_descriptor f, faces(*tm)) {
+      const halfedge_descriptor he = halfedge(f, *tm);
+      const Point_3 &p0 = vpoint_map[source(he, *tm)];
+      const Point_3 &p1 = vpoint_map[target(he, *tm)];
+      const Point_3 &p2 = vpoint_map[target(next(he, *tm), *tm)];
+      put(farea_map, f, std::sqrt(CGAL::to_double(CGAL::squared_area(p0, p1, p2))));
     }
   }
 
   // returns l2 fitting error from facet f to proxy px.
   FT operator()(const face_descriptor &f, const Proxy &px) const {
-    halfedge_descriptor he = halfedge(f, *mesh);
-    const Point_3 &p0 = point_pmap[source(he, *mesh)];
-    const Point_3 &p1 = point_pmap[target(he, *mesh)];
-    const Point_3 &p2 = point_pmap[target(next(he, *mesh), *mesh)];
+    halfedge_descriptor he = halfedge(f, *tm);
+    const Point_3 &p0 = vpoint_map[source(he, *tm)];
+    const Point_3 &p1 = vpoint_map[target(he, *tm)];
+    const Point_3 &p2 = vpoint_map[target(next(he, *tm), *tm)];
     const FT sq_d0 = CGAL::squared_distance(p0, px.fit_plane);
     const FT sq_d1 = CGAL::squared_distance(p1, px.fit_plane);
     const FT sq_d2 = CGAL::squared_distance(p2, px.fit_plane);
@@ -621,13 +603,13 @@ public:
     const FT d1(std::sqrt(CGAL::to_double(sq_d1)));
     const FT d2(std::sqrt(CGAL::to_double(sq_d2)));
 
-    return (sq_d0 + sq_d1 + sq_d2 + d0 * d1 + d1 * d2 + d2 * d0) * get(area_pmap, f) / FT(6);
+    return (sq_d0 + sq_d1 + sq_d2 + d0 * d1 + d1 * d2 + d2 * d0) * get(farea_map, f) / FT(6);
   }
 
 private:
-  const TriangleMesh *mesh;
-  const VertexPointMap point_pmap;
-  FacetAreaMap area_pmap;
+  const TriangleMesh *tm;
+  const VertexPointMap vpoint_map;
+  Face_area_map farea_map;
 };
 
 /*!
@@ -661,8 +643,8 @@ public:
   typedef PlaneProxy Proxy;
 
   // construct L2 proxy fitting functor from a triangle mesh and the vertex point map.
-  L2_proxy_fitting(const TriangleMesh &_mesh, const VertexPointMap &_point_pmap)
-    : mesh(&_mesh), point_pmap(_point_pmap) {}
+  L2_proxy_fitting(const TriangleMesh &tm_, const VertexPointMap &vpoint_map_)
+    : tm(&tm_), vpoint_map(vpoint_map_) {}
 
   // returns proxy fitted from range of facets.
   template <typename FacetIterator>
@@ -671,10 +653,10 @@ public:
 
     std::list<Triangle_3> tris;
     for (FacetIterator fitr = beg; fitr != end; ++fitr) {
-      halfedge_descriptor he = halfedge(*fitr, *mesh);
-      const Point_3 &p0 = point_pmap[source(he, *mesh)];
-      const Point_3 &p1 = point_pmap[target(he, *mesh)];
-      const Point_3 &p2 = point_pmap[target(next(he, *mesh), *mesh)];
+      halfedge_descriptor he = halfedge(*fitr, *tm);
+      const Point_3 &p0 = vpoint_map[source(he, *tm)];
+      const Point_3 &p1 = vpoint_map[target(he, *tm)];
+      const Point_3 &p2 = vpoint_map[target(next(he, *tm), *tm)];
       tris.push_back(Triangle_3(p0, p1, p2));
     }
 
@@ -690,8 +672,8 @@ public:
   }
 
 private:
-  const TriangleMesh *mesh;
-  const VertexPointMap point_pmap;
+  const TriangleMesh *tm;
+  const VertexPointMap vpoint_map;
 };
 
 // specialization.
@@ -715,9 +697,8 @@ public:
   typedef PlaneProxy Proxy;
 
   // construct L2 proxy fitting functor from a triangle mesh.
-  L2_proxy_fitting(const TriangleMesh &_mesh)
-    : mesh(&_mesh),
-    point_pmap(get(boost::vertex_point, const_cast<TriangleMesh &>(_mesh))) {}
+  L2_proxy_fitting(const TriangleMesh &tm_)
+    : tm(&tm_), vpoint_map(get(boost::vertex_point, const_cast<TriangleMesh &>(tm_))) {}
 
   // returns the proxy fitted from a range of facets.
   template <typename FacetIterator>
@@ -726,10 +707,10 @@ public:
 
     std::list<Triangle_3> tris;
     for (FacetIterator fitr = beg; fitr != end; ++fitr) {
-      halfedge_descriptor he = halfedge(*fitr, *mesh);
-      const Point_3 &p0 = point_pmap[source(he, *mesh)];
-      const Point_3 &p1 = point_pmap[target(he, *mesh)];
-      const Point_3 &p2 = point_pmap[target(next(he, *mesh), *mesh)];
+      halfedge_descriptor he = halfedge(*fitr, *tm);
+      const Point_3 &p0 = vpoint_map[source(he, *tm)];
+      const Point_3 &p1 = vpoint_map[target(he, *tm)];
+      const Point_3 &p2 = vpoint_map[target(next(he, *tm), *tm)];
       tris.push_back(Triangle_3(p0, p1, p2));
     }
 
@@ -745,8 +726,8 @@ public:
   }
 
 private:
-  const TriangleMesh *mesh;
-  const VertexPointMap point_pmap;
+  const TriangleMesh *tm;
+  const VertexPointMap vpoint_map;
 };
 
 } // end namespace VSA
