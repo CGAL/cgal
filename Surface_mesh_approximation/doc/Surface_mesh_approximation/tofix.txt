@@ -1,0 +1,5 @@
+- verify that L2,1 is square root of integral of L2 error over normals.
+- very first partition must use one proxy per connected component.
+- verify that teleport can be forced even when heuristic test fails. about the test: why not simply comparing increase of error and decrease of error ?
+- when meshing, use discrete analog of a *constrained* 2D Delaunay triangulation ? (involving visibility)
+- add option to optimize the vertex locations of the output mesh
