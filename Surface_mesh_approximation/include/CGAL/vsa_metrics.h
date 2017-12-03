@@ -532,14 +532,17 @@ public:
 
   // constructor
   L2_metric(const TriangleMesh &tm, const VertexPointMap &_point_pmap)
-    : mesh(&tm), area_pmap(facet_areas), point_pmap(_point_pmap) {
-    BOOST_FOREACH(face_descriptor f, faces(tm)) {
-      const halfedge_descriptor he = halfedge(f, tm);
-      const Point_3 &p0 = point_pmap[source(he, tm)];
-      const Point_3 &p1 = point_pmap[target(he, tm)];
-      const Point_3 &p2 = point_pmap[target(next(he, tm), tm)];
-      FT area(std::sqrt(CGAL::to_double(CGAL::squared_area(p0, p1, p2))));
-      facet_areas.insert(std::pair<face_descriptor, FT>(f, area));
+    : mesh(&tm), area_pmap(), point_pmap(_point_pmap) {
+    area_pmap = CGAL::internal::add_property(Face_area_tag("VSA-face_area"),
+      const_cast<TriangleMesh &>(*mesh));
+
+    BOOST_FOREACH(face_descriptor f, faces(*mesh)) {
+      const halfedge_descriptor he = halfedge(f, *mesh);
+      const Point_3 &p0 = point_pmap[source(he, *mesh)];
+      const Point_3 &p1 = point_pmap[target(he, *mesh)];
+      const Point_3 &p2 = point_pmap[target(next(he, *mesh), *mesh)];
+      put(area_pmap, f,
+        std::sqrt(CGAL::to_double(CGAL::squared_area(p0, p1, p2))));
     }
   }
 
@@ -561,9 +564,8 @@ public:
 
 private:
   const TriangleMesh *mesh;
-  boost::unordered_map<face_descriptor, FT> facet_areas;
-  const FacetAreaMap area_pmap;
   const VertexPointMap point_pmap;
+  FacetAreaMap area_pmap;
 };
 
 // specialization
@@ -592,15 +594,17 @@ public:
 
   // constructor
   L2_metric(const TriangleMesh &tm)
-    : mesh(&tm), area_pmap(facet_areas),
+    : mesh(&tm), area_pmap(),
     point_pmap(get(boost::vertex_point, const_cast<TriangleMesh &>(tm))) {
-    BOOST_FOREACH(face_descriptor f, faces(tm)) {
-      const halfedge_descriptor he = halfedge(f, tm);
-      const Point_3 &p0 = point_pmap[source(he, tm)];
-      const Point_3 &p1 = point_pmap[target(he, tm)];
-      const Point_3 &p2 = point_pmap[target(next(he, tm), tm)];
-      const FT area(std::sqrt(CGAL::to_double(CGAL::squared_area(p0, p1, p2))));
-      facet_areas.insert(std::pair<face_descriptor, FT>(f, area));
+    area_pmap = CGAL::internal::add_property(Face_area_tag("VSA-face_area"),
+      const_cast<TriangleMesh &>(*mesh));
+    BOOST_FOREACH(face_descriptor f, faces(*mesh)) {
+      const halfedge_descriptor he = halfedge(f, *mesh);
+      const Point_3 &p0 = point_pmap[source(he, *mesh)];
+      const Point_3 &p1 = point_pmap[target(he, *mesh)];
+      const Point_3 &p2 = point_pmap[target(next(he, *mesh), *mesh)];
+      put(area_pmap, f,
+        std::sqrt(CGAL::to_double(CGAL::squared_area(p0, p1, p2))));
     }
   }
 
@@ -622,9 +626,8 @@ public:
 
 private:
   const TriangleMesh *mesh;
-  boost::unordered_map<face_descriptor, FT> facet_areas;
-  const FacetAreaMap area_pmap;
   const VertexPointMap point_pmap;
+  FacetAreaMap area_pmap;
 };
 
 /*!

@@ -348,13 +348,15 @@ public:
       return;
 
     // rebuild internal data structure
-    internal_fidx_map.clear();
+    CGAL::internal::remove_property(fproxy_map, *m_pmesh);
+    fproxy_map = CGAL::internal::add_property(Face_proxy_tag("VSA-fproxy"),
+      *(const_cast<TriangleMesh *>(m_pmesh)));
     BOOST_FOREACH(face_descriptor f, faces(*m_pmesh))
-      internal_fidx_map[f] = CGAL_VSA_INVALID_TAG;
+      put(fproxy_map, f, CGAL_VSA_INVALID_TAG);
 
     CGAL::internal::remove_property(vanchor_map, *m_pmesh);
     vanchor_map = CGAL::internal::add_property(Vertex_anchor_tag("VSA-vertex_anchor"),
-                                               *(const_cast<TriangleMesh*>(p_mesh)));
+      *(const_cast<TriangleMesh*>(m_pmesh)));
     BOOST_FOREACH(vertex_descriptor v, vertices(*m_pmesh))
       put(vanchor_map, v, CGAL_VSA_INVALID_TAG);
 
@@ -714,7 +716,7 @@ public:
       std::size_t px_idx = get(fproxy_map, f);
       if (px_idx == px1 || px_idx == px0) {
         err_sum += (*fit_error)(f, proxies[px_idx].px);
-        set(fproxy_map, f, px0);
+        put(fproxy_map, f, px0);
         merged_patch.push_back(f);
       }
     }
@@ -1206,13 +1208,13 @@ private:
     while (!facet_pqueue.empty()) {
       const Facet_to_integrate c = facet_pqueue.top();
       facet_pqueue.pop();
-      if (get(fproxy_map,c.f) == CGAL_VSA_INVALID_TAG) {
+      if (get(fproxy_map, c.f) == CGAL_VSA_INVALID_TAG) {
         put(fproxy_map, c.f, c.px);
         BOOST_FOREACH(face_descriptor fadj, faces_around_face(halfedge(c.f, *m_pmesh), *m_pmesh)) {
           if (fadj != boost::graph_traits<TriangleMesh>::null_face()
-              && get(fproxy_map,fadj) == CGAL_VSA_INVALID_TAG) {
+            && get(fproxy_map, fadj) == CGAL_VSA_INVALID_TAG) {
             facet_pqueue.push(Facet_to_integrate(
-            fadj, c.px, (*fit_error)(fadj, proxies[c.px].px)));
+              fadj, c.px, (*fit_error)(fadj, proxies[c.px].px)));
           }
         }
       }
