@@ -44,8 +44,8 @@ struct Graph_manipulations
   typedef typename boost::graph_traits<Graph>::edge_descriptor edge_descriptor;
 
   std::map<Point_3, vertex_descriptor> p2v;
-  InterpolationFunctor interpolate;
   Graph& g;
+  InterpolationFunctor interpolate;
 
   Graph_manipulations(Graph& g,
                       InterpolationFunctor interpolate = InterpolationFunctor())
