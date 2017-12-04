@@ -70,3 +70,9 @@ CGAL_add_named_parameter(do_project_t, do_project, do_project)
 
 //internal
 CGAL_add_named_parameter(weight_calculator_t, weight_calculator, weight_calculator)
+
+// List of named parameters used in the Point Set Processing package
+CGAL_add_named_parameter(point_t, point_map, point_map)
+CGAL_add_named_parameter(normal_t, normal_map, normal_map)
+CGAL_add_named_parameter(diagonalize_traits_t, diagonalize_traits, diagonalize_traits)
+CGAL_add_named_parameter(svd_traits_t, svd_traits, svd_traits)
