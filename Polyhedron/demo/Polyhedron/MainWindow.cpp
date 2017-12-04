@@ -1669,9 +1669,9 @@ void MainWindow::on_actionPreferences_triggered()
   //QStandardItemModel* iStandardModel = new QStandardItemModel(this);
 
   std::vector<QTreeWidgetItem*> items;
-  QBrush successBrush(QColor(Qt::green)),
-      errorBrush(QColor(Qt::red)),
-      ignoredBrush(QColor(Qt::lightGray));
+  QBrush successBrush(Qt::green),
+      errorBrush(Qt::red),
+      ignoredBrush(Qt::lightGray);
 
   //add blacklisted plugins
   Q_FOREACH (QString path, PathNames_map.keys())
