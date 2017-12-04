@@ -19,8 +19,6 @@
 #include <list>
 #include <vector>
 
-namespace P3M3_IO = CGAL::Periodic_3_mesh_3::IO;
-
 // Kernel
 typedef CGAL::Exact_predicates_inexact_constructions_kernel         K;
 
@@ -107,7 +105,7 @@ void test_protected_sphere()
 
   // Output
   std::ofstream medit_file_bis("protected_sphere.mesh");
-  P3M3_IO::write_complex_to_medit(medit_file_bis, c3t3_bis);
+  CGAL::output_to_medit(medit_file_bis, c3t3_bis);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -167,7 +165,7 @@ void test_protected_squary_cylinder()
 
   // Output
   std::ofstream medit_file_bis("cone.mesh");
-  P3M3_IO::write_complex_to_medit(medit_file_bis, c3t3_bis);
+  CGAL::output_to_medit(medit_file_bis, c3t3_bis);
 }
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -274,7 +272,7 @@ void test_protected_squary_cylinder_2()
 
   // Output
   std::ofstream medit_file_bis("cone.mesh");
-  P3M3_IO::write_complex_to_medit(medit_file_bis, c3t3_bis);
+  CGAL::output_to_medit(medit_file_bis, c3t3_bis);
 }
 ////////////////////////////////////////////////////////////////////////////////
 

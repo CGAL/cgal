@@ -18,8 +18,6 @@
 #include <cmath>
 #include <fstream>
 
-namespace P3M3_IO = CGAL::Periodic_3_mesh_3::IO;
-
 // Kernel
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::FT                                               FT;
@@ -78,7 +76,7 @@ int main()
 
   // Output
   std::ofstream medit_file("output_implicit_with_subdomains.mesh");
-  P3M3_IO::write_complex_to_medit(medit_file, c3t3);
+  CGAL::output_to_medit(medit_file, c3t3);
 
   return 0;
 }

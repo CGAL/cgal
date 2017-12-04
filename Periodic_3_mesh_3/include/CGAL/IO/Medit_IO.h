@@ -23,10 +23,12 @@
 #define CGAL_PERIODIC_3_MESH_3_IO_FILE_MEDIT_H
 
 #include <CGAL/assertions.h>
+#include <CGAL/IO/File_medit.h>
 
 #include <boost/unordered_map.hpp>
 
 #include <algorithm>
+#include <fstream>
 #include <iostream>
 #include <sstream>
 
@@ -34,7 +36,7 @@ namespace CGAL {
 
 namespace Periodic_3_mesh_3 {
 
-namespace IO {
+namespace internal {
 
 // Helper functions moving periodic elements in some canonical positions
 // in order to get a surface with fewer "holes". Unused for now.
@@ -79,11 +81,22 @@ canonicalize_tetrahedron(const typename Triangulation::Periodic_tetrahedron& pt)
                           std::make_pair(pt[3].first, o3 - diff_off));
 }
 
-// Writing a periodic triangulation to the .mesh file format, which can be visualized
-// using medit. By default, 7 copies are used, for a total of 8 instances of the domains.
-template <class Stream, class C3t3>
-Stream& write_complex_to_medit(Stream& out, C3t3& c3t3,
-                               unsigned occurence_count = 8)
+} // namespace internal
+
+template <class C3T3,
+          class Vertex_index_property_map,
+          class Facet_index_property_map,
+          class Facet_index_property_map_twice,
+          class Cell_index_property_map>
+void output_to_medit(std::ostream& os,
+                     const C3T3& c3t3,
+                     const int occurence_count,
+                     const bool distinguish_copies,
+                     const Vertex_index_property_map& vertex_pmap,
+                     const Facet_index_property_map& facet_pmap,
+                     const Cell_index_property_map& cell_pmap,
+                     const Facet_index_property_map_twice& facet_twice_pmap = Facet_index_property_map_twice(),
+                     const bool print_each_facet_twice = false)
 {
   // if occurence_count equals:
   // "1" --> only draws a single instance of the domain.
@@ -96,18 +109,18 @@ Stream& write_complex_to_medit(Stream& out, C3t3& c3t3,
   CGAL_precondition(occurence_count == 1 || occurence_count == 2 ||
                     occurence_count == 4 || occurence_count == 8);
 
-  typedef typename C3t3::Triangulation           Triangulation;
+  typedef typename C3T3::Triangulation           Triangulation;
   typedef Triangulation                          Tr;
 
   typedef typename Tr::Bare_point                Bare_point;
   typedef typename Tr::Weighted_point            Weighted_point;
 
-  typedef typename C3t3::Vertex_handle           Vertex_handle;
-  typedef typename C3t3::Cell_handle             Cell_handle;
+  typedef typename C3T3::Vertex_handle           Vertex_handle;
+  typedef typename C3T3::Cell_handle             Cell_handle;
 
   typedef typename Tr::Vertex_iterator           Vertex_iterator;
-  typedef typename C3t3::Facet_iterator          Facet_iterator;
-  typedef typename C3t3::Cell_iterator           Cell_iterator;
+  typedef typename C3T3::Facet_iterator          Facet_iterator;
+  typedef typename C3T3::Cell_iterator           Cell_iterator;
 
   typedef typename Tr::Offset                    Offset;
 
@@ -124,11 +137,11 @@ Stream& write_complex_to_medit(Stream& out, C3t3& c3t3,
   int number_of_facets = static_cast<int>(c3t3.number_of_facets());
   int number_of_cells = static_cast<int>(c3t3.number_of_cells());
 
-  out << std::setprecision(17);
+  os << std::setprecision(17);
 
   int medit_number_of_vertices = (Ox_rn + 1) * (Oy_rn + 1) * (Oz_rn + 1) * number_of_vertices;
 
-  out << "MeshVersionFormatted 1\n"
+  os << "MeshVersionFormatted 1\n"
       << "Dimension 3\n"
       << "Vertices\n" << medit_number_of_vertices << std::endl;
 
@@ -162,41 +175,79 @@ Stream& write_complex_to_medit(Stream& out, C3t3& c3t3,
           else
             id = tr.off_to_int(off);
 
-          out << CGAL::to_double(bp.x()) << ' '
-              << CGAL::to_double(bp.y()) << ' '
-              << CGAL::to_double(bp.z()) << ' '
-              << 32 * id + 1
-              << '\n';
+          os << CGAL::to_double(bp.x()) << ' '
+             << CGAL::to_double(bp.y()) << ' '
+             << CGAL::to_double(bp.z()) << ' ';
+
+          if(!distinguish_copies || occurence_count == 1)
+            os << get(vertex_pmap, vit) << '\n';
+          else
+            os << 32 * id + 1 << '\n';
         }
       }
     }
   }
 
-  out << "Triangles\n" << occurence_count * number_of_facets << std::endl;
-  for(unsigned j=0; j<occurence_count; ++j)
+  os << "Triangles\n" << occurence_count * number_of_facets << std::endl;
+  for(int i=0; i<=Oz_rn; ++i)
   {
-    for(Facet_iterator fit = c3t3.facets_begin(); fit != c3t3.facets_end(); ++fit)
+    for(int j=0; j<=Oy_rn; ++j)
     {
-      for(int i=0; i<4; ++i)
+      for(int k=0; k<=Ox_rn; ++k)
       {
-        if(i == fit->second)
-          continue;
+        const Offset off(k, j, i);
+        for(Facet_iterator fit = c3t3.facets_begin(); fit != c3t3.facets_end(); ++fit)
+        {
+          for(int i=0; i<4; ++i)
+          {
+            if(i == fit->second)
+              continue;
 
-        Cell_handle c = fit->first;
-        Vertex_handle v = c->vertex(i);
-        const Offset off = tr.int_to_off(j);
-        const Offset combined_off = tr.combine_offsets(
-                                      off, tr.int_to_off(c->offset(i)));
-        const int vector_offset = combined_off.x() +
-                                  combined_off.y() * (Ox_rn + 1) +
-                                  combined_off.z() * (Ox_rn + 1) * (Oy_rn + 1);
-        out << vector_offset * number_of_vertices + V[v] << " ";
+            Cell_handle c = fit->first;
+            Vertex_handle v = c->vertex(i);
+            const Offset combined_off = tr.combine_offsets(
+                                          off, tr.int_to_off(c->offset(i)));
+            const int vector_offset = combined_off.x() +
+                                      combined_off.y() * (Ox_rn + 1) +
+                                      combined_off.z() * (Ox_rn + 1) * (Oy_rn + 1);
+            os << vector_offset * number_of_vertices + V[v] << " ";
+          }
+
+          // For multiple copies, color to distinguish copies rather than to distinguish subdomains
+          if(!distinguish_copies || occurence_count == 1)
+            os << get(facet_pmap, *fit) << '\n';
+          else
+            os << 1 + k + j * 3 + i * 9 << '\n';
+
+          // Print triangle again if needed
+          if(print_each_facet_twice)
+          {
+            for(int i=0; i<4; i++)
+            {
+              if(i == fit->second)
+                continue;
+
+              Cell_handle c = fit->first;
+              Vertex_handle v = c->vertex(i);
+              const Offset combined_off = tr.combine_offsets(
+                                            off, tr.int_to_off(c->offset(i)));
+              const int vector_offset = combined_off.x() +
+                                        combined_off.y() * (Ox_rn + 1) +
+                                        combined_off.z() * (Ox_rn + 1) * (Oy_rn + 1);
+              os << vector_offset * number_of_vertices + V[v] << " ";
+            }
+
+            if(!distinguish_copies || occurence_count == 1)
+              os << get(facet_twice_pmap, *fit) << '\n';
+            else
+              os << 1 + k + j * 3 + i * 9 << '\n';
+          }
+        }
       }
-      out << 128 * j + 1  << '\n';
     }
   }
 
-  out << "Tetrahedra\n" << occurence_count * number_of_cells << std::endl;
+  os << "Tetrahedra\n" << occurence_count * number_of_cells << std::endl;
   for(int i=0; i<Oz_rn; ++i)
   {
     for(int j=0; j<Oy_rn; ++j)
@@ -216,21 +267,90 @@ Stream& write_complex_to_medit(Stream& out, C3t3& c3t3,
 
             const int id = vector_offset * number_of_vertices + V[cit->vertex(i)];
             CGAL_assertion(id <= medit_number_of_vertices);
-            out << id << " ";
+            os << id << " ";
           }
-          out << cit->subdomain_index() << '\n';
+
+          // For multiple copies, color to distinguish copies rather than to distinguish subdomains
+          if(!distinguish_copies || occurence_count == 1)
+            os << get(cell_pmap, cit) << '\n';
+          else
+            os << 1 + k + j * 3 + i * 9 << '\n';
         }
       }
     }
   }
 
-  out << "End" << std::endl;
-  return out;
+  os << "End" << std::endl;
 }
 
-} // namespace IO
+template <class C3T3, bool rebind, bool no_patch>
+void output_to_medit(std::ostream& os,
+                     const C3T3& c3t3,
+                     const int occurence_count,
+                     const bool distinguish_copies)
+{
+#ifdef CGAL_MESH_3_IO_VERBOSE
+  std::cerr << "Output to medit:\n";
+#endif
+
+  typedef CGAL::Mesh_3::Medit_pmap_generator<C3T3, rebind, no_patch>  Generator;
+  typedef typename Generator::Cell_pmap                               Cell_pmap;
+  typedef typename Generator::Facet_pmap                              Facet_pmap;
+  typedef typename Generator::Facet_pmap_twice                        Facet_pmap_twice;
+  typedef typename Generator::Vertex_pmap                             Vertex_pmap;
+
+  Cell_pmap cell_pmap(c3t3);
+  Facet_pmap facet_pmap(c3t3, cell_pmap);
+  Facet_pmap_twice facet_pmap_twice(c3t3, cell_pmap);
+  Vertex_pmap vertex_pmap(c3t3, cell_pmap, facet_pmap);
+
+  Periodic_3_mesh_3::output_to_medit(os, c3t3, occurence_count, distinguish_copies,
+                                     vertex_pmap, facet_pmap, cell_pmap, facet_pmap_twice,
+                                     Generator().print_twice());
+
+#ifdef CGAL_MESH_3_IO_VERBOSE
+  std::cerr << "done.\n";
+#endif
+}
 
 } // namespace Periodic_3_mesh_3
+
+/**
+ * @brief Outputs a periodic mesh to the .mesh file format, which can be visualized
+ *        using medit. By default, 7 copies are used, for a total of 8 instances of the domains.
+ * @param os the stream
+ * @param c3t3 the mesh
+ * @param rebind if true, labels of cells are rebinded into [1..nb_of_labels]
+ * @param show_patches if true, patches are labeled with different labels than
+ * cells. If false, each surface facet is written twice, using label of
+ * each adjacent cell.
+ */
+template <class C3T3>
+void output_to_medit(std::ostream& os,
+                     const C3T3& c3t3,
+                     const int occurence_count = 8,
+                     const bool distinguish_copies = true,
+                     bool rebind = false,
+                     bool show_patches = false,
+                     typename boost::enable_if_c<
+                                boost::is_same<typename C3T3::Triangulation::Periodic_tag,
+                                               Tag_true>::value>::type* = NULL)
+{
+  if(rebind)
+  {
+    if(show_patches)
+      Periodic_3_mesh_3::output_to_medit<C3T3, true, false>(os, c3t3, occurence_count, distinguish_copies);
+    else
+      Periodic_3_mesh_3::output_to_medit<C3T3, true, true>(os, c3t3, occurence_count, distinguish_copies);
+  }
+  else
+  {
+    if(show_patches)
+      Periodic_3_mesh_3::output_to_medit<C3T3, false, false>(os, c3t3, occurence_count, distinguish_copies);
+    else
+      Periodic_3_mesh_3::output_to_medit<C3T3, false, true>(os, c3t3, occurence_count, distinguish_copies);
+  }
+}
 
 } // namespace CGAL
 

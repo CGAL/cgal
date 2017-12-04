@@ -19,8 +19,6 @@
 #include <string>
 #include <vector>
 
-namespace P3M3_IO = CGAL::Periodic_3_mesh_3::IO;
-
 // Kernel
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
@@ -277,7 +275,7 @@ int main(int, char**)
         oss_2 << iter->first << "__" << it->first << "__" << *i  << ".mesh";
         std::string output_filename = oss_2.str();
         std::ofstream medit_file( output_filename.data() );
-        P3M3_IO::write_complex_to_medit(medit_file, c3t3, *i);
+        CGAL::output_to_medit(medit_file, c3t3, *i);
         medit_file.close();
 
         std::cout << ", " << *i << "-copy Saved" << std::flush;

@@ -23,8 +23,6 @@
 #include <iostream>
 #include <fstream>
 
-namespace P3M3_IO = CGAL::Periodic_3_mesh_3::IO;
-
 // Domain
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::FT                                               FT;
@@ -55,6 +53,7 @@ int main(int argc, char** argv)
   // 'int' because the 'schwarz_p' function is periodic over the domain only if
   // the length of the side of the domain is an integer.
   int domain_size = (argc > 1) ? atoi(argv[1]) : 1;
+  int number_of_copies_in_output = (argc > 2) ? atoi(argv[2]) : 4; // can be 1, 2, 4, or 8
 
   Periodic_mesh_domain domain(schwarz_p, CGAL::Iso_cuboid_3<K>(0, 0, 0, domain_size, domain_size, domain_size));
 
@@ -68,7 +67,7 @@ int main(int argc, char** argv)
   C3t3 c3t3 = CGAL::make_periodic_3_mesh_3<C3t3>(domain, criteria);
 
   std::ofstream medit_file("output_implicit_shape.mesh");
-  P3M3_IO::write_complex_to_medit(medit_file, c3t3);
+  CGAL::output_to_medit(medit_file, c3t3, number_of_copies_in_output);
 
   std::cout << "EXIT SUCCESS" << std::endl;
   return 0;

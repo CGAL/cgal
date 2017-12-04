@@ -27,8 +27,6 @@
 #include <list>
 #include <vector>
 
-namespace P3M3_IO = CGAL::Periodic_3_mesh_3::IO;
-
 // Kernel
 typedef CGAL::Exact_predicates_inexact_constructions_kernel         K;
 
@@ -127,13 +125,14 @@ int main()
   C3t3 c3t3 = CGAL::make_periodic_3_mesh_3<C3t3>(domain, criteria, no_features(),
                                                  no_exude(), no_perturb());
   std::ofstream medit_file("output_implicit_shape_without_protection.mesh");
-  P3M3_IO::write_complex_to_medit(medit_file, c3t3);
+  CGAL::output_to_medit(medit_file, c3t3);
 
   // Mesh generation WITH feature preservation (and no optimizers)
   C3t3 c3t3_bis = CGAL::make_periodic_3_mesh_3<C3t3>(domain, criteria, features(),
-                                                     no_exude(), no_perturb());
+                                                     exude(time_limit=0),
+                                                     /*no_exude(),*/ no_perturb());
   std::ofstream medit_file_bis("output_implicit_shape_with_protection.mesh");
-  P3M3_IO::write_complex_to_medit(medit_file_bis, c3t3_bis);
+  CGAL::output_to_medit(medit_file_bis, c3t3_bis);
 
   std::cout << "EXIT SUCCESS" << std::endl;
   return 0;

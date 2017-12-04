@@ -24,8 +24,6 @@
 #include <iostream>
 #include <fstream>
 
-namespace P3M3_IO = CGAL::Periodic_3_mesh_3::IO;
-
 // Domain
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::FT                                               FT;
@@ -73,7 +71,7 @@ int main(int argc, char** argv)
                                                  exude(sliver_bound=10, time_limit=30));
 
   std::ofstream medit_file("output_implicit_shape.mesh");
-  P3M3_IO::write_complex_to_medit(medit_file, c3t3);
+  CGAL::output_to_medit(medit_file, c3t3);
 
   // Mesh generation and optimization in several call
   C3t3 c3t3_bis = CGAL::make_periodic_3_mesh_3<C3t3>(domain, criteria,
@@ -81,7 +79,7 @@ int main(int argc, char** argv)
                                                      no_perturb(), no_exude());
 
   std::ofstream medit_file_bis("output_implicit_shape_non-optimized.mesh");
-  P3M3_IO::write_complex_to_medit(medit_file_bis, c3t3_bis);
+  CGAL::output_to_medit(medit_file_bis, c3t3_bis);
 
   std::cout << "Optimizing..." << std::endl;
   CGAL::odt_optimize_periodic_3_mesh_3(c3t3_bis, domain, convergence=0.03, freeze_bound=0.02, time_limit=30);
@@ -90,7 +88,7 @@ int main(int argc, char** argv)
   CGAL::exude_periodic_3_mesh_3(c3t3_bis, sliver_bound=10, time_limit=30);
 
   std::ofstream medit_file_ter("output_implicit_shape_two_steps.mesh");
-  P3M3_IO::write_complex_to_medit(medit_file_ter, c3t3_bis);
+  CGAL::output_to_medit(medit_file_ter, c3t3_bis);
 
   std::cout << "EXIT SUCCESS" << std::endl;
   return 0;
