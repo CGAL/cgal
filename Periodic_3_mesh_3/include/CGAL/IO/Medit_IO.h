@@ -188,59 +188,67 @@ void output_to_medit(std::ostream& os,
     }
   }
 
-  os << "Triangles\n" << occurence_count * number_of_facets << std::endl;
-  for(int i=0; i<=Oz_rn; ++i)
+  int medit_number_of_triangles = occurence_count * number_of_facets;
+  if(print_each_facet_twice)
+    medit_number_of_triangles *= 2;
+
+  os << "Triangles\n" << medit_number_of_triangles << std::endl;
+  for(int i=0; i<Oz_rn; ++i)
   {
-    for(int j=0; j<=Oy_rn; ++j)
+    for(int j=0; j<Oy_rn; ++j)
     {
-      for(int k=0; k<=Ox_rn; ++k)
+      for(int k=0; k<Ox_rn; ++k)
       {
         const Offset off(k, j, i);
         for(Facet_iterator fit = c3t3.facets_begin(); fit != c3t3.facets_end(); ++fit)
         {
-          for(int i=0; i<4; ++i)
+          for(int l=0; l<4; ++l)
           {
-            if(i == fit->second)
+            if(l == fit->second)
               continue;
 
             Cell_handle c = fit->first;
-            Vertex_handle v = c->vertex(i);
+            Vertex_handle v = c->vertex(l);
             const Offset combined_off = tr.combine_offsets(
-                                          off, tr.int_to_off(c->offset(i)));
+                                          off, tr.int_to_off(c->offset(l)));
             const int vector_offset = combined_off.x() +
                                       combined_off.y() * (Ox_rn + 1) +
                                       combined_off.z() * (Ox_rn + 1) * (Oy_rn + 1);
-            os << vector_offset * number_of_vertices + V[v] << " ";
+            const int id = vector_offset * number_of_vertices + V[v];
+            CGAL_assertion(1 <= id && id <= medit_number_of_vertices);
+            os << id << " ";
           }
 
           // For multiple copies, color to distinguish copies rather than to distinguish subdomains
           if(!distinguish_copies || occurence_count == 1)
             os << get(facet_pmap, *fit) << '\n';
           else
-            os << 1 + k + j * 3 + i * 9 << '\n';
+            os << 1 + k + 3*j + 9*i << '\n';
 
           // Print triangle again if needed
           if(print_each_facet_twice)
           {
-            for(int i=0; i<4; i++)
+            for(int l=0; l<4; ++l)
             {
-              if(i == fit->second)
+              if(l == fit->second)
                 continue;
 
               Cell_handle c = fit->first;
-              Vertex_handle v = c->vertex(i);
+              Vertex_handle v = c->vertex(l);
               const Offset combined_off = tr.combine_offsets(
-                                            off, tr.int_to_off(c->offset(i)));
+                                            off, tr.int_to_off(c->offset(l)));
               const int vector_offset = combined_off.x() +
                                         combined_off.y() * (Ox_rn + 1) +
                                         combined_off.z() * (Ox_rn + 1) * (Oy_rn + 1);
-              os << vector_offset * number_of_vertices + V[v] << " ";
+              const int id = vector_offset * number_of_vertices + V[v];
+              CGAL_assertion(1 <= id && id <= medit_number_of_vertices);
+              os << id << " ";
             }
 
             if(!distinguish_copies || occurence_count == 1)
               os << get(facet_twice_pmap, *fit) << '\n';
             else
-              os << 1 + k + j * 3 + i * 9 << '\n';
+              os << 1 + k + 3*j + 9*i << '\n';
           }
         }
       }
@@ -257,16 +265,16 @@ void output_to_medit(std::ostream& os,
         const Offset off(k, j, i);
         for(Cell_iterator cit = c3t3.cells_begin(); cit !=c3t3.cells_end(); ++cit)
         {
-          for(int i=0; i<4; ++i)
+          for(int l=0; l<4; ++l)
           {
             const Offset combined_off = tr.combine_offsets(
-                                          off, tr.int_to_off(cit->offset(i)));
+                                          off, tr.int_to_off(cit->offset(l)));
             const int vector_offset = combined_off.x() +
                                       combined_off.y() * (Ox_rn + 1) +
                                       combined_off.z() * (Ox_rn + 1) * (Oy_rn + 1);
 
-            const int id = vector_offset * number_of_vertices + V[cit->vertex(i)];
-            CGAL_assertion(id <= medit_number_of_vertices);
+            const int id = vector_offset * number_of_vertices + V[cit->vertex(l)];
+            CGAL_assertion(1 <= id && id <= medit_number_of_vertices);
             os << id << " ";
           }
 
@@ -274,7 +282,7 @@ void output_to_medit(std::ostream& os,
           if(!distinguish_copies || occurence_count == 1)
             os << get(cell_pmap, cit) << '\n';
           else
-            os << 1 + k + j * 3 + i * 9 << '\n';
+            os << 1 + k + 3*j + 9*i << '\n';
         }
       }
     }
@@ -292,6 +300,7 @@ void output_to_medit(std::ostream& os,
 #ifdef CGAL_MESH_3_IO_VERBOSE
   std::cerr << "Output to medit:\n";
 #endif
+  CGAL_precondition(c3t3.triangulation().is_1_cover());
 
   typedef CGAL::Mesh_3::Medit_pmap_generator<C3T3, rebind, no_patch>  Generator;
   typedef typename Generator::Cell_pmap                               Cell_pmap;
