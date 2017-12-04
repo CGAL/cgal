@@ -57,9 +57,9 @@ int main(int argc, char*argv[])
     // Computes average spacing.
     const unsigned int nb_neighbors = 6; // 1 ring
     FT average_spacing = CGAL::compute_average_spacing<Concurrency_tag>(
-                            points.begin(), points.end(),
-                            CGAL::Nth_of_tuple_property_map<1,IndexedPointWithColorTuple>(),
-                            nb_neighbors);
+                            points, nb_neighbors,
+                            CGAL::parameters::point_map(CGAL::Nth_of_tuple_property_map<1,IndexedPointWithColorTuple>()));
+
     std::cout << "Average spacing: " << average_spacing << std::endl;
 
     return EXIT_SUCCESS;
