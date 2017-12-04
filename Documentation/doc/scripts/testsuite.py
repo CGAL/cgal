@@ -90,11 +90,11 @@ body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
       suffix=''
       if args.doxygen_version1:
         suffix = ""+args.doxygen_version1
-      link1="<a href=\"output/Manual/index.html\">Documentation built</a> with <a href=\"https://github.com/CGAL/doxygen\">our fork of Doxygen {_suffix}</a>\n".format(_suffix=suffix)
+      link1="<a href=\"output1/Manual/index.html\">Documentation built</a> with <a href=\"https://github.com/CGAL/doxygen\">our fork of Doxygen {_suffix}</a>\n".format(_suffix=suffix)
       suffix = ''
       if args.doxygen_version2:
         suffix = args.doxygen_version2
-      link2="\n<br><a href=\"output/Manual/index.html\">Documentation built</a> with <a href=\"https://github.com/CGAL/doxygen\">our fork of Doxygen {_suffix}</a>\n".format(_suffix=suffix)
+      link2="\n<br><a href=\"output2/Manual/index.html\">Documentation built</a> with <a href=\"https://github.com/CGAL/doxygen\">our fork of Doxygen {_suffix}</a>\n".format(_suffix=suffix)
       suffix = ''
       if args.master_describe:
         suffix=args.master_describe
