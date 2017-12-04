@@ -1071,7 +1071,7 @@ bool MainWindow::open(QString filename, QString loader_name) {
     if(!item_opt) return false;
     else item = *item_opt;
   }
-  catch(std::logic_error e) {
+  catch(std::logic_error& e) {
     std::cerr << e.what() << std::endl;
     return false;
   }
