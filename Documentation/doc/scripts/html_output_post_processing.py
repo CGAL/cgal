@@ -74,7 +74,7 @@ def package_glob(target):
 
 # remove duplicate files
 def clean_doc():
-    duplicate_files=package_glob('./*/jquery.js')
+    duplicate_files=list(package_glob('./*/jquery.js'))
     duplicate_files.extend(package_glob('./*/dynsections.js'))
     duplicate_files.extend(package_glob('./*/resize.js'))
     duplicate_files.extend(package_glob('./*/stylesheet.css'))
@@ -174,7 +174,7 @@ def update_figure_ref(i,global_anchor_map):
   link_name=link.text()
   if re.match("fig__.+",link_name) != None:
     #replace the link only if it was collected
-    if global_anchor_map.has_key(link_name):
+    if link_name in global_anchor_map:
       link.text( "Figure "+str(global_anchor_map[link_name]) )
     else:
       stderr.write("Error: Figure numbering; "+link_name+" has not been collected\n")
@@ -258,7 +258,7 @@ removes some unneeded files, and performs minor repair on some glitches.''')
       tr_tags.each(lambda i: rearrange_img(i, dir_name))
       write_out_html(d,fn)
     
-    class_files=package_glob('./*/class*.html')
+    class_files=list(package_glob('./*/class*.html'))
     class_files.extend(package_glob('./*/struct*.html'))
     for fn in class_files:
         d = pq(filename=fn, parser='html')
@@ -315,7 +315,7 @@ removes some unneeded files, and performs minor repair on some glitches.''')
     re_replace_in_file('\[external\]', '', os.path.join('Manual','annotated.html'))
 
     # fix class/concept mismatch in generated pages
-    relationship_pages=package_glob('./*/hasModels.html')
+    relationship_pages=list(package_glob('./*/hasModels.html'))
     relationship_pages.extend(package_glob('./*/generalizes.html'))
     relationship_pages.extend(package_glob('./*/refines.html'))
     for fn in relationship_pages:
@@ -346,7 +346,8 @@ removes some unneeded files, and performs minor repair on some glitches.''')
         re_replace_in_file('<a class=\"el\" href=\"namespaceCGAL.html\">CGAL</a>', 'CGAL', fn)
     
     #add a section for Inherits from
-    class_and_struct_files=package_glob('./*/class*.html')+package_glob('./*/struct*.html')
+    class_and_struct_files=list(package_glob('./*/class*.html'))
+    class_and_struct_files.extend(package_glob('./*/struct*.html'))
     for fn in class_and_struct_files:
         re_replace_first_in_file(r'<p>Inherits\s*(.*)</p>', r'<a name="details" id="details"></a><h2 class="groupheader">Inherits from</h2><p>\1</p>', fn)
 
