@@ -76,7 +76,7 @@
 //   using GMP and CGAL's algebraic kernel.
 //
 // Using CGAL_SMP_SOLVE_EQUATIONS_WITH_GMP requires GMP, MPFI, and linking CGAL
-// with Core and MPFI. This can be simply be done in 'CMakeLists.txt' by using:
+// with Core and MPFI. This can be simply done in 'CMakeLists.txt' by using:
 // 'find_package(CGAL QUIET COMPONENTS Core MPFI)'
 
 #define CGAL_SMP_SOLVE_CUBIC_EQUATION
