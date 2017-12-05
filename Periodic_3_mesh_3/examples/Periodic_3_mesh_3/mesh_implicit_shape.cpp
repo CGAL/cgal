@@ -1,9 +1,3 @@
-#define CGAL_MESH_3_VERBOSE
-#define _DEBUG
-#define CGAL_MESHES_DEBUG_REFINEMENT_POINTS
-#define CGAL_MESH_3_DEBUG_FACET_CRITERIA
-#define CGAL_MESH_3_DEBUG_CELL_CRITERIA
-
 #include <CGAL/Periodic_3_mesh_3/config.h>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>

@@ -1,11 +1,3 @@
-#define CGAL_MESH_3_VERBOSE
-//#define CGAL_MESHES_DEBUG_REFINEMENT_POINTS
-//#define CGAL_MESH_3_DEBUG_FACET_CRITERIA
-//#define CGAL_MESH_3_DEBUG_CELL_CRITERIA
-#define CGAL_MESH_3_PROFILING
-//#define CGAL_MESH_3_DEBUG_SLIVERS_EXUDER
-#define CGAL_MESH_3_PROTECTION_DEBUG 1111
-
 #include <CGAL/Periodic_3_mesh_3/config.h>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -99,8 +91,10 @@ void cone_polylines(Polylines& polylines)
   polylines.push_back(polyline);
 }
 
-int main()
+int main(int argc, char** argv)
 {
+  int number_of_copies_in_output = (argc > 1) ? atoi(argv[1]) : 8; // can be 1, 2, 4, or 8
+
   // Domain
   Mesh_domain domain(cone_function,
                      CGAL::Iso_cuboid_3<K>(0, 0, 0, domain_size, domain_size, domain_size));
@@ -125,14 +119,13 @@ int main()
   C3t3 c3t3 = CGAL::make_periodic_3_mesh_3<C3t3>(domain, criteria, no_features(),
                                                  no_exude(), no_perturb());
   std::ofstream medit_file("output_implicit_shape_without_protection.mesh");
-  CGAL::output_to_medit(medit_file, c3t3);
+  CGAL::output_to_medit(medit_file, c3t3, number_of_copies_in_output);
 
   // Mesh generation WITH feature preservation (and no optimizers)
   C3t3 c3t3_bis = CGAL::make_periodic_3_mesh_3<C3t3>(domain, criteria, features(),
-                                                     exude(time_limit=0),
-                                                     /*no_exude(),*/ no_perturb());
+                                                     no_exude(), no_perturb());
   std::ofstream medit_file_bis("output_implicit_shape_with_protection.mesh");
-  CGAL::output_to_medit(medit_file_bis, c3t3_bis);
+  CGAL::output_to_medit(medit_file_bis, c3t3_bis, number_of_copies_in_output);
 
   std::cout << "EXIT SUCCESS" << std::endl;
   return 0;

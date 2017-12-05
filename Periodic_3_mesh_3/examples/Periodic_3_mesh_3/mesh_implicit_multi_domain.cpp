@@ -42,11 +42,8 @@ typedef CGAL::Mesh_criteria_3<Tr>                         Periodic_mesh_criteria
 using namespace CGAL::parameters;
 
 // Implicit functions
-FT sphere_function_1 (const Point& p)
+FT sphere_function(const Point& p)
 { return CGAL::squared_distance(p, Point(0.5, 0.5, 0.5)) - 0.15; }
-
-FT sphere_function_2 (const Point& p)
-{ return CGAL::squared_distance(p, Point(0.66, 0.5, 0.5)) - 0.2; }
 
 FT schwarz_p(const Point& p)
 {
@@ -59,10 +56,11 @@ FT schwarz_p(const Point& p)
 int main(int argc, char** argv)
 {
   int domain_size = (argc > 1) ? atof(argv[1]) : 1;
+  int number_of_copies_in_output = (argc > 2) ? atoi(argv[2]) : 4; // can be 1, 2, 4, or 8
 
   std::vector<Function> funcs;
   funcs.push_back(&schwarz_p);
-  funcs.push_back(&sphere_function_1);
+  funcs.push_back(&sphere_function);
   std::vector<std::string> vps;
   vps.push_back("--");
   vps.push_back("-+");
@@ -80,7 +78,9 @@ int main(int argc, char** argv)
 
   // Output
   std::ofstream medit_file("output_multi_domain.mesh");
-  CGAL::output_to_medit(medit_file, c3t3, 1);
+  CGAL::output_to_medit(medit_file, c3t3, number_of_copies_in_output,
+                        false /*do not associate different colors to each copy*/,
+                        false /*do not rebind*/, true /*show patches*/);
 
   std::cout << "EXIT SUCCESS" << std::endl;
   return 0;

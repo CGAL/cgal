@@ -1,4 +1,3 @@
-
 #include <CGAL/Periodic_3_mesh_3/config.h>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -52,8 +51,10 @@ FT schwarz_p(const Point& p) {
 typedef CGAL::Mesh_constant_domain_field_3<Periodic_mesh_domain::R,
                                            Periodic_mesh_domain::Index> Field;
 
-int main()
+int main(int argc, char** argv)
 {
+  int number_of_copies_in_output = (argc > 1) ? atoi(argv[1]) : 4; // can be 1, 2, 4, or 8
+
   Periodic_mesh_domain domain(schwarz_p, CGAL::Iso_cuboid_3<K>(0, 0, 0, 1, 1, 1));
 
   double kidney_size = 0.3;
@@ -76,7 +77,7 @@ int main()
 
   // Output
   std::ofstream medit_file("output_implicit_with_subdomains.mesh");
-  CGAL::output_to_medit(medit_file, c3t3);
+  CGAL::output_to_medit(medit_file, c3t3, number_of_copies_in_output);
 
   return 0;
 }
