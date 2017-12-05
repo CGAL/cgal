@@ -55,12 +55,14 @@ int main (int argc, char** argv)
   
   Pwn_vector structured_pts;
 
-  CGAL::structure_point_set (points, Point_map(), Normal_map(),
+  CGAL::structure_point_set (points,
                              planes,
-                             CGAL::Shape_detection_3::Plane_map<Traits>(),
-                             CGAL::Shape_detection_3::Point_to_shape_index_map<Traits>(points, planes),
                              std::back_inserter (structured_pts),
-                             0.015); // epsilon for structuring points
+                             0.015, // epsilon for structuring points
+                             CGAL::parameters::point_map (Point_map()).
+                             normal_map (Normal_map()).
+                             plane_map (CGAL::Shape_detection_3::Plane_map<Traits>()).
+                             plane_index_map (CGAL::Shape_detection_3::Point_to_shape_index_map<Traits>(points, planes)));
 
   std::cerr << structured_pts.size ()
             << " structured point(s) generated." << std::endl;

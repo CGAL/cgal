@@ -27,6 +27,10 @@
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/property_map.h>
 #include <CGAL/point_set_processing_assertions.h>
+#include <CGAL/Iterator_range.h>
+
+#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 
 #include <iterator>
 #include <set>
@@ -43,59 +47,83 @@ namespace CGAL {
 /// For this reason it should not be called on sorted containers.
 ///
 /// @tparam ForwardIterator iterator over input points.
-/// @tparam PointPMap is a model of `ReadablePropertyMap` with value type `Point_3<Kernel>`.
+/// @tparam PointMap is a model of `ReadablePropertyMap` with value type `Point_3<Kernel>`.
 ///        It can be omitted if the value type of `ForwardIterator` is convertible to `Point_3<Kernel>`.
 /// @tparam Kernel Geometric traits class.
-///        It can be omitted and deduced automatically from the value type of `PointPMap`.
+///        It can be omitted and deduced automatically from the value type of `PointMap`.
+///
+/// @return iterator over the first point to remove.
+
+// This variant requires all parameters.
+template <typename PointRange>
+typename PointRange::iterator
+random_simplify_point_set(
+  PointRange& points,
+  double removed_percentage) ///< percentage of points to remove.
+{
+  CGAL_point_set_processing_precondition(removed_percentage >= 0 && removed_percentage <= 100);
+
+  // Random shuffle
+  std::random_shuffle (points.begin(), points.end());
+
+  // Computes first iterator to remove
+  std::size_t nb_points = std::distance(points.begin(), points.end());
+  std::size_t first_index_to_remove = (std::size_t)(double(nb_points) * ((100.0-removed_percentage)/100.0));
+  typename PointRange::iterator first_point_to_remove = points.begin();
+  std::advance(first_point_to_remove, first_index_to_remove);
+
+  return first_point_to_remove;
+}
+
+
+/// Randomly deletes a user-specified fraction of the input points.
+///
+/// This method modifies the order of input points so as to pack all remaining points first,
+/// and returns an iterator over the first point to remove (see erase-remove idiom).
+/// For this reason it should not be called on sorted containers.
+///
+/// @tparam ForwardIterator iterator over input points.
+/// @tparam PointMap is a model of `ReadablePropertyMap` with value type `Point_3<Kernel>`.
+///        It can be omitted if the value type of `ForwardIterator` is convertible to `Point_3<Kernel>`.
+/// @tparam Kernel Geometric traits class.
+///        It can be omitted and deduced automatically from the value type of `PointMap`.
 ///
 /// @return iterator over the first point to remove.
 
 // This variant requires all parameters.
 template <typename ForwardIterator,
-          typename PointPMap,
+          typename PointMap,
           typename Kernel
 >
 ForwardIterator
 random_simplify_point_set(
   ForwardIterator first,  ///< iterator over the first input point.
   ForwardIterator beyond, ///< past-the-end iterator over the input points.
-  PointPMap /*point_pmap*/, ///< property map: value_type of ForwardIterator -> Point_3
+  PointMap /*point_map*/, ///< property map: value_type of ForwardIterator -> Point_3
   double removed_percentage, ///< percentage of points to remove.
   const Kernel& /*kernel*/) ///< geometric traits.
 {
-  CGAL_point_set_processing_precondition(removed_percentage >= 0 && removed_percentage <= 100);
-
-  // Random shuffle
-  std::random_shuffle (first, beyond);
-
-  // Computes first iterator to remove
-  std::size_t nb_points = std::distance(first, beyond);
-  std::size_t first_index_to_remove = (std::size_t)(double(nb_points) * ((100.0-removed_percentage)/100.0));
-  ForwardIterator first_point_to_remove = first;
-  std::advance(first_point_to_remove, first_index_to_remove);
-
-  return first_point_to_remove;
+  CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("random_simplify_point_set()");
+  CGAL::Iterator_range<ForwardIterator> points (first, beyond);
+  return random_simplify_point_set (points, removed_percentage);
 }
 
+  
 /// @cond SKIP_IN_MANUAL
 // This variant deduces the kernel from the iterator type.
 template <typename ForwardIterator,
-          typename PointPMap
+          typename PointMap
 >
 ForwardIterator
 random_simplify_point_set(
   ForwardIterator first, ///< iterator over the first input point
   ForwardIterator beyond, ///< past-the-end iterator
-  PointPMap point_pmap, ///< property map: value_type of ForwardIterator -> Point_3
+  PointMap, ///< property map: value_type of ForwardIterator -> Point_3
   double removed_percentage) ///< percentage of points to remove
 {
-  typedef typename boost::property_traits<PointPMap>::value_type Point;
-  typedef typename Kernel_traits<Point>::Kernel Kernel;
-  return random_simplify_point_set(
-    first,beyond,
-    point_pmap,
-    removed_percentage,
-    Kernel());
+  CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("random_simplify_point_set()");
+  CGAL::Iterator_range<ForwardIterator> points (first, beyond);
+  return random_simplify_point_set (points, removed_percentage);
 }
 /// @endcond
 
@@ -109,11 +137,9 @@ random_simplify_point_set(
   ForwardIterator beyond, ///< past-the-end iterator
   double removed_percentage) ///< percentage of points to remove
 {
-  return random_simplify_point_set(
-    first,beyond,
-    make_identity_property_map(
-    typename std::iterator_traits<ForwardIterator>::value_type()),
-    removed_percentage);
+  CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("random_simplify_point_set()");
+  CGAL::Iterator_range<ForwardIterator> points (first, beyond);
+  return random_simplify_point_set (points, removed_percentage);
 }
 /// @endcond
 

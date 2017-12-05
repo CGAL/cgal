@@ -53,12 +53,11 @@ int main(int argc, char*argv[])
   {
     /* double error = */
     CGAL::bilateral_smooth_point_set <Concurrency_tag>(
-          points.begin(), 
-          points.end(),
-          CGAL::First_of_pair_property_map<PointVectorPair>(),
-          CGAL::Second_of_pair_property_map<PointVectorPair>(),
-          k,
-          sharpness_angle);
+      points,
+      k,
+      sharpness_angle,
+      CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>()).
+      normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>()));
   }
   
   //// Save point set.

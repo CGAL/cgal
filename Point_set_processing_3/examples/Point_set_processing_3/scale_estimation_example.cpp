@@ -44,7 +44,7 @@ int main (int argc, char** argv)
           
   // estimate k scale
   task_timer.start();
-  std::size_t k_scale = CGAL::estimate_global_k_neighbor_scale (points.begin(), points.end());
+  std::size_t k_scale = CGAL::estimate_global_k_neighbor_scale (points);
   task_timer.stop();
   
   // Example: use estimated k as scale for jet smoothing
@@ -54,7 +54,7 @@ int main (int argc, char** argv)
 
   // estimate range scale
   task_timer.start();
-  FT range_scale = CGAL::estimate_global_range_scale (points.begin(), points.end());
+  FT range_scale = CGAL::estimate_global_range_scale (points);
   task_timer.stop();
 
   // Example: use estimated range for grid simplification

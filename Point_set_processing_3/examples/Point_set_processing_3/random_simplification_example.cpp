@@ -26,7 +26,7 @@ int main(int argc, char*argv[])
 
   // Randomly simplifies using erase-remove idiom
   const double removed_percentage = 97.0; // percentage of points to remove
-  points.erase(CGAL::random_simplify_point_set(points.begin(), points.end(), removed_percentage),
+  points.erase(CGAL::random_simplify_point_set(points, removed_percentage),
                points.end());
 
   // Optional: after erase(), use Scott Meyer's "swap trick" to trim excess capacity

@@ -138,14 +138,14 @@ compute_average_spacing(const typename Kernel::Point_3& query, ///< 3D point who
 ///
 /// \pre `k >= 2.`
 ///
-/// @tparam Concurrency_tag enables sequential versus parallel algorithm.
+/// @tparam ConcurrencyTag enables sequential versus parallel algorithm.
 ///                         Possible values are `Sequential_tag`
 ///                         and `Parallel_tag`.
 /// @tparam InputIterator iterator over input points.
-/// @tparam PointPMap is a model of `ReadablePropertyMap` with value type `Point_3<Kernel>`.
+/// @tparam PointMap is a model of `ReadablePropertyMap` with value type `Point_3<Kernel>`.
 ///        It can be omitted if the value type of `InputIterator`  is convertible to `Point_3<Kernel>`.
 /// @tparam Kernel Geometric traits class.
-///        It can be omitted and deduced automatically from the value type of `PointPMap`.
+///        It can be omitted and deduced automatically from the value type of `PointMap`.
 ///
 /// @return average spacing (scalar).
 
@@ -231,7 +231,7 @@ double compute_average_spacing(
   return compute_average_spacing<ConcurrencyTag> (points, k, CGAL::parameters::all_default());
 }
 
-template <typename Concurrency_tag,
+template <typename ConcurrencyTag,
 	  typename InputIterator,
           typename PointMap,
           typename Kernel
@@ -245,7 +245,7 @@ compute_average_spacing(
   const Kernel& /*kernel*/) ///< geometric traits.
 {
   CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("compute_average_spacing()");
-  return compute_average_spacing<Concurrency_tag>(
+  return compute_average_spacing<ConcurrencyTag>(
     CGAL::make_range (first,beyond),
     k,
     CGAL::parameters::point_map (point_map).geom_traits (Kernel()));
@@ -254,7 +254,7 @@ compute_average_spacing(
   
 /// @cond SKIP_IN_MANUAL
 // This variant deduces the kernel from the iterator type.
-template <typename Concurrency_tag,
+template <typename ConcurrencyTag,
 	  typename InputIterator,
           typename PointMap
 >
@@ -266,7 +266,7 @@ compute_average_spacing(
   unsigned int k) ///< number of neighbors
 {
   CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("compute_average_spacing()");
-  return compute_average_spacing<Concurrency_tag>(
+  return compute_average_spacing<ConcurrencyTag>(
     CGAL::make_range (first,beyond),
     k,
     CGAL::parameters::point_map (point_map));
@@ -275,7 +275,7 @@ compute_average_spacing(
 
 /// @cond SKIP_IN_MANUAL
 // This variant creates a default point property map = Identity_property_map.
-template < typename Concurrency_tag, typename InputIterator >
+template < typename ConcurrencyTag, typename InputIterator >
 typename Kernel_traits<typename std::iterator_traits<InputIterator>::value_type>::Kernel::FT
 compute_average_spacing(
   InputIterator first,    ///< iterator over the first input point.
@@ -283,7 +283,7 @@ compute_average_spacing(
   unsigned int k) ///< number of neighbors.
 {
   CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("compute_average_spacing()");
-  return compute_average_spacing<Concurrency_tag>(
+  return compute_average_spacing<ConcurrencyTag>(
     CGAL::make_range (first,beyond), k);
 }
 /// @endcond

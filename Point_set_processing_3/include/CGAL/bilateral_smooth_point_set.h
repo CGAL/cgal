@@ -31,6 +31,9 @@
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/squared_distance_3.h>
 
+#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/named_params_helper.h>
+
 #include <iterator>
 #include <set>
 #include <algorithm>
@@ -380,18 +383,18 @@ public:
 /// \pre Normals must be unit vectors
 /// \pre k >= 2
 ///
-/// @tparam Concurrency_tag enables sequential versus parallel algorithm.
+/// @tparam ConcurrencyTag enables sequential versus parallel algorithm.
 ///                         Possible values are `Sequential_tag`
 ///                         and `Parallel_tag`.
 /// @tparam ForwardIterator iterator over input points.
-/// @tparam PointPMap is a model of `ReadWritePropertyMap` 
+/// @tparam PointMap is a model of `ReadWritePropertyMap` 
 ///         with the value type of `ForwardIterator` as key and `Kernel::Point_3` as value type.
 ///         It can be omitted if the value type of `ForwardIterator` is convertible to 
 ///         `Kernel::Point_3`.
-/// @tparam NormalPMap is a model of `ReadWritePropertyMap` with the value type of `ForwardIterator` as key
+/// @tparam NormalMap is a model of `ReadWritePropertyMap` with the value type of `ForwardIterator` as key
 ///         and `Kernel::Vector_3` as value type.
 /// @tparam Kernel Geometric traits class.
-///      It can be omitted and deduced automatically from the value type of  `PointPMap`
+///      It can be omitted and deduced automatically from the value type of  `PointMap`
 ///      using `Kernel_traits`.
 ///
 /// @return Average point movement error. It's a convergence criterium for the algorithm.
@@ -399,30 +402,35 @@ public:
 ///         sufficient.
 
 // This variant requires all parameters.
-template <typename Concurrency_tag,
-          typename ForwardIterator,
-          typename PointPMap,
-          typename NormalPMap,
-          typename Kernel>
+template <typename ConcurrencyTag,
+          typename PointRange,
+          typename NamedParameters>
 double
 bilateral_smooth_point_set(
-  ForwardIterator first,    ///< forward iterator on the first input point.
-  ForwardIterator beyond,   ///< past-the-end iterator.
-  PointPMap point_pmap,     ///< point property map.
-  NormalPMap normal_pmap,   ///< normal property map.
+  PointRange& points,
   unsigned int k,           ///< size of the neighborhood for the implicit surface patch fitting.
                             ///< The larger the value is, the smoother the result will be.
-  typename Kernel::FT sharpness_angle,  ///< controls the sharpness of the result.
+  double sharpness_angle,  ///< controls the sharpness of the result.
                             ///< The larger the value is, the smoother the result will be.
                             ///< The range of possible value is [0, 90].
-  const Kernel& /*kernel*/) ///< geometric traits.
+  const NamedParameters& np)
 {
+  using boost::choose_param;
+  
   // basic geometric types
+  typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::type PointMap;
+  typedef typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::type NormalMap;
+  typedef typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel Kernel;
+
+  CGAL_static_assertion_msg(!(boost::is_same<NormalMap,
+                              Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::NoMap>::value),
+                            "Error: no normal map");
+  
   typedef typename CGAL::Point_with_normal_3<Kernel> Pwn;
   typedef typename std::vector<Pwn,CGAL_PSP3_DEFAULT_ALLOCATOR<Pwn> > Pwns;
   typedef typename Kernel::FT FT;
 
-  CGAL_point_set_processing_precondition(first != beyond);
+  CGAL_point_set_processing_precondition(points.begin() != points.end());
   CGAL_point_set_processing_precondition(k > 1);
 
   // types for K nearest neighbors search structure
@@ -432,12 +440,15 @@ bilateral_smooth_point_set(
   typedef CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
   typedef typename Neighbor_search::Tree Tree;
 
+  PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
+  NormalMap normal_map = choose_param(get_param(np, internal_np::normal_map), NormalMap());
+
   // copy points and normals
   Pwns pwns;
-  for(ForwardIterator it = first; it != beyond; ++it)
+  for(typename PointRange::iterator it = points.begin(); it != points.end(); ++it)
   {
-    typename boost::property_traits<PointPMap>::reference p = get(point_pmap, *it);
-    typename boost::property_traits<NormalPMap>::reference n = get(normal_pmap, *it);
+    typename boost::property_traits<PointMap>::reference p = get(point_map, *it);
+    typename boost::property_traits<NormalMap>::reference n = get(normal_map, *it);
     CGAL_point_set_processing_precondition(n.squared_length() > 1e-10);
     
     pwns.push_back(Pwn(p, n));
@@ -492,10 +503,10 @@ bilateral_smooth_point_set(
    pwns_neighbors.resize(nb_points);
  
 #ifndef CGAL_LINKED_WITH_TBB
-  CGAL_static_assertion_msg (!(boost::is_convertible<Concurrency_tag, Parallel_tag>::value),
+  CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
 			     "Parallel_tag is enabled but TBB is unavailable.");
 #else
-   if (boost::is_convertible<Concurrency_tag,Parallel_tag>::value)
+   if (boost::is_convertible<ConcurrencyTag,Parallel_tag>::value)
    {
      Compute_pwns_neighbors<Kernel, Tree> f(k, tree, pwns, pwns_neighbors);
      tbb::parallel_for(tbb::blocked_range<size_t>(0, nb_points), f);
@@ -527,7 +538,7 @@ bilateral_smooth_point_set(
    Pwns update_pwns(nb_points);
 
 #ifdef CGAL_LINKED_WITH_TBB
-   if(boost::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value)
+   if(boost::is_convertible<ConcurrencyTag, CGAL::Parallel_tag>::value)
    {
      //tbb::task_scheduler_init init(4);
      tbb::blocked_range<size_t> block(0, nb_points);
@@ -564,67 +575,90 @@ bilateral_smooth_point_set(
 #endif
    // save results
    FT sum_move_error = 0;
-   ForwardIterator it = first;
-   for(unsigned int i = 0 ; it != beyond; ++it, ++i)
+   typename PointRange::iterator it = points.begin();
+   for(unsigned int i = 0 ; it != points.end(); ++it, ++i)
    {
-     typename boost::property_traits<PointPMap>::reference p = get(point_pmap, *it);
+     typename boost::property_traits<PointMap>::reference p = get(point_map, *it);
      sum_move_error += CGAL::squared_distance(p, update_pwns[i].position());
-     put (point_pmap, *it, update_pwns[i].position());
-     put (normal_pmap, *it, update_pwns[i].normal());
+     put (point_map, *it, update_pwns[i].position());
+     put (normal_map, *it, update_pwns[i].normal());
    }
      
    return sum_move_error / nb_points;
 }
 
 
+// This variant requires all parameters.
+template <typename ConcurrencyTag,
+          typename ForwardIterator,
+          typename PointMap,
+          typename NormalMap,
+          typename Kernel>
+double
+bilateral_smooth_point_set(
+  ForwardIterator first,    ///< forward iterator on the first input point.
+  ForwardIterator beyond,   ///< past-the-end iterator.
+  PointMap point_map,     ///< point property map.
+  NormalMap normal_map,   ///< normal property map.
+  unsigned int k,           ///< size of the neighborhood for the implicit surface patch fitting.
+                            ///< The larger the value is, the smoother the result will be.
+  typename Kernel::FT sharpness_angle,  ///< controls the sharpness of the result.
+                            ///< The larger the value is, the smoother the result will be.
+                            ///< The range of possible value is [0, 90].
+  const Kernel& /*kernel*/) ///< geometric traits.
+{
+  CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("bilateral_smooth_point_set()");
+  CGAL::Iterator_range<ForwardIterator> points = CGAL::make_range (first, beyond);
+  return bilateral_smooth_point_set<ConcurrencyTag>
+    (points,
+     k, sharpness_angle,
+     CGAL::parameters::point_map(point_map).normal_map(normal_map).geom_traits(Kernel()));
+}
+  
 /// @cond SKIP_IN_MANUAL
 // This variant deduces the kernel from the point property map.
-template <typename Concurrency_tag,
+template <typename ConcurrencyTag,
           typename ForwardIterator,
-          typename PointPMap,
-          typename NormalPMap>
+          typename PointMap,
+          typename NormalMap>
 double
 bilateral_smooth_point_set(
   ForwardIterator first,      ///< forward iterator to the first input point.
   ForwardIterator beyond,     ///< past-the-end iterator.
-  PointPMap point_pmap,        ///< property map OutputIterator -> Point_3.
-  NormalPMap normal_pmap,    ///< property map ForwardIterator -> Vector_3.
+  PointMap point_map,        ///< property map OutputIterator -> Point_3.
+  NormalMap normal_map,    ///< property map ForwardIterator -> Vector_3.
   const unsigned int k,      ///< number of neighbors.
   double sharpness_angle     ///< control sharpness(0-90)
 ) ///< property map OutputIterator -> Vector_3.
 {
-  typedef typename boost::property_traits<PointPMap>::value_type Point;
-  typedef typename Kernel_traits<Point>::Kernel Kernel;
-  return bilateral_smooth_point_set<Concurrency_tag>(
-    first, beyond,
-    point_pmap,
-    normal_pmap,
-    k,
-    sharpness_angle,
-    Kernel());
+  CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("bilateral_smooth_point_set()");
+  CGAL::Iterator_range<ForwardIterator> points = CGAL::make_range (first, beyond);
+  return bilateral_smooth_point_set<ConcurrencyTag>
+    (points,
+     k, sharpness_angle,
+     CGAL::parameters::point_map(point_map).normal_map(normal_map));
 }
 /// @endcond
 
 /// @cond SKIP_IN_MANUAL
 // This variant creates a default point property map = Dereference_property_map.
-template <typename Concurrency_tag,
+template <typename ConcurrencyTag,
           typename ForwardIterator,
-          typename NormalPMap>
+          typename NormalMap>
 double
 bilateral_smooth_point_set(
   ForwardIterator first,    ///< forward iterator to the first input point.
   ForwardIterator beyond,   ///< past-the-end iterator.
   const unsigned int k,     ///< number of neighbors.
   double sharpness_angle,   ///< control sharpness(0-90)
-  NormalPMap normal_pmap)   ///< property map OutputIterator -> Vector_3.
+  NormalMap normal_map)   ///< property map OutputIterator -> Vector_3.
 {
-  return bilateral_smooth_point_set<Concurrency_tag>(
-    first, beyond,
-    make_identity_property_map(
-    typename std::iterator_traits<ForwardIterator>::value_type()),
-    normal_pmap, 
-    k,
-    sharpness_angle);
+  CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("bilateral_smooth_point_set()");
+  CGAL::Iterator_range<ForwardIterator> points = CGAL::make_range (first, beyond);
+  return bilateral_smooth_point_set<ConcurrencyTag>
+    (points,
+     k, sharpness_angle,
+     CGAL::parameters::normal_map(normal_map));
 }
 /// @endcond
 
