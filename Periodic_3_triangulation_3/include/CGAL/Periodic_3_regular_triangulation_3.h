@@ -831,9 +831,9 @@ public:
       int i1 = cc->index(v1);
       int i2 = cc->index(v2);
       int i3 = fcirc->second;
-      Offset off1 = int_to_off(cc->offset(i1));
-      Offset off2 = int_to_off(cc->offset(i2));
-      Offset off3 = int_to_off(cc->offset(i3));
+      Offset off1 = get_offset(cc, i1);
+      Offset off2 = get_offset(cc, i2);
+      Offset off3 = get_offset(cc, i3);
       if(side_of_bounded_power_sphere(v1->point(), v2->point(), cc->vertex(i3)->point(),
                                       off1, off2, off3) == ON_BOUNDED_SIDE)
         return false;
