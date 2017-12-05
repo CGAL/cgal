@@ -172,7 +172,7 @@ private:
   Vertex_handle get_vertex_corner_from_point(const Bare_point& p,
                                              const Index& p_index) const;
 
-  /// Inserts point(p,w) into the triangulation and set its dimension to \c dim
+  /// Insert point(p,w) into the triangulation and set its dimension to \c dim
   /// and its index to \c index.
   /// The handle of the newly created vertex is returned.
   Vertex_handle insert_point(const Bare_point& p,
@@ -200,7 +200,7 @@ private:
                      ErasedVeOutIt out);
 
   /// Insert balls between the points identified by the handles \c vp and \c vq
-  /// on the curve identified by \c curve_index
+  /// on the curve identified by \c curve_index.
   ///
   /// \param orientation Orientation of the curve segment between \c vp and
   ///        \c vq, given the orientation of the curve of index
@@ -276,7 +276,7 @@ private:
 
   /// Walk along the edge from \c start, following the direction \c start to
   /// \c next, and fills \c out with the vertices which do not fullfill
-  /// the sampling conditions
+  /// the sampling conditions.
   ///
   /// \param orientation Orientation of the curve segment between \c v1 and
   ///        \c v2, given the orientation of the curve of index
@@ -399,7 +399,7 @@ private:
     return c3t3_.in_dimension(v);
   }
 
-  /// Query the sizing field and returns its value at the point `p`, or
+  /// Query the sizing field and return its value at the point `p`, or
   /// `minimal_size` if the latter is greater.
   FT query_size(const Bare_point& p, int dim, const Index& index) const
   {
