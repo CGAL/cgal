@@ -121,9 +121,12 @@ public:
     nb_pts = m_trees[0]->size();
     for (std::size_t i = 1; i < nb_trees; ++ i)
       {
+        CGAL::Iterator_range<typename std::vector<typename Kernel::Point_3>::iterator> points
+          (kd_tree_points.begin(), first_unused);
         first_unused
-          = CGAL::hierarchy_simplify_point_set (kd_tree_points.begin(), first_unused,
-                                                static_cast<unsigned int>(m_cluster_size), 1./3.);
+          = CGAL::hierarchy_simplify_point_set (points,
+                                                CGAL::parameters::size(static_cast<unsigned int>(m_cluster_size)).
+                                                maximum_variation(1./3.));
 
         m_trees.push_back (new Tree(kd_tree_points.begin(), first_unused));
 
@@ -311,9 +314,13 @@ public:
 
     for (std::size_t i = 1; i < nb_trees; ++ i)
       {
+        CGAL::Iterator_range<typename std::vector<typename Kernel::Point_2>::iterator> points
+          (search_points.begin(), first_unused);
         first_unused
-          = CGAL::hierarchy_simplify_point_set (search_points.begin(), first_unused, Pmap_to_3d(),
-                                                static_cast<unsigned int>(m_cluster_size), 1./3.);
+          = CGAL::hierarchy_simplify_point_set (points,
+                                                CGAL::parameters::point_map(Pmap_to_3d()).
+                                                size(static_cast<unsigned int>(m_cluster_size)).
+                                                maximum_variation(1./3.));
 
         m_point_sets.push_back (new Point_set (search_points.begin(), first_unused));
 

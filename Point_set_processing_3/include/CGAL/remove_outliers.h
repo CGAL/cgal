@@ -215,6 +215,15 @@ remove_outliers(
   return first_point_to_remove;
 }
 
+template <typename PointRange>
+typename PointRange::iterator
+remove_outliers(
+  PointRange& points,
+  unsigned int k) ///< number of neighbors.
+{
+  return remove_outliers (points, k, CGAL::parameters::all_default());
+}
+  
 /// Removes outliers:
 /// - computes average squared distance to the K nearest neighbors,
 /// - and sorts the points in increasing order of average distance.

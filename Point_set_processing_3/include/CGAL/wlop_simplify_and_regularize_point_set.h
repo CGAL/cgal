@@ -624,6 +624,17 @@ wlop_simplify_and_regularize_point_set(
   return output;
 }
 
+template <typename ConcurrencyTag,
+          typename PointRange,
+          typename OutputIterator>
+OutputIterator
+wlop_simplify_and_regularize_point_set(
+  PointRange& points,
+  OutputIterator output)       ///< output iterator where output points are put.
+{
+  return wlop_simplify_and_regularize_point_set<ConcurrencyTag> (points, output, CGAL::parameters::all_default());
+}
+  
 /// This is an implementation of the Weighted Locally Optimal Projection (WLOP) simplification algorithm.
 /// The WLOP simplification algorithm can produce a set of 
 /// denoised, outlier-free and evenly distributed particles over the original 
