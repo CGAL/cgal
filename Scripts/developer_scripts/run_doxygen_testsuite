@@ -63,7 +63,7 @@ export PYTHONPATH
 PATH=/home/cgal-testsuite/local/bin:$PATH
 export PATH
 cd "$PWD/doc/scripts"
-bash -$- ./test_doxygen_versions.sh /home/cgal-testsuite/local/bin/doxygen '' /srv/CGAL/www/Members/Manual_doxygen_test
+bash -$- ./process_doc.sh /home/cgal-testsuite/local/bin/doxygen /home/mgimeno/bin/doxygen /srv/CGAL/www/Members/Manual_doxygen_test
 case "$CGAL_RELEASE_ID" in
     *-I-*) rsync -a --delete "/srv/CGAL/www/Members/Manual_doxygen_test/${CGAL_RELEASE_ID}/output/" /srv/CGAL/www/doc/master/
            ;;

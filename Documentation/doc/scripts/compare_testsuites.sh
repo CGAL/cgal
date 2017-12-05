@@ -1,7 +1,7 @@
 #!/bin/bash
 if [ "$1" == '--help' ]; then
   echo "Usage: $0 <doc 1> [doc 2]"
-  exho "doc 1 and doc 2 are paths to doxygen outputs (doc_output)."
+  echo "doc 1 and doc 2 are paths to doxygen outputs (doc_output)."
   echo "Parse the xml output of doc 1 and creates a directory with organized text files."
   echo "Then, if doc_2 is specified, do the same for its xml output and make the diff between them."
   exit 0
