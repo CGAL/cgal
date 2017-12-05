@@ -359,16 +359,6 @@ public:
       *(const_cast<TriangleMesh*>(m_pmesh)));
     BOOST_FOREACH(vertex_descriptor v, vertices(*m_pmesh))
       put(vanchor_map, v, CGAL_VSA_INVALID_TAG);
-
-    // compute average edge length
-    FT sum(0.0);
-    BOOST_FOREACH(edge_descriptor e, edges(*m_pmesh)) {
-      const vertex_descriptor vs = source(e, *m_pmesh);
-      const vertex_descriptor vt = target(e, *m_pmesh);
-      sum += FT(std::sqrt(CGAL::to_double(
-        CGAL::squared_distance(point_pmap[vs], point_pmap[vt]))));
-    }
-    average_edge_length = sum / num_edges(*m_pmesh);
   }
 
   /*!
@@ -885,6 +875,8 @@ public:
     const bool is_relative_to_chord = false,
     const bool with_dihedral_angle = false,
     const bool pca_plane = false) {
+    // compute averaged edge length, used in chord subdivision
+    average_edge_length = compute_averaged_edge_length(*m_pmesh, point_pmap);
     // initialize all vertex anchor status
     BOOST_FOREACH(vertex_descriptor v, vertices(*m_pmesh))
       put(vanchor_map, v, CGAL_VSA_INVALID_TAG);
@@ -1436,7 +1428,7 @@ private:
     BOOST_FOREACH(halfedge_descriptor h, halfedges(*m_pmesh)) {
       if (!CGAL::is_border(h, *m_pmesh)
         && (CGAL::is_border(opposite(h, *m_pmesh), *m_pmesh)
-            || get(fproxy_map, face(h, *m_pmesh)) != get(fproxy_map, face(opposite(h, *m_pmesh), *m_pmesh))))
+          || get(fproxy_map, face(h, *m_pmesh)) != get(fproxy_map, face(opposite(h, *m_pmesh), *m_pmesh))))
         he_candidates.insert(h);
     }
 
@@ -1882,6 +1874,23 @@ private:
       sum_area += area;
     }
     return Point_3(avgx / sum_area, avgy / sum_area, avgz / sum_area);
+  }
+
+  /*!
+   * @brief Calculate the averaged edge length of a triangle mesh.
+   * @param tm the input triangle mesh
+   * @return averaged edge length
+   */
+  FT compute_averaged_edge_length(const TriangleMesh &tm, const VertexPointMap &vpoint_map) const {
+    // compute average edge length
+    FT sum(0.0);
+    BOOST_FOREACH(edge_descriptor e, edges(tm)) {
+      const vertex_descriptor vs = source(e, tm);
+      const vertex_descriptor vt = target(e, tm);
+      sum += FT(std::sqrt(CGAL::to_double(
+        CGAL::squared_distance(vpoint_map[vs], vpoint_map[vt]))));
+    }
+    return sum / num_edges(tm);
   }
 
   /*!
