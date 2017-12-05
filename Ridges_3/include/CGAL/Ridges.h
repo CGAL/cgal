@@ -68,7 +68,8 @@ public:
   
   typedef typename Kernel::FT         FT;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
-  typedef std::pair< halfedge_descriptor, FT> ridge_halfhedge; 
+  typedef std::pair< halfedge_descriptor, FT> Ridge_halfedge; 
+  typedef Ridge_halfedge ridge_halfhedge;  //kept for backward compatibility
 
   Ridge_type line_type() const {return m_line_type;}
   Ridge_type& line_type() {return m_line_type;}
@@ -79,8 +80,8 @@ public:
   const FT sharpness() const {return m_sharpness;}
   FT& sharpness() {return m_sharpness;}
 
-  const std::list<ridge_halfhedge>* line() const { return &m_line;}
-  std::list<ridge_halfhedge>* line() { return &m_line;}
+  const std::list<Ridge_halfedge>* line() const { return &m_line;}
+  std::list<Ridge_halfedge>* line() { return &m_line;}
 
   //constructor
   Ridge_line(const TriangleMesh& P);
@@ -99,7 +100,7 @@ protected:
   //one of MAX_ELLIPTIC_RIDGE, MAX_HYPERBOLIC_RIDGE, MAX_CREST_RIDGE,
   //MIN_ELLIPTIC_RIDGE, MIN_HYPERBOLIC_RIDGE or MIN_CREST_RIDGE
   Ridge_type m_line_type;  
-  std::list<ridge_halfhedge> m_line;
+  std::list<Ridge_halfedge> m_line;
   FT m_strength;// = integral of ppal curvature along the line
   FT m_sharpness;// = (integral of second derivative of curvature
 		 // along the line) multiplied by the squared of 
@@ -130,7 +131,7 @@ dump_4ogl(std::ostream& out_stream,
 	     << strength() << " "
 	     << sharpness() << " ";
   typedef typename boost::property_traits<VertexPointMap>::value_type Point_3;
-  typename std::list<ridge_halfhedge >::const_iterator
+  typename std::list<Ridge_halfedge >::const_iterator
     iter = line()->begin(), 
     ite =  line()->end();
   for (;iter!=ite;iter++){
@@ -155,7 +156,7 @@ dump_verbose(std::ostream& out_stream, VertexPointMap vpm) const
 	     << "Sharpness is : " << sharpness() << std::endl
 	     << "Polyline point coordinates are : " << std::endl;
 
-  typename std::list<ridge_halfhedge>::const_iterator
+  typename std::list<Ridge_halfedge>::const_iterator
     iter = line()->begin(), 
     ite =  line()->end();
   for (;iter!=ite;iter++){
@@ -203,7 +204,8 @@ class Ridge_approximation
   CGAL_static_assertion((boost::is_same<FT, typename VertexFTMap::value_type>::value));
   CGAL_static_assertion((boost::is_same<Vector_3, typename VertexVectorMap::value_type>::value));
 
-  typedef std::pair< halfedge_descriptor, FT>    Ridge_halfhedge;
+  typedef std::pair< halfedge_descriptor, FT>    Ridge_halfedge;
+  typedef Ridge_halfedge Ridge_halfhedge; // kept for backward compatibility
   typedef CGAL::Ridge_line<TriangleMesh>  Ridge_line;
 
   Ridge_approximation(const TriangleMesh &P,
@@ -711,7 +713,7 @@ init_ridge_line(Ridge_line* ridge_line,
 		const Ridge_type r_type)
 {
   ridge_line->line_type() = r_type;
-  ridge_line->line()->push_back(Ridge_halfhedge(h1, bary_coord(h1,r_type)));
+  ridge_line->line()->push_back(Ridge_halfedge(h1, bary_coord(h1,r_type)));
   addback(ridge_line, h2, r_type);
 }
 
@@ -755,7 +757,7 @@ addback(Ridge_line* ridge_line, const halfedge_descriptor he,
        k_second =CGAL::abs(( CGAL::abs(get(P2,v_p)) * coord + CGAL::abs(get(P2,v_q)) * (1-coord) )/(k1x-k2x));
      ridge_line->sharpness() += k_second * CGAL::sqrt(segment * segment) * squared_model_size; }
    } 
-  ridge_line->line()->push_back( Ridge_halfhedge(he, coord));
+  ridge_line->line()->push_back( Ridge_halfedge(he, coord));
 }
 
 
@@ -799,7 +801,7 @@ addfront(Ridge_line* ridge_line,
        k_second =CGAL::abs(( CGAL::abs(get(P2,v_p)) * coord + CGAL::abs(get(P2,v_q)) * (1-coord) )/(k1x-k2x));
      ridge_line->sharpness() += k_second * CGAL::sqrt(segment * segment) * squared_model_size; }
    } 
-  ridge_line->line()->push_front( Ridge_halfhedge(he, coord));
+  ridge_line->line()->push_front( Ridge_halfedge(he, coord));
 }
 
 

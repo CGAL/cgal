@@ -226,7 +226,7 @@ typedef typename TriangleMesh::Traits::FT FT;
 A halfedge crossed by a ridge is paired with the barycentric 
 coordinate of the crossing point. 
 */ 
-typedef std::pair< halfedge_descriptor, FT> Ridge_halfhedge; 
+typedef std::pair< halfedge_descriptor, FT> Ridge_halfedge; 
 
 /// @} 
 
@@ -261,7 +261,7 @@ FT sharpness() const;
 /*!
 
 */ 
-const std::list<Ridge_halfhedge>* line() const; 
+const std::list<Ridge_halfedge>* line() const; 
 
 
 /// @}
