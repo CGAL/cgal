@@ -28,24 +28,17 @@
 
 #define CGAL_PERIODIC_PROTECTION_ATTEMPT_TO_REMOVE_DUMMY_PTS
 
-// @todo:
-// - User manual with drawings on what sharp features are allowed
-// - Null_subdomain_index shenanigans to carry from Mesh_3.
-// - remove+insert could potentially switch to 27 copies, you gotta check for
-//   it before moving points (optimizers)!
-// - Ensure that exuder weights are greater/smaller than allowed
-
-// - .weight(), .point() in P3T3 / (P3)M3
-
 // Main differences with Mesh_3's version:
-// - A map [Vertex_handle] --> [position described in the domain] because
-//   this position might not be in the canonical domain and might be different from
-//   curve to curve.
+// - A map [Vertex_handle] --> [position in full space] because:
+//   * This position might not be in the canonical domain
+//   * Different curves might represent the same corner at different positions
 // - change_ball_size()'s signature is different: it can return false if we failed
 //   to change the ball size (if the triangulation cover changes during the process).
-// - Dummy point processing to avoid overrefinement.
-// - Various minor improvements over the original code, which should be brought back.
-// - No wonky indentation!
+// - Dummy point processing to avoid overrefinement when dummy points are close
+//   to sharp features.
+// - Various minor improvements over the original code, which should be brought back
+//   (unordered sets, improving 'unchecked_vertices', etc.)
+// - No wonky indentation :)
 
 #include <CGAL/license/Periodic_3_mesh_3.h>
 

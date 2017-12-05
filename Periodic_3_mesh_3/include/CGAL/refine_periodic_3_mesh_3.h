@@ -117,12 +117,14 @@ void project_points(C3T3& c3t3,
     const Bare_point new_point = helper.project_on_surface(vh, vh_p);
     CGAL_assertion(new_point != Bare_point());
 
+    const FT sq_d = CGAL::squared_distance(new_point, vh_p);
+
+#ifdef CGAL_PERIODIC_3_MESH_3_DEBUG_DUMMY_PROJECTION
     std::cout << "vh: " << &*vh << std::endl;
     std::cout << "vhp: " << vh_p << std::endl;
     std::cout << "projected: " << new_point << std::endl;
-
-    const FT sq_d = CGAL::squared_distance(new_point, vh_p);
     std::cout << "squared distance from dummy to surface: " << sq_d << std::endl;
+#endif
 
     // Skip tiny moves for efficiency
     if(sq_d < 1e-10) // arbitrary value, maybe compare it to the surface distance criterium ?

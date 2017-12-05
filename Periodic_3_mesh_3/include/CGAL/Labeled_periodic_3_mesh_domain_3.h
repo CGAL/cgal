@@ -257,7 +257,8 @@ public:
       typename BGT::Construct_midpoint_3 midpoint =
                                       BGT().construct_midpoint_3_object();
 
-      // @todo this whole normalization of offsets process seems completely useless...
+      // This whole normalization of offsets process seems completely unneeded;
+      // hiding it behind macros.
 #ifdef CGAL_PERIODIC_CANONICALIZE_DUAL_INTERSECTIONS
       Iso_cuboid_3 pbb = r_domain_.periodic_bounding_box();
       FT dimension [3] = { pbb.xmax() - pbb.xmin(),
