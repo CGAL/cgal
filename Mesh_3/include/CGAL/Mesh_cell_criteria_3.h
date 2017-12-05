@@ -83,12 +83,13 @@ public:
   
   /**
    * @brief returns the badness of cell \c cell
+   * @param tr the triangulation within which \c cell lives
    * @param cell the cell
    * @return the badness of \c cell
    */
-  Cell_badness operator()(const Cell_handle& cell) const
+  Cell_badness operator()(const Tr& tr, const Cell_handle& cell) const
   {
-    return criteria_(cell);
+    return criteria_(tr, cell);
   }
 
   void add(Abstract_criterion* criterion)

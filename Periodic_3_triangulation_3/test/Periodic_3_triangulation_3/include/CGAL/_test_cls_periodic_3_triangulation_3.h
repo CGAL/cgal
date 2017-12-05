@@ -329,7 +329,7 @@ _test_cls_periodic_3_triangulation_3(const PeriodicTriangulation &,
 
   std::cout<<"Geometric access functions"<<std::endl;
 
-  Cell_handle ch = PT3.locate(Point(-1,-1,1));
+  Cell_handle ch = PT3.locate(Point(-1,-1,-1));
   assert(PT3.periodic_point(ch->vertex(0)).second != Offset());
   assert(PT3.periodic_point(ch,2).second != Offset());
   PT3.point(PT3.periodic_point(ch,0));
@@ -489,11 +489,10 @@ _test_cls_periodic_3_triangulation_3(const PeriodicTriangulation &,
   assert(lt == P3T3::VERTEX);
   assert(c->vertex(li)->point() == Point(2,2,2));
 
-  c = P3T3().locate(Point(1,2,3),lt,li,lj);
+  c = P3T3().locate(Point(0,0,0),lt,li,lj);
   assert(c == Cell_handle());
   assert(lt == P3T3::EMPTY);
-  assert(P3T3().side_of_cell(Point(1,2,3),c,lt,li,lj)
-         == CGAL::ON_UNBOUNDED_SIDE);
+  assert(P3T3().side_of_cell(Point(0,0,0),c,lt,li,lj) == CGAL::ON_UNBOUNDED_SIDE);
   assert(lt == P3T3::EMPTY);
 
   std::cout << "Testing Iterators   "<< std::endl;

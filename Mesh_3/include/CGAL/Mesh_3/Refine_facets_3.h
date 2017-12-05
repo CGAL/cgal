@@ -114,7 +114,7 @@ struct Get_Is_facet_bad<Facet_criteria, true> {
       int f2_saved_erase_counter = CGAL::cpp11::get<3>(f);
       //f1_current_erase_counter - f1_saved_erase_counter + f2_current_erase_counter - f2_saved_erase_counter == 1
 
-      /*if (f1_current_erase_counter - f1_saved_erase_counter + f2_current_erase_counter - f2_saved_erase_counter == 1)
+      if (f1_current_erase_counter - f1_saved_erase_counter + f2_current_erase_counter - f2_saved_erase_counter == 1)
       {
 #ifdef CGAL_LINKED_WITH_TBB
         tbb::queuing_mutex mut;
@@ -139,8 +139,8 @@ struct Get_Is_facet_bad<Facet_criteria, true> {
         << "}" << std::endl;
 
         std::string s = sstr.str();
-        //std::cerr << s << std::endl;
-      }*/
+        std::cerr << s << std::endl;
+      }
 #endif
       return (CGAL::cpp11::get<0>(f).first->erase_counter() == CGAL::cpp11::get<1>(f)
         && CGAL::cpp11::get<2>(f).first->erase_counter() == CGAL::cpp11::get<3>(f) );
@@ -313,16 +313,17 @@ public:
 #ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
     const Cell_handle c = facet.first;
     const int i = facet.second;
-    std::cerr << "Facet ("
-              << c->vertex((i+1)&3)->point() << " , "
-              << c->vertex((i+2)&3)->point() << " , "
-              << c->vertex((i+3)&3)->point() << ") : refinement point is "
+    std::cerr << "\n Facet ("
+              << r_tr_.point(c, (i+1)&3) << " , "
+              << r_tr_.point(c, (i+2)&3) << " , "
+              << r_tr_.point(c, (i+3)&3) << ") : refinement point is "
               << get_facet_surface_center(facet) << std::endl;
 #endif
+
     CGAL_assertion (this->is_facet_on_surface(facet));
     this->set_last_vertex_index(get_facet_surface_center_index(facet));
     return get_facet_surface_center(facet);
-  };
+  }
 
   Facet get_next_element_impl()
   {
@@ -365,10 +366,10 @@ public:
   {
     std::stringstream sstr;
     sstr << "Facet { " << std::endl
-    << "  - " << *facet.first->vertex((facet.second+1)%4)  << std::endl
-    << "  - " << *facet.first->vertex((facet.second+2)%4)  << std::endl
-    << "  - " << *facet.first->vertex((facet.second+3)%4)  << std::endl
-    << "  - 4th vertex in cell: " << *facet.first->vertex(facet.second)  << std::endl
+    << "  " << *facet.first->vertex((facet.second+1)%4) << std::endl
+    << "  " << *facet.first->vertex((facet.second+2)%4) << std::endl
+    << "  " << *facet.first->vertex((facet.second+3)%4) << std::endl
+    << "  4th vertex in cell: " << *facet.first->vertex(facet.second)  << std::endl
     << "}" << std::endl;
 
     return sstr.str();
@@ -973,7 +974,7 @@ scan_triangulation_impl()
     // PARALLEL_DO
     tbb::parallel_do(
       this->r_tr_.finite_facets_begin(), this->r_tr_.finite_facets_end(),
-      typename Rf_base::template Scan_facet<Self>(*this) 
+      typename Rf_base::template Scan_facet<Self>(*this)
     );
 
     splice_local_lists();
@@ -995,9 +996,12 @@ scan_triangulation_impl()
     {
       // Cannot be const, see treat_new_facet signature
       Facet facet = *facet_it;
-      /*std::cerr << "*" << *facet.first->vertex((facet.second+1)%4)  << std::endl
-          << "  " << *facet.first->vertex((facet.second+2)%4)  << std::endl
-          << "  " << *facet.first->vertex((facet.second+3)%4)  << std::endl;*/
+#ifdef CGAL_MESH_3_DEBUG_FACET_CRITERIA
+      std::cerr << "TREAT FACET : " << std::endl
+                 << "*" << *facet.first->vertex((facet.second+1)%4)  << std::endl
+                << "  " << *facet.first->vertex((facet.second+2)%4)  << std::endl
+                << "  " << *facet.first->vertex((facet.second+3)%4)  << std::endl;
+#endif
       this->treat_new_facet(facet);
     }
   }
@@ -1311,7 +1315,7 @@ conflicts_zone_impl(const Weighted_point& point
       std::cerr << "Info: the facet is not in the conflict zone of (" << point
                 << "). Switching to exact computation." << std::endl;
 # endif
-      
+
       typename Rf_base::Facet_properties properties;
       this->compute_facet_properties(facet, properties, /*force_exact=*/true);
       if ( properties )
@@ -1328,7 +1332,7 @@ conflicts_zone_impl(const Weighted_point& point
       {
         // Facet is not on surface
         this->remove_facet_from_surface(facet);
-	this->remove_bad_facet(facet, Ct());
+        this->remove_bad_facet(facet, Ct());
       }
     }
   }
@@ -1390,7 +1394,7 @@ conflicts_zone_impl(const Weighted_point& point
       {
         // Facet is not on surface
         this->remove_facet_from_surface(facet);
-	this->remove_bad_facet(facet, Ct());
+        this->remove_bad_facet(facet, Ct());
       }
     }
   }
@@ -1409,11 +1413,6 @@ before_insertion_impl(const Facet& facet,
   typedef typename Zone::Facets_iterator Facets_iterator;
 
   bool source_facet_is_in_conflict = false;
-
-  /*std::cerr << "before_insertion_impl:" << std::endl
-    << "* " << *facet.first->vertex((facet.second+1)%4)  << std::endl
-    << "  " << *facet.first->vertex((facet.second+2)%4)  << std::endl
-    << "  " << *facet.first->vertex((facet.second+3)%4)  << std::endl;*/
 
   // Iterate on conflict zone facets
   for (Facets_iterator facet_it = zone.internal_facets.begin();
@@ -1461,17 +1460,17 @@ before_insertion_impl(const Facet& facet,
       % display_dual(facet)
       % 0 // dummy: %4% no longer used
       % group(setprecision(17), point)
-      % group(setprecision(17), facet.first->vertex((facet.second + 1)&3)->point())
-      % group(setprecision(17), facet.first->vertex((facet.second + 2)&3)->point())
-      % group(setprecision(17), facet.first->vertex((facet.second + 3)&3)->point())
-      % facet.first->vertex(0)->point()
-      % facet.first->vertex(1)->point()
-      % facet.first->vertex(2)->point()
-      % facet.first->vertex(3)->point()
-      % source_other_side.first->vertex(0)->point()
-      % source_other_side.first->vertex(1)->point()
-      % source_other_side.first->vertex(2)->point()
-      % source_other_side.first->vertex(3)->point();
+      % group(setprecision(17), r_tr_.point(facet.first, (facet.second + 1)&3))
+      % group(setprecision(17), r_tr_.point(facet.first, (facet.second + 2)&3))
+      % group(setprecision(17), r_tr_.point(facet.first, (facet.second + 3)&3))
+      % r_tr_.point(facet.first, 0)
+      % r_tr_.point(facet.first, 1)
+      % r_tr_.point(facet.first, 2)
+      % r_tr_.point(facet.first, 3)
+      % r_tr_.point(source_other_side.first, 0)
+      % r_tr_.point(source_other_side.first, 1)
+      % r_tr_.point(source_other_side.first, 2)
+      % r_tr_.point(source_other_side.first, 3);
 
     CGAL_error_msg(error_msg.str().c_str());
   }
@@ -1560,17 +1559,20 @@ treat_new_facet(Facet& facet)
     set_facet_on_surface(facet, surface_index);
 
     // Insert facet into refinement queue if needed
-    const Is_facet_bad is_facet_bad = r_criteria_(facet);
+    const Is_facet_bad is_facet_bad = r_criteria_(r_tr_, facet);
 
     if ( is_facet_bad )
     {
       insert_bad_facet(facet, *is_facet_bad);
 
-      /*std::cerr << "INSERT BAD FACET : " << std::endl
-        << "* " << *facet.first->vertex((facet.second+1)%4)  << std::endl
-        << "  " << *facet.first->vertex((facet.second+2)%4)  << std::endl
-        << "  " << *facet.first->vertex((facet.second+3)%4)  << std::endl
-        << "  Quality=" << is_facet_bad->second << std::endl;*/
+#ifdef CGAL_MESH_3_DEBUG_FACET_CRITERIA
+      std::cerr << "INSERT BAD FACET : " << std::endl
+                << "* " << *facet.first->vertex((facet.second+1)%4) << std::endl
+                << "  " << *facet.first->vertex((facet.second+2)%4) << std::endl
+                << "  " << *facet.first->vertex((facet.second+3)%4) << std::endl
+                << "  Surface center: " << get_facet_surface_center(facet) << std::endl
+                << "  Quality = " << is_facet_bad->second << std::endl;
+#endif
     }
   }
   else
@@ -1607,6 +1609,8 @@ compute_facet_properties(const Facet& facet,
       r_tr_.geom_traits().is_degenerate_3_object();
   typename Gt::Compare_xyz_3 compare_xyz =
       r_tr_.geom_traits().compare_xyz_3_object();
+  typename Gt::Construct_segment_3 construct_segment =
+      r_tr_.geom_traits().construct_segment_3_object();
 #ifndef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
   typename MD::Do_intersect_surface do_intersect_surface =
       r_oracle_.do_intersect_surface_object();
@@ -1627,9 +1631,9 @@ compute_facet_properties(const Facet& facet,
 
     // Trick to have canonical vector : thus, we compute always the same
     // intersection
-    Segment_3 segment = ( compare_xyz(p1,p2)== CGAL::SMALLER )
-      ? Segment_3(p1, p2)
-      : Segment_3(p2, p1);
+    Segment_3 segment = ( compare_xyz(p1, p2)== CGAL::SMALLER )
+                          ? construct_segment(p1, p2)
+                          : construct_segment(p2, p1);
 
     // If facet is on surface, compute intersection point and return true
 #ifndef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
@@ -1706,21 +1710,17 @@ is_facet_encroached(const Facet& facet,
                     const Weighted_point& point) const
 {
   if ( r_tr_.is_infinite(facet) || ! this->is_facet_on_surface(facet) )
-  {
     return false;
-  }
-
-  typename Gt::Compare_power_distance_3 compare_distance =
-    r_tr_.geom_traits().compare_power_distance_3_object();
 
   const Cell_handle& cell = facet.first;
   const int& facet_index = facet.second;
-  const Bare_point& center = get_facet_surface_center(facet);
-  const Weighted_point& reference_point = cell->vertex((facet_index+1)&3)->point();
 
-  // facet is encroached if the new point is near from center than
-  // one vertex of the facet
-  return ( compare_distance(center, reference_point, point) != CGAL::SMALLER );
+  const Bare_point& center = get_facet_surface_center(facet);
+  const Weighted_point& reference_point = r_tr_.point(cell, (facet_index+1)&3);
+
+  // the facet is encroached if the new point is closer to the center than
+  // any vertex of the facet
+  return r_tr_.greater_or_equal_power_distance(center, reference_point, point);
 }
 
 template<class Tr, class Cr, class MD, class C3T3_, class Ct, class C_>
@@ -1733,7 +1733,8 @@ is_encroached_facet_refinable(Facet& facet) const
 
   typename Gt::Compute_squared_radius_smallest_orthogonal_sphere_3 sq_radius =
     r_tr_.geom_traits().compute_squared_radius_smallest_orthogonal_sphere_3_object();
-
+  typename Gt::Compute_weight_3 cw =
+    r_tr_.geom_traits().compute_weight_3_object();
   typename Gt::Compare_weighted_squared_radius_3 compare =
     r_tr_.geom_traits().compare_weighted_squared_radius_3_object();
 
@@ -1747,27 +1748,30 @@ is_encroached_facet_refinable(Facet& facet) const
   // Get number of weighted points, and ensure that they will be accessible
   // using k1...ki, if i is the number of weighted points.
   int wp_nb = 0;
-  if(c->vertex(k1)->point().weight() > FT(0))
+  const Weighted_point& wpk1 = r_tr_.point(c, k1);
+  if(compare(wpk1, FT(0)) == CGAL::SMALLER)
   {
     ++wp_nb;
   }
 
-  if(c->vertex(k2)->point().weight() > FT(0))
+  const Weighted_point& wpk2 = r_tr_.point(c, k2);
+  if(compare(wpk2, FT(0)) == CGAL::SMALLER)
   {
     if ( 0 == wp_nb ) { std::swap(k1,k2); }
     ++wp_nb;
   }
 
-  if(c->vertex(k3)->point().weight() > FT(0))
+  const Weighted_point& wpk3 = r_tr_.point(c, k3);
+  if(compare(wpk3, FT(0)) == CGAL::SMALLER)
   {
     if ( 0 == wp_nb ) { std::swap(k1,k3); }
     if ( 1 == wp_nb ) { std::swap(k2,k3); }
     ++wp_nb;
   }
 
-  const Weighted_point& p1 = c->vertex(k1)->point();
-  const Weighted_point& p2 = c->vertex(k2)->point();
-  const Weighted_point& p3 = c->vertex(k3)->point();
+  const Weighted_point& p1 = r_tr_.point(c, k1);
+  const Weighted_point& p2 = r_tr_.point(c, k2);
+  const Weighted_point& p3 = r_tr_.point(c, k3);
 
   const FT min_ratio (0.16); // (0.2*2)^2
 
@@ -1777,7 +1781,7 @@ is_encroached_facet_refinable(Facet& facet) const
     case 1:
     {
       FT r = (std::max)(sq_radius(p1,p2),sq_radius(p1,p3));
-      if ( r < min_ratio*p1.weight() ) { return false; }
+      if ( r < min_ratio * cw(p1) ) { return false; }
       break;
     }
 
@@ -1786,8 +1790,8 @@ is_encroached_facet_refinable(Facet& facet) const
       bool do_spheres_intersect = (compare(p1,p2,FT(0)) != CGAL::LARGER);
       if ( do_spheres_intersect )
       {
-        FT r13 = sq_radius(p1,p3) / p1.weight();
-        FT r23 = sq_radius(p2,p3) / p2.weight();
+        FT r13 = sq_radius(p1,p3) / cw(p1);
+        FT r23 = sq_radius(p2,p3) / cw(p1);
         FT r = (std::max)(r13,r23);
 
         if ( r < min_ratio ) { return false; }
