@@ -1228,6 +1228,9 @@ expand_prestar(const Cell_handle& cell_to_add,
         // so we add a little bit more weight to make sure that 'pwp' is in conflict.
         new_weight += 1e5 * std::numeric_limits<FT>::epsilon(); // 'epsilon' alone is not enough
         Weighted_point ncr_pwp(cp(pwp), new_weight);
+
+        // The 'tetrahedron' function returns positions for which the cell is in conflict
+        // with the point, which is not trivial in a periodic setting.
         Tetrahedron_3 tet = tr_.tetrahedron(curr_f, ncr_pwp);
 
         FT new_value = sliver_criteria_(tet);
