@@ -25,6 +25,7 @@
 
 #include <CGAL/license/Mesh_3.h>
 
+#include <CGAL/Compare_handles_with_or_without_timestamps.h>
 #include <CGAL/Mesh_3/Detect_polylines_in_polyhedra_fwd.h>
 #include <CGAL/Default.h>
 #include <CGAL/Hash_handles_with_or_without_timestamps.h>
@@ -48,6 +49,7 @@ struct Detect_polylines
   typedef typename Polyhedron::Vertex_const_handle Vertex_const_handle;
   typedef typename Polyhedron::Vertex_handle Vertex_handle;
   typedef typename Polyhedron::size_type size_type;
+  typedef CGAL::Compare_handles_with_or_without_timestamps Compare_handles;
 
   typedef CGAL::Hash_handles_with_or_without_timestamps   Hash_fct;
   typedef boost::unordered_set<Vertex_handle, Hash_fct>   Vertices_set;
@@ -117,7 +119,7 @@ struct Detect_polylines
   static Halfedge_handle canonical(Halfedge_handle he)
   {
     const Halfedge_handle& op = he->opposite();
-    if(Hash_fct()(he, op))
+    if(Compare_handles()(he, op))
       return he;
     else 
       return op;
