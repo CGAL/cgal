@@ -191,77 +191,7 @@ no_topological_change(Tr& tr,
   bool np = true;
   const Point fp = tr.point(v0);
 
-//#define CGAL_PERIODIC_BACKUP_CHECK
-//#define CGAL_PERIODIC_SIDE_OF_DEBUG
-//#define CGAL_PERIODIC_CELL_VERBOSE
-
-#ifdef CGAL_PERIODIC_BACKUP_CHECK
-  std::vector<Cell> cells_backup;
-  for(Cell_iterator cit=tr.all_cells_begin(); cit!=tr.all_cells_end(); ++cit)
-    cells_backup.push_back(*cit);
-
-  std::vector<Vertex> vertex_backup;
-  for(typename Tr::Vertex_iterator vit=tr.all_vertices_begin();
-                                   vit!=tr.all_vertices_end(); ++vit)
-    vertex_backup.push_back(*vit);
-#endif
-
-#ifdef CGAL_PERIODIC_SIDE_OF_DEBUG
-  CGAL_assertion(well_oriented(tr, cells_tos));
-
-  for(Cell_iterator cit=tr.all_cells_begin(); cit!=tr.all_cells_end(); ++cit)
-  {
-    for(int j=0; j<4; j++)
-      cit->reset_visited(j);
-  }
-
-  for(Cell_iterator cit=tr.all_cells_begin(); cit!=tr.all_cells_end(); ++cit)
-  {
-    Cell_handle c = cit;
-    for(int j=0; j<4; j++)
-    {
-      // Treat each facet only once
-      if(c->is_facet_visited(j))
-        continue;
-
-      // Set facet and its mirrored version as visited
-      Cell_handle cj = c->neighbor(j);
-      CGAL_assertion(c!=cj);
-      int mj = tr.mirror_index(c, j);
-      c->set_facet_visited(j);
-      cj->set_facet_visited(mj);
-
-      if(tr.is_infinite(c->vertex(j)))
-      {
-        CGAL_assertion(tr.side_of_power_sphere(c, tr.point(cj, mj), false)
-                         != CGAL::ON_BOUNDED_SIDE);
-      }
-      else
-      {
-#ifdef CGAL_PERIODIC_CELL_VERBOSE
-        std::cout << "--- pre" << std::endl;
-        std::cout << "Cj: " << &*cj << std::endl
-                  << cj->vertex(0)->point() << " Off: " << cj->offset(0) << " tra: " << tr.point(cj, 0) << std::endl
-                  << cj->vertex(1)->point() << " Off: " << cj->offset(1) << " tra: " << tr.point(cj, 1) << std::endl
-                  << cj->vertex(2)->point() << " Off: " << cj->offset(2) << " tra: " << tr.point(cj, 2) << std::endl
-                  << cj->vertex(3)->point() << " Off: " << cj->offset(3) << " tra: " << tr.point(cj, 3) << std::endl
-                  << "fifth: " << tr.point(c, j) << std::endl;
-#endif
-        if(tr.side_of_power_sphere(cj, c->vertex(j)->point(), false) == CGAL::ON_BOUNDARY)
-        {
-//          std::cerr << "warning: on boundary" << std::endl;
-        }
-
-        CGAL_assertion(tr.side_of_power_sphere(cj, c->vertex(j)->point(), false)
-                        != CGAL::ON_BOUNDED_SIDE);
-      }
-    }
-  }
-#endif
-
-//  CGAL_assertion(tr.is_valid(true, 1000));
-
-  // move point
+  // move the point
   tr.set_point(v0, move, p);
 
   if(!well_oriented(tr, cells_tos))
@@ -271,7 +201,6 @@ no_topological_change(Tr& tr,
     return false;
   }
 
-#if 1
   // Reset visited tags of facets
   std::for_each(cells_tos.begin(), cells_tos.end(), Reset_facet_visited());
 
@@ -280,18 +209,6 @@ no_topological_change(Tr& tr,
                                        ++cit )
   {
     Cell_handle c = *cit;
-#else
-  // Reset visited tags of facets
-  for(Cell_iterator cit=tr.all_cells_begin(); cit!=tr.all_cells_end(); ++cit)
-  {
-    for(int j=0; j<4; j++)
-      cit->reset_visited(j);
-  }
-
-  for(Cell_iterator cit=tr.all_cells_begin(); cit!=tr.all_cells_end(); ++cit)
-  {
-    Cell_handle c = cit;
-#endif
     for(int j=0; j<4; j++)
     {
       // Treat each facet only once
@@ -327,83 +244,6 @@ no_topological_change(Tr& tr,
 
   // Reset (restore) v0
   tr.set_point(v0, cov(move), fp);
-
-#ifdef CGAL_PERIODIC_SIDE_OF_DEBUG
-  CGAL_assertion(well_oriented(tr, cells_tos));
-
-  for(Cell_iterator cit=tr.all_cells_begin(); cit!=tr.all_cells_end(); ++cit)
-  {
-    for(int j=0; j<4; j++)
-      cit->reset_visited(j);
-  }
-
-  for(Cell_iterator cit=tr.all_cells_begin(); cit!=tr.all_cells_end(); ++cit)
-  {
-    Cell_handle c = cit;
-    for(int j=0; j<4; j++)
-    {
-      // Treat each facet only once
-      if(c->is_facet_visited(j))
-        continue;
-
-      // Set facet and its mirrored version as visited
-      Cell_handle cj = c->neighbor(j);
-      int mj = tr.mirror_index(c, j);
-      c->set_facet_visited(j);
-      cj->set_facet_visited(mj);
-
-      if(tr.is_infinite(c->vertex(j)))
-      {
-        CGAL_assertion(tr.side_of_power_sphere(c, tr.point(cj, mj), false)
-                         != CGAL::ON_BOUNDED_SIDE);
-      }
-      else
-      {
-#ifdef CGAL_PERIODIC_CELL_VERBOSE
-        std::cout << "--- post" << std::endl;
-        std::cout << "Cj: " << &*cj << std::endl
-                  << cj->vertex(0)->point() << " Off: " << cj->offset(0) << " tra: " << tr.point(cj, 0) << std::endl
-                  << cj->vertex(1)->point() << " Off: " << cj->offset(1) << " tra: " << tr.point(cj, 1) << std::endl
-                  << cj->vertex(2)->point() << " Off: " << cj->offset(2) << " tra: " << tr.point(cj, 2) << std::endl
-                  << cj->vertex(3)->point() << " Off: " << cj->offset(3) << " tra: " << tr.point(cj, 3) << std::endl
-                  << "fifth: " << tr.point(c, j) << std::endl;
-#endif
-        CGAL_assertion(tr.side_of_power_sphere(cj, c->vertex(j)->point(), false)
-                        != CGAL::ON_BOUNDED_SIDE);
-      }
-    }
-  }
-#endif
-
-  // DEBUG: check that the triangulation is the same as before...
-#ifdef CGAL_PERIODIC_BACKUP_CHECK
-  typename std::vector<Cell>::const_iterator ccit = cells_backup.begin();
-  for(Cell_iterator cit=tr.all_cells_begin(); cit!=tr.all_cells_end(); ++cit)
-  {
-    const Cell& c1 = *ccit++;
-    const Cell& c2 = *cit;
-
-    CGAL_assertion(c1.vertex(0) == c2.vertex(0));
-    CGAL_assertion(c1.vertex(1) == c2.vertex(1));
-    CGAL_assertion(c1.vertex(2) == c2.vertex(2));
-    CGAL_assertion(c1.vertex(3) == c2.vertex(3));
-
-    CGAL_assertion(c1.offset(0) == c2.offset(0));
-    CGAL_assertion(c1.offset(1) == c2.offset(1));
-    CGAL_assertion(c1.offset(2) == c2.offset(2));
-    CGAL_assertion(c1.offset(3) == c2.offset(3));
-  }
-
-  typename std::vector<Vertex>::iterator vvit = vertex_backup.begin();
-  for(typename Tr::Vertex_iterator vit=tr.all_vertices_begin();
-                                   vit!=tr.all_vertices_end(); ++vit)
-  {
-    CGAL_assertion(vvit->point() == vit->point());
-    ++vvit;
-  }
-#endif
-
-//  CGAL_assertion(tr.is_valid(true, 1000));
 
   return np;
 }
