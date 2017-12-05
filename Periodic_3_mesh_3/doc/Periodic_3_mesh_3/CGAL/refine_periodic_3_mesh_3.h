@@ -112,20 +112,20 @@ is guaranteed at the end of the Delaunay refinement, this may no longer be true 
 some optimization processes. Also beware that the default behavior does involve some
 optimization processes.
 
-\sa `CGAL::make_periodic_3_mesh_3()`
-\sa `CGAL::refine_mesh_3()`
-\sa `CGAL::exude_periodic_3_mesh_3()`
-\sa `CGAL::perturb_periodic_3_mesh_3()`
-\sa `CGAL::lloyd_optimize_periodic_3_mesh_3()`
-\sa `CGAL::odt_optimize_periodic_3_mesh_3()`
-\sa `CGAL::parameters::exude`
-\sa `CGAL::parameters::no_exude`
-\sa `CGAL::parameters::perturb`
-\sa `CGAL::parameters::no_perturb`
-\sa `CGAL::parameters::lloyd`
-\sa `CGAL::parameters::no_lloyd`
-\sa `CGAL::parameters::odt`
-\sa `CGAL::parameters::no_odt`
+\sa `make_periodic_3_mesh_3()`
+\sa `refine_mesh_3()`
+\sa `exude_periodic_3_mesh_3()`
+\sa `perturb_periodic_3_mesh_3()`
+\sa `lloyd_optimize_periodic_3_mesh_3()`
+\sa `odt_optimize_periodic_3_mesh_3()`
+\sa `parameters::exude`
+\sa `parameters::no_exude`
+\sa `parameters::perturb`
+\sa `parameters::no_perturb`
+\sa `parameters::lloyd`
+\sa `parameters::no_lloyd`
+\sa `parameters::odt`
+\sa `parameters::no_odt`
 */
 template <class C3T3,
           class Periodic_3MeshDomain,
