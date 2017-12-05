@@ -157,7 +157,7 @@ init_c3t3(C3T3& c3t3, const MeshDomain& domain, const MeshCriteria&,
   else //use default number of points
     domain.construct_initial_points_object()(std::back_inserter(initial_points));
 
-  typename C3T3::Triangulation::Geom_traits::Construct_weighted_point_3 p2wp =
+  typename C3T3::Triangulation::Geom_traits::Construct_weighted_point_3 cwp =
       c3t3.triangulation().geom_traits().construct_weighted_point_3_object();
 
   // Insert points and set their index and dimension
@@ -165,7 +165,7 @@ init_c3t3(C3T3& c3t3, const MeshDomain& domain, const MeshCriteria&,
        it != initial_points.end() ;
        ++it )
   {
-    Vertex_handle v = c3t3.triangulation().insert(p2wp(it->first));
+    Vertex_handle v = c3t3.triangulation().insert(cwp(it->first));
 
     // v could be null if point is hidden
     if ( v != Vertex_handle() )
