@@ -65,12 +65,12 @@
 // -----------------------------------------------------------------------------
 
 #if !defined(CGAL_SMP_SOLVE_CUBIC_EQUATION) && !defined(CGAL_SMP_SOLVE_EQUATIONS_WITH_GMP)
-#error "Either 'CGAL_SMP_SOLVE_CUBIC_EQUATION' or 'CGAL_SMP_SOLVE_EQUATIONS_WITH_GMP' should be defined."
+#error "Either 'CGAL_SMP_SOLVE_CUBIC_EQUATION' or 'CGAL_SMP_SOLVE_EQUATIONS_WITH_GMP' must be defined."
 #endif
 
 #if defined(CGAL_SMP_SOLVE_EQUATIONS_WITH_GMP)
 #if !defined(CGAL_USE_GMP) || !defined(CGAL_USE_MPFI)
-#error "'CGAL_SMP_SOLVE_EQUATIONS_WITH_GMP' cannot be defined if GMP or MPFI are not present."
+#error "'CGAL_SMP_SOLVE_EQUATIONS_WITH_GMP' cannot be defined if GMP or MPFI is not present."
 #endif
 #endif
 
