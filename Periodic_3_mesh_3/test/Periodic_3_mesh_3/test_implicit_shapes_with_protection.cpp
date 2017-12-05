@@ -164,7 +164,7 @@ void test_protected_squary_cylinder()
   C3t3 c3t3_bis = CGAL::make_periodic_3_mesh_3<C3t3>(domain, criteria, manifold());
 
   // Output
-  std::ofstream medit_file_bis("cone.mesh");
+  std::ofstream medit_file_bis("squary_cylinder.mesh");
   CGAL::output_to_medit(medit_file_bis, c3t3_bis);
 }
 ////////////////////////////////////////////////////////////////////////////////
@@ -258,7 +258,8 @@ void test_protected_squary_cylinder_2()
   Mesh_criteria criteria(edge_size = 0.02 * domain_size,
                          facet_angle = 0.05 * domain_size,
                          facet_size = 0.02 * domain_size,
-                         cell_radius_edge_ratio = 2, cell_size = 0.5);
+                         cell_radius_edge_ratio = 2,
+                         cell_size = 0.05 * domain_size);
 
   // Create edge that we want to preserve
   Polylines polylines;
@@ -271,7 +272,7 @@ void test_protected_squary_cylinder_2()
   C3t3 c3t3_bis = CGAL::make_periodic_3_mesh_3<C3t3>(domain, criteria, manifold());
 
   // Output
-  std::ofstream medit_file_bis("cone.mesh");
+  std::ofstream medit_file_bis("squary_cylinder_2.mesh");
   CGAL::output_to_medit(medit_file_bis, c3t3_bis);
 }
 ////////////////////////////////////////////////////////////////////////////////
