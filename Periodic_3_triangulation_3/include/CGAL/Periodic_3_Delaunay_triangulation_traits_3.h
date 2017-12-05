@@ -147,10 +147,10 @@ public:
 template < typename K, typename Off >
 class Periodic_3_Delaunay_triangulation_traits_3<K, Off, true>
     : public Periodic_3_Delaunay_triangulation_filtered_traits_3<
-    K, Off, internal::Has_static_filters<K>::value>
+               K, Off, internal::Has_static_filters<K>::value>
 {
   typedef Periodic_3_Delaunay_triangulation_filtered_traits_3<
-  K, Off, internal::Has_static_filters<K>::value>      Base;
+            K, Off, internal::Has_static_filters<K>::value>      Base;
 
 public:
   typedef typename K::Iso_cuboid_3 Iso_cuboid_3;

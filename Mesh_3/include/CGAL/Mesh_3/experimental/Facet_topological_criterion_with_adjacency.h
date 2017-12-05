@@ -52,9 +52,10 @@ public:
   /// Constructor
   Facet_topological_criterion_with_adjacency(const MeshDomain* domain)
     : domain(domain)
-  {};
+  {}
+
   /// Destructor
-  virtual ~Facet_topological_criterion_with_adjacency() {};
+  virtual ~Facet_topological_criterion_with_adjacency() {}
   
 protected:
   virtual void do_accept(Visitor_& v) const
@@ -68,7 +69,7 @@ protected:
     return new Self(*this);
   }
   
-  virtual Badness do_is_bad (const Facet& f) const
+  virtual Badness do_is_bad (const Tr& /*tr*/, const Facet& f) const
   {
     typedef typename Tr::Vertex_handle  Vertex_handle;
     typedef typename Tr::Cell_handle    Cell_handle;

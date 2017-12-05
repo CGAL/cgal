@@ -223,8 +223,8 @@ struct Tester
     typename C3t3::Triangulation::Vertex& tv1 = *v;
     typename C3t3::Triangulation::Vertex& tv2 = *vit;
     
-    assert(   ( v == vp1 && vit->point() == p1 )
-           || ( v == vp4 && vit->point() == p4 ) );
+    assert(   ( v == vp1 && tr.point(vit) == p1 )
+           || ( v == vp4 && tr.point(vit) == p4 ) );
     
     assert ( tv1.in_dimension() == tv2.in_dimension() );
     //-------------------------------------------------------

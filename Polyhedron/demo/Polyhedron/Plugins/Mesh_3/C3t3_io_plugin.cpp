@@ -122,24 +122,30 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(QFileInfo fileinfo) {
               }
             }
         }
+
         //if there is no facet in the complex, we add the border facets.
         if(item->c3t3().number_of_facets_in_complex() == 0)
         {
-          for( C3t3::Triangulation::All_cells_iterator
-               cit = item->c3t3().triangulation().all_cells_begin();
-               cit != item->c3t3().triangulation().all_cells_end();
-               ++cit)
+          for( C3t3::Triangulation::Finite_facets_iterator
+               fit = item->c3t3().triangulation().finite_facets_begin();
+               fit != item->c3t3().triangulation().finite_facets_end();
+               ++fit)
           {
-            if(item->c3t3().triangulation().is_infinite(cit))
+            typedef C3t3::Triangulation::Cell_handle      Cell_handle;
+
+            Cell_handle c = fit->first;
+            Cell_handle nc = c->neighbor(fit->second);
+
+            // By definition, Subdomain_index() is supposed to be the id of the exterior
+            if(c->subdomain_index() != C3t3::Triangulation::Cell::Subdomain_index() &&
+               nc->subdomain_index() == C3t3::Triangulation::Cell::Subdomain_index())
             {
-              for(int i=0; i<4; ++i)
-              {
-               if(!item->c3t3().triangulation().is_infinite(cit, i))
-                 item->c3t3().add_to_complex(cit, i, 1);
-              }
+              // Color the border facet with the index of its cell
+              item->c3t3().add_to_complex(c, fit->second, c->subdomain_index());
             }
           }
         }
+
         item->c3t3_changed();
         item->resetCutPlane();
         return item;
