@@ -114,7 +114,7 @@ struct Get_Is_facet_bad<Facet_criteria, true> {
       int f2_saved_erase_counter = CGAL::cpp11::get<3>(f);
       //f1_current_erase_counter - f1_saved_erase_counter + f2_current_erase_counter - f2_saved_erase_counter == 1
 
-      if (f1_current_erase_counter - f1_saved_erase_counter + f2_current_erase_counter - f2_saved_erase_counter == 1)
+      /*if (f1_current_erase_counter - f1_saved_erase_counter + f2_current_erase_counter - f2_saved_erase_counter == 1)
       {
 #ifdef CGAL_LINKED_WITH_TBB
         tbb::queuing_mutex mut;
@@ -140,7 +140,7 @@ struct Get_Is_facet_bad<Facet_criteria, true> {
 
         std::string s = sstr.str();
         std::cerr << s << std::endl;
-      }
+      }*/
 #endif
       return (CGAL::cpp11::get<0>(f).first->erase_counter() == CGAL::cpp11::get<1>(f)
         && CGAL::cpp11::get<2>(f).first->erase_counter() == CGAL::cpp11::get<3>(f) );
