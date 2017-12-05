@@ -571,12 +571,12 @@ private:
   {
     CGAL_precondition(roots.empty());
 
-    typedef CGAL::GMP_arithmetic_kernel                       AK;
-    typedef CGAL::Algebraic_kernel_d_1<AK::Rational>          Algebraic_kernel_d_1;
+    typedef CGAL::Gmpq                                        GMP_NT;
+    typedef CGAL::Algebraic_kernel_d_1<GMP_NT>                Algebraic_kernel_d_1;
     typedef typename Algebraic_kernel_d_1::Polynomial_1       Polynomial_1;
     typedef typename Algebraic_kernel_d_1::Algebraic_real_1   Algebraic_real_1;
-    typedef typename Algebraic_kernel_d_1::Multiplicity_type  Multiplicity_type;
     typedef typename Algebraic_kernel_d_1::Coefficient        Coefficient;
+    typedef typename Algebraic_kernel_d_1::Multiplicity_type  Multiplicity_type;
 
     typedef CGAL::Polynomial_traits_d<Polynomial_1>           Polynomial_traits_1;
 
@@ -584,26 +584,23 @@ private:
 
     Algebraic_kernel_d_1 ak_1;
     const Solve_1 solve_1 = ak_1.solve_1_object();
+
+    GMP_NT a3q(a3);
+    GMP_NT a2q(a2);
+    GMP_NT a1q(a1);
+    GMP_NT a0q(a0);
+
     typename Polynomial_traits_1::Construct_polynomial construct_polynomial_1;
     std::pair<CGAL::Exponent_vector, Coefficient> coeffs_x[1]
-      = {std::make_pair(CGAL::Exponent_vector(1,0),Coefficient(1))};
+      = {std::make_pair(CGAL::Exponent_vector(1,0), Coefficient(1))};
     Polynomial_1 x=construct_polynomial_1(coeffs_x, coeffs_x+1);
-
-    AK::Rational a3q(a3);
-    AK::Rational a2q(a2);
-    AK::Rational a1q(a1);
-    AK::Rational a0q(a0);
-
-    Polynomial_1 pol = a3q*CGAL::ipower(x,3) + a2q*CGAL::ipower(x,2)
-                       + a1q*x + a0q;
+    Polynomial_1 pol = a3q*CGAL::ipower(x,3) + a2q*CGAL::ipower(x,2) + a1q*x + a0q;
 
     std::vector<std::pair<Algebraic_real_1, Multiplicity_type> > ak_roots;
     solve_1(pol, std::back_inserter(ak_roots));
 
-    for(std::size_t i=0; i<ak_roots.size(); i++)
-    {
-      roots.push_back(ak_roots[i].first.to_double());
-    }
+    for(std::size_t i=0; i<ak_roots.size(); ++i)
+      roots.push_back(CGAL::to_double(ak_roots[i].first));
 
     return roots.size();
   }
@@ -613,12 +610,12 @@ private:
   // Solve the bivariate system
   // { C1 * a + 2 * lambda * a ( a^2 + b^2 - 1 ) = C2
   // { C1 * b + 2 * lambda * b ( a^2 + b^2 - 1 ) = C3
-  // using CGAL's algeabric kernel.
+  // using CGAL's algebraic kernel.
   int solve_bivariate_system(const NT C1, const NT C2, const NT C3,
                              std::vector<NT>& a_roots, std::vector<NT>& b_roots) const
   {
-    typedef CGAL::GMP_arithmetic_kernel                       AK;
-    typedef CGAL::Algebraic_kernel_d_2<AK::Rational>          Algebraic_kernel_d_2;
+    typedef CGAL::Gmpq                                        GMP_NT;
+    typedef CGAL::Algebraic_kernel_d_2<GMP_NT>                Algebraic_kernel_d_2;
     typedef typename Algebraic_kernel_d_2::Polynomial_2       Polynomial_2;
     typedef typename Algebraic_kernel_d_2::Algebraic_real_2   Algebraic_real_2;
     typedef typename Algebraic_kernel_d_2::Multiplicity_type  Multiplicity_type;
@@ -637,15 +634,15 @@ private:
 
     typename Polynomial_traits_2::Construct_polynomial construct_polynomial_2;
     std::pair<CGAL::Exponent_vector, Coefficient> coeffs_x[1]
-      = {std::make_pair(CGAL::Exponent_vector(1,0),Coefficient(1))};
+      = {std::make_pair(CGAL::Exponent_vector(1,0), Coefficient(1))};
     Polynomial_2 x=construct_polynomial_2(coeffs_x,coeffs_x+1);
     std::pair<CGAL::Exponent_vector, Coefficient> coeffs_y[1]
-      = {std::make_pair(CGAL::Exponent_vector(0,1),Coefficient(1))};
+      = {std::make_pair(CGAL::Exponent_vector(0,1), Coefficient(1))};
     Polynomial_2 y=construct_polynomial_2(coeffs_y,coeffs_y+1);
 
-    AK::Rational C1q(C1);
-    AK::Rational C2q(C2);
-    AK::Rational C3q(C3);
+    GMP_NT C1q(C1);
+    GMP_NT C2q(C2);
+    GMP_NT C3q(C3);
 
     Polynomial_2 pol1 = C1q * x + 2 * m_lambda * x * ( x*x + y*y - 1) - C2q;
     Polynomial_2 pol2 = C1q * y + 2 * m_lambda * y * ( x*x + y*y - 1) - C3q;
@@ -800,10 +797,10 @@ private:
 #else // !CGAL_SMP_SOLVE_EQUATIONS_WITH_GMP
         solve_cubic_equation(a3_coeff, 0., (C1 - 2. * m_lambda), -C2, roots);
 #endif
-
         std::size_t ind = compute_root_with_lowest_energy(mesh, fd,
                                                           ctmap, lp, lpmap, uvmap,
                                                           C2_denom, C3, roots);
+
         a = roots[ind];
         b = C3 * C2_denom * a;
 #else // !CGAL_SMP_SOLVE_CUBIC_EQUATION, solve the bivariate system
