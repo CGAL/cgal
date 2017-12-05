@@ -100,15 +100,14 @@ private:
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
 
   // internal typedefs
-
   typedef CGAL::internal::vertex_property_t<std::size_t> Vertex_anchor_tag;
   typedef typename CGAL::internal::dynamic_property_map<TriangleMesh, Vertex_anchor_tag >::type Vertex_anchor_map;
 
   typedef CGAL::internal::face_property_t<std::size_t> Face_proxy_tag;
   typedef typename CGAL::internal::dynamic_property_map<TriangleMesh, Face_proxy_tag >::type Face_proxy_map;
   
-  typedef std::vector<halfedge_descriptor> Chord_vector;
-  typedef typename Chord_vector::iterator Chord_vector_iterator;
+  typedef std::vector<halfedge_descriptor> Boundary_chord;
+  typedef typename Boundary_chord::iterator Boundary_chord_iterator;
 
 #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
 public:
@@ -174,14 +173,14 @@ private:
     Point_3 pos; // The position of the anchor.
   };
 
-  // The border cycle of a region.
-  // One region may have multiple border cycles.
-  struct Border {
-    Border(const halfedge_descriptor &h)
+  // The boundary cycle of a region.
+  // One region may have multiple boundary cycles.
+  struct Boundary_cycle {
+    Boundary_cycle(const halfedge_descriptor &h)
       : he_head(h), num_anchors(0) {}
 
-    halfedge_descriptor he_head; // The heading halfedge of the border cylce.
-    std::size_t num_anchors; // The number of anchors on the border.
+    halfedge_descriptor he_head; // The heading halfedge of the boundary cylce.
+    std::size_t num_anchors; // The number of anchors on the boundary.
   };
 
   // Triangle polyhedron builder.
@@ -246,7 +245,7 @@ private:
   // All anchors.
   std::vector<Anchor> m_anchors;
   // All borders cycles.
-  std::vector<Border> m_borders;
+  std::vector<Boundary_cycle> m_borders;
   // The indexed triangle approximation.
   std::vector<std::vector<std::size_t> > m_tris;
 
@@ -262,8 +261,6 @@ public:
     m_ptm(NULL),
     fit_error(NULL),
     proxy_fitting(NULL),
-    m_fproxy_map(),
-    m_vanchor_map(),
     m_average_edge_length(0.0) {
 
     Geom_traits traits;
@@ -283,8 +280,6 @@ public:
     m_vpoint_map(vpoint_map),
     fit_error(NULL),
     proxy_fitting(NULL),
-    m_fproxy_map(),
-    m_vanchor_map(),
     m_average_edge_length(0.0) {
 
     Geom_traits traits;
@@ -302,7 +297,7 @@ public:
 
   
   ~Mesh_approximation() {
-    if(m_ptm){
+    if (m_ptm) {
       CGAL::internal::remove_property(m_vanchor_map, *(const_cast<TriangleMesh *>(m_ptm)));
       CGAL::internal::remove_property(m_fproxy_map, *(const_cast<TriangleMesh *>(m_ptm)));
     }
@@ -991,16 +986,14 @@ public:
    */
   template <typename OutputIterator>
   void get_indexed_boundary_polygons(OutputIterator out_itr) const {
-    for (typename std::vector<Border>::const_iterator bitr = m_borders.begin();
-      bitr != m_borders.end(); ++bitr) {
+    BOOST_FOREACH(const Boundary_cycle &bcycle, m_borders) {
       std::vector<std::size_t> bdr;
-      const halfedge_descriptor he_mark = bitr->he_head;
-      halfedge_descriptor he = he_mark;
+      halfedge_descriptor he = bcycle.he_head;
       do {
-        Chord_vector chord;
+        Boundary_chord chord;
         walk_to_next_anchor(he, chord);
         bdr.push_back(get(m_vanchor_map, target(he, *m_ptm)));
-      } while (he != he_mark);
+      } while (he != bcycle.he_head);
       *out_itr++ = bdr;
     }
   }
@@ -1439,7 +1432,7 @@ private:
         attach_anchor(he_start);
 
       // a new connected border
-      m_borders.push_back(Border(he_start));
+      m_borders.push_back(Boundary_cycle(he_start));
 
 #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
       std::cerr << "#border " << m_borders.size() << std::endl;
@@ -1447,7 +1440,7 @@ private:
 
       const halfedge_descriptor he_mark = he_start;
       do {
-        Chord_vector chord;
+        Boundary_chord chord;
         walk_to_next_anchor(he_start, chord);
         m_borders.back().num_anchors += subdivide_chord(chord.begin(), chord.end(),
           chord_error, is_relative_to_chord, with_dihedral_angle);
@@ -1456,8 +1449,8 @@ private:
         std::cerr << "#chord_anchor " << m_borders.back().num_anchors << std::endl;
 #endif
 
-        for (Chord_vector_iterator citr = chord.begin(); citr != chord.end(); ++citr)
-          he_candidates.erase(*citr);
+        BOOST_FOREACH(const halfedge_descriptor &he, chord)
+          he_candidates.erase(he);
       } while (he_start != he_mark);
     }
   }
@@ -1466,20 +1459,18 @@ private:
    * @brief Adds anchors to the border cycles with only 2 anchors.
    */
   void add_anchors() {
-    typedef typename std::vector<Border>::iterator BorderIterator;
-    for (BorderIterator bitr = m_borders.begin(); bitr != m_borders.end(); ++bitr) {
-      if (bitr->num_anchors > 2)
+    BOOST_FOREACH(const Boundary_cycle &bcycle, m_borders) {
+      if (bcycle.num_anchors > 2)
         continue;
 
       // 2 initial anchors at least
-      CGAL_assertion(bitr->num_anchors == 2);
+      CGAL_assertion(bcycle.num_anchors == 2);
       // borders with only 2 initial anchors
-      const halfedge_descriptor he_mark = bitr->he_head;
-      Point_3 pt_begin = m_vpoint_map[target(he_mark, *m_ptm)];
+      Point_3 pt_begin = m_vpoint_map[target(bcycle.he_head, *m_ptm)];
       Point_3 pt_end = pt_begin;
 
-      halfedge_descriptor he = he_mark;
-      Chord_vector chord;
+      halfedge_descriptor he = bcycle.he_head;
+      Boundary_chord chord;
       std::size_t count = 0;
       do {
         walk_to_next_border_halfedge(he);
@@ -1490,12 +1481,12 @@ private:
             pt_end = m_vpoint_map[target(he, *m_ptm)];
           ++count;
         }
-      } while (he != he_mark);
+      } while (he != bcycle.he_head);
 
       // anchor count may be increased to more than 2 afterwards
       // due to the new anchors added by the neighboring border (< 2 anchors)
       if (count > 2) {
-        bitr->num_anchors = count;
+        const_cast<Boundary_cycle &>(bcycle).num_anchors = count;
         continue;
       }
 
@@ -1504,18 +1495,18 @@ private:
       Vector_3 chord_vec = vector_functor(pt_begin, pt_end);
       chord_vec = scale_functor(chord_vec,
         FT(1.0 / std::sqrt(CGAL::to_double(chord_vec.squared_length()))));
-      for (Chord_vector_iterator citr = chord.begin(); citr != chord.end(); ++citr) {
-        Vector_3 vec = vector_functor(pt_begin, m_vpoint_map[target(*citr, *m_ptm)]);
+      BOOST_FOREACH(const halfedge_descriptor &he, chord) {
+        Vector_3 vec = vector_functor(pt_begin, m_vpoint_map[target(he, *m_ptm)]);
         vec = CGAL::cross_product(chord_vec, vec);
         FT dist(std::sqrt(CGAL::to_double(vec.squared_length())));
         if (dist > dist_max) {
           dist_max = dist;
-          he_max = *citr;
+          he_max = he;
         }
       }
-      attach_anchor(he_max);
       // increase border anchors by one
-      bitr->num_anchors++;
+      attach_anchor(he_max);
+      const_cast<Boundary_cycle &>(bcycle).num_anchors++;
     }
   }
 
@@ -1617,11 +1608,11 @@ private:
     }
 
     // tag all boundary chord
-    BOOST_FOREACH(const Border &bdr, m_borders) {
+    BOOST_FOREACH(const Boundary_cycle &bdr, m_borders) {
       const halfedge_descriptor he_mark = bdr.he_head;
       halfedge_descriptor he = he_mark;
       do {
-        Chord_vector chord;
+        Boundary_chord chord;
         walk_to_next_anchor(he, chord);
 
         std::vector<FT> vdist;
@@ -1638,12 +1629,11 @@ private:
         const std::size_t anchorleft = get(m_vanchor_map, source(chord.front(), *m_ptm));
         const std::size_t anchorright = get(m_vanchor_map, target(chord.back(), *m_ptm));
         typename std::vector<FT>::iterator ditr = vdist.begin() + 1;
-        for (typename Chord_vector::iterator hitr = chord.begin();
-          hitr != chord.end() - 1; ++hitr, ++ditr) {
+        for (Boundary_chord_iterator citr = chord.begin(); citr != chord.end() - 1; ++citr, ++ditr) {
           if (*ditr < half_chord_len)
-            global_vtag_map[to_sgv_map[target(*hitr, *m_ptm)]] = anchorleft;
+            global_vtag_map[to_sgv_map[target(*citr, *m_ptm)]] = anchorleft;
           else
-            global_vtag_map[to_sgv_map[target(*hitr, *m_ptm)]] = anchorright;
+            global_vtag_map[to_sgv_map[target(*citr, *m_ptm)]] = anchorright;
         }
       } while (he != he_mark);
     }
@@ -1683,7 +1673,7 @@ private:
    * @param[in/out] he_start starting region border halfedge pointing to a vertex associated with an anchor
    * @param[out] chord recorded path chord
    */
-  void walk_to_next_anchor(halfedge_descriptor &he_start, Chord_vector &chord) const {
+  void walk_to_next_anchor(halfedge_descriptor &he_start, Boundary_chord &chord) const {
     do {
       walk_to_next_border_halfedge(he_start);
       chord.push_back(he_start);
@@ -1715,8 +1705,8 @@ private:
    * @return the number of anchors of the chord apart from the first one
    */
   std::size_t subdivide_chord(
-    const Chord_vector_iterator &chord_begin,
-    const Chord_vector_iterator &chord_end,
+    const Boundary_chord_iterator &chord_begin,
+    const Boundary_chord_iterator &chord_end,
     const FT chord_error,
     const bool is_relative_to_chord,
     const bool with_dihedral_angle) {
@@ -1731,7 +1721,7 @@ private:
       return 1;
 
     bool if_subdivide = false;
-    Chord_vector_iterator chord_max;
+    Boundary_chord_iterator chord_max;
     const Point_3 &pt_begin = m_vpoint_map[source(he_first, *m_ptm)];
     const Point_3 &pt_end = m_vpoint_map[target(he_last, *m_ptm)];
     if (anchor_first == anchor_last) {
@@ -1739,7 +1729,7 @@ private:
       CGAL_assertion(chord_size > 2);
 
       FT dist_max(0.0);
-      for (Chord_vector_iterator citr = chord_begin; citr != chord_end; ++citr) {
+      for (Boundary_chord_iterator citr = chord_begin; citr != chord_end; ++citr) {
         FT dist = CGAL::squared_distance(pt_begin, m_vpoint_map[target(*citr, *m_ptm)]);
         dist = FT(std::sqrt(CGAL::to_double(dist)));
         if (dist > dist_max) {
@@ -1756,7 +1746,7 @@ private:
       FT chord_len(std::sqrt(CGAL::to_double(chord_vec.squared_length())));
       chord_vec = scale_functor(chord_vec, FT(1.0) / chord_len);
 
-      for (Chord_vector_iterator citr = chord_begin; citr != chord_end; ++citr) {
+      for (Boundary_chord_iterator citr = chord_begin; citr != chord_end; ++citr) {
         Vector_3 vec = vector_functor(pt_begin, m_vpoint_map[target(*citr, *m_ptm)]);
         vec = CGAL::cross_product(chord_vec, vec);
         FT dist(std::sqrt(CGAL::to_double(vec.squared_length())));
