@@ -185,6 +185,17 @@ no_topological_change(Tr& tr,
                       const Point& p,
                       Cell_vector& cells_tos) const
 {
+  // For periodic triangulations, calling this function actually takes longer than
+  // just removing and re-inserting the point directly because the periodic mesh
+  // triangulation's side_of_power_sphere() function is somewhat brute-forcy:
+  // it has to check for 27 copies of the query point to determine correctly the side.
+  // Thus, we simply return 'false' if the triangulation is a periodic triangulation.
+  //
+  // Note that the function was nevertheless adapted to work with periodic triangulation
+  // so this hack can be disabled if one day 'side_of_power_sphere()' is improved.
+  if(boost::is_same<typename Tr::Periodic_tag, Tag_true>::value)
+    return false;
+
   typename Gt::Construct_opposite_vector_3 cov =
       tr.geom_traits().construct_opposite_vector_3_object();
 
