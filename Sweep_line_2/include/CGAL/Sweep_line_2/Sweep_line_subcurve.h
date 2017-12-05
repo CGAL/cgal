@@ -35,6 +35,7 @@
 #include <CGAL/Sweep_line_2/Sweep_line_event.h>
 #include <CGAL/Multiset.h>
 #include <CGAL/assertions.h>
+#include <set>
 
 namespace CGAL {
 
@@ -115,6 +116,11 @@ public:
   /*! Set the last intersecing curve so far. */
   void set_last_curve(const X_monotone_curve_2& cv) { m_lastCurve = cv; }
 
+  /*! Check if the given event is the matches the left-end event. */
+  template <typename SweepEvent>
+  bool is_start_point(const SweepEvent* event) const
+  { return (m_left_event == (Event*)event); }
+
   /*! Check if the given event is the matches the right-end event. */
   template <typename SweepEvent>
   bool is_end_point(const SweepEvent* event) const
@@ -153,16 +159,16 @@ public:
   { m_orig_subcurve2 = orig_subcurve2; }
 
   /*! Get all the leaf-nodes in the hierarchy of overlapping subcurves. */
-  template <typename OutputIterator>
+  template <typename Subcurve, typename OutputIterator>
   OutputIterator all_leaves(OutputIterator oi)
   {
     if (m_orig_subcurve1 == NULL) {
-      *oi++ = this;
+      *oi++ = static_cast<Subcurve*>(this);
       return oi;
     }
 
-    oi = m_orig_subcurve1->all_leaves(oi);
-    oi = m_orig_subcurve2->all_leaves(oi);
+    oi = m_orig_subcurve1->template all_leaves<Subcurve>(oi);
+    oi = m_orig_subcurve2->template all_leaves<Subcurve>(oi);
     return oi;
   }
 
@@ -182,14 +188,60 @@ public:
     return (m_orig_subcurve1->is_leaf(s) || m_orig_subcurve2->is_leaf(s));
   }
 
+  /*! Check if other is entirely contained in the hierarchy of subcurves of this*/
+  bool are_all_leaves_contained(Self* other)
+  {
+    std::set<Self*> leaves_of_this;
+    this->template all_leaves<Self>(std::inserter(leaves_of_this, leaves_of_this.begin()));
+    std::vector<Self*> leaves_of_other;
+    other->template all_leaves<Self>(std::back_inserter(leaves_of_other));
+    if (leaves_of_other.size() > leaves_of_this.size())
+      return false;
+    for (typename std::vector<Self*>::iterator it=leaves_of_other.begin();
+                                                   it!=leaves_of_other.end();
+                                                   ++it)
+    {
+      if (leaves_of_this.count(*it)==0)
+        return false;
+    }
+
+    return true;
+  }
+
   /*! Check if the two hierarchies contain the same leaf nodes. */
   bool has_same_leaves(Self* s)
   {
     std::list<Self*> my_leaves;
     std::list<Self*> other_leaves;
 
-    this->all_leaves(std::back_inserter(my_leaves));
-    s->all_leaves(std::back_inserter(other_leaves));
+    this->template all_leaves<Self>(std::back_inserter(my_leaves));
+    s->template all_leaves<Self>(std::back_inserter(other_leaves));
+
+    typename std::list<Self*>::iterator iter;
+    for (iter = my_leaves.begin(); iter != my_leaves.end(); ++iter) {
+      if (std::find(other_leaves.begin(), other_leaves.end(), *iter) ==
+          other_leaves.end())
+        return false;
+    }
+
+    for (iter = other_leaves.begin(); iter != other_leaves.end(); ++iter) {
+      if (std::find(my_leaves.begin(), my_leaves.end(), *iter) ==
+          my_leaves.end())
+        return false;
+    }
+
+    return true;
+  }
+
+  /*! Check if the two hierarchies (s1+s2 considered as an overlapping curve not already created) contain the same leaf nodes. */
+  bool has_same_leaves(Self* s1, Self* s2)
+  {
+    std::list<Self*> my_leaves;
+    std::list<Self*> other_leaves;
+
+    this->template all_leaves<Self>(std::back_inserter(my_leaves));
+    s1->template all_leaves<Self>(std::back_inserter(other_leaves));
+    s2->template all_leaves<Self>(std::back_inserter(other_leaves));
 
     typename std::list<Self*>::iterator iter;
     for (iter = my_leaves.begin(); iter != my_leaves.end(); ++iter) {
@@ -213,8 +265,8 @@ public:
     std::list<Self*> my_leaves;
     std::list<Self*> other_leaves;
 
-    this->all_leaves(std::back_inserter(my_leaves));
-    s->all_leaves(std::back_inserter(other_leaves));
+    this->template all_leaves<Self>(std::back_inserter(my_leaves));
+    s->template all_leaves<Self>(std::back_inserter(other_leaves));
 
     typename std::list<Self*>::iterator iter;
     for (iter = my_leaves.begin(); iter != my_leaves.end(); ++iter) {
@@ -254,6 +306,15 @@ public:
     else return (depth2 + 1);
   }
 
+  /*! Get the number of input curves contributing to the subcurve */
+  unsigned int number_of_original_curves() const
+  {
+    if (m_orig_subcurve1 == NULL) return 1;
+    unsigned int d1 = m_orig_subcurve1->number_of_original_curves();
+    unsigned int d2 = m_orig_subcurve2->number_of_original_curves();
+    return d1+d2;
+  }
+
 #ifdef CGAL_SL_VERBOSE
   void Print() const;
 #endif
@@ -266,7 +327,7 @@ public:
     std::cout << "Curve " << this
               << "  (" << m_lastCurve << ") "
               << " [sc1: " << m_orig_subcurve1
-              << ", sc2: " << m_orig_subcurve2 << "]";
+              << ", sc2: " << m_orig_subcurve2 << "]" << " " << number_of_original_curves() ;
   }
 #endif
 
