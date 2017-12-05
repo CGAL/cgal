@@ -49,6 +49,10 @@ namespace Shape_detection_3 {
     typedef value_type reference;
     typedef boost::readable_property_map_tag category;
 
+    /// \cond SKIP_IN_MANUAL
+    Point_to_shape_index_map () { }
+    /// \endcond
+
     /*!
       Constructs a property map to map points to their associated shape.
 
