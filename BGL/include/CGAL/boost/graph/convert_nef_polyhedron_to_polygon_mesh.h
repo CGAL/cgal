@@ -27,6 +27,11 @@
 #include <CGAL/circulator.h>
 #include <CGAL/Cartesian_converter.h>
 #include <boost/unordered_map.hpp>
+#include <CGAL/Constrained_Delaunay_triangulation_2.h>
+#include <CGAL/Triangulation_2_projection_traits_3.h>
+#include <CGAL/Triangulation_vertex_base_with_info_2.h>
+#include <CGAL/Triangulation_face_base_with_info_2.h>
+
 
 namespace CGAL{
 
@@ -64,6 +69,12 @@ struct Shell_vertex_index_visitor
   {}
 };
 
+struct FaceInfo2
+{
+  FaceInfo2() : visited(false) {}
+  bool visited;
+};
+
 //Visitor used to collect polygons
 template <class Nef_polyhedron>
 struct Shell_polygons_visitor
@@ -89,21 +100,113 @@ struct Shell_polygons_visitor
 
     typename Nef_polyhedron::Halffacet_const_handle f = opposite_facet->twin();
 
-    typename Nef_polyhedron::SHalfedge_around_facet_const_circulator
-      sfc1(f->facet_cycles_begin());
+    if (cpp11::next(f->facet_cycles_begin())==f->facet_cycles_end())
+    {
+      // create a new polygon
+      polygons.push_back( std::vector<std::size_t>() );
+      fc = f->facet_cycles_begin();
+      se = typename Nef_polyhedron::SHalfedge_const_handle(fc);
+      CGAL_assertion(se!=0);
+      typename Nef_polyhedron::SHalfedge_around_facet_const_circulator
+        hc_start(se), hc_end(hc_start);
+      // insert the vertex indices of the new polygon
+      CGAL_For_all(hc_start,hc_end)
+        polygons.back().push_back(vertex_indices[hc_start->source()->center_vertex()]);
+      if (!is_marked)
+        std::reverse(polygons.back().begin(), polygons.back().end());
+    }
+    else{
+      typedef typename Nef_polyhedron::Kernel Kernel;
+      typedef Triangulation_2_projection_traits_3<Kernel>            P_traits;
+      typedef Triangulation_vertex_base_with_info_2<std::size_t, P_traits> Vb;
+      typedef Triangulation_face_base_with_info_2<FaceInfo2,P_traits>     Fbb;
+      typedef Constrained_triangulation_face_base_2<P_traits,Fbb>          Fb;
+      typedef Triangulation_data_structure_2<Vb,Fb>                       TDS;
+      typedef Exact_predicates_tag                                       Itag;
+      typedef Constrained_Delaunay_triangulation_2<P_traits, TDS, Itag>   CDT;
 
-    // create a new polygon
-    polygons.push_back( std::vector<std::size_t>() );
-    fc = f->facet_cycles_begin();
-    se = typename Nef_polyhedron::SHalfedge_const_handle(fc);
-    CGAL_assertion(se!=0);
-    typename Nef_polyhedron::SHalfedge_around_facet_const_circulator
-      hc_start(se), hc_end(hc_start);
-    // insert the vertex indices of the new polygon
-    CGAL_For_all(hc_start,hc_end)
-      polygons.back().push_back(vertex_indices[hc_start->source()->center_vertex()]);
-    if (!is_marked)
-      std::reverse(polygons.back().begin(), polygons.back().end());
+      P_traits p_traits(opposite_facet->plane().orthogonal_vector());
+      CDT cdt(p_traits);
+
+      // insert each connected component of the boundary of the face as
+      // a polygonal constraints
+      typename Nef_polyhedron::Halffacet_cycle_const_iterator
+        hfc_start=f->facet_cycles_begin(), hfc_end=f->facet_cycles_end();
+      CGAL_For_all(hfc_start, hfc_end)
+      {
+        fc=hfc_start;
+        se = typename Nef_polyhedron::SHalfedge_const_handle(fc);
+        CGAL_assertion(se!=0);
+        typename Nef_polyhedron::SHalfedge_around_facet_const_circulator
+          hc_start(se), hc_end(hc_start);
+        // collect contour vertices
+        std::vector< typename CDT::Vertex_handle > polygon;
+        CGAL_For_all(hc_start,hc_end)
+        {
+          typename CDT::Vertex_handle vh=cdt.insert(hc_start->source()->center_vertex()->point());
+          vh->info() = vertex_indices[hc_start->source()->center_vertex()];
+          polygon.push_back(vh);
+        }
+        std::size_t nb_constraints = polygon.size();
+        polygon.push_back(polygon.front());
+        for(std::size_t i=0; i<nb_constraints; ++i)
+          cdt.insert_constraint(polygon[i], polygon[i+1]);
+      }
+      //look for a triangle inside the domain of the face
+      typename CDT::Face_handle fh = cdt.infinite_face();
+      fh->info().visited=true;
+      std::vector<typename CDT::Edge> queue;
+      for (int i=0; i<3; ++i)
+        queue.push_back(typename CDT::Edge(fh, i) );
+      while(true)
+      {
+        typename CDT::Edge e = queue.back();
+        queue.pop_back();
+        e=cdt.mirror_edge(e);
+        if (e.first->info().visited) continue;
+        if (cdt.is_constrained(e))
+        {
+          queue.clear();
+          queue.push_back(e);
+          break;
+        }
+        else
+        {
+          for(int i=1; i<3; ++i)
+          {
+            typename CDT::Edge candidate(e.first, (e.second+i)%3);
+            if (!candidate.first->neighbor(candidate.second)->info().visited)
+              queue.push_back( candidate );
+          }
+          e.first->info().visited=true;
+        }
+      }
+      // now extract triangles inside the face
+      while(!queue.empty())
+      {
+        typename CDT::Edge e = queue.back();
+        queue.pop_back();
+        if (e.first->info().visited) continue;
+        e.first->info().visited=true;
+        polygons.resize(polygons.size()+1);
+        if (is_marked)
+          for (int i=2; i>=0; --i)
+            polygons.back().push_back(e.first->vertex(i)->info());
+        else
+          for (int i=0; i<3; ++i)
+            polygons.back().push_back(e.first->vertex(i)->info());
+
+        for(int i=1; i<3; ++i)
+        {
+          typename CDT::Edge candidate(e.first, (e.second+i)%3);
+          if (!cdt.is_constrained(candidate) &&
+              !candidate.first->neighbor(candidate.second)->info().visited)
+          {
+            queue.push_back( cdt.mirror_edge(candidate) );
+          }
+        }
+      }
+    }
   }
 
   void visit(typename Nef_polyhedron::SFace_const_handle)
@@ -141,7 +244,8 @@ void collect_polygon_mesh_info(
 
 /// \ingroup PkgBGL
 /// Converts an objet of type `Nef_polyhedron_3` into a polygon mesh model of `MutableFaceGraph`.
-/// Note that contrary to `Nef_polyhedron_3::convert_to_polyhedron()`, the output is not triangulated.
+/// Note that contrary to `Nef_polyhedron_3::convert_to_polyhedron()`, the output is not triangulated
+/// (but faces with more than one connected component of the boundary).
 /// The polygon mesh can be triangulated using the function `triangulate_faces()`.
 /// \pre `Polygon_mesh` must have an internal point property map with value type being `Nef_polyhedron_3::Point_3`.
 /// \pre `nef.simple()`
