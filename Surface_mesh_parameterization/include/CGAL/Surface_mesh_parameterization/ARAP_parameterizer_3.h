@@ -44,6 +44,43 @@
 #include <CGAL/Default.h>
 #include <CGAL/number_utils.h>
 
+// Below are two macros that can be used to improve the accuracy of optimal Lt
+// matrices.
+// Note that at least one of these macros should be defined. If:
+//
+// - CGAL_SMP_SOLVE_CUBIC_EQUATION is defined: a cubic equation is solved instead of the
+//   complete bivariate system. Although less accurate, it is usually sufficient.
+// - CGAL_SMP_SOLVE_CUBIC_EQUATION and CGAL_SMP_SOLVE_EQUATIONS_WITH_GMP are defined:
+//   the same cubic is solved but using GMP and CGAL's algebraic kernel.
+// - CGAL_SMP_SOLVE_EQUATIONS_WITH_GMP is defined: a bivariate system is solved,
+//   using GMP and CGAL's algebraic kernel.
+//
+// Using CGAL_SMP_SOLVE_EQUATIONS_WITH_GMP requires GMP, MPFI, and linking CGAL
+// with Core and MPFI. This can be simply done in 'CMakeLists.txt' by using:
+// 'find_package(CGAL QUIET COMPONENTS Core MPFI)'
+
+// -----------------------------------------------------------------------------
+#define CGAL_SMP_SOLVE_CUBIC_EQUATION
+//#define CGAL_SMP_SOLVE_EQUATIONS_WITH_GMP
+// -----------------------------------------------------------------------------
+
+#if !defined(CGAL_SMP_SOLVE_CUBIC_EQUATION) && !defined(CGAL_SMP_SOLVE_EQUATIONS_WITH_GMP)
+#error "Either 'CGAL_SMP_SOLVE_CUBIC_EQUATION' or 'CGAL_SMP_SOLVE_EQUATIONS_WITH_GMP' should be defined."
+#endif
+
+#if defined(CGAL_SMP_SOLVE_EQUATIONS_WITH_GMP)
+#if !defined(CGAL_USE_GMP) || !defined(CGAL_USE_MPFI)
+#error "'CGAL_SMP_SOLVE_EQUATIONS_WITH_GMP' cannot be defined if GMP or MPFI are not present."
+#endif
+#endif
+
+#ifdef CGAL_SMP_SOLVE_EQUATIONS_WITH_GMP
+#include <CGAL/GMP_arithmetic_kernel.h>
+#include <CGAL/Algebraic_kernel_d_2.h>
+#elif defined(CGAL_SMP_SOLVE_CUBIC_EQUATION)
+#include <CGAL/Kernel/Conic_misc.h> // used to solve conic equations
+#endif
+
 #include <boost/foreach.hpp>
 #include <boost/function_output_iterator.hpp>
 #include <boost/functional/hash.hpp>
@@ -63,41 +100,6 @@
 //       (this produces C2=0 which is problematic to compute a & b)
 // @todo Add distortion measures
 // @todo Parallelize the local phase?
-
-// Below are two macros that can be used to improve the accuracy of optimal Lt
-// matrices.
-// Note that at least one of these macros should be defined. If:
-//
-// - CGAL_SMP_SOLVE_CUBIC_EQUATION is defined: a cubic equation is solved instead of the
-//   complete bivariate system. Although less accurate, it is usually sufficient.
-// - CGAL_SMP_SOLVE_CUBIC_EQUATION and CGAL_SMP_SOLVE_EQUATIONS_WITH_GMP are defined:
-//   the same cubic is solved but using GMP and CGAL's algebraic kernel.
-// - CGAL_SMP_SOLVE_EQUATIONS_WITH_GMP is defined: a bivariate system is solved,
-//   using GMP and CGAL's algebraic kernel.
-//
-// Using CGAL_SMP_SOLVE_EQUATIONS_WITH_GMP requires GMP, MPFI, and linking CGAL
-// with Core and MPFI. This can be simply done in 'CMakeLists.txt' by using:
-// 'find_package(CGAL QUIET COMPONENTS Core MPFI)'
-
-#define CGAL_SMP_SOLVE_CUBIC_EQUATION
-//#define CGAL_SMP_SOLVE_EQUATIONS_WITH_GMP
-
-#if !defined(CGAL_SMP_SOLVE_CUBIC_EQUATION) && !defined(CGAL_SMP_SOLVE_EQUATIONS_WITH_GMP)
-#error "Either 'CGAL_SMP_SOLVE_CUBIC_EQUATION' or 'CGAL_SMP_SOLVE_EQUATIONS_WITH_GMP' should be defined."
-#endif
-
-#if defined(CGAL_SMP_SOLVE_EQUATIONS_WITH_GMP)
-#if !defined(CGAL_USE_GMP) || !defined(CGAL_USE_MPFI)
-#error "'CGAL_SMP_SOLVE_EQUATIONS_WITH_GMP' cannot be defined if GMP or MPFI are not present."
-#endif
-#endif
-
-#ifdef CGAL_SMP_SOLVE_EQUATIONS_WITH_GMP
-#include <CGAL/GMP_arithmetic_kernel.h>
-#include <CGAL/Algebraic_kernel_d_2.h>
-#elif defined(CGAL_SMP_SOLVE_CUBIC_EQUATION)
-#include <CGAL/Kernel/Conic_misc.h> // used to solving conic equations
-#endif
 
 namespace CGAL {
 
