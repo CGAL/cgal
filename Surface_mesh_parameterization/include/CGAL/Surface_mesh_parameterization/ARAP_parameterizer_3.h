@@ -32,19 +32,14 @@
 
 #include <CGAL/Surface_mesh_parameterization/parameterize.h>
 
-#include <CGAL/Algebraic_kernel_d_2.h>
-#include <CGAL/Kernel/Conic_misc.h> // @tmp used for solving conic equations
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
-
-#ifdef CGAL_USE_GMP
-#include <CGAL/GMP_arithmetic_kernel.h>
-#endif
 
 #if defined(CGAL_EIGEN3_ENABLED)
 #include <CGAL/Eigen_solver_traits.h>
 #endif
 
 #include <CGAL/assertions.h>
+#include <CGAL/basic.h>
 #include <CGAL/circulator.h>
 #include <CGAL/Default.h>
 #include <CGAL/number_utils.h>
@@ -68,6 +63,41 @@
 //       (this produces C2=0 which is problematic to compute a & b)
 // @todo Add distortion measures
 // @todo Parallelize the local phase?
+
+// Below are two macros that can be used to improve the accuracy of optimal Lt
+// matrices.
+// Note that at least one of these macros should be defined. If:
+//
+// - CGAL_SMP_SOLVE_CUBIC_EQUATION is defined: a cubic equation is solved instead of the
+//   complete bivariate system. Although less accurate, it is usually sufficient.
+// - CGAL_SMP_SOLVE_CUBIC_EQUATION and CGAL_SMP_SOLVE_EQUATIONS_WITH_GMP are defined:
+//   the same cubic is solved but using GMP and CGAL's algebraic kernel.
+// - CGAL_SMP_SOLVE_EQUATIONS_WITH_GMP is defined: a bivariate system is solved,
+//   using GMP and CGAL's algebraic kernel.
+//
+// Using CGAL_SMP_SOLVE_EQUATIONS_WITH_GMP requires GMP, MPFI, and linking CGAL
+// with Core and MPFI. This can be simply be done in 'CMakeLists.txt' by using:
+// 'find_package(CGAL QUIET COMPONENTS Core MPFI)'
+
+#define CGAL_SMP_SOLVE_CUBIC_EQUATION
+//#define CGAL_SMP_SOLVE_EQUATIONS_WITH_GMP
+
+#if !defined(CGAL_SMP_SOLVE_CUBIC_EQUATION) && !defined(CGAL_SMP_SOLVE_EQUATIONS_WITH_GMP)
+#error "Either 'CGAL_SMP_SOLVE_CUBIC_EQUATION' or 'CGAL_SMP_SOLVE_EQUATIONS_WITH_GMP' should be defined."
+#endif
+
+#if defined(CGAL_SMP_SOLVE_EQUATIONS_WITH_GMP)
+#if !defined(CGAL_USE_GMP) || !defined(CGAL_USE_MPFI)
+#error "'CGAL_SMP_SOLVE_EQUATIONS_WITH_GMP' cannot be defined if GMP or MPFI are not present."
+#endif
+#endif
+
+#ifdef CGAL_SMP_SOLVE_EQUATIONS_WITH_GMP
+#include <CGAL/GMP_arithmetic_kernel.h>
+#include <CGAL/Algebraic_kernel_d_2.h>
+#elif defined(CGAL_SMP_SOLVE_CUBIC_EQUATION)
+#include <CGAL/Kernel/Conic_misc.h> // used to solving conic equations
+#endif
 
 namespace CGAL {
 
@@ -533,8 +563,8 @@ private:
     return roots.size();
   }
 
-#ifdef CGAL_USE_GMP
-  // Solves the equation a3 x^3 + a2 x^2 + a1 x + a0 = 0, using CGAL's algeabric kernel.
+#if defined(CGAL_SMP_SOLVE_CUBIC_EQUATION) && defined(CGAL_SMP_SOLVE_EQUATIONS_WITH_GMP)
+  // Solves the equation a3 x^3 + a2 x^2 + a1 x + a0 = 0, using CGAL's algebraic kernel.
   int solve_cubic_equation_with_AK(const NT a3, const NT a2,
                                    const NT a1, const NT a0,
                                    std::vector<NT>& roots) const
@@ -577,7 +607,9 @@ private:
 
     return roots.size();
   }
+#endif // defined(CGAL_SMP_SOLVE_CUBIC_EQUATION) && defined(CGAL_SMP_SOLVE_EQUATIONS_WITH_GMP)
 
+#if !defined(CGAL_SMP_SOLVE_CUBIC_EQUATION) && defined(CGAL_SMP_SOLVE_EQUATIONS_WITH_GMP)
   // Solve the bivariate system
   // { C1 * a + 2 * lambda * a ( a^2 + b^2 - 1 ) = C2
   // { C1 * b + 2 * lambda * b ( a^2 + b^2 - 1 ) = C3
@@ -642,7 +674,7 @@ private:
 
     return a_roots.size();
   }
-#endif // CGAL_USE_GMP
+#endif // !defined(CGAL_SMP_SOLVE_CUBIC_EQUATION) && defined(CGAL_SMP_SOLVE_EQUATIONS_WITH_GMP)
 
   // Compute the root that gives the lowest face energy.
   template <typename VertexUVMap>
@@ -757,25 +789,16 @@ private:
         b = C3 * denom;
       }
       else { // general case
-#define SOLVE_CUBIC_EQUATION
-#ifdef SOLVE_CUBIC_EQUATION
-        // The cubic equation solving approach is less accurate but seems to be working.
-        // The other approach is left in case this one runs into trouble.
-
+#ifdef CGAL_SMP_SOLVE_CUBIC_EQUATION
         CGAL_precondition(C2 != 0.);
         NT C2_denom = 1. / C2;
         NT a3_coeff = 2. * m_lambda * (C2 * C2 + C3 * C3) * C2_denom * C2_denom;
 
         std::vector<NT> roots;
+#ifdef CGAL_SMP_SOLVE_EQUATIONS_WITH_GMP
+        solve_cubic_equation_with_AK(a3_coeff, 0., (C1 - 2. * m_lambda), -C2, roots);
+#else // !CGAL_SMP_SOLVE_EQUATIONS_WITH_GMP
         solve_cubic_equation(a3_coeff, 0., (C1 - 2. * m_lambda), -C2, roots);
-
-        // The function above is correct up to 10^{-14}, but below can be used
-        // if more precision is needed (should never be the case)
-        // Note that it requires GMP
-#ifdef CGAL_USE_GMP
-//        std::vector<NT> roots_with_AK;
-//        solve_cubic_equation_with_AK(a3_coeff, 0., (C1 - 2. * m_lambda), -C2,
-//                                     roots_with_AK);
 #endif
 
         std::size_t ind = compute_root_with_lowest_energy(mesh, fd,
@@ -783,7 +806,7 @@ private:
                                                           C2_denom, C3, roots);
         a = roots[ind];
         b = C3 * C2_denom * a;
-#elif defined(CGAL_USE_GMP) // solve the bivariate system
+#else // !CGAL_SMP_SOLVE_CUBIC_EQUATION, solve the bivariate system
         std::vector<NT> a_roots;
         std::vector<NT> b_roots;
         solve_bivariate_system(C1, C2, C3, a_roots, b_roots);
@@ -793,8 +816,6 @@ private:
                                                           a_roots, b_roots);
         a = a_roots[ind];
         b = b_roots[ind];
-#else
-  #error "The macro 'SOLVE_CUBIC_EQUATION' must be defined or GMP must be available."
 #endif
       }
 
