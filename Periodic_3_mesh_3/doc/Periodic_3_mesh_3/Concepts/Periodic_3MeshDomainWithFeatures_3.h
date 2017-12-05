@@ -32,6 +32,7 @@ of `Periodic_3MeshDomainWithFeatures_3`.
 
 class Periodic_3MeshDomainWithFeatures_3
 {
+public:
   /*!
   Returns the indices of the curves incident to the corner `id`, if any.
 
