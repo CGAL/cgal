@@ -160,15 +160,17 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
       set ( ${LIB}_VERSION "unknown" )
 
       if(NOT CMAKE_CROSSCOMPILING)
-        try_run( ${LIB}_RUN_RES
-                 ${LIB}_COMPILE_RES
-                 "${CMAKE_BINARY_DIR}"
-                 "${CGAL_INSTALLATION_PACKAGE_DIR}/config/support/print_${LIB}_version.cpp"
-                 CMAKE_FLAGS "-DINCLUDE_DIRECTORIES:STRING=${${PKG}_INCLUDE_DIR};${${PKG}_DEPENDENCY_INCLUDE_DIR}"
-                             "-DLINK_LIBRARIES:STRING=${${PKG}_LIBRARIES};${${PKG}_DEPENDENCY_LIBRARIES}"
-                             "-DLINK_DIRECTORIES:STRING=${${PKG}_LIBRARIES_DIR};${${PKG}_DEPENDENCY_LIBRARIES_DIR}"
-                 OUTPUT_VARIABLE ${LIB}_OUTPUT
-              )
+        if(EXISTS "${CGAL_INSTALLATION_PACKAGE_DIR}/config/support/print_${LIB}_version.cpp")
+          try_run( ${LIB}_RUN_RES
+                   ${LIB}_COMPILE_RES
+                   "${CMAKE_BINARY_DIR}"
+                   "${CGAL_INSTALLATION_PACKAGE_DIR}/config/support/print_${LIB}_version.cpp"
+                   CMAKE_FLAGS "-DINCLUDE_DIRECTORIES:STRING=${${PKG}_INCLUDE_DIR};${${PKG}_DEPENDENCY_INCLUDE_DIR}"
+                               "-DLINK_LIBRARIES:STRING=${${PKG}_LIBRARIES};${${PKG}_DEPENDENCY_LIBRARIES}"
+                               "-DLINK_DIRECTORIES:STRING=${${PKG}_LIBRARIES_DIR};${${PKG}_DEPENDENCY_LIBRARIES_DIR}"
+                   OUTPUT_VARIABLE ${LIB}_OUTPUT
+                   )
+        endif()
       else()
         set(${LIB}_COMPILE_RES FALSE)
         message(STATUS "CROSS-COMPILING!")

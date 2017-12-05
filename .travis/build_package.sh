@@ -6,7 +6,7 @@ CXX_FLAGS="-DCGAL_NDEBUG"
 function build_examples {
   mkdir -p build-travis
   cd build-travis
-  cmake -DCGAL_DIR="$ROOT/build" -DCMAKE_CXX_FLAGS_RELEASE="${CXX_FLAGS}" ..
+  cmake -DCGAL_DIR="/usr/local" -DCMAKE_CXX_FLAGS_RELEASE="${CXX_FLAGS}" ..
   make -j2
 }
 
@@ -44,7 +44,7 @@ function build_demo {
     QGLVIEWERROOT=$PWD/qglviewer
     export QGLVIEWERROOT
   fi
-  cmake -DCGAL_DIR="$ROOT/build" -DQt5_DIR="/opt/qt55/lib/cmake/Qt5" -DQt5Svg_DIR="/opt/qt55/lib/cmake/Qt5Svg" -DQt5OpenGL_DIR="/opt/qt55/lib/cmake/Qt5OpenGL" -DCGAL_DONT_OVERRIDE_CMAKE_FLAGS:BOOL=ON -DCMAKE_CXX_FLAGS_RELEASE="${CXX_FLAGS} ${EXTRA_CXX_FLAGS}" ..
+  cmake -DCGAL_DIR="/usr/local" -DQt5_DIR="/opt/qt55/lib/cmake/Qt5" -DQt5Svg_DIR="/opt/qt55/lib/cmake/Qt5Svg" -DQt5OpenGL_DIR="/opt/qt55/lib/cmake/Qt5OpenGL" -DCGAL_DONT_OVERRIDE_CMAKE_FLAGS:BOOL=ON -DCMAKE_CXX_FLAGS_RELEASE="${CXX_FLAGS} ${EXTRA_CXX_FLAGS}" ..
   make -j2
 }
 
