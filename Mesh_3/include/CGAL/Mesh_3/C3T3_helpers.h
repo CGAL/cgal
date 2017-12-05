@@ -3405,8 +3405,8 @@ get_least_square_surface_plane(const Vertex_handle& v,
          (patch_index == Surface_patch_index() ||
           c3t3_.surface_patch_index(*fit) == patch_index) )
     {
-      const Cell_handle& cell = fit->first;
-      const int& i = fit->second;
+      const Cell_handle cell = fit->first;
+      const int i = fit->second;
 
       // In the case of a periodic triangulation, the incident facets of a point
       // do not necessarily have the same offsets. Worse, the surface centers

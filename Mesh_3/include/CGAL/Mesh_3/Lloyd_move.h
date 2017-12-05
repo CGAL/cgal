@@ -289,8 +289,8 @@ private:
       if ( ! c3t3.is_in_complex(*fit) )
         continue;
 
-      const Cell_handle& cell = fit->first;
-      const int& i = fit->second;
+      const Cell_handle cell = fit->first;
+      const int i = fit->second;
 
       // In the case of a periodic triangulation, the incident facets of a point
       // do not necessarily have the same offsets. Worse, the surface centers
