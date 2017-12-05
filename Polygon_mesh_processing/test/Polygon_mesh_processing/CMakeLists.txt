@@ -92,6 +92,8 @@ endif()
   create_single_source_cgal_program("test_coref_epic_points_identity.cpp")
   create_single_source_cgal_program("test_does_bound_a_volume.cpp")
   create_single_source_cgal_program("test_pmp_clip.cpp")
+  create_single_source_cgal_program("test_autorefinement.cpp")
+  create_single_source_cgal_program("autorefinement_sm.cpp")
   create_single_source_cgal_program("triangulate_hole_polyline_test.cpp")
   create_single_source_cgal_program("surface_intersection_sm_poly.cpp" )
 
