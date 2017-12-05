@@ -180,7 +180,7 @@ private:
       : he_head(h), num_anchors(0) {}
 
     halfedge_descriptor he_head; // The heading halfedge of the boundary cylce.
-    std::size_t num_anchors; // The number of anchors on the boundary.
+    std::size_t num_anchors; // The number of anchors on the boundary cycle.
   };
 
   // Triangle polyhedron builder.
@@ -244,8 +244,8 @@ private:
 
   // All anchors.
   std::vector<Anchor> m_anchors;
-  // All borders cycles.
-  std::vector<Boundary_cycle> m_borders;
+  // All boundary cycles.
+  std::vector<Boundary_cycle> m_bcycles;
   // The indexed triangle approximation.
   std::vector<std::vector<std::size_t> > m_tris;
 
@@ -334,7 +334,7 @@ public:
     m_proxies.clear();
     m_px_planes.clear();
     m_anchors.clear();
-    m_borders.clear();
+    m_bcycles.clear();
     m_tris.clear();
 
     if (!m_ptm)
@@ -874,7 +874,7 @@ public:
     BOOST_FOREACH(vertex_descriptor v, vertices(*m_ptm))
       put(m_vanchor_map, v, CGAL_VSA_INVALID_TAG);
     m_anchors.clear();
-    m_borders.clear();
+    m_bcycles.clear();
     m_tris.clear();
 
     m_px_planes.clear();
@@ -986,15 +986,15 @@ public:
    */
   template <typename OutputIterator>
   void get_indexed_boundary_polygons(OutputIterator out_itr) const {
-    BOOST_FOREACH(const Boundary_cycle &bcycle, m_borders) {
-      std::vector<std::size_t> bdr;
+    BOOST_FOREACH(const Boundary_cycle &bcycle, m_bcycles) {
+      std::vector<std::size_t> plg;
       halfedge_descriptor he = bcycle.he_head;
       do {
         Boundary_chord chord;
         walk_to_next_anchor(he, chord);
-        bdr.push_back(get(m_vanchor_map, target(he, *m_ptm)));
+        plg.push_back(get(m_vanchor_map, target(he, *m_ptm)));
       } while (he != bcycle.he_head);
-      *out_itr++ = bdr;
+      *out_itr++ = plg;
     }
   }
 
@@ -1423,30 +1423,30 @@ private:
         he_candidates.insert(h);
     }
 
-    // pick up one candidate halfedge each time and traverse the connected border
+    // pick up one candidate halfedge each time and traverse the connected boundary cycle
     while (!he_candidates.empty()) {
       halfedge_descriptor he_start = *he_candidates.begin();
       walk_to_first_anchor(he_start);
-      // no anchor in this connected border, make a new anchor
+      // no anchor in this connected boundary cycle, make a new anchor
       if (!is_anchor_attached(he_start))
         attach_anchor(he_start);
 
-      // a new connected border
-      m_borders.push_back(Boundary_cycle(he_start));
+      // a new connected boundary cycle
+      m_bcycles.push_back(Boundary_cycle(he_start));
 
 #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
-      std::cerr << "#border " << m_borders.size() << std::endl;
+      std::cerr << "#bcycle " << m_bcycles.size() << std::endl;
 #endif
 
       const halfedge_descriptor he_mark = he_start;
       do {
         Boundary_chord chord;
         walk_to_next_anchor(he_start, chord);
-        m_borders.back().num_anchors += subdivide_chord(chord.begin(), chord.end(),
+        m_bcycles.back().num_anchors += subdivide_chord(chord.begin(), chord.end(),
           chord_error, is_relative_to_chord, with_dihedral_angle);
 
 #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
-        std::cerr << "#chord_anchor " << m_borders.back().num_anchors << std::endl;
+        std::cerr << "#chord_anchor " << m_bcycles.back().num_anchors << std::endl;
 #endif
 
         BOOST_FOREACH(const halfedge_descriptor &he, chord)
@@ -1456,10 +1456,10 @@ private:
   }
 
   /*!
-   * @brief Adds anchors to the border cycles with only 2 anchors.
+   * @brief Adds anchors to the boundary cycles with only 2 anchors.
    */
   void add_anchors() {
-    BOOST_FOREACH(const Boundary_cycle &bcycle, m_borders) {
+    BOOST_FOREACH(const Boundary_cycle &bcycle, m_bcycles) {
       if (bcycle.num_anchors > 2)
         continue;
 
@@ -1484,7 +1484,7 @@ private:
       } while (he != bcycle.he_head);
 
       // anchor count may be increased to more than 2 afterwards
-      // due to the new anchors added by the neighboring border (< 2 anchors)
+      // due to the new anchors added by the neighboring boundary cycle (< 2 anchors)
       if (count > 2) {
         const_cast<Boundary_cycle &>(bcycle).num_anchors = count;
         continue;
@@ -1504,7 +1504,7 @@ private:
           he_max = he;
         }
       }
-      // increase border anchors by one
+      // add one anchors to this boundary cycle
       attach_anchor(he_max);
       const_cast<Boundary_cycle &>(bcycle).num_anchors++;
     }
@@ -1607,10 +1607,9 @@ private:
       }
     }
 
-    // tag all boundary chord
-    BOOST_FOREACH(const Boundary_cycle &bdr, m_borders) {
-      const halfedge_descriptor he_mark = bdr.he_head;
-      halfedge_descriptor he = he_mark;
+    // tag all boundary chords
+    BOOST_FOREACH(const Boundary_cycle &bcycle, m_bcycles) {
+      halfedge_descriptor he = bcycle.he_head;
       do {
         Boundary_chord chord;
         walk_to_next_anchor(he, chord);
@@ -1635,7 +1634,7 @@ private:
           else
             global_vtag_map[to_sgv_map[target(*citr, *m_ptm)]] = anchorright;
         }
-      } while (he != he_mark);
+      } while (he != bcycle.he_head);
     }
 
     // collect triangles
@@ -1655,22 +1654,25 @@ private:
   }
 
   /*!
-   * @brief Walks along the region border to the first halfedge pointing to a vertex associated with an anchor.
-   * @param[in/out] he_start region border halfedge
+   * @brief Walks along the region boundary cycle to the first halfedge
+   * pointing to a vertex associated with an anchor.
+   * @param[in/out] he_start region boundary halfedge
    */
   void walk_to_first_anchor(halfedge_descriptor &he_start) {
     const halfedge_descriptor start_mark = he_start;
     while (!is_anchor_attached(he_start)) {
       // no anchor attached to the halfedge target
       walk_to_next_border_halfedge(he_start);
-      if (he_start == start_mark) // back to where started, a circular border
+      if (he_start == start_mark) // back to where started, a boundary cycle without anchor
         return;
     }
   }
 
   /*!
-   * @brief Walks along the region border to the next anchor and records the path as @a chord.
-   * @param[in/out] he_start starting region border halfedge pointing to a vertex associated with an anchor
+   * @brief Walks along the region boundary cycle to the next anchor
+   * and records the path as a `Boundary_chord`.
+   * @param[in/out] he_start starting region boundary halfedge
+   * pointing to a vertex associated with an anchor
    * @param[out] chord recorded path chord
    */
   void walk_to_next_anchor(halfedge_descriptor &he_start, Boundary_chord &chord) const {
@@ -1681,8 +1683,8 @@ private:
   }
 
   /*!
-   * @brief Walks to next border halfedge.
-   * @param[in/out] he_start region border halfedge
+   * @brief Walks to the next boundary cycle halfedge.
+   * @param[in/out] he_start region boundary halfedge
    */
   void walk_to_next_border_halfedge(halfedge_descriptor &he_start) const {
     const std::size_t px_idx = get(m_fproxy_map, face(he_start, *m_ptm));
@@ -1806,7 +1808,8 @@ private:
 
   /*!
    * @brief Check if a vertex is attached with an anchor.
-   * @tparam VertexAnchorIndexMap `WritablePropertyMap` with `boost::graph_traights<TriangleMesh>::vertex_descriptor` as key and `std::size_t` as value type
+   * @tparam VertexAnchorIndexMap `WritablePropertyMap`
+   * with `boost::graph_traights<TriangleMesh>::vertex_descriptor` as key and `std::size_t` as value type
    * @param vtx a vertex descriptor
    * @param vanchor_map vertex anchor index map
    */
