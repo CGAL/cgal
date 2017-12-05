@@ -111,7 +111,7 @@ performed by the mesh generator. Also, the mesh generator
 will not be able to apply different meshing criteria, e.g. different
 sizing fields, for the different connected components of a single feature.
 
-The domain is input to the mesh generation function,
+The domain is passed to the mesh generation function
 as a domain class, often called the oracle,
 that provides predicates and constructors related to the domain,
 the subdomains, the boundary surface patches,
@@ -136,12 +136,6 @@ The resulting mesh is output as a subcomplex of a 3D Delaunay triangulation,
 in a class providing various iterators
 on mesh elements.
 
-\subsection Mesh_3OutputFaceGraph Output FaceGraph
-
-This \cgal component also provides a function to convert the reconstructed mesh to a `FaceGraph`:
-
-- `facets_in_complex_3_to_triangle_mesh()`
-
 The 3D triangulation provides approximations of the
 subdomains, surface patches, curves,
 and corners according to the restricted
@@ -154,6 +148,11 @@ by the union of the Delaunay mesh facets whose dual Voronoi edges intersect the 
 Such mesh facets are called <I>surface facets</I> in the following.
 The 1-dimensional exposed features are approximated by sequences of mesh edges
 and the 0-dimensional exposed features are represented by mesh vertices.
+
+\subsubsection Mesh_3OutputFaceGraph Output FaceGraph
+
+This \cgal component also provides a function to convert the reconstructed mesh to a `FaceGraph`:
+`facets_in_complex_3_to_triangle_mesh()`.
 
 \subsection Mesh_3DelaunayRefinement Delaunay Refinement
 \anchor introsecparam
@@ -201,10 +200,9 @@ given 1-feature or the angles formed by two 1-features incident to a 0-feature.
 
 According to this method, the 1-dimensional features are
 sampled with points and covered by protecting balls centered on the sample points,
-in such a way that :
-
--no three balls intersect
--no pair of balls centered on different 1-features intersect.
+in such a way that:
+- no three balls intersect;
+- no pair of balls centered on different 1-features intersect.
 
 The triangulation embedding the mesh is in fact
 a weighted Delaunay triangulation, and the triangulation
@@ -216,12 +214,10 @@ are no longer circumcenters but are
 weighted circumcenters.
 All Steiner vertices inserted by the refinement process are given a zero weight.
 The method guarantees:
-
-1) that each segment joining
+- that each segment joining
 two successive centers on a 1-dimensional feature will stay in the triangulation,
-thus ensuring an accurate approximation of the 1-dimensional features.
-
-2) that the refinement process will never try to insert a refinement point in the union of the
+thus ensuring an accurate approximation of the 1-dimensional features;
+- that the refinement process will never try to insert a refinement point in the union of the
 protecting balls, which ensures the termination of the refinement process.
 
 \subsection Mesh_3OptimizationPhase Optimization Phase
@@ -380,9 +376,9 @@ represented in the mesh or not.
 The type `Features` of this parameter is an internal undescribed type.
 The library provides functions to construct appropriate values of that type.
 <UL>
-<LI>`parameters::features(domain)` sets `features` according to the domain,
+<LI>`parameters::features(domain)` sets features according to the domain,
 i.e.\ 0 and 1-dimensional features are taken into account if `domain` is a
-`MeshDomainWithFeatures_3`
+`MeshDomainWithFeatures_3`.
 <LI>`parameters::no_features()` prevents the representation
 of 0 and 1-dimensional features in the mesh. This is useful to get a smooth and rough approximation
 of a domain with features.

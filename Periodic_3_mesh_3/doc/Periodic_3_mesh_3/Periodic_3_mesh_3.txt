@@ -7,11 +7,13 @@ namespace CGAL {
 \authors Mikhail Bogdanov, Aymeric Pellé, Mael Rouxel-Labbé, and Monique Teillaud
 \cgalAutoToc
 
-\cgalFigureBegin{p3m3banner, banner.png}
-Cut-view of a multi-domain periodic 3D mesh generated from an implicit function.
-\cgalFigureEnd
-
-\warning EXAMPLES TO BE CLEANED, FIGURES TO BE REMADE.
+\cgalFigureAnchor{Periodic_3_mesh_3Banner}
+<center>
+<img src="periodic_banner.png" style="max-width:76%;"/>
+</center>
+\cgalFigureCaptionBegin{Periodic_3_mesh_3Banner}
+A cut view of a periodic mesh.
+\cgalFigureCaptionEnd
 
 \section Periodic_3_mesh_3_section_intro Introduction
 
@@ -111,12 +113,12 @@ performed by the mesh generator. Also, the mesh generator
 will not be able to apply different meshing criteria, e.g. different
 sizing field, for the different connected components of a single feature.
 
-The domain is input to the mesh generation function,
+The domain is passed to the mesh generation function
 as a domain class, often called the oracle,
 that provides predicates and constructors related to the domain,
 the subdomains, and the boundary surface patches.
 Mainly, the oracle provides a predicate to test
-if a given query point belongs to the domain or not
+if a given query point belongs to the periodic domain or not
 and to find in which subdomain it lies in the affirmative case.
 The domain class also provides predicates and constructors to test the intersection of a query line segment
 with the boundary surface patches and to build some intersection points if any.
@@ -139,6 +141,11 @@ whose dual Voronoi edges intersect the surface patch. Such mesh facets are calle
 <I>surface facets</I> in the following. The 1-dimensional exposed features
 are approximated by sequences of mesh edges and the 0-dimensional exposed features
 are represented by mesh vertices.
+
+\subsubsection Periodic_3_mesh_3OutputFaceGraph Output FaceGraph
+
+This \cgal component also provides a function to convert the reconstructed mesh to a `FaceGraph`:
+`facets_in_complex_3_to_triangle_mesh()`.
 
 \subsection Periodic_3_mesh_3DelaunayRefinement Delaunay Refinement
 
@@ -179,7 +186,7 @@ given 1-feature or the angles formed by two 1-features incident to a 0-feature.
 See Section \ref Mesh_3Protectionof0and1dimensionalExposed in the documentation
 of the `Mesh_3` package for further information.
 
-Examples of periodic meshes with features are presented
+How to prescribe sharp features and examples of periodic meshes with features are presented
 in Section \ref Periodic_3_mesh_3MeshingDomainswithSharpFeatures.
 
 \subsection Periodic_3_mesh_3OptimizationPhase Optimization Phase
@@ -279,9 +286,9 @@ represented in the mesh or not.
 The type `Features` of this parameter is an internal undescribed type.
 The library provides functions to construct appropriate values of that type.
 <UL>
-<LI>`parameters::features(domain)` sets `features` according to the domain,
+<LI>`parameters::features()` sets features according to the domain,
 i.e.\ 0 and 1-dimensional features are taken into account if `domain` is a
-`MeshDomainWithFeatures_3`
+`MeshDomainWithFeatures_3`.
 <LI>`parameters::no_features()` prevents the representation
 of 0 and 1-dimensional features in the mesh. This is useful to get a smooth and rough approximation
 of a domain with features.
@@ -355,19 +362,42 @@ have the same periodicity as the fundamental periodic domain.
 
 \section Periodic_3_mesh_3_section_examples Examples
 
+This section presents various use cases of the periodic mesh generator.
+
+\section Periodic_3_mesh_3SubMultipleCopies Outputting Multiple Copies of a Periodic Mesh
+
+Generated meshes can be output to the `.mesh` file format, which can be read
+with `medit`. The function `output_to_medit()` takes a stream, a mesh
+complex, and - optionally - the number of periodic copies that should be drawn,
+making it easier to observe the periodicity of the result.
+\cgalFigureRef{Periodic_3_mesh_3Periodic_copies} illustrates the different output
+for the three possible number of copies: `1`, `2`, `4`, and `8`.
+
+\cgalFigureAnchor{Periodic_3_mesh_3Periodic_copies}
+<center>
+<img src="periodic_copies.jpg" style="max-width:90%;"/>
+</center>
+\cgalFigureCaptionBegin{Periodic_3_mesh_3Periodic_copies}
+Example of a periodic mesh output in `1`, `4`, or `8` copies.
+\cgalFigureCaptionEnd
+
 \subsection Periodic_3_mesh_33DDomainsImplicitIsosurfaces 3D Periodic Domains Bounded by Implicit Isosurfaces
 The following code produces a 3D periodic mesh for a domain whose boundary surface
 is an isosurface defined by an implicit function.
-\cgalFigureRef{figurei_periodic_mplicit_domain} shows a cut view of the resulting mesh.
 Note the use of named parameters (from the Boost library) in the
 constructor of the `Mesh_criteria` instance.
+\cgalFigureRef{Periodic_3_mesh_3Periodic_implicit_shape} shows the resulting mesh.
 
 \cgalExample{Periodic_3_mesh_3/mesh_implicit_shape.cpp}
 
-\cgalFigureBegin{figurei_periodic_mplicit_domain, implicit_periodic_domain.png, implicit_periodic_domain_8.png}
-
-Cut views of a 3D periodic mesh produced from an implicit domain (left). The same mesh shown with 7 copies (right).
-\cgalFigureEnd
+\cgalFigureAnchor{Periodic_3_mesh_3Periodic_implicit_shape}
+<center>
+<img src="periodic_implicit_domain.png" style="max-width:90%;"/>
+</center>
+\cgalFigureCaptionBegin{Periodic_3_mesh_3Periodic_implicit_shape}
+A single instance of a periodic mesh produced from an implicit domain (left).
+Cut view (middle). Another cut is shown, with 7 copies (right).
+\cgalFigureCaptionEnd
 
 While the implicit function used in the previous example is defined and periodic
 over the complete space, it is also possible to consider an implicit function
@@ -377,49 +407,134 @@ implicit function (a sphere):
 
 \code{.cpp}
 ...
+// A sphere centered on (0.5, 0.5, 0.5) with radius sqrt(0.2)
 FT sphere_function (const Point& p) { return CGAL::squared_distance(p, Point(0.5, 0.5, 0.5)) - 0.2; }
+...
 Periodic_mesh_domain domain(sphere_function, CGAL::Iso_cuboid_3<K>(0, 0, 0, 1, 1, 1));
 ...
 \endcode
 
-will yield the mesh shown on Figure \cgalFigureRef{figure_implicit_periodic_domain_2}.
+will yield the mesh shown on Figure \cgalFigureRef{Periodic_3_mesh_3Periodic_implicit_sphere}.
 
-\cgalFigureBegin{figure_implicit_periodic_domain_2, periodic_spheres.png}
-Periodically duplicated spheres.
-\cgalFigureEnd
+\cgalFigureAnchor{Periodic_3_mesh_3Periodic_implicit_sphere}
+<center>
+<img src="periodic_implicit_spheres.png" style="max-width:70%;"/>
+</center>
+\cgalFigureCaptionBegin{Periodic_3_mesh_3Periodic_implicit_sphere}
+Periodic mesh of an implicit sphere that is entirely contained in the fundamental domain,
+shown with 7 copies (left). A cut view along one of the axes (right).
+\cgalFigureCaptionEnd
 
 \subsection Periodic_3_mesh_3MeshingMultipleDomains Meshing Multiple Domains
 
-The following code produces a 3D periodic mesh for a domain consisting of several subdomains.
-It uses `Implicit_multi_domain_to_labeling_function_wrapper` as model
-of `ImplicitFunction`, which is required by `Labeled_periodic_3_mesh_domain_3`.
-
+The following code produces a 3D periodic mesh for a domain consisting of a combination
+of the two implicit functions used in the previous example: a sphere is encompassed
+within the implicit domain of Figure \cgalFigureRef{Periodic_3_mesh_3Periodic_implicit_shape}.
+The class `Implicit_multi_domain_to_labeling_function_wrapper` is used as model
+of `ImplicitFunction`, required by the class `Labeled_periodic_3_mesh_domain_3`.
 The set of subdomains is given by a vector of vector of signs.
 Each subdomain corresponds to a sign vector `[s1, s2, ..., sn]`,
 where `si` is the sign of the function `fi(p)` at a point `p` of the subdomain.
-
-\cgalFigureRef{figure_multi_domain_periodic} shows a view and a cut view of the resulting mesh.
+\cgalFigureRef{Periodic_3_mesh_3Periodic_multi_domain} shows a view and a cut view of the resulting mesh.
 
 \cgalExample{Periodic_3_mesh_3/mesh_implicit_multi_domain.cpp}
 
-\cgalFigureBegin{figure_multi_domain_periodic, periodic_multi_domain.png, periodic_multi_domain_2.png}
-View (left) and cut view (right) of a 3D mesh of a torus intersecting sphere.
-\cgalFigureEnd
+\cgalFigureAnchor{Periodic_3_mesh_3Periodic_multi_domain}
+<center>
+<img src="periodic_implicit_multi_domain.jpg" style="max-width:90%;"/>
+</center>
+\cgalFigureCaptionBegin{Periodic_3_mesh_3Periodic_implicit_sphere}
+A periodic mesh produced by a combination of implicit functions (with 7 copies, left).
+Cut view without (middle) and with (right) the internal tetrahedra.
+\cgalFigureCaptionEnd
+
+\subsection Periodic_3_mesh_3Optimizers Tuning Mesh Optimization
+
+In the previous examples, the mesh generation is launched through a call
+`make_periodic_3_mesh_3()` with a minimal number of parameters. In such cases,
+the default optimization strategy is applied: after the Delaunay refinement process
+two optimization steps are performed, a perturbation and a sliver exudation.
+The following example shows how to enable and disable the various optimization methods.
+\cgalFigureRef{Periodic_3_mesh_3Periodic_multi_domain} shows the resulting periodic mesh
+before and after optimizations.
+
+\cgalExample{Periodic_3_mesh_3/mesh_implicit_shape_with_optimizers.cpp}
+
+\cgalFigureAnchor{Periodic_3_mesh_3Periodic_optimizers}
+<center>
+<img src="periodic_implicit_optimizers.png" style="max-width:90%;"/>
+</center>
+\cgalFigureCaptionBegin{Periodic_3_mesh_3Periodic_optimizers}
+
+\cgalFigureCaptionEnd
 
 \subsection Periodic_3_mesh_3MeshingDomainswithSharpFeatures Meshing Domains with Sharp Features
 
-The following example shows how to generate a mesh from an implicit
-domain. We add by hand the intersection of the spheres as a sharp feature.
+The periodic mesh generator currently operates on domains described by one or
+multiple implicit functions. Sharp features that wish to be preserved
+must then be explicitly specified by hand by the user, using the mesh domain
+class `CGAL::Mesh_domain_with_polyline_features_3` and the functions `add_features()`
+and `add_corner()`. These functions allow to specify `curves` (as a polyline,
+a list of points with two consecutive points forming a segment of the curve) and
+`corners` which should appear in the final mesh.
+Note that the discretization of the specified curves might change: for example,
+a curve might be subdivided in smaller segments (but it will still be present
+in the final mesh).
 
-\cgalFigureBegin{figure_implicit_protection, periodic_implicit_domain_with_protection.png}
-One of the edge of the cylinder is protected.
-\cgalFigureEnd
+To ensure the good protection of features, some requirements are put on the curves
+and corners that are specified by the user:
+- A corner can only belong to a curve if it is an endpoint of that curve.
+- A curve cannot self-intersect, except at its endpoint (it then forms a so-called `cycle`).
+- Two curves cannot intersect, except at a common endpoint.
+
+\warning Curves and corners do not need to be restricted to the fundamental
+periodic domain, but users should be mindful that curves and corners will exist
+in all copies of the domain and the requirements described above must still be verified.
+For example, if considering a unit cube, it is not a valid input
+to prescribe a corner at the point `(1.5, 1.5, 1.5)` and the curve `(2,2,2)--(3,3,3)`
+because the corner intersects the curve in the middle.
+
+\subsubsection Periodic_3_mesh_3ConeWithSharpFeatures Example of a Cone-like Periodic Domain
+
+The example below uses two different types of protecting features: a cycle to
+protect the base of the cone, and a corner at the apex of a cone, which ensures
+that the apex will appear in the mesh.
+\cgalFigureRef{Periodic_3_mesh_3Periodic_protection} shows the comparison between
+the same domain meshed with the same criteria when protection is disabled and enabled.
 
 \cgalExample{Periodic_3_mesh_3/mesh_implicit_shape_with_protection.cpp}
 
+\cgalFigureAnchor{Periodic_3_mesh_3Periodic_protection}
+<center>
+<img src="periodic_implicit_protection.jpg" style="max-width:90%;"/>
+</center>
+\cgalFigureCaptionBegin{Periodic_3_mesh_3Periodic_protection}
+A periodic mesh obtained with a cone-like periodic implicit function. The base
+and the apex of the cone are badly approximated when protection is unused (left).
+Using protection, we obtain a faithful approximation.
+\cgalFigureCaptionEnd
+
+\subsubsection Periodic_3_mesh_3InfiniteFeatures Example of Infinite Protecting Curves
+
+It is possible to prescribe features that will, due to periodicity, extend indefinitely
+in space. A simple example of such occurrence is the segment `(0,0,0) -- (1,1,1)` when
+considering the unit cube as fundamental domain.
+\cgalFigureRef{Periodic_3_mesh_3Periodic_protection} shows a domain where sharp edges
+can be protected to obtain a nicer result.
+
+\cgalFigureAnchor{Periodic_3_mesh_3Periodic_protection_infinite}
+<center>
+<img src="periodic_implicit_protection_bis.jpg" style="max-width:90%;"/>
+</center>
+\cgalFigureCaptionBegin{Periodic_3_mesh_3Periodic_protection_infinite}
+A periodic mesh without (left) and with (right) periodic.
+\cgalFigureCaptionEnd
+
 \subsection Periodic_3_mesh_3ComplexExamples Further Examples
-Advanced use cases can be found in Section \ref Mesh_3_section_examples of the `Mesh_3` package.
-It is straightforward to adapt these examples to periodic settings.
+
+Advanced use cases of the 3D mesh generator with implicit domains, its optimizers
+and protection mechanisms can be found in Section \ref Mesh_3_section_examples
+of the `Mesh_3` package.
 
 \section Periodic_3_mesh_3DesignAndImpl Design and Implementation History
 
