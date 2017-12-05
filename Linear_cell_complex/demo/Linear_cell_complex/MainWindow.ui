@@ -44,7 +44,6 @@
     <addaction name="actionSave"/>
     <addaction name="separator"/>
     <addaction name="actionImportOFF"/>
-    <addaction name="actionAddOFF"/>
     <addaction name="actionImportMoka"/>
     <addaction name="separator"/>
     <addaction name="actionImport3DTDS"/>
@@ -105,11 +104,6 @@
   <action name="actionImportOFF">
    <property name="text">
     <string>&amp;Import OFF</string>
-   </property>
-  </action>
-  <action name="actionAddOFF">
-   <property name="text">
-    <string>Add &amp;OFF</string>
    </property>
   </action>
   <action name="actionQuit">
