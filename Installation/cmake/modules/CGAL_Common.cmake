@@ -1,4 +1,4 @@
-include(CGAL_Macros)
+include(${CMAKE_CURRENT_LIST_DIR}/CGAL_Macros.cmake)
 
 if(RUNNING_CGAL_AUTO_TEST)
 # Just to avoid a warning from CMake if that variable is set on the command line...
@@ -43,7 +43,7 @@ if( NOT CGAL_COMMON_FILE_INCLUDED )
     hide_variable(CMAKE_UNAME)
 
     # Optionally setup the Visual Leak Detector
-    include(CGAL_SetupVLD)
+    include(${CMAKE_CURRENT_LIST_DIR}/CGAL_SetupVLD.cmake)
     CGAL_SetupVLD()
     if(VLD_FOUND)
       message(STATUS "Visual Leak Detector (VLD) is enabled.")

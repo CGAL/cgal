@@ -32,11 +32,6 @@ if ( CGAL_FOUND )
 
   find_package( TBB QUIET )
 
-  if( TBB_FOUND )
-    include(${TBB_USE_FILE})
-    list(APPEND CGAL_3RD_PARTY_LIBRARIES ${TBB_LIBRARIES})
-  endif()
-  
   # Executables that do *not* require LAPACK
   create_single_source_cgal_program( "read_test.cpp" )
   create_single_source_cgal_program( "read_test_with_different_pmaps.cpp" )
@@ -73,6 +68,18 @@ if ( CGAL_FOUND )
     message(STATUS "NOTICE: This program requires either Eigen 3.1 (or greater) or LAPACK, and will not be compiled.")
 
   endif(EIGEN3_FOUND OR LAPACK_FOUND)
+
+  foreach(target
+      analysis_test
+      smoothing_test
+      bilateral_smoothing_test
+      wlop_simplify_and_regularize_test
+      edge_aware_upsample_test
+      normal_estimation_test)
+    if(TBB_FOUND AND TARGET ${target})
+      CGAL_target_use_TBB(${target})
+    endif()
+  endforeach()
 
 else()
 

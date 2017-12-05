@@ -28,6 +28,10 @@ if ( CGAL_FOUND )
   target_link_libraries(mesh ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS mesh )
 
+  include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
+  cgal_add_compilation_test(conform)
+  cgal_add_compilation_test(mesh)
+
 else()
 
   message(STATUS "NOTICE: This demo requires CGAL and will not be compiled.")

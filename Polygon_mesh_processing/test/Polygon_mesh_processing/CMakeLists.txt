@@ -47,12 +47,6 @@ include_directories( BEFORE ../../include )
 find_package(Eigen3 3.2.0) #(requires 3.2.0 or greater)
 
 find_package( TBB )
-if( TBB_FOUND )
-  include( ${TBB_USE_FILE} )
-  list( APPEND CGAL_3RD_PARTY_LIBRARIES ${TBB_LIBRARIES} )
-else()
-  message( STATUS "NOTICE: Intel TBB was not found. test_pmp_distance will use sequential code." )
-endif()
 
 include( CGAL_CreateSingleSourceCGALProgram )
 if (EIGEN3_FOUND)
@@ -101,8 +95,14 @@ endif()
   create_single_source_cgal_program("triangulate_hole_polyline_test.cpp")
   create_single_source_cgal_program("surface_intersection_sm_poly.cpp" )
 
+  if( TBB_FOUND )
+    CGAL_target_use_TBB(test_pmp_distance)
+  else()
+    message( STATUS "NOTICE: Intel TBB was not found. test_pmp_distance will use sequential code." )
+  endif()
+
 if(OpenMesh_FOUND)
   create_single_source_cgal_program("remeshing_test_P_SM_OM.cpp" )
-  target_link_libraries( remeshing_test_P_SM_OM ${OPENMESH_LIBRARIES} )
+  target_link_libraries( remeshing_test_P_SM_OM PRIVATE ${OPENMESH_LIBRARIES} )
 endif()
 

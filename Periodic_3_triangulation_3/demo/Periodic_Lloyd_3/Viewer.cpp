@@ -32,18 +32,18 @@ Viewer::draw()
       initialize_buffers();
   QColor color;
  //the points
-  ::glEnable(GL_BLEND);
-  ::glEnable(GL_POINT_SMOOTH);
-  ::glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
-  ::glEnable(GL_LINE_SMOOTH);
-  ::glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-  ::glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  ::glPointSize(5);
+  glEnable(GL_BLEND);
+  glEnable(GL_POINT_SMOOTH);
+  glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
+  glEnable(GL_LINE_SMOOTH);
+  glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glPointSize(5);
 
-  ::glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
-  ::glColor3f(0.2f, 0.2f, 1.f);
-  ::glEnable(GL_POLYGON_OFFSET_FILL);
-  ::glPolygonOffset(3.0f,-3.0f);
+  glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+  glColor3f(0.2f, 0.2f, 1.f);
+  glEnable(GL_POLYGON_OFFSET_FILL);
+  glPolygonOffset(3.0f,-3.0f);
 
 
   attrib_buffers(this);
@@ -56,10 +56,10 @@ Viewer::draw()
   vao[0].release();
 
   //The Lines
-  ::glLineWidth(1.);
-  ::glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
-  ::glColor3ub(0,0,0);
-  ::glDisable(GL_POLYGON_OFFSET_FILL);
+  glLineWidth(1.);
+  glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+  glColor3ub(0,0,0);
+  glDisable(GL_POLYGON_OFFSET_FILL);
 
   vao[1].bind();
   color.setRgbF(0.27f, 0.51f, 0.7f);
@@ -173,7 +173,7 @@ void Viewer::initialize_buffers()
 
 void Viewer::compute_elements()
 {
-    //::glColor3f(1.0f, 0.72f, 0.06f);
+    //glColor3f(1.0f, 0.72f, 0.06f);
     pos_points.resize(0);
     pos_lines.resize(0);
     pos_8lines.resize(0);
@@ -188,7 +188,7 @@ void Viewer::compute_elements()
       pos_points.push_back(p.x()); pos_points.push_back(p.y()); pos_points.push_back(p.z());
     }
 
-    //::glColor3f(0.27f, 0.51f, 0.7f);
+    //glColor3f(0.27f, 0.51f, 0.7f);
     for (Periodic_triangle_iterator ptit
        = scene->periodic_triangulation.periodic_triangles_begin(
            P3DT3::UNIQUE);

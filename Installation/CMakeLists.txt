@@ -35,12 +35,11 @@ include(GNUInstallDirs)
 if(CMAKE_MAJOR_VERSION GREATER 2)
   # In header only mode, we use INTERFACE libraries, which was introduced in cmake 3.0.
   # Thus this option is only enabled for cmake >= 3.0.
-  option(CGAL_HEADER_ONLY "Enable the header only version of CGAL" OFF )
 
   if (CGAL_HEADER_ONLY)
     set(CGAL_HEADER_ONLY TRUE CACHE BOOL "Enable cgal header only" FORCE)
     add_definitions(-DCGAL_HEADER_ONLY)
-  endif (CGAL_HEADER_ONLY)
+  endif()
 
 endif()
 
@@ -551,12 +550,18 @@ message( "== Generate version files (DONE) ==\n")
 #                                    -= External libraries =-
 #
 #--------------------------------------------------------------------------------------------------
- 
-message("== Set up flags ==")
 
-include(CGAL_SetupFlags)
+if( RUNNING_CGAL_AUTO_TEST )
+  message("== Set up flags ==")
 
-message("== Set up flags (DONE) ==\n")
+  # Ugly hack to be compatible with current CGAL testsuite process (as of
+  # Nov. 2017). -- Laurent Rineau
+  include(CGAL_SetupFlags)
+
+  message("== Set up flags (DONE) ==\n")
+else()
+  include( CGAL_display_flags )
+endif()
 
 message("== Detect external libraries ==")
 
@@ -673,7 +678,9 @@ option( CGAL_ENABLE_PRECONFIG "Select to allow to preconfiguration of external l
 # this; e.g. in MPFI/RS in Algebraic_kernel_d. For these cases CGAL
 # and the example/test must be configured with MPFI (just one is not sufficient)
 
-include(CGAL_SetupDependencies)
+if(NOT CGAL_HEADER_ONLY)
+  include(CGAL_SetupDependencies)
+endif()
 
 message("== Detect external libraries (DONE) ==\n")
 
@@ -683,6 +690,7 @@ message("== Detect external libraries (DONE) ==\n")
 #
 #--------------------------------------------------------------------------------------------------
 
+if(NOT CGAL_HEADER_ONLY)
 # The variables set are the #defines expected by compiler_config.h
 # Note: CMake will not notice when files are added or removed
 # but this is probably OK for the installation procedure.
@@ -742,6 +750,10 @@ if ( RUNNING_CGAL_AUTO_TEST AND MSVC )
   file( APPEND "${CMAKE_BINARY_DIR}/include/CGAL/compiler_config.h" "#include <CGAL/Testsuite/vc_debug_hook.h>\n\n" )
 endif()
 
+message("== Write compiler_config.h (DONE) ==\n")
+
+endif(NOT CGAL_HEADER_ONLY)
+
 #--------------------------------------------------------------------------------------------------
 #
 #                                    -= Installation Setup =-
@@ -760,7 +772,7 @@ set ( CGAL_INSTALL_BIN_DIR   "${CMAKE_INSTALL_BINDIR}"
   CACHE STRING "The folder where CGAL user-side scripts will be installed, relative to CMAKE_INSTALL_PREFIX"
   )
 
-set ( CGAL_INSTALL_CMAKE_DIR "${CGAL_INSTALL_LIB_DIR}/CGAL"
+set ( CGAL_INSTALL_CMAKE_DIR "${CGAL_INSTALL_LIB_DIR}/cmake/CGAL"
   CACHE STRING "The folder where CGAL CMake modules will be installed, relative to CMAKE_INSTALL_PREFIX" 
   )
 
@@ -771,8 +783,6 @@ set ( CGAL_INSTALL_DOC_DIR "${CMAKE_INSTALL_DATAROOTDIR}/doc/${CGAL_VERSION_DIR}
 set ( CGAL_INSTALL_MAN_DIR "${CMAKE_INSTALL_DATAROOTDIR}/man/man1"
   CACHE STRING "The folder where manual pages for CGAL scripts will be installed, relative to CMAKE_INSTALL_PREFIX"
   )
-
-message("== Write compiler_config.h (DONE) ==\n")
 
 #--------------------------------------------------------------------------------------------------
 #
@@ -788,7 +798,9 @@ set(CGAL_LIBRARIES_DIR ${CMAKE_BINARY_DIR}/lib)
 set(CGAL_INCLUDE_DIRS ${CMAKE_BINARY_DIR}/include)
 
 foreach (package ${CGAL_CONFIGURED_PACKAGES})
-  set(CGAL_INCLUDE_DIRS ${CGAL_INCLUDE_DIRS} ${package}/include)
+  if(EXISTS ${package}/include)
+    set(CGAL_INCLUDE_DIRS ${CGAL_INCLUDE_DIRS} ${package}/include)
+  endif()
 endforeach()
 
 include_directories (${CGAL_INCLUDE_DIRS})
@@ -847,7 +859,12 @@ if (CGAL_BRANCH_BUILD AND CGAL_REPORT_DUPLICATE_FILES )
 
 endif()
 
-create_CGALconfig_files()
+if(NOT CGAL_HEADER_ONLY)
+  create_CGALconfig_files()
+else()
+  configure_file("${CGAL_MODULES_DIR}/CGALConfig_binary_header_only.cmake.in"
+    "${CMAKE_BINARY_DIR}/CGALConfig.cmake"  @ONLY)
+endif()
 
 #--------------------------------------------------------------------------------------------------
 #
@@ -892,10 +909,17 @@ if ( ZLIB_IN_AUXILIARY )
 endif()
 
 
-install(FILES
-  ${CMAKE_BINARY_DIR}/CGALConfigVersion.cmake
-  ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake
-  DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
+if(NOT CGAL_HEADER_ONLY)
+  install(FILES
+    ${CMAKE_BINARY_DIR}/CGALConfigVersion.cmake
+    ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake
+    DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
+else()
+  install(FILES
+    ${CMAKE_BINARY_DIR}/CGALConfigVersion.cmake
+    ${CMAKE_CURRENT_LIST_DIR}/lib/cmake/CGAL/CGALConfig.cmake
+    DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
+endif()
 
 if(CGAL_INSTALL_MAN_DIR)
   install(FILES auxiliary/cgal_create_cmake_script.1 DESTINATION ${CGAL_INSTALL_MAN_DIR} )
