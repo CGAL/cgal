@@ -388,7 +388,9 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     scene_polylines_item
     scene_basic_objects
     scene_polyhedron_selection_item
+    scene_surface_mesh_selection_item
     scene_polyhedron_item_decorator
+    scene_surface_mesh_item_decorator
     scene_polyhedron_and_sm_item_k_ring_selection
     scene_poly_item_k_ring_selection
     scene_sm_item_k_ring_selection
