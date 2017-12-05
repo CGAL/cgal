@@ -23,10 +23,10 @@ int main (void) {
 
     // Estimate the normals using VCM
     double R = 20;
-    vcm_estimate_normals(points.begin(), points.end(),
-                         CGAL::First_of_pair_property_map<PointWithNormal>(),
-                         CGAL::Second_of_pair_property_map<PointWithNormal>(),
-                         R, 0.0);
+    vcm_estimate_normals
+      (points, R, 0.0,
+       CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointWithNormal>()).
+       normal_map(CGAL::Second_of_pair_property_map<PointWithNormal>()));
 
     std::cout << "Normal is " << points[0].second << std::endl;
 

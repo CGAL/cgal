@@ -61,15 +61,13 @@ void test_edge_aware_upsample(std::vector<PointVectorPair>& points, // input poi
 
    //Run algorithm 
   CGAL::edge_aware_upsample_point_set<Concurrency_tag>(
-            points.begin(), 
-            points.end(), 
-            std::back_inserter(points),
-            CGAL::First_of_pair_property_map<PointVectorPair>(),
-            CGAL::Second_of_pair_property_map<PointVectorPair>(),
-            sharpness_sigma, 
-            edge_sensitivity,
-            neighbor_radius,
-            points.size() * times_of_output_points);
+    points, std::back_inserter(points),
+    CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>()).
+    normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>()).
+    sharpness_angle(sharpness_sigma).
+    edge_sensitivity(edge_sensitivity).
+    neighbor_radius(neighbor_radius).
+    number_of_output_points(points.size() * times_of_output_points));
 
 
   std::size_t memory = CGAL::Memory_sizer().virtual_size();
