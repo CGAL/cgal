@@ -499,11 +499,12 @@ get_sq_distance_to_closest_vertex(const Tr& tr,
       const int n = (k+i)&3;
       const Vertex_handle& vn = c->vertex(n);
 
-      std::pair<VC_it, bool> is_insert_succesful = treated_vertices.insert(vn);
-      if(! is_insert_succesful.second) // vertex has already been treated
+      if(vn == Vertex_handle() ||
+         tr.is_infinite(vn))
         continue;
 
-      if(tr.is_infinite(vn))
+      std::pair<VC_it, bool> is_insert_succesful = treated_vertices.insert(vn);
+      if(! is_insert_succesful.second) // vertex has already been treated
         continue;
 
       const Point& wpvn = tr.point(c, n);
