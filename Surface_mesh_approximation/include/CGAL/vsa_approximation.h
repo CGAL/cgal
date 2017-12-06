@@ -222,10 +222,10 @@ private:
   const TriangleMesh *m_ptm;
   // The mesh vertex point map.
   VertexPointMap m_vpoint_map;
-  // The error metric.
-  const Error_metric *fit_error;
+  // The error metric functor.
+  const Error_metric *m_perror_metric;
   // The proxy fitting functor.
-  const Proxy_fitting *proxy_fitting;
+  const Proxy_fitting *m_pproxy_fitting;
 
   Construct_vector_3 vector_functor;
   Construct_scaled_vector_3 scale_functor;
@@ -259,8 +259,8 @@ public:
    */
   Mesh_approximation() :
     m_ptm(NULL),
-    fit_error(NULL),
-    proxy_fitting(NULL),
+    m_perror_metric(NULL),
+    m_pproxy_fitting(NULL),
     m_average_edge_length(0.0) {
 
     Geom_traits traits;
@@ -278,8 +278,8 @@ public:
   Mesh_approximation(const TriangleMesh &tm, const VertexPointMap &vpoint_map) :
     m_ptm(&tm),
     m_vpoint_map(vpoint_map),
-    fit_error(NULL),
-    proxy_fitting(NULL),
+    m_perror_metric(NULL),
+    m_pproxy_fitting(NULL),
     m_average_edge_length(0.0) {
 
     Geom_traits traits;
@@ -292,7 +292,7 @@ public:
       Vertex_anchor_tag("VSA-vertex_anchor"), *(const_cast<TriangleMesh *>(m_ptm)));
 
     m_fproxy_map = CGAL::internal::add_property(
-      Face_proxy_tag("VSA-face_proxy"), *(const_cast<TriangleMesh*>(m_ptm)));
+      Face_proxy_tag("VSA-face_proxy"), *(const_cast<TriangleMesh *>(m_ptm)));
   }
 
   
@@ -317,13 +317,13 @@ public:
 
   /*!
    * Set the error and fitting functor.
-   * @param _error_metric a `ErrorMetric` functor.
-   * @param _proxy_fitting a `ProxyFitting` functor.
+   * @param error_metric_ an `ErrorMetric` functor.
+   * @param proxy_fitting_ a `ProxyFitting` functor.
    */
-  void set_metric(const Error_metric &_error_metric,
-    const Proxy_fitting &_proxy_fitting) {
-    fit_error = &_error_metric;
-    proxy_fitting = &_proxy_fitting;
+  void set_metric(const Error_metric &error_metric_,
+    const Proxy_fitting &proxy_fitting_) {
+    m_perror_metric = &error_metric_;
+    m_pproxy_fitting = &proxy_fitting_;
   }
 
   /*!
@@ -490,7 +490,7 @@ public:
       pxw.err = FT(0.0);
     BOOST_FOREACH(face_descriptor f, faces(*m_ptm)) {
       std::size_t pxidx = get(m_fproxy_map, f);
-      m_proxies[pxidx].err += (*fit_error)(f, m_proxies[pxidx].px);
+      m_proxies[pxidx].err += (*m_perror_metric)(f, m_proxies[pxidx].px);
     }
 
     FT sum_error(0.0);
@@ -698,7 +698,7 @@ public:
     BOOST_FOREACH(face_descriptor f, faces(*m_ptm)) {
       std::size_t px_idx = get(m_fproxy_map, f);
       if (px_idx == px1 || px_idx == px0) {
-        err_sum += (*fit_error)(f, m_proxies[px_idx].px);
+        err_sum += (*m_perror_metric)(f, m_proxies[px_idx].px);
         put(m_fproxy_map, f, px0);
         merged_patch.push_back(f);
       }
@@ -717,7 +717,7 @@ public:
 
     FT err_merged(0.0);
     BOOST_FOREACH(face_descriptor f, merged_patch)
-      err_merged += (*fit_error)(f, m_proxies[px0].px);
+      err_merged += (*m_perror_metric)(f, m_proxies[px0].px);
 
     return err_merged - err_sum;
   }
@@ -763,7 +763,7 @@ public:
       Proxy_wrapper pxw = fit_new_proxy(merged_patch.begin(), merged_patch.end(), CGAL_VSA_INVALID_TAG);
       FT sum_error(0.0);
       BOOST_FOREACH(face_descriptor f, merged_patch)
-        sum_error += (*fit_error)(f, pxw.px);
+        sum_error += (*m_perror_metric)(f, pxw.px);
       merged_set.insert(ProxyPair(pxi, pxj));
 
       if (first_merge || sum_error < min_merged_error) {
@@ -1183,7 +1183,7 @@ private:
         if (fadj != boost::graph_traits<TriangleMesh>::null_face()
             && get(m_fproxy_map, fadj) == CGAL_VSA_INVALID_TAG) {
           facet_pqueue.push(Facet_to_integrate(
-            fadj, pxw_itr->idx, (*fit_error)(fadj, pxw_itr->px)));
+            fadj, pxw_itr->idx, (*m_perror_metric)(fadj, pxw_itr->px)));
         }
       }
     }
@@ -1197,7 +1197,7 @@ private:
           if (fadj != boost::graph_traits<TriangleMesh>::null_face()
             && get(m_fproxy_map, fadj) == CGAL_VSA_INVALID_TAG) {
             facet_pqueue.push(Facet_to_integrate(
-              fadj, c.px, (*fit_error)(fadj, m_proxies[c.px].px)));
+              fadj, c.px, (*m_perror_metric)(fadj, m_proxies[c.px].px)));
           }
         }
       }
@@ -1250,7 +1250,7 @@ private:
       if (px_idx != px_worst || f == m_proxies[px_idx].seed)
         continue;
 
-      FT err = (*fit_error)(f, m_proxies[px_idx].px);
+      FT err = (*m_perror_metric)(f, m_proxies[px_idx].px);
       if (first || max_error < err) {
         first = false;
         max_error = err;
@@ -1283,15 +1283,15 @@ private:
     const std::size_t &px_idx) {
     CGAL_assertion(beg != end);
 
-    // use proxy_fitting functor to fit proxy parameters
-    Proxy px = (*proxy_fitting)(beg, end);
+    // use Proxy_fitting functor to fit proxy parameters
+    Proxy px = (*m_pproxy_fitting)(beg, end);
 
     // find proxy seed
     face_descriptor seed = *beg;
-    FT err_min = (*fit_error)(*beg, px);
+    FT err_min = (*m_perror_metric)(*beg, px);
     std::pair<FacetIterator, FacetIterator> facets(beg, end);
     BOOST_FOREACH(face_descriptor f, facets) {
-      FT err = (*fit_error)(f, px);
+      FT err = (*m_perror_metric)(f, px);
       if (err < err_min) {
         err_min = err;
         seed = f;
@@ -1312,7 +1312,7 @@ private:
   Proxy_wrapper fit_new_proxy(const face_descriptor &f, const std::size_t &px_idx) {
     std::vector<face_descriptor> fvec(1, f);
     // fit proxy parameters
-    Proxy px = (*proxy_fitting)(fvec.begin(), fvec.end());
+    Proxy px = (*m_pproxy_fitting)(fvec.begin(), fvec.end());
 
     return Proxy_wrapper(px, px_idx, f);
   }
