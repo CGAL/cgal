@@ -43,8 +43,8 @@ flexibility that is offered in the \ref PkgMesh_3Summary package.}
 
 A periodic mesh extends, by definition, infinitely in space. To avoid storing and
 manipulating duplicate points, well-chosen "dummy" points are inserted
-at the beginning of the meshing process, thus ensuring that the triangulation forms
-at all times a simplicial complex within a single fundamental copy of the domain
+at the beginning of the meshing process, thus ensuring that the periodic triangulation
+forms at all times a simplicial complex within a single fundamental copy of the domain
 (see Sections \ref P3Triangulation3secspace and \ref P3Triangulation3secintro
 of the manual of 3D periodic triangulations).
 The meshing process can then be exclusively conducted in the fundamental domain.
@@ -53,8 +53,8 @@ the three-dimensional mesh generator of %CGAL (see package: \ref PkgMesh_3Summar
 Since this mesh generator only supports traditional (non-periodic) domains,
 it must be provided adapted oracles to handle the periodicity of the input domain
 and of the mesh.
-This package provides these necessary tools to be able to use %CGAL's three-dimensional
-mesh generator with %CGAL's 3D periodic triangulations.
+This package provides these necessary tools to be able to use %CGAL's \ref PkgMesh_3Summary
+with %CGAL's \ref PkgPeriodic3Triangulation3Summary.
 
 \cgalClassifedRefPages
 
@@ -63,7 +63,7 @@ mesh generator with %CGAL's 3D periodic triangulations.
 This package relies entirely on the \ref PkgMesh_3Concepts
 and the \ref PkgMesh_3SecondaryConcepts described in the \ref PkgMesh_3Summary package.
 The following concepts are essentially identical to the concepts `MeshDomain_3`
-and `MeshDomainWithFeatures_3` in the \ref PkgMesh_3Summary package
+and `MeshDomainWithFeatures_3` in the package \ref PkgMesh_3Summary,
 but are nevertheless defined for clarity:
 
 - `Periodic_3MeshDomain_3`
@@ -95,8 +95,9 @@ The following functions handle the generation of a periodic mesh:
 
 ## Classes and Functions of `Mesh_3` ##
 
-Many classes and functions used by this package are defined within the `Mesh_3`
-package, see \ref PkgMesh_3MeshClasses, \ref PkgMesh_3Domains, and \ref PkgMesh_3Parameters.
+Many classes and functions used by this package are defined within the package
+\ref PkgMesh_3Summary, see \ref PkgMesh_3MeshClasses, \ref PkgMesh_3Domains,
+and \ref PkgMesh_3Parameters.
 
 */
 

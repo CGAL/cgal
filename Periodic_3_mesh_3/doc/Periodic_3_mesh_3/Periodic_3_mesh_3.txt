@@ -58,8 +58,7 @@ by a mesh optimization phase to remove slivers and provide a good quality mesh.
 
 \subsection Periodic_3_mesh_3Mesh_3 Relation to the 3D Mesh Generation Package
 
-This package is fundamentally linked to the package \ref PkgMesh_3Summary,
-referred from now on as "the Mesh_3 package", or simply `Mesh_3`.
+This package is fundamentally linked to the package \ref PkgMesh_3Summary.
 
 A periodic mesh extends, by definition, infinitely in space. To avoid storing and
 manipulating duplicate points, well-chosen "dummy" points are inserted
@@ -70,8 +69,8 @@ of the manual of 3D periodic triangulations).
 The meshing process can then be exclusively conducted in the fundamental domain.
 This single copy of the complete periodic mesh is generated using
 the three-dimensional mesh generator of %CGAL (see package: \ref PkgMesh_3Summary).
-Since `Mesh_3` only supports traditional (non-periodic) domains,
-it must be provided adapted oracles to handle the periodicity of the input domain
+Since the package \ref PkgMesh_3Summary only supports traditional (non-periodic) domains,
+we provide adapted oracles to handle the periodicity of the input domain
 and of the mesh.
 This package provides these necessary tools to be able to use %CGAL's three-dimensional
 mesh generator with %CGAL's 3D periodic triangulations.
@@ -144,8 +143,8 @@ are represented by mesh vertices.
 
 \subsubsection Periodic_3_mesh_3OutputFaceGraph Output FaceGraph
 
-This \cgal component also provides a function to convert the reconstructed mesh to a `FaceGraph`:
-`facets_in_complex_3_to_triangle_mesh()`.
+This \cgal component also provides a function to convert the reconstructed mesh to a `FaceGraph`,
+namely `facets_in_complex_3_to_triangle_mesh()`.
 
 \subsection Periodic_3_mesh_3DelaunayRefinement Delaunay Refinement
 
@@ -162,7 +161,7 @@ Those criteria may be somehow tuned to the user needs
 to achieve for instance the respect of a sizing field by mesh elements,
 some topological conditions on the representation of boundary surfaces in the mesh,
 and/or some error bound for the approximation of boundary surfaces.
-To some extend, the user may tune the Delaunay refinement
+To some extent, the user may tune the Delaunay refinement
 to a prescribed trade-off between mesh quality and mesh density.
 The mesh density refers to the number of mesh vertices and cells,
 i.e.\ to the complexity of the mesh.
@@ -184,17 +183,17 @@ and to guarantee that the refinement process terminates
 whatever may be the dihedral angles formed by input surface patches incident to a
 given 1-feature or the angles formed by two 1-features incident to a 0-feature.
 See Section \ref Mesh_3Protectionof0and1dimensionalExposed in the documentation
-of the `Mesh_3` package for further information.
+of the package \ref PkgMesh_3Summary for further information.
 
 How to prescribe sharp features and examples of periodic meshes with features are presented
 in Section \ref Periodic_3_mesh_3MeshingDomainswithSharpFeatures.
 
 \subsection Periodic_3_mesh_3OptimizationPhase Optimization Phase
 
-The optimization phase is a succession of optimization processes who aim to
+The optimization phase is a succession of optimization processes which aim to
 improve the quality of the mesh in terms of shape and size of its elements.
-All the optimizers offered by `Mesh_3` are also available for periodic mesh
-generation:
+All the optimizers offered by the package \ref PkgMesh_3Summary are also available
+for periodic mesh generation:
 
 - The Lloyd and odt-smoother are global optimizers, moving the mesh vertices
 to minimize a mesh energy.
@@ -202,8 +201,8 @@ to minimize a mesh energy.
 the worst mesh elements.
 
 See Sections \ref Mesh_3OptimizationPhase, \ref Mesh_3TheOptimizationParameters,
-and \ref Mesh_3TuningMeshOptimization Tuning Mesh Optimization
-in the documentation of the `Mesh_3` package for further information.
+and \ref Mesh_3TuningMeshOptimization in the documentation of the package \ref PkgMesh_3Summary
+for further information.
 
 \section Periodic_3_mesh_3_section_interface Interface
 
@@ -239,7 +238,7 @@ an existing periodic mesh of the input domain.
 \warning The triangulation must form at all times a simplicial complex within
 a single copy of the domain. It is the responsibility of the user to provide
 a triangulation that satisfies this condition when calling the refinement
-function `refine_periodic_3_mesh_3`.
+function `refine_periodic_3_mesh_3()`.
 
 \subsection Periodic_3_mesh_3TheDataStructure The Data Structure
 
@@ -471,15 +470,15 @@ before and after optimizations.
 \subsection Periodic_3_mesh_3MeshingDomainswithSharpFeatures Meshing Domains with Sharp Features
 
 The periodic mesh generator currently operates on domains described by one or
-multiple implicit functions. Sharp features that wish to be preserved
+multiple implicit functions. Sharp features to be preserved
 must then be explicitly specified by hand by the user, using the mesh domain
 class `CGAL::Mesh_domain_with_polyline_features_3` and the functions `add_features()`
 and `add_corner()`. These functions allow to specify `curves` (as a polyline,
 a list of points with two consecutive points forming a segment of the curve) and
 `corners` which should appear in the final mesh.
 Note that the discretization of the specified curves might change: for example,
-a curve might be subdivided in smaller segments (but it will still be present
-in the final mesh).
+a curve might be subdivided in smaller segments or simplified in larger segments,
+but the prescribed geometry will still be present in the final mesh.
 
 To ensure the good protection of features, some requirements are put on the curves
 and corners that are specified by the user:
@@ -527,26 +526,26 @@ can be protected to obtain a nicer result.
 <img src="periodic_implicit_protection_bis.jpg" style="max-width:90%;"/>
 </center>
 \cgalFigureCaptionBegin{Periodic_3_mesh_3Periodic_protection_infinite}
-A periodic mesh without (left) and with (right) periodic.
+A periodic mesh without (left) and with (right) sharp features protection.
 \cgalFigureCaptionEnd
 
 \subsection Periodic_3_mesh_3ComplexExamples Further Examples
 
-Advanced use cases of the 3D mesh generator with implicit domains, its optimizers
+Advanced use cases of the 3D mesh generator with implicit domains, its optimizers,
 and protection mechanisms can be found in Section \ref Mesh_3_section_examples
-of the `Mesh_3` package.
+of the package \ref PkgMesh_3Summary.
 
 \section Periodic_3_mesh_3DesignAndImpl Design and Implementation History
 
 \subsection Periodic_3_mesh_3TheoreticalFoundations Theoretical Foundations
 
 For the theoretical foundations of the mesh generation process, see Section
-\ref Mesh_3TheoreticalFoundations of the package `Mesh_3`.
+\ref Mesh_3TheoreticalFoundations of the package \ref PkgMesh_3Summary.
 
 \subsection Periodic_3_mesh_3ImplementationHistory Implementation History
 
-Work on the package `Periodic_3_mesh_3` started during the PhD thesis of Mikhail Bogdanov,
-advised by Monique Teillaud. A code prototype came out of their collaboration.
+The work on this package started during the PhD thesis of Mikhail Bogdanov,
+advised by Monique Teillaud, which resulted in a first prototype.
 
 From the beginning of 2014, most of the work was performed by Aymeric
 Pellé, in collaboration with Monique Teillaud.

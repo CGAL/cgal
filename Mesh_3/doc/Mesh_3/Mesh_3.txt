@@ -151,8 +151,8 @@ and the 0-dimensional exposed features are represented by mesh vertices.
 
 \subsubsection Mesh_3OutputFaceGraph Output FaceGraph
 
-This \cgal component also provides a function to convert the reconstructed mesh to a `FaceGraph`:
-`facets_in_complex_3_to_triangle_mesh()`.
+This \cgal component also provides a function to convert the reconstructed mesh to a `FaceGraph`,
+namely `facets_in_complex_3_to_triangle_mesh()`.
 
 \subsection Mesh_3DelaunayRefinement Delaunay Refinement
 \anchor introsecparam
@@ -175,7 +175,7 @@ Those criteria may be somehow tuned to the user needs
 to achieve for instance the respect of a sizing field by mesh elements,
 some topological conditions on the representation of boundary surfaces in the mesh,
 and/or some error bound for the approximation of boundary surfaces.
-To some extend, the user may tune the Delaunay refinement
+To some extent, the user may tune the Delaunay refinement
 to a prescribed trade-off
 between mesh quality and mesh density.
 The mesh density refers to the number of mesh vertices and cells,
