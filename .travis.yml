@@ -58,7 +58,7 @@ install:
 before_script: 
 - mkdir -p build 
 - cd build 
-- cmake -DCGAL_HEADER_ONLY=ON -DQt5_DIR="/opt/qt55/lib/cmake/Qt5" -DQt5Svg_DIR="/opt/qt55/lib/cmake/Qt5Svg" -DQt5OpenGL_DIR="/opt/qt55/lib/cmake/Qt5OpenGL" -DWITH_demos:BOOL=TRUE -DWITH_examples:BOOL=true -DWITH_tests:BOOL=TRUE -DCMAKE_CXX_FLAGS_RELEASE=-DCGAL_NDEBUG .. 
+- cmake -DCGAL_HEADER_ONLY=ON -DQt5_DIR="/opt/qt55/lib/cmake/Qt5" -DQt5Svg_DIR="/opt/qt55/lib/cmake/Qt5Svg" -DQt5OpenGL_DIR="/opt/qt55/lib/cmake/Qt5OpenGL" -DCMAKE_CXX_FLAGS_RELEASE=-DCGAL_NDEBUG .. 
 - make 
 - sudo make install
 - cd .. 
