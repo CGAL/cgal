@@ -363,7 +363,7 @@ public:
    * Parameters out of range are ignored.
    * @param method seeding method
    * @param max_nb_proxies maximum target number of proxies,
-   * should be in range (0, num_faces(tm) / 3)
+   * should be in range (nb_connected_components, num_faces(tm) / 3)
    * @param min_error_drop minimum error drop,
    * should be in range (0.0, 1.0)
    * @param nb_relaxations number of interleaved refitting relaxations
@@ -376,6 +376,9 @@ public:
     const std::size_t nb_relaxations = 5) {
     // maximum number of proxies internally, maybe better choice?
     const std::size_t nb_px = num_faces(*m_ptm) / 3;
+
+    // initialize proxies and the proxy map to prepare for insertion
+    bootstrap_from_connected_components();
 
     if (min_error_drop && *min_error_drop > FT(0.0) && *min_error_drop < FT(1.0)) {
       // as long as minimum error is specified and valid
@@ -1006,20 +1009,20 @@ private:
    * @brief Random initialize proxies to target number of proxies.
    * @note To ensure the randomness, call `std::srand()` beforehand.
    * @param max_nb_proxies maximum number of proxies, 
-   * should be in range (0, num_faces(*m_ptm))
+   * should be in range (nb_connected_components, num_faces(*m_ptm))
    * @param num_iterations number of re-fitting iterations 
    * @return number of proxies initialized
    */
   std::size_t init_random(const std::size_t max_nb_proxies,
     const std::size_t num_iterations) {
-    // fill a temporary vector of facets
-    std::vector<face_descriptor> facets;
-    random_shuffle_facets(facets);
+    // random shuffled facets except for the bootstrapped connected component seed facets
+    std::vector<face_descriptor> shuffled_facets;
+    random_shuffle_non_seed_facets(shuffled_facets);
 
-    m_proxies.clear();
     // reach to the number of proxies
-    for (std::size_t i = 0; i < max_nb_proxies; ++i)
-      m_proxies.push_back(fit_new_proxy(facets[i], m_proxies.size()));
+    for (std::size_t i = 0; i < shuffled_facets.size()
+      && m_proxies.size() < max_nb_proxies; ++i)
+      m_proxies.push_back(fit_new_proxy(shuffled_facets[i], m_proxies.size()));
     run(num_iterations);
 
     return m_proxies.size();
@@ -1028,17 +1031,15 @@ private:
   /*!
    * @brief Incremental initialize proxies to target number of proxies.
    * @param max_nb_proxies maximum number of proxies, 
-   * should be in range (0, num_faces(*m_ptm))
+   * should be in range (nb_connected_components, num_faces(*m_ptm))
    * @param num_iterations number of re-fitting iterations 
    * before each incremental proxy insertion
    * @return number of proxies initialized
    */
   std::size_t init_incremental(const std::size_t max_nb_proxies,
     const std::size_t num_iterations) {
-    // initialize a proxy and the proxy map to prepare for the insertion
-    bootstrap_from_first_facet();
-
-    add_proxies_furthest(max_nb_proxies - 1, num_iterations);
+    if (m_proxies.size() < max_nb_proxies)
+      add_proxies_furthest(max_nb_proxies - m_proxies.size(), num_iterations);
 
     return m_proxies.size();
   }
@@ -1046,16 +1047,13 @@ private:
   /*!
    * @brief Hierarchical initialize proxies to target number of proxies.
    * @param max_nb_proxies maximum number of proxies, 
-   * should be in range (0, num_faces(*m_ptm))
+   * should be in range (nb_connected_components, num_faces(*m_ptm))
    * @param num_iterations number of re-fitting iterations
    * before each hierarchical proxy insertion
    * @return number of proxies initialized
    */
   std::size_t init_hierarchical(const std::size_t max_nb_proxies,
     const std::size_t num_iterations) {
-    // initialize a proxy and the proxy map to prepare for the insertion
-    bootstrap_from_first_facet();
-
     while (m_proxies.size() < max_nb_proxies) {
       // try to double current number of proxies each time
       std::size_t target_px = m_proxies.size();
@@ -1076,7 +1074,7 @@ private:
    * with both maximum number of proxies and minimum error drop stop criteria,
    * The first criterion met stops the seeding.
    * @note To ensure the randomness, call `std::srand()` beforehand.
-   * @param max_nb_proxies maximum number of proxies, should be in range (0, num_faces(tm) / 3)
+   * @param max_nb_proxies maximum number of proxies, should be in range (nb_connected_components, num_faces(tm) / 3)
    * @param min_error_drop minimum error drop, should be in range (0.0, 1.0)
    * @param num_iterations number of re-fitting iterations 
    * @return number of proxies initialized
@@ -1084,11 +1082,15 @@ private:
   std::size_t init_random_error(const std::size_t max_nb_proxies,
     const FT min_error_drop,
     const std::size_t num_iterations) {
-    // fill a temporary vector of facets
-    std::vector<face_descriptor> facets;
-    random_shuffle_facets(facets);
+    // random shuffled facets except for the bootstrapped connected component seed facets
+    std::vector<face_descriptor> shuffled_facets;
+    random_shuffle_non_seed_facets(shuffled_facets);
 
-    bootstrap_from_first_facet();
+    // keep a copy of the connected components seeds
+    std::vector<face_descriptor> cc_seed_facets;
+    BOOST_FOREACH(const Proxy_wrapper &pxw, m_proxies)
+      cc_seed_facets.push_back(pxw.seed);
+
     const FT initial_err = compute_fitting_error();
     FT error_drop = min_error_drop * FT(2.0);
     while (m_proxies.size() < max_nb_proxies && error_drop > min_error_drop) {
@@ -1098,10 +1100,17 @@ private:
         target_px = max_nb_proxies;
       else
         target_px *= 2;
+
+      // reset proxies to the bootstrapped connected components
       m_proxies.clear();
-      for (std::size_t j = 0; j < target_px; ++j)
-        m_proxies.push_back(fit_new_proxy(facets[j], m_proxies.size()));
+      BOOST_FOREACH(face_descriptor f, cc_seed_facets)
+        m_proxies.push_back(fit_new_proxy(f, m_proxies.size()));
+
+      for (std::size_t i = 0; i < shuffled_facets.size()
+        && m_proxies.size() < target_px; ++i)
+        m_proxies.push_back(fit_new_proxy(shuffled_facets[i], m_proxies.size()));
       run(num_iterations);
+
       const FT err = compute_fitting_error();
       error_drop = err / initial_err;
     }
@@ -1113,7 +1122,7 @@ private:
    * @brief Incrementally initialize proxies
    * with both maximum number of proxies and minimum error drop stop criteria,
    * The first criterion met stops the seeding.
-   * @param max_nb_proxies maximum number of proxies, should be in range (0, num_faces(tm) / 3)
+   * @param max_nb_proxies maximum number of proxies, should be in range (nb_connected_components, num_faces(tm) / 3)
    * @param min_error_drop minimum error drop, should be in range (0.0, 1.0)
    * @param num_iterations number of re-fitting iterations 
    * @return number of proxies initialized
@@ -1121,8 +1130,6 @@ private:
   std::size_t init_incremental_error(const std::size_t max_nb_proxies,
     const FT min_error_drop,
     const std::size_t num_iterations) {
-    // initialize a proxy and the proxy map to prepare for the insertion
-    bootstrap_from_first_facet();
     const FT initial_err = compute_fitting_error();
     FT error_drop = min_error_drop * FT(2.0);
     while (m_proxies.size() < max_nb_proxies && error_drop > min_error_drop) {
@@ -1139,7 +1146,7 @@ private:
    * @brief Hierarchically initialize proxies
    * with both maximum number of proxies and minimum error drop stop criteria,
    * The first criterion met stops the seeding.
-   * @param max_nb_proxies maximum number of proxies, should be in range (0, num_faces(tm) / 3)
+   * @param max_nb_proxies maximum number of proxies, should be in range (nb_connected_components, num_faces(tm) / 3)
    * @param min_error_drop minimum error drop, should be in range (0.0, 1.0)
    * @param num_iterations number of re-fitting iterations 
    * @return number of proxies initialized
@@ -1147,8 +1154,6 @@ private:
   std::size_t init_hierarchical_error(const std::size_t max_nb_proxies,
     const FT min_error_drop,
     const std::size_t num_iterations) {
-    // initialize a proxy and the proxy map to prepare for the insertion
-    bootstrap_from_first_facet();
     const FT initial_err = compute_fitting_error();
     FT error_drop = min_error_drop * FT(2.0);
     while (m_proxies.size() < max_nb_proxies && error_drop > min_error_drop) {
@@ -1320,14 +1325,26 @@ private:
   }
 
   /*!
-   * @brief Random shuffle the surface facets into an empty vector.
+   * @brief Random shuffle the non-seed facets into an empty vector,
+   * to prepare for consecutive random seed facets selection (no interleaved re-fitting).
    * @param[out] facets shuffled facets vector
    */
-  void random_shuffle_facets(std::vector<face_descriptor> &facets) {
-    const std::size_t nbf = num_faces(*m_ptm);
+  void random_shuffle_non_seed_facets(std::vector<face_descriptor> &facets) {
+    std::set<face_descriptor> seed_facets_set;
+    BOOST_FOREACH(const Proxy_wrapper &pxw, m_proxies)
+      seed_facets_set.insert(pxw.seed);
+
+    if (num_faces(*m_ptm) <= m_proxies.size())
+      return;
+
+    const std::size_t nbf = num_faces(*m_ptm) - m_proxies.size();
     facets.reserve(nbf);
-    BOOST_FOREACH(face_descriptor f, faces(*m_ptm))
+    BOOST_FOREACH(face_descriptor f, faces(*m_ptm)) {
+      if (seed_facets_set.find(f) != seed_facets_set.end())
+        continue;
       facets.push_back(f);
+    }
+
     // random shuffle
     for (std::size_t i = 0; i < nbf; ++i) {
       // swap ith element with a random one
@@ -1338,20 +1355,6 @@ private:
       facets[r] = facets[i];
       facets[i] = tmp;
     }
-  }
-
-  /*!
-   * @brief Initialize a proxy from the first facet of the surface.
-   * @note This function clears proxy vector and set facet proxy map to initial state,
-   * intended only for bootstrapping initialization.
-   * Coarse approximation iteration is not performed, because it's inaccurate anyway
-   * and may cause serious degenerate cases(e.g. a standard cube mode).
-   */
-  void bootstrap_from_first_facet() {
-    m_proxies.clear();
-    m_proxies.push_back(fit_new_proxy(*(faces(*m_ptm).first), m_proxies.size()));
-    BOOST_FOREACH(face_descriptor f, faces(*m_ptm))
-      put(m_fproxy_map, f, 0);
   }
 
   /*!
