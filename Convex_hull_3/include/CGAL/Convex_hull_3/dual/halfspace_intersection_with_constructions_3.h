@@ -55,22 +55,25 @@ namespace CGAL
         typedef typename boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
         typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
           
-        typename boost::property_map<Polyhedron, vertex_point_t>::const_type vpmap  = get(CGAL::vertex_point, primal);
+        typename boost::property_map<Polyhedron, vertex_point_t>::const_type vpm_primal = get(CGAL::vertex_point, primal);
+        typename boost::property_map<Polyhedron, vertex_point_t>::type vpm_dual = get(CGAL::vertex_point, dual);
         // compute coordinates of extreme vertices in the dual polyhedron
         // from primal faces
         boost::unordered_map<face_descriptor, vertex_descriptor> extreme_points;
 
         BOOST_FOREACH (face_descriptor fd , faces( primal)){
           halfedge_descriptor h = halfedge(fd,primal);
-          Plane_3 p (get(vpmap, target(h, primal)),
-                     get(vpmap, target(next(h, primal), primal)),
-                     get(vpmap, target(next(next(h, primal), primal), primal)));
+          Plane_3 p (get(vpm_primal, target(h, primal)),
+                     get(vpm_primal, target(next(h, primal), primal)),
+                     get(vpm_primal, target(next(next(h, primal), primal), primal)));
           // translate extreme vertex
           Point_3 extreme_p = CGAL::ORIGIN + p.orthogonal_vector () / (-p.d());
           Point_3 translated_extreme_p(extreme_p.x() + origin.x(),
                                        extreme_p.y() + origin.y(),
                                        extreme_p.z() + origin.z());
-          extreme_points[fd] = add_vertex(translated_extreme_p,dual);
+          vertex_descriptor vd = add_vertex(dual);
+          extreme_points[fd] = vd;
+          put(vpm_dual, vd, translated_extreme_p);
         }
         
         // build faces
