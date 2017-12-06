@@ -298,6 +298,8 @@ public:
        p.z() >= domain().zmin() && p.z() < domain().zmax())
       return p;
 
+    // @todo it might be dangerous to call robust_canonicalize without also changing
+    // <p, offset> = construct_periodic_point(p) (lack of consistency in the result)
     return robust_canonicalize_point(p);
   }
 
