@@ -3,20 +3,17 @@
 
 project( Periodic_3_mesh_3_Tests )
 
-cmake_minimum_required(VERSION 2.8.10)
+cmake_minimum_required( VERSION 2.8.11 )
 
-set(CMAKE_CXX_STANDARD 14)
-
-find_package(CGAL QUIET COMPONENTS Core )
+find_package( CGAL QUIET )
 
 if ( CGAL_FOUND )
 
   include( ${CGAL_USE_FILE} )
 
+  include_directories( BEFORE ../../include )
+
   include( CGAL_CreateSingleSourceCGALProgram )
-
-  include_directories (BEFORE "../../include")
-
   create_single_source_cgal_program( "test_implicit_shapes_bunch.cpp" )
   create_single_source_cgal_program( "test_implicit_shapes_with_protection.cpp" )
   create_single_source_cgal_program( "test_triply_periodic_minimal_surfaces.cpp" )
