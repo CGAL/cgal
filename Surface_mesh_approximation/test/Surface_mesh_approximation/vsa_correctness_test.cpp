@@ -78,5 +78,9 @@ int main()
   if (!test_shape("./data/cube_meshed_open.off", 5))
     return EXIT_FAILURE;
 
+  std::cout << "Surface with disconnected components test." << std::endl;
+  if (!test_shape("./data/cubes_disconnected.off", 11))
+    return EXIT_FAILURE;
+
   return EXIT_SUCCESS;
 }
