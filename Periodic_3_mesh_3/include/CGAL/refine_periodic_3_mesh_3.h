@@ -55,7 +55,6 @@ void project_dummy_points_of_surface(C3T3& c3t3, const MeshDomain& domain)
   Vertex_container vertex_container;
   find_points_to_project(c3t3, std::insert_iterator<Vertex_container>(vertex_container, vertex_container.begin()));
 
-  std::cout << "nb of points to project: " << vertex_container.size() << std::endl;
   project_points(c3t3, domain, vertex_container.begin(), vertex_container.end());
 }
 

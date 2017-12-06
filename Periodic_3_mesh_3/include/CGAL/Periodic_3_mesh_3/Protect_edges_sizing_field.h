@@ -577,7 +577,7 @@ operator()(const bool refine)
             << "  min_balls_weight = " << minimal_weight_ << std::endl;
 #endif
 
-#ifdef CGAL_PERIODIC_PROTECTION_ATTEMPT_TO_REMOVE_DUMMY_PTS
+#if defined(CGAL_PERIODIC_PROTECTION_ATTEMPT_TO_REMOVE_DUMMY_PTS) && defined(CGAL_MESH_3_VERBOSE)
   std::cerr << "Dumping dummy vertices pre protection treatment" << std::endl;
   dump_dummy_points("dummies_pre_treatement.xyz");
 #endif
@@ -612,9 +612,9 @@ operator()(const bool refine)
 //    CGAL_assertion(minimal_size_ > 0 || c3t3_.is_valid());
  }
 
-  debug_dump_c3t3("dump-mesh-after-protect_edges.binary.cgal", c3t3_);
+  // debug_dump_c3t3("dump-mesh-after-protect_edges.binary.cgal", c3t3_);
 
-#ifdef CGAL_PERIODIC_PROTECTION_ATTEMPT_TO_REMOVE_DUMMY_PTS
+#if defined(CGAL_PERIODIC_PROTECTION_ATTEMPT_TO_REMOVE_DUMMY_PTS) && defined(CGAL_MESH_3_VERBOSE)
   std::cerr << "Dumping dummy vertices post protection treatment" << std::endl;
   dump_dummy_points("dummies_post_treatement.xyz");
 #endif

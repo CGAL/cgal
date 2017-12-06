@@ -2777,8 +2777,6 @@ rebuild_restricted_delaunay(OutdatedCells& outdated_cells,
     const Weighted_point& initial_position = tr_.point(*it);
     Bare_point new_pos = project_on_surface(*it, cp(initial_position));
 
-    std::cout << "project: " << initial_position << " got: " << new_pos << std::endl;
-
     if ( ! equal(new_pos, Bare_point()) )
     {
       //freezing needs 'erase' to be done before the vertex is actually destroyed
@@ -2786,8 +2784,6 @@ rebuild_restricted_delaunay(OutdatedCells& outdated_cells,
       moving_vertices.erase(*it);
 
       Vector_3 move(cp(initial_position), new_pos);
-      std::cout << "projection move: " << move << std::endl;
-
       Vertex_handle new_vertex = update_mesh(*it, move);
       c3t3_.set_dimension(new_vertex, 2);
 
