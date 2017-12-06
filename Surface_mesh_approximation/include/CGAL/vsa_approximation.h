@@ -20,7 +20,9 @@
 #include <boost/graph/subgraph.hpp>
 #include <boost/foreach.hpp>
 #include <boost/optional.hpp>
+
 #include <vector>
+#include <stack>
 #include <queue>
 #include <iterator>
 #include <cmath>
@@ -1350,6 +1352,61 @@ private:
     m_proxies.push_back(fit_new_proxy(*(faces(*m_ptm).first), m_proxies.size()));
     BOOST_FOREACH(face_descriptor f, faces(*m_ptm))
       put(m_fproxy_map, f, 0);
+  }
+
+  /*!
+   * @brief Initialize proxies from each connected components of the surface.
+   * @note This function clears proxy vector and set facet proxy map to initial state,
+   * intended only for bootstrapping initialization.
+   * Coarse approximation iteration is not performed, because it's inaccurate anyway
+   * and may cause serious degenerate cases(e.g. a standard cube mode).
+   */
+  void bootstrap_from_connected_components() {
+    // set all face invalid to mark as unvisited / untagged
+    BOOST_FOREACH(face_descriptor f, faces(*m_ptm))
+      put(m_fproxy_map, f, CGAL_VSA_INVALID_TAG);
+
+    // prepare for connected components visiting
+    std::vector<face_descriptor> cc_seed_facets;
+    bool if_all_visited = false;
+    std::size_t cc_idx = 0;
+    face_descriptor seed_facet = *(faces(*m_ptm).first);
+    while (!if_all_visited) {
+      // use current seed facet to traverse the conneceted componnets
+      cc_seed_facets.push_back(seed_facet);
+      std::stack<face_descriptor> fstack;
+      fstack.push(seed_facet);
+      put(m_fproxy_map, seed_facet, cc_idx);
+      while (!fstack.empty()) {
+        face_descriptor active_facet = fstack.top();
+        fstack.pop();
+        BOOST_FOREACH(face_descriptor fadj,
+          faces_around_face(halfedge(active_facet, *m_ptm), *m_ptm)) {
+          if (fadj != boost::graph_traits<TriangleMesh>::null_face()
+            && get(m_fproxy_map, fadj) == CGAL_VSA_INVALID_TAG) {
+            fstack.push(fadj);
+            put(m_fproxy_map, fadj, cc_idx);
+          }
+        }
+      }
+      // check if all visited
+      if_all_visited = true;
+      BOOST_FOREACH(face_descriptor f, faces(*m_ptm)) {
+        if (get(m_fproxy_map, f) == CGAL_VSA_INVALID_TAG) {
+          if_all_visited = false;
+          ++cc_idx;
+          seed_facet = f;
+          break;
+        }
+      }
+    }
+
+    m_proxies.clear();
+    BOOST_FOREACH(face_descriptor f, cc_seed_facets)
+      m_proxies.push_back(fit_new_proxy(f, m_proxies.size()));
+#ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
+    std::cerr << "#cc " << m_proxies.size() << std::endl;
+#endif
   }
 
   /*!
