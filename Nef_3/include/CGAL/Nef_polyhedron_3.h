@@ -685,17 +685,17 @@ protected:
     typedef typename CT::Edge                  Edge;
 
     CT ct;
-    Halffacet_const_handle f;
     Plane_3 supporting_plane;
+    Halffacet_const_handle facet;
 
   public:
     Triangulation_handler2(Halffacet_const_handle f) : 
-      supporting_plane(f->plane()), f(f) {}
+      supporting_plane(f->plane()), facet(f) {}
 
     template<typename PIB, typename Index>
     void handle_triangles(PIB& pib, Index& VI) {
         Halffacet_cycle_const_iterator fci;
-        for(fci=f->facet_cycles_begin(); fci!=f->facet_cycles_end(); ++fci) {
+        for(fci=facet->facet_cycles_begin(); fci!=facet->facet_cycles_end(); ++fci) {
             if(fci.is_shalfedge()) {
                 SHalfedge_around_facet_const_circulator sfc(fci), send(sfc);
                 CGAL_For_all(sfc,send) {
