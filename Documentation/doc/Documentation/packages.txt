@@ -97,6 +97,7 @@ h1 {
 \package_listing{Surface_mesher}
 \package_listing{Skin_surface_3}
 \package_listing{Mesh_3}
+\package_listing{Periodic_3_mesh_3}
 
 \section PartReconstruction Shape Reconstruction
 

@@ -1,0 +1,103 @@
+/// \defgroup PkgPeriodic_3_mesh_3 3D Periodic Mesh Generation Reference
+
+/// \defgroup PkgPeriodic_3_mesh_3Concepts Main Concepts
+/// \ingroup PkgPeriodic_3_mesh_3
+/// The main concepts of this package.
+
+/// \defgroup PkgPeriodic_3_mesh_3MeshClasses Mesh Classes
+/// \ingroup PkgPeriodic_3_mesh_3
+/// The classes in this group are the main classes involved in the mesh generation process.
+
+/// \defgroup PkgPeriodic_3_mesh_3Domains Domain Classes
+/// \ingroup PkgPeriodic_3_mesh_3
+/// The classes in this group are models of domain concepts and their associated classes.
+
+/// \defgroup PkgPeriodic_3_mesh_3Functions Mesh Generation Functions
+/// \ingroup PkgPeriodic_3_mesh_3
+/// The two main functions to generate a periodic mesh are `make_periodic_3_mesh_3()`
+/// and `refine_periodic_3_mesh_3()`. Other functions are provided to optimize
+/// an existing periodic mesh.
+
+/*!
+\addtogroup PkgPeriodic_3_mesh_3
+\cgalPkgDescriptionBegin{3D Periodic Mesh Generation,PkgPeriodic_3_mesh_3Summary}
+\cgalPkgPicture{periodic_mesher_small.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Mikhail Bogdanov, Aymeric Pellé, Mael Rouxel-Labbé, and Monique Teillaud}
+\cgalPkgDesc{This package is devoted to the generation of isotropic simplicial meshes
+discretizing periodic 3D domains. The domain to be meshed is a region of
+the three-dimensional flat torus. The periodic mesh generator provides users with the same
+flexibility that is offered in the \ref PkgMesh_3Summary package.}
+\cgalPkgManuals{Chapter_3D_Periodic_Mesh_Generation,PkgPeriodic_3_mesh_3}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{4.11}
+\cgalPkgDependsOn{\ref PkgPeriodic3Triangulation3Summary, \ref PkgMesh_3Summary}
+\cgalPkgBib{cgal:btprl-p3m3}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgDemo{,}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
+
+### Relation to the 3D Mesh Generation and 3D Periodic Triangulations Packages ###
+
+A periodic mesh extends, by definition, infinitely in space. To avoid storing and
+manipulating duplicate points, well-chosen "dummy" points are inserted
+at the beginning of the meshing process, thus ensuring that the periodic triangulation
+forms at all times a simplicial complex within a single fundamental copy of the domain
+(see Sections \ref P3Triangulation3secspace and \ref P3Triangulation3secintro
+of the manual of 3D periodic triangulations).
+The meshing process can then be exclusively conducted in the fundamental domain.
+This single copy of the complete periodic mesh is generated using
+the three-dimensional mesh generator of %CGAL (see package: \ref PkgMesh_3Summary).
+Since this mesh generator only supports traditional (non-periodic) domains,
+it must be provided adapted oracles to handle the periodicity of the input domain
+and of the mesh.
+This package provides these necessary tools to be able to use %CGAL's \ref PkgMesh_3Summary
+with %CGAL's \ref PkgPeriodic3Triangulation3Summary.
+
+\cgalClassifedRefPages
+
+## Concepts ##
+
+This package relies entirely on the \ref PkgMesh_3Concepts
+and the \ref PkgMesh_3SecondaryConcepts described in the \ref PkgMesh_3Summary package.
+The following concepts are essentially identical to the concepts `MeshDomain_3`
+and `MeshDomainWithFeatures_3` in the package \ref PkgMesh_3Summary,
+but are nevertheless defined for clarity:
+
+- `Periodic_3MeshDomain_3`
+- `Periodic_3MeshDomainWithFeatures_3`
+
+## Classes ##
+
+The following class provides the interface between %CGAL's periodic triangulation
+and %CGAL's three-dimensional mesh generator:
+- `CGAL::Periodic_3_mesh_triangulation_3<MD, K, Vertex_base, Cell_base>`
+
+The following classes are models of the periodic domain concept:
+- `CGAL::Implicit_periodic_3_mesh_domain_3<Function,BGT>`
+- `CGAL::Labeled_periodic_3_mesh_domain_3<LabelingFunction,BGT>`
+
+The following class allows to split the fundamental domain in two subdomains,
+separated by the zero-level of an implicit function:
+- `CGAL::Implicit_to_labeled_subdomains_function_wrapper<Function,BGT>`
+
+## Function Templates ##
+
+The following functions handle the generation of a periodic mesh:
+- `CGAL::make_periodic_3_mesh_3()`
+- `CGAL::refine_periodic_3_mesh_3()`
+- `CGAL::exude_periodic_3_mesh_3()`
+- `CGAL::perturb_periodic_3_mesh_3()`
+- `CGAL::lloyd_optimize_periodic_3_mesh_3()`
+- `CGAL::odt_optimize_periodic_3_mesh_3()`
+
+## Classes and Functions of `Mesh_3` ##
+
+Many classes and functions used by this package are defined within the package
+\ref PkgMesh_3Summary, see \ref PkgMesh_3MeshClasses, \ref PkgMesh_3Domains,
+and \ref PkgMesh_3Parameters.
+
+*/
+
