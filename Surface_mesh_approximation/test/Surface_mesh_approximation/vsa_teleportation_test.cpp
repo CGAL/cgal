@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <ctime>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polyhedron_3.h>
@@ -65,13 +66,14 @@ int main()
     get(boost::vertex_point, const_cast<Polyhedron &>(mesh)));
   approx.set_metric(error_metric, proxy_fitting);
 
-  std::cout << "Seeding by number." << std::endl;
+  std::cout << "Random seeding by number." << std::endl;
+  std::srand(static_cast<unsigned int>(std::time(0)));
   approx.seeding(CGAL::VSA::Random, 50);
   if (approx.get_proxies_size() != 50)
     return EXIT_FAILURE;
   approx.run(10);
 
-  // teleport until merge test failed
+  std::cout << "Teleport until merge test failed." << std::endl;
   std::vector<FT> error;
   std::size_t count = 0;
   while(approx.teleport_proxies(1) == 1) {
@@ -81,13 +83,15 @@ int main()
     error.push_back(sum_err / FT(10.0));
     ++count;
   }
-  std::cout << "#teleportation " << count << std::endl;
+  std::cout << "#teleported " << count << std::endl;
 
   if (!check_strict_ordering(error)) {
     std::cout << "Failed: teleportation error decrease inconsistent." << std::endl;
     return EXIT_FAILURE;
   }
 
+  // test partition placement
+  std::cout << "Test partition placement." << std::endl;
   std::map<Facet_handle, std::size_t> internal_fidxmap;
   for (Facet_iterator fitr = mesh.facets_begin(); fitr != mesh.facets_end(); ++fitr)
     internal_fidxmap[fitr] = 0;
@@ -132,12 +136,27 @@ int main()
     }
   }
   std::cout << "#facets on planar part " << num_planar_facets << std::endl;
+  if (num_planar_facets != 922) {
+    std::cout << "Failed: the plane-sphere model have 922 facets on the planar part." << std::endl;
+    return EXIT_FAILURE;
+  }
 
   // proxy of the planar part should facing straight towards the y positive.
   double px_dir_var = std::abs(CGAL::to_double(proxies[planar_pxidx].normal.y()) - 1.0);
   if (px_dir_var > CGAL_VSA_TEST_TOLERANCE) {
     std::cout << "Failed: the proxy of planar part is incorrect." << std::endl;
     return EXIT_FAILURE;
+  }
+
+  // force teleportation test
+  std::size_t pxi = 0, pxj = 0;
+  if (approx.find_best_merge(pxi, pxj, true)) {
+    std::cout << "Failed: should be no possible merge with test." << std::endl;
+    return EXIT_FAILURE;
+  }
+  std::cout << "Test forced teleportation." << std::endl;
+  if (approx.teleport_proxies(1, 5, true) != 1) {
+    std::cout << "Failed: forced teleportation failed." << std::endl;
   }
 
   std::cout << "Succeeded." << std::endl;

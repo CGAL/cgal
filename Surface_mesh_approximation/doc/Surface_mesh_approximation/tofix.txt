@@ -1,4 +1,5 @@
 - verify that L2,1 is square root of integral of L2 error over normals.
+-- checked, square root can be omitted
 - very first partition must use one proxy per connected component.
 -- checked
 - verify that teleport can be forced even when heuristic test fails. about the test: why not simply comparing increase of error and decrease of error ?
