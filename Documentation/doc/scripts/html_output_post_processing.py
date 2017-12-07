@@ -135,7 +135,7 @@ def re_replace_first_in_file(pat, s_after, fname):
 def is_concept_file(filename):
   if not path.exists(filename):
     return False;
-  d = pq(filename=filename, parser='html')
+  d = pq(filename=filename, parser='html', encoding='utf-8')
   ident = d('#CGALConcept')
   return ident.size() == 1
 
@@ -275,7 +275,7 @@ removes some unneeded files, and performs minor repair on some glitches.''')
 
     namespace_files=package_glob('./*/namespace*.html')
     for fn in namespace_files:
-        d = pq(filename=fn, parser='html')
+        d = pq(filename=fn, parser='html', encoding='utf-8')
         ident = d('#CGALConceptNS')
         if ident.size() == 1:
             conceptify_ns(d);
@@ -285,14 +285,14 @@ removes some unneeded files, and performs minor repair on some glitches.''')
     # in a group we only need to change the nested-classes
     group_files=package_glob('./*/group*Concepts*.html')
     for fn in group_files:
-        d = pq(filename=fn, parser='html')
+        d = pq(filename=fn, parser='html',encoding='utf-8')
         conceptify_nested_classes(d)
         write_out_html(d, fn)
 
     # fix up Files
     files_files=package_glob('./*/files.html')
     for fn in files_files:
-        d = pq(filename=fn, parser='html')
+        d = pq(filename=fn, parser='html',encoding='utf-8')
         table = d("table.directory")
         row_id=table("td.entry").filter(lambda i: pq(this).text() == 'Concepts').parent().attr('id')
         if row_id != None:
@@ -319,7 +319,7 @@ removes some unneeded files, and performs minor repair on some glitches.''')
     relationship_pages.extend(package_glob('./*/generalizes.html'))
     relationship_pages.extend(package_glob('./*/refines.html'))
     for fn in relationship_pages:
-        d = pq(filename=fn, parser='html')
+        d = pq(filename=fn, parser='html',encoding='utf-8')
         dts=d(".textblock .reflist dt")
         # no contents() on pyquery, do it the hard way
         # Note that in the following regular expression, the Struct did not appear in doxygen version 1.8.3
@@ -331,7 +331,7 @@ removes some unneeded files, and performs minor repair on some glitches.''')
     # throw out nav-sync
     all_pages=glob.glob('./*/*.html')
     for fn in all_pages:
-        d = pq(filename=fn, parser='html')
+        d = pq(filename=fn, parser='html',encoding='utf-8')
         d('#nav-sync').hide()
         # TODO count figures
         write_out_html(d, fn)
@@ -354,7 +354,7 @@ removes some unneeded files, and performs minor repair on some glitches.''')
     # remove class name in Definition section if there is no default template
     # parameter documented
     for fn in class_and_struct_files:
-        d = pq(filename=fn, parser='html')
+        d = pq(filename=fn, parser='html',encoding='utf-8')
         for el in d('h3'):
           text = pq(el).text()
           if text[0:9]=="template<" and text.find('=')==-1:
