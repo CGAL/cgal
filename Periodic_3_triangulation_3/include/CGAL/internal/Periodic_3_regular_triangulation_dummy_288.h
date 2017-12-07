@@ -5217,7 +5217,7 @@ static const int O[1728][4] = {
   { 4,4,0,0 }
 };
 
-static const unsigned C[287] = {
+static const unsigned C[288] = {
   1721,
   1507,
   1699,
@@ -5552,7 +5552,7 @@ static const unsigned C[287] = {
     set_offsets(cells[i],O[i][0],O[i][1],O[i][2],O[i][3]);
   }
 
-  for(unsigned int i = 0; i < 287; ++i){
+  for(unsigned int i = 0; i < 288; ++i){
     vertices[i]->set_cell(cells[C[i]]);
   }
 
