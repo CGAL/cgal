@@ -3,7 +3,7 @@
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -19,9 +19,10 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
 //
-// Author(s)     : Wieger Wesselink 
+//
+//
+// Author(s)     : Wieger Wesselink
 //                 Michael Hoffmann <hoffmann@inf.ethz.ch>
 //                 Sylvain Pion
 //                 Laurent Rineau
@@ -106,7 +107,7 @@
 #  define BOOST_TT_HAS_POST_INCREMENT_HPP_INCLUDED
 #endif
 
-// The following header file defines among other things  BOOST_PREVENT_MACRO_SUBSTITUTION 
+// The following header file defines among other things  BOOST_PREVENT_MACRO_SUBSTITUTION
 #include <boost/config.hpp>
 #include <boost/version.hpp>
 
@@ -251,6 +252,10 @@
     || (BOOST_VERSION < 103600)
 #define CGAL_CFG_NO_CPP0X_EXPLICIT_CONVERSION_OPERATORS 1
 #endif
+#if defined(BOOST_NO_CXX11_TEMPLATE_ALIASES) || \
+    defined(BOOST_NO_TEMPLATE_ALIASES) || (BOOST_VERSION < 103900)
+#define CGAL_CFG_NO_CPP0X_TEMPLATE_ALIASES 1
+#endif
 
 // Some random list to let us write C++11 without thinking about
 // each feature we are using.
@@ -299,7 +304,7 @@
 #define CGAL_VERSION_NUMBER(x,y,z) (1000001 + 10000*x + 100*y + 10*z) * 1000
 
 #ifndef CGAL_NO_DEPRECATED_CODE
-#define CGAL_BEGIN_NAMESPACE  namespace CGAL { 
+#define CGAL_BEGIN_NAMESPACE  namespace CGAL {
 #define CGAL_END_NAMESPACE }
 #endif
 
@@ -411,10 +416,10 @@
 #endif
 
 //-------------------------------------------------------------------//
-// When the global min and max are no longer defined (as macros) 
-// because of NOMINMAX flag definition, we define our own global 
+// When the global min and max are no longer defined (as macros)
+// because of NOMINMAX flag definition, we define our own global
 // min/max functions to make the Microsoft headers compile. (afxtempl.h)
-// Users that does not want the global min/max 
+// Users that does not want the global min/max
 // should define CGAL_NOMINMAX
 //-------------------------------------------------------------------//
 #include <algorithm>
@@ -436,7 +441,7 @@ using std::max;
 #  define CGAL_PRETTY_FUNCTION __FUNCSIG__
 #elif defined __GNUG__
 #  define CGAL_PRETTY_FUNCTION __PRETTY_FUNCTION__
-#else 
+#else
 #  define CGAL_PRETTY_FUNCTION __func__
 // with sunpro, this requires -features=extensions
 #endif
