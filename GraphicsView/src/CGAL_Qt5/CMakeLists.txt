@@ -33,8 +33,8 @@ endif()
 
 if (CGAL_HEADER_ONLY)
   install(DIRECTORY "../../include/CGAL/Qt/" DESTINATION "${CGAL_INSTALL_INC_DIR}/CGAL/include/CGAL/Qt" COMPONENT CGAL_Qt5)
-  install(DIRECTORY "../../demo/resources/" DESTINATION "${CGAL_INSTALL_INC_DIR}/CGAL/demo/resources" COMPONENT CGAL_Qt5)
-  install(DIRECTORY "../../demo/icons/" DESTINATION "${CGAL_INSTALL_INC_DIR}/CGAL/demo/icons" COMPONENT CGAL_Qt5)
+  install(DIRECTORY "../../demo/resources/" DESTINATION "${CGAL_INSTALL_CMAKE_DIR}/demo/resources" COMPONENT CGAL_Qt5)
+  install(DIRECTORY "../../demo/icons/" DESTINATION "${CGAL_INSTALL_CMAKE_DIR}/demo/icons" COMPONENT CGAL_Qt5)
 endif()
 
 message("libCGAL_Qt5 is configured")

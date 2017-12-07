@@ -23,7 +23,7 @@ include(${CMAKE_CURRENT_LIST_DIR}/CGAL_TweakFindBoost.cmake)
   else()
     try_run( CGAL_test_cpp_version_RUN_RES CGAL_test_cpp_version_COMPILE_RES
       "${CMAKE_BINARY_DIR}"
-      "${CGAL_INSTALLATION_PACKAGE_DIR}/config/support/CGAL_test_cpp_version.cpp"
+      "${CGAL_MODULES_DIR}/config/support/CGAL_test_cpp_version.cpp"
       RUN_OUTPUT_VARIABLE CGAL_cplusplus)
     message(STATUS "__cplusplus is ${CGAL_cplusplus}")
     if(NOT CGAL_test_cpp_version_RUN_RES)
