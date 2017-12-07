@@ -418,7 +418,7 @@ if (TBB_FOUND)
 endif (TBB_FOUND)
 
 set(TBB_USE_FILE "UseTBB")
-
+include(${CMAKE_CURRENT_LIST_DIR}/CGAL_target_use_TBB.cmake)
 ### ** Emacs settings **
 ### Local Variables:
 ### cmake-tab-width: 4

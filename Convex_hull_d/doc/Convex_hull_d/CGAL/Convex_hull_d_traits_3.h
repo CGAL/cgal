@@ -17,8 +17,7 @@ low-dimensional standard kernel model, e.g. `Homogeneous<RT>` or
 
 */
 template< typename R >
-class Convex_hull_d_traits_3 {
-public:
+struct Convex_hull_d_traits_3 {
 
 /// \name Creation 
 /// @{

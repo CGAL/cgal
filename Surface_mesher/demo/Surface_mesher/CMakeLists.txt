@@ -16,6 +16,10 @@ set(CMAKE_AUTOMOC ON)
 if(POLICY CMP0071)
   cmake_policy(SET CMP0071 NEW)
 endif()
+if(POLICY CMP0072)
+  # About the use of OpenGL
+  cmake_policy(SET CMP0072 NEW)
+endif()
 
 set(PACKAGE_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../..)
 
@@ -35,10 +39,6 @@ endforeach()
 include_directories( ./ )
 
 # QGLViwer needs Qt5 configured with QtOpenGL and QtXml support
-
-set( QT_USE_QTOPENGL TRUE )
-set( QT_USE_QTXML    TRUE )
-set( QT_USE_QTMAIN   TRUE )
 
 find_package(CGAL COMPONENTS ImageIO Qt5)
 if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND CGAL_ImageIO_FOUND)
@@ -97,8 +97,6 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND CGAL_ImageIO_FOUND)
 
     add_executable  ( ${prj}  ${sources} ${uis} ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES})
 
-    qt5_use_modules(${prj} OpenGL Xml Svg)
-
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${prj} )
 
     set(VTK_LIBS "")
@@ -116,10 +114,17 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND CGAL_ImageIO_FOUND)
       message(STATUS "For reading Dicom files install VTK first")
     endif()
 
-    # Link the executable to CGAL and third-party libraries
-    target_link_libraries( ${prj} ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
+    target_link_libraries( ${prj} PRIVATE
+      CGAL::CGAL CGAL::CGAL_Qt5 CGAL::CGAL_ImageIO
+      ${OPENGL_LIBRARIES}
+      ${QGLVIEWER_LIBRARIES}
+      ${VTK_LIBS} )
 
-    target_link_libraries( ${prj} ${QT_LIBRARIES} ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} ${VTK_LIBS})
+    include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
+    cgal_add_compilation_test(${prj})
+
+    include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
+    cgal_add_compilation_test(${prj})
 
   else( QGLVIEWER_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND OPENGL_GLU_FOUND )
     message(STATUS "NOTICE: This demo needs libQGLViewer, and will not be compiled.")

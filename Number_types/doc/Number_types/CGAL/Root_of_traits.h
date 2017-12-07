@@ -114,8 +114,7 @@ algebraic numbers of degree 2 over `RT`. Moreover, the class provides
 
 */
 template< typename RT >
-class Root_of_traits {
-public:
+struct Root_of_traits {
 
 /// \name Types 
 /// @{

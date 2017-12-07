@@ -39,12 +39,6 @@ if ( CGAL_FOUND )
     endif( LINK_WITH_TBB )
   endif()
   
-  if( TBB_FOUND )
-    include(${TBB_USE_FILE})
-    list(APPEND CGAL_3RD_PARTY_LIBRARIES ${TBB_LIBRARIES})
-  endif()
-
-
  set(VTK_LIBS "")
       find_package(VTK QUIET COMPONENTS vtkImagingGeneral  vtkIOImage NO_MODULE)
       if(VTK_FOUND)
@@ -106,6 +100,27 @@ if ( CGAL_FOUND )
 #    create_single_source_cgal_program( "mesh_polyhedral_implicit_function.cpp" )
 #    create_single_source_cgal_program( "mesh_polyhedral_surface_tolerance_region.cpp" )
 #    create_single_source_cgal_program( "mesh_polyhedral_edge_tolerance_region.cpp" )
+
+    foreach(target
+        mesh_3D_image_with_features
+        mesh_3D_image
+        mesh_polyhedral_domain
+        mesh_3D_image_with_custom_initialization
+        mesh_two_implicit_spheres_with_balls
+        mesh_optimization_lloyd_example
+        mesh_optimization_example
+        mesh_implicit_sphere
+        mesh_polyhedral_complex_sm
+        mesh_implicit_sphere_variable_size
+        mesh_polyhedral_domain_sm
+        mesh_polyhedral_domain_with_lipschitz_sizing
+        mesh_polyhedral_complex
+        mesh_polyhedral_domain_with_features
+        mesh_3D_image_variable_size)
+      if(TBB_FOUND AND TARGET ${target})
+        CGAL_target_use_TBB(${target})
+      endif()
+    endforeach()
 
   else()
     message(STATUS "NOTICE: This program requires Boost >= 1.34.1, and will not be compiled.")

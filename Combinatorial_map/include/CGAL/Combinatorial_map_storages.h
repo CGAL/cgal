@@ -347,7 +347,7 @@ namespace CGAL {
 
     // Get the dart of the i-cell attribute associated with the given dart
     template<unsigned int i>
-    Dart_handle & dart(Dart_handle adart)
+    Dart_handle dart(Dart_handle adart)
     {
       CGAL_assertion( adart!=NULL );
       CGAL_assertion( attribute<i>(adart)!=NULL );

@@ -1803,10 +1803,21 @@ namespace CartesianKernelFunctors {
     result_type
     operator()(const Triangle_2& t) const
     {
+      Bbox_2 bb = this->operator()(t.vertex(0));
+      bb += this->operator()(t.vertex(1));
+      bb += this->operator()(t.vertex(2));
+      return bb;
+      /*
+	  Microsoft (R) C/C++ Optimizing Compiler Version 18.00.40629.0 for x64 
+	  produces a segfault of this functor for Simple_cartesian<Interval_nt<0>>
+	  with the original version of the code below
+	  Note that it also worked for 18.00.21005.1
+
       typename K::Construct_bbox_2 construct_bbox_2;
       return construct_bbox_2(t.vertex(0))
 	   + construct_bbox_2(t.vertex(1))
 	   + construct_bbox_2(t.vertex(2));
+      */
     }
 
     result_type

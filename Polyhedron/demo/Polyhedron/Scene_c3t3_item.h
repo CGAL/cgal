@@ -11,7 +11,6 @@
 #include <set>
 
 #include <QtCore/qglobal.h>
-#include <CGAL/gl.h>
 #include <QGLViewer/manipulatedFrame.h>
 #include <QGLViewer/qglviewer.h>
 #include <QOpenGLVertexArrayObject>

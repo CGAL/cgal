@@ -3,7 +3,7 @@
 #include <vector>
 
 /* If you want to use a viewer, you can use qglviewer. */
-#ifdef CGAL_LCC_USE_QT
+#ifdef CGAL_USE_BASIC_VIEWER
 #include "linear_cell_complex_3_viewer_qt.h"
 #endif
 
@@ -54,9 +54,9 @@ void run_test()
   lcc.template sew<3>(lcc.template opposite<2>(lcc.next(dh1)),
                       lcc.other_orientation(lcc.template opposite<2>(lcc.previous(dh3))));
 
-#ifdef CGAL_LCC_USE_VIEWER
+#ifdef CGAL_USE_BASIC_VIEWER
   display_lcc(lcc);
-#endif // CGAL_LCC_USE_VIEWER
+#endif // CGAL_USE_BASIC_VIEWER
 
   lcc.insert_cell_1_in_cell_2(lcc.next(dh1),
                               Alpha1<LCC>::run(lcc, lcc.previous(dh1)));
@@ -75,9 +75,9 @@ void run_test()
   lcc.display_characteristics(std::cout) << ", valid=" 
                                          << lcc.is_valid() << std::endl;
   
-#ifdef CGAL_LCC_USE_VIEWER
+#ifdef CGAL_USE_BASIC_VIEWER
   display_lcc(lcc);
-#endif // CGAL_LCC_USE_VIEWER
+#endif // CGAL_USE_BASIC_VIEWER
 }
 
 

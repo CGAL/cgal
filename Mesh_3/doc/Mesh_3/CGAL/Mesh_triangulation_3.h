@@ -39,8 +39,7 @@ template< typename MD, typename Gt,
           typename Concurrency_tag,
           typename Vertex_base,
           typename Cell_base >
-class Mesh_triangulation_3 {
-public:
+struct Mesh_triangulation_3 {
 
 /// \name Types
 /// @{

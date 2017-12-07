@@ -7,7 +7,6 @@
 #include  <CGAL/Three/Scene_item.h>
 #include <qgl.h>
 #include <QtCore/qglobal.h>
-#include <CGAL/gl.h>
 
 class SCENE_C2T3_ITEM_EXPORT Scene_c2t3_item : public CGAL::Three::Scene_item
 {

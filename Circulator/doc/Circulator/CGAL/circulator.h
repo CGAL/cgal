@@ -340,8 +340,7 @@ void bar( IC i, IC j) { // calls the correct function
 
 */
 template< typename C >
-class Circulator_traits {
-public:
+struct Circulator_traits {
 
 /// \name Types
 /// @{

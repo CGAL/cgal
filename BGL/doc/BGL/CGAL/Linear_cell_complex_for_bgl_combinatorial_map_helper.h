@@ -16,8 +16,7 @@ The class `Linear_cell_complex_for_bgl_combinatorial_map_helper` defines a `CGAL
 
 */
 template< typename d, typename d2, typename LCCTraits, typename Alloc >
-class Linear_cell_complex_for_bgl_combinatorial_map_helper {
-public:
+struct Linear_cell_complex_for_bgl_combinatorial_map_helper {
   /// Type of the Linear_cell_complex_for_combinatorial_map.
   typedef CGAL::Linear_cell_complex_for_combinatorial_map
             <d, d2, LCCTraits, CGAL::Linear_cell_complex_bgl_min_items,

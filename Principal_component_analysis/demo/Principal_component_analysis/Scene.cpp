@@ -1,4 +1,5 @@
 #include "Scene.h"
+#include "Viewer.h"
 
 #include <iostream>
 #include <fstream>
@@ -93,54 +94,54 @@ void Scene::update_bbox()
         << " facets)" << std::endl;
 }
 
-void Scene::draw()
+void Scene::draw(Viewer* viewer)
 {
     if(m_view_polyhedron)
-        render_polyhedron();
+        render_polyhedron(viewer);
 
-    render_line();
-    render_plane();
-    render_centroid();
+    render_line(viewer);
+    render_plane(viewer);
+    render_centroid(viewer);
 }
 
-void Scene::render_plane()
+void Scene::render_plane(Viewer* viewer)
 {
-    ::glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
-    ::glLineWidth(3.0f);
-    ::glColor3ub(255,0,0);
-    ::glBegin(GL_QUADS);
+    viewer->glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+    viewer->glLineWidth(3.0f);
+    viewer->glColor3ub(255,0,0);
+    viewer->glBegin(GL_QUADS);
     Point o = m_plane.projection(m_centroid);
     Point a = o + normalize(m_plane.base1()) + normalize(m_plane.base2());
     Point b = o + normalize(m_plane.base1()) - normalize(m_plane.base2());
     Point c = o - normalize(m_plane.base1()) - normalize(m_plane.base2());
     Point d = o - normalize(m_plane.base1()) + normalize(m_plane.base2());
-    ::glVertex3d(a.x(),a.y(),a.z());
-    ::glVertex3d(b.x(),b.y(),b.z());
-    ::glVertex3d(c.x(),c.y(),c.z());
-    ::glVertex3d(d.x(),d.y(),d.z());
-    ::glEnd();
+    viewer->glVertex3d(a.x(),a.y(),a.z());
+    viewer->glVertex3d(b.x(),b.y(),b.z());
+    viewer->glVertex3d(c.x(),c.y(),c.z());
+    viewer->glVertex3d(d.x(),d.y(),d.z());
+    viewer->glEnd();
 }
 
-void Scene::render_line()
+void Scene::render_line(Viewer* viewer)
 {
-    ::glLineWidth(3.0f);
-    ::glColor3ub(0,0,255);
-    ::glBegin(GL_LINES);
+    viewer->glLineWidth(3.0f);
+    viewer->glColor3ub(0,0,255);
+    viewer->glBegin(GL_LINES);
     Point o = m_line.projection(m_centroid);
     Point a = o + normalize(m_line.to_vector());
     Point b = o - normalize(m_line.to_vector());
-    ::glVertex3d(a.x(),a.y(),a.z());
-    ::glVertex3d(b.x(),b.y(),b.z());
-    ::glEnd();
+    viewer->glVertex3d(a.x(),a.y(),a.z());
+    viewer->glVertex3d(b.x(),b.y(),b.z());
+    viewer->glEnd();
 }
 
-void Scene::render_centroid()
+void Scene::render_centroid(Viewer* viewer)
 {
-    ::glPointSize(10.0f);
-    ::glColor3ub(0,128,0);
-    ::glBegin(GL_POINTS);
-    ::glVertex3d(m_centroid.x(),m_centroid.y(),m_centroid.z());
-    ::glEnd();
+    viewer->glPointSize(10.0f);
+    viewer->glColor3ub(0,128,0);
+    viewer->glBegin(GL_POINTS);
+    viewer->glVertex3d(m_centroid.x(),m_centroid.y(),m_centroid.z());
+    viewer->glEnd();
 }
 
 
@@ -149,15 +150,15 @@ Vector Scene::normalize(const Vector& v)
     return v / std::sqrt(v*v);
 }
 
-void Scene::render_polyhedron()
+void Scene::render_polyhedron(Viewer *viewer)
 {
     // draw black edges
     if(m_pPolyhedron != NULL)
     {
-        ::glDisable(GL_LIGHTING);
-        ::glColor3ub(0,0,0);
-        ::glLineWidth(1.0f);
-        gl_render_edges(*m_pPolyhedron);
+        viewer->glDisable(GL_LIGHTING);
+        viewer->glColor3ub(0,0,0);
+        viewer->glLineWidth(1.0f);
+        gl_render_edges(*m_pPolyhedron, viewer);
     }
 }
 

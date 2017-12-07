@@ -466,6 +466,7 @@ void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_sort_left_curves()
   Subcurve* curve = *(m_currentEvent->left_curves_begin());
   Status_line_iterator sl_iter = curve->hint();
 
+  CGAL_assertion(sl_iter != m_statusLine.end());
   CGAL_assertion(*sl_iter == curve);
   // Look for the first curve in the vertical ordering that is also in the
   // left curve of the event
@@ -559,7 +560,7 @@ void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_right_curves()
 template <typename Tr, typename Vis, typename Subcv, typename Evnt,
           typename Alloc>
 bool Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::
-_add_curve_to_right(Event* event, Subcurve* curve, bool /* overlap_exist */)
+_add_curve_to_right(Event* event, Subcurve* curve)
 {
 #if defined(CGAL_NO_ASSERTIONS)
   (void) event->add_curve_to_right(curve, m_traits);
@@ -592,6 +593,7 @@ _remove_curve_from_status_line(Subcurve* sc)
   // The position of the next event can be right after the deleted subcurve.
   m_status_line_insert_hint = sl_iter;
   ++m_status_line_insert_hint;
+  sc->set_hint(m_statusLine.end());
 
   // Erase the subcurve from the status line.
   CGAL_SL_PRINT_ERASE(*sl_iter);

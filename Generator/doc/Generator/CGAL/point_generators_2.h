@@ -451,8 +451,7 @@ get_default_random() );
  template< typename Point_2,
            typename Triangle_2 = typename Kernel_traits<Point_2>::Kernel::Triangle_2,
            typename Creator = Creator_uniform_2<typename Kernel_traits<Point_2>::Kernel::RT,Point_2> >
- class Random_points_in_triangles_2 {
- public:
+ struct Random_points_in_triangles_2 {
 
  /// \name Types
  /// @{

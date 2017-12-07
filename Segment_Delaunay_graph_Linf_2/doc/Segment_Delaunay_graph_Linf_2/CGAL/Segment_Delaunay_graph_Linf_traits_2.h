@@ -29,7 +29,7 @@ and should be preferred over
 
 */
 template< typename K, typename MTag >
-class Segment_Delaunay_graph_Linf_traits_2 {
+struct Segment_Delaunay_graph_Linf_traits_2 {
 }; /* end Segment_Delaunay_graph_Linf_traits_2 */
 } /* end namespace CGAL */
 
@@ -64,6 +64,6 @@ and should be preferred over
 
 */
 template< typename K, typename MTag >
-class Segment_Delaunay_graph_Linf_traits_without_intersections_2 {
+struct Segment_Delaunay_graph_Linf_traits_without_intersections_2 {
 }; /* end Segment_Delaunay_graph_Linf_traits_without_intersections_2 */
 } /* end namespace CGAL */

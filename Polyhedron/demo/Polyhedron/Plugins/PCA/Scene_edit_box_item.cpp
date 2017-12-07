@@ -1279,8 +1279,8 @@ void Scene_edit_box_item_priv::picking(int& type, int& id, Viewer_interface *vie
   int deviceHeight = viewer->camera()->screenHeight();
   QOpenGLFramebufferObject* fbo = new QOpenGLFramebufferObject(deviceWidth, deviceHeight,QOpenGLFramebufferObject::Depth);
   fbo->bind();
-  glEnable(GL_DEPTH_TEST);
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  viewer->glEnable(GL_DEPTH_TEST);
+  viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   QColor bgColor(viewer->backgroundColor());
   //draws the image in the fbo
   viewer->setBackgroundColor(::Qt::white);
@@ -1290,7 +1290,7 @@ void Scene_edit_box_item_priv::picking(int& type, int& id, Viewer_interface *vie
   const static int dataLength = rowLength * deviceHeight;
   GLubyte* buffer = new GLubyte[dataLength];
   // Qt uses upper corner for its origin while GL uses the lower corner.
-  glReadPixels(picked_pixel.x(), deviceHeight-1-picked_pixel.y(), 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+  viewer->glReadPixels(picked_pixel.x(), deviceHeight-1-picked_pixel.y(), 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
   //decode ID and pick (don't forget the case nothing is picked
   if(!(buffer[0]==buffer[1] && buffer[1]==buffer[2]))
   {
@@ -1392,8 +1392,8 @@ void Scene_edit_box_item::drawHl(Viewer_interface* viewer)const
   {
     viewer->glGetFloatv(GL_POLYGON_OFFSET_FACTOR, &offset_factor);
     viewer->glGetFloatv(GL_POLYGON_OFFSET_UNITS, &offset_units);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    viewer->glEnable(GL_BLEND);
+    viewer->glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     vaos[Scene_edit_box_item_priv::S_Faces]->bind();
     d->program = &d->transparent_face_program;
     d->program->bind();
@@ -1409,8 +1409,8 @@ void Scene_edit_box_item::drawHl(Viewer_interface* viewer)const
     viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(d->hl_vertex.size()/3));
     vaos[Scene_edit_box_item_priv::S_Faces]->release();
     d->program->release();
-    glPolygonOffset(offset_factor, offset_units);
-    glDisable(GL_BLEND);
+    viewer->glPolygonOffset(offset_factor, offset_units);
+    viewer->glDisable(GL_BLEND);
 
   }
 }
@@ -1445,8 +1445,8 @@ void Scene_edit_box_item::drawTransparent(CGAL::Three::Viewer_interface*viewer)c
   // Specular
   QVector4D specular(0.0f, 0.0f, 0.0f, 1.0f);
 
-  glEnable(GL_BLEND);
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  viewer->glEnable(GL_BLEND);
+  viewer->glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   vaos[Scene_edit_box_item_priv::Faces]->bind();
   d->program = &d->transparent_face_program;
   d->program->bind();
@@ -1462,5 +1462,5 @@ void Scene_edit_box_item::drawTransparent(CGAL::Three::Viewer_interface*viewer)c
   viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(d->vertex_faces.size()/3));
   vaos[Scene_edit_box_item_priv::Faces]->release();
   d->program->release();
-  glDisable(GL_BLEND);
+  viewer->glDisable(GL_BLEND);
 }

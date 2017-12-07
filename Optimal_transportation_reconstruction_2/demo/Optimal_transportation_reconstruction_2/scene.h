@@ -24,6 +24,8 @@
 #include <CGAL/property_map.h>
 #include <CGAL/value_type_traits.h>
 
+class GlViewer;
+
 class Scene {
 
 public:
@@ -83,12 +85,14 @@ private:
   Optimal_transportation_reconstruction_kerneled_2* m_pwsrec;
   int m_ignore;
   bool m_init_done;
+  bool is_viewer_set;
   double m_percentage;
 
   // bbox
   double m_bbox_x;
   double m_bbox_y;
   double m_bbox_size;
+
 
 public:
   Scene() {
@@ -99,6 +103,7 @@ public:
     m_bbox_x = 0.0;
     m_bbox_y = 0.0;
     m_bbox_size = 1.0;
+    is_viewer_set = false;
 
     m_pwsrec = new Optimal_transportation_reconstruction_kerneled_2();
   }
@@ -532,12 +537,16 @@ public:
     const bool view_bins, const bool view_foot_points,
     const bool view_relocation, const bool view_edge_relevance,
     const float point_size, const float vertex_size,
-    const float line_thickness)
+    const float line_thickness, GlViewer* viewer)
   {
     if (m_pwsrec == NULL) {
       return;
     }
-
+    if(!is_viewer_set)
+    {
+      m_pwsrec->setViewer(viewer);
+      is_viewer_set = true;
+    }
     if (view_edges)
       m_pwsrec->draw_edges(0.5f * line_thickness, 0.9f, 0.9f, 0.9f);
 
@@ -563,26 +572,10 @@ public:
       m_pwsrec->draw_footpoints(line_thickness, 0.2f, 0.8f, 0.2f);
 
     if (view_points)
-      draw_samples(point_size);
+      draw_samples(point_size, viewer);
   }
 
-  void draw_samples(const float point_size) {
-
-    ::glPointSize(point_size);
-    ::glBegin(GL_POINTS);
-
-    std::vector<Sample_>::const_iterator it;
-    for (it = m_samples.begin(); it != m_samples.end(); it++) {
-      double mass = it->mass();
-
-      float value = mass;
-      float grey = 0.9 * (1.0f - value);
-      ::glColor3f(grey, grey, grey);
-      const Point& p = it->point();
-      ::glVertex2d(p.x(), p.y());
-    }
-    ::glEnd();
-  }
+  void draw_samples(const float point_size, GlViewer* viewer);
 
 
   // PREDEFINED EXAMPLES //

@@ -1,15 +1,15 @@
 #ifndef _GL_RENDER_EDGES_
 #define _GL_RENDER_EDGES_
 
-#include <CGAL/gl.h>
+#include "Viewer.h"
 
 template <class Polyhedron>
-void gl_render_edges(Polyhedron& polyhedron)
+void gl_render_edges(Polyhedron& polyhedron, Viewer* viewer)
 {
   typedef typename Polyhedron::Traits Kernel;
   typedef typename Kernel::Point_3 Point;
 
-  ::glBegin(GL_LINES);
+  viewer->glBegin(GL_LINES);
   typename Polyhedron::Edge_iterator he;
   for(he = polyhedron.edges_begin();
       he != polyhedron.edges_end();
@@ -17,10 +17,10 @@ void gl_render_edges(Polyhedron& polyhedron)
   {
     const Point& a = he->vertex()->point();
     const Point& b = he->opposite()->vertex()->point();
-    ::glVertex3d(a.x(),a.y(),a.z());
-    ::glVertex3d(b.x(),b.y(),b.z());
+    viewer->glVertex3d(a.x(),a.y(),a.z());
+    viewer->glVertex3d(b.x(),b.y(),b.z());
   }
-  ::glEnd();
+  viewer->glEnd();
 } 
 
 #endif // _GL_RENDER_EDGES_

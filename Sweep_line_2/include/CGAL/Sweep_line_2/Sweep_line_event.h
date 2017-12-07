@@ -149,6 +149,8 @@ public:
     //std::cout << "add_curve_to_left, curve: ";
     //curve->Print();
 
+    bool curve_added = false;
+    std::vector<Subcurve_iterator> left_curves_to_remove;
     for (iter = m_leftCurves.begin(); iter != m_leftCurves.end(); ++iter) {
       //std::cout << "add_curve_to_left, iter: ";
       //(*iter)->Print();
@@ -159,15 +161,42 @@ public:
         return;
       }
 
-      // Replace the existing curve in case of overlap.
-      // EBEB 2011-10-27: Fixed to detect overlaps correctly
-      if ((curve != *iter) && (curve->has_common_leaf(*iter))) {
+      // Replace the existing curve in case of overlap, only if the set of ancesters
+      // of curve contains the set of ancesters of *iter
+      if (curve->has_common_leaf(*iter))
+      {
         //std::cout << "add_curve_to_left, curve overlaps" << std::endl;
-        *iter = curve;
-        return;
+        if ( curve->number_of_original_curves() > (*iter)->number_of_original_curves() )
+        {
+          if (curve->are_all_leaves_contained(*iter))
+          {
+            if (curve_added)
+            {
+              left_curves_to_remove.push_back(iter);
+              continue;
+            }
+
+            *iter = curve;
+            curve_added=true;
+          }
+        }
+        else{
+          if ((*iter)->are_all_leaves_contained(curve))
+          {
+            CGAL_assertion(!curve_added);
+            return;
+          }
+        }
       }
     }
 
+    for (typename std::vector<Subcurve_iterator>::iterator itit =
+          left_curves_to_remove.begin(); itit!=left_curves_to_remove.end(); ++itit)
+    {
+      m_leftCurves.erase(*itit);
+    }
+
+    if (curve_added) return;
     // The curve does not exist - insert it to the container.
     m_leftCurves.push_back(curve);
     // std::cout << "add_curve_to_left, pushed back" << std::endl;
@@ -178,6 +207,10 @@ public:
   /*! Add a subcurve to the container of left curves (without checks). */
   void push_back_curve_to_left(Subcurve* curve)
   { m_leftCurves.push_back(curve); }
+
+  /*! Add a subcurve to the container of right curves (without checks). */
+  void push_back_curve_to_right(Subcurve* curve)
+  { m_rightCurves.push_back(curve); }
 
   /*! Add a subcurve to the container of right curves. */
   std::pair<bool, Subcurve_iterator>
@@ -237,8 +270,20 @@ public:
   {
     Subcurve_iterator iter;
     for (iter = m_leftCurves.begin(); iter!= m_leftCurves.end(); ++iter) {
-      if (curve->has_common_leaf(*iter)) {
+      if (curve == *iter || curve->are_all_leaves_contained(*iter)) {
         m_leftCurves.erase(iter);
+        return;
+      }
+    }
+  }
+
+  /*! Remove a curve from the set of right curves. */
+  void remove_curve_from_right(Subcurve* curve)
+  {
+    Subcurve_iterator iter;
+    for (iter = m_rightCurves.begin(); iter!= m_rightCurves.end(); ++iter) {
+      if (curve == *iter || curve->are_all_leaves_contained(*iter)) {
+        m_rightCurves.erase(iter);
         return;
       }
     }
@@ -408,22 +453,33 @@ public:
     m_leftCurves.erase(left_iter, m_leftCurves.end());
   }
 
-  bool is_right_curve_bigger(Subcurve* c1, Subcurve* c2)
+  bool is_right_curve_bigger(Subcurve* c1, Subcurve* c2, const Traits_2* tr)
   {
+    bool found_c1=false, found_c2=false;
     Subcurve_iterator   iter;
     for (iter = m_rightCurves.begin(); iter != m_rightCurves.end(); ++iter) {
-      if ((*iter == c1) ||
-          (static_cast<Subcurve*>((*iter)->originating_subcurve1()) == c1) ||
-          (static_cast<Subcurve*>((*iter)->originating_subcurve2()) == c1))
-        return false;
+      if (!found_c1 && ( (*iter == c1) ||
+          (static_cast<Subcurve*>(*iter)->are_all_leaves_contained(c1))))
+      {
+        if (found_c2)
+          return true;
+        else
+          found_c1=true;
+      }
 
-      if ((*iter == c2) ||
-          (static_cast<Subcurve*>((*iter)->originating_subcurve1()) == c2) ||
-          (static_cast<Subcurve*>((*iter)->originating_subcurve2()) == c2))
-        return true;
+      if (!found_c2 && ( (*iter == c2) ||
+          (static_cast<Subcurve*>(*iter)->are_all_leaves_contained(c2))))
+      {
+        if (found_c1)
+          return false;
+        else
+          found_c2=true;
+      }
     }
+    CGAL_assertion(!found_c1 || !found_c2);
 
-    return true;
+    return tr->compare_y_at_x_right_2_object()
+             (c1->last_curve(), c2->last_curve(), m_point) == LARGER;
   }
 
   /*! Check if the two curves are negihbors to the left of the event. */
