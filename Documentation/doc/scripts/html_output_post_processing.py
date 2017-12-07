@@ -184,7 +184,7 @@ def automagically_number_figures():
   #collect the list of packages in the package overview page,
   #respecting the order of that page
   all_packages=[]
-  d = pq(filename="./Manual/packages.html", parser='html')
+  d = pq(filename="./Manual/packages.html", parser='html', encoding='utf-8')
   for el in d('a.elRef'):
     text = pq(el).attr('href')
     if text.find("index.html")!=-1:
@@ -204,14 +204,14 @@ def automagically_number_figures():
     all_pkg_files.remove(userman)
     for fname in [userman]+all_pkg_files:
       infos=figure_anchor_info(pkg_id, global_anchor_map)
-      d = pq(filename=fname, parser='html')
+      d = pq(filename=fname, parser='html', encoding='utf-8')
       d('a.anchor').each( lambda i: collect_figure_anchors(i,infos) )
     pkg_id+=1
 
   #Figure link dev Manual
   for fname in glob.glob("Manual/*.html"):
     infos=figure_anchor_info(0, global_anchor_map)
-    d = pq(filename=fname, parser='html')
+    d = pq(filename=fname, parser='html', encoding='utf-8')
     d('a.anchor').each( lambda i: collect_figure_anchors(i,infos) )
 
   #replace each link to a figure by its unique id
@@ -221,7 +221,7 @@ def automagically_number_figures():
     with codecs.open(fname, encoding='utf-8') as f:
         if not any(re.search("fig__", line) for line in f):
             continue # pattern does not occur in file so we are done.
-    d = pq(filename=fname, parser='html')
+    d = pq(filename=fname, parser='html', encoding='utf-8')
     d('a.el').each( lambda i: update_figure_ref(i,global_anchor_map) )
     d('a.elRef').each( lambda i: update_figure_ref(i,global_anchor_map) )
     write_out_html(d, fname)
@@ -253,7 +253,7 @@ removes some unneeded files, and performs minor repair on some glitches.''')
     annotated_files=package_glob('./*/annotated.html')
     for fn in annotated_files:
       dir_name=path.dirname(fn)
-      d = pq(filename=fn, parser='html')
+      d = pq(filename=fn, parser='html', encoding='utf-8')
       tr_tags = d('table.directory tr img')
       tr_tags.each(lambda i: rearrange_img(i, dir_name))
       write_out_html(d,fn)
@@ -261,7 +261,7 @@ removes some unneeded files, and performs minor repair on some glitches.''')
     class_files=list(package_glob('./*/class*.html'))
     class_files.extend(package_glob('./*/struct*.html'))
     for fn in class_files:
-        d = pq(filename=fn, parser='html')
+        d = pq(filename=fn, parser='html', encoding='utf-8')
         ident = d('#CGALConcept')
         if ident.size() == 1:
             conceptify(d);
