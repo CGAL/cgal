@@ -32,16 +32,10 @@ void main(void)
   vec3 V = -fs_in.fP.xyz;
 
   vec3 N;
-  vec3 X = dFdx(fs_in.fP.xyz);
-  vec3 Y = dFdy(fs_in.fP.xyz);
-  vec3 normal=normalize(cross(X,Y));
-  if(dot(normal, fs_in.normal) <0)
-    normal = - normal;
-
-  if(normal == highp vec3(0.0,0.0,0.0))
+  if(fs_in.normal == highp vec3(0.0,0.0,0.0))
        N = highp vec3(0.0,0.0,0.0);
    else
-       N = normalize(normal);
+       N = fs_in.normal;
   L = normalize(L);
   V = normalize(V);
 
