@@ -91,9 +91,11 @@ private:
   typedef typename Geom_traits::Vector_3 Vector_3;
   typedef typename Geom_traits::Plane_3 Plane_3;
   typedef typename Geom_traits::Construct_vector_3 Construct_vector_3;
+  typedef typename Geom_traits::Construct_point_3 Construct_point_3;
   typedef typename Geom_traits::Construct_scaled_vector_3 Construct_scaled_vector_3;
   typedef typename Geom_traits::Construct_sum_of_vectors_3 Construct_sum_of_vectors_3;
   typedef typename Geom_traits::Compute_scalar_product_3 Compute_scalar_product_3;
+  typedef typename Geom_traits::Construct_translated_point_3 Construct_translated_point_3;
 
   // graph_traits typedefs
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
@@ -230,9 +232,11 @@ private:
   const Proxy_fitting *m_pproxy_fitting;
 
   Construct_vector_3 vector_functor;
+  Construct_point_3 point_functor;
   Construct_scaled_vector_3 scale_functor;
   Construct_sum_of_vectors_3 sum_functor;
   Compute_scalar_product_3 scalar_product_functor;
+  Construct_translated_point_3 translate_point_functor;
 
   // The facet proxy index map.
   Face_proxy_map m_fproxy_map;
@@ -267,9 +271,11 @@ public:
 
     Geom_traits traits;
     vector_functor = traits.construct_vector_3_object();
+    point_functor = traits.construct_point_3_object();
     scale_functor = traits.construct_scaled_vector_3_object();
     sum_functor = traits.construct_sum_of_vectors_3_object();
     scalar_product_functor = traits.compute_scalar_product_3_object();
+    translate_point_functor = traits.construct_translated_point_3_object();
   }
 
   /*!
@@ -286,9 +292,11 @@ public:
 
     Geom_traits traits;
     vector_functor = traits.construct_vector_3_object();
+    point_functor = traits.construct_point_3_object();
     scale_functor = traits.construct_scaled_vector_3_object();
     sum_functor = traits.construct_sum_of_vectors_3_object();
     scalar_product_functor = traits.compute_scalar_product_3_object();
+    translate_point_functor = traits.construct_translated_point_3_object();
 
     m_vanchor_map = CGAL::internal::add_property(
       Vertex_anchor_tag("VSA-vertex_anchor"), *(const_cast<TriangleMesh *>(m_ptm)));
@@ -888,19 +896,24 @@ public:
     const bool pca_plane = false) {
     // compute averaged edge length, used in chord subdivision
     m_average_edge_length = compute_averaged_edge_length(*m_ptm, m_vpoint_map);
+
     // initialize all vertex anchor status
     BOOST_FOREACH(vertex_descriptor v, vertices(*m_ptm))
       put(m_vanchor_map, v, CGAL_VSA_INVALID_TAG);
     m_anchors.clear();
     m_bcycles.clear();
     m_tris.clear();
-
     m_px_planes.clear();
-    init_proxy_planes(pca_plane);
 
+    // compute proxy planes, used for subdivision and anchor location
+    compute_proxy_planes(pca_plane);
+
+    // generate anchors
     find_anchors();
     find_edges(chord_error, is_relative_to_chord, with_dihedral_angle);
     add_anchors();
+
+    // descrete Delaunay triangulation
     pseudo_cdt();
 
     if (if_optimize_anchor_location)
@@ -1429,10 +1442,12 @@ private:
   }
 
   /*!
-   * @brief Initialize proxy planes.
+   * @brief Compute proxy planes.
+   * The proxy may not contain the plane related properties, so we need these internal planes,
+   * used in the chord subdivision and anchor location.
    * @param if_pca_plane true to use the PCA plane fitting
    */
-  void init_proxy_planes(const bool if_pca_plane) {
+  void compute_proxy_planes(const bool if_pca_plane) {
     // fit proxy planes, areas, normals
     std::vector<std::list<face_descriptor> > px_facets(m_proxies.size());
     BOOST_FOREACH(face_descriptor f, faces(*m_ptm))
@@ -1929,20 +1944,19 @@ private:
       }
 
       // projection
-      FT avgx(0.0), avgy(0.0), avgz(0.0), sum_area(0.0);
+      FT sum_area(0.0);
+      Vector_3 vec = vector_functor(CGAL::ORIGIN, point_functor(CGAL::ORIGIN));
       const Point_3 vtx_pt = m_vpoint_map[v];
-      for (std::set<std::size_t>::iterator pxitr = px_set.begin();
-        pxitr != px_set.end(); ++pxitr) {
-        std::size_t px_idx = *pxitr;
-        Point_3 proj = m_px_planes[px_idx].plane.projection(vtx_pt);
-        FT area = m_px_planes[px_idx].area; // TOFIX: use Vector and CGAL::ORIGIN + vector
-        avgx += proj.x() * area;
-        avgy += proj.y() * area;
-        avgz += proj.z() * area;
+      BOOST_FOREACH(const std::size_t px_idx, px_set) {
+        const Vector_3 proj = vector_functor(
+          CGAL::ORIGIN, m_px_planes[px_idx].plane.projection(vtx_pt));
+        const FT area = m_px_planes[px_idx].area;
+        vec = sum_functor(vec, scale_functor(proj, area));
         sum_area += area;
       }
+      vec = scale_functor(vec, FT(1.0) / sum_area);
 
-      a.pos = Point_3(avgx / sum_area, avgy / sum_area, avgz / sum_area);
+      a.pos = translate_point_functor(CGAL::ORIGIN, vec);
     }
   }
 
