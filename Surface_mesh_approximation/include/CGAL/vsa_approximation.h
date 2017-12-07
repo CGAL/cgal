@@ -619,12 +619,12 @@ public:
    * Here if we specify more than one proxy this means we teleport in a naive iterative fashion.
    * @param num_proxies number of proxies request to teleport
    * @param num_iterations number of re-fitting iterations
-   * @param if_test true if do the merge test before the teleportation (attempt to escape from local minima).
+   * @param if_force true to force the teleportation (no merge test)
    * @return number of proxies teleported.
    */
   std::size_t teleport_proxies(const std::size_t num_proxies,
     const std::size_t num_iterations = 5,
-    const bool if_test = true) {
+    const bool if_force = false) {
     std::size_t num_teleported = 0;
     while (num_teleported < num_proxies) {
       // find worst proxy
@@ -652,7 +652,7 @@ public:
 
       // find the best merge pair
       std::size_t px_enlarged = 0, px_merged = 0;
-      if (!find_best_merge(px_enlarged, px_merged, if_test))
+      if (!find_best_merge(px_enlarged, px_merged, !if_force))
         return num_teleported;
       if (px_worst == px_enlarged || px_worst == px_merged)
         return num_teleported;
@@ -730,16 +730,24 @@ public:
   /*!
    * @brief Simulate merging and local re-fitting of all two adjacent proxies
    * and find the best two regions to merge.
-   * Currently, the 'best' is defined as the minimum merged sum error among all adjacent pairs.
-   * @param px_enlarged the proxy to be enlarged
-   * @param px_merged the proxy to be merged
-   * @param if_test set true to activate the merge test
-   * @return true if found, false otherwise
+   * @note The <b>best</b> is defined as the minimum merged sum error
+   * <b>change</b> (increase of decrease) among all adjacent pairs.
+   * @param[out] px_tobe_enlarged the proxy index to be enlarged
+   * @param[out] px_tobe_merged the proxy index to be merged,
+   * guaranteed to be greater than <em>px_tobe_enlarged</em>.
+   * @param if_test true to activate the merge test.
+   * The merge test is considered successful if the merged error change
+   * is less than the half of the maximum proxy error.
+   * @return true if best merge pair found, false otherwise
    */
-  bool find_best_merge(std::size_t &px_enlarged, std::size_t &px_merged, const bool if_test) {
+  bool find_best_merge(std::size_t &px_tobe_enlarged,
+    std::size_t &px_tobe_merged,
+    const bool if_test) {
     typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor edge_descriptor;
     typedef std::pair<std::size_t, std::size_t> ProxyPair;
     typedef std::set<ProxyPair> MergedPair;
+
+    compute_fitting_error();
 
     std::vector<std::list<face_descriptor> > px_facets(m_proxies.size());
     BOOST_FOREACH(face_descriptor f, faces(*m_ptm))
@@ -747,7 +755,7 @@ public:
 
     // find best merge
     MergedPair merged_set;
-    FT min_merged_error = FT(0.0);
+    FT min_error_change = FT(0.0);
     bool first_merge = true;
     BOOST_FOREACH(edge_descriptor e, edges(*m_ptm)) {
       if (CGAL::is_border(e, *m_ptm))
@@ -761,35 +769,38 @@ public:
       if (merged_set.find(ProxyPair(pxi, pxj)) != merged_set.end())
         continue;
 
+      merged_set.insert(ProxyPair(pxi, pxj));
+      // simulated merge
       std::list<face_descriptor> merged_patch(px_facets[pxi]);
       BOOST_FOREACH(face_descriptor f, px_facets[pxj])
         merged_patch.push_back(f);
+      Proxy_wrapper pxw_tmp = fit_new_proxy(
+        merged_patch.begin(), merged_patch.end(), CGAL_VSA_INVALID_TAG);
 
-      Proxy_wrapper pxw = fit_new_proxy(merged_patch.begin(), merged_patch.end(), CGAL_VSA_INVALID_TAG);
-      FT sum_error(0.0);
+      FT error_merged(0.0);
       BOOST_FOREACH(face_descriptor f, merged_patch)
-        sum_error += (*m_perror_metric)(f, pxw.px);
-      merged_set.insert(ProxyPair(pxi, pxj));
+        error_merged += (*m_perror_metric)(f, pxw_tmp.px);
+      const FT error_change = error_merged - (m_proxies[pxi].err + m_proxies[pxj].err);
 
-      if (first_merge || sum_error < min_merged_error) {
+      if (first_merge || error_change < min_error_change) {
         first_merge = false;
-        min_merged_error = sum_error;
-        px_enlarged = pxi;
-        px_merged = pxj;
+        min_error_change = error_change;
+        px_tobe_enlarged = pxi;
+        px_tobe_merged = pxj;
       }
     }
 
+    if (merged_set.empty())
+      return false;
+
     // test if merge worth it
     if (if_test) {
-      compute_fitting_error();
       FT max_error = m_proxies.front().err;
       for (std::size_t i = 0; i < m_proxies.size(); ++i) {
         if (max_error < m_proxies[i].err)
           max_error = m_proxies[i].err;
       }
-      const FT merge_thre = max_error / FT(2.0);
-      const FT increase = min_merged_error - (m_proxies[px_enlarged].err + m_proxies[px_merged].err);
-      if (increase > merge_thre)
+      if (min_error_change > max_error / FT(2.0))
         return false;
     }
 
