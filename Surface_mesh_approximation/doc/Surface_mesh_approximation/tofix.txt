@@ -7,3 +7,4 @@
 - when meshing, use discrete analog of a *constrained* 2D Delaunay triangulation ? (involving visibility)
 -- checked
 - add option to optimize the vertex locations of the output mesh
+-- checked

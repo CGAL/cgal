@@ -166,7 +166,7 @@ private:
     FT err;
   };
 
-  // The average positioned anchor attached to a vertex.
+  // The anchor attached to a vertex.
   struct Anchor {
     Anchor(const vertex_descriptor &vtx_, const Point_3 pos_)
       : vtx(vtx_), pos(pos_) {}
@@ -875,6 +875,7 @@ public:
    * @param is_relative_to_chord true if the chord_error is relative to the the chord length (relative sense),
    * otherwise it's relative to the average edge length (absolute sense).
    * @param with_dihedral_angle true if add dihedral angle weight to the distance, false otherwise
+   * @param if_optimize_anchor_location true if optimize the anchor location, false otherwise
    * @param pca_plane true if use PCA plane fitting, otherwise use the default area averaged plane parameters
    * @return true if the extracted surface mesh is manifold, false otherwise.
    */
@@ -883,6 +884,7 @@ public:
     const FT chord_error = FT(5.0),
     const bool is_relative_to_chord = false,
     const bool with_dihedral_angle = false,
+    const bool if_optimize_anchor_location = true,
     const bool pca_plane = false) {
     // compute averaged edge length, used in chord subdivision
     m_average_edge_length = compute_averaged_edge_length(*m_ptm, m_vpoint_map);
@@ -900,6 +902,9 @@ public:
     find_edges(chord_error, is_relative_to_chord, with_dihedral_angle);
     add_anchors();
     pseudo_cdt();
+
+    if (if_optimize_anchor_location)
+      optimize_anchor_location();
 
     return build_polyhedron_surface(tm_out);
   }
@@ -1897,7 +1902,8 @@ private:
    */
   void attach_anchor(const vertex_descriptor &vtx) {
     put(m_vanchor_map, vtx, m_anchors.size());
-    m_anchors.push_back(Anchor(vtx, compute_anchor_position(vtx)));
+    // default anchor location is the vertex point
+    m_anchors.push_back(Anchor(vtx, m_vpoint_map[vtx]));
   }
 
   /*!
@@ -1905,37 +1911,39 @@ private:
    * @param he halfedge
    */
   void attach_anchor(const halfedge_descriptor &he) {
-    vertex_descriptor vtx = target(he, *m_ptm);
-    attach_anchor(vtx);
+    attach_anchor(target(he, *m_ptm));
   }
 
   /*!
-   * @brief Calculate the anchor positions from a vertex.
-   * @param v the vertex descriptor
-   * @return the anchor position
+   * @brief Optimize the anchor location by averaging the projection points of
+   * the anchor vertex to the incident proxy plane.
    */
-  Point_3 compute_anchor_position(const vertex_descriptor &v) {
-    // construct an anchor from vertex and the incident proxies
-    std::set<std::size_t> px_set;
-    BOOST_FOREACH(halfedge_descriptor h, halfedges_around_target(v, *m_ptm)) {
-      if (!CGAL::is_border(h, *m_ptm))
-        px_set.insert(get(m_fproxy_map, face(h, *m_ptm)));
-    }
+  void optimize_anchor_location() {
+    BOOST_FOREACH(Anchor &a, m_anchors) {
+      const vertex_descriptor v = a.vtx;
+      // incident proxy set
+      std::set<std::size_t> px_set;
+      BOOST_FOREACH(halfedge_descriptor h, halfedges_around_target(v, *m_ptm)) {
+        if (!CGAL::is_border(h, *m_ptm))
+          px_set.insert(get(m_fproxy_map, face(h, *m_ptm)));
+      }
 
-    // construct an anchor from vertex and the incident proxies
-    FT avgx(0.0), avgy(0.0), avgz(0.0), sum_area(0.0);
-    const Point_3 vtx_pt = m_vpoint_map[v];
-    for (std::set<std::size_t>::iterator pxitr = px_set.begin();
-      pxitr != px_set.end(); ++pxitr) {
-      std::size_t px_idx = *pxitr;
-      Point_3 proj = m_px_planes[px_idx].plane.projection(vtx_pt);
-      FT area = m_px_planes[px_idx].area; // TOFIX: use Vector and CGAL::ORIGIN + vector
-      avgx += proj.x() * area;
-      avgy += proj.y() * area;
-      avgz += proj.z() * area;
-      sum_area += area;
+      // projection
+      FT avgx(0.0), avgy(0.0), avgz(0.0), sum_area(0.0);
+      const Point_3 vtx_pt = m_vpoint_map[v];
+      for (std::set<std::size_t>::iterator pxitr = px_set.begin();
+        pxitr != px_set.end(); ++pxitr) {
+        std::size_t px_idx = *pxitr;
+        Point_3 proj = m_px_planes[px_idx].plane.projection(vtx_pt);
+        FT area = m_px_planes[px_idx].area; // TOFIX: use Vector and CGAL::ORIGIN + vector
+        avgx += proj.x() * area;
+        avgy += proj.y() * area;
+        avgz += proj.z() * area;
+        sum_area += area;
+      }
+
+      a.pos = Point_3(avgx / sum_area, avgy / sum_area, avgz / sum_area);
     }
-    return Point_3(avgx / sum_area, avgy / sum_area, avgz / sum_area);
   }
 
   /*!
