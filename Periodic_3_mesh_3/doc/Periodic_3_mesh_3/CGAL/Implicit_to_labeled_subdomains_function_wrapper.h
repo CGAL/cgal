@@ -16,7 +16,7 @@ thus yielding a periodic mesh of the entire fundamental domain.
 \tparam Function provides the definition of the function.
         This parameter stands for a model of the concept `ImplicitFunction`
         described in the surface mesh generation package.
-        The number types Function::FT and BGT::FT are required to match.
+        The number types `Function::FT` and `BGT::FT` are required to match.
 
 \sa `Implicit_multi_domain_to_labeling_function_wrapper`.
 
@@ -43,7 +43,7 @@ public:
 /// @{
 
   /*!
-   * Returns 1 or 2, depending on wether f(p) is negative or not.
+   * Returns 1 or 2, depending on whether f(p) is negative or not.
    */
   int operator()(const Point_3& p, const bool = true) const;
 

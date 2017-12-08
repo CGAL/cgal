@@ -61,6 +61,9 @@ int main(int argc, char** argv)
   std::vector<Function> funcs;
   funcs.push_back(&schwarz_p);
   funcs.push_back(&sphere_function);
+
+  // The vector of vectors of sign is passed as a vector of strings (a string
+  // being a vector of chars)
   std::vector<std::string> vps;
   vps.push_back("--");
   vps.push_back("-+");

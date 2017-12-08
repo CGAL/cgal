@@ -13,8 +13,9 @@ The criteria driving the Delaunay refinement
 process may be tuned to achieve the user needs with respect to
 the size of mesh elements, the accuracy of boundaries approximation, etc.
 
-The optimization phase is a succession of optimization processes,
-including possibly a Lloyd smoothing, an odt-smoothing, a perturber and an exuder.
+The optimization phase is a sequence of optimization processes,
+amongst the following available optimizers: an ODT-smoothing,
+a Lloyd smoothing, a sliver perturber, and a sliver exuder.
 Each optimization process can be activated or not, according to the user requirements
 and available time.
 By default, only the perturber and the exuder are activated.
@@ -68,10 +69,10 @@ a sizing field to guide the discretization of 1-dimensional exposed features.
 The four additional parameters are optimization parameters.
 They control which optimization processes are performed
 and allow the user to tune the parameters of the optimization processes.
-We do not describe the types of optimization parameters as they are
-internal types. The package defines two global
-functions for each optimization parameter
-to generate appropriate value of this parameter.
+Individual optimization parameters are not described here as they are
+internal types (see instead the documentation page of each optimizer).
+For each optimization algorithm, there exist two global functions
+that allow to enable or disable the optimizer:
 
 \cgalHeading{Named Parameters}
 - <b>`lloyd`</b>  `parameters::lloyd()` and `parameters::no_lloyd()` are designed to
@@ -79,7 +80,7 @@ trigger or not a call to `lloyd_optimize_periodic_3_mesh_3()` function and to se
 parameters of this optimizer. If one parameter is not set, the default value of
 `lloyd_optimize_periodic_3_mesh_3()` is used for this parameter.
 
-- <b>`odt`</b> `parameters::odt()` and `parameters::no_odt()` are designed to
+- <b>`ODT`</b> `parameters::odt()` and `parameters::no_odt()` are designed to
 trigger or not a call to `odt_optimize_periodic_3_mesh_3()` function and
 to set the parameters of this optimizer.
 If one parameter is not set, the default value of
@@ -102,8 +103,8 @@ is not passed, its default value is used. The default values are
 `no_lloyd()`, `no_odt()`, `perturb()` and `exude()`.
 Note that whatever may be the optimization processes activated,
 they are always launched in the order that is a suborder
-of the following (see user manual for further details):
-*lloyd*, *odt*, *perturb*, *exude*.
+of the following (see user manual for further
+details): *ODT-smoother*, *Lloyd-smoother*, *perturber*, and *exuder*.
 
 Beware that optimization of the mesh is obtained by perturbing mesh vertices
 and modifying the mesh connectivity and that this has an impact on the strict

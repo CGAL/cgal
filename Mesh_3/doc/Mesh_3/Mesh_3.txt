@@ -65,7 +65,7 @@ and representable as a pure
 3D complex. A 3D complex is a set of faces with dimension 0,
 1, 2, and 3 such that
 all faces are pairwise interior disjoint
-and the boundary of each face of the complex is the union of faces
+and the boundary of each face of the complex is the union of lower-dimensional faces
 of the complex.
 The 3D complex is pure, meaning that each face is included in a face of dimension 3,
 so that the complex is entirely described by the set of its 3D faces and their subfaces.
@@ -100,16 +100,14 @@ and the singularities of those patches need not be accurately approximated
 in the final mesh.
 
 Note also that input complex faces are not required to be connected.
-Faces of the input domain are identified by indexes.
+Faces of the input domain are identified by indices.
 If a subdomain is not connected, its different components receive the same index.
 Likewise different surface patches, curves, or corners may share the same index.
 Each connected component of a feature will be accurately represented
 in the final mesh.
 Note however that the occurrence of multiply connected faces in the
 input complex may affect the relevance of internal topological checks
-performed by the mesh generator. Also, the mesh generator
-will not be able to apply different meshing criteria, e.g. different
-sizing fields, for the different connected components of a single feature.
+performed by the mesh generator.
 
 The domain is passed to the mesh generation function
 as a domain class, often called the oracle,
@@ -121,7 +119,7 @@ if a given query point belongs
 to the domain or not
 and to find in which subdomain it lies in, in the affirmative case.
 The domain class also provides predicates and constructors to test the intersection of a query line segment
-with the boundary surface patches and to build some intersection points, if any.
+with the boundary surface patches and to construct intersection points, if any.
 Lastly, if the input domain includes 1-dimensional exposed features, the domain class
 provides a way to construct sample points on these features.
 
@@ -132,7 +130,7 @@ Currently, 1-dimensional features may be defined as segments and polyline segmen
 
 \subsection Mesh_3OutputMesh Output Mesh
 
-The resulting mesh is output as a subcomplex of a 3D Delaunay triangulation,
+The resulting mesh is output as a subcomplex of a weighted 3D triangulation,
 in a class providing various iterators
 on mesh elements.
 
@@ -182,8 +180,8 @@ The mesh density refers to the number of mesh vertices and cells,
 i.e.\ to the complexity of the mesh.
 The mesh quality referred to here is measured by the radius edge
 ratio of surface facets end mesh cells, where the radius edge ratio of
-a simplex (triangle or tetrahedron) is the
-the ratio between its circumradius and its shortest edge.
+a simplex (triangle or tetrahedron) is the ratio between its circumradius
+and its shortest edge length.
 
 \subsection Mesh_3Protectionof0and1dimensionalExposed Protection of 0 and 1-dimensional Exposed Features
 
@@ -234,11 +232,11 @@ Therefore, some sliver-shaped tetrahedra may still be present in the mesh
 at the end of the refinement process.
 The optimization phase aims to eliminate these slivers.
 
-The optimization phase is a succession of optimization processes,
-including possibly a Lloyd smoothing, an odt-smoothing,
-a perturber and an exuder.
+The optimization phase is a sequence of optimization processes,
+amongst the following available optimizers: an ODT-smoother,
+a Lloyd-smoother, a sliver perturber, and a sliver exuder.
 
-The Lloyd and odt-smoother are global optimizers
+The Lloyd and ODT-smoother are global optimizers
 moving the mesh vertices to minimize
 a mesh energy. Those optimizers are described respectively in
 \cgalCite{cgal:dfg-cvtaa-99t}, \cgalCite{cgal:dw-tmgob-02} and in \cgalCite{cgal::c-mssbo-04}, \cgalCite{cgal:acyd-vtm-05}.
@@ -247,16 +245,16 @@ is the `L1` error resulting from the interpolation
 of the function \f$ f(x) =x^2\f$ by a piecewise linear function.
 In the case of the Lloyd smoother,
 the interpolation is linear in each Voronoi cell of the set of mesh vertices.
-In the case of the odt-smoother, the interpolation is linear in each cell
+In the case of the ODT-smoother, the interpolation is linear in each cell
 of the Delaunay triangulation of the mesh vertices,
-hence the name odt which is an abbreviation for *optimal Delaunay triangulation*.
+hence the name `ODT` which is an abbreviation for *Optimal Delaunay Triangulation*.
 
 \cgalFigureBegin{mesh_3paraboloid,paraboloid.jpg}
 The one dimensional illustration of the mesh energy minimized by ODT (left) and Lloyd (right) smoothers.
 \cgalFigureEnd
 
 The Lloyd optimizer is known to be blind to the occurrence of slivers in the mesh
-while the odt-smoother tends to chase them out.
+while the ODT-smoother tends to chase them out.
 Both of them are global optimizers,
 meaning that they try to improve
 the whole mesh rather than focusing on the worst elements. However, both are empirically known
@@ -376,7 +374,8 @@ represented in the mesh or not.
 The type `Features` of this parameter is an internal undescribed type.
 The library provides functions to construct appropriate values of that type.
 <UL>
-<LI>`parameters::features(domain)` sets features according to the domain,
+<LI>\link parameters::features() `parameters::features(domain)` \endlink
+sets features according to the domain,
 i.e.\ 0 and 1-dimensional features are taken into account if `domain` is a
 `MeshDomainWithFeatures_3`.
 <LI>`parameters::no_features()` prevents the representation
@@ -389,8 +388,7 @@ of a domain with features.
 The template parameter `MeshCriteria` must be a model of the concept
 `MeshCriteria_3`, or a model of the refined concept `MeshCriteriaWithFeatures_3`
 if the domain has exposed features.
-The argument of
-type `MeshCriteria` passed to the mesh generator specifies the
+The argument of type `MeshCriteria` passed to the mesh generator specifies the
 size and shape requirements for the tetrahedra in the mesh
 and for the triangles in the boundary surface mesh. These criteria
 condition the rules that drive the refinement process. At the end
@@ -402,18 +400,17 @@ The criteria for surface facets are governed by the four following
 parameters:
 <UL>
 <LI><I>`facet_angle`.</I> This parameter controls the shape of
-surface facets. Actually, it is a lower bound for the angle (in degrees) of
+surface facets. Specifically, it is a lower bound for the angle (in degrees) of
 surface facets. When boundary surfaces are smooth, the termination of the meshing process is
-guaranteed if the angular bound is at most 30
-degrees.
+guaranteed if this angular bound is at most 30 degrees.
 <LI><I>`facet_size`.</I> This parameter controls the size of surface facets.
-Actually, each surface facet has
+Each surface facet has
 a surface Delaunay ball which is a ball circumscribing the surface facet and
 centered on the surface patch. The parameter `facet_size` is
 either a constant or a spatially variable scalar field, providing an
 upper bound for the radii of surface Delaunay balls.
 <LI><I>`facet_distance`.</I> This parameter controls the approximation error of boundary and subdivision surfaces.
-Actually, it is
+Specifically, it is
 either a constant or a spatially variable scalar field. It
 provides an upper bound for the distance between the circumcenter
 of a surface facet and the center of a surface Delaunay ball of this facet.
@@ -421,15 +418,15 @@ of a surface facet and the center of a surface Delaunay ball of this facet.
 which have to be verified by each surface facet. By default, each vertex of a surface
 facet has to be located on a surface patch, on a curve, or on a corner. It can
 also be set to check whether the three vertices of a surface facet belongs to the same
-surface patch. This has to be done cautiously, as such a criteria needs that each surface
-patches intersection is an input 1-dimensional feature.
+surface patch. This has to be done cautiously, as such a criterion needs that each
+intersection of input surface patches is an input 1-dimensional feature.
 </UL>
 
 The criteria for mesh cells are governed by two parameters:
 <UL>
 <LI><I>`cell_radius_edge_ratio`.</I> This parameter controls the
 shape of mesh cells (but can't filter slivers, as we discussed earlier).
-Actually, it is an upper bound for the ratio
+It is an upper bound for the ratio
 between the circumradius of a
 mesh tetrahedron and its shortest edge.
 There is a theoretical bound for this parameter:
@@ -495,7 +492,7 @@ but the library provides global functions to generate
 appropriate values of these types:
 <UL>
 <LI>`parameters::lloyd()` and `parameters::no_lloyd()` activate and deactivate the Lloyd smoother.
-<LI>`parameters::odt()` and `parameters::no_odt()` activate and deactivate the odt-smoother.
+<LI>`parameters::odt()` and `parameters::no_odt()` activate and deactivate the ODT-smoother.
 <LI>`parameters::perturb()` and `parameters::no_perturb()` activate and deactivate the perturber.
 <LI>`parameters::exude()` and `parameters::no_exude()` activate and deactivate the exuder.
 </UL>
@@ -506,9 +503,7 @@ only the perturber and the exuder are activated.
 Note that whatever may be the optimization processes activated by `make_mesh_3()`
 or `refine_mesh_3()`,
 they are always launched in the order that is a suborder
-of the following:
-*odt smoother*, *Lloyd smoother*, *perturber* and
-*exuder*.
+of the following: *ODT-smoother*, *Lloyd-smoother*, *perturber*, and *exuder*.
 
 The package also provides four global functions to launch
 each optimization process independently. These functions are useful for advanced experimentation
@@ -519,9 +514,7 @@ Therefore an exudation process should never be run before
 a smoother or a perturber.
 For a maximum efficiency, whatever may be the optimization processes activated,
 they should be launched in the order that is a suborder
-of the following:
-*odt-smoother*, *Lloyd-smoother*, *perturber*,
-*exuder*.
+of the following: *ODT-smoother*, *Lloyd-smoother*, *perturber*, and *exuder*.
 
 \code{.cpp}
 

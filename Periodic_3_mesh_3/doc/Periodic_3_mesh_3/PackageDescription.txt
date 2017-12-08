@@ -53,7 +53,7 @@ the three-dimensional mesh generator of %CGAL (see package: \ref PkgMesh_3Summar
 Since this mesh generator only supports traditional (non-periodic) domains,
 it must be provided adapted oracles to handle the periodicity of the input domain
 and of the mesh.
-This package provides these necessary tools to be able to use %CGAL's \ref PkgMesh_3Summary
+This package provides the necessary tools to be able to use %CGAL's \ref PkgMesh_3Summary
 with %CGAL's \ref PkgPeriodic3Triangulation3Summary.
 
 \cgalClassifedRefPages

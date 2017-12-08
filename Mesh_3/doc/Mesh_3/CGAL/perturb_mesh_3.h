@@ -5,7 +5,7 @@ namespace CGAL {
 
 The function `perturb_mesh_3()` is a mesh optimizer that
 improves the quality of a Delaunay mesh
-by changing the mesh vertices positions.
+by changing the positions of some vertices of the mesh.
 
 The perturber tries to improve the dihedral angles of the worst cells in the mesh
 degree by degree: the

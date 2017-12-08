@@ -15,8 +15,8 @@ the size of mesh elements, the accuracy of boundaries approximation,
 etc.
 
 The optimization phase is a sequence of optimization processes,
-including possibly a Lloyd smoothing, an odt-smoothing,
-a perturber and an exuder.
+amongst the following available optimizers: an ODT-smoothing,
+a Lloyd-smoothing, a sliver perturber, and a sliver exuder.
 Each optimization process
 can be activated or not,
 according to the user requirements
@@ -31,8 +31,7 @@ traverse the resulting mesh data structure or can be written to a file
 
 
 \tparam C3T3 is required to be a model of
-the concept
-`MeshComplex_3InTriangulation_3`. This is the return type.
+the concept `MeshComplex_3InTriangulation_3`. This is the return type.
 The type `C3T3` is in particular required to provide a nested type
 `C3T3::Triangulation` for the 3D triangulation
 embedding the mesh. The vertex and cell base classes of the
@@ -64,13 +63,13 @@ of 1-dimensional exposed features.
 \cgalHeading{Named Parameters}
 
 - <b>`features`</b> allows
-the user to specify if 0 and 1-dimensional features actually have to be
+the user to specify whether 0 and 1-dimensional features have to be
 taken into account or not
 when the domain is a model of `MeshDomainWithFeatures_3`.
 The type `Features` of this parameter is an internal undescribed type.
 The library provides functions to construct appropriate values of that type.
 <UL>
-<LI>`parameters::features(domain)` sets `features` according to the domain,
+<LI>\link parameters::features() `parameters::features(domain)` \endlink sets `features` according to the domain,
 i.e.\ 0 and 1-dimensional features are taken into account if `domain` is a
 `MeshDomainWithFeatures_3`. This is the default behavior
 if parameter `features` is not specified.
@@ -87,29 +86,29 @@ surface if the input surface is not manifold.
 The four additional parameters are optimization parameters.
 They control which optimization processes are performed
 and allow the user to tune the parameters of the optimization processes.
-We do not describe the types of optimization parameters as they are
-internal types. The package defines two global
-functions for each optimization parameter
-to generate appropriate value of this parameter.
+Individual optimization parameters are not described here as they are
+internal types (see instead the documentation page of each optimizer).
+For each optimization algorithm, there exist two global functions
+that allow to enable or disable the optimizer:
 
-- <b>`lloyd`</b>  `parameters::lloyd()` and `parameters::no_lloyd()` are designed to
+- <b>`lloyd`</b>: `parameters::lloyd()` and `parameters::no_lloyd()` are designed to
 trigger or not a call to `lloyd_optimize_mesh_3()` function and to set the
 parameters of this optimizer. If one parameter is not set, the default value of
 `lloyd_optimize_mesh_3()` is used for this parameter.
 
-- <b>`odt`</b> `parameters::odt()` and `parameters::no_odt()` are designed to
-trigger or not a call to `CGAL::odt_optimize_mesh_3` function and
-to set the parameters of this optimizer
+- <b>`ODT`</b>: `parameters::odt()` and `parameters::no_odt()` are designed to
+trigger or not a call to `odt_optimize_mesh_3` function and
+to set the parameters of this optimizer.
 If one parameter is not set, the default value of
 `odt_optimize_mesh_3()` is used for this parameter.
 
-- <b>`perturb`</b> `parameters::perturb()` and `parameters::no_perturb()` are designed to
-trigger or not a call to `CGAL::perturb_mesh_3` function and
+- <b>`perturb`</b>: `parameters::perturb()` and `parameters::no_perturb()` are designed to
+trigger or not a call to `perturb_mesh_3` function and
 to set the parameters of this optimizer. If one parameter is not set, the default value of
 `CGAL::perturb_mesh_3` is used for this parameter, except for the time bound which is set to be
 equal to the refinement CPU time.
 
-- <b>`exude`</b> `parameters::exude()` and `parameters::no_exude()` are designed to
+- <b>`exude`</b>: `parameters::exude()` and `parameters::no_exude()` are designed to
 trigger or not a call to `exude_mesh_3()` function and to override to set the
 parameters of this optimizer. If one parameter is not set, the default value of
 `exude_mesh_3()` is used for this parameter, except for the time bound which is set to be
@@ -121,8 +120,8 @@ is not passed, its default value is used. The default values are
 
 Note that whatever may be the optimization processes activated,
 they are always launched in the order that is a suborder
-of the following (see user manual for further details):
-*lloyd*, *odt*, *perturb*, *exude*.
+of the following (see user manual for further
+details): *ODT-smoother*, *Lloyd-smoother*, *perturber*, and *exuder*.
 
 Beware that optimization of the mesh is obtained
 by perturbing mesh vertices and modifying the mesh connectivity

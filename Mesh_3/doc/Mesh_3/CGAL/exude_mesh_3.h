@@ -5,13 +5,15 @@ namespace CGAL {
 
 The function `exude_mesh_3()` performs a sliver exudation process on a Delaunay mesh.
 
-The sliver exudation process consists in turning the Delaunay triangulation
-into a weighted Delaunay triangulation and optimizing the weights
-of vertices in such a way that slivers disappear and
+The sliver exudation process consists in optimizing the weights of vertices
+of the weighted Delaunay triangulation in such a way that slivers disappear and
 the quality of the mesh improves.
 
-\pre `time_limit` \f$ \geq\f$ 0 and 0 \f$ \leq\f$ `sliver_bound` \f$ \leq\f$ 180
+\warning This optimizer modifies the weight of vertices of the triangulation and,
+if called, must be the last optimizer to be called. If the mesh is refined after
+this optimization has been performed, all improvements will be lost.
 
+\pre `time_limit` \f$ \geq\f$ 0 and 0 \f$ \leq\f$ `sliver_bound` \f$ \leq\f$ 180
 
 \tparam  C3T3 is required to be a model of the concept
 `MeshComplex_3InTriangulation_3`.
@@ -42,7 +44,6 @@ The default value is 0 and means that there is no targeted bound:
 the exuder then runs as long as
 it can improve the smallest dihedral angles of the set of cells
 incident to some vertices.
-
 
 \return
 The function `exude_mesh_3()` returns a value of type `CGAL::Mesh_optimization_return_code`

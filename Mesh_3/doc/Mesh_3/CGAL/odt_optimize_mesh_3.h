@@ -82,7 +82,7 @@ most vertices have been frozen, and no better convergence can be reached.
 \cgalHeading{Example}
 
 \code{.cpp}
-// 100 iterations of Odt-smoothing
+// 100 iterations of ODT-smoothing
 odt_optimize_mesh_3(c3t3,
                     domain,
                     parameters::max_iteration_number = 100,

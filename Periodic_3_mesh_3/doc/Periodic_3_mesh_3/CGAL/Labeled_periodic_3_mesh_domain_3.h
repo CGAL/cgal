@@ -8,11 +8,11 @@ namespace CGAL {
 This class is a model of concept `Periodic_3MeshDomain_3`.
 
 Any boundary facet is labeled `<a,b>`, with `a<b`, where `a` and `b` are the
-tags of its incident subdomain.
+tags of its incident subdomains.
 Thus, a boundary facet of the domain is labeled `<0,b>`, where `b!=0`.
 
-This class includes a function that provides the subdomain index of any
-query point. An intersection between a segment and bounding
+This class includes a function that provides the index of the subdomain
+in which any query point lies. An intersection between a segment and bounding
 surfaces is detected when both segment endpoints are associated with different
 values of subdomain indices. The intersection is then constructed by bisection.
 The bisection stops when the query segment is shorter than an error bound
@@ -21,7 +21,7 @@ The bisection stops when the query segment is shorter than an error bound
 to the constructor of `Labeled_periodic_3_mesh_domain_3`.
 
 `Implicit_periodic_3_mesh_domain_3` is derived from `Labeled_periodic_3_mesh_domain_3`.
-It uses a satisfying labeling function if there is only one component to mesh.
+It uses a satisfactory labeling function if there is only one component to mesh.
 
 \tparam LabelingFunction is the type of the input function.<br />
         This parameter stands for a model of the concept `ImplicitFunction`
