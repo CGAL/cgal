@@ -52,7 +52,7 @@ class Cell_radius_edge_criterion
 
   typedef Abstract_criterion<Tr,Visitor_> Base;
   typedef typename Base::Quality Quality;
-  typedef typename Base::Badness Badness;
+  typedef typename Base::Is_bad  Is_bad;
 
   typedef Cell_radius_edge_criterion<Tr, Visitor_> Self;
 
@@ -78,7 +78,7 @@ protected:
     return new Self(*this);
   }
 
-  virtual Badness do_is_bad(const Tr& tr, const Cell_handle& ch) const
+  virtual Is_bad do_is_bad(const Tr& tr, const Cell_handle& ch) const
   {
     typedef typename Tr::Geom_traits    Geom_traits;
     typedef typename Tr::Bare_point     Bare_point;
@@ -117,10 +117,10 @@ protected:
                 << size/min_sq_length << "] bound[" << sq_radius_edge_bound_
                 << "]\n" ;
 #endif
-      return Badness(Quality( (sq_radius_edge_bound_*min_sq_length)/size ));
+      return Is_bad(Quality( (sq_radius_edge_bound_*min_sq_length)/size ));
     }
     else
-      return Badness();
+      return Is_bad();
   }
 
 private:
@@ -145,7 +145,7 @@ class Cell_uniform_size_criterion
 
   typedef Abstract_criterion<Tr, Visitor_> Base;
   typedef typename Base::Quality Quality;
-  typedef typename Base::Badness Badness;
+  typedef typename Base::Is_bad  Is_bad;
 
   typedef Cell_uniform_size_criterion<Tr, Visitor_> Self;
 
@@ -169,7 +169,7 @@ protected:
     return new Self(*this);
   }
 
-  virtual Badness do_is_bad(const Tr& tr, const Cell_handle& ch) const
+  virtual Is_bad do_is_bad(const Tr& tr, const Cell_handle& ch) const
   {
     typedef typename Tr::Geom_traits     Geom_traits;
     typedef typename Tr::Bare_point      Bare_point;
@@ -197,10 +197,10 @@ protected:
       std::cerr << "bad cell (radius bound): size[" << size
                 << "] bound[" << sq_radius_bound_ << "]\n" ;
 #endif
-      return Badness(Quality(sq_radius_bound_/size));
+      return Is_bad(Quality(sq_radius_bound_/size));
     }
     else
-      return Badness();
+      return Is_bad();
   }
 
 private:
@@ -219,7 +219,7 @@ class Cell_variable_size_criterion
   
   typedef Abstract_criterion<Tr, Visitor_> Base;
   typedef typename Base::Quality Quality;
-  typedef typename Base::Badness Badness;
+  typedef typename Base::Is_bad  Is_bad;
   
   typedef Cell_variable_size_criterion<Tr, Visitor_, SizingField> Self;
   typedef SizingField Sizing_field;
@@ -244,7 +244,7 @@ protected:
     return new Self(*this);
   }
   
-  virtual Badness do_is_bad(const Tr& tr, const Cell_handle& ch) const
+  virtual Is_bad do_is_bad(const Tr& tr, const Cell_handle& ch) const
   {
     typedef typename Tr::Geom_traits      Geom_traits;
     typedef typename Tr::Bare_point       Bare_point;
@@ -274,10 +274,10 @@ protected:
       std::cerr << "bad cell (radius bound): size[" << size
       << "] bound[" << sq_bound << "]\n" ;
 #endif
-      return Badness(Quality(sq_bound/size));
+      return Is_bad(Quality(sq_bound/size));
     }
     else
-      return Badness();
+      return Is_bad();
   }
   
 private:
@@ -298,7 +298,7 @@ class No_bridge_cell_criterion
 
   typedef Abstract_criterion<Tr,Visitor_> Base;
   typedef typename Base::Quality Quality;
-  typedef typename Base::Badness Badness;
+  typedef typename Base::Is_bad  Is_bad;
 
   typedef No_bridge_cell_criterion<C3t3, Visitor_> Self;
 
@@ -323,7 +323,7 @@ protected:
     return new Self(*this);
   }
 
-  virtual Badness do_is_bad(const Tr& /*tr*/, const Cell_handle& ch) const
+  virtual Is_bad do_is_bad(const Tr& /*tr*/, const Cell_handle& ch) const
   {
     typedef typename Tr::Vertex_handle Vertex_handle;
 
@@ -335,16 +335,18 @@ protected:
     if(vp->in_dimension() != 2 || 
        vq->in_dimension() != 2 || 
        vr->in_dimension() != 2 || 
-       vs->in_dimension() != 2) return Badness();
+       vs->in_dimension() != 2)
+      return Is_bad();
 
     typedef typename C3t3::Index Index;
     const Index& vp_index = vp->index();
 
     if(vq->index() != vp_index ||
        vr->index() != vp_index ||
-       vs->index() != vp_index) return Badness(Quality(1));
+       vs->index() != vp_index)
+      return Is_bad(Quality(1));
 
-    return Badness();
+    return Is_bad();
   }
 };  // end class No_bridge_cell_criterion
 
@@ -359,7 +361,7 @@ class Cell_criterion_visitor
 public:
   typedef Abstract_criterion<Tr, Self> Criterion;
   typedef typename Base::Quality Cell_quality;
-  typedef typename Base::Badness Cell_badness;
+  typedef typename Base::Is_bad  Is_cell_bad;
   typedef typename Base::Handle Handle;
   typedef Handle Cell_handle;
 
@@ -397,7 +399,7 @@ class Cell_criteria_visitor_with_features
   
 public:  
   typedef typename Base::Quality  Cell_quality;
-  typedef typename Base::Badness  Cell_badness;
+  typedef typename Base::Is_bad   Is_cell_bad;
   typedef typename Base::Handle   Handle;
   typedef Handle                  Cell_handle;
   

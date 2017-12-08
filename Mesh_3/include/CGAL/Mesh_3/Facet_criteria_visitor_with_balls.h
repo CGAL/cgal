@@ -53,8 +53,8 @@ public:
   
 
   typedef typename Base::Quality Facet_quality;
-  typedef typename Base::Badness Facet_badness;
-  typedef typename Base::Handle Handle;
+  typedef typename Base::Is_bad  Is_facet_bad;
+  typedef typename Base::Handle  Handle;
   typedef Handle Facet;
 
   typedef typename Tr::Bare_point      Bare_point;

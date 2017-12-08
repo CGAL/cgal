@@ -60,35 +60,6 @@ namespace CGAL {
 
 namespace Mesh_3 {
 
-// Helper meta-programming functions, to allow backward compatibility.
-//
-//   - Has_Is_facet_bad and Had_Facet_badness are used to detect if a model
-//     of the MeshFacetCriteria_3 concept follows the specifications of
-//     CGAL-3.7 (with Facet_badness) or later (with Is_facet_bad).
-//
-//   - Then the meta-function Get_Is_facet_bad is used to get the actual
-//     type, either Facet_criteria::Facet_badness or
-//      Facet_criteria::Is_facet_bad.
-
-BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_Is_facet_bad, Is_facet_bad, true)
-BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_Facet_badness, Facet_badness, false)
-
-// template class, used when use_facet_badness = false
-template <typename Facet_criteria,
-          bool use_facet_badness = (!Has_Is_facet_bad<Facet_criteria>::value) &&
-                                    Has_Facet_badness<Facet_criteria>::value >
-struct Get_Is_facet_bad {
-  typedef typename Facet_criteria::Is_facet_bad Type;
-  typedef Type type; // compatibility with Boost
-};
-
-// partial specialization when use_facet_badness == true
-template <typename Facet_criteria>
-struct Get_Is_facet_bad<Facet_criteria, true> {
-  typedef typename Facet_criteria::Facet_badness Type;
-  typedef Type type;
-};
-
   // Predicate to know if a facet in a refinement queue is a zombie
   // A facet is a pair <cell, index of the opposite vertex>.
   // A facet is a "zombie" if at least one of its two adjacent cells
@@ -410,7 +381,7 @@ protected:
   // Private types
   //-------------------------------------------------------
   typedef typename Criteria::Facet_quality Quality;
-  typedef typename Get_Is_facet_bad<Criteria>::Type Is_facet_bad;
+  typedef typename Criteria::Is_facet_bad Is_facet_bad;
   typedef typename MeshDomain::Surface_patch_index Surface_patch_index;
   typedef typename MeshDomain::Index Index;
 

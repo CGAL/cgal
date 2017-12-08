@@ -69,7 +69,7 @@ private:
 
   typedef Mesh_3::Abstract_criterion<Tr,Visitor_> Base;
   typedef typename Base::Quality Quality;
-  typedef typename Base::Badness Badness;
+  typedef typename Base::Is_bad  Is_bad;
 
   typedef Aspect_ratio_criterion<Tr,Visitor_> Self;
 
@@ -106,7 +106,7 @@ protected:
     }
   }
 
-  virtual Badness do_is_bad(const Tr& tr, const Facet& f) const
+  virtual Is_bad do_is_bad(const Tr& tr, const Facet& f) const
   {
     CGAL_assertion (f.first->is_facet_on_surface(f.second));
     CGAL_assertion (B_ != 0);
@@ -148,10 +148,10 @@ protected:
       std::cerr << "Bad facet (angle criterion): aspect_ratio[" << aspect_ratio
                 << "] bound[" << B_ << "]" << std::endl;
 #endif
-      return Badness(Quality(aspect_ratio));
+      return Is_bad(Quality(aspect_ratio));
     }
     else
-      return Badness();
+      return Is_bad();
   }
 
 private:
@@ -176,7 +176,7 @@ private:
 
   typedef Mesh_3::Abstract_criterion<Tr,Visitor_> Base;
   typedef typename Base::Quality Quality;
-  typedef typename Base::Badness Badness;
+  typedef typename Base::Is_bad  Is_bad;
 
   typedef Uniform_curvature_size_criterion<Tr,Visitor_> Self;
 
@@ -197,7 +197,7 @@ protected:
     return new Self(*this);
   }
 
-  virtual Badness do_is_bad(const Tr& tr, const Facet& f) const
+  virtual Is_bad do_is_bad(const Tr& tr, const Facet& f) const
   {
     CGAL_assertion(f.first->is_facet_on_surface(f.second));
     CGAL_assertion (B_ != 0);
@@ -224,10 +224,10 @@ protected:
       std::cerr << "Bad facet (curvature size): sq_dist[" << sq_dist
                 << "] bound[" << B_ << "]\n";
 #endif
-      return Badness(Quality(B_/sq_dist));
+      return Is_bad(Quality(B_/sq_dist));
     }
     else
-      return Badness();
+      return Is_bad();
   }
 
 private:
@@ -247,7 +247,7 @@ private:
 
   typedef Mesh_3::Abstract_criterion<Tr,Visitor_> Base;
   typedef typename Base::Quality Quality;
-  typedef typename Base::Badness Badness;
+  typedef typename Base::Is_bad  Is_bad;
 
   typedef Variable_curvature_size_criterion<Tr,Visitor_,SizingField> Self;
   typedef SizingField Sizing_field;
@@ -269,7 +269,7 @@ protected:
     return new Self(*this);
   }
 
-  virtual Badness do_is_bad(const Tr& tr, const Facet& f) const
+  virtual Is_bad do_is_bad(const Tr& tr, const Facet& f) const
   {
     CGAL_assertion (f.first->is_facet_on_surface(f.second));
 
@@ -299,10 +299,10 @@ protected:
       std::cerr << "Bad facet (curvature size): sq_dist[" << sq_dist
       << "] bound[" << sq_bound << "]\n";
 #endif
-      return Badness(Quality(sq_bound/sq_dist));
+      return Is_bad(Quality(sq_bound/sq_dist));
     }
     else
-      return Badness();
+      return Is_bad();
   }
 
 private:
@@ -329,7 +329,7 @@ private:
   
   typedef Mesh_3::Abstract_criterion<Tr,Visitor_> Base;
   typedef typename Base::Quality Quality;
-  typedef typename Base::Badness Badness;
+  typedef typename Base::Is_bad  Is_bad;
   
   typedef Variable_size_criterion<Tr,Visitor_,SizingField> Self;
   typedef SizingField Sizing_field;
@@ -351,7 +351,7 @@ protected:
     return new Self(*this);
   }
 
-  virtual Badness do_is_bad(const Tr& tr, const Facet& f) const
+  virtual Is_bad do_is_bad(const Tr& tr, const Facet& f) const
   {
     CGAL_assertion (f.first->is_facet_on_surface(f.second));
     
@@ -376,10 +376,10 @@ protected:
       std::cerr << "Bad facet (uniform size): sq_radius[" << sq_radius
       << "] bound[" << sq_bound << "]\n";
 #endif
-      return Badness(Quality(sq_bound/sq_radius));
+      return Is_bad(Quality(sq_bound/sq_radius));
     }
     else
-      return Badness();
+      return Is_bad();
   }
   
 private:
@@ -400,7 +400,7 @@ private:
 
   typedef Mesh_3::Abstract_criterion<Tr,Visitor_> Base;
   typedef typename Base::Quality Quality;
-  typedef typename Base::Badness Badness;
+  typedef typename Base::Is_bad  Is_bad;
 
   typedef Uniform_size_criterion<Tr,Visitor_> Self;
   
@@ -421,7 +421,7 @@ protected:
     return new Self(*this);
   }
 
-  virtual Badness do_is_bad(const Tr& tr, const Facet& f) const
+  virtual Is_bad do_is_bad(const Tr& tr, const Facet& f) const
   {
     CGAL_assertion (f.first->is_facet_on_surface(f.second));
     CGAL_assertion (B_ != 0);
@@ -444,10 +444,10 @@ protected:
       std::cerr << "Bad facet (uniform size): sq_radius[" << sq_radius
                 << "] bound[" << B_ << "]\n";
 #endif
-      return Badness(Quality(B_/sq_radius));
+      return Is_bad(Quality(B_/sq_radius));
     }
     else
-      return Badness();
+      return Is_bad();
   }
 
 private:
@@ -466,7 +466,7 @@ private:
 
   typedef Mesh_3::Abstract_criterion<Tr,Visitor_> Base;
   typedef typename Base::Quality Quality;
-  typedef typename Base::Badness Badness;
+  typedef typename Base::Is_bad  Is_bad;
 
   typedef Facet_on_surface_criterion<Tr,Visitor_> Self;
 
@@ -488,7 +488,7 @@ protected:
     return new Self(*this);
   }
 
-  virtual Badness do_is_bad(const Tr& /* tr */, const Facet& f) const
+  virtual Is_bad do_is_bad(const Tr& /* tr */, const Facet& f) const
   {
     typedef typename Tr::Vertex_handle Vertex_handle;
     typedef typename Tr::Cell_handle Cell_handle;
@@ -507,10 +507,10 @@ protected:
 #ifdef CGAL_MESH_3_DEBUG_FACET_CRITERIA
       std::cerr << "Bad facet (on surface criterion)" << std::endl;
 #endif
-      return Badness(Quality(1));
+      return Is_bad(Quality(1));
     }
     else
-      return Badness();
+      return Is_bad();
   }
 }; // end class Facet_on_surface_criterion
 
@@ -524,7 +524,7 @@ private:
   
   typedef Mesh_3::Abstract_criterion<Tr,Visitor_> Base;
   typedef typename Base::Quality Quality;
-  typedef typename Base::Badness Badness;
+  typedef typename Base::Is_bad  Is_bad;
   
   typedef Facet_on_same_surface_criterion<Tr,Visitor_> Self;
   
@@ -546,7 +546,7 @@ protected:
     return new Self(*this);
   }
 
-  virtual Badness do_is_bad(const Tr& /* tr */, const Facet& f) const
+  virtual Is_bad do_is_bad(const Tr& /* tr */, const Facet& f) const
   {
     typedef typename Tr::Vertex_handle  Vertex_handle;
     typedef typename Tr::Cell_handle    Cell_handle;
@@ -574,7 +574,7 @@ protected:
       {
         if ( !(v2->index() == index) )
         {
-          return Badness(Quality(1));
+          return Is_bad(Quality(1));
         }
       }
       else
@@ -588,11 +588,11 @@ protected:
     {
       if ( is_index_initialized && !(v3->index() == index) )
       {
-        return Badness(Quality(1));
+        return Is_bad(Quality(1));
       } 
     }
     
-    return  Badness();			
+    return Is_bad();
   }
   
 }; // end class Facet_on_same_surface_criterion
@@ -609,7 +609,7 @@ class Facet_criterion_visitor
 public:
   typedef Mesh_3::Abstract_criterion<Tr, Self> Criterion;
   typedef typename Base::Quality Facet_quality;
-  typedef typename Base::Badness Facet_badness;
+  typedef typename Base::Is_bad  Is_facet_bad;
   typedef typename Base::Handle Handle;
   typedef Handle Facet;
 
@@ -648,7 +648,7 @@ class Facet_criterion_visitor_with_features
 
 public:  
   typedef typename Base::Quality  Facet_quality;
-  typedef typename Base::Badness  Facet_badness;
+  typedef typename Base::Is_bad   Is_facet_bad;
   typedef typename Base::Handle   Handle;
   typedef Handle                  Facet;
   

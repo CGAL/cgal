@@ -48,8 +48,8 @@ public:
   typedef Mesh_3::Cell_radius_edge_criterion<Tr, Self> Cell_radius_edge_criterion;
         
   typedef typename Base::Quality Cell_quality;
-  typedef typename Base::Badness Cell_badness;
-  typedef typename Base::Handle Handle;
+  typedef typename Base::Is_bad  Is_cell_bad;
+  typedef typename Base::Handle  Handle;
   typedef Handle Cell_handle;
 
   typedef typename Tr::Bare_point      Bare_point;
