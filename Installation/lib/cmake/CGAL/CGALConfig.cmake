@@ -48,6 +48,8 @@ if(BRANCH_BUILD)
     endif()
   endforeach()
 else()
+  set(CGAL_ROOT ${CGAL_CONFIG_DIR}/../../..)
+
   # not BRANCH_BUILD: it can be an installed CGAL, or the tarball layout
   if(EXISTS ${CGAL_CONFIG_DIR}/CGAL_add_test.cmake)
     # installed CGAL
@@ -57,7 +59,6 @@ else()
     set(CGAL_MODULES_DIR ${CGAL_ROOT}/cmake/modules)
   endif()
 
-  set(CGAL_ROOT ${CGAL_CONFIG_DIR}/../../..)
   set(CGAL_INSTALLATION_PACKAGE_DIR ${CGAL_ROOT})
   set(CGAL_GRAPHICSVIEW_PACKAGE_DIR ${CGAL_ROOT})
   set(CGAL_INCLUDE_DIRS ${CGAL_ROOT}/include)
