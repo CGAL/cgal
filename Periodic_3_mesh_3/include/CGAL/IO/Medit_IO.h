@@ -22,6 +22,8 @@
 #ifndef CGAL_PERIODIC_3_MESH_3_IO_FILE_MEDIT_H
 #define CGAL_PERIODIC_3_MESH_3_IO_FILE_MEDIT_H
 
+#include <CGAL/license/Periodic_3_mesh_3.h>
+
 #include <CGAL/assertions.h>
 #include <CGAL/IO/File_medit.h>
 
