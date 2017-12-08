@@ -392,11 +392,12 @@ public:
 	}
 
 	Segment segment(const Point& src, const Point& tgt) const {
-	  return construct_segment(src, tgt);
+	  	return construct_segment(src, tgt);
 	}
 
 	Segment segment(const pair<Face_handle, int> & edge) const {
-	  return segment(edge.first, ccw(edge.second));
+	  	CGAL_triangulation_precondition( edge.second >= 0 && edge.second <= 2 );	
+	  	return segment(edge.first, ccw(edge.second));
 	}
 
 	Segment segment(const Periodic_segment & ps) const {

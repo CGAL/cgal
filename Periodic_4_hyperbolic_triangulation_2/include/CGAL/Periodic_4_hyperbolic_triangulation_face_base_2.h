@@ -202,6 +202,7 @@ public:
 
 
 	Hyperbolic_translation neighbor_translation(int i) const {
+		CGAL_triangulation_precondition( i >= 0 && i <= 2 );
 		int myi = Triangulation_cw_ccw_2::ccw(i);
 		Hyperbolic_translation myof = o[myi];
 
@@ -246,6 +247,7 @@ public:
 	}
 
 	void set_translation(int k, Hyperbolic_translation new_o) {
+		CGAL_triangulation_precondition( i >= 0 && i <= 2 );
 		o[k] = new_o;
 	}
 
@@ -254,6 +256,7 @@ public:
 	}
 
 	void set_vertex(int k, const Vertex_handle& vh) {
+		CGAL_triangulation_precondition( i >= 0 && i <= 2 );
 		V[k] = vh;
 	}
 
@@ -280,6 +283,7 @@ public:
 	}
 
 	void set_neighbor(int k, const Face_handle& nfh) {
+		CGAL_triangulation_precondition( i >= 0 && i <= 2 );
 		N[k] = nfh;
 	}
 
@@ -360,9 +364,15 @@ public:
 
 
   	void store_translations(Hyperbolic_translation noff = Hyperbolic_translation()) {
-  		V[0]->store_translation(noff * o[0]);
-  		V[1]->store_translation(noff * o[1]);
-  		V[2]->store_translation(noff * o[2]);
+  		if (noff == Hyperbolic_translation()) {
+  			V[0]->store_translation(o[0]);
+  			V[1]->store_translation(o[1]);
+  			V[2]->store_translation(o[2]);
+  		} else {
+  			V[0]->store_translation(noff * o[0]);
+  			V[1]->store_translation(noff * o[1]);
+  			V[2]->store_translation(noff * o[2]);
+  		}
   	}
 
   	void restore_translations(Hyperbolic_translation loff = Hyperbolic_translation()) {

@@ -268,6 +268,80 @@ public:
 	typedef Hyperbolic_traits_with_translations_2_adaptor<Self, typename Kernel::Compare_distance_2>        Compare_distance_2;
 	typedef Periodic_4_hyperbolic_construct_point_2<Self, typename Kernel::Construct_point_2>         		Construct_point_2;
 			
+private:
+
+	class Compute_circle_in_pencil {
+	public:
+		typedef Circle_2 result_type;
+
+		Compute_circle_in_pencil() {}
+
+		// Code by Olivier Devillers (CGAL_ipelets)
+		result_type operator()(Circle_2 c, Circle_2 c1, Circle_2 c2) {
+			Point_2 origin = ORIGIN;
+			FT lambda = squared_distance(c.center(), origin);
+			lambda -= c.squared_radius();
+			FT l1 = squared_distance(c1.center(),origin) - c1.squared_radius() ;
+			FT l2 = squared_distance(c2.center(),origin) - c2.squared_radius() ;
+			l1 += -2*((c1.center()-origin)*(c.center()-origin));
+			l2 += -2*((c2.center()-origin)*(c.center()-origin));
+			
+			if (l1==l2){ // degenerate case, radical axis
+				return Circle_2();
+			}
+
+			lambda= -(lambda+l2)/(l1-l2);
+			Point_2 center = origin+lambda*(c1.center()-origin)+(1-lambda)*(c2.center()-origin);
+			FT sqradius = - lambda*(CGAL::squared_distance(c1.center(),origin)-c1.squared_radius())
+						  - (1-lambda)*(CGAL::squared_distance(c2.center(),origin)-c2.squared_radius())
+						  + CGAL::squared_distance(center,origin);
+			Circle_2 circ(center,sqradius);
+			return circ;
+		}
+	};
+
+
+	
+	class Compute_circle_orthogonal {
+	public:
+		typedef Circle_2 result_type;
+
+		Compute_circle_orthogonal() {}
+
+		// Code by Olivier Devillers (CGAL_ipelets)
+		result_type operator()(Circle_2 c, Circle_2 c1, Circle_2 c2) {
+			Point_2 origin = ORIGIN;
+			FT z  = squared_distance(c.center() ,origin) -  c.squared_radius();
+			FT z1 = squared_distance(c1.center(),origin) - c1.squared_radius();
+			FT z2 = squared_distance(c2.center(),origin) - c2.squared_radius();
+			FT det=	-(c1.center().x() * c2.center().y() - c1.center().y() * c2.center().x())
+					+(c.center().x() * c2.center().y() - c.center().y() * c2.center().x())
+					-(c.center().x() * c1.center().y() - c.center().y() * c1.center().x());
+			
+			if (det == FT(0)){ // degenerate casse, radical axis
+				return Circle_2();
+			}
+			
+			FT x =	( -(z1 * c2.center().y() - c1.center().y() * z2)
+					+(z * c2.center().y() - c.center().y() * z2)
+					-(z * c1.center().y() - c.center().y() * z1))/FT(2)/det;
+			
+			FT y =  ( -(c1.center().x() * z2 - z1 * c2.center().x())
+					+(c.center().x() * z2 - z * c2.center().x())
+					-(c.center().x() * z1 - z * c1.center().x()))/FT(2)/det;
+			
+			FT rr= -(  (c1.center().x() * c2.center().y() - c1.center().y() * c2.center().x())*z
+					-(c.center().x() * c2.center().y() - c.center().y() * c2.center().x())*z1
+					+(c.center().x() * c1.center().y() - c.center().y() * c1.center().x())*z2)/det+x*x+y*y;
+			
+			Point_2 center(x,y);
+			Circle_2 circ(center,rr);
+			return circ;
+		}
+	};
+
+
+
 public:
 
 
@@ -318,59 +392,31 @@ public:
 	}
 
 	class Construct_hyperbolic_segment_2 {
-		typedef Exact_complex<FT> 		Exact_complex;
 	public:
 		typedef Segment_2 result_type;
 
 		Construct_hyperbolic_segment_2() {}
 
-		Segment_2 operator()(const Point_2& p1, const Point_2& p2) const {
-			Exact_complex p(p1.x(), p1.y()), q(p2.x(), p2.y());
-			Exact_complex O(0,0);
-			Exact_complex inv;
-			if (p == O) {
-				inv = q.invert_in_unit_circle();
-			} else {
-				inv = p.invert_in_unit_circle();
-			}
-
-			Point ip(inv.real(), inv.imag());
-
-			#if defined PROFILING_MODE
-				// here the predicate is called without translations
-				calls_predicate_identity++;
-			#endif
-
-			#if defined PROFILING_MODE
-		  		CGAL::Timer tmr;
-				tmr.start();
-			#endif
-			Orientation ori1 = Orientation_2()(p1, p2, ip);
-			#if defined PROFILING_MODE
-			  	tmr.stop();
-			  	time_predicate_identity += tmr.time();
-	  		#endif
-
-			if ( ori1 == COLLINEAR ) {
+		result_type operator()(const Point_2& p1, const Point_2& p2) const {
+			
+			// Check first if the points are collinear with the origin
+			Circle_2 poincare(Point_2(FT(0),FT(0)), FT(1));
+			Orientation ori = orientation(poincare.center(), p1, p2);
+			if (ori == COLLINEAR) {
 				Euclidean_segment_2 seg(p1, p2);
 				return seg;
-			} else {
-				Circle_2 c(p1, p2, ip);
-				#if defined PROFILING_MODE
-			  		CGAL::Timer tmr2;
-					tmr2.start();
-				#endif
-				Orientation ori2 = Orientation_2()(p1, p2, c.center());
-				#if defined PROFILING_MODE
-				  	tmr2.stop();
-				  	time_predicate_identity += tmr2.time();
-		  		#endif
-				if( ori2 == LEFT_TURN ) {
-					return Circular_arc_2(c, p1, p2);
-				}
-				return Circular_arc_2(c, p2, p1);
 			}
 
+			Compute_circle_orthogonal comp;
+			Circle_2 supp = comp(Circle_2(p1, FT(0)), Circle_2(p2, FT(0)), poincare);
+ 
+			if (ori == LEFT_TURN) {
+				Circular_arc_2 carc(supp, p2, p1);
+				return carc;
+			} else {
+				Circular_arc_2 carc(supp, p1, p2);
+				return carc;
+			}
 		}
 		
 	}; // end Construct_hyperbolic_segment_2
@@ -389,38 +435,37 @@ public:
 
 
 	class Construct_hyperbolic_line_2 {
-		typedef Exact_complex<FT> 		Exact_complex;
 	public:
 		typedef Segment_2 result_type;
 
 		Construct_hyperbolic_line_2() {}
 
-		Segment_2 operator()(const Point_2& p1, const Point_2& p2) const {
-			Exact_complex p(p1.x(), p1.y()), q(p2.x(), p2.y());
-			Exact_complex O(0,0);
-			Exact_complex inv;
-			if (p == O) {
-				inv = q.invert_in_unit_circle();
-			} else {
-				inv = p.invert_in_unit_circle();
-			}
 
-			Point ip(inv.real(), inv.imag());
-
-			Orientation ori1 = Orientation_2()(p1, p2, ip);
-
-			if ( ori1 == COLLINEAR ) {
+		result_type operator()(const Point_2& p1, const Point_2& p2) const {
+			
+			// Check first if the points are collinear with the origin
+			Circle_2 poincare(Point_2(FT(0),FT(0)), FT(1));
+			Orientation ori = orientation(poincare.center(), p1, p2);
+			if (ori == COLLINEAR) {
 				Euclidean_line_2 ell(p1, p2);
-				pair<Point, Point> res = Construct_inexact_intersection_2()(ell, Circle_2(Point(0,0), 1));
-				return Construct_hyperbolic_segment_2()(res.first, res.second);
-			} else {
-				Circle_2 c(p1, p2, ip);
-				pair<Point, Point> res = Construct_inexact_intersection_2()(c, Circle_2(Point(0, 0), 1));
-				return Construct_hyperbolic_segment_2()(res.first, res.second);
+				pair<Point, Point> res = Construct_inexact_intersection_2()(ell, poincare);
+				return Euclidean_segment_2(res.first, res.second);
 			}
 
+			Compute_circle_orthogonal comp;
+			Circle_2 supp = comp(Circle_2(p1, FT(0)), Circle_2(p2, FT(0)), poincare);
+ 			pair<Point, Point> res = Construct_inexact_intersection_2()(supp, poincare);
+ 			Point pp1 = res.first;
+ 			Point pp2 = res.second;
+
+			if (ori == LEFT_TURN) {
+				Circular_arc_2 carc(supp, pp2, pp1);
+				return carc;
+			} else {
+				Circular_arc_2 carc(supp, pp1, pp2);
+				return carc;
+			}
 		}
-		
 	}; // end Construct_hyperbolic_line_2
 
 
@@ -440,65 +485,15 @@ public:
 
 
 	class Construct_hyperbolic_circle_2 {
+	public:
+		typedef Circle_2 result_type;
 
-		typedef Exact_complex<FT> 		Exact_complex;
-
-	public: 
 		Construct_hyperbolic_circle_2() {}
 
-		Circle_2 operator()(Point_2 hcenter, Point_2 p) {
-			
-			Point o(0,0);
-
-			if (hcenter == o) {
-				return Circle_2(o, squared_distance(o, p));
-			} else if (Orientation_2()(hcenter, p, o) != COLLINEAR) {
-				Euclidean_line_2 ell(hcenter, o);
-				
-				Exact_complex p1(hcenter.x(), hcenter.y()), p2(p.x(), p.y());
-				Exact_complex inv;
-				if (p1 == Exact_complex(0,0)) {
-					inv = p2.invert_in_unit_circle();
-				} else {
-					inv = p1.invert_in_unit_circle();
-				}
-				Point ip(inv.real(), inv.imag());
-
-				Circle_2 schl(hcenter, p, ip);
-				Euclidean_line_2 line_through_p(schl.center(), p);
-				Euclidean_line_2 tangent_at_p = line_through_p.perpendicular(p);
-
-				// assume that ell := ax + by + c = 0 and tangent_at_p := dx + ey + f = 0
-				FT a = ell.a(), b = ell.b(), c = ell.c();
-				FT d = tangent_at_p.a(), e = tangent_at_p.b(), f = tangent_at_p.c();
-                FT px, py;
-                if (a == FT(0)) {
-                	px = (e*c - b*f)/(d*b);
-                	py = -c/b;
-                } else if (b == FT(0)) {
-                	px = -c/a;
-                	py = (c*d - a*f)/(a*e);
-                } else if (d == FT(0)) {
-                	px = (b*f - e*c)/(e*a);
-                	py = -f/e;
-                } else if (e == FT(0)) {
-                	px = -f/d;
-                	py = (a*f - d*c)/(d*b);
-                } else {
-                	py = (c*d - a*f)/(a*e - d*b);	
-                	px = (-c -b*py)/a;
-                }
-				Point intersection(px, py);
-				return Circle_2(intersection, squared_distance(intersection, p));
-			} else {  // if the given points and the origin are collinear, we need to treat them differently
-				Exact_complex hcinv = Exact_complex(hcenter.x(), hcenter.y()).invert_in_unit_circle();
-				Point ip(hcinv.real(), hcinv.imag());
-				Point mp = midpoint(hcenter, ip);
-				Circle_2 tmpc(mp, hcenter);
-				Exact_complex res = Exact_complex(p.x(), p.y()).invert_in_circle(tmpc);
-				Point pres(res.real(), res.imag());
-				return Circle_2(p, pres);
-			}
+		result_type operator()(Point_2 center, Point_2 p) {
+			Circle_2 poincare(Point_2(FT(0),FT(0)), FT(1));
+			Circle_2 circ = Compute_circle_in_pencil()(Circle_2(p,FT(0)), poincare, Circle_2(center,FT(0)));
+			return circ;
 		}
 	};
 
@@ -513,50 +508,38 @@ public:
 	class Construct_inexact_hyperbolic_bisector_2 {
 		typedef Exact_complex<FT> 		Exact_complex;
 	public:      
-		Construct_inexact_hyperbolic_bisector_2() 
-			{}
-		
-		Hyperbolic_segment_2 operator()(Point_2 p, Point_2 q) const
-		{
+		typedef Segment_2 result_type;
 
-			Origin o; 
-			Point_2 po = Point_2(o);
-			double np = sqrt(to_double(p.x()*p.x() + p.y()*p.y()));
-			double nq = sqrt(to_double(q.x()*q.x() + q.y()*q.y()));
-			if ( fabs(np - nq) < 1e-16 ) {      
-				Euclidean_line_2 ebl = Construct_Euclidean_bisector_2()(p, q);
-				pair<Point_2, Point_2> pts = Construct_inexact_intersection_2()(ebl, Circle_2(Point_2(0, 0), 1));
+		Construct_inexact_hyperbolic_bisector_2() {}
+		
+		result_type operator()(Point_2 p1, Point_2 p2) {
+			Circle_2 poincare(Point_2(FT(0),FT(0)), FT(1));
+			
+			double np1 = sqrt(to_double(p1.x()*p1.x() + p1.y()*p1.y()));
+			double np2 = sqrt(to_double(p2.x()*p2.x() + p2.y()*p2.y()));
+			if ( fabs(np1 - np2) < 1e-16 ) {      
+				Euclidean_line_2 ell = Construct_Euclidean_bisector_2()(p1, p2);
+				pair<Point_2, Point_2> pts = Construct_inexact_intersection_2()(ell, poincare);
 				return Euclidean_segment_2(pts.first, pts.second);
 			}
 
-			Circle_2 c1 = Construct_hyperbolic_circle_2()(p, q);
-			Circle_2 c2 = Construct_hyperbolic_circle_2()(q, p);
+			Circle_2 supp = Compute_circle_in_pencil()(poincare, Circle_2(p1,FT(0)), Circle_2(p2,FT(0)));
+			pair<Point, Point> res = Construct_inexact_intersection_2()(supp, poincare);
+ 			Point pp1 = res.first;
+ 			Point pp2 = res.second;
 
-			pair<Point_2, Point_2> res = Construct_inexact_intersection_2()(c1, c2);
-			Point_2 p1 = res.first, p2 = res.second;
+ 			Orientation ori = orientation(poincare.center(), pp1, pp2);
 
-			Exact_complex cp1(p1.x(), p1.y()), cp2(p2.x(), p2.y());
-			Exact_complex inv;
-			if (cp1 == Exact_complex(0,0)) {
-				inv = cp2.invert_in_unit_circle();
+			if (ori == LEFT_TURN) {
+				Circular_arc_2 carc(supp, pp2, pp1);
+				return carc;
 			} else {
-				inv = cp1.invert_in_unit_circle();
+				Circular_arc_2 carc(supp, pp1, pp2);
+				return carc;
 			}
-			
-			Point cpi(inv.real(), inv.imag());
-
-			Circle_2 c(p1, p2, cpi);
-
-			res = Construct_inexact_intersection_2()(c, Circle_2(Point(0,0), 1));
-			p1 = res.first;
-			p2 = res.second;
-
-			if(Orientation_2()(p1, p2, c.center()) == LEFT_TURN) {
-				return Circular_arc_2(c, p1, p2);
-			}
-			return Circular_arc_2(c, p2, p1);
 
 		}
+
 	}; // end Construct_hyperbolic_bisector_2
 	
 	Construct_inexact_hyperbolic_bisector_2
@@ -565,52 +548,36 @@ public:
 
 
 
-
-
 	class Construct_hyperbolic_bisector_2 {
-		typedef Exact_complex<FT> 		Exact_complex;
 	public:      
-		Construct_hyperbolic_bisector_2() 
-			{}
+		typedef Segment_2 result_type;
+
+		Construct_hyperbolic_bisector_2() {}
 		
-		Hyperbolic_segment_2 operator()(Point_2 p, Point_2 q) const
-		{
 
-			Origin o; 
-			Point_2 po = Point_2(o);
-			if ( Compare_distance_2()(po, p, q) == EQUAL ){      
-				Euclidean_line_2 ebl = Construct_Euclidean_bisector_2()(p, q);
-				pair<Point_2, Point_2> pts = Construct_intersection_2()(ebl, Circle_2(Point_2(0, 0), 1));
+		result_type operator()(Point_2 p1, Point_2 p2) {
+			Circle_2 poincare(Point_2(FT(0),FT(0)), FT(1));
+				
+			if ( Compare_distance_2()(Point_2(FT(0),FT(0)), p1, p2) == EQUAL ){      
+				Euclidean_line_2 ell = Construct_Euclidean_bisector_2()(p1, p2);
+				pair<Point_2, Point_2> pts = Construct_intersection_2()(ell, poincare);
 				return Euclidean_segment_2(pts.first, pts.second);
-			}
+			}	
 
-			Circle_2 c1 = Construct_hyperbolic_circle_2()(p, q);
-			Circle_2 c2 = Construct_hyperbolic_circle_2()(q, p);
+			Circle_2 supp = Compute_circle_in_pencil()(poincare, Circle_2(p1,FT(0)), Circle_2(p2,FT(0)));
+			pair<Point, Point> res = Construct_inexact_intersection_2()(supp, poincare);
+ 			Point pp1 = res.first;
+ 			Point pp2 = res.second;
 
-			pair<Point_2, Point_2> res = Construct_intersection_2()(c1, c2);
-			Point_2 p1 = res.first, p2 = res.second;
+ 			Orientation ori = orientation(poincare.center(), pp1, pp2);
 
-			Exact_complex cp1(p1.x(), p1.y()), cp2(p2.x(), p2.y());
-			Exact_complex inv;
-			if (cp1 == Exact_complex(0,0)) {
-				inv = cp2.invert_in_unit_circle();
+			if (ori == LEFT_TURN) {
+				Circular_arc_2 carc(supp, pp2, pp1);
+				return carc;
 			} else {
-				inv = cp1.invert_in_unit_circle();
+				Circular_arc_2 carc(supp, pp1, pp2);
+				return carc;
 			}
-			
-			Point cpi(inv.real(), inv.imag());
-
-			Circle_2 c(p1, p2, cpi);
-
-			res = Construct_intersection_2()(c, Circle_2(Point(0,0), 1));
-			p1 = res.first;
-			p2 = res.second;
-
-			if(Orientation_2()(p1, p2, c.center()) == LEFT_TURN) {
-				return Circular_arc_2(c, p1, p2);
-			}
-			return Circular_arc_2(c, p2, p1);
-
 		}
 	}; // end Construct_hyperbolic_bisector_2
 	
@@ -629,7 +596,6 @@ public:
 		Construct_intersection_2() {}
 
 		Point_2 operator()(Euclidean_line_2 ell1, Euclidean_line_2 ell2) {
-			//cout << "intersecting lines..." << endl;
 			if (ell1.b() == FT(0)) {
 				std::swap(ell1, ell2);
 			}
@@ -647,9 +613,7 @@ public:
 		}
 
 		std::pair<Point_2, Point_2> operator()(Euclidean_line_2 ell, Circle_2 c) {
-			//cout << "intersecting line and circle: " << ell.a() << "x + " << ell.b() << "y + " << ell.c() << " = 0, c = " << c.center() << ", r_sq = " << c.squared_radius() << endl;
 			if (ell.b() == FT(0)) {
-			//	cout << "  degenerate case!" << endl;
 				FT p 	= c.center().x();
 				FT q 	= c.center().y(); 
 				FT y1  	= q + CGAL::sqrt(c.squared_radius() - p*p);
@@ -659,7 +623,6 @@ public:
 				return make_pair(p1, p2);
 			}
 
-			//cout << "  non-degenerate case" << endl;
 			FT lambda = -ell.a()/ell.b();
 			FT mu 	  = -ell.c()/ell.b();
 			FT p 	  = c.center().x();
@@ -668,31 +631,14 @@ public:
 			FT B = FT(2)*( lambda * mu - lambda*q - p);
 			FT C = p*p + mu*mu + q*q - c.squared_radius() - FT(2)*q*mu;
 			FT Delta = B*B - FT(4)*A*C;
-			//cout << "  computed quantities" << endl;
-			//cout << "  A     = " << A << endl;
-			//cout << "  B     = " << B << endl;
-			//cout << "  C     = " << C << endl;
-			//cout << "  Delta = " << Delta << endl;
-			//CGAL_assertion(Delta >= FT(0));
-			// if (Delta == FT(0)) {
-			// 	cout << "  one double root" << endl;
-			// 	FT x = -B/(FT(2)*A);
-			// 	FT y = lambda*x + mu;
-			// 	Point_2 sol(x, y);
-			// 	return make_pair(sol, sol);
-			// } else {
-				FT x1 = (-B + CGAL::sqrt(Delta))/(FT(2)*A);
-				//cout << "    x1 = " << x1 << endl;
-				FT x2 = (-B - CGAL::sqrt(Delta))/(FT(2)*A);
-				//cout << "    x2 = " << x2 << endl;
-				FT y1 = lambda*x1 + mu;
-				//cout << "    y1 = " << y1 << endl;
-				FT y2 = lambda*x2 + mu;
-				//cout << "    y2 = " << y2 << endl;
-				Point_2 sol1(x1, y1);
-				Point_2 sol2(x2, y2);
-				return make_pair(sol1, sol2);
-			//}
+			FT x1 = (-B + CGAL::sqrt(Delta))/(FT(2)*A);
+			FT x2 = (-B - CGAL::sqrt(Delta))/(FT(2)*A);
+			FT y1 = lambda*x1 + mu;
+			FT y2 = lambda*x2 + mu;
+
+			Point_2 sol1(x1, y1);
+			Point_2 sol2(x2, y2);
+			return make_pair(sol1, sol2);
 		}
 
 		std::pair<Point_2, Point_2> operator()(Circle_2 c, Euclidean_line_2 ell) {
@@ -700,46 +646,27 @@ public:
 		}
 
 		std::pair<Point_2, Point_2> operator()(Circle_2 c1, Circle_2 c2) {
-			//cout << "intersecting circles: c1 = " << c1.center() << ", r1_sq = " << c1.squared_radius() << ", c2 = " << c2.center() << ", r2_sq = " << c2.squared_radius() << endl;
 			
 			FT xa = c1.center().x(), ya = c1.center().y();
 			FT xb = c2.center().x(), yb = c2.center().y();
-			//cout << "   centers" << endl;
 			FT d2 = squared_distance(c1.center(), c2.center());
-			//cout << "   centers squared distance" << endl;
 			FT ra = CGAL::sqrt(c1.squared_radius());
-			//cout << "   radius 1" << endl;
 			FT rb = CGAL::sqrt(c2.squared_radius());
-			//cout << "   radius 2" << endl;
 			FT K  = CGAL::sqrt(((ra+rb)*(ra+rb)-d2)*(d2-(ra-rb)*(ra-rb)))/FT(4); 
-			//cout << "   quantities ready" << endl;
 
 			FT xbase = (xb + xa)/FT(2) + (xb - xa)*(ra*ra - rb*rb)/d2/FT(2);
 			FT xdiff = FT(2)*(yb - ya)*K/d2;
 			FT x1 = xbase + xdiff;
 			FT x2 = xbase - xdiff;
-			//cout << "   x computed" << endl;
 
 			FT ybase = (yb + ya)/FT(2) + (yb - ya)*(ra*ra - rb*rb)/d2/FT(2);
 			FT ydiff = FT(-2)*(xb - xa)*K/d2;
 			FT y1 = ybase + ydiff;
 			FT y2 = ybase - ydiff;
-			//cout << "   y computed" << endl;
 
 			Point_2 res1(x1, y1);
 			Point_2 res2(x2, y2);
 			return make_pair(res1, res2);
-
-			// FT p1 = c1.center().x();
-			// FT p2 = c2.center().x();
-			// FT q1 = c1.center().y();
-			// FT q2 = c2.center().y();
-
-			// FT a = FT(2)*(p2 - p1);
-			// FT b = FT(2)*(q2 - q1);
-			// FT c = p1*p1 + q1*q1 + c2.squared_radius() - p2*p2 - q2*q2 - c1.squared_radius();
-			// Euclidean_line_2 ell(a, b, c);
-			// return operator()(ell, c1);
 		}
 
 
@@ -801,7 +728,6 @@ public:
 		Construct_inexact_intersection_2() {}
 
 		Point_2 operator()(Euclidean_line_2 ell1, Euclidean_line_2 ell2) {
-			//cout << "inexactly intersecting lines..." << endl;
 
 			if (fabs(to_double(ell1.b())) < 1e-16) {
 				std::swap(ell1, ell2);
@@ -825,7 +751,6 @@ public:
 		std::pair<Point_2, Point_2> operator()(Euclidean_line_2 ell, Circle_2 cc) {
 			double a = to_double(ell.a()), b = to_double(ell.b()), c = to_double(ell.c());
 			double p = to_double(cc.center().x()), q = to_double(cc.center().y()), r2 = to_double(cc.squared_radius());
-			//cout << "inexactly intersecting line and circle: " << a << "x + " << b << "y + " << c << " = 0, c = (" << p << "," << q << "), r_sq = " << r2 << endl;
 			
 			double A, B, C, D;
 			double x1, y1, x2, y2;
@@ -833,16 +758,12 @@ public:
 				y1 = -c/b;  y2 = -c/b;
 				A = b*p;
 				D = -b*b*q*q + b*b*r2 - 2.*b*c*q - c*c;
-				//cout << "A     = " << A 	<< endl;
-				//cout << "D     = " << D  	<< endl;
 				x1 = (A + sqrt(D))/b;
 				x2 = (A - sqrt(D))/b;
 			} else if (fabs(b) < 1e-16) {
 				x1 = -c/a;  x2 = -c/a;
 				A = q*a;
 				D = -a*a*p*p + r2*a*a - 2.*a*c*p - c*c;
-				//cout << "A     = " << A 	<< endl;
-				//cout << "D     = " << D  	<< endl;
 				y1 = (A + sqrt(D))/a;
 				y2 = (A - sqrt(D))/a;
 			} else {
@@ -850,11 +771,6 @@ public:
 				C = (-b*q - c)*a*a + b*b*p*a;
 				D = -a*a*( b*b*q*q + 2.*q*(p*a + c)*b - b*b*r2 + (p*p - r2)*a*a + 2.*a*c*p + c*c );
 				B = a*a + b*b;
-
-				//cout << "A     = " << A 	<< endl;
-				//cout << "B     = " << B 	<< endl;
-				//cout << "C     = " << C 	<< endl;
-				//cout << "D     = " << D  	<< endl;
 
 				y1 = (A + sqrt(D))/B;
 				y2 = (A - sqrt(D))/B;
@@ -866,64 +782,6 @@ public:
 			Point_2 p2(x2, y2);
 
 			return make_pair(p1, p2);
-			// double A, B, C, Delta, lambda, mu;
-			// if (fabs(b) < 1e-16) {
-			// 	cout << "  degenerate case!" << endl;
-			// 	double mu = -c/a;
-			// 	A = 1.;
-			// 	B = -2.*q;
-			// 	C = q*q - r2 + (mu-p)*(mu-p);
-				
-			// 	Delta = B*B - 4.*A*C;
-			// 	cout << "mu    = " << mu 	<< endl;
-			// 	cout << "A     = " << A 	<< endl;
-			// 	cout << "B     = " << B 	<< endl;
-			// 	cout << "C     = " << C 	<< endl;
-			// 	cout << "Delta = " << Delta << endl;
-
-			// 	double y1 = (-B + sqrt(Delta))/(2.*A);
-			// 	double y2 = (-B - sqrt(Delta))/(2.*A);
-			// 	double x = mu;
-
-			// 	cout << "    x1 = " << x << endl;
-			// 	cout << "    y1 = " << y1 << endl;
-			// 	cout << "    x2 = " << x << endl;
-			// 	cout << "    y2 = " << y2 << endl;
-
-			// 	Point_2 sol1(x, y1);
-			// 	Point_2 sol2(x, y2);
-			// 	return make_pair(sol1, sol2);
-			// } else {
-			// 	cout << "  non-degenerate case" << endl;
-			// 	double lambda = -a/b;
-			// 	double mu 	  = -c/b;
-			// 	A = 1. + lambda*lambda;
-			// 	B = 2.*( lambda*mu - lambda*p - q);
-			// 	C = mu*mu + p*p + q*q - r2 - 2.*mu*p;
-			
-			// 	Delta = B*B - 4.*A*C;
-					
-			// 	cout << "A     = " << A 	<< endl;
-			// 	cout << "B     = " << B 	<< endl;
-			// 	cout << "C     = " << C 	<< endl;
-			// 	cout << "Delta = " << Delta << endl;
-
-			// 	double y1 = (-B + sqrt(Delta))/(2.*A);
-			// 	double y2 = (-B - sqrt(Delta))/(2.*A);
-			// 	double x1 = lambda*y1 + mu;
-			// 	double x2 = lambda*y2 + mu;
-
-			// 	cout << "    x1 = " << x1 << endl;
-			// 	cout << "    y1 = " << y1 << endl;
-			// 	cout << "    x2 = " << x2 << endl;
-			// 	cout << "    y2 = " << y2 << endl;
-
-			// 	Point_2 sol1(x1, y1);
-			// 	Point_2 sol2(x2, y2);
-			// 	return make_pair(sol1, sol2);
-			
-			// }
-			
 		}
 
 		std::pair<Point_2, Point_2> operator()(Circle_2 c, Euclidean_line_2 ell) {
@@ -931,34 +789,25 @@ public:
 		}
 
 		std::pair<Point_2, Point_2> operator()(Circle_2 c1, Circle_2 c2) {
-			//cout << "inexactly intersecting circles..." << endl;
 			double xa = to_double(c1.center().x()), ya = to_double(c1.center().y());
 			double xb = to_double(c2.center().x()), yb = to_double(c2.center().y());
-			//cout << "   centers" << endl;
 			double d2 = (xa-xb)*(xa-xb) + (ya-yb)*(ya-yb);
-			//cout << "   centers squared distance" << endl;
 			double ra = sqrt(to_double(c1.squared_radius()));
-			//cout << "   radius 1" << endl;
 			double rb = sqrt(to_double(c2.squared_radius()));
-			//cout << "   radius 2" << endl;
 			double K  = sqrt(((ra+rb)*(ra+rb)-d2)*(d2-(ra-rb)*(ra-rb)))/4.; 
-			//cout << "   quantities ready" << endl;
 
 			double xbase = (xb + xa)/2. + (xb - xa)*(ra*ra - rb*rb)/d2/2.;
 			double xdiff = 2.*(yb - ya)*K/d2;
 			double x1 = xbase + xdiff;
 			double x2 = xbase - xdiff;
-			//cout << "   x computed" << endl;
 
 			double ybase = (yb + ya)/2. + (yb - ya)*(ra*ra - rb*rb)/d2/2.;
 			double ydiff = -2.*(xb - xa)*K/d2;
 			double y1 = ybase + ydiff;
 			double y2 = ybase - ydiff;
-			//cout << "   y computed" << endl;
 
 			Point_2 res1(x1, y1);
 			Point_2 res2(x2, y2);
-			//cout << "   returning!" << endl;
 			return make_pair(res1, res2);
 		}
 
@@ -1017,10 +866,7 @@ public:
 
 
 
-
-
 	class Construct_hyperbolic_circumcenter_2_base {
-
 	public:
 
 		typedef Point_2 result_type;
@@ -1052,7 +898,6 @@ public:
 
 
 	class Construct_inexact_hyperbolic_circumcenter_2_base {
-
 	public:
 
 		typedef Point_2 result_type;
@@ -1086,110 +931,40 @@ public:
 	public:
 		typedef Bounded_side result_type;
 
-		Side_of_hyperbolic_face_2() 
-			{}
-
+		Side_of_hyperbolic_face_2() {}
 
 
 		template<class Face_handle, class Hyperbolic_translation>
 		Bounded_side operator()(const Point_2 p, Bounded_side sides[3], const Face_handle fh, const Hyperbolic_translation o) const {
 
-
-			#if defined PROFILING_MODE
-				bool increment_id = (	(o * fh->translation(0)).is_identity() &&
-										(o * fh->translation(1)).is_identity() &&
-										(o * fh->translation(2)).is_identity()   );
-			#endif
-
 			Point_2 p1 = Construct_point_2()(fh->vertex(0)->point(), o * fh->translation(0));
 			Point_2 p2 = Construct_point_2()(fh->vertex(0)->point(), o * fh->translation(1));
 			Point_2 p3 = Construct_point_2()(fh->vertex(0)->point(), o * fh->translation(2));
 
-			#if defined PROFILING_MODE
-			  	CGAL::Timer tmr;
-				tmr.start();
-			#endif	
-
 			Bounded_side cp1 = side_of_segment_2(p,  p2, p3);
-
-			#if defined PROFILING_MODE
-				tmr.stop();
-				if (increment_id) {
-					calls_predicate_identity += 2;
-					time_predicate_identity += tmr.time();
-				} else {
-					calls_predicate_non_identity += 2;
-					time_predicate_non_identity += tmr.time();
-				}
-			#endif
 
 			sides[0] = cp1;
 			if (cp1 == ON_BOUNDARY) {
 				return ON_BOUNDARY;
 			}
 
-			#if defined PROFILING_MODE
-				tmr.reset();
-				tmr.start();
-			#endif	
 			Bounded_side cp2 = side_of_segment_2(p,  p3, p1);
-
-			#if defined PROFILING_MODE
-				tmr.stop();
-				if (increment_id) {
-					calls_predicate_identity += 2;
-					time_predicate_identity += tmr.time();
-				} else {
-					calls_predicate_non_identity += 2;
-					time_predicate_non_identity += tmr.time();
-				}
-			#endif
 
 			sides[1] = cp2;
 			if (cp2 == ON_BOUNDARY) {
 				return ON_BOUNDARY;
 			}
 
-			#if defined PROFILING_MODE
-				tmr.reset();
-				tmr.start();
-			#endif	
 			Bounded_side cp3 = side_of_segment_2(p,  p1, p2);
-
-			#if defined PROFILING_MODE
-				tmr.stop();
-				if (increment_id) {
-					calls_predicate_identity += 2;
-					time_predicate_identity += tmr.time();
-				} else {
-					calls_predicate_non_identity += 2;
-					time_predicate_non_identity += tmr.time();
-				}
-			#endif
 
 			sides[2] = cp3;
 			if (cp3 == ON_BOUNDARY) {
 				return ON_BOUNDARY;
 			}			
 
-			#if defined PROFILING_MODE
-				tmr.reset();
-				tmr.start();
-			#endif	
 			Bounded_side cs1 = side_of_segment_2(p1, p2, p3);
 			Bounded_side cs2 = side_of_segment_2(p2, p3, p1);
 			Bounded_side cs3 = side_of_segment_2(p3, p1, p2);
-
-			#if defined PROFILING_MODE
-				tmr.stop();
-				if (increment_id) {
-					calls_predicate_identity += 6;
-					time_predicate_identity += tmr.time();
-				} else {
-					calls_predicate_non_identity += 6;
-					time_predicate_non_identity += tmr.time();
-				}
-			#endif
 
 			// Cannot be on the boundary here.
 			if (cs1 != cp1 || cs2 != cp2 || cs3 != cp3) {
@@ -1212,42 +987,27 @@ public:
 	private:
 		Bounded_side side_of_segment_2(const Point_2 query, const Point_2 p, const Point_2 q) const {
 			
-			Point_2 o(0, 0);
-
-			// Invert p or q through the unit circle.
-			// The inversion depends on the distance from the origin, so to increase 
-			// numerical stability we choose to invert the point further from (0,0).
-			Point_2 inv;
-			FT dp = squared_distance(o, p), dq = squared_distance(o, q);
-			if (dq < dp) {
-                if (dp != FT(0)) {
-                    inv = Point_2( p.x()/dp, p.y()/dp );
-                } else {
-                    return ON_UNBOUNDED_SIDE;
-                }
-			} else {
-                if (dq != FT(0)) {
-                    inv = Point_2( q.x()/dq, q.y()/dq );
-                } else {
-                    return ON_UNBOUNDED_SIDE;
-                }
-            }
-
-			// If iq is on the line defined by p and q, we need to work with a line instead of a circle
-			if (orientation(p, q, inv) == COLLINEAR) {
-				Orientation oquery = orientation(p, q, query);
-				if (oquery == COLLINEAR) {
+			// Check first if the points are collinear with the origin
+			Circle_2 poincare(Point_2(FT(0),FT(0)), FT(1));
+			Orientation ori = orientation(poincare.center(), p, q);
+			if (ori == COLLINEAR) {
+				Euclidean_line_2 seg(p, q);
+				Orientation qori = orientation(query, p, q);
+				if (qori == COLLINEAR) {
 					return ON_BOUNDARY;
-				} else if (oquery == LEFT_TURN) {
-					return ON_BOUNDED_SIDE; 	// this is just a convention
 				} else {
-					return ON_UNBOUNDED_SIDE;
+					// It is sufficient that these are consistent.
+					if (qori == LEFT_TURN) {
+						return ON_BOUNDED_SIDE;
+					} else {
+						return ON_UNBOUNDED_SIDE;
+					}
 				}
-			} else { // this means that we work in the circle
-				Circle_2 c(p, q, inv);
-				return c.bounded_side(query);
 			}
 
+			Compute_circle_orthogonal comp;
+			Circle_2 supp = comp(Circle_2(p, FT(0)), Circle_2(q, FT(0)), poincare);
+ 			return supp.bounded_side(query);
 		}
 
 	};

@@ -47,6 +47,9 @@ int main(int argc, char** argv) {
     int NV = tr.number_of_vertices();
     int NF = tr.number_of_faces();
     int NE = tr.number_of_edges();
+
+    // This function `tr.number_of_dummy_points()` returns the number of dummy points that 
+    // are currently in the triangulation. 
     int NDP = tr.number_of_dummy_points();
 
     cout << endl;
@@ -61,6 +64,11 @@ int main(int argc, char** argv) {
     cout << "Number of vertices NV:             " << NV << endl;
     cout << "Number of faces NF:                " << NF << endl;
     cout << "Number of edges NE:                " << NE << endl;
+
+    // The number of vertices in the triangulation must equal the number of points
+    // inserted, plus the dummy points in the triangulation.
+    CGAL_assertion( N_inserted + NDP == NV );
+    cout << "Number of vertices is correct!     " << endl;    
 
     // Note that the Euler relation is already verified by the function `is_valid()`.
     CGAL_assertion( (2 + NE - NV - NF) / 2 == 2);

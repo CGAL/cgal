@@ -397,7 +397,7 @@ MainWindow::animate() {
       }
     }
 
-    assert(check(Make_point()(p,o)) == CGAL::ON_BOUNDED_SIDE);
+    //assert(check(Make_point()(p,o)) == CGAL::ON_BOUNDED_SIDE);
 
     source = Make_point()(source,o);
     target = Make_point()(target,o);
