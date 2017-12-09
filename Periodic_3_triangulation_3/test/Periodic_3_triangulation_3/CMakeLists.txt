@@ -4,9 +4,7 @@
 
 project( Periodic_3_triangulation_3_Tests )
 
-cmake_minimum_required(VERSION 2.8.10)
-
-set(CMAKE_CXX_STANDARD 14)
+cmake_minimum_required(VERSION 2.8.11)
 
 find_package(CGAL QUIET COMPONENTS Core )
 
