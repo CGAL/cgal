@@ -118,8 +118,8 @@ public:
 #endif
   // The proxy wrapper for approximation.
   struct Proxy_wrapper {
-    Proxy_wrapper(const Proxy &p, const std::size_t &i, const face_descriptor &s)
-      : px(p), idx(i), seed(s), err(0.0) {}
+    Proxy_wrapper(const Proxy &p, const std::size_t &i, const face_descriptor &s, const FT &e)
+      : px(p), idx(i), seed(s), err(e) {}
 
     Proxy px; // parameterized proxy
     std::size_t idx; // proxy index, maintained to be the same as its position in proxies vector
@@ -1304,9 +1304,10 @@ private:
   }
 
   /*!
-   * @brief Fitting a new proxy.
-   * 1. Fit proxy parameters from a list of facets.
-   * 2. Set seed.
+   * @brief Fitting a new (wrapped) proxy.
+   * 1. Compute proxy parameters from a list of facets.
+   * 2. Find proxy seed.
+   * 3. Sum the proxy error.
    * @tparam FacetIterator face_descriptor container iterator
    * @param beg container begin
    * @param end container end
@@ -1314,43 +1315,46 @@ private:
    * @return fitted proxy wrapped with internal data
    */
   template<typename FacetIterator>
-  Proxy_wrapper fit_new_proxy(const FacetIterator &beg,
-    const FacetIterator &end,
-    const std::size_t &px_idx) {
+  Proxy_wrapper fit_new_proxy(const FacetIterator beg,
+    const FacetIterator end,
+    const std::size_t px_idx) {
     CGAL_assertion(beg != end);
 
     // use Proxy_fitting functor to fit proxy parameters
-    Proxy px = (*m_pproxy_fitting)(beg, end);
+    const Proxy px = (*m_pproxy_fitting)(beg, end);
 
-    // find proxy seed
+    // find proxy seed and sum error
     face_descriptor seed = *beg;
     FT err_min = (*m_perror_metric)(*beg, px);
-    std::pair<FacetIterator, FacetIterator> facets(beg, end);
-    BOOST_FOREACH(face_descriptor f, facets) {
-      FT err = (*m_perror_metric)(f, px);
+    FT sum_error(0.0);
+    for (FacetIterator fitr = beg; fitr != end; ++fitr) {
+      const FT err = (*m_perror_metric)(*fitr, px);
+      sum_error += err;
       if (err < err_min) {
         err_min = err;
-        seed = f;
+        seed = *fitr;
       }
     }
 
-    return Proxy_wrapper(px, px_idx, seed);
+    return Proxy_wrapper(px, px_idx, seed, sum_error);
   }
 
   /*!
-   * @brief Fitting a new proxy from a single facet.
-   * 1. Fit proxy parameters from one facet.
-   * 2. Set seed.
+   * @brief Fitting a new (wrapped) proxy from a single facet.
+   * 1. Compute proxy parameters from one facet.
+   * 2. Find proxy seed.
+   * 3. Sum the proxy error.
    * @param face_descriptor facet
    * @param px_idx proxy index
    * @return fitted proxy wrapped with internal data
    */
-  Proxy_wrapper fit_new_proxy(const face_descriptor &f, const std::size_t &px_idx) {
-    std::vector<face_descriptor> fvec(1, f);
+  Proxy_wrapper fit_new_proxy(const face_descriptor f, const std::size_t px_idx) {
     // fit proxy parameters
-    Proxy px = (*m_pproxy_fitting)(fvec.begin(), fvec.end());
+    std::vector<face_descriptor> fvec(1, f);
+    const Proxy px = (*m_pproxy_fitting)(fvec.begin(), fvec.end());
+    const FT err = (*m_perror_metric)(f, px);
 
-    return Proxy_wrapper(px, px_idx, f);
+    return Proxy_wrapper(px, px_idx, f, err);
   }
 
   /*!
