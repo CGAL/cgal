@@ -607,7 +607,7 @@ public:
         continue;
 
       if (num_to_add[px_id] > 0) {
-        m_proxies.push_back(fit_new_proxy(f, m_proxies.size()));
+        m_proxies.push_back(fit_proxy_from_seed_facet(f, m_proxies.size()));
         --num_to_add[px_id];
         ++num_added;
       }
@@ -675,9 +675,9 @@ public:
           merged_patch.push_back(f);
         }
       }
-      m_proxies[px_enlarged] = fit_new_proxy(merged_patch.begin(), merged_patch.end(), px_enlarged);
+      m_proxies[px_enlarged] = fit_proxy_from_patch(merged_patch, px_enlarged);
       // replace the merged proxy position to the newly teleported proxy
-      m_proxies[px_merged] = fit_new_proxy(tele_to, px_merged);
+      m_proxies[px_merged] = fit_proxy_from_seed_facet(tele_to, px_merged);
       put(m_fproxy_map, tele_to, px_merged);
 
       num_teleported++;
@@ -716,7 +716,7 @@ public:
         merged_patch.push_back(f);
       }
     }
-    m_proxies[px0] = fit_new_proxy(merged_patch.begin(), merged_patch.end(), px0);
+    m_proxies[px0] = fit_proxy_from_patch(merged_patch, px0);
 
     // erase px1 and maintain proxy index
     m_proxies.erase(m_proxies.begin() + px1);
@@ -782,8 +782,7 @@ public:
       std::list<face_descriptor> merged_patch(px_facets[pxi]);
       BOOST_FOREACH(face_descriptor f, px_facets[pxj])
         merged_patch.push_back(f);
-      Proxy_wrapper pxw_tmp = fit_new_proxy(
-        merged_patch.begin(), merged_patch.end(), CGAL_VSA_INVALID_TAG);
+      Proxy_wrapper pxw_tmp = fit_proxy_from_patch(merged_patch, CGAL_VSA_INVALID_TAG);
 
       FT error_merged(0.0);
       BOOST_FOREACH(face_descriptor f, merged_patch)
@@ -850,7 +849,7 @@ public:
 
       if (get(m_fproxy_map, f) == px_idx && f != m_proxies[px_idx].seed) {
         put(m_fproxy_map, f, m_proxies.size());
-        m_proxies.push_back(fit_new_proxy(f, m_proxies.size()));
+        m_proxies.push_back(fit_proxy_from_seed_facet(f, m_proxies.size()));
         ++count;
         // copy
         confined_proxies.push_back(m_proxies.back());
@@ -1051,7 +1050,7 @@ private:
     // reach to the number of proxies
     for (std::size_t i = 0; i < shuffled_facets.size()
       && m_proxies.size() < max_nb_proxies; ++i)
-      m_proxies.push_back(fit_new_proxy(shuffled_facets[i], m_proxies.size()));
+      m_proxies.push_back(fit_proxy_from_seed_facet(shuffled_facets[i], m_proxies.size()));
     run(num_iterations);
 
     return m_proxies.size();
@@ -1133,11 +1132,11 @@ private:
       // reset proxies to the bootstrapped connected components
       m_proxies.clear();
       BOOST_FOREACH(face_descriptor f, cc_seed_facets)
-        m_proxies.push_back(fit_new_proxy(f, m_proxies.size()));
+        m_proxies.push_back(fit_proxy_from_seed_facet(f, m_proxies.size()));
 
       for (std::size_t i = 0; i < shuffled_facets.size()
         && m_proxies.size() < target_px; ++i)
-        m_proxies.push_back(fit_new_proxy(shuffled_facets[i], m_proxies.size()));
+        m_proxies.push_back(fit_proxy_from_seed_facet(shuffled_facets[i], m_proxies.size()));
       run(num_iterations);
 
       const FT err = compute_fitting_error();
@@ -1255,7 +1254,7 @@ private:
     // update proxy parameters and seed
     for (ProxyWrapperIterator pxw_itr = beg; pxw_itr != end; ++pxw_itr) {
       const std::size_t px_idx = pxw_itr->idx;
-      *pxw_itr = fit_new_proxy(px_facets[px_idx].begin(), px_facets[px_idx].end(), px_idx);
+      *pxw_itr = fit_proxy_from_patch(px_facets[px_idx], px_idx);
     }
   }
 
@@ -1298,41 +1297,38 @@ private:
       return false;
 
     put(m_fproxy_map, fworst, m_proxies.size());
-    m_proxies.push_back(fit_new_proxy(fworst, m_proxies.size()));
+    m_proxies.push_back(fit_proxy_from_seed_facet(fworst, m_proxies.size()));
 
     return true;
   }
 
   /*!
-   * @brief Fitting a new (wrapped) proxy.
+   * @brief Fitting a new (wrapped) proxy from a region patch.
    * 1. Compute proxy parameters from a list of facets.
-   * 2. Find proxy seed.
+   * 2. Find proxy seed facet.
    * 3. Sum the proxy error.
-   * @tparam FacetIterator face_descriptor container iterator
-   * @param beg container begin
-   * @param end container end
+   * @tparam FacetPatch container with `face_descriptor` as data type
+   * @param px_patch proxy patch container
    * @param px_idx proxy index
-   * @return fitted proxy wrapped with internal data
+   * @return fitted wrapped proxy
    */
-  template<typename FacetIterator>
-  Proxy_wrapper fit_new_proxy(const FacetIterator beg,
-    const FacetIterator end,
-    const std::size_t px_idx) {
-    CGAL_assertion(beg != end);
+  template<typename FacetPatch>
+  Proxy_wrapper fit_proxy_from_patch(const FacetPatch &px_patch, const std::size_t px_idx) {
+    CGAL_assertion(!px_patch.empty());
 
     // use Proxy_fitting functor to fit proxy parameters
-    const Proxy px = (*m_pproxy_fitting)(beg, end);
+    const Proxy px = (*m_pproxy_fitting)(px_patch.begin(), px_patch.end());
 
     // find proxy seed and sum error
-    face_descriptor seed = *beg;
-    FT err_min = (*m_perror_metric)(*beg, px);
+    face_descriptor seed = *px_patch.begin();
+    FT err_min = (*m_perror_metric)(seed, px);
     FT sum_error(0.0);
-    for (FacetIterator fitr = beg; fitr != end; ++fitr) {
-      const FT err = (*m_perror_metric)(*fitr, px);
+    BOOST_FOREACH(face_descriptor f, px_patch) {
+      const FT err = (*m_perror_metric)(f, px);
       sum_error += err;
       if (err < err_min) {
         err_min = err;
-        seed = *fitr;
+        seed = f;
       }
     }
 
@@ -1340,15 +1336,15 @@ private:
   }
 
   /*!
-   * @brief Fitting a new (wrapped) proxy from a single facet.
-   * 1. Compute proxy parameters from one facet.
-   * 2. Find proxy seed.
+   * @brief Fitting a new (wrapped) proxy from a seed facet.
+   * 1. Compute proxy parameters from the facet.
+   * 2. Set seed to this facet.
    * 3. Sum the proxy error.
    * @param face_descriptor facet
    * @param px_idx proxy index
    * @return fitted proxy wrapped with internal data
    */
-  Proxy_wrapper fit_new_proxy(const face_descriptor f, const std::size_t px_idx) {
+  Proxy_wrapper fit_proxy_from_seed_facet(const face_descriptor f, const std::size_t px_idx) {
     // fit proxy parameters
     std::vector<face_descriptor> fvec(1, f);
     const Proxy px = (*m_pproxy_fitting)(fvec.begin(), fvec.end());
@@ -1439,7 +1435,7 @@ private:
 
     m_proxies.clear();
     BOOST_FOREACH(face_descriptor f, cc_seed_facets)
-      m_proxies.push_back(fit_new_proxy(f, m_proxies.size()));
+      m_proxies.push_back(fit_proxy_from_seed_facet(f, m_proxies.size()));
 #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
     std::cerr << "#cc " << m_proxies.size() << std::endl;
 #endif
