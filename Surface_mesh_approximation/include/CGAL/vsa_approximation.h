@@ -450,7 +450,7 @@ public:
     }
 #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
     static std::size_t count = 0;
-    std::cerr << '#' << count++ << ": " << compute_fitting_error() << std::endl;
+    std::cerr << '#' << count++ << ": " << compute_total_error() << std::endl;
 #endif
   }
 
@@ -469,7 +469,7 @@ public:
     if (avg_interval == 0)
       avg_interval = 1;
     FT drop_pct(0.0);
-    FT pre_err = compute_fitting_error();
+    FT pre_err = compute_total_error();
     for (std::size_t itr_count = 0; itr_count < max_iterations; itr_count += avg_interval) {
       if (pre_err == FT(0.0))
         return true;
@@ -477,7 +477,7 @@ public:
       FT avg_err(0.0);
       for (std::size_t i = 0; i < avg_interval; ++i) {
         run();
-        avg_err += compute_fitting_error();
+        avg_err += compute_total_error();
       }
       avg_err /= static_cast<FT>(avg_interval);
 
@@ -498,14 +498,7 @@ public:
    * @brief Computes fitting error of current partition to the proxies.
    * @return total fitting error
    */
-  FT compute_fitting_error() {
-    BOOST_FOREACH(Proxy_wrapper &pxw, m_proxies)
-      pxw.err = FT(0.0);
-    BOOST_FOREACH(face_descriptor f, faces(*m_ptm)) {
-      std::size_t pxidx = get(m_fproxy_map, f);
-      m_proxies[pxidx].err += (*m_perror_metric)(f, m_proxies[pxidx].px);
-    }
-
+  FT compute_total_error() {
     FT sum_error(0.0);
     BOOST_FOREACH(const Proxy_wrapper &pxw, m_proxies)
       sum_error += pxw.err;
@@ -546,7 +539,7 @@ public:
     std::cerr << "#px " << m_proxies.size() << std::endl;
 #endif
 
-    const FT sum_error = compute_fitting_error();
+    const FT sum_error = compute_total_error();
     const FT avg_error = sum_error / FT(static_cast<double>(num_proxies));
 
     std::vector<Proxy_error> px_error;
@@ -636,7 +629,7 @@ public:
     std::size_t num_teleported = 0;
     while (num_teleported < num_proxies) {
       // find worst proxy
-      compute_fitting_error();
+      compute_total_error();
       std::size_t px_worst = 0;
       FT max_error = m_proxies.front().err;
       for (std::size_t i = 0; i < m_proxies.size(); ++i) {
@@ -755,7 +748,7 @@ public:
     typedef std::pair<std::size_t, std::size_t> ProxyPair;
     typedef std::set<ProxyPair> MergedPair;
 
-    compute_fitting_error();
+    compute_total_error();
 
     std::vector<std::list<face_descriptor> > px_facets(m_proxies.size());
     BOOST_FOREACH(face_descriptor f, faces(*m_ptm))
@@ -1119,7 +1112,7 @@ private:
     BOOST_FOREACH(const Proxy_wrapper &pxw, m_proxies)
       cc_seed_facets.push_back(pxw.seed);
 
-    const FT initial_err = compute_fitting_error();
+    const FT initial_err = compute_total_error();
     FT error_drop = min_error_drop * FT(2.0);
     while (m_proxies.size() < max_nb_proxies && error_drop > min_error_drop) {
       // try to double current number of proxies each time
@@ -1139,7 +1132,7 @@ private:
         m_proxies.push_back(fit_proxy_from_seed_facet(shuffled_facets[i], m_proxies.size()));
       run(num_iterations);
 
-      const FT err = compute_fitting_error();
+      const FT err = compute_total_error();
       error_drop = err / initial_err;
     }
 
@@ -1158,12 +1151,12 @@ private:
   std::size_t init_incremental_error(const std::size_t max_nb_proxies,
     const FT min_error_drop,
     const std::size_t num_iterations) {
-    const FT initial_err = compute_fitting_error();
+    const FT initial_err = compute_total_error();
     FT error_drop = min_error_drop * FT(2.0);
     while (m_proxies.size() < max_nb_proxies && error_drop > min_error_drop) {
       add_proxy_furthest();
       run(num_iterations);
-      const FT err = compute_fitting_error();
+      const FT err = compute_total_error();
       error_drop = err / initial_err;
     }
 
@@ -1182,7 +1175,7 @@ private:
   std::size_t init_hierarchical_error(const std::size_t max_nb_proxies,
     const FT min_error_drop,
     const std::size_t num_iterations) {
-    const FT initial_err = compute_fitting_error();
+    const FT initial_err = compute_total_error();
     FT error_drop = min_error_drop * FT(2.0);
     while (m_proxies.size() < max_nb_proxies && error_drop > min_error_drop) {
       // try to double current number of proxies each time
@@ -1193,7 +1186,7 @@ private:
         target_px *= 2;
       add_proxies_error_diffusion(target_px - m_proxies.size());
       run(num_iterations);
-      const FT err = compute_fitting_error();
+      const FT err = compute_total_error();
       error_drop = err / initial_err;
     }
 
@@ -1268,7 +1261,7 @@ private:
 #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
     std::cerr << "add furthest " << m_proxies.size() << std::endl;
 #endif
-    compute_fitting_error();
+    compute_total_error();
     FT max_error = m_proxies.front().err;
     std::size_t px_worst = 0;
     for (std::size_t i = 0; i < m_proxies.size(); ++i) {
@@ -1436,6 +1429,14 @@ private:
     m_proxies.clear();
     BOOST_FOREACH(face_descriptor f, cc_seed_facets)
       m_proxies.push_back(fit_proxy_from_seed_facet(f, m_proxies.size()));
+
+    BOOST_FOREACH(Proxy_wrapper &pxw, m_proxies)
+      pxw.err = FT(0.0);
+    BOOST_FOREACH(face_descriptor f, faces(*m_ptm)) {
+      const std::size_t pxidx = get(m_fproxy_map, f);
+      m_proxies[pxidx].err += (*m_perror_metric)(f, m_proxies[pxidx].px);
+    }
+
 #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
     std::cerr << "#cc " << m_proxies.size() << std::endl;
 #endif

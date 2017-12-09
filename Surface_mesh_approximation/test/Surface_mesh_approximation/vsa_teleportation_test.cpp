@@ -79,7 +79,7 @@ int main()
   while(approx.teleport_proxies(1) == 1) {
     FT sum_err(0);
     approx.run(10);
-    sum_err += approx.compute_fitting_error();
+    sum_err += approx.compute_total_error();
     error.push_back(sum_err / FT(10.0));
     ++count;
   }

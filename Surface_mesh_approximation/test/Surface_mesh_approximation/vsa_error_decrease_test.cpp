@@ -55,7 +55,7 @@ int main()
   std::vector<FT> error;
   for (std::size_t i = 0; i < 30; ++i) {
     approx.run();
-    error.push_back(approx.compute_fitting_error());
+    error.push_back(approx.compute_total_error());
   }
 
   if (check_strict_ordering(error)) {
