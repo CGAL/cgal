@@ -1036,15 +1036,13 @@ private:
    */
   std::size_t init_random(const std::size_t max_nb_proxies,
     const std::size_t num_iterations) {
-    // random shuffled facets except for the bootstrapped connected component seed facets
-    std::vector<face_descriptor> shuffled_facets;
-    random_shuffle_non_seed_facets(shuffled_facets);
-
-    // reach to the number of proxies
-    for (std::size_t i = 0; i < shuffled_facets.size()
-      && m_proxies.size() < max_nb_proxies; ++i)
-      m_proxies.push_back(fit_proxy_from_seed_facet(shuffled_facets[i], m_proxies.size()));
-    run(num_iterations);
+    // pick from current non seed facets randomly
+    std::vector<face_descriptor> picked_seeds;
+    if (random_pick_non_seed_facets(max_nb_proxies - m_proxies.size(), picked_seeds)) {
+      BOOST_FOREACH(face_descriptor f, picked_seeds)
+        m_proxies.push_back(fit_proxy_from_seed_facet(f, m_proxies.size()));
+      run(num_iterations);
+    }
 
     return m_proxies.size();
   }
@@ -1103,33 +1101,22 @@ private:
   std::size_t init_random_error(const std::size_t max_nb_proxies,
     const FT min_error_drop,
     const std::size_t num_iterations) {
-    // random shuffled facets except for the bootstrapped connected component seed facets
-    std::vector<face_descriptor> shuffled_facets;
-    random_shuffle_non_seed_facets(shuffled_facets);
-
-    // keep a copy of the connected components seeds
-    std::vector<face_descriptor> cc_seed_facets;
-    BOOST_FOREACH(const Proxy_wrapper &pxw, m_proxies)
-      cc_seed_facets.push_back(pxw.seed);
 
     const FT initial_err = compute_total_error();
     FT error_drop = min_error_drop * FT(2.0);
     while (m_proxies.size() < max_nb_proxies && error_drop > min_error_drop) {
       // try to double current number of proxies each time
-      std::size_t target_px = m_proxies.size();
-      if (target_px * 2 > max_nb_proxies)
-        target_px = max_nb_proxies;
-      else
-        target_px *= 2;
+      const std::size_t nb_px = m_proxies.size();
+      const std::size_t nb_to_add =
+        (nb_px * 2 > max_nb_proxies) ? max_nb_proxies - nb_px : nb_px;
 
-      // reset proxies to the bootstrapped connected components
-      m_proxies.clear();
-      BOOST_FOREACH(face_descriptor f, cc_seed_facets)
+      // pick from current non seed facets randomly
+      std::vector<face_descriptor> picked_seeds;
+      if (!random_pick_non_seed_facets(nb_to_add, picked_seeds))
+        return m_proxies.size();
+
+      BOOST_FOREACH(face_descriptor f, picked_seeds)
         m_proxies.push_back(fit_proxy_from_seed_facet(f, m_proxies.size()));
-
-      for (std::size_t i = 0; i < shuffled_facets.size()
-        && m_proxies.size() < target_px; ++i)
-        m_proxies.push_back(fit_proxy_from_seed_facet(shuffled_facets[i], m_proxies.size()));
       run(num_iterations);
 
       const FT err = compute_total_error();
@@ -1347,36 +1334,42 @@ private:
   }
 
   /*!
-   * @brief Random shuffle the non-seed facets into an empty vector,
-   * to prepare for consecutive random seed facets selection (no interleaved re-fitting).
+   * @brief Pick a number of non-seed facets into an empty vector randomly.
+   * @param nb_requested requested number of facets
    * @param[out] facets shuffled facets vector
+   * @return true if requested number of facets are selected, false otherwise
    */
-  void random_shuffle_non_seed_facets(std::vector<face_descriptor> &facets) {
+  bool random_pick_non_seed_facets(const std::size_t nb_requested,
+    std::vector<face_descriptor> &facets) {
+    if (nb_requested + m_proxies.size() >= num_faces(*m_ptm))
+      return false;
+
     std::set<face_descriptor> seed_facets_set;
     BOOST_FOREACH(const Proxy_wrapper &pxw, m_proxies)
       seed_facets_set.insert(pxw.seed);
 
-    if (num_faces(*m_ptm) <= m_proxies.size())
-      return;
-
-    const std::size_t nbf = num_faces(*m_ptm) - m_proxies.size();
-    facets.reserve(nbf);
+    const std::size_t nb_nsf = num_faces(*m_ptm) - m_proxies.size();
+    std::vector<face_descriptor> non_seed_facets;
+    non_seed_facets.reserve(nb_nsf);
     BOOST_FOREACH(face_descriptor f, faces(*m_ptm)) {
       if (seed_facets_set.find(f) != seed_facets_set.end())
         continue;
-      facets.push_back(f);
+      non_seed_facets.push_back(f);
     }
 
-    // random shuffle
-    for (std::size_t i = 0; i < nbf; ++i) {
+    // random shuffle first few facets
+    for (std::size_t i = 0; i < nb_requested; ++i) {
       // swap ith element with a random one
       std::size_t r = static_cast<std::size_t>(
         static_cast<double>(std::rand()) / static_cast<double>(RAND_MAX) * 
-        static_cast<double>(nbf - 1));
-      face_descriptor tmp = facets[r];
-      facets[r] = facets[i];
-      facets[i] = tmp;
+        static_cast<double>(nb_nsf - 1));
+      std::swap(non_seed_facets[i], non_seed_facets[r]);
     }
+
+    for (std::size_t i = 0; i < nb_requested; ++i)
+      facets.push_back(non_seed_facets[i]);
+
+    return true;
   }
 
   /*!
