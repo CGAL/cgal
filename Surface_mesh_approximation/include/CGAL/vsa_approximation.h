@@ -671,7 +671,6 @@ public:
       m_proxies[px_enlarged] = fit_proxy_from_patch(merged_patch, px_enlarged);
       // replace the merged proxy position to the newly teleported proxy
       m_proxies[px_merged] = fit_proxy_from_facet(tele_to, px_merged);
-      put(m_fproxy_map, tele_to, px_merged);
 
       num_teleported++;
       // coarse re-fitting
@@ -1276,7 +1275,6 @@ private:
     if (first)
       return false;
 
-    put(m_fproxy_map, fworst, m_proxies.size());
     add_one_proxy_at(fworst);
 
     return true;
@@ -1327,16 +1325,24 @@ private:
    * @brief Fitting a new (wrapped) proxy from a facet.
    * 1. Compute proxy parameters from the facet.
    * 2. Set seed to this facet.
-   * 3. Sum the proxy error.
+   * 3. Update the proxy error.
+   * 4. Update proxy map.
+   * @pre current facet proxy map is valid
    * @param face_descriptor facet
    * @param px_idx proxy index
-   * @return fitted proxy wrapped with internal data
+   * @return fitted wrapped proxy
    */
   Proxy_wrapper fit_proxy_from_facet(const face_descriptor f, const std::size_t px_idx) {
     // fit proxy parameters
     std::vector<face_descriptor> fvec(1, f);
     const Proxy px = (*m_pproxy_fitting)(fvec.begin(), fvec.end());
     const FT err = (*m_perror_metric)(f, px);
+
+    // original proxy map should always be falid
+    CGAL_assertion(get(m_fproxy_map, f) != CGAL_VSA_INVALID_TAG);
+    // update the proxy error and proxy map
+    m_proxies[get(m_fproxy_map, f)].err -= err;
+    put(m_fproxy_map, f, px_idx);
 
     return Proxy_wrapper(px, px_idx, f, err);
   }
@@ -1393,13 +1399,14 @@ private:
       put(m_fproxy_map, f, CGAL_VSA_INVALID_TAG);
 
     // prepare for connected components visiting
-    std::vector<face_descriptor> cc_seed_facets;
+    std::vector<std::list<face_descriptor> > cc_patches;
     bool if_all_visited = false;
     std::size_t cc_idx = 0;
     face_descriptor seed_facet = *(faces(*m_ptm).first);
     while (!if_all_visited) {
       // use current seed facet to traverse the conneceted componnets
-      cc_seed_facets.push_back(seed_facet);
+      std::list<face_descriptor> cc_patch;
+      cc_patch.push_back(seed_facet);
       std::stack<face_descriptor> fstack;
       fstack.push(seed_facet);
       put(m_fproxy_map, seed_facet, cc_idx);
@@ -1410,11 +1417,13 @@ private:
           faces_around_face(halfedge(active_facet, *m_ptm), *m_ptm)) {
           if (fadj != boost::graph_traits<TriangleMesh>::null_face()
             && get(m_fproxy_map, fadj) == CGAL_VSA_INVALID_TAG) {
+            cc_patch.push_back(fadj);
             fstack.push(fadj);
             put(m_fproxy_map, fadj, cc_idx);
           }
         }
       }
+      cc_patches.push_back(cc_patch);
       // check if all visited
       if_all_visited = true;
       BOOST_FOREACH(face_descriptor f, faces(*m_ptm)) {
@@ -1428,16 +1437,8 @@ private:
     }
 
     m_proxies.clear();
-    BOOST_FOREACH(face_descriptor f, cc_seed_facets)
-      add_one_proxy_at(f);
-
-    BOOST_FOREACH(Proxy_wrapper &pxw, m_proxies)
-      pxw.err = FT(0.0);
-    BOOST_FOREACH(face_descriptor f, faces(*m_ptm)) {
-      const std::size_t pxidx = get(m_fproxy_map, f);
-      m_proxies[pxidx].err += (*m_perror_metric)(f, m_proxies[pxidx].px);
-    }
-
+    BOOST_FOREACH(const std::list<face_descriptor> &cc_patch, cc_patches)
+      m_proxies.push_back(fit_proxy_from_patch(cc_patch, m_proxies.size()));
 #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
     std::cerr << "#cc " << m_proxies.size() << std::endl;
 #endif
