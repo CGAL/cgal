@@ -600,7 +600,7 @@ public:
         continue;
 
       if (num_to_add[px_id] > 0) {
-        m_proxies.push_back(fit_proxy_from_seed_facet(f, m_proxies.size()));
+        add_one_proxy_at(f);
         --num_to_add[px_id];
         ++num_added;
       }
@@ -670,7 +670,7 @@ public:
       }
       m_proxies[px_enlarged] = fit_proxy_from_patch(merged_patch, px_enlarged);
       // replace the merged proxy position to the newly teleported proxy
-      m_proxies[px_merged] = fit_proxy_from_seed_facet(tele_to, px_merged);
+      m_proxies[px_merged] = fit_proxy_from_facet(tele_to, px_merged);
       put(m_fproxy_map, tele_to, px_merged);
 
       num_teleported++;
@@ -842,7 +842,7 @@ public:
 
       if (get(m_fproxy_map, f) == px_idx && f != m_proxies[px_idx].seed) {
         put(m_fproxy_map, f, m_proxies.size());
-        m_proxies.push_back(fit_proxy_from_seed_facet(f, m_proxies.size()));
+        add_one_proxy_at(f);
         ++count;
         // copy
         confined_proxies.push_back(m_proxies.back());
@@ -1040,7 +1040,7 @@ private:
     std::vector<face_descriptor> picked_seeds;
     if (random_pick_non_seed_facets(max_nb_proxies - m_proxies.size(), picked_seeds)) {
       BOOST_FOREACH(face_descriptor f, picked_seeds)
-        m_proxies.push_back(fit_proxy_from_seed_facet(f, m_proxies.size()));
+        add_one_proxy_at(f);
       run(num_iterations);
     }
 
@@ -1116,7 +1116,7 @@ private:
         return m_proxies.size();
 
       BOOST_FOREACH(face_descriptor f, picked_seeds)
-        m_proxies.push_back(fit_proxy_from_seed_facet(f, m_proxies.size()));
+        add_one_proxy_at(f);
       run(num_iterations);
 
       const FT err = compute_total_error();
@@ -1277,7 +1277,7 @@ private:
       return false;
 
     put(m_fproxy_map, fworst, m_proxies.size());
-    m_proxies.push_back(fit_proxy_from_seed_facet(fworst, m_proxies.size()));
+    add_one_proxy_at(fworst);
 
     return true;
   }
@@ -1316,7 +1316,15 @@ private:
   }
 
   /*!
-   * @brief Fitting a new (wrapped) proxy from a seed facet.
+   * @brief Add a proxy at facet f
+   * @param f where to the proxy is initialized from
+   */
+  void add_one_proxy_at(const face_descriptor f) {
+    m_proxies.push_back(fit_proxy_from_facet(f, m_proxies.size()));
+  }
+
+  /*!
+   * @brief Fitting a new (wrapped) proxy from a facet.
    * 1. Compute proxy parameters from the facet.
    * 2. Set seed to this facet.
    * 3. Sum the proxy error.
@@ -1324,7 +1332,7 @@ private:
    * @param px_idx proxy index
    * @return fitted proxy wrapped with internal data
    */
-  Proxy_wrapper fit_proxy_from_seed_facet(const face_descriptor f, const std::size_t px_idx) {
+  Proxy_wrapper fit_proxy_from_facet(const face_descriptor f, const std::size_t px_idx) {
     // fit proxy parameters
     std::vector<face_descriptor> fvec(1, f);
     const Proxy px = (*m_pproxy_fitting)(fvec.begin(), fvec.end());
@@ -1421,7 +1429,7 @@ private:
 
     m_proxies.clear();
     BOOST_FOREACH(face_descriptor f, cc_seed_facets)
-      m_proxies.push_back(fit_proxy_from_seed_facet(f, m_proxies.size()));
+      add_one_proxy_at(f);
 
     BOOST_FOREACH(Proxy_wrapper &pxw, m_proxies)
       pxw.err = FT(0.0);
