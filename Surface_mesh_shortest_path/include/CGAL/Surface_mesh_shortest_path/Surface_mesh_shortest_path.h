@@ -1268,7 +1268,7 @@ private:
       propagateRight = rightSide;
     }
 
-    if (node->level() <= num_faces(m_graph))
+    if (node->level() <= static_cast<std::size_t>(num_faces(m_graph)))
     {
       if (propagateLeft)
       {
