@@ -264,7 +264,8 @@ jet_smooth_point_set(
   PointRange& points,
   unsigned int k) ///< number of neighbors.
 {
-  jet_smooth_point_set<ConcurrencyTag> (points, k, CGAL::parameters::all_default());
+  jet_smooth_point_set<ConcurrencyTag>
+    (points, k, CGAL::Point_set_processing_3::parameters::all_default(points));
 }
 
 

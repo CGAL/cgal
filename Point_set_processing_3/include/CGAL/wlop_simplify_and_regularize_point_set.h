@@ -632,7 +632,8 @@ wlop_simplify_and_regularize_point_set(
   PointRange& points,
   OutputIterator output)       ///< output iterator where output points are put.
 {
-  return wlop_simplify_and_regularize_point_set<ConcurrencyTag> (points, output, CGAL::parameters::all_default());
+  return wlop_simplify_and_regularize_point_set<ConcurrencyTag>
+    (points, output, CGAL::Point_set_processing_3::parameters::all_default(points));
 }
   
 /// This is an implementation of the Weighted Locally Optimal Projection (WLOP) simplification algorithm.

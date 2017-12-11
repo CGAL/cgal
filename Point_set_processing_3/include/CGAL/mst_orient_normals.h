@@ -635,6 +635,18 @@ mst_orient_normals(
     return first_unoriented_point;
 }
 
+template <typename PointRange,
+          typename NamedParameters
+>
+typename PointRange::iterator
+mst_orient_normals(
+  PointRange& points,
+  unsigned int k) ///< number of neighbors
+
+{
+  return mst_orient_normals (points, k, CGAL::Point_set_processing_3::parameters::all_default(points));
+}
+  
 /// Orients the normals of the `[first, beyond)` range of points using the propagation
 /// of a seed orientation through a minimum spanning tree of the Riemannian graph [Hoppe92].
 ///

@@ -221,7 +221,7 @@ remove_outliers(
   PointRange& points,
   unsigned int k) ///< number of neighbors.
 {
-  return remove_outliers (points, k, CGAL::parameters::all_default());
+  return remove_outliers (points, k, CGAL::Point_set_processing_3::parameters::all_default(points));
 }
   
 /// Removes outliers:

@@ -571,7 +571,18 @@ edge_aware_upsample_point_set(
   return output;
 }
 
-
+template <typename ConcurrencyTag,
+          typename PointRange,
+	  typename OutputIterator>
+OutputIterator
+edge_aware_upsample_point_set(
+  const PointRange& points,
+  OutputIterator output)  ///< output iterator where output points and normals 
+                          ///< are put.
+{
+  return edge_aware_upsample_point_set<ConcurrencyTag>
+    (points, output, CGAL::Point_set_processing_3::parameters::all_default(points));
+}
 // This variant requires all parameters.
 template <typename ConcurrencyTag,
 	  typename OutputIterator,

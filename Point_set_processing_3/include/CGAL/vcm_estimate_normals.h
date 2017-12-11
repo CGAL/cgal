@@ -411,6 +411,17 @@ vcm_estimate_normals (PointRange& points,
                                             Kernel());
 }
 
+template <typename PointRange>
+void
+vcm_estimate_normals (PointRange& points,
+                      double offset_radius, ///< offset radius.
+                      double convolution_radius) ///< convolution radius.
+{
+  return vcm_estimate_normals
+    (points, offset_radius, convolution_radius,
+     CGAL::Point_set_processing_3::parameters::all_default(points));
+}
+
 /// Estimates normal directions of the points in the range `[first, beyond)`
 /// using the Voronoi Covariance Measure with a radius for the convolution.
 /// The output normals are randomly oriented.

@@ -227,7 +227,8 @@ template <typename PointRange>
 typename PointRange::iterator
 grid_simplify_point_set(PointRange& points, double epsilon)
 {
-  return grid_simplify_point_set (points, epsilon, CGAL::parameters::all_default());
+  return grid_simplify_point_set
+    (points, epsilon, CGAL::Point_set_processing_3::parameters::all_default(points));
 }
   
 /// Merges points which belong to the same cell of a grid of cell size = `epsilon`.

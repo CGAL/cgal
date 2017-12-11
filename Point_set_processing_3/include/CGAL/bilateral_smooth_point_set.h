@@ -587,6 +587,20 @@ bilateral_smooth_point_set(
    return sum_move_error / nb_points;
 }
 
+template <typename ConcurrencyTag,
+          typename PointRange>
+double
+bilateral_smooth_point_set(
+  PointRange& points,
+  unsigned int k,           ///< size of the neighborhood for the implicit surface patch fitting.
+                            ///< The larger the value is, the smoother the result will be.
+  double sharpness_angle)  ///< controls the sharpness of the result.
+                            ///< The larger the value is, the smoother the result will be.
+                            ///< The range of possible value is [0, 90].
+{
+  return bilateral_smooth_point_set<ConcurrencyTag>
+    (points, k, sharpness_angle, CGAL::Point_set_processing_3::parameters::all_default(points));
+}
 
 // This variant requires all parameters.
 template <typename ConcurrencyTag,

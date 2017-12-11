@@ -228,7 +228,8 @@ double compute_average_spacing(
   const PointRange& points,
   unsigned int k) ///< number of neighbors.
 {
-  return compute_average_spacing<ConcurrencyTag> (points, k, CGAL::parameters::all_default());
+  return compute_average_spacing<ConcurrencyTag>
+    (points, k, CGAL::Point_set_processing_3::parameters::all_default(points));
 }
 
 template <typename ConcurrencyTag,

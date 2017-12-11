@@ -510,7 +510,7 @@ estimate_local_k_neighbor_scales(
   OutputIterator output) ///< output iterator to store the computed scales
 {
   return estimate_local_k_neighbor_scales
-    (points, queries, output, CGAL::parameters::all_default());
+    (points, queries, output, CGAL::Point_set_processing_3::parameters::all_default(points));
 }
   
 /// \ingroup PkgPointSetProcessingAlgorithms
@@ -551,7 +551,8 @@ template <typename PointRange>
 std::size_t
 estimate_global_k_neighbor_scale(const PointRange& points)
 {
-  return estimate_global_k_neighbor_scale (points, CGAL::parameters::all_default());
+  return estimate_global_k_neighbor_scale
+    (points, CGAL::Point_set_processing_3::parameters::all_default(points));
 }
   
 /// \ingroup PkgPointSetProcessingAlgorithms
@@ -627,8 +628,8 @@ estimate_local_range_scales(
   const QueryPointRange& queries,
   OutputIterator output) ///< output iterator to store the computed scales
 {
-  return estimate_local_range_scales (points, queries, output,
-                                      CGAL::parameters::all_default());
+  return estimate_local_range_scales
+    (points, queries, output, CGAL::Point_set_processing_3::parameters::all_default(points));
 }
   
 /// \ingroup PkgPointSetProcessingAlgorithms
@@ -669,7 +670,8 @@ template <typename PointRange>
 double
 estimate_global_range_scale(const PointRange& points)
 {
-  return estimate_global_range_scale(points, CGAL::parameters::all_default());
+  return estimate_global_range_scale
+    (points, CGAL::Point_set_processing_3::parameters::all_default(points));
 }
 
 // ----------------------------------------------------------------------------

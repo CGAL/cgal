@@ -254,6 +254,18 @@ pca_estimate_normals(
   CGAL_TRACE("End of pca_estimate_normals()\n");
 }
   
+template <typename ConcurrencyTag,
+	  typename PointRange
+>
+void
+pca_estimate_normals(
+  PointRange& points,
+  unsigned int k) ///< number of neighbors.
+{
+  return pca_estimate_normals<ConcurrencyTag>
+    (points, k, CGAL::Point_set_processing_3::parameters::all_default(points));
+}
+  
 /// Estimates normal directions of the `[first, beyond)` range of points
 /// by linear least squares fitting of a plane over the k nearest neighbors.
 /// The output normals are randomly oriented.

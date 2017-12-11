@@ -326,7 +326,8 @@ namespace CGAL {
   typename PointRange::iterator
   hierarchy_simplify_point_set (PointRange& points)
   {
-    return hierarchy_simplify_point_set(points, CGAL::parameters::all_default());
+    return hierarchy_simplify_point_set
+      (points, CGAL::Point_set_processing_3::parameters::all_default(points));
   }
   
   /// Recursively split the point set in smaller clusters until the

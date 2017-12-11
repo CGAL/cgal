@@ -272,6 +272,17 @@ jet_estimate_normals(
   CGAL_TRACE("End of jet_estimate_normals()\n");
 }
 
+template <typename ConcurrencyTag,
+	  typename PointRange>
+void
+jet_estimate_normals(
+  PointRange& points,
+  unsigned int k) ///< number of neighbors.
+{
+  jet_estimate_normals<ConcurrencyTag>
+    (points, k, CGAL::Point_set_processing_3::parameters::all_default(points));
+}
+  
 /// \ingroup PkgPointSetProcessingAlgorithms
 /// Estimates normal directions of the `[first, beyond)` range of points
 /// using jet fitting on the k nearest neighbors.

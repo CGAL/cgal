@@ -1497,6 +1497,20 @@ structure_point_set (const PointRange& points, ///< range of points.
   return output;
 }
 
+template <typename PointRange,
+          typename PlaneRange,
+          typename OutputIterator>
+OutputIterator
+structure_point_set (const PointRange& points, ///< range of points.
+                     const PlaneRange& planes, ///< range of planes.
+                     OutputIterator output, ///< output iterator where output points are written.
+                     double epsilon) ///< size parameter.
+{
+  return structure_point_set
+    (points, planes, output, epsilon,
+     CGAL::Point_set_processing_3::parameters::all_default(points));
+}
+  
 /// This is an implementation of the Point Set Structuring algorithm. This
 /// algorithm takes advantage of a set of detected planes: it detects adjacency
 /// relationships between planes and resamples the detected planes, edges and
