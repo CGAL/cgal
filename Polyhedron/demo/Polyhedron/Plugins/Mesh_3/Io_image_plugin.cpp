@@ -373,7 +373,7 @@ public Q_SLOTS:
 
   void addVP(Volume_plane_thread* thread) {
     Volume_plane_interface* plane = thread->getItem();
-    plane->init();
+    plane->init(static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first()));
     // add the interface for this Volume_plane
     int id = scene->addItem(plane);
     scene->changeGroup(plane, group);

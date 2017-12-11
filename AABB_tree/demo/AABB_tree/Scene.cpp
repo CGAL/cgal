@@ -595,6 +595,7 @@ void Scene::draw(QGLViewer* viewer)
         initGL();
     if(!are_buffers_initialized)
         initialize_buffers();
+    gl->glEnable(GL_DEPTH_TEST);
     QColor color;
     QMatrix4x4 fMatrix;
     fMatrix.setToIdentity();
@@ -663,7 +664,7 @@ void Scene::draw(QGLViewer* viewer)
 
             //cutting_segments
             fMatrix.setToIdentity();
-            ::glLineWidth(2.0f);
+            gl->glLineWidth(2.0f);
             vao[3].bind();
             attrib_buffers(viewer);
             rendering_program.bind();
@@ -671,7 +672,7 @@ void Scene::draw(QGLViewer* viewer)
             rendering_program.setUniformValue(colorLocation, color);
             rendering_program.setUniformValue(fLocation, fMatrix);
             gl->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(pos_cut_segments.size()/3));
-            ::glLineWidth(1.0f);
+            gl->glLineWidth(1.0f);
             rendering_program.release();
             vao[3].release();
             //grid
@@ -690,8 +691,8 @@ void Scene::draw(QGLViewer* viewer)
             //cutting_plane
             // for(int i=0; i< 16 ; i++)
             //     fMatrix.data()[i] =  m_frame->matrix()[i];
-            ::glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
-            ::glEnable(GL_BLEND);
+            gl->glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+            gl->glEnable(GL_BLEND);
             vao[4].bind();
             attrib_buffers(viewer);
             rendering_program.bind();
@@ -699,7 +700,7 @@ void Scene::draw(QGLViewer* viewer)
             rendering_program.setUniformValue(colorLocation, color);
             rendering_program.setUniformValue(fLocation, fMatrix);
             gl->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(pos_plane.size()/3));
-            ::glDisable(GL_BLEND);
+            gl->glDisable(GL_BLEND);
             rendering_program.release();
             vao[4].release();
 

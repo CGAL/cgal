@@ -44,8 +44,8 @@ struct Scene_points_with_normal_item_priv
     normal_Slider = new QSlider(Qt::Horizontal);
     normal_Slider->setValue(20);
     point_Slider = new QSlider(Qt::Horizontal);
-    point_Slider->setValue(2);
     point_Slider->setMinimum(1);
+    point_Slider->setValue(2);
     point_Slider->setMaximum(25);
   }
   Scene_points_with_normal_item_priv(Scene_points_with_normal_item* parent)
@@ -369,6 +369,10 @@ void Scene_points_with_normal_item_priv::compute_normals_and_vertices() const
     normals.resize(0);
     colors_points.resize(0);
 
+    if(item->point_set()->number_of_points() < 30 )
+      point_Slider->setValue(5);
+    else
+      point_Slider->setValue(2);
     //Shuffle container to allow quick display random points
     std::random_shuffle (m_points->begin(), m_points->first_selected());
     if (m_points->nb_selected_points() != 0)

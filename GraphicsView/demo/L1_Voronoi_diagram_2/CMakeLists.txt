@@ -37,14 +37,16 @@ qt5_generate_moc( L1_voronoi_diagram_2.cpp L1_voronoi_diagram_2.moc )
 # The executable itself.
 add_executable  ( L1_voronoi_diagram_2 L1_voronoi_diagram_2.cpp L1_voronoi_diagram_2.moc ${DT_UI_FILES}  ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES} )
 
-qt5_use_modules(L1_voronoi_diagram_2 Xml Script OpenGL Svg)
-
 add_to_cached_list( CGAL_EXECUTABLE_TARGETS L1_voronoi_diagram_2 )
 
-# Link with Qt libraries
-target_link_libraries( L1_voronoi_diagram_2 ${QT_LIBRARIES} )
-# Link with CGAL
-target_link_libraries( L1_voronoi_diagram_2 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
+target_link_libraries( L1_voronoi_diagram_2 PRIVATE
+  CGAL::CGAL CGAL::CGAL_Qt5 Qt5::Gui )
+
+include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
+cgal_add_compilation_test(L1_voronoi_diagram_2)
+
+include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
+cgal_add_compilation_test(L1_voronoi_diagram_2)
 
 else()
 

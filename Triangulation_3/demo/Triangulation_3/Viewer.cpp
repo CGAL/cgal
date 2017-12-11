@@ -58,23 +58,23 @@ void Viewer::init()
     GLfloat specular_color[4] = { 0.8f, 0.8f, 0.8f, 1.0 };
     glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR,  specular_color);
     // Set Smooth Shading
-    ::glShadeModel(GL_SMOOTH);
+    glShadeModel(GL_SMOOTH);
 
     // depth buffer setup
-    ::glClearDepth(1.0f);
-    ::glEnable(GL_DEPTH_TEST);
-    ::glDepthFunc(GL_LEQUAL);
-    ::glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+    glClearDepth(1.0f);
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LEQUAL);
+    glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 
     // enable semi-transparent culling planes
-    ::glEnable(GL_BLEND);
-    ::glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     // anti-aliasing, i.e. reduce jaggedness (if the OpenGL driver permits that)
-    ::glEnable(GL_POINT_SMOOTH);
-    ::glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
-    ::glEnable(GL_LINE_SMOOTH);
-    ::glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+    glEnable(GL_POINT_SMOOTH);
+    glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
+    glEnable(GL_LINE_SMOOTH);
+    glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 
     /* Add mouse and key description */
     setKeyDescription( Qt::CTRL + Qt::Key_G, tr("Generate points") );
@@ -1234,7 +1234,7 @@ void Viewer::draw()
         // Insert point mode
         if( m_curMode == INSERT_PT) {
             // Show prompt messages
-            ::glColor3d(0,0,0);
+            glColor3d(0,0,0);
             drawText( width()-200, 20, tr("Shift+Left: Insert a point"), fontPrompt );
             drawText( width()-200, 40, tr("Hold Left: Move the point"), fontPrompt );
             drawText( width()-200, 60, tr("Return: Insert to DT"), fontPrompt );
@@ -1258,7 +1258,7 @@ void Viewer::draw()
         }
         else if( m_curMode == SELECT) {
             // Show prompt messages
-            ::glColor3d(0,0,0);
+            glColor3d(0,0,0);
             drawText( width()-200, 20, tr("Shift+Left: Select"), fontPrompt );
             drawText( width()-200, 40, tr("Ctrl+Left: Add selection"),
                       QFont("Arial", 14) );
@@ -1274,7 +1274,7 @@ void Viewer::draw()
         }
         else if( m_curMode == MOVE ) {
             // Show prompt messages
-            ::glColor3d(0,0,0);
+            glColor3d(0,0,0);
             drawText( width()-200, 20, tr("Left Click: Select"), fontPrompt );
             if(m_isMoving)
                 drawText( width()-200, 40, tr("Shift+Wheel: Resize trackball"), fontPrompt );
@@ -1288,7 +1288,7 @@ void Viewer::draw()
         }
         else if( m_curMode == FINDNB ) {
             // Show prompt messages
-            ::glColor3d(0,0,0);
+            glColor3d(0,0,0);
             drawText( width()-200, 20, tr("Shift+Left: Place query point"), fontPrompt );
             drawText( width()-200, 40, tr("Shift+Wheel: Resize trackball"), fontPrompt );
             rendering_program.bind();
@@ -1307,7 +1307,7 @@ void Viewer::draw()
         }
         else if(m_curMode == EMPTYSPH){
             // Show prompt messages
-            ::glColor3d(0,0,0);
+            glColor3d(0,0,0);
             drawText( width()-200, 20, tr("Shift+Left: Place query point"), fontPrompt );
             drawText( width()-200, 40, tr("Press S: Show/Hide trackball"), fontPrompt );
             drawText( width()-200, 60, tr("Shift+Wheel: Resize trackball"), fontPrompt );
@@ -1337,7 +1337,7 @@ void Viewer::draw()
             switch( m_curStep ) {
             case NEWPT:
                 // Show prompt messages
-                ::glColor3d(0,0,0);
+                glColor3d(0,0,0);
                 drawText( 10, 20, tr("Highlight the next-to-insert point"), fontPrompt );
                 // Highlight the next-to-insert point
                 rendering_program.bind();
@@ -1351,7 +1351,7 @@ void Viewer::draw()
                 break;
             case CELL:  // show the tetrahedron that contains the point
                 // Show prompt messages
-                ::glColor3d(0,0,0);
+                glColor3d(0,0,0);
                 drawText( 10, 20, tr("Show the tetrahedron containing the point"), fontPrompt );
                 drawText( 10, 40, tr("(Only finite facets are drawn)"), fontPrompt );
                 // Highlight the next-to-insert vertex
@@ -1373,7 +1373,7 @@ void Viewer::draw()
                 break;
             case CONFLICT:  // show the conflict region
                 // Show prompt messages
-                ::glColor3d(0,0,0);
+                glColor3d(0,0,0);
                 drawText( 10, 20, tr("Show the conflict region"), fontPrompt );
                 // Highlight the next-to-insert vertex
                 rendering_program.bind();
@@ -1432,7 +1432,7 @@ void Viewer::draw()
 
         if( m_curMode == INSERT_PT) {
             // Show prompt messages
-            ::glColor3d(0,0,0);
+            glColor3d(0,0,0);
             drawText( width()-200, 20, tr("Shift+Left: Insert a point"), fontPrompt );
             drawText( width()-200, 40, tr("Hold Left: Move the point"), fontPrompt );
             drawText( width()-200, 60, tr("Return: Insert to DT"), fontPrompt );
@@ -1457,7 +1457,7 @@ void Viewer::draw()
         }
         else if( m_curMode == SELECT) {
             // Show prompt messages
-            ::glColor3d(0,0,0);
+            glColor3d(0,0,0);
             drawText( width()-200, 20, tr("Shift+Left: Select"), fontPrompt );
             drawText( width()-200, 40, tr("Ctrl+Left: Add selection"),
                       QFont("Arial", 14) );
@@ -1473,7 +1473,7 @@ void Viewer::draw()
         }
         else if( m_curMode == MOVE ) {
             // Show prompt messages
-            ::glColor3d(0,0,0);
+            glColor3d(0,0,0);
             drawText( width()-200, 20, tr("Left Click: Select"), fontPrompt );
             if(m_isMoving)
                 drawText( width()-200, 40, tr("Shift+Wheel: Resize trackball"), fontPrompt );
@@ -1487,7 +1487,7 @@ void Viewer::draw()
         }
         else if( m_curMode == FINDNB ) {
             // Show prompt messages
-            ::glColor3d(0,0,0);
+            glColor3d(0,0,0);
             drawText( width()-200, 20, tr("Shift+Left: Place query point"), fontPrompt );
             drawText( width()-200, 40, tr("Shift+Wheel: Resize trackball"), fontPrompt );
             rendering_program_spheres.bind();
@@ -1507,7 +1507,7 @@ void Viewer::draw()
         }
         else if(m_curMode == EMPTYSPH){
             // Show prompt messages
-            ::glColor3d(0,0,0);
+            glColor3d(0,0,0);
             drawText( width()-200, 20, tr("Shift+Left: Place query point"), fontPrompt );
             drawText( width()-200, 40, tr("Press S: Show/Hide trackball"), fontPrompt );
             drawText( width()-200, 60, tr("Shift+Wheel: Resize trackball"), fontPrompt );
@@ -1539,7 +1539,7 @@ void Viewer::draw()
             switch( m_curStep ) {
             case NEWPT:
                 // Show prompt messages
-                ::glColor3d(0,0,0);
+                glColor3d(0,0,0);
                 drawText( 10, 20, tr("Highlight the next-to-insert point"), fontPrompt );
                 // Highlight the next-to-insert point
                 rendering_program_spheres.bind();
@@ -1552,7 +1552,7 @@ void Viewer::draw()
                 break;
             case CELL:  // show the tetrahedron that contains the point
                 // Show prompt messages
-                ::glColor3d(0,0,0);
+                glColor3d(0,0,0);
                 drawText( 10, 20, tr("Show the tetrahedron containing the point"), fontPrompt );
                 drawText( 10, 40, tr("(Only finite facets are drawn)"), fontPrompt );
                 // Highlight the next-to-insert vertex
@@ -1573,7 +1573,7 @@ void Viewer::draw()
                 break;
             case CONFLICT:  // show the conflict region
                 // Show prompt messages
-                ::glColor3d(0,0,0);
+                glColor3d(0,0,0);
                 drawText( 10, 20, tr("Show the conflict region"), fontPrompt );
                 // Highlight the next-to-insert vertex
                 rendering_program_spheres.bind();
@@ -1610,7 +1610,7 @@ void Viewer::draw()
     }
     if( m_curMode == INSERT_V  ) {
         // Show prompt messages
-        ::glColor3d(0,0,0);
+        glColor3d(0,0,0);
         drawText( width()-200, 20, tr("Shift+Left: Insert a vertex"), fontPrompt );
         drawText( width()-200, 40, tr("Shift+Wheel: Resize trackball"), fontPrompt );
 
@@ -1680,35 +1680,35 @@ void Viewer::drawWithNames()
     for(int i=0; i<m_pScene->m_vhArray.size(); ++i) {
         // push a name for each point onto the name stack
         // note: it can NOT be used between glBegin and glEnd
-        ::glPushName( i );
+        glPushName( i );
 
         // draw the point
-        ::glBegin(GL_POINTS);
+        glBegin(GL_POINTS);
         Point_3& p = m_pScene->m_vhArray.at(i)->point();
-        ::glVertex3f(p.x(), p.y(), p.z());
-        ::glEnd();
+        glVertex3f(p.x(), p.y(), p.z());
+        glEnd();
 
         // pop one name off the top of the name stack
-        ::glPopName();
+        glPopName();
     }//end-for-points
 
     // push a name for the newly inserted point
     if( m_curMode == INSERT_PT && m_hasNewPt ) {
-        ::glPushName( ::GLuint(-1) );
-        ::glBegin(GL_POINTS);
-        ::glVertex3f(m_newPt.x(), m_newPt.y(), m_newPt.z());
-        ::glEnd();
-        ::glPopName();
+        glPushName( GLuint(-1) );
+        glBegin(GL_POINTS);
+        glVertex3f(m_newPt.x(), m_newPt.y(), m_newPt.z());
+        glEnd();
+        glPopName();
     }//end-if-newPt
 }
 
 void Viewer::endSelection(const QPoint& /*point*/)
 {
     // flush GL buffers
-    ::glFlush();
+    glFlush();
 
     // reset GL_RENDER mode (was GL_SELECT) and get the number of selected points
-    size_t nSel = ::glRenderMode(GL_RENDER);
+    size_t nSel = glRenderMode(GL_RENDER);
 
     /* No selection */
     if( nSel <= 0 ) {
@@ -1722,7 +1722,7 @@ void Viewer::endSelection(const QPoint& /*point*/)
 
     /* Check whether the new point is clicked on */
     else if( m_curMode == INSERT_PT ) {
-        if( m_hasNewPt && (selectBuffer())[3] == ::GLuint(-1) )
+        if( m_hasNewPt && (selectBuffer())[3] == GLuint(-1) )
             m_isMoving = true;
     }//end-if-inspt
 

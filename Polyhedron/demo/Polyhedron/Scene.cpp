@@ -312,7 +312,7 @@ Scene::duplicate(Item_id index)
         return -1;
 }
 
-void Scene::initializeGL()
+void Scene::initializeGL(CGAL::Three::Viewer_interface* viewer)
 {
     ms_splatting->init();
 
@@ -325,10 +325,10 @@ void Scene::initializeGL()
     GLfloat position[] = { 0.0f, 0.0f, 1.0f, 1.0f };
 
     // Assign created components to GL_LIGHT0
-    glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
-    glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
-    glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight);
-    glLightfv(GL_LIGHT0, GL_POSITION, position);
+    viewer->glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
+    viewer->glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
+    viewer->glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight);
+    viewer->glLightfv(GL_LIGHT0, GL_POSITION, position);
 
     gl_init = true;
 }
@@ -380,11 +380,11 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
 {
     QMap<float, int> picked_item_IDs;
     if(with_names)
-      glEnable(GL_DEPTH_TEST);
+      viewer->glEnable(GL_DEPTH_TEST);
     if(!ms_splatting->viewer_is_set)
         ms_splatting->setViewer(viewer);
     if(!gl_init)
-        initializeGL();
+        initializeGL(viewer);
     // Flat/Gouraud OpenGL drawing
     for(int index = 0; index < m_entries.size(); ++index)
     {
@@ -404,8 +404,8 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
             if(item.renderingMode() == Flat || item.renderingMode() == FlatPlusEdges || item.renderingMode() == Gouraud)
             {
                 if(with_names) {
-                    glClearDepth(1.0);
-                    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+                    viewer->glClearDepth(1.0);
+                    viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
                 }
                 viewer->glEnable(GL_LIGHTING);
                 viewer->glPointSize(2.f);
@@ -423,7 +423,7 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
 
                     //    read depth buffer at pick location;
                     float depth = 1.0;
-                    glReadPixels(picked_pixel.x(),viewer->camera()->screenHeight()-1-picked_pixel.y(),1,1,GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+                    viewer->glReadPixels(picked_pixel.x(),viewer->camera()->screenHeight()-1-picked_pixel.y(),1,1,GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
                     if (depth != 1.0)
                     {
                         //add object to list of picked objects;
@@ -433,7 +433,7 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
             }
         }
     }
-    glDepthFunc(GL_LEQUAL);
+    viewer->glDepthFunc(GL_LEQUAL);
     // Wireframe OpenGL drawing
     for(int index = 0; index < m_entries.size(); ++index)
     {
@@ -453,8 +453,8 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
             if((item.renderingMode() == Wireframe || item.renderingMode() == PointsPlusNormals )
                     && with_names)
             {
-                glClearDepth(1.0);
-                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+                viewer->glClearDepth(1.0);
+                viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             }
             if((!with_names && item.renderingMode() == FlatPlusEdges )
                     || item.renderingMode() == Wireframe)
@@ -495,7 +495,7 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
 
                 //    read depth buffer at pick location;
                 float depth = 1.0;
-                glReadPixels(picked_pixel.x(),viewer->camera()->screenHeight()-1-picked_pixel.y(),1,1,GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+                viewer->glReadPixels(picked_pixel.x(),viewer->camera()->screenHeight()-1-picked_pixel.y(),1,1,GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
                 if (depth != 1.0)
                 {
                     //add object to list of picked objects;
@@ -512,8 +512,8 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
         if(item.visible())
         {
             if(item.renderingMode() == Points && with_names) {
-                glClearDepth(1.0);
-                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+                viewer->glClearDepth(1.0);
+                viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             }
             if(item.renderingMode() == Points  ||
                     (!with_names && item.renderingMode() == PointsPlusNormals)  ||
@@ -531,7 +531,7 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
             if(item.renderingMode() == Points && with_names) {
                 //    read depth buffer at pick location;
                 float depth = 1.0;
-                glReadPixels(picked_pixel.x(),viewer->camera()->screenHeight()-1-picked_pixel.y(),1,1,GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+                viewer->glReadPixels(picked_pixel.x(),viewer->camera()->screenHeight()-1-picked_pixel.y(),1,1,GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
                 if (depth != 1.0)
                 {
                     //add object to list of picked objects;
@@ -541,7 +541,7 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
 
             if(!with_names)
             {
-                glDepthFunc(GL_LESS);
+                viewer->glDepthFunc(GL_LESS);
                 // Splatting
                 if(!with_names && ms_splatting->isSupported())
                 {
@@ -594,8 +594,8 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
       if(item.visible())
       {
         if(with_names) {
-          glClearDepth(1.0);
-          glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+          viewer->glClearDepth(1.0);
+          viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         }
         viewer->glEnable(GL_LIGHTING);
         viewer->glPointSize(2.f);
@@ -612,7 +612,7 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
 
           //    read depth buffer at pick location;
           float depth = 1.0;
-          glReadPixels(picked_pixel.x(),viewer->camera()->screenHeight()-1-picked_pixel.y(),1,1,GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+          viewer->glReadPixels(picked_pixel.x(),viewer->camera()->screenHeight()-1-picked_pixel.y(),1,1,GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
           if (depth != 1.0)
           {
             //add object to list of picked objects;

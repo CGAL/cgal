@@ -22,12 +22,12 @@ using namespace CGAL::Three;
 
 #if !defined(NDEBUG)
 inline
-void printGlError(unsigned int line) {
- CGAL::Qt::opengl_check_errors(line);
+void printGlError(CGAL::Three::Viewer_interface* viewer, unsigned int line) {
+  CGAL::Qt::opengl_check_errors(viewer, line);
 }
 #else
 inline
-void printGlError(unsigned int) {
+void printGlError(CGAL::Three::Viewer_interface*, unsigned int) {
 }
 #endif
 
@@ -121,7 +121,7 @@ public:
 
   // uses a public init function to enable construction in
   // threads without gl-context
-  void init();
+  void init(Viewer_interface* viewer);
 
 private:
   bool is_grabbing;
@@ -438,11 +438,11 @@ void Volume_plane<T>::draw(Viewer_interface *viewer) const {
   program_bordures.setUniformValue("f_matrix", f);
   program_bordures.release();
   GLint renderMode;
-  glGetIntegerv(GL_RENDER_MODE, &renderMode);
-  printGlError(__LINE__);
+  viewer->glGetIntegerv(GL_RENDER_MODE, &renderMode);
+  printGlError(viewer, __LINE__);
 
 
-  glLineWidth(4.0f);
+  viewer->glLineWidth(4.0f);
   v_rec.resize(0);
   drawRectangle(*this);
 
@@ -453,10 +453,10 @@ void Volume_plane<T>::draw(Viewer_interface *viewer) const {
   program_bordures.setAttributeBuffer("vertex",GL_FLOAT,0,3);
   program_bordures.enableAttributeArray("vertex");
   program_bordures.setUniformValue("color",this->color());
-  glDrawArrays(GL_LINE_LOOP, 0, static_cast<GLsizei>(v_rec.size()/3));
+  viewer->glDrawArrays(GL_LINE_LOOP, 0, static_cast<GLsizei>(v_rec.size()/3));
   rectBuffer.release();
   program_bordures.release();
-  glLineWidth(1.0f);
+  viewer->glLineWidth(1.0f);
 
   program.bind();
   int mvpLoc = program.uniformLocation("mvp_matrix");
@@ -477,20 +477,20 @@ void Volume_plane<T>::draw(Viewer_interface *viewer) const {
 
 
 
-  printGlError(__LINE__);
+  printGlError(viewer, __LINE__);
 
  for(unsigned int i = 0; i < ebos.size(); ++i)
   {
       ebos[i].first.bind();
-      glDrawElements(GL_TRIANGLES, ebos[i].second, GL_UNSIGNED_INT, 0);
+      viewer->glDrawElements(GL_TRIANGLES, ebos[i].second, GL_UNSIGNED_INT, 0);
       ebos[i].first.release();
   }
 
   cbuffer.release();
-  printGlError(__LINE__);
+  printGlError(viewer, __LINE__);
   program.release();
 
-  printGlError(__LINE__);
+  printGlError(viewer, __LINE__);
 
   if(!are_buffers_filled)
       initializeBuffers(viewer);
@@ -517,7 +517,7 @@ void Volume_plane<T>::draw(Viewer_interface *viewer) const {
 }
 
 template<typename T>
-void Volume_plane<T>::init() {
+void Volume_plane<T>::init(Viewer_interface* viewer) {
   is_grabbing = false;
   initShaders();
 
@@ -538,7 +538,7 @@ void Volume_plane<T>::init() {
   vVBO.bind();
   vVBO.allocate(vertices.data(),static_cast<int>(sizeof(float) * vertices.size()));
   vVBO.release();
-  printGlError(__LINE__);
+  printGlError(viewer, __LINE__);
 
   // for each patch
   std::vector<unsigned int> indices;
@@ -590,7 +590,7 @@ void Volume_plane<T>::init() {
   cbuffer.allocate(colors_.data(),static_cast<int>(colors_.size()*sizeof(float)));
   cbuffer.release();
 
-  printGlError(__LINE__);
+  printGlError(viewer, __LINE__);
 }
 
 template<typename T>

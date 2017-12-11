@@ -363,8 +363,8 @@ void Scene_alpha_shape_item::draw(CGAL::Three::Viewer_interface* viewer) const
   vaos[0]->bind();
 
   program->setAttributeValue("colors", this->color());
-  glDrawElements(GL_TRIANGLES, static_cast<GLuint>(indices.size()),
-                 GL_UNSIGNED_INT, indices.data());
+  viewer->glDrawElements(GL_TRIANGLES, static_cast<GLuint>(indices.size()),
+                         GL_UNSIGNED_INT, indices.data());
   program->release();
   vaos[0]->release();
 

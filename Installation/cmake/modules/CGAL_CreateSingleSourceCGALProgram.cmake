@@ -1,4 +1,9 @@
-include(CGAL_add_test)
+if(CGAL_CreateSingleSourceCGALProgram_included)
+  return()
+endif(CGAL_CreateSingleSourceCGALProgram_included)
+set(CGAL_CreateSingleSourceCGALProgram_included TRUE)
+
+include(${CMAKE_CURRENT_LIST_DIR}/CGAL_add_test.cmake)
 include(CMakeParseArguments)
 
 function(create_single_source_cgal_program firstfile )
@@ -11,7 +16,7 @@ function(create_single_source_cgal_program firstfile )
   set(NO_TESTING ${create_single_source_cgal_program_NO_TESTING})
 
   if(NOT IS_ABSOLUTE "${firstfile}")
-    set(firstfile "${CGAL_CURRENT_SOURCE_DIR}/${firstfile}")
+    set(firstfile "${CMAKE_CURRENT_SOURCE_DIR}/${firstfile}")
   endif()
 
   get_filename_component(exe_name ${firstfile} NAME_WE)
@@ -52,22 +57,22 @@ function(create_single_source_cgal_program firstfile )
       set(NO_TESTING TRUE)
     endif()
 
-    if(NOT NO_TESTING)
-      cgal_add_test(${exe_name})
-    endif(NOT NO_TESTING)
+    if(POLICY CMP0064)
+      # CMake 3.4 or later
+      if(NOT NO_TESTING)
+        cgal_add_test(${exe_name})
+      else()
+        cgal_add_test(${exe_name} NO_EXECUTION)
+      endif()
+    endif()
 
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${exe_name} )
 
-    # Link the executable to CGAL and third-party libraries
-    if ( CGAL_AUTO_LINK_ENABLED )
-
-      target_link_libraries(${exe_name} ${CGAL_3RD_PARTY_LIBRARIES} )
-
-    else()
-
-      target_link_libraries(${exe_name} ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
-
+    target_link_libraries(${exe_name} PRIVATE CGAL::CGAL)
+    if(CGAL_3RD_PARTY_LIBRARIES)
+      target_link_libraries(${exe_name} PRIVATE ${CGAL_3RD_PARTY_LIBRARIES})
     endif()
+
   else()
     message(AUTHOR_WARNING "The executable ${exe_name} will not be created because the source file ${firstfile} does not exist.")
   endif()

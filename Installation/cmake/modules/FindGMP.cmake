@@ -9,7 +9,7 @@
 # TODO: support MacOSX
 
 include(FindPackageHandleStandardArgs)
-include(CGAL_GeneratorSpecificSettings)
+include(${CMAKE_CURRENT_LIST_DIR}/CGAL_GeneratorSpecificSettings.cmake)
 
 if(GMP_INCLUDE_DIR)
   set(GMP_in_cache TRUE)

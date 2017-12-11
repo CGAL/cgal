@@ -43,16 +43,13 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND )
   # The executable itself.
   add_executable  ( Polygon_2 Polygon_2.cpp Polygon_2.moc ${DT_UI_FILES} ${DT_RESOURCE_FILES} ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES} )
 
-  qt5_use_modules(Polygon_2 Xml Script OpenGL Svg)
-
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS Polygon_2 )
 
+  target_link_libraries( Polygon_2 PRIVATE
+    CGAL::CGAL CGAL::CGAL_Qt5 Qt5::Gui )
 
-  # Link with Qt libraries
-  target_link_libraries( Polygon_2 ${QT_LIBRARIES} )
-  # And with CGAL libraries
-  target_link_libraries( Polygon_2 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
-
+  include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
+  cgal_add_compilation_test(Polygon_2)
 else()
 
   message(STATUS "NOTICE: This demo requires CGAL, CGAL_Core, and Qt5, and will not be compiled.")

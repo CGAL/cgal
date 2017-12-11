@@ -1,19 +1,24 @@
 message("Configuring libCGAL")
 
-use_essential_libs()
-
-include_directories (SYSTEM ${CGAL_3RD_PARTY_INCLUDE_DIRS})
-
-add_definitions(${CGAL_3RD_PARTY_DEFINITIONS})
-
-link_directories(${CGAL_3RD_PARTY_LIBRARIES_DIRS})
-
 collect_cgal_library(CGAL "")
 
+include(CGAL_SetupCGALDependencies)
+
 if(CGAL_HEADER_ONLY)
-  target_link_libraries(CGAL INTERFACE ${CGAL_3RD_PARTY_LIBRARIES})
-else()
-  target_link_libraries(CGAL ${CGAL_3RD_PARTY_LIBRARIES})
+  set(keyword "INTERFACE")
 endif()
+
+CGAL_setup_CGAL_dependencies(CGAL ${keyword})
+
+if(CGAL_HEADER_ONLY)
+  target_compile_definitions(CGAL INTERFACE CGAL_HEADER_ONLY=1)
+endif()
+
+if(NOT CGAL_DISABLE_GMP)
+  get_dependency_version(GMP)
+  get_dependency_version(MPFR)
+endif()
+
+message( STATUS "USING BOOST_VERSION = '${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION}.${Boost_SUBMINOR_VERSION}'" )
 
 message("libCGAL is configured")

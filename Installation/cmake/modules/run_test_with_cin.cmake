@@ -8,10 +8,17 @@ if(NOT CIN OR NOT EXISTS ${CIN})
     "The variable `CIN` should be defined to the input file for the test!")
 endif()
 
-execute_process(
-  COMMAND ${CMD}
-  INPUT_FILE ${CIN}
-  RESULT_VARIABLE error_result)
+if(ANDROID)
+  execute_process(
+    COMMAND adb shell "cd ${ANDROID_DIR_PREFIX}${PROJECT_NAME} && ${ANDROID_DIR_PREFIX}${CMD}"
+    INPUT_FILE ${CIN}
+    RESULT_VARIABLE error_result)
+else()
+  execute_process(
+    COMMAND ${CMD}
+    INPUT_FILE ${CIN}
+    RESULT_VARIABLE error_result)
+endif()
 
 if(error_result)
   message(SEND_ERROR

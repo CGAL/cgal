@@ -116,14 +116,16 @@ struct Ecm_bind<G, No_mark<G>, No_mark<G> >
 template<class G>
 struct No_extra_output_from_corefinement
 {
-  template <class Mesh_to_intersection_edge_map,
-            class Node_vector,
-            class An_edge_per_polyline_map,
+  void start_new_polyline(std::size_t, std::size_t) {}
+  void add_node_to_polyline(std::size_t){}
+  template<class Node_id_pair, class halfedge_descriptor>
+  void set_edge_per_polyline(G& /*tm*/,
+                             Node_id_pair /*indices*/,
+                             halfedge_descriptor /*hedge*/){}
+  template <class Node_vector,
             class Mesh_to_map_node>
   void operator()(
-    const std::map<const G*,Mesh_to_intersection_edge_map>& /*mesh_to_intersection_edges*/,
     const Node_vector& /*nodes*/,
-    const An_edge_per_polyline_map& /*an_edge_per_polyline*/,
     bool /*input_have_coplanar_faces*/,
     const boost::dynamic_bitset<>& /* is_node_of_degree_one */,
     const Mesh_to_map_node& /*mesh_to_node_id_to_vertex*/) const
@@ -137,7 +139,8 @@ template< class TriangleMesh,
           class OutputBuilder_ = Default,
           class EdgeMarkMapBind_ = Default,
           class NewNodeVisitor_ = Default,
-          class NewFaceVisitor_ = Default >
+          class NewFaceVisitor_ = Default,
+          bool doing_autorefinement = false >
 class Visitor{
 //default template parameters
   typedef typename Default::Get<EdgeMarkMapBind_,
@@ -161,14 +164,6 @@ private:
   typedef typename Graph_traits::face_descriptor                face_descriptor;
   typedef typename Graph_traits::vertex_descriptor            vertex_descriptor;
   typedef typename Graph_traits::halfedge_descriptor        halfedge_descriptor;
-  // to maintain a halfedge on each polyline per TriangleMesh + pair<bool,size_t>
-  // with first = "is the key (pair<Node_id,Node_id>) was reversed?" and
-  // second is the number of edges +1 in the polyline
-  typedef std::map< std::pair<Node_id,Node_id>,
-                    std::pair< std::map<TriangleMesh*,halfedge_descriptor>,
-                               std::pair<bool,std::size_t> > >
-                                                       An_edge_per_polyline_map;
-
    typedef std::vector<Node_id>                                        Node_ids;
    typedef boost::unordered_map<face_descriptor,Node_ids>           On_face_map;
    typedef boost::unordered_map<edge_descriptor,Node_ids>           On_edge_map;
@@ -176,7 +171,7 @@ private:
    typedef std::vector<vertex_descriptor>                     Node_id_to_vertex;
    typedef std::map<TriangleMesh*, Node_id_to_vertex >         Mesh_to_map_node;
    //to handle coplanar halfedge of polyhedra that are full in the intersection
-   typedef std::map<Node_id,halfedge_descriptor>    Node_to_target_of_hedge_map;
+   typedef std::multimap<Node_id,halfedge_descriptor>    Node_to_target_of_hedge_map;
    typedef std::map<TriangleMesh*,Node_to_target_of_hedge_map>
                                            Mesh_to_vertices_on_intersection_map;
    typedef boost::unordered_map<vertex_descriptor,Node_id>    Vertex_to_node_id;
@@ -195,10 +190,8 @@ private:
   // boost::dynamic_bitset<> non_manifold_nodes;
   std::vector< std::vector<Node_id> > graph_of_constraints;
   boost::dynamic_bitset<> is_node_of_degree_one;
-  An_edge_per_polyline_map an_edge_per_polyline;
   //nb of intersection points between coplanar faces, see fixes XSL_TAG_CPL_VERT
   std::size_t number_coplanar_vertices;
-  typename An_edge_per_polyline_map::iterator last_polyline;
   std::map<TriangleMesh*,On_face_map> on_face;
   std::map<TriangleMesh*,On_edge_map> on_edge;
   Mesh_to_vertices_on_intersection_map mesh_to_vertices_on_inter;
@@ -212,8 +205,35 @@ private:
   NewNodeVisitor& new_node_visitor;
   NewFaceVisitor& new_face_visitor;
   OutputBuilder& output_builder;
-  const EdgeMarkMapBind& marks_on_edges;
+  EdgeMarkMapBind marks_on_edges;
   bool input_with_coplanar_faces;
+
+  template <class Ecm1, class Ecm2>
+  void call_put(Ecm_bind<TriangleMesh, Ecm1, Ecm2>& ecm,
+                TriangleMesh& tm, edge_descriptor ed, bool v)
+  {
+    ecm.call_put(tm, ed, v);
+  }
+  template <class Ecm>
+  void call_put(Ecm& ecm,
+                TriangleMesh&, edge_descriptor ed, bool v)
+  {
+    put(ecm, ed, v);
+  }
+
+  template <class Ecm1, class Ecm2>
+  bool call_get(const Ecm_bind<TriangleMesh, Ecm1, Ecm2>& ecm,
+                TriangleMesh& tm, edge_descriptor ed)
+  {
+    return ecm.call_get(tm, ed);
+  }
+  template <class Ecm>
+  bool call_get(const Ecm& ecm,
+                TriangleMesh&, edge_descriptor ed)
+  {
+    return get(ecm, ed);
+  }
+
 // visitor public functions
 public:
   Visitor(NewNodeVisitor& v, NewFaceVisitor& f,
@@ -244,7 +264,7 @@ public:
     }
   }
 
-  void start_new_polyline(std::size_t i, std::size_t j)
+  void start_new_polyline(Node_id i, Node_id j)
   {
     if ( i==j ) //case of a single point
     {
@@ -253,20 +273,12 @@ public:
       //nothing is done
       return;
     }
-    std::pair<typename An_edge_per_polyline_map::iterator,bool> res=
-      an_edge_per_polyline.insert(
-        std::make_pair( make_sorted_pair(i,j),
-          std::make_pair( std::map<TriangleMesh*,halfedge_descriptor>(),std::make_pair(false,0))  )
-      );
-    CGAL_assertion(res.second);
-    last_polyline=res.first;
-    if ( i !=last_polyline->first.first )
-      last_polyline->second.second.first=true;
+    output_builder.start_new_polyline(i,j);
   }
 
-  void add_node_to_polyline(std::size_t)
+  void add_node_to_polyline(Node_id i)
   {
-    ++(last_polyline->second.second.second);
+    output_builder.add_node_to_polyline(i);
   }
 
   void set_number_of_intersection_points_from_coplanar_faces(std::size_t n)
@@ -414,25 +426,6 @@ public:
     );
   }
 
-  void set_edge_per_polyline(TriangleMesh& tm,
-                             std::pair<std::size_t,std::size_t> indices,
-                             halfedge_descriptor hedge)
-  {
-    if (indices.first>indices.second)
-    {
-      std::swap(indices.first,indices.second);
-      hedge=opposite(hedge,tm);
-    }
-    typename An_edge_per_polyline_map::iterator it =
-      an_edge_per_polyline.find(indices);
-
-    if (it!=an_edge_per_polyline.end()){
-      CGAL_assertion(it->second.first.count(&tm) == 0 ||
-                     it->second.first[&tm]==hedge);
-      it->second.first.insert( std::make_pair( &tm,hedge) );
-    }
-  }
-
   struct Face_boundary{
     std::vector<std::size_t> node_ids_array[3]; // the node_ids on each halfedges
     std::map<halfedge_descriptor,int> hedges_ids;
@@ -480,6 +473,27 @@ public:
       CGAL_assertion(it_id!=hedges_ids.end());
       std::copy(begin,end,std::back_inserter(node_ids_array[it_id->second]));
     }
+
+    // Used by the autorefinement to re-set the id of nodes on the boundary of a
+    // face since another vertex (inside a face or on another edge) might have
+    // overwritten the vertex in node_id_to_vertex
+    template <class Node_id_to_vertex>
+    void update_node_id_to_vertex_map(Node_id_to_vertex& node_id_to_vertex,
+                                      TriangleMesh& tm)
+    {
+      for (int i=0; i<3; ++i)
+      {
+        halfedge_descriptor h = halfedges[(i+2)%3];
+        h = next(h, tm);
+        BOOST_FOREACH(std::size_t id, node_ids_array[i])
+        {
+          node_id_to_vertex[id] = target(h, tm);
+          h = next(h, tm);
+        }
+        CGAL_assertion(h ==  halfedges[i]);
+      }
+    }
+
   };
 
   //update the id of input mesh vertex that are also a node
@@ -606,14 +620,6 @@ public:
     mesh_to_node_id_to_vertex[tm1_ptr].resize(nb_nodes+3, null_vertex);
     mesh_to_node_id_to_vertex[tm2_ptr].resize(nb_nodes+3, null_vertex);
 
-    ///TODO check these comments
-    //mark halfedge that are on the intersection
-    //SL: I needed to use a map because to get the orientation around the edge,
-    //    I need to know in the case the third vertex is a node its index (for exact construction)
-    typedef boost::unordered_map<edge_descriptor,
-                                 std::pair<Node_id,Node_id> > Intersection_edge_map;
-    std::map<const TriangleMesh*,Intersection_edge_map> mesh_to_intersection_edges;
-
     //store for each triangle face which boundary is intersected by the other surface,
     //original vertices (and halfedges in the refined mesh pointing on these vertices)
     typedef boost::unordered_map<face_descriptor,Face_boundary> Face_boundaries;
@@ -630,10 +636,8 @@ public:
           ++it)
     {
       TriangleMesh& tm=*it->first;
-      Intersection_edge_map& intersection_edges = mesh_to_intersection_edges[&tm];
     //   Face_boundaries& face_boundaries=mesh_to_face_boundaries[&tm];
 
-      std::set<std::pair<Node_id,Node_id> > already_done;
       Node_to_target_of_hedge_map& nodes_to_hedge=it->second;
       for(typename Node_to_target_of_hedge_map::iterator
             it_node_2_hedge=nodes_to_hedge.begin();
@@ -647,8 +651,7 @@ public:
           BOOST_FOREACH(Node_id node_id, neighbors)
           {
             //if already done for the opposite
-            if ( !already_done.insert(
-              make_sorted_pair(node_id,node_id_of_first)).second ) continue;
+            if (node_id >= node_id_of_first) continue;
 
             typename Node_to_target_of_hedge_map::iterator
               it_node_2_hedge_two = nodes_to_hedge.find(node_id);
@@ -656,17 +659,25 @@ public:
             {
               //get the corresponding halfedge with vertex corresponding to node_id_of_first
               halfedge_descriptor hedge=it_node_2_hedge->second;
-              CGAL_assertion_code(halfedge_descriptor start=hedge;)
+              halfedge_descriptor start=hedge;
               while ( source(hedge,tm) !=
                       target(it_node_2_hedge_two->second,tm) )
               {
                 hedge=opposite(next(hedge,tm),tm);
-                CGAL_assertion(hedge!=start);
+                if (tm1_ptr==tm2_ptr && hedge==start)
+                {
+                  ++it_node_2_hedge_two;
+                  CGAL_assertion(it_node_2_hedge_two!=nodes_to_hedge.end());
+                  CGAL_assertion(it_node_2_hedge->first==node_id_of_first);
+                }
+                else
+                {
+                  CGAL_assertion(hedge!=start);
+                }
               }
               std::pair<Node_id,Node_id> edge_pair(node_id,node_id_of_first);
-              if ( intersection_edges.insert( std::make_pair(edge(hedge,tm),edge_pair) ).second)
-                marks_on_edges.call_put(tm,edge(hedge,tm),true);
-              set_edge_per_polyline(tm,edge_pair,hedge);
+              call_put(marks_on_edges,tm,edge(hedge,tm),true);
+              output_builder.set_edge_per_polyline(tm,edge_pair,hedge);
             }
           }
         }
@@ -732,7 +743,7 @@ public:
         //We need an edge incident to the source vertex of hedge. This is the first opposite edge created.
         bool first=true;
         halfedge_descriptor hedge_incident_to_src=Graph_traits::null_halfedge();
-        bool hedge_is_marked = marks_on_edges.call_get(tm,edge(hedge,tm));
+        bool hedge_is_marked = call_get(marks_on_edges,tm,edge(hedge,tm));
         //do split the edges
         CGAL_assertion_code(vertex_descriptor expected_src=source(hedge,tm));
         BOOST_FOREACH(std::size_t node_id, node_ids)
@@ -751,7 +762,7 @@ public:
 
           //update marker tags. If the edge was marked, then the resulting edges in the split must be marked
           if ( hedge_is_marked )
-            marks_on_edges.call_put(tm,edge(hnew,tm),true);
+            call_put(marks_on_edges,tm,edge(hnew,tm),true);
 
           CGAL_assertion_code(expected_src=vnew);
         }
@@ -783,13 +794,12 @@ public:
       Face_boundaries& face_boundaries=mesh_to_face_boundaries[&tm];
       Node_id_to_vertex& node_id_to_vertex=mesh_to_node_id_to_vertex[&tm];
       Vertex_to_node_id& vertex_to_node_id=mesh_to_vertex_to_node_id[&tm];
-      Intersection_edge_map& intersection_edges = mesh_to_intersection_edges[&tm];
 
       for (typename On_face_map::iterator it=on_face_map.begin();
             it!=on_face_map.end();++it)
       {
         face_descriptor f = it->first; //the face to be triangulated
-        Node_ids& node_ids  = it->second; // ids of node in the interior of f
+        Node_ids& node_ids  = it->second; // ids of nodes in the interior of f
         typename Face_boundaries::iterator it_fb=face_boundaries.find(f);
 
         std::map<Node_id,typename CDT::Vertex_handle> id_to_CDT_vh;
@@ -806,6 +816,8 @@ public:
           f_vertices[1]=it_fb->second.vertices[1];
           f_vertices[2]=it_fb->second.vertices[2];
           update_face_indices(f_vertices,f_indices,vertex_to_node_id);
+          if (doing_autorefinement)
+            it_fb->second.update_node_id_to_vertex_map(node_id_to_vertex, tm);
         }
         else{
           CGAL_assertion( is_triangle(halfedge(f,tm),tm) );
@@ -847,8 +859,14 @@ public:
         //if one of the triangle input vertex is also a node
         for (int ik=0;ik<3;++ik){
           if ( f_indices[ik]<nb_nodes )
+          {
             id_to_CDT_vh.insert(
                 std::make_pair(f_indices[ik],triangle_vertices[ik]));
+            if (doing_autorefinement)
+              // update the current vertex in node_id_to_vertex
+              // to match the one of the face
+              node_id_to_vertex[f_indices[ik]]=f_vertices[ik];
+          }
         }
         //insert points on edges
         if (it_fb!=face_boundaries.end()) //if f not a triangle?
@@ -996,10 +1014,8 @@ public:
           //is defined as one of them defines an adjacent face
           //CGAL_assertion(it_poly_hedge!=edge_to_hedge.end());
           if( it_poly_hedge!=edge_to_hedge.end() ){
-            if ( intersection_edges.insert(
-                    std::make_pair(edge(it_poly_hedge->second,tm),node_id_pair) ).second)
-              marks_on_edges.call_put(tm,edge(it_poly_hedge->second,tm),true);
-            set_edge_per_polyline(tm,node_id_pair,it_poly_hedge->second);
+            call_put(marks_on_edges,tm,edge(it_poly_hedge->second,tm),true);
+            output_builder.set_edge_per_polyline(tm,node_id_pair,it_poly_hedge->second);
           }
           else{
             //WARNING: in few case this is needed if the marked edge is on the border
@@ -1008,10 +1024,8 @@ public:
             it_poly_hedge=edge_to_hedge.find(opposite_pair);
             CGAL_assertion( it_poly_hedge!=edge_to_hedge.end() );
 
-            if ( intersection_edges.insert(
-                std::make_pair(edge(it_poly_hedge->second,tm),opposite_pair) ).second )
-              marks_on_edges.call_put(tm,edge(it_poly_hedge->second,tm),true);
-            set_edge_per_polyline(tm,opposite_pair,it_poly_hedge->second);
+            call_put(marks_on_edges,tm,edge(it_poly_hedge->second,tm),true);
+            output_builder.set_edge_per_polyline(tm,opposite_pair,it_poly_hedge->second);
           }
         }
       }
@@ -1020,9 +1034,7 @@ public:
     nodes.finalize();
 
     // additional operations
-    output_builder(mesh_to_intersection_edges,
-                   nodes,
-                   an_edge_per_polyline,
+    output_builder(nodes,
                    input_with_coplanar_faces,
                    is_node_of_degree_one,
                    mesh_to_node_id_to_vertex);

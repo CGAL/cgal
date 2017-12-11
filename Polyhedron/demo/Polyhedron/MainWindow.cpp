@@ -128,6 +128,7 @@ MainWindow::MainWindow(QWidget* parent)
 {
   ui = new Ui::MainWindow;
   ui->setupUi(this);
+  menuBar()->setNativeMenuBar(false);
   menu_map[ui->menuOperations->title()] = ui->menuOperations;
   // remove the Load Script menu entry, when the demo has not been compiled with QT_SCRIPT_LIB
 #if !defined(QT_SCRIPT_LIB)
@@ -1092,8 +1093,17 @@ CGAL::Three::Scene_item* MainWindow::loadItem(QFileInfo fileinfo, CGAL::Three::P
     throw std::invalid_argument(QString("File %1 is not a readable file.")
                                 .arg(fileinfo.absoluteFilePath()).toStdString());
   }
+  //test if the file is empty.
+  QFile test(fileinfo.absoluteFilePath());
 
+  test.open( QIODevice::WriteOnly|QIODevice::Append);
+  if (test.pos() == 0) {
+    QMessageBox::warning(this, tr("Error"),
+                         tr("The file you are trying to load is empty.\n"));
+    return 0;
+  }
   QApplication::setOverrideCursor(Qt::WaitCursor);
+
   item = loader->load(fileinfo);
   QApplication::restoreOverrideCursor();
   if(!item) {
@@ -1709,6 +1719,7 @@ void MainWindow::on_actionSetBackgroundColor_triggered()
   QColor c =  QColorDialog::getColor();
   if(c.isValid()) {
     viewer->setBackgroundColor(c);
+    viewer->update();
   }
 }
 

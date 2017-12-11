@@ -553,7 +553,9 @@ add_subcurve(const X_monotone_curve_2& cv, Subcurve* sc)
   // In case the event has no more right subcurves associated with it, we can
   // deallocate it. Note that we inform the helper class before deallocating
   // the event.
-  if (last_event->dec_right_curves_counter() == 0) {
+  if (((Event*) sc->right_event())==this->current_event() &&
+      last_event->dec_right_curves_counter() == 0)
+  {
     m_helper.before_deallocate_event(last_event);
     this->deallocate_event(last_event);
   }
