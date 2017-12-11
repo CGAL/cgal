@@ -131,10 +131,10 @@ bool recursive_does_bound_a_volume(const TriangleMesh& tm,
  * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`.
  *                      If `TriangleMesh` has an internal property map for `CGAL::face_index_t`,
  *                      as a named parameter, then it must be initialized.
- * @tparam NamedParameters a sequence of \ref namedparameterspmp
+ * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
  *
  * @param tm a closed triangulated surface mesh
- * @param np optional sequence of \ref namedparameterspmp among the ones listed below
+ * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
  *
  * @pre `CGAL::is_closed(tm)`
  *
@@ -436,15 +436,15 @@ boolean_operation(      TriangleMesh& tm1,
   *                      If `TriangleMesh` has an internal property map for `CGAL::face_index_t`,
   *                      as a named parameter, then it must be initialized.
   *
-  * @tparam NamedParameters1 a sequence of \ref namedparameterspmp
-  * @tparam NamedParameters2 a sequence of \ref namedparameterspmp
-  * @tparam NamedParametersOut a sequence of \ref namedparameterspmp
+  * @tparam NamedParameters1 a sequence of \ref pmp_namedparameters "Named Parameters"
+  * @tparam NamedParameters2 a sequence of \ref pmp_namedparameters "Named Parameters"
+  * @tparam NamedParametersOut a sequence of \ref pmp_namedparameters "Named Parameters"
   *
   * @param tm1 first input triangulated surface mesh
   * @param tm2 second input triangulated surface mesh
   * @param tm_out output surface mesh
-  * @param np1 optional sequence of \ref namedparameterspmp among the ones listed below
-  * @param np2 optional sequence of \ref namedparameterspmp among the ones listed below
+  * @param np1 optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  * @param np2 optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
   *   \cgalParamBegin{vertex_point_map}
@@ -461,7 +461,7 @@ boolean_operation(      TriangleMesh& tm1,
   *   \cgalParamEnd
   * \cgalNamedParamsEnd
   *
-  * @param np_out optional sequence of \ref namedparameterspmp among the ones listed below
+  * @param np_out optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
   *   \cgalParamBegin{vertex_point_map}
@@ -579,13 +579,13 @@ corefine_and_compute_difference(      TriangleMesh& tm1,
  * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersect(tm2)` \endlink
  *
  * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`
- * @tparam NamedParameters1 a sequence of \ref namedparameterspmp
- * @tparam NamedParameters2 a sequence of \ref namedparameterspmp
+ * @tparam NamedParameters1 a sequence of \ref pmp_namedparameters "Named Parameters"
+ * @tparam NamedParameters2 a sequence of \ref pmp_namedparameters "Named Parameters"
  *
  * @param tm1 first input triangulated surface mesh
  * @param tm2 second input triangulated surface mesh
- * @param np1 optional sequence of \ref namedparameterspmp among the ones listed below
- * @param np2 optional sequence of \ref namedparameterspmp among the ones listed below
+ * @param np1 optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+ * @param np2 optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
  * @param throw_on_self_intersection if `true`, for each input triangle mesh,
  *        the set of triangles closed to the intersection of `tm1` and `tm2` will be
  *        checked for self-intersection and `CGAL::Corefinement::Self_intersection_exception`

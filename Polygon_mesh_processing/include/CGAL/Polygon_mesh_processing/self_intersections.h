@@ -240,11 +240,11 @@ self_intersections( const FaceRange& face_range,
  * @tparam TriangleMesh a model of `FaceListGraph`
  * @tparam OutputIterator a model of `OutputIterator` holding objects of type
  *   `std::pair<boost::graph_traits<TriangleMesh>::%face_descriptor, boost::graph_traits<TriangleMesh>::%face_descriptor>`
- * @tparam NamedParameters a sequence of \ref namedparameterspmp
+ * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
  *
  * @param tmesh the triangulated surface mesh to be checked
  * @param out output iterator to be filled with all pairs of non-adjacent faces that intersect
- * @param np optional sequence of \ref namedparameterspmp among the ones listed below
+ * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
@@ -298,12 +298,12 @@ self_intersections(const TriangleMesh& tmesh, OutputIterator out)
  * @tparam TriangleMesh a model of `FaceListGraph`
  * @tparam OutputIterator a model of `OutputIterator` holding objects of type
  *   `std::pair<boost::graph_traits<TriangleMesh>::%face_descriptor, boost::graph_traits<TriangleMesh>::%face_descriptor>`
- * @tparam NamedParameters a sequence of \ref namedparameterspmp
+ * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
  *
  * @param face_range the range of faces to check for self-intersection.
  * @param tmesh the triangulated surface mesh to be checked
  * @param out output iterator to be filled with all pairs of non-adjacent faces that intersect
- * @param np optional sequence of \ref namedparameterspmp among the ones listed below
+ * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
@@ -386,10 +386,10 @@ OutputIterator self_intersections(const FaceRange& face_range,
  * @pre `CGAL::is_triangle_mesh(tmesh)`
  *
  * @tparam TriangleMesh a model of `FaceListGraph`
- * @tparam NamedParameters a sequence of \ref namedparameterspmp
+ * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
  *
  * @param tmesh the triangulated surface mesh to be tested
- * @param np optional sequence of \ref namedparameterspmp among the ones listed below
+ * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tmesh`.
@@ -427,11 +427,11 @@ bool does_self_intersect(const TriangleMesh& tmesh
  *
  * @tparam FaceRange a range of `face_descriptor`
  * @tparam TriangleMesh a model of `FaceListGraph`
- * @tparam NamedParameters a sequence of \ref namedparameterspmp
+ * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
  *
  * @param face_range the set of faces to test for self-intersection
  * @param tmesh the triangulated surface mesh to be tested
- * @param np optional sequence of \ref namedparameterspmp among the ones listed below
+ * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tmesh`.

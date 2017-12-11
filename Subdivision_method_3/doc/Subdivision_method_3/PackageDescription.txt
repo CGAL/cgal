@@ -26,6 +26,13 @@
 
 \cgalClassifedRefPages
 
+## Parameters ##
+
+Optional parameters of the functions of this package
+are implemented as \ref BGLNamedParameters.
+The page \ref sm_namedparameters describes their usage
+and provides a list of the parameters that are used in this package.
+
 ## Concepts ##
 - `SubdivisionMask_3`
 - `PQQMask_3`

@@ -108,10 +108,10 @@ void CatmullClark_subdivision(PolygonMesh& pmesh, int step = 1) {
  * This function overwrites the control mesh `pmesh` with the subdivided mesh.
  *
  * @tparam PolygonMesh a model of `MutableFaceGraph`
- * @tparam NamedParameters a sequence of \ref namedparameterspmp
+ * @tparam NamedParameters a sequence of \ref sm_namedparameters "Named Parameters"
  *
  * @param pmesh a polygon mesh
- * @param np optional sequence of \ref namedparameterspmp among the ones listed below
+ * @param np optional sequence of \ref sm_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
@@ -155,10 +155,10 @@ void Loop_subdivision(PolygonMesh& pmesh, int step = 1) {
  * This function overwrites the control mesh `pmesh` with the subdivided mesh.
 
  * @tparam PolygonMesh a model of `MutableFaceGraph`
- * @tparam NamedParameters a sequence of \ref namedparameterspmp
+ * @tparam NamedParameters a sequence of \ref sm_namedparameters "Named Parameters"
  *
  * @param pmesh a polygon mesh
- * @param np optional sequence of \ref namedparameterspmp among the ones listed below
+ * @param np optional sequence of \ref sm_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
@@ -200,10 +200,10 @@ void DooSabin_subdivision(PolygonMesh& pmesh, int step = 1) {
  * This function overwrites the control mesh `pmesh` with the subdivided mesh.
 
  * @tparam PolygonMesh a model of `MutableFaceGraph`
- * @tparam NamedParameters a sequence of \ref namedparameterspmp
+ * @tparam NamedParameters a sequence of \ref sm_namedparameters "Named Parameters"
  *
  * @param pmesh a polygon mesh
- * @param np optional sequence of \ref namedparameterspmp among the ones listed below
+ * @param np optional sequence of \ref sm_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
@@ -248,10 +248,10 @@ void Sqrt3_subdivision(PolygonMesh& pmesh, int step = 1) {
  *            during a <em>single</em> call of this function.
  *
  * @tparam PolygonMesh a model of `MutableFaceGraph`
- * @tparam NamedParameters a sequence of \ref namedparameterspmp
+ * @tparam NamedParameters a sequence of \ref sm_namedparameters "Named Parameters"
  *
  * @param pmesh a polygon mesh
- * @param np optional sequence of \ref namedparameterspmp among the ones listed below
+ * @param np optional sequence of \ref sm_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.

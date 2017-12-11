@@ -107,13 +107,13 @@ namespace Polygon_mesh_processing{
  *  \tparam FaceOutputIterator a model of `OutputIterator` that accepts
         faces of type
         `boost::graph_traits<PolygonMesh>::%face_descriptor`.
- *  \tparam NamedParameters a sequence of \ref namedparameterspmp
+ *  \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
  *
  *  \param seed_face a face of `pmesh` from which exploration starts to detect the connected component
            that contains it
  *  \param pmesh the polygon mesh
  *  \param out the output iterator that collects faces from the same connected component as `seed_face`
- *  \param np optional \ref namedparameterspmp described below
+ *  \param np optional \ref pmp_namedparameters "Named Parameters" described below
  *
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{edge_is_constrained_map}  a property map containing the constrained-or-not status of each edge of `pmesh` \cgalParamEnd
@@ -183,17 +183,17 @@ connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor s
  *  computes for each face the index of the corresponding connected component.
  *
  *  A property map for `CGAL::face_index_t` should be either available as an internal property map 
- *  to `pmesh` or provided as one of the \ref namedparameterspmp.
+ *  to `pmesh` or provided as one of the \ref pmp_namedparameters "Named Parameters".
  *
  *  \tparam PolygonMesh a model of `FaceListGraph`
  *  \tparam FaceComponentMap a model of `WritablePropertyMap` with
         `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and
         `boost::graph_traits<PolygonMesh>::%faces_size_type` as value type.
- *  \tparam NamedParameters a sequence of \ref namedparameterspmp
+ *  \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 
  * \param pmesh the polygon mesh
  * \param fcm the property map with indices of components associated to faces in `pmesh`
- * \param np optional \ref namedparameterspmp described below
+ * \param np optional \ref pmp_namedparameters "Named Parameters" described below
  *
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{edge_is_constrained_map} a property map containing the constrained-or-not status of each edge of `pmesh` \cgalParamEnd
@@ -269,14 +269,14 @@ void keep_connected_components(PolygonMesh& pmesh
  *
  * Property maps for `CGAL::face_index_t` and `CGAL::vertex_index_t`
  * should be either available as internal property maps 
- * to `pmesh` or provided as \ref namedparameterspmp.
+ * to `pmesh` or provided as \ref pmp_namedparameters "Named Parameters".
  *
  * \tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
- * \tparam NamedParameters a sequence of \ref namedparameterspmp
+ * \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
  *
  * \param pmesh the polygon mesh
  * \param nb_components_to_keep the number of components to be kept
- * \param np optional \ref namedparameterspmp described below
+ * \param np optional \ref pmp_namedparameters "Named Parameters" described below
  *
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{edge_is_constrained_map} a property map containing the constrained-or-not status of each edge of `pmesh` \cgalParamEnd
@@ -352,14 +352,14 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
  *
  * Property maps for `CGAL::face_index_t` and `CGAL::vertex_index_t`
  * should be either available as internal property maps 
- * to `pmesh` or provided as \ref namedparameterspmp.
+ * to `pmesh` or provided as \ref pmp_namedparameters "Named Parameters".
  *
  * \tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
- * \tparam NamedParameters a sequence of \ref namedparameterspmp
+ * \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
  *
  * \param pmesh the polygon mesh
  * \param threshold_components_to_keep the number of faces a component must have so that it is kept
- * \param np optional \ref namedparameterspmp described below
+ * \param np optional \ref pmp_namedparameters "Named Parameters" described below
  *
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{edge_is_constrained_map} a property map containing the constrained-or-not status of each edge of `pmesh` \cgalParamEnd
@@ -567,10 +567,10 @@ void keep_or_remove_connected_components(PolygonMesh& pmesh
 *
 * Property maps for `CGAL::vertex_index_t`
 * should be either available as internal property map
-* to `pmesh` or provided as \ref namedparameterspmp.
+* to `pmesh` or provided as \ref pmp_namedparameters "Named Parameters".
 *
 * \tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
-* \tparam NamedParameters a sequence of \ref namedparameterspmp
+* \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 * \tparam ComponentRange a range of ids convertible to `std::size`
 * \tparam FaceComponentMap a model of `ReadWritePropertyMap` with
 *         `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and
@@ -580,7 +580,7 @@ void keep_or_remove_connected_components(PolygonMesh& pmesh
 * \param pmesh the polygon mesh
 * \param fcm the property map with indices of components associated to faces in `pmesh`.
 *        After calling this function, the values of `fcm` are undefined.
-* \param np optional \ref namedparameterspmp described below
+* \param np optional \ref pmp_namedparameters "Named Parameters" described below
 *
 * \cgalNamedParamsBegin
 *    \cgalParamBegin{vertex_index_map} a property map containing the index of each vertex of `pmesh` \cgalParamEnd
@@ -610,11 +610,11 @@ void keep_connected_components(PolygonMesh& pmesh
 *
 * Property maps for `CGAL::vertex_index_t`
 * should be either available as internal property map
-* to `pmesh` or provided as \ref namedparameterspmp.
+* to `pmesh` or provided as \ref pmp_namedparameters "Named Parameters".
 *
 *
 * \tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
-* \tparam NamedParameters a sequence of \ref namedparameterspmp
+* \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 * \tparam ComponentRange a range of ids convertible to `std::size`
 * \tparam FaceComponentMap a model of `ReadWritePropertyMap` with
 *         `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and
@@ -624,7 +624,7 @@ void keep_connected_components(PolygonMesh& pmesh
 * \param pmesh the polygon mesh
 * \param fcm the property map with indices of components associated to faces in `pmesh`.
 *        After calling this function, the values of `fcm` are undefined.
-* \param np optional \ref namedparameterspmp described below
+* \param np optional \ref pmp_namedparameters "Named Parameters" described below
 *
 * \cgalNamedParamsBegin
 *    \cgalParamBegin{vertex_index_map} a property map containing the index of each vertex of `pmesh` \cgalParamEnd
@@ -651,19 +651,19 @@ void remove_connected_components(PolygonMesh& pmesh
 *
 * Property maps for `CGAL::face_index_t` and `CGAL::vertex_index_t`
 * should be either available as internal property maps
-* to `pmesh` or provided as \ref namedparameterspmp.
+* to `pmesh` or provided as \ref pmp_namedparameters "Named Parameters".
 *
 * \note If the removal of the connected components makes `pmesh` a non-manifold surface,
 * then the behavior of this function is undefined.
 *
 * \tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
-* \tparam NamedParameters a sequence of \ref namedparameterspmp
+* \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 * \tparam FaceRange a range of `boost::graph_traits<PolygonMesh>::%face_descriptor`
 *         indicating the connected components to be removed.
 *
 * \param components_to_remove a face range, including one face or more on each component to be removed
 * \param pmesh the polygon mesh
-* \param np optional \ref namedparameterspmp described below
+* \param np optional \ref pmp_namedparameters "Named Parameters" described below
 *
 * \cgalNamedParamsBegin
 *    \cgalParamBegin{edge_is_constrained_map} a property map containing the constrained-or-not status of each edge of `pmesh` \cgalParamEnd
@@ -709,19 +709,19 @@ void remove_connected_components(PolygonMesh& pmesh
 *
 * Property maps for `CGAL::face_index_t` and `CGAL::vertex_index_t`
 * should be either available as internal property maps
-* to `pmesh` or provided as \ref namedparameterspmp.
+* to `pmesh` or provided as \ref pmp_namedparameters "Named Parameters".
 *
 * \note If the removal of the connected components makes `pmesh` a non-manifold surface,
 * then the behavior of this function is undefined.
 *
 * \tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
-* \tparam NamedParameters a sequence of \ref namedparameterspmp
+* \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 * \tparam FaceRange a range of `boost::graph_traits<PolygonMesh>::%face_descriptor`
 *         indicating the connected components to be kept.
 *
 * \param pmesh the polygon mesh
 * \param components_to_keep a face range, including one face or more on each component to be kept
-* \param np optional \ref namedparameterspmp described below
+* \param np optional \ref pmp_namedparameters "Named Parameters" described below
 *
 * \cgalNamedParamsBegin
 *    \cgalParamBegin{edge_is_constrained_map} a property map containing the constrained-or-not status of each edge of `pmesh` \cgalParamEnd
