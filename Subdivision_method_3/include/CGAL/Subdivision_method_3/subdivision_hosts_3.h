@@ -67,11 +67,11 @@ void PQQ(PolygonMesh& pmesh, Mask mask, int step = 1) {
  *
  * @tparam PolygonMesh a model of `MutableFaceGraph`
  * @tparam Mask a model of `PQQMask_3`
- * @tparam NamedParameters a sequence of \ref namedparameters
+ * @tparam NamedParameters a sequence of \ref namedparameterspmp
  *
  * @param pmesh a polygon mesh
  * @param mask a geometry policy mask
- * @param np optional sequence of \ref namedparameters among the ones listed below
+ * @param np optional sequence of \ref namedparameterspmp among the ones listed below
  *
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
@@ -114,11 +114,11 @@ void PTQ(PolygonMesh& pmesh, Mask mask, int step = 1) {
  *
  * @tparam PolygonMesh a model of `MutableFaceGraph`
  * @tparam Mask a model of `PTQMask_3`
- * @tparam NamedParameters a sequence of \ref namedparameters
+ * @tparam NamedParameters a sequence of \ref namedparameterspmp
  *
  * @param pmesh a polygon mesh
  * @param mask a geometry policy mask
- * @param np optional sequence of \ref namedparameters among the ones listed below
+ * @param np optional sequence of \ref namedparameterspmp among the ones listed below
  *
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
@@ -162,11 +162,11 @@ void DQQ(PolygonMesh& pmesh, Mask mask, int step = 1) {
  *
  * @tparam PolygonMesh a model of `MutableFaceGraph`
  * @tparam Mask a model of `DQQMask_3`
- * @tparam NamedParameters a sequence of \ref namedparameters
+ * @tparam NamedParameters a sequence of \ref namedparameterspmp
  *
  * @param pmesh a polygon mesh
  * @param mask a geometry policy mask
- * @param np optional sequence of \ref namedparameters among the ones listed below
+ * @param np optional sequence of \ref namedparameterspmp among the ones listed below
  *
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
@@ -214,11 +214,11 @@ void Sqrt3(PolygonMesh& pmesh, Mask mask, int step = 1) {
  *
  * @tparam PolygonMesh a model of `MutableFaceGraph`
  * @tparam Mask a model of `Sqrt3Mask_3`
- * @tparam NamedParameters a sequence of \ref namedparameters
+ * @tparam NamedParameters a sequence of \ref namedparameterspmp
  *
  * @param pmesh a polygon mesh
  * @param mask a geometry policy mask
- * @param np optional sequence of \ref namedparameters among the ones listed below
+ * @param np optional sequence of \ref namedparameterspmp among the ones listed below
  *
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
