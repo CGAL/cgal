@@ -73,8 +73,8 @@ namespace CGAL{
           input.read(reinterpret_cast<char*>(&c), sizeof(c));
           line[i++]=c;
         }while(! isspace(c) && ( i < 80));
-#       ifdef CGAL_DEBUG_BINARY_HEADER       
-          s = std::string(line+ni, (i-1) - ni);
+        s = std::string(line+ni, (i-1) - ni);
+#       ifdef CGAL_DEBUG_BINARY_HEADER
           std::cout << "|" << s  << "|" << std::endl;
 #       endif        
         if(s == facet){
@@ -103,7 +103,7 @@ namespace CGAL{
           input.read(reinterpret_cast<char*>(&c), sizeof(c));
           line[i++]=c;
         }while(! isspace(c) && ( i < 80));
-#       ifdef CGAL_DEBUG_BINARY_HEADER       
+#       ifdef CGAL_DEBUG_BINARY_HEADER
           s = std::string(line+ni, (i-1) - ni);
           std::cout << "|" << s  << "|" << std::endl;
 #       endif
