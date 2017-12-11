@@ -101,6 +101,10 @@ Release date: April 2018
     after the observer is notified that the edge has been removed. This is
     symmetric (opposite) to the order of notification when an edge is inserted.
 
+    The user can restore old (non-symmetric) behaviour by defining the macro:
+
+    `CGAL_NON_SYMETRICAL_OBSERVER_EDGE_REMOVAL_BACKWARD_COMPATIBILITY`
+
 Release 4.11
 ------------
 
