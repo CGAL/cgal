@@ -795,7 +795,6 @@ public:
 
   /*!
    * @brief Split one proxy area by default bisection, but N-section is also possible.
-   * @pre valid facet proxy map
    * @param px_idx proxy index
    * @param n number of split sections
    * @param nb_relaxations number of relaxation on the confined proxy area
@@ -804,11 +803,11 @@ public:
   bool split(const std::size_t px_idx,
     const std::size_t n = 2,
     const std::size_t nb_relaxations = 10) {
-    if (px_idx >= m_proxies.size() || n < 2)
+    if (px_idx >= m_proxies.size())
       return false;
 
     // collect confined proxy area
-    std::vector<face_descriptor> confined_area;
+    std::list<face_descriptor> confined_area;
     BOOST_FOREACH(face_descriptor f, faces(*m_ptm))
       if (get(m_fproxy_map, f) == px_idx)
         confined_area.push_back(f);
@@ -826,8 +825,7 @@ public:
       if (count >= n)
         break;
 
-      if (get(m_fproxy_map, f) == px_idx && f != m_proxies[px_idx].seed) {
-        put(m_fproxy_map, f, m_proxies.size());
+      if (f != m_proxies[px_idx].seed) {
         add_one_proxy_at(f);
         ++count;
         // copy
