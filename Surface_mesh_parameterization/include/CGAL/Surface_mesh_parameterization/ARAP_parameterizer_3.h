@@ -547,8 +547,8 @@ private:
   }
 
   // Solves the cubic equation a3 x^3 + a2 x^2 + a1 x + a0 = 0.
-  int solve_cubic_equation(const NT a3, const NT a2, const NT a1, const NT a0,
-                           std::vector<NT>& roots) const
+  std::size_t solve_cubic_equation(const NT a3, const NT a2, const NT a1, const NT a0,
+                                   std::vector<NT>& roots) const
   {
     CGAL_precondition(roots.empty());
     NT r1 = 0, r2 = 0, r3 = 0; // roots of the cubic equation
@@ -567,9 +567,9 @@ private:
 
 #if defined(CGAL_SMP_SOLVE_CUBIC_EQUATION) && defined(CGAL_SMP_SOLVE_EQUATIONS_WITH_GMP)
   // Solves the equation a3 x^3 + a2 x^2 + a1 x + a0 = 0, using CGAL's algebraic kernel.
-  int solve_cubic_equation_with_AK(const NT a3, const NT a2,
-                                   const NT a1, const NT a0,
-                                   std::vector<NT>& roots) const
+  std::size_t solve_cubic_equation_with_AK(const NT a3, const NT a2,
+                                           const NT a1, const NT a0,
+                                           std::vector<NT>& roots) const
   {
     CGAL_precondition(roots.empty());
 
@@ -613,8 +613,8 @@ private:
   // { C1 * a + 2 * lambda * a ( a^2 + b^2 - 1 ) = C2
   // { C1 * b + 2 * lambda * b ( a^2 + b^2 - 1 ) = C3
   // using CGAL's algebraic kernel.
-  int solve_bivariate_system(const NT C1, const NT C2, const NT C3,
-                             std::vector<NT>& a_roots, std::vector<NT>& b_roots) const
+  std::size_t solve_bivariate_system(const NT C1, const NT C2, const NT C3,
+                                     std::vector<NT>& a_roots, std::vector<NT>& b_roots) const
   {
     typedef CGAL::Gmpq                                        GMP_NT;
     typedef CGAL::Algebraic_kernel_d_2<GMP_NT>                Algebraic_kernel_d_2;
