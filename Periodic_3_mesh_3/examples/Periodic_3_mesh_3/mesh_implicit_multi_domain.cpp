@@ -55,7 +55,7 @@ FT schwarz_p(const Point& p)
 
 int main(int argc, char** argv)
 {
-  int domain_size = (argc > 1) ? atof(argv[1]) : 1;
+  int domain_size = (argc > 1) ? atoi(argv[1]) : 1;
   int number_of_copies_in_output = (argc > 2) ? atoi(argv[2]) : 4; // can be 1, 2, 4, or 8
 
   std::vector<Function> funcs;
