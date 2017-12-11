@@ -223,6 +223,16 @@ namespace CGAL {
 
   namespace Point_set_processing_3
   {
+    namespace parameters
+    {
+      template <typename PointRange>
+      cgal_bgl_named_params<bool, internal_np::all_default_t>
+      inline all_default(const PointRange&)
+      {
+        return CGAL::parameters::all_default();
+      }
+    }
+    
     template<typename PointRange, typename NamedParameters>
     class GetPointMap
     {

@@ -31,6 +31,10 @@
 
 #include <CGAL/demangle.h>
 
+#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/named_params_helper.h>
+
+
 namespace CGAL {
 
 
@@ -833,6 +837,23 @@ public:
     return out;
   }
 
+  cgal_bgl_named_params
+  <typename Kernel_traits<Point>::Kernel,
+   internal_np::geom_traits_t,
+   cgal_bgl_named_params
+   <typename CGAL::Point_set_3<Point, Vector>::template Property_map<Vector>,
+    internal_np::normal_t,
+    cgal_bgl_named_params
+    <typename CGAL::Point_set_3<Point, Vector>::template Property_map<Point>,
+     internal_np::point_t> > >
+  inline parameters() const
+  {
+    return CGAL::parameters::point_map (m_points).
+      normal_map (m_normals).
+      geom_traits (typename Kernel_traits<Point>::Kernel());
+  }
+
+
   /// \cond SKIP_IN_MANUAL
   std::string info() const
   {
@@ -1139,6 +1160,27 @@ Point_set_3<Point, Vector>& operator+=(Point_set_3<Point, Vector>& ps,
 
 
 
+
+namespace Point_set_processing_3
+{
+  namespace parameters
+  {
+    template <typename Point, typename Vector>
+    cgal_bgl_named_params
+    <typename Kernel_traits<Point>::Kernel,
+     internal_np::geom_traits_t,
+     cgal_bgl_named_params
+     <typename CGAL::Point_set_3<Point, Vector>::template Property_map<Vector>,
+      internal_np::normal_t,
+      cgal_bgl_named_params
+      <typename CGAL::Point_set_3<Point, Vector>::template Property_map<Point>,
+       internal_np::point_t> > >
+    inline all_default(const CGAL::Point_set_3<Point, Vector>& ps)
+    {
+      return ps.parameters();
+    }
+  }
+}
 
 
 } // namespace CGAL
