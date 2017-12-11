@@ -997,8 +997,8 @@ remove_if_no_cover_change(Vertex_handle v)
 
   if(!Base::periodic_remove(v, remover, cover_manager, true /*abort if cover change*/))
   {
-    std::cerr << "Warning: removing " << &*v << " (" << v->point() << ") would change cover" << std::endl;
-    std::cerr << "Aborted removal." << std::endl;
+//    std::cerr << "Warning: removing " << &*v << " (" << v->point() << ") would change cover" << std::endl;
+//    std::cerr << "Aborted removal." << std::endl;
     return false; // removing would cause a cover change
   }
 

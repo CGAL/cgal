@@ -1615,7 +1615,9 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
 
   if(lt == Tr::VERTEX)
   {
+#if CGAL_MESH_3_PROTECTION_DEBUG & 1
     std::cerr << "Warning: point " << p << " already inserted" << std::endl;
+#endif
     Vertex_handle v = ch->vertex(li);
 
     Index existing_vertex_index = c3t3_.index(v);

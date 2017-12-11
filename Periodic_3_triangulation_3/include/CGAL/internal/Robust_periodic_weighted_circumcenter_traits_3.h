@@ -73,8 +73,6 @@ public:
 
     if(ps(p, q, r, s, p2wp(c), o_p, o_q, o_r, o_s, Offset()) != ON_POSITIVE_SIDE)
     {
-      std::cout << "Warning: circumcenter is not in the power sphere!" << std::endl;
-
       // switch to exact
       typedef typename Base_traits::Kernel                         K;
       typedef typename Exact_kernel_selector<K>::Exact_kernel      EK;
@@ -115,8 +113,6 @@ public:
 
     if(ps(p, q, r, p2wp(c), o_p, o_q, o_r, Offset()) != ON_BOUNDED_SIDE)
     {
-      std::cout << "Warning: circumcenter is not in the power sphere!" << std::endl;
-
       // switch to exact
       typedef typename Base_traits::Kernel                         K;
       typedef typename Exact_kernel_selector<K>::Exact_kernel      EK;
@@ -154,8 +150,6 @@ public:
 
     if(ps(p, q, p2wp(c), o_p, o_q, Offset()) != ON_BOUNDED_SIDE)
     {
-      std::cout << "Warning: circumcenter is not in the power sphere!" << std::endl;
-
       // switch to exact
       typedef typename Base_traits::Kernel                         K;
       typedef typename Exact_kernel_selector<K>::Exact_kernel      EK;
