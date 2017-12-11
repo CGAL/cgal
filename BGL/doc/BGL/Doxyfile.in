@@ -20,7 +20,6 @@ EXAMPLE_PATH               =  ${CGAL_Surface_mesh_skeletonization_EXAMPLE_DIR} \
                               ${CGAL_BGL_EXAMPLE_DIR}
 
 ALIASES +=  "bgllink{1}=<a href=\"http://www.boost.org/libs/graph/doc/\1.html\"><code>\1</code></a>"
-ALIASES += "cgalNamedParamsBegin=<dl class=\"params\"><dt>Named Parameters</dt><dd> <table class=\"params\">"
 
 # macros to be used inside the code
 ALIASES += "cgalNamedParamsBegin=<dl class=\"params\"><dt>Named Parameters</dt><dd> <table class=\"params\">"
