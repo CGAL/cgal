@@ -16,6 +16,7 @@
 #include "Scene_polyhedron_item.h"
 #include "Scene_polyhedron_selection_item.h"
 #include "Polyhedron_type.h"
+#include "Scene.h"
 
 #include <CGAL/iterator.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
@@ -184,7 +185,6 @@ public Q_SLOTS:
             Q_EMIT poly_item->itemChanged();
         }
 
-
         QApplication::restoreOverrideCursor();
     }
 
@@ -261,16 +261,16 @@ public Q_SLOTS:
         solve_mcf_system(pmesh, time, nb_iter, stiffness_matrix_);
 
 
+        // todo: for selection item
+
+        poly_item->compute_bbox();
+        static_cast<Scene*>(scene)->updated_bbox(true);
         poly_item->invalidateOpenGLBuffers();
-        Q_EMIT poly_item->itemChanged();
+        poly_item->itemChanged();
+
+
 
         QApplication::restoreOverrideCursor();
-
-
-
-        // update viewport
-
-
 
     }
 
@@ -298,7 +298,6 @@ public Q_SLOTS:
 
         poly_item->invalidateOpenGLBuffers();
         Q_EMIT poly_item->itemChanged();
-
         QApplication::restoreOverrideCursor();
     }
 
