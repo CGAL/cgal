@@ -89,7 +89,7 @@ void PQQ_1step(Poly& p, VertexPointMap vpm, Mask mask) {
 
   std::vector<bool> v_onborder(num_vertex);
   face_iterator fitr = faces(p).first;
-  for (size_t i = 0; i < num_facet; i++, ++fitr)
+  for (typename boost::graph_traits<Poly>::faces_size_type i = 0; i < num_facet; i++, ++fitr)
     mask.face_node(*fitr, face_point_buffer[i]);
 
 
@@ -111,7 +111,7 @@ void PQQ_1step(Poly& p, VertexPointMap vpm, Mask mask) {
   }
 
   vertex_iterator vitr = vertices(p).first;
-  for (size_t i = 0; i < num_vertex; i++, ++vitr)
+  for (typename boost::graph_traits<Poly>::vertices_size_type i = 0; i < num_vertex; i++, ++vitr)
     if (!v_onborder[v_index[*vitr]]) mask.vertex_node(*vitr, vertex_point_buffer[i]);
 
   // Build the connectivity using insert_vertex() and insert_edge()
@@ -123,7 +123,7 @@ void PQQ_1step(Poly& p, VertexPointMap vpm, Mask mask) {
   //    the new inserted vertex of step 3
   // Step 1.
   edge_iterator eitr = edges(p).first;
-  for (size_t i = 0; i < num_edge; i++, ++eitr) {
+  for (typename boost::graph_traits<Poly>::edges_size_type i = 0; i < num_edge; i++, ++eitr) {
     vertex_descriptor vh = insert_vertex(p, halfedge(*eitr,p));
     put(vpm, vh, edge_point_buffer[i]);
   }
@@ -131,7 +131,7 @@ void PQQ_1step(Poly& p, VertexPointMap vpm, Mask mask) {
 
   // TODO: the topoloy modification can be done by a template function
   //       and that gives the user a chance to create new topological masks.
-  for (size_t i = 0; i < num_facet; i++, ++fitr) {
+  for (typename boost::graph_traits<Poly>::faces_size_type i = 0; i < num_facet; i++, ++fitr) {
     // Step 2.
     Halfedge_around_facet_circulator hcir_begin(halfedge(*fitr,p),p);
     Halfedge_around_facet_circulator hcir = hcir_begin;
@@ -161,7 +161,7 @@ void PQQ_1step(Poly& p, VertexPointMap vpm, Mask mask) {
   // Update the geometry data of the newly inserted vertices by the
   // vertices buffer
   vitr = vertices(p).first;
-  for (size_t i = 0; i < num_vertex; i++, ++vitr)
+  for (typename boost::graph_traits<Poly>::vertices_size_type i = 0; i < num_vertex; i++, ++vitr)
     put(vpm, *vitr, vertex_point_buffer[i]);
 
 //  CGAL_postcondition(p.is_valid());
@@ -223,7 +223,7 @@ void PTQ_1step(Poly& p, VertexPointMap vpm, Mask mask) {
     }
   }
   vertex_iterator vitr = vertices(p).first;
-  for (size_t i = 0; i < num_vertex; i++, ++vitr)
+  for (typename boost::graph_traits<Poly>::vertices_size_type i = 0; i < num_vertex; i++, ++vitr)
     if (!v_onborder[i]) mask.vertex_node(*vitr, vertex_point_buffer[i]);
 
   // Build the connectivity using insert_vertex() and insert_edge()
@@ -235,12 +235,12 @@ void PTQ_1step(Poly& p, VertexPointMap vpm, Mask mask) {
   //    the new inserted vertex of step 3
   // Step 1.
   edge_iterator eitr = edges(p).first;
-  for (size_t i = 0; i < num_edge; i++, ++eitr) {
+  for (typename boost::graph_traits<Poly>::edges_size_type i = 0; i < num_edge; i++, ++eitr) {
     vertex_descriptor vh = insert_vertex(p, halfedge(*eitr,p));
     put(vpm,vh, edge_point_buffer[i]);
   }
   face_iterator fitr = faces(p).first;
-  for (size_t i = 0; i < num_facet; i++, ++fitr) {
+  for (typename boost::graph_traits<Poly>::faces_size_type i = 0; i < num_facet; i++, ++fitr) {
     // Step 2.
     Halfedge_around_face_circulator hcir_begin(halfedge(*fitr,p),p);
     Halfedge_around_face_circulator hcir = hcir_begin;
@@ -261,7 +261,7 @@ void PTQ_1step(Poly& p, VertexPointMap vpm, Mask mask) {
   // Update the geometry data of the newly inserted vertices by the
   // vertices buffer
   vitr = vertices(p).first;
-  for (size_t i = 0; i < num_vertex; i++, ++vitr)
+  for (typename boost::graph_traits<Poly>::vertices_size_type i = 0; i < num_vertex; i++, ++vitr)
     put(vpm, *vitr, vertex_point_buffer[i]);
 
 //  CGAL_postcondition(p.is_valid());
@@ -312,13 +312,13 @@ void DQQ_1step_impl(Poly& p, VertexPointMap vpm, Mask mask, CGAL::Tag_false) {
 
   // Build the connectivity using insert_vertex() and insert_edge()
   pi = 0;
-  for (size_t i = 0; i < num_v; ++i) {
+  for (typename boost::graph_traits<Poly>::vertices_size_type i = 0; i < num_v; ++i) {
     vertex_descriptor vh = *vitr;
     ++vitr;
 
     Halfedge_around_target_circulator<Poly> vcir(vh,p);
-    size_t vn = degree(vh,p);
-    for (size_t j = 0; j < vn; ++j) {
+    typename boost::graph_traits<Poly>::degree_size_type vn = degree(vh,p);
+    for (typename boost::graph_traits<Poly>::degree_size_type j = 0; j < vn; ++j) {
       halfedge_descriptor e = *vcir;
       ++vcir;
       if (! is_border(e,p)) {
@@ -328,7 +328,7 @@ void DQQ_1step_impl(Poly& p, VertexPointMap vpm, Mask mask, CGAL::Tag_false) {
     }
 
     vcir = Halfedge_around_target_circulator<Poly>(vh,p);
-    for (size_t j = 0; j < vn; ++j) {
+    for (typename boost::graph_traits<Poly>::vertices_size_type j = 0; j < vn; ++j) {
       if (! is_border(*vcir,p)) {
         halfedge_descriptor e1 = prev(*vcir, p);
         ++vcir;
@@ -343,7 +343,7 @@ void DQQ_1step_impl(Poly& p, VertexPointMap vpm, Mask mask, CGAL::Tag_false) {
   }
 
   edge_iterator eitr = edges(p).first;
-  for (size_t i = 0; i < num_e; ++i) {
+  for (typename boost::graph_traits<Poly>::edges_size_type i = 0; i < num_e; ++i) {
     halfedge_descriptor eh = halfedge(*eitr,p);
     ++eitr;
     if (! is_border(edge(eh,p),p)) {
@@ -378,7 +378,7 @@ void DQQ_1step_impl(Poly& p, VertexPointMap vpm, Mask mask, CGAL::Tag_false) {
   }
 
   vitr = vertices(p).first;
-  for (size_t i = 0; i < num_v-num_be; ++i) {
+  for (typename boost::graph_traits<Poly>::vertices_size_type i = 0; i < num_v-num_be; ++i) {
     vertex_descriptor vh = *vitr;
     ++vitr;
     Euler::remove_center_vertex(halfedge(vh,p),p);
@@ -624,7 +624,7 @@ void Sqrt3_1step(Poly& p, VertexPointMap vpm, Mask mask,
   // insert the new subdividing points
   face_iterator b,e;
   boost::tie(b,e) = faces(p);
-  for(std::size_t i=0, cpt_id=0; i < num_f; ++i, ++b){
+  for(typename boost::graph_traits<Poly>::faces_size_type i=0, cpt_id=0; i < num_f; ++i, ++b){
     face_descriptor fd = *b;
     halfedge_descriptor hd = face_halfedge_border[i];
     if(refine_border && hd != boost::graph_traits<Poly>::null_halfedge()) {
@@ -650,7 +650,7 @@ void Sqrt3_1step(Poly& p, VertexPointMap vpm, Mask mask,
 
   // flip the old edges (except the border edges)
   edge_iterator eitr = edges(p).first;
-  for (size_t i = 0; i < num_e; ++i) {
+  for (typename boost::graph_traits<Poly>::edges_size_type i = 0; i < num_e; ++i) {
     halfedge_descriptor e = halfedge(*eitr,p);
     ++eitr; // move to next edge before flip since flip destroys current edge
     if (! is_border(edge(e,p),p)) {

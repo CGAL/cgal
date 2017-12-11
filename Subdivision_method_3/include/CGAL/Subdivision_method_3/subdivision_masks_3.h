@@ -219,7 +219,7 @@ public:
     const Point_ref S = get(this->vpmap,vertex);
 
     Point q;
-    for (unsigned int i = 0; i < n; i++, ++vcir) {
+    for (typename boost::graph_traits<Mesh>::degree_size_type i = 0; i < n; i++, ++vcir) {
       const Point& p2 = get(this->vpmap, target(opposite(*vcir, *(this->pmesh)), *(this->pmesh)));
       R[0] += (S[0] + p2[0]) / 2;
       R[1] += (S[1] + p2[1]) / 2;
