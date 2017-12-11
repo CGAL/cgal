@@ -53,12 +53,18 @@ void PQQ_1step(Poly& p, VertexPointMap vpm, Mask mask) {
   typedef typename boost::graph_traits<Poly>::vertex_descriptor       vertex_descriptor;
   typedef typename boost::graph_traits<Poly>::halfedge_descriptor     halfedge_descriptor;
   typedef typename boost::graph_traits<Poly>::edge_descriptor         edge_descriptor;
-
-  typedef typename boost::graph_traits<Poly>::vertex_iterator         vertex_iterator;
-  typedef typename boost::graph_traits<Poly>::edge_iterator           edge_iterator;
-  typedef typename boost::graph_traits<Poly>::face_iterator           face_iterator;
+  typedef typename boost::graph_traits<Poly>::face_descriptor         face_descriptor;
 
   typedef Halfedge_around_face_circulator<Poly>  Halfedge_around_facet_circulator;
+
+  //First back up initial vertices/faces/edges
+  std::vector<vertex_descriptor> p_vertices(vertices(p).first, vertices(p).second);
+  std::vector<face_descriptor> p_faces(faces(p).first, faces(p).second);
+  std::vector<edge_descriptor> p_edges(edges(p).first, edges(p).second);
+
+  std::size_t num_v = p_vertices.size();
+  std::size_t num_e = p_edges.size();
+  std::size_t num_f = p_faces.size();
 
   // Build a new vertices buffer has the following structure
   //
@@ -68,34 +74,29 @@ void PQQ_1step(Poly& p, VertexPointMap vpm, Mask mask) {
   // f_begin ... (end)     : store the positions of the face-vertices
   // The index of the vertices buffer should 1-1 map to the distance
   // of the corresponding iterator to the begin of the iterator.
-  typename boost::graph_traits<Poly>::vertices_size_type num_vertex = num_vertices(p);
-  typename boost::graph_traits<Poly>::halfedges_size_type num_edge = num_halfedges(p)/2;
-  typename boost::graph_traits<Poly>::faces_size_type num_facet = num_faces(p);
 
   // We need to reserve the memory to prevent reallocation.
-  reserve(p,num_vertex+num_edge+num_facet, 4*2*num_edge, 4*num_edge/2);
+  reserve(p,num_v+num_e+num_f, 4*2*num_e, 4*num_e/2);
 
   typedef typename boost::property_traits<VertexPointMap>::value_type Point;
 
-  Point* vertex_point_buffer = new Point[num_vertex + num_edge + num_facet];
-  Point* edge_point_buffer = vertex_point_buffer + num_vertex;
-  Point* face_point_buffer = edge_point_buffer + num_edge;
+  Point* vertex_point_buffer = new Point[num_v + num_e + num_f];
+  Point* edge_point_buffer = vertex_point_buffer + num_v;
+  Point* face_point_buffer = edge_point_buffer + num_e;
 
   int i=0;
   boost::unordered_map<vertex_descriptor,int> v_index;
-  BOOST_FOREACH(vertex_descriptor vh, vertices(p)){
+  BOOST_FOREACH(vertex_descriptor vh, p_vertices){
     v_index[vh]= i++;
   }
 
-  std::vector<bool> v_onborder(num_vertex);
-  face_iterator fitr = faces(p).first;
-  for (typename boost::graph_traits<Poly>::faces_size_type i = 0; i < num_facet; i++, ++fitr)
+  std::vector<bool> v_onborder(num_v);
+  typename std::vector<face_descriptor>::iterator fitr=p_faces.begin();
+  for (std::size_t i = 0; i < num_f; i++, ++fitr)
     mask.face_node(*fitr, face_point_buffer[i]);
-
-
   {
     std::size_t i = 0;
-    BOOST_FOREACH(edge_descriptor ed, edges(p)){
+    BOOST_FOREACH(edge_descriptor ed, p_edges){
       if(is_border(ed,p)){
         halfedge_descriptor h=halfedge(ed,p);
         if (is_border(h,p)) h=opposite(h,p);
@@ -110,8 +111,8 @@ void PQQ_1step(Poly& p, VertexPointMap vpm, Mask mask) {
     }
   }
 
-  vertex_iterator vitr = vertices(p).first;
-  for (typename boost::graph_traits<Poly>::vertices_size_type i = 0; i < num_vertex; i++, ++vitr)
+  typename std::vector<vertex_descriptor>::iterator vitr = p_vertices.begin();
+  for (std::size_t i = 0; i < num_v; i++, ++vitr)
     if (!v_onborder[v_index[*vitr]]) mask.vertex_node(*vitr, vertex_point_buffer[i]);
 
   // Build the connectivity using insert_vertex() and insert_edge()
@@ -122,16 +123,16 @@ void PQQ_1step(Poly& p, VertexPointMap vpm, Mask mask) {
   // 4. insert_edge() between all other new inserted vertices of step 1 and
   //    the new inserted vertex of step 3
   // Step 1.
-  edge_iterator eitr = edges(p).first;
-  for (typename boost::graph_traits<Poly>::edges_size_type i = 0; i < num_edge; i++, ++eitr) {
+  typename std::vector<edge_descriptor>::iterator eitr = p_edges.begin();
+  for (std::size_t i = 0; i < num_e; i++, ++eitr) {
     vertex_descriptor vh = insert_vertex(p, halfedge(*eitr,p));
     put(vpm, vh, edge_point_buffer[i]);
   }
-  fitr = faces(p).first;
 
   // TODO: the topoloy modification can be done by a template function
   //       and that gives the user a chance to create new topological masks.
-  for (typename boost::graph_traits<Poly>::faces_size_type i = 0; i < num_facet; i++, ++fitr) {
+  fitr = p_faces.begin();
+  for (std::size_t i = 0; i < num_f; i++, ++fitr) {
     // Step 2.
     Halfedge_around_facet_circulator hcir_begin(halfedge(*fitr,p),p);
     Halfedge_around_facet_circulator hcir = hcir_begin;
@@ -160,8 +161,8 @@ void PQQ_1step(Poly& p, VertexPointMap vpm, Mask mask) {
 
   // Update the geometry data of the newly inserted vertices by the
   // vertices buffer
-  vitr = vertices(p).first;
-  for (typename boost::graph_traits<Poly>::vertices_size_type i = 0; i < num_vertex; i++, ++vitr)
+  vitr = p_vertices.begin();
+  for (std::size_t i = 0; i < num_v; i++, ++vitr)
     put(vpm, *vitr, vertex_point_buffer[i]);
 
 //  CGAL_postcondition(p.is_valid());
@@ -174,14 +175,20 @@ void PTQ_1step(Poly& p, VertexPointMap vpm, Mask mask) {
   typedef typename boost::graph_traits<Poly>::vertex_descriptor       vertex_descriptor;
   typedef typename boost::graph_traits<Poly>::halfedge_descriptor     halfedge_descriptor;
   typedef typename boost::graph_traits<Poly>::edge_descriptor         edge_descriptor;
-
-  typedef typename boost::graph_traits<Poly>::vertex_iterator         vertex_iterator;
-  typedef typename boost::graph_traits<Poly>::edge_iterator           edge_iterator;
-  typedef typename boost::graph_traits<Poly>::face_iterator           face_iterator;
+  typedef typename boost::graph_traits<Poly>::face_descriptor         face_descriptor;
 
   typedef Halfedge_around_face_circulator<Poly>  Halfedge_around_face_circulator;
 
   typedef typename boost::property_traits<VertexPointMap>::value_type Point;
+
+  //First back up initial vertices/faces/edges
+  std::vector<vertex_descriptor> p_vertices(vertices(p).first, vertices(p).second);
+  std::vector<face_descriptor> p_faces(faces(p).first, faces(p).second);
+  std::vector<edge_descriptor> p_edges(edges(p).first, edges(p).second);
+
+  std::size_t num_v = p_vertices.size();
+  std::size_t num_e = p_edges.size();
+  std::size_t num_f = p_faces.size();
 
   // Build a new vertices buffer has the following structure
   //
@@ -190,26 +197,23 @@ void PTQ_1step(Poly& p, VertexPointMap vpm, Mask mask) {
   // e_begin ... (end)     : store the positions of the edge-vertices
   // The index of the vertices buffer should 1-1 map to the distance
   // of the corresponding iterator to the begin of the iterator.
-  typename boost::graph_traits<Poly>::vertices_size_type num_vertex = num_vertices(p);
-  typename boost::graph_traits<Poly>::halfedges_size_type num_edge = num_halfedges(p)/2;
-  typename boost::graph_traits<Poly>::faces_size_type num_facet = num_faces(p);
 
   // We need to reserve the memory to prevent reallocation.
-  reserve(p,num_vertex+num_edge, 2*2*num_edge, 4*num_edge/2);
+  reserve(p,num_v + num_e, 2*2*num_e, 4*num_e/2);
 
-  Point* vertex_point_buffer = new Point[num_vertex + num_edge];
-  Point* edge_point_buffer = vertex_point_buffer + num_vertex;
+  Point* vertex_point_buffer = new Point[num_v + num_e];
+  Point* edge_point_buffer = vertex_point_buffer + num_v;
 
   int i=0;
   boost::unordered_map<vertex_descriptor,int> v_index;
-  BOOST_FOREACH(vertex_descriptor vh, vertices(p)){
+  BOOST_FOREACH(vertex_descriptor vh, p_vertices){
     v_index[vh]= i++;
   }
-  std::vector<bool> v_onborder(num_vertex);
+  std::vector<bool> v_onborder(num_v);
 
   {
     std::size_t i = 0;
-    BOOST_FOREACH(edge_descriptor ed, edges(p)){
+    BOOST_FOREACH(edge_descriptor ed, p_edges){
       if(! is_border(ed,p)){
         mask.edge_node(halfedge(ed,p), edge_point_buffer[i]);
       } else{
@@ -222,8 +226,8 @@ void PTQ_1step(Poly& p, VertexPointMap vpm, Mask mask) {
       ++i;
     }
   }
-  vertex_iterator vitr = vertices(p).first;
-  for (typename boost::graph_traits<Poly>::vertices_size_type i = 0; i < num_vertex; i++, ++vitr)
+  typename std::vector<vertex_descriptor>::iterator vitr = p_vertices.begin();
+  for (std::size_t i = 0; i < num_v; i++, ++vitr)
     if (!v_onborder[i]) mask.vertex_node(*vitr, vertex_point_buffer[i]);
 
   // Build the connectivity using insert_vertex() and insert_edge()
@@ -234,13 +238,14 @@ void PTQ_1step(Poly& p, VertexPointMap vpm, Mask mask) {
   // 4. insert_edge() between all other new inserted vertices of step 1 and
   //    the new inserted vertex of step 3
   // Step 1.
-  edge_iterator eitr = edges(p).first;
-  for (typename boost::graph_traits<Poly>::edges_size_type i = 0; i < num_edge; i++, ++eitr) {
-    vertex_descriptor vh = insert_vertex(p, halfedge(*eitr,p));
+  typename std::vector<edge_descriptor>::iterator eit = p_edges.begin();
+  for (std::size_t i = 0; i < num_e; i++, ++eit) {
+    vertex_descriptor vh = insert_vertex(p, halfedge(*eit,p));
     put(vpm,vh, edge_point_buffer[i]);
   }
-  face_iterator fitr = faces(p).first;
-  for (typename boost::graph_traits<Poly>::faces_size_type i = 0; i < num_facet; i++, ++fitr) {
+
+  typename std::vector<face_descriptor>::iterator fitr = p_faces.begin();
+  for (std::size_t i = 0; i < num_f; i++, ++fitr) {
     // Step 2.
     Halfedge_around_face_circulator hcir_begin(halfedge(*fitr,p),p);
     Halfedge_around_face_circulator hcir = hcir_begin;
@@ -260,8 +265,8 @@ void PTQ_1step(Poly& p, VertexPointMap vpm, Mask mask) {
 
   // Update the geometry data of the newly inserted vertices by the
   // vertices buffer
-  vitr = vertices(p).first;
-  for (typename boost::graph_traits<Poly>::vertices_size_type i = 0; i < num_vertex; i++, ++vitr)
+  vitr = p_vertices.begin();
+  for (std::size_t i = 0; i < num_v; i++, ++vitr)
     put(vpm, *vitr, vertex_point_buffer[i]);
 
 //  CGAL_postcondition(p.is_valid());
@@ -555,19 +560,21 @@ void Sqrt3_1step(Poly& p, VertexPointMap vpm, Mask mask,
   typedef typename boost::graph_traits<Poly>::edge_descriptor         edge_descriptor;
   typedef typename boost::graph_traits<Poly>::face_descriptor         face_descriptor;
 
-  typedef typename boost::graph_traits<Poly>::edge_iterator           edge_iterator;
-  typedef typename boost::graph_traits<Poly>::face_iterator           face_iterator;
-
   typedef typename boost::property_traits<VertexPointMap>::value_type Point;
 
-  typename boost::graph_traits<Poly>::vertices_size_type num_v = num_vertices(p);
-  typename boost::graph_traits<Poly>::halfedges_size_type num_e = num_halfedges(p)/2;
-  typename boost::graph_traits<Poly>::faces_size_type num_f = num_faces(p);
+  //First back up initial vertices/faces/edges
+  std::vector<vertex_descriptor> p_vertices(vertices(p).first, vertices(p).second);
+  std::vector<face_descriptor> p_faces(faces(p).first, faces(p).second);
+  std::vector<edge_descriptor> p_edges(edges(p).first, edges(p).second);
+
+  std::size_t num_v = p_vertices.size();
+  std::size_t num_e = p_edges.size();
+  std::size_t num_f = p_faces.size();
 
   // reserve enough size for the new points
-  typename boost::graph_traits<Poly>::faces_size_type new_pts_size = num_f;
+  std::size_t new_pts_size = num_f;
   if(refine_border) {
-    BOOST_FOREACH(edge_descriptor ed, edges(p)){
+    BOOST_FOREACH(edge_descriptor ed, p_edges){
       if(is_border(ed, p))
         ++new_pts_size;
     }
@@ -586,7 +593,7 @@ void Sqrt3_1step(Poly& p, VertexPointMap vpm, Mask mask,
   // compute the positions of new points
   std::size_t i = 0;
   std::size_t face_id = 0;
-  BOOST_FOREACH (face_descriptor fd, faces(p)) {
+  BOOST_FOREACH (face_descriptor fd, p_faces) {
     //ASSERTION_MSG(circulator_size(fitr->facet_begin())==3, "(ERROR) Non-triangle facet!");
     if(refine_border) {
       BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(fd, p), p)) {
@@ -613,7 +620,7 @@ void Sqrt3_1step(Poly& p, VertexPointMap vpm, Mask mask,
   }
 
   // smooth the position of existing vertices
-  BOOST_FOREACH(vertex_descriptor vd, vertices(p)){
+  BOOST_FOREACH(vertex_descriptor vd, p_vertices){
     Point pt;
     if(!is_border(vd, p)) {
       mask.vertex_node(vd, pt);
@@ -622,10 +629,9 @@ void Sqrt3_1step(Poly& p, VertexPointMap vpm, Mask mask,
   }
 
   // insert the new subdividing points
-  face_iterator b,e;
-  boost::tie(b,e) = faces(p);
-  for(typename boost::graph_traits<Poly>::faces_size_type i=0, cpt_id=0; i < num_f; ++i, ++b){
-    face_descriptor fd = *b;
+  typename std::vector<face_descriptor>::iterator fit=p_faces.begin();
+  for(std::size_t i=0, cpt_id=0; i < num_f; ++i, ++fit){
+    face_descriptor fd = *fit;
     halfedge_descriptor hd = face_halfedge_border[i];
     if(refine_border && hd != boost::graph_traits<Poly>::null_halfedge()) {
       halfedge_descriptor hd_next = next(hd, p);
@@ -649,8 +655,8 @@ void Sqrt3_1step(Poly& p, VertexPointMap vpm, Mask mask,
   }
 
   // flip the old edges (except the border edges)
-  edge_iterator eitr = edges(p).first;
-  for (typename boost::graph_traits<Poly>::edges_size_type i = 0; i < num_e; ++i) {
+  typename std::vector<edge_descriptor>::iterator eitr = p_edges.begin();
+  for (std::size_t i = 0; i < num_e; ++i) {
     halfedge_descriptor e = halfedge(*eitr,p);
     ++eitr; // move to next edge before flip since flip destroys current edge
     if (! is_border(edge(e,p),p)) {
