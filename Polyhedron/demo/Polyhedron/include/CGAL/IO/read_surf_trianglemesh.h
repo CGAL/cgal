@@ -85,7 +85,7 @@ bool read_surf(std::istream& input, std::vector<Mesh>& output,
     DuplicatedPointsOutIterator out,
     const NamedParameters&)
 {
-  typedef typename CGAL::GetGeomTraits<Mesh,
+  typedef typename CGAL::Polygon_mesh_processing::GetGeomTraits<Mesh,
       NamedParameters>::type Kernel;
   typedef typename Kernel::Point_3 Point_3;
   std::vector<Point_3> points;
