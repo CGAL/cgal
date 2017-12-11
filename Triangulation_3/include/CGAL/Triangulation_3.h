@@ -844,7 +844,7 @@ public:
 
   const Point& point(Vertex_handle v) const
   {
-    CGAL_triangulation_precondition(dimension() >= 0);
+    CGAL_triangulation_precondition(number_of_vertices() > 0);
     CGAL_triangulation_precondition(! is_infinite(v));
     return v->point();
   }
