@@ -92,6 +92,8 @@ public:
   typedef typename Base::FT                          FT;
   typedef typename Base::Point                       Point;
   typedef typename Base::Vector                      Vector;
+
+  typedef typename boost::property_traits<VertexPointMap>::reference Point_ref;
 #endif
 
 public:
@@ -116,8 +118,8 @@ public:
   }
 
   void edge_node(halfedge_descriptor edge, Point& pt) {
-    const Point& p1 = get(this->vpmap, target(edge, *(this->pmesh)));
-    const Point& p2 = get(this->vpmap, source(edge, *(this->pmesh)));
+    const Point_ref p1 = get(this->vpmap, target(edge, *(this->pmesh)));
+    const Point_ref p2 = get(this->vpmap, source(edge, *(this->pmesh)));
     pt = Point((p1[0]+p2[0])/2, (p1[1]+p2[1])/2, (p1[2]+p2[2])/2);
   }
 
@@ -172,6 +174,8 @@ public:
   typedef typename Base::FT                          FT;
   typedef typename Base::Point                       Point;
   typedef typename Base::Vector                      Vector;
+
+  typedef typename boost::property_traits<VertexPointMap>::reference Point_ref;
 #endif
 
 public:
@@ -212,7 +216,7 @@ public:
     typename boost::graph_traits<Mesh>::degree_size_type n = degree(vertex, *(this->pmesh));
 
     FT Q[] = {0.0, 0.0, 0.0}, R[] = {0.0, 0.0, 0.0};
-    Point& S = get(this->vpmap,vertex);
+    const Point_ref S = get(this->vpmap,vertex);
 
     Point q;
     for (unsigned int i = 0; i < n; i++, ++vcir) {
