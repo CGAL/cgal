@@ -23,23 +23,21 @@ CGAL_add_named_parameter(vertex_point_t, vertex_point, vertex_point_map)
 CGAL_add_named_parameter(face_index_t, face_index, face_index_map)
 CGAL_add_named_parameter(edge_index_t, edge_index, edge_index_map)
 CGAL_add_named_parameter(halfedge_index_t, halfedge_index, halfedge_index_map)
+
 CGAL_add_named_parameter(edge_is_constrained_t, edge_is_constrained, edge_is_constrained_map)
 CGAL_add_named_parameter(vertex_incident_patches_t, vertex_incident_patches, vertex_incident_patches_map)
 CGAL_add_named_parameter(first_index_t, first_index, first_index)
-CGAL_add_named_parameter(vertex_feature_degree_t, vertex_feature_degree, vertex_feature_degree_map)
-CGAL_add_named_parameter(set_cache_policy_t, set_cache_policy, set_cache)
-CGAL_add_named_parameter(get_cost_policy_t, get_cost_policy, get_cost)
-CGAL_add_named_parameter(get_cost_policy_params_t, get_cost_policy_params, get_cost_params)
-CGAL_add_named_parameter(get_placement_policy_t, get_placement_policy, get_placement)
-CGAL_add_named_parameter(get_placement_policy_params_t, get_placement_policy_params, get_placement_params)
+CGAL_add_named_parameter(number_of_iterations_t, number_of_iterations, number_of_iterations)
 
-// List of named parameters used in the Polygon Mesh Processing package
+// List of named parameters that we use in the package 'Mesh_3'
+CGAL_add_named_parameter(vertex_feature_degree_t, vertex_feature_degree, vertex_feature_degree_map)
+
+// List of named parameters used in the package 'Polygon Mesh Processing'
 CGAL_add_named_parameter(geom_traits_t, geom_traits, geom_traits)
 CGAL_add_named_parameter(density_control_factor_t, density_control_factor, density_control_factor)
 CGAL_add_named_parameter(use_delaunay_triangulation_t, use_delaunay_triangulation, use_delaunay_triangulation)
 CGAL_add_named_parameter(fairing_continuity_t, fairing_continuity, fairing_continuity)
 CGAL_add_named_parameter(sparse_linear_solver_t, sparse_linear_solver, sparse_linear_solver)
-CGAL_add_named_parameter(number_of_iterations_t, number_of_iterations, number_of_iterations)
 CGAL_add_named_parameter(number_of_relaxation_steps_t, number_of_relaxation_steps, number_of_relaxation_steps)
 CGAL_add_named_parameter(protect_constraints_t, protect_constraints, protect_constraints)
 CGAL_add_named_parameter(relax_constraints_t, relax_constraints, relax_constraints)
@@ -58,6 +56,10 @@ CGAL_add_named_parameter(number_of_points_per_edge_t, number_of_points_per_edge,
 CGAL_add_named_parameter(number_of_points_on_edges_t, number_of_points_on_edges, number_of_points_on_edges)
 CGAL_add_named_parameter(nb_points_per_area_unit_t, nb_points_per_area_unit, number_of_points_per_area_unit)
 CGAL_add_named_parameter(nb_points_per_distance_unit_t, nb_points_per_distance_unit, number_of_points_per_distance_unit)
+
+// List of named parameters that we use in the package 'Surface Mesh Simplification'
+CGAL_add_named_parameter(get_cost_policy_t, get_cost_policy, get_cost)
+CGAL_add_named_parameter(get_placement_policy_t, get_placement_policy, get_placement)
 
 //to be documented
 CGAL_add_named_parameter(face_normal_t, face_normal, face_normal_map)
