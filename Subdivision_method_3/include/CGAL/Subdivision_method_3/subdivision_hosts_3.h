@@ -87,7 +87,7 @@ void PQQ(PolygonMesh& pmesh, Mask mask, const NamedParameters& np) {
   using boost::choose_param;
   using boost::get_param;
 
-  typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type Vpm;
+  typedef typename Polygon_mesh_processing::GetVertexPointMap<PolygonMesh, NamedParameters>::type Vpm;
   Vpm vpm = choose_param(get_param(np, internal_np::vertex_point),
                          get_property_map(CGAL::vertex_point, pmesh));
 
@@ -134,7 +134,7 @@ void PTQ(PolygonMesh& pmesh, Mask mask, const NamedParameters& np) {
   using boost::choose_param;
   using boost::get_param;
 
-  typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type Vpm;
+  typedef typename Polygon_mesh_processing::GetVertexPointMap<PolygonMesh, NamedParameters>::type Vpm;
   Vpm vpm = choose_param(get_param(np, internal_np::vertex_point),
                          get_property_map(CGAL::vertex_point, pmesh));
 
@@ -184,7 +184,7 @@ void DQQ(PolygonMesh& pmesh, Mask mask, const NamedParameters& np) {
   using boost::choose_param;
   using boost::get_param;
 
-  typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type Vpm;
+  typedef typename Polygon_mesh_processing::GetVertexPointMap<PolygonMesh, NamedParameters>::type Vpm;
   Vpm vpm = choose_param(get_param(np, internal_np::vertex_point),
                          get_property_map(CGAL::vertex_point, pmesh));
 
@@ -236,7 +236,7 @@ void Sqrt3(PolygonMesh& pmesh, Mask mask, const NamedParameters& np) {
   using boost::choose_param;
   using boost::get_param;
 
-  typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type Vpm;
+  typedef typename Polygon_mesh_processing::GetVertexPointMap<PolygonMesh, NamedParameters>::type Vpm;
   Vpm vpm = choose_param(get_param(np, internal_np::vertex_point),
                          get_property_map(CGAL::vertex_point, pmesh));
 
