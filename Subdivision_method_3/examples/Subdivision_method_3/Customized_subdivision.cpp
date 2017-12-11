@@ -16,6 +16,7 @@ typedef CGAL::Simple_cartesian<double>      Kernel;
 typedef CGAL::Surface_mesh<Kernel::Point_3> PolygonMesh;
 using namespace std;
 using namespace CGAL;
+namespace params = CGAL::Polygon_mesh_processing::parameters;
 
 // ======================================================================
 template <class Poly>
@@ -109,7 +110,7 @@ int main(int argc, char **argv) {
 
   Timer t;
   t.start();
-  Subdivision_method_3::PTQ(pmesh, WLoop_mask_3<PolygonMesh>(pmesh), d);
+  Subdivision_method_3::PTQ(pmesh, WLoop_mask_3<PolygonMesh>(pmesh), params::number_of_iterations(d));
   std::cerr << "Done (" << t.time() << " s)" << std::endl;
 
   std::ofstream out(out_file);
