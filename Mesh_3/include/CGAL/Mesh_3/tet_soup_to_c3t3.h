@@ -119,6 +119,7 @@ void build_finite_cells(Tr& tr,
       vertex_handle_vector.at(tet[j] + 1)->set_dimension(3);
       vs[j] = vertex_handle_vector.at(tet[j] + 1);
       CGAL_postcondition(vs[j] != Vertex_handle());
+      CGAL_postcondition(!tr.is_infinite(vs[j]));
     }
 
     // this assertion also tests for degeneracy
