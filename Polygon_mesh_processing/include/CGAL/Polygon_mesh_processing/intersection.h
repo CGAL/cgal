@@ -40,8 +40,8 @@ namespace Polygon_mesh_processing{
  * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersect(tm2)` \endlink
  *
  * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`
- * @tparam NamedParameters1 a sequence of \ref namedparameters
- * @tparam NamedParameters2 a sequence of \ref namedparameters
+ * @tparam NamedParameters1 a sequence of \ref namedparameterspmp
+ * @tparam NamedParameters2 a sequence of \ref namedparameterspmp
  * @tparam OutputIterator an output iterator in which `std::vector` of points
  *                        can be put. The point type is the one from the
  *                        vertex property map
@@ -54,8 +54,8 @@ namespace Polygon_mesh_processing{
  *        the set of triangles closed to the intersection of `tm1` and `tm2` will be
  *        checked for self-intersection and `CGAL::Corefinement::Self_intersection_exception`
  *        will be thrown if at least one is found.
- * @param np1 optional sequence of \ref namedparameters among the ones listed below
- * @param np2 optional sequence of \ref namedparameters among the ones listed below
+ * @param np1 optional sequence of \ref namedparameterspmp among the ones listed below
+ * @param np2 optional sequence of \ref namedparameterspmp among the ones listed below
  *
  * \cgalNamedParamsBegin
  *   \cgalParamBegin{vertex_point_map}

@@ -494,10 +494,10 @@ void stitch_borders(PolygonMesh& pmesh,
 /// the same as those of the target and source vertices of `h2` respectively.
 ///
 /// @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
-/// @tparam NamedParameters a sequence of \ref namedparameters
+/// @tparam NamedParameters a sequence of \ref namedparameterspmp
 ///
 /// @param pmesh the polygon mesh to be modified by stitching
-/// @param np optional sequence of \ref namedparameters among the ones listed below
+/// @param np optional sequence of \ref namedparameterspmp among the ones listed below
 ///
 /// \cgalNamedParamsBegin
 ///    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.

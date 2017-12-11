@@ -647,10 +647,10 @@ std::size_t remove_null_edges(
 /// @pre `CGAL::is_triangle_mesh(tmesh)`
 ///
 /// @tparam TriangleMesh a model of `FaceListGraph` and `MutableFaceGraph`
-/// @tparam NamedParameters a sequence of \ref namedparameters
+/// @tparam NamedParameters a sequence of \ref namedparameterspmp
 ///
 /// @param tmesh the  triangulated surface mesh to be repaired
-/// @param np optional \ref namedparameters described below
+/// @param np optional \ref namedparameterspmp described below
 ///
 /// \cgalNamedParamsBegin
 ///    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`. The type of this map is model of `ReadWritePropertyMap`.
