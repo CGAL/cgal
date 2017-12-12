@@ -55,12 +55,12 @@ public:
 
 } // end namespace details
 
-template<class Gt, class Tds>
+template<class Gt_, class Tds_>
 class Mesh_3_regular_triangulation_3_wrapper
-  : public Regular_triangulation_3<Gt, Tds>
+  : public Regular_triangulation_3<Gt_, Tds_>
 {
 public:
-  typedef Regular_triangulation_3<Gt, Tds>                    Base;
+  typedef Regular_triangulation_3<Gt_, Tds_>                  Base;
 
   typedef typename Base::Geom_traits                          Geom_traits;
 
@@ -71,7 +71,7 @@ public:
   typedef typename Base::Vertex_handle                        Vertex_handle;
   typedef typename Base::Cell_handle                          Cell_handle;
 
-  typedef typename Gt::Vector_3                               Vector;
+  typedef typename Geom_traits::Vector_3                      Vector;
 
   using Base::geom_traits;
   using Base::point;

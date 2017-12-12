@@ -61,9 +61,9 @@ namespace CGAL {
 /// `CGAL::Periodic_3_regular_triangulation_3` and the mesher `Mesh_3`.
 /// As periodic triangulations are parallelized, a lot of these functions will
 /// become obsolete.
-template<class Gt, class Tds>
+template<class Gt_, class Tds_>
 class Periodic_3_regular_triangulation_3_wrapper
-  : public Periodic_3_regular_triangulation_3<Gt, Tds>
+  : public Periodic_3_regular_triangulation_3<Gt_, Tds_>
 {
 public:
   typedef Sequential_tag                                      Concurrency_tag;
@@ -72,10 +72,10 @@ public:
   void *get_lock_data_structure() const { return 0; }
   void set_lock_data_structure(void *) const { }
 
-  typedef Periodic_3_regular_triangulation_3<Gt, Tds>         Base;
+  typedef Periodic_3_regular_triangulation_3<Gt_, Tds_>       Base;
 
-  typedef Gt                                                  Geom_traits;
-  typedef Tds                                                 Triangulation_data_structure;
+  typedef typename Base::Geom_traits                          Geom_traits;
+  typedef typename Base::Triangulation_data_structure         Triangulation_data_structure;
 
   typedef typename Base::Cell_iterator                        Finite_cells_iterator;
   typedef typename Base::Facet_iterator                       Finite_facets_iterator;
@@ -109,8 +109,8 @@ public:
   typedef typename Base::Conflict_tester                      Conflict_tester;
   typedef typename Base::Covering_sheets                      Covering_sheets;
 
-  typedef typename Gt::Vector_3                               Vector_3;
-  typedef typename Gt::Ray_3                                  Ray;
+  typedef typename Geom_traits::Vector_3                      Vector_3;
+  typedef typename Geom_traits::Ray_3                         Ray;
 
   using Base::construct_point;
   using Base::construct_weighted_point;
@@ -226,7 +226,7 @@ public:
 
   Weighted_point snap_to_domain_border(const Weighted_point& p) const
   {
-    typename Gt::Compute_weight_3 cw = geom_traits().compute_weight_3_object();
+    typename Geom_traits::Compute_weight_3 cw = geom_traits().compute_weight_3_object();
 
     const Bare_point snapped_p =
       snap_to_domain_border(geom_traits().construct_point_3_object()(p));
@@ -404,7 +404,7 @@ public:
 
   FT compute_power_distance_to_power_sphere(const Cell_handle& c, const int i) const
   {
-    typename Gt::Compute_power_distance_to_power_sphere_3 cr =
+    typename Geom_traits::Compute_power_distance_to_power_sphere_3 cr =
       geom_traits().compute_power_distance_to_power_sphere_3_object();
 
     Offset o_nb = this->neighbor_offset(c, i, c->neighbor(i));
@@ -430,7 +430,7 @@ public:
   FT compute_power_distance_to_power_sphere(const Cell_handle& c,
                                             const Vertex_handle v) const
   {
-    typename Gt::Compute_power_distance_to_power_sphere_3 cr =
+    typename Geom_traits::Compute_power_distance_to_power_sphere_3 cr =
       geom_traits().compute_power_distance_to_power_sphere_3_object();
 
     FT min_power_dist = std::numeric_limits<FT>::infinity();
@@ -569,9 +569,9 @@ public:
 
   Weighted_point get_closest_point(const Weighted_point& wp, const Weighted_point& wq) const
   {
-    typename Gt::Compute_weight_3 cw = geom_traits().compute_weight_3_object();
-    typename Gt::Construct_point_3 cp = geom_traits().construct_point_3_object();
-    typename Gt::Construct_weighted_point_3 cwp = geom_traits().construct_weighted_point_3_object();
+    typename Geom_traits::Compute_weight_3 cw = geom_traits().compute_weight_3_object();
+    typename Geom_traits::Construct_point_3 cp = geom_traits().construct_point_3_object();
+    typename Geom_traits::Construct_weighted_point_3 cwp = geom_traits().construct_weighted_point_3_object();
 
     return cwp(get_closest_point(cp(wp), cp(wq)), cw(wq));
   }
@@ -651,11 +651,11 @@ public:
     Locate_type lt;
     int li, lj;
 
-    typename Gt::Compute_squared_distance_3 csd =
+    typename Geom_traits::Compute_squared_distance_3 csd =
       geom_traits().compute_squared_distance_3_object();
-    typename Gt::Construct_point_3 cp =
+    typename Geom_traits::Construct_point_3 cp =
       geom_traits().construct_point_3_object();
-    typename Gt::Construct_weighted_point_3 cwp =
+    typename Geom_traits::Construct_weighted_point_3 cwp =
       geom_traits().construct_weighted_point_3_object();
 
     Offset query_offset;
@@ -769,7 +769,6 @@ public:
     CGAL_assertion(false); // not yet supported
   }
 
-  //template < class Gt, class Tds >
   template <class OutputIteratorBoundaryFacets, class OutputIteratorCells,
             class OutputIteratorInternalFacets>
   Triple<OutputIteratorBoundaryFacets, OutputIteratorCells, OutputIteratorInternalFacets>
