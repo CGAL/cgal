@@ -181,7 +181,7 @@ three components of the Catmull-Clark subdivision method.
 
 \code{.cpp}
 
-template <class PolygonMesh, class Mask>
+template <class PolygonMesh, class Mask, class NamedParameters>
 void PQQ(PolygonMesh& p, Mask mask, NamedParameters np)
 
 \endcode
@@ -327,16 +327,16 @@ and \f$ \sqrt{3}\f$ subdivision.
 \code{.cpp}
 
 namespace Subdivision_method_3 {
-template <class PolygonMesh, class Mask>
+template <class PolygonMesh, class Mask, class NamedParameters>
 void PQQ(PolygonMesh& pmesh, Mask mask, NamedParameters np);
 
-template <class PolygonMesh, class Mask>
+template <class PolygonMesh, class Mask, class NamedParameters>
 void PTQ(PolygonMesh& pmesh, Mask mask, NamedParameters np);
 
-template <class PolygonMesh,  class Mask>
+template <class PolygonMesh,  class Mask, class NamedParameters>
 void DQQ(PolygonMesh& pmesh, Mask mask, NamedParameters np)
 
-template <class PolygonMesh,  class Mask>
+template <class PolygonMesh,  class Mask, class NamedParameters>
 void Sqrt3(PolygonMesh& pmesh, Mask mask, NamedParameters np)
 }
 
