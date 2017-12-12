@@ -73,6 +73,7 @@ void fill_sphere_polylines(Polylines& polylines)
   for(int i = 0; i < 360; ++i)
   {
     Point p(0., 0.5 + 0.33 * std::cos(i*CGAL_PI/180), 0.5 + 0.33 * std::sin(i*CGAL_PI/180));
+    std::cout << "Adding " << p << " to polyline" << std::endl;
     polyline.push_back(p);
   }
   polyline.push_back(polyline.front()); // close the line
