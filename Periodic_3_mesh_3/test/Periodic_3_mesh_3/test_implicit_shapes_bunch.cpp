@@ -204,22 +204,11 @@ int main()
     &split_p
   };
 
-  for( int i = 0; i < functions_count; i++ )
+  for(int i=0; i<functions_count; ++i)
   {
     // Periodic mesh domain (Warning: Sphere_3 constructor uses squared radius !)
     Periodic_mesh_domain domain(*implicit_function[i],
                                 CGAL::Iso_cuboid_3<K>(0, 0, 0, 1, 1, 1));
-
-    /*
-      double kidney_size = 3.;
-      int volume_dimension = 3;
-      Sizing_field size(8);
-      size.set_size(kidney_size, volume_dimension,
-                    domain.index_from_subdomain_index(2));
-
-      size.set_size(0.05, volume_dimension,
-                    domain.index_from_subdomain_index(1));
-       */
 
     // Mesh criteria
     Periodic_mesh_criteria criteria(facet_angle = 30,
@@ -229,8 +218,8 @@ int main()
                                     cell_size = 0.05);
 
     // Mesh generation
-    C3t3 c3t3 = CGAL::make_periodic_3_mesh_3<C3t3>(domain, criteria,
-                                                   no_odt(), no_perturb(), no_lloyd());
+    std::cout << "Meshing implicit shape n°: " << i << std::endl;
+    C3t3 c3t3 = CGAL::make_periodic_3_mesh_3<C3t3>(domain, criteria);
 
     // File name
     std::stringstream index;
