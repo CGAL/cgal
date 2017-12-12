@@ -577,12 +577,12 @@ public:
   /// computes the \f$ \sqrt{3}\f$ vertex-point `pt` of the vertex `vd`.
   void vertex_node(vertex_descriptor vertex, Point& pt) {
     Halfedge_around_target_circulator<Mesh> vcir(vertex, *(this->pmesh));
-    const size_t n = degree(vertex, *(this->pmesh));
+    const typename boost::graph_traits<Mesh>::degree_size_type n = degree(vertex, *(this->pmesh));
 
     const FT a = (FT) ((4.0-2.0*std::cos(2.0*CGAL_PI/(double)n))/9.0);
 
     Vector cv = ((FT)(1.0-a)) * (get(this->vpmap, vertex) - CGAL::ORIGIN);
-    for (size_t i = 1; i <= n; ++i, --vcir) {
+    for (typename boost::graph_traits<Mesh>::degree_size_type i = 1; i <= n; ++i, --vcir) {
       cv = cv + (a/FT(n))*(get(this->vpmap, target(opposite(*vcir, *(this->pmesh)), *(this->pmesh)))-CGAL::ORIGIN);
     }
 
