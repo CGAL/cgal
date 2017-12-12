@@ -92,13 +92,13 @@ private:
   double    time;
   bool      go;
 
+  void        initialize_animation_parameters();
   void        animate();
   double      updateTime();
-  Face_handle last_location;
   Point       get_image(Point, Point, double);
+  Face_handle last_location;
   double      timestep;
-  Hyperbolic_translation      last_Hyperbolic_translation;
-  int         idx;
+  Hyperbolic_translation      last_loc_translation;
 
 public:
   MainWindow();
@@ -138,31 +138,14 @@ signals:
 };
 
 
+#include <hyperbolic_billiards_animation.h>
+
+
 MainWindow::MainWindow()
   : DemosMainWindow(), dt(Traits())
 {
-  
-  idx = 1;
-    //dt.insert_dummy_points(true);
 
-  std::srand(std::time(0));
-  double rx1, rx2, ry1, ry2;
-  rx1 = ((double)std::rand()/(double)RAND_MAX)*0.6;
-  rx2 = ((double)std::rand()/(double)RAND_MAX)*0.6;
-  ry1 = ((double)std::rand()/(double)RAND_MAX)*0.6;
-  ry2 = ((double)std::rand()/(double)RAND_MAX)*0.6;
-  source = Point(rx1, ry1);
-  target = Point(rx2, ry2);
-  Segment_2 seg = Construct_hyperbolic_line_2()(source, target);
-  Circular_arc_2* carc = boost::get<Circular_arc_2>(&seg);
-  source = carc->source();
-  target = carc->target();
-
-  timestep = 0.005;
-  time = updateTime();
-  last_location = dt.periodic_locate(get_image(source, target, time), last_Hyperbolic_translation); 
-  //cout << "last location: face " << last_location->get_number() << " with Hyperbolic_translation " << last_Hyperbolic_translation << endl; 
-
+  initialize_animation_parameters();
 
   setupUi(this);
 
@@ -322,113 +305,6 @@ void MainWindow::on_actionPlayDemo_toggled(bool checked) {
   } else {
     dgi->setVisibleDemo(false);
     go = false;
-  }
-}
-
-
-Point
-MainWindow::get_image(Point src, Point tgt, double time) {
-  Segment_2 seg = Construct_hyperbolic_segment_2()(src, tgt);
-  Circular_arc_2* carc = boost::get<Circular_arc_2>(&seg);
-  Circle_2 crc = carc->circle();
-  
-  double sx = to_double(((src.x()) - crc.center().x())/sqrt(crc.squared_radius()));
-  double sy = to_double(((src.y()) - crc.center().y())/sqrt(crc.squared_radius()));
-  double tx = to_double(((tgt.x()) - crc.center().x())/sqrt(crc.squared_radius()));
-  double ty = to_double(((tgt.y()) - crc.center().y())/sqrt(crc.squared_radius()));
-  
-  double dot = to_double(sx*tx + sy*ty);
-  double n1 = sqrt(sx*sx+sy*sy);
-  double n2 = sqrt(tx*tx+ty*ty);
-  double theta = acos(dot/n1/n2);
-
-  double x = sin((1.0-time)*theta)/sin(theta)*sx + sin(time*theta)/sin(theta)*tx;
-  double y = sin((1.0-time)*theta)/sin(theta)*sy + sin(time*theta)/sin(theta)*ty;
-  
-  x = to_double(x*sqrt(crc.squared_radius()) + crc.center().x());
-  y = to_double(y*sqrt(crc.squared_radius()) + crc.center().y());
-
-  Point p(x, y);
-
-  return p;
-}
-
-
-double 
-MainWindow::updateTime() {
-  double t = 0.1;
-  Side_of_original_octagon check;
-  while(check(get_image(source, target, t)) == CGAL::ON_UNBOUNDED_SIDE) {
-    t += timestep;
-  }
-  return t;
-}
-
-
-void
-MainWindow::animate() {
-  
-  Point p = get_image(source, target, time);
-
-  Side_of_original_octagon check;
-  if (check(p) != CGAL::ON_UNBOUNDED_SIDE) {
-    Locate_type lt;
-    int li;
-    last_location = dt.periodic_locate(p, lt, li, last_Hyperbolic_translation, last_location);
-    dgi->setMovingPoint(p);
-    dgi->setSource(source);
-    dgi->setTarget(target);
-    
-    time += timestep;
-
-  } else {
-
-    Hyperbolic_translation o;
-    for (int i = 0; i < 3; i++) {
-      if (last_Hyperbolic_translation.is_identity()) {
-        o = last_location->translation(i).inverse();  
-        
-      } else {
-        o = last_location->translation(i);
-      }
-      
-      if (check(Make_point()(p,o)) == CGAL::ON_BOUNDED_SIDE) {
-        break;
-      }
-    }
-
-    //assert(check(Make_point()(p,o)) == CGAL::ON_BOUNDED_SIDE);
-
-    source = Make_point()(source,o);
-    target = Make_point()(target,o);
-    
-    Segment_2 seg = Construct_hyperbolic_line_2()(source, target);
-    Circular_arc_2* carc = boost::get<Circular_arc_2>(&seg);
-    if (sqrt(squared_distance(source, carc->source())) < sqrt(squared_distance(source, carc->target()))) {
-      source = carc->source();
-      target = carc->target();
-    } else {
-      source = carc->target();
-      target = carc->source();
-    }
-
-    time = updateTime();
-  }
-
-  emit(changed());
-  qApp->processEvents();
-
-  if (go) {
-    //boost::this_thread::sleep(boost::posix_time::milliseconds(50));
-
-    // Uncomment here to generate snapshots!
-    // QPixmap sshot = this->grab(QRect(QPoint(560, 210), QSize(780, 770)));
-    // //QPixmap sshot = this->grab(QRect(QPoint(320, 55), QSize(625, 615)));
-    // std::stringstream ss;
-    // ss << "/Users/iordanov/Desktop/shots/sshot" << (idx++) << ".png";
-    // sshot.save(QString(ss.str().c_str()));
-    
-    animate();
   }
 }
 

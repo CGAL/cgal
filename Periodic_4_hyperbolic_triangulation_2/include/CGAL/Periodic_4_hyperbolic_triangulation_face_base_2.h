@@ -247,7 +247,7 @@ public:
 	}
 
 	void set_translation(int k, Hyperbolic_translation new_o) {
-		CGAL_triangulation_precondition( i >= 0 && i <= 2 );
+		CGAL_triangulation_precondition( k >= 0 && k <= 2 );
 		o[k] = new_o;
 	}
 
@@ -256,7 +256,7 @@ public:
 	}
 
 	void set_vertex(int k, const Vertex_handle& vh) {
-		CGAL_triangulation_precondition( i >= 0 && i <= 2 );
+		CGAL_triangulation_precondition( k >= 0 && k <= 2 );
 		V[k] = vh;
 	}
 
@@ -283,7 +283,7 @@ public:
 	}
 
 	void set_neighbor(int k, const Face_handle& nfh) {
-		CGAL_triangulation_precondition( i >= 0 && i <= 2 );
+		CGAL_triangulation_precondition( k >= 0 && k <= 2 );
 		N[k] = nfh;
 	}
 

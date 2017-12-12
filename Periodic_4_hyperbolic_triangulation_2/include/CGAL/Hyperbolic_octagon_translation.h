@@ -215,6 +215,7 @@ void get_generators(std::vector< Hyperbolic_octagon_translation<NT> >& gens) {
 	gens.push_back(Translation(7));
 }
 
+
 } // namespace CGAL
 
 #endif  // CGAL_HYPERBOLIC_OCTAGON_TRANSLATION

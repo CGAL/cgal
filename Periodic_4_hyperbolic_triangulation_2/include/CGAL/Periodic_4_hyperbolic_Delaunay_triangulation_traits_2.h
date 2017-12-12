@@ -1048,7 +1048,7 @@ public:
 				Point_2 CenterA ( qty/F2, FT(0) );
 				Point_2 CenterB ( qty*CGAL::sqrt(F2)/FT(4), qty*CGAL::sqrt(F2)/FT(4) );
 
-				// The squared radius of the Eucliden circle corresponding to the side s_1
+				// The squared radius of the Euclidean circle corresponding to the side s_1
 				FT      Radius2 ( (CGAL::sqrt(F2) - FT(1)) / F2 );
 
 				// Poincare disk (i.e., unit Euclidean disk)
@@ -1071,7 +1071,7 @@ public:
 					y = tmp;
 				}
 
-				// This tells us whether the point is in the side of the open boundary
+				// This tells us whether the point is on the side of the open boundary
 				bool on_open_side = ( ( p.y() + tan(CGAL_PI / 8.) * p.x() ) < 0.0 );
 
 				Point t(x, y);
