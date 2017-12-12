@@ -14,15 +14,14 @@ export MAKE_CMD='nmake'
 
 export PATH=$PATH:'/cygdrive/c/CGAL/CGAL-4.9/scripts'
 export PATH=$PATH:'/cygdrive/c/CGAL'
-export PATH="C:\Program Files\CMake\bin":$PATH
+export PATH="/cygdrive/c/dev/CMake/bin":$PATH
 
 #Header only
-export BOOST_INCLUDEDIR="C:\3rdPartyLibs\boost\boost_${BOOST_VERSION}"
-export EIGEN3_DIR="C:\3rdPartyLibs\eigen-eigen-f562a193118d"
-export ZLIB_INCLUDE_DIR="C:\3rdPartyLibs\zlib-1.2.8"
+export BOOST_INCLUDEDIR="C:/3rdPartyLibs/boost/boost_${BOOST_VERSION}"
+export EIGEN3_DIR="C:/3rdPartyLibs/eigen-eigen-f562a193118d"
 
 #paths depending on the architecture
-export BOOST_LIBRARYDIR="C:\3rdPartyLibs\boost\boost_${BOOST_VERSION}\lib${ARCH}_msvc${VC_VERSION}"
+export BOOST_LIBRARYDIR="C:/3rdPartyLibs/boost/boost_${BOOST_VERSION}/lib${ARCH}_msvc${VC_VERSION}"
 export PATH="`cygpath $BOOST_LIBRARYDIR`":$PATH
 
 export GMP_INC_DIR="C:\3rdPartyLibs\VC-${ARCH}\gmp-5.0.1_and_mpfr-3.0.0\include"
@@ -54,7 +53,32 @@ export OPENMESH_LIB_DIR="${OPENMESH_DIR}\build_vs${VC_VERSION_YEAR}-${ARCH}\Buil
 
 export PATH=${OPENMESH_LIB_DIR}:$PATH
 
-export PATH="/cygdrive/c/3rdPartyLibs/zlib-1.2.8/build_vs${VC_VERSION_YEAR}/Release":$PATH
-export PATH="/cygdrive/c/3rdPartyLibs/zlib-1.2.8/build_vs${VC_VERSION_YEAR}/Debug":$PATH
+#Zlib build_msvc2013 is sufficient for all versions
+export ZLIB_ROOT="C:/3rdPartyLibs/zlib-1.2.11"
+export PATH="`cygpath ${ZLIB_ROOT}/build_msvc2013/Release`":$PATH
+export PATH="`cygpath ${ZLIB_ROOT}/build_msvc2013/Debug`":$PATH
 
+#TBB
+export TBBROOT="C:/3rdPartyLibs/tbb2018_20170919oss"
+export PATH="`cygpath ${TBBROOT}/bin/${TBB_ARCH_PLATFORM}`":$PATH
+
+#Vtk
+export VTK_DIR="C:/3rdPartyLibs/VTK-8.0.1/build_vs${VC_VERSION_YEAR}-${ARCH}"
+export PATH="`cygpath ${VTK_DIR}/bin/Debug`":$PATH
+export PATH="`cygpath ${VTK_DIR}/bin/Release`":$PATH
+
+#LAS
+if [ -d /cygdrive/c/3rdPartyLibs/LAStools-master/build_vs${VC_VERSION_YEAR}-${ARCH} ]; then
+  export LASLIB_INC_DIR="C:/3rdPartyLibs/LAStools-master/LASlib/inc"
+  export LASLIB_LIB_DIR="C:/3rdPartyLibs/LAStools-master/build_vs${VC_VERSION_YEAR}-${ARCH}/Release"
+  export PATH="`cygpath ${LASLIB_LIB_DIR}`":$PATH
+fi
+
+#OpenCV
+if [ -d/cygdrive/c/3rdPartyLibs/opencv/build_vs${VC_VERSION_YEAR}-${ARCH} ]; then
+  export PATH="/cygdrive/c/dev/Python":$PATH
+  export OpenCV_DIR="C:/3rdPartyLibs/opencv/build_vs${VC_VERSION_YEAR}-${ARCH}"
+  export PATH="`cygpath ${OpenCV_DIR}/bin/Release`":$PATH
+  export PATH="`cygpath ${OpenCV_DIR}/bin/Debug`":$PATH
+fi
 
