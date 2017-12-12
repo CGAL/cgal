@@ -303,12 +303,17 @@ void DQQ_1step(Poly& p, VertexPointMap vpm, Mask mask) {
 
   // Build the point_buffer
   int pi = 0;
+  int vi=0;
+  std::vector<bool> is_border_vertex(num_v, false);
   BOOST_FOREACH(vertex_descriptor vd, p_vertices){
     BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_target(vd,p)){
       if (! is_border(hd,p)){
         mask.corner_node(hd, point_buffer[pi++]);
       }
+      else
+        is_border_vertex[vi]=true;
     }
+    ++vi;
   }
 
   // Reserve to avoid rellocations during insertions
@@ -365,7 +370,7 @@ void DQQ_1step(Poly& p, VertexPointMap vpm, Mask mask) {
     }
   }
 
-  // After this point, the original border edges are in front!
+
   BOOST_FOREACH(halfedge_descriptor eeh, border_halfedges){
     halfedge_descriptor eh = eeh;
     if (is_border(eh,p)){
@@ -383,10 +388,11 @@ void DQQ_1step(Poly& p, VertexPointMap vpm, Mask mask) {
   }
 
   vitr = p_vertices.begin();
-  for (typename boost::graph_traits<Poly>::vertices_size_type i = 0; i < num_v-num_be; ++i) {
+  for (typename boost::graph_traits<Poly>::vertices_size_type i = 0; i < num_v; ++i) {
     vertex_descriptor vh = *vitr;
     ++vitr;
-    Euler::remove_center_vertex(halfedge(vh,p),p);
+    if (!is_border_vertex[i])
+      Euler::remove_center_vertex(halfedge(vh,p),p);
   }
 
   delete []point_buffer;
