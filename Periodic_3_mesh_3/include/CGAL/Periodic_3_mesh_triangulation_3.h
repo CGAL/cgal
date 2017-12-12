@@ -199,6 +199,37 @@ public:
     Base::set_domain(domain);
   }
 
+  bool is_point_too_close_to_border(const Periodic_bare_point& pbp) const
+  {
+    Bare_point p = construct_point(pbp);
+    const FT px = p.x();
+    const FT py = p.y();
+    const FT pz = p.z();
+    const FT dxm = domain().xmin();
+    const FT dym = domain().ymin();
+    const FT dzm = domain().zmin();
+    const FT dxM = domain().xmax();
+    const FT dyM = domain().ymax();
+    const FT dzM = domain().zmax();
+
+    // simply comparing to FT::epsilon() is probably not completely satisfactory
+    const FT eps = std::numeric_limits<FT>::epsilon();
+
+    FT diff = CGAL::abs(px - dxm);
+    if(diff < eps && diff > 0) return true;
+    diff = CGAL::abs(px - dxM);
+    if(diff < eps && diff > 0) return true;
+    diff = CGAL::abs(py - dym);
+    if(diff < eps && diff > 0) return true;
+    diff = CGAL::abs(py - dyM);
+    if(diff < eps && diff > 0) return true;
+    diff = CGAL::abs(pz - dzm);
+    if(diff < eps && diff > 0) return true;
+    diff = CGAL::abs(pz - dzM);
+    if(diff < eps && diff > 0) return true;
+    return false;
+  }
+
   Bare_point snap_to_domain_border(const Bare_point& p) const
   {
     const FT px = p.x();
@@ -222,7 +253,10 @@ public:
     if(CGAL::abs(pz - dzm) < eps) sz = domain().zmin();
     if(CGAL::abs(pz - dzM) < eps) sz = domain().zmax();
 
+    std::cout << "epsilon: " << eps << std::endl;
+    std::cout.precision(20);
     std::cout << "snapped " << p << " to " << sx << " " << sy << " " << sz << std::endl;
+
     return geom_traits().construct_point_3_object()(sx, sy, sz);
   }
 
@@ -240,12 +274,18 @@ public:
   /// instance of the same bare point that lives inside the base domain
   Bare_point robust_canonicalize_point(const Bare_point& p) const
   {
-    bool had_to_use_exact = false;
-    Periodic_bare_point pbp = construct_periodic_point(p, had_to_use_exact);
+    bool should_snap = false;
+    Periodic_bare_point pbp = construct_periodic_point(p, should_snap);
 
-    if(had_to_use_exact)
+    if(!should_snap)
     {
-      // the point is close to a border, snap it !
+      // Even if there is no issue while constructing the canonical point,
+      // snap the point if it's too close to a border of the domain
+      should_snap = is_point_too_close_to_border(pbp);
+    }
+
+    if(should_snap)
+    {
       Bare_point sp = snap_to_domain_border(p);
 
       // might have snapped to a 'max' of the domain, which is not in the domain
@@ -280,17 +320,14 @@ public:
   /// instance of the same weighted point that lives inside the base domain
   Weighted_point robust_canonicalize_point(const Weighted_point& p) const
   {
-    bool had_to_use_exact = false;
-    Periodic_weighted_point pwp = construct_periodic_weighted_point(p, had_to_use_exact);
+    typename Geom_traits::Compute_weight_3 cw = geom_traits().compute_weight_3_object();
+    typename Geom_traits::Construct_point_3 cp = geom_traits().construct_point_3_object();
+    typename Geom_traits::Construct_weighted_point_3 cwp = geom_traits().construct_weighted_point_3_object();
 
-    if(had_to_use_exact)
-    {
-      // the point is close to a border, snap it !
-      Weighted_point sp = snap_to_domain_border(p);
-      return canonicalize_point(sp);
-    }
+    const Bare_point& bp = cp(p);
+    Bare_point canonical_point = robust_canonicalize_point(bp);
 
-    return construct_weighted_point(pwp);
+    return cwp(canonical_point, cw(p));
   }
 
   Weighted_point canonicalize_point(const Weighted_point& p) const
