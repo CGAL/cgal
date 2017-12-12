@@ -62,11 +62,12 @@ struct SEP_header_aux
   
 public:
   template <typename Tuple_string_variant>
-  void operator<<(const Tuple_string_variant& tuple)
+  SEP_header_aux& operator<<(const Tuple_string_variant& tuple)
   {
     using boost::get;
     visitor vis(this, get<0>(tuple));
     boost::apply_visitor(vis, get<1>(tuple));
+    return *this;
   }
 
 private:
