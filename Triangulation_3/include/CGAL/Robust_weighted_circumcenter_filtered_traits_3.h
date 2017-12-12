@@ -61,8 +61,8 @@ public:
 #ifndef CGAL_CFG_MATCHING_BUG_6
   using Base::operator();
 #else // CGAL_CFG_MATCHING_BUG_6
-  typedef typename K::Sphere_3                         Sphere_3;
-  typedef typename K::Circle_3                         Circle_3;
+  typedef typename Kernel::Sphere_3                    Sphere_3;
+  typedef typename Kernel::Circle_3                    Circle_3;
 
   result_type operator()(const Sphere_3& s) const
   { return this->CSR_Base::operator()(s); }
