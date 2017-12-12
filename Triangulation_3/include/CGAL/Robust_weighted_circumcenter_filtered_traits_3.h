@@ -56,7 +56,7 @@ public:
       traits(k)
   { }
 
-#ifndef  CGAL_CFG_MATCHING_BUG_6
+#ifndef CGAL_CFG_MATCHING_BUG_6
   using CSR_Base::operator();
 #else // CGAL_CFG_MATCHING_BUG_6
   typedef typename K::Sphere_3                         Sphere_3;

@@ -88,32 +88,30 @@ public:
   typedef Functor_with_offset_points_adaptor_3<Self, typename K::Construct_circumcenter_3>
       Construct_circumcenter_3;
 
-  using Base::construct_point_3_object;
-
   // Operations
   Side_of_oriented_sphere_3 side_of_oriented_sphere_3_object() const {
     return Side_of_oriented_sphere_3(this->Base::side_of_oriented_sphere_3_object(),
-                                     construct_point_3_object());
+                                     this->construct_point_3_object());
   }
   Compare_distance_3 compare_distance_3_object() const {
     return Compare_distance_3(this->Base::compare_distance_3_object(),
-                              construct_point_3_object());
+                              this->construct_point_3_object());
   }
   Side_of_bounded_sphere_3 side_of_bounded_sphere_3_object() const {
     return Side_of_bounded_sphere_3(this->Base::side_of_bounded_sphere_3_object(),
-                                    construct_point_3_object());
+                                    this->construct_point_3_object());
   }
   Coplanar_orientation_3 coplanar_orientation_3_object() const {
     return Coplanar_orientation_3(this->Base::coplanar_orientation_3_object(),
-                                  construct_point_3_object());
+                                  this->construct_point_3_object());
   }
   Coplanar_side_of_bounded_circle_3 coplanar_side_of_bounded_circle_3_object() const {
     return Coplanar_side_of_bounded_circle_3(this->Base::coplanar_side_of_bounded_circle_3_object(),
-                                             construct_point_3_object());
+                                             this->construct_point_3_object());
   }
   Construct_circumcenter_3 construct_circumcenter_3_object() const {
     return Construct_circumcenter_3(this->Base::construct_circumcenter_3_object(),
-                                    construct_point_3_object());
+                                    this->construct_point_3_object());
   }
 };
 
