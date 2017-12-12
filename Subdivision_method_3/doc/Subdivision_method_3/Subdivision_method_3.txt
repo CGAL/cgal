@@ -150,12 +150,6 @@ in the internal container are sequentially ordered (e.g.
 This implies that the iterators traverse the primitives in
 the order of their creations/insertions.
 
-\attention The four subdivision techniques have been made to work with
-`Surface_mesh` despite `Surface_mesh` not necessarily inserting new elements at
-the end of its containers (see Section \ref sectionSurfaceMesh_properties of the
-`Surface_mesh`). However, it is required that the `Surface_mesh` passed as input
-is garbage-free, which can be achieved by first calling `Surface_mesh::collect_garbage()`.
-
 Section \ref secRefHost gives detailed explanations on this
 two restrictions.
 
