@@ -395,37 +395,54 @@ public:
 // Public section
 // ----------------------------------------------------------------------------
 
-//=============================================================================
-/// \ingroup PkgPointSetProcessingAlgorithms
-/// This is an implementation of the Weighted Locally Optimal Projection (WLOP) simplification algorithm.
-/// The WLOP simplification algorithm can produce a set of 
-/// denoised, outlier-free and evenly distributed particles over the original 
-/// dense point cloud. 
-/// The core of the algorithm is a Weighted Locally Optimal Projection operator
-/// with a density uniformization term. 
-/// For more details, please refer to \cgalCite{wlop-2009}.
-///
-/// A parallel version of WLOP is provided and requires the executable to be 
-/// linked against the <a href="http://www.threadingbuildingblocks.org">Intel TBB library</a>.
-/// To control the number of threads used, the user may use the tbb::task_scheduler_init class.
-/// See the <a href="http://www.threadingbuildingblocks.org/documentation">TBB documentation</a> 
-/// for more details.
-///
-/// @tparam ConcurrencyTag enables sequential versus parallel algorithm.
-///                         Possible values are `Sequential_tag`
-///                         and `Parallel_tag`.
-/// @tparam OutputIterator Type of the output iterator. 
-///         It must accept objects of type `Kernel::Point_3`.
-/// @tparam RandomAccessIterator Iterator over input points.
-/// @tparam PointMap is a model of `ReadablePropertyMap` 
-///         with the value type of `ForwardIterator` as key type and `Kernel::Point_3` as value type.
-///         It can be omitted if the value type of ` RandomAccessIterator` is convertible  
-///         to `Kernel::Point_3`.
-/// @tparam Kernel Geometric traits class.
-///      It can be omitted and deduced automatically from the value type of `PointMap`
-///      using `Kernel_traits`.
+/**
+   \ingroup PkgPointSetProcessingAlgorithms
+   This is an implementation of the Weighted Locally Optimal Projection (WLOP) simplification algorithm.
+   The WLOP simplification algorithm can produce a set of 
+   denoised, outlier-free and evenly distributed particles over the original 
+   dense point cloud. 
+   The core of the algorithm is a Weighted Locally Optimal Projection operator
+   with a density uniformization term. 
+   For more details, please refer to \cgalCite{wlop-2009}.
 
-// This variant requires all parameters.
+   A parallel version of WLOP is provided and requires the executable to be 
+   linked against the <a href="http://www.threadingbuildingblocks.org">Intel TBB library</a>.
+   To control the number of threads used, the user may use the tbb::task_scheduler_init class.
+   See the <a href="http://www.threadingbuildingblocks.org/documentation">TBB documentation</a> 
+   for more details.
+
+   \tparam ConcurrencyTag enables sequential versus parallel algorithm.
+   Possible values are `Sequential_tag`
+   and `Parallel_tag`.
+   \tparam PointRange is a model of `Range`. The value type of
+   its iterator is the key type of the named parameter `point_map`.
+   \tparam OutputIterator Type of the output iterator. 
+   It must accept objects of type `geom_traits::Point_3`.
+
+   \param points input point range.
+   \param output iterator where output points are put.
+   \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
+
+   \cgalNamedParamsBegin
+     \cgalParamBegin{point_map} a model of `ReadWritePropertyMap` with value type `geom_traits::Point_3`.
+     If this parameter is omitted, `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
+     \cgalParamBegin{normal_map} a model of `ReadWritePropertyMap` with value type
+     `geom_traits::Vector_3`.\cgalParamEnd
+     \cgalParamBegin{select_percentage} percentage of points to retain. The default value is set to 
+     5 (\%).\cgalParamEnd
+     \cgalParamBegin{neighbor_radius} spherical neighborhood radius. This is a key parameter that needs to be
+     finely tuned. The result will be irregular if too small, but a larger value will impact the runtime. In 
+     practice, choosing a radius such that the neighborhood of each sample point includes at least two rings 
+     of neighboring sample points gives satisfactory result. The default value is set to 8 times the average 
+     spacing of the point set.\cgalParamEnd
+     \cgalParamBegin{number_of_iterations} number of iterations to solve the optimsation problem. The default
+     value is 35. More iterations give a more regular result but increase the runtime.\cgalParamEnd
+     \cgalParamBegin{require_uniform_sampling} an optional preprocessing, which will give better result if the
+     distribution of the input points is highly non-uniform. The default value is `false`. \cgalParamEnd
+     \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
+   \cgalNamedParamsEnd
+
+*/
 template <typename ConcurrencyTag,
           typename PointRange,
           typename OutputIterator,
@@ -433,7 +450,7 @@ template <typename ConcurrencyTag,
 OutputIterator
 wlop_simplify_and_regularize_point_set(
   PointRange& points,
-  OutputIterator output,       ///< output iterator where output points are put.
+  OutputIterator output,
   const NamedParameters& np
 )
 {
@@ -624,6 +641,9 @@ wlop_simplify_and_regularize_point_set(
   return output;
 }
 
+
+/// \cond SKIP_IN_MANUAL
+// variant with default NP
 template <typename ConcurrencyTag,
           typename PointRange,
           typename OutputIterator>
@@ -635,36 +655,8 @@ wlop_simplify_and_regularize_point_set(
   return wlop_simplify_and_regularize_point_set<ConcurrencyTag>
     (points, output, CGAL::Point_set_processing_3::parameters::all_default(points));
 }
-  
-/// This is an implementation of the Weighted Locally Optimal Projection (WLOP) simplification algorithm.
-/// The WLOP simplification algorithm can produce a set of 
-/// denoised, outlier-free and evenly distributed particles over the original 
-/// dense point cloud. 
-/// The core of the algorithm is a Weighted Locally Optimal Projection operator
-/// with a density uniformization term. 
-/// For more details, please refer to \cgalCite{wlop-2009}.
-///
-/// A parallel version of WLOP is provided and requires the executable to be 
-/// linked against the <a href="http://www.threadingbuildingblocks.org">Intel TBB library</a>.
-/// To control the number of threads used, the user may use the tbb::task_scheduler_init class.
-/// See the <a href="http://www.threadingbuildingblocks.org/documentation">TBB documentation</a> 
-/// for more details.
-///
-/// @tparam ConcurrencyTag enables sequential versus parallel algorithm.
-///                         Possible values are `Sequential_tag`
-///                         and `Parallel_tag`.
-/// @tparam OutputIterator Type of the output iterator. 
-///         It must accept objects of type `Kernel::Point_3`.
-/// @tparam RandomAccessIterator Iterator over input points.
-/// @tparam PointMap is a model of `ReadablePropertyMap` 
-///         with the value type of `ForwardIterator` as key type and `Kernel::Point_3` as value type.
-///         It can be omitted if the value type of ` RandomAccessIterator` is convertible  
-///         to `Kernel::Point_3`.
-/// @tparam Kernel Geometric traits class.
-///      It can be omitted and deduced automatically from the value type of `PointMap`
-///      using `Kernel_traits`.
 
-// This variant requires all parameters.
+// deprecated API
 template <typename ConcurrencyTag,
           typename OutputIterator,
           typename RandomAccessIterator,
@@ -735,12 +727,8 @@ wlop_simplify_and_regularize_point_set(
      number_of_iterations(max_iter_number).
      require_uniform_sampling (require_uniform_sampling));
 }
-/// @endcond
 
-
-
-/// @cond SKIP_IN_MANUAL
-/// This variant creates a default point property map=Dereference_property_map.
+// deprecated API
 template <typename ConcurrencyTag, 
           typename OutputIterator,     
           typename RandomAccessIterator >

@@ -363,31 +363,44 @@ vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input 
 }
 /// @endcond
 
-/// \ingroup PkgPointSetProcessingAlgorithms
-/// Estimates normal directions of the points in the range `[first, beyond)`
-/// using the Voronoi Covariance Measure with a radius for the convolution.
-/// The output normals are randomly oriented.
-///
-/// See `compute_vcm()` for a detailed description of the parameters `offset_radius` and `convolution_radius`
-/// and of the Voronoi Covariance Measure.
-///
-/// @tparam ForwardIterator iterator over input points.
-/// @tparam PointMap is a model of `ReadablePropertyMap` with a value_type = `Kernel::Point_3`.
-/// @tparam NormalMap is a model of `WritablePropertyMap` with a value_type = `Kernel::Vector_3`.
-/// \tparam VCMTraits is a model of `DiagonalizeTraits`. It can be
-/// omitted: if Eigen 3 (or greater) is available and
-/// `CGAL_EIGEN3_ENABLED` is defined then an overload using
-/// `Eigen_diagonalize_traits` is provided. Otherwise, the internal
-/// implementation `Diagonalize_traits` is used.
-// This variant deduces the kernel from the point property map
-// and uses a radius for the convolution.
+
+/**  
+   \ingroup PkgPointSetProcessingAlgorithms
+   Estimates normal directions of the range of `points`
+   using the Voronoi Covariance Measure with a radius for the convolution.
+   The output normals are randomly oriented.
+
+   See `compute_vcm()` for a detailed description of the parameters `offset_radius` and `convolution_radius`
+   and of the Voronoi Covariance Measure.
+
+   \tparam PointRange is a model of `Range`. The value type of
+   its iterator is the key type of the named parameter `point_map`.
+
+   \param points input point range.
+   \param offset_radius offset_radius.
+   \param convolution_radius convolution_radius.
+   \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
+
+   \cgalNamedParamsBegin
+     \cgalParamBegin{point_map} a model of `ReadablePropertyMap` with value type `geom_traits::Point_3`.
+     If this parameter is omitted, `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
+     \cgalParamBegin{normal_map} a model of `WritablePropertyMap` with value type
+     `geom_traits::Vector_3`.\cgalParamEnd
+       \cgalParamBegin{diagonalize_traits} a model of `DiagonalizeTraits`. It can be omitted:
+       if Eigen 3 (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined then an overload
+       using `Eigen_diagonalize_traits` is provided. Otherwise, the internal implementation
+       `CGAL::Diagonalize_traits` is used.\cgalParamEnd
+     \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
+   \cgalNamedParamsEnd
+
+*/
 template <typename PointRange,
           typename NamedParameters
 >
 void
 vcm_estimate_normals (PointRange& points,
-                      double offset_radius, ///< offset radius.
-                      double convolution_radius, ///< convolution radius.
+                      double offset_radius,
+                      double convolution_radius,
                       const NamedParameters& np
 )
 {
@@ -411,6 +424,8 @@ vcm_estimate_normals (PointRange& points,
                                             Kernel());
 }
 
+/// \cond SKIP_IN_MANUAL
+// variant with default NP
 template <typename PointRange>
 void
 vcm_estimate_normals (PointRange& points,
@@ -422,23 +437,7 @@ vcm_estimate_normals (PointRange& points,
      CGAL::Point_set_processing_3::parameters::all_default(points));
 }
 
-/// Estimates normal directions of the points in the range `[first, beyond)`
-/// using the Voronoi Covariance Measure with a radius for the convolution.
-/// The output normals are randomly oriented.
-///
-/// See `compute_vcm()` for a detailed description of the parameters `offset_radius` and `convolution_radius`
-/// and of the Voronoi Covariance Measure.
-///
-/// @tparam ForwardIterator iterator over input points.
-/// @tparam PointMap is a model of `ReadablePropertyMap` with a value_type = `Kernel::Point_3`.
-/// @tparam NormalMap is a model of `WritablePropertyMap` with a value_type = `Kernel::Vector_3`.
-/// \tparam VCMTraits is a model of `DiagonalizeTraits`. It can be
-/// omitted: if Eigen 3 (or greater) is available and
-/// `CGAL_EIGEN3_ENABLED` is defined then an overload using
-/// `Eigen_diagonalize_traits` is provided. Otherwise, the internal
-/// implementation `Diagonalize_traits` is used.
-// This variant deduces the kernel from the point property map
-// and uses a radius for the convolution.
+// deprecated API
 template < typename ForwardIterator,
            typename PointMap,
            typename NormalMap,
@@ -463,34 +462,45 @@ vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input 
      normal_map (normal_map).
      diagonalize_traits (VCMTraits()));
 }
+/// \endcond
 
 
-/// \ingroup PkgPointSetProcessingAlgorithms
-/// Estimates normal directions of the points in the range `[first, beyond)`
-/// using the Voronoi Covariance Measure with a number of neighbors for the convolution.
-/// The output normals are randomly oriented.
-///
-/// See `compute_vcm()` for a detailed description of the parameter `offset_radius`
-/// and of the Voronoi Covariance Measure.
-///
-/// @tparam ForwardIterator iterator over input points.
-/// @tparam PointMap is a model of `ReadablePropertyMap` with a value_type = `Kernel::Point_3`.
-/// @tparam NormalMap is a model of `WritablePropertyMap` with a value_type = `Kernel::Vector_3`.
-/// \tparam VCMTraits is a model of `DiagonalizeTraits`. It can be
-/// omitted: if Eigen 3 (or greater) is available and
-/// `CGAL_EIGEN3_ENABLED` is defined then an overload using
-/// `Eigen_diagonalize_traits` is provided. Otherwise, the internal
-/// implementation `Diagonalize_traits` is used.
+/**
+   \ingroup PkgPointSetProcessingAlgorithms
+   Estimates normal directions of the range of `points`
+   using the Voronoi Covariance Measure with a number of neighbors for the convolution.
+   The output normals are randomly oriented.
 
-// This variant deduces the kernel from the point property map
-// and uses a number of neighbors for the convolution.
+   See `compute_vcm()` for a detailed description of the parameter `offset_radius`
+   and of the Voronoi Covariance Measure.
+
+   \tparam PointRange is a model of `Range`. The value type of
+   its iterator is the key type of the named parameter `point_map`.
+
+   \param points input point range.
+   \param offset_radius offset_radius.
+   \param k number of neighbor points used for convolution.
+   \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
+
+   \cgalNamedParamsBegin
+     \cgalParamBegin{point_map} a model of `ReadablePropertyMap` with value type `geom_traits::Point_3`.
+     If this parameter is omitted, `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
+     \cgalParamBegin{normal_map} a model of `WritablePropertyMap` with value type
+     `geom_traits::Vector_3`.\cgalParamEnd
+       \cgalParamBegin{diagonalize_traits} a model of `DiagonalizeTraits`. It can be omitted:
+       if Eigen 3 (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined then an overload
+       using `Eigen_diagonalize_traits` is provided. Otherwise, the internal implementation
+       `CGAL::Diagonalize_traits` is used.\cgalParamEnd
+     \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
+   \cgalNamedParamsEnd
+*/
 template < typename PointRange,
            typename NamedParameters
 >
 void
 vcm_estimate_normals (PointRange& points,
-                      double offset_radius, ///< offset radius.
-                      unsigned int k, ///< number of neighbor points used for the convolution.
+                      double offset_radius,
+                      unsigned int k,
                       const NamedParameters& np
 )
 {
@@ -515,24 +525,20 @@ vcm_estimate_normals (PointRange& points,
                                             k);
 }
 
-/// Estimates normal directions of the points in the range `[first, beyond)`
-/// using the Voronoi Covariance Measure with a number of neighbors for the convolution.
-/// The output normals are randomly oriented.
-///
-/// See `compute_vcm()` for a detailed description of the parameter `offset_radius`
-/// and of the Voronoi Covariance Measure.
-///
-/// @tparam ForwardIterator iterator over input points.
-/// @tparam PointMap is a model of `ReadablePropertyMap` with a value_type = `Kernel::Point_3`.
-/// @tparam NormalMap is a model of `WritablePropertyMap` with a value_type = `Kernel::Vector_3`.
-/// \tparam VCMTraits is a model of `DiagonalizeTraits`. It can be
-/// omitted: if Eigen 3 (or greater) is available and
-/// `CGAL_EIGEN3_ENABLED` is defined then an overload using
-/// `Eigen_diagonalize_traits` is provided. Otherwise, the internal
-/// implementation `Diagonalize_traits` is used.
+/// \cond SKIP_IN_MANUAL
+// variant with default NP
+template <typename PointRange>
+void
+vcm_estimate_normals (PointRange& points,
+                      double offset_radius, ///< offset radius.
+                      unsigned int k)
+{
+  return vcm_estimate_normals
+    (points, offset_radius, k,
+     CGAL::Point_set_processing_3::parameters::all_default(points));
+}
 
-// This variant deduces the kernel from the point property map
-// and uses a number of neighbors for the convolution.
+// deprecated API
 template < typename ForwardIterator,
            typename PointMap,
            typename NormalMap,
@@ -557,7 +563,8 @@ vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input 
      normal_map (normal_map).
      diagonalize_traits (VCMTraits()));
 }
-  
+
+// deprecated API  
 template < typename ForwardIterator,
            typename PointMap,
            typename NormalMap
@@ -579,6 +586,7 @@ vcm_estimate_normals (ForwardIterator first,
      normal_map (normal_map));
 }
 
+// deprecated API  
 template < typename ForwardIterator,
            typename PointMap,
            typename NormalMap
@@ -601,9 +609,7 @@ vcm_estimate_normals (ForwardIterator first,
 }
 
 
-/// @cond SKIP_IN_MANUAL
-// This variant creates a default point property map = Identity_property_map
-// and use a radius for the convolution.
+// deprecated API  
 template < typename ForwardIterator,
            typename NormalMap
 >
@@ -620,11 +626,8 @@ vcm_estimate_normals (ForwardIterator first,
      offset_radius, convolution_radius,
      CGAL::parameters::normal_map (normal_map));
 }
-/// @endcond
 
-/// @cond SKIP_IN_MANUAL
-// This variant creates a default point property map = Identity_property_map
-// and use a number of neighbors for the convolution.
+// deprecated API  
 template < typename ForwardIterator,
            typename NormalMap
 >
@@ -641,7 +644,7 @@ vcm_estimate_normals (ForwardIterator first,
      offset_radius, nb_neighbors_convolve,
      CGAL::parameters::normal_map (normal_map));
 }
-/// @endcond
+/// \endcond
 
 } // namespace CGAL
 

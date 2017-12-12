@@ -133,23 +133,30 @@ compute_average_spacing(const typename Kernel::Point_3& query, ///< 3D point who
 // Public section
 // ----------------------------------------------------------------------------
 
-/// \ingroup PkgPointSetProcessingAlgorithms
-/// Computes average spacing from k nearest neighbors.
-///
-/// \pre `k >= 2.`
-///
-/// @tparam ConcurrencyTag enables sequential versus parallel algorithm.
-///                         Possible values are `Sequential_tag`
-///                         and `Parallel_tag`.
-/// @tparam InputIterator iterator over input points.
-/// @tparam PointMap is a model of `ReadablePropertyMap` with value type `Point_3<Kernel>`.
-///        It can be omitted if the value type of `InputIterator`  is convertible to `Point_3<Kernel>`.
-/// @tparam Kernel Geometric traits class.
-///        It can be omitted and deduced automatically from the value type of `PointMap`.
-///
-/// @return average spacing (scalar).
+/**
+   \ingroup PkgPointSetProcessingAlgorithms
+   Computes average spacing from k nearest neighbors.
 
-// This variant requires the kernel.
+   \pre `k >= 2.`
+
+   \tparam ConcurrencyTag enables sequential versus parallel algorithm.
+   Possible values are `Sequential_tag`
+   and `Parallel_tag`.
+   \tparam PointRange is a model of `ConstRange`. The value type of
+   its iterator is the key type of the named parameter `point_map`.
+
+   \param points input point range.
+   \param k number of neighbors.
+   \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
+
+   \cgalNamedParamsBegin
+     \cgalParamBegin{point_map} a model of `ReadablePropertyMap` with value type `geom_traits::Point_3`.
+     If this parameter is omitted, `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
+     \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
+   \cgalNamedParamsEnd
+
+   \return average spacing (scalar).
+*/
 template <typename ConcurrencyTag,
 	  typename PointRange,
           typename NamedParameters
@@ -157,7 +164,7 @@ template <typename ConcurrencyTag,
 double
 compute_average_spacing(
   const PointRange& points,
-  unsigned int k, ///< number of neighbors.
+  unsigned int k,
   const NamedParameters& np)
 {
   using boost::choose_param;
@@ -223,6 +230,9 @@ compute_average_spacing(
    return sum_spacings / (FT)(kd_tree_points.size ());
 }
 
+/// \cond SKIP_IN_MANUAL
+
+// variant with default NP
 template <typename ConcurrencyTag, typename PointRange>
 double compute_average_spacing(
   const PointRange& points,
@@ -232,6 +242,8 @@ double compute_average_spacing(
     (points, k, CGAL::Point_set_processing_3::parameters::all_default(points));
 }
 
+
+// deprecated API
 template <typename ConcurrencyTag,
 	  typename InputIterator,
           typename PointMap,
@@ -253,8 +265,8 @@ compute_average_spacing(
 }
 
   
-/// @cond SKIP_IN_MANUAL
-// This variant deduces the kernel from the iterator type.
+
+// deprecated API
 template <typename ConcurrencyTag,
 	  typename InputIterator,
           typename PointMap
@@ -272,10 +284,8 @@ compute_average_spacing(
     k,
     CGAL::parameters::point_map (point_map));
 }
-/// @endcond
 
-/// @cond SKIP_IN_MANUAL
-// This variant creates a default point property map = Identity_property_map.
+// deprecated API
 template < typename ConcurrencyTag, typename InputIterator >
 typename Kernel_traits<typename std::iterator_traits<InputIterator>::value_type>::Kernel::FT
 compute_average_spacing(
@@ -287,7 +297,8 @@ compute_average_spacing(
   return compute_average_spacing<ConcurrencyTag>(
     CGAL::make_range (first,beyond), k);
 }
-/// @endcond
+  
+/// \endcond
 
 
 } //namespace CGAL

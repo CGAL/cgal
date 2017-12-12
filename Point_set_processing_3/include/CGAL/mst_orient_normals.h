@@ -497,36 +497,44 @@ create_mst_graph(
 // Public section
 // ----------------------------------------------------------------------------
 
-/// \ingroup PkgPointSetProcessingAlgorithms
-/// Orients the normals of the `[first, beyond)` range of points using the propagation
-/// of a seed orientation through a minimum spanning tree of the Riemannian graph [Hoppe92].
-///
-/// This method modifies the order of input points so as to pack all sucessfully oriented points first,
-/// and returns an iterator over the first point with an unoriented normal (see erase-remove idiom).
-/// For this reason it should not be called on sorted containers.
-/// \warning This function may fail when Boost version 1.54 is used,
-/// because of the following bug: https://svn.boost.org/trac/boost/ticket/9012
-///
-/// \pre Normals must be unit vectors
-/// \pre `k >= 2`
-///
-/// @tparam ForwardIterator iterator over input points.
-/// @tparam PointMap is a model of `ReadablePropertyMap` with value type  `Point_3<Kernel>`.
-///        It can be omitted if the value type of `ForwardIterator` is convertible to `Point_3<Kernel>`.
-/// @tparam NormalMap is a model of `ReadWritePropertyMap` with value type `Vector_3<Kernel>` .
-/// @tparam Kernel Geometric traits class.
-///        It can be omitted and deduced automatically from the value type of `PointMap`.
-///
-/// @return iterator over the first point with an unoriented normal.
+/**  
+   \ingroup PkgPointSetProcessingAlgorithms
+   Orients the normals of the range of `points` using the propagation
+   of a seed orientation through a minimum spanning tree of the Riemannian graph [Hoppe92].
 
-// This variant requires all parameters.
+   This method modifies the order of input points so as to pack all sucessfully oriented points first,
+   and returns an iterator over the first point with an unoriented normal (see erase-remove idiom).
+   For this reason it should not be called on sorted containers.
+   \warning This function may fail when Boost version 1.54 is used,
+   because of the following bug: https://svn.boost.org/trac/boost/ticket/9012
+
+   \pre Normals must be unit vectors
+   \pre `k >= 2`
+
+   \tparam PointRange is a model of `Range`. The value type of
+   its iterator is the key type of the named parameter `point_map`.
+
+   \param points input point range.
+   \param k number of neighbors.
+   \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
+
+   \cgalNamedParamsBegin
+     \cgalParamBegin{point_map} a model of `ReadablePropertyMap` with value type `geom_traits::Point_3`.
+     If this parameter is omitted, `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
+     \cgalParamBegin{normal_map} a model of `ReadWritePropertyMap` with value type
+     `geom_traits::Vector_3`.\cgalParamEnd
+     \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
+   \cgalNamedParamsEnd
+
+   \return iterator over the first point with an unoriented normal.
+*/
 template <typename PointRange,
           typename NamedParameters
 >
 typename PointRange::iterator
 mst_orient_normals(
   PointRange& points,
-  unsigned int k, ///< number of neighbors
+  unsigned int k,
   const NamedParameters& np)
 {
     using boost::choose_param;
@@ -635,6 +643,8 @@ mst_orient_normals(
     return first_unoriented_point;
 }
 
+/// \cond SKIP_IN_MANUAL
+// variant with default NP
 template <typename PointRange,
           typename NamedParameters
 >
@@ -647,28 +657,7 @@ mst_orient_normals(
   return mst_orient_normals (points, k, CGAL::Point_set_processing_3::parameters::all_default(points));
 }
   
-/// Orients the normals of the `[first, beyond)` range of points using the propagation
-/// of a seed orientation through a minimum spanning tree of the Riemannian graph [Hoppe92].
-///
-/// This method modifies the order of input points so as to pack all sucessfully oriented points first,
-/// and returns an iterator over the first point with an unoriented normal (see erase-remove idiom).
-/// For this reason it should not be called on sorted containers.
-/// \warning This function may fail when Boost version 1.54 is used,
-/// because of the following bug: https://svn.boost.org/trac/boost/ticket/9012
-///
-/// \pre Normals must be unit vectors
-/// \pre `k >= 2`
-///
-/// @tparam ForwardIterator iterator over input points.
-/// @tparam PointMap is a model of `ReadablePropertyMap` with value type  `Point_3<Kernel>`.
-///        It can be omitted if the value type of `ForwardIterator` is convertible to `Point_3<Kernel>`.
-/// @tparam NormalMap is a model of `ReadWritePropertyMap` with value type `Vector_3<Kernel>` .
-/// @tparam Kernel Geometric traits class.
-///        It can be omitted and deduced automatically from the value type of `PointMap`.
-///
-/// @return iterator over the first point with an unoriented normal.
-
-// This variant requires all parameters.
+// deprecated API
 template <typename ForwardIterator,
           typename PointMap,
           typename NormalMap,
@@ -693,8 +682,7 @@ mst_orient_normals(
      geom_traits(kernel));
 }
   
-/// @cond SKIP_IN_MANUAL
-// This variant deduces the kernel from the point property map.
+// deprecated API
 template <typename ForwardIterator,
           typename PointMap,
           typename NormalMap
@@ -715,10 +703,8 @@ mst_orient_normals(
      CGAL::parameters::point_map (point_map).
      normal_map (normal_map));
 }
-/// @endcond
 
-/// @cond SKIP_IN_MANUAL
-// This variant creates a default point property map = Identity_property_map.
+// deprecated API
 template <typename ForwardIterator,
           typename NormalMap
 >
@@ -736,7 +722,7 @@ mst_orient_normals(
      k,
      CGAL::parameters::normal_map (normal_map));
 }
-/// @endcond
+/// \endcond
 
 
 } //namespace CGAL

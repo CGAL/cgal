@@ -279,36 +279,39 @@ update_new_point(
 // Public section
 // ----------------------------------------------------------------------------
 
-/// \ingroup PkgPointSetProcessingAlgorithms
-/// This method progressively upsamples the point set while 
-/// approaching the edge singularities (detected by normal variation), which 
-/// generates a denser point set from an input point set. This has applications 
-/// in point-based rendering, hole filling, and sparse surface reconstruction. 
-/// Normals of points are required as input. For more details, please refer to \cgalCite{ear-2013}.
-/// 
-/// @tparam ConcurrencyTag enables sequential versus parallel
-///                         versions of `compute_average_spacing()` (called internally).
-///                         Possible values are `Sequential_tag`
-///                         and `Parallel_tag`.
-/// @tparam OutputIterator Type of the output iterator. 
-///         The type of the objects put in it is 
-///         `std::pair<Kernel::Point_3, Kernel::Vector_3>`.
-///         Note that the user may use a 
-///         <A HREF="http://www.boost.org/libs/iterator/doc/function_output_iterator.html">function_output_iterator</A>
-///         to match specific needs.
-/// @tparam ForwardIterator iterator over input points.
-/// @tparam PointMap is a model of `ReadablePropertyMap` 
-///         with the value type of `ForwardIterator` as key and `Kernel::Point_3` as value type.
-///         It can be omitted if the value type of `ForwardIterator` is convertible to 
-///         `Kernel::Point_3`.
-/// @tparam NormalMap is a model of `ReadablePropertyMap` with the value type of `ForwardIterator` as key
-///         and `Kernel::Vector_3` as value type.
-/// @tparam Kernel Geometric traits class.
-///      It can be omitted and deduced automatically from the value type of  `PointMap`
-///      using `Kernel_traits`.
-///
+/**
+   \ingroup PkgPointSetProcessingAlgorithms
+   This method progressively upsamples the point set while 
+   approaching the edge singularities (detected by normal variation), which 
+   generates a denser point set from an input point set. This has applications 
+   in point-based rendering, hole filling, and sparse surface reconstruction. 
+   Normals of points are required as input. For more details, please refer to \cgalCite{ear-2013}.
+ 
+   \tparam ConcurrencyTag enables sequential versus parallel versions
+   of `compute_average_spacing()` (called internally).  Possible
+   values are `Sequential_tag` and `Parallel_tag`.
+   \tparam PointRange is a model of `ConstRange`. The value type of
+   its iterator is the key type of the named parameter `point_map`.
+   \tparam OutputIterator Type of the output iterator. 
+   The type of the objects put in it is 
+   `std::pair<geom_traits::Point_3, geom_traits::Vector_3>`.
+   Note that the user may use a 
+   <A HREF="http://www.boost.org/libs/iterator/doc/function_output_iterator.html">function_output_iterator</A>
+   to match specific needs.
 
-// This variant requires all parameters.
+   \param points input point range.
+   \param output iterator where output points and normals are put.
+   \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
+
+   \cgalNamedParamsBegin
+     \cgalParamBegin{point_map} a model of `ReadablePropertyMap` with value type `geom_traits::Point_3`.
+     If this parameter is omitted, `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
+     \cgalParamBegin{normal_map} a model of `ReadablePropertyMap` with value type
+     `geom_traits::Vector_3`.\cgalParamEnd
+     \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
+   \cgalNamedParamsEnd
+
+*/
 template <typename ConcurrencyTag,
           typename PointRange,
 	  typename OutputIterator,
@@ -316,8 +319,7 @@ template <typename ConcurrencyTag,
 OutputIterator
 edge_aware_upsample_point_set(
   const PointRange& points,
-  OutputIterator output,  ///< output iterator where output points and normals 
-                          ///< are put.
+  OutputIterator output,
   const NamedParameters& np)
 {
   using boost::choose_param;
@@ -571,19 +573,22 @@ edge_aware_upsample_point_set(
   return output;
 }
 
+
+/// \cond SKIP_IN_MANUAL
+// variant with default NP
 template <typename ConcurrencyTag,
           typename PointRange,
 	  typename OutputIterator>
 OutputIterator
 edge_aware_upsample_point_set(
   const PointRange& points,
-  OutputIterator output)  ///< output iterator where output points and normals 
-                          ///< are put.
+  OutputIterator output)
 {
   return edge_aware_upsample_point_set<ConcurrencyTag>
     (points, output, CGAL::Point_set_processing_3::parameters::all_default(points));
 }
-// This variant requires all parameters.
+
+// deprecated API
 template <typename ConcurrencyTag,
 	  typename OutputIterator,
           typename ForwardIterator, 
@@ -633,8 +638,8 @@ edge_aware_upsample_point_set(
      geom_traits (Kernel()));
 }
   
-/// @cond SKIP_IN_MANUAL
-// This variant deduces the kernel from the point property map.
+
+// deprecated API
 template <typename ConcurrencyTag,
 	  typename OutputIterator,
           typename ForwardIterator,
@@ -663,10 +668,8 @@ edge_aware_upsample_point_set(
      neighbor_radius (neighbor_radius).
      number_of_output_points (number_of_output_points));
 }
-/// @endcond
 
-
-/// @cond SKIP_IN_MANUAL
+// deprecated API
 template <typename ConcurrencyTag,
 	  typename OutputIterator,
           typename ForwardIterator,
@@ -692,7 +695,7 @@ edge_aware_upsample_point_set(
      neighbor_radius (neighbor_radius).
      number_of_output_points (number_of_output_points));
 }
-/// @endcond
+/// \endcond
 
 } //namespace CGAL
 

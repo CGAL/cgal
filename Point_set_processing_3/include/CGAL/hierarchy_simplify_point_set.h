@@ -45,6 +45,7 @@
 namespace CGAL {
 
 
+  /// \cond SKIP_IN_MANUAL
   namespace internal {
 
     template < typename InputIterator,
@@ -109,37 +110,42 @@ namespace CGAL {
 
 
   } // namespace internal
-    
+  /// \endcond
 
-  /// \ingroup PkgPointSetProcessingAlgorithms
+  /**
+     \ingroup PkgPointSetProcessingAlgorithms
   
-  /// Recursively split the point set in smaller clusters until the
-  /// clusters have less than `size` elements or until their variation
-  /// factor is below `var_max`. 
-  ///
-  /// This method modifies the order of input points so as to pack all remaining points first,
-  /// and returns an iterator over the first point to remove (see erase-remove idiom).
-  /// For this reason it should not be called on sorted containers.
-  ///
-  /// \pre `0 < var_max < 1/3`
-  /// \pre `size > 0`
-  ///
-  /// @tparam ForwardIterator iterator over input points.
-  /// @tparam PointMap is a model of `ReadablePropertyMap` with value type `Point_3<Kernel>`.
-  ///        It can be omitted if the value type of `ForwardIterator` is convertible to `Point_3<Kernel>`.
-  /// @tparam DiagonalizeTraits is a model of `DiagonalizeTraits`. It
-  ///        can be omitted: if Eigen 3 (or greater) is available and
-  ///        `CGAL_EIGEN3_ENABLED` is defined then an overload using
-  ///        `Eigen_diagonalize_traits` is provided. Otherwise, the internal
-  ///        implementation `Internal_diagonalize_traits` is used.
-  /// @tparam Kernel Geometric traits class.
-  ///        It can be omitted and deduced automatically from the value type of `PointMap`.
-  ///
-  /// @return iterator over the first point to remove.
+     Recursively split the point set in smaller clusters until the
+     clusters have less than `size` elements or until their variation
+     factor is below `var_max`. 
+  
+     This method modifies the order of input points so as to pack all remaining points first,
+     and returns an iterator over the first point to remove (see erase-remove idiom).
+     For this reason it should not be called on sorted containers.
+  
+     \pre `0 < maximum_variation < 1/3`
+     \pre `size > 0`
+  
+     \tparam PointRange is a model of `Range`. The value type of
+     its iterator is the key type of the named parameter `point_map`.
 
+     \param points input point range.
+     \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
 
-  // This variant requires all parameters.
+     \cgalNamedParamsBegin
+       \cgalParamBegin{point_map} a model of `ReadWritePropertyMap` with value type `geom_traits::Point_3`.
+       If this parameter is omitted, `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
+       \cgalParamBegin{size} maximum cluster size.\cgalParamEnd
+       \cgalParamBegin{maximum_variation} maximum cluster variation value.\cgalParamEnd
+       \cgalParamBegin{diagonalize_traits} a model of `DiagonalizeTraits`. It can be omitted:
+       if Eigen 3 (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined then an overload
+       using `Eigen_diagonalize_traits` is provided. Otherwise, the internal implementation
+       `CGAL::Diagonalize_traits` is used.\cgalParamEnd
+       \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
+     \cgalNamedParamsEnd
 
+     \return iterator over the first point to remove.
+  */
   template <typename PointRange,
 	    typename NamedParameters>
   typename PointRange::iterator
@@ -320,8 +326,10 @@ namespace CGAL {
     return first_point_to_remove;
 
   }
-  /// @endcond
 
+
+  /// \cond SKIP_IN_MANUAL
+  // variant with default NP
   template <typename PointRange>
   typename PointRange::iterator
   hierarchy_simplify_point_set (PointRange& points)
@@ -330,33 +338,7 @@ namespace CGAL {
       (points, CGAL::Point_set_processing_3::parameters::all_default(points));
   }
   
-  /// Recursively split the point set in smaller clusters until the
-  /// clusters have less than `size` elements or until their variation
-  /// factor is below `var_max`. 
-  ///
-  /// This method modifies the order of input points so as to pack all remaining points first,
-  /// and returns an iterator over the first point to remove (see erase-remove idiom).
-  /// For this reason it should not be called on sorted containers.
-  ///
-  /// \pre `0 < var_max < 1/3`
-  /// \pre `size > 0`
-  ///
-  /// @tparam ForwardIterator iterator over input points.
-  /// @tparam PointMap is a model of `ReadablePropertyMap` with value type `Point_3<Kernel>`.
-  ///        It can be omitted if the value type of `ForwardIterator` is convertible to `Point_3<Kernel>`.
-  /// @tparam DiagonalizeTraits is a model of `DiagonalizeTraits`. It
-  ///        can be omitted: if Eigen 3 (or greater) is available and
-  ///        `CGAL_EIGEN3_ENABLED` is defined then an overload using
-  ///        `Eigen_diagonalize_traits` is provided. Otherwise, the internal
-  ///        implementation `Internal_diagonalize_traits` is used.
-  /// @tparam Kernel Geometric traits class.
-  ///        It can be omitted and deduced automatically from the value type of `PointMap`.
-  ///
-  /// @return iterator over the first point to remove.
-
-
-  // This variant requires all parameters.
-
+  // deprecated API
   template <typename ForwardIterator,
 	    typename PointMap,
 	    typename DiagonalizeTraits,
@@ -379,9 +361,8 @@ namespace CGAL {
        diagonalize_traits (DiagonalizeTraits()).
        geom_traits(Kernel()));
   }
-  
-  /// @cond SKIP_IN_MANUAL
-  // This variant deduces the kernel from the iterator type.
+
+  // deprecated API
   template <typename ForwardIterator,
 	    typename PointMap,
 	    typename DiagonalizeTraits>
@@ -401,10 +382,8 @@ namespace CGAL {
        maximum_variation (var_max).
        diagonalize_traits (diagonalize_traits));
   }
-  /// @endcond
 
-  /// @cond SKIP_IN_MANUAL  
-  // This variant uses default diagonalize traits
+  // deprecated API
   template <typename ForwardIterator,
 	    typename PointMap >
   ForwardIterator hierarchy_simplify_point_set (ForwardIterator begin,
@@ -421,10 +400,8 @@ namespace CGAL {
        size (size).
        maximum_variation (var_max));
   }
-  /// @endcond  
-
-  /// @cond SKIP_IN_MANUAL
-  // This variant creates a default point property map = Identity_property_map.
+  
+  // deprecated API
   template <typename ForwardIterator >
   ForwardIterator hierarchy_simplify_point_set (ForwardIterator begin,
 						ForwardIterator end,
@@ -438,7 +415,7 @@ namespace CGAL {
        CGAL::parameters::size (size).
        maximum_variation (var_max));
   }
-  /// @endcond  
+  /// \endcond  
 
 } // namespace CGAL
 

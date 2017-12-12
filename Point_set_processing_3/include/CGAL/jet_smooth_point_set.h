@@ -154,26 +154,37 @@ jet_smooth_point(
 // Public section
 // ----------------------------------------------------------------------------
 
-/// \ingroup PkgPointSetProcessingAlgorithms
-/// Smoothes the `[first, beyond)` range of points using jet fitting on the k
-/// nearest neighbors and reprojection onto the jet.
-/// As this method relocates the points, it
-/// should not be called on containers sorted w.r.t. point locations.
-///
-/// \pre `k >= 2`
-///
-/// @tparam ConcurrencyTag enables sequential versus parallel algorithm.
-///                         Possible values are `Sequential_tag`
-///                         and `Parallel_tag`.
-/// @tparam InputIterator iterator over input points.
-/// @tparam PointMap is a model of `ReadWritePropertyMap` with value type `Point_3<Kernel>`.
-///        It can be omitted if  the value type of `InputIterator` is convertible to `Point_3<Kernel>`.
-/// @tparam Kernel Geometric traits class.
-///        It can be omitted and deduced automatically from the value type of `PointMap`.
-/// @tparam SvdTraits template parameter for the class `Monge_via_jet_fitting` that
-///         can be ommited under conditions described in the documentation of `Monge_via_jet_fitting`.
+/**
+   \ingroup PkgPointSetProcessingAlgorithms
+   Smoothes the range of `points` using jet fitting on the k
+   nearest neighbors and reprojection onto the jet.
+   As this method relocates the points, it
+   should not be called on containers sorted w.r.t. point locations.
 
-// This variant requires all parameters.
+   \pre `k >= 2`
+
+   \tparam ConcurrencyTag enables sequential versus parallel algorithm.
+   Possible values are `Sequential_tag`
+   and `Parallel_tag`.
+   \tparam PointRange is a model of `Range`. The value type of
+   its iterator is the key type of the named parameter `point_map`.
+
+   \param points input point range.
+   \param k number of neighbors
+   \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
+
+   \cgalNamedParamsBegin
+     \cgalParamBegin{point_map} a model of `ReadablePropertyMap` with value type `geom_traits::Point_3`.
+     If this parameter is omitted, `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
+     \cgalParamBegin{degree_fitting} degree of jet fitting.\cgalParamEnd
+     \cgalParamBegin{degree_monge} Monge degree.\cgalParamEnd
+     \cgalParamBegin{svd_traits} template parameter for the class `Monge_via_jet_fitting`. If
+     \ref thirdpartyEigen "Eigen" 3.2 (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined,
+     then `CGAL::Eigen_svd` is used.\cgalParamEnd
+     \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
+   \cgalNamedParamsEnd
+
+*/
 template <typename ConcurrencyTag,
 	  typename PointRange,
           typename NamedParameters
@@ -181,7 +192,7 @@ template <typename ConcurrencyTag,
 void
 jet_smooth_point_set(
   PointRange& points,
-  unsigned int k, ///< number of neighbors.
+  unsigned int k,
   const NamedParameters& np)
 {
   using boost::choose_param;
@@ -257,6 +268,9 @@ jet_smooth_point_set(
      }
 }
 
+
+/// \cond SKIP_IN_MANUAL
+// variant with default NP
 template <typename ConcurrencyTag,
 	  typename PointRange>
 void
@@ -269,25 +283,7 @@ jet_smooth_point_set(
 }
 
 
-/// Smoothes the `[first, beyond)` range of points using jet fitting on the k
-/// nearest neighbors and reprojection onto the jet.
-/// As this method relocates the points, it
-/// should not be called on containers sorted w.r.t. point locations.
-///
-/// \pre `k >= 2`
-///
-/// @tparam ConcurrencyTag enables sequential versus parallel algorithm.
-///                         Possible values are `Sequential_tag`
-///                         and `Parallel_tag`.
-/// @tparam InputIterator iterator over input points.
-/// @tparam PointMap is a model of `ReadWritePropertyMap` with value type `Point_3<Kernel>`.
-///        It can be omitted if  the value type of `InputIterator` is convertible to `Point_3<Kernel>`.
-/// @tparam Kernel Geometric traits class.
-///        It can be omitted and deduced automatically from the value type of `PointMap`.
-/// @tparam SvdTraits template parameter for the class `Monge_via_jet_fitting` that
-///         can be ommited under conditions described in the documentation of `Monge_via_jet_fitting`.
-
-// This variant requires all parameters.
+// deprecated API
 template <typename ConcurrencyTag,
 	  typename InputIterator,
           typename PointMap,
@@ -316,7 +312,7 @@ jet_smooth_point_set(
 }
   
 #if defined(CGAL_EIGEN3_ENABLED) || defined(CGAL_LAPACK_ENABLED)
-/// @cond SKIP_IN_MANUAL
+// deprecated API
 template <typename ConcurrencyTag,
 	  typename InputIterator,
           typename PointMap,
@@ -349,8 +345,7 @@ jet_smooth_point_set(
      geom_traits(kernel));
 }
 
-/// @cond SKIP_IN_MANUAL
-// This variant deduces the kernel from the point property map.
+// deprecated API
 template <typename ConcurrencyTag,
 	  typename InputIterator,
           typename PointMap
@@ -373,10 +368,8 @@ jet_smooth_point_set(
      degree_fitting (degree_fitting).
      degree_monge (degree_monge));
 }
-/// @endcond
 
-/// @cond SKIP_IN_MANUAL
-// This variant creates a default point property map = Identity_property_map.
+// deprecated API
 template <typename ConcurrencyTag,
 	  typename InputIterator
 >
@@ -396,8 +389,9 @@ jet_smooth_point_set(
      CGAL::parameters::degree_fitting (degree_fitting).
      degree_monge (degree_monge));
 }
-/// @endcond
 #endif
+/// \endcond
+  
 
 } //namespace CGAL
 

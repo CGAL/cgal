@@ -365,54 +365,55 @@ public:
 // Public section
 // ----------------------------------------------------------------------------
 
-//=============================================================================
-/// \ingroup PkgPointSetProcessingAlgorithms
-/// 
-/// This function smooths an input point set by iteratively projecting each 
-///  point onto the implicit surface patch fitted over its k nearest neighbors.
-///  Bilateral projection preserves sharp features according to the normal
-/// (gradient) information. Both point positions and normals will be modified.  
-/// For more details, please see section 4 in \cgalCite{ear-2013}.  
-///
-/// A parallel version of this function is provided and requires the executable to be 
-/// linked against the <a href="http://www.threadingbuildingblocks.org">Intel TBB library</a>.
-/// To control the number of threads used, the user may use the tbb::task_scheduler_init class.
-/// See the <a href="http://www.threadingbuildingblocks.org/documentation">TBB documentation</a> 
-/// for more details.
-///
-/// \pre Normals must be unit vectors
-/// \pre k >= 2
-///
-/// @tparam ConcurrencyTag enables sequential versus parallel algorithm.
-///                         Possible values are `Sequential_tag`
-///                         and `Parallel_tag`.
-/// @tparam ForwardIterator iterator over input points.
-/// @tparam PointMap is a model of `ReadWritePropertyMap` 
-///         with the value type of `ForwardIterator` as key and `Kernel::Point_3` as value type.
-///         It can be omitted if the value type of `ForwardIterator` is convertible to 
-///         `Kernel::Point_3`.
-/// @tparam NormalMap is a model of `ReadWritePropertyMap` with the value type of `ForwardIterator` as key
-///         and `Kernel::Vector_3` as value type.
-/// @tparam Kernel Geometric traits class.
-///      It can be omitted and deduced automatically from the value type of  `PointMap`
-///      using `Kernel_traits`.
-///
-/// @return Average point movement error. It's a convergence criterium for the algorithm.
-///         This value can help the user to decide how many iterations are
-///         sufficient.
 
-// This variant requires all parameters.
+/**
+   \ingroup PkgPointSetProcessingAlgorithms
+ 
+   This function smooths an input point set by iteratively projecting each 
+   point onto the implicit surface patch fitted over its k nearest neighbors.
+   Bilateral projection preserves sharp features according to the normal
+   (gradient) information. Both point positions and normals will be modified.  
+   For more details, please see section 4 in \cgalCite{ear-2013}.  
+
+   A parallel version of this function is provided and requires the executable to be 
+   linked against the <a href="http://www.threadingbuildingblocks.org">Intel TBB library</a>.
+   To control the number of threads used, the user may use the tbb::task_scheduler_init class.
+   See the <a href="http://www.threadingbuildingblocks.org/documentation">TBB documentation</a> 
+   for more details.
+
+   \pre Normals must be unit vectors
+   \pre k >= 2
+
+   \tparam ConcurrencyTag enables sequential versus parallel algorithm.
+   Possible values are `Sequential_tag`
+   And `Parallel_tag`.
+   \tparam PointRange is a model of `Range`. The value type of
+   its iterator is the key type of the named parameter `point_map`.
+
+   \param points input point range.
+   \param k size of the neighborhood for the implicit surface patch fitting.
+   The larger the value is, the smoother the result will be.
+   \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
+
+   \cgalNamedParamsBegin
+     \cgalParamBegin{point_map} a model of `ReadWritePropertyMap` with value type `geom_traits::Point_3`.
+     If this parameter is omitted, `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
+     \cgalParamBegin{normal_map} a model of `ReadWritePropertyMap` with value type
+     `geom_traits::Vector_3`.\cgalParamEnd
+     \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
+   \cgalNamedParamsEnd
+
+   \return Average point movement error. It's a convergence criterium for the algorithm.
+   This value can help the user to decide how many iterations are
+   sufficient.
+*/
 template <typename ConcurrencyTag,
           typename PointRange,
           typename NamedParameters>
 double
 bilateral_smooth_point_set(
   PointRange& points,
-  unsigned int k,           ///< size of the neighborhood for the implicit surface patch fitting.
-                            ///< The larger the value is, the smoother the result will be.
-  double sharpness_angle,  ///< controls the sharpness of the result.
-                            ///< The larger the value is, the smoother the result will be.
-                            ///< The range of possible value is [0, 90].
+  unsigned int k,
   const NamedParameters& np)
 {
   using boost::choose_param;
@@ -429,7 +430,9 @@ bilateral_smooth_point_set(
   typedef typename CGAL::Point_with_normal_3<Kernel> Pwn;
   typedef typename std::vector<Pwn,CGAL_PSP3_DEFAULT_ALLOCATOR<Pwn> > Pwns;
   typedef typename Kernel::FT FT;
-
+  
+  double sharpness_angle = choose_param(get_param(np, internal_np::sharpness_angle), 30.);
+  
   CGAL_point_set_processing_precondition(points.begin() != points.end());
   CGAL_point_set_processing_precondition(k > 1);
 
@@ -587,22 +590,21 @@ bilateral_smooth_point_set(
    return sum_move_error / nb_points;
 }
 
+/// \cond SKIP_IN_MANUAL
+// variant with default NP  
 template <typename ConcurrencyTag,
           typename PointRange>
 double
 bilateral_smooth_point_set(
   PointRange& points,
-  unsigned int k,           ///< size of the neighborhood for the implicit surface patch fitting.
+  unsigned int k)           ///< size of the neighborhood for the implicit surface patch fitting.
                             ///< The larger the value is, the smoother the result will be.
-  double sharpness_angle)  ///< controls the sharpness of the result.
-                            ///< The larger the value is, the smoother the result will be.
-                            ///< The range of possible value is [0, 90].
 {
   return bilateral_smooth_point_set<ConcurrencyTag>
-    (points, k, sharpness_angle, CGAL::Point_set_processing_3::parameters::all_default(points));
+    (points, k, CGAL::Point_set_processing_3::parameters::all_default(points));
 }
 
-// This variant requires all parameters.
+// deprecated API
 template <typename ConcurrencyTag,
           typename ForwardIterator,
           typename PointMap,
@@ -625,12 +627,12 @@ bilateral_smooth_point_set(
   CGAL::Iterator_range<ForwardIterator> points = CGAL::make_range (first, beyond);
   return bilateral_smooth_point_set<ConcurrencyTag>
     (points,
-     k, sharpness_angle,
-     CGAL::parameters::point_map(point_map).normal_map(normal_map).geom_traits(Kernel()));
+     k,
+     CGAL::parameters::point_map(point_map).normal_map(normal_map)
+     .sharpness_angle(sharpness_angle).geom_traits(Kernel()));
 }
   
-/// @cond SKIP_IN_MANUAL
-// This variant deduces the kernel from the point property map.
+// deprecated API
 template <typename ConcurrencyTag,
           typename ForwardIterator,
           typename PointMap,
@@ -649,13 +651,11 @@ bilateral_smooth_point_set(
   CGAL::Iterator_range<ForwardIterator> points = CGAL::make_range (first, beyond);
   return bilateral_smooth_point_set<ConcurrencyTag>
     (points,
-     k, sharpness_angle,
-     CGAL::parameters::point_map(point_map).normal_map(normal_map));
+     k,
+     CGAL::parameters::point_map(point_map).normal_map(normal_map).sharpness_angle(sharpness_angle));
 }
-/// @endcond
 
-/// @cond SKIP_IN_MANUAL
-// This variant creates a default point property map = Dereference_property_map.
+// deprecated API
 template <typename ConcurrencyTag,
           typename ForwardIterator,
           typename NormalMap>
@@ -671,10 +671,10 @@ bilateral_smooth_point_set(
   CGAL::Iterator_range<ForwardIterator> points = CGAL::make_range (first, beyond);
   return bilateral_smooth_point_set<ConcurrencyTag>
     (points,
-     k, sharpness_angle,
-     CGAL::parameters::normal_map(normal_map));
+     k,
+     CGAL::parameters::normal_map(normal_map).sharpness_angle(sharpness_angle));
 }
-/// @endcond
+/// \endcond
 
 
 } //namespace CGAL

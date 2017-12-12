@@ -39,27 +39,26 @@
 
 namespace CGAL {
 
-/// \ingroup PkgPointSetProcessingAlgorithms
-/// Randomly deletes a user-specified fraction of the input points.
-///
-/// This method modifies the order of input points so as to pack all remaining points first,
-/// and returns an iterator over the first point to remove (see erase-remove idiom).
-/// For this reason it should not be called on sorted containers.
-///
-/// @tparam ForwardIterator iterator over input points.
-/// @tparam PointMap is a model of `ReadablePropertyMap` with value type `Point_3<Kernel>`.
-///        It can be omitted if the value type of `ForwardIterator` is convertible to `Point_3<Kernel>`.
-/// @tparam Kernel Geometric traits class.
-///        It can be omitted and deduced automatically from the value type of `PointMap`.
-///
-/// @return iterator over the first point to remove.
+/**
+   \ingroup PkgPointSetProcessingAlgorithms
+   Randomly deletes a user-specified fraction of the input points.
 
-// This variant requires all parameters.
+   This method modifies the order of input points so as to pack all remaining points first,
+   and returns an iterator over the first point to remove (see erase-remove idiom).
+   For this reason it should not be called on sorted containers.
+
+   \tparam PointRange is a model of `Range`.
+
+   \param points input point range.
+   \param removed_percentage percentage of points to remove.
+
+   \return iterator over the first point to remove.
+*/
 template <typename PointRange>
 typename PointRange::iterator
 random_simplify_point_set(
   PointRange& points,
-  double removed_percentage) ///< percentage of points to remove.
+  double removed_percentage)
 {
   CGAL_point_set_processing_precondition(removed_percentage >= 0 && removed_percentage <= 100);
 
@@ -75,22 +74,8 @@ random_simplify_point_set(
   return first_point_to_remove;
 }
 
-
-/// Randomly deletes a user-specified fraction of the input points.
-///
-/// This method modifies the order of input points so as to pack all remaining points first,
-/// and returns an iterator over the first point to remove (see erase-remove idiom).
-/// For this reason it should not be called on sorted containers.
-///
-/// @tparam ForwardIterator iterator over input points.
-/// @tparam PointMap is a model of `ReadablePropertyMap` with value type `Point_3<Kernel>`.
-///        It can be omitted if the value type of `ForwardIterator` is convertible to `Point_3<Kernel>`.
-/// @tparam Kernel Geometric traits class.
-///        It can be omitted and deduced automatically from the value type of `PointMap`.
-///
-/// @return iterator over the first point to remove.
-
-// This variant requires all parameters.
+/// \cond SKIP_IN_MANUAL
+// deprecated API
 template <typename ForwardIterator,
           typename PointMap,
           typename Kernel
@@ -109,8 +94,7 @@ random_simplify_point_set(
 }
 
   
-/// @cond SKIP_IN_MANUAL
-// This variant deduces the kernel from the iterator type.
+// deprecated API
 template <typename ForwardIterator,
           typename PointMap
 >
@@ -125,10 +109,8 @@ random_simplify_point_set(
   CGAL::Iterator_range<ForwardIterator> points (first, beyond);
   return random_simplify_point_set (points, removed_percentage);
 }
-/// @endcond
 
-/// @cond SKIP_IN_MANUAL
-// This variant creates a default point property map = Identity_property_map.
+// deprecated API
 template <typename ForwardIterator
 >
 ForwardIterator
@@ -141,7 +123,7 @@ random_simplify_point_set(
   CGAL::Iterator_range<ForwardIterator> points (first, beyond);
   return random_simplify_point_set (points, removed_percentage);
 }
-/// @endcond
+/// \endcond
 
 
 } //namespace CGAL

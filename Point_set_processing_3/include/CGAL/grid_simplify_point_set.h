@@ -128,11 +128,6 @@ public:
 } /* namespace internal */
 
 
-// ----------------------------------------------------------------------------
-// Public section
-// ----------------------------------------------------------------------------
-
-
 /// Utility class for grid_simplify_point_set():
 /// 3D points set which allows at most 1 point per cell
 /// of a grid of cell size = epsilon.
@@ -168,29 +163,40 @@ public:
 
 /// \endcond
 
-/// \ingroup PkgPointSetProcessingAlgorithms
-/// Merges points which belong to the same cell of a grid of cell size = `epsilon`.
-///
-/// This method modifies the order of input points so as to pack all remaining points first,
-/// and returns an iterator over the first point to remove (see erase-remove idiom).
-/// For this reason it should not be called on sorted containers.
-///
-/// \pre `epsilon > 0`
-///
-/// @tparam ForwardIterator iterator over input points.
-/// @tparam PointMap is a model of `ReadablePropertyMap` with value type `Point_3<Kernel>`.
-///        It can be omitted if the value type of `ForwardIterator` is convertible to `Point_3<Kernel>`.
-/// @tparam Kernel Geometric traits class.
-///        It can be omitted and deduced automatically from the value type of `PointMap`.
-///
-/// @return iterator over the first point to remove.
+// ----------------------------------------------------------------------------
+// Public section
+// ----------------------------------------------------------------------------
 
-// This variant requires all parameters.
+/**
+   \ingroup PkgPointSetProcessingAlgorithms
+   Merges points which belong to the same cell of a grid of cell size = `epsilon`.
+
+   This method modifies the order of input points so as to pack all remaining points first,
+   and returns an iterator over the first point to remove (see erase-remove idiom).
+   For this reason it should not be called on sorted containers.
+
+   \pre `epsilon > 0`
+
+   \tparam PointRange is a model of `Range`. The value type of
+   its iterator is the key type of the named parameter `point_map`.
+
+   \param points input point range.
+   \param epsilon tolerance value when merging 3D points.
+   \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
+
+   \cgalNamedParamsBegin
+     \cgalParamBegin{point_map} a model of `ReadWritePropertyMap` with value type `geom_traits::Point_3`.
+     If this parameter is omitted, `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
+     \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
+   \cgalNamedParamsEnd
+
+   \return iterator over the first point to remove.
+*/
 template <typename PointRange, typename NamedParameters>
 typename PointRange::iterator
 grid_simplify_point_set(
   PointRange& points,
-  double epsilon, ///< tolerance value when merging 3D points.
+  double epsilon,
   const NamedParameters& np)
 {
   using boost::choose_param;
@@ -223,6 +229,8 @@ grid_simplify_point_set(
   return first_point_to_remove;
 }
 
+/// \cond SKIP_IN_MANUAL
+// variant with default NP
 template <typename PointRange>
 typename PointRange::iterator
 grid_simplify_point_set(PointRange& points, double epsilon)
@@ -230,24 +238,8 @@ grid_simplify_point_set(PointRange& points, double epsilon)
   return grid_simplify_point_set
     (points, epsilon, CGAL::Point_set_processing_3::parameters::all_default(points));
 }
-  
-/// Merges points which belong to the same cell of a grid of cell size = `epsilon`.
-///
-/// This method modifies the order of input points so as to pack all remaining points first,
-/// and returns an iterator over the first point to remove (see erase-remove idiom).
-/// For this reason it should not be called on sorted containers.
-///
-/// \pre `epsilon > 0`
-///
-/// @tparam ForwardIterator iterator over input points.
-/// @tparam PointMap is a model of `ReadablePropertyMap` with value type `Point_3<Kernel>`.
-///        It can be omitted if the value type of `ForwardIterator` is convertible to `Point_3<Kernel>`.
-/// @tparam Kernel Geometric traits class.
-///        It can be omitted and deduced automatically from the value type of `PointMap`.
-///
-/// @return iterator over the first point to remove.
 
-// This variant requires all parameters.
+// deprecated API
 template <typename ForwardIterator,
           typename PointMap,
           typename Kernel>
@@ -267,8 +259,8 @@ ForwardIterator grid_simplify_point_set(
      geom_traits (Kernel()));
 }
   
-/// @cond SKIP_IN_MANUAL
-// This variant deduces the kernel from the iterator type.
+
+// deprecated API
 template <typename ForwardIterator,
           typename PointMap
 >
@@ -286,10 +278,8 @@ grid_simplify_point_set(
      epsilon,
      CGAL::parameters::point_map (point_map));
 }
-/// @endcond
-
-/// @cond SKIP_IN_MANUAL
-// This variant creates a default point property map = Identity_property_map.
+  
+// deprecated API
 template <typename ForwardIterator
 >
 ForwardIterator
@@ -304,7 +294,7 @@ grid_simplify_point_set(
     (points,
      epsilon);
 }
-/// @endcond
+/// \endcond
 
 
 } //namespace CGAL

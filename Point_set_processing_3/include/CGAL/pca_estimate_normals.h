@@ -142,24 +142,32 @@ pca_estimate_normal(const typename Kernel::Point_3& query, ///< point to compute
 // Public section
 // ----------------------------------------------------------------------------
 
-/// \ingroup PkgPointSetProcessingAlgorithms
-/// Estimates normal directions of the `[first, beyond)` range of points
-/// by linear least squares fitting of a plane over the k nearest neighbors.
-/// The output normals are randomly oriented.
-///
-/// \pre `k >= 2`
-///
-/// @tparam ConcurrencyTag enables sequential versus parallel algorithm.
-///                         Possible values are `Sequential_tag`
-///                         and `Parallel_tag`.
-/// @tparam ForwardIterator iterator over input points.
-/// @tparam PointMap is a model of `ReadablePropertyMap` with value type `Point_3<Kernel>`.
-///        It can be omitted if the value type of  `ForwardIterator` is convertible to `Point_3<Kernel>`.
-/// @tparam NormalMap is a model of `WritablePropertyMap` with value type  `Vector_3<Kernel>`.
-/// @tparam Kernel Geometric traits class.
-///        It can be omitted and deduced automatically from the value type of `PointMap`.
+/**
+   \ingroup PkgPointSetProcessingAlgorithms
+   Estimates normal directions of the range of `points`
+   by linear least squares fitting of a plane over the k nearest neighbors.
+   The output normals are randomly oriented.
 
-// This variant requires all parameters.
+   \pre `k >= 2`
+
+   \tparam ConcurrencyTag enables sequential versus parallel algorithm.
+   Possible values are `Sequential_tag`
+   and `Parallel_tag`.
+   \tparam PointRange is a model of `Range`. The value type of
+   its iterator is the key type of the named parameter `point_map`.
+
+   \param points input point range.
+   \param k number of neighbors
+   \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
+
+   \cgalNamedParamsBegin
+     \cgalParamBegin{point_map} a model of `ReadablePropertyMap` with value type `geom_traits::Point_3`.
+     If this parameter is omitted, `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
+     \cgalParamBegin{normal_map} a model of `WritablePropertyMap` with value type
+     `geom_traits::Vector_3`.\cgalParamEnd
+     \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
+   \cgalNamedParamsEnd
+*/
 template <typename ConcurrencyTag,
 	  typename PointRange,
           typename NamedParameters
@@ -167,7 +175,7 @@ template <typename ConcurrencyTag,
 void
 pca_estimate_normals(
   PointRange& points,
-  unsigned int k, ///< number of neighbors.
+  unsigned int k,
   const NamedParameters& np)
 {
   using boost::choose_param;
@@ -253,7 +261,9 @@ pca_estimate_normals(
   memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
   CGAL_TRACE("End of pca_estimate_normals()\n");
 }
-  
+
+/// \cond SKIP_IN_MANUAL
+// variant with default NP
 template <typename ConcurrencyTag,
 	  typename PointRange
 >
@@ -266,23 +276,7 @@ pca_estimate_normals(
     (points, k, CGAL::Point_set_processing_3::parameters::all_default(points));
 }
   
-/// Estimates normal directions of the `[first, beyond)` range of points
-/// by linear least squares fitting of a plane over the k nearest neighbors.
-/// The output normals are randomly oriented.
-///
-/// \pre `k >= 2`
-///
-/// @tparam ConcurrencyTag enables sequential versus parallel algorithm.
-///                         Possible values are `Sequential_tag`
-///                         and `Parallel_tag`.
-/// @tparam ForwardIterator iterator over input points.
-/// @tparam PointMap is a model of `ReadablePropertyMap` with value type `Point_3<Kernel>`.
-///        It can be omitted if the value type of  `ForwardIterator` is convertible to `Point_3<Kernel>`.
-/// @tparam NormalMap is a model of `WritablePropertyMap` with value type  `Vector_3<Kernel>`.
-/// @tparam Kernel Geometric traits class.
-///        It can be omitted and deduced automatically from the value type of `PointMap`.
-
-// This variant requires all parameters.
+// deprecated API
 template <typename ConcurrencyTag,
 	  typename ForwardIterator,
           typename PointMap,
@@ -308,8 +302,7 @@ pca_estimate_normals(
      geom_traits(Kernel()));
 }
   
-/// @cond SKIP_IN_MANUAL
-// This variant deduces the kernel from the point property map.
+// deprecated API
 template <typename ConcurrencyTag,
 	  typename ForwardIterator,
           typename PointMap,
@@ -331,10 +324,8 @@ pca_estimate_normals(
      CGAL::parameters::point_map (point_map).
      normal_map (normal_map));
 }
-/// @endcond
 
-/// @cond SKIP_IN_MANUAL
-// This variant creates a default point property map = Identity_property_map.
+// deprecated API
 template <typename ConcurrencyTag,
 	  typename ForwardIterator,
           typename NormalMap
@@ -353,7 +344,7 @@ pca_estimate_normals(
      k,
      CGAL::parameters::normal_map (normal_map));
 }
-/// @endcond
+/// \endcond
 
 
 } //namespace CGAL

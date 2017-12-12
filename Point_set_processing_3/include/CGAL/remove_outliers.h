@@ -106,41 +106,51 @@ compute_avg_knn_sq_distance_3(
 // Public section
 // ----------------------------------------------------------------------------
 
-/// \ingroup PkgPointSetProcessingAlgorithms
-/// Removes outliers:
-/// - computes average squared distance to the K nearest neighbors,
-/// - and sorts the points in increasing order of average distance.
-///
-/// This method modifies the order of input points so as to pack all remaining points first,
-/// and returns an iterator over the first point to remove (see erase-remove idiom).
-/// For this reason it should not be called on sorted containers.
-///
-/// \pre `k >= 2`
-///
-/// @tparam InputIterator iterator over input points.
-/// @tparam PointMap is a model of `ReadablePropertyMap` with value type `Point_3<Kernel>`.
-///        It can be omitted ifthe value type of `InputIterator` is convertible to `Point_3<Kernel>`.
-/// @tparam Kernel Geometric traits class.
-///        It can be omitted and deduced automatically from the value type of `PointMap`.
-///
-/// @return iterator over the first point to remove.
-///
-/// @note There are two thresholds that can be used:
-/// `threshold_percent` and `threshold_distance`. This function
-/// returns the smallest number of outliers such that at least one of
-/// these threshold is fullfilled. This means that if
-/// `threshold_percent=100`, only `threshold_distance` is taken into
-/// account; if `threshold_distance=0` only `threshold_percent` is
-/// taken into account.
+/**
+   \ingroup PkgPointSetProcessingAlgorithms
+   Removes outliers:
+   - computes average squared distance to the K nearest neighbors,
+   - and sorts the points in increasing order of average distance.
 
-// This variant requires all parameters.
+   This method modifies the order of input points so as to pack all remaining points first,
+   and returns an iterator over the first point to remove (see erase-remove idiom).
+   For this reason it should not be called on sorted containers.
+
+   \pre `k >= 2`
+
+   \tparam PointRange is a model of `Range`. The value type of
+   its iterator is the key type of the named parameter `point_map`.
+
+   \param points input point range.
+   \param k number of neighbors
+   \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
+
+   \cgalNamedParamsBegin
+     \cgalParamBegin{point_map} a model of `ReadablePropertyMap` with value type `geom_traits::Point_3`.
+     If this parameter is omitted, `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
+     \cgalParamBegin{threshold_percent} maximum percentage of points to remove.\cgalParamEnd
+     \cgalParamBegin{threshold_distance} minimum distance for a point to be considered as outlier
+     (distance here is the square root of the average squared distance to K nearest neighbors).\cgalParamEnd
+     \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
+   \cgalNamedParamsEnd
+
+   \return iterator over the first point to remove.
+
+   \note There are two thresholds that can be used:
+   `threshold_percent` and `threshold_distance`. This function
+   returns the smallest number of outliers such that at least one of
+   these threshold is fullfilled. This means that if
+   `threshold_percent=100`, only `threshold_distance` is taken into
+   account; if `threshold_distance=0` only `threshold_percent` is
+   taken into account.
+*/
 template <typename PointRange,
           typename NamedParameters
 >
 typename PointRange::iterator
 remove_outliers(
   PointRange& points,
-  unsigned int k, ///< number of neighbors.
+  unsigned int k,
   const NamedParameters& np)
 {
   using boost::choose_param;
@@ -215,6 +225,8 @@ remove_outliers(
   return first_point_to_remove;
 }
 
+/// \cond SKIP_IN_MANUAL
+// variant with default NP
 template <typename PointRange>
 typename PointRange::iterator
 remove_outliers(
@@ -224,33 +236,7 @@ remove_outliers(
   return remove_outliers (points, k, CGAL::Point_set_processing_3::parameters::all_default(points));
 }
   
-/// Removes outliers:
-/// - computes average squared distance to the K nearest neighbors,
-/// - and sorts the points in increasing order of average distance.
-///
-/// This method modifies the order of input points so as to pack all remaining points first,
-/// and returns an iterator over the first point to remove (see erase-remove idiom).
-/// For this reason it should not be called on sorted containers.
-///
-/// \pre `k >= 2`
-///
-/// @tparam InputIterator iterator over input points.
-/// @tparam PointMap is a model of `ReadablePropertyMap` with value type `Point_3<Kernel>`.
-///        It can be omitted ifthe value type of `InputIterator` is convertible to `Point_3<Kernel>`.
-/// @tparam Kernel Geometric traits class.
-///        It can be omitted and deduced automatically from the value type of `PointMap`.
-///
-/// @return iterator over the first point to remove.
-///
-/// @note There are two thresholds that can be used:
-/// `threshold_percent` and `threshold_distance`. This function
-/// returns the smallest number of outliers such that at least one of
-/// these threshold is fullfilled. This means that if
-/// `threshold_percent=100`, only `threshold_distance` is taken into
-/// account; if `threshold_distance=0` only `threshold_percent` is
-/// taken into account.
-
-// This variant requires all parameters.
+// deprecated API
 template <typename InputIterator,
           typename PointMap,
           typename Kernel
@@ -279,8 +265,7 @@ remove_outliers(
      geom_traits(Kernel()));
 }
   
-/// @cond SKIP_IN_MANUAL
-// This variant deduces the kernel from the iterator type.
+// deprecated API
 template <typename InputIterator,
           typename PointMap
 >
@@ -303,10 +288,8 @@ remove_outliers(
      threshold_percent (threshold_percent).
      threshold_distance (threshold_distance));
 }
-/// @endcond
 
-/// @cond SKIP_IN_MANUAL
-// This variant creates a default point property map = Identity_property_map.
+// deprecated API
 template <typename InputIterator
 >
 InputIterator
@@ -326,7 +309,7 @@ remove_outliers(
      CGAL::parameters::threshold_percent (threshold_percent).
      threshold_distance (threshold_distance));
 }
-/// @endcond
+/// \endcond
 
 
 } //namespace CGAL

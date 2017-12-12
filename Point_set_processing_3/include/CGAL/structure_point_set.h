@@ -1426,44 +1426,61 @@ private:
 // Public section
 // ----------------------------------------------------------------------------
 
-/// \ingroup PkgPointSetProcessingAlgorithms
-  
-/// This is an implementation of the Point Set Structuring algorithm. This
-/// algorithm takes advantage of a set of detected planes: it detects adjacency
-/// relationships between planes and resamples the detected planes, edges and
-/// corners to produce a structured point set.
-///
-/// The size parameter `epsilon` is used both for detecting adjacencies and for
-/// setting the sampling density of the structured point set.
-///
-/// For more details, please refer to \cgalCite{cgal:la-srpss-13}.
-///
-/// @tparam PointRange range of points, model of `ConstRange`
-/// @tparam PointMap is a model of `ReadablePropertyMap` with value type `Kernel::Point_3`.
-///        It can be omitted if the value type of the iterator of `PointRange` is convertible to `Point_3<Kernel>`.
-/// @tparam NormalMap is a model of `ReadablePropertyMap` with value type `Kernel::Vector_3`.
-/// @tparam PlaneRange range of planes, model of `ConstRange`
-/// @tparam PlaneMap is a model of `ReadablePropertyMap` with value type `Kernel::Plane_3`.
-///        It can be omitted if the value type of the iterator of `PlaneRange` is convertible to `Plane_3<Kernel>`.
-/// @tparam IndexMap is a model of `ReadablePropertyMap` with value type `std::size_t`.
-/// @tparam OutputIterator Type of the output iterator. The type of the objects
-/// put in it is `std::pair<Kernel::Point_3, Kernel::Vector_3>`.  Note that the
-/// user may use a <A HREF="http://www.boost.org/libs/iterator/doc/function_output_iterator.html">function_output_iterator</A>
-/// to match specific needs.
-/// @tparam Kernel Geometric traits class.
-///        It can be omitted and deduced automatically from the value type of `PointMap`.
+/** 
+   \ingroup PkgPointSetProcessingAlgorithms
 
-// This variant requires all parameters
+   This is an implementation of the Point Set Structuring algorithm. This
+   algorithm takes advantage of a set of detected planes: it detects adjacency
+   relationships between planes and resamples the detected planes, edges and
+   corners to produce a structured point set.
+
+   The size parameter `epsilon` is used both for detecting adjacencies and for
+   setting the sampling density of the structured point set.
+
+   For more details, please refer to \cgalCite{cgal:la-srpss-13}.
+
+   \tparam PointRange is a model of `ConstRange`. The value type of
+   its iterator is the key type of the named parameter `point_map`.
+   \tparam PlaneRange is a model of `ConstRange`. The value type of
+   its iterator is the key type of the named parameter `plane_map`.
+   \tparam OutputIterator Type of the output iterator. The type of the
+   objects put in it is `std::pair<Kernel::Point_3, Kernel::Vector_3>`.
+   Note that the user may use a
+   <A HREF="http://www.boost.org/libs/iterator/doc/function_output_iterator.html">function_output_iterator</A>
+   to match specific needs.
+
+   \param points input point range.
+   \param planes input plane range.
+   \param output output iterator where output points are written
+   \param epsilon size parameters.
+   \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
+
+   \cgalNamedParamsBegin
+     \cgalParamBegin{point_map} a model of `ReadablePropertyMap` with value type `geom_traits::Point_3`.
+     If this parameter is omitted, `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
+     \cgalParamBegin{normal_map} a model of `ReadablePropertyMap` with value type
+     `geom_traits::Vector_3`.\cgalParamEnd
+     \cgalParamBegin{plane_index_map} a model of `ReadablePropertyMap` with value type `int`.
+     Associates the index of a point in the input range to the index of plane (-1 if point does is not assigned to
+     a plane).\cgalParamEnd
+     \cgalParamBegin{plane_map} a model of `ReadablePropertyMap` with value type
+     `geom_traits::Plane_3`. If this parameter is omitted, `CGAL::Identity_property_map<geom_traits::Plane_3>`
+     is used.\cgalParamEnd
+     \cgalParamBegin{attraction_factor} multiple of `epsilon` used to connect simplices.\cgalParamEnd
+     \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
+   \cgalNamedParamsEnd
+
+*/
 template <typename PointRange,
           typename PlaneRange,
           typename OutputIterator,
           typename NamedParameters
           >
 OutputIterator
-structure_point_set (const PointRange& points, ///< range of points.
-                     const PlaneRange& planes, ///< range of planes.
-                     OutputIterator output, ///< output iterator where output points are written.
-                     double epsilon, ///< size parameter.
+structure_point_set (const PointRange& points,
+                     const PlaneRange& planes,
+                     OutputIterator output,
+                     double epsilon,
                      const NamedParameters& np)
 {
   using boost::choose_param;
@@ -1497,6 +1514,8 @@ structure_point_set (const PointRange& points, ///< range of points.
   return output;
 }
 
+/// \cond SKIP_IN_MANUAL
+// variant with default NP
 template <typename PointRange,
           typename PlaneRange,
           typename OutputIterator>
@@ -1511,32 +1530,7 @@ structure_point_set (const PointRange& points, ///< range of points.
      CGAL::Point_set_processing_3::parameters::all_default(points));
 }
   
-/// This is an implementation of the Point Set Structuring algorithm. This
-/// algorithm takes advantage of a set of detected planes: it detects adjacency
-/// relationships between planes and resamples the detected planes, edges and
-/// corners to produce a structured point set.
-///
-/// The size parameter `epsilon` is used both for detecting adjacencies and for
-/// setting the sampling density of the structured point set.
-///
-/// For more details, please refer to \cgalCite{cgal:la-srpss-13}.
-///
-/// @tparam PointRange range of points, model of `ConstRange`
-/// @tparam PointMap is a model of `ReadablePropertyMap` with value type `Kernel::Point_3`.
-///        It can be omitted if the value type of the iterator of `PointRange` is convertible to `Point_3<Kernel>`.
-/// @tparam NormalMap is a model of `ReadablePropertyMap` with value type `Kernel::Vector_3`.
-/// @tparam PlaneRange range of planes, model of `ConstRange`
-/// @tparam PlaneMap is a model of `ReadablePropertyMap` with value type `Kernel::Plane_3`.
-///        It can be omitted if the value type of the iterator of `PlaneRange` is convertible to `Plane_3<Kernel>`.
-/// @tparam IndexMap is a model of `ReadablePropertyMap` with value type `std::size_t`.
-/// @tparam OutputIterator Type of the output iterator. The type of the objects
-/// put in it is `std::pair<Kernel::Point_3, Kernel::Vector_3>`.  Note that the
-/// user may use a <A HREF="http://www.boost.org/libs/iterator/doc/function_output_iterator.html">function_output_iterator</A>
-/// to match specific needs.
-/// @tparam Kernel Geometric traits class.
-///        It can be omitted and deduced automatically from the value type of `PointMap`.
-
-// This variant requires all parameters
+// deprecated API
 template <typename PointRange,
           typename PointMap,
           typename NormalMap,
@@ -1569,9 +1563,7 @@ structure_point_set (const PointRange& points, ///< range of points.
      geom_traits (Kernel()));
 }
   
-/// \cond SKIP_IN_MANUAL
-  
-// This variant deduces the kernel from the point property map.
+// deprecated API
 template <typename PointRange,
           typename PointMap,
           typename NormalMap,
@@ -1601,7 +1593,7 @@ structure_point_set (const PointRange& points,
      attraction_factor (attraction_factor));
 }
 
-// This variant creates a default point property map = Identity_property_map.
+// deprecated API
 template <typename PointRange,
           typename NormalMap,
           typename PlaneRange,
@@ -1624,7 +1616,6 @@ structure_point_set (const PointRange& points,
      plane_index_map (index_map).
      attraction_factor (attraction_factor));
 }
-
 
 /// \endcond
 
