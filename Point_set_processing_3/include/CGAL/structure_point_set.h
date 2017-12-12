@@ -161,31 +161,61 @@ public:
     Constructs a structured point set based on the input points and the
     associated shape detection object.
 
-    \tparam PointRange range of points, model of `ConstRange`
-    \tparam PointMap is a model of `ReadablePropertyMap` with value type `Kernel::Point_3`.
-    \tparam NormalMap is a model of `ReadablePropertyMap` with value type `Kernel::Vector_3`.
-    \tparam PlaneRange range of planes, model of `ConstRange`
-    \tparam PlaneMap is a model of `ReadablePropertyMap` with value type `Kernel::Plane_3`.
-    \tparam IndexMap is a model of `ReadablePropertyMap` with value type `std::size_t`.
+    \tparam PointRange is a model of `ConstRange`. The value type of
+    its iterator is the key type of the named parameter `point_map`.
+    \tparam PlaneRange is a model of `ConstRange`. The value type of
+    its iterator is the key type of the named parameter `plane_map`.
 
-    \note Both property maps can be omitted if the default constructors of these property maps can be safely used.
+    \param points input point range.
+    \param planes input plane range.
+    \param epsilon size parameter.
+    \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
+
+    \cgalNamedParamsBegin
+      \cgalParamBegin{point_map} a model of `ReadablePropertyMap` with value type `Kernel::Point_3`.
+      If this parameter is omitted, `CGAL::Identity_property_map<Kernel::Point_3>` is used.\cgalParamEnd
+      \cgalParamBegin{normal_map} a model of `ReadablePropertyMap` with value type
+      `Kernel::Vector_3`.\cgalParamEnd
+      \cgalParamBegin{plane_index_map} a model of `ReadablePropertyMap` with value type `int`.
+      Associates the index of a point in the input range to the index of plane (-1 if point does is not assigned to
+      a plane).\cgalParamEnd
+      \cgalParamBegin{plane_map} a model of `ReadablePropertyMap` with value type
+      `Kernel::Plane_3`. If this parameter is omitted, `CGAL::Identity_property_map<Kernel::Plane_3>`
+      is used.\cgalParamEnd
+      \cgalParamBegin{attraction_factor} multiple of `epsilon` used to connect simplices.\cgalParamEnd
+    \cgalNamedParamsEnd
 
   */
   template <typename PointRange,
-            typename PointMap,
-            typename NormalMap,
             typename PlaneRange,
-            typename PlaneMap,
-            typename IndexMap>
-  Point_set_with_structure (const PointRange& points, ///< range of points.
-                            PointMap point_map, ///< property map: value_type of `typename PointRange::const_iterator` -> `Point_3`
-                            NormalMap normal_map, ///< property map: value_type of `typename PointRange::const_iterator` -> `Normal_3`
-                            const PlaneRange& planes, ///< range of planes.
-                            PlaneMap plane_map, ///< property map: value_type of `typename PlaneRange::const_iterator` -> `Plane_3`
-                            IndexMap index_map, ///< property map: index of point `std::size_t` -> index of plane `int` (-1 if the point is not assigned to a plane)
-                            double epsilon, ///< size parameter
-                            double attraction_factor = 3.) ///< attraction factor
+            typename NamedParameters>
+  Point_set_with_structure (const PointRange& points,
+                            const PlaneRange& planes,
+                            double epsilon,
+                            const NamedParameters& np)
+
   {
+    using boost::choose_param;
+
+    // basic geometric types
+    typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::type PointMap;
+    typedef typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::type NormalMap;
+    typedef typename Point_set_processing_3::GetPlaneMap<PlaneRange, NamedParameters>::type PlaneMap;
+    typedef typename Point_set_processing_3::GetPlaneIndexMap<NamedParameters>::type PlaneIndexMap;
+
+    CGAL_static_assertion_msg(!(boost::is_same<NormalMap,
+                                Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::NoMap>::value),
+                              "Error: no normal map");
+    CGAL_static_assertion_msg(!(boost::is_same<PlaneIndexMap,
+                                Point_set_processing_3::GetPlaneIndexMap<NamedParameters>::NoMap>::value),
+                              "Error: no plane index map");
+
+    PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
+    NormalMap normal_map = choose_param(get_param(np, internal_np::normal_map), NormalMap());
+    PlaneMap plane_map = choose_param(get_param(np, internal_np::plane_map), PlaneMap());
+    PlaneIndexMap index_map = choose_param(get_param(np, internal_np::plane_index_map), PlaneIndexMap());
+    double attraction_factor = choose_param(get_param(np, internal_np::attraction_factor), 3.);
+    
     m_points.reserve(points.size());
     m_normals.reserve(points.size());
     m_indices_of_assigned_points.resize (planes.size());
@@ -218,7 +248,6 @@ public:
     run (epsilon, attraction_factor);
     clean ();
   }
-  /// \endcond
 
   std::size_t size () const { return m_points.size (); }
   std::pair<Point, Vector> operator[] (std::size_t i) const
@@ -1452,7 +1481,7 @@ private:
    \param points input point range.
    \param planes input plane range.
    \param output output iterator where output points are written
-   \param epsilon size parameters.
+   \param epsilon size parameter.
    \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
 
    \cgalNamedParamsBegin
@@ -1485,28 +1514,9 @@ structure_point_set (const PointRange& points,
 {
   using boost::choose_param;
 
-  // basic geometric types
-  typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::type PointMap;
-  typedef typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::type NormalMap;
   typedef typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel Kernel;
-  typedef typename Point_set_processing_3::GetPlaneMap<PlaneRange, NamedParameters>::type PlaneMap;
-  typedef typename Point_set_processing_3::GetPlaneIndexMap<NamedParameters>::type PlaneIndexMap;
 
-  CGAL_static_assertion_msg(!(boost::is_same<NormalMap,
-                              Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::NoMap>::value),
-                            "Error: no normal map");
-  CGAL_static_assertion_msg(!(boost::is_same<PlaneIndexMap,
-                              Point_set_processing_3::GetPlaneIndexMap<NamedParameters>::NoMap>::value),
-                            "Error: no plane index map");
-
-  PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
-  NormalMap normal_map = choose_param(get_param(np, internal_np::normal_map), NormalMap());
-  PlaneMap plane_map = choose_param(get_param(np, internal_np::plane_map), PlaneMap());
-  PlaneIndexMap plane_index_map = choose_param(get_param(np, internal_np::plane_index_map), PlaneIndexMap());
-  double attraction_factor = choose_param(get_param(np, internal_np::attraction_factor), 3.);
-
-  Point_set_with_structure<Kernel> pss (points, point_map, normal_map, planes, plane_map, plane_index_map,
-                                        epsilon, attraction_factor);
+  Point_set_with_structure<Kernel> pss (points, planes, epsilon, np);
 
   for (std::size_t i = 0; i < pss.size(); ++ i)
     *(output ++) = pss[i];

@@ -81,11 +81,14 @@ int main()
   ransac.detect(op);
   Efficient_ransac::Plane_range planes = ransac.planes();
   
-  Points_with_structure pss (points, Point_map(), Normal_map(),
+  Points_with_structure pss (points, 
                              planes,
-                             CGAL::Shape_detection_3::Plane_map<Traits>(),
-                             CGAL::Shape_detection_3::Point_to_shape_index_map<Traits>(points, planes),
-                             op.cluster_epsilon);
+                             op.cluster_epsilon,
+                             CGAL::parameters::point_map(Point_map()).
+                             normal_map (Normal_map()).
+                             plane_map (CGAL::Shape_detection_3::Plane_map<Traits>()).
+                             plane_index_map (CGAL::Shape_detection_3::Point_to_shape_index_map<Traits>(points, planes)));
+
 
 
   std::vector<Point> vertices;
