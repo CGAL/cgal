@@ -194,6 +194,8 @@ public:
 
   void set_domain(const Iso_cuboid& domain)
   {
+    const FT eps = std::numeric_limits<FT>::epsilon(); // @tmp
+    std::cout << "epsilon: " << eps << std::endl;
     Base::set_domain(domain);
   }
 
