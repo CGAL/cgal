@@ -472,9 +472,8 @@ before and after optimizations.
 The periodic mesh generator currently operates on domains described by one or
 multiple implicit functions. Sharp features to be preserved
 must then be explicitly specified by hand by the user, using the mesh domain
-class `CGAL::Mesh_domain_with_polyline_features_3` and the functions
-\link CGAL::Mesh_domain_with_polyline_features_3::add_features() `add_features()` \endlink
-and \link CGAL::Mesh_domain_with_polyline_features_3::add_corners() `add_corners()` \endlink.
+class `CGAL::Mesh_domain_with_polyline_features_3` and its functions
+`add_corners()` and `add_features()`.
 These functions allow to specify curves (as a polyline -- a list of points
 with two consecutive points forming a segment of the curve) and
 corners which should appear in the final mesh.
