@@ -280,19 +280,23 @@ void DQQ_1step_impl(Poly& p, VertexPointMap vpm, Mask mask, CGAL::Tag_false) {
   typedef typename boost::graph_traits<Poly>::vertex_descriptor       vertex_descriptor;
   typedef typename boost::graph_traits<Poly>::halfedge_descriptor     halfedge_descriptor;
   typedef typename boost::graph_traits<Poly>::edge_descriptor         edge_descriptor;
+  typedef typename boost::graph_traits<Poly>::face_descriptor         face_descriptor;
 
-  typedef typename boost::graph_traits<Poly>::vertex_iterator         vertex_iterator;
-  typedef typename boost::graph_traits<Poly>::edge_iterator           edge_iterator;
 
   typedef typename boost::property_traits<VertexPointMap>::value_type Point;
 
-  typename boost::graph_traits<Poly>::vertices_size_type num_v = num_vertices(p);
-  typename boost::graph_traits<Poly>::halfedges_size_type num_e = num_halfedges(p)/2;
-  typename boost::graph_traits<Poly>::faces_size_type num_f = num_faces(p);
+  //First back up initial vertices/faces/edges
+  std::vector<vertex_descriptor> p_vertices(vertices(p).first, vertices(p).second);
+  std::vector<face_descriptor> p_faces(faces(p).first, faces(p).second);
+  std::vector<edge_descriptor> p_edges(edges(p).first, edges(p).second);
+
+  std::size_t num_v = p_vertices.size();
+  std::size_t num_e = p_edges.size();
+  std::size_t num_f = p_faces.size();
 
   std::vector<halfedge_descriptor> border_halfedges;
   size_t num_be = 0 ;
-  BOOST_FOREACH(edge_descriptor ed, edges(p)){
+  BOOST_FOREACH(edge_descriptor ed, p_edges){
     if(is_border(ed,p)){
       ++num_be;
       border_halfedges.push_back(halfedge(ed,p));
@@ -301,10 +305,8 @@ void DQQ_1step_impl(Poly& p, VertexPointMap vpm, Mask mask, CGAL::Tag_false) {
   Point* point_buffer = new Point[num_e*2];
 
   // Build the point_buffer
-  vertex_iterator vitr, vitr_end;
-  boost::tie(vitr,vitr_end) = vertices(p);
   int pi = 0;
-  BOOST_FOREACH(vertex_descriptor vd, vertices(p)){
+  BOOST_FOREACH(vertex_descriptor vd, p_vertices){
     BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_target(vd,p)){
       if (! is_border(hd,p)){
         mask.corner_node(hd, point_buffer[pi++]);
@@ -317,7 +319,8 @@ void DQQ_1step_impl(Poly& p, VertexPointMap vpm, Mask mask, CGAL::Tag_false) {
 
   // Build the connectivity using insert_vertex() and insert_edge()
   pi = 0;
-  for (typename boost::graph_traits<Poly>::vertices_size_type i = 0; i < num_v; ++i) {
+  typename std::vector<vertex_descriptor>::iterator vitr=p_vertices.begin();
+  for (std::size_t i = 0; i < num_v; ++i) {
     vertex_descriptor vh = *vitr;
     ++vitr;
 
@@ -347,7 +350,7 @@ void DQQ_1step_impl(Poly& p, VertexPointMap vpm, Mask mask, CGAL::Tag_false) {
     }
   }
 
-  edge_iterator eitr = edges(p).first;
+  typename std::vector<edge_descriptor>::iterator eitr = p_edges.begin();
   for (typename boost::graph_traits<Poly>::edges_size_type i = 0; i < num_e; ++i) {
     halfedge_descriptor eh = halfedge(*eitr,p);
     ++eitr;
@@ -382,7 +385,7 @@ void DQQ_1step_impl(Poly& p, VertexPointMap vpm, Mask mask, CGAL::Tag_false) {
     Euler::remove_face(ehe,p);
   }
 
-  vitr = vertices(p).first;
+  vitr = p_vertices.begin();
   for (typename boost::graph_traits<Poly>::vertices_size_type i = 0; i < num_v-num_be; ++i) {
     vertex_descriptor vh = *vitr;
     ++vitr;
