@@ -36,12 +36,14 @@
 
 namespace CGAL {
 
-template <typename K, typename CSR_Base>
+template <typename K_, typename CSR_Base_>
 class Robust_filtered_compute_squared_radius_3
-  : public CSR_Base
+  : public CSR_Base_
 {
+  typedef CSR_Base_                                    Base;
+
 public:
-  typedef K                                            Kernel;
+  typedef K_                                           Kernel;
   typedef Exact_predicates_exact_constructions_kernel  EKernel;
   typedef Cartesian_converter<Kernel, EKernel>         To_exact;
   typedef Cartesian_converter<EKernel, Kernel>         Back_from_exact;
@@ -52,12 +54,12 @@ public:
   typedef FT                                           result_type;
 
   Robust_filtered_compute_squared_radius_3(const Kernel& k)
-    : CSR_Base(k.compute_squared_radius_3_object()),
+    : Base(k.compute_squared_radius_3_object()),
       traits(k)
   { }
 
 #ifndef CGAL_CFG_MATCHING_BUG_6
-  using CSR_Base::operator();
+  using Base::operator();
 #else // CGAL_CFG_MATCHING_BUG_6
   typedef typename K::Sphere_3                         Sphere_3;
   typedef typename K::Circle_3                         Circle_3;
@@ -143,12 +145,14 @@ private:
   const Kernel& traits;
 };
 
-template <typename K, typename CWC_Base>
+template <typename K_, typename CWC_Base_>
 class Robust_filtered_construct_weighted_circumcenter_3
-  : public CWC_Base
+  : public CWC_Base_
 {
+  typedef CWC_Base_                                         Base;
+
 public:
-  typedef K                                                 Kernel;
+  typedef K_                                                Kernel;
   typedef Exact_predicates_exact_constructions_kernel       EKernel;
   typedef Cartesian_converter<Kernel, EKernel>              To_exact;
   typedef Cartesian_converter<EKernel, Kernel>              Back_from_exact;
@@ -161,7 +165,7 @@ public:
   typedef Point_3                                           result_type;
 
   Robust_filtered_construct_weighted_circumcenter_3(const Kernel& k)
-    : CWC_Base(k.construct_weighted_circumcenter_3_object()),
+    : Base(k.construct_weighted_circumcenter_3_object()),
       traits(k)
   { }
 
@@ -303,12 +307,14 @@ private:
   const Kernel& traits;
 };
 
-template <typename K, typename CSRSOS_Base>
+template <typename K_, typename CSRSOS_Base_>
 class Robust_filtered_compute_squared_radius_smallest_orthogonal_sphere_3
-  : public CSRSOS_Base
+  : public CSRSOS_Base_
 {
+  typedef CSRSOS_Base_                                       Base;
+
 public:
-  typedef K                                                  Kernel;
+  typedef K_                                                 Kernel;
   typedef Exact_predicates_exact_constructions_kernel        EKernel;
   typedef Cartesian_converter<Kernel, EKernel>               To_exact;
   typedef Cartesian_converter<EKernel, Kernel>               Back_from_exact;
@@ -319,7 +325,7 @@ public:
   typedef FT                                                 result_type;
 
   Robust_filtered_compute_squared_radius_smallest_orthogonal_sphere_3(const Kernel& k)
-    : CSRSOS_Base(k.compute_squared_radius_smallest_orthogonal_sphere_3_object())
+    : Base(k.compute_squared_radius_smallest_orthogonal_sphere_3_object())
   { }
 
   FT operator()(const Weighted_point_3& p,
@@ -414,14 +420,15 @@ public:
   }
 };
 
-template<class K>
+template<class K_>
 class Robust_weighted_circumcenter_filtered_traits_3
-  : public K
+  : public K_
 {
-  typedef Robust_weighted_circumcenter_filtered_traits_3<K>           Self;
-  typedef K                                                           Kernel;
+  typedef Robust_weighted_circumcenter_filtered_traits_3<K_>          Self;
 
 public:
+  typedef K_                                                          Kernel;
+
   typedef CGAL::Robust_filtered_construct_weighted_circumcenter_3<
             Kernel, typename Kernel::Construct_weighted_circumcenter_3>
                                                             Construct_weighted_circumcenter_3;

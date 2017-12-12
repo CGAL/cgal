@@ -31,12 +31,12 @@
 namespace CGAL
 {
 
-template < typename P3RTT, typename CWC_Base >
+template <typename K_, typename CWC_Base_>
 class Robust_periodic_construct_weighted_circumcenter_3
-  : public CWC_Base
+  : public CWC_Base_
 {
-  typedef P3RTT                                              Base_traits;
-  typedef CWC_Base                                           Base;
+  typedef K_                                                 Base_traits;
+  typedef CWC_Base_                                          Base;
 
 public:
   typedef typename Base_traits::FT                           FT;
@@ -186,20 +186,20 @@ public:
     return c;
   }
 
-  const P3RTT& base_traits;
+  const Base_traits& base_traits;
 };
 
-template< typename P3RTT >
+template <typename K_>
 class Robust_periodic_weighted_circumcenter_traits_3
-  : public P3RTT
+  : public K_
 {
-  typedef P3RTT                                       Base_traits;
+  typedef K_                                          Base_traits;
 
 public:
   typedef typename Base_traits::Iso_cuboid_3          Iso_cuboid_3;
 
   typedef CGAL::Robust_periodic_construct_weighted_circumcenter_3<
-            P3RTT, typename Base_traits::Construct_weighted_circumcenter_3>
+            Base_traits, typename Base_traits::Construct_weighted_circumcenter_3>
                                                       Construct_weighted_circumcenter_3;
 
   Construct_weighted_circumcenter_3

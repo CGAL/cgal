@@ -981,20 +981,20 @@ public:
 
   void dual_segment_exact(const Facet& facet, Bare_point& p, Bare_point& q) const
   {
-    typedef typename Kernel_traits<Bare_point>::Kernel           K;
-    typedef Exact_predicates_exact_constructions_kernel          EK;
+    typedef typename Kernel_traits<Bare_point>::Kernel                Kernel;
+    typedef Exact_predicates_exact_constructions_kernel               EKernel;
 
-    typedef Cartesian_converter<K, EK>                           To_exact;
-    typedef Cartesian_converter<EK,K>                            Back_from_exact;
+    typedef Cartesian_converter<Kernel, EKernel>                      To_exact;
+    typedef Cartesian_converter<EKernel, Kernel>                      Back_from_exact;
 
-    typedef CGAL::Periodic_3_regular_triangulation_traits_3<EK>  Exact_Rt;
-    typedef typename Exact_Rt::Point_3                           EPoint_3;
+    typedef CGAL::Periodic_3_regular_triangulation_traits_3<EKernel>  Exact_Rt;
+    typedef typename Exact_Rt::Point_3                                EPoint_3;
 
     To_exact to_exact;
     Back_from_exact back_from_exact;
 
     Exact_Rt etraits(to_exact(domain()));
-    const typename EK::Iso_cuboid_3& dom = etraits.get_domain();
+    const typename EKernel::Iso_cuboid_3& dom = etraits.get_domain();
 
     Exact_Rt::Construct_weighted_circumcenter_3 exact_weighted_circumcenter =
       etraits.construct_weighted_circumcenter_3_object();
@@ -1015,7 +1015,7 @@ public:
                            to_exact(point(n->vertex(2))), to_exact(point(n->vertex(3))),
                            get_offset(n, 0), get_offset(n, 1),
                            get_offset(n, 2), get_offset(n, 3));
-    typename EK::Point_3 dp;
+    typename EKernel::Point_3 dp;
 
     // get the offset of the first weighted circumcenter
     Offset transl_wc1;
@@ -1135,4 +1135,3 @@ public:
 } // namespace CGAL
 
 #endif // CGAL_PERIODIC_3_MESH_3_MESH_TRIANGULATION_3_H
-
