@@ -53,7 +53,21 @@ public:
       base_traits(base_traits)
   { }
 
-  using Base::operator();
+  Point_3 operator()(const Weighted_point_3& p, const Weighted_point_3& q,
+                     const Weighted_point_3& r, const Weighted_point_3& s) const
+  {
+    return Base::operator()(p,q,r,s);
+  }
+
+  Point_3 operator()(const Weighted_point_3& p, const Weighted_point_3& q, const Weighted_point_3& r) const
+  {
+    return Base::operator()(p,q,r);
+  }
+
+  Point_3 operator()(const Weighted_point_3& p, const Weighted_point_3& q) const
+  {
+    return Base::operator()(p,q);
+  }
 
   Point_3 operator()(const Weighted_point_3& p,
                      const Weighted_point_3& q,
