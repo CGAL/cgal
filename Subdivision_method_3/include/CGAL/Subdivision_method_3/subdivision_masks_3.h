@@ -118,8 +118,8 @@ public:
   }
 
   void edge_node(halfedge_descriptor edge, Point& pt) {
-    const Point_ref p1 = get(this->vpmap, target(edge, *(this->pmesh)));
-    const Point_ref p2 = get(this->vpmap, source(edge, *(this->pmesh)));
+    Point_ref p1 = get(this->vpmap, target(edge, *(this->pmesh)));
+    Point_ref p2 = get(this->vpmap, source(edge, *(this->pmesh)));
     pt = Point((p1[0]+p2[0])/2, (p1[1]+p2[1])/2, (p1[2]+p2[2])/2);
   }
 
@@ -200,8 +200,8 @@ public:
 
   /// computes the Catmull-Clark edge-point `pt` of the edge `edge`.
   void edge_node(halfedge_descriptor edge, Point& pt) {
-    const Point& p1 = get(this->vpmap,target(edge, *(this->pmesh)));
-    const Point& p2 = get(this->vpmap,source(edge, *(this->pmesh)));
+    Point_ref p1 = get(this->vpmap,target(edge, *(this->pmesh)));
+    Point_ref p2 = get(this->vpmap,source(edge, *(this->pmesh)));
     Point f1, f2;
     this->face_node(face(edge, *(this->pmesh)), f1);
     this->face_node(face(opposite(edge, *(this->pmesh)), *(this->pmesh)), f2);
@@ -216,11 +216,11 @@ public:
     typename boost::graph_traits<Mesh>::degree_size_type n = degree(vertex, *(this->pmesh));
 
     FT Q[] = {0.0, 0.0, 0.0}, R[] = {0.0, 0.0, 0.0};
-    const Point_ref S = get(this->vpmap,vertex);
+    Point_ref S = get(this->vpmap,vertex);
 
     Point q;
     for (typename boost::graph_traits<Mesh>::degree_size_type i = 0; i < n; i++, ++vcir) {
-      const Point& p2 = get(this->vpmap, target(opposite(*vcir, *(this->pmesh)), *(this->pmesh)));
+      Point_ref p2 = get(this->vpmap, target(opposite(*vcir, *(this->pmesh)), *(this->pmesh)));
       R[0] += (S[0] + p2[0]) / 2;
       R[1] += (S[1] + p2[1]) / 2;
       R[2] += (S[2] + p2[2]) / 2;
@@ -240,15 +240,15 @@ public:
   /// computes the Catmull-Clark edge-point `ept` and the Catmull-Clark
   /// vertex-point `vpt` of the border edge `edge`.
   void border_node(halfedge_descriptor edge, Point& ept, Point& vpt) {
-    const Point& ep1 = get(this->vpmap,target(edge, *(this->pmesh)));
-    const Point& ep2 = get(this->vpmap,target(opposite(edge, *(this->pmesh)), *(this->pmesh)));
+    Point_ref ep1 = get(this->vpmap,target(edge, *(this->pmesh)));
+    Point_ref ep2 = get(this->vpmap,target(opposite(edge, *(this->pmesh)), *(this->pmesh)));
     ept = Point((ep1[0]+ep2[0])/2, (ep1[1]+ep2[1])/2, (ep1[2]+ep2[2])/2);
 
     Halfedge_around_target_circulator<Mesh> vcir(edge, *(this->pmesh));
-    const Point& vp1  = get(this->vpmap,target(opposite(*vcir, *(this->pmesh)), *(this->pmesh)));
-    const Point& vp0  = get(this->vpmap, target(*vcir, *(this->pmesh)));
+    Point_ref vp1  = get(this->vpmap,target(opposite(*vcir, *(this->pmesh)), *(this->pmesh)));
+    Point_ref vp0  = get(this->vpmap, target(*vcir, *(this->pmesh)));
     --vcir;
-    const Point& vp_1 = get(this->vpmap, target(opposite(*vcir, *(this->pmesh)), *(this->pmesh)));
+    Point_ref vp_1 = get(this->vpmap, target(opposite(*vcir, *(this->pmesh)), *(this->pmesh)));
     vpt = Point((vp_1[0] + 6*vp0[0] + vp1[0])/8,
                 (vp_1[1] + 6*vp0[1] + vp1[1])/8,
                 (vp_1[2] + 6*vp0[2] + vp1[2])/8 );
@@ -299,6 +299,7 @@ public:
   typedef typename Base::FT                          FT;
   typedef typename Base::Point                       Point;
   typedef typename Base::Vector                      Vector;
+  typedef typename boost::property_traits<VertexPointMap>::reference Point_ref;
 #endif
 
   typedef Halfedge_around_face_circulator<Mesh> Halfedge_around_facet_circulator;
@@ -326,10 +327,10 @@ public:
 
   /// computes the Loop edge-point `pt` of the edge `edge`.
   void edge_node(halfedge_descriptor edge, Point& pt) {
-    const Point& p1 = get(this->vpmap,target(edge, *(this->pmesh)));
-    const Point& p2 = get(this->vpmap,target(opposite(edge, *(this->pmesh)), *(this->pmesh)));
-    const Point& f1 = get(this->vpmap,target(next(edge, *(this->pmesh)), *(this->pmesh)));
-    const Point& f2 = get(this->vpmap,target(next(opposite(edge, *(this->pmesh)), *(this->pmesh)), *(this->pmesh)));
+    Point_ref p1 = get(this->vpmap,target(edge, *(this->pmesh)));
+    Point_ref p2 = get(this->vpmap,target(opposite(edge, *(this->pmesh)), *(this->pmesh)));
+    Point_ref f1 = get(this->vpmap,target(next(edge, *(this->pmesh)), *(this->pmesh)));
+    Point_ref f2 = get(this->vpmap,target(next(opposite(edge, *(this->pmesh)), *(this->pmesh)), *(this->pmesh)));
 
     pt = Point((3*(p1[0]+p2[0])+f1[0]+f2[0])/8,
                (3*(p1[1]+p2[1])+f1[1]+f2[1])/8,
@@ -342,10 +343,10 @@ public:
     size_t n = circulator_size(vcir);
 
     FT R[] = {0.0, 0.0, 0.0};
-    const Point& S = get(this->vpmap,vertex);
+    Point_ref S = get(this->vpmap,vertex);
 
     for (size_t i = 0; i < n; i++, ++vcir) {
-      const Point& p = get(this->vpmap,target(opposite(*vcir, *(this->pmesh)), *(this->pmesh)));
+      Point_ref p = get(this->vpmap,target(opposite(*vcir, *(this->pmesh)), *(this->pmesh)));
       R[0] += p[0]; 	R[1] += p[1]; 	R[2] += p[2];
     }
     if (n == 6) {
@@ -364,15 +365,15 @@ public:
 
   /// computes the Loop edge-point `ept` and the Loop vertex-point `vpt` of the border edge `edge`.
   void border_node(halfedge_descriptor edge, Point& ept, Point& vpt) {
-    const Point& ep1 = get(this->vpmap,target(edge, *(this->pmesh)));
-    const Point& ep2 = get(this->vpmap,target(opposite(edge, *(this->pmesh)), *(this->pmesh)));
+    Point_ref ep1 = get(this->vpmap,target(edge, *(this->pmesh)));
+    Point_ref ep2 = get(this->vpmap,target(opposite(edge, *(this->pmesh)), *(this->pmesh)));
     ept = Point((ep1[0]+ep2[0])/2, (ep1[1]+ep2[1])/2, (ep1[2]+ep2[2])/2);
 
     Halfedge_around_vertex_circulator vcir(edge, *(this->pmesh));
-    const Point& vp1  = get(this->vpmap,target(opposite(*vcir, *(this->pmesh) ), *(this->pmesh)));
-    const Point& vp0  = get(this->vpmap,target(*vcir, *(this->pmesh)));
+    Point_ref vp1  = get(this->vpmap,target(opposite(*vcir, *(this->pmesh) ), *(this->pmesh)));
+    Point_ref vp0  = get(this->vpmap,target(*vcir, *(this->pmesh)));
     --vcir;
-    const Point& vp_1 = get(this->vpmap,target(opposite(*vcir, *(this->pmesh)), *(this->pmesh)));
+    Point_ref vp_1 = get(this->vpmap,target(opposite(*vcir, *(this->pmesh)), *(this->pmesh)));
     vpt = Point((vp_1[0] + 6*vp0[0] + vp1[0])/8,
                 (vp_1[1] + 6*vp0[1] + vp1[1])/8,
                 (vp_1[2] + 6*vp0[2] + vp1[2])/8 );
@@ -460,6 +461,7 @@ public:
   typedef typename Base::FT                          FT;
   typedef typename Base::Point                       Point;
   typedef typename Base::Vector                      Vector;
+  typedef typename boost::property_traits<VertexPointMap>::reference Point_ref;
 #endif
 
 public:

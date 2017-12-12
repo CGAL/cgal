@@ -251,8 +251,8 @@ class CatmullClark_mask_3 {
 };
 
   void edge_node(halfedge_descriptor edge, Point_3& pt) {
-    Point_3& p1 = get(vpm,target(edge, pmesh));
-    Point_3& p2 = get(vpm,source(edge, pmesh));
+    Point_3 p1 = get(vpm,target(edge, pmesh));
+    Point_3 p2 = get(vpm,source(edge, pmesh));
     Point_3 f1, f2;
     face_node(face(edge,pmesh), f1);
     face_node(face(opposite(edge,pmesh),pmesh), f2);
@@ -266,11 +266,11 @@ class CatmullClark_mask_3 {
     typename boost::graph_traits<PolygonMesh>::degree_size_type n = degree(vertex,pmesh);
 
     FT Q[] = {0.0, 0.0, 0.0}, R[] = {0.0, 0.0, 0.0};
-    Point_3& S = get(vpm,vertex);
+    Point_3 S = get(vpm,vertex);
 
     Point_3 q;
     for (int i = 0; i < n; i++, ++vcir) {
-      Point_3& p2 = get(vpm, target(opposite(*vcir,pmesh),pmesh));
+      Point_3 p2 = get(vpm, target(opposite(*vcir,pmesh),pmesh));
       R[0] += (S[0]+p2[0])/2;
       R[1] += (S[1]+p2[1])/2;
       R[2] += (S[2]+p2[2])/2;
@@ -454,15 +454,15 @@ is listed below, where `ept` returns the new point splitting
 \code{.cpp}
 
   void border_node(halfedge_descriptor edge, Point_3& ept, Point_3& vpt) {
-    Point_3& ep1 = get(vpm, target(edge, pmesh));
-    Point_3& ep2 = get(vpm, target(opposite(edge, pmesh), pmesh));
+    Point_3 ep1 = get(vpm, target(edge, pmesh));
+    Point_3 ep2 = get(vpm, target(opposite(edge, pmesh), pmesh));
     ept = Point_3((ep1[0]+ep2[0])/2, (ep1[1]+ep2[1])/2, (ep1[2]+ep2[2])/2);
 
     Halfedge_around_target_circulator<Poly> vcir(edge, pmesh);
-    Point_3& vp1  = get(vpm,target(opposite(*vcir, pmesh ), pmesh));
-    Point_3& vp0  = get(vpm, target(*vcir, pmesh));
+    Point_3 vp1  = get(vpm,target(opposite(*vcir, pmesh ), pmesh));
+    Point_3 vp0  = get(vpm, target(*vcir, pmesh));
     --vcir;
-    Point_3& vp_1 = get(vpm, target(opposite(*vcir, pmesh), pmesh));
+    Point_3 vp_1 = get(vpm, target(opposite(*vcir, pmesh), pmesh));
     vpt = Point_3((vp_1[0] + 6*vp0[0] + vp1[0])/8,
                   (vp_1[1] + 6*vp0[1] + vp1[1])/8,
                   (vp_1[2] + 6*vp0[2] + vp1[2])/8 );
