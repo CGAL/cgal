@@ -1306,6 +1306,59 @@ bool do_intersect(const TriangleMesh& mesh,
 }//end PMP
 namespace internal{
 
+template <class GT, class TriangleMesh, class VPM>
+void get_one_point_per_cc(TriangleMesh& mesh,
+                          const VPM& vpm,
+                          std::vector<typename GT::Point_3>& points_of_interest)
+{
+  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
+  boost::unordered_map<face_descriptor, int> fid_map;
+  int id = 0;
+  BOOST_FOREACH(face_descriptor fd, faces(mesh))
+  {
+    fid_map.insert(std::make_pair(fd,id++));
+  }
+  boost::associative_property_map< boost::unordered_map<face_descriptor, int> >
+      fid_pmap(fid_map);
+  std::map<face_descriptor, int> fcc_map;
+
+  int nb_cc = Polygon_mesh_processing::connected_components(mesh,
+                                                            boost::make_assoc_property_map<std::map<face_descriptor, int> >(fcc_map),
+                                                            Polygon_mesh_processing::parameters::face_index_map(fid_pmap));
+  std::vector<bool> is_cc_treated(nb_cc, false);
+  points_of_interest.resize(nb_cc);
+  int cc_treated = 0;
+  BOOST_FOREACH(face_descriptor fd, faces(mesh))
+  {
+    int cc=fcc_map[fd];
+    if(!is_cc_treated[cc])
+    {
+      points_of_interest[cc]=get(vpm, target(halfedge(fd, mesh),mesh));
+      is_cc_treated[cc] = true;
+      if(++cc_treated == nb_cc)
+        break;
+    }
+  }
+}
+
+//this assumes the meshes does not intersect
+template <class TriangleMesh, class VPM, class GT, class AABB_tree>
+bool is_mesh2_in_mesh1_impl(const AABB_tree& tree1,
+                            const std::vector<typename GT::Point_3>& points_of_interest2,
+                            const GT& gt)
+{
+  //for each CC, take a point on it and test bounded side
+  Side_of_triangle_mesh<TriangleMesh, GT, VPM> sotm(tree1, gt);
+  BOOST_FOREACH(const typename GT::Point_3& p, points_of_interest2)
+  {
+    if(sotm(p) == CGAL::ON_BOUNDED_SIDE) // sufficient as we know meshes do not intersect
+    {
+      return true;
+    }
+  }
+  return false;
+}
+
 template<class TriangleMeshRange,
          typename OutputIterator,
          class NamedParametersRange>
@@ -1372,46 +1425,11 @@ struct Mesh_callback
     }
     //get a face-index map for mesh2
     if(points_of_interest[mesh_id_2].size() == 0)
-    {
-      boost::unordered_map<face_descriptor, int> fid_map;
-      int id = 0;
-      BOOST_FOREACH(face_descriptor fd, faces(mesh_2))
-      {
-        fid_map.insert(std::make_pair(fd,id++));
-      }
-      boost::associative_property_map< boost::unordered_map<face_descriptor, int> >
-          fid_pmap(fid_map);
-      std::map<face_descriptor, int> fcc_map;
+      get_one_point_per_cc<GT>(mesh_2, vpm2, points_of_interest[mesh_id_2]);
 
-      int nb_cc = Polygon_mesh_processing::connected_components(mesh_2,
-                                                                boost::make_assoc_property_map<std::map<face_descriptor, int> >(fcc_map),
-                                                                Polygon_mesh_processing::parameters::face_index_map(fid_pmap));
-      std::vector<bool> is_cc_treated(nb_cc, false);
-      int cc_treated = 0;
-      BOOST_FOREACH(face_descriptor fd, faces(mesh_2))
-      {
-        int cc=fcc_map[fd];
-        if(!is_cc_treated[cc])
-        {
-          points_of_interest[mesh_id_2].push_back(get(vpm2, target(halfedge(fd, mesh_2),mesh_2)));
-          is_cc_treated[cc] = true;
-          if(++cc_treated == nb_cc)
-            break;
-        }
-      }
-    }
     //test if mesh_2 is included in mesh_1:
-
-    //for each CC, take a point on it and test bounded side
-    Side_of_triangle_mesh<TriangleMesh, GT, VPM> sotm(*trees[mesh_id_1], gt);
-    BOOST_FOREACH(CGAL::Point_3<GT> p, points_of_interest[mesh_id_2])
-    {
-      if(sotm(p) == CGAL::ON_BOUNDED_SIDE) // sufficient as we know meshes do not intersect
-      {
-        return true;
-      }
-    }
-    return false;
+    return is_mesh2_in_mesh1_impl<TriangleMesh, VPM, GT>(
+      *trees[mesh_id_1],  points_of_interest[mesh_id_2], gt);
   }
 
   template<class Mesh_box>
