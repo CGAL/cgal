@@ -32,21 +32,18 @@
 
 #include <CGAL/Periodic_2_offset_2.h>
 
-namespace CGAL
-{
-namespace internal
-{
-namespace Static_filters_predicates
-{
+namespace CGAL {
+namespace internal {
+namespace Static_filters_predicates {
 
-template < class K, class Side_of_oriented_circle_2_base >
+template <class K_, class Side_of_oriented_circle_2_base_>
 class Periodic_2_side_of_oriented_circle_2
-  : public Side_of_oriented_circle_2_base
+  : public Side_of_oriented_circle_2_base_
 {
-  typedef Side_of_oriented_circle_2_base                Base;
+  typedef Side_of_oriented_circle_2_base_               Base;
 
 public:
-  typedef K                                             Kernel;
+  typedef K_                                            Kernel;
 
   typedef typename Kernel::FT                           FT;
   typedef typename Kernel::Point_2                      Point_2;
@@ -60,7 +57,7 @@ public:
   typedef typename Base::result_type  result_type;
 
   Periodic_2_side_of_oriented_circle_2(const Iso_rectangle_2 * dom,
-                                       const Side_of_oriented_circle_2_base& socb)
+                                       const Base& socb)
     : Base(socb), _dom(dom)
   { }
 

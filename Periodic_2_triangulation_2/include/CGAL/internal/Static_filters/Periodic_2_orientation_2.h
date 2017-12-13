@@ -81,21 +81,18 @@
   }
 */
 
-namespace CGAL
-{
-namespace internal
-{
-namespace Static_filters_predicates
-{
+namespace CGAL {
+namespace internal {
+namespace Static_filters_predicates {
 
-template < class K, class Orientation_2_base >
+template <class K_, class Orientation_2_base_>
 class Periodic_2_orientation_2
-  : public Orientation_2_base
+  : public Orientation_2_base_
 {
-  typedef Orientation_2_base                      Base;
+  typedef Orientation_2_base_                     Base;
 
 public:
-  typedef K                                       Kernel;
+  typedef K_                                      Kernel;
 
   typedef typename Kernel::FT FT;
   typedef typename Kernel::Point_2                Point_2;
@@ -111,7 +108,7 @@ public:
   typedef typename Base::result_type  result_type;
 
   Periodic_2_orientation_2(const Iso_rectangle_2 * const dom,
-                           const Orientation_2_base& o2b)
+                           const Base& o2b)
     : Base(o2b), _dom(dom)
   { }
 

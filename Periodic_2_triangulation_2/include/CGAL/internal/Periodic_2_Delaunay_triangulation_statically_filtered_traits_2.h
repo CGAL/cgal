@@ -28,19 +28,20 @@
 
 namespace CGAL {
 
-template< typename K,
-          typename Off = typename CGAL::Periodic_2_offset_2>
+template<class K_,
+         class Off_ = typename CGAL::Periodic_2_offset_2>
 class Periodic_2_Delaunay_triangulation_statically_filtered_traits_2
-  : public Periodic_2_Delaunay_triangulation_filtered_traits_base_2<K, Off>
+  : public Periodic_2_Delaunay_triangulation_filtered_traits_base_2<K_, Off_>
 {
-  typedef Periodic_2_Delaunay_triangulation_statically_filtered_traits_2<K, Off> Self;
-  typedef Periodic_2_Delaunay_triangulation_filtered_traits_base_2<K, Off>       Base;
+  typedef Periodic_2_Delaunay_triangulation_statically_filtered_traits_2<K_, Off_> Self;
+  typedef Periodic_2_Delaunay_triangulation_filtered_traits_base_2<K_, Off_>       Base;
 
 public:
-  typedef typename K::Iso_rectangle_2 Iso_rectangle_2;
+  typedef K_                                                                       Kernel;
+  typedef typename Kernel::Iso_rectangle_2                                         Iso_rectangle_2;
 
   Periodic_2_Delaunay_triangulation_statically_filtered_traits_2(const Iso_rectangle_2& domain,
-                                                                 const K& k)
+                                                                 const Kernel& k)
     : Base(domain, k)
   { }
 
