@@ -195,7 +195,7 @@ write_off_points(
   return write_off_points
     (stream, points,
      CGAL::parameters::point_map (point_map).
-     geom_traits (Kernel());
+     geom_traits (Kernel()));
 }
 
 // deprecated API
