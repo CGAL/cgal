@@ -292,10 +292,8 @@ void DQQ_1step(Poly& p, VertexPointMap vpm, Mask mask) {
   std::size_t num_f = p_faces.size();
 
   std::vector<halfedge_descriptor> border_halfedges;
-  size_t num_be = 0 ;
   BOOST_FOREACH(edge_descriptor ed, p_edges){
     if(is_border(ed,p)){
-      ++num_be;
       border_halfedges.push_back(halfedge(ed,p));
     }
   }
