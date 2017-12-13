@@ -1057,6 +1057,26 @@ bool is_mesh2_in_mesh1_impl(const AABB_tree& tree1,
   }
   return false;
 }
+
+template <class TriangleMesh, class VPM, class GT>
+bool is_mesh2_in_mesh1(const TriangleMesh& mesh_1,
+                       const TriangleMesh& mesh_2,
+                       const VPM& vpm1,
+                       const VPM& vpm2,
+                       const GT& gt)
+{
+  typedef CGAL::AABB_face_graph_triangle_primitive<TriangleMesh, VPM> Primitive;
+  typedef CGAL::AABB_traits<GT, Primitive> Traits;
+  typedef CGAL::AABB_tree<Traits> AABBTree;
+
+  AABBTree tree1(faces(mesh_1).begin(), faces(mesh_1).end(), mesh_1, vpm1);
+  std::vector<typename GT::Point_3> points_of_interest2;
+  get_one_point_per_cc<GT>(mesh_2, vpm2, points_of_interest2);
+
+  return is_mesh2_in_mesh1_impl<TriangleMesh, VPM>(tree1, points_of_interest2, gt);
+}
+
+
 }// namespace internal
 
 namespace Polygon_mesh_processing{
@@ -1151,8 +1171,12 @@ bool do_intersect(const Polyline& polyline1,
  * \ingroup PMP_predicates_grp
  * returns `true` if any pair of faces from `mesh1` and `mesh2` intersect, and `false` otherwise.
  * This function depends on the package \ref PkgBoxIntersectionDSummary
+ * If `test_overlap` is `true`, bounded volume overlaps are tested as well. In that case, the meshes must be closed.
+ *
  * @pre `CGAL::is_triangle_mesh(mesh1)`
  * @pre `CGAL::is_triangle_mesh(mesh2)`
+ * @pre `!test_overlap || CGAL::is_closed(mesh1)`
+ * @pre `!test_overlap || CGAL::is_closed(mesh2)`
  *
  * @tparam TriangleMesh a model of `FaceListGraph`
  * @tparam NamedParameters1 a sequence of \ref namedparameters for `mesh1`
@@ -1162,6 +1186,8 @@ bool do_intersect(const Polyline& polyline1,
  * @param mesh2 the second triangulated surface mesh to check for intersections
  * @param np1 optional sequence of \ref namedparameters for `mesh1`, among the ones listed below
  * @param np2 optional sequence of \ref namedparameters for `mesh2`, among the ones listed below
+ * @param test_overlap if `true` tests also for mesh inclusions. Note that the inclusion tests do not depend on the orientation of the meshes.
+ *                     if `false`, only the intersection of surface triangles are tested. Default is `false`.
  *
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `mesh1` (mesh2`).
@@ -1177,11 +1203,14 @@ template <class TriangleMesh,
           class NamedParameters2>
 bool do_intersect(const TriangleMesh& mesh1,
                   const TriangleMesh& mesh2,
+                  bool test_overlap,
                   const NamedParameters1& np1,
                   const NamedParameters2& np2)
 {
   CGAL_precondition(CGAL::is_triangle_mesh(mesh1));
   CGAL_precondition(CGAL::is_triangle_mesh(mesh2));
+  CGAL_precondition(!test_overlap || CGAL::is_closed(mesh1));
+  CGAL_precondition(!test_overlap || CGAL::is_closed(mesh2));
 
   try
   {
@@ -1191,6 +1220,20 @@ bool do_intersect(const TriangleMesh& mesh1,
   catch( CGAL::internal::Throw_at_first_output::Throw_at_first_output_exception& )
   { return true; }
 
+  if (test_overlap)
+  {
+    typedef typename GetVertexPointMap<TriangleMesh, NamedParameters1>::const_type VertexPointMap1;
+    typedef typename GetVertexPointMap<TriangleMesh, NamedParameters2>::const_type VertexPointMap2;
+    VertexPointMap1 vpm1 = boost::choose_param(get_param(np1, internal_np::vertex_point),
+                                                get_const_property_map(boost::vertex_point, mesh1));
+    VertexPointMap2 vpm2 = boost::choose_param(get_param(np2, internal_np::vertex_point),
+                                                get_const_property_map(boost::vertex_point, mesh2));
+    typedef typename GetGeomTraits<TriangleMesh, NamedParameters1>::type GeomTraits;
+    GeomTraits gt = boost::choose_param(get_param(np1, internal_np::geom_traits), GeomTraits());
+
+    return CGAL::internal::is_mesh2_in_mesh1(mesh1, mesh2, vpm1, vpm2, gt) ||
+           CGAL::internal::is_mesh2_in_mesh1(mesh2, mesh1, vpm2, vpm1, gt);
+  }
   return false;
 }
 
@@ -1198,13 +1241,14 @@ bool do_intersect(const TriangleMesh& mesh1,
 template <class TriangleMesh>
 bool do_intersect(const TriangleMesh& mesh1,
                   const TriangleMesh& mesh2,
+                  bool test_overlap = false,
                   const typename boost::disable_if<
                                     typename boost::has_range_const_iterator<TriangleMesh>::type
                   >::type* = 0)
 {
   CGAL_precondition(CGAL::is_triangle_mesh(mesh1));
   CGAL_precondition(CGAL::is_triangle_mesh(mesh2));
-  return do_intersect(mesh1, mesh2, parameters::all_default(), parameters::all_default());
+  return do_intersect(mesh1, mesh2, test_overlap, parameters::all_default(), parameters::all_default());
 }
 
 /**
@@ -1454,6 +1498,8 @@ struct Mesh_callback
     //surfacic test
     if(Polygon_mesh_processing::do_intersect(*b1->info(),
                                              *b2->info(),
+                                             false, // we do not put report_overlap here since
+                                                    // we want to cache aabb-trees and reference points
                                              Polygon_mesh_processing::parameters::vertex_point_map(vpm1)
                                              .geom_traits(gt),
                                              Polygon_mesh_processing::parameters::vertex_point_map(vpm2)
