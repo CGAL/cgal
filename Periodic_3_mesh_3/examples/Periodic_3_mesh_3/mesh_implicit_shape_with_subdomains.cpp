@@ -25,7 +25,7 @@ typedef K::Point_3                                          Point;
 // Domain
 typedef FT (Function)(const Point&);
 typedef CGAL::Implicit_to_labeled_subdomains_function_wrapper<Function, K> Function_wrapper;
-typedef CGAL::Implicit_periodic_3_mesh_domain_3<Function,K, Function_wrapper> Periodic_mesh_domain;
+typedef CGAL::Implicit_periodic_3_mesh_domain_3<Function, K, Function_wrapper> Periodic_mesh_domain;
 
 // Triangulation
 typedef CGAL::Periodic_3_mesh_triangulation_3<Periodic_mesh_domain>::type Tr;
@@ -38,9 +38,6 @@ typedef CGAL::Mesh_criteria_3<Tr> Periodic_mesh_criteria;
 using namespace CGAL::parameters;
 
 // Function
-FT sphere_function (const Point& p)
-{ return CGAL::squared_distance(p, Point(0.5, 0.5, 0.5))-0.2; }
-
 FT schwarz_p(const Point& p) {
   const FT x2 = std::cos( p.x() * 2 * CGAL_PI ),
            y2 = std::cos( p.y() * 2 * CGAL_PI ),
@@ -48,6 +45,7 @@ FT schwarz_p(const Point& p) {
   return x2 + y2 + z2;
 }
 
+// This example uses a cell sizing field that depends on the subdomain index
 typedef CGAL::Mesh_constant_domain_field_3<Periodic_mesh_domain::R,
                                            Periodic_mesh_domain::Index> Field;
 
@@ -57,14 +55,11 @@ int main(int argc, char** argv)
 
   Periodic_mesh_domain domain(schwarz_p, CGAL::Iso_cuboid_3<K>(0, 0, 0, 1, 1, 1));
 
-  double kidney_size = 0.3;
+  // Write the two different sizing fields for cells
   int volume_dimension = 3;
-  Field size(8);
-  size.set_size(kidney_size, volume_dimension,
-                domain.index_from_subdomain_index(2));
-
-  size.set_size(0.06, volume_dimension,
-                domain.index_from_subdomain_index(1));
+  Field size(2);
+  size.set_size(0.1, volume_dimension, domain.index_from_subdomain_index(2)); // exterior
+  size.set_size(0.03, volume_dimension, domain.index_from_subdomain_index(1)); // interior
 
   Periodic_mesh_criteria criteria(facet_angle = 30.,
                                   facet_size = 0.05,

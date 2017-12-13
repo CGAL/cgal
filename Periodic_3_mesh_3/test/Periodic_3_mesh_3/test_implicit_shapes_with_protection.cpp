@@ -83,6 +83,7 @@ void fill_sphere_polylines(Polylines& polylines)
 
 void test_protected_sphere()
 {
+  std::cout << "test_protected_sphere..." << std::endl;
   int domain_size = 1;
   Mesh_domain domain(sphere_function,
                      CGAL::Iso_cuboid_3<K>(0, 0, 0, domain_size, domain_size, domain_size));
@@ -143,6 +144,7 @@ void fill_squary_cylinder_polylines(Polylines& polylines)
 
 void test_protected_squary_cylinder()
 {
+  std::cout << "test_protected_squary_cylinder..." << std::endl;
   int domain_size = 1;
   Mesh_domain domain(squary_cylinder_function,
                      CGAL::Iso_cuboid_3<K>(0, 0, 0, domain_size, domain_size, domain_size));
@@ -186,23 +188,23 @@ void fill_squary_cylinder_polylines_2(Polylines& polylines)
   Polyline_3 polyline;
 
   // vertical
+  polyline.push_back(Point(min, min, -1.));
   polyline.push_back(Point(min, min, 0.));
-  polyline.push_back(Point(min, min, 1.));
   polylines.push_back(polyline);
 
   polyline.clear();
-  polyline.push_back(Point(max, max, 0.));
-  polyline.push_back(Point(max, max, 1.));
+  polyline.push_back(Point(1 + max, 1 + max, 2.));
+  polyline.push_back(Point(1 + max, 1 + max, 3.));
   polylines.push_back(polyline);
 
   polyline.clear();
-  polyline.push_back(Point(max, min, 0.));
-  polyline.push_back(Point(max, min, 1.));
+  polyline.push_back(Point(max, min, 4.));
+  polyline.push_back(Point(max, min, 5.));
   polylines.push_back(polyline);
 
   polyline.clear();
-  polyline.push_back(Point(min, max, 0.));
-  polyline.push_back(Point(min, max, 1.));
+  polyline.push_back(Point(min, max, 6.));
+  polyline.push_back(Point(min, max, 7.));
   polylines.push_back(polyline);
 
   // vertical, on border
@@ -250,6 +252,7 @@ void fill_squary_cylinder_polylines_2(Polylines& polylines)
 
 void test_protected_squary_cylinder_2()
 {
+  std::cout << "test_protected_squary_cylinder_2..." << std::endl;
   int domain_size = 1;
   Mesh_domain domain(squary_cylinder_function_2,
                      CGAL::Iso_cuboid_3<K>(0, 0, 0, domain_size, domain_size, domain_size));
