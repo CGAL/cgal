@@ -1355,8 +1355,8 @@ struct Mesh_callback
            class GT>
   bool is_mesh2_in_mesh1(const TriangleMesh& mesh_1,
                          const TriangleMesh& mesh_2,
-                         const int& mesh_id_1,
-                         const int& mesh_id_2,
+                         const int mesh_id_1,
+                         const int mesh_id_2,
                          const VPM& vpm1,
                          const VPM& vpm2,
                          const GT& gt)
