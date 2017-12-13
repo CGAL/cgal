@@ -123,7 +123,6 @@ test_faces_polyline_intersections(const char* filename1,
 {
   typedef typename K::Point_3                                    Point;
   typedef typename CGAL::Surface_mesh<Point>                     Mesh;
-  typedef typename boost::graph_traits<Mesh>::face_descriptor    face_descriptor;
 
   std::ifstream input1(filename1);
   std::ifstream input2(filename2);
@@ -181,7 +180,6 @@ test_faces_polylines_intersections(const char* filename1,
 {
   typedef typename K::Point_3                                    Point;
   typedef typename CGAL::Surface_mesh<Point>                     Mesh;
-  typedef typename boost::graph_traits<Mesh>::face_descriptor    face_descriptor;
 
   std::ifstream input1(filename1);
   std::ifstream input2(filename2);
@@ -242,8 +240,6 @@ test_polylines_polylines_intersections(const char* filename1,
                                   const bool expected)
 {
   typedef typename K::Point_3                                    Point;
-  typedef typename CGAL::Surface_mesh<Point>                     Mesh;
-  typedef typename boost::graph_traits<Mesh>::face_descriptor    face_descriptor;
 
   std::ifstream input1(filename1);
   std::ifstream input2(filename2);
@@ -308,8 +304,6 @@ test_polylines_intersections(const char* filename1,
                                   const bool expected)
 {
   typedef typename K::Point_3                                    Point;
-  typedef typename CGAL::Surface_mesh<Point>                     Mesh;
-  typedef typename boost::graph_traits<Mesh>::face_descriptor    face_descriptor;
 
   std::ifstream input1(filename1);
   std::ifstream input2(filename2);
@@ -369,11 +363,10 @@ int test_inter_in_range(const std::vector<const char*>& filenames, std::size_t e
 {
   typedef typename K::Point_3                                    Point;
   typedef typename CGAL::Surface_mesh<Point>                     Mesh;
-  typedef typename boost::graph_traits<Mesh>::face_descriptor    face_descriptor;
 
   // reading input meshes
   std::vector<Mesh> meshes(filenames.size());
-  for (int i=0; i< filenames.size(); ++i)
+  for (std::size_t i=0; i< filenames.size(); ++i)
   {
     std::ifstream input(filenames[i]);
     input >> meshes[i];
