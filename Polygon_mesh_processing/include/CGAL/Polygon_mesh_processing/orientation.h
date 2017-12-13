@@ -430,14 +430,17 @@ void recursive_orient_volume_ccs( TriangleMesh& tm,
 
 /**
 * \ingroup PMP_orientation_grp
-* makes the orientation of all the connected components of a `TriangleMesh` consistent.
+* makes each connected component of a closed triangulated surface mesh
+* inward or outward oriented.
 *
 * @tparam TriangleMesh a model of `FaceListGraph` and `MutableFaceGraph` .
+*                      If `TriangleMesh` has an internal property map for `CGAL::face_index_t`,
+*                      as a named parameter, then it must be initialized.
 * @tparam NamedParameters a sequence of \ref namedparameters
 *
-* @param tm a closed triangulated `TriangleMesh`
-* @param orient_outward indicates if the output mesh should be oriented outward (`true`) or inward (`false`).
-* default value is true.
+* @param tm a closed triangulated surface mesh
+* @param orient_outward `true` indicates that each connected component will be outward oriented,
+*                        and inward oriented if `false`. Default value is true.
 * @param np optional sequence of \ref namedparameters among the ones listed below
 *
 * \cgalNamedParamsBegin
@@ -463,9 +466,10 @@ void orient(TriangleMesh& tm, bool orient_outward, const NamedParameters& np)
   typedef typename GetFaceIndexMap<TriangleMesh,
       NamedParameters>::const_type Fid_map;
 
-  if (!is_triangle_mesh(tm)) return ;
-  if (!is_valid(tm)) return ;
-  if (!is_closed(tm)) return;
+  CGAL_assertion(is_triangle_mesh(tm));
+  CGAL_assertion(is_valid(tm));
+  CGAL_assertion(is_closed(tm));
+
   Vpm vpm = boost::choose_param(get_param(np, internal_np::vertex_point),
                                 get_const_property_map(boost::vertex_point, tm));
 
