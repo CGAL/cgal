@@ -70,8 +70,8 @@ Release date: April 2018
 ### Polygon Mesh Processing
 
 -   Added two functions for orienting connected components :
-    -   CGAL::Polygon_mesh_processing::orient()
-    -   CGAL::Polygon_mesh_processing::orient_to_bound_a_volume()
+    -   `CGAL::Polygon_mesh_processing::orient()`
+    -   `CGAL::Polygon_mesh_processing::orient_to_bound_a_volume()`
 
 -   Added new functions for feature detection and feature-guided
     segmentation:
