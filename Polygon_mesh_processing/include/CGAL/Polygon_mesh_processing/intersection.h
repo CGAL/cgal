@@ -40,6 +40,7 @@
 #include <CGAL/Side_of_triangle_mesh.h>
 
 namespace CGAL {
+namespace Polygon_mesh_processing{
 namespace internal {
 
 template<class TM,
@@ -450,16 +451,15 @@ compute_face_face_intersection(const FaceRange& face_range1,
   typedef typename GetGeomTraits<TM, NamedParameters1>::type GeomTraits;
   GeomTraits gt = boost::choose_param(get_param(np1, internal_np::geom_traits), GeomTraits());
 
-  CGAL::internal::Intersect_faces<TM,
-      GeomTraits,
-      Box,
-      OutputIterator,
-      VertexPointMap1,
-      VertexPointMap2>
-      Intersect_faces(tm1, tm2,
-                       out,
-                       vpmap1, vpmap2,
-                       gt);
+  internal::Intersect_faces<TM,
+                            GeomTraits,
+                            Box,
+                            OutputIterator,
+                            VertexPointMap1,
+                            VertexPointMap2> Intersect_faces(tm1, tm2,
+                                                             out,
+                                                             vpmap1, vpmap2,
+                                                             gt);
 
   std::ptrdiff_t cutoff = 2000;
   CGAL::box_intersection_d(box1_ptr.begin(), box1_ptr.end(),
@@ -570,18 +570,18 @@ compute_face_polyline_intersection( const FaceRange& face_range,
   typedef typename GetGeomTraits<TM, NamedParameters>::type GeomTraits;
   GeomTraits gt = boost::choose_param(get_param(np, internal_np::geom_traits), GeomTraits());
 
-  CGAL::internal::Intersect_face_polyline<TM,
-      GeomTraits,
-      Box,
-      OutputIterator,
-      Polyline,
-      VertexPointMap>
-      Intersect_face_polyline(tm,
-                               faces,
-                               polyline,
-                               out,
-                               vpmap,
-                               gt);
+  internal::Intersect_face_polyline<TM,
+                                    GeomTraits,
+                                    Box,
+                                    OutputIterator,
+                                    Polyline,
+                                    VertexPointMap>
+                                    Intersect_face_polyline(tm,
+                                                            faces,
+                                                            polyline,
+                                                            out,
+                                                            vpmap,
+                                                            gt);
 
   std::ptrdiff_t cutoff = 2000;
   CGAL::box_intersection_d(box1_ptr.begin(), box1_ptr.end(),
@@ -699,18 +699,18 @@ compute_face_polylines_intersection(const FaceRange& face_range,
   typedef typename GetGeomTraits<TM, NamedParameters>::type GeomTraits;
   GeomTraits gt = boost::choose_param(get_param(np, internal_np::geom_traits), GeomTraits());
 
-  CGAL::internal::Intersect_face_polylines<TM,
-      GeomTraits,
-      Box,
-      PolylineRange,
-      OutputIterator,
-      VertexPointMap>
-      Intersect_face_polyline(mesh,
-                               faces,
-                               polyline_range,
-                               out,
-                               vpmap,
-                               gt);
+  internal::Intersect_face_polylines<TM,
+                                     GeomTraits,
+                                     Box,
+                                     PolylineRange,
+                                     OutputIterator,
+                                     VertexPointMap>
+                                     Intersect_face_polyline(mesh,
+                                                             faces,
+                                                             polyline_range,
+                                                             out,
+                                                             vpmap,
+                                                             gt);
 
   std::ptrdiff_t cutoff = 2000;
   CGAL::box_intersection_d(box1_ptr.begin(), box1_ptr.end(),
@@ -790,14 +790,14 @@ compute_polyline_polyline_intersection(const Polyline& polyline1,
 
   // compute intersections filtered out by boxes
 
-  CGAL::internal::Intersect_polylines<Polyline,
-      Kernel,
-      Box,
-      OutputIterator>
-      intersect_polylines(polyline1,
-                          polyline2,
-                          out,
-                          K);
+  internal::Intersect_polylines<Polyline,
+                                Kernel,
+                                Box,
+                                OutputIterator>
+                                intersect_polylines(polyline1,
+                                                    polyline2,
+                                                    out,
+                                                    K);
 
   std::ptrdiff_t cutoff = 2000;
   CGAL::box_intersection_d(box1_ptr.begin(), box1_ptr.end(),
@@ -898,14 +898,14 @@ compute_polylines_polylines_intersection(const PolylineRange& polylines1,
 
   // compute intersections filtered out by boxes
 
-  CGAL::internal::Intersect_polyline_ranges<PolylineRange,
-      Kernel,
-      Box,
-      OutputIterator>
-      intersect_polylines(polylines1,
-                          polylines2,
-                          out,
-                          K);
+  internal::Intersect_polyline_ranges<PolylineRange,
+                                      Kernel,
+                                      Box,
+                                      OutputIterator>
+                                      intersect_polylines(polylines1,
+                                                          polylines2,
+                                                          out,
+                                                          K);
 
   std::ptrdiff_t cutoff = 2000;
   CGAL::box_intersection_d(box1_ptr.begin(), box1_ptr.end(),
@@ -1079,7 +1079,6 @@ bool is_mesh2_in_mesh1(const TriangleMesh& mesh_1,
 
 }// namespace internal
 
-namespace Polygon_mesh_processing{
 /**
  * \ingroup PMP_predicates_grp
  * returns `true` if any pair of segments from `polylines1` and `polylines2` intersect, and `false` otherwise.
@@ -1113,10 +1112,10 @@ bool do_intersect(const PolylineRange& polylines1,
   typedef typename CGAL::Kernel_traits<Point>::Kernel K;
   try
   {
-    typedef boost::function_output_iterator<CGAL::internal::Throw_at_first_output> OutputIterator;
-    CGAL::internal::compute_polylines_polylines_intersection(polylines1, polylines2, OutputIterator(), K());
+    typedef boost::function_output_iterator<internal::Throw_at_first_output> OutputIterator;
+    internal::compute_polylines_polylines_intersection(polylines1, polylines2, OutputIterator(), K());
   }
-  catch( CGAL::internal::Throw_at_first_output::Throw_at_first_output_exception& )
+  catch( internal::Throw_at_first_output::Throw_at_first_output_exception& )
   { return true; }
 
   return false;
@@ -1158,10 +1157,10 @@ bool do_intersect(const Polyline& polyline1,
   typedef typename CGAL::Kernel_traits<Point>::Kernel K;
   try
   {
-    typedef boost::function_output_iterator<CGAL::internal::Throw_at_first_output> OutputIterator;
-    CGAL::internal::compute_polyline_polyline_intersection(polyline1, polyline2, OutputIterator(), K());
+    typedef boost::function_output_iterator<internal::Throw_at_first_output> OutputIterator;
+    internal::compute_polyline_polyline_intersection(polyline1, polyline2, OutputIterator(), K());
   }
-  catch( CGAL::internal::Throw_at_first_output::Throw_at_first_output_exception& )
+  catch( internal::Throw_at_first_output::Throw_at_first_output_exception& )
   { return true; }
 
   return false;
@@ -1214,10 +1213,10 @@ bool do_intersect(const TriangleMesh& mesh1,
 
   try
   {
-    typedef boost::function_output_iterator<CGAL::internal::Throw_at_first_output> OutputIterator;
-    CGAL::internal::compute_face_face_intersection(mesh1,mesh2, OutputIterator(), np1, np2);
+    typedef boost::function_output_iterator<internal::Throw_at_first_output> OutputIterator;
+    internal::compute_face_face_intersection(mesh1,mesh2, OutputIterator(), np1, np2);
   }
-  catch( CGAL::internal::Throw_at_first_output::Throw_at_first_output_exception& )
+  catch( internal::Throw_at_first_output::Throw_at_first_output_exception& )
   { return true; }
 
   if (test_overlap)
@@ -1231,8 +1230,8 @@ bool do_intersect(const TriangleMesh& mesh1,
     typedef typename GetGeomTraits<TriangleMesh, NamedParameters1>::type GeomTraits;
     GeomTraits gt = boost::choose_param(get_param(np1, internal_np::geom_traits), GeomTraits());
 
-    return CGAL::internal::is_mesh2_in_mesh1(mesh1, mesh2, vpm1, vpm2, gt) ||
-           CGAL::internal::is_mesh2_in_mesh1(mesh2, mesh1, vpm2, vpm1, gt);
+    return internal::is_mesh2_in_mesh1(mesh1, mesh2, vpm1, vpm2, gt) ||
+           internal::is_mesh2_in_mesh1(mesh2, mesh1, vpm2, vpm1, gt);
   }
   return false;
 }
@@ -1298,10 +1297,10 @@ bool do_intersect(const TriangleMesh& mesh,
 
   try
   {
-    typedef boost::function_output_iterator<CGAL::internal::Throw_at_first_output> OutputIterator;
-    CGAL::internal::compute_face_polylines_intersection(faces(mesh), polylines, mesh, OutputIterator(), np);
+    typedef boost::function_output_iterator<internal::Throw_at_first_output> OutputIterator;
+    internal::compute_face_polylines_intersection(faces(mesh), polylines, mesh, OutputIterator(), np);
   }
-  catch( CGAL::internal::Throw_at_first_output::Throw_at_first_output_exception& )
+  catch( internal::Throw_at_first_output::Throw_at_first_output_exception& )
   { return true; }
 
   return false;
@@ -1354,10 +1353,10 @@ bool do_intersect(const TriangleMesh& mesh,
 
   try
   {
-    typedef boost::function_output_iterator<CGAL::internal::Throw_at_first_output> OutputIterator;
-    CGAL::internal::compute_face_polyline_intersection(mesh,polyline, OutputIterator(), np);
+    typedef boost::function_output_iterator<internal::Throw_at_first_output> OutputIterator;
+    internal::compute_face_polyline_intersection(mesh,polyline, OutputIterator(), np);
   }
-  catch( CGAL::internal::Throw_at_first_output::Throw_at_first_output_exception& )
+  catch( internal::Throw_at_first_output::Throw_at_first_output_exception& )
   { return true; }
 
   return false;
@@ -1404,7 +1403,7 @@ bool do_intersect(const TriangleMesh& mesh,
 
   return do_intersect(mesh, polyline, parameters::all_default());
 }
-}//end PMP
+
 namespace internal{
 
 template<class TriangleMeshRange,
@@ -1521,7 +1520,6 @@ struct Mesh_callback
 };
 }//end internal
 
-namespace Polygon_mesh_processing{
 /*!
  * \ingroup PMP_predicates_grp
  * detects and reports all the pairs of meshes intersecting in a range of triangulated surface meshes.
@@ -1578,7 +1576,7 @@ OutputIterator intersecting_meshes(const TriangleMeshRange& range,
 
   //get all the pairs of meshes intersecting (no strict inclusion test)
   std::ptrdiff_t cutoff = 2000;
-  CGAL::internal::Mesh_callback<TriangleMeshRange, OutputIterator, NamedParametersRange> callback(range, out, report_overlap, nps);
+  internal::Mesh_callback<TriangleMeshRange, OutputIterator, NamedParametersRange> callback(range, out, report_overlap, nps);
   CGAL::box_self_intersection_d(boxes_ptr.begin(), boxes_ptr.end(),
                                 callback, cutoff);
   return callback.m_iterator;
