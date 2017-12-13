@@ -1158,7 +1158,7 @@ bool do_intersect(const Polyline& polyline1,
  * \ingroup PMP_predicates_grp
  * returns `true` if any pair of faces from `tm1` and `tm2` intersect, and `false` otherwise.
  * This function depends on the package \ref PkgBoxIntersectionDSummary
- * If `test_overlap` is `true`, bounded volume overlaps are tested as well. In that case, the meshes must be closed.
+ * If `test_overlap` is `true`, the overlap of bounded sides are tested as well. In that case, the meshes must be closed.
  *
  * @pre `CGAL::is_triangle_mesh(tm1)`
  * @pre `CGAL::is_triangle_mesh(tm2)`
@@ -1173,7 +1173,7 @@ bool do_intersect(const Polyline& polyline1,
  * @param tm2 the second triangulated surface mesh to check for intersections
  * @param np1 optional sequence of \ref namedparameters for `tm1`, among the ones listed below
  * @param np2 optional sequence of \ref namedparameters for `tm2`, among the ones listed below
- * @param test_overlap if `true` tests also for mesh inclusions. Note that the inclusion tests do not depend on the orientation of the meshes.
+ * @param test_overlap if `true` tests also the overlap of the bounded sides of `tm1` and `tm2`.
  *                     if `false`, only the intersection of surface triangles are tested. Default is `false`.
  *
  * \cgalNamedParamsBegin
@@ -1513,7 +1513,7 @@ struct Mesh_callback
  * detects and reports all the pairs of meshes intersecting in a range of triangulated surface meshes.
  * A pair of meshes intersecting is put in the output iterator `out` as a `std::pair<std::size_t, std::size_t>`,
  * each index refering to the index of the triangle mesh in the input range.
- * If `report_overlap` is `true`, bounded volume overlaps are tested as well. In that case, the meshes must be closed.
+ * If `report_overlap` is `true`, the overlap of bounded sides are tested as well. In that case, the meshes must be closed.
  *
  * \tparam TriangleMeshRange a model of `Bidirectional Range` of triangulated surface meshes model of `FaceListGraph`.
  * \tparam OutputIterator an output iterator in which `std::pair<std::size_t, std::size_t>` can be put.
@@ -1521,7 +1521,7 @@ struct Mesh_callback
  *
  * \param range the range of triangulated surface meshes to be checked for intersections.
  * \param out output iterator used to collect pairs of intersecting meshes.
- * \param report_overlap if `true` reports also mesh inclusions. Note that the inclusion tests do not depend on the orientation of the meshes.
+ * \param report_overlap if `true` reports also overlap of bounded sides of meshes.
  *                       if `false`, only the intersection of surface triangles are tested.
  *                       Default is `false`.
  * \param nps an optional range of `vertex_point_map` namedparameters containing the `VertexPointMap` of each mesh in `range`, in the same order.
