@@ -217,7 +217,7 @@ void Polyhedron_demo_intersection_plugin::intersectionPolylines()
       }
 
       std::vector<Poly_intersection> poly_intersections;
-      CGAL::internal::compute_polylines_polylines_intersection(polyA, polyB,std::back_inserter(poly_intersections) , Kernel());
+      PMP::internal::compute_polylines_polylines_intersection(polyA, polyB,std::back_inserter(poly_intersections) , Kernel());
 
       Q_FOREACH(const Poly_intersection& inter, poly_intersections)
       {
@@ -318,11 +318,11 @@ void Polyhedron_demo_intersection_plugin::intersectionSurfacePolyline()
     polylines.push_back(pol);
   }
   std::vector<Poly_intersection> poly_intersections;
-  CGAL::internal::compute_face_polylines_intersection(faces(*itemA->face_graph()),
-                                                      polylines,
-                                                      *itemA->face_graph(),
-                                                      std::back_inserter(poly_intersections),
-                                                      CGAL::Polygon_mesh_processing::parameters::all_default);
+  PMP::internal::compute_face_polylines_intersection(faces(*itemA->face_graph()),
+                                                     polylines,
+                                                     *itemA->face_graph(),
+                                                     std::back_inserter(poly_intersections),
+                                                     CGAL::Polygon_mesh_processing::parameters::all_default);
 
   Q_FOREACH(const Poly_intersection& inter, poly_intersections)
   {
