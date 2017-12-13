@@ -611,7 +611,7 @@ double approximate_Hausdorff_distance(
  *      and in all places where vertex_point_map is used.
  *    \cgalParamEnd
  * \cgalNamedParamsEnd
- * The function `CGAL::Polygon_mesh_processing::params::all_default()` can be used to indicate to use the default values for
+ * The function `CGAL::parameters::all_default()` can be used to indicate to use the default values for
  * `np1` and specify custom values for `np2`
  */
 template< class Concurrency_tag,

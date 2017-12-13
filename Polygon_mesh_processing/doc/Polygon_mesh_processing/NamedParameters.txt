@@ -7,7 +7,7 @@ named parameters (see \ref BGLNamedParameters for more information on how to use
 Since the parameters of the various polygon mesh processing functions defined
 in this package are redundant, their long descriptions are centralized below.
 The sequence of named parameters should start with `CGAL::parameters::`.
-`#CGAL::parameters::all_default()` can be used to indicate
+`CGAL::parameters::all_default()` can be used to indicate
 that default values of optional named parameters must be used.
 
 In the following, we assume that the following types are provided as template parameters
