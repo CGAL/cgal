@@ -440,7 +440,7 @@ void recursive_orient_volume_ccs( TriangleMesh& tm,
 *
 * @param tm a closed triangulated surface mesh
 * @param orient_outward `true` indicates that each connected component will be outward oriented,
-*                        and inward oriented if `false`. Default value is true.
+*                        (inward oriented if `false`). Default value is true.
 * @param np optional sequence of \ref namedparameters among the ones listed below
 *
 * \cgalNamedParamsBegin
@@ -542,9 +542,9 @@ void orient(TriangleMesh& tm)
  * @tparam NamedParameters a sequence of \ref namedparameters
  *
  * @param tm a closed triangulated surface mesh
- * @param orient_outward decides if the outer components should be oriented outward or
- * inward. In this specific case, inwards means that the infinity will be considered
- * as inside the volume bounded by `tm`.
+ * @param orient_outward if `true` the outer connected components will be outward oriented (inward oriented if `false`).
+ * If the outer connected components are inward oriented, it means that the infinity will be considered
+ * as part of the volume bounded by `tm`. Default value is `true`.
  * @param np optional sequence of \ref namedparameters among the ones listed below
  *
  * \cgalNamedParamsBegin
@@ -635,6 +635,12 @@ template <class TriangleMesh>
 void orient_to_bound_a_volume(TriangleMesh& tm, const bool orient_outward)
 {
   orient_to_bound_a_volume(tm, orient_outward, parameters::all_default());
+}
+
+template <class TriangleMesh>
+void orient_to_bound_a_volume(TriangleMesh& tm)
+{
+  orient_to_bound_a_volume(tm, true, parameters::all_default());
 }
 } // namespace Polygon_mesh_processing
 } // namespace CGAL
