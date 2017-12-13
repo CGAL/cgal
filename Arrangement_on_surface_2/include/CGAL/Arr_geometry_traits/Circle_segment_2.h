@@ -2441,7 +2441,7 @@ protected:
     {
       x = x_left + x_jump*i;
       disc = app_sqr_rad - CGAL::square(x - app_xcenter);
-      CGAL_precondition(disc >= 0);
+      if (disc < 0) disc = 0;
       if(is_up)
         y = app_ycenter + std::sqrt(disc);
       else

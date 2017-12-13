@@ -1456,8 +1456,8 @@ void Scene_edit_polyhedron_item::drawTransparent(Viewer_interface *viewer) const
     viewer->camera()->getModelViewProjectionMatrix(d_mat);
     for (int i=0; i<16; ++i)
       mvp_mat.data()[i] = GLfloat(d_mat[i]);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    viewer->glEnable(GL_BLEND);
+    viewer->glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     vaos[Scene_edit_polyhedron_item_priv::Frame_plane]->bind();
     d->program = &d->transparent_plane_program;
     d->program->bind();
@@ -1468,7 +1468,7 @@ void Scene_edit_polyhedron_item::drawTransparent(Viewer_interface *viewer) const
     viewer->glDrawElements(GL_TRIANGLES, (GLsizei) d->plane_idx.size(), GL_UNSIGNED_INT, d->plane_idx.data());
     d->program->release();
     vaos[Scene_edit_polyhedron_item_priv::Frame_plane]->release();
-    glDisable(GL_BLEND);
+    viewer->glDisable(GL_BLEND);
   }
 }
 
@@ -1572,7 +1572,7 @@ void Scene_edit_polyhedron_item_priv::draw_ROI_and_control_vertices(CGAL::Three:
 }
 void Scene_edit_polyhedron_item::draw_ROI_and_control_vertices(CGAL::Three::Viewer_interface* viewer) const {
 
-  CGAL::GL::Point_size point_size; point_size.set_point_size(5);
+  CGAL::GL::Point_size point_size(viewer); point_size.set_point_size(5);
 
   //Draw the points
   if(d->ui_widget->ShowROICheckBox->isChecked()) {

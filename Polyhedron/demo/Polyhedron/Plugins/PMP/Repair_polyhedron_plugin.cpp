@@ -7,7 +7,6 @@
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include "Messages_interface.h"
-#include <CGAL/gl.h>
 
 #include <QAction>
 #include <QApplication>

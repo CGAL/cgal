@@ -9,7 +9,7 @@ if( RS_FOUND AND NOT RS_SETUP )
     message( STATUS "RS libraries:      ${RS_LIBRARIES}" )
 
     if( APPLE AND CMAKE_COMPILER_IS_GNUCXX )
-      include( CGAL_VersionUtils )
+      include( ${CMAKE_CURRENT_LIST_DIR}/CGAL_VersionUtils.cmake )
       EXEC_PROGRAM( ${CMAKE_CXX_COMPILER}
                     ARGS -dumpversion
                     OUTPUT_VARIABLE RS_GXX_VERSION )

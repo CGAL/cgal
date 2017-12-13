@@ -284,7 +284,7 @@ private:
         Q_FOREACH(const std::vector<Kernel::Point_3>& points,
                     polylines_item->polylines)
           cdt.insert_constraint(points.begin(),points.end());
-    }catch(std::runtime_error)
+    }catch(std::runtime_error&)
     {
       QApplication::restoreOverrideCursor();
       throw;

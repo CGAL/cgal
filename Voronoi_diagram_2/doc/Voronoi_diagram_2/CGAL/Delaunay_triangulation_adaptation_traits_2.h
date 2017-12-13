@@ -18,8 +18,7 @@ the semantics of a 2D Delaunay triangulation.
 
 */
 template< typename DT2 >
-class Delaunay_triangulation_adaptation_traits_2 {
-public:
+struct Delaunay_triangulation_adaptation_traits_2 {
 
 /// \name Types 
 /// @{

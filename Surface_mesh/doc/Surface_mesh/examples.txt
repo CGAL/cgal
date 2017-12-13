@@ -5,6 +5,7 @@
 \example Surface_mesh/sm_memory.cpp
 \example Surface_mesh/sm_bgl.cpp
 \example Surface_mesh/sm_kruskal.cpp
+\example Surface_mesh/sm_derivation.cpp
 @cond 
 \example Surface_mesh/sm_do_intersect.cpp
 \example Surface_mesh/sm_aabbtree.cpp

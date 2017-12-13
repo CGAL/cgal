@@ -660,7 +660,8 @@ void clear(OpenMesh::PolyMesh_ArrayKernelT<K>& sm)
 template<typename K>
 bool read_off(std::istream& is, OpenMesh::PolyMesh_ArrayKernelT<K>& sm)
 {
-  return OpenMesh::IO::read_mesh(sm, is, ".OFF");
+  OpenMesh::IO::Options ropt;
+  return OpenMesh::IO::read_mesh(sm, is, ".OFF", ropt, false);
 }
 
 

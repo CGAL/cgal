@@ -1,3 +1,4 @@
+
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
@@ -27,7 +28,7 @@ if ( CGAL_FOUND )
   if ( OpenMesh_FOUND )
     include( UseOpenMesh )
     create_single_source_cgal_program( "shortest_paths_OpenMesh.cpp" )
-    target_link_libraries( shortest_paths_OpenMesh ${OPENMESH_LIBRARIES} )
+    target_link_libraries( shortest_paths_OpenMesh PRIVATE ${OPENMESH_LIBRARIES} )
   else()
     message(STATUS "Examples that use OpenMesh will not be compiled.")
   endif()

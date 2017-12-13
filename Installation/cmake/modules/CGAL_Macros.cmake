@@ -159,16 +159,22 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
 
       set ( ${LIB}_VERSION "unknown" )
 
-      try_run( ${LIB}_RUN_RES
-               ${LIB}_COMPILE_RES
-               "${CMAKE_BINARY_DIR}"
-               "${CGAL_INSTALLATION_PACKAGE_DIR}/config/support/print_${LIB}_version.cpp"
-               CMAKE_FLAGS "-DINCLUDE_DIRECTORIES:STRING=${${PKG}_INCLUDE_DIR};${${PKG}_DEPENDENCY_INCLUDE_DIR}"
-                           "-DLINK_LIBRARIES:STRING=${${PKG}_LIBRARIES};${${PKG}_DEPENDENCY_LIBRARIES}"
-                           "-DLINK_DIRECTORIES:STRING=${${PKG}_LIBRARIES_DIR};${${PKG}_DEPENDENCY_LIBRARIES_DIR}"
-               OUTPUT_VARIABLE ${LIB}_OUTPUT
-            )
-
+      if(NOT CMAKE_CROSSCOMPILING)
+        if(EXISTS "${CGAL_MODULES_DIR}/config/support/print_${LIB}_version.cpp")
+          try_run( ${LIB}_RUN_RES
+                   ${LIB}_COMPILE_RES
+                   "${CMAKE_BINARY_DIR}"
+                   "${CGAL_MODULES_DIR}/config/support/print_${LIB}_version.cpp"
+                   CMAKE_FLAGS "-DINCLUDE_DIRECTORIES:STRING=${${PKG}_INCLUDE_DIR};${${PKG}_DEPENDENCY_INCLUDE_DIR}"
+                               "-DLINK_LIBRARIES:STRING=${${PKG}_LIBRARIES};${${PKG}_DEPENDENCY_LIBRARIES}"
+                               "-DLINK_DIRECTORIES:STRING=${${PKG}_LIBRARIES_DIR};${${PKG}_DEPENDENCY_LIBRARIES_DIR}"
+                   OUTPUT_VARIABLE ${LIB}_OUTPUT
+                   )
+        endif()
+      else()
+        set(${LIB}_COMPILE_RES FALSE)
+        message(STATUS "CROSS-COMPILING!")
+      endif()
       if ( ${LIB}_COMPILE_RES )
 
         if ( ${LIB}_RUN_RES EQUAL "0" )
@@ -268,7 +274,9 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
     message (STATUS "Requested component: ${component}")
 
     if(WITH_CGAL_${component})
-      if(TARGET CGAL_${component})
+      if(TARGET CGAL::CGAL_${component})
+        add_to_list( CGAL_LIBRARIES CGAL::CGAL_${component} )
+      elseif(TARGET CGAL_${component})
         add_to_list( CGAL_LIBRARIES CGAL_${component} )
       else()
         add_to_list( CGAL_LIBRARIES ${CGAL_${component}_LIBRARY} )
@@ -298,7 +306,6 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
       endif()
 
       if (${component} STREQUAL "Qt5")
-        find_package(OpenGL QUIET)
         find_package(Qt5 COMPONENTS OpenGL Gui Core Script ScriptTools QUIET)
       endif()
 
@@ -335,7 +342,6 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
 
           if (${component} STREQUAL "Qt5")
             set(CGAL_${component}_FOUND TRUE)
-            find_package(OpenGL QUIET)
             find_package(Qt5 COMPONENTS OpenGL Gui Core Script ScriptTools QUIET)
           endif()
           ####message( STATUS "External library ${vlib} after find")

@@ -1,4 +1,3 @@
-# Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
 project (Generator_Demo)
@@ -14,8 +13,6 @@ find_package(CGAL COMPONENTS Qt5)
 include(${CGAL_USE_FILE})
 
 find_package(Qt5 QUIET COMPONENTS Xml Script OpenGL Svg)
-
-include_directories (BEFORE ../../include)
 
 if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND )
 
@@ -35,15 +32,13 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND )
   # The executable itself.
   add_executable  ( Generator_2 Generator_2.cpp Generator_2.moc ${DT_UI_FILES}  ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES} )
 
-  qt5_use_modules(Generator_2 Xml Script OpenGL Svg)
-
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS Generator_2 )
 
-  # Link with Qt libraries
-  target_link_libraries( Generator_2 ${QT_LIBRARIES} )
-  # And with CGAL libraries
-  target_link_libraries( Generator_2 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
+  target_link_libraries( Generator_2 PRIVATE
+    CGAL::CGAL CGAL::CGAL_Qt5 Qt5::Gui )
 
+  include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
+  cgal_add_compilation_test(Generator_2)
 else()
 
   message(STATUS "NOTICE: This demo requires CGAL, and Qt5, and will not be compiled.")

@@ -8,6 +8,7 @@
 #include <QWidgetAction>
 #include <QGLViewer/qglviewer.h>
 #include <CGAL/Three/Scene_item.h>
+#include <CGAL/Three/Viewer_interface.h>
 #include <iostream>
 #include <QGLViewer/manipulatedFrame.h>
 using namespace CGAL::Three;
@@ -22,7 +23,7 @@ public:
     delete mFrame_;
   }
 
-  virtual void init() = 0;
+  virtual void init(CGAL::Three::Viewer_interface*) = 0;
 
   virtual void setData(unsigned int adim, unsigned int bdim, unsigned int cdim, float xscale, float yscale, float zscale, std::vector<float> &colors) =0;
   virtual unsigned int aDim() const = 0;

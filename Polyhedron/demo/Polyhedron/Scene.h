@@ -78,7 +78,7 @@ public:
   QList<int> selectionIndices() const Q_DECL_OVERRIDE;
   int selectionAindex() const Q_DECL_OVERRIDE;
   int selectionBindex() const Q_DECL_OVERRIDE;
-  void initializeGL() Q_DECL_OVERRIDE;
+  void initializeGL(CGAL::Three::Viewer_interface*) Q_DECL_OVERRIDE;
   void setPickedPixel(const QPoint &p) Q_DECL_OVERRIDE {picked_pixel = p;}
   void draw(CGAL::Three::Viewer_interface*) Q_DECL_OVERRIDE;
   void drawWithNames(CGAL::Three::Viewer_interface*) Q_DECL_OVERRIDE;

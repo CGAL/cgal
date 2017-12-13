@@ -40,8 +40,7 @@ orientation(p,q,r); // exact
 
 */
 template< typename CK >
-class Filtered_kernel_adaptor {
-public:
+struct Filtered_kernel_adaptor {
 
 /// @}
 
@@ -98,8 +97,7 @@ filters may be used for a few selected critical predicates.
 
 */
 template< typename CK >
-class Filtered_kernel {
-public:
+struct Filtered_kernel {
 
 /// \name Types 
 /// @{

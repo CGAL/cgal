@@ -421,8 +421,7 @@ template< typename Point_3,
           typename Triangle_3=typename Kernel_traits<Point_3>::Kernel::Triangle_3,
           typename Creator = Creator_uniform_3< typename Kernel_traits< Point_3 >::Kernel::RT,
                                                 Point_3 > >
-class Random_points_in_triangles_3 {
-public:
+struct Random_points_in_triangles_3 {
 
 /// \name Types
 /// @{
@@ -497,8 +496,7 @@ template < class TriangleMesh,
            class Creator = Creator_uniform_3<
                             typename Kernel_traits< typename boost::property_traits<VertexPointMap>::value_type >::Kernel::RT,
                             typename boost::property_traits<VertexPointMap>::value_type > >
-class Random_points_in_triangle_mesh_3 {
-public:
+struct Random_points_in_triangle_mesh_3 {
 
 /// \name Types
 /// @{

@@ -4,7 +4,6 @@
 #include "Volume_plane_interface.h"
 
 #include <QApplication>
-#include <CGAL/gl.h>
 struct Volume_plane_intersection_priv
 {
   Volume_plane_intersection_priv(float x, float y, float z, Volume_plane_intersection* parent)
@@ -118,7 +117,7 @@ void Volume_plane_intersection::draw(Viewer_interface* viewer) const {
     d->initializeBuffers(viewer);
   }
   attribBuffers(viewer, PROGRAM_NO_SELECTION);
-  glDepthRange(0.0,0.9999);
+  viewer->glDepthRange(0.0,0.9999);
   if(d->b && d->c) {
 
     vaos[Volume_plane_intersection_priv::AArray]->bind();
@@ -186,7 +185,7 @@ void Volume_plane_intersection::draw(Viewer_interface* viewer) const {
       vaos[Volume_plane_intersection_priv::CArray]->release();
   }
   viewer->glLineWidth(1.0f);
-  glDepthRange(0.00001,1.0);
+  viewer->glDepthRange(0.00001,1.0);
 }
 
 Volume_plane_intersection::Volume_plane_intersection(float x, float y, float z)

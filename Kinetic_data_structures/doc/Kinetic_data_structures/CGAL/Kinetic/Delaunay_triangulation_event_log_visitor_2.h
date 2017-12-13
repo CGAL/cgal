@@ -13,7 +13,7 @@ The class `Kinetic::Delaunay_triangulation_event_log_visitor_2` provides a model
 
 */
 
-class Delaunay_triangulation_event_log_visitor_2 {
+struct Delaunay_triangulation_event_log_visitor_2 {
 
 }; /* end Kinetic::Delaunay_triangulation_event_log_visitor_2 */
 } /* end namespace Kinetic */

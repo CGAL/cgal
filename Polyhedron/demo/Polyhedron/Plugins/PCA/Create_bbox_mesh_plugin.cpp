@@ -2,7 +2,6 @@
 
 #include <CGAL/Three/Scene_item.h>
 #include <CGAL/Three/Scene_interface.h>
-#include <CGAL/gl.h>
 
 #include <QAction>
 #include <QMainWindow>

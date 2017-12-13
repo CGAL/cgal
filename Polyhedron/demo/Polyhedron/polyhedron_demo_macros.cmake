@@ -1,5 +1,5 @@
 include(AddFileDependencies)
-include (CGAL_Macros)
+include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
 
   macro(polyhedron_demo_plugin plugin_name plugin_implementation_base_name)
     list_split(option ARGN_TAIL ${ARGN} )
@@ -23,22 +23,22 @@ include (CGAL_Macros)
     endif()
 
     add_library(${plugin_name} MODULE ${option} ${moc_file_name} ${plugin_implementation_base_name}.cpp ${other_sources})
-    qt5_use_modules(${plugin_name} Widgets Script OpenGL Gui Xml )
     set_property(TARGET ${plugin_name}
       PROPERTY LIBRARY_OUTPUT_DIRECTORY
       "${CGAL_POLYHEDRON_DEMO_PLUGINS_DIR}")
+    cgal_add_compilation_test(${plugin_name})
 
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${plugin_name} )
     # Link with Qt
-    target_link_libraries( ${plugin_name} ${QT_LIBRARIES} )
+    target_link_libraries( ${plugin_name} PUBLIC ${QT_LIBRARIES} )
     # Link with the demo_framework
     if(TARGET demo_framework)
-      target_link_libraries( ${plugin_name} demo_framework)
+      target_link_libraries( ${plugin_name} PUBLIC demo_framework)
     else()
-      target_link_libraries( ${plugin_name} Polyhedron_demo_framework)
+      target_link_libraries( ${plugin_name} PUBLIC Polyhedron_demo_framework)
     endif()
     # Link with CGAL
-    target_link_libraries( ${plugin_name} ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
+    target_link_libraries( ${plugin_name} PUBLIC ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
     if(TARGET Polyhedron_3)
       add_dependencies( ${plugin_name} Polyhedron_3 )
     endif()

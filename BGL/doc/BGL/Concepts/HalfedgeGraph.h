@@ -16,6 +16,24 @@ the same vertex. We refer to \ref PkgBGLIterators for a description of
 iterators and circulators for these halfedge cycles.
 
 
+
+\cgalAssociatedTypesBegin
+
+\cgalAssociatedTypeBegin{boost::graph_traits<HalfedgeGraph>::%vertex_descriptor} A vertex descriptor corresponds to a unique vertex in an abstract graph instance.
+A vertex descriptor must be `DefaultConstructible`, `Assignable`, `EqualityComparable`, and `Hashable`.  
+\cgalAssociatedTypeEnd
+
+\cgalAssociatedTypeBegin{boost::graph_traits<HalfedgeGraph>::%halfedge_descriptor} A halfedge descriptor corresponds to a unique halfedge in an abstract graph instance.
+A halfedge descriptor must be `DefaultConstructible`, `Assignable`, `EqualityComparable`, and `Hashable`. 
+\cgalAssociatedTypeEnd 
+
+\cgalAssociatedTypeBegin{boost::graph_traits<HalfedgeGraph>::%edge_descriptor} An edge descriptor corresponds to a unique edge in an abstract graph instance.
+An edge descriptor must be `DefaultConstructible`, `Assignable`, `EqualityComparable`, and `Hashable`.  
+\cgalAssociatedTypeEnd
+
+\cgalAssociatedTypesEnd
+
+
 \cgalRefines <A HREF="http://www.boost.org/libs/graph/doc/IncidenceGraph.html">`IncidenceGraph`</A>
 \cgalRefines <A HREF="http://www.boost.org/libs/graph/doc/PropertyGraph.html">`PropertyGraph`</A>
 
@@ -24,7 +42,11 @@ A model of `HalfedgeGraph` must have the interior property `vertex_point` attach
 \cgalHasModel `CGAL::Polyhedron_3`
 \cgalHasModel `CGAL::Surface_mesh`
 */
-class HalfedgeGraph {};
+class HalfedgeGraph {
+  /// Returns a special `boost::graph_traits<HalfedgeGraph>::halfedge_descriptor` object which
+  /// does not refer to any halfedge of graph object which type is `HalfedgeGraph`.
+  static boost::graph_traits<HalfedgeGraph>::halfedge_descriptor null_halfedge();
+};
 
 /*! \relates HalfedgeGraph
 returns the edge corresponding to halfedges `h` and `opposite(h,g)`.
@@ -92,9 +114,3 @@ template <typename HalfedgeGraph>
 boost::graph_traits<HalfedgeGraph>::halfedge_descriptor
 prev(boost::graph_traits<HalfedgeGraph>::halfedge_descriptor h, const HalfedgeGraph& g);
 
-/*! \relates HalfedgeGraph
-returns a special halfedge that is not equal to any other halfedge.
- */
-template <typename HalfedgeGraph>
-boost::graph_traits<HalfedgeGraph>::halfedge_descriptor
-null_halfedge();

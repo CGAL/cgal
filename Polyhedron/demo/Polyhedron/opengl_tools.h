@@ -27,6 +27,7 @@
 #define CGAL_OPENGL_TOOLS_H
 
 # include <CGAL/gl.h>
+#include <CGAL/Three/Viewer_interface.h>
 
 namespace CGAL {
 namespace GL {
@@ -47,15 +48,16 @@ public:
 
 class Point_size {
   GLfloat ps;
+  CGAL::Three::Viewer_interface* viewer;
 public:
-  Point_size() {
-    ::glGetFloatv(GL_POINT_SIZE, &ps);
+  Point_size(CGAL::Three::Viewer_interface* viewer) : viewer(viewer) {
+    viewer->glGetFloatv(GL_POINT_SIZE, &ps);
   }
   ~Point_size() {
     set_point_size(ps);
   }
   void set_point_size(GLfloat v) {
-    ::glPointSize(v);
+    viewer->glPointSize(v);
   }
 }; // end class Point_size
 

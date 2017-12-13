@@ -7,7 +7,7 @@
 #include <fstream>
 
 /* If you want to use a viewer, you can use qglviewer. */
-#ifdef CGAL_LCC_USE_QT
+#ifdef CGAL_USE_BASIC_VIEWER
 #include "linear_cell_complex_3_viewer_qt.h"
 #endif
 
@@ -57,9 +57,9 @@ void display_voronoi(LCC_2& alcc, Dart_handle adart)
                                           << alcc.is_valid()
                                           << std::endl;
   
-#ifdef CGAL_LCC_USE_VIEWER
+#ifdef CGAL_USE_BASIC_VIEWER
   display_lcc(alcc);
-#endif // CGAL_LCC_USE_VIEWER
+#endif // CGAL_USE_BASIC_VIEWER
 }
 
 template<typename LCC, typename TR>
