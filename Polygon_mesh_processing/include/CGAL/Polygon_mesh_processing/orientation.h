@@ -25,6 +25,7 @@
 
 #include <CGAL/license/Polygon_mesh_processing/orientation.h>
 
+
 #include <algorithm>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
@@ -32,8 +33,6 @@
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 #include <CGAL/Side_of_triangle_mesh.h>
 #include <CGAL/Projection_traits_xy_3.h>
-#include <CGAL/Projection_traits_xz_3.h>
-#include <CGAL/Projection_traits_yz_3.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/iterator.h>
 
@@ -117,21 +116,7 @@ namespace internal{
     Orientation p1p2p3_2d = orientation_2(p1, p2, p3);
     Orientation p2p1p4_2d = orientation_2(p2, p1, p4);
 
-    if(!( p1p2p3_2d!=COLLINEAR || p2p1p4_2d!=COLLINEAR ))
-    {
-      Projection_traits_xz_3<GT> p_gt_bis;
-      typename Projection_traits_xz_3<GT>::Orientation_2 orientation_2_bis = p_gt_bis.orientation_2_object();
-      p1p2p3_2d = orientation_2_bis(p1, p2, p3);
-      p2p1p4_2d = orientation_2_bis(p2, p1, p4);
-      if(!( p1p2p3_2d!=COLLINEAR || p2p1p4_2d!=COLLINEAR ))
-      {
-        Projection_traits_yz_3<GT> p_gt_last;
-        typename Projection_traits_yz_3<GT>::Orientation_2 orientation_2_last = p_gt_last.orientation_2_object();
-        p1p2p3_2d = orientation_2_last(p1, p2, p3);
-        p2p1p4_2d = orientation_2_last(p2, p1, p4);
-      }
-    }
-    CGAL_assertion( p1p2p3_2d!=COLLINEAR || p2p1p4_2d!=COLLINEAR );//no self-intersection
+    CGAL_assertion( p1p2p3_2d!=COLLINEAR || p2p1p4_2d!=COLLINEAR ); // no self-intersection
 
     if ( p1p2p3_2d == COLLINEAR)
       return p2p1p4_2d == LEFT_TURN;
@@ -154,8 +139,6 @@ namespace internal{
     CGAL_assertion(p2p1p4_2d == LEFT_TURN);
     return orientation_3(p2, p1, p4, p3) == NEGATIVE;
   }
-
-
 } // end of namespace internal
 
 /**
@@ -353,7 +336,6 @@ void reverse_face_orientations(const FaceRange& face_range, PolygonMesh& pmesh)
       }
     }
 }
-}//end PMP
 namespace internal {
 
 template <class Kernel, class TriangleMesh, class VD, class Fid_map, class Vpm>
@@ -443,8 +425,8 @@ void recursive_orient_volume_ccs( TriangleMesh& tm,
             tm, vpm, fid_map, xtrm_vertices, cc_handled, face_cc,
             new_xtrm_cc_id, is_parent_outward_oriented);
 }
+
 }//end internal
-namespace Polygon_mesh_processing {
 
 /**
 * \ingroup PMP_orientation_grp
