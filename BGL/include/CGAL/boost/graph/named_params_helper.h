@@ -223,6 +223,15 @@ namespace CGAL {
 
   namespace Point_set_processing_3
   {
+    template <typename ValueType>
+    struct Fake_point_range
+    {
+      struct iterator
+      {
+        typedef ValueType value_type;
+      };
+    };
+    
     namespace parameters
     {
       template <typename PointRange>
@@ -288,13 +297,14 @@ namespace CGAL {
     {
       struct DummyNormalMap
       {
-        typedef typename PointRange::iterator key_type;
+        typedef typename PointRange::iterator::value_type key_type;
         typedef typename GetK<PointRange, NamedParameters>::Kernel::Vector_3 value_type;
         typedef value_type reference;
-        typedef boost::readable_property_map_tag category;
+        typedef boost::read_write_property_map_tag category;
 
         typedef DummyNormalMap Self;
         friend reference get(const Self&, const key_type&) { return CGAL::NULL_VECTOR; }
+        friend void put(const Self&, const key_type&, const value_type&) { }
       };
 
     public:
