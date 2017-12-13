@@ -1,3 +1,4 @@
+#include <cassert>
 #include <CGAL/IO/STL_reader.h>
 #include <CGAL/array.h>
 
@@ -5,7 +6,7 @@
 #include <iostream>
 #include <vector>
 
-void read(const char* fname, int v, int f)
+void read(const char* fname, std::size_t v, std::size_t f)
 {
   std::cout << "Reading "<< fname << std::endl;
   std::ifstream input(fname, std::ios::in | std::ios::binary);
