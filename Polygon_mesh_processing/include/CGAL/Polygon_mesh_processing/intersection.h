@@ -448,6 +448,7 @@ compute_face_face_intersection(const FaceRange& face_range1,
 
   // compute intersections filtered out by boxes
   typedef typename GetGeomTraits<TM, NamedParameters1>::type GeomTraits;
+  GeomTraits gt = boost::choose_param(get_param(np1, internal_np::geom_traits), GeomTraits());
 
   CGAL::internal::Intersect_faces<TM,
       GeomTraits,
@@ -458,7 +459,7 @@ compute_face_face_intersection(const FaceRange& face_range1,
       Intersect_faces(tm1, tm2,
                        out,
                        vpmap1, vpmap2,
-                       GeomTraits());
+                       gt);
 
   std::ptrdiff_t cutoff = 2000;
   CGAL::box_intersection_d(box1_ptr.begin(), box1_ptr.end(),
@@ -567,6 +568,7 @@ compute_face_polyline_intersection( const FaceRange& face_range,
 
   // compute intersections filtered out by boxes
   typedef typename GetGeomTraits<TM, NamedParameters>::type GeomTraits;
+  GeomTraits gt = boost::choose_param(get_param(np, internal_np::geom_traits), GeomTraits());
 
   CGAL::internal::Intersect_face_polyline<TM,
       GeomTraits,
@@ -579,7 +581,7 @@ compute_face_polyline_intersection( const FaceRange& face_range,
                                polyline,
                                out,
                                vpmap,
-                               GeomTraits());
+                               gt);
 
   std::ptrdiff_t cutoff = 2000;
   CGAL::box_intersection_d(box1_ptr.begin(), box1_ptr.end(),
@@ -695,6 +697,7 @@ compute_face_polylines_intersection(const FaceRange& face_range,
 
   // compute intersections filtered out by boxes
   typedef typename GetGeomTraits<TM, NamedParameters>::type GeomTraits;
+  GeomTraits gt = boost::choose_param(get_param(np, internal_np::geom_traits), GeomTraits());
 
   CGAL::internal::Intersect_face_polylines<TM,
       GeomTraits,
@@ -707,7 +710,7 @@ compute_face_polylines_intersection(const FaceRange& face_range,
                                polyline_range,
                                out,
                                vpmap,
-                               GeomTraits());
+                               gt);
 
   std::ptrdiff_t cutoff = 2000;
   CGAL::box_intersection_d(box1_ptr.begin(), box1_ptr.end(),
@@ -1439,13 +1442,13 @@ struct Mesh_callback
     std::size_t mesh_id_2 = std::distance(meshes.begin(), b2->info());
 
 
-    VPM vpm1 = choose_param(get_param(*(nps.begin() + mesh_id_1), internal_np::vertex_point),
-                            get_const_property_map(CGAL::vertex_point, *b1->info()));
+    VPM vpm1 = boost::choose_param(get_param(*(nps.begin() + mesh_id_1), internal_np::vertex_point),
+                                   get_const_property_map(CGAL::vertex_point, *b1->info()));
 
-    VPM vpm2 = choose_param(get_param(*(nps.begin() + mesh_id_2), internal_np::vertex_point),
-                            get_const_property_map(CGAL::vertex_point, *b2->info()));
+    VPM vpm2 = boost::choose_param(get_param(*(nps.begin() + mesh_id_2), internal_np::vertex_point),
+                                   get_const_property_map(CGAL::vertex_point, *b2->info()));
 
-    GT gt = choose_param(get_param(*nps.begin(), internal_np::geom_traits), GT());
+    GT gt = boost::choose_param(get_param(*nps.begin(), internal_np::geom_traits), GT());
 
     //surfacic test
     if(Polygon_mesh_processing::do_intersect(*b1->info(),
@@ -1485,7 +1488,7 @@ namespace Polygon_mesh_processing{
  *
  * \param range the range of triangulated surface meshes to be checked for intersections.
  * \param out output iterator used to collect pairs of intersecting meshes.
- * \param report_overlap if `true` tests for mesh inclusions. Note that the inclusion tests do not depend on the orientation of the meshes.
+ * \param report_overlap if `true` reports also mesh inclusions. Note that the inclusion tests do not depend on the orientation of the meshes.
  *                       if `false`, only the intersection of surface triangles are tested.
  *                       Default is `false`.
  * \param nps an optional range of `vertex_point_map` namedparameters containing the `VertexPointMap` of each mesh in `range`, in the same order.
