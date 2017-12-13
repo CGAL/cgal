@@ -359,7 +359,7 @@ void recursive_orient_volume_ccs( TriangleMesh& tm,
   }
 // first check that the orientation of the current cc is consistant with its
 // parent cc containing it
-  bool new_is_parent_outward_oriented = Polygon_mesh_processing::internal::is_outward_oriented(
+  bool new_is_parent_outward_oriented = internal::is_outward_oriented(
          xtrm_vertices[xtrm_cc_id], tm, parameters::vertex_point_map(vpm));
   if (new_is_parent_outward_oriented==is_parent_outward_oriented)
   {
@@ -623,7 +623,7 @@ void orient_to_bound_a_volume(TriangleMesh& tm,
   bool is_parent_outward_oriented =
       ! orient_outward;
 
-  CGAL::internal::recursive_orient_volume_ccs<Kernel>(tm, vpm, fid_map,
+  internal::recursive_orient_volume_ccs<Kernel>(tm, vpm, fid_map,
                                                 xtrm_vertices,
                                                 cc_handled,
                                                 face_cc,
