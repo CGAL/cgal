@@ -260,7 +260,7 @@ int main(int argc, char * argv[])
       success = stream &&
                 CGAL::read_off_points(stream,
                                       std::back_inserter(points),
-                                      CGAL::First_of_pair_property_map<PointVectorPair>());
+                                      CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>()));
     }
     // If XYZ file format
     else if (extension == ".xyz" || extension == ".XYZ" ||
@@ -270,7 +270,7 @@ int main(int argc, char * argv[])
       success = stream &&
                 CGAL::read_xyz_points(stream,
                                       std::back_inserter(points),
-                                      CGAL::First_of_pair_property_map<PointVectorPair>());
+                                      CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>()));
     }
     if (!success)
     {
@@ -324,10 +324,10 @@ int main(int argc, char * argv[])
     {
       std::ofstream stream(output_filename.c_str());
       if (!stream ||
-          !CGAL::write_xyz_points_and_normals(stream,
-                                              points.begin(), points.end(),
-                                              CGAL::First_of_pair_property_map<PointVectorPair>(),
-                                              CGAL::Second_of_pair_property_map<PointVectorPair>()))
+          !CGAL::write_xyz_points(stream,
+                                  points,
+                                  CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>()).
+                                  normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>())))
       {
         std::cerr << "Error: cannot write file " << output_filename << std::endl;
         return EXIT_FAILURE;

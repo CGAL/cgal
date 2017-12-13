@@ -47,7 +47,7 @@ int main(int argc, char** argv)
   
   std::ofstream out(output_filename);
   if (!out || !CGAL::write_xyz_points(
-      out, output.begin(), output.end()))
+        out, output))
   {
     return EXIT_FAILURE;
   }

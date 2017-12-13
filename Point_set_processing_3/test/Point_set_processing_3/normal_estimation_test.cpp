@@ -319,10 +319,11 @@ int main(int argc, char * argv[])
     {
       std::ifstream stream(input_filename.c_str());
       success = stream && 
-                CGAL::read_off_points_and_normals(stream,
-                                                  std::back_inserter(points),
-                                                  CGAL::make_normal_of_point_with_normal_map(PointList::value_type()) 
-                                                  );
+                CGAL::read_off_points(stream,
+                                      std::back_inserter(points),
+                                      CGAL::parameters::normal_map
+                                      (CGAL::make_normal_of_point_with_normal_map(PointList::value_type()))
+                  );
     }
     // If XYZ file format
     else if (extension == ".xyz" || extension == ".XYZ" ||
@@ -330,10 +331,11 @@ int main(int argc, char * argv[])
     {
       std::ifstream stream(input_filename.c_str());
       success = stream && 
-                CGAL::read_xyz_points_and_normals(stream,
-                                                  std::back_inserter(points),
-                                                  CGAL::make_normal_of_point_with_normal_map(PointList::value_type())
-                                                  );
+                CGAL::read_xyz_points(stream,
+                                      std::back_inserter(points),
+                                      CGAL::parameters::normal_map
+                                      (CGAL::make_normal_of_point_with_normal_map(PointList::value_type()))
+                  );
     }
     if (success)
     {

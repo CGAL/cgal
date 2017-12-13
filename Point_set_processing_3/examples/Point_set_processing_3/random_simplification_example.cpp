@@ -33,13 +33,10 @@ int main(int argc, char*argv[])
   std::vector<Point>(points).swap(points);
 
   // Saves point set.
-  // Note: write_xyz_points_and_normals() requires an output iterator
-  // over points as well as property maps to access each
-  // point position and normal.
   std::ofstream out((argc>2)?argv[2]:"Three_lady_copy.xyz");
   if (!out ||
 	  !CGAL::write_xyz_points(
-	  out, points.begin(), points.end()))
+            out, points))
   {
 	  return EXIT_FAILURE;
   }

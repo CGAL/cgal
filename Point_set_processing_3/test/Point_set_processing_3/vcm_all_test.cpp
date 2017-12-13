@@ -35,7 +35,7 @@ std::cout << "=== test_fandisk ===\n";
   if (!stream ||
       !CGAL::read_off_points(stream,
                              std::back_inserter(points),
-                             pmap))
+                             CGAL::parameters::point_map(pmap)))
   {
     std::cerr << "Error: cannot read file data/fandisk.off" << std::endl;
     return false;

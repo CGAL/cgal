@@ -34,10 +34,10 @@ int main (int argc, char** argv)
   std::ifstream stream(argc>1 ? argv[1] : "data/cube.pwn");
 
   if (!stream || 
-    !CGAL::read_xyz_points_and_normals(stream,
+    !CGAL::read_xyz_points(stream,
       std::back_inserter(points),
-      Point_map(),
-      Normal_map()))
+      CGAL::parameters::point_map(Point_map()).
+      normal_map(Normal_map())))
   {
       std::cerr << "Error: cannot read file cube.pwn" << std::endl;
       return EXIT_FAILURE;
@@ -68,8 +68,8 @@ int main (int argc, char** argv)
             << " structured point(s) generated." << std::endl;
 
   std::ofstream out ("out.pwn");
-  CGAL::write_xyz_points_and_normals (out, structured_pts.begin(), structured_pts.end(),
-                                      Point_map(), Normal_map());
+  CGAL::write_xyz_points (out, structured_pts,
+                          CGAL::parameters::point_map(Point_map()).normal_map(Normal_map()));
   out.close();
   
   return EXIT_SUCCESS;

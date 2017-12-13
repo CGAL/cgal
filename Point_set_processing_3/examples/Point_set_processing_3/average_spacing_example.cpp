@@ -35,7 +35,7 @@ int main(int argc, char*argv[])
     if (!stream ||
         !CGAL::read_xyz_points(
             stream, std::back_inserter(points),
-            CGAL::Nth_of_tuple_property_map<1,IndexedPointWithColorTuple>()))
+            CGAL::parameters::point_map(CGAL::Nth_of_tuple_property_map<1,IndexedPointWithColorTuple>())))
     {
       std::cerr << "Error: cannot read file " << fname << std::endl;
       return EXIT_FAILURE;

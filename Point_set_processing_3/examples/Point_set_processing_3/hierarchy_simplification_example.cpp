@@ -41,7 +41,7 @@ int main(int argc, char*argv[])
 	    << (memory>>20) << " Mib allocated." << std::endl;
 
   std::ofstream f ("out.xyz");
-  CGAL::write_xyz_points (f, points.begin (), points.end ());
+  CGAL::write_xyz_points (f, points);
   
   return EXIT_SUCCESS;
 }

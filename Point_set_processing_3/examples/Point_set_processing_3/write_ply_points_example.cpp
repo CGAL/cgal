@@ -55,7 +55,7 @@ int main(int, char**)
   CGAL::set_binary_mode(f); // The PLY file will be written in the binary format
   
   CGAL::write_ply_points_with_properties
-    (f, points.begin(), points.end(),
+    (f, points,
      CGAL::make_ply_point_writer (Point_map()),
      std::make_tuple(Color_map(),
                      CGAL::PLY_property<unsigned char>("red"),
