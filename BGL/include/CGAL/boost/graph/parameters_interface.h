@@ -20,9 +20,9 @@
 
 // List of named parameters that we use in CGAL
 CGAL_add_named_parameter(vertex_point_t, vertex_point, vertex_point_map)
-CGAL_add_named_parameter(face_index_t, face_index, face_index_map)
-CGAL_add_named_parameter(edge_index_t, edge_index, edge_index_map)
 CGAL_add_named_parameter(halfedge_index_t, halfedge_index, halfedge_index_map)
+CGAL_add_named_parameter(edge_index_t, edge_index, edge_index_map)
+CGAL_add_named_parameter(face_index_t, face_index, face_index_map)
 
 CGAL_add_named_parameter(edge_is_constrained_t, edge_is_constrained, edge_is_constrained_map)
 CGAL_add_named_parameter(first_index_t, first_index, first_index)
@@ -43,9 +43,9 @@ CGAL_add_named_parameter(protect_constraints_t, protect_constraints, protect_con
 CGAL_add_named_parameter(relax_constraints_t, relax_constraints, relax_constraints)
 CGAL_add_named_parameter(vertex_is_constrained_t, vertex_is_constrained, vertex_is_constrained_map)
 CGAL_add_named_parameter(face_patch_t, face_patch, face_patch_map)
-CGAL_add_named_parameter(random_uniform_sampling_t, random_uniform_sampling, random_uniform_sampling)
-CGAL_add_named_parameter(grid_sampling_t, grid_sampling, grid_sampling)
-CGAL_add_named_parameter(monte_carlo_sampling_t, monte_carlo_sampling, monte_carlo_sampling)
+CGAL_add_named_parameter(random_uniform_sampling_t, random_uniform_sampling, use_random_uniform_sampling)
+CGAL_add_named_parameter(grid_sampling_t, grid_sampling, use_grid_sampling)
+CGAL_add_named_parameter(monte_carlo_sampling_t, monte_carlo_sampling, use_monte_carlo_sampling)
 CGAL_add_named_parameter(do_sample_edges_t, do_sample_edges, do_sample_edges)
 CGAL_add_named_parameter(do_sample_vertices_t, do_sample_vertices, do_sample_vertices)
 CGAL_add_named_parameter(do_sample_faces_t, do_sample_faces, do_sample_faces)
