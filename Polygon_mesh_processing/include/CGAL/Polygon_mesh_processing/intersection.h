@@ -1003,6 +1003,60 @@ compute_face_polyline_intersection(const TriangleMesh& mesh,
   return compute_face_polyline_intersection(faces(mesh), polyline, mesh, out, np);
 }
 
+
+// functions to check for overlap of meshes
+template <class GT, class TriangleMesh, class VPM>
+void get_one_point_per_cc(TriangleMesh& mesh,
+                          const VPM& vpm,
+                          std::vector<typename GT::Point_3>& points_of_interest)
+{
+  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
+  boost::unordered_map<face_descriptor, int> fid_map;
+  int id = 0;
+  BOOST_FOREACH(face_descriptor fd, faces(mesh))
+  {
+    fid_map.insert(std::make_pair(fd,id++));
+  }
+  boost::associative_property_map< boost::unordered_map<face_descriptor, int> >
+      fid_pmap(fid_map);
+  std::map<face_descriptor, int> fcc_map;
+
+  int nb_cc = Polygon_mesh_processing::connected_components(mesh,
+                                                            boost::make_assoc_property_map<std::map<face_descriptor, int> >(fcc_map),
+                                                            Polygon_mesh_processing::parameters::face_index_map(fid_pmap));
+  std::vector<bool> is_cc_treated(nb_cc, false);
+  points_of_interest.resize(nb_cc);
+  int cc_treated = 0;
+  BOOST_FOREACH(face_descriptor fd, faces(mesh))
+  {
+    int cc=fcc_map[fd];
+    if(!is_cc_treated[cc])
+    {
+      points_of_interest[cc]=get(vpm, target(halfedge(fd, mesh),mesh));
+      is_cc_treated[cc] = true;
+      if(++cc_treated == nb_cc)
+        break;
+    }
+  }
+}
+
+//this assumes the meshes does not intersect
+template <class TriangleMesh, class VPM, class GT, class AABB_tree>
+bool is_mesh2_in_mesh1_impl(const AABB_tree& tree1,
+                            const std::vector<typename GT::Point_3>& points_of_interest2,
+                            const GT& gt)
+{
+  //for each CC, take a point on it and test bounded side
+  Side_of_triangle_mesh<TriangleMesh, GT, VPM> sotm(tree1, gt);
+  BOOST_FOREACH(const typename GT::Point_3& p, points_of_interest2)
+  {
+    if(sotm(p) == CGAL::ON_BOUNDED_SIDE) // sufficient as we know meshes do not intersect
+    {
+      return true;
+    }
+  }
+  return false;
+}
 }// namespace internal
 
 namespace Polygon_mesh_processing{
@@ -1308,59 +1362,6 @@ bool do_intersect(const TriangleMesh& mesh,
 }
 }//end PMP
 namespace internal{
-
-template <class GT, class TriangleMesh, class VPM>
-void get_one_point_per_cc(TriangleMesh& mesh,
-                          const VPM& vpm,
-                          std::vector<typename GT::Point_3>& points_of_interest)
-{
-  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
-  boost::unordered_map<face_descriptor, int> fid_map;
-  int id = 0;
-  BOOST_FOREACH(face_descriptor fd, faces(mesh))
-  {
-    fid_map.insert(std::make_pair(fd,id++));
-  }
-  boost::associative_property_map< boost::unordered_map<face_descriptor, int> >
-      fid_pmap(fid_map);
-  std::map<face_descriptor, int> fcc_map;
-
-  int nb_cc = Polygon_mesh_processing::connected_components(mesh,
-                                                            boost::make_assoc_property_map<std::map<face_descriptor, int> >(fcc_map),
-                                                            Polygon_mesh_processing::parameters::face_index_map(fid_pmap));
-  std::vector<bool> is_cc_treated(nb_cc, false);
-  points_of_interest.resize(nb_cc);
-  int cc_treated = 0;
-  BOOST_FOREACH(face_descriptor fd, faces(mesh))
-  {
-    int cc=fcc_map[fd];
-    if(!is_cc_treated[cc])
-    {
-      points_of_interest[cc]=get(vpm, target(halfedge(fd, mesh),mesh));
-      is_cc_treated[cc] = true;
-      if(++cc_treated == nb_cc)
-        break;
-    }
-  }
-}
-
-//this assumes the meshes does not intersect
-template <class TriangleMesh, class VPM, class GT, class AABB_tree>
-bool is_mesh2_in_mesh1_impl(const AABB_tree& tree1,
-                            const std::vector<typename GT::Point_3>& points_of_interest2,
-                            const GT& gt)
-{
-  //for each CC, take a point on it and test bounded side
-  Side_of_triangle_mesh<TriangleMesh, GT, VPM> sotm(tree1, gt);
-  BOOST_FOREACH(const typename GT::Point_3& p, points_of_interest2)
-  {
-    if(sotm(p) == CGAL::ON_BOUNDED_SIDE) // sufficient as we know meshes do not intersect
-    {
-      return true;
-    }
-  }
-  return false;
-}
 
 template<class TriangleMeshRange,
          typename OutputIterator,
