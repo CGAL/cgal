@@ -1353,7 +1353,7 @@ struct Mesh_callback
   template<class TriangleMesh,
            class VPM,
            class GT>
-  bool is_mesh1_in_mesh2(const TriangleMesh& mesh_1,
+  bool is_mesh2_in_mesh1(const TriangleMesh& mesh_1,
                          const TriangleMesh& mesh_2,
                          const int& mesh_id_1,
                          const int& mesh_id_2,
@@ -1444,9 +1444,9 @@ struct Mesh_callback
     {
       if(!CGAL::do_overlap(b1->bbox(), b2->bbox()))
         return;
-      if(is_mesh1_in_mesh2(*b1->info(), *b2->info(), mesh_id_1, mesh_id_2, vpm1, vpm2, gt))
+      if(is_mesh2_in_mesh1(*b1->info(), *b2->info(), mesh_id_1, mesh_id_2, vpm1, vpm2, gt))
         *m_iterator++ = std::make_pair(mesh_id_1, mesh_id_2);
-      else if(is_mesh1_in_mesh2(*b2->info(), *b1->info(), mesh_id_2, mesh_id_1, vpm2, vpm1, gt))
+      else if(is_mesh2_in_mesh1(*b2->info(), *b1->info(), mesh_id_2, mesh_id_1, vpm2, vpm1, gt))
         *m_iterator++ = std::make_pair(mesh_id_2, mesh_id_1);
     }
   }
