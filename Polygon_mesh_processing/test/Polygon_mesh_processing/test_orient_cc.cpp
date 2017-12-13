@@ -74,11 +74,7 @@ bool test_orientation(TriangleMesh& tm, bool is_positive, const NamedParameters&
 int main()
 {
 
-<<<<<<< HEAD
   std::ifstream input("data-coref/nested_cubes_invalid_volume.off");
-=======
-  std::ifstream input("data/Volume_nested_spheres.off");
->>>>>>> 5bf8e4d86b... Add requirement close for orient function
   assert(input);
   SMesh sm1, sm2, sm3, sm4, volume;
   input >> sm1;
@@ -98,11 +94,17 @@ int main()
                                    .face_index_map(fidmap2));
   if(!test_orientation(sm2, true, PMP::parameters::vertex_point_map(vpmap2)
                        .face_index_map(fidmap2)))
+  {
+    std::cerr << "ERROR for test1\n";
     return 1;
+  }
 
   PMP::orient(sm3, false);
   if(!test_orientation(sm3, false, PMP::parameters::all_default()))
+  {
+    std::cerr << "ERROR for test2\n";
     return 1;
+  }
 
   Ppmap vpmap4 = get(CGAL::vertex_point, sm4);
   Fidmap fidmap4 = get(CGAL::face_index, sm4);
@@ -111,13 +113,17 @@ int main()
                                    .face_index_map(fidmap4));
   if(!test_orientation(sm4, false, PMP::parameters::vertex_point_map(vpmap4)
                        .face_index_map(fidmap4)))
+  {
+    std::cerr << "ERROR for test3\n";
     return 1;
-
-
+  }
 
   PMP::orient_to_bound_a_volume(volume, true);
   if( !PMP::does_bound_a_volume(volume))
+  {
+    std::cerr << "ERROR for test4\n";
     return 1;
+  }
 
   return 0;
 }
