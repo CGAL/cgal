@@ -5,7 +5,7 @@ if(EIGEN3_FOUND)
   target_link_libraries(parameterization_plugin scene_polyhedron_item scene_textured_polyhedron_item scene_polyhedron_selection_item)
 
   polyhedron_demo_plugin(parameterization_sm_plugin Parameterization_plugin ${parameterizationUI_FILES})
-  target_link_libraries(parameterization_sm_plugin PUBLIC scene_surface_mesh_item scene_textured_surface_mesh_item scene_surface_mesh_selection_item)
+  target_link_libraries(parameterization_sm_plugin scene_surface_mesh_item scene_textured_surface_mesh_item scene_surface_mesh_selection_item)
   target_compile_definitions(parameterization_sm_plugin PUBLIC "-DUSE_SURFACE_MESH" )
 else(EIGEN3_FOUND)
   message(STATUS "NOTICE: Eigen 3.1 (or greater) was not found. The Parameterization plugin will not be available.")
