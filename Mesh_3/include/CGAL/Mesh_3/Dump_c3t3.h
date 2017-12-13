@@ -24,11 +24,11 @@
 
 #include <CGAL/license/Mesh_3.h>
 
-
 #include <string>
 #include <CGAL/Mesh_3/io_signature.h>
 #include <CGAL/Mesh_3/Mesh_complex_3_in_triangulation_3_base.h>
 #include <CGAL/is_streamable.h>
+#include <boost/type_traits/is_same.hpp>
 #include <fstream>
 
 namespace CGAL {
@@ -49,9 +49,14 @@ struct Dump_c3t3 {
   {
     std::clog<<"======dump c3t3===== to: " << prefix << std::endl;
     std::ofstream medit_file((prefix+".mesh").c_str());
-    medit_file.precision(17);
-    CGAL::output_to_medit(medit_file, c3t3, false, true);
-    medit_file.close();
+
+    // This medit function is meant to be used with Mesh_3 only
+    if(boost::is_same<typename C3t3::Triangulation::Periodic_tag, Tag_false>::value)
+    {
+      medit_file.precision(17);
+      CGAL::output_to_medit(medit_file, c3t3, false, true);
+      medit_file.close();
+    }
 
     std::string bin_filename = prefix;
     bin_filename += ".binary.cgal";
