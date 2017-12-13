@@ -1324,7 +1324,7 @@ struct Mesh_callback
   // Side_of_triangle_mesh.
   const TriangleMeshRange& meshes;
   OutputIterator m_iterator;
-  const bool test_volume;
+  const bool report_overlap;
   const NamedParametersRange& nps;
   std::vector<AABBTree*> trees;
 
@@ -1332,10 +1332,10 @@ struct Mesh_callback
 
   Mesh_callback(const TriangleMeshRange& meshes,
                 OutputIterator iterator,
-                const bool test_volume,
+                const bool report_overlap,
                 const NamedParametersRange& nps)
     : meshes(meshes), m_iterator(iterator),
-      test_volume(test_volume), nps(nps)
+      report_overlap(report_overlap), nps(nps)
   {
     int size = std::distance(meshes.begin(), meshes.end());
     trees = std::vector<AABBTree*>(size, NULL);
@@ -1406,7 +1406,7 @@ struct Mesh_callback
     Side_of_triangle_mesh<TriangleMesh, GT, VPM> sotm(*trees[mesh_id_1], gt);
     BOOST_FOREACH(CGAL::Point_3<GT> p, points_of_interest[mesh_id_2])
     {
-      if(sotm(p) == CGAL::ON_BOUNDED_SIDE)
+      if(sotm(p) == CGAL::ON_BOUNDED_SIDE) // sufficient as we know meshes do not intersect
       {
         return true;
       }
@@ -1440,7 +1440,7 @@ struct Mesh_callback
       *m_iterator++ = std::make_pair(mesh_id_1, mesh_id_2);
     }
     //volumic test
-    else if(test_volume)
+    else if(report_overlap)
     {
       if(!CGAL::do_overlap(b1->bbox(), b2->bbox()))
         return;
@@ -1459,7 +1459,7 @@ namespace Polygon_mesh_processing{
  * detects and reports all the pairs of meshes intersecting in a range of triangulated surface meshes.
  * A pair of meshes intersecting is put in the output iterator `out` as a `std::pair<std::size_t, std::size_t>`,
  * each index refering to the index of the triangle mesh in the input range.
- * If `test_volume` is `true`, bounded volume intersections are tested as well. In that case, the meshes must be closed.
+ * If `report_overlap` is `true`, bounded volume overlaps are tested as well. In that case, the meshes must be closed.
  *
  * \tparam TriangleMeshRange a model of `Bidirectional Range` of triangulated surface meshes model of `FaceListGraph`.
  * \tparam OutputIterator an output iterator in which `std::pair<std::size_t, std::size_t>` can be put.
@@ -1467,9 +1467,9 @@ namespace Polygon_mesh_processing{
  *
  * \param range the range of triangulated surface meshes to be checked for intersections.
  * \param out output iterator used to collect pairs of intersecting meshes.
- * \param test_volume if `true` tests for mesh inclusions. Note that the inclusion tests do not depend on the orientation of the meshes.
- *                    if `false`, only the intersection of surface triangles are tested.
- *                    Default is `false`.
+ * \param report_overlap if `true` tests for mesh inclusions. Note that the inclusion tests do not depend on the orientation of the meshes.
+ *                       if `false`, only the intersection of surface triangles are tested.
+ *                       Default is `false`.
  * \param nps an optional range of `vertex_point_map` namedparameters containing the `VertexPointMap` of each mesh in `range`, in the same order.
  * The first named parameter of the range may contain a custom `geom_traits` for the whole range of meshes.
  * if this parameter is omitted, then an internal property map for
@@ -1490,7 +1490,7 @@ template <class TriangleMeshRange,
           class NamedParametersRange>
 OutputIterator intersecting_meshes(const TriangleMeshRange& range,
                                          OutputIterator out,
-                                   const bool test_volume,
+                                   const bool report_overlap,
                                          NamedParametersRange nps)
 {
   typedef typename TriangleMeshRange::const_iterator TriangleMeshIterator;
@@ -1510,7 +1510,7 @@ OutputIterator intersecting_meshes(const TriangleMeshRange& range,
 
   //get all the pairs of meshes intersecting (no strict inclusion test)
   std::ptrdiff_t cutoff = 2000;
-  CGAL::internal::Mesh_callback<TriangleMeshRange, OutputIterator, NamedParametersRange> callback(range, out, test_volume, nps);
+  CGAL::internal::Mesh_callback<TriangleMeshRange, OutputIterator, NamedParametersRange> callback(range, out, report_overlap, nps);
   CGAL::box_self_intersection_d(boxes_ptr.begin(), boxes_ptr.end(),
                                 callback, cutoff);
   return callback.m_iterator;
@@ -1519,7 +1519,7 @@ OutputIterator intersecting_meshes(const TriangleMeshRange& range,
 template <class TriangleMeshRange, class OutputIterator>
 OutputIterator intersecting_meshes(const TriangleMeshRange& range,
                                           OutputIterator out,
-                                          bool test_volume = false)
+                                          bool report_overlap = false)
 {
   std::vector<pmp_bgl_named_params<bool, internal_np::all_default_t> >nps;
   nps.reserve(std::distance(range.begin(), range.end()));
@@ -1527,7 +1527,7 @@ OutputIterator intersecting_meshes(const TriangleMeshRange& range,
   {
     nps.push_back(parameters::all_default);
   }
-  return intersecting_meshes(range, out, test_volume, nps);
+  return intersecting_meshes(range, out, report_overlap, nps);
 }
 
 /**
