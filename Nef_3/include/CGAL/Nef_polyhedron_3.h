@@ -801,7 +801,8 @@ protected:
 
           Halffacet_const_handle f = opposite_facet->twin();
 
-          if(needs_triangulation(f)) {
+          int s = sides(f);
+          if(s > 4 || has_holes(f)) {
               Vector_3 orth = f->plane().orthogonal_vector();
               int c = CGAL::abs(orth[0]) > CGAL::abs(orth[1]) ? 0 : 1;
               c = CGAL::abs(orth[2]) > CGAL::abs(orth[c]) ? 2 : c;
@@ -817,29 +818,48 @@ protected:
                   th.handle_triangles(B, VI);
               } else
                   CGAL_error_msg( "wrong value");
-
           } else {
-
               B.begin_facet();
               Halffacet_cycle_const_iterator fc = f->facet_cycles_begin();
               SHalfedge_const_handle se(fc);
               CGAL_assertion(se != 0);
               SHalfedge_around_facet_const_circulator hc(se),he(hc);
+              int t = 0, fv;
               CGAL_For_all(hc,he) {
                   Vertex_const_handle cv = hc->source()->center_vertex();
                   CGAL_NEF_TRACEN("   add vertex " << cv->point());
-                  B.add_vertex_to_facet(VI[cv]);
+                  int i=VI[cv];
+                  B.add_vertex_to_facet(i);
+                  if(s==4) {
+                      if(t==0) fv=i;
+                      if(++t==3) {
+                        B.end_facet();
+                        B.begin_facet();
+                        B.add_vertex_to_facet(i);
+                      }
+                  }
               }
+              if(s==4)
+                  B.add_vertex_to_facet(fv);
               B.end_facet();
           }
       }
 
-      inline bool needs_triangulation(Halffacet_const_handle f)
+      inline int sides(Halffacet_const_handle f)
       {
           SHalfedge_around_facet_const_circulator
                   sfc1(f->facet_cycles_begin()), sfc2(sfc1);
-          return ++f->facet_cycles_begin() != f->facet_cycles_end() ||
-                  ++(++(++sfc1)) != sfc2;
+          if(++(++(++sfc1)) == sfc2)
+              return 3;
+          if((++sfc1) == sfc2)
+              return 4;
+           //We only care whether there are 3,4 or greater sides.
+          return 0xFF;
+      }
+
+      inline bool has_holes(Halffacet_const_handle f)
+      {
+          return cpp11::next(f->facet_cycles_begin())!=f->facet_cycles_end();
       }
 
       void visit(SFace_const_handle) {}
