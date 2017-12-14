@@ -39,7 +39,7 @@ int main(int argc, char*argv[])
     }
 
     // Estimates normals direction.
-    // Note: pca_estimate_normals() requires an iterator over points
+    // Note: pca_estimate_normals() requiresa range of points
     // as well as property maps to access each point's position and normal.
     const int nb_neighbors = 18; // K-nearest neighbors = 3 rings
     CGAL::pca_estimate_normals<Concurrency_tag>
@@ -48,7 +48,7 @@ int main(int argc, char*argv[])
        normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>()));
 
     // Orients normals.
-    // Note: mst_orient_normals() requires an iterator over points
+    // Note: mst_orient_normals() requires a range of points
     // as well as property maps to access each point's position and normal.
     std::list<PointVectorPair>::iterator unoriented_points_begin =
       CGAL::mst_orient_normals(points, nb_neighbors,

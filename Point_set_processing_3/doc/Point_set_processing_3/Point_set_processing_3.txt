@@ -38,16 +38,69 @@ Point set processing pipeline for surface reconstruction. The algorithms listed 
 \cgalFigureEnd
 
 
+\section Point_set_processing_3API API
 
-\section Point_set_processing_3PropertyMaps Property Maps
+The algorithms of this component take as input parameters ranges of 3D
+points, or of 3D points with normals.
 
-The algorithms of this component take as input parameters iterator
-ranges of 3D points, or of 3D points with normals. The property maps
-are used to access the point or normal information from the input
-data, so as to let the user decide upon the implementation of a point
-with normal. The latter can be represented as, e.g., a class derived
-from the \cgal 3D point, or as a `std::pair<Point_3<K>, Vector_3<K>>`, 
-or as a `boost::tuple<..,Point_3<K>, ..., Vector_3<K> >`.
+\subsection Point_set_processing_3NamedParameters Named Parameters
+
+\ref BGLNamedParameters are used to deal with optional parameters.
+The page \ref psp_namedparameters describes their usage
+and provides a list of the parameters that are used in this package.
+
+\cgalDebugBegin
+
+\b Deprecated \b API
+
+This API based on ranges and named parameters was introduced in \cgal
+4.12. The old API that used pairs of iterators along with usual \cpp
+parameters (with some default values and overloads to handle optional
+parameters) is deprecated.
+
+Translating your pre-\cgal 4.12 code using Point Set Processing to the
+new API is easy. For example, consider this code using the old API:
+
+\code
+std::vector<PointVectorPair> points;
+
+// Old pre-CGAL 4.12 deprecated API
+CGAL::jet_estimate_normals<Concurrency_tag>
+  (points.begin(), points.end(),
+   CGAL::First_of_pair_property_map<PointVectorPair>(),
+   CGAL::Second_of_pair_property_map<PointVectorPair>(),
+   nb_neighbors_jet_fitting_normals); // Number of neighbors
+\endcode
+
+The pair of iterators is replaced by a range and the optional
+parameters (than can be deduced automatically in the simple cases) are
+moved to the end of the function in a single named parameter object
+(see \ref BGLNamedParameters). The code translated to the new API
+becomes:
+   
+\code
+std::vector<PointVectorPair> points;
+
+// Valid up-to-date API
+CGAL::jet_estimate_normals<Concurrency_tag>
+  (points,
+   12, // Number of neighbors
+   CGAL::parameters::point_map (CGAL::First_of_pair_property_map<PointVectorPair>()).
+   normal_map (CGAL::Second_of_pair_property_map<PointVectorPair>()));
+\endcode
+
+Please refer to the [reference manual](@ref PkgPointSetProcessing) for
+the detailed API of the Point Set Processing functions.
+\cgalDebugEnd
+
+\subsection Point_set_processing_3PropertyMaps Property Maps
+
+The property maps are used to access the point or normal information
+from the input data, so as to let the user decide upon the
+implementation of a point with normal. The latter can be represented
+as, e.g., a class derived from the \cgal 3D point, or as a
+`std::pair<Point_3<K>, Vector_3<K>>`, or as a
+`boost::tuple<..,Point_3<K>, ..., Vector_3<K> >`.
 
 The following classes described in Chapter \ref PkgProperty_mapSummary
 provide property maps for the implementations of points with normals
@@ -89,14 +142,19 @@ not handle normals and requires the \ref thirdpartyLASlib library.
 
 The following functions are available:
 
-- `read_xyz_points()` and `read_xyz_points_and_normals()` 
-- `read_off_points()` and `read_off_points_and_normals()` 
-- `read_ply_points()` and `read_ply_points_and_normals()`
+- `read_xyz_points()`
+- `read_off_points()`
+- `read_ply_points()`
 - `read_las_points()`
-- `write_xyz_points()` and `write_xyz_points_and_normals()`
-- `write_off_points()` and `write_off_points_and_normals()`
-- `write_ply_points()` and `write_ply_points_and_normals()`
+- `write_xyz_points()`
+- `write_off_points()`
+- `write_ply_points()`
 - `write_las_points()`
+
+All of these functions (with the exception of the LAS format) can read
+and write either points alone or points with normals (depending on
+whether the [normal_map](@ref PSP_normal_map) is provided by the user
+or not).
 
 Note that the %PLY format handles both ASCII and binary formats. In
 addition, %PLY and %LAS are extensible formats that can embed additional
