@@ -439,8 +439,6 @@ void recursive_orient_volume_ccs( TriangleMesh& tm,
 * @tparam NamedParameters a sequence of \ref namedparameters
 *
 * @param tm a closed triangulated surface mesh
-* @param orient_outward `true` indicates that each connected component will be outward oriented,
-*                        (inward oriented if `false`). Default value is true.
 * @param np optional sequence of \ref namedparameters among the ones listed below
 *
 * \cgalNamedParamsBegin
@@ -452,10 +450,14 @@ void recursive_orient_volume_ccs( TriangleMesh& tm,
 *   \cgalParamBegin{face_index_map}
 *     a property map containing the index of each face of `tm`.
 *   \cgalParamEnd
+*   \cgalParamBegin{outward_orientation}
+*     if set to `true` (default) indicates that each connected component will be outward oriented,
+*     (inward oriented if `false`).
+*   \cgalParamEnd
 * \cgalNamedParamsEnd
 */
 template<class TriangleMesh, class NamedParameters>
-void orient(TriangleMesh& tm, bool orient_outward, const NamedParameters& np)
+void orient(TriangleMesh& tm, const NamedParameters& np)
 {
   typedef boost::graph_traits<TriangleMesh> Graph_traits;
   typedef typename Graph_traits::vertex_descriptor vertex_descriptor;
@@ -472,6 +474,9 @@ void orient(TriangleMesh& tm, bool orient_outward, const NamedParameters& np)
 
   using boost::choose_param;
   using boost::get_param;
+
+  bool orient_outward = choose_param(
+                          get_param(np, internal_np::outward_orientation),true);
 
   Vpm vpm = choose_param(get_param(np, internal_np::vertex_point),
                          get_const_property_map(boost::vertex_point, tm));
@@ -522,15 +527,9 @@ void orient(TriangleMesh& tm, bool orient_outward, const NamedParameters& np)
 }
 
 template<class TriangleMesh>
-void orient(TriangleMesh& tm, bool orient_outward)
-{
-  orient(tm, orient_outward, parameters::all_default());
-}
-
-template<class TriangleMesh>
 void orient(TriangleMesh& tm)
 {
-  orient(tm, true, parameters::all_default());
+  orient(tm, parameters::all_default());
 }
 
 
@@ -545,9 +544,6 @@ void orient(TriangleMesh& tm)
  * @tparam NamedParameters a sequence of \ref namedparameters
  *
  * @param tm a closed triangulated surface mesh
- * @param orient_outward if `true` the outer connected components will be outward oriented (inward oriented if `false`).
- * If the outer connected components are inward oriented, it means that the infinity will be considered
- * as part of the volume bounded by `tm`. Default value is `true`.
  * @param np optional sequence of \ref namedparameters among the ones listed below
  *
  * \cgalNamedParamsBegin
@@ -559,13 +555,17 @@ void orient(TriangleMesh& tm)
  *   \cgalParamBegin{face_index_map}
  *     a property map containing the index of each face of `tm`.
  *   \cgalParamEnd
+ *   \cgalParamBegin{outward_orientation}
+ *     if set to `true` (default) the outer connected components will be outward oriented (inward oriented if set to `false`).
+ *     If the outer connected components are inward oriented, it means that the infinity will be considered
+ *     as part of the volume bounded by `tm`.
+ *   \cgalParamEnd
  * \cgalNamedParamsEnd
  *
  * \see `CGAL::Polygon_mesh_processing::does_bound_a_volume()`
  */
 template <class TriangleMesh, class NamedParameters>
 void orient_to_bound_a_volume(TriangleMesh& tm,
-                                        const bool orient_outward,
                                         const NamedParameters& np)
 {
   typedef boost::graph_traits<TriangleMesh> Graph_traits;
@@ -581,6 +581,9 @@ void orient_to_bound_a_volume(TriangleMesh& tm,
 
   using boost::choose_param;
   using boost::get_param;
+
+  bool orient_outward = choose_param(
+                          get_param(np, internal_np::outward_orientation),true);
 
   Vpm vpm = choose_param(get_param(np, internal_np::vertex_point),
                          get_const_property_map(boost::vertex_point, tm));
@@ -636,15 +639,9 @@ void orient_to_bound_a_volume(TriangleMesh& tm,
 }
 
 template <class TriangleMesh>
-void orient_to_bound_a_volume(TriangleMesh& tm, const bool orient_outward)
-{
-  orient_to_bound_a_volume(tm, orient_outward, parameters::all_default());
-}
-
-template <class TriangleMesh>
 void orient_to_bound_a_volume(TriangleMesh& tm)
 {
-  orient_to_bound_a_volume(tm, true, parameters::all_default());
+  orient_to_bound_a_volume(tm, parameters::all_default());
 }
 } // namespace Polygon_mesh_processing
 } // namespace CGAL

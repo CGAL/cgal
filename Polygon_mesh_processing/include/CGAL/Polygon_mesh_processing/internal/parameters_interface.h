@@ -45,6 +45,7 @@ CGAL_add_named_parameter(number_of_points_per_edge_t, number_of_points_per_edge,
 CGAL_add_named_parameter(number_of_points_on_edges_t, number_of_points_on_edges, number_of_points_on_edges)
 CGAL_add_named_parameter(nb_points_per_area_unit_t, nb_points_per_area_unit, number_of_points_per_area_unit)
 CGAL_add_named_parameter(nb_points_per_distance_unit_t, nb_points_per_distance_unit, number_of_points_per_distance_unit)
+CGAL_add_named_parameter(outward_orientation_t, outward_orientation, outward_orientation)
 
 //to be documented
 CGAL_add_named_parameter(face_normal_t, face_normal, face_normal_map)

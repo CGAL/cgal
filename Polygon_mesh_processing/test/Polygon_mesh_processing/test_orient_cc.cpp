@@ -90,7 +90,7 @@ int main()
   Ppmap vpmap2 = get(CGAL::vertex_point, sm2);
   Fidmap fidmap2 = get(CGAL::face_index, sm2);
 
-  PMP::orient(sm2, true, PMP::parameters::vertex_point_map(vpmap2)
+  PMP::orient(sm2, PMP::parameters::vertex_point_map(vpmap2)
                                    .face_index_map(fidmap2));
   if(!test_orientation(sm2, true, PMP::parameters::vertex_point_map(vpmap2)
                        .face_index_map(fidmap2)))
@@ -99,7 +99,7 @@ int main()
     return 1;
   }
 
-  PMP::orient(sm3, false);
+  PMP::orient(sm3, PMP::parameters::outward_orientation(false));
   if(!test_orientation(sm3, false, PMP::parameters::all_default()))
   {
     std::cerr << "ERROR for test2\n";
@@ -109,8 +109,9 @@ int main()
   Ppmap vpmap4 = get(CGAL::vertex_point, sm4);
   Fidmap fidmap4 = get(CGAL::face_index, sm4);
 
-  PMP::orient(sm4, false, PMP::parameters::vertex_point_map(vpmap4)
-                                   .face_index_map(fidmap4));
+  PMP::orient(sm4, PMP::parameters::vertex_point_map(vpmap4)
+                                   .face_index_map(fidmap4)
+                                   .outward_orientation(false));
   if(!test_orientation(sm4, false, PMP::parameters::vertex_point_map(vpmap4)
                        .face_index_map(fidmap4)))
   {
@@ -118,7 +119,7 @@ int main()
     return 1;
   }
 
-  PMP::orient_to_bound_a_volume(volume, true);
+  PMP::orient_to_bound_a_volume(volume);
   if( !PMP::does_bound_a_volume(volume))
   {
     std::cerr << "ERROR for test4\n";
