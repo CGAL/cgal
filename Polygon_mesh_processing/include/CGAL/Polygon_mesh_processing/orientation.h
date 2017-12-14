@@ -573,8 +573,6 @@ void orient_to_bound_a_volume(TriangleMesh& tm,
       NamedParameters>::const_type Fid_map;
   typedef typename Kernel_traits<
       typename boost::property_traits<Vpm>::value_type >::Kernel Kernel;
-  typedef typename Kernel_traits<
-      typename boost::property_traits<Vpm>::value_type >::Kernel Kernel;
   if (!is_closed(tm)) return;
   if (!is_triangle_mesh(tm)) return;
 
