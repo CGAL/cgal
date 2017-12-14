@@ -31,10 +31,13 @@
  */
 
 #include <list>
+#include <vector>
+
 #include <CGAL/Object.h>
 #include <CGAL/Basic_sweep_line_2.h>
 #include <CGAL/Sweep_line_2/Sweep_line_curve_pair.h>
 #include <CGAL/Arrangement_2/Open_hash.h>
+#include <CGAL/algorithm.h>
 
 namespace CGAL {
 
@@ -155,6 +158,7 @@ public:
   virtual ~Sweep_line_2() {}
 
 protected:
+  typedef typename std::vector<Subcurve*>               Subcurve_vector;
 
   /*! Initialize the data structures for the sweep-line algorithm. */
   virtual void _init_structures();
@@ -171,22 +175,28 @@ protected:
   /*! Add a subcurve to the right of an event point.
    * \param event The event point.
    * \param curve The subcurve to add.
-   * \return (true) if an overlap occured; (false) otherwise.
    */
-  virtual bool _add_curve_to_right(Event* event, Subcurve* curve,
-                                   bool overlap_exist = false);
+  virtual bool _add_curve_to_right(Event* event, Subcurve* curve);
 
   /*! Fix overlapping subcurves before handling the current event. */
   void _fix_overlap_subcurves();
 
-  /*! Handle overlap at right insertion to event.
-   * \param event The event point.
-   * \param curve The subcurve representing the overlap.
-   * \param iter An iterator for the curves.
-   * \param overlap_exist
+  /*! create an overlap subcurve from overlap_cv between c1 and c2.
+   * \param overlap_cv the overlapping curve.
+   * \param c1 first subcurve contributing to the overlap.
+   * \param c2 second subcurve contributing to the overlap.
+   * \param all_leaves_diff not empty in case c1 and c2 have common ancesters.
+   *                        It contains the set of curves  not contained in first_parent
+   *                        that are in the other subcurve
+   * \param first_parent only used when c1 and c2 have common ancesters.
+   *                     It is either c1 or c2 (the one having the more leaves)
+   *
    */
-  void _handle_overlap(Event* event, Subcurve* curve,
-                       Event_subcurve_iterator iter, bool overlap_exist);
+  void _create_overlapping_curve(const X_monotone_curve_2& overlap_cv,
+                                 Subcurve*& c1 , Subcurve*& c2,
+                                 const Subcurve_vector& all_leaves_diff,
+                                 Subcurve* first_parent,
+                                 Event* event_on_overlap);
 
   /*! Compute intersections between the two given curves.
    * If the two curves intersect, create a new event (or use the event that
@@ -195,7 +205,7 @@ protected:
    * \param curve1 The first curve.
    * \param curve2 The second curve.
    */
-  void _intersect(Subcurve* c1, Subcurve* c2);
+  void _intersect(Subcurve* c1, Subcurve* c2, Event* event_for_overlap = NULL);
 
   /*! When a curve is removed from the status line for good, its top and
    * bottom neighbors become neighbors. This method finds these cases and
@@ -211,13 +221,11 @@ protected:
    * \param mult Its multiplicity.
    * \param curve1 The first curve.
    * \param curve2 The second curve.
-   * \param is_overlap Whether the two curves overlap at xp.
    */
   void _create_intersection_point(const Point_2& xp,
                                   unsigned int mult,
                                   Subcurve*& c1,
-                                  Subcurve*& c2,
-                                  bool is_overlap = false);
+                                  Subcurve*& c2);
 
   /*! Fix a subcurve that represents an overlap.
    * \param sc The subcurve.

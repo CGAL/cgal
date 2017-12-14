@@ -1,5 +1,4 @@
 #include "Viewer.h"
-#include <CGAL/gl.h>
 #include <CGAL/Three/Scene_draw_interface.h>
 #include <QMouseEvent>
 #include <QKeyEvent>

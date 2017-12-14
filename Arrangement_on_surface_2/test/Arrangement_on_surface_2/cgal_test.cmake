@@ -687,6 +687,18 @@ function(test_construction_spherical_arcs)
 endfunction()
 
 #---------------------------------------------------------------------#
+# construction with polylines
+#---------------------------------------------------------------------#
+function(test_construction_polylines)
+  set(nt ${CGAL_GMPQ_NT})
+  set(kernel ${CARTESIAN_KERNEL})
+  set(geom_traits ${POLYLINE_GEOM_TRAITS})
+  set(flags "-DTEST_NT=${nt} -DTEST_KERNEL=${kernel} -DTEST_GEOM_TRAITS=${geom_traits}")
+  compile_and_run_with_flags( test_construction polylines "${flags}")
+endfunction()
+
+
+#---------------------------------------------------------------------#
 # overlay with segments
 #---------------------------------------------------------------------#
 function(test_overlay_segments)
@@ -1358,6 +1370,8 @@ test_algebraic_traits_core()
 test_algebraic_traits_gmp()
 test_algebraic_traits_leda()
 
+compile_and_run(test_data_traits)
+
 compile_and_run(test_insertion)
 compile_and_run(test_unbounded_rational_insertion)
 compile_and_run(test_unbounded_rational_direct_insertion)
@@ -1369,6 +1383,7 @@ compile_and_run(test_vert_ray_shoot_vert_segments)
 test_construction_segments()
 test_construction_linear_curves()
 test_construction_spherical_arcs()
+test_construction_polylines()
 
 test_overlay_segments()
 test_overlay_spherical_arcs()

@@ -2,7 +2,6 @@
 #include <QColor>
 #include <QApplication>
 #include <map>
-#include <CGAL/gl.h>
 #include <CGAL/Simple_cartesian.h>
 #include <QGLViewer/manipulatedFrame.h>
 

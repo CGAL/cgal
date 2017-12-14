@@ -46,6 +46,9 @@ void GlViewer::resizeGL(int width, int height)
 
 void GlViewer::initializeGL() 
 {
+  QOpenGLWidget::initializeGL();
+  initializeOpenGLFunctions();
+  makeCurrent();
   glClearColor(1., 1., 1., 0.);
   glDisable(GL_DEPTH_TEST);
   glEnable(GL_SMOOTH);
@@ -73,7 +76,8 @@ void GlViewer::paintGL()
       m_view_edge_relevance,
       float(m_point_size),
       float(m_vertex_size),
-      float(m_line_thickness));
+      float(m_line_thickness),
+      this);
 
   glPopMatrix();
 }

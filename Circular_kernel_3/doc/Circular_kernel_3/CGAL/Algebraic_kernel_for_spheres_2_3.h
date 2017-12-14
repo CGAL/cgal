@@ -8,8 +8,7 @@ namespace CGAL {
 
 */
 template< typename RT >
-class Algebraic_kernel_for_spheres_2_3 {
-public:
+struct Algebraic_kernel_for_spheres_2_3 {
 
 /// @}
 

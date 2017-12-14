@@ -13,8 +13,7 @@ the most recent change.
 
 */
 template< typename Triangulation >
-class Delaunay_triangulation_recent_edges_visitor_2 {
-public:
+struct Delaunay_triangulation_recent_edges_visitor_2 {
 
 /// \name Creation 
 /// @{

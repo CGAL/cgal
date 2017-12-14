@@ -23,6 +23,7 @@
 #ifndef CGAL_SURFACE_MESH_H
 #define CGAL_SURFACE_MESH_H
 
+
 #include <CGAL/license/Surface_mesh.h>
 
 
@@ -2633,9 +2634,14 @@ namespace internal{
 }
 
 } // CGAL
+ 
+#ifndef DOXYGEN_RUNNING
 
 namespace std {
 
+
+  struct TTTTTffff {};
+    
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
 #  pragma warning(disable:4099) // For VC10 it is class hash 
@@ -2700,6 +2706,8 @@ namespace boost {
   };
 
 } // namespace boost
+
+#endif // DOXYGEN_RUNNING
 
 #endif /* CGAL_SURFACE_MESH_H */
 

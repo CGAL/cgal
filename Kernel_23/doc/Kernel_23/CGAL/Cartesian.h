@@ -26,8 +26,7 @@ All geometric objects in `Cartesian` are reference counted.
 
 */
 template< typename FieldNumberType >
-class Cartesian {
-public:
+struct Cartesian {
 
 /// \name Types 
 /// @{

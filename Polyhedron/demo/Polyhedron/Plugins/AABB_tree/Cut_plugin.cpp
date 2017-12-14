@@ -13,7 +13,6 @@
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
 #include <CGAL/Three/Scene_interface.h>
 #include <CGAL/Three/Viewer_interface.h>
-#include <CGAL/gl.h>
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>

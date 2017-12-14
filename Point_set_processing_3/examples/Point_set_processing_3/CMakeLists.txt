@@ -36,10 +36,6 @@ if ( CGAL_FOUND )
      
   if( ACTIVATE_CONCURRENT_PSP3 OR ENV{ACTIVATE_CONCURRENT_PSP3} )
     find_package( TBB REQUIRED )
-    if( TBB_FOUND )
-      include(${TBB_USE_FILE})
-      list(APPEND CGAL_3RD_PARTY_LIBRARIES ${TBB_LIBRARIES})
-    endif()
   endif()
 
   # Executables that do *not* require EIGEN or LAPACK
@@ -69,7 +65,7 @@ if ( CGAL_FOUND )
     include_directories(${LASLIB_INCLUDE_DIR})
     include_directories(${LASZIP_INCLUDE_DIR})
     create_single_source_cgal_program( "read_las_example.cpp" CXX_FEATURES ${needed_cxx_features} )
-    target_link_libraries(read_las_example ${LASLIB_LIBRARIES})
+    target_link_libraries(read_las_example PRIVATE ${LASLIB_LIBRARIES})
   else()
     message(STATUS "NOTICE : the LAS reader test requires LASlib and will not be compiled.")
   endif()
@@ -96,6 +92,19 @@ if ( CGAL_FOUND )
 
   endif(EIGEN3_FOUND OR LAPACK_FOUND)
 
+  foreach(target
+      scale_estimation_example
+      wlop_simplify_and_regularize_point_set_example
+      bilateral_smooth_point_set_example
+      edge_aware_upsample_point_set_example
+      average_spacing_example
+      normals_example
+      jet_smoothing_example
+      normal_estimation)
+    if(TBB_FOUND AND TARGET ${target})
+      CGAL_target_use_TBB(${target})
+    endif()
+  endforeach()
 
 else()
     message(STATUS "NOTICE: This program requires the CGAL library, and will not be compiled.")

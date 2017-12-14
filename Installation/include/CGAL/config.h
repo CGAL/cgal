@@ -140,7 +140,18 @@
 //  platform specific workaround flags (CGAL_CFG_...)
 //----------------------------------------------------------------------//
 
-#include <CGAL/compiler_config.h>
+#if CGAL_HEADER_ONLY
+#  include <CGAL/internal/enable_third_party_libraries.h>
+#  if(BOOST_MSVC)
+#    include <CGAL/MSVC_compiler_config.h>
+#  endif
+#else
+#  include <CGAL/compiler_config.h>
+#endif
+
+#if BOOST_MSVC && CGAL_TEST_SUITE
+#  include <CGAL/Testsuite/vc_debug_hook.h>
+#endif
 
 //----------------------------------------------------------------------//
 //  Support for DLL on Windows (CGAL_EXPORT macro)
@@ -538,7 +549,7 @@ using std::max;
 #if __has_feature(cxx_thread_local) || \
     ( (__GNUC__ * 100 + __GNUC_MINOR__) >= 408 && __cplusplus >= 201103L ) || \
     ( _MSC_VER >= 1900 )
-// see also Installation/config/support/CGAL_test_cpp_version.cpp
+// see also Installation/cmake/modules/config/support/CGAL_test_cpp_version.cpp
 #define CGAL_CAN_USE_CXX11_THREAD_LOCAL
 #endif
 

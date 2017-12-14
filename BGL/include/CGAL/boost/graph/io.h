@@ -89,6 +89,10 @@ bool write_off(const char* fname,
   return false;
 }
 
+template <typename FaceGraph>
+bool write_off(const std::string& fname,
+               const FaceGraph& g)
+{ return write_off(fname.c_str(), g); }
 
   namespace internal { namespace read_off_tools {
   
@@ -198,7 +202,11 @@ bool read_off(const char* fname,
   return false;
 }
 
-  
+template <typename FaceGraph>
+bool read_off(const std::string& fname,
+              FaceGraph& g)
+{ return read_off(fname.c_str(), g); }  
+
 template <typename FaceGraph>
 bool write_inp(std::ostream& os,
                const FaceGraph& g,

@@ -2,12 +2,14 @@
 #define VIEWER_H
 #include <QMap>
 #include <QGLViewer/qglviewer.h>
+#include <QOpenGLFunctions_2_1>
 
 // forward declarations
 class QWidget;
 class Scene;
 
-class Viewer : public QGLViewer {
+class Viewer : public QGLViewer,
+public QOpenGLFunctions_2_1{
 
   Q_OBJECT
 

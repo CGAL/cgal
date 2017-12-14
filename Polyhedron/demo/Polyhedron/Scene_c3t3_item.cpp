@@ -15,7 +15,6 @@
 
 #include <map>
 #include <vector>
-#include <CGAL/gl.h>
 #include <CGAL/Three/Scene_interface.h>
 #include <CGAL/Real_timer.h>
 
@@ -957,7 +956,7 @@ void Scene_c3t3_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
   if(renderingMode() == FlatPlusEdges)
   {
     GLint renderMode;
-    glGetIntegerv(GL_RENDER_MODE, &renderMode);
+    viewer->glGetIntegerv(GL_RENDER_MODE, &renderMode);
     if(renderMode == GL_SELECT) return;
   }
   Scene_c3t3_item* ncthis = const_cast<Scene_c3t3_item*>(this);

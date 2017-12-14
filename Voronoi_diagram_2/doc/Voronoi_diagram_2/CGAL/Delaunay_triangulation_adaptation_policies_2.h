@@ -22,8 +22,7 @@ edges of zero length.
 
 */
 template< typename DT2 >
-class Delaunay_triangulation_caching_degeneracy_removal_policy_2 {
-public:
+struct Delaunay_triangulation_caching_degeneracy_removal_policy_2 {
 
 /// \name Types 
 /// @{
@@ -60,8 +59,7 @@ i.e., it has no Voronoi edges of zero length.
 
 */
 template< typename DT2 >
-class Delaunay_triangulation_degeneracy_removal_policy_2 {
-public:
+struct Delaunay_triangulation_degeneracy_removal_policy_2 {
 
 /// \name Types 
 /// @{

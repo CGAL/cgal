@@ -18,7 +18,6 @@ void Viewer::setScene(Scene* pScene)
 
 void Viewer::draw()
 {
-  glEnable(GL_DEPTH_TEST);
   QGLViewer::draw();
   if(m_pScene != NULL)
   {

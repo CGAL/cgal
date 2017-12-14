@@ -6,7 +6,7 @@ template<typename Mesh>
 void test() {
   const std::string fname = "data/7_faces_triangle.off";
   Mesh m;
-  if(!read_a_mesh(m, fname)) {
+  if(!CGAL::read_off(fname, m)) {
     std::cout << "Error reading file: " << fname << std::endl;
   }
 

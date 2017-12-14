@@ -33,14 +33,17 @@ qt5_generate_moc( Apollonius_graph_2.cpp Apollonius_graph_2.moc )
 # The executable itself.
 add_executable  ( Apollonius_graph_2 Apollonius_graph_2.cpp Apollonius_graph_2.moc ${DT_UI_FILES} ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES})
 
-qt5_use_modules(Apollonius_graph_2 Xml Script OpenGL Svg)
-
 add_to_cached_list( CGAL_EXECUTABLE_TARGETS Apollonius_graph_2 )
 
-# Link with Qt libraries
-target_link_libraries( Apollonius_graph_2 ${QT_LIBRARIES} )
-# Link with CGAL
-target_link_libraries( Apollonius_graph_2 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
+target_link_libraries( Apollonius_graph_2 PRIVATE
+  CGAL::CGAL CGAL::CGAL_Qt5
+  Qt5::Gui )
+
+include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
+cgal_add_compilation_test(Apollonius_graph_2)
+
+include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
+cgal_add_compilation_test(Apollonius_graph_2)
 
 else()
 

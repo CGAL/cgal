@@ -1267,8 +1267,8 @@ void Scene_polyhedron_item::draw(CGAL::Three::Viewer_interface* viewer) const {
                 d->program->setUniformValue("is_selected", true);
         else
                 d->program->setUniformValue("is_selected", false);
-        glDrawElements(GL_TRIANGLES, static_cast<GLuint>(d->idx_faces.size()),
-                       GL_UNSIGNED_INT, d->idx_faces.data());
+        viewer->glDrawElements(GL_TRIANGLES, static_cast<GLuint>(d->idx_faces.size()),
+                               GL_UNSIGNED_INT, d->idx_faces.data());
         d->program->release();
         vaos[Scene_polyhedron_item_priv::Gouraud_Facets]->release();
     }
@@ -1314,8 +1314,8 @@ void Scene_polyhedron_item::draw(CGAL::Three::Viewer_interface* viewer) const {
         else
                 d->program->setUniformValue("is_selected", false);
 
-        glDrawElements(GL_TRIANGLES, static_cast<GLuint>(d->idx_faces.size()),
-                       GL_UNSIGNED_INT, d->idx_faces.data());
+        viewer->glDrawElements(GL_TRIANGLES, static_cast<GLuint>(d->idx_faces.size()),
+                               GL_UNSIGNED_INT, d->idx_faces.data());
         d->program->release();
         vaos[Scene_polyhedron_item_priv::Gouraud_Facets]->release();
     }
@@ -1345,8 +1345,8 @@ void Scene_polyhedron_item::drawEdges(CGAL::Three::Viewer_interface* viewer) con
           d->program->setUniformValue("is_selected", true);
         else
           d->program->setUniformValue("is_selected", false);
-        glDrawElements(GL_LINES, static_cast<GLuint>(d->idx_lines.size()),
-                       GL_UNSIGNED_INT, d->idx_lines.data());
+        viewer->glDrawElements(GL_LINES, static_cast<GLuint>(d->idx_lines.size()),
+                               GL_UNSIGNED_INT, d->idx_lines.data());
         d->program->release();
         vaos[Scene_polyhedron_item_priv::Edges]->release();
     }
@@ -1365,8 +1365,8 @@ void Scene_polyhedron_item::drawEdges(CGAL::Three::Viewer_interface* viewer) con
         else
             d->program->setAttributeValue("colors",QColor(0,0,0));
     }
-    glDrawElements(GL_LINES, static_cast<GLuint>(d->idx_feature_lines.size()),
-                   GL_UNSIGNED_INT, d->idx_feature_lines.data());
+    viewer->glDrawElements(GL_LINES, static_cast<GLuint>(d->idx_feature_lines.size()),
+                           GL_UNSIGNED_INT, d->idx_feature_lines.data());
     d->program->release();
     vaos[Scene_polyhedron_item_priv::Feature_edges]->release();
     }

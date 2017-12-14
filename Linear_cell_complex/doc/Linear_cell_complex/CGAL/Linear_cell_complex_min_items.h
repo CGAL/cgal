@@ -32,8 +32,7 @@ struct Linear_cell_complex_min_items
 \sa `CGAL::Linear_cell_complex_for_generalized_map<d,d2,LCCTraits,Items,Alloc>`
 
 */
-class Linear_cell_complex_min_items {
-public:
+struct Linear_cell_complex_min_items {
 
 /// @}
 

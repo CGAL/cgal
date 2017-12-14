@@ -46,11 +46,10 @@ if ( CGAL_FOUND )
   endif()
 
   find_package( TBB QUIET )
-  if( TBB_FOUND )
-    include(${TBB_USE_FILE})
-    list(APPEND CGAL_3RD_PARTY_LIBRARIES ${TBB_LIBRARIES})
-  endif()
   create_single_source_cgal_program( "test_TBB.cpp" )
+  if(TBB_FOUND)
+    CGAL_target_use_TBB(test_TBB)
+  endif()
 
   create_link_to_program(CGAL)
  

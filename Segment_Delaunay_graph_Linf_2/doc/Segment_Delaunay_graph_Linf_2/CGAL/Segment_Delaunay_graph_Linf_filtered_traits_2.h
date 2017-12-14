@@ -27,7 +27,7 @@ in the user manual).
 
 */
 template< typename CK, typename CM, typename EK, typename EM, typename FK, typename FM >
-class Segment_Delaunay_graph_Linf_filtered_traits_2 {
+struct Segment_Delaunay_graph_Linf_filtered_traits_2 {
 }; /* end Segment_Delaunay_graph_Linf_filtered_traits_2 */
 } /* end namespace CGAL */
 
@@ -60,6 +60,6 @@ in the user manual).
 
 */
 template< typename CK, typename CM, typename EK, typename EM, typename FK, typename FM >
-class Segment_Delaunay_graph_Linf_filtered_traits_without_intersections_2 {
+struct Segment_Delaunay_graph_Linf_filtered_traits_without_intersections_2 {
 }; /* end Segment_Delaunay_graph_Linf_filtered_traits_without_intersections_2 */
 } /* end namespace CGAL */

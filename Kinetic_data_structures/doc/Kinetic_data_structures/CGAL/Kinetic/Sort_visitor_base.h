@@ -13,8 +13,7 @@ want to implement a few methods from `Kinetic::SortVisitor`.
 
 */
 
-class Sort_visitor_base {
-public:
+struct Sort_visitor_base {
 
 /// \name Creation 
 /// @{
