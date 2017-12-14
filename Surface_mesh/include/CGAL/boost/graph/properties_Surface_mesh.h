@@ -354,7 +354,7 @@ get(dynamic_vertex_property_t<T> vprop, Surface_mesh<Point>& sm)
 {
   typedef typename boost::property_map<Surface_mesh<Point>, dynamic_vertex_property_t<T> >::SMPM SMPM;
   typedef typename boost::property_map<Surface_mesh<Point>, dynamic_vertex_property_t<T> >::const_type DPM;
-  return DPM(sm, new SMPM(sm.template add_property_map<typename Surface_mesh<Point>::Vertex_index, T>(std::string(), vprop.t).first));
+  return DPM(sm, new SMPM(sm.template add_property_map<typename Surface_mesh<Point>::Vertex_index, T>(std::string()).first));
 }
 
 template <typename Point, typename T>
@@ -363,7 +363,7 @@ get(dynamic_face_property_t<T> vprop, Surface_mesh<Point>& sm)
 {
   typedef typename boost::property_map<Surface_mesh<Point>, dynamic_face_property_t<T> >::SMPM SMPM;
   typedef typename boost::property_map<Surface_mesh<Point>, dynamic_face_property_t<T> >::const_type DPM;
-  return DPM(sm, new SMPM(sm.template add_property_map<typename Surface_mesh<Point>::Face_index, T>(std::string(), vprop.t).first));
+  return DPM(sm, new SMPM(sm.template add_property_map<typename Surface_mesh<Point>::Face_index, T>(std::string()).first));
 }
 
 template <typename Point, typename T>
@@ -372,7 +372,7 @@ get(dynamic_edge_property_t<T> vprop, Surface_mesh<Point>& sm)
 {
   typedef typename boost::property_map<Surface_mesh<Point>, dynamic_edge_property_t<T> >::SMPM SMPM;
   typedef typename boost::property_map<Surface_mesh<Point>, dynamic_edge_property_t<T> >::const_type DPM;
-  return DPM(sm, new SMPM(sm.template add_property_map<typename Surface_mesh<Point>::Edge_index, T>(std::string(), vprop.t).first));
+  return DPM(sm, new SMPM(sm.template add_property_map<typename Surface_mesh<Point>::Edge_index, T>(std::string()).first));
 }
 
 template <typename Point, typename T>
@@ -381,7 +381,7 @@ get(dynamic_halfedge_property_t<T> vprop, Surface_mesh<Point>& sm)
 {
   typedef typename boost::property_map<Surface_mesh<Point>, dynamic_halfedge_property_t<T> >::SMPM SMPM;
   typedef typename boost::property_map<Surface_mesh<Point>, dynamic_halfedge_property_t<T> >::const_type DPM;
-  return DPM(sm, new SMPM(sm.template add_property_map<typename Surface_mesh<Point>::Halfedge_index, T>(std::string(), vprop.t).first));
+  return DPM(sm, new SMPM(sm.template add_property_map<typename Surface_mesh<Point>::Halfedge_index, T>(std::string()).first));
 }
 
 template <typename Pmap,typename P>

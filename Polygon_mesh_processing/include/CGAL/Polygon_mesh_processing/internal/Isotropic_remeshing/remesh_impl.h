@@ -181,7 +181,7 @@ namespace internal {
     typedef Patch_id&                           reference;
     typedef boost::read_write_property_map_tag  category;
 
-    //note pmesh is a non-const ref because add_property() and remove_property()
+    //note pmesh is a non-const ref because properties are added and removed
     //modify the mesh data structure, but not the mesh itself
     Connected_components_pmap(PM& pmesh
                             , EdgeIsConstrainedMap ecmap

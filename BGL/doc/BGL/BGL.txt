@@ -419,22 +419,23 @@ are class templates that work for any model of this concept.
 
 \subsection BGLProperties Properties and Dynamic Properties
 
-As the concepts `FaceGraph` adds the notion of halfedges and faces,
+As the concepts `HalfedgeGraph and `FaceGraph` add the notion of halfedges and faces,
 as well as a geometric embedding of the vertices, we have to add
 property tags such as `face_index_t` and `vertex_point_t`.
 
 We further add <em>dynamic properties</em> that enable the user
 to add properties to vertices, halfedges, edges, and faces on the fly.
-The life time of a dynamic property is bound to the life time
-of the property map, that is it used reference counting and
-deletes the property if no property map refers to it.
+The lifetime of a dynamic property is bound to the lifetime
+of the property map: reference counting is used to delete the property
+when no map refers to it.
+
 
 Dynamic property tags such as `dynamic_vertex_property_t` are a generalization of
 `boost::vertex_index_t`, as they have a template parameter for the
 value type of the dynamic property map, and a default value.
 
 `boost::property_map<G,T>::%type` is used to obtain the 
-type of the dynamic property map for a graph `g` of type `G`, for a
+type of the dynamic property map for a graph of type `G`, for a
 dynamic property tag `T`.
 
 As for ordinary properties, the function `%get()` is overloaded and

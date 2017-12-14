@@ -20,7 +20,7 @@ int main()
   std::cout << get(vnm, *(vertices(mesh).first)) << std::endl;
   
   typedef boost::property_map<Mesh, CGAL::dynamic_halfedge_property_t<double> >::type TrafficDensityMap;
-  TrafficDensityMap tdm = get(CGAL::dynamic_halfedge_property_t<double>(0.1), mesh);
+  TrafficDensityMap tdm = get(CGAL::dynamic_halfedge_property_t<double>(), mesh);
   put(tdm, *(halfedges(mesh).first), 0.7);
   
   std::cout << get(tdm, *(halfedges(mesh).first)) << std::endl;

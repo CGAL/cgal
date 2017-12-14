@@ -1,4 +1,4 @@
-// Copyright (c) 2007  GeometryFactory (France).  All rights reserved.
+// Copyright (c) 2017  GeometryFactory (France).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -132,39 +132,31 @@ struct Dynamic {
 template <typename T>
 struct dynamic_vertex_property_t
 {
-  dynamic_vertex_property_t(const T& t = T())
-    : t(t)
+  dynamic_vertex_property_t()
   {}
-  T t;
 };
 
 
 template <typename T>
 struct dynamic_halfedge_property_t
 {
-  dynamic_halfedge_property_t(const T& t = T())
-    : t(t)
+  dynamic_halfedge_property_t()
   {}
-  T t;
 };
 
 template <typename T>
 struct dynamic_edge_property_t
 {
-  dynamic_edge_property_t(const T& t = T())
-    : t(t)
+  dynamic_edge_property_t()
   {}
-  T t;
 };
 
 
 template <typename T>
 struct dynamic_face_property_t
 {
-  dynamic_face_property_t(const T& t = T())
-    : t(t)
+  dynamic_face_property_t()
   {}
-  T t;
 };
 
 } // namespace CGAL
@@ -214,7 +206,7 @@ typename boost::property_map<G, dynamic_vertex_property_t<T> >::const_type
 get(CGAL::dynamic_vertex_property_t<T> prop, const G&)
 {
   typedef typename boost::graph_traits<G>::vertex_descriptor vertex_descriptor;
-  return internal::Dynamic_property_map<vertex_descriptor,T>(prop.t);
+  return internal::Dynamic_property_map<vertex_descriptor,T>();
 }
 
 template <typename T, typename G>
@@ -222,7 +214,7 @@ typename boost::property_map<G, dynamic_halfedge_property_t<T> >::const_type
 get(CGAL::dynamic_halfedge_property_t<T> prop, const G&)
 {
   typedef typename boost::graph_traits<G>::halfedge_descriptor halfedge_descriptor;
-  return internal::Dynamic_property_map<halfedge_descriptor,T>(prop.t);
+  return internal::Dynamic_property_map<halfedge_descriptor,T>();
 }
 
 template <typename T, typename G>
@@ -230,7 +222,7 @@ typename boost::property_map<G, dynamic_edge_property_t<T> >::const_type
 get(CGAL::dynamic_edge_property_t<T> prop, const G&)
 {
   typedef typename boost::graph_traits<G>::edge_descriptor edge_descriptor;
-  return internal::Dynamic_property_map<edge_descriptor,T>(prop.t);
+  return internal::Dynamic_property_map<edge_descriptor,T>();
 }
 
 template <typename T, typename G>
@@ -238,7 +230,7 @@ typename boost::property_map<G, dynamic_face_property_t<T> >::const_type
 get(CGAL::dynamic_face_property_t<T> prop, const G&)
 {
   typedef typename boost::graph_traits<G>::face_descriptor face_descriptor;
-  return internal::Dynamic_property_map<face_descriptor,T>(prop.t);
+  return internal::Dynamic_property_map<face_descriptor,T>();
 }
 
 template<typename G, typename Descriptor, typename T>
