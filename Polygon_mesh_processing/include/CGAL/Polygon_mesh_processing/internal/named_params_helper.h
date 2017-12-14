@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Jane Tournois
 
@@ -73,7 +73,9 @@ public:
   typedef typename CGAL::Kernel_traits<Point>::Kernel Kernel;
 };
 
-template<typename PolygonMesh, typename NamedParameters = pmp_bgl_named_params<bool, internal_np::all_default_t> >
+template<typename PolygonMesh,
+         typename NamedParametersGT = pmp_bgl_named_params<bool, internal_np::all_default_t>,
+         typename NamedParametersVPM = NamedParametersGT >
 class GetGeomTraits
 {
   typedef typename boost::graph_has_property<PolygonMesh, boost::vertex_point_t>::type
@@ -81,14 +83,14 @@ class GetGeomTraits
   struct Fake_GT {};//to be used if there is no internal vertex_point_map in PolygonMesh
 
   typedef typename boost::mpl::if_c< Has_internal_pmap::value
-                                   , typename GetK<PolygonMesh, NamedParameters>::Kernel
+                                   , typename GetK<PolygonMesh, NamedParametersVPM>::Kernel
                                    , Fake_GT
   >::type DefaultKernel;
 
 public:
   typedef typename boost::lookup_named_param_def <
     internal_np::geom_traits_t,
-    NamedParameters,
+    NamedParametersGT,
     DefaultKernel
   > ::type  type;
 };
