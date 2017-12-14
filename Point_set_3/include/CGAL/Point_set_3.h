@@ -837,6 +837,22 @@ public:
     return out;
   }
 
+  /*!
+    \brief Returns a sequence of \ref psp_namedparameters "Named Parameters" for Point Set Processing algorithms.
+
+    \cgalNamedParamsBegin
+      \cgalParamBegin{point_map} contains the point map (see `point_map()`)\cgalParamEnd
+      \cgalParamBegin{normal_map} contains the normal map (see `normal_map()`)\cgalParamEnd
+      \cgalParamBegin{geom_traits} contains the kernel `typename Kernel_traits<Point>`::`Kernel`\cgalParamEnd
+    \cgalNamedParamsEnd
+
+    \warning this method does not check if the normal map was
+    instanciated or not. The normal map named parameter should not be
+    used if this property was not instanciated first.
+  */
+#ifdef DOXYGEN_RUNNING
+  unspecified_type
+#else
   cgal_bgl_named_params
   <typename Kernel_traits<Point>::Kernel,
    internal_np::geom_traits_t,
@@ -846,6 +862,7 @@ public:
     cgal_bgl_named_params
     <typename CGAL::Point_set_3<Point, Vector>::template Property_map<Point>,
      internal_np::point_t> > >
+#endif
   inline parameters() const
   {
     return CGAL::parameters::point_map (m_points).
@@ -1160,7 +1177,7 @@ Point_set_3<Point, Vector>& operator+=(Point_set_3<Point, Vector>& ps,
 
 
 
-
+/// \cond SKIP_IN_MANUAL
 namespace Point_set_processing_3
 {
   namespace parameters
@@ -1181,7 +1198,7 @@ namespace Point_set_processing_3
     }
   }
 }
-
+/// \endcond
 
 } // namespace CGAL
 
