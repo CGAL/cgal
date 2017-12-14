@@ -38,13 +38,18 @@ int main (int, char**)
 
   // Add normal property and estimate normal values
   point_set.add_normal_map();
-  CGAL::jet_estimate_normals<CGAL::Sequential_tag> (point_set,
-                                                    12); // Number of neighbors
+  CGAL::jet_estimate_normals<CGAL::Sequential_tag>
+    (point_set,
+     12,; // Number of neighbors
+     point_set.parameters(). // Named parameters provided by Point_set_3
+     degree_fitting(2));     // additional named parameter specific to jet_estimate_normals
 
 
   // Simplify point set
-  CGAL::grid_simplify_point_set (point_set,
-                                 0.1); // Size of grid cell
+  CGAL::grid_simplify_point_set
+    (point_set,
+     0.1); // Size of grid cell
+  // point_set.parameters() can be omitted if no additional named parameter is needed
 
   std::vector<std::string> properties = point_set.properties();
   std::cerr << "Properties:" << std::endl;
