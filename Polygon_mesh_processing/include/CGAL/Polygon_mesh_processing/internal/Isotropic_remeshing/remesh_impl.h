@@ -200,16 +200,11 @@ namespace internal {
                                       PMP::parameters::edge_is_constrained_map(ecmap)
                                      .face_index_map(fimap));
         if(nb_cc == 1){
-          // CGAL::remove_property(patch_ids_map, pmesh);
           patch_ids_map = Patch_ids_map();
         }
       }
     }
 
-    friend void remove(CCMap m, PM& pmesh)
-    {
-      //CGAL::remove_property(m.patch_ids_map, pmesh);
-    }
 
     friend value_type get(const CCMap& m, const key_type& f)
     {
@@ -314,7 +309,7 @@ namespace internal {
       , vcmap_(vcmap)
       , fimap_(fimap)
     {
-      halfedge_status_pmap_ = get(CGAL::dynamic_halfedge_property_t<Halfedge_status>(MESH),
+      halfedge_status_pmap_ = get(CGAL::dynamic_halfedge_property_t<Halfedge_status>(),
                                   pmesh);
       CGAL_assertion(CGAL::is_triangle_mesh(mesh_));
     }
@@ -322,22 +317,11 @@ namespace internal {
     ~Incremental_remesher()
     {
       typedef Connected_components_pmap<PM, EdgeIsConstrainedMap, FaceIndexMap> CCPmap;
-      //remove_connected_components_pmap
-      //  (CGAL::Boolean_tag<boost::is_same<FacePatchMap, CCPmap>::value>());
-
-      // CGAL::remove_property(halfedge_status_pmap_, mesh_);
-
       if (build_tree_){
         for(std::size_t i=0; i < trees.size();++i){
           delete trees[i];
         }
       }
-    }
-
-    void remove_connected_components_pmap(CGAL::Tag_false) {}
-    void remove_connected_components_pmap(CGAL::Tag_true)
-    {
-      remove(patch_ids_map_, mesh_);
     }
 
     template<typename FaceRange>
@@ -1477,6 +1461,8 @@ private:
         if (is_border(h, mesh_)){
           set_status(h, MESH_BORDER); //erase previous value if exists
           has_border_ = true;
+        } else {
+          set_status(h, MESH);
         }
       }
 
