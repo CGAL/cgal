@@ -436,7 +436,7 @@ value type of the dynamic property map, and a default value.
 
 `boost::property_map<G,T>::%type` is used to obtain the 
 type of the dynamic property map for a graph of type `G`, for a
-dynamic property tag `T`.
+dynamic property tag `T`.  This type must be default constructible and assignable.
 
 As for ordinary properties, the function `%get()` is overloaded and
 serves for retrieving a property map for a given graph and dynamic
