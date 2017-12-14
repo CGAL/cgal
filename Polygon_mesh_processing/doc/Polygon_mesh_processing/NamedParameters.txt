@@ -117,7 +117,7 @@ typename CGAL::Kernel_traits<
  the property map containing the index of each face of the input polygon mesh.\n
 \b Type: a class model of `ReadablePropertyMap` with
 `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and
-the  value type 
+the  value type
 \code typename boost::property_traits<
     typename boost::property_map<PolygonMesh, CGAL::face_index_t>::type>::value_type
 \endcode
@@ -129,7 +129,7 @@ If this internal property map exists, its values should be initialized
  the property map containing the index of each vertex of the input polygon mesh.\n
 \b Type: a class model of `ReadablePropertyMap` with
 `boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and
-the  value type 
+the  value type
 \code typename boost::property_traits<
     typename boost::property_map<PolygonMesh, CGAL::vertex_index_t>::type>::value_type
 \endcode
@@ -365,6 +365,14 @@ and perturbation is not deterministic
 \n
 \b Type : `unsigned int` \n
 \b Default is that this variable is not set
+\cgalNPEnd
+
+\cgalNPBegin{do_overlap_test_of_bounded_sides} \anchor PMP_do_overlap_test_of_bounded_sides
+Parameter used in intersection test functions to indicate whether overlapping tests of bounded sides
+of close meshes should be done in addition to surface intersection tests.
+\n
+\b Type : `bool` \n
+\b Default value is `false`
 \cgalNPEnd
 
 \cgalNPTableEnd
