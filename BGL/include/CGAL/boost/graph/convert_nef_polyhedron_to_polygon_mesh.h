@@ -83,11 +83,14 @@ struct Shell_polygons_visitor
   typedef boost::unordered_map<typename Nef_polyhedron::Vertex_const_handle, std::size_t> Vertex_index_map;
   Vertex_index_map& vertex_indices;
   std::vector< std::vector<std::size_t> >& polygons;
+  bool triangulate_all_faces;
 
   Shell_polygons_visitor(Vertex_index_map& vertex_indices,
-                         std::vector< std::vector<std::size_t> >& polygons)
+                         std::vector< std::vector<std::size_t> >& polygons,
+                         bool triangulate_all_faces)
     : vertex_indices( vertex_indices )
     , polygons(polygons)
+    , triangulate_all_faces(triangulate_all_faces)
   {}
 
   void visit(typename Nef_polyhedron::Halffacet_const_handle opposite_facet)
@@ -101,7 +104,7 @@ struct Shell_polygons_visitor
 
     typename Nef_polyhedron::Halffacet_const_handle f = opposite_facet->twin();
 
-    if (cpp11::next(f->facet_cycles_begin())==f->facet_cycles_end())
+    if (!triangulate_all_faces && cpp11::next(f->facet_cycles_begin())==f->facet_cycles_end())
     {
       // create a new polygon
       polygons.push_back( std::vector<std::size_t>() );
@@ -228,7 +231,8 @@ void collect_polygon_mesh_info(
   std::vector< std::vector<std::size_t> >& polygons,
   Nef_polyhedron& nef,
   typename Nef_polyhedron::Shell_entry_const_iterator shell,
-  const Converter& converter)
+  const Converter& converter,
+  bool triangulate_all_faces)
 {
   // collect points and set vertex indices
   Shell_vertex_index_visitor<Nef_polyhedron, Point_3, Converter> vertex_index_visitor(points, converter);
@@ -237,7 +241,8 @@ void collect_polygon_mesh_info(
   // collect polygons
   Shell_polygons_visitor<Nef_polyhedron> polygon_visitor(
     vertex_index_visitor.vertex_indices,
-    polygons);
+    polygons,
+    triangulate_all_faces);
   nef.visit_shell_objects(typename Nef_polyhedron::SFace_const_handle(shell), polygon_visitor);
 }
 
@@ -247,11 +252,11 @@ void collect_polygon_mesh_info(
 /// Converts an objet of type `Nef_polyhedron_3` into a polygon mesh model of `MutableFaceGraph`.
 /// Note that contrary to `Nef_polyhedron_3::convert_to_polyhedron()`, the output is not triangulated
 /// (but faces with more than one connected component of the boundary).
-/// The polygon mesh can be triangulated using the function `triangulate_faces()`.
+/// The polygon mesh can be triangulated by setting `triangulate_all_faces` to `true` or by calling the function `triangulate_faces()`.
 /// \pre `Polygon_mesh` must have an internal point property map with value type being `Nef_polyhedron_3::Point_3`.
 /// \pre `nef.simple()`
 template <class Nef_polyhedron, class Polygon_mesh>
-void convert_nef_polyhedron_to_polygon_mesh(const Nef_polyhedron& nef, Polygon_mesh& pm)
+void convert_nef_polyhedron_to_polygon_mesh(const Nef_polyhedron& nef, Polygon_mesh& pm, bool triangulate_all_faces = false)
 {
   typedef typename Nef_polyhedron::Point_3 Point_3;
   typedef typename boost::property_traits<typename boost::property_map<Polygon_mesh, vertex_point_t>::type>::value_type PM_Point;
@@ -273,7 +278,8 @@ void convert_nef_polyhedron_to_polygon_mesh(const Nef_polyhedron& nef, Polygon_m
                                                   polygons,
                                                   nef,
                                                   vol_it->shells_begin(),
-                                                  to_inexact);
+                                                  to_inexact,
+                                                  triangulate_all_faces);
 
   Polygon_mesh_processing::polygon_soup_to_polygon_mesh(points, polygons, pm);
 }
