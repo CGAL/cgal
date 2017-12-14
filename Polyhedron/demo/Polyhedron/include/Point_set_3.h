@@ -27,6 +27,7 @@
 #include <CGAL/Min_sphere_of_points_d_traits_3.h>
 #include <CGAL/Min_sphere_of_spheres_d_traits_3.h>
 #include <CGAL/Point_set_3.h>
+#include <CGAL/Iterator_range.h>
 
 #include <algorithm>
 #include <vector>
@@ -95,7 +96,10 @@ private:
   Double_map m_fred;
   Double_map m_fgreen;
   Double_map m_fblue;
-
+  
+  mutable CGAL::Iterator_range<const_iterator> m_const_range;
+  CGAL::Iterator_range<iterator> m_range;
+  
   // Assignment operator not implemented and declared private to make
   // sure nobody uses the default one without knowing it
   Point_set_3& operator= (const Point_set_3&)
@@ -105,14 +109,20 @@ private:
 
   
 public:
+  
   Point_set_3 ()
+    : m_const_range (begin(), end())
+    , m_range (begin(), end())
   {
     m_bounding_box_is_valid = false;
     m_radii_are_uptodate = false;
   }
 
   // copy constructor 
-  Point_set_3 (const Point_set_3& p) : Base (p)
+  Point_set_3 (const Point_set_3& p)
+    : Base (p)
+    , m_const_range (begin(), end())
+    , m_range (begin(), end())
   {
     check_colors();
     m_bounding_box_is_valid = p.m_bounding_box_is_valid;
@@ -308,6 +318,17 @@ public:
     return (this->m_nb_removed == 0 ? begin() : first_selected());
   }
 
+  const CGAL::Iterator_range<const_iterator>& all_or_selection_if_not_empty() const
+  {
+    m_const_range = CGAL::make_range (begin_or_selection_begin(), end());
+    return m_const_range;
+  }
+  CGAL::Iterator_range<iterator>& all_or_selection_if_not_empty()
+  {
+    m_range = CGAL::make_range (begin_or_selection_begin(), end());
+    return m_range;
+  }
+
 
   // Test if point is selected
   bool is_selected(const_iterator it) const
@@ -458,6 +479,21 @@ public:
   bool are_radii_uptodate() const { return m_radii_are_uptodate; }
   void set_radii_uptodate(bool /*on*/) { m_radii_are_uptodate = false; }
   
+  CGAL::cgal_bgl_named_params
+  <Kernel,
+   CGAL::internal_np::geom_traits_t,
+   CGAL::cgal_bgl_named_params
+   <typename Base::template Property_map<Vector>,
+    CGAL::internal_np::normal_t,
+    CGAL::cgal_bgl_named_params
+    <typename Base::template Property_map<Point>,
+     CGAL::internal_np::point_t> > >
+  inline parameters() const
+  {
+    return CGAL::parameters::point_map (this->m_points).
+      normal_map (this->m_normals).
+      geom_traits (Kernel());
+  }
 
 private:
 
@@ -522,5 +558,28 @@ private:
   
 }; // end of class Point_set_3
 
+namespace CGAL
+{
+namespace Point_set_processing_3
+{
+  namespace parameters
+  {
+    template <typename Kernel>
+    cgal_bgl_named_params
+    <Kernel,
+     internal_np::geom_traits_t,
+     cgal_bgl_named_params
+     <typename ::Point_set_3<Kernel>::template Property_map<typename Kernel::Vector_3>,
+      internal_np::normal_t,
+      cgal_bgl_named_params
+      <typename ::Point_set_3<Kernel>::template Property_map<typename Kernel::Point_3>,
+       internal_np::point_t> > >
+    inline all_default(const ::Point_set_3<Kernel>& ps)
+    {
+      return ps.parameters();
+    }
+  }
+}
+}
 
 #endif // POINT_SET_3_H
