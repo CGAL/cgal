@@ -255,7 +255,7 @@ void reverse_face_orientations(PolygonMesh& pmesh)
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
   BOOST_FOREACH(face_descriptor fd, faces(pmesh)){
     reverse_orientation(halfedge(fd,pmesh),pmesh);
-  } 
+  }
   // Note: A border edge is now parallel to its opposite edge.
   // We scan all border edges for this property. If it holds, we
   // reorient the associated hole and search again until no border
@@ -470,11 +470,14 @@ void orient(TriangleMesh& tm, bool orient_outward, const NamedParameters& np)
   CGAL_assertion(is_valid(tm));
   CGAL_assertion(is_closed(tm));
 
-  Vpm vpm = boost::choose_param(get_param(np, internal_np::vertex_point),
-                                get_const_property_map(boost::vertex_point, tm));
+  using boost::choose_param;
+  using boost::get_param;
 
-  Fid_map fid_map = boost::choose_param(get_param(np, internal_np::face_index),
-                                        get_const_property_map(boost::face_index, tm));
+  Vpm vpm = choose_param(get_param(np, internal_np::vertex_point),
+                         get_const_property_map(boost::vertex_point, tm));
+
+  Fid_map fid_map = choose_param(get_param(np, internal_np::face_index),
+                                 get_const_property_map(boost::face_index, tm));
 
   std::vector<std::size_t> face_cc(num_faces(tm), std::size_t(-1));
 
@@ -576,11 +579,14 @@ void orient_to_bound_a_volume(TriangleMesh& tm,
   if (!is_closed(tm)) return;
   if (!is_triangle_mesh(tm)) return;
 
-  Vpm vpm = boost::choose_param(get_param(np, internal_np::vertex_point),
-                                get_const_property_map(boost::vertex_point, tm));
+  using boost::choose_param;
+  using boost::get_param;
 
-  Fid_map fid_map = boost::choose_param(get_param(np, internal_np::face_index),
-                                        get_const_property_map(boost::face_index, tm));
+  Vpm vpm = choose_param(get_param(np, internal_np::vertex_point),
+                         get_const_property_map(boost::vertex_point, tm));
+
+  Fid_map fid_map = choose_param(get_param(np, internal_np::face_index),
+                                 get_const_property_map(boost::face_index, tm));
 
   std::vector<std::size_t> face_cc(num_faces(tm), std::size_t(-1));
 
