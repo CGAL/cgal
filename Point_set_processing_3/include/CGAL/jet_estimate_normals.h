@@ -295,7 +295,8 @@ jet_estimate_normals(
   jet_estimate_normals<ConcurrencyTag>
     (points, k, CGAL::Point_set_processing_3::parameters::all_default(points));
 }
-  
+
+#ifndef CGAL_NO_DEPRECATED_CODE
 // deprecated API
 template <typename ConcurrencyTag,
 	  typename ForwardIterator,
@@ -304,6 +305,7 @@ template <typename ConcurrencyTag,
           typename Kernel,
           typename SvdTraits
 >
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::jet_estimate_normals(), please update your code")
 void
 jet_estimate_normals(
   ForwardIterator first,  ///< iterator over the first input point.
@@ -314,7 +316,6 @@ jet_estimate_normals(
   const Kernel& /*kernel*/, ///< geometric traits.
   unsigned int degree_fitting = 2) ///< fitting degree
 {
-  CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("jet_estimate_normals()");
   CGAL::Iterator_range<ForwardIterator> points (first, beyond);
   return jet_estimate_normals<ConcurrencyTag>
     (points,
@@ -333,6 +334,7 @@ template <typename ConcurrencyTag,
           typename NormalMap,
           typename Kernel
 >
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::jet_estimate_normals(), please update your code")
 void
 jet_estimate_normals(
   ForwardIterator first,
@@ -349,7 +351,6 @@ jet_estimate_normals(
   typedef Lapack_svd SvdTraits;
   #endif
 
-  CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("jet_estimate_normals()");
   CGAL::Iterator_range<ForwardIterator> points (first, beyond);
   return jet_estimate_normals<ConcurrencyTag>
     (points,
@@ -367,6 +368,7 @@ template <typename ConcurrencyTag,
           typename PointMap,
           typename NormalMap
 >
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::jet_estimate_normals(), please update your code")
 void
 jet_estimate_normals(
   ForwardIterator first,  ///< iterator over the first input point.
@@ -376,7 +378,6 @@ jet_estimate_normals(
   unsigned int k, ///< number of neighbors.
   unsigned int degree_fitting = 2)
 {
-  CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("jet_estimate_normals()");
   CGAL::Iterator_range<ForwardIterator> points (first, beyond);
   return jet_estimate_normals<ConcurrencyTag>
     (points,
@@ -391,6 +392,7 @@ template <typename ConcurrencyTag,
 	  typename ForwardIterator,
           typename NormalMap
 >
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::jet_estimate_normals(), please update your code")
 void
 jet_estimate_normals(
   ForwardIterator first,  ///< iterator over the first input point.
@@ -399,7 +401,6 @@ jet_estimate_normals(
   unsigned int k, ///< number of neighbors.
   unsigned int degree_fitting = 2)
 {
-  CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("jet_estimate_normals()");
   CGAL::Iterator_range<ForwardIterator> points (first, beyond);
   return jet_estimate_normals<ConcurrencyTag>
     (points,
@@ -407,7 +408,8 @@ jet_estimate_normals(
      CGAL::parameters::normal_map (normal_map).
      degree_fitting (degree_fitting));
 }
-#endif
+#endif // CGAL Eigen / Lapack
+#endif // CGAL_NO_DEPRECATED_CODE
 /// \endcond
 
 } //namespace CGAL

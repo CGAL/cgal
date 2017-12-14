@@ -645,9 +645,7 @@ mst_orient_normals(
 
 /// \cond SKIP_IN_MANUAL
 // variant with default NP
-template <typename PointRange,
-          typename NamedParameters
->
+template <typename PointRange>
 typename PointRange::iterator
 mst_orient_normals(
   PointRange& points,
@@ -656,13 +654,15 @@ mst_orient_normals(
 {
   return mst_orient_normals (points, k, CGAL::Point_set_processing_3::parameters::all_default(points));
 }
-  
+
+#ifndef CGAL_NO_DEPRECATED_CODE
 // deprecated API
 template <typename ForwardIterator,
           typename PointMap,
           typename NormalMap,
           typename Kernel
 >
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::mst_orient_normals(), please update your code")
 ForwardIterator
 mst_orient_normals(
     ForwardIterator first,  ///< iterator over the first input point.
@@ -672,7 +672,6 @@ mst_orient_normals(
     unsigned int k, ///< number of neighbors
     const Kernel& kernel) ///< geometric traits.
 {
-  CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("mst_orient_normals()");
   CGAL::Iterator_range<ForwardIterator> points (first, beyond);
   return mst_orient_normals
     (points,
@@ -687,6 +686,7 @@ template <typename ForwardIterator,
           typename PointMap,
           typename NormalMap
 >
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::mst_orient_normals(), please update your code")
 ForwardIterator
 mst_orient_normals(
     ForwardIterator first,  ///< iterator over the first input point.
@@ -695,7 +695,6 @@ mst_orient_normals(
     NormalMap normal_map, ///< property map: value_type of ForwardIterator -> Vector_3.
     unsigned int k) ///< number of neighbors
 {
-  CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("mst_orient_normals()");
   CGAL::Iterator_range<ForwardIterator> points (first, beyond);
   return mst_orient_normals
     (points,
@@ -708,6 +707,7 @@ mst_orient_normals(
 template <typename ForwardIterator,
           typename NormalMap
 >
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::mst_orient_normals(), please update your code")
 ForwardIterator
 mst_orient_normals(
     ForwardIterator first,  ///< iterator over the first input point.
@@ -715,13 +715,13 @@ mst_orient_normals(
     NormalMap normal_map, ///< property map: value_type of ForwardIterator -> Vector_3.
     unsigned int k) ///< number of neighbors
 {
-  CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("mst_orient_normals()");
   CGAL::Iterator_range<ForwardIterator> points (first, beyond);
   return mst_orient_normals
     (points,
      k,
      CGAL::parameters::normal_map (normal_map));
 }
+#endif // CGAL_NO_DEPRECATED_CODE
 /// \endcond
 
 

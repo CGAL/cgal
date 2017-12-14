@@ -283,6 +283,7 @@ jet_smooth_point_set(
 }
 
 
+#ifndef CGAL_NO_DEPRECATED_CODE
 // deprecated API
 template <typename ConcurrencyTag,
 	  typename InputIterator,
@@ -290,6 +291,7 @@ template <typename ConcurrencyTag,
           typename Kernel,
           typename SvdTraits
 >
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::jet_smooth_point_set(), please update your code")
 void
 jet_smooth_point_set(
   InputIterator first,  ///< iterator over the first input point.
@@ -300,7 +302,6 @@ jet_smooth_point_set(
   unsigned int degree_fitting = 2, ///< fitting degree
   unsigned int degree_monge = 2)  ///< Monge degree
 {
-  CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("jet_smooth_point_set()");
   CGAL::Iterator_range<InputIterator> points (first, beyond);
   return jet_smooth_point_set<ConcurrencyTag>
     (points,
@@ -318,6 +319,7 @@ template <typename ConcurrencyTag,
           typename PointMap,
           typename Kernel
 >
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::jet_smooth_point_set(), please update your code")
 void
 jet_smooth_point_set(
   InputIterator first,  ///< iterator over the first input point.
@@ -333,7 +335,6 @@ jet_smooth_point_set(
   #else
   typedef Lapack_svd SvdTraits;
   #endif
-  CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("jet_smooth_point_set()");
   CGAL::Iterator_range<InputIterator> points (first, beyond);
   return jet_smooth_point_set<ConcurrencyTag>
     (points,
@@ -341,7 +342,7 @@ jet_smooth_point_set(
      CGAL::parameters::point_map (point_map).
      degree_fitting (degree_fitting).
      degree_monge (degree_monge).
-     svd_traits (SvdTraits()),
+     svd_traits (SvdTraits()).
      geom_traits(kernel));
 }
 
@@ -350,6 +351,7 @@ template <typename ConcurrencyTag,
 	  typename InputIterator,
           typename PointMap
 >
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::jet_smooth_point_set(), please update your code")
 void
 jet_smooth_point_set(
   InputIterator first, ///< iterator over the first input point
@@ -359,7 +361,6 @@ jet_smooth_point_set(
   const unsigned int degree_fitting = 2,
   const unsigned int degree_monge = 2)
 {
-  CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("jet_smooth_point_set()");
   CGAL::Iterator_range<InputIterator> points (first, beyond);
   return jet_smooth_point_set<ConcurrencyTag>
     (points,
@@ -373,6 +374,7 @@ jet_smooth_point_set(
 template <typename ConcurrencyTag,
 	  typename InputIterator
 >
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::jet_smooth_point_set(), please update your code")
 void
 jet_smooth_point_set(
   InputIterator first, ///< iterator over the first input point
@@ -381,7 +383,6 @@ jet_smooth_point_set(
   const unsigned int degree_fitting = 2,
   const unsigned int degree_monge = 2)
 {
-  CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("jet_smooth_point_set()");
   CGAL::Iterator_range<InputIterator> points (first, beyond);
   return jet_smooth_point_set<ConcurrencyTag>
     (points,
@@ -389,7 +390,8 @@ jet_smooth_point_set(
      CGAL::parameters::degree_fitting (degree_fitting).
      degree_monge (degree_monge));
 }
-#endif
+#endif // CGAL Eigen / Lapack
+#endif // CGAL_NO_DEPRECATED_CODE
 /// \endcond
   
 

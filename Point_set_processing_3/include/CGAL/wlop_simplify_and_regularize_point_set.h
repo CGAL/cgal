@@ -511,10 +511,7 @@ wlop_simplify_and_regularize_point_set(
   if (radius < 0)
   {
     const unsigned int nb_neighbors = 6; // 1 ring
-    FT average_spacing = CGAL::compute_average_spacing<ConcurrencyTag>(
-                               points.begin(), points.end(),
-                               point_map,
-                               nb_neighbors);
+    FT average_spacing = CGAL::compute_average_spacing<ConcurrencyTag>(points, nb_neighbors, np);
     radius = average_spacing * 8.0;
 
 #ifdef CGAL_PSP3_VERBOSE
@@ -656,12 +653,14 @@ wlop_simplify_and_regularize_point_set(
     (points, output, CGAL::Point_set_processing_3::parameters::all_default(points));
 }
 
+#ifndef CGAL_NO_DEPRECATED_CODE
 // deprecated API
 template <typename ConcurrencyTag,
           typename OutputIterator,
           typename RandomAccessIterator,
           typename PointMap,
           typename Kernel>
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::wlop_simplify_and_regularize_point_set(), please update your code")
 OutputIterator
 wlop_simplify_and_regularize_point_set(
   RandomAccessIterator first,  ///< random-access iterator to the first input point.
@@ -686,7 +685,6 @@ wlop_simplify_and_regularize_point_set(
   const Kernel&                ///< geometric traits.
 )
 {
-  CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("wlop_simplify_and_regularize_point_set()");
   CGAL::Iterator_range<RandomAccessIterator> points (first, beyond);
   return wlop_simplify_and_regularize_point_set<ConcurrencyTag>
     (points, output,
@@ -698,12 +696,13 @@ wlop_simplify_and_regularize_point_set(
      geom_traits (Kernel()));
 }
   
-/// @cond SKIP_IN_MANUAL
-// This variant deduces the kernel from the iterator type.
+
+// deprecated API
 template <typename ConcurrencyTag,
           typename OutputIterator,     
           typename RandomAccessIterator, 
           typename PointMap>
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::wlop_simplify_and_regularize_point_set(), please update your code")
 OutputIterator 
 wlop_simplify_and_regularize_point_set(
   RandomAccessIterator  first,  ///< iterator over the first input point
@@ -717,7 +716,6 @@ wlop_simplify_and_regularize_point_set(
                                       ///  to generate more rugularized result.                                 
 ) 
 {
-  CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("wlop_simplify_and_regularize_point_set()");
   CGAL::Iterator_range<RandomAccessIterator> points (first, beyond);
   return wlop_simplify_and_regularize_point_set<ConcurrencyTag>
     (points, output,
@@ -732,6 +730,7 @@ wlop_simplify_and_regularize_point_set(
 template <typename ConcurrencyTag, 
           typename OutputIterator,     
           typename RandomAccessIterator >
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::wlop_simplify_and_regularize_point_set(), please update your code")
 OutputIterator
 wlop_simplify_and_regularize_point_set(
   RandomAccessIterator  first,  ///< iterator to the first input point.
@@ -744,7 +743,6 @@ wlop_simplify_and_regularize_point_set(
                                            ///to generate a more uniform result. 
 )
 {
-  CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("wlop_simplify_and_regularize_point_set()");
   CGAL::Iterator_range<RandomAccessIterator> points (first, beyond);
   return wlop_simplify_and_regularize_point_set<ConcurrencyTag>
     (points, output,
@@ -753,6 +751,7 @@ wlop_simplify_and_regularize_point_set(
      number_of_iterations(max_iter_number).
      require_uniform_sampling (require_uniform_sampling));
 }
+#endif // CGAL_NO_DEPRECATED_CODE
 /// @endcond
 
 } //namespace CGAL

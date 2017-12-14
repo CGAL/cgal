@@ -75,11 +75,13 @@ random_simplify_point_set(
 }
 
 /// \cond SKIP_IN_MANUAL
+#ifndef CGAL_NO_DEPRECATED_CODE
 // deprecated API
 template <typename ForwardIterator,
           typename PointMap,
           typename Kernel
 >
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::random_simplify_point_set(), please update your code")
 ForwardIterator
 random_simplify_point_set(
   ForwardIterator first,  ///< iterator over the first input point.
@@ -88,7 +90,6 @@ random_simplify_point_set(
   double removed_percentage, ///< percentage of points to remove.
   const Kernel& /*kernel*/) ///< geometric traits.
 {
-  CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("random_simplify_point_set()");
   CGAL::Iterator_range<ForwardIterator> points (first, beyond);
   return random_simplify_point_set (points, removed_percentage);
 }
@@ -98,6 +99,7 @@ random_simplify_point_set(
 template <typename ForwardIterator,
           typename PointMap
 >
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::random_simplify_point_set(), please update your code")
 ForwardIterator
 random_simplify_point_set(
   ForwardIterator first, ///< iterator over the first input point
@@ -105,7 +107,6 @@ random_simplify_point_set(
   PointMap, ///< property map: value_type of ForwardIterator -> Point_3
   double removed_percentage) ///< percentage of points to remove
 {
-  CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("random_simplify_point_set()");
   CGAL::Iterator_range<ForwardIterator> points (first, beyond);
   return random_simplify_point_set (points, removed_percentage);
 }
@@ -113,16 +114,17 @@ random_simplify_point_set(
 // deprecated API
 template <typename ForwardIterator
 >
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::random_simplify_point_set(), please update your code")
 ForwardIterator
 random_simplify_point_set(
   ForwardIterator first, ///< iterator over the first input point
   ForwardIterator beyond, ///< past-the-end iterator
   double removed_percentage) ///< percentage of points to remove
 {
-  CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("random_simplify_point_set()");
   CGAL::Iterator_range<ForwardIterator> points (first, beyond);
   return random_simplify_point_set (points, removed_percentage);
 }
+#endif // CGAL_NO_DEPRECATED_CODE
 /// \endcond
 
 

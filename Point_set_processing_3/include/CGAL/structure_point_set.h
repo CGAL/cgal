@@ -1539,7 +1539,8 @@ structure_point_set (const PointRange& points, ///< range of points.
     (points, planes, output, epsilon,
      CGAL::Point_set_processing_3::parameters::all_default(points));
 }
-  
+
+#ifndef CGAL_NO_DEPRECATED_CODE
 // deprecated API
 template <typename PointRange,
           typename PointMap,
@@ -1550,6 +1551,7 @@ template <typename PointRange,
           typename OutputIterator,
           typename Kernel
           >
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::structure_point_set(), please update your code")
 OutputIterator
 structure_point_set (const PointRange& points, ///< range of points.
                      PointMap point_map, ///< property map: value_type of `typename PointRange::const_iterator` -> `Point_3`
@@ -1562,7 +1564,6 @@ structure_point_set (const PointRange& points, ///< range of points.
                      double epsilon, ///< size parameter.
                      double attraction_factor = 3.) ///< attraction factor.
 {
-  CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("structure_point_set()");
   return structure_point_set
     (points, planes, output, epsilon,
      CGAL::parameters::point_map (point_map).
@@ -1582,6 +1583,7 @@ template <typename PointRange,
           typename IndexMap,
           typename OutputIterator
           >
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::structure_point_set(), please update your code")
 OutputIterator
 structure_point_set (const PointRange& points,
                      PointMap point_map,
@@ -1593,7 +1595,6 @@ structure_point_set (const PointRange& points,
                      double epsilon, ///< size parameter
                      double attraction_factor = 3.) ///< attraction factor
 {
-  CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("structure_point_set()");
   return structure_point_set
     (points, planes, output, epsilon,
      CGAL::parameters::point_map (point_map).
@@ -1610,6 +1611,7 @@ template <typename PointRange,
           typename IndexMap,
           typename OutputIterator
           >
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::structure_point_set(), please update your code")
 OutputIterator
 structure_point_set (const PointRange& points,
                      NormalMap normal_map,
@@ -1619,14 +1621,13 @@ structure_point_set (const PointRange& points,
                      double epsilon, ///< size parameter
                      double attraction_factor = 3.) ///< attraction factor
 {
-  CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("structure_point_set()");
   return structure_point_set
     (points, planes, output, epsilon,
      CGAL::parameters::normal_map (normal_map).
      plane_index_map (index_map).
      attraction_factor (attraction_factor));
 }
-
+#endif // CGAL_NO_DEPRECATED_CODE
 /// \endcond
 
 } //namespace CGAL

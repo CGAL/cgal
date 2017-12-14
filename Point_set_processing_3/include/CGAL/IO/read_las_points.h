@@ -516,15 +516,16 @@ read_las_points(
     (stream, output, CGAL::parameters::all_default());
 }
 
+#ifndef CGAL_NO_DEPRECATED_CODE
 // deprecated API  
 template < typename OutputIteratorValueType,
            typename OutputIterator,
            typename PointMap >
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::read_las_points(), please update your code")
 bool read_las_points(std::istream& stream, ///< input stream.
                      OutputIterator output, ///< output iterator over points.
                      PointMap point_map) ///< property map: value_type of OutputIterator -> Point_3.
 {
-  CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("read_las_points()");
   return read_las_points<OutputIteratorValueType>
     (stream, output,
      CGAL::parameters::point_map (point_map));
@@ -533,15 +534,16 @@ bool read_las_points(std::istream& stream, ///< input stream.
 // deprecated API
 template < typename OutputIterator,
            typename PointMap >
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::read_las_points(), please update your code")
 bool read_las_points(std::istream& stream, ///< input stream.
                      OutputIterator output, ///< output iterator over points.
                      PointMap point_map) ///< property map: value_type of OutputIterator -> Point_3.
 {
-  CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("read_las_points()");
   return read_las_points<typename value_type_traits<OutputIterator>::type>
     (stream, output,
      CGAL::parameters::point_map (point_map));
 }
+#endif // CGAL_NO_DEPRECATED_CODE
 /// \endcond
 
 

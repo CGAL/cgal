@@ -430,11 +430,13 @@ write_ply_points(
   return write_ply_points
     (stream, points, CGAL::Point_set_processing_3::parameters::all_default(points));
 }
-  
+
+#ifndef CGAL_NO_DEPRECATED_CODE
 // deprecated API
 template < typename ForwardIterator,
            typename PointMap,
            typename VectorMap >
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::write_ply_points_and_normals(), please update your code")
 bool
 write_ply_points_and_normals(
   std::ostream& stream, ///< output stream.
@@ -443,7 +445,6 @@ write_ply_points_and_normals(
   PointMap point_map, ///< property map: value_type of OutputIterator -> Point_3.
   VectorMap normal_map) ///< property map: value_type of OutputIterator -> Vector_3.
 {
-  CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("write_ply_points_and_normals()");
   CGAL::Iterator_range<ForwardIterator> points (first, beyond);
   return write_ply_points
     (stream, points,
@@ -455,6 +456,7 @@ write_ply_points_and_normals(
 template <typename ForwardIterator,
           typename VectorMap
 >
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::write_ply_points_and_normals(), please update your code")
 bool
 write_ply_points_and_normals(
   std::ostream& stream, ///< output stream.
@@ -462,7 +464,6 @@ write_ply_points_and_normals(
   ForwardIterator beyond, ///< past-the-end input point.
   VectorMap normal_map) ///< property map: value_type of OutputIterator -> Vector_3.
 {
-  CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("write_ply_points_and_normals()");
   CGAL::Iterator_range<ForwardIterator> points (first, beyond);
   return write_ply_points
     (stream, points,
@@ -472,6 +473,7 @@ write_ply_points_and_normals(
 // deprecated API
 template < typename ForwardIterator,
            typename PointMap >
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::write_ply_points(), please update your code")
 bool
 write_ply_points(
   std::ostream& stream, ///< output stream.
@@ -479,7 +481,6 @@ write_ply_points(
   ForwardIterator beyond, ///< past-the-end input point.
   PointMap point_map) ///< property map: value_type of OutputIterator -> Point_3.
 {
-  CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("write_ply_points()");
   CGAL::Iterator_range<ForwardIterator> points (first, beyond);
   return write_ply_points
     (stream, points,
@@ -488,17 +489,18 @@ write_ply_points(
 
 // deprecated API
 template < typename ForwardIterator >
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::write_ply_points(), please update your code")
 bool
 write_ply_points(
   std::ostream& stream, ///< output stream.
   ForwardIterator first, ///< first input point.
   ForwardIterator beyond) ///< past-the-end input point.
 {
-  CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("write_ply_points()");
   CGAL::Iterator_range<ForwardIterator> points (first, beyond);
   return write_ply_points
     (stream, points);
 }
+#endif // CGAL_NO_DEPRECATED_CODE
 /// \endcond
 
 

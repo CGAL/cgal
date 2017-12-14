@@ -218,6 +218,7 @@ read_xyz_points(
     (stream, output, CGAL::parameters::all_default());
 }
 
+#ifndef CGAL_NO_DEPRECATED_CODE
 // deprecated API  
 template <typename OutputIteratorValueType,
           typename OutputIterator,
@@ -225,6 +226,7 @@ template <typename OutputIteratorValueType,
           typename NormalPMap,
           typename Kernel
 >
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::read_xyz_points_and_normals(), please update your code")
 bool
 read_xyz_points_and_normals(
   std::istream& stream, ///< input stream.
@@ -233,7 +235,6 @@ read_xyz_points_and_normals(
   NormalPMap normal_map, ///< property map: value_type of OutputIterator -> Vector_3.
   const Kernel& /*kernel*/) ///< geometric traits.
 {
-  CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("read_xyz_points_and_normals()");
   return read_xyz_points<OutputIteratorValueType>
     (stream, output,
      CGAL::parameters::point_map (point_map).
@@ -247,6 +248,7 @@ template <typename OutputIterator,
           typename NormalPMap,
           typename Kernel
 >
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::read_xyz_points_and_normals(), please update your code")
 bool
 read_xyz_points_and_normals(
   std::istream& stream, ///< input stream.
@@ -255,7 +257,6 @@ read_xyz_points_and_normals(
   NormalPMap normal_map, ///< property map: value_type of OutputIterator -> Vector_3.
   const Kernel& kernel) ///< geometric traits.
 {
-  CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("read_xyz_points_and_normals()");
   return read_xyz_points<typename value_type_traits<OutputIterator>::type>
     (stream, output,
      CGAL::parameters::point_map (point_map).
@@ -269,6 +270,7 @@ template <typename OutputIteratorValueType,
           typename PointPMap,
           typename NormalPMap
 >
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::read_xyz_points_and_normals(), please update your code")
 bool
 read_xyz_points_and_normals(
   std::istream& stream, ///< input stream.
@@ -276,7 +278,6 @@ read_xyz_points_and_normals(
   PointPMap point_map, ///< property map: value_type of OutputIterator -> Point_3.
   NormalPMap normal_map) ///< property map: value_type of OutputIterator -> Vector_3.
 {
-  CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("read_xyz_points_and_normals()");
   return read_xyz_points<OutputIteratorValueType>
     (stream, output,
      CGAL::parameters::point_map (point_map).
@@ -288,6 +289,7 @@ template <typename OutputIterator,
           typename PointPMap,
           typename NormalPMap
 >
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::read_xyz_points_and_normals(), please update your code")
 bool
 read_xyz_points_and_normals(
   std::istream& stream, ///< input stream.
@@ -295,7 +297,6 @@ read_xyz_points_and_normals(
   PointPMap point_map, ///< property map: value_type of OutputIterator -> Point_3.
   NormalPMap normal_map) ///< property map: value_type of OutputIterator -> Vector_3.
 {
-  CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("read_xyz_points_and_normals()");
   return read_xyz_points<typename value_type_traits<OutputIterator>::type>
     (stream, output,
      CGAL::parameters::point_map (point_map).
@@ -307,13 +308,13 @@ template <typename OutputIteratorValueType,
           typename OutputIterator,
           typename NormalPMap
 >
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::read_xyz_points_and_normals(), please update your code")
 bool
 read_xyz_points_and_normals(
   std::istream& stream, ///< input stream.
   OutputIterator output, ///< output iterator over points.
   NormalPMap normal_map) ///< property map: value_type of OutputIterator -> Vector_3.
 {
-  CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("read_xyz_points_and_normals()");
   return read_xyz_points<OutputIteratorValueType>
     (stream, output,
      CGAL::parameters::normal_map (normal_map));
@@ -323,13 +324,13 @@ read_xyz_points_and_normals(
 template <typename OutputIterator,
           typename NormalPMap
 >
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::read_xyz_points_and_normals(), please update your code")
 bool
 read_xyz_points_and_normals(
   std::istream& stream, ///< input stream.
   OutputIterator output, ///< output iterator over points.
   NormalPMap normal_map) ///< property map: value_type of OutputIterator -> Vector_3.
 {
-  CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("read_xyz_points_and_normals()");
   return read_xyz_points<typename value_type_traits<OutputIterator>::type>
     (stream, output,
      CGAL::parameters::normal_map (normal_map));
@@ -341,6 +342,7 @@ template <typename OutputIteratorValueType,
           typename PointPMap,
           typename Kernel
 >
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::read_xyz_points(), please update your code")
 bool
 read_xyz_points(
   std::istream& stream, ///< input stream.
@@ -348,7 +350,6 @@ read_xyz_points(
   PointPMap point_map, ///< property map: value_type of OutputIterator -> Point_3.
   const Kernel& kernel) ///< geometric traits.
 {
-  CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("read_xyz_points()");
   return read_xyz_points<OutputIteratorValueType>
     (stream, output,
      CGAL::parameters::point_map (point_map).
@@ -360,6 +361,7 @@ template <typename OutputIterator,
           typename PointPMap,
           typename Kernel
 >
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::read_xyz_points(), please update your code")
 bool
 read_xyz_points(
   std::istream& stream, ///< input stream.
@@ -367,7 +369,6 @@ read_xyz_points(
   PointPMap point_map, ///< property map: value_type of OutputIterator -> Point_3.
   const Kernel& kernel) ///< geometric traits.
 {
-  CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("read_xyz_points()");
   return read_xyz_points<typename value_type_traits<OutputIterator>::type>
     (stream, output,
      CGAL::parameters::point_map (point_map).
@@ -379,13 +380,13 @@ template <typename OutputIteratorValueType,
           typename OutputIterator,
           typename PointPMap
 >
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::read_xyz_points(), please update your code")
 bool
 read_xyz_points(
   std::istream& stream, ///< input stream.
   OutputIterator output, ///< output iterator over points.
   PointPMap point_map) ///< property map: value_type of OutputIterator -> Point_3.
 {
-  CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("read_xyz_points()");
   return read_xyz_points<OutputIteratorValueType>
     (stream, output,
      CGAL::parameters::point_map (point_map));
@@ -395,18 +396,18 @@ read_xyz_points(
 template <typename OutputIterator,
           typename PointPMap
 >
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::read_xyz_points(), please update your code")
 bool
 read_xyz_points(
   std::istream& stream, ///< input stream.
   OutputIterator output, ///< output iterator over points.
   PointPMap point_map) ///< property map: value_type of OutputIterator -> Point_3.
 {
-  CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("read_xyz_points()");
   return read_xyz_points<typename value_type_traits<OutputIterator>::type>
     (stream, output,
      CGAL::parameters::point_map (point_map));
 }
-
+#endif // CGAL_NO_DEPRECATED_CODE
 /// \endcond
 
 

@@ -604,12 +604,14 @@ bilateral_smooth_point_set(
     (points, k, CGAL::Point_set_processing_3::parameters::all_default(points));
 }
 
+#ifndef CGAL_NO_DEPRECATED_CODE
 // deprecated API
 template <typename ConcurrencyTag,
           typename ForwardIterator,
           typename PointMap,
           typename NormalMap,
           typename Kernel>
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::bilateral_smooth_point_set(), please update your code")
 double
 bilateral_smooth_point_set(
   ForwardIterator first,    ///< forward iterator on the first input point.
@@ -623,7 +625,6 @@ bilateral_smooth_point_set(
                             ///< The range of possible value is [0, 90].
   const Kernel& /*kernel*/) ///< geometric traits.
 {
-  CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("bilateral_smooth_point_set()");
   CGAL::Iterator_range<ForwardIterator> points = CGAL::make_range (first, beyond);
   return bilateral_smooth_point_set<ConcurrencyTag>
     (points,
@@ -637,6 +638,7 @@ template <typename ConcurrencyTag,
           typename ForwardIterator,
           typename PointMap,
           typename NormalMap>
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::bilateral_smooth_point_set(), please update your code")
 double
 bilateral_smooth_point_set(
   ForwardIterator first,      ///< forward iterator to the first input point.
@@ -647,7 +649,6 @@ bilateral_smooth_point_set(
   double sharpness_angle     ///< control sharpness(0-90)
 ) ///< property map OutputIterator -> Vector_3.
 {
-  CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("bilateral_smooth_point_set()");
   CGAL::Iterator_range<ForwardIterator> points = CGAL::make_range (first, beyond);
   return bilateral_smooth_point_set<ConcurrencyTag>
     (points,
@@ -659,6 +660,7 @@ bilateral_smooth_point_set(
 template <typename ConcurrencyTag,
           typename ForwardIterator,
           typename NormalMap>
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::bilateral_smooth_point_set(), please update your code")
 double
 bilateral_smooth_point_set(
   ForwardIterator first,    ///< forward iterator to the first input point.
@@ -667,13 +669,13 @@ bilateral_smooth_point_set(
   double sharpness_angle,   ///< control sharpness(0-90)
   NormalMap normal_map)   ///< property map OutputIterator -> Vector_3.
 {
-  CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("bilateral_smooth_point_set()");
   CGAL::Iterator_range<ForwardIterator> points = CGAL::make_range (first, beyond);
   return bilateral_smooth_point_set<ConcurrencyTag>
     (points,
      k,
      CGAL::parameters::normal_map(normal_map).sharpness_angle(sharpness_angle));
 }
+#endif // CGAL_NO_DEPRECATED_CODE
 /// \endcond
 
 

@@ -199,7 +199,7 @@ template <typename PointRange,
           typename PointMap,
           typename ... PropertyHandler>
 bool write_las_points_with_properties (std::ostream& stream,  ///< output stream.
-                                       const PoinRange& points, ///< input point range.
+                                       const PointRange& points, ///< input point range.
                                        std::tuple<PointMap,
                                        LAS_property::X,
                                        LAS_property::Y,
@@ -305,9 +305,11 @@ write_las_points(
     (stream, points, CGAL::Point_set_processing_3::parameters::all_default(points));
 }
 
+#ifndef CGAL_NO_DEPRECATED_CODE
 // deprecated API
 template < typename ForwardIterator,
            typename PointMap >
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::write_las_points(), please update your code")
 bool
 write_las_points(
   std::ostream& stream, ///< output stream.
@@ -315,7 +317,6 @@ write_las_points(
   ForwardIterator beyond, ///< past-the-end input point.
   PointMap point_map) ///< property map: value_type of OutputIterator -> Point_3.
 {
-  CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("write_las_points()");
   CGAL::Iterator_range<ForwardIterator> points (first, beyond);
   return write_las_points
     (stream, points,
@@ -324,17 +325,18 @@ write_las_points(
   
 // deprecated API  
 template < typename ForwardIterator >
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::write_las_points(), please update your code")
 bool
 write_las_points(
   std::ostream& stream, ///< output stream.
   ForwardIterator first, ///< first input point.
   ForwardIterator beyond) ///< past-the-end input point.
 {
-  CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("write_las_points()");
   CGAL::Iterator_range<ForwardIterator> points (first, beyond);
   return write_las_points
     (stream, points);
 }
+#endif // CGAL_NO_DEPRECATED_CODE
 /// \endcond
 
 

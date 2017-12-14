@@ -341,12 +341,18 @@ edge_aware_upsample_point_set(
   PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
   NormalMap normal_map = choose_param(get_param(np, internal_np::normal_map), NormalMap());
   double sharpness_angle = choose_param(get_param(np, internal_np::sharpness_angle), 30.);
-  double edge_sensitivity = choose_param(get_param(np, internal_np::sharpness_angle), 1);
-  double neighbor_radius = choose_param(get_param(np, internal_np::sharpness_angle), -1);
+  double edge_sensitivity = choose_param(get_param(np, internal_np::edge_sensitivity), 1);
+  double neighbor_radius = choose_param(get_param(np, internal_np::neighbor_radius), -1);
   std::size_t number_of_output_points = choose_param(get_param(np, internal_np::number_of_output_points), 1000);
 
+  std::cerr << sharpness_angle << " " << edge_sensitivity << " " << neighbor_radius
+            << " " << number_of_output_points << std::endl;
+  // trick in case the output iterator add points to the input container
+  typename PointRange::iterator begin = points.begin();
+  typename PointRange::iterator end = points.end();
+  
   // preconditions
-  CGAL_point_set_processing_precondition(points.begin() != points.end());
+  CGAL_point_set_processing_precondition(begin != end);
   CGAL_point_set_processing_precondition(sharpness_angle >= 0 
                                        &&sharpness_angle <= 90);
   CGAL_point_set_processing_precondition(edge_sensitivity >= 0 
@@ -355,7 +361,7 @@ edge_aware_upsample_point_set(
 
   edge_sensitivity *= 10;  // just project [0, 1] to [0, 10].
 
-  std::size_t number_of_input = std::distance(points.begin(), points.end());
+  std::size_t number_of_input = std::distance(begin, end);
   CGAL_point_set_processing_precondition(number_of_output_points > number_of_input);
 
 
@@ -377,8 +383,8 @@ edge_aware_upsample_point_set(
   std::vector<Rich_point> rich_point_set(number_of_input);
   CGAL::Bbox_3 bbox(0., 0., 0., 0., 0., 0.);
   
-  typename PointRange::const_iterator it = points.begin(); // point iterator
-  for(unsigned int i = 0; it != points.end(); ++it, ++i)
+  typename PointRange::const_iterator it = begin; // point iterator
+  for(unsigned int i = 0; it != end; ++it, ++i)
   {
     rich_point_set[i].pt = get(point_map, *it);
     rich_point_set[i].normal = get(normal_map, *it);
@@ -428,7 +434,7 @@ edge_aware_upsample_point_set(
 
     if (iter_time == 0)
     {
-      //estimate density threshold for the points.begin() time
+      //estimate density threshold for the first time
       for (unsigned int i = 0; i < rich_point_set.size() * 0.05; ++i)
       {
         const Rich_point& v = rich_point_set[i];
@@ -588,6 +594,8 @@ edge_aware_upsample_point_set(
     (points, output, CGAL::Point_set_processing_3::parameters::all_default(points));
 }
 
+
+#ifndef CGAL_NO_DEPRECATED_CODE  
 // deprecated API
 template <typename ConcurrencyTag,
 	  typename OutputIterator,
@@ -595,6 +603,7 @@ template <typename ConcurrencyTag,
           typename PointMap, 
           typename NormalMap,
           typename Kernel>
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::edge_aware_upsample_point_set(), please update your code")
 OutputIterator
 edge_aware_upsample_point_set(
   ForwardIterator first,  ///< forward iterator on the first input point.
@@ -626,7 +635,6 @@ edge_aware_upsample_point_set(
   const Kernel& /*kernel*/ ///< geometric traits.
 )
 {
-  CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("edge_aware_upsample_point_set()");
   return edge_aware_upsample_point_set<ConcurrencyTag>
     (CGAL::make_range (first, beyond), output,
      CGAL::parameters::point_map (point_map).
@@ -645,6 +653,7 @@ template <typename ConcurrencyTag,
           typename ForwardIterator,
           typename PointMap,
           typename NormalMap>
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::edge_aware_upsample_point_set(), please update your code")
 OutputIterator
 edge_aware_upsample_point_set(
   ForwardIterator first,    ///< forward iterator to the first input point.
@@ -658,7 +667,6 @@ edge_aware_upsample_point_set(
   const std::size_t number_of_output_points///< number of iterations.   
   )
 {
-  CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("edge_aware_upsample_point_set()");
   return edge_aware_upsample_point_set<ConcurrencyTag>
     (CGAL::make_range (first, beyond), output,
      CGAL::parameters::point_map (point_map).
@@ -674,6 +682,7 @@ template <typename ConcurrencyTag,
 	  typename OutputIterator,
           typename ForwardIterator,
           typename NormalMap>
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::edge_aware_upsample_point_set(), please update your code")
 OutputIterator
 edge_aware_upsample_point_set(
   ForwardIterator first, ///< iterator over the first input point
@@ -686,7 +695,6 @@ edge_aware_upsample_point_set(
   const std::size_t number_of_output_points = 1000///< number of output points.     
   )
 {
-  CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("edge_aware_upsample_point_set()");
   return edge_aware_upsample_point_set<ConcurrencyTag>
     (CGAL::make_range (first, beyond), output,
      CGAL::parameters::normal_map (normal_map).
@@ -695,6 +703,7 @@ edge_aware_upsample_point_set(
      neighbor_radius (neighbor_radius).
      number_of_output_points (number_of_output_points));
 }
+#endif // CGAL_NO_DEPRECATED_CODE
 /// \endcond
 
 } //namespace CGAL

@@ -239,10 +239,13 @@ grid_simplify_point_set(PointRange& points, double epsilon)
     (points, epsilon, CGAL::Point_set_processing_3::parameters::all_default(points));
 }
 
+
+#ifndef CGAL_NO_DEPRECATED_CODE
 // deprecated API
 template <typename ForwardIterator,
           typename PointMap,
           typename Kernel>
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::grid_simplify_point_set(), please update your code")
 ForwardIterator grid_simplify_point_set(
   ForwardIterator first,  ///< iterator over the first input point.
   ForwardIterator beyond, ///< past-the-end iterator over the input points.
@@ -250,7 +253,6 @@ ForwardIterator grid_simplify_point_set(
   double epsilon, ///< tolerance value when merging 3D points.
   const Kernel& /*kernel*/) ///< geometric traits.
 {
-  CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("grid_simplify_point_set()");
   CGAL::Iterator_range<ForwardIterator> points = CGAL::make_range (first, beyond);
   return grid_simplify_point_set
     (points,
@@ -264,6 +266,7 @@ ForwardIterator grid_simplify_point_set(
 template <typename ForwardIterator,
           typename PointMap
 >
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::grid_simplify_point_set(), please update your code")
 ForwardIterator
 grid_simplify_point_set(
   ForwardIterator first, ///< iterator over the first input point
@@ -271,7 +274,6 @@ grid_simplify_point_set(
   PointMap point_map, ///< property map: value_type of ForwardIterator -> Point_3
   double epsilon) ///< tolerance value when merging 3D points
 {
-  CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("grid_simplify_point_set()");
   CGAL::Iterator_range<ForwardIterator> points = CGAL::make_range (first, beyond);
   return grid_simplify_point_set
     (points,
@@ -282,18 +284,19 @@ grid_simplify_point_set(
 // deprecated API
 template <typename ForwardIterator
 >
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::grid_simplify_point_set(), please update your code")
 ForwardIterator
 grid_simplify_point_set(
   ForwardIterator first, ///< iterator over the first input point
   ForwardIterator beyond, ///< past-the-end iterator
   double epsilon) ///< tolerance value when merging 3D points
 {
-  CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("grid_simplify_point_set()");
   CGAL::Iterator_range<ForwardIterator> points = CGAL::make_range (first, beyond);
   return grid_simplify_point_set
     (points,
      epsilon);
 }
+#endif // CGAL_NO_DEPRECATED_CODE
 /// \endcond
 
 

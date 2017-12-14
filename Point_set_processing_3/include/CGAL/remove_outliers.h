@@ -235,12 +235,14 @@ remove_outliers(
 {
   return remove_outliers (points, k, CGAL::Point_set_processing_3::parameters::all_default(points));
 }
-  
+
+#ifndef CGAL_NO_DEPRECATED_CODE
 // deprecated API
 template <typename InputIterator,
           typename PointMap,
           typename Kernel
 >
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::remove_outliers(), please update your code")
 InputIterator
 remove_outliers(
   InputIterator first,  ///< iterator over the first input point.
@@ -254,7 +256,6 @@ remove_outliers(
                              ///< neighbors)
   const Kernel& /*kernel*/) ///< geometric traits.
 {
-  CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("remove_outliers()");
   CGAL::Iterator_range<InputIterator> points (first, beyond);
   return remove_outliers
     (points,
@@ -269,6 +270,7 @@ remove_outliers(
 template <typename InputIterator,
           typename PointMap
 >
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::remove_outliers(), please update your code")
 InputIterator
 remove_outliers(
   InputIterator first, ///< iterator over the first input point
@@ -279,7 +281,6 @@ remove_outliers(
   double threshold_distance = 0.0)  ///< minimum average squared distance to K nearest neighbors
                              ///< for a point to be removed.
 {
-  CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("remove_outliers()");
   CGAL::Iterator_range<InputIterator> points (first, beyond);
   return remove_outliers
     (points,
@@ -292,6 +293,7 @@ remove_outliers(
 // deprecated API
 template <typename InputIterator
 >
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::remove_outliers(), please update your code")
 InputIterator
 remove_outliers(
   InputIterator first, ///< iterator over the first input point
@@ -301,7 +303,6 @@ remove_outliers(
   double threshold_distance = 0.0)  ///< minimum average squared distance to K nearest neighbors
                              ///< for a point to be removed.
 {
-  CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("remove_outliers()");
   CGAL::Iterator_range<InputIterator> points (first, beyond);
   return remove_outliers
     (points,
@@ -309,6 +310,7 @@ remove_outliers(
      CGAL::parameters::threshold_percent (threshold_percent).
      threshold_distance (threshold_distance));
 }
+#endif // CGAL_NO_DEPRECATED_CODE
 /// \endcond
 
 

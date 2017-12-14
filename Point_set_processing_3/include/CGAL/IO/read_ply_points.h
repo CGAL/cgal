@@ -854,17 +854,18 @@ read_ply_points(
     (stream, output, CGAL::parameters::all_default());
 }
 
+#ifndef CGAL_NO_DEPRECATED_CODE
 // deprecated API
 template < typename OutputIteratorValueType,
            typename OutputIterator,
            typename PointMap,
            typename NormalMap >
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::read_ply_points_and_normals(), please update your code")
 bool read_ply_points_and_normals(std::istream& stream, ///< input stream.
                                  OutputIterator output, ///< output iterator over points.
                                  PointMap point_map, ///< property map: value_type of OutputIterator -> Point_3.
                                  NormalMap normal_map) ///< property map: value_type of OutputIterator -> Vector_3.
 {
-  CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("read_ply_points_and_normals()");
   return read_ply_points<OutputIteratorValueType>
     (stream, output,
      CGAL::parameters::point_map (point_map).
@@ -875,12 +876,12 @@ bool read_ply_points_and_normals(std::istream& stream, ///< input stream.
 template < typename OutputIterator,
            typename PointMap,
            typename NormalMap >
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::read_ply_points_and_normals(), please update your code")
 bool read_ply_points_and_normals(std::istream& stream, ///< input stream.
                                  OutputIterator output, ///< output iterator over points.
                                  PointMap point_map, ///< property map: value_type of OutputIterator -> Point_3.
                                  NormalMap normal_map) ///< property map: value_type of OutputIterator -> Vector_3.
 {
-  CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("read_ply_points_and_normals()");
   return read_ply_points<typename value_type_traits<OutputIterator>::type>
     (stream, output,
      CGAL::parameters::point_map (point_map).
@@ -891,23 +892,24 @@ bool read_ply_points_and_normals(std::istream& stream, ///< input stream.
 template < typename OutputIteratorValueType,
            typename OutputIterator,
            typename NormalMap >
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::read_ply_points_and_normals(), please update your code")
 bool read_ply_points_and_normals(std::istream& stream, ///< input stream.
                                  OutputIterator output, ///< output iterator over points.
                                  NormalMap normal_map) ///< property map: value_type of OutputIterator -> Vector_3.
 {
-  CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("read_ply_points_and_normals()");
   return read_ply_points<OutputIteratorValueType>
     (stream, output,
      CGAL::parameters::normal_map (normal_map));
 }
 
+// deprecated API
 template < typename OutputIterator,
            typename NormalMap >
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::read_ply_points_and_normals(), please update your code")
 bool read_ply_points_and_normals(std::istream& stream, ///< input stream.
                                  OutputIterator output, ///< output iterator over points.
                                  NormalMap normal_map) ///< property map: value_type of OutputIterator -> Vector_3.
 {
-  CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("read_ply_points_and_normals()");
   return read_ply_points<typename value_type_traits<OutputIterator>::type>
     (stream, output,
      CGAL::parameters::normal_map (normal_map));
@@ -918,13 +920,13 @@ template <typename OutputIteratorValueType,
           typename OutputIterator,
           typename PointMap
 >
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::read_ply_points(), please update your code")
 bool
 read_ply_points(
   std::istream& stream, ///< input stream.
   OutputIterator output, ///< output iterator over points.
   PointMap point_map) ///< property map: value_type of OutputIterator -> Point_3.
 {
-  CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("read_ply_points()");
   return read_ply_points<OutputIteratorValueType>
     (stream, output,
      CGAL::parameters::point_map (point_map));
@@ -933,15 +935,16 @@ read_ply_points(
 // deprecated API
 template < typename OutputIterator,
            typename PointMap >
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::read_ply_points(), please update your code")
 bool read_ply_points(std::istream& stream, ///< input stream.
                      OutputIterator output, ///< output iterator over points.
                      PointMap point_map) ///< property map: value_type of OutputIterator -> Point_3.
 {
-  CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("read_ply_points()");
   return read_ply_points<typename value_type_traits<OutputIterator>::type>
     (stream, output,
      CGAL::parameters::point_map (point_map));
 }
+#endif // CGAL_NO_DEPRECATED_CODE
 /// \endcond
 
 

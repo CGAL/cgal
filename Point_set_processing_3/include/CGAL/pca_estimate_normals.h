@@ -275,7 +275,8 @@ pca_estimate_normals(
   return pca_estimate_normals<ConcurrencyTag>
     (points, k, CGAL::Point_set_processing_3::parameters::all_default(points));
 }
-  
+
+#ifndef CGAL_NO_DEPRECATED_CODE
 // deprecated API
 template <typename ConcurrencyTag,
 	  typename ForwardIterator,
@@ -283,6 +284,7 @@ template <typename ConcurrencyTag,
           typename NormalMap,
           typename Kernel
 >
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::pca_estimate_normals(), please update your code")
 void
 pca_estimate_normals(
   ForwardIterator first,  ///< iterator over the first input point.
@@ -292,7 +294,6 @@ pca_estimate_normals(
   unsigned int k, ///< number of neighbors.
   const Kernel& /*kernel*/) ///< geometric traits.
 {
-  CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("pca_estimate_normals()");
   CGAL::Iterator_range<ForwardIterator> points (first, beyond);
   return pca_estimate_normals<ConcurrencyTag>
     (points,
@@ -308,6 +309,7 @@ template <typename ConcurrencyTag,
           typename PointMap,
           typename NormalMap
 >
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::pca_estimate_normals(), please update your code")
 void
 pca_estimate_normals(
   ForwardIterator first,  ///< iterator over the first input point.
@@ -316,7 +318,6 @@ pca_estimate_normals(
   NormalMap normal_map, ///< property map: value_type of ForwardIterator -> Vector_3.
   unsigned int k) ///< number of neighbors.
 {
-  CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("pca_estimate_normals()");
   CGAL::Iterator_range<ForwardIterator> points (first, beyond);
   return pca_estimate_normals<ConcurrencyTag>
     (points,
@@ -330,6 +331,7 @@ template <typename ConcurrencyTag,
 	  typename ForwardIterator,
           typename NormalMap
 >
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::pca_estimate_normals(), please update your code")
 void
 pca_estimate_normals(
   ForwardIterator first,  ///< iterator over the first input point.
@@ -337,13 +339,13 @@ pca_estimate_normals(
   NormalMap normal_map, ///< property map: value_type of ForwardIterator -> Vector_3.
   unsigned int k) ///< number of neighbors.
 {
-  CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("pca_estimate_normals()");
   CGAL::Iterator_range<ForwardIterator> points (first, beyond);
   return pca_estimate_normals<ConcurrencyTag>
     (points,
      k,
      CGAL::parameters::normal_map (normal_map));
 }
+#endif // CGAL_NO_DEPRECATED_CODE
 /// \endcond
 
 

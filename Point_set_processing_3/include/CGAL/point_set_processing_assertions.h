@@ -370,15 +370,4 @@
 #  define CGAL_point_set_processing_expensive_exactness_warnings 1
 #endif // CGAL_POINT_SET_PROCESSING_NO_WARNINGS
 
-#undef CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API
-
-#if defined(CGAL_POINT_SET_PROCESSING_DO_NOT_COMPILE_DEPRECATED_V1_API)
-#  define CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API(FCT)                \
-  CGAL_static_assertion_msg (false, "Error: you are using the deprecated V1 API of the Point Set Processing package")
-#else
-#  define CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API(FCT)                \
-  std::cerr << "Warning: you are using the deprecated V1 API of the Point Set Processing\nfunction " \
-            << FCT << ", please update your code." << std::endl
-#endif
-
 /// \endcond

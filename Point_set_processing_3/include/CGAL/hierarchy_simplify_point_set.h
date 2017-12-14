@@ -337,12 +337,14 @@ namespace CGAL {
     return hierarchy_simplify_point_set
       (points, CGAL::Point_set_processing_3::parameters::all_default(points));
   }
-  
+
+#ifndef CGAL_NO_DEPRECATED_CODE
   // deprecated API
   template <typename ForwardIterator,
 	    typename PointMap,
 	    typename DiagonalizeTraits,
 	    typename Kernel>
+  CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::hierarchy_simplify_point_set(), please update your code")
   ForwardIterator hierarchy_simplify_point_set (ForwardIterator begin,
 						ForwardIterator end,
 						PointMap point_map,
@@ -351,7 +353,6 @@ namespace CGAL {
 						const DiagonalizeTraits&,
 						const Kernel&)
   {
-    CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("hierarchy_simplify_point_set()");
     CGAL::Iterator_range<ForwardIterator> points (begin, end);
     return hierarchy_simplify_point_set
       (points,
@@ -366,6 +367,7 @@ namespace CGAL {
   template <typename ForwardIterator,
 	    typename PointMap,
 	    typename DiagonalizeTraits>
+  CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::hierarchy_simplify_point_set(), please update your code")
   ForwardIterator hierarchy_simplify_point_set (ForwardIterator begin,
 						ForwardIterator end,
 						PointMap point_map,
@@ -373,7 +375,6 @@ namespace CGAL {
 						const double var_max,
 						const DiagonalizeTraits& diagonalize_traits)
   {
-    CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("hierarchy_simplify_point_set()");
     CGAL::Iterator_range<ForwardIterator> points (begin, end);
     return hierarchy_simplify_point_set
       (points,
@@ -386,13 +387,13 @@ namespace CGAL {
   // deprecated API
   template <typename ForwardIterator,
 	    typename PointMap >
+  CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::hierarchy_simplify_point_set(), please update your code")
   ForwardIterator hierarchy_simplify_point_set (ForwardIterator begin,
 						ForwardIterator end,
 						PointMap point_map,
 						const unsigned int size,
 						const double var_max)
   {
-    CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("hierarchy_simplify_point_set()");
     CGAL::Iterator_range<ForwardIterator> points (begin, end);
     return hierarchy_simplify_point_set
       (points,
@@ -403,18 +404,19 @@ namespace CGAL {
   
   // deprecated API
   template <typename ForwardIterator >
+  CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::hierarchy_simplify_point_set(), please update your code")
   ForwardIterator hierarchy_simplify_point_set (ForwardIterator begin,
 						ForwardIterator end,
 						const unsigned int size = 10,
 						const double var_max = 0.333)
   {
-    CGAL_POINT_SET_PROCESSING_DEPRECATED_V1_API("hierarchy_simplify_point_set()");
     CGAL::Iterator_range<ForwardIterator> points (begin, end);
     return hierarchy_simplify_point_set
       (points,
        CGAL::parameters::size (size).
        maximum_variation (var_max));
   }
+#endif // CGAL_NO_DEPRECATED_CODE
   /// \endcond  
 
 } // namespace CGAL
