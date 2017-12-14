@@ -1,6 +1,3 @@
-# Created by the script cgal_create_CMakeLists
-# This is the CMake script for compiling a set of CGAL applications.
-
 project( Property_map )
 
 
@@ -32,9 +29,6 @@ if ( NOT Boost_FOUND )
 endif()
 
 # include for local directory
-
-# include for local package
-include_directories( BEFORE ../../include )
 
 
 # Creating entries for all C++ files with "main" routine
