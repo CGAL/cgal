@@ -348,8 +348,8 @@ edge_aware_upsample_point_set(
   std::cerr << sharpness_angle << " " << edge_sensitivity << " " << neighbor_radius
             << " " << number_of_output_points << std::endl;
   // trick in case the output iterator add points to the input container
-  typename PointRange::iterator begin = points.begin();
-  typename PointRange::iterator end = points.end();
+  typename PointRange::const_iterator begin = points.begin();
+  typename PointRange::const_iterator end = points.end();
   
   // preconditions
   CGAL_point_set_processing_precondition(begin != end);
