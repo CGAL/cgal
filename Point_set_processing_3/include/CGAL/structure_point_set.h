@@ -193,7 +193,43 @@ public:
                             const PlaneRange& planes,
                             double epsilon,
                             const NamedParameters& np)
+  {
+    init (points, planes, epsilon, np);
+  }
 
+  /// \cond SKIP_IN_MANUAL
+  // deprecated
+  template <typename PointRange,
+            typename PointMap,
+            typename NormalMap,
+            typename PlaneRange,
+            typename PlaneMap,
+            typename IndexMap>
+  CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::Point_set_with_structure(), please update your code")
+  Point_set_with_structure (const PointRange& points,
+                            PointMap point_map,
+                            NormalMap normal_map,
+                            const PlaneRange& planes,
+                            PlaneMap plane_map,
+                            IndexMap index_map,
+                            double epsilon,
+                            double attraction_factor = 3.)
+  {
+    init (points, planes, epsilon,
+          CGAL::parameters::point_map (point_map).
+          normal_map (normal_map).
+          plane_map (plane_map).
+          plane_index_map (index_map).
+          attraction_factor (attraction_factor));
+  }
+
+  template <typename PointRange,
+            typename PlaneRange,
+            typename NamedParameters>
+  void init (const PointRange& points,
+             const PlaneRange& planes,
+             double epsilon,
+             const NamedParameters& np)
   {
     using boost::choose_param;
 
@@ -248,6 +284,7 @@ public:
     run (epsilon, attraction_factor);
     clean ();
   }
+  /// \endcond
 
   std::size_t size () const { return m_points.size (); }
   std::pair<Point, Vector> operator[] (std::size_t i) const
