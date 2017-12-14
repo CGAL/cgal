@@ -389,14 +389,13 @@ namespace SurfaceReconstruction
 
   void simplify_point_set (Point_set& points, double size)
   {
-    points.set_first_selected (CGAL::grid_simplify_point_set (points.begin (), points.end (), points.point_map(), size));
+    points.set_first_selected (CGAL::grid_simplify_point_set (points, size));
     points.delete_selection();
   }
 
   void smooth_point_set (Point_set& points, unsigned int scale)
   {
-    CGAL::jet_smooth_point_set<Concurrency_tag>(points.begin(), points.end(), points.point_map(),
-                                                scale);
+    CGAL::jet_smooth_point_set<Concurrency_tag>(points, scale);
   }
 
   template <typename ItemsInserter>
@@ -418,8 +417,7 @@ namespace SurfaceReconstruction
       ScaleSpaceJS smoother(neighbors, fitting, monge);
       reconstruct.increase_scale(iterations, smoother);
       if (!advancing_front_mesher)
-        squared_radius = CGAL::compute_average_spacing<Concurrency_tag> (points.points().begin(),
-                                                                         points.points().end(), neighbors);
+        squared_radius = CGAL::compute_average_spacing<Concurrency_tag> (points, neighbors);
     }
     else
     {
@@ -673,15 +671,9 @@ namespace SurfaceReconstruction
 
   void compute_normals (Point_set& points, unsigned int neighbors)
   {
-    CGAL::jet_estimate_normals<Concurrency_tag>(points.begin_or_selection_begin(), points.end(),
-                                                points.point_map(),
-                                                points.normal_map(),
-                                                2 * neighbors);
+    CGAL::jet_estimate_normals<Concurrency_tag>(points, 2 * neighbors);
 
-    points.set_first_selected (CGAL::mst_orient_normals (points.begin(), points.end(),
-                                                         points.point_map(),
-                                                         points.normal_map(),
-                                                         2 * neighbors));
+    points.set_first_selected (CGAL::mst_orient_normals (points, 2 * neighbors));
     points.delete_selection();
   }
   
@@ -831,10 +823,7 @@ private:
                 
         std::cerr << "Estimation of normal vectors... ";
         points->add_normal_map();
-        CGAL::jet_estimate_normals<Concurrency_tag>(points->begin(), points->end(),
-                                                    points->point_map(),
-                                                    points->normal_map(),
-                                                    12);
+        CGAL::jet_estimate_normals<Concurrency_tag>(*points, 12);
         local_timer.stop();
         point_set_item->setRenderingMode(PointsPlusNormals);
 
@@ -865,11 +854,13 @@ private:
       typename Shape_detection::Plane_range planes = shape_detection.planes();
       
       local_timer.start();
-      Structuring structuring (*points, points->point_map(), points->normal_map(),
+      Structuring structuring (*points,
                                planes,
-                               CGAL::Shape_detection_3::Plane_map<Traits>(),
-                               CGAL::Shape_detection_3::Point_to_shape_index_map<Traits>(*points, planes),
-                               op.cluster_epsilon);
+                               op.cluster_epsilon,
+                               points->parameters().
+                               plane_map(CGAL::Shape_detection_3::Plane_map<Traits>()).
+                               plane_index_map(CGAL::Shape_detection_3::Point_to_shape_index_map<Traits>(*points, planes)));
+
 
       Scene_points_with_normal_item *structured = new Scene_points_with_normal_item;
       structured->point_set()->add_normal_map();

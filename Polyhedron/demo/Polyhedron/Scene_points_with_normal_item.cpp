@@ -395,9 +395,7 @@ void Scene_points_with_normal_item_priv::compute_normals_and_vertices() const
       positions_lines.reserve(m_points->size() * 6);
       positions_normals.reserve((m_points->size() - m_points->nb_selected_points()) * 3);
       positions_selected_normals.reserve(m_points->nb_selected_points() * 3);
-      average_spacing = CGAL::compute_average_spacing<Concurrency_tag>(
-            m_points->begin(), m_points->end(), m_points->point_map(),
-            6);
+      average_spacing = CGAL::compute_average_spacing<Concurrency_tag>(*m_points, 6);
       normal_length = (std::min)(average_spacing, std::sqrt(region_of_interest.squared_radius() / 1000.));
       length_factor = 5.0/100*normal_Slider->value();
     }

@@ -428,13 +428,13 @@ private:
         
         typename Shape_detection::Plane_range planes = shape_detection.planes();
         CGAL::structure_point_set (*points,
-                                   points->point_map(), points->normal_map(),
                                    planes,
-                                   CGAL::Shape_detection_3::Plane_map<Traits>(),
-                                   CGAL::Shape_detection_3::Point_to_shape_index_map<Traits>(*points, planes),
                                    boost::make_function_output_iterator (build_from_pair ((*(pts_full->point_set())))),
-                                   op.cluster_epsilon);
-        
+                                   op.cluster_epsilon,
+                                   points->parameters().
+                                   plane_map(CGAL::Shape_detection_3::Plane_map<Traits>()).
+                                   plane_index_map(CGAL::Shape_detection_3::Point_to_shape_index_map<Traits>(*points, planes)));
+                
         if (pts_full->point_set ()->empty ())
           delete pts_full;
         else
