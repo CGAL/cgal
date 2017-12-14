@@ -45,6 +45,16 @@ namespace Subdivision_method_3 {
 
 namespace internal {
 
+template <class PolygonMesh>
+void call_reserve(PolygonMesh& pm, std::size_t v, std::size_t e, std::size_t f)
+{
+  typedef boost::graph_traits<PolygonMesh> GT;
+  reserve(pm,
+          static_cast<typename GT::vertices_size_type>(v),
+          static_cast<typename GT::edges_size_type>(e),
+          static_cast<typename GT::faces_size_type>(f));
+}
+
 template <class Poly, class VertexPointMap, class Mask>
 void PQQ_1step(Poly& p, VertexPointMap vpm, Mask mask) {
   typedef typename boost::graph_traits<Poly>::vertex_descriptor       vertex_descriptor;
@@ -73,7 +83,7 @@ void PQQ_1step(Poly& p, VertexPointMap vpm, Mask mask) {
   // of the corresponding iterator to the begin of the iterator.
 
   // We need to reserve the memory to prevent reallocation.
-  reserve(p,num_v+num_e+num_f, 4*2*num_e, 4*num_e/2);
+  call_reserve(p,num_v+num_e+num_f, 4*2*num_e, 4*num_e/2);
 
   typedef typename boost::property_traits<VertexPointMap>::value_type Point;
 
@@ -196,7 +206,7 @@ void PTQ_1step(Poly& p, VertexPointMap vpm, Mask mask) {
   // of the corresponding iterator to the begin of the iterator.
 
   // We need to reserve the memory to prevent reallocation.
-  reserve(p,num_v + num_e, 2*2*num_e, 4*num_e/2);
+  call_reserve(p,num_v + num_e, 2*2*num_e, 4*num_e/2);
 
   Point* vertex_point_buffer = new Point[num_v + num_e];
   Point* edge_point_buffer = vertex_point_buffer + num_v;
@@ -315,7 +325,7 @@ void DQQ_1step(Poly& p, VertexPointMap vpm, Mask mask) {
   }
 
   // Reserve to avoid rellocations during insertions
-  reserve(p,num_v+num_e+num_f, 2*num_e, (2+4+2)*num_e);
+  call_reserve(p,num_v+num_e+num_f, 2*num_e, (2+4+2)*num_e);
 
   // Build the connectivity using insert_vertex() and insert_edge()
   pi = 0;
@@ -433,7 +443,7 @@ void Sqrt3_1step(Poly& p, VertexPointMap vpm, Mask mask,
   Point* cpt = new Point[new_pts_size];
 
   // size of the subdivided mesh
-  reserve(p,num_v + new_pts_size, (num_e + 2*num_f + new_pts_size)*2, 3*num_f);
+  call_reserve(p,num_v + new_pts_size, (num_e + 2*num_f + new_pts_size)*2, 3*num_f);
 
   // keep in memory whether a face is incident to the border and, if so, which
   // halfedge corresponds to THE (there can only be one) border edge.
