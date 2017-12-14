@@ -1528,7 +1528,7 @@ struct Mesh_callback
  * each index refering to the index of the triangle mesh in the input range.
  * If `do_overlap_test_of_bounded_sides` is `true`, the overlap of bounded sides are tested as well. In that case, the meshes must be closed.
  *
- * \tparam TriangleMeshRange a model of `Bidirectional Range` of triangulated surface meshes model of `FaceListGraph`.
+ * \tparam TriangleMeshRange a model of `RandomAccessRange` of triangulated surface meshes model of `FaceListGraph`.
  * \tparam OutputIterator an output iterator in which `std::pair<std::size_t, std::size_t>` can be put.
  * \tparam NamedParameters a sequence of \ref namedparameters for the algorithm
  * \tparam NamedParametersRange a range of named parameters for the meshes.
