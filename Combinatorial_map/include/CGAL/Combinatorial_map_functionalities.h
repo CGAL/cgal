@@ -159,6 +159,14 @@ namespace CGAL {
               { uftrees.unify_sets(get_face(currentdart), get_opposite_face(currentdart)); }
 
               m_map.remove_cell<1>(currentdart);
+              if (!m_map.is_dart_used(it))
+              { ++it; }
+
+             /* m_map.display_characteristics(std::cout) << ", valid="
+                                                       << m_map.is_valid() << std::endl;
+              m_map.display_darts(std::cout);
+              std::cout<<"\n*****************************************************************\n";
+            */
             }
           }
         }

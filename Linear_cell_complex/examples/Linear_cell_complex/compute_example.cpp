@@ -9,8 +9,8 @@
 #include "linear_cell_complex_3_viewer_qt.h"
 #endif
 
-typedef CGAL::Linear_cell_complex_for_combinatorial_map<3> LCC_3_cmap;
-typedef CGAL::Linear_cell_complex_for_generalized_map<3> LCC_3_gmap;
+typedef CGAL::Linear_cell_complex_for_combinatorial_map<2,3> LCC_3_cmap;
+typedef CGAL::Linear_cell_complex_for_generalized_map<2,3> LCC_3_gmap;
 
 int main(int argc, char** argv)
 {
@@ -33,18 +33,17 @@ int main(int argc, char** argv)
 
   CGAL::Combinatorial_map_tools<LCC_3_cmap> cmt(lcc);
   
-  cmt.initialize_faces();
-  
-  cmt.surface_simplification_in_one_face();
-  std::cout<<"All faces merges: ";
-  lcc.display_characteristics(std::cout) << ", valid=" 
-                                         << lcc.is_valid() << std::endl;
-  
   cmt.surface_simplification_in_one_vertex();
   std::cout<<"All non loop contracted: ";
   lcc.display_characteristics(std::cout) << ", valid=" 
                                          << lcc.is_valid() << std::endl;
 
+  cmt.initialize_faces();
+  cmt.surface_simplification_in_one_face();
+  std::cout<<"All faces merges: ";
+  lcc.display_characteristics(std::cout) << ", valid=" 
+                                         << lcc.is_valid() << std::endl;
+  
   cmt.surface_quadrangulate();
   std::cout<<"After quadrangulation: ";
   lcc.display_characteristics(std::cout) << ", valid=" 
