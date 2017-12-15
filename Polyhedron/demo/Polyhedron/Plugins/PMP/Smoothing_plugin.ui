@@ -6,81 +6,93 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>570</width>
-    <height>383</height>
+    <width>365</width>
+    <height>284</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string/>
+   <string>Smoothing</string>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
    <widget class="QGroupBox" name="Shape_groupBox">
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>230</y>
-      <width>551</width>
+      <y>120</y>
+      <width>341</width>
       <height>121</height>
      </rect>
     </property>
     <property name="title">
-     <string>Shape smoothing</string>
+     <string>Shape</string>
     </property>
-    <widget class="QPushButton" name="MCF_Button">
+    <widget class="QPushButton" name="curvature_button">
      <property name="geometry">
       <rect>
-       <x>110</x>
+       <x>20</x>
        <y>40</y>
-       <width>211</width>
+       <width>151</width>
        <height>30</height>
       </rect>
      </property>
      <property name="text">
-      <string>MCF</string>
+      <string>curvature flow</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="modified_MCF_button">
+    <widget class="QPushButton" name="modified_curv_button">
      <property name="geometry">
       <rect>
-       <x>110</x>
+       <x>20</x>
        <y>80</y>
-       <width>211</width>
+       <width>151</width>
        <height>30</height>
       </rect>
      </property>
      <property name="text">
-      <string>Modified MCF</string>
+      <string>modified curv. flow</string>
      </property>
     </widget>
-    <widget class="QWidget" name="">
+    <widget class="QWidget" name="layoutWidget">
      <property name="geometry">
       <rect>
-       <x>340</x>
+       <x>190</x>
        <y>80</y>
-       <width>101</width>
+       <width>131</width>
        <height>33</height>
       </rect>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
-       <widget class="QLabel" name="label_4">
+       <widget class="QLabel" name="time_step_label">
         <property name="text">
          <string>time:</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QSpinBox" name="time_spinBox">
-        <property name="minimum">
-         <number>1</number>
-        </property>
-        <property name="maximum">
-         <number>1000000</number>
-        </property>
-        <property name="value">
-         <number>10</number>
+       <widget class="QDoubleSpinBox" name="time_step_spinBox"/>
+      </item>
+     </layout>
+    </widget>
+    <widget class="QWidget" name="layoutWidget_4">
+     <property name="geometry">
+      <rect>
+       <x>190</x>
+       <y>40</y>
+       <width>132</width>
+       <height>33</height>
+      </rect>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_4">
+      <item>
+       <widget class="QLabel" name="label_3">
+        <property name="text">
+         <string>iterations: </string>
         </property>
        </widget>
+      </item>
+      <item>
+       <widget class="QSpinBox" name="curvature_iter_spinBox"/>
       </item>
      </layout>
     </widget>
@@ -89,186 +101,83 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>-4</y>
-      <width>551</width>
-      <height>241</height>
+      <y>0</y>
+      <width>341</width>
+      <height>121</height>
      </rect>
     </property>
     <property name="title">
-     <string>Mesh smoothing</string>
+     <string>Mesh</string>
     </property>
-    <widget class="QSplitter" name="splitter">
+    <widget class="QPushButton" name="angle_button">
      <property name="geometry">
       <rect>
-       <x>10</x>
-       <y>10</y>
-       <width>531</width>
-       <height>221</height>
+       <x>30</x>
+       <y>40</y>
+       <width>141</width>
+       <height>30</height>
       </rect>
      </property>
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
+     <property name="text">
+      <string>angle smoothing</string>
      </property>
-     <widget class="QGroupBox" name="Type_groupBox">
-      <property name="enabled">
-       <bool>true</bool>
-      </property>
-      <property name="layoutDirection">
-       <enum>Qt::LeftToRight</enum>
-      </property>
-      <property name="title">
-       <string/>
-      </property>
-      <property name="flat">
-       <bool>false</bool>
-      </property>
-      <property name="checkable">
-       <bool>false</bool>
-      </property>
-      <layout class="QVBoxLayout" name="verticalLayout">
-       <item>
-        <layout class="QGridLayout" name="gridLayout">
-         <item row="6" column="0">
-          <widget class="QCheckBox" name="Area_checkBox">
-           <property name="text">
-            <string>areas</string>
-           </property>
-          </widget>
-         </item>
-         <item row="6" column="1">
-          <widget class="QSpinBox" name="Area_spinBox"/>
-         </item>
-         <item row="0" column="0">
-          <widget class="QLabel" name="label">
-           <property name="text">
-            <string>Smooth</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QLabel" name="label_2">
-           <property name="text">
-            <string>Iterations</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="5" column="0">
-          <widget class="QCheckBox" name="Angle_checkBox">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text">
-            <string>angles</string>
-           </property>
-          </widget>
-         </item>
-         <item row="5" column="1">
-          <widget class="QSpinBox" name="Angle_spinBox"/>
-         </item>
-         <item row="7" column="0">
-          <widget class="QCheckBox" name="Angle_checkBox_2">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text">
-            <string>angles</string>
-           </property>
-          </widget>
-         </item>
-         <item row="7" column="1">
-          <widget class="QSpinBox" name="Angle_spinBox_2"/>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <widget class="QPushButton" name="Apply_button">
-         <property name="text">
-          <string>Apply</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QGroupBox" name="Compatible_groupBox">
-      <property name="title">
-       <string/>
-      </property>
-      <layout class="QVBoxLayout" name="verticalLayout_2">
-       <item>
-        <layout class="QGridLayout" name="gridLayout_3">
-         <item row="1" column="0">
-          <widget class="QLabel" name="distance_label">
-           <property name="layoutDirection">
-            <enum>Qt::RightToLeft</enum>
-           </property>
-           <property name="text">
-            <string>Hausdorff distance:</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QDoubleSpinBox" name="dist_dSpinBox">
-           <property name="decimals">
-            <number>4</number>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0">
-          <widget class="QLabel" name="iterations_label">
-           <property name="layoutDirection">
-            <enum>Qt::RightToLeft</enum>
-           </property>
-           <property name="text">
-            <string>max iterations:       </string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1">
-          <widget class="QSpinBox" name="iterations_spinBox">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="0" colspan="2">
-          <widget class="QLabel" name="label_3">
-           <property name="text">
-            <string>Convergence criteria</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <widget class="QPushButton" name="Run_convergence_button">
-         <property name="text">
-          <string>Run to convergence</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
+    </widget>
+    <widget class="QPushButton" name="area_button">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>80</y>
+       <width>141</width>
+       <height>30</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>area smoothing</string>
+     </property>
+    </widget>
+    <widget class="QWidget" name="layoutWidget_2">
+     <property name="geometry">
+      <rect>
+       <x>190</x>
+       <y>40</y>
+       <width>132</width>
+       <height>33</height>
+      </rect>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <item>
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>iterations: </string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QSpinBox" name="angles_iter_spinBox"/>
+      </item>
+     </layout>
+    </widget>
+    <widget class="QWidget" name="layoutWidget_3">
+     <property name="geometry">
+      <rect>
+       <x>190</x>
+       <y>80</y>
+       <width>132</width>
+       <height>33</height>
+      </rect>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
+      <item>
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>iterations: </string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QSpinBox" name="areas_iter_spinBox"/>
+      </item>
+     </layout>
     </widget>
    </widget>
   </widget>

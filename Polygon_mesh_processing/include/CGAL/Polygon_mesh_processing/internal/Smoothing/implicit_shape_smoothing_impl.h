@@ -215,11 +215,6 @@ public:
 
   void calc_stiff_matrix(Eigen_matrix& mat)
   {
-
-  // TOFIX: very slow way to fill the matrx
-  // avoid matrix C!! and use triplets
-  // read http://eigen.tuxfamily.org/dox/group__TutorialSparse.html#TutorialSparseFilling
-
     typedef Eigen::Triplet<double> Triplet;
     std::vector<Triplet> tripletList;
     tripletList.reserve(8 * nb_vert_);

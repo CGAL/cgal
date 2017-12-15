@@ -44,28 +44,28 @@ class Polyhedron_demo_smothing_plugin :
 
 
 public:
-    void init(QMainWindow* mainWindow, Scene_interface* scene_interface, Messages_interface*)
-    {
-        scene = scene_interface;
-        mw = mainWindow;
+void init(QMainWindow* mainWindow, Scene_interface* scene_interface, Messages_interface*)
+{
+    scene = scene_interface;
+    mw = mainWindow;
 
-        actionSmoothing_ = new QAction(tr("Smoothing"), mw);
-        actionSmoothing_->setProperty("subMenuName", "Polygon Mesh Processing");
+    actionSmoothing_ = new QAction(tr("Smoothing"), mw);
+    actionSmoothing_->setProperty("subMenuName", "Polygon Mesh Processing");
 
-        connect(actionSmoothing_, SIGNAL(triggered()), this, SLOT(smoothing_action()));
+    connect(actionSmoothing_, SIGNAL(triggered()), this, SLOT(smoothing_action()));
 
-        dock_widget = new QDockWidget("Smoothing", mw);
-        dock_widget->setVisible(false);
+    dock_widget = new QDockWidget("Smoothing", mw);
+    dock_widget->setVisible(false);
 
-        ui_widget.setupUi(dock_widget);
-        addDockWidget(dock_widget);
+    ui_widget.setupUi(dock_widget);
+    addDockWidget(dock_widget);
 
-        connect(ui_widget.Apply_button,  SIGNAL(clicked()), this, SLOT(on_Apply_by_type_clicked()));
-        connect(ui_widget.MCF_Button,  SIGNAL(clicked()), this, SLOT(on_Apply_MCF_clicked()));
-        connect(ui_widget.modified_MCF_button ,  SIGNAL(clicked()), this, SLOT(on_Apply_mMCF_clicked()));
-        connect(ui_widget.Run_convergence_button,  SIGNAL(clicked()), this, SLOT(on_Run_convergence_clicked()));
+    connect(ui_widget.angle_button,  SIGNAL(clicked()), this, SLOT(on_angles_clicked()));
+    connect(ui_widget.area_button,  SIGNAL(clicked()), this, SLOT(on_areas_clicked()));
+    connect(ui_widget.curvature_button,  SIGNAL(clicked()), this, SLOT(on_curvature_clicked()));
+    connect(ui_widget.modified_curv_button,  SIGNAL(clicked()), this, SLOT(on_modified_curv_clicked()));
 
-    }
+}
 
     QList<QAction*> actions() const
     {
@@ -90,34 +90,24 @@ public:
 
     void init_ui()
     {
-        ui_widget.Angle_spinBox->setValue(1);
-        ui_widget.Angle_spinBox->setSingleStep(1);
-        ui_widget.Angle_spinBox->setMinimum(1);
+      ui_widget.angles_iter_spinBox ->setValue(1);
+      ui_widget.angles_iter_spinBox->setSingleStep(1);
+      ui_widget.angles_iter_spinBox->setMinimum(1);
 
-        ui_widget.Area_spinBox->setValue(1);
-        ui_widget.Area_spinBox->setSingleStep(1);
-        ui_widget.Area_spinBox->setMinimum(1);
+      ui_widget.areas_iter_spinBox->setValue(1);
+      ui_widget.areas_iter_spinBox->setSingleStep(1);
+      ui_widget.areas_iter_spinBox->setMinimum(1);
 
-        ui_widget.Angle_spinBox_2->setValue(1);
-        ui_widget.Angle_spinBox_2->setSingleStep(1);
-        ui_widget.Angle_spinBox_2->setMinimum(1);
+      ui_widget.time_step_spinBox->setValue(0.00001);
+      double current_time_step = ui_widget.time_step_spinBox->value();
+      ui_widget.time_step_spinBox->setSingleStep(current_time_step * 10);
+      ui_widget.time_step_spinBox->setMinimum(1e-15);
+
+      QObject* scene_object = dynamic_cast<QObject*>(scene);
+      connect(scene_object, SIGNAL(itemAboutToBeDestroyed(CGAL::Three::Scene_item*)),
+              this, SLOT(on_actionItemAboutToBeDestroyed()));
 
 
-        /*
-        ui_widget.gd_dSpinBox->setSingleStep(0.0001);
-        ui_widget.gd_dSpinBox->setDecimals(4);
-        ui_widget.gd_dSpinBox->setMinimum(0.0001);
-        ui_widget.gd_dSpinBox->setValue(0.001);
-
-        ui_widget.use_weights_checkBox->setChecked(true);
-
-        ui_widget.gd_precision_label->setToolTip("Tradeoff between precision and speed. Less is more precise.");
-        ui_widget.distance_label->setToolTip("Tradeoff between precision and speed. Less is more precise.");
-        */
-
-        ui_widget.iterations_spinBox->setValue(20);
-        ui_widget.iterations_spinBox->setSingleStep(1);
-        ui_widget.iterations_spinBox->setMinimum(1);
     }
 
 
@@ -140,179 +130,102 @@ public Q_SLOTS:
         }
     }
 
-    void on_Apply_by_type_clicked()
-    {
-        const Scene_interface::Item_id index = scene->mainSelectionIndex();
-
-        Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(index));
-
-        Scene_polyhedron_selection_item* selection_item =
-          qobject_cast<Scene_polyhedron_selection_item*>(scene->item(index));
-
-        Polyhedron& pmesh = (poly_item != NULL) ?
-                    * poly_item->polyhedron() :
-                    * selection_item->polyhedron();
-
-        QApplication::setOverrideCursor(Qt::WaitCursor);
-
-        if(ui_widget.Angle_checkBox->isChecked())
-        {
-            unsigned int nb_iter = ui_widget.Angle_spinBox->value();
-            //bool use_weights = ui_widget.use_weights_checkBox->isChecked();
-            smooth_angles(pmesh, parameters::number_of_iterations(nb_iter));
-
-            poly_item->invalidateOpenGLBuffers();
-            Q_EMIT poly_item->itemChanged();
-        }
-
-        if(ui_widget.Area_checkBox->isChecked())
-        {
-            unsigned int nb_iter = ui_widget.Area_spinBox->value();
-            //double gd_precision = ui_widget.gd_dSpinBox->value();
-            smooth_areas(pmesh, parameters::number_of_iterations(nb_iter));
-
-            poly_item->invalidateOpenGLBuffers();
-            Q_EMIT poly_item->itemChanged();
-        }
-
-        if(ui_widget.Angle_checkBox_2->isChecked())
-        {
-            unsigned int nb_iter = ui_widget.Angle_spinBox_2->value();
-            //double gd_precision = ui_widget.gd_dSpinBox->value();
-            smooth_angles(pmesh, parameters::number_of_iterations(nb_iter));
-
-            poly_item->invalidateOpenGLBuffers();
-            Q_EMIT poly_item->itemChanged();
-        }
-
-        QApplication::restoreOverrideCursor();
-    }
-
-    void on_Apply_MCF_clicked()
+    void on_angles_clicked()
     {
         const Scene_interface::Item_id index = scene->mainSelectionIndex();
         Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(index));
-        Scene_polyhedron_selection_item* selection_item =
-          qobject_cast<Scene_polyhedron_selection_item*>(scene->item(index));
-
-        Polyhedron& pmesh = (poly_item != NULL) ?
-                    * poly_item->polyhedron() :
-                    * selection_item->polyhedron();
+        Scene_polyhedron_selection_item* selection_item = qobject_cast<Scene_polyhedron_selection_item*>(scene->item(index));
+        Polyhedron& pmesh = (poly_item != NULL) ? * poly_item->polyhedron() : * selection_item->polyhedron();
 
         QApplication::setOverrideCursor(Qt::WaitCursor);
 
-        //unsigned int nb_iter = ui_widget.curv_iterations_spinBox->value();
-        unsigned int nb_iter = 1;
-
-        smooth_curvature_flow(pmesh, parameters::number_of_iterations(nb_iter));
-
-        /*
-		unsigned int itime = ui_widget.time_spinBox->value();
-		const double time = itime * 1e-6;
-		std::cout << "time: " << time << std::endl;
-		curvature_flow_smoothing(pmesh, time, parameters::number_of_iterations(nb_iter));
-        */
+        unsigned int nb_iter = ui_widget.angles_iter_spinBox->value();
+        smooth_angles(pmesh, parameters::number_of_iterations(nb_iter));
 
         poly_item->invalidateOpenGLBuffers();
-        Q_EMIT poly_item->itemChanged();
-
+        poly_item->itemChanged();
         QApplication::restoreOverrideCursor();
-    }
 
-    void on_Apply_mMCF_clicked()
+     }
+
+    void on_areas_clicked()
     {
         const Scene_interface::Item_id index = scene->mainSelectionIndex();
         Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(index));
-        Scene_polyhedron_selection_item* selection_item =
-          qobject_cast<Scene_polyhedron_selection_item*>(scene->item(index));
-
-        Polyhedron& pmesh = (poly_item != NULL) ?
-                    * poly_item->polyhedron() :
-                    * selection_item->polyhedron();
-
-
-        if(previously_selected_index != index)
-        {
-            is_stiffness_matrix_setup = false;
-            previously_selected_index = index;
-        }
-
-
-
-		unsigned int itime = ui_widget.time_spinBox->value();
-		const double time = itime * 1e-6;
-        //unsigned int nb_iter = ui_widget.curv_iterations_spinBox_2->value();
-        unsigned int nb_iter = 1;
-
-        //std::cout<<"setting up stiffness matrix..."<<std::endl;
+        Scene_polyhedron_selection_item* selection_item = qobject_cast<Scene_polyhedron_selection_item*>(scene->item(index));
+        Polyhedron& pmesh = (poly_item != NULL) ? * poly_item->polyhedron() : * selection_item->polyhedron();
 
         QApplication::setOverrideCursor(Qt::WaitCursor);
 
-        if(!is_stiffness_matrix_setup)
+        unsigned int nb_iter = ui_widget.areas_iter_spinBox->value();
+        smooth_areas(pmesh, parameters::number_of_iterations(nb_iter));
+
+        poly_item->invalidateOpenGLBuffers();
+        poly_item->itemChanged();
+        QApplication::restoreOverrideCursor();
+
+     }
+
+    void on_curvature_clicked()
+    {
+        const Scene_interface::Item_id index = scene->mainSelectionIndex();
+        Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+        Scene_polyhedron_selection_item* selection_item = qobject_cast<Scene_polyhedron_selection_item*>(scene->item(index));
+        Polyhedron& pmesh = (poly_item != NULL) ? * poly_item->polyhedron() : * selection_item->polyhedron();
+
+        QApplication::setOverrideCursor(Qt::WaitCursor);
+
+        unsigned int nb_iter = ui_widget.curvature_iter_spinBox ->value();
+        smooth_curvature_flow(pmesh, parameters::number_of_iterations(nb_iter));
+
+        poly_item->invalidateOpenGLBuffers();
+        poly_item->itemChanged();
+        QApplication::restoreOverrideCursor();
+    }
+
+    void on_modified_curv_clicked()
+    {
+        const Scene_interface::Item_id index = scene->mainSelectionIndex();
+        Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+        Scene_polyhedron_selection_item* selection_item = qobject_cast<Scene_polyhedron_selection_item*>(scene->item(index));
+        Polyhedron& pmesh = (poly_item != NULL) ? * poly_item->polyhedron() : * selection_item->polyhedron();
+
+        int index_id = scene->item_id(poly_item);
+
+        const double time_step = ui_widget.time_step_spinBox->value();
+
+        QApplication::setOverrideCursor(Qt::WaitCursor);
+
+        if(index_id != last_index_id)
         {
-            std::cout<<"!is_stiffness_matrix_setup= "<<is_stiffness_matrix_setup<<std::endl;
             setup_mcf_system(pmesh, stiffness_matrix_);
-            is_stiffness_matrix_setup = true;
+            last_index_id = index_id;
         }
 
-       // std::cout<<"stiffness_matrix_: "<<stiffness_matrix_<<std::endl;
+        solve_mcf_system(pmesh, time_step, stiffness_matrix_);
 
-
-        solve_mcf_system(pmesh, time, nb_iter, stiffness_matrix_);
-
-
-        // todo: for selection item
-
+        // todo: update scene for selection item
         poly_item->compute_bbox();
         static_cast<Scene*>(scene)->updated_bbox(true);
         poly_item->invalidateOpenGLBuffers();
         poly_item->itemChanged();
 
-
-
         QApplication::restoreOverrideCursor();
 
     }
 
-    void on_Run_convergence_clicked()
+    void on_actionItemAboutToBeDestroyed()
     {
-        const Scene_interface::Item_id index = scene->mainSelectionIndex();
-        Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(index));
-        Scene_polyhedron_selection_item* selection_item =
-          qobject_cast<Scene_polyhedron_selection_item*>(scene->item(index));
-
-        Polyhedron& pmesh = (poly_item != NULL) ?
-                    * poly_item->polyhedron() :
-                    * selection_item->polyhedron();
-
-        QApplication::setOverrideCursor(Qt::WaitCursor);
-
-        unsigned int nb_iter = ui_widget.iterations_spinBox->value();
-        double dist = ui_widget.dist_dSpinBox->value();
-        //double gd_precision = ui_widget.gd_dSpinBox->value();
-        //bool use_weights = ui_widget.use_weights_checkBox->isChecked();
-
-        compatible_smoothing(pmesh,
-                             parameters::number_of_iterations(nb_iter).
-                             distance_precision(dist));
-
-        poly_item->invalidateOpenGLBuffers();
-        Q_EMIT poly_item->itemChanged();
-        QApplication::restoreOverrideCursor();
+        last_index_id= -1;
     }
-
-
 
 private:
     QAction* actionSmoothing_;
     QDockWidget* dock_widget;
     Ui::Smoothing ui_widget;
 
+    int last_index_id = -1;
     Eigen::SparseMatrix<double> stiffness_matrix_;
-    bool is_stiffness_matrix_setup = false; // not needed..
-
-    Scene_interface::Item_id previously_selected_index = -1;
-
 
 
 };

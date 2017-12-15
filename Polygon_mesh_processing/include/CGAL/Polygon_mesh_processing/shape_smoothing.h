@@ -89,22 +89,22 @@ void smooth_modified_curvature_flow(const FaceRange& faces, PolygonMesh& pmesh, 
 
   internal::Shape_smoother<PolygonMesh, VertexPointMap> smoother(pmesh, vpmap);
 
-  std::cerr << "compute stiffness matrix...";
-  smoother.calc_stiff_matrix(stiffness_matrix);
 
-
-  /*std::ofstream out("data/stiff_matrix.dat");
-  out<<stiffness_matrix<<std::endl;
-  out.close();*/
-
-
-  std::cerr << "done" << std::endl;
 
 
   double time = 1e-5;
 
   for(std::size_t t=0; t<nb_iterations; ++t)
   {
+
+    std::cerr << "compute stiffness matrix...";
+    smoother.calc_stiff_matrix(stiffness_matrix);
+    // print out stiff matrix
+    std::ofstream out("data/stiff_matrix.dat");
+    out<<stiffness_matrix<<std::endl;
+    out.close();
+
+
     smoother.setup_system(A, stiffness_matrix, mass_matrix, bx, by, bz, time);
 
     /*std::ofstream out("data/mass_matrix.dat");
@@ -137,8 +137,8 @@ void setup_mcf_system(PolygonMesh& mesh, Eigen::SparseMatrix<double>& stiffness_
 }
 
 template<typename PolygonMesh>
-void solve_mcf_system(PolygonMesh& mesh, const double& time, unsigned int nb_iter,
-	Eigen::SparseMatrix<double>& stiffness_matrix)
+void solve_mcf_system(PolygonMesh& mesh, const double& time,
+                      Eigen::SparseMatrix<double>& stiffness_matrix)
 {
 
   // VPmap type
@@ -160,18 +160,12 @@ void solve_mcf_system(PolygonMesh& mesh, const double& time, unsigned int nb_ite
   Eigen_vector Xy(n);
   Eigen_vector Xz(n);
 
-
-
   internal::Shape_smoother<PolygonMesh, VertexPointMap> smoother(mesh, vpmap);
 
-  for(unsigned int t = 0; t < nb_iter; ++t)
-  {
+  smoother.setup_system(A, stiffness_matrix, mass_matrix, bx, by, bz, time);
+  smoother.solve_system(A, Xx, Xy, Xz, bx, by, bz);
+  smoother.update_mesh(Xx, Xy, Xz);
 
-    smoother.setup_system(A, stiffness_matrix, mass_matrix, bx, by, bz, time);
-    smoother.solve_system(A, Xx, Xy, Xz, bx, by, bz);
-    smoother.update_mesh(Xx, Xy, Xz);
-
-  }
 
 }
 
