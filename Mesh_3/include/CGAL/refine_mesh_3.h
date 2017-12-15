@@ -206,7 +206,7 @@ struct Mesh_3_options {
     , dump_after_glob_opt_prefix()
     , dump_after_perturb_prefix()
     , dump_after_exude_prefix()
-    , number_of_initial_points()
+    , number_of_initial_points(-1)
     , nonlinear_growth_of_balls(false)
         , maximal_number_of_vertices(0)
         , pointer_to_error_code(0)

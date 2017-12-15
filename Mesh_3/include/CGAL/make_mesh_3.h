@@ -151,7 +151,7 @@ init_c3t3(C3T3& c3t3, const MeshDomain& domain, const MeshCriteria&,
 
   // Mesh initialization : get some points and add them to the mesh
   Initial_points_vector initial_points;
-  if (nb_initial_points > 0)
+  if (nb_initial_points > -1)
     domain.construct_initial_points_object()(std::back_inserter(initial_points),
                                              nb_initial_points);
   else //use default number of points
