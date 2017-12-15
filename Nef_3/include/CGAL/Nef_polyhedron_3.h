@@ -818,6 +818,26 @@ protected:
                   th.handle_triangles(B, VI);
               } else
                   CGAL_error_msg( "wrong value");
+          } else if(s == 4) {
+              SHalfedge_const_handle se(f->facet_cycles_begin());
+              CGAL_assertion(se != 0);
+              SHalfedge_around_facet_const_circulator hc(se);
+              Vertex_const_handle cv0 = (  hc)->source()->center_vertex();
+              Vertex_const_handle cv1 = (++hc)->source()->center_vertex();
+              Vertex_const_handle cv2 = (++hc)->source()->center_vertex();
+              Vertex_const_handle cv3 = (++hc)->source()->center_vertex();
+              int i0=VI[cv0],i1=VI[cv1],i2=VI[cv2],i3=VI[cv3];
+              Point_3 p0=cv0->point(),p1=cv1->point(),p2=cv2->point(),p3=cv3->point();
+              Vector_3 p1p0 = p1-p0,p3p2 = p3-p2;
+              if(CGAL::cross_product(p2-p1,p3p2) * CGAL::cross_product(p0-p3,p1p0)
+               < CGAL::cross_product(p1p0,p1-p2) * CGAL::cross_product(p3p2,p3-p0))
+              {
+                  build_triangle(i0,i1,i2);
+                  build_triangle(i0,i2,i3);
+              } else {
+                  build_triangle(i0,i1,i3);
+                  build_triangle(i3,i1,i2);
+              }
           } else {
               B.begin_facet();
               SHalfedge_const_handle se(f->facet_cycles_begin());
@@ -830,6 +850,15 @@ protected:
               }
               B.end_facet();
           }
+      }
+
+      inline void build_triangle(int i0,int i1,int i2)
+      {
+           B.begin_facet();
+           B.add_vertex_to_facet(i0);
+           B.add_vertex_to_facet(i1);
+           B.add_vertex_to_facet(i2);
+           B.end_facet();
       }
 
       inline int sides(Halffacet_const_handle f)
