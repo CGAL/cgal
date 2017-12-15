@@ -45,25 +45,11 @@ typedef CGAL::Mesh_criteria_3<Tr>                                   Mesh_criteri
 // To avoid verbose function and named parameters call
 using namespace CGAL::parameters;
 
-// Function
-static Tr dummy_tr; // default constructs a iso_cuboid (0,0,0,1,1,1)
-
-Point canonicalize_point(const Point& p)
-{
-  Point canonical_p = dummy_tr.robust_canonicalize_point(p);
-
-  CGAL_postcondition( !(canonical_p.x() < 0) && (canonical_p.x() < 1) );
-  CGAL_postcondition( !(canonical_p.y() < 0) && (canonical_p.y() < 1) );
-  CGAL_postcondition( !(canonical_p.z() < 0) && (canonical_p.z() < 1) );
-  return canonical_p;
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 static const FT r = 0.6;
-
 FT sphere_function(const Point& p)
 {
-  return CGAL::squared_distance(canonicalize_point(p), Point(0.5, 0.5, 0.5)) - r*r;
+  return CGAL::squared_distance(p, Point(0.5, 0.5, 0.5)) - r*r;
 }
 
 void fill_sphere_polylines(Polylines& polylines)

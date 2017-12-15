@@ -26,6 +26,9 @@
 
 #include <CGAL/Periodic_3_mesh_3/config.h>
 
+#include <CGAL/Periodic_3_mesh_triangulation_3.h>
+#include <CGAL/internal/canonicalize_helper.h>
+
 #include <CGAL/Labeled_mesh_domain_3.h>
 #include <CGAL/intersections.h>
 #include <CGAL/result_of.h>
@@ -38,22 +41,31 @@ namespace CGAL
 /**
  * \class Labeled_periodic_3_mesh_domain_3
  *
- * Function f must take his values into N.
- * Let p be a Point.
- *  - f(p)=0 means that p is outside domain.
- *  - f(p)=a, a!=0 means that p is inside subdomain a.
+ * Function `f` must be defined over the fundamental domain and take his values into `N`.
+ * Let `p` be a point.
+ *  - `f(p)=0` means that p is outside domain.
+ *  - `f(p)=a`, `a!=0` means that `p` is inside subdomain `a`.
  *
- *  Any boundary facet is labelled <a,b>, with a<b, where a and b are the
+ *  Any boundary facet is labelled `<a,b>`, with `a<b`, where `a` and `b` are the
  *  tags of its incident subdomain.
- *  Thus, a boundary facet of the domain is labelled <0,b>, where b!=0.
+ *  Thus, a boundary facet of the domain is labelled `<0,b>`, where `b!=0`.
  */
-template<class Function, class BGT>
+// The difference with Mesh_3's is very tiny if 'CGAL_PERIODIC_CANONICALIZE_DUAL_INTERSECTIONS'
+// is not enabled: it resides in the call to label() which canonicalizes the point
+// (that is, send them to the fundamental domain) before evaluation.
+template<class Function, class BGT, class Null_subdomain_index = Default>
 class Labeled_periodic_3_mesh_domain_3
-  : public Labeled_mesh_domain_3<Function, BGT>
+  : public Labeled_mesh_domain_3<Function, BGT,
+                                 typename Default::Get<Null_subdomain_index,
+                                                       CGAL::Null_subdomain_index>::type>
 {
 public:
+  /// Null subdomain type
+  typedef typename Default::Get<Null_subdomain_index,
+                                CGAL::Null_subdomain_index>::type       Null;
+
   /// Base type
-  typedef Labeled_mesh_domain_3<Function, BGT> Base;
+  typedef Labeled_mesh_domain_3<Function, BGT, Null>                    Base;
 
   /// Geometric object types
   typedef typename Base::Point_3            Point_3;
@@ -80,13 +92,27 @@ public:
   typedef typename Base::FT                  FT;
   typedef BGT                                Geom_traits;
 
+  /// Periodic traits used in the canonicalization of the points
+  typedef typename details::Periodic_3_mesh_geom_traits_generator<BGT>::type Periodic_geom_traits;
+
   Labeled_periodic_3_mesh_domain_3(const Function& f,
                                    const Iso_cuboid_3& bbox,
-                                   const FT& error_bound = FT(1e-6))
-    : Base(f, bbox, error_bound)
+                                   const FT& error_bound = FT(1e-6),
+                                   Null null = Null(),
+                                   CGAL::Random* p_rng = NULL)
+    : Base(f, bbox, error_bound, null, p_rng),
+      pgt(bbox)
   { }
 
   const Iso_cuboid_3& periodic_bounding_box() const { return Base::bounding_box(); }
+  const Periodic_geom_traits& periodic_geom_traits() const { return pgt; }
+
+  Subdomain_index label(const Point_3& p) const {
+    return Base::labeling_function()(P3T3::internal::robust_canonicalize_point(p, pgt));
+  }
+  Subdomain_index label(const Point_3& p, const bool b) const {
+    return Base::labeling_function()(P3T3::internal::robust_canonicalize_point(p, pgt), b);
+  }
 
   /**
    * Returns true if the element \ccc{type} intersect properly any of the
@@ -127,6 +153,7 @@ public:
       // [a,b] intersects surface_patch labelled <f(a),f(b)> (or <f(b),f(a)>).
       // It may be false, further rafinement will improve precision
 
+      // This whole canonicalization of offsets process seems useless... Hiding it behind macros.
 #ifdef CGAL_PERIODIC_CANONICALIZE_DUAL_INTERSECTIONS
       Iso_cuboid_3 pbb = r_domain_.periodic_bounding_box();
       FT dimension [3] = { pbb.xmax()-pbb.xmin(),
@@ -146,41 +173,56 @@ public:
       int o2 [3] = { static_cast<int>(b_t[0] / dimension[0]),
                      static_cast<int>(b_t[1] / dimension[1]),
                      static_cast<int>(b_t[2] / dimension[2]) };
-#endif
-
       FT a_min [3] = { a.x(), a.y(), a.z() };
       FT b_min [3] = { b.x(), b.y(), b.z() };
 
-#ifdef CGAL_PERIODIC_CANONICALIZE_DUAL_INTERSECTIONS
       for (unsigned idx = 0; idx < 3; ++idx)
       {
         FT offset = dimension[idx] * static_cast<FT>((std::min)(o1[idx], o2[idx]));
         a_min[idx] -= offset;
         b_min[idx] -= offset;
       }
+
+      const Point_3 pa(a_min[0], a_min[1], a_min[2]);
+      const Point_3 pb(b_min[0], b_min[1], b_min[2]);
+      Subdomain_index value_a = r_domain_.label(pa);
+      Subdomain_index value_b = r_domain_.label(pb);
+#else
+      Subdomain_index value_a = r_domain_.label(a);
+      Subdomain_index value_b = r_domain_.label(b);
 #endif
 
-      Subdomain_index value_a = r_domain_.labeling_function()(Point_3(a_min[0], a_min[1], a_min[2]));
-      Subdomain_index value_b = r_domain_.labeling_function()(Point_3(b_min[0], b_min[1], b_min[2]));
       if ( value_a != value_b )
-        return Surface_patch(r_domain_.make_surface_index(value_a, value_b));
+      {
+        if( r_domain_.null_function()(value_a) && r_domain_.null_function()(value_b) )
+          return Surface_patch();
+        else
+          return Surface_patch(r_domain_.make_surface_index(value_a, value_b));
+      }
 
+#ifdef CGAL_PERIODIC_CANONICALIZE_DUAL_INTERSECTIONS
       FT a_max [3] = { a.x(), a.y(), a.z() };
       FT b_max [3] = { b.x(), b.y(), b.z() };
 
-#ifdef CGAL_PERIODIC_CANONICALIZE_DUAL_INTERSECTIONS
       for (unsigned idx = 0; idx < 3; ++idx)
       {
         FT offset = dimension[idx] * static_cast<FT>((std::max)(o1[idx], o2[idx]));
         a_max[idx] -= offset;
         b_max[idx] -= offset;
       }
-#endif
 
-      value_a = r_domain_.labeling_function()(Point_3(a_max[0], a_max[1], a_max[2]));
-      value_b = r_domain_.labeling_function()(Point_3(b_max[0], b_max[1], b_max[2]));
+      pa = Point_3(a_max[0], a_max[1], a_max[2]);
+      pb = Point_3(b_max[0], b_max[1], b_max[2]);
+      value_a = r_domain_.label(pa);
+      value_b = r_domain_.label(pb);
       if ( value_a != value_b )
-        return Surface_patch(r_domain_.make_surface_index(value_a, value_b));
+      {
+        if( r_domain_.null_function()(value_a) && r_domain_.null_function()(value_b) )
+          return Surface_patch();
+        else
+          return Surface_patch(r_domain_.make_surface_index(value_a, value_b));
+      }
+#endif
 
       return Surface_patch();
     }
@@ -261,12 +303,10 @@ public:
     {
       // Functors
       typename BGT::Compute_squared_distance_3 squared_distance =
-                                      BGT().compute_squared_distance_3_object();
+        r_domain_.periodic_geom_traits().compute_squared_distance_3_object();
       typename BGT::Construct_midpoint_3 midpoint =
-                                      BGT().construct_midpoint_3_object();
+        r_domain_.periodic_geom_traits().construct_midpoint_3_object();
 
-      // This whole normalization of offsets process seems completely unneeded;
-      // hiding it behind macros.
 #ifdef CGAL_PERIODIC_CANONICALIZE_DUAL_INTERSECTIONS
       Iso_cuboid_3 pbb = r_domain_.periodic_bounding_box();
       FT dimension [3] = { pbb.xmax() - pbb.xmin(),
@@ -287,29 +327,30 @@ public:
       int o2 [3] = { static_cast<int>(b_t[0] / dimension[0]),
                      static_cast<int>(b_t[1] / dimension[1]),
                      static_cast<int>(b_t[2] / dimension[2]) };
-#endif
 
       FT a_min [3] = { a.x(), a.y(), a.z() };
       FT b_min [3] = { b.x(), b.y(), b.z() };
-
-#ifdef CGAL_PERIODIC_CANONICALIZE_DUAL_INTERSECTIONS
       for (unsigned idx = 0; idx < 3; ++idx)
       {
         FT offset = dimension[idx] * static_cast<FT>((std::min)(o1[idx], o2[idx]));
         a_min[idx] -= offset;
         b_min[idx] -= offset;
       }
-#endif
 
       // Non const points
       Point_3 p1(a_min[0], a_min[1], a_min[2]);
       Point_3 p2(b_min[0], b_min[1], b_min[2]);
+#else
+      Point_3 p1 = a;
+      Point_3 p2 = b;
+#endif
+
       Point_3 mid = midpoint(p1, p2);
 
       // Cannot be const: those values are modified below.
-      Subdomain_index value_at_p1 = r_domain_.labeling_function()(p1);
-      Subdomain_index value_at_p2 = r_domain_.labeling_function()(p2);
-      Subdomain_index value_at_mid = r_domain_.labeling_function()(mid, true);
+      Subdomain_index value_at_p1 = r_domain_.label(p1);
+      Subdomain_index value_at_p2 = r_domain_.label(p2);
+      Subdomain_index value_at_mid = r_domain_.label(mid, true);
 
       // If both extremities are in the same subdomain, then there is no intersection.
       // This should not happen...
@@ -324,26 +365,23 @@ public:
           a_max[idx] -= offset;
           b_max[idx] -= offset;
         }
+
         p1 = Point_3(a_max[0], a_max[1], a_max[2]);
         p2 = Point_3(b_max[0], b_max[1], b_max[2]);
         mid = midpoint(p1, p2);
-#endif
 
-        value_at_p1 = r_domain_.labeling_function()(p1);
-        value_at_p2 = r_domain_.labeling_function()(p2);
-        value_at_mid = r_domain_.labeling_function()(mid, true);
+        value_at_p1 = r_domain_.label(p1);
+        value_at_p2 = r_domain_.label(p2);
+        value_at_mid = r_domain_.label(mid, true);
 
         if( value_at_p1 == value_at_p2 )
+#endif
           return Intersection();
       }
 
-      // Construct the surface patch index and index from the values at 'a'
-      // and 'b'. Even if the bissection finds out a different pair of
-      // values, the reported index will be constructed from the initial
-      // values.
-      const Surface_patch_index sp_index =
-        r_domain_.make_surface_index(value_at_p1, value_at_p2);
-      const Index index = r_domain_.index_from_surface_patch_index(sp_index);
+      if( r_domain_.null_function()(value_at_p1) && r_domain_.null_function()(value_at_p2) ) {
+        return Intersection();
+      }
 
       // Else lets find a point (by bisection)
       // Bisection ends when the point is closer to the surface than the error bound
@@ -352,7 +390,13 @@ public:
         // If the two points are sufficiently close, then we return the midpoint
         if ( squared_distance(p1, p2) < r_domain_.squared_error_bound_value() )
         {
-          CGAL_assertion(value_at_p1 != value_at_p2);
+          CGAL_assertion(value_at_p1 != value_at_p2 &&
+                         ! ( r_domain_.null_function()(value_at_p1) && r_domain_.null_function()(value_at_p2) ) );
+
+          const Surface_patch_index sp_index =
+            r_domain_.make_surface_index(value_at_p1, value_at_p2);
+          const Index index = r_domain_.index_from_surface_patch_index(sp_index);
+
           return Intersection(mid, index, 2);
         }
 
@@ -361,7 +405,8 @@ public:
         // change p2 if f(p1)!=f(p2).
         // That allows us to find the first intersection from a of [a,b] with
         // a surface.
-        if ( value_at_p1 != value_at_mid )
+        if ( value_at_p1 != value_at_mid &&
+             ! ( r_domain_.null_function()(value_at_p1) && r_domain_.null_function()(value_at_mid) ) )
         {
           p2 = mid;
           value_at_p2 = value_at_mid;
@@ -373,7 +418,7 @@ public:
         }
 
         mid = midpoint(p1, p2);
-        value_at_mid = r_domain_.labeling_function()(mid, true);
+        value_at_mid = r_domain_.label(mid, true);
       }
     }
 
@@ -404,6 +449,14 @@ public:
   {
     return Construct_intersection(*this);
   }
+
+private:
+  // The domain must know the periodic fundamental domain, which is in the traits.
+  //
+  // Note that the fundamental domain is also known through 'bounding_box()', but
+  // a full geometric traits class is needed for 'construct_point()'
+  // in canonicalization functions.
+  Periodic_geom_traits pgt;
 
 private:
   // Disabled copy constructor & assignment operator

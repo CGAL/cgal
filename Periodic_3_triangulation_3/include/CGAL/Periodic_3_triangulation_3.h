@@ -29,7 +29,6 @@
 #include <CGAL/license/Periodic_3_triangulation_3.h>
 
 #include <CGAL/basic.h>
-#include <CGAL/Exact_kernel_selector.h>
 
 #include <boost/tuple/tuple.hpp>
 #include <boost/random/linear_congruential.hpp>
@@ -44,8 +43,10 @@
 #include <CGAL/Triangulation_cell_base_3.h>
 #include <CGAL/Triangulation_vertex_base_3.h>
 #include <CGAL/triangulation_assertions.h>
+#include <CGAL/internal/canonicalize_helper.h>
 
 #include <CGAL/array.h>
+#include <CGAL/internal/Exact_type_selector.h>
 #include <CGAL/NT_converter.h>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/use.h>
@@ -614,159 +615,13 @@ public:
     return construct_point(pp.first, pp.second);
   }
 
-  Periodic_point_3 construct_periodic_point_exact(const Point_3& p) const
-  {
-    typedef typename Geometric_traits::Kernel                    K;
-    typedef typename Exact_kernel_selector<K>::Exact_kernel      EK;
-    typedef typename Exact_kernel_selector<K>::C2E               C2E;
-
-    C2E to_exact;
-
-    typedef Periodic_3_triangulation_traits_3<EK> Exact_traits;
-    Exact_traits etraits(to_exact(domain()));
-
-    Offset transl(0, 0, 0);
-    typename EK::Point_3 ep = to_exact(p);
-    typename EK::Point_3 dp;
-
-    const typename EK::Iso_cuboid_3& dom = etraits.get_domain();
-
-    while(true) /* while not in */
-    {
-      dp = etraits.construct_point_3_object()(ep, transl);
-
-      if(dp.x() < dom.xmin())
-        transl.x() += 1;
-      else if(dp.y() < dom.ymin())
-        transl.y() += 1;
-      else if(dp.z() < dom.zmin())
-        transl.z() += 1;
-      else if(!(dp.x() < dom.xmax()))
-        transl.x() -= 1;
-      else if(!(dp.y() < dom.ymax()))
-        transl.y() -= 1;
-      else if(!(dp.z() < dom.zmax()))
-        transl.z() -= 1;
-      else
-        break;
-    }
-
-    Periodic_point_3 pp(std::make_pair(p, transl));
-
-    return pp;
-  }
-
-  // Given a point `p` in space, compute its offset `o` with respect
-  // to the canonical domain and returns (p, o)
-  Periodic_point_3 construct_periodic_point(const Point_3& p,
-                                            bool& encountered_issue) const
-  {
-    // Check if p lies within the domain. If not, translate.
-    const Iso_cuboid& dom = domain();
-    if(!(p.x() < dom.xmin()) && p.x() < dom.xmax() &&
-       !(p.y() < dom.ymin()) && p.y() < dom.ymax() &&
-       !(p.z() < dom.zmin()) && p.z() < dom.zmax())
-      return std::make_pair(p, Offset());
-
-    // Numerical approximations might create inconsistencies between the constructions
-    // and the comparisons. For example in a cubic domain of size 2:
-    // 1. initial point: P(2+1e-17, 0, 0)
-    // 2. the function computes an offset(1, 0, 0),
-    // 3. P + (-1, 0, 0) * domain_size constructs Q(-1e-17, 0, 0) // numerical approximation
-    // 4. the function computes an offset of (-1, 0, 0)
-    // 5. Q + (1, 0, 0) * domain_size constructs (2+1e-17, 0, 0) (that is P)
-    // And the function is looping...
-    //
-    // If this is happening the 'Last_change' enum will break this infinite
-    // loop and return the wrong point and the 'encountered_issue' bool will be
-    // set to 'true'. An exact version of this function should then be called.
-
-    enum Last_change {
-      NO_LAST_CHANGE,
-      INCREASED_X, DECREASED_X, INCREASED_Y, DECREASED_Y, INCREASED_Z, DECREASED_Z
-    };
-
-    Last_change lc = NO_LAST_CHANGE;
-    bool in = false;
-
-    Offset transl(0, 0, 0);
-    Point_3 dp;
-
-    while(!in)
-    {
-      dp = construct_point(std::make_pair(p, transl));
-
-      if(dp.x() < dom.xmin())
-      {
-        if(lc == DECREASED_X) // stuck in a loop
-          break;
-
-        lc = INCREASED_X;
-        transl.x() += 1;
-      }
-      else if(dp.y() < dom.ymin())
-      {
-        if(lc == DECREASED_Y) // stuck in a loop
-          break;
-
-        lc = INCREASED_Y;
-        transl.y() += 1;
-      }
-      else if(dp.z() < dom.zmin())
-      {
-        if(lc == DECREASED_Z) // stuck in a loop
-          break;
-
-        lc = INCREASED_Z;
-        transl.z() += 1;
-      }
-      else if(!(dp.x() < dom.xmax()))
-      {
-        if(lc == INCREASED_X) // stuck in a loop
-          break;
-
-        lc = DECREASED_X;
-        transl.x() -= 1;
-      }
-      else if(!(dp.y() < dom.ymax()))
-      {
-        if(lc == INCREASED_Y) // stuck in a loop
-          break;
-
-        lc = DECREASED_Y;
-        transl.y() -= 1;
-      }
-      else if(!(dp.z() < dom.zmax()))
-      {
-        if(lc == INCREASED_Z) // stuck in a loop
-          break;
-
-        lc = DECREASED_Z;
-        transl.z() -= 1;
-      }
-      else
-      {
-        in = true;
-      }
-    }
-
-    Periodic_point_3 pp(std::make_pair(p, transl));
-
-    if(dp.x() < dom.xmin() || !(dp.x() < dom.xmax()) ||
-       dp.y() < dom.ymin() || !(dp.y() < dom.ymax()) ||
-       dp.z() < dom.zmin() || !(dp.z() < dom.zmax()))
-    {
-      encountered_issue = true;
-      pp = construct_periodic_point_exact(p);
-    }
-
-    return pp;
-  }
-
   Periodic_point_3 construct_periodic_point(const Point_3& p) const
   {
     bool useless = false;
-    return construct_periodic_point(p, useless);
+
+    // The function is a different file to be able to be used where there is
+    // no triangulation (namely, the domains of Periodic_3_mesh_3).
+    return ::CGAL::P3T3::internal::construct_periodic_point(p, useless, geom_traits());
   }
 
   // ---------------------------------------------------------------------------

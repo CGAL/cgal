@@ -512,6 +512,7 @@ protected:
   /// Returns bounding box
   const Iso_cuboid_3& bounding_box() const { return bbox_; }
   const Function& labeling_function() const { return function_; }
+  const Null& null_function() const { return null; }
   FT squared_error_bound_value() const { return squared_error_bound_; }
 
 private:

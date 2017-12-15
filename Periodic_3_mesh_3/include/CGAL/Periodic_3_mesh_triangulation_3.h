@@ -32,6 +32,7 @@
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/Robust_weighted_circumcenter_filtered_traits_3.h>
 #include <CGAL/internal/Robust_periodic_weighted_circumcenter_traits_3.h>
+#include <CGAL/internal/canonicalize_helper.h>
 
 // periodic triangulations
 #include <CGAL/Periodic_3_regular_triangulation_traits_3.h>
@@ -194,152 +195,19 @@ public:
 
   void set_domain(const Iso_cuboid& domain)
   {
-    const FT eps = std::numeric_limits<FT>::epsilon(); // @tmp
-    std::cout << "epsilon: " << eps << std::endl;
     Base::set_domain(domain);
-  }
-
-  bool is_point_too_close_to_border(const Periodic_bare_point& pbp) const
-  {
-    Bare_point p = construct_point(pbp);
-    const FT px = p.x();
-    const FT py = p.y();
-    const FT pz = p.z();
-    const FT dxm = domain().xmin();
-    const FT dym = domain().ymin();
-    const FT dzm = domain().zmin();
-    const FT dxM = domain().xmax();
-    const FT dyM = domain().ymax();
-    const FT dzM = domain().zmax();
-
-    // simply comparing to FT::epsilon() is probably not completely satisfactory
-    const FT eps = std::numeric_limits<FT>::epsilon();
-
-    FT diff = CGAL::abs(px - dxm);
-    if(diff < eps && diff > 0) return true;
-    diff = CGAL::abs(px - dxM);
-    if(diff < eps && diff > 0) return true;
-    diff = CGAL::abs(py - dym);
-    if(diff < eps && diff > 0) return true;
-    diff = CGAL::abs(py - dyM);
-    if(diff < eps && diff > 0) return true;
-    diff = CGAL::abs(pz - dzm);
-    if(diff < eps && diff > 0) return true;
-    diff = CGAL::abs(pz - dzM);
-    if(diff < eps && diff > 0) return true;
-    return false;
-  }
-
-  Bare_point snap_to_domain_border(const Bare_point& p) const
-  {
-    const FT px = p.x();
-    const FT py = p.y();
-    const FT pz = p.z();
-    const FT dxm = domain().xmin();
-    const FT dym = domain().ymin();
-    const FT dzm = domain().zmin();
-    const FT dxM = domain().xmax();
-    const FT dyM = domain().ymax();
-    const FT dzM = domain().zmax();
-    FT sx = px, sy = py, sz = pz;
-
-    // simply comparing to FT::epsilon() is probably not completely satisfactory
-    const FT eps = std::numeric_limits<FT>::epsilon();
-
-    if(CGAL::abs(px - dxm) < eps) sx = domain().xmin();
-    if(CGAL::abs(px - dxM) < eps) sx = domain().xmax();
-    if(CGAL::abs(py - dym) < eps) sy = domain().ymin();
-    if(CGAL::abs(py - dyM) < eps) sy = domain().ymax();
-    if(CGAL::abs(pz - dzm) < eps) sz = domain().zmin();
-    if(CGAL::abs(pz - dzM) < eps) sz = domain().zmax();
-
-    std::cout << "epsilon: " << eps << std::endl;
-    std::cout.precision(20);
-    std::cout << "snapped " << p << " to " << sx << " " << sy << " " << sz << std::endl;
-
-    return geom_traits().construct_point_3_object()(sx, sy, sz);
-  }
-
-  Weighted_point snap_to_domain_border(const Weighted_point& p) const
-  {
-    typename Geom_traits::Compute_weight_3 cw = geom_traits().compute_weight_3_object();
-
-    const Bare_point snapped_p =
-      snap_to_domain_border(geom_traits().construct_point_3_object()(p));
-
-    return geom_traits().construct_weighted_point_3_object()(snapped_p, cw(p));
-  }
-
-  /// transform a bare point (living anywhere in space) into the canonical
-  /// instance of the same bare point that lives inside the base domain
-  Bare_point robust_canonicalize_point(const Bare_point& p) const
-  {
-    bool should_snap = false;
-    Periodic_bare_point pbp = construct_periodic_point(p, should_snap);
-
-    if(!should_snap)
-    {
-      // Even if there is no issue while constructing the canonical point,
-      // snap the point if it's too close to a border of the domain
-      should_snap = is_point_too_close_to_border(pbp);
-    }
-
-    if(should_snap)
-    {
-      Bare_point sp = snap_to_domain_border(p);
-
-      // might have snapped to a 'max' of the domain, which is not in the domain
-      // note: we could snap to 'min' all the time in 'snap_to_domain_border'
-      // but this is clearer like that (and costs very little since we should
-      // not have to use exact computations too often)
-      return canonicalize_point(sp);
-    }
-
-    Bare_point canonical_p = construct_point(pbp);
-    CGAL_postcondition( !(canonical_p.x() < domain().xmin()) &&
-                         (canonical_p.x() < domain().xmax()) );
-    CGAL_postcondition( !(canonical_p.y() < domain().ymin()) &&
-                         (canonical_p.y() < domain().ymax()) );
-    CGAL_postcondition( !(canonical_p.z() < domain().zmin()) &&
-                         (canonical_p.z() < domain().zmax()) );
-
-    return canonical_p;
   }
 
   Bare_point canonicalize_point(const Bare_point& p) const
   {
-    if(p.x() >= domain().xmin() && p.x() < domain().xmax() &&
-       p.y() >= domain().ymin() && p.y() < domain().ymax() &&
-       p.z() >= domain().zmin() && p.z() < domain().zmax())
-      return p;
-
-    return robust_canonicalize_point(p);
+    return P3T3::internal::robust_canonicalize_point(p, geom_traits());
   }
 
-  /// transform a weighted point (living anywhere in space) into the canonical
-  /// instance of the same weighted point that lives inside the base domain
-  Weighted_point robust_canonicalize_point(const Weighted_point& p) const
-  {
-    typename Geom_traits::Compute_weight_3 cw = geom_traits().compute_weight_3_object();
-    typename Geom_traits::Construct_point_3 cp = geom_traits().construct_point_3_object();
-    typename Geom_traits::Construct_weighted_point_3 cwp = geom_traits().construct_weighted_point_3_object();
-
-    const Bare_point& bp = cp(p);
-    Bare_point canonical_point = robust_canonicalize_point(bp);
-
-    return cwp(canonical_point, cw(p));
-  }
-
+  // @todo it might be dangerous to call robust_canonicalize without also changing
+  // <p, offset> = construct_periodic_point(p) (lack of consistency in the result)
   Weighted_point canonicalize_point(const Weighted_point& p) const
   {
-    if(p.x() >= domain().xmin() && p.x() < domain().xmax() &&
-       p.y() >= domain().ymin() && p.y() < domain().ymax() &&
-       p.z() >= domain().zmin() && p.z() < domain().zmax())
-      return p;
-
-    // @todo it might be dangerous to call robust_canonicalize without also changing
-    // <p, offset> = construct_periodic_point(p) (lack of consistency in the result)
-    return robust_canonicalize_point(p);
+    return P3T3::internal::robust_canonicalize_point(p, geom_traits());
   }
 
   Triangle triangle(const Facet& f) const

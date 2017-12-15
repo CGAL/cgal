@@ -37,16 +37,16 @@ typedef CGAL::Mesh_criteria_3<Tr> Periodic_mesh_criteria;
 // To avoid verbose function and named parameters call
 using namespace CGAL::parameters;
 
-static Tr dummy_tr; // default constructs a iso_cuboid (0,0,0,1,1,1)
-
 // Function
 FT sphere(const Point& p)
 {
+  assert(p.x() >= 0 && p.y() >= 0 && p.z() >= 0 && p.x() < 1 && p.y() < 1 && p.z() < 1);
   return CGAL::squared_distance(p, Point(0.5, 0.5, 0.5))-0.2;
 }
 
 FT schwarz_p(const Point& p)
 {
+  assert(p.x() >= 0 && p.y() >= 0 && p.z() >= 0 && p.x() < 1 && p.y() < 1 && p.z() < 1);
   const FT x2 = std::cos( p.x() * 2 * CGAL_PI ),
            y2 = std::cos( p.y() * 2 * CGAL_PI ),
            z2 = std::cos( p.z() * 2 * CGAL_PI );
@@ -56,11 +56,13 @@ FT schwarz_p(const Point& p)
 // not triply periodic
 FT scherk(const Point& p)
 {
+  assert(p.x() >= 0 && p.y() >= 0 && p.z() >= 0 && p.x() < 1 && p.y() < 1 && p.z() < 1);
   return std::exp( p.z() ) * std::cos( p.y() * 2 * CGAL_PI) - std::cos( p.x() * 2 * CGAL_PI );
 }
 
 // Triply Implicit Periodic Functions for meshing
 FT schwarz_p_transl (const Point& p) {
+  assert(p.x() >= 0 && p.y() >= 0 && p.z() >= 0 && p.x() < 1 && p.y() < 1 && p.z() < 1);
   const FT x2 = std::cos(p.x() * 2 * CGAL_PI + CGAL_PI / 2.0),
            y2 = std::cos(p.y() * 2 * CGAL_PI + CGAL_PI / 2.0),
            z2 = std::cos(p.z() * 2 * CGAL_PI + CGAL_PI / 2.0);
@@ -68,6 +70,7 @@ FT schwarz_p_transl (const Point& p) {
 }
 
 FT gyroid (const Point& p) {
+  assert(p.x() >= 0 && p.y() >= 0 && p.z() >= 0 && p.x() < 1 && p.y() < 1 && p.z() < 1);
   const FT cx = std::cos(p.x() * 2 * CGAL_PI),
            cy = std::cos(p.y() * 2 * CGAL_PI),
            cz = std::cos(p.z() * 2 * CGAL_PI);
@@ -78,6 +81,7 @@ FT gyroid (const Point& p) {
 }
 
 FT diamond (const Point& p) {
+  assert(p.x() >= 0 && p.y() >= 0 && p.z() >= 0 && p.x() < 1 && p.y() < 1 && p.z() < 1);
   const FT cx = std::cos(p.x() * 2 * CGAL_PI),
            cy = std::cos(p.y() * 2 * CGAL_PI),
            cz = std::cos(p.z() * 2 * CGAL_PI);
@@ -88,6 +92,7 @@ FT diamond (const Point& p) {
 }
 
 FT double_p (const Point& p) {
+  assert(p.x() >= 0 && p.y() >= 0 && p.z() >= 0 && p.x() < 1 && p.y() < 1 && p.z() < 1);
   const FT cx = std::cos(p.x() * 2 * CGAL_PI),
            cy = std::cos(p.y() * 2 * CGAL_PI),
            cz = std::cos(p.z() * 2 * CGAL_PI);
@@ -98,6 +103,7 @@ FT double_p (const Point& p) {
 }
 
 FT G_prime (const Point& p) {
+  assert(p.x() >= 0 && p.y() >= 0 && p.z() >= 0 && p.x() < 1 && p.y() < 1 && p.z() < 1);
   const FT cx = std::cos(p.x() * 2 * CGAL_PI),
            cy = std::cos(p.y() * 2 * CGAL_PI),
            cz = std::cos(p.z() * 2 * CGAL_PI);
@@ -115,6 +121,7 @@ FT G_prime (const Point& p) {
 }
 
 FT lidinoid (const Point& p) {
+  assert(p.x() >= 0 && p.y() >= 0 && p.z() >= 0 && p.x() < 1 && p.y() < 1 && p.z() < 1);
   const FT cx = std::cos(p.x() * 2 * CGAL_PI),
            cy = std::cos(p.y() * 2 * CGAL_PI),
            cz = std::cos(p.z() * 2 * CGAL_PI);
@@ -132,6 +139,7 @@ FT lidinoid (const Point& p) {
 }
 
 FT D_prime (const Point& p) {
+  assert(p.x() >= 0 && p.y() >= 0 && p.z() >= 0 && p.x() < 1 && p.y() < 1 && p.z() < 1);
   const FT cx = std::cos(p.x() * 2 * CGAL_PI),
            cy = std::cos(p.y() * 2 * CGAL_PI),
            cz = std::cos(p.z() * 2 * CGAL_PI);
@@ -146,6 +154,7 @@ FT D_prime (const Point& p) {
 }
 
 FT split_p (const Point& p) {
+  assert(p.x() >= 0 && p.y() >= 0 && p.z() >= 0 && p.x() < 1 && p.y() < 1 && p.z() < 1);
   const FT cx = std::cos(p.x() * 2 * CGAL_PI),
            cy = std::cos(p.y() * 2 * CGAL_PI),
            cz = std::cos(p.z() * 2 * CGAL_PI);
@@ -163,22 +172,11 @@ FT split_p (const Point& p) {
             - 0.4 * (cx + cy + cz);
 }
 
-// simple implementation
-Point canonicalize_point(const Point& p)
-{
-  Point canonical_p = dummy_tr.canonicalize_point(p);
-
-  CGAL_postcondition( !(canonical_p.x() < 0) && (canonical_p.x() < 1) );
-  CGAL_postcondition( !(canonical_p.y() < 0) && (canonical_p.y() < 1) );
-  CGAL_postcondition( !(canonical_p.z() < 0) && (canonical_p.z() < 1) );
-  return canonical_p;
-}
-
 FT cylinder(const Point& p)
 {
-  Point p_ = canonicalize_point(p);
-  const FT x2 = (p_.y() - 0.5) * (p_.y() - 0.5),
-           y2 = (p_.z() - 0.5) * (p_.z() - 0.5);
+  assert(p.x() >= 0 && p.y() >= 0 && p.z() >= 0 && p.x() < 1 && p.y() < 1 && p.z() < 1);
+  const FT x2 = (p.y() - 0.5) * (p.y() - 0.5),
+           y2 = (p.z() - 0.5) * (p.z() - 0.5);
   return x2 + y2 - 0.1;
 }
 

@@ -51,21 +51,12 @@ using namespace CGAL::parameters;
 static const int domain_size = 1;
 static const Iso_cuboid periodic_domain = Iso_cuboid(0, 0, 0, domain_size, domain_size, domain_size);
 
-// Used to artifically create a periodic function.
-static const Tr dummy_tr(periodic_domain);
-Point canonicalize_point(const Point& p)
-{
-  // Compute the representative of 'p' in the fundamental domain
-  return dummy_tr.canonicalize_point(p);
-}
-
 // Implicit function
 static const FT cx = 0.51, cy = 0.51, cz = 0.5;
 static const FT scale = 0.9;
 FT cone_function(const Point& p)
 {
-  const Point& cp = canonicalize_point(p);
-  const FT x = cp.x(), y = cp.y(), z = cp.z();
+  const FT x = p.x(), y = p.y(), z = p.z();
 
   if (((x-cx)*(x-cx) + (y-cy)*(y-cy)) > scale * (z-cz)*(z-cz))
     return 1; // outside
