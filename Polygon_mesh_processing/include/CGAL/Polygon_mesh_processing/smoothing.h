@@ -247,10 +247,10 @@ void smooth_angles(PolygonMesh& pmesh)
 *    constrained-or-not status of each vertex of `pmesh`. A constrained vertex
 *    cannot be modified at all during smoothing.
 *  \cgalParamEnd
-*  \cgalParamBegin{gradient_descent_precision} The precision which is met during gradient descent refers to
-*    the relative energy between iterations of each triangle element which is minimized
-*    while one of its vertices is being moved. Triangle energy is defined based on its area compared to
-*    the average area of all triangles adjacent to the vertex that is being moved.  Defaults to 1e-4.
+*  \cgalParamBegin{gradient_descent_precision} The precision to be met while the energy of each
+*    triangle is being minimized. Corresponds to the
+*    relative energy of triangles between iterations. Triangle energy is defined based on its area compared to
+*    the average area of all triangles adjacent to the vertex that is being moved.  Defaults to 1e-5.
 *  \cgalParamEnd
 * \cgalNamedParamsEnd
 */
@@ -306,7 +306,7 @@ void smooth_areas(const FaceRange& faces, PolygonMesh& pmesh, const NamedParamet
     unsigned int nb_iterations = choose_param(get_param(np, internal_np::number_of_iterations), 1);
 
     //gradient descent precision
-    double gd_precision = choose_param(get_param(np, internal_np::gradient_descent_precision), 0.0001);
+    double gd_precision = choose_param(get_param(np, internal_np::gradient_descent_precision), 1e-5);
 
     internal::Compatible_remesher<PolygonMesh, VertexPointMap, VCMap, ECMap, GeomTraits>
             remesher(pmesh, vpmap, vcmap, ecmap);

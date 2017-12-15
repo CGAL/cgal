@@ -35,12 +35,12 @@ namespace Polygon_mesh_processing {
 *
 * \cgalNamedParamsBegin
 *  \cgalParamBegin{geom_traits} a geometric traits class instance, model of `Kernel`.
-*    Exact constructions kernels are not supported by this function.
+*    Kernels with exact constructions are not supported by this function.
 *  \cgalParamEnd
 *  \cgalParamBegin{vertex_point_map} the property map with the points associated
 *    to the vertices of `pmesh`. Instance of a class model of `ReadWritePropertyMap`.
 *  \cgalParamEnd
-*  \cgalParamBegin{number_of_iterations} the number of iterations for the
+*  \cgalParamBegin{number_of_iterations} the number of iterations of the
 *    sequence of the smoothing iterations performed.
 *  \cgalParamEnd
 *  \cgalParamBegin{face_index_map} a property map containing the index of each face of `pmesh`.
