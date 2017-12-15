@@ -127,6 +127,7 @@ public:
       // [a,b] intersects surface_patch labelled <f(a),f(b)> (or <f(b),f(a)>).
       // It may be false, further rafinement will improve precision
 
+#ifdef CGAL_PERIODIC_CANONICALIZE_DUAL_INTERSECTIONS
       Iso_cuboid_3 pbb = r_domain_.periodic_bounding_box();
       FT dimension [3] = { pbb.xmax()-pbb.xmin(),
                            pbb.ymax()-pbb.ymin(),
@@ -145,15 +146,19 @@ public:
       int o2 [3] = { static_cast<int>(b_t[0] / dimension[0]),
                      static_cast<int>(b_t[1] / dimension[1]),
                      static_cast<int>(b_t[2] / dimension[2]) };
+#endif
 
       FT a_min [3] = { a.x(), a.y(), a.z() };
       FT b_min [3] = { b.x(), b.y(), b.z() };
+
+#ifdef CGAL_PERIODIC_CANONICALIZE_DUAL_INTERSECTIONS
       for (unsigned idx = 0; idx < 3; ++idx)
       {
         FT offset = dimension[idx] * static_cast<FT>((std::min)(o1[idx], o2[idx]));
         a_min[idx] -= offset;
         b_min[idx] -= offset;
       }
+#endif
 
       Subdomain_index value_a = r_domain_.labeling_function()(Point_3(a_min[0], a_min[1], a_min[2]));
       Subdomain_index value_b = r_domain_.labeling_function()(Point_3(b_min[0], b_min[1], b_min[2]));
@@ -162,12 +167,15 @@ public:
 
       FT a_max [3] = { a.x(), a.y(), a.z() };
       FT b_max [3] = { b.x(), b.y(), b.z() };
+
+#ifdef CGAL_PERIODIC_CANONICALIZE_DUAL_INTERSECTIONS
       for (unsigned idx = 0; idx < 3; ++idx)
       {
         FT offset = dimension[idx] * static_cast<FT>((std::max)(o1[idx], o2[idx]));
         a_max[idx] -= offset;
         b_max[idx] -= offset;
       }
+#endif
 
       value_a = r_domain_.labeling_function()(Point_3(a_max[0], a_max[1], a_max[2]));
       value_b = r_domain_.labeling_function()(Point_3(b_max[0], b_max[1], b_max[2]));
