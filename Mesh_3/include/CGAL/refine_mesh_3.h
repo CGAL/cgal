@@ -208,8 +208,8 @@ struct Mesh_3_options {
     , dump_after_exude_prefix()
     , number_of_initial_points(-1)
     , nonlinear_growth_of_balls(false)
-        , maximal_number_of_vertices(0)
-        , pointer_to_error_code(0)
+    , maximal_number_of_vertices(0)
+    , pointer_to_error_code(0)
   {}
 
   std::string dump_after_init_prefix;
@@ -220,8 +220,8 @@ struct Mesh_3_options {
   std::string dump_after_exude_prefix;
   int number_of_initial_points;
   bool nonlinear_growth_of_balls;
-      std::size_t maximal_number_of_vertices;
-      Mesh_error_code* pointer_to_error_code;
+  std::size_t maximal_number_of_vertices;
+  Mesh_error_code* pointer_to_error_code;
 
 }; // end struct Mesh_3_options
 
