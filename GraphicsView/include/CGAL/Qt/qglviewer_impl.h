@@ -221,6 +221,7 @@ void CGAL::QGLViewer::initializeGL() {
   format.setVersion(4,3);
   format.setProfile(QSurfaceFormat::CompatibilityProfile);
   format.setSamples(0);
+  format.setOption(QSurfaceFormat::DebugContext);
   context()->setFormat(format);
   bool created = context()->create();
   if(!created || context()->format().profile() != QSurfaceFormat::CompatibilityProfile) {
