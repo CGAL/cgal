@@ -956,6 +956,13 @@ template<typename K>
 struct Periodic_3_mesh_geom_traits_generator
 {
 private:
+  // - 'Robust_periodic_weighted_circumcenter_traits_3': provides robust periodic
+  //   constructions for construct_weighted_circumcenter()
+  // - 'Periodic_3_regular_triangulation_traits_3': makes the base (non-periodic)
+  //   traits usable in a periodic setting
+  // - 'Robust_weighted_circumcenter_filtered_traits_3': provides robust versions
+  //   of some non-periodic constructions.
+
   typedef Robust_periodic_weighted_circumcenter_traits_3<
             Periodic_3_regular_triangulation_traits_3<
               Robust_weighted_circumcenter_filtered_traits_3<K> > > Geom_traits;
