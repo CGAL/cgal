@@ -46,10 +46,18 @@ public:
   };
 
   Periodic_3_triangulation_ds_vertex_base_3()
-    : _c(), _off(), offset_flag(false) {}
+    : _c(), _off(), offset_flag(false)
+#ifdef CGAL_PERIODIC_TRIANGULATION_USE_VISITED_VERTEX_BOOLEAN
+      , visited_for_vertex_extractor(false)
+#endif
+  {}
 
   Periodic_3_triangulation_ds_vertex_base_3(const Cell_handle& c)
-    : _c(c), _off(), offset_flag(false) {}
+    : _c(c), _off(), offset_flag(false)
+#ifdef CGAL_PERIODIC_TRIANGULATION_USE_VISITED_VERTEX_BOOLEAN
+      , visited_for_vertex_extractor(false)
+#endif
+  {}
 
   const Cell_handle& cell() const
   { return _c; }
