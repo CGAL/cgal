@@ -106,6 +106,22 @@ void test_small_hull()
           polyhedron2.size_of_facets() == 6 );
 }
 
+void test_coplanar_hull()
+{
+  std::vector<Point_3> points;
+  points.push_back(Point_3(0,0,0));
+  points.push_back(Point_3(1,0,0));
+  points.push_back(Point_3(0,1,0));
+  points.push_back(Point_3(1,1,0));
+  points.push_back(Point_3(1.5,0.5,0));
+  points.push_back(Point_3(0.5,1.1,0));
+  Polyhedron_3 polyhedron;
+  CGAL::convex_hull_3(points.begin(), points.end(), polyhedron, Traits());
+  assert( polyhedron.is_valid() );
+  assert( polyhedron.size_of_facets() == 4 );
+  assert( polyhedron.is_pure_triangle() );
+}
+
 
 int main()
 {
@@ -115,6 +131,8 @@ int main()
   test_tetrahedron_convexity();
   std::cerr << "Testing small hull" << std::endl;
   test_small_hull();
+  std::cerr << "Testing coplanar hull" << std::endl;
+  test_coplanar_hull();
 
   std::cerr << "Testing 500 random points" << std::endl;
   std::vector<Point_3> points;
