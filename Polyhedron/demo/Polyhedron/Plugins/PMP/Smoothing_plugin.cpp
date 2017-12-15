@@ -25,7 +25,7 @@
 #include <boost/graph/graph_traits.hpp>
 #include <CGAL/property_map.h>
 
-#include <CGAL/Polygon_mesh_processing/smoothing.h>
+#include <CGAL/Polygon_mesh_processing/mesh_smoothing.h>
 #include <CGAL/Polygon_mesh_processing/shape_smoothing.h>
 
 #include "ui_Smoothing_plugin.h"
