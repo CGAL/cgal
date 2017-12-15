@@ -195,6 +195,9 @@ public:
 
   void set_domain(const Iso_cuboid& domain)
   {
+    CGAL_precondition_msg(domain.xmax() - domain.xmin() == domain.ymax() - domain.ymin() &&
+                          domain.xmax() - domain.xmin() == domain.zmax() - domain.zmin(),
+                          "The fundamental domain must be a cube.");
     Base::set_domain(domain);
   }
 
