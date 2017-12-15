@@ -659,7 +659,7 @@ public:
   // Given a point `p` in space, compute its offset `o` with respect
   // to the canonical domain and returns (p, o)
   Periodic_point_3 construct_periodic_point(const Point_3& p,
-                                            bool& had_to_use_exact) const
+                                            bool& encountered_issue) const
   {
     // Check if p lies within the domain. If not, translate.
     const Iso_cuboid& dom = domain();
@@ -667,6 +667,19 @@ public:
        !(p.y() < dom.ymin()) && p.y() < dom.ymax() &&
        !(p.z() < dom.zmin()) && p.z() < dom.zmax())
       return std::make_pair(p, Offset());
+
+    // Numerical approximations might create inconsistencies between the constructions
+    // and the comparisons. For example in a cubic domain of size 2:
+    // 1. initial point: P(2+1e-17, 0, 0)
+    // 2. the function computes an offset(1, 0, 0),
+    // 3. P + (-1, 0, 0) * domain_size constructs Q(-1e-17, 0, 0) // numerical approximation
+    // 4. the function computes an offset of (-1, 0, 0)
+    // 5. Q + (1, 0, 0) * domain_size constructs (2+1e-17, 0, 0) (that is P)
+    // And the function is looping...
+    //
+    // If this is happening the 'Last_change' enum will break this infinite
+    // loop and return the wrong point and the 'encountered_issue' bool will be
+    // set to 'true'. An exact version of this function should then be called.
 
     enum Last_change {
       NO_LAST_CHANGE,
@@ -743,8 +756,7 @@ public:
        dp.y() < dom.ymin() || !(dp.y() < dom.ymax()) ||
        dp.z() < dom.zmin() || !(dp.z() < dom.zmax()))
     {
-      // approximate construction does not manage
-      had_to_use_exact = true;
+      encountered_issue = true;
       pp = construct_periodic_point_exact(p);
     }
 
