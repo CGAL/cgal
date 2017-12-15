@@ -1243,6 +1243,64 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh)
   return remove_degenerate_faces(tmesh,
     CGAL::Polygon_mesh_processing::parameters::all_default());
 }
+
+template <class TriangleMesh, class Vpm>
+std::size_t duplicate_non_manifold_vertices(TriangleMesh& tm, Vpm vpm)
+{
+  typedef boost::graph_traits<TriangleMesh> GT;
+  typedef typename GT::vertex_descriptor vertex_descriptor;
+  typedef typename GT::halfedge_descriptor halfedge_descriptor;
+
+  boost::unordered_set<vertex_descriptor> vertices_handled;
+  boost::unordered_set<halfedge_descriptor> halfedges_handled;
+
+  std::size_t nb_new_vertices=0;
+
+  std::vector<halfedge_descriptor> non_manifold_cones;
+  BOOST_FOREACH(halfedge_descriptor h, halfedges(tm))
+  {
+    if (halfedges_handled.insert(h).second)
+    {
+      vertex_descriptor vd = target(h, tm);
+      if ( !vertices_handled.insert(vd).second )
+      {
+        non_manifold_cones.push_back(h);
+      }
+      else
+        set_halfedge(vd, h, tm);
+      halfedge_descriptor start=opposite(next(h, tm), tm);
+      h=start;
+      do{
+        halfedges_handled.insert(h);
+        h=opposite(next(h, tm), tm);
+      }while(h!=start);
+    }
+  }
+
+  if (!non_manifold_cones.empty())  {
+    BOOST_FOREACH(halfedge_descriptor h, non_manifold_cones)
+    {
+      halfedge_descriptor start = h;
+      vertex_descriptor new_vd = add_vertex(tm);
+      ++nb_new_vertices;
+      put(vpm, new_vd, get(vpm, target(h, tm)));
+      set_halfedge(new_vd, h, tm);
+      do{
+        set_target(h, new_vd, tm);
+        h=opposite(next(h, tm), tm);
+      } while(h!=start);
+    }
+  }
+
+  return nb_new_vertices;
+}
+
+template <class TriangleMesh>
+std::size_t duplicate_non_manifold_vertices(TriangleMesh& tm)
+{
+  return duplicate_non_manifold_vertices(tm, get(vertex_point, tm));
+}
+
 /// \endcond
 
 
