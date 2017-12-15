@@ -677,7 +677,7 @@ Labeled_mesh_domain_3<F,BGT,Null>::Construct_initial_points::operator()(
   // Create nb_point points
   int n = nb_points;
 #ifdef CGAL_MESH_3_VERBOSE
-  std::cerr << "construct initial points:\n";
+  std::cerr << "construct initial points (nb_points: " << nb_points << ")\n";
 #endif
   while ( 0 != n )
   {
