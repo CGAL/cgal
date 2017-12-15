@@ -802,7 +802,7 @@ protected:
           Halffacet_const_handle f = opposite_facet->twin();
 
           int s = sides(f);
-          if(s > 3 || has_holes(f)) {
+          if(s > 4 || has_holes(f)) {
               Vector_3 orth = f->plane().orthogonal_vector();
               int c = CGAL::abs(orth[0]) > CGAL::abs(orth[1]) ? 0 : 1;
               c = CGAL::abs(orth[2]) > CGAL::abs(orth[c]) ? 2 : c;
