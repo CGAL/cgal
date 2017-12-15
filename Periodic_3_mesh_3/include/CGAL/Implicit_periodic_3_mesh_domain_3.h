@@ -77,9 +77,9 @@ private:
   Implicit_periodic_3_mesh_domain_3(const Self& src);
   Self& operator=(const Self& src);
 
-};  // end class Implicit_periodic_3_mesh_domain_3
+};
 
-}  // end namespace CGAL
+} // end namespace CGAL
 
 #if defined(BOOST_MSVC)
 #  pragma warning(pop)

@@ -998,7 +998,7 @@ class Periodic_3_mesh_triangulation_3
 public:
   typedef Triangulation type;
   typedef type Type;
-};  // end struct Mesh_triangulation_3
+};
 
 } // namespace CGAL
 
