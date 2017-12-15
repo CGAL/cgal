@@ -802,7 +802,7 @@ protected:
           Halffacet_const_handle f = opposite_facet->twin();
 
           int s = sides(f);
-          if(s > 4 || has_holes(f)) {
+          if(s > 3 || has_holes(f)) {
               Vector_3 orth = f->plane().orthogonal_vector();
               int c = CGAL::abs(orth[0]) > CGAL::abs(orth[1]) ? 0 : 1;
               c = CGAL::abs(orth[2]) > CGAL::abs(orth[c]) ? 2 : c;
@@ -820,27 +820,14 @@ protected:
                   CGAL_error_msg( "wrong value");
           } else {
               B.begin_facet();
-              Halffacet_cycle_const_iterator fc = f->facet_cycles_begin();
-              SHalfedge_const_handle se(fc);
+              SHalfedge_const_handle se(f->facet_cycles_begin());
               CGAL_assertion(se != 0);
               SHalfedge_around_facet_const_circulator hc(se),he(hc);
-              int t = 0, fv;
               CGAL_For_all(hc,he) {
                   Vertex_const_handle cv = hc->source()->center_vertex();
                   CGAL_NEF_TRACEN("   add vertex " << cv->point());
-                  int i=VI[cv];
-                  B.add_vertex_to_facet(i);
-                  if(s==4) {
-                      if(t==0) fv=i;
-                      if(++t==3) {
-                        B.end_facet();
-                        B.begin_facet();
-                        B.add_vertex_to_facet(i);
-                      }
-                  }
+                  B.add_vertex_to_facet(VI[cv]);
               }
-              if(s==4)
-                  B.add_vertex_to_facet(fv);
               B.end_facet();
           }
       }
