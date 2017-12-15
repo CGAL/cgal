@@ -828,9 +828,9 @@ protected:
               Vertex_const_handle cv3 = (++hc)->source()->center_vertex();
               int i0=VI[cv0],i1=VI[cv1],i2=VI[cv2],i3=VI[cv3];
               Point_3 p0=cv0->point(),p1=cv1->point(),p2=cv2->point(),p3=cv3->point();
-              Vector_3 p1p0 = p1-p0,p3p2 = p3-p2;
-              if(CGAL::cross_product(p2-p1,p3p2) * CGAL::cross_product(p0-p3,p1p0)
-               < CGAL::cross_product(p1p0,p1-p2) * CGAL::cross_product(p3p2,p3-p0))
+              Vector_3 v1 = p0-p1,v2 = p1-p2,v3 = p2-p3,v4 = p3-p0;
+              if(CGAL::cross_product(v2,v3) * CGAL::cross_product(v4,v1)
+               < CGAL::cross_product(v1,v2) * CGAL::cross_product(v3,v4))
               {
                   build_triangle(i0,i1,i2);
                   build_triangle(i0,i2,i3);
