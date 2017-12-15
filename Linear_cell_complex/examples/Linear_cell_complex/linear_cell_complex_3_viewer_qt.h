@@ -223,7 +223,7 @@ protected:
 };
 
   
-template<class LCC, class ColorFunctor=DefaultColorFunctor>
+template<class LCC, class ColorFunctor>
 void display_lcc(const LCC& alcc,
                  const char* title="",
                  bool nofill=false)
@@ -238,5 +238,11 @@ void display_lcc(const LCC& alcc,
 
   app.exec();
 }
+
+template<class LCC>
+void display_lcc(const LCC& alcc,
+                 const char* title="",
+                 bool nofill=false)
+{ display_lcc<LCC, DefaultColorFunctor>(alcc, title, nofill); }
 
 #endif // CGAL_LCC_3_VIEWER_QT_H
