@@ -307,7 +307,8 @@ private:
     // Find the minimum value
     do
     {
-      min_sqr = (std::min)(min_sqr, sq_circumradius(face));
+      if (!cdt_.is_infinite(face))
+        min_sqr = (std::min)(min_sqr, sq_circumradius(face));
       face++;
     }
     while(face != end);
