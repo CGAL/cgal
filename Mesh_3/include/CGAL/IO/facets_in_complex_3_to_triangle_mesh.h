@@ -69,9 +69,9 @@ void facets_in_complex_3_to_triangle_mesh(const C3T3& c3t3, TriangleMesh& graph)
   typedef typename C3T3::Facets_in_complex_iterator                      Ficit;
 
   typedef CGAL::Hash_handles_with_or_without_timestamps                  Hash_fct;
-  typedef boost::unordered_map<Vertex_handle, int, Hash_fct>             VHmap;
+  typedef boost::unordered_map<Vertex_handle, std::size_t, Hash_fct>     VHmap;
 
-  typedef CGAL::cpp11::array<int, 3>                                     Face;
+  typedef CGAL::cpp11::array<std::size_t, 3>                             Face;
 
   typename std::iterator_traits<Ficit>::difference_type nf =
     std::distance(c3t3.facets_in_complex_begin(), c3t3.facets_in_complex_end());
@@ -82,7 +82,7 @@ void facets_in_complex_3_to_triangle_mesh(const C3T3& c3t3, TriangleMesh& graph)
   points.reserve(nf / 2); // approximating Euler
 
   VHmap vh_to_ids;
-  int inum = 0;
+  std::size_t inum = 0;
 
   for(Ficit fit = c3t3.facets_in_complex_begin(),
             end = c3t3.facets_in_complex_end(); fit != end; ++fit)
