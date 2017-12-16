@@ -118,11 +118,6 @@ public:
   using Base::construct_segment;
   using Base::construct_triangle;
   using Base::construct_tetrahedron;
-  using Base::construct_periodic_point;
-  using Base::construct_periodic_weighted_point;
-  using Base::construct_periodic_segment;
-  using Base::construct_periodic_triangle;
-  using Base::construct_periodic_tetrahedron;
   using Base::domain;
   using Base::dual;
   using Base::get_offset;
@@ -131,7 +126,6 @@ public:
   using Base::incident_cells;
   using Base::incident_edges;
   using Base::incident_facets;
-  using Base::insert_dummy_points;
   using Base::is_vertex;
   using Base::number_of_vertices;
   using Base::periodic_triangle;
