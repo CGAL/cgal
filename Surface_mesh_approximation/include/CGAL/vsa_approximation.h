@@ -13,6 +13,7 @@
 
 #include <CGAL/vsa_metrics.h>
 #include <CGAL/Default.h>
+#include <CGAL/tags.h>
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/adjacency_list.hpp>
@@ -28,8 +29,10 @@
 #include <cmath>
 #include <cstdlib>
 
+#ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range.h>
+#endif // CGAL_LINKED_WITH_TBB
 
 #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
 #include <iostream>
@@ -66,7 +69,8 @@ template <typename TriangleMesh,
   typename VertexPointMap,
   typename ErrorMetric = CGAL::Default,
   typename ProxyFitting = CGAL::Default,
-  typename GeomTraits = CGAL::Default>
+  typename GeomTraits = CGAL::Default,
+  typename Concurrency_tag = CGAL::Sequential_tag>
 class Mesh_approximation {
 // public typedefs
 public:
@@ -1210,16 +1214,32 @@ private:
    */
   template<typename ProxyWrapperIterator>
   void fit(const ProxyWrapperIterator beg, const ProxyWrapperIterator end) {
+    fit(beg, end, Concurrency_tag());
+  }
+
+  // Sequential
+  template<typename ProxyWrapperIterator>
+  void fit(const ProxyWrapperIterator beg, const ProxyWrapperIterator end, const CGAL::Sequential_tag t) {
     std::vector<std::list<face_descriptor> > px_facets(m_proxies.size());
     BOOST_FOREACH(face_descriptor f, faces(*m_ptm))
       px_facets[get(m_fproxy_map, f)].push_back(f);
 
     // update proxy parameters and seed
-    // for (ProxyWrapperIterator pxw_itr = beg; pxw_itr != end; ++pxw_itr) {
-    //   const std::size_t px_idx = pxw_itr->idx;
-    //   *pxw_itr = fit_proxy_from_patch(px_facets[px_idx], px_idx);
-    // }
+    for (ProxyWrapperIterator pxw_itr = beg; pxw_itr != end; ++pxw_itr) {
+      const std::size_t px_idx = pxw_itr->idx;
+      *pxw_itr = fit_proxy_from_patch(px_facets[px_idx], px_idx);
+    }
+  }
 
+  // Parallel
+#ifdef CGAL_LINKED_WITH_TBB
+  template<typename ProxyWrapperIterator>
+  void fit(const ProxyWrapperIterator beg, const ProxyWrapperIterator end, const CGAL::Parallel_tag t) {
+    std::vector<std::list<face_descriptor> > px_facets(m_proxies.size());
+    BOOST_FOREACH(face_descriptor f, faces(*m_ptm))
+      px_facets[get(m_fproxy_map, f)].push_back(f);
+
+    // update proxy parameters and seed
     tbb::parallel_for(tbb::blocked_range<ProxyWrapperIterator>(beg, end),
       [&](tbb::blocked_range<ProxyWrapperIterator> &r) {
         for (ProxyWrapperIterator pxw_itr = r.begin(); pxw_itr != r.end(); ++pxw_itr) {
@@ -1228,6 +1248,7 @@ private:
         }
       });
   }
+#endif // CGAL_LINKED_WITH_TBB
 
   /*!
    * @brief Add a proxy seed at the facet with the maximum fitting error.
