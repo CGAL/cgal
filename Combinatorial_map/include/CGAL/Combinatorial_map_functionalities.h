@@ -36,6 +36,9 @@ namespace CGAL {
     typedef CGAL::Union_find<Dart_handle> UFTree;
     typedef typename UFTree::handle UFTree_handle;
     
+    typedef boost::unordered_map<Dart_const_handle,
+                      std::pair<Dart_const_handle, Dart_const_handle> > TPaths;
+
     Combinatorial_map_tools(Map& amap) : m_map(amap)
     {
       if (!m_map.is_without_boundary(1))
@@ -120,34 +123,17 @@ namespace CGAL {
 
       m_map.set_automatic_attributes_management(false);
 
-      std::stack<Dart_handle> to_treat;
-      
       typename Map::size_type treated=m_map.get_new_mark();
       Dart_handle currentdart=NULL;
-      bool dangling=false;
       
-      typename Map::Dart_range::iterator it=m_map.darts().begin();
-      while(!to_treat.empty() || it!=m_map.darts().end())
+      for (typename Map::Dart_range::iterator it=m_map.darts().begin(),
+           itend=m_map.darts().end(); it!=itend; ++it)
       {
-        if (!to_treat.empty())
-        {
-          currentdart=to_treat.top();
-          to_treat.pop();
-          dangling=true;
-        }
-        else
-        {
-          currentdart=it++;
-          dangling=false;
-        }
-        
-        if (m_map.is_dart_used(currentdart) &&
-            (dangling || !m_map.is_marked(currentdart, treated)))
+        currentdart=it;
+        if (!m_map.is_marked(currentdart, treated))
         {
           if (m_map.template is_free<2>(currentdart))
-          {
-            m_map.mark(currentdart, treated);
-          }
+          { m_map.mark(currentdart, treated); }
           else
           {
             m_map.mark(currentdart, treated);
@@ -157,55 +143,18 @@ namespace CGAL {
             // The two first tests allow to keep isolated edges (case of spheres)
             if ((m_map.template beta<0>(currentdart)!=m_map.template beta<2>(currentdart) ||
                  m_map.template beta<1>(currentdart)!=m_map.template beta<2>(currentdart)) &&
-                (dangling || get_uftree(uftrees, faces, currentdart)!=
-                 get_uftree(uftrees, faces, m_map.template beta<2>(currentdart))))
+                get_uftree(uftrees, faces, currentdart)!=
+                get_uftree(uftrees, faces, m_map.template beta<2>(currentdart)))
             {
-              // We push in the stack all the neighboors of the current
-              // edge that will become dangling after the removal.
-              /*              if (!m_map.template is_free<2>(m_map.template beta<0>(currentdart)) &&
-                  m_map.template beta<0,2>(currentdart)==m_map.template beta<2,1>(currentdart))
-              { to_treat.push(m_map.template beta<0>(currentdart)); }
-              if (!m_map.template is_free<2>(m_map.template beta<1>(currentdart)) &&
-                  m_map.template beta<1,2>(currentdart)==m_map.template beta<2,0>(currentdart))
-              { to_treat.push(m_map.template beta<1>(currentdart)); }
-              */
-              // TODO LATER (?) OPTIMIZE AND REPLACE THE REMOVE_CELL CALL BY THE MODIFICATION BY HAND
-              // Moreover, we make the removal manually instead of calling
-              // remove_cell<1>(currentdart) for optimisation reasons.
-              // Now we update alpha2
-              /*t1 = alpha(*itEdge, 1);
-              if ( !isMarked(t1, toDelete1) )
-              {
-                t2 = *itEdge;
-                while ( isMarked(t2, toDelete1) )
-                  {
-                    t2 = alpha21(t2);
-                  }
-
-                if ( t2 != alpha(t1, 1) )
-                {
-                  unsew(t1, 1);
-                  if (!isFree(t2, 1)) unsew(t2, 1);
-                  if (t1!=t2) sew(t1, t2, 1);
-                }
-                }*/
-
-              if (!dangling)
-              {
-                uftrees.unify_sets(get_uftree(uftrees, faces, currentdart),
-                                   get_uftree(uftrees, faces,
+              uftrees.unify_sets(get_uftree(uftrees, faces, currentdart),
+                                 get_uftree(uftrees, faces,
                                             m_map.template beta<2>(currentdart)));
-              }
 
+              // TODO LATER (?) OPTIMIZE AND REPLACE THE REMOVE_CELL CALL BY THE MODIFICATION BY HAND
+              // OR DEVELOP A SPECIALIZED VERSION OF REMOVE_CELL
               m_map.remove_cell<1>(currentdart);
               if (!m_map.is_dart_used(it))
               { ++it; }
-
-             /* m_map.display_characteristics(std::cout) << ", valid="
-                                                       << m_map.is_valid() << std::endl;
-              m_map.display_darts(std::cout);
-              std::cout<<"\n*****************************************************************\n";
-            */
             }
           }
         }
@@ -248,7 +197,15 @@ namespace CGAL {
       //    New edges created by the operation are not marked.
       m_map.insert_point_in_cell_2(m_map.darts().begin(), m_map.point(m_map.darts().begin()));
 
-      // 2) We remove all the old edges.
+      // 2) We update the pair of darts
+      for (typename TPaths::iterator itp=paths.begin(), itpend=paths.end(); itp!=itpend; ++itp)
+      {
+        std::pair<Dart_const_handle, Dart_const_handle>& p=itp->second;
+        p.first=m_map.template beta<1>(p.first);
+        p.second=m_map.template beta<1>(p.second);
+      }
+
+      // 3) We remove all the old edges.
       for (typename Map::Dart_range::iterator it=m_map.darts().begin(), itend=m_map.darts().end();
            it!=itend; ++it)
       {
@@ -259,8 +216,27 @@ namespace CGAL {
       m_map.free_mark(oldedges);
     }
 
+    // Compute, for each edge not in the spanning tree, the pair of darts adjacent
+    // to it
+    void compute_length_two_paths()
+    {
+      paths.clear();
+
+      for (typename Map::Dart_range::iterator it=m_map.darts().begin(),
+           itend=m_map.darts().end(); it!=itend; ++it)
+      {
+        if (m_map.template is_free<2>(it) ||
+            it<m_map.template beta<2>(it))
+        {
+          paths[it]=std::make_pair(m_map.template beta<0>(it),
+                                   m_map.template beta<2,0>(it));
+        }
+      }
+    }
+
   protected:
     Map& m_map;
+    TPaths paths;
   };
   
 } // namespace CGAL
