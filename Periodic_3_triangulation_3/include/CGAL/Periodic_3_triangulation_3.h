@@ -616,7 +616,7 @@ public:
   }
 
   Periodic_point_3 construct_periodic_point(const Point_3& p,
-                                            const bool had_to_use_exact) const
+                                            bool& had_to_use_exact) const
   {
     // The function is a different file to be able to be used where there is
     // no triangulation (namely, the domains of Periodic_3_mesh_3).
