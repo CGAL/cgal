@@ -38,7 +38,6 @@ int main(int argc, char** argv)
   lcc.display_characteristics(std::cout) << ", valid=" 
                                          << lcc.is_valid() << std::endl;
 
-  cmt.initialize_faces();
   cmt.surface_simplification_in_one_face();
   std::cout<<"All faces merges: ";
   lcc.display_characteristics(std::cout) << ", valid=" 

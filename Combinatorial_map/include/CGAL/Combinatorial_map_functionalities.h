@@ -32,6 +32,7 @@ namespace CGAL {
   {
   public:
     typedef typename Map::Dart_handle Dart_handle;
+    typedef typename Map::Dart_const_handle Dart_const_handle;
     typedef CGAL::Union_find<Dart_handle> UFTree;
     typedef typename UFTree::handle UFTree_handle;
     
@@ -49,8 +50,38 @@ namespace CGAL {
       }
     }
     
-    void initialize_faces()
+    void initialize_vertices(UFTree& uftrees,
+                             boost::unordered_map<Dart_const_handle, UFTree_handle>& vertices)
     {
+      uftrees.clear();
+      vertices.clear();
+
+      typename Map::size_type treated=m_map.get_new_mark();
+      for (typename Map::Dart_range::iterator it=m_map.darts().begin(),
+           itend=m_map.darts().end(); it!=itend; ++it)
+      {
+        if (!m_map.is_marked(it, treated))
+        {
+          UFTree_handle newuf=uftrees.make_set(it);
+          for (typename Map::template Dart_of_cell_basic_range<0>::iterator
+               itv=m_map.template darts_of_cell_basic<0>(it, treated).begin(),
+               itvend=m_map.template darts_of_cell_basic<0>(it, treated).end();
+               itv!=itvend; ++itv)
+          {
+            vertices[itv]=newuf;
+            m_map.mark(itv, treated);
+          }
+        }
+      }
+      m_map.free_mark(treated);
+    }
+
+    void initialize_faces(UFTree& uftrees,
+                          boost::unordered_map<Dart_const_handle, UFTree_handle>& faces)
+    {
+      uftrees.clear();
+      faces.clear();
+
       typename Map::size_type treated=m_map.get_new_mark();
       for (typename Map::Dart_range::iterator it=m_map.darts().begin(), itend=m_map.darts().end();
            it!=itend; ++it)
@@ -70,22 +101,25 @@ namespace CGAL {
       }
       m_map.free_mark(treated);
     }
-    
-    UFTree_handle get_face(Dart_handle dh)
+
+    UFTree_handle get_uftree(const UFTree& uftrees,
+                             const boost::unordered_map<Dart_const_handle,
+                             UFTree_handle>& mapdhtouf,
+                             Dart_const_handle dh)
     {
       assert(dh!=NULL);
-      assert(faces.find(dh)!=faces.end());
-      return uftrees.find(faces.find(dh)->second);
+      assert(mapdhtouf.find(dh)!=mapdhtouf.end());
+      return uftrees.find(mapdhtouf.find(dh)->second);
     }
 
-    UFTree_handle get_opposite_face(Dart_handle dh)
-    {
-      assert(!m_map.template is_free<2>(dh));
-      return get_face(m_map.template beta<2>(dh));
-    }
-    
     void surface_simplification_in_one_face()
     {
+      UFTree uftrees; // uftree of faces; one tree for each face, contains one dart of the face
+      boost::unordered_map<Dart_const_handle, UFTree_handle> faces;
+      initialize_faces(uftrees, faces);
+
+      m_map.set_automatic_attributes_management(false);
+
       std::stack<Dart_handle> to_treat;
       
       typename Map::size_type treated=m_map.get_new_mark();
@@ -123,7 +157,8 @@ namespace CGAL {
             // The two first tests allow to keep isolated edges (case of spheres)
             if ((m_map.template beta<0>(currentdart)!=m_map.template beta<2>(currentdart) ||
                  m_map.template beta<1>(currentdart)!=m_map.template beta<2>(currentdart)) &&
-                (dangling || get_face(currentdart)!=get_opposite_face(currentdart)))
+                (dangling || get_uftree(uftrees, faces, currentdart)!=
+                 get_uftree(uftrees, faces, m_map.template beta<2>(currentdart))))
             {
               // We push in the stack all the neighboors of the current
               // edge that will become dangling after the removal.
@@ -156,7 +191,11 @@ namespace CGAL {
                 }*/
 
               if (!dangling)
-              { uftrees.unify_sets(get_face(currentdart), get_opposite_face(currentdart)); }
+              {
+                uftrees.unify_sets(get_uftree(uftrees, faces, currentdart),
+                                   get_uftree(uftrees, faces,
+                                            m_map.template beta<2>(currentdart)));
+              }
 
               m_map.remove_cell<1>(currentdart);
               if (!m_map.is_dart_used(it))
@@ -172,17 +211,31 @@ namespace CGAL {
         }
       }
       
+      m_map.set_automatic_attributes_management(true);
       m_map.free_mark(treated);
     }
     
     void surface_simplification_in_one_vertex()
     {
-      for (typename Map::Dart_range::iterator it=m_map.darts().begin(), itend=m_map.darts().end();
-           it!=itend; ++it)
+      UFTree uftrees; // uftree of vertices; one tree for each vertex, contains one dart of the vertex
+      boost::unordered_map<Dart_const_handle, UFTree_handle> vertices;
+      initialize_vertices(uftrees, vertices);
+
+      m_map.set_automatic_attributes_management(false);
+
+      for (typename Map::Dart_range::iterator it=m_map.darts().begin(),
+           itend=m_map.darts().end(); it!=itend; ++it)
       {
-        if (m_map.vertex_attribute(it)!=m_map.vertex_attribute(m_map.template beta<2>(it)))
-        { m_map.contract_cell<1>(it); }
+        if (get_uftree(uftrees, vertices, it)!=
+            get_uftree(uftrees, vertices, m_map.template beta<2>(it)))
+        {
+          uftrees.unify_sets(get_uftree(uftrees, vertices, it),
+                             get_uftree(uftrees, vertices, m_map.template beta<2>(it)));
+          m_map.contract_cell<1>(it);
+        }
       }
+
+      m_map.set_automatic_attributes_management(true);
     }
     
     void surface_quadrangulate()
@@ -208,8 +261,6 @@ namespace CGAL {
 
   protected:
     Map& m_map;
-    UFTree uftrees; // uftree of faces; one tree for each face, contains one dart of the face
-    boost::unordered_map<Dart_handle, UFTree_handle> faces;
   };
   
 } // namespace CGAL
