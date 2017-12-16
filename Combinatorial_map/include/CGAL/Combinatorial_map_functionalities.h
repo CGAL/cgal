@@ -24,8 +24,121 @@
 #include <stack>
 #include <CGAL/Union_find.h>
 #include <boost/unordered_map.hpp>
- 
+#include<CGAL/Random.h>
+
 namespace CGAL {
+
+template<typename Map>
+class Path_on_surface
+{
+public:
+  typedef typename Map::Dart_handle Dart_handle;
+  typedef typename Map::Dart_const_handle Dart_const_handle;
+
+  Path_on_surface(const Map& amap) : m_map(amap)
+  {}
+
+  // @return true iff the path is valid; i.e. a sequence of edges two by
+  //              two adjacent.
+  bool is_valid() const
+  {
+    for (unsigned int i=1; i<m_path.size(); ++i)
+    {
+      Dart_const_handle pend=m_map.other_extremity(m_path[i-1]);
+      if (pend==Map::null_handle) { return false; }
+
+      if (!CGAL::template belong_to_same_cell<Map,0>(m_map, m_path[i], pend))
+      { return false; }
+    }
+    return true;
+  }
+
+  // @return true iff the path is empty
+  bool is_empty() const
+  { return m_path.empty(); }
+
+  // @return true iff the path is closed (i.e. the second extremity of the
+  //              last dart of the path is the same vertex than the one of the
+  //              first dart of the path.
+  bool is_closed() const
+  {
+    if (is_empty()) { return false; } // or true by vacuity ?
+    if (!is_valid()) { return false; } // Interest ??
+
+    Dart_const_handle pend=m_map.other_extremity(m_path.back());
+    if (pend==Map::null_handle) { return false; }
+
+    return CGAL::belong_to_same_cell<Map,0>(m_map, m_path[0], pend);
+  }
+
+  // @return true iff the path does not pass twice through a same edge
+  //              or a same vertex.
+  bool is_simple() const
+  {
+    typename Map::size_type markvertex=m_map.get_new_mark();
+    typename Map::size_type markedge=m_map.get_new_mark();
+
+    bool res=true;
+    unsigned int i=0;
+    for (i=0; res && i<m_path.size(); ++i)
+    {
+      if (m_map.is_marked(m_path[i], markvertex)) res=false;
+      if (m_map.is_marked(m_path[i], markedge)) res=false;
+
+      CGAL::mark_cell<Map, 0>(m_path[i], markvertex);
+      CGAL::mark_cell<Map, 1>(m_path[i], markedge);
+    }
+
+    i=0;
+    while(m_map.number_of_marked_darts(markedge)>0)
+    {
+      assert(i<m_path.size());
+      CGAL::unmark_cell<Map, 0>(m_path[i], markvertex);
+      CGAL::unmark_cell<Map, 1>(m_path[i], markedge);
+      ++i;
+    }
+
+    m_map.free_mark(markvertex);
+    m_map.free_mark(markedge);
+
+    return res;
+  }
+
+  bool extend_randomly(bool allow_half_turn=false)
+  {
+    CGAL::Random random;
+    if (m_path.empty())
+    {
+      unsigned int index=random.get_int(0, m_map.darts().capacity());
+      while (!m_map.darts().is_used(index))
+      {
+         ++index;
+        if (index==m_map.darts().capacity()) index=0;
+      }
+      m_path.push_back(m_map.darts().iterator_to(m_map.darts()[index]));
+      return true;
+    }
+
+    Dart_const_handle pend=m_map.other_extremity(m_path.back());
+    if (pend==Map::null_handle) { return false; }
+
+    typename Map::template Dart_of_cell_range<0>::iterator
+        it=m_map.template darts_of_cell<0>(pend).begin();
+
+     unsigned int index=random.get_int((allow_half_turn?0:1), m_map.template darts_of_cell<0>
+                                       (pend).size());
+     for(unsigned int i=0; i<index; ++i)
+     { ++it; }
+
+      m_path.push_back(it);
+     return true;
+  }
+
+protected:
+  const Map& m_map;
+  std::vector<Dart_const_handle> m_path;
+};
+
 
   template<typename Map>
   class Combinatorial_map_tools
