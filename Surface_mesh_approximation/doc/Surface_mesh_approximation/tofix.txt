@@ -3,8 +3,9 @@
 - very first partition must use one proxy per connected component.
 -- checked
 - verify that teleport can be forced even when heuristic test fails. about the test: why not simply comparing increase of error and decrease of error ?
-- use Intel TBB to parallelize where possible? eg, when it is trivially parallelizable such as measure of total error, or re-fitting. partitioning seems harder.
 -- checked
+- use Intel TBB to parallelize where possible? eg, when it is trivially parallelizable such as measure of total error, or re-fitting. partitioning seems harder.
+-- checked, parallelize re-fitting and error
 
 harder:
 

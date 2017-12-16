@@ -454,7 +454,7 @@ public:
         put(m_fproxy_map, f, CGAL_VSA_INVALID_TAG);
 
       partition(m_proxies.begin(), m_proxies.end());
-      fit(m_proxies.begin(), m_proxies.end());
+      fit(m_proxies.begin(), m_proxies.end(), Concurrency_tag());
     }
 
     return compute_total_error();
@@ -846,7 +846,7 @@ public:
         put(m_fproxy_map, f, CGAL_VSA_INVALID_TAG);
 
       partition(confined_proxies.begin(), confined_proxies.end());
-      fit(confined_proxies.begin(), confined_proxies.end());
+      fit(confined_proxies.begin(), confined_proxies.end(), Concurrency_tag());
     }
 
     // copy back
@@ -1207,17 +1207,12 @@ private:
   }
 
   /*!
-   * @brief Refitting and update input range of proxies.
+   * @brief Refitting and update input range of proxies, sequential.
    * @tparam ProxyWrapperIterator forward iterator with Proxy_wrapper as value type
    * @param beg iterator point to the first element
    * @param end iterator point to the one past the last element
+   * @param t concurrency tag
    */
-  template<typename ProxyWrapperIterator>
-  void fit(const ProxyWrapperIterator beg, const ProxyWrapperIterator end) {
-    fit(beg, end, Concurrency_tag());
-  }
-
-  // Sequential
   template<typename ProxyWrapperIterator>
   void fit(const ProxyWrapperIterator beg, const ProxyWrapperIterator end, const CGAL::Sequential_tag t) {
     std::vector<std::list<face_descriptor> > px_facets(m_proxies.size());
@@ -1231,8 +1226,14 @@ private:
     }
   }
 
-  // Parallel
 #ifdef CGAL_LINKED_WITH_TBB
+  /*!
+   * @brief Refitting and update input range of proxies, parallel.
+   * @tparam ProxyWrapperIterator forward iterator with Proxy_wrapper as value type
+   * @param beg iterator point to the first element
+   * @param end iterator point to the one past the last element
+   * @param t concurrency tag
+   */
   template<typename ProxyWrapperIterator>
   void fit(const ProxyWrapperIterator beg, const ProxyWrapperIterator end, const CGAL::Parallel_tag t) {
     std::vector<std::list<face_descriptor> > px_facets(m_proxies.size());
