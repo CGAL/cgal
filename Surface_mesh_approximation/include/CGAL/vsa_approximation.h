@@ -28,6 +28,9 @@
 #include <cmath>
 #include <cstdlib>
 
+#include <tbb/parallel_for.h>
+#include <tbb/blocked_range.h>
+
 #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
 #include <iostream>
 #endif
@@ -1212,10 +1215,18 @@ private:
       px_facets[get(m_fproxy_map, f)].push_back(f);
 
     // update proxy parameters and seed
-    for (ProxyWrapperIterator pxw_itr = beg; pxw_itr != end; ++pxw_itr) {
-      const std::size_t px_idx = pxw_itr->idx;
-      *pxw_itr = fit_proxy_from_patch(px_facets[px_idx], px_idx);
-    }
+    // for (ProxyWrapperIterator pxw_itr = beg; pxw_itr != end; ++pxw_itr) {
+    //   const std::size_t px_idx = pxw_itr->idx;
+    //   *pxw_itr = fit_proxy_from_patch(px_facets[px_idx], px_idx);
+    // }
+
+    tbb::parallel_for(tbb::blocked_range<ProxyWrapperIterator>(beg, end),
+      [&](tbb::blocked_range<ProxyWrapperIterator> &r) {
+        for (ProxyWrapperIterator pxw_itr = r.begin(); pxw_itr != r.end(); ++pxw_itr) {
+          const std::size_t px_idx = pxw_itr->idx;
+          *pxw_itr = fit_proxy_from_patch(px_facets[px_idx], px_idx);
+        }
+      });
   }
 
   /*!
