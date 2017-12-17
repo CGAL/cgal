@@ -38,6 +38,15 @@ public:
   Path_on_surface(const Map& amap) : m_map(amap)
   {}
 
+  unsigned int length() const
+  { return m_path.size(); }
+
+  Dart_const_handle get_ith_dart(unsigned int i) const
+  {
+    assert(i<m_path.size());
+    return m_path[i];
+  }
+  
   // @return true iff the path is valid; i.e. a sequence of edges two by
   //              two adjacent.
   bool is_valid() const
@@ -104,9 +113,22 @@ public:
     return res;
   }
 
-  bool extend_randomly(bool allow_half_turn=false)
+  // Generate a random path with about percent % of edge
+  void generate_random_path(unsigned int percent, CGAL::Random& random)
+  {
+    m_path.clear();
+    unsigned int length=((m_map.number_of_darts()/2)*percent)/100;
+    for (unsigned int i=0; i<length; ++i)
+    { extend_randomly(random); }
+  }
+  void generate_random_path(unsigned int percent)
   {
     CGAL::Random random;
+    generate_random_path(percent, random);
+  }
+  
+  bool extend_randomly(CGAL::Random& random, bool allow_half_turn=false)
+  {
     if (m_path.empty())
     {
       unsigned int index=random.get_int(0, m_map.darts().capacity());
@@ -122,7 +144,7 @@ public:
     Dart_const_handle pend=m_map.other_extremity(m_path.back());
     if (pend==Map::null_handle) { return false; }
 
-    typename Map::template Dart_of_cell_range<0>::iterator
+    typename Map::template Dart_of_cell_range<0>::const_iterator
         it=m_map.template darts_of_cell<0>(pend).begin();
 
      unsigned int index=random.get_int((allow_half_turn?0:1), m_map.template darts_of_cell<0>
@@ -130,7 +152,9 @@ public:
      for(unsigned int i=0; i<index; ++i)
      { ++it; }
 
-      m_path.push_back(it);
+     assert(allow_half_turn || it!=pend);
+     
+     m_path.push_back(it);
      return true;
   }
 

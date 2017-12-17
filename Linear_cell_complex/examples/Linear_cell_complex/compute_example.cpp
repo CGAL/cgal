@@ -6,7 +6,7 @@
 
 /* If you want to use a viewer, you can use qglviewer. */
 #ifdef CGAL_USE_BASIC_VIEWER
-#include "linear_cell_complex_3_viewer_qt.h"
+#include <CGAL/LCC_with_paths.h>
 #endif
 
 typedef CGAL::Linear_cell_complex_for_combinatorial_map<2,3> LCC_3_cmap;
@@ -31,6 +31,19 @@ int main(int argc, char** argv)
   lcc.display_characteristics(std::cout) << ", valid=" 
                                          << lcc.is_valid() << std::endl;
 
+  CGAL::Random random;
+  CGAL::Path_on_surface<LCC_3_cmap> p1(lcc);
+  p1.generate_random_path(10, random); // 10 %
+  CGAL::Path_on_surface<LCC_3_cmap> p2(lcc);
+  p2.generate_random_path(15, random);
+  std::vector<const CGAL::Path_on_surface<LCC_3_cmap>*> v;
+  v.push_back(&p1);
+  v.push_back(&p2);
+  
+#ifdef CGAL_USE_BASIC_VIEWER
+  display(lcc, v);
+#endif // CGAL_USE_BASIC_VIEWER
+    
   CGAL::Combinatorial_map_tools<LCC_3_cmap> cmt(lcc);
   
   cmt.surface_simplification_in_one_vertex();
@@ -47,10 +60,6 @@ int main(int argc, char** argv)
   std::cout<<"After quadrangulation: ";
   lcc.display_characteristics(std::cout) << ", valid=" 
                                          << lcc.is_valid() << std::endl;
-  
-#ifdef CGAL_USE_BASIC_VIEWER
-  //  display_lcc(lcc);
-#endif // CGAL_USE_BASIC_VIEWER
 
   return EXIT_SUCCESS;
 }
