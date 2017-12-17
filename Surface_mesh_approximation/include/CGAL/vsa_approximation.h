@@ -866,7 +866,7 @@ public:
    * @param is_relative_to_chord true if the chord_error is relative to the the chord length (relative sense),
    * otherwise it's relative to the average edge length (absolute sense).
    * @param with_dihedral_angle true if add dihedral angle weight to the distance, false otherwise
-   * @param if_optimize_anchor_location true if optimize the anchor location, false otherwise
+   * @param optimize_anchor_location true if optimize the anchor locations, false otherwise
    * @param pca_plane true if use PCA plane fitting, otherwise use the default area averaged plane parameters
    * @return true if the extracted surface mesh is manifold, false otherwise.
    */
@@ -875,7 +875,7 @@ public:
     const FT chord_error = FT(5.0),
     const bool is_relative_to_chord = false,
     const bool with_dihedral_angle = false,
-    const bool if_optimize_anchor_location = true,
+    const bool optimize_anchor_location = true,
     const bool pca_plane = false) {
     // compute averaged edge length, used in chord subdivision
     m_average_edge_length = compute_averaged_edge_length(*m_ptm, m_vpoint_map);
@@ -896,10 +896,10 @@ public:
     find_edges(chord_error, is_relative_to_chord, with_dihedral_angle);
     add_anchors();
 
-    // descrete Delaunay triangulation
+    // discrete constrained Delaunay triangulation
     pseudo_cdt();
 
-    if (if_optimize_anchor_location)
+    if (optimize_anchor_location)
       optimize_anchor_location();
 
     return build_polyhedron_surface(tm_out);
