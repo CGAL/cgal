@@ -99,17 +99,14 @@ void init(QMainWindow* mainWindow, Scene_interface* scene_interface, Messages_in
       ui_widget.areas_iter_spinBox->setMinimum(1);
 
       ui_widget.time_step_spinBox->setValue(0.00001);
-      double current_time_step = ui_widget.time_step_spinBox->value();
-      ui_widget.time_step_spinBox->setSingleStep(current_time_step * 10);
-      ui_widget.time_step_spinBox->setMinimum(1e-15);
+      // todo: better time step
+      ui_widget.time_step_spinBox->setSingleStep(0.00001);
+      ui_widget.time_step_spinBox->setMinimum(1e-6);
 
       QObject* scene_object = dynamic_cast<QObject*>(scene);
       connect(scene_object, SIGNAL(itemAboutToBeDestroyed(CGAL::Three::Scene_item*)),
               this, SLOT(on_actionItemAboutToBeDestroyed()));
-
-
     }
-
 
 public Q_SLOTS:
     void smoothing_action()
@@ -163,7 +160,6 @@ public Q_SLOTS:
         poly_item->invalidateOpenGLBuffers();
         poly_item->itemChanged();
         QApplication::restoreOverrideCursor();
-
      }
 
     void on_curvature_clicked()
@@ -191,7 +187,6 @@ public Q_SLOTS:
         Polyhedron& pmesh = (poly_item != NULL) ? * poly_item->polyhedron() : * selection_item->polyhedron();
 
         int index_id = scene->item_id(poly_item);
-
         const double time_step = ui_widget.time_step_spinBox->value();
 
         QApplication::setOverrideCursor(Qt::WaitCursor);

@@ -57,7 +57,7 @@
       <rect>
        <x>190</x>
        <y>80</y>
-       <width>131</width>
+       <width>148</width>
        <height>33</height>
       </rect>
      </property>
@@ -70,7 +70,11 @@
        </widget>
       </item>
       <item>
-       <widget class="QDoubleSpinBox" name="time_step_spinBox"/>
+       <widget class="QDoubleSpinBox" name="time_step_spinBox">
+        <property name="decimals">
+         <number>6</number>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>

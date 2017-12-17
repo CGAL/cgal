@@ -1,4 +1,4 @@
-// Copyright (c) 2015 GeometryFactory (France).
+// Copyright (c) 2017 GeometryFactory (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -21,7 +21,7 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_SMOOTHING_H
 #define CGAL_POLYGON_MESH_PROCESSING_SMOOTHING_H
 
-#include <CGAL/Polygon_mesh_processing/internal/Smoothing/smoothing_impl.h>
+#include <CGAL/Polygon_mesh_processing/internal/Smoothing/mesh_smoothing_impl.h>
 #include <CGAL/Polygon_mesh_processing/internal/Smoothing/curvature_flow_impl.h>
 #include <CGAL/Polygon_mesh_processing/internal/Isotropic_remeshing/remesh_impl.h>
 #include <CGAL/Polygon_mesh_processing/internal/Smoothing/evaluation.h>
@@ -103,20 +103,20 @@ void smooth_angles(const FaceRange& faces, PolygonMesh& pmesh, const NamedParame
     t.start();
 #endif
 
-    //geom traits
+    // geom traits
     typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GeomTraits;
 
-    //vpmap
+    // vpmap
     typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type VertexPointMap;
     VertexPointMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
                                  get_property_map(CGAL::vertex_point, pmesh));
 
-    //fimap
+    // fimap
     typedef typename GetFaceIndexMap<PolygonMesh, NamedParameters>::type FIMap;
     FIMap fimap = choose_param(get_param(np, internal_np::face_index),
                              get_property_map(face_index, pmesh));
 
-    //vcmap
+    // vcmap
     typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
     typedef typename boost::lookup_named_param_def <
         internal_np::vertex_is_constrained_t,
@@ -126,7 +126,7 @@ void smooth_angles(const FaceRange& faces, PolygonMesh& pmesh, const NamedParame
     VCMap vcmap = choose_param(get_param(np, internal_np::vertex_is_constrained),
                                internal::No_constraint_pmap<vertex_descriptor>());
 
-    //ecmap
+    // ecmap
     typedef typename boost::lookup_named_param_def <
           internal_np::edge_is_constrained_t,
           NamedParameters,
@@ -138,10 +138,10 @@ void smooth_angles(const FaceRange& faces, PolygonMesh& pmesh, const NamedParame
     : choose_param(get_param(np, internal_np::edge_is_constrained),
                    internal::Border_constraint_pmap<PolygonMesh, FaceRange, FIMap>());
 
-    //nb_iterations
+    // nb_iterations
     unsigned int nb_iterations = choose_param(get_param(np, internal_np::number_of_iterations), 1);
 
-    //use weighted angles
+    //use weighted angles - should always be true?
     bool use_weights = choose_param(get_param(np, internal_np::use_weights), true);
 
     // convergence precision

@@ -1,4 +1,4 @@
-// Copyright (c) 2015 GeometryFactory (France).
+// Copyright (c) 2017 GeometryFactory (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -41,35 +41,29 @@
 
 
 namespace CGAL {
-
 namespace Polygon_mesh_processing {
-
 namespace internal {
-
 
 template<typename PolygonMesh, typename VertexPointMap, typename VertexConstraintMap, typename EdgeConstraintMap, typename GeomTraits>
 class Compatible_remesher
 {
-
     typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
     typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
     typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
     typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor edge_descriptor;
     typedef typename boost::graph_traits<PolygonMesh>::vertex_iterator vertex_iterator;
-
     typedef typename GeomTraits::Point_3 Point;
     typedef typename GeomTraits::Vector_3 Vector;
     typedef typename GeomTraits::Segment_3 Segment;
     typedef typename GeomTraits::Triangle_3 Triangle;
+
     typedef std::vector<Triangle> Triangle_list;
+    typedef std::pair<halfedge_descriptor, halfedge_descriptor> he_pair;
+    typedef std::map<halfedge_descriptor, he_pair> Edges_around_map;
 
     typedef CGAL::AABB_triangle_primitive<GeomTraits, typename Triangle_list::iterator> AABB_Primitive;
     typedef CGAL::AABB_traits<GeomTraits, AABB_Primitive> AABB_Traits;
     typedef CGAL::AABB_tree<AABB_Traits> Tree;
-
-    typedef std::pair<halfedge_descriptor, halfedge_descriptor> he_pair;
-    typedef std::map<halfedge_descriptor, he_pair> Edges_around_map;
-
 
 public:
     Compatible_remesher(PolygonMesh& pmesh, VertexPointMap& vpmap, VertexConstraintMap& vcmap, EdgeConstraintMap& ecmap) :
@@ -663,7 +657,6 @@ private:
         }
     }
 
-
 private:
 
     // data members
@@ -680,9 +673,6 @@ private:
 
 };
 
-
-
-
 } // namespace internal
 } // namespace Polygon_mesh_processing
 } // namespace CGAL
@@ -691,5 +681,3 @@ private:
 
 
 #endif // CGAL_POLYGON_MESH_PROCESSING_SMOOTHING_IMPL_H
-
-

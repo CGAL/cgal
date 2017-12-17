@@ -11,10 +11,10 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Surface_mesh<K::Point_3> Mesh;
 
-int main(){
+int main(int argc, char* argv[]){
 
     namespace PMP = CGAL::Polygon_mesh_processing;
-    const char* filename = "data/pig.off";
+    const char* filename = argc > 1 ? argv[1] : "data/pig.off";
     std::ifstream input(filename);
 
     Mesh mesh;
@@ -23,24 +23,12 @@ int main(){
         return 1;
     }
 
-    /*
-    unsigned int nb_iter = 10;
-    CGAL::Polygon_mesh_processing::smooth_curvature_flow(mesh,
-                                                         CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter));
+    const double time = 1e-5;
+    CGAL::Polygon_mesh_processing::smooth_modified_curvature_flow(mesh, time);
 
-    std::ofstream output("data/dino_smoothed.off");
+    std::ofstream output("data/pig_smoothed_to_sphere.off");
     output << mesh;
     output.close();
-
-    */
-    unsigned int nb_iter2 = 1;
-    const double time = 10;
-    CGAL::Polygon_mesh_processing::smooth_modified_curvature_flow(faces(mesh), mesh,
-                                                                  CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter2));
-
-    std::ofstream output2("data/pig_smoothed_to_sphere.off");
-    output2 << mesh;
-    output2.close();
 
     return 0;
 }
