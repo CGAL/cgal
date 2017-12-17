@@ -141,8 +141,16 @@ public:
       return true;
     }
 
-    Dart_const_handle pend=m_map.other_extremity(m_path.back());
-    if (pend==Map::null_handle) { return false; }
+    Dart_const_handle pend=m_map.opposite(m_path.back());
+    if (pend==Map::null_handle)
+    {
+      if (!m_map.template is_free<1>(m_path.back()))
+      {
+        m_path.push_back(m_map.template beta<1>(m_path.back()));
+        return true;
+      }
+      else { return false; }
+    }
 
     typename Map::template Dart_of_cell_range<0>::const_iterator
         it=m_map.template darts_of_cell<0>(pend).begin();
@@ -264,9 +272,9 @@ protected:
       Dart_handle currentdart=NULL;
       
       for (typename Map::Dart_range::iterator it=m_map.darts().begin(),
-           itend=m_map.darts().end(); it!=itend; ++it)
+           itend=m_map.darts().end(); it!=itend;)
       {
-        currentdart=it;
+        currentdart=it++;
         if (!m_map.is_marked(currentdart, treated))
         {
           if (m_map.template is_free<2>(currentdart))
@@ -289,9 +297,9 @@ protected:
 
               // TODO LATER (?) OPTIMIZE AND REPLACE THE REMOVE_CELL CALL BY THE MODIFICATION BY HAND
               // OR DEVELOP A SPECIALIZED VERSION OF REMOVE_CELL
-              m_map.remove_cell<1>(currentdart);
-              if (!m_map.is_dart_used(it))
+              if (m_map.is_marked(it, treated))
               { ++it; }
+              m_map.remove_cell<1>(currentdart);
             }
           }
         }

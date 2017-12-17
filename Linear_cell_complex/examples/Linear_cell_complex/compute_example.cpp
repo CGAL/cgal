@@ -36,9 +36,15 @@ int main(int argc, char** argv)
   p1.generate_random_path(10, random); // 10 %
   CGAL::Path_on_surface<LCC_3_cmap> p2(lcc);
   p2.generate_random_path(15, random);
+  CGAL::Path_on_surface<LCC_3_cmap> p3(lcc);
+  p3.generate_random_path(10, random); // 10 %
+  CGAL::Path_on_surface<LCC_3_cmap> p4(lcc);
+  p4.generate_random_path(15, random);
   std::vector<const CGAL::Path_on_surface<LCC_3_cmap>*> v;
   v.push_back(&p1);
   v.push_back(&p2);
+  v.push_back(&p3);
+  v.push_back(&p4);
   
 #ifdef CGAL_USE_BASIC_VIEWER
   display(lcc, v);

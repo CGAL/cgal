@@ -91,7 +91,7 @@ public:
     Base(title),
     lcc(alcc),
     m_paths(paths),
-    m_current_path(0),
+    m_current_path(m_paths.size()),
     m_nofaces(anofaces),
     m_fcolor(fcolor)
   { compute_elements(); }
@@ -106,9 +106,15 @@ protected:
     unsigned int markedges    = lcc.get_new_mark();
     unsigned int markvertices = lcc.get_new_mark();
 
-    // for (unsigned int i=0; i<m_paths.size(); ++i)
-    // { compute_path(i, markedges); }
-    compute_path(m_current_path, markedges);
+    if (m_current_path==m_paths.size())
+    {
+      for (unsigned int i=0; i<m_paths.size(); ++i)
+      { compute_path(i, markedges); }
+    }
+    else
+    {
+      compute_path(m_current_path, markedges);
+    }
     
     for (typename LCC::Dart_range::const_iterator it=lcc.darts().begin(),
          itend=lcc.darts().end(); it!=itend; ++it )
@@ -189,8 +195,8 @@ protected:
     const ::Qt::KeyboardModifiers modifiers = e->modifiers();
     if ((e->key()==::Qt::Key_N) && (modifiers==::Qt::NoButton))
     {
-      m_current_path=(m_current_path+1)%m_paths.size();
-      displayMessage(QString("Draw path=%1.").arg(m_current_path));
+      m_current_path=(m_current_path+1)%(m_paths.size()+1);
+      displayMessage(QString("Draw path=%1.").arg((m_current_path)));
       compute_elements();
       initialize_buffers();
       compile_shaders();
