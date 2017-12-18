@@ -32,6 +32,36 @@
 
 namespace CGAL {
 
+  template < class InterpolationTraits>
+  struct V2P {
+    InterpolationTraits traits;
+    typedef typename InterpolationTraits::Point_d Point;
+    typedef typename InterpolationTraits::Weighted_point_d Weighted_point;
+
+    V2P(const InterpolationTraits& traits)
+      : traits(traits)
+    {}
+    
+    template <typename VH>
+    const Point& operator()(const VH& vh) const
+    {
+      return traits.construct_point_d_object()(vh->point());
+    }
+
+    
+    const Point& operator()(const Point& p) const
+    {
+      return p;
+    }
+    
+    Point operator()(const Weighted_point& wp) const
+    {
+      return traits.construct_point_d_object()(wp);
+    }
+    
+  };
+
+  
 //Functor class for accessing the function values/gradients
 template< class Map >
 struct Data_access
@@ -76,20 +106,19 @@ linear_interpolation(ForwardIterator first, ForwardIterator beyond,
 }
 
 
-template < class ForwardIterator, class Functor, class GradFunctor, class Traits>
+  template < class ForwardIterator, class Functor, class GradFunctor, class Traits, class Point>
 std::pair< typename Functor::result_type::first_type, bool>
 quadratic_interpolation(ForwardIterator first, ForwardIterator beyond,
                         const typename
                           std::iterator_traits<ForwardIterator>::
                           value_type::second_type& norm,
-                        const typename
-                          std::iterator_traits<ForwardIterator>::value_type::
-                          first_type& p,
+                        const Point& p,
                         Functor function_value,
                         GradFunctor function_gradient,
                         const Traits& traits)
 {
   CGAL_precondition(norm >0);
+  V2P<Traits> v2p(traits);
   typedef typename Functor::result_type::first_type Value_type;
   Value_type result(0);
   typename Functor::result_type f;
@@ -104,26 +133,25 @@ quadratic_interpolation(ForwardIterator first, ForwardIterator beyond,
     result += (first->second/norm)
               *( f.first + grad.first*
                  traits.construct_scaled_vector_d_object()
-                 (traits.construct_vector_d_object()(first->first, p),0.5));
+                 (traits.construct_vector_d_object()(v2p(first->first), p),0.5));
   }
   return std::make_pair(result, true);
 }
 
 
-template < class ForwardIterator, class Functor, class GradFunctor, class Traits>
+  template < class ForwardIterator, class Functor, class GradFunctor, class Traits, class Point>
 std::pair< typename Functor::result_type::first_type, bool>
 sibson_c1_interpolation(ForwardIterator first, ForwardIterator beyond,
                         const typename
                           std::iterator_traits<ForwardIterator>::
                           value_type::second_type& norm,
-                        const typename
-                          std::iterator_traits<ForwardIterator>::value_type::
-                          first_type& p,
+                        const Point& p,
                         Functor function_value,
                         GradFunctor function_gradient,
                         const Traits& traits)
 {
   CGAL_precondition(norm >0);
+  V2P<Traits> v2p(traits);
   typedef typename Functor::result_type::first_type Value_type;
   typedef typename Traits::FT                       Coord_type;
 
@@ -142,7 +170,7 @@ sibson_c1_interpolation(ForwardIterator first, ForwardIterator beyond,
 
     Coord_type coeff = first->second/norm;
     Coord_type squared_dist = traits.
-                              compute_squared_distance_d_object()(first->first, p);
+      compute_squared_distance_d_object()(v2p(first->first), p);
     Coord_type dist = CGAL_NTS sqrt(squared_dist);
 
     if(squared_dist ==0){
@@ -161,7 +189,7 @@ sibson_c1_interpolation(ForwardIterator first, ForwardIterator beyond,
 
     gradient_int += (coeff/dist)
                     * (f.first + grad.first *
-                       traits.construct_vector_d_object()(first->first, p));
+                       traits.construct_vector_d_object()(v2p(first->first), p));
   }
 
   term4 = term3/ term1;
@@ -184,20 +212,19 @@ sibson_c1_interpolation(ForwardIterator first, ForwardIterator beyond,
 // 	  (vh->get_value()+  vh->get_gradient()
 // 	   *(p - vh->point()));
 
-template < class ForwardIterator, class Functor, class GradFunctor, class Traits>
+  template < class ForwardIterator, class Functor, class GradFunctor, class Traits, class Point>
 std::pair< typename Functor::result_type::first_type, bool>
 sibson_c1_interpolation_square(ForwardIterator first, ForwardIterator beyond,
                                const typename
                                  std::iterator_traits<ForwardIterator>::
                                  value_type::second_type& norm,
-                               const typename
-                                 std::iterator_traits<ForwardIterator>::
-                                 value_type::first_type& p,
+                               const Point& p,
                                Functor function_value,
                                GradFunctor function_gradient,
                                const Traits& traits)
 {
   CGAL_precondition(norm >0);
+  V2P<Traits> v2p(traits);
   typedef typename Functor::result_type::first_type Value_type;
   typedef typename Traits::FT                       Coord_type;
 
@@ -215,8 +242,7 @@ sibson_c1_interpolation_square(ForwardIterator first, ForwardIterator beyond,
       return std::make_pair(Value_type(0), false);
 
     Coord_type coeff = first->second/norm;
-    Coord_type squared_dist = traits.
-                              compute_squared_distance_d_object()(first->first, p);
+    Coord_type squared_dist = traits.compute_squared_distance_d_object()(v2p(first->first), p);
 
     if(squared_dist ==0){
       ForwardIterator it = first;
@@ -233,7 +259,7 @@ sibson_c1_interpolation_square(ForwardIterator first, ForwardIterator beyond,
     linear_int += coeff * f.first;
 
     gradient_int += (coeff/squared_dist) * (f.first + grad.first *
-                      traits.construct_vector_d_object()(first->first, p));
+                                            traits.construct_vector_d_object()(v2p(first->first), p));
   }
 
   term4 = term3/ term1;
@@ -245,16 +271,14 @@ sibson_c1_interpolation_square(ForwardIterator first, ForwardIterator beyond,
 
 
 template < class RandomAccessIterator, class Functor, class
-           GradFunctor, class Traits>
+           GradFunctor, class Traits, class Point_>
 std::pair< typename Functor::result_type::first_type, bool>
 farin_c1_interpolation(RandomAccessIterator first,
                        RandomAccessIterator beyond,
                        const typename
                          std::iterator_traits<RandomAccessIterator>::
                          value_type::second_type& norm,
-                       const typename
-                         std::iterator_traits<RandomAccessIterator>::
-                         value_type::first_type& /*p*/,
+                       const Point_& /*p*/,
                        Functor function_value, GradFunctor
                        function_gradient,
                        const Traits& traits)
@@ -265,6 +289,7 @@ farin_c1_interpolation(RandomAccessIterator first,
   typedef typename Functor::result_type::first_type  Value_type;
   typedef typename Traits::FT                        Coord_type;
 
+  V2P<Traits> v2p(traits);
   typename Functor::result_type f;
   typename GradFunctor::result_type grad;
 
@@ -311,7 +336,7 @@ farin_c1_interpolation(RandomAccessIterator first,
 
         //ordinates[i][j] = (p_j - p_i) * g_i
         ordinates[i][j] = grad.first *
-                          traits.construct_vector_d_object()(it->first,it2->first);
+          traits.construct_vector_d_object()(v2p(it->first),v2p(it2->first));
 
         // a point in the tangent plane:
         // 3( f(p_i) + (1/3)(p_j - p_i) * g_i)
