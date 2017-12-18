@@ -101,7 +101,7 @@ The following minimal example reads a point set from a file and detects only pla
 
 \subsection Point_set_shape_detection_3Usage_callback Planar Shape Detection with Callback
 
-Both Region Growing and Efficient RANSAC provide a callback mechanism that can be used for example to terminate the algorithm if it takes too long. The following example shows the instanciation of a time-out callback that stops the algorithm if it takes more than half a second:
+Both Region Growing and Efficient RANSAC provide a callback mechanism that allows the user to know what is the current advancement of the algorithm. It can be used for example to terminate the algorithm if it takes too long. The following example shows the instanciation of a time-out callback that stops the algorithm if it takes more than half a second (and prints out the reached advancement):
 
 \cgalExample{Point_set_shape_detection_3/shape_detection_with_callback.cpp}
 

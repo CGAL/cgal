@@ -32,6 +32,7 @@
 #include <CGAL/Search_traits_adapter.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
 #include <CGAL/squared_distance_3.h>
+#include <CGAL/function.h>
 
 #include <boost/iterator/counting_iterator.hpp>
 #include <boost/iterator/transform_iterator.hpp>
@@ -169,8 +170,6 @@ shape. The implementation follows \cgalCite{cgal:lm-clscm-12}.
 
     
   private:
-    
-    struct Empty_callback { bool operator()(double) const { return true; } };
     
     class My_point_map
     {
@@ -459,32 +458,25 @@ shape. The implementation follows \cgalCite{cgal:lm-clscm-12}.
     /// \name Detection 
     /// @{
 
-    /// \cond SKIP_IN_MANUAL
-    bool detect (const Parameters& options = Parameters())
-    {
-      return detect<Empty_callback> (options);
-    }
-    /// \endcond
-
-    
     /*! 
       Performs the shape detection.
 
-      \tparam Callback can be omitted if the algorithm should be run
-      without any callback. `Callback` must be a functor providing
-      `bool operator()(double) const`. This functor is called
-      regularly when the algorithm is running: the current advancement
-      (between 0. and 1.) is passed as parameter. If it returns
-      `true`, then the algorithm continues its execution normally; if
-      it returns `false`, the algorithm is stopped. Note that this
-      interruption may leave the class in an invalid state.
+      \param options %Parameters for shape detection.
+
+      \param callback can be omitted if the algorithm should be run
+      without any callback. It is called regularly when the algorithm
+      is running: the current advancement (between 0. and 1.) is
+      passed as parameter. If it returns `true`, then the algorithm
+      continues its execution normally; if it returns `false`, the
+      algorithm is stopped. Note that this interruption may leave the
+      class in an invalid state.
 
       \return `true` if shape types have been registered and
               input data has been set. Otherwise, `false` is returned.
     */
-    template <typename Callback>
-    bool detect(const Parameters &options, ///< %Parameters for shape detection.
-                const Callback& callback = Callback()) ///< Functor for callback mechanism.
+    bool detect(const Parameters &options = Parameters(),
+                const cpp11::function<bool(double)>& callback
+                = cpp11::function<bool(double)>())
     {
       // No shape types for detection or no points provided, exit
       if (m_shape_factories.size() == 0 ||
@@ -535,7 +527,7 @@ shape. The implementation follows \cgalCite{cgal:lm-clscm-12}.
       //Initialization structures
       int class_index = -1;
 
-      if (!callback(0.))
+      if (callback && !callback(0.))
         return false;
       
       std::vector<std::size_t> neighbors;
@@ -560,7 +552,7 @@ shape. The implementation follows \cgalCite{cgal:lm-clscm-12}.
       std::size_t num_to_test = 1 + m_num_total_points - m_options.min_points;
       for (std::size_t I = 0; I < num_to_test; ++ I)
       {
-        if (!callback(1. - (m_num_available_points / double(m_num_total_points))))
+        if (callback && !callback(1. - (m_num_available_points / double(m_num_total_points))))
           return false;
 
         std::size_t i = sorted_indices[I];
