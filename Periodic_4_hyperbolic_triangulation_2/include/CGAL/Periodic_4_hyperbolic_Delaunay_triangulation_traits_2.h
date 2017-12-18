@@ -506,7 +506,6 @@ public:
 
 
 	class Construct_inexact_hyperbolic_bisector_2 {
-		typedef Exact_complex<FT> 		Exact_complex;
 	public:      
 		typedef Segment_2 result_type;
 
@@ -573,12 +572,13 @@ public:
 
 			if (ori == LEFT_TURN) {
 				Circular_arc_2 carc(supp, pp2, pp1);
-				return carc;
+				return carc;		
 			} else {
 				Circular_arc_2 carc(supp, pp1, pp2);
 				return carc;
 			}
 		}
+
 	}; // end Construct_hyperbolic_bisector_2
 	
 	Construct_hyperbolic_bisector_2
