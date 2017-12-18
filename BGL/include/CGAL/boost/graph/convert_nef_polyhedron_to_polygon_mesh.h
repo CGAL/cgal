@@ -176,7 +176,7 @@ struct Shell_polygons_visitor
               polygons.push_back( std::vector<std::size_t>() );
               polygons.back().push_back(vertex_indices[v[3]]);
               polygons.back().push_back(vertex_indices[v[1]]);
-              polygons.back().push_back(vertex_indices[v[0]]);
+              polygons.back().push_back(vertex_indices[v[2]]);
             }
             else
             {
@@ -185,9 +185,9 @@ struct Shell_polygons_visitor
               polygons.back().push_back(vertex_indices[v[3]]);
               polygons.back().push_back(vertex_indices[v[1]]);
               polygons.push_back( std::vector<std::size_t>() );
-              polygons.back().push_back(vertex_indices[v[3]]);
-              polygons.back().push_back(vertex_indices[v[0]]);
               polygons.back().push_back(vertex_indices[v[1]]);
+              polygons.back().push_back(vertex_indices[v[3]]);
+              polygons.back().push_back(vertex_indices[v[2]]);
             }
           }
           return;
