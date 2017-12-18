@@ -59,7 +59,7 @@ public:
   /**
    * Constructor
    * @param f the function which negative values defines the domain
-   * @param cuboid a bounding box of the domain, periodic domain
+   * @param cuboid the fundamental domain
    * @param error_bound the error bound relative to the sphere radius
    */
   Implicit_periodic_3_mesh_domain_3(const Function& f,

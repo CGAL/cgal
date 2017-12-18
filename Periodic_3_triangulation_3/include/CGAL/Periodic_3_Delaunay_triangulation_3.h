@@ -687,7 +687,7 @@ public:
   }
 
   // The following functions return the "real" position in space (unrestrained
-  // to the original periodic domain) of the vertices v and c->vertex(idx),
+  // to the fundamental domain) of the vertices v and c->vertex(idx),
   // respectively
 
   Point point(Vertex_handle v) const

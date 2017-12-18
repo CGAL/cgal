@@ -21,7 +21,7 @@ typedef P3DT3::Locate_type       Locate_type;
 
 int main(int, char**)
 {
-  Iso_cuboid domain(-1,-1,-1,2,2,2);  // the cube for the periodic domain
+  Iso_cuboid domain(-1,-1,-1,2,2,2);  // the fundamental domain
 
   // construction from a list of points :
   std::list<Point> L;

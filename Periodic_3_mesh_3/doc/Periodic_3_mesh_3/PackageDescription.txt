@@ -1,8 +1,8 @@
 /// \defgroup PkgPeriodic_3_mesh_3 3D Periodic Mesh Generation Reference
 
-/// \defgroup PkgPeriodic_3_mesh_3Concepts Main Concepts
+/// \defgroup PkgPeriodic_3_mesh_3Concepts Concepts
 /// \ingroup PkgPeriodic_3_mesh_3
-/// The main concepts of this package.
+/// The concepts of this package.
 
 /// \defgroup PkgPeriodic_3_mesh_3MeshClasses Mesh Classes
 /// \ingroup PkgPeriodic_3_mesh_3
@@ -31,11 +31,10 @@ flexibility that is offered in the \ref PkgMesh_3Summary package.}
 \cgalPkgManuals{Chapter_3D_Periodic_Mesh_Generation,PkgPeriodic_3_mesh_3}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
-\cgalPkgSince{4.11}
+\cgalPkgSince{4.13}
 \cgalPkgDependsOn{\ref PkgPeriodic3Triangulation3Summary, \ref PkgMesh_3Summary}
 \cgalPkgBib{cgal:btprl-p3m3}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
-\cgalPkgDemo{,}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
@@ -43,18 +42,18 @@ flexibility that is offered in the \ref PkgMesh_3Summary package.}
 
 A periodic mesh extends, by definition, infinitely in space. To avoid storing and
 manipulating duplicate points, well-chosen "dummy" points are inserted
-at the beginning of the meshing process, thus ensuring that the periodic triangulation
-forms at all times a simplicial complex within a single fundamental copy of the domain
+at the beginning of the meshing process, thus ensuring that the underlying periodic
+triangulation forms at all times a simplicial complex within a single copy of the periodic space \f$ \mathbb T_c^3\f$
 (see Sections \ref P3Triangulation3secspace and \ref P3Triangulation3secintro
-of the manual of 3D periodic triangulations).
-The meshing process can then be exclusively conducted in the fundamental domain.
-This single copy of the complete periodic mesh is generated using
-the three-dimensional mesh generator of %CGAL (see package: \ref PkgMesh_3Summary).
-Since this mesh generator only supports traditional (non-periodic) domains,
-it must be provided adapted oracles to handle the periodicity of the input domain
-and of the mesh.
-This package provides the necessary tools to be able to use %CGAL's \ref PkgMesh_3Summary
-with %CGAL's \ref PkgPeriodic3Triangulation3Summary.
+of the package \ref PkgPeriodic3Triangulation3Summary).
+By identifying a single copy of the flat torus \f$ \mathbb T_c^3\f$ (where `c`
+denotes the period) with a cube of side `c` in \f$ \mathbb R^3\f$, the meshing process
+can be exclusively conducted within this cube.
+The mesh within a single copy is created using %CGAL's \ref PkgMesh_3Summary package, but
+because %CGAL's \ref PkgMesh_3Summary package aims to mesh traditional (non-periodic)
+domains, an interface is necessary between %CGAL's \ref PkgMesh_3Summary package
+and %CGAL's \ref PkgPeriodic3Triangulation3Summary.
+This package offers these interfaces.
 
 \cgalClassifedRefPages
 

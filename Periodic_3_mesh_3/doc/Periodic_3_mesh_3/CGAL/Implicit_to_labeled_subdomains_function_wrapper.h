@@ -6,7 +6,9 @@ namespace CGAL {
 The class `Implicit_to_labeled_subdomains_function_wrapper` is a helper class
 designed to wrap an implicit function which describes a domain by
 [`p` is inside if `f(p)<0`] to a function that takes its values into `{1, 2}` and
-thus describes a multidomain.
+thus describes a multidomain: the subspace described by `f(p)<0` is attributed
+the subdomain index `1` and the subspace described by `f(p)>0` is attributed
+the subdomain index `2`.
 
 Note that for the 3D mesh generator [`f(p)=0`] means that p is outside the domain.
 Since this wrapper has values into `{1, 2}`, both the interior and the exterior of

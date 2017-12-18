@@ -643,7 +643,7 @@ public:
   }
 
   // The following functions return the "real" position in space (unconstrained
-  // to the original periodic domain) of the vertices v and c->vertex(idx),
+  // to the fundamental domain) of the vertices v and c->vertex(idx),
   // respectively
   template <class ConstructPoint>
   Point point(Vertex_handle v, ConstructPoint cp) const {
@@ -2583,9 +2583,9 @@ template < class GT, class TDS >
 inline typename Periodic_3_triangulation_3<GT,TDS>::Vertex_handle
 Periodic_3_triangulation_3<GT,TDS>::create_initial_triangulation(const Point& p)
 {
-  /// Virtual vertices, one per periodic domain
+  /// Virtual vertices, one per periodic instance
   Vertex_handle vir_vertices[3][3][3];
-  /// Virtual cells, 6 per periodic domain
+  /// Virtual cells, 6 per periodic instance
   Cell_handle cells[3][3][3][6];
 
   // Initialise vertices:

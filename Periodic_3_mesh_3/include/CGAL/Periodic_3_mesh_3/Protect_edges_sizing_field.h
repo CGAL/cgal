@@ -30,7 +30,7 @@
 
 // Main differences with Mesh_3's version:
 // - A map [Vertex_handle] --> [position in full space] because:
-//   * This position might not be in the canonical domain
+//   * This position might not be (in full space coordinates) in the canonical instance
 //   * Different curves might represent the same corner at different positions
 // - change_ball_size()'s signature is different: it can return false if we failed
 //   to change the ball size (if the triangulation cover changes during the process).
@@ -534,7 +534,7 @@ private:
 
   // The correspondence map is a map that keeps track of the position of the points
   // in the domain class, which might differ due to periodicity. For example,
-  // someone might be using the unit cube as periodic domain and add the vertex(1,0,0)
+  // someone might be using the unit cube as fundamental domain and add the vertex(1,0,0)
   // as corner. If 'v' is the vertex handle of that corner, we have v->point() = (0,0,0).
   //
   // This map must be kept perfectly up to date: removing a vertex from the triangulation

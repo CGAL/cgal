@@ -24,19 +24,21 @@ is further refined afterward.
 
 \attention The function template `refine_periodic_3_mesh_3()` may be used
 to refine a previously computed mesh, e.g.:
-
 \code{.cpp}
 C3T3 c3t3 = CGAL::make_periodic_3_mesh_3<C3T3>(domain,criteria);
 
 CGAL::refine_periodic_3_mesh_3(c3t3, domain, new_criteria);
 \endcode
 
-Note that the triangulation must form at all times a simplicial complex within
-a single copy of the domain. It is the responsability of the user to provide
+\attention Note that the triangulation must form at all times a simplicial complex within
+a single copy of the domain (see Sections \ref P3Triangulation3secspace and \ref P3Triangulation3secintro
+of the manual of 3D periodic triangulations). It is the responsability of the user to provide
 a triangulation that satisfies this condition when calling the refinement
-function `refine_periodic_3_mesh_3`.
+function `refine_periodic_3_mesh_3`. The underlying triangulation of a mesh
+complex obtained through `make_periodic_3_mesh_3()` or `refine_periodic_3_mesh_3()`
+will always satisfy this condition.
 
-\tparam  C3T3 is required to be a model of the concept `MeshComplex_3InTriangulation_3`.
+\tparam C3T3 is required to be a model of the concept `MeshComplex_3InTriangulation_3`.
 The argument `c3t3` is passed by reference as this object is modified
 by the refinement process. As the refinement process only adds points
 to the triangulation, all vertices of the triangulation of `c3t3` remain in the

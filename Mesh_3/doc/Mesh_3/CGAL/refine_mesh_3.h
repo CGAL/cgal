@@ -27,7 +27,6 @@ is further refined afterward.
 
 \attention The function template `refine_mesh_3()` may be used to refine a previously
 computed mesh, e.g.:
-
 \code{.cpp}
 C3T3 c3t3 = CGAL::make_mesh_3<C3T3>(domain,criteria);
 

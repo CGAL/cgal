@@ -98,7 +98,7 @@ construct_periodic_point_exact(const typename Gt_::Point_3& p,
 }
 
 // Given a point `p` in space, compute its offset `o` with respect
-// to the canonical domain and returns (p, o)
+// to the canonical instance and returns (p, o)
 template <typename Gt_>
 std::pair<typename Gt_::Point_3, typename Gt_::Periodic_3_offset_3>
 construct_periodic_point(const typename Gt_::Point_3& p, bool& encountered_issue, const Gt_& gt)

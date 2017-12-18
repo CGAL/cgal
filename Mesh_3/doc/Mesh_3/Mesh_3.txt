@@ -130,7 +130,8 @@ Currently, 1-dimensional features may be defined as segments and polyline segmen
 
 \subsection Mesh_3OutputMesh Output Mesh
 
-The resulting mesh is output as a subcomplex of a weighted 3D triangulation,
+The resulting mesh is output as a subcomplex of a
+\ref CGAL::Regular_triangulation_3 "weighted 3D triangulation",
 in a class providing various iterators
 on mesh elements.
 
@@ -149,8 +150,8 @@ and the 0-dimensional exposed features are represented by mesh vertices.
 
 \subsubsection Mesh_3OutputFaceGraph Output FaceGraph
 
-This \cgal component also provides a function to convert the reconstructed mesh to a `FaceGraph`,
-namely `facets_in_complex_3_to_triangle_mesh()`.
+This \cgal component also provides a function to extract the facets of the complex
+as a `FaceGraph`, namely `facets_in_complex_3_to_triangle_mesh()`.
 
 \subsection Mesh_3DelaunayRefinement Delaunay Refinement
 \anchor introsecparam
@@ -190,7 +191,7 @@ the corresponding points are inserted into the Delaunay triangulation
 from the start.
 
 If the domain has 1-dimensional exposed features,
-the method of protecting balls \cgalCite{cgal:cdr-drpsc-07}, \cgalCite{cgal:cdl-pdma-07}
+the method of protecting balls \cgalCite{cgal:cdl-pdma-07}, \cgalCite{cgal:cdr-drpsc-07}
 is used to achieve an accurate representation of those features in the mesh
 and to guarantee that the refinement process terminates
 whatever may be the dihedral angles formed by input surface patches incident to a
@@ -333,9 +334,9 @@ and to represent the final 3D mesh at the end
 of the procedure.
 
 The embedding 3D triangulation is required to be the nested type
-`CGAL::Mesh_triangulation_3::type`, provided by the meta functor
+`CGAL::Mesh_triangulation_3::type`, provided by the class
 `CGAL::Mesh_triangulation_3`. The type for this triangulation is a
-`CGAL::Regular_triangulation_3` whose vertex and cell base classes
+wrapper around the class `CGAL::Regular_triangulation_3` whose vertex and cell base classes
 are respectively models of the concepts `MeshVertexBase_3` and
 `MeshCellBase_3`.
 

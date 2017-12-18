@@ -446,7 +446,7 @@ public:
   // Warning : This function finds which offset 'Oq' should be applied to 'q' so
   // that the distance between 'p' and '(q, Oq)' is minimal.
   //
-  // \pre 'p' lives in the canonical domain.
+  // \pre 'p' lives in the canonical instance.
   Bare_point get_closest_point(const Bare_point& p, const Bare_point& q) const
   {
     Bare_point rq;

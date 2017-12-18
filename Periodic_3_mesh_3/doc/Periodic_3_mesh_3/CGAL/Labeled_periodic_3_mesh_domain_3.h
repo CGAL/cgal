@@ -15,8 +15,8 @@ This class includes a function that provides the index of the subdomain
 in which any query point lies. An intersection between a segment and bounding
 surfaces is detected when both segment endpoints are associated with different
 values of subdomain indices. The intersection is then constructed by bisection.
-The bisection stops when the query segment is shorter than an error bound
-`e` given by the product of the length of the diagonal of the bounding box
+The bisection stops when the query segment is shorter than an error bound `e`
+given by the product of the length of the diagonal of the cuboid
 (in world coordinates) and a relative error bound passed as argument
 to the constructor of `Labeled_periodic_3_mesh_domain_3`.
 
@@ -26,6 +26,8 @@ It uses a satisfactory labeling function if there is only one component to mesh.
 \tparam LabelingFunction is the type of the input function.<br />
         This parameter stands for a model of the concept `ImplicitFunction`
         described in the surface mesh generation package.<br />
+        The function is defined over the canonical representation of the three dimensional flat torus,
+        the input canonical cube (see Section \ref Periodic_3_mesh_3InputDomain).
         The labeling function `f` must return `0` if the point isn't located in any subdomain.
         Usually, the return types of labeling functions are integer.<br />
         Let `p` be a point.
@@ -33,7 +35,7 @@ It uses a satisfactory labeling function if there is only one component to mesh.
         <li>`f(p)=0` means that `p` is outside domain.</li>
         <li>`f(p)=a`, `a!=0` means that `p` is inside the subdomain `a`.</li>
         </ul>
-        Implicit_multi_domain_to_labeling_function_wrapper is a good candidate for this template parameter
+        `Implicit_multi_domain_to_labeling_function_wrapper` is a good candidate for this template parameter
         if there are several components to mesh.
 
 \tparam BGT is a geometric traits class that provides

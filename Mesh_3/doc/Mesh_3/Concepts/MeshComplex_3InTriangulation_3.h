@@ -61,7 +61,7 @@ The type of the
 embedding 3D triangulation. 
  It is required to be
   the nested type
-`CGAL::Mesh_triangulation_3::type`, provided by the meta functor 
+`CGAL::Mesh_triangulation_3::type`, provided by the class
 `CGAL::Mesh_triangulation_3<MD, GT, Concurrency_tag, Vertex_base, Cell_base>`
 where the Vertex_base and  Cell_base template parameters are respectively instantiated with models
 of the concepts `MeshVertexBase_3` and 

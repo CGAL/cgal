@@ -15,7 +15,8 @@ curves, and corners according to their respective dimensions 3, 2, 1, and 0.
 
 From a syntactic point of view, `Periodic_3MeshDomainWithFeatures_3`
 refines `MeshDomainWithFeatures_3`. However, the various requirements from
-`MeshDomainWithFeatures_3` must also take into account the periodicity of the domain.
+`MeshDomainWithFeatures_3` must also take into account the periodicity of the domain
+(see Section \ref Periodic_3_mesh_3InputDomain).
 
 Wrapping any model of `Periodic_3MeshDomain_3` with the class
 `CGAL::Mesh_domain_with_polyline_features_3` gives a model
