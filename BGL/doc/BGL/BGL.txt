@@ -419,7 +419,7 @@ are class templates that work for any model of this concept.
 
 \subsection BGLProperties Properties and Dynamic Properties
 
-As the concepts `HalfedgeGraph and `FaceGraph` add the notion of halfedges and faces,
+As the concepts `HalfedgeGraph` and `FaceGraph` add the notion of halfedges and faces,
 as well as a geometric embedding of the vertices, we have to add
 property tags such as `face_index_t` and `vertex_point_t`.
 
