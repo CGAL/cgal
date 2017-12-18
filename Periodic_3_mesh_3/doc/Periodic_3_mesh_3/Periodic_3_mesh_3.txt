@@ -58,7 +58,7 @@ the boundary and subdivision surface patches may form \cgalCite{cgal:cdl-pdma-07
 \cgalCite{cgal:cdr-drpsc-07}. The Delaunay refinement is followed
 by a mesh optimization phase to remove slivers and provide a good quality mesh.
 
-\subsection Periodic_3_mesh_3Mesh_3 Relation to the 3D Mesh Generation and 3D Periodic Triangulation Packages
+\subsection Periodic_3_mesh_3Mesh_3 Relation to the 3D Mesh Generation and 3D Periodic Triangulations Packages
 
 This package is fundamentally linked to the package \ref PkgMesh_3Summary,
 which is devoted to the generation of isotropic simplicial
