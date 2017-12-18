@@ -47,10 +47,6 @@ typedef CGAL::Mesh_criteria_3<Tr>                                   Mesh_criteri
 // To avoid verbose function and named parameters call
 using namespace CGAL::parameters;
 
-// Periodic domain
-static const int domain_size = 1;
-static const Iso_cuboid periodic_domain = Iso_cuboid(0, 0, 0, domain_size, domain_size, domain_size);
-
 // Implicit function
 static const FT cx = 0.51, cy = 0.51, cz = 0.5;
 static const FT scale = 0.9;
@@ -87,6 +83,7 @@ int main(int argc, char** argv)
   int number_of_copies_in_output = (argc > 1) ? atoi(argv[1]) : 8; // can be 1, 2, 4, or 8
 
   // Domain
+  const int domain_size = 1;
   Mesh_domain domain(cone_function,
                      CGAL::Iso_cuboid_3<K>(0, 0, 0, domain_size, domain_size, domain_size));
 
