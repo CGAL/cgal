@@ -179,8 +179,7 @@ struct Segments_function
     ++nb_evals;
 
     FT min_distance = 1000000;
-    for (Segments::const_iterator si = segments.begin();
-      si != segments.end(); ++si)
+    for (Segments::const_iterator si = segments.begin(); si != segments.end(); ++si)
       min_distance = std::min(CGAL::squared_distance(p, *si), min_distance);
 
     return min_distance - 0.01; // Change the squared beam radius here
@@ -208,13 +207,13 @@ std::vector<std::string> make_vps_in_out ()
   return vps;
 }
 
-C3t3 make_mesh (const Labeling_function& labeling_function, FT domain_size = FT(1.))
+C3t3 make_mesh(const Labeling_function& labeling_function)
 {
-  Periodic_mesh_domain domain(labeling_function, CGAL::Iso_cuboid_3<K>(0, 0, 0, domain_size, domain_size, domain_size));
+  Periodic_mesh_domain domain(labeling_function, CGAL::Iso_cuboid_3<K>(1, 1, 1, 3, 3, 3));
 
   Periodic_mesh_criteria criteria(facet_angle = 30.,
-                                  facet_size = 0.03 * domain_size,
-                                  facet_distance = 0.03 * domain_size,
+                                  facet_size = 0.03 * 2 /*domain's edge length*/,
+                                  facet_distance = 0.03 * 2 /*domain's edge length*/,
                                   cell_radius_edge_ratio = 2.,
                                   cell_size = 0.05);
 
@@ -243,7 +242,8 @@ int main(int, char**)
 
   std::vector<unsigned> v_ncopy;
 //  v_ncopy.push_back(1);
-  v_ncopy.push_back(4);
+  v_ncopy.push_back(2);
+//  v_ncopy.push_back(4);
 //  v_ncopy.push_back(8);
 
   for (std::map<std::string, Function>::iterator iter = functions.begin();
