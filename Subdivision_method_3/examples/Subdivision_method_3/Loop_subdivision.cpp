@@ -16,6 +16,7 @@ typedef CGAL::Surface_mesh<Kernel::Point_3>     PolygonMesh;
 
 using namespace std;
 using namespace CGAL;
+namespace params = CGAL::Polygon_mesh_processing::parameters;
 
 int main(int argc, char **argv) {
   if (argc > 4) {
@@ -40,7 +41,7 @@ int main(int argc, char **argv) {
 
   Timer t;
   t.start();
-  Subdivision_method_3::Loop_subdivision(pmesh,d);
+  Subdivision_method_3::Loop_subdivision(pmesh, params::number_of_iterations(d));
   std::cerr << "Done (" << t.time() << " s)" << std::endl;
 
   std::ofstream out(out_file);

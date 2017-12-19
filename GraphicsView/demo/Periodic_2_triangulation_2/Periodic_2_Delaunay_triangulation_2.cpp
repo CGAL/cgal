@@ -30,7 +30,8 @@
 #include "ui_Periodic_2_triangulation_2.h"
 #include <CGAL/Qt/DemosMainWindow.h>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel     EPIC;
+//typedef CGAL::Exact_predicates_inexact_constructions_kernel     EPIC;
+struct EPIC : public CGAL::Exact_predicates_inexact_constructions_kernel {};
 typedef CGAL::Periodic_2_Delaunay_triangulation_traits_2<EPIC>  Gt;
 typedef Gt::Point_2                                             Point_2;
 typedef Gt::Iso_rectangle_2                                     Iso_rectangle_2;

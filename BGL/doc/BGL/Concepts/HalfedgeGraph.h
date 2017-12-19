@@ -49,7 +49,7 @@ class HalfedgeGraph {
 };
 
 /*! \relates HalfedgeGraph
-returns the edge corresponding to halfedges `h` and `opposite(h,g)`.
+returns the edge corresponding to halfedges `h` and `opposite(h,g)`, with the following invariant `halfedge(edge(h,g),g)==h`.
  */
 template <typename HalfedgeGraph>
 boost::graph_traits<HalfedgeGraph>::edge_descriptor

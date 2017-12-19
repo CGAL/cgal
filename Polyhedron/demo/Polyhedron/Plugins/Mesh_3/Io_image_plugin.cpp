@@ -13,7 +13,7 @@
 
 #include <CGAL/Image_3.h>
 #include <CGAL/ImageIO.h>
-#include <CGAL/read_sep_image_data.h>
+#include <CGAL/SEP_to_ImageIO.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/Three/Scene_interface.h>
@@ -575,7 +575,7 @@ private:
 
       // Find the right width for the label to accommodate at least 9999
       QFontMetrics metric = x_cubeLabel->fontMetrics();
-      x_cubeLabel->setFixedWidth(metric.width(QString("9999")));
+      x_cubeLabel->setFixedWidth(metric.width(QString(".9999.")));
       x_cubeLabel->setText("0");
       x_cubeLabel->setValidator(validator);
 
@@ -601,7 +601,7 @@ private:
 
       // Find the right width for the label to accommodate at least 9999
       QFontMetrics metric = y_cubeLabel->fontMetrics();
-      y_cubeLabel->setFixedWidth(metric.width(QString("9999")));
+      y_cubeLabel->setFixedWidth(metric.width(QString(".9999.")));
       y_cubeLabel->setText("0");
       y_cubeLabel->setValidator(validator);
       y_slider = new QSlider(mw);
@@ -626,7 +626,7 @@ private:
 
       // Find the right width for the label to accommodate at least 9999
       QFontMetrics metric = z_cubeLabel->fontMetrics();
-      z_cubeLabel->setFixedWidth(metric.width(QString("9999")));
+      z_cubeLabel->setFixedWidth(metric.width(QString(".9999.")));
       z_cubeLabel->setText("0");
       z_cubeLabel->setValidator(validator);
       z_slider = new QSlider(mw);
@@ -636,6 +636,7 @@ private:
       z_box->addWidget(z_cubeLabel);
       show_sliders &= seg_img->image()->zdim() > 1;
     }
+    std::cout<<"show_sliders is "<<show_sliders<<std::endl;
     x_control->setEnabled(show_sliders);
     y_control->setEnabled(show_sliders);
     z_control->setEnabled(show_sliders);
@@ -860,7 +861,7 @@ private Q_SLOTS:
 
       x_box->addWidget(x_slider);
       x_box->addWidget(x_cubeLabel);
-      show_sliders &= x_slider->maximum() > 0;
+      show_sliders &= qobject_cast<Scene_image_item*>(sel_itm)->image()->xdim() > 1;
     }
     //y line
     if(c.y_item != NULL)
@@ -880,7 +881,7 @@ private Q_SLOTS:
       y_slider->setValue(c.y_value);
       y_box->addWidget(y_slider);
       y_box->addWidget(y_cubeLabel);
-      show_sliders &= y_slider->maximum() > 0;
+      show_sliders &= qobject_cast<Scene_image_item*>(sel_itm)->image()->ydim() > 1;
     }
     // z line
     if(c.z_item != NULL)
@@ -900,8 +901,9 @@ private Q_SLOTS:
       z_slider->setValue(c.z_value);
       z_box->addWidget(z_slider);
       z_box->addWidget(z_cubeLabel);
-      show_sliders &= z_slider->maximum() > 0;
+      show_sliders &= qobject_cast<Scene_image_item*>(sel_itm)->image()->zdim() > 1;
     }
+
       x_control->setEnabled(show_sliders);
       y_control->setEnabled(show_sliders);
       z_control->setEnabled(show_sliders);
@@ -1060,7 +1062,7 @@ Io_image_plugin::load(QFileInfo fileinfo) {
   //read a sep file
   else if(fileinfo.suffix() == "H" || fileinfo.suffix() == "HH")
   {
-    Sep_reader<float> reader(fileinfo.filePath().toUtf8().data());
+    CGAL::SEP_to_ImageIO<float> reader(fileinfo.filePath().toUtf8().data());
     *image = *reader.cgal_image();
     is_gray = true;
   }

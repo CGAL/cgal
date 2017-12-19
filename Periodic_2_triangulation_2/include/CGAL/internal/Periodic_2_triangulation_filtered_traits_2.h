@@ -37,12 +37,14 @@ namespace CGAL
 {
 // The Offset_converter is parametrized by a usual kernel converter,
 // and adds the conversions for Offsets.
-template < typename Converter >
+template <typename Converter_>
 struct Offset_converter_2
-  : public Converter
+  : public Converter_
 {
-  typedef typename Converter::Source_kernel Source_kernel;
-  typedef typename Converter::Target_kernel Target_kernel;
+  typedef Converter_                        Base;
+
+  typedef typename Base::Source_kernel      Source_kernel;
+  typedef typename Base::Target_kernel      Target_kernel;
 
   typedef typename Periodic_2_triangulation_traits_base_2<Source_kernel>::Offset   Source_off;
   typedef typename Periodic_2_triangulation_traits_base_2<Source_kernel>::Point_2  Source_pt;
@@ -50,35 +52,36 @@ struct Offset_converter_2
   typedef typename Periodic_2_triangulation_traits_base_2<Target_kernel>::Offset   Target_off;
   typedef typename Periodic_2_triangulation_traits_base_2<Target_kernel>::Point_2  Target_pt;
 
-  using Converter::operator();
+  using Base::operator();
 
   Target_off operator()(const Source_off &off) const { return off; }
 };
 
 // The argument is supposed to be a Filtered_kernel like kernel.
-template < typename K, typename Off >
+template <class K_, typename Off_>
 class Periodic_2_triangulation_filtered_traits_base_2
-  : public Periodic_2_triangulation_traits_base_2<K, Off>
+  : public Periodic_2_triangulation_traits_base_2<K_, Off_>
 {
-  typedef Periodic_2_triangulation_traits_base_2<K, Off> Base;
+  typedef Periodic_2_triangulation_traits_base_2<K_, Off_> Base;
+  typedef K_                                               Kernel;
 
-  typedef typename K::Exact_kernel                         EKernel;
-  typedef typename K::Approximate_kernel                   AKernel;
-  typedef typename K::C2E                                  C2E;
-  typedef typename K::C2F                                  C2F;
+  typedef typename Kernel::Exact_kernel                    EKernel;
+  typedef typename Kernel::Approximate_kernel              AKernel;
+  typedef typename Kernel::C2E                             C2E;
+  typedef typename Kernel::C2F                             C2F;
 
   // Exact traits is based on the exact kernel.
-  typedef Periodic_2_triangulation_traits_2<EKernel, Off>  Exact_traits;
+  typedef Periodic_2_triangulation_traits_2<EKernel, Off_> Exact_traits;
   // Filtering traits is based on the filtering kernel.
-  typedef Periodic_2_triangulation_traits_2<AKernel, Off>  Filtering_traits;
+  typedef Periodic_2_triangulation_traits_2<AKernel, Off_> Filtering_traits;
 
 public:
-  typedef typename K::Iso_rectangle_2 Iso_rectangle_2;
+  typedef typename Kernel::Iso_rectangle_2 Iso_rectangle_2;
 
   virtual ~Periodic_2_triangulation_filtered_traits_base_2() { }
 
   Periodic_2_triangulation_filtered_traits_base_2(const Iso_rectangle_2& domain,
-                                                  const K& k)
+                                                  const Kernel& k)
     : Base(domain, k),
       traits_e(C2E()(domain)),
       traits_f(C2F()(domain))
@@ -167,44 +170,45 @@ protected:
   Filtering_traits traits_f;
 };
 
-template < typename K,
-           typename Off = typename CGAL::Periodic_2_offset_2,
-           bool Has_static_filters = internal::Has_static_filters<K>::value >
+template <class K_,
+          class Off_ = typename CGAL::Periodic_2_offset_2,
+          bool Has_static_filters_ = internal::Has_static_filters<K_>::value >
 class Periodic_2_triangulation_filtered_traits_2;
 
 } //namespace CGAL
 
 #include <CGAL/internal/Periodic_2_triangulation_statically_filtered_traits_2.h>
 
-namespace CGAL
-{
+namespace CGAL {
 
-template < typename K, typename Off >
-class Periodic_2_triangulation_filtered_traits_2<K, Off, false>
-  : public Periodic_2_triangulation_filtered_traits_base_2<K, Off>
+template <class K_, class Off_>
+class Periodic_2_triangulation_filtered_traits_2<K_, Off_, false>
+  : public Periodic_2_triangulation_filtered_traits_base_2<K_, Off_>
 {
-  typedef Periodic_2_triangulation_filtered_traits_base_2<K, Off> Base;
+  typedef Periodic_2_triangulation_filtered_traits_base_2<K_, Off_> Base;
 
 public:
-  typedef typename K::Iso_rectangle_2 Iso_rectangle_2;
+  typedef K_                                                        Kernel;
+  typedef typename Kernel::Iso_rectangle_2                          Iso_rectangle_2;
 
   Periodic_2_triangulation_filtered_traits_2(const Iso_rectangle_2& domain,
-                                             const K& k)
+                                             const Kernel& k)
     : Base(domain, k)
   { }
 };
 
-template < typename K, typename Off >
-class Periodic_2_triangulation_filtered_traits_2<K, Off, true>
-  : public Periodic_2_triangulation_statically_filtered_traits_2<K, Off>
+template <class K_, class Off_>
+class Periodic_2_triangulation_filtered_traits_2<K_, Off_, true>
+  : public Periodic_2_triangulation_statically_filtered_traits_2<K_, Off_>
 {
-  typedef Periodic_2_triangulation_statically_filtered_traits_2<K, Off> Base;
+  typedef Periodic_2_triangulation_statically_filtered_traits_2<K_, Off_> Base;
 
 public:
-  typedef typename K::Iso_rectangle_2 Iso_rectangle_2;
+  typedef K_                                                              Kernel;
+  typedef typename Kernel::Iso_rectangle_2                                Iso_rectangle_2;
 
   Periodic_2_triangulation_filtered_traits_2(const Iso_rectangle_2& domain,
-                                             const K& k)
+                                             const Kernel& k)
     : Base(domain, k)
   { }
 };

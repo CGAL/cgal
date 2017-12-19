@@ -67,8 +67,10 @@ namespace CGAL
               typedef typename Polyhedron_dual::Vertex_const_iterator
                 Vertex_const_iterator;
 
-              // typedefs for primal
+              // typedef and type for primal
               typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
+              typename boost::property_map<Polyhedron, vertex_point_t>::type vpm  =
+                get(CGAL::vertex_point, primal);
 
               // Typedefs for intersection
               typedef typename Kernel::Plane_3 Plane_3;
@@ -115,8 +117,9 @@ namespace CGAL
                             origin.y() + pp->y(),
                             origin.z() + pp->z());
 
-                
-                primal_vertices[it] = add_vertex(ppp, primal);
+                vertex_descriptor vd = add_vertex(primal);
+                primal_vertices[it] = vd;
+                put(vpm, vd, ppp);
               }
 
               // Then, add facets to the primal polyhedron

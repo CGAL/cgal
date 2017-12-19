@@ -36,29 +36,30 @@
 namespace CGAL {
 
 // The first template item is supposed to be a Filtered_kernel-like kernel.
-template < typename K, typename Off >
+template < typename K_, typename Off_>
 class Periodic_2_Delaunay_triangulation_filtered_traits_base_2
-  : public Periodic_2_Delaunay_triangulation_traits_base_2<K, Off>
+  : public Periodic_2_Delaunay_triangulation_traits_base_2<K_, Off_>
 {
-  typedef Periodic_2_Delaunay_triangulation_traits_base_2<K, Off> Base;
+  typedef Periodic_2_Delaunay_triangulation_traits_base_2<K_, Off_> Base;
+  typedef K_                                                        Kernel;
 
   // Exact traits is based on the exact kernel.
-  typedef Periodic_2_Delaunay_triangulation_traits_2<typename K::Exact_kernel,
-                                                     Off>      Exact_traits;
+  typedef Periodic_2_Delaunay_triangulation_traits_2<typename Kernel::Exact_kernel, Off_>
+                                                                    Exact_traits;
   // Filtering traits is based on the filtering kernel.
-  typedef Periodic_2_Delaunay_triangulation_traits_2<typename K::Approximate_kernel,
-                                                     Off>      Filtering_traits;
+  typedef Periodic_2_Delaunay_triangulation_traits_2<typename Kernel::Approximate_kernel, Off_>
+                                                                    Filtering_traits;
 private:
-  typedef typename K::C2E C2E;
-  typedef typename K::C2F C2F;
+  typedef typename Kernel::C2E                C2E;
+  typedef typename Kernel::C2F                C2F;
 
-  typedef typename K::Iso_rectangle_2 Iso_rectangle_2;
+  typedef typename Kernel::Iso_rectangle_2    Iso_rectangle_2;
 
 public:
   virtual ~Periodic_2_Delaunay_triangulation_filtered_traits_base_2() { }
 
   Periodic_2_Delaunay_triangulation_filtered_traits_base_2(const Iso_rectangle_2& domain,
-                                                           const K& k)
+                                                           const Kernel& k)
     :
       Base(domain, k),
       Delaunay_traits_e(C2E()(domain)),
@@ -121,9 +122,9 @@ protected:
   Filtering_traits Delaunay_traits_f;
 };
 
-template < typename K,
-           typename Off = CGAL::Periodic_2_offset_2,
-           bool Has_static_filters = internal::Has_static_filters<K>::value >
+template <class K_,
+          class Off_ = CGAL::Periodic_2_offset_2,
+          bool Has_static_filters_ = internal::Has_static_filters<K_>::value>
 class Periodic_2_Delaunay_triangulation_filtered_traits_2;
 
 } // namespace CGAL
@@ -132,32 +133,34 @@ class Periodic_2_Delaunay_triangulation_filtered_traits_2;
 
 namespace CGAL {
 
-template<class K, class Off>
-class Periodic_2_Delaunay_triangulation_filtered_traits_2<K, Off, false>
-  : public Periodic_2_Delaunay_triangulation_filtered_traits_base_2<K, Off>
+template<class K_, class Off_>
+class Periodic_2_Delaunay_triangulation_filtered_traits_2<K_, Off_, false>
+  : public Periodic_2_Delaunay_triangulation_filtered_traits_base_2<K_, Off_>
 {
-  typedef Periodic_2_Delaunay_triangulation_filtered_traits_base_2<K, Off> Base;
+  typedef Periodic_2_Delaunay_triangulation_filtered_traits_base_2<K_, Off_> Base;
 
 public:
-  typedef typename K::Iso_rectangle_2 Iso_rectangle_2;
+  typedef K_                                                                 Kernel;
+  typedef typename Kernel::Iso_rectangle_2                                   Iso_rectangle_2;
 
   Periodic_2_Delaunay_triangulation_filtered_traits_2(const Iso_rectangle_2& domain,
-                                                      const K& k)
+                                                      const Kernel& k)
     : Base(domain, k)
   { }
 };
 
-template<class K, class Off>
-class Periodic_2_Delaunay_triangulation_filtered_traits_2<K, Off, true>
-  : public Periodic_2_Delaunay_triangulation_statically_filtered_traits_2<K, Off>
+template<class K_, class Off_>
+class Periodic_2_Delaunay_triangulation_filtered_traits_2<K_, Off_, true>
+  : public Periodic_2_Delaunay_triangulation_statically_filtered_traits_2<K_, Off_>
 {
-  typedef Periodic_2_Delaunay_triangulation_statically_filtered_traits_2<K, Off > Base;
+  typedef Periodic_2_Delaunay_triangulation_statically_filtered_traits_2<K_, Off_> Base;
 
 public:
-  typedef typename K::Iso_rectangle_2 Iso_rectangle_2;
+  typedef K_                                                                       Kernel;
+  typedef typename Kernel::Iso_rectangle_2                                         Iso_rectangle_2;
 
   Periodic_2_Delaunay_triangulation_filtered_traits_2(const Iso_rectangle_2& domain,
-                                                      const K& k)
+                                                      const Kernel& k)
     : Base(domain, k)
   { }
 };

@@ -32,7 +32,9 @@ It can thus be used either with `Polyhedron_3`, `Surface_mesh`, or
 any class model of the concept `FaceGraph`. Each function or class of this package
 details the requirements on the input polygon mesh.
 
-BGL \ref namedparameters are used to deal with optional parameters.
+\ref BGLNamedParameters are used to deal with optional parameters.
+The page \ref pmp_namedparameters describes their usage
+and provides a list of the parameters that are used in this package.
 
 \subsection PMPOutline Outline
 The algorithms described in this manual are organized in sections:
@@ -225,7 +227,7 @@ Mathematically speaking, the intersection with an infinitesimally small ball
 centered in the output volume is a topological ball. At the surface level this means
 that no non-manifold vertex or edge is allowed in the output. For example, it
 is not possible to compute the union of two cubes that are disjoint but sharing an edge.
-In case you have to deal with such scenarii, you should consider using the
+In case you have to deal with such scenarios, you should consider using the
 package \ref PkgNef3Summary.
 
 It is possible to update the input so that it contains the result (in-place operation).

@@ -86,11 +86,11 @@ namespace internal {
   @tparam TriangleMesh a model of `FaceGraph` and `MutableFaceGraph`
   @tparam VertexRange a range of vertex descriptors of `TriangleMesh`, model of `Range`.
           Its iterator type is `InputIterator`.
-  @tparam NamedParameters a sequence of \ref namedparameters
+  @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 
   @param tmesh the triangle mesh with patches to be faired
   @param vertices the vertices of the patches to be faired (the positions of only those vertices will be changed)
-  @param np optional sequence of \ref namedparameters among the ones listed below
+  @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
 
   \cgalNamedParamsBegin
     \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tmesh`.

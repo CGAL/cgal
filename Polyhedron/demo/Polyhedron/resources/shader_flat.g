@@ -48,7 +48,7 @@ EmitVertex();
   // and the last vertex is the provoking vertex by default
   vec3 normal = cross(norm1.xyz, norm2.xyz);
 
-  gs_out.normal = mat3(mv_matrix)* normal;
+  gs_out.normal = normalize(mat3(mv_matrix)* normal);
   gs_out.color = gs_in[2].out_color;
 
   for(int i=0; i< 6; ++i)

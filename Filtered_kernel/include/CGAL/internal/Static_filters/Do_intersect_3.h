@@ -84,7 +84,7 @@ public:
   // of the triangle and the segment
   // By calling the do_intersect function with
   // the  statically filtered kernel we avoid
-  // that doubles are put into Inteval_nt
+  // that doubles are put into Interval_nt
   // to get taken out again with fit_in_double
   result_type 
   operator()(const Segment_3 &s, const Triangle_3& t) const

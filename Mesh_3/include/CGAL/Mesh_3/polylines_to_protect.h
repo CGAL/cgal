@@ -766,25 +766,6 @@ polylines_to_protect(const CGAL::Image_3& cgal_image,
   polylines_to_protect<P, Image_word_type>(cgal_image, polylines, 0, 0);
 }
 
-
-template <typename P,
-          typename Image_word_type,
-          typename PolylineInputIterator>
-void
-polylines_to_protect(const CGAL::Image_3& cgal_image,
-                     std::vector<std::vector<P> >& polylines,
-                     PolylineInputIterator existing_polylines_begin,
-                     PolylineInputIterator existing_polylines_end)
-{
-  polylines_to_protect<P>
-    (cgal_image,
-     polylines,
-     (Image_word_type*)0,
-     CGAL::Null_subdomain_index(),
-     existing_polylines_begin,
-     existing_polylines_end);
-}
-
 template <typename P,
           typename Image_word_type,
           typename Null_subdomain_index,
@@ -806,6 +787,24 @@ polylines_to_protect(const CGAL::Image_3& cgal_image,
      null,
      CGAL::Identity<Image_word_type>(),
      internal::Mesh_3::Returns_midpoint<K, Image_word_type>(),
+     existing_polylines_begin,
+     existing_polylines_end);
+}
+
+template <typename P,
+          typename Image_word_type,
+          typename PolylineInputIterator>
+void
+polylines_to_protect(const CGAL::Image_3& cgal_image,
+                     std::vector<std::vector<P> >& polylines,
+                     PolylineInputIterator existing_polylines_begin,
+                     PolylineInputIterator existing_polylines_end)
+{
+  polylines_to_protect<P>
+    (cgal_image,
+     polylines,
+     (Image_word_type*)0,
+     CGAL::Null_subdomain_index(),
      existing_polylines_begin,
      existing_polylines_end);
 }

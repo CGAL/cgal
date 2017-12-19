@@ -103,6 +103,10 @@ BOOST_PP_REPEAT_FROM_TO(1, 10, CGAL_VARIANT_TYPEMAP, _)
 
 #include <CGAL/Kernel/interface_macros.h>
 
+template < typename K1, typename K2 >
+struct Type_mapper_impl < typename K1::FT, K1, K2 >
+{ typedef typename K2::FT type; };
+
 } // internal
 
 // This is a tool to obtain the K2::Point_2 from K1 and K1::Point_2.

@@ -534,10 +534,6 @@ void Volume_plane<T>::init(Viewer_interface* viewer) {
     
   assert(vertices.size() == (3 * adim_ * bdim_));
 
-  int maxi, maxv;
-  viewer->glGetIntegerv(GL_MAX_ELEMENTS_INDICES, &maxi);
-  viewer->glGetIntegerv(GL_MAX_ELEMENTS_VERTICES, &maxv);
-  assert((vertices.size( ) / 3) < (unsigned int)maxi);
   vVBO.create();
   vVBO.bind();
   vVBO.allocate(vertices.data(),static_cast<int>(sizeof(float) * vertices.size()));
