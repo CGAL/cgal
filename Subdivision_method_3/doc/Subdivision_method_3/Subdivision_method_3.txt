@@ -127,12 +127,12 @@ There is only one line deserving a detailed explanation:
 
 \code{.cpp}
 
-Subdivision_method_3::CatmullClark_subdivision(pmesh, d);
+Subdivision_method_3::CatmullClark_subdivision(pmesh, params::number_of_iterations(d));
 
 \endcode
 
 `Subdivision_method_3` specifies the namespace of the
-subdivision functions. `CatmullClark_subdivision(P, d)` computes the
+subdivision functions. `CatmullClark_subdivision(P, params::number_of_iterations(d))` computes the
 Catmull-Clark subdivision surface of the polygon mesh `pmesh` after
 `d` iterations of the refinements. The polygon mesh  `pmesh` is
 passed by reference, and is modified (i.e.\ subdivided) by the
@@ -149,12 +149,6 @@ in the internal container are sequentially ordered (e.g.
 `std::vector` and `std::list`).
 This implies that the iterators traverse the primitives in
 the order of their creations/insertions.
-
-\attention The four subdivision techniques have been made to work with
-`Surface_mesh` despite `Surface_mesh` not necessarily inserting new elements at
-the end of its containers (see Section \ref sectionSurfaceMesh_properties of the
-`Surface_mesh`). However, it is required that the `Surface_mesh` passed as input
-is garbage-free, which can be achieved by first calling `Surface_mesh::collect_garbage()`.
 
 Section \ref secRefHost gives detailed explanations on this
 two restrictions.
@@ -187,8 +181,8 @@ three components of the Catmull-Clark subdivision method.
 
 \code{.cpp}
 
-template <class PolygonMesh, class Mask>
-void PQQ(PolygonMesh& p, Mask mask, int depth)
+template <class PolygonMesh, class Mask, class NamedParameters>
+void PQQ(PolygonMesh& p, Mask mask, NamedParameters np)
 
 \endcode
 
@@ -203,8 +197,7 @@ new points by cooperating with the `mask`.
 To implement Catmull-Clark subdivision,
 `Mask`, the <I>geometry policy</I>, has to realize the
 geometry masks of Catmull-Clark subdivision.
-The parameter `depth` specifies the iterations of the refinement
-on the control mesh.
+The number of iterations as well as the vertex point map can be specified using the named parameter `np`.
 
 To implement the geometry masks, we need to know how
 a refinement host communicates with its geometry masks.
@@ -258,8 +251,8 @@ class CatmullClark_mask_3 {
 };
 
   void edge_node(halfedge_descriptor edge, Point_3& pt) {
-    Point_3& p1 = get(vpm,target(edge, pmesh));
-    Point_3& p2 = get(vpm,source(edge, pmesh));
+    Point_3 p1 = get(vpm,target(edge, pmesh));
+    Point_3 p2 = get(vpm,source(edge, pmesh));
     Point_3 f1, f2;
     face_node(face(edge,pmesh), f1);
     face_node(face(opposite(edge,pmesh),pmesh), f2);
@@ -273,11 +266,11 @@ class CatmullClark_mask_3 {
     typename boost::graph_traits<PolygonMesh>::degree_size_type n = degree(vertex,pmesh);
 
     FT Q[] = {0.0, 0.0, 0.0}, R[] = {0.0, 0.0, 0.0};
-    Point_3& S = get(vpm,vertex);
+    Point_3 S = get(vpm,vertex);
 
     Point_3 q;
     for (int i = 0; i < n; i++, ++vcir) {
-      Point_3& p2 = get(vpm, target(opposite(*vcir,pmesh),pmesh));
+      Point_3 p2 = get(vpm, target(opposite(*vcir,pmesh),pmesh));
       R[0] += (S[0]+p2[0])/2;
       R[1] += (S[1]+p2[1])/2;
       R[2] += (S[2]+p2[2])/2;
@@ -305,7 +298,7 @@ call `PQQ()` with the Catmull-Clark masks that we have just defined.
 
 \code{.cpp}
 
-PQQ(pmesh, CatmullClark_mask_3(pmesh), depth);
+PQQ(pmesh, CatmullClark_mask_3(pmesh), params::number_of_iterations(depth));
 
 \endcode
 
@@ -334,17 +327,17 @@ and \f$ \sqrt{3}\f$ subdivision.
 \code{.cpp}
 
 namespace Subdivision_method_3 {
-template <class PolygonMesh, class Mask>
-void PQQ(PolygonMesh& pmesh, Mask mask, int step);
+template <class PolygonMesh, class Mask, class NamedParameters>
+void PQQ(PolygonMesh& pmesh, Mask mask, NamedParameters np);
 
-template <class PolygonMesh, class Mask>
-void PTQ(PolygonMesh& pmesh, Mask mask, int step);
+template <class PolygonMesh, class Mask, class NamedParameters>
+void PTQ(PolygonMesh& pmesh, Mask mask, NamedParameters np);
 
-template <class PolygonMesh,  class Mask>
-void DQQ(PolygonMesh& pmesh, Mask mask, int step)
+template <class PolygonMesh,  class Mask, class NamedParameters>
+void DQQ(PolygonMesh& pmesh, Mask mask, NamedParameters np)
 
-template <class PolygonMesh,  class Mask>
-void Sqrt3(PolygonMesh& pmesh, Mask mask, int step)
+template <class PolygonMesh,  class Mask, class NamedParameters>
+void Sqrt3(PolygonMesh& pmesh, Mask mask, NamedParameters np)
 }
 
 \endcode
@@ -461,15 +454,15 @@ is listed below, where `ept` returns the new point splitting
 \code{.cpp}
 
   void border_node(halfedge_descriptor edge, Point_3& ept, Point_3& vpt) {
-    Point_3& ep1 = get(vpm, target(edge, pmesh));
-    Point_3& ep2 = get(vpm, target(opposite(edge, pmesh), pmesh));
+    Point_3 ep1 = get(vpm, target(edge, pmesh));
+    Point_3 ep2 = get(vpm, target(opposite(edge, pmesh), pmesh));
     ept = Point_3((ep1[0]+ep2[0])/2, (ep1[1]+ep2[1])/2, (ep1[2]+ep2[2])/2);
 
     Halfedge_around_target_circulator<Poly> vcir(edge, pmesh);
-    Point_3& vp1  = get(vpm,target(opposite(*vcir, pmesh ), pmesh));
-    Point_3& vp0  = get(vpm, target(*vcir, pmesh));
+    Point_3 vp1  = get(vpm,target(opposite(*vcir, pmesh ), pmesh));
+    Point_3 vp0  = get(vpm, target(*vcir, pmesh));
     --vcir;
-    Point_3& vp_1 = get(vpm, target(opposite(*vcir, pmesh), pmesh));
+    Point_3 vp_1 = get(vpm, target(opposite(*vcir, pmesh), pmesh));
     vpt = Point_3((vp_1[0] + 6*vp0[0] + vp1[0])/8,
                   (vp_1[1] + 6*vp0[1] + vp1[1])/8,
                   (vp_1[2] + 6*vp0[2] + vp1[2])/8 );
@@ -533,24 +526,24 @@ based on that kernel.
 \code{.cpp}
 
 namespace Subdivision_method_3 {
-  template <class PolygonMesh>
-  void CatmullClark_subdivision(PolygonMesh& pmesh, int step = 1) {
-    PQQ(pmesh, CatmullClark_mask_3<PolygonMesh>(pmesh), step);
+  template <class PolygonMesh, class NamedParameters>
+  void CatmullClark_subdivision(PolygonMesh& pmesh, NamedParameters np) {
+    PQQ(pmesh, CatmullClark_mask_3<PolygonMesh>(pmesh), np);
   }
 
-  template <class PolygonMesh>
-  void Loop_subdivision(PolygonMesh& pmesh, int step = 1) {
-    PTQ(pmesh, Loop_mask_3<PolygonMesh>(pmesh) , step);
+  template <class PolygonMesh, class NamedParameters>
+  void Loop_subdivision(PolygonMesh& pmesh, NamedParameters np) {
+    PTQ(pmesh, Loop_mask_3<PolygonMesh>(pmesh) , np);
   }
 
-  template <class PolygonMesh>
-  void DooSabin_subdivision(PolygonMesh& pmesh, int step = 1) {
-    DQQ(pmesh, DooSabin_mask_3<PolygonMesh>(pmesh), step);
+  template <class PolygonMesh, class NamedParameters>
+  void DooSabin_subdivision(PolygonMesh& pmesh, NamedParameters np) {
+    DQQ(pmesh, DooSabin_mask_3<PolygonMesh>(pmesh), np);
   }
 
-  template <class PolygonMesh>
-  void Sqrt3_subdivision(PolygonMesh& pmesh, int step = 1) {
-    Sqrt3(pmesh, Sqrt3_mask_3<PolygonMesh>(pmesh), step);
+  template <class PolygonMesh, class NamedParameters>
+  void Sqrt3_subdivision(PolygonMesh& pmesh, NamedParameters np) {
+    Sqrt3(pmesh, Sqrt3_mask_3<PolygonMesh>(pmesh), np);
   }
 }
 
