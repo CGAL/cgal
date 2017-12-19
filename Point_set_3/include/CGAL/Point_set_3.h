@@ -412,7 +412,9 @@ public:
     else
       {
         -- m_nb_removed;
-        return m_indices.end() - m_nb_removed - 1;
+        iterator out = m_indices.end() - m_nb_removed - 1;
+        m_base.reset(*out);
+        return out;
       }
   }
 
