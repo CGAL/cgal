@@ -13,7 +13,7 @@
 
 #include <CGAL/Image_3.h>
 #include <CGAL/ImageIO.h>
-#include <CGAL/read_sep_image_data.h>
+#include <CGAL/SEP_to_ImageIO.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/Three/Scene_interface.h>
@@ -1062,7 +1062,7 @@ Io_image_plugin::load(QFileInfo fileinfo) {
   //read a sep file
   else if(fileinfo.suffix() == "H" || fileinfo.suffix() == "HH")
   {
-    Sep_reader<float> reader(fileinfo.filePath().toUtf8().data());
+    CGAL::SEP_to_ImageIO<float> reader(fileinfo.filePath().toUtf8().data());
     *image = *reader.cgal_image();
     is_gray = true;
   }
