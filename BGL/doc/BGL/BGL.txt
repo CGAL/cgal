@@ -132,28 +132,39 @@ in the \sc{Bgl} manual.
 
 \subsection BGLNamedParameters Named Parameters
 
-The algorithms of \sc{Bgl} often have many parameters with default
-values that are appropriate for most cases. In general, when no
-special treatment is applied, the values of such parameters are passed
-as a sequence. Deviating from the default for a certain parameter
-requires the user to explicitly pass values for all preceding
-parameters. The solution to this problem
-is to first write a tag and then the parameter, which for
-Dijkstra's shortest path algorithm might look as follows:
+The notion of named parameters was introduced in the BGL.
+You can read about it in the following site: http://www.boost.org/libs/graph/doc/bgl_named_params.html.
+Named parameters allow the user to specify only those parameters which are really needed, by name, making the parameter ordering unimportant.
 
-\code {.cpp}
-std::vector<vertex_descriptor> p(num_vertices(g));
-std::vector<int> d(num_vertices(g));
-vertex_descriptor s = vertex(A, g);
-dijkstra_shortest_paths(g, s, predecessor_map(&p[0]).distance_map(&d[0]));
+Say there is a function `f()` that takes 3 parameters called name, age and gender, and you have variables `n`, `a` and `g` to pass as parameters to that function. Without named parameters, you would call it like this: `f(n,a,g)`, whereas with named parameters, you call it like this: `f(name(n).age(a).gender(g))`.
+
+That is, you give each parameter a name by wrapping it into a function whose name matches that of the parameter. The entire list of named parameters is really a composition of function calls separated by a dot ( .). Thus, if the function takes a mix of mandatory and named parameters, you use a comma to separate the last non-named parameter from the first named parameters, like this:
+
+`f(non_named_par0, non_named_par1, name(n).age(a).gender(g))`
+
+When you use named parameters, the ordering is irrelevant, so `f(name(n).age(a).gender(g))` is equivalent to `f(age(a).gender(g).name(n))`, and you can just omit any named parameter that has a default value.
+
+The sequence of named parameters should start with `CGAL::parameters::`.
+
+
+\subsubsection BGLNamedParametersExample Example
+
+See below a sample call of a function that uses the optional BGL named parameters.
+
+\code
+// pmesh : polygon mesh with patches to be refined
+// faces : the range of faces defining the patches to refine
+// faces_out : output iterator into which descriptors of new faces are put
+// vertices_out : output iterator into which descriptors of new vertices are put
+// vertex_point_map : the property map with the points associated to the vertices of `pmesh`
+// density_control_factor : factor to control density of the output mesh
+refine(pmesh
+       , faces
+       , faces_out
+       , vertices_out
+       , CGAL::Polygon_mesh_processing::parameters::vertex_point_map(vpmap)
+       .density_control_factor(d));
 \endcode
-
-In the \sc{Bgl} manual this is called
-<a href="http://www.boost.org/libs/graph/doc/bgl_named_params.html">named parameters</a>.
-The named parameters in the example use the tags `predecessor_map` and `distance_map`
-and they are concatenated with the dot operator.<BR>
-
-
 
 
 \section BGLHeader Header Files, Namespaces, and Naming Conventions

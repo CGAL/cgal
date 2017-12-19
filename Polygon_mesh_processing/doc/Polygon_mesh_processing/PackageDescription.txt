@@ -82,8 +82,8 @@ ranging from basic operations on simplices, to complex geometry processing algor
 ## Parameters ##
 
 Optional parameters of the functions of this package
-are implemented as BGL named parameters.
-The page \ref namedparameters describes their usage
+are implemented as \ref BGLNamedParameters.
+The page \ref pmp_namedparameters "Named Parameters" describes their usage
 and provides a list of the parameters that are used in this package.
 
 ## Meshing Functions ##

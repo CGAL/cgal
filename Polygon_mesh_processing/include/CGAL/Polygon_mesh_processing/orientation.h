@@ -152,10 +152,10 @@ namespace internal{
  *      isolated connected component.
  *
  * @tparam PolygonMesh a model of `FaceListGraph`
- * @tparam NamedParameters a sequence of \ref namedparameters
+ * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
  *
  * @param pmesh the closed polygon mesh to be tested
- * @param np optional sequence of \ref namedparameters among the ones listed below
+ * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
