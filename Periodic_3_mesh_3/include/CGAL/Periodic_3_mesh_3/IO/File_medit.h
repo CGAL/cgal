@@ -339,14 +339,17 @@ void output_to_medit(std::ostream& os,
 } // namespace Periodic_3_mesh_3
 
 /**
- * @brief Outputs a periodic mesh to the .mesh file format, which can be visualized
+ * \brief Outputs a periodic mesh to the .mesh file format, which can be visualized
  *        using medit. By default, 7 copies are used, for a total of 8 instances of the domains.
- * @param os the stream
- * @param c3t3 the mesh
- * @param rebind if true, labels of cells are rebinded into [1..nb_of_labels]
- * @param show_patches if true, patches are labeled with different labels than
- * cells. If false, each surface facet is written twice, using label of
- * each adjacent cell.
+ * \param os the stream
+ * \param c3t3 the mesh
+ * \param occurrence_count the number of copies that are printed
+ * \param distinguish_copies if set to `true`, each copy is assigned a unique color.
+ *                           Otherwise, all domains are drawn with subdomain index-based colors.
+ * \param rebind if set to `true`, labels of cells are rebinded into [1..nb_of_labels]
+ * \param show_patches if set to `true`, patches are labeled with different labels than
+ *                     cells. If `false`, each surface facet is written twice, using label of
+ *                     each adjacent cell.
  */
 template <class C3T3>
 void output_to_medit(std::ostream& os,

@@ -21,15 +21,15 @@
 /// The two main functions to generate a mesh are `make_mesh_3()` and `refine_mesh_3()`.
 /// The other functions allow to optimize an existing mesh.
 
-
 /// \defgroup PkgMesh_3Parameters Parameter Functions
 /// \ingroup PkgMesh_3
-
-
 
 /// \defgroup PkgMesh_3Enum Enumerations
 /// \ingroup PkgMesh_3
 
+/// \defgroup PkgMesh_3IOFunctions Input/Output Functions
+/// \ingroup PkgMesh_3
+/// The free functions that can be used to read and write meshes.
 
 /*!
 \addtogroup PkgMesh_3
@@ -137,6 +137,9 @@ and their associated classes:
 
 - `CGAL::Mesh_optimization_return_code`
 - `CGAL::Mesh_facet_topology`
+
+## Input/Output Functions ##
+- `CGAL::output_to_medit()`
 
 */
 

@@ -866,9 +866,6 @@ output_to_medit(std::ostream& os,
 
 } // end namespace Mesh_3
 
-  
-
-  
 /**
  * @brief outputs mesh to medit format
  * @param os the stream

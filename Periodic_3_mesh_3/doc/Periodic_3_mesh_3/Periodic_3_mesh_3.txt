@@ -427,8 +427,8 @@ This section presents various use cases of the periodic mesh generator.
 \subsection Periodic_3_mesh_3SubMultipleCopies Outputting Multiple Copies of a Periodic Mesh
 
 Generated meshes can be output to the `.mesh` file format, which can be read
-with `medit`. The function `output_to_medit()` takes a stream, a mesh
-complex, and - optionally - the number of periodic copies that should be drawn,
+with `medit`. The function \link PkgPeriodic_3_mesh_3IOFunctions `CGAL::output_to_medit()` \endlink
+takes a stream, a mesh complex, and - optionally - the number of periodic copies that should be drawn,
 making it easier to observe the periodicity of the result.
 \cgalFigureRef{Periodic_3_mesh_3Periodic_copies} illustrates the different output
 for the three possible number of copies: `1`, `2`, `4`, and `8`.
