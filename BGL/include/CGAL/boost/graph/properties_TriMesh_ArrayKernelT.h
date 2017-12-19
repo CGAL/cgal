@@ -212,81 +212,91 @@ put(boost::vertex_point_t p, OpenMesh::TriMesh_ArrayKernelT<K>& g,
 
 
 
-
-namespace CGAL {
+namespace boost {
 
 template <typename K, typename V>
-struct dynamic_property_map<OpenMesh::TriMesh_ArrayKernelT<K>, vertex_property_t<V> >
+  struct property_map<OpenMesh::TriMesh_ArrayKernelT<K>, CGAL::dynamic_vertex_property_t<V> >
 {
   typedef OpenMesh::TriMesh_ArrayKernelT<K> SM;
   typedef typename boost::graph_traits<SM>::vertex_descriptor vertex_descriptor;
-  typedef CGAL::OM_pmap<SM,vertex_descriptor, V> type;
+  typedef CGAL::OM_pmap<SM,vertex_descriptor, V> SMPM;
+  typedef CGAL::internal::Dynamic<SM, SMPM> type;
   typedef type const_type;
 };
 
 template <typename K, typename V>
-struct dynamic_property_map<OpenMesh::TriMesh_ArrayKernelT<K>, edge_property_t<V> >
-{
-  typedef OpenMesh::TriMesh_ArrayKernelT<K> SM;
-  typedef typename boost::graph_traits<SM>::edge_descriptor edge_descriptor;
-  typedef CGAL::OM_pmap<SM,edge_descriptor, V> type;
-  typedef type const_type;
-};
-
-template <typename K, typename V>
-struct dynamic_property_map<OpenMesh::TriMesh_ArrayKernelT<K>, halfedge_property_t<V> >
+struct property_map<OpenMesh::TriMesh_ArrayKernelT<K>, CGAL::dynamic_halfedge_property_t<V> >
 {
   typedef OpenMesh::TriMesh_ArrayKernelT<K> SM;
   typedef typename boost::graph_traits<SM>::halfedge_descriptor halfedge_descriptor;
-  typedef CGAL::OM_pmap<SM,halfedge_descriptor, V> type;
+  typedef CGAL::OM_pmap<SM,halfedge_descriptor, V> SMPM;
+  typedef CGAL::internal::Dynamic<SM, SMPM> type;
   typedef type const_type;
 };
 
 template <typename K, typename V>
-struct dynamic_property_map<OpenMesh::TriMesh_ArrayKernelT<K>, face_property_t<V> >
+struct property_map<OpenMesh::TriMesh_ArrayKernelT<K>, CGAL::dynamic_edge_property_t<V> >
+{
+  typedef OpenMesh::TriMesh_ArrayKernelT<K> SM;
+  typedef typename boost::graph_traits<SM>::edge_descriptor edge_descriptor;
+  typedef CGAL::OM_pmap<SM,edge_descriptor, V> SMPM;
+  typedef CGAL::internal::Dynamic<SM, SMPM> type;
+  typedef type const_type;
+};
+
+template <typename K, typename V>
+struct property_map<OpenMesh::TriMesh_ArrayKernelT<K>, CGAL::dynamic_face_property_t<V> >
 {
   typedef OpenMesh::TriMesh_ArrayKernelT<K> SM;
   typedef typename boost::graph_traits<SM>::face_descriptor face_descriptor;
-  typedef CGAL::OM_pmap<SM,face_descriptor, V> type;
+  typedef CGAL::OM_pmap<SM,face_descriptor, V> SMPM;
+  typedef CGAL::internal::Dynamic<SM, SMPM> type;
   typedef type const_type;
 };
 
+} // namespace boost
 
+
+namespace OpenMesh {
 
 template <typename K, typename V>
-typename dynamic_property_map<OpenMesh::TriMesh_ArrayKernelT<K>, vertex_property_t<V> >::const_type
-add_property(vertex_property_t<V>, OpenMesh::TriMesh_ArrayKernelT<K>& om)
+typename boost::property_map<OpenMesh::TriMesh_ArrayKernelT<K>, CGAL::dynamic_vertex_property_t<V> >::const_type
+get(CGAL::dynamic_vertex_property_t<V>, OpenMesh::TriMesh_ArrayKernelT<K>& om)
 {
   typedef OpenMesh::TriMesh_ArrayKernelT<K> OM;
-  typedef typename boost::graph_traits<OM>::vertex_descriptor vertex_descriptor;
-  return CGAL::OM_pmap<OM,vertex_descriptor, V>(om);
+  typedef typename boost::property_map<OM, CGAL::dynamic_vertex_property_t<V> >::SMPM SMPM;
+  typedef typename boost::property_map<OM, CGAL::dynamic_vertex_property_t<V> >::const_type DPM;
+  return DPM(om, new SMPM(om));
 }
 
 template <typename K, typename V>
-typename dynamic_property_map<OpenMesh::TriMesh_ArrayKernelT<K>, halfedge_property_t<V> >::const_type
-add_property(halfedge_property_t<V>, OpenMesh::TriMesh_ArrayKernelT<K>& om)
+typename boost::property_map<OpenMesh::TriMesh_ArrayKernelT<K>, CGAL::dynamic_halfedge_property_t<V> >::const_type
+get(CGAL::dynamic_halfedge_property_t<V>, OpenMesh::TriMesh_ArrayKernelT<K>& om)
 {
   typedef OpenMesh::TriMesh_ArrayKernelT<K> OM;
-  typedef typename boost::graph_traits<OM>::halfedge_descriptor halfedge_descriptor;
-  return CGAL::OM_pmap<OM,halfedge_descriptor, V>(om);
+  typedef typename boost::property_map<OM, CGAL::dynamic_halfedge_property_t<V> >::SMPM SMPM;
+  typedef typename boost::property_map<OM, CGAL::dynamic_halfedge_property_t<V> >::const_type DPM;
+  return DPM(om, new SMPM(om));
 }
 
 template <typename K, typename V>
-typename dynamic_property_map<OpenMesh::TriMesh_ArrayKernelT<K>, edge_property_t<V> >::const_type
-add_property(edge_property_t<V>, OpenMesh::TriMesh_ArrayKernelT<K>& om)
+typename boost::property_map<OpenMesh::TriMesh_ArrayKernelT<K>, CGAL::dynamic_edge_property_t<V> >::const_type
+get(CGAL::dynamic_edge_property_t<V>, OpenMesh::TriMesh_ArrayKernelT<K>& om)
 {
   typedef OpenMesh::TriMesh_ArrayKernelT<K> OM;
-  typedef typename boost::graph_traits<OM>::edge_descriptor edge_descriptor;
-  return CGAL::OM_pmap<OM,edge_descriptor, V>(om);
+  typedef typename boost::property_map<OM, CGAL::dynamic_edge_property_t<V> >::SMPM SMPM;
+  typedef typename boost::property_map<OM, CGAL::dynamic_edge_property_t<V> >::const_type DPM;
+  return DPM(om, new SMPM(om));
 }
 
 template <typename K, typename V>
-typename dynamic_property_map<OpenMesh::TriMesh_ArrayKernelT<K>, face_property_t<V> >::const_type
-add_property(face_property_t<V>, OpenMesh::TriMesh_ArrayKernelT<K>& om)
+typename boost::property_map<OpenMesh::TriMesh_ArrayKernelT<K>, CGAL::dynamic_face_property_t<V> >::const_type
+get(CGAL::dynamic_face_property_t<V>, OpenMesh::TriMesh_ArrayKernelT<K>& om)
 {
   typedef OpenMesh::TriMesh_ArrayKernelT<K> OM;
-  typedef typename boost::graph_traits<OM>::face_descriptor face_descriptor;
-  return CGAL::OM_pmap<OM,face_descriptor, V>(om);
+  typedef typename boost::property_map<OM, CGAL::dynamic_face_property_t<V> >::SMPM SMPM;
+  typedef typename boost::property_map<OM, CGAL::dynamic_face_property_t<V> >::const_type DPM;
+  return DPM(om, new SMPM(om));
 }
 
 template <typename Pmap, typename K>
@@ -294,6 +304,8 @@ void remove_property(Pmap pm, OpenMesh::TriMesh_ArrayKernelT<K>& om)
 {
   om.remove_property(pm.handle());
 }
-} // namespace CGAL
+
+} // namespace OpenMesh
+
 
 #endif /* CGAL_PROPERTIES_TRIMESH_ARRAYKERNELT_H */
