@@ -299,6 +299,7 @@ get(CGAL::dynamic_face_property_t<V>, OpenMesh::TriMesh_ArrayKernelT<K>& om)
   return DPM(om, new SMPM(om));
 }
 
+// implementation detail: required by Dynamic_property_map_deleter
 template <typename Pmap, typename K>
 void remove_property(Pmap pm, OpenMesh::TriMesh_ArrayKernelT<K>& om)
 {

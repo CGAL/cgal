@@ -384,6 +384,7 @@ get(dynamic_halfedge_property_t<T>, Surface_mesh<Point>& sm)
   return DPM(sm, new SMPM(sm.template add_property_map<typename Surface_mesh<Point>::Halfedge_index, T>(std::string()).first));
 }
 
+// implementation detail: required by Dynamic_property_map_deleter
 template <typename Pmap,typename P>
 void
 remove_property(Pmap pm, CGAL::Surface_mesh<P>& sm)
