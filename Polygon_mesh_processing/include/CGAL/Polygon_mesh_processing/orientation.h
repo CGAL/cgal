@@ -27,16 +27,18 @@
 
 
 #include <algorithm>
+#include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+#include <CGAL/Side_of_triangle_mesh.h>
 #include <CGAL/Projection_traits_xy_3.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/iterator.h>
 
 #include <boost/foreach.hpp>
 #include <boost/unordered_set.hpp>
-
+#include <boost/dynamic_bitset.hpp>
 namespace CGAL {
 
 namespace Polygon_mesh_processing {
@@ -253,7 +255,7 @@ void reverse_face_orientations(PolygonMesh& pmesh)
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
   BOOST_FOREACH(face_descriptor fd, faces(pmesh)){
     reverse_orientation(halfedge(fd,pmesh),pmesh);
-  } 
+  }
   // Note: A border edge is now parallel to its opposite edge.
   // We scan all border edges for this property. If it holds, we
   // reorient the associated hole and search again until no border
@@ -334,7 +336,313 @@ void reverse_face_orientations(const FaceRange& face_range, PolygonMesh& pmesh)
       }
     }
 }
+namespace internal {
 
+template <class Kernel, class TriangleMesh, class VD, class Fid_map, class Vpm>
+void recursive_orient_volume_ccs( TriangleMesh& tm,
+                                  Vpm& vpm,
+                                  Fid_map& fid_map,
+                                  const std::vector<VD>& xtrm_vertices,
+                                  boost::dynamic_bitset<>& cc_handled,
+                                  const std::vector<std::size_t>& face_cc,
+                                  std::size_t xtrm_cc_id,
+                                  bool is_parent_outward_oriented)
+{
+  typedef boost::graph_traits<TriangleMesh> Graph_traits;
+  typedef typename Graph_traits::face_descriptor face_descriptor;
+  typedef Side_of_triangle_mesh<TriangleMesh, Kernel, Vpm> Side_of_tm;
+  std::vector<face_descriptor> cc_faces;
+  BOOST_FOREACH(face_descriptor fd, faces(tm))
+  {
+    if(face_cc[get(fid_map, fd)]==xtrm_cc_id)
+      cc_faces.push_back(fd);
+  }
+// first check that the orientation of the current cc is consistant with its
+// parent cc containing it
+  bool new_is_parent_outward_oriented = internal::is_outward_oriented(
+         xtrm_vertices[xtrm_cc_id], tm, parameters::vertex_point_map(vpm));
+  if (new_is_parent_outward_oriented==is_parent_outward_oriented)
+  {
+    Polygon_mesh_processing::reverse_face_orientations(cc_faces, tm);
+    new_is_parent_outward_oriented = !new_is_parent_outward_oriented;
+  }
+  cc_handled.set(xtrm_cc_id);
+
+  std::size_t nb_cc = cc_handled.size();
+
+// get all cc that are inside xtrm_cc_id
+
+  typename Side_of_tm::AABB_tree aabb_tree(cc_faces.begin(), cc_faces.end(),
+                                           tm, vpm);
+  Side_of_tm side_of_cc(aabb_tree);
+
+  std::vector<std::size_t> cc_inside;
+  for(std::size_t id=0; id<nb_cc; ++id)
+  {
+    if (cc_handled.test(id)) continue;
+    if (side_of_cc(get(vpm,xtrm_vertices[id]))==ON_BOUNDED_SIDE)
+      cc_inside.push_back(id);
+  }
+
+// check whether we need another recursion for cc inside xtrm_cc_id
+  if (!cc_inside.empty())
+  {
+    std::size_t new_xtrm_cc_id = cc_inside.front();
+    boost::dynamic_bitset<> new_cc_handled(nb_cc,0);
+    new_cc_handled.set();
+    new_cc_handled.reset(new_xtrm_cc_id);
+    cc_handled.set(new_xtrm_cc_id);
+
+    std::size_t nb_candidates = cc_inside.size();
+    for (std::size_t i=1;i<nb_candidates;++i)
+    {
+      std::size_t candidate = cc_inside[i];
+      if(get(vpm,xtrm_vertices[candidate]).z() >
+         get(vpm,xtrm_vertices[new_xtrm_cc_id]).z()) new_xtrm_cc_id=candidate;
+      new_cc_handled.reset(candidate);
+      cc_handled.set(candidate);
+    }
+
+    internal::recursive_orient_volume_ccs<Kernel>(
+           tm, vpm, fid_map, xtrm_vertices, new_cc_handled, face_cc,
+           new_xtrm_cc_id, new_is_parent_outward_oriented);
+  }
+
+// now explore remaining cc included in the same cc as xtrm_cc_id
+  boost::dynamic_bitset<> cc_not_handled = ~cc_handled;
+  std::size_t new_xtrm_cc_id = cc_not_handled.find_first();
+  if (new_xtrm_cc_id == cc_not_handled.npos) return ;
+
+  for (std::size_t candidate = cc_not_handled.find_next(new_xtrm_cc_id);
+                   candidate < cc_not_handled.npos;
+                   candidate = cc_not_handled.find_next(candidate))
+  {
+     if(get(vpm,xtrm_vertices[candidate]).z() > get(vpm,xtrm_vertices[new_xtrm_cc_id]).z())
+        new_xtrm_cc_id = candidate;
+  }
+
+  internal::recursive_orient_volume_ccs<Kernel>(
+            tm, vpm, fid_map, xtrm_vertices, cc_handled, face_cc,
+            new_xtrm_cc_id, is_parent_outward_oriented);
+}
+
+}//end internal
+
+/**
+* \ingroup PMP_orientation_grp
+* makes each connected component of a closed triangulated surface mesh
+* inward or outward oriented.
+*
+* @tparam TriangleMesh a model of `FaceListGraph` and `MutableFaceGraph` .
+*                      If `TriangleMesh` has an internal property map for `CGAL::face_index_t`,
+*                      as a named parameter, then it must be initialized.
+* @tparam NamedParameters a sequence of \ref namedparameters
+*
+* @param tm a closed triangulated surface mesh
+* @param np optional sequence of \ref namedparameters among the ones listed below
+*
+* \cgalNamedParamsBegin
+*   \cgalParamBegin{vertex_point_map}
+*     the property map with the points associated to the vertices of `tm`.
+*     If this parameter is omitted, an internal property map for
+*     `CGAL::vertex_point_t` should be available in `TriangleMesh`
+*   \cgalParamEnd
+*   \cgalParamBegin{face_index_map}
+*     a property map containing the index of each face of `tm`.
+*   \cgalParamEnd
+*   \cgalParamBegin{outward_orientation}
+*     if set to `true` (default) indicates that each connected component will be outward oriented,
+*     (inward oriented if `false`).
+*   \cgalParamEnd
+* \cgalNamedParamsEnd
+*/
+template<class TriangleMesh, class NamedParameters>
+void orient(TriangleMesh& tm, const NamedParameters& np)
+{
+  typedef boost::graph_traits<TriangleMesh> Graph_traits;
+  typedef typename Graph_traits::vertex_descriptor vertex_descriptor;
+  typedef typename Graph_traits::face_descriptor face_descriptor;
+  typedef typename Graph_traits::halfedge_descriptor halfedge_descriptor;
+  typedef typename GetVertexPointMap<TriangleMesh,
+      NamedParameters>::const_type Vpm;
+  typedef typename GetFaceIndexMap<TriangleMesh,
+      NamedParameters>::const_type Fid_map;
+
+  CGAL_assertion(is_triangle_mesh(tm));
+  CGAL_assertion(is_valid(tm));
+  CGAL_assertion(is_closed(tm));
+
+  using boost::choose_param;
+  using boost::get_param;
+
+  bool orient_outward = choose_param(
+                          get_param(np, internal_np::outward_orientation),true);
+
+  Vpm vpm = choose_param(get_param(np, internal_np::vertex_point),
+                         get_const_property_map(boost::vertex_point, tm));
+
+  Fid_map fid_map = choose_param(get_param(np, internal_np::face_index),
+                                 get_const_property_map(boost::face_index, tm));
+
+  std::vector<std::size_t> face_cc(num_faces(tm), std::size_t(-1));
+
+  // set the connected component id of each face
+  std::size_t nb_cc = connected_components(tm,
+                                           bind_property_maps(fid_map,make_property_map(face_cc)),
+                                           parameters::face_index_map(fid_map));
+
+  // extract a vertex with max z coordinate for each connected component
+  std::vector<vertex_descriptor> xtrm_vertices(nb_cc, Graph_traits::null_vertex());
+  BOOST_FOREACH(vertex_descriptor vd, vertices(tm))
+  {
+    halfedge_descriptor test_hd = halfedge(vd, tm);
+    if(test_hd == Graph_traits::null_halfedge())
+      continue;
+    face_descriptor test_face = face(halfedge(vd, tm), tm);
+    if(test_face == Graph_traits::null_face())
+      test_face = face(opposite(halfedge(vd, tm), tm), tm);
+    CGAL_assertion(test_face != Graph_traits::null_face());
+    std::size_t cc_id = face_cc[get(fid_map,test_face )];
+    if (xtrm_vertices[cc_id]==Graph_traits::null_vertex())
+      xtrm_vertices[cc_id]=vd;
+    else
+      if (get(vpm, vd).z()>get(vpm,xtrm_vertices[cc_id]).z())
+        xtrm_vertices[cc_id]=vd;
+  }
+  std::vector<std::vector<face_descriptor> > ccs(nb_cc);
+  BOOST_FOREACH(face_descriptor fd, faces(tm))
+  {
+    ccs[face_cc[get(fid_map,fd)]].push_back(fd);
+  }
+
+  //orient ccs outward
+  for(std::size_t id=0; id<nb_cc; ++id)
+  {
+    if(internal::is_outward_oriented(xtrm_vertices[id], tm, np)
+        != orient_outward)
+    {
+      reverse_face_orientations(ccs[id], tm);
+    }
+  }
+}
+
+template<class TriangleMesh>
+void orient(TriangleMesh& tm)
+{
+  orient(tm, parameters::all_default());
+}
+
+
+/** \ingroup PMP_orientation_grp
+ *
+ * orients the connected components of `tm` to make it bound a volume.
+ * See \ref coref_def_subsec for a precise definition.
+ *
+ * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`.
+ *                      If `TriangleMesh` has an internal property map for `CGAL::face_index_t`,
+ *                      as a named parameter, then it must be initialized.
+ * @tparam NamedParameters a sequence of \ref namedparameters
+ *
+ * @param tm a closed triangulated surface mesh
+ * @param np optional sequence of \ref namedparameters among the ones listed below
+ *
+ * \cgalNamedParamsBegin
+ *   \cgalParamBegin{vertex_point_map}
+ *     the property map with the points associated to the vertices of `tm`.
+ *     If this parameter is omitted, an internal property map for
+ *     `CGAL::vertex_point_t` should be available in `TriangleMesh`
+ *   \cgalParamEnd
+ *   \cgalParamBegin{face_index_map}
+ *     a property map containing the index of each face of `tm`.
+ *   \cgalParamEnd
+ *   \cgalParamBegin{outward_orientation}
+ *     if set to `true` (default) the outer connected components will be outward oriented (inward oriented if set to `false`).
+ *     If the outer connected components are inward oriented, it means that the infinity will be considered
+ *     as part of the volume bounded by `tm`.
+ *   \cgalParamEnd
+ * \cgalNamedParamsEnd
+ *
+ * \see `CGAL::Polygon_mesh_processing::does_bound_a_volume()`
+ */
+template <class TriangleMesh, class NamedParameters>
+void orient_to_bound_a_volume(TriangleMesh& tm,
+                                        const NamedParameters& np)
+{
+  typedef boost::graph_traits<TriangleMesh> Graph_traits;
+  typedef typename Graph_traits::vertex_descriptor vertex_descriptor;
+  typedef typename GetVertexPointMap<TriangleMesh,
+      NamedParameters>::const_type Vpm;
+  typedef typename GetFaceIndexMap<TriangleMesh,
+      NamedParameters>::const_type Fid_map;
+  typedef typename Kernel_traits<
+      typename boost::property_traits<Vpm>::value_type >::Kernel Kernel;
+  if (!is_closed(tm)) return;
+  if (!is_triangle_mesh(tm)) return;
+
+  using boost::choose_param;
+  using boost::get_param;
+
+  bool orient_outward = choose_param(
+                          get_param(np, internal_np::outward_orientation),true);
+
+  Vpm vpm = choose_param(get_param(np, internal_np::vertex_point),
+                         get_const_property_map(boost::vertex_point, tm));
+
+  Fid_map fid_map = choose_param(get_param(np, internal_np::face_index),
+                                 get_const_property_map(boost::face_index, tm));
+
+  std::vector<std::size_t> face_cc(num_faces(tm), std::size_t(-1));
+
+
+  // set the connected component id of each face
+  std::size_t nb_cc = connected_components(tm,
+                                           bind_property_maps(fid_map,make_property_map(face_cc)),
+                                           parameters::face_index_map(fid_map));
+
+  if (nb_cc == 1)
+  {
+    if( orient_outward != is_outward_oriented(tm))
+      reverse_face_orientations(faces(tm), tm);
+    return ;
+  }
+
+
+  boost::dynamic_bitset<> cc_handled(nb_cc, 0);
+
+  // extract a vertex with max z coordinate for each connected component
+  std::vector<vertex_descriptor> xtrm_vertices(nb_cc, Graph_traits::null_vertex());
+  BOOST_FOREACH(vertex_descriptor vd, vertices(tm))
+  {
+    std::size_t cc_id = face_cc[get(fid_map, face(halfedge(vd, tm), tm))];
+    if (xtrm_vertices[cc_id]==Graph_traits::null_vertex())
+      xtrm_vertices[cc_id]=vd;
+    else
+      if (get(vpm, vd).z()>get(vpm,xtrm_vertices[cc_id]).z())
+        xtrm_vertices[cc_id]=vd;
+  }
+
+  //extract a vertex with max z amongst all components
+  std::size_t xtrm_cc_id=0;
+  for(std::size_t id=1; id<nb_cc; ++id)
+    if (get(vpm, xtrm_vertices[id]).z()>get(vpm,xtrm_vertices[xtrm_cc_id]).z())
+      xtrm_cc_id=id;
+
+  bool is_parent_outward_oriented =
+      ! orient_outward;
+
+  internal::recursive_orient_volume_ccs<Kernel>(tm, vpm, fid_map,
+                                                xtrm_vertices,
+                                                cc_handled,
+                                                face_cc,
+                                                xtrm_cc_id,
+                                                is_parent_outward_oriented);
+}
+
+template <class TriangleMesh>
+void orient_to_bound_a_volume(TriangleMesh& tm)
+{
+  orient_to_bound_a_volume(tm, parameters::all_default());
+}
 } // namespace Polygon_mesh_processing
 } // namespace CGAL
 #endif // CGAL_ORIENT_POLYGON_MESH_H

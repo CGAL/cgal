@@ -295,6 +295,14 @@ If this parameter is not provided, the perturbation is not deterministic
 <b>Type:</b> `unsigned int` \n
 <b>Default:</b> the random number generator is initialized with `CGAL::Random()`
 \cgalNPEnd
+
+\cgalNPBegin{outward_orientation} \anchor PMP_outward_orientation
+Parameter used in orientation functions to choose between an outward or inward orientation.
+\n
+\b Type : `bool` \n
+\b Default value is `true`
+\cgalNPEnd
+
 \cgalNPTableEnd
 
 */

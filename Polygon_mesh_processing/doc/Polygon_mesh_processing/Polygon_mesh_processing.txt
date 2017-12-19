@@ -430,6 +430,13 @@ As a consequence, the normal computed for each face (see Section
 
 The \ref PolygonSoupExample puts these functions at work on a polygon soup.
 
+The function `CGAL::Polygon_mesh_processing::orient()` makes each connected component
+of a closed polygon mesh outward or inward oriented.
+
+The function `CGAL::Polygon_mesh_processing::orient_to_bound_a_volume()` orients
+the connected components of a closed polygon mesh so that it bounds a volume
+(see \ref coref_def_subsec for the precise definition).
+
 
 ****************************************
 \section PMPRepairing Combinatorial Repairing 
