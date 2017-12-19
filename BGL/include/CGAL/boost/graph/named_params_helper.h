@@ -132,23 +132,25 @@ namespace CGAL {
     typedef typename CGAL::Kernel_traits<Point>::Kernel Kernel;
   };
 
-  template<typename PolygonMesh, typename NamedParameters = cgal_bgl_named_params<bool, internal_np::all_default_t> >
+  template<typename PolygonMesh,
+           typename NamedParametersGT = cgal_bgl_named_params<bool, internal_np::all_default_t>,
+           typename NamedParametersVPM = NamedParametersGT >
   class GetGeomTraits
   {
     typedef typename boost::graph_has_property<PolygonMesh, boost::vertex_point_t>::type
-    Has_internal_pmap;
+      Has_internal_pmap;
     struct Fake_GT {};//to be used if there is no internal vertex_point_map in PolygonMesh
 
     typedef typename boost::mpl::if_c< Has_internal_pmap::value
-                                       , typename GetK<PolygonMesh, NamedParameters>::Kernel
-                                       , Fake_GT
-                                       >::type DefaultKernel;
+                                     , typename GetK<PolygonMesh, NamedParametersVPM>::Kernel
+                                     , Fake_GT
+    >::type DefaultKernel;
 
   public:
     typedef typename boost::lookup_named_param_def <
-    internal_np::geom_traits_t,
-    NamedParameters,
-    DefaultKernel
+      internal_np::geom_traits_t,
+      NamedParametersGT,
+      DefaultKernel
     > ::type  type;
   };
 

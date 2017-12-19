@@ -52,6 +52,10 @@
 /// \defgroup PMP_detect_features_grp Feature Detection Functions
 /// Functions to detect sharp edges and surface patches of polygon meshes.
 /// \ingroup PkgPolygonMeshProcessing
+
+/// \defgroup PMP_predicates_grp Intersection Detection Functions
+/// Functions to detect intersections.
+/// \ingroup PkgPolygonMeshProcessing
 /*!
 \addtogroup PkgPolygonMeshProcessing
  
@@ -104,6 +108,8 @@ and provides a list of the parameters that are used in this package.
 ## Predicate Functions ##
 - `CGAL::Polygon_mesh_processing::does_self_intersect()`
 - `CGAL::Polygon_mesh_processing::self_intersections()`
+- \link PMP_predicates_grp `CGAL::Polygon_mesh_processing::do_intersect()` \endlink
+- `CGAL::Polygon_mesh_processing::intersecting_meshes()`
 
 ## Orientation Functions ##
 - `CGAL::Polygon_mesh_processing::is_outward_oriented()`

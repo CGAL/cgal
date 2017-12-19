@@ -380,7 +380,7 @@ This packages provides several predicates to be evaluated with respect to a tria
 Self intersections can be detected from a triangle mesh, by calling the predicate
 `CGAL::Polygon_mesh_processing::does_self_intersect()`.
 Additionally, the function `CGAL::Polygon_mesh_processing::self_intersections()`
-records all pairs of intersecting triangles.
+reports all pairs of intersecting triangles.
 
 \cgalFigureBegin{SelfIntersections, selfintersections.jpg}
 Detecting self-intersections on a triangle mesh.
@@ -412,6 +412,11 @@ input triangle mesh.
 \subsubsection InsideExample Inside Test Example
 \cgalExample{Polygon_mesh_processing/point_inside_example.cpp}
 
+\subsection PMPDoIntersect Intersections Detection
+Intersections between triangle meshes and/or polylines can be detected by calling the predicate
+\link PMP_predicates_grp `CGAL::Polygon_mesh_processing::do_intersect()` \endlink.
+Additionally, the function `CGAL::Polygon_mesh_processing::intersecting_meshes()`
+records all pairs of intersecting meshes in a range.
 
 ****************************************
 \section PMPOrientation Orientation
