@@ -22,7 +22,18 @@ evaluate queries at the canonical representative a point (see Section
 \sa `CGAL::refine_periodic_3_mesh_3()`
 */
 
-class Periodic_3MeshDomain_3 {
+class Periodic_3MeshDomain_3
+{
+public:
+  /*!
+  Cuboid type.
+  */
+  typedef unspecified_type Iso_cuboid_3;
+
+  /*!
+  Return the user-chosen cube that is the canonical instance of the flat torus.
+  */
+  const Iso_cuboid_3& canonical_periodic_domain();
 
 /// @}
 

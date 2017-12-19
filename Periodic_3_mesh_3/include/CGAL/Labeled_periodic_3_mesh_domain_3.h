@@ -104,7 +104,7 @@ public:
       pgt(bbox)
   { }
 
-  const Iso_cuboid_3& periodic_bounding_box() const { return Base::bounding_box(); }
+  const Iso_cuboid_3& canonical_periodic_domain() const { return Base::bounding_box(); }
   const Periodic_geom_traits& periodic_geom_traits() const { return pgt; }
 
   Subdomain_index label(const Point_3& p) const {
@@ -155,7 +155,7 @@ public:
 
       // This whole canonicalization of offsets process seems useless... Hiding it behind macros.
 #ifdef CGAL_PERIODIC_CANONICALIZE_DUAL_INTERSECTIONS
-      Iso_cuboid_3 pbb = r_domain_.periodic_bounding_box();
+      Iso_cuboid_3 pbb = r_domain_.canonical_periodic_domain();
       FT dimension [3] = { pbb.xmax()-pbb.xmin(),
                            pbb.ymax()-pbb.ymin(),
                            pbb.zmax()-pbb.zmin() };
@@ -308,7 +308,7 @@ public:
         r_domain_.periodic_geom_traits().construct_midpoint_3_object();
 
 #ifdef CGAL_PERIODIC_CANONICALIZE_DUAL_INTERSECTIONS
-      Iso_cuboid_3 pbb = r_domain_.periodic_bounding_box();
+      Iso_cuboid_3 pbb = r_domain_.canonical_periodic_domain();
       FT dimension [3] = { pbb.xmax() - pbb.xmin(),
                            pbb.ymax() - pbb.ymin(),
                            pbb.zmax() - pbb.zmin() };

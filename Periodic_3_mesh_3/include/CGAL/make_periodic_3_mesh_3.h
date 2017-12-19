@@ -98,7 +98,7 @@ struct C3t3_initializer_base
                   bool nonlinear = false,
                   const int nb_initial_points = -1)
   {
-    c3t3.triangulation().set_domain(domain.periodic_bounding_box());
+    c3t3.triangulation().set_domain(domain.canonical_periodic_domain());
     c3t3.triangulation().insert_dummy_points();
     mark_dummy_points(c3t3);
 

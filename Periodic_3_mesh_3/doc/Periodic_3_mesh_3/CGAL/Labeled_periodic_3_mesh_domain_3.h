@@ -57,6 +57,7 @@ template<class LabelingFunction, class BGT>
 class Labeled_periodic_3_mesh_domain_3
 {
 public:
+  typedef typename BGT::Iso_cuboid_3          Iso_cuboid_3;
 
 /// \name Creation
 /// @{
@@ -74,6 +75,11 @@ Labeled_periodic_3_mesh_domain_3(const LabelingFunction& f,
                                  const BGT::FT& relative_error_bound = FT(1e-6));
 
 /// @}
+
+/*!
+ * \brief Return the user-chosen cube that is the canonical instance of the flat torus.
+*/
+const Iso_cuboid_3& canonical_periodic_domain();
 
 }; /* end Labeled_periodic_3_mesh_domain_3 */
 } /* end namespace CGAL */
