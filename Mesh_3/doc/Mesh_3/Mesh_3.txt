@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_3D_Mesh_Generation
 \anchor userchaptermesh3
 \authors Pierre Alliez, Clément Jamin, Laurent Rineau, Stéphane Tayeb, Jane Tournois, Mariette Yvinec
@@ -17,7 +17,7 @@ This package is devoted to the generation of isotropic simplicial
 meshes discretizing 3D domains.
 The domain to be meshed is a region of 3D space, required to be bounded.
 The region may be connected or composed of multiple components
-and/or subdivided in several subdomains. 
+and/or subdivided in several subdomains.
 
 Boundary and subdivision surfaces are either
 smooth or piecewise smooth surfaces, formed with planar or curved surface patches.
@@ -26,13 +26,13 @@ and 0-dimensional features (e.g. singular points as corners
 tips, cusps or darts), that have to be fairly
 approximated in the mesh.
 
-The output mesh is a 3-dimensional triangulation, 
+The output mesh is a 3-dimensional triangulation,
 including subcomplexes that approximate each input domain feature: subdomain,
 boundary surface patch or input domain feature with dimension 0 or 1.
-Thus, the output mesh includes a 3D submesh covering each subdomain, 
+Thus, the output mesh includes a 3D submesh covering each subdomain,
 a surface mesh approximating each boundary or subdividing
-surface patch, a polyline approximation for each 
-1-dimensional feature and 
+surface patch, a polyline approximation for each
+1-dimensional feature and
 of course a vertex on each corner.
 
 The main entry points of the package are
@@ -40,7 +40,7 @@ two global functions that respectively generate
 and refine such meshes.
 The mesh generator is customized to output a mesh
 that fits as much as possible the user needs,
-for instance in terms of sizing field 
+for instance in terms of sizing field
 or with respect to some user customized quality criteria.
 
 The meshing engine used in this mesh generator
@@ -55,7 +55,7 @@ the boundary and subdivision surface patches may form \cgalCite{cgal:cdl-pdma-07
 The Delaunay refinement is followed by a mesh optimization phase
 to remove slivers and provide a good quality mesh.
 
-Optionally, the meshing and optimization algorithms support multi-core shared-memory 
+Optionally, the meshing and optimization algorithms support multi-core shared-memory
 architectures to take advantage of available parallelism.
 
 \subsection Mesh_3InputDomain Input Domain
@@ -63,9 +63,9 @@ architectures to take advantage of available parallelism.
 The domain to be meshed is assumed to be bounded
 and representable as a pure
 3D complex. A 3D complex is a set of faces with dimension 0,
-1, 2 and 3 such that
-all faces are pairwise interior disjoint, 
-and the boundary of each face of the complex is the union of faces
+1, 2, and 3 such that
+all faces are pairwise interior disjoint
+and the boundary of each face of the complex is the union of lower-dimensional faces
 of the complex.
 The 3D complex is pure, meaning that each face is included in a face of dimension 3,
 so that the complex is entirely described by the set of its 3D faces and their subfaces.
@@ -75,20 +75,20 @@ subcomplex which needs not be manifold, neither pure, nor connected:
 some 3D faces may have dangling 2D or 1D faces in their boundary faces.
 
 In the rest of the documentation, we will refer to the
-input 3D complex as the input domain. The faces of the input domain 
-with dimension 0, 1, 2 and 3 are called respectively
-<I>corners</I>, <I>curves</I>, <I>surface patches</I> and <I>subdomains</I>
+input 3D complex as the input domain. The faces of the input domain
+with dimension 0, 1, 2, and 3 are called respectively
+<I>corners</I>, <I>curves</I>, <I>surface patches</I>, and <I>subdomains</I>
 to clearly distinguish them from the faces of the mesh
-that are called vertices, edges, facets and cells.
+that are called vertices, edges, facets, and cells.
 
 Note that the input complex faces are not required to be linear nor smooth.
-Surface patches, for instance, may be smooth surface patches, 
+Surface patches, for instance, may be smooth surface patches
 or portions of surface meshes with boundaries.
 Curves may be for instance straight segments, parameterized curves
 or polylines. Each of those features will be accurately represented in the final mesh.
 
 The 0 and 1-dimensional features of the input domain are usually singular points
-of the subdomain boundaries, however this is not required. Furthermore those features
+of the subdomain boundaries, however this is not required. Furthermore, those features
 are not required to cover all the subdomains boundaries singularities
 but only those that need to be accurately represented in the final mesh.
 In the following, we say that a domain has <I>features</I> when it has 0 and
@@ -100,181 +100,172 @@ and the singularities of those patches need not be accurately approximated
 in the final mesh.
 
 Note also that input complex faces are not required to be connected.
-Faces of the input domain are identified by indexes.
+Faces of the input domain are identified by indices.
 If a subdomain is not connected, its different components receive the same index.
-Likewise different surface patches, curves or corners may share the same index.
+Likewise different surface patches, curves, or corners may share the same index.
 Each connected component of a feature will be accurately represented
 in the final mesh.
 Note however that the occurrence of multiply connected faces in the
 input complex may affect the relevance of internal topological checks
-performed by the mesh generator. Also the mesh generator
-will not be able to apply different meshing criteria, e.g. different
-sizing field, for the different connected components of a single feature.
+performed by the mesh generator.
 
-The domain is input to the mesh generation function,
+The domain is passed to the mesh generation function
 as a domain class, often called the oracle,
 that provides predicates and constructors related to the domain,
-the subdomains, the boundary surface patches
+the subdomains, the boundary surface patches,
 and also the 0 and 1-dimensional exposed features, if any.
 Mainly, the oracle provides a predicate to test
-if a given query point belongs 
+if a given query point belongs
 to the domain or not
-and to find in which subdomain it lies in the affirmative case.
+and to find in which subdomain it lies in, in the affirmative case.
 The domain class also provides predicates and constructors to test the intersection of a query line segment
-with the boundary surface patches and to build some intersection points if any.
+with the boundary surface patches and to construct intersection points, if any.
 Lastly, if the input domain includes 1-dimensional exposed features, the domain class
 provides a way to construct sample points on these features.
 
 The current implementation provides classes to represent
-domains bounded by isosurfaces of implicit functions, polyhedral domains
-and domains defined through 3D labeled images. 
+domains bounded by isosurfaces of implicit functions, polyhedral domains,
+and domains defined through 3D labeled images.
 Currently, 1-dimensional features may be defined as segments and polyline segments.
 
 \subsection Mesh_3OutputMesh Output Mesh
 
-The resulting mesh is output as a subcomplex of a 3D Delaunay triangulation,
+The resulting mesh is output as a subcomplex of a
+\ref CGAL::Regular_triangulation_3 "weighted 3D triangulation",
 in a class providing various iterators
 on mesh elements.
 
-\subsection Mesh_3OutputFaceGraph Output FaceGraph
-
-This \cgal component also provides a function to convert the reconstructed mesh to a `FaceGraph`:
-
-- `facets_in_complex_3_to_triangle_mesh()`
-
 The 3D triangulation provides approximations of the
-subdomains, surface patches and curves
-and corners, according to the restricted
+subdomains, surface patches, curves,
+and corners according to the restricted
 Delaunay triangulation paradigm. This means that each subdomain
 is approximated by the union of the tetrahedral cells
 whose circumcenters are located inside the domain
-(or subdomain). 
-Each surface patch is approximated 
+(or subdomain).
+Each surface patch is approximated
 by the union of the Delaunay mesh facets whose dual Voronoi edges intersect the surface patch.
-Such mesh facets are called <I>surface facets</I> in the following. 
+Such mesh facets are called <I>surface facets</I> in the following.
 The 1-dimensional exposed features are approximated by sequences of mesh edges
 and the 0-dimensional exposed features are represented by mesh vertices.
+
+\subsubsection Mesh_3OutputFaceGraph Output FaceGraph
+
+This \cgal component also provides a function to extract the facets of the complex
+as a `FaceGraph`, namely `facets_in_complex_3_to_triangle_mesh()`.
 
 \subsection Mesh_3DelaunayRefinement Delaunay Refinement
 \anchor introsecparam
 
 The mesh generation algorithm is mainly a Delaunay refinement process.
-The Delaunay refinement is 
+The Delaunay refinement is
 preceded by a protecting phase to ensure an accurate representation
-of 1-dimensional features if any,
+of 1-dimensional features, if any,
 and followed by an optimization phase to achieve a good quality mesh.
 
 The Delaunay refinement process is driven by criteria
-concerning either the size and shape of mesh cells 
+concerning either the size and shape of mesh cells
 and surface facets.
 The refinement process terminates when there are
 no more mesh cells or surface facets violating the criteria.
 
 The criteria are designed to achieve a nice spread of the mesh vertices
 while ensuring the termination of the refinement process.
-Those criteria may be somehow tuned to the user needs 
+Those criteria may be somehow tuned to the user needs
 to achieve for instance the respect of a sizing field by mesh elements,
 some topological conditions on the representation of boundary surfaces in the mesh,
 and/or some error bound for the approximation of boundary surfaces.
-To some extend, the user may tune the Delaunay refinement 
+To some extent, the user may tune the Delaunay refinement
 to a prescribed trade-off
-between mesh quality and mesh density. 
+between mesh quality and mesh density.
 The mesh density refers to the number of mesh vertices and cells,
 i.e.\ to the complexity of the mesh.
 The mesh quality referred to here is measured by the radius edge
 ratio of surface facets end mesh cells, where the radius edge ratio of
-a simplex (triangle or tetrahedron) is the
-the ratio between its circumradius and its shortest edge.
+a simplex (triangle or tetrahedron) is the ratio between its circumradius
+and its shortest edge length.
 
 \subsection Mesh_3Protectionof0and1dimensionalExposed Protection of 0 and 1-dimensional Exposed Features
 
 If the domain description includes 0 dimensional features,
-the corresponding points are inserted into the Delaunay triangulation 
+the corresponding points are inserted into the Delaunay triangulation
 from the start.
 
 If the domain has 1-dimensional exposed features,
-the method of protecting balls \cgalCite{cgal:cdr-drpsc-07}, \cgalCite{cgal:cdl-pdma-07}
+the method of protecting balls \cgalCite{cgal:cdl-pdma-07}, \cgalCite{cgal:cdr-drpsc-07}
 is used to achieve an accurate representation of those features in the mesh
 and to guarantee that the refinement process terminates
 whatever may be the dihedral angles formed by input surface patches incident to a
 given 1-feature or the angles formed by two 1-features incident to a 0-feature.
 
-According to this method, the 1-dimensional features are 
+According to this method, the 1-dimensional features are
 sampled with points and covered by protecting balls centered on the sample points,
-in such a way that :
+in such a way that:
+- no three balls intersect;
+- no pair of balls centered on different 1-features intersect.
 
--no three balls intersect 
-
--no pair of balls centered on different 1-features intersect.
-
-The triangulation embedding the mesh is in fact 
-a weighted Delaunay triangulation, and the triangulation 
+The triangulation embedding the mesh is in fact
+a weighted Delaunay triangulation, and the triangulation
 is initialized by the insertion of all the protecting
 balls, regarded as weighted points.
 The Delaunay refinement process
 is then launched as before except that refinement points
-are no longer circumcenters but are 
+are no longer circumcenters but are
 weighted circumcenters.
 All Steiner vertices inserted by the refinement process are given a zero weight.
-
 The method guarantees:
-
-1) that each segment joining
+- that each segment joining
 two successive centers on a 1-dimensional feature will stay in the triangulation,
-thus ensuring an accurate approximation of the 1-dimensional features. 
-
-2) that the refinement process will never try to insert a refinement point in the union of the
+thus ensuring an accurate approximation of the 1-dimensional features;
+- that the refinement process will never try to insert a refinement point in the union of the
 protecting balls, which ensures the termination of the refinement process.
 
 \subsection Mesh_3OptimizationPhase Optimization Phase
 
-Any tetrahedron that is quasi degenerate has a big radius edge ratio except
-those belonging to the family of slivers. A sliver is easily obtained 
+Any tetrahedron that is quasi degenerate has a big radius edge ratio, except
+those belonging to the family of slivers. A sliver is easily obtained
 as the convex hull of 4 points close to the equatorial circle of a 3D
 ball and roughly equally spread along this circle.
-The Delaunay refinement tracks tetrahedra with big radius edge ratio 
-and therefore eliminates all kinds of 
+The Delaunay refinement tracks tetrahedra with big radius edge ratio
+and therefore eliminates all kinds of
 badly shaped tetrahedra except slivers.
 
-Therefore, at the end of the refinement process,
-some sliver shaped tetrahedra may occur in the mesh.
-The optimization phase aims at eliminating slivers.
+Therefore, some sliver-shaped tetrahedra may still be present in the mesh
+at the end of the refinement process.
+The optimization phase aims to eliminate these slivers.
 
-The optimization phase is a succession of optimization processes,
-including possibly a Lloyd smoothing, an odt-smoothing,
-a perturber and an exuder.
+The optimization phase is a sequence of optimization processes,
+amongst the following available optimizers: an ODT-smoother,
+a Lloyd-smoother, a sliver perturber, and a sliver exuder.
 
-The Lloyd and odt-smoother are global optimizers
-moving the mesh vertices to minimize 
-a mesh energy. Those optimizers are described respectively in 
+The Lloyd and ODT-smoother are global optimizers
+moving the mesh vertices to minimize
+a mesh energy. Those optimizers are described respectively in
 \cgalCite{cgal:dfg-cvtaa-99t}, \cgalCite{cgal:dw-tmgob-02} and in \cgalCite{cgal::c-mssbo-04}, \cgalCite{cgal:acyd-vtm-05}.
 In both cases the mesh energy
-is the `L1` error resulting from the interpolation 
+is the `L1` error resulting from the interpolation
 of the function \f$ f(x) =x^2\f$ by a piecewise linear function.
 In the case of the Lloyd smoother,
 the interpolation is linear in each Voronoi cell of the set of mesh vertices.
-In the case of the odt-smoother, the interpolation is linear in each cell 
+In the case of the ODT-smoother, the interpolation is linear in each cell
 of the Delaunay triangulation of the mesh vertices,
-hence the name odt which is an abbreviation for *optimal Delaunay triangulation*.
+hence the name `ODT` which is an abbreviation for *Optimal Delaunay Triangulation*.
 
 \cgalFigureBegin{mesh_3paraboloid,paraboloid.jpg}
-The one dimensional illustration of the mesh energy minimized by Lloyd (right)  and ODT (left) smoothers.
+The one dimensional illustration of the mesh energy minimized by ODT (left) and Lloyd (right) smoothers.
 \cgalFigureEnd
 
-
-The Lloyd optimizer is known to be blind to the occurrence of slivers in the mesh 
-
-while the odt-smoother tends to chase them out.
-Both of them are global optimizers, 
+The Lloyd optimizer is known to be blind to the occurrence of slivers in the mesh
+while the ODT-smoother tends to chase them out.
+Both of them are global optimizers,
 meaning that they try to improve
 the whole mesh rather than focusing on the worst elements. However, both are empirically known
-to be very efficient as a preliminary step of optimization, as they tend to enhance the
-efficiency of the perturber and/or exuder applied next, see \cgalFigureRef{figureoptimization} 
+to be very efficient as a preliminary step of optimization as they tend to enhance the
+efficiency of the perturber and/or the exuder applied afterwards, see \cgalFigureRef{figureoptimization}
 
 The perturber and the exuder focus on improving the worst mesh elements.
 The perturber \cgalCite{cgal:tsa-ps3dd-09} improves the meshes by local changes
 in the vertices positions
-aiming to make sliver disappear. The exuder \cgalCite{cgal:cdeft-slive-00}
+aiming to make slivers disappear. The exuder \cgalCite{cgal:cdeft-slive-00}
 chases the remaining slivers by
 re-weighting mesh vertices with optimal weights.
 
@@ -302,59 +293,59 @@ to one of the two following functions:
 
 \code{.cpp}
 template <class C3T3,
-class MeshDomain_3,
+class MeshDomain,
 class MeshCriteria>
-C3T3 make_mesh_3(MeshDomain_3 domain, 
+C3T3 make_mesh_3(MeshDomain domain,
                  MeshCriteria criteria,
                  parameters::internal::Features_options features = parameters::features(domain),
                  parameters::internal::Lloyd_options lloyd = parameters::no_lloyd(),
                  parameters::internal::Odt_options odt = parameters::no_odt(),
                  parameters::internal::Perturb_options perturb = parameters::perturb(),
-                 parameters::internal::Exude_options exude = parameters::exude()); 
+                 parameters::internal::Exude_options exude = parameters::exude());
 
 template <class C3T3,
-class MeshDomain_3,
+class MeshDomain,
 class MeshCriteria>
 void refine_mesh_3(C3T3& c3t3,
-                   MeshDomain_3 domain,
+                   MeshDomain domain,
                    MeshCriteria criteria,
                    parameters::internal::Lloyd_options lloyd = parameters::no_lloyd(),
                    parameters::internal::Odt_options odt = parameters::no_odt(),
                    parameters::internal::Perturb_options perturb = parameters::perturb(),
-                   parameters::internal::Exude_options exude = parameters::exude()); 
+                   parameters::internal::Exude_options exude = parameters::exude());
 \endcode
 
 The function `make_mesh_3()` generates from scratch a mesh
 of the input domain, while the function `refine_mesh_3()` refines
 an existing mesh of the input domain. Note that as the protection
-of 0 and 1-dimensional features does not rely on Delaunay 
+of 0 and 1-dimensional features does not rely on Delaunay
 refinement, the function `refine_mesh_3()` has no parameter
 to preserve features.
 
 \subsection Mesh_3TheDataStructure The Data Structure
 
 The template parameter `C3T3` is required to be a model of
-the concept 
+the concept
 `MeshComplex_3InTriangulation_3`, a data structure devised to
 represent a three dimensional complex embedded in a 3D
 triangulation. In both functions, an instance of type `C3T3` is used to maintain the current
-approximating simplicial mesh 
+approximating simplicial mesh
 and to represent the final 3D mesh at the end
 of the procedure.
 
 The embedding 3D triangulation is required to be the nested type
-`CGAL::Mesh_triangulation_3::type`, provided by the meta functor 
-`CGAL::Mesh_triangulation_3`. The type for this triangulation is a 
-`CGAL::Regular_triangulation_3` whose vertex and cell base classes 
-are respectively models of the concepts `MeshVertexBase_3` and 
+`CGAL::Mesh_triangulation_3::type`, provided by the class template
+`CGAL::Mesh_triangulation_3`. The type for this triangulation is a
+wrapper around the class `CGAL::Regular_triangulation_3` whose vertex and cell base classes
+are respectively models of the concepts `MeshVertexBase_3` and
 `MeshCellBase_3`.
 
 
 \subsection Mesh_3TheDomainOracleandtheFeaturesParameter The Domain Oracle and the Features Parameter
 
-The template parameter `MeshDomain_3` is required to be a model of
+The template parameter `MeshDomain` is required to be a model of
 the concept `MeshDomain_3`. The argument `domain` of type
-`MeshDomain_3`
+`MeshDomain`
 is the sole link through which the domain
 to be discretized is known by the mesh generation algorithm.
 
@@ -362,33 +353,33 @@ This concept provides, among others,
 member functions to test whether or not
 a query segment intersects boundary surfaces,
 and to compute an intersection point in the affirmative.
-The `MeshDomain_3` concept adds member functions 
+The `MeshDomain_3` concept adds member functions
 which given a query point tell whether the point lies
-inside or outside the domain and in which subdomain the point lies
+inside or outside the domain and in which subdomain the point lies,
 if inside.
 
 If the domain description includes 0 and 1-dimensional features
 that have to be accurately represented in the final mesh,
-the template parameter `MeshDomain_3` is required to be 
+the template parameter `MeshDomain` is required to be
 of a model of the refined concept
-`MeshDomainWithFeatures_3`. Mainly 
-the concept `MeshDomainWithFeatures_3` provides
-the incidence
+`MeshDomainWithFeatures_3`. The concept `MeshDomainWithFeatures_3` mainly
+provides the incidence
 graph of 0, 1 and 2-dimensional features,
 and a member function to construct
 sample points on curves.
 
 Using the parameter of type `Features`, the user
-whose domain is a model of `MeshDomainWithFeatures_3` 
+whose domain is a model of `MeshDomainWithFeatures_3`
 can choose to have the corners and curves of the domain
 represented in the mesh or not.
 The type `Features` of this parameter is an internal undescribed type.
 The library provides functions to construct appropriate values of that type.
 <UL>
-<LI>`parameters::features(domain)` sets `features` according to the domain,
+<LI>\link parameters::features() `parameters::features(domain)` \endlink
+sets features according to the domain,
 i.e.\ 0 and 1-dimensional features are taken into account if `domain` is a
-`MeshDomainWithFeatures_3` 
-<LI>`parameters::no_features()` prevents the representation 
+`MeshDomainWithFeatures_3`.
+<LI>`parameters::no_features()` prevents the representation
 of 0 and 1-dimensional features in the mesh. This is useful to get a smooth and rough approximation
 of a domain with features.
 </UL>
@@ -398,31 +389,29 @@ of a domain with features.
 The template parameter `MeshCriteria` must be a model of the concept
 `MeshCriteria_3`, or a model of the refined concept `MeshCriteriaWithFeatures_3`
 if the domain has exposed features.
-The argument of
-type `MeshCriteria` passed to the mesh generator specifies the
+The argument of type `MeshCriteria` passed to the mesh generator specifies the
 size and shape requirements for the tetrahedra in the mesh
 and for the triangles in the boundary surface mesh. These criteria
-condition the rules that drive the refinement process. At the end 
+condition the rules that drive the refinement process. At the end
 of the refinement process, mesh elements satisfy the criteria.
-This may not be strictly true anymore after the optimization phase, but this
+Note that this may not be strictly true anymore after the optimization phase, but this
 last phase is devised to only improve the mesh quality.
 
 The criteria for surface facets are governed by the four following
 parameters:
 <UL>
-<LI><I>`facet_angle`.</I> This parameter controls the shape of 
-surface facets. Actually, it is a lower bound for the angle (in degree) of
+<LI><I>`facet_angle`.</I> This parameter controls the shape of
+surface facets. Specifically, it is a lower bound for the angle (in degrees) of
 surface facets. When boundary surfaces are smooth, the termination of the meshing process is
-guaranteed if the angular bound is at most 30
-degrees. 
-<LI><I>`facet_size`.</I> This parameter controls the size of surface facets. 
-Actually, each surface facet has 
+guaranteed if this angular bound is at most 30 degrees.
+<LI><I>`facet_size`.</I> This parameter controls the size of surface facets.
+Each surface facet has
 a surface Delaunay ball which is a ball circumscribing the surface facet and
 centered on the surface patch. The parameter `facet_size` is
-either a constant or a spatially variable scalar field, providing an 
+either a constant or a spatially variable scalar field, providing an
 upper bound for the radii of surface Delaunay balls.
 <LI><I>`facet_distance`.</I> This parameter controls the approximation error of boundary and subdivision surfaces.
-Actually, it is
+Specifically, it is
 either a constant or a spatially variable scalar field. It
 provides an upper bound for the distance between the circumcenter
 of a surface facet and the center of a surface Delaunay ball of this facet.
@@ -430,16 +419,16 @@ of a surface facet and the center of a surface Delaunay ball of this facet.
 which have to be verified by each surface facet. By default, each vertex of a surface
 facet has to be located on a surface patch, on a curve, or on a corner. It can
 also be set to check whether the three vertices of a surface facet belongs to the same
-surface patch. This has to be done cautiously, as such a criteria needs that each surface
-patches intersection is an input 1-dimensional feature.
+surface patch. This has to be done cautiously, as such a criterion needs that each
+intersection of input surface patches is an input 1-dimensional feature.
 </UL>
 
 The criteria for mesh cells are governed by two parameters:
 <UL>
 <LI><I>`cell_radius_edge_ratio`.</I> This parameter controls the
 shape of mesh cells (but can't filter slivers, as we discussed earlier).
-Actually, it is an upper bound for the ratio
-between the circumradius of a 
+It is an upper bound for the ratio
+between the circumradius of a
 mesh tetrahedron and its shortest edge.
 There is a theoretical bound for this parameter:
 the Delaunay refinement process is guaranteed to terminate
@@ -448,7 +437,7 @@ for values of `cell_radius_edge_ratio` bigger than 2.
 This parameter controls the size of mesh tetrahedra.
 It is either a scalar or a spatially variable scalar field.
 It provides an upper bound on the circumradii of the
-mesh tetrahedra. 
+mesh tetrahedra.
 </UL>
 
 \cgalFigureRef{figureparameters} shows how the mesh generation process
@@ -486,11 +475,11 @@ bound.
 \cgalFigureCaptionEnd
 
 If the domain has 1-dimensional exposed features, the `criteria` includes
-a sizing field to guide 
+a sizing field to guide
 the sampling of 1-dimensional features with protecting balls centers.
 <UL>
-<LI><I>`edge_size`</I>. This constant or variable scalar field is used as an upper bound for the distance between two 
-protecting ball centers that are consecutive on a 1-feature. This parameter has to be set to a positive value when  
+<LI><I>`edge_size`</I>. This constant or variable scalar field is used as an upper bound for the distance between two
+protecting ball centers that are consecutive on a 1-feature. This parameter has to be set to a positive value when
 1-dimensional features protection is used.
 </UL>
 
@@ -504,7 +493,7 @@ but the library provides global functions to generate
 appropriate values of these types:
 <UL>
 <LI>`parameters::lloyd()` and `parameters::no_lloyd()` activate and deactivate the Lloyd smoother.
-<LI>`parameters::odt()` and `parameters::no_odt()` activate and deactivate the odt-smoother.
+<LI>`parameters::odt()` and `parameters::no_odt()` activate and deactivate the ODT-smoother.
 <LI>`parameters::perturb()` and `parameters::no_perturb()` activate and deactivate the perturber.
 <LI>`parameters::exude()` and `parameters::no_exude()` activate and deactivate the exuder.
 </UL>
@@ -514,23 +503,19 @@ If one parameter is not passed the default value is used. By default,
 only the perturber and the exuder are activated.
 Note that whatever may be the optimization processes activated by `make_mesh_3()`
 or `refine_mesh_3()`,
-they are always launched in the order that is a suborder 
-of the following:
-*odt smoother*, *Lloyd smoother*, *perturber* and 
-*exuder*.
+they are always launched in the order that is a suborder
+of the following: *ODT-smoother*, *Lloyd-smoother*, *perturber*, and *exuder*.
 
 The package also provides four global functions to launch
-each optimization process independently. These functions are useful for advanced experimentation 
+each optimization process independently. These functions are useful for advanced experimentation
 on the efficiency of each optimization method.
 Note however that the exuder adds on mesh vertices weights that are conditioned by vertices
-positions. 
+positions.
 Therefore an exudation process should never be run before
-a smoother or a perturber. 
+a smoother or a perturber.
 For a maximum efficiency, whatever may be the optimization processes activated,
-they should be launched in the order that is a suborder 
-of the following:
-*odt-smoother*, *Lloyd-smoother*, *perturber*,
-*exuder*.
+they should be launched in the order that is a suborder
+of the following: *ODT-smoother*, *Lloyd-smoother*, *perturber*, and *exuder*.
 
 \code{.cpp}
 
@@ -554,17 +539,17 @@ those processes have themselves parameters (see details in reference pages) to t
 
 \subsection Mesh_3ParallelAlgorithms Parallel Algorithms
 
-Enabling parallel meshing and optimization algorithms is achieved through 
-setting the third template parameter of the `Mesh_triangulation_3` class  
-to `Parallel_tag`, when defining the triangulation type. 
-Note that when the user provides his/her own vertex and 
-cell base classes, the `MeshVertexBase_3` and 
-`MeshCellBase_3` concepts impose additionnal requirements.
+Enabling parallel meshing and optimization algorithms is achieved through
+setting the third template parameter of the `Mesh_triangulation_3` class
+to `Parallel_tag`, when defining the triangulation type.
+Note that when the user provides his/her own vertex and
+cell base classes, the `MeshVertexBase_3` and
+`MeshCellBase_3` concepts impose additional requirements.
 
-Parallel algorithms require the executable to be linked against the 
+Parallel algorithms require the executable to be linked against the
 <a href="http://www.threadingbuildingblocks.org">Intel TBB library</a>.
 To control the number of threads used, the user may use the tbb::task_scheduler_init class.
-See the <a href="http://www.threadingbuildingblocks.org/documentation">TBB documentation</a> 
+See the <a href="http://www.threadingbuildingblocks.org/documentation">TBB documentation</a>
 for more details.
 
 \section Mesh_3_section_examples Examples
@@ -625,7 +610,7 @@ resulting mesh.
 View of a 3D mesh of the relative complement of a torus in a sphere.
 \cgalFigureEnd
 
-\subsubsection Mesh_3MeshingMultipleDomains_3 Construction of an Hybrid domain : from an Implicit and a Polyhedral domain
+\subsubsection Mesh_3MeshingMultipleDomains_3 Construction of a Hybrid Domain : From an Implicit and a Polyhedral Domain
 
 The example code of \ref Mesh_3/mesh_hybrid_mesh_domain.cpp produces a 3D mesh for a domain consisting of several subdomains too.
 Here, the set of subdomains is given by two subdomains of different types : a domain defined by an implicit sphere,
@@ -660,7 +645,7 @@ Right : the output mesh with added 1D-features at the intersection of subdomains
 \subsubsection Mesh_33DPolyhedralDomains 3D Polyhedral Domains
 
 The following code produces a 3D mesh for a domain
-defined by a polyhedral surface. \cgalFigureRef{figurepolyhedral_domain} 
+defined by a polyhedral surface. \cgalFigureRef{figurepolyhedral_domain}
 shows the resulting mesh.
 
 \cgalExample{Mesh_3/mesh_polyhedral_domain.cpp}
@@ -671,12 +656,12 @@ View of 3D meshes produced from a polyhedral domain. (i) is a view of file out_1
 
 \subsubsection Mesh_33DSurfaceInsidePolyhedralDomain Remeshing a Polyhedral Domain with Surfaces
 
-In the following example we have a "bounding polyhedron" which defines the meshing domain and two surfaces inside this domain. 
+In the following example we have a "bounding polyhedron" which defines the meshing domain and two surfaces inside this domain.
 The surfaces inside the domain may be closed surfaces as well as surfaces with boundaries. In the case of a closed surface
-the volume delimited by this surface is also considered as inside the domain. 
+the volume delimited by this surface is also considered as inside the domain.
 previous subsection.
 
- 
+
 \cgalExample{Mesh_3/mesh_polyhedral_domain_with_surface_inside.cpp}
 
 \cgalFigureBegin{figurepolyhedral_domain_with_surface,polyhedral_domain_with_surface.jpg}
@@ -687,7 +672,7 @@ View of 3D meshes produced from a polyhedral domain with a nested surface.
 
 The following code creates a polyhedral domain, with only one polyhedron,
 and no "bounding polyhedron", so the volumetric part of the domain will be empty.
-This allows to remesh a surface, and is equivalent to the function `make_surface_mesh()`. 
+This allows to remesh a surface, and is equivalent to the function `make_surface_mesh()`.
 
 \cgalExample{Mesh_3/remesh_polyhedral_surface.cpp}
 
@@ -699,7 +684,7 @@ View of a remeshed surface. (Left) input mesh (Right) output mesh. Code from sub
 
 \anchor Mesh_3_subsection_examples_3d_image
 The following code produces a 3D mesh from
-a 3D image. The image is a segmented medical image in which each 
+a 3D image. The image is a segmented medical image in which each
 voxel is associated a label in accordance with
 the tissue the voxel belongs to.
 The domain is therefore a multi-domain
@@ -937,7 +922,7 @@ Right: the mesh with added 1D-features in the interior of the bounding box
 of the image.
 \cgalFigureCaptionEnd
 
-\subsubsection Mesh_3PolyhedralComplex Polyhedral complex
+\subsubsection Mesh_3PolyhedralComplex Polyhedral Complex
 
 The following example shows how to generate a mesh from a polyhedral complex
 that forms a bounded domain.
@@ -945,7 +930,7 @@ The domain is defined by a group of polyhedral surfaces that are conformal.
 For each facet of the input polyhedral surfaces,
 the ids of incident subdomains are known.
 The input surfaces intersect along polylines that are considered as sharp features,
-and protected as for all domain types in this Section. 
+and protected as for all domain types in this Section.
 
 \cgalExample{Mesh_3/mesh_polyhedral_complex.cpp}
 
@@ -978,10 +963,10 @@ by at least two of the input polyhedral surfaces forming the complex.
 \anchor Mesh_3_subsection_examples_optimization
 
 In the previous examples, the mesh generation is launched through a call
-`make_mesh_3()` with a minimal number of parameters. In such cases, 
+`make_mesh_3()` with a minimal number of parameters. In such cases,
 the default optimization strategy is applied: after the Delaunay refinement process
 two optimization steps are performed, a perturbation and a sliver exudation.
-The following examples show how to disable default optimization steps 
+The following examples show how to disable default optimization steps
 and how to tune the parameters of optimization steps.
 
 \subsubsection Mesh_3DisablingExudationandTuningPerturbation Disabling Exudation and Tuning Perturbation
@@ -992,7 +977,7 @@ a perturbation phase which is launched with no time bound
 and an objective of 10 degrees for the minimum dihedral angle
 of the mesh.
 The example shows two ways of achieving the same result. The first way
-issues a single call to `make_mesh_3()` with the required optimization 
+issues a single call to `make_mesh_3()` with the required optimization
 process activated and tuned. In the second way, `make_mesh_3()` is first called
 without any optimization process and the resulting mesh is next optimized
 through a call to `perturb_mesh_3()` with tuned parameters.
@@ -1002,7 +987,7 @@ through a call to `perturb_mesh_3()` with tuned parameters.
 \subsubsection Mesh_3UsingLloydGlobalOptimization Using Lloyd Global Optimization
 
 In this second example, we show how to call the Lloyd optimization on the
-mesh, followed by a call to exudation. We set a time bound of 30s for the Lloyd optimization. 
+mesh, followed by a call to exudation. We set a time bound of 30s for the Lloyd optimization.
 We set a time bound of 10s and a sliver bound of 10 degrees for the exuder.
 
 \cgalExample{Mesh_3/mesh_optimization_lloyd_example.cpp}
@@ -1014,10 +999,10 @@ We provide here some benchmarks of the performance of the mesh generation algori
 \subsection Mesh_3DelaunayRefinement_1 Delaunay Refinement
 
 The computer used for benchmarking is a PC running Linux64 with two Intel Xeon CPU X5450 clocked at 3.00 GHz
-with 32GB of RAM. The program has been compiled with g++ v4.3.2 with the -O3 option. 
+with 32GB of RAM. The program has been compiled with g++ v4.3.2 with the -O3 option.
 These benchmarks have been done using \cgal v3.8.
-Note that these benchmarks were obtained with the sequential version of the algorithm, 
-which does not take advantage of multi-core architectures. See the next 
+Note that these benchmarks were obtained with the sequential version of the algorithm,
+which does not take advantage of multi-core architectures. See the next
 section for performance of parallel algorithms.
 
 We study the refinement part of the mesh generation engine in this section. We
@@ -1035,83 +1020,83 @@ We mesh an analytical sphere of radius 1.
 <TR><TD ALIGN=LEFT NOWRAP COLSPAN=6><HR>
 <TR>
 <TD ALIGN=LEFT NOWRAP>
-Size bound 
+Size bound
 <TD ALIGN=LEFT NOWRAP>
-vertices nb 
+vertices nb
 <TD ALIGN=LEFT NOWRAP>
-facets nb 
+facets nb
 <TD ALIGN=LEFT NOWRAP>
-tetrahedra nb 
+tetrahedra nb
 <TD ALIGN=CENTER NOWRAP>
-CPU Time (s) 
+CPU Time (s)
 <TD ALIGN=CENTER NOWRAP>
 vertices/second
 <TR><TD ALIGN=LEFT NOWRAP COLSPAN=6><HR>
 <TR>
 <TD ALIGN=LEFT NOWRAP>
-0.2 
+0.2
 <TD ALIGN=LEFT NOWRAP>
-499 
+499
 <TD ALIGN=LEFT NOWRAP>
-488 
+488
 <TD ALIGN=LEFT NOWRAP>
-2,299 
+2,299
 <TD ALIGN=CENTER NOWRAP>
-0.0240 
+0.0240
 <TD ALIGN=CENTER NOWRAP>
-20,800 
+20,800
 <TR>
 <TD ALIGN=LEFT NOWRAP>
-0.1 
+0.1
 <TD ALIGN=LEFT NOWRAP>
-3,480 
+3,480
 <TD ALIGN=LEFT NOWRAP>
-2,046 
+2,046
 <TD ALIGN=LEFT NOWRAP>
-18,756 
+18,756
 <TD ALIGN=CENTER NOWRAP>
-0.146 
+0.146
 <TD ALIGN=CENTER NOWRAP>
-23,800 
+23,800
 <TR>
 <TD ALIGN=LEFT NOWRAP>
-0.05 
+0.05
 <TD ALIGN=LEFT NOWRAP>
-25,556 
+25,556
 <TD ALIGN=LEFT NOWRAP>
-8,274 
+8,274
 <TD ALIGN=LEFT NOWRAP>
-149,703 
+149,703
 <TD ALIGN=CENTER NOWRAP>
-1.50 
+1.50
 <TD ALIGN=CENTER NOWRAP>
-17,000 
+17,000
 <TR>
 <TD ALIGN=LEFT NOWRAP>
-0.025 
+0.025
 <TD ALIGN=LEFT NOWRAP>
-195,506 
+195,506
 <TD ALIGN=LEFT NOWRAP>
-33,212 
+33,212
 <TD ALIGN=LEFT NOWRAP>
-1,194,727 
+1,194,727
 <TD ALIGN=CENTER NOWRAP>
-17.4 
+17.4
 <TD ALIGN=CENTER NOWRAP>
-11,200 
+11,200
 <TR>
 <TD ALIGN=LEFT NOWRAP>
-0.0125 
+0.0125
 <TD ALIGN=LEFT NOWRAP>
-1,528,636 
+1,528,636
 <TD ALIGN=LEFT NOWRAP>
-134,810 
+134,810
 <TD ALIGN=LEFT NOWRAP>
-9,547,772 
+9,547,772
 <TD ALIGN=CENTER NOWRAP>
-179 
+179
 <TD ALIGN=CENTER NOWRAP>
-8,530 
+8,530
 <TR><TD ALIGN=LEFT NOWRAP COLSPAN=6><HR>
 </TABLE>
 
@@ -1132,83 +1117,83 @@ size is set to 0.005.
 <TR><TD ALIGN=LEFT NOWRAP COLSPAN=6><HR>
 <TR>
 <TD ALIGN=LEFT NOWRAP>
-Size bound 
+Size bound
 <TD ALIGN=LEFT NOWRAP>
-vertices nb 
+vertices nb
 <TD ALIGN=LEFT NOWRAP>
-facets nb 
+facets nb
 <TD ALIGN=LEFT NOWRAP>
-tetrahedra nb 
+tetrahedra nb
 <TD ALIGN=CENTER NOWRAP>
-CPU Time (s) 
+CPU Time (s)
 <TD ALIGN=CENTER NOWRAP>
-vertices/second 
+vertices/second
 <TR><TD ALIGN=LEFT NOWRAP COLSPAN=6><HR>
 <TR>
 <TD ALIGN=LEFT NOWRAP>
-0.04 
+0.04
 <TD ALIGN=LEFT NOWRAP>
-423 
+423
 <TD ALIGN=LEFT NOWRAP>
-717 
+717
 <TD ALIGN=LEFT NOWRAP>
-1,332 
+1,332
 <TD ALIGN=CENTER NOWRAP>
-0.488 
+0.488
 <TD ALIGN=CENTER NOWRAP>
-866 
+866
 <TR>
 <TD ALIGN=LEFT NOWRAP>
-0.02 
+0.02
 <TD ALIGN=LEFT NOWRAP>
-2,638 
+2,638
 <TD ALIGN=LEFT NOWRAP>
-3,414 
+3,414
 <TD ALIGN=LEFT NOWRAP>
-10,957 
+10,957
 <TD ALIGN=CENTER NOWRAP>
-2.64 
+2.64
 <TD ALIGN=CENTER NOWRAP>
-998 
+998
 <TR>
 <TD ALIGN=LEFT NOWRAP>
-0.01 
+0.01
 <TD ALIGN=LEFT NOWRAP>
-18,168 
+18,168
 <TD ALIGN=LEFT NOWRAP>
-15,576 
+15,576
 <TD ALIGN=LEFT NOWRAP>
-90,338 
+90,338
 <TD ALIGN=CENTER NOWRAP>
-13.9 
+13.9
 <TD ALIGN=CENTER NOWRAP>
-1,310 
+1,310
 <TR>
 <TD ALIGN=LEFT NOWRAP>
-0.005 
+0.005
 <TD ALIGN=LEFT NOWRAP>
-129,442 
+129,442
 <TD ALIGN=LEFT NOWRAP>
-64,645 
+64,645
 <TD ALIGN=LEFT NOWRAP>
-722,018 
+722,018
 <TD ALIGN=CENTER NOWRAP>
-66.7 
+66.7
 <TD ALIGN=CENTER NOWRAP>
-1,940 
+1,940
 <TR>
 <TD ALIGN=LEFT NOWRAP>
-0.0025 
+0.0025
 <TD ALIGN=LEFT NOWRAP>
-967,402 
+967,402
 <TD ALIGN=LEFT NOWRAP>
-263,720 
+263,720
 <TD ALIGN=LEFT NOWRAP>
-5,756,491 
+5,756,491
 <TD ALIGN=CENTER NOWRAP>
-348 
+348
 <TD ALIGN=CENTER NOWRAP>
-2,780 
+2,780
 <TR><TD ALIGN=LEFT NOWRAP COLSPAN=6><HR>
 </TABLE>
 
@@ -1222,7 +1207,7 @@ View of 3d image mesh generation result (size = 4).
 
 We mesh image number 2 from the 3D-IRCADb-01 (available at <A href="http://www.ircad.fr/softwares/3Dircadb/3Dircadb1/index.php">http://www.ircad.fr/softwares/3Dircadb/3Dircadb1/index.php</A>) public database.
 The size of this image is 512x512x172 voxels (about 45M voxels). The size of the voxels
-is 0.78mm x 0.78mm x 1.6mm. \cgalFigureRef{figuremesh_3_benchmark_3d_image} 
+is 0.78mm x 0.78mm x 1.6mm. \cgalFigureRef{figuremesh_3_benchmark_3d_image}
 shows the mesh obtained for size set to 4.
 
 <CENTER>
@@ -1230,70 +1215,70 @@ shows the mesh obtained for size set to 4.
 <TR><TD ALIGN=LEFT NOWRAP COLSPAN=6><HR>
 <TR>
 <TD ALIGN=LEFT NOWRAP>
-Size bound (mm) 
+Size bound (mm)
 <TD ALIGN=LEFT NOWRAP>
-vertices nb 
+vertices nb
 <TD ALIGN=LEFT NOWRAP>
-facets nb 
+facets nb
 <TD ALIGN=LEFT NOWRAP>
-tetrahedra nb 
+tetrahedra nb
 <TD ALIGN=CENTER NOWRAP>
-CPU Time (s) 
+CPU Time (s)
 <TD ALIGN=CENTER NOWRAP>
 vertices/second
 <TR><TD ALIGN=LEFT NOWRAP COLSPAN=6><HR>
 <TR>
 <TD ALIGN=LEFT NOWRAP>
-16 
+16
 <TD ALIGN=LEFT NOWRAP>
-3,898 
+3,898
 <TD ALIGN=LEFT NOWRAP>
-4,099 
+4,099
 <TD ALIGN=LEFT NOWRAP>
-20,692 
+20,692
 <TD ALIGN=CENTER NOWRAP>
-0.344 
+0.344
 <TD ALIGN=CENTER NOWRAP>
-11,300 
+11,300
 <TR>
 <TD ALIGN=LEFT NOWRAP>
-8 
+8
 <TD ALIGN=LEFT NOWRAP>
-34,117 
+34,117
 <TD ALIGN=LEFT NOWRAP>
-27,792 
+27,792
 <TD ALIGN=LEFT NOWRAP>
-199,864 
+199,864
 <TD ALIGN=CENTER NOWRAP>
-3.09 
+3.09
 <TD ALIGN=CENTER NOWRAP>
-11,000 
+11,000
 <TR>
 <TD ALIGN=LEFT NOWRAP>
-4 
+4
 <TD ALIGN=LEFT NOWRAP>
-206,566 
+206,566
 <TD ALIGN=LEFT NOWRAP>
-86,180 
+86,180
 <TD ALIGN=LEFT NOWRAP>
-1,253,694 
+1,253,694
 <TD ALIGN=CENTER NOWRAP>
-22.4 
+22.4
 <TD ALIGN=CENTER NOWRAP>
-9,230 
+9,230
 <TR>
 <TD ALIGN=LEFT NOWRAP>
-2 
+2
 <TD ALIGN=LEFT NOWRAP>
-1,546,196 
+1,546,196
 <TD ALIGN=LEFT NOWRAP>
-329,758 
+329,758
 <TD ALIGN=LEFT NOWRAP>
-9,617,278 
+9,617,278
 <TD ALIGN=CENTER NOWRAP>
-199 
+199
 <TD ALIGN=CENTER NOWRAP>
-7,780 
+7,780
 <TR><TD ALIGN=LEFT NOWRAP COLSPAN=6><HR>
 </TABLE>
 
@@ -1320,9 +1305,9 @@ Lloyd optimization speed-up, compared to the sequential version of the algorithm
 
 \subsection Mesh_3TheoreticalFoundations Theoretical Foundations
 
-The \cgal mesh generation package implements a meshing engine based 
+The \cgal mesh generation package implements a meshing engine based
 on the method of Delaunay refinement introduced by Chew \cgalCite{c-gqmgc-93} and Ruppert \cgalCite{r-draq2d-95}
-and pioneered in 3D by Shewchuk \cgalCite{s-tmgdr-98}. 
+and pioneered in 3D by Shewchuk \cgalCite{s-tmgdr-98}.
 It uses the notion of restricted Delaunay triangulation
 to approximate 1-dimensional curved features and curved surface patches
 and rely on the work of Boissonnat and Oudot \cgalCite{cgal:bo-pgsms-05}
@@ -1337,7 +1322,7 @@ was pioneered by Cheng et al. \cgalCite{cgal:cdr-drpsc-07} and further experimen
 The optimization phase involves global optimization processes, a perturbation process
 and a sliver exudation process. The global optimizers are based on Lloyd smoothing \cgalCite{cgal:dfg-cvtaa-99t}, \cgalCite{cgal:dw-tmgob-02}
 and odt smoothing \cgalCite{cgal::c-mssbo-04}, \cgalCite{cgal:acyd-vtm-05}, where odt means
-<I>optimal Delaunay triangulation</I>. The perturbation process 
+<I>optimal Delaunay triangulation</I>. The perturbation process
 is mainly based on the work of Tournois \cgalCite{cgal:t-om-09}
 and Tournois et al. \cgalCite{cgal:twad-iropitmg-09},
 while the exudation process is, the now famous, optimization by weighting described
@@ -1368,7 +1353,7 @@ of 1-dimensional features was worked out by Laurent Rineau, Stéphane Tayeb
 and Mariette Yvinec. It appeared first in the release 3.8 of \cgal.
 
 In 2013, Clément Jamin made the meshing and optimization algorithms parallel
-on multi-core shared-memory architectures. 
+on multi-core shared-memory architectures.
 \todo Add reference to paper or research report when it is available.
-*/ 
+*/
 } /* namespace CGAL */

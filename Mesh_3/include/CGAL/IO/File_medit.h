@@ -37,7 +37,9 @@
 #include <CGAL/utility.h>
 #include <CGAL/basic.h>
 
+#include <boost/type_traits/is_same.hpp>
 #include <boost/unordered_map.hpp>
+#include <boost/utility/enable_if.hpp>
 
 namespace CGAL {
 
@@ -791,7 +793,7 @@ output_to_medit(std::ostream& os,
        ++vit)
   {
     V[vit] = inum++;
-    Weighted_point p = vit->point();
+    Weighted_point p = tr.point(vit);
     os << CGAL::to_double(p.x()) << ' '
        << CGAL::to_double(p.y()) << ' '
        << CGAL::to_double(p.z()) << ' '
@@ -864,9 +866,6 @@ output_to_medit(std::ostream& os,
 
 } // end namespace Mesh_3
 
-  
-
-  
 /**
  * @brief outputs mesh to medit format
  * @param os the stream
@@ -881,7 +880,10 @@ void
 output_to_medit(std::ostream& os,
                 const C3T3& c3t3,
                 bool rebind = false,
-                bool show_patches = false) 
+                bool show_patches = false,
+                typename boost::enable_if_c<
+                           boost::is_same<typename C3T3::Triangulation::Periodic_tag,
+                                          Tag_false>::value>::type* = NULL)
 {
   if ( rebind )
   {
