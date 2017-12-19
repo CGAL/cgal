@@ -785,7 +785,7 @@ polylines_to_protect(const CGAL::Image_3& cgal_image,
      word_type,
      null,
      CGAL::Identity<Image_word_type>(),
-     internal::Mesh_3::Returns_midpoint<K, Image_word_type>(),
+     Mesh_3::internal::Returns_midpoint<K, Image_word_type>(),
      existing_polylines_begin,
      existing_polylines_end);
 }
