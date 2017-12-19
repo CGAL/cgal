@@ -4,4 +4,5 @@
 \example Interpolation/surface_neighbor_coordinates_3.cpp
 \example Interpolation/linear_interpolation_2.cpp
 \example Interpolation/sibson_interpolation_2.cpp
+\example Interpolation/sibson_interpolation_vertex_with_info_2.cpp
 */

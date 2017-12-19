@@ -342,9 +342,27 @@ type of natural neighbor coordinate (i.e.\ `natural_neighbor_coordinates_2()`, `
 
 \cgalExample{Interpolation/sibson_interpolation_2.cpp}
 
+
+\subsection InterpolationExampleVertices Example for Storing Values and Gradients in Vertices
+
+In the previous examples we stored the values and gradients in a `std::map` and wrapped them in
+a `Data_access` object. As the triangulation package provides the class `Triangulation_vertex_base_with_info_2`
+we can store values and gradients in the vertices, and use functors and output iterators
+so that the gradient fitting and interpolation function can access them.
+
+
+\cgalExample{Interpolation/sibson_interpolation_vertex_with_info_2.cpp}
+
+
 An additional example in the distribution compares numerically the errors of the different 
 interpolation functions with respect to a known function. 
 It is distributed in the examples directory.
+
+\section Interpolation Design and Implementation History
+
+The original version was written by Julia Fl&ouml;totto, while working towards her PhD thesis at Inria.
+The possibility to use values and gradients in a `Triangulation_vertex_base_with_info_2` was introduced
+by Andreas Fabri and Mael Rouxel-Labb&eacut working at GeometryFactory.
 
 */ 
 } /* namespace CGAL */
