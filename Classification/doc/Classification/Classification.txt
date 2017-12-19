@@ -200,9 +200,11 @@ Example of classification on a point set with medium noise and outliers (left: i
 
 \cgal provides [ETHZ_random_forest_classifier](@ref CGAL::Classification::ETHZ_random_forest_classifier),
 a classifier based on the Random Forest Template Library developed by
-Stefan Walk at ETH Zurich \cgalCite{cgal:w-erftl-14}. This classifier
-uses a ground truth training set to construct several decision trees
-that are then used to assign a label to each input item.
+Stefan Walk at ETH Zurich \cgalCite{cgal:w-erftl-14} (the library is
+included with the \cgal release, the user does not have to install
+anything more). This classifier uses a ground truth training set to
+construct several decision trees that are then used to assign a label
+to each input item.
 
 This classifier cannot be set up by hand and requires a ground truth
 training set. The training algorithm is significantly faster but
@@ -213,7 +215,7 @@ configuration files are larger than those produced by
 but the output quality is usually significantly better, especially in
 the cases where many labels are used (more than five).
 
-An [example](\ref Classification_example_random_forest) shows how to
+An [example](\ref Classification_example_ethz_random_forest) shows how to
 use this classifier. For more details about the algorithm, please refer
 to README provided in the [ETH Zurich's code archive](https://www.ethz.ch/content/dam/ethz/special-interest/baug/igp/photogrammetry-remote-sensing-dam/documents/sourcecode-and-datasets/Random%20Forest/rforest.zip).
 
@@ -231,7 +233,7 @@ It is provided for the sake of completeness and for testing purposes,
 but if you are not sure what to use, we advise using the ETHZ Random
 Forest instead.
 
-An [example](\ref Classification_example_random_forest) shows how to
+An [example](\ref Classification_example_opencv_random_forest) shows how to
 use this classifier. For more details about the algorithm, please refer
 to [the official documentation](http://docs.opencv.org/2.4/modules/ml/doc/random_trees.html)
 of OpenCV.
@@ -396,11 +398,17 @@ The following example:
 
 \cgalExample{Classification/example_generation_and_training.cpp}
 
-\subsection Classification_example_random_forest Random Forest
+\subsection Classification_example_ethz_random_forest ETHZ Random Forest
 
-The following example shows how to use classifiers [OpenCV_random_forest_classifier](@ref CGAL::Classification::OpenCV_random_forest_classifier) using an input training set.
+The following example shows how to use the classifier [ETHZ_random_forest_classifier](@ref CGAL::Classification::ETHZ_random_forest_classifier) using an input training set.
 
-\cgalExample{Classification/example_random_forest.cpp}
+\cgalExample{Classification/example_ethz_random_forest.cpp}
+
+\subsection Classification_example_opencv_random_forest OpenCV Random Forest
+
+The following example shows how to use the classifier [OpenCV_random_forest_classifier](@ref CGAL::Classification::OpenCV_random_forest_classifier) using an input training set.
+
+\cgalExample{Classification/example_opencv_random_forest.cpp}
 
 \section Classification_history History
 

@@ -33,10 +33,12 @@
 #include <CGAL/Classification/internal/auxiliary/random-forest/node-gini.hpp>
 #include <CGAL/Classification/internal/auxiliary/random-forest/forest.hpp>
 
+#ifdef CGAL_LINKED_WITH_BOOST_SERIALIZATION
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/iostreams/filtering_stream.hpp>
 #include <boost/iostreams/filter/gzip.hpp>
+#endif
 
 
 namespace CGAL {
@@ -193,6 +195,7 @@ public:
     The output file is written in an GZIP container that is readable
     by the `load_configuration()` method.
   */
+#if defined(CGAL_LINKED_WITH_BOOST_SERIALIZATION) || defined(DOXYGEN_RUNNING)
   void save_configuration (std::ostream& output)
   {
     boost::iostreams::filtering_ostream outs;
@@ -201,6 +204,13 @@ public:
     boost::archive::text_oarchive oas(outs);
     oas << BOOST_SERIALIZATION_NVP(*m_rfc);
   }
+#else
+  void save_configuration (std::ostream&)
+  {
+    std::cerr << "Error: can't use ETHZ random forest classifier IO functions, "
+              << "missing Boost Serialization library." << std::endl;
+  }
+#endif
 
   /*!
     \brief Loads a configuration from the stream `input`.
@@ -211,6 +221,7 @@ public:
     the ones present when the file was generated using
     `save_configuration()`.
   */
+#if defined(CGAL_LINKED_WITH_BOOST_SERIALIZATION) || defined(DOXYGEN_RUNNING)
   void load_configuration (std::istream& input)
   {
     liblearning::RandomForest::ForestParams params;
@@ -224,6 +235,13 @@ public:
     boost::archive::text_iarchive ias(ins);
     ias >> BOOST_SERIALIZATION_NVP(*m_rfc);
   }
+#else
+  void load_configuration (std::istream&)
+  {
+    std::cerr << "Error: can't use ETHZ random forest classifier IO functions, "
+              << "missing Boost Serialization library." << std::endl;
+  }
+#endif
 
 
 };

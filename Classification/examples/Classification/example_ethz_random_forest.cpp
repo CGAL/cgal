@@ -1,8 +1,3 @@
-#if defined (_MSC_VER) && !defined (_WIN64)
-#pragma warning(disable:4244) // boost::number_distance::distance()
-                              // converts 64 to 32 bits integers
-#endif
-
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
@@ -51,14 +46,6 @@ int main (int argc, char** argv)
       filename = argv[1];
   }
 
-#ifndef CGAL_LINKED_WITH_OPENCV  
-  if (use_opencv)
-  {
-    std::cerr << "OpenCV not available, exiting." << std::endl;
-    return EXIT_SUCCESS;
-  }
-#endif
-
   std::ifstream in (filename.c_str(), std::ios::binary);
   Point_set pts;
 
@@ -97,48 +84,23 @@ int main (int argc, char** argv)
 
   std::vector<int> label_indices(pts.size(), -1);
   
-#ifdef CGAL_LINKED_WITH_OPENCV  
-  if (use_opencv)
-  {
-    std::cerr << "Using OpenCV Random Forest Classifier" << std::endl;
-    Classification::OpenCV_random_forest_classifier classifier (labels, features);
+  std::cerr << "Using ETHZ Random Forest Classifier" << std::endl;
+  Classification::ETHZ_random_forest_classifier classifier (labels, features);
   
-    std::cerr << "Training" << std::endl;
-    t.reset();
-    t.start();
-    classifier.train (ground_truth);
-    t.stop();
-    std::cerr << "Done in " << t.time() << " second(s)" << std::endl;
+  std::cerr << "Training" << std::endl;
+  t.reset();
+  t.start();
+  classifier.train (ground_truth);
+  t.stop();
+  std::cerr << "Done in " << t.time() << " second(s)" << std::endl;
 
-    t.reset();
-    t.start();
-    Classification::classify_with_graphcut<CGAL::Sequential_tag>
-      (pts, pts.point_map(), labels, classifier,
-       generator.neighborhood().k_neighbor_query(12),
-       0.2f, 1, label_indices);
-    t.stop();
-  }
-  else
-#endif
-  {
-    std::cerr << "Using ETHZ Random Forest Classifier" << std::endl;
-    Classification::ETHZ_random_forest_classifier classifier (labels, features);
-  
-    std::cerr << "Training" << std::endl;
-    t.reset();
-    t.start();
-    classifier.train (ground_truth);
-    t.stop();
-    std::cerr << "Done in " << t.time() << " second(s)" << std::endl;
-
-    t.reset();
-    t.start();
-    Classification::classify_with_graphcut<CGAL::Sequential_tag>
-      (pts, pts.point_map(), labels, classifier,
-       generator.neighborhood().k_neighbor_query(12),
-       0.2f, 1, label_indices);
-    t.stop();
-  }
+  t.reset();
+  t.start();
+  Classification::classify_with_graphcut<CGAL::Sequential_tag>
+    (pts, pts.point_map(), labels, classifier,
+     generator.neighborhood().k_neighbor_query(12),
+     0.2f, 1, label_indices);
+  t.stop();
   
   std::cerr << "Classification with graphcut done in " << t.time() << " second(s)" << std::endl;
 
