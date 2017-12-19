@@ -773,82 +773,88 @@ insert_subconstraint(Vertex_handle vaa,
   // insert the subconstraint [vaa vbb] 
   // it will eventually be splitted into several subconstraints
 {
-  CGAL_triangulation_precondition( vaa != vbb);
-  Vertex_handle vi;
+  std::stack<std::pair<Vertex_handle, Vertex_handle> > stack;
+  stack.push(std::make_pair(vaa,vbb));
 
-  Face_handle fr;
-  int i;
-  if(this->includes_edge(vaa,vbb,vi,fr,i)) {
-    this->mark_constraint(fr,i);
-    if (vi != vbb)  {
-      hierarchy.split_constraint(vaa,vbb,vi);
-      insert_subconstraint(vi,vbb, out);
+  while(! stack.empty()){
+    boost::tie(vaa,vbb) = stack.top();
+    stack.pop();
+    CGAL_triangulation_precondition( vaa != vbb);
+  
+    Vertex_handle vi;
+
+    Face_handle fr;
+    int i;
+    if(this->includes_edge(vaa,vbb,vi,fr,i)) {
+      this->mark_constraint(fr,i);
+      if (vi != vbb)  {
+        hierarchy.split_constraint(vaa,vbb,vi);
+        stack.push(std::make_pair(vi,vbb));
+      }
+      continue;
     }
-    return;
-  }
       
-  List_faces intersected_faces;
-  List_edges conflict_boundary_ab, conflict_boundary_ba;
+    List_faces intersected_faces;
+    List_edges conflict_boundary_ab, conflict_boundary_ba;
      
-  bool intersection  = this->find_intersected_faces( 
-    vaa, vbb,
-    intersected_faces,
-    conflict_boundary_ab,
-    conflict_boundary_ba,
-    vi);
+    bool intersection  = this->find_intersected_faces( 
+                                                      vaa, vbb,
+                                                      intersected_faces,
+                                                      conflict_boundary_ab,
+                                                      conflict_boundary_ba,
+                                                      vi);
 
-  if ( intersection) {
-    if (vi != vaa && vi != vbb) {
-      hierarchy.split_constraint(vaa,vbb,vi);
-      insert_subconstraint(vaa,vi, out); 
-      insert_subconstraint(vi,vbb, out); 
-     }
-    else insert_subconstraint(vaa,vbb,out);  
+    if ( intersection) {
+      if (vi != vaa && vi != vbb) {
+        hierarchy.split_constraint(vaa,vbb,vi);
+        stack.push(std::make_pair(vaa,vi)); 
+        stack.push(std::make_pair(vi,vbb)); 
+      }
+      else stack.push(std::make_pair(vaa,vbb));  
 
-    
-    return;
-  }
+      continue;
+    }
 
 
-  //no intersection
+    //no intersection
 
-  List_edges edges(conflict_boundary_ab);
-  std::copy(conflict_boundary_ba.begin(), conflict_boundary_ba.end(), std::back_inserter(edges));
+    List_edges edges(conflict_boundary_ab);
+    std::copy(conflict_boundary_ba.begin(), conflict_boundary_ba.end(), std::back_inserter(edges));
 
-  // edges may contain mirror edges. They no longer exist after triangulate_hole
-  // so we have to remove them before calling get_bounded_faces
-  if(! edges.empty()){
+    // edges may contain mirror edges. They no longer exist after triangulate_hole
+    // so we have to remove them before calling get_bounded_faces
+    if(! edges.empty()){
 
 #if defined(BOOST_MSVC) && (BOOST_VERSION == 105500)
-    std::set<Face_handle> faces(intersected_faces.begin(), intersected_faces.end());
+      std::set<Face_handle> faces(intersected_faces.begin(), intersected_faces.end());
 #else
-    boost::container::flat_set<Face_handle> faces(intersected_faces.begin(), intersected_faces.end());
+      boost::container::flat_set<Face_handle> faces(intersected_faces.begin(), intersected_faces.end());
 #endif
-    typename List_edges::iterator it2;
-    for(typename List_edges::iterator it = edges.begin(); it!= edges.end();){
-      if(faces.find(it->first) != faces.end()){
-        typename List_edges::iterator it2 = it;
-        ++it;
-        edges.erase(it2);
-      }else {
-        ++it;
+      typename List_edges::iterator it2;
+      for(typename List_edges::iterator it = edges.begin(); it!= edges.end();){
+        if(faces.find(it->first) != faces.end()){
+          typename List_edges::iterator it2 = it;
+          ++it;
+          edges.erase(it2);
+        }else {
+          ++it;
+        }
       }
     }
+
+    this->triangulate_hole(intersected_faces,
+                           conflict_boundary_ab,
+                           conflict_boundary_ba);
+
+    this->get_bounded_faces(edges.begin(),
+                            edges.end(),
+                            out);
+
+    if (vi != vbb) {
+      hierarchy.split_constraint(vaa,vbb,vi);
+      stack.push(std::make_pair(vi,vbb)); 
+    }
   }
-
-  this->triangulate_hole(intersected_faces,
-                         conflict_boundary_ab,
-                         conflict_boundary_ba);
-
-  this->get_bounded_faces(edges.begin(),
-                          edges.end(),
-                          out);
-
-  if (vi != vbb) {
-    hierarchy.split_constraint(vaa,vbb,vi);
-    insert_subconstraint(vi,vbb, out); 
-  }
-  return;
 }
 
 
