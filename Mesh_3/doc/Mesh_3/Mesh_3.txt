@@ -334,7 +334,7 @@ and to represent the final 3D mesh at the end
 of the procedure.
 
 The embedding 3D triangulation is required to be the nested type
-`CGAL::Mesh_triangulation_3::type`, provided by the class
+`CGAL::Mesh_triangulation_3::type`, provided by the class template
 `CGAL::Mesh_triangulation_3`. The type for this triangulation is a
 wrapper around the class `CGAL::Regular_triangulation_3` whose vertex and cell base classes
 are respectively models of the concepts `MeshVertexBase_3` and

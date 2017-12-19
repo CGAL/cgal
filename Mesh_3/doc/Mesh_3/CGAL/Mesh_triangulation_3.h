@@ -3,8 +3,8 @@ namespace CGAL {
 /*!
 \ingroup PkgMesh_3MeshClasses
 
-The class `Mesh_triangulation_3` is a metafunctor which provides the triangulation type to be used
-for the 3D triangulation embedding the mesh.
+The class `Mesh_triangulation_3` is a class template which provides the triangulation
+type to be used for the 3D triangulation embedding the mesh.
 
 \tparam MD must be a model of `MeshDomain_3`.
 

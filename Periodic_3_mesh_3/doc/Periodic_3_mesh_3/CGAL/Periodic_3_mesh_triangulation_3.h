@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
 \ingroup PkgPeriodic_3_mesh_3MeshClasses
 
-The class `Periodic_3_mesh_triangulation_3` is a metafunctor which provides
+The class `Periodic_3_mesh_triangulation_3` is a class template which provides
 the triangulation type to be used for the 3D periodic triangulation embedding the mesh.
 
 \tparam MD must be a model of `Periodic_3MeshDomain_3` or `Periodic_3MeshDomainWithFeatures_3`.

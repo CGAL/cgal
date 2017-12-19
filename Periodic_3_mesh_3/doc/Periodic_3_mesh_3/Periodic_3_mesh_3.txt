@@ -248,7 +248,7 @@ See Section \ref Mesh_3Protectionof0and1dimensionalExposed in the documentation
 of the package \ref PkgMesh_3Summary for further information.
 
 Section \ref Periodic_3_mesh_3MeshingDomainswithSharpFeatures details how
-to prescribe sharp features and examples of periodic meshes with features
+to prescribe sharp features and examples of periodic meshes with features.
 
 \subsection Periodic_3_mesh_3OptimizationPhase Optimization Phase
 
@@ -315,7 +315,7 @@ approximating simplicial mesh and to represent a single copy of
 the final periodic 3D mesh at the end of the procedure.
 
 The embedding periodic 3D triangulation is required to be the nested type
-`CGAL::Periodic_3_mesh_triangulation_3::type`, provided by the class
+`CGAL::Periodic_3_mesh_triangulation_3::type`, provided by the class template
 `CGAL::Periodic_3_mesh_triangulation_3`. The type for this triangulation is a
 wrapper around the class `CGAL::Periodic_3_regular_triangulation_3` whose vertex and cell
 base classes are respectively models of the concepts `MeshVertexBase_3` and
@@ -472,7 +472,7 @@ Cut view (middle). Another cut is shown, with 7 copies (right).
 
 While the implicit function used in the previous example is defined and periodic
 over the complete space, it is also possible to consider an implicit function
-defined entirely within the fundamental domain. It will then be periodically
+defined entirely within the canonical periodic domain. It will then be periodically
 duplicated. For example, replacing the previous domain and with the following
 implicit function (a sphere):
 
@@ -492,7 +492,7 @@ will yield the mesh shown on \cgalFigureRef{Periodic_3_mesh_3Periodic_implicit_s
 <img src="periodic_implicit_spheres.png" style="max-width:70%;"/>
 </center>
 \cgalFigureCaptionBegin{Periodic_3_mesh_3Periodic_implicit_sphere}
-Periodic mesh of an implicit sphere that is entirely contained in the fundamental domain,
+Periodic mesh of an implicit sphere that is entirely contained in the input cube,
 shown with 7 copies (left). A cut view along one of the axes (right).
 \cgalFigureCaptionEnd
 
@@ -596,7 +596,7 @@ and corners that are specified by the user:
 - Two curves cannot intersect, except at a common endpoint.
 
 \warning For conveniency, curves and corners do not need to be restricted
-to the fundamental domain, but users should be mindful that curves and corners will exist
+to the input cube, but users should be mindful that curves and corners will exist
 in all periodic instances and the requirements described above must be satisfied.
 For example, if considering the unit cube, it is not a valid input
 to prescribe a corner at the point `(1.5, 1.5, 1.5)` and the curve `(2,2,2)--(3,3,3)`
@@ -632,7 +632,7 @@ a single copy of the mesh does not necessarily form a visually pleasing mesh by 
 
 It is possible to prescribe features that will, due to periodicity, extend indefinitely
 in space. A simple example of such occurrence is the segment `(0,0,0) -- (1,1,1)` when
-considering the unit cube as fundamental domain.
+considering the unit cube as canonical periodic domain.
 \cgalFigureRef{Periodic_3_mesh_3Periodic_protection} shows an implicit function
 describing a square-based prism such that the axis of the prism is the (Oz) axis.
 (The prism is thus 'cut' into 4 pieces when considered within a single instance of the periodic space.)
@@ -657,7 +657,7 @@ The fundamental domain is the unit cube and the following polylines have been sp
   // As the last four polylines, these polylines do not correspond to a sharp feature
   // on the prism, but are rather just for aesthetics.
   //
-  // Note that these polylines cross the border of the fundamental domain.
+  // Note that these polylines cross the border of the input cube.
   LH0: ( 0.3,  0.3, 0) -- ( 0.3, -0.3, 0)
   LH1: ( 0.3, -0.3, 1) -- (-0.3, -0.3, 1)
   LH2: (-0.3, -0.3, 2) -- (-0.3,  0.3, 2)
