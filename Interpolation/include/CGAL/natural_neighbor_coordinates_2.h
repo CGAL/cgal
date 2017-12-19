@@ -36,24 +36,13 @@ namespace CGAL {
 namespace internal{
 namespace interpolation{
 
-  template <class Traits>
-  const typename Traits::Point_d&
-  get_point(const typename Traits::Point_d& p){ return p; }
-
-  template <class Traits, class Vertex_handle>
-  const typename Traits::Point_d&
-  get_point(Vertex_handle v){ return v->point(); }
-
-
-
-
-  template < typename Dt>
+  template < typename Dt, typename T2>
   struct Vertex2Point {
     typedef typename Dt::Vertex_handle Vertex_handle;
-    typedef typename Dt::Geom_traits::FT FT;
     typedef typename Dt::Point Point;
-    typedef std::pair<Vertex_handle,FT> argument_type;
-    typedef std::pair<Point,FT> result_type;
+    
+    typedef std::pair<Vertex_handle, T2> argument_type;
+    typedef std::pair<Point, T2> result_type;
     
     result_type operator()(const argument_type& vp) const
     {
@@ -69,18 +58,35 @@ namespace interpolation{
     typedef std::pair<Vertex_handle,FT> result_type;
     
     const Map& map;
+    const Dt& dt;
 
-    Vertex2Vertex(const Map& map)
-      : map(map)
+    Vertex2Vertex(const Map& map, const Dt& dt)
+      : map(map), dt(dt)
     {}
 
     result_type operator()(const argument_type& vp) const
     {
       typename Map::const_iterator it = map.find(vp.first);
       CGAL_assertion(it != map.end());
-      return std::make_pair(it->first, vp.second);
+      CGAL_assertion(dt.tds().is_vertex(it->second));
+      return std::make_pair(it->second, vp.second);
     }
   };
+  
+  template <typename Tr, typename InterpolationTraits, typename FunctorArgType, typename T2>
+  struct Output_iterator_functor_selector
+  {
+    typedef CGAL::Identity<std::pair<FunctorArgType, T2> > type;
+  };
+
+  template <typename Tr, typename InterpolationTraits, typename T2>
+  struct Output_iterator_functor_selector<Tr, InterpolationTraits,
+                                          typename InterpolationTraits::Point_d, T2>
+  {
+    typedef internal::interpolation::Vertex2Point<Tr, T2> type;
+  };
+
+  
 // the struct "Project_vertex_output_iterator"
 // is used in the (next two) functions
 // as well as in regular_neighbor_coordinates_2 and
@@ -116,7 +122,6 @@ struct Project_vertex_output_iterator
   Project_vertex_output_iterator&
   operator=(const Vertex_pair& vp){
     *_base = fct(vp);
-    //*_base=std::make_pair(vp.first->point(), vp.second);
     return *this;
   }
 };
@@ -323,7 +328,8 @@ natural_neighbor_coordinates_2(const Dt& dt,
     CGAL_TYPENAME_DEFAULT_ARG Dt::Face_handle() )
 
 {
-  return natural_neighbor_coordinates_2(dt, p, out, internal::interpolation::Vertex2Point<Dt>(), start);
+  return natural_neighbor_coordinates_2(dt, p, out,
+                                        internal::interpolation::Vertex2Point<Dt, typename Dt::Geom_traits::FT>(), start);
 }
 
 
@@ -383,7 +389,7 @@ natural_neighbor_coordinates_2(const Dt& dt,
   }
   while(++vc!=done);
 
-  internal::interpolation::Vertex2Vertex<Dt,V2V> v2v(correspondence_map);
+  internal::interpolation::Vertex2Vertex<Dt,V2V> v2v(correspondence_map, dt);
   Unary_compose_1<Fct,internal::interpolation::Vertex2Vertex<Dt,V2V> >  cfct(fct,v2v);
   return natural_neighbor_coordinates_2(t2, vh->point(), out, cfct);
 }
@@ -394,9 +400,11 @@ natural_neighbor_coordinates_2(const Dt& dt,
                                typename Dt::Vertex_handle vh,
                                OutputIterator out)
 {
-  return natural_neighbor_coordinates_2(dt, vh, out, internal::interpolation::Vertex2Point<Dt>());
+  return natural_neighbor_coordinates_2(dt, vh, out,
+                                        internal::interpolation::Vertex2Point<Dt, typename Dt::Geom_traits::FT>());
 }
 
+#if 0  
 /**********************************************************/
 // AF added
 // writes pair<Vertex_handle,Vector> into out
@@ -438,7 +446,7 @@ natural_neighbors_2(const Dt& dt,
   result.first = out;
   return result;
  }
-
+#endif
 
 //class providing a function object:
 //OutputIterator has value type
@@ -472,6 +480,7 @@ public:
   {
     return natural_neighbor_coordinates_2(dt, vh, out);
   }
+
 };
 #endif  
 } //namespace CGAL

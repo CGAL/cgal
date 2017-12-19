@@ -48,7 +48,9 @@ int main()
 
   // Create n+m-4 points within a disc of radius 2
   double r_d = 3;
-  CGAL::Random_points_in_disc_2<Point> g(r_d );
+  CGAL::Random rng(1513114263);
+  
+  CGAL::Random_points_in_disc_2<Point> g(r_d,rng );
   CGAL::cpp11::copy_n( g, n+m, std::back_inserter(points));
 
   Delaunay_triangulation T;
@@ -112,7 +114,7 @@ int main()
     l_value = CGAL::linear_interpolation(coords.begin(), coords.end(),
                                          norm,
                                          CGAL::Data_access<Point_value_map>(values));
-
+    
     error = CGAL_NTS abs(l_value - exact_value);
     l_total += error;
     if (error > l_max) l_max = error;

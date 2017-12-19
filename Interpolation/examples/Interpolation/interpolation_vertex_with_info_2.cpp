@@ -21,47 +21,66 @@ typedef K::Vector_2                                   Vector;
 typedef K::Point_2                                    Point;
 
 
-struct I {
-  I()
+template <typename V, typename G>
+struct Value_and_gradient {
+  Value_and_gradient()
     : value(), gradient(CGAL::NULL_VECTOR)
   {}
   
-  Coord_type value;
-  Vector gradient;
+  V value;
+  G gradient;
 };
 
-typedef CGAL::Triangulation_vertex_base_with_info_2<I, K>    Vb;
+typedef CGAL::Triangulation_vertex_base_with_info_2<Value_and_gradient<Coord_type,Vector>, K>    Vb;
 typedef CGAL::Triangulation_data_structure_2<Vb>      Tds;
 typedef CGAL::Delaunay_triangulation_2<K,Tds>         Delaunay_triangulation;
 typedef Delaunay_triangulation::Vertex_handle         Vertex_handle;
 typedef CGAL::Interpolation_traits_2<K>               Traits;
 
 typedef std::vector< std::pair<Point, Coord_type> >   Coordinate_vector;
-typedef std::map<Point, Coord_type, K::Less_xy_2>     Point_value_map;
-typedef std::map<Vertex_handle,  Vector>              Vertex_vector_map;
-typedef std::map<Point,  Vector>                      Point_vector_map;
 
-
-struct Func {
-  typedef std::pair<Coord_type, bool> result_type;
+template <typename V, typename T>
+struct Function_value {
+  typedef V argument_type;
+  typedef std::pair<T, bool> result_type;
   
-  template <typename T>
-  result_type operator()(const T& t)const
+  result_type operator()(const argument_type& a)const
   {
-    return result_type(t->info().value, true);
+    return result_type(a->info().value, true);
   }
   
 };
 
 
-struct Grad {
-  typedef std::pair<Vector,bool> result_type;
+template <typename V, typename G>
+struct Function_gradient
+  : public std::iterator<std::output_iterator_tag,void,void,void,void> {
   
-  template <typename T>
+  typedef V argument_type;
+  typedef std::pair<G,bool> result_type;
+  
+  
   result_type
-  operator()(const T& t)const
+  operator()(const argument_type& a)const
   {
-    return std::make_pair(t->info().gradient,t->info().gradient != CGAL::NULL_VECTOR) ;
+    return std::make_pair(a->info().gradient,a->info().gradient != CGAL::NULL_VECTOR) ;
+  }
+
+
+  const Function_gradient& operator=(const std::pair<V, G>& p) const
+    {
+      p.first->info().gradient = p.second;
+      return *this;
+    }
+
+  const Function_gradient& operator++(int) const
+  {
+    return *this;
+  }
+  
+  const Function_gradient& operator*() const
+  {
+    return *this;
   }
 };
 
@@ -89,10 +108,9 @@ int main()
 
   Delaunay_triangulation T;
 
-  Point_value_map values;
-  Vertex_vector_map gradients;
-  Point_vector_map pgradients;
-
+  Function_value<Vertex_handle,Coord_type> function_value;
+  Function_gradient<Vertex_handle,Vector> function_gradient;
+  
   //parameters for quadratic function:
   Coord_type alpha = Coord_type(1.0),
       beta1 = Coord_type(2.0),
@@ -115,9 +133,6 @@ int main()
                     beta2+ (gamma2+ gamma3)*x + Coord_type(2)*(gamma4*y));
     vh->info().value = value;
     vh->info().gradient = gradient;
-    values.insert(std::make_pair(points[j], value));
-    gradients.insert(std::make_pair(vh, gradient));
-    pgradients.insert(std::make_pair(points[j], gradient));
   }
 
   //variables for statistics:
@@ -140,35 +155,6 @@ int main()
 
     total_value += exact_value;
 
-    {
-
-    //Coordinate_vector:
-    std::vector< std::pair< Point, Coord_type > > coords;
-    Coord_type norm =
-        CGAL::natural_neighbor_coordinates_2(T, points[i],
-                                             std::back_inserter(coords)).second;
-
-    assert(norm>0);
-
-    //linear interpolant:
-    l_value = CGAL::linear_interpolation(coords.begin(), coords.end(),
-                                         norm,
-                                         CGAL::Data_access<Point_value_map>(values));
-
-
-    
-    //Sibson interpolant: version without sqrt:
-    res =  CGAL::sibson_c1_interpolation_square(coords.begin(),
-                                                coords.end(), norm,
-                                                points[i],
-                                                CGAL::Data_access<Point_value_map>(values),
-                                                CGAL::Data_access<Point_vector_map>(pgradients),
-                                                Traits());
-
-
-    }
-
-
 
     
     //Coordinate_vector:
@@ -182,27 +168,24 @@ int main()
 
     assert(norm>0);
 
-    Func fct;
-    Grad grad;
-#if 0
     //linear interpolant:
     l_value =
       CGAL::linear_interpolation(coords.begin(), coords.end(),
-                                         norm,
-                                         fct);
+                                 norm,
+                                 function_value);
 
 
 
     error = CGAL_NTS abs(l_value - exact_value);
     l_total += error;
     if (error > l_max) l_max = error;
-#endif
+
     
     //Farin interpolant:
     res = CGAL::farin_c1_interpolation(coords.begin(),
                                        coords.end(), norm,points[i],
-                                       fct,
-                                       grad,
+                                       function_value,
+                                       function_gradient,
                                        Traits());
 
 
@@ -215,8 +198,8 @@ int main()
     //quadratic interpolant:
     res =  CGAL::quadratic_interpolation(coords.begin(), coords.end(),
                                          norm,points[i],
-                                         fct,
-                                         CGAL::Data_access<Vertex_vector_map>(gradients),
+                                         function_value,
+                                         function_gradient,
                                          Traits());
     if(res.second){
       error = CGAL_NTS abs(res.first - exact_value);
@@ -230,8 +213,8 @@ int main()
     res =  CGAL::sibson_c1_interpolation_square(coords.begin(),
                                                 coords.end(), norm,
                                                 points[i],
-                                                fct,
-                                                CGAL::Data_access<Vertex_vector_map>(gradients),
+                                                function_value,
+                                                function_gradient,
                                                 Traits());
     //error statistics
     if(res.second){
@@ -244,8 +227,8 @@ int main()
     res =  CGAL::sibson_c1_interpolation(coords.begin(),
                                          coords.end(), norm,
                                          points[i],
-                                         fct,
-                                         grad,
+                                         function_value,
+                                         function_gradient,
                                          Traits());
 
     //error statistics

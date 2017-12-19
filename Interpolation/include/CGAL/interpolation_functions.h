@@ -31,42 +31,47 @@
 #include <vector>
 
 namespace CGAL {
+namespace internal {
+namespace interpolation {
+  
+template < class InterpolationTraits>
+struct V2P
+{    
+  typedef typename InterpolationTraits::Point_d Point;
+  typedef typename InterpolationTraits::Weighted_point_d Weighted_point;
 
-  template < class InterpolationTraits>
-  struct V2P {
-    InterpolationTraits traits;
-    typedef typename InterpolationTraits::Point_d Point;
-    typedef typename InterpolationTraits::Weighted_point_d Weighted_point;
+  V2P(const InterpolationTraits& traits)
+    : traits(traits)
+  {}
+    
+  template <typename VH>
+  const Point& operator()(const VH& vh) const
+  {
+    return traits.construct_point_d_object()(vh->point());
+  }
+   
+  const Point& operator()(const Point& p) const
+  {
+    return p;
+  }
+    
+  Point operator()(const Weighted_point& wp) const
+  {
+    return traits.construct_point_d_object()(wp);
+  }
 
-    V2P(const InterpolationTraits& traits)
-      : traits(traits)
-    {}
-    
-    template <typename VH>
-    const Point& operator()(const VH& vh) const
-    {
-      return traits.construct_point_d_object()(vh->point());
-    }
-
-    
-    const Point& operator()(const Point& p) const
-    {
-      return p;
-    }
-    
-    Point operator()(const Weighted_point& wp) const
-    {
-      return traits.construct_point_d_object()(wp);
-    }
-    
-  };
-
+private:
+  InterpolationTraits traits;
+};
+  
+} // end namespace interpolation
+} // end namespace internal
   
 //Functor class for accessing the function values/gradients
 template< class Map >
 struct Data_access
-    : public CGAL::unary_function< typename Map::key_type,
-                                  std::pair< typename Map::mapped_type, bool> >
+    : public CGAL::unary_function<typename Map::key_type,
+                                  std::pair<typename Map::mapped_type, bool> >
 {
   typedef typename Map::mapped_type Data_type;
   typedef typename Map::key_type  Key_type;
@@ -118,7 +123,7 @@ quadratic_interpolation(ForwardIterator first, ForwardIterator beyond,
                         const Traits& traits)
 {
   CGAL_precondition(norm >0);
-  V2P<Traits> v2p(traits);
+  internal::interpolation::V2P<Traits> v2p(traits);
   typedef typename Functor::result_type::first_type Value_type;
   Value_type result(0);
   typename Functor::result_type f;
@@ -151,7 +156,7 @@ sibson_c1_interpolation(ForwardIterator first, ForwardIterator beyond,
                         const Traits& traits)
 {
   CGAL_precondition(norm >0);
-  V2P<Traits> v2p(traits);
+  internal::interpolation::V2P<Traits> v2p(traits);
   typedef typename Functor::result_type::first_type Value_type;
   typedef typename Traits::FT                       Coord_type;
 
@@ -224,7 +229,7 @@ sibson_c1_interpolation_square(ForwardIterator first, ForwardIterator beyond,
                                const Traits& traits)
 {
   CGAL_precondition(norm >0);
-  V2P<Traits> v2p(traits);
+  internal::interpolation::V2P<Traits> v2p(traits);
   typedef typename Functor::result_type::first_type Value_type;
   typedef typename Traits::FT                       Coord_type;
 
@@ -289,7 +294,7 @@ farin_c1_interpolation(RandomAccessIterator first,
   typedef typename Functor::result_type::first_type  Value_type;
   typedef typename Traits::FT                        Coord_type;
 
-  V2P<Traits> v2p(traits);
+  internal::interpolation::V2P<Traits> v2p(traits);
   typename Functor::result_type f;
   typename GradFunctor::result_type grad;
 
