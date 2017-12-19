@@ -35,6 +35,8 @@
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/Kernel/global_functions_3.h>
 
+#include <CGAL/Lazy.h> // needed for CGAL::exact(FT)/CGAL::exact(Lazy_exact_nt<T>)
+
 #include <utility>
 
 #ifdef DOXYGEN_RUNNING

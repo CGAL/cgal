@@ -68,7 +68,8 @@ public:
   
   typedef typename Kernel::FT         FT;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
-  typedef std::pair< halfedge_descriptor, FT> ridge_halfhedge; 
+  typedef std::pair< halfedge_descriptor, FT> Ridge_halfedge; 
+  typedef Ridge_halfedge ridge_halfhedge;  //kept for backward compatibility
 
   Ridge_type line_type() const {return m_line_type;}
   Ridge_type& line_type() {return m_line_type;}
@@ -79,8 +80,8 @@ public:
   const FT sharpness() const {return m_sharpness;}
   FT& sharpness() {return m_sharpness;}
 
-  const std::list<ridge_halfhedge>* line() const { return &m_line;}
-  std::list<ridge_halfhedge>* line() { return &m_line;}
+  const std::list<Ridge_halfedge>* line() const { return &m_line;}
+  std::list<Ridge_halfedge>* line() { return &m_line;}
 
   //constructor
   Ridge_line(const TriangleMesh& P);
@@ -99,7 +100,7 @@ protected:
   //one of MAX_ELLIPTIC_RIDGE, MAX_HYPERBOLIC_RIDGE, MAX_CREST_RIDGE,
   //MIN_ELLIPTIC_RIDGE, MIN_HYPERBOLIC_RIDGE or MIN_CREST_RIDGE
   Ridge_type m_line_type;  
-  std::list<ridge_halfhedge> m_line;
+  std::list<Ridge_halfedge> m_line;
   FT m_strength;// = integral of ppal curvature along the line
   FT m_sharpness;// = (integral of second derivative of curvature
 		 // along the line) multiplied by the squared of 
@@ -130,7 +131,7 @@ dump_4ogl(std::ostream& out_stream,
 	     << strength() << " "
 	     << sharpness() << " ";
   typedef typename boost::property_traits<VertexPointMap>::value_type Point_3;
-  typename std::list<ridge_halfhedge >::const_iterator
+  typename std::list<Ridge_halfedge >::const_iterator
     iter = line()->begin(), 
     ite =  line()->end();
   for (;iter!=ite;iter++){
@@ -155,7 +156,7 @@ dump_verbose(std::ostream& out_stream, VertexPointMap vpm) const
 	     << "Sharpness is : " << sharpness() << std::endl
 	     << "Polyline point coordinates are : " << std::endl;
 
-  typename std::list<ridge_halfhedge>::const_iterator
+  typename std::list<Ridge_halfedge>::const_iterator
     iter = line()->begin(), 
     ite =  line()->end();
   for (;iter!=ite;iter++){
@@ -203,7 +204,8 @@ class Ridge_approximation
   CGAL_static_assertion((boost::is_same<FT, typename VertexFTMap::value_type>::value));
   CGAL_static_assertion((boost::is_same<Vector_3, typename VertexVectorMap::value_type>::value));
 
-  typedef std::pair< halfedge_descriptor, FT>    Ridge_halfhedge;
+  typedef std::pair< halfedge_descriptor, FT>    Ridge_halfedge;
+  typedef Ridge_halfedge Ridge_halfhedge; // kept for backward compatibility
   typedef CGAL::Ridge_line<TriangleMesh>  Ridge_line;
 
   Ridge_approximation(const TriangleMesh &P,
@@ -501,7 +503,7 @@ facet_ridge_type(const face_descriptor f, halfedge_descriptor& he1, halfedge_des
 
   //check for regular facet
   //i.e. if there is a coherent orientation of ppal dir at the facet vertices
-  if ( d1[v1]*d1[v2] * d1[v1]*d1[v3] * d1[v2]*d1[v3] < 0 ) 
+  if ( get(d1,v1)*get(d1,v2) * get(d1,v1)*get(d1,v3) * get(d1,v2)*get(d1,v3) < 0 ) 
     return NO_RIDGE;
    
   //determine potential crest color
@@ -510,11 +512,11 @@ facet_ridge_type(const face_descriptor f, halfedge_descriptor& he1, halfedge_des
   Ridge_type crest_color = NO_RIDGE;
   if (r_type == CREST_RIDGE) 
     {
-      if ( CGAL::abs(k1[v1]+k1[v2]+k1[v3]) > CGAL::abs(k2[v1]+k2[v2]+k2[v3]) ) 
+      if ( CGAL::abs(get(k1,v1)+get(k1,v2)+get(k1,v3)) > CGAL::abs(get(k2, v1)+get(k2,v2)+get(k2,v3)) ) 
 	crest_color = MAX_CREST_RIDGE; 
-      if ( CGAL::abs(k1[v1]+k1[v2]+k1[v3]) < CGAL::abs(k2[v1]+k2[v2]+k2[v3]) ) 
+      if ( CGAL::abs(get(k1,v1)+get(k1,v2)+get(k1,v3)) < CGAL::abs(get(k2,v1)+get(k2,v2)+get(k2,v3)) ) 
 	crest_color = MIN_CREST_RIDGE;
-      if ( CGAL::abs(k1[v1]+k1[v2]+k1[v3]) == CGAL::abs(k2[v1]+k2[v2]+k2[v3]) ) 
+      if ( CGAL::abs(get(k1,v1)+get(k1,v2)+get(k1,v3)) == CGAL::abs(get(k2,v1)+get(k2,v2)+get(k2,v3)) ) 
 	return NO_RIDGE;
     }
   
@@ -586,15 +588,15 @@ xing_on_edge(const halfedge_descriptor he, bool& is_crossed, Ridge_interrogation
   is_crossed = false;
   FT sign = 0;
   FT b_p, b_q; // extremalities at p and q for he: p->q
-  Vector_3  d_p = d1[target(opposite(he,P),P)],
-    d_q = d1[target(he,P)]; //ppal dir
+  Vector_3  d_p = get(d1,target(opposite(he,P),P)),
+    d_q = get(d1,target(he,P)); //ppal dir
   if ( color == MAX_RIDGE ) {
-    b_p = b0[target(opposite(he,P),P)];
-    b_q = b0[target(he,P)];
+    b_p = get(b0,target(opposite(he,P),P));
+    b_q = get(b0,target(he,P));
   }
   else {     
-    b_p = b3[target(opposite(he,P),P)];
-    b_q = b3[target(he,P)];
+    b_p = get(b3,target(opposite(he,P),P));
+    b_q = get(b3,target(he,P));
   }
   if ( b_p == 0 && b_q == 0 ) return;
   if ( b_p == 0 && b_q !=0 ) sign = d_p*d_q * b_q;
@@ -619,13 +621,13 @@ tag_as_elliptic_hyperbolic(const Ridge_interrogation_type color,
   FT coord1, coord2;
   if (color == MAX_RIDGE) 
     {
-      coord1 = CGAL::abs(b0[v_q1]) / ( CGAL::abs(b0[v_p1]) + CGAL::abs(b0[v_q1]) );
-      coord2 = CGAL::abs(b0[v_q2]) / ( CGAL::abs(b0[v_p2]) + CGAL::abs(b0[v_q2]) ); 
+      coord1 = CGAL::abs(get(b0,v_q1)) / ( CGAL::abs(get(b0,v_p1)) + CGAL::abs(get(b0,v_q1)) );
+      coord2 = CGAL::abs(get(b0,v_q2)) / ( CGAL::abs(get(b0,v_p2)) + CGAL::abs(get(b0,v_q2)) ); 
     }
   else 
     {
-      coord1 = CGAL::abs(b3[v_q1]) / ( CGAL::abs(b3[v_p1]) + CGAL::abs(b3[v_q1]) );
-      coord2 = CGAL::abs(b3[v_q2]) / ( CGAL::abs(b3[v_p2]) + CGAL::abs(b3[v_q2]) ); 
+      coord1 = CGAL::abs(get(b3,v_q1)) / ( CGAL::abs(get(b3,v_p1)) + CGAL::abs(get(b3,v_q1)) );
+      coord2 = CGAL::abs(get(b3,v_q2)) / ( CGAL::abs(get(b3,v_p2)) + CGAL::abs(get(b3,v_q2)) ); 
     }
 
   if ( tag_order == Ridge_order_3 ) {
@@ -648,10 +650,10 @@ tag_as_elliptic_hyperbolic(const Ridge_interrogation_type color,
     //      of Pi at the two crossing points
     FT sign_P;
     if (color == MAX_RIDGE) 
-      sign_P =  P1[v_p1]*coord1 + P1[v_q1]*(1-coord1) 
-	+ P1[v_p2]*coord2 + P1[v_q2]*(1-coord2);
-    else sign_P =  P2[v_p1]*coord1 + P2[v_q1]*(1-coord1) 
-	+ P2[v_p2]*coord2 + P2[v_q2]*(1-coord2);
+      sign_P =  get(P1,v_p1)*coord1 + get(P1,v_q1)*(1-coord1)
+	+ get(P1,v_p2)*coord2 + get(P1,v_q2)*(1-coord2);
+    else sign_P =  get(P2,v_p1)*coord1 + get(P2,v_q1)*(1-coord1) 
+	+ get(P2,v_p2)*coord2 + get(P2,v_q2)*(1-coord2);
 
     if ( sign_P < 0 ) return true; else return false;
   }
@@ -671,20 +673,20 @@ b_sign_pointing_to_ridge(const vertex_descriptor v1,
   Vector_3 r = r2 - r1, dv1, dv2, dv3;
   FT bv1, bv2, bv3;
   if ( color == MAX_RIDGE ) {
-    bv1 = b0[v1];
-    bv2 = b0[v2];
-    bv3 = b0[v3];
-    dv1 = d1[v1];
-    dv2 = d1[v2];
-    dv3 = d1[v3];
+    bv1 = get(b0,v1);
+    bv2 = get(b0,v2);
+    bv3 = get(b0,v3);
+    dv1 = get(d1,v1);
+    dv2 = get(d1,v2);
+    dv3 = get(d1,v3);
   }
   else {
-    bv1 = b3[v1];
-    bv2 = b3[v2];
-    bv3 = b3[v3];
-    dv1 = d2[v1];
-    dv2 = d2[v2];
-    dv3 = d2[v3];    
+    bv1 = get(b3,v1);
+    bv2 = get(b3,v2);
+    bv3 = get(b3,v3);
+    dv1 = get(d2,v1);
+    dv2 = get(d2,v2);
+    dv3 = get(d2,v3);    
   }
   if ( r != CGAL::NULL_VECTOR ) r = r/CGAL::sqrt(r*r);
   FT sign1, sign2, sign3;
@@ -711,7 +713,7 @@ init_ridge_line(Ridge_line* ridge_line,
 		const Ridge_type r_type)
 {
   ridge_line->line_type() = r_type;
-  ridge_line->line()->push_back(Ridge_halfhedge(h1, bary_coord(h1,r_type)));
+  ridge_line->line()->push_back(Ridge_halfedge(h1, bary_coord(h1,r_type)));
   addback(ridge_line, h2, r_type);
 }
 
@@ -734,8 +736,8 @@ addback(Ridge_line* ridge_line, const halfedge_descriptor he,
   FT k1x, k2x; //abs value of the ppal curvatures at the Xing point on he.
   FT k_second = 0; // abs value of the second derivative of the curvature
                // along the line of curvature
-  k1x = CGAL::abs(k1[v_p]) * coord + CGAL::abs(k1[v_q]) * (1-coord) ;   
-  k2x = CGAL::abs(k2[v_p]) * coord + CGAL::abs(k2[v_q]) * (1-coord) ;   
+  k1x = CGAL::abs(get(k1,v_p)) * coord + CGAL::abs(get(k1,v_q)) * (1-coord) ;   
+  k2x = CGAL::abs(get(k2,v_p)) * coord + CGAL::abs(get(k2,v_q)) * (1-coord) ;   
 
   if ( (ridge_line->line_type() == MAX_ELLIPTIC_RIDGE) 
        || (ridge_line->line_type() == MAX_HYPERBOLIC_RIDGE) 
@@ -743,7 +745,7 @@ addback(Ridge_line* ridge_line, const halfedge_descriptor he,
     ridge_line->strength() += k1x * CGAL::sqrt(segment * segment); 
     if (tag_order == Ridge_order_4) { 
       if (k1x != k2x) 
-	k_second =CGAL::abs(( CGAL::abs(P1[v_p]) * coord + CGAL::abs(P1[v_q]) * (1-coord) )/(k1x-k2x));
+	k_second =CGAL::abs(( CGAL::abs(get(P1,v_p)) * coord + CGAL::abs(get(P1,v_q)) * (1-coord) )/(k1x-k2x));
       ridge_line->sharpness() += k_second * CGAL::sqrt(segment * segment) * squared_model_size; }
   }
   if ( (ridge_line->line_type() == MIN_ELLIPTIC_RIDGE) 
@@ -752,10 +754,10 @@ addback(Ridge_line* ridge_line, const halfedge_descriptor he,
    ridge_line->strength() += k2x * CGAL::sqrt(segment * segment); 
    if (tag_order == Ridge_order_4) {
      if (k1x != k2x) 
-       k_second =CGAL::abs(( CGAL::abs(P2[v_p]) * coord + CGAL::abs(P2[v_q]) * (1-coord) )/(k1x-k2x));
+       k_second =CGAL::abs(( CGAL::abs(get(P2,v_p)) * coord + CGAL::abs(get(P2,v_q)) * (1-coord) )/(k1x-k2x));
      ridge_line->sharpness() += k_second * CGAL::sqrt(segment * segment) * squared_model_size; }
    } 
-  ridge_line->line()->push_back( Ridge_halfhedge(he, coord));
+  ridge_line->line()->push_back( Ridge_halfedge(he, coord));
 }
 
 
@@ -778,8 +780,8 @@ addfront(Ridge_line* ridge_line,
   FT k1x, k2x; //abs value of the ppal curvatures at the Xing point on he.
   FT k_second = 0.; // abs value of the second derivative of the curvature
                // along the line of curvature
-  k1x = CGAL::abs(k1[v_p]) * coord + CGAL::abs(k1[v_q]) * (1-coord) ;   
-  k2x = CGAL::abs(k2[v_p]) * coord + CGAL::abs(k2[v_q]) * (1-coord) ;   
+  k1x = CGAL::abs(get(k1,v_p)) * coord + CGAL::abs(get(k1,v_q)) * (1-coord) ;   
+  k2x = CGAL::abs(get(k2,v_p)) * coord + CGAL::abs(get(k2,v_q)) * (1-coord) ;   
 
   if ( (ridge_line->line_type() == MAX_ELLIPTIC_RIDGE) 
        || (ridge_line->line_type() == MAX_HYPERBOLIC_RIDGE) 
@@ -787,7 +789,7 @@ addfront(Ridge_line* ridge_line,
     ridge_line->strength() += k1x * CGAL::sqrt(segment * segment); 
    if (tag_order == Ridge_order_4) {
      if (k1x != k2x) 
-       k_second =CGAL::abs(( CGAL::abs(P1[v_p]) * coord + CGAL::abs(P1[v_q]) * (1-coord) )/(k1x-k2x));
+       k_second =CGAL::abs(( CGAL::abs(get(P1,v_p)) * coord + CGAL::abs(get(P1,v_q)) * (1-coord) )/(k1x-k2x));
      ridge_line->sharpness() += k_second * CGAL::sqrt(segment * segment) * squared_model_size; }
   }
   if ( (ridge_line->line_type() == MIN_ELLIPTIC_RIDGE) 
@@ -796,10 +798,10 @@ addfront(Ridge_line* ridge_line,
    ridge_line->strength() += k2x * CGAL::sqrt(segment * segment); 
    if (tag_order == Ridge_order_4) {
      if (k1x != k2x) 
-       k_second =CGAL::abs(( CGAL::abs(P2[v_p]) * coord + CGAL::abs(P2[v_q]) * (1-coord) )/(k1x-k2x));
+       k_second =CGAL::abs(( CGAL::abs(get(P2,v_p)) * coord + CGAL::abs(get(P2,v_q)) * (1-coord) )/(k1x-k2x));
      ridge_line->sharpness() += k_second * CGAL::sqrt(segment * segment) * squared_model_size; }
    } 
-  ridge_line->line()->push_front( Ridge_halfhedge(he, coord));
+  ridge_line->line()->push_front( Ridge_halfedge(he, coord));
 }
 
 
@@ -814,14 +816,14 @@ bary_coord(const halfedge_descriptor he, const Ridge_type r_type)
   if ( (r_type == MAX_ELLIPTIC_RIDGE) 
        || (r_type == MAX_HYPERBOLIC_RIDGE) 
        || (r_type == MAX_CREST_RIDGE) ) {
-    b_p = b0[target(opposite(he,P),P)];
-    b_q = b0[target(he,P)];    
+    b_p = get(b0,target(opposite(he,P),P));
+    b_q = get(b0,target(he,P));
   }
   if ( (r_type == MIN_ELLIPTIC_RIDGE) 
        || (r_type == MIN_HYPERBOLIC_RIDGE) 
        || (r_type == MIN_CREST_RIDGE) ) {
-    b_p = b3[target(opposite(he,P),P)];
-    b_q = b3[target(he,P)];    
+    b_p = get(b3,target(opposite(he,P),P));
+    b_q = get(b3,target(he,P));
   }
   //denominator cannot be 0 since there is no crossing when both extremalities are 0
   return CGAL::abs(b_q) / ( CGAL::abs(b_q) + CGAL::abs(b_p) );
