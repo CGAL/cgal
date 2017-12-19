@@ -26,13 +26,12 @@
 
 namespace CGAL {
 
-template < typename K, typename Construct_point_2_base>
+template < typename K_, typename Construct_point_2_base_>
 class Periodic_2_construct_point_2
-  : public Construct_point_2_base
+  : public Construct_point_2_base_
 {
-  typedef Construct_point_2_base             Base;
-
-  typedef K                                  Kernel;
+  typedef Construct_point_2_base_            Base;
+  typedef K_                                 Kernel;
 
   typedef typename Kernel::Point_2           Point;
   typedef typename Kernel::Offset            Offset;
@@ -40,7 +39,7 @@ class Periodic_2_construct_point_2
 
 public:
   Periodic_2_construct_point_2(const Iso_rectangle_2* dom,
-                               const Construct_point_2_base& cp)
+                               const Base& cp)
     : Base(cp), _dom(dom)
   { }
 
