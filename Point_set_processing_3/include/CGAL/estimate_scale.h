@@ -70,7 +70,8 @@ class Quick_multiscale_approximate_knn_distance<Kernel, typename Kernel::Point_3
   {
     PointPMap point_pmap;
     Pmap_unary_function (PointPMap point_pmap) : point_pmap (point_pmap) { }
-    const typename Kernel::Point_3& operator() (const ValueType& v) const { return get(point_pmap, v); }
+    typename boost::property_traits<PointPMap>::reference
+    operator() (const ValueType& v) const { return get(point_pmap, v); }
   };
   
   std::size_t m_cluster_size;
@@ -226,7 +227,8 @@ class Quick_multiscale_approximate_knn_distance<Kernel, typename Kernel::Point_2
   {
     PointPMap point_pmap;
     Pmap_unary_function (PointPMap point_pmap) : point_pmap (point_pmap) { }
-    const typename Kernel::Point_2& operator() (const ValueType& v) const { return get(point_pmap, v); }
+    typename boost::property_traits<PointPMap>::reference
+    operator() (const ValueType& v) const { return get(point_pmap, v); }
   };
 
   template <typename PointPMap>
@@ -242,7 +244,8 @@ class Quick_multiscale_approximate_knn_distance<Kernel, typename Kernel::Point_2
       : point_pmap (point_pmap) { }
     friend inline value_type get (const Pmap_to_3d& ppmap, key_type i) 
     {
-      typename Kernel::Point_2 p2 = get(ppmap.point_pmap, i);
+      typename boost::property_traits<PointPMap>::reference
+        p2 = get(ppmap.point_pmap, i);
       return value_type (p2.x(), p2.y(), 0.);
     }
 
@@ -367,7 +370,8 @@ public:
     FT nb = 0.;
     std::size_t index = 0;
     
-    const typename Kernel::Point_2& pquery = get(point_pmap, *query);
+    typename boost::property_traits<PointPMap>::reference
+      pquery = get(point_pmap, *query);
     for (std::size_t t = 0; t < m_point_sets.size(); ++ t)
       {
         std::size_t size = ((t == m_point_sets.size() - 1)
