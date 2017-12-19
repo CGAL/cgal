@@ -53,8 +53,8 @@ typename CGAL::Kernel_traits<point_map::value_type>::Kernel
 \cgalNPEnd
 
 \cgalNPBegin{svd_traits} \anchor PSP_svd_traits
- is the linear algebra algorithm required by the jet fitting method. For more information, please refer to the documenation of `Monge_via_jet_fitting`.\n
-\b Type: a class fitting the requirements of `Monge_via_jet_fitting`.\n
+ is the linear algebra algorithm required by the jet fitting method. For more information, please refer to the documenation of `CGAL::Monge_via_jet_fitting`.\n
+\b Type: a class fitting the requirements of `CGAL::Monge_via_jet_fitting`.\n
 \b Default: if \ref thirdpartyEigen "Eigen" 3.2 (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined, then `CGAL::Eigen_svd` is used.\n
 \cgalNPEnd
 
@@ -108,13 +108,13 @@ maximum cluster size for hierarchical clustering. Must be strictly greather than
 \cgalNPEnd
 
 \cgalNPBegin{degree_fitting} \anchor PSP_degree_fitting
- is the degree of fitting (see `Monge_via_jet_fitting`).\n
+ is the degree of fitting (see `CGAL::Monge_via_jet_fitting`).\n
 \b Type: \c unsigned \c int \n
 \b Default value is `2`
 \cgalNPEnd
 
 \cgalNPBegin{degree_monge} \anchor PSP_degree_monge
- is the Monge degree (see `Monge_via_jet_fitting`).\n
+ is the Monge degree (see `CGAL::Monge_via_jet_fitting`).\n
 \b Type: \c unsigned \c int \n
 \b Default value is `2`
 \cgalNPEnd
