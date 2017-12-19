@@ -900,7 +900,7 @@ public:
     pseudo_cdt();
 
     if (optimize_anchor_location)
-      optimize_anchor_location();
+      this->optimize_anchor_location();
 
     return build_polyhedron_surface(tm_out);
   }
