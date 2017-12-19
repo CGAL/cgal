@@ -43,7 +43,7 @@ typename CGAL::Kernel_traits<point_map::value_type>::Kernel
 \b Type: a class model of `ReadablePropertyMap` with
 `PointRange::iterator` as key type and
 `geom_traits::Vector_3` as value type. \n
-\b No default value.
+No default value.
 \cgalNPEnd
 
 \cgalNPBegin{diagonalize_traits} \anchor PSP_diagonalize_traits
@@ -152,7 +152,7 @@ point does is not assigned to a plane).\n
 \b Type: a class model of `ReadablePropertyMap` with
 `std::size_t` as key type and
 `int` as value type. \n
-\b No default value.
+No default value.
 \cgalNPEnd
 
 \cgalNPBegin{select_percentage} \anchor PSP_select_percentage
