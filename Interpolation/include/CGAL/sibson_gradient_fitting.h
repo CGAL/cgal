@@ -46,7 +46,7 @@ sibson_gradient_fitting(ForwardIterator first,
                         Functor function_value,
                         const Traits& traits)
 {
-  internal::interpolation::V2P<Traits> v2p(traits);
+  Interpolation::internal::V2P<Traits> v2p(traits);
   CGAL_precondition( first!=beyond && norm!=0);
   typedef typename Traits::Aff_transformation_d Aff_transformation;
   typedef typename Traits::FT                   Coord_type;
@@ -107,6 +107,7 @@ sibson_gradient_fitting(const Triangul& tr,
                                  traits);
 }
 
+  
 template < class Triangul, class ForwardIterator, class Functor, class Traits, class VH>
 typename Traits::Vector_d
 sibson_gradient_fitting(const Triangul& tr,
@@ -149,7 +150,7 @@ sibson_gradient_fitting_internal(const Triangul& tr,
   std::vector< std::pair< typename Functor::argument_type, Coord_type> > coords;
   Coord_type norm;
 
-  typedef typename internal::interpolation::Output_iterator_functor_selector<Triangul, Traits,
+  typedef typename Interpolation::internal::Output_iterator_functor_selector<Triangul, Traits,
                                                                              typename Functor::argument_type,
                                                                              Coord_type>::type     Coord_OIF;   
   
@@ -196,7 +197,7 @@ sibson_gradient_fitting_nn_2(const Dt& dt,
                        std::pair< typename Functor::argument_type,
                                   typename  Traits::FT > > >   CoordInserter;
 
-  typedef typename internal::interpolation::Output_iterator_functor_selector<Dt, Traits,
+  typedef typename Interpolation::internal::Output_iterator_functor_selector<Dt, Traits,
                                                                              typename Functor::argument_type,
                                                                              typename Traits::FT>::type     Coord_OIF;
 
@@ -217,7 +218,7 @@ sibson_gradient_fitting_nn_2(const Dt& dt,
                              const Traits& traits)
 {
   return sibson_gradient_fitting_nn_2(dt, out, function_value,
-                                      internal::interpolation::Vertex2Point<Dt, typename Traits::Vector_d>(), traits);
+                                      Interpolation::internal::Vertex2Point<Dt, typename Traits::Vector_d>(), traits);
 }
 
 

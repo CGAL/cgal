@@ -25,8 +25,7 @@
 
 #include <CGAL/iterator.h>
 
-//for definition of class Project_vertex_output_iterator
-#include <CGAL/natural_neighbor_coordinates_2.h>
+#include <CGAL/Interpolation/internal/helpers.h>
 
 #include <list>
 #include <utility>
@@ -305,11 +304,11 @@ regular_neighbor_coordinates_2(const Rt& rt,
   //out: the result of the coordinate computation
   //vor_vertices: the vertices of the power cell (to avoid
   // recomputation)
-  Project_vertex_output_iterator<OutputIterator> op(out);
+  Interpolation::internal::Project_vertex_output_iterator<OutputIterator> op(out);
 
   CGAL_precondition(rt.dimension() == 2);
 
-  Triple< Project_vertex_output_iterator<OutputIterator>,
+  Triple< Interpolation::internal::Project_vertex_output_iterator<OutputIterator>,
       typename Rt::Geom_traits::FT, bool > result =
     regular_neighbor_coordinates_vertex_2(rt, p, op, vor_vertices, start);
 
@@ -352,9 +351,9 @@ regular_neighbor_coordinates_2(const Rt& rt,
   //out: the result of the coordinate computation
   //vor_vertices: the vertices of the power cell of p
   //(to avoid recomputation)
-  Project_vertex_output_iterator<OutputIterator> op(out);
+  Interpolation::internal::Project_vertex_output_iterator<OutputIterator> op(out);
 
-  Triple< Project_vertex_output_iterator<OutputIterator>,
+  Triple< Interpolation::internal::Project_vertex_output_iterator<OutputIterator>,
           typename Rt::Geom_traits::FT, bool > result =
     regular_neighbor_coordinates_vertex_2(rt, p, op , vor_vertices,
                                           hole_begin, hole_end,

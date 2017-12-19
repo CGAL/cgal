@@ -23,6 +23,7 @@
 
 #include <CGAL/license/Interpolation.h>
 
+#include <CGAL/Interpolation/internal/helpers.h>
 #include <CGAL/double.h>
 #include <CGAL/use.h>
 
@@ -31,41 +32,6 @@
 #include <vector>
 
 namespace CGAL {
-namespace internal {
-namespace interpolation {
-  
-template < class InterpolationTraits>
-struct V2P
-{    
-  typedef typename InterpolationTraits::Point_d Point;
-  typedef typename InterpolationTraits::Weighted_point_d Weighted_point;
-
-  V2P(const InterpolationTraits& traits)
-    : traits(traits)
-  {}
-    
-  template <typename VH>
-  const Point& operator()(const VH& vh) const
-  {
-    return traits.construct_point_d_object()(vh->point());
-  }
-   
-  const Point& operator()(const Point& p) const
-  {
-    return p;
-  }
-    
-  Point operator()(const Weighted_point& wp) const
-  {
-    return traits.construct_point_d_object()(wp);
-  }
-
-private:
-  InterpolationTraits traits;
-};
-  
-} // end namespace interpolation
-} // end namespace internal
   
 //Functor class for accessing the function values/gradients
 template< class Map >
@@ -123,7 +89,7 @@ quadratic_interpolation(ForwardIterator first, ForwardIterator beyond,
                         const Traits& traits)
 {
   CGAL_precondition(norm >0);
-  internal::interpolation::V2P<Traits> v2p(traits);
+  Interpolation::internal::V2P<Traits> v2p(traits);
   typedef typename Functor::result_type::first_type Value_type;
   Value_type result(0);
   typename Functor::result_type f;
@@ -156,7 +122,7 @@ sibson_c1_interpolation(ForwardIterator first, ForwardIterator beyond,
                         const Traits& traits)
 {
   CGAL_precondition(norm >0);
-  internal::interpolation::V2P<Traits> v2p(traits);
+  Interpolation::internal::V2P<Traits> v2p(traits);
   typedef typename Functor::result_type::first_type Value_type;
   typedef typename Traits::FT                       Coord_type;
 
@@ -229,7 +195,7 @@ sibson_c1_interpolation_square(ForwardIterator first, ForwardIterator beyond,
                                const Traits& traits)
 {
   CGAL_precondition(norm >0);
-  internal::interpolation::V2P<Traits> v2p(traits);
+  Interpolation::internal::V2P<Traits> v2p(traits);
   typedef typename Functor::result_type::first_type Value_type;
   typedef typename Traits::FT                       Coord_type;
 
@@ -294,7 +260,7 @@ farin_c1_interpolation(RandomAccessIterator first,
   typedef typename Functor::result_type::first_type  Value_type;
   typedef typename Traits::FT                        Coord_type;
 
-  internal::interpolation::V2P<Traits> v2p(traits);
+  Interpolation::internal::V2P<Traits> v2p(traits);
   typename Functor::result_type f;
   typename GradFunctor::result_type grad;
 
