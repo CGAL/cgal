@@ -29,7 +29,7 @@ typedef Scene_surface_mesh_item Scene_face_graph_item;
 typedef Scene_polyhedron_item Scene_face_graph_item;
 #endif
 
-typedef Scene_polylines_item::Polyline Polyline;
+typedef Scene_polylines_item::Polyline Polyline_3;
 typedef boost::graph_traits<Scene_face_graph_item::Face_graph>::face_descriptor face_descriptor;
 
 using namespace CGAL::Three;
@@ -206,12 +206,12 @@ void Polyhedron_demo_intersection_plugin::intersectionPolylines()
      // perform Boolean operation
       QTime time;
       time.start();
-      std::vector<Polyline> polyA, polyB;
-      Q_FOREACH(const Polyline& poly, itemA->polylines)
+      std::vector<Polyline_3> polyA, polyB;
+      Q_FOREACH(const Polyline_3& poly, itemA->polylines)
       {
         polyA.push_back(poly);
       }
-      Q_FOREACH(const Polyline& poly, itemB->polylines)
+      Q_FOREACH(const Polyline_3& poly, itemB->polylines)
       {
         polyB.push_back(poly);
       }
@@ -228,7 +228,7 @@ void Polyhedron_demo_intersection_plugin::intersectionPolylines()
             result = CGAL::intersection(segA, segB);
         if (result) {
           if (const Kernel::Segment_3* s = boost::get<Kernel::Segment_3>(&*result)) {
-            Polyline p;
+            Polyline_3 p;
             p.push_back(s->point(0));
             p.push_back(s->point(1));
             new_pol_item->polylines.push_back(p);
@@ -311,9 +311,9 @@ void Polyhedron_demo_intersection_plugin::intersectionSurfacePolyline()
   boost::property_map<Scene_face_graph_item::Face_graph ,CGAL::vertex_point_t>::type
   vpm = get(CGAL::vertex_point,tm);
 
-  std::vector<Polyline> polylines;
-  //Polyline polyline;
-  Q_FOREACH(const Polyline &pol, itemB->polylines)
+  std::vector<Polyline_3> polylines;
+  //Polyline_3 polyline;
+  Q_FOREACH(const Polyline_3 &pol, itemB->polylines)
   {
     polylines.push_back(pol);
   }
@@ -338,7 +338,7 @@ void Polyhedron_demo_intersection_plugin::intersectionSurfacePolyline()
         result = CGAL::intersection(triangle, segment);
     if (result) {
       if (const Kernel::Segment_3* s = boost::get<Kernel::Segment_3>(&*result)) {
-        Polyline p;
+        Polyline_3 p;
         p.push_back(s->point(0));
         p.push_back(s->point(1));
         new_pol_item->polylines.push_back(p);
