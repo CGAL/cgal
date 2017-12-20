@@ -224,7 +224,7 @@ public:
   /*! Remove from the left-curves container a single element.
    */
   Subcurve_iterator left_curves_erase(Subcurve_iterator it)
-  { m_left_curves.erase(it); }
+  { return m_left_curves.erase(it); }
 
   /*! Return an iterator to the first curve to the right of the event. */
   Subcurve_iterator right_curves_begin() { return (m_right_curves.begin()); }
@@ -237,7 +237,7 @@ public:
   /*! Remove from the right-curves container a single element.
    */
   Subcurve_iterator right_curves_erase(Subcurve_iterator it)
-  { m_right_curves.erase(it); }
+  { return m_right_curves.erase(it); }
 
   /*! Returns a const iterator to the first curve to the left of the event. */
   Subcurve_const_iterator left_curves_begin() const
