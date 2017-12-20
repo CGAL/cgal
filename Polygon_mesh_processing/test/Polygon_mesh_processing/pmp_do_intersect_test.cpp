@@ -372,7 +372,8 @@ int test_inter_in_range(const std::vector<const char*>& filenames, std::size_t e
     input >> meshes[i];
   }
   std::vector<std::pair<std::size_t, std::size_t> > output;
-  CGAL::Polygon_mesh_processing::intersecting_meshes(meshes, std::back_inserter(output), volume);
+  CGAL::Polygon_mesh_processing::intersecting_meshes(meshes, std::back_inserter(output),
+    CGAL::Polygon_mesh_processing::parameters::do_overlap_test_of_bounded_sides(volume));
   std::cout << output.size() <<" pairs."<<std::endl;
   if(output.size() != expected)
     return 1;
