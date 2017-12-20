@@ -41,57 +41,35 @@ Point set processing pipeline for surface reconstruction. The algorithms listed 
 \section Point_set_processing_3API API
 
 The algorithms of this component take as input parameters ranges of 3D
-points, or of 3D points with normals.
+points, or of 3D points with normals. They can be
+adapted to the user's data structures and make extensive use of
+\ref Point_set_processing_3NamedParameters "named parameters" and of
+\ref Point_set_processing_3PropertyMaps "property maps":
+
+\code
+std::vector<PointVectorPair> points;
+typedef CGAL::First_of_pair_property_map<PointVectorPair> Point_map;
+typedef CGAL::Second_of_pair_property_map<PointVectorPair> Vector_map;
+
+CGAL::jet_estimate_normals
+<CGAL::Parallel_tag>           // concurrency tag
+  (points,                     // input range of points
+   12,                         // parameter: number of neighbors
+   CGAL::parameters::          // named parameters:
+   point_map (Point_map()).    //  * point map
+   normal_map (Vector_map())); //  * normal map
+\endcode
+
+This API was introduced in \cgal 4.12. Please refer to the
+\ref Point_set_processing_3Deprecated "dedicated section"
+on how to upgrade from the deprecated API.
 
 \subsection Point_set_processing_3NamedParameters Named Parameters
 
-\ref BGLNamedParameters are used to deal with optional parameters.
+Named parameters are used to deal with optional parameters. The page
+\ref BGLNamedParameters explains the rationale and API in general.
 The page \ref psp_namedparameters describes their usage
 and provides a list of the parameters that are used in this package.
-
-\cgalDebugBegin
-
-\b Deprecated \b API
-
-This API based on ranges and named parameters was introduced in \cgal
-4.12. The old API that used pairs of iterators along with usual \cpp
-parameters (with some default values and overloads to handle optional
-parameters) is deprecated.
-
-Translating your pre-\cgal 4.12 code using Point Set Processing to the
-new API is easy. For example, consider this code using the old API:
-
-\code
-std::vector<PointVectorPair> points;
-
-// Old pre-CGAL 4.12 deprecated API
-CGAL::jet_estimate_normals<Concurrency_tag>
-  (points.begin(), points.end(),
-   CGAL::First_of_pair_property_map<PointVectorPair>(),
-   CGAL::Second_of_pair_property_map<PointVectorPair>(),
-   nb_neighbors_jet_fitting_normals); // Number of neighbors
-\endcode
-
-The pair of iterators is replaced by a range and the optional
-parameters (than can be deduced automatically in the simple cases) are
-moved to the end of the function in a single named parameter object
-(see \ref BGLNamedParameters). The code translated to the new API
-becomes:
-   
-\code
-std::vector<PointVectorPair> points;
-
-// Valid up-to-date API
-CGAL::jet_estimate_normals<Concurrency_tag>
-  (points,
-   12, // Number of neighbors
-   CGAL::parameters::point_map (CGAL::First_of_pair_property_map<PointVectorPair>()).
-   normal_map (CGAL::Second_of_pair_property_map<PointVectorPair>()));
-\endcode
-
-Please refer to the [reference manual](@ref PkgPointSetProcessing) for
-the detailed API of the Point Set Processing functions.
-\cgalDebugEnd
 
 \subsection Point_set_processing_3PropertyMaps Property Maps
 
@@ -123,6 +101,50 @@ and accessed by their index, as any built-in vector is also
 a property map.
 
 \cgalExample{Point_set_processing_3/grid_simplify_indices.cpp}
+
+\subsection Point_set_processing_3Deprecated Upgrading from pre-CGAL 4.12 Deprecated API
+
+The current API based on ranges and named parameters was introduced in
+\cgal 4.12. The old API that used pairs of iterators along with usual
+\cpp parameters (with some default values and overloads to handle
+optional parameters) is deprecated.
+
+\warning The deprecated API will be removed in \cgal 4.14, so we
+recommend to update your code.
+
+Translating your pre-\cgal 4.12 code using Point Set Processing to the
+new API is easy. For example, consider this code using the old API:
+
+\code
+std::vector<PointVectorPair> points;
+
+// Old pre-CGAL 4.12 deprecated API
+CGAL::jet_estimate_normals<Concurrency_tag>
+  (points.begin(), points.end(),
+   CGAL::First_of_pair_property_map<PointVectorPair>(),
+   CGAL::Second_of_pair_property_map<PointVectorPair>(),
+   12); // Number of neighbors
+\endcode
+
+The pair of iterators is replaced by a range and the optional
+parameters (than can be deduced automatically in simple cases) are
+moved to the end of the function in a single named parameter object
+(see \ref BGLNamedParameters). The code translated to the new API
+becomes:
+   
+\code
+std::vector<PointVectorPair> points;
+
+// New API
+CGAL::jet_estimate_normals<Concurrency_tag>
+  (points,
+   12, // Number of neighbors
+   CGAL::parameters::point_map (CGAL::First_of_pair_property_map<PointVectorPair>()).
+   normal_map (CGAL::Second_of_pair_property_map<PointVectorPair>()));
+\endcode
+
+Please refer to the [Reference Manual](@ref PkgPointSetProcessing) for
+the detailed API of the Point Set Processing functions.
 
 
 \section Point_set_processing_3InputOutput Input/Output
