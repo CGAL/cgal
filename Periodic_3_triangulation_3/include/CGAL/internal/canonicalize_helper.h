@@ -318,7 +318,6 @@ robust_canonicalize_point(const typename Gt_::Point_3& p, const Gt_& gt)
 {
   typedef Gt_                                         Geom_traits;
   typedef typename Geom_traits::Point_3               Bare_point;
-  typedef typename Geom_traits::Weighted_point_3      Weighted_point;
   typedef typename Geom_traits::Periodic_3_offset_3   Offset;
   typedef typename Geom_traits::Iso_cuboid_3          Iso_cuboid;
 
@@ -370,7 +369,6 @@ robust_canonicalize_point(const typename Gt_::Weighted_point_3& wp, const Gt_& g
 {
   typedef Gt_                                         Geom_traits;
   typedef typename Geom_traits::Point_3               Bare_point;
-  typedef typename Geom_traits::Weighted_point_3      Weighted_point;
   typedef typename Geom_traits::Iso_cuboid_3          Iso_cuboid;
 
   const Iso_cuboid& domain = gt.get_domain();
