@@ -52,7 +52,7 @@ struct Timeout_callback
     // If the limit is reach, interrupt the algorithm
     if (timer.time() > limit)
     {
-      std::cerr << "Algorithm was too long, exiting ("
+      std::cerr << "Algorithm takes too long, exiting ("
                 << 100. * advancement << "% done)" << std::endl;
       return false;
     }
