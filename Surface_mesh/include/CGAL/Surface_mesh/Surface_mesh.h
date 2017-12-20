@@ -31,6 +31,7 @@
 #include <algorithm>
 #include <utility>
 #include <iostream>
+#include <sstream>
 #include <cstddef>
 #include <vector>
 #include <string>
@@ -41,7 +42,6 @@
 #include <boost/array.hpp>
 #include <boost/iterator/iterator_facade.hpp>
 #include <boost/foreach.hpp>
-#include <boost/lexical_cast.hpp>
 #include <CGAL/property_map.h>
 #include <CGAL/Iterator_range.h>
 #include <CGAL/circulator.h>
@@ -1816,10 +1816,11 @@ private: //--------------------------------------------------- property handling
   
     template<class I, class T>
     std::pair<Property_map<I, T>, bool>
-    add_property_map(const std::string& name=std::string(), const T t=T()) {
+    add_property_map(std::string name=std::string(), const T t=T()) {
       if(name.empty()){
-        std::string name("anonymous-property-");
-        name += boost::lexical_cast<std::string>(anonymous_property_++);
+        std::ostringstream oss;
+        oss << "anonymous-property-" << anonymous_property_++;
+        name = std::string(oss.str());
       }
       return Property_selector<I>(this)().template add<T>(name, t);
     }
