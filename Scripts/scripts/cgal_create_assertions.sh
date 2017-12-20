@@ -21,7 +21,7 @@
 # $Id$
 # 
 #
-# Author(s)     : Geert-Jan Giezeman, Sven Schönherr
+# Author(s)     : Geert-Jan Giezeman, Sven SchÃ¶nherr
 
 if test $# -ne 1
 then
@@ -46,6 +46,7 @@ sed -e "s/XXX_/${nameUC}/g" -e "s/xxx_/${nameLC}/g" <<"EOF" \
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Geert-Jan Giezeman, Sven Schoenherr

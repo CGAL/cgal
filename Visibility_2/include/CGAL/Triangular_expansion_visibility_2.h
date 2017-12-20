@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s):  Michael Hemmer <michael.hemmer@cgal.org>
@@ -21,6 +22,9 @@
 
 #ifndef CGAL_TRIANGULAR_EXPANSION_VISIBILITY_2_H
 #define CGAL_TRIANGULAR_EXPANSION_VISIBILITY_2_H
+
+#include <CGAL/license/Visibility_2.h>
+
 
 #include <CGAL/Arrangement_2.h>
 #include <boost/shared_ptr.hpp>

@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
@@ -21,6 +22,9 @@
 
 #ifndef CGAL_ARR_INSERTION_TRAITS_2_H
 #define CGAL_ARR_INSERTION_TRAITS_2_H
+
+#include <CGAL/license/Sweep_line_2.h>
+
 
 /*!
  * Defintion of the Arr_insertion_traits_2<Traits,Arrangement> class.
@@ -104,7 +108,8 @@ public:
                                OutputIterator oi)
     {
       if(cv1.halfedge_handle() != invalid_he &&
-         cv2.halfedge_handle() != invalid_he)
+         cv2.halfedge_handle() != invalid_he &&
+         cv1.halfedge_handle()!=cv2.halfedge_handle())
       {
         // The curves are interior-disjoint as both of them are already in
         //  the arrangement.

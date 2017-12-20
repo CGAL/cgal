@@ -12,10 +12,17 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s)     : Efi Fogel         <efif@post.tau.ac.il>
 
 #ifndef CGAL_ARR_GEODESIC_ARC_ON_SPHERE_TRAITS_2_H
 #define CGAL_ARR_GEODESIC_ARC_ON_SPHERE_TRAITS_2_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 
 // #define CGAL_FULL_X_MONOTONE_GEODESIC_ARC_ON_SPHERE_IS_SUPPORTED 1
 
@@ -708,7 +715,8 @@ public:
       typename Kernel::Construct_opposite_direction_3 opposite_3 =
         kernel->construct_opposite_direction_3_object();
       Point_2 tmp1 = opposite_3(p);     // pacify msvc 10
-      if (!kernel->equal_3_object()(tmp1, r1)) return EQUAL;
+      if (!kernel->equal_3_object()(Direction_3(tmp1), Direction_3(r1)))
+        return EQUAL;
 
       Sign xsign = Traits::x_sign(p);
       Sign ysign = Traits::y_sign(p);
@@ -775,8 +783,8 @@ public:
                 equal_3(xc1.normal(), xc2.normal()));
       }
 
-      return (equal_3(xc1.left(), xc2.left()) &&
-              equal_3(xc1.right(), xc2.right()));
+      return (equal_3(Direction_3(xc1.left()),  Direction_3(xc2.left())) &&
+              equal_3(Direction_3(xc1.right()), Direction_3(xc2.right())));
     }
 
     /*! Determines whether the two points are the same.
@@ -787,7 +795,7 @@ public:
     bool operator()(const Point_2& p1, const Point_2& p2) const
     {
       const Kernel* kernel = m_traits;
-      return kernel->equal_3_object()(p1, p2);
+      return kernel->equal_3_object()(Direction_3(p1), Direction_3(p2));
     }
   };
 
@@ -1554,8 +1562,8 @@ public:
       CGAL_precondition_code(const Kernel* kernel = m_traits);
       CGAL_precondition_code
         (typename Kernel::Equal_3 equal_3 = kernel->equal_3_object());
-      CGAL_precondition(!equal_3(p, source));
-      CGAL_precondition(!equal_3(p, target));
+      CGAL_precondition(!equal_3(Direction_3(p), Direction_3(source)));
+      CGAL_precondition(!equal_3(Direction_3(p), Direction_3(target)));
 
       xc1.set_normal(xc.normal());
       xc1.set_is_vertical(xc.is_vertical());
@@ -2460,7 +2468,8 @@ public:
     typedef Arr_geodesic_arc_on_sphere_traits_2<Kernel> Traits;
 
     Kernel kernel;
-    CGAL_precondition(!kernel.equal_3_object()(m_source, m_target));
+    CGAL_precondition(!kernel.equal_3_object()(Direction_3(m_source),
+                                               Direction_3(m_target)));
 
     // Check whether any one of the endpoint coincide with a pole:
     if (m_source.is_max_boundary()) {
@@ -2531,7 +2540,8 @@ public:
     // The arc is not vertical!
     set_is_vertical(false);
     set_is_directed_right(orient == LEFT_TURN);
-    set_is_full(kernel.equal_3_object()(m_source, m_target));
+    set_is_full(kernel.equal_3_object()(Direction_3(m_source),
+                                        Direction_3(m_target)));
   }
 
   /*! Construct a full spherical_arc from a plane
@@ -2930,10 +2940,11 @@ public:
     typedef typename Kernel::Direction_3                        Direction_3;
 
     Kernel kernel;
-    CGAL_precondition(!kernel.equal_3_object()(source, target));
+    CGAL_precondition(!kernel.equal_3_object()(Direction_3(source),
+                                               Direction_3(target)));
     CGAL_precondition(!kernel.equal_3_object()
                       (kernel.construct_opposite_direction_3_object()(source),
-                       target));
+                       static_cast<const Direction_3&>(target)));
     this->m_normal = this->construct_normal_3(source, target);
 
     // Check whether one of the endpoints coincides with a pole: */

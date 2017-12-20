@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Ilker O. Yaz
@@ -22,36 +23,120 @@
 #ifndef CGAL_ORIENT_POLYGON_MESH_H
 #define CGAL_ORIENT_POLYGON_MESH_H
 
+#include <CGAL/license/Polygon_mesh_processing/orientation.h>
+
+
 #include <algorithm>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+#include <CGAL/Projection_traits_xy_3.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/iterator.h>
 
 #include <boost/foreach.hpp>
+#include <boost/unordered_set.hpp>
 
 namespace CGAL {
 
 namespace Polygon_mesh_processing {
 
 namespace internal{
-  template <class Less_xyz, class VPmap>
-  struct Compare_vertex_points_xyz_3{
-    Less_xyz less;
-    VPmap vpmap;
 
-   Compare_vertex_points_xyz_3(VPmap const& vpmap)
-	: vpmap(vpmap){}
+  template <class GT, class VPmap>
+  struct Compare_vertex_points_z_3
+  {
+    VPmap vpmap;
+    typename GT::Compare_z_3 compare_z;
+
+    Compare_vertex_points_z_3(VPmap const& vpmap, const GT& gt)
+      : vpmap(vpmap)
+      , compare_z(gt.compare_z_3_object())
+    {}
 
     typedef bool result_type;
     template <class vertex_descriptor>
     bool operator()(vertex_descriptor v1, vertex_descriptor v2) const
     {
-      return less(get(vpmap, v1), get(vpmap, v2));
+      return CGAL::SMALLER == compare_z(get(vpmap, v1), get(vpmap, v2));
+    }
+  };
+
+
+  template<typename PolygonMesh, typename NamedParameters>
+  bool is_outward_oriented(typename boost::graph_traits<PolygonMesh>::vertex_descriptor v_max,
+                           const PolygonMesh& pmesh,
+                           const NamedParameters& np)
+  {
+    using boost::choose_param;
+    using boost::get_param;
+
+    //VertexPointMap
+    typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type VPMap;
+    VPMap vpmap = choose_param(get_param(np, vertex_point),
+                               get_const_property_map(vertex_point, pmesh));
+    //Kernel
+    typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
+    GT gt = choose_param(get_param(np, internal_np::geom_traits), GT());
+
+    //among the incoming edges of `v_max`, find one edge `e` with the minimal slope
+    typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
+    halfedge_descriptor min_slope_he = halfedge(v_max, pmesh);
+    CGAL_assertion(v_max == target(min_slope_he, pmesh));
+
+    typename GT::Compare_slope_3 compare_slope = gt.compare_slope_3_object();
+    BOOST_FOREACH(halfedge_descriptor he, halfedges_around_target(v_max, pmesh))
+    {
+      CGAL_assertion(v_max == target(min_slope_he, pmesh));
+      CGAL_assertion(v_max == target(he, pmesh));
+
+      if(CGAL::SMALLER == compare_slope(get(vpmap, source(he, pmesh)),
+                                        get(vpmap, v_max),
+                                        get(vpmap, source(min_slope_he, pmesh)),
+                                        get(vpmap, v_max)))
+      {
+        min_slope_he = he;
+      }
     }
 
-  };
+    // We compute the orientations of the two triangles incident to the edge
+    // of `min_slope_he` projected in the xy-plane. We can conclude using
+    // the 2D orientation of the 3D triangle that is the top one along the z-axis
+    // in the neighborhood of `min_slope_he`.
+    Projection_traits_xy_3<GT> p_gt;
+    typename Projection_traits_xy_3<GT>::Orientation_2 orientation_2 = p_gt.orientation_2_object();
+
+    typename boost::property_traits<VPMap>::reference p1 = get(vpmap, source(min_slope_he, pmesh));
+    typename boost::property_traits<VPMap>::reference p2 = get(vpmap, target(min_slope_he, pmesh));
+    typename boost::property_traits<VPMap>::reference p3 = get(vpmap, target(next(min_slope_he, pmesh), pmesh));
+    typename boost::property_traits<VPMap>::reference p4 = get(vpmap, target(next(opposite(min_slope_he, pmesh), pmesh), pmesh));
+
+    Orientation p1p2p3_2d = orientation_2(p1, p2, p3);
+    Orientation p2p1p4_2d = orientation_2(p2, p1, p4);
+
+    CGAL_assertion( p1p2p3_2d!=COLLINEAR || p2p1p4_2d!=COLLINEAR ); // no self-intersection
+
+    if ( p1p2p3_2d == COLLINEAR)
+      return p2p1p4_2d == LEFT_TURN;
+    if (p2p1p4_2d ==COLLINEAR)
+      return p1p2p3_2d == LEFT_TURN;
+
+    // if the local dihedral angle is strictly larger that PI/2, we can conclude with any of two triangles
+    if (p1p2p3_2d==p2p1p4_2d)
+      return p1p2p3_2d == LEFT_TURN;
+
+    typename GT::Orientation_3 orientation_3 = gt.orientation_3_object();
+
+    CGAL_assertion( orientation_3(p1, p2, p3, p4) != COPLANAR ); // same side of min_slope_he and no self-intersection
+
+    // if p1p2p3_2d is left turn, then it must be the top face so that the orientation is outward oriented
+    if (p1p2p3_2d == LEFT_TURN)
+      return orientation_3(p1, p2, p3, p4) == NEGATIVE;
+
+    // same test with the other face
+    CGAL_assertion(p2p1p4_2d == LEFT_TURN);
+    return orientation_3(p2, p1, p4, p3) == NEGATIVE;
+  }
 } // end of namespace internal
 
 /**
@@ -67,10 +152,10 @@ namespace internal{
  *      isolated connected component.
  *
  * @tparam PolygonMesh a model of `FaceListGraph`
- * @tparam NamedParameters a sequence of \ref namedparameters
+ * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
  *
  * @param pmesh the closed polygon mesh to be tested
- * @param np optional sequence of \ref namedparameters among the ones listed below
+ * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
@@ -89,33 +174,32 @@ bool is_outward_oriented(const PolygonMesh& pmesh,
   CGAL_warning(CGAL::is_closed(pmesh));
   CGAL_precondition(CGAL::is_valid(pmesh));
 
+  //check for empty pmesh
+  CGAL_warning(faces(pmesh).first != faces(pmesh).second);
+  if (faces(pmesh).first == faces(pmesh).second)
+    return true;
+
   using boost::choose_param;
   using boost::get_param;
 
   //VertexPointMap
   typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type VPMap;
-  VPMap vpmap = choose_param(get_param(np, vertex_point),
+  VPMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
                              get_const_property_map(vertex_point, pmesh));
   //Kernel
-  typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type Kernel;
+  typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
+  GT gt = choose_param(get_param(np, internal_np::geom_traits), GT());
 
-  internal::Compare_vertex_points_xyz_3<typename Kernel::Less_xyz_3, VPMap >
-    less_xyz(vpmap);
-
+  //find the vertex with maximal z coordinate
   typename boost::graph_traits<PolygonMesh>::vertex_iterator vbegin, vend;
   cpp11::tie(vbegin, vend) = vertices(pmesh);
-  typename boost::graph_traits<PolygonMesh>::vertex_iterator v_min
-    = std::min_element(vbegin, vend, less_xyz);
 
-  const typename Kernel::Vector_3&
-    normal_v_min = compute_vertex_normal(*v_min, pmesh, np);
+  internal::Compare_vertex_points_z_3<GT, VPMap> less_z(vpmap, gt);
+  typename boost::graph_traits<PolygonMesh>::vertex_iterator v_max_it
+    = std::max_element(vbegin, vend, less_z);
+  typename boost::graph_traits<PolygonMesh>::vertex_descriptor v_max = *v_max_it;
 
-  return normal_v_min[0] < 0 || (
-            normal_v_min[0] == 0 && (
-              normal_v_min[1] < 0  ||
-              ( normal_v_min[1]==0  && normal_v_min[2] < 0 )
-            )
-         );
+  return internal::is_outward_oriented(v_max, pmesh, np);
 }
 
 ///\cond SKIP_IN_MANUAL
@@ -183,6 +267,37 @@ void reverse_face_orientations(PolygonMesh& pmesh)
   }
 }
 
+// Do the same thing as `reverse_face_orientations()` except that for
+// the reversal of the border cycles (last step in the aforementioned function),
+// this function guarantees that each cycle is reversed only once. This is
+// particularly useful if you mesh contains polylines (i.e. edge which halfedges
+// are both border halfedges).
+template<typename PolygonMesh>
+void reverse_face_orientations_of_mesh_with_polylines(PolygonMesh& pmesh)
+{
+  typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
+
+  // reverse the orientation of each face
+  BOOST_FOREACH(face_descriptor fd, faces(pmesh))
+    reverse_orientation(halfedge(fd,pmesh),pmesh);
+
+  //extract all border cycles
+  boost::unordered_set<halfedge_descriptor> already_seen;
+  std::vector<halfedge_descriptor> border_cycles;
+  BOOST_FOREACH(halfedge_descriptor h, halfedges(pmesh))
+    if ( is_border(h,pmesh) && already_seen.insert(h).second )
+    {
+      border_cycles.push_back(h);
+      BOOST_FOREACH(halfedge_descriptor h2, halfedges_around_face(h,pmesh))
+        already_seen.insert(h2);
+    }
+
+  // now reverse the border cycles
+  BOOST_FOREACH(halfedge_descriptor h, border_cycles)
+    reverse_orientation(h, pmesh);
+}
+
 /**
 * \ingroup PMP_orientation_grp
 * reverses for each face in `face_range` the order of the vertices along the face boundary.
@@ -223,4 +338,3 @@ void reverse_face_orientations(const FaceRange& face_range, PolygonMesh& pmesh)
 } // namespace Polygon_mesh_processing
 } // namespace CGAL
 #endif // CGAL_ORIENT_POLYGON_MESH_H
-

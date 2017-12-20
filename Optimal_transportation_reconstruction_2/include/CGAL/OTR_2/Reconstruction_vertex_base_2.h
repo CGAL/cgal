@@ -14,11 +14,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Fernando de Goes, Pierre Alliez, Ivo Vigan, Clément Jamin
 
 #ifndef CGAL_RECONSTRUCTION_VERTEX_BASE_2_H_
 #define CGAL_RECONSTRUCTION_VERTEX_BASE_2_H_
+
+#include <CGAL/license/Optimal_transportation_reconstruction_2.h>
+
 
 #include <CGAL/Triangulation_vertex_base_2.h>
 #include <CGAL/OTR_2/Sample.h>

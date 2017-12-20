@@ -29,24 +29,28 @@ typedef
 
 
 /*!
+This function is not thread safe.
  */
 Failure_function
 set_error_handler( Failure_function handler);
 
 
 /*!
+This function is not thread safe.
  */
 Failure_function
 set_warning_handler( Failure_function handler);
 
 
 /*!
+This function is not thread safe.
  */
 Failure_behaviour
 set_error_behaviour(Failure_behaviour eb);
 
 
 /*!
+This function is not thread safe.
  */
 Failure_behaviour
 set_warning_behaviour(Failure_behaviour eb);

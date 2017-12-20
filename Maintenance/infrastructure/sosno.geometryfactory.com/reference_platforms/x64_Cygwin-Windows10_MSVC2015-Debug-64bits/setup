@@ -1,0 +1,15 @@
+export CGAL_DIR='/cygdrive/c/CGAL/reference_platforms/x64_Cygwin-Windows10_MSVC2015-Release-64bits'
+export VC_VERSION="14"
+export VC_VERSION_YEAR="2015"
+export ARCH="64"
+export PLATFORM_REFERENCE="/cygdrive/e/CGAL/reference_platforms"
+export BOOST_VERSION=1_59_0
+export TBB_ARCH="intel64"
+source "${PLATFORM_REFERENCE}/setup_common"
+
+WEEK_DAY=`date '+%A'`
+if [ "$WEEK_DAY" = "samedi" ];  then
+  export CGAL_ENABLE_VLD=TRUE
+  export VLD_LIBRARY_DIR="C:\\Program Files (x86)\\Visual Leak Detector\\lib\\Win64"
+  export VLD_INCLUDE_DIR="C:\\Program Files (x86)\\Visual Leak Detector\\include"
+fi

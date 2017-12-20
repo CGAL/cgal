@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Lutz Kettner  <kettner@inf.ethz.ch>
@@ -505,10 +506,10 @@ class Random_points_in_triangle_2 : public Random_generator_base<P> {
 	void generate_point();
 public:
 	typedef P result_type;
-	typedef Random_points_in_triangle_2<P> This;
+	typedef Random_points_in_triangle_2<P, Creator> This;
 	typedef typename Kernel_traits<P>::Kernel::Triangle_2 Triangle_2;
 	Random_points_in_triangle_2() {}
-	Random_points_in_triangle_2( const This& x,Random& rnd = get_default_random())
+	Random_points_in_triangle_2( const This& x,Random& rnd)
 	: Random_generator_base<P>( 1, rnd ),_p(x._p),_q(x._q),_r(x._r) {
 		generate_point();
 	}
@@ -561,7 +562,11 @@ public:
   }
 };
 }//end namespace internal
-template <class P, class T>
+template <class P,
+          class T,
+          class Creator =
+            Creator_uniform_2<typename Kernel_traits<P>::Kernel::RT,P>
+>
 class Random_points_in_triangle_mesh_2 : public Generic_random_point_generator<
   typename T::Face_handle ,
   internal::Triangle_from_face_2<T>,
@@ -569,11 +574,11 @@ class Random_points_in_triangle_mesh_2 : public Generic_random_point_generator<
 public:
   typedef Generic_random_point_generator<typename T::Face_handle,
                                          internal::Triangle_from_face_2<T>,
-                                         Random_points_in_triangle_2<P>,
+                                         Random_points_in_triangle_2<P, Creator>,
                                          P>                           Base;
   typedef typename T::Face_handle                                     Id;
   typedef P result_type;
-  typedef Random_points_in_triangle_mesh_2<P, T>                      This;
+  typedef Random_points_in_triangle_mesh_2<P, T, Creator>             This;
 
 
   Random_points_in_triangle_mesh_2( const T& triangulation, Random& rnd = get_default_random())
@@ -621,7 +626,9 @@ struct Address_of {
 }//namesapce internal
 
 template <class Point_2,
-          class Triangle_2=typename Kernel_traits<Point_2>::Kernel::Triangle_2>
+          class Triangle_2=typename Kernel_traits<Point_2>::Kernel::Triangle_2,
+          class Creator =
+            Creator_uniform_2<typename Kernel_traits<Point_2>::Kernel::RT,Point_2> >
 struct Random_points_in_triangles_2
   : public Generic_random_point_generator<const Triangle_2*,
                                           internal::Deref<Triangle_2>,
@@ -630,11 +637,11 @@ struct Random_points_in_triangles_2
 {
   typedef Generic_random_point_generator<const Triangle_2*,
                                          internal::Deref<Triangle_2>,
-                                         Random_points_in_triangle_2<Point_2>,
+                                         Random_points_in_triangle_2<Point_2, Creator>,
                                          Point_2>                   Base;
   typedef const Triangle_2*                                         Id;
   typedef Point_2                                                   result_type;
-  typedef Random_points_in_triangles_2<Point_2>                     This;
+  typedef Random_points_in_triangles_2<Point_2, Triangle_2, Creator>  This;
 
   template<typename TriangleRange>
   Random_points_in_triangles_2( const TriangleRange& triangles, Random& rnd = get_default_random())

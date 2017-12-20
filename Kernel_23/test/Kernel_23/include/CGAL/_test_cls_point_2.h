@@ -15,6 +15,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Stefan Schirra
@@ -23,8 +24,17 @@
 #ifndef CGAL__TEST_CLS_POINT_2_H
 #define CGAL__TEST_CLS_POINT_2_H
 
+#include <CGAL/assertions.h>
 #include <CGAL/Bbox_2.h>
+#include <CGAL/Point_2.h>
+#include <CGAL/Origin.h>
+#include <CGAL/Vector_2.h>
+#include <CGAL/Weighted_point_2.h>
+
+#include <boost/type_traits/is_convertible.hpp>
+
 #include <cassert>
+#include <iostream>
 
 template <class R>
 bool
@@ -51,6 +61,14 @@ _test_cls_point_2(const R& )
  CGAL::Point_2<R>  p5(n1, n2, n4);
  CGAL::Point_2<R>  p6( p5 );
                   p1 = p4;
+
+ CGAL::Weighted_point_2<R> wp(p1);
+ CGAL::Point_2<R> p7(wp);
+
+ CGAL_static_assertion(!(boost::is_convertible<CGAL::Weighted_point_2<R>,
+                                               CGAL::Point_2<R> >::value));
+ CGAL_static_assertion(!(boost::is_convertible<CGAL::Point_2<R>,
+                                               CGAL::Weighted_point_2<R> >::value));
 
  std::cout << '.';
 

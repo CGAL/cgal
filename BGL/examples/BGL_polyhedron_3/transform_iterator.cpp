@@ -1,11 +1,10 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#include <CGAL/boost/graph/iterator.h>
-#include <fstream>
 
+#include <CGAL/boost/graph/iterator.h>
 #include <boost/iterator/transform_iterator.hpp>
+
+#include <fstream>
 #include <algorithm>
 
 typedef CGAL::Simple_cartesian<double> Kernel;

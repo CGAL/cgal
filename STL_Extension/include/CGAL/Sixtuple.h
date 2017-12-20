@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Andreas Fabri
@@ -26,6 +27,10 @@
 #define CGAL_SIXTUPLE_H
 
 #include <CGAL/config.h>
+
+#define CGAL_DEPRECATED_HEADER "<CGAL/Sixtuple.h>"
+#define CGAL_DEPRECATED_MESSAGE_DETAILS "Please use `CGAL::cpp11::array` instead."
+#include <CGAL/internal/deprecation_warning.h>
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 

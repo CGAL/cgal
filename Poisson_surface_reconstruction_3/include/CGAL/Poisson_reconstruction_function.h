@@ -14,11 +14,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Laurent Saboret, Pierre Alliez
 
 #ifndef CGAL_POISSON_RECONSTRUCTION_FUNCTION_H
 #define CGAL_POISSON_RECONSTRUCTION_FUNCTION_H
+
+#include <CGAL/license/Poisson_surface_reconstruction_3.h>
+
 
 #ifndef CGAL_DIV_NORMALIZED
 #  ifndef CGAL_DIV_NON_NORMALIZED

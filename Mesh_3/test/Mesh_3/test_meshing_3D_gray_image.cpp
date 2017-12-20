@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Laurent Rineau, Jane Tournois
@@ -85,16 +86,11 @@ public:
       1e-3, //error_bound
       &CGAL::get_default_random());//random generator for determinism
 
-    const CGAL::Mesh_facet_topology topology =
-      boost::is_same<Concurrency_tag, CGAL::Sequential_tag>::value ?
-      CGAL::MANIFOLD :
-      CGAL::FACET_VERTICES_ON_SURFACE;
-
     // Mesh criteria
     Mesh_criteria criteria(facet_angle = 30,
                            facet_size = 6,
                            facet_distance = 2,
-                           facet_topology = topology,
+                           facet_topology = CGAL::MANIFOLD,
                            cell_radius_edge_ratio = 3,
                            cell_size = 8);
 
@@ -102,7 +98,9 @@ public:
     C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
                                         no_perturb(),
                                         no_exude(),
-      mesh_3_options(number_of_initial_points = 30));
+      mesh_3_options(number_of_initial_points = 30),
+      non_manifold()
+      );
 
     // Verify
     this->verify_c3t3_volume(c3t3, 1236086 * 0.95, 1236086 * 1.05);

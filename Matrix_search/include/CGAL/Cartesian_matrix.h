@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
 
 #ifndef CGAL_CARTESIAN_MATRIX_H
 #define CGAL_CARTESIAN_MATRIX_H 1
+
+#include <CGAL/license/Matrix_search.h>
+
 
 #include <CGAL/basic.h>
 #include <CGAL/Optimisation/assertions.h>

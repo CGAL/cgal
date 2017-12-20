@@ -15,8 +15,8 @@ varying highp vec4 color;
 void main(void)
 {
   color = vec4(colors, center.x * cutplane.x  + center.y * cutplane.y  + center.z * cutplane.z  +  cutplane.w);
-  fP = mv_matrix * vertex;
+  vec4 my_vertex = vec4(radius*vertex.x + center.x, radius* vertex.y + center.y, radius*vertex.z + center.z, 1.0) ;
+  fP = mv_matrix * my_vertex;
   fN = mat3(mv_matrix)* normals;
-  gl_Position =  mvp_matrix *
-  vec4(radius*vertex.x + center.x, radius* vertex.y + center.y, radius*vertex.z + center.z, 1.0) ;
+  gl_Position =  mvp_matrix * my_vertex;
 }

@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Laurent Rineau
 
 #ifndef CGAL_MESH_3_IMPLICIT_SURFACE_MESHER_VISITOR_H
 #define CGAL_MESH_3_IMPLICIT_SURFACE_MESHER_VISITOR_H
+
+#include <CGAL/license/Mesh_3.h>
+
 
 #include <CGAL/Mesh_2/Output_stream.h>
 

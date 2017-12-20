@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Sylvain Pion
@@ -290,6 +291,16 @@ compare_distance_to_point(const Point_2<K>& p,
 template <class K >
 inline
 typename K::Comparison_result
+compare_power_distance(const Point_2<K> &r,
+                       const Weighted_point_2<K> &p,
+                       const Weighted_point_2<K> &q)
+{
+  return internal::compare_power_distance(r, p, q, K());
+}
+
+template <class K >
+inline
+typename K::Comparison_result
 compare_squared_distance(const Point_2<K>& p,
                          const Point_2<K>& q,
                          const typename K::FT& d2)
@@ -332,18 +343,41 @@ compare_lexicographically_xy(const Point_2<K> &p,
 template < class K >
 inline
 typename K::Comparison_result
-compare_slopes(const Line_2<K> &l1, const Line_2<K> &l2)
+compare_slope(const Line_2<K> &l1, const Line_2<K> &l2)
 {
-  return internal::compare_slopes(l1, l2, K());
+  return internal::compare_slope(l1, l2, K());
 }
 
 template < class K >
 inline
 typename K::Comparison_result
+compare_slope(const Segment_2<K> &s1, const Segment_2<K> &s2)
+{
+  return internal::compare_slope(s1, s2, K());
+}
+
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+// kept for backward compatibility
+template < class K >
+CGAL_DEPRECATED_MSG("This function is deprecated. CGAL::compare_slope() should be used instead")
+inline
+typename K::Comparison_result
+compare_slopes(const Line_2<K> &l1, const Line_2<K> &l2)
+{
+  return internal::compare_slope(l1, l2, K());
+}
+
+// kept for backward compatibility
+template < class K >
+CGAL_DEPRECATED_MSG("This function is deprecated. CGAL::compare_slope() should be used instead")
+inline
+typename K::Comparison_result
 compare_slopes(const Segment_2<K> &s1, const Segment_2<K> &s2)
 {
-  return internal::compare_slopes(s1, s2, K());
+  return internal::compare_slope(s1, s2, K());
 }
+#endif
 
 template < class K >
 inline
@@ -715,6 +749,13 @@ lexicographically_yx_larger_or_equal(const Point_2<K> &p, const Point_2<K> &q)
 }
 
 template < class K >
+typename K::FT
+l_infinity_distance(const Point_2<K> &p, const Point_2<K> &q)
+{
+  return internal::l_infinity_distance(p,q, K());
+}
+
+template < class K >
 inline
 typename K::Point_2
 midpoint(const Point_2<K> &p, const Point_2<K> &q)
@@ -932,11 +973,89 @@ orientation(const Vector_2<K> &u, const Vector_2<K> &v)
 
 // parallel() functions are in global_functions.h
 
+template <class K >
+inline
+typename K::FT
+power_product(const Weighted_point_2<K> &p,
+              const Weighted_point_2<K> &q)
+{
+  return internal::power_product(p, q, K());
+}
+
+template <class K >
+inline
+typename K::Bounded_side
+power_side_of_bounded_power_circle(const Weighted_point_2<K> &p,
+                                   const Weighted_point_2<K> &q)
+{
+  return internal::power_side_of_bounded_power_circle(p, q, K());
+}
+
+template <class K >
+inline
+typename K::Bounded_side
+power_side_of_bounded_power_circle(const Weighted_point_2<K> &p,
+                                   const Weighted_point_2<K> &q,
+                                   const Weighted_point_2<K> &r)
+{
+  return internal::power_side_of_bounded_power_circle(p, q, r, K());
+}
+
+template <class K >
+inline
+typename K::Bounded_side
+power_side_of_bounded_power_circle(const Weighted_point_2<K> &p,
+                                   const Weighted_point_2<K> &q,
+                                   const Weighted_point_2<K> &r,
+                                   const Weighted_point_2<K> &s)
+{
+  return internal::power_side_of_bounded_power_circle(p, q, r, s, K());
+}
+
+template <typename K>
+inline
+typename K::Orientation
+power_side_of_oriented_power_circle(const Weighted_point_2<K> &p,
+                                    const Weighted_point_2<K> &q)
+{
+  return internal::power_side_of_oriented_power_circle(p, q, K());
+}
+
+template <typename K>
+inline
+typename K::Orientation
+power_side_of_oriented_power_circle(const Weighted_point_2<K> &p,
+                                    const Weighted_point_2<K> &q,
+                                    const Weighted_point_2<K> &r)
+{
+  return internal::power_side_of_oriented_power_circle(p, q, r, K());
+}
+
+template <typename K>
+inline
+typename K::Orientation
+power_side_of_oriented_power_circle(const Weighted_point_2<K> &p,
+                                    const Weighted_point_2<K> &q,
+                                    const Weighted_point_2<K> &r,
+                                    const Weighted_point_2<K> &s)
+{
+  return internal::power_side_of_oriented_power_circle(p, q, r, s, K());
+}
+
+template <class K>
+inline
+typename K::Line_2
+radical_axis(const Weighted_point_2<K> &p,
+             const Weighted_point_2<K> &q)
+{
+  return internal::radical_axis(p, q, K());
+}
+
 template <class K>
 inline
 typename K::Line_2
 radical_line(const Circle_2<K> &s1,
-              const Circle_2<K> &s2)
+             const Circle_2<K> &s2)
 {
   return K().construct_radical_line_2_object()(s1,s2);
 }
@@ -1011,6 +1130,43 @@ typename K::FT
 squared_radius(const Point_2<K>& p, const Point_2<K>& q, const Point_2<K>& r)
 {
   return internal::squared_radius(p, q, r, K());
+}
+
+template < class K >
+inline
+typename K::FT
+squared_radius_smallest_orthogonal_circle(const Weighted_point_2<K> &p)
+{
+  return internal::squared_radius_smallest_orthogonal_circle(p, K());
+}
+
+template < class K >
+inline
+typename K::FT
+squared_radius_smallest_orthogonal_circle(const Weighted_point_2<K> &p,
+                                          const Weighted_point_2<K> &q)
+{
+  return internal::squared_radius_smallest_orthogonal_circle(p, q, K());
+}
+
+template < class K >
+inline
+typename K::FT
+squared_radius_smallest_orthogonal_circle(const Weighted_point_2<K> &p,
+                                          const Weighted_point_2<K> &q,
+                                          const Weighted_point_2<K> &r)
+{
+  return internal::squared_radius_smallest_orthogonal_circle(p, q, r, K());
+}
+
+template < class K >
+inline
+typename K::Point_2
+weighted_circumcenter(const Weighted_point_2<K> &p,
+                      const Weighted_point_2<K> &q,
+                      const Weighted_point_2<K> &r)
+{
+  return internal::weighted_circumcenter(p, q, r, K());
 }
 
 template < class K >

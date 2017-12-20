@@ -14,11 +14,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s) : Pierre Alliez and Laurent Saboret
 
 #ifndef CGAL_WRITE_XYZ_POINTS_H
 #define CGAL_WRITE_XYZ_POINTS_H
+
+#include <CGAL/license/Point_set_processing_3.h>
+
 
 #include <CGAL/property_map.h>
 #include <CGAL/point_set_processing_assertions.h>
@@ -31,7 +35,7 @@ namespace CGAL {
 
 
 //===================================================================================
-/// \ingroup PkgPointSetProcessing
+/// \ingroup PkgPointSetProcessingIO
 /// Saves the [first, beyond) range of points (positions + normals) to a .xyz ASCII stream.
 /// The function writes for each point a line with the x y z position
 /// followed by the nx ny nz normal.
@@ -128,7 +132,7 @@ write_xyz_points_and_normals(
 
 
 //===================================================================================
-/// \ingroup PkgPointSetProcessing
+/// \ingroup PkgPointSetProcessingIO
 /// Saves the [first, beyond) range of points (positions only) to a .xyz ASCII stream.
 /// The function writes for each point a line with the x y z position.
 ///

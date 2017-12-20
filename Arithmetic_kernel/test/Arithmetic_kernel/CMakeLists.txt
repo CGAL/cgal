@@ -8,11 +8,16 @@ cmake_minimum_required(VERSION 2.8.11)
 
 
 
-find_package(CGAL QUIET COMPONENTS Core GMP MPFR)
+find_package(CGAL QUIET COMPONENTS Core)
+
+if ( CGAL_FOUND)
+  include( ${CGAL_USE_FILE} )
+endif()
+
+find_package(GMP QUIET)
 
 if ( CGAL_FOUND AND GMP_FOUND )
 
-  include( ${CGAL_USE_FILE} )
   include( CGAL_VersionUtils )
   
   get_dependency_version( GMP )
@@ -27,6 +32,8 @@ if ( CGAL_FOUND AND GMP_FOUND )
   find_package( MPFI )
 
   if( MPFI_FOUND )
+    include( ${MPFI_USE_FILE} )
+
     # for the testsuite, the version of MPFI shipped with RS is used; this
     # version needs GMP>=4.2, so we require this dependency only here and
     # not in FindMPFI.cmake

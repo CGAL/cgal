@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Michael Seel  <seel@mpi-sb.mpg.de>
 
 #ifndef CGAL_NEF_SM_VISUALIZOR_H
 #define CGAL_NEF_SM_VISUALIZOR_H
+
+#include <CGAL/license/Nef_S2.h>
+
 
 #include <CGAL/basic.h>
 #include <CGAL/Nef_S2/SM_decorator.h>

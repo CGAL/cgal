@@ -6,13 +6,13 @@ uniform highp vec4 light_pos;
 uniform highp vec4 light_diff; 
 uniform highp vec4 light_spec; 
 uniform highp vec4 light_amb;  
-uniform highp float spec_power ; 
+uniform highp float spec_power ;
 uniform int is_two_side; 
 uniform bool is_selected;
 void main(void) {
  if(color.w<0)
  {
-    vec4 my_color = vec4(color.xzy, 1.);
+    vec4 my_color = vec4(color.xyz, 1.);
     highp vec3 L = light_pos.xyz - fP.xyz; 
     highp vec3 V = -fP.xyz; 
     highp vec3 N; 

@@ -4,16 +4,16 @@
 \cgalConcept
 
 The concept `TriangulationDSVertexBase_2` describes the requirements for the 
-vertex base class of a `CGAL::Triangulation_data_structure_2<Vb,Fb>`. 
+vertex base class of a `CGAL::Triangulation_data_structure_2<Vb,Fb>`.
 
 Note that if the `CGAL::Triangulation_data_structure_2` 
 is plugged into a triangulation class, 
-the vertex base class has additional geometric 
+the vertex base class may have additional geometric 
 requirements depending on the triangulation class. 
 
 At the base level, 
 provides access to one of its incident 
-face through a `Face_handle`. 
+faces through a `Face_handle`. 
 
 Since the `CGAL::Triangulation_data_structure_2` is the class 
 which defines the handle 
@@ -26,7 +26,7 @@ In order
 to break the cycle, the base classes for faces and vertices 
 which are plugged in to instantiate a 
 `Triangulation_data_structure_2` 
-use a `void` as triangulation 
+use  `void` as triangulation 
 data structure parameter. Then, 
 the `CGAL::Triangulation_data_structure_2` 
 uses a <I>rebind</I> mechanism (similar to the one specified in 

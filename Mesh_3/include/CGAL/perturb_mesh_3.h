@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Stephane Tayeb
@@ -24,6 +25,9 @@
 
 #ifndef CGAL_PERTURB_MESH_3_H
 #define CGAL_PERTURB_MESH_3_H
+
+#include <CGAL/license/Mesh_3.h>
+
 
 
 #include <CGAL/Mesh_3/global_parameters.h>

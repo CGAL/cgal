@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Sylvain Pion, Michael Hemmer
@@ -28,6 +29,7 @@
 #include <CGAL/number_type_basic.h>
 #include <CGAL/gmpxx_coercion_traits.h>
 #include <CGAL/mpz_class.h> // for GCD in Type traits
+#include <CGAL/IO/io.h>
 
 // This file gathers the necessary adaptors so that the following
 // C++ number types that come with GMP can be used by CGAL :
@@ -55,7 +57,7 @@ class Algebraic_structure_traits< mpq_class  >
     typedef Tag_true            Is_exact;
     typedef Tag_false           Is_numerical_sensitive;
 
-    struct Is_zero: public std::unary_function< mpq_class , bool > {
+    struct Is_zero: public CGAL::unary_function< mpq_class , bool > {
         template <class T, class U>
         bool operator()( const ::__gmp_expr< T , U >& x) const {
             CGAL_CHECK_GMP_EXPR;
@@ -63,7 +65,7 @@ class Algebraic_structure_traits< mpq_class  >
         }
     };
 
-    struct Is_one: public std::unary_function< mpq_class , bool > {
+    struct Is_one: public CGAL::unary_function< mpq_class , bool > {
         template <typename T, typename U>
         bool operator()( const ::__gmp_expr< T , U >& x) const {
             CGAL_CHECK_GMP_EXPR;
@@ -71,27 +73,27 @@ class Algebraic_structure_traits< mpq_class  >
         }
     };
 
-    struct Simplify: public std::unary_function< mpq_class , void > {
+    struct Simplify: public CGAL::unary_function< mpq_class , void > {
         void operator()( mpq_class& x) const {
             // do nothing because x is already canonical?
             x.canonicalize();
         }
     };
 
-    struct Square: public std::unary_function< mpq_class , mpq_class > {
+    struct Square: public CGAL::unary_function< mpq_class , mpq_class > {
         mpq_class operator()( const mpq_class& x) const {
             return x*x;
         }
     };
 
-    struct Unit_part: public std::unary_function< mpq_class , mpq_class > {
+    struct Unit_part: public CGAL::unary_function< mpq_class , mpq_class > {
         mpq_class operator()( const mpq_class& x) const {
             return( x == 0) ? mpq_class(1) : x;
         }
     };
 
     struct Integral_division
-        : public std::binary_function< mpq_class , mpq_class, mpq_class > {
+        : public CGAL::binary_function< mpq_class , mpq_class, mpq_class > {
         template <typename T,  typename U1, typename U2>
         mpq_class operator()(
                 const ::__gmp_expr< T , U1 >& x,
@@ -107,7 +109,7 @@ class Algebraic_structure_traits< mpq_class  >
     };
 
     class Is_square
-        : public std::binary_function< mpq_class, mpq_class&, bool > {
+        : public CGAL::binary_function< mpq_class, mpq_class&, bool > {
     public:
         bool operator()( const mpq_class& x, mpq_class& y ) const {
             y = mpq_class (::sqrt( x.get_num() ), ::sqrt( x.get_den() )) ;
@@ -129,14 +131,14 @@ class Real_embeddable_traits< mpq_class >
   : public INTERN_RET::Real_embeddable_traits_base< mpq_class , CGAL::Tag_true > {
   public:
 
-    struct Is_zero: public std::unary_function< mpq_class , bool > {
+    struct Is_zero: public CGAL::unary_function< mpq_class , bool > {
         template <typename T, typename U>
         bool operator()( const ::__gmp_expr< T , U >& x) const {
             CGAL_CHECK_GMP_EXPR;
             return ::sgn(x) == 0;
         }
     };
-    struct Is_finite: public std::unary_function<mpq_class,bool> {
+    struct Is_finite: public CGAL::unary_function<mpq_class,bool> {
         template <typename T, typename U>
         bool operator()( const ::__gmp_expr< T , U >&) const {
             CGAL_CHECK_GMP_EXPR;
@@ -144,7 +146,7 @@ class Real_embeddable_traits< mpq_class >
         }
     };
 
-    struct Is_positive: public std::unary_function< mpq_class , bool > {
+    struct Is_positive: public CGAL::unary_function< mpq_class , bool > {
         template <typename T, typename U>
         bool operator()( const ::__gmp_expr< T , U >& x) const {
             CGAL_CHECK_GMP_EXPR;
@@ -152,7 +154,7 @@ class Real_embeddable_traits< mpq_class >
         }
     };
 
-    struct Is_negative: public std::unary_function< mpq_class , bool > {
+    struct Is_negative: public CGAL::unary_function< mpq_class , bool > {
         template <typename T, typename U>
         bool operator()( const ::__gmp_expr< T , U >& x) const {
             CGAL_CHECK_GMP_EXPR;
@@ -160,7 +162,7 @@ class Real_embeddable_traits< mpq_class >
         }
     };
 
-    struct Abs: public std::unary_function< mpq_class , mpq_class > {
+    struct Abs: public CGAL::unary_function< mpq_class , mpq_class > {
         template <typename T, typename U>
         mpq_class operator()( const ::__gmp_expr< T , U >& x) const {
             CGAL_CHECK_GMP_EXPR;
@@ -169,7 +171,7 @@ class Real_embeddable_traits< mpq_class >
     };
 
     struct Sgn
-        : public std::unary_function< mpq_class, ::CGAL::Sign > {
+        : public CGAL::unary_function< mpq_class, ::CGAL::Sign > {
     public:
         template <typename T, typename U>
         ::CGAL::Sign
@@ -180,7 +182,7 @@ class Real_embeddable_traits< mpq_class >
     };
 
     struct Compare
-        : public std::binary_function< mpq_class, mpq_class, Comparison_result>
+        : public CGAL::binary_function< mpq_class, mpq_class, Comparison_result>
     {
         template <typename T, typename U1, typename U2>
         Comparison_result operator()(
@@ -195,7 +197,7 @@ class Real_embeddable_traits< mpq_class >
     };
 
     struct To_double
-        : public std::unary_function< mpq_class, double > {
+        : public CGAL::unary_function< mpq_class, double > {
         double operator()( const mpq_class& x ) const {
             return x.get_d();
         }
@@ -203,17 +205,33 @@ class Real_embeddable_traits< mpq_class >
 
     struct To_interval
 
-        : public std::unary_function< mpq_class, std::pair< double, double > > {
+        : public CGAL::unary_function< mpq_class, std::pair< double, double > > {
         std::pair<double, double>
         operator()( const mpq_class& x ) const {
-            mpfr_t y;
-            mpfr_init2 (y, 53); /* Assume IEEE-754 */
-            mpfr_set_q (y, x.get_mpq_t(), GMP_RNDD);
-            double i = mpfr_get_d (y, GMP_RNDD); /* EXACT but can overflow */
-            mpfr_set_q (y, x.get_mpq_t(), GMP_RNDU);
-            double s = mpfr_get_d (y, GMP_RNDU); /* EXACT but can overflow */
-            mpfr_clear (y);
-            return std::pair<double, double>(i, s);
+#if MPFR_VERSION_MAJOR >= 3
+	  MPFR_DECL_INIT (y, 53); /* Assume IEEE-754 */
+	  int r = mpfr_set_q (y, x.get_mpq_t(), MPFR_RNDA);
+	  double i = mpfr_get_d (y, MPFR_RNDA); /* EXACT but can overflow */
+	  if (r == 0 && is_finite (i))
+	    return std::pair<double, double>(i, i);
+	  else
+	    {
+	      double s = nextafter (i, 0);
+	      if (i < 0)
+		return std::pair<double, double>(i, s);
+	      else
+		return std::pair<double, double>(s, i);
+	    }
+#else
+	  mpfr_t y;
+	  mpfr_init2 (y, 53); /* Assume IEEE-754 */
+	  mpfr_set_q (y, x.get_mpq_t(), GMP_RNDD);
+	  double i = mpfr_get_d (y, GMP_RNDD); /* EXACT but can overflow */
+	  mpfr_set_q (y, x.get_mpq_t(), GMP_RNDU);
+	  double s = mpfr_get_d (y, GMP_RNDU); /* EXACT but can overflow */
+	  mpfr_clear (y);
+	  return std::pair<double, double>(i, s);
+#endif
         }
     };
 };
@@ -260,6 +278,30 @@ public:
         }
     };
 };
+
+template <>
+class Input_rep<mpq_class> : public IO_rep_is_specialized {
+    mpq_class& q;
+public:
+    Input_rep( mpq_class& qq) : q(qq) {}
+    std::istream& operator()( std::istream& in) const {
+      internal::read_float_or_quotient<mpz_class,mpq_class>(in, q);
+      return in;
+    }
+};
+
+// Copied from leda_rational.h
+namespace internal {
+  // See: Stream_support/include/CGAL/IO/io.h
+  template <typename ET>
+  void read_float_or_quotient(std::istream & is, ET& et);
+
+  template <>
+  inline void read_float_or_quotient(std::istream & is, mpq_class& et)
+  {
+    internal::read_float_or_quotient<mpz_class,mpq_class>(is, et);
+  }
+} // namespace internal
 
 } //namespace CGAL
 

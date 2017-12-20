@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Abdelkrim Mebarki <Abdelkrim.Mebarki@sophia.inria.fr>
 
 #ifndef CGAL_RUNGE_KUTTA_INTEGRATOR_2_H_
 #define CGAL_RUNGE_KUTTA_INTEGRATOR_2_H_
+
+#include <CGAL/license/Stream_lines_2.h>
+
 
 #include <CGAL/basic.h>
 #include <CGAL/Euler_integrator_2.h>

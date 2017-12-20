@@ -10,8 +10,8 @@ namespace CGAL {
 \image html alphashape.png 
 \image latex alphashape.png 
 
-Assume we are given a set \f$ S\f$ of points in 2D or 3D and we'd like to
-have something like "the shape formed by these points." This is
+Assume we are given a set \f$ S\f$ of points in 2D or 3D and we would like to
+have something like "the shape formed by these points". This is
 quite a vague notion and there are probably many possible
 interpretations, the alpha shape being one of them. Alpha shapes
 can be used for shape reconstruction from a dense unorganized set of
@@ -22,27 +22,26 @@ As mentioned in Edelsbrunner's and M&uuml;cke's paper \cgalCite{em-tdas-94},
 one can intuitively think of an alpha shape as the
 following. Imagine a huge mass of ice-cream making up the space \f$ \mathbb{R}^3\f$
 and containing the points as "hard" chocolate pieces. Using one of
-those sphere-formed ice-cream spoons we carve out all parts of the
+those sphere-formed ice-cream spoons, we carve out all parts of the
 ice-cream block we can reach without bumping into chocolate pieces,
 thereby even carving out holes in the inside (e.g. parts not reachable
 by simply moving the spoon from the outside). We will eventually end
 up with a (not necessarily convex) object bounded by caps, arcs and
 points. If we now straighten all "round" faces to triangles and line
 segments, we have an intuitive description of what is called the
-alpha shape of \f$ S\f$. Here's an example for this process in 2D (where
-our ice-cream spoon is simply a circle):
+alpha shape of \f$ S\f$. The drawing above provides an example
+of this process in 2D (where our ice-cream spoon is simply a circle).
 
-Alpha shapes depend on a parameter \f$ \alpha\f$ from which they
-are named. 
-What is \f$ \alpha\f$ in the ice-cream game? \f$ \alpha\f$ is the squared radius of the
+Alpha shapes depend on a parameter \f$ \alpha\f$ after which they are named.
+In the ice-cream analogy above, \f$ \alpha\f$ is the squared radius of the
 carving spoon. A very small value will allow us to eat up all of the
 ice-cream except the chocolate points themselves. Thus we already see
 that the alpha shape degenerates to the point-set \f$ S\f$ for
 \f$ \alpha \rightarrow 0\f$. On the other hand, a huge value of \f$ \alpha\f$
 will prevent us even from moving the spoon between two points since
-it's way too large. So we will never spoon up ice-cream lying in the
-inside of the convex hull of \f$ S\f$, and hence the alpha shape for
-\f$ \alpha \rightarrow \infty\f$ is the convex hull of \f$ S\f$.
+it is too large and we will never spoon up the ice-cream lying in the
+inside of the convex hull of \f$ S\f$. Hence, the alpha shape becomes
+the convex hull of \f$ S\f$ as \f$ \alpha \rightarrow \infty\f$.
 
 \cgal offers 2D and 3D alpha shapes. The GUDHI library offers a
 <a href="http://gudhi.gforge.inria.fr/doc/latest/group__alpha__complex.html"> dD Alpha complex</a>.
@@ -50,12 +49,11 @@ inside of the convex hull of \f$ S\f$, and hence the alpha shape for
 
 \section Alpha_shapes_3Definitions Definitions
 
-More precisely, the definition of alpha shapes is based on an underlying
-triangulation that may be a Delaunay triangulation 
-in case of basic alpha shapes 
-or a regular triangulation 
-(cf. Section \ref Triangulation3secclassRegulartriangulation "Regular Triangulations")
-in case of weighted alpha shapes.
+We distinguish two versions of alpha shapes. <I>Basic alpha shapes</I>
+are based on the Delaunay triangulation. <I>Weighted alpha shapes</I>
+are based on its generalization, the regular triangulation
+(cf. Section \ref Triangulation3secclassRegulartriangulation "Regular Triangulations"),
+replacing the euclidean distance by the power to weighted points.
 
 Let us consider the basic case with a Delaunay triangulation.
 We first define the alpha complex of the set of points \f$ S\f$. 
@@ -64,13 +62,12 @@ of the Delaunay triangulation.
 For a given value of \f$ \alpha\f$, the alpha complex includes
 all the simplices in the Delaunay triangulation which have
 an empty circumscribing sphere with squared radius equal or smaller than \f$ \alpha\f$.
-Here "empty" means that the open sphere 
-do not include any points of \f$ S\f$.
+Here "empty" means that the open sphere does not include any points of \f$ S\f$.
 The alpha shape is then simply the domain covered by the simplices
 of the alpha complex (see \cgalCite{em-tdas-94}).
 
-In general, an alpha complex is a disconnected and non-pure complex:
-This means in particular that the alpha complex may have
+In general, an alpha complex is a disconnected and non-pure complex,
+meaning in particular that the alpha complex may have
 singular faces. For \f$ 0 \leq k \leq d-1\f$,
 a \f$ k\f$-simplex of the alpha complex is said to be
 singular if it is not a facet of a \f$ (k+1)\f$-simplex of the complex.
@@ -102,18 +99,18 @@ faces of the triangulation of a set of points.
 In this filtration, the faces of the triangulation are output
 in increasing order of the alpha value 
 for which they appear 
-in the alpha complex. In case of equal alpha value
+in the alpha complex. In case of equal alpha values,
 lower dimensional faces are output first.
 
 The definition is analog in the case of weighted alpha shapes.
 The input set is now a set of weighted points (which can be regarded
 as spheres) and the underlying triangulation 
 is the regular triangulation of this set.
-Two spheres, or two weighted points , with centers \f$ C_1, C_2\f$
+Two spheres, or two weighted points, with centers \f$ C_1, C_2\f$
 and radii \f$ r_1, r_2 \f$ are said to be orthogonal iff 
 \f$ C_1C_2 ^2 = r_1^2 + r_2^2\f$ and suborthogonal
 iff \f$ C_1C_2 ^2 < r_1^2 + r_2^2\f$.
-For a given value of \f$ \alpha\f$
+For a given value of \f$ \alpha\f$,
 the weighted alpha complex is formed with the simplices of the 
 regular triangulation triangulation
 such that there is a sphere orthogonal to the weighted points associated
@@ -133,12 +130,14 @@ of the set, and associates to each \f$ k\f$-face of this triangulation
 an interval specifying 
 for which values of \f$ \alpha\f$ the face belongs to the
 alpha complex.
+The second template parameter, `ExactAlphaComparisonTag`, is a tag that,
+when set to CGAL::Tag_true, triggers exact comparisons between alpha values.
 
 The class provides functions to set and
 get the current \f$ \alpha\f$-value, as well as an iterator that enumerates
 the \f$ \alpha\f$ values where the alpha shape changes.
 
-Also the class has a filtration member function that, given
+Additionally, the class has a filtration member function that, given
 an output iterator with `Object`
 as value type, outputs the faces of the triangulation 
 according to the 
@@ -146,12 +145,12 @@ order of apparition in the alpha complex when alpha increases.
 
 Finally, it provides a function to determine 
 the smallest value \f$ \alpha\f$
-such that the alpha shape satisfies the following two properties 
-
-(i) all data points are either on the boundary or in the interior 
-of the regularized version of the alpha shape (no singular faces). 
-
-(ii) The number of components is equal or less than a given number.
+such that the alpha shape satisfies the following two properties: <br>
+<ol>
+<li> All data points are either on the boundary or in the interior
+of the regularized version of the alpha shape (no singular faces).
+<li> The number of components is equal or less than a given number.
+</ol>
 
 The current implementation is static, that is after its construction
 points cannot be inserted or removed.
@@ -199,38 +198,37 @@ We currently do not specify concepts for the underlying triangulation
 type. Models that work for a family of alpha-shapes are the instantiations
 of the classes `Delaunay_triangulation_3` and
 `Periodic_3_Delaunay_triangulation_3` (see
-example \ref AlphaShape_3DExampleForPeriodicAlphaShapes). A model that works for a fixed alpha-shape are the instantiations
+example \ref AlphaShape_3DExampleForPeriodicAlphaShapes).
+A model that works for a fixed alpha-shape are the instantiations
 of the class `Delaunay_triangulation_3`.
-A model that works for a weighted alpha-shape is 
-the class `Regular_triangulation_3`. The triangulation needs a geometric traits class 
+Models that work for a weighted alpha-shape are the instantiations
+of the classes `Regular_triangulation_3` and
+`Periodic_3_regular_triangulation_3`.
+The triangulation needs a geometric traits class
 and a triangulation data structure as template parameters.
+
+\subsection AlphaShape3D_ConceptAndModelsAlphaShapes Alpha Shapes
 
 For the class `Alpha_shape_3<Dt,ExactAlphaComparisonTag>`, the requirements of
 the traits class are described in the concepts `AlphaShapeTraits_3`
 in the non-weighted case and `WeightedAlphaShapeTraits_3` in the weighted case.
-The \cgal kernels are models in the non-weighted case, and 
-the class `Regular_triangulation_euclidean_traits_3` is a model
-in the weighted case.
+All \cgal kernels are models of both concepts.
+
 The triangulation data structure of the triangulation
 has to be a model of the concept `TriangulationDataStructure_3`,
 and it must be parameterized with vertex and cell classes, which are model of the concepts
 `AlphaShapeVertex_3` and `AlphaShapeCell_3`.
-The package provides by default the classes
-`Alpha_shape_vertex_base_3<Gt>` and
-`Alpha_shape_cell_base_3<Gt>`. When using
-`Periodic_3_Delaunay_triangulation_3` as underlying
-triangulation the vertex and cell classes need to be models to both
-`AlphaShapeVertex_3` and
-`Periodic_3TriangulationDSVertexBase_3` as well as
-`AlphaShapeCell_3` and `Periodic_3TriangulationDSCellBase_3`
-(see example \ref  AlphaShape_3DExampleForPeriodicAlphaShapes).
+The classes `Alpha_shape_vertex_base_3<Gt>` and `Alpha_shape_cell_base_3<Gt>`
+are models of these concepts and can be used for all type of alpha shapes,
+provided that the template parameters `Vb` and `Fb` are appropriately chosen,
+as we shall see in the following section.
+
+\subsection AlphaShape3D_ConceptAndModelsFixedAlphaShapes Fixed Alpha Shapes
 
 For the class `Fixed_alpha_shape_3<Dt>`, the requirements of
 the traits class are described in the concepts `FixedAlphaShapeTraits_3`
 in the non-weighted case and `FixedWeightedAlphaShapeTraits_3` in the weighted case.
-The \cgal kernels are models in the non-weighted case, and 
-the class `Regular_triangulation_euclidean_traits_3` is a model
-in the weighted case.
+All \cgal kernels are models of both concepts.
 The triangulation data structure of the triangulation
 has to be a model of the concept `TriangulationDataStructure_3`,
 and it must be parameterized with vertex and cell classes, which are model of the concepts
@@ -238,14 +236,32 @@ and it must be parameterized with vertex and cell classes, which are model of th
 The package provides models `Fixed_alpha_shape_vertex_base_3<Gt>` 
 and `Fixed_alpha_shape_cell_base_3<Gt>`, respectively.
 
-\section Alpha_shapes_3AlphaShape3OrFixedAlphaShape3 Alpha_shape_3 vs.\ Fixed_alpha_shape_3
+\subsection AlphaShape3D_ConceptAndModelsTDS Triangulation data structure
+
+Additional requirements are put when using weighted or
+periodic triangulations as underlying triangulation:
+<ul>
+<li> When using a weighted triangulation (`Regular_triangulation_3` or
+`Periodic_3_regular_triangulation_3`), the vertex
+and cell classes must respectively be models to both `AlphaShapeVertex_3` and
+`RegularTriangulationVertexBase_3`, and to both
+`AlphaShapeCell_3` and `RegularTriangulationCellBase_3`
+(see example: \ref AlphaShape_3DExampleforWeightedAlphaShapes).
+<li> When using a periodic triangulation (`Periodic_3_Delaunay_triangulation_3`
+or `Periodic_3_regular_triangulation_3`), the vertex and cell classes must
+respectively be models to both `AlphaShapeVertex_3` and `Periodic_3TriangulationDSVertexBase_3`,
+and to both `AlphaShapeCell_3` and `Periodic_3TriangulationDSCellBase_3`
+(see example: \ref  AlphaShape_3DExampleForPeriodicAlphaShapes).
+</ul>
+
+\section Alpha_shapes_3AlphaShape3OrFixedAlphaShape3 Alpha_shape_3 vs. Fixed_alpha_shape_3
 
 The class `Alpha_shape_3<Dt,ExactAlphaComparisonTag>` represents the whole family
 of alpha shapes for a given set of points while the class `Fixed_alpha_shape_3<Dt>`
 represents only one alpha shape (for a fixed alpha). When using the same kernel,
-`Fixed_alpha_shape_3<Dt>` being a lighter version, it is naturally much more efficient 
+`Fixed_alpha_shape_3<Dt>` is a lighter version. It is thus naturally much more efficient
 when the alpha-shape is needed for a single given value of alpha.
-In addition note that the class `Alpha_shape_3<Dt,ExactAlphaComparisonTag>`
+In addition, note that the class `Alpha_shape_3<Dt,ExactAlphaComparisonTag>`
 requires constructions (squared radius of simplices) while the 
 class `Fixed_alpha_shape_3<Dt>` uses only predicates.
 This implies that a certified construction of one (several)
@@ -279,7 +295,7 @@ as underlying triangulation.
 \subsection AlphaShape_3DBuildingBasicAlphaShapesForManyPoints Building Basic Alpha Shapes for Many Points
 
 When many points are input in the alpha shape, say more than 10 000,
-it may pay off to use a Delaunay triangulation with `Fast_location`
+it may pay off to use a Delaunay triangulation with the `Fast_location`
 policy as underlying triangulation in order to speed up point location
 queries (cf. Section \ref Triangulation3seclocpol "The Location Policy Parameter").
 
@@ -309,21 +325,22 @@ them with a traits with inexact constructions, the tag
 
 \subsection AlphaShape_3DExampleForPeriodicAlphaShapes Example for Periodic Alpha Shapes
 
-The following example shows how to use the periodic Delaunay
+The following example shows how to use a periodic Delaunay
 triangulation (Chapter \ref Chapter_3D_Periodic_Triangulations "3D Periodic Triangulations") as underlying
-triangulation for the alpha shape computation.
+triangulation for the alpha shape computation. Usage of a weighted Delaunay periodic
+triangulation is presented in the example: \ref Alpha_shapes_3/ex_weighted_periodic_alpha_shapes_3.cpp "ex_weighted_periodic_alpha_shapes_3.cpp".
 
 In order to define the original domain and to benefit from the
-built-in heuristic optimizations of the periodic Delaunay
-triangulation computation it is recommended to first construct the
-triangulation and then construct the alpha shape from it. The alpha
+built-in heuristic optimizations of the periodic triangulation computation,
+it is recommended to first construct the triangulation and
+then construct the alpha shape from it. The alpha
 shape constructor that takes a point range can be used as well but in
 this case the original domain cannot be specified and the default unit
 cube will be chosen and no optimizations will be used.
 
 It is also recommended to switch the triangulation to 1-sheeted
 covering if possible. Note that a periodic triangulation in 27-sheeted
-covering space is degenerate. In this case an exact constructions
+covering space is degenerate. In this case, an exact constructions
 kernel needs to be used to compute the alpha shapes. Otherwise the
 results will suffer from round-off problems.
 

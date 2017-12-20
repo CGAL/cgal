@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
 #ifndef CGAL_SWEEP_LINE_EMPTY_VISITOR_H
 #define CGAL_SWEEP_LINE_EMPTY_VISITOR_H
+
+#include <CGAL/license/Sweep_line_2.h>
+
 
 /*! \file
  * Definition of the Sweep_line_empty_visitor class-template.

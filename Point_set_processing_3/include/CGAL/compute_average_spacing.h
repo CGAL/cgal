@@ -14,11 +14,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s) : Pierre Alliez and Laurent Saboret
 
 #ifndef CGAL_AVERAGE_SPACING_3_H
 #define CGAL_AVERAGE_SPACING_3_H
+
+#include <CGAL/license/Point_set_processing_3.h>
+
 
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/squared_distance_3.h>
@@ -126,7 +130,7 @@ compute_average_spacing(const typename Kernel::Point_3& query, ///< 3D point who
 // Public section
 // ----------------------------------------------------------------------------
 
-/// \ingroup PkgPointSetProcessing
+/// \ingroup PkgPointSetProcessingAlgorithms
 /// Computes average spacing from k nearest neighbors.
 ///
 /// \pre `k >= 2.`

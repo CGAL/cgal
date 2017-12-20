@@ -14,18 +14,23 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s) : Nader Salman and Laurent Saboret 
 
 #ifndef CGAL_GRID_SIMPLIFY_POINT_SET_H
 #define CGAL_GRID_SIMPLIFY_POINT_SET_H
 
+#include <CGAL/license/Point_set_processing_3.h>
+
+
 #include <CGAL/property_map.h>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/point_set_processing_assertions.h>
+#include <CGAL/unordered.h>
+#include <boost/functional/hash.hpp>
 
 #include <iterator>
-#include <set>
 #include <deque>
 #include <algorithm>
 #include <cmath>
@@ -41,11 +46,17 @@ namespace CGAL {
 namespace internal {
 
 
-/// Utility class for grid_simplify_point_set():
-/// Less_epsilon_points_3 defines a 3D points order / 2 points are equal
-/// iff they belong to the same cell of a grid of cell size = epsilon.
+// Round number to multiples of epsilon
+inline double round_epsilon(double value, double epsilon)
+{
+  return std::floor(value / epsilon);
+}
+  
+/// Utility class for grid_simplify_point_set(): Hash_epsilon_points_3
+/// defines a 3D point hash / 2 points are equal iff they belong to
+/// the same cell of a grid of cell size = epsilon.
 template <class Point_3, class PointPMap>
-struct Less_epsilon_points_3
+struct Hash_epsilon_points_3
 {
 private:
 
@@ -54,7 +65,37 @@ private:
     typedef typename boost::property_traits<PointPMap>::value_type Point;
 public:
 
-    Less_epsilon_points_3 (double epsilon, PointPMap p_pmap) 
+    Hash_epsilon_points_3 (double epsilon, PointPMap p_pmap) 
+        : m_epsilon (epsilon), point_pmap(p_pmap)
+    {
+        CGAL_point_set_processing_precondition(epsilon > 0);
+    }
+
+  std::size_t operator() (const Point_3& a) const
+  {
+    const Point& pa = get(point_pmap,a);
+    std::size_t result = boost::hash_value(round_epsilon(pa.x(), m_epsilon));
+    boost::hash_combine(result, boost::hash_value(round_epsilon(pa.y(), m_epsilon)));
+    boost::hash_combine(result, boost::hash_value(round_epsilon(pa.z(), m_epsilon)));
+    return result;
+  }
+
+};
+
+/// Utility class for grid_simplify_point_set(): Hash_epsilon_points_3
+/// defines a 3D point equality / 2 points are equal iff they belong
+/// to the same cell of a grid of cell size = epsilon.
+template <class Point_3, class PointPMap>
+struct Equal_epsilon_points_3
+{
+private:
+
+    const double m_epsilon;
+    PointPMap point_pmap;
+    typedef typename boost::property_traits<PointPMap>::value_type Point;
+public:
+
+    Equal_epsilon_points_3 (const double& epsilon, PointPMap p_pmap) 
         : m_epsilon (epsilon), point_pmap(p_pmap)
     {
         CGAL_point_set_processing_precondition(epsilon > 0);
@@ -62,27 +103,22 @@ public:
 
     bool operator() (const Point_3& a, const Point_3& b) const
     {
-        // Round points to multiples of m_epsilon, then compare.
-        return round_epsilon( get(point_pmap,a), m_epsilon ) <
-               round_epsilon( get(point_pmap,b), m_epsilon );
-    }
+      const Point& pa = get(point_pmap,a);
+      const Point& pb = get(point_pmap,b);
 
-private:
-
-    // Round number to multiples of epsilon
-    static inline double round_epsilon(double value, double epsilon)
-    {
-        return std::floor(value/epsilon) * epsilon;
-    }
-
-    static inline Point round_epsilon(const Point& p, double epsilon)
-    {
-        return Point( round_epsilon(p.x(), epsilon),
-                      round_epsilon(p.y(), epsilon),
-                      round_epsilon(p.z(), epsilon) );
+      double ra = round_epsilon(pa.x(), m_epsilon);
+      double rb = round_epsilon(pb.x(), m_epsilon);
+      if (ra != rb)
+        return false;
+      ra = round_epsilon(pa.y(), m_epsilon);
+      rb = round_epsilon(pb.y(), m_epsilon);
+      if (ra != rb)
+        return false;
+      ra = round_epsilon(pa.z(), m_epsilon);
+      rb = round_epsilon(pb.z(), m_epsilon);
+      return ra == rb;
     }
 };
-
 
 
 } /* namespace internal */
@@ -103,17 +139,22 @@ private:
 
 template <class Point_3, class PointPMap>
 class Epsilon_point_set_3
-  : public std::set<Point_3, internal::Less_epsilon_points_3<Point_3, PointPMap> >
+  : public cpp11::unordered_set<Point_3,
+                                internal::Hash_epsilon_points_3<Point_3, PointPMap>,
+                                internal::Equal_epsilon_points_3<Point_3, PointPMap> >
 {
 private:
 
     // superclass
-    typedef std::set<Point_3, internal::Less_epsilon_points_3<Point_3, PointPMap> > Base;
+    typedef cpp11::unordered_set<Point_3,
+                                internal::Hash_epsilon_points_3<Point_3, PointPMap>,
+                                internal::Equal_epsilon_points_3<Point_3, PointPMap> > Base;
 
 public:
 
     Epsilon_point_set_3 (double epsilon, PointPMap point_pmap)
-        : Base( internal::Less_epsilon_points_3<Point_3, PointPMap>(epsilon, point_pmap) )
+        : Base(10, internal::Hash_epsilon_points_3<Point_3, PointPMap>(epsilon, point_pmap),
+               internal::Equal_epsilon_points_3<Point_3, PointPMap>(epsilon, point_pmap))
     {
         CGAL_point_set_processing_precondition(epsilon > 0);
     }
@@ -123,7 +164,7 @@ public:
 
 /// \endcond
 
-/// \ingroup PkgPointSetProcessing
+/// \ingroup PkgPointSetProcessingAlgorithms
 /// Merges points which belong to the same cell of a grid of cell size = `epsilon`.
 ///
 /// This method modifies the order of input points so as to pack all remaining points first,

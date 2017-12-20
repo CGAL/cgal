@@ -8,4 +8,5 @@ HalfedgeDS
 Polyhedron
 Triangulation_3
 Combinatorial_map
+Generalized_map
 Kernel_d

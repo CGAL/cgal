@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Efi Fogel <efif@post.tau.ac.il>
 
 #ifndef CGAL_GPS_IOSTREAM_H
 #define CGAL_GPS_IOSTREAM_H
+
+#include <CGAL/license/Boolean_set_operations_2.h>
+
 
 #include <iostream>
 #include <list>

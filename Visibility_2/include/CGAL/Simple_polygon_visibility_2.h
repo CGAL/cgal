@@ -12,8 +12,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$`
+// $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s):  Francisc Bungiu <fbungiu@gmail.com>
@@ -22,6 +23,9 @@
 
 #ifndef CGAL_SIMPLE_POLYGON_VISIBILITY_2_H
 #define CGAL_SIMPLE_POLYGON_VISIBILITY_2_H
+
+#include <CGAL/license/Visibility_2.h>
+
 
 #include <CGAL/tags.h>
 #include <CGAL/enum.h>

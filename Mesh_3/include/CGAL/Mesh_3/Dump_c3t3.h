@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Laurent Rineau
 
 #ifndef CGAL_MESH_3_DUMP_C3T3_H
 #define CGAL_MESH_3_DUMP_C3T3_H
+
+#include <CGAL/license/Mesh_3.h>
+
 
 #include <string>
 #include <CGAL/Mesh_3/io_signature.h>
@@ -100,6 +104,25 @@ struct Dump_c3t3<C3t3, false> {
   }
 }; // end struct template specialization Dump_c3t3<C3t3, false>
 
+template <typename C3t3>
+void dump_c3t3_edges(const C3t3& c3t3, std::string prefix) {
+  typename C3t3::Triangulation::Geom_traits::Construct_point_3 wp2p =
+    c3t3.triangulation().geom_traits().construct_point_3_object();
+
+  std::ofstream file((prefix+".polylines.txt").c_str());
+  file.precision(17);
+  for(typename C3t3::Edges_in_complex_iterator
+        edge_it = c3t3.edges_in_complex_begin(),
+        end     = c3t3.edges_in_complex_end();
+      edge_it != end; ++edge_it)
+  {
+    const typename C3t3::Triangulation::Cell_handle c = edge_it->first;
+    const int i = edge_it->second;
+    const int j = edge_it->third;
+    file << "2 " << wp2p(c->vertex(i)->point())
+         << " "  << wp2p(c->vertex(j)->point()) << "\n";
+  }
+}
 template <typename C3t3>
 void dump_c3t3(const C3t3& c3t3, std::string prefix) {
   if(!prefix.empty()) {

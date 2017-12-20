@@ -48,7 +48,7 @@ int main()
   ch->set_subdomain_index(sub_index);
   
   // Init facet
-  Tr::Point facet_circum =
+  Tr::Bare_point facet_circum =
     tr.geom_traits().construct_weighted_circumcenter_3_object()(
       ch->vertex(k+1)->point(), ch->vertex(k+2)->point(), ch->vertex(k+3)->point());
   
@@ -70,38 +70,43 @@ int main()
   // -----------------------------------
   // Test edge criteria
   // -----------------------------------
+  Tr::Bare_point bp1 = tr.geom_traits().construct_point_3_object()(p1);
+
   Mc ec1(edge_size = 1);
-  assert( ec1.edge_criteria_object().sizing_field(p1,1,index) == 1 );
+  assert( ec1.edge_criteria_object().sizing_field(bp1,1,index) == 1 );
   
   Mc ec2(edge_sizing_field = Esf(2));
-  assert( ec2.edge_criteria_object().sizing_field(p1,1,index) == 2 );
+  assert( ec2.edge_criteria_object().sizing_field(bp1,1,index) == 2 );
 
   Mc ec3(edge_sizing_field = 3.);
-  assert( ec3.edge_criteria_object().sizing_field(p1,1,index) == 3 );
+  assert( ec3.edge_criteria_object().sizing_field(bp1,1,index) == 3 );
   
   Mc ec4(edge_size = 4.1,
          edge_sizing_field = Esf(4.2));
-  assert( ec4.edge_criteria_object().sizing_field(p1,1,index) == 4.1 );
+  assert( ec4.edge_criteria_object().sizing_field(bp1,1,index) == 4.1 );
   
   Mc ec5(sizing_field = 5.);
-  assert( ec5.edge_criteria_object().sizing_field(p1,1,index) == 5 );
+  assert( ec5.edge_criteria_object().sizing_field(bp1,1,index) == 5 );
   
   Mc ec6(sizing_field = 6.1,
          edge_sizing_field = 6.2);
-  assert( ec6.edge_criteria_object().sizing_field(p1,1,index) == 6.2 );
+  assert( ec6.edge_criteria_object().sizing_field(bp1,1,index) == 6.2 );
   
   Mc ec7(sizing_field = 7.1,
          edge_size = 7.2);
-  assert( ec7.edge_criteria_object().sizing_field(p1,1,index) == 7.2 );
+  assert( ec7.edge_criteria_object().sizing_field(bp1,1,index) == 7.2 );
   
   
   // -----------------------------------
   // Test facet criteria
   // -----------------------------------
   typedef Tr::Geom_traits::FT FT;
-  FT radius_facet = CGAL::sqrt(CGAL::squared_radius(ch->vertex(k+1)->point(),
-                                                    ch->vertex(k+2)->point(),
-                                                    ch->vertex(k+3)->point()));
+  Tr::Geom_traits::Compute_squared_radius_3 squared_radius = tr.geom_traits().compute_squared_radius_3_object();
+  Tr::Geom_traits::Construct_point_3 wp2p = tr.geom_traits().construct_point_3_object();
+
+  FT radius_facet = CGAL::sqrt(squared_radius(wp2p(ch->vertex(k+1)->point()),
+                                              wp2p(ch->vertex(k+2)->point()),
+                                              wp2p(ch->vertex(k+3)->point())));
   
   FT facet_size_ok = radius_facet*FT(10);
   FT facet_size_nok = radius_facet/FT(10);
@@ -154,10 +159,10 @@ int main()
   // -----------------------------------
   // Test cell criteria
   // -----------------------------------
-  FT radius_cell = CGAL::sqrt(CGAL::squared_radius(ch->vertex(0)->point(),
-                                                   ch->vertex(1)->point(),
-                                                   ch->vertex(2)->point(),
-                                                   ch->vertex(3)->point()));
+  FT radius_cell = CGAL::sqrt(squared_radius(wp2p(ch->vertex(0)->point()),
+                                             wp2p(ch->vertex(1)->point()),
+                                             wp2p(ch->vertex(2)->point()),
+                                             wp2p(ch->vertex(3)->point())));
   
   FT cell_size_ok = radius_cell*FT(10);
   FT cell_size_nok = radius_cell/FT(10);

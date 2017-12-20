@@ -12,8 +12,7 @@ An instance of `Coercion_traits` reflects the type coercion of the types
 
 */
 template< typename A, typename B >
-class Coercion_traits {
-public:
+struct Coercion_traits {
 
 /// \name Types 
 /// @{

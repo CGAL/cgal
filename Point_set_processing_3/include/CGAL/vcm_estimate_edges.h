@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s) : Jocelyn Meyron and Quentin Mérigot
 //
@@ -21,11 +22,14 @@
 #ifndef CGAL_VCM_ESTIMATE_EDGES_H
 #define CGAL_VCM_ESTIMATE_EDGES_H
 
+#include <CGAL/license/Point_set_processing_3.h>
+
+
 #include <CGAL/vcm_estimate_normals.h>
 
 namespace CGAL {
 
-/// \ingroup PkgPointSetProcessing
+/// \ingroup PkgPointSetProcessingAlgorithms
 /// determines if a point is on a sharp feature edge from a point set
 /// for which the Voronoi covariance Measures have been computed.
 ///

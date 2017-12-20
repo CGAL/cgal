@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Kaspar Fischer
@@ -21,6 +22,9 @@
 
 #ifndef CGAL_MINIBALL_PAIR
 #define CGAL_MINIBALL_PAIR
+
+#include <CGAL/license/Bounding_volumes.h>
+
 
 namespace CGAL_MINIBALL_NAMESPACE {
 

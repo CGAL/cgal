@@ -30,7 +30,7 @@
 \cgalPkgDependsOn{\ref PkgSolverSummary} 
 \cgalPkgBib{cgal:ap-pcad}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
-\cgalPkgDemo{Principal Component Analysis,pca.zip,Operations on Polygons,polygon.zip,Operations on Polyhedra,polyhedron_3.zip}
+\cgalPkgDemo{Principal Component Analysis,pca.zip,Operations on Polygons,polygon.zip,Polyhedron demo,polyhedron_3.zip}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 

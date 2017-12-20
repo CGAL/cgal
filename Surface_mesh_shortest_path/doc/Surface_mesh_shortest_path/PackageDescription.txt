@@ -26,7 +26,7 @@
 \cgalPkgSince{4.7}
 \cgalPkgBib{cgal:klcdv-tsmsp}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
-\cgalPkgDemo{Operations on Polyhedra,polyhedron_3.zip}
+\cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
@@ -43,7 +43,7 @@
 
 ## Enums ##
 
-- `CGAL::Surface_mesh_shortest_paths_3::Barycentric_coordinate_type`
+- `CGAL::Surface_mesh_shortest_paths_3::Barycentric_coordinates_type`
 
 */
 

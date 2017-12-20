@@ -1,13 +1,12 @@
-#include <CGAL/Linear_cell_complex.h>
-#include <CGAL/Linear_cell_complex_constructors.h>
+#include <CGAL/Linear_cell_complex_for_generalized_map.h>
 #include <iostream>
 #include <vector>
 
-typedef CGAL::Linear_cell_complex<4,5> LCC_4;
-typedef LCC_4::Dart_handle             Dart_handle;
-typedef LCC_4::Point                   Point;
-typedef LCC_4::Vector                  Vector;
-typedef LCC_4::FT                      FT;
+typedef CGAL::Linear_cell_complex_for_generalized_map<4,5> LCC_4;
+typedef LCC_4::Dart_handle                                 Dart_handle;
+typedef LCC_4::Point                                       Point;
+typedef LCC_4::Vector                                      Vector;
+typedef LCC_4::FT                                          FT;
 
 int main()
 {
@@ -49,7 +48,7 @@ int main()
   std::cout<<", valid="<<lcc.is_valid()<<std::endl;
 
   // Add one edge to cut the face containing dart d3 in two.
-  Dart_handle d4 = lcc.insert_cell_1_in_cell_2(d3,lcc.beta(d1, 0));
+  Dart_handle d4 = lcc.insert_cell_1_in_cell_2(d3, lcc.alpha(d1, 1, 0, 1));
   CGAL_assertion( lcc.is_valid() );
   
   lcc.display_characteristics(std::cout);

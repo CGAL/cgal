@@ -10,5 +10,6 @@ int main() {
   Nef_polyhedron N1(Nef_polyhedron::COMPLETE);
 
   CGAL_assertion (N0 == N1.complement());
+  CGAL_assertion (N0 != N1);
   return 0;
 }

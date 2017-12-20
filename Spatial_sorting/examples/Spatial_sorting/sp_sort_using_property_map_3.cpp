@@ -2,7 +2,7 @@
 #include <CGAL/spatial_sort.h>
 #include <CGAL/Spatial_sort_traits_adapter_3.h>
 #include <vector>
-#include <boost/iterator/counting_iterator.hpp>
+#include <CGAL/boost/iterator/counting_iterator.hpp>
 
 typedef CGAL::Simple_cartesian<double>                  Kernel;
 typedef Kernel::Point_3                                 Point_3;

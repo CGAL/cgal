@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Steve Oudot, Laurent Rineau
 
 #ifndef CGAL_IO_COMPLEX_2_IN_TRIANGULATION_3_FILE_WRITER_H
 #define CGAL_IO_COMPLEX_2_IN_TRIANGULATION_3_FILE_WRITER_H
+
+#include <CGAL/license/Surface_mesher.h>
+
 
 #define CGAL_C2T3_USE_FILE_WRITER_OFF
 

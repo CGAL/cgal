@@ -13,6 +13,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Philipp Moeller
@@ -162,6 +163,8 @@ BOOST_concept(MutableFaceGraph,(G))
     remove_face(f, g);
     set_face(h, f, g);
     set_halfedge(f, h, g);
+    int i=33;
+    reserve(g, i, i, i);
   }
   G g;
   typename boost::graph_traits<G>::face_descriptor f;

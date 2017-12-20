@@ -15,9 +15,12 @@ int main()
 
     kdel.set_has_certificates(false);
     std::ifstream in("data/points_2");
-    in >> *tr.active_points_2_table_handle();
-    kdel.set_has_certificates(true);
+    CGAL_assertion(in.good());
 
+    in >> *tr.active_points_2_table_handle();
+    CGAL_assertion(!in.fail());
+
+    kdel.set_has_certificates(true);
 
     std::cout << "Starting to run" << std::endl;
     while (sp->next_event_time()

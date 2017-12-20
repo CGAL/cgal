@@ -20,12 +20,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s) : Sebastien Loriot
 
 
 #ifndef CGAL_SPHERICAL_KERNEL_PREDICATES_COMPARE_TO_RIGHT_H
 #define CGAL_SPHERICAL_KERNEL_PREDICATES_COMPARE_TO_RIGHT_H
+
+#include <CGAL/license/Circular_kernel_3.h>
+
 
 namespace CGAL {
   namespace SphericalFunctors {

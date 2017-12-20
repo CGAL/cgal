@@ -15,12 +15,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Laurent Rineau
 
 #ifndef CGAL_MESH_2_DO_NOT_REFINE_EDGES_H
 #define CGAL_MESH_2_DO_NOT_REFINE_EDGES_H
+
+#include <CGAL/license/Mesh_2.h>
+
 
 #include <CGAL/Mesh_2/Refine_edges.h>
 

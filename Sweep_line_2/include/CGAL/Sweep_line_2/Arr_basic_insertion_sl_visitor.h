@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
@@ -22,6 +23,9 @@
 
 #ifndef CGAL_ARR_BASIC_INSERTION_SL_VISITOR_H
 #define CGAL_ARR_BASIC_INSERTION_SL_VISITOR_H
+
+#include <CGAL/license/Sweep_line_2.h>
+
 
 /*!
  * Definition of the Arr_basic_insertion_sl_visitor class-template.

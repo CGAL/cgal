@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Marc Glisse
 
@@ -555,6 +556,60 @@ template<class R_> struct Orientation<R_,false> : private Store_kernel<R_> {
 #endif
 
 namespace CartesianDKernelFunctors {
+template<class R_> struct Power_side_of_power_sphere_raw : private Store_kernel<R_> {
+	CGAL_FUNCTOR_INIT_STORE(Power_side_of_power_sphere_raw)
+	typedef R_ R;
+	typedef typename Get_type<R, RT_tag>::type RT;
+	typedef typename Get_type<R, FT_tag>::type FT;
+	typedef typename Get_type<R, Point_tag>::type Point;
+	typedef typename Get_type<R, Oriented_side_tag>::type result_type;
+	typedef typename Increment_dimension<typename R::Default_ambient_dimension>::type D1;
+	typedef typename Increment_dimension<typename R::Max_ambient_dimension>::type D2;
+	typedef typename R::LA::template Rebind_dimension<D1,D2>::Other LA;
+	typedef typename LA::Square_matrix Matrix;
+
+	template<class IterP, class IterW, class Pt, class Wt>
+	result_type operator()(IterP f, IterP const& e, IterW fw, Pt const& p0, Wt const& w0) const {
+	  typedef typename Get_functor<R, Squared_distance_to_origin_tag>::type Sqdo;
+	  typename Get_functor<R, Compute_point_cartesian_coordinate_tag>::type c(this->kernel());
+	  typename Get_functor<R, Point_dimension_tag>::type pd(this->kernel());
+
+	  int d=pd(p0);
+	  Matrix m(d+1,d+1);
+	  if(CGAL::Is_stored<Sqdo>::value) {
+	    Sqdo sqdo(this->kernel());
+	    FT const& h0 = sqdo(p0) - w0;
+	    for(int i=0;f!=e;++f,++fw,++i) {
+	      Point const& p=*f;
+	      for(int j=0;j<d;++j){
+		RT const& x=c(p,j);
+		m(i,j)=x-c(p0,j);
+	      }
+	      m(i,d) = sqdo(p) - *fw - h0;
+	    }
+	  } else {
+	    for(int i=0;f!=e;++f,++fw,++i) {
+	      Point const& p=*f;
+	      m(i,d) = w0 - *fw;
+	      for(int j=0;j<d;++j){
+		RT const& x=c(p,j);
+		m(i,j)=x-c(p0,j);
+		m(i,d)+=CGAL::square(m(i,j));
+	      }
+	    }
+	  }
+	  if(d%2)
+	    return -LA::sign_of_determinant(CGAL_MOVE(m));
+	  else
+	    return LA::sign_of_determinant(CGAL_MOVE(m));
+	}
+};
+}
+
+CGAL_KD_DEFAULT_FUNCTOR(Power_side_of_power_sphere_raw_tag,(CartesianDKernelFunctors::Power_side_of_power_sphere_raw<K>),(Point_tag),(Point_dimension_tag,Squared_distance_to_origin_tag,Compute_point_cartesian_coordinate_tag));
+
+// TODO: make Side_of_oriented_sphere call Power_side_of_power_sphere_raw
+namespace CartesianDKernelFunctors {
 template<class R_> struct Side_of_oriented_sphere : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Side_of_oriented_sphere)
 	typedef R_ R;
@@ -978,7 +1033,7 @@ template<class R_> struct Midpoint : private Store_kernel<R_> {
 	typedef Point first_argument_type;
 	typedef Point second_argument_type;
 	// There is a division, but it will be cast to RT afterwards anyway, so maybe we could use RT.
-	struct Average : std::binary_function<FT,RT,FT> {
+	struct Average : CGAL::binary_function<FT,RT,FT> {
 		FT operator()(FT const&a, RT const&b)const{
 			return (a+b)/2;
 		}
@@ -1044,7 +1099,7 @@ template<class R_> struct Squared_distance : private Store_kernel<R_> {
 	typedef RT result_type;
 	typedef Point first_argument_type;
 	typedef Point second_argument_type;
-	struct Sq_diff : std::binary_function<RT,RT,RT> {
+	struct Sq_diff : CGAL::binary_function<RT,RT,RT> {
 		RT operator()(RT const&a, RT const&b)const{
 			return CGAL::square(a-b);
 		}

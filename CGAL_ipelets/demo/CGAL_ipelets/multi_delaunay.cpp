@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Sebastien Loriot, Sylvain Pion
@@ -23,7 +24,6 @@
 
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
-#include <CGAL/Regular_triangulation_euclidean_traits_2.h>
 #include <CGAL/Regular_triangulation_face_base_2.h>
 #include <CGAL/Regular_triangulation_vertex_base_2.h>
 #include <CGAL/Regular_triangulation_2.h>
@@ -33,16 +33,14 @@
 namespace CGAL_multi_delaunay{
 
 typedef  CGAL::Exact_predicates_inexact_constructions_kernel                        Kernel;
-typedef Kernel::FT                                                                  FT;
 typedef CGAL::Delaunay_triangulation_2<Kernel>                                      Delaunay;
-typedef CGAL::Regular_triangulation_euclidean_traits_2<Kernel,FT>                   Gt;
-typedef CGAL::Regular_triangulation_vertex_base_2<Gt>                               Vb;
-typedef CGAL::Triangulation_vertex_base_with_info_2<std::vector<Kernel::Point_2>,Gt,Vb>   VbI;
-//~ typedef CGAL::Triangulation_vertex_base_with_info_2<std::list<Kernel::Point_2>,Gt,Vb>         VbI;
+typedef CGAL::Regular_triangulation_vertex_base_2<Kernel>                          Vb;
+typedef CGAL::Triangulation_vertex_base_with_info_2<std::vector<Kernel::Point_2>,Kernel,Vb>   VbI;
+//~ typedef CGAL::Triangulation_vertex_base_with_info_2<std::list<Kernel::Point_2>,Kernel,Vb>         VbI;
 typedef CGAL::Regular_triangulation_face_base_2<Kernel  >                           Fb;
 typedef CGAL::Triangulation_data_structure_2<VbI,Fb>                                Tds;
-typedef CGAL::Regular_triangulation_2<Gt,Tds>                                       RegularI;
-typedef CGAL::Regular_triangulation_2<Gt>                                           Regular;
+typedef CGAL::Regular_triangulation_2<Kernel,Tds>                                   RegularI;
+typedef CGAL::Regular_triangulation_2<Kernel>                                       Regular;
 typedef Delaunay::Finite_vertices_iterator                                          itVert;
 typedef RegularI::Finite_vertices_iterator                                          RitVert;
 typedef Delaunay::Vertex_handle                                                     Vertex;
@@ -126,16 +124,15 @@ void MdelaunayIpelet::protected_run(int fn)
           Point_2 pt0_ori1=it->first->vertex(Delaunay::cw(it->second))->info().back();
           Point_2 pt1_ori0=it->first->vertex(Delaunay::ccw(it->second))->info().front();
           Point_2 pt1_ori1=it->first->vertex(Delaunay::ccw(it->second))->info().back();
-          Point_2 pt3 = Point_2();
+
           if(CGAL::compare_xy(pt0_ori0,pt1_ori0)==CGAL::EQUAL || CGAL::compare_xy(pt0_ori1,pt1_ori0)==CGAL::EQUAL)
-            pt3 = pt1_ori1;
+            rt.insert(Weighted_point_2(CGAL::centroid(pt0_ori0,pt0_ori1,pt1_ori1),-CGAL::to_double(CGAL::squared_distance(pt0_ori0,pt0_ori1)+
+              CGAL::squared_distance(pt0_ori0,pt1_ori1)+CGAL::squared_distance(pt1_ori1,pt0_ori1))/9.));
           else
             if(CGAL::compare_xy(pt0_ori0,pt1_ori1)==CGAL::EQUAL || CGAL::compare_xy(pt0_ori1,pt1_ori1)==CGAL::EQUAL)
-              pt3 = pt1_ori0;
+              rt.insert(Weighted_point_2(CGAL::centroid(pt0_ori0,pt0_ori1,pt1_ori0),-CGAL::to_double(CGAL::squared_distance(pt0_ori0,pt0_ori1)+
+              CGAL::squared_distance(pt0_ori0,pt1_ori0)+CGAL::squared_distance(pt1_ori0,pt0_ori1))/9.));
 
-          if(pt3!=Point_2()) //if adjacent wpoints comed from a delaunay triangle
-            rt.insert(Weighted_point_2(CGAL::centroid(pt0_ori0,pt0_ori1,pt3),-CGAL::to_double(CGAL::squared_distance(pt0_ori0,pt0_ori1)+
-              CGAL::squared_distance(pt0_ori0,pt3)+CGAL::squared_distance(pt3,pt0_ori1))/9.));
         }
         if(fn==2){//Draw 3th Delauney
           draw_in_ipe(rt);

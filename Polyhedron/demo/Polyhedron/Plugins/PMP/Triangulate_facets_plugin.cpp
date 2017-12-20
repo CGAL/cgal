@@ -4,6 +4,7 @@
 #include "Messages_interface.h"
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include "Scene_polyhedron_item.h"
+#include "Scene_surface_mesh_item.h"
 #include "Polyhedron_type.h"
 
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
@@ -38,7 +39,8 @@ public:
 
   bool applicable(QAction*) const {
     Q_FOREACH(CGAL::Three::Scene_interface::Item_id index, scene->selectionIndices()){
-      if ( qobject_cast<Scene_polyhedron_item*>(scene->item(index)) )
+      if ( qobject_cast<Scene_polyhedron_item*>(scene->item(index)) ||
+           qobject_cast<Scene_surface_mesh_item*>(scene->item(index)) )
         return true;
     }
     return false;
@@ -46,6 +48,7 @@ public:
 
 public Q_SLOTS:
    void triangulate() {
+      QApplication::setOverrideCursor(Qt::WaitCursor);
     Q_FOREACH(CGAL::Three::Scene_interface::Item_id index, scene->selectionIndices())  {
 
     Scene_polyhedron_item* item = 
@@ -61,7 +64,6 @@ public Q_SLOTS:
         continue;
       }
 
-      QApplication::setOverrideCursor(Qt::WaitCursor);
 
       if(!CGAL::Polygon_mesh_processing::triangulate_faces(*pMesh))
         messages->warning(tr("Some facets could not be triangulated."));
@@ -71,11 +73,27 @@ public Q_SLOTS:
 
       item->invalidateOpenGLBuffers();
       scene->itemChanged(item);
-      // default cursor
-      QApplication::restoreOverrideCursor();
-    } // end of if(item)
+   
+    } else {
+      Scene_surface_mesh_item* sm_item =
+        qobject_cast<Scene_surface_mesh_item*>(scene->item(index));
+      SMesh* pMesh = sm_item->polyhedron();
+      if(!pMesh) continue;
+      if(is_triangle_mesh(*pMesh)) {
+      messages->warning(tr("The polyhedron  \"%1\"  is already triangulated.")
+                          .arg(sm_item->name()) );
+        continue;
+      }
+      if(!CGAL::Polygon_mesh_processing::triangulate_faces(*pMesh))
+        messages->warning(tr("Some facets could not be triangulated."));
 
-    } // end of the loop on the selected items
+      sm_item->invalidateOpenGLBuffers();
+      scene->itemChanged(sm_item);
+    } // end of if(item)
+    } // end of the loop on the selected items   
+
+    // default cursor
+    QApplication::restoreOverrideCursor();
   }
   
 private:

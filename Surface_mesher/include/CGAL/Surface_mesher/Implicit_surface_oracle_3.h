@@ -15,12 +15,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Steve OUDOT, Laurent RINEAU
 
 #ifndef CGAL_SURFACE_MESHER_IMPLICIT_SURFACE_ORACLE_3_H
 #define CGAL_SURFACE_MESHER_IMPLICIT_SURFACE_ORACLE_3_H
+
+#include <CGAL/license/Surface_mesher.h>
+
 
 #include <CGAL/Surface_mesher/Null_oracle_visitor.h>
 #include <CGAL/point_generators_3.h>
@@ -101,7 +105,7 @@ namespace CGAL {
   namespace {
     
   template <typename T>
-  struct Return_min : std::binary_function<T, T, T>
+  struct Return_min : CGAL::binary_function<T, T, T>
   {
     T operator()(const T& a, const T& b) const
     {

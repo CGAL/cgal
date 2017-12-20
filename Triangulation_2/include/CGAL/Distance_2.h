@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Mariette Yvinec
@@ -21,6 +22,9 @@
 
 #ifndef CGAL_DISTANCE_2_H
 #define CGAL_DISTANCE_2_H
+
+#include <CGAL/license/Triangulation_2.h>
+
 
 #include <CGAL/assertions.h>
 #include <CGAL/distance_predicates_2.h>

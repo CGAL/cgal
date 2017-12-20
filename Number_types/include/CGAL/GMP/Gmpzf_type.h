@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Bernd Gaertner <gaertner@inf.ethz.ch>
@@ -422,7 +423,7 @@ std::pair<std::pair<double, double>, long> Gmpzf::to_interval_exp() const
   // get surrounding interval of the form [l * 2 ^ k, u * 2^ k]
   // first get mantissa in the form l*2^k, with 0.5 <= d < 1;
   // truncation is guaranteed to go towards zero
-  long k = 0;
+  Exponent k = 0;
   double l = mpz_get_d_2exp (&k, man());
   // l = +/- 0.1*...*
   //           ------

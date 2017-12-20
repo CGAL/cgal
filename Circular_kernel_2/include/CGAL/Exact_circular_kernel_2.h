@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Monique Teillaud, Sylvain Pion, Pedro Machado
 
@@ -25,6 +26,9 @@
 
 #ifndef CGAL_EXACT_CIRCULAR_2_KERNEL_H
 #define CGAL_EXACT_CIRCULAR_2_KERNEL_H
+
+#include <CGAL/license/Circular_kernel_2.h>
+
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Algebraic_kernel_for_circles_2_2.h>

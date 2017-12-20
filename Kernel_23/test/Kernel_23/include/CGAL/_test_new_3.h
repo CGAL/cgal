@@ -15,6 +15,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Michael Seel
@@ -93,6 +94,7 @@ test_new_3(const R& rep)
   typedef typename R::FT                          FT;
 
   typedef typename R::Point_3                     Point_3;
+  typedef typename R::Weighted_point_3            Weighted_point_3;
   typedef typename R::Vector_3                    Vector_3;
   typedef typename R::Direction_3                 Direction_3;
   typedef typename R::Segment_3                   Segment_3;
@@ -117,6 +119,21 @@ test_new_3(const R& rep)
   Point_3 p4 = construct_point(1,1,2,2);
   Point_3 p5 = construct_point(1,2,3,4);
   Point_3 p6 = construct_point(4,2,1,2);
+
+  typename R::Construct_weighted_point_3 construct_weighted_point
+        = rep.construct_weighted_point_3_object();
+  Weighted_point_3 wp1;
+  Weighted_point_3 wp2 = construct_weighted_point(ORIGIN);
+  Weighted_point_3 wp3 = construct_weighted_point(1,1,1);
+  Weighted_point_3 wp3bis = construct_weighted_point(RT(1),RT(1),RT(1));
+  Weighted_point_3 wp3ter = construct_weighted_point(FT(1),FT(1),FT(1));
+  use(wp3bis); use(wp3ter);
+  Weighted_point_3 wp4 = construct_weighted_point(p2);
+  Weighted_point_3 wp5 = construct_weighted_point(p4,2);
+  Weighted_point_3 wp6 = construct_weighted_point(p5,RT(2));
+  Weighted_point_3 wp7 = construct_weighted_point(p6,FT(2));
+  Weighted_point_3 wp8 = construct_weighted_point(wp7);
+  use(wp1);
 
   typename R::Construct_vector_3 construct_vector
         = rep.construct_vector_3_object();
@@ -327,6 +344,12 @@ test_new_3(const R& rep)
           tmp4 = construct_circumcenter(th2);
           tmp4 = construct_circumcenter(t2);
 
+  typename R::Construct_weighted_circumcenter_3 construct_weighted_circumcenter
+        = rep.construct_weighted_circumcenter_3_object();
+          tmp4 = construct_weighted_circumcenter(wp4,wp5);
+          tmp4 = construct_weighted_circumcenter(wp4,wp5,wp6);
+          tmp4 = construct_weighted_circumcenter(wp4,wp5,wp6,wp7);
+
   typename R::Construct_centroid_3 construct_centroid
         = rep.construct_centroid_3_object();
           tmp4 = construct_centroid(p2,p3,p4);
@@ -422,6 +445,11 @@ test_new_3(const R& rep)
      tmp12c = Compute_squared_distance(p1, h2);
   (void) tmp12c;
 
+  typename R::Compute_power_product_3 compute_power_product
+        = rep.compute_power_product_3_object();
+     tmp12c = compute_power_product(wp2, wp3);
+  (void) tmp12c;
+
   typename R::Compute_squared_length_3 compute_squared_length
         = rep.compute_squared_length_3_object();
   FT tmp11 = compute_squared_length(v3);
@@ -436,6 +464,17 @@ test_new_3(const R& rep)
      tmp11aa = Compute_squared_radius(p3, p4);
      tmp11aa = Compute_squared_radius(p3, p4, p5);
      tmp11aa = Compute_squared_radius(p3, p4, p5, p6);
+
+  typename R::Compute_power_distance_to_power_sphere_3 power_distance_to_power_sphere
+        = rep.compute_power_distance_to_power_sphere_3_object();
+     tmp11aa = power_distance_to_power_sphere(wp3, wp4, wp5, wp6, wp7);
+
+  typename R::Compute_squared_radius_smallest_orthogonal_sphere_3 compute_squared_radius_smallest_orthogonal_sphere
+       = rep.compute_squared_radius_smallest_orthogonal_sphere_3_object();
+     tmp11aa = compute_squared_radius_smallest_orthogonal_sphere(wp4);
+     tmp11aa = compute_squared_radius_smallest_orthogonal_sphere(wp4, wp5);
+     tmp11aa = compute_squared_radius_smallest_orthogonal_sphere(wp4, wp5, wp6);
+     tmp11aa = compute_squared_radius_smallest_orthogonal_sphere(wp4, wp5, wp6, wp7);
   (void) tmp11aa;
 
   typename R::Compute_squared_area_3 compute_squared_area
@@ -589,6 +628,10 @@ test_new_3(const R& rep)
   tmp34ab = CGAL::compare_distance(p1, p2, p3, p4);  
   tmp34ab = CGAL::compare_distance(p1, p2, p3);  
 
+  typename R::Compare_power_distance_3 compare_power_dist
+        = rep.compare_power_distance_3_object();
+  tmp34ab = compare_power_dist(p1, wp2, wp3);
+
   typename R::Compare_squared_radius_3 compare_sq_radius
         = rep.compare_squared_radius_3_object();
 
@@ -601,6 +644,13 @@ test_new_3(const R& rep)
     tmp = compare_sq_radius(p1, rad);
     (void)tmp;
   }
+
+  typename R::Compare_weighted_squared_radius_3 compare_weighted_squared_radius
+        = rep.compare_weighted_squared_radius_3_object();
+  tmp34ab = compare_weighted_squared_radius(wp4, FT(1));
+  tmp34ab = compare_weighted_squared_radius(wp4, wp5, FT(1));
+  tmp34ab = compare_weighted_squared_radius(wp4, wp5, wp6, FT(1));
+  tmp34ab = compare_weighted_squared_radius(wp4, wp5, wp6, wp7, FT(1));
 
   typename R::Collinear_3 collinear
         = rep.collinear_3_object();
@@ -740,14 +790,27 @@ test_new_3(const R& rep)
   typename R::Side_of_oriented_sphere_3 side_of_oriented_sphere
         = rep.side_of_oriented_sphere_3_object();
   Oriented_side tmp44 = side_of_oriented_sphere(p2,p3,p4,p5,p6);
-  (void) tmp44;
 
+  typename R::Power_side_of_oriented_power_sphere_3 power_side_of_oriented_power_sphere
+        = rep.power_side_of_oriented_power_sphere_3_object();
+                tmp44 = power_side_of_oriented_power_sphere(wp3,wp4);
+                tmp44 = power_side_of_oriented_power_sphere(wp3,wp4,wp5);
+                tmp44 = power_side_of_oriented_power_sphere(wp3,wp4,wp5,wp6);
+                tmp44 = power_side_of_oriented_power_sphere(wp3,wp4,wp5,wp6,wp8);
+  (void) tmp44;
 
   typename R::Side_of_bounded_sphere_3 side_of_bounded_sphere
         = rep.side_of_bounded_sphere_3_object();
   Bounded_side tmp45 = side_of_bounded_sphere(p2,p3,p4,p5,p6);
                tmp45 = side_of_bounded_sphere(p2,p3,p4,p6);
                tmp45 = side_of_bounded_sphere(p2,p3,p6);
+
+  typename R::Power_side_of_bounded_power_sphere_3 power_side_of_bounded_power_sphere
+        = rep.power_side_of_bounded_power_sphere_3_object();
+               tmp45 = power_side_of_bounded_power_sphere(wp3,wp4);
+               tmp45 = power_side_of_bounded_power_sphere(wp3,wp4,wp5);
+               tmp45 = power_side_of_bounded_power_sphere(wp3,wp4,wp5,wp6);
+               tmp45 = power_side_of_bounded_power_sphere(wp3,wp4,wp5,wp6,wp7);
   (void) tmp45;
 
   typename R::Angle_3 angle

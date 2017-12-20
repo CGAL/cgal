@@ -5,12 +5,14 @@
 #include <CGAL/Surface_mesh_default_triangulation_3.h>
 #include <CGAL/make_surface_mesh.h>
 #include <CGAL/Implicit_surface_3.h>
-#include <CGAL/IO/output_surface_facets_to_polyhedron.h>
+#include <CGAL/IO/facets_in_complex_2_to_triangle_mesh.h>
 #include <CGAL/Poisson_reconstruction_function.h>
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/property_map.h>
 #include <CGAL/IO/read_xyz_points.h>
 #include <CGAL/compute_average_spacing.h>
+
+#include <CGAL/Polygon_mesh_processing/distance.h>
 
 #include <vector>
 #include <fstream>
@@ -101,8 +103,18 @@ int main(void)
     // saves reconstructed surface mesh
     std::ofstream out("kitten_poisson-20-30-0.375.off");
     Polyhedron output_mesh;
-    CGAL::output_surface_facets_to_polyhedron(c2t3, output_mesh);
+    CGAL::facets_in_complex_2_to_triangle_mesh(c2t3, output_mesh);
     out << output_mesh;
+
+
+    /// [PMP_distance_snippet]
+    // computes the approximation error of the reconstruction
+    double max_dist =
+      CGAL::Polygon_mesh_processing::approximate_max_distance_to_point_set(output_mesh,
+                                                               points,
+                                                               4000);
+    std::cout << "Max distance to point_set: " << max_dist << std::endl;
+    /// [PMP_distance_snippet]
 
     return EXIT_SUCCESS;
 }

@@ -14,14 +14,19 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
 #ifndef CGAL_LINEAR_CELL_COMPLEX_MIN_ITEMS_H
 #define CGAL_LINEAR_CELL_COMPLEX_MIN_ITEMS_H 1
 
+#if defined(CGAL_CMAP_DART_DEPRECATED) && !defined(CGAL_NO_DEPRECATED_CODE)
 #include <CGAL/Dart.h>
+#endif
+
 #include <CGAL/Cell_attribute_with_point.h>
+#include <CGAL/tuple.h>
 
 namespace CGAL {
 
@@ -32,21 +37,34 @@ namespace CGAL {
   /** Minimal items for linear cell complexes.
    * Linear_cell_complex_min_items defines what is the item class
    * for a linear cell complex. It provides definitions for attributes
-   * associated to vertices (containing points), and darts. 
+   * associated to vertices (containing points), and information associated with darts.
    */
+#if defined(CGAL_CMAP_DART_DEPRECATED) && !defined(CGAL_NO_DEPRECATED_CODE)
   template <unsigned int d>
-  struct Linear_cell_complex_min_items
+  struct CGAL_DEPRECATED Linear_cell_complex_min_items
   {
     /// Dart_wrapper defines the type of darts used.
     template <class LCC>
     struct Dart_wrapper
     {
       typedef CGAL::Dart<d, LCC> Dart;
-
-      typedef Cell_attribute_with_point<LCC> Vertex_attrib;    
-      typedef CGAL::cpp11::tuple<Vertex_attrib> Attributes;
+      
+      typedef CGAL::Cell_attribute_with_point<LCC> Vertex_attrib;
+      typedef CGAL::cpp11::tuple<Vertex_attrib>    Attributes;
     };
   };
+#else
+  struct Linear_cell_complex_min_items
+  {
+    /// Dart_wrapper defines the type of darts used.
+    template <class LCC>
+    struct Dart_wrapper
+    {
+      typedef CGAL::Cell_attribute_with_point<LCC> Vertex_attrib;
+      typedef CGAL::cpp11::tuple<Vertex_attrib>    Attributes;
+    };
+  };
+#endif
 
 } // namespace CGAL
 

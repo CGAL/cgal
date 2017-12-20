@@ -14,10 +14,18 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
+//
 
 
 #ifndef CGAL_SURFACE_MESH_PROPERTY_H
 #define CGAL_SURFACE_MESH_PROPERTY_H
+
+#include <CGAL/license/Surface_mesh.h>
+
+#ifndef DOXYGEN_RUNNING
 
 #include <vector>
 #include <string>
@@ -29,7 +37,7 @@
 
 namespace CGAL {
 
-#ifndef DOXYGEN_RUNNING
+namespace Properties {
 
 /// \addtogroup PkgSurface_mesh
 ///
@@ -57,6 +65,11 @@ public:
 
     /// Extend the number of elements by one.
     virtual void push_back() = 0;
+
+    /// Reset element to default value
+    virtual void reset(size_t idx) = 0;
+
+    virtual bool transfer(const Base_property_array& other) = 0;
 
     /// Let two elements swap their storage place.
     virtual void swap(size_t i0, size_t i1) = 0;
@@ -92,6 +105,8 @@ public:
     typedef std::vector<value_type>                 vector_type;
     typedef typename vector_type::reference         reference;
     typedef typename vector_type::const_reference   const_reference;
+    typedef typename vector_type::iterator          iterator;
+    typedef typename vector_type::const_iterator    const_iterator;
 
     Property_array(const std::string& name, T t=T()) : Base_property_array(name), value_(t) {}
 
@@ -112,6 +127,21 @@ public: // virtual interface of Base_property_array
         data_.push_back(value_);
     }
 
+    virtual void reset(size_t idx)
+    {
+        data_[idx] = value_;
+    }
+
+    bool transfer(const Base_property_array& other)
+    {
+      const Property_array<T>* pa = dynamic_cast<const Property_array*>(&other);
+      if(pa != NULL){
+        std::copy((*pa).data_.begin(), (*pa).data_.end(), data_.end()-(*pa).data_.size());
+        return true;
+      } 
+      return false;
+    }
+
     virtual void shrink_to_fit()
     {
         vector_type(data_).swap(data_);
@@ -126,7 +156,7 @@ public: // virtual interface of Base_property_array
 
     virtual Base_property_array* clone() const
     {
-        Property_array<T>* p = new Property_array<T>(name_, value_);
+        Property_array<T>* p = new Property_array<T>(this->name_, this->value_);
         p->data_ = data_;
         return p;
     }
@@ -143,44 +173,37 @@ public:
     }
 
     /// Access the i'th element. No range check is performed!
-    reference operator[](int _idx)
+    reference operator[](std::size_t _idx)
     {
-        CGAL_assertion( size_t(_idx) < data_.size() );
+        CGAL_assertion( _idx < data_.size() );
         return data_[_idx];
     }
 
     /// Const access to the i'th element. No range check is performed!
-    const_reference operator[](int _idx) const
+    const_reference operator[](std::size_t _idx) const
     {
-        CGAL_assertion( size_t(_idx) < data_.size());
+        CGAL_assertion( _idx < data_.size());
         return data_[_idx];
     }
 
-
+    iterator begin() { return data_.begin(); }
+    iterator end() { return data_.end(); }
+    const_iterator begin() const { return data_.begin(); }
+    const_iterator end() const { return data_.end(); }
 
 private:
     vector_type data_;
     value_type  value_;
 };
 
+
   /// @endcond
-
-// specialization for bool properties
-template <>
-inline const bool*
-Property_array<bool>::data() const
-{
-    CGAL_assertion(false);
-    return NULL;
-}
-
-
 
 //== CLASS DEFINITION =========================================================
 
 /// @cond CGAL_DOCUMENT_INTERNALS
 
-template<typename>
+template<typename, typename>
 class Property_container;
 /// @endcond 
 
@@ -190,10 +213,7 @@ class Property_container;
 //== CLASS DEFINITION =========================================================
 /// @cond CGAL_DOCUMENT_INTERNALS
 
-template <class, class>
-class Property_map;
-
-template<typename Key>
+template<typename Ref_class, typename Key>
 class Property_container
 {
 public:
@@ -215,10 +235,22 @@ public:
             clear();
             parrays_.resize(_rhs.n_properties());
             size_ = _rhs.size();
-            for (unsigned int i=0; i<parrays_.size(); ++i)
+            for (std::size_t i=0; i<parrays_.size(); ++i)
                 parrays_[i] = _rhs.parrays_[i]->clone();
         }
         return *this;
+    }
+
+    void transfer(const Property_container& _rhs)
+    {
+      for(std::size_t i=0; i<parrays_.size(); ++i){
+        for (std::size_t j=0; j<_rhs.parrays_.size(); ++j){
+          if(parrays_[i]->name() ==  _rhs.parrays_[j]->name()){
+            parrays_[i]->transfer(* _rhs.parrays_[j]);
+            break;
+          }
+        }
+      }
     }
 
     // returns the current size of the property arrays
@@ -231,56 +263,87 @@ public:
     std::vector<std::string> properties() const
     {
         std::vector<std::string> names;
-        for (unsigned int i=0; i<parrays_.size(); ++i)
+        for (std::size_t i=0; i<parrays_.size(); ++i)
             names.push_back(parrays_[i]->name());
         return names;
     }
 
-    // add a property with name \c name and default value \c t
+    template <typename T>
+    struct Get_pmap_type {
+      typedef typename Ref_class::template Get_property_map<Key, T>::type type;
+    };
+
     template <class T> 
-    std::pair<Property_map<Key, T>,bool>
+    std::pair<typename Get_pmap_type<T>::type, bool>
+    get(const std::string& name, std::size_t i) const
+    {
+      typedef typename Ref_class::template Get_property_map<Key, T>::type Pmap;
+      if (parrays_[i]->name() == name)
+        {
+          if (Property_array<T>* array = dynamic_cast<Property_array<T>*>(parrays_[i]))
+            return std::make_pair (Pmap(array), true);
+        }
+      return std::make_pair(Pmap(), false);
+    }
+
+    // add a property with name \c name and default value \c t
+    template <class T>
+    std::pair<typename Get_pmap_type<T>::type, bool>
     add(const std::string& name, const T t=T())
     {
-        // if a property with this name already exists, return it
-        for (unsigned int i=0; i<parrays_.size(); ++i)
+        typedef typename Ref_class::template Get_property_map<Key, T>::type Pmap;
+        for (std::size_t i=0; i<parrays_.size(); ++i)
         {
-            if (parrays_[i]->name() == name)
-            {
-              return std::make_pair(Property_map<Key, T>(dynamic_cast<Property_array<T>*>(parrays_[i])), true);
-            }
+            std::pair<Pmap, bool> out = get<T>(name, i);
+            if (out.second)
+              {
+                out.second = false;
+                return out;
+              }
         }
 
         // otherwise add the property
         Property_array<T>* p = new Property_array<T>(name, t);
         p->resize(size_);
         parrays_.push_back(p);
-        return std::make_pair(Property_map<Key, T>(p),false);
+        return std::make_pair(Pmap(p), true);
     }
 
 
     // get a property by its name. returns invalid property if it does not exist.
-    template <class T> Property_map<Key, T> get(const std::string& name) const
+    template <class T> 
+    std::pair<typename Get_pmap_type<T>::type, bool>
+    get(const std::string& name) const
     {
-        for (unsigned int i=0; i<parrays_.size(); ++i)
-            if (parrays_[i]->name() == name)
-                return Property_map<Key, T>(dynamic_cast<Property_array<T>*>(parrays_[i]));
-        return Property_map<Key, T>();
+        typedef typename Ref_class::template Get_property_map<Key, T>::type Pmap;
+        for (std::size_t i=0; i<parrays_.size(); ++i)
+          {
+            std::pair<Pmap, bool> out = get<T>(name, i);
+            if (out.second)
+              return out;
+          }
+        return std::make_pair(Pmap(), false);
     }
 
 
     // returns a property if it exists, otherwise it creates it first.
-    template <class T> Property_map<Key, T> get_or_add(const std::string& name, const T t=T())
+    template <class T>
+    typename Get_pmap_type<T>::type
+    get_or_add(const std::string& name, const T t=T())
     {
-        Property_map<Key, T> p = get<T>(name);
-        if (!p) p = add<T>(name, t);
+      typename Ref_class::template Get_property_map<Key, T>::type p;
+      bool b;
+      boost::tie(p,b)= get<T>(name);
+        if (!b) p = add<T>(name, t).first;
         return p;
     }
 
 
     // get the type of property by its name. returns typeid(void) if it does not exist.
-    const std::type_info& get_type(const std::string& name)
+    const std::type_info& 
+    get_type(const std::string& name) const
     {
-        for (unsigned int i=0; i<parrays_.size(); ++i)
+        for (std::size_t i=0; i<parrays_.size(); ++i)
             if (parrays_[i]->name() == name)
                 return parrays_[i]->type();
         return typeid(void);
@@ -288,9 +351,11 @@ public:
 
 
     // delete a property
-    template <class T> void remove(Property_map<Key, T>& h)
+    template <class T> 
+    bool
+    remove(typename Get_pmap_type<T>::type& h)
     {
-        std::vector<Base_property_array*>::iterator it=parrays_.begin(), end=parrays_.end();
+        typename std::vector<Base_property_array*>::iterator it=parrays_.begin(), end=parrays_.end();
         for (; it!=end; ++it)
         {
             if (*it == h.parray_)
@@ -298,16 +363,17 @@ public:
                 delete *it;
                 parrays_.erase(it);
                 h.reset();
-                break;
+                return true;
             }
         }
+        return false;
     }
 
 
     // delete all properties
     void clear()
     {
-        for (unsigned int i=0; i<parrays_.size(); ++i)
+        for (std::size_t i=0; i<parrays_.size(); ++i)
             delete parrays_[i];
         parrays_.clear();
         size_ = 0;
@@ -317,14 +383,14 @@ public:
     // reserve memory for n entries in all arrays
     void reserve(size_t n) const
     {
-        for (unsigned int i=0; i<parrays_.size(); ++i)
+        for (std::size_t i=0; i<parrays_.size(); ++i)
             parrays_[i]->reserve(n);
     }
 
     // resize all arrays to size n
     void resize(size_t n)
     {
-        for (unsigned int i=0; i<parrays_.size(); ++i)
+        for (std::size_t i=0; i<parrays_.size(); ++i)
             parrays_[i]->resize(n);
         size_ = n;
     }
@@ -332,26 +398,38 @@ public:
     // free unused space in all arrays
     void shrink_to_fit() const
     {
-        for (unsigned int i=0; i<parrays_.size(); ++i)
+        for (std::size_t i=0; i<parrays_.size(); ++i)
             parrays_[i]->shrink_to_fit();
     }
 
     // add a new element to each vector
     void push_back()
     {
-        for (unsigned int i=0; i<parrays_.size(); ++i)
+        for (std::size_t i=0; i<parrays_.size(); ++i)
             parrays_[i]->push_back();
         ++size_;
+    }
+
+    // reset element to its default property values
+    void reset(size_t idx)
+    {
+        for (std::size_t i=0; i<parrays_.size(); ++i)
+            parrays_[i]->reset(idx);
     }
 
     // swap elements i0 and i1 in all arrays
     void swap(size_t i0, size_t i1) const
     {
-        for (unsigned int i=0; i<parrays_.size(); ++i)
+        for (std::size_t i=0; i<parrays_.size(); ++i)
             parrays_[i]->swap(i0, i1);
     }
 
-
+    // swap content with other Property_container
+    void swap (Property_container& other)
+    {
+      this->parrays_.swap (other.parrays_);
+    }
+  
 private:
     std::vector<Base_property_array*>  parrays_;
     size_t  size_;
@@ -359,6 +437,8 @@ private:
 
   /// @endcond
 
+#ifndef DOXYGEN_RUNNING
+/// 
 ///
 /// `Property_map` enables to attach properties to the simplices of a 
 ///  surface mesh.
@@ -368,15 +448,15 @@ private:
 ///
 /// \cgalModels `LvaluePropertyMap`
 ///
-template <class I, class T>
-class Property_map
+template <class I, class T, class CRTP_derived_class>
+class Property_map_base
 /// @cond CGAL_DOCUMENT_INTERNALS
   : public boost::put_get_helper< 
            typename Property_array<T>::reference,
-           Property_map< I, T > >
+           CRTP_derived_class>
 /// @endcond
 {
-    typedef void (Property_map::*bool_type)() const;
+    typedef void (Property_map_base::*bool_type)() const;
     void this_type_does_not_support_comparisons() const {}
 public:
     typedef I key_type;
@@ -386,8 +466,9 @@ public:
 #ifndef DOXYGEN_RUNNING
 
     typedef typename Property_array<T>::reference reference;
-
     typedef typename Property_array<T>::const_reference const_reference;
+    typedef typename Property_array<T>::iterator iterator;
+    typedef typename Property_array<T>::const_iterator const_iterator;
 #else 
     /// A reference to the value type of the property.
   typedef unspecified_type reference;
@@ -397,14 +478,13 @@ public:
 #endif
 
 #ifndef DOXYGEN_RUNNING
-    friend class Property_container<I>;
-
-    template <typename K>  friend class Surface_mesh;
+    template <typename Ref_class, typename Key>
+    friend class Property_container;
 #endif
 
 public:
 /// @cond CGAL_DOCUMENT_INTERNALS
-    Property_map(Property_array<T>* p=NULL) : parray_(p) {}
+    Property_map_base(Property_array<T>* p=NULL) : parray_(p) {}
 
     void reset()
     {
@@ -422,21 +502,31 @@ public:
 #else
     operator bool_type() const {
         return parray_ != NULL ?
-            &Property_map::this_type_does_not_support_comparisons : 0;
+            &Property_map_base::this_type_does_not_support_comparisons : 0;
     }
 #endif
     /// Access the property associated with the key \c i.
     reference operator[](const I& i)
     {
       CGAL_assertion(parray_ != NULL);
-      return (*parray_)[i.idx()];
+      return (*parray_)[i];
     }
 
     /// Access the property associated with the key \c i.
     reference operator[](const I& i) const
     {
       CGAL_assertion(parray_ != NULL);
-      return (*parray_)[i.idx()];
+      return (*parray_)[i];
+    }
+
+    iterator begin() { return parray_->begin(); }
+    iterator end() { return parray_->end(); }
+    const_iterator begin() const { return parray_->begin(); }
+    const_iterator end() const { return parray_->end(); }
+
+    bool transfer (const Property_map_base& other)
+    {
+      return parray_->transfer(*(other.parray_));
     }
 
     /// Allows access to the underlying storage of the property. This
@@ -469,11 +559,15 @@ private:
     Property_array<T>* parray_;
 };
 
-
+#endif // DOXYGEN_RUNNING
 
 ///@}
-#endif // DOXYGEN_RUNNING  
+
+} // Properties
+
 } // CGAL
+
+#endif // DOXYGEN_RUNNING
 
 //=============================================================================
 #endif // CGAL_SURFACE_MESH_PROPERTY_H

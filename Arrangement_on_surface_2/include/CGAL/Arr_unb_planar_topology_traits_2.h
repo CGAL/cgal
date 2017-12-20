@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Ron Wein   <wein@post.tau.ac.il>
@@ -21,6 +22,9 @@
 
 #ifndef CGAL_ARR_UNB_PLANAR_TOPOLOGY_TRAITS_2_H
 #define CGAL_ARR_UNB_PLANAR_TOPOLOGY_TRAITS_2_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 
 /*! \file
  * Definition of the Arr_unb_planar_topology_traits_2<GeomTraits> class.

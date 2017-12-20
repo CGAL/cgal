@@ -12,9 +12,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: https://scm.gforge.inria.fr/svn/cgal/branches/features/Mesh_3-experimental-GF/Mesh_3/include/CGAL/internal/Mesh_3/get_index.h $
-// $Id: get_index.h 67573 2012-02-02 14:54:51Z lrineau $
-//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Stéphane Tayeb
 //
@@ -26,6 +26,9 @@
 
 #ifndef CGAL_INTERNAL_MESH_3_GET_INDEX_3_H
 #define CGAL_INTERNAL_MESH_3_GET_INDEX_3_H
+
+#include <CGAL/license/Mesh_3.h>
+
 
 #include <boost/type_traits/is_same.hpp>
 #include <CGAL/Mesh_3/Has_features.h>
@@ -61,7 +64,7 @@ struct Read_mesh_domain_index {
       return  ci;
       break;
     case 1: 
-      typename MT::Curve_segment_index si;
+      typename MT::Curve_index si;
       if(is_ascii(is)) is >> si;
       else CGAL::read(is, si);
       return  si;
@@ -80,7 +83,7 @@ struct Write_mesh_domain_index {
 
   typedef Mesh_domain MT; // was named "mesh traits" previously
   typedef typename MT::Corner_index Ci;
-  typedef typename MT::Curve_segment_index  Si;
+  typedef typename MT::Curve_index  Si;
 
   void
   operator()(std::ostream& os, int dimension,

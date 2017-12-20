@@ -377,7 +377,9 @@ typedef const Point_2& reference;
  \sa `std::random_shuffle`
 
  */
- template< typename Point_2, typename Triangulation >
+ template< typename Point_2,
+           typename Triangulation,
+           typename Creator = Creator_uniform_2<typename Kernel_traits<Point_2>::Kernel::RT,Point_2> >
  class Random_points_in_triangle_mesh_2 {
  public:
 
@@ -446,9 +448,10 @@ get_default_random() );
  \sa `std::random_shuffle`
 
  */
- template< typename Point_2 >
- class Random_points_in_triangles_2 {
- public:
+ template< typename Point_2,
+           typename Triangle_2 = typename Kernel_traits<Point_2>::Kernel::Triangle_2,
+           typename Creator = Creator_uniform_2<typename Kernel_traits<Point_2>::Kernel::RT,Point_2> >
+ struct Random_points_in_triangles_2 {
 
  /// \name Types
  /// @{

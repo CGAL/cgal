@@ -9,7 +9,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Surface_mesh.h>
-#include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
 
 #include <CGAL/Polygon_mesh_processing/remesh.h>
 #include <CGAL/Polygon_mesh_processing/border.h>
@@ -21,6 +20,7 @@
 #include <fstream>
 #include <vector>
 #include <cstdlib>
+#include <cstring>
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
@@ -164,6 +164,7 @@ Main(int argc, char* argv[])
   Mesh m;
   if (!input || !(input >> m)){
     std::cerr << "Error: can not read file.\n";
+    assert(false);
     return;
   }
 
@@ -171,6 +172,7 @@ Main(int argc, char* argv[])
   unsigned int nb_iter = (argc > 3) ? atoi(argv[3]) : 2;
   const char* selection_file = (argc > 4) ? argv[4]
     : "data/joint-patch.selection.txt";
+  const char* save_file = (argc > 5) ? argv[5] : NULL;
 
   std::set<face_descriptor> pre_patch;
   collect_patch(selection_file, m, pre_patch);
@@ -183,6 +185,8 @@ Main(int argc, char* argv[])
   if(!facets.empty())
   {
     std::cout << "Input is self intersecting. STOP" << std::endl;
+    if (strcmp(filename, "data/joint_refined.off") == 0)
+      assert(false);
     return;
   }
   else
@@ -237,10 +241,12 @@ Main(int argc, char* argv[])
   t.stop();
   std::cout << "Remeshing all took " << t.time() << std::endl;
 
-  std::ofstream out("remeshed.off");
-  out << m;
-  out.close();
-
+  if (save_file != NULL)
+  {
+    std::ofstream out("remeshed.off");
+    out << m;
+    out.close();
+  }
   //this test should make the precondition fail
   test_precondition("data/joint_refined.off",
     "data/joint-patch-toolargeconstraints.selection.txt");

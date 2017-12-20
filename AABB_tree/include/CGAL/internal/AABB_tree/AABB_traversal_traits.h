@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s) : Camille Wormser, Pierre Alliez, Stephane Tayeb
 
 #ifndef CGAL_AABB_TRAVERSAL_TRAITS_H
 #define CGAL_AABB_TRAVERSAL_TRAITS_H
+
+#include <CGAL/license/AABB_tree.h>
+
 
 #include <CGAL/internal/AABB_tree/AABB_node.h>
 #include <boost/optional.hpp>
@@ -314,7 +318,7 @@ public:
   {
     Point new_closest_point = m_traits.closest_point_object()
       (query, primitive, m_closest_point);
-    if(new_closest_point != m_closest_point)
+    if( !m_traits.equal_3_object()(new_closest_point, m_closest_point) )
     {
       m_closest_primitive = primitive.id();
       m_closest_point = new_closest_point; // this effectively shrinks the sphere 

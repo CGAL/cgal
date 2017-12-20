@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Sebastien Loriot, Sylvain Pion
@@ -29,8 +30,6 @@ namespace CGAL{
 template <class Kernel, class Container>
 class Polygon_2;
 
-  template <class P, class W>
-  class Weighted_point;
 
 namespace internal{
 
@@ -95,7 +94,7 @@ segment_grabber(output_iterator it){
 template <class Kernel,class output_iterator>
 class Wpoint_grabber{
   output_iterator out;
-  typedef CGAL::Weighted_point<typename Kernel::Point_2,typename Kernel::FT> Self;
+  typedef typename Kernel::Weighted_point_2 Self;
 public:  
   Wpoint_grabber(output_iterator it):out(it){}
 

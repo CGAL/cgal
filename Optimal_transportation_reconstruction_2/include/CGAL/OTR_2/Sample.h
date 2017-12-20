@@ -14,11 +14,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Fernando de Goes, Pierre Alliez, Ivo Vigan, Clément Jamin
 
 #ifndef CGAL_OTR2_SAMPLE_H
 #define CGAL_OTR2_SAMPLE_H
+
+#include <CGAL/license/Optimal_transportation_reconstruction_2.h>
+
 
 
 /// \cond SKIP_IN_MANUAL

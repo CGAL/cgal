@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Stephane Tayeb
@@ -25,11 +26,43 @@
 #ifndef CGAL_MESH_3_UTILITIES_H
 #define CGAL_MESH_3_UTILITIES_H
 
+#include <CGAL/license/Mesh_3.h>
+
+#include <CGAL/Has_timestamp.h>
+#include <iterator>
+#include <string>
+#include <sstream>
+
 namespace CGAL {
 
 namespace Mesh_3 {
 namespace internal {
   
+struct Debug_messages_tools {
+  template <typename Vertex_handle>
+  static std::string disp_vert(Vertex_handle v, Tag_true) {
+    std::stringstream ss;
+    ss.precision(17);
+    ss << (void*)(&*v) << "[ts=" << v->time_stamp() << "]"
+       << "(" << v->point() <<")";
+    return ss.str();
+  }
+
+  template <typename Vertex_handle>
+  static std::string disp_vert(Vertex_handle v, Tag_false) {
+    std::stringstream ss;
+    ss.precision(17);
+    ss << (void*)(&*v) << "(" << v->point() <<")";
+    return ss.str();
+  }
+
+  template <typename Vertex_handle>
+  static std::string disp_vert(Vertex_handle v)
+  {
+    typedef typename std::iterator_traits<Vertex_handle>::value_type Vertex;
+    return disp_vert(v, CGAL::internal::Has_timestamp<Vertex>());
+  }
+};
 
 /**
  * @class First_of
@@ -37,9 +70,9 @@ namespace internal {
  */
 template <typename Pair>
 struct First_of :
-  public std::unary_function<Pair, const typename Pair::first_type&>
+  public CGAL::unary_function<Pair, const typename Pair::first_type&>
 {
-  typedef std::unary_function<Pair, const typename Pair::first_type&> Base;
+  typedef CGAL::unary_function<Pair, const typename Pair::first_type&> Base;
   typedef typename Base::result_type                                  result_type;
   typedef typename Base::argument_type                                argument_type;
   

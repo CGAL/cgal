@@ -10,9 +10,8 @@ location queries.
 
 \cgalHeading{Template Parameters}
 
-It is templated by a parameter which must be instantiated by one of the \cgal periodic triangulation classes. <I>In the current 
-implementation, only `Periodic_3_Delaunay_triangulation_3` is 
-supported for `PTr`.</I> 
+\tparam PTr must be one of the \cgal periodic triangulation classes. <I>In the current
+implementation, only `Periodic_3_Delaunay_triangulation_3` is supported for.</I>
 
 `PTr::Vertex` has to be a model of the concept 
 `Periodic_3TriangulationHierarchyVertexBase_3`. 
@@ -21,14 +20,14 @@ supported for `PTr`.</I>
 `Periodic_3DelaunayTriangulationTraits_3`. 
 
 `Periodic_3_triangulation_hierarchy_3` offers exactly the same functionalities as `PTr`. 
-Most of them (point location, insertion, removal \f$ \ldots\f$ ) are overloaded to 
-improve their efficiency by using the hierarchic structure. 
+Most of these functionalities (point location, insertion, removal \f$ \ldots\f$ )
+are overloaded to improve their efficiency by using the hierarchic structure.
 
 Note that, since the algorithms that are provided are randomized, the 
 running time of constructing a triangulation with a hierarchy may be 
 improved when shuffling the data points. 
 
-However, the I/O operations are not overloaded. So, writing a 
+However, the I/O operations are not overloaded. Thus, writing a
 hierarchy into a file will lose the hierarchic structure and reading 
 it from the file will result in an ordinary triangulation whose 
 efficiency will be the same as `PTr`. 

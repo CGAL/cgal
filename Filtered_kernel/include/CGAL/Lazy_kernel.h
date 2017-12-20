@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Andreas Fabri, Sylvain Pion
@@ -23,6 +24,7 @@
 
 #include <CGAL/basic.h>
 //#include <CGAL/Filtered_predicate.h>
+#include <CGAL/Static_filtered_predicate.h>
 #include <CGAL/Filtered_kernel.h>
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/Simple_cartesian.h>
@@ -31,7 +33,8 @@
 #include <CGAL/Filtered_kernel/Cartesian_coordinate_iterator_2.h>
 #include <CGAL/Filtered_kernel/Cartesian_coordinate_iterator_3.h>
 #include <CGAL/Lazy.h>
-
+#include <CGAL/internal/Static_filters/tools.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <boost/none.hpp>
 #include <boost/mpl/if.hpp>
 #include <boost/mpl/or.hpp>
@@ -109,6 +112,8 @@ public:
   typedef E2A_  E2A;
   typedef Kernel_ Kernel;
 
+  typedef Lazy_kernel_generic_base<EK_, AK_, E2A_, Kernel_> Self;
+  
   // synonym identical to Filtered_kernel
   typedef AK_   FK;
 
@@ -267,12 +272,16 @@ private:
 
 public:
 
-  // We don't touch the predicates.
-  // FIXME TODO : better use a layer of Filtered_kernel on top of everything,
-  //              so that semi-static filters are used as well (?).
-#define CGAL_Kernel_pred(P, Pf)  \
+
+#ifdef CGAL_NO_STATIC_FILTERS_FOR_LAZY_KERNEL
+#define CGAL_Kernel_pred(P, Pf)                                         \
     typedef Filtered_predicate<typename Exact_kernel::P, typename Approximate_kernel::P, C2E, C2F> P; \
     P Pf() const { return P(); }
+#else
+#define CGAL_Kernel_pred(P, Pf)  \
+  typedef Static_filtered_predicate<Approximate_kernel, Filtered_predicate<typename Exact_kernel::P, typename Approximate_kernel::P, C2E, C2F>, Exact_predicates_inexact_constructions_kernel::P> P; \
+    P Pf() const { return P(); }
+#endif
 
 #define CGAL_Kernel_cons(C, Cf) \
   typedef typename Select_wrapper<typename Approximate_kernel::C>::template apply<Kernel, typename Approximate_kernel::C, typename Exact_kernel::C>::type C; \
@@ -281,6 +290,10 @@ public:
 #include <CGAL/Kernel/interface_macros.h>
 };
 
+
+
+
+  
 template < typename EK_, typename AK_, typename E2A_, typename Kernel_ >
 class Lazy_kernel_base
   : public Lazy_kernel_generic_base<EK_, AK_, E2A_, Kernel_>
@@ -306,7 +319,7 @@ public:
 
   // typedef void Compute_z_3; // to detect where .z() is called
   // typedef void Construct_point_3; // to detect where the ctor is called
-
+  
   Assign_2
   assign_2_object() const
   { return Assign_2(); }
@@ -340,13 +353,6 @@ public:
   { return Compute_approximate_area_3(); }
 }; // end class Lazy_kernel_base<EK_, AK_, E2A_, Kernel_2>
 
-#ifndef CGAL_LAZY_KERNEL_USE_STATIC_FILTERS_BY_DEFAULT
-#  ifdef CGAL_NO_STATIC_FILTERS
-#    define CGAL_LAZY_KERNEL_USE_STATIC_FILTERS_BY_DEFAULT false
-#  else 
-#    define CGAL_LAZY_KERNEL_USE_STATIC_FILTERS_BY_DEFAULT true
-#  endif
-#endif
 
 template <class Exact_kernel, class Approximate_kernel, class E2A>
 struct Lazy_kernel_without_type_equality
@@ -355,21 +361,11 @@ struct Lazy_kernel_without_type_equality
 
 template <class Exact_kernel,
 	  class Approximate_kernel = Simple_cartesian<Interval_nt_advanced>,
-          class E2A = Cartesian_converter<Exact_kernel, Approximate_kernel>,
-          bool UseStaticFilters = CGAL_LAZY_KERNEL_USE_STATIC_FILTERS_BY_DEFAULT >
+          class E2A = Cartesian_converter<Exact_kernel, Approximate_kernel> >
 struct Lazy_kernel
   : public Type_equality_wrapper<
-             Lazy_kernel_base< Exact_kernel, Approximate_kernel, E2A,
-                               Lazy_kernel<Exact_kernel, Approximate_kernel, E2A, UseStaticFilters> >,
-             Lazy_kernel<Exact_kernel, Approximate_kernel, E2A, UseStaticFilters> >
-{};
-
-template <class Exact_kernel, class Approximate_kernel, class E2A>
-struct Lazy_kernel<Exact_kernel, Approximate_kernel, E2A, true>
-  : public internal::Static_filters<
-      Type_equality_wrapper<
-        Lazy_kernel_base< Exact_kernel, Approximate_kernel, E2A, Lazy_kernel<Exact_kernel, Approximate_kernel, E2A, true> > ,
-        Lazy_kernel<Exact_kernel, Approximate_kernel, E2A, true> >, false >
+             Lazy_kernel_base< Exact_kernel, Approximate_kernel, E2A, Lazy_kernel<Exact_kernel, Approximate_kernel, E2A> >,
+             Lazy_kernel<Exact_kernel, Approximate_kernel, E2A> >
 {
 // WARNING: If you change the definition of Lazy_kernel, then you need to
 // change also the definition of Epeck in

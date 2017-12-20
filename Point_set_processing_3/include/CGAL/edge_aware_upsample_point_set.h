@@ -14,11 +14,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s) : Shihao Wu, Clement Jamin, Pierre Alliez 
 
 #ifndef CGAL_UPSAMPLE_POINT_SET_H
 #define CGAL_UPSAMPLE_POINT_SET_H
+
+#include <CGAL/license/Point_set_processing_3.h>
+
 
 #include <CGAL/property_map.h>
 #include <CGAL/point_set_processing_assertions.h>
@@ -272,7 +276,7 @@ update_new_point(
 // Public section
 // ----------------------------------------------------------------------------
 
-/// \ingroup PkgPointSetProcessing
+/// \ingroup PkgPointSetProcessingAlgorithms
 /// This method progressively upsamples the point set while 
 /// approaching the edge singularities (detected by normal variation), which 
 /// generates a denser point set from an input point set. This has applications 

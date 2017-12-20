@@ -14,9 +14,16 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
+//
 
 #ifndef CGAL_SURFACE_MESH_IO_H
 #define CGAL_SURFACE_MESH_IO_H
+
+#include <CGAL/license/Surface_mesh.h>
+
 
 
 //== INCLUDES =================================================================
@@ -24,6 +31,9 @@
 #include <string>
 #include <cstdio>
 #include <cstring>
+#include <algorithm>
+#include <vector>
+#include <stdexcept>
 
 
 #include <boost/array.hpp>
@@ -33,6 +43,7 @@
 #include <CGAL/Surface_mesh/Surface_mesh.h>
 #include <CGAL/Surface_mesh/Properties.h>
 #include <CGAL/Kernel_traits.h>
+#include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
 
 //=============================================================================
 
@@ -69,8 +80,8 @@ bool read_off_binary(Surface_mesh<Point_3>& mesh,
     typename Mesh::Vertex_index  v;
 
     // properties
-    typename Mesh:: template Property_map<typename Mesh::Vertex_index, Normal>              normals;
-    typename Mesh:: template Property_map<typename Mesh::Vertex_index, Texture_coordinate>  texcoords;
+    typename Mesh::template Property_map<typename Mesh::Vertex_index, Normal>              normals;
+    typename Mesh::template Property_map<typename Mesh::Vertex_index, Texture_coordinate>  texcoords;
     if (has_normals)   normals   = mesh.template add_property_map<typename Mesh::Vertex_index, Normal>("v:normal").first;
     if (has_texcoords) texcoords = mesh.template add_property_map<typename Mesh::Vertex_index, Texture_coordinate>("v:texcoord").first;
 
@@ -344,7 +355,7 @@ bool write_off(const Surface_mesh<K>& mesh, const std::string& filename)
 
 
     // vertices
-    typename Mesh::template Property_map<typename Mesh::Vertex_index, Point_3> points 
+    typename Mesh::template Property_map<typename Mesh::Vertex_index, Point_3> points
       = mesh.template property_map<typename Mesh::Vertex_index, Point_3>("v:point").first;
     for (typename Mesh::Vertex_iterator vit=mesh.vertices_begin(); vit!=mesh.vertices_end(); ++vit)
     {
@@ -394,7 +405,7 @@ bool read_mesh(Surface_mesh<K>& mesh, const std::string& filename) {
     std::string::size_type dot(filename.rfind("."));
     if (dot == std::string::npos) return false;
     std::string ext = filename.substr(dot+1, filename.length()-dot-1);
-    std::transform(ext.begin(), ext.end(), ext.begin(), tolower);
+    std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
 
     // extension determines reader
     if (ext == "off")
@@ -426,7 +437,7 @@ bool write_mesh(const Surface_mesh<K>& mesh, const std::string& filename)
     std::string::size_type dot(filename.rfind("."));
     if (dot == std::string::npos) return false;
     std::string ext = filename.substr(dot+1, filename.length()-dot-1);
-    std::transform(ext.begin(), ext.end(), ext.begin(), tolower);
+    std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
 
     // extension determines reader
     if (ext == "off")
@@ -440,7 +451,50 @@ bool write_mesh(const Surface_mesh<K>& mesh, const std::string& filename)
 
 /// group io
 /// @}
+template <class P, class Writer>
+void
+generic_print_surface_mesh( std::ostream&   out,
+                          const Surface_mesh<P>&       M,
+                          Writer&           writer) {
+  // writes M to `out' in the format provided by `writer'.
+  typedef typename boost::graph_traits<Surface_mesh<P> >::vertex_iterator VCI;
+  typedef typename boost::graph_traits<Surface_mesh<P> >::face_iterator   FCI;
+  typedef typename Surface_mesh<P>::Halfedge_around_face_circulator            HFCC;
+  typedef typename boost::property_map<Surface_mesh<P>,CGAL::vertex_point_t>::type VPmap;
+  VPmap map = get(CGAL::vertex_point, M);
+  // Print header.
+  writer.write_header( out,
+                       num_vertices(M),
+                       num_halfedges(M),
+                       num_faces(M));
 
+  std::map<typename Surface_mesh<P>::vertex_index, std::size_t> index_map;
+  typename std::map<typename Surface_mesh<P>::vertex_index, std::size_t>::iterator hint = index_map.begin();
+  std::size_t id = 0;
+
+  for( VCI vi = vertices(M).begin(); vi != vertices(M).end(); ++vi) {
+    writer.write_vertex( ::CGAL::to_double( get(map, *vi).x()),
+                         ::CGAL::to_double( get(map, *vi).y()),
+                         ::CGAL::to_double( get(map, *vi).z()));
+
+    hint = index_map.insert(hint, std::make_pair(*vi, id++));
+  }
+
+  writer.write_facet_header();
+  for( FCI fi = faces(M).begin(); fi != faces(M).end(); ++fi) {
+    HFCC hc(halfedge(*fi, M), M);
+    HFCC hc_end = hc;
+    std::size_t n = circulator_size( hc);
+    CGAL_assertion( n >= 3);
+    writer.write_facet_begin( n);
+    do {
+      writer.write_facet_vertex_index(index_map[target(*hc, M)]);
+      ++hc;
+    } while( hc != hc_end);
+    writer.write_facet_end();
+  }
+  writer.write_footer();
+}
 } // CGAL
 
 

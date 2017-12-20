@@ -13,44 +13,92 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic;
 typedef CGAL::Exact_predicates_exact_constructions_kernel Epec;
 
 template <typename K>
-int
+bool
 test_triangulate_faces()
 {
   typedef typename K::Point_3                    Point;
   typedef CGAL::Surface_mesh<Point>          Surface_mesh;
 
   Surface_mesh mesh;
-  std::ifstream input("data/elephant.off");
+  std::ifstream input("data/cube_quad.off");
 
   if (!input || !(input >> mesh) || mesh.is_empty())
   {
     std::cerr << "Not a valid off file." << std::endl;
-    return 1;
+    return false;
   }
   
+  bool success =
   CGAL::Polygon_mesh_processing::triangulate_faces(mesh);
-  CGAL::Polygon_mesh_processing::triangulate_faces(mesh, 
-                                                   CGAL::Polygon_mesh_processing::parameters::all_default());
-  CGAL::Polygon_mesh_processing::triangulate_faces(faces(mesh), mesh);
-  CGAL::Polygon_mesh_processing::triangulate_faces(faces(mesh), mesh, 
-                                                   CGAL::Polygon_mesh_processing::parameters::all_default());
+  assert(CGAL::is_triangle_mesh(mesh));
 
+  return success;
+}
 
+template <typename K>
+bool
+test_triangulate_face_range()
+{
+  typedef typename K::Point_3                    Point;
+  typedef CGAL::Surface_mesh<Point>          Surface_mesh;
+
+  Surface_mesh mesh;
+  std::ifstream input("data/cube_quad.off");
+
+  if (!input || !(input >> mesh) || mesh.is_empty())
+  {
+    std::cerr << "Not a valid off file." << std::endl;
+    return false;
+  }
+
+  bool success =
+    CGAL::Polygon_mesh_processing::triangulate_faces(faces(mesh), mesh);
+  assert(CGAL::is_triangle_mesh(mesh));
+
+  return success;
+}
+
+template <typename K>
+bool
+test_triangulate_face()
+{
+  typedef typename K::Point_3                    Point;
+  typedef CGAL::Surface_mesh<Point>          Surface_mesh;
+
+  Surface_mesh mesh;
+  std::ifstream input("data/cube_quad.off");
+
+  if (!input || !(input >> mesh) || mesh.is_empty())
+  {
+    std::cerr << "Not a valid off file." << std::endl;
+    return false;
+  }
+
+  unsigned int nb = 0;
   BOOST_FOREACH(typename boost::graph_traits<Surface_mesh>::face_descriptor fit, faces(mesh))
-    if (next(next(halfedge(fit, mesh), mesh), mesh)
-        !=   prev(halfedge(fit, mesh), mesh)) {
-      CGAL::Polygon_mesh_processing::triangulate_face(fit, mesh);
-      CGAL::Polygon_mesh_processing::triangulate_face(fit, mesh,
-                                                      CGAL::Polygon_mesh_processing::parameters::all_default());
+  {
+    if (nb > 4)
+      break;
+    else if (next(next(halfedge(fit, mesh), mesh), mesh)
+             !=   prev(halfedge(fit, mesh), mesh))
+    {
+      if(CGAL::Polygon_mesh_processing::triangulate_face(fit, mesh))
+        ++nb;
+      else assert(false);
     }
-  return 0;
+  }
+  return true;
 }
 
 int main()
 {
-  int r = test_triangulate_faces<Epic>();
-  assert(r==0);
-  r = test_triangulate_faces<Epec>();
-  assert(r==0);
-  return 0;
+  assert(test_triangulate_faces<Epic>());
+  assert(test_triangulate_face_range<Epic>());
+  assert(test_triangulate_face<Epic>());
+
+  assert(test_triangulate_faces<Epec>());
+  assert(test_triangulate_face_range<Epec>());
+  assert(test_triangulate_face<Epec>());
+
+  return EXIT_SUCCESS;
 }

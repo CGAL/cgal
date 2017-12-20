@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Kaspar Fischer
@@ -23,6 +24,9 @@
 
 #ifndef CGAL_QP_SOLUTION_H
 #define CGAL_QP_SOLUTION_H
+
+#include <CGAL/license/QP_solver.h>
+
 
 #include <iostream>
 #include <vector>
@@ -770,7 +774,7 @@ namespace QP_solution_detail {
   // Value_by_index
   // --------------
   template < typename ET>
-  class Value_by_index : public std::unary_function< std::size_t, ET>
+  class Value_by_index : public CGAL::unary_function< std::size_t, ET>
   {
   public:
     typedef QP_solver_base<ET> QP;
@@ -792,7 +796,7 @@ namespace QP_solution_detail {
   // Unbounded_direction_by_index
   // ----------------------------
   template < typename ET>
-  class Unbounded_direction_by_index : public std::unary_function< std::size_t, ET>
+  class Unbounded_direction_by_index : public CGAL::unary_function< std::size_t, ET>
   {
   public:
     typedef QP_solver_base<ET> QP;
@@ -813,7 +817,7 @@ namespace QP_solution_detail {
   // Lambda_by_index
   // ---------------
   template < typename ET>
-  class Lambda_by_index : public std::unary_function< std::size_t, ET>
+  class Lambda_by_index : public CGAL::unary_function< std::size_t, ET>
   {
   public:
     typedef QP_solver_base<ET> QP;

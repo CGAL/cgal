@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // author(s)     : Eli Packer <elip@post.tau.ac.il>,
@@ -21,6 +22,9 @@
 
 #ifndef CGAL_SNAP_ROUNDING_2_TRAITS_H
 #define CGAL_SNAP_ROUNDING_2_TRAITS_H
+
+#include <CGAL/license/Snap_rounding_2.h>
+
 
 #include <CGAL/basic.h>
 #include <map>

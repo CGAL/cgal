@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Stéphane Tayeb
@@ -26,6 +27,9 @@
 #ifndef CGAL_MESH_3_LABELED_MESH_DOMAIN_3_H
 #define CGAL_MESH_3_LABELED_MESH_DOMAIN_3_H
 
+#include <CGAL/license/Mesh_3.h>
+
+
 #define CGAL_DEPRECATED_HEADER "<CGAL/Mesh_3/Labeled_mesh_domain_3.h>"
 #define CGAL_REPLACEMENT_HEADER "<CGAL/Labeled_mesh_domain_3.h>"
 #include <CGAL/internal/deprecation_warning.h>
@@ -35,7 +39,6 @@
 #include <CGAL/Bbox_3.h>
 
 #include <CGAL/point_generators_3.h>
-#include <CGAL/Mesh_3/Creator_weighted_point_3.h>
 
 #include <boost/variant.hpp>
 #include <boost/format.hpp>

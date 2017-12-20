@@ -4,7 +4,7 @@ namespace CGAL {
 /*!
 \ingroup PkgSurfaceMesher3Classes
 
-The class `Surface_mesh_traits_generator_3` provides a type `Type`,
+The class `Surface_mesh_traits_generator_3` provides a type `type`,
 that is a model of the concept `SurfaceMeshTraits_3` for the surface
 type `Surface`. 
 
@@ -29,13 +29,12 @@ level images (`Gray_level_image_3<FT, Point>`).
 
 */
 template< typename Surface >
-class Surface_mesh_traits_generator_3 {
-public:
+struct Surface_mesh_traits_generator_3 {
 
 /*!
 A model of the concept `SurfaceMeshTraits_3`. 
 */ 
-typedef unspecified_type Type; 
+typedef unspecified_type type;
 
 }; /* end Surface_mesh_traits_generator_3 */
 } /* end namespace CGAL */

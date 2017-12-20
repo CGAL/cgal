@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Stephane Tayeb
@@ -28,7 +29,6 @@
 
 #include "test_utilities.h"
 #include <CGAL/Polyhedral_mesh_domain_3.h>
-#include <CGAL/Mesh_3/Creator_weighted_point_3.h>
 #include <CGAL/Polyhedron_3.h>
 
 #include <CGAL/Mesh_criteria_3.h>
@@ -55,16 +55,17 @@ struct Tester
   typedef typename C3t3::Facet Facet;
   typedef typename C3t3::Surface_patch_index Surface_patch_index;
 
-  typedef typename Tr::Geom_traits Gt;
-  typedef typename Gt::FT FT;
-  typedef typename Gt::Point_3 Point;
-  typedef CGAL::Mesh_3::Creator_weighted_point_3<FT, Point> Point_creator;
+  typedef typename Tr::Bare_point       Bare_point;
+  typedef typename Tr::Weighted_point   Weighted_point;
+
+  typedef typename Tr::Geom_traits      Gt;
+  typedef typename Gt::FT               FT;
 
   C3t3 c3t3_;
   // Cells & facets
   int c1_,c2_,f1_,f2_;
   // Facets center
-  Point p1_,p2_;
+  Bare_point p1_,p2_;
 
   Tester()
     : c3t3_()
@@ -75,15 +76,14 @@ struct Tester
   {
     Tr& tr = c3t3_.triangulation();
 
-    Point_creator creator;
-    Point p1 = creator(0,0,0);
-    Point p2 = creator(1,0,0);
-    Point p3 = creator(0,1,0);
-    Point p4 = creator(0,0,100);
-    Point p5 = creator(0,0,-1);
+    Weighted_point p1(0,0,0);
+    Weighted_point p2(1,0,0);
+    Weighted_point p3(0,1,0);
+    Weighted_point p4(0,0,100);
+    Weighted_point p5(0,0,-1);
 
-    p1_ = creator(0,.5,50);
-    p2_ = creator(1,1,-1);
+    p1_ = Bare_point(0,.5,50);
+    p2_ = Bare_point(1,1,-1);
 
     tr.insert(p1);
     tr.insert(p2);
@@ -92,7 +92,7 @@ struct Tester
     tr.insert(p5);
   }
 
-  void init_facet(const Facet& f, const Point& p) const
+  void init_facet(const Facet& f, const Bare_point& p) const
   {
     f.first->set_surface_patch_index(f.second,Surface_patch_index(0,1));
     f.first->set_facet_surface_center(f.second,p);

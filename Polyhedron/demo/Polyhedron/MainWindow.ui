@@ -37,7 +37,7 @@
      <x>0</x>
      <y>0</y>
      <width>978</width>
-     <height>20</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -66,6 +66,7 @@
     <addaction name="actionSetPolyhedronB"/>
     <addaction name="actionSelectAllItems"/>
     <addaction name="actionPreferences"/>
+    <addaction name="actionColorItems"/>
    </widget>
    <widget class="QMenu" name="menuOperations">
     <property name="title">
@@ -95,6 +96,7 @@
     <addaction name="actionAntiAliasing"/>
     <addaction name="actionDrawTwoSides"/>
     <addaction name="actionQuickCameraMode"/>
+    <addaction name="actionSwitchProjection"/>
     <addaction name="actionMaxTextItemsDisplayed"/>
     <addaction name="actionSetBackgroundColor"/>
     <addaction name="menuDockWindows"/>
@@ -294,7 +296,7 @@
             <x>0</x>
             <y>0</y>
             <width>541</width>
-            <height>176</height>
+            <height>173</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout">
@@ -344,60 +346,6 @@
     <string>Ctrl+Q</string>
    </property>
   </action>
-  <action name="actionSimplify">
-   <property name="text">
-    <string>&amp;Simplification</string>
-   </property>
-  </action>
-  <action name="actionCatmullClark">
-   <property name="text">
-    <string>&amp;Catmull-Clark</string>
-   </property>
-  </action>
-  <action name="actionKernel">
-   <property name="text">
-    <string>&amp;Kernel</string>
-   </property>
-  </action>
-  <action name="actionUnion">
-   <property name="text">
-    <string>&amp;Union (A/B)</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+O, U</string>
-   </property>
-  </action>
-  <action name="actionIntersection">
-   <property name="text">
-    <string>&amp;Intersection (A/B)</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+O, I</string>
-   </property>
-  </action>
-  <action name="actionDifference">
-   <property name="text">
-    <string>&amp;Difference (A/B)</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+O, D</string>
-   </property>
-  </action>
-  <action name="actionFitPlane">
-   <property name="text">
-    <string>Fit &amp;Plane</string>
-   </property>
-  </action>
-  <action name="actionFitLine">
-   <property name="text">
-    <string>Fit &amp;Line</string>
-   </property>
-  </action>
-  <action name="actionEstimateCurvature">
-   <property name="text">
-    <string>&amp;Curvature Estimation</string>
-   </property>
-  </action>
   <action name="actionLoad">
    <property name="icon">
     <iconset resource="Polyhedron_3.qrc">
@@ -434,11 +382,6 @@
     <string>Ctrl+D</string>
    </property>
   </action>
-  <action name="actionSqrt3">
-   <property name="text">
-    <string>&amp;Sqrt3</string>
-   </property>
-  </action>
   <action name="actionAntiAliasing">
    <property name="checkable">
     <bool>true</bool>
@@ -452,69 +395,14 @@
     <string>n/a</string>
    </property>
   </action>
-  <action name="actionConvexHull">
-   <property name="text">
-    <string>&amp;Convex Hull</string>
-   </property>
-  </action>
   <action name="actionEraseAll">
    <property name="text">
     <string>&amp;Erase All</string>
    </property>
   </action>
-  <action name="actionOptions">
-   <property name="text">
-    <string>&amp;Options...</string>
-   </property>
-  </action>
-  <action name="actionLoop">
-   <property name="text">
-    <string>&amp;Loop</string>
-   </property>
-  </action>
   <action name="actionSaveAs">
    <property name="text">
     <string>Save &amp;as...</string>
-   </property>
-  </action>
-  <action name="actionSave">
-   <property name="text">
-    <string>&amp;Save</string>
-   </property>
-  </action>
-  <action name="actionSaveAll">
-   <property name="text">
-    <string>Save A&amp;ll</string>
-   </property>
-  </action>
-  <action name="actionMergeAll">
-   <property name="text">
-    <string>Mer&amp;ge All</string>
-   </property>
-  </action>
-  <action name="actionMerge">
-   <property name="text">
-    <string>&amp;Merge</string>
-   </property>
-  </action>
-  <action name="actionSelfIntersection">
-   <property name="text">
-    <string>Self-&amp;intersection</string>
-   </property>
-  </action>
-  <action name="actionSelectAll">
-   <property name="text">
-    <string>Select &amp;All</string>
-   </property>
-  </action>
-  <action name="actionSelectNone">
-   <property name="text">
-    <string>Select &amp;None</string>
-   </property>
-  </action>
-  <action name="actionSelectInvert">
-   <property name="text">
-    <string>&amp;Invert Selection</string>
    </property>
   </action>
   <action name="actionShowHide">
@@ -533,46 +421,6 @@
   <action name="actionSetPolyhedronB">
    <property name="text">
     <string>Set Polyhedron B</string>
-   </property>
-  </action>
-  <action name="actionInsideOut">
-   <property name="text">
-    <string>&amp;Inside-Out</string>
-   </property>
-  </action>
-  <action name="actionRemeshing">
-   <property name="text">
-    <string>&amp;Remeshing</string>
-   </property>
-  </action>
-  <action name="actionConvexDecomposition">
-   <property name="text">
-    <string>Convex Decomposition</string>
-   </property>
-  </action>
-  <action name="actionMVC">
-   <property name="text">
-    <string>Mean &amp;Value Coordinates</string>
-   </property>
-  </action>
-  <action name="actionDCP">
-   <property name="text">
-    <string>Discrete &amp;Conformal Maps</string>
-   </property>
-  </action>
-  <action name="actionExplode">
-   <property name="text">
-    <string>Explode</string>
-   </property>
-  </action>
-  <action name="actionToNef">
-   <property name="text">
-    <string>Convert to Nef Polyhedron</string>
-   </property>
-  </action>
-  <action name="actionToPoly">
-   <property name="text">
-    <string>Convert to Normal Polyhedron</string>
    </property>
   </action>
   <action name="actionDrawTwoSides">
@@ -597,14 +445,6 @@
   <action name="actionSetBackgroundColor">
    <property name="text">
     <string>Change &amp;Background Color...</string>
-   </property>
-  </action>
-  <action name="actionMinkowskiSum">
-   <property name="text">
-    <string>&amp;Minkowski Sum (A/B)</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+O, M</string>
    </property>
   </action>
   <action name="actionLookAt">
@@ -650,11 +490,6 @@
     <string>&amp;Preferences</string>
    </property>
   </action>
-  <action name="actionLSC">
-   <property name="text">
-    <string>Least Square Conformal Maps</string>
-   </property>
-  </action>
   <action name="actionLoadPlugin">
    <property name="text">
     <string>Load Plugin</string>
@@ -674,6 +509,33 @@
   <action name="actionMaxTextItemsDisplayed">
    <property name="text">
     <string>Set Maximum  Text Items Displayed :</string>
+   </property>
+  </action>
+  <action name="actionSwitchProjection">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Orthographic Projection</string>
+   </property>
+  </action>
+  <action name="actionColorItems">
+   <property name="text">
+    <string>Set Different Colors for Selected Items</string>
+   </property>
+  </action>
+  <action name="actionPolyhedron_Mode">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Polyhedron Mode</string>
+   </property>
+   <property name="toolTip">
+    <string>In Polyhedron Mode, the default type for facegraphs is Polyhedron, by opposition to Surface_mesh.</string>
    </property>
   </action>
  </widget>

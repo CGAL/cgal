@@ -123,7 +123,8 @@ void check_triangles(std::vector<Point_3>& points, std::vector<boost::tuple<int,
 
 void check_constructed_polyhedron(const char* file_name,
   std::vector<boost::tuple<int, int, int> >* triangles, 
-  std::vector<Point_3>* polyline) 
+  std::vector<Point_3>* polyline,
+  const bool save_poly) 
 {
   Polyhedron poly;
   Polyhedron_builder<typename Polyhedron::HalfedgeDS,K> patch_builder(triangles, polyline);
@@ -133,13 +134,17 @@ void check_constructed_polyhedron(const char* file_name,
     std::cerr << "  Error: constructed patch does not constitute a valid polyhedron." << std::endl;
     assert(false);
   }
+
+  if (!save_poly)
+    return;
+
   std::string out_file_name;
   out_file_name.append(file_name).append(".off");
   std::ofstream out(out_file_name.c_str());
   out << poly; out.close();
 }
 
-void test_1(const char* file_name, bool use_DT) {
+void test_1(const char* file_name, bool use_DT, bool save_output) {
   std::cerr << "test_1 + useDT: " << use_DT << std::endl;
   std::cerr << "  File: "<< file_name  << std::endl;
   std::vector<Point_3> points; // this will contain n and +1 repeated point
@@ -151,12 +156,12 @@ void test_1(const char* file_name, bool use_DT) {
     CGAL::Polygon_mesh_processing::parameters::use_delaunay_triangulation(use_DT));
 
   check_triangles(points, tris);
-  check_constructed_polyhedron(file_name, &tris, &points);
+  check_constructed_polyhedron(file_name, &tris, &points, save_output);
 
   std::cerr << "  Done!" << std::endl;
 }
 
-void test_2(const char* file_name, bool use_DT) {
+void test_2(const char* file_name, bool use_DT, bool save_output) {
   std::cerr << "test_2 + useDT: " << use_DT << std::endl;
   std::cerr << "  File: "<< file_name  << std::endl;
   std::vector<Point_3> points; // this will contain n and +1 repeated point
@@ -169,7 +174,7 @@ void test_2(const char* file_name, bool use_DT) {
     CGAL::Polygon_mesh_processing::parameters::use_delaunay_triangulation(use_DT));
 
   check_triangles(points, tris);
-  check_constructed_polyhedron(file_name, &tris, &points);
+  check_constructed_polyhedron(file_name, &tris, &points, save_output);
 
   std::cerr << "  Done!" << std::endl;
 }
@@ -200,8 +205,8 @@ void test_should_be_no_output(const char* file_name, bool use_DT) {
   input_files_1.push_back("data/planar.polylines.txt");
 
   for(std::vector<std::string>::iterator it = input_files_1.begin(); it != input_files_1.end(); ++it) {
-    test_1(it->c_str(), true);
-    test_1(it->c_str(), false);
+    test_1(it->c_str(), true, false);
+    test_1(it->c_str(), false, false);
   }
 
   std::vector<std::string> input_files_2;
@@ -212,8 +217,8 @@ void test_should_be_no_output(const char* file_name, bool use_DT) {
 
   for(std::vector<std::string>::iterator it = input_files_2.begin(); it != input_files_2.end(); ++it) {
     if(it != input_files_2.begin())
-    { test_2(it->c_str(), true); } // to skip hole1.txt (DT does not include all border edges)
-    test_2(it->c_str(), false);
+    { test_2(it->c_str(), true, false); } // to skip hole1.txt (DT does not include all border edges)
+    test_2(it->c_str(), false, false);
   }
 
   test_should_be_no_output("data/collinear.polylines.txt", true);

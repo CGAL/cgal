@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Laurent Rineau
 
 #ifndef CGAL_SURFACE_MESH_DEFAULT_TRIANGULATION_3_H
 #define CGAL_SURFACE_MESH_DEFAULT_TRIANGULATION_3_H
+
+#include <CGAL/license/Surface_mesher.h>
+
 
 // traits class
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>

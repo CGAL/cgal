@@ -12,14 +12,17 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: 
-// $Id: 
-// 
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Philipp Moeller
 
 #ifndef CGAL_POLYLINE_SIMPLIFICATION_VERTEX_BASE_2_H
 #define CGAL_POLYLINE_SIMPLIFICATION_VERTEX_BASE_2_H
+
+#include <CGAL/license/Polyline_simplification_2.h>
+
 
 #include <CGAL/Triangulation_vertex_base_2.h>
 

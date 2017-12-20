@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Laurent Rineau
 
 #ifndef CGAL_COMPLEX_2_IN_TRIANGULATION_3_TO_VTK
 #define CGAL_COMPLEX_2_IN_TRIANGULATION_3_TO_VTK
+
+#include <CGAL/license/Surface_mesher.h>
+
 
 #include <map>
 

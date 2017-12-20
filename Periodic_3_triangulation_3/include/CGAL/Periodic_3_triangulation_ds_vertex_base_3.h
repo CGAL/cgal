@@ -14,13 +14,16 @@
 //
 // $URL$
 // $Id$
-// 
+// SPDX-License-Identifier: GPL-3.0+
+//
 //
 // Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //                 Manuel Caroli <Manuel.Caroli@sophia.inria.fr>
 
 #ifndef CGAL_PERIODIC_3_TRIANGULATION_DS_VERTEX_BASE_3_H
 #define CGAL_PERIODIC_3_TRIANGULATION_DS_VERTEX_BASE_3_H
+
+#include <CGAL/license/Periodic_3_triangulation_3.h>
 
 #include <CGAL/basic.h>
 #include <CGAL/internal/Dummy_tds_3.h>
@@ -44,7 +47,7 @@ public:
 
   Periodic_3_triangulation_ds_vertex_base_3()
     : _c(), _off(), offset_flag(false) {}
-  
+
   Periodic_3_triangulation_ds_vertex_base_3(const Cell_handle& c)
     : _c(c), _off(), offset_flag(false) {}
 
@@ -56,7 +59,7 @@ public:
 
   const Offset& offset() const
   { return _off; }
-  
+
   void set_offset(const Offset& off)
   { _off = off; offset_flag=true; }
 
@@ -68,10 +71,10 @@ public:
   bool get_offset_flag() const { return offset_flag; }
 
   // the following trivial is_valid allows
-  // the user of derived cell base classes 
+  // the user of derived cell base classes
   // to add their own purpose checking
   bool is_valid(bool = false, int = 0) const
-  { 
+  {
     return cell() != Cell_handle();
   }
 
@@ -84,7 +87,6 @@ public:
 private:
   Cell_handle _c;
   Offset _off;
-  int _index;
   bool offset_flag;
 };
 

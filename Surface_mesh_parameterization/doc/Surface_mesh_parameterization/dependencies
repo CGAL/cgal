@@ -1,3 +1,5 @@
+BGL
+Surface_mesh
 Manual
 Kernel_23
 STL_Extension
@@ -8,4 +10,4 @@ Polyhedron
 Kernel_d
 Solver_interface
 Convex_hull_2
-
+Miscellany

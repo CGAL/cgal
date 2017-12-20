@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
 
 #ifndef CGAL_IO_POLYHEDRON_GEOMVIEW_OSTREAM_H
 #define CGAL_IO_POLYHEDRON_GEOMVIEW_OSTREAM_H 1
+
+#include <CGAL/license/Polyhedron.h>
+
 
 #include <CGAL/IO/Geomview_stream.h>
 #include <CGAL/IO/generic_print_polyhedron.h>

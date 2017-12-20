@@ -13,6 +13,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Andreas Fabri
@@ -444,7 +445,7 @@ public:
   Self& operator++() 
   {
     CGAL_assertion(g != NULL);
-    pos = next(pos,*g); 
+    pos = next(pos,*g);
     if ( pos == anchor)
       ++winding;
     return *this;
@@ -820,7 +821,7 @@ private:
  */
 template<typename Graph>
 Iterator_range<Halfedge_around_source_iterator<Graph> >
-halfedges_around_source(typename boost::graph_traits<Graph>::halfedge_descriptor h, Graph& g)
+halfedges_around_source(typename boost::graph_traits<Graph>::halfedge_descriptor h, const Graph& g)
 {
   typedef Halfedge_around_source_iterator<Graph> I;
   return make_range(I(h,g), I(h,g,1));
@@ -832,7 +833,7 @@ halfedges_around_source(typename boost::graph_traits<Graph>::halfedge_descriptor
  */
 template<typename Graph>
 Iterator_range<Halfedge_around_source_iterator<Graph> >
-halfedges_around_source(typename boost::graph_traits<Graph>::vertex_descriptor v, Graph& g)
+halfedges_around_source(typename boost::graph_traits<Graph>::vertex_descriptor v, const Graph& g)
 {
   return halfedges_around_source(opposite(halfedge(v,g),g),g);
 }
@@ -1128,6 +1129,40 @@ opposite_edges_around_face(typename boost::graph_traits<Graph>::halfedge_descrip
   return make_range(I(h,g), I(h,g,1));
 }
 
+template <typename Graph>
+class Edge_around_face_iterator
+#ifndef DOXYGEN_RUNNING
+  : public boost::iterator_adaptor<
+            Edge_around_face_iterator<Graph>                       // Derived
+             , Halfedge_around_face_iterator<Graph>                // Base
+             , typename boost::graph_traits<Graph>::edge_descriptor  // Value
+             , std::bidirectional_iterator_tag                       // CategoryOrTraversal
+             , typename boost::graph_traits<Graph>::edge_descriptor  // Reference
+             >
+#endif
+{
+  typedef typename boost::graph_traits<Graph>::halfedge_descriptor halfedge_descriptor;
+  internal::Edge<Graph> fct;
+public:
+
+  Edge_around_face_iterator()
+  {}
+
+  Edge_around_face_iterator(halfedge_descriptor h, const Graph& g, int n = 0)
+    : Edge_around_face_iterator::iterator_adaptor_(Halfedge_around_face_iterator<Graph>(h,g,(h==halfedge_descriptor())?1:n)), fct(g)
+  {}
+private:
+  friend class boost::iterator_core_access;
+  typename  boost::graph_traits<Graph>::edge_descriptor dereference() const { return fct(*this->base_reference()); }
+}; 
+
+template<typename Graph>
+Iterator_range<Edge_around_face_iterator<Graph> >
+edges_around_face(typename boost::graph_traits<Graph>::halfedge_descriptor h, const Graph& g)
+{
+  typedef Edge_around_face_iterator<Graph> I;
+  return make_range(I(h,g), I(h,g,1));
+}
 
 
 

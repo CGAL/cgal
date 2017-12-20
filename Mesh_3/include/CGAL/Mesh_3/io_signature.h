@@ -13,18 +13,21 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: https://scm.gforge.inria.fr/svn/cgal/branches/features/Mesh_3-experimental-GF/Mesh_3/include/CGAL/Mesh_3/io_signature.h $
-// $Id: io_signature.h 68587 2012-04-17 16:00:12Z lrineau $
-// 
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Laurent RINEAU
 
 #ifndef CGAL_MESH_3_IO_SIGNATURE_H
 #define CGAL_MESH_3_IO_SIGNATURE_H
+
+#include <CGAL/license/Mesh_3.h>
+
 #define CGAL_MESH_3_IO_H // the old include macro, tested by other files
 
 #include <CGAL/Point_3.h>
-#include <CGAL/Weighted_point.h>
+#include <CGAL/Weighted_point_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Triangulation_vertex_base_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
@@ -168,11 +171,11 @@ struct Get_io_signature<Point_3<Kernel> >
   }
 };
 
-template <class Point, typename FT>
-struct Get_io_signature<Weighted_point<Point, FT> >
+template <class K>
+struct Get_io_signature<Weighted_point_3<K> >
 {
   std::string operator()() {
-    return std::string("Weighted_point<") + Get_io_signature<Point>()() + ">";
+    return std::string("Weighted_point<") + Get_io_signature<Point_3<K> >()() + ">";
   }
 };
 
@@ -185,7 +188,7 @@ Get_io_signature<Triangulation_3<Gt, Triangulation_data_structure_3<Vb, Cb, C_ta
 
   std::string operator()() {
     return std::string("Triangulation_3(") +
-      Get_io_signature<typename Gt::Point_3>()() +
+      Get_io_signature<typename Tds::Vertex::Point>()() +
       ",Vb(" + Get_io_signature<typename Tds::Vertex>()() +
       "),Cb(" + Get_io_signature<typename Tds::Cell>()() +
       "))";
@@ -219,6 +222,17 @@ Get_io_signature<Regular_triangulation_3<Gt, Tds> >
 template <class Gt, class Vb>
 struct Get_io_signature<Triangulation_vertex_base_3<Gt, Vb> >
 {
+  std::string operator()() {
+    return "Tvb_3";
+  }
+};
+#endif
+
+#ifdef CGAL_REGULAR_TRIANGULATION_VERTEX_BASE_3_H
+template <class Gt, class Vb>
+struct Get_io_signature<Regular_triangulation_vertex_base_3<Gt, Vb> >
+{
+  // identical to Triangulation_vertex_base_3
   std::string operator()() {
     return "Tvb_3";
   }

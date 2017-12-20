@@ -14,11 +14,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Laurent RINEAU
 
 #ifndef CGAL_INTERSECTION_DATA_STRUCTURE_H
 #define CGAL_INTERSECTION_DATA_STRUCTURE_H
+
+#include <CGAL/license/Surface_mesher.h>
+
 
 #include <CGAL/Segment_tree_k.h>
 #include <CGAL/Range_segment_tree_traits.h>

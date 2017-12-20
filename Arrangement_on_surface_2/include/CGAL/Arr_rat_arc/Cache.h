@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Oren Salzman <orenzalz@post.tau.ac.il >
 //                 Michael Hemmer <Michael.Hemmer@sophia.inria.fr>
 
 #ifndef CGAL_RATIONAL_ARC_CACHE
 #define CGAL_RATIONAL_ARC_CACHE
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 
 #include <CGAL/Arr_rat_arc/Base_rational_arc_ds_1.h>
 #include <CGAL/Arr_rat_arc/Rational_function.h>

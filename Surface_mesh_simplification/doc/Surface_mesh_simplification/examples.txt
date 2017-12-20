@@ -6,4 +6,6 @@
 \example Surface_mesh_simplification/edge_collapse_constrain_sharp_edges.cpp
 \example Surface_mesh_simplification/edge_collapse_constrained_border_surface_mesh.cpp
 \example Surface_mesh_simplification/edge_collapse_surface_mesh.cpp
+\example Surface_mesh_simplification/edge_collapse_all_short_edges.cpp
+\example Surface_mesh_simplification/edge_collapse_bounded_normal_change.cpp
 */

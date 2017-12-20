@@ -14,11 +14,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)    : Samuel Hornus
 
 #ifndef CGAL_TRIANGULATION_FACE_H
 #define CGAL_TRIANGULATION_FACE_H
+
+#include <CGAL/license/Triangulation.h>
+
 
 #include <CGAL/basic.h>
 #include <CGAL/internal/Static_or_dynamic_array.h>

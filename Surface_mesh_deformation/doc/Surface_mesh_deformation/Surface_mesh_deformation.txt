@@ -59,7 +59,7 @@ the As-Rigid-As-Possible (center) and the Spokes and Rims (right) methods from t
 latter method provides unconditional convergence does not produce a symmetric result.
 \cgalFigureEnd
 
-\cgalFigureBegin{Arap_spokes_comparison, sr_arap_comparison.png}
+\cgalFigureBegin{sr_arap_comparison, sr_arap_comparison.png}
 A comparison on a 5261 vertices cactus model (left) between the As-Rigid-As-Possible (middle) and the Smoothed %Rotation Enhanced As-Rigid-As-Possible (right).
 \cgalFigureEnd
 
@@ -219,7 +219,7 @@ The displacement of the vertices is triggered when the <i>Ctrl</i> button is pre
 \anchor SModelingVideo_1
 \htmlonly
 <center>
-<iframe width="560" height="315" src="http://www.youtube.com/embed/akpYaDLuaUI?rel=0" frameborder="0" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/akpYaDLuaUI?rel=0" frameborder="0" allowfullscreen></iframe>
 </center>
 <div class="cgal_video_caption"> <a class="el" href="index.html#SModelingVideo_1">Video 1</a> Grouping of control vertices.</div>
 \endhtmlonly
@@ -227,7 +227,7 @@ The displacement of the vertices is triggered when the <i>Ctrl</i> button is pre
 \anchor SModelingVideo_2
 \htmlonly
 <center>
-<iframe width="560" height="315" src="http://www.youtube.com/embed/1cpnkx_YG5E?rel=0" frameborder="0" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/1cpnkx_YG5E?rel=0" frameborder="0" allowfullscreen></iframe>
 </center>
 <div class="cgal_video_caption"> <a class="el" href="index.html#SModelingVideo_2">Video 2</a>
 Convergence: this video shows that upon fast changes of the positions of the control vertices,
@@ -237,7 +237,7 @@ more iteration steps are needed to reach the convergence.</div>
 \anchor SModelingVideo_3
 \htmlonly
 <center>
-<iframe width="560" height="315" src="http://www.youtube.com/embed/-1rO-RdbudM?rel=0" frameborder="0" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/-1rO-RdbudM?rel=0" frameborder="0" allowfullscreen></iframe>
 </center>
 <div class="cgal_video_caption"> <a class="el" href="index.html#SModelingVideo_3">Video 3</a> A complete example: changing the pose of a dinausor.</div>
 \endhtmlonly

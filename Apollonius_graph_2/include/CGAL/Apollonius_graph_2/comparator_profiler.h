@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
@@ -23,7 +24,11 @@
 #ifndef CGAL_COMPARATOR_PROFILER_H
 #define CGAL_COMPARATOR_PROFILER_H
 
+#include <CGAL/license/Apollonius_graph_2.h>
+
+
 #include <CGAL/Apollonius_graph_2/basic.h>
+#include <CGAL/atomic.h>
 
 namespace CGAL {
 
@@ -32,23 +37,31 @@ namespace ApolloniusGraph_2 {
 class comparator_profiler
 {
 public:
-  static bool count_cases;
-  static unsigned long case_1_counter;
-  static unsigned long case_2_counter;
-  static unsigned long case_3a_Jpos_counter;
-  static unsigned long case_3a_Jneg_counter;
-  static unsigned long case_3b_Jpos_counter;
-  static unsigned long case_3b_Jneg_counter;
-  static unsigned long case_4_counter;
-  static unsigned long case_5_counter;
-  static unsigned long case_degenerate_counter;
+
+#ifdef CGAL_NO_ATOMIC
+  typedef bool bool_;
+  typedef unsigned long long_;
+#else
+  typedef CGAL::cpp11::atomic<bool> bool_;
+  typedef CGAL::cpp11::atomic<unsigned long> long_;
+#endif
+
+  static bool_ count_cases;
+  static long_ case_1_counter;
+  static long_ case_2_counter;
+  static long_ case_3a_Jpos_counter;
+  static long_ case_3a_Jneg_counter;
+  static long_ case_3b_Jpos_counter;
+  static long_ case_3b_Jneg_counter;
+  static long_ case_4_counter;
+  static long_ case_5_counter;
+  static long_ case_degenerate_counter;
 public:
-  static unsigned long counter_rr;
-  static unsigned long counter_rr_p3inf;
-  static unsigned long counter_rr_p4;
-  static unsigned long counter_rr_e;
-  static unsigned long counter_rr_r0;
-  //  static unsigned long counter_rr_jneg;
+  static long_ counter_rr;
+  static long_ counter_rr_p3inf;
+  static long_ counter_rr_p4;
+  static long_ counter_rr_e;
+  static long_ counter_rr_r0;
 
   static void reset()
   {
@@ -68,7 +81,6 @@ public:
     counter_rr_p4 = 0;
     counter_rr_e = 0;
     counter_rr_r0 = 0;
-    //    counter_rr_jneg = 0;
   }
 
   template< class FT >
@@ -141,6 +153,8 @@ public:
   }
 };
 
+#ifdef CGAL_NO_ATOMIC
+
 bool comparator_profiler::count_cases = false;
 unsigned long comparator_profiler::case_1_counter = 0;
 unsigned long comparator_profiler::case_2_counter = 0;
@@ -157,7 +171,9 @@ unsigned long comparator_profiler::counter_rr_p3inf = 0;
 unsigned long comparator_profiler::counter_rr_p4 = 0;
 unsigned long comparator_profiler::counter_rr_e = 0;
 unsigned long comparator_profiler::counter_rr_r0 = 0;
-//unsigned long comparator_profiler::counter_rr_jneg = 0;
+
+#endif
+
 
 } //namespace ApolloniusGraph_2
 

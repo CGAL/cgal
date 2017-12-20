@@ -13,14 +13,17 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: https://scm.gforge.inria.fr/svn/cgal/branches/features/Mesh_3-experimental-GF/Mesh_3/include/CGAL/Mesh_3/Profile_counter.h $
-// $Id: Profile_counter.h 66846 2011-12-16 13:48:50Z lrineau $
-//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Sylvain Pion, Laurent Rineau
 
 #ifndef CGAL_MESH_3_PROFILE_COUNTER_H
 #define CGAL_MESH_3_PROFILE_COUNTER_H
+
+#include <CGAL/license/Mesh_3.h>
+
 
 #include <CGAL/Mesh_3/config.h>
 

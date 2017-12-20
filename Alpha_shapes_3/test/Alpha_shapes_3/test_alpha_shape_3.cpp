@@ -12,20 +12,18 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$ 
-// $Id$ 
-// $Date$
-// 
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>
 
-
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-#include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Alpha_shape_3.h>
-#include <CGAL/_test_cls_alpha_shape_3.h>
+#include <CGAL/Alpha_shape_cell_base_3.h>
+#include <CGAL/Alpha_shape_vertex_base_3.h>
+#include <CGAL/Delaunay_triangulation_3.h>
 
+#include <CGAL/_test_cls_alpha_shape_3.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel           Gt;
 typedef CGAL::Alpha_shape_vertex_base_3<Gt>                           Vb;

@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Laurent RINEAU
 
 #ifndef CGAL_MESH_3_RADIUS_RATIO_H
 #define CGAL_MESH_3_RADIUS_RATIO_H
+
+#include <CGAL/license/Mesh_3.h>
+
 
 namespace CGAL {
 

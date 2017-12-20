@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Daniel Russel <drussel@alumni.princeton.edu>
@@ -47,7 +48,7 @@ public:
     if (rs_.empty()) {
       std::cerr << "You now must check if the certificate will fail before calling top.\n";
       CGAL_error();
-      static Time t(1000000);
+      static const Time t(1000000);
       return t;
     }
     return rs_.top();

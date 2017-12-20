@@ -44,7 +44,6 @@
     <addaction name="actionSave"/>
     <addaction name="separator"/>
     <addaction name="actionImportOFF"/>
-    <addaction name="actionAddOFF"/>
     <addaction name="actionImportMoka"/>
     <addaction name="separator"/>
     <addaction name="actionImport3DTDS"/>
@@ -66,6 +65,8 @@
     <addaction name="separator"/>
     <addaction name="actionSew3_same_facets"/>
     <addaction name="actionUnsew3_all"/>
+    <addaction name="separator"/>
+    <addaction name="actionInsideOut"/>
     <addaction name="separator"/>
     <addaction name="actionSubdivide"/>
     <addaction name="actionSubdivide_pqq"/>
@@ -103,11 +104,6 @@
   <action name="actionImportOFF">
    <property name="text">
     <string>&amp;Import OFF</string>
-   </property>
-  </action>
-  <action name="actionAddOFF">
-   <property name="text">
-    <string>Add &amp;OFF</string>
    </property>
   </action>
   <action name="actionQuit">
@@ -188,6 +184,11 @@
   <action name="actionUnsew3_all">
    <property name="text">
     <string>&amp;Unsew3 volumes</string>
+   </property>
+  </action>
+  <action name="actionInsideOut">
+   <property name="text">
+    <string>Reverse &amp;orientation</string>
    </property>
   </action>
   <action name="actionVolume_list">

@@ -10,17 +10,19 @@
 #include <CGAL/perturb_mesh_3.h>
 #include <CGAL/exude_mesh_3.h>
 
+#include <fstream>
 #include <sstream>
 #include <cstring>
 
 // Domain
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+typedef CGAL::Mesh_polyhedron_3<K>::type Polyhedron;
 typedef CGAL::Polyhedral_mesh_domain_with_features_3<K> Mesh_domain;
 
 // Triangulation
 typedef CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
 typedef CGAL::Mesh_complex_3_in_triangulation_3<
-  Tr,Mesh_domain::Corner_index,Mesh_domain::Curve_segment_index> C3t3;
+  Tr,Mesh_domain::Corner_index,Mesh_domain::Curve_index> C3t3;
 
 // Mesh Criteria
 typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
@@ -39,7 +41,10 @@ int main(int, char*[])
 
   // Domain
   std::cout << "\tSeed is\t 0" << std::endl;
-  Mesh_domain domain("data/cube.off");
+  std::ifstream input("data/cube.off");
+  Polyhedron polyhedron;
+  input >> polyhedron;
+  Mesh_domain domain(polyhedron);
     //no random generator is given, so CGAL::Random(0) is used
 
   // Get sharp features

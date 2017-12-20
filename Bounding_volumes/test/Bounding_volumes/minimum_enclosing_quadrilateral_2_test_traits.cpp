@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch> and
@@ -39,19 +40,19 @@ struct MyTraits {
   };
   struct Strip_2      { Point_2 pp1, pp2; Direction_2 dd; };
   struct Equal_2
-  : public std::binary_function<Point_2,Point_2,bool>
+  : public CGAL::binary_function<Point_2,Point_2,bool>
   {
     bool operator()(const Point_2& p, const Point_2& q) const
     { return p.xc == q.xc && p.yc == q.yc; }
   };
   struct Less_xy_2
-  : public std::binary_function<Point_2,Point_2,bool>
+  : public CGAL::binary_function<Point_2,Point_2,bool>
   {
     bool operator()(const Point_2& p, const Point_2& q) const
     { return p.xc < q.xc || (p.xc == q.xc && p.yc < q.yc); }
   };
   struct Less_yx_2
-  : public std::binary_function<Point_2,Point_2,bool>
+  : public CGAL::binary_function<Point_2,Point_2,bool>
   {
     bool operator()(const Point_2& p, const Point_2& q) const
     { return p.yc < q.yc || (p.yc == q.yc && p.xc < q.xc); }
@@ -65,7 +66,7 @@ struct MyTraits {
     }
   };
   struct Has_on_negative_side_2
-  : public std::binary_function<Line_2,Point_2,bool>
+  : public CGAL::binary_function<Line_2,Point_2,bool>
   {
     bool operator()(const Line_2& l, const Point_2& p) const {
       return
@@ -75,14 +76,14 @@ struct MyTraits {
     }
   };
   struct Compare_angle_with_x_axis_2
-  : public std::binary_function<Direction_2,Direction_2,CGAL::Comparison_result>
+  : public CGAL::binary_function<Direction_2,Direction_2,CGAL::Comparison_result>
   {
     CGAL::Comparison_result
     operator()(const Direction_2& d, const Direction_2& e) const
     { return CGAL::compare_angle_with_x_axisC2(d.xd, d.yd, e.xd, e.yd); }
   };
   struct Area_less_rectangle_2
-  : public std::binary_function<Rectangle_2,Rectangle_2,bool>
+  : public CGAL::binary_function<Rectangle_2,Rectangle_2,bool>
   {
     bool operator()(const Rectangle_2& d, const Rectangle_2& e) const
     {
@@ -101,7 +102,7 @@ struct MyTraits {
     }
   };
   struct Area_less_parallelogram_2
-  : public std::binary_function<Parallelogram_2,Parallelogram_2,bool>
+  : public CGAL::binary_function<Parallelogram_2,Parallelogram_2,bool>
   {
     bool operator()(const Parallelogram_2& d,
                     const Parallelogram_2& e) const
@@ -120,7 +121,7 @@ struct MyTraits {
     }
   };
   struct Width_less_strip_2
-  : public std::binary_function<Strip_2,Strip_2,bool>
+  : public CGAL::binary_function<Strip_2,Strip_2,bool>
   {
     bool operator()(const Strip_2& d, const Strip_2& e) const
     {
@@ -133,7 +134,7 @@ struct MyTraits {
     }
   };
   struct Construct_vector_2
-  : public std::binary_function<Point_2,Point_2,Vector_2>
+  : public CGAL::binary_function<Point_2,Point_2,Vector_2>
   {
     Vector_2 operator()(const Point_2& p, const Point_2& q) const
     {
@@ -144,7 +145,7 @@ struct MyTraits {
     }
   };
   struct Construct_vector_from_direction_2
-  : public std::unary_function<Direction_2,Vector_2>
+  : public CGAL::unary_function<Direction_2,Vector_2>
   {
     Vector_2 operator()(const Direction_2& d) const
     {
@@ -155,7 +156,7 @@ struct MyTraits {
     }
   };
   struct Construct_perpendicular_vector_2
-  : public std::binary_function<Vector_2,CGAL::Orientation,Vector_2>
+  : public CGAL::binary_function<Vector_2,CGAL::Orientation,Vector_2>
   {
     Vector_2 operator()(const Vector_2& v, CGAL::Orientation o) const
     {
@@ -171,7 +172,7 @@ struct MyTraits {
     }
   };
   struct Construct_direction_2
-  : public std::unary_function<Vector_2,Direction_2>
+  : public CGAL::unary_function<Vector_2,Direction_2>
   {
     Direction_2 operator()(const Vector_2& v) const
     {
@@ -182,7 +183,7 @@ struct MyTraits {
     }
   };
   struct Construct_opposite_direction_2
-  : public std::unary_function<Direction_2,Direction_2>
+  : public CGAL::unary_function<Direction_2,Direction_2>
   {
     Direction_2 operator()(const Direction_2& d) const
     {
@@ -193,7 +194,7 @@ struct MyTraits {
     }
   };
   struct Construct_line_2
-  : public std::binary_function<Point_2,Direction_2,Line_2>
+  : public CGAL::binary_function<Point_2,Direction_2,Line_2>
   {
     Line_2 operator()(const Point_2& p, const Direction_2& d) const
     {

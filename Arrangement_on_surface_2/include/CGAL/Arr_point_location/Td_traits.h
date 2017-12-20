@@ -14,11 +14,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)	 : Oren Nechushtan <theoren@math.tau.ac.il>
 #ifndef CGAL_TD_TRAITS_H
 #define CGAL_TD_TRAITS_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 
 #include <CGAL/Arr_point_location/Td_active_trapezoid.h>
 #include <CGAL/Arr_point_location/Td_inactive_trapezoid.h>
@@ -1144,18 +1148,19 @@ public:
   
 public:
 
-  static Vertex_const_handle empty_vtx_handle() { return m_empty_vtx_handle; }
-  static Halfedge_const_handle empty_he_handle() { return m_empty_he_handle; }
-  
-private:
+  static Vertex_const_handle empty_vtx_handle() {
+    CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(Vertex_const_handle, m_empty_vtx_handle);
+    return m_empty_vtx_handle;
+  }
 
-  static Vertex_const_handle m_empty_vtx_handle;
-  static Halfedge_const_handle m_empty_he_handle;
-  
+  static Halfedge_const_handle empty_he_handle() {
+    CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(Halfedge_const_handle, m_empty_he_handle);
+    return m_empty_he_handle;
+  }
+
 };
 
 } //namespace CGAL
 
-#include <CGAL/Arr_point_location/Td_traits_functions.h>
 
 #endif

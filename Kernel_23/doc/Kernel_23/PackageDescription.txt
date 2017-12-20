@@ -93,6 +93,7 @@
 - `CGAL::Segment_2<Kernel>`
 - `CGAL::Triangle_2<Kernel>`
 - `CGAL::Vector_2<Kernel>`
+- `CGAL::Weighted_point_2<Kernel>`
 
 ### Three-dimensional Objects ###
 
@@ -110,6 +111,8 @@
 - `CGAL::Tetrahedron_3<Kernel>`
 - `CGAL::Triangle_3<Kernel>`
 - `CGAL::Vector_3<Kernel>`
+- `CGAL::Weighted_point_3<Kernel>`
+
 
 ## Constants and Enumerations ##
 
@@ -181,6 +184,7 @@
 - \link has_smaller_signed_distance_to_line_grp `CGAL::has_smaller_signed_distance_to_line()` \endlink
 - \link has_smaller_signed_distance_to_plane_grp `CGAL::has_smaller_signed_distance_to_plane()` \endlink
 - \link intersection_grp `CGAL::intersection()` \endlink
+- \link l_infinity_distance_grp `CGAL::l_infinity_distance()` \endlink
 - \link left_turn_grp `CGAL::left_turn()` \endlink
 - \link lexicographically_xyz_smaller_grp `CGAL::lexicographically_xyz_smaller()` \endlink
 - \link lexicographically_xyz_smaller_or_equal_grp `CGAL::lexicographically_xyz_smaller_or_equal()` \endlink
@@ -243,6 +247,8 @@
 - `Kernel::Triangle_3`
 - `Kernel::Vector_2`
 - `Kernel::Vector_3`
+- `Kernel::WeightedPoint_2`
+- `Kernel::WeightedPoint_3`
 
 ## %Kernel Function Object Concepts ##
 
@@ -270,9 +276,13 @@
 - `Kernel::CompareDistance_2`
 - `Kernel::CompareDistance_3`
 - `Kernel::CompareSlope_2`
+- `Kernel::CompareSlope_3`
+- `Kernel::ComparePowerDistance_2`
+- `Kernel::ComparePowerDistance_3`
 - `Kernel::CompareSquaredDistance_2`
 - `Kernel::CompareSquaredDistance_3`
 - `Kernel::CompareSquaredRadius_3`
+- `Kernel::CompareWeightedSquaredRadius_3`
 - `Kernel::CompareXAtY_2`
 - `Kernel::CompareXYZ_3`
 - `Kernel::CompareXY_2`
@@ -299,6 +309,11 @@
 - `Kernel::ComputeDy_2`
 - `Kernel::ComputeHx_2`
 - `Kernel::ComputeHy_2`
+- `Kernel::ComputeLInfinityDistance_2`
+- `Kernel::ComputeLInfinityDistance_3`
+- `Kernel::ComputePowerDistanceToPowerSphere_3`
+- `Kernel::ComputePowerProduct_2`
+- `Kernel::ComputePowerProduct_3`
 - `Kernel::ComputeScalarProduct_2`
 - `Kernel::ComputeScalarProduct_3`
 - `Kernel::ComputeSquaredArea_3`
@@ -309,7 +324,11 @@
 - `Kernel::ComputeSquaredLengthDividedByPiSquare_3`
 - `Kernel::ComputeSquaredRadius_2`
 - `Kernel::ComputeSquaredRadius_3`
+- `Kernel::ComputeSquaredRadiusSmallestOrthogonalCircle_2`
+- `Kernel::ComputeSquaredRadiusSmallestOrthogonalSphere_3`
 - `Kernel::ComputeVolume_3`
+- `Kernel::ComputeWeight_2`
+- `Kernel::ComputeWeight_3`
 - `Kernel::ComputeX_2`
 - `Kernel::ComputeX_3`
 - `Kernel::ComputeY_2`
@@ -387,6 +406,7 @@
 - `Kernel::ConstructProjectedPoint_2`
 - `Kernel::ConstructProjectedPoint_3`
 - `Kernel::ConstructProjectedXYPoint_2`
+- `Kernel::ConstructRadicalAxis_2`
 - `Kernel::ConstructRadicalLine_2`
 - `Kernel::ConstructRadicalPlane_3`
 - `Kernel::ConstructRay_2`
@@ -412,6 +432,9 @@
 - `Kernel::ConstructVector_3`
 - `Kernel::ConstructVertex_2`
 - `Kernel::ConstructVertex_3`
+- `Kernel::ConstructWeightedCircumcenter_3`
+- `Kernel::ConstructWeightedPoint_2`
+- `Kernel::ConstructWeightedPoint_3`
 - `Kernel::CartesianConstIterator_2`
 - `Kernel::CartesianConstIterator_3`
 - `Kernel::CoplanarOrientation_3`
@@ -465,6 +488,10 @@
 - `Kernel::Orientation_3`
 - `Kernel::OrientedSide_2`
 - `Kernel::OrientedSide_3`
+- `Kernel::PowerSideOfBoundedPowerCircle_2`
+- `Kernel::PowerSideOfBoundedPowerSphere_3`
+- `Kernel::PowerSideOfOrientedPowerCircle_2`
+- `Kernel::PowerSideOfOrientedPowerSphere_3`
 - `Kernel::SideOfBoundedCircle_2`
 - `Kernel::SideOfBoundedSphere_3`
 - `Kernel::SideOfOrientedCircle_2`

@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Andreas Fabri, Stefan Schirra
@@ -257,7 +258,7 @@ template < class R >
 std::istream &
 operator>>(std::istream &is, Plane_3<R> &p)
 {
-    typename R::RT a, b, c, d;
+  typename R::RT a(0), b(0), c(0), d(0);
     switch(get_mode(is)) {
     case IO::ASCII :
         is >> iformat(a) >> iformat(b) >> iformat(c) >> iformat(d);

@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Laurent Rineau
@@ -22,10 +23,12 @@
 #ifndef CGAL_TRIANGULATION_2_FILTERED_PROJECTION_TRAITS_3_H
 #define CGAL_TRIANGULATION_2_FILTERED_PROJECTION_TRAITS_3_H
 
+#include <CGAL/license/Triangulation_2.h>
+
 #define CGAL_DEPRECATED_HEADER "<CGAL/Triangulation_2_filtered_projection_traits_3.h>"
 #define CGAL_REPLACEMENT_HEADER "<CGAL/Triangulation_2_projection_traits_3.h>"
 #include <CGAL/internal/deprecation_warning.h>
 
-#include <CGAL/internal/Triangulation_2_filtered_projection_traits_3.h>
+#include <CGAL/Triangulation_2_projection_traits_3.h>
 
 #endif // CGAL_TRIANGULATION_2_FILTERED_PROJECTION_TRAITS_3_H

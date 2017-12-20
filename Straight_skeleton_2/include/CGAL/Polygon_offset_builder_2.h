@@ -13,11 +13,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
 #ifndef CGAL_POLYGON_OFFSET_BUILDER_2_H
 #define CGAL_POLYGON_OFFSET_BUILDER_2_H 1
+
+#include <CGAL/license/Straight_skeleton_2.h>
+
 
 #include <vector>
 #include <algorithm>

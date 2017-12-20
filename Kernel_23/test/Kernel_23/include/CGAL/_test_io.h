@@ -15,6 +15,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Sylvain Pion
@@ -57,6 +58,14 @@ _test_io(const R&)
     typename R::Point_2 p2(2, 6, 2);
     typename R::Point_2 p22(2, -6, 2);
     typename R::Point_2 p222(-2, 6, 2);
+    _test_io_for(p2);
+    _test_io_for(p22);
+    _test_io_for(p222);
+
+    std::cout << "Weighted_point_2" << std::endl;
+    typename R::Weighted_point_2 wp2(p2);
+    typename R::Weighted_point_2 wp22(p22, 2);
+    typename R::Weighted_point_2 wp222(p222, -2);
     _test_io_for(p2);
     _test_io_for(p22);
     _test_io_for(p222);
@@ -124,6 +133,14 @@ _test_io(const R&)
     _test_io_for(p33);
     _test_io_for(p333);
     _test_io_for(p3333);
+
+    std::cout << "Weighted_point_3" << std::endl;
+    typename R::Weighted_point_3 wp3(p3);
+    typename R::Weighted_point_3 wp33(p33, 3);
+    typename R::Weighted_point_3 wp333(p333, -3);
+    _test_io_for(p3);
+    _test_io_for(p33);
+    _test_io_for(p333);
 
     std::cout << "Vector_3" << std::endl;
     typename R::Vector_3 v3(2, 6, 2, 2);

@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Kaspar Fischer
@@ -23,6 +24,9 @@
 
 #ifndef CGAL_QP_SOLVER_H
 #define CGAL_QP_SOLVER_H
+
+#include <CGAL/license/QP_solver.h>
+
 
 #include <CGAL/iterator.h>
 #include <CGAL/QP_solver/basic.h>

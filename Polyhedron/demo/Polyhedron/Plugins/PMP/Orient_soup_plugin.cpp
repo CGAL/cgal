@@ -24,14 +24,16 @@ public:
   void init(QMainWindow* mainWindow,
             CGAL::Three::Scene_interface* scene_interface,
             Messages_interface* m);
-            bool applicable(QAction* action) const {
+  bool applicable(QAction* action) const {
     Q_FOREACH(CGAL::Three::Scene_interface::Item_id index, scene->selectionIndices()) {
       if(qobject_cast<Scene_polygon_soup_item*>(scene->item(index)))
         return true;
       else
-        if (action==actionShuffle && 
-            qobject_cast<Scene_polyhedron_item*>(scene->item(index)))
-            return true;
+        if (action==actionShuffle &&
+            (qobject_cast<Scene_polyhedron_item*>(scene->item(index))
+            ||qobject_cast<Scene_surface_mesh_item*>(scene->item(index)))
+            )
+          return true;
     }
     return false;
   }
@@ -45,6 +47,9 @@ public Q_SLOTS:
   void displayNonManifoldEdges();
 
 private:
+  template<class Item>
+  void apply_shuffle(Item* item,
+                     const CGAL::Three::Scene_interface::Item_id& index);
   CGAL::Three::Scene_interface* scene;
   Messages_interface* messages;
   QMainWindow* mw;
@@ -93,9 +98,9 @@ QList<QAction*> Polyhedron_demo_orient_soup_plugin::actions() const {
       << actionDisplayNonManifoldEdges;
 }
 
-void set_vcolors(Scene_surface_mesh_item::SMesh* smesh, std::vector<CGAL::Color> colors)
+void set_vcolors(SMesh* smesh, std::vector<CGAL::Color> colors)
 {
-  typedef Scene_surface_mesh_item::SMesh SMesh;
+  typedef SMesh SMesh;
   typedef boost::graph_traits<SMesh>::vertex_descriptor vertex_descriptor;
   SMesh::Property_map<vertex_descriptor, CGAL::Color> vcolors =
     smesh->property_map<vertex_descriptor, CGAL::Color >("v:color").first;
@@ -107,9 +112,9 @@ void set_vcolors(Scene_surface_mesh_item::SMesh* smesh, std::vector<CGAL::Color>
       vcolors[vd] = colors[color_id++];
 }
 
-void set_fcolors(Scene_surface_mesh_item::SMesh* smesh, std::vector<CGAL::Color> colors)
+void set_fcolors(SMesh* smesh, std::vector<CGAL::Color> colors)
 {
-  typedef Scene_surface_mesh_item::SMesh SMesh;
+  typedef SMesh SMesh;
   typedef boost::graph_traits<SMesh>::face_descriptor face_descriptor;
   SMesh::Property_map<face_descriptor, CGAL::Color> fcolors =
     smesh->property_map<face_descriptor, CGAL::Color >("f:color").first;
@@ -125,7 +130,7 @@ void Polyhedron_demo_orient_soup_plugin::orientPoly()
 {
   Q_FOREACH(CGAL::Three::Scene_interface::Item_id index, scene->selectionIndices())
   {
-    Scene_polygon_soup_item* item = 
+    Scene_polygon_soup_item* item =
       qobject_cast<Scene_polygon_soup_item*>(scene->item(index));
 
     if(item)
@@ -179,7 +184,7 @@ void Polyhedron_demo_orient_soup_plugin::orientSM()
                                       .arg(item->name()));
       }
       QApplication::setOverrideCursor(Qt::WaitCursor);
-        Scene_surface_mesh_item::SMesh* smesh = new Scene_surface_mesh_item::SMesh();
+        SMesh* smesh = new SMesh();
         if(item->exportAsSurfaceMesh(smesh)) {
           if(!item->getVColors().empty())
             set_vcolors(smesh,item->getVColors());
@@ -207,41 +212,55 @@ void Polyhedron_demo_orient_soup_plugin::orientSM()
 
 void Polyhedron_demo_orient_soup_plugin::shuffle()
 {
-  const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
-  
-  Scene_polygon_soup_item* item = 
-    qobject_cast<Scene_polygon_soup_item*>(scene->item(index));
+  BOOST_FOREACH(CGAL::Three::Scene_interface::Item_id index, scene->selectionIndices())
+  {
+    Scene_polygon_soup_item* soup_item =
+        qobject_cast<Scene_polygon_soup_item*>(scene->item(index));
 
-  if(item) {
-    QApplication::setOverrideCursor(Qt::WaitCursor);
-    item->shuffle_orientations();
-    QApplication::restoreOverrideCursor();
-  }
-  else {
-    Scene_polyhedron_item* poly_item = 
-      qobject_cast<Scene_polyhedron_item*>(scene->item(index));
-    if(poly_item) {
+    if(soup_item) {
       QApplication::setOverrideCursor(Qt::WaitCursor);
-      item = new Scene_polygon_soup_item();
-      item->setName(poly_item->name());
-      item->setRenderingMode(poly_item->renderingMode());
-      item->setVisible(poly_item->visible());
-      item->setProperty("source filename", poly_item->property("source filename"));
-      item->load(poly_item);
-      item->shuffle_orientations();
-      item->setColor(poly_item->color());
-      scene->replaceItem(index, item);
-      delete poly_item;
+      soup_item->shuffle_orientations();
       QApplication::restoreOverrideCursor();
+      continue;
+    }
+
+    Scene_polyhedron_item* poly_item =
+        qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+    if(poly_item) {
+      apply_shuffle(poly_item, index);
+      continue;
+    }
+    Scene_surface_mesh_item* sm_item =
+        qobject_cast<Scene_surface_mesh_item*>(scene->item(index));
+    if(sm_item) {
+      apply_shuffle(sm_item, index);
     }
   }
+}
+
+template<class Item>
+void Polyhedron_demo_orient_soup_plugin::apply_shuffle( Item* root_item,
+                                                        const CGAL::Three::Scene_interface::Item_id& index)
+{
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+  Scene_polygon_soup_item* item = new Scene_polygon_soup_item();
+  item->setName(root_item->name());
+  item->setRenderingMode(root_item->renderingMode());
+  item->setVisible(root_item->visible());
+  item->setProperty("source filename", root_item->property("source filename"));
+  item->load(root_item);
+  item->shuffle_orientations();
+  item->setColor(root_item->color());
+  scene->replaceItem(index, item);
+  delete root_item;
+  QApplication::restoreOverrideCursor();
 }
 
 void Polyhedron_demo_orient_soup_plugin::displayNonManifoldEdges()
 {
   const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
   
-  Scene_polygon_soup_item* item = 
+  Scene_polygon_soup_item* item =
     qobject_cast<Scene_polygon_soup_item*>(scene->item(index));
 
   if(item)

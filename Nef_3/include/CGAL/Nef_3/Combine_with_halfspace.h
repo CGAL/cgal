@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Michael Seel    <seel@mpi-sb.mpg.de>
@@ -22,6 +23,9 @@
 //                 Lutz Kettner    <kettner@mpi-sb.mpg.de>
 #ifndef CGAL_COMBINE_WITH_HALFSPACE_H
 #define CGAL_COMBINE_WITH_HALFSPACE_H
+
+#include <CGAL/license/Nef_3.h>
+
 
 #include <CGAL/Nef_S2/Normalizing.h>
 #include <CGAL/Unique_hash_map.h>

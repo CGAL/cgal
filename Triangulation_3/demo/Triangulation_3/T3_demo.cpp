@@ -12,9 +12,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://sccode@scm.gforge.inria.fr/svn/cgal/branches/experimental-packages/GSoC10-demoT3/demos/Triangulation_demo_3/ $
-// $Id: r58170 2010-08-19 20:46:16 -0400 $
-//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Sophie Fei Che <fei@cis.udel.edu>
 //

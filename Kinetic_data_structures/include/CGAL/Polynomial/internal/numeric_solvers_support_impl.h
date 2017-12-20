@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Daniel Russel <drussel@alumni.princeton.edu>
@@ -38,7 +39,7 @@
 
 namespace CGAL { namespace POLYNOMIAL { namespace internal {
 
-static double max_error_value=.00005;
+static const double max_error_value=.00005;
 
 namespace {
 template <bool CLEAN, class NT>

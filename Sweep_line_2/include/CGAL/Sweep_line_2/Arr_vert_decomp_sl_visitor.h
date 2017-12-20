@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Ron Wein <wein@post.tau.ac.il>
 
 #ifndef CGAL_ARR_VERT_DECOMP_SL_VISITOR_H
 #define CGAL_ARR_VERT_DECOMP_SL_VISITOR_H
+
+#include <CGAL/license/Sweep_line_2.h>
+
 
 /*!
  * Definition of the Arr_vert_decomp_sl_visitor class-template.

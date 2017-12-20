@@ -14,11 +14,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s) : Laurent Saboret and Andreas Fabri
 
 #ifndef CGAL_MST_ORIENT_NORMALS_H
 #define CGAL_MST_ORIENT_NORMALS_H
+
+#include <CGAL/license/Point_set_processing_3.h>
+
 
 #include <CGAL/trace.h>
 #include <CGAL/Search_traits_3.h>
@@ -490,7 +494,7 @@ create_mst_graph(
 // Public section
 // ----------------------------------------------------------------------------
 
-/// \ingroup PkgPointSetProcessing
+/// \ingroup PkgPointSetProcessingAlgorithms
 /// Orients the normals of the `[first, beyond)` range of points using the propagation
 /// of a seed orientation through a minimum spanning tree of the Riemannian graph [Hoppe92].
 ///

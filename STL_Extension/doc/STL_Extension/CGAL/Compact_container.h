@@ -801,8 +801,7 @@ types `T` to make them usable with the default `Compact_container_traits`.
 
 */
 template< typename T >
-class Compact_container_traits {
-public:
+struct Compact_container_traits {
 
 /// \name Operations 
 /// @{ 

@@ -14,11 +14,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s) : Pierre Alliez and Laurent Saboret
 
 #ifndef CGAL_SEARCH_TRAITS_VERTEX_HANDLE_3_H
 #define CGAL_SEARCH_TRAITS_VERTEX_HANDLE_3_H
+
+#include <CGAL/license/Point_set_processing_3.h>
+
 
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/Search_traits.h>

@@ -28,6 +28,7 @@ In 2D, the types `Type1` and `Type2` can be any of the following:
 - `Segment_2`
 - `Triangle_2`
 
+as well as any combination of `Kernel::Point_2` and `Kernel::Weighted_point_2`
 
 In 3D, the types `Type1` and `Type2` can be any of the
 following:
@@ -38,7 +39,8 @@ following:
 - `Segment_3`
 - `Plane_3`
 
-as well as the combination `Point_3`/`Triangle_3`.
+as well as combinations `Point_3`/`Triangle_3`,
+and `Weighted_point_3`/`Triangle_3`.
 
 \sa `compare_distance_to_point_grp`
 \sa `compare_signed_distance_to_line_grp`

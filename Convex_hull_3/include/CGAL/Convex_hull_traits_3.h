@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Susan Hert <hert@mpi-sb.mpg.de>
 
 #ifndef CGAL_CONVEX_HULL_TRAITS_3_H
 #define CGAL_CONVEX_HULL_TRAITS_3_H
+
+#include <CGAL/license/Convex_hull_3.h>
+
 
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Convex_hull_face_base_2.h>
@@ -29,6 +33,7 @@
 #include <list>
 #include <CGAL/Filtered_predicate.h>
 #include <CGAL/Cartesian_converter.h>
+#include <CGAL/Default.h>
 
 namespace CGAL {
 template < class R_ >
@@ -185,20 +190,21 @@ struct Convex_hull_traits_base_3<R_, Tag_true>{
 };
 
 
-template <class R_, class Has_filtered_predicates_tag = Tag_false>
+  template <class R_, class Polyhedron = Default, class Has_filtered_predicates_tag = Tag_false>
 class Convex_hull_traits_3 :
   public Convex_hull_traits_base_3<R_, Has_filtered_predicates_tag>
 {
  public:  
   typedef R_                                     R;
-  typedef Convex_hull_traits_3<R, Has_filtered_predicates_tag>  Self;
+  typedef Convex_hull_traits_3<R, Polyhedron, Has_filtered_predicates_tag>  Self;
   typedef typename R::Point_3                    Point_3;
   typedef typename R::Segment_3                  Segment_3;
   typedef typename R::Triangle_3                 Triangle_3;
   typedef Point_triple<R>                        Plane_3;
   typedef typename R::Vector_3                   Vector_3;
 
-  typedef CGAL::Polyhedron_3<R>                  Polyhedron_3;
+  typedef typename Default::Get<Polyhedron, CGAL::Polyhedron_3<R> >::type Polygon_mesh;
+  typedef Polygon_mesh                           Polyhedron_3;
 
   typedef typename R::Construct_segment_3        Construct_segment_3;
   typedef typename R::Construct_ray_3            Construct_ray_3;

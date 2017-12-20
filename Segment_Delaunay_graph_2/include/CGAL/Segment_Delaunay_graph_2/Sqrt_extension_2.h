@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
@@ -23,6 +24,9 @@
 
 #ifndef CGAL_SEGMENT_DELAUNAY_GRAPH_2_SQRT_EXTENSION_2_H
 #define CGAL_SEGMENT_DELAUNAY_GRAPH_2_SQRT_EXTENSION_2_H
+
+#include <CGAL/license/Segment_Delaunay_graph_2.h>
+
 
 #include <CGAL/Sqrt_extension.h>
 
@@ -260,7 +264,7 @@ public:
     typedef Sqrt_extension_2<NT> Real_embeddable;
     
     class Abs 
-        : public std::unary_function< Real_embeddable, Real_embeddable >{
+        : public CGAL::unary_function< Real_embeddable, Real_embeddable >{
     public:
         Real_embeddable operator()(const Real_embeddable& x) const {
             return (x>=0)?x:-x;
@@ -268,7 +272,7 @@ public:
     };    
 
     class Sgn 
-        : public std::unary_function< Real_embeddable, CGAL::Sign >{
+        : public CGAL::unary_function< Real_embeddable, CGAL::Sign >{
     public:
         CGAL::Sign operator()(const Real_embeddable& x) const {
             return x.sign();
@@ -276,7 +280,7 @@ public:
     };
     
     class Compare 
-        : public std::binary_function< Real_embeddable, 
+        : public CGAL::binary_function< Real_embeddable,
                                   Real_embeddable, 
                                   CGAL::Comparison_result >{
     public:
@@ -290,7 +294,7 @@ public:
     };
     
     class To_double 
-        : public std::unary_function< Real_embeddable, double >{
+        : public CGAL::unary_function< Real_embeddable, double >{
     public:
         double operator()(const Real_embeddable& x) const {
             return x.to_double();
@@ -298,7 +302,7 @@ public:
     };
     
     class To_interval 
-        : public std::unary_function< Real_embeddable, std::pair< double, double > >{
+        : public CGAL::unary_function< Real_embeddable, std::pair< double, double > >{
     public:
         std::pair<double,double> operator()(const Real_embeddable& x) const {
             return x.to_interval();

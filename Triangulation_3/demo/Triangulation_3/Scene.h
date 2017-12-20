@@ -2,6 +2,7 @@
 #define SCENE_H
 
 #include "typedefs.h"
+#include <QMap>
 #include <QGLViewer/qglviewer.h>
 
 class Scene {

@@ -29,7 +29,7 @@ int main(int argc, char* argv[])
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
   typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3> Polyhedron_3;
   typedef CGAL::Surface_mesh_shortest_path_traits<Kernel, Polyhedron_3> Traits;
-  typedef Traits::Barycentric_coordinate Barycentric_coordinate;
+  typedef Traits::Barycentric_coordinates Barycentric_coordinates;
   typedef Traits::FT FT;
   typedef Traits::Point_3 Point_3;
   typedef Traits::Triangle_3 Triangle_3;
@@ -87,12 +87,12 @@ int main(int argc, char* argv[])
 
   for (size_t i = 0; i < numTrials; ++i)
   {
-    size_t faceIndex = random.get_int(0, facesList.size());
+    size_t faceIndex = random.get_int(0, static_cast<int>(facesList.size()));
     face_descriptor face = facesList[faceIndex];
 
     Triangle_3 faceTriangle = CGAL::internal::triangle_from_halfedge<Triangle_3, Polyhedron_3, VPM>(halfedge(face, polyhedron), polyhedron, vertexPointMap);
 
-    Barycentric_coordinate location = CGAL::test::random_coordinate<Traits>(random);
+    Barycentric_coordinates location = CGAL::test::random_coordinates<Traits>(random);
 
     Point_3 location3d = construct_barycenter_3(faceTriangle[0], location[0], faceTriangle[1], location[1], faceTriangle[2], location[2]);
 

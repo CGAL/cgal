@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Andreas Fabri <Andreas.Fabri@sophia.inria.fr>
 //                 Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
@@ -24,6 +25,9 @@
 
 #ifndef CGAL_TRIANGULATION_GEOM_TRAITS_3_H
 #define CGAL_TRIANGULATION_GEOM_TRAITS_3_H
+
+#include <CGAL/license/Triangulation_3.h>
+
 
 #include <CGAL/basic.h>
 

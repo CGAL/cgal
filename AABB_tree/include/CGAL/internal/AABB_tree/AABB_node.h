@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s) : Camille Wormser, Pierre Alliez, Stephane Tayeb
 
 #ifndef CGAL_AABB_NODE_H
 #define CGAL_AABB_NODE_H
+
+#include <CGAL/license/AABB_tree.h>
+
 
 #include <CGAL/Profile_counter.h>
 #include <CGAL/Cartesian_converter.h>

@@ -14,7 +14,7 @@ The class `Kinetic::Delaunay_triangulation_event_log_visitor_3` provides a model
 
 */
 
-class Delaunay_triangulation_event_log_visitor_3 {
+struct Delaunay_triangulation_event_log_visitor_3 {
 
 }; /* end Kinetic::Delaunay_triangulation_event_log_visitor_3 */
 } /* end namespace Kinetic */

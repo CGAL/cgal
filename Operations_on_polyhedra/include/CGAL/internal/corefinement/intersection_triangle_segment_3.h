@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Sebastien Loriot
 
 #ifndef CGAL_INTERNAL_INTERSECTION_TRIANGLE_SEGMENT_3_H
 #define CGAL_INTERNAL_INTERSECTION_TRIANGLE_SEGMENT_3_H
+
+#include <CGAL/license/Polygon_mesh_processing.h>
+
 
 //TODO rename this file when doing proper integration
 #include <CGAL/internal/corefinement/Polyhedron_constness_types.h>
@@ -81,19 +85,20 @@ find_intersection(const typename Kernel::Point_3& p, const typename Kernel::Poin
 }
 
 
-template<class Polyhedron,class Kernel,class Is_const>
+template<class Polyhedron, class Kernel, class Is_const, class PolyhedronPointPmap>
 typename Intersection_types<Polyhedron,Is_const>::Intersection_result
 do_intersect(typename Polyhedron_types<Polyhedron,Is_const>::Halfedge_handle hh,
-             typename Polyhedron_types<Polyhedron,Is_const>::Facet_handle fh)
+             typename Polyhedron_types<Polyhedron,Is_const>::Facet_handle fh,
+             PolyhedronPointPmap ppmap)
 {
   typedef typename Intersection_types<Polyhedron,Is_const>::Intersection_info   Intersection_info;
   typedef typename Intersection_types<Polyhedron,Is_const>::Intersection_result Intersection_result;
   
-  const typename Kernel::Point_3 & a = fh->halfedge()->vertex()->point();
-  const typename Kernel::Point_3 & b = fh->halfedge()->next()->vertex()->point();
-  const typename Kernel::Point_3 & c = fh->halfedge()->next()->next()->vertex()->point();
-  const typename Kernel::Point_3 & p = hh->vertex()->point();
-  const typename Kernel::Point_3 & q = hh->opposite()->vertex()->point();
+  const typename Kernel::Point_3 & a = get(ppmap, fh->halfedge()->vertex() );
+  const typename Kernel::Point_3 & b = get(ppmap, fh->halfedge()->next()->vertex() );
+  const typename Kernel::Point_3 & c = get(ppmap, fh->halfedge()->next()->next()->vertex() );
+  const typename Kernel::Point_3 & p = get(ppmap, hh->vertex() );
+  const typename Kernel::Point_3 & q = get(ppmap, hh->opposite()->vertex() );
 
 
   const Orientation abcp = orientation(a,b,c,p);

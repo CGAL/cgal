@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Efi Fogel         <efif@post.tau.ac.il>
 //                 Eric Berberich    <ericb@post.tau.ac.il>
 
 #ifndef CGAL_ARR_SPHERICAL_TOPOLOGY_TRAITS_2_H
 #define CGAL_ARR_SPHERICAL_TOPOLOGY_TRAITS_2_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 
 /*! \file
  * The topology traits for great spherical arcs embedded on a sphere for the

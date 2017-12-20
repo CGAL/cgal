@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Ron Wein          <wein@post.tau.ac.il>
@@ -21,16 +22,17 @@
 #ifndef CGAL_ARR_FACE_MAP_H
 #define CGAL_ARR_FACE_MAP_H
 
-/*! \file
- * Definition of the Arr_face_index_map<Arrangement> class.
- */
+#include <CGAL/license/Arrangement_on_surface_2.h>
 
-#if (defined __GNUC__)
-  #warning Arr_face_map.h is DEPRECATED, please include Arr_face_index_map.h instead
-#elif (defined _MSC_VER)
-  #pragma message("Arr_face_map.h is DEPRECATED, please include Arr_face_index_map.h instead")
-#endif
+#define CGAL_DEPRECATED_HEADER "<CGAL/Arr_face_map.h>"
+#define CGAL_REPLACEMENT_HEADER "<CGAL/Arr_face_index_map.h>"
+#include <CGAL/internal/deprecation_warning.h>
 
 #include <CGAL/Arr_face_index_map.h>
+
+/*! \file
+ * Definition of the Arr_face_index_map<Arrangement> class.
+
+ */
 
 #endif

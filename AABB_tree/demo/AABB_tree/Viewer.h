@@ -1,6 +1,6 @@
 #ifndef VIEWER_H
 #define VIEWER_H
-
+#include <QMap>
 #include <QGLViewer/qglviewer.h>
 
 

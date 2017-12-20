@@ -14,11 +14,15 @@
 
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
 #ifndef CGAL_CREATE_OFFSET_POLYGONS_FROM_POLYGON_WITH_HOLES_2_H
 #define CGAL_CREATE_OFFSET_POLYGONS_FROM_POLYGON_WITH_HOLES_2_H
+
+#include <CGAL/license/Straight_skeleton_2.h>
+
 
 #include <CGAL/create_offset_polygons_2.h>
 #include <CGAL/Polygon_with_holes_2.h>

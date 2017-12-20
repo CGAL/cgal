@@ -24,10 +24,11 @@ A plugin usually make use of objects that inherit from `CGAL::Three::Scene_item`
 
 \subsection examplePluginItself The Plugin Itself
 
-A basic plugin will inherit from `CGAL::Three::Polyhedron_demo_plugin_interface`. It must be created in a folder named Xxxx_yyyy_plugin containing all the files created for it, and a CMakeLists.txt file.
+A basic plugin will inherit from `CGAL::Three::Polyhedron_demo_plugin_interface`.
+It must be created in the corresponding folder named after its package, and containing all the files created for the plugin, and a CMakeLists.txt file.
 Its name must be of the form Xxxx_yyyy_plugin. \n
 
-  [init()]: @ref CGAL::Three::Polyhedron_demo_plugin_interface#init(QMainWindow *, Scene_interface *)
+  [init()]: @ref CGAL::Three::Polyhedron_demo_plugin_interface#init(QMainWindow *, Scene_interface *, Messages_interface*)
   [applicable()]: @ref CGAL::Three::Polyhedron_demo_plugin_interface#applicable()
   [actions()]: @ref CGAL::Three::Polyhedron_demo_plugin_interface#actions()
   The class must contain the following lines :\n
@@ -81,9 +82,9 @@ For a more elaborate interface, you will have to use the designer tool of QtCrea
 *  \image html menu_2.png
 Then select among the template/form choices.
 *  \image html menu_3.png
-Name it Xxxx_yyyy_plugin_dialog.ui (you may have to rename it once it is created as QtCreator tends to forget the capital letters), and add it to the project in the CMakeLists :
+Name it Xxxx_yyyy_dialog.ui (you may have to rename it once it is created as QtCreator tends to forget the capital letters), and add it to the project in the CMakeLists :
 
-    qt5_wrap_ui( basicUI_FILES Basic_dialog_plugin.ui )
+    qt5_wrap_ui( basicUI_FILES Basic_dialog.ui )
     polyhedron_demo_plugin(basic_plugin Basic_plugin ${basicUI_FILES})
 
 Add a layout to the dialog with a drag and drop and lay it out.
@@ -250,14 +251,13 @@ A group item is a virtual item that is not seen in the viewer, nor drawn, but ac
 interaction with the `SceneView` (which is the list of items on the left of the viewer). With group items, this view becomes hierarchic, which allows to interact
 with several objects at the same time, and organize this view.
 
-To use a group item in your plugin, you will need a `CGAL::Three::Scene_group_item`, of course, and a `CGAL::Three::Scene_interface`.\n As a group item will automatically
-contain all the selected items of the scene when it is created,
-the first thing to do is to clear the selection with `CGAL::Three::Scene_interface::setSelectedItem(-1)`.
+To use a group item in your plugin, you will need a `CGAL::Three::Scene_group_item`, of course, and a `CGAL::Three::Scene_interface`.\n
 
-Then you can create a new `Scene_group_item` and give the
-items you want to regroup to it with `CGAL::Three::Scene_interface::changeGroup()`. Keep in mind that you must pass items to a group only if those
+Create a new `Scene_group_item`, add it to the scene with `CGAL::Three::Scene_interface::addItem()` and give it the
+items you want to regroup with `CGAL::Three::Scene_interface::changeGroup()`.\n Keep in mind that you must pass items to a group only if those
 items are already in the scene.\n
-Once it is done, add the group to the scene with `CGAL::Three::Scene_interface::add_group()`.
+You also have the possibility to "lock" a child of a group with `CGAL::Three::Scene_group_item::lockChild()` to prevent it from being moved or erased.
+
 
 \snippet Three/Example_plugin/Basic_item_plugin.cpp group
 
@@ -317,17 +317,8 @@ Configure CMake as you desire and fetch the right Qt5 packages :
     set(CMAKE_INCLUDE_CURRENT_DIR ON)
     # Instruct CMake to run moc automatically when needed.
     set(CMAKE_AUTOMOC ON)
-    cmake_minimum_required(VERSION 2.8.11)
-    if(POLICY CMP0043)
-      cmake_policy(SET CMP0043 OLD)
-    endif()
-
-    # Compatibility with CMake 3.0
-    if(POLICY CMP0042)
-      # Do not enable the use of MACOSX_RPATH
-      # http://www.cmake.org/cmake/help/v3.0/policy/CMP0042.html
-      cmake_policy(SET CMP0042 OLD)
-    endif()
+    cmake_minimum_required(VERSION 3.1)
+    
     #Find CGAL
     find_package(CGAL COMPONENTS Qt5)
     include( ${CGAL_USE_FILE} )
@@ -364,17 +355,8 @@ Notice that an external plugin will not be automatically loaded in the Polyhedro
     set(CMAKE_INCLUDE_CURRENT_DIR ON)
     # Instruct CMake to run moc automatically when needed.
     set(CMAKE_AUTOMOC ON)
-    cmake_minimum_required(VERSION 2.8.11)
-    if(POLICY CMP0043)
-      cmake_policy(SET CMP0043 OLD)
-    endif()
-
-    # Compatibility with CMake 3.0
-    if(POLICY CMP0042)
-      # Do not enable the use of MACOSX_RPATH
-      # http://www.cmake.org/cmake/help/v3.0/policy/CMP0042.html
-      cmake_policy(SET CMP0042 OLD)
-    endif()
+    cmake_minimum_required(VERSION 3.1)
+    
     #Find CGAL
     find_package(CGAL COMPONENTS Qt5)
     include( ${CGAL_USE_FILE} )

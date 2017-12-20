@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Sebastien Loriot
 
 #ifndef CGAL_INTERNAL_INTERSECTION_COPLANAR_TRIANGLES_3_H
 #define CGAL_INTERNAL_INTERSECTION_COPLANAR_TRIANGLES_3_H
+
+#include <CGAL/license/Polygon_mesh_processing.h>
+
 
 #include <CGAL/internal/corefinement/intersection_triangle_segment_3.h> //for Intersection_type
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
@@ -33,7 +37,7 @@ namespace internal_IOP{
 
 //intersection point of two coplanar triangles that keeps track of 
 //the location of that point onto the triangles.
-template <class IK,class Halfedge_handle>
+template <class IK,class Halfedge_handle, class PolyhedronPointPMap>
 struct Intersection_point_with_info
 {
   typedef CGAL::Exact_predicates_exact_constructions_kernel     Exact_kernel;
@@ -43,13 +47,14 @@ struct Intersection_point_with_info
   Intersection_type type_1,type_2; //intersection type for 1st and 2nd facets
   Halfedge_handle info_1,info_2; //halfedge providing primitive indicated by type_1 and type_2
   typename Exact_kernel::Point_3 point; //the geometric embedding of the intersection
+  PolyhedronPointPMap ppmap; // extract the point from a vertex. Only needed to be stored in the class for is_valid
   
   //constructor from a vertex of first triangle initialized inside the second triangle
-  Intersection_point_with_info(Halfedge_handle info1,Halfedge_handle info2):
-    type_1(VERTEX),type_2(FACET),info_1(info1),info_2(info2)
+  Intersection_point_with_info(Halfedge_handle info1,Halfedge_handle info2, PolyhedronPointPMap ppmap):
+    type_1(VERTEX),type_2(FACET),info_1(info1),info_2(info2),ppmap(ppmap)
   {
     Converter converter;
-    point=converter(info_1->vertex()->point());
+    point=converter(get(ppmap,info_1->vertex()));
   }
 
   //constructor for intersection of edges. prev and curr are two points on an edge of the first facet (preserving the 
@@ -70,8 +75,8 @@ struct Intersection_point_with_info
   //(F,F) : impossible
   //
   Intersection_point_with_info(Intersection_point_with_info prev,Intersection_point_with_info curr,
-                               Halfedge_handle info1,Halfedge_handle info2):
-    type_2(EDGE),info_2(info2)
+                               Halfedge_handle info1,Halfedge_handle info2, PolyhedronPointPMap ppmap):
+    type_2(EDGE),info_2(info2),ppmap(ppmap)
   {
     #ifdef CGAL_DEBUG_COPLANAR_TRIANGLE_INTERSECTION
     std::cout << "prev: "; prev.print_debug();
@@ -103,11 +108,11 @@ struct Intersection_point_with_info
           
           //this is used to select the correct endpoint of the edge of the second facet
           typename Exact_kernel::Collinear_3 is_collinear = Exact_kernel().collinear_3_object();
-          if ( !is_collinear(prev.point,curr.point,converter(info_2->vertex()->point()) ) ){
+          if ( !is_collinear(prev.point,curr.point,converter(get(ppmap,info_2->vertex()) ) ) ){
             info_2=info_2->next()->next();
-            CGAL_assertion( is_collinear(prev.point,curr.point,converter(info_2->vertex()->point()) ) );
+            CGAL_assertion( is_collinear(prev.point,curr.point,converter(get(ppmap,info_2->vertex())) ) );
           }
-          point = converter( info_2->vertex()->point() );
+          point = converter( get(ppmap, info_2->vertex()) );
           return;
         }
       }
@@ -117,15 +122,15 @@ struct Intersection_point_with_info
     //at least one of the two vertex has already been found as a vertex of a facet. Here we set it for the second point
     if(prev.type_2!=FACET && curr.type_2!=FACET && (prev.type_1==VERTEX || prev.type_2==VERTEX) && (curr.type_1==VERTEX || curr.type_2==VERTEX)){
         typename Exact_kernel::Collinear_3 is_collinear = Exact_kernel().collinear_3_object();
-        if ( is_collinear(prev.point,curr.point,converter(info_2->opposite()->vertex()->point()) ) ){
+        if ( is_collinear(prev.point,curr.point,converter(get(ppmap, info_2->opposite()->vertex())) ) ){
           info_2=info_2->next()->next();
           type_2=VERTEX;
-          point = converter( info_2->vertex()->point() );
+          point = converter( get(ppmap, info_2->vertex()) );
           return;          
         }
-        if ( is_collinear(prev.point,curr.point,converter(info_2->vertex()->point()) ) ){
+        if ( is_collinear(prev.point,curr.point,converter(get(ppmap, info_2->vertex())) ) ){
           type_2=VERTEX;
-          point = converter( info_2->vertex()->point() );
+          point = converter( get(ppmap, info_2->vertex()) );
           return;
         }
     }
@@ -133,7 +138,7 @@ struct Intersection_point_with_info
     //handle regular intersection of two edges
     typename Exact_kernel::Construct_line_3 line_3=Exact_kernel().construct_line_3_object();
     typename Exact_kernel::Line_3 l1=
-      line_3(converter(info_2->vertex()->point()),converter(info_2->opposite()->vertex()->point()));
+      line_3(converter(get(ppmap, info_2->vertex())),converter(get(ppmap, info_2->opposite()->vertex())));
     typename Exact_kernel::Line_3 l2=line_3(prev.point,curr.point);
     CGAL::Object res=Exact_kernel().intersect_3_object()(l1,l2);
     const typename Exact_kernel::Point_3* ptptr=CGAL::object_cast<typename Exact_kernel::Point_3>(&res);
@@ -177,19 +182,19 @@ struct Intersection_point_with_info
     bool valid=true;
     Converter converter;
     switch (type){
-      case VERTEX: valid&= converter(info->vertex()->point())==point; break;
+      case VERTEX: valid&= converter(get(ppmap, info->vertex()))==point; break;
       case EDGE:{
         typename Exact_kernel::Segment_3 seg=
-          Exact_kernel().construct_segment_3_object()( converter(info->vertex()->point()),
-                                                       converter(info->opposite()->vertex()->point()) );
+          Exact_kernel().construct_segment_3_object()( converter(get(ppmap,info->vertex())),
+                                                       converter(get(ppmap,info->opposite()->vertex())) );
         valid&= Exact_kernel().has_on_3_object()(seg,point);
       }
       break;
       case FACET:{
         typename Exact_kernel::Coplanar_orientation_3 orient=Exact_kernel().coplanar_orientation_3_object();
-        typename Exact_kernel::Point_3 p=converter(info->vertex()->point());
-        typename Exact_kernel::Point_3 q=converter(info->next()->vertex()->point());
-        typename Exact_kernel::Point_3 r=converter(info->opposite()->vertex()->point());
+        typename Exact_kernel::Point_3 p=converter(get(ppmap,info->vertex()));
+        typename Exact_kernel::Point_3 q=converter(get(ppmap,info->next()->vertex()));
+        typename Exact_kernel::Point_3 r=converter(get(ppmap,info->opposite()->vertex()));
         valid &= orient(p,q,r,point)==POSITIVE;
         valid &= orient(q,r,p,point)==POSITIVE;
         valid &= orient(r,p,q,point)==POSITIVE;
@@ -206,16 +211,16 @@ struct Intersection_point_with_info
   
 };
   
-template<class Halfedge_handle,class Inter_pt>  
-CGAL::Orientation get_orientation_and_update_info_2(Halfedge_handle h,Inter_pt& p)
+template<class Halfedge_handle,class Inter_pt, class PolyhedronPointPMap>
+CGAL::Orientation get_orientation_and_update_info_2(Halfedge_handle h,Inter_pt& p, PolyhedronPointPMap ppmap)
 {
   typename Inter_pt::Exact_kernel::Coplanar_orientation_3 orient=
     typename Inter_pt::Exact_kernel().coplanar_orientation_3_object();
   typename Inter_pt::Converter converter;
   
-  CGAL::Orientation res = orient(converter(h->opposite()->vertex()->point()),
-                                 converter(h->vertex()->point()),
-                                 converter(h->next()->vertex()->point()),
+  CGAL::Orientation res = orient(converter(get(ppmap,h->opposite()->vertex())),
+                                 converter(get(ppmap,h->vertex())),
+                                 converter(get(ppmap,h->next()->vertex())),
                                  p.point);
   
   if ( (p.type_1==VERTEX || p.type_1==EDGE) && res==COLLINEAR){
@@ -237,8 +242,8 @@ CGAL::Orientation get_orientation_and_update_info_2(Halfedge_handle h,Inter_pt& 
   return res;
 }
   
-template <class Facet_handle,class Inter_pt>
-void intersection_coplanar_facets_cutoff(Facet_handle f,std::list<Inter_pt>& inter_pts,Facet_handle other)
+template <class Facet_handle,class Inter_pt,class PolyhedronPointPMap>
+void intersection_coplanar_facets_cutoff(Facet_handle f,std::list<Inter_pt>& inter_pts,Facet_handle other,PolyhedronPointPMap ppmap)
 {
   #ifdef CGAL_DEBUG_COPLANAR_TRIANGLE_INTERSECTION
   std::cout << "cutoff: " << f->opposite()->vertex()->point() << " " << f->vertex()->point() << std::endl;
@@ -251,7 +256,7 @@ void intersection_coplanar_facets_cutoff(Facet_handle f,std::list<Inter_pt>& int
     #ifdef CGAL_DEBUG_COPLANAR_TRIANGLE_INTERSECTION
     it->print_debug();
     #endif //CGAL_DEBUG_COPLANAR_TRIANGLE_INTERSECTION
-    orientations[ &(*it) ]=get_orientation_and_update_info_2(f,*it);
+    orientations[ &(*it) ]=get_orientation_and_update_info_2(f,*it,ppmap);
   }
   #ifdef CGAL_DEBUG_COPLANAR_TRIANGLE_INTERSECTION
   std::cout << std::endl;
@@ -270,7 +275,7 @@ void intersection_coplanar_facets_cutoff(Facet_handle f,std::list<Inter_pt>& int
     if ( (or_prev==POSITIVE && or_curr==NEGATIVE) || (or_prev==NEGATIVE && or_curr==POSITIVE) )
     {
       Iterator it_curr = inter_pts_size_g_2 ? it:boost::next(it);
-      prev=&(* inter_pts.insert( it_curr,Inter_pt(*prev,*curr,other,f) ) );
+      prev=&(* inter_pts.insert( it_curr,Inter_pt(*prev,*curr,other,f,ppmap) ) );
       orientations[prev]=COLLINEAR;
       ++pt_added;
     }
@@ -301,22 +306,23 @@ void intersection_coplanar_facets_cutoff(Facet_handle f,std::list<Inter_pt>& int
   if (should_revert_list && nb_interpt==2) inter_pts.reverse();
 }
   
-template <class Input_kernel,class Halfedge_handle>
+template <class Input_kernel,class Halfedge_handle,class PolyhedronPointPMap>
 void
 intersection_coplanar_facets(
   Halfedge_handle f1,
   Halfedge_handle f2,
-  std::list<Intersection_point_with_info<Input_kernel,Halfedge_handle> >& output )
+  PolyhedronPointPMap ppmap,
+  std::list<Intersection_point_with_info<Input_kernel,Halfedge_handle,PolyhedronPointPMap> >& output )
 {
-  typedef Intersection_point_with_info<Input_kernel,Halfedge_handle> Inter_pt;
-  output.push_back( Inter_pt(f1,f2) );
-  output.push_back( Inter_pt(f1->next(),f2) );
-  output.push_back( Inter_pt(f1->next()->next(),f2) );
+  typedef Intersection_point_with_info<Input_kernel,Halfedge_handle,PolyhedronPointPMap> Inter_pt;
+  output.push_back( Inter_pt(f1,f2,ppmap) );
+  output.push_back( Inter_pt(f1->next(),f2,ppmap) );
+  output.push_back( Inter_pt(f1->next()->next(),f2,ppmap) );
 
   //intersect f2 with the three half planes which intersection defines f1
-  intersection_coplanar_facets_cutoff(f2,output,f1);
-  intersection_coplanar_facets_cutoff(f2->next(),output,f1);
-  intersection_coplanar_facets_cutoff(f2->next()->next(),output,f1);
+  intersection_coplanar_facets_cutoff(f2,output,f1,ppmap);
+  intersection_coplanar_facets_cutoff(f2->next(),output,f1,ppmap);
+  intersection_coplanar_facets_cutoff(f2->next()->next(),output,f1,ppmap);
 }
 
 

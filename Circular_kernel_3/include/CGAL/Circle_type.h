@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s) : Monique Teillaud, Sylvain Pion, Pedro Machado, 
 //             Sebastien Loriot, Julien Hazebrouck, Damien Leroy
@@ -26,6 +27,9 @@
 
 #ifndef CGAL_CIRCLE_TYPE_H
 #define CGAL_CIRCLE_TYPE_H
+
+#include <CGAL/license/Circular_kernel_3.h>
+
 
 namespace CGAL {
   enum Circle_type {NORMAL, THREADED, POLAR, BIPOLAR};

@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Hans Tangelder (<hanst@cs.uu.nl>)
@@ -22,6 +23,9 @@
 // custom point container
 #ifndef CGAL_POINT_CONTAINER_H
 #define CGAL_POINT_CONTAINER_H
+
+#include <CGAL/license/Spatial_searching.h>
+
 
 #include <list>
 #include <vector>

@@ -13,6 +13,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Philipp Möller
@@ -21,8 +22,13 @@
 #ifndef CGAL_PROPERTIES_SURFACE_MESH_H
 #define CGAL_PROPERTIES_SURFACE_MESH_H
 
+#ifndef DOXYGEN_RUNNING
+
+#include <CGAL/license/Surface_mesh.h>
+
 #include <CGAL/assertions.h>
 #include <CGAL/Surface_mesh.h>
+#include <CGAL/Surface_mesh/Properties.h>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/number_utils.h>
@@ -58,7 +64,7 @@ public:
   }
 
 private:
-   typename SM::template Property_map< typename SM::Vertex_index, 
+   typename SM::template Property_map< typename SM::Vertex_index,
                                        typename SM::Point > pm_;
   const SM& sm_;
 };
@@ -81,21 +87,7 @@ public:
 
 } // CGAL
 
-// overloads and specializations in the boost namespace
 namespace boost {
-#if 1
-template <typename Point, typename T>
-struct property_map<CGAL::Surface_mesh<Point>, boost::vertex_property_t<T> >
-{
-  typedef CGAL::Surface_mesh<Point> SM;
-  typedef typename SM:: template Property_map<typename SM::vertex_index,T> type;
-  typedef type const_type;
-};
-
-
-#endif
-
-
 //
 // edge_weight
 //
@@ -222,7 +214,7 @@ struct property_map<CGAL::Surface_mesh<P>, CGAL::vertex_point_t >
     SM::template Property_map< typename SM::Vertex_index,
                                P
                                > type;
-
+  
   typedef type const_type;
 
 };
@@ -317,30 +309,84 @@ namespace boost
 
 } //boost
 
-#if 0
-//
+
+
 namespace CGAL {
-template <typename Point, typename T>
-typename boost::property_map<CGAL::Surface_mesh<Point>, boost::vertex_property_t<T> >::const_type
-get(boost::vertex_property_t<T> vprop, const CGAL::Surface_mesh<Point>& sm)
-{
-  return sm.template get_property_map<typename CGAL::Surface_mesh<Point>::Vertex_index, T>(vprop.s).first;
-}
+
+namespace internal {
 
 template <typename Point, typename T>
-typename boost::property_map<CGAL::Surface_mesh<Point>, boost::vertex_property_t<T> >::const_type
-add(boost::vertex_property_t<T> vprop, CGAL::Surface_mesh<Point>& sm)
+struct dynamic_property_map<CGAL::Surface_mesh<Point>, vertex_property_t<T> >
+{
+  typedef CGAL::Surface_mesh<Point> SM;
+  typedef typename SM:: template Property_map<typename SM::Vertex_index,T> type;
+  typedef type const_type;
+};
+
+template <typename Point, typename T>
+struct dynamic_property_map<CGAL::Surface_mesh<Point>, face_property_t<T> >
+{
+  typedef CGAL::Surface_mesh<Point> SM;
+  typedef typename SM:: template Property_map<typename SM::Face_index,T> type;
+  typedef type const_type;
+};
+
+template <typename Point, typename T>
+struct dynamic_property_map<CGAL::Surface_mesh<Point>, halfedge_property_t<T> >
+{
+  typedef CGAL::Surface_mesh<Point> SM;
+  typedef typename SM:: template Property_map<typename SM::Halfedge_index,T> type;
+  typedef type const_type;
+};
+
+template <typename Point, typename T>
+struct dynamic_property_map<CGAL::Surface_mesh<Point>, edge_property_t<T> >
+{
+  typedef CGAL::Surface_mesh<Point> SM;
+  typedef typename SM:: template Property_map<typename SM::Edge_index,T> type;
+  typedef type const_type;
+};
+
+
+template <typename Point, typename T>
+typename dynamic_property_map<CGAL::Surface_mesh<Point>, vertex_property_t<T> >::const_type
+add_property(vertex_property_t<T> vprop, CGAL::Surface_mesh<Point>& sm)
 {
   return sm.template add_property_map<typename CGAL::Surface_mesh<Point>::Vertex_index, T>(vprop.s, vprop.t).first;
 }
 
+template <typename Point, typename T>
+typename dynamic_property_map<CGAL::Surface_mesh<Point>, face_property_t<T> >::const_type
+add_property(face_property_t<T> vprop, CGAL::Surface_mesh<Point>& sm)
+{
+  return sm.template add_property_map<typename CGAL::Surface_mesh<Point>::Face_index, T>(vprop.s, vprop.t).first;
+}
+
+template <typename Point, typename T>
+typename dynamic_property_map<CGAL::Surface_mesh<Point>, edge_property_t<T> >::const_type
+add_property(edge_property_t<T> vprop, CGAL::Surface_mesh<Point>& sm)
+{
+  return sm.template add_property_map<typename CGAL::Surface_mesh<Point>::Edge_index, T>(vprop.s, vprop.t).first;
+}
+
+template <typename Point, typename T>
+typename dynamic_property_map<CGAL::Surface_mesh<Point>, halfedge_property_t<T> >::const_type
+add_property(halfedge_property_t<T> vprop, CGAL::Surface_mesh<Point>& sm)
+{
+  return sm.template add_property_map<typename CGAL::Surface_mesh<Point>::Halfedge_index, T>(vprop.s, vprop.t).first;
+}
+
 template <typename Pmap,typename P>
 void
-remove(Pmap pm, CGAL::Surface_mesh<P>& sm)
+remove_property(Pmap pm, CGAL::Surface_mesh<P>& sm)
 {
   return sm.remove_property_map(pm);
 }
+
+} // namespace internal
+
 } // namespace CGAL
-#endif
+
+#endif // DOXYGEN_RUNNING
 
 #endif /* CGAL_PROPERTIES_SURFACE_MESH_H */

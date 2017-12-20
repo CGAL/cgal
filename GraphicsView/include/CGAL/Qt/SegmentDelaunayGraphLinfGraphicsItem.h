@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Panagiotis Cheilaris, Sandeep Kumar Dey, Evanthia Papadopoulou
@@ -21,6 +22,9 @@
 
 #ifndef CGAL_QT_SEGMENT_DELAUNAY_GRAPH_LINF_GRAPHICS_ITEM_H
 #define CGAL_QT_SEGMENT_DELAUNAY_GRAPH_LINF_GRAPHICS_ITEM_H
+
+#include <CGAL/license/GraphicsView.h>
+
 
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Qt/PainterOstream.h>

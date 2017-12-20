@@ -14,11 +14,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s) : Pierre Alliez and Laurent Saboret
 
 #ifndef CGAL_PCA_ESTIMATE_NORMALS_H
 #define CGAL_PCA_ESTIMATE_NORMALS_H
+
+#include <CGAL/license/Point_set_processing_3.h>
+
 
 #include <CGAL/trace.h>
 #include <CGAL/Dimension.h>
@@ -135,7 +139,7 @@ pca_estimate_normal(const typename Kernel::Point_3& query, ///< point to compute
 // Public section
 // ----------------------------------------------------------------------------
 
-/// \ingroup PkgPointSetProcessing
+/// \ingroup PkgPointSetProcessingAlgorithms
 /// Estimates normal directions of the `[first, beyond)` range of points
 /// by linear least squares fitting of a plane over the k nearest neighbors.
 /// The output normals are randomly oriented.

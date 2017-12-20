@@ -16,6 +16,12 @@ if ( CGAL_FOUND )
 
   include_directories (BEFORE "../../include")
 
+  # Use Eigen
+  find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
+  if (EIGEN3_FOUND)
+    include( ${EIGEN3_USE_FILE} )
+  endif()
+
   # create a target per cppfile
   file(GLOB cppfiles RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
   foreach(cppfile ${cppfiles})

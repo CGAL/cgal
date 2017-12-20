@@ -14,11 +14,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s) : Pierre Alliez and Laurent Saboret
 
 #ifndef CGAL_READ_OFF_POINTS_H
 #define CGAL_READ_OFF_POINTS_H
+
+#include <CGAL/license/Point_set_processing_3.h>
+
 
 #include <CGAL/IO/io.h>
 #include <CGAL/property_map.h>
@@ -35,7 +39,7 @@ namespace CGAL {
 
 
 //===================================================================================
-/// \ingroup PkgPointSetProcessing
+/// \ingroup PkgPointSetProcessingIO
 /// Reads points (positions + normals, if available) from a .off ASCII stream.
 /// The function expects for each point a line with the x y z position,
 /// optionally followed by the nx ny nz normal.
@@ -272,7 +276,7 @@ read_off_points_and_normals(
 
 
 //===================================================================================
-/// \ingroup PkgPointSetProcessing
+/// \ingroup PkgPointSetProcessingIO
 /// Reads points (position only) from a .off ASCII stream.
 /// The function expects for each point a line with the x y z position.
 /// If the position is followed by the nx ny nz normal, then the normal will be ignored.

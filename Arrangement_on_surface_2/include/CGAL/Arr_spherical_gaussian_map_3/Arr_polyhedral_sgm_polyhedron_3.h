@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
-// 
+// SPDX-License-Identifier: GPL-3.0+
+//
 //
 // Author(s)     : Efi Fogel          <efif@post.tau.ac.il>
 
 #ifndef CGAL_ARR_POLYHEDRAL_SGM_POLYHEDRON_3_H
 #define CGAL_ARR_POLYHEDRAL_SGM_POLYHEDRON_3_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 
 /*! \file
  * Related definition of a Polyhedron_3 data structure, an instance of which
@@ -157,7 +161,7 @@ public:
 
   /*! Set the vertex */
   void set_vertex(Arr_vertex_handle vertex) { m_vertex = vertex; }
-  
+
   /*! Set the "marked" flag */
   void set_marked(bool marked) { m_marked = marked; }
 
@@ -214,5 +218,23 @@ struct Arr_polyhedral_sgm_polyhedron_3 :
 };
 
 } //namespace CGAL
+
+//! Make the polyhedron a model of FaceGraph
+namespace boost {
+
+template <typename Sgm, typename Traits>
+struct graph_traits<CGAL::Arr_polyhedral_sgm_polyhedron_3<Sgm, Traits> > :
+  public graph_traits<CGAL::Polyhedron_3
+                      <Traits, CGAL::Arr_polyhedral_sgm_polyhedron_items<Sgm> > >
+{};
+
+template <typename Sgm, typename Traits, typename Tag>
+struct property_map<CGAL::Arr_polyhedral_sgm_polyhedron_3<Sgm, Traits>, Tag> :
+  public property_map<CGAL::Polyhedron_3
+                      <Traits, CGAL::Arr_polyhedral_sgm_polyhedron_items<Sgm> >,
+                      Tag>
+{};
+
+}
 
 #endif

@@ -12,8 +12,7 @@ something is `true` or `false` respectively.
 
 */
 template< typename bool value >
-class Boolean_tag {
-public:
+struct Boolean_tag {
 
 /// \name Constants 
 /// @{ 
@@ -92,8 +91,7 @@ General tag indicating that non of any other possible tags is valid.
 \sa `AlgebraicStructureTraits` 
 
 */
-class Null_tag {
-public:
+struct Null_tag {
 }; /* end Null_tag */
 
 } /* end namespace CGAL */

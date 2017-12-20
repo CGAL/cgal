@@ -1,3 +1,0 @@
-#!/bin/sh
-
-./b2 -j2 -d+2 cxxflags="-D_HAS_ITERATOR_DEBUGGING=0 -D_SECURE_SCL=0" toolset=msvc-9.0 link=static --with-thread --with-date_time --with-program_options --with-filesystem --with-system  debug release stage

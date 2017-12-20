@@ -12,12 +12,19 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s) : Baruch Zukerman <baruchzu@post.tau.ac.il>
 //             Efi Fogel       <efifogel@gmail.com>
 //               (based on old version by Tali Zvi)
 
 #ifndef CGAL_BASIC_SWEEP_LINE_2_H
 #define CGAL_BASIC_SWEEP_LINE_2_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 
 /*! \file
  * Definition of the Basic_sweep_line_2 class.
@@ -237,7 +244,7 @@ public:
    */
   Basic_sweep_line_2(const Traits_2* traits, Visitor* visitor);
 
-  /*! Destrcutor. */
+  /*! Destructor. */
   virtual ~Basic_sweep_line_2();
 
   /*! Run the sweep-line algorithm on a given range of x-monotone curves.
@@ -396,7 +403,7 @@ protected:
   /*! Initialize the data structures for the sweep-line algorithm. */
   virtual void _init_structures();
 
-  /*! Complete the sweep (complete data strcures). */
+  /*! Complete the sweep (complete data structures). */
   virtual void _complete_sweep();
 
   /*! Initialize an event associated with a point.
@@ -426,12 +433,12 @@ protected:
 
   /*! Handle an event that does not have any incident left curves.
    * Such an event is usually the left endpoint of its incident right
-   * subcurves, and we locate thei position in the status line.
+   * subcurves, and we locate their position in the status line.
    */
   void _handle_event_without_left_curves();
 
   /*! Sort the left subcurves of an event point according to their order in
-   * their status line (no geometric comprasions are needed).
+   * their status line (no geometric comparisons are needed).
    */
   void _sort_left_curves();
 
@@ -443,8 +450,7 @@ protected:
    * \param curve The subcurve to add.
    * \return (true) if an overlap occured; (false) otherwise.
    */
-  virtual bool _add_curve_to_right(Event* event, Subcurve* curve,
-                                   bool overlap_exist = false);
+  virtual bool _add_curve_to_right(Event* event, Subcurve* curve);
 
   /*! Remove a curve from the status line. */
   void _remove_curve_from_status_line(Subcurve *leftCurve);

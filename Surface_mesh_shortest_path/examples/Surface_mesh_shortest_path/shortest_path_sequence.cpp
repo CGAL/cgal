@@ -1,41 +1,37 @@
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
-#include <iterator>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Random.h>
 
-#include <CGAL/Polyhedron_3.h>
-#include <CGAL/Polyhedron_items_with_id_3.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
+#include <CGAL/Surface_mesh.h>
 
 #include <CGAL/Surface_mesh_shortest_path.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#include <CGAL/boost/graph/iterator.h>
 
 #include <boost/variant.hpp>
+#include <boost/lexical_cast.hpp>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3> Polyhedron_3;
-typedef CGAL::Surface_mesh_shortest_path_traits<Kernel, Polyhedron_3> Traits;
+typedef CGAL::Surface_mesh<Kernel::Point_3> Triangle_mesh;
+typedef CGAL::Surface_mesh_shortest_path_traits<Kernel, Triangle_mesh> Traits;
 typedef CGAL::Surface_mesh_shortest_path<Traits> Surface_mesh_shortest_path;
-typedef Traits::Barycentric_coordinate Barycentric_coordinate;
-typedef boost::graph_traits<Polyhedron_3> Graph_traits;
+typedef Traits::Barycentric_coordinates Barycentric_coordinates;
+typedef boost::graph_traits<Triangle_mesh> Graph_traits;
 typedef Graph_traits::vertex_iterator vertex_iterator;
 typedef Graph_traits::face_iterator face_iterator;
 typedef Graph_traits::vertex_descriptor vertex_descriptor;
 typedef Graph_traits::face_descriptor face_descriptor;
 typedef Graph_traits::halfedge_descriptor halfedge_descriptor;
 
-// A model of SurfaceMeshShortestPathVisitor storing simplicies
+// A model of SurfacemeshShortestPathVisitor storing simplicies
 // using boost::variant
 struct Sequence_collector
 {
   typedef boost::variant< vertex_descriptor,
                          std::pair<halfedge_descriptor,double>,
-                         std::pair<face_descriptor, Barycentric_coordinate> > Simplex;
+                         std::pair<face_descriptor, Barycentric_coordinates> > Simplex;
   std::vector< Simplex > sequence;
 
   void operator()(halfedge_descriptor he, double alpha)
@@ -49,7 +45,7 @@ struct Sequence_collector
     sequence.push_back( v );
   }
 
-  void operator()(face_descriptor f, Barycentric_coordinate alpha)
+  void operator()(face_descriptor f, Barycentric_coordinates alpha)
   {
     sequence.push_back( std::make_pair(f, alpha) );
   }
@@ -58,9 +54,9 @@ struct Sequence_collector
 // A visitor to print what a variant contains using boost::apply_visitor
 struct Print_visitor : public boost::static_visitor<> {
   int i;
-  Polyhedron_3& g;
+  Triangle_mesh& g;
 
-  Print_visitor(Polyhedron_3& g) :i(-1), g(g) {}
+  Print_visitor(Triangle_mesh& g) :i(-1), g(g) {}
 
   void operator()(vertex_descriptor v)
   {
@@ -74,7 +70,7 @@ struct Print_visitor : public boost::static_visitor<> {
                                             << h_a.second << ")\n";
   }
 
-  void operator()(const std::pair<face_descriptor, Barycentric_coordinate>& f_bc)
+  void operator()(const std::pair<face_descriptor, Barycentric_coordinates>& f_bc)
   {
     std::cout << "#" << ++i << " : Face : " << get(CGAL::face_index, g)[f_bc.first] << " , ("
                                             << f_bc.second[0] << " , "
@@ -85,38 +81,34 @@ struct Print_visitor : public boost::static_visitor<> {
 
 int main(int argc, char** argv)
 {
-  // read input polyhedron
-  Polyhedron_3 polyhedron;
+  Triangle_mesh tmesh;
   std::ifstream input((argc>1)?argv[1]:"data/elephant.off");
-  input >> polyhedron;
+  input >> tmesh;
   input.close();
 
-  // initialize indices of vertices, halfedges and facets
-  CGAL::set_halfedgeds_items_id(polyhedron);
-
   // pick up a random face
-  const size_t randSeed = argc > 2 ? std::atoi(argv[2]) : 7915421;
+  const unsigned int randSeed = argc > 2 ? boost::lexical_cast<unsigned int>(argv[2]) : 7915421;
   CGAL::Random rand(randSeed);
-  const int target_face_index = rand.get_int(0, num_faces(polyhedron));
-  face_iterator face_it = faces(polyhedron).first;
+  const int target_face_index = rand.get_int(0, static_cast<int>(num_faces(tmesh)));
+  face_iterator face_it = faces(tmesh).first;
   std::advance(face_it,target_face_index);
-  // ... and define a barycentric coordinate inside the face
-  Barycentric_coordinate face_location = {{0.25, 0.5, 0.25}};
+  // ... and define a barycentric coordinates inside the face
+  Barycentric_coordinates face_location = {{0.25, 0.5, 0.25}};
 
   // construct a shortest path query object and add a source point
-  Surface_mesh_shortest_path shortest_paths(polyhedron);
+  Surface_mesh_shortest_path shortest_paths(tmesh);
   shortest_paths.add_source_point(*face_it, face_location);
 
   // pick a random target point inside a face
-  face_it = faces(polyhedron).first;
-  std::advance(face_it, rand.get_int(0, num_faces(polyhedron)));
+  face_it = faces(tmesh).first;
+  std::advance(face_it, rand.get_int(0, static_cast<int>(num_faces(tmesh))));
 
   // collect the sequence of simplicies crossed by the shortest path
   Sequence_collector sequence_collector;
   shortest_paths.shortest_path_sequence_to_source_points(*face_it, face_location, sequence_collector);
 
   // print the sequence using the visitor pattern
-  Print_visitor print_visitor(polyhedron);
+  Print_visitor print_visitor(tmesh);
   for (size_t i = 0; i < sequence_collector.sequence.size(); ++i)
     boost::apply_visitor(print_visitor, sequence_collector.sequence[i]);
 

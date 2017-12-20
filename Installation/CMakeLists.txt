@@ -8,26 +8,10 @@ if(NOT PROJECT_NAME)
 endif()
 
 # Minimal version of CMake:
-cmake_minimum_required(VERSION 2.8.11)
+cmake_minimum_required(VERSION 3.1)
 
 # Tested version:
-cmake_policy(VERSION 2.8.11)
-
-#
-# Compatibility with CMake 3.0
-#
-if(POLICY CMP0042)
-  # Do not enable the use of MACOSX_RPATH
-  # http://www.cmake.org/cmake/help/v3.0/policy/CMP0042.html
-  cmake_policy(SET CMP0042 OLD)
-endif()
-
-# Compatibility with CMake 3.1
-if(POLICY CMP0054)
-  # http://www.cmake.org/cmake/help/v3.1/policy/CMP0054.html
-  # See the discussion https://github.com/CGAL/cgal/issues/189
-  cmake_policy(SET CMP0054 NEW)
-endif()
+cmake_policy(VERSION 3.1)
 
 if(POLICY CMP0056)
   # http://www.cmake.org/cmake/help/v3.2/policy/CMP0056.html
@@ -51,12 +35,11 @@ include(GNUInstallDirs)
 if(CMAKE_MAJOR_VERSION GREATER 2)
   # In header only mode, we use INTERFACE libraries, which was introduced in cmake 3.0.
   # Thus this option is only enabled for cmake >= 3.0.
-  option(CGAL_HEADER_ONLY "Enable the header only version of CGAL" OFF )
 
   if (CGAL_HEADER_ONLY)
     set(CGAL_HEADER_ONLY TRUE CACHE BOOL "Enable cgal header only" FORCE)
     add_definitions(-DCGAL_HEADER_ONLY)
-  endif (CGAL_HEADER_ONLY)
+  endif()
 
 endif()
 
@@ -81,7 +64,7 @@ if ( CGAL_BRANCH_BUILD )
   foreach (package ${CGAL_CONFIGURED_PACKAGES})
     if (NOT IS_DIRECTORY "${CMAKE_SOURCE_DIR}/${package}")
       list(APPEND CGAL_WRONG_PACKAGES ${package})
-    elseif(NOT IS_DIRECTORY "${CMAKE_SOURCE_DIR}/${package}/package_info")
+    elseif(NOT EXISTS "${CMAKE_SOURCE_DIR}/${package}/package_info/${package}/maintainer")
       list(APPEND CGAL_WRONG_PACKAGES ${package})
     endif()
   endforeach()
@@ -135,7 +118,10 @@ else ( CGAL_BRANCH_BUILD )
   # Enable testing with BUILD_TESTING
   option(BUILD_TESTING "Build the testing tree." OFF)
   include(CTest)
-
+  if(BUILD_TESTING AND NOT POLICY CMP0064)
+    message(FATAL_ERROR "CGAL support of CTest requires CMake version 3.4 or later.
+The variable BUILD_TESTING must be set of OFF.")
+  endif()
 endif (CGAL_BRANCH_BUILD )
 
 #message(STATUS "Packages found: ${CGAL_CONFIGURED_PACKAGES}")
@@ -212,7 +198,8 @@ if ( CGAL_BRANCH_BUILD )
   message(STATUS "CGAL_CREATED_SVN_REVISION is ${CGAL_CREATED_SVN_REVISION} (dummy)")
 
   file(REMOVE ${CMAKE_BINARY_DIR}/include/CGAL/version.h)
-  configure_file(${CGAL_INSTALLATION_PACKAGE_DIR}/config/version.h.in ${CMAKE_BINARY_DIR}/include/CGAL/version.h @ONLY)
+  string(TIMESTAMP CGAL_CREATED_RELEASE_DATE "%Y%m%d")
+  configure_file(${CGAL_INSTALLATION_PACKAGE_DIR}/cmake/modules/config/version.h.in ${CMAKE_BINARY_DIR}/include/CGAL/version.h @ONLY)
 
   #
   # Duplicate files
@@ -383,11 +370,13 @@ endif()
 #   CGAL-4.7   : 11.0.1 (Nothing different in CGAL compiled libraries.)
 #   CGAL-4.8   : 11.0.2 (Nothing different in CGAL compiled libraries.)
 #   CGAL-4.9   : 12.0.0 (Change the API/ABI in CGAL_ImageIO, but issue with 4GB images.)
-#   CGAL-4.1-  : 13.0.0 (Change the API/ABI in CGAL_ImageIO.)
+#   CGAL-4.10  : 13.0.0 (Change the API/ABI in CGAL_ImageIO.)
+#   CGAL-4.11  : 13.0.1 (Nothing different in CGAL compiled libraries.)
+#   CGAL-4.12  : 13.0.2 (Nothing different in CGAL compiled libraries.)
 # ¹) According to http://upstream-tracker.org/versions/cgal.html
 
 set( CGAL_SONAME_VERSION "13" )
-set( CGAL_SOVERSION      "13.0.0" )
+set( CGAL_SOVERSION      "13.0.2" )
 
 message( STATUS "CGAL_SONAME_VERSION=${CGAL_SONAME_VERSION}" )
 message( STATUS "CGAL_SOVERSION     =${CGAL_SOVERSION}" )
@@ -450,6 +439,7 @@ endif()
 include(CGAL_Common)
 include(CGAL_GeneratorSpecificSettings)
 include(CGAL_CheckCXXFileRuns)
+include(CGAL_add_test)
 
 mark_as_advanced(CMAKE_BACKWARDS_COMPATIBILITY)
 
@@ -560,12 +550,18 @@ message( "== Generate version files (DONE) ==\n")
 #                                    -= External libraries =-
 #
 #--------------------------------------------------------------------------------------------------
- 
-message("== Set up flags ==")
 
-include(CGAL_SetupFlags)
+if( RUNNING_CGAL_AUTO_TEST )
+  message("== Set up flags ==")
 
-message("== Set up flags (DONE) ==\n")
+  # Ugly hack to be compatible with current CGAL testsuite process (as of
+  # Nov. 2017). -- Laurent Rineau
+  include(CGAL_SetupFlags)
+
+  message("== Set up flags (DONE) ==\n")
+else()
+  include( CGAL_display_flags )
+endif()
 
 message("== Detect external libraries ==")
 
@@ -627,8 +623,13 @@ if(CGAL_DISABLE_GMP)
     "#error GMP is disabled by the CMake option CGAL_DISABLE_GMP")
 else()
   list(APPEND      CGAL_ESSENTIAL_3RD_PARTY_LIBRARIES GMP MPFR)
-  # Where CMake is run several times, to avoid duplicates
+  if(WITH_GMPXX)
+    list(APPEND      CGAL_ESSENTIAL_3RD_PARTY_LIBRARIES GMPXX)
+  endif()
+
+  # When CMake is run several times, to avoid duplicates
   list (REMOVE_DUPLICATES CGAL_ESSENTIAL_3RD_PARTY_LIBRARIES)
+
   file(REMOVE "${CMAKE_BINARY_DIR}/include/gmp.h")
 endif()
 hide_variable(CGAL_ESSENTIAL_3RD_PARTY_LIBRARIES)
@@ -677,7 +678,9 @@ option( CGAL_ENABLE_PRECONFIG "Select to allow to preconfiguration of external l
 # this; e.g. in MPFI/RS in Algebraic_kernel_d. For these cases CGAL
 # and the example/test must be configured with MPFI (just one is not sufficient)
 
-include(CGAL_SetupDependencies)
+if(NOT CGAL_HEADER_ONLY)
+  include(CGAL_SetupDependencies)
+endif()
 
 message("== Detect external libraries (DONE) ==\n")
 
@@ -687,6 +690,7 @@ message("== Detect external libraries (DONE) ==\n")
 #
 #--------------------------------------------------------------------------------------------------
 
+if(NOT CGAL_HEADER_ONLY)
 # The variables set are the #defines expected by compiler_config.h
 # Note: CMake will not notice when files are added or removed
 # but this is probably OK for the installation procedure.
@@ -701,25 +705,27 @@ macro(add_config_flag flag)
     endif()
 endmacro()
 
-file(GLOB all_config_tests "${CGAL_INSTALLATION_PACKAGE_DIR}/config/testfiles/*.cpp")
-list(SORT all_config_tests)
+if(NOT CMAKE_CROSSCOMPILING)
+  file(GLOB all_config_tests "${CGAL_MODULES_DIR}/config/testfiles/*.cpp")
+  list(SORT all_config_tests)
 
-file(WRITE ${CMAKE_BINARY_DIR}/include/CGAL/compiler_config.h "//\n// compiler_config.h is included by CGAL headers to load the needed compiler settings.\n//\n// DO NOT EDIT compiler_config.h. It is generated by CMake.\n//\n\n")
+  file(WRITE ${CMAKE_BINARY_DIR}/include/CGAL/compiler_config.h "//\n// compiler_config.h is included by CGAL headers to load the needed compiler settings.\n//\n// DO NOT EDIT compiler_config.h. It is generated by CMake.\n//\n\n")
 
-foreach(config_test_cpp ${all_config_tests})
-  # Test's name is .cpp's base name
-  get_filename_component(config_test_name ${config_test_cpp} NAME_WE)
+  foreach(config_test_cpp ${all_config_tests})
+    # Test's name is .cpp's base name
+    get_filename_component(config_test_name ${config_test_cpp} NAME_WE)
 
-  # Compile and run ${config_test_cpp}. Exit code is stored in ${config_test_name}.
-  CHECK_CXX_FILE_RUNS(${config_test_cpp} ${config_test_name} ${config_test_name})
-  if(${config_test_name})
-    set(${config_test_name} 0)
-  else()
-    set(${config_test_name} 1)
-  endif()
+    # Compile and run ${config_test_cpp}. Exit code is stored in ${config_test_name}.
+    CHECK_CXX_FILE_RUNS(${config_test_cpp} ${config_test_name} ${config_test_name})
+    if(${config_test_name})
+      set(${config_test_name} 0)
+    else()
+      set(${config_test_name} 1)
+    endif()
 
-  add_config_flag(${config_test_name} ${config_test_name})
-endforeach()
+    add_config_flag(${config_test_name} ${config_test_name})
+  endforeach()
+endif()
 
 add_config_flag(CGAL_USE_GMP)
 add_config_flag(CGAL_USE_MPFR)
@@ -744,6 +750,10 @@ if ( RUNNING_CGAL_AUTO_TEST AND MSVC )
   file( APPEND "${CMAKE_BINARY_DIR}/include/CGAL/compiler_config.h" "#include <CGAL/Testsuite/vc_debug_hook.h>\n\n" )
 endif()
 
+message("== Write compiler_config.h (DONE) ==\n")
+
+endif(NOT CGAL_HEADER_ONLY)
+
 #--------------------------------------------------------------------------------------------------
 #
 #                                    -= Installation Setup =-
@@ -762,19 +772,17 @@ set ( CGAL_INSTALL_BIN_DIR   "${CMAKE_INSTALL_BINDIR}"
   CACHE STRING "The folder where CGAL user-side scripts will be installed, relative to CMAKE_INSTALL_PREFIX"
   )
 
-set ( CGAL_INSTALL_CMAKE_DIR "${CGAL_INSTALL_LIB_DIR}/CGAL"
+set ( CGAL_INSTALL_CMAKE_DIR "${CGAL_INSTALL_LIB_DIR}/cmake/CGAL"
   CACHE STRING "The folder where CGAL CMake modules will be installed, relative to CMAKE_INSTALL_PREFIX" 
   )
 
-set ( CGAL_INSTALL_DOC_DIR "${CMAKE_INSTALL_FULL_DATAROOTDIR}/doc/${CGAL_VERSION_DIR}"
+set ( CGAL_INSTALL_DOC_DIR "${CMAKE_INSTALL_DATAROOTDIR}/doc/${CGAL_VERSION_DIR}"
   CACHE STRING "The folder where CGAL documentation and license files will be installed, relative to CMAKE_INSTALL_PREFIX"
   )
 
-set ( CGAL_INSTALL_MAN_DIR "${CMAKE_INSTALL_FULL_DATAROOTDIR}/man/man1"
+set ( CGAL_INSTALL_MAN_DIR "${CMAKE_INSTALL_DATAROOTDIR}/man/man1"
   CACHE STRING "The folder where manual pages for CGAL scripts will be installed, relative to CMAKE_INSTALL_PREFIX"
   )
-
-message("== Write compiler_config.h (DONE) ==\n")
 
 #--------------------------------------------------------------------------------------------------
 #
@@ -790,7 +798,9 @@ set(CGAL_LIBRARIES_DIR ${CMAKE_BINARY_DIR}/lib)
 set(CGAL_INCLUDE_DIRS ${CMAKE_BINARY_DIR}/include)
 
 foreach (package ${CGAL_CONFIGURED_PACKAGES})
-  set(CGAL_INCLUDE_DIRS ${CGAL_INCLUDE_DIRS} ${package}/include)
+  if(EXISTS ${package}/include)
+    set(CGAL_INCLUDE_DIRS ${CGAL_INCLUDE_DIRS} ${package}/include)
+  endif()
 endforeach()
 
 include_directories (${CGAL_INCLUDE_DIRS})
@@ -849,7 +859,12 @@ if (CGAL_BRANCH_BUILD AND CGAL_REPORT_DUPLICATE_FILES )
 
 endif()
 
-create_CGALconfig_files()
+if(NOT CGAL_HEADER_ONLY)
+  create_CGALconfig_files()
+else()
+  configure_file("${CGAL_MODULES_DIR}/CGALConfig_binary_header_only.cmake.in"
+    "${CMAKE_BINARY_DIR}/CGALConfig.cmake"  @ONLY)
+endif()
 
 #--------------------------------------------------------------------------------------------------
 #
@@ -860,7 +875,7 @@ create_CGALconfig_files()
 # DESTINATION option is mandatory; skipping it breaks CPack!
 
 if(CGAL_INSTALL_DOC_DIR)
-  install(FILES AUTHORS CHANGES LICENSE LICENSE.FREE_USE LICENSE.GPL LICENSE.LGPL DESTINATION ${CGAL_INSTALL_DOC_DIR} )
+  install(FILES AUTHORS changes.md LICENSE LICENSE.FREE_USE LICENSE.GPL LICENSE.LGPL DESTINATION ${CGAL_INSTALL_DOC_DIR} )
 endif()
 
 #install all includes collected in trunk et cetera
@@ -894,10 +909,17 @@ if ( ZLIB_IN_AUXILIARY )
 endif()
 
 
-install(FILES
-  ${CMAKE_BINARY_DIR}/CGALConfigVersion.cmake
-  ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake
-  DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
+if(NOT CGAL_HEADER_ONLY)
+  install(FILES
+    ${CMAKE_BINARY_DIR}/CGALConfigVersion.cmake
+    ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake
+    DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
+else()
+  install(FILES
+    ${CMAKE_BINARY_DIR}/CGALConfigVersion.cmake
+    ${CMAKE_CURRENT_LIST_DIR}/lib/cmake/CGAL/CGALConfig.cmake
+    DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
+endif()
 
 if(CGAL_INSTALL_MAN_DIR)
   install(FILES auxiliary/cgal_create_cmake_script.1 DESTINATION ${CGAL_INSTALL_MAN_DIR} )
@@ -1087,7 +1109,7 @@ because IPE_FOUND is false.")
 
     if(NOT DEFINED CGAL_CHECK_SYNTAX_ONLY)
       execute_process(COMMAND 
-        ${CMAKE_CXX_COMPILER} -x c++ -fsyntax-only ${CMAKE_CURRENT_SOURCE_DIR}/config/support/test_syntaxonly.cpp
+        ${CMAKE_CXX_COMPILER} -x c++ -fsyntax-only ${CGAL_MODULES_DIR}/config/support/test_syntaxonly.cpp
         ERROR_QUIET
         RESULT_VARIABLE ok)
       if(ok EQUAL 0)
@@ -1150,12 +1172,28 @@ You must disable CGAL_ENABLE_CHECK_HEADERS and CGAL_COMPUTE_DEPENDENCIES.")
         endif()
         foreach(header ${${package}_HEADERS})
           set(skip_hdr FALSE)
-          if(POLICY CMP0057
-              AND has_list_of_documented_headers
-              AND NOT header IN_LIST list_of_documented_headers
-              )
-            message(STATUS "Skip non-documented header \"${header}\".")
-            set(skip_hdr TRUE)
+          if(POLICY CMP0057)
+            if(has_list_of_documented_headers
+                AND NOT header IN_LIST list_of_documented_headers)
+              message(STATUS "Skip non-documented header \"${header}\".")
+              set(skip_hdr TRUE)
+            endif()
+          endif()
+          if(NOT QGLVIEWER_FOUND)
+            string(REGEX MATCH "CGAL/Three/.*" is_a_three_header ${header})
+            if(is_a_three_header)
+              message(STATUS "Skip Three header \"${header}\" because \
+QGLVIEWER_FOUND is false.")
+              set(skip_hdr TRUE)
+            endif()
+          endif()
+          if(NOT VTK_FOUND)
+            string(REGEX MATCH ".*vtk.*" is_a_vtk_header ${header})
+            if(is_a_vtk_header)
+              message(STATUS "Skip VTK header \"${header}\" because \
+VTK_FOUND is false.")
+              set(skip_hdr TRUE)
+            endif()
           endif()
           string(REGEX MATCH "CGAL/leda_.*" is_a_leda_header ${header})
           if(NOT LEDA_FOUND AND is_a_leda_header)
@@ -1163,11 +1201,12 @@ You must disable CGAL_ENABLE_CHECK_HEADERS and CGAL_COMPUTE_DEPENDENCIES.")
 LEDA_FOUND is false.")
             set(skip_hdr TRUE)
           endif()
-          if(POLICY CMP0057
-              AND has_list_of_whitelisted_headers
-              AND header IN_LIST list_of_whitelisted_headers)
-            message(STATUS "Skip whitelisted header \"${header}\".")
-            set(skip_hdr TRUE)
+          if(POLICY CMP0057)
+            if(has_list_of_whitelisted_headers
+                AND header IN_LIST list_of_whitelisted_headers)
+              message(STATUS "Skip whitelisted header \"${header}\".")
+              set(skip_hdr TRUE)
+            endif()
           endif()
           if(NOT skip_hdr)
             string(REPLACE "/" "__" header2 "${header}")

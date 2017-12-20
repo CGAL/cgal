@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Stephane Tayeb
@@ -24,6 +25,9 @@
 
 #ifndef CGAL_MESH_EDGE_CRITERIA_3_H
 #define CGAL_MESH_EDGE_CRITERIA_3_H
+
+#include <CGAL/license/Mesh_3.h>
+
 
 #include <CGAL/Mesh_constant_domain_field_3.h>
 #include <boost/type_traits.hpp>
@@ -100,7 +104,7 @@ public:
   typedef typename Tr::Vertex::Index  Index;
   typedef typename Tr::Geom_traits    Gt;
   typedef typename Gt::FT             FT;
-  typedef typename Gt::Point_3        Point_3;
+  typedef typename Tr::Bare_point     Point_3;
   
   /// Constructors
   Mesh_edge_criteria_3(const FT& value)

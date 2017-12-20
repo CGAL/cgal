@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Michal Meyerovitch     <gorgymic@post.tau.ac.il>
 //                 Baruch Zukerman        <baruchzu@post.tau.ac.il>
@@ -21,6 +22,9 @@
 
 #ifndef CGAL_ENVELOPE_BASE_H
 #define CGAL_ENVELOPE_BASE_H
+
+#include <CGAL/license/Envelope_3.h>
+
 
 namespace CGAL {
 

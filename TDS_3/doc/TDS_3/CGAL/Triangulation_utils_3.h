@@ -27,8 +27,7 @@ Operations on indices.
 \cgalFigureCaptionEnd
 */
 
-class Triangulation_utils_3 {
-public:
+struct Triangulation_utils_3 {
 
 /// \name Operations 
 /// @{

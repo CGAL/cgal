@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Mariette Yvinec
 
 #ifndef CGAL_TRIANGULATION_2_TRAITS_3_H
 #define CGAL_TRIANGULATION_2_TRAITS_3_H
+
+#include <CGAL/license/Triangulation_2.h>
+
 
 
 #include <CGAL/Point_3.h>

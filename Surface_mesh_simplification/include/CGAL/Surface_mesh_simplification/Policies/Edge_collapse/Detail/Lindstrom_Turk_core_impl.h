@@ -13,11 +13,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
 #ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_DETAIL_LINDSTROM_TURK_CORE_IMPL_H
 #define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_DETAIL_LINDSTROM_TURK_CORE_IMPL_H 1
+
+#include <CGAL/license/Surface_mesh_simplification.h>
+
 
 namespace CGAL {
 
@@ -87,7 +91,7 @@ void LindstromTurkCore<ECM,K>::Extract_triangle_data()
   for ( const_triangle_iterator it = mProfile.triangles().begin(), eit = mProfile.triangles().end() ; it != eit ; ++ it )
   {
     Triangle const& tri = *it ;
-    
+
     Point const& p0 = get_point(tri.v0);
     Point const& p1 = get_point(tri.v1);
     Point const& p2 = get_point(tri.v2);

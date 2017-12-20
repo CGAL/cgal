@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
@@ -21,6 +22,9 @@
 
 #ifndef CGAL_BOX_INTERSECTION_D_BOX_WITH_HANDLE_D_H
 #define CGAL_BOX_INTERSECTION_D_BOX_WITH_HANDLE_D_H
+
+#include <CGAL/license/Box_intersection_d.h>
+
 
 #include <CGAL/basic.h>
 #include <CGAL/Box_intersection_d/Box_d.h>

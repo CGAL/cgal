@@ -6,7 +6,8 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Triangulation_2.h>
 #include <CGAL/Delaunay_triangulation_3.h>
-#include <CGAL/Linear_cell_complex.h>
+#include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
+#include <CGAL/Linear_cell_complex_for_generalized_map.h>
 #include <CGAL/boost/graph/graph_traits_Arrangement_2.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/graph_traits_Triangulation_2.h>
@@ -31,7 +32,8 @@ typedef CGAL::Triangulation_data_structure_3<
 typedef CGAL::Delaunay_triangulation_3<Kernel, Tds> Triangulation_3;
 #endif
 
-typedef CGAL::Linear_cell_complex<3, 3> Linear_cell_complex_3;
+typedef CGAL::Linear_cell_complex_for_combinatorial_map<3, 3> Linear_cell_complex_3_cmap;
+typedef CGAL::Linear_cell_complex_for_generalized_map<3, 3> Linear_cell_complex_3_gmap;
 
 
 template <typename P,typename Descriptor>
@@ -46,10 +48,11 @@ fct(const P& )
   U[d] = 12;
 }
 
+template<typename LCC>
 void fct2()
 {
-  typedef Linear_cell_complex_3::Dart_handle dh;
-  typedef Linear_cell_complex_3::Vertex_attribute_handle vh;
+  typedef typename LCC::Dart_handle dh;
+  typedef typename LCC::Vertex_attribute_handle vh;
 
   { // For dart handle
   std::map<dh, int> M;
@@ -138,7 +141,8 @@ int main()
   T.insert(Kernel::Point_2(1,1));
   fct4(T);
 
-  fct2();
+  fct2<Linear_cell_complex_3_cmap>();
+  fct2<Linear_cell_complex_3_gmap>();
 
 #ifdef CGAL_LINKED_WITH_TBB
   Triangulation_3 T3;

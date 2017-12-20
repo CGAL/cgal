@@ -1,7 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/point_generators_3.h>
 
 #include <CGAL/Side_of_triangle_mesh.h>
@@ -17,7 +15,7 @@ typedef CGAL::Polyhedron_3<K> Polyhedron;
 
 double max_coordinate(const Polyhedron& poly)
 {
-  double max_coord = (std::numeric_limits<double>::min)();
+  double max_coord = -std::numeric_limits<double>::infinity();
   BOOST_FOREACH(Polyhedron::Vertex_handle v, vertices(poly))
   {
     Point p = v->point();
@@ -34,9 +32,10 @@ int main(int argc, char* argv[])
   std::ifstream input(filename);
 
   Polyhedron poly;
-  if (!input || !(input >> poly) || poly.empty())
+  if (!input || !(input >> poly) || poly.empty()
+             || !CGAL::is_triangle_mesh(poly))
   {
-    std::cerr << "Not a valid off file." << std::endl;
+    std::cerr << "Not a valid input file." << std::endl;
     return 1;
   }
 

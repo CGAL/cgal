@@ -13,12 +13,16 @@
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
-// $Id$ 
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     :  Peter Hachenberger <hachenberger@mpi-sb.mpg.de>
 #ifndef CGAL_MS3_POINTMARK_H
 #define CGAL_MS3_POINTMARK_H
+
+#include <CGAL/license/Minkowski_sum_3.h>
+
 
 namespace CGAL {
 

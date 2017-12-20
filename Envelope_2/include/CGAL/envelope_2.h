@@ -14,11 +14,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Ron Wein   <wein@post.tau.ac.il>
 
 #ifndef CGAL_ENVELOPE_2_H
 #define CGAL_ENVELOPE_2_H
+
+#include <CGAL/license/Envelope_2.h>
+
 
 /*! \file
  * Global functions for computing lower and upper envelopes of curves in the

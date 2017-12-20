@@ -31,7 +31,7 @@ int main(int argc, char* argv[])
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
   typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3> Polyhedron_3;
   typedef CGAL::Surface_mesh_shortest_path_traits<Kernel, Polyhedron_3> Traits;
-  typedef Traits::Barycentric_coordinate Barycentric_coordinate;
+  typedef Traits::Barycentric_coordinates Barycentric_coordinates;
   typedef Traits::FT FT;
   typedef boost::graph_traits<Polyhedron_3> Graph_traits;
   typedef Graph_traits::vertex_descriptor vertex_descriptor;
@@ -95,7 +95,7 @@ int main(int argc, char* argv[])
   for (size_t i = 0; i < numInitialLocations; ++i)
   {
     size_t faceId = rand.get_int(0, faces.size());
-    sourcePoints.push_back(Face_location(faces[faceId], CGAL::test::random_coordinate<Traits>(rand)));
+    sourcePoints.push_back(Face_location(faces[faceId], CGAL::test::random_coordinates<Traits>(rand)));
     shortestPaths.add_source_point(sourcePoints.back().first, sourcePoints.back().second);
   }
 

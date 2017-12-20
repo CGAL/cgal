@@ -13,7 +13,7 @@
 \cgalPkgDependsOn{\ref PkgSolverSummary} 
 \cgalPkgBib{cgal:asg-srps}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
-\cgalPkgDemo{See Polyhedral Surface,polyhedron_3.zip}
+\cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 

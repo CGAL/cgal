@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Susan Hert <hert@mpi-sb.mpg.de>
 
 #ifndef CGAL_POLYGON_FUNCTION_OBJECTS_H
 #define CGAL_POLYGON_FUNCTION_OBJECTS_H
+
+#include <CGAL/license/Partition_2.h>
+
 
 #include <CGAL/is_y_monotone_2.h>
 

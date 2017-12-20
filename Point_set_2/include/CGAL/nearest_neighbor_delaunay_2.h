@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Matthias Baesken
 
 #ifndef CGAL_NEAREST_NEIGHBOR_DELAUNAY_2_H
 #define CGAL_NEAREST_NEIGHBOR_DELAUNAY_2_H
+
+#include <CGAL/license/Point_set_2.h>
+
 
 #include <CGAL/basic.h>
 #include <CGAL/Unique_hash_map.h>

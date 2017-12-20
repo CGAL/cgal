@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Laurent Rineau
@@ -21,7 +22,11 @@
 #ifndef CGAL_INTERNAL_MESH_3_INTERNAL_GRAPH_MANIPULATIONS
 #define CGAL_INTERNAL_MESH_3_INTERNAL_GRAPH_MANIPULATIONS
 
+#include <CGAL/license/Mesh_3.h>
+
+
 #include <CGAL/Kernel/global_functions_3.h>
+#include <CGAL/Kernel_traits.h>
 // Assumes the point is a CGAL point.
 
 #include <boost/graph/graph_traits.hpp>
@@ -32,7 +37,8 @@ namespace CGAL {
 namespace internal {
 namespace Mesh_3 {
 
-template <typename Graph, typename Point_3>
+template <typename Graph, typename Point_3, typename NT,
+          typename InterpolationFunctor>
 struct Graph_manipulations
 {
   typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_descriptor;
@@ -40,8 +46,13 @@ struct Graph_manipulations
 
   std::map<Point_3, vertex_descriptor> p2v;
   Graph& g;
+  InterpolationFunctor interpolate;
 
-  Graph_manipulations(Graph& g) : g(g) {}
+  Graph_manipulations(Graph& g,
+                      InterpolationFunctor interpolate = InterpolationFunctor())
+    : g(g)
+    , interpolate(interpolate)
+  {}
 
   vertex_descriptor get_vertex(const Point_3& p) {
     typename std::map<Point_3, vertex_descriptor>::iterator
@@ -57,6 +68,7 @@ struct Graph_manipulations
   }
 
   vertex_descriptor split(const Point_3& a, const Point_3& b,
+                          const NT v_a, const NT v_b,
                           bool a_is_outside, bool b_is_outside)
   {
 #ifdef CGAL_MESH_3_DEBUG_GRAPH_MANIPULATION
@@ -64,7 +76,8 @@ struct Graph_manipulations
               << std::boolalpha << a_is_outside << ", "
               <<  std::boolalpha << b_is_outside << ")\n";
 #endif // CGAL_MESH_3_DEBUG_GRAPH_MANIPULATION
-    const Point_3 mid = a < b ? midpoint(a, b) : midpoint(b, a);
+
+    const Point_3 mid = interpolate(a, b, v_a, v_b);
     vertex_descriptor vmid = get_vertex(mid);
     typename std::map<Point_3, vertex_descriptor>::iterator
       it_a = p2v.find(a),

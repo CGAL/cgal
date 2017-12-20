@@ -68,8 +68,8 @@ int main ()
   
   arcs.push_back(construct_arc(P2.begin(), P2.end(), Q2.begin(), Q2.end(),
                                Alg_real_1(-3), Alg_real_1(3)));
-  
-  // Create an arc supported by the parbola y = 0.8 - 0.1x^2 / 0.1,
+
+  // Create an arc supported by the parabola y = 0.8 - 0.1x^2 / 0.1,
   // defined over the interval [-2, 3]:
   Rat_vec P3,Q3;
   P3.push_back(Rational(4,5));

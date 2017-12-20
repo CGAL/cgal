@@ -334,7 +334,7 @@ bool is_valid_test()
     DEBUG( std::cout << "is_valid( " << d << " ) = " << tmpflag << std::endl; )
     flag = flag && !tmpflag;
   }
-  catch (CGAL::Assertion_exception)
+  catch (CGAL::Assertion_exception&)
   {}
 
   return flag;

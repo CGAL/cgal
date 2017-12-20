@@ -12,13 +12,17 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$ 
+// $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     :  Peter Hachenberger <hachenberger@mpi-sb.mpg.de>
 #ifndef CGAL_CD3_SM_WALLS_H
 #define CGAL_CD3_SM_WALLS_H
+
+#include <CGAL/license/Convex_decomposition_3.h>
+
 
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 227

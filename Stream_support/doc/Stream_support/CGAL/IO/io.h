@@ -40,9 +40,9 @@ enum Mode { ASCII = 0, BINARY, PRETTY };
 /*!
 \ingroup PkgIOstreams
 
-returns the printing mode of the IO stream `s`.
+returns the printing mode of the %IO stream `s`.
 
-\sa `CGAL::Mode`
+\sa `CGAL::IO::Mode`
 \sa `CGAL::set_mode()`
 \sa `CGAL::set_ascii_mode()`
 \sa `CGAL::set_binary_mode()`
@@ -53,16 +53,16 @@ returns the printing mode of the IO stream `s`.
 
 
 */
-Mode get_mode(std::ios& s);
+IO::Mode get_mode(std::ios& s);
 
 /*!
 \ingroup PkgIOstreams
 
-sets the mode of the IO stream `s` to be the `ASCII` mode.
+sets the mode of the %IO stream `s` to be the `IO::ASCII` mode.
 Returns the previous mode of `s`.
 
 
-\sa `CGAL::Mode`
+\sa `CGAL::IO::Mode`
 \sa `CGAL::set_mode()`
 \sa `CGAL::set_binary_mode()`
 \sa `CGAL::set_pretty_mode()`
@@ -71,12 +71,12 @@ Returns the previous mode of `s`.
 \sa `CGAL::is_binary()`
 \sa `CGAL::is_pretty()`
 */
-Mode set_ascii_mode(std::ios& s);
+IO::Mode set_ascii_mode(std::ios& s);
 
 /*!
 \ingroup PkgIOstreams
 
-\sa `CGAL::Mode`
+\sa `CGAL::IO::Mode`
 \sa `CGAL::set_mode()`
 \sa `CGAL::set_ascii_mode()`
 \sa `CGAL::set_pretty_mode()`
@@ -85,17 +85,17 @@ Mode set_ascii_mode(std::ios& s);
 \sa `CGAL::is_binary()`
 \sa `CGAL::is_pretty()`
 
-sets the mode of the IO stream `s` to be the `BINARY` mode.
+sets the mode of the %IO stream `s` to be the `IO::BINARY` mode.
 Returns the previous mode of `s`.
 */
-Mode set_binary_mode(std::ios& s);
+IO::Mode set_binary_mode(std::ios& s);
 
 /*!
 \ingroup PkgIOstreams
 
-sets the printing mode of the IO stream `s`.
+sets the printing mode of the %IO stream `s`.
 
-\sa `CGAL::Mode`
+\sa `CGAL::IO::Mode`
 \sa `CGAL::set_ascii_mode()`
 \sa `CGAL::set_binary_mode()`
 \sa `CGAL::set_pretty_mode()`
@@ -104,15 +104,15 @@ sets the printing mode of the IO stream `s`.
 \sa `CGAL::is_binary()`
 \sa `CGAL::is_pretty()`
 */
-Mode set_mode(std::ios& s, IO::Mode m);
+IO::Mode set_mode(std::ios& s, IO::Mode m);
 
 /*!
 \ingroup PkgIOstreams
 
-sets the mode of the IO stream `s` to be the `PRETTY` mode.
+sets the mode of the %IO stream `s` to be the `IO::PRETTY` mode.
 Returns the previous mode of `s`.
 
-\sa `CGAL::Mode`
+\sa `CGAL::IO::Mode`
 \sa `CGAL::set_mode()`
 \sa `CGAL::set_ascii_mode()`
 \sa `CGAL::set_binary_mode()`
@@ -122,7 +122,8 @@ Returns the previous mode of `s`.
 \sa `CGAL::is_pretty()`
 
 */
-Mode set_pretty_mode(std::ios& s);
+IO::Mode set_pretty_mode(std::ios& s);
+
 
 /*!
 \ingroup PkgIOstreams
@@ -172,9 +173,9 @@ class Output_rep {
 /*!
 \ingroup PkgIOstreams
 
-checks if the IO stream `s` is in `ASCII` mode.
+checks if the %IO stream `s` is in `IO::ASCII` mode.
 
-\sa `CGAL::Mode`
+\sa `CGAL::IO::Mode`
 \sa `CGAL::set_mode()`
 \sa `CGAL::set_ascii_mode()`
 \sa `CGAL::set_binary_mode()`
@@ -189,9 +190,9 @@ bool is_ascii(std::ios& s);
 /*!
 \ingroup PkgIOstreams
 
-checks if the IO stream `s` is in `BINARY` mode.
+checks if the %IO stream `s` is in `IO::BINARY` mode.
 
-\sa `CGAL::Mode`
+\sa `CGAL::IO::Mode`
 \sa `CGAL::set_mode()`
 \sa `CGAL::set_ascii_mode()`
 \sa `CGAL::set_binary_mode()`
@@ -205,9 +206,9 @@ bool is_binary(std::ios& s);
 /*!
 \ingroup PkgIOstreams
 
-checks if the IO stream `s` is in `PRETTY` mode.
+checks if the %IO stream `s` is in `IO::PRETTY` mode.
 
-\sa `CGAL::Mode`
+\sa `CGAL::IO::Mode`
 \sa `CGAL::set_mode()`
 \sa `CGAL::set_ascii_mode()`
 \sa `CGAL::set_binary_mode()`
@@ -272,7 +273,7 @@ ostream& operator<<(ostream& os, Class c);
 
 \brief \cgal defines input operators for classes that are derived
 from the class `istream`. This allows to read from istreams
-as `cin`, as well as from `std::istringstream` and `std::ifstream`.
+as `std::cin`, as well as from `std::istringstream` and `std::ifstream`.
 The input operator is defined for all classes in the \cgal `Kernel`.
 
 

@@ -1,6 +1,5 @@
 
 namespace CGAL {
-
 /*!
 \ingroup PkgTriangulation3TriangulationClasses
 
@@ -27,31 +26,38 @@ the <I>power sphere</I>. A sphere \f$ {z}^{(w)}\f$ is said to be
 A triangulation of \f$ {S}^{(w)}\f$ is <I>regular</I> if the power spheres 
 of all simplices are regular. 
 
-\tparam  RegularTriangulationTraits_3 is the geometric traits class.
+\tparam Traits is the geometric traits class, and must be a model of `RegularTriangulationTraits_3`
 
-\tparam TriangulationDataStructure_3 is the triangulation data structure. 
-It has the default value `Triangulation_data_structure_3<Triangulation_vertex_base_3<RegularTriangulationTraits_3>, Regular_triangulation_cell_base_3<RegularTriangulationTraits_3> >`. 
-`Default` may be used.
+\tparam TDS is the triangulation data structure and must be a model of `TriangulationDataStructure_3`.
+TDS has default value `Triangulation_data_structure_3<Regular_triangulation_vertex_base_3<Traits>,
+                                                      Regular_triangulation_cell_base_3<Traits> >`.
+Any custom type can be used instead of `Regular_triangulation_vertex_base_3`
+and `Regular_triangulation_cell_base_3`, provided that they are models of the
+concepts `RegularTriangulationVertexBase_3` and `RegularTriangulationCellBase_3`,
+respectively.
 
-\tparam SurjectiveLockDataStructure is an optional parameter to specify the type of the spatial lock data structure.
-        It is only used if the triangulation data structure used is concurrency-safe (i.e.\ when 
-        `TriangulationDataStructure_3::Concurrency_tag` is `Parallel_tag`).
+\tparam SLDS is an optional parameter to specify the type of the spatial lock data structure.
         It must be a model of the `SurjectiveLockDataStructure` concept,
         with `Object` being a `Point`.
+        It is only used if the triangulation data structure used is concurrency-safe (i.e.\ when 
+        `TDS::Concurrency_tag` is `Parallel_tag`).
         The default value is `Spatial_lock_grid_3<Tag_priority_blocking>` if
         the triangulation data structure is concurrency-safe, and `void` otherwise.
         In order to use concurrent operations, the user must provide a
-        reference to a `SurjectiveLockDataStructure`
+        reference to a `SLDS`
         instance via the constructor or `Triangulation_3::set_lock_data_structure`.
         
-If `TriangulationDataStructure_3::Concurrency_tag` is `Parallel_tag`, some operations, 
+If `TDS::Concurrency_tag` is `Parallel_tag`, some operations,
 such as insertion/removal of a range of points, are performed in parallel. See 
 the documentation of the operations for more details.
 
-\sa `CGAL::Delaunay_triangulation_3` 
+\sa `CGAL::Triangulation_3`
+\sa `CGAL::Delaunay_triangulation_3`
+
 */
-template< typename RegularTriangulationTraits_3, typename TriangulationDataStructure_3, typename SurjectiveLockDataStructure >
-class Regular_triangulation_3 : public Triangulation_3<RegularTriangulationTraits_3,TriangulationDataStructure_3,SurjectiveLockDataStructure> {
+template< typename Traits, typename TDS, typename SLDS >
+class Regular_triangulation_3
+  : public Triangulation_3<Traits, TDS, SLDS> {
 public:
 
 /// \name Types 
@@ -61,17 +67,17 @@ public:
 The type for points 
 `p` of weighted points \f$ {p}^{(w)}=(p,w_p)\f$ 
 */ 
-typedef RegularTriangulationTraits_3::Bare_point Bare_point; 
+typedef Traits::Point_3 Bare_point;
 
 /*!
 
 */ 
-typedef RegularTriangulationTraits_3::Weighted_point_3 Weighted_point; 
+typedef Traits::Weighted_point_3 Weighted_point;
 
 /*!
 
 */ 
-typedef SurjectiveLockDataStructure Lock_data_structure;
+typedef SLDS Lock_data_structure;
 
 /// @} 
 
@@ -83,18 +89,16 @@ Creates an empty regular triangulation, possibly specifying a traits class
 `traits`. 
 `lock_ds` is an optional pointer to the lock data structure for parallel operations. It
 must be provided if concurrency is enabled.
-*/ 
-Regular_triangulation_3 
-(const RegularTriangulationTraits_3 & traits = RegularTriangulationTraits_3(), 
-Lock_data_structure *lock_ds = NULL); 
+*/
+Regular_triangulation_3(const Traits & traits = Traits(),
+                        Lock_data_structure *lock_ds = NULL);
 
 /*!
 Copy constructor. 
 The pointer to the lock data structure is not copied. Thus, the copy won't be
 concurrency-safe as long as the user has not called `Triangulation_3::set_lock_data_structure`.
 */ 
-Regular_triangulation_3 
-(const Regular_triangulation_3 & rt1); 
+Regular_triangulation_3(const Regular_triangulation_3 & rt1);
 
 /*!
 Equivalent to constructing an empty triangulation with the optional 
@@ -103,17 +107,17 @@ If parallelism is enabled, the points will be inserted in parallel.
 \tparam InputIterator must be an input iterator with value type `Weighted_point`. 
 */ 
 template < class InputIterator > 
-Regular_triangulation_3 (InputIterator first, InputIterator last, 
-const RegularTriangulationTraits_3& traits = RegularTriangulationTraits_3(), 
-Lock_data_structure *lock_ds = NULL); 
+Regular_triangulation_3 (InputIterator first, InputIterator last,
+                         const Traits& traits = Traits(),
+                         Lock_data_structure *lock_ds = NULL);
 
 /*! 
 Same as before, with last two parameters in reverse order.
 */ 
 template < class InputIterator > 
 Regular_triangulation_3 (InputIterator first, InputIterator last, 
-Lock_data_structure *lock_ds, 
-const RegularTriangulationTraits_3& traits = RegularTriangulationTraits_3());
+                         Lock_data_structure *lock_ds,
+                         const Traits& traits = Traits());
 /// @} 
 
 /*!\name Insertion 
@@ -287,7 +291,7 @@ int remove(InputIterator first, InputIterator beyond);
 Let us remark that \f$ \Pi({p}^{(w)}-{z}^{(w)}) > 0 \f$ is equivalent to `p` lies outside the sphere with center `z` and radius \f$ \sqrt{w_p^2+w_z^2}\f$. This remark helps provide an intuition about the following predicates.
 
 \anchor Triangulation3figsidedim2
-\image html sidedim2.png side_of_power_circle
+\image html sidedim2.svg side_of_power_circle
 \image latex sidedim2.png side_of_power_circle
 */
 

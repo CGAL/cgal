@@ -1,3 +1,4 @@
+#define CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP 1
 // Copyright (c) 2009 INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
@@ -14,6 +15,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Stephane Tayeb

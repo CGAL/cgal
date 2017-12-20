@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Clement Jamin
@@ -24,6 +25,9 @@
 
 #ifndef CGAL_REMOVE_FAR_POINTS_IN_MESH_3_H
 #define CGAL_REMOVE_FAR_POINTS_IN_MESH_3_H
+
+#include <CGAL/license/Mesh_3.h>
+
 
 namespace CGAL {
   

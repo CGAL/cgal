@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Laurent RINEAU
 
 #ifndef CGAL_MESH_3_DIHEDRAL_ANGLE_3_H
 #define CGAL_MESH_3_DIHEDRAL_ANGLE_3_H
+
+#include <CGAL/license/Mesh_3.h>
+
 
 #include <CGAL/number_type_basic.h>
 #include <CGAL/Kernel_traits.h>

@@ -13,8 +13,7 @@ want to implement a few methods from `Kinetic::DelaunayTriangulationVisitor_3`.
 
 */
 
-class Delaunay_triangulation_visitor_base_3 {
-public:
+struct Delaunay_triangulation_visitor_base_3 {
 
 /// \name Creation 
 /// @{

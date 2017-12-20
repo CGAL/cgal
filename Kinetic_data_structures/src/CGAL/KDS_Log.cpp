@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Daniel Russel <drussel@alumni.princeton.edu>
@@ -25,10 +26,4 @@
 #include <CGAL/Tools/Log.h>
 #include <CGAL/Tools/Log_impl.h>
 
-namespace CGAL { namespace Kinetic { namespace internal {
-  unsigned int function_degeneracies__=0;
-  unsigned int zero_certificates__=0;
-  unsigned int io_errors__=0;
-  unsigned int audit_failures__=0;
-} } } //namespace CGAL::Kinetic::internal
 #endif

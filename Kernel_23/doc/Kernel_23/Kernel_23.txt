@@ -493,7 +493,7 @@ especially integer types and rationals.
 
 \subsection Kernel_23VariantReturnValues Intersections and Variant Return Types
 
-Some functions, for example `intersection()`, can return different types of objects. To achieve this
+Some functions, for example \link intersection_linear_grp `intersection()`\endlink, can return different types of objects. To achieve this
 in a type-safe way \cgal uses return values of type
 `boost::optional< boost::variant< T...  > >` were `T...` is a
 list of all possible resulting geometric objects.  The exact result

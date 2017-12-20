@@ -37,7 +37,7 @@ Each primitive gives access to both one input geometric object
 example primitive wraps a 3D triangle as datum and a face handle of a
 polyhedral surface as id. Each intersection query can return the
 intersection objects (e.g., 3D points or segments for ray queries) as
-well the as id (here the face handle) of the intersected
+well as the id (here the face handle) of the intersected
 primitives. Similarly, each distance query can return the closest
 point from the point query as well as the id of the closest primitive.
 
@@ -138,7 +138,7 @@ a segment.  We finally compute the first intersection along a ray.
 \cgalExample{AABB_tree/AABB_polyhedron_facet_intersection_example.cpp}
 
 
-\subsection aabb_tree_examples_2 Ray Shooting
+\subsection aabb_ray_shooting Ray Shooting
 
 In the following example we load a closed polyhedral surface and perform a
 ray shooting query from the centroid of each face, orthogonally to the face

@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Daniel Russel <drussel@alumni.princeton.edu>
@@ -259,7 +260,7 @@ template <class A, class B>			\
 
 #define CGAL_REAL_EMBEDDABLE_BODY					\
   class Abs								\
-    : public std::unary_function< Type, Type > {                        \
+    : public CGAL::unary_function< Type, Type > {                        \
   public:								\
     Type operator()( const Type& x ) const {				\
       if (x < Type(0)) return -x;					\
@@ -268,7 +269,7 @@ template <class A, class B>			\
   };									\
   									\
   class Sgn								\
-    : public std::unary_function< Type, ::CGAL::Sign > {                \
+    : public CGAL::unary_function< Type, ::CGAL::Sign > {                \
   public:								\
     ::CGAL::Sign operator()( const Type& x ) const {			\
       return static_cast<CGAL::Sign>(x.compare(0));			\
@@ -276,7 +277,7 @@ template <class A, class B>			\
   };									\
   									\
   class Compare								\
-    : public std::binary_function< Type, Type,				\
+    : public CGAL::binary_function< Type, Type,				\
 			      Comparison_result > {			\
   public:								\
       Comparison_result operator()( const Type& x,			\
@@ -290,7 +291,7 @@ template <class A, class B>			\
   };									\
 									\
   class To_double							\
-    : public std::unary_function< Type, double > {                      \
+    : public CGAL::unary_function< Type, double > {                      \
   public:								\
     double operator()( const Type& x ) const {				\
       return x.approximation(.00000001);				\
@@ -298,7 +299,7 @@ template <class A, class B>			\
   };									\
 									\
   class To_interval							\
-    : public std::unary_function< Type, std::pair< double, double > > {	\
+    : public CGAL::unary_function< Type, std::pair< double, double > > {	\
   public:								\
     std::pair<double, double> operator()( const Type& x ) const {	\
 									\

@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Laurent RINEAU
 
 #ifndef CGAL_DELAUNAY_FACE_BASE_2_H
 #define CGAL_DELAUNAY_FACE_BASE_2_H
+
+#include <CGAL/license/Mesh_2.h>
+
 
 #include <CGAL/Constrained_Delaunay_triangulation_face_base_2.h>
 

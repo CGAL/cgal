@@ -3,6 +3,10 @@
 #include <CGAL/linear_least_squares_fitting_3.h>
 #include <list>
 
+#ifdef CGAL_EIGEN3_ENABLED
+#include <CGAL/Diagonalize_traits.h>
+#endif
+
 typedef double               FT;
 typedef CGAL::Cartesian<FT>  Kernel;
 typedef Kernel::Line_3       Line;
@@ -43,6 +47,28 @@ int main()
   linear_least_squares_fitting_3(cuboids.begin(),cuboids.end(),plane,centroid,CGAL::Dimension_tag<2>());
   linear_least_squares_fitting_3(cuboids.begin(),cuboids.end(),plane,centroid,CGAL::Dimension_tag<1>());
   linear_least_squares_fitting_3(cuboids.begin(),cuboids.end(),plane,centroid,CGAL::Dimension_tag<0>());
+
+  // If Eigen is available, it's used by default everywhere.
+  // These additional lines test the fallback version
+#ifdef CGAL_EIGEN3_ENABLED
+  linear_least_squares_fitting_3(cuboids.begin(),cuboids.end(),line,centroid,CGAL::Dimension_tag<3>(),
+                                 Kernel(), CGAL::Diagonalize_traits<FT, 3>());
+  linear_least_squares_fitting_3(cuboids.begin(),cuboids.end(),line,centroid,CGAL::Dimension_tag<2>(),
+                                 Kernel(), CGAL::Diagonalize_traits<FT, 3>());
+  linear_least_squares_fitting_3(cuboids.begin(),cuboids.end(),line,centroid,CGAL::Dimension_tag<1>(),
+                                 Kernel(), CGAL::Diagonalize_traits<FT, 3>());
+  linear_least_squares_fitting_3(cuboids.begin(),cuboids.end(),line,centroid,CGAL::Dimension_tag<0>(),
+                                 Kernel(), CGAL::Diagonalize_traits<FT, 3>());
+
+  linear_least_squares_fitting_3(cuboids.begin(),cuboids.end(),plane,centroid,CGAL::Dimension_tag<3>(),
+                                 Kernel(), CGAL::Diagonalize_traits<FT, 3>());
+  linear_least_squares_fitting_3(cuboids.begin(),cuboids.end(),plane,centroid,CGAL::Dimension_tag<2>(),
+                                 Kernel(), CGAL::Diagonalize_traits<FT, 3>());
+  linear_least_squares_fitting_3(cuboids.begin(),cuboids.end(),plane,centroid,CGAL::Dimension_tag<1>(),
+                                 Kernel(), CGAL::Diagonalize_traits<FT, 3>());
+  linear_least_squares_fitting_3(cuboids.begin(),cuboids.end(),plane,centroid,CGAL::Dimension_tag<0>(),
+                                 Kernel(), CGAL::Diagonalize_traits<FT, 3>());
+#endif
 
   return 0;
 }

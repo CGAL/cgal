@@ -12,14 +12,17 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL:  $
-// $Id:  $
-//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Clement Jamin
 
 #ifndef CGAL_IO_FILE_MAYA_H
 #define CGAL_IO_FILE_MAYA_H
+
+#include <CGAL/license/Mesh_3.h>
+
 
 #include <iostream>
 #include <map>
@@ -47,7 +50,7 @@ output_to_maya(std::ostream& os,
 
   typedef typename Tr::Finite_vertices_iterator Finite_vertices_iterator;
   typedef typename Tr::Vertex_handle Vertex_handle;
-  typedef typename Tr::Point Point_3;
+  typedef typename Tr::Weighted_point Weighted_point;
 
 #ifdef CGAL_MESH_3_IO_VERBOSE
   std::cerr << "Output to maya:\n";
@@ -114,7 +117,7 @@ output_to_maya(std::ostream& os,
       || !surfaceOnly)
     {
       V[vit] = num_vertices++;
-      Point_3 p = vit->point();
+      Weighted_point p = vit->point();
       vertices_sstr << "    " << CGAL::to_double(p.x()) << " " << CGAL::to_double(p.y()) << " " << CGAL::to_double(p.z()) << std::endl;
     }
   }
@@ -163,7 +166,7 @@ output_to_maya(std::ostream& os,
          ++fit, ++c)
     {
       int indices[3];
-      //Point_3 points[3];
+      //Weighted_point points[3];
       facets_sstr << "    f 3 ";
       for (int j = 0, i = (fit->second + 1) % 4 ; j < 3 ; i = (i+1)%4, ++j)
       {
@@ -222,7 +225,7 @@ output_to_maya(std::ostream& os,
       for (int facet_i = 0 ; facet_i < 4 ; ++facet_i)
       {
         int indices[3];
-        //Point_3 points[3];
+        //Weighted_point points[3];
         facets_sstr << "    f 3 ";
         for (int j = 0, i = (facet_i + 1) % 4 ; j < 3 ; i = (i+1)%4, ++j)
         {

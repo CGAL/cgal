@@ -14,11 +14,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s) : Shihao Wu, Clement Jamin, Pierre Alliez 
 
 #ifndef CGAL_BILATERAL_SMOOTH_POINT_SET_H
 #define CGAL_BILATERAL_SMOOTH_POINT_SET_H
+
+#include <CGAL/license/Point_set_processing_3.h>
+
 
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
@@ -359,7 +363,7 @@ public:
 // ----------------------------------------------------------------------------
 
 //=============================================================================
-/// \ingroup PkgPointSetProcessing
+/// \ingroup PkgPointSetProcessingAlgorithms
 /// 
 /// This function smooths an input point set by iteratively projecting each 
 ///  point onto the implicit surface patch fitted over its k nearest neighbors.

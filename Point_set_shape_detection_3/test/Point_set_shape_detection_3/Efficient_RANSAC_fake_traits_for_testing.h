@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Sven Oesau, Yannick Verdie, Clément Jamin, Pierre Alliez
@@ -45,9 +46,9 @@ namespace CGAL {
             class InputRange,
             class InputPointMap,
             class InputNormalMap>
-  struct Efficient_RANSAC_traits {
+  struct Shape_detection_traits {
 
-    typedef Efficient_RANSAC_traits<
+    typedef Shape_detection_traits<
       Gt, InputRange, InputPointMap, InputNormalMap> Self;
     ///
     typedef double FT;
@@ -305,7 +306,7 @@ namespace CGAL {
     Compute_squared_distance_3 compute_squared_distance_3_object() const
     { return Compute_squared_distance_3(); }*/
     ///
-    Efficient_RANSAC_traits(const Gt& gt =  Gt())
+    Shape_detection_traits(const Gt& gt =  Gt())
       : m_gt(gt) {}
 
   private:

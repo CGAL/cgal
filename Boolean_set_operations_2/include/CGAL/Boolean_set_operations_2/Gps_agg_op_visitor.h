@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
@@ -21,6 +22,9 @@
 
 #ifndef CGAL_GSP_AGG_OP_VISITOR_H
 #define CGAL_GSP_AGG_OP_VISITOR_H
+
+#include <CGAL/license/Boolean_set_operations_2.h>
+
 
 #include <CGAL/Unique_hash_map.h> 
 #include <CGAL/Sweep_line_2/Arr_construction_sl_visitor.h>

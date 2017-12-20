@@ -1,19 +1,20 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
 #include <CGAL/Periodic_3_Delaunay_triangulation_traits_3.h>
 #include <CGAL/Periodic_3_Delaunay_triangulation_3.h>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Periodic_3_Delaunay_triangulation_traits_3<K>          PK;
-typedef CGAL::Periodic_3_Delaunay_triangulation_3<PK>       P3DT3;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel  K;
+typedef CGAL::Periodic_3_Delaunay_triangulation_traits_3<K>  Gt;
+typedef CGAL::Periodic_3_Delaunay_triangulation_3<Gt>        P3DT3;
 
-typedef PK::Point_3        Point;
-typedef PK::Triangle_3     Triangle;
+typedef Gt::Point_3        Point;
+typedef Gt::Triangle_3     Triangle;
 
 typedef P3DT3::Periodic_triangle           Periodic_triangle;
 typedef P3DT3::Periodic_triangle_iterator  Periodic_triangle_iterator;
 typedef P3DT3::Iterator_type               Iterator_type;
 
-int main() {
+int main(int, char**) {
   P3DT3 T;
 
   T.insert(Point(0,0,0));

@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     :  Olivier Devillers
 
@@ -33,7 +34,7 @@ namespace internal {
 
     template <class K, int x>
     struct Fixed_hilbert_cmp_2<K,x,true>
-        : public std::binary_function<typename K::Point_2,
+        : public CGAL::binary_function<typename K::Point_2,
                                       typename K::Point_2, bool>
     {
         typedef typename K::Point_2 Point;
@@ -48,7 +49,7 @@ namespace internal {
     
     template <class K>
     struct Fixed_hilbert_cmp_2<K,0,false>
-        : public std::binary_function<typename K::Point_2,
+        : public CGAL::binary_function<typename K::Point_2,
                                       typename K::Point_2, bool>
     {
         typedef typename K::Point_2 Point;
@@ -63,7 +64,7 @@ namespace internal {
     
     template <class K>
     struct Fixed_hilbert_cmp_2<K,1,false>
-        : public std::binary_function<typename K::Point_2,
+        : public CGAL::binary_function<typename K::Point_2,
                                       typename K::Point_2, bool>
     {
         typedef typename K::Point_2 Point;
@@ -116,10 +117,14 @@ public:
         RandomAccessIterator m3 = 
 	  internal::fixed_hilbert_split (m2, m4, Cmp< y, !upy> (ymed,_k));
 
-        sort<y, upy, upx> (m0, m1, ymin, xmin, ymed, xmed);
-        sort<x, upx, upy> (m1, m2, xmin, ymed, xmed, ymax);
-        sort<x, upx, upy> (m2, m3, xmed, ymed, xmax, ymax);
-        sort<y,!upy,!upx> (m3, m4, ymed, xmax, ymin, xmed);
+        if (m1!=m4)
+          sort<y, upy, upx> (m0, m1, ymin, xmin, ymed, xmed);
+        if (m1!=m0 || m2!=m4)
+          sort<x, upx, upy> (m1, m2, xmin, ymed, xmed, ymax);
+        if (m2!=m0 || m3!=m4)
+          sort<x, upx, upy> (m2, m3, xmed, ymed, xmax, ymax);
+        if (m3!=m0)
+          sort<y,!upy,!upx> (m3, m4, ymed, xmax, ymin, xmed);
     }
 
     template <class RandomAccessIterator>

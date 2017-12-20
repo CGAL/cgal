@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Olivier Devillers <Olivier.Devillers@sophia.inria.fr>
 //                 Sylvain Pion
@@ -21,22 +22,35 @@
 #ifndef CGAL_TRIANGULATION_HIERARCHY_3_H
 #define CGAL_TRIANGULATION_HIERARCHY_3_H
 
+#include <CGAL/license/Triangulation_3.h>
+
+// #define CGAL_DEPRECATED_HEADER "<CGAL/Triangulation_hierarchy_3.h>"
+// #include <CGAL/internal/deprecation_warning.h>
+
 #include <CGAL/basic.h>
+#include <CGAL/internal/Has_nested_type_Bare_point.h>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_hierarchy_vertex_base_3.h>
 #include <CGAL/Location_policy.h>
 
+#include <CGAL/internal/boost/function_property_map.hpp>
+
 #include <boost/random/linear_congruential.hpp>
 #include <boost/random/geometric_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
+#include <boost/utility/result_of.hpp>
 
 #ifndef CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 #include <CGAL/Spatial_sort_traits_adapter_3.h>
+#include <CGAL/spatial_sort.h>
 #include <CGAL/internal/info_check.h>
 
 #include <boost/tuple/tuple.hpp>
 #include <boost/iterator/zip_iterator.hpp>
 #include <boost/mpl/and.hpp>
+#include <boost/mpl/identity.hpp>
+#include <boost/mpl/if.hpp>
+
 #endif //CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 
 namespace CGAL {
@@ -63,7 +77,6 @@ public:
   typedef Tr                                   Tr_Base;
   typedef Fast_location                        Location_policy;
   typedef typename Tr_Base::Geom_traits        Geom_traits;
-  typedef typename Tr_Base::Point              Point;
   typedef typename Tr_Base::size_type          size_type;
   typedef typename Tr_Base::Vertex_handle      Vertex_handle;
   typedef typename Tr_Base::Cell_handle        Cell_handle;
@@ -74,6 +87,12 @@ public:
   typedef typename Tr_Base::Finite_cells_iterator     Finite_cells_iterator;
   typedef typename Tr_Base::Finite_facets_iterator    Finite_facets_iterator;
   typedef typename Tr_Base::Finite_edges_iterator     Finite_edges_iterator;
+
+  // this may be weighted or not
+  typedef typename Tr_Base::Point              Point;
+
+  typedef typename Tr_Base::Weighted_tag       Weighted_tag;
+  typedef typename Tr_Base::Periodic_tag       Periodic_tag;
 
   using Tr_Base::number_of_vertices;
   using Tr_Base::geom_traits;
@@ -154,7 +173,17 @@ public:
     size_type n = number_of_vertices();
 
       std::vector<Point> points (first, last);
-      spatial_sort (points.begin(), points.end(), geom_traits());
+
+      // Spatial sort can only be used with Geom_traits::Point_3: we need an adapter
+      typedef typename Geom_traits::Construct_point_3 Construct_point_3;
+      typedef typename boost::result_of<const Construct_point_3(const Point&)>::type Ret;
+      typedef CGAL::internal::boost_::function_property_map<Construct_point_3, Point, Ret> fpmap;
+      typedef CGAL::Spatial_sort_traits_adapter_3<Geom_traits, fpmap> Search_traits_3;
+
+      spatial_sort(points.begin(), points.end(),
+                   Search_traits_3(
+                     CGAL::internal::boost_::make_function_property_map<Point, Ret, Construct_point_3>(
+                       geom_traits().construct_point_3_object()), geom_traits()));
 
       // hints[i] is the vertex of the previously inserted point in level i.
       // Thanks to spatial sort, they are better hints than what the hierarchy
@@ -189,6 +218,21 @@ private:
   template <class Info>
   const Info& top_get_second(const boost::tuple<Point,Info>& tuple) const { return boost::get<1>(tuple); }
 
+  template<class Construct_bare_point, class Container>
+  struct Index_to_Bare_point
+  {
+    const typename Geom_traits::Point_3& operator()(const std::size_t& i) const
+    {
+      return cp(c[i]);
+    }
+
+    Index_to_Bare_point(const Container& c, const Construct_bare_point& cp)
+      : c(c), cp(cp) { }
+
+    const Container& c;
+    const Construct_bare_point cp;
+  };
+
   template <class Tuple_or_pair,class InputIterator>
   std::ptrdiff_t insert_with_info(InputIterator first,InputIterator last)
   {
@@ -203,12 +247,22 @@ private:
       infos.push_back ( top_get_second(value) );
       indices.push_back(index++);
     }
-    typedef typename Pointer_property_map<Point>::type Pmap;
-    typedef Spatial_sort_traits_adapter_3<Geom_traits,Pmap> Search_traits;
 
-    spatial_sort(indices.begin(),
-                 indices.end(),
-                 Search_traits(make_property_map(points),geom_traits()));
+    // We need to sort the points and their info at the same time through
+    // the `indices` vector AND spatial sort can only handle Geom_traits::Point_3.
+    typedef typename Geom_traits::Construct_point_3 Construct_point_3;
+    typedef Index_to_Bare_point<Construct_point_3,
+                                std::vector<Point> > Access_bare_point;
+    typedef typename boost::result_of<const Construct_point_3(const Point&)>::type Ret;
+    typedef CGAL::internal::boost_::function_property_map<Access_bare_point, std::size_t, Ret> fpmap;
+    typedef CGAL::Spatial_sort_traits_adapter_3<Geom_traits, fpmap> Search_traits_3;
+
+    Access_bare_point accessor(points, geom_traits().construct_point_3_object());
+    spatial_sort(indices.begin(), indices.end(),
+                 Search_traits_3(
+                   CGAL::internal::boost_::make_function_property_map<
+                     std::size_t, Ret, Access_bare_point>(accessor),
+                   geom_traits()));
 
 
     // hints[i] is the vertex of the previously inserted point in level i.

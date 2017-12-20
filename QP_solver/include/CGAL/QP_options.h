@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Bernd Gaertner <gaertner@inf.ethz.ch>
 
 #ifndef CGAL_QP_OPTIONS_H
 #define CGAL_QP_OPTIONS_H
+
+#include <CGAL/license/QP_solver.h>
+
 // this file defines a class for passing options to the linear and
 // quadratic programming solvers
 

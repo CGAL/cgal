@@ -14,12 +14,12 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Sylvain Pion
 
 #include <CGAL/Regular_triangulation_3.h>
-#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 
 
 bool del=true;
@@ -27,11 +27,10 @@ bool del=true;
 #include "include/CGAL/_test_types.h"
 #include "include/CGAL/_test_cls_delaunay_3.h"
 
-typedef CGAL::Regular_triangulation_euclidean_traits_3<K>        Traits;
 
 int main()
 {
-  typedef CGAL::Regular_triangulation_3<Traits>    Cls;
+  typedef CGAL::Regular_triangulation_3<K>    Cls;
 
   _test_cls_delaunay_3( Cls() );
 
@@ -40,4 +39,4 @@ int main()
 
 // MipsPro prefers this after the other instantiations...
 // Explicit instantiation of the whole class :
-template class CGAL::Regular_triangulation_3<Traits>;
+template class CGAL::Regular_triangulation_3<K>;

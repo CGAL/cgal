@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Matthias Baesken
 
 #ifndef CGAL_COMPARE_VERTICES_H
 #define CGAL_COMPARE_VERTICES_H
+
+#include <CGAL/license/Point_set_2.h>
+
 
 namespace CGAL {
 

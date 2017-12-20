@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
 
 #ifndef CGAL_PM_IO_PARSER_H
 #define CGAL_PM_IO_PARSER_H
+
+#include <CGAL/license/Nef_2.h>
+
 
 #include <CGAL/Nef_2/PM_decorator.h>
 #include <CGAL/Nef_2/Object_index.h>

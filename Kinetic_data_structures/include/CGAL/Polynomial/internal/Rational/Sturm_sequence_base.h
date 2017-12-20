@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Daniel Russel <drussel@alumni.princeton.edu>
@@ -143,7 +144,7 @@ class Sturm_sequence_base
     protected:
 
         static const Polynomial &zero_poly() {
-            static Polynomial zero(NT(0));
+            static const Polynomial zero(NT(0));
             return zero;
         }
 

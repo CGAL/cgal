@@ -26,7 +26,7 @@ macro(create_link_to_program COMPONENT )
   
 endmacro()
 
-find_package(CGAL QUIET)
+find_package(CGAL QUIET COMPONENTS Core)
 
 if ( CGAL_FOUND )
 
@@ -42,15 +42,14 @@ if ( CGAL_FOUND )
 
   create_single_source_cgal_program( will_fail.cpp will_fail_aux.cpp )
   if(BUILD_TESTING)
-    set_property(TEST will_fail PROPERTY WILL_FAIL TRUE)
+    set_property(TEST execution___of__will_fail PROPERTY WILL_FAIL TRUE)
   endif()
 
   find_package( TBB QUIET )
-  if( TBB_FOUND )
-    include(${TBB_USE_FILE})
-    list(APPEND CGAL_3RD_PARTY_LIBRARIES ${TBB_LIBRARIES})
-  endif()
   create_single_source_cgal_program( "test_TBB.cpp" )
+  if(TBB_FOUND)
+    CGAL_target_use_TBB(test_TBB)
+  endif()
 
   create_link_to_program(CGAL)
  

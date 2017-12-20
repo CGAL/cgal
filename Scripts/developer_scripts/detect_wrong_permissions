@@ -2,7 +2,7 @@
 
 setopt extendedglob nullglob
 
-files=(((^build*)/)#(#i)*.^(py|sh|run|sh|csh|pl|perl|bin|out)(.x))
+files=(((^build*)/)#(#i)*.^(py|sh|run|sh|csh|pl|perl|bin|out|bat)(.x))
 #ls -1 ((^build*)/)#(#i)*.^(py|sh|run|sh|csh|pl|perl|bin|out)(.x) 2>/dev/null || exit 0
 if [ ${#files[@]} -gt 0 ]; then
     ls -1 "${(@)files}"

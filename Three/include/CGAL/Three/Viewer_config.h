@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Laurent RINEAU, Maxime Gimeno
 
 #ifndef VIEWER_CONFIG_H
 #define VIEWER_CONFIG_H
+
+#include <CGAL/license/Three.h>
+
 
 #include <QtCore/qglobal.h>
 

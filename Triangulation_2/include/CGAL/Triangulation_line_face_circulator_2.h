@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Mariette Yvinec
@@ -21,6 +22,9 @@
 
 #ifndef CGAL_TRIANGULATION_LINE_FACE_CIRCULATOR_2_H
 #define CGAL_TRIANGULATION_LINE_FACE_CIRCULATOR_2_H
+
+#include <CGAL/license/Triangulation_2.h>
+
 
 #include <CGAL/circulator.h>
 #include <CGAL/Triangulation_utils_2.h>
@@ -49,7 +53,7 @@ public:
   typedef typename Tds::Face_handle            Face_handle;
   typedef typename Tds::Face_circulator        Face_circulator;
   
-  typedef typename Gt::Point_2 Point;
+  typedef typename Triangulation::Point       Point;
   typedef typename Triangulation::Locate_type Locate_type;
 
    enum State {undefined = -1,

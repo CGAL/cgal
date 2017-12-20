@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
@@ -29,12 +30,10 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Regular_triangulation_2.h>
-#include <CGAL/Regular_triangulation_euclidean_traits_2.h>
 #include <CGAL/Regular_triangulation_adaptation_traits_2.h>
 #include <CGAL/Regular_triangulation_adaptation_policies_2.h>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel      K;
-struct Gt : public CGAL::Regular_triangulation_euclidean_traits_2<K> {};
+typedef CGAL::Exact_predicates_inexact_constructions_kernel      Gt;
 
 #if 1 // definitions for hierarchy
 

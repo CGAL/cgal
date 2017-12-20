@@ -14,11 +14,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Laurent RINEAU
 
 #ifndef CGAL_IMPLICIT_SURFACE_3_H
 #define CGAL_IMPLICIT_SURFACE_3_H
+
+#include <CGAL/license/Surface_mesher.h>
+
 
 #include <CGAL/make_surface_mesh.h>
 #include <CGAL/Surface_mesher/Implicit_surface_oracle_3.h>
@@ -124,7 +128,7 @@ namespace CGAL {
 
   // non documented class
   template <typename FT, typename Point>
-  class Implicit_function_wrapper : public std::unary_function<Point, FT> 
+  class Implicit_function_wrapper : public CGAL::unary_function<Point, FT> 
   {
     typedef FT (*Implicit_function)(FT, FT, FT);
 

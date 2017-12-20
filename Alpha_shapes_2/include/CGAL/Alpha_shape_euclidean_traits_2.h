@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Tran Kai Frank DA <Frank.Da@sophia.inria.fr>
@@ -21,6 +22,9 @@
 
 #ifndef CGAL_ALPHA_SHAPE_EUCLIDEAN_TRAITS_H
 #define CGAL_ALPHA_SHAPE_EUCLIDEAN_TRAITS_H
+
+#include <CGAL/license/Alpha_shapes_2.h>
+
 
 
 namespace CGAL {

@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Andreas Fabri
@@ -40,7 +41,7 @@ CGAL_INLINE_FUNCTION
 IO::Mode
 get_mode(std::ios& i)
 {
-  return static_cast<IO::Mode>(i.iword(IO::get_static_mode()));
+  return static_cast<IO::Mode>(i.iword(IO::Static::get_mode()));
 }
 
 CGAL_INLINE_FUNCTION
@@ -48,7 +49,7 @@ IO::Mode
 set_ascii_mode(std::ios& i)
 {
     IO::Mode m = get_mode(i);
-    i.iword(IO::get_static_mode()) = IO::ASCII;
+    i.iword(IO::Static::get_mode()) = IO::ASCII;
     return m;
 }
 
@@ -57,7 +58,7 @@ IO::Mode
 set_binary_mode(std::ios& i)
 {
     IO::Mode m = get_mode(i);
-    i.iword(IO::get_static_mode()) = IO::BINARY;
+    i.iword(IO::Static::get_mode()) = IO::BINARY;
     return m;
 }
 
@@ -67,7 +68,7 @@ IO::Mode
 set_pretty_mode(std::ios& i)
 {
     IO::Mode m = get_mode(i);
-    i.iword(IO::get_static_mode()) = IO::PRETTY;
+    i.iword(IO::Static::get_mode()) = IO::PRETTY;
     return m;
 }
 
@@ -76,7 +77,7 @@ IO::Mode
 set_mode(std::ios& i, IO::Mode m)
 {
     IO::Mode old = get_mode(i);
-    i.iword(IO::get_static_mode()) = m;
+    i.iword(IO::Static::get_mode()) = m;
     return old;
 }
 
@@ -84,21 +85,21 @@ CGAL_INLINE_FUNCTION
 bool
 is_pretty(std::ios& i)
 {
-    return i.iword(IO::get_static_mode()) == IO::PRETTY;
+    return i.iword(IO::Static::get_mode()) == IO::PRETTY;
 }
 
 CGAL_INLINE_FUNCTION
 bool
 is_ascii(std::ios& i)
 {
-    return i.iword(IO::get_static_mode()) == IO::ASCII;
+    return i.iword(IO::Static::get_mode()) == IO::ASCII;
 }
 
 CGAL_INLINE_FUNCTION
 bool
 is_binary(std::ios& i)
 {
-    return i.iword(IO::get_static_mode()) == IO::BINARY;
+    return i.iword(IO::Static::get_mode()) == IO::BINARY;
 }
 
 CGAL_INLINE_FUNCTION

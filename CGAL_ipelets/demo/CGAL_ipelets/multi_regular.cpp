@@ -14,13 +14,13 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Sebastien Loriot, Sylvain Pion
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/CGAL_Ipelet_base.h> 
-#include <CGAL/Regular_triangulation_euclidean_traits_2.h>
 #include <CGAL/Regular_triangulation_2.h>
 
 #include "include/CGAL_ipelets/k_delaunay.h"
@@ -30,9 +30,7 @@ namespace CGAL_multi_regular{
 
   
 typedef  CGAL::Exact_predicates_inexact_constructions_kernel           Kernel;
-typedef Kernel::FT                                                     FT;
-typedef CGAL::Regular_triangulation_euclidean_traits_2<Kernel,FT>      Gt;
-typedef CGAL::Regular_triangulation_2<Gt>                              Regular;
+typedef CGAL::Regular_triangulation_2<Kernel>                          Regular;
 typedef Regular::Finite_edges_iterator                                 itEdge;
 
 // --------------------------------------------------------------------

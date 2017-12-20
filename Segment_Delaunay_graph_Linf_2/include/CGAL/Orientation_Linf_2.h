@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Panagiotis Cheilaris, Sandeep Kumar Dey, Evanthia Papadopoulou
@@ -21,6 +22,9 @@
 
 #ifndef CGAL_ORIENTATION_LINF_2_H
 #define CGAL_ORIENTATION_LINF_2_H
+
+#include <CGAL/license/Segment_Delaunay_graph_Linf_2.h>
+
 
 #include <CGAL/basic.h>
 #include <CGAL/enum.h>

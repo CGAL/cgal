@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Fernando Cacciola
 //
@@ -46,11 +47,11 @@ namespace
   { 
     switch(n)
     {
-      case SIGSEGV: std::fprintf(stderr,"Program recieved signal SIGSEGV: Segmentation Fault."); break ;
-      case SIGFPE : std::fprintf(stderr,"Program recieved signal SIGFPE: Floating Point Execption."); break ;
-      case SIGILL : std::fprintf(stderr,"Program recieved signal SIGILL: Illegal Instruction."); break ;
+      case SIGSEGV: std::fprintf(stderr,"In CGAL_handle_signal, Program received signal SIGSEGV: Segmentation Fault."); break ;
+      case SIGFPE : std::fprintf(stderr,"In CGAL_handle_signal, Program received signal SIGFPE: Floating Point Execption."); break ;
+      case SIGILL : std::fprintf(stderr,"In CGAL_handle_signal, Program received signal SIGILL: Illegal Instruction."); break ;
       default:
-        std::fprintf(stderr,"Program recieved signal %d", n); break ;
+        std::fprintf(stderr,"In CGAL_handle_signal, Program received signal %d", n); break ;
     }
     
     std::exit(128+n); 

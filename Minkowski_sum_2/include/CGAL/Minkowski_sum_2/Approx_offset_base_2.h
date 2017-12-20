@@ -12,6 +12,10 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s)     : Ron Wein       <wein_r@yahoo.com>
 //                 Andreas Fabri  <Andreas.Fabri@geometryfactory.com>
 //                 Laurent Rineau <Laurent.Rineau@geometryfactory.com>
@@ -19,6 +23,9 @@
 
 #ifndef CGAL_APPROXIMATED_OFFSET_BASE_H
 #define CGAL_APPROXIMATED_OFFSET_BASE_H
+
+#include <CGAL/license/Minkowski_sum_2.h>
+
 
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Polygon_with_holes_2.h>

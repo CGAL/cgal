@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/CGAL/cgal.svg?branch=master)](https://travis-ci.org/CGAL/cgal)
 
-#![CGAL](Installation/doc_html/images/cgal_2013_grey.png)
+![CGAL](Installation/doc_html/images/cgal_2013_grey.png)
 
 The Computational Geometry Algorithms Library (CGAL) is a C++ library that
 aims to provide easy access to efficient and reliable algorithms in
@@ -9,9 +9,9 @@ computational geometry.
 CGAL releases
 =============
 The primary vector of distribution of CGAL are sources tarballs, released
-twice a year, announced on [the web site of CGAL](http://www.cgal.org/).
+twice a year, announced on [the web site of CGAL](https://www.cgal.org/).
 The sources distributed that way can be built using the
-[CGAL installation manual](http://doc.cgal.org/latest/Manual/installation.html).
+[CGAL installation manual](https://doc.cgal.org/latest/Manual/installation.html).
 
 CGAL Git repository layout
 ==========================
@@ -32,9 +32,9 @@ or `Triangulation_3`); however some packages serve special needs:
 
 Compilation and installation
 ============================
-The compilation and installation of CGAL from a sources tarball is
+The compilation and installation of CGAL from a sources tarball are
 described in the
-[CGAL installation manual](http://doc.cgal.org/latest/Manual/installation.html)
+[CGAL installation manual](https://doc.cgal.org/latest/Manual/installation.html)
 and in the file [INSTALL.md](Installation/INSTALL.md) that is at the root
 of any sources tarball.
 
@@ -49,7 +49,7 @@ See the file [LICENSE.md](LICENSE.md).
 
 More information
 ================
-* [The CGAL web site](http://www.cgal.org/)
-* [Latest CGAL release documentation pages](http://doc.cgal.org/)
+* [The CGAL web site](https://www.cgal.org/)
+* [Latest CGAL release documentation pages](https://doc.cgal.org/)
 * [Latest CGAL master documentation pages, updated once a week](https://cgal.geometryfactory.com/CGAL/doc/master/)
 * [CGAL daily testsuite results](https://cgal.geometryfactory.com/CGAL/testsuite/)

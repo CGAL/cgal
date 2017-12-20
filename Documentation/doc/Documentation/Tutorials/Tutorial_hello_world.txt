@@ -291,7 +291,7 @@ is a class that fulfills the requirements of the concept.
 Let's have a look at the following function.
 
 \code{.cpp}
-template <T>
+template <typename T>
 T
 duplicate(T t)
 {
@@ -308,7 +308,7 @@ Another example is the function
 
 \code{.cpp}
 template <typename T> 
-T& std::min(const T& a, constT& b)
+T& std::min(const T& a, const T& b)
 {
   return (a<b)?a:b;
 } 

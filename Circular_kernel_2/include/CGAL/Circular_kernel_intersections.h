@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Monique Teillaud, Sylvain Pion, Pedro Machado
 
@@ -25,6 +26,9 @@
 
 #ifndef CGAL_CIRCULAR_KERNEL_INTERSECTIONS_H
 #define CGAL_CIRCULAR_KERNEL_INTERSECTIONS_H 
+
+#include <CGAL/license/Circular_kernel_2.h>
+
 
 #include <vector>
 
@@ -82,6 +86,13 @@ intersection(const Circle_2 <K> &c1, const Line_2 <K> &c2, OutputIterator res)
 template < class OutputIterator, class K >
 OutputIterator
 intersection(const Line_2 <K> &c1, const Circle_2 <K> &c2, OutputIterator res)
+{
+  return typename K::Intersect_2()(c1, c2, res);
+}
+
+template < class OutputIterator, class K >
+OutputIterator
+intersection(const Line_2 <K> &c1, const Line_2 <K> &c2, OutputIterator res)
 {
   return typename K::Intersect_2()(c1, c2, res);
 }

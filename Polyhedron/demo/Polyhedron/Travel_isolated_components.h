@@ -5,12 +5,58 @@
 #include <vector>
 #include "One_ring_iterators.h"
 #include <CGAL/Default.h>
+
+
+template<typename Mesh>
+struct Id_getter{
+  typedef typename boost::graph_traits<Mesh>::vertex_descriptor mesh_vd;
+  typedef typename boost::graph_traits<Mesh>::face_descriptor mesh_fd;
+  typedef typename boost::graph_traits<Mesh>::halfedge_descriptor mesh_hd;
+  typedef typename boost::graph_traits<Mesh>::edge_descriptor mesh_ed;
+  const Mesh& mesh;
+  typename boost::property_map<Mesh, boost::vertex_index_t >::type vmap;
+  typename boost::property_map<Mesh, boost::face_index_t >::type fmap;
+  typename boost::property_map<Mesh, boost::halfedge_index_t >::type hmap;
+  typename boost::property_map<Mesh, boost::edge_index_t >::type emap;
+
+  Id_getter(const Mesh& mesh)
+    :mesh(mesh)
+  {
+    vmap = get(boost::vertex_index, mesh);
+    fmap = get(boost::face_index, mesh);
+    hmap = get(boost::halfedge_index, mesh);
+    emap = get(boost::edge_index, mesh);
+  }
+
+  std::size_t id(mesh_vd vd)
+  {
+    return get(vmap, vd);
+  }
+  std::size_t id(mesh_fd fd)
+  {
+    return get(fmap, fd);
+  }
+  std::size_t id(mesh_hd hd)
+  {
+    return get(hmap, hd);
+  }
+  std::size_t id(mesh_ed ed)
+  {
+    return get(emap, ed);
+  }
+};
+
+template<typename Mesh>
 class Travel_isolated_components {
+  const Mesh& mesh;
+  Id_getter<Mesh> id_getter;
 public:
+  Travel_isolated_components(const Mesh& mesh)
+    :mesh(mesh), id_getter(mesh){}
   // for transform iterator
-  template<class HandleType>
+  template<class Descriptor>
   struct Get_handle {
-    typedef HandleType result_type;
+    typedef Descriptor result_type;
     template<class Iterator>
     result_type operator()(Iterator it) const
     { return it; }
@@ -19,8 +65,8 @@ public:
   // to be used in get_minimum_isolated_component function
   struct Minimum_visitor
   {
-    template<class HandleType>
-    void operator()(const std::vector<HandleType>& C) {
+    template<class Descriptor>
+    void operator()(const std::vector<Descriptor>& C) {
       if(!minimum) { minimum = C.size(); }
       else         { minimum = (std::min)(*minimum, C.size()); }
     }
@@ -35,8 +81,8 @@ public:
     Selection_visitor(std::size_t threshold_size, OutputIterator out) 
       : threshold_size(threshold_size), out(out), any_inserted(false) { }
 
-    template<class HandleType>
-    void operator()(const std::vector<HandleType>& C) {
+    template<class Descriptor>
+    void operator()(const std::vector<Descriptor>& C) {
       if(C.size() <= threshold_size) {
         any_inserted = true;
         out = std::copy(C.begin(), C.end(), out);
@@ -53,14 +99,15 @@ public:
   };
 
   template <class Handle>
-  std::size_t id(Handle h) { return h->id(); }
+  std::size_t id(Handle h) { return id_getter.id(h); }
+  /* AF shouldn't the edge property map do that right?
   std::size_t id(boost::graph_traits<Polyhedron>::edge_descriptor ed)
   {
-    return ed.halfedge()->id() / 2;
+    return id_getter.id(halfedge(ed, id_getter.mesh)) /2;
   }
-
+  */
   // NOTE: prior to call this function, id fields should be updated
-  template<class HandleType, class InputIterator, class IsSelected, class Visitor>
+  template<class Descriptor, class InputIterator, class IsSelected, class Visitor>
   void travel(InputIterator begin, 
               InputIterator end, 
               std::size_t size, 
@@ -71,22 +118,22 @@ public:
 
     for(; begin != end; ++begin) 
     {
-      HandleType h = *begin;
+      Descriptor h = *begin;
 
       if(mark[id(h)] || selection.count(h)) { continue; }
 
-      std::vector<HandleType> C;
+      std::vector<Descriptor> C;
       C.push_back(h);
       mark[id(h)] = true;
       std::size_t current_index = 0;
 
       bool neigh_to_selection = false;
       while(current_index < C.size()) {
-        HandleType current = C[current_index++];
+        Descriptor current = C[current_index++];
 
-        for(One_ring_iterator<HandleType> circ(current); circ; ++circ)
+        for(One_ring_iterator<Mesh, Descriptor> circ(current, mesh); circ; ++circ)
         {
-          HandleType nv = circ;
+          Descriptor nv = circ;
           neigh_to_selection |= (selection.count(nv)!=0);
           if(!mark[id(nv)] && !selection.count(nv)) {
             mark[id(nv)] = true;

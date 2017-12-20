@@ -15,6 +15,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Stefan Schirra
@@ -233,6 +234,23 @@ _test_fct_point_3(const R& )
    assert( CGAL::compare_squared_radius(p0, p1, p2, p3, four) == CGAL::EQUAL );
  }
 
+ {
+   CGAL::Point_3<R> p0(0,0,1), p1(0,0,2), p2(1,0,1), p3(1,0,2), p4(1,0,3);
+   assert( CGAL::compare_slope(p0, p2, p1, p3) == CGAL::EQUAL );
+   assert( CGAL::compare_slope(p0, p2, p0, p3) == CGAL::SMALLER );
+   assert( CGAL::compare_slope(p0, p2, p1, p2) == CGAL::LARGER );
+   assert( CGAL::compare_slope(p0, p3, p0, p2) == CGAL::LARGER );
+   assert( CGAL::compare_slope(p0, p3, p0, p4) == CGAL::SMALLER );
+   assert( CGAL::compare_slope(p0, p3, p1, p2) == CGAL::LARGER );
+   assert( CGAL::compare_slope(p1, p2, p0, p2) == CGAL::SMALLER );
+   assert( CGAL::compare_slope(p1, p2, p0, p3) == CGAL::SMALLER );
+   assert( CGAL::compare_slope(p1, p2, p4, p0) == CGAL::LARGER );
+   
+ }
+
+
+ assert(CGAL::l_infinity_distance(p1,p2) == FT(11));
+ assert(CGAL::l_infinity_distance(p1,p5) == FT(6));
  // More tests, that require sqrt().
  {
      typedef ::CGAL::Algebraic_structure_traits<FT> AST; 

@@ -4,7 +4,8 @@
 #include "Point.h"  // defines types Point, Construct_coord_iterator
 #include "Distance.h"
 
-typedef CGAL::Random_points_in_cube_3<Point> Random_points_iterator;
+typedef CGAL::Creator_uniform_3<double,Point> Point_creator;
+typedef CGAL::Random_points_in_cube_3<Point, Point_creator> Random_points_iterator;
 typedef CGAL::Counting_iterator<Random_points_iterator> N_Random_points_iterator;
 typedef CGAL::Dimension_tag<3> D;
 typedef CGAL::Search_traits<double, Point, const double*, Construct_coord_iterator, D> Traits;

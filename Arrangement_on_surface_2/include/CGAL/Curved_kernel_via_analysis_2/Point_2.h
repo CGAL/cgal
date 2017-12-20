@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Eric Berberich <eric@mpi-inf.mpg.de>
@@ -31,6 +32,7 @@
 
 #include <boost/optional.hpp>
 #include <boost/optional/optional_io.hpp>
+#include <boost/type_traits/is_same.hpp>
 
 #include <CGAL/Handle_with_policy.h>
 
@@ -173,9 +175,13 @@ public:
     
     //! type of kernel point
     typedef typename Curved_kernel_via_analysis_2::Point_2 Kernel_point_2;
-    
+
     //!@}
-    
+
+    #if !defined(CGAL_NO_ASSERTIONS)
+    static const bool Kernel_point_2_equals_Point_2 = boost::is_same<Point_2, Kernel_point_2>::value;
+    #endif
+
 public:
     //!\name Rebind
     //!@{
@@ -496,7 +502,8 @@ public:
         CGAL_precondition(q.ptr()->_m_xy);
 
         CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_POINT(Compare_x_2, compare_x_2)
-        CGAL_precondition(dynamic_cast< const Kernel_point_2* >(this) != NULL);
+        CGAL_precondition(Kernel_point_2_equals_Point_2 ||
+                          dynamic_cast< const Kernel_point_2* >(this) != NULL);
         return compare_x_2(*dynamic_cast< const Kernel_point_2* >(this), q);
     }
 
@@ -518,7 +525,8 @@ public:
         CGAL_precondition(bool(q.ptr()->_m_xy));
 
         CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_POINT(Compare_xy_2, compare_xy_2)
-        CGAL_precondition(dynamic_cast< const Kernel_point_2* >(this) != NULL);
+        CGAL_precondition(Kernel_point_2_equals_Point_2 ||
+                          dynamic_cast< const Kernel_point_2* >(this) != NULL);
         return compare_xy_2(
                 *dynamic_cast< const Kernel_point_2* >(this), q, equal_x
         );
@@ -537,7 +545,8 @@ public:
         CGAL_precondition(bool(this->ptr()->_m_xy));
 
         CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_POINT(Is_on_2, is_on_2)
-        CGAL_precondition(dynamic_cast< const Kernel_point_2* >(this) != NULL);
+        CGAL_precondition(Kernel_point_2_equals_Point_2 ||
+                          dynamic_cast< const Kernel_point_2* >(this) != NULL);
         return is_on_2(*dynamic_cast< const Kernel_point_2* >(this), curve);
     }
 

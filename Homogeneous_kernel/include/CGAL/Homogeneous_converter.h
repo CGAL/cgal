@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Sylvain Pion
@@ -83,6 +84,13 @@ public:
     operator()(const typename K1::Point_2 &a) const
     {
 	return k.construct_point_2_object()(rc(a.hx()), rc(a.hy()),
+		rc(a.hw()));
+    }
+
+    typename K2::Weighted_point_2
+    operator()(const typename K1::Weighted_point_2 &a) const
+    {
+      return k.construct_weighted_point_2_object()(operator()(a.point()), operator()(a.weight()),
 		rc(a.hw()));
     }
 

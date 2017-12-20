@@ -12,14 +12,17 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: $
-// $Id: $
-//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s) : Efi Fogel   <efif@post.tau.ac.il>
 
 #ifndef CGAL_ARR_POINT_LOCATION_RESULT_H
 #define CGAL_ARR_POINT_LOCATION_RESULT_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 
 // The macro CGAL_ARR_POINT_LOCATION_VERSION controls which version of the
 // point location is used. Currently two values are supported:

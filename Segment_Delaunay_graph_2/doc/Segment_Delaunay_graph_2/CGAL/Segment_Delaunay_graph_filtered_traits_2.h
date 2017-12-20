@@ -70,8 +70,7 @@ The default values for the template parameters are as follows:
 
 */
 template< typename CK, typename CM, typename EK, typename EM, typename FK, typename FM >
-class Segment_Delaunay_graph_filtered_traits_2 {
-public:
+struct Segment_Delaunay_graph_filtered_traits_2 {
 
 /// \name Types 
 /// In addition to the types required by the
@@ -230,8 +229,7 @@ default value is
 
 */
 template< typename CK, typename CM, typename EK, typename EM, typename FK, typename FM >
-class Segment_Delaunay_graph_filtered_traits_without_intersections_2 {
-public:
+struct Segment_Delaunay_graph_filtered_traits_without_intersections_2 {
 
 /// \name Types 
 /// In addition to the types required by the

@@ -15,6 +15,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Stefan Schirra
@@ -22,6 +23,9 @@
 
 #ifndef CGAL__TEST_FCT_POINT_2_H
 #define CGAL__TEST_FCT_POINT_2_H
+
+#include <cassert>
+#include <iostream>
 
 template <class R>
 bool
@@ -277,6 +281,8 @@ _test_fct_point_2(const R& )
  
  std::cout << '.';
 
+ assert(CGAL::l_infinity_distance(p1,p2) == FT(1));
+ assert(CGAL::l_infinity_distance(p1,p8) == FT(2));
  std::cout << "done" << std::endl;
  return true;
 }

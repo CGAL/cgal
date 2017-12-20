@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Michal Meyerovitch     <gorgymic@post.tau.ac.il>
 //                 Baruch Zukerman        <baruchzu@post.tau.ac.il>
@@ -23,12 +24,16 @@
 #ifndef CGAL_ENV_SPHERE_TRAITS_3_H
 #define CGAL_ENV_SPHERE_TRAITS_3_H
 
+#include <CGAL/license/Envelope_3.h>
+
+
 #include <CGAL/Object.h>
 #include <CGAL/enum.h>
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Sphere_3.h>
 #include <CGAL/functions_on_signs.h>
 #include <CGAL/Envelope_3/Envelope_base.h>
+#include <CGAL/int.h>
 
 namespace CGAL {
 
@@ -692,7 +697,7 @@ public:
         // If the mid-point forms a left-turn with the source and the target
         // points, the orientation is positive (going counterclockwise).
         // Otherwise, it is negative (going clockwise).
-        static Alg_kernel k;
+        Alg_kernel k;
         typename Alg_kernel::Orientation_2 orient_f = k.orientation_2_object();
         Orientation orient;
         if (orient_f(source, pmid, target) == LEFT_TURN)

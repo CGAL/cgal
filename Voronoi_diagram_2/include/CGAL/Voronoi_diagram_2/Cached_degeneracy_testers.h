@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
@@ -21,13 +22,16 @@
 #ifndef CGAL_VORONOI_DIAGRAM_2_CACHED_DEGENERACY_TESTERS_H
 #define CGAL_VORONOI_DIAGRAM_2_CACHED_DEGENERACY_TESTERS_H 1
 
+#include <CGAL/license/Voronoi_diagram_2.h>
+
+
 #include <CGAL/Voronoi_diagram_2/basic.h>
 
 #include <CGAL/Voronoi_diagram_2/Edge_less.h>
 #include <map>
 
 #include <CGAL/Unique_hash_map.h>
-#include <CGAL/Edge_hash_function.h>
+#include <CGAL/internal/TDS_2/Edge_hash_function.h>
 
 
 namespace CGAL {

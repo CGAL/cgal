@@ -14,14 +14,13 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Monique Teillaud (Monique.Teillaud@sophia.inria.fr)
 //               : Mariette Yvinec (Mariette.Yvinec@sophia.inria.fr)
 
 #include <CGAL/Regular_triangulation_3.h>
-#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
-
 #include <iostream>
 #include <cassert>
 #include <list>
@@ -32,8 +31,8 @@
 
 bool del=true;
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel FK;
-typedef CGAL::Regular_triangulation_euclidean_traits_3<FK> traits;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel traits;
+
 
 // Explicit instantiation of the whole class :
 template class CGAL::Regular_triangulation_3<traits>;
@@ -43,9 +42,9 @@ void test_RT()
 {
   typedef RT                 Cls;
 
-  //  _test_cls_regular_3( Cls() );
-  typedef traits::Bare_point Point;
-  typedef traits::Weighted_point Weighted_point;
+  _test_cls_regular_3( Cls() );
+  typedef typename RT::Bare_point                    Point;
+  typedef typename RT::Weighted_point                Weighted_point;
 
   typedef typename Cls::Vertex_handle                Vertex_handle;
   typedef typename Cls::Cell_handle                  Cell_handle; 
@@ -295,7 +294,7 @@ void test_RT()
              a-b+d +5*b,
              a*a-d*d+b),
              a*b-a*d) );
-  list_point::iterator it;
+  typename list_point::iterator it;
   count = 0 ;
   std::cout << " number of inserted points : " ;
   for (it=lp.begin(); it!=lp.end(); ++it){
@@ -369,7 +368,7 @@ void test_RT()
   Vertex_handle v8 = T3.insert(wpp8);
   Point query(0.5,0.5,0.5);
   assert(T3.nearest_power_vertex(query) == v8);
-  assert(T3.nearest_power_vertex(Weighted_point(query,1.0)) == v8 );
+
   assert(T3.nearest_power_vertex_in_cell(query ,v8->cell()) == v8); 
   
   // test dual
@@ -438,16 +437,13 @@ void test_RT()
 
 int main()
 {
-  std::cout << " with CGAL::Regular_triangulation_euclidean_traits_3: "
-            << std::endl;
-
   test_RT<CGAL::Regular_triangulation_3<traits> >();
   
 #ifdef CGAL_LINKED_WITH_TBB
   typedef CGAL::Spatial_lock_grid_3<
     CGAL::Tag_priority_blocking>                      Lock_ds;
   typedef CGAL::Triangulation_data_structure_3< 
-    CGAL::Triangulation_vertex_base_3<traits>, 
+    CGAL::Regular_triangulation_vertex_base_3<traits>, 
     CGAL::Regular_triangulation_cell_base_3<traits>, 
     CGAL::Parallel_tag >	                            Tds_parallel;
   typedef CGAL::Regular_triangulation_3<

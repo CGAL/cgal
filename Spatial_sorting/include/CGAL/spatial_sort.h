@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Christophe Delage
 
@@ -47,9 +48,11 @@ namespace internal {
 		       std::ptrdiff_t threshold_multiscale,
 		       double ratio)
     {
+      typedef std::iterator_traits<RandomAccessIterator> Iterator_traits;
+      typedef typename Iterator_traits::difference_type Diff_t;
       typedef Hilbert_sort_2<Kernel, Policy> Sort;
         boost::rand48 random;
-        boost::random_number_generator<boost::rand48> rng(random);
+        boost::random_number_generator<boost::rand48, Diff_t> rng(random);
 #if defined(CGAL_HILBERT_SORT_WITH_MEDIAN_POLICY_CROSS_PLATFORM_BEHAVIOR)
         CGAL::random_shuffle(begin,end,rng);
 #else
@@ -74,9 +77,11 @@ namespace internal {
 		       std::ptrdiff_t threshold_multiscale,
 		       double ratio)
     {
+      typedef std::iterator_traits<RandomAccessIterator> Iterator_traits;
+      typedef typename Iterator_traits::difference_type Diff_t;
       typedef Hilbert_sort_3<Kernel, Policy> Sort;
         boost::rand48 random;
-        boost::random_number_generator<boost::rand48> rng(random);
+        boost::random_number_generator<boost::rand48, Diff_t> rng(random);
 #if defined(CGAL_HILBERT_SORT_WITH_MEDIAN_POLICY_CROSS_PLATFORM_BEHAVIOR)
         CGAL::random_shuffle(begin,end, rng);
 #else
@@ -101,9 +106,11 @@ namespace internal {
 		       std::ptrdiff_t threshold_multiscale,
 		       double ratio)
     {
+      typedef std::iterator_traits<RandomAccessIterator> Iterator_traits;
+      typedef typename Iterator_traits::difference_type Diff_t;
       typedef Hilbert_sort_d<Kernel, Policy> Sort;
         boost::rand48 random;
-        boost::random_number_generator<boost::rand48> rng(random);
+        boost::random_number_generator<boost::rand48, Diff_t> rng(random);
 #if defined(CGAL_HILBERT_SORT_WITH_MEDIAN_POLICY_CROSS_PLATFORM_BEHAVIOR)
         CGAL::random_shuffle(begin,end, rng);
 #else

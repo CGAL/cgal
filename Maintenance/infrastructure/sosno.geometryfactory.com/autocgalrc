@@ -1,0 +1,17 @@
+#!/bin/sh
+CGAL_ROOT="/cygdrive/e/cgal/test"
+BUILD_HOSTS="localhost"
+REFERENCE_PLATFORMS_DIR="E:/CGAL/reference_platforms"
+CGAL_TESTER="jtournois"
+CGAL_TESTER_NAME="SOSNO (GF)"
+CGAL_TESTER_ADDRESS="jane.tournois@geometryfactory.com"
+
+COMPILERS_localhost="x64_Cygwin-Windows10_MSVC2015-Release-64bits"
+COMPILERS_localhost="$COMPILERS_localhost x64_Cygwin-Windows10_MSVC2015-Debug-64bits"
+
+MYSHELL="bash --login"
+FTP_OPTS="-v -n"
+PROCESSORS_localhost="4"
+
+UPLOAD_RESULT_DESTINATION="cgaltest@cgaltest.geometryfactory.com:incoming"
+WGET_OPTS="--no-verbose"

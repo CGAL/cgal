@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Andreas Fabri
@@ -39,6 +40,7 @@ template < typename K_base >
 class Equal_2
   : public K_base::Equal_2
 {
+  typedef typename K_base::FT        FT;
   typedef typename K_base::Point_2   Point_2;
   typedef typename K_base::Vector_2  Vector_2;
   typedef typename K_base::Equal_2   Base;
@@ -68,6 +70,7 @@ public:
     Get_approx<Point_2> get_approx; // Identity functor for all points
                                     // but lazy points
     double px, py, qx, qy;
+    init_double(px, py,qx, qy, (FT*)(0));
 
     if (fit_in_double(get_approx(p).x(), px) && fit_in_double(get_approx(p).y(), py) &&
         fit_in_double(get_approx(q).x(), qx) && fit_in_double(get_approx(q).y(), qy) )

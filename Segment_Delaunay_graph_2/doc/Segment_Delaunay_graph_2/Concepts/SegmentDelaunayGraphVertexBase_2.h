@@ -3,15 +3,13 @@
 \ingroup PkgSegmentDelaunayGraph2Concepts
 \cgalConcept
 
+\cgalRefines `TriangulationVertexBase_2`
+
 The concept `SegmentDelaunayGraphVertexBase_2` describes the 
 requirements for the vertex base class of the 
 `SegmentDelaunayGraphDataStructure_2` concept. A vertex stores a 
 site of the segment Delaunay graph and provides access to one of its 
 incident faces through a `Face_handle`. 
-
-\cgalRefines `DefaultConstructible` 
-\cgalRefines `CopyConstructible` 
-\cgalRefines `Assignable` 
 
 \cgalHasModel `CGAL::Segment_Delaunay_graph_vertex_base_2<Gt>`
 

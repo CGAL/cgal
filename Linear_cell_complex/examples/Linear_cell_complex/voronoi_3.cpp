@@ -1,14 +1,12 @@
-#include <CGAL/Linear_cell_complex.h>
-#include <CGAL/Linear_cell_complex_constructors.h>
-#include <CGAL/Linear_cell_complex_operations.h>
+#include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/Delaunay_triangulation_3.h>
-#include <CGAL/import_from_triangulation_3.h>
+#include <CGAL/Triangulation_3_to_lcc.h>
 
 #include <iostream>
 #include <fstream>
 
 /* If you want to use a viewer, you can use one qglviewer. */
-#ifdef CGAL_LCC_USE_QT
+#ifdef CGAL_USE_BASIC_VIEWER
 #include "linear_cell_complex_3_viewer_qt.h"
 #endif
 
@@ -18,7 +16,7 @@ typedef CGAL::Linear_cell_complex<3,3,
   CGAL::Linear_cell_complex_traits<3, CGAL::Exact_predicates_exact_constructions_kernel> > LCC_3;
 */
 
-typedef CGAL::Linear_cell_complex<3> LCC_3;
+typedef CGAL::Linear_cell_complex_for_combinatorial_map<3> LCC_3;
 typedef LCC_3::Dart_handle           Dart_handle;
 typedef LCC_3::Point                 Point;
 
@@ -62,9 +60,9 @@ void display_voronoi(LCC_3& alcc, Dart_handle adart)
                                           << alcc.is_valid()
                                           << std::endl;
 
-#ifdef CGAL_LCC_USE_VIEWER
+#ifdef CGAL_USE_BASIC_VIEWER
   display_lcc(alcc);
-#endif // CGAL_LCC_USE_VIEWER
+#endif // CGAL_USE_BASIC_VIEWER
 }
 
 template<typename LCC, typename TR>

@@ -12,9 +12,18 @@
 //
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
+//
+// Author(s)     : Ilker O. Yaz
 
 
 #define CGAL_INTERNAL_SURFACE_MESH_SEGMENTATION_AABB_TRAITS_H
+
+#include <CGAL/license/Surface_mesh_segmentation.h>
+
 
 #include <CGAL/AABB_traits.h>
 #include <boost/utility/enable_if.hpp>

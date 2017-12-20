@@ -12,7 +12,11 @@
 \example BGL_triangulation_2/dijkstra.cpp
 \example BGL_triangulation_2/dijkstra_with_internal_properties.cpp
 \example BGL_triangulation_2/emst.cpp
+\example BGL_triangulation_2/emst_regular.cpp
+\example BGL_triangulation_2/emst_cdt_plus_hierarchy.cpp
 \example BGL_surface_mesh/prim.cpp
 \example BGL_surface_mesh/surface_mesh_dual.cpp
 \example Surface_mesh_skeletonization/simple_mcfskel_example.cpp
+\example Surface_mesh_segmentation/extract_segmentation_into_mesh_example.cpp
+\example Polygon_mesh_processing/face_filtered_graph_example.cpp
 */

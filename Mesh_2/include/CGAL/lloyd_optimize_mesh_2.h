@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 // Author(s) : Jane Tournois
 //
 
 #ifndef CGAL_LLOYD_OPTIMIZE_MESH_2_H
 #define CGAL_LLOYD_OPTIMIZE_MESH_2_H
+
+#include <CGAL/license/Mesh_2.h>
+
 
 
 

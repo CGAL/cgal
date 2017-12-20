@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Sven Oesau, Yannick Verdie, Clément Jamin, Pierre Alliez
@@ -21,6 +22,9 @@
 
 #ifndef CGAL_SHAPE_DETECTION_3_CONE_H
 #define CGAL_SHAPE_DETECTION_3_CONE_H
+
+#include <CGAL/license/Point_set_shape_detection_3.h>
+
 
 #include <CGAL/Shape_detection_3/Shape_base.h>
 #include <CGAL/number_utils.h>
@@ -422,8 +426,7 @@ namespace CGAL {
         Vector_3 d = this->constr_vec(m_apex, this->point(indices[0]));
         FT v = this->scalar_pdct(d, m_axis) / m_cos_ang;
         FT phi = atan2(this->scalar_pdct(d, d2), this->scalar_pdct(d, d1));
-        FT radPerDist = -m_neg_sin_ang * v;
-        FT u = FT(phi + CGAL_PI);// * radPerDist;
+        FT u = FT(phi + CGAL_PI);
         FT avg_v = v;
 
         min[0] = max[0] = u;
@@ -433,8 +436,7 @@ namespace CGAL {
           d = this->constr_vec(m_apex, this->point(indices[i]));
           v = this->scalar_pdct(d, m_axis) / m_cos_ang;
           phi = atan2(this->scalar_pdct(d, d2), this->scalar_pdct(d, d1));
-          radPerDist = -m_neg_sin_ang * v;
-          u = FT(phi + CGAL_PI);// * radPerDist;
+          u = FT(phi + CGAL_PI);
 
           min[0] = (std::min<FT>)(min[0], u);
           max[0] = (std::max<FT>)(max[0], u);

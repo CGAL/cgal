@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Daniel Russel <drussel@alumni.princeton.edu>
@@ -455,7 +456,7 @@ protected:
   std::size_t size() const {return coefs_.size();}
 
   static const NT & zero_coef() {
-    static NT z(0);
+    static const NT z(0);
     return z;
   }
 

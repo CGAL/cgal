@@ -15,6 +15,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Stephane Tayeb, Laurent Rineau
@@ -22,6 +23,9 @@
 
 #ifndef CGAL_GRAY_IMAGE_MESH_DOMAIN_3_H
 #define CGAL_GRAY_IMAGE_MESH_DOMAIN_3_H
+
+#include <CGAL/license/Mesh_3.h>
+
 
 #include <CGAL/Random.h>
 #include <CGAL/Labeled_mesh_domain_3.h>

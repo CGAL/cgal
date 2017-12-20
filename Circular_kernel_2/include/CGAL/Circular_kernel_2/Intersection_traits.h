@@ -14,9 +14,11 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Philipp Möller and Sebastien Loriot
@@ -176,6 +178,12 @@ template<typename CK>
 struct CK2_Intersection_traits<CK, typename CK::Circle_2, typename CK::Line_2> :
     public CK2_Intersection_traits<CK, typename CK::Line_2, typename CK::Circle_2>
 {};
+
+template<typename CK>
+struct CK2_Intersection_traits<CK, typename CK::Line_2, typename CK::Line_2>
+{
+  typedef typename Intersection_traits<CK, typename CK::Line_2, typename CK::Line_2>::result_type type;
+};
 
 } //end of namespace CGAL
 

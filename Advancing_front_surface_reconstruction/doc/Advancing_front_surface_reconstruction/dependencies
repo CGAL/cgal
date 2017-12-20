@@ -10,3 +10,5 @@ Triangulation_3
 Number_types
 Surface_mesh
 Polyhedron
+Point_set_shape_detection_3
+Point_set_processing_3

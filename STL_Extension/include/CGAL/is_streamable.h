@@ -12,6 +12,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: BSL-1.0
 //
 // Author(s)     : Laurent Rineau, Philipp Moeller
 

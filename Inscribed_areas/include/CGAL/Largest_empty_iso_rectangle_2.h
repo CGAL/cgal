@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Eli Packer (algorithm), Andreas Fabri (cgal conformance)
 
 #ifndef CGAL_LARGEST_EMPTY_ISO_RECTANGLE_2_H
 #define CGAL_LARGEST_EMPTY_ISO_RECTANGLE_2_H
+
+#include <CGAL/license/Inscribed_areas.h>
+
 
 /*! \file
  * The implementation of the Largest_empty_iso_rectangle_2<Traits> class.

@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Laurent RINEAU
 
 #ifndef CGAL_FILTRED_CIRCULATOR_H
 #define CGAL_FILTRED_CIRCULATOR_H
+
+#include <CGAL/license/Mesh_2.h>
+
 
 #include <CGAL/config.h>
 #include <CGAL/assertions.h>

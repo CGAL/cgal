@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Monique Teillaud, Sylvain Pion, Pedro Machado
 
@@ -25,6 +26,9 @@
 
 #ifndef CGAL_CIRCULAR_KERNEL_FUNCTIONS_ON_LINE_2_H
 #define CGAL_CIRCULAR_KERNEL_FUNCTIONS_ON_LINE_2_H
+
+#include <CGAL/license/Circular_kernel_2.h>
+
 
 namespace CGAL {
 namespace LinearFunctors {

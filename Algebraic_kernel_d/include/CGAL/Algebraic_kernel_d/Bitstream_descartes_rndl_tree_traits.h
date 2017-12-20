@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Michael Kerber <mkerber@mpi-inf.mpg.de>
@@ -29,6 +30,7 @@
 #include <CGAL/Algebraic_kernel_d/Float_traits.h>
 #include <CGAL/Polynomial_type_generator.h>
 #include <CGAL/convert_to_bfi.h>
+#include <CGAL/tss.h>
 
 #include <vector>
 
@@ -134,7 +136,7 @@ public:
 private:
     static const Self& get_default_instance(){
       Bitstream_coefficient_kernel kernel;
-      static Self x = Self(kernel);
+      CGAL_STATIC_THREAD_LOCAL_VARIABLE(Self, x,kernel);
       return x;
     }
 

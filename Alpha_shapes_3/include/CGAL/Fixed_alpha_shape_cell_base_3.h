@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Sebastien Loriot
@@ -21,6 +22,9 @@
 
 #ifndef CGAL_FIXED_ALPHA_SHAPE_CELL_BASE_3_H
 #define CGAL_FIXED_ALPHA_SHAPE_CELL_BASE_3_H
+
+#include <CGAL/license/Alpha_shapes_3.h>
+
 
 #include <vector>
 #include <CGAL/Compact_container.h>

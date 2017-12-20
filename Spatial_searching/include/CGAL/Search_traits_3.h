@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Hans Tangelder (<hanst@cs.uu.nl>)
@@ -21,6 +22,9 @@
 
 #ifndef CGAL_SEARCH_TRAITS_3_H
 #define CGAL_SEARCH_TRAITS_3_H
+
+#include <CGAL/license/Spatial_searching.h>
+
 #include <CGAL/Dimension.h>
 
 namespace CGAL {

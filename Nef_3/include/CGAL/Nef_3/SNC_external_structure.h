@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Michael Seel       <seel@mpi-sb.mpg.de> 
@@ -23,6 +24,9 @@
 //                 Peter Hachenberger <hachenberger@mpi-sb.mpg.de>
 #ifndef CGAL_SNC_EXTERNAL_STRUCTURE_H
 #define CGAL_SNC_EXTERNAL_STRUCTURE_H
+
+#include <CGAL/license/Nef_3.h>
+
 
 #include <CGAL/Nef_S2/Normalizing.h>
 #include <CGAL/Nef_3/Pluecker_line_3.h>

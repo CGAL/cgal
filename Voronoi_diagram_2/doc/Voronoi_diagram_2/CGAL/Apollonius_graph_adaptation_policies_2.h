@@ -23,8 +23,7 @@ edges of zero length and no Voronoi faces of zero area.
 
 */
 template< typename AG2 >
-class Apollonius_graph_caching_degeneracy_removal_policy_2 {
-public:
+struct Apollonius_graph_caching_degeneracy_removal_policy_2 {
 
 /// \name Types 
 /// @{
@@ -63,7 +62,7 @@ zero area.
 
 */
 template< typename AG2 >
-class Apollonius_graph_degeneracy_removal_policy_2 {
+struct Apollonius_graph_degeneracy_removal_policy_2 {
 public:
 
 /// \name Types 

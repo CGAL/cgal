@@ -13,6 +13,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Andreas Fabri, Fernando Cacciola
@@ -36,12 +37,12 @@ namespace internal {
 
 template<class Handle>
 class Polyhedron_index_map_external
-  : public boost::put_get_helper<std::size_t, Polyhedron_index_map_external<Handle> >
+  : public boost::put_get_helper<std::size_t&, Polyhedron_index_map_external<Handle> >
 {
 public:
-  typedef boost::readable_property_map_tag category;
+  typedef boost::lvalue_property_map_tag   category;
   typedef std::size_t                      value_type;
-  typedef std::size_t                      reference;
+  typedef std::size_t&                     reference;
   typedef Handle                           key_type;
 
 private:
@@ -181,7 +182,7 @@ void put(PropertyTag p, CGAL::Polyhedron_3<Gt,I,HDS,A>& g, const Key& key, const
   put(pmap, key, value);
 }
 
-} // boost
+} // CGAL
 
 // specialization needs to be repeated for halfedge, vertex, face
 #define CGAL_POLYHEDRON_INDEX_PM(ENTITY, TAG, ACCESSOR)                 \
@@ -196,7 +197,7 @@ void put(PropertyTag p, CGAL::Polyhedron_3<Gt,I,HDS,A>& g, const Key& key, const
     typedef type const_type;                                            \
   };                                                                    \
   };                                                                    \
-  }
+  } //CGAL
 
 CGAL_POLYHEDRON_INDEX_PM(halfedge, _index_t, Index)
 CGAL_POLYHEDRON_INDEX_PM(vertex, _index_t, Index)

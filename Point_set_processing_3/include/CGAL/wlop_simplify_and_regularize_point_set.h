@@ -14,11 +14,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s) : Shihao Wu, Clement Jamin, Pierre Alliez 
 
 #ifndef CGAL_wlop_simplify_and_regularize_point_set_H
 #define CGAL_wlop_simplify_and_regularize_point_set_H
+
+#include <CGAL/license/Point_set_processing_3.h>
+
 
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
@@ -389,7 +393,7 @@ public:
 // ----------------------------------------------------------------------------
 
 //=============================================================================
-/// \ingroup PkgPointSetProcessing
+/// \ingroup PkgPointSetProcessingAlgorithms
 /// This is an implementation of the Weighted Locally Optimal Projection (WLOP) simplification algorithm.
 /// The WLOP simplification algorithm can produce a set of 
 /// denoised, outlier-free and evenly distributed particles over the original 
@@ -580,7 +584,7 @@ wlop_simplify_and_regularize_point_set(
                            sample_points,          
                            original_kd_tree,
                            sample_kd_tree,
-                           radius, 
+                           radius2,
                            original_density_weights,
                            sample_density_weights);
 

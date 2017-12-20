@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Ron Wein <wein@post.tau.ac.il>
@@ -21,6 +22,9 @@
 
 #ifndef CGAL_ARR_DEFAULT_OVERLAY_TRAITS_H
 #define CGAL_ARR_DEFAULT_OVERLAY_TRAITS_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 
 /*! \file
  * Definition of default overlay-traits classes.
@@ -51,7 +55,7 @@ class Arr_default_overlay_traits :
  * An overlay-traits class for computing the overlay of two arrangement whose
  * face records are extended with auxiliary data fields, of type Data1 and
  * Data2, respectively. The resulting arrangement is also assumed to be
- * templated with the face-extended DCEL, where each face stores an auxiliart
+ * templated with the face-extended DCEL, where each face stores an auxiliary
  * Res_data field.
  * The resulting data object that corresponds to the overlay of two data
  * object of type Data1 and Data2 is computed using the functor

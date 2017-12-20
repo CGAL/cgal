@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s): Quincy Tse, Weisheng Si
@@ -27,6 +28,9 @@
 
 #ifndef GNUPLOT_OUTPUT_2_H
 #define GNUPLOT_OUTPUT_2_H
+
+#include <CGAL/license/Cone_spanners_2.h>
+
 
 #include <iostream>
 #include <sstream>

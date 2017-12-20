@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Wieger Wesselink 
@@ -117,13 +118,40 @@
 #  define BOOST_NO_CXX11_VARIADIC_TEMPLATES
 #endif
 
+// workaround for the bug https://svn.boost.org/trac10/ticket/12534
+// That bug was introduced in Boost 1.62 and fixed in 1.63.
+#if BOOST_VERSION >= 106200 && BOOSTS_VERSION < 106300
+#  include <boost/container/flat_map.hpp>
+#endif
+
+// Hack: Boost<1.55 does not detect correctly the C++11 features of ICC.
+// We declare by hand two features that we need (variadic templates and
+// rvalue references).
+#if defined(__INTEL_COMPILER) && defined(__GXX_EXPERIMENTAL_CXX0X__)
+#  undef BOOST_NO_VARIADIC_TEMPLATES
+#  undef BOOST_NO_CXX11_VARIADIC_TEMPLATES
+#  undef BOOST_NO_RVALUE_REFERENCES
+#  undef BOOST_NO_CXX11_RVALUE_REFERENCES
+#endif
+
 #include <CGAL/version.h>
 
 //----------------------------------------------------------------------//
 //  platform specific workaround flags (CGAL_CFG_...)
 //----------------------------------------------------------------------//
 
-#include <CGAL/compiler_config.h>
+#if CGAL_HEADER_ONLY
+#  include <CGAL/internal/enable_third_party_libraries.h>
+#  if(BOOST_MSVC)
+#    include <CGAL/MSVC_compiler_config.h>
+#  endif
+#else
+#  include <CGAL/compiler_config.h>
+#endif
+
+#if BOOST_MSVC && CGAL_TEST_SUITE
+#  include <CGAL/Testsuite/vc_debug_hook.h>
+#endif
 
 //----------------------------------------------------------------------//
 //  Support for DLL on Windows (CGAL_EXPORT macro)
@@ -151,6 +179,12 @@
 #if defined(BOOST_NO_0X_HDR_ARRAY) || \
     defined(BOOST_NO_CXX11_HDR_ARRAY) || BOOST_VERSION < 104000
 #define CGAL_CFG_NO_CPP0X_ARRAY 1
+#endif
+#if defined(BOOST_NO_0X_HDR_UNORDERED_SET) || \
+    defined(BOOST_NO_0X_HDR_UNORDERED_MAP) || \
+    defined(BOOST_NO_CXX11_HDR_UNORDERED_SET) || \
+    defined(BOOST_NO_CXX11_HDR_UNORDERED_MAP)
+#define CGAL_CFG_NO_CPP0X_UNORDERED 1
 #endif
 #if defined(BOOST_NO_DECLTYPE) || \
     defined(BOOST_NO_CXX11_DECLTYPE) || (BOOST_VERSION < 103600)
@@ -236,6 +270,15 @@
 #if defined(BOOST_NO_CXX11_HDR_FUNCTIONAL) || BOOST_VERSION < 105000
 #define CGAL_CFG_NO_STD_HASH 1
 #endif
+
+
+//----------------------------------------------------------------------//
+//  As std::unary_function and std::binary_function are deprecated
+//  we use internally equivalent class templates from
+// <CGAL/functional.h>.
+//----------------------------------------------------------------------//
+
+#include <CGAL/functional.h>
 
 //----------------------------------------------------------------------//
 //  auto-link the CGAL library on platforms that support it
@@ -506,7 +549,7 @@ using std::max;
 #if __has_feature(cxx_thread_local) || \
     ( (__GNUC__ * 100 + __GNUC_MINOR__) >= 408 && __cplusplus >= 201103L ) || \
     ( _MSC_VER >= 1900 )
-// see also Installation/config/support/CGAL_test_cpp_version.cpp
+// see also Installation/cmake/modules/config/support/CGAL_test_cpp_version.cpp
 #define CGAL_CAN_USE_CXX11_THREAD_LOCAL
 #endif
 
@@ -589,5 +632,37 @@ typedef const void * Nullptr_t;   // Anticipate C++0x's std::nullptr_t
 #else
 #define CGAL_ADDITIONAL_VARIANT_FOR_ICL
 #endif
+
+#if !defined CGAL_EIGEN3_ENABLED && \
+    !defined CGAL_EIGEN3_DISABLED && \
+    __has_include(<Eigen/Jacobi>)
+#  define CGAL_EIGEN3_ENABLED 1
+#endif
+
+#define CGAL_STRINGIZE_HELPER(x) #x
+#define CGAL_STRINGIZE(x) CGAL_STRINGIZE_HELPER(x)
+
+/// Macro `CGAL_WARNING`.
+/// Must be used with `#pragma`, this way:
+///
+///     #pragma CGAL_WARNING(This line should trigger a warning)
+///
+/// @{
+#ifdef BOOST_MSVC
+#  define CGAL_WARNING(desc) message(__FILE__ "(" CGAL_STRINGIZE(__LINE__) ") : warning: " desc)
+#else // not BOOST_MSVC
+#  define CGAL_WARNING(desc) message( "warning: " desc)
+#endif // not BOOST_MSVC
+/// @}
+
+/// Macro `CGAL_pragma_warning`.
+#ifdef BOOST_MSVC
+#  define CGAL_pragma_warning(desc) __pragma(CGAL_WARNING(desc))
+#else // not BOOST_MSVC
+#  define CGAL_pragma_warning(desc) _Pragma(CGAL_STRINGIZE(CGAL_WARNING(desc)))
+#endif // not BOOST_MSVC
+/// @}
+#include <CGAL/license/lgpl.h>
+
 
 #endif // CGAL_CONFIG_H

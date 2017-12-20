@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Bernd Gaertner <gaertner@inf.ethz.ch>, Kaspar Fischer
@@ -21,11 +22,15 @@
 #ifndef CGAL_QP_MODELS_H
 #define CGAL_QP_MODELS_H
 
+#include <CGAL/license/QP_solver.h>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/iterator.h>
 #include <CGAL/algorithm.h>
 #include <CGAL/QP_solver/basic.h>
 #include <CGAL/QP_solver/functors.h>
+#include <CGAL/IO/io.h>
 #include <vector> 
 #include <map>
 #include <iomanip>
@@ -390,7 +395,7 @@ namespace QP_model_detail {
   // maps a container to its begin-iterator, as specified by HowToBegin
   template<typename Container, typename Iterator, typename HowToBegin>
   struct Begin
-    : public std::unary_function< Container, Iterator >
+    : public CGAL::unary_function< Container, Iterator >
   {
     typedef Iterator result_type;
     result_type operator () ( const Container& v) const 
@@ -1064,7 +1069,7 @@ private:
   template<typename NumberType>
   bool number(NumberType& entry) {
     // whitespace(); the following >> should care for this
-    from >> entry;
+    from >> CGAL::iformat(entry);
     return from.good();
   }
 

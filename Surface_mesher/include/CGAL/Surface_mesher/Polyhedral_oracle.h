@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Steve OUDOT, Laurent Rineau
 
 #ifndef CGAL_SURFACE_MESHER_POLYHEDRAL_ORACLE_H
 #define CGAL_SURFACE_MESHER_POLYHEDRAL_ORACLE_H
+
+#include <CGAL/license/Surface_mesher.h>
+
 
 #include <utility>
 

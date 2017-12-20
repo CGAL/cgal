@@ -5,7 +5,10 @@
 #include <CGAL/algorithm.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
 #include <CGAL/point_generators_3.h>
-#include <CGAL/Default_diagonalize_traits.h>
+#ifdef CGAL_EIGEN3_ENABLED
+#include <CGAL/Eigen_diagonalize_traits.h>
+#endif
+#include <CGAL/Diagonalize_traits.h>
 
 #include <vector>
 #include <cassert>
@@ -36,12 +39,20 @@ FT fit_set(std::list<Segment>& segments,
   quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),line,CGAL::Dimension_tag<1>());
   quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),line,centroid,CGAL::Dimension_tag<1>());
   quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),line,centroid,CGAL::Dimension_tag<1>(),kernel,
-					   CGAL::Default_diagonalize_traits<FT,3>());
+					   CGAL::Diagonalize_traits<FT,3>());
+#ifdef CGAL_EIGEN3_ENABLED
+  quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),line,centroid,CGAL::Dimension_tag<1>(),kernel,
+					   CGAL::Eigen_diagonalize_traits<FT,3>());
+#endif
 
   quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,CGAL::Dimension_tag<1>());
   quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,centroid,CGAL::Dimension_tag<1>());
   quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,centroid,CGAL::Dimension_tag<1>(),kernel,
-					   CGAL::Default_diagonalize_traits<FT,3>());
+					   CGAL::Diagonalize_traits<FT,3>());
+#ifdef CGAL_EIGEN3_ENABLED
+  quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,centroid,CGAL::Dimension_tag<1>(),kernel,
+					   CGAL::Eigen_diagonalize_traits<FT,3>());
+#endif
 
   return quality;
 }
@@ -164,6 +175,12 @@ void test_4()
   FT quality1;
   quality1 = linear_least_squares_fitting_3(points.begin(),points.end(),line1,CGAL::Dimension_tag<0>());
   quality1 = linear_least_squares_fitting_3(points.begin(),points.end(),line1,centroid1,CGAL::Dimension_tag<0>());
+  // If Eigen is available, it's used by default everywhere.
+  // These additional lines test the fallback version
+#ifdef CGAL_EIGEN3_ENABLED
+  quality1 = linear_least_squares_fitting_3(points.begin(),points.end(),line1,centroid1,CGAL::Dimension_tag<0>(),
+                                            Kernel(), CGAL::Diagonalize_traits<FT, 3>());
+#endif
   std::cout << "done, quality: " << quality1 << std::endl;
 
   if(!(line.has_on(line1.point(0)) && (double)line.to_vector().y()/line.to_vector().x() -
@@ -225,6 +242,19 @@ void test_6()
   linear_least_squares_fitting_3(segments.begin(),segments.end(),line,CGAL::Dimension_tag<0>());
   linear_least_squares_fitting_3(segments.begin(),segments.end(),line,centroid,CGAL::Dimension_tag<1>());
   linear_least_squares_fitting_3(segments.begin(),segments.end(),line,centroid,CGAL::Dimension_tag<0>());
+
+    // If Eigen is available, it's used by default everywhere.
+  // These additional lines test the fallback version
+#ifdef CGAL_EIGEN3_ENABLED
+  linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,centroid,CGAL::Dimension_tag<1>(),
+                                 Kernel(), CGAL::Diagonalize_traits<FT, 3>());
+  linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,centroid,CGAL::Dimension_tag<0>(),
+                                 Kernel(), CGAL::Diagonalize_traits<FT, 3>());
+  linear_least_squares_fitting_3(segments.begin(),segments.end(),line,centroid,CGAL::Dimension_tag<1>(),
+                                 Kernel(), CGAL::Diagonalize_traits<FT, 3>());
+  linear_least_squares_fitting_3(segments.begin(),segments.end(),line,centroid,CGAL::Dimension_tag<0>(),
+                                 Kernel(), CGAL::Diagonalize_traits<FT, 3>());
+#endif
 }
 
 int main()

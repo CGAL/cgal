@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Tali Zvi <talizvi@post.tau.ac.il>
@@ -23,6 +24,9 @@
 
 #ifndef CGAL_SWEEP_LINE_FUNCTORS_H
 #define CGAL_SWEEP_LINE_FUNCTORS_H
+
+#include <CGAL/license/Sweep_line_2.h>
+
 
 /*! \file
  * Comparison functors used by the sweep-line algorithm.

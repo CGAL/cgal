@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Bernd Gaertner <gaertner@inf.ethz.ch>
 
 #ifndef CGAL_QP_FUNCTIONS_H
 #define CGAL_QP_FUNCTIONS_H
+
+#include <CGAL/license/QP_solver.h>
+
 
 #include <iostream>
 #include <string>

@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s) : Monique Teillaud, Sylvain Pion, Pedro Machado, 
 //             Julien Hazebrouck, Damien Leroy
@@ -24,6 +25,9 @@
 
 #ifndef CGAL_CIRCULAR_ARC_POINT_3_H
 #define CGAL_CIRCULAR_ARC_POINT_3_H
+
+#include <CGAL/license/Circular_kernel_3.h>
+
 
 #include <CGAL/result_of.h>
 #include <CGAL/Bbox_3.h>

@@ -7,6 +7,7 @@ The concept `StopPredicate` describes the requirements for the predicate which i
 
 \cgalHasModel `CGAL::Surface_mesh_simplification::Count_stop_predicate<ECM>`
 \cgalHasModel `CGAL::Surface_mesh_simplification::Count_ratio_stop_predicate<ECM>`
+\cgalHasModel `CGAL::Surface_mesh_simplification::Edge_length_stop_predicate<FT>`
 
 */
 

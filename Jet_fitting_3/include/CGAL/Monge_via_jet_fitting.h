@@ -14,10 +14,14 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Marc Pouget and Frédéric Cazals
 #ifndef CGAL_MONGE_VIA_JET_FITTING_H_
 #define CGAL_MONGE_VIA_JET_FITTING_H_
+
+#include <CGAL/license/Jet_fitting_3.h>
+
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/circulator.h>

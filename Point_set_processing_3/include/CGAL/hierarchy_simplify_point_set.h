@@ -12,14 +12,18 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL:
-// $Id: 
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s) : Simon Giraudot, Pierre Alliez
 
 
 #ifndef HIERARCHY_SIMPLIFY_POINT_SET_H
 #define HIERARCHY_SIMPLIFY_POINT_SET_H
+
+#include <CGAL/license/Point_set_processing_3.h>
+
 
 #include <cmath>
 #include <stack>
@@ -103,7 +107,7 @@ namespace CGAL {
   } // namespace internal
     
 
-  /// \ingroup PkgPointSetProcessing
+  /// \ingroup PkgPointSetProcessingAlgorithms
   
   /// Recursively split the point set in smaller clusters until the
   /// clusters have less than `size` elements or until their variation

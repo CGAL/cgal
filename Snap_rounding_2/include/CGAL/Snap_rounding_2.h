@@ -14,11 +14,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // author(s)     : Eli Packer <elip@post.tau.ac.il>
 #ifndef CGAL_SNAP_ROUNDING_2_H
 #define CGAL_SNAP_ROUNDING_2_H
+
+#include <CGAL/license/Snap_rounding_2.h>
+
 
 #include <iostream>
 #include <CGAL/basic.h>
@@ -614,7 +618,7 @@ find_intersected_hot_pixels(Segment_data & seg,
 
   }
 
-  number_of_intersections = hot_pixels_intersected_set.size();
+  number_of_intersections = static_cast<int>(hot_pixels_intersected_set.size());
 }
 
 /*! */

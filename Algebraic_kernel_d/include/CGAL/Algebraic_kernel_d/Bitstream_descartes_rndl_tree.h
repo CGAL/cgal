@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Arno Eigenwillig <arno@mpi-inf.mpg.de>
@@ -38,6 +39,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Random.h>
+#include <CGAL/tss.h>
 
 #include <CGAL/Algebraic_kernel_d/Real_embeddable_extension.h>
 /*#include <CGAL/Handle.h>
@@ -175,7 +177,7 @@ Integer caching_factorial(int n) {
     CGAL_precondition(n >= 0);
 
     // table of factorials; augment if necessary
-    static std::vector< Integer > factorial;
+    CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(std::vector< Integer >, factorial);
     factorial.reserve(n+1);
     if (factorial.empty()) {
         factorial.push_back(Integer(1)); // 0! = 1

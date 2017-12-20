@@ -12,9 +12,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://fcacciola@scm.gforge.inria.fr/svn/cgal/trunk/Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/include/CGAL/Qt/GraphicsViewCircularPolygonInput.h $
-// $Id: GraphicsViewCircularPolygonInput.h 53502 2009-12-18 16:47:24Z fcacciola $
-// 
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Fernando Cacciola <Fernando.Cacciola@geometryfactory.com>
 //

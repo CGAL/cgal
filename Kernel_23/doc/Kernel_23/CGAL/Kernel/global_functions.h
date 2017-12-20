@@ -38,7 +38,15 @@ const CGAL::Point_2<Kernel>& r,
 const CGAL::Point_2<Kernel>& s);
 
 /*!
+returns \ref CGAL::OBTUSE, \ref CGAL::RIGHT or \ref CGAL::ACUTE depending
+on the angle formed by the two vectors `u` and `v`.
+*/
+template <typename Kernel>
+Angle angle(const CGAL::Vector_3<Kernel>& u,
+            const CGAL::Vector_3<Kernel>& v);
 
+
+/*!
 returns `CGAL::OBTUSE`, `CGAL::RIGHT` or `CGAL::ACUTE` depending
 on the angle formed by the three points `p`, `q`, `r` (`q` being the vertex of
 the angle).
@@ -48,18 +56,42 @@ Angle angle(const CGAL::Point_3<Kernel>& p,
 const CGAL::Point_3<Kernel>& q,
 const CGAL::Point_3<Kernel>& r);
 
+/*!
+returns \ref CGAL::OBTUSE, \ref CGAL::RIGHT or \ref CGAL::ACUTE depending
+on the angle formed by the two vectors `pq`, `rs`. The returned value is
+the same as `angle(q - p, s - r)`.
+*/
+template<typename Kernel >
+Angle angle(const CGAL::Point_3<Kernel>&p,
+            const CGAL::Point_3<Kernel>&q,
+            const CGAL::Point_3<Kernel>&r,
+            const CGAL::Point_3<Kernel>&s);
+
+/*!
+returns \ref CGAL::OBTUSE, \ref CGAL::RIGHT or \ref CGAL::ACUTE depending
+on the angle formed by the normal of the triangle `pqr` and the vector `v`.
+*/
+
+template<typename Kernel >
+Angle angle(const CGAL::Point_3<Kernel>&p,
+            const CGAL::Point_3<Kernel>&q,
+            const CGAL::Point_3<Kernel>&r,
+            const CGAL::Vector_3<Kernel>&v);
+
+
 
 /*!
 returns an approximation of the signed dihedral angle in the tetrahedron `pqrs` of edge `pq`.
-    The sign is negative if `orientation(p,q,r,s)` is `CGAL::NEGATIVE` and positive otherwise. 
-    The angle is given in degree.
-    \pre `p,q,r` and `p,q,s` are not collinear.
+The sign is negative if `orientation(p,q,r,s)` is `CGAL::NEGATIVE` and positive otherwise. 
+The angle is given in degree.
+\pre `p,q,r` and `p,q,s` are not collinear.
 */
 template <typename Kernel>
 Kernel::FT approximate_dihedral_angle(const CGAL::Point_3<Kernel>& p,
                                       const CGAL::Point_3<Kernel>& q,
                                       const CGAL::Point_3<Kernel>& r,
                                       const CGAL::Point_3<Kernel>& s);
+
 
 /// @}
 
@@ -561,10 +593,10 @@ const CGAL::Point_3<Kernel>&r);
 /*!
 compares the dihedral angles \f$ \theta_1\f$ and \f$ \theta_2\f$, where
 \f$ \theta_1\f$ is the dihedral angle, in \f$ [0, \pi]\f$, of the tetrahedron
-`(a_1, b_1, c_1, d_1)`at the edge `(a_1, b_1)`, and \f$ \theta_2\f$ is
+`(a1, b1, c1, d1)` at the edge `(a1, b1)`, and \f$ \theta_2\f$ is
 the angle in \f$ [0, \pi]\f$ such that \f$ cos(\theta_2) = cosine\f$.
 The result is the same as `compare_dihedral_angle(b1-a1, c1-a1, d1-a1, cosine)`.
-\pre `a_1`, `b_1`, `c_1` are not collinear, and `a_1`, `b_1`, `d_1` are not collinear.
+\pre `a1`, `b1`, `c1` are not collinear, and `a1`, `b1`, `d1` are not collinear.
 */
 template <typename Kernel>
 Comparison_result compare_dihedral_angle(const CGAL::Point_3<Kernel>& a1,
@@ -576,7 +608,7 @@ const Kernel::FT& cosine);
 /*!
 compares the dihedral angles \f$ \theta_1\f$ and \f$ \theta_2\f$, where
 \f$ \theta_i\f$ is the dihedral angle in the tetrahedron `(a_i, b_i,
-c_i, d_i)`at the edge `(a_i, b_i)`. These two angles are computed
+c_i, d_i)` at the edge `(a_i, b_i)`. These two angles are computed
 in \f$ [0, \pi]\f$.
 The result is the same as `compare_dihedral_angle(b1-a1, c1-a1, d1-a1, b2-a2, c2-a2, d2-a2)`.
 \pre For \f$ i \in\{1,2\}\f$, `a_i`, `b_i`, `c_i` are not collinear, and `a_i`, `b_i`, `d_i` are not collinear.
@@ -793,16 +825,28 @@ const CGAL::Point_3<Kernel>& t);
 compares the slopes of the lines `l1` and `l2`
 */
 template <typename Kernel>
-Comparison_result compare_slopes(const CGAL::Line_2<Kernel> &l1,
+Comparison_result compare_slope(const CGAL::Line_2<Kernel> &l1,
 const CGAL::Line_2<Kernel> &l2);
 
 /*!
-compares the slopes of the segments `s1` and `s2`
+compares the slopes of the segments `s1` and `s2`,
+where the slope is the variation of the `y`-coordinate
+from the left to the right endpoint of the segments.
 */
 template <typename Kernel>
-Comparison_result compare_slopes(const CGAL::Segment_2<Kernel> &s1,
+Comparison_result compare_slope(const CGAL::Segment_2<Kernel> &s1,
 const CGAL::Segment_2<Kernel> &s2);
 
+/*!
+compares the slopes of the segments `(p,q)` and `(r,s)`,
+where the slope is the variation of the `z`-coordinate from the first
+to the second point  of the segment divided by the length of the segment.
+*/
+template <typename Kernel>
+Comparison_result compare_slope(const CGAL::Point_3<Kernel> &p,
+                                const CGAL::Point_3<Kernel> &q,
+                                const CGAL::Point_3<Kernel> &r,
+                                const CGAL::Point_3<Kernel> &s);
 /// @}
 
 /// \defgroup compare_squared_distance_grp CGAL::compare_squared_distance()
@@ -1617,11 +1661,11 @@ const CGAL::Point_3<Kernel>&s);
 /// @{
 
 /*!
-Let `p` be the plane defined by the points `p`, `q`,
+Let `P` be the plane defined by the points `p`, `q`,
 and `r`. Note that the order defines the orientation of
-`p`. The function computes the orientation of points `p`, 
-`q`, and `s` in `p`: Iff `p`, `q`, `s` are
-collinear, `CGAL::COLLINEAR` is returned. Iff `p` and the plane 
+`P`. The function computes the orientation of points `p`, 
+`q`, and `s` in `P`: Iff `p`, `q`, `s` are
+collinear, `CGAL::COLLINEAR` is returned. Iff `P` and the plane 
 defined by `p`, `q`, and `s` have the same orientation, 
 `CGAL::POSITIVE` is returned; otherwise `CGAL::NEGATIVE` is returned. 
 \pre `p`, `q`, `r`, and `s` are coplanar and `p`, `q`, and `r` are not collinear.
@@ -1975,14 +2019,36 @@ const CGAL::Point_3<Kernel>& t);
 /// \defgroup intersection_spherical_grp CGAL::intersection() (3D Spherical Kernel)
 /// \ingroup intersection_grp
 
+
+/// \defgroup l_infinity_distance_grp CGAL::l_infinity_distance()
+/// \ingroup kernel_global_function
+
+/// @{
+
+/*!
+returns the distance between `p` and `q` in the L-infinity metric.
+*/
+template <typename Kernel>
+Kernel::FT l_infinity_distance(const CGAL::Point_2<Kernel> &p,
+                               const CGAL::Point_2<Kernel> &q);
+
+/*!
+returns the distance between `p` and `q` in the L-infinity metric.
+*/
+template <typename Kernel>
+Kernel::FT l_infinity_distance(const CGAL::Point_3<Kernel> &p,
+                               const CGAL::Point_3<Kernel> &q);
+
+/// @}
+
 /// \defgroup left_turn_grp CGAL::left_turn()
 /// \ingroup kernel_global_function
 /// \sa `collinear_grp`
 /// \sa `orientation_grp`
 /// \sa `right_turn_grp`
 
-/// @{
 
+/// @{
 /*!
 returns `true` iff `p`, `q`, and `r` form a left turn.
 */
@@ -1992,7 +2058,6 @@ const CGAL::Point_2<Kernel> &q,
 const CGAL::Point_2<Kernel> &r);
 
 /// @}
-
 
 
 /// \defgroup lexicographically_xy_larger_grp CGAL::lexicographically_xy_larger()

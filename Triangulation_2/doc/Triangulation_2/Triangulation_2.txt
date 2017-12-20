@@ -736,22 +736,9 @@ and a power test on these weighted points.
 The concept 
 `RegularTriangulationTraits_2`,
 is a refinement of the concept
-`TriangulationTraits_2`. \cgal provides 
-the class
-`Regular_triangulation_euclidean_traits_2<Rep,Weight>`
-which is a model for the traits concept
+`TriangulationTraits_2`. All \cgal kernels are a model for the traits concept
 `RegularTriangulationTraits_2`.
 
-\attention Note that, since the type `Weighted_point` is not defined 
-in \cgal kernels, plugging a filtered kernel such as 
-`Exact_predicates_exact_constructions_kernel` in
-`Regular_triangulation_euclidean_traits_2<K,Weight>` will in fact
-not provide exact predicates on weighted points.
-To solve this, there is also another model of the traits concept,
-`Regular_triangulation_filtered_traits_2<FK>`, which is providing filtered
-predicates (exact and efficient). The argument `FK` must be a
-model of the `Kernel` concept, and it is also restricted to be a
-instance of the `Filtered_kernel` template.
 
 \subsection Triangulation_2TheVertexTypeandFaceTypeof The Vertex Type and Face Type of a Regular Triangulation
 
@@ -986,7 +973,7 @@ Triangulation (in blue) of the domain delimited by the red polygons.
 
 \cgalExample{Triangulation_2/polygon_triangulation.cpp}
 
-\section Section_2D_Triangulations_Constrained_Plus Constrained Triangulations with a Bidirectional Mapping between Constaints and Subconstraints
+\section Section_2D_Triangulations_Constrained_Plus Constrained Triangulations with a Bidirectional Mapping between Constraints and Subconstraints
 
 The class `Constrained_triangulation_plus_2<Tr>`
 provides a constrained triangulation with an additional data
@@ -1251,14 +1238,20 @@ or `Triangulation_face_base_with_info_2<Info,Traits,Vb>`
 can be used. Those classes have
 a template parameter `Info` devoted to
 handle additional information.
-The following examples show how to add a 
+The following example shows how to add a 
 `Color` in the triangulation faces.
 
 \cgalExample{Triangulation_2/colored_face.cpp}
 
+The second example adds a `std::string` in the vertices of a terrain.
+
+
+\cgalExample{Triangulation_2/terrain_with_info.cpp}
+
+
 \subsection Triangulation_2AddingHandles Adding Handles
 
-The second example shows how the user can still
+This example shows how the user can still
 derive and plug in his own vertex 
 or face class when he would like to have 
 additional functionalities depending on types provided by the triangulation

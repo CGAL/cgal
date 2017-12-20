@@ -61,6 +61,7 @@ class Point_set_demo_outlier_removal_dialog : public QDialog, private Ui::Outlie
     }
 
     double percentage() const { return m_inputPercentage->value(); }
+    double distance() const { return m_distanceThreshold->value(); }
     int nbNeighbors() const { return m_inputNbNeighbors->value(); }
 };
 
@@ -83,18 +84,21 @@ void Polyhedron_demo_point_set_outliers_removal_plugin::on_actionOutlierRemoval_
     if(!dialog.exec())
       return;
     const double removed_percentage = dialog.percentage(); // percentage of points to remove
+    const double distance_threshold = dialog.distance();
     const int nb_neighbors = dialog.nbNeighbors();
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
     CGAL::Timer task_timer; task_timer.start();
-    std::cerr << "Select outliers (" << removed_percentage <<"%)...\n";
+    std::cerr << "Select outliers (" << removed_percentage <<"% with distance threshold "
+              << distance_threshold << ")...\n";
 
     // Computes outliers
     Point_set::iterator first_point_to_remove =
       CGAL::remove_outliers(points->begin(), points->end(),
+                            points->point_map(),
                             nb_neighbors,
-                            removed_percentage);
+                            removed_percentage, distance_threshold, Kernel());
 
     std::size_t nb_points_to_remove = std::distance(first_point_to_remove, points->end());
     std::size_t memory = CGAL::Memory_sizer().virtual_size();

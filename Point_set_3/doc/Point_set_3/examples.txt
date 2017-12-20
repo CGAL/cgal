@@ -1,0 +1,8 @@
+/*!
+\example Point_set_3/point_set.cpp
+\example Point_set_3/point_set_property.cpp
+\example Point_set_3/point_set_algo.cpp
+\example Point_set_3/point_set_read_xyz.cpp
+\example Point_set_3/point_set_read_ply.cpp
+\example Point_set_3/point_set_advanced.cpp
+*/

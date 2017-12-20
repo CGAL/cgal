@@ -12,10 +12,17 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s): Sebastian Morr    <sebastian@morr.cc>
 
 #ifndef CGAL_MINKOWSKI_SUM_BY_REDUCED_CONVOLUTION_2_H
 #define CGAL_MINKOWSKI_SUM_BY_REDUCED_CONVOLUTION_2_H
+
+#include <CGAL/license/Minkowski_sum_2.h>
+
 
 #include <CGAL/basic.h>
 #include <CGAL/Arrangement_with_history_2.h>

@@ -31,6 +31,7 @@
  *
  * $URL$
  * $Id$
+ * SPDX-License-Identifier: LGPL-3.0+
  ***************************************************************************/
 
 #ifdef CGAL_HEADER_ONLY
@@ -146,18 +147,6 @@ long gcd(long m, long n) {
     q = r;
   }
   return p;
-}
-
-// return a gmp_randstate_t structure
-CGAL_INLINE_FUNCTION
-gmp_randstate_t* getRandstate() {
-  static gmp_randstate_t rstate;
-  static bool initialized = false;
-  if (!initialized) {
-    gmp_randinit(rstate, GMP_RAND_ALG_DEFAULT, 32L);
-    initialized = true;
-  }
-  return &rstate;
 }
 
 // char* core_itoa(int n, char* buffer)

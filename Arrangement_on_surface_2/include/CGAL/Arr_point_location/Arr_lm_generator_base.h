@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Idit Haran   <haranidi@post.tau.ac.il>
 //                 Ron Wein     <wein@post.tau.ac.il>
 
 #ifndef CGAL_ARR_LANDMARKS_GENERATOR_BASE_H
 #define CGAL_ARR_LANDMARKS_GENERATOR_BASE_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 
 /*! \file
 * Definition of the Arr_landmarks_generator_base<Arrangement> template.

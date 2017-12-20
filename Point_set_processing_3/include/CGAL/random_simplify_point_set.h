@@ -14,11 +14,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s) : Laurent Saboret
 
 #ifndef CGAL_RANDOM_SIMPLIFY_POINT_SET_H
 #define CGAL_RANDOM_SIMPLIFY_POINT_SET_H
+
+#include <CGAL/license/Point_set_processing_3.h>
+
 
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/property_map.h>
@@ -31,7 +35,7 @@
 
 namespace CGAL {
 
-/// \ingroup PkgPointSetProcessing
+/// \ingroup PkgPointSetProcessingAlgorithms
 /// Randomly deletes a user-specified fraction of the input points.
 ///
 /// This method modifies the order of input points so as to pack all remaining points first,

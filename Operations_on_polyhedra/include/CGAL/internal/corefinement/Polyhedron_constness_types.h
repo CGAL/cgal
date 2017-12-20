@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Sebastien Loriot
 
 #ifndef CGAL_INTERNAL_POLYHEDRON_CONSTNESS_TYPES_H
 #define CGAL_INTERNAL_POLYHEDRON_CONSTNESS_TYPES_H
+
+#include <CGAL/license/Polygon_mesh_processing.h>
+
 
 namespace CGAL {
 namespace internal_IOP{

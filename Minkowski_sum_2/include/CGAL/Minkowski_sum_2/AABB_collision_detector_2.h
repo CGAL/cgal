@@ -12,10 +12,17 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s): Sebastian Morr    <sebastian@morr.cc>
 
 #ifndef CGAL_AABB_COLLISION_DETECTOR_2_H
 #define CGAL_AABB_COLLISION_DETECTOR_2_H
+
+#include <CGAL/license/Minkowski_sum_2.h>
+
 
 #include <CGAL/Minkowski_sum_2/AABB_tree_with_join.h>
 #include <CGAL/Minkowski_sum_2/AABB_traits_2.h>

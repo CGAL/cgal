@@ -830,7 +830,7 @@ void Scene::draw() {
         rendering_program.bind();
 
         glPointSize(5);
-        ::glEnable(GL_POINT_SMOOTH);
+        glEnable(GL_POINT_SMOOTH);
 
         rendering_program.setUniformValue(colorLocation[0], color);
         glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(pos_points.size()/3));
@@ -844,7 +844,7 @@ void Scene::draw() {
             rendering_program.bind();
 
             glPointSize(5);
-            ::glEnable(GL_POINT_SMOOTH);
+            glEnable(GL_POINT_SMOOTH);
             rendering_program.setUniformValue(colorLocation[0], color);
             glDrawArrays(GL_POINTS, 0, 1);
             rendering_program.release();
@@ -1283,7 +1283,7 @@ inline void Scene::primitives_from_geom_it(Segment_set& sset) {
     case SEGMENT:
         for ( Segment_iterator sit = p3dt.periodic_segments_begin(it_type) ;
               sit != p3dt.periodic_segments_end(it_type) ; ++sit ) {
-            sset.insert(p3dt.segment(*sit));
+            sset.insert(p3dt.construct_segment(*sit));
         }
         break;
     case TRIANGLE:

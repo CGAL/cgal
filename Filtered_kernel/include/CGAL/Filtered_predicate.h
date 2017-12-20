@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Sylvain Pion
@@ -168,7 +169,7 @@ Filtered_predicate<EP,AP,C2E,C2A,Protection>::
 	  if (is_certain(res))
 	    return get_certain(res);
 	}
-      catch (Uncertain_conversion_exception) {}
+      catch (Uncertain_conversion_exception&) {}
     }
     CGAL_BRANCH_PROFILER_BRANCH(tmp);
     Protect_FPU_rounding<!Protection> p(CGAL_FE_TONEAREST);
@@ -193,7 +194,7 @@ Filtered_predicate<EP,AP,C2E,C2A,Protection>::
 	  if (is_certain(res))
 	    return get_certain(res);
 	}
-      catch (Uncertain_conversion_exception) {}
+      catch (Uncertain_conversion_exception&) {}
     }
     CGAL_BRANCH_PROFILER_BRANCH(tmp);
     Protect_FPU_rounding<!Protection> p(CGAL_FE_TONEAREST);
@@ -215,7 +216,7 @@ Filtered_predicate<EP,AP,C2E,C2A,Protection>::
 	  if (is_certain(res))
 	    return get_certain(res);
 	}
-      catch (Uncertain_conversion_exception) {}
+      catch (Uncertain_conversion_exception&) {}
     }
     CGAL_BRANCH_PROFILER_BRANCH(tmp);
     Protect_FPU_rounding<!Protection> p(CGAL_FE_TONEAREST);
@@ -237,7 +238,7 @@ Filtered_predicate<EP,AP,C2E,C2A,Protection>::
 	  if (is_certain(res))
 	    return get_certain(res);
 	}
-      catch (Uncertain_conversion_exception) {}
+      catch (Uncertain_conversion_exception&) {}
     }
     CGAL_BRANCH_PROFILER_BRANCH(tmp);
     Protect_FPU_rounding<!Protection> p(CGAL_FE_TONEAREST);
@@ -259,7 +260,7 @@ Filtered_predicate<EP,AP,C2E,C2A,Protection>::
 	  if (is_certain(res))
 	    return get_certain(res);
 	}
-      catch (Uncertain_conversion_exception) {}
+      catch (Uncertain_conversion_exception&) {}
     }
     CGAL_BRANCH_PROFILER_BRANCH(tmp);
     Protect_FPU_rounding<!Protection> p(CGAL_FE_TONEAREST);
@@ -282,7 +283,7 @@ Filtered_predicate<EP,AP,C2E,C2A,Protection>::
 	  if (is_certain(res))
 	    return get_certain(res);
 	}
-      catch (Uncertain_conversion_exception) {}
+      catch (Uncertain_conversion_exception&) {}
     }
     CGAL_BRANCH_PROFILER_BRANCH(tmp);
     Protect_FPU_rounding<!Protection> p(CGAL_FE_TONEAREST);
@@ -305,7 +306,7 @@ Filtered_predicate<EP,AP,C2E,C2A,Protection>::
 	  if (is_certain(res))
 	    return get_certain(res);
 	}
-      catch (Uncertain_conversion_exception) {}
+      catch (Uncertain_conversion_exception&) {}
     }
     CGAL_BRANCH_PROFILER_BRANCH(tmp);
     Protect_FPU_rounding<!Protection> p(CGAL_FE_TONEAREST);
@@ -330,7 +331,7 @@ Filtered_predicate<EP,AP,C2E,C2A,Protection>::
 	  if (is_certain(res))
 	    return get_certain(res);
 	}
-      catch (Uncertain_conversion_exception) {}
+      catch (Uncertain_conversion_exception&) {}
     }
     CGAL_BRANCH_PROFILER_BRANCH(tmp);
     Protect_FPU_rounding<!Protection> p(CGAL_FE_TONEAREST);
@@ -355,7 +356,7 @@ Filtered_predicate<EP,AP,C2E,C2A,Protection>::
 	  if (is_certain(res))
 	    return get_certain(res);
 	}
-      catch (Uncertain_conversion_exception) {}
+      catch (Uncertain_conversion_exception&) {}
     }
     CGAL_BRANCH_PROFILER_BRANCH(tmp);
     Protect_FPU_rounding<!Protection> p(CGAL_FE_TONEAREST);
@@ -382,7 +383,7 @@ Filtered_predicate<EP,AP,C2E,C2A,Protection>::
 	  if (is_certain(res))
 	    return get_certain(res);
 	}
-      catch (Uncertain_conversion_exception) {}
+      catch (Uncertain_conversion_exception&) {}
     }
     CGAL_BRANCH_PROFILER_BRANCH(tmp);
     Protect_FPU_rounding<!Protection> p(CGAL_FE_TONEAREST);
@@ -409,7 +410,7 @@ Filtered_predicate<EP,AP,C2E,C2A,Protection>::
 	  if (is_certain(res))
 	    return get_certain(res);
 	}
-      catch (Uncertain_conversion_exception) {}
+      catch (Uncertain_conversion_exception&) {}
     }
     CGAL_BRANCH_PROFILER_BRANCH(tmp);
     Protect_FPU_rounding<!Protection> p(CGAL_FE_TONEAREST);

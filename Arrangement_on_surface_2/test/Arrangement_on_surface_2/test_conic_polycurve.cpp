@@ -141,7 +141,7 @@ void check_compare_end_points_xy_2()
   // Insert a parabolic arc that is supported by a parabola y = -x^2
   // (or: x^2 + y = 0) and whose endpoints are (-sqrt(3), -3) ~ (-1.73, -3)
   // and (sqrt(2), -2) ~ (1.41, -2). Notice that since the x-coordinates
-  // of the endpoints cannot be acccurately represented, we specify them
+  // of the endpoints cannot be accurately represented, we specify them
   // as the intersections of the parabola with the lines y = -3 and y = -2.
   // Note that the arc is clockwise oriented.
   Conic_curve_2

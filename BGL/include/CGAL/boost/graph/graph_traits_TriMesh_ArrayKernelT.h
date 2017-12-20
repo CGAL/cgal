@@ -13,6 +13,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Andreas Fabri, Philipp Moeller
@@ -25,12 +26,15 @@
 
 #include <boost/iterator/transform_iterator.hpp>
 
+#include <OpenMesh/Core/IO/MeshIO.hh>
+
 #include <CGAL/boost/graph/properties_TriMesh_ArrayKernelT.h>
 #include <CGAL/boost/graph/graph_traits_PolyMesh_ArrayKernelT.h>
 #include <CGAL/boost/graph/internal/OM_iterator_from_circulator.h>
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/Iterator_range.h>
 #include <CGAL/boost/graph/helpers.h>
+#include <CGAL/boost/graph/io.h>
 #include <CGAL/assertions.h>
 
 #include <OpenMesh/Core/Mesh/TriMesh_ArrayKernelT.hh>
@@ -134,6 +138,15 @@ degree(typename boost::graph_traits<OpenMesh::TriMesh_ArrayKernelT<K> >::vertex_
        const OpenMesh::TriMesh_ArrayKernelT<K>& sm)
 {
   return sm.valence(v);
+}
+
+
+template <typename K>
+typename boost::graph_traits<OpenMesh::TriMesh_ArrayKernelT<K> >::degree_size_type
+degree(typename boost::graph_traits<OpenMesh::TriMesh_ArrayKernelT<K> >::face_descriptor,
+       const OpenMesh::TriMesh_ArrayKernelT<K>& )
+{
+  return 3;
 }
 
          
@@ -388,6 +401,15 @@ add_edge(OpenMesh::TriMesh_ArrayKernelT<K>& sm)
                           boost::graph_traits<OpenMesh::TriMesh_ArrayKernelT<K> >::null_vertex() ), sm);
 }
 
+template<typename K>
+void
+reserve(OpenMesh::TriMesh_ArrayKernelT<K>& tm,
+        typename boost::graph_traits< OpenMesh::TriMesh_ArrayKernelT<K> >::vertices_size_type nv,
+        typename boost::graph_traits< OpenMesh::TriMesh_ArrayKernelT<K> >::edges_size_type ne,
+        typename boost::graph_traits< OpenMesh::TriMesh_ArrayKernelT<K> >::faces_size_type nf)
+{
+  tm.reserve(nv, ne, nf);
+}
 
 //
 // FaceGraph
@@ -592,7 +614,40 @@ bool is_valid(OpenMesh::TriMesh_ArrayKernelT<K>& sm, bool /* verbose */ = false)
 
 } // namespace OpenMesh
 
+namespace CGAL {
 
+// Overload CGAL::clear function. TriMesh_ArrayKernel behaves
+// differently from other meshes. Calling clear does not affect the
+// number of vertices, edges, or faces in the mesh. To get actual
+// numbers it is necessary to first collect garbage. We add an
+// overlaod to get consistent behavior.
+template<typename K>
+void clear(OpenMesh::TriMesh_ArrayKernelT<K>& sm)
+{
+  sm.clear();
+  sm.garbage_collection(true, true, true);
+  CGAL_postcondition(num_edges(sm) == 0);
+  CGAL_postcondition(num_vertices(sm) == 0);
+  CGAL_postcondition(num_faces(sm) == 0);
+}
+
+
+template<typename K>
+bool read_off(std::istream& is, OpenMesh::TriMesh_ArrayKernelT<K>& sm)
+{
+  OpenMesh::IO::Options ropt;
+  return OpenMesh::IO::read_mesh(sm, is, ".OFF", ropt, false);
+}
+
+
+template<typename K>
+bool write_off(std::ostream& os, OpenMesh::TriMesh_ArrayKernelT<K>& sm)
+{
+  OpenMesh::IO::Options ropt;
+  return OpenMesh::IO::write_mesh(sm, os, ".OFF", ropt);
+}
+
+}
 #ifndef CGAL_NO_DEPRECATED_CODE
 #include <CGAL/boost/graph/backward_compatibility_functions.h>
 

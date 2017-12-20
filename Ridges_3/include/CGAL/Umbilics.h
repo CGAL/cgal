@@ -14,10 +14,14 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Marc Pouget and Frédéric Cazals
 #ifndef CGAL_UMBILIC_H_
 #define CGAL_UMBILIC_H_
+
+#include <CGAL/license/Ridges_3.h>
+
 
 #include <list>
 #include <vector>
@@ -190,7 +194,7 @@ compute(OutputIterator umbilics_it, FT size)
   boost::tie(itb,ite) = vertices(P);
   for (;itb != ite; itb++) {
     vertex_descriptor vh = *itb;
-    umbilicEstimatorVertex = cgal_abs(k1[vh]-k2[vh]);
+    umbilicEstimatorVertex = cgal_abs(get(k1,vh)-get(k2,vh));
     //reset vector, list and bool
     vces.clear();
     contour.clear();
@@ -214,7 +218,7 @@ compute(OutputIterator umbilics_it, FT size)
       itev = vces.end();
     itbv++;
     for (; itbv != itev; itbv++)
-      {	umbilicEstimatorNeigh = cgal_abs( k1[*itbv] - k2[*itbv] );
+      {	umbilicEstimatorNeigh = cgal_abs( get(k1,*itbv) - get(k2,*itbv) );
 	if ( umbilicEstimatorNeigh < umbilicEstimatorVertex ) 
 	  {is_umbilic = false; break;}
       }
@@ -241,14 +245,14 @@ compute_type(Umbilic& umb)
     itlast = --umb.contour_list().end();
   v = target(*itb, P);
 
-  dir = d1[v];
-  normal = CGAL::cross_product(d1[v], d2[v]);
+  dir = get(d1,v);
+  normal = CGAL::cross_product(get(d1,v), get(d2,v));
 
   //sum angles along the contour
   do{
     itb++;
     v = target(*itb, P);
-    dirnext = d1[v];
+    dirnext = get(d1,v);
     cosinus = To_double(dir*dirnext);
     if (cosinus < 0) {dirnext = dirnext*(-1); cosinus *= -1;}
     if (cosinus>1) cosinus = 1;
@@ -257,13 +261,13 @@ compute_type(Umbilic& umb)
     else angle = -acos(cosinus);
     angleSum += angle;
     dir = dirnext;
-    normal = CGAL::cross_product(d1[v], d2[v]);
+    normal = CGAL::cross_product(get(d1,v), get(d2,v));
   }
   while (itb != (itlast));
   
   //angle (v_last, v_0)
   v = target(*umb.contour_list().begin(), P);
-   dirnext = d1[v];
+   dirnext = get(d1,v);
    cosinus = To_double(dir*dirnext);
   if (cosinus < 0) {dirnext = dirnext*(-1); cosinus *= -1;}
   if (cosinus>1) cosinus = 1;

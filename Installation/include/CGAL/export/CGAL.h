@@ -13,6 +13,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Andreas Fabri
@@ -23,7 +24,7 @@
 #include <CGAL/config.h>
 #include <CGAL/export/helpers.h>
 
-#if defined(CGAL_BUILD_SHARED_LIBS)
+#if defined(CGAL_BUILD_SHARED_LIBS) && ! defined(CGAL_HEADER_ONLY)
 
 #  if defined(CGAL_EXPORTS) // defined by CMake or in cpp files of the dll
 

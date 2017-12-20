@@ -14,11 +14,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)    : Samuel Hornus
 
 #ifndef CGAL_TDS_FULL_CELL_DEFAULT_STORAGE_POLICY_H
 #define CGAL_TDS_FULL_CELL_DEFAULT_STORAGE_POLICY_H
+
+#include <CGAL/license/Triangulation.h>
+
 
 #include <CGAL/Dimension.h>
 #include <CGAL/Compact_container.h>

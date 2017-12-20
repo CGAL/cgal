@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Miguel Granados <granados@mpi-sb.mpg.de>
 
 #ifndef CGAL_NEF_SNC_POINT_LOCATOR_H
 #define CGAL_NEF_SNC_POINT_LOCATOR_H
+
+#include <CGAL/license/Nef_3.h>
+
 
 #include <CGAL/basic.h>
 #include <CGAL/Nef_3/SNC_intersection.h>

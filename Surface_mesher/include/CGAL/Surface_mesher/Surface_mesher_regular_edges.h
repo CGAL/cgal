@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Steve Oudot, David Rey, Mariette Yvinec, Laurent Rineau, Andreas Fabri
 
 #ifndef CGAL_SURFACE_MESHER_REGULAR_EDGES_H
 #define CGAL_SURFACE_MESHER_REGULAR_EDGES_H
+
+#include <CGAL/license/Surface_mesher.h>
+
 
 #include <CGAL/Surface_mesher/Surface_mesher.h>
 #include <CGAL/utility.h>

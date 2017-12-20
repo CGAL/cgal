@@ -83,7 +83,7 @@ void Polyhedron_demo_features_detection_plugin::on_actionDetectFeatures_triggere
 
     CGAL::Timer task_timer; task_timer.start();
     CGAL::compute_vcm(points->begin(), points->end(),
-                      CGAL::make_identity_property_map(Point_set::value_type()),
+                      points->point_map(),
                       cov, dialog.offsetRadius(), dialog.convolveRadius(),
                       Kernel());
     task_timer.stop();
@@ -93,10 +93,10 @@ void Polyhedron_demo_features_detection_plugin::on_actionDetectFeatures_triggere
     task_timer.reset(); task_timer.start();
     std::size_t i=0;
     std::cerr << "Select feature points (threshold=" << dialog.threshold() << ")...\n";
-    BOOST_FOREACH(const Point_set::value_type& p, *points)
+    for (Point_set::const_iterator it = points->begin(); it != points->end(); ++ it)
     {
       if (CGAL::vcm_is_on_feature_edge(cov[i], dialog.threshold()))
-          new_item->point_set()->push_back(p);
+        new_item->point_set()->insert(points->point(*it));
       ++i;
     }
     task_timer.stop();

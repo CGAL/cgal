@@ -14,22 +14,18 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Michael Seel
 //                 Andreas Fabri
 
-#ifdef CGAL_HEADER_ONLY
-#define CGAL_INLINE_FUNCTION inline
-#else
-#define CGAL_INLINE_FUNCTION
-#endif
 
 namespace CGAL{
 
   namespace Nef {
 
-CGAL_INLINE_FUNCTION
+inline
 void Polynomial<int>::euclidean_div(
   const Polynomial<int>& f, const Polynomial<int>& g,
   Polynomial<int>& q, Polynomial<int>& r)
@@ -50,7 +46,7 @@ void Polynomial<int>::euclidean_div(
 
 
 
-CGAL_INLINE_FUNCTION
+inline
 void Polynomial<int>::pseudo_div(
   const Polynomial<int>& f, const Polynomial<int>& g, 
   Polynomial<int>& q, Polynomial<int>& r, int& D)
@@ -84,7 +80,7 @@ void Polynomial<int>::pseudo_div(
 
 
 
-CGAL_INLINE_FUNCTION
+inline
 Polynomial<int> Polynomial<int>::gcd(
   const Polynomial<int>& p1, const Polynomial<int>& p2)
 { CGAL_NEF_TRACEN("gcd("<<p1<<" , "<<p2<<")");
@@ -117,7 +113,7 @@ Polynomial<int> Polynomial<int>::gcd(
 
 
 
-CGAL_INLINE_FUNCTION
+inline
 void Polynomial<double>::euclidean_div(
   const Polynomial<double>& f, const Polynomial<double>& g,
   Polynomial<double>& q, Polynomial<double>& r)
@@ -138,7 +134,7 @@ void Polynomial<double>::euclidean_div(
 
 
 
-CGAL_INLINE_FUNCTION
+inline
 void Polynomial<double>::pseudo_div(
   const Polynomial<double>& f, const Polynomial<double>& g, 
   Polynomial<double>& q, Polynomial<double>& r, double& D)
@@ -170,7 +166,7 @@ void Polynomial<double>::pseudo_div(
   CGAL_NEF_TRACEN("  returning "<<q<<", "<<r<<", "<< D);
 }
 
-CGAL_INLINE_FUNCTION
+inline
 Polynomial<double> Polynomial<double>::gcd(
   const Polynomial<double>& p1, const Polynomial<double>& p2)
 { CGAL_NEF_TRACEN("gcd("<<p1<<" , "<<p2<<")");

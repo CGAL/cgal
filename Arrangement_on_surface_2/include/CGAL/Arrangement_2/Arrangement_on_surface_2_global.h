@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Ron Wein          <wein@post.tau.ac.il>
@@ -22,6 +23,9 @@
 //
 #ifndef CGAL_ARRANGEMENT_ON_SURFACE_2_GLOBAL_H
 #define CGAL_ARRANGEMENT_ON_SURFACE_2_GLOBAL_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 
 /*! \file
  * Global insertion functions for the Arrangement_2 class.
@@ -1325,7 +1329,7 @@ bool is_valid (const Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
       }
       else
       {
-        // Get the first halfedge aroung v_below that is directed from left to
+        // Get the first halfedge around v_below that is directed from left to
         // right and the first halfedge that is directed from right to left.
         first = circ = v_below->incident_halfedges();
         Halfedge_const_handle he_left;  // A halfedge to the left of v_below.

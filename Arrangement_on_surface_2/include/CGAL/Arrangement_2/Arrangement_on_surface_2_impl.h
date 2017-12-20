@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Ron Wein          <wein@post.tau.ac.il>
@@ -29,6 +30,9 @@
 
 #ifndef CGAL_ARRANGEMENT_ON_SURFACE_2_IMPL_H
 #define CGAL_ARRANGEMENT_ON_SURFACE_2_IMPL_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 
 #ifndef CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
 #define CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE 0
@@ -1154,7 +1158,7 @@ insert_at_vertices(const X_monotone_curve_2& cv,
                    Halfedge_handle prev1,
                    Vertex_handle v2)
 {
-  // Determine which one of the given vertices mathces the left end of the
+  // Determine which one of the given vertices matches the left end of the
   // given curve.
   const bool at_obnd1 = !m_geom_traits->is_closed_2_object()(cv, ARR_MIN_END);
   const bool at_obnd2 = !m_geom_traits->is_closed_2_object()(cv, ARR_MAX_END);
@@ -1319,7 +1323,7 @@ insert_at_vertices(const X_monotone_curve_2& cv,
 #endif
 
   // Determine which one of the given vertices (the target vertices of the
-  // given halfedges) mathces the left end of the given curve.
+  // given halfedges) matches the left end of the given curve.
   // Thus, we can determine the comparison result between prev1->target()
   // and prev2->target().
   const bool at_obnd1 = !m_geom_traits->is_closed_2_object()(cv, ARR_MIN_END);
@@ -3693,7 +3697,7 @@ _compute_signs(const DHalfedge* he_anchor, boost::mpl::bool_<true>) const
   } while (he_curr != he_end);
 
   // Return the leftmost vertex and its x_index (with respect to he_before).
-  return (std::make_pair(sign(x_index), sign(y_index)));
+  return (std::make_pair(CGAL::sign(x_index), CGAL::sign(y_index)));
 }
 
 // Computes the halfedge that points at the smallest vertex in a closed ccb
@@ -3820,7 +3824,7 @@ _compute_signs_and_min(const DHalfedge* he_anchor,
   } while (he_next != he_end);
 
   // Return the leftmost vertex and the signs.
-  return std::make_pair(std::make_pair(sign(x_index), sign(y_index)), he_min);
+  return std::make_pair(std::make_pair(CGAL::sign(x_index), CGAL::sign(y_index)), he_min);
 }
 
 /* This is the implementation for the case where all 4 boundary sides are

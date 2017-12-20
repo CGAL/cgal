@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Daniel Russel <drussel@alumni.princeton.edu>
@@ -23,7 +24,6 @@
 #include <CGAL/Kinetic/basic.h>
 #include <CGAL/Tools/Label.h>
 #include <CGAL/Kinetic/Ref_counted.h>
-#include <CGAL/Tools/Counter.h>
 #include <CGAL/Kinetic/internal/debug_counters.h>
 #include <iostream>
 #include <CGAL/Kinetic/Multi_listener.h>
@@ -31,7 +31,6 @@
 #include <map>
 #include <vector>
 #include <sstream>
-//#include <boost/iterator/filter_iterator.hpp>
 #include <CGAL/iterator.h>
 #include <boost/iterator/transform_iterator.hpp>
 

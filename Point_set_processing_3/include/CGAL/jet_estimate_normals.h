@@ -14,11 +14,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s) : Pierre Alliez and Laurent Saboret and Marc Pouget and Frederic Cazals
 
 #ifndef CGAL_JET_ESTIMATE_NORMALS_H
 #define CGAL_JET_ESTIMATE_NORMALS_H
+
+#include <CGAL/license/Point_set_processing_3.h>
+
 
 #include <CGAL/trace.h>
 #include <CGAL/Search_traits_3.h>
@@ -144,7 +148,7 @@ jet_estimate_normal(const typename Kernel::Point_3& query, ///< point to compute
 // Public section
 // ----------------------------------------------------------------------------
 
-/// \ingroup PkgPointSetProcessing
+/// \ingroup PkgPointSetProcessingAlgorithms
 /// Estimates normal directions of the `[first, beyond)` range of points
 /// using jet fitting on the k nearest neighbors.
 /// The output normals are randomly oriented.

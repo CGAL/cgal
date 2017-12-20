@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Sylvain Pion
@@ -101,6 +102,10 @@ BOOST_PP_REPEAT_FROM_TO(1, 10, CGAL_VARIANT_TYPEMAP, _)
   { typedef typename K2::X type; };
 
 #include <CGAL/Kernel/interface_macros.h>
+
+template < typename K1, typename K2 >
+struct Type_mapper_impl < typename K1::FT, K1, K2 >
+{ typedef typename K2::FT type; };
 
 } // internal
 

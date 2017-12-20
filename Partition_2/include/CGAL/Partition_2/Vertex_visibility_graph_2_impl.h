@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Susan Hert <hert@mpi-sb.mpg.de>
@@ -227,20 +228,21 @@ Vertex_visibility_graph_2<Traits>::left_turn_to_parent(
                                    Tree_iterator q, 
                                    Tree& tree)
 {
+   typedef typename Traits::Point_2 Point;
    if (tree.parent_is_p_infinity(q)) 
    {
-      return (less_xy_2(*p, *q));
+      return (less_xy_2(Point(*p), Point(*q)));
    }
-   else if (orientation_2(*p, *q, *(*q).parent()) == COLLINEAR &&
-            (collinear_ordered_2(*p, *q, *(*q).parent()) ||
-             collinear_ordered_2(*p, *q, *(*q).parent())))
+   else if (orientation_2(Point(*p), Point(*q), Point(*q->parent())) == COLLINEAR &&
+            (collinear_ordered_2(Point(*p), Point(*q), Point(*q->parent())) ||
+             collinear_ordered_2(Point(*p), Point(*q), Point(*q->parent()))))
       
    {
       return true;
    }
    else
    {
-      return left_turn_2(*p, *q, *(*q).parent());
+      return left_turn_2(Point(*p), Point(*q), Point(*q->parent()));
    }
 }
 

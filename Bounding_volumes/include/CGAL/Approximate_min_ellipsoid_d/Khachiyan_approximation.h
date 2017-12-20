@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Kaspar Fischer <fischerk@inf.ethz.ch>
@@ -27,6 +28,9 @@
 
 #ifndef CGAL_KHACHIYAN_APPROXIMATION_H
 #define CGAL_KHACHIYAN_APPROXIMATION_H
+
+#include <CGAL/license/Bounding_volumes.h>
+
 
 #include <CGAL/Interval_arithmetic.h>
 #include <CGAL/Approximate_min_ellipsoid_d/Approximate_min_ellipsoid_d_configure.h>

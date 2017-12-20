@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Stéphane Tayeb, Aymeric PELLE
@@ -26,12 +27,14 @@
 #ifndef CGAL_LABELED_MESH_DOMAIN_3_H
 #define CGAL_LABELED_MESH_DOMAIN_3_H
 
+#include <CGAL/license/Mesh_3.h>
+
+
 #include <CGAL/Mesh_3/config.h>
 
 #include <CGAL/Bbox_3.h>
 
 #include <CGAL/point_generators_3.h>
-#include <CGAL/Mesh_3/Creator_weighted_point_3.h>
 
 #include <boost/variant.hpp>
 #include <boost/format.hpp>

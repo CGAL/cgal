@@ -17,7 +17,7 @@ typedef CGAL::Mesh_polyhedron_3<K>::type Polyhedron;
 // Triangulation
 typedef CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
 typedef CGAL::Mesh_complex_3_in_triangulation_3<
-  Tr,Mesh_domain::Corner_index,Mesh_domain::Curve_segment_index> C3t3;
+  Tr,Mesh_domain::Corner_index,Mesh_domain::Curve_index> C3t3;
 
 // Criteria
 typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
@@ -31,6 +31,12 @@ int main()
   Polyhedron poly;
   std::ifstream input("data/lion-head.off");
   input >> poly;
+
+  if (!CGAL::is_triangle_mesh(poly)){
+    std::cerr << "Input geometry is not triangulated." << std::endl;
+    return EXIT_FAILURE;
+  }
+
   // Create a vector with only one element: the pointer to the polyhedron.
   std::vector<Polyhedron*> poly_ptrs_vector(1, &poly);
 
@@ -56,5 +62,5 @@ int main()
   std::ofstream off_file("out.off");
   c3t3.output_boundary_to_off(off_file);
 
-  return off_file.bad() ? EXIT_FAILURE : EXIT_SUCCESS;
+  return off_file.fail() ? EXIT_FAILURE : EXIT_SUCCESS;
 }

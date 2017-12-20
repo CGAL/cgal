@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Gael Guennebaud (gael.guennebaud@inria.fr)
@@ -23,6 +24,9 @@
 
 #ifndef CGAL_INTERNAL_BOUNDED_PRIORITY_QUEUE_H
 #define CGAL_INTERNAL_BOUNDED_PRIORITY_QUEUE_H
+
+#include <CGAL/license/Spatial_searching.h>
+
 
 #include <vector>
 #include <functional>

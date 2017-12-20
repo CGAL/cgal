@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Stephane Tayeb
@@ -26,6 +27,9 @@
 
 #ifndef CGAL_LABELED_IMAGE_MESH_DOMAIN_3_H
 #define CGAL_LABELED_IMAGE_MESH_DOMAIN_3_H
+
+#include <CGAL/license/Mesh_3.h>
+
 
 
 #include <CGAL/Random.h>
@@ -134,10 +138,12 @@ private:
   /// Returns a box enclosing image \c im
   Bbox_3 compute_bounding_box(const Image& im) const
   {
-    return Bbox_3(-1,-1,-1,
-                  double(im.xdim())*im.vx()+1,
-                  double(im.ydim())*im.vy()+1,
-                  double(im.zdim())*im.vz()+1);
+    return Bbox_3(-im.vx(),
+                  -im.vy(),
+                  -im.vz(),
+                  double(im.xdim()+1)*im.vx(),
+                  double(im.ydim()+1)*im.vy(),
+                  double(im.zdim()+1)*im.vz());
   }
 
 private:

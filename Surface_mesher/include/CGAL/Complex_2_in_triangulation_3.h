@@ -14,12 +14,16 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Steve Oudot, David Rey, Mariette Yvinec, Laurent Rineau, Andreas Fabri
 
 #ifndef CGAL_COMPLEX_2_IN_TRIANGULATION_3_H
 #define CGAL_COMPLEX_2_IN_TRIANGULATION_3_H
+
+#include <CGAL/license/Surface_mesher.h>
+
 
 // TODO: add the iterators
 // TODO: document the output/input function of C2T3?
@@ -30,9 +34,6 @@
 #include <set>
 #include <map>
 #include <vector>
-#include <boost/type_traits/is_same.hpp>
-#include <boost/mpl/if.hpp>
-#include <boost/utility/enable_if.hpp>
 #include <boost/format.hpp>
 
 namespace CGAL {

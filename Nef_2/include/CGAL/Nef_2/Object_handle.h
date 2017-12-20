@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Stefan Schirra
@@ -25,6 +26,9 @@
 
 #ifndef CGAL_OBJECT_HANDLE_H
 #define CGAL_OBJECT_HANDLE_H
+
+#include <CGAL/license/Nef_2.h>
+
 
 #include <CGAL/Object.h>
 

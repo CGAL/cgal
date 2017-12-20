@@ -14,11 +14,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
 #ifndef CGAL_EXTENDED_CARTESIAN_H
 #define CGAL_EXTENDED_CARTESIAN_H
+
+#include <CGAL/license/Nef_2.h>
+
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Point_2.h> 
