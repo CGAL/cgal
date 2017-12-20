@@ -308,6 +308,11 @@ update_new_point(
      If this parameter is omitted, `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
      \cgalParamBegin{normal_map} a model of `ReadablePropertyMap` with value type
      `geom_traits::Vector_3`.\cgalParamEnd
+     \cgalParamBegin{sharpness_angle} controls the sharpness of the result.\cgalParamEnd
+     \cgalParamBegin{edge_sensitivity} controls the priority of points inserted along sharp features. See
+     section \ref Point_set_processing_3Upsample_Parameter1 for an example.\cgalParamEnd
+     \cgalParamBegin{neighbor_radius} spherical neighborhood radius.\cgalParamEnd
+     \cgalParamBegin{number_of_output_points} is the number of output points to generate.\cgalParamEnd
      \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
    \cgalNamedParamsEnd
 
