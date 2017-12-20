@@ -224,6 +224,9 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   add_item(scene_c2t3_item Scene_c2t3_item.cpp)
   add_item(scene_c3t3_item Scene_c3t3_item.cpp)
   target_link_libraries(scene_c3t3_item PUBLIC scene_polyhedron_item scene_polygon_soup_item scene_basic_objects ${TBB_LIBRARIES})
+  if(TBB_FOUND)
+    CGAL_target_use_TBB(scene_c3t3_item)
+  endif()
   add_item(scene_polyhedron_item Scene_polyhedron_item.cpp)
   add_item(scene_polyhedron_transform_item Plugins/PCA/Scene_facegraph_transform_item.cpp )
   add_item(scene_sm_transform_item Plugins/PCA/Scene_facegraph_transform_item.cpp )
@@ -305,7 +308,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   endif()
 
   target_link_libraries( demo_framework PUBLIC gl_splat)
-
 
 
   foreach( lib 
@@ -402,7 +404,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     gl_splat
     NAMESPACE Polyhedron_
     APPEND FILE polyhedron_demo_targets.cmake)
-
   configure_file(CGAL_polyhedron_demoConfig.cmake.in  CGAL_polyhedron_demoConfig.cmake)
 #TO DO script the activation of all the plugins.
 
