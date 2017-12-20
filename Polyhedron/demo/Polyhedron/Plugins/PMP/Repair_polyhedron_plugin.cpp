@@ -217,7 +217,6 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionStitchCloseBorderHalfedg
 template <typename Item>
 void Polyhedron_demo_repair_polyhedron_plugin::on_actionDuplicateNMVertices_triggered(Scene_interface::Item_id index)
 {
-  typedef typename boost::graph_traits<typename Item::Face_graph>::halfedge_descriptor halfedge_descriptor;
   namespace PMP =   CGAL::Polygon_mesh_processing;
 
   if (Item* poly_item = qobject_cast<Item*>(scene->item(index)))
