@@ -17,7 +17,8 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
 //
-// Author(s)     : Aymeric Pellé
+// Author(s)     : Stéphane Tayeb,
+//                 Aymeric Pellé
 //
 #ifndef CGAL_PERIODIC_3_MESH_3_LABELED_PERIODIC_3_MESH_DOMAIN_3_H
 #define CGAL_PERIODIC_3_MESH_3_LABELED_PERIODIC_3_MESH_DOMAIN_3_H
@@ -53,6 +54,9 @@ namespace CGAL
 // The difference with Mesh_3's is very tiny if 'CGAL_PERIODIC_CANONICALIZE_DUAL_INTERSECTIONS'
 // is not enabled: it resides in the call to label() which canonicalizes the point
 // (that is, send them to the fundamental domain) before evaluation.
+//
+// This could be simplified with a virtual function label() (in Mesh_3)?
+// Leaving this simplification to be done when other types of domains are added to P3M3.
 template<class Function, class BGT, class Null_subdomain_index = Default>
 class Labeled_periodic_3_mesh_domain_3
   : public Labeled_mesh_domain_3<Function, BGT,
@@ -72,6 +76,7 @@ public:
   typedef typename Base::Segment_3          Segment_3;
   typedef typename Base::Ray_3              Ray_3;
   typedef typename Base::Line_3             Line_3;
+  typedef typename Base::Vector_3           Vector_3;
   typedef typename Base::Iso_cuboid_3       Iso_cuboid_3;
   typedef typename Base::Bbox_3             Bbox_3;
   typedef typename Base::Sphere_3           Sphere_3;
@@ -87,6 +92,7 @@ public:
 
   /// Type of indexes for cells of the input complex
   typedef typename Base::Subdomain_index     Subdomain_index;
+  typedef typename Base::Subdomain           Subdomain;
 
   /// Public types
   typedef typename Base::FT                  FT;
@@ -113,6 +119,130 @@ public:
   Subdomain_index label(const Point_3& p, const bool b) const {
     return Base::labeling_function()(P3T3::internal::robust_canonicalize_point(p, pgt), b);
   }
+
+  /**
+   * Constructs  a set of \ccc{n} points on the surface, and output them to
+   *  the output iterator \ccc{pts} whose value type is required to be
+   *  \ccc{std::pair<Points_3, Index>}.
+   */
+  // This is a complete copy paste from the base class because Do_intersect
+  // needs to be the nested class' and not the base class'.
+  // To be simplified...
+  struct Construct_initial_points
+  {
+    Construct_initial_points(const Labeled_periodic_3_mesh_domain_3& domain)
+      : r_domain_(domain) {}
+
+    template<class OutputIterator>
+    OutputIterator operator()(OutputIterator pts, const int nb_points = 12) const
+    {
+      // Create point_iterator on and in bounding_sphere
+      typedef Random_points_on_sphere_3<Point_3> Random_points_on_sphere_3;
+      typedef Random_points_in_sphere_3<Point_3> Random_points_in_sphere_3;
+
+      const FT squared_radius = BGT().compute_squared_radius_3_object()(
+          r_domain_.bounding_sphere(r_domain_.bounding_box()));
+
+      const double radius = std::sqrt(CGAL::to_double(squared_radius));
+
+      CGAL::Random& rng = *(r_domain_.random_number_generator());
+      Random_points_on_sphere_3 random_point_on_sphere(radius, rng);
+      Random_points_in_sphere_3 random_point_in_sphere(radius, rng);
+
+      // Get some functors
+      typename Periodic_geom_traits::Construct_segment_3 segment_3 =
+        r_domain_.periodic_geom_traits().construct_segment_3_object();
+      typename Periodic_geom_traits::Construct_vector_3 vector_3 =
+        r_domain_.periodic_geom_traits().construct_vector_3_object();
+      typename Periodic_geom_traits::Construct_translated_point_3 translate =
+        r_domain_.periodic_geom_traits().construct_translated_point_3_object();
+      typename Periodic_geom_traits::Construct_center_3 center =
+        r_domain_.periodic_geom_traits().construct_center_3_object();
+
+      // Get translation from origin to sphere center
+      Point_3 center_pt = center(r_domain_.bounding_sphere(r_domain_.bounding_box()));
+      const Vector_3 sphere_translation = vector_3(CGAL::ORIGIN, center_pt);
+
+      // Create nb_point points
+      int n = nb_points;
+#ifdef CGAL_MESH_3_VERBOSE
+      std::cerr << "construct initial points (nb_points: " << nb_points << ")\n";
+#endif
+      while ( 0 != n )
+      {
+        // Get a random segment
+        const Point_3 random_point = translate(*random_point_on_sphere, sphere_translation);
+        const Segment_3 random_seg = segment_3(center_pt, random_point);
+
+        // Add the intersection to the output if it exists
+        Surface_patch surface = r_domain_.do_intersect_surface_object()(random_seg);
+        if ( surface )
+        {
+          const Point_3 intersect_pt = CGAL::cpp11::get<0>(
+              r_domain_.construct_intersection_object()(random_seg));
+          *pts++ = std::make_pair(intersect_pt,
+                                  r_domain_.index_from_surface_patch_index(*surface));
+          --n;
+
+#ifdef CGAL_MESH_3_VERBOSE
+          std::cerr << boost::format("\r             \r"
+                                     "%1%/%2% initial point(s) found...")
+                       % (nb_points - n)
+                       % nb_points;
+#endif
+        }
+        else
+        {
+          // Get a new random point into sphere as center of object
+          // It may be necessary if the center of the domain is empty, e.g. torus
+          // In general case, it is good for input point dispersion
+          ++random_point_in_sphere;
+          center_pt = translate(*random_point_in_sphere, sphere_translation);
+        }
+        ++random_point_on_sphere;
+      }
+
+#ifdef CGAL_MESH_3_VERBOSE
+      std::cerr << "\n";
+#endif
+      return pts;
+    }
+
+  private:
+    const Labeled_periodic_3_mesh_domain_3& r_domain_;
+  };
+
+  /// Returns Construct_initial_points object
+  Construct_initial_points construct_initial_points_object() const
+  {
+    return Construct_initial_points(*this);
+  }
+
+  /**
+   * Returns true if point~\ccc{p} is in the domain. If \ccc{p} is in the
+   *  domain, the parameter index is set to the index of the subdomain
+   *  including $p$. It is set to the default value otherwise.
+   */
+  struct Is_in_domain
+  {
+    Is_in_domain(const Labeled_periodic_3_mesh_domain_3& domain)
+      : r_domain_(domain) {}
+
+    Subdomain operator()(const Point_3& p) const
+    {
+      // null(f(p)) means p is outside the domain
+      Subdomain_index index = r_domain_.label(p);
+      if ( r_domain_.null_function()(index) )
+        return Subdomain();
+      else
+        return Subdomain(index);
+    }
+  private:
+    const Labeled_periodic_3_mesh_domain_3& r_domain_;
+  };
+
+  /// Returns Is_in_domain object
+  Is_in_domain is_in_domain_object() const { return Is_in_domain(*this); }
 
   /**
    * Returns true if the element \ccc{type} intersect properly any of the
@@ -302,9 +432,9 @@ public:
     Intersection operator()(const Point_3& a, const Point_3& b) const
     {
       // Functors
-      typename BGT::Compute_squared_distance_3 squared_distance =
+      typename Periodic_geom_traits::Compute_squared_distance_3 squared_distance =
         r_domain_.periodic_geom_traits().compute_squared_distance_3_object();
-      typename BGT::Construct_midpoint_3 midpoint =
+      typename Periodic_geom_traits::Construct_midpoint_3 midpoint =
         r_domain_.periodic_geom_traits().construct_midpoint_3_object();
 
 #ifdef CGAL_PERIODIC_CANONICALIZE_DUAL_INTERSECTIONS
