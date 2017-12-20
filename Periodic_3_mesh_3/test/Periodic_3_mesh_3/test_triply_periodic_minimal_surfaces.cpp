@@ -46,6 +46,7 @@ using namespace CGAL::parameters;
 const FT PI = CGAL_PI;
 
 FT schwarz_p(const Point& p) {
+  assert(p.x() >= 1 && p.y() >= 1 && p.z() >= 1 && p.x() < 3 && p.y() < 3 && p.z() < 3);
   const FT x2 = std::cos( p.x() * 2*PI ),
            y2 = std::cos( p.y() * 2*PI ),
            z2 = std::cos( p.z() * 2*PI );
@@ -53,6 +54,7 @@ FT schwarz_p(const Point& p) {
 }
 
 FT schwarz_p_transl (const Point& p) {
+  assert(p.x() >= 1 && p.y() >= 1 && p.z() >= 1 && p.x() < 3 && p.y() < 3 && p.z() < 3);
   const FT x2 = std::cos(p.x() * 2 * PI + PI / 2.0),
            y2 = std::cos(p.y() * 2 * PI + PI / 2.0),
            z2 = std::cos(p.z() * 2 * PI + PI / 2.0);
@@ -60,6 +62,7 @@ FT schwarz_p_transl (const Point& p) {
 }
 
 FT gyroid (const Point& p) {
+  assert(p.x() >= 1 && p.y() >= 1 && p.z() >= 1 && p.x() < 3 && p.y() < 3 && p.z() < 3);
   const FT cx = std::cos(p.x() * 2 * PI),
            cy = std::cos(p.y() * 2 * PI),
            cz = std::cos(p.z() * 2 * PI);
@@ -70,6 +73,7 @@ FT gyroid (const Point& p) {
 }
 
 FT diamond (const Point& p) {
+  assert(p.x() >= 1 && p.y() >= 1 && p.z() >= 1 && p.x() < 3 && p.y() < 3 && p.z() < 3);
   const FT cx = std::cos(p.x() * 2 * PI),
            cy = std::cos(p.y() * 2 * PI),
            cz = std::cos(p.z() * 2 * PI);
@@ -80,6 +84,7 @@ FT diamond (const Point& p) {
 }
 
 FT double_p (const Point& p) {
+  assert(p.x() >= 1 && p.y() >= 1 && p.z() >= 1 && p.x() < 3 && p.y() < 3 && p.z() < 3);
   const FT cx = std::cos(p.x() * 2 * PI),
            cy = std::cos(p.y() * 2 * PI),
            cz = std::cos(p.z() * 2 * PI);
@@ -90,6 +95,7 @@ FT double_p (const Point& p) {
 }
 
 FT G_prime (const Point& p) {
+  assert(p.x() >= 1 && p.y() >= 1 && p.z() >= 1 && p.x() < 3 && p.y() < 3 && p.z() < 3);
   const FT cx = std::cos(p.x() * 2 * PI),
            cy = std::cos(p.y() * 2 * PI),
            cz = std::cos(p.z() * 2 * PI);
@@ -107,6 +113,7 @@ FT G_prime (const Point& p) {
 }
 
 FT lidinoid (const Point& p) {
+  assert(p.x() >= 1 && p.y() >= 1 && p.z() >= 1 && p.x() < 3 && p.y() < 3 && p.z() < 3);
   const FT cx = std::cos(p.x() * 2 * PI),
            cy = std::cos(p.y() * 2 * PI),
            cz = std::cos(p.z() * 2 * PI);
@@ -124,6 +131,7 @@ FT lidinoid (const Point& p) {
 }
 
 FT D_prime (const Point& p) {
+  assert(p.x() >= 1 && p.y() >= 1 && p.z() >= 1 && p.x() < 3 && p.y() < 3 && p.z() < 3);
   const FT cx = std::cos(p.x() * 2 * PI),
            cy = std::cos(p.y() * 2 * PI),
            cz = std::cos(p.z() * 2 * PI);
@@ -138,6 +146,7 @@ FT D_prime (const Point& p) {
 }
 
 FT split_p (const Point& p) {
+  assert(p.x() >= 1 && p.y() >= 1 && p.z() >= 1 && p.x() < 3 && p.y() < 3 && p.z() < 3);
   const FT cx = std::cos(p.x() * 2 * PI),
            cy = std::cos(p.y() * 2 * PI),
            cz = std::cos(p.z() * 2 * PI);
@@ -160,18 +169,21 @@ struct Segments_function
 {
   typedef std::vector<Segment> Segments;
 
-  Segments_function() : segments()
+  Segments_function()
+    : segments(), nb_evals(0)
   {
-    const Point pmid(0.5,0.5,0.5);
-    nb_evals = 0;
-    segments.push_back( Segment(Point(0,0.5,0), pmid) );
-    segments.push_back( Segment(Point(1,0.5,0), pmid) );
-    segments.push_back( Segment(Point(0,0.5,1), pmid) );
-    segments.push_back( Segment(Point(1,0.5,1), pmid) );
-    segments.push_back( Segment(Point(0.5,0,0), pmid) );
-    segments.push_back( Segment(Point(0.5,1,0), pmid) );
-    segments.push_back( Segment(Point(0.5,0,1), pmid) );
-    segments.push_back( Segment(Point(0.5,1,1), pmid) );
+    const FT min = 1, max = 3;
+    const FT mid = 0.5 * (min + max);
+    const Point pmid(mid, mid, mid);
+
+    segments.push_back(Segment(Point(min, mid, min), pmid));
+    segments.push_back(Segment(Point(max, mid, min), pmid));
+    segments.push_back(Segment(Point(min, mid, max), pmid));
+    segments.push_back(Segment(Point(max, mid, max), pmid));
+    segments.push_back(Segment(Point(mid, min, min), pmid));
+    segments.push_back(Segment(Point(mid, max, min), pmid));
+    segments.push_back(Segment(Point(mid, min, max), pmid));
+    segments.push_back(Segment(Point(mid, max, max), pmid));
   }
 
   FT operator()(const Point& p)
@@ -190,6 +202,7 @@ struct Segments_function
 };
 
 FT segments(const Point& p) {
+  assert(p.x() >= 1 && p.y() >= 1 && p.z() >= 1 && p.x() < 3 && p.y() < 3 && p.z() < 3);
   static Segments_function instance;
   return instance(p);
 }
