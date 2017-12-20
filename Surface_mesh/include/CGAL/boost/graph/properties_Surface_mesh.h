@@ -350,7 +350,7 @@ namespace CGAL {
 
 template <typename Point, typename T>
 typename boost::property_map<CGAL::Surface_mesh<Point>, dynamic_vertex_property_t<T> >::const_type
-get(dynamic_vertex_property_t<T> vprop, Surface_mesh<Point>& sm)
+get(dynamic_vertex_property_t<T>, Surface_mesh<Point>& sm)
 {
   typedef typename boost::property_map<Surface_mesh<Point>, dynamic_vertex_property_t<T> >::SMPM SMPM;
   typedef typename boost::property_map<Surface_mesh<Point>, dynamic_vertex_property_t<T> >::const_type DPM;
@@ -359,7 +359,7 @@ get(dynamic_vertex_property_t<T> vprop, Surface_mesh<Point>& sm)
 
 template <typename Point, typename T>
 typename boost::property_map<Surface_mesh<Point>, dynamic_face_property_t<T> >::const_type
-get(dynamic_face_property_t<T> vprop, Surface_mesh<Point>& sm)
+get(dynamic_face_property_t<T>, Surface_mesh<Point>& sm)
 {
   typedef typename boost::property_map<Surface_mesh<Point>, dynamic_face_property_t<T> >::SMPM SMPM;
   typedef typename boost::property_map<Surface_mesh<Point>, dynamic_face_property_t<T> >::const_type DPM;
@@ -368,7 +368,7 @@ get(dynamic_face_property_t<T> vprop, Surface_mesh<Point>& sm)
 
 template <typename Point, typename T>
 typename boost::property_map<Surface_mesh<Point>, dynamic_edge_property_t<T> >::const_type
-get(dynamic_edge_property_t<T> vprop, Surface_mesh<Point>& sm)
+get(dynamic_edge_property_t<T>, Surface_mesh<Point>& sm)
 {
   typedef typename boost::property_map<Surface_mesh<Point>, dynamic_edge_property_t<T> >::SMPM SMPM;
   typedef typename boost::property_map<Surface_mesh<Point>, dynamic_edge_property_t<T> >::const_type DPM;
@@ -377,13 +377,14 @@ get(dynamic_edge_property_t<T> vprop, Surface_mesh<Point>& sm)
 
 template <typename Point, typename T>
 typename boost::property_map<Surface_mesh<Point>, dynamic_halfedge_property_t<T> >::const_type
-get(dynamic_halfedge_property_t<T> vprop, Surface_mesh<Point>& sm)
+get(dynamic_halfedge_property_t<T>, Surface_mesh<Point>& sm)
 {
   typedef typename boost::property_map<Surface_mesh<Point>, dynamic_halfedge_property_t<T> >::SMPM SMPM;
   typedef typename boost::property_map<Surface_mesh<Point>, dynamic_halfedge_property_t<T> >::const_type DPM;
   return DPM(sm, new SMPM(sm.template add_property_map<typename Surface_mesh<Point>::Halfedge_index, T>(std::string()).first));
 }
 
+// implementation detail: required by Dynamic_property_map_deleter
 template <typename Pmap,typename P>
 void
 remove_property(Pmap pm, CGAL::Surface_mesh<P>& sm)

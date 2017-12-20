@@ -316,7 +316,6 @@ namespace internal {
 
     ~Incremental_remesher()
     {
-      typedef Connected_components_pmap<PM, EdgeIsConstrainedMap, FaceIndexMap> CCPmap;
       if (build_tree_){
         for(std::size_t i=0; i < trees.size();++i){
           delete trees[i];

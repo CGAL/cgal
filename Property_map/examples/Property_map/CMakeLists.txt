@@ -1,4 +1,4 @@
-project( Property_map )
+project( Property_map_Examples )
 
 
 cmake_minimum_required(VERSION 2.8.11)
