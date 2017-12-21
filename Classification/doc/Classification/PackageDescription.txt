@@ -47,6 +47,8 @@ Features are defined as scalar fields that associates each input item with a spe
 
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.9}
+\cgalPkgDependsOn{\ref PkgSolverSummary, \ref PkgSpatialSearchingDSummary, [Boost Serialization](http://www.boost.org/libs/serialization) and
+[Boost IO Streams](http://www.boost.org/libs/iostreams)}
 \cgalPkgBib{cgal:lm-clscm-12}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{Operations on Polyhedra,polyhedron_3.zip}
