@@ -672,7 +672,7 @@ compute_face_polylines_intersection(const FaceRange& face_range,
         std::distance( boost::begin(face_range), boost::end(face_range) )
         );
 
-  int polylines_size = 0;
+  std::size_t polylines_size = 0;
   BOOST_FOREACH(Polyline poly, polyline_range)
   {
     polylines_size += std::distance( boost::begin(poly), boost::end(poly) ) -1;
@@ -684,12 +684,12 @@ compute_face_polylines_intersection(const FaceRange& face_range,
     faces.push_back(f);
     boxes1.push_back(Box(Polygon_mesh_processing::face_bbox(f, tm), std::make_pair(0, faces.size()-1)));
   }
-  int range_size = std::distance( boost::begin(polyline_range), boost::end(polyline_range) );
-  for(int j = 0; j < range_size; ++j)
+  std::size_t range_size = std::distance( boost::begin(polyline_range), boost::end(polyline_range) );
+  for(std::size_t j = 0; j < range_size; ++j)
   {
     Polyline poly = polyline_range[j];
-    int size = std::distance( boost::begin(poly), boost::end(poly) );
-    for(int i =0; i< size - 1; ++i)
+    std::size_t size = std::distance( boost::begin(poly), boost::end(poly) );
+    for(std::size_t i =0; i< size - 1; ++i)
     {
       Point p1 = poly[i];
       Point p2 = poly[i+1];
@@ -847,7 +847,7 @@ compute_polylines_polylines_intersection(const PolylineRange& polylines1,
   // make one box per facet
   std::vector<Box> boxes1;
   std::vector<Box> boxes2;
-  int polylines_size = 0;
+  std::size_t polylines_size = 0;
   BOOST_FOREACH(Polyline poly, polylines1)
   {
     polylines_size += std::distance( boost::begin(poly), boost::end(poly) ) -1;
@@ -860,12 +860,12 @@ compute_polylines_polylines_intersection(const PolylineRange& polylines1,
   }
   boxes2.reserve(polylines_size);
 
-  int range_size = std::distance( boost::begin(polylines1), boost::end(polylines1) );
-  for(int j = 0; j < range_size; ++j)
+  std::size_t range_size = std::distance( boost::begin(polylines1), boost::end(polylines1) );
+  for(std::size_t j = 0; j < range_size; ++j)
   {
     Polyline poly = polylines1[j];
-    int size = std::distance( boost::begin(poly), boost::end(poly) );
-    for(int i =0; i< size - 1; ++i)
+    std::size_t size = std::distance( boost::begin(poly), boost::end(poly) );
+    for(std::size_t i =0; i< size - 1; ++i)
     {
       const Point& p1 = poly[i];
       const Point& p2 = poly[i+1];
@@ -874,11 +874,11 @@ compute_polylines_polylines_intersection(const PolylineRange& polylines1,
   }
 
   range_size = std::distance( boost::begin(polylines2), boost::end(polylines2) );
-  for(int j = 0; j < range_size; ++j)
+  for(std::size_t j = 0; j < range_size; ++j)
   {
     Polyline poly = polylines2[j];
-    int size = std::distance( boost::begin(poly), boost::end(poly) );
-    for(int i =0; i< size - 1; ++i)
+    std::size_t size = std::distance( boost::begin(poly), boost::end(poly) );
+    for(std::size_t i =0; i< size - 1; ++i)
     {
       const Point& p1 = poly[i];
       const Point& p2 = poly[i+1];
@@ -1441,7 +1441,7 @@ struct Mesh_callback
     : meshes(meshes), m_iterator(iterator),
       report_overlap(report_overlap), nps(nps), gt(gt)
   {
-    int size = std::distance(meshes.begin(), meshes.end());
+    std::size_t size = std::distance(meshes.begin(), meshes.end());
     trees = std::vector<AABBTree*>(size, NULL);
     points_of_interest.resize(size);
   }
@@ -1458,8 +1458,8 @@ struct Mesh_callback
            class VPM>
   bool is_mesh2_in_mesh1(const TriangleMesh& tm1,
                          const TriangleMesh& tm2,
-                         const int mesh_id_1,
-                         const int mesh_id_2,
+                         const std::size_t mesh_id_1,
+                         const std::size_t mesh_id_2,
                          const VPM& vpm1,
                          const VPM& vpm2)
   {
