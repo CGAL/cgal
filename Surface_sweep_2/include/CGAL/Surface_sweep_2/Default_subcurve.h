@@ -48,6 +48,7 @@
 #include <CGAL/Multiset.h>
 #include <CGAL/assertions.h>
 #include <CGAL/Default.h>
+#include <set>
 
 namespace CGAL {
 namespace Surface_sweep_2 {
