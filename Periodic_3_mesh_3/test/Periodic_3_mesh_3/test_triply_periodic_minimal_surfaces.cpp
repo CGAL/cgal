@@ -238,12 +238,15 @@ typedef std::vector<std::string> Position_vector;
 int main(int, char**)
 {
   std::map<std::string, Function> functions;
+#ifdef CGAL_NDEBUG
+  // Only test those when not in debug (otherwise it takes too long)
   functions["D_prime"] = &D_prime;
   functions["G_prime"] = &G_prime;
   functions["diamond"] = &diamond;
   functions["double_p"] = &double_p;
   functions["gyroid"] = &gyroid;
   functions["lidinoid"] = &lidinoid;
+#endif
   functions["schwarz_p"] = &schwarz_p;
   functions["schwarz_p_transl"] = &schwarz_p_transl;
   functions["segments"] = &segments;
@@ -254,8 +257,8 @@ int main(int, char**)
   v_vps["in-out"] = make_vps_in_out();
 
   std::vector<unsigned> v_ncopy;
-//  v_ncopy.push_back(1);
-  v_ncopy.push_back(2);
+  v_ncopy.push_back(1);
+//  v_ncopy.push_back(2);
 //  v_ncopy.push_back(4);
 //  v_ncopy.push_back(8);
 
