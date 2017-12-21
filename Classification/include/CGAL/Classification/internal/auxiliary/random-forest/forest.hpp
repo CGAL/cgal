@@ -24,14 +24,22 @@
 //
 // Author(s)     : Stefan Walk
 
-#ifndef LIBLEARNING_RANDOMFOREST_FOREST_H
-#define LIBLEARNING_RANDOMFOREST_FOREST_H 
+// Modifications from original library:
+//  * changed inclusion protection tag
+//  * moved to namespace CGAL::internal::
+//  * add parameter "reset_trees" to train() to be able to construct
+//    forest with several iterations
+
+#ifndef CGAL_INTERNAL_LIBLEARNING_RANDOMFOREST_FOREST_H
+#define CGAL_INTERNAL_LIBLEARNING_RANDOMFOREST_FOREST_H
 #include "common-libraries.hpp"
 #include "tree.hpp"
 #include <boost/ptr_container/serialize_ptr_vector.hpp>
 #if VERBOSE_TREE_PROGRESS
 #include <cstdio>
 #endif
+
+namespace CGAL { namespace internal {
 
 namespace liblearning {
 namespace RandomForest {
@@ -173,4 +181,7 @@ public:
 
 }
 }
+
+}} // namespace CGAL::internal::
+
 #endif

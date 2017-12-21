@@ -24,8 +24,13 @@
 //
 // Author(s)     : Stefan Walk
 
-#ifndef LIBLEARNING_RANDOMFORESTS_NODE_H
-#define LIBLEARNING_RANDOMFORESTS_NODE_H 
+// Modifications from original library:
+//  * changed inclusion protection tag
+//  * moved to namespace CGAL::internal::
+//  * fix computation of node_dist[label] so that results are always <= 1.0
+
+#ifndef CGAL_INTERNAL_LIBLEARNING_RANDOMFORESTS_NODE_H
+#define CGAL_INTERNAL_LIBLEARNING_RANDOMFORESTS_NODE_H
 #include "../dataview.h"
 #include "common-libraries.hpp"
 #include <boost/serialization/scoped_ptr.hpp>
@@ -33,6 +38,8 @@
 #if VERBOSE_NODE_LEARNING
 #include <cstdio>
 #endif
+
+namespace CGAL { namespace internal {
 
 namespace liblearning {
 namespace RandomForest {
@@ -249,4 +256,7 @@ public:
 
 }
 }
+
+}} // namespace CGAL::internal::
+
 #endif

@@ -24,11 +24,17 @@
 //
 // Author(s)     : Stefan Walk
 
-#ifndef LIBLEARNING_RANDOMFOREST_TREE_H
-#define LIBLEARNING_RANDOMFOREST_TREE_H 
+// Modifications from original library:
+//  * changed inclusion protection tag
+//  * moved to namespace CGAL::internal::
+
+#ifndef CGAL_INTERNAL_LIBLEARNING_RANDOMFOREST_TREE_H
+#define CGAL_INTERNAL_LIBLEARNING_RANDOMFOREST_TREE_H
 #include "../dataview.h"
 #include "common-libraries.hpp"
 #include <boost/serialization/scoped_ptr.hpp>
+
+namespace CGAL { namespace internal {
 
 namespace liblearning {
 namespace RandomForest {
@@ -133,4 +139,7 @@ public:
 
 }
 }
+
+}} // namespace CGAL::internal::
+
 #endif

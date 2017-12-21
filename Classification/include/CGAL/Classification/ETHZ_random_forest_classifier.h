@@ -52,9 +52,9 @@ namespace Classification {
 */
 class ETHZ_random_forest_classifier
 {
-  typedef liblearning::RandomForest::RandomForest
-  < liblearning::RandomForest::NodeGini
-    < liblearning::RandomForest::AxisAlignedSplitter> > Forest;
+  typedef CGAL::internal::liblearning::RandomForest::RandomForest
+  < CGAL::internal::liblearning::RandomForest::NodeGini
+    < CGAL::internal::liblearning::RandomForest::AxisAlignedSplitter> > Forest;
   
   const Label_set& m_labels;
   const Feature_set& m_features;
@@ -124,7 +124,7 @@ public:
               std::size_t num_trees = 25,
               std::size_t max_depth = 20)
   {
-    liblearning::RandomForest::ForestParams params;
+    CGAL::internal::liblearning::RandomForest::ForestParams params;
     params.n_trees   = num_trees;
     params.max_depth = max_depth;
 
@@ -139,8 +139,8 @@ public:
         gt.push_back(ground_truth[i]);
       }
 
-    liblearning::DataView2D<int> label_vector (&(gt[0]), gt.size(), 1);    
-    liblearning::DataView2D<float> feature_vector(&(ft[0]), gt.size(), ft.size() / gt.size());
+    CGAL::internal::liblearning::DataView2D<int> label_vector (&(gt[0]), gt.size(), 1);    
+    CGAL::internal::liblearning::DataView2D<float> feature_vector(&(ft[0]), gt.size(), ft.size() / gt.size());
 
     if (m_rfc != NULL && reset_trees)
     {
@@ -151,9 +151,9 @@ public:
     if (m_rfc == NULL)
       m_rfc = new Forest (params);
 
-    liblearning::RandomForest::AxisAlignedRandomSplitGenerator generator;
+    CGAL::internal::liblearning::RandomForest::AxisAlignedRandomSplitGenerator generator;
     
-    m_rfc->train(feature_vector, label_vector, liblearning::DataView2D<int>(), generator, 0, false, reset_trees);
+    m_rfc->train(feature_vector, label_vector, CGAL::internal::liblearning::DataView2D<int>(), generator, 0, false, reset_trees);
   }
 
   /// \cond SKIP_IN_MANUAL
@@ -213,7 +213,7 @@ public:
   */
   void load_configuration (std::istream& input)
   {
-    liblearning::RandomForest::ForestParams params;
+    CGAL::internal::liblearning::RandomForest::ForestParams params;
     if (m_rfc != NULL)
       delete m_rfc;
     m_rfc = new Forest (params);

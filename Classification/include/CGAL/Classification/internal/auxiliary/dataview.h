@@ -24,9 +24,17 @@
 //
 // Author(s)     : Stefan Walk
 
-#ifndef LIBLEARNING_DATAVIEW_H
-#define LIBLEARNING_DATAVIEW_H
+// Modifications from original library:
+//  * changed inclusion protection tag
+//  * moved to namespace CGAL::internal::
+
+
+#ifndef CGAL_INTERNAL_LIBLEARNING_DATAVIEW_H
+#define CGAL_INTERNAL_LIBLEARNING_DATAVIEW_H
 #include <vector>
+
+namespace CGAL { namespace internal {
+    
 namespace liblearning {
 //! \brief A view for one-dimensional data
 //
@@ -164,4 +172,7 @@ bool equal_dims(DataView2D<A> view_a, DataView2D<B> view_b)
     return view_a.rows == view_b.rows && view_a.cols == view_b.cols;
 }
 }
+
+}} // namespace CGAL::internal::
+
 #endif

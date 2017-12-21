@@ -24,10 +24,16 @@
 //
 // Author(s)     : Stefan Walk
 
-#ifndef LIBLEARNING_RANDOMFOREST_NODE_GINI_H
-#define LIBLEARNING_RANDOMFOREST_NODE_GINI_H 
+// Modifications from original library:
+//  * changed inclusion protection tag
+//  * moved to namespace CGAL::internal::
+
+#ifndef CGAL_INTERNAL_LIBLEARNING_RANDOMFOREST_NODE_GINI_H
+#define CGAL_INTERNAL_LIBLEARNING_RANDOMFOREST_NODE_GINI_H
 #include "node.hpp"
 #include "common-libraries.hpp"
+
+namespace CGAL { namespace internal {
 
 namespace liblearning {
 namespace RandomForest {
@@ -104,4 +110,7 @@ public:
 
 }
 }
+
+}} // namespace CGAL::internal::
+
 #endif

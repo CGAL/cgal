@@ -24,8 +24,12 @@
 //
 // Author(s)     : Stefan Walk
 
-#ifndef LIBLEARNING_RANDOMFOREST_COMMON_LIBRARIES_H
-#define LIBLEARNING_RANDOMFOREST_COMMON_LIBRARIES_H
+// Modifications from original library:
+//  * changed inclusion protection tag
+//  * moved to namespace CGAL::internal::
+
+#ifndef CGAL_INTERNAL_LIBLEARNING_RANDOMFOREST_COMMON_LIBRARIES_H
+#define CGAL_INTERNAL_LIBLEARNING_RANDOMFOREST_COMMON_LIBRARIES_H
 #include <algorithm>
 #include <numeric>
 #include <limits>
@@ -51,6 +55,8 @@
 #include <cstdio>
 
 #include "../dataview.h"
+
+namespace CGAL { namespace internal {
 
 namespace liblearning {
 namespace RandomForest {
@@ -329,4 +335,6 @@ struct QuadraticSplitGenerator {
 }
 }
 
+}} // namespace CGAL::internal::
+    
 #endif
