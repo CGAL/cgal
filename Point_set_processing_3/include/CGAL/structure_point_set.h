@@ -240,10 +240,10 @@ public:
     typedef typename Point_set_processing_3::GetPlaneIndexMap<NamedParameters>::type PlaneIndexMap;
 
     CGAL_static_assertion_msg(!(boost::is_same<NormalMap,
-                                Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::NoMap>::value),
+                                typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::NoMap>::value),
                               "Error: no normal map");
     CGAL_static_assertion_msg(!(boost::is_same<PlaneIndexMap,
-                                Point_set_processing_3::GetPlaneIndexMap<NamedParameters>::NoMap>::value),
+                                typename Point_set_processing_3::GetPlaneIndexMap<NamedParameters>::NoMap>::value),
                               "Error: no plane index map");
 
     PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());

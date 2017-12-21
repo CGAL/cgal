@@ -203,7 +203,7 @@ jet_smooth_point_set(
   typedef typename GetSvdTraits<NamedParameters>::type SvdTraits;
 
   CGAL_static_assertion_msg(!(boost::is_same<SvdTraits,
-                              GetSvdTraits<NamedParameters>::NoMap>::value),
+                              typename GetSvdTraits<NamedParameters>::NoMap>::value),
                             "Error: no SVD traits");
 
   PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());

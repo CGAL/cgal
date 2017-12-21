@@ -425,7 +425,7 @@ bilateral_smooth_point_set(
   typedef typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel Kernel;
 
   CGAL_static_assertion_msg(!(boost::is_same<NormalMap,
-                              Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::NoMap>::value),
+                              typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::NoMap>::value),
                             "Error: no normal map");
   
   typedef typename CGAL::Point_with_normal_3<Kernel> Pwn;

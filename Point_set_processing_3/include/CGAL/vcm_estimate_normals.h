@@ -270,7 +270,7 @@ compute_vcm (const PointRange& points,
     typedef typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel Kernel;
 
     CGAL_static_assertion_msg(!(boost::is_same<NormalMap,
-                                Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::NoMap>::value),
+                                typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::NoMap>::value),
                               "Error: no normal map");
 
     PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
@@ -356,7 +356,7 @@ vcm_estimate_normals_internal (PointRange& points,
     typedef typename GetDiagonalizeTraits<NamedParameters, double, 3>::type DiagonalizeTraits;
 
     CGAL_static_assertion_msg(!(boost::is_same<NormalMap,
-                                Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::NoMap>::value),
+                                typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::NoMap>::value),
                               "Error: no normal map");
 
     PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
