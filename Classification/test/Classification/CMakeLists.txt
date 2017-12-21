@@ -53,8 +53,24 @@ include( CGAL_CreateSingleSourceCGALProgram )
 
 #add_definitions("-DCGAL_DO_NOT_USE_BOYKOV_KOLMOGOROV_MAXFLOW_SOFTWARE")
 
+# Classification requires some C++11 features
 set(needed_cxx_features cxx_rvalue_references cxx_variadic_templates)
+
+# Libraries and flags
+set(classification_linked_libraries)
+
+find_package(Boost COMPONENTS serialization iostreams)
+if (Boost_SERIALIZATION_FOUND AND Boost_IOSTREAMS_FOUND)
+  set(classification_linked_libraries ${classification_linked_libraries}
+    ${Boost_SERIALIZATION_LIBRARY}
+    ${Boost_IOSTREAMS_LIBRARY})
+else()
+  message(STATUS "ERROR: Boost Serialization or IO Streams not found.")
+  exit()
+endif()
+
 create_single_source_cgal_program( "test_classification_point_set.cpp" CXX_FEATURES ${needed_cxx_features} )
+target_link_libraries(test_classification_point_set PUBLIC ${classification_linked_libraries})
 
 if(TBB_FOUND)
   CGAL_target_use_TBB( test_classification_point_set )

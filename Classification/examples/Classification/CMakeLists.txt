@@ -42,29 +42,55 @@ include_directories( BEFORE ../../include )
 
 include( CGAL_CreateSingleSourceCGALProgram )
 
+# Classification examples
+set(targets
+  example_classification
+  example_ethz_random_forest
+  example_feature
+  example_generation_and_training)
+
+# Classification requires some C++11 features
 set(needed_cxx_features cxx_rvalue_references cxx_variadic_templates)
-create_single_source_cgal_program( "example_classification.cpp" CXX_FEATURES ${needed_cxx_features} )
-if(TBB_FOUND)
-  CGAL_target_use_TBB(example_classification)
-endif()
-create_single_source_cgal_program( "example_generation_and_training.cpp" CXX_FEATURES ${needed_cxx_features} )
-create_single_source_cgal_program( "example_feature.cpp" CXX_FEATURES ${needed_cxx_features} )
 
-if( OpenCV_FOUND )
-  message(STATUS "Found OpenCV ${OpenCV_VERSION}")
-  include_directories( ${OpenCV_INCLUDE_DIRS} )
-  create_single_source_cgal_program( "example_opencv_random_forest.cpp" CXX_FEATURES ${needed_cxx_features} )
-  target_link_libraries( example_opencv_random_forest ${OpenCV_LIBS} )
-  target_compile_definitions(example_opencv_random_forest PUBLIC "-DCGAL_LINKED_WITH_OPENCV")
-else()
-  message(STATUS "OpenCV not found, OpenCV random forest example won't be compiled.")
-endif()
+# Libraries and flags
+set(classification_linked_libraries)
+set(classification_compile_definitions)
 
+find_package(Boost COMPONENTS serialization iostreams)
 if (Boost_SERIALIZATION_FOUND AND Boost_IOSTREAMS_FOUND)
-  create_single_source_cgal_program( "example_ethz_random_forest.cpp" CXX_FEATURES ${needed_cxx_features} )
-  target_link_libraries( example_ethz_random_forest ${Boost_SERIALIZATION_LIBRARY} ${Boost_IOSTREAMS_LIBRARY})
-  target_compile_definitions(example_ethz_random_forest PUBLIC "-DCGAL_LINKED_WITH_BOOST_SERIALIZATION")
+  set(classification_linked_libraries ${classification_linked_libraries}
+    ${Boost_SERIALIZATION_LIBRARY}
+    ${Boost_IOSTREAMS_LIBRARY})
 else()
-  message(STATUS "Boost serialization and IO streams not found, ETHZ random forest example won't be compiled.")
+  message(STATUS "ERROR: Boost Serialization or IO Streams not found.")
+  exit()
 endif()
+
+find_package(OpenCV QUIET)
+if (OpenCV_FOUND)
+  message(STATUS "Found OpenCV ${OpenCV_VERSION}")
+  include_directories(${OpenCV_INCLUDE_DIRS})
+  set(classification_linked_libraries ${classification_linked_libraries}
+    ${OpenCV_LIBS})
+  set(classification_compile_definitions ${classification_compile_definitions}
+    "-DCGAL_LINKED_WITH_OPENCV")
+
+  set(targets ${targets} example_opencv_random_forest)
+else()
+  message(STATUS "NOTICE: OpenCV was not found. OpenCV random forest predicate for classification won't be available.")
+endif()
+
+# Creating targets with correct libraries and flags
+foreach(target ${targets})
+  create_single_source_cgal_program( "${target}.cpp" CXX_FEATURES ${needed_cxx_features} )
+  target_link_libraries(${target} PUBLIC ${classification_linked_libraries})
+  target_compile_definitions(${target} PUBLIC ${classification_compile_definitions})
+  if(TBB_FOUND AND TARGET ${target})
+    CGAL_target_use_TBB(${target})
+  endif()
+endforeach()
+
+
+
+
 

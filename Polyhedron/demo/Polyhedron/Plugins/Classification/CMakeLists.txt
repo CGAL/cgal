@@ -13,27 +13,26 @@ if(EIGEN3_FOUND)
     set(classification_linked_libraries ${classification_linked_libraries}
       ${Boost_SERIALIZATION_LIBRARY}
       ${Boost_IOSTREAMS_LIBRARY})
-    set(classification_compile_definitions ${classification_compile_definitions}
-      "-DCGAL_LINKED_WITH_BOOST_SERIALIZATION")
+    
+    find_package(OpenCV QUIET)
+    if (OpenCV_FOUND)
+      message(STATUS "Found OpenCV ${OpenCV_VERSION}")
+      include_directories(${OpenCV_INCLUDE_DIRS})
+      set(classification_linked_libraries ${classification_linked_libraries}
+        ${OpenCV_LIBS})
+      set(classification_compile_definitions ${classification_compile_definitions}
+        "-DCGAL_LINKED_WITH_OPENCV")
+    else()
+      message(STATUS "NOTICE: OpenCV was not found. OpenCV random forest predicate for classification won't be available.")
+    endif()
+    
+    target_link_libraries(classification_plugin PUBLIC scene_points_with_normal_item
+      scene_polylines_item scene_polygon_soup_item scene_color_ramp ${classification_linked_libraries})
+    target_compile_definitions(classification_plugin PUBLIC ${classification_compile_definitions})
   else()
-    message(STATUS "NOTICE: Boost Serialization or IO Streams not found. IO functions for ETHZ classifier won't be available.")
+    message(STATUS "NOTICE: Boost Serialization or IO Streams not found. Classification plugin won't be available.")
   endif()
 
-  find_package(OpenCV QUIET)
-  if (OpenCV_FOUND)
-    message(STATUS "Found OpenCV ${OpenCV_VERSION}")
-    include_directories(${OpenCV_INCLUDE_DIRS})
-    set(classification_linked_libraries ${classification_linked_libraries}
-      ${OpenCV_LIBS})
-    set(classification_compile_definitions ${classification_compile_definitions}
-      "-DCGAL_LINKED_WITH_OPENCV")
-  else()
-    message(STATUS "NOTICE: OpenCV was not found. OpenCV random forest predicate for classification won't be available.")
-  endif()
-  
-  target_link_libraries(classification_plugin PUBLIC scene_points_with_normal_item
-    scene_polylines_item scene_polygon_soup_item scene_color_ramp ${classification_linked_libraries})
-  target_compile_definitions(classification_plugin PUBLIC ${classification_compile_definitions})
 
 else(EIGEN3_FOUND)
   message(STATUS "NOTICE: Eigen 3.1 (or greater) was not found. Classification plugin will not be available.")
