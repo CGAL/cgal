@@ -24,6 +24,7 @@
 #include <CGAL/property_map.h>
 #include <CGAL/value_type_traits.h>
 #include <CGAL/compute_average_spacing.h>
+#include <CGAL/functional.h>
 
 class GlViewer;
 
@@ -81,7 +82,7 @@ public:
 
 private:
 
-  struct Point_3_from_sample : public std::unary_function<Sample_, typename K::Point_3>
+  struct Point_3_from_sample : public CGAL::unary_function<Sample_, typename K::Point_3>
   {
     typename K::Point_3 operator() (const Sample_& sample) const
     {
