@@ -1016,10 +1016,10 @@ void get_one_point_per_cc(TriangleMesh& tm,
   }
   boost::associative_property_map< boost::unordered_map<face_descriptor, int> >
       fid_pmap(fid_map);
-  std::map<face_descriptor, int> fcc_map;
+  boost::unordered_map<face_descriptor, int> fcc_map;
 
   int nb_cc = Polygon_mesh_processing::connected_components(tm,
-                                                            boost::make_assoc_property_map<std::map<face_descriptor, int> >(fcc_map),
+                                                            boost::make_assoc_property_map(fcc_map),
                                                             Polygon_mesh_processing::parameters::face_index_map(fid_pmap));
   std::vector<bool> is_cc_treated(nb_cc, false);
   points_of_interest.resize(nb_cc);
