@@ -45,8 +45,6 @@
 #include <boost/iterator/transform_iterator.hpp>
 #include <boost/type_traits/is_float.hpp>
 
-#define OTR_NO_TOLERANCE (FT)(-1.)
-
 namespace CGAL {
 
 
@@ -233,7 +231,7 @@ public:
     m_alpha(0.5),
     m_ghost(1.0),
     m_relocation(relocation),
-    m_tolerance (OTR_NO_TOLERANCE),
+    m_tolerance (FT(-1.)),
     point_pmap(point_map),
     mass_pmap(mass_map)
   {
@@ -671,7 +669,7 @@ public:
 
   bool is_above_tolerance (const Rec_edge_2& pedge)
   {
-    if (m_tolerance == OTR_NO_TOLERANCE)
+    if (m_tolerance == (FT)(-1.))
       return false;
     double cost = std::sqrt (pedge.after() / pedge.total_weight());
     return cost > m_tolerance;
@@ -1504,7 +1502,7 @@ public:
     collapse was possible.
    */
   bool run_until(std::size_t np) {
-    m_tolerance = OTR_NO_TOLERANCE;
+    m_tolerance = (FT)(-1.);
     CGAL::Real_timer timer;
     if (m_verbose > 0)
       std::cerr << "reconstruct until " << np << " V";
@@ -1537,7 +1535,7 @@ public:
     edge collapse was possible.
    */
   bool run(const unsigned steps) {
-    m_tolerance = OTR_NO_TOLERANCE;
+    m_tolerance = (FT)(-1.);
     CGAL::Real_timer timer;
     if (m_verbose > 0)
       std::cerr << "reconstruct " << steps;
@@ -1823,7 +1821,5 @@ public:
 
 };
 } // namespace
-
-#undef OTR_NO_TOLERANCE
 
 #endif // CGAL_OPTIMAL_TRANSPORTATION_RECONSTRUCTION_2_H_
