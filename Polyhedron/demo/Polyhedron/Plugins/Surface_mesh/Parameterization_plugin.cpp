@@ -220,11 +220,13 @@ typedef boost::associative_property_map<Seam_edge_uhm>              Seam_edge_pm
 typedef boost::associative_property_map<Seam_vertex_uhm>            Seam_vertex_pmap;
 
 typedef CGAL::Seam_mesh<Base_face_graph,
-Seam_edge_pmap, Seam_vertex_pmap>                                   Seam_mesh;
+                        Seam_edge_pmap, Seam_vertex_pmap>           Seam_mesh;
 
 typedef boost::graph_traits<Seam_mesh>::vertex_descriptor           s_vertex_descriptor;
 typedef boost::graph_traits<Seam_mesh>::halfedge_descriptor         s_halfedge_descriptor;
 typedef boost::graph_traits<Seam_mesh>::face_descriptor             s_face_descriptor;
+
+typedef boost::graph_traits<Seam_mesh>::edges_size_type             s_edges_size_type;
 
 typedef boost::unordered_set<boost::graph_traits<Base_face_graph>::
 face_descriptor>                                                    Component;
@@ -748,7 +750,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
   }
 #endif
   Seam_mesh sMesh(tMesh, seam_edge_pm, seam_vertex_pm);
-  sMesh.set_seam_edges_number(seam_edges.size());
+  sMesh.set_seam_edges_number(static_cast<s_edges_size_type>(seam_edges.size()));
 
   // The parameterized values
   UV_uhm uv_uhm;

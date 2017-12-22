@@ -36,22 +36,54 @@
 
 #include <CGAL/Surface_mesh_parameterization/parameterize.h>
 
-#include <CGAL/Algebraic_kernel_d_2.h>
-#include <CGAL/Kernel/Conic_misc.h> // @tmp used for solving conic equations
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
-
-#ifdef CGAL_USE_GMP
-#include <CGAL/GMP_arithmetic_kernel.h>
-#endif
 
 #if defined(CGAL_EIGEN3_ENABLED)
 #include <CGAL/Eigen_solver_traits.h>
 #endif
 
 #include <CGAL/assertions.h>
+#include <CGAL/basic.h>
 #include <CGAL/circulator.h>
 #include <CGAL/Default.h>
 #include <CGAL/number_utils.h>
+
+// Below are two macros that can be used to improve the accuracy of optimal Lt
+// matrices.
+// Note that at least one of these macros should be defined. If:
+//
+// - CGAL_SMP_SOLVE_CUBIC_EQUATION is defined: a cubic equation is solved instead of the
+//   complete bivariate system. Although less accurate, it is usually sufficient.
+// - CGAL_SMP_SOLVE_CUBIC_EQUATION and CGAL_SMP_SOLVE_EQUATIONS_WITH_GMP are defined:
+//   the same cubic is solved but using GMP and CGAL's algebraic kernel.
+// - CGAL_SMP_SOLVE_EQUATIONS_WITH_GMP is defined: a bivariate system is solved,
+//   using GMP and CGAL's algebraic kernel.
+//
+// Using CGAL_SMP_SOLVE_EQUATIONS_WITH_GMP requires GMP, MPFI, and linking CGAL
+// with Core and MPFI. This can be simply done in 'CMakeLists.txt' by using:
+// 'find_package(CGAL QUIET COMPONENTS Core MPFI)'
+
+// -----------------------------------------------------------------------------
+#define CGAL_SMP_SOLVE_CUBIC_EQUATION
+//#define CGAL_SMP_SOLVE_EQUATIONS_WITH_GMP
+// -----------------------------------------------------------------------------
+
+#if !defined(CGAL_SMP_SOLVE_CUBIC_EQUATION) && !defined(CGAL_SMP_SOLVE_EQUATIONS_WITH_GMP)
+#error "Either 'CGAL_SMP_SOLVE_CUBIC_EQUATION' or 'CGAL_SMP_SOLVE_EQUATIONS_WITH_GMP' must be defined."
+#endif
+
+#if defined(CGAL_SMP_SOLVE_EQUATIONS_WITH_GMP)
+#if !defined(CGAL_USE_GMP) || !defined(CGAL_USE_MPFI)
+#error "'CGAL_SMP_SOLVE_EQUATIONS_WITH_GMP' cannot be defined if GMP or MPFI is not present."
+#endif
+#endif
+
+#ifdef CGAL_SMP_SOLVE_EQUATIONS_WITH_GMP
+#include <CGAL/GMP_arithmetic_kernel.h>
+#include <CGAL/Algebraic_kernel_d_2.h>
+#elif defined(CGAL_SMP_SOLVE_CUBIC_EQUATION)
+#include <CGAL/Kernel/Conic_misc.h> // used to solve conic equations
+#endif
 
 #include <boost/foreach.hpp>
 #include <boost/function_output_iterator.hpp>
@@ -519,8 +551,8 @@ private:
   }
 
   // Solves the cubic equation a3 x^3 + a2 x^2 + a1 x + a0 = 0.
-  int solve_cubic_equation(const NT a3, const NT a2, const NT a1, const NT a0,
-                           std::vector<NT>& roots) const
+  std::size_t solve_cubic_equation(const NT a3, const NT a2, const NT a1, const NT a0,
+                                   std::vector<NT>& roots) const
   {
     CGAL_precondition(roots.empty());
     NT r1 = 0, r2 = 0, r3 = 0; // roots of the cubic equation
@@ -537,20 +569,20 @@ private:
     return roots.size();
   }
 
-#ifdef CGAL_USE_GMP
-  // Solves the equation a3 x^3 + a2 x^2 + a1 x + a0 = 0, using CGAL's algeabric kernel.
-  int solve_cubic_equation_with_AK(const NT a3, const NT a2,
-                                   const NT a1, const NT a0,
-                                   std::vector<NT>& roots) const
+#if defined(CGAL_SMP_SOLVE_CUBIC_EQUATION) && defined(CGAL_SMP_SOLVE_EQUATIONS_WITH_GMP)
+  // Solves the equation a3 x^3 + a2 x^2 + a1 x + a0 = 0, using CGAL's algebraic kernel.
+  std::size_t solve_cubic_equation_with_AK(const NT a3, const NT a2,
+                                           const NT a1, const NT a0,
+                                           std::vector<NT>& roots) const
   {
     CGAL_precondition(roots.empty());
 
-    typedef CGAL::GMP_arithmetic_kernel                       AK;
-    typedef CGAL::Algebraic_kernel_d_1<AK::Rational>          Algebraic_kernel_d_1;
+    typedef CGAL::Gmpq                                        GMP_NT;
+    typedef CGAL::Algebraic_kernel_d_1<GMP_NT>                Algebraic_kernel_d_1;
     typedef typename Algebraic_kernel_d_1::Polynomial_1       Polynomial_1;
     typedef typename Algebraic_kernel_d_1::Algebraic_real_1   Algebraic_real_1;
-    typedef typename Algebraic_kernel_d_1::Multiplicity_type  Multiplicity_type;
     typedef typename Algebraic_kernel_d_1::Coefficient        Coefficient;
+    typedef typename Algebraic_kernel_d_1::Multiplicity_type  Multiplicity_type;
 
     typedef CGAL::Polynomial_traits_d<Polynomial_1>           Polynomial_traits_1;
 
@@ -558,39 +590,38 @@ private:
 
     Algebraic_kernel_d_1 ak_1;
     const Solve_1 solve_1 = ak_1.solve_1_object();
+
+    GMP_NT a3q(a3);
+    GMP_NT a2q(a2);
+    GMP_NT a1q(a1);
+    GMP_NT a0q(a0);
+
     typename Polynomial_traits_1::Construct_polynomial construct_polynomial_1;
     std::pair<CGAL::Exponent_vector, Coefficient> coeffs_x[1]
-      = {std::make_pair(CGAL::Exponent_vector(1,0),Coefficient(1))};
+      = {std::make_pair(CGAL::Exponent_vector(1,0), Coefficient(1))};
     Polynomial_1 x=construct_polynomial_1(coeffs_x, coeffs_x+1);
-
-    AK::Rational a3q(a3);
-    AK::Rational a2q(a2);
-    AK::Rational a1q(a1);
-    AK::Rational a0q(a0);
-
-    Polynomial_1 pol = a3q*CGAL::ipower(x,3) + a2q*CGAL::ipower(x,2)
-                       + a1q*x + a0q;
+    Polynomial_1 pol = a3q*CGAL::ipower(x,3) + a2q*CGAL::ipower(x,2) + a1q*x + a0q;
 
     std::vector<std::pair<Algebraic_real_1, Multiplicity_type> > ak_roots;
     solve_1(pol, std::back_inserter(ak_roots));
 
-    for(std::size_t i=0; i<ak_roots.size(); i++)
-    {
-      roots.push_back(ak_roots[i].first.to_double());
-    }
+    for(std::size_t i=0; i<ak_roots.size(); ++i)
+      roots.push_back(CGAL::to_double(ak_roots[i].first));
 
     return roots.size();
   }
+#endif // defined(CGAL_SMP_SOLVE_CUBIC_EQUATION) && defined(CGAL_SMP_SOLVE_EQUATIONS_WITH_GMP)
 
+#if !defined(CGAL_SMP_SOLVE_CUBIC_EQUATION) && defined(CGAL_SMP_SOLVE_EQUATIONS_WITH_GMP)
   // Solve the bivariate system
   // { C1 * a + 2 * lambda * a ( a^2 + b^2 - 1 ) = C2
   // { C1 * b + 2 * lambda * b ( a^2 + b^2 - 1 ) = C3
-  // using CGAL's algeabric kernel.
-  int solve_bivariate_system(const NT C1, const NT C2, const NT C3,
-                             std::vector<NT>& a_roots, std::vector<NT>& b_roots) const
+  // using CGAL's algebraic kernel.
+  std::size_t solve_bivariate_system(const NT C1, const NT C2, const NT C3,
+                                     std::vector<NT>& a_roots, std::vector<NT>& b_roots) const
   {
-    typedef CGAL::GMP_arithmetic_kernel                       AK;
-    typedef CGAL::Algebraic_kernel_d_2<AK::Rational>          Algebraic_kernel_d_2;
+    typedef CGAL::Gmpq                                        GMP_NT;
+    typedef CGAL::Algebraic_kernel_d_2<GMP_NT>                Algebraic_kernel_d_2;
     typedef typename Algebraic_kernel_d_2::Polynomial_2       Polynomial_2;
     typedef typename Algebraic_kernel_d_2::Algebraic_real_2   Algebraic_real_2;
     typedef typename Algebraic_kernel_d_2::Multiplicity_type  Multiplicity_type;
@@ -609,15 +640,15 @@ private:
 
     typename Polynomial_traits_2::Construct_polynomial construct_polynomial_2;
     std::pair<CGAL::Exponent_vector, Coefficient> coeffs_x[1]
-      = {std::make_pair(CGAL::Exponent_vector(1,0),Coefficient(1))};
+      = {std::make_pair(CGAL::Exponent_vector(1,0), Coefficient(1))};
     Polynomial_2 x=construct_polynomial_2(coeffs_x,coeffs_x+1);
     std::pair<CGAL::Exponent_vector, Coefficient> coeffs_y[1]
-      = {std::make_pair(CGAL::Exponent_vector(0,1),Coefficient(1))};
+      = {std::make_pair(CGAL::Exponent_vector(0,1), Coefficient(1))};
     Polynomial_2 y=construct_polynomial_2(coeffs_y,coeffs_y+1);
 
-    AK::Rational C1q(C1);
-    AK::Rational C2q(C2);
-    AK::Rational C3q(C3);
+    GMP_NT C1q(C1);
+    GMP_NT C2q(C2);
+    GMP_NT C3q(C3);
 
     Polynomial_2 pol1 = C1q * x + 2 * m_lambda * x * ( x*x + y*y - 1) - C2q;
     Polynomial_2 pol2 = C1q * y + 2 * m_lambda * y * ( x*x + y*y - 1) - C3q;
@@ -646,7 +677,7 @@ private:
 
     return a_roots.size();
   }
-#endif // CGAL_USE_GMP
+#endif // !defined(CGAL_SMP_SOLVE_CUBIC_EQUATION) && defined(CGAL_SMP_SOLVE_EQUATIONS_WITH_GMP)
 
   // Compute the root that gives the lowest face energy.
   template <typename VertexUVMap>
@@ -761,33 +792,24 @@ private:
         b = C3 * denom;
       }
       else { // general case
-#define SOLVE_CUBIC_EQUATION
-#ifdef SOLVE_CUBIC_EQUATION
-        // The cubic equation solving approach is less accurate but seems to be working.
-        // The other approach is left in case this one runs into trouble.
-
+#ifdef CGAL_SMP_SOLVE_CUBIC_EQUATION
         CGAL_precondition(C2 != 0.);
         NT C2_denom = 1. / C2;
         NT a3_coeff = 2. * m_lambda * (C2 * C2 + C3 * C3) * C2_denom * C2_denom;
 
         std::vector<NT> roots;
+#ifdef CGAL_SMP_SOLVE_EQUATIONS_WITH_GMP
+        solve_cubic_equation_with_AK(a3_coeff, 0., (C1 - 2. * m_lambda), -C2, roots);
+#else // !CGAL_SMP_SOLVE_EQUATIONS_WITH_GMP
         solve_cubic_equation(a3_coeff, 0., (C1 - 2. * m_lambda), -C2, roots);
-
-        // The function above is correct up to 10^{-14}, but below can be used
-        // if more precision is needed (should never be the case)
-        // Note that it requires GMP
-#ifdef CGAL_USE_GMP
-//        std::vector<NT> roots_with_AK;
-//        solve_cubic_equation_with_AK(a3_coeff, 0., (C1 - 2. * m_lambda), -C2,
-//                                     roots_with_AK);
 #endif
-
         std::size_t ind = compute_root_with_lowest_energy(mesh, fd,
                                                           ctmap, lp, lpmap, uvmap,
                                                           C2_denom, C3, roots);
+
         a = roots[ind];
         b = C3 * C2_denom * a;
-#elif defined(CGAL_USE_GMP) // solve the bivariate system
+#else // !CGAL_SMP_SOLVE_CUBIC_EQUATION, solve the bivariate system
         std::vector<NT> a_roots;
         std::vector<NT> b_roots;
         solve_bivariate_system(C1, C2, C3, a_roots, b_roots);
@@ -797,8 +819,6 @@ private:
                                                           a_roots, b_roots);
         a = a_roots[ind];
         b = b_roots[ind];
-#else
-  #error "The macro 'SOLVE_CUBIC_EQUATION' must be defined or GMP must be available."
 #endif
       }
 

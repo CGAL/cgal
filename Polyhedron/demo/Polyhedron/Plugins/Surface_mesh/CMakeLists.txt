@@ -5,19 +5,13 @@ if(EIGEN3_FOUND)
 
   include(${CGAL_USE_FILE})
 
-  if(CGAL_Core_FOUND)
-    qt5_wrap_ui( parameterizationUI_FILES Parameterization_widget.ui ARAP_dialog.ui OTE_dialog.ui)
-    polyhedron_demo_plugin(parameterization_plugin Parameterization_plugin ${parameterizationUI_FILES})
-    target_link_libraries(parameterization_plugin PUBLIC CGAL::CGAL_Core scene_polyhedron_item scene_textured_polyhedron_item scene_polyhedron_selection_item)
+  qt5_wrap_ui(parameterizationUI_FILES Parameterization_widget.ui ARAP_dialog.ui OTE_dialog.ui)
+  polyhedron_demo_plugin(parameterization_plugin Parameterization_plugin ${parameterizationUI_FILES})
+  target_link_libraries(parameterization_plugin PUBLIC scene_polyhedron_item scene_textured_polyhedron_item scene_polyhedron_selection_item)
 
-    polyhedron_demo_plugin(parameterization_sm_plugin Parameterization_plugin ${parameterizationUI_FILES})
-    target_link_libraries(parameterization_sm_plugin PUBLIC CGAL::CGAL_Core scene_surface_mesh_item scene_textured_surface_mesh_item scene_surface_mesh_selection_item)
-    target_compile_definitions(parameterization_sm_plugin PUBLIC "-DUSE_SURFACE_MESH" )
-
-  else(CGAL_Core_FOUND)
-    message(STATUS "NOTICE: CGAL Core was not found. The Parameterization plugin will not be available.")
-  endif(CGAL_Core_FOUND)
-
+  polyhedron_demo_plugin(parameterization_sm_plugin Parameterization_plugin ${parameterizationUI_FILES})
+  target_link_libraries(parameterization_sm_plugin PUBLIC scene_surface_mesh_item scene_textured_surface_mesh_item scene_surface_mesh_selection_item)
+  target_compile_definitions(parameterization_sm_plugin PUBLIC "-DUSE_SURFACE_MESH" )
 else(EIGEN3_FOUND)
   message(STATUS "NOTICE: Eigen 3.1 (or greater) was not found. The Parameterization plugin will not be available.")
 endif(EIGEN3_FOUND)
