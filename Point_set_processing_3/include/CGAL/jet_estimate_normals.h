@@ -205,7 +205,7 @@ jet_estimate_normals(
                               typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::NoMap>::value),
                             "Error: no normal map");
   CGAL_static_assertion_msg(!(boost::is_same<SvdTraits,
-                              typename GetSvdTraits<NamedParameters>::NoMap>::value),
+                              typename GetSvdTraits<NamedParameters>::NoTraits>::value),
                             "Error: no SVD traits");
 
   PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());

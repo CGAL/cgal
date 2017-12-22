@@ -243,17 +243,23 @@ class Quick_multiscale_approximate_knn_distance<Kernel, typename Kernel::Point_2
     operator() (const ValueType& v) const { return get(point_map, v); }
   };
 
+  template <typename PointMap>
   struct Pmap_to_3d
   {
+    PointMap point_map;
     typedef typename Kernel::Point_3 value_type;
     typedef const value_type& reference;
     typedef typename Kernel::Point_2 key_type;
     typedef boost::lvalue_property_map_tag category;
 
-    friend inline value_type get (const Pmap_to_3d&, key_type p) 
+    Pmap_to_3d () { }
+    Pmap_to_3d (PointMap point_map)
+      : point_map (point_map) { }
+
+    friend inline value_type get (const Pmap_to_3d& pmap, key_type p) 
     {
       typename boost::property_traits<PointMap>::reference
-        p2 = get(ppmap.point_pmap, i);
+        p2 = get(pmap.point_map, p);
       return value_type (p2.x(), p2.y(), 0.);
     }
 
@@ -318,7 +324,7 @@ public:
           (search_points.begin(), first_unused);
         first_unused
           = CGAL::hierarchy_simplify_point_set (points,
-                                                CGAL::parameters::point_map(Pmap_to_3d()).
+                                                CGAL::parameters::point_map(Pmap_to_3d<PointMap>(point_map)).
                                                 size(static_cast<unsigned int>(m_cluster_size)).
                                                 maximum_variation(1./3.));
 
@@ -388,7 +394,7 @@ public:
     std::size_t index = 0;
     
     typename boost::property_traits<PointMap>::reference
-      pquery = get(point_pmap, *query);
+      pquery = get(point_map, *query);
     for (std::size_t t = 0; t < m_point_sets.size(); ++ t)
       {
         std::size_t size = ((t == m_point_sets.size() - 1)
