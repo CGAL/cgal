@@ -94,9 +94,7 @@ The interpolation package of \cgal provides functions to compute
 natural neighbor coordinates for \f$ 2D\f$ and \f$ 3D\f$ points with respect
 to Voronoi diagrams as well as with respect to power diagrams (only
 \f$ 2D\f$), i.e.\ for weighted points. Refer to the reference pages
-`natural_neighbor_coordinates_2()`,
-`sibson_natural_neighbor_coordinates_3()`
-`laplace_natural_neighbor_coordinates_3()` and
+`natural_neighbor_coordinates_2()` and 
 `regular_neighbor_coordinates_2()`.
 
 In addition, the package provides functions to compute natural
