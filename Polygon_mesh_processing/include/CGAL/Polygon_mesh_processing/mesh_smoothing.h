@@ -384,7 +384,9 @@ void smooth_areas(PolygonMesh& pmesh)
 * @param faces the range of triangular faces defining one or several surface patches to be smoothed.
 * @param np optional sequence of \ref namedparameters among the ones listed below.
 *
-* @todo remove Hausdorff and use ratio between max (or mean?) displacement.
+* @todo remove Hausdorff and use ratio beteen max (or mean?) displacement.
+* @todo change connectivity and add it as a smoothing step.
+
 * \cgalNamedParamsBegin
 *  \cgalParamBegin{geom_traits} a geometric traits class instance, model of `Kernel`.
 *    Exact constructions kernels are not supported by this function.

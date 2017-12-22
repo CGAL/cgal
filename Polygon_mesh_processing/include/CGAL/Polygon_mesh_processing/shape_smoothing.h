@@ -37,8 +37,8 @@ namespace Polygon_mesh_processing {
 *         and `boost::graph_traits<PolygonMesh>::%halfedge_descriptor` must be
 *         models of `Hashable`.
 *         If `PolygonMesh` has an internal property map for `CGAL::face_index_t`,
-*         and no `face_index_map` is given
-*         as a named parameter, then the internal one should be initialized
+*         and no `face_index_map` is given.
+*         as a named parameter, then the internal one should be initialized.
 * @tparam FaceRange range of `boost::graph_traits<PolygonMesh>::%face_descriptor`,
           model of `Range`. Its iterator type is `ForwardIterator`.
 * @tparam NamedParameters a sequence of \ref namedparameters
@@ -200,13 +200,14 @@ void smooth_curvature_flow(PolygonMesh& pmesh)
 *         models of `Hashable`.
 *         If `PolygonMesh` has an internal property map for `CGAL::face_index_t`,
 *         and no `face_index_map` is given
-*         as a named parameter, then the internal one should be initialized
+*         as a named parameter, then the internal one should be initialized.
 * @tparam FaceRange range of `boost::graph_traits<PolygonMesh>::%face_descriptor`,
 *         model of `Range`. Its iterator type is `ForwardIterator`.
 * @tparam NamedParameters a sequence of \ref namedparameters
 *
 * @param pmesh a polygon mesh with triangulated surface patches to be smoothed.
 * @param faces the range of triangular faces defining one or several surface patches to be smoothed.
+* @param time a time step that corresponds to the amount by which the surface is smoothed.
 * @param np optional sequence of \ref namedparameters among the ones listed below.
 *
 * \cgalNamedParamsBegin
@@ -253,32 +254,6 @@ void smooth_modified_curvature_flow(const FaceRange& faces, PolygonMesh& pmesh, 
   smoother.update_mesh(Xx, Xy, Xz);
 }
 
-/*!
-* \ingroup PMP_meshing_grp
-* same as above, applied on faces of the mesh.
-*
-* @tparam PolygonMesh model of `MutableFaceGraph`.
-*         The descriptor types `boost::graph_traits<PolygonMesh>::%face_descriptor`
-*         and `boost::graph_traits<PolygonMesh>::%halfedge_descriptor` must be
-*         models of `Hashable`.
-*         If `PolygonMesh` has an internal property map for `CGAL::face_index_t`,
-*         and no `face_index_map` is given
-*         as a named parameter, then the internal one should be initialized
-* @tparam NamedParameters a sequence of \ref namedparameters
-*
-* @param pmesh a polygon mesh with triangulated surface patches to be smoothed.
-* @param np optional sequence of \ref namedparameters among the ones listed below.
-*
-* \cgalNamedParamsBegin
-*  \cgalParamBegin{geom_traits} a geometric traits class instance, model of `Kernel`.
-*    Kernels with exact constructions are not supported by this function.
-*  \cgalParamEnd
-*  \cgalParamBegin{vertex_point_map} the property map with the points associated
-*    to the vertices of `pmesh`. Instance of a class model of `ReadWritePropertyMap`.
-*  \cgalParamEnd
-*  \cgalParamEnd
-* \cgalNamedParamsEnd
-*/
 template<typename PolygonMesh, typename NamedParameters>
 void smooth_modified_curvature_flow(PolygonMesh& pmesh, const double& time,
                                     const NamedParameters& np)
