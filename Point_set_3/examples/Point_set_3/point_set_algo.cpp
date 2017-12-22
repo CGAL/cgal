@@ -40,7 +40,7 @@ int main (int, char**)
   point_set.add_normal_map();
   CGAL::jet_estimate_normals<CGAL::Sequential_tag>
     (point_set,
-     12,; // Number of neighbors
+     12, // Number of neighbors
      point_set.parameters(). // Named parameters provided by Point_set_3
      degree_fitting(2));     // additional named parameter specific to jet_estimate_normals
 
