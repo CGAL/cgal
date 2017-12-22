@@ -41,16 +41,19 @@ public:
     actionRemoveDegenerateFaces = new QAction(tr("Remove Degenerate Faces"), mw);
     actionRemoveSelfIntersections = new QAction(tr("Remove Self-Intersections"), mw);
     actionStitchCloseBorderHalfedges = new QAction(tr("Stitch Close Border Halfedges"), mw);
+    actionDuplicateNMVertices = new QAction(tr("Duplicate non-manifold vertices"), mw);
 
     actionRemoveIsolatedVertices->setObjectName("actionRemoveIsolatedVertices");
     actionRemoveDegenerateFaces->setObjectName("actionRemoveDegenerateFaces");
     actionRemoveSelfIntersections->setObjectName("actionRemoveSelfIntersections");
     actionStitchCloseBorderHalfedges->setObjectName("actionStitchCloseBorderHalfedges");
+    actionDuplicateNMVertices->setObjectName("actionDuplicateNMVertices");
 
     actionRemoveDegenerateFaces->setProperty("subMenuName", "Polygon Mesh Processing/Repair/Experimental");
     actionStitchCloseBorderHalfedges->setProperty("subMenuName", "Polygon Mesh Processing/Repair/Experimental");
     actionRemoveSelfIntersections->setProperty("subMenuName", "Polygon Mesh Processing/Repair/Experimental");
     actionRemoveIsolatedVertices->setProperty("subMenuName", "Polygon Mesh Processing/Repair");
+    actionDuplicateNMVertices->setProperty("subMenuName", "Polygon Mesh Processing/Repair/Experimental");
 
     autoConnectActions();
   }
@@ -60,7 +63,8 @@ public:
     return QList<QAction*>() << actionRemoveDegenerateFaces
                              << actionRemoveIsolatedVertices
                              << actionRemoveSelfIntersections
-                             << actionStitchCloseBorderHalfedges;
+                             << actionStitchCloseBorderHalfedges
+                             << actionDuplicateNMVertices;
   }
 
   bool applicable(QAction*) const
@@ -77,18 +81,22 @@ public:
   void on_actionRemoveSelfIntersections_triggered(Scene_interface::Item_id index);
   template <typename Item>
   void on_actionStitchCloseBorderHalfedges_triggered(Scene_interface::Item_id index);
+  template <typename Item>
+  void on_actionDuplicateNMVertices_triggered(Scene_interface::Item_id index);
 
 public Q_SLOTS:
   void on_actionRemoveIsolatedVertices_triggered();
   void on_actionRemoveDegenerateFaces_triggered();
   void on_actionRemoveSelfIntersections_triggered();
   void on_actionStitchCloseBorderHalfedges_triggered();
+  void on_actionDuplicateNMVertices_triggered();
 
 private:
   QAction* actionRemoveIsolatedVertices;
   QAction* actionRemoveDegenerateFaces;
   QAction* actionRemoveSelfIntersections;
   QAction* actionStitchCloseBorderHalfedges;
+  QAction* actionDuplicateNMVertices;
 
   Messages_interface* messages;
 }; // end Polyhedron_demo_repair_polyhedron_plugin
@@ -203,6 +211,32 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionStitchCloseBorderHalfedg
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
   on_actionStitchCloseBorderHalfedges_triggered<Scene_polyhedron_item>(index);
   on_actionStitchCloseBorderHalfedges_triggered<Scene_surface_mesh_item>(index);
+  QApplication::restoreOverrideCursor();
+}
+
+template <typename Item>
+void Polyhedron_demo_repair_polyhedron_plugin::on_actionDuplicateNMVertices_triggered(Scene_interface::Item_id index)
+{
+  namespace PMP =   CGAL::Polygon_mesh_processing;
+
+  if (Item* poly_item = qobject_cast<Item*>(scene->item(index)))
+  {
+    std::size_t nb_vd = PMP::duplicate_non_manifold_vertices(*poly_item->polyhedron());
+    messages->information(tr(" %1 vertices created").arg(nb_vd));
+    if (nb_vd)
+    {
+      poly_item->invalidateOpenGLBuffers();
+      Q_EMIT poly_item->itemChanged();
+    }
+  }
+}
+
+void Polyhedron_demo_repair_polyhedron_plugin::on_actionDuplicateNMVertices_triggered()
+{
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+  const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  on_actionDuplicateNMVertices_triggered<Scene_polyhedron_item>(index);
+  on_actionDuplicateNMVertices_triggered<Scene_surface_mesh_item>(index);
   QApplication::restoreOverrideCursor();
 }
 
