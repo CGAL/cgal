@@ -21,7 +21,7 @@ include( ${CGAL_USE_FILE} )
 
 
 # Boost and its components
-find_package( Boost REQUIRED )
+find_package( Boost REQUIRED OPTIONAL_COMPONENTS serialization iostreams)
 
 # Use Eigen
 find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
@@ -59,13 +59,12 @@ set(needed_cxx_features cxx_rvalue_references cxx_variadic_templates)
 # Libraries and flags
 set(classification_linked_libraries)
 
-find_package(Boost COMPONENTS serialization iostreams)
 if (Boost_SERIALIZATION_FOUND AND Boost_IOSTREAMS_FOUND)
   set(classification_linked_libraries ${classification_linked_libraries}
     ${Boost_SERIALIZATION_LIBRARY}
     ${Boost_IOSTREAMS_LIBRARY})
 else()
-  message(STATUS "ERROR: Boost Serialization or IO Streams not found.")
+  message(STATUS "NOTICE: Boost Serialization or IO Streams not found, no test will be compiled.")
   exit()
 endif()
 

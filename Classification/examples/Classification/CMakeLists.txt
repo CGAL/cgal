@@ -19,7 +19,7 @@ include( ${CGAL_USE_FILE} )
 
 
 # Boost and its components
-find_package( Boost REQUIRED COMPONENTS serialization iostreams)
+find_package( Boost REQUIRED OPTIONAL_COMPONENTS serialization iostreams)
 
 if ( NOT Boost_FOUND )
   message(STATUS "This project requires the Boost library, and will not be compiled.")
@@ -56,13 +56,12 @@ set(needed_cxx_features cxx_rvalue_references cxx_variadic_templates)
 set(classification_linked_libraries)
 set(classification_compile_definitions)
 
-find_package(Boost COMPONENTS serialization iostreams)
 if (Boost_SERIALIZATION_FOUND AND Boost_IOSTREAMS_FOUND)
   set(classification_linked_libraries ${classification_linked_libraries}
     ${Boost_SERIALIZATION_LIBRARY}
     ${Boost_IOSTREAMS_LIBRARY})
 else()
-  message(STATUS "ERROR: Boost Serialization or IO Streams not found.")
+  message(STATUS "NOTICE: Boost Serialization or IO Streams not found, no example will be compiled.")
   exit()
 endif()
 
