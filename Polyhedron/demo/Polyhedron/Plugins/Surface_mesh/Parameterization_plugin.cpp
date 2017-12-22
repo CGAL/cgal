@@ -317,7 +317,7 @@ uv = graph->add_property_map<halfedge_descriptor,std::pair<float, float> >("h:uv
     }
   }
 
-  int number_of_components()const{return components->size();}
+  int number_of_components()const{return static_cast<int>(components->size());}
   int current_component()const{return m_current_component;}
   void set_current_component(int n){m_current_component = n;}
 
