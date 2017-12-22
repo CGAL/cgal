@@ -368,7 +368,7 @@ struct Throw_at_first_output {
  *  model of `RandomAccessRange`.
  * \tparam OutputIterator a model of `OutputIterator` holding objects of type
  *   `std::pair<boost::graph_traits<TriangleMesh>::%face_descriptor, boost::graph_traits<TriangleMesh>::%face_descriptor>`
- * \tparam NamedParameters a sequence of \ref namedparameters
+ * \tparam NamedParameters a sequence of \ref pmp_namedparameters
  *
  * \param face_range1 the range of faces of `tm1` to check for intersections.
  * \param face_range2 the range of faces of `tm2` to check for intersections.
@@ -376,8 +376,8 @@ struct Throw_at_first_output {
  * \param tm2 the second triangulated surface mesh.
  * \param out output iterator to be filled with all pairs of faces that intersect.
  *  First and second element in the pairs correspond to faces of `tm1` and `tm2` respectively
- * \param np1 optional sequence of \ref namedparameters for `tm1`, among the ones listed below
- * \param np2 optional sequence of \ref namedparameters for `tm2`, among the ones listed below
+ * \param np1 optional sequence of \ref pmp_namedparameters for `tm1`, among the ones listed below
+ * \param np2 optional sequence of \ref pmp_namedparameters for `tm2`, among the ones listed below
  *
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
@@ -491,13 +491,13 @@ compute_face_face_intersection(const FaceRange& face_range1,
  *  elements in their respective range. In the case of the polyline, this position is the index of
  * the segment intersecting the face (which is the index  of the first point of the
  * segment following the range order.)
- * \tparam NamedParameters a sequence of \ref namedparameters
+ * \tparam NamedParameters a sequence of \ref pmp_namedparameters
  *
  * \param face_range the range of faces of `tm` to check for intersections.
  * \param polyline the polyline to check for intersections.
  * \param tm the triangulated surface mesh to check for intersections.
  * \param out output iterator to be filled with all pairs of face-segment that intersect
- * \param np optional sequence of \ref namedparameters for `tm`, among the ones listed below
+ * \param np optional sequence of \ref pmp_namedparameters for `tm`, among the ones listed below
  *
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tm`.
@@ -615,13 +615,13 @@ compute_face_polyline_intersection( const FaceRange& face_range,
  *   `std::pair<std::size_t, std::pair<std::size_t, std::size_t> >`.
  * Each pair holds the index of the face and a pair containing the index of the polyline in the range and the index of
  * the first point of the segment in the polyline.
- * \tparam NamedParameters a sequence of \ref namedparameters
+ * \tparam NamedParameters a sequence of \ref pmp_namedparameters
  *
  * \param face_range the range of `tm` faces to check for intersections.
  * \param polyline_range the range of polylines to check for intersections.
  * \param tm the triangulated surface mesh to check for intersections.
  * \param out output iterator to be filled with all pairs of face-segment that intersect
- * \param np optional sequence of \ref namedparameters for `tm`, among the ones listed below
+ * \param np optional sequence of \ref pmp_namedparameters for `tm`, among the ones listed below
  *
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tm`.
@@ -922,13 +922,13 @@ compute_polylines_polylines_intersection(const PolylineRange& polylines1,
  * \tparam TriangleMesh a model of `FaceListGraph`
  * \tparam OutputIterator a model of `OutputIterator` holding objects of type
  *   `std::pair<boost::graph_traits<TriangleMesh>::%face_descriptor, boost::graph_traits<TriangleMesh>::%face_descriptor>`
- * \tparam NamedParameters a sequence of \ref namedparameters
+ * \tparam NamedParameters a sequence of \ref pmp_namedparameters
  *
  * \param tm1 the first triangulated surface mesh to check for intersections
  * \param tm2 the second triangulated surface mesh to check for intersections
  * \param out output iterator to be filled with all pairs of faces that intersect
- * \param np1 optional sequence of \ref namedparameters for `tm1`, among the ones listed below
- * \param np2 optional sequence of \ref namedparameters for `tm2`, among the ones listed below
+ * \param np1 optional sequence of \ref pmp_namedparameters for `tm1`, among the ones listed below
+ * \param np2 optional sequence of \ref pmp_namedparameters for `tm2`, among the ones listed below
  *
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
@@ -972,12 +972,12 @@ compute_face_face_intersection(const TriangleMesh& tm1,
  *  elements in their respective range. In the case of the polyline, this position is the index
  * of the segment that holds the intersection, so it is the index of the first point of the
  * segment following the range order.
- * \tparam NamedParameters a sequence of \ref namedparameters
+ * \tparam NamedParameters a sequence of \ref pmp_namedparameters
  *
  * \param tm the triangulated surface mesh to check for intersections.
  * \param polyline the polyline to check for intersections.
  * \param out output iterator to be filled with all pairs of face-segment that intersect
- * \param np optional sequence of \ref namedparameters for `tm`, among the ones listed below
+ * \param np optional sequence of \ref pmp_namedparameters for `tm`, among the ones listed below
  *
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
@@ -1175,13 +1175,13 @@ bool do_intersect(const Polyline& polyline1,
  * @pre `!do_overlap_test_of_bounded_sides || CGAL::is_closed(tm2)`
  *
  * @tparam TriangleMesh a model of `FaceListGraph`
- * @tparam NamedParameters1 a sequence of \ref namedparameters for `tm1`
- * @tparam NamedParameters2 a sequence of \ref namedparameters for `tm2`
+ * @tparam NamedParameters1 a sequence of \ref pmp_namedparameters for `tm1`
+ * @tparam NamedParameters2 a sequence of \ref pmp_namedparameters for `tm2`
  *
  * @param tm1 the first triangulated surface mesh to check for intersections
  * @param tm2 the second triangulated surface mesh to check for intersections
- * @param np1 optional sequence of \ref namedparameters for `tm1`, among the ones listed below
- * @param np2 optional sequence of \ref namedparameters for `tm2`, among the ones listed below
+ * @param np1 optional sequence of \ref pmp_namedparameters for `tm1`, among the ones listed below
+ * @param np2 optional sequence of \ref pmp_namedparameters for `tm2`, among the ones listed below
  *
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tm1` (tm2`).
@@ -1262,11 +1262,11 @@ bool do_intersect(const TriangleMesh& tm1,
  * \tparam PolylineRange a `RandomAccessRange` of `RandomAccessRange` of points. The point type of the range must be the
  *  same as the value type of the vertex point map.
  * \cgalDescribePolylineType
- * @tparam NamedParameters a sequence of \ref namedparameters
+ * @tparam NamedParameters a sequence of \ref pmp_namedparameters
  *
  * @param tm the triangulated surface mesh to check for intersections
  * @param polylines the range of polylines to check for intersections.
- * @param np optional sequence of \ref namedparameters among the ones listed below
+ * @param np optional sequence of \ref pmp_namedparameters among the ones listed below
  *
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tm`.
@@ -1318,11 +1318,11 @@ bool do_intersect(const TriangleMesh& tm,
  * \tparam Polyline a `RandomAccessRange` of points. The point type of the range must be the
  *  same as the value type of the vertex point map.
  * \cgalDescribePolylineType
- * @tparam NamedParameters a sequence of \ref namedparameters
+ * @tparam NamedParameters a sequence of \ref pmp_namedparameters
  *
  * @param tm the triangulated surface mesh to check for intersections
  * @param polyline the polyline to check for intersections.
- * @param np optional sequence of \ref namedparameters among the ones listed below
+ * @param np optional sequence of \ref pmp_namedparameters among the ones listed below
  *
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tn`.
@@ -1530,7 +1530,7 @@ struct Mesh_callback
  *
  * \tparam TriangleMeshRange a model of `RandomAccessRange` of triangulated surface meshes model of `FaceListGraph`.
  * \tparam OutputIterator an output iterator in which `std::pair<std::size_t, std::size_t>` can be put.
- * \tparam NamedParameters a sequence of \ref namedparameters for the algorithm
+ * \tparam NamedParameters a sequence of \ref pmp_namedparameters for the algorithm
  * \tparam NamedParametersRange a range of named parameters for the meshes.
  *
  * \param range the range of triangulated surface meshes to be checked for intersections.
