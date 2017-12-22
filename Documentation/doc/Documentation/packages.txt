@@ -67,7 +67,7 @@ h1 {
 \section PartArrangements Arrangements
 
 \package_listing{Arrangement_on_surface_2}
-\package_listing{Sweep_line_2}
+\package_listing{Surface_sweep_2}
 \package_listing{Snap_rounding_2}
 \package_listing{Envelope_2}
 \package_listing{Envelope_3}

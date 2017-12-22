@@ -26,13 +26,11 @@
 //                                           Ester Ezra,
 //                                           Shai Hirsch,
 //                                           and Eugene Lipovetsky)
-//
 
 #ifndef CGAL_ARRANGEMENT_ON_SURFACE_2_IMPL_H
 #define CGAL_ARRANGEMENT_ON_SURFACE_2_IMPL_H
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
-
 
 #ifndef CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
 #define CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE 0
@@ -2683,7 +2681,7 @@ _insert_at_vertices(DHalfedge* he_to,
     // Check what to do here, when allow_swap_of_predecessors = false and thus
     // signs1 and signs2 set to DEFAULT (=ZERO) values.
     // swapping is currently only disabled when _insert_at_vertices is called
-    // from Arr_construction_sl_visitor, which however uses the
+    // from Arr_construction_ss_visitor, which however uses the
     // 'swap_predecessors' member of the topology traits' construction helper.
     // So it's questionable whether we can combine the light-weigth swap
     // information with the slightly more expensive sign computations, to keep
@@ -5529,6 +5527,6 @@ _are_curves_ordered_cw_around_vertrex(Vertex_const_handle v) const
   return true;
 }
 
-} //namespace CGAL
+} // namespace CGAL
 
 #endif
