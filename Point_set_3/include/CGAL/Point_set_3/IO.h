@@ -171,6 +171,12 @@ public:
     : m_point_set (point_set), m_use_floats (false)
   { }
 
+  ~Point_set_3_filler()
+  {
+    for (std::size_t i = 0; i < m_properties.size(); ++ i)
+      delete m_properties[i];
+  }
+
   void instantiate_properties  (PLY_reader& reader)
   {
     const std::vector<PLY_read_number*>& readers
@@ -556,6 +562,9 @@ write_ply_point_set(
       if (get_mode (stream) == IO::ASCII)
         stream << std::endl;
     }
+
+  for (std::size_t i = 0; i < printers.size(); ++ i)
+    delete printers[i];
   return true;
 }
 
