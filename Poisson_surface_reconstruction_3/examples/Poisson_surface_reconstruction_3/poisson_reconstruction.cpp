@@ -196,7 +196,7 @@ int main(int argc, char * argv[])
           !CGAL::read_xyz_points_and_normals(
                                 stream,
                                 std::back_inserter(points),
-                                CGAL::make_normal_of_point_with_normal_pmap(PointList::value_type())))
+                                CGAL::make_normal_of_point_with_normal_map(PointList::value_type())))
       {
         std::cerr << "Error: cannot read file " << input_filename << std::endl;
         return EXIT_FAILURE;
@@ -252,7 +252,7 @@ int main(int argc, char * argv[])
     Poisson_reconstruction_function function(
                               points.begin(), points.end(),
                               CGAL::make_identity_property_map(PointList::value_type()),
-                              CGAL::make_normal_of_point_with_normal_pmap(PointList::value_type()),
+                              CGAL::make_normal_of_point_with_normal_map(PointList::value_type()),
                               visitor);
 
     #ifdef CGAL_EIGEN3_ENABLED
