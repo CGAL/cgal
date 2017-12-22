@@ -625,7 +625,7 @@ public:
     }
 
     if (view_tolerance)
-      draw_tolerance();
+      draw_tolerance(viewer);
     
     if (view_edges)
       m_pwsrec->draw_edges(0.5f * line_thickness, 0.9f, 0.9f, 0.9f);
@@ -657,29 +657,7 @@ public:
 
   void draw_samples(const float point_size, GlViewer* viewer);
 
-  void draw_tolerance()
-  {
-    double tol = m_pwsrec->tolerance();
-    if (tol < 0.)
-      return;
-    
-    const std::size_t resolution = 16;
-    ::glColor3f (0.6, 1.0, 0.8);
-    std::vector<Sample_>::const_iterator it;
-    for (it = m_samples.begin(); it != m_samples.end(); it++)
-      {
-        ::glBegin (GL_TRIANGLE_FAN);
-        const Point& center = it->point();
-        for (std::size_t i = 0; i < resolution; ++ i)
-          {
-            Point p = center + Vector (tol * std::cos (2. * M_PI * (i / (double)resolution)),
-                                       tol * std::sin (2. * M_PI * (i / (double)resolution)));
-            ::glVertex2d(p.x(), p.y());
-          }
-        ::glEnd();
-      }
-  }
-
+  void draw_tolerance(GlViewer* viewer);
 
   // PREDEFINED EXAMPLES //
 
