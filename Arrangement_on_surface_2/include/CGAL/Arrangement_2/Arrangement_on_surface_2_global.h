@@ -30,12 +30,12 @@
  * Global insertion functions for the Arrangement_2 class.
  */
 
+#include <list>
 #include <boost/type_traits.hpp>
 #include <boost/mpl/if.hpp>
 #include <boost/type_traits.hpp>
 #include <list>
 
-#include <CGAL/Arrangement_on_surface_2.h>
 #include <CGAL/Arr_accessor.h>
 #include <CGAL/Arrangement_zone_2.h>
 #include <CGAL/Arrangement_2/Arr_compute_zone_visitor.h>
@@ -195,7 +195,7 @@ void insert(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
   typedef GeometryTraits_2                              Gt2;
   typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
   typedef typename boost::is_same<Curve, X_monotone_curve_2>::type
-    Is_x_monotone;
+                                                        Is_x_monotone;
 
   insert(arr, c, pl, visitor, Is_x_monotone());
 }
@@ -801,7 +801,7 @@ insert_non_intersecting_curve
          "The curve intersects the interior of existing edges.");
 
       if ((fh1 != NULL) && (fh2 != NULL) && (*fh1 == *fh2)) {
-        new_he = arr.insert_in_face_interior(c, arr.non_const_handle (*fh1));
+        new_he = arr.insert_in_face_interior(c, arr.non_const_handle(*fh1));
       }
     }
   }
@@ -1094,7 +1094,7 @@ remove_edge(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
     (v_ends[1]->is_at_open_boundary() || (v_ends[1]->degree() == 1));
 
   // Remove the edge from the arrangement.
-  typename Arr::Face_handle    face = arr.remove_edge (e);
+  typename Arr::Face_handle face = arr.remove_edge(e);
 
   // Examine the end-vertices: If a vertex has now two incident edges, and the
   // curves associated with these edges can be merged, merge the two edges and
@@ -1167,7 +1167,7 @@ insert_point(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
   if ((fh = object_cast<typename Arr::Face_const_handle>(&obj)) != NULL) {
     // p lies inside a face: Insert it as an isolated vertex it the interior of
     // this face.
-    vh_for_p = arr.insert_in_face_interior(p, arr.non_const_handle (*fh));
+    vh_for_p = arr.insert_in_face_interior(p, arr.non_const_handle(*fh));
   }
   else if ((hh = object_cast<typename Arr::Halfedge_const_handle>(&obj)) !=
            NULL)
@@ -1175,12 +1175,12 @@ insert_point(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
     // p lies in the interior of an edge: Split this edge to create a new
     // vertex associated with p.
     typename Gt2::X_monotone_curve_2 sub_cv1, sub_cv2;
-    typename Arr::Halfedge_handle split_he;
 
     arr.geometry_traits()->split_2_object()((*hh)->curve(), p,
                                             sub_cv1, sub_cv2);
 
-    split_he = arr.split_edge(arr.non_const_handle(*hh), sub_cv1, sub_cv2);
+    typename Arr::Halfedge_handle split_he =
+      arr.split_edge(arr.non_const_handle(*hh), sub_cv1, sub_cv2);
 
     // The new vertex is the target of the returned halfedge.
     vh_for_p = split_he->target();
@@ -1189,9 +1189,9 @@ insert_point(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
     // In this case p lies on an existing vertex, so we just update this
     // vertex.
     vh = object_cast<typename Arr::Vertex_const_handle>(&obj);
-    CGAL_assertion (vh != NULL);
+    CGAL_assertion(vh != NULL);
 
-    vh_for_p = arr.modify_vertex (arr.non_const_handle (*vh), p);
+    vh_for_p = arr.modify_vertex(arr.non_const_handle(*vh), p);
   }
 
   // Notify the arrangement observers that the global operation has been
@@ -1246,7 +1246,7 @@ bool remove_vertex(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>&
 
   if (v->is_isolated()) {
     // In case v is an isolated vertex, simply remove it.
-    arr.remove_isolated_vertex (v);
+    arr.remove_isolated_vertex(v);
     removed = true;
   }
   else if (v->degree() == 2) {
@@ -1316,7 +1316,7 @@ is_valid(const Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr)
   typedef Ss2::Surface_sweep_2<Visitor>                 Surface_sweep_2;
 
   // First use the internal validity check.
-  if (!arr.is_valid()) return (false);
+  if (!arr.is_valid()) return false;
 
   // Perform a sweep over all subcurves associated with arrangement edges.
   std::vector<X_monotone_curve_2> curves_vec(arr.number_of_edges());
@@ -1361,8 +1361,7 @@ is_valid(const Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr)
       is_first = true;
 
       do {
-        if (ccb->face() != fit)
-          return (false);
+        if (ccb->face() != fit) return false;
 
         if (is_first ||
             compare_xy (ccb->target()->point(), left_v->point()) == SMALLER)
@@ -1375,16 +1374,16 @@ is_valid(const Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr)
 
       } while (ccb != *ic_it);
 
-      vf_list.push_back (std::make_pair (left_v, fh));
+      vf_list.push_back (std::make_pair(left_v, fh));
     }
 
     // Check all isolated vertices in the current face.
     for (iv_it = fh->isolated_vertices_begin();
          iv_it != fh->isolated_vertices_end(); ++iv_it)
     {
-      if (iv_it->face() != fit) return (false);
+      if (iv_it->face() != fit) return false;
 
-      vf_list.push_back (std::make_pair (Vertex_const_handle(iv_it), fh));
+      vf_list.push_back(std::make_pair(Vertex_const_handle(iv_it), fh));
     }
   }
 
@@ -1450,7 +1449,7 @@ is_valid(const Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr)
             he_left = he_left->next()->twin();
 
           he_left = he_left->twin()->prev();
-          CGAL_assertion (he_left->direction() == ARR_LEFT_TO_RIGHT);
+          CGAL_assertion(he_left->direction() == ARR_LEFT_TO_RIGHT);
           in_face = he_left->face();
         }
         else if (he_left != invalid_he) {
@@ -1469,14 +1468,12 @@ is_valid(const Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr)
         else {
           Comparison_result res;
           Halfedge_const_handle he_curr = he_right;
-
-          do // as long as we have he_right halfedge which is below
-          {
+          do {
+            // as long as we have he_right halfedge which is below
             he_right = he_curr;
             he_curr = he_right->next()->twin();
-            res = comp_y_at_x_right (he_curr->curve(),
-                                     he_right->curve(),
-                                     v_below->point());
+            res = comp_y_at_x_right(he_curr->curve(), he_right->curve(),
+                                    v_below->point());
           } while(res == SMALLER);
           in_face = he_right->face();
         }
@@ -1485,14 +1482,13 @@ is_valid(const Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr)
     else {
       // Hit nothing (an unbounded face is returned).
       assign_ok = CGAL::assign(in_face, obj);
-
-      CGAL_assertion (assign_ok && in_face->is_unbounded());
+      CGAL_assertion(assign_ok && in_face->is_unbounded());
 
       if (! assign_ok) return false;
     }
 
     if (vf_iter->second != in_face) {
-      CGAL_warning_msg (false,
+      CGAL_warning_msg(false,
                         "An inner component is located in the wrong face.");
       return false;
     }
@@ -1507,7 +1503,7 @@ is_valid(const Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr)
 // Meaning, it output the arrangment's vertices, edges and faces that the
 // x-monotone curve intersects.
 template <typename GeometryTraits_2, typename TopologyTraits,
-  typename OutputIterator, typename PointLocation>
+          typename OutputIterator, typename PointLocation>
 OutputIterator
 zone(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
      const typename GeometryTraits_2::X_monotone_curve_2& c,
@@ -1636,8 +1632,7 @@ do_intersect(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
     x_curve = object_cast<typename Gt2::X_monotone_curve_2>(&(*obj_iter));
     if (x_curve != NULL) {
       // Check if the x-monotone subcurve intersects the arrangement.
-      if (do_intersect(arr, *x_curve, pl) == true)
-        return true;
+      if (do_intersect(arr, *x_curve, pl) == true) return true;
     }
     else {
       iso_p = object_cast<typename Gt2::Point_2>(&(*obj_iter));
@@ -1645,7 +1640,7 @@ do_intersect(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
 
       // Check whether the isolated point lies inside a face (otherwise,
       // it conincides with a vertex or an edge).
-      CGAL::Object  obj = pl.locate (*iso_p);
+      CGAL::Object  obj = pl.locate(*iso_p);
 
       return (object_cast<typename Arr::Face_const_handle>(&obj) != NULL);
     }

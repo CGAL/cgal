@@ -77,8 +77,12 @@ private:
 
     // Compare in x boundaries:
     CGAL::Arr_parameter_space ps_x1 =
+      (m_traits.is_on_y_identification_2_object()(p1)) ?
+      CGAL::ARR_LEFT_BOUNDARY :
       m_traits.parameter_space_in_x_2_object()(p1);
     CGAL::Arr_parameter_space ps_x2 =
+      (m_traits.is_on_y_identification_2_object()(p2)) ?
+      CGAL::ARR_LEFT_BOUNDARY :
       m_traits.parameter_space_in_x_2_object()(p2);
     if (ps_x1 == CGAL::ARR_LEFT_BOUNDARY) {
       if (ps_x2 == CGAL::ARR_LEFT_BOUNDARY)

@@ -213,22 +213,6 @@ private:
   bool parameter_space_in_y_wrapper_imp(std::istringstream&,
                                         CGAL::Arr_use_traits_tag);
 
-  /*! Test Compare_x_near_limit_2
-   */
-  bool compare_x_near_limit_wrapper(std::istringstream&);
-  bool compare_x_near_limit_wrapper_imp(std::istringstream&,
-                                        CGAL::Arr_use_dummy_tag);
-  bool compare_x_near_limit_wrapper_imp(std::istringstream&,
-                                        CGAL::Arr_use_traits_tag);
-
-  /*! Test Compare_x_at_limit_2
-   */
-  bool compare_x_at_limit_wrapper(std::istringstream&);
-  bool compare_x_at_limit_wrapper_imp(std::istringstream&,
-                                      CGAL::Arr_use_dummy_tag);
-  bool compare_x_at_limit_wrapper_imp(std::istringstream&,
-                                      CGAL::Arr_use_traits_tag);
-
   /*! Test Compare_x_near_boundary_2
    */
   bool compare_x_near_boundary_wrapper(std::istringstream&);
@@ -330,10 +314,6 @@ Base(traits)
 
   m_wrappers[std::string("parameter_space_y")] =
     &Traits_test<Traits>::parameter_space_in_y_wrapper;
-  m_wrappers[std::string("compare_x_near_limit")] =
-    &Traits_test<Traits>::compare_x_near_limit_wrapper;
-  m_wrappers[std::string("compare_x_at_limit")] =
-    &Traits_test<Traits>::compare_x_at_limit_wrapper;
 
   m_wrappers[std::string("compare_x_near_boundary")] =
     &Traits_test<Traits>::compare_x_near_boundary_wrapper;
@@ -1357,152 +1337,6 @@ parameter_space_in_y_wrapper_imp(std::istringstream& str_stream,
     this->m_geom_traits.parameter_space_in_y_2_object()(this->m_xcurves[id],
                                                         cv_end) :
     this->m_geom_traits.parameter_space_in_y_2_object()(this->m_points[id]);
-  return this->compare(exp_answer, real_answer);
-}
-
-/* Compare_x_near_limit_2
- */
-template <typename Geom_traits_T>
-bool Traits_test<Geom_traits_T>::
-compare_x_near_limit_wrapper(std::istringstream& str_stream)
-{
-  typedef typename
-    CGAL::internal::Arr_complete_bottom_side_category<Geom_traits_T>::Category
-    Bottom_side_category;
-  typedef typename
-    CGAL::internal::Arr_complete_top_side_category<Geom_traits_T>::Category
-    Top_side_category;
-  typedef CGAL::internal::Arr_bottom_top_implementation_dispatch
-    <Bottom_side_category, Top_side_category>           BT;
-  typedef typename BT::Compare_x_near_limit_2_curve_ends_tag Cmp_tag;
-  return compare_x_near_limit_wrapper_imp(str_stream, Cmp_tag());
-}
-
-template <typename Geom_traits_T>
-bool Traits_test<Geom_traits_T>::
-compare_x_near_limit_wrapper_imp(std::istringstream&, CGAL::Arr_use_dummy_tag)
-{
-  CGAL_error();
-  return false;
-}
-
-template <typename Geom_traits_T>
-bool Traits_test<Geom_traits_T>::
-compare_x_near_limit_wrapper_imp(std::istringstream& str_stream,
-                                 CGAL::Arr_use_traits_tag)
-{
-  std::cout << "Test: compare_x_near_limit( ";
-
-  unsigned int id1, id2;
-  // xcurve xcurve curve-end
-  str_stream >> id1 >> id2;
-  std::pair<Enum_type, unsigned int> next_input =
-    this->get_next_input(str_stream);
-  assert(next_input.first == Base::CURVE_END);
-  CGAL::Arr_curve_end cv_end =
-    static_cast<CGAL::Arr_curve_end>(next_input.second);
-
-  std::cout << this->m_xcurves[id1] << ", "
-            << this->m_xcurves[id2] << " , "
-            << this->curve_end_str(cv_end) << " ) ? ";
-
-  next_input = this->get_next_input(str_stream);
-  assert(next_input.first == Base::SIGN);
-  CGAL::Comparison_result exp_answer =
-    static_cast<CGAL::Comparison_result>(next_input.second);
-  std::cout << (exp_answer == CGAL::SMALLER ? "SMALLER":
-               (exp_answer == CGAL::LARGER ? "LARGER":"EQUAL")) << " ";
-
-  CGAL::Comparison_result real_answer =
-    this->m_geom_traits.compare_x_near_limit_2_object()
-    (this->m_xcurves[id1], this->m_xcurves[id2], cv_end);
-  return this->compare(exp_answer, real_answer);
-}
-
-/* Compare_x_at_limit
- */
-template <typename Geom_traits_T>
-bool Traits_test<Geom_traits_T>::
-compare_x_at_limit_wrapper(std::istringstream& str_stream)
-{
-  typedef typename
-    CGAL::internal::Arr_complete_bottom_side_category<Geom_traits_T>::Category
-    Bottom_side_category;
-  typedef typename
-    CGAL::internal::Arr_complete_top_side_category<Geom_traits_T>::Category
-    Top_side_category;
-  typedef CGAL::internal::Arr_bottom_top_implementation_dispatch
-    <Bottom_side_category, Top_side_category> BT;
-  typedef typename BT::Compare_x_at_limit_2_curve_ends_tag             Cmp_tag1;
-  typedef typename BT::Compare_x_at_limit_2_point_curve_end_tag        Cmp_tag2;
-  typedef typename CGAL::internal::Or_traits<Cmp_tag1, Cmp_tag2>::type Cmp_tag;
-  return compare_x_at_limit_wrapper_imp(str_stream, Cmp_tag());
-}
-
-template <typename Geom_traits_T>
-bool Traits_test<Geom_traits_T>::
-compare_x_at_limit_wrapper_imp(std::istringstream&,
-                               CGAL::Arr_use_dummy_tag)
-{
-  CGAL_error();
-  return false;
-}
-
-template <typename Geom_traits_T>
-bool Traits_test<Geom_traits_T>::
-compare_x_at_limit_wrapper_imp(std::istringstream& str_stream,
-                               CGAL::Arr_use_traits_tag)
-{
-  std::cout << "Test: compare_x_at_limit( ";
-
-  CGAL::Comparison_result real_answer;
-  unsigned int id1, id2;
-  // first argument must be a number (either a point or a xcurve)
-  str_stream >> id1;
-  std::pair<Enum_type, unsigned int> next_input =
-    this->get_next_input(str_stream);
-  // second argument can be number or text (either xcurve or curve_end)
-  bool curves_op = next_input.first == Base::NUMBER;
-  CGAL::Arr_curve_end cv_end1 = CGAL::ARR_MIN_END, cv_end2 = CGAL::ARR_MIN_END;
-
-  if (curves_op) {
-    id2 = static_cast<unsigned int>(next_input.second);
-    next_input = this->get_next_input(str_stream);
-    assert(next_input.first == Base::CURVE_END);
-    cv_end1 = static_cast<CGAL::Arr_curve_end>(next_input.second);
-
-    std::cout << this->m_points[id1] << " , "
-              << this->m_xcurves[id2]<< " , "
-              << this->curve_end_str(cv_end1) << " ) ? ";
-  }
-  else if (next_input.first == Base::CURVE_END) {
-    cv_end1 = static_cast<CGAL::Arr_curve_end>(next_input.second);
-    next_input = this->get_next_input(str_stream);
-    assert(next_input.first == Base::NUMBER);
-    id2 = static_cast<unsigned int>(next_input.second);
-    next_input = this->get_next_input(str_stream);
-    assert(next_input.first == Base::CURVE_END);
-    cv_end2 = static_cast<CGAL::Arr_curve_end>(next_input.second);
-
-    std::cout << this->m_xcurves[id1] << ", "
-              << this->curve_end_str(cv_end1) << ", "
-              << this->m_xcurves[id2] << " , "
-              << this->curve_end_str(cv_end2) << " ) ? ";
-  }
-  else CGAL_error();
-
-  next_input = this->get_next_input(str_stream);
-  assert(next_input.first == Base::SIGN);
-  CGAL::Comparison_result exp_answer =
-    static_cast<CGAL::Comparison_result>(next_input.second);
-  std::cout << (exp_answer == CGAL::SMALLER ? "SMALLER":
-               (exp_answer == CGAL::LARGER ? "LARGER":"EQUAL")) << " ";
-
-  real_answer = (curves_op) ?
-    this->m_geom_traits.compare_x_at_limit_2_object()
-    (this->m_points[id1], this->m_xcurves[id2], cv_end1) :
-    this->m_geom_traits.compare_x_at_limit_2_object()
-    (this->m_xcurves[id1], cv_end1,this->m_xcurves[id2], cv_end2);
   return this->compare(exp_answer, real_answer);
 }
 

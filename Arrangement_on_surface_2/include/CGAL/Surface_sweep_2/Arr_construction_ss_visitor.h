@@ -314,6 +314,7 @@ after_handle_event(Event* event, Status_line_iterator iter, bool /* flag */)
 
     ++m_sc_counter;
     m_iso_verts_map[m_sc_counter] = v;
+
     _map_new_halfedge(m_sc_counter, Halfedge_handle());
 
     if (iter != this->status_line_end()) {
@@ -336,10 +337,13 @@ after_handle_event(Event* event, Status_line_iterator iter, bool /* flag */)
   }
 
   // TODO EBEB 2012-10-16 compile only when non-oblivious
-  if (event->parameter_space_in_x() == CGAL::ARR_LEFT_BOUNDARY) {
+  if (event->parameter_space_in_x() == CGAL::ARR_LEFT_BOUNDARY &&
+      event->parameter_space_in_y() != CGAL::ARR_TOP_BOUNDARY) {
+    // for an event on the left non-top-corner boundary
+    // move entries for halfedge incidences list to the top
     if (!this->is_status_line_empty()) {
       Status_line_iterator prev = iter;
-      for (size_t i = 0; i < event->number_of_right_curves(); ++i) --prev;
+            for (size_t i = 0; i < event->number_of_right_curves(); ++i) --prev;
       // move items from top face to last inserted curve
       Indices_list& list_ref = (*prev)->halfedge_indices_list();
       list_ref.clear();
@@ -882,7 +886,13 @@ relocate_in_new_face(Halfedge_handle he)
         // isolated vertex. Move this vertex to the new face, if necessary.
         Vertex_handle v = m_iso_verts_map[*itr];
         CGAL_assertion(v != m_invalid_vertex);
-        if (v->face() != new_face) {
+        // There are cases where the vertex is not isolated. For example, consider an
+        // arrangement embedded on a sphere. When inserting the north pole as an isolated
+        // vertex and at the same time some arcs incident to the north pole, the isolated
+        // vertex and the curve-ends that end at the north pole generate different events.
+        // The insertion of the isolated vertex generates an event that is processed before
+        // other events, and the associated vertex is recorder in the iso vertex map.
+        if (v->is_isolated() && (v->face() != new_face)) {
           m_arr_access.move_isolated_vertex(v->face(), new_face, v);
         }
       }
@@ -915,8 +925,10 @@ void Arr_construction_ss_visitor<Hlpr, Vis>::
 _map_new_halfedge(unsigned int i, Halfedge_handle he)
 {
 #if CGAL_ARR_CONSTRUCTION_SS_VISITOR_VERBOSE
-  std::cout << "map " << i << " to " << he->curve() << " "
-            << he->direction() << std::endl;
+  std::cout << "map " << i << " to ";
+  if (he == Halfedge_handle()) std::cout << "null halfedge";
+  else std::cout << he->curve() << " " << he->direction();
+  std::cout << std::endl;
 #endif
   CGAL_assertion(i != 0);
   // Resize the index table if needed.

@@ -26,6 +26,7 @@
 //                                      Ester Ezra,
 //                                      Shai Hirsch,
 //                                      and Eugene Lipovetsky)
+
 #ifndef CGAL_ARRANGEMENT_ON_SURFACE_2_H
 #define CGAL_ARRANGEMENT_ON_SURFACE_2_H
 
@@ -93,7 +94,7 @@ public:
 
 public:
   typedef Arrangement_on_surface_2<Geometry_traits_2, Topology_traits>
-  Self;
+                                                          Self;
 
   typedef typename Geometry_traits_2::Point_2             Point_2;
   typedef typename Geometry_traits_2::X_monotone_curve_2  X_monotone_curve_2;
@@ -1996,6 +1997,18 @@ protected:
 
   /*!
    * Create a new boundary vertex.
+   * \param p The point on the boundary.
+   * \param bx The boundary condition in x.
+   * \param by The boundary condition in y.
+   * \pre Either bx or by does not equal ARR_INTERIOR.
+   * \return A pointer to the newly created vertex.
+   */
+  DVertex* _create_boundary_vertex(const Point_2& p,
+                                   Arr_parameter_space bx,
+                                   Arr_parameter_space by);
+
+  /*!
+   * Create a new boundary vertex.
    * \param cv The curve incident to the boundary.
    * \param ind The relevant curve-end.
    * \param bx The boundary condition in x.
@@ -2007,6 +2020,20 @@ protected:
                                    Arr_curve_end ind,
                                    Arr_parameter_space bx,
                                    Arr_parameter_space by);
+
+  /*!
+   * Locate the DCEL features that will be used for inserting the given point,
+   * which has a boundary condition, and set a proper vertex there.
+   * \param f The face that contains the point.
+   * \param p The point.
+   * \param bx The boundary condition at the point x-coordinate.
+   * \param by The boundary condition at the point y-coordinate.
+   * \return The vertex that corresponds to the point.
+   */
+  DVertex* _place_and_set_point(DFace* f,
+                                const Point_2& p,
+                                Arr_parameter_space bx,
+                                Arr_parameter_space by);
 
   /*!
    * Locate the DCEL features that will be used for inserting the given curve
@@ -2344,6 +2371,17 @@ protected:
     Observers_rev_iterator end = m_observers.rend();
     for (iter = m_observers.rbegin(); iter != end; ++iter)
       (*iter)->after_create_vertex(v);
+  }
+
+  void _notify_before_create_boundary_vertex(const Point_2& p,
+                                             Arr_parameter_space bx,
+                                             Arr_parameter_space by)
+  {
+    Observers_iterator iter;
+    Observers_iterator end = m_observers.end();
+
+    for (iter = m_observers.begin(); iter != end; ++iter)
+      (*iter)->before_create_boundary_vertex(p, bx, by);
   }
 
   void _notify_before_create_boundary_vertex(const X_monotone_curve_2& cv,

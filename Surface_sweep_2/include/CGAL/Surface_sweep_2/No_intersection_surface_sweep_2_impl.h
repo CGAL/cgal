@@ -18,7 +18,7 @@
 //
 // Author(s)     : Baruch Zukerman  <baruchzu@post.tau.ac.il>
 //                 Efi Fogel        <efif@post.tau.ac.il>
-//                 Eric Berberich   <ericb@post.tau.ac.il>
+//                 Eric Berberich   <eric.berberich@cgal.org>
 //                 (based on old version by Tali Zvi)
 
 #ifndef CGAL_NO_INTERSECTION_SURFACE_SWEEP_2_IMPL_H
@@ -241,9 +241,16 @@ void No_intersection_surface_sweep_2<Vis>::_init_point(const Point_2& pt,
                                                        Attribute type)
 {
   // Create the event, or obtain an existing event in the queue.
-  // Note that an isolated point does not have any boundary conditions.
+  Arr_parameter_space ps_x = m_traits->parameter_space_in_x_2_object()(pt);
+  Arr_parameter_space ps_y = m_traits->parameter_space_in_y_2_object()(pt);
+#if 0
+  CGAL::set_pretty_mode(std::cout);
+  std::cout << "init pt ps_x: " << ps_x << std::endl;
+  std::cout << "init pt ps_y: " << ps_y << std::endl;
+#endif
+
   const std::pair<Event*, bool>& pair_res =
-    _push_event(pt, type, ARR_INTERIOR, ARR_INTERIOR);
+    _push_event(pt, type, ps_x, ps_y);
 
   bool is_new = pair_res.second;
   m_visitor->update_event(pair_res.first, pt, is_new);
@@ -273,13 +280,12 @@ template <typename Vis>
 void No_intersection_surface_sweep_2<Vis>::
 _init_curve_end(const X_monotone_curve_2& cv, Arr_curve_end ind, Subcurve* sc)
 {
-  // Get the boundary conditions of the curve end.
   const Attribute  end_attr =
     (ind == ARR_MIN_END) ? Event::LEFT_END : Event::RIGHT_END;
 
+  // Get the parameter space of the curve end.
   Arr_parameter_space ps_x = m_traits->parameter_space_in_x_2_object()(cv, ind);
   Arr_parameter_space ps_y = m_traits->parameter_space_in_y_2_object()(cv, ind);
-
   // Create the corresponding event and push it into the event queue.
   std::pair<Event*, bool> pair_res;
 
@@ -305,7 +311,7 @@ _init_curve_end(const X_monotone_curve_2& cv, Arr_curve_end ind, Subcurve* sc)
     // Inform the visitor in case we updated an existing event.
     Event* e = pair_res.first;
     CGAL_assertion(! e->is_closed());
-    _update_event_at_open_boundary(e, cv, ind, pair_res.second);
+    m_visitor->update_event(e, cv, ind, pair_res.second);
   }
 }
 
@@ -327,20 +333,7 @@ void No_intersection_surface_sweep_2<Vis>::_handle_left_curves()
     // update the m_status_line_insert_hint and m_is_event_on_above members).
     // We also notify the visitor on the new event we are about to handle.
     _handle_event_without_left_curves();
-
-    if (m_currentEvent->is_closed()) {
-      if (m_is_event_on_above) {
-        // The current event is on the interior of existing curve on the
-        // status line. Since the basic sweep does not allow intersections,
-        // this is possible only if the event is an isolated query point.
-        CGAL_assertion(! m_currentEvent->has_right_curves() &&
-                        m_currentEvent->is_query());
-
-        m_visitor->before_handle_event(m_currentEvent);
-      }
-      else m_visitor->before_handle_event(m_currentEvent);
-    }
-    else m_visitor->before_handle_event(m_currentEvent);
+    m_visitor->before_handle_event(m_currentEvent);
 
     // Nothing else to do (no left curves).
     CGAL_SS_PRINT_END_EOL("handling left curves");
@@ -412,6 +405,8 @@ void No_intersection_surface_sweep_2<Vis>::_handle_event_without_left_curves()
     // We are still sweeping the left boundary, so by the way we have ordered
     // the events in the queue, we know that the new event should be placed
     // above all other subcurves in the status line.
+    // \todo EF, now that we allow curves to overlap with the identification
+    // curve, the above does not hold any longer.
     m_status_line_insert_hint = m_statusLine.end();
   }
   else {
@@ -643,7 +638,7 @@ No_intersection_surface_sweep_2<Vis>::_push_event(const Point_2& pt,
   const std::pair<Event_queue_iterator, bool>& pair_res =
     m_queue->find_lower(pt, m_queueEventLess);
   const bool exist = pair_res.second;
-  if (! exist) {
+  if (!exist) {
     // The point is not found in the event queue - create a new event and
     // insert it into the queue.
     e = _allocate_event(pt, type, ps_x, ps_y);
@@ -656,6 +651,8 @@ No_intersection_surface_sweep_2<Vis>::_push_event(const Point_2& pt,
 
     e->set_attribute(type);
   }
+  CGAL_assertion(e->parameter_space_in_x() == ps_x);
+  CGAL_assertion(e->parameter_space_in_y() == ps_y);
 
   // If we are given a subcurve that the event represents one of its
   // endpoints, update the event and the subcurve records accordingly.
@@ -725,8 +722,14 @@ No_intersection_surface_sweep_2<Vis>::_push_event(const X_monotone_curve_2& cv,
     // The event associated with the given curve end already exists in the
     // queue, so we just have to update it.
     e = *(pair_res.first);
-    CGAL_assertion((e->parameter_space_in_x() == ps_x) &&
-                   (e->parameter_space_in_y() == ps_y));
+#if 0
+    std::cout << "ps_x: " << ps_x << std::endl;
+    std::cout << "ps_y: " << ps_y << std::endl;
+    std::cout << "es_x: " << e->parameter_space_in_x() << std::endl;
+    std::cout << "es_y: " << e->parameter_space_in_y() << std::endl;
+#endif
+    CGAL_assertion(e->parameter_space_in_x() == ps_x);
+    CGAL_assertion(e->parameter_space_in_y() == ps_y);
 
     e->set_attribute(type);
   }

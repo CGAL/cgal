@@ -120,6 +120,8 @@ before_handle_event(Event* event)
   const Arr_parameter_space ps_y = event->parameter_space_in_y();
   if ((ps_x == ARR_INTERIOR) && (ps_y == ARR_INTERIOR)) return;
 
+  if (event->is_isolated()) return;
+
   if (ps_y == ARR_BOTTOM_BOUNDARY) {
     // Process bootom contraction boundary:
     // The event has only one right curve, as there is exactly one curve
