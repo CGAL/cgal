@@ -93,10 +93,9 @@ public:
     Arr_parameter_space ps_y1 =
       m_traits->parameter_space_in_y_2_object()(c1->last_curve(), ARR_MIN_END);
 
-    if ((ps_x1 == ARR_INTERIOR) && (ps_y1 == ARR_INTERIOR))
-    {
+    if ((ps_x1 == ARR_INTERIOR) && (ps_y1 == ARR_INTERIOR)) {
       // The first curve has a valid left endpoint. Compare the y-position
-      // of this endpoint to the second subcurve.
+      // of this endpoint with the second subcurve.
       return m_traits->compare_y_at_x_2_object()
         (m_traits->construct_min_vertex_2_object()(c1->last_curve()),
          c2->last_curve());
@@ -110,7 +109,7 @@ public:
     if (ps_x1 == ARR_LEFT_BOUNDARY) return LARGER;
 
     // For similar reasons, if c1 begins on the bottom boundary it is below
-    // c2, if it is on the top boundary it is above it.
+    // c2, if it begins on the top boundary it is above it.
     CGAL_assertion (ps_y1 != ARR_INTERIOR);
     return (ps_y1 == ARR_BOTTOM_BOUNDARY) ? SMALLER : LARGER;
   }
