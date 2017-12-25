@@ -1,3 +1,5 @@
+// #define CGAL_SS_VERBOSE 1
+
 //! \file examples/Arrangement_on_surface_2/aggregated_insertion.cpp
 // Using the global aggregated insertion functions.
 
@@ -8,12 +10,7 @@
 #include <list>
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel    Kernel;
-#if 0
-typedef CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel, -1, 0>
-#else
-typedef CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel, -8, 6>
-#endif
-                                                             Geom_traits_2;
+typedef CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel>    Geom_traits_2;
 typedef Geom_traits_2::Point_2                               Point_2;
 typedef Geom_traits_2::X_monotone_curve_2                    X_monotone_curve_2;
 typedef CGAL::Arr_spherical_topology_traits_2<Geom_traits_2> Topol_traits_2;
@@ -32,6 +29,9 @@ int main()
   Geom_traits_2::Construct_x_monotone_curve_2 ctr_xcv =
     traits.construct_x_monotone_curve_2_object();
 
+  // Observe that by default the identification curve is a meridian that
+  // contains the point (-1, 0, 0). The following curves do not intersect
+  // the identification curve; thus, they are all x-monotone.
   arcs.push_back(ctr_xcv(ctr_p(1, 0, 0), ctr_p(0, 1, 0)));
   arcs.push_back(ctr_xcv(ctr_p(0, 1, 0), ctr_p(0, 0, 1)));
   arcs.push_back(ctr_xcv(ctr_p(0, 0, 1), ctr_p(1, 0, 0)));
