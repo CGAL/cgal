@@ -448,7 +448,7 @@ public:
 
 #ifdef CGAL_SS_VERBOSE
 template <typename Traits, typename Subcurve>
-void No_overlap_event_base<Traits, Subcurve>::Print()
+void No_overlap_event_base<Traits, Subcurve>::Print() const
 {
   std::cout << "\tEvent info: "  << "\n" ;
   if (this->is_closed()) std::cout << "\t" << m_point << "\n" ;
