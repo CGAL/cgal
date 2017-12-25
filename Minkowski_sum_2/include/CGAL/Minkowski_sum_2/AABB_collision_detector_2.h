@@ -79,18 +79,44 @@ public:
 
     // If t_q is inside of P, or t_p is inside of Q, one polygon is completely
     // inside of the other.
-    Point_2 t_q = *m_q.outer_boundary().vertices_begin() + Vector_2(ORIGIN, t);
-    Point_2 t_p = *m_p.outer_boundary().vertices_begin() - Vector_2(ORIGIN, t);
+    Point_2 t_q = *m_q.outer_boundary().vertices_begin() - Vector_2(ORIGIN, t);
+    Point_2 t_p = *m_p.outer_boundary().vertices_begin() + Vector_2(ORIGIN, t);
 
     // Use bounded_side_2() instead of on_bounded_side() because the latter
     // checks vor simplicity every time.
-    return
+    bool in_mp =
       bounded_side_2(m_p.outer_boundary().vertices_begin(),
                      m_p.outer_boundary().vertices_end(), t_q,
-                     m_p.outer_boundary().traits_member()) == ON_BOUNDED_SIDE ||
+                     m_p.outer_boundary().traits_member()) == ON_BOUNDED_SIDE;
+    if (m_p.number_of_holes() == 0) {
+      if (in_mp) return true;
+    }
+    bool in_mq =
       bounded_side_2(m_q.outer_boundary().vertices_begin(),
                      m_q.outer_boundary().vertices_end(), t_p,
                      m_q.outer_boundary().traits_member()) == ON_BOUNDED_SIDE;
+    if (m_q.number_of_holes() == 0) {
+      if (in_mq) return true;
+    }
+    if (!in_mq && !in_mp) return false;
+    if (in_mp) {
+      for (typename Polygon_with_holes_2::Hole_const_iterator it =
+             m_p.holes_begin(); it != m_p.holes_end(); ++it)
+      {
+        if (bounded_side_2(it->vertices_begin(), it->vertices_end(), t_q,
+                           it->traits_member()) == ON_BOUNDED_SIDE)
+          return false;
+      }
+      return true;
+    }
+    for (typename Polygon_with_holes_2::Hole_const_iterator it =
+           m_q.holes_begin(); it != m_q.holes_end(); ++it)
+    {
+      if (bounded_side_2(it->vertices_begin(), it->vertices_end(), t_p,
+                         it->traits_member()) == ON_BOUNDED_SIDE)
+        return false;
+    }
+    return true;
   }
 
 private:
