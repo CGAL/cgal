@@ -260,6 +260,7 @@ regular_neighbor_coordinates_vertex_2(const Rt& rt,
   return make_triple(out, area_sum, true);
 }
 
+  
 ////////////////////////////////////////////////////////////
 //the cast from vertex to point:
 // the following functions return an Output_iterator over

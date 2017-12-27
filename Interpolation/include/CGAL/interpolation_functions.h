@@ -213,7 +213,7 @@ sibson_c1_interpolation_square(ForwardIterator first, ForwardIterator beyond,
       return std::make_pair(Value_type(0), false);
 
     Coord_type coeff = first->second/norm;
-    Coord_type squared_dist = traits.compute_squared_distance_d_object()(v2p(first->first), p);
+    Coord_type squared_dist = traits.compute_squared_distance_d_object()(v2p(first->first), v2p(p));
 
     if(squared_dist ==0){
       ForwardIterator it = first;
@@ -230,7 +230,7 @@ sibson_c1_interpolation_square(ForwardIterator first, ForwardIterator beyond,
     linear_int += coeff * f.first;
 
     gradient_int += (coeff/squared_dist) * (f.first + grad.first *
-                                            traits.construct_vector_d_object()(v2p(first->first), p));
+                                            traits.construct_vector_d_object()(v2p(first->first), v2p(p)));
   }
 
   term4 = term3/ term1;
