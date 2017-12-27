@@ -61,7 +61,8 @@ bool test_barycenter(ForwardIterator first, ForwardIterator beyond,
 template <class Point, class FT>
 struct Functor
 {
-  typedef std::pair<FT, bool>                  result_type;
+  typedef Point               argument_type;
+  typedef std::pair<FT, bool> result_type;
 
   result_type operator()(const Point&) { return std::make_pair(0., true); }
 };
@@ -72,7 +73,7 @@ void test_gradient_fitting(const Triangul& rt)
   typedef typename Triangul::Geom_traits::Kernel    K;
   typedef typename Triangul::Geom_traits::FT        FT;
   typedef typename Triangul::Geom_traits::Vector_2  Vector_2;
-  typedef typename Triangul::Geom_traits::Point_2   Point;
+  typedef typename Triangul::Geom_traits::Weighted_point_2   Point;
 
   typedef typename std::back_insert_iterator<
                      std::vector<

@@ -25,7 +25,7 @@
 #include <CGAL/license/Interpolation.h>
 
 #include <CGAL/Origin.h>
-#include <CGAL/interpolation_functions.h> // AF: for V2P
+#include <CGAL/Interpolation/internal/helpers.h>
 #include <CGAL/natural_neighbor_coordinates_2.h>
 #include <CGAL/regular_neighbor_coordinates_2.h>
 
@@ -106,7 +106,32 @@ sibson_gradient_fitting(const Triangul& tr,
                                  function_value,
                                  traits);
 }
-
+ 
+template < class Triangul, class ForwardIterator, class Functor, class Traits, class VH>
+typename Traits::Vector_d
+sibson_gradient_fitting(const Triangul& tr,
+                        ForwardIterator first,
+                        ForwardIterator beyond,
+                        const typename
+                        std::iterator_traits<ForwardIterator>::
+                          value_type::second_type& norm,
+                        VH vh,
+                        Functor function_value,
+                        const Traits& traits,
+                        const typename Traits::Weighted_point_d& ignored)
+{
+  const typename Traits::Point_d& bare_p = traits.construct_point_d_object()(vh->point());
+  typename Functor::result_type fn = function_value(vh->point());
+  CGAL_assertion(fn.second);
+                                                         
+  return sibson_gradient_fitting(first,
+                                 beyond,
+                                 norm,
+                                 bare_p,
+                                 fn.first,
+                                 function_value,
+                                 traits);
+}
   
 template < class Triangul, class ForwardIterator, class Functor, class Traits, class VH>
 typename Traits::Vector_d
@@ -162,7 +187,7 @@ sibson_gradient_fitting_internal(const Triangul& tr,
     {
       norm = compute_coordinates(tr, vit, std::back_inserter(coords), Coord_OIF()).second;
 
-       *out++ =  fct(std::make_pair(vit,
+      *out++ = fct(std::make_pair(vit,
                                   sibson_gradient_fitting(tr,
                                                           coords.begin(),
                                                           coords.end(),
@@ -222,6 +247,31 @@ sibson_gradient_fitting_nn_2(const Dt& dt,
 }
 
 
+template < class Rt, class OutputIterator, class Functor, class OIF, class Traits>
+OutputIterator
+sibson_gradient_fitting_rn_2(const Rt& rt,
+                             OutputIterator out,
+                             Functor function_value,
+                             OIF fct,
+                             const Traits& traits)
+{
+  typedef typename std::back_insert_iterator<
+                     std::vector<
+                       std::pair< typename Functor::argument_type,
+                                  typename  Traits::FT > > >   CoordInserter;
+
+  typedef typename Interpolation::internal::Output_iterator_functor_selector<Rt, Traits,
+                                                                             typename Functor::argument_type,
+                                                                             typename Traits::FT>::type     Coord_OIF;
+
+  return sibson_gradient_fitting_internal(rt, out, function_value,
+                                 regular_neighbor_coordinates_2_object<Rt,
+                                                                       CoordInserter,
+                                                                       Coord_OIF>(),
+                                 fct,
+                                 traits);
+}
+
 template < class Rt, class OutputIterator, class Functor, class Traits>
 OutputIterator
 sibson_gradient_fitting_rn_2(const Rt& rt,
@@ -229,15 +279,8 @@ sibson_gradient_fitting_rn_2(const Rt& rt,
                              Functor function_value,
                              const Traits& traits)
 {
-  typedef typename std::back_insert_iterator<
-                     std::vector<
-                       std::pair< typename Traits::Weighted_point_d,
-                                  typename Traits::FT > > >   CoordInserter;
-
-  return sibson_gradient_fitting(rt, out, function_value,
-                                 regular_neighbor_coordinates_2_object< Rt,
-                                                                        CoordInserter >(),
-                                 traits);
+  return sibson_gradient_fitting_rn_2(rt, out, function_value,
+                                      Interpolation::internal::Vertex2WPoint<Rt, typename Traits::Vector_d>(), traits);
 }
 
 } //namespace CGAL

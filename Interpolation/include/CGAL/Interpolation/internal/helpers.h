@@ -73,6 +73,20 @@ namespace internal {
     }
   };
 
+  template < typename Dt, typename T2>
+  struct Vertex2WPoint {
+    typedef typename Dt::Vertex_handle Vertex_handle;
+    typedef typename Dt::Weighted_point Point;
+    
+    typedef std::pair<Vertex_handle, T2> argument_type;
+    typedef std::pair<Point, T2> result_type;
+    
+    result_type operator()(const argument_type& vp) const
+    {
+      return std::make_pair(vp.first->point(), vp.second);
+    }
+  };
+
   
   template <typename Dt, typename Map>
   struct Vertex2Vertex {

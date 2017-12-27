@@ -202,7 +202,6 @@ natural_neighbor_coordinates_2(const Dt& dt,
 
 {
   CGAL_precondition(dt.dimension() == 2);
-
   Interpolation::internal::Project_vertex_output_iterator<OutputIterator, Fct> op(out, fct);
 
   Triple<Interpolation::internal::Project_vertex_output_iterator<OutputIterator,Fct>,
@@ -237,6 +236,28 @@ natural_neighbor_coordinates_2(const Dt& dt,
 //OutputIterator has value type
 //   std::pair< Dt::Geom_traits::Point_2, Dt::Geom_traits::FT>
 //function call if the conflict zone is known:
+  template < class Dt, class OutputIterator, class EdgeIterator, class Fct >
+Triple< OutputIterator, typename Dt::Geom_traits::FT, bool >
+natural_neighbor_coordinates_2(const Dt& dt,
+                               const typename Dt::Geom_traits::Point_2& p,
+                               OutputIterator out, EdgeIterator
+                               hole_begin, EdgeIterator hole_end,
+                               Fct fct)
+{
+  CGAL_precondition(dt.dimension() == 2);
+
+  Interpolation::internal::Project_vertex_output_iterator<OutputIterator,Fct> op(out,fct);
+
+  Triple<Interpolation::internal::Project_vertex_output_iterator<OutputIterator,Fct>,
+         typename Dt::Geom_traits::FT, bool > result =
+      natural_neighbors_2(dt, p, op, hole_begin,hole_end);
+
+  return make_triple(result.first.base(), result.second, result.third);
+}
+
+//OutputIterator has value type
+//   std::pair< Dt::Geom_traits::Point_2, Dt::Geom_traits::FT>
+//function call if the conflict zone is known:
 template < class Dt, class OutputIterator, class EdgeIterator >
 Triple< OutputIterator, typename Dt::Geom_traits::FT, bool >
 natural_neighbor_coordinates_2(const Dt& dt,
@@ -244,17 +265,10 @@ natural_neighbor_coordinates_2(const Dt& dt,
                                OutputIterator out, EdgeIterator
                                hole_begin, EdgeIterator hole_end)
 {
-  CGAL_precondition(dt.dimension() == 2);
-
-  Interpolation::internal::Project_vertex_output_iterator<OutputIterator> op(out);
-
-  Triple<Interpolation::internal::Project_vertex_output_iterator<OutputIterator>,
-         typename Dt::Geom_traits::FT, bool > result =
-      natural_neighbors_2(dt, p, op, hole_begin,hole_end);
-
-  return make_triple(result.first.base(), result.second, result.third);
+  /// @todo TEST ME
+  return natural_neighbor_coordinates_2(dt,p, out, hole_begin, hole_end,
+                                        Interpolation::internal::Vertex2Point<Dt, typename Dt::Geom_traits::FT>());
 }
-
   
 /**********************************************************/
 //compute the coordinates for a vertex of the triangulation
