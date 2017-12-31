@@ -101,15 +101,15 @@ public:
 
   // maybe remove this in a future version (that supports complete handling
   // of all sides)
-  typedef typename Arr_are_all_sides_oblivious_tag<Left_side_category,
-                                                   Bottom_side_category,
-                                                   Top_side_category,
-                                                   Right_side_category>::result
+  typedef typename Arr_all_sides_oblivious_category<Left_side_category,
+                                                    Bottom_side_category,
+                                                    Top_side_category,
+                                                    Right_side_category>::result
     Are_all_sides_oblivious_category;
 
   typedef typename Arr_has_identified_sides<Left_side_category,
                                             Bottom_side_category>::result
-    Has_identified_sides_category;
+    Has_identified_sides;
 
   typedef typename Arr_two_sides_category<Bottom_side_category,
                                           Top_side_category>::result
@@ -1795,7 +1795,7 @@ protected:
   void
   _compute_indices(Arr_parameter_space ps_x_curr, Arr_parameter_space ps_y_curr,
                    Arr_parameter_space ps_x_next, Arr_parameter_space ps_y_next,
-                   int& x_index, int& y_index,  boost::mpl::bool_<true>) const;
+                   int& x_index, int& y_index,  Arr_true) const;
 
   /*!
    * Update the indices according to boundary locations (i.e. does nothing)
@@ -1803,7 +1803,7 @@ protected:
   void
   _compute_indices(Arr_parameter_space ps_x_curr, Arr_parameter_space ps_y_curr,
                    Arr_parameter_space ps_x_next, Arr_parameter_space ps_y_next,
-                   int& x_index, int& y_index,  boost::mpl::bool_<false>) const;
+                   int& x_index, int& y_index,  Arr_false) const;
 
   /*!
    * Is the first given x-monotone curve above the second given?
@@ -1905,16 +1905,14 @@ protected:
    *     POSITIVE if the ccb is perimetric and oriented in positive direction,
    *     NEGATIVE if the ccb is perimetric and oriented in negative direction).
    */
-  std::pair<Sign, Sign> _compute_signs(const DHalfedge* he,
-                                       boost::mpl::bool_<true>) const;
+  std::pair<Sign, Sign> _compute_signs(const DHalfedge* he, Arr_true) const;
 
   /*! Compute the signs (in left/right and bottom/top) of a closed ccb (loop)
    * represented by a given halfedge for the case where non of the boundaries
    * is identified.
    * \return the pair (ZERO, ZERO)
    */
-  std::pair<Sign, Sign> _compute_signs(const DHalfedge* he,
-                                       boost::mpl::bool_<false>) const;
+  std::pair<Sign, Sign> _compute_signs(const DHalfedge* he, Arr_false) const;
 
   /*!
    * Given two predecessor halfedges that will be used for inserting a

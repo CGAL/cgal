@@ -3054,7 +3054,7 @@ _insert_at_vertices(DHalfedge* he_to,
             // *oc_it is already closed, so we do a full round
             // (default = false)
             std::pair<Sign, Sign> signs_oc =
-              _compute_signs(*oc_it, Has_identified_sides_category());
+              _compute_signs(*oc_it, Has_identified_sides());
 
             bool move = false;
 
@@ -3483,14 +3483,14 @@ _compute_indices(Arr_parameter_space /* ps_x_curr */,
                  Arr_parameter_space /* ps_x_next */,
                  Arr_parameter_space /* ps_y_next */,
                  int& /* x_index */, int& /* y_index */,
-                 boost::mpl::bool_<false>) const
+                 Arr_false) const
 { /* nothing if no identification */ }
 
 template <typename GeomTraits, typename TopTraits>
 void Arrangement_on_surface_2<GeomTraits, TopTraits>::
 _compute_indices(Arr_parameter_space ps_x_curr, Arr_parameter_space ps_y_curr,
                  Arr_parameter_space ps_x_next, Arr_parameter_space ps_y_next,
-                 int& x_index, int& y_index,  boost::mpl::bool_<true>) const
+                 int& x_index, int& y_index,  Arr_true) const
 {
   // If we cross the identification curve in x, then we must update the
   // x_index. Note that a crossing takes place in the following cases:
@@ -3623,7 +3623,7 @@ _compute_signs_and_local_minima(const DHalfedge* he_to,
   }
 
   _compute_indices(ps_x_curr, ps_y_curr, ps_x_next, ps_y_next,
-                   x_index, y_index, Has_identified_sides_category());
+                   x_index, y_index, Has_identified_sides());
 
   const DHalfedge* he = he_away;
   while (he != he_to) {
@@ -3655,7 +3655,7 @@ _compute_signs_and_local_minima(const DHalfedge* he_to,
       *local_mins_it++  = std::make_pair(he, x_index);
 
     _compute_indices(ps_x_curr, ps_y_curr, ps_x_next, ps_y_next,
-                     x_index, y_index, Has_identified_sides_category());
+                     x_index, y_index, Has_identified_sides());
 
     // Move to the next halfedge.
     he = he->next();
@@ -3674,7 +3674,7 @@ _compute_signs_and_local_minima(const DHalfedge* he_to,
     *local_mins_it++  = std::make_pair(he_to, x_index);
 
   _compute_indices(ps_x_curr, ps_y_curr, ps_x_next, ps_y_next, x_index, y_index,
-                   Has_identified_sides_category());
+                   Has_identified_sides());
 
   return (std::make_pair(CGAL::sign(x_index), CGAL::sign(y_index)));
 }
@@ -3685,7 +3685,7 @@ _compute_signs_and_local_minima(const DHalfedge* he_to,
 template <typename GeomTraits, typename TopTraits>
 std::pair<Sign, Sign>
 Arrangement_on_surface_2<GeomTraits, TopTraits>::
-_compute_signs(const DHalfedge* /* he_anchor */, boost::mpl::bool_<false>) const
+_compute_signs(const DHalfedge* /* he_anchor */, Arr_false) const
 { return (std::make_pair(ZERO, ZERO)); }
 
   // Computes the signs of a closed ccb (loop) when deleting he_anchor and its
@@ -3693,7 +3693,7 @@ _compute_signs(const DHalfedge* /* he_anchor */, boost::mpl::bool_<false>) const
 template <typename GeomTraits, typename TopTraits>
 std::pair<Sign, Sign>
 Arrangement_on_surface_2<GeomTraits, TopTraits>::
-_compute_signs(const DHalfedge* he_anchor, boost::mpl::bool_<true>) const
+_compute_signs(const DHalfedge* he_anchor, Arr_true) const
 {
   // We go over the sequence of vertices, starting from he_before's target
   // vertex, until reaching he_after's source vertex, and find the leftmost
@@ -3752,7 +3752,7 @@ _compute_signs(const DHalfedge* he_anchor, boost::mpl::bool_<true>) const
     ps_y_save = parameter_space_in_y(he_next->curve(), he_next_tgt_end);
 
     _compute_indices(ps_x_curr, ps_y_curr, ps_x_next, ps_y_next,
-                     x_index, y_index, Has_identified_sides_category());
+                     x_index, y_index, Has_identified_sides());
 
     // iterate
     he_curr = he_next;
@@ -3876,7 +3876,7 @@ _compute_signs_and_min(const DHalfedge* he_anchor,
     }
 
     _compute_indices(ps_x_curr, ps_y_curr, ps_x_next, ps_y_next,
-                     x_index, y_index, Has_identified_sides_category());
+                     x_index, y_index, Has_identified_sides());
 
     // iterate
     he_curr = he_next;
@@ -4948,13 +4948,13 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
     // assumes that non of the (other) boundaries is open. A 3rd version
     // that supports the remaining case, (for example the cylinder), should
     // be developed and used.
-    signs1 = _compute_signs(he1, Has_identified_sides_category());
+    signs1 = _compute_signs(he1, Has_identified_sides());
 #if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
       std::cout << "signs1.x: " << signs1.first << std::endl;
       std::cout << "signs1.y: " << signs1.second << std::endl;
 #endif
 
-      signs2 = _compute_signs(he2, Has_identified_sides_category());
+      signs2 = _compute_signs(he2, Has_identified_sides());
 #if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
       std::cout << "signs2.x: " << signs2.first << std::endl;
       std::cout << "signs2.y: " << signs2.second << std::endl;
