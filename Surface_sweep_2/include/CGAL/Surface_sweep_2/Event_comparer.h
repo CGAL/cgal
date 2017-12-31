@@ -83,15 +83,19 @@ public:
    */
   Comparison_result operator()(const Event* e1, const Event* e2) const
   {
+    Arr_parameter_space ps_x1 = e1->parameter_space_in_x();
+    Arr_parameter_space ps_y1 = e1->parameter_space_in_y();
+    Arr_parameter_space ps_x2 = e2->parameter_space_in_x();
+    Arr_parameter_space ps_y2 = e2->parameter_space_in_y();
 #if 0
     CGAL::set_pretty_mode(std::cout);
     std::cout << "\n FUNCTOR e1-e2" << std::endl;
     std::cout << "e1: " << e1 << std::endl;
-    std::cout << "ps_x1: " << e1->parameter_space_in_x() << std::endl;
-    std::cout << "ps_y1: " << e1->parameter_space_in_y() << std::endl;
+    std::cout << "ps_x1: " << ps_x1 << std::endl;
+    std::cout << "ps_y1: " << ps_y1 << std::endl;
     std::cout << "e2: " << e2 << std::endl;
-    std::cout << "ps_x2: " << e2->parameter_space_in_x() << std::endl;
-    std::cout << "ps_y2: " << e2->parameter_space_in_y() << std::endl;
+    std::cout << "ps_x2: " << ps_x2 << std::endl;
+    std::cout << "ps_y2: " << ps_y2 << std::endl;
 #endif
 
     const bool is_isolated1 = e1->is_isolated();
@@ -101,8 +105,6 @@ public:
 
     if (is_isolated1 || is_closed_interior1) {
       const Point_2& pt1 = e1->point();
-      Arr_parameter_space ps_x1 = e1->parameter_space_in_x();
-      Arr_parameter_space ps_y1 = e1->parameter_space_in_y();
       if (is_isolated2 || is_closed_interior2) {
         const Point_2& pt2 = e2->point();
         Arr_parameter_space ps_x2 = e2->parameter_space_in_x();
@@ -112,8 +114,6 @@ public:
       else {
         Arr_curve_end ind2;
         const X_monotone_curve_2& cv2 = e2->boundary_touching_curve(ind2);
-        Arr_parameter_space ps_x2 = e2->parameter_space_in_x();
-        Arr_parameter_space ps_y2 = e2->parameter_space_in_y();
         return _compare_point_curve_end(pt1, ps_x1, ps_y1,
                                         cv2, ind2, ps_x2, ps_y2);
       }
@@ -121,20 +121,14 @@ public:
     else {
       Arr_curve_end ind1;
       const X_monotone_curve_2& cv1 = e1->boundary_touching_curve(ind1);
-      Arr_parameter_space ps_x1 = e1->parameter_space_in_x();
-      Arr_parameter_space ps_y1 = e1->parameter_space_in_y();
       if (is_isolated2 || is_closed_interior2) {
         const Point_2& pt2 = e2->point();
-        Arr_parameter_space ps_x2 = e2->parameter_space_in_x();
-        Arr_parameter_space ps_y2 = e2->parameter_space_in_y();
         return CGAL::opposite(_compare_point_curve_end(pt2, ps_x2, ps_y2,
                                                        cv1, ind1, ps_x1, ps_y1));
       }
       else {
         Arr_curve_end ind2;
         const X_monotone_curve_2& cv2 = e2->boundary_touching_curve(ind2);
-        Arr_parameter_space ps_x2 = e2->parameter_space_in_x();
-        Arr_parameter_space ps_y2 = e2->parameter_space_in_y();
         return _compare_curve_ends(cv1, ind1, ps_x1, ps_y1,
                                    cv2, ind2, ps_x2, ps_y2);
       }
@@ -154,6 +148,16 @@ public:
     Arr_parameter_space ps_y1 = m_ps_y;
     Arr_parameter_space ps_x2 = e2->parameter_space_in_x();
     Arr_parameter_space ps_y2 = e2->parameter_space_in_y();
+#if 0
+    CGAL::set_pretty_mode(std::cout);
+    std::cout << "\n FUNCTOR p1-e2" << std::endl;
+    std::cout << "pt1: " << pt1 << std::endl;
+    std::cout << "ps_x1: " << ps_x1 << std::endl;
+    std::cout << "ps_y1: " << ps_y1 << std::endl;
+    std::cout << "e2: " << e2 << std::endl;
+    std::cout << "ps_x2: " << ps_x2 << std::endl;
+    std::cout << "ps_y2: " << ps_y2 << std::endl;
+#endif
 
     const bool is_isolated2 = e2->is_isolated();
     const bool is_closed_interior2 = e2->is_closed() && !e2->is_on_boundary();
@@ -183,6 +187,16 @@ public:
     Arr_parameter_space ps_y1 = m_ps_y;
     Arr_parameter_space ps_x2 = e2->parameter_space_in_x();
     Arr_parameter_space ps_y2 = e2->parameter_space_in_y();
+#if 0
+    CGAL::set_pretty_mode(std::cout);
+    std::cout << "\n FUNCTOR cv1-e2" << std::endl;
+    std::cout << "cv1: " << cv1 << ", " << ind1 << std::endl;
+    std::cout << "ps_x1: " << ps_x1 << std::endl;
+    std::cout << "ps_y1: " << ps_y1 << std::endl;
+    std::cout << "e2: " << e2 << std::endl;
+    std::cout << "ps_x2: " << ps_x2 << std::endl;
+    std::cout << "ps_y2: " << ps_y2 << std::endl;
+#endif
 
     const bool is_isolated2 = e2->is_isolated();
     const bool is_closed_interior2 = e2->is_closed() && !e2->is_on_boundary();
@@ -210,9 +224,9 @@ public:
   //@}
 
 private:
-  // The following three functions basically adapt the case distincting of this table
-  // (in particular for the 'easy cases' that consists only of a single word and for which the
-  // following common comparison can be used:
+  // The following three functions basically adapt the case distincting of this
+  // table (in particular for the 'easy cases' that consists only of a single
+  // word and for which the following common comparison can be used:
 
     // e1 left      e2 left      if a point exists (pt in signature, or vertical case): compare_y_on_boundary(pt1, pt2) REMARK: obviously points on the left boundary are allowed, otherwise: compare_y_curve_ends(ce1, ce2, ind)
     // e1 left      e2 bottom    SMALLER
