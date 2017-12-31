@@ -94,10 +94,10 @@ public:
   typedef typename Geometry_traits_2::Multiplicity       Multiplicity;
 
 protected:
-  typedef typename Arr_are_all_sides_oblivious_tag<Left_side_category,
-                                                   Bottom_side_category,
-                                                   Top_side_category,
-                                                   Right_side_category>::result
+  typedef typename Arr_all_sides_oblivious_category<Left_side_category,
+                                                    Bottom_side_category,
+                                                    Top_side_category,
+                                                    Right_side_category>::result
     Are_all_sides_oblivious_category;
 
   typedef typename Arrangement_2::Vertex_const_handle   Vertex_const_handle;
