@@ -92,7 +92,8 @@ void Surface_sweep_2<Vis>::_handle_left_curves()
     // to locate a place for it in the status line.
     CGAL_SS_PRINT_TEXT("Handling case: no left curves");
     CGAL_SS_PRINT_EOL();
-    this->_handle_event_without_left_curves();
+
+    this->_handle_event_without_left_curves(Sides_category());
 
     if (this->m_is_event_on_above) {
       CGAL_SS_PRINT_TEXT("The event is on a curve in the status line");
@@ -177,9 +178,9 @@ void Surface_sweep_2<Vis>::_handle_left_curves()
       // curren event splits the subcurve.
       const X_monotone_curve_2& lastCurve = leftCurve->last_curve();
       this->m_traits->split_2_object()(lastCurve, this->m_currentEvent->point(),
-                                       sub_cv1, sub_cv2);
-      this->m_visitor->add_subcurve(sub_cv1, leftCurve);
-      leftCurve->set_last_curve(sub_cv2);
+                                       m_sub_cv1, m_sub_cv2);
+      this->m_visitor->add_subcurve(m_sub_cv1, leftCurve);
+      leftCurve->set_last_curve(m_sub_cv2);
     }
     ++left_iter;
 
@@ -230,8 +231,8 @@ void Surface_sweep_2<Vis>::_handle_right_curves()
       {
         this->m_traits->split_2_object()(lastCurve,
                                          this->m_currentEvent->point(),
-                                         sub_cv1, sub_cv2);
-        (*cit)->set_last_curve(sub_cv2);
+                                         m_sub_cv1, m_sub_cv2);
+        (*cit)->set_last_curve(m_sub_cv2);
       }
     }
   }
@@ -991,8 +992,8 @@ void Surface_sweep_2<Vis>::_fix_finished_overlap_subcurve(Subcurve* sc)
   if (sc->right_event() != this->m_currentEvent) {
     this->m_traits->split_2_object()(sc->last_curve(),
                                      this->m_currentEvent->point(),
-                                     sub_cv1, sub_cv2);
-    sc->set_last_curve(sub_cv2);
+                                     m_sub_cv1, m_sub_cv2);
+    sc->set_last_curve(m_sub_cv2);
 
     this->m_currentEvent->set_weak_intersection();
     this->m_visitor->update_event(this->m_currentEvent, sc);
