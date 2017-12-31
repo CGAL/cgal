@@ -150,7 +150,7 @@ protected:
   typedef typename Geom_traits::Top_side_category       Top_side_category;
   typedef typename Geom_traits::Right_side_category     Right_side_category;
   typedef typename
-  CGAL::Arr_all_sides_non_open_category<Left_side_category,
+  CGAL::Arr_all_sides_not_open_category<Left_side_category,
                                         Bottom_side_category,
                                         Top_side_category,
                                         Right_side_category>::result
