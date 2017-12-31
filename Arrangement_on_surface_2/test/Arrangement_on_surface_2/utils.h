@@ -13,11 +13,11 @@ private:
   typedef typename Traits::Top_side_category    Top_side_category;
   typedef typename Traits::Right_side_category  Right_side_category;
   typedef typename
-  CGAL::Arr_are_all_sides_oblivious_tag<Left_side_category,
-                                        Bottom_side_category,
-                                        Top_side_category,
-                                        Right_side_category>::result
-    Are_all_sides_oblivious_category;
+  CGAL::Arr_all_sides_oblivious_category<Left_side_category,
+                                         Bottom_side_category,
+                                         Top_side_category,
+                                         Right_side_category>::result
+    All_sides_oblivious_category;
 
   typedef typename CGAL::Arr_has_identified_sides<Left_side_category,
                                                   Bottom_side_category>::result
@@ -31,7 +31,7 @@ public:
   Point_compare(const Traits& traits) : m_traits(traits) {}
 
   bool operator()(const Point_2& p1, const Point_2& p2) const
-  { return operator()(p1, p2, Are_all_sides_oblivious_category()); }
+  { return operator()(p1, p2, All_sides_oblivious_category()); }
 
 private:
   // The following set of operators is incomplete, but for now there are
@@ -43,9 +43,7 @@ private:
   // are oblivious.
   bool operator()(const Point_2& p1, const Point_2& p2,
                   CGAL::Arr_all_sides_oblivious_tag) const
-  {
-    return (m_traits.compare_xy_2_object()(p1, p2) == CGAL::SMALLER);
-  }
+  { return (m_traits.compare_xy_2_object()(p1, p2) == CGAL::SMALLER); }
 
   bool operator()(const Point_2& p1, const Point_2& p2,
                   CGAL::Arr_not_all_sides_oblivious_tag) const
@@ -55,9 +53,7 @@ private:
   // boundary is not oblivious and all boundaries are not identified.
   bool operator()(const Point_2& p1, const Point_2& p2,
                   boost::mpl::bool_<false>) const
-  {
-    return (m_traits.compare_xy_2_object()(p1, p2) == CGAL::SMALLER);
-  }
+  { return (m_traits.compare_xy_2_object()(p1, p2) == CGAL::SMALLER); }
 
   // This function should be invoked for traits classes where at least one
   // boundary is identified.

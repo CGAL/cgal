@@ -63,11 +63,11 @@ public:
   typedef typename Subcurve_traits_2::Top_side_category    Top_side_category;
   typedef typename Subcurve_traits_2::Right_side_category  Right_side_category;
 
-  typedef typename Arr_are_all_sides_oblivious_tag<Left_side_category,
-                                                   Bottom_side_category,
-                                                   Top_side_category,
-                                                   Right_side_category>::result
-    Are_all_sides_oblivious_tag;
+  typedef typename Arr_all_sides_oblivious_category<Left_side_category,
+                                                    Bottom_side_category,
+                                                    Top_side_category,
+                                                    Right_side_category>::result
+    All_sides_oblivious_category;
 
   typedef typename Arr_two_sides_category<Bottom_side_category,
                                           Top_side_category>::result
@@ -181,7 +181,7 @@ public:
     Comparison_result operator()(const X_monotone_subcurve_2& xs1,
                                  Arr_curve_end ce1,
                                  const Point_2& p2)
-    { return operator()(xs1, ce1, p2, Are_all_sides_oblivious_tag()); }
+    { return operator()(xs1, ce1, p2, All_sides_oblivious_category()); }
 
     /*! Compare two ends of x-monotone curves in x.
      * \param xs1 the first curve.
@@ -197,7 +197,7 @@ public:
                                  Arr_curve_end ce1,
                                  const X_monotone_subcurve_2& xs2,
                                  Arr_curve_end ce2)
-    { return operator()(xs1, ce1, xs2, ce2, Are_all_sides_oblivious_tag()); }
+    { return operator()(xs1, ce1, xs2, ce2, All_sides_oblivious_category()); }
 
   private:
     // Oblivious implementation
@@ -356,7 +356,7 @@ public:
     Comparison_result operator()(const X_monotone_subcurve_2& xs1,
                                  Arr_curve_end ce1,
                                  const Point_2& p2)
-    { return operator()(xs1, ce1, p2, Are_all_sides_oblivious_tag()); }
+    { return operator()(xs1, ce1, p2, All_sides_oblivious_category()); }
 
     /*! Compare two ends of x-monotone curves lexicographically.
      * \param xs1 the first curve.
@@ -372,7 +372,7 @@ public:
                                  Arr_curve_end ce1,
                                  const X_monotone_subcurve_2& xs2,
                                  Arr_curve_end ce2)
-    { return operator()(xs1, ce1, xs2, ce2, Are_all_sides_oblivious_tag()); }
+    { return operator()(xs1, ce1, xs2, ce2, All_sides_oblivious_category()); }
 
   private:
     // Oblivious implementation
@@ -749,7 +749,7 @@ public:
       if (! m_poly_traits.is_vertical_2_object()(xcv)) {
         // Get the index of the subcurve in xcv containing p.
         std::size_t i =
-          m_poly_traits.locate_impl(xcv, p, Are_all_sides_oblivious_tag());
+          m_poly_traits.locate_impl(xcv, p, All_sides_oblivious_category());
         CGAL_precondition(i != INVALID_INDEX);
 
         // Compare the subcurve xcv[i] and p.
@@ -792,7 +792,7 @@ public:
     Comparison_result operator()(const X_monotone_subcurve_2& xs1,
                                  Arr_curve_end ce1,
                                  const X_monotone_subcurve_2& xs2) const
-    { return operator()(xs1, ce1, xs2, Are_all_sides_oblivious_tag()); }
+    { return operator()(xs1, ce1, xs2, All_sides_oblivious_category()); }
   };
 
   /*! Obtain a Compare_y_at_x_2 functor object. */
@@ -1937,7 +1937,7 @@ public:
      */
     void operator()(X_monotone_curve_2& xcv, const X_monotone_subcurve_2& seg)
       const
-    { push_back_2_impl<void*>(xcv, seg, Are_all_sides_oblivious_tag()); }
+    { push_back_2_impl<void*>(xcv, seg, All_sides_oblivious_category()); }
 
   private:
     // Oblivious implementation
@@ -2131,7 +2131,7 @@ public:
     /* Append a subcurve `seg` to an existing polycurve `xcv` at the front. */
     void operator()(X_monotone_curve_2& xcv, const X_monotone_subcurve_2& seg)
       const
-    { push_front_2_impl<void*>(xcv, seg, Are_all_sides_oblivious_tag()); }
+    { push_front_2_impl<void*>(xcv, seg, All_sides_oblivious_category()); }
 
   private:
     // Oblivious implementation
