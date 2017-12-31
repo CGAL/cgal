@@ -1000,7 +1000,7 @@ public:
     Comparison_result _compare_curve_ends(const X_monotone_curve_2& xcv1,
                                           const X_monotone_curve_2& xcv2,
                                           Arr_curve_end ce,
-                                          Arr_non_oblivious_side_tag) const
+                                          Arr_not_oblivious_side_tag) const
     {
       Comparison_result res =
         m_self->compare_y_on_boundary_2_object()(
@@ -1320,7 +1320,7 @@ public:
                                           Arr_curve_end ce1,
                                           const X_monotone_curve_2& xcv2,
                                           Arr_curve_end ce2,
-                                          Arr_non_oblivious_side_tag) const
+                                          Arr_not_oblivious_side_tag) const
     {
       Comparison_result res =
         m_self->compare_x_on_boundary_2_object()
