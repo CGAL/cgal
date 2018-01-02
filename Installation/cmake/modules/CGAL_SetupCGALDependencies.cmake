@@ -107,7 +107,7 @@ function(CGAL_setup_CGAL_dependencies target)
       $<BUILD_INTERFACE:${dir}>)
   endforeach()
   target_include_directories(${target} ${keyword}
-    $<INSTALL_INTERFACE:include/CGAL>)
+    $<INSTALL_INTERFACE:include>)
 
   # Now setup compilation flags
   if(MSVC)
