@@ -328,6 +328,8 @@ natural_neighbor_coordinates_2(const Dt& dt,
 class natural_neighbor_coordinates_2_object
 {
 public:
+  typedef Fct Function;
+
   Triple< OutputIterator, typename Dt::Geom_traits::FT, bool >
   operator()(const Dt& dt,
              typename Dt::Vertex_handle vh,

@@ -110,22 +110,6 @@ namespace internal {
       return std::make_pair(it->second, vp.second);
     }
   };
-
-  
-  template <typename Tr, typename InterpolationTraits, typename FunctorArgType, typename T2>
-  struct Output_iterator_functor_selector
-  {
-    typedef CGAL::Identity<std::pair<FunctorArgType, T2> > type;
-  };
-
-  
-  template <typename Tr, typename InterpolationTraits, typename T2>
-  struct Output_iterator_functor_selector<Tr, InterpolationTraits,
-                                          typename InterpolationTraits::Point_d, T2>
-  {
-    typedef Interpolation::internal::Vertex2Point<Tr, T2> type;
-  };
-
   
   // the struct "Project_vertex_output_iterator"
   // is used in the (next two) functions

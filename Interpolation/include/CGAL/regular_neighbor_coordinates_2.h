@@ -464,7 +464,8 @@ regular_neighbor_coordinates_2(const Rt& rt,
 
   Interpolation::internal::Vertex2Vertex<Rt,V2V> v2v(correspondence_map, rt);
   Unary_compose_1<Fct,Interpolation::internal::Vertex2Vertex<Rt,V2V> >  cfct(fct,v2v);
-  return regular_neighbor_coordinates_2(t2, vh->point(), out);
+
+  return regular_neighbor_coordinates_2(t2, vh->point(), out, cfct);
 }
 
   
@@ -488,6 +489,8 @@ regular_neighbor_coordinates_2(const Rt& rt,
 class regular_neighbor_coordinates_2_object
 {
 public:
+  typedef Fct Function;
+
   Triple< OutputIterator, typename Rt::Geom_traits::FT , bool >
   operator()(const Rt& rt,
              typename Rt::Vertex_handle vh,

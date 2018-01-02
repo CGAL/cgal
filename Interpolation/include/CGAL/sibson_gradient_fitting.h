@@ -32,6 +32,9 @@
 #include <iterator>
 #include <utility>
 
+#include <boost/mpl/if.hpp>
+#include <boost/type_traits/is_same.hpp>
+
 namespace CGAL {
 
 template < class ForwardIterator, class Functor, class Traits>
@@ -175,10 +178,8 @@ sibson_gradient_fitting_internal(const Triangul& tr,
   std::vector< std::pair< typename Functor::argument_type, Coord_type> > coords;
   Coord_type norm;
 
-  typedef typename Interpolation::internal::Output_iterator_functor_selector<Triangul, Traits,
-                                                                             typename Functor::argument_type,
-                                                                             Coord_type>::type     Coord_OIF;   
-  
+  typedef typename CoordFunctor::Function Coord_OIF;
+
   typename Triangul::Finite_vertices_iterator vit = tr.finite_vertices_begin();
 
   for(; vit != tr.finite_vertices_end(); ++vit){
@@ -222,9 +223,11 @@ sibson_gradient_fitting_nn_2(const Dt& dt,
                        std::pair< typename Functor::argument_type,
                                   typename  Traits::FT > > >   CoordInserter;
 
-  typedef typename Interpolation::internal::Output_iterator_functor_selector<Dt, Traits,
-                                                                             typename Functor::argument_type,
-                                                                             typename Traits::FT>::type     Coord_OIF;
+  typedef typename boost::mpl::if_<
+    boost::is_same<typename Functor::argument_type, typename Dt::Point>,
+    Interpolation::internal::Vertex2Point<Dt, typename Traits::FT>,
+    CGAL::Identity<std::pair<typename Functor::argument_type, typename Traits::FT> >
+  >::type Coord_OIF;
 
   return sibson_gradient_fitting_internal(dt, out, function_value,
                                  natural_neighbor_coordinates_2_object<Dt,
@@ -260,9 +263,12 @@ sibson_gradient_fitting_rn_2(const Rt& rt,
                        std::pair< typename Functor::argument_type,
                                   typename  Traits::FT > > >   CoordInserter;
 
-  typedef typename Interpolation::internal::Output_iterator_functor_selector<Rt, Traits,
-                                                                             typename Functor::argument_type,
-                                                                             typename Traits::FT>::type     Coord_OIF;
+
+  typedef typename boost::mpl::if_<
+    boost::is_same<typename Functor::argument_type, typename Rt::Weighted_point>,
+    Interpolation::internal::Vertex2WPoint<Rt, typename Traits::FT>,
+    CGAL::Identity<std::pair<typename Functor::argument_type, typename Traits::FT> >
+  >::type Coord_OIF;
 
   return sibson_gradient_fitting_internal(rt, out, function_value,
                                  regular_neighbor_coordinates_2_object<Rt,
