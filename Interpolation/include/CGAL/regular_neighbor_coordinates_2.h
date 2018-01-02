@@ -30,6 +30,9 @@
 #include <list>
 #include <utility>
 #include <vector>
+#include <CGAL/is_iterator.h>
+#include <boost/core/enable_if.hpp>
+#include <boost/type_traits/is_convertible.hpp>
 
 namespace CGAL {
 
@@ -278,6 +281,20 @@ regular_neighbor_coordinates_2(const Rt& rt,
   return regular_neighbor_coordinates_2(rt, p, out, typename Rt::Face_handle());
 }
 
+template <class Rt, class OutputIterator, class Fct>
+Triple< OutputIterator, typename Rt::Geom_traits::FT, bool >
+regular_neighbor_coordinates_2(const Rt& rt,
+                               const typename Rt::Weighted_point& p,
+                               OutputIterator out,
+                               Fct fct,
+                               typename boost::disable_if_c<
+                                 boost::is_convertible<Fct,
+                                                       typename Rt::Face_handle>::value 
+                               >::type* = 0)
+{
+  return regular_neighbor_coordinates_2(rt, p, out, fct, typename Rt::Face_handle());
+}
+
 //OutputIterator has value type
 //   std::pair< Rt::Geom_traits::Weighted_point_2, Rt::Geom_traits::FT>
 //Face_handle start is known:
@@ -289,6 +306,18 @@ regular_neighbor_coordinates_2(const Rt& rt,
                                typename Rt::Face_handle start)
 {
   return regular_neighbor_coordinates_2(rt, p, out, Emptyset_iterator(), start);
+}
+
+template <class Rt, class OutputIterator, class Fct>
+Triple< OutputIterator, typename Rt::Geom_traits::FT, bool >
+regular_neighbor_coordinates_2(const Rt& rt,
+                               const typename Rt::Weighted_point& p,
+                               OutputIterator out,
+                               Fct fct,
+                               typename Rt::Face_handle start,
+                               typename boost::disable_if_c< is_iterator<Fct>::value >::type* = 0)
+{
+  return regular_neighbor_coordinates_2(rt, p, out, fct, Emptyset_iterator(), start);
 }
 
 //OutputIterator has value type
@@ -324,7 +353,8 @@ regular_neighbor_coordinates_2(const Rt& rt,
                                const typename Rt::Weighted_point& p,
                                OutputIterator out,
                                OutputIteratorVorVertices vor_vertices,
-                               typename Rt::Face_handle start)
+                               typename Rt::Face_handle start,
+                               typename boost::enable_if_c< is_iterator<OutputIteratorVorVertices>::value >::type* = 0)
 {
   return regular_neighbor_coordinates_2(rt, p, out,
                                  Interpolation::internal::Vertex2WPoint<Rt, typename Rt::Geom_traits::FT>(),
