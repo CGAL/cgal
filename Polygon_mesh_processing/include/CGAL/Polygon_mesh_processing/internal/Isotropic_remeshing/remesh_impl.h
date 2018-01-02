@@ -311,6 +311,9 @@ namespace internal {
     {
       halfedge_status_pmap_ = get(CGAL::dynamic_halfedge_property_t<Halfedge_status>(),
                                   pmesh);
+      BOOST_FOREACH(halfedge_descriptor h, halfedges(mesh_))
+        put(halfedge_status_pmap_, h, MESH);
+
       CGAL_assertion(CGAL::is_triangle_mesh(mesh_));
     }
 
@@ -1741,10 +1744,7 @@ private:
     void halfedge_added(const halfedge_descriptor& h,
                         const Halfedge_status& s)
     {
-      // AF: Can s be MESH?
-      if(s != MESH){
         set_status(h, s);
-      }
     }
 
     void halfedge_and_opp_removed(const halfedge_descriptor& h)

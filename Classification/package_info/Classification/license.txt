@@ -1,1 +1,3 @@
+MULTIPLE!
 GPL (v3 or later)
+MIT/X11 (BSD like)
