@@ -10,6 +10,7 @@
 #include <CGAL/Arrangement_on_surface_2.h>
 #include <CGAL/Arr_geodesic_arc_on_sphere_traits_2.h>
 #include <CGAL/Arr_spherical_topology_traits_2.h>
+#include <CGAL/foreach.h>
 
 typedef CGAL::Exact_rational                                 Number_type;
 typedef CGAL::Cartesian<Number_type>                         Kernel;
