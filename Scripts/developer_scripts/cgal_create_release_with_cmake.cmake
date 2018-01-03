@@ -87,6 +87,22 @@ endforeach()
 #create VERSION
 file(WRITE ${release_dir}/VERSION "${CGAL_VERSION}")
 
+#edit include/CGAL/version.h
+file(READ "${release_dir}/include/CGAL/version.h" file_content)
+#  update CGAL_GIT_HASH
+if(EXISTS ${CMAKE_BINARY_DIR}/.git)
+  execute_process(
+    COMMAND git rev-parse HEAD
+    RESULT_VARIABLE RESULT_VAR
+    OUTPUT_VARIABLE OUT_VAR
+    )
+  string(REPLACE "CGAL_GIT_HASH abcdef\n" "CGAL_GIT_HASH ${OUT_VAR}" file_content "${file_content}")
+endif()
+#  update CGAL_RELEASE_DATE
+string(TIMESTAMP TODAY "%Y%m%d")
+string(REPLACE "CGAL_RELEASE_DATE 20170101" "CGAL_RELEASE_DATE ${TODAY}" file_content "${file_content}")
+file(WRITE ${release_dir}/include/CGAL/version.h "${file_content}")
+
 # removal of extra directories and files
 file(REMOVE_RECURSE ${release_dir}/doc/fig_src)
 file(REMOVE_RECURSE ${release_dir}/benchmark)

@@ -1,4 +1,4 @@
-// Copyright (c) 2009  
+// Copyright (c) 2009
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
@@ -28,6 +28,8 @@
 #define CGAL_VERSION 4.12-dev
 #define CGAL_VERSION_NR 1041200000
 #define CGAL_SVN_REVISION 99999
+#define CGAL_GIT_HASH abcdef
+#define CGAL_RELEASE_DATE 20170101
 
 #include <CGAL/version_macros.h>
 
