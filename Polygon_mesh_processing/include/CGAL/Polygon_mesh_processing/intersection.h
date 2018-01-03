@@ -1082,7 +1082,7 @@ bool is_mesh2_in_mesh1(const TriangleMesh& tm1,
  * This function depends on the package \ref PkgBoxIntersectionDSummary.
  *
  * \tparam PolylineRange a `RandomAccessRange` of `RandomAccessRange` of points.
- *         The point type must be from a \cgal Kernel.
+ *         The point type must be from a 3D point from a \cgal Kernel.
  * \cgalDescribePolylineType
  *
  * @param polylines1 the first range of polylines to check for intersections.
@@ -1124,7 +1124,7 @@ bool do_intersect(const PolylineRange& polylines1,
  * This function depends on the package \ref PkgBoxIntersectionDSummary.
  *
  * \tparam Polyline a `RandomAccessRange` of points.
- *         The point type must be from a \cgal Kernel.
+ *         The point type must be from a 3D point type from \cgal Kernel.
  * \cgalDescribePolylineType
  *
  * @param polyline1 the first polyline to check for intersections.
