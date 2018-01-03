@@ -10,7 +10,7 @@ This component implements the algorithm described in \cgalCite{cgal:lm-clscm-12}
 
 \note This component depends on the Boost libraries
 [Serialization](http://www.boost.org/libs/serialization) and
-[IO Streams](http://www.boost.org/libs/iostreams).
+[IO Streams](http://www.boost.org/libs/iostreams) (compiled with the GZIP dependency).
 
 \section Classification_Organization Package Organization
 
@@ -205,10 +205,10 @@ Example of classification on a point set with medium noise and outliers (left: i
 \cgal provides [ETHZ_random_forest_classifier](@ref CGAL::Classification::ETHZ_random_forest_classifier),
 a classifier based on the Random Forest Template Library developed by
 Stefan Walk at ETH Zurich \cgalCite{cgal:w-erftl-14} (the library is
-included with the \cgal release, the user does not have to install
-anything more). This classifier uses a ground truth training set to
-construct several decision trees that are then used to assign a label
-to each input item.
+distributed under the MIT license and is included with the \cgal release,
+the user does not have to install anything more). This classifier uses
+a ground truth training set to construct several decision trees that
+are then used to assign a label to each input item.
 
 This classifier cannot be set up by hand and requires a ground truth
 training set. The training algorithm is significantly faster but

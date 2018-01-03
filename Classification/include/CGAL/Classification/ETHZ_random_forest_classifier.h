@@ -48,6 +48,8 @@ namespace Classification {
 
   \brief %Classifier based on the ETH Zurich version of random forest algorithm \cgalCite{cgal:w-erftl-14}.
 
+  \note This classifier is distributed under the MIT license.
+
   \cgalModels `CGAL::Classification::Classifier`
 */
 class ETHZ_random_forest_classifier
