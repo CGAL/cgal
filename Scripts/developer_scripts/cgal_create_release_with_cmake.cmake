@@ -84,6 +84,9 @@ foreach(pkg ${files})
   endif()
 endforeach()
 
+#create VERSION
+file(WRITE ${release_dir}/VERSION "${CGAL_VERSION}")
+
 # removal of extra directories and files
 file(REMOVE_RECURSE ${release_dir}/doc/fig_src)
 file(REMOVE_RECURSE ${release_dir}/benchmark)
