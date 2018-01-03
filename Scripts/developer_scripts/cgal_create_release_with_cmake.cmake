@@ -2,6 +2,8 @@
 # DESTINATION the path where the release is created, default is /tmp
 # PUBLIC=[ON/OFF] indicates if a public release should be built, default is OFF
 # VERBOSE=[ON/OFF] makes the script more verbose, default is OFF
+# CGAL_VERSION=release id used to update version.h, VERSION and the release directory. Can be 4.12-Ic-33, 4.12-I-32, 4.12, ...
+# CGAL_VERSION_NR=release string used to update version.h. Must be something like 1041200033
 
 if (NOT EXISTS ${CMAKE_BINARY_DIR}/Installation/include/CGAL/version.h)
   message(FATAL_ERROR "Cannot find Installation/include/CGAL/version.h. Make sure you are at the root of a CGAL branch")
@@ -11,12 +13,14 @@ file(READ "${CMAKE_BINARY_DIR}/Installation/include/CGAL/version.h" version_file
 string(REGEX MATCH "define CGAL_VERSION (.*)\n#define CGAL_VERSION_NR" CGAL_VERSION_FOUND "${version_file_content}")
 
 if (CGAL_VERSION_FOUND)
-  set(CGAL_VERSION "${CMAKE_MATCH_1}")
+  set(CGAL_VERSION_INPUT "${CMAKE_MATCH_1}")
+  if (NOT CGAL_VERSION)
+    set(CGAL_VERSION "${CGAL_VERSION_INPUT}")
+  endif()
   set (GITHUB_PREFIX "https://github.com/CGAL/cgal/blob/releases/CGAL-${CGAL_VERSION}")
 else()
   message(FATAL_ERROR "Cannot extract CGAL version number.")
 endif()
-
 
 
 if (NOT DEFINED DESTINATION)
@@ -101,6 +105,12 @@ endif()
 #  update CGAL_RELEASE_DATE
 string(TIMESTAMP TODAY "%Y%m%d")
 string(REPLACE "CGAL_RELEASE_DATE 20170101" "CGAL_RELEASE_DATE ${TODAY}" file_content "${file_content}")
+#  update CGAL_VERSION
+string(REPLACE "CGAL_VERSION ${CGAL_VERSION_INPUT}" "CGAL_VERSION ${CGAL_VERSION}" file_content "${file_content}")
+#  update CGAL_VERSION_NR
+if (CGAL_VERSION_NR)
+  string(REGEX REPLACE "CGAL_VERSION_NR 10[0-9][0-9][0-9][0-9]0000" "CGAL_VERSION_NR ${CGAL_VERSION_NR}" file_content "${file_content}")
+endif()
 file(WRITE ${release_dir}/include/CGAL/version.h "${file_content}")
 
 # removal of extra directories and files
