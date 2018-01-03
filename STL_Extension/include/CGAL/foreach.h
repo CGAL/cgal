@@ -32,29 +32,35 @@ namespace for_range_loop{
 
 template <class T>
 Iterator_range<T>
-make_range(const std::pair<T,T>& p)
+constexpr make_range(const std::pair<T,T>& p)
 {
   return CGAL::make_range(p);
 }
 
 template <class T>
 Iterator_range<T>
-make_range(std::pair<T,T>& p)
+constexpr make_range(std::pair<T,T>& p)
 {
   return CGAL::make_range(p);
 }
 
 template <class T>
 Iterator_range<T>
-make_range(std::pair<T,T>&& p)
+constexpr make_range(std::pair<T,T>&& p)
 {
   return CGAL::make_range(p);
 }
 
-template<class T>
-constexpr T&& make_range( T&& t )
+template <class T>
+constexpr T& make_range(T& t)
 {
-  return std::forward<T>(t);
+  return t;
+}
+
+template <class T>
+constexpr T make_range(T&& t)
+{
+  return std::move(t);
 }
 
 } }
