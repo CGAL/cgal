@@ -1350,9 +1350,10 @@ private:
     const FT err = (*m_perror_metric)(f, px);
 
     // original proxy map should always be falid
-    CGAL_assertion(get(m_fproxy_map, f) != CGAL_VSA_INVALID_TAG);
+    const std::size_t prev_px_idx = get(m_fproxy_map, f);
+    CGAL_assertion(prev_px_idx != CGAL_VSA_INVALID_TAG);
     // update the proxy error and proxy map
-    m_proxies[get(m_fproxy_map, f)].err -= err;
+    m_proxies[prev_px_idx].err -= (*m_perror_metric)(f, m_proxies[prev_px_idx].px);
     put(m_fproxy_map, f, px_idx);
 
     return Proxy_wrapper(px, px_idx, f, err);
