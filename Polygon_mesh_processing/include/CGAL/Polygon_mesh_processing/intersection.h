@@ -1078,7 +1078,8 @@ bool is_mesh2_in_mesh1(const TriangleMesh& tm1,
 
 /**
  * \ingroup PMP_predicates_grp
- * returns `true` if any pair of segments from `polylines1` and `polylines2` intersect, and `false` otherwise.
+ * returns `true` if any segment of any polyline of `polylines1` intersects
+ * any segment of any polyline of `polylines2`, and `false` otherwise.
  * This function depends on the package \ref PkgBoxIntersectionDSummary.
  *
  * \tparam PolylineRange a `RandomAccessRange` of `RandomAccessRange` of points.
@@ -1120,7 +1121,7 @@ bool do_intersect(const PolylineRange& polylines1,
 
 /**
  * \ingroup PMP_predicates_grp
- * returns `true` if any pair of segments from `polyline1` and `polyline2` intersect, and `false` otherwise.
+ * returns `true` if any segment of `polyline1` intersects any segment of `polyline2`, and `false` otherwise.
  * This function depends on the package \ref PkgBoxIntersectionDSummary.
  *
  * \tparam Polyline a `RandomAccessRange` of points.
@@ -1165,7 +1166,7 @@ bool do_intersect(const Polyline& polyline1,
 
 /**
  * \ingroup PMP_predicates_grp
- * returns `true` if any pair of faces from `tm1` and `tm2` intersect, and `false` otherwise.
+ * returns `true` if any face of `tm1` intersects any face of `tm2`, and `false` otherwise.
  * If `do_overlap_test_of_bounded_sides` is set to `true`, the overlap of bounded sides are tested as well. In that case, the meshes must be closed.
  * This function depends on the package \ref PkgBoxIntersectionDSummary.
  *
@@ -1254,7 +1255,7 @@ bool do_intersect(const TriangleMesh& tm1,
 
 /**
  * \ingroup PMP_predicates_grp
- * returns `true` if any pair of face and segment from `tm` and `polylines` intersect, and `false` otherwise.
+ * returns `true` if any face of `tm` and any segment of any polyline of `polylines` intersects, and `false` otherwise.
  * This function depends on the package \ref PkgBoxIntersectionDSummary.
  * @pre `CGAL::is_triangle_mesh(tm)`
  *
@@ -1310,7 +1311,7 @@ bool do_intersect(const TriangleMesh& tm,
 
 /**
  * \ingroup PMP_predicates_grp
- * returns `true` if any pair of face and segment from `tm` and `polyline` intersect, and `false` otherwise.
+ * returns `true` if any face of `tm` and any segment of `polyline` intersects, and `false` otherwise.
  * This function depends on the package \ref PkgBoxIntersectionDSummary.
  * @pre `CGAL::is_triangle_mesh(tm)`
  *
