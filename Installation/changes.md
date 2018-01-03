@@ -68,7 +68,7 @@ Release date: April 2018
     added.
 
 ### Polygon Mesh Processing
--   Added a new function for intersection detection between triangle meshes and/or polylines or range of polylines, and another one to report all the      
+-   Added a new function for intersection tests between triangle meshes and/or polylines or range of polylines, and another one to report all the
     pairs of meshes intersecting from a range of meshes:
     -   `CGAL::Polygon_mesh_processing::do_intersect()`
     -   `CGAL::Polygon_mesh_processing::intersecting_meshes()`
