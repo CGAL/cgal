@@ -45,7 +45,7 @@ int main()
   typedef boost::property_map<My::Mesh,CGAL::vertex_point_t>::type Point_property_map;
   Point_property_map ppm = get(CGAL::vertex_point, mesh);
 
-  BOOST_FOREACH(vertex_descriptor vd , vertices(mesh)){
+  CGAL_FOREACH(vertex_descriptor vd , vertices(mesh)){
     if (vd != boost::graph_traits<My::Mesh>::null_vertex()){
       std::cout << vd << " at " << get(ppm, vd) << std::endl;
     }
