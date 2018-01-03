@@ -55,6 +55,8 @@
 
 /// \defgroup PMP_predicates_grp Intersection Detection Functions
 /// Functions to detect intersections.
+/// Note that those functions will be exact as long as the underlying do-intersect predicates used is exact.
+/// In practice, it means that the 3D point type used must come from a \cgal kernel with exact predicates.
 /// \ingroup PkgPolygonMeshProcessing
 /*!
 \addtogroup PkgPolygonMeshProcessing
