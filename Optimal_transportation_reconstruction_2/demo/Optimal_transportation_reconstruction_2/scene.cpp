@@ -25,7 +25,7 @@ void Scene::draw_tolerance(GlViewer* viewer)
     return;
 
   const std::size_t resolution = 16;
-  viewer->glColor3f (0.6, 1.0, 0.8);
+  viewer->glColor3f (0.6f, 1.0f, 0.8f);
   std::vector<Sample_>::const_iterator it;
   for (it = m_samples.begin(); it != m_samples.end(); it++)
     {

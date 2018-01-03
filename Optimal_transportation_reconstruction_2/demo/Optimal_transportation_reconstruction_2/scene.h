@@ -82,9 +82,9 @@ public:
 
 private:
 
-  struct Point_3_from_sample : public CGAL::unary_function<Sample_, typename K::Point_3>
+  struct Point_3_from_sample : public CGAL::unary_function<Sample_, K::Point_3>
   {
-    typename K::Point_3 operator() (const Sample_& sample) const
+    K::Point_3 operator() (const Sample_& sample) const
     {
       return K::Point_3 (sample.point().x(), sample.point().y(), 0.);
     }
