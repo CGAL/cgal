@@ -1,8 +1,7 @@
 #option :
-# DESTINATION the path where the release is create, default is /tmp
-# PUBLIC=[ON/OFF] indicates if a public release should be built
-# INTERNAL=[ON/OFF] indicates if an internal release should be built
-# VERBOSE=[ON/OFF] makes the script more verbose
+# DESTINATION the path where the release is created, default is /tmp
+# PUBLIC=[ON/OFF] indicates if a public release should be built, default is OFF
+# VERBOSE=[ON/OFF] makes the script more verbose, default is OFF
 
 if (NOT EXISTS ${CMAKE_BINARY_DIR}/Installation/include/CGAL/version.h)
   message(FATAL_ERROR "Cannot find Installation/include/CGAL/version.h. Make sure you are at the root of a CGAL branch")
@@ -22,11 +21,6 @@ endif()
 
 if (NOT DEFINED DESTINATION)
   SET(DESTINATION "/tmp")
-endif()
-
-# Check consistency.
-if(PUBLIC AND INTERNAL)
-  message(FATAL_ERROR "You can only create either an internal or a public release.")
 endif()
 
 set(release_dir "${DESTINATION}/CGAL-${CGAL_VERSION}")
