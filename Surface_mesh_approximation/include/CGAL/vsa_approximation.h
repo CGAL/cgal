@@ -1214,7 +1214,7 @@ private:
    * @param t concurrency tag
    */
   template<typename ProxyWrapperIterator>
-  void fit(const ProxyWrapperIterator beg, const ProxyWrapperIterator end, const CGAL::Sequential_tag t) {
+  void fit(const ProxyWrapperIterator beg, const ProxyWrapperIterator end, const CGAL::Sequential_tag &) {
     std::vector<std::list<face_descriptor> > px_facets(m_proxies.size());
     BOOST_FOREACH(face_descriptor f, faces(*m_ptm))
       px_facets[get(m_fproxy_map, f)].push_back(f);
@@ -1235,7 +1235,7 @@ private:
    * @param t concurrency tag
    */
   template<typename ProxyWrapperIterator>
-  void fit(const ProxyWrapperIterator beg, const ProxyWrapperIterator end, const CGAL::Parallel_tag t) {
+  void fit(const ProxyWrapperIterator beg, const ProxyWrapperIterator end, const CGAL::Parallel_tag &) {
     std::vector<std::list<face_descriptor> > px_facets(m_proxies.size());
     BOOST_FOREACH(face_descriptor f, faces(*m_ptm))
       px_facets[get(m_fproxy_map, f)].push_back(f);
