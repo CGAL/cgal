@@ -2,11 +2,10 @@
 \ingroup PkgTSMAConcepts
 \cgalConcept
 
-The concept `ProxyFitting` is required to fit a shape `Proxy` from a range of facets.
-It is used in the functions `vsa_mesh_approximation()`.
+The concept `ProxyFitting` fits a shape primitive `Proxy` from a range of facets, used in CGAL::VSA::Mesh_approximation.
 
-\cgalHasModel `L21ProxyFitting`
-\cgalHasModel `L2ProxyFitting`
+\cgalHasModel `CGAL::VSA::L21_proxy_fitting`
+\cgalHasModel `CGAL::VSA::L2_proxy_fitting`
 */
 
 class ProxyFitting {
@@ -18,9 +17,9 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /// returns the fitting proxy from a range of facets.
-  template<FacetsIterator>
-  Proxy operator()(const FacetsIterator &beg, const FacetsIterator &end) const;
+  /// returns the fitted proxy from a range of facets.
+  template <typename FacetIterator>
+  Proxy operator()(const FacetIterator &beg, const FacetIterator &end) const;
 
   /// }
 };

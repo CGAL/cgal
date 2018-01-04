@@ -2,19 +2,18 @@
 \ingroup PkgTSMAConcepts
 \cgalConcept
 
-The concept `ErrorMetric` is requied to operate on a facet and a proxy, returns the fitting error.
-It is used in the functions `vsa_mesh_approximation()` and `vsa_mesh_segmentation()`.
+The concept `ErrorMetric` computes the fitting error of a face to a `Proxy`, used in CGAL::VSA::Mesh_approximation.
 
-\cgalHasModel `L21Metric`
-\cgalHasModel `L2Metric`
+\cgalHasModel `CGAL::VSA::L21_metric`
+\cgalHasModel `CGAL::VSA::L2_metric`
 */
 
 class ErrorMetric {
 public:
   /// A number type model of `Field` and `RealEmbeddable`
   typedef unspecified_type FT;
-  /// Triangle mesh facet descriptor.
-  typedef unspecified_type facet_descriptor;
+  /// Triangle mesh face descriptor.
+  typedef unspecified_type face_descriptor;
   /// Parametrized shape proxy.
   typedef unspecified_type Proxy;
 
@@ -22,8 +21,8 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /// returns the fitting error of a facet f to the proxy px.
-  FT operator()(const facet_descriptor &f, const Proxy &px) const;
+  /// returns the fitting error of a face f to the proxy px.
+  FT operator()(const face_descriptor &f, const Proxy &px) const;
 
   /// }
 };

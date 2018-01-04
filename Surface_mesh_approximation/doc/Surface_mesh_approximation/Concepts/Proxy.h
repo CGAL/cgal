@@ -2,10 +2,11 @@
 \ingroup PkgTSMAConcepts
 \cgalConcept
 
-The concept `Proxy` describes the primitive shape used in the Variational Shape Approximation algorithm.
-It is nested within the `ErrorMetric` and `ProxyFitting` concepts.
+The concept `Proxy` describes the primitive shape, nested within the `ErrorMetric` and `ProxyFitting` concepts.
 
-\cgalHasModel `Plane_proxy`
+It can contain anything to store the primitive shape parameters.
+
+\cgalHasModel `CGAL::VSA::Plane_proxy`
 */
 
 class Proxy {
