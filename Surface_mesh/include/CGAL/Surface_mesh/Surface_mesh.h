@@ -31,6 +31,7 @@
 #include <algorithm>
 #include <utility>
 #include <iostream>
+#include <sstream>
 #include <cstddef>
 #include <vector>
 #include <string>
@@ -41,7 +42,6 @@
 #include <boost/array.hpp>
 #include <boost/iterator/iterator_facade.hpp>
 #include <boost/foreach.hpp>
-
 #include <CGAL/property_map.h>
 #include <CGAL/Iterator_range.h>
 #include <CGAL/circulator.h>
@@ -1816,10 +1816,14 @@ private: //--------------------------------------------------- property handling
   
     template<class I, class T>
     std::pair<Property_map<I, T>, bool>
-    add_property_map(const std::string& name, const T t=T()) {
+    add_property_map(std::string name=std::string(), const T t=T()) {
+      if(name.empty()){
+        std::ostringstream oss;
+        oss << "anonymous-property-" << anonymous_property_++;
+        name = std::string(oss.str());
+      }
       return Property_selector<I>(this)().template add<T>(name, t);
     }
-
  
     /// returns a property map named `name` with key type `I` and value type `T`, 
     /// and a Boolean that is `true` if the property exists. 
@@ -1944,6 +1948,8 @@ private: //------------------------------------------------------- private data
     size_type edges_freelist_;
     size_type faces_freelist_;
     bool garbage_;
+
+    size_type anonymous_property_;
 };
 
   /*! \addtogroup PkgSurface_mesh
@@ -2191,6 +2197,7 @@ Surface_mesh()
     removed_vertices_ = removed_edges_ = removed_faces_ = 0;
     vertices_freelist_ = edges_freelist_ = faces_freelist_ = -1;
     garbage_ = false;
+    anonymous_property_ = 0;
 }
 
 
@@ -2225,6 +2232,7 @@ operator=(const Surface_mesh<P>& rhs)
         edges_freelist_    = rhs.edges_freelist_;
         faces_freelist_    = rhs.faces_freelist_;
         garbage_           = rhs.garbage_;
+        anonymous_property_ = rhs.anonymous_property_;
     }
 
     return *this;
@@ -2277,6 +2285,7 @@ assign(const Surface_mesh<P>& rhs)
         edges_freelist_    = rhs.edges_freelist_;
         faces_freelist_    = rhs.faces_freelist_;
         garbage_           = rhs.garbage_;
+        anonymous_property_ = rhs.anonymous_property_;
     }
 
     return *this;
@@ -2301,6 +2310,7 @@ clear()
     removed_vertices_ = removed_edges_ = removed_faces_ = 0;
     vertices_freelist_ = edges_freelist_ = faces_freelist_ = -1;
     garbage_ = false;
+    anonymous_property_ = 0;
 }
 
 //-----------------------------------------------------------------------------
