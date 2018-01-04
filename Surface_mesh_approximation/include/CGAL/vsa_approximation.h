@@ -467,7 +467,7 @@ public:
    * @param max_iterations maximum number of iterations allowed
    * @param avg_interval size of error average interval to have smoother convergence curve,
    * if 0 is assigned, 1 is used instead.
-   * @return true if converged before hitting the maximum iterations, false otherwise
+   * @return `true` if converged before hitting the maximum iterations, `false` otherwise
    */
   bool run_to_converge(const FT cvg_threshold,
     const std::size_t max_iterations = 100,
@@ -626,7 +626,7 @@ public:
    * Here if we specify more than one proxy this means we teleport in a naive iterative fashion.
    * @param num_proxies number of proxies request to teleport
    * @param num_iterations number of re-fitting iterations
-   * @param if_force true to force the teleportation (no merge test)
+   * @param if_force set `true` to force the teleportation (no merge test)
    * @return number of proxies teleported.
    */
   std::size_t teleport_proxies(const std::size_t num_proxies,
@@ -735,10 +735,10 @@ public:
    * @param[out] px_tobe_enlarged the proxy index to be enlarged
    * @param[out] px_tobe_merged the proxy index to be merged,
    * guaranteed to be greater than <em>px_tobe_enlarged</em>.
-   * @param if_test true to activate the merge test.
+   * @param if_test set `true` to activate the merge test.
    * The merge test is considered successful if the merged error change
    * is less than the half of the maximum proxy error.
-   * @return true if best merge pair found, false otherwise
+   * @return `true` if best merge pair found, `false` otherwise
    */
   bool find_best_merge(std::size_t &px_tobe_enlarged,
     std::size_t &px_tobe_merged,
@@ -805,7 +805,7 @@ public:
    * @param px_idx proxy index
    * @param n number of split sections
    * @param nb_relaxations number of relaxation on the confined proxy area
-   * @return true if split succeeds, false otherwise
+   * @return `true` if split succeeds, `false` otherwise
    */
   bool split(const std::size_t px_idx,
     const std::size_t n = 2,
@@ -863,12 +863,12 @@ public:
    * @tparam PolyhedronSurface should be `CGAL::Polyhedron_3`
    * @param[out] tm_out output triangle mesh
    * @param chord_error boundary approximation recursively split criterion
-   * @param is_relative_to_chord true if the chord_error is relative to the the chord length (relative sense),
+   * @param is_relative_to_chord set `true` if the chord_error is relative to the the chord length (relative sense),
    * otherwise it's relative to the average edge length (absolute sense).
-   * @param with_dihedral_angle true if add dihedral angle weight to the distance, false otherwise
-   * @param optimize_anchor_location true if optimize the anchor locations, false otherwise
-   * @param pca_plane true if use PCA plane fitting, otherwise use the default area averaged plane parameters
-   * @return true if the extracted surface mesh is manifold, false otherwise.
+   * @param with_dihedral_angle set `true` if add dihedral angle weight to the distance, `false` otherwise
+   * @param optimize_anchor_location set `true` if optimize the anchor locations, `false` otherwise
+   * @param pca_plane set `true` if use PCA plane fitting, otherwise use the default area averaged plane parameters
+   * @return `true` if the extracted surface mesh is manifold, `false` otherwise.
    */
   template <typename PolyhedronSurface>
   bool extract_mesh(PolyhedronSurface &tm_out,
@@ -1253,7 +1253,7 @@ private:
 
   /*!
    * @brief Add a proxy seed at the facet with the maximum fitting error.
-   * @return true add successfully, false otherwise
+   * @return `true` add successfully, `false` otherwise
    */
   bool add_proxy_furthest() {
 #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
@@ -1363,7 +1363,7 @@ private:
    * @brief Pick a number of non-seed facets into an empty vector randomly.
    * @param nb_requested requested number of facets
    * @param[out] facets shuffled facets vector
-   * @return true if requested number of facets are selected, false otherwise
+   * @return `true` if requested number of facets are selected, `false` otherwise
    */
   bool random_pick_non_seed_facets(const std::size_t nb_requested,
     std::vector<face_descriptor> &facets) {
@@ -1460,7 +1460,7 @@ private:
    * @brief Compute proxy planes.
    * The proxy may not contain the plane related properties, so we need these internal planes,
    * used in the chord subdivision and anchor location.
-   * @param if_pca_plane true to use the PCA plane fitting
+   * @param if_pca_plane set `true` to use the PCA plane fitting
    */
   void compute_proxy_planes(const bool if_pca_plane) {
     // fit proxy planes, areas, normals
@@ -1513,9 +1513,9 @@ private:
   /*!
    * @brief Finds and approximates the chord connecting the anchors.
    * @param chord_error boundary chord approximation recursive split creterion
-   * @param is_relative_to_chord true if the chord_error is relative to the the chord length (relative sense),
+   * @param is_relative_to_chord set `true` if the chord_error is relative to the the chord length (relative sense),
    * otherwise it's relative to the average edge length (absolute sense).
-   * @param with_dihedral_angle true if add dihedral angle weight to the distance, false otherwise
+   * @param with_dihedral_angle set `true` if add dihedral angle weight to the distance, `false` otherwise
    */
   void find_edges(const FT chord_error,
     const bool is_relative_to_chord,
@@ -1807,9 +1807,9 @@ private:
    * @param chord_begin begin iterator of the chord
    * @param chord_end end iterator of the chord
    * @param chord_error the chord recursive split error threshold
-   * @param is_relative_to_chord true if the chord_error is relative to the the chord length (relative sense),
+   * @param is_relative_to_chord set `true` if the chord_error is relative to the the chord length (relative sense),
    * otherwise it's relative to the average edge length (absolute sense).
-   * @param with_dihedral_angle true if add dihedral angle weight to the distance, false otherwise
+   * @param with_dihedral_angle set `true` if add dihedral angle weight to the distance, `false` otherwise
    * @return the number of anchors of the chord apart from the first one
    */
   std::size_t subdivide_chord(
@@ -1905,8 +1905,9 @@ private:
   }
 
   /*!
-   * @brief Return true if the target vertex of a halfedge is attached with an anchor, and false otherwise.
+   * @brief Test if the target vertex of a halfedge is attached with an anchor.
    * @param he a halfedge descriptor
+   * @return `true` is attached with an anchor, and `false` otherwise.
    */
   bool is_anchor_attached(const halfedge_descriptor &he) const {
     return is_anchor_attached(target(he, *m_ptm), m_vanchor_map);
@@ -1997,7 +1998,7 @@ private:
    * @brief Use an incremental builder to build and test if the indexed triangle surface is manifold
    * @tparam PolyhedronSurface should be `CGAL::Polyhedron_3`
    * @param[out] poly input polyhedorn mesh
-   * @return true if build manifold surface successfully
+   * @return `true` if build manifold surface successfully, `false` otherwise
    */
   template <typename PolyhedronSurface>
   bool build_polyhedron_surface(PolyhedronSurface &poly) {

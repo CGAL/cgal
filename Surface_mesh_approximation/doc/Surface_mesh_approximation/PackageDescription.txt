@@ -10,7 +10,7 @@
 
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Pierre Alliez, David Cohen-Steiner, Lingjie Zhu}
-\cgalPkgDesc{This package implements the Variational Shape Approximation method to approximate an input surface triangle mesh by a simpler indexed face set or 2-manifold oriented surface triangle mesh. The algorithm proceeds by iterative clustering of triangles, the clustering process being seeded either randomly, incrementally or hierarchically. The default function runs an automated version of the algorithm and an interactive variant is available through a class interface. 
+\cgalPkgDesc{This package implements the Variational Shape Approximation method to approximate an input surface triangle mesh by a simpler indexed face set or 2-manifold oriented surface triangle mesh. The algorithm proceeds by iterative clustering of triangles, the clustering process being seeded either randomly, incrementally or hierarchically. The default function runs an automated version of the algorithm and more detailed control is available through a class interface.
 The API is flexible and can be extended to user-defined error metrics.}
 \cgalPkgManuals{Chapter_Triangulated_Surface_Mesh_Approximation,PkgTSMA}
 \cgalPkgSummaryEnd

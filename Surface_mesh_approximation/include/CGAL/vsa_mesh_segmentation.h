@@ -20,10 +20,10 @@ namespace VSA {
 
 /*!
  * \ingroup PkgTSMA
- * @brief variational shape approximation segmentation a triangulated mesh.
- * This function segment the input triangulated mesh by the variational shape approximation algorithm.
+ * @brief Function segments the input mesh into planar parts.
+ * This function segments the input triangulated mesh by the Variational Shape Approximation algorithm.
  * It fills a property map which associates a segment-id (in [0, number_of_segments -1])
- * or a proxy-id (in [0, number_of_proxies-1]) to each facet.
+ * or a proxy-id (in [0, number_of_proxies - 1]) to each facet.
  * A segment is a set of connected facets which are placed under the same proxy patch (see \cgalFigureRef{iterations}).
  *
  * @tparam TriangleMesh model of `FaceGraph`.

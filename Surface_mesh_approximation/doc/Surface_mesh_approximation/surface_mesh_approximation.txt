@@ -12,8 +12,8 @@ For many applications ranging from reverse engineering to computational engineer
 
 This package implements the <em>Variational Shape Approximation</em> \cgalCite{cgal:cad-vsa-04} (%VSA) method to approximate an input surface mesh by a simpler indexed face set or polyhedral surface mesh. 
 
-Given an input surface triangle mesh, %VSA leverages a discrete clustering algorithm to approximate it by a set of local simple shapes referred to as proxies. Each cluster is represented as a connected set of triangles of the input mesh, and the output mesh is constructed by generating a triangle mesh approximation of the clusters. 
-By default the proxies are planar, and the algorithm design is generic for future extensions to non-planar proxies. 
+Given an input surface triangle mesh, %VSA leverages a discrete clustering algorithm to approximate it by a set of local simple shapes referred to as proxies. Each cluster is represented as a connected set of triangles of the input mesh, and the output mesh is constructed by generating a triangle mesh approximation of the clusters.
+By default the proxies are planar, and the algorithm design is generic for future extensions to non-planar proxies \cgalCite{cgal:ywly-vmsqs-12}.
 The approximation error is one-sided, defined between the clusters and their associated proxies. Two error metrics (\f$ \mathcal{L}^2 \f$, \f$ \mathcal{L}^{2,1} \f$) are provided via the classes `CGAL::VSA::L2_metric` and `CGAL::VSA::L21_metric`, and the algorithm design is generic to other user-defined metrics.
 
 \cgalFigureBegin{Approximation_teaser, teaser.png}

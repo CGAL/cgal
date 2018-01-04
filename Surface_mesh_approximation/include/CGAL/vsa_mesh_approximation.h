@@ -20,8 +20,9 @@ namespace VSA {
 
 /*!
  * \ingroup PkgTSMA
- * @brief variational shape approximation of a triangle surface mesh.
- * This function approximates the input mesh by fitting it with proxies.
+ * @brief Function approximates the input mesh by fitting it with proxies.
+ * This function use the Variational Shape Approximation algorithm to approximate the shape of a triangle surface mesh.
+ * With indexed triangles as output.
  *
  * @tparam TriangleMesh model of `FaceGraph`.
  *         The descriptor types `boost::graph_traits<TriangleMesh>::%face_descriptor`
@@ -29,15 +30,15 @@ namespace VSA {
  *         models of `Hashable`.
  *         If `TriangleMesh` has an internal property map for `CGAL::face_index_t`,
  *         and no `face_index_map` is given as a named parameter, then the internal one should be initialized.
- * @tparam AnchorPointOutItr a class model of `OutputIterator` with `GeomTraits::Point_3` value type
- * @tparam IndexedTrisOutItr a class model of `OutputIterator` with `std::vector<std::size_t>` value type
+ * @tparam AnchorPointOutputIterator a class model of `OutputIterator` with `GeomTraits::Point_3` value type
+ * @tparam IndexedTriangleOutputIterator a class model of `OutputIterator` with `std::vector<std::size_t>` value type
  * @tparam NamedParameters a sequence of \ref namedparameters
  *
  * @param tm_in a triangle surface mesh to be approximated
  * @param[out] apts_out_itr output iterator over anchor points 
  * @param[out] tris_out_itr output iterator over indexed triangles (triplets of integers referring to anchor points)
  * @param np optional sequence of \ref namedparameters among the ones listed below
- * @return true if the indexed triangles represent a valid 2-manifold, oriented surface mesh, and false otherwise. 
+ * @return `true` if the indexed triangles represent a valid 2-manifold, oriented surface mesh, and `false` otherwise. 
   *
  * \cgalNamedParamsBegin
  *  \cgalParamBegin{geom_traits} a geometric traits class instance, model of `Kernel`.
@@ -70,12 +71,12 @@ namespace VSA {
  * \cgalNamedParamsEnd
  */
 template <typename TriangleMesh,
-  typename AnchorPointOutItr,
-  typename IndexedTrisOutItr,
+  typename AnchorPointOutputIterator,
+  typename IndexedTriangleOutputIterator,
   typename NamedParameters>
 bool mesh_approximation(const TriangleMesh &tm_in,
-  AnchorPointOutItr apts_out_itr,
-  IndexedTrisOutItr tris_out_itr,
+  AnchorPointOutputIterator apts_out_itr,
+  IndexedTriangleOutputIterator tris_out_itr,
   const NamedParameters &np)
 {
   using boost::get_param;

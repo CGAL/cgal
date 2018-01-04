@@ -52,7 +52,7 @@ public:
            GeomTraits::Point_3 as value type
  * @tparam GeomTraits geometric traits
  * @tparam PlaneProxy a model of `PlaneProxy`
- * @tparam with_area_weighing set true to activate area weighing
+ * @tparam with_area_weighing set `true` to activate area weighing
  */
 template <typename TriangleMesh,
   typename VertexPointMap
