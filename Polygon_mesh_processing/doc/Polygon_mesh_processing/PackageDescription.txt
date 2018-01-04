@@ -109,6 +109,8 @@ and provides a list of the parameters that are used in this package.
 - `CGAL::Polygon_mesh_processing::is_outward_oriented()`
 - `CGAL::Polygon_mesh_processing::reverse_face_orientations()`
 - `CGAL::Polygon_mesh_processing::orient_polygon_soup()`
+- `CGAL::Polygon_mesh_processing::orient()`
+- `CGAL::Polygon_mesh_processing::orient_to_bound_a_volume()`
 
 ## Combinatorial Repairing Functions ##
 - \link PMP_repairing_grp `CGAL::Polygon_mesh_processing::stitch_borders()` \endlink
