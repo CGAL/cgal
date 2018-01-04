@@ -193,10 +193,11 @@ int main(int argc, char * argv[])
       // The position property map can be omitted here as we use iterators over Point_3 elements.
       std::ifstream stream(input_filename.c_str());
       if (!stream ||
-          !CGAL::read_xyz_points_and_normals(
+          !CGAL::read_xyz_points(
                                 stream,
                                 std::back_inserter(points),
-                                CGAL::make_normal_of_point_with_normal_map(PointList::value_type())))
+                                CGAL::parameters::normal_map
+                                (CGAL::make_normal_of_point_with_normal_map(PointList::value_type()))))
       {
         std::cerr << "Error: cannot read file " << input_filename << std::endl;
         return EXIT_FAILURE;
@@ -294,8 +295,7 @@ int main(int argc, char * argv[])
     std::cerr << "Surface meshing...\n";
 
     // Computes average spacing
-    FT average_spacing = CGAL::compute_average_spacing<CGAL::Sequential_tag>(points.begin(), points.end(),
-                                                       6 /* knn = 1 ring */);
+    FT average_spacing = CGAL::compute_average_spacing<CGAL::Sequential_tag>(points, 6 /* knn = 1 ring */);
 
     // Gets one point inside the implicit surface
     Point inner_point = function.get_inner_point();
