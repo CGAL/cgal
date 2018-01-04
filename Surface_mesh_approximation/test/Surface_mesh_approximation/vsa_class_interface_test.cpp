@@ -55,7 +55,7 @@ int main()
   std::cout << "random seeding and run" << std::endl;
   approx.seeding(CGAL::VSA::Random, 10);
   approx.run(10);
-  if (approx.get_proxies_size() != 10)
+  if (approx.proxies_size() != 10)
     return EXIT_FAILURE;
 
   // incremental add and run to convergence
@@ -63,20 +63,20 @@ int main()
   approx.add_proxies_furthest(3, 5);
   if (approx.run_to_converge(0.1))
     std::cout << "Converged." << std::endl;
-  if (approx.get_proxies_size() != 13)
+  if (approx.proxies_size() != 13)
     return EXIT_FAILURE;
 
   std::cout << "hierarchical add and run" << std::endl;
   approx.add_proxies_error_diffusion(3);
   approx.run(10);
-  if (approx.get_proxies_size() != 16)
+  if (approx.proxies_size() != 16)
     return EXIT_FAILURE;
 
   // merge and teleport the proxies from local minimal
   std::cout << "teleport" << std::endl;
   approx.teleport_proxies(3);
   approx.run(10);
-  if (approx.get_proxies_size() != 16)
+  if (approx.proxies_size() != 16)
     return EXIT_FAILURE;
 
   // split proxy 0 into 2 proxies
@@ -84,7 +84,7 @@ int main()
   std::cout << "spliting" << std::endl;
   if (!approx.split(0, 2, 10))
     return EXIT_FAILURE;
-  if (approx.get_proxies_size() != 17)
+  if (approx.proxies_size() != 17)
     return EXIT_FAILURE;
 
   // extract the approximation polyhedron
@@ -97,45 +97,45 @@ int main()
 
   // get outputs
   std::cout << "get outputs" << std::endl;
-  approx.get_proxy_map(proxy_pmap);
+  approx.proxy_map(proxy_pmap);
 
-  for (std::size_t i = 0; i < approx.get_proxies_size(); ++i) {
+  for (std::size_t i = 0; i < approx.proxies_size(); ++i) {
     std::list<Facet_handle> patch;
-    approx.get_proxy_region(i, std::back_inserter(patch));
+    approx.proxy_region(i, std::back_inserter(patch));
   }
 
   std::vector<Plane_proxy> proxies;
-  approx.get_proxies(std::back_inserter(proxies));
+  approx.proxies(std::back_inserter(proxies));
 
   std::vector<Point> anchor_pos;
-  approx.get_anchor_points(std::back_inserter(anchor_pos));
+  approx.anchor_points(std::back_inserter(anchor_pos));
 
   std::vector<Polyhedron::Vertex_handle> anchor_vtx;
-  approx.get_anchor_vertices(std::back_inserter(anchor_vtx));
+  approx.anchor_vertices(std::back_inserter(anchor_vtx));
 
   std::vector<std::vector<std::size_t> > tris;
-  approx.get_indexed_triangles(std::back_inserter(tris));
+  approx.indexed_triangles(std::back_inserter(tris));
 
   std::vector<std::vector<std::size_t> > boundary;
-  approx.get_indexed_boundary_polygons(std::back_inserter(boundary));
+  approx.indexed_boundary_polygons(std::back_inserter(boundary));
 
   const FT drop(0.001);
   const std::size_t iterations = 5;
   std::cout << "rebuild and hierarchical seeding" << std::endl;
   approx.rebuild();
-  if (approx.get_proxies_size() != 0)
+  if (approx.proxies_size() != 0)
     return EXIT_FAILURE;
   approx.seeding(CGAL::VSA::Hierarchical, boost::none, drop, iterations);
   approx.run(10);
-  std::cout << "#proxies " << approx.get_proxies_size() << std::endl;
+  std::cout << "#proxies " << approx.proxies_size() << std::endl;
 
   std::cout << "rebuild and incremental seeding" << std::endl;
   approx.rebuild();
-  if (approx.get_proxies_size() != 0)
+  if (approx.proxies_size() != 0)
     return EXIT_FAILURE;
   approx.seeding(CGAL::VSA::Incremental, boost::none, drop, iterations);
   approx.run(10);
-  std::cout << "#proxies " << approx.get_proxies_size() << std::endl;
+  std::cout << "#proxies " << approx.proxies_size() << std::endl;
 
   return EXIT_SUCCESS;
 }

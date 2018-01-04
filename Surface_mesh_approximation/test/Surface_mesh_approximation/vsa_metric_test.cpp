@@ -101,7 +101,7 @@ int main()
   std::cout << "random seeding and run" << std::endl;
   approx.seeding(CGAL::VSA::Random, 20);
   approx.run(20);
-  if (approx.get_proxies_size() != 20)
+  if (approx.proxies_size() != 20)
     return EXIT_FAILURE;
 
   // extract the approximation polyhedron

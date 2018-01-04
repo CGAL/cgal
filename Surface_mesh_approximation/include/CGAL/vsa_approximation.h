@@ -912,7 +912,7 @@ public:
    * @param[out] facet_proxy_map facet proxy index map
    */
   template <typename FacetProxyMap>
-  void get_proxy_map(FacetProxyMap &facet_proxy_map) const {
+  void proxy_map(FacetProxyMap &facet_proxy_map) const {
     BOOST_FOREACH(face_descriptor f, faces(*m_ptm))
       facet_proxy_map[f] = get(m_fproxy_map, f);
   }
@@ -924,7 +924,7 @@ public:
    * @param out_itr output iterator
    */
   template <typename OutputIterator>
-  void get_proxy_region(const std::size_t px_idx, OutputIterator out_itr) const {
+  void proxy_region(const std::size_t px_idx, OutputIterator out_itr) const {
     if (px_idx >= m_proxies.size())
       return;
 
@@ -939,7 +939,7 @@ public:
    * @param out_itr output iterator
    */
   template <typename OutputIterator>
-  void get_proxies(OutputIterator out_itr) const {
+  void proxies(OutputIterator out_itr) const {
     BOOST_FOREACH(const Proxy_wrapper &pxw, m_proxies)
       *out_itr++ = pxw.px;
   }
@@ -951,7 +951,7 @@ public:
    * @param out_itr output iterator
    */
   template <typename OutputIterator>
-  void get_wrapped_proxies(OutputIterator out_itr) const {
+  void wrapped_proxies(OutputIterator out_itr) const {
     BOOST_FOREACH(const Proxy_wrapper &pxw, m_proxies)
       *out_itr++ = pxw;
   }
@@ -961,7 +961,7 @@ public:
    * @brief Get the proxies size.
    * @return number of proxies
    */
-  std::size_t get_proxies_size() const { return m_proxies.size(); }
+  std::size_t proxies_size() const { return m_proxies.size(); }
 
   /*!
    * @brief Get the anchor points, which have the area-averaged position of the projected anchor vertex points on the incident proxies.
@@ -969,7 +969,7 @@ public:
    * @param out_itr output iterator
    */
   template <typename OutputIterator>
-  void get_anchor_points(OutputIterator out_itr) const {
+  void anchor_points(OutputIterator out_itr) const {
     BOOST_FOREACH(const Anchor &a, m_anchors)
       *out_itr++ = a.pos;
   }
@@ -980,7 +980,7 @@ public:
    * @param out_itr output iterator
    */
   template <typename OutputIterator>
-  void get_anchor_vertices(OutputIterator out_itr) const {
+  void anchor_vertices(OutputIterator out_itr) const {
     BOOST_FOREACH(const Anchor &a, m_anchors)
       *out_itr++ = a.vtx;
   }
@@ -992,7 +992,7 @@ public:
    * @param out_itr output iterator
    */
   template <typename OutputIterator>
-  void get_indexed_triangles(OutputIterator out_itr) const {
+  void indexed_triangles(OutputIterator out_itr) const {
     BOOST_FOREACH(const std::vector<std::size_t> &t, m_tris)
       *out_itr++ = t;
   }
@@ -1002,7 +1002,7 @@ public:
    * @tparam OutputIterator output iterator with std::vector<std::size_t> as value type
    */
   template <typename OutputIterator>
-  void get_indexed_boundary_polygons(OutputIterator out_itr) const {
+  void indexed_boundary_polygons(OutputIterator out_itr) const {
     BOOST_FOREACH(const Boundary_cycle &bcycle, m_bcycles) {
       std::vector<std::size_t> plg;
       halfedge_descriptor he = bcycle.he_head;

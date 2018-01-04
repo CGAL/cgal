@@ -69,7 +69,7 @@ int main()
   std::cout << "Random seeding by number." << std::endl;
   std::srand(static_cast<unsigned int>(std::time(0)));
   approx.seeding(CGAL::VSA::Random, 50);
-  if (approx.get_proxies_size() != 50)
+  if (approx.proxies_size() != 50)
     return EXIT_FAILURE;
   approx.run(10);
 
@@ -96,9 +96,9 @@ int main()
   for (Facet_iterator fitr = mesh.facets_begin(); fitr != mesh.facets_end(); ++fitr)
     internal_fidxmap[fitr] = 0;
   Facet_proxy_map fproxymap(internal_fidxmap);
-  approx.get_proxy_map(fproxymap);
+  approx.proxy_map(fproxymap);
   std::vector<Plane_proxies> proxies;
-  approx.get_proxies(std::back_inserter(proxies));
+  approx.proxies(std::back_inserter(proxies));
 
   CGAL::Bbox_3 bbox = CGAL::bbox_3(mesh.points_begin(), mesh.points_end());
   const FT ymin = bbox.ymin(), ymax = bbox.ymax(), yrange = ymax - ymin;

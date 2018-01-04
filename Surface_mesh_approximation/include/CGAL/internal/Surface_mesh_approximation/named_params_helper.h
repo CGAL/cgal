@@ -75,7 +75,7 @@ public:
 // output helper functions
 template <typename Approximation, typename FacetProxyMap>
 void get_proxy_map(const Approximation &approx, FacetProxyMap fproxymap) {
-  approx.get_proxy_map(fproxymap);
+  approx.proxy_map(fproxymap);
 }
 
 template <typename Approximation>
@@ -83,7 +83,7 @@ void get_proxy_map(const Approximation &, internal_np::vsa_no_output_t) {}
 
 template <typename Approximation, typename OutputIterator>
 void get_anchor_vertices(const Approximation &approx, OutputIterator out_itr) {
-  approx.get_anchor_vertices(out_itr);
+  approx.anchor_vertices(out_itr);
 }
 
 template <typename Approximation>
@@ -91,7 +91,7 @@ void get_anchor_vertices(const Approximation &, internal_np::vsa_no_output_t) {}
 
 template <typename Approximation, typename OutputIterator>
 void get_proxies(const Approximation &approx, OutputIterator out_itr) {
-  approx.get_proxies(out_itr);
+  approx.proxies(out_itr);
 }
 
 template <typename Approximation>

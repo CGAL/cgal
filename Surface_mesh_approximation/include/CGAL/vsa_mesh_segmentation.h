@@ -112,7 +112,7 @@ void mesh_segmentation(const TriangleMesh &tm_in,
     << ", #relx = " << nb_of_relaxations << std::endl;
 #endif
 
-  approx.get_proxy_map(segment_ids);
+  approx.proxy_map(segment_ids);
 
   typedef typename boost::lookup_named_param_def <
     internal_np::proxies_t,

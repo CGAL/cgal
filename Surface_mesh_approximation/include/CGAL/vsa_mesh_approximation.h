@@ -117,7 +117,7 @@ bool mesh_approximation(const TriangleMesh &tm_in,
   approx.run(nb_of_iterations);
 
 #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
-  std::cout << "#px = " << approx.get_proxies_size()
+  std::cout << "#px = " << approx.proxies_size()
     << ", #itr = " << nb_of_iterations
     << ", #relx = " << nb_of_relaxations << std::endl;
 #endif
@@ -137,10 +137,10 @@ bool mesh_approximation(const TriangleMesh &tm_in,
   const bool is_manifold = approx.extract_mesh(*tm_out, chord_error);
 
   // get anchor points
-  approx.get_anchor_points(apts_out_itr);
+  approx.anchor_points(apts_out_itr);
 
   // get indexed triangles
-  approx.get_indexed_triangles(tris_out_itr);
+  approx.indexed_triangles(tris_out_itr);
 
   typedef typename boost::lookup_named_param_def<
     internal_np::anchor_vertices_t,

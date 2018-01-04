@@ -50,10 +50,10 @@ bool test_shape(const char *file_name, const std::size_t target_num_proxies)
     approx.run(num_iterations);
   }
 
-  if (approx.get_proxies_size() != target_num_proxies) {
+  if (approx.proxies_size() != target_num_proxies) {
     std::cout << "#targeted - #result "
       << target_num_proxies << ' '
-      << approx.get_proxies_size() << std::endl;
+      << approx.proxies_size() << std::endl;
 
     std::cout << "Failed." << std::endl;
     return false;

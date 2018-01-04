@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
     static_cast<CGAL::VSA::Seeding>(method), boost::none, error_drop, nb_relaxations);
   t.stop();
   std::cerr << "seeding time " << t.time() << " sec." << std::endl;
-  std::cerr << "#proxies " << approx.get_proxies_size() << std::endl;
+  std::cerr << "#proxies " << approx.proxies_size() << std::endl;
 
   return EXIT_SUCCESS;
 }
