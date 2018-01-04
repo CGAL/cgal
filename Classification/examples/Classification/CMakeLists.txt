@@ -19,12 +19,14 @@ include( ${CGAL_USE_FILE} )
 
 
 # Boost and its components
-find_package( Boost REQUIRED OPTIONAL_COMPONENTS serialization iostreams)
+find_package( Boost REQUIRED )
 
 if ( NOT Boost_FOUND )
   message(STATUS "This project requires the Boost library, and will not be compiled.")
   return()  
 endif()
+
+find_package( Boost OPTIONAL_COMPONENTS serialization iostreams)
 
 find_package( TBB )
 
