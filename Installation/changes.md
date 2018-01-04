@@ -73,6 +73,11 @@ Release date: April 2018
     -   `CGAL::Polygon_mesh_processing::orient()`
     -   `CGAL::Polygon_mesh_processing::orient_to_bound_a_volume()`
 
+-   Added a new function for intersection tests between triangle meshes and/or polylines or range of polylines, and another one to report all the
+    pairs of meshes intersecting from a range of meshes:
+    -   `CGAL::Polygon_mesh_processing::do_intersect()`
+    -   `CGAL::Polygon_mesh_processing::intersecting_meshes()`
+
 -   Added new functions for feature detection and feature-guided
     segmentation:
     -   `CGAL::Polygon_mesh_processing::detect_sharp_edges()`
@@ -96,6 +101,8 @@ Release date: April 2018
 -   Add helper function `CGAL::expand_face_selection_for_removal` that
     expands a face selection to avoid creating a non manifold mesh when
     removing the selected faces.
+
+-   Add support for dynamic property maps
 
 ### 2D Arrangements
 

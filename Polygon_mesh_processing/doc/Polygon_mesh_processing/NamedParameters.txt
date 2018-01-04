@@ -301,6 +301,13 @@ Parameter used in orientation functions to choose between an outward or inward o
 \n
 \b Type : `bool` \n
 \b Default value is `true`
+
+\cgalNPBegin{do_overlap_test_of_bounded_sides} \anchor PMP_do_overlap_test_of_bounded_sides
+Parameter used in intersection test functions to indicate whether overlapping tests of bounded sides
+of close meshes should be done in addition to surface intersection tests.
+\n
+\b Type : `bool` \n
+\b Default value is `false`
 \cgalNPEnd
 
 \cgalNPTableEnd
