@@ -113,7 +113,6 @@ and their associated classes:
 - `CGAL::perturb_mesh_3`
 - `CGAL::lloyd_optimize_mesh_3`
 - `CGAL::odt_optimize_mesh_3`
-- `CGAL::facets_in_complex_3_to_triangle_mesh()`
 
 ## CGAL::parameters Functions ##
 

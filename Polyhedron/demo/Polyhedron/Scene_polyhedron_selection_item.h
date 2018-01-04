@@ -785,10 +785,11 @@ public:
   {
     CGAL::detect_sharp_edges(polyhedron(), angle);
 
-    boost::property_map<Face_graph,CGAL::edge_is_feature_t>::type is_feature = get(CGAL::edge_is_feature,*polyhedron());
+    boost::property_map<Face_graph,CGAL::halfedge_is_feature_t>::type is_feature = get(CGAL::halfedge_is_feature,*polyhedron());
     BOOST_FOREACH(fg_edge_descriptor e, edges(*polyhedron()))
     {
-      if (get(is_feature,e))
+      fg_halfedge_descriptor h = halfedge(e, *polyhedron());
+      if (get(is_feature,h))
         selected_edges.insert(e);
     }
     invalidateOpenGLBuffers();

@@ -22,7 +22,7 @@ public:
 specifies the dimension of the spheres you want to 
 compute the minsphere of. 
 */ 
-static const int D;
+typedef unspecified_type D; 
 
 /// @} 
 

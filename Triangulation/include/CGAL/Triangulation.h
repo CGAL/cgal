@@ -183,12 +183,6 @@ public:
     typedef boost::filter_iterator<Finiteness_predicate, Facet_iterator>
         Finite_facet_iterator;
 
-    //Tag to distinguish Delaunay from regular triangulations
-    typedef Tag_false                               Weighted_tag;
-
-    // Tag to distinguish periodic triangulations from others
-    typedef Tag_false                               Periodic_tag;
-
 protected: // DATA MEMBERS
 
     Triangulation_ds                            tds_;

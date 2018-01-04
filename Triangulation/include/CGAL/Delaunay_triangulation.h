@@ -90,10 +90,11 @@ public: // PUBLIC NESTED TYPES
   //Tag to distinguish triangulations with weighted_points
   typedef Tag_false                                 Weighted_tag;
 
-  // Tag to distinguish periodic triangulations from others
-  typedef Tag_false                                 Periodic_tag;
+protected: // DATA MEMBERS
+
 
 public:
+
     typedef typename Base::Rotor Rotor;
     using Base::maximal_dimension;
     using Base::are_incident_full_cells_valid;

@@ -840,7 +840,6 @@ public:
         vertices_freelist_ = (size_type)vconn_[Vertex_index(vertices_freelist_)].halfedge_;
         --removed_vertices_;
         vremoved_[Vertex_index(idx)] = false;
-        vprops_.reset(Vertex_index(idx));
         return Vertex_index(idx);
       } else {
         vprops_.push_back();
@@ -872,7 +871,6 @@ public:
         edges_freelist_ = (size_type)hconn_[Halfedge_index(edges_freelist_)].next_halfedge_;
         --removed_edges_;
         eremoved_[Edge_index(Halfedge_index(idx))] = false;
-        hprops_.reset(Halfedge_index(idx));
         return Halfedge_index(idx);
       } else {
         eprops_.push_back();
@@ -908,7 +906,6 @@ public:
         size_type idx = faces_freelist_;
         faces_freelist_ = (size_type)fconn_[Face_index(faces_freelist_)].halfedge_;
         --removed_faces_;
-        fprops_.reset(Face_index(idx));
         fremoved_[Face_index(idx)] = false;
         return Face_index(idx);
       } else {

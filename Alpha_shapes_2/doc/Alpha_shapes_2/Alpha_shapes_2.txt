@@ -120,44 +120,24 @@ points cannot be inserted or removed.
 
 We currently do not specify concepts for the underlying triangulation
 type. Models that work for a basic alpha shape are the classes
-`Delaunay_triangulation_2`, `Periodic_2_Delaunay_triangulation_2`, and
+`Delaunay_triangulation_2` and 
 `Triangulation_hierarchy_2` templated with a Delaunay
 triangulation. A model that works for a weighted alpha shape is
 the class `Regular_triangulation_2`.
-
-\subsection AlphaShape2D_ConceptAndModelsAlphaShapes Alpha Shapes
 
 The triangulation needs a geometric traits class as argument.
 The requirements of this class are described in the concepts `AlphaShapeTraits_2`
 in the non-weighted case and `WeightedAlphaShapeTraits_2` in the weighted case.
 All \cgal kernels are models of both concepts.
 
-The triangulation data structure of the triangulation
-has to be a model of the concept `TriangulationDataStructure_2`,
-and it must be parameterized with
+There are no requirements on the triangulation data structure.
+However it must be parameterized with 
 vertex and face classes which are models of the concepts
 `AlphaShapeVertex_2` and `AlphaShapeFace_2`.
 The classes `Alpha_shape_vertex_base_2<Gt, Vb>` and `Alpha_shape_face_base_2<Gt, Fb>`
-are models of these concepts and can be used for all type of alpha shapes,
+are models of these concepts and can be used for either type of alpha shapes,
 provided that the template parameters `Vb` and `Fb` are appropriately chosen,
 as we shall see in the following section.
-
-\subsection AlphaShape2D_ConceptAndModelsTDS Triangulation data structure
-
-Additional requirements are put when using weighted or
-periodic triangulations as underlying triangulation:
-<ul>
-<li> When using a weighted triangulation (`Regular_triangulation_2`), the vertex
-and face classes must respectively be models to both `AlphaShapeVertex_2` and
-`RegularTriangulationVertexBase_2`, and to both
-`AlphaShapeFace_2` and `RegularTriangulationFaceBase_2`
-(see example: \ref I1_SectWeightedAS2D).
-<li> When using a periodic triangulation (`Periodic_2_Delaunay_triangulation_2`),
-the vertex and face classes must respectively be models to both `AlphaShapeVertex_2`
-and `Periodic_2TriangulationVertexBase_2`,
-and to both `AlphaShapeFace_2` and `Periodic_2TriangulationFaceBase_2`
-(see example: \ref AlphaShape_2DExampleForPeriodicAlphaShapes).
-</ul>
 
 \section Alpha_shapes_2Examples Examples
 
@@ -198,26 +178,6 @@ Note that there is no special weighted alpha shape class.
 
 The example below illustrates how to construct a weighted alpha shape.
 \cgalExample{Alpha_shapes_2/ex_weighted_alpha_shapes_2.cpp}
-
-\subsection AlphaShape_2DExampleForPeriodicAlphaShapes Example for Periodic Alpha Shapes
-The following example shows how to use a periodic Delaunay
-triangulation as underlying triangulation for the alpha shape computation.
-
-In order to define the original domain and to benefit from the
-built-in heuristic optimizations of the periodic triangulation computation,
-it is recommended to first construct the triangulation and
-then construct the alpha shape from it. The alpha
-shape constructor that takes a point range can be used as well but in
-this case the original domain cannot be specified and the default unit
-cube will be chosen and no optimizations will be used.
-
-It is also recommended to switch the triangulation to 1-sheeted
-covering if possible. Note that a periodic triangulation in 9-sheeted
-covering space is degenerate. In this case, an exact constructions
-kernel needs to be used to compute the alpha shapes. Otherwise the
-results will suffer from round-off problems.
-
-\cgalExample{Alpha_shapes_2/ex_periodic_alpha_shapes_2.cpp}
 
 */ 
 } /* namespace CGAL */

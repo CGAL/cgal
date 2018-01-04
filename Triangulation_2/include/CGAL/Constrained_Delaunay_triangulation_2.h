@@ -90,12 +90,6 @@ public:
   typedef typename Ctr::Less_edge less_edge;
   typedef typename Ctr::Edge_set Edge_set;
 
-  //Tag to distinguish Delaunay from regular triangulations
-  typedef Tag_false Weighted_tag;
-
-  // Tag to distinguish periodic triangulations from others
-  typedef Tag_false Periodic_tag;
-
 #ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
   using Ctr::geom_traits;
   using Ctr::number_of_vertices;

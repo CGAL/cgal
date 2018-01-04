@@ -22,7 +22,9 @@
 
 #include <CGAL/license/Periodic_2_triangulation_2.h>
 
+
 #include <CGAL/Profile_counter.h>
+#include <CGAL/internal/Static_filters/Orientation_2.h>
 #include <CGAL/internal/Static_filters/Static_filter_error.h>
 #include <CGAL/internal/Static_filters/tools.h>
 
@@ -87,21 +89,17 @@ namespace internal
 namespace Static_filters_predicates
 {
 
-template < class K, class Orientation_2_base >
-class Periodic_2_orientation_2
-  : public Orientation_2_base
+template < typename K_base >
+class Periodic_2_orientation_2 : public K_base::Orientation_2
 {
-  typedef Orientation_2_base                      Base;
+  typedef typename K_base::FT FT;
+  typedef typename K_base::Point_2          Point_2;
+  typedef typename K_base::Vector_2         Vector_2;
+  typedef typename K_base::Circle_2         Circle_2;
+  typedef typename K_base::Offset_2         Offset_2;
+  typedef typename K_base::Iso_rectangle_2  Iso_rectangle_2;
 
-public:
-  typedef K                                       Kernel;
-
-  typedef typename Kernel::FT FT;
-  typedef typename Kernel::Point_2                Point_2;
-  typedef typename Kernel::Vector_2               Vector_2;
-  typedef typename Kernel::Circle_2               Circle_2;
-  typedef typename Kernel::Iso_rectangle_2        Iso_rectangle_2;
-  typedef typename Kernel::Periodic_2_offset_2    Offset_2;
+  typedef typename K_base::Orientation_2    Base;
 
 public:
   const Iso_rectangle_2 * const _dom;
@@ -109,10 +107,11 @@ public:
 public:
   typedef typename Base::result_type  result_type;
 
+  template <class EX, class AP>
   Periodic_2_orientation_2(const Iso_rectangle_2 * const dom,
-                           const Orientation_2_base& o2b)
-    : Base(o2b), _dom(dom)
-  { }
+                           const EX * dom_e, const AP * dom_f) : Base(dom_e, dom_f), _dom(dom)
+  {
+  }
 
 #ifndef CGAL_CFG_MATCHING_BUG_6
   using Base::operator();

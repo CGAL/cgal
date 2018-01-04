@@ -43,8 +43,7 @@ class Scene_intersection_item : public CGAL::Three::Scene_item
   Q_OBJECT
 public :
   Scene_intersection_item(Scene_c3t3_item* parent)
-  :CGAL::Three::Scene_item(NumberOfBuffers,NumberOfVaos),
-    is_fast(false)
+  :CGAL::Three::Scene_item(NumberOfBuffers,NumberOfVaos)
   {
     setParent(parent);
   }
@@ -131,8 +130,6 @@ public :
   //Displays the item
   void draw(CGAL::Three::Viewer_interface* viewer) const
   {
-    if(is_fast)
-      return;
     vaos[Facets]->bind();
     program = getShaderProgram(PROGRAM_C3T3_TETS);
     attribBuffers(viewer, PROGRAM_C3T3_TETS);
@@ -147,8 +144,6 @@ public :
   }
   void drawEdges(CGAL::Three::Viewer_interface* viewer) const
   {
-    if(is_fast)
-      return;
     vaos[Lines]->bind();
     program = getShaderProgram(PROGRAM_NO_SELECTION);
     attribBuffers(viewer, PROGRAM_NO_SELECTION);
@@ -158,12 +153,6 @@ public :
     program->release();
     vaos[Lines]->release();
   }
-
-  void setFast(bool b)
-  {
-    is_fast = b;
-  }
-
   void addTriangle(const Tr::Bare_point& pa, const Tr::Bare_point& pb,
                    const Tr::Bare_point& pc, const CGAL::Color color)
   {
@@ -252,7 +241,6 @@ private:
   mutable std::vector<float> *colors;
   mutable std::vector<float> *barycenters;
   mutable QOpenGLShaderProgram *program;
-  mutable bool is_fast;
 }; //end of class Scene_triangle_item
 
 
@@ -913,17 +901,16 @@ void Scene_c3t3_item::draw(CGAL::Three::Viewer_interface* viewer) const {
   vaos[Scene_c3t3_item_priv::Facets]->release();
 
   if(d->show_tetrahedra){
-    if(!d->frame->isManipulated())
-      d->intersection->setFast(false);
-    else
-      d->intersection->setFast(true);
-
     if(!d->frame->isManipulated() && !d->are_intersection_buffers_filled)
     {
+      if(!d->intersection->visible())
+        d->intersection->setVisible(true);
       ncthis->d->computeIntersections();
       d->intersection->initialize_buffers(viewer);
       d->are_intersection_buffers_filled = true;
     }
+    else if(d->frame->isManipulated() && d->intersection->visible())
+      d->intersection->setVisible(false);
   }
 
   if(d->spheres_are_shown)
@@ -992,16 +979,16 @@ void Scene_c3t3_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
   vaos[Scene_c3t3_item_priv::Edges]->release();
 
   if(d->show_tetrahedra){
-    if(!d->frame->isManipulated())
-      d->intersection->setFast(false);
-    else
-      d->intersection->setFast(true);
     if(!d->frame->isManipulated() && !d->are_intersection_buffers_filled)
     {
+      if(!d->intersection->visible())
+        d->intersection->setVisible(true);
       ncthis->d->computeIntersections();
       d->intersection->initialize_buffers(viewer);
       d->are_intersection_buffers_filled = true;
     }
+    else if(d->frame->isManipulated() && d->intersection->visible())
+      d->intersection->setVisible(false);
   }
   if(d->spheres_are_shown)
   {

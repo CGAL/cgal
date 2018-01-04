@@ -146,10 +146,7 @@ namespace CGAL {
     typedef typename Gt::Object_3      Object;
 
     //Tag to distinguish Delaunay from regular triangulations
-    typedef Tag_true                   Weighted_tag;
-
-    // Tag to distinguish periodic triangulations from others
-    typedef Tag_false                  Periodic_tag;
+    typedef Tag_true   Weighted_tag;
 
 #ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
     using Tr_Base::geom_traits;

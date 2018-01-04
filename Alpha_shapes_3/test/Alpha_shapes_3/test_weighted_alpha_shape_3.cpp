@@ -12,15 +12,18 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
+// $URL$ 
+// $Id$ 
+// $Date$
+// 
+//
 // Author(s)     : Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-#include <CGAL/Alpha_shape_3.h>
-#include <CGAL/Alpha_shape_cell_base_3.h>
-#include <CGAL/Alpha_shape_vertex_base_3.h>
-#include <CGAL/Regular_triangulation_3.h>
 #include <CGAL/Triangulation_data_structure_3.h>
+#include <CGAL/Regular_triangulation_3.h>
+#include <CGAL/Alpha_shape_3.h>
 
 #include <CGAL/_test_weighted_alpha_shape_3.h>
 

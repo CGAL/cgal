@@ -36,10 +36,7 @@ find_package( OpenMesh QUIET )
 if ( OpenMesh_FOUND )
 include( UseOpenMesh )
 else()
-
-  message(STATUS "NOTICE: These examples require OpenMesh and will not be compiled.")
-  return()
-
+  message(STATUS "Examples that use OpenMesh will not be compiled.")
 endif()
 
 # include for local directory

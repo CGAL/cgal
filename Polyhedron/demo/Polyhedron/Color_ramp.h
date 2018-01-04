@@ -37,8 +37,7 @@ class SCENE_COLOR_RAMP_EXPORT Color_ramp
 {
 public :
 	Color_ramp();
-        Color_ramp(const double r0, const double r1, const double g0, const double g1,
-                   const double b0, const double b1);
+	~Color_ramp() {}
 
 public :
   inline double r(double v) const;
@@ -48,7 +47,6 @@ public :
 	void build_red();
 	void build_blue();
         void build_thermal();
-
   void print() const;
 
 private :

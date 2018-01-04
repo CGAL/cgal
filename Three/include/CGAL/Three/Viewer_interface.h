@@ -28,7 +28,6 @@
 #include <QWidget>
 #include <QPoint>
 #include <QOpenGLFunctions_2_1>
-#include <QOpenGLFunctions_4_3_Compatibility>
 #include <CGAL/Qt/CreateOpenGLContext.h>
 // forward declarations
 class QWidget;
@@ -72,8 +71,7 @@ public:
    PROGRAM_CUTPLANE_SPHERES,    //! Used to render the spheres of an item with a cut plane.
    PROGRAM_SPHERES,             //! Used to render one or several spheres.
    PROGRAM_C3T3_TETS,           //! Used to render the tetrahedra of the intersection of a c3t3_item.
-   PROGRAM_FLAT,                /** Used to render flat shading without pre computing normals*/
-   PROGRAM_OLD_FLAT,            /** Used to render flat shading without pre computing normals without geometry shader*/
+   PROGRAM_FLAT,                //! Used to render flat shading without pre computing normals
    NB_OF_PROGRAMS               //! Holds the number of different programs in this enum.
   };
 
@@ -148,17 +146,6 @@ public:
   //! @see OpenGL_program_IDs
   //!
   virtual void attribBuffers(int program_name) const = 0;
-  /*! Enables the clipping box. Each Vector4 of `box` contains the equation of a plane of the clipping box.
-   * Everything that is located on the positive side of one of those planes will not be displayed.
-   * @see disableCLippingBox()
-   */
-  virtual void enableClippingBox(QVector4D box[6])=0;
-
-  /*!
-   * Disables the clipping box. The six clipping planes will be ignored.
-   * @see enableClippingBox()
-   */
-  virtual void disableClippingBox()= 0;
 
   //! \brief Returns a program according to name.
   //!
@@ -234,16 +221,7 @@ public Q_SLOTS:
 //! \param animation_duration is the duration of the animation of the movement.
   virtual bool moveCameraToCoordinates(QString target,
                                        float animation_duration = 0.5f) = 0;
-public:
-  //! Is used to know if the openGL context is 4.3 or 2.1.
-  //! @returns `true` if the context is 4.3.
-  //! @returns `false` if the context is 2.1.
-  virtual bool isOpenGL_4_3() const = 0;
-  //! Gives acces to recent openGL(4.3) features, allowing use of things like
-  //! Geometry Shaders or Depth Textures.
-  //! @returns a pointer to an initialized  QOpenGLFunctions_4_3_Compatibility if `isOpenGL_4_3()` is `true`
-  //! @returns NULL if `isOpenGL_4_3()` is `false`
-  virtual QOpenGLFunctions_4_3_Compatibility* openGL_4_3_functions() = 0;
+
 }; // end class Viewer_interface
 }
 }

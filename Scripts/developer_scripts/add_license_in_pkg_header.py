@@ -36,7 +36,7 @@ def add_license_include_in_file(package_name, fname):
     if not inserted:
       print("Warning: file "+fname+" was not modified (no CGAL_*_H defined)")
 
-if len(argv)==1:
+if len(argv)==0:
   print("Usage: "+argv[0]+" Package_directory [Package_name=Package_directory]\n")
 else:
   package_dir=argv[1]

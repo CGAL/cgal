@@ -58,7 +58,6 @@ target_link_libraries(mean_curvature_flow_skeleton_plugin
     scene_polyhedron_item 
     scene_points_with_normal_item
     scene_polylines_item
-    scene_mcf_poly_item
     demo_framework)
     
 
@@ -69,7 +68,6 @@ target_link_libraries(mean_curvature_flow_skeleton_sm_plugin
     scene_surface_mesh_item
     scene_points_with_normal_item
     scene_polylines_item
-    scene_mcf_sm_item
     demo_framework)
 target_compile_definitions(mean_curvature_flow_skeleton_sm_plugin PUBLIC "-DUSE_SURFACE_MESH" )
 
@@ -96,11 +94,7 @@ target_link_libraries(selection_sm_plugin scene_surface_mesh_selection_item scen
 target_compile_definitions(selection_sm_plugin PUBLIC "-DUSE_SURFACE_MESH" )
 
 polyhedron_demo_plugin(self_intersection_plugin Self_intersection_plugin)
-target_link_libraries(self_intersection_plugin scene_polyhedron_item scene_polyhedron_selection_item )
-
-polyhedron_demo_plugin(self_intersection_sm_plugin Self_intersection_plugin)
-target_link_libraries(self_intersection_sm_plugin  scene_surface_mesh_selection_item scene_surface_mesh_item)
-target_compile_definitions(self_intersection_sm_plugin PUBLIC "-DUSE_SURFACE_MESH" )
+target_link_libraries(self_intersection_plugin scene_polyhedron_item scene_polyhedron_selection_item scene_surface_mesh_item)
 
 polyhedron_demo_plugin(triangulate_facets_plugin Triangulate_facets_plugin)
 target_link_libraries(triangulate_facets_plugin scene_polyhedron_item scene_surface_mesh_item)
@@ -144,11 +138,3 @@ target_compile_definitions(distance_sm_plugin PUBLIC "-DUSE_SURFACE_MESH" )
 qt5_wrap_ui( randomPerturbationUI_FILES Random_perturbation_dialog.ui)
 polyhedron_demo_plugin(random_perturbation_plugin Random_perturbation_plugin ${randomPerturbationUI_FILES})
 target_link_libraries(random_perturbation_plugin scene_polyhedron_item scene_polyhedron_selection_item)
-
-polyhedron_demo_plugin(degenerated_faces_poly_plugin Degenerated_faces_plugin)
-target_link_libraries(degenerated_faces_poly_plugin scene_polyhedron_item scene_polyhedron_selection_item)
-
-polyhedron_demo_plugin(degenerated_faces_sm_plugin Degenerated_faces_plugin)
-target_link_libraries(degenerated_faces_sm_plugin scene_surface_mesh_item scene_surface_mesh_selection_item)
-target_compile_definitions(degenerated_faces_sm_plugin PUBLIC "-DUSE_SURFACE_MESH" )
-

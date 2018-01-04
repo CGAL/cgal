@@ -82,8 +82,6 @@ public:
   void setSceneBoundingBox(const qglviewer::Vec &min, const qglviewer::Vec &max);
 
   TextRenderer* textRenderer() Q_DECL_OVERRIDE;
-  void enableClippingBox(QVector4D box[]) Q_DECL_OVERRIDE;
-  void disableClippingBox() Q_DECL_OVERRIDE;
 
 Q_SIGNALS:
   void sendMessage(QString);
@@ -149,10 +147,6 @@ protected:
   friend class Viewer_impl;
   Viewer_impl* d;
   double prev_radius;
-
-public:
-  bool isOpenGL_4_3() const Q_DECL_OVERRIDE;
-  QOpenGLFunctions_4_3_Compatibility* openGL_4_3_functions() Q_DECL_OVERRIDE;
 
 }; // end class Viewer
 

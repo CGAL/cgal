@@ -702,63 +702,16 @@ is_valid(const Graph_with_descriptor_with_graph<Graph> & w, bool verbose = false
     @tparam PM a property_map of a `Graph`.
 
 */
-template <typename Graph, typename PM, typename Category =
-          typename boost::property_traits<PM>::category>
+template <typename Graph, typename PM>
 struct Graph_with_descriptor_with_graph_property_map {
 
-  typedef Category category;
+  typedef typename boost::property_traits<PM>::category category;
   typedef typename boost::property_traits<PM>::value_type value_type;
   typedef typename boost::property_traits<PM>::reference reference;
   typedef Gwdwg_descriptor<Graph, typename boost::property_traits<PM>::key_type > key_type;
 
   Graph* graph;
   PM pm;
-
-  Graph_with_descriptor_with_graph_property_map()
-    : graph(NULL)
-  {}
-
-  Graph_with_descriptor_with_graph_property_map(const Graph& graph, const PM& pm)
-    : graph(const_cast<Graph*>(&graph)), pm(pm)
-  {}
-
-  template <typename Descriptor>
-  friend
-  reference
-  get(const Graph_with_descriptor_with_graph_property_map<Graph,PM>& gpm, const Descriptor& d)
-  {
-    CGAL_assertion(gpm.graph!=NULL);
-    CGAL_assertion(d.graph == gpm.graph);
-    return get(gpm.pm, d.descriptor);
-  }
-
-  template <typename Descriptor>
-  friend
-  void
-  put(const Graph_with_descriptor_with_graph_property_map<Graph,PM>& gpm, const Descriptor& d,   const value_type& v)
-  {
-    CGAL_assertion(gpm.graph!=NULL);
-    CGAL_assertion(d.graph == gpm.graph);
-    put(gpm.pm, d.descriptor, v);
-  }
-}; // class Graph_with_descriptor_with_graph_property_map
-
-//specialisation for lvaluepropertymaps
-template <typename Graph, typename PM>
-struct Graph_with_descriptor_with_graph_property_map<Graph, PM, boost::lvalue_property_map_tag> {
-
-  typedef boost::lvalue_property_map_tag category;
-  typedef typename boost::property_traits<PM>::value_type value_type;
-  typedef typename boost::property_traits<PM>::reference reference;
-  typedef Gwdwg_descriptor<Graph, typename boost::property_traits<PM>::key_type > key_type;
-
-  Graph* graph;
-  PM pm;
-
-  value_type& operator[](key_type& k) const
-  {
-      return get(*this, k);
-  }
 
   Graph_with_descriptor_with_graph_property_map()
     : graph(NULL)

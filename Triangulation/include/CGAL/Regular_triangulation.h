@@ -95,10 +95,11 @@ public: // PUBLIC NESTED TYPES
   //Tag to distinguish Delaunay from Regular triangulations
   typedef Tag_true                                Weighted_tag;
 
-  // Tag to distinguish periodic triangulations from others
-  typedef Tag_false                               Periodic_tag;
+protected: // DATA MEMBERS
+
 
 public:
+
   typedef typename Base::Point Weighted_point;
   typedef typename Base::Rotor Rotor;
   using Base::maximal_dimension;

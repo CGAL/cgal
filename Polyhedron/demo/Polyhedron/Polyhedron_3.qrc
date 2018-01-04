@@ -59,12 +59,6 @@
         <file>resources/prism-open.png</file>
         <file>resources/pyramid.png</file>
         <file>resources/pyramid-open.png</file>
-        <file>resources/no_interpolation_shader.f</file>
-        <file>resources/no_interpolation_shader.g</file>
-        <file>resources/no_interpolation_shader.v</file>
-        <file>resources/shader_flat.g</file>
-        <file>resources/shader_flat.v</file>
-        <file>resources/shader_old_flat.f</file>
     </qresource>
     <qresource prefix="/cgal/cursors">
         <file>resources/rotate_around_cursor.png</file>

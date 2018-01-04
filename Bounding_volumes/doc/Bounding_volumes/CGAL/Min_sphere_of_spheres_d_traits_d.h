@@ -17,8 +17,6 @@ a model for concept `MinSphereOfSpheresTraits`. It uses the
 type `FT` of concept `MinSphereOfSpheresTraits`: It must be 
 either `double` or `float`, or an exact number type. 
 
-\tparam Dim is the dimension.
-
 \tparam UseSqrt fulfills the 
 requirements of type `Use_square_roots` of concept 
 `MinSphereOfSpheresTraits`: It must be either `Tag_true` or `Tag_false`
@@ -30,7 +28,7 @@ concept `MinSphereOfSpheresTraits`: It must be either
 and it defaults to `Default_algorithm`.
 
 */
-template< typename K, typename FT, int Dim, typename UseSqrt, typename Algorithm >
+template< typename K, typename FT, typename Dim, typename UseSqrt, typename Algorithm >
 class Min_sphere_of_spheres_d_traits_d {
 public:
 
@@ -40,7 +38,7 @@ public:
 /*!
 is the constant `Dim`. 
 */ 
-static const int D;
+typedef unspecified_type D; 
 
 /// @} 
 

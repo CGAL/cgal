@@ -245,13 +245,13 @@ namespace internal {
   
   template <typename OutputValueType, typename PropertyMap, typename T, LAS_property::Id::Id id>
   void process_properties (const LASpoint& reader, OutputValueType& new_element,
-                           std::pair<PropertyMap, LAS_property::Base<T,id> >&& current);
+                           std::pair<PropertyMap, LAS_property::Base<T,id> >& current);
 
   template <typename OutputValueType, typename PropertyMap, typename T, LAS_property::Id::Id id,
             typename NextPropertyBinder, typename ... PropertyMapBinders>
   void process_properties (const LASpoint& reader, OutputValueType& new_element,
-                           std::pair<PropertyMap, LAS_property::Base<T,id> >&& current,
-                           NextPropertyBinder&& next,
+                           std::pair<PropertyMap, LAS_property::Base<T,id> >& current,
+                           NextPropertyBinder& next,
                            PropertyMapBinders&& ... properties);
   
   template <typename OutputValueType,
@@ -260,7 +260,7 @@ namespace internal {
             typename ... T,
             LAS_property::Id::Id ... id>
   void process_properties (const LASpoint& reader, OutputValueType& new_element,
-                           std::tuple<PropertyMap, Constructor, LAS_property::Base<T,id>...>&& current)
+                           std::tuple<PropertyMap, Constructor, LAS_property::Base<T,id>...>& current)
   {
     typedef typename PropertyMap::value_type PmapValueType;
     std::tuple<T...> values;
@@ -277,8 +277,8 @@ namespace internal {
             typename NextPropertyBinder,
             typename ... PropertyMapBinders>
   void process_properties (const LASpoint& reader, OutputValueType& new_element,
-                           std::tuple<PropertyMap, Constructor, LAS_property::Base<T,id>...>&& current,
-                           NextPropertyBinder&& next,
+                           std::tuple<PropertyMap, Constructor, LAS_property::Base<T,id>...>& current,
+                           NextPropertyBinder& next,
                            PropertyMapBinders&& ... properties)
   {
     typedef typename PropertyMap::value_type PmapValueType;
@@ -287,14 +287,13 @@ namespace internal {
     PmapValueType new_value = call_functor<PmapValueType>(std::get<1>(current), values);
     put (std::get<0>(current), new_element, new_value);
   
-    process_properties (reader, new_element, std::forward<NextPropertyBinder>(next),
-                        std::forward<PropertyMapBinders>(properties)...);
+    process_properties (reader, new_element, next, properties...);
   }
 
 
   template <typename OutputValueType, typename PropertyMap, typename T, LAS_property::Id::Id id>
   void process_properties (const LASpoint& reader, OutputValueType& new_element,
-                           std::pair<PropertyMap, LAS_property::Base<T,id> >&& current)
+                           std::pair<PropertyMap, LAS_property::Base<T,id> >& current)
   {
     T new_value = T();
     get_value (reader, new_value, current.second);
@@ -304,15 +303,14 @@ namespace internal {
   template <typename OutputValueType, typename PropertyMap, typename T, LAS_property::Id::Id id,
             typename NextPropertyBinder, typename ... PropertyMapBinders>
   void process_properties (const LASpoint& reader, OutputValueType& new_element,
-                           std::pair<PropertyMap, LAS_property::Base<T,id> >&& current,
-                           NextPropertyBinder&& next,
+                           std::pair<PropertyMap, LAS_property::Base<T,id> >& current,
+                           NextPropertyBinder& next,
                            PropertyMapBinders&& ... properties)
   {
     T new_value = T();
     get_value (reader, new_value, current.second);
     put (current.first, new_element, new_value);
-    process_properties (reader, new_element, std::forward<NextPropertyBinder>(next),
-                        std::forward<PropertyMapBinders>(properties)...);
+    process_properties (reader, new_element, next, properties...);
   }
 
   } // namespace LAS
@@ -400,7 +398,7 @@ bool read_las_points_with_properties (std::istream& stream,
       const LASpoint& laspoint = lasreader.point;
       Enriched_point new_point;
 
-      internal::LAS::process_properties (laspoint, new_point, std::forward<PropertyHandler>(properties)...);
+      internal::LAS::process_properties (laspoint, new_point, properties...);
 
       *(output ++) = new_point;
     }
@@ -422,7 +420,7 @@ bool read_las_points_with_properties (std::istream& stream,
   typedef typename value_type_traits<OutputIterator>::type OutputValueType;
 
   return read_las_points_with_properties<OutputValueType>
-    (stream, output, std::forward<PropertyHandler>(properties)...);
+    (stream, output, properties...);
 }
 /// \endcond
 

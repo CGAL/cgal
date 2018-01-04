@@ -35,7 +35,7 @@
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 
 #include <CGAL/Mesh_3/Polyline_with_context.h>
-#include <CGAL/Polygon_mesh_processing/detect_features.h>
+#include <CGAL/Polygon_mesh_processing/Detect_features_in_polyhedra.h>
 #include <CGAL/Mesh_3/properties_Polyhedron_3.h>
 
 #include <CGAL/enum.h>
@@ -236,8 +236,10 @@ is union of the positive side of all of its facets, usually named the
 `Polyhedral_complex_mesh_domain_3` assumes that for each polyhedral
 surface, the sub-domain indices on both sides are known.
 
-\tparam Polyhedron stands for the type of the input polyhedral surface(s),
-model of `FaceListGraph`.
+\tparam Polyhedron stands for the type of the input polyhedral surface(s).
+The only requirements for this type is that the triangles of the surfaces
+must be accessible through an object of the class
+`TriangleAccessor`. @todo Document the requirements.
 
 \tparam IGT_ stands for a geometric traits class
 providing the types and functors required to implement
@@ -245,9 +247,18 @@ the intersection tests and intersection computations
 for polyhedral boundary surfaces. This parameter has to be instantiated
 with a model of the concept `IntersectionGeometricTraits_3`.
 
+\tparam TriangleAccessor provides access to the triangles
+of the input polyhedral
+surface. It must be a model of the concept
+`TriangleAccessor_3`. It defaults to
+`Triangle_accessor_3<Polyhedron,IGT_>`. The type `IGT_::Triangle_3` must
+be identical to the type `TriangleAccessor::Triangle_3`.
+
 \cgalModels `MeshDomainWithFeatures_3`
 
+\sa `TriangleAccessor_3`
 \sa `IntersectionGeometricTraits_3`
+\sa `CGAL::Triangle_accessor_3<Polyhedron_3<K>,K>`
 \sa `CGAL::make_mesh_3()`.
 \sa `CGAL::Mesh_domain_with_polyline_features_3<MeshDomain>`
 \sa `CGAL::Polyhedral_mesh_domain_3<Polyhedron,IGT_,TriangleAccessor>`
@@ -255,13 +266,13 @@ with a model of the concept `IntersectionGeometricTraits_3`.
 */
 template < class IGT_,
            class Polyhedron = typename Mesh_polyhedron_3<IGT_>::type,
-           class TriangleAccessor=CGAL::Default
+           class TriangleAccessor=Triangle_accessor_3<Polyhedron,IGT_>
            >
 class Polyhedral_complex_mesh_domain_3
   : public Mesh_domain_with_polyline_features_3<
       Polyhedral_mesh_domain_3< Polyhedron,
                                 IGT_,
-                                CGAL::Default,
+                                TriangleAccessor,
                                 Tag_true,   //Use_patch_id_tag
                                 Tag_true > >//Use_exact_intersection_tag
 {
@@ -276,16 +287,17 @@ protected:
 
 private:
   typedef IGT_ IGT;
-  typedef Polyhedral_mesh_domain_3<Polyhedron, IGT_, CGAL::Default,
+  typedef Polyhedral_mesh_domain_3<Polyhedron, IGT_, TriangleAccessor,
                                    Tag_true, Tag_true >       BaseBase;
-  typedef Polyhedral_complex_mesh_domain_3<IGT_, Polyhedron>  Self;
+  typedef Polyhedral_complex_mesh_domain_3<IGT_, Polyhedron,
+                                           TriangleAccessor>  Self;
   /// @endcond
 
 public:
   /// The base class
   typedef Mesh_domain_with_polyline_features_3<
     Polyhedral_mesh_domain_3<
-      Polyhedron, IGT_, CGAL::Default,
+      Polyhedron, IGT_, TriangleAccessor,
       Tag_true, Tag_true > > Base;
   /*!
   Numerical type.
@@ -787,17 +799,10 @@ detect_features(FT angle_in_degree,
   P2vmap p2vmap;
 
   namespace PMP = CGAL::Polygon_mesh_processing;
-  std::size_t nb_of_patch_plus_one = 1;
+  PMP::Detect_features_in_polyhedra<Polyhedron_type, Surface_patch_index> detect_features;
   BOOST_FOREACH(Polyhedron_type& p, poly)
   {
     initialize_ts(p);
-    typedef typename boost::graph_traits<Polyhedron_type>::face_descriptor face_descriptor;
-    std::map<face_descriptor, int> face_ids;
-    int id = 0;
-    BOOST_FOREACH(face_descriptor& f, faces(p))
-    {
-        face_ids[f] = id++;
-    }
 
 #if CGAL_MESH_3_VERBOSE
     std::size_t poly_id = &p-&poly[0];
@@ -807,23 +812,16 @@ detect_features(FT angle_in_degree,
 #endif // CGAL_MESH_3_VERBOSE
 
     // Get sharp features
-    typedef typename boost::property_map<Polyhedron_type,CGAL::face_patch_id_t<Patch_id> >::type PIDMap;
-    typedef typename boost::property_map<Polyhedron_type,CGAL::vertex_incident_patches_t<Patch_id> >::type VIPMap;
-    typedef typename boost::property_map<Polyhedron_type,CGAL::edge_is_feature_t>::type EIFMap;
-    PIDMap pid_map = get(face_patch_id_t<Patch_id>(), p);
-    VIPMap vip_map = get(vertex_incident_patches_t<Patch_id>(), p);
-    EIFMap eif = get(CGAL::edge_is_feature, p);
-    nb_of_patch_plus_one +=PMP::sharp_edges_segmentation(p, angle_in_degree
-      , eif
-      , pid_map
-      , PMP::parameters::first_index(nb_of_patch_plus_one)
-      .face_index_map(boost::make_assoc_property_map(face_ids))
-      .vertex_incident_patches_map(vip_map));
+    detect_features.detect_sharp_edges(p, angle_in_degree);
+    detect_features.detect_surface_patches(p);
+    detect_features.detect_vertices_incident_patches(p);
 
     internal::Mesh_3::Is_featured_edge<Polyhedron_type> is_featured_edge(p);
 
     add_featured_edges_to_graph(p, is_featured_edge, g_copy, p2vmap);
   }
+  const std::size_t nb_of_patch_plus_one =
+    detect_features.maximal_surface_patch_index()+1;
   this->patch_id_to_polyhedron_id.resize(nb_of_patch_plus_one);
   this->patch_has_featured_edges.resize(nb_of_patch_plus_one);
   this->several_vertices_on_patch.resize(nb_of_patch_plus_one);

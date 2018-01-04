@@ -90,8 +90,6 @@ create_single_source_cgal_program( "test_bgl_read_write.cpp" )
 
 create_single_source_cgal_program( "graph_concept_Face_filtered_graph.cpp" )
 
-create_single_source_cgal_program( "test_Manifold_face_removal.cpp")
-
 create_single_source_cgal_program( "test_Face_filtered_graph.cpp" )
 
 create_single_source_cgal_program( "test_Euler_operations.cpp" )

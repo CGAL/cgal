@@ -162,7 +162,7 @@ void put(Polyhedron_num_feature_edges_pmap, Handle_type h, int n)
 
 
 template <>
-struct Polyhedron_property_map<CGAL::vertex_feature_degree_t>
+struct Polyhedron_property_map<CGAL::vertex_num_feature_edges_t>
 {
   template<class Gt, class I, CGAL_HDS_PARAM_, class A>
   struct bind_
@@ -177,25 +177,22 @@ struct Polyhedron_is_feature_edge_pmap {
   typedef bool                               value_type;
   typedef bool                               reference;
   typedef boost::read_write_property_map_tag category;
-
 };
 
 template <typename Handle_type>
-bool get(Polyhedron_is_feature_edge_pmap, Handle_type e)
+bool get(Polyhedron_is_feature_edge_pmap, Handle_type h)
 {
-  return e.halfedge()->is_feature_edge()
-          || e.halfedge()->opposite()->is_feature_edge();
+  return h->is_feature_edge();
 }
 
 template <typename Handle_type>
-void put(Polyhedron_is_feature_edge_pmap, Handle_type e, bool b)
+void put(Polyhedron_is_feature_edge_pmap, Handle_type h, bool b)
 {
-  e.halfedge()->set_feature_edge(b);
-  e.halfedge()->opposite()->set_feature_edge(b);
+  h->set_feature_edge(b);
 }
 
 template <>
-struct Polyhedron_property_map<CGAL::edge_is_feature_t>
+struct Polyhedron_property_map<CGAL::halfedge_is_feature_t>
 {
   template<class Gt, class I, CGAL_HDS_PARAM_, class A>
   struct bind_
@@ -212,14 +209,7 @@ struct Polyhedron_incident_patches_pmap {
   typedef void                               key_type;
   typedef std::set<Patch_id>                 value_type;
   typedef std::set<Patch_id>&                reference;
-  typedef boost::lvalue_property_map_tag     category;
-
-  template <typename Handle_type>
-  value_type& operator[](Handle_type h) const
-  {
-    return get(*this, h);
-  }
-
+  typedef boost::read_write_property_map_tag category;
 };
 
 template <typename Patch_id, typename Handle_type>
@@ -233,7 +223,6 @@ template <typename Patch_id, typename Handle_type>
 void put(Polyhedron_incident_patches_pmap<Patch_id>,
          Handle_type h, const std::set<Patch_id>& v)
 {
-  h->clear_incident_patches();
   BOOST_FOREACH(Patch_id n, v)
     h->add_incident_patch(n);
 }

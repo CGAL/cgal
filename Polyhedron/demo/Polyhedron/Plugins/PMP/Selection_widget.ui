@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>613</width>
+    <width>597</width>
     <height>334</height>
    </rect>
   </property>
@@ -473,11 +473,6 @@
             <item>
              <property name="text">
               <string>Keep Connected Components of Selected Facets</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Expand Face Selection to Stay Manifold After Removal</string>
              </property>
             </item>
             <item>

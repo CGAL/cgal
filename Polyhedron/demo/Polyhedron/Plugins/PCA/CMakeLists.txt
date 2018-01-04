@@ -9,10 +9,6 @@ target_link_libraries(affine_transform_plugin  scene_surface_mesh_item scene_pol
 polyhedron_demo_plugin(edit_box_plugin Edit_box_plugin)
 target_link_libraries(edit_box_plugin  scene_edit_box_item   scene_surface_mesh_item scene_polyhedron_item)
 
-qt5_wrap_ui( clipUI_FILES Clipping_box_widget.ui )
-polyhedron_demo_plugin(clipping_box_plugin Clipping_box_plugin ${clipUI_FILES})
-target_link_libraries(clipping_box_plugin  scene_edit_box_item )
-
 polyhedron_demo_plugin(create_bbox_mesh_plugin Create_bbox_mesh_plugin)
 target_link_libraries(create_bbox_mesh_plugin scene_surface_mesh_item scene_polyhedron_item)
 

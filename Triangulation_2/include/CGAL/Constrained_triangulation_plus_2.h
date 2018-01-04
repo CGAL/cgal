@@ -161,16 +161,10 @@ public:
   typedef Polyline_constraint_hierarchy_2<Vertex_handle, Vh_less_xy, Point>
                                                    Constraint_hierarchy;
 public:
-  // Tag to mark the presence of a hierarchy of constraints
-  typedef Tag_true                                 Constraint_hierarchy_tag;
-
-  //Tag to distinguish Delaunay from regular triangulations
-  typedef Tag_false                                Weighted_tag;
-
-  // Tag to distinguish periodic triangulations from others
-  typedef Tag_false                                Periodic_tag;
+  typedef Tag_true                                Constraint_hierarchy_tag;
 
   // for user interface with the constraint hierarchy
+
   typedef typename Constraint_hierarchy::Vertex_it 
                                             Vertices_in_constraint_iterator;
   

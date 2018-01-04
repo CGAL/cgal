@@ -50,17 +50,17 @@ struct property_map<CGAL::Surface_mesh<P>, CGAL::face_patch_id_t<void> >
 
 
 template<typename P>
-struct property_map<CGAL::Surface_mesh<P>, CGAL::edge_is_feature_t>
+struct property_map<CGAL::Surface_mesh<P>, CGAL::halfedge_is_feature_t>
 {
-  typedef typename boost::graph_traits<CGAL::Surface_mesh<P> >::edge_descriptor edge_descriptor;
+  typedef typename boost::graph_traits<CGAL::Surface_mesh<P> >::halfedge_descriptor halfedge_descriptor;
 
-  typedef typename CGAL::Surface_mesh<P>::template Property_map<edge_descriptor, bool> type;
+  typedef typename CGAL::Surface_mesh<P>::template Property_map<halfedge_descriptor, bool> type;
   typedef type const_type;
 };
 
 
 template <typename P>
-struct property_map<CGAL::Surface_mesh<P>, CGAL::vertex_feature_degree_t>
+struct property_map<CGAL::Surface_mesh<P>, CGAL::vertex_num_feature_edges_t>
 {
 
   typedef typename boost::graph_traits<CGAL::Surface_mesh<P> >::vertex_descriptor vertex_descriptor;
@@ -151,17 +151,17 @@ inline get(CGAL::face_patch_id_t<void>, Surface_mesh<P> &)
 
 
 template <typename P>
-CGAL_MESH_3_PROPERTY_SURFACE_MESH_RETURN_TYPE(CGAL::edge_is_feature_t)
-inline get(CGAL::edge_is_feature_t, Surface_mesh<P>& smesh)
+CGAL_MESH_3_PROPERTY_SURFACE_MESH_RETURN_TYPE(CGAL::halfedge_is_feature_t)
+inline get(CGAL::halfedge_is_feature_t, Surface_mesh<P>& smesh)
 {
-  typedef typename boost::graph_traits<Surface_mesh<P> >::edge_descriptor edge_descriptor;
-  return smesh. template add_property_map<edge_descriptor,bool>("e:is_feature").first;
+  typedef typename boost::graph_traits<Surface_mesh<P> >::halfedge_descriptor halfedge_descriptor;
+  return smesh. template add_property_map<halfedge_descriptor,bool>("h:is_feature").first;
 }
 
 
  template <typename P>
-CGAL_MESH_3_PROPERTY_SURFACE_MESH_RETURN_TYPE(CGAL::vertex_feature_degree_t)
- inline get(CGAL::vertex_feature_degree_t, Surface_mesh<P> & smesh)
+CGAL_MESH_3_PROPERTY_SURFACE_MESH_RETURN_TYPE(CGAL::vertex_num_feature_edges_t)
+ inline get(CGAL::vertex_num_feature_edges_t, Surface_mesh<P> & smesh)
 {
   typedef typename boost::graph_traits<Surface_mesh<P> >::vertex_descriptor vertex_descriptor;
   return smesh. template add_property_map<vertex_descriptor,int>("v:nfe").first;

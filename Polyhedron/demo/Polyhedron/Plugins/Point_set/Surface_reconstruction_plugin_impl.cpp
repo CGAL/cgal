@@ -12,7 +12,7 @@
 #include <CGAL/Surface_mesh_default_triangulation_3.h>
 #include <CGAL/make_surface_mesh.h>
 #include <CGAL/Implicit_surface_3.h>
-#include <CGAL/IO/facets_in_complex_2_to_triangle_mesh.h>
+#include <CGAL/IO/output_surface_facets_to_facegraph.h>
 #include <CGAL/Poisson_reconstruction_function.h>
 #include <CGAL/compute_average_spacing.h>
 
@@ -188,7 +188,7 @@ bool poisson_reconstruct(FaceGraph* graph,
      return false;
 
     // Converts to polyhedron
-    CGAL::facets_in_complex_2_to_triangle_mesh(c2t3, *graph);
+    c2t3_to_facegraph(c2t3, *graph);
 
     // Prints total reconstruction duration
     std::cerr << "Total reconstruction (implicit function + meshing): " << reconstruction_timer.time() << " seconds\n";

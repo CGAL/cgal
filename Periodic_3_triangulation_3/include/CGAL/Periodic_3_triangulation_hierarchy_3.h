@@ -64,9 +64,6 @@ public:
   typedef typename PTr_Base::Facet_iterator    Facet_iterator;
   typedef typename PTr_Base::Edge_iterator     Edge_iterator;
 
-  typedef typename PTr_Base::Weighted_tag      Weighted_tag;
-  typedef typename PTr_Base::Periodic_tag      Periodic_tag;
-
 #ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
   using PTr_Base::number_of_vertices;
   using PTr_Base::geom_traits;

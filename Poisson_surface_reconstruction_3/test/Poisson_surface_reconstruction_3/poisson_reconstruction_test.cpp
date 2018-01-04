@@ -18,7 +18,7 @@
 #include <CGAL/Surface_mesh_default_triangulation_3.h>
 #include <CGAL/make_surface_mesh.h>
 #include <CGAL/Implicit_surface_3.h>
-#include <CGAL/IO/facets_in_complex_2_to_triangle_mesh.h>
+#include <CGAL/IO/output_surface_facets_to_polyhedron.h>
 #include <CGAL/Poisson_reconstruction_function.h>
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/property_map.h>
@@ -286,7 +286,7 @@ int main(int argc, char * argv[])
 
     // Converts to polyhedron
     Polyhedron output_mesh;
-    CGAL::facets_in_complex_2_to_triangle_mesh(c2t3, output_mesh);
+    CGAL::output_surface_facets_to_polyhedron(c2t3, output_mesh);
 
     // Prints total reconstruction duration
     std::cerr << "Total reconstruction (implicit function + meshing): " << reconstruction_timer.time() << " seconds\n";

@@ -47,15 +47,15 @@ public:
   using Base::operator();
 
   Point operator() ( const Point& p, const Offset& o ) const {
-    return operator()(p.x() + (_dom->xmax() - _dom->xmin()) * o.x(),
-                      p.y() + (_dom->ymax() - _dom->ymin()) * o.y(),
-                      p.z() + (_dom->zmax() - _dom->zmin()) * o.z());
+    return Point(p.x() + (_dom->xmax() - _dom->xmin()) * o.x(),
+                 p.y() + (_dom->ymax() - _dom->ymin()) * o.y(),
+                 p.z() + (_dom->zmax() - _dom->zmin()) * o.z());
   }
 
   Point operator() ( const Weighted_point& p, const Offset& o ) const {
-    return operator()(p.x() + (_dom->xmax() - _dom->xmin()) * o.x(),
-                      p.y() + (_dom->ymax() - _dom->ymin()) * o.y(),
-                      p.z() + (_dom->zmax() - _dom->zmin()) * o.z());
+    return Point(p.x() + (_dom->xmax() - _dom->xmin()) * o.x(),
+                 p.y() + (_dom->ymax() - _dom->ymin()) * o.y(),
+                 p.z() + (_dom->zmax() - _dom->zmin()) * o.z());
   }
 
 private:

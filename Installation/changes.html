@@ -1,4 +1,4 @@
-﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- $Id$
      $URL$
 -->
@@ -70,7 +70,6 @@
 <td width="28%">
 
 <table CELLSPACING=0>
-<tr><td><a href="#release4.12">4.12</a>&nbsp;<td> (April 2018)
 <tr><td><a href="#release4.11">4.11</a>&nbsp;<td> (September 2017)
 <tr><td><a href="#release4.10">4.10</a>&nbsp;<td> (May 2017)
 <tr><td><a href="#release4.9">4.9</a>&nbsp;<td> (September 2016)
@@ -130,115 +129,6 @@ and <code>src/</code> directories).
 </table>
 
 <HR>
-<h2 id="release4.12">Release 4.12 </h2>
-<div>
-  <p>Release date: April 2018 </p>
-
-  <h3>2D Movable Separability of Sets</h3>
-  <ul>
-    <li><p>A new packaged called "2D Movable Separability of Sets" has been introduced. It handles a class of problems that deal with moving sets of objects in the plane; the challenge is to avoid collisions between the objects while considering different kinds of motions and various definitions of separation.<\p>
-
-      <p>At this point this package consists of the implementations of various predicates and constructions related to castings of polygonal objects. In particular, it can be used to determine whether a feasible mold for a polygonal object does exist. If a mold exists, the package can also be used to compute all possible orientations of the feasible molds and the corresponding motions needed to remove the casted object from the mold.</p>
-    </li>
-  </ul>
-<!-- Installation (and general changes) -->
-<!-- New packages -->
-<h3>Classification (new package)</h3>
-<ul>
-  <li>This package offers an algorithm that classifies a data set into
-  a user-defined set of labels (such as ground, vegetation, buildings,
-  etc.). A flexible API is provided so that users can classify any
-  type of data, compute their own local features on the input data
-  set, and define their own labels.</li>
-</ul>
-<!-- Major and breaking changes -->
-<!-- Arithmetic and Algebra -->
-<!-- Combinatorial Algorithms -->
-<!-- Geometry Kernels -->
-<!-- Convex Hull Algorithms -->
-<!-- Polygons -->
-<!-- Cell Complexes and Polyhedra -->
-<!-- Arrangements -->
-<!-- Triangulations and Delaunay Triangulations -->
-<h3>2D Alpha Shapes</h3>
-<ul>
-  <li> It is now possible to use <code>CGAL::Periodic_2_triangulation_2</code>
-  as underlying triangulation for <code>Alpha_shape_2</code>. </li>
-</ul>
-
-<h3>2D Periodic Triangulations </h3>
-<ul>
-   <li><b>Breaking change</b>:
-   The class <code>Periodic_2_triangulation_hierarchy_vertex_base_2</code>
-   (and its corresponding header) have been removed. Users should directly use the
-   class <code>Triangulation_hierarchy_vertex_base_2</code>, which is identical.</li>
-   <li><b>Breaking change</b>:
-   The functions <code>circumcenter()</code>, <code>side_of_oriented_circle()</code>,
-   and <code>is_extensible_in_1_sheet_h[12]()</code> are related to
-   Delaunay triangulations and have been moved from <code>Periodic_2_triangulation_2</code>
-   to <code>Periodic_2_Delaunay_triangulation_2</code>. </li>
-</ul>
-<!-- Voronoi Diagrams -->
-<!-- Mesh Generation -->
- <h3>3D Surface Mesh Generation</h3>
-   <ul>
-     <li>
-       Add the function facets_in_complex_2_to_triangle_mesh() 
-       that exports Surface_mesh_complex_2_in_triangulation_3
-       facets into a MutableFaceGraph.
-     </li>
-   </ul>
-  <h3>3D Mesh Generation</h3>
-   <ul>
-     <li>
-       Add the function facets_in_complex_3_to_triangle_mesh() 
-       that exports Mesh_complex_3_in_triangulation_3
-       facets into a MutableFaceGraph.
-     </li>
-   </ul>
-<!-- Surface Reconstruction -->
-<!-- Geometry Processing -->
-<h3>Polygon Mesh Processing</h3>
-<ul>
-  <li> Added new functions for feature detection and feature-guided segmentation:
-    <ul>
-      <li><code>CGAL::Polygon_mesh_processing::detect_sharp_edges()</code></li>
-      <li><code>CGAL::Polygon_mesh_processing::detect_vertex_incident_patches()</code></li>
-      <li><code>CGAL::Polygon_mesh_processing::sharp_edges_segmentation()</code></li>
-    </ul>
-  </li>
-</ul>
-<h3>Point Set Shape Detection</h3>
-<ul>
-  <li>New algorithm: <code>CGAL::Region_growing</code>. This is a
-    deterministic alternative to RANSAC for plane detection.</li>
-  <li><b>Breaking change</b>: the API
-  of <code>CGAL::regularize_planes()</code> is generalized to accept
-  other types of input than the RANSAC output.</li>
-</ul>
-<h3>Point Set Processing</h3>
-<ul>
-  <li><b>Breaking change</b>: the API
-  of <code>CGAL::structure_point_set()</code> is generalized to accept
-  other types of input than the RANSAC output.</li>
-</ul>
-<!-- Spatial Searching and Sorting -->
-<!-- Geometric Optimization -->
-<!-- Interpolation -->
-<!-- Kinetic Data Structures -->
-<!-- Support Library -->
-<!-- Visualization -->
-<!-- Support Library -->
- <h3>CGAL and the Boost Graph Library (BGL)</h3>
-  <ul>
-    <li>
-      Add helper function <code>CGAL::expand_face_selection_for_removal</code> that
-      expands a face selection to avoid creating a non manifold mesh when removing the selected faces.
-    </li>
-  </ul>
-<!-- end of the div for 4.12 -->
-</div>
-
 <h2 id="release4.11">Release 4.11 </h2>
 <div>
   <p>Release date: September 2017 </p>
@@ -522,11 +412,6 @@ and <code>src/</code> directories).
       Add function <code>Kd_tree::remove(Point)</code>.
     </li>
   </ul>
-  <h3>3D Fast Intersection and Distance Computation</h3>
-  <ul>
-    <li>Add a template parameter to <code>AABB_traits</code>
-        for a property map that associates a bounding box to a primitive</li>
-  </ul>
   <h3>CGAL and the Boost Graph Library</h3>
   <ul>
     <li>
@@ -645,7 +530,7 @@ and <code>src/</code> directories).
         All models of the Kernel concept now provide the functor <code>Compare_slope_3</code>,
         and the free function <code>compare_slope()</code> is available.
     </li>
-    <li>Add an operator in CGAL Kernel concept <code>Angle_3</code> to qualify the angle
+    <li>Add an operator in CGAL Kernel concept <code>Angle_3</code> to qualify the angle 
         between the normal of the triangle given by three points, and a vector.
     </li>
   </ul>
@@ -789,7 +674,7 @@ and <code>src/</code> directories).
       all of its descriptors.
     </li>
   </ul>
-
+  
   <h3>Cone Based Spanners</h3>
   <ul>
     <li>Add a parameter to compute half Tao graph and half Theta graph.</li>

@@ -136,11 +136,6 @@ public:
   typedef typename Tr_Base::size_type size_type;
   typedef typename Tr_Base::Locate_type Locate_type;
 
-  //Tag to distinguish Delaunay from regular triangulations
-  typedef Tag_false                          Weighted_tag;
-
-  // Tag to distinguish periodic triangulations from others
-  typedef Tag_false                          Periodic_tag;
 
 #ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
   using Tr_Base::cw;

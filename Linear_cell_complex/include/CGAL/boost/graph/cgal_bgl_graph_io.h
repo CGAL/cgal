@@ -110,7 +110,7 @@ bool write_off(const char* fname,
 
   namespace internal { namespace read_off_tools {
   
-  inline bool is_whitespace(const std::string& s)
+  bool is_whitespace(const std::string& s)
   {
     for(unsigned int i=0; i < s.size(); i++){
       if(s[i] != ' ' && s[i] != '\t'){
@@ -120,7 +120,7 @@ bool write_off(const char* fname,
     return true;
   }
   
-inline std::string next_non_comment(std::istream& is)
+std::string next_non_comment(std::istream& is)
 {
   std::string line;
   do {

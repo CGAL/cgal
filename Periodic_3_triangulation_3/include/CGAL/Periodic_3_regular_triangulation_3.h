@@ -129,9 +129,6 @@ public:
   //Tag to distinguish Delaunay from Regular triangulations
   typedef Tag_true                                 Weighted_tag;
 
-  // Tag to distinguish periodic triangulations from others
-  typedef Tag_true                                 Periodic_tag;
-
 #ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
   using Tr_Base::cw;
   using Tr_Base::ccw;
@@ -907,7 +904,7 @@ public:
 
 protected:
   // Protected, because inheritors(e.g. periodic triangulation for meshing)
-  // of the class Periodic_3_regular_triangulation_3 use this class
+  // of the class Periodic_3_Delaunay_triangulation_3 use this class
   class Conflict_tester;
 
 private:

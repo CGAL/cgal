@@ -1,19 +1,24 @@
 namespace CGAL {
 
 /*!
-\deprecated Gets reconstructed surface out of a SurfaceMeshComplex_2InTriangulation_3 object.
+\ingroup PkgSurfaceMesher3FunctionsIO
 
-This variant exports the surface as a polyhedron.
-It requires the surface to be manifold. For this purpose,
-you may call make_surface_mesh() with Manifold_tag or Manifold_with_boundary_tag parameter.
+converts a manifold surface reconstructed by `make_surface_mesh()` to a `Polyhedron_3<Traits>`.
 
-@tparam SurfaceMeshComplex_2InTriangulation_3 model of the SurfaceMeshComplex_2InTriangulation_3 concept.
-@tparam Polyhedron an instance of CGAL::Polyhedron_3<Traits>.
+The surface must be manifold. For this purpose, you may call
+`make_surface_mesh()` with `Manifold_tag` or
+`Manifold_with_boundary_tag` parameter.
 
-@param c2t3 the input.
-@param output_polyhedron the output.
+\tparam SurfaceMeshComplex_2InTriangulation_3 must be a model of the `SurfaceMeshComplex_2InTriangulation_3` concept. 
+\tparam Polyhedron must be an instance of `Polyhedron_3<Traits>`.
 
-@return true if the surface is manifold and orientable.
+\returns `true` if the surface is manifold and orientable.
+
+
+\param c2t3 Input surface. 
+\param output_polyhedron Output polyhedron.
+
+\sa `CGAL::output_surface_facets_to_off()`
 */
 template<class SurfaceMeshComplex_2InTriangulation_3, class Polyhedron> bool output_surface_facets_to_polyhedron(const SurfaceMeshComplex_2InTriangulation_3& c2t3, Polyhedron& output_polyhedron);
 

@@ -4,7 +4,7 @@ namespace CGAL {
 /*!
 \ingroup PkgSurfaceMesher3Classes
 
-The class `Surface_mesh_traits_generator_3` provides a type `type`,
+The class `Surface_mesh_traits_generator_3` provides a type `Type`,
 that is a model of the concept `SurfaceMeshTraits_3` for the surface
 type `Surface`. 
 
@@ -35,7 +35,7 @@ public:
 /*!
 A model of the concept `SurfaceMeshTraits_3`. 
 */ 
-typedef unspecified_type type;
+typedef unspecified_type Type; 
 
 }; /* end Surface_mesh_traits_generator_3 */
 } /* end namespace CGAL */
