@@ -4,7 +4,7 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
-#include <CGAL/Polygon_mesh_processing/smoothing.h>
+#include <CGAL/Polygon_mesh_processing/mesh_smoothing.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
 
 #include <boost/accumulators/accumulators.hpp>
@@ -107,7 +107,7 @@ int main(int argc, char* argv[]){
 
     calc_angles(mesh, min_a, max_a, mean_a);
 
-    CGAL::Polygon_mesh_processing::angle_smoothing(mesh);
+    CGAL::Polygon_mesh_processing::smooth_angles(mesh);
     calc_angles(mesh, min_a, max_a, mean_a);
 
     if(!check_value_equal(min_a, 24.980))
@@ -123,7 +123,7 @@ int main(int argc, char* argv[]){
     input>>mesh;
     input.close();
 
-    CGAL::Polygon_mesh_processing::area_smoothing(mesh);
+    CGAL::Polygon_mesh_processing::smooth_areas(mesh);
     calc_areas(mesh, min_a, max_a, mean_a);
 
     if(!check_value_equal(min_a, 0.476))
