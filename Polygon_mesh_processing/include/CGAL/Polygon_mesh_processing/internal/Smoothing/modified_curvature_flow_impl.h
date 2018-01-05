@@ -115,11 +115,11 @@ struct Incident_area
 
 };
 
-
-
-
-
-template<typename PolygonMesh, typename VertexPointMap, typename GeomTraits>
+template<typename PolygonMesh,
+         typename VertexPointMap,
+         typename VertexConstraintMap,
+         typename EdgeConstraintMap,
+         typename GeomTraits>
 class Shape_smoother{
 
 // types
@@ -132,7 +132,7 @@ private:
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
-
+  typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor edge_descriptor;
   // vertex index map
   typedef typename boost::property_map<PolygonMesh, boost::vertex_index_t>::type IndexMap;
 
@@ -144,31 +144,27 @@ private:
   // typedef typename Eigen::SimplicialLDLT<Eigen_matrix> Eigen_solver;
 
 
-
-// data
-private:
-
-    IndexMap vimap_ = get(boost::vertex_index, mesh_);
-
-    // geometry data
-    PolygonMesh& mesh_;
-    VertexPointMap& vpmap_;
-    Edge_cotangent_weight<PolygonMesh, VertexPointMap> weight_calculator_;
-    Incident_area<PolygonMesh> inc_areas_calculator_;
-
-    std::size_t nb_vert_;
-
-    // constrained vertices
-    std::unordered_set<vertex_descriptor> constrained_vertices_;
-
-
 public:
-
-  Shape_smoother(PolygonMesh& mesh, VertexPointMap& vpmap) : mesh_(mesh), vpmap_(vpmap),
+  Shape_smoother(PolygonMesh& mesh,
+                 VertexPointMap& vpmap,
+                 VertexConstraintMap vcmap,
+                 EdgeConstraintMap& ecmap) :
+      mesh_(mesh),
+      vpmap_(vpmap),
+      vcmap_(vcmap),
+      ecmap_(ecmap),
       weight_calculator_(mesh, vpmap),
       inc_areas_calculator_(mesh),
-      nb_vert_(static_cast<int>(vertices(mesh).size()))
-  {  }
+      nb_vert_(static_cast<int>(vertices(mesh).size())) {}
+
+
+  void init_smoothing()
+  {
+    //check_vertex_range(face_range);
+
+    check_constraints();
+  }
+
 
   void setup_system(Eigen_matrix& A, Eigen_matrix& L, Eigen_matrix& D,
                     Eigen_vector& bx, Eigen_vector& by, Eigen_vector& bz,
@@ -236,15 +232,17 @@ public:
       {
         vertex_descriptor v_source = source(hi, mesh_);
         vertex_descriptor v_target = target(hi, mesh_);
-        auto i_source = vimap_[v_source];
-        auto i_target = vimap_[v_target];
 
-        NT Lij = weight_calculator_(hi);
-
-        tripletList.push_back(Triplet(i_source, i_target, Lij));
-        tripletList.push_back(Triplet(i_target, i_source, Lij));
-        tripletList.push_back(Triplet(i_source, i_source, -Lij));
-        tripletList.push_back(Triplet(i_target, i_target, -Lij));
+        if(!is_constrained(v_source) && !is_constrained(v_target))
+        {
+          auto i_source = vimap_[v_source];
+          auto i_target = vimap_[v_target];
+          NT Lij = weight_calculator_(hi);
+          tripletList.push_back(Triplet(i_source, i_target, Lij));
+          tripletList.push_back(Triplet(i_target, i_source, Lij));
+          tripletList.push_back(Triplet(i_source, i_source, -Lij));
+          tripletList.push_back(Triplet(i_target, i_target, -Lij));
+        }
       }
     }
 
@@ -274,203 +272,247 @@ public:
 private:
 
 
-    void calc_mass_matrix(Eigen_matrix& D)
-    {
-      //D.resize(nb_vert_, nb_vert_);
+  void calc_mass_matrix(Eigen_matrix& D)
+  {
+    //D.resize(nb_vert_, nb_vert_);
 
-      for(face_descriptor f : faces(mesh_))
+    for(face_descriptor f : faces(mesh_))
+    {
+      double area = face_area(f, mesh_);
+      for(vertex_descriptor v : vertices_around_face(halfedge(f, mesh_), mesh_))
       {
-        double area = face_area(f, mesh_);
-        for(vertex_descriptor v : vertices_around_face(halfedge(f, mesh_), mesh_))
+        if(!is_constrained(v))
         {
           auto indx = vimap_[v];
           D.coeffRef(indx, indx) += 2.0 * area;
         }
+
       }
-
-      D /= 12.0;
     }
 
+    D /= 12.0;
+  }
 
 
-    void compute_coeff_matrix(Eigen_matrix& A, Eigen_matrix& L, Eigen_matrix& D, const double& time)
+
+  void compute_coeff_matrix(Eigen_matrix& A, Eigen_matrix& L, Eigen_matrix& D, const double& time)
+  {
+
+    double delta = time;
+
+    //Eigen_matrix D(L.rows(), L.cols());
+    //D.setIdentity();
+
+    //A.resize(nb_vert_, nb_vert_);
+    A = D - delta * L;
+
+
+  }
+
+
+  void compute_rhs(Eigen_vector& bx, Eigen_vector& by, Eigen_vector& bz,
+                   Eigen_matrix& D)
+  {
+    //bx.resize(nb_vert_);
+    //by.resize(nb_vert_);
+    //bz.resize(nb_vert_);
+
+    // vrange
+    for(vertex_descriptor vi : vertices(mesh_))
     {
-
-      double delta = time;
-
-      //Eigen_matrix D(L.rows(), L.cols());
-      //D.setIdentity();
-
-      //A.resize(nb_vert_, nb_vert_);
-      A = D - delta * L;
-
-
+      int index = vimap_[vi];
+      Point p = get(vpmap_, vi);
+      bx.coeffRef(index) = p.x();
+      by.coeffRef(index) = p.y();
+      bz.coeffRef(index) = p.z();
     }
 
+    //calc_mass_matrix(D);
 
-    void compute_rhs(Eigen_vector& bx, Eigen_vector& by, Eigen_vector& bz,
-                     Eigen_matrix& D)
+    //Eigen_matrix D(Bx.rows(), Bx.rows());
+    //D.setIdentity();
+
+    bx = D * bx;
+    by = D * by;
+    bz = D * bz;
+
+
+    //std::cout<<"bx= "<<bx<<std::endl;
+    //std::cout<<"by= "<<by<<std::endl;
+    //std::cout<<"bz= "<<bz<<std::endl;
+  }
+
+
+
+
+
+  /*
+  // ---------------- CONSTRAINS ---------------- //
+  void gather_constrained_vertices()
+  {
+    for(vertex_descriptor v : vertices(mesh_))
     {
-      //bx.resize(nb_vert_);
-      //by.resize(nb_vert_);
-      //bz.resize(nb_vert_);
-
-      for(vertex_descriptor vi : vertices(mesh_))
+      if(is_border(v, mesh_))
       {
-        int index = vimap_[vi];
-        Point p = get(vpmap_, vi);
-        bx.coeffRef(index) = p.x();
-        by.coeffRef(index) = p.y();
-        bz.coeffRef(index) = p.z();
+        constrained_vertices_.insert(v);
       }
-
-      //calc_mass_matrix(D);
-
-      //Eigen_matrix D(Bx.rows(), Bx.rows());
-      //D.setIdentity();
-
-      bx = D * bx;
-      by = D * by;
-      bz = D * bz;
-
-
-      //std::cout<<"bx= "<<bx<<std::endl;
-      //std::cout<<"by= "<<by<<std::endl;
-      //std::cout<<"bz= "<<bz<<std::endl;
     }
+  }
+  */
 
+  /*
+  void apply_constraints(Matrix& A)
+  { // to be called after gather_constrained_vertices()
 
-
-
-
-    // ---------------- CONSTRAINS ---------------- //
-    void gather_constrained_vertices()
+    typename std::unordered_set<vertex_descriptor>::iterator it;
+    for(it = constrained_vertices_.begin(); it != constrained_vertices_.end(); ++it)
     {
-      for(vertex_descriptor v : vertices(mesh_))
-      {
-        if(is_border(v, mesh_))
+      int i = get(vimap_, *it);
+      A.set_coef(i, i, 1.0);
+
+      // also set all cols of the same row = 0 - not needed
+      //for(std::size_t j = 0; j<A.column_dimension(); ++j)
+      //  A.set_coef(i, j, 0);
+    }
+  }
+  */
+
+  /*
+  void export_eigen_matrix(Eigen_matrix& A, const char* filename)
+  {
+
+    std::ofstream out(filename);
+    for(auto i=0; i < A.rows(); ++i)
+    {
+        for(auto j=0; j < A.cols(); ++j)
         {
-          constrained_vertices_.insert(v);
+            NT val = A.coeff(i, j);
+            out<<val<<" ";
         }
-      }
+        out<<nl;
+    }
+    out.close();
+  }
+  */
+
+
+  // -------------- UPDATE MESH ----------------- //
+
+  Triangle triangle(face_descriptor f) const
+  {
+    halfedge_descriptor h = halfedge(f, mesh_);
+    vertex_descriptor v1  = target(h, mesh_);
+    vertex_descriptor v2  = target(next(h, mesh_), mesh_);
+    vertex_descriptor v3  = target(next(next(h, mesh_), mesh_), mesh_);
+    return Triangle(get(vpmap_, v1), get(vpmap_, v2), get(vpmap_, v3));
+  }
+
+  /*
+  void translate_centroid(Vector& Xx, Vector& Xy, Vector& Xz)
+  {
+
+    std::vector<std::pair<Point, NT>> barycenters;
+
+    for(face_descriptor f : faces(mesh_))
+    {
+      Point tr_centroid = CGAL::centroid(triangle(f));
+      barycenters.push_back(std::make_pair(tr_centroid, face_area(f, mesh_)));
     }
 
-    /*
-    void apply_constraints(Matrix& A)
-    { // to be called after gather_constrained_vertices()
+    Point centroid = CGAL::barycenter(barycenters.begin(), barycenters.end());
+    std::cout << "centroid= " << centroid << std::endl;
 
-      typename std::unordered_set<vertex_descriptor>::iterator it;
-      for(it = constrained_vertices_.begin(); it != constrained_vertices_.end(); ++it)
+    for(std::size_t i=0; i < Xx.rows(); ++i)
+    {
+      Xx[i] -= centroid.x();
+      Xy[i] -= centroid.y();
+      Xz[i] -= centroid.z();
+    }
+
+  }
+  */
+
+  void normalize_area(Eigen_vector& Xx, Eigen_vector& Xy, Eigen_vector& Xz)
+  {
+    NT surface_area = area(faces(mesh_), mesh_);
+    Xx /= CGAL::sqrt(surface_area);
+    Xy /= CGAL::sqrt(surface_area);
+    Xz /= CGAL::sqrt(surface_area);
+  }
+
+
+  void update_map(Eigen_vector& Xx, Eigen_vector& Xy, Eigen_vector& Xz)
+  {
+    for (vertex_descriptor v : vertices(mesh_))
+    {
+      int index = get(vimap_, v);
+      NT x_new = Xx.coeffRef(index);
+      NT y_new = Xy.coeffRef(index);
+      NT z_new = Xz.coeffRef(index);
+      put(vpmap_, v, Point(x_new, y_new, z_new));
+    }
+  }
+
+  // handling constrains
+  // -----------------------------------
+  bool is_constrained(const edge_descriptor& e)
+  {
+    return get(ecmap_, e);
+  }
+
+  bool is_constrained(const vertex_descriptor& v)
+  {
+    return get(vcmap_, v);
+  }
+
+  void check_constraints()
+  {
+    BOOST_FOREACH(edge_descriptor e, edges(mesh_))
+    {
+      if (is_constrained(e))
       {
-        int i = get(vimap_, *it);
-        A.set_coef(i, i, 1.0);
-
-        // also set all cols of the same row = 0 - not needed
-        //for(std::size_t j = 0; j<A.column_dimension(); ++j)
-        //  A.set_coef(i, j, 0);
+        vertex_descriptor vs = source(e, mesh_);
+        vertex_descriptor vt = target(e, mesh_);
+        put(vcmap_, vs, true);
+        put(vcmap_, vt, true);
       }
     }
-    */
+  }
 
-    void export_eigen_matrix(Eigen_matrix& A, const char* filename)
+  // to use
+  template<typename FaceRange>
+  void check_vertex_range(const FaceRange& face_range)
+  {
+    BOOST_FOREACH(face_descriptor f, face_range)
     {
-
-      std::ofstream out(filename);
-      for(auto i=0; i < A.rows(); ++i)
-      {
-          for(auto j=0; j < A.cols(); ++j)
-          {
-              NT val = A.coeff(i, j);
-              out<<val<<" ";
-          }
-          out<<nl;
-      }
-      out.close();
+      BOOST_FOREACH(vertex_descriptor v, vertices_around_face(halfedge(f, mesh_), mesh_))
+          vrange.insert(v);
     }
+  }
 
+  private:
 
-    // -------------- UPDATE MESH ----------------- //
+  // data members
+  // ------------
+  PolygonMesh& mesh_;
+  VertexPointMap& vpmap_;
+  std::size_t nb_vert_;
+  std::set<vertex_descriptor> vrange;
+  IndexMap vimap_ = get(boost::vertex_index, mesh_);
+  VertexConstraintMap vcmap_;
+  EdgeConstraintMap ecmap_;
+  Edge_cotangent_weight<PolygonMesh, VertexPointMap> weight_calculator_;
+  Incident_area<PolygonMesh> inc_areas_calculator_;
 
-    Triangle triangle(face_descriptor f) const
-    {
-      halfedge_descriptor h = halfedge(f, mesh_);
-      vertex_descriptor v1  = target(h, mesh_);
-      vertex_descriptor v2  = target(next(h, mesh_), mesh_);
-      vertex_descriptor v3  = target(next(next(h, mesh_), mesh_), mesh_);
-      return Triangle(get(vpmap_, v1), get(vpmap_, v2), get(vpmap_, v3));
-    }
-
-    /*
-    void translate_centroid(Vector& Xx, Vector& Xy, Vector& Xz)
-    {
-
-      std::vector<std::pair<Point, NT>> barycenters;
-
-      for(face_descriptor f : faces(mesh_))
-      {
-        Point tr_centroid = CGAL::centroid(triangle(f));
-        barycenters.push_back(std::make_pair(tr_centroid, face_area(f, mesh_)));
-      }
-
-      Point centroid = CGAL::barycenter(barycenters.begin(), barycenters.end());
-      std::cout << "centroid= " << centroid << std::endl;
-
-      for(std::size_t i=0; i < Xx.rows(); ++i)
-      {
-        Xx[i] -= centroid.x();
-        Xy[i] -= centroid.y();
-        Xz[i] -= centroid.z();
-      }
-
-    }
-    */
-
-    void normalize_area(Eigen_vector& Xx, Eigen_vector& Xy, Eigen_vector& Xz)
-    {
-
-      NT surface_area = area(faces(mesh_), mesh_);
-
-      Xx /= CGAL::sqrt(surface_area);
-      Xy /= CGAL::sqrt(surface_area);
-      Xz /= CGAL::sqrt(surface_area);
-
-    }
-
-
-    void update_map(Eigen_vector& Xx, Eigen_vector& Xy, Eigen_vector& Xz)
-    {
-        for (vertex_descriptor v : vertices(mesh_))
-        {
-            int index = get(vimap_, v);
-            NT x_new = Xx.coeffRef(index);
-            NT y_new = Xy.coeffRef(index);
-            NT z_new = Xz.coeffRef(index);
-            put(vpmap_, v, Point(x_new, y_new, z_new));
-        }
-    }
-
-
-
+  /*
+  // constrained vertices
+  std::unordered_set<vertex_descriptor> constrained_vertices_;
+  */
 
 };
 
 
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+} // internal
 } // PMP
 } // CGAL
 

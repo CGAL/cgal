@@ -97,8 +97,7 @@ public:
 
     Curvature_flow(PolygonMesh& pmesh, VertexPointMap& vpmap, VertexConstraintMap& vcmap, EdgeConstraintMap& ecmap) :
         mesh_(pmesh), vpmap_(vpmap), vcmap_(vcmap), ecmap_(ecmap),
-        weight_calculator_(pmesh, vpmap)
-    {}
+        weight_calculator_(pmesh, vpmap) {}
 
     template<typename FaceRange>
     void init_smoothing(const FaceRange& face_range)
@@ -251,7 +250,7 @@ private:
     }
 
 
-    // functions for constrained vertices
+    // handling constrains
     // -----------------------------------
     bool is_constrained(const edge_descriptor& e)
     {

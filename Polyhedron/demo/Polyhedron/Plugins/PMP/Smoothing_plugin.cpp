@@ -193,11 +193,11 @@ public Q_SLOTS:
 
         if(index_id != last_index_id)
         {
-            setup_mcf_system(pmesh, stiffness_matrix_);
+            setup_mcf_system(faces(pmesh), pmesh, stiffness_matrix_, parameters::all_default());
             last_index_id = index_id;
         }
 
-        solve_mcf_system(pmesh, time_step, stiffness_matrix_);
+        solve_mcf_system(faces(pmesh), pmesh, time_step, stiffness_matrix_, parameters::all_default());
 
         // todo: update scene for selection item
         poly_item->compute_bbox();
@@ -228,21 +228,3 @@ private:
 
 
 #include "Smoothing_plugin.moc"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
