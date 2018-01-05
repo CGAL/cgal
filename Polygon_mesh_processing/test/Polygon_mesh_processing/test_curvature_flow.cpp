@@ -6,7 +6,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
 
-#include <CGAL/Polygon_mesh_processing/smoothing.h>
+#include <CGAL/Polygon_mesh_processing/shape_smoothing.h>
 #include <CGAL/Polygon_mesh_processing/distance.h>
 #include <CGAL/Polygon_mesh_processing/remesh.h>
 
@@ -64,7 +64,7 @@ int main(int argc, char* argv[]){
     input.close();
 
     originalMesh = mesh;
-    CGAL::Polygon_mesh_processing::curvature_flow_smoothing(mesh);
+    CGAL::Polygon_mesh_processing::smooth_curvature_flow(mesh);
 
     double dist = CGAL::Polygon_mesh_processing::approximate_Hausdorff_distance
         <TAG>(originalMesh, mesh, CGAL::Polygon_mesh_processing::parameters::number_of_points_per_area_unit(1000));
@@ -102,7 +102,7 @@ int main(int argc, char* argv[]){
 #endif
 
     originalMesh = mesh;
-    CGAL::Polygon_mesh_processing::curvature_flow_smoothing(mesh);
+    CGAL::Polygon_mesh_processing::smooth_curvature_flow(mesh);
 
     dist = CGAL::Polygon_mesh_processing::approximate_Hausdorff_distance
         <TAG>(originalMesh, mesh, CGAL::Polygon_mesh_processing::parameters::number_of_points_per_area_unit(1000));

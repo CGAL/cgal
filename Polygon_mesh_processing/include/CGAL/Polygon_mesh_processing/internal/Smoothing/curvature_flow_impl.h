@@ -45,7 +45,7 @@ namespace internal {
 
 
 template<typename PolygonMesh, typename VertexPointMap,
-         typename CotangentValue = CGAL::internal::Cotangent_value_Meyer<PolygonMesh, VertexPointMap>>
+         typename CotangentValue = CGAL::internal::Cotangent_value_Meyer<PolygonMesh, VertexPointMap> >
 class Cotangent_weight : CotangentValue
 {
 public:
