@@ -28,7 +28,7 @@ endif()
 
 find_package( Boost OPTIONAL_COMPONENTS serialization iostreams)
 
-find_package( TBB )
+find_package(TBB QUIET)
 
 find_package(OpenCV QUIET)
 
