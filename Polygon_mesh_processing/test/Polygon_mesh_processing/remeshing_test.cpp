@@ -195,20 +195,28 @@ Main(int argc, char* argv[])
   std::cout << "Split border...";
     std::set<edge_descriptor> border;
     Constraints_pmap ecmap(&border);
+
+
     PMP::border_halfedges(pre_patch,
       m,
       boost::make_function_output_iterator(halfedge2edge(m, border)));
+
     PMP::split_long_edges(border, target_edge_length, m
       , PMP::parameters::edge_is_constrained_map(ecmap));
+
   std::cout << "done." << std::endl;
+
 
   std::cout << "Collect patch...";
     std::vector<face_descriptor> patch;
+
     face_descriptor seed = face(halfedge(*border.begin(), m), m);
     if (is_border(halfedge(*border.begin(), m), m))
       seed = face(opposite(halfedge(*border.begin(), m), m), m);
+
     PMP::connected_component(seed, m, std::back_inserter(patch),
       PMP::parameters::edge_is_constrained_map(ecmap));
+
   std::cout << " done." << std::endl;
 
   std::cout << "Start remeshing of " << selection_file

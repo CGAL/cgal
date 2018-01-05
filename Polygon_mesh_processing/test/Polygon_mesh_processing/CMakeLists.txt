@@ -107,6 +107,8 @@ endif()
   create_single_source_cgal_program("surface_intersection_sm_poly.cpp" )
   create_single_source_cgal_program("test_mesh_smoothing.cpp")
   create_single_source_cgal_program("test_curvature_flow.cpp")
+  create_single_source_cgal_program("test_shape_smoothing.cpp")
+
 if(OpenMesh_FOUND)
   create_single_source_cgal_program("remeshing_test_P_SM_OM.cpp" )
   target_link_libraries( remeshing_test_P_SM_OM ${OPENMESH_LIBRARIES} )
