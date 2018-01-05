@@ -25,7 +25,7 @@
 #include <CGAL/Iterator_range.h>
 
 #ifndef DOXYGEN_RUNNING
-#if BOOST_VERSION >= 105100 && !defined(BOOST_NO_CXX11_RANGE_BASED_FOR)
+#if BOOST_VERSION >= 105100 && !defined(BOOST_NO_CXX11_RANGE_BASED_FOR) && !defined(BOOST_NO_CXX11_RVALUE_REFERENCES)
 
 namespace CGAL{
 namespace for_range_loop{
