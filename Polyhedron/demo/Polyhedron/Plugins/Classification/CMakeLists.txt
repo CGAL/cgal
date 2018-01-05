@@ -8,7 +8,7 @@ if(EIGEN3_FOUND)
   set(classification_linked_libraries)
   set(classification_compile_definitions)
   
-  find_package(Boost COMPONENTS serialization iostreams)
+  find_package(Boost OPTIONAL_COMPONENTS serialization iostreams)
   if (Boost_SERIALIZATION_FOUND AND Boost_IOSTREAMS_FOUND)
     set(classification_linked_libraries ${classification_linked_libraries}
       ${Boost_SERIALIZATION_LIBRARY}
