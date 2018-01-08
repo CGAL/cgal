@@ -2,14 +2,14 @@ include( polyhedron_demo_macros )
 
 if(EIGEN3_FOUND)
 
-  qt5_wrap_ui( classificationUI_FILES Classification_widget.ui)
-  polyhedron_demo_plugin(classification_plugin Classification_plugin Point_set_item_classification ${classificationUI_FILES})
-  
   set(classification_linked_libraries)
   set(classification_compile_definitions)
   
   find_package(Boost OPTIONAL_COMPONENTS serialization iostreams)
   if (Boost_SERIALIZATION_FOUND AND Boost_IOSTREAMS_FOUND)
+    qt5_wrap_ui( classificationUI_FILES Classification_widget.ui)
+    polyhedron_demo_plugin(classification_plugin Classification_plugin Point_set_item_classification ${classificationUI_FILES})
+    
     set(classification_linked_libraries ${classification_linked_libraries}
       ${Boost_SERIALIZATION_LIBRARY}
       ${Boost_IOSTREAMS_LIBRARY})
