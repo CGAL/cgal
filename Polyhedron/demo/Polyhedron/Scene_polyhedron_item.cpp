@@ -126,6 +126,7 @@ struct Scene_polyhedron_item_priv{
     faces_displayed = true;
     all_primitives_displayed = false;
     invalidate_stats();
+    CGAL::set_halfedgeds_items_id(*poly);
   }
 
 
@@ -709,7 +710,6 @@ Scene_polyhedron_item_priv::compute_normals_and_vertices(const bool is_recent,
     idx_faces.resize(0);
     idx_lines.resize(0);
     idx_feature_lines.resize(0);
-    CGAL::set_halfedgeds_items_id(*poly);
 
     //Facets
     typedef Polyhedron::Traits	    Kernel;
@@ -1419,6 +1419,7 @@ void
 Scene_polyhedron_item::
 invalidateOpenGLBuffers()
 {
+  CGAL::set_halfedgeds_items_id(*(d->poly));
   Q_EMIT item_is_about_to_be_changed();
     delete_aabb_tree(this);
     d->init();
