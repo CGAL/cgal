@@ -114,12 +114,11 @@ void build_finite_cells(Tr& tr,
 
     for(int j=0; j<4; ++j)
     {
-      CGAL_precondition(static_cast<std::size_t>(tet[j]) < tr.number_of_vertices() &&
-                        tet[j] >= 0);
-      vertex_handle_vector.at(tet[j] + 1)->set_dimension(3);
+      CGAL_precondition(static_cast<std::size_t>(tet[j]) < tr.number_of_vertices() && tet[j] >= 0);
       vs[j] = vertex_handle_vector.at(tet[j] + 1);
       CGAL_postcondition(vs[j] != Vertex_handle());
       CGAL_postcondition(!tr.is_infinite(vs[j]));
+      vs[j]->set_dimension(3);
     }
 
     // this assertion also tests for degeneracy
