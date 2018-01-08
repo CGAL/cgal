@@ -17,9 +17,9 @@ bool test_orientation(TriangleMesh& tm, bool is_positive, const NamedParameters&
   typedef boost::graph_traits<TriangleMesh> Graph_traits;
   typedef typename Graph_traits::vertex_descriptor vertex_descriptor;
   typedef typename Graph_traits::face_descriptor face_descriptor;
-  typedef typename CGAL::GetVertexPointMap<TriangleMesh,
+  typedef typename CGAL::Polygon_mesh_processing::GetVertexPointMap<TriangleMesh,
       NamedParameters>::const_type Vpm;
-  typedef typename CGAL::GetFaceIndexMap<TriangleMesh,
+  typedef typename CGAL::Polygon_mesh_processing::GetFaceIndexMap<TriangleMesh,
       NamedParameters>::const_type Fid_map;
 
   Vpm vpm = boost::choose_param(get_param(np, CGAL::internal_np::vertex_point),

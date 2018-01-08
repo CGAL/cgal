@@ -145,11 +145,14 @@ int main (int argc, char* argv[])
   std::cerr << "done\nPoint set structuring... ";
 
   Pwn_vector structured_pts;
-  Structure pss (points, Point_map(), Normal_map(),
+  Structure pss (points,
                  planes,
-                 CGAL::Shape_detection_3::Plane_map<Traits>(),
-                 CGAL::Shape_detection_3::Point_to_shape_index_map<Traits>(points, planes),
-                 op.cluster_epsilon);  // Same parameter as RANSAC
+                 op.cluster_epsilon,  // Same parameter as RANSAC
+                 CGAL::parameters::point_map (Point_map()).
+                 normal_map (Normal_map()).
+                 plane_map (CGAL::Shape_detection_3::Plane_map<Traits>()).
+                 plane_index_map(CGAL::Shape_detection_3::Point_to_shape_index_map<Traits>(points, planes)));
+
 
   for (std::size_t i = 0; i < pss.size(); ++ i)
     structured_pts.push_back (pss[i]);
