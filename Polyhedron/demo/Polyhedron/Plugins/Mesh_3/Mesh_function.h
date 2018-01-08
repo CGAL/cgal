@@ -239,11 +239,11 @@ initialize(const Mesh_criteria& criteria, Mesh_fnt::Domain_tag)
   // features, or with the initial points (or both).
   // If `detect_connected_components==true`, the initialization is
   // already done.
-  CGAL::internal::Mesh_3::C3t3_initializer<
+  CGAL::Mesh_3::internal::C3t3_initializer<
     C3t3,
     Domain,
     Mesh_criteria,
-    CGAL::internal::Mesh_3::has_Has_features<Domain>::value >()
+    CGAL::Mesh_3::internal::has_Has_features<Domain>::value >()
     (c3t3_,
      *domain_,
      criteria,

@@ -10,8 +10,8 @@ class is a model of the concept `MeshDomain_3`. The domain to be discretized
 is the union of voxels that have an non-default index (different from the 
 default constructed value of the type `Image::Type`). 
 
-This class includes a member function that provides, by interpolation, the subdomain index of any 
-query point. An intersection between a segment and bounding 
+This class includes a member function that provides, by interpolation, the index
+of the subdomain in which any query point lies. An intersection between a segment and bounding
 surfaces is detected when both segment endpoints are associated with different 
 values of subdomain indices. The intersection is then constructed by bisection. 
 The bisection stops when the query segment is shorter than a given error bound 
