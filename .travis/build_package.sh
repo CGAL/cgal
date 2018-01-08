@@ -96,8 +96,8 @@ do
     cd ..
     #check if non standard cgal installation works
     cd $ROOT
-    mkdir build
-    cd build
+    mkdir build_test
+    cd build_test
     cmake -DCMAKE_INSTALL_PREFIX=install/ ..
     make install
     # test install with minimal downstream example
