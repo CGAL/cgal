@@ -94,8 +94,28 @@ do
     cd .travis
     ./generate_travis.sh -c
     cd ..
+    #check if non standard cgal installation works
+    cd $ROOT
+    mkdir build
+    cd build
+    cmake -DCMAKE_INSTALL_PREFIX=install/ ..
+    make install
+    # test install with minimal downstream example
+    mkdir installtest
+    cd installtest
+    touch main.cpp
+    mkdir build
+    echo 'project(Example)' >> CMakeLists.txt
+    echo 'set(PROJECT_SRCS ${PROJECT_SOURCE_DIR}/main.cpp)' >> CMakeLists.txt
+    echo 'find_package(CGAL REQUIRED)' >> CMakeLists.txt
+    echo 'add_executable(${PROJECT_NAME} ${PROJECT_SRCS})' >> CMakeLists.txt
+    echo 'target_link_libraries(${PROJECT_NAME} CGAL::CGAL)' >> CMakeLists.txt
+    echo '#include "CGAL/remove_outliers.h"' >> main.cpp
+    cd build
+    cmake -DCMAKE_INSTALL_PREFIX=../../install ..
+    cd ..
     exit 0
-	fi
+  fi
 	EXAMPLES="$ARG/examples/$ARG"
 	TEST="$ARG/test/$ARG" 
 	DEMOS=$ROOT/$ARG/demo/*
