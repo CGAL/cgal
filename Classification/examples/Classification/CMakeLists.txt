@@ -64,7 +64,7 @@ if (Boost_SERIALIZATION_FOUND AND Boost_IOSTREAMS_FOUND)
     ${Boost_IOSTREAMS_LIBRARY})
 else()
   message(STATUS "NOTICE: Boost Serialization or IO Streams not found, no example will be compiled.")
-  exit()
+  return()
 endif()
 
 find_package(OpenCV QUIET)

@@ -64,7 +64,7 @@ if (Boost_SERIALIZATION_FOUND AND Boost_IOSTREAMS_FOUND)
     ${Boost_IOSTREAMS_LIBRARY})
 else()
   message(STATUS "NOTICE: Boost Serialization or IO Streams not found, no test will be compiled.")
-  exit()
+  return()
 endif()
 
 create_single_source_cgal_program( "test_classification_point_set.cpp" CXX_FEATURES ${needed_cxx_features} )
