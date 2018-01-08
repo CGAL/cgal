@@ -4,6 +4,7 @@
 # VERBOSE=[ON/OFF] makes the script more verbose, default is OFF
 # CGAL_VERSION=release id used to update version.h, VERSION and the release directory. Can be 4.12-Ic-33, 4.12-I-32, 4.12, ...
 # CGAL_VERSION_NR=release string used to update version.h. Must be something like 1041200033
+# TESTSUITE=indicate if the release is meant to be used by the testsuite, default if OFF
 
 if (NOT EXISTS ${CMAKE_BINARY_DIR}/Installation/include/CGAL/version.h)
   message(FATAL_ERROR "Cannot find Installation/include/CGAL/version.h. Make sure you are at the root of a CGAL branch")
@@ -112,6 +113,51 @@ if (CGAL_VERSION_NR)
   string(REGEX REPLACE "CGAL_VERSION_NR 10[0-9][0-9][0-9][0-9]0000" "CGAL_VERSION_NR ${CGAL_VERSION_NR}" file_content "${file_content}")
 endif()
 file(WRITE ${release_dir}/include/CGAL/version.h "${file_content}")
+
+
+#make an additional copy for demos and examples for the testsuite
+if (TESTSUITE)
+  file(GLOB tests RELATIVE "${release_dir}/test" "${release_dir}/test/*")
+  foreach(d ${tests})
+    if(IS_DIRECTORY "${release_dir}/test/${d}")
+      if(NOT EXISTS "${release_dir}/test/${d}/cgal_test_with_cmake")
+        file(COPY "${release_dir}/developer_scripts/cgal_test_with_cmake" DESTINATION "${release_dir}/test/${d}")
+      endif()
+    endif()
+  endforeach()
+
+  file(MAKE_DIRECTORY "${release_dir}/tmp")
+  #copy demo/PKG to test/PKG_Demo
+  file(GLOB demos RELATIVE "${release_dir}/demo" "${release_dir}/demo/*")
+  foreach(d ${demos})
+    if(IS_DIRECTORY "${release_dir}/demo/${d}")
+      string(REGEX MATCH "^[a-z]" IS_RESOURCE_DIR ${d})
+      if (IS_RESOURCE_DIR)
+        file(COPY "${release_dir}/demo/${d}" DESTINATION "${release_dir}/test")
+      else()
+        #do the copy in 2 pass since we cannot specify the target name
+        file(COPY "${release_dir}/demo/${d}" DESTINATION "${release_dir}/tmp")
+        file(RENAME "${release_dir}/tmp/${d}" "${release_dir}/test/${d}_Demo")
+        if(NOT EXISTS "${release_dir}/test/${d}_Demo/cgal_test_with_cmake")
+          file(COPY "${release_dir}/developer_scripts/cgal_test_with_cmake" DESTINATION "${release_dir}/test/${d}_Demo")
+        endif()
+      endif()
+    endif()
+  endforeach()
+  #copy examples/PKG to test/PKG_Examples
+  file(GLOB examples RELATIVE "${release_dir}/examples" "${release_dir}/examples/*")
+  foreach(d ${examples})
+    if(IS_DIRECTORY "${release_dir}/examples/${d}")
+      #do the copy in 2 pass since we cannot specify the target name
+      file(COPY "${release_dir}/examples/${d}" DESTINATION "${release_dir}/tmp")
+      file(RENAME "${release_dir}/tmp/${d}" "${release_dir}/test/${d}_Examples")
+      if(NOT EXISTS "${release_dir}/test/${d}_Examples/cgal_test_with_cmake")
+        file(COPY "${release_dir}/developer_scripts/cgal_test_with_cmake" DESTINATION "${release_dir}/test/${d}_Examples")
+      endif()
+    endif()
+  endforeach()
+  file(REMOVE_RECURSE ${release_dir}/tmp)
+endif()
 
 # removal of extra directories and files
 file(REMOVE_RECURSE ${release_dir}/doc/fig_src)
