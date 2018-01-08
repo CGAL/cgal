@@ -897,7 +897,7 @@ next(typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMa
     return next(h, w.graph());
 
   //h is on the border of the selection
-  CGAL_assertion( !w.is_in_cc(face(h, w.graph())) );
+  CGAL_assertion( is_border(h, w.graph()) || !w.is_in_cc(face(h, w.graph())) );
   typedef typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_descriptor h_d;
   h_d candidate = next(h, w.graph());
   CGAL_assertion(!w.is_in_cc(candidate));
@@ -922,7 +922,7 @@ prev(typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMa
     return prev(h, w.graph());
 
   //h is on the border of the selection
-  CGAL_assertion( !w.is_in_cc(face(h, w.graph())) );
+  CGAL_assertion( is_border(h, w.graph()) || !w.is_in_cc(face(h, w.graph())) );
   typedef typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_descriptor h_d;
   h_d candidate = prev(h, w.graph());
   CGAL_assertion(!w.is_in_cc(candidate));
