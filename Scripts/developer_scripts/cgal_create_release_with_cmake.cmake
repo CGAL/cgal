@@ -44,7 +44,10 @@ file(GLOB files RELATIVE ${CMAKE_BINARY_DIR} ${CMAKE_BINARY_DIR}/*)
 
 foreach(pkg ${files})
   set(pkg_dir ${CMAKE_BINARY_DIR}/${pkg}) # use absolute path
-  if(IS_DIRECTORY ${pkg_dir} AND EXISTS ${pkg_dir}/package_info AND NOT "${pkg}" STREQUAL "Maintenance") # only consider packages
+  if(IS_DIRECTORY ${pkg_dir} AND (NOT "${pkg}" STREQUAL "Maintenance")
+      AND (EXISTS ${pkg_dir}/package_info
+           OR "${pkg}" STREQUAL "Documentation"
+           OR "${pkg}" STREQUAL "Miscellany" ) ) # only consider packages
     if(VERBOSE)
       message(STATUS "handling ${pkg}")
     endif()
@@ -85,7 +88,9 @@ foreach(pkg ${files})
         endif()
       endif()
     endforeach()
-
+    if (IS_DIRECTORY "${release_dir}/doc/${pkg}/fig_src")
+      file(REMOVE_RECURSE "${release_dir}/doc/${pkg}/fig_src")
+    endif()
   endif()
 endforeach()
 
@@ -156,11 +161,10 @@ if (TESTSUITE)
       endif()
     endif()
   endforeach()
-  file(REMOVE_RECURSE ${release_dir}/tmp)
+  file(REMOVE_RECURSE "${release_dir}/tmp")
 endif()
 
 # removal of extra directories and files
-file(REMOVE_RECURSE ${release_dir}/doc/fig_src)
 file(REMOVE_RECURSE ${release_dir}/benchmark)
 file(REMOVE_RECURSE ${release_dir}/archive)
 file(REMOVE ${release_dir}/include/CGAL/license/generate_files.cmake)
