@@ -32,19 +32,9 @@ typedef Classification::Point_set_feature_generator<Kernel, Point_set, Pmap>    
 int main (int argc, char** argv)
 {
   std::string filename = "data/b9_training.ply";
-  bool use_opencv = false;
   
   if (argc > 1)
-  {
-    if (std::string(argv[1]) == "-cv")
-    {
-      use_opencv = true;
-      if (argc > 2)
-        filename = argv[2];
-    }
-    else
-      filename = argv[1];
-  }
+    filename = argv[1];
 
   std::ifstream in (filename.c_str(), std::ios::binary);
   Point_set pts;
