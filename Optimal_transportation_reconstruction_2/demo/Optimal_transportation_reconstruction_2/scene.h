@@ -25,6 +25,7 @@
 #include <CGAL/value_type_traits.h>
 #include <CGAL/compute_average_spacing.h>
 #include <CGAL/functional.h>
+#include <CGAL/Iterator_range.h>
 
 class GlViewer;
 
@@ -390,10 +391,10 @@ public:
   void compute_average_spacing()
   {
     FT spacing = CGAL::compute_average_spacing<CGAL::Sequential_tag>
-      (boost::make_transform_iterator (m_samples.begin(),
-                                       Point_3_from_sample()),
-       boost::make_transform_iterator (m_samples.end(),
-                                       Point_3_from_sample()),
+      (CGAL::make_range (boost::make_transform_iterator (m_samples.begin(),
+                                                         Point_3_from_sample()),
+                         boost::make_transform_iterator (m_samples.end(),
+                                                         Point_3_from_sample())),
        3);
     std::cerr << "Average spacing = " << spacing << std::endl;
   }
