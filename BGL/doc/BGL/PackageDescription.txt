@@ -205,6 +205,8 @@ Valid Expression  |  returns                                   | Description
 /// \defgroup PkgBGLEulerOperations Euler Operations
 /// \ingroup PkgBGL
 
+/// \defgroup PkgBGLPartition Partitioning Operations
+/// \ingroup PkgBGL
 
 /*!
 \addtogroup PkgBGLPropertiesDynamic
@@ -266,6 +268,12 @@ the dual graph of a graph without actually building the dual. By operating
 almost entirely on the input graph, adaptors can avoid potentially expensive operations,
 both in term of time and memory.
 
+*/
+
+/*!
+\addtogroup PkgBGLPartition
+
+Methods to split a mesh into subdomains, using the library METIS.
 */
 
 /*!
@@ -390,7 +398,6 @@ user might encounter.
 - `CGAL::Face_around_face_circulator`
 
 ## Euler Operations ##
-
 - `CGAL::Euler::add_center_vertex()`
 - `CGAL::Euler::add_edge()`
 - `CGAL::Euler::add_face()`
@@ -425,13 +432,16 @@ user might encounter.
 - `CGAL::convert_nef_polyhedron_to_polygon_mesh()`
 - `CGAL::split_graph_into_polylines()`
 
-
 ## Graph Adaptors ##
 - `CGAL::Dual`
 - `CGAL::Face_filtered_graph`
 - `CGAL::Graph_with_descriptor_with_graph`
 - `CGAL::Graph_with_descriptor_with_graph_property_map`
 - `CGAL::Seam_mesh`
+
+## Partitioning Methods ##
+- `CGAL::METIS::partition_graph()`
+- `CGAL::METIS::partition_dual_graph()`
 
 ## I/O Functions ##
 - `CGAL::read_off()`

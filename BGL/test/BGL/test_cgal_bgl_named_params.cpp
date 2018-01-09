@@ -40,6 +40,10 @@ void test(const NamedParameters& np)
   assert(get_param(np, CGAL::internal_np::first_index).v == 7);
   assert(get_param(np, CGAL::internal_np::number_of_iterations).v == 8);
 
+  assert(get_param(np, CGAL::internal_np::METIS_options).v == 800000001);
+  assert(get_param(np, CGAL::internal_np::vertex_partition_id).v == 800000002);
+  assert(get_param(np, CGAL::internal_np::face_partition_id).v == 800000003);
+
     // Named parameters that we use in the package 'Mesh_3'
   assert(get_param(np, CGAL::internal_np::vertex_feature_degree).v == 9);
 
@@ -98,6 +102,10 @@ void test(const NamedParameters& np)
   check_same_type<7>(get_param(np, CGAL::internal_np::first_index));
   check_same_type<8>(get_param(np, CGAL::internal_np::number_of_iterations));
 
+  check_same_type<800000001>(get_param(np, CGAL::internal_np::METIS_options));
+  check_same_type<800000002>(get_param(np, CGAL::internal_np::vertex_partition_id));
+  check_same_type<800000003>(get_param(np, CGAL::internal_np::face_partition_id));
+
     // Named parameters that we use in the package 'Mesh_3'
   check_same_type<9>(get_param(np, CGAL::internal_np::vertex_feature_degree));
 
@@ -151,6 +159,9 @@ int main()
                          .edge_is_constrained_map(A<6>(6))
                          .first_index(A<7>(7))
                          .number_of_iterations(A<8>(8))
+                         .METIS_options(A<800000001>(800000001))
+                         .vertex_partition_id_map(A<800000002>(800000002))
+                         .face_partition_id_map(A<800000003>(800000003))
                          .vertex_feature_degree_map(A<9>(9))
                          .geom_traits(A<10>(10))
                          .vertex_incident_patches_map(A<11>(11))

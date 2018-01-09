@@ -28,6 +28,10 @@ CGAL_add_named_parameter(edge_is_constrained_t, edge_is_constrained, edge_is_con
 CGAL_add_named_parameter(first_index_t, first_index, first_index)
 CGAL_add_named_parameter(number_of_iterations_t, number_of_iterations, number_of_iterations)
 
+CGAL_add_named_parameter(metis_options_t, METIS_options, METIS_options)
+CGAL_add_named_parameter(vertex_partition_id_t, vertex_partition_id, vertex_partition_id_map)
+CGAL_add_named_parameter(face_partition_id_t, face_partition_id, face_partition_id_map)
+
 // List of named parameters that we use in the package 'Mesh_3'
 CGAL_add_named_parameter(vertex_feature_degree_t, vertex_feature_degree, vertex_feature_degree_map)
 
