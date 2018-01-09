@@ -68,8 +68,10 @@ else()
 endif()
 
 create_single_source_cgal_program( "test_classification_point_set.cpp" CXX_FEATURES ${needed_cxx_features} )
-target_link_libraries(test_classification_point_set PUBLIC ${classification_linked_libraries})
 
-if(TBB_FOUND)
-  CGAL_target_use_TBB( test_classification_point_set )
+if(TARGET test_classification_point_set)
+  target_link_libraries(test_classification_point_set PUBLIC ${classification_linked_libraries})
+  if (TBB_FOUND)
+    CGAL_target_use_TBB( test_classification_point_set )
+  endif()
 endif()
