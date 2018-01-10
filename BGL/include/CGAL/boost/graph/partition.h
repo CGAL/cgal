@@ -31,6 +31,11 @@
 #include <CGAL/boost/graph/METIS/partition_graph.h>
 #include <CGAL/boost/graph/METIS/partition_dual_graph.h>
 
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <string>
+
 namespace CGAL {
 
 // \ingroup PkgBGLPartition
