@@ -38,6 +38,10 @@
 
 namespace CGAL {
 
+// Note that to use the function below with Polyhedron_3, you need to enhance
+// the Polyhedron_3 to use items, that is, use:
+// typedef CGAL::Polyhedron_3<K, CGAL::Polyhedron_items_with_id_3> PM;
+
 // \ingroup PkgBGLPartition
 //
 // Output each part of a partition as a single mesh.
