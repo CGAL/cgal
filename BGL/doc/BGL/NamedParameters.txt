@@ -98,7 +98,9 @@ of the partition that has been assigned to this vertex.\n
 <b>Type:</b> a class model of `ReadWritePropertyMap` with
 `boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and
 `int` as value type. \n
-<b>Default:</b> a default property map.
+<b>Default:</b> None: this property map is used to store the partition IDs of the vertices
+as result of a partition algorithm; if it is not provided, this information is
+simply inaccessible.
 \cgalNPEnd
 
 \cgalNPBegin{face_partition_id_map} \anchor BGL_face_partition_id_map
@@ -107,7 +109,9 @@ of the partition that has been assigned to this face.\n
 <b>Type:</b> a class model of `ReadWritePropertyMap` with
 `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and
 `int` as value type. \n
-<b>Default:</b> a default property map.
+<b>Default:</b> None: this property map is used to store the partition IDs of the faces
+as result of a partition algorithm; if it is not provided, this information is
+simply inaccessible.
 \cgalNPEnd
 
 \cgalNPTableEnd
