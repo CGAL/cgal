@@ -57,10 +57,10 @@ namespace CGAL {
 //           with `boost::graph_traits<TriangleMesh>::%face_descriptor`
 //           as key type and `boost::graph_traits<Graph>::%faces_size_type` as value type.
 template<typename TriangleMesh, typename FacePartitionIDPmap>
-void output_dual_graph_partition(const TriangleMesh& tm,
-                                 const idx_t nparts,
-                                 const FacePartitionIDPmap fpmap,
-                                 const std::string filename_base)
+void output_partition(const TriangleMesh& tm,
+                      const idx_t nparts,
+                      const FacePartitionIDPmap fpmap,
+                      const std::string filename_base)
 {
   CGAL_precondition(CGAL::is_triangle_mesh(tm));
 
