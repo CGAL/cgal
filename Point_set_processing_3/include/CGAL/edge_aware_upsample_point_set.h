@@ -402,7 +402,7 @@ edge_aware_upsample_point_set(
   // compute neighborhood
   rich_grid_internal::compute_ball_neighbors_one_self(rich_point_set,
                                                       bbox,
-                                                      neighbor_radius);
+                                                      FT(neighbor_radius));
 
   //
   FT cos_sigma = static_cast<FT>(std::cos(CGAL::to_double(sharpness_angle) / 180.0 * CGAL_PI));
@@ -411,7 +411,7 @@ edge_aware_upsample_point_set(
   FT sum_density = 0.0;
   unsigned int count_density = 1;
   double max_iter_time = 20;
-  FT current_radius = neighbor_radius;
+  FT current_radius = FT(neighbor_radius);
   FT density_pass_threshold = 0.0;
 
   for (unsigned int iter_time = 0; iter_time < max_iter_time; ++iter_time)
@@ -458,7 +458,7 @@ edge_aware_upsample_point_set(
         FT density2 = upsample_internal::
                               base_point_selection(v,
                                                    neighbor_rich_points,
-                                                   edge_sensitivity,
+                                                   FT(edge_sensitivity),
                                                    base_index);
 
         if (density2 < 0)
@@ -514,7 +514,7 @@ edge_aware_upsample_point_set(
         FT density2 = upsample_internal::
                               base_point_selection(v,
                                                    neighbor_rich_points,
-                                                   edge_sensitivity,
+                                                   FT(edge_sensitivity),
                                                    base_index);
 
         // test if it pass the density threshold
