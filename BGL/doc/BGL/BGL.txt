@@ -385,7 +385,8 @@ accordingly:
 The previous sections introduced partial specializations
 and free functions so that several \cgal data structures are adapted as models of some
 of the \sc{Bgl} graph concepts.
-In this section, we introduce new functiona
+In this section, we introduce new concepts, iterators, and property maps inspired
+by the functionalities of the BGL.
 
 \subsection BGLExtensionsGraphConcepts Graph concepts
 

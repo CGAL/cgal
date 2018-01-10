@@ -164,8 +164,8 @@ void partition_graph(const TriangleMesh& tm, int nparts,
 
 /// \ingroup PkgBGLPartition
 ///
-/// Computes a partition of the input mesh into `nparts` parts, based on the
-/// mesh's nodal graph. The resulting partition is stored in the vertex and face
+/// Computes a partition of the input triangular mesh into `nparts` parts, based on the
+/// mesh's nodal graph. The resulting partition is stored in the vertex and/or face
 /// property maps that are passed as parameters using \ref bgl_namedparameters "Named Parameters".
 ///
 /// Property map for `CGAL::vertex_index_t` should be either available

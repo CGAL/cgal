@@ -82,9 +82,10 @@ being marked or not.\n
 \cgalNPEnd
 
 \cgalNPBegin{METIS_options} \anchor BGL_METIS_options
-is a parameter used in `partition()` to pass options to the METIS mesh
-partitioner. The many options of METIS are not described here. Instead, users
-should refer to METIS' <a href="http://glaros.dtc.umn.edu/gkhome/fetch/sw/metis/manual.pdf">documentation</a>.\n
+is a parameter used in `partition_graph()` and `partition_dual_graph()`
+to pass options to the METIS graph partitioner. The many options of METIS
+are not described here. Instead, users should refer to METIS'
+<a href="http://glaros.dtc.umn.edu/gkhome/fetch/sw/metis/manual.pdf">documentation</a>.\n
 <b>Type:</b> an array of size `METIS_NOPTIONS` with value type `idx_t`
             (an integer type defined by METIS). \n
 <b>Default:</b> an array of size `METIS_NOPTIONS` with value type `idx_t`,
