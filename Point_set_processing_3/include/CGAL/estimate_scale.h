@@ -705,12 +705,19 @@ estimate_local_range_scales(
 
    \note This function accepts both 2D and 3D points.
 
-   \return The estimated scale in the range sense.
+   \return The estimated scale in the range sense. The return type `FT` is a number type. It is
+   either deduced from the `geom_traits` \ref psp_namedparameters "Named Parameters" if provided,
+   or the geometric traits class deduced from the point property map
+   of `points`.
 */
 template <typename PointRange,
           typename NamedParameters
 >
-double
+#ifdef DOXYGEN_RUNNING
+  FT
+#else
+  typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel::FT
+#endif
 estimate_global_range_scale(
   const PointRange& points,
   const NamedParameters& np)
@@ -724,7 +731,7 @@ estimate_global_range_scale(
 /// \cond SKIP_IN_MANUAL
 // variant with default NP
 template <typename PointRange>
-double
+typename Kernel_traits<typename PointRange::iterator::value_type>::Kernel::FT
 estimate_global_range_scale(const PointRange& points)
 {
   return estimate_global_range_scale

@@ -155,13 +155,20 @@ compute_average_spacing(const typename Kernel::Point_3& query, ///< 3D point who
      \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
    \cgalNamedParamsEnd
 
-   \return average spacing (scalar).
+   \return average spacing (scalar). The return type `FT` is a number type. It is
+   either deduced from the `geom_traits` \ref psp_namedparameters "Named Parameters" if provided,
+   or the geometric traits class deduced from the point property map
+   of `points`.
 */
 template <typename ConcurrencyTag,
 	  typename PointRange,
           typename NamedParameters
 >
-double
+#ifdef DOXYGEN_RUNNING
+  FT
+#else
+  typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel::FT
+#endif
 compute_average_spacing(
   const PointRange& points,
   unsigned int k,
@@ -234,7 +241,8 @@ compute_average_spacing(
 
 // variant with default NP
 template <typename ConcurrencyTag, typename PointRange>
-double compute_average_spacing(
+typename Kernel_traits<typename PointRange::iterator::value_type>::Kernel::FT
+compute_average_spacing(
   const PointRange& points,
   unsigned int k) ///< number of neighbors.
 {
