@@ -607,9 +607,9 @@ Seam meshes are for example used in Chapter \ref PkgSurfaceParameterizationSumma
 to parameterize a topological sphere by first virtually cutting it into a topological
 disk.
 
-\section PMPPartitioning Mesh Partitioning
+\section PMPPartitioning Graph Partitioning
 
-For algorithms that operate locally, mesh partitioning is often an easy way to parallelize
+For algorithms that operate locally, partitioning is often an easy way to parallelize
 the algorithm at little cost.
 The functions `CGAL::METIS::partition_graph()` and `CGAL::METIS::partition_dual_graph()`
 provide wrappers to the graph partitioning library METIS \cgalCite{karypis1998fast},
