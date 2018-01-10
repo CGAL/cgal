@@ -60,8 +60,8 @@ with respect to the data point \f$ \mathbf{p_i}\in \mathcal{P}\f$ is defined by
 A two-dimensional example
 is depicted in \cgalFigureRef{fignn_coords}.
 
-Various papers (\cgalCite{s-vidt-80}, \cgalCite{f-sodt-90},
-\cgalCite{cgal:p-plcbd-93}, \cgalCite{b-scaps-97}, \cgalCite{hs-vbihc-00}) show that
+Various papers (\cgalCite{b-scaps-97}, \cgalCite{f-sodt-90}, \cgalCite{hs-vbihc-00},
+\cgalCite{cgal:p-plcbd-93}, \cgalCite{s-vidt-80}) show that
 the natural neighbor coordinates have the following properties:
 <OL>
 <LI>\f$ \mathbf{x} = \sum_{i=1}^n \lambda_i(\mathbf{x}) \mathbf{p_i}\f$
