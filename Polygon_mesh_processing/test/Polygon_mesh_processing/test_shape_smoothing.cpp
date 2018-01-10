@@ -50,8 +50,7 @@ public:
 
 int main(int argc, char* argv[])
 {
-  //const char* filename = "data/mannequin-devil.off";
-    const char* filename = "data/simple_polygon.off";
+  const char* filename = "data/mannequin-devil.off";
   std::ifstream input(filename);
 
 
@@ -73,48 +72,49 @@ int main(int argc, char* argv[])
 
   for (edge_descriptor h : edges(mesh))
   {
-
     vertex_descriptor v_s = source(h, mesh);
     vertex_descriptor v_t = target(h, mesh);
-
     double z_s = get(vpmap, v_s).z();
     double z_t = get(vpmap, v_t).z();
-
-    if(z_s  > 19.99 || z_t > 19.99)
+    if(z_s  > 12 || z_t > 12)
       selected_edges.insert(h);
-
   }
-
-  std::cout<<"number of selected_halfedges= "<<selected_edges.size()<<std::endl;
-
+  std::cout<<"number of selected edges= "<<selected_edges.size()<<std::endl;
   Constraints_pmap ecmap(&selected_edges);
 
 
-  double time_step = 1e-2;
 
-  CGAL::PMP::smooth_modified_curvature_flow(mesh, time_step);
+  double time_step = 1e-3;
 
-
-
+  Eigen::SparseMatrix<double> stiff_matrix;
 
 
+  CGAL::Polygon_mesh_processing::setup_mcf_system(faces(mesh), mesh, stiff_matrix,
+                                                  CGAL::PMP::parameters::edge_is_constrained_map(ecmap));
 
-
-
-
-  /*
-  std::set<halfedge_descriptor>::iterator it;
-  for(it = selected_halfedges.begin(); it != selected_halfedges.end(); ++it)
+  for(int t = 0; t<5; ++t)
   {
-    std::cout<<*it<<"\n";
+
+  //CGAL::PMP::smooth_modified_curvature_flow(mesh, time_step,
+  //                                          CGAL::PMP::parameters::edge_is_constrained_map(ecmap));
+
+
+
+    CGAL::Polygon_mesh_processing::solve_mcf_system(faces(mesh), mesh, time_step, stiff_matrix,
+                                                    CGAL::PMP::parameters::edge_is_constrained_map(ecmap));
+
+
+    std::string out_name = "data/output" + std::to_string(t) + ".off";
+    std::ofstream out(out_name);
+    out << mesh;
+    out.close();
+
+
   }
-  */
 
 
 
-  std::ofstream out("data/output.off");
-  out << mesh;
-  out.close();
+
 
 
 

@@ -246,26 +246,35 @@ void smooth_modified_curvature_flow(const FaceRange& faces, PolygonMesh& pmesh, 
   typedef typename boost::lookup_named_param_def <
       internal_np::vertex_is_constrained_t,
       NamedParameters,
-      internal::No_constraint_pmap<vertex_descriptor>//default
+      internal::Constrained_things_map<vertex_descriptor>
     > ::type VCMap;
   VCMap vcmap = choose_param(get_param(np, internal_np::vertex_is_constrained),
-                             internal::No_constraint_pmap<vertex_descriptor>());
+                             internal::Constrained_things_map<vertex_descriptor>());
 
+  /*
   // fimap
   typedef typename GetFaceIndexMap<PolygonMesh, NamedParameters>::type FIMap;
   FIMap fimap = choose_param(get_param(np, internal_np::face_index),
-                           get_property_map(face_index, pmesh));
+                             get_property_map(face_index, pmesh));
+  */
+
   // ecmap
+  typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor edge_descriptor;
   typedef typename boost::lookup_named_param_def <
-        internal_np::edge_is_constrained_t,
-        NamedParameters,
-        internal::Border_constraint_pmap<PolygonMesh, FaceRange, FIMap>
-      > ::type ECMap;
-  ECMap ecmap = (boost::is_same<ECMap, internal::Border_constraint_pmap<PolygonMesh, FaceRange, FIMap> >::value)
+      internal_np::edge_is_constrained_t,
+      NamedParameters,
+      internal::Constrained_things_map<edge_descriptor>
+      >::type ECMap;
+  ECMap ecmap = choose_param(get_param(np, internal_np::edge_is_constrained),
+                             internal::Constrained_things_map<edge_descriptor>());
+
+
+  /*typedef typename boost::lookup_named_param_def < internal_np::edge_is_constrained_t, NamedParameters, internal::Border_constraint_pmap<PolygonMesh, FaceRange, FIMap > > ::type ECMap;*/
+  /*ECMap ecmap = (boost::is_same<ECMap, internal::Border_constraint_pmap<PolygonMesh, FaceRange, FIMap> >::value)
   ? choose_param(get_param(np, internal_np::edge_is_constrained),
                  internal::Border_constraint_pmap<PolygonMesh, FaceRange, FIMap>(pmesh, faces, fimap))
   : choose_param(get_param(np, internal_np::edge_is_constrained),
-                 internal::Border_constraint_pmap<PolygonMesh, FaceRange, FIMap>());
+                 internal::Border_constraint_pmap<PolygonMesh, FaceRange, FIMap>());*/
 
   std::size_t n = static_cast<int>(vertices(pmesh).size());
   typedef typename Eigen::VectorXd Eigen_vector;
@@ -311,6 +320,9 @@ void setup_mcf_system(const FaceRange& faces, PolygonMesh& mesh,
                       Eigen::SparseMatrix<double>& stiffness_matrix, const NamedParameters& np)
 {
 
+  using boost::choose_param;
+  using boost::get_param;
+
   //typedef typename GetGeomTraits<PolygonMesh>::type GeomTraits;
 
   //typedef typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::type VertexPointMap;
@@ -329,26 +341,20 @@ void setup_mcf_system(const FaceRange& faces, PolygonMesh& mesh,
   typedef typename boost::lookup_named_param_def <
       internal_np::vertex_is_constrained_t,
       NamedParameters,
-      internal::No_constraint_pmap<vertex_descriptor>//default
+      internal::Constrained_things_map<vertex_descriptor>
     > ::type VCMap;
   VCMap vcmap = choose_param(get_param(np, internal_np::vertex_is_constrained),
-                             internal::No_constraint_pmap<vertex_descriptor>());
+                             internal::Constrained_things_map<vertex_descriptor>());
 
-  // fimap
-  typedef typename GetFaceIndexMap<PolygonMesh, NamedParameters>::type FIMap;
-  FIMap fimap = choose_param(get_param(np, internal_np::face_index),
-                           get_property_map(face_index, mesh));
   // ecmap
+  typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor edge_descriptor;
   typedef typename boost::lookup_named_param_def <
-        internal_np::edge_is_constrained_t,
-        NamedParameters,
-        internal::Border_constraint_pmap<PolygonMesh, FaceRange, FIMap>
-      > ::type ECMap;
-  ECMap ecmap = (boost::is_same<ECMap, internal::Border_constraint_pmap<PolygonMesh, FaceRange, FIMap> >::value)
-  ? choose_param(get_param(np, internal_np::edge_is_constrained),
-                 internal::Border_constraint_pmap<PolygonMesh, FaceRange, FIMap>(mesh, faces, fimap))
-  : choose_param(get_param(np, internal_np::edge_is_constrained),
-                 internal::Border_constraint_pmap<PolygonMesh, FaceRange, FIMap>());
+      internal_np::edge_is_constrained_t,
+      NamedParameters,
+      internal::Constrained_things_map<edge_descriptor>
+      >::type ECMap;
+  ECMap ecmap = choose_param(get_param(np, internal_np::edge_is_constrained),
+                             internal::Constrained_things_map<edge_descriptor>());
 
   std::size_t n = static_cast<int>(vertices(mesh).size());
   stiffness_matrix.resize(n, n);
@@ -363,6 +369,10 @@ template<typename PolygonMesh, typename FaceRange, typename NamedParameters>
 void solve_mcf_system(const FaceRange& faces, PolygonMesh& mesh, const double& time,
                       Eigen::SparseMatrix<double>& stiffness_matrix, const NamedParameters& np)
 {
+
+  using boost::choose_param;
+  using boost::get_param;
+
   //typedef typename GetGeomTraits<PolygonMesh>::type GeomTraits;
 
   //typedef typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::type VertexPointMap;
@@ -381,26 +391,20 @@ void solve_mcf_system(const FaceRange& faces, PolygonMesh& mesh, const double& t
   typedef typename boost::lookup_named_param_def <
       internal_np::vertex_is_constrained_t,
       NamedParameters,
-      internal::No_constraint_pmap<vertex_descriptor>//default
+      internal::Constrained_things_map<vertex_descriptor>
     > ::type VCMap;
   VCMap vcmap = choose_param(get_param(np, internal_np::vertex_is_constrained),
-                             internal::No_constraint_pmap<vertex_descriptor>());
+                             internal::Constrained_things_map<vertex_descriptor>());
 
-  // fimap
-  typedef typename GetFaceIndexMap<PolygonMesh, NamedParameters>::type FIMap;
-  FIMap fimap = choose_param(get_param(np, internal_np::face_index),
-                           get_property_map(face_index, mesh));
   // ecmap
+  typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor edge_descriptor;
   typedef typename boost::lookup_named_param_def <
-        internal_np::edge_is_constrained_t,
-        NamedParameters,
-        internal::Border_constraint_pmap<PolygonMesh, FaceRange, FIMap>
-      > ::type ECMap;
-  ECMap ecmap = (boost::is_same<ECMap, internal::Border_constraint_pmap<PolygonMesh, FaceRange, FIMap> >::value)
-  ? choose_param(get_param(np, internal_np::edge_is_constrained),
-                 internal::Border_constraint_pmap<PolygonMesh, FaceRange, FIMap>(mesh, faces, fimap))
-  : choose_param(get_param(np, internal_np::edge_is_constrained),
-                 internal::Border_constraint_pmap<PolygonMesh, FaceRange, FIMap>());
+      internal_np::edge_is_constrained_t,
+      NamedParameters,
+      internal::Constrained_things_map<edge_descriptor>
+      >::type ECMap;
+  ECMap ecmap = choose_param(get_param(np, internal_np::edge_is_constrained),
+                             internal::Constrained_things_map<edge_descriptor>());
 
   typedef typename Eigen::VectorXd Eigen_vector;
   typedef typename Eigen::SparseMatrix<double> Eigen_matrix;

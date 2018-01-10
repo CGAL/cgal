@@ -37,6 +37,9 @@
 #include <unordered_set>
 #include <unordered_map>
 
+//#define CGAL_EXPORT_SYSTEM
+
+
 namespace CGAL {
 namespace Polygon_mesh_processing {
 namespace internal {
@@ -115,6 +118,35 @@ struct Incident_area
 
 };
 
+template<typename Descriptor>
+struct Constrained_things_map
+{
+  typedef Descriptor                          key_type;
+  typedef bool                                value_type;
+  typedef value_type&                         reference;
+  typedef boost::read_write_property_map_tag  category;
+
+  // to change this to boost::shared_ptr
+  std::shared_ptr<std::set<Descriptor>> const_things;
+
+public:
+  Constrained_things_map() : const_things(new std::set<Descriptor>) {}
+
+  friend bool get(const Constrained_things_map& map, const key_type& d)
+  {
+    typename std::set<Descriptor>::iterator it = map.const_things->find(d);
+    return it != map.const_things->end() ? true : false;
+  }
+
+  friend void put(Constrained_things_map& map, const key_type& d)
+  {
+    map.const_things->insert(d);
+  }
+};
+
+
+
+
 template<typename PolygonMesh,
          typename VertexPointMap,
          typename VertexConstraintMap,
@@ -147,7 +179,7 @@ private:
 public:
   Shape_smoother(PolygonMesh& mesh,
                  VertexPointMap& vpmap,
-                 VertexConstraintMap vcmap,
+                 VertexConstraintMap& vcmap,
                  EdgeConstraintMap& ecmap) :
       mesh_(mesh),
       vpmap_(vpmap),
@@ -163,6 +195,7 @@ public:
     //check_vertex_range(face_range);
 
     check_constraints();
+
   }
 
 
@@ -175,20 +208,35 @@ public:
 
     // todo : assert L, D sizes
 
-    //std::cout<<"mass matrix= "<<D<<std::endl;
-
     std::cerr << "compute coefficient matrix...";
     compute_coeff_matrix(A, L, D, time);
+    std::cerr << "done with computing coeff matrix" << std::endl;
 
-    //std::cout<<"mass matrix= "<<A<<std::endl;
-
-    std::cerr << "done" << std::endl;
-
-    std::cerr << "rhs...";
+    std::cerr << "conpute rhs...";
     compute_rhs(bx, by, bz, D);
+    std::cerr << "done with rhs." << std::endl;
 
 
-    std::cerr << "done setup system" << std::endl;
+#ifdef CGAL_EXPORT_SYSTEM
+    std::ofstream out("data/coeff_matrix_before.dat");
+    out << A << std::endl;
+    out.close();
+#endif
+
+
+
+    //apply_constraints(A);
+
+
+
+#ifdef CGAL_EXPORT_SYSTEM
+    std::ofstream out2("data/coeff_matrix_after.dat");
+    out2 << A << std::endl;
+    out2.close();
+#endif
+
+
+    std::cout<<"Done with setting up the sytem.\n";
   }
 
 
@@ -197,15 +245,15 @@ public:
                     Eigen_vector& bx, Eigen_vector& by, Eigen_vector& bz)
   {
     // Cholesky factorization
-    std::cerr << "compute ...";
+    std::cerr << "Preparing linear solver ...";
     Eigen_solver solver;
     solver.compute(A);
-    std::cerr << "done" << std::endl;
+    std::cerr << "ok." << std::endl;
     // solver.analyzePattern(A);
       // solver.factorize(A);
 
       // back-substitution
-    std::cerr << "solve...";
+    std::cerr << "solving...";
     Xx = solver.solve(bx);
     Xy = solver.solve(by);
     Xz = solver.solve(bz);
@@ -247,6 +295,13 @@ public:
     }
 
     mat.setFromTriplets(tripletList.begin(), tripletList.end());
+
+#ifdef CGAL_EXPORT_SYSTEM
+    std::ofstream out("data/stiff_matrix.dat");
+    out << mat << std::endl;
+    out.close();
+#endif
+
   }
 
   void update_mesh(Eigen_vector& Xx, Eigen_vector& Xy, Eigen_vector& Xz)
@@ -281,16 +336,30 @@ private:
       double area = face_area(f, mesh_);
       for(vertex_descriptor v : vertices_around_face(halfedge(f, mesh_), mesh_))
       {
+
+        auto idx = vimap_[v];
         if(!is_constrained(v))
         {
-          auto indx = vimap_[v];
-          D.coeffRef(indx, indx) += 2.0 * area;
+          D.coeffRef(idx, idx) += 2.0 * area;
         }
+        else
+        {
+          D.coeffRef(idx, idx) = 1.0;
+        }
+        //D.row(indx) = 0.0;
 
       }
     }
 
     D /= 12.0;
+
+
+#ifdef CGAL_EXPORT_SYSTEM
+    std::ofstream out("data/mass_matrix.dat");
+    out << D << std::endl;
+    out.close();
+#endif
+
   }
 
 
@@ -327,7 +396,6 @@ private:
       bz.coeffRef(index) = p.z();
     }
 
-    //calc_mass_matrix(D);
 
     //Eigen_matrix D(Bx.rows(), Bx.rows());
     //D.setIdentity();
@@ -337,67 +405,31 @@ private:
     bz = D * bz;
 
 
+#ifdef CGAL_EXPORT_SYSTEM
+    std::ofstream outx("data/bx.dat");
+    outx << bx << std::endl;
+    outx.close();
+
+    std::ofstream outy("data/by.dat");
+    outy << by << std::endl;
+    outy.close();
+
+    std::ofstream outz("data/bz.dat");
+    outz << bz << std::endl;
+    outz.close();
+
+
     //std::cout<<"bx= "<<bx<<std::endl;
     //std::cout<<"by= "<<by<<std::endl;
     //std::cout<<"bz= "<<bz<<std::endl;
+#endif
+
   }
 
 
 
-
-
-  /*
-  // ---------------- CONSTRAINS ---------------- //
-  void gather_constrained_vertices()
-  {
-    for(vertex_descriptor v : vertices(mesh_))
-    {
-      if(is_border(v, mesh_))
-      {
-        constrained_vertices_.insert(v);
-      }
-    }
-  }
-  */
-
-  /*
-  void apply_constraints(Matrix& A)
-  { // to be called after gather_constrained_vertices()
-
-    typename std::unordered_set<vertex_descriptor>::iterator it;
-    for(it = constrained_vertices_.begin(); it != constrained_vertices_.end(); ++it)
-    {
-      int i = get(vimap_, *it);
-      A.set_coef(i, i, 1.0);
-
-      // also set all cols of the same row = 0 - not needed
-      //for(std::size_t j = 0; j<A.column_dimension(); ++j)
-      //  A.set_coef(i, j, 0);
-    }
-  }
-  */
-
-  /*
-  void export_eigen_matrix(Eigen_matrix& A, const char* filename)
-  {
-
-    std::ofstream out(filename);
-    for(auto i=0; i < A.rows(); ++i)
-    {
-        for(auto j=0; j < A.cols(); ++j)
-        {
-            NT val = A.coeff(i, j);
-            out<<val<<" ";
-        }
-        out<<nl;
-    }
-    out.close();
-  }
-  */
-
-
-  // -------------- UPDATE MESH ----------------- //
-
+  // update mesh
+  // -----------------------------------
   Triangle triangle(face_descriptor f) const
   {
     halfedge_descriptor h = halfedge(f, mesh_);
@@ -473,11 +505,49 @@ private:
       {
         vertex_descriptor vs = source(e, mesh_);
         vertex_descriptor vt = target(e, mesh_);
-        put(vcmap_, vs, true);
-        put(vcmap_, vt, true);
+
+
+        put(vcmap_, vs);
+        put(vcmap_, vt);
       }
     }
   }
+
+  /*
+  void apply_constraints(Eigen_matrix& A)
+  {
+    std::cout<<"Applying constraints..."<<std::endl;
+
+    typedef Eigen::Triplet<double> Triplet;
+    std::vector<Triplet> tripletList;
+    // to reserve this tripletlist
+
+    for(vertex_descriptor v : vertices(mesh_))
+    {
+      if(is_constrained(v))
+      {
+        int ind = get(vimap_, v); // to static cast
+
+        //A.
+
+        for(int j=0; j<A.cols(); ++j)
+        {
+          tripletList.push_back(Triplet(ind, j, 0.0));
+        }
+
+
+        //A.block(ind, 0, 1, A.cols()) = 0.0;
+
+        //A.coeffRef(ind, ind) = 1.0;
+        tripletList.push_back(Triplet(ind, ind, 0.0));
+      }
+    }
+
+    //A.setFromTriplets(tripletList.begin(), tripletList.end());
+    std::cout<<"done applying constraints..."<<std::endl;
+  }
+*/
+
 
   // to use
   template<typename FaceRange>
