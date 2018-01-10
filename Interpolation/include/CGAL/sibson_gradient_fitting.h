@@ -82,7 +82,7 @@ sibson_gradient_fitting(ForwardIterator first,
   return Hn.inverse().transform(pn);
 }
 
-  
+
 template < class Triangul, class ForwardIterator, class Functor, class Traits, class VH>
 typename Traits::Vector_d
 sibson_gradient_fitting(const Triangul& tr,
@@ -98,9 +98,9 @@ sibson_gradient_fitting(const Triangul& tr,
 {
   const typename Traits::Point_d& bare_p = traits.construct_point_d_object()(vh->point());
   typename Functor::result_type fn = function_value(bare_p);
- 
+
   CGAL_assertion(fn.second);
-                                                         
+
   return sibson_gradient_fitting(first,
                                  beyond,
                                  norm,
@@ -109,7 +109,7 @@ sibson_gradient_fitting(const Triangul& tr,
                                  function_value,
                                  traits);
 }
- 
+
 template < class Triangul, class ForwardIterator, class Functor, class Traits, class VH>
 typename Traits::Vector_d
 sibson_gradient_fitting(const Triangul& tr,
@@ -126,7 +126,7 @@ sibson_gradient_fitting(const Triangul& tr,
   const typename Traits::Point_d& bare_p = traits.construct_point_d_object()(vh->point());
   typename Functor::result_type fn = function_value(vh->point());
   CGAL_assertion(fn.second);
-                                                         
+
   return sibson_gradient_fitting(first,
                                  beyond,
                                  norm,
@@ -135,7 +135,7 @@ sibson_gradient_fitting(const Triangul& tr,
                                  function_value,
                                  traits);
 }
-  
+
 template < class Triangul, class ForwardIterator, class Functor, class Traits, class VH>
 typename Traits::Vector_d
 sibson_gradient_fitting(const Triangul& tr,
@@ -152,7 +152,7 @@ sibson_gradient_fitting(const Triangul& tr,
   const typename Traits::Point_d& bare_p = traits.construct_point_d_object()(vh->point());
   typename Functor::result_type fn = function_value(vh);
    CGAL_assertion(fn.second);
-                                                         
+
   return sibson_gradient_fitting(first,
                                  beyond,
                                  norm,
@@ -162,7 +162,7 @@ sibson_gradient_fitting(const Triangul& tr,
                                  traits);
 }
 
-  
+
 template < class Triangul, class OutputIterator, class Functor,
            class CoordFunctor, class OIF, class Traits>
 OutputIterator
@@ -197,14 +197,14 @@ sibson_gradient_fitting_internal(const Triangul& tr,
                                                           function_value,
                                                           traits,
                                                           typename Functor::argument_type())));
-      
+
       coords.clear();
     }
   }
   return out;
 }
 
-  
+
 //the following functions allow to fit the gradients for all points in
 // a triangulation except the convex hull points.
 // -> _nn2: natural_neighbor_coordinates_2
@@ -242,7 +242,7 @@ template < class Dt, class OutputIterator, class Functor, class Traits>
 OutputIterator
 sibson_gradient_fitting_nn_2(const Dt& dt,
                              OutputIterator out,
-                             Functor function_value,    
+                             Functor function_value,
                              const Traits& traits)
 {
   return sibson_gradient_fitting_nn_2(dt, out, function_value,

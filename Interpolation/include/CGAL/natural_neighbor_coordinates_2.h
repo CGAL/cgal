@@ -22,19 +22,21 @@
 #define CGAL_NATURAL_NEIGHBOR_COORDINATES_2_H
 
 #include <CGAL/license/Interpolation.h>
+
 #include <CGAL/Interpolation/internal/helpers.h>
+
 #include <CGAL/Iterator_project.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/number_utils_classes.h>
 #include <CGAL/utility.h>
 
+#include <iterator>
 #include <list>
 #include <utility>
+#include <vector>
 
 namespace CGAL {
 
-
-  
 // The following natural_neighbor_coordinate_2 functions fix the
 // traits class to be Dt::Geom_traits. The following signatures could
 // be used if one wants to pass a traits class as argument:
@@ -60,8 +62,8 @@ template < class Dt, class OutputIterator >
 Triple< OutputIterator, typename Dt::Geom_traits::FT, bool >
 natural_neighbors_2(const Dt& dt,
                     const typename Dt::Geom_traits::Point_2& p,
-                    OutputIterator out, typename Dt::Face_handle start
-                    = typename Dt::Face_handle())
+                    OutputIterator out,
+                    typename Dt::Face_handle start = typename Dt::Face_handle())
 {
   typedef typename Dt::Geom_traits       Traits;
   typedef typename Traits::FT            Coord_type;
@@ -96,13 +98,13 @@ natural_neighbors_2(const Dt& dt,
     Equal_x_2 equal_x_2;
     if(!equal_x_2(p1,p2))
     {
-      coef1 =  (p.x() - p2.x()) / (p1.x() - p2.x());
+      coef1 = (p.x() - p2.x()) / (p1.x() - p2.x());
       coef2 = 1 - coef1;
       *out++ = std::make_pair(v1,coef1);
       *out++ = std::make_pair(v2,coef2);
     } else {
       coef1 = (p.y() - p2.y()) / (p1.y() - p2.y());
-      coef2 = 1-coef1;
+      coef2 = 1 - coef1;
       *out++ = std::make_pair(v1,coef1);
       *out++ = std::make_pair(v2,coef2);
     }
@@ -122,7 +124,7 @@ natural_neighbors_2(const Dt& dt,
   return natural_neighbors_2(dt, p, out, hole.begin(), hole.end());
 }
 
-  
+
 //function call if the conflict zone is known:
 // OutputIterator has value type
 //        std::pair<Dt::Vertex_handle, Dt::Geom_traits::FT>
@@ -148,6 +150,7 @@ natural_neighbors_2(const Dt& dt,
   Coord_type area_sum(0);
   EdgeIterator hit = hole_end;
   --hit;
+
   //in the beginning: prev is the "last" vertex of the hole:
   // later: prev is the last vertex processed (previously)
   Vertex_handle prev = hit->first->vertex(dt.cw(hit->second));
@@ -190,7 +193,7 @@ natural_neighbors_2(const Dt& dt,
   return make_triple(out, area_sum, true);
 }
 
-  
+
 template < class Dt, class OutputIterator, class Fct >
 Triple< OutputIterator, typename Dt::Geom_traits::FT, bool >
 natural_neighbor_coordinates_2(const Dt& dt,
@@ -205,8 +208,7 @@ natural_neighbor_coordinates_2(const Dt& dt,
   Interpolation::internal::Project_vertex_output_iterator<OutputIterator, Fct> op(out, fct);
 
   Triple<Interpolation::internal::Project_vertex_output_iterator<OutputIterator,Fct>,
-         typename Dt::Geom_traits::FT, bool > result =
-      natural_neighbors_2(dt, p, op, start);
+         typename Dt::Geom_traits::FT, bool > result = natural_neighbors_2(dt, p, op, start);
 
   return make_triple(result.first.base(), result.second, result.third);
 }
@@ -255,6 +257,7 @@ natural_neighbor_coordinates_2(const Dt& dt,
   return make_triple(result.first.base(), result.second, result.third);
 }
 
+
 //OutputIterator has value type
 //   std::pair< Dt::Geom_traits::Point_2, Dt::Geom_traits::FT>
 //function call if the conflict zone is known:
@@ -269,7 +272,8 @@ natural_neighbor_coordinates_2(const Dt& dt,
   return natural_neighbor_coordinates_2(dt,p, out, hole_begin, hole_end,
                                         Interpolation::internal::Vertex2Point<Dt, typename Dt::Geom_traits::FT>());
 }
-  
+
+
 /**********************************************************/
 //compute the coordinates for a vertex of the triangulation
 // with respect to the other points in the triangulation
@@ -295,11 +299,11 @@ natural_neighbor_coordinates_2(const Dt& dt,
 
   typedef std::map<Vertex_handle /*t2*/, Vertex_handle/*dt*/> V2V;
   V2V correspondence_map;
-  
+
   do{
     CGAL_assertion(!dt.is_infinite(vc));
     Vertex_handle vh2 = t2.insert(vc->point());
-    correspondence_map[vh2] = vc; 
+    correspondence_map[vh2] = vc;
   }
   while(++vc!=done);
 
@@ -308,7 +312,7 @@ natural_neighbor_coordinates_2(const Dt& dt,
   return natural_neighbor_coordinates_2(t2, vh->point(), out, cfct);
 }
 
-  
+
 template <class Dt, class OutputIterator>
 Triple< OutputIterator, typename Dt::Geom_traits::FT, bool >
 natural_neighbor_coordinates_2(const Dt& dt,
@@ -340,7 +344,6 @@ public:
   }
 };
 
- 
 } //namespace CGAL
 
 #endif // CGAL_NATURAL_NEIGHBOR_COORDINATES_2_H
