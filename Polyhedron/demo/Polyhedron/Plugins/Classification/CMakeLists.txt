@@ -6,7 +6,16 @@ if(EIGEN3_FOUND)
   set(classification_compile_definitions)
   
   find_package(Boost OPTIONAL_COMPONENTS serialization iostreams)
-  if (Boost_SERIALIZATION_FOUND AND Boost_IOSTREAMS_FOUND)
+
+  if( WIN32 )
+    find_package( Boost OPTIONAL_COMPONENTS zlib)
+    if( Boost_ZLIB_FOUND )
+      set(classification_linked_libraries ${classification_linked_libraries}
+        ${Boost_ZLIB_LIBRARY})
+    endif()
+  endif()
+
+  if (Boost_SERIALIZATION_FOUND AND Boost_IOSTREAMS_FOUND AND (NOT WIN23 OR Boost_ZLIB_FOUND))
     qt5_wrap_ui( classificationUI_FILES Classification_widget.ui)
     polyhedron_demo_plugin(classification_plugin Classification_plugin Point_set_item_classification ${classificationUI_FILES})
     
@@ -30,7 +39,7 @@ if(EIGEN3_FOUND)
       scene_polylines_item scene_polygon_soup_item scene_color_ramp ${classification_linked_libraries})
     target_compile_definitions(classification_plugin PUBLIC ${classification_compile_definitions})
   else()
-    message(STATUS "NOTICE: Boost Serialization or IO Streams not found. Classification plugin won't be available.")
+    message(STATUS "NOTICE: Boost Serialization or IO Streams or ZLIB not found. Classification plugin won't be available.")
   endif()
 
 

@@ -30,6 +30,10 @@ endif()
 
 find_package( Boost OPTIONAL_COMPONENTS serialization iostreams)
 
+if( WIN32 )
+  find_package( Boost OPTIONAL_COMPONENTS zlib)
+endif()
+
 # Use Eigen
 find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
 if (EIGEN3_FOUND)
@@ -65,6 +69,16 @@ if (Boost_SERIALIZATION_FOUND AND Boost_IOSTREAMS_FOUND)
 else()
   message(STATUS "NOTICE: Boost Serialization or IO Streams not found, no test will be compiled.")
   return()
+endif()
+
+if( WIN23 )
+  if (Boost_ZLIB_FOUND)
+    set(classification_linked_libraries ${classification_linked_libraries}
+      ${Boost_ZLIB_LIBRARY})
+  else()
+    message(STATUS "NOTICE: Boost ZLIB not found, no example will be compiled.")
+    return()
+  endif()
 endif()
 
 create_single_source_cgal_program( "test_classification_point_set.cpp" CXX_FEATURES ${needed_cxx_features} )

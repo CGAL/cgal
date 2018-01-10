@@ -26,7 +26,11 @@ if ( NOT Boost_FOUND )
   return()  
 endif()
 
-find_package( Boost OPTIONAL_COMPONENTS serialization iostreams)
+find_package( Boost OPTIONAL_COMPONENTS serialization iostreams )
+
+if( WIN32 )
+  find_package( Boost OPTIONAL_COMPONENTS zlib)
+endif()
 
 find_package(TBB QUIET)
 
@@ -58,6 +62,7 @@ set(needed_cxx_features cxx_rvalue_references cxx_variadic_templates)
 set(classification_linked_libraries)
 set(classification_compile_definitions)
 
+
 if (Boost_SERIALIZATION_FOUND AND Boost_IOSTREAMS_FOUND)
   set(classification_linked_libraries ${classification_linked_libraries}
     ${Boost_SERIALIZATION_LIBRARY}
@@ -65,6 +70,16 @@ if (Boost_SERIALIZATION_FOUND AND Boost_IOSTREAMS_FOUND)
 else()
   message(STATUS "NOTICE: Boost Serialization or IO Streams not found, no example will be compiled.")
   return()
+endif()
+
+if( WIN23 )
+  if (Boost_ZLIB_FOUND)
+    set(classification_linked_libraries ${classification_linked_libraries}
+      ${Boost_ZLIB_LIBRARY})
+  else()
+    message(STATUS "NOTICE: Boost ZLIB not found, no example will be compiled.")
+    return()
+  endif()
 endif()
 
 find_package(OpenCV QUIET)
