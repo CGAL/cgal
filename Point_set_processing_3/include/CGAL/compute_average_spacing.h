@@ -241,7 +241,7 @@ compute_average_spacing(
 
 // variant with default NP
 template <typename ConcurrencyTag, typename PointRange>
-typename Kernel_traits<typename PointRange::iterator::value_type>::Kernel::FT
+typename Kernel_traits<typename std::iterator_traits<typename PointRange::iterator>::value_type>::Kernel::FT
 compute_average_spacing(
   const PointRange& points,
   unsigned int k) ///< number of neighbors.

@@ -230,6 +230,10 @@ namespace CGAL {
       struct iterator
       {
         typedef ValueType value_type;
+        typedef std::ptrdiff_t difference_type;
+        typedef ValueType* pointer;
+        typedef ValueType reference;
+        typedef std::random_access_iterator_tag iterator_category;
       };
     };
     
@@ -246,7 +250,7 @@ namespace CGAL {
     template<typename PointRange, typename NamedParameters>
     class GetPointMap
     {
-      typedef typename PointRange::iterator::value_type Point;
+      typedef typename std::iterator_traits<typename PointRange::iterator>::value_type Point;
       typedef typename CGAL::Identity_property_map<Point> DefaultPMap;
 
     public:
@@ -266,7 +270,7 @@ namespace CGAL {
     template<typename PointRange, typename NamedParameters>
     class GetQueryPointMap
     {
-      typedef typename PointRange::iterator::value_type Point;
+      typedef typename std::iterator_traits<typename PointRange::iterator>::value_type Point;
       typedef typename CGAL::Identity_property_map<Point> DefaultPMap;
 
     public:
@@ -298,7 +302,7 @@ namespace CGAL {
     {
       struct DummyNormalMap
       {
-        typedef typename PointRange::iterator::value_type key_type;
+        typedef typename std::iterator_traits<typename PointRange::iterator>::value_type key_type;
         typedef typename GetK<PointRange, NamedParameters>::Kernel::Vector_3 value_type;
         typedef value_type reference;
         typedef boost::read_write_property_map_tag category;
