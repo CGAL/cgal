@@ -78,6 +78,7 @@ addons:
       - libboost-system1.55-dev 
       - libboost-program-options1.55-dev 
       - libboost-thread1.55-dev 
+      - libboost-iostreams1.55-dev
       - libgmp-dev 
       - libmpfr-dev 
       - libmpfi-dev 
