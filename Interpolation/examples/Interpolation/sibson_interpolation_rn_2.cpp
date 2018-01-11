@@ -34,8 +34,8 @@ int main()
 {
   Regular_triangulation T;
 
-  Point_value_map function_values;
-  Point_vector_map function_gradients;
+  Point_value_map value_function;
+  Point_vector_map gradient_function;
 
   //parameters for spherical function:
   Coord_type a(0.25), bx(1.3), by(-0.7), c(0.2);
@@ -43,17 +43,17 @@ int main()
     for (int x=0; x<4; x++) {
       Point p(x,y);
       T.insert(p);
-      function_values.insert(std::make_pair(p, a + bx*x + by*y + c*(x*x+y*y)));
+      value_function.insert(std::make_pair(p, a + bx*x + by*y + c*(x*x+y*y)));
     }
   }
 
-  sibson_gradient_fitting_rn_2(T,std::inserter(function_gradients,
-                                               function_gradients.begin()),
-                               CGAL::Data_access<Point_value_map>(function_values),
+  sibson_gradient_fitting_rn_2(T,
+                               std::inserter(gradient_function, gradient_function.begin()),
+                               CGAL::Data_access<Point_value_map>(value_function),
                                Traits());
 
-  for(Point_vector_map::iterator it = function_gradients.begin();
-                                 it != function_gradients.end(); ++it) {
+  for(Point_vector_map::iterator it = gradient_function.begin();
+                                 it != gradient_function.end(); ++it) {
     std::cout << it->first << "  "  << it->second << std::endl;
   }
 
@@ -67,8 +67,8 @@ int main()
                                                                          coords.end(),
                                                                          norm,
                                                                          p,
-                                                                         CGAL::Data_access<Point_value_map>(function_values),
-                                                                         CGAL::Data_access<Point_vector_map>(function_gradients),
+                                                                         CGAL::Data_access<Point_value_map>(value_function),
+                                                                         CGAL::Data_access<Point_vector_map>(gradient_function),
                                                                          Traits());
 
   if(res.second)
@@ -78,7 +78,7 @@ int main()
               << std::endl;
   else
     std::cout << "C^1 Interpolation not successful." << std::endl
-              << " not all function_gradients are provided."  << std::endl
+              << " not all gradients are provided."  << std::endl
               << " You may resort to linear interpolation." << std::endl;
 
   return 0;

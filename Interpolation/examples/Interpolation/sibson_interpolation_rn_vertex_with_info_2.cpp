@@ -38,7 +38,7 @@ typedef CGAL::Regular_triangulation_2<K, Tds>                  Regular_triangula
 typedef Regular_triangulation::Vertex_handle                   Vertex_handle;
 
 template <typename V, typename T>
-struct Function_value
+struct Value_function
 {
   typedef V                                                    argument_type;
   typedef std::pair<T, bool>                                   result_type;
@@ -49,7 +49,7 @@ struct Function_value
 };
 
 template <typename V, typename G>
-struct Function_gradient
+struct Gradient_function
   : public std::iterator<std::output_iterator_tag, void, void, void, void>
 {
   typedef V                                                    argument_type;
@@ -59,23 +59,23 @@ struct Function_gradient
     return std::make_pair(a->info().gradient, a->info().gradient != CGAL::NULL_VECTOR);
   }
 
-  const Function_gradient& operator=(const std::pair<V, G>& p) const {
+  const Gradient_function& operator=(const std::pair<V, G>& p) const {
     p.first->info().gradient = p.second;
     return *this;
   }
 
-  const Function_gradient& operator++(int) const { return *this; }
-  const Function_gradient& operator*() const { return *this; }
+  const Gradient_function& operator++(int) const { return *this; }
+  const Gradient_function& operator*() const { return *this; }
 };
 
 int main()
 {
   Regular_triangulation rt;
 
-  Function_value<Vertex_handle, Coord_type> function_value;
-  Function_gradient<Vertex_handle, Vector> function_gradient;
+  Value_function<Vertex_handle, Coord_type> value_function;
+  Gradient_function<Vertex_handle, Vector> gradient_function;
 
-  //parameters for spherical function:
+  // parameters for spherical function:
   Coord_type a(0.25), bx(1.3), by(-0.7), c(0.2);
   for (int y=0; y<4; y++) {
     for (int x=0; x<4; x++) {
@@ -87,13 +87,13 @@ int main()
   }
 
   sibson_gradient_fitting_rn_2(rt,
-                               function_gradient,
-                               function_value,
+                               gradient_function,
                                CGAL::Identity<std::pair<Vertex_handle, Vector> >(),
+                               value_function,
                                Traits());
 
-  //coordinate computation
-  Point p(1.6,1.4);
+  // coordinate computation
+  Point p(1.6, 1.4);
   std::vector<std::pair<Vertex_handle, Coord_type> > coords;
   typedef CGAL::Identity<std::pair<Vertex_handle, Coord_type> > Identity;
   Coord_type norm = CGAL::regular_neighbor_coordinates_2(rt,
@@ -101,13 +101,13 @@ int main()
                                                          std::back_inserter(coords),
                                                          Identity()).second;
 
-  //Sibson interpolant: version without sqrt:
+  // Sibson interpolant: version without sqrt:
   std::pair<Coord_type, bool> res = CGAL::sibson_c1_interpolation_square(coords.begin(),
                                                                          coords.end(),
                                                                          norm,
                                                                          p,
-                                                                         function_value,
-                                                                         function_gradient,
+                                                                         value_function,
+                                                                         gradient_function,
                                                                          Traits());
 
   if(res.second)
@@ -117,7 +117,7 @@ int main()
               << std::endl;
   else
     std::cout << "C^1 Interpolation not successful." << std::endl
-              << " not all function_gradients are provided."  << std::endl
+              << " not all gradients are provided."  << std::endl
               << " You may resort to linear interpolation." << std::endl;
 
   return EXIT_SUCCESS;
