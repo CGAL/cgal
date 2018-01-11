@@ -562,6 +562,13 @@ namespace CGAL
 {
 namespace Point_set_processing_3
 {
+  template<typename Kernel>
+  class GetFT<::Point_set_3<Kernel> >
+  {
+  public:
+    typedef typename Kernel::FT type;
+  };
+  
   namespace parameters
   {
     template <typename Kernel>

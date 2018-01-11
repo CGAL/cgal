@@ -1180,6 +1180,13 @@ Point_set_3<Point, Vector>& operator+=(Point_set_3<Point, Vector>& ps,
 /// \cond SKIP_IN_MANUAL
 namespace Point_set_processing_3
 {
+  template<typename Point, typename Vector>
+  class GetFT<CGAL::Point_set_3<Point, Vector> >
+  {
+  public:
+    typedef typename Kernel_traits<Point>::Kernel::FT type;
+  };
+  
   namespace parameters
   {
     template <typename Point, typename Vector>

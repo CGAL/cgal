@@ -267,6 +267,17 @@ namespace CGAL {
       > ::type  const_type;
     };
 
+    template<typename PointRange>
+    class GetFT
+    {
+    public:
+      typedef typename Kernel_traits<
+        typename std::iterator_traits<
+          typename PointRange::iterator
+          >::value_type
+        >::Kernel::FT type;
+    };
+
     template<typename PointRange, typename NamedParameters>
     class GetQueryPointMap
     {

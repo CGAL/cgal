@@ -731,7 +731,7 @@ estimate_global_range_scale(
 /// \cond SKIP_IN_MANUAL
 // variant with default NP
 template <typename PointRange>
-typename Kernel_traits<typename std::iterator_traits<typename PointRange::iterator>::value_type>::Kernel::FT
+typename Point_set_processing_3::GetFT<PointRange>::type
 estimate_global_range_scale(const PointRange& points)
 {
   return estimate_global_range_scale
