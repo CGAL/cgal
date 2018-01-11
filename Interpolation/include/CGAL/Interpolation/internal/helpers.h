@@ -66,7 +66,7 @@ struct Extract_point_in_pair
   typedef Triangulation_                              Tr;
   typedef T2_                                         T2;
   typedef typename Tr::Vertex_handle                  Vertex_handle;
-  typedef typename Tr::Point                          Point;
+  typedef typename Tr::Point                          Point; // possibly weighted
 
   typedef std::pair<Vertex_handle, T2>                argument_type;
   typedef std::pair<Point, T2>                        result_type;
