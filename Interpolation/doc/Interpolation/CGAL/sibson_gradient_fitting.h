@@ -14,25 +14,25 @@ coordinates.
 
 \cgalHeading{Requirements}
 
-<OL> 
-<LI>The value type of `ForwardIterator` is a pair of point/coordinate 
-value, thus `std::iterator_traits<ForwardIterator>::%value_type::first_type` is 
-equivalent to a point and 
-`std::iterator_traits<ForwardIterator>::%value_type::second_type` is a 
-number type. 
-<LI>`Functor::argument_type` must be equivalent to 
-`std::iterator_traits<ForwardIterator>::%value_type::first_type` and 
-`Functor::result_type` is the function value type. It must 
-provide a multiplication and addition operation with the type 
-`std::iterator_traits<ForwardIterator>::%value_type::second_type`. 
-<LI>`Traits` is a model of the concept 
-`GradientFittingTraits`. 
-</OL> 
+<OL>
+<LI>The value type of `ForwardIterator` is a pair of point/coordinate
+value, thus `std::iterator_traits<ForwardIterator>::%value_type::first_type` is
+equivalent to a point and
+`std::iterator_traits<ForwardIterator>::%value_type::second_type` is a
+number type.
+<LI>`Functor::argument_type` must be equivalent to
+`std::iterator_traits<ForwardIterator>::%value_type::first_type` and
+`Functor::result_type` is the function value type. It must
+provide a multiplication and addition operation with the type
+`std::iterator_traits<ForwardIterator>::%value_type::second_type`.
+<LI>`Traits` is a model of the concept
+`GradientFittingTraits`.
+</OL>
 
 \sa `CGAL::linear_interpolation()`
-\sa `CGAL::sibson_c1_interpolation()` 
+\sa `CGAL::sibson_c1_interpolation()`
 \sa `CGAL::farin_c1_interpolation()`
-\sa `CGAL::quadratic_interpolation()` 
+\sa `CGAL::quadratic_interpolation()`
 \sa `CGAL::Interpolation_gradient_fitting_traits_2<K>`
 \sa `PkgInterpolationNaturalNeighborCoordinates2`
 \sa `PkgInterpolationRegularNeighborCoordinates2`
@@ -40,9 +40,9 @@ provide a multiplication and addition operation with the type
 
 \cgalHeading{Implementation}
 
-This function implements Sibson's gradient 
-estimation method based on natural neighbor coordinates 
-\cgalCite{s-bdnni-81}. 
+This function implements Sibson's gradient
+estimation method based on natural neighbor coordinates
+\cgalCite{s-bdnni-81}.
 
 */
 /// @{
