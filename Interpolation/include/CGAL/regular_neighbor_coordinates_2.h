@@ -23,129 +23,27 @@
 
 #include <CGAL/license/Interpolation.h>
 
-#include <CGAL/iterator.h>
-
 #include <CGAL/Interpolation/internal/helpers.h>
 
-#include <list>
-#include <utility>
-#include <vector>
 #include <CGAL/is_iterator.h>
+#include <CGAL/iterator.h>
+#include <CGAL/utility.h>
+#include <CGAL/function_objects.h>
+
 #include <boost/core/enable_if.hpp>
 #include <boost/type_traits/is_convertible.hpp>
+
+#include <iterator>
+#include <list>
+#include <map>
+#include <utility>
+#include <vector>
 
 namespace CGAL {
 
 // In these functions, the traits class is defined via the regular triangulation.
 // See natural_neighbor_coordinates_2 for a proposal for signatures
 // that allow to pass the traits class as argument.
-
-// The following two functions assume that
-// OutputIterator has value type
-//        std::pair<Rt::Vertex_handle, Rt::Geom_traits::FT>
-//!!!they are not documented!!!
-//init Face_handle start:
-// OutputIterator has value type
-//        std::pair<Rt::Vertex_handle, Rt::Geom_traits::FT>
-template <class Rt, class OutputIterator>
-Triple< OutputIterator, typename Rt::Geom_traits::FT, bool >
-regular_neighbor_coordinates_vertex_2(const Rt& rt,
-                                      const typename Rt::Weighted_point& p,
-                                      OutputIterator out)
-{
-  return regular_neighbor_coordinates_vertex_2(rt, p, out,
-                                               typename Rt::Face_handle());
-}
-
-// Face_handle start is known:
-// OutputIterator has value type
-//        std::pair<Rt::Vertex_handle, Rt::Geom_traits::FT>
-template <class Rt, class OutputIterator>
-Triple< OutputIterator, typename Rt::Geom_traits::FT, bool >
-regular_neighbor_coordinates_vertex_2(const Rt& rt,
-                                      const typename Rt::Weighted_point& p,
-                                      OutputIterator out,
-                                      typename Rt::Face_handle start)
-{
-  return regular_neighbor_coordinates_vertex_2(rt, p, out,
-                                               Emptyset_iterator(), start);
-}
-
-// The Voronoi vertices of the power cell are known:
-// OutputIterator has value type
-//        std::pair<Rt::Vertex_handle, Rt::Geom_traits::FT>
-template <class Rt, class OutputIterator, class OutputIteratorVorVertices>
-Triple< OutputIterator, typename Rt::Geom_traits::FT, bool >
-regular_neighbor_coordinates_vertex_2(const Rt& rt,
-                                      const typename Rt::Weighted_point& p,
-                                      OutputIterator out,
-                                      OutputIteratorVorVertices vor_vertices,
-                                      typename Rt::Face_handle start)
-{
-  // out: the result of the coordinate computation
-  // vor_vertices: the vertices of the power cell (to avoid recomputation)
-  typedef typename Rt::Geom_traits        Traits;
-  typedef typename Traits::FT             Coord_type;
-
-  typedef typename Rt::Vertex_handle      Vertex_handle;
-  typedef typename Rt::Face_handle        Face_handle;
-  typedef typename Rt::Edge               Edge;
-  typedef typename Rt::Locate_type        Locate_type;
-
-  CGAL_precondition(rt.dimension() == 2);
-
-  Locate_type lt;
-  int li;
-  Face_handle fh = rt.locate(p, lt, li, start);
-
-  // the point must lie inside the convex hull otherwisereturn false:
-  if(lt == Rt::OUTSIDE_AFFINE_HULL || lt == Rt::OUTSIDE_CONVEX_HULL
-     || (lt == Rt::EDGE
-         && (rt.is_infinite(fh) || rt.is_infinite(fh->neighbor(li)))))
-    return make_triple(out, Coord_type(1), false);
-
-  if (lt == Rt::VERTEX)
-  {
-    //the point must be in conflict:
-    CGAL_precondition(rt.power_test(fh->vertex(li)->point(), p) != ON_NEGATIVE_SIDE);
-    if (rt.power_test(fh->vertex(li)->point(), p) ==ON_ORIENTED_BOUNDARY)
-    {
-      *out++= std::make_pair(fh->vertex(li),Coord_type(1));
-      return make_triple(out, Coord_type(1), true);
-    }
-  }
-
-  std::list<Edge> hole;
-  std::list<Vertex_handle> hidden_vertices;
-
-  rt.get_boundary_of_conflicts_and_hidden_vertices(p,
-                                                   std::back_inserter(hole),
-                                                   std::back_inserter(hidden_vertices),
-                                                   fh);
-  return regular_neighbor_coordinates_vertex_2(rt, p, out, vor_vertices,
-                                               hole.begin(),hole.end(),
-                                               hidden_vertices.begin(),
-                                               hidden_vertices.end());
-}
-
-
-// OutputIterator has value type
-//        std::pair<Rt::Vertex_handle, Rt::Geom_traits::FT>
-template <class Rt, class OutputIterator, class EdgeIterator,
-          class VertexIterator >
-Triple< OutputIterator, typename Rt::Geom_traits::FT, bool >
-regular_neighbor_coordinates_vertex_2(const Rt& rt,
-                                      const typename Rt::Weighted_point& p,
-                                      OutputIterator out,
-                                      EdgeIterator hole_begin, EdgeIterator hole_end,
-                                      VertexIterator hidden_vertices_begin,
-                                      VertexIterator hidden_vertices_end)
-{
-  return regular_neighbor_coordinates_vertex_2(rt, p, out, Emptyset_iterator(),
-                                               hole_begin, hole_end,
-                                               hidden_vertices_begin,
-                                               hidden_vertices_end);
-}
 
 // OutputIterator has value type
 //        std::pair<Rt::Vertex_handle, Rt::Geom_traits::FT>
@@ -156,7 +54,8 @@ regular_neighbor_coordinates_vertex_2(const Rt& rt,
                                       const typename Rt::Weighted_point& p,
                                       OutputIterator out,
                                       OutputIteratorVorVertices vor_vertices,
-                                      EdgeIterator hole_begin, EdgeIterator hole_end,
+                                      EdgeIterator hole_begin,
+                                      EdgeIterator hole_end,
                                       VertexIterator hidden_vertices_begin,
                                       VertexIterator hidden_vertices_end)
 {
@@ -265,6 +164,103 @@ regular_neighbor_coordinates_vertex_2(const Rt& rt,
 }
 
 
+// OutputIterator has value type `pair<Rt::Vertex_handle, Rt::Geom_traits::FT>`
+template <class Rt, class OutputIterator, class EdgeIterator,
+          class VertexIterator >
+Triple< OutputIterator, typename Rt::Geom_traits::FT, bool >
+regular_neighbor_coordinates_vertex_2(const Rt& rt,
+                                      const typename Rt::Weighted_point& p,
+                                      OutputIterator out,
+                                      EdgeIterator hole_begin,
+                                      EdgeIterator hole_end,
+                                      VertexIterator hidden_vertices_begin,
+                                      VertexIterator hidden_vertices_end)
+{
+  return regular_neighbor_coordinates_vertex_2(rt, p, out, Emptyset_iterator(),
+                                               hole_begin, hole_end,
+                                               hidden_vertices_begin,
+                                               hidden_vertices_end);
+}
+
+
+// vor_vertices: the vertices of the power cell (to avoid recomputation)
+// OutputIterator has value type `pair<Rt::Vertex_handle, Rt::Geom_traits::FT>`
+template <class Rt, class OutputIterator, class OutputIteratorVorVertices>
+Triple< OutputIterator, typename Rt::Geom_traits::FT, bool >
+regular_neighbor_coordinates_vertex_2(const Rt& rt,
+                                      const typename Rt::Weighted_point& p,
+                                      OutputIterator out,
+                                      OutputIteratorVorVertices vor_vertices,
+                                      typename Rt::Face_handle start)
+{
+  typedef typename Rt::Geom_traits        Traits;
+  typedef typename Traits::FT             Coord_type;
+
+  typedef typename Rt::Vertex_handle      Vertex_handle;
+  typedef typename Rt::Face_handle        Face_handle;
+  typedef typename Rt::Edge               Edge;
+  typedef typename Rt::Locate_type        Locate_type;
+
+  CGAL_precondition(rt.dimension() == 2);
+
+  Locate_type lt;
+  int li;
+  Face_handle fh = rt.locate(p, lt, li, start);
+
+  // the point must lie inside the convex hull otherwisereturn false:
+  if(lt == Rt::OUTSIDE_AFFINE_HULL || lt == Rt::OUTSIDE_CONVEX_HULL
+     || (lt == Rt::EDGE
+         && (rt.is_infinite(fh) || rt.is_infinite(fh->neighbor(li)))))
+    return make_triple(out, Coord_type(1), false);
+
+  if (lt == Rt::VERTEX)
+  {
+    //the point must be in conflict:
+    CGAL_precondition(rt.power_test(fh->vertex(li)->point(), p) != ON_NEGATIVE_SIDE);
+    if (rt.power_test(fh->vertex(li)->point(), p) ==ON_ORIENTED_BOUNDARY)
+    {
+      *out++= std::make_pair(fh->vertex(li),Coord_type(1));
+      return make_triple(out, Coord_type(1), true);
+    }
+  }
+
+  std::list<Edge> hole;
+  std::list<Vertex_handle> hidden_vertices;
+
+  rt.get_boundary_of_conflicts_and_hidden_vertices(p,
+                                                   std::back_inserter(hole),
+                                                   std::back_inserter(hidden_vertices),
+                                                   fh);
+
+  return regular_neighbor_coordinates_vertex_2(rt, p, out, vor_vertices,
+                                               hole.begin(),hole.end(),
+                                               hidden_vertices.begin(),
+                                               hidden_vertices.end());
+}
+
+
+// OutputIterator has value type `pair<Rt::Vertex_handle, Rt::Geom_traits::FT>`
+template <class Rt, class OutputIterator>
+Triple< OutputIterator, typename Rt::Geom_traits::FT, bool >
+regular_neighbor_coordinates_vertex_2(const Rt& rt,
+                                      const typename Rt::Weighted_point& p,
+                                      OutputIterator out,
+                                      typename Rt::Face_handle start)
+{
+  return regular_neighbor_coordinates_vertex_2(rt, p, out, Emptyset_iterator(), start);
+}
+
+
+// OutputIterator has value type `pair<Rt::Vertex_handle, Rt::Geom_traits::FT>`
+template <class Rt, class OutputIterator>
+Triple< OutputIterator, typename Rt::Geom_traits::FT, bool >
+regular_neighbor_coordinates_vertex_2(const Rt& rt,
+                                      const typename Rt::Weighted_point& p,
+                                      OutputIterator out)
+{
+  return regular_neighbor_coordinates_vertex_2(rt, p, out, typename Rt::Face_handle());
+}
+
 ////////////////////////////////////////////////////////////
 //the cast from vertex to point:
 // the following functions return an Output_iterator over
@@ -272,33 +268,87 @@ regular_neighbor_coordinates_vertex_2(const Rt& rt,
 //=> OutputIterator has value type
 //   std::pair< Rt::Geom_traits::Weighted_point_2, Rt::Geom_traits::FT>
 /////////////////////////////////////////////////////////////
-//init Face_handle start:
-template <class Rt, class OutputIterator>
-Triple< OutputIterator, typename Rt::Geom_traits::FT, bool >
-regular_neighbor_coordinates_2(const Rt& rt,
-                               const typename Rt::Weighted_point& p,
-                               OutputIterator out)
-{
-  return regular_neighbor_coordinates_2(rt, p, out, typename Rt::Face_handle());
-}
 
-template <class Rt, class OutputIterator, class Fct>
+// OutputIterator has value type `pair< Rt::Geom_traits::Weighted_point_2, Rt::Geom_traits::FT>`
+// out: the result of the coordinate computation
+// vor_vertices: the vertices of the power cell (to avoid recomputation)
+template < class Rt, class OutputIterator, class OutputFunctor, class OutputIteratorVorVertices >
 Triple< OutputIterator, typename Rt::Geom_traits::FT, bool >
 regular_neighbor_coordinates_2(const Rt& rt,
                                const typename Rt::Weighted_point& p,
                                OutputIterator out,
-                               Fct fct,
+                               OutputFunctor fct,
+                               OutputIteratorVorVertices vor_vertices,
+                               typename Rt::Face_handle start)
+{
+  typedef Interpolation::internal::
+            Project_vertex_output_iterator<OutputIterator, OutputFunctor> OutputIteratorWithFunctor;
+  typedef typename Rt::Geom_traits::FT                                    FT;
+
+  OutputIteratorWithFunctor op(out, fct);
+
+  CGAL_precondition(rt.dimension() == 2);
+
+  Triple< OutputIteratorWithFunctor, FT, bool > result =
+    regular_neighbor_coordinates_vertex_2(rt, p, op, vor_vertices, start);
+
+  return make_triple(result.first.base(), result.second, result.third);
+}
+
+
+// OutputIteratorVorVertices and start are given but not OutputFunctor.
+template <class Rt, class OutputIterator, class OutputIteratorVorVertices>
+Triple< OutputIterator, typename Rt::Geom_traits::FT, bool >
+regular_neighbor_coordinates_2(const Rt& rt,
+                               const typename Rt::Weighted_point& p,
+                               OutputIterator out,
+                               OutputIteratorVorVertices vor_vertices,
+                               typename Rt::Face_handle start,
+                               typename boost::enable_if_c<
+                                          is_iterator<OutputIteratorVorVertices>::value
+                                        >::type* = 0)
+{
+  // Same as above but without OutputFunctor. Default to extracting the point, for backward compatibility.
+  typedef typename Rt::Geom_traits::FT                            FT;
+  typedef Interpolation::internal::Extract_point_in_pair<Rt, FT>  OutputFunctor;
+
+  return regular_neighbor_coordinates_2(rt, p, out, OutputFunctor(), vor_vertices, start);
+}
+
+
+// OutputFunctor and start are given but not OutputIteratorVorVertices
+template < class Rt, class OutputIterator, class OutputFunctor >
+Triple< OutputIterator, typename Rt::Geom_traits::FT, bool >
+regular_neighbor_coordinates_2(const Rt& rt,
+                               const typename Rt::Weighted_point& p,
+                               OutputIterator out,
+                               OutputFunctor fct,
+                               typename Rt::Face_handle start,
                                typename boost::disable_if_c<
-                                 boost::is_convertible<Fct,
+                                          is_iterator<OutputFunctor>::value
+                                        >::type* = 0)
+{
+  return regular_neighbor_coordinates_2(rt, p, out, fct, Emptyset_iterator(), start);
+}
+
+
+// Only the OutputFunctor is given.
+template < class Rt, class OutputIterator, class OutputFunctor >
+Triple< OutputIterator, typename Rt::Geom_traits::FT, bool >
+regular_neighbor_coordinates_2(const Rt& rt,
+                               const typename Rt::Weighted_point& p,
+                               OutputIterator out,
+                               OutputFunctor fct,
+                               typename boost::disable_if_c<
+                                 boost::is_convertible<OutputFunctor,
                                                        typename Rt::Face_handle>::value
                                >::type* = 0)
 {
   return regular_neighbor_coordinates_2(rt, p, out, fct, typename Rt::Face_handle());
 }
 
-//OutputIterator has value type
-//   std::pair< Rt::Geom_traits::Weighted_point_2, Rt::Geom_traits::FT>
-//Face_handle start is known:
+
+// Only the starting face is given.
 template <class Rt, class OutputIterator>
 Triple< OutputIterator, typename Rt::Geom_traits::FT, bool >
 regular_neighbor_coordinates_2(const Rt& rt,
@@ -309,69 +359,113 @@ regular_neighbor_coordinates_2(const Rt& rt,
   return regular_neighbor_coordinates_2(rt, p, out, Emptyset_iterator(), start);
 }
 
-template <class Rt, class OutputIterator, class Fct>
+
+// Nothing is given.
+template <class Rt, class OutputIterator>
 Triple< OutputIterator, typename Rt::Geom_traits::FT, bool >
 regular_neighbor_coordinates_2(const Rt& rt,
                                const typename Rt::Weighted_point& p,
-                               OutputIterator out,
-                               Fct fct,
-                               typename Rt::Face_handle start,
-                               typename boost::disable_if_c< is_iterator<Fct>::value >::type* = 0)
+                               OutputIterator out)
 {
-  return regular_neighbor_coordinates_2(rt, p, out, fct, Emptyset_iterator(), start);
+  return regular_neighbor_coordinates_2(rt, p, out, typename Rt::Face_handle());
 }
 
-//OutputIterator has value type
-//   std::pair< Rt::Geom_traits::Weighted_point_2, Rt::Geom_traits::FT>
-//the Voronoi vertices of the power cell are known:
-  template <class Rt, class OutputIterator, class OutputIteratorVorVertices, class Fct>
+
+////////////////////////////////////////////////////////////
+// Functions below use the conflict region
+////////////////////////////////////////////////////////////
+
+// OutputIterator has value type `pair< Rt::Geom_traits::Weighted_point_2, Rt::Geom_traits::FT>`
+// vor_vertices are the vertices of the power cell of p (to avoid recomputation)
+//
+// \pre p must lie inside the non-empty hole (=^ inside convex hull of neighbors)
+template < class Rt, class OutputIterator, class OutputFunctor,
+           class EdgeIterator, class VertexIterator, class OutputIteratorVorVertices >
 Triple< OutputIterator, typename Rt::Geom_traits::FT, bool >
 regular_neighbor_coordinates_2(const Rt& rt,
                                const typename Rt::Weighted_point& p,
                                OutputIterator out,
-                               Fct fct,
+                               OutputFunctor fct,
                                OutputIteratorVorVertices vor_vertices,
-                               typename Rt::Face_handle start)
+                               EdgeIterator hole_begin,
+                               EdgeIterator hole_end,
+                               VertexIterator hidden_vertices_begin,
+                               VertexIterator hidden_vertices_end)
 {
-  //out: the result of the coordinate computation
-  //vor_vertices: the vertices of the power cell (to avoid
-  // recomputation)
-  Interpolation::internal::Project_vertex_output_iterator<OutputIterator,Fct> op(out, fct);
+  typedef Interpolation::internal::
+            Project_vertex_output_iterator<OutputIterator, OutputFunctor> OutputIteratorWithFunctor;
+  typedef typename Rt::Geom_traits::FT                                    FT;
 
-  CGAL_precondition(rt.dimension() == 2);
+  OutputIteratorWithFunctor op(out, fct);
 
-  Triple< Interpolation::internal::Project_vertex_output_iterator<OutputIterator,Fct>,
-      typename Rt::Geom_traits::FT, bool > result =
-    regular_neighbor_coordinates_vertex_2(rt, p, op, vor_vertices, start);
+  Triple<OutputIteratorWithFunctor, FT, bool> result =
+    regular_neighbor_coordinates_vertex_2(rt, p, op, vor_vertices,
+                                          hole_begin, hole_end,
+                                          hidden_vertices_begin,
+                                          hidden_vertices_end);
 
   return make_triple(result.first.base(), result.second, result.third);
 }
 
 
-template <class Rt, class OutputIterator, class OutputIteratorVorVertices>
+// Same as above but without OutputIteratorVorVertices.
+// OutputIterator has value type `pair< Rt::Geom_traits::Weighted_point_2, Rt::Geom_traits::FT>`
+template <class Rt, class OutputIterator, class OutputFunctor,
+          class EdgeIterator, class VertexIterator >
+Triple< OutputIterator, typename Rt::Geom_traits::FT, bool >
+regular_neighbor_coordinates_2(const Rt& rt,
+                               const typename Rt::Weighted_point& p,
+                               OutputIterator out,
+                               OutputFunctor fct,
+                               EdgeIterator hole_begin,
+                               EdgeIterator hole_end,
+                               VertexIterator hidden_vertices_begin,
+                               VertexIterator hidden_vertices_end,
+                               typename boost::disable_if_c<
+                                          is_iterator<OutputFunctor>::value
+                                        >::type* = 0)
+{
+   return regular_neighbor_coordinates_2(rt, p, out, fct, Emptyset_iterator(),
+                                         hole_begin, hole_end,
+                                         hidden_vertices_begin,
+                                         hidden_vertices_end);
+}
+
+
+// Same as above but without OutputFunctor. Default to extracting the point, for backward compatibility.
+template < class Rt, class OutputIterator, class OutputIteratorVorVertices,
+           class EdgeIterator, class VertexIterator >
 Triple< OutputIterator, typename Rt::Geom_traits::FT, bool >
 regular_neighbor_coordinates_2(const Rt& rt,
                                const typename Rt::Weighted_point& p,
                                OutputIterator out,
                                OutputIteratorVorVertices vor_vertices,
-                               typename Rt::Face_handle start,
-                               typename boost::enable_if_c< is_iterator<OutputIteratorVorVertices>::value >::type* = 0)
+                               EdgeIterator hole_begin,
+                               EdgeIterator hole_end,
+                               VertexIterator hidden_vertices_begin,
+                               VertexIterator hidden_vertices_end,
+                               typename boost::enable_if_c<
+                                          is_iterator<OutputIteratorVorVertices>::value
+                                        >::type* = 0)
 {
-  return regular_neighbor_coordinates_2(rt, p, out,
-                                 Interpolation::internal::Vertex2WPoint<Rt, typename Rt::Geom_traits::FT>(),
-                                 vor_vertices, start);
+  typedef typename Rt::Geom_traits::FT                            FT;
+  typedef Interpolation::internal::Extract_point_in_pair<Rt, FT>  OutputFunctor;
+
+  return regular_neighbor_coordinates_2(rt, p, out, OutputFunctor(),
+                                        vor_vertices, hole_begin, hole_end,
+                                        hidden_vertices_begin, hidden_vertices_end);
 }
 
 
-//OutputIterator has value type
-//   std::pair< Rt::Geom_traits::Weighted_point_2, Rt::Geom_traits::FT>
-template <class Rt, class OutputIterator, class EdgeIterator,
-          class VertexIterator >
+// Same as above but without OutputFunctor nor OutputIteratorVorVertices
+// OutputIterator has value type `pair< Rt::Geom_traits::Weighted_point_2, Rt::Geom_traits::FT>`
+template <class Rt, class OutputIterator, class EdgeIterator, class VertexIterator >
 Triple< OutputIterator, typename Rt::Geom_traits::FT, bool >
 regular_neighbor_coordinates_2(const Rt& rt,
                                const typename Rt::Weighted_point& p,
                                OutputIterator out,
-                               EdgeIterator hole_begin, EdgeIterator hole_end,
+                               EdgeIterator hole_begin,
+                               EdgeIterator hole_end,
                                VertexIterator hidden_vertices_begin,
                                VertexIterator hidden_vertices_end)
 {
@@ -381,122 +475,76 @@ regular_neighbor_coordinates_2(const Rt& rt,
                                          hidden_vertices_end);
 }
 
-//OutputIterator has value type
-//   std::pair< Rt::Geom_traits::Weighted_point_2, Rt::Geom_traits::FT>
-template <class Rt, class OutputIterator, class EdgeIterator,
-          class VertexIterator , class OutputIteratorVorVertices, class Fct >
-Triple< OutputIterator, typename Rt::Geom_traits::FT, bool >
-regular_neighbor_coordinates_2(const Rt& rt,
-                               const typename Rt::Weighted_point& p,
-                               OutputIterator out,
-                               OutputIteratorVorVertices vor_vertices,
-                               EdgeIterator hole_begin, EdgeIterator hole_end,
-                               VertexIterator hidden_vertices_begin,
-                               VertexIterator hidden_vertices_end,
-                               Fct fct)
-{
-  //precondition: p must lie inside the non-empty hole
-  //               (=^ inside convex hull of neighbors)
-  //out: the result of the coordinate computation
-  //vor_vertices: the vertices of the power cell of p
-  //(to avoid recomputation)
-    Interpolation::internal::Project_vertex_output_iterator<OutputIterator,Fct> op(out,fct);
-
-    Triple< Interpolation::internal::Project_vertex_output_iterator<OutputIterator,Fct>,
-          typename Rt::Geom_traits::FT, bool > result =
-    regular_neighbor_coordinates_vertex_2(rt, p, op , vor_vertices,
-                                          hole_begin, hole_end,
-                                          hidden_vertices_begin,
-                                          hidden_vertices_end);
-  return make_triple(result.first.base(), result.second, result.third);
-}
-
-
-template <class Rt, class OutputIterator, class EdgeIterator,
-  class VertexIterator , class OutputIteratorVorVertices >
-Triple< OutputIterator, typename Rt::Geom_traits::FT, bool >
-regular_neighbor_coordinates_2(const Rt& rt,
-                               const typename Rt::Weighted_point& p,
-                               OutputIterator out,
-                               OutputIteratorVorVertices vor_vertices,
-                               EdgeIterator hole_begin, EdgeIterator hole_end,
-                               VertexIterator hidden_vertices_begin,
-                               VertexIterator hidden_vertices_end)
-{
-  return regular_neighbor_coordinates_2(rt, p, out, vor_vertices,
-                                        hole_begin, hole_end,
-                                        hidden_vertices_begin, hidden_vertices_end,
-                                        Interpolation::internal::Vertex2Point<Rt, typename Rt::Geom_traits::FT>());
-}
-
 
 /**********************************************************/
-//compute the coordinates for a vertex of the triangulation
+// Compute the coordinates for a vertex of the triangulation
 // with respect to the other points in the triangulation
-//OutputIterator has value type
-//   std::pair< Rt::Geom_traits::Weighted_point_2, Rt::Geom_traits::FT>
-template <class Rt, class OutputIterator, class Fct>
+// OutputIterator has value type `pair< Rt::Geom_traits::Weighted_point_2, Rt::Geom_traits::FT>`
+template <class Rt, class OutputIterator, class OutputFunctor>
 Triple< OutputIterator, typename Rt::Geom_traits::FT, bool >
 regular_neighbor_coordinates_2(const Rt& rt,
                                typename Rt::Vertex_handle vh,
                                OutputIterator out,
-                               Fct fct)
+                               OutputFunctor fct)
 {
-  //this functions creates a small triangulation of the
-  // incident vertices of this vertex and computes the
-  // natural neighbor coordinates of vh->point() wrt. it.
+  // This function creates a small triangulation of the incident vertices of this vertex
+  // and computes the natural neighbor coordinates of ch->point() w.r.t. it.
   typedef typename Rt::Vertex_circulator     Vertex_circulator;
-  typedef typename Rt::Vertex_handle Vertex_handle;
+  typedef typename Rt::Vertex_handle         Vertex_handle;
 
   CGAL_precondition(rt.dimension() == 2);
 
   Rt t2;
   Vertex_circulator vc = rt.incident_vertices(vh), done(vc);
 
-  typedef std::map<Vertex_handle /*t2*/, Vertex_handle/*dt*/> V2V;
-  V2V correspondence_map;
+  typedef std::map<Vertex_handle /*t2*/, Vertex_handle/*dt*/> Correspondence_map;
+  Correspondence_map cm;
 
-  do{
+  do
+  {
     CGAL_assertion(!rt.is_infinite(vc));
-    Vertex_handle vh2 = t2.insert(vc->point());
-    correspondence_map[vh2] = vc;
+    Vertex_handle t2_vh = t2.insert(vc->point());
+    cm[t2_vh] = vc;
   }
-  while(++vc!=done);
+  while(++vc != done);
 
-  Interpolation::internal::Vertex2Vertex<Rt,V2V> v2v(correspondence_map, rt);
-  Unary_compose_1<Fct,Interpolation::internal::Vertex2Vertex<Rt,V2V> >  cfct(fct,v2v);
+  // Before applying the output functor, we need to switch back from vertices of `t2`
+  // to the vertices of `rt`
+  typedef typename Rt::Geom_traits::FT                                    FT;
+  typedef Interpolation::internal::Pair_mapper<Correspondence_map, FT>    Mapper;
+  Mapper pair_mapper(cm);
+  CGAL::Unary_compose_1<OutputFunctor, Mapper> composed_fct(fct, pair_mapper);
 
-  return regular_neighbor_coordinates_2(t2, vh->point(), out, cfct);
+  return regular_neighbor_coordinates_2(t2, vh->point(), out, composed_fct);
 }
 
 
+// Same as above but without OutputFunctor. Default to extracting the point, for backward compatibility.
 template <class Rt, class OutputIterator>
 Triple< OutputIterator, typename Rt::Geom_traits::FT, bool >
 regular_neighbor_coordinates_2(const Rt& rt,
                                typename Rt::Vertex_handle vh,
                                OutputIterator out)
 {
-  return regular_neighbor_coordinates_2(rt,
-                                        vh,
-                                        out,
-                                        Interpolation::internal::Vertex2Point<Rt, typename Rt::Geom_traits::FT>());
+  typedef typename Rt::Geom_traits::FT                            FT;
+  typedef Interpolation::internal::Extract_point_in_pair<Rt, FT>  OutputFunctor;
+
+  return regular_neighbor_coordinates_2(rt, vh, out, OutputFunctor());
 }
 
 
-//class providing a function object:
-//OutputIterator has value type
-//   std::pair< Rt::Geom_traits::Weighted_point_2, Rt::Geom_traits::FT>
-  template <class Rt, class OutputIterator, class Fct>
+// OutputIterator has value type `pair< Rt::Geom_traits::Weighted_point_2, Rt::Geom_traits::FT>`
+template < class Rt, class OutputIterator, class OutputFunctor >
 class regular_neighbor_coordinates_2_object
 {
 public:
-  typedef Fct Function;
+  typedef OutputFunctor                                       Function;
 
   Triple< OutputIterator, typename Rt::Geom_traits::FT , bool >
   operator()(const Rt& rt,
              typename Rt::Vertex_handle vh,
              OutputIterator out,
-             Fct fct) const
+             OutputFunctor fct) const
   {
     return regular_neighbor_coordinates_2(rt, vh, out, fct);
   }
