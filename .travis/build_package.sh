@@ -116,7 +116,6 @@ do
     cd ..
     exit 0
   fi
-
   IFS=$old_IFS
   if [ -n "$TRAVIS_PULL_REQUEST" ] && [ "$ARG" != Polyhedron_demo ]; then
     DO_IGNORE=FALSE
@@ -139,15 +138,13 @@ do
 
   if [ -d "$ROOT/$EXAMPLES" ]
   then
-	  cd $ROOT/$EXAMPLES
-	  build_examples
-  elif [ "$ARG" = BGL ]; then
-    EXAMPLES=$ROOT/BGL/examples
-    cd $EXAMPLES
-  	for dir in ./BGL*
+    cd $ROOT/$EXAMPLES
+    for dir in ./*
     do
-      cd $EXAMPLES/$dir
-      build_examples
+      if [ -d $dir ]; then
+        cd $ROOT/$EXAMPLES/$dir
+        build_examples
+      fi
     done
   elif [ "$ARG" != Polyhedron_demo ]; then
     echo "No example found for $ARG"
