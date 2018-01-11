@@ -13,6 +13,6 @@ printf "# Generated using $0\n" > "$file"
 exec >> "$file"
 
 printf 'set(list_of_documented_headers_txt [=[\n'
-ack --no-heading --no-filename --output='$2' --cpp --html '# *include *(&lt;|[<"])(CGAL/[^>&]*)([>"]|&gt;)' ../build-doc/doc_output ../*/examples/*/*.cpp | sort | uniq
+ack --no-heading --no-filename --output='$2' '# *include *(&lt;|[<"])(CGAL/[^>&]*)([>"]|&gt;)' ../build-doc/doc_output/*/*.html ../*/examples/*/*.cpp | sort | uniq
 printf ']=])\n'
 printf 'separate_arguments(list_of_documented_headers UNIX_COMMAND ${list_of_documented_headers_txt})\n'
