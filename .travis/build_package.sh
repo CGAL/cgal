@@ -141,6 +141,14 @@ do
   then
 	  cd $ROOT/$EXAMPLES
 	  build_examples
+  elif [ "$ARG" = BGL ]; then
+    EXAMPLES=$ROOT/BGL/examples
+    cd $EXAMPLES
+  	for dir in ./BGL*
+    do
+      cd $EXAMPLES/$dir
+      build_examples
+    done
   elif [ "$ARG" != Polyhedron_demo ]; then
     echo "No example found for $ARG"
   fi
