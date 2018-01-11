@@ -94,10 +94,11 @@ quadratic_interpolation(ForwardIterator first, ForwardIterator beyond,
   CGAL_precondition(norm > 0);
   typedef typename Functor::result_type::first_type Value_type;
 
-  Interpolation::internal::V2P<Traits> v2p(traits);
+  Interpolation::internal::Extract_bare_point<Traits> cp(traits);
   Value_type result(0);
   typename Functor::result_type f;
   typename GradFunctor::result_type grad;
+
   for(; first !=beyond; ++first)
   {
     f = function_value(first->first);
@@ -108,7 +109,7 @@ quadratic_interpolation(ForwardIterator first, ForwardIterator beyond,
       return std::make_pair(Value_type(0), false);
     result += (first->second/norm) * (f.first + grad.first *
                  traits.construct_scaled_vector_d_object()
-                 (traits.construct_vector_d_object()(v2p(first->first), p),0.5));
+                 (traits.construct_vector_d_object()(cp(first->first), p),0.5));
   }
   return std::make_pair(result, true);
 }
@@ -130,11 +131,11 @@ sibson_c1_interpolation(ForwardIterator first, ForwardIterator beyond,
   typedef typename Functor::result_type::first_type Value_type;
   typedef typename Traits::FT                       Coord_type;
 
+  Interpolation::internal::Extract_bare_point<Traits> cp(traits);
   Coord_type term1(0), term2(term1), term3(term1), term4(term1);
   Value_type linear_int(0), gradient_int(0);
   typename Functor::result_type f;
   typename GradFunctor::result_type grad;
-  Interpolation::internal::V2P<Traits> v2p(traits);
 
   for(; first !=beyond; ++first)
   {
@@ -145,7 +146,7 @@ sibson_c1_interpolation(ForwardIterator first, ForwardIterator beyond,
       return std::make_pair(Value_type(0), false); //the values are not correct
 
     Coord_type coeff = first->second/norm;
-    Coord_type squared_dist = traits.compute_squared_distance_d_object()(v2p(first->first), p);
+    Coord_type squared_dist = traits.compute_squared_distance_d_object()(cp(first->first), p);
     Coord_type dist = CGAL_NTS sqrt(squared_dist);
 
     if(squared_dist == 0)
@@ -165,7 +166,7 @@ sibson_c1_interpolation(ForwardIterator first, ForwardIterator beyond,
     linear_int += coeff * f.first;
 
     gradient_int += (coeff/dist) * (f.first + grad.first *
-                       traits.construct_vector_d_object()(v2p(first->first), p));
+                       traits.construct_vector_d_object()(cp(first->first), p));
   }
 
   term4 = term3 / term1;
@@ -199,10 +200,10 @@ sibson_c1_interpolation_square(ForwardIterator first, ForwardIterator beyond,
                                const Traits& traits)
 {
   CGAL_precondition(norm > 0);
-  Interpolation::internal::V2P<Traits> v2p(traits);
   typedef typename Functor::result_type::first_type Value_type;
   typedef typename Traits::FT                       Coord_type;
 
+  Interpolation::internal::Extract_bare_point<Traits> cp(traits);
   Coord_type term1(0), term2(term1), term3(term1), term4(term1);
   Value_type linear_int(0), gradient_int(0);
   typename Functor::result_type f;
@@ -218,7 +219,7 @@ sibson_c1_interpolation_square(ForwardIterator first, ForwardIterator beyond,
       return std::make_pair(Value_type(0), false); // the gradient is not known
 
     Coord_type coeff = first->second/norm;
-    Coord_type squared_dist = traits.compute_squared_distance_d_object()(v2p(first->first), v2p(p));
+    Coord_type squared_dist = traits.compute_squared_distance_d_object()(cp(first->first), cp(p));
 
     if(squared_dist ==0)
     {
@@ -237,7 +238,7 @@ sibson_c1_interpolation_square(ForwardIterator first, ForwardIterator beyond,
     linear_int += coeff * f.first;
 
     gradient_int += (coeff/squared_dist) * (f.first + grad.first *
-                       traits.construct_vector_d_object()(v2p(first->first), v2p(p)));
+                       traits.construct_vector_d_object()(cp(first->first), cp(p)));
   }
 
   term4 = term3/ term1;
@@ -267,7 +268,7 @@ farin_c1_interpolation(RandomAccessIterator first,
   typedef typename Functor::result_type::first_type  Value_type;
   typedef typename Traits::FT                        Coord_type;
 
-  Interpolation::internal::V2P<Traits> v2p(traits);
+  Interpolation::internal::Extract_bare_point<Traits> cp(traits);
   typename Functor::result_type f;
   typename GradFunctor::result_type grad;
 
@@ -316,7 +317,7 @@ farin_c1_interpolation(RandomAccessIterator first,
 
         //ordinates[i][j] = (p_j - p_i) * g_i
         ordinates[i][j] = grad.first *
-          traits.construct_vector_d_object()(v2p(it->first),v2p(it2->first));
+          traits.construct_vector_d_object()(cp(it->first),cp(it2->first));
 
         // a point in the tangent plane:
         // 3( f(p_i) + (1/3)(p_j - p_i) * g_i)
