@@ -20,12 +20,9 @@
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/property_map/property_map.hpp>
-
+#include <Eigen/Sparse>
 #include <CGAL/Polygon_mesh_processing/internal/Smoothing/curvature_flow_impl.h>
 #include <CGAL/Polygon_mesh_processing/internal/Smoothing/modified_curvature_flow_impl.h>
-
-#include <CGAL/Polygon_mesh_processing/internal/Isotropic_remeshing/remesh_impl.h>
-#include <Eigen/Sparse>
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
@@ -73,122 +70,105 @@ namespace Polygon_mesh_processing {
 * \cgalNamedParamsEnd
 */
 template<typename PolygonMesh, typename FaceRange, typename NamedParameters>
-void smooth_curvature_flow(const FaceRange& faces, PolygonMesh& pmesh, const NamedParameters& np)
+void smooth_curvature_flow_explicit(const FaceRange& faces, PolygonMesh& pmesh, const NamedParameters& np)
 {
-    using boost::choose_param;
-    using boost::get_param;
+  using boost::choose_param;
+  using boost::get_param;
 
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
-    CGAL::Timer t;
-    std::cout << "Smoothing parameters...";
-    std::cout.flush();
-    t.start();
-#endif
+  #ifdef CGAL_PMP_SMOOTHING_VERBOSE
+  CGAL::Timer t;
+  std::cout << "Smoothing parameters...";
+  std::cout.flush();
+  t.start();
+  #endif
 
-    // GeomTraits
-    typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GeomTraits;
+  // GeomTraits
+  typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GeomTraits;
 
-    // vpmap
-    typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type VertexPointMap;
-    VertexPointMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
-                                 get_property_map(CGAL::vertex_point, pmesh));
+  // vpmap
+  typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type VertexPointMap;
+  VertexPointMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
+                               get_property_map(CGAL::vertex_point, pmesh));
 
-    // fimap
-    typedef typename GetFaceIndexMap<PolygonMesh, NamedParameters>::type FIMap;
-    FIMap fimap = choose_param(get_param(np, internal_np::face_index),
-                             get_property_map(face_index, pmesh));
+  // vcmap
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::lookup_named_param_def <
+      internal_np::vertex_is_constrained_t,
+      NamedParameters,
+      internal::Constrained_vertices_map<vertex_descriptor>
+    > ::type VCMap;
+  VCMap vcmap = choose_param(get_param(np, internal_np::vertex_is_constrained),
+                             internal::Constrained_vertices_map<vertex_descriptor>());
 
-    // vcmap
-    typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
-    typedef typename boost::lookup_named_param_def <
-        internal_np::vertex_is_constrained_t,
-        NamedParameters,
-        internal::No_constraint_pmap<vertex_descriptor>//default
-      > ::type VCMap;
-    VCMap vcmap = choose_param(get_param(np, internal_np::vertex_is_constrained),
-                               internal::No_constraint_pmap<vertex_descriptor>());
+  // nb_iterations
+  unsigned int nb_iterations = choose_param(get_param(np, internal_np::number_of_iterations), 1);
 
-    // ecmap
-    typedef typename boost::lookup_named_param_def <
-          internal_np::edge_is_constrained_t,
-          NamedParameters,
-          internal::Border_constraint_pmap<PolygonMesh, FaceRange, FIMap>
-        > ::type ECMap;
-    ECMap ecmap = (boost::is_same<ECMap, internal::Border_constraint_pmap<PolygonMesh, FaceRange, FIMap> >::value)
-    ? choose_param(get_param(np, internal_np::edge_is_constrained),
-                   internal::Border_constraint_pmap<PolygonMesh, FaceRange, FIMap>(pmesh, faces, fimap))
-    : choose_param(get_param(np, internal_np::edge_is_constrained),
-                   internal::Border_constraint_pmap<PolygonMesh, FaceRange, FIMap>());
+  #ifdef CGAL_PMP_SMOOTHING_VERBOSE
+  t.stop();
+  std::cout << "\rSmoothing parameters done ("<< t.time() <<" sec)" << std::endl;
+  std::cout << "Remesher construction...";
+  std::cout.flush();
+  t.reset(); t.start();
+  #endif
 
-    // nb_iterations
-    unsigned int nb_iterations = choose_param(get_param(np, internal_np::number_of_iterations), 1);
+  internal::Curvature_flow<PolygonMesh, VertexPointMap, VCMap, GeomTraits>
+          curvature_remesher(pmesh, vpmap, vcmap);
+  #ifdef CGAL_PMP_SMOOTHING_VERBOSE
+  t.stop();
+  std::cout << " done ("<< t.time() <<" sec)." << std::endl;
+  std::cout << "Removing degenerate faces..." << std::endl;
+  t.reset(); t.start();
+  #endif
 
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
-    t.stop();
-    std::cout << "\rSmoothing parameters done ("<< t.time() <<" sec)" << std::endl;
-    std::cout << "Remesher construction...";
-    std::cout.flush();
-    t.reset(); t.start();
-#endif
+  curvature_remesher.remove_degenerate_faces();
 
-    internal::Curvature_flow<PolygonMesh, VertexPointMap, VCMap, ECMap, GeomTraits>
-            curvature_remesher(pmesh, vpmap, vcmap, ecmap);
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
-    t.stop();
-    std::cout << " done ("<< t.time() <<" sec)." << std::endl;
-    std::cout << "Removing degenerate faces..." << std::endl;
-    t.reset(); t.start();
-#endif
+  #ifdef CGAL_PMP_SMOOTHING_VERBOSE
+  t.stop();
+  std::cout << " done ("<< t.time() <<" sec)." << std::endl;
+  std::cout << "Initializing..." << std::endl;
+  t.reset(); t.start();
+  #endif
 
-    curvature_remesher.remove_degenerate_faces();
+  curvature_remesher.init_smoothing(faces);
 
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
-    t.stop();
-    std::cout << " done ("<< t.time() <<" sec)." << std::endl;
-    std::cout << "Initializing..." << std::endl;
-    t.reset(); t.start();
-#endif
+  #ifdef CGAL_PMP_SMOOTHING_VERBOSE
+  t.stop();
+  std::cout << " done ("<< t.time() <<" sec)." << std::endl;
+  std::cout << "#iter = " << nb_iterations << std::endl;
+  std::cout << "Shape smoothing..." << std::endl;
+  t.reset(); t.start();
+  #endif
 
-    curvature_remesher.init_smoothing(faces);
+  for(unsigned int i=0; i<nb_iterations; ++i)
+  {
 
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
-    t.stop();
-    std::cout << " done ("<< t.time() <<" sec)." << std::endl;
-    std::cout << "#iter = " << nb_iterations << std::endl;
-    std::cout << "Shape smoothing..." << std::endl;
-    t.reset(); t.start();
-#endif
+  #ifdef CGAL_PMP_SMOOTHING_VERBOSE
+      std::cout << " * Iteration " << (i + 1) << " *" << std::endl;
+  #endif
 
-    for(unsigned int i=0; i<nb_iterations; ++i)
-    {
+  curvature_remesher.curvature_smoothing();
 
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
-        std::cout << " * Iteration " << (i + 1) << " *" << std::endl;
-#endif
+  }
 
-    curvature_remesher.curvature_smoothing();
-
-    }
-
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
-    t.stop();
-    std::cout << "Shape smoothing done in ";
-    std::cout << t.time() << " sec." << std::endl;
-    std::cout<<std::endl;
-#endif
+  #ifdef CGAL_PMP_SMOOTHING_VERBOSE
+  t.stop();
+  std::cout << "Shape smoothing done in ";
+  std::cout << t.time() << " sec." << std::endl;
+  std::cout<<std::endl;
+  #endif
 
 }
 
 template<typename PolygonMesh, typename NamedParameters>
 void smooth_curvature_flow(PolygonMesh& pmesh, const NamedParameters& np)
 {
-    smooth_curvature_flow(faces(pmesh), pmesh, np);
+  smooth_curvature_flow(faces(pmesh), pmesh, np);
 }
 
 template<typename PolygonMesh>
 void smooth_curvature_flow(PolygonMesh& pmesh)
 {
-    smooth_curvature_flow(pmesh, parameters::all_default());
+  smooth_curvature_flow(pmesh, parameters::all_default());
 }
 
 /*!
@@ -220,11 +200,13 @@ void smooth_curvature_flow(PolygonMesh& pmesh)
 *  \cgalParamBegin{vertex_point_map} the property map with the points associated
 *    to the vertices of `pmesh`. Instance of a class model of `ReadWritePropertyMap`.
 *  \cgalParamEnd
-*  \cgalParamBegin{face_index_map} a property map containing the index of each face of `pmesh`.
+*  \cgalParamBegin{vertex_is_constrained_map} a property map containing the
+*    constrained-or-not status of each vertex of `pmesh`. A constrained vertex
+*    cannot be modified at all during smoothing.
 *  \cgalParamEnd
-*  \cgalParamBegin{edge_is_constrained_map} a property map containing the
-*    constrained-or-not status of each edge of `pmesh`. Vertices that belong to constrained
-*    edges are not modified at all during smoothing.
+*  \cgalParamBegin{number_of_iterations} the number of iterations for the
+*    sequence of the smoothing iterations performed. Each iteration is performed
+*    with the given time step.
 *  \cgalParamEnd
 * \cgalNamedParamsEnd
 */
@@ -251,29 +233,30 @@ void smooth_modified_curvature_flow(const FaceRange& faces, PolygonMesh& pmesh, 
   VCMap vcmap = choose_param(get_param(np, internal_np::vertex_is_constrained),
                              internal::Constrained_vertices_map<vertex_descriptor>());
 
-  std::size_t n = static_cast<int>(vertices(pmesh).size());
+  //nb_iterations
+  unsigned int nb_iterations = choose_param(get_param(np, internal_np::number_of_iterations), 1);
+
   typedef typename Eigen::VectorXd Eigen_vector;
   typedef typename Eigen::SparseMatrix<double> Eigen_matrix;
-  Eigen_matrix A(n, n);
-  Eigen_matrix stiffness_matrix(n, n);
-  Eigen_matrix mass_matrix(n, n);
-  Eigen_vector bx(n);
-  Eigen_vector by(n);
-  Eigen_vector bz(n);
-  Eigen_vector Xx(n);
-  Eigen_vector Xy(n);
-  Eigen_vector Xz(n);
-  //todo: use resize ?
+
+  std::size_t n = static_cast<int>(vertices(pmesh).size());
+  Eigen_matrix A(n, n), stiffness_matrix(n, n), mass_matrix(n, n);
+  Eigen_vector bx(n), by(n), bz(n), Xx(n), Xy(n), Xz(n);
 
   internal::Shape_smoother<PolygonMesh, VertexPointMap, VCMap, GeomTraits>
       smoother(pmesh, vpmap, vcmap);
 
-  //smoother.init_smoothing();
   smoother.calc_stiff_matrix(stiffness_matrix);
-  smoother.setup_system(A, stiffness_matrix, mass_matrix, bx, by, bz, time);
-  smoother.solve_system(A, Xx, Xy, Xz, bx, by, bz);
-  smoother.update_mesh(Xx, Xy, Xz);
+
+  for(std::size_t iter = 0; iter < nb_iterations; ++iter)
+  {
+    smoother.setup_system(A, stiffness_matrix, mass_matrix, bx, by, bz, time);
+    smoother.solve_system(A, Xx, Xy, Xz, bx, by, bz);
+    smoother.update_mesh(Xx, Xy, Xz);
+  }
 }
+
+
 
 template<typename PolygonMesh, typename NamedParameters>
 void smooth_modified_curvature_flow(PolygonMesh& pmesh, const double& time,

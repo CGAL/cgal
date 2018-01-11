@@ -75,7 +75,7 @@ public:
 };
 
 
-template<typename PolygonMesh, typename VertexPointMap, typename VertexConstraintMap, typename EdgeConstraintMap, typename GeomTraits>
+template<typename PolygonMesh, typename VertexPointMap, typename VertexConstraintMap, typename GeomTraits>
 class Curvature_flow
 {
     typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
@@ -95,8 +95,8 @@ class Curvature_flow
 
 public:
 
-    Curvature_flow(PolygonMesh& pmesh, VertexPointMap& vpmap, VertexConstraintMap& vcmap, EdgeConstraintMap& ecmap) :
-        mesh_(pmesh), vpmap_(vpmap), vcmap_(vcmap), ecmap_(ecmap),
+    Curvature_flow(PolygonMesh& pmesh, VertexPointMap& vpmap, VertexConstraintMap& vcmap) :
+        mesh_(pmesh), vpmap_(vpmap), vcmap_(vcmap),
         weight_calculator_(pmesh, vpmap) {}
 
     template<typename FaceRange>
@@ -104,7 +104,7 @@ public:
     {
         check_vertex_range(face_range);
 
-        check_constraints();
+        //check_constraints();
 
         BOOST_FOREACH(face_descriptor f, face_range)
             input_triangles_.push_back(triangle(f));
@@ -252,16 +252,19 @@ private:
 
     // handling constrains
     // -----------------------------------
+    /*
     bool is_constrained(const edge_descriptor& e)
     {
         return get(ecmap_, e);
     }
+    */
 
     bool is_constrained(const vertex_descriptor& v)
     {
         return get(vcmap_, v);
     }
 
+    /*
     void check_constraints()
     {
         BOOST_FOREACH(edge_descriptor e, edges(mesh_))
@@ -275,6 +278,7 @@ private:
             }
         }
     }
+    */
 
     template<typename FaceRange>
     void check_vertex_range(const FaceRange& face_range)
@@ -294,7 +298,6 @@ private:
     PolygonMesh& mesh_;
     VertexPointMap& vpmap_;
     VertexConstraintMap vcmap_;
-    EdgeConstraintMap ecmap_;
     Triangle_list input_triangles_;
     GeomTraits traits_;
     std::set<vertex_descriptor> vrange;
