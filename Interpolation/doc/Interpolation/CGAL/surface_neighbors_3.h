@@ -64,22 +64,24 @@ function is placed starting at `out`. The function returns an
 iterator that is placed past-the-end of the resulting point
 sequence.
 */
-template <class OutputIterator, class InputIterator, class
-Kernel> OutputIterator surface_neighbors_3(InputIterator first,
-InputIterator beyond, const typename Kernel::Point_3& p, const
-typename Kernel::Vector_3& normal, OutputIterator out, const Kernel&
-K);
+template <class OutputIterator, class InputIterator, class Kernel>
+OutputIterator
+surface_neighbors_3(InputIterator first, InputIterator beyond,
+                    const typename Kernel::Point_3& p,
+                    const typename Kernel::Vector_3& normal,
+                    OutputIterator out,
+                    const Kernel& K);
 
 /*!
 The same as above only that the traits class must be instantiated by
 the user. `ITraits` must be equivalent to
 `Voronoi_intersection_2_traits_3<K>`.
 */
-template <class OutputIterator, class InputIterator, class
-ITraits> OutputIterator
-surface_neighbors_3(InputIterator first, InputIterator beyond,
-const typename ITraits::Point_2& p,OutputIterator out,
-const ITraits& traits);
+template <class OutputIterator, class InputIterator, class ITraits>
+OutputIterator surface_neighbors_3(InputIterator first, InputIterator beyond,
+                                   const typename ITraits::Point_2& p,
+                                   OutputIterator out,
+                                   const ITraits& traits);
 
 /*!
 Similar to the first function. The additional third return
@@ -90,25 +92,27 @@ furthest vertex of the intersection of the Voronoi cell of `p`
 with the tangent plane defined be `(p,normal)`. It is
 `false` otherwise.
 */
-template <class OutputIterator, class InputIterator, class
-Kernel> std::pair< OutputIterator, bool >
-surface_neighbors_certified_3(InputIterator first,
-InputIterator beyond, const typename Kernel::Point_3& p, const
-typename Kernel::Vector_3& normal, OutputIterator out, const Kernel&
-K);
+template <class OutputIterator, class InputIterator, class Kernel>
+std::pair< OutputIterator, bool >
+surface_neighbors_certified_3(InputIterator first, InputIterator beyond,
+                              const typename Kernel::Point_3& p,
+                              const typename Kernel::Vector_3& normal,
+                              OutputIterator out,
+                              const Kernel& K);
 
 /*!
 The same as above except that this function
 takes the maximal distance from `p` to the points in the range
 `[first, beyond)` as additional parameter.
 */
-template <class OutputIterator, class InputIterator, class
-Kernel> std::pair< OutputIterator, bool >
-surface_neighbors_certified_3(InputIterator first,
-InputIterator beyond, const typename Kernel::Point_3& p,
-const typename Kernel::Vector_3& normal, const
-typename Kernel::FT& max_distance, OutputIterator out, const
-Kernel& kernel);
+template <class OutputIterator, class InputIterator, class Kernel>
+std::pair< OutputIterator, bool >
+surface_neighbors_certified_3(InputIterator first, InputIterator beyond,
+                              const typename Kernel::Point_3& p,
+                              const typename Kernel::Vector_3& normal,
+                              const typename Kernel::FT& max_distance,
+                              OutputIterator out,
+                              const Kernel& kernel);
 
 /*!
 The same as above only that the traits
@@ -116,22 +120,24 @@ class must be instantiated by the user. `ITraits` must be
 equivalent to `Voronoi_intersection_2_traits_3<K>`. There is no
 parameter `max_distance`.
 */
-template <class OutputIterator, class InputIterator, class
-ITraits> std::pair< OutputIterator, bool >
-surface_neighbors_certified_3(InputIterator first, InputIterator
-beyond, const typename ITraits::Point_2& p, OutputIterator out,
-const ITraits& traits);
+template <class OutputIterator, class InputIterator, class ITraits>
+std::pair< OutputIterator, bool >
+surface_neighbors_certified_3(InputIterator first, InputIterator beyond,
+                              const typename ITraits::Point_2& p,
+                              OutputIterator out,
+                              const ITraits& traits);
 
 /*!
 The same as above with the parameter
 `max_distance`.
 */
-template <class OutputIterator, class InputIterator, class
-ITraits> std::pair< OutputIterator, bool >
-surface_neighbors_certified_3(InputIterator first,
-InputIterator beyond, const typename ITraits::Point_2& p, const
-typename ITraits::FT& max_distance, OutputIterator out, const
-ITraits& traits);
+template <class OutputIterator, class InputIterator, class ITraits>
+std::pair< OutputIterator, bool >
+surface_neighbors_certified_3(InputIterator first, InputIterator beyond,
+                              const typename ITraits::Point_2& p,
+                              const typename ITraits::FT& max_distance,
+                              OutputIterator out,
+                              const ITraits& traits);
 
 /*!
 computes the surface neighbor coordinates with respect to the points
@@ -150,22 +156,23 @@ necessarily neighbors in the Delaunay triangulation of \f$ \mathcal{P}
 */
 template < class Dt, class OutputIterator >
 OutputIterator
-surface_neighbors_3(const Dt& dt, const typename
-Dt::Geom_traits::Point_3& p, const typename
-Dt::Geom_traits::Vector_3& normal, OutputIterator out, typename
-Dt::Cell_handle start = typename Dt::Cell_handle());
+surface_neighbors_3(const Dt& dt,
+                    const typename Dt::Geom_traits::Point_3& p,
+                    const typename Dt::Geom_traits::Vector_3& normal,
+                    OutputIterator out,
+                    typename Dt::Cell_handle start = typename Dt::Cell_handle());
 
 /*!
 The same as above only that the parameter `traits` instantiates
 the geometric traits class. Its type `ITraits` must be
 equivalent to `Voronoi_intersection_2_traits_3<K>`.
 */
-template < class Dt, class OutputIterator,
-class ITraits>
+template < class Dt, class OutputIterator, class ITraits>
 OutputIterator surface_neighbors_3(const Dt& dt,
-const typename ITraits::Point_2& p, OutputIterator out,
-const ITraits& traits, typename Dt::Cell_handle start = typename
-Dt::Cell_handle());
+                                   const typename ITraits::Point_2& p,
+                                   OutputIterator out,
+                                   const ITraits& traits,
+                                   typename Dt::Cell_handle start = typename Dt::Cell_handle());
 
 /// @}
 

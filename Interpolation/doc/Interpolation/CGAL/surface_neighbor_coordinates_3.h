@@ -72,22 +72,25 @@ computation was successful, i.e.\ if `p` lies inside the convex
 hull of the projection of the points \f$ \mathcal{P}\f$ onto the tangent
 plane.
 */
-template <class OutputIterator, class InputIterator, class
-Kernel> CGAL::Triple< OutputIterator, typename Kernel::FT, bool >
-surface_neighbor_coordinates_3(InputIterator first, InputIterator
-beyond, const typename Kernel::Point_3& p, const typename
-Kernel::Vector_3& normal, OutputIterator out, const Kernel& K);
+template <class OutputIterator, class InputIterator, class Kernel>
+CGAL::Triple < OutputIterator, typename Kernel::FT, bool >
+surface_neighbor_coordinates_3(InputIterator first, InputIterator beyond,
+                               const typename Kernel::Point_3& p,
+                               const typename Kernel::Vector_3& normal,
+                               OutputIterator out,
+                               const Kernel& K);
 
 /*!
 the same as above only that the traits class
 must be instantiated by the user. `ITraits` must be equivalent
 to `Voronoi_intersection_2_traits_3<K>`.
 */
-template <class OutputIterator, class InputIterator, class
-ITraits> CGAL::Triple< OutputIterator, typename ITraits::FT, bool >
-surface_neighbor_coordinates_3(InputIterator first, InputIterator
-beyond, const typename ITraits::Point_2& p,OutputIterator out, const
-ITraits& traits);
+template < class OutputIterator, class InputIterator, class ITraits >
+CGAL::Triple< OutputIterator, typename ITraits::FT, bool >
+surface_neighbor_coordinates_3(InputIterator first, InputIterator beyond,
+                               const typename ITraits::Point_2& p,
+                               OutputIterator out,
+                               const ITraits& traits);
 
 /*!
 Similar to the first function. The additional fourth return
@@ -98,25 +101,26 @@ furthest vertex of the intersection of the Voronoi cell of `p`
 with the tangent plane defined by `(p,normal)`. It is
 `false` otherwise.
 */
-template <class OutputIterator, class InputIterator, class
-Kernel> CGAL::Quadruple< OutputIterator, typename Kernel::FT, bool,
-bool > surface_neighbor_coordinates_certified_3(InputIterator first,
-InputIterator beyond, const typename Kernel::Point_3& p, const
-typename Kernel::Vector_3& normal, OutputIterator out, const Kernel&
-K);
+template <class OutputIterator, class InputIterator, class Kernel>
+CGAL::Quadruple< OutputIterator, typename Kernel::FT, bool, bool >
+surface_neighbor_coordinates_certified_3(InputIterator first, InputIterator beyond,
+                                         const typename Kernel::Point_3& p,
+                                         const typename Kernel::Vector_3& normal,
+                                         OutputIterator out,
+                                         const Kernel& K);
 
 /*!
 The same as above except that this function takes the
 maximal distance from p to the points in the range
 `[first, beyond)` as additional parameter.
 */
-template <class OutputIterator,
-class InputIterator, class Kernel> CGAL::Quadruple< OutputIterator,
-typename Kernel::FT, bool, bool >
-surface_neighbor_coordinates_certified_3(InputIterator first,
-InputIterator beyond, const typename Kernel::Point_3& p, const
-typename Kernel::FT& max_distance, OutputIterator out, const Kernel&
-kernel);
+template < class OutputIterator, class InputIterator, class Kernel >
+CGAL::Quadruple< OutputIterator, typename Kernel::FT, bool, bool >
+surface_neighbor_coordinates_certified_3(InputIterator first, InputIterator beyond,
+                                         const typename Kernel::Point_3& p,
+                                         const typename Kernel::FT& max_distance,
+                                         OutputIterator out,
+                                         const Kernel& kernel);
 
 /*!
 The same as above only
@@ -124,22 +128,24 @@ that the traits class must be instantiated by the user and without
 the parameter `max_distance`. `ITraits` must be equivalent
 to `Voronoi_intersection_2_traits_3<K>`.
 */
-template <class OutputIterator, class InputIterator, class
-ITraits> CGAL::Quadruple< OutputIterator, typename ITraits::FT, bool, bool >
-surface_neighbor_coordinates_certified_3(InputIterator first,
-InputIterator beyond, const typename ITraits::Point_2& p,
-OutputIterator out, const ITraits& traits);
+template <class OutputIterator, class InputIterator, class ITraits >
+CGAL::Quadruple< OutputIterator, typename ITraits::FT, bool, bool >
+surface_neighbor_coordinates_certified_3(InputIterator first, InputIterator beyond,
+                                         const typename ITraits::Point_2& p,
+                                         OutputIterator out,
+                                         const ITraits& traits);
 
 /*!
 The same as above with the parameter
 `max_distance`.
 */
-template <class OutputIterator, class InputIterator, class
-ITraits> CGAL::Quadruple< OutputIterator, typename ITraits::FT, bool, bool >
-surface_neighbor_coordinates_certified_3(InputIterator first,
-InputIterator beyond, const typename ITraits::Point_2& p, const
-typename ITraits::FT& max_distance, OutputIterator out, const
-ITraits& traits);
+template <class OutputIterator, class InputIterator, class ITraits>
+CGAL::Quadruple< OutputIterator, typename ITraits::FT, bool, bool >
+surface_neighbor_coordinates_certified_3(InputIterator first, InputIterator beyond,
+                                         const typename ITraits::Point_2& p,
+                                         const  typename ITraits::FT& max_distance,
+                                         OutputIterator out,
+                                         const ITraits& traits);
 
 /*!
 computes the surface neighbor coordinates with respect to the points
@@ -158,22 +164,24 @@ necessarily neighbors in the Delaunay triangulation of \f$ \mathcal{P}
 */
 template < class Dt, class OutputIterator >
 CGAL::Triple< OutputIterator, typename Dt::Geom_traits::FT, bool >
-surface_neighbor_coordinates_3(const Dt& dt, const typename
-Dt::Geom_traits::Point_3& p, const typename
-Dt::Geom_traits::Vector_3& normal, OutputIterator out, typename
-Dt::Cell_handle start = typename Dt::Cell_handle());
+surface_neighbor_coordinates_3(const Dt& dt,
+                               const typename Dt::Geom_traits::Point_3& p,
+                               const typename Dt::Geom_traits::Vector_3& normal,
+                               OutputIterator out,
+                               typename Dt::Cell_handle start = typename Dt::Cell_handle());
 
 /*!
 The same as above only that the parameter traits instantiates
 the geometric traits class. Its type `ITraits` must be
 equivalent to `Voronoi_intersection_2_traits_3<K>`.
 */
-template < class Dt, class OutputIterator,
-class ITraits> CGAL::Triple< OutputIterator, typename
-Dt::Geom_traits::FT, bool > surface_neighbor_coordinates_3(const Dt& dt,
-const typename Dt::Geom_traits::Point_3& p, OutputIterator out,
-const ITraits& traits, typename Dt::Cell_handle start = typename
-Dt::Cell_handle());
+template < class Dt, class OutputIterator, class ITraits >
+CGAL::Triple< OutputIterator, typename Dt::Geom_traits::FT, bool >
+surface_neighbor_coordinates_3(const Dt& dt,
+                               const typename Dt::Geom_traits::Point_3& p,
+                               OutputIterator out,
+                               const ITraits& traits,
+                               typename Dt::Cell_handle start = typename Dt::Cell_handle());
 
 /// @}
 

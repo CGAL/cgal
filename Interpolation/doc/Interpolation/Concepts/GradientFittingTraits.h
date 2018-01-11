@@ -18,7 +18,8 @@ concept `GradientFittingTraits` defines this common set of requirements.
 
 */
 
-class GradientFittingTraits {
+class GradientFittingTraits
+{
 public:
 
 /// \name Types
@@ -154,8 +155,7 @@ Construct_vector_d construct_vector_d_object();
 /*!
 
 */
-Construct_scaled_vector_d
-construct_scaled_vector_d_object();
+Construct_scaled_vector_d construct_scaled_vector_d_object();
 
 /*!
 
@@ -165,14 +165,12 @@ Construct_null_matrix_d construct_null_matrix_d_object();
 /*!
 
 */
-Construct_sum_matrix_d
-construct_sum_matrix_d_object();
+Construct_sum_matrix_d construct_sum_matrix_d_object();
 
 /*!
 
 */
-Construct_outer_product_d
-construct_outer_product_d_object();
+Construct_outer_product_d construct_outer_product_d_object();
 
 /// @}
 

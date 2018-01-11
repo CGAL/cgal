@@ -62,11 +62,12 @@ of the resulting sequence of point/coordinate pairs, the normalization
 factor of the coordinates and a Boolean value which is set to `true` iff
 the coordinate computation was successful.
 */
-template < class Dt, class OutputIterator > CGAL::Triple<
-OutputIterator, typename Dt::Geom_traits::FT, bool >
-natural_neighbor_coordinates_2(
-  const Dt& dt, const typename Dt::Geom_traits::Point_2& p,
-  OutputIterator out, typename Dt::Face_handle start = typename Dt::Face_handle());
+template < class Dt, class OutputIterator >
+CGAL::Triple<OutputIterator, typename Dt::Geom_traits::FT, bool >
+natural_neighbor_coordinates_2(const Dt& dt,
+                               const typename Dt::Geom_traits::Point_2& p,
+                               OutputIterator out,
+                               typename Dt::Face_handle start = typename Dt::Face_handle());
 
 /*!
 The same as above. The iterator range `[hole_begin, hole_end)` determines
@@ -75,22 +76,24 @@ the triangulation. It is the result of the function
 \link Delaunay_triangulation_2::get_boundary_of_conflicts()
 `dt.get_boundary_of_conflicts(p,std::back_inserter(hole), start)`\endlink.
 */
-template <class Dt, class OutputIterator,
-class EdgeIterator > CGAL::Triple< OutputIterator, typename Dt::Geom_traits::FT,
-bool > natural_neighbor_coordinates_2(
-  const Dt& dt, const typename Dt::Geom_traits::Point_2& p,
-  OutputIterator out, EdgeIterator hole_begin, EdgeIterator hole_end);
+template < class Dt, class OutputIterator, class EdgeIterator >
+CGAL::Triple< OutputIterator, typename Dt::Geom_traits::FT, bool >
+natural_neighbor_coordinates_2(const Dt& dt,
+                               const typename Dt::Geom_traits::Point_2& p,
+                               OutputIterator out,
+                               EdgeIterator hole_begin, EdgeIterator hole_end);
 
 /*!
 computes the natural neighbor coordinates of the point
 `vh->point()` with respect to the vertices of `dt` excluding
 `vh->point()`. The same as above for the remaining parameters.
 */
-template <class Dt, class OutputIterator>
+template < class Dt, class OutputIterator >
 CGAL::Triple< OutputIterator, typename Dt::Geom_traits::FT, bool >
-natural_neighbor_coordinates_2(const Dt& dt, typename Dt::Vertex_handle vh, OutputIterator out);
+natural_neighbor_coordinates_2(const Dt& dt,
+                               typename Dt::Vertex_handle vh,
+                               OutputIterator out);
 
 /// @}
 
 } /* namespace CGAL */
-

@@ -17,7 +17,8 @@ defines the primitives used in the interpolation algorithms. The concept
 \sa `CGAL::quadratic_interpolation()`
 
 */
-class InterpolationTraits {
+class InterpolationTraits
+{
 public:
 
 /// \name Types

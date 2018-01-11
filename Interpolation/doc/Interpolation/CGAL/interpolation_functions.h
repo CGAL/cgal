@@ -20,8 +20,10 @@ The class
 
 */
 template< typename Map >
-struct Data_access : public CGAL::unary_function< typename Map::key_type,
-         std::pair< typename Map::mapped_type, bool> > {
+struct Data_access
+  : public CGAL::unary_function<typename Map::key_type,
+                                std::pair<typename Map::mapped_type, bool> >
+{
 public:
 
 /// \name Types
@@ -53,7 +55,7 @@ there is an entry for `p` in the container `map`, then the
 pair of `map.find(p)` and `true` is returned. Otherwise, the
 Boolean value of the pair is `false`.
 */
-std::pair< Data_type, bool> operator()(const Key_type& p);
+std::pair<Data_type, bool> operator()(const Key_type& p);
 
 /// @}
 
@@ -92,15 +94,13 @@ to provide the square root operation.
 
 */
 template < class RandomAccessIterator, class Functor,
-class GradFunctor, class Traits> typename Functor::result_type
-farin_c1_interpolation(RandomAccessIterator first,
-RandomAccessIterator beyond, const typename
-std::iterator_traits<RandomAccessIterator>::value_type::second_type&
-norm, const typename
-std::iterator_traits<ForwardIterator>::value_type::first_type& p,
-Functor function_value, GradFunctor function_gradient, const
-Traits& traits);
-
+           class GradFunctor, class Traits>
+typename Functor::result_type
+farin_c1_interpolation(RandomAccessIterator first, RandomAccessIterator beyond,
+                       const typename std::iterator_traits<RandomAccessIterator>::value_type::second_type& norm,
+                       const typename std::iterator_traits<ForwardIterator>::value_type::first_type& p,
+                       Functor function_value, GradFunctor function_gradient,
+                       const Traits& traits);
 
 /*!
 \ingroup PkgInterpolation2Interpolation
@@ -144,12 +144,11 @@ range `[first, beyond)`.
 \sa PkgInterpolationSurfaceNeighborCoordinates3
 
 */
-template < class ForwardIterator, class Functor> typename
-Functor::result_type::first_type linear_interpolation(ForwardIterator first,
-ForwardIterator beyond, const typename
-std::iterator_traits<ForwardIterator>::value_type::second_type&
-norm, Functor function_values);
-
+template < class ForwardIterator, class Functor>
+typename Functor::result_type::first_type
+linear_interpolation(ForwardIterator first, ForwardIterator beyond,
+                     const typename std::iterator_traits<ForwardIterator>::value_type::second_type& norm,
+                     Functor function_values);
 
 /*!
 \ingroup PkgInterpolation2Interpolation
@@ -175,15 +174,13 @@ to provide the square root operation.
 \sa `PkgInterpolationRegularNeighborCoordinates2`
 \sa PkgInterpolationSurfaceNeighborCoordinates3
 */
-template < class ForwardIterator, class Functor, class
-GradFunctor, class Traits> typename Functor::result_type
-quadratic_interpolation(ForwardIterator first, ForwardIterator
-beyond, const typename std::iterator_traits<ForwardIterator>::
-value_type::second_type& norm,
-const typename std::iterator_traits<ForwardIterator>::value_type::
-first_type& p, Functor function_value, GradFunctor
-function_gradient,const Traits& traits);
-
+template < class ForwardIterator, class Functor, class GradFunctor, class Traits>
+typename Functor::result_type
+quadratic_interpolation(ForwardIterator first, ForwardIterator beyond,
+                        const typename std::iterator_traits<ForwardIterator>::value_type::second_type& norm,
+                        const typename std::iterator_traits<ForwardIterator>::value_type::first_type& p,
+                        Functor function_value, GradFunctor function_gradient,
+                        const Traits& traits);
 
 /*!
 \ingroup PkgInterpolation2Interpolation
@@ -249,15 +246,13 @@ function gradient given a point.
 \sa `PkgInterpolationRegularNeighborCoordinates2`
 \sa PkgInterpolationSurfaceNeighborCoordinates3
 */
-template < class ForwardIterator, class Functor, class
-GradFunctor, class Traits> std::pair< typename Functor::result_type,
-bool> sibson_c1_interpolation(ForwardIterator first, ForwardIterator
-beyond, const typename
-std::iterator_traits<ForwardIterator>::value_type::second_type&
-norm, const typename
-std::iterator_traits<ForwardIterator>::value_type::first_type& p,
-Functor function_value, GradFunctor function_gradient,const Traits&
-traits);
+template < class ForwardIterator, class Functor, class GradFunctor, class Traits >
+std::pair<typename Functor::result_type, bool>
+sibson_c1_interpolation(ForwardIterator first, ForwardIterator beyond,
+                        const typename std::iterator_traits<ForwardIterator>::value_type::second_type& norm,
+                        const typename std::iterator_traits<ForwardIterator>::value_type::first_type& p,
+                        Functor function_value, GradFunctor function_gradient,
+                        const Traits& traits);
 
 /*!
 \ingroup PkgInterpolation2Interpolation
@@ -265,15 +260,13 @@ traits);
 The same as `sibson_c1_interpolation()` except that no square root
 operation is needed for FT.
 */
-template < class ForwardIterator, class Functor, class
-GradFunctor, class Traits> typename Functor::result_type
-sibson_c1_interpolation_square(ForwardIterator first,
-ForwardIterator beyond, const typename
-std::iterator_traits<ForwardIterator>::value_type::second_type&
-norm, const typename
-std::iterator_traits<ForwardIterator>::value_type::first_type& p,
-Functor function_value, GradFunctor function_gradient,const
-Traits& traits);
+template < class ForwardIterator, class Functor, class GradFunctor, class Traits >
+typename Functor::result_type
+sibson_c1_interpolation_square(ForwardIterator first, ForwardIterator beyond,
+                               const typename std::iterator_traits<ForwardIterator>::value_type::second_type& norm,
+                               const typename std::iterator_traits<ForwardIterator>::value_type::first_type& p,
+                               Functor function_value, GradFunctor function_gradient,
+                               const Traits& traits);
 
 } /* namespace CGAL */
 

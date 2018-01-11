@@ -54,14 +54,13 @@ coordinates of `p` in the range `[first, beyond)` and the function values of the
 provided by the functor `f`. `norm` is the normalization
 factor of the barycentric coordinates.
 */
-template < class ForwardIterator, class Functor, class
-Traits> typename Traits::Vector_d
-sibson_gradient_fitting(ForwardIterator first, ForwardIterator
-beyond, const typename
-std::iterator_traits<ForwardIterator>::value_type::second_type&
-norm, const typename
-std::iterator_traits<ForwardIterator>::value_type::first_type& p,
-Functor f, const Traits& traits);
+template < class ForwardIterator, class Functor, class Traits >
+typename Traits::Vector_d
+sibson_gradient_fitting(ForwardIterator first, ForwardIterator beyond,
+                        const typename std::iterator_traits<ForwardIterator>::value_type::second_type& norm,
+                        const typename std::iterator_traits<ForwardIterator>::value_type::first_type& p,
+                        Functor f,
+                        const Traits& traits);
 
 /*!
 estimates the function gradients at all vertices of `dt` that lie
@@ -74,9 +73,12 @@ iterator that is placed past-the-end of the resulting sequence. The
 requirements are the same as above. The template class `Dt` must
 be equivalent to `Delaunay_triangulation_2<Gt, Tds>`.
 */
-template < class Dt, class OutputIterator, class Functor,
-class Traits> OutputIterator sibson_gradient_fitting_nn_2(const Dt&
-dt, OutputIterator out, Functor f, const Traits& traits);
+template < class Dt, class OutputIterator, class Functor, class Traits >
+OutputIterator
+sibson_gradient_fitting_nn_2(const Dt& dt,
+                             OutputIterator out,
+                             Functor f,
+                             const Traits& traits);
 
 /*!
 estimates the function gradients at all vertices of `rt` that lie
@@ -89,9 +91,12 @@ iterator that is placed past-the-end of the resulting sequence. The
 requirements are the same as above. The template class `Rt` must
 be equivalent to `Regular_triangulation_2<Gt, Tds>`.
 */
-template < class Rt, class OutputIterator, class Functor,
-class Traits> OutputIterator sibson_gradient_fitting_rn_2(const Rt&
-rt, OutputIterator out, Functor f, const Traits& traits);
+template < class Rt, class OutputIterator, class Functor, class Traits >
+OutputIterator
+sibson_gradient_fitting_rn_2(const Rt& rt,
+                             OutputIterator out,
+                             Functor f,
+                             const Traits& traits);
 
 /// @}
 

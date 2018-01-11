@@ -57,11 +57,12 @@ and a Boolean value which is set to `true`, iff the coordinate
 computation was successful, i.e., if `p` lies inside the
 convex hull of the points in `rt`.
 */
-template < class Rt, class OutputIterator > CGAL::Triple<
-OutputIterator, typename Rt::Geom_traits::FT, bool >
-regular_neighbor_coordinates_2(const Rt& rt, const typename
-Rt::Weighted_point& p, OutputIterator out, typename
-Rt::Face_handle start = typename Rt::Face_handle());
+template < class Rt, class OutputIterator >
+CGAL::Triple<OutputIterator, typename Rt::Geom_traits::FT, bool >
+regular_neighbor_coordinates_2(const Rt& rt,
+                               const typename Rt::Weighted_point& p,
+                               OutputIterator out,
+                               typename Rt::Face_handle start = typename Rt::Face_handle());
 
 /*!
 The same as above. The iterator range `[hole_begin, hole_end)` determines
@@ -72,23 +73,24 @@ determines the iterator range over the hidden vertices of the conflict
 zone of `p` in`rt`. It is the result of the function
 \link Regular_triangulation_2::get_boundary_of_conflicts() `rt.get_boundary_of_conflicts(p,std::back_inserter(hole), std::back_inserter(hidden_vertices), start)`\endlink.
 */
-template <class Rt, class OutputIterator,
-class EdgeIterator, class VertexIterator > CGAL::Triple<
-OutputIterator, typename Traits::FT, bool >
-regular_neighbor_coordinates_2(const Rt& rt, const typename
-Traits::Weighted_point& p, OutputIterator out, EdgeIterator
-hole_begin, EdgeIterator hole_end, VertexIterator
-hidden_vertices_begin, VertexIterator hidden_vertices_end);
+template <class Rt, class OutputIterator, class EdgeIterator, class VertexIterator >
+CGAL::Triple< OutputIterator, typename Traits::FT, bool >
+regular_neighbor_coordinates_2(const Rt& rt,
+                               const typename Traits::Weighted_point& p,
+                               OutputIterator out,
+                               EdgeIterator hole_begin, EdgeIterator hole_end,
+                               VertexIterator hidden_vertices_begin, VertexIterator hidden_vertices_end);
 
 /*!
 computes the regular neighbor coordinates of the point
 `vh->point()` with respect to the vertices of `rt` excluding
 `vh->point()`. The same as above for the remaining parameters.
 */
-template <class Rt, class OutputIterator>
+template < class Rt, class OutputIterator >
 CGAL::Triple< OutputIterator, typename Rt::Geom_traits::FT, bool >
-regular_neighbor_coordinates_2(const Rt& rt, typename
-Rt::Vertex_handle vh, OutputIterator out);
+regular_neighbor_coordinates_2(const Rt& rt,
+                               typename Rt::Vertex_handle vh,
+                               OutputIterator out);
 
 /// @}
 

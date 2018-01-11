@@ -158,14 +158,12 @@ typedef Side_of_plane_centered_sphere_2_3<K> Power_side_of_oriented_power_circle
 /*!
 
 */
-typedef Construct_plane_centered_circumcenter_3<K>
-Construct_weighted_circumcenter_2;
+typedef Construct_plane_centered_circumcenter_3<K> Construct_weighted_circumcenter_2;
 
 /*!
 
 */
-typedef Construct_plane_intersected_bisector_3<Point_2>
-Construct_radical_axis_2;
+typedef Construct_plane_intersected_bisector_3<Point_2> Construct_radical_axis_2;
 
 /*!
 
