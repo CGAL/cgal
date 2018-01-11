@@ -119,7 +119,7 @@ struct Incident_area
 };
 
 template<typename Descriptor>
-struct Constrained_things_map
+struct Constrained_vertices_map
 {
   typedef Descriptor                          key_type;
   typedef bool                                value_type;
@@ -130,15 +130,15 @@ struct Constrained_things_map
   std::shared_ptr<std::set<Descriptor>> const_things;
 
 public:
-  Constrained_things_map() : const_things(new std::set<Descriptor>) {}
+  Constrained_vertices_map() : const_things(new std::set<Descriptor>) {}
 
-  friend bool get(const Constrained_things_map& map, const key_type& d)
+  friend bool get(const Constrained_vertices_map& map, const key_type& d)
   {
     typename std::set<Descriptor>::iterator it = map.const_things->find(d);
     return it != map.const_things->end() ? true : false;
   }
 
-  friend void put(Constrained_things_map& map, const key_type& d)
+  friend void put(Constrained_vertices_map& map, const key_type& d)
   {
     map.const_things->insert(d);
   }
@@ -150,7 +150,6 @@ public:
 template<typename PolygonMesh,
          typename VertexPointMap,
          typename VertexConstraintMap,
-         typename EdgeConstraintMap,
          typename GeomTraits>
 class Shape_smoother{
 
@@ -179,25 +178,23 @@ private:
 public:
   Shape_smoother(PolygonMesh& mesh,
                  VertexPointMap& vpmap,
-                 VertexConstraintMap& vcmap,
-                 EdgeConstraintMap& ecmap) :
+                 VertexConstraintMap& vcmap) :
       mesh_(mesh),
       vpmap_(vpmap),
       vcmap_(vcmap),
-      ecmap_(ecmap),
       weight_calculator_(mesh, vpmap),
       inc_areas_calculator_(mesh),
       nb_vert_(static_cast<int>(vertices(mesh).size())) {}
 
-
+/*
   void init_smoothing()
   {
     //check_vertex_range(face_range);
 
-    check_constraints();
+    //check_constraints();
 
   }
-
+*/
 
   void setup_system(Eigen_matrix& A, Eigen_matrix& L, Eigen_matrix& D,
                     Eigen_vector& bx, Eigen_vector& by, Eigen_vector& bz,
@@ -236,7 +233,7 @@ public:
 #endif
 
 
-    std::cout<<"Done with setting up the sytem.\n";
+    std::cout<<"Done with setting up the system.\n";
   }
 
 
@@ -272,7 +269,7 @@ public:
     typedef Eigen::Triplet<double> Triplet;
     std::vector<Triplet> tripletList;
     tripletList.reserve(8 * nb_vert_);
-    // todo: calculate exactly how many non zero entries ther will be.
+    // todo: calculate exactly how many non zero entries there will be.
 
     for(face_descriptor f : faces(mesh_))
     {
@@ -314,9 +311,10 @@ public:
     std::cout << "area sqrt= " << CGAL::sqrt(surface_area) << nl;
 
 
-    normalize_area(Xx, Xy, Xz);
 
-    update_map(Xx, Xy, Xz);
+    //normalize_area(Xx, Xy, Xz);
+
+    //update_map(Xx, Xy, Xz);
 
     surface_area = area(faces(mesh_), mesh_);
     std::cout << "surface_area normalized= " << surface_area << nl;
@@ -487,16 +485,21 @@ private:
 
   // handling constrains
   // -----------------------------------
+  /*
+
   bool is_constrained(const edge_descriptor& e)
   {
     return get(ecmap_, e);
   }
+
+  */
 
   bool is_constrained(const vertex_descriptor& v)
   {
     return get(vcmap_, v);
   }
 
+  /*
   void check_constraints()
   {
     BOOST_FOREACH(edge_descriptor e, edges(mesh_))
@@ -512,6 +515,7 @@ private:
       }
     }
   }
+  */
 
   /*
   void apply_constraints(Eigen_matrix& A)
@@ -570,7 +574,6 @@ private:
   std::set<vertex_descriptor> vrange;
   IndexMap vimap_ = get(boost::vertex_index, mesh_);
   VertexConstraintMap vcmap_;
-  EdgeConstraintMap ecmap_;
   Edge_cotangent_weight<PolygonMesh, VertexPointMap> weight_calculator_;
   Incident_area<PolygonMesh> inc_areas_calculator_;
 

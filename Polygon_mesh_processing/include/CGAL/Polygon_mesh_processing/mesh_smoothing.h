@@ -23,7 +23,7 @@
 
 #include <CGAL/Polygon_mesh_processing/internal/Smoothing/mesh_smoothing_impl.h>
 #include <CGAL/Polygon_mesh_processing/internal/Smoothing/curvature_flow_impl.h>
-#include <CGAL/Polygon_mesh_processing/internal/Isotropic_remeshing/remesh_impl.h>
+//#include <CGAL/Polygon_mesh_processing/internal/Isotropic_remeshing/remesh_impl.h>
 #include <CGAL/Polygon_mesh_processing/internal/Smoothing/evaluation.h>
 
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
@@ -111,32 +111,15 @@ void smooth_angles(const FaceRange& faces, PolygonMesh& pmesh, const NamedParame
     VertexPointMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
                                  get_property_map(CGAL::vertex_point, pmesh));
 
-    // fimap
-    typedef typename GetFaceIndexMap<PolygonMesh, NamedParameters>::type FIMap;
-    FIMap fimap = choose_param(get_param(np, internal_np::face_index),
-                             get_property_map(face_index, pmesh));
-
     // vcmap
     typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
     typedef typename boost::lookup_named_param_def <
         internal_np::vertex_is_constrained_t,
         NamedParameters,
-        internal::No_constraint_pmap<vertex_descriptor>//default
+        internal::Constrained_vertices_map<vertex_descriptor>
       > ::type VCMap;
     VCMap vcmap = choose_param(get_param(np, internal_np::vertex_is_constrained),
-                               internal::No_constraint_pmap<vertex_descriptor>());
-
-    // ecmap
-    typedef typename boost::lookup_named_param_def <
-          internal_np::edge_is_constrained_t,
-          NamedParameters,
-          internal::Border_constraint_pmap<PolygonMesh, FaceRange, FIMap>
-        > ::type ECMap;
-    ECMap ecmap = (boost::is_same<ECMap, internal::Border_constraint_pmap<PolygonMesh, FaceRange, FIMap> >::value)
-    ? choose_param(get_param(np, internal_np::edge_is_constrained),
-                   internal::Border_constraint_pmap<PolygonMesh, FaceRange, FIMap>(pmesh, faces, fimap))
-    : choose_param(get_param(np, internal_np::edge_is_constrained),
-                   internal::Border_constraint_pmap<PolygonMesh, FaceRange, FIMap>());
+                               internal::Constrained_vertices_map<vertex_descriptor>());
 
     // nb_iterations
     unsigned int nb_iterations = choose_param(get_param(np, internal_np::number_of_iterations), 1);
@@ -147,8 +130,8 @@ void smooth_angles(const FaceRange& faces, PolygonMesh& pmesh, const NamedParame
     // convergence precision
     double precision = choose_param(get_param(np, internal_np::number_of_iterations), 1);
 
-    internal::Compatible_remesher<PolygonMesh, VertexPointMap, VCMap, ECMap, GeomTraits>
-            remesher(pmesh, vpmap, vcmap, ecmap);
+    internal::Compatible_remesher<PolygonMesh, VertexPointMap, VCMap, GeomTraits>
+            remesher(pmesh, vpmap, vcmap);
 
 #ifdef CGAL_PMP_SMOOTHING_VERBOSE
     t.stop();
@@ -274,32 +257,15 @@ void smooth_areas(const FaceRange& faces, PolygonMesh& pmesh, const NamedParamet
     VertexPointMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
                                  get_property_map(CGAL::vertex_point, pmesh));
 
-    //fimap
-    typedef typename GetFaceIndexMap<PolygonMesh, NamedParameters>::type FIMap;
-    FIMap fimap = choose_param(get_param(np, internal_np::face_index),
-                             get_property_map(face_index, pmesh));
-
     //vcmap
     typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
     typedef typename boost::lookup_named_param_def <
         internal_np::vertex_is_constrained_t,
         NamedParameters,
-        internal::No_constraint_pmap<vertex_descriptor>//default
+        internal::Constrained_vertices_map<vertex_descriptor>
       > ::type VCMap;
     VCMap vcmap = choose_param(get_param(np, internal_np::vertex_is_constrained),
-                               internal::No_constraint_pmap<vertex_descriptor>());
-
-    //ecmap
-    typedef typename boost::lookup_named_param_def <
-          internal_np::edge_is_constrained_t,
-          NamedParameters,
-          internal::Border_constraint_pmap<PolygonMesh, FaceRange, FIMap>
-        > ::type ECMap;
-    ECMap ecmap = (boost::is_same<ECMap, internal::Border_constraint_pmap<PolygonMesh, FaceRange, FIMap> >::value)
-    ? choose_param(get_param(np, internal_np::edge_is_constrained),
-                   internal::Border_constraint_pmap<PolygonMesh, FaceRange, FIMap>(pmesh, faces, fimap))
-    : choose_param(get_param(np, internal_np::edge_is_constrained),
-                   internal::Border_constraint_pmap<PolygonMesh, FaceRange, FIMap>());
+                               internal::Constrained_vertices_map<vertex_descriptor>());
 
     //nb_iterations
     unsigned int nb_iterations = choose_param(get_param(np, internal_np::number_of_iterations), 1);
@@ -307,8 +273,8 @@ void smooth_areas(const FaceRange& faces, PolygonMesh& pmesh, const NamedParamet
     //gradient descent precision
     double gd_precision = choose_param(get_param(np, internal_np::gradient_descent_precision), 1e-5);
 
-    internal::Compatible_remesher<PolygonMesh, VertexPointMap, VCMap, ECMap, GeomTraits>
-            remesher(pmesh, vpmap, vcmap, ecmap);
+    internal::Compatible_remesher<PolygonMesh, VertexPointMap, VCMap, GeomTraits>
+            remesher(pmesh, vpmap, vcmap);
 
 #ifdef CGAL_PMP_SMOOTHING_VERBOSE
     t.stop();
@@ -435,32 +401,15 @@ void compatible_smoothing(const FaceRange& faces, PolygonMesh& pmesh, const Name
     VertexPointMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
                                  get_property_map(CGAL::vertex_point, pmesh));
 
-    // fimap
-    typedef typename GetFaceIndexMap<PolygonMesh, NamedParameters>::type FIMap;
-    FIMap fimap = choose_param(get_param(np, internal_np::face_index),
-                             get_property_map(face_index, pmesh));
-
-    // vcmap
+    //vcmap
     typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
     typedef typename boost::lookup_named_param_def <
         internal_np::vertex_is_constrained_t,
         NamedParameters,
-        internal::No_constraint_pmap<vertex_descriptor>//default
+        internal::Constrained_vertices_map<vertex_descriptor>
       > ::type VCMap;
     VCMap vcmap = choose_param(get_param(np, internal_np::vertex_is_constrained),
-                               internal::No_constraint_pmap<vertex_descriptor>());
-
-    // ecmap
-    typedef typename boost::lookup_named_param_def <
-          internal_np::edge_is_constrained_t,
-          NamedParameters,
-          internal::Border_constraint_pmap<PolygonMesh, FaceRange, FIMap>
-        > ::type ECMap;
-    ECMap ecmap = (boost::is_same<ECMap, internal::Border_constraint_pmap<PolygonMesh, FaceRange, FIMap> >::value)
-    ? choose_param(get_param(np, internal_np::edge_is_constrained),
-                   internal::Border_constraint_pmap<PolygonMesh, FaceRange, FIMap>(pmesh, faces, fimap))
-    : choose_param(get_param(np, internal_np::edge_is_constrained),
-                   internal::Border_constraint_pmap<PolygonMesh, FaceRange, FIMap>());
+                               internal::Constrained_vertices_map<vertex_descriptor>());
 
     // nb_iterations
     unsigned int nb_iterations = choose_param(get_param(np, internal_np::number_of_iterations), 20);
@@ -474,8 +423,8 @@ void compatible_smoothing(const FaceRange& faces, PolygonMesh& pmesh, const Name
     // convergence precision
     double dist_precision = choose_param(get_param(np, internal_np::distance_precision), 0.01);
 
-    internal::Compatible_remesher<PolygonMesh, VertexPointMap, VCMap, ECMap, GeomTraits>
-            remesher(pmesh, vpmap, vcmap, ecmap);
+    internal::Compatible_remesher<PolygonMesh, VertexPointMap, VCMap, GeomTraits>
+            remesher(pmesh, vpmap, vcmap);
 
 #ifdef CGAL_PMP_SMOOTHING_VERBOSE
     t.stop();
