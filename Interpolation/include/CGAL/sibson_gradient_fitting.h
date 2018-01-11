@@ -24,73 +24,69 @@
 
 #include <CGAL/license/Interpolation.h>
 
-#include <CGAL/Origin.h>
 #include <CGAL/Interpolation/internal/helpers.h>
 #include <CGAL/natural_neighbor_coordinates_2.h>
 #include <CGAL/regular_neighbor_coordinates_2.h>
 
-#include <iterator>
-#include <utility>
+#include <CGAL/Origin.h>
 
 #include <boost/mpl/if.hpp>
 #include <boost/type_traits/is_same.hpp>
 
+#include <iterator>
+#include <utility>
+#include <vector>
+
 namespace CGAL {
 
-template < class ForwardIterator, class Functor, class Traits>
+template < class ForwardIterator, class Functor, class Traits >
 typename Traits::Vector_d
 sibson_gradient_fitting(ForwardIterator first,
                         ForwardIterator beyond,
                         const typename
-                        std::iterator_traits<ForwardIterator>::
-                          value_type::second_type& norm,
+                        std::iterator_traits<ForwardIterator>::value_type::second_type& norm,
                         const typename Traits::Point_d& bare_p,
                         const typename Functor::result_type::first_type fn,
                         Functor function_value,
                         const Traits& traits)
 {
+  CGAL_precondition( first != beyond && norm != 0);
+
   Interpolation::internal::V2P<Traits> v2p(traits);
-  CGAL_precondition( first!=beyond && norm!=0);
   typedef typename Traits::Aff_transformation_d Aff_transformation;
   typedef typename Traits::FT                   Coord_type;
 
-  typename Traits::Vector_d pn =
-      traits.construct_vector_d_object()(NULL_VECTOR);
-  Aff_transformation scaling, m,
-      Hn(traits.construct_null_matrix_d_object()());
+  typename Traits::Vector_d pn = traits.construct_vector_d_object()(NULL_VECTOR);
+  Aff_transformation scaling, m, Hn(traits.construct_null_matrix_d_object()());
 
-  for(;first!=beyond; ++first)
+  for(; first!=beyond; ++first)
   {
     const typename Traits::Point_d& bare_f = v2p(first->first);
     Coord_type square_dist = traits.compute_squared_distance_d_object()(bare_f, bare_p);
     CGAL_assertion(square_dist != 0);
-    Coord_type scale = first->second / (norm*square_dist);
+    Coord_type scale = first->second / (norm * square_dist);
     typename Traits::Vector_d d = traits.construct_vector_d_object()(bare_p, bare_f);
 
-    //compute the vector pn:
+    // compute the vector pn:
     typename Functor::result_type f = function_value(first->first);
-    CGAL_assertion(f.second);//function value of first->first is valid
-    pn = pn + traits.construct_scaled_vector_d_object()
-         (d,scale * (f.first - fn));
+    CGAL_assertion(f.second); //function value of first->first is valid
+    pn = pn + traits.construct_scaled_vector_d_object()(d, scale * (f.first - fn));
 
     //compute the matrix Hn:
     m = traits.construct_outer_product_d_object()(d);
     scaling = traits.construct_scaling_matrix_d_object()(scale);
-
     Hn = traits.construct_sum_matrix_d_object()(Hn, scaling * m);
   }
   return Hn.inverse().transform(pn);
 }
 
 
-template < class Triangul, class ForwardIterator, class Functor, class Traits, class VH>
+template < class Triangul, class ForwardIterator, class Functor, class Traits, class VH >
 typename Traits::Vector_d
 sibson_gradient_fitting(const Triangul& tr,
                         ForwardIterator first,
                         ForwardIterator beyond,
-                        const typename
-                        std::iterator_traits<ForwardIterator>::
-                          value_type::second_type& norm,
+                        const typename std::iterator_traits<ForwardIterator>::value_type::second_type& norm,
                         VH vh,
                         Functor function_value,
                         const Traits& traits,
@@ -110,14 +106,13 @@ sibson_gradient_fitting(const Triangul& tr,
                                  traits);
 }
 
-template < class Triangul, class ForwardIterator, class Functor, class Traits, class VH>
+template < class Triangul, class ForwardIterator, class Functor, class Traits, class VH >
 typename Traits::Vector_d
 sibson_gradient_fitting(const Triangul& tr,
                         ForwardIterator first,
                         ForwardIterator beyond,
                         const typename
-                        std::iterator_traits<ForwardIterator>::
-                          value_type::second_type& norm,
+                        std::iterator_traits<ForwardIterator>::value_type::second_type& norm,
                         VH vh,
                         Functor function_value,
                         const Traits& traits,
@@ -136,14 +131,13 @@ sibson_gradient_fitting(const Triangul& tr,
                                  traits);
 }
 
-template < class Triangul, class ForwardIterator, class Functor, class Traits, class VH>
+template < class Triangul, class ForwardIterator, class Functor, class Traits, class VH >
 typename Traits::Vector_d
 sibson_gradient_fitting(const Triangul& tr,
                         ForwardIterator first,
                         ForwardIterator beyond,
                         const typename
-                        std::iterator_traits<ForwardIterator>::
-                          value_type::second_type& norm,
+                        std::iterator_traits<ForwardIterator>::value_type::second_type& norm,
                         VH vh,
                         Functor function_value,
                         const Traits& traits,
@@ -151,7 +145,7 @@ sibson_gradient_fitting(const Triangul& tr,
 {
   const typename Traits::Point_d& bare_p = traits.construct_point_d_object()(vh->point());
   typename Functor::result_type fn = function_value(vh);
-   CGAL_assertion(fn.second);
+  CGAL_assertion(fn.second);
 
   return sibson_gradient_fitting(first,
                                  beyond,
@@ -164,14 +158,14 @@ sibson_gradient_fitting(const Triangul& tr,
 
 
 template < class Triangul, class OutputIterator, class Functor,
-           class CoordFunctor, class OIF, class Traits>
+           class CoordFunctor, class OIF, class Traits >
 OutputIterator
 sibson_gradient_fitting_internal(const Triangul& tr,
-                        OutputIterator out,
-                        Functor function_value,
-                        CoordFunctor compute_coordinates,
-                        OIF fct,
-                        const Traits& traits)
+                                 OutputIterator out,
+                                 Functor function_value,
+                                 CoordFunctor compute_coordinates,
+                                 OIF fct,
+                                 const Traits& traits)
 {
   typedef typename Traits::FT                             Coord_type;
 
@@ -205,12 +199,12 @@ sibson_gradient_fitting_internal(const Triangul& tr,
 }
 
 
-//the following functions allow to fit the gradients for all points in
+// The following functions allow to fit the gradients for all points in
 // a triangulation except the convex hull points.
 // -> _nn2: natural_neighbor_coordinates_2
 // -> _rn2: regular_neighbor_coordinates_2
 // -> _sn2_3: surface_neighbor_coordinates_2_3
-template < class Dt, class OutputIterator, class Functor, class OIF, class Traits>
+template < class Dt, class OutputIterator, class Functor, class OIF, class Traits >
 OutputIterator
 sibson_gradient_fitting_nn_2(const Dt& dt,
                              OutputIterator out,
@@ -238,7 +232,7 @@ sibson_gradient_fitting_nn_2(const Dt& dt,
 }
 
 
-template < class Dt, class OutputIterator, class Functor, class Traits>
+template < class Dt, class OutputIterator, class Functor, class Traits >
 OutputIterator
 sibson_gradient_fitting_nn_2(const Dt& dt,
                              OutputIterator out,
@@ -250,7 +244,7 @@ sibson_gradient_fitting_nn_2(const Dt& dt,
 }
 
 
-template < class Rt, class OutputIterator, class Functor, class OIF, class Traits>
+template < class Rt, class OutputIterator, class Functor, class OIF, class Traits >
 OutputIterator
 sibson_gradient_fitting_rn_2(const Rt& rt,
                              OutputIterator out,
@@ -263,7 +257,6 @@ sibson_gradient_fitting_rn_2(const Rt& rt,
                        std::pair< typename Functor::argument_type,
                                   typename  Traits::FT > > >   CoordInserter;
 
-
   typedef typename boost::mpl::if_<
     boost::is_same<typename Functor::argument_type, typename Rt::Weighted_point>,
     Interpolation::internal::Vertex2WPoint<Rt, typename Traits::FT>,
@@ -271,14 +264,14 @@ sibson_gradient_fitting_rn_2(const Rt& rt,
   >::type Coord_OIF;
 
   return sibson_gradient_fitting_internal(rt, out, function_value,
-                                 regular_neighbor_coordinates_2_object<Rt,
-                                                                       CoordInserter,
-                                                                       Coord_OIF>(),
-                                 fct,
-                                 traits);
+                                          regular_neighbor_coordinates_2_object<Rt,
+                                                                                CoordInserter,
+                                                                                Coord_OIF>(),
+                                          fct,
+                                          traits);
 }
 
-template < class Rt, class OutputIterator, class Functor, class Traits>
+template < class Rt, class OutputIterator, class Functor, class Traits >
 OutputIterator
 sibson_gradient_fitting_rn_2(const Rt& rt,
                              OutputIterator out,
