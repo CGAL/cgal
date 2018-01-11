@@ -39,8 +39,8 @@ struct Data_access
   : public CGAL::unary_function<typename Map::key_type,
                                 std::pair<typename Map::mapped_type, bool> >
 {
-  typedef typename Map::mapped_type Data_type;
-  typedef typename Map::key_type  Key_type;
+  typedef typename Map::mapped_type   Data_type;
+  typedef typename Map::key_type      Key_type;
 
   Data_access<Map>(const Map& m): map(m){}
 
@@ -57,21 +57,21 @@ struct Data_access
 };
 
 //the interpolation functions:
-template < class ForwardIterator, class Functor >
-typename Functor::result_type::first_type
+template < class ForwardIterator, class ValueFunctor >
+typename ValueFunctor::result_type::first_type
 linear_interpolation(ForwardIterator first, ForwardIterator beyond,
-                     const typename
-                       std::iterator_traits<ForwardIterator>::value_type::
-                       second_type& norm,
-                     Functor function_value)
+                     const typename std::iterator_traits<ForwardIterator>::value_type::second_type& norm,
+                     ValueFunctor value_function)
 {
-  CGAL_precondition(norm>0);
-  typedef typename Functor::result_type::first_type Value_type;
+  CGAL_precondition(norm > 0);
+
+  typedef typename ValueFunctor::result_type::first_type Value_type;
+
   Value_type result(0);
-  typename Functor::result_type val;
+  typename ValueFunctor::result_type val;
   for(; first !=beyond; ++first)
   {
-    val = function_value(first->first);
+    val = value_function(first->first);
     CGAL_assertion(val.second);
     result += (first->second/norm) * val.first;
   }
@@ -79,30 +79,28 @@ linear_interpolation(ForwardIterator first, ForwardIterator beyond,
 }
 
 
-  template < class ForwardIterator, class Functor, class GradFunctor,
-             class Traits, class Point >
-std::pair< typename Functor::result_type::first_type, bool>
+template < class ForwardIterator, class ValueFunctor, class GradFunctor,
+           class Traits, class Point >
+std::pair< typename ValueFunctor::result_type::first_type, bool>
 quadratic_interpolation(ForwardIterator first, ForwardIterator beyond,
-                        const typename
-                          std::iterator_traits<ForwardIterator>::
-                          value_type::second_type& norm,
+                        const typename std::iterator_traits<ForwardIterator>::value_type::second_type& norm,
                         const Point& p,
-                        Functor function_value,
-                        GradFunctor function_gradient,
+                        ValueFunctor value_function,
+                        GradFunctor gradient_function,
                         const Traits& traits)
 {
   CGAL_precondition(norm > 0);
-  typedef typename Functor::result_type::first_type Value_type;
+  typedef typename ValueFunctor::result_type::first_type Value_type;
 
   Interpolation::internal::Extract_bare_point<Traits> cp(traits);
   Value_type result(0);
-  typename Functor::result_type f;
+  typename ValueFunctor::result_type f;
   typename GradFunctor::result_type grad;
 
   for(; first !=beyond; ++first)
   {
-    f = function_value(first->first);
-    grad = function_gradient(first->first);
+    f = value_function(first->first);
+    grad = gradient_function(first->first);
     //test if value and gradient are correctly retrieved:
     CGAL_assertion(f.second);
     if(!grad.second)
@@ -115,32 +113,31 @@ quadratic_interpolation(ForwardIterator first, ForwardIterator beyond,
 }
 
 
-  template < class ForwardIterator, class Functor, class GradFunctor,
-             class Traits, class Point >
-std::pair< typename Functor::result_type::first_type, bool>
+template < class ForwardIterator, class ValueFunctor, class GradFunctor,
+           class Traits, class Point >
+std::pair< typename ValueFunctor::result_type::first_type, bool>
 sibson_c1_interpolation(ForwardIterator first, ForwardIterator beyond,
-                        const typename
-                          std::iterator_traits<ForwardIterator>::
-                          value_type::second_type& norm,
+                        const typename std::iterator_traits<ForwardIterator>::value_type::second_type& norm,
                         const Point& p,
-                        Functor function_value,
-                        GradFunctor function_gradient,
+                        ValueFunctor value_function,
+                        GradFunctor gradient_function,
                         const Traits& traits)
 {
   CGAL_precondition(norm >0);
-  typedef typename Functor::result_type::first_type Value_type;
-  typedef typename Traits::FT                       Coord_type;
+
+  typedef typename ValueFunctor::result_type::first_type Value_type;
+  typedef typename Traits::FT                            Coord_type;
 
   Interpolation::internal::Extract_bare_point<Traits> cp(traits);
   Coord_type term1(0), term2(term1), term3(term1), term4(term1);
   Value_type linear_int(0), gradient_int(0);
-  typename Functor::result_type f;
+  typename ValueFunctor::result_type f;
   typename GradFunctor::result_type grad;
 
   for(; first !=beyond; ++first)
   {
-    f = function_value(first->first);
-    grad = function_gradient(first->first);
+    f = value_function(first->first);
+    grad = gradient_function(first->first);
     CGAL_assertion(f.second);
     if(!grad.second)
       return std::make_pair(Value_type(0), false); //the values are not correct
@@ -187,32 +184,31 @@ sibson_c1_interpolation(ForwardIterator first, ForwardIterator beyond,
 //    term3 +=  coeff*(squared_dist/inv_weight);
 // 	  gradient_int += (coeff/inv_weight) * (vh->get_value()+ vh->get_gradient() * (p - vh->point()));
 
-template < class ForwardIterator, class Functor, class GradFunctor,
+template < class ForwardIterator, class ValueFunctor, class GradFunctor,
            class Traits, class Point >
-std::pair< typename Functor::result_type::first_type, bool >
+std::pair< typename ValueFunctor::result_type::first_type, bool >
 sibson_c1_interpolation_square(ForwardIterator first, ForwardIterator beyond,
-                               const typename
-                                 std::iterator_traits<ForwardIterator>::
-                                 value_type::second_type& norm,
+                               const typename std::iterator_traits<ForwardIterator>::value_type::second_type& norm,
                                const Point& p,
-                               Functor function_value,
-                               GradFunctor function_gradient,
+                               ValueFunctor value_function,
+                               GradFunctor gradient_function,
                                const Traits& traits)
 {
   CGAL_precondition(norm > 0);
-  typedef typename Functor::result_type::first_type Value_type;
-  typedef typename Traits::FT                       Coord_type;
+
+  typedef typename ValueFunctor::result_type::first_type Value_type;
+  typedef typename Traits::FT                            Coord_type;
 
   Interpolation::internal::Extract_bare_point<Traits> cp(traits);
   Coord_type term1(0), term2(term1), term3(term1), term4(term1);
   Value_type linear_int(0), gradient_int(0);
-  typename Functor::result_type f;
+  typename ValueFunctor::result_type f;
   typename GradFunctor::result_type grad;
 
   for(; first!=beyond; ++first)
   {
-    f = function_value(first->first);
-    grad = function_gradient(first->first);
+    f = value_function(first->first);
+    grad = gradient_function(first->first);
     CGAL_assertion(f.second);
 
     if(!grad.second)
@@ -249,33 +245,32 @@ sibson_c1_interpolation_square(ForwardIterator first, ForwardIterator beyond,
 }
 
 
-template < class RandomAccessIterator, class Functor, class
-           GradFunctor, class Traits, class Point_>
-std::pair< typename Functor::result_type::first_type, bool>
+template < class RandomAccessIterator, class ValueFunctor, class GradFunctor,
+           class Traits, class Point_>
+std::pair< typename ValueFunctor::result_type::first_type, bool>
 farin_c1_interpolation(RandomAccessIterator first,
                        RandomAccessIterator beyond,
-                       const typename
-                         std::iterator_traits<RandomAccessIterator>::
-                         value_type::second_type& norm,
+                       const typename std::iterator_traits<RandomAccessIterator>::value_type::second_type& norm,
                        const Point_& /*p*/,
-                       Functor function_value, GradFunctor
-                       function_gradient,
+                       ValueFunctor value_function,
+                       GradFunctor gradient_function,
                        const Traits& traits)
 {
   CGAL_precondition(norm >0);
-  //the function value is available for all points
-  //if a gradient value is not availble: function returns false
-  typedef typename Functor::result_type::first_type  Value_type;
-  typedef typename Traits::FT                        Coord_type;
+
+  // the function value is available for all points
+  // if a gradient value is not availble: function returns false
+  typedef typename ValueFunctor::result_type::first_type  Value_type;
+  typedef typename Traits::FT                             Coord_type;
 
   Interpolation::internal::Extract_bare_point<Traits> cp(traits);
-  typename Functor::result_type f;
+  typename ValueFunctor::result_type f;
   typename GradFunctor::result_type grad;
 
   int n = static_cast<int>(beyond - first);
   if(n == 1)
   {
-    f = function_value(first->first);
+    f = value_function(first->first);
     CGAL_assertion(f.second);
     return std::make_pair(f.first, true);
   }
@@ -296,7 +291,7 @@ farin_c1_interpolation(RandomAccessIterator first,
     Coord_type coord_i_square = CGAL_NTS square(it->second);
 
     // for later: the function value of it->first:
-    f = function_value(it->first);
+    f = value_function(it->first);
     CGAL_assertion(f.second);
     ordinates[i][i] = f.first;
 
@@ -311,7 +306,7 @@ farin_c1_interpolation(RandomAccessIterator first,
       {
         it2 = first + j;
 
-        grad = function_gradient(it->first);
+        grad = gradient_function(it->first);
         if(!grad.second)
           return std::make_pair(Value_type(0), false); // the gradient is not known
 
