@@ -95,6 +95,58 @@ void test_area_smoothing(const char* filename)
   }
 }
 
+void test_angle_smoothing_without_projection(const char* filename)
+{
+  std::cout.precision(17);
+  std::ifstream input(filename);
+  Mesh mesh;
+  input >> mesh;
+  input.close();
+
+  boost::property_map<Mesh, CGAL::vertex_point_t>::type vpmap =
+          get(CGAL::vertex_point, mesh);
+
+  CGAL::Polygon_mesh_processing::smooth_angles(mesh, CGAL::Polygon_mesh_processing::parameters::do_project(false));
+
+  for (vertex_descriptor v : vertices(mesh))
+  {
+    if(!is_border(v, mesh))
+    {
+      Point p_c = get(vpmap, v);
+      assert(p_c.x() == 0.59571844622769954);
+      assert(p_c.y() == 0.5);
+      assert(p_c.z() == 1.0652302640732678);
+      break;
+    }
+  }
+}
+
+void test_area_smoothing_without_projection(const char* filename)
+{
+  std::cout.precision(17);
+  std::ifstream input(filename);
+  Mesh mesh;
+  input >> mesh;
+  input.close();
+
+  boost::property_map<Mesh, CGAL::vertex_point_t>::type vpmap =
+          get(CGAL::vertex_point, mesh);
+
+  CGAL::Polygon_mesh_processing::smooth_areas(mesh, CGAL::Polygon_mesh_processing::parameters::do_project(false));
+
+  for (vertex_descriptor v : vertices(mesh))
+  {
+    if(!is_border(v, mesh))
+    {
+      Point p_c = get(vpmap, v);
+      assert(p_c.x() == 0.42183982448892759);
+      assert(p_c.y() == 0.5);
+      assert(p_c.z() == 0.87816017551107273);
+      break;
+    }
+  }
+}
+
 void test_constrained_vertices(const char* filename)
 {
   std::cout.precision(17);
@@ -122,9 +174,9 @@ void test_constrained_vertices(const char* filename)
   Constraints_pmap vcmap(&selected_vertices);
 
   CGAL::Polygon_mesh_processing::smooth_angles(mesh,
-                          CGAL::Polygon_mesh_processing::parameters::vertex_is_constrained_map(vcmap));
+        CGAL::Polygon_mesh_processing::parameters::vertex_is_constrained_map(vcmap));
   CGAL::Polygon_mesh_processing::smooth_areas(mesh,
-                          CGAL::Polygon_mesh_processing::parameters::vertex_is_constrained_map(vcmap));
+        CGAL::Polygon_mesh_processing::parameters::vertex_is_constrained_map(vcmap));
 
   for(vertex_descriptor v : vertices(mesh))
   {
@@ -139,10 +191,13 @@ void test_constrained_vertices(const char* filename)
 
 int main(){
 
-  const char* filename = "data/simple_polygon.off";
-  test_angle_smoothing(filename);
-  test_area_smoothing(filename);
-  test_constrained_vertices(filename);
+  const char* filename_polygon = "data/simple_polygon.off";
+  test_angle_smoothing(filename_polygon);
+  test_area_smoothing(filename_polygon);
+  test_constrained_vertices(filename_polygon);
+  const char* filename_pyramid = "data/simple_pyramid.off";
+  test_angle_smoothing_without_projection(filename_pyramid);
+  test_area_smoothing_without_projection(filename_pyramid);
 
   return 0;
 }

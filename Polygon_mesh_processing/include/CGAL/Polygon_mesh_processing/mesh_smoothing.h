@@ -51,7 +51,6 @@ namespace Polygon_mesh_processing {
 * A weighted scheme is also proposed to favorise the removal of small angles.
 * Optionally, the points are reprojected after each iteration.
 *
-* @todo Make the projection of points optional.
 * @tparam PolygonMesh model of `MutableFaceGraph`.
 *         If `PolygonMesh` has an internal property map for `CGAL::face_index_t`,
 *         and no `face_index_map` is given
@@ -79,6 +78,8 @@ namespace Polygon_mesh_processing {
 *    cannot be modified at all during smoothing.
 *  \cgalParamEnd
 *  \cgalParamBegin{use_weights} If `true`, small angles carry more weight than larger ones.
+*  \cgalParamEnd
+*  \cgalParamBegin{do_project} If `true`, points are projected to the initial surface after each iteration.
 *  \cgalParamEnd
 * \cgalNamedParamsEnd
 */
@@ -119,6 +120,8 @@ void smooth_angles(const FaceRange& faces, PolygonMesh& pmesh, const NamedParame
   //use weighted angles - should always be true?
   bool use_weights = choose_param(get_param(np, internal_np::use_weights), true);
 
+  bool do_project = choose_param(get_param(np, internal_np::do_project), true);
+
   internal::Compatible_remesher<PolygonMesh, VertexPointMap, VCMap, GeomTraits>
           remesher(pmesh, vpmap, vcmap);
 
@@ -148,14 +151,15 @@ void smooth_angles(const FaceRange& faces, PolygonMesh& pmesh, const NamedParame
   t.reset(); t.start();
   #endif
 
-  for(std::size_t int i=0; i<nb_iterations; ++i)
+  for(std::size_t i=0; i<nb_iterations; ++i)
   {
     #ifdef CGAL_PMP_SMOOTHING_VERBOSE
     std::cout << " * Iteration " << (i + 1) << " *" << std::endl;
     #endif
 
     remesher.angle_relaxation(use_weights);
-    remesher.project_to_surface();
+    if(do_project)
+      remesher.project_to_surface();
   }
 
   #ifdef CGAL_PMP_SMOOTHING_VERBOSE
@@ -184,7 +188,6 @@ void smooth_angles(PolygonMesh& pmesh)
 * This function tries to make the area distribution of triangle as uniform as possible
 * by moving non constrained vertices.
 * Optionally, the points are reprojected after each iteration.
-* @todo make the reprojection optional.
 *
 * @tparam PolygonMesh model of `MutableFaceGraph`.
 *         If `PolygonMesh` has an internal property map for `CGAL::face_index_t`,
@@ -216,6 +219,8 @@ void smooth_angles(PolygonMesh& pmesh)
 *    triangle is being minimized. Corresponds to the
 *    relative energy of triangles between iterations. Triangle energy is defined based on its area compared to
 *    the average area of all triangles adjacent to the vertex that is being moved.  Defaults to 1e-5.
+*  \cgalParamEnd
+*  \cgalParamBegin{do_project} If `true`, points are projected to the initial surface after each iteration.
 *  \cgalParamEnd
 * \cgalNamedParamsEnd
 */
@@ -256,6 +261,8 @@ void smooth_areas(const FaceRange& faces, PolygonMesh& pmesh, const NamedParamet
   //gradient descent precision
   double gd_precision = choose_param(get_param(np, internal_np::gradient_descent_precision), 1e-5);
 
+  bool do_project = choose_param(get_param(np, internal_np::do_project), true);
+
   internal::Compatible_remesher<PolygonMesh, VertexPointMap, VCMap, GeomTraits>
           remesher(pmesh, vpmap, vcmap);
 
@@ -290,7 +297,8 @@ void smooth_areas(const FaceRange& faces, PolygonMesh& pmesh, const NamedParamet
     #endif
 
     remesher.area_relaxation(gd_precision);
-    remesher.project_to_surface();
+    if(do_project)
+      remesher.project_to_surface();
   }
 
   #ifdef CGAL_PMP_SMOOTHING_VERBOSE
