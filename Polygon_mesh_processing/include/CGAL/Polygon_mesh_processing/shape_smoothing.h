@@ -225,7 +225,6 @@ void smooth_modified_curvature_flow(const FaceRange& faces, PolygonMesh& pmesh, 
   VertexPointMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
                                get_property_map(CGAL::vertex_point, pmesh));
 
-  // vcmap
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
   typedef typename boost::lookup_named_param_def <
       internal_np::vertex_is_constrained_t,
@@ -235,7 +234,6 @@ void smooth_modified_curvature_flow(const FaceRange& faces, PolygonMesh& pmesh, 
   VCMap vcmap = choose_param(get_param(np, internal_np::vertex_is_constrained),
                              internal::Constrained_vertices_map<vertex_descriptor>());
 
-  //nb_iterations
   std::size_t nb_iterations = choose_param(get_param(np, internal_np::number_of_iterations), 1);
 
   bool use_explicit_scheme = choose_param(get_param(np, internal_np::use_explicit_scheme), true);
@@ -297,15 +295,12 @@ void setup_mcf_system(const FaceRange& faces, PolygonMesh& mesh,
   //typedef typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::type VertexPointMap;
   //VertexPointMap vpmap = get(CGAL::vertex_point, mesh);
 
-  // GeomTraits
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GeomTraits;
 
-  // vpmap
   typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type VertexPointMap;
   VertexPointMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
                                get_property_map(CGAL::vertex_point, mesh));
 
-  // vcmap
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
   typedef typename boost::lookup_named_param_def <
       internal_np::vertex_is_constrained_t,
