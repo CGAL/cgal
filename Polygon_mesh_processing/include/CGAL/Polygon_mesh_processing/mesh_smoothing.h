@@ -23,12 +23,9 @@
 
 #include <CGAL/Polygon_mesh_processing/internal/Smoothing/mesh_smoothing_impl.h>
 #include <CGAL/Polygon_mesh_processing/internal/Smoothing/evaluation.h>
-
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
-
 #include <CGAL/Polygon_mesh_processing/distance.h>
-#define CGAL_PMP_SMOOTHING_VERBOSE
 
 #ifdef CGAL_PMP_SMOOTHING_VERBOSE
 #include <CGAL/Timer.h>
@@ -77,8 +74,6 @@ namespace Polygon_mesh_processing {
 *    constrained-or-not status of each vertex of `pmesh`. A constrained vertex
 *    cannot be modified at all during smoothing.
 *  \cgalParamEnd
-*  \cgalParamBegin{use_weights} If `true`, small angles carry more weight than larger ones.
-*  \cgalParamEnd
 *  \cgalParamBegin{do_project} If `true`, points are projected to the initial surface after each iteration.
 *  \cgalParamEnd
 * \cgalNamedParamsEnd
@@ -117,9 +112,6 @@ void smooth_angles(const FaceRange& faces, PolygonMesh& pmesh, const NamedParame
   // nb_iterations
   std::size_t nb_iterations = choose_param(get_param(np, internal_np::number_of_iterations), 1);
 
-  //use weighted angles - should always be true?
-  bool use_weights = choose_param(get_param(np, internal_np::use_weights), true);
-
   bool do_project = choose_param(get_param(np, internal_np::do_project), true);
 
   internal::Compatible_remesher<PolygonMesh, VertexPointMap, VCMap, GeomTraits>
@@ -157,7 +149,7 @@ void smooth_angles(const FaceRange& faces, PolygonMesh& pmesh, const NamedParame
     std::cout << " * Iteration " << (i + 1) << " *" << std::endl;
     #endif
 
-    remesher.angle_relaxation(use_weights);
+    remesher.angle_relaxation();
     if(do_project)
       remesher.project_to_surface();
   }

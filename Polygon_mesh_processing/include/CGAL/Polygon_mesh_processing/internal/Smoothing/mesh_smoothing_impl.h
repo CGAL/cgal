@@ -123,7 +123,7 @@ public:
         return nb_removed_faces;
     }
 
-    void angle_relaxation(bool use_weights)
+    void angle_relaxation()
     {
         std::map<vertex_descriptor, Point> barycenters;
         std::map<vertex_descriptor, Vector> n_map;
@@ -148,7 +148,7 @@ public:
                 measure_angles(he_map);
 
                 // calculate movement
-                Vector move = calc_move(he_map, use_weights);
+                Vector move = calc_move(he_map);
 
                 barycenters[v] = (get(vpmap_, v) + move) ;
 
@@ -251,7 +251,7 @@ private:
 
     // angle bisecting functions
     // -------------------------
-    Vector calc_move(const Edges_around_map& he_map, bool use_weights)
+    Vector calc_move(const Edges_around_map& he_map)
     {
         Vector move = CGAL::NULL_VECTOR;
         double weights_sum = 0;
@@ -279,17 +279,18 @@ private:
             double weight = 1.0 / (angle*angle);
             weights_sum += weight;
 
-            if(use_weights)
-                move += weight * rotated_edge;
-            else
-                move += rotated_edge;
+            //if(use_weights)
+              move += weight * rotated_edge;
+            //else
+            //  move += rotated_edge;
         }
 
         // if at least 1 angle was summed
-        if(use_weights && weights_sum != 0)
-            move /= weights_sum;
-        else
-            move /= CGAL::to_double(he_map.size());
+        //if(use_weights && weights_sum != 0)
+        if(weights_sum != 0)
+          move /= weights_sum;
+        //else
+        //move /= CGAL::to_double(he_map.size());
 
         return move;
     }
