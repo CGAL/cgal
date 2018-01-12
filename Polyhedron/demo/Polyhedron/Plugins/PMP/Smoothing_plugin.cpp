@@ -60,10 +60,9 @@ void init(QMainWindow* mainWindow, Scene_interface* scene_interface, Messages_in
     ui_widget.setupUi(dock_widget);
     addDockWidget(dock_widget);
 
-    connect(ui_widget.angle_button,  SIGNAL(clicked()), this, SLOT(on_angles_clicked()));
-    connect(ui_widget.area_button,  SIGNAL(clicked()), this, SLOT(on_areas_clicked()));
-    connect(ui_widget.curvature_button,  SIGNAL(clicked()), this, SLOT(on_curvature_clicked()));
-    connect(ui_widget.modified_curv_button,  SIGNAL(clicked()), this, SLOT(on_modified_curv_clicked()));
+    connect(ui_widget.angle_button,  SIGNAL(clicked()), this, SLOT(on_angle_smoothing_clicked()));
+    connect(ui_widget.area_button,  SIGNAL(clicked()), this, SLOT(on_area_smoothing_clicked()));
+    connect(ui_widget.curvature_flow_button,  SIGNAL(clicked()), this, SLOT(on_curvature_flow_clicked()));
 
 }
 
@@ -99,9 +98,17 @@ void init(QMainWindow* mainWindow, Scene_interface* scene_interface, Messages_in
       ui_widget.areas_iter_spinBox->setMinimum(1);
 
       ui_widget.time_step_spinBox->setValue(0.00001);
-      // todo: better time step
       ui_widget.time_step_spinBox->setSingleStep(0.00001);
       ui_widget.time_step_spinBox->setMinimum(1e-6);
+
+      ui_widget.tolerance_spinBox->setValue(0.00001);
+      ui_widget.tolerance_spinBox->setSingleStep(0.00001);
+      ui_widget.tolerance_spinBox->setMinimum(1e-16);
+
+      ui_widget.projection_checkBox->setChecked(true);
+      ui_widget.explicit_checkBox->setChecked(false);
+
+      ui_widget.curvature_iter_spinBox->setValue(1);
 
       QObject* scene_object = dynamic_cast<QObject*>(scene);
       connect(scene_object, SIGNAL(itemAboutToBeDestroyed(CGAL::Three::Scene_item*)),
@@ -114,7 +121,6 @@ public Q_SLOTS:
         dock_widget->show();
         dock_widget->raise();
 
-        // needed?
         const Scene_interface::Item_id index = scene->mainSelectionIndex();
         Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(index));
 
@@ -127,17 +133,18 @@ public Q_SLOTS:
         }
     }
 
-    void on_angles_clicked()
+    void on_angle_smoothing_clicked()
     {
         const Scene_interface::Item_id index = scene->mainSelectionIndex();
         Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(index));
         Scene_polyhedron_selection_item* selection_item = qobject_cast<Scene_polyhedron_selection_item*>(scene->item(index));
         Polyhedron& pmesh = (poly_item != NULL) ? * poly_item->polyhedron() : * selection_item->polyhedron();
 
-        QApplication::setOverrideCursor(Qt::WaitCursor);
+        const unsigned int nb_iter = ui_widget.angles_iter_spinBox->value();
+        bool projection = ui_widget.projection_checkBox->isChecked();
 
-        unsigned int nb_iter = ui_widget.angles_iter_spinBox->value();
-        smooth_angles(pmesh, parameters::number_of_iterations(nb_iter));
+        QApplication::setOverrideCursor(Qt::WaitCursor);
+        smooth_angles(pmesh, parameters::number_of_iterations(nb_iter).do_project(projection));
 
         poly_item->invalidateOpenGLBuffers();
         poly_item->itemChanged();
@@ -145,41 +152,28 @@ public Q_SLOTS:
 
      }
 
-    void on_areas_clicked()
+    void on_area_smoothing_clicked()
     {
         const Scene_interface::Item_id index = scene->mainSelectionIndex();
         Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(index));
         Scene_polyhedron_selection_item* selection_item = qobject_cast<Scene_polyhedron_selection_item*>(scene->item(index));
         Polyhedron& pmesh = (poly_item != NULL) ? * poly_item->polyhedron() : * selection_item->polyhedron();
-
-        QApplication::setOverrideCursor(Qt::WaitCursor);
 
         unsigned int nb_iter = ui_widget.areas_iter_spinBox->value();
-        smooth_areas(pmesh, parameters::number_of_iterations(nb_iter));
+        bool projection = ui_widget.projection_checkBox->isChecked();
+        const double tolerance = ui_widget.tolerance_spinBox->value();
+
+        QApplication::setOverrideCursor(Qt::WaitCursor);
+        smooth_areas(pmesh, parameters::number_of_iterations(nb_iter)
+                                        .do_project(projection)
+                                        .gradient_descent_tolerance(tolerance));
 
         poly_item->invalidateOpenGLBuffers();
         poly_item->itemChanged();
         QApplication::restoreOverrideCursor();
      }
 
-    void on_curvature_clicked()
-    {
-        const Scene_interface::Item_id index = scene->mainSelectionIndex();
-        Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(index));
-        Scene_polyhedron_selection_item* selection_item = qobject_cast<Scene_polyhedron_selection_item*>(scene->item(index));
-        Polyhedron& pmesh = (poly_item != NULL) ? * poly_item->polyhedron() : * selection_item->polyhedron();
-
-        QApplication::setOverrideCursor(Qt::WaitCursor);
-
-        unsigned int nb_iter = ui_widget.curvature_iter_spinBox ->value();
-        smooth_curvature_flow_explicit(faces(pmesh), pmesh, parameters::number_of_iterations(nb_iter));
-
-        poly_item->invalidateOpenGLBuffers();
-        poly_item->itemChanged();
-        QApplication::restoreOverrideCursor();
-    }
-
-    void on_modified_curv_clicked()
+    void on_curvature_flow_clicked()
     {
         const Scene_interface::Item_id index = scene->mainSelectionIndex();
         Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(index));
@@ -188,23 +182,37 @@ public Q_SLOTS:
 
         int index_id = scene->item_id(poly_item);
         const double time_step = ui_widget.time_step_spinBox->value();
+        const unsigned int nb_iter = ui_widget.curvature_iter_spinBox->value();
 
         QApplication::setOverrideCursor(Qt::WaitCursor);
 
-        if(index_id != last_index_id)
+        // explicit
+        if(ui_widget.explicit_checkBox->isChecked())
         {
-            setup_mcf_system(faces(pmesh), pmesh, stiffness_matrix_, parameters::all_default());
-            last_index_id = index_id;
+          CGAL::Polygon_mesh_processing::smooth_modified_curvature_flow(pmesh, time_step,
+                            CGAL::Polygon_mesh_processing::parameters::use_explicit_scheme(true)
+                                                                       .number_of_iterations(nb_iter));
+        }
+        else
+        {
+          // implicit scheme
+          if(index_id != last_index_id)
+          {
+              setup_mcf_system(faces(pmesh), pmesh, stiffness_matrix_, parameters::all_default());
+              last_index_id = index_id;
+          }
+
+          for(unsigned int iter=0; iter<nb_iter; ++iter)
+          {
+              solve_mcf_system(faces(pmesh), pmesh, time_step, stiffness_matrix_, parameters::all_default());
+          }
         }
 
-        solve_mcf_system(faces(pmesh), pmesh, time_step, stiffness_matrix_, parameters::all_default());
-
-        // todo: update scene for selection item
-        poly_item->compute_bbox();
-        static_cast<Scene*>(scene)->updated_bbox(true);
+        // recenter scene
+        //poly_item->compute_bbox();
+        //static_cast<Scene*>(scene)->updated_bbox(true);
         poly_item->invalidateOpenGLBuffers();
         poly_item->itemChanged();
-
         QApplication::restoreOverrideCursor();
 
     }

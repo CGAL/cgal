@@ -75,7 +75,7 @@ void test_implicit_constrained(const char* filename)
   CGAL::Polygon_mesh_processing::smooth_modified_curvature_flow(mesh, time_step,
                             CGAL::Polygon_mesh_processing::parameters::vertex_is_constrained_map(vcmap).
                                                                        number_of_iterations(5));
-
+#define CGAL_PMP_SMOOTHING_VERBOSE
   #ifdef CGAL_PMP_SMOOTHING_VERBOSE
   std::ofstream out("data/output_implicit.off");
   out << mesh;

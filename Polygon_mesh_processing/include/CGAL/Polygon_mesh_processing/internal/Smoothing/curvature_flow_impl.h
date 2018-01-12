@@ -18,22 +18,24 @@
 //
 // Author(s)     : Konstantinos Katrioplas (konst.katrioplas@gmail.com)
 
-#ifndef CGAL_POLYGON_MESH_PROCESSING_CURVATURE_FLOW_EXPLICIT_IMPL_H
-#define CGAL_POLYGON_MESH_PROCESSING_CURVATURE_FLOW_EXPLICIT_IMPL_H
+#ifndef CGAL_POLYGON_MESH_PROCESSING_CURVATURE_FLOW_IMPL_H
+#define CGAL_POLYGON_MESH_PROCESSING_CURVATURE_FLOW_IMPL_H
 
-#include <utility>
-#include <math.h>
-
+#include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
+#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 #include <CGAL/Polygon_mesh_processing/Weights.h>
-#include <CGAL/Polygon_mesh_processing/compute_normal.h>
-#include <CGAL/Polygon_mesh_processing/repair.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
-
-#include <CGAL/property_map.h>
-#include <CGAL/iterator.h>
-#include <CGAL/boost/graph/Euler_operations.h>
 #include <boost/graph/graph_traits.hpp>
-#include <boost/foreach.hpp>
+#include <boost/property_map/property_map.hpp>
+
+#include <CGAL/Eigen_solver_traits.h>
+#include <CGAL/Eigen_matrix.h>
+#include <CGAL/barycenter.h>
+#include <Eigen/Sparse>
+
+#include <fstream>
+#include <unordered_set>
+#include <unordered_map>
 
 
 namespace CGAL {
@@ -41,11 +43,10 @@ namespace Polygon_mesh_processing {
 namespace internal {
 
 template<typename PolygonMesh, typename VertexPointMap,
-         typename CotangentValue = CGAL::internal::Cotangent_value_Meyer<PolygonMesh, VertexPointMap> >
-class Cotangent_weight : CotangentValue
+         typename CotangentValue = CGAL::internal::Cotangent_value_Meyer<PolygonMesh, VertexPointMap>>
+struct Edge_cotangent_weight : CotangentValue
 {
-public:
-    Cotangent_weight(PolygonMesh& pmesh_, VertexPointMap vpmap_)
+    Edge_cotangent_weight(PolygonMesh& pmesh_, VertexPointMap vpmap_)
       : CotangentValue(pmesh_, vpmap_)
     {}
 
@@ -56,261 +57,299 @@ public:
 
     typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor   halfedge_descriptor;
     typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor     vertex_descriptor;
-    typedef std::pair<halfedge_descriptor, halfedge_descriptor>              he_pair;
 
-    double operator()(halfedge_descriptor he, he_pair incd_edges)
+    double operator()(halfedge_descriptor he)
     {
-      vertex_descriptor vs = source(he, pmesh());
-      vertex_descriptor vt = target(he, pmesh());
-      vertex_descriptor v1 = target(incd_edges.first, pmesh());
-      vertex_descriptor v2 = source(incd_edges.second, pmesh());
-
-      return ( CotangentValue::operator()(vs, v1, vt) + CotangentValue::operator()(vs, v2, vt) );
+      if(is_border_edge(he, pmesh()))
+      {
+        halfedge_descriptor h1 = next(he, pmesh());
+        vertex_descriptor vs = source(he, pmesh());
+        vertex_descriptor vt = target(he, pmesh());
+        vertex_descriptor v1 = target(h1, pmesh());
+        return (CotangentValue::operator ()(vs, v1, vt));
+      }
+      else
+      {
+        halfedge_descriptor h1 = next(he, pmesh());
+        halfedge_descriptor h2 = prev(opposite(he, pmesh()), pmesh());
+        vertex_descriptor vs = source(he, pmesh());
+        vertex_descriptor vt = target(he, pmesh());
+        vertex_descriptor v1 = target(h1, pmesh());
+        vertex_descriptor v2 = source(h2, pmesh());
+        return ( CotangentValue::operator()(vs, v1, vt) + CotangentValue::operator()(vs, v2, vt) ) / 2.0;
+      }
     }
-
 };
 
-
-template<typename PolygonMesh, typename VertexPointMap, typename VertexConstraintMap, typename GeomTraits>
-class Curvature_flow
+template<typename PolygonMesh>
+struct Incident_area
 {
-    typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
-    typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
-    typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
-    typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor edge_descriptor;
+  Incident_area(PolygonMesh& mesh) : pmesh(mesh){}
 
-    typedef typename GeomTraits::Point_3  Point;
-    typedef typename GeomTraits::Vector_3 Vector;
-    typedef typename GeomTraits::Triangle_3 Triangle;
-    typedef std::vector<Triangle> Triangle_list;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
 
-    typedef std::pair<halfedge_descriptor, halfedge_descriptor> he_pair;
-    typedef std::map<halfedge_descriptor, he_pair> Edges_around_map;
+  double operator()(halfedge_descriptor he)
+  {
+    halfedge_descriptor hopp = opposite(he, pmesh);
+    face_descriptor f1 = face(he, pmesh);
+    face_descriptor f2 = face(hopp, pmesh);
 
-    typedef Cotangent_weight<PolygonMesh, VertexPointMap> Weight_calculator;
+    double A1 = f1 == boost::graph_traits<PolygonMesh>::null_face() ? 0 : face_area(f1, pmesh);
+    double A2 = f2 == boost::graph_traits<PolygonMesh>::null_face() ? 0 : face_area(f2, pmesh);
+    return A1 + A2;
+  }
+  PolygonMesh& pmesh;
+};
+
+template<typename PolygonMesh,
+         typename VertexPointMap,
+         typename VertexConstraintMap,
+         typename GeomTraits>
+class Shape_smoother{
+
+private:
+
+  typedef typename GeomTraits::FT NT;
+  typedef typename GeomTraits::Point_3 Point;
+  typedef typename GeomTraits::Triangle_3 Triangle;
+
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor edge_descriptor;
+
+  typedef typename boost::property_map<PolygonMesh, boost::vertex_index_t>::type IndexMap;
+
+  typedef typename Eigen::SparseMatrix<double> Eigen_matrix;
+  typedef typename Eigen::VectorXd Eigen_vector;
+
+  typedef typename Eigen::BiCGSTAB<Eigen_matrix, Eigen::IncompleteLUT<double> > Eigen_solver;
+  // typedef typename Eigen::SimplicialLDLT<Eigen_matrix> Eigen_solver;
 
 public:
+  Shape_smoother(PolygonMesh& mesh,
+                 VertexPointMap& vpmap,
+                 VertexConstraintMap& vcmap) :
+      mesh_(mesh),
+      vpmap_(vpmap),
+      vcmap_(vcmap),
+      weight_calculator_(mesh, vpmap),
+      inc_areas_calculator_(mesh),
+      nb_vert_(static_cast<int>(vertices(mesh).size())) {}
 
-    Curvature_flow(PolygonMesh& pmesh, VertexPointMap& vpmap, VertexConstraintMap& vcmap) :
-        mesh_(pmesh), vpmap_(vpmap), vcmap_(vcmap),
-        weight_calculator_(pmesh, vpmap) {}
+  template<typename FaceRange>
+  void init_smoothing(const FaceRange& face_range)
+  {
+    check_face_range(face_range);
+  }
 
-    template<typename FaceRange>
-    void init_smoothing(const FaceRange& face_range)
+  void setup_system(Eigen_matrix& A, const Eigen_matrix& L, Eigen_matrix& D,
+                    Eigen_vector& bx, Eigen_vector& by, Eigen_vector& bz,
+                    const double& time)
+  {
+    calc_mass_matrix(D);
+
+    #ifdef CGAL_PMP_SMOOTHING_DEBUG
+    std::cerr << "compute coefficient matrix...\n";
+    #endif
+
+    compute_coeff_matrix(A, L, D, time);
+
+    #ifdef CGAL_PMP_SMOOTHING_DEBUG
+    std::cerr << "conpute rhs...\n";
+    #endif
+
+    compute_rhs(bx, by, bz, D);
+
+    #ifdef CGAL_PMP_SMOOTHING_DEBUG
+    std::cout<<"Done with setting up the system.\n";
+    #endif
+  }
+
+  void solve_system(const Eigen_matrix& A,
+                    Eigen_vector& Xx, Eigen_vector& Xy, Eigen_vector& Xz,
+                    const Eigen_vector& bx, const Eigen_vector& by, const Eigen_vector& bz)
+  {
+    #ifdef CGAL_PMP_SMOOTHING_DEBUG
+    std::cerr << "Preparing linear solver ...\n";
+    #endif
+
+    Eigen_solver solver;
+    solver.compute(A);
+
+    #ifdef CGAL_PMP_SMOOTHING_DEBUG
+    std::cerr << "solving...";
+    #endif
+
+    Xx = solver.solve(bx);
+    Xy = solver.solve(by);
+    Xz = solver.solve(bz);
+
+    #ifdef CGAL_PMP_SMOOTHING_DEBUG
+    std::cerr << "ok." << std::endl;
+    #endif
+
+    if(solver.info() != Eigen::Success)
     {
-        check_vertex_range(face_range);
-
-        //check_constraints();
-
-        BOOST_FOREACH(face_descriptor f, face_range)
-            input_triangles_.push_back(triangle(f));
+      std::cerr << "Not Solved!" << std::endl;
+      return;
     }
+  }
 
-    std::size_t remove_degenerate_faces()
+  void calc_stiff_matrix(Eigen_matrix& mat)
+  {
+    typedef Eigen::Triplet<double> Triplet;
+    std::vector<Triplet> tripletList;
+    tripletList.reserve(8 * nb_vert_);
+    // todo: calculate exactly how many non zero entries there will be.
+
+    for(face_descriptor f : frange_)
     {
-        std::size_t nb_removed_faces = 0;
-        nb_removed_faces = CGAL::Polygon_mesh_processing::remove_degenerate_faces(mesh_);
+      for(halfedge_descriptor hi : halfedges_around_face(halfedge(f, mesh_), mesh_))
+      {
+        vertex_descriptor v_source = source(hi, mesh_);
+        vertex_descriptor v_target = target(hi, mesh_);
 
-        return nb_removed_faces;
-    }
-
-    void curvature_smoothing()
-    {
-        std::map<vertex_descriptor, Point> barycenters;
-
-        BOOST_FOREACH(vertex_descriptor v, vrange)
+        if(!is_constrained(v_source) && !is_constrained(v_target))
         {
-            if(!is_border(v, mesh_) && !is_constrained(v))
-            {
-                // find incident halfedges
-                Edges_around_map he_map;
-                typename Edges_around_map::iterator it;
-                BOOST_FOREACH(halfedge_descriptor hi, halfedges_around_source(v, mesh_))
-                    he_map[hi] = he_pair( next(hi, mesh_), prev(opposite(hi, mesh_), mesh_) );
-
-                // calculate movement
-                Vector curvature_normal = CGAL::NULL_VECTOR;
-                double sum_cot_weights = 0;
-                for(it = he_map.begin(); it!= he_map.end(); ++it)
-                {
-                    halfedge_descriptor hi = it->first;
-                    he_pair incd_edges = it->second;
-
-                    //check_degeneracy(hi);
-
-                    // weight
-                    double weight = weight_calculator_(hi, incd_edges);;
-                    sum_cot_weights += weight;
-
-                    // displacement vector
-                    Point xi = get(vpmap_, source(hi, mesh_));
-                    Point xj = get(vpmap_, target(hi, mesh_));
-                    Vector vec(xj, xi); // towards the vertex that is being moved
-
-                    // add weight
-                    vec *= weight;
-
-                    // sum vecs
-                    curvature_normal += vec;
-                }
-
-                // divide with total weight
-                if(sum_cot_weights != 0)
-                     curvature_normal /= sum_cot_weights;
-
-                Point weighted_barycenter = get(vpmap_, v) - curvature_normal;
-                barycenters[v] = weighted_barycenter;
-
-            } // not on border
-        } // all vertices
-
-        // update location
-        typedef typename std::map<vertex_descriptor, Point>::value_type VP;
-        BOOST_FOREACH(const VP& vp, barycenters)
-            put(vpmap_, vp.first, vp.second);
-
+          auto i_source = vimap_[v_source];
+          auto i_target = vimap_[v_target];
+          NT Lij = weight_calculator_(hi);
+          tripletList.push_back(Triplet(i_source, i_target, Lij));
+          tripletList.push_back(Triplet(i_target, i_source, Lij));
+          tripletList.push_back(Triplet(i_source, i_source, -Lij));
+          tripletList.push_back(Triplet(i_target, i_target, -Lij));
+        }
+      }
     }
+    mat.setFromTriplets(tripletList.begin(), tripletList.end());
+  }
 
+  void update_mesh(Eigen_vector& Xx, Eigen_vector& Xy, Eigen_vector& Xz)
+  {
+    update_map(Xx, Xy, Xz);
+
+    // normalize area
+    //NT surface_area = area(faces(mesh_), mesh_);
+    //std::cout << "area= " << surface_area << nl;
+    //std::cout << "area sqrt= " << CGAL::sqrt(surface_area) << nl;
+    //normalize_area(Xx, Xy, Xz);
+    //update_map(Xx, Xy, Xz);
+    //surface_area = area(faces(mesh_), mesh_);
+    //std::cout << "surface_area normalized= " << surface_area << nl;
+  }
 
 private:
-
-    // helper functions
-    // ----------------
-    Triangle triangle(face_descriptor f) const
+  void calc_mass_matrix(Eigen_matrix& D)
+  {
+    for(face_descriptor f : frange_)
     {
-        halfedge_descriptor h = halfedge(f, mesh_);
-        vertex_descriptor v1 = target(h, mesh_);
-        vertex_descriptor v2 = target(next(h, mesh_), mesh_);
-        vertex_descriptor v3 = target(next(next(h, mesh_), mesh_), mesh_);
-        return Triangle(get(vpmap_, v1), get(vpmap_, v2), get(vpmap_, v3));
+      double area = face_area(f, mesh_);
+      for(vertex_descriptor v : vertices_around_face(halfedge(f, mesh_), mesh_))
+      {
+        auto idx = vimap_[v];
+        if(!is_constrained(v))
+          D.coeffRef(idx, idx) += 2.0 * area;
+        else
+          D.coeffRef(idx, idx) = 1.0;
+      }
     }
+    D /= 12.0;
+  }
 
-    double sqlength(const vertex_descriptor& v1, const vertex_descriptor& v2) const
+  void compute_coeff_matrix(Eigen_matrix& A, const Eigen_matrix& L, const Eigen_matrix& D, const double& time)
+  {
+    A = D - time * L;
+  }
+
+  void compute_rhs(Eigen_vector& bx, Eigen_vector& by, Eigen_vector& bz,
+                   Eigen_matrix& D)
+  {
+    for(vertex_descriptor vi : vrange_)
     {
-        return to_double(CGAL::squared_distance(get(vpmap_, v1), get(vpmap_, v2)));
+      int index = vimap_[vi];
+      Point p = get(vpmap_, vi);
+      bx.coeffRef(index) = p.x();
+      by.coeffRef(index) = p.y();
+      bz.coeffRef(index) = p.z();
     }
+    bx = D * bx;
+    by = D * by;
+    bz = D * bz;
+  }
 
-    double sqlength(const halfedge_descriptor& h) const
+  // update mesh
+  // -----------------------------------
+  Triangle triangle(face_descriptor f) const
+  {
+    halfedge_descriptor h = halfedge(f, mesh_);
+    vertex_descriptor v1  = target(h, mesh_);
+    vertex_descriptor v2  = target(next(h, mesh_), mesh_);
+    vertex_descriptor v3  = target(next(next(h, mesh_), mesh_), mesh_);
+    return Triangle(get(vpmap_, v1), get(vpmap_, v2), get(vpmap_, v3));
+  }
+
+  /*
+  void normalize_area(Eigen_vector& Xx, Eigen_vector& Xy, Eigen_vector& Xz)
+  {
+    NT surface_area = area(faces(mesh_), mesh_);
+    Xx /= CGAL::sqrt(surface_area);
+    Xy /= CGAL::sqrt(surface_area);
+    Xz /= CGAL::sqrt(surface_area);
+  }
+  */
+
+  void update_map(Eigen_vector& Xx, Eigen_vector& Xy, Eigen_vector& Xz)
+  {
+    for (vertex_descriptor v : vertices(mesh_))
     {
-      vertex_descriptor v1 = target(h, mesh_);
-      vertex_descriptor v2 = source(h, mesh_);
-      return sqlength(v1, v2);
+      int index = get(vimap_, v);
+      NT x_new = Xx.coeffRef(index);
+      NT y_new = Xy.coeffRef(index);
+      NT z_new = Xz.coeffRef(index);
+      put(vpmap_, v, Point(x_new, y_new, z_new));
     }
+  }
 
-    double sqlength(const edge_descriptor& e) const
+  // handling constrains
+  // -----------------------------------
+  bool is_constrained(const vertex_descriptor& v)
+  {
+    return get(vcmap_, v);
+  }
+
+  template<typename FaceRange>
+  void check_face_range(const FaceRange& face_range)
+  {
+    frange_.resize(faces(mesh_).size());
+    BOOST_FOREACH(face_descriptor f, face_range)
     {
-      return sqlength(halfedge(e, mesh_));
+      frange_.insert(f);
+      BOOST_FOREACH(vertex_descriptor v, vertices_around_face(halfedge(f, mesh_), mesh_))
+        vrange_.insert(v);
     }
+  }
 
-
-    // degeneracy removal
-    // ------------------
-    void check_degeneracy(halfedge_descriptor h1)
-    {
-        halfedge_descriptor h2 = next(h1, mesh_);
-        halfedge_descriptor h3 = next(h2, mesh_);
-
-        double a1 = get_angle(h1, h2);
-        double a2 = get_angle(h2, h3);
-        double a3 = get_angle(h3, h1);
-
-        double angle_min_threshold = 0.05; // rad
-        double angle_max_threshold = CGAL_PI - 0.05;
-
-        if(a1 < angle_min_threshold || a2 < angle_min_threshold || a3 < angle_min_threshold)
-        {
-            Euler::remove_face(h1, mesh_);
-        }
-
-        if(a1 > angle_max_threshold || a2 > angle_max_threshold || a3 > angle_max_threshold)
-        {
-            Euler::remove_face(h1, mesh_);
-        }
-    }
-
-    double get_angle(halfedge_descriptor ha, halfedge_descriptor hb)
-    {
-        Vector a(get(vpmap_, source(ha, mesh_)), get(vpmap_, target(ha, mesh_)));
-        Vector b(get(vpmap_, source(hb, mesh_)), get(vpmap_, target(hb, mesh_)));
-
-        return get_angle(a, b);
-    }
-
-    double get_angle(const Vector& e1, const Vector& e2)
-    {
-        //double rad_to_deg = 180. / CGAL_PI;
-        double cos_angle = (e1 * e2)
-          / std::sqrt(e1.squared_length() * e2.squared_length());
-
-        return std::acos(cos_angle); //* rad_to_deg;
-    }
-
-
-    // handling constrains
-    // -----------------------------------
-    /*
-    bool is_constrained(const edge_descriptor& e)
-    {
-        return get(ecmap_, e);
-    }
-    */
-
-    bool is_constrained(const vertex_descriptor& v)
-    {
-        return get(vcmap_, v);
-    }
-
-    /*
-    void check_constraints()
-    {
-        BOOST_FOREACH(edge_descriptor e, edges(mesh_))
-        {
-            if (is_constrained(e))
-            {
-                vertex_descriptor vs = source(e, mesh_);
-                vertex_descriptor vt = target(e, mesh_);
-                put(vcmap_, vs, true);
-                put(vcmap_, vt, true);
-            }
-        }
-    }
-    */
-
-    template<typename FaceRange>
-    void check_vertex_range(const FaceRange& face_range)
-    {
-        BOOST_FOREACH(face_descriptor f, face_range)
-        {
-            BOOST_FOREACH(vertex_descriptor v, vertices_around_face(halfedge(f, mesh_), mesh_))
-                vrange.insert(v);
-        }
-    }
-
-
-private:
-
-    // data members
-    // ------------
-    PolygonMesh& mesh_;
-    VertexPointMap& vpmap_;
-    VertexConstraintMap vcmap_;
-    Triangle_list input_triangles_;
-    GeomTraits traits_;
-    std::set<vertex_descriptor> vrange;
-    Weight_calculator weight_calculator_;
-
+  private:
+  // data members
+  // ------------
+  PolygonMesh& mesh_;
+  VertexPointMap& vpmap_;
+  std::size_t nb_vert_;
+  std::set<face_descriptor> frange_;
+  std::set<vertex_descriptor> vrange_;
+  IndexMap vimap_ = get(boost::vertex_index, mesh_);
+  VertexConstraintMap vcmap_;
+  Edge_cotangent_weight<PolygonMesh, VertexPointMap> weight_calculator_;
+  Incident_area<PolygonMesh> inc_areas_calculator_;
 
 };
-
-
 
 
 } // internal
-} // Polygon_mesh_processing
+} // PMP
 } // CGAL
 
 
-
-
-
-#endif // CGAL_POLYGON_MESH_PROCESSING_CURVATURE_FLOW_EXPLICIT_IMPL_H
+#endif // CGAL_POLYGON_MESH_PROCESSING_CURVATURE_FLOW_IMPL_H

@@ -25,7 +25,7 @@
 #include <boost/property_map/property_map.hpp>
 #include <Eigen/Sparse>
 #include <CGAL/Polygon_mesh_processing/internal/Smoothing/curvature_flow_impl.h>
-#include <CGAL/Polygon_mesh_processing/internal/Smoothing/modified_curvature_flow_impl.h>
+#include <CGAL/Polygon_mesh_processing/internal/Smoothing/curvature_flow_explicit_impl.h>
 #include <CGAL/Polygon_mesh_processing/internal/Smoothing/constraints_map.h>
 
 namespace CGAL {
@@ -286,7 +286,6 @@ template<typename PolygonMesh, typename FaceRange, typename NamedParameters>
 void setup_mcf_system(const FaceRange& faces, PolygonMesh& mesh,
                       Eigen::SparseMatrix<double>& stiffness_matrix, const NamedParameters& np)
 {
-
   using boost::choose_param;
   using boost::get_param;
 
