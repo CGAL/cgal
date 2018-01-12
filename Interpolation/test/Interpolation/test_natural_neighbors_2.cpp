@@ -30,8 +30,8 @@ typedef CGAL::Delaunay_triangulation_2<K>            Dt;
 int main()
 {
   std::cout << "Testing NN_neighbors_2 " << std::endl;
-  std::cout << " with Exact_predicates_inexact_constructions_kernel: " << std::endl ;
+  std::cout << " using Exact_predicates_inexact_constructions_kernel: " << std::endl;
   _test_natural_neighbors_2( Dt() );
 
-  return 0;
+  return EXIT_SUCCESS;
 }
