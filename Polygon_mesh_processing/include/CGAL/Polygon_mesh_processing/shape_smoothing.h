@@ -159,6 +159,7 @@ void smooth_curvature_flow_explicit(const FaceRange& faces, PolygonMesh& pmesh, 
 
 }
 
+/*
 template<typename PolygonMesh, typename NamedParameters>
 void smooth_curvature_flow(PolygonMesh& pmesh, const NamedParameters& np)
 {
@@ -170,6 +171,7 @@ void smooth_curvature_flow(PolygonMesh& pmesh)
 {
   smooth_curvature_flow(pmesh, parameters::all_default());
 }
+*/
 
 /*!
 * \ingroup PMP_meshing_grp
@@ -234,29 +236,38 @@ void smooth_modified_curvature_flow(const FaceRange& faces, PolygonMesh& pmesh, 
                              internal::Constrained_vertices_map<vertex_descriptor>());
 
   //nb_iterations
-  unsigned int nb_iterations = choose_param(get_param(np, internal_np::number_of_iterations), 1);
+  std::size_t nb_iterations = choose_param(get_param(np, internal_np::number_of_iterations), 1);
 
-  typedef typename Eigen::VectorXd Eigen_vector;
-  typedef typename Eigen::SparseMatrix<double> Eigen_matrix;
+  bool use_explicit_scheme = choose_param(get_param(np, internal_np::use_explicit_scheme), true);
 
-  std::size_t n = static_cast<int>(vertices(pmesh).size());
-  Eigen_matrix A(n, n), stiffness_matrix(n, n), mass_matrix(n, n);
-  Eigen_vector bx(n), by(n), bz(n), Xx(n), Xy(n), Xz(n);
-
-  internal::Shape_smoother<PolygonMesh, VertexPointMap, VCMap, GeomTraits>
-      smoother(pmesh, vpmap, vcmap);
-
-  smoother.calc_stiff_matrix(stiffness_matrix);
-
-  for(std::size_t iter = 0; iter < nb_iterations; ++iter)
+  if(use_explicit_scheme)
   {
-    smoother.setup_system(A, stiffness_matrix, mass_matrix, bx, by, bz, time);
-    smoother.solve_system(A, Xx, Xy, Xz, bx, by, bz);
-    smoother.update_mesh(Xx, Xy, Xz);
+    smooth_curvature_flow_explicit(faces, pmesh, parameters::all_default());
   }
+  else
+  {
+    // implicit
+    typedef typename Eigen::VectorXd Eigen_vector;
+    typedef typename Eigen::SparseMatrix<double> Eigen_matrix;
+
+    std::size_t n = static_cast<int>(vertices(pmesh).size());
+    Eigen_matrix A(n, n), stiffness_matrix(n, n), mass_matrix(n, n);
+    Eigen_vector bx(n), by(n), bz(n), Xx(n), Xy(n), Xz(n);
+
+    internal::Shape_smoother<PolygonMesh, VertexPointMap, VCMap, GeomTraits>
+        smoother(pmesh, vpmap, vcmap);
+
+    smoother.calc_stiff_matrix(stiffness_matrix);
+
+    for(std::size_t iter = 0; iter < nb_iterations; ++iter)
+    {
+      smoother.setup_system(A, stiffness_matrix, mass_matrix, bx, by, bz, time);
+      smoother.solve_system(A, Xx, Xy, Xz, bx, by, bz);
+      smoother.update_mesh(Xx, Xy, Xz);
+    }
+  }
+
 }
-
-
 
 template<typename PolygonMesh, typename NamedParameters>
 void smooth_modified_curvature_flow(PolygonMesh& pmesh, const double& time,

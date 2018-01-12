@@ -44,14 +44,9 @@ public:
   }
 };
 
-
-
-
-int main(int argc, char* argv[])
+void test_implicit_constrained(const char* filename)
 {
-  const char* filename = "data/mannequin-devil.off";
   std::ifstream input(filename);
-
   Mesh mesh;
   input >> mesh;
   input.close();
@@ -64,23 +59,57 @@ int main(int argc, char* argv[])
 
   for (vertex_descriptor v : vertices(mesh))
   {
-    double z = get(vpmap, v).z();
+    const double z = get(vpmap, v).z();
     if(z  > 19)
       selected_vertices.insert(v);
   }
   std::cout<<"number of selected vertices= "<<selected_vertices.size()<<std::endl;
   Constraints_pmap vcmap(&selected_vertices);
 
-  double time_step = 1;
+  const double time_step = 1;
 
   CGAL::Polygon_mesh_processing::smooth_modified_curvature_flow(mesh, time_step,
                             CGAL::Polygon_mesh_processing::parameters::vertex_is_constrained_map(vcmap).
                                                                        number_of_iterations(5));
 
-  std::ofstream out("data/output.off");
+  #ifdef CGAL_PMP_SMOOTHING_VERBOSE
+  std::ofstream out("data/output_implicit.off");
   out << mesh;
   out.close();
+  #endif
+}
 
+void test_explicit_scheme(const char* filename)
+{
+  std::ifstream input(filename);
+  Mesh mesh;
+  input >> mesh;
+  input.close();
+
+  boost::property_map<Mesh, CGAL::vertex_point_t>::type vpmap =
+          get(CGAL::vertex_point, mesh);
+
+  const double time_step = 1;
+  const unsigned int iterations = 5;
+  CGAL::Polygon_mesh_processing::smooth_modified_curvature_flow(mesh, time_step,
+                            CGAL::Polygon_mesh_processing::parameters::use_explicit_scheme(true).
+                                                                       number_of_iterations(iterations));
+
+
+  #ifdef CGAL_PMP_SMOOTHING_VERBOSE
+  std::ofstream out("data/output_explicit.off");
+  out << mesh;
+  out.close();
+  #endif
+}
+
+int main(int argc, char* argv[])
+{
+  const char* filename = "data/mannequin-devil.off";
+  std::ifstream input(filename);
+
+  test_implicit_constrained(filename);
+  test_explicit_scheme(filename);
 
   return 0;
 }

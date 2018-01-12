@@ -46,7 +46,7 @@ CGAL_add_named_parameter(nb_points_per_area_unit_t, nb_points_per_area_unit, num
 CGAL_add_named_parameter(nb_points_per_distance_unit_t, nb_points_per_distance_unit, number_of_points_per_distance_unit)
 CGAL_add_named_parameter(gradient_descent_precision_t, gradient_descent_precision, gradient_descent_precision)
 CGAL_add_named_parameter(use_weights_t, use_weights, use_weights)
-CGAL_add_named_parameter(distance_precision_t, distance_precision, distance_precision)
+CGAL_add_named_parameter(use_explicit_scheme_t, use_explicit_scheme, use_explicit_scheme)
 
 //to be documented
 CGAL_add_named_parameter(face_normal_t, face_normal, face_normal_map)
