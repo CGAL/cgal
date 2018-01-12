@@ -18,8 +18,8 @@
 //
 // Author(s)     : Konstantinos Katrioplas (konst.katrioplas@gmail.com)
 
-#ifndef CURVATURE_FLOW_IMPL_H
-#define CURVATURE_FLOW_IMPL_H
+#ifndef CGAL_POLYGON_MESH_PROCESSING_CURVATURE_FLOW_EXPLICIT_IMPL_H
+#define CGAL_POLYGON_MESH_PROCESSING_CURVATURE_FLOW_EXPLICIT_IMPL_H
 
 #include <utility>
 #include <math.h>
@@ -37,12 +37,8 @@
 
 
 namespace CGAL {
-
 namespace Polygon_mesh_processing {
-
 namespace internal {
-
-
 
 template<typename PolygonMesh, typename VertexPointMap,
          typename CotangentValue = CGAL::internal::Cotangent_value_Meyer<PolygonMesh, VertexPointMap> >
@@ -317,4 +313,4 @@ private:
 
 
 
-#endif // CURVATURE_FLOW_IMPL_H
+#endif // CGAL_POLYGON_MESH_PROCESSING_CURVATURE_FLOW_EXPLICIT_IMPL_H

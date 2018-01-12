@@ -18,8 +18,8 @@
 //
 // Author(s)     : Konstantinos Katrioplas (konst.katrioplas@gmail.com)
 
-#ifndef SMOOTHING_H
-#define SMOOTHING_H
+#ifndef CGAL_POLYGON_MESH_PROCESSING_CURVATURE_FLOW_IMPL_H
+#define CGAL_POLYGON_MESH_PROCESSING_CURVATURE_FLOW_IMPL_H
 
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
@@ -118,35 +118,6 @@ struct Incident_area
 
 };
 
-template<typename Descriptor>
-struct Constrained_vertices_map
-{
-  typedef Descriptor                          key_type;
-  typedef bool                                value_type;
-  typedef value_type&                         reference;
-  typedef boost::read_write_property_map_tag  category;
-
-  // to change this to boost::shared_ptr
-  std::shared_ptr<std::set<Descriptor>> const_things;
-
-public:
-  Constrained_vertices_map() : const_things(new std::set<Descriptor>) {}
-
-  friend bool get(const Constrained_vertices_map& map, const key_type& d)
-  {
-    typename std::set<Descriptor>::iterator it = map.const_things->find(d);
-    return it != map.const_things->end() ? true : false;
-  }
-
-  friend void put(Constrained_vertices_map& map, const key_type& d)
-  {
-    map.const_things->insert(d);
-  }
-};
-
-
-
-
 template<typename PolygonMesh,
          typename VertexPointMap,
          typename VertexConstraintMap,
@@ -186,15 +157,14 @@ public:
       inc_areas_calculator_(mesh),
       nb_vert_(static_cast<int>(vertices(mesh).size())) {}
 
-/*
-  void init_smoothing()
+
+
+  template<typename FaceRange>
+  void init_smoothing(const FaceRange& face_range)
   {
-    //check_vertex_range(face_range);
-
-    //check_constraints();
-
+    check_face_range(face_range);
   }
-*/
+
 
   void setup_system(Eigen_matrix& A, Eigen_matrix& L, Eigen_matrix& D,
                     Eigen_vector& bx, Eigen_vector& by, Eigen_vector& bz,
@@ -271,7 +241,8 @@ public:
     tripletList.reserve(8 * nb_vert_);
     // todo: calculate exactly how many non zero entries there will be.
 
-    for(face_descriptor f : faces(mesh_))
+    //for(face_descriptor f : faces(mesh_))
+    for(face_descriptor f : frange_)
     {
       for(halfedge_descriptor hi : halfedges_around_face(halfedge(f, mesh_), mesh_))
       {
@@ -323,7 +294,7 @@ private:
   {
     //D.resize(nb_vert_, nb_vert_);
 
-    for(face_descriptor f : faces(mesh_))
+    for(face_descriptor f : frange_)
     {
       double area = face_area(f, mesh_);
       for(vertex_descriptor v : vertices_around_face(halfedge(f, mesh_), mesh_))
@@ -546,17 +517,14 @@ private:
   }
 */
 
-
-  // to use
   template<typename FaceRange>
-  void check_vertex_range(const FaceRange& face_range)
+  void check_face_range(const FaceRange& face_range)
   {
+    frange_.resize(faces(mesh_).size());
     BOOST_FOREACH(face_descriptor f, face_range)
-    {
-      BOOST_FOREACH(vertex_descriptor v, vertices_around_face(halfedge(f, mesh_), mesh_))
-          vrange.insert(v);
-    }
+      frange_.insert(f);
   }
+
 
   private:
 
@@ -565,7 +533,7 @@ private:
   PolygonMesh& mesh_;
   VertexPointMap& vpmap_;
   std::size_t nb_vert_;
-  std::set<vertex_descriptor> vrange;
+  std::set<face_descriptor> frange_;
   IndexMap vimap_ = get(boost::vertex_index, mesh_);
   VertexConstraintMap vcmap_;
   Edge_cotangent_weight<PolygonMesh, VertexPointMap> weight_calculator_;
@@ -584,4 +552,4 @@ private:
 } // CGAL
 
 
-#endif // SMOOTHING_H
+#endif // CGAL_POLYGON_MESH_PROCESSING_CURVATURE_FLOW_IMPL_H

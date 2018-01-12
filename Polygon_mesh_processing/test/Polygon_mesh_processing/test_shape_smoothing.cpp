@@ -63,7 +63,11 @@ void test_implicit_constrained(const char* filename)
     if(z  > 19)
       selected_vertices.insert(v);
   }
+
+  #ifdef CGAL_PMP_SMOOTHING_VERBOSE
   std::cout<<"number of selected vertices= "<<selected_vertices.size()<<std::endl;
+  #endif
+
   Constraints_pmap vcmap(&selected_vertices);
 
   const double time_step = 1;

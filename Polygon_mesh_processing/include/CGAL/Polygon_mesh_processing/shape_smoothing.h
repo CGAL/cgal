@@ -18,11 +18,15 @@
 //
 // Author(s)     : Konstantinos Katrioplas (konst.katrioplas@gmail.com)
 
+#ifndef CGAL_POLYGON_MESH_PROCESSING_SHAPE_SMOOTHING_H
+#define CGAL_POLYGON_MESH_PROCESSING_sHAPE_SMOOTHING_H
+
 #include <boost/graph/graph_traits.hpp>
 #include <boost/property_map/property_map.hpp>
 #include <Eigen/Sparse>
 #include <CGAL/Polygon_mesh_processing/internal/Smoothing/curvature_flow_impl.h>
 #include <CGAL/Polygon_mesh_processing/internal/Smoothing/modified_curvature_flow_impl.h>
+#include <CGAL/Polygon_mesh_processing/internal/Smoothing/constraints_map.h>
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
@@ -242,7 +246,7 @@ void smooth_modified_curvature_flow(const FaceRange& faces, PolygonMesh& pmesh, 
   }
   else
   {
-    // implicit
+    // implicit scheme
     typedef typename Eigen::VectorXd Eigen_vector;
     typedef typename Eigen::SparseMatrix<double> Eigen_matrix;
 
@@ -374,3 +378,5 @@ void solve_mcf_system(const FaceRange& faces, PolygonMesh& mesh, const double& t
 
 } //Polygon_mesh_processing
 } //CGAL
+
+#endif // CGAL_POLYGON_MESH_PROCESSING_SHAPE_SMOOTHING_H

@@ -18,8 +18,8 @@
 //
 // Author(s)     : Konstantinos Katrioplas (konst.katrioplas@gmail.com)
 
-#ifndef CGAL_POLYGON_MESH_PROCESSING_SMOOTHING_IMPL_H
-#define CGAL_POLYGON_MESH_PROCESSING_SMOOTHING_IMPL_H
+#ifndef CGAL_POLYGON_MESH_PROCESSING_MESH_SMOOTHING_IMPL_H
+#define CGAL_POLYGON_MESH_PROCESSING_MESH_SMOOTHING_IMPL_H
 
 #include <math.h>
 #include <utility>
@@ -43,32 +43,6 @@
 namespace CGAL {
 namespace Polygon_mesh_processing {
 namespace internal {
-
-template<typename Descriptor>
-struct Constrained_vertices_map
-{
-  typedef Descriptor                          key_type;
-  typedef bool                                value_type;
-  typedef value_type&                         reference;
-  typedef boost::read_write_property_map_tag  category;
-
-  // to change this to boost::shared_ptr
-  std::shared_ptr<std::set<Descriptor>> const_things;
-
-public:
-  Constrained_vertices_map() : const_things(new std::set<Descriptor>) {}
-
-  friend bool get(const Constrained_vertices_map& map, const key_type& d)
-  {
-    typename std::set<Descriptor>::iterator it = map.const_things->find(d);
-    return it != map.const_things->end() ? true : false;
-  }
-
-  friend void put(Constrained_vertices_map& map, const key_type& d)
-  {
-    map.const_things->insert(d);
-  }
-};
 
 template<typename PolygonMesh, typename VertexPointMap, typename VertexConstraintMap, typename GeomTraits>
 class Compatible_remesher
@@ -105,8 +79,6 @@ public:
     void init_smoothing(const FaceRange& face_range)
     {
         check_vertex_range(face_range);
-
-        //check_constraints();
 
         BOOST_FOREACH(face_descriptor f, face_range)
             input_triangles_.push_back(triangle(f));
@@ -681,11 +653,11 @@ private:
     template<typename FaceRange>
     void check_vertex_range(const FaceRange& face_range)
     {
-        BOOST_FOREACH(face_descriptor f, face_range)
-        {
-            BOOST_FOREACH(vertex_descriptor v, vertices_around_face(halfedge(f, mesh_), mesh_))
-                vrange_.insert(v);
-        }
+      BOOST_FOREACH(face_descriptor f, face_range)
+      {
+        BOOST_FOREACH(vertex_descriptor v, vertices_around_face(halfedge(f, mesh_), mesh_))
+          vrange_.insert(v);
+      }
     }
 
 private:
@@ -710,4 +682,4 @@ private:
 
 
 
-#endif // CGAL_POLYGON_MESH_PROCESSING_SMOOTHING_IMPL_H
+#endif // CGAL_POLYGON_MESH_PROCESSING_MESH_SMOOTHING_IMPL_H

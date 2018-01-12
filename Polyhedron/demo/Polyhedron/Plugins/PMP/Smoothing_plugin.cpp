@@ -172,7 +172,7 @@ public Q_SLOTS:
         QApplication::setOverrideCursor(Qt::WaitCursor);
 
         unsigned int nb_iter = ui_widget.curvature_iter_spinBox ->value();
-        smooth_curvature_flow(pmesh, parameters::number_of_iterations(nb_iter));
+        smooth_curvature_flow_explicit(faces(pmesh), pmesh, parameters::number_of_iterations(nb_iter));
 
         poly_item->invalidateOpenGLBuffers();
         poly_item->itemChanged();
