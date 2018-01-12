@@ -23,6 +23,8 @@
 
 #include <CGAL/license/Interpolation.h>
 
+#include <CGAL/assertions.h>
+
 #include <utility>
 
 namespace CGAL {
@@ -40,7 +42,7 @@ struct Extract_bare_point
   typedef typename Traits::Point_d                   Point;
   typedef typename Traits::Weighted_point_d          Weighted_point;
 
-  Extract_bare_point(const Traits& traits) : traits(traits) {}
+  Extract_bare_point(const Traits& traits = Traits()) : traits(traits) {}
 
   const Point& operator()(const Point& p) const { return p; }
 

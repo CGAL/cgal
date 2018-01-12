@@ -73,14 +73,13 @@ linear_interpolation(ForwardIterator first, ForwardIterator beyond,
   {
     val = value_function(first->first);
     CGAL_assertion(val.second);
-    result += (first->second/norm) * val.first;
+    result += (first->second / norm) * val.first;
   }
   return result;
 }
 
 
-template < class ForwardIterator, class ValueFunctor, class GradFunctor,
-           class Traits, class Point >
+template < class ForwardIterator, class ValueFunctor, class GradFunctor, class Traits, class Point >
 std::pair< typename ValueFunctor::result_type::first_type, bool>
 quadratic_interpolation(ForwardIterator first, ForwardIterator beyond,
                         const typename std::iterator_traits<ForwardIterator>::value_type::second_type& norm,
@@ -101,21 +100,23 @@ quadratic_interpolation(ForwardIterator first, ForwardIterator beyond,
   {
     f = value_function(first->first);
     grad = gradient_function(first->first);
+
     //test if value and gradient are correctly retrieved:
     CGAL_assertion(f.second);
     if(!grad.second)
       return std::make_pair(Value_type(0), false);
+
     result += (first->second/norm) * (f.first + grad.first *
                  traits.construct_scaled_vector_d_object()
-                 (traits.construct_vector_d_object()(cp(first->first), p),0.5));
+                 (traits.construct_vector_d_object()(cp(first->first), cp(p)), 0.5));
   }
+
   return std::make_pair(result, true);
 }
 
 
-template < class ForwardIterator, class ValueFunctor, class GradFunctor,
-           class Traits, class Point >
-std::pair< typename ValueFunctor::result_type::first_type, bool>
+template < class ForwardIterator, class ValueFunctor, class GradFunctor, class Traits, class Point >
+std::pair< typename ValueFunctor::result_type::first_type, bool >
 sibson_c1_interpolation(ForwardIterator first, ForwardIterator beyond,
                         const typename std::iterator_traits<ForwardIterator>::value_type::second_type& norm,
                         const Point& p,
@@ -127,23 +128,27 @@ sibson_c1_interpolation(ForwardIterator first, ForwardIterator beyond,
 
   typedef typename ValueFunctor::result_type::first_type Value_type;
   typedef typename Traits::FT                            Coord_type;
+  typedef typename Traits::Point_d                       Bare_point;
 
   Interpolation::internal::Extract_bare_point<Traits> cp(traits);
+  const Bare_point& bp = cp(p);
+
   Coord_type term1(0), term2(term1), term3(term1), term4(term1);
   Value_type linear_int(0), gradient_int(0);
   typename ValueFunctor::result_type f;
   typename GradFunctor::result_type grad;
 
-  for(; first !=beyond; ++first)
+  for(; first!=beyond; ++first)
   {
     f = value_function(first->first);
     grad = gradient_function(first->first);
+
     CGAL_assertion(f.second);
     if(!grad.second)
       return std::make_pair(Value_type(0), false); //the values are not correct
 
     Coord_type coeff = first->second/norm;
-    Coord_type squared_dist = traits.compute_squared_distance_d_object()(cp(first->first), p);
+    Coord_type squared_dist = traits.compute_squared_distance_d_object()(cp(first->first), bp);
     Coord_type dist = CGAL_NTS sqrt(squared_dist);
 
     if(squared_dist == 0)
@@ -163,7 +168,7 @@ sibson_c1_interpolation(ForwardIterator first, ForwardIterator beyond,
     linear_int += coeff * f.first;
 
     gradient_int += (coeff/dist) * (f.first + grad.first *
-                       traits.construct_vector_d_object()(cp(first->first), p));
+                       traits.construct_vector_d_object()(cp(first->first), bp));
   }
 
   term4 = term3 / term1;
@@ -184,8 +189,7 @@ sibson_c1_interpolation(ForwardIterator first, ForwardIterator beyond,
 //    term3 +=  coeff*(squared_dist/inv_weight);
 // 	  gradient_int += (coeff/inv_weight) * (vh->get_value()+ vh->get_gradient() * (p - vh->point()));
 
-template < class ForwardIterator, class ValueFunctor, class GradFunctor,
-           class Traits, class Point >
+template < class ForwardIterator, class ValueFunctor, class GradFunctor, class Traits, class Point >
 std::pair< typename ValueFunctor::result_type::first_type, bool >
 sibson_c1_interpolation_square(ForwardIterator first, ForwardIterator beyond,
                                const typename std::iterator_traits<ForwardIterator>::value_type::second_type& norm,
@@ -198,8 +202,11 @@ sibson_c1_interpolation_square(ForwardIterator first, ForwardIterator beyond,
 
   typedef typename ValueFunctor::result_type::first_type Value_type;
   typedef typename Traits::FT                            Coord_type;
+  typedef typename Traits::Point_d                       Bare_point;
 
   Interpolation::internal::Extract_bare_point<Traits> cp(traits);
+  const Bare_point& bp = cp(p);
+
   Coord_type term1(0), term2(term1), term3(term1), term4(term1);
   Value_type linear_int(0), gradient_int(0);
   typename ValueFunctor::result_type f;
@@ -215,7 +222,7 @@ sibson_c1_interpolation_square(ForwardIterator first, ForwardIterator beyond,
       return std::make_pair(Value_type(0), false); // the gradient is not known
 
     Coord_type coeff = first->second/norm;
-    Coord_type squared_dist = traits.compute_squared_distance_d_object()(cp(first->first), cp(p));
+    Coord_type squared_dist = traits.compute_squared_distance_d_object()(cp(first->first), bp);
 
     if(squared_dist ==0)
     {

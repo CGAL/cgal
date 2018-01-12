@@ -25,11 +25,15 @@
 
 #include <CGAL/Interpolation/internal/helpers.h>
 
+#include <CGAL/function_objects.h>
+#include <CGAL/is_iterator.h>
 #include <CGAL/Iterator_project.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/number_utils_classes.h>
 #include <CGAL/utility.h>
-#include <CGAL/function_objects.h>
+
+#include <boost/core/enable_if.hpp>
+#include <boost/utility/enable_if.hpp>
 
 #include <iterator>
 #include <list>
@@ -195,15 +199,63 @@ natural_neighbors_2(const Dt& dt,
 }
 
 
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+
+
+// This function is called when the conflict zone is known.
+// OutputIterator has value type `pair< Dt::Geom_traits::Point_2, Dt::Geom_traits::FT>`
+template < class Dt, class OutputIterator, class OutputFunctor, class EdgeIterator >
+Triple< OutputIterator, typename Dt::Geom_traits::FT, bool >
+natural_neighbor_coordinates_2(const Dt& dt,
+                               const typename Dt::Geom_traits::Point_2& p,
+                               OutputIterator out,
+                               OutputFunctor fct,
+                               EdgeIterator hole_begin, EdgeIterator hole_end)
+{
+  CGAL_precondition(dt.dimension() == 2);
+
+  typedef Interpolation::internal::
+            Project_vertex_output_iterator<OutputIterator, OutputFunctor> OutputIteratorWithFunctor;
+  typedef typename Dt::Geom_traits::FT                                    FT;
+
+  OutputIteratorWithFunctor op(out, fct);
+  Triple<OutputIteratorWithFunctor, FT, bool > result = natural_neighbors_2(dt, p, op, hole_begin, hole_end);
+
+  return make_triple(result.first.base(), result.second, result.third);
+}
+
+
+// Same as above but without OutputFunctor. Default to extracting the point, for backward compatibility.
+template < class Dt, class OutputIterator, class EdgeIterator >
+Triple< OutputIterator, typename Dt::Geom_traits::FT, bool >
+natural_neighbor_coordinates_2(const Dt& dt,
+                               const typename Dt::Geom_traits::Point_2& p,
+                               OutputIterator out,
+                               EdgeIterator hole_begin, EdgeIterator hole_end)
+{
+  typedef typename Dt::Geom_traits::FT                            FT;
+  typedef Interpolation::internal::Extract_point_in_pair<Dt, FT>  OutputFunctor;
+
+  return natural_neighbor_coordinates_2(dt, p, out, OutputFunctor(), hole_begin, hole_end);
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+
+
+// Function with a point. Can take a default starting face.
 template < class Dt, class OutputIterator, class OutputFunctor >
 Triple< OutputIterator, typename Dt::Geom_traits::FT, bool >
 natural_neighbor_coordinates_2(const Dt& dt,
                                const typename Dt::Geom_traits::Point_2& p,
                                OutputIterator out,
                                OutputFunctor fct,
-                               typename Dt::Face_handle start =
-    CGAL_TYPENAME_DEFAULT_ARG Dt::Face_handle() )
-
+                               typename Dt::Face_handle start = CGAL_TYPENAME_DEFAULT_ARG Dt::Face_handle(),
+                               typename boost::disable_if_c<
+                                          is_iterator<OutputFunctor>::value
+                                        >::type* = 0)
 {
   CGAL_precondition(dt.dimension() == 2);
 
@@ -233,48 +285,11 @@ natural_neighbor_coordinates_2(const Dt& dt,
 }
 
 
-// This function is called when the conflict zone is known.
-// OutputIterator has value type `pair< Dt::Geom_traits::Point_2, Dt::Geom_traits::FT>`
-template < class Dt, class OutputIterator, class OutputFunctor, class EdgeIterator >
-Triple< OutputIterator, typename Dt::Geom_traits::FT, bool >
-natural_neighbor_coordinates_2(const Dt& dt,
-                               const typename Dt::Geom_traits::Point_2& p,
-                               OutputIterator out, OutputFunctor fct,
-                               EdgeIterator hole_begin, EdgeIterator hole_end)
-{
-  CGAL_precondition(dt.dimension() == 2);
-
-  typedef Interpolation::internal::
-            Project_vertex_output_iterator<OutputIterator, OutputFunctor> OutputIteratorWithFunctor;
-  typedef typename Dt::Geom_traits::FT                                    FT;
-
-  OutputIteratorWithFunctor op(out, fct);
-  Triple<OutputIteratorWithFunctor, FT, bool > result = natural_neighbors_2(dt, p, op, hole_begin, hole_end);
-
-  return make_triple(result.first.base(), result.second, result.third);
-}
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
 
-// Same as above but without OutputFunctor. Default to extracting the point, for backward compatibility.
-template < class Dt, class OutputIterator, class EdgeIterator >
-Triple< OutputIterator, typename Dt::Geom_traits::FT, bool >
-natural_neighbor_coordinates_2(const Dt& dt,
-                               const typename Dt::Geom_traits::Point_2& p,
-                               OutputIterator out,
-                               EdgeIterator hole_begin, EdgeIterator hole_end)
-{
-  /// @todo TEST ME
-  typedef typename Dt::Geom_traits::FT                            FT;
-  typedef Interpolation::internal::Extract_point_in_pair<Dt, FT>  OutputFunctor;
-
-  return natural_neighbor_coordinates_2(dt,p, out, OutputFunctor(), hole_begin, hole_end);
-}
-
-
-/**********************************************************/
-// Compute the coordinates for a vertex of the triangulation
-// with respect to the other points in the triangulation.
-// OutputIterator has value type `pair< Dt::Geom_traits::Point_2, Dt::Geom_traits::FT>`
+// Function with a Vertex_handle
 template <class Dt, class OutputIterator, class OutputFunctor>
 Triple< OutputIterator, typename Dt::Geom_traits::FT, bool >
 natural_neighbor_coordinates_2(const Dt& dt,
@@ -326,6 +341,10 @@ natural_neighbor_coordinates_2(const Dt& dt,
 
   return natural_neighbor_coordinates_2(dt, vh, out, OutputFunctor());
 }
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
 
 // OutputIterator has value type `std::pair< Dt::Geom_traits::Point_2, Dt::Geom_traits::FT>`
