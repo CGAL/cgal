@@ -207,10 +207,10 @@ void smooth_angles(PolygonMesh& pmesh)
 *    constrained-or-not status of each vertex of `pmesh`. A constrained vertex
 *    cannot be modified at all during smoothing.
 *  \cgalParamEnd
-*  \cgalParamBegin{gradient_descent_precision} The precision to be met while the energy of each
-*    triangle is being minimized. Corresponds to the
-*    relative energy of triangles between iterations. Triangle energy is defined based on its area compared to
-*    the average area of all triangles adjacent to the vertex that is being moved.  Defaults to 1e-5.
+*  \cgalParamBegin{gradient_descent_tolerance} Tolerance under which the energy of each
+*    triangle is being minimized. Triangle energy is defined based on its area compared to
+*    the average area of all triangles adjacent to the vertex that is being moved. The tolerance corresponds to the
+*    relative energy of triangles between iterations. Defaults to 1e-6.
 *  \cgalParamEnd
 *  \cgalParamBegin{do_project} If `true`, points are projected to the initial surface after each iteration.
 *  \cgalParamEnd
@@ -229,15 +229,12 @@ void smooth_areas(const FaceRange& faces, PolygonMesh& pmesh, const NamedParamet
   t.start();
   #endif
 
-  //geom traits
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GeomTraits;
 
-  //vpmap
   typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type VertexPointMap;
   VertexPointMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
                                get_property_map(CGAL::vertex_point, pmesh));
 
-  //vcmap
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
   typedef typename boost::lookup_named_param_def <
       internal_np::vertex_is_constrained_t,
@@ -247,11 +244,9 @@ void smooth_areas(const FaceRange& faces, PolygonMesh& pmesh, const NamedParamet
   VCMap vcmap = choose_param(get_param(np, internal_np::vertex_is_constrained),
                              internal::Constrained_vertices_map<vertex_descriptor>());
 
-  //nb_iterations
   std::size_t nb_iterations = choose_param(get_param(np, internal_np::number_of_iterations), 1);
 
-  //gradient descent precision
-  double gd_precision = choose_param(get_param(np, internal_np::gradient_descent_precision), 1e-5);
+  const double gd_tolerance = choose_param(get_param(np, internal_np::gradient_descent_tolerance), 1e-6);
 
   bool do_project = choose_param(get_param(np, internal_np::do_project), true);
 
@@ -264,6 +259,7 @@ void smooth_areas(const FaceRange& faces, PolygonMesh& pmesh, const NamedParamet
   std::cout << "Removing degenerate faces..." << std::endl;
   t.reset(); t.start();
   #endif
+
   remesher.remove_degenerate_faces();
 
   #ifdef CGAL_PMP_SMOOTHING_VERBOSE
@@ -272,6 +268,7 @@ void smooth_areas(const FaceRange& faces, PolygonMesh& pmesh, const NamedParamet
   std::cout << "Initializing..." << std::endl;
   t.reset(); t.start();
   #endif
+
   remesher.init_smoothing(faces);
 
   #ifdef CGAL_PMP_SMOOTHING_VERBOSE
@@ -288,7 +285,7 @@ void smooth_areas(const FaceRange& faces, PolygonMesh& pmesh, const NamedParamet
     std::cout << " * Iteration " << (i + 1) << " *" << std::endl;
     #endif
 
-    remesher.area_relaxation(gd_precision);
+    remesher.area_relaxation(gd_tolerance);
     if(do_project)
       remesher.project_to_surface();
   }

@@ -306,19 +306,13 @@ public:
     update_map(Xx, Xy, Xz);
 
     // normalize area
-    NT surface_area = area(faces(mesh_), mesh_);
-    std::cout << "area= " << surface_area << nl;
-    std::cout << "area sqrt= " << CGAL::sqrt(surface_area) << nl;
-
-
-
+    //NT surface_area = area(faces(mesh_), mesh_);
+    //std::cout << "area= " << surface_area << nl;
+    //std::cout << "area sqrt= " << CGAL::sqrt(surface_area) << nl;
     //normalize_area(Xx, Xy, Xz);
-
     //update_map(Xx, Xy, Xz);
-
-    surface_area = area(faces(mesh_), mesh_);
-    std::cout << "surface_area normalized= " << surface_area << nl;
-
+    //surface_area = area(faces(mesh_), mesh_);
+    //std::cout << "surface_area normalized= " << surface_area << nl;
   }
 
 

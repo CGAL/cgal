@@ -82,15 +82,12 @@ void smooth_curvature_flow_explicit(const FaceRange& faces, PolygonMesh& pmesh, 
   t.start();
   #endif
 
-  // GeomTraits
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GeomTraits;
 
-  // vpmap
   typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type VertexPointMap;
   VertexPointMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
                                get_property_map(CGAL::vertex_point, pmesh));
 
-  // vcmap
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
   typedef typename boost::lookup_named_param_def <
       internal_np::vertex_is_constrained_t,
@@ -100,8 +97,7 @@ void smooth_curvature_flow_explicit(const FaceRange& faces, PolygonMesh& pmesh, 
   VCMap vcmap = choose_param(get_param(np, internal_np::vertex_is_constrained),
                              internal::Constrained_vertices_map<vertex_descriptor>());
 
-  // nb_iterations
-  unsigned int nb_iterations = choose_param(get_param(np, internal_np::number_of_iterations), 1);
+  std::size_t nb_iterations = choose_param(get_param(np, internal_np::number_of_iterations), 1);
 
   #ifdef CGAL_PMP_SMOOTHING_VERBOSE
   t.stop();
@@ -139,7 +135,7 @@ void smooth_curvature_flow_explicit(const FaceRange& faces, PolygonMesh& pmesh, 
   t.reset(); t.start();
   #endif
 
-  for(unsigned int i=0; i<nb_iterations; ++i)
+  for(std::size_t i=0; i<nb_iterations; ++i)
   {
 
   #ifdef CGAL_PMP_SMOOTHING_VERBOSE
