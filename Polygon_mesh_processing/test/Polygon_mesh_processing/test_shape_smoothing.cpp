@@ -64,20 +64,14 @@ void test_implicit_constrained(const char* filename)
       selected_vertices.insert(v);
   }
 
-  #ifdef CGAL_PMP_SMOOTHING_VERBOSE
-  std::cout<<"number of selected vertices= "<<selected_vertices.size()<<std::endl;
-  #endif
-
   Constraints_pmap vcmap(&selected_vertices);
 
-  const double time_step = 1;
-
+  const double time_step = 1.0;
   CGAL::Polygon_mesh_processing::smooth_modified_curvature_flow(mesh, time_step,
                             CGAL::Polygon_mesh_processing::parameters::vertex_is_constrained_map(vcmap).
                                                                        number_of_iterations(5));
-#define CGAL_PMP_SMOOTHING_VERBOSE
   #ifdef CGAL_PMP_SMOOTHING_VERBOSE
-  std::ofstream out("data/output_implicit.off");
+  std::ofstream out("data/output_implicit_constrained.off");
   out << mesh;
   out.close();
   #endif
@@ -99,7 +93,6 @@ void test_explicit_scheme(const char* filename)
                             CGAL::Polygon_mesh_processing::parameters::use_explicit_scheme(true).
                                                                        number_of_iterations(iterations));
 
-
   #ifdef CGAL_PMP_SMOOTHING_VERBOSE
   std::ofstream out("data/output_explicit.off");
   out << mesh;
@@ -107,13 +100,79 @@ void test_explicit_scheme(const char* filename)
   #endif
 }
 
+void test_curvature_flow_time_step(const char* filename)
+{
+  std::ifstream input(filename);
+  Mesh mesh;
+  input >> mesh;
+  input.close();
+
+  boost::property_map<Mesh, CGAL::vertex_point_t>::type vpmap =
+          get(CGAL::vertex_point, mesh);
+
+  const double time_step = 1e-15;
+  CGAL::Polygon_mesh_processing::smooth_modified_curvature_flow(mesh, time_step);
+
+  #ifdef CGAL_PMP_SMOOTHING_VERBOSE
+  std::ofstream out("data/output_devil_time_step.off");
+  out << mesh;
+  out.close();
+  #endif
+}
+
+void test_curvature_flow(const char* filename)
+{
+  std::ifstream input(filename);
+  Mesh mesh;
+  input >> mesh;
+  input.close();
+
+  boost::property_map<Mesh, CGAL::vertex_point_t>::type vpmap =
+          get(CGAL::vertex_point, mesh);
+
+  const double time_step = 1.0;
+  CGAL::Polygon_mesh_processing::smooth_modified_curvature_flow(mesh, time_step);
+
+  #ifdef CGAL_PMP_SMOOTHING_VERBOSE
+  std::ofstream out("data/output_precision_pyramid.off");
+  out << mesh;
+  out.close();
+  #endif
+}
+
+void test_demo_helpers(const char* filename)
+{
+  std::ifstream input(filename);
+  Mesh mesh;
+  input >> mesh;
+  input.close();
+
+  boost::property_map<Mesh, CGAL::vertex_point_t>::type vpmap =
+          get(CGAL::vertex_point, mesh);
+
+  const double time_step = 1e-2;
+  Eigen::SparseMatrix<double> stiff_matrix;
+  CGAL::Polygon_mesh_processing::setup_mcf_system(faces(mesh), mesh, stiff_matrix, CGAL::Polygon_mesh_processing::parameters::all_default());
+  CGAL::Polygon_mesh_processing::solve_mcf_system(faces(mesh), mesh, time_step, stiff_matrix, CGAL::Polygon_mesh_processing::parameters::all_default());
+
+  #ifdef CGAL_PMP_SMOOTHING_VERBOSE
+  std::ofstream out("data/output_devil_demo_helpers.off");
+  out << mesh;
+  out.close();
+  #endif
+
+}
+
 int main(int argc, char* argv[])
 {
-  const char* filename = "data/mannequin-devil.off";
-  std::ifstream input(filename);
+  const char* filename_devil = "data/mannequin-devil.off";
+  const char* filename_pyramid = "data/simple_pyramid.off";
 
-  test_implicit_constrained(filename);
-  test_explicit_scheme(filename);
+  test_demo_api(filename_devil);
+  test_curvature_flow_time_step(filename_devil);
+  test_curvature_flow(filename_pyramid);
+  test_implicit_constrained(filename_devil);
+  test_explicit_scheme(filename_devil);
 
   return 0;
 }

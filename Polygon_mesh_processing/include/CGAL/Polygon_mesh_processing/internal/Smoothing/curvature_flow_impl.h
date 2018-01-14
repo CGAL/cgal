@@ -260,6 +260,12 @@ private:
 
   void compute_coeff_matrix(Eigen_matrix& A, const Eigen_matrix& L, const Eigen_matrix& D, const double& time)
   {
+    assert(A.rows() != 0);
+    assert(A.cols() != 0);
+    assert(A.rows() == L.rows());
+    assert(A.cols() == L.cols());
+    assert(A.rows() == D.rows());
+    assert(A.cols() == D.cols());
     A = D - time * L;
   }
 
@@ -322,7 +328,6 @@ private:
   template<typename FaceRange>
   void check_face_range(const FaceRange& face_range)
   {
-    frange_.resize(faces(mesh_).size());
     BOOST_FOREACH(face_descriptor f, face_range)
     {
       frange_.insert(f);

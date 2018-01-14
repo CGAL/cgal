@@ -24,6 +24,87 @@
      </rect>
     </property>
     <layout class="QGridLayout" name="gridLayout">
+     <item row="1" column="0">
+      <widget class="QGroupBox" name="Shape_groupBox">
+       <property name="title">
+        <string>Shape</string>
+       </property>
+       <widget class="QPushButton" name="curvature_flow_button">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>40</y>
+          <width>221</width>
+          <height>30</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>smooth along curvature flow</string>
+        </property>
+       </widget>
+       <widget class="QWidget" name="layoutWidget">
+        <property name="geometry">
+         <rect>
+          <x>260</x>
+          <y>40</y>
+          <width>182</width>
+          <height>33</height>
+         </rect>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QLabel" name="time_step_label">
+           <property name="text">
+            <string>time step:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QDoubleSpinBox" name="time_step_spinBox">
+           <property name="decimals">
+            <number>6</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="layoutWidget_4">
+        <property name="geometry">
+         <rect>
+          <x>260</x>
+          <y>80</y>
+          <width>132</width>
+          <height>33</height>
+         </rect>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <item>
+          <widget class="QLabel" name="label_3">
+           <property name="text">
+            <string>iterations: </string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="curvature_iter_spinBox"/>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QCheckBox" name="explicit_checkBox">
+        <property name="geometry">
+         <rect>
+          <x>40</x>
+          <y>80</y>
+          <width>171</width>
+          <height>26</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>normalized scheme</string>
+        </property>
+       </widget>
+      </widget>
+     </item>
      <item row="0" column="0">
       <widget class="QGroupBox" name="Mesh_groupBox">
        <property name="title">
@@ -104,7 +185,7 @@
          <rect>
           <x>190</x>
           <y>120</y>
-          <width>179</width>
+          <width>201</width>
           <height>33</height>
          </rect>
         </property>
@@ -119,7 +200,7 @@
          <item>
           <widget class="QDoubleSpinBox" name="tolerance_spinBox">
            <property name="decimals">
-            <number>6</number>
+            <number>7</number>
            </property>
           </widget>
          </item>
@@ -136,87 +217,6 @@
         </property>
         <property name="text">
          <string>projection</string>
-        </property>
-       </widget>
-      </widget>
-     </item>
-     <item row="1" column="0">
-      <widget class="QGroupBox" name="Shape_groupBox">
-       <property name="title">
-        <string>Shape</string>
-       </property>
-       <widget class="QPushButton" name="curvature_flow_button">
-        <property name="geometry">
-         <rect>
-          <x>20</x>
-          <y>40</y>
-          <width>201</width>
-          <height>30</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>smooth along curvature flow</string>
-        </property>
-       </widget>
-       <widget class="QWidget" name="layoutWidget">
-        <property name="geometry">
-         <rect>
-          <x>230</x>
-          <y>40</y>
-          <width>178</width>
-          <height>33</height>
-         </rect>
-        </property>
-        <layout class="QHBoxLayout" name="horizontalLayout">
-         <item>
-          <widget class="QLabel" name="time_step_label">
-           <property name="text">
-            <string>time step:</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QDoubleSpinBox" name="time_step_spinBox">
-           <property name="decimals">
-            <number>6</number>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-       <widget class="QWidget" name="layoutWidget_4">
-        <property name="geometry">
-         <rect>
-          <x>230</x>
-          <y>80</y>
-          <width>132</width>
-          <height>33</height>
-         </rect>
-        </property>
-        <layout class="QHBoxLayout" name="horizontalLayout_4">
-         <item>
-          <widget class="QLabel" name="label_3">
-           <property name="text">
-            <string>iterations: </string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QSpinBox" name="curvature_iter_spinBox"/>
-         </item>
-        </layout>
-       </widget>
-       <widget class="QCheckBox" name="explicit_checkBox">
-        <property name="geometry">
-         <rect>
-          <x>40</x>
-          <y>80</y>
-          <width>151</width>
-          <height>26</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>normalized scheme</string>
         </property>
        </widget>
       </widget>

@@ -236,11 +236,11 @@ void smooth_modified_curvature_flow(const FaceRange& faces, PolygonMesh& pmesh, 
 
   std::size_t nb_iterations = choose_param(get_param(np, internal_np::number_of_iterations), 1);
 
-  bool use_explicit_scheme = choose_param(get_param(np, internal_np::use_explicit_scheme), true);
+  bool use_explicit_scheme = choose_param(get_param(np, internal_np::use_explicit_scheme), false);
 
   if(use_explicit_scheme)
   {
-    smooth_curvature_flow_explicit(faces, pmesh, parameters::all_default());
+    smooth_curvature_flow_explicit(faces, pmesh, parameters::number_of_iterations(nb_iterations));
   }
   else
   {
@@ -255,6 +255,7 @@ void smooth_modified_curvature_flow(const FaceRange& faces, PolygonMesh& pmesh, 
     internal::Shape_smoother<PolygonMesh, VertexPointMap, VCMap, GeomTraits>
         smoother(pmesh, vpmap, vcmap);
 
+    smoother.init_smoothing(faces);
     smoother.calc_stiff_matrix(stiffness_matrix);
 
     for(std::size_t iter = 0; iter < nb_iterations; ++iter)
@@ -281,7 +282,7 @@ void smooth_modified_curvature_flow(PolygonMesh& pmesh, const double& time)
                                  parameters::all_default());
 }
 
-// demo API, undocumented
+// demo helpers, undocumented
 template<typename PolygonMesh, typename FaceRange, typename NamedParameters>
 void setup_mcf_system(const FaceRange& faces, PolygonMesh& mesh,
                       Eigen::SparseMatrix<double>& stiffness_matrix, const NamedParameters& np)
@@ -314,10 +315,10 @@ void setup_mcf_system(const FaceRange& faces, PolygonMesh& mesh,
 
   internal::Shape_smoother<PolygonMesh, VertexPointMap, VCMap, GeomTraits>
       smoother(mesh, vpmap, vcmap);
+  smoother.init_smoothing(faces);
   smoother.calc_stiff_matrix(stiffness_matrix);
 }
 
-// demo API, undocumented
 template<typename PolygonMesh, typename FaceRange, typename NamedParameters>
 void solve_mcf_system(const FaceRange& faces, PolygonMesh& mesh, const double& time,
                       Eigen::SparseMatrix<double>& stiffness_matrix, const NamedParameters& np)
@@ -331,15 +332,12 @@ void solve_mcf_system(const FaceRange& faces, PolygonMesh& mesh, const double& t
   //typedef typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::type VertexPointMap;
   //VertexPointMap vpmap = get(CGAL::vertex_point, mesh);
 
-  // GeomTraits
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GeomTraits;
 
-  // vpmap
   typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type VertexPointMap;
   VertexPointMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
                                get_property_map(CGAL::vertex_point, mesh));
 
-  // vcmap
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
   typedef typename boost::lookup_named_param_def <
       internal_np::vertex_is_constrained_t,
@@ -365,6 +363,7 @@ void solve_mcf_system(const FaceRange& faces, PolygonMesh& mesh, const double& t
 
   internal::Shape_smoother<PolygonMesh, VertexPointMap, VCMap, GeomTraits>
       smoother(mesh, vpmap, vcmap);
+  smoother.init_smoothing(faces);
   smoother.setup_system(A, stiffness_matrix, mass_matrix, bx, by, bz, time);
   smoother.solve_system(A, Xx, Xy, Xz, bx, by, bz);
   smoother.update_mesh(Xx, Xy, Xz);
