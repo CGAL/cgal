@@ -67,7 +67,7 @@ void test_implicit_constrained(const char* filename)
   Constraints_pmap vcmap(&selected_vertices);
 
   const double time_step = 1.0;
-  CGAL::Polygon_mesh_processing::smooth_modified_curvature_flow(mesh, time_step,
+  CGAL::Polygon_mesh_processing::smooth_along_curvature_flow(mesh, time_step,
                             CGAL::Polygon_mesh_processing::parameters::vertex_is_constrained_map(vcmap).
                                                                        number_of_iterations(5));
   #ifdef CGAL_PMP_SMOOTHING_VERBOSE
@@ -89,7 +89,7 @@ void test_explicit_scheme(const char* filename)
 
   const double time_step = 1;
   const unsigned int iterations = 5;
-  CGAL::Polygon_mesh_processing::smooth_modified_curvature_flow(mesh, time_step,
+  CGAL::Polygon_mesh_processing::smooth_along_curvature_flow(mesh, time_step,
                             CGAL::Polygon_mesh_processing::parameters::use_explicit_scheme(true).
                                                                        number_of_iterations(iterations));
 
@@ -111,7 +111,7 @@ void test_curvature_flow_time_step(const char* filename)
           get(CGAL::vertex_point, mesh);
 
   const double time_step = 1e-15;
-  CGAL::Polygon_mesh_processing::smooth_modified_curvature_flow(mesh, time_step);
+  CGAL::Polygon_mesh_processing::smooth_along_curvature_flow(mesh, time_step);
 
   #ifdef CGAL_PMP_SMOOTHING_VERBOSE
   std::ofstream out("data/output_devil_time_step.off");
@@ -131,7 +131,7 @@ void test_curvature_flow(const char* filename)
           get(CGAL::vertex_point, mesh);
 
   const double time_step = 1.0;
-  CGAL::Polygon_mesh_processing::smooth_modified_curvature_flow(mesh, time_step);
+  CGAL::Polygon_mesh_processing::smooth_along_curvature_flow(mesh, time_step);
 
   #ifdef CGAL_PMP_SMOOTHING_VERBOSE
   std::ofstream out("data/output_precision_pyramid.off");
@@ -168,7 +168,7 @@ int main(int argc, char* argv[])
   const char* filename_devil = "data/mannequin-devil.off";
   const char* filename_pyramid = "data/simple_pyramid.off";
 
-  test_demo_api(filename_devil);
+  test_demo_helpers(filename_devil);
   test_curvature_flow_time_step(filename_devil);
   test_curvature_flow(filename_pyramid);
   test_implicit_constrained(filename_devil);

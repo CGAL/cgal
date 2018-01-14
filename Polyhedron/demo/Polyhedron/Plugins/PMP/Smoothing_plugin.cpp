@@ -192,7 +192,7 @@ public Q_SLOTS:
         if(ui_widget.explicit_checkBox->isChecked()) 
         {
           std::cout << "iterations = " << nb_iter << std::endl;
-          CGAL::Polygon_mesh_processing::smooth_modified_curvature_flow(pmesh, time_step,
+          CGAL::Polygon_mesh_processing::smooth_along_curvature_flow(pmesh, time_step,
                             CGAL::Polygon_mesh_processing::parameters::use_explicit_scheme(true)
                                                                        .number_of_iterations(nb_iter));
         }
