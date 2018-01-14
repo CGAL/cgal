@@ -373,7 +373,7 @@ between iterations of each triangle is minimized. Triangle energy is defined bas
 average area of all triangles adjacent to the vertex that is being moved.
 \n
 \b Type : `double` \n
-\b Default is `0.000001`
+\b Default is `0.00001`
 \cgalNPEnd
 
 \cgalNPBegin{use_explicit_scheme} \anchor PMP_use_explicit_scheme

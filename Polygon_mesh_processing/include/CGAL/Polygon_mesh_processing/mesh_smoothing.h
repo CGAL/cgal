@@ -211,7 +211,7 @@ void smooth_angles(PolygonMesh& pmesh)
 *  \cgalParamBegin{gradient_descent_tolerance} Tolerance under which the energy of each
 *    triangle is being minimized. Triangle energy is defined based on its area compared to
 *    the average area of all triangles adjacent to the vertex that is being moved. The tolerance corresponds to the
-*    relative energy of triangles between iterations. Defaults to 1e-6.
+*    relative energy of triangles between iterations. Defaults to 1e-5.
 *  \cgalParamEnd
 *  \cgalParamBegin{do_project} If `true`, points are projected to the initial surface after each iteration.
 *  \cgalParamEnd
@@ -247,7 +247,7 @@ void smooth_areas(const FaceRange& faces, PolygonMesh& pmesh, const NamedParamet
 
   std::size_t nb_iterations = choose_param(get_param(np, internal_np::number_of_iterations), 1);
 
-  const double gd_tolerance = choose_param(get_param(np, internal_np::gradient_descent_tolerance), 1e-6);
+  const double gd_tolerance = choose_param(get_param(np, internal_np::gradient_descent_tolerance), 1e-5);
 
   bool do_project = choose_param(get_param(np, internal_np::do_project), true);
 

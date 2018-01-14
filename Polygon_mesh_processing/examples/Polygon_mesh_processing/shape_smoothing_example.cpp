@@ -23,8 +23,8 @@ int main(int argc, char* argv[]){
         return 1;
     }
 
-    const double time = 1e-5;
-    CGAL::Polygon_mesh_processing::smooth_modified_curvature_flow(mesh, time);
+    const double time = 0.1;
+    CGAL::Polygon_mesh_processing::smooth_along_curvature_flow(mesh, time);
 
     std::ofstream output("data/pig_smoothed_to_sphere.off");
     output << mesh;

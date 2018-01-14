@@ -14,7 +14,7 @@ typedef CGAL::Surface_mesh<K::Point_3> Mesh;
 int main(int argc, char* argv[]){
 
     namespace PMP = CGAL::Polygon_mesh_processing;
-    const char* filename = argc > 1 ? argv[1] : "data/sphere.off";
+    const char* filename = argc > 1 ? argv[1] : "data/eight.off";
     std::ifstream input(filename);
 
     Mesh mesh;
@@ -23,7 +23,7 @@ int main(int argc, char* argv[]){
       return 1;
     }
 
-    unsigned int nb_iterations = 10;
+    unsigned int nb_iterations = 2;
 
     for(unsigned int t = 0 ; t < nb_iterations; ++t)
     {
@@ -32,7 +32,7 @@ int main(int argc, char* argv[]){
       CGAL::Polygon_mesh_processing::smooth_angles(mesh);
     }
 
-    std::ofstream output("data/sphere_smoothed.off");
+    std::ofstream output("data/eight_smoothed.off");
     output << mesh;
     output.close();
 
