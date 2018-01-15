@@ -331,8 +331,6 @@ namespace internal {
     {
       tag_halfedges_status(face_range); //called first
 
-      constrain_patch_corners(face_range);
-
       BOOST_FOREACH(face_descriptor f, face_range)
       {
         if (is_degenerate_triangle_face(halfedge(f,mesh_),mesh_,vpmap_,GeomTraits())){
@@ -1368,10 +1366,6 @@ private:
     {
       return get(vcmap_, v);
     }
-    void set_constrained(const vertex_descriptor& v, const bool b)
-    {
-      put(vcmap_, v, b);
-    }
     bool is_isolated(const vertex_descriptor& v) const
     {
       return halfedges_around_target(v, mesh_).empty();
@@ -1412,43 +1406,6 @@ private:
         return CGAL::NULL_VECTOR;
       else
         return PMP::compute_face_normal(f, mesh_, parameters::vertex_point_map(vpmap_));
-    }
-
-    template <typename FaceRange>
-    void constrain_patch_corners(const FaceRange& face_range)
-    {
-      boost::container::flat_set<vertex_descriptor> visited;
-
-      BOOST_FOREACH(face_descriptor f, face_range)
-      {
-        BOOST_FOREACH(halfedge_descriptor h,
-                      halfedges_around_face(halfedge(f, mesh_), mesh_))
-        {
-          vertex_descriptor vt = target(h, mesh_);
-          //treat target(h, mesh_)
-          if (visited.find(vt) != visited.end())
-            continue;//already treated
-
-          if (status(h) == PATCH)//h not on patch boundary
-            continue;            //so neither is target(h, mesh_)
-
-          //count incident MESH_BORDER edges
-          unsigned int nb_incident_borders = 0;
-          BOOST_FOREACH(halfedge_descriptor hv,
-                        halfedges_around_target(h, mesh_))
-          {
-            CGAL_assertion(vt == target(hv, mesh_));
-            if ( (status(hv) == PATCH_BORDER && status(opposite(hv, mesh_)) == MESH_BORDER)
-              || (status(hv) == MESH_BORDER && status(opposite(hv, mesh_)) == PATCH_BORDER))
-            nb_incident_borders++;
-          }
-
-          if (nb_incident_borders == 1) //this is a special corner
-            set_constrained(vt, true);
-
-          visited.insert(vt);
-        }
-      }
     }
 
     template<typename FaceRange>
