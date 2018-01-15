@@ -507,7 +507,9 @@ regular_neighbor_coordinates_2(const Rt& rt,
 
   do
   {
-    CGAL_assertion(!rt.is_infinite(vc));
+    if(rt.is_infinite(vc))
+      continue;
+
     Vertex_handle t2_vh = t2.insert(vc->point());
     cm[t2_vh] = vc;
   }

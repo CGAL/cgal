@@ -312,7 +312,9 @@ natural_neighbor_coordinates_2(const Dt& dt,
 
   do
   {
-    CGAL_assertion(!dt.is_infinite(vc));
+    if(dt.is_infinite(vc))
+      continue;
+
     Vertex_handle t2_vh = t2.insert(vc->point());
     cm[t2_vh] = vc;
   }
