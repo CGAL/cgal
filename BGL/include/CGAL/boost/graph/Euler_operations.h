@@ -1020,39 +1020,33 @@ add_face_to_border(typename boost::graph_traits<Graph>::halfedge_descriptor h1,
  * collapses an edge in a graph.
  *
  * \tparam Graph must be a model of `MutableFaceGraph`
- * Let `v0` and `v1` be the source and target vertices, and let `e` and `e'` be the halfedges of edge `v0v1`.
+ * Let `h` be the halfedge of `e`, and let `v0` and `v1` be the source and target vertices of `h`.
+ * Let `ep` and `e'p` be respectively the edges of `prev(h,g)` and `prev(opposite(h, g), g)`.
+ * Let `en` and `e'n` be respectively the edges of `opposite(next(h,g))` and `opposite(next(opposite(h, g), g))`.
  *
- * For `e`, let `en` and `ep` be the next and previous
- * halfedges, that is `en = next(e, g)`, `ep = prev(e, g)`, and let
- * `eno` and `epo` be their opposite halfedges, that is
- * `eno = opposite(en, g)` and `epo = opposite(ep, g)`.
- * Analoguously, for `e'` define  `en'`, `ep'`, `eno'`, and  `epo'`.
+ * After the collapse of edge `e` the following holds:
+ *   - The edge `e` is no longer in `g`.
+ *   - The faces incident to edge `v0v1` are no longer in `g`.
+ *   - `v0` is no longer in `g`.
+ *   - If `h` is not a border halfedge, `ep` is no longer in `g` and is replaced by `en`.
+ *   - If the opposite of `h` is not a border halfedge, `e'p` is no longer in `g` and is replaced by `e'n`.
+ *   - The halfedges kept in `g` that had `v0` as target now have `v1` as target, and similarly for the source.
+ *   - No other incidence information is changed in `g`.
  *
- * Then, after the collapse of edge `v0v1` the following holds for `e` (and analoguously for `e'`)
- *
- * <UL>
- *   <LI>The edge `v0v1` is no longer in `g`.
- *   <LI>The faces incident to edge `v0v1` are no longer in `g`.
- *   <LI>`v0` is no longer in `g`.
- *   <LI>If `e` was a border halfedge, that is `is_border(e, g) == true`, then `next(ep,g) == en`, and `prev(en,g) == ep`.
- *   <LI>If `e` was not a border halfedge, that is `is_border(e, g) == false`, then `ep` and `epo` are no longer in `g` while `en` and `eno` are kept in `g`.
- *   <LI>For all halfedges `hv` in `halfedges_around_target(v0, g)`, `target(*hv, g) == v1` and `source(opposite(*hv, g), g) == v1`.
- *   <LI>No other incidence information has changed in `g`.
- * </UL>
  * \returns vertex `v1`.
  * \pre g must be a triangulated graph
  * \pre `does_satisfy_link_condition(v0v1,g) == true`.
  */
 template<typename Graph>
 typename boost::graph_traits<Graph>::vertex_descriptor
-collapse_edge(typename boost::graph_traits<Graph>::edge_descriptor v0v1,
+collapse_edge(typename boost::graph_traits<Graph>::edge_descriptor e,
               Graph& g)
 {
   typedef boost::graph_traits< Graph > Traits;
   typedef typename Traits::vertex_descriptor          vertex_descriptor;
   typedef typename Traits::halfedge_descriptor            halfedge_descriptor;
 
-  halfedge_descriptor pq = halfedge(v0v1,g);
+  halfedge_descriptor pq = halfedge(e,g);
   halfedge_descriptor qp = opposite(pq, g);
   halfedge_descriptor pt = opposite(prev(pq, g), g);
   halfedge_descriptor qb = opposite(prev(qp, g), g);
