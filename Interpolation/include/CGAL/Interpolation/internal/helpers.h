@@ -51,7 +51,8 @@ struct Extract_bare_point
   }
 
   template <typename VH>
-  const Point& operator()(const VH& vh) const {
+  Point operator()(const VH& vh) const {
+    CGAL_precondition(vh != VH());
     return traits.construct_point_d_object()(vh->point());
   }
 
@@ -75,6 +76,7 @@ struct Extract_point_in_pair
 
   result_type operator()(const argument_type& vp) const
   {
+    CGAL_precondition(vp.first != Vertex_handle());
     return std::make_pair(vp.first->point(), vp.second);
   }
 };
