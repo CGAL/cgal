@@ -71,7 +71,8 @@ the boundary edges of the conflict zone of `p` in the triangulation `rt`.
 \link  Regular_triangulation_2::hidden_vertices_end() `rt.hidden_vertices_end()`\endlink
 determines the iterator range over the hidden vertices of the conflict
 zone of `p` in`rt`. It is the result of the function
-\link Regular_triangulation_2::get_boundary_of_conflicts() `rt.get_boundary_of_conflicts(p,std::back_inserter(hole), std::back_inserter(hidden_vertices), start)`\endlink.
+\link Regular_triangulation_2::get_boundary_of_conflicts_and_hidden_vertices()
+`rt.get_boundary_of_conflicts_and_hidden_vertices(p,std::back_inserter(hole), std::back_inserter(hidden_vertices), start)`\endlink.
 */
 template <class Rt, class OutputIterator, class EdgeIterator, class VertexIterator >
 CGAL::Triple< OutputIterator, typename Traits::FT, bool >
