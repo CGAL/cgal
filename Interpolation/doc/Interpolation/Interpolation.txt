@@ -45,7 +45,7 @@ associated to \f$ \mathcal{P}\f$ are defined from the Voronoi diagram of
 Voronoi cell of \f$ \mathbf{x}\f$ "steals" some parts from the existing
 cells.
 
-\cgalFigureBegin{fignn_coords,nn_coords.png}
+\cgalFigureBegin{fignn_coords, nn_coords.svg}
 2D example: \f$ \mathbf{x}\f$ has five natural neighbors \f$ \mathbf{p_1},\ldots, \mathbf{p_5}\f$. The natural neighbor coordinate \f$ \lambda_3(\mathbf{x})\f$ is the ratio of the area of the pink polygon, \f$ \pi_3(\mathbf{x})\f$, over the area of the total highlighted zone.
 \cgalFigureEnd
 
