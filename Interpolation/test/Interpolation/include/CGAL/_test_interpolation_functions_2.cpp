@@ -180,7 +180,6 @@ bool test_interpolation_with_value(ForwardIterator first, ForwardIterator beyond
 
   res = CGAL::farin_c1_interpolation(first, beyond, norm, p, f, grad_f, geom_traits);
   assert(res.second);
-  std::cout << CGAL_NTS abs(res.first - exact_value) << " vs tolerance: " << tolerance << std::endl;
   assert(CGAL_NTS abs(res.first - exact_value) <= tolerance);
 
   return true;
