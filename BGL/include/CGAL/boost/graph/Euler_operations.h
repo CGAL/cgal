@@ -1069,7 +1069,7 @@ collapse_edge(typename boost::graph_traits<Graph>::edge_descriptor v0v1,
   vertex_descriptor p = source(pq, g);
 
 
-  bool lP_Erased = false, lQ_Erased = false ;
+  bool lP_Erased = false;
 
   if ( lTopFaceExists )
   { 
@@ -1114,20 +1114,28 @@ collapse_edge(typename boost::graph_traits<Graph>::edge_descriptor v0v1,
       //CGAL_ECMS_TRACE(3, "Removing q-b E" << qb.idx() << " (V" 
       //                << q.idx() << "->V" << target(qb, g).idx() 
       //                << ") by erasing bottom face" ) ;
-      if ( lTopFaceExists )
+
+      if ( !lTopFaceExists )
       {
-        remove_face(opposite(qb, g),g);
+        //CGAL_ECMS_TRACE(3, "Top face doesn't exist so vertex Q already removed" ) ;
+        lP_Erased = true ;
+
+        // q will be removed, swap p and q
+        halfedge_descriptor hq=halfedge(q, g);
+        halfedge_descriptor hp=halfedge(p, g);
+        BOOST_FOREACH(halfedge_descriptor h, halfedges_around_target(hq, g))
+          set_target(h, p, g);
+        BOOST_FOREACH(halfedge_descriptor h, halfedges_around_target(hp, g))
+          set_target(h, q, g);
+        set_halfedge(p, hq, g);
+        set_halfedge(q, hp, g);
       }
-      else
-      {
-        join_face(opposite(next(qp, g), g), g);
-      }
+
+      remove_face(opposite(qb, g),g);
     }
   }
 
-  CGAL_assertion( !lP_Erased || !lQ_Erased ) ;
-
-  if ( !lP_Erased && !lQ_Erased )
+  if ( !lP_Erased )
   {
     //CGAL_ECMS_TRACE(3, "Removing vertex P by joining pQ" ) ;
 
@@ -1137,7 +1145,7 @@ collapse_edge(typename boost::graph_traits<Graph>::edge_descriptor v0v1,
 
   CGAL_expensive_assertion(is_valid_polygon_mesh(g));
 
-  return lP_Erased ? q : p ;
+  return q;
 }
 
 /**
