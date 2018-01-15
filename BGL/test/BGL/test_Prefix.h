@@ -157,7 +157,7 @@ template <typename Graph>
 struct Surface_fixture_1 {
   Surface_fixture_1() {
     assert(read_a_mesh(m, "data/fixture1.off"));
-    assert(CGAL::is_valid(m));
+    assert(CGAL::is_valid_polygon_mesh(m));
     typename boost::property_map<Graph, CGAL::vertex_point_t>::const_type
       pm = get(CGAL::vertex_point, const_cast<const Graph&>(m));
 
@@ -206,7 +206,7 @@ template <typename Graph>
 struct Surface_fixture_2 {
   Surface_fixture_2() {
     assert(read_a_mesh(m, "data/fixture2.off"));
-    assert(CGAL::is_valid(m));
+    assert(CGAL::is_valid_polygon_mesh(m));
 
     typename boost::property_map<Graph, CGAL::vertex_point_t>::const_type
       pm = get(CGAL::vertex_point, const_cast<const Graph&>(m));
@@ -267,7 +267,7 @@ template <typename Graph>
 struct Surface_fixture_3 {
   Surface_fixture_3() {
     assert(read_a_mesh(m, "data/fixture3.off"));
-    assert(CGAL::is_valid(m));
+    assert(CGAL::is_valid_polygon_mesh(m));
 
     typename boost::property_map<Graph, CGAL::vertex_point_t>::const_type
       pm = get(CGAL::vertex_point, const_cast<const Graph&>(m));
@@ -313,7 +313,7 @@ template <typename Graph>
 struct Surface_fixture_4 {
   Surface_fixture_4() {
     assert(read_a_mesh(m, "data/fixture4.off"));
-    assert(CGAL::is_valid(m));
+    assert(CGAL::is_valid_polygon_mesh(m));
 
    typename boost::property_map<Graph, CGAL::vertex_point_t>::const_type
       pm = get(CGAL::vertex_point, const_cast<const Graph&>(m));
@@ -348,7 +348,7 @@ template <typename Graph>
 struct Surface_fixture_5 {
   Surface_fixture_5() {
     assert(read_a_mesh(m, "data/add_face_to_border.off"));
-    assert(CGAL::is_valid(m));
+    assert(CGAL::is_valid_polygon_mesh(m));
 
    typename boost::property_map<Graph, CGAL::vertex_point_t>::const_type
       pm = get(CGAL::vertex_point, const_cast<const Graph&>(m));
@@ -378,7 +378,7 @@ template <typename Graph>
 struct Surface_fixture_6 {
   Surface_fixture_6() {
     assert(read_a_mesh(m, "data/quad.off"));
-    assert(CGAL::is_valid(m));
+    assert(CGAL::is_valid_polygon_mesh(m));
 
     typename boost::graph_traits<Graph>::halfedge_descriptor h;
     
@@ -397,7 +397,7 @@ template <typename Graph>
 struct Surface_fixture_7 {
   Surface_fixture_7() {
     assert(read_a_mesh(m, "data/cube.off"));
-    assert(CGAL::is_valid(m));
+    assert(CGAL::is_valid_polygon_mesh(m));
 
     h = *(halfedges(m).first);    
   }
@@ -410,7 +410,7 @@ template <typename Graph>
 struct Surface_fixture_8 {
   Surface_fixture_8() {
     assert(read_a_mesh(m, "data/fixture5.off"));
-    assert(CGAL::is_valid(m));
+    assert(CGAL::is_valid_polygon_mesh(m));
 
    typename boost::property_map<Graph, CGAL::vertex_point_t>::const_type
       pm = get(CGAL::vertex_point, const_cast<const Graph&>(m));

@@ -41,7 +41,7 @@ join_face_test()
   
   assert(degree(f.w, f.m) == 2);
   assert(degree(f.v, f.m) == 3);
-  assert(CGAL::is_valid(f.m));
+  assert(CGAL::is_valid_polygon_mesh(f.m));
 
 }
 
@@ -63,7 +63,7 @@ remove_face_test_1()
 
   CGAL::Euler::remove_face(e,f.m);
 
-  assert(CGAL::is_valid(f.m));
+  assert(CGAL::is_valid_polygon_mesh(f.m));
 
   assert_EQUAL(degree(f.v, f.m) == 3);
   assert_EQUAL(degree(f.x, f.m) == 2);
@@ -99,7 +99,7 @@ remove_face_test_2()
   assert(found);
   assert(face(e, f.m) == f.f1);
   CGAL::Euler::remove_face(e,f.m);
-  assert(CGAL::is_valid(f.m));
+  assert(CGAL::is_valid_polygon_mesh(f.m));
 
   assert(CGAL::internal::exact_num_faces(f.m) == 3);
   assert(CGAL::internal::exact_num_edges(f.m) == 7);
@@ -128,7 +128,7 @@ add_face_to_border_test()
 
   CGAL::Euler::add_face_to_border(f.h1, f.h2, f.m);
 
-  assert(CGAL::is_valid(f.m));
+  assert(CGAL::is_valid_polygon_mesh(f.m));
 
 }
 
@@ -158,7 +158,7 @@ add_vertex_and_face_to_border_test()
   }
 
   halfedge_descriptor res = CGAL::Euler::add_vertex_and_face_to_border(f.h1, f.h2, f.m);
-  assert(CGAL::is_valid(f.m));
+  assert(CGAL::is_valid_polygon_mesh(f.m));
   
   assert(! CGAL::is_border(res,m));
   assert(CGAL::is_border(opposite(res,m),m));
@@ -168,8 +168,6 @@ add_vertex_and_face_to_border_test()
     blength--;
   }
   assert(blength == 0);
-
-
 
 }
 
@@ -193,7 +191,7 @@ join_vertex_interior_test()
   assert(boost::distance(CGAL::halfedges_around_face(halfedge(f.f1, f.m), f.m)) == 3);
   assert(boost::distance(CGAL::halfedges_around_face(halfedge(f.f2, f.m), f.m)) == 3);
   assert(degree(f.x, f.m) == 4);
-  assert(CGAL::is_valid(f.m));
+  assert(CGAL::is_valid_polygon_mesh(f.m));
 }
 
 template <typename T> 
@@ -218,7 +216,7 @@ join_vertex_exterior_test()
     assert(boost::distance(CGAL::halfedges_around_face(halfedge(f.f1, f.m), f.m)) == 4);
     assert(boost::distance(CGAL::halfedges_around_face(halfedge(f.f2, f.m), f.m)) == 3);
     assert(degree(f.y, f.m) == 3);
-    assert(CGAL::is_valid(f.m));
+    assert(CGAL::is_valid_polygon_mesh(f.m));
   }
 
   {
@@ -237,7 +235,7 @@ join_vertex_exterior_test()
     assert(boost::distance(CGAL::halfedges_around_face(halfedge(f.f1, f.m), f.m)) == 4);
     assert(boost::distance(CGAL::halfedges_around_face(halfedge(f.f2, f.m), f.m)) == 3);
  
-    assert(CGAL::is_valid(f.m));
+    assert(CGAL::is_valid_polygon_mesh(f.m));
     assert(degree(f.w, f.m) == 3);
 
   }
@@ -261,7 +259,7 @@ split_vertex()
 
   // split border vertex y
   CGAL::Euler::split_vertex(h1, h2,f.m);
-  assert(CGAL::is_valid(f.m));
+  assert(CGAL::is_valid_polygon_mesh(f.m));
   assert(CGAL::internal::exact_num_vertices(f.m) == 7);
   assert(CGAL::internal::exact_num_edges(f.m) == 8);
   assert(boost::distance(CGAL::halfedges_around_face(h1, f.m)) == 5);
@@ -279,13 +277,13 @@ split_join_vertex_inverse()
   boost::tie(h, found) = halfedge(f.w, f.x, f.m);
   assert(found);
   CGAL::Euler::join_vertex(h,f.m);
-  assert(CGAL::is_valid(f.m));
+  assert(CGAL::is_valid_polygon_mesh(f.m));
   boost::tie(h1, found) = halfedge(f.z, f.x, f.m);
   assert(found);
   boost::tie(h2, found) = halfedge(f.v, f.x, f.m);
   assert(found);
   CGAL::Euler::join_vertex(CGAL::Euler::split_vertex(h1, h2,f.m),f.m);
-  assert(CGAL::is_valid(f.m));
+  assert(CGAL::is_valid_polygon_mesh(f.m));
   
   assert(CGAL::internal::exact_num_vertices(f.m)== 5);
   assert(CGAL::internal::exact_num_faces(f.m) == 2);
@@ -305,7 +303,7 @@ join_loop_test()
 
   CGAL::Euler::join_loop(f.h1, f.h2, f.m);
   
-  assert(CGAL::is_valid(f.m));
+  assert(CGAL::is_valid_polygon_mesh(f.m));
 }
 
 template <typename T> 
@@ -319,7 +317,7 @@ split_loop_test()
   assert(CGAL::internal::exact_num_vertices(f.m) == 8);
   assert(CGAL::internal::exact_num_faces(f.m) == 8);
   assert(CGAL::internal::exact_num_halfedges(f.m) == 24);
-  assert(CGAL::is_valid(f.m));
+  assert(CGAL::is_valid_polygon_mesh(f.m));
 }
 
 template <typename T> 
