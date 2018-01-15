@@ -35,6 +35,7 @@
 #include <CGAL/property_map.h>
 #include <CGAL/boost/graph/properties.h>
 #include <boost/mpl/if.hpp>
+#include <boost/mpl/has_xxx.hpp>
 
 #include <boost/type_traits/is_same.hpp>
 #include <boost/version.hpp>
@@ -246,8 +247,13 @@ namespace CGAL {
         return CGAL::parameters::all_default();
       }
     }
+
+    namespace internal{
+      BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_nested_type_iterator, iterator, false)
+    }
     
-    template<typename PointRange, typename NamedParameters>
+    template<typename PointRange, typename NamedParameters,
+             bool has_nested_iterator=internal::Has_nested_type_iterator<PointRange>::value>
     class GetPointMap
     {
       typedef typename std::iterator_traits<typename PointRange::iterator>::value_type Point;
@@ -265,6 +271,16 @@ namespace CGAL {
       NamedParameters,
       DefaultPMap
       > ::type  const_type;
+    };
+
+    // to please compiler instantiating non valid overloads
+    template<typename PointRange, typename NamedParameters>
+    class GetPointMap<PointRange, NamedParameters, false>
+    {
+      struct Dummy_point{};
+    public:
+      typedef typename CGAL::Identity_property_map<Dummy_point> type;
+      typedef typename CGAL::Identity_property_map<Dummy_point> const_type;
     };
 
     template<typename PointRange>
