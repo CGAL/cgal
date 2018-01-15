@@ -72,9 +72,17 @@ regular_neighbor_coordinates_vertex_2(const Rt& rt,
   typedef typename Rt::Vertex_handle       Vertex_handle;
   typedef typename Rt::Face_circulator     Face_circulator;
 
-  //no hole because only (exactly!) one vertex is hidden:
-  if(hole_begin==hole_end){
-    *out++= std::make_pair((*hidden_vertices_begin), Coord_type(1));
+  // no hole
+  if(hole_begin == hole_end)
+  {
+    if(hidden_vertices_begin == hidden_vertices_end)
+    {
+      // No hole and nothing hidden: the point's weight is too low to appear in the triangulation.
+      return make_triple(out, Coord_type(0), true);
+    }
+
+    // No hole but some vertices are hidden (there can be only one)
+    *out++ = std::make_pair((*hidden_vertices_begin), Coord_type(1));
     ++hidden_vertices_begin;
     CGAL_assertion(hidden_vertices_begin == hidden_vertices_end);
     return make_triple(out, Coord_type(1), true);
