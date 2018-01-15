@@ -661,29 +661,29 @@ namespace internal {
         vertex_descriptor va = source(he, mesh_);
         vertex_descriptor vb = target(he, mesh_);
 
-        bool swap_done = false;
-        if (is_on_patch_border(va) && !is_on_patch_border(vb))
+        bool is_va_constrained = is_constrained(va) || is_corner(va);
+        bool is_vb_constrained = is_constrained(vb) || is_corner(vb);
+
+
+        // do not collapse edge with two constrained vertices
+        if (is_va_constrained && is_vb_constrained) continue;
+
+        bool can_swap = !is_va_constrained || !is_vb_constrained;
+        if (is_va_constrained)
         {
           he = opposite(he, mesh_);
-          va = source(he, mesh_);
-          vb = target(he, mesh_);
-          swap_done = true;
-          CGAL_assertion(is_on_patch_border(vb) && !is_on_patch_border(va));
+          e=edge(he, mesh_);
+          std::swap(va, vb);
         }
 
         if(!collapse_does_not_invert_face(he))
         {
-          if (!swap_done//if swap has already been done, don't re-swap
-           && collapse_does_not_invert_face(opposite(he, mesh_)))
+          if (can_swap//if swap allowed (no constrained vertices)
+              && collapse_does_not_invert_face(opposite(he, mesh_)))
           {
             he = opposite(he, mesh_);
-            va = source(he, mesh_);
-            vb = target(he, mesh_);
-
-            if (is_on_patch_border(va) && !is_on_patch_border(vb))
-              continue;//we cannot swap again. It would lead to a face inversion
-            else if (is_corner(va) && !is_corner(vb))
-              continue;//idem
+            e=edge(he, mesh_);
+            std::swap(va, vb);
           }
           else
             continue;//both directions invert a face
@@ -706,9 +706,9 @@ namespace internal {
             break;
           }
         }
-        //before collapsing va into vb, check that it does not break a corner
-        //if it is allowed, perform the collapse
-        if (collapse_ok && !is_constrained(va) && !is_corner(va))
+        // before collapsing va into vb, check that it does not break a corner
+        // or a constrained vertex
+        if (collapse_ok)
         {
           //"collapse va into vb along e"
           // remove edges incident to va and vb, because their lengths will change
@@ -748,25 +748,15 @@ namespace internal {
           if (!mesh_border_case_opp)
             halfedge_and_opp_removed(prev(opposite(he, mesh_), mesh_));
 
-
-          //constrained case
-          bool constrained_case = is_constrained(va) || is_constrained(vb);
           //perform collapse
-          //Take vb as the target of the collapse_edge so it is kept
-          vertex_descriptor vkept;
-          if(target(halfedge(e, mesh_), mesh_) == vb)
-            vkept = CGAL::Euler::collapse_edge(e, mesh_);
-          else
-            vkept = CGAL::Euler::collapse_edge(edge(opposite(halfedge(e, mesh_), mesh_), mesh_), mesh_);
+          CGAL_assertion(target(halfedge(e, mesh_), mesh_) == vb);
+          vertex_descriptor vkept = CGAL::Euler::collapse_edge(e, mesh_);
           CGAL_assertion(vkept == vb);//is the constrained point still here
           ++nb_collapses;
 
           //fix constrained case
-          if (constrained_case)//we have made sure that collapse goes to constrained vertex
-            CGAL_assertion(is_constrained(vkept));
+          CGAL_assertion(is_constrained(vkept) == (is_va_constrained || is_vb_constrained));
           fix_degenerate_faces(vkept, short_edges, sq_low);
-
-
 
 #ifdef CGAL_PMP_REMESHING_DEBUG
           debug_status_map();
