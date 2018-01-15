@@ -330,14 +330,32 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
                 << " " << std::endl;
       inside_is_less = !inside_is_less;
     }
-    Gray_Image_mesh_domain* p_domain = new Gray_Image_mesh_domain(*pImage, CGAL::Compare_to_isovalue(iso_value, inside_is_less), value_outside);
+    CGAL::Compare_to_isovalue domain_functor(iso_value, inside_is_less);
+    Gray_Image_mesh_domain* p_domain =
+      new Gray_Image_mesh_domain(*pImage, domain_functor, value_outside);
     if(protect_features && polylines.empty())
     {
-      std::cerr << "Warning : Automatic detection of features"
-                << " in Gray images is not implemented yet" << std::endl;
-      //std::vector<std::vector<Bare_point> > polylines_on_bbox;
-      //CGAL::polylines_to_protect<Bare_point>(*pImage, polylines_on_bbox);
-      //p_domain->add_features(polylines_on_bbox.begin(), polylines_on_bbox.end());
+      using CGAL::internal::Mesh_3::Linear_interpolator;
+      typedef Gray_Image_mesh_domain::Image_word_type Image_word_type;
+      std::vector<std::vector<Bare_point> > polylines_on_bbox;
+      CGAL::polylines_to_protect<
+        Bare_point, Image_word_type>(*pImage,
+                                     pImage->vx(),
+                                     pImage->vy(),
+                                     pImage->vz(),
+                                     polylines_on_bbox,
+                                     (Image_word_type*)0,
+                                     CGAL::Null_subdomain_index(),
+                                     domain_functor,
+                                     Linear_interpolator<Kernel, Image_word_type>(),
+                                     0,
+                                     0,
+                                     iso_value,
+                                     (std::max)(10, int(10 * (std::min)((std::min)(pImage->vx(),
+                                                                                   pImage->vy()),
+                                                                        pImage->vz())
+                                                        / edge_size)));
+      p_domain->add_features(polylines_on_bbox.begin(), polylines_on_bbox.end());
     }
     if(! polylines.empty()){
       // Insert edge in domain

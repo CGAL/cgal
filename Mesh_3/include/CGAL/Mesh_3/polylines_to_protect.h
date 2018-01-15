@@ -66,6 +66,37 @@ struct Returns_midpoint {
   }
 };
 
+template <typename K, typename NT>
+struct Linear_interpolator {
+  typedef typename K::Point_3 Point_3;
+
+  Point_3 interpolate(const Point_3& pa,
+                      const Point_3& pb,
+                      const NT a,
+                      const NT b) const
+  {
+    return pa + (a / (a - b)) * ( pb - pa);
+  }
+
+
+  Point_3 operator()(const Point_3& pa,
+                     const Point_3& pb,
+                     const NT a,
+                     const NT b) const
+  {
+    return
+      (a < b) ?
+      interpolate(pa, pb, a, b) :
+      interpolate(pb, pa, b, a);
+  }
+  double operator()(const NT a,
+                    const NT b) const
+  {
+    return a / ( a - b );
+  }
+};
+
+
 class Isoline_equation {
   double a;
   double b;

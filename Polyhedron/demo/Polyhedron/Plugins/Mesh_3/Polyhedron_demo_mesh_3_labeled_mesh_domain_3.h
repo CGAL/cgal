@@ -36,6 +36,7 @@
 namespace CGAL {
 
 struct Compare_to_isovalue {
+  typedef bool result_type;
   float iso_value;
   bool less;
 

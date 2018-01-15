@@ -57,19 +57,20 @@ namespace internal {
  */
 template<class Image,
          class BGT,
-         typename Image_word_type = float,
+         typename Image_word_type_ = float,
          typename Transform = internal::Greater_than<double>,
          typename Subdomain_index = int>
 class Gray_image_mesh_domain_3
   : public Labeled_mesh_domain_3<
   Mesh_3::Image_to_labeled_function_wrapper<Image, BGT,
-                                            Image_word_type,
+                                            Image_word_type_,
                                             Subdomain_index,
                                             Transform,
                                             false> ,
   BGT>
 {
 public:
+  typedef Image_word_type_ Image_word_type;
   typedef Mesh_3::Image_to_labeled_function_wrapper<Image, BGT,
                                                     Image_word_type,
                                                     Subdomain_index,
