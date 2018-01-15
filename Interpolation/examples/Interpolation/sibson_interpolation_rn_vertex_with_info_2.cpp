@@ -17,7 +17,8 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel    K;
 typedef CGAL::Interpolation_gradient_fitting_traits_2<K>       Traits;
 
 typedef K::FT                                                  Coord_type;
-typedef K::Weighted_point_2                                    Point;
+typedef K::Point_2                                             Bare_point;
+typedef K::Weighted_point_2                                    Weighted_point;
 typedef K::Vector_2                                            Vector;
 
 template <typename V, typename G>
@@ -79,21 +80,21 @@ int main()
   Coord_type a(0.25), bx(1.3), by(-0.7), c(0.2);
   for (int y=0; y<4; y++) {
     for (int x=0; x<4; x++) {
-      Point p(x,y);
+      Weighted_point p(Bare_point(x,y), (x-y)/3. /*weight*/);
       Vertex_handle vh = rt.insert(p);
       Coord_type value = a + bx*x + by*y + c*(x*x+y*y);
       vh->info().value = value;
     }
   }
 
-  sibson_gradient_fitting_rn_2(rt,
-                               gradient_function,
-                               CGAL::Identity<std::pair<Vertex_handle, Vector> >(),
-                               value_function,
-                               Traits());
+  CGAL::sibson_gradient_fitting_rn_2(rt,
+                                     gradient_function,
+                                     CGAL::Identity<std::pair<Vertex_handle, Vector> >(),
+                                     value_function,
+                                     Traits());
 
   // coordinate computation
-  Point p(1.6, 1.4);
+  Weighted_point p(Bare_point(1.6, 1.4), -0.3 /*weight*/);
   std::vector<std::pair<Vertex_handle, Coord_type> > coords;
   typedef CGAL::Identity<std::pair<Vertex_handle, Coord_type> > Identity;
   Coord_type norm = CGAL::regular_neighbor_coordinates_2(rt,

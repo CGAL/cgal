@@ -36,7 +36,7 @@ typedef CGAL::Delaunay_triangulation_2<K, Tds>              Delaunay_triangulati
 typedef Delaunay_triangulation::Vertex_handle               Vertex_handle;
 typedef CGAL::Interpolation_traits_2<K>                     Traits;
 
-typedef std::vector< std::pair<Point, Coord_type> >         Coordinate_vector;
+typedef std::vector<std::pair<Vertex_handle, Coord_type> >  Coordinate_vector;
 
 template <typename V, typename T>
 struct Value_function
@@ -144,8 +144,8 @@ int main()
     total_value += exact_value;
 
     //Coordinate_vector:
-    std::vector< std::pair<Vertex_handle, Coord_type> > coords;
-    typedef CGAL::Identity<std::pair< Vertex_handle, Coord_type> > Identity;
+    Coordinate_vector coords;
+    typedef CGAL::Identity<std::pair<Vertex_handle, Coord_type> > Identity;
     Coord_type norm = CGAL::natural_neighbor_coordinates_2(T,
                                                            points[i],
                                                            std::back_inserter(coords),
