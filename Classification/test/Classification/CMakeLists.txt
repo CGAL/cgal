@@ -71,7 +71,7 @@ else()
   return()
 endif()
 
-if( WIN23 )
+if( WIN32 )
   if (Boost_ZLIB_FOUND)
     set(classification_linked_libraries ${classification_linked_libraries}
       ${Boost_ZLIB_LIBRARY})
