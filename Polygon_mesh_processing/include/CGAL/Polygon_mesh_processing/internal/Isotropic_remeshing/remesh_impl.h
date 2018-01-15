@@ -691,9 +691,7 @@ namespace internal {
         CGAL_assertion(collapse_does_not_invert_face(he));
         CGAL_assertion(is_collapse_allowed(e));
 
-        if (degree(va, mesh_) < 3
-          || degree(vb, mesh_) < 3
-          || !CGAL::Euler::does_satisfy_link_condition(e, mesh_))//necessary to collapse
+        if (!CGAL::Euler::does_satisfy_link_condition(e, mesh_))//necessary to collapse
           continue;
 
         //check that collapse would not create an edge with length > high
