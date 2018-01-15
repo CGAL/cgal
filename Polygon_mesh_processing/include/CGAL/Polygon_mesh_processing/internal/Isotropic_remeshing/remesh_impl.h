@@ -941,10 +941,10 @@ namespace internal {
 
         else if (is_on_patch(v))
         {
-        Vector_3 vn = PMP::compute_vertex_normal(v, mesh_
-                            , PMP::parameters::vertex_point_map(vpmap_)
-                            .geom_traits(GeomTraits()));
-        put(propmap_normals, v, vn);
+          Vector_3 vn = PMP::compute_vertex_normal(v, mesh_
+                              , PMP::parameters::vertex_point_map(vpmap_)
+                              .geom_traits(GeomTraits()));
+          put(propmap_normals, v, vn);
 
           Vector_3 move = CGAL::NULL_VECTOR;
           unsigned int star_size = 0;
