@@ -251,6 +251,13 @@ void _test_natural_neighbors_2_with_outputfunctor(Rt T) // intentional copy beca
   assert(is_equal);
   pt_coords.clear();
 
+  // with an absurdly low weight to have a vertex that is hidden on insertion
+  wp = Weighted_point(Bare_point(0,0), -1000.);
+  pt_coordinate_result = CGAL::regular_neighbor_coordinates_2(T, wp, std::back_inserter(pt_coords), pt_fct);
+  assert(pt_coords.empty());
+  assert(pt_coordinate_result.third);
+  assert(pt_coordinate_result.second == 0);
+
   // test with hidden_vertices:
   wp = Weighted_point(Bare_point(0,0), 4.);
   pt_coordinate_result = CGAL::regular_neighbor_coordinates_2(T, wp, std::back_inserter(pt_coords), pt_fct);
