@@ -1033,14 +1033,13 @@ add_face_to_border(typename boost::graph_traits<Graph>::halfedge_descriptor h1,
  * <UL>
  *   <LI>The edge `v0v1` is no longer in `g`.
  *   <LI>The faces incident to edge `v0v1` are no longer in `g`.
- *   <LI>Either `v0`, or `v1` is no longer in `g` while the other remains.
- *       Let `vgone` be the removed vertex and `vkept` be the remaining vertex.
+ *   <LI>`v0` is no longer in `g`.
  *   <LI>If `e` was a border halfedge, that is `is_border(e, g) == true`, then `next(ep,g) == en`, and `prev(en,g) == ep`.
  *   <LI>If `e` was not a border halfedge, that is `is_border(e, g) == false`, then `ep` and `epo` are no longer in `g` while `en` and `eno` are kept in `g`.
- *   <LI>For all halfedges `hv` in `halfedges_around_target(vgone, g)`, `target(*hv, g) == vkept` and `source(opposite(*hv, g), g) == vkept`.
+ *   <LI>For all halfedges `hv` in `halfedges_around_target(v0, g)`, `target(*hv, g) == v1` and `source(opposite(*hv, g), g) == v1`.
  *   <LI>No other incidence information has changed in `g`.
  * </UL>
- * \returns vertex `vkept` (which can be either `v0` or `v1`).
+ * \returns vertex `v1`.
  * \pre g must be a triangulated graph
  * \pre `does_satisfy_link_condition(v0v1,g) == true`.
  */
