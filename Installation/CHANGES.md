@@ -36,6 +36,14 @@ Release date: September 2018
 -   Added a function to apply a transformation to a mesh : 
     - `CGAL::Polygon_mesh_processing::transform()`
 
+### CGAL and the Boost Graph Library (BGL)
+
+-   Change the function `CGAL::Euler::collapse_edge` so that the target
+    vertex stays the same after the collapsing.
+
+-   Guarantee that constrained vertices are kept in the remeshed mesh, 
+    and not only constrained points like before.
+
 Release 4.12
 ------------
 
