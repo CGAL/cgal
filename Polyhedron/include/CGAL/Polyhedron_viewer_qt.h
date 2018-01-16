@@ -206,6 +206,15 @@ void draw(const Polyhedron& apoly,
   app.exec();
 }
 
+template<class Polyhedron>
+void draw(const Polyhedron& apoly,
+          const char* title="Polyhedron Viewer",
+          bool nofill=false)
+{
+  return display<Polyhedron, DefaultColorFunctorPolyhedron>
+    (apoly, title, nofill);
+}
+
 } // End namespace CGAL
 
 #else // CGAL_USE_BASIC_VIEWER
@@ -223,20 +232,17 @@ void draw(const Polyhedron&,
            <<std::endl;
 }
 
+template<class Polyhedron>
+void draw(const Polyhedron&,
+          const char* ="Polyhedron Viewer",
+          bool=false)
+{
+  std::cerr<<"Impossible to draw a Polyhedron_3 because CGAL_USE_BASIC_VIEWER is not defined."
+           <<std::endl;
+}
+
 } // End namespace CGAL
 
 #endif // CGAL_USE_BASIC_VIEWER
-
-namespace CGAL 
-{
-
-template<class Polyhedron>
-void draw(const Polyhedron& apoly,
-          const char* title="Polyhedron Viewer",
-          bool nofill=false)
-{ return display<Polyhedron, DefaultColorFunctorPolyhedron>
-    (apoly, title, nofill); }
-
-} // End namespace CGAL
 
 #endif // CGAL_POLYHEDRON_VIEWER_QT_H

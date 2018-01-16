@@ -151,6 +151,12 @@ void draw(const T3& at3,
   app.exec();
 }
 
+template<class T3>
+void draw(const T3& at3,
+          const char* title="t3_viewer",
+          bool nofill=false)
+{ return display<T3, DefaultColorFunctor>(at3, title, nofill); }
+
 } // End namespace CGAL
 
 #else // CGAL_USE_BASIC_VIEWER
@@ -160,9 +166,18 @@ namespace CGAL
 
 template<class T3, class ColorFunctor>
 void draw(const T3&,
-          const char*="T3 Viewer",
+          const char* ="T3 Viewer",
           bool=false,
-          const ColorFunctor&=ColorFunctor())
+          const ColorFunctor& =ColorFunctor())
+{
+  std::cerr<<"Impossible to draw a Triangulation_3 because CGAL_USE_BASIC_VIEWER is not defined."
+           <<std::endl;
+}
+  
+template<class T3>
+void draw(const T3&,
+          const char* ="t3_viewer",
+          bool=false)
 {
   std::cerr<<"Impossible to draw a Triangulation_3 because CGAL_USE_BASIC_VIEWER is not defined."
            <<std::endl;
@@ -171,16 +186,5 @@ void draw(const T3&,
 } // End namespace CGAL
 
 #endif // CGAL_USE_BASIC_VIEWER
-
-namespace CGAL 
-{
-
-template<class T3>
-void draw(const T3& at3,
-          const char* title="t3_viewer",
-          bool nofill=false)
-{ return display<T3, DefaultColorFunctor>(at3, title, nofill); }
-
-} // End namespace CGAL
 
 #endif // CGAL_T3_VIEWER_QT_H

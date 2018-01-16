@@ -198,6 +198,12 @@ void draw(const SM& amesh,
   app.exec();
 }
 
+template<class SM>
+void draw(const SM& amesh,
+          const char* title="Surface Mesh Viewer",
+          bool nofill=false)
+{ return draw<SM, DefaultColorFunctorSM>(amesh, title, nofill); }
+
 } // End namespace CGAL
 
 #else // CGAL_USE_BASIC_VIEWER
@@ -207,9 +213,18 @@ namespace CGAL
   
 template<class SM, class ColorFunctor>
 void draw(const SM&,
-          const char*="Surface Mesh Viewer",
+          const char* ="Surface Mesh Viewer",
           bool=false,
-          const ColorFunctor&=ColorFunctor())
+          const ColorFunctor& =ColorFunctor())
+{
+  std::cerr<<"Impossible to draw a Surface mesh because CGAL_USE_BASIC_VIEWER is not defined."
+           <<std::endl;
+}
+
+template<class SM>
+void draw(const SM&,
+          const char* ="Surface Mesh Viewer",
+          bool=false)
 {
   std::cerr<<"Impossible to draw a Surface mesh because CGAL_USE_BASIC_VIEWER is not defined."
            <<std::endl;
@@ -218,16 +233,5 @@ void draw(const SM&,
 } // End namespace CGAL
 
 #endif // CGAL_USE_BASIC_VIEWER
-
-namespace CGAL 
-{
-
-template<class SM>
-void draw(const SM& amesh,
-          const char* title="Surface Mesh Viewer",
-          bool nofill=false)
-{ return draw<SM, DefaultColorFunctorSM>(amesh, title, nofill); }
-
-} // End namespace CGAL
 
 #endif // CGAL_SURFACE_MESH_VIEWER_QT_H
