@@ -356,19 +356,25 @@ bool is_valid_face_descriptor( typename boost::graph_traits<FaceGraph>::face_des
   return true;
 }
 
-
-template <typename FaceGraph>
-bool is_valid_polygon_mesh(const FaceGraph& g, bool verb = false)
+/*!
+  \ingroup PkgBGLHelperFct
+ * \brief is_valid_polygon_mesh checks the integrity of a `PolygonMesh`.
+ * \param g the `PolygonMesh` to test.
+ * \param verb : if `true`, the details of the check will be written in the standard output.
+ * \return `true` if the `PolygonMesh` is valid, `false` otherwise.
+ */
+template <typename PolygonMesh>
+bool is_valid_polygon_mesh(const PolygonMesh& g, bool verb = false)
 {
-  typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor   halfedge_descriptor;
-  typedef typename boost::graph_traits<FaceGraph>::vertex_descriptor     vertex_descriptor;
-  typedef typename boost::graph_traits<FaceGraph>::face_descriptor       face_descriptor;
-  typedef typename boost::graph_traits<FaceGraph>::vertex_iterator       vertex_const_iterator;
-  typedef typename boost::graph_traits<FaceGraph>::halfedge_iterator     halfedge_const_iterator;
-  typedef typename boost::graph_traits<FaceGraph>::face_iterator         face_const_iterator;
-  typedef typename boost::graph_traits<FaceGraph>::vertices_size_type    vertex_size_type;
-  typedef typename boost::graph_traits<FaceGraph>::halfedges_size_type   halfedges_size_type;
-  typedef typename boost::graph_traits<FaceGraph>::faces_size_type       faces_size_type;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor   halfedge_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor     vertex_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::face_descriptor       face_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_iterator       vertex_const_iterator;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_iterator     halfedge_const_iterator;
+  typedef typename boost::graph_traits<PolygonMesh>::face_iterator         face_const_iterator;
+  typedef typename boost::graph_traits<PolygonMesh>::vertices_size_type    vertex_size_type;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedges_size_type   halfedges_size_type;
+  typedef typename boost::graph_traits<PolygonMesh>::faces_size_type       faces_size_type;
   Verbose_ostream verr(verb);
   int num_v(std::distance(boost::begin(vertices(g)), boost::end(vertices(g)))),
   num_h(std::distance(boost::begin(halfedges(g)), boost::end(halfedges(g)))),
@@ -388,8 +394,8 @@ bool is_valid_polygon_mesh(const FaceGraph& g, bool verb = false)
     if ( is_border(begin, g))
       verr << "    is border halfedge" << std::endl;
     // Pointer integrity.
-    valid = valid && ( next(begin, g) != boost::graph_traits<FaceGraph>::null_halfedge());
-    valid = valid && ( opposite(begin, g) != boost::graph_traits<FaceGraph>::null_halfedge());
+    valid = valid && ( next(begin, g) != boost::graph_traits<PolygonMesh>::null_halfedge());
+    valid = valid && ( opposite(begin, g) != boost::graph_traits<PolygonMesh>::null_halfedge());
     if ( ! valid) {
       verr << "    pointer integrity corrupted (ptr==0)."
            << std::endl;
@@ -411,7 +417,7 @@ bool is_valid_polygon_mesh(const FaceGraph& g, bool verb = false)
       break;
     }
     // vertex integrity.
-    valid = valid && ( target(begin, g) != boost::graph_traits<FaceGraph>::null_vertex());
+    valid = valid && ( target(begin, g) != boost::graph_traits<PolygonMesh>::null_vertex());
     if ( ! valid) {
       verr << "    vertex pointer integrity corrupted."
            << std::endl;
@@ -448,7 +454,7 @@ bool is_valid_polygon_mesh(const FaceGraph& g, bool verb = false)
       break;
     verr << "vertex " << v << std::endl;
     // Pointer integrity.
-    if ( halfedge(vbegin, g) != boost::graph_traits<FaceGraph>::null_halfedge())
+    if ( halfedge(vbegin, g) != boost::graph_traits<PolygonMesh>::null_halfedge())
       valid = valid && (
             target( halfedge(vbegin, g), g) == vbegin);
     else
@@ -460,7 +466,7 @@ bool is_valid_polygon_mesh(const FaceGraph& g, bool verb = false)
     }
     // cycle-around-vertex test.
     halfedge_descriptor h = halfedge(vbegin, g);
-    if ( h != boost::graph_traits<FaceGraph>::null_halfedge()) {
+    if ( h != boost::graph_traits<PolygonMesh>::null_halfedge()) {
       halfedge_descriptor ge = h;
       do {
         verr << "    halfedge " << n << std::endl;
@@ -488,7 +494,7 @@ bool is_valid_polygon_mesh(const FaceGraph& g, bool verb = false)
       break;
     verr << "face " << f << std::endl;
     // Pointer integrity.
-    if ( halfedge(fbegin, g) != boost::graph_traits<FaceGraph>::null_halfedge())
+    if ( halfedge(fbegin, g) != boost::graph_traits<PolygonMesh>::null_halfedge())
       valid = valid && (
                          face(halfedge(fbegin, g), g) == fbegin);
     else
@@ -499,7 +505,7 @@ bool is_valid_polygon_mesh(const FaceGraph& g, bool verb = false)
     }
     // cycle-around-face test.
     halfedge_descriptor h = halfedge( fbegin, g);
-    if (h != boost::graph_traits<FaceGraph>::null_halfedge()) {
+    if (h != boost::graph_traits<PolygonMesh>::null_halfedge()) {
       halfedge_descriptor ge = h;
       do {
         verr << "    halfedge " << n << std::endl;
