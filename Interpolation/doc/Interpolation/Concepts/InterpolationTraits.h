@@ -25,14 +25,17 @@ public:
 /// @{
 
 /*!
-The number type must follow the model
-`FieldNumberType`.
+The number type must follow the model `FieldNumberType`.
 */
 typedef unspecified_type FT;
 
 /*!
-The point type on
-which the function is defined and interpolated.
+The (weightless) point type.
+*/
+typedef unspecified_type Point_d;
+
+/*!
+The weighted point type.
 */
 typedef unspecified_type Point_d;
 
@@ -42,12 +45,19 @@ The corresponding vector type.
 typedef unspecified_type Vector_d;
 
 /*!
-A constructor object for
-`Vector_d`.
-Provides :
+A constructor object for `Point_d`. Provides :
 
-`Vector_d operator() (Point_d a, Point_d b)` which produces the
-vector `b - a` and
+`Point_d operator() (Point_d p)` which returns the point itself.
+
+`Point_d operator() (Weighted_point_d wp)` which extracts the bare point from the weighted point.
+*/
+typedef unspecified_type Construct_point_d;
+
+/*!
+A constructor object for `Vector_d`. Provides :
+
+`Vector_d operator() (Point_d p, Point_d q)` which produces the
+vector `q - p` and
 
 `Vector_d operator() (Null_vector NULL_VECTOR)` which introduces
 the null vector.
@@ -55,21 +65,18 @@ the null vector.
 typedef unspecified_type Construct_vector_d;
 
 /*!
-Constructor object for
-`Vector_d`.
-Provides :
+Constructor object for `Vector_d`. Provides :
 
-`Vector_d operator() (Vector_d v,FT scale)` which produces the
+`Vector_d operator() (Vector_d v, FT scale)` which produces the
 vector `v` scaled by a factor `scale`.
 */
 typedef unspecified_type Construct_scaled_vector_d;
 
 /*!
-Constructor
-object for `FT`. Provides the operator:
+Constructor object for `FT`. Provides the operator:
 
-`FT operator() (Point_d a, Point_d b)` returning the squared
-distance between `a` and `b`.
+`FT operator() (Point_d p, Point_d q)` returning the squared
+distance between `p` and `q`.
 */
 typedef unspecified_type Compute_squared_distance_d;
 
@@ -84,6 +91,11 @@ InterpolationTraits();
 /// The following functions that create instances of the above
 /// constructor object types must exist.
 /// @{
+
+/*!
+
+*/
+Construct_vector_d construct_point_d_object();
 
 /*!
 
