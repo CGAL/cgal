@@ -3,7 +3,6 @@
 /// \defgroup PkgInterpolation2Concepts Concepts
 /// \ingroup PkgInterpolation2
 
-
 /// \defgroup PkgInterpolation2Interpolation Interpolation Functions
 /// \ingroup PkgInterpolation2
 
