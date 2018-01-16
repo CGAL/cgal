@@ -6,6 +6,7 @@
 
 #include <CGAL/Random.h>
 #include <CGAL/point_generators_3.h>
+#include <CGAL/Timer.h>
 
 #include <algorithm>
 #include <cassert>
@@ -744,6 +745,8 @@ public:
 
 int main (int, char**)
 {
+  CGAL::Timer t;
+  t.start();
   std::cout << "TESTING ..." << std::endl;
 
   CGAL::Set_ieee_double_precision pfr;
@@ -753,6 +756,7 @@ int main (int, char**)
   std::cout << "Epick ..." << std::endl;
   Tests<CGAL::Epick>::test();
 
+  std::cout << t.time() << " sec." << std::endl;
   std::cout << "EXIT SUCCESS" << std::endl;
   return EXIT_SUCCESS;
 }

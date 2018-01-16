@@ -7,6 +7,7 @@
 #include <CGAL/Periodic_3_regular_triangulation_traits_3.h>
 #include <CGAL/Periodic_3_triangulation_3.h>
 #include <CGAL/Periodic_3_triangulation_traits_3.h>
+#include <CGAL/Timer.h>
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel         Epeck;
 typedef CGAL::Periodic_3_regular_triangulation_traits_3<Epeck>    PRTT_Exact;
@@ -16,6 +17,8 @@ typedef CGAL::Periodic_3_regular_triangulation_traits_3<Epick>    PRTT_Inexact;
 
 int main(int, char**)
 {
+  CGAL::Timer t;
+  t.start();
   typedef CGAL::Periodic_3_regular_triangulation_3<PRTT_Exact>    P3RT3_Exact;
   _test_periodic_3_triangulation_3_constructors( P3RT3_Exact() );
   _test_cls_periodic_3_triangulation_3(P3RT3_Exact(),
@@ -31,5 +34,6 @@ int main(int, char**)
                                        "data/P3RT3_covering_test_HOM.tri",
                                        "data/P3RT3_covering_test.tri");
 
+  std::cout << t.time() << " sec." << std::endl;
   return 0;
 }
