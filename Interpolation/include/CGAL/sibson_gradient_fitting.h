@@ -39,12 +39,12 @@
 
 namespace CGAL {
 
-template < class ForwardIterator, class ValueFunctor, class Traits >
+template < class ForwardIterator, class ValueFunctor, class Traits, class Point >
 typename Traits::Vector_d
 sibson_gradient_fitting(ForwardIterator first,
                         ForwardIterator beyond,
                         const typename std::iterator_traits<ForwardIterator>::value_type::second_type& norm,
-                        const typename Traits::Point_d& bare_p,
+                        const Point& p,
                         const typename ValueFunctor::result_type::first_type fn,
                         ValueFunctor value_function,
                         const Traits& traits)
@@ -53,18 +53,20 @@ sibson_gradient_fitting(ForwardIterator first,
 
   typedef typename Traits::Aff_transformation_d Aff_transformation;
   typedef typename Traits::FT                   Coord_type;
+  typedef typename Traits::Point_d              Bare_point;
 
   typename Traits::Vector_d pn = traits.construct_vector_d_object()(NULL_VECTOR);
   Aff_transformation scaling, m, Hn(traits.construct_null_matrix_d_object()());
   Interpolation::internal::Extract_bare_point<Traits> cp(traits);
+  const Bare_point& bp = cp(p);
 
   for(; first!=beyond; ++first)
   {
     const typename Traits::Point_d& bare_f = cp(first->first);
-    Coord_type square_dist = traits.compute_squared_distance_d_object()(bare_f, bare_p);
+    Coord_type square_dist = traits.compute_squared_distance_d_object()(bare_f, bp);
     CGAL_assertion(square_dist != 0);
     Coord_type scale = first->second / (norm * square_dist);
-    typename Traits::Vector_d d = traits.construct_vector_d_object()(bare_p, bare_f);
+    typename Traits::Vector_d d = traits.construct_vector_d_object()(bp, bare_f);
 
     // compute the vector pn:
     typename ValueFunctor::result_type f = value_function(first->first);
@@ -79,6 +81,21 @@ sibson_gradient_fitting(ForwardIterator first,
   return Hn.inverse().transform(pn);
 }
 
+// for backward compatibility
+template < class ForwardIterator, class ValueFunctor, class Traits >
+typename Traits::Vector_d
+sibson_gradient_fitting(ForwardIterator first,
+                        ForwardIterator beyond,
+                        const typename std::iterator_traits<ForwardIterator>::value_type::second_type& norm,
+                        const typename std::iterator_traits<ForwardIterator>::value_type::first_type& p,
+                        ValueFunctor value_function,
+                        const Traits& traits)
+{
+  typename ValueFunctor::result_type fn = value_function(p);
+  CGAL_assertion(fn.second);
+
+  return sibson_gradient_fitting(first, beyond, norm, p, fn.first, value_function, traits);
+}
 
 // The next three functions are used to call the value functor for different
 // types of arguments and pass a final (bare) point + value to the function above.
@@ -112,11 +129,10 @@ sibson_gradient_fitting_internal(ForwardIterator first,
                                  const Traits& traits,
                                  const typename Traits::Weighted_point_d& /*dummy*/)
 {
-  const typename Traits::Point_d& bare_p = traits.construct_point_d_object()(vh->point());
   typename ValueFunctor::result_type fn = value_function(vh->point());
   CGAL_assertion(fn.second);
 
-  return sibson_gradient_fitting(first, beyond, norm, bare_p, fn.first, value_function, traits);
+  return sibson_gradient_fitting(first, beyond, norm, vh->point(), fn.first, value_function, traits);
 }
 
 
