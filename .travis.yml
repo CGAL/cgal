@@ -69,10 +69,10 @@ script:
 - cd ./.travis
 - bash -x -e ./build_package.sh $PACKAGE
 addons: 
-  apt:
-    sources:
-      - sourceline: 'ppa:ppsspp/cmake' 
-      - sourceline: 'ppa:hedges/qt5.5'
+#  apt:
+#    sources:
+#      - sourceline: 'ppa:ppsspp/cmake' 
+#      - sourceline: 'ppa:hedges/qt5.5'
 #    packages:
 #      - clang-3.6
 #      - zsh
