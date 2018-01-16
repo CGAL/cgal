@@ -210,6 +210,12 @@ void draw(const LCC& alcc,
   app.exec();
 }
 
+template<class LCC>
+void draw(const LCC& alcc,
+          const char* title="LCC Viewer",
+          bool nofill=false)
+{ return draw<LCC, DefaultColorFunctorLCC>(alcc, title, nofill); }
+
 } // End namespace CGAL
 
 #else // CGAL_USE_BASIC_VIEWER
@@ -219,9 +225,18 @@ namespace CGAL
   
 template<class LCC, class ColorFunctor>
 void draw(const LCC&,
-          const char*="LCC Viewer",
+          const char* ="LCC Viewer",
           bool=false,
-          const ColorFunctor&=ColorFunctor())
+          const ColorFunctor& =ColorFunctor())
+{
+  std::cerr<<"Impossible to draw a Linear_cell_complex because CGAL_USE_BASIC_VIEWER is not defined."
+           <<std::endl;
+}
+
+template<class LCC>
+void draw(const LCC&,
+          const char* ="LCC Viewer",
+          bool=false)
 {
   std::cerr<<"Impossible to draw a Linear_cell_complex because CGAL_USE_BASIC_VIEWER is not defined."
            <<std::endl;
@@ -230,16 +245,5 @@ void draw(const LCC&,
 } // End namespace CGAL
 
 #endif // CGAL_USE_BASIC_VIEWER
-
-namespace CGAL 
-{
-
-template<class LCC>
-void draw(const LCC& alcc,
-          const char* title="LCC Viewer",
-          bool nofill=false)
-{ return draw<LCC, DefaultColorFunctorLCC>(alcc, title, nofill); }
-
-} // End namespace CGAL
 
 #endif // CGAL_LCC_VIEWER_QT_H

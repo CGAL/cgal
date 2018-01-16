@@ -9,12 +9,7 @@ if(NOT POLICY CMP0070 AND POLICY CMP0053)
   cmake_policy(SET CMP0053 OLD)
 endif()
 
-# If you want to visualize a linear cell complex, you can use the following viewer
-# based on qt. Just uncomment the following line, plus the line find_package(CGALBasicViewer) below
 find_package(CGAL COMPONENTS Qt5)
-
-# If you don't want to visualize, use the following line (otherwise comment it)
-# find_package(CGAL QUIET)
 
 # For Gprof.
 # ADD_DEFINITIONS("-pg")
@@ -25,7 +20,6 @@ find_package(CGAL COMPONENTS Qt5)
 
 if ( CGAL_FOUND )
   include(${CGAL_USE_FILE})
-  find_package(CGALBasicViewer)
 
   include( CGAL_CreateSingleSourceCGALProgram )
   include_directories(BEFORE ../../include)
@@ -42,10 +36,22 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program("linear_cell_complex_3_operations.cpp")  
 
   create_single_source_cgal_program("display_linear_cell_complex.cpp")                           
-if (USE_BASIC_VIEWER)
-  target_link_libraries(display_linear_cell_complex ${BASIC_VIEWER_LIBRARIES})
-  qt5_use_modules(display_linear_cell_complex ${BASIC_VIEWER_MODULES})
-endif(USE_BASIC_VIEWER)
+  if(CGAL_Qt5_FOUND)
+    find_package(Qt5        REQUIRED COMPONENTS OpenGL Xml)
+    find_package(QGLViewer  REQUIRED)
+    find_package(OpenGL     REQUIRED)
+    add_definitions(${QT_DEFINITIONS})
+    add_definitions(-DQT_NO_KEYWORDS)
+    include_directories( ${QGLVIEWER_INCLUDE_DIR} )
+    add_definitions(${QGLVIEWER_DEFINITIONS})
+
+    target_link_libraries(display_linear_cell_complex CGAL::CGAL_Qt5
+                                                      ${QT_LIBRARIES}
+                                                      ${QGLVIEWER_LIBRARIES}
+                                                      ${OPENGL_gl_LIBRARY})
+    target_compile_definitions(display_linear_cell_complex PRIVATE CGAL_USE_BASIC_VIEWER)
+  endif()
+
 else()
 
   message(STATUS "This program requires the CGAL library, "
