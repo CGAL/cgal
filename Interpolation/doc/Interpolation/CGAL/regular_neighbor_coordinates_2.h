@@ -67,8 +67,8 @@ regular_neighbor_coordinates_2(const Rt& rt,
 /*!
 The same as above. The iterator range `[hole_begin, hole_end)` determines
 the boundary edges of the conflict zone of `p` in the triangulation `rt`.
-\link  Regular_triangulation_2::hidden_vertices_begin() `rt.hidden_vertices_begin()`\endlink and
-\link  Regular_triangulation_2::hidden_vertices_end() `rt.hidden_vertices_end()`\endlink
+\link Regular_triangulation_2::hidden_vertices_begin() `rt.hidden_vertices_begin()`\endlink and
+\link Regular_triangulation_2::hidden_vertices_end() `rt.hidden_vertices_end()`\endlink
 determines the iterator range over the hidden vertices of the conflict
 zone of `p` in`rt`. It is the result of the function
 \link Regular_triangulation_2::get_boundary_of_conflicts_and_hidden_vertices()
