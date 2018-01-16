@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\defgroup PkgInterpolationSibsonGradientFitting Sibson gradient fitting functions
+\defgroup PkgInterpolationSibsonGradientFitting Sibson Gradient Fitting Functions
 \ingroup PkgInterpolation2Interpolation
 
 The first function implements Sibson's gradient estimation method

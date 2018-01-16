@@ -87,7 +87,7 @@ Furthermore, Piper \cgalCite{cgal:p-plcbd-93} shows that the coordinate
 functions are continuous in the convex hull of \f$ \mathcal{P}\f$ and
 continuously differentiable except on the data points \f$ \mathcal{P}\f$.<BR>
 
-\subsection InterpolationIntroductionRegular Regular neighbor coordinates
+\subsection InterpolationIntroductionRegular Regular Neighbor Coordinates
 
 The previous definition naturally extends to weighted Voronoi diagrams. These
 diagrams, also known as <em>power diagrams</em>, are obtained by considering weighted points
@@ -130,8 +130,8 @@ from which the query point will "steal") are first determined. Then, the areas
 sub-cells. The output is threefold:
 - points (or vertices) with a non-null coordinate along with these coordinates \f$ \pi_i(\mathbf{x})\f$,
 - the normalization factor \f$ \pi(\mathbf{x})\f$,
-- a boolean indicator on whether the coordinate computation was successful
-(which is equivalent to a boolean indicating whether the query point lies in the
+- a Boolean indicator on whether the coordinate computation was successful
+(which is equivalent to a Boolean indicating whether the query point lies in the
 convex hull or not).
 
 Note that if the query point has already been located in the triangulation (for example using

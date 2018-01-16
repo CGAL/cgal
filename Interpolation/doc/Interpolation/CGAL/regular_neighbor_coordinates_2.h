@@ -28,7 +28,7 @@ using an output iterator (see the concept `OutputIterator`).
 Internally, these coordinates are associated to some of the vertices of the triangulation,
 and a natural value type for the output iterator would thus be
 `std::pair<Rt::Vertex_handle, Rt::Geom_traits::FT>`.
-However, to allow flexitibility in the format of the output, a functor passed in argument
+However, to allow flexibility in the format of the output, a functor passed as argument
 can be used to format the output as desired: this functor must have argument type
 `std::pair<Rt::Vertex_handle, Rt::Geom_traits::FT>`
 and its result type and the value type of the output iterator must be identical.
