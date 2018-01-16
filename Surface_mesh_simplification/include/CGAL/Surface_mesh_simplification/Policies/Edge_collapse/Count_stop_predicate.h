@@ -42,16 +42,16 @@ namespace Surface_mesh_simplification
 // 
 // Stops when the number of edges left falls below a given number.
 //
-template<class ECM_>    
+template<class TM_>    
 class Count_stop_predicate
 {
 public:
 
-  typedef ECM_ ECM ;
+  typedef TM_ TM ;
 
-  //  typedef Edge_profile<ECM> Profile ;
+  //  typedef Edge_profile<TM> Profile ;
   
-  typedef typename boost::graph_traits<ECM>::edges_size_type size_type ;
+  typedef typename boost::graph_traits<TM>::edges_size_type size_type ;
   
   // typedef typename Kernel::FT FT ;
 
