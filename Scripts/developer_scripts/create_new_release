@@ -221,6 +221,21 @@ if [ -n "$DO_IT" -a -e "${HTML_DIR}/${release_name}.tar.gz" ]; then
     exit 1
 fi
 
+function cleanup() {
+    # Remove local directory and tarball
+    rm -rf ./"${release_name}"
+    rm ${release_name}.tar.gz
+    if [ -n "$DO_PUBLIC" ]; then
+        [ -d "${public_release_name}" ] && rm -rf  ./"${public_release_name}"
+        rm -rf doc
+        #  rm -rf doc_tex
+        rm -rf doc_html
+        rm -f "${public_release_name}.tar.gz" "${public_release_name}.zip"
+    fi
+}
+
+trap cleanup EXIT
+
 # Create the release
 if [ -n "$CANDIDATES_DIR_HAS_BEEN_SET" ]; then
     ${SOURCES_DIR}/Scripts/developer_scripts/create_internal_release -a ${SOURCES_DIR} -c ${CANDIDATES_DIR} -r ${release_name} -n ${release_number}
@@ -282,7 +297,7 @@ if [ -n "$DO_PUBLIC" ]; then
     else
 	public_release_name="CGAL-${public_release_version}"
     fi
-    mv ${release_name} $public_release_name
+    mv -T ${release_name} $public_release_name
 
     cd ${public_release_name}
     rm -rf bench* Bench* test package_info developer_scripts doc winutils include/CGAL/Test include/CGAL/Testsuite/
@@ -334,15 +349,4 @@ if [ -n "$DO_PUBLIC" ]; then
   docker start -a ${container_id}
   docker cp ${container_id}:/nsis_release/${public_release_name}-Setup.exe "${HTML_DIR}/${release_name}-public/"
   docker rm ${container_id}
-fi
-
-# Remove local directory and tarball
-rm -rf "${release_name}"
-rm ${release_name}.tar.gz
-if [ -n "$DO_PUBLIC" ]; then
-  rm -rf  ./"${public_release_name}"
-  rm -rf doc
-#  rm -rf doc_tex
-  rm -rf doc_html
-  rm  "${public_release_name}.tar.gz" "${public_release_name}.zip"
 fi
