@@ -56,7 +56,7 @@ to the weighted points in the two-dimensional regular triangulation `rt`.
 
 \tparam Rt must be a `Regular_triangulation_2<Traits, Tds>`.
         `Traits` must be a model of the concepts `RegularTriangulationTraits_2` and `PolygonTraits_2`.
-\tparam CoordinateIterator must be a model of `OutputIterator` and have the value type OutputFunctor::result_type.
+\tparam CoordinateOutputIterator must be a model of `OutputIterator` and have the value type OutputFunctor::result_type.
         The output computed by the function is placed starting at `out`.
 \tparam OutputFunctor must be a functor with argument type `std::pair<Rt::Vertex_handle, Rt::Geom_traits::FT>`.
 
@@ -65,7 +65,7 @@ for a detailed explanation on the usage of `OutputFunctor`.
 
 \param rt is the regular triangulation.
 \param p is the query point.
-\param out is an object of type `CoordinateIterator`.
+\param out is an object of type `CoordinateOutputIterator`.
 \param fct is an object of type `OutputFunctor`.
 \param start is an optional argument that is used as a hint of where the locate process has to start its search.
 
@@ -80,11 +80,11 @@ any power cell if it were inserted in the power diagram, then the resulting trip
 will be `(out, 0, true)` with no additional entry in `out` (compared to its state
 in input).
 */
-template < class Rt, class CoordinateIterator, class OutputFunctor >
-CGAL::Triple<CoordinateIterator, typename Rt::Geom_traits::FT, bool >
+template < class Rt, class CoordinateOutputIterator, class OutputFunctor >
+CGAL::Triple<CoordinateOutputIterator, typename Rt::Geom_traits::FT, bool >
 regular_neighbor_coordinates_2(const Rt& rt,
                                const typename Rt::Weighted_point& p,
-                               CoordinateIterator out,
+                               CoordinateOutputIterator out,
                                OutputFunctor fct,
                                typename Rt::Face_handle start = typename Rt::Face_handle());
 
@@ -105,11 +105,11 @@ std::back_inserter(hidden_vertices), start)`\endlink.
 \cgalHeading{Requirements}
 Same as above.
 */
-template <class Rt, class CoordinateIterator, class OutputFunctor, class EdgeIterator, class VertexIterator >
-CGAL::Triple< CoordinateIterator, typename Traits::FT, bool >
+template <class Rt, class CoordinateOutputIterator, class OutputFunctor, class EdgeIterator, class VertexIterator >
+CGAL::Triple< CoordinateOutputIterator, typename Traits::FT, bool >
 regular_neighbor_coordinates_2(const Rt& rt,
                                const typename Traits::Weighted_point& p,
-                               CoordinateIterator out,
+                               CoordinateOutputIterator out,
                                OutputFunctor fct,
                                EdgeIterator hole_begin, EdgeIterator hole_end,
                                VertexIterator hidden_vertices_begin, VertexIterator hidden_vertices_end);
@@ -121,11 +121,11 @@ to the vertices of `rt` excluding `vh->point()`.
 \cgalHeading{Requirements}
 Same as above.
 */
-template < class Rt, class CoordinateIterator, class OutputFunctor >
-CGAL::Triple< CoordinateIterator, typename Rt::Geom_traits::FT, bool >
+template < class Rt, class CoordinateOutputIterator, class OutputFunctor >
+CGAL::Triple< CoordinateOutputIterator, typename Rt::Geom_traits::FT, bool >
 regular_neighbor_coordinates_2(const Rt& rt,
                                typename Rt::Vertex_handle vh,
-                               CoordinateIterator out,
+                               CoordinateOutputIterator out,
                                OutputFunctor fct);
 
 /// @}

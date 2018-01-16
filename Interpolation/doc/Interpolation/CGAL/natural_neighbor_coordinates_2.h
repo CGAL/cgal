@@ -21,7 +21,7 @@ of the triple are then meaningless).
 \cgalHeading{Output Format}
 
 The return type is identical for all overloads of `CGAL::natural_neighbor_coordinates_2()`:
-it is `CGAL::Triple<CoordinateIterator, Dt::Geom_traits::FT, bool >`
+it is `CGAL::Triple<CoordinateOutputIterator, Dt::Geom_traits::FT, bool >`
 
 Natural neighbor coordinates are output in the first value of the triple,
 using an output iterator (see the concept `OutputIterator`).
@@ -56,7 +56,7 @@ in the two-dimensional Delaunay triangulation `dt`.
 
 \tparam Dt must be of type `Delaunay_triangulation_2<Traits, Tds>`.
         `Traits` must be a model of the concepts `DelaunayTriangulationTraits_2` and `PolygonTraits_2`.
-\tparam CoordinateIterator must be a model of `OutputIterator` and have the value type OutputFunctor::result_type.
+\tparam CoordinateOutputIterator must be a model of `OutputIterator` and have the value type OutputFunctor::result_type.
         The output computed by the function is placed starting at `out`.
 \tparam OutputFunctor must be a functor with argument type `std::pair<Dt::Vertex_handle, Dt::Geom_traits::FT>`.
 
@@ -65,7 +65,7 @@ for a detailed explanation on the usage of `OutputFunctor`.
 
 \param dt is the Delaunay triangulation.
 \param p is the query point.
-\param out is an object of type `CoordinateIterator`.
+\param out is an object of type `CoordinateOutputIterator`.
 \param fct is an object of type `OutputFunctor`.
 \param start is an optional argument that is used as a hint of where the locate process has to start its search.
 
@@ -75,11 +75,11 @@ for a detailed explanation on the usage of `OutputFunctor`.
 - a Boolean value which is set to `true` if the coordinate computation was successful,
 and `false` otherwise.
 */
-template < class Dt, class CoordinateIterator, class OutputFunctor >
-CGAL::Triple<CoordinateIterator, typename Dt::Geom_traits::FT, bool >
+template < class Dt, class CoordinateOutputIterator, class OutputFunctor >
+CGAL::Triple<CoordinateOutputIterator, typename Dt::Geom_traits::FT, bool >
 natural_neighbor_coordinates_2(const Dt& dt,
                                const typename Dt::Geom_traits::Point_2& p,
-                               CoordinateIterator out,
+                               CoordinateOutputIterator out,
                                OutputFunctor fct,
                                typename Dt::Face_handle start = typename Dt::Face_handle());
 
@@ -95,11 +95,11 @@ using the function: \link Delaunay_triangulation_2::get_boundary_of_conflicts()
 \cgalHeading{Requirements}
 Same as above.
 */
-template < class Dt, class CoordinateIterator, class OutputFunctor, class EdgeIterator >
-CGAL::Triple< CoordinateIterator, typename Dt::Geom_traits::FT, bool >
+template < class Dt, class CoordinateOutputIterator, class OutputFunctor, class EdgeIterator >
+CGAL::Triple< CoordinateOutputIterator, typename Dt::Geom_traits::FT, bool >
 natural_neighbor_coordinates_2(const Dt& dt,
                                const typename Dt::Geom_traits::Point_2& p,
-                               CoordinateIterator out,
+                               CoordinateOutputIterator out,
                                OutputFunctor fct,
                                EdgeIterator hole_begin, EdgeIterator hole_end);
 
@@ -110,11 +110,11 @@ with respect to the vertices of `dt` excluding `vh->point()`.
 \cgalHeading{Requirements}
 Same as above.
 */
-template < class Dt, class CoordinateIterator, class OutputFunctor >
-CGAL::Triple< CoordinateIterator, typename Dt::Geom_traits::FT, bool >
+template < class Dt, class CoordinateOutputIterator, class OutputFunctor >
+CGAL::Triple< CoordinateOutputIterator, typename Dt::Geom_traits::FT, bool >
 natural_neighbor_coordinates_2(const Dt& dt,
                                typename Dt::Vertex_handle vh,
-                               CoordinateIterator out,
+                               CoordinateOutputIterator out,
                                OutputFunctor fct);
 
 /// @}
