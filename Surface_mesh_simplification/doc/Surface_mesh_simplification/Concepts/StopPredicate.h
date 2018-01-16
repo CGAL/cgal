@@ -5,8 +5,8 @@
 
 The concept `StopPredicate` describes the requirements for the predicate which indicates if the simplification process must finish. 
 
-\cgalHasModel `CGAL::Surface_mesh_simplification::Count_stop_predicate<ECM>`
-\cgalHasModel `CGAL::Surface_mesh_simplification::Count_ratio_stop_predicate<ECM>`
+\cgalHasModel `CGAL::Surface_mesh_simplification::Count_stop_predicate<TriangleMesh>`
+\cgalHasModel `CGAL::Surface_mesh_simplification::Count_ratio_stop_predicate<TriangleMesh>`
 \cgalHasModel `CGAL::Surface_mesh_simplification::Edge_length_stop_predicate<FT>`
 
 */
@@ -20,7 +20,7 @@ public:
 /*!
 The type of the surface mesh to simplify. Must be a model of the `MutableFaceGraph` and `HalfedgeListGraph` concepts.
 */ 
-typedef unspecified_type ECM; 
+typedef unspecified_type TriangleMesh; 
 
 /*!
 A field type representing the collapse cost 
