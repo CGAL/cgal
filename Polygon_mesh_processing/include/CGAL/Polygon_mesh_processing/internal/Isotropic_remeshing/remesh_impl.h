@@ -661,8 +661,8 @@ namespace internal {
         vertex_descriptor va = source(he, mesh_);
         vertex_descriptor vb = target(he, mesh_);
 
-        bool is_va_constrained = is_constrained(va) || is_corner(va);
-        bool is_vb_constrained = is_constrained(vb) || is_corner(vb);
+        bool is_va_constrained = is_constrained(va) || is_on_patch_border(va);
+        bool is_vb_constrained = is_constrained(vb) || is_on_patch_border(vb);
 
 
         // do not collapse edge with two constrained vertices
