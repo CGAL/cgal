@@ -185,7 +185,7 @@ private:
                                                Virtual_vertex_map;
   typedef typename Virtual_vertex_map::const_iterator
                                                Virtual_vertex_map_it;
-  typedef std::map<Vertex_handle, std::vector<Vertex_handle > >
+  typedef boost::unordered_map<Vertex_handle, std::vector<Vertex_handle > >
                                                Virtual_vertex_reverse_map;
   typedef typename Virtual_vertex_reverse_map::const_iterator
                                                Virtual_vertex_reverse_map_it;

@@ -370,7 +370,7 @@ public:
             edge_to_delete = std::make_pair((*it)->vertex(k),(*it)->vertex(j));
           }
           Vertex_handle v_no = edge_to_delete.first;
-		  std::list<Vertex_handle>& vl = too_long_edges[v_no];
+          std::list<Vertex_handle>& vl = too_long_edges[v_no];
           sit = std::find(vl.begin(), vl.end(), edge_to_delete.second);
           if(sit != vl.end()) {
             vl.erase(sit);
@@ -407,7 +407,7 @@ public:
           p1 = construct_point((*it)->vertex(j)->point(), get_offset(*it, j));
           p2 = construct_point((*it)->vertex(k)->point(), get_offset(*it, k));
 
-		  std::list<Vertex_handle>& vl = too_long_edges[(*it)->vertex(j)];
+          std::list<Vertex_handle>& vl = too_long_edges[(*it)->vertex(j)];
 
           if((squared_distance(p1,p2) > edge_length_threshold)
              && (find(vl.begin(), vl.end(), edge_to_add.second)
