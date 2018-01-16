@@ -1,8 +1,5 @@
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
-
-#ifdef CGAL_USE_BASIC_VIEWER
 #include <CGAL/Linear_cell_complex_viewer_qt.h>
-#endif
 
 typedef CGAL::Linear_cell_complex_for_combinatorial_map<3> LCC;
 typedef LCC::Point Point;
@@ -17,10 +14,7 @@ int main()
 
   lcc.display_characteristics(std::cout)<<", valid=" 
                                         <<lcc.is_valid()<<std::endl;
-
-#ifdef CGAL_USE_BASIC_VIEWER
-  CGAL::display(lcc);
-#endif // CGAL_USE_BASIC_VIEWER
+  CGAL::draw(lcc);
 
   return EXIT_SUCCESS;
 }
