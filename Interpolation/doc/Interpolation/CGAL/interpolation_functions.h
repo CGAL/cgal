@@ -69,8 +69,8 @@ values which must be provided via a functor.
 \tparam CoordinateIterator must be a model of `ForwardIterator` and
 must have as value type a pair associating an entity, e.g. the `Vertex_handle` or `Point`
 types of a triangulation, to a (non-normalized) barycentric coordinate.
-\tparam ValueFunctor `ValueFunctor::result_type` is a pair of the function value type
-and a Boolean value.
+\tparam ValueFunctor must be a functor such that `ValueFunctor::result_type`
+is a pair of the function value type and a Boolean value.
 The function value type must provide a multiplication and addition operation with the field number type
 `std::iterator_traits<CoordinateIterator>::%value_type::second_type` and a constructor
 with argument `0`. <br>
