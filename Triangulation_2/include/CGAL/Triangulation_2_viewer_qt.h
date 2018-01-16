@@ -20,6 +20,8 @@
 #ifndef CGAL_T2_VIEWER_QT_H
 #define CGAL_T2_VIEWER_QT_H
 
+#ifdef CGAL_USE_BASIC_VIEWER
+
 #include <CGAL/Qt/Basic_viewer_qt.h>
 #include <CGAL/Random.h>
 
@@ -27,7 +29,7 @@ namespace CGAL
 {
   
 // Default color functor; user can change it to have its own face color
-struct DefaultColorFunctor
+struct DefaultColorFunctorT2
 {
   template<typename T2>
   static CGAL::Color run(const T2& at2,
@@ -107,7 +109,17 @@ protected:
 
   virtual void keyPressEvent(QKeyEvent *e)
   {
-    // const ::Qt::KeyboardModifiers modifiers = e->modifiers();
+    // Test key pressed:
+    //    const ::Qt::KeyboardModifiers modifiers = e->modifiers();
+    //    if ((e->key()==Qt::Key_PageUp) && (modifiers==Qt::NoButton)) { ... }
+    
+    // Call: * compute_elements() if the model changed, followed by
+    //       * redraw() if some viewing parameters changed that implies some
+    //                  modifications of the buffers
+    //                  (eg. type of normal, color/mono)
+    //       * update() just to update the drawing
+
+    // Call the base method to process others/classicals key
     Base::keyPressEvent(e);
   }
 
@@ -116,13 +128,12 @@ protected:
   bool m_nofaces;
   const ColorFunctor& m_fcolor;
 };
-
   
 template<class T2, class ColorFunctor>
-void display(const T2& at2,
-             const char* title="T2 Viewer",
-             bool nofill=false,
-             const ColorFunctor& fcolor=ColorFunctor())
+void draw(const T2& at2,
+          const char* title="T2 Viewer",
+          bool nofill=false,
+          const ColorFunctor& fcolor=ColorFunctor())
 {
   int argc=1;
 
@@ -136,11 +147,35 @@ void display(const T2& at2,
   app.exec();
 }
 
+} // End namespace CGAL
+
+#else // CGAL_USE_BASIC_VIEWER
+
+namespace CGAL 
+{
+
+template<class T2, class ColorFunctor>
+void draw(const T2&,
+          const char*="T2 Viewer",
+          bool=false,
+          const ColorFunctor&=ColorFunctor())
+{
+  std::cerr<<"Impossible to draw a Triangulation_2 because CGAL_USE_BASIC_VIEWER is not defined."
+           <<std::endl;
+}
+  
+} // End namespace CGAL
+
+#endif // CGAL_USE_BASIC_VIEWER
+
+namespace CGAL 
+{
+
 template<class T2>
-void display(const T2& at2,
-             const char* title="T2 Viewer",
-             bool nofill=false)
-{ return display<T2, DefaultColorFunctor>(at2, title, nofill); }
+void draw(const T2& at2,
+          const char* title="T2 Viewer",
+          bool nofill=false)
+{ return display<T2, DefaultColorFunctorT2>(at2, title, nofill); }
 
 } // End namespace CGAL
 

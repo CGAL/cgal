@@ -20,6 +20,8 @@
 #ifndef CGAL_LCC_VIEWER_QT_H
 #define CGAL_LCC_VIEWER_QT_H
 
+#ifdef CGAL_USE_BASIC_VIEWER
+
 #include <CGAL/Qt/Basic_viewer_qt.h>
 #include <CGAL/Random.h>
 
@@ -27,7 +29,7 @@ namespace CGAL
 {
   
 // Default color functor; user can change it to have its own face color
-struct DefaultColorFunctor
+struct DefaultColorFunctorLCC
 {
   template<typename LCC>
   static CGAL::Color run(const LCC& alcc,
@@ -171,7 +173,17 @@ protected:
 
   virtual void keyPressEvent(QKeyEvent *e)
   {
-    // const ::Qt::KeyboardModifiers modifiers = e->modifiers();
+    // Test key pressed:
+    //    const ::Qt::KeyboardModifiers modifiers = e->modifiers();
+    //    if ((e->key()==Qt::Key_PageUp) && (modifiers==Qt::NoButton)) { ... }
+    
+    // Call: * compute_elements() if the model changed, followed by
+    //       * redraw() if some viewing parameters changed that implies some
+    //                  modifications of the buffers
+    //                  (eg. type of normal, color/mono)
+    //       * update() just to update the drawing
+
+    // Call the base method to process others/classicals key
     Base::keyPressEvent(e);
   }
 
@@ -182,10 +194,10 @@ protected:
 };
   
 template<class LCC, class ColorFunctor>
-void display(const LCC& alcc,
-             const char* title="LCC Viewer",
-             bool nofill=false,
-             const ColorFunctor& fcolor=ColorFunctor())
+void draw(const LCC& alcc,
+          const char* title="LCC Viewer",
+          bool nofill=false,
+          const ColorFunctor& fcolor=ColorFunctor())
 {
   int argc=1;
 
@@ -198,11 +210,35 @@ void display(const LCC& alcc,
   app.exec();
 }
 
+} // End namespace CGAL
+
+#else // CGAL_USE_BASIC_VIEWER
+
+namespace CGAL 
+{
+  
+template<class LCC, class ColorFunctor>
+void draw(const LCC&,
+          const char*="LCC Viewer",
+          bool=false,
+          const ColorFunctor&=ColorFunctor())
+{
+  std::cerr<<"Impossible to draw a Linear_cell_complex because CGAL_USE_BASIC_VIEWER is not defined."
+           <<std::endl;
+}
+
+} // End namespace CGAL
+
+#endif // CGAL_USE_BASIC_VIEWER
+
+namespace CGAL 
+{
+
 template<class LCC>
-void display(const LCC& alcc,
-             const char* title="LCC Viewer",
-             bool nofill=false)
-{ return display<LCC, DefaultColorFunctor>(alcc, title, nofill); }
+void draw(const LCC& alcc,
+          const char* title="LCC Viewer",
+          bool nofill=false)
+{ return draw<LCC, DefaultColorFunctorLCC>(alcc, title, nofill); }
 
 } // End namespace CGAL
 
