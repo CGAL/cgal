@@ -13,7 +13,7 @@ and the derived visitor will never be used polymorphically at runtime (is perfec
 and hide a non-virtual method in the context of the static polymorphism used in the simplification algorithm). 
 
 
-\tparam ECM is the type of surface mesh being simplified, and must be a model of the `EdgeCollapsableSurfaceMesh` concept. 
+\tparam ECM is the type of surface mesh being simplified, and must be a model of the `MutableFaceGraph` and `HalfedgeListGraph` concepts.
 
 \cgalModels `EdgeCollapseSimplificationVisitor`
 

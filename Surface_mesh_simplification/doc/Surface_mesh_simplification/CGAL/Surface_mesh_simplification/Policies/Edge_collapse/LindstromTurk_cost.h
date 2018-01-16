@@ -8,7 +8,7 @@ The class `LindstromTurk_cost` provides a model for the `GetCost` concept.
 It computes the collapse cost following the Lindstrom-Turk strategy 
 (Section \ref SurfaceMeshSimplificationLindstromTurkStrategy) 
 
-\tparam ECM is the type of surface mesh being simplified, and must be a model of the `EdgeCollapsableSurfaceMesh` concept. 
+\tparam ECM is the type of surface mesh being simplified, and must be a model of the `MutableFaceGraph` and `HalfedgeListGraph` concepts.
 
 \cgalModels `GetCost`
 

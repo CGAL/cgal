@@ -29,14 +29,7 @@ and the coordinates of the replacing vertex are determined by another user-suppl
 is met, such as reaching the desired number of edges.
 
 The algorithm implemented here is generic in the sense that it does not require the surface mesh 
-to be of a particular type. Instead, it defines the concept of a `EdgeCollapsableSurfaceMesh`,
-which presents the surface mesh as being a halfedge data structure, and any surface mesh that 
-is a model of that concept can be simplified. The concept is defined not in terms of a monolithic class, but in terms of a set 
-of functions and traits, making it easy to adapt any concrete surface mesh type, 
-even if it is not a halfedge data structure at all.
-In particular, the concept definition follows the design of the 
-<A HREF="http://www.boost.org/libs/graph/doc/index.html"> Boost Graph Library (Bgl)</A>
-\cgalCite{cgal:sll-bgl-02}.
+to be of a particular type but to be a model of the `MutableFaceGraph` and `HalfedgeListGraph` concepts.
 
 The design is <A HREF="http://en.wikipedia.org/wiki/Policy-based_design"><I>policy-based</I></A>
 (<A HREF="http://en.wikipedia.org/wiki/Policy-based_design"><TT>http://en.wikipedia.org/wiki/Policy-based_design</TT></A>),
@@ -213,17 +206,7 @@ The simplification algorithm is implemented as the free template function
 
 There are two main parameters to the algorithm: the surface mesh to be simplified (in-place) and the stop predicate.
 
-The surface mesh to simplify must be a model of the `EdgeCollapsableSurfaceMesh` concept. 
-Many concrete surface mesh types, such as `Polyhedron_3` with only triangular faces,
-become models of that concept via a technique known as 
-<I>external adaptation</I>, which is described in \cgalCite{cgal:sll-bgl-02}
-and this <span class="textsc">Bgl</span> web page: <A HREF="http://www.boost.org/libs/graph/doc/leda_conversion.html"><TT>http://www.boost.org/libs/graph/doc/leda_conversion.html</TT></A>
-
-External adaptation is a way to add an interface to an 
-object without coercing the type of the object (which happens when you adapt it by means 
-of a wrapper). That is, the formal parameter to the `edge_collapse` function that 
-implements the simplification is the concrete surface mesh object itself, not an adaptor 
-which delegates the functionality to the concrete type.
+The surface mesh to simplify must be a model of the `MutableFaceGraph` and `HalfedgeListGraph` concepts.
 
 The stop predicate is called after each edge is selected for processing, <I>before</I> 
 it is classified as collapsible or not (thus before it is collapsed). If the stop predicate 

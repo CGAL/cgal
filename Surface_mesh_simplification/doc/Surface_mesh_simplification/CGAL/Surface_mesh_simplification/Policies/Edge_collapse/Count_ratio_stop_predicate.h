@@ -8,7 +8,7 @@ namespace Surface_mesh_simplification {
 The class `Count_ratio_stop_predicate` is a model for the `StopPredicate` concept
 which returns `true` when the relation between the initial and current number of edges drops below a certain ratio.  
 
-\tparam ECM is the type of surface mesh being simplified, and must be a model of the `EdgeCollapsableSurfaceMesh` concept. 
+\tparam ECM is the type of surface mesh being simplified, and must be a model of the `MutableFaceGraph` and `HalfedgeListGraph` concepts.
 
 
 \cgalModels `StopPredicate`

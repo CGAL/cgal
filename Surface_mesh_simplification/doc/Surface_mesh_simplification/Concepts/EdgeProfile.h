@@ -18,7 +18,7 @@ public:
 /// @{
 
 /*!
-The type of the surface mesh to simplify. Must be a model of the `EdgeCollapsableSurfaceMesh` concept. 
+The type of the surface mesh to simplify. Must be a model of the `MutableFaceGraph` and `HalfedgeListGraph` concepts.
 */ 
 typedef unspecified_type ECM; 
 
