@@ -724,12 +724,14 @@ namespace internal {
           }
 
           //before collapse
+          halfedge_descriptor he_opp= opposite(he, mesh_);
           bool mesh_border_case     = is_on_border(he);
-          bool mesh_border_case_opp = is_on_border(opposite(he, mesh_));
-          halfedge_descriptor ep_p  = prev(opposite(he, mesh_), mesh_);
+          bool mesh_border_case_opp = is_on_border(he_opp);
+          halfedge_descriptor ep_p  = prev(he_opp, mesh_);
           halfedge_descriptor epo_p = opposite(ep_p, mesh_);
           halfedge_descriptor en    = next(he, mesh_);
-          halfedge_descriptor en_p  = next(opposite(he, mesh_), mesh_);
+          halfedge_descriptor en_p  = next(he_opp, mesh_);
+          halfedge_descriptor eno_p = opposite(en_p, mesh_);
           Halfedge_status s_ep_p    = status(ep_p);
           Halfedge_status s_epo_p   = status(epo_p);
           Halfedge_status s_ep      = status(prev(he, mesh_));
@@ -739,23 +741,55 @@ namespace internal {
           //do it before collapse is performed to be sure everything is valid
           if (!mesh_border_case)
             merge_status(en, s_epo, s_ep);
-          if (!mesh_border_case_opp)
+          if (!mesh_border_case_opp && s_ep_p!=PATCH_BORDER)
             merge_status(en_p, s_epo_p, s_ep_p);
 
           halfedge_and_opp_removed(he);
           if (!mesh_border_case)
             halfedge_and_opp_removed(prev(he, mesh_));
           if (!mesh_border_case_opp)
-            halfedge_and_opp_removed(prev(opposite(he, mesh_), mesh_));
+          {
+            if (s_ep_p!=PATCH_BORDER)
+              halfedge_and_opp_removed(prev(he_opp, mesh_));
+            else{
+              // swap edges so as to keep constained edges:
+              // replace en_p by epo_p and ep_p by eno_p
+              // (1) exchange next pointer
+              set_next(prev(epo_p, mesh_), en_p, mesh_);
+              set_next(en_p, next(epo_p, mesh_), mesh_);
+              set_next(prev(eno_p, mesh_), ep_p, mesh_);
+              set_next(ep_p, next(eno_p, mesh_), mesh_);
+              set_next(epo_p, eno_p, mesh_);
+              set_next(he_opp, epo_p, mesh_);
+              set_next(eno_p, he_opp, mesh_);
+              // (2) exchange vertex-halfedge pointer
+              set_target(ep_p, va, mesh_);
+              set_target(eno_p, vb, mesh_);
+              set_halfedge(va, ep_p, mesh_);
+              set_halfedge(vb, eno_p, mesh_);
+              // (3) exchange face-halfedge pointer
+              set_face(ep_p, face(eno_p, mesh_), mesh_);
+              set_face(en_p, face(epo_p, mesh_), mesh_);
+              set_face(epo_p, face(he_opp, mesh_), mesh_);
+              set_face(eno_p, face(he_opp, mesh_), mesh_);
+              set_halfedge(face(he_opp, mesh_), he_opp, mesh_);
+              if (face(ep_p, mesh_) != boost::graph_traits<PM>::null_face())
+                set_halfedge(face(ep_p, mesh_), ep_p, mesh_);
+              if (face(en_p, mesh_) != boost::graph_traits<PM>::null_face())
+                set_halfedge(face(en_p, mesh_), en_p, mesh_);
+              CGAL_assertion(mesh_.is_valid());
+            }
+          }
 
           //perform collapse
           CGAL_assertion(target(halfedge(e, mesh_), mesh_) == vb);
           vertex_descriptor vkept = CGAL::Euler::collapse_edge(e, mesh_);
+          CGAL_assertion(mesh_.is_valid());
           CGAL_assertion(vkept == vb);//is the constrained point still here
           ++nb_collapses;
 
           //fix constrained case
-          CGAL_assertion(is_constrained(vkept) == (is_va_constrained || is_vb_constrained));
+          CGAL_assertion((is_constrained(vkept) || is_on_patch_border(vb)) == (is_va_constrained || is_vb_constrained));
           fix_degenerate_faces(vkept, short_edges, sq_low);
 
 #ifdef CGAL_PMP_REMESHING_DEBUG
