@@ -69,7 +69,7 @@ linear_interpolation(ForwardIterator first, ForwardIterator beyond,
 
   Value_type result(0);
   typename ValueFunctor::result_type val;
-  for(; first !=beyond; ++first)
+  for(; first!=beyond; ++first)
   {
     val = value_function(first->first);
     CGAL_assertion(val.second);
@@ -90,13 +90,16 @@ quadratic_interpolation(ForwardIterator first, ForwardIterator beyond,
 {
   CGAL_precondition(norm > 0);
   typedef typename ValueFunctor::result_type::first_type Value_type;
+  typedef typename Traits::Point_d                       Bare_point;
 
   Interpolation::internal::Extract_bare_point<Traits> cp(traits);
+  const Bare_point& bp = cp(p);
+
   Value_type result(0);
   typename ValueFunctor::result_type f;
   typename GradFunctor::result_type grad;
 
-  for(; first !=beyond; ++first)
+  for(; first!=beyond; ++first)
   {
     f = value_function(first->first);
     grad = gradient_function(first->first);
@@ -108,7 +111,7 @@ quadratic_interpolation(ForwardIterator first, ForwardIterator beyond,
 
     result += (first->second/norm) * (f.first + grad.first *
                  traits.construct_scaled_vector_d_object()
-                 (traits.construct_vector_d_object()(cp(first->first), cp(p)), 0.5));
+                 (traits.construct_vector_d_object()(cp(first->first), bp), 0.5));
   }
 
   return std::make_pair(result, true);
@@ -241,7 +244,7 @@ sibson_c1_interpolation_square(ForwardIterator first, ForwardIterator beyond,
     linear_int += coeff * f.first;
 
     gradient_int += (coeff/squared_dist) * (f.first + grad.first *
-                       traits.construct_vector_d_object()(cp(first->first), cp(p)));
+                       traits.construct_vector_d_object()(cp(first->first), bp));
   }
 
   term4 = term3/ term1;
