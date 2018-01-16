@@ -703,6 +703,12 @@ protected:
       }
   }
 
+  virtual void redraw()
+  {
+    initialize_buffers();
+    update();
+  }
+  
   virtual void init()
   {
     // Restore previous viewer state.
