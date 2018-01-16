@@ -133,7 +133,7 @@ public:
     }
     int evaluate(FeatureType const* sample, float* results) {
         // initialize output probabilities to 0
-        std::fill_n(results, params.n_classes, 0);
+        std::fill_n(results, params.n_classes, 0.0f);
         // accumulate votes of the trees
         for (size_t i_tree = 0; i_tree < trees.size(); ++i_tree) {
             float const* tree_result = trees[i_tree].evaluate(sample);
