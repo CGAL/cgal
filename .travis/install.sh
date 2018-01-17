@@ -1,4 +1,5 @@
 #!/bin/bash
+
 set -x
 DONE=0
 while [ $DONE = 0 ]
