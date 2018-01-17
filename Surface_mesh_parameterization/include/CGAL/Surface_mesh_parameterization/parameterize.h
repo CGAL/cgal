@@ -24,6 +24,8 @@
 
 #include <CGAL/license/Surface_mesh_parameterization.h>
 
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/Surface_mesh_parameterization/internal/Bool_property_map.h>
 
 #include <CGAL/Surface_mesh_parameterization/Error_code.h>
@@ -165,5 +167,7 @@ Error_code parameterize(Seam_mesh<TM, SEM, SVM>& mesh,
 } // namespace Surface_mesh_parameterization
 
 } // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_PARAMETERIZE_H
