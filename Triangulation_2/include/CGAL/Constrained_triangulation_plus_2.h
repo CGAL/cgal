@@ -838,7 +838,6 @@ insert_subconstraint(Vertex_handle vaa,
 #else
       boost::container::flat_set<Face_handle> faces(intersected_faces.begin(), intersected_faces.end());
 #endif
-      typename List_edges::iterator it2;
       for(typename List_edges::iterator it = edges.begin(); it!= edges.end();){
         if(faces.find(it->first) != faces.end()){
           typename List_edges::iterator it2 = it;
