@@ -21,7 +21,9 @@
 
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
+#  pragma warning(disable: 4099) // struct class mixed
 #  pragma warning(disable: 4127) // conditional expression is constant
+#  pragma warning(disable:4355)  // 'this' : used in base member initializer list
 #  pragma warning(disable: 4510) // default constructor could not be generated
 #  pragma warning(disable: 4512) //  assignment operator could not be generated
 #  pragma warning(disable: 4610) // can never be instantiated - user defined constructor required
