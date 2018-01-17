@@ -90,7 +90,7 @@ struct TestMeshProgramInstance
 
     if (randomizer)
     {
-      return shortestPath.face_location(vertices[randomizer->get_int(0, vertices.size())]);
+      return shortestPath.face_location(vertices[randomizer->get_int(0, static_cast<int>(vertices.size()))]);
     }
     else
     {
