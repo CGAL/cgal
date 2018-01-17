@@ -25,6 +25,7 @@
 
 #include <CGAL/license/Triangulation_3.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/basic.h>
 
@@ -6790,5 +6791,7 @@ operator!=(const Triangulation_3<GT, Tds1> &t1,
 }
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_TRIANGULATION_3_H

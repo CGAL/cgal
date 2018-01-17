@@ -20,6 +20,8 @@
 #ifndef CGAL_GMPFR_TYPE_H
 #define CGAL_GMPFR_TYPE_H
 
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/gmp.h>
 #include <mpfr.h>
 #include <boost/operators.hpp>
@@ -1341,5 +1343,7 @@ Gmpfr max BOOST_PREVENT_MACRO_SUBSTITUTION(const Gmpfr& x,const Gmpfr& y){
 }
 
 } // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif  // CGAL_GMPFR_TYPE_H

@@ -34,5 +34,7 @@
 #if defined(BOOST_MSVC)
 #  pragma warning(pop)
 #endif
+
 #include <CGAL/enable_warnings.h>
+
 #endif // CGAL_GMP_H

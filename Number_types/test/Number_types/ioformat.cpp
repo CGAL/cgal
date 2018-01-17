@@ -36,6 +36,9 @@
 
 #include <CGAL/Number_type_checker.h>
 #include <cassert>
+
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/_test_utilities.h>
 
 typedef CGAL::Quotient<CGAL::MP_Float>            QMPF;

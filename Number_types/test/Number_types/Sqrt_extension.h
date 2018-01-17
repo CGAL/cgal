@@ -14,6 +14,8 @@
 #include <iostream>
 #include <cassert>
 
+#include <CGAL/disable_warnings.h>
+
 // TODO: Included from EXACUS/NumeriX/include/NiX/number_type_utils.h
 namespace CGAL {
 template <class NT , class RT>

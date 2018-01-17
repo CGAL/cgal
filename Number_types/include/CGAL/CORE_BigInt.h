@@ -23,6 +23,8 @@
 #ifndef CGAL_CORE_BIGINT_H
 #define CGAL_CORE_BIGINT_H
 
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/config.h>
 #include <CGAL/number_type_basic.h>
 #include <CGAL/CORE/BigInt.h>
@@ -224,5 +226,7 @@ namespace Eigen {
     };
   };
 }
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_CORE_BIGINT_H
