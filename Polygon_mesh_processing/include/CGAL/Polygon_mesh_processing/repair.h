@@ -1346,7 +1346,7 @@ struct Is_selected{
   {}
 
   friend bool get(Is_selected is, Descriptor d){
-    return is.selection.count(d);
+    return (is.selection.count(d) == 1);
   }
 
   friend void put(Is_selected is, Descriptor d, bool b){
@@ -1373,8 +1373,11 @@ bool remove_self_intersections_one_step(TriangleMesh& tm,
   bool no_hole_was_filled=true; // indicates if the filling of all previously
                                 // created holes failed.
   if (verbose)
-    std::cout << "DEBUG: is_valid(tm)? " << is_valid(tm) << "\n";
-
+  {
+    std::cout << "DEBUG: is_valid in one_step(tm)? ";
+    std::cout.flush();
+    std::cout << is_valid(tm) << "\n";
+  }
   std::vector<halfedge_descriptor> one_halfedge_per_border;
 
   if(!faces_to_remove.empty() || !non_filled_hole.empty()){
@@ -1485,7 +1488,6 @@ bool remove_self_intersections_one_step(TriangleMesh& tm,
       // remove small border cycle that are imposing a self-intersection
       // that could not be fixed if kept. (This also prevent small island
       // if a small hole is incident to the faces to be removed).
-      if (border_edges_found){
         std::set<halfedge_descriptor> cycles;
         std::set<halfedge_descriptor>  boundary_set;
         BOOST_FOREACH(halfedge_descriptor h, boundary_hedges)
@@ -1527,7 +1529,6 @@ bool remove_self_intersections_one_step(TriangleMesh& tm,
           }
           tmp.swap(boundary_hedges);
         }
-      }
 
       // do not remove edges on the boundary of the selection of faces,
       // nor its vertices
@@ -1535,6 +1536,12 @@ bool remove_self_intersections_one_step(TriangleMesh& tm,
       {
         vertices_to_remove.erase(target(h, tm));
         edges_to_remove.erase(edge(h,tm));
+      }
+      if (verbose)
+      {
+        std::cout << "DEBUG: is_valid(tm) in one_step, before mesh changes? ";
+        std::cout.flush();
+        std::cout << is_valid(tm) << "\n";
       }
       // now remove edges,
       BOOST_FOREACH(edge_descriptor e, edges_to_remove)
@@ -1649,6 +1656,10 @@ bool remove_self_intersections(TriangleMesh& tm, const int max_steps = 7, bool v
     if (!no_hole_was_filled)
       self_intersections(tm, std::back_inserter(self_inter));
 
+    if (verbose)
+      std::cout << "DEBUG: is_valid(tm) after self_intersections? "
+                << is_valid(tm) << "\n";
+
     std::set<face_descriptor> faces_to_remove;
     BOOST_FOREACH(Face_pair fp, self_inter)
     {
@@ -1658,7 +1669,8 @@ bool remove_self_intersections(TriangleMesh& tm, const int max_steps = 7, bool v
 
     if (verbose)
       std::cout << "DEBUG: Iterative self-intersection removal step " << step
-                << " - non_filled_hole.size() = " << non_filled_hole.size() << std::endl;
+                << " - non_filled_hole.size() = " << non_filled_hole.size()
+                << " - is_valid(tm) = " << is_valid(tm) << std::endl;
 
     if ( faces_to_remove.empty() && non_filled_hole.empty() )
       break;
