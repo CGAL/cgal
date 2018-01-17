@@ -98,7 +98,6 @@ public:
       this->m_subCurves =
         this->m_subCurveAlloc.allocate(this->m_num_of_subCurves);
 
-    this->m_curves_pair_set.resize(2 * this->m_num_of_subCurves);
 
     // Initialize the event queue using the vertices vectors. Note that these
     // vertices are already sorted, we simply have to merge them

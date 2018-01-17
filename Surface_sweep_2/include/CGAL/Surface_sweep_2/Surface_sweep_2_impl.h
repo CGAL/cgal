@@ -41,9 +41,6 @@ void Surface_sweep_2<Vis>::_init_structures()
 {
   // Initailize the structures maintained by the base sweep-line class.
   Base::_init_structures();
-
-  // Resize the hash to be O(2*n), where n is the number of input curves.
-  m_curves_pair_set.resize(2 * this->m_num_of_subCurves);
 }
 
 //-----------------------------------------------------------------------------
@@ -420,12 +417,6 @@ template <typename Vis>
     CGAL_SS_PRINT_END_EOL("computing intersection (already computed)");
     return;  //the curves have already been checked for intersection
   }
-
-  float load_factor = static_cast<float>(m_curves_pair_set.size()) /
-    m_curves_pair_set.bucket_count();
-  // after lot of benchemarks, keeping load_factor<=6 is optimal
-  if (load_factor > 6.0f)
-    m_curves_pair_set.resize(m_curves_pair_set.size() * 6);
 
   // handle overlapping curves with common ancesters
   Subcurve_vector all_leaves_diff;

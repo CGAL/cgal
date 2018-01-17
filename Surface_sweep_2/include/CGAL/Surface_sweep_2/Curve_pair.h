@@ -61,6 +61,11 @@ public:
 
   /*! Obtain the second subcurve. */
   Subcurve* second() const { return m_pair.second; }
+
+  std::pair<Subcurve*, Subcurve*> pair() const
+  {
+    return m_pair;
+  }
 };
 
 /*! \struct
@@ -80,22 +85,11 @@ struct Less_curve_pair {
   }
 };
 
-/*! \struct
- * A hash functor for curve pairs.
- */
-template <typename Subcurve_>
-struct Curve_pair_hasher {
-  typedef Subcurve_ Subcurve;
-  typedef class Curve_pair<Subcurve> Curve_pair;
-
-  size_t operator()(const Curve_pair& pair) const
-  {
-    const size_t half_n_bits = sizeof(size_t) * 8 / 2;
-    const size_t val1 = reinterpret_cast<size_t>(pair.first());
-    const size_t val2 = reinterpret_cast<size_t>(pair.second());
-    return (((val1 << half_n_bits) | (val1 >> half_n_bits)) ^ val2);
-  }
-};
+template <class Subcurve_>
+std::size_t hash_value(const Curve_pair<Subcurve_>& cp)
+{
+  return boost::hash<std::pair<Subcurve_*, Subcurve_*> >()(cp.pair());
+}
 
 /*! \struct
  * Equaility functor for curve pairs.
