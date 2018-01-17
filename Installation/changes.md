@@ -6,9 +6,9 @@ Release 4.12
 
 Release date: April 2018
 
-### 2D Movable Separability of Sets
+### 2D Movable Separability of Sets (new package)
 
--   A new packaged called "2D Movable Separability of Sets" has been
+-   A new package called "2D Movable Separability of Sets" has been
     introduced. It handles a class of problems that deal with moving
     sets of objects in the plane; the challenge is to avoid collisions
     between the objects while considering different kinds of motions and
