@@ -24,6 +24,7 @@
 
 #include <CGAL/license/AABB_tree.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <vector>
 #include <iterator>
@@ -1282,6 +1283,7 @@ public:
 
 #include <CGAL/internal/AABB_tree/AABB_ray_intersection.h>
 
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_AABB_TREE_H
 
