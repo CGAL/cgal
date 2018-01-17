@@ -417,7 +417,6 @@ private:
       //if (traits().construct_cartesian_const_iterator_d_object()(p)[newparent->cutting_dimension()] >= newparent->cutting_value())
 	return remove_(p, parent, islower, newparent, false, newparent->upper(), equal_to_p);
 
-      CGAL_assertion(false); // Point was not found
     }
 
     // Actual removal
