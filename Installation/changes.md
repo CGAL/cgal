@@ -98,11 +98,16 @@ Release date: April 2018
 
 ### CGAL and the Boost Graph Library (BGL)
 
--   Add helper function `CGAL::expand_face_selection_for_removal` that
+-   Added helper function `CGAL::expand_face_selection_for_removal` that
     expands a face selection to avoid creating a non manifold mesh when
     removing the selected faces.
 
--   Add support for dynamic property maps
+-   Added support for dynamic property maps.
+
+-   Added an interface to the [METIS library](http://glaros.dtc.umn.edu/gkhome/metis/metis/overview),
+    which allows to partition any mesh that is a model of `FaceListGraph`.
+    Wrappers to the METIS functions `METIS_PartMeshNodal` and `METIS_PartMeshDual`
+    are offered.
 
 ### 2D Arrangements
 
