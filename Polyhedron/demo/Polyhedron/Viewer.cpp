@@ -138,6 +138,8 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
                       tr("Toggle the primitive IDs visibility of the selected Item."));
   setKeyDescription(Qt::Key_D,
                       tr("Disable the distance between two points  visibility."));
+  setKeyDescription(Qt::Key_F5,
+                    tr("Reload selected items if possible."));
 
 #if QGLVIEWER_VERSION >= 0x020501
   //modify mouse bindings that have been updated

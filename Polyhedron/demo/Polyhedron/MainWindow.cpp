@@ -151,6 +151,9 @@ MainWindow::MainWindow(QWidget* parent)
     QShortcut* shortcut = new QShortcut(QKeySequence(Qt::ALT+Qt::Key_Q), this);
     connect(shortcut, SIGNAL(activated()),
             this, SLOT(setFocusToQuickSearch()));
+    shortcut = new QShortcut(QKeySequence(Qt::Key_F5), this);
+    connect(shortcut, SIGNAL(activated()),
+            this, SLOT(reloadItem()));
   }
 
   proxyModel = new QSortFilterProxyModel(this);
