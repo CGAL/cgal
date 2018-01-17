@@ -201,9 +201,11 @@ void draw(const Polyhedron& apoly,
 
   SimplePolyhedronViewerQt<Polyhedron, ColorFunctor>
     mainwindow(apoly, title, nofill, fcolor);
-  mainwindow.show();
 
+#if !defined(CGAL_TEST_SUITE)
+  mainwindow.show();
   app.exec();
+#endif
 }
 
 template<class Polyhedron>

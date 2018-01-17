@@ -146,9 +146,11 @@ void draw(const T3& at3,
 
   SimpleTriangulation3ViewerQt<T3, ColorFunctor> mainwindow(at3, title,
                                                             nofill, fcolor);
-  mainwindow.show();
 
+#if !defined(CGAL_TEST_SUITE)
+  mainwindow.show();
   app.exec();
+#endif
 }
 
 template<class T3>

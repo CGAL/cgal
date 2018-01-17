@@ -193,9 +193,11 @@ void draw(const SM& amesh,
 
   SimpleSurfaceMeshViewerQt<SM, ColorFunctor> mainwindow(amesh, title,
                                                          nofill, fcolor);
-  mainwindow.show();
 
+#if !defined(CGAL_TEST_SUITE)
+  mainwindow.show();
   app.exec();
+#endif
 }
 
 template<class SM>

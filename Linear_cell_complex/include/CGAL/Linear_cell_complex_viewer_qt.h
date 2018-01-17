@@ -205,9 +205,11 @@ void draw(const LCC& alcc,
   QApplication app(argc,const_cast<char**>(argv));
 
   SimpleLCCViewerQt<LCC, ColorFunctor> mainwindow(alcc, title, nofill, fcolor);
-  mainwindow.show();
 
+#if !defined(CGAL_TEST_SUITE)
+  mainwindow.show();
   app.exec();
+#endif
 }
 
 template<class LCC>
