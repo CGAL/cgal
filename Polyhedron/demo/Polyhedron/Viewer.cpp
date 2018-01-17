@@ -53,9 +53,9 @@ public:
   };
 
   //! The buffers used to draw the axis system
-  QOpenGLBuffer buffers[4];
+  QOpenGLBuffer buffers[8];
   //! The VAO used to draw the axis system
-  QOpenGLVertexArrayObject vao[2];
+  QOpenGLVertexArrayObject vao[4];
   //! The rendering program used to draw the axis system
   QOpenGLShaderProgram rendering_program;
   //! The rendering program used to draw the distance
@@ -69,6 +69,9 @@ public:
   std::vector<float> c_Axis;
   //! Decides if the axis system must be drawn or not
   bool axis_are_displayed;
+  bool grid_is_displayed;
+  std::size_t grid_size;
+  std::size_t v_gaxis_size;
   //! Decides if the text is displayed in the drawVisualHints function.
   bool has_text;
   //! Decides if the distance between APoint and BPoint must be drawn;
@@ -96,6 +99,7 @@ public:
    * \param data the struct of std::vector that will contain the results.
    */
   void makeArrow(double R, int prec, qglviewer::Vec from, qglviewer::Vec to, qglviewer::Vec color, AxisData &data);
+  void drawGrid(qreal size, int nbSubdivisions=10);
   //!Clears the distance display
   void clearDistancedisplay();
   void draw_aux(bool with_names, Viewer*);
@@ -170,6 +174,8 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
 #endif // QGLVIEWER_VERSION >= 2.5.0
   prev_radius = sceneRadius();
   d->axis_are_displayed = true;
+  d->grid_is_displayed = false;
+  d->grid_size = 0;
   d->has_text = false;
   d->i_is_pressed = false;
   d->z_is_pressed = false;
@@ -400,6 +406,12 @@ void Viewer::initializeGL()
      {
          d->vao[1].create();
          d->buffers[3].create();
+         d->vao[2].create();
+         d->vao[3].create();
+         d->buffers[4].create();
+         d->buffers[5].create();
+         d->buffers[6].create();
+         d->buffers[7].create();
          //Vertex source code
          const char vertex_source_dist[] =
          {
@@ -557,6 +569,10 @@ void Viewer::keyPressEvent(QKeyEvent* e)
     }
     else if(e->key() == Qt::Key_A) {
           d->axis_are_displayed = !d->axis_are_displayed;
+          update();
+        }
+    else if(e->key() == Qt::Key_G) {
+          d->grid_is_displayed = !d->grid_is_displayed;
           update();
         }
     else if(e->key() == Qt::Key_I) {
@@ -1143,6 +1159,71 @@ void Viewer::drawVisualHints()
         glLineWidth(1.0f);
 
     }
+    if(d->grid_is_displayed)
+    {
+      //draws the distance
+      QMatrix4x4 mvpMatrix;
+      double mat[16];
+      //camera()->frame()->rotation().getMatrix(mat);
+      camera()->getModelViewProjectionMatrix(mat);
+      //nullifies the translation
+      for(int i=0; i < 16; i++)
+      {
+          mvpMatrix.data()[i] = (float)mat[i];
+      }
+      d->rendering_program_dist.bind();
+      d->rendering_program_dist.setUniformValue("mvp_matrix", mvpMatrix);
+      d->vao[2].bind();
+      glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->grid_size));
+      d->vao[2].release();
+      d->rendering_program_dist.release();
+
+      d->rendering_program.bind();
+        QMatrix4x4 mvMatrix;
+        for(int i=0; i < 16; i++)
+        {
+            mvMatrix.data()[i] = camera()->orientation().inverse().matrix()[i];
+        }
+        QVector4D	position(0.0f,0.0f,1.0f,1.0f );
+        // define material
+        QVector4D	ambient;
+        QVector4D	diffuse;
+        QVector4D	specular;
+        GLfloat      shininess ;
+        // Ambient
+        ambient[0] = 0.29225f;
+        ambient[1] = 0.29225f;
+        ambient[2] = 0.29225f;
+        ambient[3] = 1.0f;
+        // Diffuse
+        diffuse[0] = 0.50754f;
+        diffuse[1] = 0.50754f;
+        diffuse[2] = 0.50754f;
+        diffuse[3] = 1.0f;
+        // Specular
+        specular[0] = 0.0f;
+        specular[1] = 0.0f;
+        specular[2] = 0.0f;
+        specular[3] = 0.0f;
+        // Shininess
+        shininess = 51.2f;
+
+        d->rendering_program.setUniformValue("light_pos", position);
+        d->rendering_program.setUniformValue("mvp_matrix", mvpMatrix);
+        d->rendering_program.setUniformValue("mv_matrix", mvMatrix);
+        d->rendering_program.setUniformValue("light_diff", diffuse);
+        d->rendering_program.setUniformValue("light_spec", specular);
+        d->rendering_program.setUniformValue("light_amb", ambient);
+        d->rendering_program.setUniformValue("spec_power", shininess);
+
+        d->vao[3].bind();
+        // Axis viewport size, in pixels
+        glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(d->v_gaxis_size / 3));
+        // The viewport and the scissor are restored.
+        d->vao[3].release();
+        d->rendering_program.release();
+    }
+
     if (!d->painter->isActive())
       d->painter->begin(this);
     //So that the text is drawn in front of everything
@@ -1326,9 +1407,6 @@ void Viewer::postDraw()
 
   // Pivot point, line when camera rolls, zoom region
   drawVisualHints();
-
-  if (gridIsDrawn()) { glLineWidth(1.0); drawGrid(camera()->sceneRadius()); }
-  if (axisIsDrawn()) { glLineWidth(2.0); drawAxis(camera()->sceneRadius()); }
 
   // FPS computation
   const unsigned int maxCounter = 20;
@@ -1665,6 +1743,7 @@ qglviewer::Vec Viewer::offset()const { return d->offset; }
 void Viewer::setSceneBoundingBox(const qglviewer::Vec &min, const qglviewer::Vec &max)
 {
   QGLViewer::setSceneBoundingBox(min+d->offset, max+d->offset);
+  d->drawGrid(camera()->sceneRadius());
 }
 
 void Viewer::updateIds(CGAL::Three::Scene_item * item)
@@ -1702,6 +1781,78 @@ void Viewer::enableClippingBox(QVector4D box[6])
 
 
 bool Viewer::isOpenGL_4_3() const { return d->is_ogl_4_3; }
+void Viewer_impl::drawGrid(qreal size, int nbSubdivisions)
+{
+  std::vector<float> v_Grid;
+  std::vector<float> v_gAxis;
+  std::vector<float> n_gAxis;
+  std::vector<float> c_gAxis;
+  for (int i=0; i<=nbSubdivisions; ++i)
+  {
+          const float pos = size*(2.0*i/nbSubdivisions-1.0);
+          v_Grid.push_back(pos);
+          v_Grid.push_back(-size);
+          v_Grid.push_back(0.0);
 
+          v_Grid.push_back(pos);
+          v_Grid.push_back(+size);
+          v_Grid.push_back(0.0);
+
+          v_Grid.push_back(-size);
+          v_Grid.push_back(pos);
+          v_Grid.push_back(0.0);
+
+          v_Grid.push_back( size);
+          v_Grid.push_back( pos);
+          v_Grid.push_back( 0.0);
+  }
+  rendering_program_dist.bind();
+  vao[2].bind();
+  buffers[4].bind();
+  buffers[4].allocate(v_Grid.data(),v_Grid.size()*sizeof(float));
+  rendering_program_dist.enableAttributeArray("vertex");
+  rendering_program_dist.setAttributeBuffer("vertex",GL_FLOAT,0,3);
+  buffers[4].release();
+  vao[2].release();
+  rendering_program_dist.release();
+  grid_size = v_Grid.size();
+
+  Viewer_impl::AxisData data;
+  v_gAxis.resize(0);
+  n_gAxis.resize(0);
+  c_gAxis.resize(0);
+  data.vertices = &v_gAxis;
+  data.normals =  &n_gAxis;
+  data.colors =   &c_gAxis;
+  makeArrow(0.02*size,10, qglviewer::Vec(0,0,0),qglviewer::Vec(size,0,0),qglviewer::Vec(1,0,0), data);
+  makeArrow(0.02*size,10, qglviewer::Vec(0,0,0),qglviewer::Vec(0,size,0),qglviewer::Vec(0,1,0), data);
+  makeArrow(0.02*size,10, qglviewer::Vec(0,0,0),qglviewer::Vec(0,0,size),qglviewer::Vec(0,0,1), data);
+
+  rendering_program.bind();
+  vao[3].bind();
+  buffers[5].bind();
+  buffers[5].allocate(v_gAxis.data(), static_cast<int>(v_gAxis.size()) * sizeof(float));
+  rendering_program.enableAttributeArray("vertex");
+  rendering_program.setAttributeBuffer("vertex",GL_FLOAT,0,3);
+  buffers[5].release();
+
+  buffers[6].bind();
+  buffers[6].allocate(n_gAxis.data(), static_cast<int>(n_gAxis.size() * sizeof(float)));
+  rendering_program.enableAttributeArray("normal");
+  rendering_program.setAttributeBuffer("normal",GL_FLOAT,0,3);
+  buffers[6].release();
+
+  buffers[7].bind();
+  buffers[7].allocate(c_gAxis.data(), static_cast<int>(c_gAxis.size() * sizeof(float)));
+  rendering_program.enableAttributeArray("colors");
+  rendering_program.setAttributeBuffer("colors",GL_FLOAT,0,3);
+  buffers[7].release();
+  vao[3].release();
+
+  rendering_program.release();
+
+  v_gaxis_size = v_gAxis.size();
+
+}
 QOpenGLFunctions_4_3_Compatibility* Viewer::openGL_4_3_functions() { return d->_recentFunctions; }
  #include "Viewer.moc"
