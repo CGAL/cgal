@@ -30,6 +30,8 @@
 #include <fstream>
 #include <cstdlib>
 
+#include <CGAL/disable_warnings.h>
+
 #include "util.h"
 
 static unsigned int failed = 0;
