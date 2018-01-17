@@ -23,6 +23,7 @@
 
 #include <CGAL/license/Surface_mesh_deformation.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/config.h>
 #include <CGAL/Default.h>
@@ -1506,7 +1507,6 @@ private:
     else
     {
       return energy_arap();
-      return 0;
     }
   }
   double energy_arap() const
@@ -1613,4 +1613,7 @@ private:
   }
 };
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
+
 #endif  // CGAL_SURFACE_MESH_DEFORMATION_H
