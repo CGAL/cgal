@@ -54,6 +54,10 @@ struct Graph_manipulations
     , interpolate(interpolate)
   {}
 
+  static vertex_descriptor null_vertex() {
+    return boost::graph_traits<Graph>::null_vertex();
+  }
+
   vertex_descriptor get_vertex(const Point_3& p) {
     typename std::map<Point_3, vertex_descriptor>::iterator
       it = p2v.find(p);

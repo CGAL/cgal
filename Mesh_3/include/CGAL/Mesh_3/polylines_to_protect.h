@@ -129,20 +129,25 @@ class Insert_curve_in_graph {
   typedef typename Geom_traits::Vector_3 Vector;
 
   G_manip& g_manip;
+  const vertex_descriptor null_vertex;
   const Geom_traits& gt;
   const typename Geom_traits::Construct_translated_point_3 translate;
   const typename Geom_traits::Construct_scaled_vector_3 scale;
   const int prec;
+  const double max_squared_distance;
 
 public:
   Insert_curve_in_graph(G_manip& g_manip,
                         const Geom_traits& gt,
-                        const int prec = 10)
+                        const int prec = 10,
+                        const double max_squared_distance = 0)
     : g_manip(g_manip)
+    , null_vertex(g_manip.null_vertex())
     , gt(gt)
     , translate(gt.construct_translated_point_3_object())
     , scale(gt.construct_scaled_vector_3_object())
     , prec(prec)
+    , max_squared_distance(max_squared_distance)
   {}
 
   struct Coords {
@@ -184,7 +189,7 @@ private:
     const double stop = end-step/2;
     const bool step_is_positive = (step > 0);
     vertex_descriptor old = start_v;
-    vertex_descriptor v_int;
+    vertex_descriptor v_int = null_vertex;
     for(double x = start + step;
         (step_is_positive ? x < stop : x > stop);
         x += step)
@@ -196,9 +201,44 @@ private:
                   scale(vy, y));
       v_int = g_manip.get_vertex(inter_p);
       g_manip.try_add_edge(old, v_int);
+      CGAL_assertion_msg(max_squared_distance == 0 ||
+                         CGAL::squared_distance(g_manip.g[old],
+                                                g_manip.g[v_int]) <
+                         max_squared_distance,
+#ifndef CGAL_CFG_NO_CPP0X_LAMBDAS
+                       ([this, old, v_int] {
+                         std::stringstream s;
+                         s << "Problem at segment ("
+                           << this->g_manip.g[old] << ", "
+                           << this->g_manip.g[v_int] << ")";
+                         return s.str();
+                       }().c_str())
+#else // no C++ lamdbas
+                           ""
+#endif // no C++ lamdbas
+                     );
       old = v_int;
     }
-    g_manip.try_add_edge(v_int, end_v);
+    if(null_vertex != v_int) {
+      // v_int can be null if the curve is degenerated into one point.
+      g_manip.try_add_edge(v_int, end_v);
+      CGAL_assertion_msg(max_squared_distance == 0 ||
+                         CGAL::squared_distance(g_manip.g[end_v],
+                                                g_manip.g[v_int]) <
+                         max_squared_distance,
+#ifndef CGAL_CFG_NO_CPP0X_LAMBDAS
+                         ([this, end_v, v_int] {
+                           std::stringstream s;
+                           s << "Problem at segment ("
+                             << this->g_manip.g[end_v] << ", "
+                             << this->g_manip.g[v_int] << ")";
+                           return s.str();
+                         }().c_str())
+#else // no C++ lamdbas
+                         ""
+#endif // no C++ lamdbas
+                         );
+    }
   }
 };
 
@@ -403,9 +443,17 @@ polylines_to_protect
                                                 InterpolationFunctor> G_manip;
   G_manip g_manip(graph, interpolate);
 
+  double max_squared_distance =
+    (std::max)( (std::max)(cgal_image.vx(),
+                           cgal_image.vy()),
+                cgal_image.vz() );
+  max_squared_distance *= max_squared_distance;
+  max_squared_distance *= 2;
+
   Insert_curve_in_graph<G_manip,
                         vertex_descriptor,
-                        K> insert_curve_in_graph(g_manip, K(), prec);
+                        K> insert_curve_in_graph(g_manip, K(), prec,
+                                                 max_squared_distance);
 
   std::size_t
     case4 = 0, // 4 colors
