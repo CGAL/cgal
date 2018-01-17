@@ -98,7 +98,7 @@ public:
                 best_thresh = fraction * data_points[i_point-1].first + (1-fraction) * data_points[i_point].first;
             }
         }
-        return std::make_pair(best_thresh, best_loss);
+        return std::make_pair(best_thresh, float(best_loss));
     }
 
     template <typename Archive>
