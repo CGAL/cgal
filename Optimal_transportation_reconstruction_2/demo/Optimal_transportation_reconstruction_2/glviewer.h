@@ -17,7 +17,8 @@ private:
     Scene* m_scene;
     
     // toggles
-    bool m_view_points;    
+    bool m_view_points;
+    bool m_view_tolerance;    
     bool m_view_vertices;
     bool m_view_edges;
     bool m_view_ghost_edges;
@@ -68,7 +69,9 @@ public:
     const double& vertex_size() const { return m_vertex_size; }
     
     // toggles
-    void toggle_view_points() { m_view_points = !m_view_points; } 
+    void toggle_view_points() { m_view_points = !m_view_points; }
+
+    void toggle_view_tolerance() { m_view_tolerance = !m_view_tolerance; } 
 
     void toggle_view_vertices() { m_view_vertices = !m_view_vertices; }
     
