@@ -38,16 +38,47 @@ Point set processing pipeline for surface reconstruction. The algorithms listed 
 \cgalFigureEnd
 
 
+\section Point_set_processing_3API API
 
-\section Point_set_processing_3PropertyMaps Property Maps
+The algorithms of this component take as input parameters ranges of 3D
+points, or of 3D points with normals. They can be
+adapted to the user's data structures and make extensive use of
+\ref Point_set_processing_3NamedParameters "named parameters" and of
+\ref Point_set_processing_3PropertyMaps "property maps":
 
-The algorithms of this component take as input parameters iterator
-ranges of 3D points, or of 3D points with normals. The property maps
-are used to access the point or normal information from the input
-data, so as to let the user decide upon the implementation of a point
-with normal. The latter can be represented as, e.g., a class derived
-from the \cgal 3D point, or as a `std::pair<Point_3<K>, Vector_3<K>>`, 
-or as a `boost::tuple<..,Point_3<K>, ..., Vector_3<K> >`.
+\code
+std::vector<PointVectorPair> points;
+typedef CGAL::First_of_pair_property_map<PointVectorPair> Point_map;
+typedef CGAL::Second_of_pair_property_map<PointVectorPair> Vector_map;
+
+CGAL::jet_estimate_normals
+<CGAL::Parallel_tag>           // concurrency tag
+  (points,                     // input range of points
+   12,                         // parameter: number of neighbors
+   CGAL::parameters::          // named parameters:
+   point_map (Point_map()).    //  * point map
+   normal_map (Vector_map())); //  * normal map
+\endcode
+
+This API was introduced in \cgal 4.12. Please refer to the
+\ref Point_set_processing_3Deprecated "dedicated section"
+on how to upgrade from the deprecated API.
+
+\subsection Point_set_processing_3NamedParameters Named Parameters
+
+Named parameters are used to deal with optional parameters. The page
+\ref BGLNamedParameters explains the rationale and API in general.
+The page \ref psp_namedparameters describes their usage
+and provides a list of the parameters that are used in this package.
+
+\subsection Point_set_processing_3PropertyMaps Property Maps
+
+The property maps are used to access the point or normal information
+from the input data, so as to let the user decide upon the
+implementation of a point with normal. The latter can be represented
+as, e.g., a class derived from the \cgal 3D point, or as a
+`std::pair<Point_3<K>, Vector_3<K>>`, or as a
+`boost::tuple<..,Point_3<K>, ..., Vector_3<K> >`.
 
 The following classes described in Chapter \ref PkgProperty_mapSummary
 provide property maps for the implementations of points with normals
@@ -71,6 +102,50 @@ a property map.
 
 \cgalExample{Point_set_processing_3/grid_simplify_indices.cpp}
 
+\subsection Point_set_processing_3Deprecated Upgrading from pre-CGAL 4.12 Deprecated API
+
+The current API based on ranges and named parameters was introduced in
+\cgal 4.12. The old API that used pairs of iterators along with usual
+\cpp parameters (with some default values and overloads to handle
+optional parameters) is deprecated.
+
+\warning The deprecated API will be removed in \cgal 4.14, so we
+recommend to update your code.
+
+Translating your pre-\cgal 4.12 code using Point Set Processing to the
+new API is easy. For example, consider this code using the old API:
+
+\code
+std::vector<PointVectorPair> points;
+
+// Old pre-CGAL 4.12 deprecated API
+CGAL::jet_estimate_normals<Concurrency_tag>
+  (points.begin(), points.end(),
+   CGAL::First_of_pair_property_map<PointVectorPair>(),
+   CGAL::Second_of_pair_property_map<PointVectorPair>(),
+   12); // Number of neighbors
+\endcode
+
+The pair of iterators is replaced by a range and the optional
+parameters (than can be deduced automatically in simple cases) are
+moved to the end of the function in a single named parameter object
+(see \ref BGLNamedParameters). The code translated to the new API
+becomes:
+   
+\code
+std::vector<PointVectorPair> points;
+
+// New API
+CGAL::jet_estimate_normals<Concurrency_tag>
+  (points,
+   12, // Number of neighbors
+   CGAL::parameters::point_map (CGAL::First_of_pair_property_map<PointVectorPair>()).
+   normal_map (CGAL::Second_of_pair_property_map<PointVectorPair>()));
+\endcode
+
+Please refer to the [Reference Manual](@ref PkgPointSetProcessing) for
+the detailed API of the Point Set Processing functions.
+
 
 \section Point_set_processing_3InputOutput Input/Output
 
@@ -89,14 +164,19 @@ not handle normals and requires the \ref thirdpartyLASlib library.
 
 The following functions are available:
 
-- `read_xyz_points()` and `read_xyz_points_and_normals()` 
-- `read_off_points()` and `read_off_points_and_normals()` 
-- `read_ply_points()` and `read_ply_points_and_normals()`
+- `read_xyz_points()`
+- `read_off_points()`
+- `read_ply_points()`
 - `read_las_points()`
-- `write_xyz_points()` and `write_xyz_points_and_normals()`
-- `write_off_points()` and `write_off_points_and_normals()`
-- `write_ply_points()` and `write_ply_points_and_normals()`
+- `write_xyz_points()`
+- `write_off_points()`
+- `write_ply_points()`
 - `write_las_points()`
+
+All of these functions (with the exception of the LAS format) can read
+and write either points alone or points with normals (depending on
+whether the [normal_map](@ref PSP_normal_map) is provided by the user
+or not).
 
 Note that the %PLY format handles both ASCII and binary formats. In
 addition, %PLY and %LAS are extensible formats that can embed additional
@@ -537,7 +617,7 @@ structure provides the user with a method
 `Point_set_with_structure::facet_coherence()` that estimates if a
 triplet of points form a coherent facet.
 
-\cgalFigureBegin{Point_set_processing_3figstructuringcoherence, structuring_coherence.png}
+\cgalFigureBegin{Point_set_processing_3figstructuring_coherence, structuring_coherence.png}
 (a) Input point set (and structured output); (b) output with many
 incoherent facets; (c) output with all facets coherent. i, j and k
 each corresponds to a primitive index.

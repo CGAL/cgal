@@ -127,7 +127,7 @@ template <class PolygonMesh, class NamedParameters>
 void CatmullClark_subdivision(PolygonMesh& pmesh, const NamedParameters& np) {
   using boost::choose_param;
   using boost::get_param;
-  typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type Vpm;
+  typedef typename Polygon_mesh_processing::GetVertexPointMap<PolygonMesh, NamedParameters>::type Vpm;
   Vpm vpm = choose_param(get_param(np, internal_np::vertex_point),
                          get_property_map(CGAL::vertex_point, pmesh));
 
@@ -172,7 +172,7 @@ template <class PolygonMesh, class NamedParameters>
 void Loop_subdivision(PolygonMesh& pmesh, const NamedParameters& np) {
   using boost::choose_param;
   using boost::get_param;
-  typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type Vpm;
+  typedef typename Polygon_mesh_processing::GetVertexPointMap<PolygonMesh, NamedParameters>::type Vpm;
   Vpm vpm = choose_param(get_param(np, internal_np::vertex_point),
                          get_property_map(CGAL::vertex_point, pmesh));
 
@@ -217,7 +217,7 @@ template <class PolygonMesh, class NamedParameters>
 void DooSabin_subdivision(PolygonMesh& pmesh, const NamedParameters& np) {
   using boost::choose_param;
   using boost::get_param;
-  typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type Vpm;
+  typedef typename Polygon_mesh_processing::GetVertexPointMap<PolygonMesh, NamedParameters>::type Vpm;
   Vpm vpm = choose_param(get_param(np, internal_np::vertex_point),
                          get_property_map(CGAL::vertex_point, pmesh));
 
@@ -267,7 +267,7 @@ template <class PolygonMesh, class NamedParameters>
 void Sqrt3_subdivision(PolygonMesh& pmesh, const NamedParameters& np) {
   using boost::choose_param;
   using boost::get_param;
-  typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type Vpm;
+  typedef typename Polygon_mesh_processing::GetVertexPointMap<PolygonMesh, NamedParameters>::type Vpm;
   Vpm vpm = choose_param(get_param(np, internal_np::vertex_point),
                          get_property_map(CGAL::vertex_point, pmesh));
 

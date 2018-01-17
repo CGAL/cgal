@@ -26,20 +26,17 @@ int main(int argc, char*argv[])
 
   // Randomly simplifies using erase-remove idiom
   const double removed_percentage = 97.0; // percentage of points to remove
-  points.erase(CGAL::random_simplify_point_set(points.begin(), points.end(), removed_percentage),
+  points.erase(CGAL::random_simplify_point_set(points, removed_percentage),
                points.end());
 
   // Optional: after erase(), use Scott Meyer's "swap trick" to trim excess capacity
   std::vector<Point>(points).swap(points);
 
   // Saves point set.
-  // Note: write_xyz_points_and_normals() requires an output iterator
-  // over points as well as property maps to access each
-  // point position and normal.
   std::ofstream out((argc>2)?argv[2]:"Three_lady_copy.xyz");
   if (!out ||
 	  !CGAL::write_xyz_points(
-	  out, points.begin(), points.end()))
+            out, points))
   {
 	  return EXIT_FAILURE;
   }

@@ -95,6 +95,10 @@ Release date: April 2018
 
 -   **Breaking change**: the API of `CGAL::structure_point_set()` is
     generalized to accept other types of input than the RANSAC output.
+-   **Breaking change**: the API of all functions of Point Set
+    Processing is modified to use ranges (instead of iterators) and
+    Named Parameters (similarly to the API of Polygon Mesh
+    Processing). The old API is kept as deprecated.
 
 ### CGAL and the Boost Graph Library (BGL)
 

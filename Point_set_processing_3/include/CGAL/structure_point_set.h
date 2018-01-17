@@ -40,6 +40,9 @@
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
 
+#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/named_params_helper.h>
+
 #include <iterator>
 #include <list>
 #include <limits>
@@ -158,31 +161,97 @@ public:
     Constructs a structured point set based on the input points and the
     associated shape detection object.
 
-    \tparam PointRange range of points, model of `ConstRange`
-    \tparam PointMap is a model of `ReadablePropertyMap` with value type `Kernel::Point_3`.
-    \tparam NormalMap is a model of `ReadablePropertyMap` with value type `Kernel::Vector_3`.
-    \tparam PlaneRange range of planes, model of `ConstRange`
-    \tparam PlaneMap is a model of `ReadablePropertyMap` with value type `Kernel::Plane_3`.
-    \tparam IndexMap is a model of `ReadablePropertyMap` with value type `std::size_t`.
+    \tparam PointRange is a model of `ConstRange`. The value type of
+    its iterator is the key type of the named parameter `point_map`.
+    \tparam PlaneRange is a model of `ConstRange`. The value type of
+    its iterator is the key type of the named parameter `plane_map`.
 
-    \note Both property maps can be omitted if the default constructors of these property maps can be safely used.
+    \param points input point range.
+    \param planes input plane range.
+    \param epsilon size parameter.
+    \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
+
+    \cgalNamedParamsBegin
+      \cgalParamBegin{point_map} a model of `ReadablePropertyMap` with value type `Kernel::Point_3`.
+      If this parameter is omitted, `CGAL::Identity_property_map<Kernel::Point_3>` is used.\cgalParamEnd
+      \cgalParamBegin{normal_map} a model of `ReadablePropertyMap` with value type
+      `Kernel::Vector_3`.\cgalParamEnd
+      \cgalParamBegin{plane_index_map} a model of `ReadablePropertyMap` with value type `int`.
+      Associates the index of a point in the input range to the index of plane (-1 if point does is not assigned to
+      a plane).\cgalParamEnd
+      \cgalParamBegin{plane_map} a model of `ReadablePropertyMap` with value type
+      `Kernel::Plane_3`. If this parameter is omitted, `CGAL::Identity_property_map<Kernel::Plane_3>`
+      is used.\cgalParamEnd
+      \cgalParamBegin{attraction_factor} multiple of `epsilon` used to connect simplices.\cgalParamEnd
+    \cgalNamedParamsEnd
 
   */
+  template <typename PointRange,
+            typename PlaneRange,
+            typename NamedParameters>
+  Point_set_with_structure (const PointRange& points,
+                            const PlaneRange& planes,
+                            double epsilon,
+                            const NamedParameters& np)
+  {
+    init (points, planes, epsilon, np);
+  }
+
+  /// \cond SKIP_IN_MANUAL
+  // deprecated
   template <typename PointRange,
             typename PointMap,
             typename NormalMap,
             typename PlaneRange,
             typename PlaneMap,
             typename IndexMap>
-  Point_set_with_structure (const PointRange& points, ///< range of points.
-                            PointMap point_map, ///< property map: value_type of `typename PointRange::const_iterator` -> `Point_3`
-                            NormalMap normal_map, ///< property map: value_type of `typename PointRange::const_iterator` -> `Normal_3`
-                            const PlaneRange& planes, ///< range of planes.
-                            PlaneMap plane_map, ///< property map: value_type of `typename PlaneRange::const_iterator` -> `Plane_3`
-                            IndexMap index_map, ///< property map: index of point `std::size_t` -> index of plane `int` (-1 if the point is not assigned to a plane)
-                            double epsilon, ///< size parameter
-                            double attraction_factor = 3.) ///< attraction factor
+  CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::Point_set_with_structure(), please update your code")
+  Point_set_with_structure (const PointRange& points,
+                            PointMap point_map,
+                            NormalMap normal_map,
+                            const PlaneRange& planes,
+                            PlaneMap plane_map,
+                            IndexMap index_map,
+                            double epsilon,
+                            double attraction_factor = 3.)
   {
+    init (points, planes, epsilon,
+          CGAL::parameters::point_map (point_map).
+          normal_map (normal_map).
+          plane_map (plane_map).
+          plane_index_map (index_map).
+          attraction_factor (attraction_factor));
+  }
+
+  template <typename PointRange,
+            typename PlaneRange,
+            typename NamedParameters>
+  void init (const PointRange& points,
+             const PlaneRange& planes,
+             double epsilon,
+             const NamedParameters& np)
+  {
+    using boost::choose_param;
+
+    // basic geometric types
+    typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::type PointMap;
+    typedef typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::type NormalMap;
+    typedef typename Point_set_processing_3::GetPlaneMap<PlaneRange, NamedParameters>::type PlaneMap;
+    typedef typename Point_set_processing_3::GetPlaneIndexMap<NamedParameters>::type PlaneIndexMap;
+
+    CGAL_static_assertion_msg(!(boost::is_same<NormalMap,
+                                typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::NoMap>::value),
+                              "Error: no normal map");
+    CGAL_static_assertion_msg(!(boost::is_same<PlaneIndexMap,
+                                typename Point_set_processing_3::GetPlaneIndexMap<NamedParameters>::NoMap>::value),
+                              "Error: no plane index map");
+
+    PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
+    NormalMap normal_map = choose_param(get_param(np, internal_np::normal_map), NormalMap());
+    PlaneMap plane_map = choose_param(get_param(np, internal_np::plane_map), PlaneMap());
+    PlaneIndexMap index_map = choose_param(get_param(np, internal_np::plane_index_map), PlaneIndexMap());
+    double attraction_factor = choose_param(get_param(np, internal_np::attraction_factor), 3.);
+    
     m_points.reserve(points.size());
     m_normals.reserve(points.size());
     m_indices_of_assigned_points.resize (planes.size());
@@ -1423,34 +1492,93 @@ private:
 // Public section
 // ----------------------------------------------------------------------------
 
-/// \ingroup PkgPointSetProcessingAlgorithms
-  
-/// This is an implementation of the Point Set Structuring algorithm. This
-/// algorithm takes advantage of a set of detected planes: it detects adjacency
-/// relationships between planes and resamples the detected planes, edges and
-/// corners to produce a structured point set.
-///
-/// The size parameter `epsilon` is used both for detecting adjacencies and for
-/// setting the sampling density of the structured point set.
-///
-/// For more details, please refer to \cgalCite{cgal:la-srpss-13}.
-///
-/// @tparam PointRange range of points, model of `ConstRange`
-/// @tparam PointMap is a model of `ReadablePropertyMap` with value type `Kernel::Point_3`.
-///        It can be omitted if the value type of the iterator of `PointRange` is convertible to `Point_3<Kernel>`.
-/// @tparam NormalMap is a model of `ReadablePropertyMap` with value type `Kernel::Vector_3`.
-/// @tparam PlaneRange range of planes, model of `ConstRange`
-/// @tparam PlaneMap is a model of `ReadablePropertyMap` with value type `Kernel::Plane_3`.
-///        It can be omitted if the value type of the iterator of `PlaneRange` is convertible to `Plane_3<Kernel>`.
-/// @tparam IndexMap is a model of `ReadablePropertyMap` with value type `std::size_t`.
-/// @tparam OutputIterator Type of the output iterator. The type of the objects
-/// put in it is `std::pair<Kernel::Point_3, Kernel::Vector_3>`.  Note that the
-/// user may use a <A HREF="http://www.boost.org/libs/iterator/doc/function_output_iterator.html">function_output_iterator</A>
-/// to match specific needs.
-/// @tparam Kernel Geometric traits class.
-///        It can be omitted and deduced automatically from the value type of `PointMap`.
+/** 
+   \ingroup PkgPointSetProcessingAlgorithms
 
-// This variant requires all parameters
+   This is an implementation of the Point Set Structuring algorithm. This
+   algorithm takes advantage of a set of detected planes: it detects adjacency
+   relationships between planes and resamples the detected planes, edges and
+   corners to produce a structured point set.
+
+   The size parameter `epsilon` is used both for detecting adjacencies and for
+   setting the sampling density of the structured point set.
+
+   For more details, please refer to \cgalCite{cgal:la-srpss-13}.
+
+   \tparam PointRange is a model of `ConstRange`. The value type of
+   its iterator is the key type of the named parameter `point_map`.
+   \tparam PlaneRange is a model of `ConstRange`. The value type of
+   its iterator is the key type of the named parameter `plane_map`.
+   \tparam OutputIterator Type of the output iterator. The type of the
+   objects put in it is `std::pair<Kernel::Point_3, Kernel::Vector_3>`.
+   Note that the user may use a
+   <A HREF="http://www.boost.org/libs/iterator/doc/function_output_iterator.html">function_output_iterator</A>
+   to match specific needs.
+
+   \param points input point range.
+   \param planes input plane range.
+   \param output output iterator where output points are written
+   \param epsilon size parameter.
+   \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
+
+   \cgalNamedParamsBegin
+     \cgalParamBegin{point_map} a model of `ReadablePropertyMap` with value type `geom_traits::Point_3`.
+     If this parameter is omitted, `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
+     \cgalParamBegin{normal_map} a model of `ReadablePropertyMap` with value type
+     `geom_traits::Vector_3`.\cgalParamEnd
+     \cgalParamBegin{plane_index_map} a model of `ReadablePropertyMap` with value type `int`.
+     Associates the index of a point in the input range to the index of plane (-1 if point does is not assigned to
+     a plane).\cgalParamEnd
+     \cgalParamBegin{plane_map} a model of `ReadablePropertyMap` with value type
+     `geom_traits::Plane_3`. If this parameter is omitted, `CGAL::Identity_property_map<geom_traits::Plane_3>`
+     is used.\cgalParamEnd
+     \cgalParamBegin{attraction_factor} multiple of `epsilon` used to connect simplices.\cgalParamEnd
+     \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
+   \cgalNamedParamsEnd
+
+*/
+template <typename PointRange,
+          typename PlaneRange,
+          typename OutputIterator,
+          typename NamedParameters
+          >
+OutputIterator
+structure_point_set (const PointRange& points,
+                     const PlaneRange& planes,
+                     OutputIterator output,
+                     double epsilon,
+                     const NamedParameters& np)
+{
+  using boost::choose_param;
+
+  typedef typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel Kernel;
+
+  Point_set_with_structure<Kernel> pss (points, planes, epsilon, np);
+
+  for (std::size_t i = 0; i < pss.size(); ++ i)
+    *(output ++) = pss[i];
+
+  return output;
+}
+
+/// \cond SKIP_IN_MANUAL
+// variant with default NP
+template <typename PointRange,
+          typename PlaneRange,
+          typename OutputIterator>
+OutputIterator
+structure_point_set (const PointRange& points, ///< range of points.
+                     const PlaneRange& planes, ///< range of planes.
+                     OutputIterator output, ///< output iterator where output points are written.
+                     double epsilon) ///< size parameter.
+{
+  return structure_point_set
+    (points, planes, output, epsilon,
+     CGAL::Point_set_processing_3::parameters::all_default(points));
+}
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+// deprecated API
 template <typename PointRange,
           typename PointMap,
           typename NormalMap,
@@ -1460,6 +1588,7 @@ template <typename PointRange,
           typename OutputIterator,
           typename Kernel
           >
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::structure_point_set(), please update your code")
 OutputIterator
 structure_point_set (const PointRange& points, ///< range of points.
                      PointMap point_map, ///< property map: value_type of `typename PointRange::const_iterator` -> `Point_3`
@@ -1472,18 +1601,17 @@ structure_point_set (const PointRange& points, ///< range of points.
                      double epsilon, ///< size parameter.
                      double attraction_factor = 3.) ///< attraction factor.
 {
-  Point_set_with_structure<Kernel> pss (points, point_map, normal_map, planes, plane_map, index_map,
-                                        epsilon, attraction_factor);
-
-  for (std::size_t i = 0; i < pss.size(); ++ i)
-    *(output ++) = pss[i];
-
-  return output;
+  return structure_point_set
+    (points, planes, output, epsilon,
+     CGAL::parameters::point_map (point_map).
+     normal_map (normal_map).
+     plane_map (plane_map).
+     plane_index_map (index_map).
+     attraction_factor (attraction_factor).
+     geom_traits (Kernel()));
 }
-
-/// \cond SKIP_IN_MANUAL
   
-// This variant deduces the kernel from the point property map.
+// deprecated API
 template <typename PointRange,
           typename PointMap,
           typename NormalMap,
@@ -1492,6 +1620,7 @@ template <typename PointRange,
           typename IndexMap,
           typename OutputIterator
           >
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::structure_point_set(), please update your code")
 OutputIterator
 structure_point_set (const PointRange& points,
                      PointMap point_map,
@@ -1503,20 +1632,23 @@ structure_point_set (const PointRange& points,
                      double epsilon, ///< size parameter
                      double attraction_factor = 3.) ///< attraction factor
 {
-  typedef typename boost::property_traits<PointMap>::value_type Point;
-  typedef typename Kernel_traits<Point>::Kernel Kernel;
-
-  return structure_point_set(points, point_map, normal_map, planes, plane_map, index_map, output,
-                             Kernel(), epsilon, attraction_factor);
+  return structure_point_set
+    (points, planes, output, epsilon,
+     CGAL::parameters::point_map (point_map).
+     normal_map (normal_map).
+     plane_map (plane_map).
+     plane_index_map (index_map).
+     attraction_factor (attraction_factor));
 }
 
-// This variant creates a default point property map = Identity_property_map.
+// deprecated API
 template <typename PointRange,
           typename NormalMap,
           typename PlaneRange,
           typename IndexMap,
           typename OutputIterator
           >
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::structure_point_set(), please update your code")
 OutputIterator
 structure_point_set (const PointRange& points,
                      NormalMap normal_map,
@@ -1526,20 +1658,13 @@ structure_point_set (const PointRange& points,
                      double epsilon, ///< size parameter
                      double attraction_factor = 3.) ///< attraction factor
 {
-  return structure_point_set(points,
-                             make_identity_property_map(
-                               typename std::iterator_traits<typename PointRange::const_iterator>::value_type()),
-                             normal_map,
-                             planes,
-                             make_identity_property_map(
-                               typename std::iterator_traits<typename PlaneRange::const_iterator>::value_type()),
-                             index_map,
-                             output,
-                             epsilon,
-                             attraction_factor);
+  return structure_point_set
+    (points, planes, output, epsilon,
+     CGAL::parameters::normal_map (normal_map).
+     plane_index_map (index_map).
+     attraction_factor (attraction_factor));
 }
-
-
+#endif // CGAL_NO_DEPRECATED_CODE
 /// \endcond
 
 } //namespace CGAL

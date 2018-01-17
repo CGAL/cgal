@@ -21,7 +21,7 @@ int main(int argc, char*argv[])
   std::ifstream stream(fname);
   if (!stream ||
       !CGAL::read_xyz_points(stream, std::back_inserter(points),
-                             CGAL::Identity_property_map<Point>()))
+                             CGAL::parameters::point_map(CGAL::Identity_property_map<Point>())))
   {
     std::cerr << "Error: cannot read file " << fname << std::endl;
     return EXIT_FAILURE;
@@ -33,18 +33,17 @@ int main(int argc, char*argv[])
 
   // Estimate scale of the point set with average spacing
   const double average_spacing = CGAL::compute_average_spacing<CGAL::Sequential_tag>
-    (points.begin(), points.end(), nb_neighbors);
+    (points, nb_neighbors);
 
   //////////////////
   // FIRST OPTION //
   // I don't know the ratio of outliers present in the point set
   std::vector<Point>::iterator first_to_remove
-    = CGAL::remove_outliers(points.begin(), points.end(),
-                            CGAL::Identity_property_map<Point>(),
-                            nb_neighbors,
-                            100.,                  // No limit on the number of outliers to remove
-                            2. * average_spacing); // Point with distance above 2*average_spacing are considered outliers
-
+    = CGAL::remove_outliers
+    (points,
+     nb_neighbors,
+     CGAL::parameters::threshold_percent (100.). // No limit on the number of outliers to remove
+     threshold_distance (2. * average_spacing)); // Point with distance above 2*average_spacing are considered outliers
 
   std::cerr << (100. * std::distance(first_to_remove, points.end()) / (double)(points.size()))
             << "% of the points are considered outliers when using a distance threshold of "
@@ -56,11 +55,11 @@ int main(int argc, char*argv[])
   // I know the ratio of outliers present in the point set
   const double removed_percentage = 5.0; // percentage of points to remove
 
-  points.erase(CGAL::remove_outliers(points.begin(), points.end(),
-                                     CGAL::Identity_property_map<Point>(),
-                                     nb_neighbors,
-                                     removed_percentage, // Minimum percentage to remove
-                                     0.), // No distance threshold (can be omitted)
+  points.erase(CGAL::remove_outliers
+               (points,
+                nb_neighbors,
+                CGAL::parameters::threshold_percent(removed_percentage). // Minimum percentage to remove
+                threshold_distance(0.)), // No distance threshold (can be omitted)
                points.end());
 
   // Optional: after erase(), use Scott Meyer's "swap trick" to trim excess capacity

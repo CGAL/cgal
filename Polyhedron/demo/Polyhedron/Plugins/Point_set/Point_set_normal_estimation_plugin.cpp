@@ -146,8 +146,6 @@ void Polyhedron_demo_point_set_normal_estimation_plugin::on_actionNormalEstimati
   Scene_points_with_normal_item* item =
     qobject_cast<Scene_points_with_normal_item*>(scene->item(index));
 
-  Kernel k;
-  
   if(item)
   {
     // Gets point set
@@ -177,10 +175,9 @@ void Polyhedron_demo_point_set_normal_estimation_plugin::on_actionNormalEstimati
       std::cerr << "Estimates normal direction by PCA (k=" << dialog.pca_neighbors() <<")...\n";
 
       // Estimates normals direction.
-      CGAL::pca_estimate_normals<Concurrency_tag>(points->begin_or_selection_begin(), points->end(),
-                                                  points->point_map(),
-                                                  points->normal_map(),
-                                                  dialog.pca_neighbors(), k);
+      CGAL::pca_estimate_normals<Concurrency_tag>(points->all_or_selection_if_not_empty(),
+                                                  dialog.pca_neighbors(),
+                                                  points->parameters());
 
       std::size_t memory = CGAL::Memory_sizer().virtual_size();
       std::cerr << "Estimates normal direction: " << task_timer.time() << " seconds, "
@@ -193,10 +190,9 @@ void Polyhedron_demo_point_set_normal_estimation_plugin::on_actionNormalEstimati
       std::cerr << "Estimates normal direction by Jet Fitting (k=" << dialog.jet_neighbors() <<")...\n";
 
       // Estimates normals direction.
-      CGAL::jet_estimate_normals<Concurrency_tag>(points->begin_or_selection_begin(), points->end(),
-                                                  points->point_map(),
-                                                  points->normal_map(),
-                                                  dialog.jet_neighbors(), k);
+      CGAL::jet_estimate_normals<Concurrency_tag>(points->all_or_selection_if_not_empty(),
+                                                  dialog.jet_neighbors(),
+                                                  points->parameters());
 
       std::size_t memory = CGAL::Memory_sizer().virtual_size();
       std::cerr << "Estimates normal direction: " << task_timer.time() << " seconds, "
@@ -212,30 +208,22 @@ void Polyhedron_demo_point_set_normal_estimation_plugin::on_actionNormalEstimati
           std::cerr << "Estimates Normals Direction using VCM (R="
                     << dialog.offset_radius() << " and r=" << dialog.convolution_radius() << ")...\n";
 
-          CGAL::vcm_estimate_normals<CGAL::Default_diagonalize_traits<double, 3> >
-            (points->begin_or_selection_begin(),
-             points->end(),
-             points->point_map(),
-             points->normal_map(),
+          CGAL::vcm_estimate_normals
+            (points->all_or_selection_if_not_empty(),
              dialog.offset_radius(),
              dialog.convolution_radius(),
-             k,
-             -1);
+             points->parameters());
         }
       else
         {
           std::cerr << "Estimates Normals Direction using VCM (R="
                     << dialog.offset_radius() << " and k=" << dialog.convolution_neighbors() << ")...\n";
 
-          CGAL::vcm_estimate_normals<CGAL::Default_diagonalize_traits<double, 3> >
-            (points->begin_or_selection_begin(),
-             points->end(),
-             points->point_map(),
-             points->normal_map(),
+          CGAL::vcm_estimate_normals
+            (points->all_or_selection_if_not_empty(),
              dialog.offset_radius(),
-             0,
-             k,
-             dialog.convolution_neighbors());
+             dialog.convolution_neighbors(),
+             points->parameters());
         }
 
       std::size_t memory = CGAL::Memory_sizer().virtual_size();
@@ -257,10 +245,9 @@ void Polyhedron_demo_point_set_normal_estimation_plugin::on_actionNormalEstimati
 
         // Tries to orient normals
         first_unoriented_point =
-          CGAL::mst_orient_normals(points->begin_or_selection_begin(), points->end(),
-                                   points->point_map(),
-                                   points->normal_map(),
-                                   dialog.orient_neighbors(), k);
+          CGAL::mst_orient_normals(points->all_or_selection_if_not_empty(),
+                                   dialog.orient_neighbors(),
+                                   points->parameters());
 
         std::size_t nb_unoriented_normals = std::distance(first_unoriented_point, points->end());
         std::size_t memory = CGAL::Memory_sizer().virtual_size();

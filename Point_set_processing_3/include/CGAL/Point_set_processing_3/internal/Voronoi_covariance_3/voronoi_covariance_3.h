@@ -30,7 +30,7 @@
 
 #include <list>
 #include <CGAL/array.h>
-#include <CGAL/internal/Voronoi_covariance_3/voronoi_covariance_sphere_3.h>
+#include <CGAL/Point_set_processing_3/internal/Voronoi_covariance_3/voronoi_covariance_sphere_3.h>
 #ifdef CGAL_VORONOI_COVARIANCE_USE_CONSTRUCTIONS
 #include <CGAL/Convex_hull_3/dual/halfspace_intersection_with_constructions_3.h>
 #else

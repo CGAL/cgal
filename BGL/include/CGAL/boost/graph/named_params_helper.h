@@ -23,10 +23,19 @@
 
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/Origin.h>
+#include <CGAL/Default_diagonalize_traits.h>
+
+#if defined(CGAL_EIGEN3_ENABLED)
+#include <CGAL/Eigen_svd.h>
+#elif defined(CGAL_LAPACK_ENABLED)
+#include <CGAL/Lapack_svd.h>
+#endif
+
 
 #include <CGAL/property_map.h>
 #include <CGAL/boost/graph/properties.h>
 #include <boost/mpl/if.hpp>
+#include <boost/mpl/has_xxx.hpp>
 
 #include <boost/type_traits/is_same.hpp>
 #include <boost/version.hpp>
@@ -101,6 +110,9 @@ namespace CGAL {
   public:
     typedef typename boost::property_traits<PMap>::value_type type;
   };
+
+  namespace Polygon_mesh_processing
+  {
 
   template<typename PolygonMesh, typename NamedParameters>
   class GetVertexPointMap
@@ -209,6 +221,178 @@ namespace CGAL {
       > ::type  type;
   };
 
+  } // namespace Polygon_mesh_processing
+
+  namespace Point_set_processing_3
+  {
+    template <typename ValueType>
+    struct Fake_point_range
+    {
+      struct iterator
+      {
+        typedef ValueType value_type;
+        typedef std::ptrdiff_t difference_type;
+        typedef ValueType* pointer;
+        typedef ValueType reference;
+        typedef std::random_access_iterator_tag iterator_category;
+      };
+    };
+    
+    namespace parameters
+    {
+      template <typename PointRange>
+      cgal_bgl_named_params<bool, internal_np::all_default_t>
+      inline all_default(const PointRange&)
+      {
+        return CGAL::parameters::all_default();
+      }
+    }
+
+    namespace internal{
+      BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_nested_type_iterator, iterator, false)
+    }
+    
+    template<typename PointRange, typename NamedParameters,
+             bool has_nested_iterator=internal::Has_nested_type_iterator<PointRange>::value>
+    class GetPointMap
+    {
+      typedef typename std::iterator_traits<typename PointRange::iterator>::value_type Point;
+      typedef typename CGAL::Identity_property_map<Point> DefaultPMap;
+
+    public:
+      typedef typename boost::lookup_named_param_def<
+      internal_np::point_t,
+      NamedParameters,
+      DefaultPMap
+      > ::type  type;
+
+      typedef typename boost::lookup_named_param_def<
+      internal_np::point_t,
+      NamedParameters,
+      DefaultPMap
+      > ::type  const_type;
+    };
+
+    // to please compiler instantiating non valid overloads
+    template<typename PointRange, typename NamedParameters>
+    class GetPointMap<PointRange, NamedParameters, false>
+    {
+      struct Dummy_point{};
+    public:
+      typedef typename CGAL::Identity_property_map<Dummy_point> type;
+      typedef typename CGAL::Identity_property_map<Dummy_point> const_type;
+    };
+
+    template<typename PointRange>
+    class GetFT
+    {
+    public:
+      typedef typename Kernel_traits<
+        typename std::iterator_traits<
+          typename PointRange::iterator
+          >::value_type
+        >::Kernel::FT type;
+    };
+
+    template<typename PointRange, typename NamedParameters>
+    class GetQueryPointMap
+    {
+      typedef typename std::iterator_traits<typename PointRange::iterator>::value_type Point;
+      typedef typename CGAL::Identity_property_map<Point> DefaultPMap;
+
+    public:
+      typedef typename boost::lookup_named_param_def<
+      internal_np::query_point_t,
+      NamedParameters,
+      DefaultPMap
+      > ::type  type;
+
+      typedef typename boost::lookup_named_param_def<
+      internal_np::query_point_t,
+      NamedParameters,
+      DefaultPMap
+      > ::type  const_type;
+    };
+
+    template<typename PointRange, typename NamedParameters>
+    class GetK
+    {
+      typedef typename boost::property_traits<
+        typename GetPointMap<PointRange, NamedParameters>::type
+        >::value_type Point;
+    public:
+      typedef typename CGAL::Kernel_traits<Point>::Kernel Kernel;
+    };
+
+    template<typename PointRange, typename NamedParameters>
+    class GetNormalMap
+    {
+      struct DummyNormalMap
+      {
+        typedef typename std::iterator_traits<typename PointRange::iterator>::value_type key_type;
+        typedef typename GetK<PointRange, NamedParameters>::Kernel::Vector_3 value_type;
+        typedef value_type reference;
+        typedef boost::read_write_property_map_tag category;
+
+        typedef DummyNormalMap Self;
+        friend reference get(const Self&, const key_type&) { return CGAL::NULL_VECTOR; }
+        friend void put(const Self&, const key_type&, const value_type&) { }
+      };
+
+    public:
+      typedef DummyNormalMap NoMap;
+      typedef typename boost::lookup_named_param_def <
+        internal_np::normal_t,
+        NamedParameters,
+        DummyNormalMap//default
+        > ::type  type;
+    };
+
+    template<typename PlaneRange, typename NamedParameters>
+    class GetPlaneMap
+    {
+      typedef typename PlaneRange::iterator::value_type Plane;
+      typedef typename CGAL::Identity_property_map<Plane> DefaultPMap;
+
+    public:
+      typedef typename boost::lookup_named_param_def<
+      internal_np::plane_t,
+      NamedParameters,
+      DefaultPMap
+      > ::type  type;
+
+      typedef typename boost::lookup_named_param_def<
+      internal_np::plane_t,
+      NamedParameters,
+      DefaultPMap
+      > ::type  const_type;
+    };
+    
+    template<typename NamedParameters>
+    class GetPlaneIndexMap
+    {
+      struct DummyPlaneIndexMap
+      {
+        typedef std::size_t key_type;
+        typedef int value_type;
+        typedef value_type reference;
+        typedef boost::readable_property_map_tag category;
+
+        typedef DummyPlaneIndexMap Self;
+        friend reference get(const Self&, const key_type&) { return -1; }
+      };
+
+    public:
+      typedef DummyPlaneIndexMap NoMap;
+      typedef typename boost::lookup_named_param_def <
+        internal_np::plane_index_t,
+        NamedParameters,
+        DummyPlaneIndexMap//default
+        > ::type  type;
+    };
+
+  } // namespace Point_set_processing_3
+  
   template<typename NamedParameters, typename DefaultSolver>
   class GetSolver
   {
@@ -217,6 +401,44 @@ namespace CGAL {
     internal_np::sparse_linear_solver_t,
     NamedParameters,
     DefaultSolver
+    > ::type type;
+  };
+
+  template<typename NamedParameters, typename FT, unsigned int dim = 3>
+  class GetDiagonalizeTraits
+  {
+  public:
+    typedef typename boost::lookup_named_param_def <
+    internal_np::diagonalize_traits_t,
+    NamedParameters,
+    Default_diagonalize_traits<FT, dim>
+    > ::type type;
+  };
+
+  template<typename NamedParameters>
+  class GetSvdTraits
+  {
+    struct DummySvdTraits
+    {
+      typedef double FT;
+      typedef int Vector;
+      typedef int Matrix;
+      static FT solve (const Matrix&, Vector&) { return 0.; }
+    };
+    
+  public:
+    typedef DummySvdTraits NoTraits;
+    
+    typedef typename boost::lookup_named_param_def <
+    internal_np::svd_traits_t,
+    NamedParameters,
+#if defined(CGAL_EIGEN3_ENABLED)
+    Eigen_svd
+#elif defined(CGAL_LAPACK_ENABLED)
+    Lapack_svd
+#else
+    NoTraits
+#endif
     > ::type type;
   };
 } //namespace CGAL

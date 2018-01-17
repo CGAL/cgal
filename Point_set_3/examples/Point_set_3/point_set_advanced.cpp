@@ -19,11 +19,11 @@ int main (int argc, char** argv)
   Point_set point_set;
   point_set.add_normal_map();
   // Reading input in OFF format
-  if (!f || !CGAL::read_off_points_and_normals
+  if (!f || !CGAL::read_off_points
                    (f,
                     point_set.index_back_inserter(), // OutputIterator
-                    point_set.point_push_map(),
-                    point_set.normal_push_map()))
+                    CGAL::parameters::point_map(point_set.point_push_map()).
+                    normal_map(point_set.normal_push_map())))
     {
       std::cerr << "Can't read input file " << std::endl;
       return EXIT_FAILURE;

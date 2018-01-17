@@ -34,10 +34,10 @@ int main (int argc, char** argv)
   std::ifstream stream(argc>1 ? argv[1] : "data/cube.pwn");
 
   if (!stream || 
-    !CGAL::read_xyz_points_and_normals(stream,
+    !CGAL::read_xyz_points(stream,
       std::back_inserter(points),
-      Point_map(),
-      Normal_map()))
+      CGAL::parameters::point_map(Point_map()).
+      normal_map(Normal_map())))
   {
       std::cerr << "Error: cannot read file cube.pwn" << std::endl;
       return EXIT_FAILURE;
@@ -55,19 +55,21 @@ int main (int argc, char** argv)
   
   Pwn_vector structured_pts;
 
-  CGAL::structure_point_set (points, Point_map(), Normal_map(),
+  CGAL::structure_point_set (points,
                              planes,
-                             CGAL::Shape_detection_3::Plane_map<Traits>(),
-                             CGAL::Shape_detection_3::Point_to_shape_index_map<Traits>(points, planes),
                              std::back_inserter (structured_pts),
-                             0.015); // epsilon for structuring points
+                             0.015, // epsilon for structuring points
+                             CGAL::parameters::point_map (Point_map()).
+                             normal_map (Normal_map()).
+                             plane_map (CGAL::Shape_detection_3::Plane_map<Traits>()).
+                             plane_index_map (CGAL::Shape_detection_3::Point_to_shape_index_map<Traits>(points, planes)));
 
   std::cerr << structured_pts.size ()
             << " structured point(s) generated." << std::endl;
 
   std::ofstream out ("out.pwn");
-  CGAL::write_xyz_points_and_normals (out, structured_pts.begin(), structured_pts.end(),
-                                      Point_map(), Normal_map());
+  CGAL::write_xyz_points (out, structured_pts,
+                          CGAL::parameters::point_map(Point_map()).normal_map(Normal_map()));
   out.close();
   
   return EXIT_SUCCESS;

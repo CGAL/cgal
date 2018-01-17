@@ -12,6 +12,8 @@
 #include <CGAL/IO/read_xyz_points.h>
 #include <CGAL/IO/write_xyz_points.h>
 
+#include <CGAL/Iterator_range.h>
+
 using namespace std;
 
 void Scene::generatePoints(int num)
@@ -226,8 +228,8 @@ void Scene::savePointsXYZ(const char* filename)
   /* Use CGAL::write_xyz_points to write out data */
   /* Note: this function writes out points only (normals are ignored) */
   if( !CGAL::write_xyz_points( fout,  // output ofstream
-                               m_dt.points_begin(),  // first output point
-                               m_dt.points_end() ) ) {  // past-the-end output point
+                               CGAL::make_range (m_dt.points_begin(),  // first output point
+                                                 m_dt.points_end()) ) ) {  // past-the-end output point
     showError( QObject::tr("Error: cannot read file %1.").arg(filename) );
   }
 }

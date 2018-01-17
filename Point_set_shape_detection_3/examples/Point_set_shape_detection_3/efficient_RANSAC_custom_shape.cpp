@@ -34,10 +34,10 @@ int main()
   std::ifstream stream("data/cube.pwn");
 
   if (!stream || 
-    !CGAL::read_xyz_points_and_normals(stream,
+    !CGAL::read_xyz_points(stream,
       std::back_inserter(points),
-      Point_map(),
-      Normal_map()))
+      CGAL::parameters::point_map(Point_map()).
+      normal_map(Normal_map())))
   {
       std::cerr << "Error: cannot read file cube.pwn" << std::endl;
       return EXIT_FAILURE;
