@@ -24,6 +24,7 @@
 
 #include <CGAL/license/Polygon_mesh_processing/measure.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/helpers.h>
@@ -538,5 +539,7 @@ volume(const TriangleMesh& tmesh, const CGAL_PMP_NP_CLASS& np)
 
 }
 }
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_POLYGON_MESH_PROCESSING_MEASURE_H

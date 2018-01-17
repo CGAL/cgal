@@ -25,6 +25,8 @@
 
 #include <CGAL/license/Polygon_mesh_processing/detect_features.h>
 
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/Kernel/global_functions_3.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
@@ -468,5 +470,7 @@ sharp_edges_segmentation(PolygonMesh& p,
 
 } // end namespace PMP
 } // end namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_POLYGON_MESH_PROCESSING_DETECT_FEATURES_IN_POLYGON_MESH_H

@@ -25,6 +25,7 @@
 
 #include <CGAL/license/Polygon_mesh_processing/orientation.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/tuple.h>
 #include <CGAL/array.h>
@@ -489,5 +490,7 @@ bool orient_polygon_soup(PointRange& points,
 }
 
 } }//end namespace CGAL::Polygon_mesh_processing
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_POLYGON_MESH_PROCESSING_ORIENT_POLYGON_SOUP
