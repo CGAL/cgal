@@ -67,6 +67,13 @@ Release date: April 2018
     `manifold()`, `manifold_with_boundary()`, and `non_manifold()` are
     added.
 
+### Optimal Transportation Curve Reconstruction
+
+-   New method `run_under_wasserstein_tolerance()` which allows the
+    user to perform curve reconstruction by relying on a threshold on
+    the Wasserstein distance. This is useful when the number of edges
+    in the expected output reconstruction is not known.
+
 ### Polygon Mesh Processing
 
 -   Added two functions for orienting connected components :
