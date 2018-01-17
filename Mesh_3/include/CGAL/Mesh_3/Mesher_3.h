@@ -619,24 +619,9 @@ initialize()
 #ifdef CGAL_SEQUENTIAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
     if (r_c3t3_.number_of_far_points() == 0 && r_c3t3_.number_of_facets() == 0)
     {
-      /*std::cerr << "A little bit of refinement... ";
-
-      // Start by a little bit of refinement to get a coarse mesh
-      // => Good approx of bounding box
-      const int NUM_VERTICES_OF_COARSE_MESH = 40;
-      facets_mesher_.refine_sequentially_up_to_N_vertices(
-        facets_visitor_, NUM_VERTICES_OF_COARSE_MESH);
-
-      std::cerr << "done." << std::endl;
-      std::cerr
-        << "Vertices: " << r_c3t3_.triangulation().number_of_vertices() << std::endl
-        << "Facets  : " << r_c3t3_.number_of_facets_in_complex() << std::endl
-        << "Tets    : " << r_c3t3_.number_of_cells_in_complex() << std::endl;*/
+      const Bbox_3 &bbox = r_oracle_.bbox();
 
       // Compute radius for far sphere
-      //const Bbox_3 &bbox = r_c3t3_.bbox();
-      CGAL_assertion(is_estimated_bbox_initialized);
-      const Bbox_3 &bbox = estimated_bbox;
       const double xdelta = bbox.xmax()-bbox.xmin();
       const double ydelta = bbox.ymax()-bbox.ymin();
       const double zdelta = bbox.zmax()-bbox.zmin();
@@ -650,10 +635,11 @@ initialize()
 # ifdef CGAL_MESH_3_VERBOSE
       std::cerr << "Adding points on a far sphere (radius = " << radius << ")...";
 # endif
-      Random_points_on_sphere_3<Point> random_point(radius);
+      Random_points_on_sphere_3<Bare_point> random_point(radius);
       const int NUM_PSEUDO_INFINITE_VERTICES = 12*2;
       for (int i = 0 ; i < NUM_PSEUDO_INFINITE_VERTICES ; ++i, ++random_point)
-        r_c3t3_.add_far_point(*random_point + center);
+        r_c3t3_.add_far_point(r_c3t3_.triangulation().geom_traits().construct_weighted_point_3_object()
+                              (r_c3t3_.triangulation().geom_traits().construct_translated_point_3_object()(*random_point, center)));
 # ifdef CGAL_MESH_3_VERBOSE
       std::cerr << "done." << std::endl;
 # endif
