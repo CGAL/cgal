@@ -10,6 +10,7 @@
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
 #include <CGAL/Advancing_front_surface_reconstruction.h>
 #include <CGAL/IO/read_xyz_points.h>
+#include <CGAL/disable_warnings.h>
 
 #include <boost/lexical_cast.hpp>
 
