@@ -24,6 +24,7 @@
 
 #include <CGAL/license/Spatial_searching.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/basic.h>
 #include <CGAL/assertions.h>
@@ -585,5 +586,7 @@ public:
 };
 
 } // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_KD_TREE_H
