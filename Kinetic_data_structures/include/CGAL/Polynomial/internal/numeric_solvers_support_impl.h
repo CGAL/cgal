@@ -108,6 +108,7 @@ inline void compute_linear_roots_t(const NT *begin, const NT *,
 					  NT lb, NT ub,
 					  std::vector<NT> &roots)
 {
+    CGAL_USE(lb);
     if (CLEAN &&  begin[1]>0 ) return;
     //NT max_error=0;
     //if (CLEAN) max_error=max_error_value;

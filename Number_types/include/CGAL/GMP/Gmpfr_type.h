@@ -349,7 +349,10 @@ class Gmpfr:
         // only avoid the binary incompatibility of a CGAL program compiled
         // with MSVC with the libmpfr-1.dll compiled with mingw.
 #ifdef _MSC_VER
+#  pragma warning(push)
+#  pragma warning(disable: 4244)
         CGAL_GMPFR_CONSTRUCTOR_FROM_TYPE(long double,mpfr_set_d);
+#  pragma warning(pop)  
 #else
         CGAL_GMPFR_CONSTRUCTOR_FROM_TYPE(long double,mpfr_set_ld);
 #endif
@@ -1283,17 +1286,17 @@ bool operator==(const Gmpfr &a,double b){
 #ifdef _MSC_VER
 inline
 bool operator<(const Gmpfr &a,long double b){
-        return(mpfr_cmp_d(a.fr(),b)<0);
+        return(mpfr_cmp_d(a.fr(),static_cast<double>(b))<0);
 }
 
 inline
 bool operator>(const Gmpfr &a,long double b){
-        return(mpfr_cmp_d(a.fr(),b)>0);
+        return(mpfr_cmp_d(a.fr(),static_cast<double>(b))>0);
 }
 
 inline
 bool operator==(const Gmpfr &a,long double b){
-        return !mpfr_cmp_d(a.fr(),b);
+        return !mpfr_cmp_d(a.fr(),static_cast<double>(b));
 }
 #else
 inline

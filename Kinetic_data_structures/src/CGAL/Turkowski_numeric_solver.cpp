@@ -20,8 +20,8 @@
 // Author(s)     : Daniel Russel <drussel@alumni.princeton.edu>
 
 #ifndef CGAL_HEADER_ONLY
-
+#include <CGAL/disable_warnings.h>
 #include <CGAL/Polynomial/internal/numeric_solvers.h>
 #include <CGAL/Polynomial/internal/Turkowski_numeric_solvers_impl.h>
-
+#include <CGAL/enable_warnings.h>
 #endif
