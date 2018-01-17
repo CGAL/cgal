@@ -99,6 +99,12 @@ The following minimal example reads a point set from a file and detects only pla
 
 \cgalExample{Point_set_shape_detection_3/shape_detection_basic.cpp}
 
+\subsection Point_set_shape_detection_3Usage_callback Planar Shape Detection with Callback
+
+Both Region Growing and Efficient RANSAC provide a callback mechanism that enables the user to track the progress of the algorithms. It can be used, for example, to terminate the algorithm based on a timeout. In the following example, the algorithm stops if it takes more than half a second and prints out the progress made:
+
+\cgalExample{Point_set_shape_detection_3/shape_detection_with_callback.cpp}
+
 \subsection Point_set_shape_detection_3Usage_parameters Setting Parameters and Using Different Types of Shape
 
 This example illustrates the user selection of parameters using the `Shape_detection_3::Efficient_RANSAC::Parameters` class. Shape detection is performed on five types of shapes (plane, cylinder, sphere, cone, torus). The input point set is sampled on a surface mostly composed of piece-wise planar and cylindrical parts, in addition to free-form parts.
