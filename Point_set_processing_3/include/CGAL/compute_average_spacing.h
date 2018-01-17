@@ -23,6 +23,7 @@
 
 #include <CGAL/license/Point_set_processing_3.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/squared_distance_3.h>
@@ -258,5 +259,7 @@ compute_average_spacing(
 
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_AVERAGE_SPACING_3_H

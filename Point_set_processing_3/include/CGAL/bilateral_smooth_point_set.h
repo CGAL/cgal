@@ -23,6 +23,7 @@
 
 #include <CGAL/license/Point_set_processing_3.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
@@ -630,5 +631,7 @@ bilateral_smooth_point_set(
 
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_BILATERAL_SMOOTH_POINT_SET_H

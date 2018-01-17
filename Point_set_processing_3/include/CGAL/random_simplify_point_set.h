@@ -23,6 +23,7 @@
 
 #include <CGAL/license/Point_set_processing_3.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/property_map.h>
@@ -119,5 +120,7 @@ random_simplify_point_set(
 
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_RANDOM_SIMPLIFY_POINT_SET_H

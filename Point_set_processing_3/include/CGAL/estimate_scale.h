@@ -24,6 +24,7 @@
 
 #include <CGAL/license/Point_set_processing_3.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/squared_distance_3.h>
@@ -769,5 +770,7 @@ estimate_global_range_scale(
 /// \endcond  
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_ESTIMATE_SCALE_3_H

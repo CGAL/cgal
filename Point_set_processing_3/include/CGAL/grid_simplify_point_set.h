@@ -23,6 +23,7 @@
 
 #include <CGAL/license/Point_set_processing_3.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/property_map.h>
 #include <CGAL/Kernel_traits.h>
@@ -259,5 +260,7 @@ grid_simplify_point_set(
 
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_GRID_SIMPLIFY_POINT_SET_H

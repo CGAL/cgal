@@ -23,6 +23,7 @@
 
 #include <CGAL/license/Point_set_processing_3.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/trace.h>
 #include <CGAL/Dimension.h>
@@ -294,5 +295,7 @@ pca_estimate_normals(
 
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_PCA_ESTIMATE_NORMALS_H

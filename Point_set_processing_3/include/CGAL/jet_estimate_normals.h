@@ -23,6 +23,7 @@
 
 #include <CGAL/license/Point_set_processing_3.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/trace.h>
 #include <CGAL/Search_traits_3.h>
@@ -339,5 +340,7 @@ jet_estimate_normals(
 #endif
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_JET_ESTIMATE_NORMALS_H
