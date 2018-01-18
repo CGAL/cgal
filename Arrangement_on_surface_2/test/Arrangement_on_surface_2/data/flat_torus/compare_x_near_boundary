@@ -1,0 +1,12 @@
+compare_x_near_boundary 37 38 MAX_END SMALLER
+compare_x_near_boundary 39 40 MAX_END SMALLER
+compare_x_near_boundary 37 40 MAX_END SMALLER
+compare_x_near_boundary 39 38 MAX_END SMALLER
+compare_x_near_boundary 41 42 MIN_END LARGER
+compare_x_near_boundary 43 44 MIN_END LARGER
+compare_x_near_boundary 41 44 MIN_END LARGER
+compare_x_near_boundary 43 42 MIN_END LARGER
+compare_x_near_boundary 22 24 MIN_END EQUAL
+compare_x_near_boundary 8 15 MAX_END SMALLER
+compare_x_near_boundary 23 25 MIN_END LARGER
+compare_x_near_boundary 23 24 MIN_END LARGER

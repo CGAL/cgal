@@ -128,7 +128,7 @@ bool IO_base_test<Base_geom_traits>::read_xcurve(InputStream_& is,
   is >> num_points;
   std::vector<Point_2> points;
   points.clear();
-  for (unsigned int j = 0; j < num_points; ++j) {
+  for (size_t j = 0; j < num_points; ++j) {
     Basic_number_type x, y;
     is >> x >> y;
     Point_2 p(x, y);
@@ -825,7 +825,7 @@ bool read_ort_point(InputStream_& is, Point_2& p)
   is >> is_rat;
   if (is_rat) {
     is >> alpha;
-    ort_y=Point_2::CoordNT(alpha);
+    ort_y = Point_2::CoordNT(alpha);
   }
   else {
     is >> alpha >> beta >> gamma;
@@ -1716,6 +1716,36 @@ bool IO_base_test<Base_geom_traits>::read_curve(InputStream_& is, Curve_2& cv)
   }
   else
     cv = Curve_2(p1, p2);
+  return true;
+}
+
+// Flat Torus
+#elif TEST_GEOM_TRAITS == FLAT_TORUS_GEOM_TRAITS
+
+/*! Read a curve */
+template <>
+template <typename InputStream_>
+bool IO_base_test<Base_geom_traits>::read_curve(InputStream_& is, Curve_2& cv)
+{
+  Point_2 p1, p2;
+  read_point(is, p1);
+  read_point(is, p2);
+  CGAL_assertion(p1 != p2);
+  cv = m_geom_traits.construct_curve_2_object()(p1, p2);
+  return true;
+}
+
+template <>
+template <typename InputStream_>
+bool IO_base_test<Base_geom_traits>::read_xcurve(InputStream_& is,
+                                                 X_monotone_curve_2& xcv)
+{
+  Basic_number_type x1, y1, x2, y2;
+  is >> x1 >> y1 >> x2 >> y2;
+  Point_2 p1(x1, y1);
+  Point_2 p2(x2, y2);
+  CGAL_assertion(p1 != p2);
+  xcv = m_geom_traits.construct_x_monotone_curve_2_object()(p1, p2);
   return true;
 }
 
