@@ -3,6 +3,8 @@
 #include <CGAL/Polygon_2.h>
 #include <QtCore/qglobal.h>
 #include <QGLViewer/manipulatedCameraFrame.h>
+#include <CGAL/Search_traits_3.h>
+#include <CGAL/Orthogonal_k_neighbor_search.h>
 #include "opengl_tools.h"
 
 #include "Messages_interface.h"
@@ -22,6 +24,7 @@
 #include <QEvent>
 #include <QKeyEvent>
 #include <QMouseEvent>
+#include <QMessageBox>
 
 #include <map>
 #include <fstream>
@@ -225,10 +228,18 @@ public:
 
     connect(ui_widget.box, SIGNAL(toggled(bool)), 
             this, SLOT(on_box_toggled(bool)));
+    connect(ui_widget.helpButton, &QAbstractButton::clicked,
+    [this](){
+      QMessageBox::information(dock_widget, QString("Help"),
+                               QString("SHIFT + Left Click : selection\n"
+                                       "CONTROL + Left Click : print coordinates of point under cursor."));
+    }
+  );
 
     visualizer = NULL;
     edit_box = NULL;
     shift_pressing = false;
+    ctrl_pressing = false;
     
     QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
     viewer->installEventFilter(this);
@@ -260,6 +271,7 @@ protected:
       Qt::KeyboardModifiers modifiers = keyEvent->modifiers();
 
       shift_pressing = modifiers.testFlag(Qt::ShiftModifier);
+      ctrl_pressing = modifiers.testFlag(Qt::ControlModifier);
 #if QGLVIEWER_VERSION >= 0x020700
       background = static_cast<CGAL::Three::Viewer_interface*>(*QGLViewer::QGLViewerPool().begin())->grabFramebuffer();
 #else
@@ -310,7 +322,32 @@ protected:
         visualizer->sample_mouse_path(background);
 	return true;
       }
+    //Position request
+    else if(ctrl_pressing && event->type() == QEvent::MouseButtonPress)
+    {
+      QMouseEvent* m_e = static_cast<QMouseEvent*>(event);
+      Scene_points_with_normal_item* item =
+          qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex()));
+      if(!item)
+        return false;
+      QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+      bool found = false;
+      QPoint pixel(m_e->pos().x(),
+             viewer->camera()->screenHeight()-1-m_e->pos().y());
+      qglviewer::Vec point = viewer->camera()->pointUnderPixel(m_e->pos(),
+                                                               found);
+      if(!found)
+        return false;
+      typedef Kernel::Point_3 Point;
+      typedef CGAL::Search_traits_3<Kernel> TreeTraits;
+      typedef CGAL::Orthogonal_k_neighbor_search<TreeTraits> Neighbor_search;
+      typedef Neighbor_search::Tree Tree;
+      Tree tree(item->point_set()->points().begin(), item->point_set()->points().end());
 
+      Neighbor_search search(tree, Point(point.x, point.y, point.z), 1);
+      Point res = search.begin()->first;
+      messages->information(QString("Selected point : (%1, %2, %3)").arg(res.x()).arg(res.y()).arg(res.z()));
+    }
     return false;
   }
 
@@ -563,6 +600,7 @@ public Q_SLOTS:
 
   }
 
+
   void reset_editbox()
   {
     edit_box = NULL;
@@ -578,6 +616,7 @@ private:
   Ui::PointSetSelection ui_widget;
   Scene_point_set_selection_visualizer* visualizer;
   bool shift_pressing;
+  bool ctrl_pressing;
   Scene_edit_box_item* edit_box;
 
 }; // end Polyhedron_demo_point_set_selection_plugin

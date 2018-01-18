@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>389</width>
-    <height>101</height>
+    <width>514</width>
+    <height>281</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -255,6 +255,26 @@
        </widget>
       </item>
       <item>
+       <widget class="QPushButton" name="helpButton">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../../Polyhedron_3.qrc">
+          <normaloff>:/cgal/icons/resources/help_button.png</normaloff>:/cgal/icons/resources/help_button.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>16</width>
+          <height>16</height>
+         </size>
+        </property>
+        <property name="flat">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
        <spacer name="horizontalSpacer">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -286,6 +306,9 @@
   </widget>
  </widget>
  <resources>
+  <include location="../../Polyhedron_3.qrc"/>
+  <include location="../../Polyhedron_3.qrc"/>
+  <include location="../../Polyhedron_3.qrc"/>
   <include location="../../Polyhedron_3.qrc"/>
  </resources>
  <connections/>
