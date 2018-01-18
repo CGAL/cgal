@@ -255,14 +255,14 @@ We can observe that the second run is faster than the first one. Indeed, updatin
 \subsection Linear_cell_complexDisplay Display a Linear_cell_complex
 \anchor ssecDisplayLCC
 
-It is possible to show a linear cell complex by using the `CGAL::display` function as illustrated in the following example. When calling this function, a new window is opened showing the given linear cell complex. The program will continue after than the window will be closed.
+A linear cell complex can be visualized by calling the `CGAL::draw()` function as shown in the following example. This function opens a new window showing the given linear cell complex. The function is blocking, that is the program continues as soon as the user closes the window.
 
-\cgalExample{Linear_cell_complex/display_linear_cell_complex.cpp}
+\cgalExample{Linear_cell_complex/draw_linear_cell_complex.cpp}
 
- This function requires CGAL_Qt5, and is only available if the flag CGAL_USE_BASIC_VIEWER is defined at compile time.
+This function requires CGAL_Qt5, and is only available if the flag CGAL_USE_BASIC_VIEWER is defined at compile time.
 
 \cgalFigureBegin{fig_display_lcc,display_lcc.png}
-Result of the run of display_linear_cell_complex program. A window shows a 3D cube and allows to navigate through the 3D scene.
+Result of the run of the draw_linear_cell_complex program. A window shows two 3D cube and allows to navigate through the 3D scene.
 \cgalFigureEnd
 
 \cgalModifEnd
