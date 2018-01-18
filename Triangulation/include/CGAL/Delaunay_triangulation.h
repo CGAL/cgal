@@ -23,6 +23,7 @@
 
 #include <CGAL/license/Triangulation.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/tss.h>
 #include <CGAL/Triangulation.h>
@@ -933,5 +934,7 @@ Delaunay_triangulation<DCTraits, TDS>
 
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_DELAUNAY_COMPLEX_H
