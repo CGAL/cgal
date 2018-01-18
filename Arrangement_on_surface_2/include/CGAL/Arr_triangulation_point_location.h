@@ -23,6 +23,8 @@
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
+#include <CGAL/disable_warnings.h>
+
 
 /*! \file
  * Definition of the Arr_triangulation_point_location<Arrangement> template.
@@ -389,5 +391,7 @@ protected:
 
 // The member-function definitions can be found under:
 #include <CGAL/Arr_point_location/Arr_triangulation_pl_functions.h>
+
+#include <CGAL/enable_warnings.h>
 
 #endif

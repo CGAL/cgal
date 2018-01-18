@@ -24,6 +24,8 @@
 #ifndef CGAL_POLYNOMIAL_TRAITS_D_H
 #define CGAL_POLYNOMIAL_TRAITS_D_H
 
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/basic.h>
 #include <functional>
 #include <list>
@@ -1713,5 +1715,7 @@ public:
 };
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_POLYNOMIAL_TRAITS_D_H

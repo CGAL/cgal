@@ -25,6 +25,8 @@
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
+#include <CGAL/disable_warnings.h>
+
 
 /*! \file
  * Definition of the Arr_vertex_index_map<Arrangement> class.
@@ -281,5 +283,7 @@ unsigned int get (const CGAL::Arr_vertex_index_map<Arrangement>& index_map,
 }
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif

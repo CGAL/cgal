@@ -30,6 +30,7 @@
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
+#include <CGAL/disable_warnings.h>
 
 /*! \file The basic non-caching segment traits-class for the arrangement
  * package. This traits class handles x-monotone non-intersecting segments.
@@ -281,5 +282,7 @@ public:
 };
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif

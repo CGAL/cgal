@@ -23,6 +23,7 @@
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Arr_non_caching_segment_basic_traits_2.h>
 
@@ -153,5 +154,7 @@ public:
 };
 
 }
+
+#include <CGAL/enable_warnings.h>
 
 #endif

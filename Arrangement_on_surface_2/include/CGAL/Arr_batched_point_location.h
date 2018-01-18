@@ -25,6 +25,8 @@
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/Arrangement_on_surface_2.h>
 #include <CGAL/No_intersection_surface_sweep_2.h>
 #include <CGAL/Arr_point_location/Arr_batched_point_location_traits_2.h>
@@ -144,5 +146,7 @@ locate(const Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
 }
 
 } // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif
