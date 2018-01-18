@@ -30,6 +30,7 @@
 #  pragma warning(disable: 4512) //  assignment operator could not be generated#  pragma warning(disable: 4522)  // multiple assignment operators specified
 #  pragma warning(disable: 4610) // can never be instantiated - user defined constructor required
 #  pragma warning(disable: 4706) // assignment within conditional expression
+#  pragma warning(disable: 4714) // function marked as __forceinline not inlined
 #  pragma warning(disable: 4800) //  forcing value to bool 'true' or 'false' (performance warning)
 #  pragma warning(disable: 4913) // user defined binary operator ',' exists but no overload could convert all operands, default built-in binary operator ',' used
 
