@@ -23,6 +23,7 @@
 
 #include <CGAL/license/Surface_mesher.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/make_surface_mesh.h>
 #include <CGAL/Surface_mesher/Implicit_surface_oracle_3.h>
@@ -144,5 +145,7 @@ namespace CGAL {
   };
 
 } // end namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_IMPLICIT_SURFACE_3_H

@@ -23,6 +23,7 @@
 
 #include <CGAL/license/Poisson_surface_reconstruction_3.h>
 
+#include <CGAL/disable_warnings.h>
 
 #ifndef CGAL_DIV_NORMALIZED
 #  ifndef CGAL_DIV_NON_NORMALIZED
@@ -1218,5 +1219,7 @@ private:
 
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_POISSON_RECONSTRUCTION_FUNCTION_H

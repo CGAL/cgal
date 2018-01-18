@@ -25,6 +25,7 @@
 
 #include <CGAL/license/Poisson_surface_reconstruction_3.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/Lightweight_vector_3.h>
@@ -334,7 +335,7 @@ public:
     }
     if(this->dimension() < 3){
       Vertex_handle v = Base::insert(p, start);
-      v->type() = type;
+      v->type() = static_cast<unsigned char>(type);
       return v;
     }
     typename Base::Locate_type lt;
@@ -342,7 +343,7 @@ public:
     Cell_handle ch = Base::locate(p, lt, li, lj, start);
 
     Vertex_handle v = Base::insert(p, lt, ch, li, lj);
-    v->type() = type;
+    v->type() = static_cast<unsigned char>(type);
     return v;
     
   }
@@ -461,7 +462,7 @@ public:
                  Point_type type = STEINER)
   {
       Vertex_handle v = Base::insert_in_hole(p, cell_begin, cell_end, begin, i);
-      v->type() = type;
+      v->type() = static_cast<unsigned char>(type);
       return v;
   }
 
@@ -498,5 +499,7 @@ public:
 }; // end of Reconstruction_triangulation_3
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_IMPLICIT_FCT_DELAUNAY_TRIANGULATION_H

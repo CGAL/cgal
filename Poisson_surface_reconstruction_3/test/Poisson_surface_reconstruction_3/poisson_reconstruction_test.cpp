@@ -13,8 +13,6 @@
 #include <CGAL/trace.h>
 #include <CGAL/Memory_sizer.h>
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/Surface_mesh_default_triangulation_3.h>
 #include <CGAL/make_surface_mesh.h>
 #include <CGAL/Implicit_surface_3.h>
@@ -32,6 +30,8 @@
 #include <math.h>
 
 #include <boost/foreach.hpp>
+
+#include <CGAL/disable_warnings.h>
 
 // ----------------------------------------------------------------------------
 // Types
