@@ -17,8 +17,8 @@
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 
-#ifndef CGAL_POLYHEDRON_VIEWER_QT_H
-#define CGAL_POLYHEDRON_VIEWER_QT_H
+#ifndef CGAL_DRAW_POLYHEDRON_H
+#define CGAL_DRAW_POLYHEDRON_H
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
@@ -247,4 +247,4 @@ void draw(const Polyhedron&,
 
 #endif // CGAL_USE_BASIC_VIEWER
 
-#endif // CGAL_POLYHEDRON_VIEWER_QT_H
+#endif // CGAL_DRAW_POLYHEDRON_H

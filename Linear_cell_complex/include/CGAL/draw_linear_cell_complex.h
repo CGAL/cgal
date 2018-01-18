@@ -17,8 +17,8 @@
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 
-#ifndef CGAL_LCC_VIEWER_QT_H
-#define CGAL_LCC_VIEWER_QT_H
+#ifndef CGAL_DRAW_LCC_H
+#define CGAL_DRAW_LCC_H
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
@@ -248,4 +248,4 @@ void draw(const LCC&,
 
 #endif // CGAL_USE_BASIC_VIEWER
 
-#endif // CGAL_LCC_VIEWER_QT_H
+#endif // CGAL_DRAW_LCC_H

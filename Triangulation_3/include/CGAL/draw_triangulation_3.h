@@ -17,8 +17,8 @@
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 
-#ifndef CGAL_T2_VIEWER_QT_H
-#define CGAL_T2_VIEWER_QT_H
+#ifndef CGAL_DRAW_T3_H
+#define CGAL_DRAW_T3_H
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
@@ -29,39 +29,43 @@ namespace CGAL
 {
   
 // Default color functor; user can change it to have its own face color
-struct DefaultColorFunctorT2
+struct DefaultColorFunctorT3
 {
-  template<typename T2>
-  static CGAL::Color run(const T2& at2,
-                         const typename T2::Finite_faces_iterator fh)
+  template<typename T3>
+  static CGAL::Color run(const T3& at3,
+                         const typename T3::Finite_facets_iterator* fh)
   {
+    if (fh==NULL) // use to get the mono color
+      return CGAL::Color(100, 125, 200); // R G B between 0-255
+
     // Here dh is the smaller dart of its face
-    CGAL::Random random((unsigned long int)(&*fh));
+    CGAL::Random random((unsigned long int)(&*((*fh)->first))+(*fh)->second);
     return get_random_color(random);
   }
 };
 
-// Viewer class for T2 
-template<class T2, class ColorFunctor>
-class SimpleTriangulation2ViewerQt : public Basic_viewer_qt
+// Viewer class for T3 
+template<class T3, class ColorFunctor>
+class SimpleTriangulation3ViewerQt : public Basic_viewer_qt
 {
-  typedef Basic_viewer_qt                     Base;
-  typedef typename T2::Vertex_handle          Vertex_const_handle;
-  typedef typename T2::Finite_edges_iterator Edge_const_handle;
-  typedef typename T2::Finite_faces_iterator Facet_const_handle;
-  typedef typename T2::Point                  Point;
+  typedef Basic_viewer_qt                 Base;
+  typedef typename T3::Vertex_handle Vertex_const_handle;
+  typedef typename T3::Finite_edges_iterator  Edge_const_handle;
+  typedef typename T3::Finite_facets_iterator Facet_const_handle;
+  typedef typename T3::Cell_handle         Cell_handle;
+  typedef typename T3::Point               Point;
  
 public:
   /// Construct the viewer.
-  /// @param at2 the t2 to view
+  /// @param at3 the t3 to view
   /// @param title the title of the window
   /// @param anofaces if true, do not draw faces (faces are not computed; this can be
   ///        usefull for very big object where this time could be long)
-  SimpleTriangulation2ViewerQt(const T2& at2, const char* title="",
+  SimpleTriangulation3ViewerQt(const T3& at3, const char* title="",
                                bool anofaces=false,
                                const ColorFunctor& fcolor=ColorFunctor()) :
     Base(title),
-    t2(at2),
+    t3(at3),
     m_nofaces(anofaces),
     m_fcolor(fcolor)
   {
@@ -71,20 +75,20 @@ public:
 protected:
   void compute_face(Facet_const_handle fh)
   {
-    CGAL::Color c=m_fcolor.run(t2, fh);
+    CGAL::Color c=m_fcolor.run(t3, &fh);
     face_begin(c);
 
-    add_point_in_face(fh->vertex(0)->point());
-    add_point_in_face(fh->vertex(1)->point());
-    add_point_in_face(fh->vertex(2)->point());
+    add_point_in_face(fh->first->vertex((fh->second+1)%4)->point());
+    add_point_in_face(fh->first->vertex((fh->second+2)%4)->point());
+    add_point_in_face(fh->first->vertex((fh->second+3)%4)->point());
     
     face_end();
   }
 
   void compute_edge(Edge_const_handle eh)
   {
-    add_segment(eh->first->vertex(eh->first->cw(eh->second))->point(),
-                eh->first->vertex(eh->first->ccw(eh->second))->point());
+    add_segment(eh->first->vertex(eh->second)->point(),
+                eh->first->vertex(eh->third)->point());
   }
 
   void compute_vertex(Vertex_const_handle vh)
@@ -94,16 +98,16 @@ protected:
   {
     clear();
 
-    for (typename T2::Finite_faces_iterator it=t2.finite_faces_begin();
-         it!=t2.finite_faces_end(); ++it)
+    for (typename T3::Finite_facets_iterator it=t3.finite_facets_begin();
+         it!=t3.finite_facets_end(); ++it)
     { compute_face(it); } 
 
-    for (typename T2::Finite_edges_iterator it=t2.finite_edges_begin();
-         it!=t2.finite_edges_end(); ++it)
+    for (typename T3::Finite_edges_iterator it=t3.finite_edges_begin();
+         it!=t3.finite_edges_end(); ++it)
     { compute_edge(it); } 
 
-    for (typename T2::Finite_vertices_iterator it=t2.finite_vertices_begin();
-         it!=t2.finite_vertices_end(); ++it)
+    for (typename T3::Finite_vertices_iterator it=t3.finite_vertices_begin();
+         it!=t3.finite_vertices_end(); ++it)
     { compute_vertex(it); } 
   }
 
@@ -124,23 +128,23 @@ protected:
   }
 
 protected:
-  const T2& t2;
+  const T3& t3;
   bool m_nofaces;
   const ColorFunctor& m_fcolor;
 };
   
-template<class T2, class ColorFunctor>
-void draw(const T2& at2,
-          const char* title="T2 Viewer",
+template<class T3, class ColorFunctor>
+void draw(const T3& at3,
+          const char* title="T3 Viewer",
           bool nofill=false,
           const ColorFunctor& fcolor=ColorFunctor())
 {
   int argc=1;
 
-  const char* argv[2]={"t2_viewer","\0"};
+  const char* argv[2]={"t3_viewer","\0"};
   QApplication app(argc,const_cast<char**>(argv));
 
-  SimpleTriangulation2ViewerQt<T2, ColorFunctor> mainwindow(at2, title,
+  SimpleTriangulation3ViewerQt<T3, ColorFunctor> mainwindow(at3, title,
                                                             nofill, fcolor);
 
 #if !defined(CGAL_TEST_SUITE)
@@ -149,11 +153,11 @@ void draw(const T2& at2,
 #endif
 }
 
-template<class T2>
-void draw(const T2& at2,
-          const char* title="T2 Viewer",
+template<class T3>
+void draw(const T3& at3,
+          const char* title="t3_viewer",
           bool nofill=false)
-{ return display<T2, DefaultColorFunctorT2>(at2, title, nofill); }
+{ return display<T3, DefaultColorFunctor>(at3, title, nofill); }
 
 } // End namespace CGAL
 
@@ -162,22 +166,22 @@ void draw(const T2& at2,
 namespace CGAL 
 {
 
-template<class T2, class ColorFunctor>
-void draw(const T2&,
-          const char* ="T2 Viewer",
+template<class T3, class ColorFunctor>
+void draw(const T3&,
+          const char* ="T3 Viewer",
           bool=false,
           const ColorFunctor& =ColorFunctor())
 {
-  std::cerr<<"Impossible to draw a Triangulation_2 because CGAL_USE_BASIC_VIEWER is not defined."
+  std::cerr<<"Impossible to draw a Triangulation_3 because CGAL_USE_BASIC_VIEWER is not defined."
            <<std::endl;
 }
-
-template<class T2>
-void draw(const T2&,
-          const char* ="T2 Viewer",
+  
+template<class T3>
+void draw(const T3&,
+          const char* ="t3_viewer",
           bool=false)
 {
-  std::cerr<<"Impossible to draw a Triangulation_2 because CGAL_USE_BASIC_VIEWER is not defined."
+  std::cerr<<"Impossible to draw a Triangulation_3 because CGAL_USE_BASIC_VIEWER is not defined."
            <<std::endl;
 }
   
@@ -185,4 +189,4 @@ void draw(const T2&,
 
 #endif // CGAL_USE_BASIC_VIEWER
 
-#endif // CGAL_T2_VIEWER_QT_H
+#endif // CGAL_DRAW_T3_H

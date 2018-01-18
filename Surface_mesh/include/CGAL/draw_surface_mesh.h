@@ -17,8 +17,8 @@
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 
-#ifndef CGAL_SURFACE_MESH_VIEWER_QT_H
-#define CGAL_SURFACE_MESH_VIEWER_QT_H
+#ifndef CGAL_DRAW_SURFACE_MESH_H
+#define CGAL_DRAW_SURFACE_MESH_H
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
@@ -236,4 +236,4 @@ void draw(const SM&,
 
 #endif // CGAL_USE_BASIC_VIEWER
 
-#endif // CGAL_SURFACE_MESH_VIEWER_QT_H
+#endif // CGAL_DRAW_SURFACE_MESH_H
