@@ -26,6 +26,8 @@
 
 #include <CGAL/license/Convex_hull_3.h>
 
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/basic.h>
 #include <CGAL/algorithm.h> 
 #include <CGAL/convex_hull_2.h>
@@ -906,5 +908,7 @@ void convex_hull_3(InputIterator first, InputIterator beyond,
 }
 
 } // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_CONVEX_HULL_3_H

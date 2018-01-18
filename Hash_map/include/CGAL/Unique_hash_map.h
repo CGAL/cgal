@@ -27,6 +27,8 @@
 #ifndef CGAL_UNIQUE_HASH_MAP_H
 #define CGAL_UNIQUE_HASH_MAP_H
 
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/config.h>
 #include <CGAL/memory.h>
 #include <CGAL/Handle_hash_function.h>
@@ -178,6 +180,8 @@ namespace boost {
   }
 
 }
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_UNIQUE_HASH_MAP_H
 // EOF
