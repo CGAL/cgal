@@ -35,7 +35,7 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program("gmap_linear_cell_complex_3.cpp")
   create_single_source_cgal_program("linear_cell_complex_3_operations.cpp")  
 
-  create_single_source_cgal_program("display_linear_cell_complex.cpp")                           
+  create_single_source_cgal_program("draw_linear_cell_complex.cpp")                           
   if(TARGET CGAL::CGAL_Qt5)
     find_package(Qt5        REQUIRED COMPONENTS OpenGL Xml)
     find_package(QGLViewer  REQUIRED)
@@ -45,11 +45,11 @@ if ( CGAL_FOUND )
     include_directories( ${QGLVIEWER_INCLUDE_DIR} )
     add_definitions(${QGLVIEWER_DEFINITIONS})
 
-    target_link_libraries(display_linear_cell_complex CGAL::CGAL_Qt5 Qt5::Xml
+    target_link_libraries(draw_linear_cell_complex CGAL::CGAL_Qt5 Qt5::Xml
                                                       ${QT_LIBRARIES}
                                                       ${QGLVIEWER_LIBRARIES}
                                                       ${OPENGL_gl_LIBRARY})
-    target_compile_definitions(display_linear_cell_complex PRIVATE CGAL_USE_BASIC_VIEWER)
+    target_compile_definitions(draw_linear_cell_complex PRIVATE CGAL_USE_BASIC_VIEWER)
   endif()
 
 else()

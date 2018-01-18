@@ -261,8 +261,8 @@ A linear cell complex can be visualized by calling the `CGAL::draw()` function a
 
 This function requires CGAL_Qt5, and is only available if the flag CGAL_USE_BASIC_VIEWER is defined at compile time.
 
-\cgalFigureBegin{fig_display_lcc,display_lcc.png}
-Result of the run of the draw_linear_cell_complex program. A window shows two 3D cube and allows to navigate through the 3D scene.
+\cgalFigureBegin{fig_draw_lcc,draw_lcc.png}
+Result of the run of the draw_linear_cell_complex program. A window shows two 3D cubes and allows to navigate through the 3D scene.
 \cgalFigureEnd
 
 \cgalModifEnd

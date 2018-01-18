@@ -19,12 +19,12 @@
 /// \defgroup PkgLinearCellComplexOperations Operations for Linear Cell Complex
 /// \ingroup PkgLinearCellComplex
 
-/*! Display.
+/*! Draw.
   \code
-   #include <CGAL/Display_linear_cell_complex.h>
+   #include <CGAL/Draw_linear_cell_complex.h>
   \endcode
 */
-/// \defgroup PkgDisplayLinearCellComplex Display a Linear Cell Complex
+/// \defgroup PkgDrawLinearCellComplex Draw a Linear Cell Complex
 /// \ingroup PkgLinearCellComplex
 
 
