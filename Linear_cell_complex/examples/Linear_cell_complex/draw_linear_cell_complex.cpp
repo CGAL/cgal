@@ -1,5 +1,5 @@
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
-#include <CGAL/Linear_cell_complex_viewer_qt.h>
+#include <CGAL/Draw_linear_cell_complex.h>
 
 typedef CGAL::Linear_cell_complex_for_combinatorial_map<3> LCC;
 typedef LCC::Dart_handle Dart_handle;

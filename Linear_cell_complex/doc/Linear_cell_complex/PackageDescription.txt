@@ -74,8 +74,8 @@
 - `CGAL::compute_normal_of_cell_0<LCC>`
 - `CGAL::compute_normal_of_cell_2<LCC>`
 
-### Display a Linear cell complex ###
-- `CGAL::display<LCC>`
+### Draw a Linear cell complex ###
+- `CGAL::draw<LCC>`
 
 */
 
