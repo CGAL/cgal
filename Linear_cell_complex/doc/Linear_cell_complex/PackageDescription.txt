@@ -21,7 +21,7 @@
 
 /*! Draw.
   \code
-   #include <CGAL/Draw_linear_cell_complex.h>
+   #include <CGAL/draw_linear_cell_complex.h>
   \endcode
 */
 /// \defgroup PkgDrawLinearCellComplex Draw a Linear Cell Complex
