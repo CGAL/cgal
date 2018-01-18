@@ -4,8 +4,8 @@
 
 template < typename Mesh>
 typename boost::graph_traits<Mesh>::
-halfedge_descriptor find_halfedge(float x1, float y1,
-                                  float x2, float y2,
+halfedge_descriptor find_halfedge(double x1, double y1,
+                                  double x2, double y2,
                                   Mesh& m,
                                   bool is_border = false)
 {
