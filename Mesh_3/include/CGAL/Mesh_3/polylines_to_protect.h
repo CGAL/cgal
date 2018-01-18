@@ -185,6 +185,9 @@ private:
                     Vector vx,
                     Vector vy)
   {
+#ifdef CGAL_MESH_3_DEBUG_POLYLINES_TO_PROTECT
+    std::cerr << "New curve:\n";
+#endif // CGAL_MESH_3_DEBUG_POLYLINES_TO_PROTECT
     const double step = (end - start)/prec;
     const double stop = end-step/2;
     const bool step_is_positive = (step > 0);
@@ -195,6 +198,9 @@ private:
         x += step)
     {
       const double y = (equation.*f)(x);
+#ifdef CGAL_MESH_3_DEBUG_POLYLINES_TO_PROTECT
+      std::cerr << "  (" << x << ", " << y << ")\n";
+#endif // CGAL_MESH_3_DEBUG_POLYLINES_TO_PROTECT
       const Point inter_p =
         translate(translate(p00,
                             scale(vx, x)),
@@ -470,6 +476,9 @@ polylines_to_protect
 
   for(int axis = 0; axis < 3; ++axis)
   {
+#ifdef CGAL_MESH_3_DEBUG_POLYLINES_TO_PROTECT
+    std::cerr << "axis = " << axis << "\n";
+#endif // CGAL_MESH_3_DEBUG_POLYLINES_TO_PROTECT
     for(int i = 0; i < xdim; i+= (axis == 0 ? (std::max)(1, xdim-1) : 1 ) )
       for(int j = 0; j < ydim; j+= (axis == 1 ? (std::max)(1, ydim-1) : 1 ) )
         for(int k = 0; k < zdim; k+= (axis == 2 ? (std::max)(1, zdim-1) : 1 ) )
@@ -481,6 +490,9 @@ polylines_to_protect
 
           typedef array<int, 3> Pixel;
 
+#ifdef CGAL_MESH_3_DEBUG_POLYLINES_TO_PROTECT
+          std::cerr << "Pixel(" << i << ", " << j << ", " << k << ")\n";
+#endif // CGAL_MESH_3_DEBUG_POLYLINES_TO_PROTECT
           Pixel pix00 = {{i  , j  , k  }},
             pix10 = pix00, pix01 = pix00, pix11 = pix00;
 
@@ -492,6 +504,9 @@ polylines_to_protect
           ++pix01[axis_yy];
           if(pix11[0] >= xdim || pix11[1] >= ydim || pix11[2] >= zdim) {
             // we have gone too far
+#ifdef CGAL_MESH_3_DEBUG_POLYLINES_TO_PROTECT
+            std::cerr << "  ... continue\n";
+#endif // CGAL_MESH_3_DEBUG_POLYLINES_TO_PROTECT
             continue;
           }
           typedef internal::Mesh_3::Enriched_pixel<Pixel,
@@ -807,6 +822,9 @@ case_1_2_1:
                   const double discrimant = double(v00) * v11 - double(v01) * v10;
                   const double squared_distance =
                     8 * CGAL::abs(discrimant) / CGAL::square(double(v00) - v10 - v01 + v11);
+#ifdef CGAL_MESH_3_DEBUG_POLYLINES_TO_PROTECT
+                  std::cerr << "squared_distance: " << squared_distance << "\n";
+#endif // CGAL_MESH_3_DEBUG_POLYLINES_TO_PROTECT
                   if(CGAL::square(prec) * squared_distance > 1)
                   {
                     // In that case, the case 1-2-1 will be applied
