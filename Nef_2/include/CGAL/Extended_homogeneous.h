@@ -23,6 +23,7 @@
 
 #include <CGAL/license/Nef_2.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/basic.h>
 #include <CGAL/Homogeneous.h> 
@@ -520,4 +521,7 @@ on the extended geometric objects.}*/
 };
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
+
 #endif // CGAL_EXTENDED_HOMOGENEOUS_H

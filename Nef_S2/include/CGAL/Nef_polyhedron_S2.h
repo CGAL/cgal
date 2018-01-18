@@ -25,11 +25,7 @@
 
 #include <CGAL/license/Nef_S2.h>
 
-
-#if defined(BOOST_MSVC)
-#  pragma warning(push)
-#  pragma warning(disable:4800) // complaint about performance in std::map where we can't do anything
-#endif
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/basic.h>
 #include <CGAL/Handle_for.h>
@@ -729,10 +725,8 @@ std::istream& operator>>
   return is;
 }
 
-
-#if defined(BOOST_MSVC)
-#  pragma warning(pop)
-#endif
-
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
+
 #endif //CGAL_NEF_POLYHEDRON_S2_H

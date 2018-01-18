@@ -28,6 +28,7 @@
 
 #include <CGAL/license/Nef_3.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/basic.h>
 #include <CGAL/Handle_for.h>
@@ -2161,5 +2162,7 @@ extract_boundary() {
 }
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif //CGAL_NEF_POLYHEDRON_3_H
