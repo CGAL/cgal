@@ -41,13 +41,15 @@ collapse_edge_test()
   if(!CGAL::read_off(fname, m)) {
     std::cout << "Error reading file: " << fname << std::endl;
   }
-  assert(CGAL::is_valid(m));
+  bool m_is_valid = CGAL::is_valid(m);
+  assert(m_is_valid);
 
   Mesh test_mesh;
   CGAL::copy_face_graph(m, test_mesh);
-  assert(CGAL::is_valid(test_mesh));
+  m_is_valid = CGAL::is_valid(m);
+  assert(m_is_valid);
 
-  //case 1
+  //case 1: General Case.
   {
     halfedge_descriptor e = find_halfedge(-0.5,0,
                                           0.5,0,
@@ -55,8 +57,9 @@ collapse_edge_test()
     halfedge_descriptor en = next(e, test_mesh);
     halfedge_descriptor eno = opposite(en, test_mesh);
     halfedge_descriptor eno_prime = opposite(next(opposite(e, test_mesh), test_mesh), test_mesh);
-    vertex_descriptor v1 = target(edge(e, test_mesh), test_mesh);
-    assert(CGAL::Euler::collapse_edge(edge(e, test_mesh), test_mesh) == v1);
+    vertex_descriptor v1 = target(e, test_mesh);
+    bool ok = CGAL::Euler::collapse_edge(edge(e, test_mesh), test_mesh) == v1;
+    assert(ok);
     char found = 0;
     BOOST_FOREACH(halfedge_descriptor it, CGAL::halfedges_around_target(v1,test_mesh))
     {
@@ -69,10 +72,9 @@ collapse_edge_test()
     CGAL::clear(test_mesh);
 
   }
-  //case 2
+  //case 2:  collapsing edge is not itself a border, but is incident upon a border edge that is removed.
   {
     CGAL::copy_face_graph(m, test_mesh);
-    assert(CGAL::is_valid(test_mesh));
     halfedge_descriptor e = find_halfedge(0,0.5,
                                           -0.75,0.5,
                                           test_mesh);
@@ -84,8 +86,9 @@ collapse_edge_test()
     halfedge_descriptor en = next(e, test_mesh);
     halfedge_descriptor eno = opposite(en, test_mesh);
     halfedge_descriptor eno_prime = opposite(next(opposite(e, test_mesh), test_mesh), test_mesh);
-    vertex_descriptor v1 = target(edge(e, test_mesh), test_mesh);
-    assert(CGAL::Euler::collapse_edge(edge(e, test_mesh), test_mesh) == v1);
+    vertex_descriptor v1 = target(e, test_mesh);
+    bool ok = CGAL::Euler::collapse_edge(edge(e, test_mesh), test_mesh) == v1;
+    assert(ok);
     char found = 0;
     BOOST_FOREACH(halfedge_descriptor it, CGAL::halfedges_around_target(v1,test_mesh))
     {
@@ -97,10 +100,9 @@ collapse_edge_test()
     assert(found == 2);
     CGAL::clear(test_mesh);
   }
-  //case 3
+  //case 3: collapsing edge is not itself a border, but is incident upon a border edge that is not removed
   {
     CGAL::copy_face_graph(m, test_mesh);
-    assert(CGAL::is_valid(test_mesh));
     halfedge_descriptor e = find_halfedge(1.5,0,
                                           0.75,0.5,
                                           test_mesh);
@@ -112,8 +114,9 @@ collapse_edge_test()
     halfedge_descriptor en = next(e, test_mesh);
     halfedge_descriptor eno = opposite(en, test_mesh);
     halfedge_descriptor eno_prime = opposite(next(opposite(e, test_mesh), test_mesh), test_mesh);
-    vertex_descriptor v1 = target(edge(e, test_mesh), test_mesh);
-    assert(CGAL::Euler::collapse_edge(edge(e, test_mesh), test_mesh) == v1);
+    vertex_descriptor v1 = target(e, test_mesh);
+    bool ok = CGAL::Euler::collapse_edge(edge(e, test_mesh), test_mesh) == v1;
+    assert(ok);
     char found = 0;
     BOOST_FOREACH(halfedge_descriptor it, CGAL::halfedges_around_target(v1,test_mesh))
     {
@@ -125,10 +128,9 @@ collapse_edge_test()
     assert(found == 2);
     CGAL::clear(test_mesh);
   }
-  //case 4
+  //case 4: collapsing edge is itself a border
   {
     CGAL::copy_face_graph(m, test_mesh);
-    assert(CGAL::is_valid(test_mesh));
     halfedge_descriptor e = find_halfedge(-0.5, 0,
                                           0, -0.5,
                                           test_mesh);
@@ -150,8 +152,9 @@ collapse_edge_test()
     halfedge_descriptor eno = opposite(en, test_mesh);
     halfedge_descriptor ep_prime = prev(opposite(e, test_mesh), test_mesh);
     halfedge_descriptor eno_prime = opposite(next(opposite(e, test_mesh), test_mesh), test_mesh);
-    vertex_descriptor v1 = target(edge(e, test_mesh), test_mesh);
-    assert(CGAL::Euler::collapse_edge(edge(e, test_mesh), test_mesh) == v1);
+    vertex_descriptor v1 = target(e, test_mesh);
+    bool ok = CGAL::Euler::collapse_edge(edge(e, test_mesh), test_mesh) == v1;
+    assert(ok);
     char found = 0;
     BOOST_FOREACH(halfedge_descriptor it, CGAL::halfedges_around_target(v1,test_mesh))
     {
@@ -164,10 +167,9 @@ collapse_edge_test()
     assert(found == 3);
     CGAL::clear(test_mesh);
   }
-  //case 5
+  //case 5 singular case.
   {
     CGAL::copy_face_graph(m, test_mesh);
-    assert(CGAL::is_valid(test_mesh));
     halfedge_descriptor e = find_halfedge(0.75,0.5,
                                           1.5,0,
                                           test_mesh);
@@ -191,8 +193,9 @@ collapse_edge_test()
     CGAL::Euler::remove_face(e, test_mesh);
     halfedge_descriptor ep = prev(e, test_mesh);
     halfedge_descriptor eno_prime = opposite(next(opposite(e, test_mesh), test_mesh), test_mesh);
-    vertex_descriptor v1 = target(edge(e, test_mesh), test_mesh);
-    assert(CGAL::Euler::collapse_edge(edge(e, test_mesh), test_mesh) == v1);
+    vertex_descriptor v1 = target(e, test_mesh);
+    bool ok = CGAL::Euler::collapse_edge(edge(e, test_mesh), test_mesh) == v1;
+    assert(ok);
     char found = 0;
     BOOST_FOREACH(halfedge_descriptor it, CGAL::halfedges_around_target(v1,test_mesh))
     {
