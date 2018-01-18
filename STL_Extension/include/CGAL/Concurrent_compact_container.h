@@ -23,6 +23,8 @@
 #ifndef CGAL_CONCURRENT_COMPACT_CONTAINER_H
 #define CGAL_CONCURRENT_COMPACT_CONTAINER_H
 
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/basic.h>
 #include <CGAL/Default.h>
 
@@ -1056,6 +1058,8 @@ namespace std {
 #endif
 
 } // namespace std
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_CONCURRENT_COMPACT_CONTAINER_H
 
