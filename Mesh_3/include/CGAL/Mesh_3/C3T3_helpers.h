@@ -28,6 +28,7 @@
 
 #include <CGAL/license/Mesh_3.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Mesh_3/config.h>
 #include <CGAL/use.h>
@@ -3942,5 +3943,7 @@ check_no_inside_vertices(const Facet_vector& facets) const
 
 } // end namespace Mesh_3
 } // end namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_MESH_3_C3T3_HELPERS_H

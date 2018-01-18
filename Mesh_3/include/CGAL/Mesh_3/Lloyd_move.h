@@ -28,6 +28,7 @@
 
 #include <CGAL/license/Mesh_3.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Mesh_3/config.h>
 
@@ -565,5 +566,7 @@ private:
 
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_MESH_3_LLOYD_MOVE_H

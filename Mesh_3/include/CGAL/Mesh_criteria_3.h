@@ -30,6 +30,7 @@
 
 #include <CGAL/license/Mesh_3.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Mesh_3/config.h>
 #include <CGAL/Mesh_3/global_parameters.h>
@@ -212,5 +213,6 @@ public:
 
 }  // end namespace CGAL
 
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_MESH_CRITERIA_3_H

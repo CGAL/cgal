@@ -29,7 +29,7 @@
 
 #include <CGAL/license/Mesh_3.h>
 
-
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/iterator.h>
 
@@ -792,5 +792,7 @@ operator>> (std::istream& is,
 }
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_MESH_COMPLEX_3_IN_TRIANGULATION_3_H

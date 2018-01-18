@@ -33,7 +33,7 @@
 
 #include <CGAL/license/Mesh_3.h>
 
-
+#include <CGAL/disable_warnings.h>
 
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
@@ -290,5 +290,7 @@ public:
 #if defined(BOOST_MSVC)
 #  pragma warning(pop)
 #endif
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_IMPLICIT_TO_LABELING_FUNCTION_WRAPPER_H

@@ -24,6 +24,7 @@
 
 #include <CGAL/license/Mesh_3.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/utility.h>
 #include <set>
@@ -671,5 +672,6 @@ public:
 
 }  // end namespace CGAL
 
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_MESH_3_REFINE_FACETS_MANIFOLD_BASE_H

@@ -30,6 +30,7 @@
 
 #include <CGAL/license/Mesh_3.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Mesh_3/config.h>
 
@@ -602,5 +603,6 @@ add_featured_edges_to_graph(const Polyhedron& p,
 
 } //namespace CGAL
 
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_POLYHEDRAL_MESH_DOMAIN_WITH_FEATURES_3_H

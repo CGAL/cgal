@@ -19,6 +19,8 @@
 #ifndef CGAL_BOOST_GRAPH_NAMED_FUNCTION_PARAMS_H
 #define CGAL_BOOST_GRAPH_NAMED_FUNCTION_PARAMS_H
 
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/basic.h>
 
 #include <CGAL/boost/graph/properties.h>
@@ -197,5 +199,7 @@ struct lookup_named_param_def<Tag1, CGAL::cgal_bgl_named_params<T, Tag, Base>, D
   }
 };
 } // boost
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_BOOST_GRAPH_NAMED_FUNCTION_PARAMS_HPP

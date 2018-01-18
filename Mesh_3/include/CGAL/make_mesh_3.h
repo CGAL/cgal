@@ -28,6 +28,7 @@
 
 #include <CGAL/license/Mesh_3.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Mesh_3/config.h>
 #include <CGAL/Mesh_3/global_parameters.h>
@@ -480,5 +481,6 @@ void make_mesh_3_impl(C3T3& c3t3,
 
 }  // end namespace CGAL
 
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_MAKE_MESH_3_H
