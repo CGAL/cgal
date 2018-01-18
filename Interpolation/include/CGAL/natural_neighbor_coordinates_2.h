@@ -32,7 +32,6 @@
 #include <CGAL/number_utils_classes.h>
 #include <CGAL/utility.h>
 
-#include <boost/core/enable_if.hpp>
 #include <boost/utility/enable_if.hpp>
 
 #include <iterator>
