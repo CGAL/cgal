@@ -264,9 +264,20 @@ point_on_planeC3(const FT &pa, const FT &pb, const FT &pc, const FT &pd,
                  FT &x, FT &y, FT &z)
 {
   x = y = z = 0;
-  if (! CGAL_NTS is_zero(pa))      x = -pd/pa;
-  else if (! CGAL_NTS is_zero(pb)) y = -pd/pb;
-  else                             z = -pd/pc;
+  
+  FT abs_pa = CGAL::abs(pa);
+  FT abs_pb = CGAL::abs(pb);
+  FT abs_pc = CGAL::abs(pc);
+  
+  // to avoid badly defined point with an overly large coordinate when
+  //  the plane is almost orthogonal to one axis, we use the largest
+  //  scalar coordinate instead of always using the first non-null
+  if (CGAL::possibly(CGAL_AND (abs_pa >= abs_pb, abs_pa >= abs_pc)))
+    x = -pd/pa;
+  else if (CGAL::possibly(CGAL_AND (abs_pb >= abs_pa, abs_pb >= abs_pc)))
+    y = -pd/pb;
+  else
+    z = -pd/pc;
 }
 
 template <class FT>
