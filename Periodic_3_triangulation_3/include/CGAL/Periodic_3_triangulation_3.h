@@ -34,7 +34,7 @@
 #include <boost/random/linear_congruential.hpp>
 #include <boost/random/uniform_smallint.hpp>
 #include <boost/random/variate_generator.hpp>
-
+#include <boost/unordered_map.hpp>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/use.h>
 
@@ -181,11 +181,11 @@ public:
 private:
   typedef typename GT::FT                      FT;
   typedef std::pair< Vertex_handle, Offset >   Virtual_vertex;
-  typedef std::map<Vertex_handle, Virtual_vertex>
+  typedef boost::unordered_map<Vertex_handle, Virtual_vertex>
                                                Virtual_vertex_map;
   typedef typename Virtual_vertex_map::const_iterator
                                                Virtual_vertex_map_it;
-  typedef std::map<Vertex_handle, std::vector<Vertex_handle > >
+  typedef boost::unordered_map<Vertex_handle, std::vector<Vertex_handle > >
                                                Virtual_vertex_reverse_map;
   typedef typename Virtual_vertex_reverse_map::const_iterator
                                                Virtual_vertex_reverse_map_it;
@@ -2904,17 +2904,6 @@ Periodic_3_triangulation_3<GT,TDS>::insert_in_conflict(const Point& p,
   }
 
   hider.set_original_cube(false);
-  for(Cell_iterator it = all_cells_begin();
-      it != all_cells_end(); it++) {
-    CGAL_triangulation_assertion(it->neighbor(0)->neighbor(
-        it->neighbor(0)->index(it))==it);
-    CGAL_triangulation_assertion(it->neighbor(1)->neighbor(
-        it->neighbor(1)->index(it))==it);
-    CGAL_triangulation_assertion(it->neighbor(2)->neighbor(
-        it->neighbor(2)->index(it))==it);
-    CGAL_triangulation_assertion(it->neighbor(3)->neighbor(
-        it->neighbor(3)->index(it))==it);
-  }
 
   virtual_vertices_reverse[vh] = std::vector<Vertex_handle>();
   Offset lo;

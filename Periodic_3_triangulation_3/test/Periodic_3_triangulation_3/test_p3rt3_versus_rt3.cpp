@@ -9,6 +9,7 @@
 
 #include <CGAL/periodic_3_triangulation_3_io.h>
 #include <CGAL/IO/Triangulation_off_ostream_3.h>
+#include <CGAL/Timer.h>
 
 #include <algorithm>
 #include <cassert>
@@ -47,6 +48,8 @@ typedef RT3::Finite_cells_iterator                                Finite_cells_i
 
 int main (int, char**)
 {
+  CGAL::Timer t;
+  t.start();
   Iso_cuboid iso_cuboid(-0.5, -0.5, -0.5, 0.5, 0.5, 0.5);
   P3RT3 p3rt3(iso_cuboid);
 
@@ -137,6 +140,7 @@ int main (int, char**)
   std::cout << p3rt3.number_of_cells() << " unique cells (p3rt3)" << std::endl;
   CGAL_assertion(unique_cells_from_rt3.size() == p3rt3.number_of_cells());
 
+  std::cout << t.time() << " sec." << std::endl;
   std::cout << "EXIT SUCCESS" << std::endl;
   return EXIT_SUCCESS;
 }

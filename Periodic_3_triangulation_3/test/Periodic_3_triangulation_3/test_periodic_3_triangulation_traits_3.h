@@ -47,6 +47,7 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Simple_homogeneous.h>
 #include <CGAL/Homogeneous.h>
+#include <CGAL/Timer.h>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
@@ -56,6 +57,8 @@
 
 void test_periodic_3_triangulation_traits_3()
 {
+  CGAL::Timer t;
+  t.start();
   std::cout<<"Statically filtered predicates:"<<std::endl;
   _test_periodic_3_static_filters();
 
@@ -124,4 +127,5 @@ void test_periodic_3_triangulation_traits_3()
 #endif
 
 #endif
+  std::cout << t.time() << " sec." << std::endl;
 }
