@@ -1343,23 +1343,8 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
         QMenu menu;
         Q_FOREACH(QString name, menu_actions.keys())
         {
-          menu.addAction(name,
-                         [this, name]()
-          {
-            Q_FOREACH(Scene::Item_id id, scene->selectionIndices())
-            {
-              Scene_item* item = scene->item(id);
-              Q_FOREACH(QAction* action, item->contextMenu()->actions())
-              {
-                if(action->text() == name)
-                {
-                  action->trigger();
-                  break;
-                }
-              }
-            }
-          }
-          );
+          QAction* action = menu.addAction(name);
+          connect(action, &QAction::triggered, this, &MainWindow::propagate_action);
         }
 
           QAction* reload = menu.addAction(tr("&Reload Item from File"));
@@ -2151,4 +2136,23 @@ void MainWindow::exportStatistics()
   QTextStream outStream(&output);
   outStream << str;
   output.close();
+}
+
+void MainWindow::propagate_action()
+{
+  QAction* sender = qobject_cast<QAction*>(this->sender());
+  if(!sender) return;
+  QString name = sender->text();
+  Q_FOREACH(Scene::Item_id id, scene->selectionIndices())
+  {
+    Scene_item* item = scene->item(id);
+    Q_FOREACH(QAction* action, item->contextMenu()->actions())
+    {
+      if(action->text() == name)
+      {
+        action->trigger();
+        break;
+      }
+    }
+  }
 }
