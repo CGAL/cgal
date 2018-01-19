@@ -315,9 +315,9 @@ void Polyhedron_demo_offset_meshing_plugin::offset_meshing()
                       .arg(offset_value));
     new_item->setColor(Qt::magenta);
     new_item->setRenderingMode(item->renderingMode());
+    scene->addItem(new_item);
     item->setVisible(false);
     scene->itemChanged(index);
-    scene->addItem(new_item);
   }
 
   QApplication::restoreOverrideCursor();

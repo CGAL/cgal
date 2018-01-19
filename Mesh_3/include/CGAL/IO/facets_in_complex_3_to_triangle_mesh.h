@@ -130,10 +130,8 @@ void facets_in_complex_3_to_triangle_mesh(const C3T3& c3t3, TriangleMesh& graph)
   if (valid_polygons.size()!=polygons.size())
     polygons.swap(valid_polygons);
 
-
   CGAL::Polygon_mesh_processing::
       orient_polygon_soup(points, polygons);
-
   CGAL_assertion(CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh(polygons));
   CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(points, polygons, graph);
 }//end c3t3_to_face_graph
