@@ -385,9 +385,27 @@ public:
     autoConnectActions();
     Q_FOREACH(QAction *action, _actions)
       action->setProperty("subMenuName",
-                          "Triangulated Surface Mesh Parameterization");
-    dock_widget = new QDockWidget("UVMapping", mw);
+                    #ifdef USE_SURFACE_MESH
+                          "Triangulated Surface Mesh Parameterization"
+                    #else
+                          "Triangulated Surface Mesh Parameterization for Polyhedron"
+                    #endif
+                          );
+    dock_widget = new QDockWidget(
+      #ifdef USE_SURFACE_MESH
+          "UVMapping for Surface Mesh"
+      #else
+          "UVMapping for Polyhedron"
+      #endif
+          , mw);
     ui_widget.setupUi(dock_widget);
+    dock_widget->setWindowTitle(tr(
+                              #ifdef USE_SURFACE_MESH
+                                  "UVMapping for Surface Mesh"
+                              #else
+                                  "UVMapping for Polyhedron"
+                              #endif
+                                  ));
     graphics_scene = new QGraphicsScene(dock_widget);
     ui_widget.graphicsView->setScene(graphics_scene);
     ui_widget.graphicsView->setRenderHints(QPainter::Antialiasing);

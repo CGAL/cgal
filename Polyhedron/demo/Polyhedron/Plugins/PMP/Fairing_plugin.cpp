@@ -57,16 +57,35 @@ public:
     mw = mainWindow;
     scene = scene_interface;
     messages = m;
-    actionFairing = new QAction(tr("Refinement and Fairing"), mw);
+    actionFairing = new QAction(tr(
+                              #ifdef USE_SURFACE_MESH
+                                  "Refinement and Fairing for Surface Mesh"
+                              #else
+                                  "Refinement and Fairing for Polyhedron"
+                              #endif
+                                  ), mw);
     actionFairing->setProperty("subMenuName", "Polygon Mesh Processing");
 
     connect(actionFairing, SIGNAL(triggered()), this, SLOT(fairing_action()));
 
-    dock_widget = new QDockWidget("Refinement and Fairing", mw);
+    dock_widget = new QDockWidget(
+      #ifdef USE_SURFACE_MESH
+          "Refinement and Fairing for Surface Mesh"
+      #else
+          "Refinement and Fairing for Polyhedron"
+      #endif
+                                  , mw);
     dock_widget->setVisible(false);
 
     ui_widget.setupUi(dock_widget);
     addDockWidget(dock_widget);
+    dock_widget->setWindowTitle(tr(
+                              #ifdef USE_SURFACE_MESH
+                                  "Fairing for Surface Mesh"
+                              #else
+                                  "Fairing for Polyhedron"
+                              #endif
+                                  ));
 
     connect(ui_widget.Fair_button,  SIGNAL(clicked()), this, SLOT(on_Fair_button_clicked()));  
     connect(ui_widget.Refine_button,  SIGNAL(clicked()), this, SLOT(on_Refine_button_clicked()));

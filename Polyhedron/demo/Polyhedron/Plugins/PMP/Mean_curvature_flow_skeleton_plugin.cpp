@@ -118,7 +118,13 @@ public:
     dockWidget = NULL;
     ui = NULL;
 
-    actionMCFSkeleton = new QAction(tr("Mean Curvature Skeleton (Advanced)"), mainWindow);
+    actionMCFSkeleton = new QAction(tr(
+                                  #ifdef USE_SURFACE_MESH
+                                      "Mean Curvature Skeleton (Advanced) for Surface Mesh"
+                                  #else
+                                      "Mean Curvature Skeleton (Advanced) for Polyhedron"
+                                  #endif
+                                      ), mainWindow);
     actionMCFSkeleton->setProperty("subMenuName", "Triangulated Surface Mesh Skeletonization");
     actionMCFSkeleton->setObjectName("actionMCFSkeleton");
 
@@ -126,14 +132,26 @@ public:
     actionConvert_to_medial_skeleton->setProperty("subMenuName", "Triangulated Surface Mesh Skeletonization");
     actionConvert_to_medial_skeleton->setObjectName("actionConvert_to_medial_skeleton");
 
-    dockWidget = new QDockWidget(mw);
+    dockWidget = new QDockWidget(tr(
+                               #ifdef USE_SURFACE_MESH
+                                   "Mean Curvature Skeleton for Surface Mesh"
+                               #else
+                                   "Mean Curvature Skeleton for Polyhedron"
+                               #endif
+                                   ),mw);
     dockWidget->setVisible(false);
     ui = new Ui::Mean_curvature_flow_skeleton_plugin();
     ui->setupUi(dockWidget);
     dockWidget->setFeatures(QDockWidget::DockWidgetMovable
                           | QDockWidget::DockWidgetFloatable
                           | QDockWidget::DockWidgetClosable);
-    dockWidget->setWindowTitle("Mean Curvature Flow Skeleton");
+    dockWidget->setWindowTitle(tr(
+                             #ifdef USE_SURFACE_MESH
+                               "Mean Curvature Skeleton for Surface Mesh"
+                           #else
+                               "Mean Curvature Skeleton for Polyhedron"
+                           #endif
+                                 ));
     addDockWidget(dockWidget);
 
     connect(ui->pushButton_contract, SIGNAL(clicked()),

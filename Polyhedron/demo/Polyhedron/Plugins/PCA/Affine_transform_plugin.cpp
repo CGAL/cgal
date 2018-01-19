@@ -195,16 +195,36 @@ public:
     lastMatrix.setToIdentity();
     mw = _mw;
     this->scene = scene_interface;
-    actionTransformPolyhedron = new QAction("Affine Transformation", mw);
+
+
+    actionTransformPolyhedron = new QAction(
+      #ifdef CGAL_USE_SURFACE_MESH
+                tr("Affine Transformation for Surface Mesh")
+      #else
+                tr("Affine Transformation for Polyhedron")
+      #endif
+          , mw);
     if(actionTransformPolyhedron) {
       connect(actionTransformPolyhedron, SIGNAL(triggered()),this, SLOT(go()));
     }
     transform_item = NULL;
     transform_points_item = NULL;
 
-    dock_widget = new QDockWidget(mw);
+    dock_widget = new QDockWidget(
+      #ifdef CGAL_USE_SURFACE_MESH
+          tr("Affine Transformation for Surface Mesh")
+      #else
+          tr("Affine Transformation for Polyhedron")
+      #endif
+          , mw);
     ui.setupUi(dock_widget);
-
+    dock_widget->setWindowTitle(tr(
+                              #ifdef CGAL_USE_SURFACE_MESH
+                                  "Affine Transformation for Surface Mesh"
+                              #else
+                                  "Affine Transformation for Polyhedron"
+                              #endif
+                                  ));
     addDockWidget(dock_widget);
     dock_widget->hide();
 

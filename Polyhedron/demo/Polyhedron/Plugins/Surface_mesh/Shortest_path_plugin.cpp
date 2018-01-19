@@ -89,17 +89,36 @@ public:
     this->mw = mainWindow;
     this->m_messages = messages;
 
-    dock_widget = new QDockWidget("Shortest path", mw);
+    dock_widget = new QDockWidget(
+      #ifdef USE_SURFACE_MESH
+          "Shortest Path for Surface Mesh"
+      #else
+          "Shortest Path for Polyhedron"
+      #endif
+          , mw);
 
     dock_widget->setVisible(false);
 
     ui_widget.setupUi(dock_widget);
+    dock_widget->setWindowTitle(tr(
+                              #ifdef USE_SURFACE_MESH
+                                  "Shortest Path for Surface Mesh"
+                              #else
+                                  "Shortest Path for Polyhedron"
+                              #endif
+                                  ));
     addDockWidget(dock_widget);
 
     connect(ui_widget.Selection_type_combo_box, SIGNAL(currentIndexChanged(int)),  this, SLOT(on_Selection_type_combo_box_changed(int)));
     connect(ui_widget.Primitives_type_combo_box, SIGNAL(currentIndexChanged(int)), this, SLOT(on_Primitives_type_combo_box_changed(int)));
 
-    actionMakeShortestPaths = new QAction("Make Shortest Path", this->mw);
+    actionMakeShortestPaths = new QAction(
+      #ifdef USE_SURFACE_MESH
+          "Make Shortest Path for Surface Mesh"
+      #else
+          "Make Shortest Path for Polyhedron"
+      #endif
+          , this->mw);
     actionMakeShortestPaths->setProperty("subMenuName", "Triangulated Surface Mesh Shortest Paths");
     actionMakeShortestPaths->setObjectName("actionMakeShortestPaths");
 
