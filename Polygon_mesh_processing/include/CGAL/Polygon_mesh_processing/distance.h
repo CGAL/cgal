@@ -111,8 +111,12 @@ struct Distance_computation{
       if (d>hdist) hdist=d;
     }
 
-    if (hdist > distance->load())
-      distance->store(hdist);
+    // update max value stored in distance
+    double current_value = *distance;
+    while( current_value < hdist )
+    {
+      current_value = distance->compare_and_swap(hdist, current_value);
+    }
   }
 };
 #endif
@@ -133,7 +137,7 @@ double approximate_Hausdorff_distance_impl(
   if (boost::is_convertible<Concurrency_tag,Parallel_tag>::value)
   {
     tbb::atomic<double> distance;
-    distance.store(0);
+    distance=0;
     Distance_computation<AABBTree, typename Kernel::Point_3> f(tree, hint, sample_points, &distance);
     tbb::parallel_for(tbb::blocked_range<std::size_t>(0, sample_points.size()), f);
     return distance;
