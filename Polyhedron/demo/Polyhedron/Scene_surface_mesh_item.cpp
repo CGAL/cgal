@@ -1932,6 +1932,9 @@ void Scene_surface_mesh_item::zoomToId()
   QString text = QInputDialog::getText(QApplication::activeWindow(), tr("Zoom to Index"),
                                        tr("Simplex"), QLineEdit::Normal,
                                        tr("v0"), &ok);
+  if(!ok)
+    return;
+
   CGAL::Three::Viewer_interface* viewer =
       qobject_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first());
   Point_3 p;
