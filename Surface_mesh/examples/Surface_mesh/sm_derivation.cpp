@@ -29,12 +29,14 @@ namespace boost {
     : public boost::property_map<My::Mesh::Base, T>
   {};
   
+}
+
+namespace CGAL{
   template <typename T>
   struct graph_has_property<My::Mesh, T>
-    : public boost::graph_has_property<My::Mesh::Base, T>
+      : public CGAL::graph_has_property<My::Mesh::Base, T>
   {};
-};
-
+}
 
 int main()
 {

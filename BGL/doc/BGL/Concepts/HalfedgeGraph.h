@@ -15,6 +15,9 @@ in another cycle, namely the cycle of halfedges which are incident to
 the same vertex. We refer to \ref PkgBGLIterators for a description of
 iterators and circulators for these halfedge cycles.
 
+A partial specialization must be provided for `CGAL::graph_has_property`
+for each internal property map available.
+
 
 
 \cgalAssociatedTypesBegin

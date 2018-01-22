@@ -46,7 +46,7 @@ namespace CGAL {
   class property_map_selector
   {
   public:
-    typedef typename boost::graph_has_property<PolygonMesh, PropertyTag>::type Has_internal_pmap;
+    typedef typename graph_has_property<PolygonMesh, PropertyTag>::type Has_internal_pmap;
     typedef typename boost::mpl::if_c< Has_internal_pmap::value
                                        , typename boost::property_map<PolygonMesh, PropertyTag>::type
                                        , typename boost::cgal_no_property::type
@@ -149,7 +149,7 @@ namespace CGAL {
            typename NamedParametersVPM = NamedParametersGT >
   class GetGeomTraits
   {
-    typedef typename boost::graph_has_property<PolygonMesh, boost::vertex_point_t>::type
+    typedef typename CGAL::graph_has_property<PolygonMesh, boost::vertex_point_t>::type
       Has_internal_pmap;
     struct Fake_GT {};//to be used if there is no internal vertex_point_map in PolygonMesh
 

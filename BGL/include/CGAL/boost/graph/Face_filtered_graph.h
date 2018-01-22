@@ -1111,6 +1111,13 @@ put(PropertyTag ptag, const Face_filtered_graph<Graph, FIMap, VIMap, HIMap>& w,
   put(ptag, w.graph(), k, v);
 }
 
+template<typename Graph,
+         typename FIMap,
+         typename VIMap,
+         typename HIMap,
+         typename PropertyTag>
+struct graph_has_property<CGAL::Face_filtered_graph<Graph, FIMap, VIMap, HIMap>, PropertyTag>
+    : graph_has_property<Graph, PropertyTag> {};
 }//end namespace CGAL
 
 namespace boost {
@@ -1124,13 +1131,6 @@ struct property_map<CGAL::Face_filtered_graph<Graph, FIMap, VIMap, HIMap>,Proper
   typedef typename boost::property_map<Graph, PropertyTag >::const_type const_type;
 };
 
-template<typename Graph,
-         typename FIMap,
-         typename VIMap,
-         typename HIMap,
-         typename PropertyTag>
-struct graph_has_property<CGAL::Face_filtered_graph<Graph, FIMap, VIMap, HIMap>, PropertyTag>
-    : graph_has_property<Graph, PropertyTag> {};
 
 
 //specializations for indices

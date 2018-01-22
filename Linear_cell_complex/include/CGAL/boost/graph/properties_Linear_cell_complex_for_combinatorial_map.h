@@ -366,7 +366,23 @@ get(boost::edge_weight_t, CGAL_LCC_TYPE & cmap)
   return typename boost::property_map<CGAL_LCC_TYPE, boost::edge_weight_t>::
     type(cmap);
 }
+template<CGAL_LCC_ARGS>
+struct graph_has_property<CGAL_LCC_TYPE, boost::vertex_point_t>: CGAL::Tag_true {};
 
+template<CGAL_LCC_ARGS>
+struct graph_has_property<CGAL_LCC_TYPE, boost::edge_weight_t>: CGAL::Tag_true {};
+
+template<CGAL_LCC_ARGS>
+struct graph_has_property<CGAL_LCC_TYPE, boost::edge_index_t>: CGAL::Tag_true {};
+
+template<CGAL_LCC_ARGS>
+struct graph_has_property<CGAL_LCC_TYPE, boost::face_index_t>: CGAL::Tag_true {};
+
+template<CGAL_LCC_ARGS>
+struct graph_has_property<CGAL_LCC_TYPE, boost::halfedge_index_t>: CGAL::Tag_true {};
+
+template<CGAL_LCC_ARGS>
+struct graph_has_property<CGAL_LCC_TYPE, boost::vertex_index_t>: CGAL::Tag_true {};
 } // namespace CGAL
 
 namespace boost {
@@ -390,24 +406,6 @@ struct property_map<const CGAL_LCC_TYPE, Tag>
   typedef typename map_gen::type       type;
   typedef typename map_gen::const_type const_type;
 };
-  
-  template<CGAL_LCC_ARGS>
-  struct graph_has_property<CGAL_LCC_TYPE, vertex_point_t>: CGAL::Tag_true {};
-  
-  template<CGAL_LCC_ARGS>
-  struct graph_has_property<CGAL_LCC_TYPE, edge_weight_t>: CGAL::Tag_true {};
-  
-  template<CGAL_LCC_ARGS>
-  struct graph_has_property<CGAL_LCC_TYPE, edge_index_t>: CGAL::Tag_true {};
-  
-  template<CGAL_LCC_ARGS>
-  struct graph_has_property<CGAL_LCC_TYPE, face_index_t>: CGAL::Tag_true {};
-
-  template<CGAL_LCC_ARGS>
-  struct graph_has_property<CGAL_LCC_TYPE, halfedge_index_t>: CGAL::Tag_true {};
-
-  template<CGAL_LCC_ARGS>
-  struct graph_has_property<CGAL_LCC_TYPE, vertex_index_t>: CGAL::Tag_true {};  
 
 } // namespace boost
 

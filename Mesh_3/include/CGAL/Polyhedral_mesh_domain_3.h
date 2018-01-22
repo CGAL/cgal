@@ -135,7 +135,7 @@ struct IGT_generator<Gt,CGAL::Tag_false>
 namespace internal { namespace Mesh_3 {
 
 template <typename Polyhedron_type,
-          bool = boost::graph_has_property<Polyhedron_type,
+          bool = CGAL::graph_has_property<Polyhedron_type,
                                            CGAL::face_index_t>::value>
 class Get_face_index_pmap {
 public:
