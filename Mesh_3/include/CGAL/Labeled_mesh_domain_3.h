@@ -44,6 +44,7 @@
 #include <CGAL/Origin.h>
 
 #include <CGAL/Default.h>
+#include <CGAL/result_of.h>
 
 #include <CGAL/internal/Mesh_3/Handle_IO_for_pair_of_int.h>
 
@@ -53,6 +54,15 @@ struct Null_subdomain_index {
   template <typename T>
   bool operator()(const T& x) const { return 0 == x; }
 };
+
+template <typename Subdomain_index>
+struct Construct_pair_from_subdomain_indices {
+  typedef std::pair<Subdomain_index, Subdomain_index> result_type;
+
+  result_type operator()(Subdomain_index a, Subdomain_index b) const {
+    return result_type(a, b);
+  }
+}; // end class template Construct_pair_from_subdomain_indices
 
 /**
  * \class Labeled_mesh_domain_3
@@ -67,7 +77,8 @@ struct Null_subdomain_index {
  *  Thus, a boundary facet of the domain is labelled <0,b>, where b!=0.
  */
 template<class Function, class BGT,
-         class Null_subdomain_index = Default >
+         class Null_subdomain_index = Default,
+         class Construct_surface_patch_index = Default>
 class Labeled_mesh_domain_3
 {
   typedef typename Default::Get<Null_subdomain_index,
@@ -97,12 +108,21 @@ public:
   /// Type of indexes for cells of the input complex
   typedef typename Function::return_type Subdomain_index;
   typedef boost::optional<Subdomain_index> Subdomain;
+
+  typedef typename Default::Get<Construct_surface_patch_index,
+                                Construct_pair_from_subdomain_indices<Subdomain_index>
+                                >::type Cstr_surface_patch_index;
+
   /// Type of indexes for surface patch of the input complex
-  typedef std::pair<Subdomain_index, Subdomain_index> Surface_patch_index;
+  typedef typename CGAL::cpp11::result_of
+  <
+    Cstr_surface_patch_index(Subdomain_index)
+      >::type Surface_patch_index;
   typedef boost::optional<Surface_patch_index> Surface_patch;
   /// Type of indexes to characterize the lowest dimensional face of the input
   /// complex on which a vertex lie
-  typedef boost::variant<Subdomain_index, Surface_patch_index> Index;
+  typedef typename CGAL::internal::Mesh_3::
+    Index_generator<Subdomain_index, Surface_patch_index>::Index Index;
   typedef CGAL::cpp11::tuple<Point_3,Index,int> Intersection;
 
 
@@ -542,8 +562,8 @@ private:
 //-------------------------------------------------------
 // Method implementation
 //-------------------------------------------------------
-template<class F, class BGT, class Null>
-Labeled_mesh_domain_3<F,BGT,Null>::Labeled_mesh_domain_3(
+template<class F, class BGT, class N, class Cstr_s_patch_index>
+Labeled_mesh_domain_3<F,BGT,N,Cstr_s_patch_index>::Labeled_mesh_domain_3(
                        const F& f,
                        const Sphere_3& bounding_sphere,
                        const FT& error_bound,
@@ -558,8 +578,8 @@ Labeled_mesh_domain_3<F,BGT,Null>::Labeled_mesh_domain_3(
 {
 }
 
-template<class F, class BGT, class Null>
-Labeled_mesh_domain_3<F,BGT,Null>::Labeled_mesh_domain_3(
+template<class F, class BGT, class N, class Cstr_s_patch_index>
+Labeled_mesh_domain_3<F,BGT,N,Cstr_s_patch_index>::Labeled_mesh_domain_3(
                        const F& f,
                        const Bbox_3& bbox,
                        const FT& error_bound,
@@ -574,8 +594,8 @@ Labeled_mesh_domain_3<F,BGT,Null>::Labeled_mesh_domain_3(
 {
 }
 
-template<class F, class BGT, class Null>
-Labeled_mesh_domain_3<F,BGT,Null>::Labeled_mesh_domain_3(
+template<class F, class BGT, class N, class Cstr_s_patch_index>
+Labeled_mesh_domain_3<F,BGT,N,Cstr_s_patch_index>::Labeled_mesh_domain_3(
                        const F& f,
                        const Iso_cuboid_3& bbox,
                        const FT& error_bound,
@@ -593,8 +613,8 @@ Labeled_mesh_domain_3<F,BGT,Null>::Labeled_mesh_domain_3(
 
 
 
-template<class F, class BGT, class Null>
-Labeled_mesh_domain_3<F,BGT,Null>::Labeled_mesh_domain_3(
+template<class F, class BGT, class N, class Cstr_s_patch_index>
+Labeled_mesh_domain_3<F,BGT,N,Cstr_s_patch_index>::Labeled_mesh_domain_3(
                        const F& f,
                        const Sphere_3& bounding_sphere,
                        const FT& error_bound,
@@ -608,8 +628,8 @@ Labeled_mesh_domain_3<F,BGT,Null>::Labeled_mesh_domain_3(
 {
 }
 
-template<class F, class BGT, class Null>
-Labeled_mesh_domain_3<F,BGT,Null>::Labeled_mesh_domain_3(
+template<class F, class BGT, class N, class Cstr_s_patch_index>
+Labeled_mesh_domain_3<F,BGT,N,Cstr_s_patch_index>::Labeled_mesh_domain_3(
                        const F& f,
                        const Bbox_3& bbox,
                        const FT& error_bound,
@@ -623,8 +643,8 @@ Labeled_mesh_domain_3<F,BGT,Null>::Labeled_mesh_domain_3(
 {
 }
 
-template<class F, class BGT, class Null>
-Labeled_mesh_domain_3<F,BGT,Null>::Labeled_mesh_domain_3(
+template<class F, class BGT, class N, class Cstr_s_patch_index>
+Labeled_mesh_domain_3<F,BGT,N,Cstr_s_patch_index>::Labeled_mesh_domain_3(
                        const F& f,
                        const Iso_cuboid_3& bbox,
                        const FT& error_bound,
@@ -639,12 +659,12 @@ Labeled_mesh_domain_3<F,BGT,Null>::Labeled_mesh_domain_3(
 }
 
 
-template<class F, class BGT, class Null>
+template<class F, class BGT, class N, class Cstr_s_patch_index>
 template<class OutputIterator>
 OutputIterator
-Labeled_mesh_domain_3<F,BGT,Null>::Construct_initial_points::operator()(
-                                                    OutputIterator pts,
-                                                    const int nb_points) const
+Labeled_mesh_domain_3<F,BGT,N,Cstr_s_patch_index>::
+Construct_initial_points::operator()(OutputIterator pts,
+                                     const int nb_points) const
 {
   // Create point_iterator on and in bounding_sphere
   typedef Random_points_on_sphere_3<Point_3> Random_points_on_sphere_3;
