@@ -361,6 +361,8 @@ bool is_valid_face_descriptor( typename boost::graph_traits<FaceGraph>::face_des
  * \brief is_valid_polygon_mesh checks the integrity of a `PolygonMesh`.
  * \param g the `PolygonMesh` to test.
  * \param verb : if `true`, the details of the check will be written in the standard output.
+ *
+ * \tparam PolygonMesh a model of `FaceListGraph` and `HalfedgeListGraph`
  * \return `true` if the `PolygonMesh` is valid, `false` otherwise.
  */
 template <typename PolygonMesh>
@@ -376,7 +378,7 @@ bool is_valid_polygon_mesh(const PolygonMesh& g, bool verb = false)
   typedef typename boost::graph_traits<PolygonMesh>::halfedges_size_type   halfedges_size_type;
   typedef typename boost::graph_traits<PolygonMesh>::faces_size_type       faces_size_type;
   Verbose_ostream verr(verb);
-  int num_v(std::distance(boost::begin(vertices(g)), boost::end(vertices(g)))),
+  std::size_t num_v(std::distance(boost::begin(vertices(g)), boost::end(vertices(g)))),
   num_h(std::distance(boost::begin(halfedges(g)), boost::end(halfedges(g)))),
   num_f(std::distance(boost::begin(faces(g)), boost::end(faces(g))));
   bool valid = ( 1 != (num_h& 1));
@@ -411,6 +413,7 @@ bool is_valid_polygon_mesh(const PolygonMesh& g, bool verb = false)
     }
     // previous integrity.
     valid = valid && ( prev(next(begin, g), g) == begin);
+    valid = valid && ( next(prev(begin, g), g) == begin);
     if ( ! valid) {
       verr << "    previous pointer integrity corrupted."
            << std::endl;
@@ -443,7 +446,7 @@ bool is_valid_polygon_mesh(const PolygonMesh& g, bool verb = false)
     if ( is_border(begin, g))
       ++nb;
   }
-  verr << "summe border halfedges (2*nb) = " << 2 * nb << std::endl;
+  verr << "sum border halfedges (2*nb) = " << 2 * nb << std::endl;
   if ( valid && n != num_h)
     verr << "counting halfedges failed." << std::endl;
   // All vertices.
