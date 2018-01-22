@@ -39,6 +39,24 @@ namespace internal {
 namespace Mesh_3 {
 
 
+// -----------------------------------
+// Index_generator
+// Don't use boost::variant if types are the same type
+// -----------------------------------
+template < typename Subdomain_index, typename Surface_patch_index >
+struct Index_generator
+{
+  typedef boost::variant<Subdomain_index,Surface_patch_index> Index;
+  typedef Index                                         type;
+};
+
+template < typename T >
+struct Index_generator<T, T>
+{
+  typedef T       Index;
+  typedef Index   type;
+};
+
 template <typename T, typename Boost_variant>
 const T& get_index(const Boost_variant& x,
                    typename boost::disable_if<boost::is_same<T, Boost_variant> >::type * = 0)

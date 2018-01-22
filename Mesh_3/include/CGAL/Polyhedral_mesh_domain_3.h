@@ -83,24 +83,6 @@ max_length(const Bbox_3& b)
 }
 
 // -----------------------------------
-// Index_generator
-// Don't use boost::variant if types are the same type
-// -----------------------------------
-template < typename Subdomain_index, typename Surface_patch_index >
-struct Index_generator
-{
-  typedef boost::variant<Subdomain_index,Surface_patch_index> Index;
-  typedef Index                                         type;
-};
-
-template < typename T >
-struct Index_generator<T, T>
-{
-  typedef T       Index;
-  typedef Index   type;
-};
-
-// -----------------------------------
 // Geometric traits generator
 // -----------------------------------
 template < typename Gt,
@@ -213,7 +195,7 @@ public:
   typedef boost::optional<Surface_patch_index>            Surface_patch;
   /// Type of indexes to characterize the lowest dimensional face of the input
   /// complex on which a vertex lie
-  typedef typename Mesh_3::details::Index_generator<
+  typedef typename internal::Mesh_3::Index_generator<
     Subdomain_index, Surface_patch_index>::type           Index;
 
   typedef CGAL::cpp11::tuple<Point_3,Index,int> Intersection;
