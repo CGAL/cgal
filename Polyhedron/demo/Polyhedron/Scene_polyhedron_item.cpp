@@ -121,10 +121,9 @@ struct Scene_polyhedron_item_priv{
     nb_f_lines = 0;
     is_multicolor = false;
     no_flat = false;
-    vertices_displayed = true;
-    edges_displayed = true;
-    faces_displayed = true;
-    all_primitives_displayed = false;
+    vertices_displayed = false;
+    edges_displayed = false;
+    faces_displayed = false;
     invalidate_stats();
     CGAL::set_halfedgeds_items_id(*poly);
   }
@@ -189,7 +188,6 @@ struct Scene_polyhedron_item_priv{
   mutable bool vertices_displayed;
   mutable bool edges_displayed;
   mutable bool faces_displayed;
-  mutable bool all_primitives_displayed;
   mutable QList<double> text_ids;
   mutable std::vector<TextItem*> targeted_id;
   void initialize_buffers(CGAL::Three::Viewer_interface *viewer = 0) const;
@@ -1142,13 +1140,6 @@ QMenu* Scene_polyhedron_item::contextMenu()
     connect(actionPrintFaces, SIGNAL(triggered(bool)),
             this, SLOT(showFaces(bool)));
 
-    QAction* actionPrintAll=
-        menu->addAction(tr("Display All Ids"));
-    actionPrintAll->setCheckable(true);
-    actionPrintAll->setObjectName("actionPrintAll");
-    connect(actionPrintAll, SIGNAL(triggered(bool)),
-            this, SLOT(showPrimitives(bool)));
-
     QAction* actionZoomToId=
         menu->addAction(tr("Zoom to Index"));
     actionZoomToId->setObjectName("actionZoomToId");
@@ -1212,8 +1203,6 @@ QMenu* Scene_polyhedron_item::contextMenu()
   if(action) action->setChecked(d->edges_displayed);
   action = menu->findChild<QAction*>("actionPrintFaces");
   if(action) action->setChecked(d->faces_displayed);
-  action = menu->findChild<QAction*>("actionPrintAll");
-  if(action) action->setChecked(d->all_primitives_displayed);
 
   return menu;
 }
@@ -1845,8 +1834,6 @@ CGAL::Three::Scene_item::Header_data Scene_polyhedron_item::header() const
 
 void Scene_polyhedron_item::printPrimitiveId(QPoint point, CGAL::Three::Viewer_interface *viewer)
 {
-  if(d->all_primitives_displayed)
-    return;
   typedef Input_facets_AABB_tree Tree;
   Tree* aabb_tree = static_cast<Input_facets_AABB_tree*>(d->get_aabb_tree());
   if(!aabb_tree)
@@ -1871,8 +1858,7 @@ void Scene_polyhedron_item_priv::fillTargetedIds(const Polyhedron::Facet_handle&
                         textVItems,
                         textEItems,
                         textFItems,
-                        &targeted_id,
-                        &all_primitives_displayed);
+                        &targeted_id);
 
 
   if(vertices_displayed
@@ -1928,8 +1914,7 @@ void Scene_polyhedron_item_priv::killIds()
             textVItems,
             textEItems,
             textFItems,
-            &targeted_id,
-            &all_primitives_displayed);
+            &targeted_id);
 }
 
 void Scene_polyhedron_item::printAllIds(CGAL::Three::Viewer_interface *viewer)
@@ -1944,7 +1929,6 @@ void Scene_polyhedron_item::printAllIds(CGAL::Three::Viewer_interface *viewer)
         s3(printFaceIds(viewer));
     if((s1 && s2 && s3))
     {
-      d->all_primitives_displayed = true;
       viewer->update();
     }
     return;
@@ -2253,6 +2237,7 @@ void Scene_polyhedron_item::zoomToId()
                                        tr("v0"), &ok);
   if(!ok)
     return;
+
   CGAL::Three::Viewer_interface* viewer =
       qobject_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first());
   Point p;

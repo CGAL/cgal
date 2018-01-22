@@ -88,10 +88,9 @@ struct Scene_surface_mesh_item_priv{
     item = parent;
     has_feature_edges = false;
     invalidate_stats();
-    vertices_displayed = true;
-    edges_displayed = true;
-    faces_displayed = true;
-    all_primitives_displayed = false;
+    vertices_displayed = false;
+    edges_displayed = false;
+    faces_displayed = false;
   }
 
   Scene_surface_mesh_item_priv(SMesh* sm, Scene_surface_mesh_item *parent):
@@ -100,10 +99,9 @@ struct Scene_surface_mesh_item_priv{
     item = parent;
     has_feature_edges = false;
     invalidate_stats();
-    vertices_displayed = true;
-    edges_displayed = true;
-    faces_displayed = true;
-    all_primitives_displayed = false;
+    vertices_displayed = false;
+    edges_displayed = false;
+    faces_displayed = false;
   }
 
   ~Scene_surface_mesh_item_priv()
@@ -165,7 +163,6 @@ struct Scene_surface_mesh_item_priv{
   mutable bool vertices_displayed;
   mutable bool edges_displayed;
   mutable bool faces_displayed;
-  mutable bool all_primitives_displayed;
   mutable QList<double> text_ids;
   mutable std::vector<TextItem*> targeted_id;
 
@@ -1706,12 +1703,6 @@ QMenu* Scene_surface_mesh_item::contextMenu()
     connect(actionPrintFaces, SIGNAL(triggered(bool)),
             this, SLOT(showFaces(bool)));
 
-    QAction* actionPrintAll=
-        menu->addAction(tr("Display All Ids"));
-    actionPrintAll->setCheckable(true);
-    actionPrintAll->setObjectName("actionPrintAll");
-    connect(actionPrintAll, SIGNAL(triggered(bool)),
-            this, SLOT(showPrimitives(bool)));
 
     QAction* actionZoomToId=
         menu->addAction(tr("Zoom to Index"));
@@ -1727,14 +1718,10 @@ QMenu* Scene_surface_mesh_item::contextMenu()
   if(action) action->setChecked(d->edges_displayed);
   action = menu->findChild<QAction*>("actionPrintFaces");
   if(action) action->setChecked(d->faces_displayed);
-  action = menu->findChild<QAction*>("actionPrintAll");
-  if(action) action->setChecked(d->all_primitives_displayed);
   return menu;
 }
 void Scene_surface_mesh_item::printPrimitiveId(QPoint point, CGAL::Three::Viewer_interface *viewer)
 {
-  if(d->all_primitives_displayed)
-    return;
   typedef Input_facets_AABB_tree Tree;
   Tree* aabb_tree = static_cast<Input_facets_AABB_tree*>(d->get_aabb_tree());
   if(!aabb_tree)
@@ -1759,8 +1746,7 @@ void Scene_surface_mesh_item_priv::fillTargetedIds(const face_descriptor &select
                         textVItems,
                         textEItems,
                         textFItems,
-                        &targeted_id,
-                        &all_primitives_displayed);
+                        &targeted_id);
 
 
   if(vertices_displayed
@@ -1816,8 +1802,7 @@ void Scene_surface_mesh_item_priv::killIds()
             textVItems,
             textEItems,
             textFItems,
-            &targeted_id,
-            &all_primitives_displayed);
+            &targeted_id);
 }
 
 void Scene_surface_mesh_item::printAllIds(CGAL::Three::Viewer_interface *viewer)
@@ -1832,7 +1817,6 @@ void Scene_surface_mesh_item::printAllIds(CGAL::Three::Viewer_interface *viewer)
         s3(printFaceIds(viewer));
     if((s1 && s2 && s3))
     {
-      d->all_primitives_displayed = true;
       viewer->update();
     }
     return;
@@ -1887,7 +1871,7 @@ void Scene_surface_mesh_item::showEdges(bool b)
     if(d->textEItems->isEmpty())
     {
       d->edges_displayed = b;
-      printFaceIds(viewer);
+      printEdgeIds(viewer);
     }
     else
       renderer->addTextList(d->textEItems);
