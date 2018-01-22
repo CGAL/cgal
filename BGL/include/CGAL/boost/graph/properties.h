@@ -40,8 +40,8 @@ namespace CGAL{
 ///
 /// It inherits from `CGAL::Tag_true` if there is a
 /// default internal property map for the
-/// corresponding property tag or from
-/// CGAL::Tag_false otherwise.
+/// corresponding property tag and from
+/// `CGAL::Tag_false` otherwise.
 ///
 /// \tparam Graph a model of `HalfedgeGraph` or `FaceGraph`
 /// \tparam PropertyTag the type of a property tag
