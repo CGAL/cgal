@@ -42,7 +42,7 @@ public:
   { }
 
   typedef internal::Static_filters_predicates::Periodic_3_orientation_3<
-            Self, typename Base::Orientation_3> Orientation_3;
+            K, typename Base::Orientation_3> Orientation_3;
 
   Orientation_3 orientation_3_object() const {
     return Orientation_3(&this->_domain,

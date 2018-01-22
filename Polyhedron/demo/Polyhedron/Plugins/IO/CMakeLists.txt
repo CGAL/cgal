@@ -73,9 +73,9 @@ if(has_cxx_rvalues LESS 0 OR has_cxx_variadic LESS 0)
 else()
   set(needed_cxx_features cxx_rvalue_references cxx_variadic_templates)
   
-  polyhedron_demo_plugin(ply_plugin PLY_io_plugin)
-  target_link_libraries(ply_plugin scene_points_with_normal_item scene_polygon_soup_item scene_surface_mesh_item scene_polygon_soup_item)
-  target_compile_features(ply_plugin PRIVATE ${needed_cxx_features})
+  polyhedron_demo_plugin(ply_to_xyz_plugin PLY_to_xyz_io_plugin)
+  target_link_libraries(ply_to_xyz_plugin scene_points_with_normal_item)
+  target_compile_features(ply_to_xyz_plugin PRIVATE ${needed_cxx_features})
   
   if (LASLIB_FOUND)
     polyhedron_demo_plugin(las_plugin LAS_io_plugin)

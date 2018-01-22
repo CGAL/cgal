@@ -92,19 +92,13 @@ namespace internal {
   template <> void property_header_type<unsigned int> (std::ostream& stream) { stream << "uint"; }
   template <> void property_header_type<float> (std::ostream& stream) { stream << "float"; }
   template <> void property_header_type<double> (std::ostream& stream) { stream << "double"; }
-    
+
+
+  
   template <typename T>
   void property_header (std::ostream& stream, const PLY_property<T>& prop)
   {
     stream << "property ";
-    property_header_type<T>(stream);
-    stream << " " << prop.name << std::endl;
-  }
-
-  template <typename T>
-  void property_header (std::ostream& stream, const PLY_property<std::vector<T> >& prop)
-  {
-    stream << "property list uchar ";
     property_header_type<T>(stream);
     stream << " " << prop.name << std::endl;
   }
@@ -133,7 +127,7 @@ namespace internal {
   template <typename PropertyMap,
             typename ... T>
   void output_property_header (std::ostream& stream,
-                               std::tuple<PropertyMap, PLY_property<T>... >&& current)
+                               std::tuple<PropertyMap, PLY_property<T>... >& current)
   {
     Properties_header<sizeof...(T)-1>::write(stream, current); 
   }
@@ -142,7 +136,7 @@ namespace internal {
   template <typename PropertyMap,
             typename T>
   void output_property_header (std::ostream& stream,
-                               std::pair<PropertyMap, PLY_property<T> >&& current)
+                               std::pair<PropertyMap, PLY_property<T> >& current)
   {
     property_header (stream, current.second);
   }
@@ -152,26 +146,24 @@ namespace internal {
             typename NextPropertyHandler,
             typename ... PropertyHandler>
   void output_property_header (std::ostream& stream,
-                               std::pair<PropertyMap, PLY_property<T> >&& current,
-                               NextPropertyHandler&& next,
+                               std::pair<PropertyMap, PLY_property<T> >& current,
+                               NextPropertyHandler& next,
                                PropertyHandler&& ... properties)
   {
     property_header (stream, current.second);
-    output_property_header (stream, std::forward<NextPropertyHandler>(next),
-                            std::forward<PropertyHandler>(properties)...);
+    output_property_header (stream, next, properties...);
   }
   template <typename PropertyMap,
             typename ... T,
             typename NextPropertyHandler,
             typename ... PropertyHandler>
   void output_property_header (std::ostream& stream,
-                               std::tuple<PropertyMap, PLY_property<T>... >&& current,
-                               NextPropertyHandler&& next,
+                               std::tuple<PropertyMap, PLY_property<T>... >& current,
+                               NextPropertyHandler& next,
                                PropertyHandler&& ... properties)
   {
     Properties_header<sizeof...(T)-1>::write(stream, current); 
-    output_property_header (stream, std::forward<NextPropertyHandler>(next),
-                            std::forward<PropertyHandler>(properties)...);
+    output_property_header (stream, next, properties...);
   }
 
 
@@ -183,53 +175,24 @@ namespace internal {
   }
 
   template <typename ForwardIterator,
-            typename PropertyMap,
-            typename T>
-  void simple_property_write (std::ostream& stream, ForwardIterator it,
-                              std::pair<PropertyMap, PLY_property<T> >&& map)
+            typename PropertyMap>
+  void simple_property_write (std::ostream& stream, ForwardIterator it, PropertyMap map)
   {
     if (CGAL::get_mode(stream) == IO::ASCII)
-      stream << get (map.first, *it);
+      stream << get (map, *it);
     else
       {
-        typename PropertyMap::value_type value = get(map.first, *it);
+        typename PropertyMap::value_type value = get(map, *it);
         stream.write (reinterpret_cast<char*>(&value), sizeof(value));
       }
   }
 
   template <typename ForwardIterator,
             typename PropertyMap,
-            typename T>
-  void simple_property_write (std::ostream& stream, ForwardIterator it,
-                              std::pair<PropertyMap, PLY_property<std::vector<T> > > map)
-  {
-    const typename PropertyMap::reference value = get(map.first, *it);
-    
-    if (CGAL::get_mode(stream) == IO::ASCII)
-    {
-      stream << value.size();
-      for (std::size_t i = 0; i < value.size(); ++ i)
-        stream << " " << value[i];
-    }
-    else
-      {
-        unsigned char size = static_cast<unsigned char>(value.size());
-        stream.write (reinterpret_cast<char*>(&size), sizeof(size));
-        for (std::size_t i = 0; i < value.size(); ++ i)
-        {
-          T t = T(value[i]);
-          stream.write (reinterpret_cast<char*>(&t), sizeof(t));
-        }
-      }
-  }
-
-    
-  template <typename ForwardIterator,
-            typename PropertyMap,
             typename ... T>
   void output_properties (std::ostream& stream,
                           ForwardIterator it,
-                          std::tuple<PropertyMap, PLY_property<T>... >&& current)
+                          std::tuple<PropertyMap, PLY_property<T>... >& current)
   {
     property_write (stream, it, std::get<0>(current));
     if (get_mode(stream) == IO::ASCII)
@@ -242,9 +205,9 @@ namespace internal {
             typename T>
   void output_properties (std::ostream& stream,
                           ForwardIterator it,
-                          std::pair<PropertyMap, PLY_property<T> >&& current)
+                          std::pair<PropertyMap, PLY_property<T> >& current)
   {
-    simple_property_write (stream, it, std::forward<std::pair<PropertyMap, PLY_property<T> > >(current));
+    simple_property_write (stream, it, current.first);
     if (get_mode(stream) == IO::ASCII)
       stream << std::endl;
   }
@@ -256,15 +219,14 @@ namespace internal {
             typename ... PropertyHandler>
   void output_properties (std::ostream& stream,
                           ForwardIterator it,
-                          std::pair<PropertyMap, PLY_property<T> >&& current,
+                          std::pair<PropertyMap, PLY_property<T> >& current,
                           NextPropertyHandler& next,
                           PropertyHandler&& ... properties)
   {
-    simple_property_write (stream, it, current);
+    simple_property_write (stream, it, current.first);
     if (get_mode(stream) == IO::ASCII)
       stream << " ";
-    output_properties (stream, it, std::forward<NextPropertyHandler>(next),
-                       std::forward<PropertyHandler>(properties)...);
+    output_properties (stream, it, next, properties...);
   }
   
   template <typename ForwardIterator,
@@ -274,15 +236,14 @@ namespace internal {
             typename ... PropertyHandler>
   void output_properties (std::ostream& stream,
                           ForwardIterator it,
-                          std::tuple<PropertyMap, PLY_property<T>... >&& current,
-                          NextPropertyHandler&& next,
+                          std::tuple<PropertyMap, PLY_property<T>... >& current,
+                          NextPropertyHandler& next,
                           PropertyHandler&& ... properties)
   {
     property_write (stream, it, std::get<0>(current));
     if (get_mode(stream) == IO::ASCII)
       stream << " ";
-    output_properties (stream, it, std::forward<NextPropertyHandler>(next),
-                       std::forward<PropertyHandler>(properties)...);
+    output_properties (stream, it, next, properties...);
   }
 
   } // namespace PLY
@@ -343,7 +304,7 @@ write_ply_points_with_properties(
          << "comment Generated by the CGAL library" << std::endl
          << "element vertex " << std::distance (first, beyond) << std::endl;
   
-  internal::PLY::output_property_header (stream, std::forward<PropertyHandler>(properties)...);
+  internal::PLY::output_property_header (stream, properties...);
   
   stream << "end_header" << std::endl;
   
@@ -351,7 +312,7 @@ write_ply_points_with_properties(
   // Write positions + normals
   for(ForwardIterator it = first; it != beyond; it++)
   {
-    internal::PLY::output_properties (stream, it, std::forward<PropertyHandler>(properties)...);
+    internal::PLY::output_properties (stream, it, properties...);
   }
 
   return ! stream.fail();

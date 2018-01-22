@@ -49,7 +49,8 @@ with normal. The latter can be represented as, e.g., a class derived
 from the \cgal 3D point, or as a `std::pair<Point_3<K>, Vector_3<K>>`, 
 or as a `boost::tuple<..,Point_3<K>, ..., Vector_3<K> >`.
 
-The following classes described in Chapter \ref PkgProperty_mapSummary
+The following classes described in Chapter \ref chapterProperty_map
+"CGAL and Boost Property Maps"
 provide property maps for the implementations of points with normals
 listed above:
 
@@ -100,7 +101,7 @@ The following functions are available:
 
 Note that the %PLY format handles both ASCII and binary formats. In
 addition, %PLY and %LAS are extensible formats that can embed additional
-properties. These can also be read by \cgal (see Section \ref
+properties. These can also be read by \cgal (see section \ref
 Point_set_processing_3Properties_io).
 
 \subsubsection Point_set_processing_3Example_io Example
@@ -501,10 +502,9 @@ points that are on sharp edges:
 
 \section Point_set_processing_3Structuring Structuring
 
-The function `structure_point_set()` generates a structured version of
-the input point set assigned to a set of planes. Such an input can be
-produced by a shape detection algorithm (see \ref
-PkgPointSetShapeDetection3Summary). Point set structuring is based on
+The function `structure_point_set()` generates a structured version of the
+input point set. It requires that a shape detection algorithm is first applied
+to the point set (see \ref Chapter_Point_Set_Shape_Detection). It is based on
 the article \cgalCite{cgal:la-srpss-13}.
 
 - __Planes__: inliers of each detected plane are replaced by sets of
@@ -521,6 +521,7 @@ twice the user-defined tolerance.
 graph and sampled using the exact intersection point of the 3 planes
 (provided it exists and remains in the given tolerance). These corners
 are also locally clustered to former corners of degree higher than 3.
+
 
 This algorithm is well suited to point sets sampled on surfaces with
 planar sections and sharp edges.

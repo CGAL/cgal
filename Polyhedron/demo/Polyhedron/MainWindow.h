@@ -240,11 +240,6 @@ public Q_SLOTS:
    * set_face_graph_default_type sets the global state of the application to `Polyhedron mode` or `Surface_mesh mode`.
    */
   void set_face_graph_default_type(MainWindow::Face_graph_mode m);
-
-  /*!
-   * Writes the statistics dialog content in a text file.
-   */
-  void exportStatistics();
 protected Q_SLOTS:
 
    //!Gets the new selected item(s) from the Geometric Objects view and updates the scene

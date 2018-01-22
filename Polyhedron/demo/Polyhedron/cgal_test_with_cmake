@@ -128,7 +128,6 @@ scene_textured_polyhedron_item \
 basic_generator_plugin \
 c3t3_io_plugin \
 camera_positions_plugin \
-classification_plugin \
 clip_polyhedron_plugin \
 convex_hull_plugin \
 corefinement_plugin \

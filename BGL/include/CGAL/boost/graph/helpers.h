@@ -27,7 +27,6 @@
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/boost/graph/internal/Has_member_clear.h>
 #include <CGAL/function_objects.h>
-#include <boost/unordered_set.hpp>
 
 
 namespace CGAL {
@@ -1174,6 +1173,7 @@ bool is_empty(const FaceGraph& g)
 {
   return boost::empty(vertices(g));
 }
+
 
 } // namespace CGAL
 

@@ -136,12 +136,6 @@ The resulting mesh is output as a subcomplex of a 3D Delaunay triangulation,
 in a class providing various iterators
 on mesh elements.
 
-\subsection Mesh_3OutputFaceGraph Output FaceGraph
-
-This \cgal component also provides a function to convert the reconstructed mesh to a `FaceGraph`:
-
-- `facets_in_complex_3_to_triangle_mesh()`
-
 The 3D triangulation provides approximations of the
 subdomains, surface patches and curve segments
 and corners, according to the restricted

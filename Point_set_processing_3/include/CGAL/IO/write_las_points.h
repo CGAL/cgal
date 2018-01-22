@@ -139,7 +139,7 @@ namespace internal {
             typename T>
   void output_properties (LASpoint& point,
                           ForwardIterator it,
-                          std::pair<PropertyMap, T>&& current)
+                          std::pair<PropertyMap, T>& current)
   {
     output_value (point, get(current.first, *it), current.second);
   }
@@ -151,13 +151,12 @@ namespace internal {
             typename ... PropertyHandler>
   void output_properties (LASpoint& point,
                           ForwardIterator it,
-                          std::pair<PropertyMap, T>&& current,
-                          NextPropertyHandler&& next,
+                          std::pair<PropertyMap, T>& current,
+                          NextPropertyHandler& next,
                           PropertyHandler&& ... properties)
   {
     output_value (point, get(current.first, *it), current.second);
-    output_properties (point, it, std::forward<NextPropertyHandler>(next),
-                       std::forward<PropertyHandler>(properties)...);
+    output_properties (point, it, next, properties...);
   }
 
   } // namespace LAS
@@ -239,7 +238,7 @@ bool write_las_points_with_properties (std::ostream& stream,  ///< output stream
     laspoint.set_X ((unsigned int)((p.x() - header.x_offset) / header.x_scale_factor));
     laspoint.set_Y ((unsigned int)((p.y() - header.y_offset) / header.y_scale_factor));
     laspoint.set_Z ((unsigned int)((p.z() - header.z_offset) / header.z_scale_factor));
-    internal::LAS::output_properties (laspoint, it, std::forward<PropertyHandler>(properties)...);
+    internal::LAS::output_properties (laspoint, it, properties...);
 
     laswriter.write_point (&laspoint);
     laswriter.update_inventory(&laspoint);

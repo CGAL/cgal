@@ -7,18 +7,15 @@ corresponding to the weighted Alpha Shape.
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Filtered_kernel.h>
-
-#include <CGAL/Alpha_shape_2.h>
-#include <CGAL/Alpha_shape_face_base_2.h>
-#include <CGAL/Alpha_shape_vertex_base_2.h>
-#include <CGAL/Regular_triangulation_2.h>
-
 #include <cstdio>
 #include <cstring>
-#include <fstream>
 #include <iostream>
-#include <list>
+#include <fstream>
 #include <vector>
+#include <list>
+
+#include <CGAL/Regular_triangulation_2.h>
+#include <CGAL/Alpha_shape_2.h>
 
 typedef double                                          coord_type;
 

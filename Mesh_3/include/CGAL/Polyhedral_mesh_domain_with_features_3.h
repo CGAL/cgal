@@ -39,7 +39,7 @@
 
 #include <CGAL/Mesh_3/Detect_polylines_in_polyhedra.h>
 #include <CGAL/Mesh_3/Polyline_with_context.h>
-#include <CGAL/Polygon_mesh_processing/detect_features.h>
+#include <CGAL/Polygon_mesh_processing/Detect_features_in_polyhedra.h>
 #include <CGAL/Mesh_3/properties_Polyhedron_3.h>
 
 #include <CGAL/enum.h>
@@ -49,7 +49,6 @@
 #include <boost/graph/filtered_graph.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <CGAL/boost/graph/split_graph_into_polylines.h>
-#include <CGAL/Default.h>
 
 #include <boost/iterator/transform_iterator.hpp>
 #include <boost/foreach.hpp>
@@ -94,17 +93,17 @@ struct Angle_tester
 template <typename Polyhedron>
 struct Is_featured_edge {
   const Polyhedron* polyhedron;
-  typename boost::property_map<Polyhedron, edge_is_feature_t>::type eifm;
-  Is_featured_edge()
-    : polyhedron(0)
+  typename boost::property_map<Polyhedron, halfedge_is_feature_t>::type hifm;
+  Is_featured_edge() 
+    : polyhedron(0) 
   {} // required by boost::filtered_graph
-
+  
   Is_featured_edge(const Polyhedron& polyhedron)
-    : polyhedron(&polyhedron), eifm(get(edge_is_feature,polyhedron))
+    : polyhedron(&polyhedron), hifm(get(halfedge_is_feature,polyhedron))
   {}
 
   bool operator()(typename boost::graph_traits<Polyhedron>::edge_descriptor e) const {
-    return get(eifm, e);
+    return get(hifm, halfedge(e, *polyhedron));
   }
 }; // end Is_featured_edge<Polyhedron>
 
@@ -194,7 +193,7 @@ struct Extract_polyline_with_context_visitor
  */
 template < class IGT_,
            class Polyhedron_ = typename Mesh_polyhedron_3<IGT_>::type,
-           class TriangleAccessor= CGAL::Default,
+           class TriangleAccessor=Triangle_accessor_3<Polyhedron_,IGT_>,
            class Patch_id=int,
            class Use_exact_intersection_construction_tag = Tag_true >
 class Polyhedral_mesh_domain_with_features_3
@@ -449,41 +448,23 @@ detect_features(FT angle_in_degree, std::vector<Polyhedron>& poly)
                    vertex_descriptor> P2vmap;
   // TODO: replace this map by and unordered_map
   P2vmap p2vmap;
-  namespace PMP = CGAL::Polygon_mesh_processing;
-  std::size_t nb_of_patch_plus_one = 1;
+
+  CGAL::Polygon_mesh_processing::Detect_features_in_polyhedra<Polyhedron,Surface_patch_index> detect_features;
   BOOST_FOREACH(Polyhedron& p, poly)
   {
     initialize_ts(p);
-    typedef typename boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
-    std::map<face_descriptor, int> face_ids;
-    int id = 0;
-    BOOST_FOREACH(face_descriptor f, faces(p))
-    {
-        face_ids[f] = id++;
-    }
-
-    typedef typename boost::property_map<Polyhedron,CGAL::face_patch_id_t<P_id> >::type PIDMap;
-    typedef typename boost::property_map<Polyhedron,CGAL::vertex_incident_patches_t<P_id> >::type VIPMap;
-    typedef typename boost::property_map<Polyhedron, CGAL::edge_is_feature_t>::type EIFMap;
-
-    PIDMap pid_map = get(face_patch_id_t<P_id>(), p);
-    VIPMap vip_map = get(vertex_incident_patches_t<P_id>(), p);
-    EIFMap eif_map = get(CGAL::edge_is_feature, p);
 
     // Get sharp features
-    nb_of_patch_plus_one += PMP::sharp_edges_segmentation(p, angle_in_degree
-      , eif_map
-      , pid_map
-      , PMP::parameters::first_index(nb_of_patch_plus_one)
-      .face_index_map(boost::make_assoc_property_map(face_ids))
-      .vertex_incident_patches_map(vip_map));
+    detect_features.detect_sharp_edges(p, angle_in_degree);
+    detect_features.detect_surface_patches(p);
+    detect_features.detect_vertices_incident_patches(p);
 
     internal::Mesh_3::Is_featured_edge<Polyhedron> is_featured_edge(p);
 
     add_featured_edges_to_graph(p, is_featured_edge, g_copy, p2vmap);
   }
   add_features_from_split_graph_into_polylines(g_copy);
-  borders_detected_ = true;/*done by PMP::detect_features*/
+  borders_detected_ = true;/*done by Mesh_3::detect_features*/
 }
 
 template < typename GT_, typename P_, typename TA_,

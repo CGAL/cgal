@@ -4,7 +4,6 @@
 // include this to get #define BOOST_PARAMETER_MAX_ARITY 12
 // as otherwise it gets set via inclusion of Polyhedron_3.h
 #include <CGAL/Mesh_3/global_parameters.h>
-#include <CGAL/Default.h>
 
 #include "Polyhedron_type.h"
 #include "SMesh_type.h"
@@ -49,10 +48,13 @@ private:
 };
 #endif
 
+typedef CGAL::Triangle_accessor_3<Polyhedron, Kernel> T_accessor;
+typedef CGAL::Triangle_accessor_3<SMwgd, Kernel> T_sm_accessor;
+
 typedef CGAL::Polyhedral_mesh_domain_with_features_3<
-          Kernel, Polyhedron, CGAL::Default, CGAL::Tag_true> Polyhedral_mesh_domain;
+          Kernel, Polyhedron, T_accessor, CGAL::Tag_true> Polyhedral_mesh_domain;
 typedef CGAL::Polyhedral_mesh_domain_with_features_3<
-          Kernel, SMwgd, CGAL::Default, int> Polyhedral_mesh_domain_sm;
+          Kernel, SMwgd, T_sm_accessor, int> Polyhedral_mesh_domain_sm;
 // The last `Tag_true` says the Patch_id type will be int, and not pair<int, int>
 
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES

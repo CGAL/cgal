@@ -63,7 +63,6 @@ public:
   //typedef typename PTr::Finite_faces_iterator     Finite_faces_iterator;
 
   typedef typename PTr::Weighted_tag       Weighted_tag;
-  typedef typename PTr::Periodic_tag       Periodic_tag;
 
 #ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
   using PTr_Base::geom_traits;

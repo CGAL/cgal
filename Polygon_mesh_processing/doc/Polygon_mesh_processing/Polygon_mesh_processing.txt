@@ -27,7 +27,7 @@ A polygon mesh can have any number of connected components, and also some self-i
 In this package, a polygon mesh is considered to have the topology of a 2-manifold.
 
 \subsection PMPAPI API
-This package follows the BGL API described in \ref PkgBGLSummary.
+This package follows the BGL API described in \ref chapterBGL.
 It can thus be used either with `Polyhedron_3`, `Surface_mesh`, or
 any class model of the concept `FaceGraph`. Each function or class of this package
 details the requirements on the input polygon mesh.
@@ -679,23 +679,6 @@ and the distance between the point set and the reconstructed surface is computed
 with the following code:
 
 \snippet Poisson_surface_reconstruction_3/poisson_reconstruction_example.cpp PMP_distance_snippet
-
-\section PMPDetectFeatures Feature Detection
-
-This package provides methods to detect some features of a polygon mesh.
-
-The function `CGAL::Polygon_mesh_processing::sharp_edges_segmentation()`
-detects the sharp edges of a polygon mesh and deduces surface patches and vertices incidences.
-It can be split into three functions : `CGAL::Polygon_mesh_processing::detect_sharp_edges()`, `CGAL::Polygon_mesh_processing::connected_components()`
-and `CGAL::Polygon_mesh_processing::detect_vertex_incident_patches()`,
-that respectively detect the sharp edges, compute the patch indices, and give each of `pmesh` vertices the patch indices of its incident faces.
-
-\subsection DetectFeaturesExample Feature Detection Example
-In the following example, we count how many edges of `pmesh` are incident to two faces
-which normals form an angle smaller than 90 degrees,
-and the number of surface patches that are separated by these edges.
-
-\cgalExample{Polygon_mesh_processing/detect_features_example.cpp}
 
 \section PMPHistory Implementation History
 

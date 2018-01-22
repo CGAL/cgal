@@ -90,9 +90,6 @@ public:
   // this may be weighted or not
   typedef typename Tr_Base::Point              Point;
 
-  typedef typename Tr_Base::Weighted_tag       Weighted_tag;
-  typedef typename Tr_Base::Periodic_tag       Periodic_tag;
-
   using Tr_Base::number_of_vertices;
   using Tr_Base::geom_traits;
 

@@ -1,7 +1,5 @@
 #import Visual specific variables
-
 source "${PLATFORM_REFERENCE}/setup_VC${VC_VERSION}-${ARCH}"
-export PATH="C:/cygwin/bin":"/usr/bin":$PATH #broken by the above setup (why?)
 
 if [ -z "${BOOST_VERSION}" ]; then
   export BOOST_VERSION="1_63_0"
@@ -22,39 +20,31 @@ export EIGEN3_DIR="C:\3rdPartyLibs\eigen-eigen-f562a193118d"
 export ZLIB_INCLUDE_DIR="C:\3rdPartyLibs\zlib-1.2.8"
 
 #paths depending on the architecture
-export BOOST_LIBRARYDIR="C:\3rdPartyLibs\boost\boost_${BOOST_VERSION}\lib${ARCH}_msvc${VC_VERSION}"
-export PATH="`cygpath $BOOST_LIBRARYDIR`":$PATH
-
-export GMP_INC_DIR="C:\3rdPartyLibs\VC-${ARCH}\gmp-5.0.1_and_mpfr-3.0.0\include"
-export GMP_LIB_DIR="C:\3rdPartyLibs\VC-${ARCH}\gmp-5.0.1_and_mpfr-3.0.0\lib"
-export MPFR_INC_DIR="C:\3rdPartyLibs\VC-${ARCH}\gmp-5.0.1_and_mpfr-3.0.0\include"
-export MPFR_LIB_DIR="C:\3rdPartyLibs\VC-${ARCH}\gmp-5.0.1_and_mpfr-3.0.0\lib"
-export PATH="`cygpath $GMP_LIB_DIR`":$PATH
+#export BOOST_LIBRARYDIR="C:\dev\boost\boost_${BOOST_VERSION}\lib${ARCH}_msvc${VC_VERSION}"
+export GMP_INC_DIR="C:\CGAL\CGAL-4.9\auxiliary\gmp\include"
+export GMP_LIB_DIR="C:\CGAL\CGAL-4.9\auxiliary\gmp\lib"
+export MPFR_INC_DIR="C:\CGAL\CGAL-4.9\auxiliary\gmp\include"
+export MPFR_LIB_DIR="C:\CGAL\CGAL-4.9\auxiliary\gmp\lib"
 
 #paths depending on the compiler and the architecture
-if [ -d /cygdrive/c/3rdPartyLibs/Qt/${QT_VERSION}/msvc${VC_VERSION_YEAR}_${ARCH} ]; then
-   export QTDIR="C:\3rdPartyLibs\Qt\${QT_VERSION}\msvc${VC_VERSION_YEAR}_${ARCH}"
-   export Qt5_DIR=`cygpath -w /cygdrive/c/3rdPartyLibs/Qt/${QT_VERSION}/msvc${VC_VERSION_YEAR}_${ARCH}/lib/cmake/Qt5`
-elif [ -d /cygdrive/c/3rdPartyLibs/Qt/${QT_VERSION}/msvc${VC_VERSION_YEAR} ]; then
-   export QTDIR="C:\3rdPartyLibs\Qt\${QT_VERSION}\msvc${VC_VERSION_YEAR}"
-   export Qt5_DIR=`cygpath -w /cygdrive/c/3rdPartyLibs/Qt/${QT_VERSION}/msvc${VC_VERSION_YEAR}/lib/cmake/Qt5`
+
+#if [ -d /cygdrive/c/3rdPartyLibs/qt-5.7/5.7/msvc${VC_VERSION_YEAR}_${ARCH} ]; then
+#   export QTDIR="C:\3rdPartyLibs\qt-5.7\5.7\msvc${VC_VERSION_YEAR}_${ARCH}"
+#   export Qt5_DIR=`cygpath -w /cygdrive/c/3rdPartyLibs/qt-5.7/5.7/msvc${VC_VERSION_YEAR}_${ARCH}/lib/cmake/Qt5`
 #else
 #  export Qt5_DIR=`cygpath -w /cygdrive/c/3rdPartyLibs/VC${VC_VERSION_YEAR}-${ARCH}/QT-5*/*/msvc*/lib/cmake/Qt5`
-fi
+#fi
 
-if [ -d /cygdrive/c/3rdPartyLibs/VC${VC_VERSION}-${ARCH}/libQGLViewer-2.6.2 ]; then
-   export QGLVIEWERROOT="C:\3rdPartyLibs\VC${VC_VERSION}-${ARCH}\libQGLViewer-2.6.2"
-elif [ -d /cygdrive/c/3rdPartyLibs/VC-${ARCH}/libQGLViewer-2.6.2  ]; then
-   export QGLVIEWERROOT="C:\3rdPartyLibs/VC-${ARCH}/libQGLViewer-2.6.2"
-fi
+#if [ -d /cygdrive/c/dev/libQGLViewer-2.6.3 ]; then
+#   export QGLVIEWERROOT="C:\dev\libQGLViewer-2.6.3"
+#fi
 
 export OPENMESH_DIR="C:\3rdPartyLibs\OpenMesh-6.3"
 export OPENMESH_INC_DIR="${OPENMESH_DIR}\src"
-export OPENMESH_LIB_DIR="${OPENMESH_DIR}\build_vs${VC_VERSION_YEAR}-${ARCH}\Build\lib"
+export OPENMESH_LIB_DIR="${OPENMESH_DIR}\build_vs2017\Build\lib"
 
-export PATH=${OPENMESH_LIB_DIR}:$PATH
-
-export PATH="/cygdrive/c/3rdPartyLibs/zlib-1.2.8/build_vs${VC_VERSION_YEAR}/Release":$PATH
-export PATH="/cygdrive/c/3rdPartyLibs/zlib-1.2.8/build_vs${VC_VERSION_YEAR}/Debug":$PATH
+export PATH="`cygpath $GMP_LIB_DIR`":$PATH
+export PATH="/cygdrive/c/3rdPartyLibs/zlib-1.2.8/build_vs2017/Release":$PATH
+export PATH="/cygdrive/c/3rdPartyLibs/zlib-1.2.8/build_vs2017/Debug":$PATH
 
 

@@ -78,7 +78,6 @@ pushd "$DEST_DIR"
 printf "Compute md5sum.txt..."
 md5sum *.^txt > md5sum.txt
 sha256sum *.^txt > sha256sum.txt
-sha512sum *.^txt > sha512sum.txt
 popd
 
 printf "Now use:\n"

@@ -5,8 +5,8 @@
 
 The concept `Periodic_3DelaunayTriangulationTraits_3` is the first template parameter
 of the class `CGAL::Periodic_3_Delaunay_triangulation_3`.
-It refines the concepts `Periodic_3TriangulationTraits_3` and
-`DelaunayTriangulationTraits_3`.
+It refines the concept `DelaunayTriangulationTraits_3` from the
+\cgal 3D Triangulations.
 It redefines the geometric objects, predicates and constructions to
 work with point-offset pairs. In most cases the offsets will be
 (0,0,0) and the predicates from `DelaunayTriangulationTraits_3`
@@ -18,10 +18,10 @@ functor the version without offsets.
 
 \cgalHasModel CGAL::Periodic_3_Delaunay_triangulation_traits_3
 
-In addition to the requirements described by the concepts
-`Periodic_3TriangulationTraits_3` and `DelaunayTriangulationTraits_3`,
-the geometric traits class of a Periodic Delaunay triangulation must fulfill
-the following requirements.
+In addition to the requirements described for the traits class
+DelaunayTriangulationTraits_3, the geometric traits class of a
+Periodic Delaunay triangulation must fulfill the following
+requirements.
 
 \note The optional types must be provided in any case, however they
 can be replaced by dummy types if the respective functions are not

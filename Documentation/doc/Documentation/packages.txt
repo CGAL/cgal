@@ -48,7 +48,6 @@ h1 {
 \package_listing{Minkowski_sum_2}
 \package_listing{Polyline_simplification_2}
 \package_listing{Visibility_2}
-\package_listing{Set_movable_separability_2}
 
 
 \section PartPolyhedra Cell Complexes and Polyhedra
@@ -121,7 +120,6 @@ h1 {
 \package_listing{Point_set_processing_3}
 \package_listing{Point_set_shape_detection_3}
 \package_listing{Stream_lines_2}
-\package_listing{Classification}
 
 
 \section PartSearchStructures Spatial Searching and Sorting

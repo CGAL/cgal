@@ -199,11 +199,8 @@ public:
   typedef Finite_edges_iterator                Edge_iterator;
   typedef Finite_vertices_iterator             Vertex_iterator;
 
-  //Tag to distinguish Delaunay from regular triangulations
+ //Tag to distinguish Delaunay from regular triangulations
   typedef Tag_true  Weighted_tag;
-
-  // Tag to distinguish periodic triangulations from others
-  typedef Tag_false  Periodic_tag;
 
 private:
   size_type _hidden_vertices;

@@ -107,8 +107,6 @@ public Q_SLOTS:
   //Set the status of the slider as `released`
   void pointSliderReleased();
   void itemAboutToBeDestroyed(Scene_item *) Q_DECL_OVERRIDE;
-  void setPointSize(int size);
-  void setNormalSize(int size);
 
 // Data
 protected:

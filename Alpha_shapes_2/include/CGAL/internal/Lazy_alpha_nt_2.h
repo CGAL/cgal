@@ -14,7 +14,6 @@
 //
 // Author(s)     : Sébastien Loriot <sebastien.loriot@geometryfactory.com>
 //                 Mael Rouxel-Labbé
-
 #ifndef CGAL_INTERNAL_LAZY_ALPHA_NT_2_H
 #define CGAL_INTERNAL_LAZY_ALPHA_NT_2_H
 

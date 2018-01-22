@@ -10,7 +10,6 @@ Bounding_volumes Bounding Volumes
 Box_intersection_d Intersecting Sequences of dD Iso-oriented Boxes
 Circular_kernel_2 2D Circular Geometry Kernel
 Circular_kernel_3 3D Spherical Geometry Kernel
-Classification Classification
 Cone_spanners_2 Cone-Based Spanners
 Convex_decomposition_3 Convex Decomposition of Polyhedra
 Convex_hull_2 2D Convex Hulls and Extreme Points
@@ -62,7 +61,6 @@ Scale_space_reconstruction_3 Scale-Space Surface Reconstruction
 SearchStructures dD Range and Segment Trees
 Segment_Delaunay_graph_2 2D Segment Delaunay Graphs
 Segment_Delaunay_graph_Linf_2 L Infinity Segment Delaunay Graphs
-Set_movable_separability_2 2D Movable Separability of Sets
 Skin_surface_3 3D Skin Surface Meshing
 Snap_rounding_2 2D Snap Rounding
 Spatial_searching dD Spatial Searching

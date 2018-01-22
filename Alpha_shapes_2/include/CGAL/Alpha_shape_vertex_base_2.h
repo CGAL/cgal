@@ -64,20 +64,29 @@ private:
 
 public:
   Alpha_shape_vertex_base_2()
-    : Vb()
-  {}
+    : Vb() 
+    {}
   
   Alpha_shape_vertex_base_2(const Point & p)
-    : Vb(p)
-  {}
+    : Vb(p) 
+    {}
   
   Alpha_shape_vertex_base_2(const Point & p, Face_handle f)
-    : Vb(p, f)
-  {}
+    : Vb(p, f) 
+    {}
+
 
 public:
-  inline Interval2 get_range() { return I; }
-  inline void set_range(Interval2 Inter) { I = Inter; }
+
+  inline Interval2 get_range() 
+    {
+      return I;
+    }
+
+  inline void set_range(Interval2 Inter)
+    {  
+      I = Inter;
+    }
 
 };
 

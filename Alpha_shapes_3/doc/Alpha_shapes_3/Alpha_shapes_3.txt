@@ -218,10 +218,9 @@ The triangulation data structure of the triangulation
 has to be a model of the concept `TriangulationDataStructure_3`,
 and it must be parameterized with vertex and cell classes, which are model of the concepts
 `AlphaShapeVertex_3` and `AlphaShapeCell_3`.
-The classes `Alpha_shape_vertex_base_3<Gt>` and `Alpha_shape_cell_base_3<Gt>`
-are models of these concepts and can be used for all type of alpha shapes,
-provided that the template parameters `Vb` and `Fb` are appropriately chosen,
-as we shall see in the following section.
+The package provides by default the classes
+`Alpha_shape_vertex_base_3<Gt>` and
+`Alpha_shape_cell_base_3<Gt>`.
 
 \subsection AlphaShape3D_ConceptAndModelsFixedAlphaShapes Fixed Alpha Shapes
 
@@ -238,19 +237,19 @@ and `Fixed_alpha_shape_cell_base_3<Gt>`, respectively.
 
 \subsection AlphaShape3D_ConceptAndModelsTDS Triangulation data structure
 
-Additional requirements are put when using weighted or
+Additionally requirements are put when using weighted or
 periodic triangulations as underlying triangulation:
 <ul>
 <li> When using a weighted triangulation (`Regular_triangulation_3` or
 `Periodic_3_regular_triangulation_3`), the vertex
-and cell classes must respectively be models to both `AlphaShapeVertex_3` and
-`RegularTriangulationVertexBase_3`, and to both
-`AlphaShapeCell_3` and `RegularTriangulationCellBase_3`
+and cell classes must be models to both `AlphaShapeVertex_3` and
+`RegularTriangulationVertexBase_3`, as well as
+`AlphaShapeCell_3` and `RegularTriangulationCellBase_3` respectively
 (see example: \ref AlphaShape_3DExampleforWeightedAlphaShapes).
 <li> When using a periodic triangulation (`Periodic_3_Delaunay_triangulation_3`
 or `Periodic_3_regular_triangulation_3`), the vertex and cell classes must
-respectively be models to both `AlphaShapeVertex_3` and `Periodic_3TriangulationDSVertexBase_3`,
-and to both `AlphaShapeCell_3` and `Periodic_3TriangulationDSCellBase_3`
+be models to both `AlphaShapeVertex_3` and `Periodic_3TriangulationDSVertexBase_3`,
+as well as `AlphaShapeCell_3` and `Periodic_3TriangulationDSCellBase_3`
 (see example: \ref  AlphaShape_3DExampleForPeriodicAlphaShapes).
 </ul>
 
@@ -340,7 +339,7 @@ cube will be chosen and no optimizations will be used.
 
 It is also recommended to switch the triangulation to 1-sheeted
 covering if possible. Note that a periodic triangulation in 27-sheeted
-covering space is degenerate. In this case, an exact constructions
+covering space is degenerate. In this case an exact constructions
 kernel needs to be used to compute the alpha shapes. Otherwise the
 results will suffer from round-off problems.
 

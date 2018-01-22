@@ -144,41 +144,13 @@ algorithm.\n
 \cgalNPEnd
 
 \cgalNPBegin{ edge_is_constrained_map } \anchor PMP_edge_is_constrained_map
-the property map containing information about edges of the input polygon mesh being marked or not.\n
-In `CGAL::Polygon_mesh_processing::isotropic_remeshing()` and `CGAL::Polygon_mesh_processing::connected_components()`,
-the marked edges are constrained.\n
+the property map containing information about edges of the input polygon mesh being constrained or not.\n
 \b Type : a class model of `ReadWritePropertyMap` with
 `boost::graph_traits<PolygonMesh>::%edge_descriptor` as key type and
 `bool` as value type. It should be default constructible.\n
 \b Default : if this parameter is omitted,
 a default property map where no edge is constrained is provided.
 \cgalNPEnd
-
-\cgalNPBegin{ vertex_incident_patches_map } \anchor PMP_vertex_incident_patches_map
-the property map containing the surface patches incident to each vertex of the input polygon mesh.\n
-\b Type : a class model of `LvaluePropertyMap` with
-`boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type. Its value type
-must be a container of `boost::property_traits<PatchIdMap>::%value_type` and have a function `insert()`.
-A `std::set` or a `boost::unordered_set` are recommended, as a patch index may be
-inserted several times.\n
-\b Default value is \code boost::get(CGAL::vertex_incident_patches_t, pmesh)\endcode
-\cgalNPEnd
-
-\cgalNPBegin{ first_index } \anchor PMP_first_index
-The index of the first surface patch.\n
-\b Type : `std::size_t`\n
-\b Default : 1
-\cgalNPEnd
-
-\cgalNPBegin{ vertex_feature_degree_map } \anchor PMP_vertex_feature_degree_map
-the property map containing the number of feature edges being incident to the vertices of the polygon mesh `pmesh`.\n
-\b Type : a class model of `ReadWritePropertyMap` with
-`boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and
-`int` as value type. It should be default constructible.\n
-\b Default value is \code boost::get(CGAL::vertex_feature_degree_t(), pmesh)\endcode
-\cgalNPEnd
-
-
 
 \cgalNPBegin{ vertex_is_constrained_map } \anchor PMP_vertex_is_constrained_map
 the property map containing information about vertices of the input polygon mesh being constrained or not.

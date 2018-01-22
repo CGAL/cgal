@@ -114,12 +114,6 @@ public:
   typedef typename Base::Periodic_tetrahedron_iterator  Periodic_tetrahedron_iterator;
   //@}
 
-  //Tag to distinguish Delaunay from Regular triangulations
-  typedef Tag_false                             Weighted_tag;
-
-  // Tag to distinguish periodic triangulations from others
-  typedef Tag_true                              Periodic_tag;
-
 #ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
   using Base::cw;
   using Base::ccw;

@@ -25,12 +25,12 @@
 
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Complex_2_in_triangulation_3_polyhedron_builder.h>
-#include <CGAL/IO/facets_in_complex_2_to_triangle_mesh.h>
 #include <CGAL/value_type_traits.h>
 
 namespace CGAL {
 
-/// \deprecated Gets reconstructed surface out of a SurfaceMeshComplex_2InTriangulation_3 object.
+
+/// Gets reconstructed surface out of a SurfaceMeshComplex_2InTriangulation_3 object.
 ///
 /// This variant exports the surface as a polyhedron.
 /// It requires the surface to be manifold. For this purpose,
@@ -43,15 +43,15 @@ namespace CGAL {
 /// @return true if the surface is manifold and orientable.
 template <class SurfaceMeshComplex_2InTriangulation_3,
           class Polyhedron>
-CGAL_DEPRECATED_MSG(
-        "Please use facets_in_complex_2_to_triangle_mesh() instead."
-        ) bool
+bool
 output_surface_facets_to_polyhedron(
   const SurfaceMeshComplex_2InTriangulation_3& c2t3, ///< Input surface.
   Polyhedron& output_polyhedron) ///< Output polyhedron.
 {
-  facets_in_complex_2_to_triangle_mesh(c2t3, output_polyhedron);
+  typedef SurfaceMeshComplex_2InTriangulation_3 C2t3;
 
+  Complex_2_in_triangulation_3_polyhedron_builder<C2t3, Polyhedron>  builder(c2t3);
+  output_polyhedron.delegate(builder);
 
   // TODO: return true if the surface is manifold and orientable
   return true;

@@ -1795,6 +1795,8 @@ void MainWindow::recurseExpand(QModelIndex index)
     {
         recurseExpand(index.child(0,0));
     }
+
+    QString name = scene->item(scene->getIdFromModelIndex(index))->name();
         CGAL::Three::Scene_group_item* group =
                 qobject_cast<CGAL::Three::Scene_group_item*>(scene->item(scene->getIdFromModelIndex(index)));
         if(group && group->isExpanded())
@@ -1854,8 +1856,6 @@ void MainWindow::statisticsOnItem()
             statistics_dlg, SLOT(accept()));
     connect(statistics_ui->updateButton, SIGNAL(clicked()),
             this, SLOT(statisticsOnItem()));
-    connect(statistics_ui->exportButton, &QPushButton::clicked,
-            this, &MainWindow::exportStatistics);
   }
   statistics_ui->label_htmltab->setText(get_item_stats());
 
@@ -2034,53 +2034,3 @@ void MainWindow::set_facegraph_mode_adapter(bool is_polyhedron)
     set_face_graph_default_type(SURFACE_MESH);
 }
 
-void MainWindow::exportStatistics()
-{
-  std::vector<Scene_item*> items;
-  Q_FOREACH(int id, getSelectedSceneItemIndices())
-  {
-    Scene_item* s_item = scene->item(id);
-    items.push_back(s_item);
-  }
-
-  QString str;
-  Q_FOREACH(Scene_item* sit, items)
-  {
-    CGAL::Three::Scene_item::Header_data data = sit->header();
-    if(data.titles.size()>0)
-    {
-      int titles_limit =0;
-      int title = 0;
-      str.append(QString("%1: \n").arg(sit->name()));
-      for(int j=0; j<data.categories.size(); j++)
-      {
-        str.append(QString("  %1: \n")
-                   .arg(data.categories[j].first));
-        titles_limit+=data.categories[j].second;
-        for(;title<titles_limit; ++title)
-        {
-          str.append(QString("    %1: ").arg(data.titles.at(title)));
-          str.append(QString("%1\n").arg(sit->computeStats(title)));
-          title++;
-        }
-      }
-    }
-  }
-
-  QString filename =
-      QFileDialog::getSaveFileName((QWidget*)sender(),
-                                   "",
-                                   QString("Statistics.txt"),
-                                   "Text Files (*.txt)");
-  if(filename.isEmpty())
-    return;
-  QFile output(filename);
-  output.open(QIODevice::WriteOnly | QIODevice::Text);
-
-  if(!output.isOpen()){
-    qDebug() << "- Error, unable to open" << "outputFilename" << "for output";
-  }
-  QTextStream outStream(&output);
-  outStream << str;
-  output.close();
-}

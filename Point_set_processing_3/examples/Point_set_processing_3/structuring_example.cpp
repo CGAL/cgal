@@ -20,7 +20,7 @@ typedef CGAL::First_of_pair_property_map<Point_with_normal>  Point_map;
 typedef CGAL::Second_of_pair_property_map<Point_with_normal> Normal_map;
 
 // Efficient RANSAC types
-typedef CGAL::Shape_detection_3::Shape_detection_traits
+typedef CGAL::Shape_detection_3::Efficient_RANSAC_traits
   <Kernel, Pwn_vector, Point_map, Normal_map>                Traits;
 typedef CGAL::Shape_detection_3::Efficient_RANSAC<Traits>    Efficient_ransac;
 typedef CGAL::Shape_detection_3::Plane<Traits>               Plane;
@@ -50,16 +50,12 @@ int main (int argc, char** argv)
   ransac.set_input(points);
   ransac.add_shape_factory<Plane>();
   ransac.detect();
-  
-  Efficient_ransac::Plane_range planes = ransac.planes();
-  
+
   Pwn_vector structured_pts;
 
-  CGAL::structure_point_set (points, Point_map(), Normal_map(),
-                             planes,
-                             CGAL::Shape_detection_3::Plane_map<Traits>(),
-                             CGAL::Shape_detection_3::Point_to_shape_index_map<Traits>(points, planes),
+  CGAL::structure_point_set (points.begin (), points.end (), // input points
                              std::back_inserter (structured_pts),
+                             ransac, // shape detection engine
                              0.015); // epsilon for structuring points
 
   std::cerr << structured_pts.size ()

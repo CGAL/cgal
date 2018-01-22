@@ -236,9 +236,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   add_item(scene_edit_box_item Plugins/PCA/Scene_edit_box_item.cpp )
   add_item(scene_image_item Scene_image_item.cpp)
   add_item(scene_surface_mesh_item Scene_surface_mesh_item.cpp)
-  add_item(scene_mcf_poly_item Plugins/PMP/Scene_mcf_item.cpp)
-  add_item(scene_mcf_sm_item Plugins/PMP/Scene_mcf_item.cpp)
-  target_compile_definitions(scene_mcf_sm_item PUBLIC "-DUSE_SURFACE_MESH" )
 
   # special
   target_link_libraries(scene_polyhedron_transform_item scene_polyhedron_item)

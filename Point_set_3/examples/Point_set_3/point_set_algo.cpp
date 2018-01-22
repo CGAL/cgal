@@ -18,7 +18,7 @@ typedef CGAL::Random_points_on_sphere_3<Point> Point_generator;
 
 typedef CGAL::Point_set_3<Point> Point_set;
 
-typedef CGAL::Shape_detection_3::Shape_detection_traits
+typedef CGAL::Shape_detection_3::Efficient_RANSAC_traits
 <Kernel, Point_set, Point_set::Point_map, Point_set::Vector_map> Traits;
 typedef CGAL::Shape_detection_3::Efficient_RANSAC<Traits>        Efficient_ransac;
 typedef CGAL::Shape_detection_3::Sphere<Traits>                  Sphere;

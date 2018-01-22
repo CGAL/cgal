@@ -27,7 +27,6 @@
 
 #include <CGAL/Shape_detection_3/Octree.h>
 #include <CGAL/Shape_detection_3/Shape_base.h>
-#include <CGAL/Shape_detection_3/Plane.h>
 #include <CGAL/Random.h>
 
 //for octree ------------------------------
@@ -65,7 +64,7 @@ this class enables to detect subsets of connected points lying on the surface of
 Each input point is assigned to either none or at most one detected primitive
 shape. The implementation follows \cgalCite{schnabel2007efficient}.
 
-\tparam Traits a model of `ShapeDetectionTraits`
+\tparam Traits a model of `EfficientRANSACTraits`
 
 */
   template <class Traits>
@@ -88,7 +87,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
     };
 
     typedef boost::filter_iterator<Filter_unassigned_points,
-      boost::counting_iterator<std::size_t, boost::use_default, std::ptrdiff_t> > Point_index_iterator;
+      boost::counting_iterator<std::size_t> > Point_index_iterator;
     ///< iterator for indices of points.
     /// \endcond
 
@@ -110,13 +109,9 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
     typedef typename Traits::Normal_map Normal_map;
     ///< property map to access the unoriented normal of an input point
     typedef Shape_base<Traits> Shape; ///< shape type.
-    typedef Plane<Traits> Plane_shape; ///< plane shape type.
 
 #ifdef DOXYGEN_RUNNING
     typedef unspecified_type Shape_range;
-    ///< An `Iterator_range` with a bidirectional constant iterator type with value type `boost::shared_ptr<Shape>`.
-    typedef unspecified_type Plane_range;
-    ///< An `Iterator_range` with a bidirectional constant iterator type with value type `boost::shared_ptr<Plane_shape>`.
 #else
     struct Shape_range : public Iterator_range<
       typename std::vector<boost::shared_ptr<Shape> >::const_iterator> {
@@ -130,21 +125,8 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
       boost::shared_ptr<std::vector<boost::shared_ptr<Shape> > >
         m_extracted_shapes; // keeps a reference to the shape vector
     };
-
-    struct Plane_range : public Iterator_range<
-      typename std::vector<boost::shared_ptr<Plane_shape> >::const_iterator> {
-      typedef Iterator_range<
-        typename std::vector<boost::shared_ptr<Plane_shape> >::const_iterator> Base;
-
-      Plane_range(boost::shared_ptr<std::vector<boost::shared_ptr<Plane_shape> > >
-        extracted_shapes) : Base(make_range(extracted_shapes->begin(),
-        extracted_shapes->end())), m_extracted_shapes(extracted_shapes) {}
-    private:
-      boost::shared_ptr<std::vector<boost::shared_ptr<Plane_shape> > >
-        m_extracted_shapes; // keeps a reference to the shape vector
-    };
 #endif
-
+    ///< An `Iterator_range` with a bidirectional constant iterator type with value type `boost::shared_ptr<Shape>`.
 
 
 #ifdef DOXYGEN_RUNNING
@@ -202,7 +184,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
   /// @{
 
     /*! 
-      Constructs an empty shape detection object.
+      Constructs an empty shape detection engine.
     */ 
     Efficient_RANSAC(Traits t = Traits())
       : m_traits(t)
@@ -402,7 +384,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
     /*!
       Calls `clear_octrees()` and removes all detected shapes.
       All internal structures are cleaned, including formerly detected shapes.
-      Thus iterators and ranges retrieved through `shapes()`, `planes()` and `indices_of_unassigned_points()` 
+      Thus iterators and ranges retrieved through `shapes()` and `indices_of_unassigned_points()` 
       are invalidated.
     */ 
     void clear() {
@@ -787,29 +769,6 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
       return Shape_range(m_extracted_shapes);
     }
       
-    /*!
-      Returns an `Iterator_range` with a bidirectional iterator with
-      value type `boost::shared_ptr<Plane_shape>` over only the
-      detected planes in the order of detection.  Depending on the
-      chosen probability for the detection, the planes are ordered
-      with decreasing size.
-    */
-    Plane_range planes() const {
-      boost::shared_ptr<std::vector<boost::shared_ptr<Plane_shape> > > planes
-        = boost::make_shared<std::vector<boost::shared_ptr<Plane_shape> > >();
-      
-      for (std::size_t i = 0; i < m_extracted_shapes->size(); ++ i)
-      {
-        boost::shared_ptr<Plane_shape> pshape
-          = boost::dynamic_pointer_cast<Plane_shape>((*m_extracted_shapes)[i]);
-        
-        // Ignore all shapes other than plane
-        if (pshape != boost::shared_ptr<Plane_shape>())
-          planes->push_back (pshape);
-      }
-      return Plane_range(planes);
-    }
-      
     /*! 
       Number of points not assigned to a shape.
     */ 
@@ -827,8 +786,8 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
       Point_index_iterator p1 =
         boost::make_filter_iterator<Filter_unassigned_points>(
         fup,
-        boost::counting_iterator<std::size_t, boost::use_default, std::ptrdiff_t>(0),
-        boost::counting_iterator<std::size_t, boost::use_default, std::ptrdiff_t>(m_shape_index.size()));
+        boost::counting_iterator<std::size_t>(0),
+        boost::counting_iterator<std::size_t>(m_shape_index.size()));
 
       return make_range(p1, Point_index_iterator(p1.end()));
     }

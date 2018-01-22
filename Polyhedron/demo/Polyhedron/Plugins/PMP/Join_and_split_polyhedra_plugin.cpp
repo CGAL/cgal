@@ -139,13 +139,6 @@ struct Polyhedron_appender{
   std::list<FaceGraph*>& m_new_polyhedra;
 };
 
-struct Compare{
-bool operator()(FaceGraph* mesh1, FaceGraph* mesh2)
-{
-  return num_faces(*mesh1) < num_faces(*mesh2);
-}
-};
-
 void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionSplitPolyhedra_triggered()
 {
   Q_FOREACH(int index, scene->selectionIndices()) {
@@ -171,8 +164,6 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionSplitPolyhedra_tr
         CGAL::copy_face_graph(filter_graph, *new_graph);
         new_polyhedra.push_back(new_graph);
       }
-      //sort polyhedra by number of faces
-      new_polyhedra.sort(Compare());
 
 
       if (new_polyhedra.size()==1)

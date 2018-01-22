@@ -127,14 +127,6 @@ public:
   const_iterator end() const { return this->m_indices.end(); }
   std::size_t size() const { return this->m_base.size(); }
 
-  void reset_indices()
-  {
-    unselect_all();
-    
-    for (std::size_t i = 0; i < this->m_base.size(); ++ i)
-      this->m_indices[i] = i;
-  }
-  
   bool add_radius()
   {
     bool out = false;
@@ -260,36 +252,13 @@ public:
     return (m_blue != Byte_map());
   }
     
-  void remove_colors()
-  {
-    if (m_blue != Byte_map())
-      {
-        this->template remove_property_map<unsigned char>(m_red);
-        this->template remove_property_map<unsigned char>(m_green);
-        this->template remove_property_map<unsigned char>(m_blue);
-      }
-    if (m_fblue != Double_map())
-      {
-        this->template remove_property_map<double>(m_fred);
-        this->template remove_property_map<double>(m_fgreen);
-        this->template remove_property_map<double>(m_fblue);
-      }
-  }
-  
   double red (const Index& index) const
   { return (m_red == Byte_map()) ? m_fred[index]  : double(m_red[index]) / 255.; }
   double green (const Index& index) const
   { return (m_green == Byte_map()) ? m_fgreen[index]  : double(m_green[index]) / 255.; }
   double blue (const Index& index) const
   { return (m_blue == Byte_map()) ? m_fblue[index]  : double(m_blue[index]) / 255.; }
-  void set_color (const Index& index, unsigned char r, unsigned char g, unsigned char b)
-  {
-    m_red[index] = r;
-    m_green[index] = g;
-    m_blue[index] = b;
-  }
 
-    
   
   iterator first_selected() { return this->m_indices.end() - this->m_nb_removed; }
   const_iterator first_selected() const { return this->m_indices.end() - this->m_nb_removed; }

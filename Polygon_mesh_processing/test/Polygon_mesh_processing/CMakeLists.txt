@@ -75,7 +75,6 @@ endif()
 
   create_single_source_cgal_program("connected_component_polyhedron.cpp")
   create_single_source_cgal_program("connected_component_surface_mesh.cpp")
-  create_single_source_cgal_program("test_detect_features.cpp")
   create_single_source_cgal_program("pmp_compute_normals_test.cpp")
   create_single_source_cgal_program("orient_polygon_mesh_test.cpp" )
   create_single_source_cgal_program("orient_polygon_soup_test.cpp")

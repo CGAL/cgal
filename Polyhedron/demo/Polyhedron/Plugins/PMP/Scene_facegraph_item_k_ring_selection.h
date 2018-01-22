@@ -110,7 +110,7 @@ public:
     is_edit_mode = b;
     QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
     //for highlighting
-    viewer->setMouseTracking(true);
+    viewer->setMouseTracking(b);
   }
 
   void init(Scene_facegraph_item* poly_item, QMainWindow* mw, Active_handle::Type aht, int k_ring) {

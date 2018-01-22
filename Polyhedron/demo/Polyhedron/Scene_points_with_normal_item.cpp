@@ -572,9 +572,7 @@ bool Scene_points_with_normal_item::read_las_point_set(std::istream& stream)
 bool Scene_points_with_normal_item::write_las_point_set(std::ostream& stream) const
 {
   Q_ASSERT(d->m_points != NULL);
-  
-  d->m_points->reset_indices();
-  
+
   return stream &&
     CGAL::write_las_point_set (stream, *(d->m_points));
 }
@@ -608,8 +606,6 @@ bool Scene_points_with_normal_item::write_ply_point_set(std::ostream& stream, bo
 {
   Q_ASSERT(d->m_points != NULL);
 
-  d->m_points->reset_indices();
-  
   if (!stream)
     return false;
 
@@ -640,8 +636,6 @@ bool Scene_points_with_normal_item::write_off_point_set(std::ostream& stream) co
 {
   Q_ASSERT(d->m_points != NULL);
 
-  d->m_points->reset_indices();
-
   return stream &&
     CGAL::write_off_point_set (stream, *(d->m_points));
 }
@@ -665,8 +659,6 @@ bool Scene_points_with_normal_item::read_xyz_point_set(std::istream& stream)
 bool Scene_points_with_normal_item::write_xyz_point_set(std::ostream& stream) const
 {
   Q_ASSERT(d->m_points != NULL);
-
-  d->m_points->reset_indices();
 
   return stream &&
     CGAL::write_xyz_point_set (stream, *(d->m_points));
@@ -1060,14 +1052,4 @@ zoomToPosition(const QPoint &, CGAL::Three::Viewer_interface *viewer) const
                                                                  .arg(new_orientation[2])
                                                                  .arg(new_orientation[3]));
 
-}
-
-void Scene_points_with_normal_item::setPointSize(int size)
-{
-  d->point_Slider->setValue(size);
-}
-
-void Scene_points_with_normal_item::setNormalSize(int size)
-{
-  d->normal_Slider->setValue(size);
 }

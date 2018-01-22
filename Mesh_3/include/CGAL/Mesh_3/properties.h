@@ -26,8 +26,8 @@
 namespace CGAL
 {
 
-enum vertex_feature_degree_t    { vertex_feature_degree };
-enum edge_is_feature_t          { edge_is_feature };
+enum vertex_num_feature_edges_t { vertex_num_feature_edges };
+enum halfedge_is_feature_t      { halfedge_is_feature };
 
 enum vertex_time_stamp_t        { vertex_time_stamp};
 enum halfedge_time_stamp_t      { halfedge_time_stamp};

@@ -201,11 +201,7 @@ public:
   typedef Point                                value_type;
   typedef const value_type&                    const_reference;
 
-  //Tag to distinguish regular triangulations from others
-  typedef Tag_false                            Weighted_tag;
-
-  // Tag to distinguish periodic triangulations from others
-  typedef Tag_true                             Periodic_tag;
+  typedef Tag_false Weighted_tag;
 
 public:
   enum Iterator_type {

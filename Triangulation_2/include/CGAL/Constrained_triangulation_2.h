@@ -141,13 +141,8 @@ public:
   typedef std::list<Constraint>              List_constraints;
 
   // Tag to mark the presence of a hierarchy of constraints
-  typedef Tag_false                          Constraint_hierarchy_tag;
-
-  //Tag to distinguish Delaunay from regular triangulations
-  typedef Tag_false                          Weighted_tag;
-
-  // Tag to distinguish periodic triangulations from others
-  typedef Tag_false                          Periodic_tag;
+ typedef Tag_false                           Constraint_hierarchy_tag;
+   
 
   class Less_edge;
   typedef std::set<Edge,Less_edge> Edge_set;

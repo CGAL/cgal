@@ -58,7 +58,7 @@ private:
   Point _p;
 
 public:
-  Triangulation_vertex_base_2 () : Vb(), _p() {}
+  Triangulation_vertex_base_2 () : Vb() {}
   Triangulation_vertex_base_2(const Point & p) : Vb(), _p(p) {}
   Triangulation_vertex_base_2(const Point & p, Face_handle f)
     : Vb(f), _p(p) {}

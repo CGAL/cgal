@@ -873,37 +873,18 @@ void Scene_polygon_soup_item::load(const std::vector<Point>& points, const std::
     d->oriented = false;
     invalidateOpenGLBuffers();
 }
-
-template <class Point, class Polygon>
-void Scene_polygon_soup_item::load(const std::vector<Point>& points, const std::vector<Polygon>& polygons,
-                                   const std::vector<CGAL::Color>& fcolors,
-                                   const std::vector<CGAL::Color>& vcolors)
-{
-    load (points, polygons);
-
-    d->soup->fcolors.reserve (fcolors.size());
-    std::copy (fcolors.begin(), fcolors.end(), std::back_inserter (d->soup->fcolors));
-    
-    d->soup->vcolors.reserve (vcolors.size());
-    std::copy (vcolors.begin(), vcolors.end(), std::back_inserter (d->soup->vcolors));
-}
 // Force the instanciation of the template function for the types used in the STL_io_plugin. This is needed
 // because the d-pointer forbid the definition in the .h for this function.
 template SCENE_POLYGON_SOUP_ITEM_EXPORT void Scene_polygon_soup_item::load<CGAL::cpp11::array<double, 3>, CGAL::cpp11::array<int, 3> >
 (const std::vector<CGAL::cpp11::array<double, 3> >& points, const std::vector<CGAL::cpp11::array<int, 3> >& polygons);
 template SCENE_POLYGON_SOUP_ITEM_EXPORT void Scene_polygon_soup_item::load<CGAL::Epick::Point_3, std::vector<std::size_t> >
 (const std::vector<CGAL::Epick::Point_3>& points, const std::vector<std::vector<std::size_t> >& polygons);
-template SCENE_POLYGON_SOUP_ITEM_EXPORT void Scene_polygon_soup_item::load<CGAL::Epick::Point_3, std::vector<std::size_t> >
-(const std::vector<CGAL::Epick::Point_3>& points, const std::vector<std::vector<std::size_t> >& polygons,
- const std::vector<CGAL::Color>& fcolors,
- const std::vector<CGAL::Color>& vcolors);
 
 // Local Variables:
 // c-basic-offset: 4
 // End:
 
 const Scene_polygon_soup_item::Points& Scene_polygon_soup_item::points() const { return d->soup->points; }
-const Scene_polygon_soup_item::Polygons& Scene_polygon_soup_item::polygons() const { return d->soup->polygons; }
 bool Scene_polygon_soup_item::isDataColored() { return d->soup->fcolors.size()>0 || d->soup->vcolors.size()>0;}
 std::vector<CGAL::Color> Scene_polygon_soup_item::getVColors() const{return d->soup->vcolors;}
 std::vector<CGAL::Color> Scene_polygon_soup_item::getFColors() const{return d->soup->fcolors;}
