@@ -175,6 +175,15 @@ public :
     //! Only returns children that have this item as a parent.
     //! Children of these children are not returned.
     QList<Scene_item*> getChildren() const {return children;}
+
+    //! \brief getChildrenForSelection returns the list of
+    //! children to select along with the group.
+    //!
+    //! When a `Scene_group_item` is added to the selection of the scene,
+    //! this function defines which of its children will be added too.
+    //! Typically overriden to allow applying an operation from the
+    //! Operation menu only to the parent item and not to its children.
+    virtual QList<Scene_item*> getChildrenForSelection() const {return children;}
     //!Removes a Scene_item from the list of children.
     //!@see getChildren() @see addChild()
     void removeChild( Scene_item* item)
