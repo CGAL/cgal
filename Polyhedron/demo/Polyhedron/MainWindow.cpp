@@ -1585,14 +1585,16 @@ void MainWindow::on_actionSaveAs_triggered()
         filters += plugin->saveNameFilters();
       }
     }
-    QString ext;
-    if(!filters.isEmpty())
+    QString ext1, ext2;
+    QRegExp extensions("\\(\\*\\..+\\)");
+    QStringList filter_ext;
+    Q_FOREACH(QString s, filters.first().split(";;"))
     {
-      QRegExp extensions("\\(\\*\\..+\\)");
-      extensions.indexIn(filters.first().split(";;").first());
-      ext = extensions.cap();
-      filters << tr("All files (*)");
+      int pos = extensions.indexIn(s);
+      if( pos >-1)
+        filter_ext.append(extensions.capturedTexts());
     }
+    filters << tr("All files (*)");
     if(canSavePlugins.isEmpty()) {
       QMessageBox::warning(this,
                            tr("Cannot save"),
@@ -1600,19 +1602,36 @@ void MainWindow::on_actionSaveAs_triggered()
                            .arg(item->name()));
       continue;
     }
-    QString caption = tr("Save %1 to File...%2").arg(item->name()).arg(ext);
-    //remove `)`
-    ext.chop(1);
-    //remove `(*.`
-    ext = ext.right(ext.size()-3);
+    QString caption = tr("Save %1 to File...").arg(item->name());
+    QString sf;
     QString filename =
         QFileDialog::getSaveFileName(this,
                                      caption,
-                                     QString("%1.%2").arg(item->name()).arg(ext),
-                                     filters.join(";;"));
+                                     QString("%1").arg(item->name()),
+                                     filters.join(";;"),
+                                     &sf);
+    extensions.indexIn(sf.split(";;").first());
+    ext1 = extensions.cap();
+    //remove `)`
+    ext1.chop(1);
+    //remove `(*`
+    ext1 = ext1.right(ext1.size()-2);
     if(filename.isEmpty())
       continue;
 
+    ext2 = filename.split(".").last();
+    QStringList final_extensions;
+    Q_FOREACH(QString s, filter_ext)
+    {
+      //remove `)`
+      s.chop(1);
+      //remove `(*.`
+      final_extensions.append(s.right(s.size()-3));
+    }
+    if(!final_extensions.contains(ext2))
+    {
+      filename = filename.append(ext1);
+    }
     viewer->update();
     save(filename, item);
   }

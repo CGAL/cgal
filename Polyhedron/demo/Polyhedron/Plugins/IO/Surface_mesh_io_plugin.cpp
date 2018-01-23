@@ -108,8 +108,8 @@ public:
      return 0;
 
    }
-   bool canSave(const CGAL::Three::Scene_item*) {
-       return true;
+   bool canSave(const CGAL::Three::Scene_item* item) {
+       return qobject_cast<const Scene_surface_mesh_item*>(item) != 0;
    }
 
    bool save(const CGAL::Three::Scene_item* item, QFileInfo fileinfo) {
