@@ -1568,7 +1568,7 @@ MATHJAX_FORMAT         = HTML-CSS
 # Content Delivery Network so you can quickly see the result without installing
 # MathJax. However, it is strongly recommended to install a local copy of
 # MathJax from http://www.mathjax.org before deployment.
-# The default value is: http://cdn.mathjax.org/mathjax/latest.
+# The default value is: https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2.
 # This tag requires that the tag USE_MATHJAX is set to YES.
 
 MATHJAX_RELPATH        = ${CGAL_DOC_MATHJAX_LOCATION}
