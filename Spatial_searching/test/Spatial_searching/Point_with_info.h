@@ -1,4 +1,4 @@
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 
 template <class Pt>
 struct My_point_with_info

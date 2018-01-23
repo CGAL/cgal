@@ -19,7 +19,7 @@
 
 #include <functional>
 #include <boost/foreach.hpp>
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 
 #include <fstream>
 

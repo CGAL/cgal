@@ -25,7 +25,7 @@
 #include <string>
 #include <cstdlib>
 
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <boost/iterator/zip_iterator.hpp>
 #include <boost/shared_ptr.hpp>
 

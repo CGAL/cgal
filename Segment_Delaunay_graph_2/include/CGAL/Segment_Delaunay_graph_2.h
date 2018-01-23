@@ -57,7 +57,7 @@
 #include <CGAL/assertions.h>
 
 #include <CGAL/boost/iterator/counting_iterator.hpp>
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 
 /*
   Conventions:

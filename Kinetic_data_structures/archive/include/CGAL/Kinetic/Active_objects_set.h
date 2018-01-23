@@ -31,7 +31,7 @@
 #include <map>
 #include <vector>
 #include <sstream>
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <utility>
 
 namespace CGAL { namespace Kinetic {;

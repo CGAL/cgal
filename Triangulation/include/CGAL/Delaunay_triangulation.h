@@ -29,7 +29,7 @@
 #include <CGAL/Dimension.h>
 #include <CGAL/Default.h>
 
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 
 #include <algorithm>
 

@@ -27,7 +27,7 @@
 
 #include <CGAL/Mesh_2/Face_badness.h>
 #include <CGAL/Double_map.h>
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 
 #include <string>
 #include <sstream>

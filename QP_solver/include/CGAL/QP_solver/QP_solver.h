@@ -48,7 +48,7 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 
 #include <vector>
 #include <numeric>

@@ -32,7 +32,7 @@
 #include <boost/optional.hpp>
 
 #include <CGAL/Handle_with_policy.h>
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 
 #include <CGAL/Polynomial.h>
 #include <CGAL/Polynomial_traits_d.h>

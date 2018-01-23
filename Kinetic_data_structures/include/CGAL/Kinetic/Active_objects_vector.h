@@ -32,7 +32,7 @@
 #include <vector>
 #include <sstream>
 #include <CGAL/iterator.h>
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 
 #if defined(BOOST_MSVC)
 #  pragma warning(push)

@@ -48,7 +48,7 @@
 #include <boost/dynamic_bitset.hpp>
 #include <CGAL/boost/graph/split_graph_into_polylines.h>
 
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <boost/foreach.hpp>
 
 #include <string>
