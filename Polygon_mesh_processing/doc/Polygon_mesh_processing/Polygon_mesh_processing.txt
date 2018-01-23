@@ -129,20 +129,25 @@ shape smoothing is designed to be \e intrinsic, depending as little as possible 
 and smoothing the shape alone without optimizing the shape of the triangles.
 
 - For **mesh smoothing**, `CGAL::Polygon_mesh_processing::smooth_angles()` may be used to
-move vertices so that incident edges equalize and `CGAL::Polygon_mesh_processing::smooth_areas()` may be used to
-move vertices so that the areas of adjacent triangles tend to equalize. 
+move vertices so that incident edges equalize angles and `CGAL::Polygon_mesh_processing::smooth_areas()` may be used to
+move vertices so that the areas of adjacent triangles tend to equalize.
 Border vertices are considered as constrained and do not move at any step of the procedures.
 No new vertex is inserted, although degenerate faces are removed as a first step before smoothing.
 
- Angle and area smoothing algorithms are based on Surazhsky and Gotsman \cgalCite{cgal:sg-hqct-04}. Angle weights are considered 
+Angle and area smoothing algorithms are based on Surazhsky and Gotsman \cgalCite{cgal:sg-hqct-04}. Angle weights are considered
 so that small angles carry more weight and convergence may be achieved faster.
-Area smoothing, since it considers only triangle areas as a smoothing criterion, may result in long and skinny triangles,
+Since area smoothing considers only triangle areas as a smoothing criterion, it may result in long and skinny triangles,
 especially for meshes with highly irregular connectivity. However, area smoothing is guaranteed to improve the spatial
 distribution of the vertices over the area that is being smoothed.
 
 - For **shape smoothing**, `CGAL::Polygon_mesh_processing::smooth_along_curvature_flow()`
-takes into account the mean curvature flow to calculate a weighted barycenter towards which vertices move incrementally. Shape smoothing using the curvature flow is based on Desbrun et al \cgalCite{cgal:dmsb-ifamdcf-99} and on Kazhdan et al \cgalCite{kazhdan2012can}.
-The algorithm uses the mean curvature flow to calculate the translation of vertices along the surface normal with a speed equal to the mean curvature of the area that is being smoothed. This means that vertices on sharp corners slide faster. If the region around a vertex is flat, this vertex does not move (zero curvature). To avoid the formation of undesirable neck pinches the algorith slows down the evolution in cylindrical regions. The smoothed surface converges to a conformal parameterization of the initial surface onto a sphere.
+takes into account the mean curvature flow to calculate a weighted barycenter towards which vertices move incrementally.
+Shape smoothing using the curvature flow is based on Desbrun et al \cgalCite{cgal:dmsb-ifamdcf-99} and on Kazhdan et al \cgalCite{kazhdan2012can}.
+The algorithm uses the mean curvature flow to calculate the translation of vertices along the surface normal with a speed equal
+to the mean curvature of the area that is being smoothed. This means that vertices on sharp corners slide faster.
+If the region around a vertex is flat, this vertex does not move (zero curvature). To avoid the formation of undesirable neck
+pinches the algorithm slows down the evolution in cylindrical regions. The smoothed surface converges to a conformal
+parameterization of the initial surface onto a sphere.
 
 \cgalFigureBegin{smooth_sphere, smooth_sphere.png}
 Mesh smoothing. (a) Input mesh.

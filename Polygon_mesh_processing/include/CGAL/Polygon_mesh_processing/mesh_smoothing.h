@@ -46,7 +46,7 @@ namespace Polygon_mesh_processing {
 * smoothes a triangulated region of a polygon mesh using angle based criteria.
 * This function improves the angles of triangle faces by iteratively moving non
 * constrained vertices.
-* A weighted scheme is also proposed to favorise the removal of small angles.
+* A weighted scheme is used to favorise the removal of small angles.
 * Optionally, the points are reprojected after each iteration.
 *
 * @tparam PolygonMesh model of `MutableFaceGraph`.
@@ -75,7 +75,7 @@ namespace Polygon_mesh_processing {
 *    constrained-or-not status of each vertex of `pmesh`. A constrained vertex
 *    cannot be modified at all during smoothing.
 *  \cgalParamEnd
-*  \cgalParamBegin{do_project} If `true`, points are projected to the initial surface after each iteration.
+*  \cgalParamBegin{do_project} If `true` (default value), points are projected to the initial surface after each iteration.
 *  \cgalParamEnd
 * \cgalNamedParamsEnd
 */
@@ -178,7 +178,7 @@ void smooth_angles(PolygonMesh& pmesh)
 /*!
 * \ingroup PMP_meshing_grp
 * smoothes a triangulated region of a polygon mesh using area based criteria.
-* This function tries to make the area distribution of triangle as uniform as possible
+* This function tries to make the triangle area distribution as uniform as possible
 * by moving non constrained vertices.
 * Optionally, the points are reprojected after each iteration.
 *
@@ -213,7 +213,7 @@ void smooth_angles(PolygonMesh& pmesh)
 *    the average area of all triangles adjacent to the vertex that is being moved. The tolerance corresponds to the
 *    relative energy of triangles between iterations. Defaults to 1e-5.
 *  \cgalParamEnd
-*  \cgalParamBegin{do_project} If `true`, points are projected to the initial surface after each iteration.
+*  \cgalParamBegin{do_project} If `true` (default value), points are projected to the initial surface after each iteration.
 *  \cgalParamEnd
 * \cgalNamedParamsEnd
 */
