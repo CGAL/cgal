@@ -413,8 +413,11 @@ void test2(){
   D un10; CGAL_USE(un10);
 }
 
+#if defined(BOOST_MSVC)
 #  pragma warning(push)
 #  pragma warning(disable: 4512)
+#endif
+
 template<class CP> struct Construct_point3_helper {
   CP const& cp;
   Construct_point3_helper(CP const& x) : cp(x) {}
@@ -430,7 +433,9 @@ template<class CP> struct Construct_point3_helper {
   }
 };
 
+#if defined(BOOST_MSVC)
 #  pragma warning(pop)
+#endif
 
 template<class Ker>
 void test3(){
