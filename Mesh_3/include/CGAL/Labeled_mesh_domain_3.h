@@ -45,6 +45,7 @@
 
 #include <CGAL/Default.h>
 #include <CGAL/result_of.h>
+#include <CGAL/function.h>
 
 #include <CGAL/internal/Mesh_3/Handle_IO_for_pair_of_int.h>
 
@@ -64,6 +65,55 @@ struct Construct_pair_from_subdomain_indices {
   }
 }; // end class template Construct_pair_from_subdomain_indices
 
+template <typename Geom_traits,
+          typename Subdomain_index>
+class Labeled_mesh_domain_3_impl_details {
+protected:
+  typedef typename Geom_traits::Point_3 Point_3;
+  typedef typename Geom_traits::Iso_cuboid_3 Iso_cuboid_3;
+  typedef typename Geom_traits::FT FT;
+
+  /// Returns squared error bound from \c bbox and \c error
+  FT squared_error_bound(const Iso_cuboid_3& bbox, const FT& error) const
+  {
+    typename Geom_traits::Compute_squared_distance_3 squared_distance =
+                             Geom_traits().compute_squared_distance_3_object();
+    return squared_distance((bbox.min)(), (bbox.max)())*error*error/4;
+  }
+
+  template <typename Function, typename Null>
+  Labeled_mesh_domain_3_impl_details(const Function& f,
+                                     const Iso_cuboid_3 bbox,
+                                     const FT& error_bound,
+                                     Null null,
+                                     CGAL::Random* p_rng)
+    : function_(f)
+    , bbox_(bbox)
+    , null(null)
+    , p_rng_(p_rng == 0 ? new CGAL::Random(0) : p_rng)
+    , delete_rng_(p_rng == 0)
+    , squared_error_bound_(squared_error_bound(bbox_,error_bound))
+  {}
+
+  virtual ~Labeled_mesh_domain_3_impl_details() {
+    if(delete_rng_)
+      delete p_rng_;
+  }
+
+  /// The function which answers subdomain queries
+  CGAL::cpp11::function<Subdomain_index(const Point_3&)> function_;
+  /// The bounding box
+  const Iso_cuboid_3 bbox_;
+  /// The functor that decides which sub-domain indices correspond to the
+  /// outside of the domain.
+  CGAL::cpp11::function<bool(Subdomain_index)> null;
+  /// The random number generator used by Construct_initial_points
+  CGAL::Random* p_rng_;
+  bool delete_rng_;
+  /// Error bound relative to sphere radius
+  FT squared_error_bound_;
+}; // Labeled_mesh_domain_3_impl_details
+
 /**
  * \class Labeled_mesh_domain_3
  *
@@ -80,7 +130,11 @@ template<class Function, class BGT,
          class Null_subdomain_index = Default,
          class Construct_surface_patch_index = Default>
 class Labeled_mesh_domain_3
+  : protected Labeled_mesh_domain_3_impl_details<BGT,
+                                                 typename Function::return_type>
 {
+  typedef Labeled_mesh_domain_3_impl_details<BGT,
+                                typename Function::return_type> Impl_details;
   typedef typename Default::Get<Null_subdomain_index,
                                 CGAL::Null_subdomain_index>::type Null;
 public:
@@ -136,41 +190,43 @@ public:
                         const Sphere_3& bounding_sphere,
                         const FT& error_bound = FT(1e-3),
                         Null null = Null(),
-                        CGAL::Random* p_rng = NULL);
+                        CGAL::Random* p_rng = NULL)
+    : Impl_details(f, iso_cuboid(bounding_sphere.bbox()),
+                   error_bound, null, p_rng) {}
 
   Labeled_mesh_domain_3(const Function& f,
                         const Bbox_3& bbox,
                         const FT& error_bound = FT(1e-3),
                         Null null = Null(),
-                        CGAL::Random* p_rng = NULL);
+                        CGAL::Random* p_rng = NULL)
+    : Impl_details(f, iso_cuboid(bbox), error_bound, null, p_rng) {}
 
   Labeled_mesh_domain_3(const Function& f,
                         const Iso_cuboid_3& bbox,
                         const FT& error_bound = FT(1e-3),
                         Null null = Null(),
-                        CGAL::Random* p_rng = NULL);
+                        CGAL::Random* p_rng = NULL)
+    : Impl_details(f, bbox, error_bound, null, p_rng) {}
 
   Labeled_mesh_domain_3(const Function& f,
                         const Sphere_3& bounding_sphere,
                         const FT& error_bound,
-                        CGAL::Random* p_rng);
+                        CGAL::Random* p_rng)
+    : Impl_details(f, iso_cuboid(bounding_sphere.bbox()),
+                   error_bound, Null(), p_rng) {}
+
 
   Labeled_mesh_domain_3(const Function& f,
                         const Bbox_3& bbox,
                         const FT& error_bound,
-                        CGAL::Random* p_rng);
+                        CGAL::Random* p_rng)
+    : Impl_details(f, iso_cuboid(bbox), error_bound, Null(), p_rng) {}
 
   Labeled_mesh_domain_3(const Function& f,
                         const Iso_cuboid_3& bbox,
                         const FT& error_bound,
-                        CGAL::Random* p_rng);
-  /// Destructor
-  virtual ~Labeled_mesh_domain_3()
-  {
-    if(delete_rng_)
-      delete p_rng_;
-  }
-
+                        CGAL::Random* p_rng)
+    : Impl_details(f, bbox, error_bound, Null(), p_rng) {}
 
   /**
    * Constructs  a set of \ccc{n} points on the surface, and output them to
@@ -199,7 +255,7 @@ public:
    * Returns a bounding box of the domain
    */
   Bbox_3 bbox() const {
-    return bbox_.bbox();
+    return this->bbox_.bbox();
   }
 
   /**
@@ -364,7 +420,7 @@ public:
       // Cannot be const: those values are modified below.
       Subdomain_index value_at_p1 = r_domain_.function_(p1);
       Subdomain_index value_at_p2 = r_domain_.function_(p2);
-      Subdomain_index value_at_mid = r_domain_.function_(mid,true);
+      Subdomain_index value_at_mid = r_domain_.function_(mid);
 
       // If both extremities are in the same subdomain,
       // there is no intersection.
@@ -410,7 +466,7 @@ public:
         }
 
         mid = midpoint(p1, p2);
-        value_at_mid = r_domain_.function_(mid,true);
+        value_at_mid = r_domain_.function_(mid);
       }
     }
 
@@ -497,14 +553,6 @@ private:
     else return Surface_patch_index(j,i);
   }
 
-  /// Returns squared error bound from \c bbox and \c error
-  FT squared_error_bound(const Iso_cuboid_3& bbox, const FT& error) const
-  {
-    typename BGT::Compute_squared_distance_3 squared_distance =
-                                    BGT().compute_squared_distance_3_object();
-    return squared_distance((bbox.min)(), (bbox.max)())*error*error/4;
-  }
-
   /// Returns squared error bound from \c sphere and \c error
   FT squared_error_bound(const Sphere_3& sphere, const FT& error) const
   {
@@ -531,22 +579,7 @@ private:
 
 protected:
   /// Returns bounding box
-  const Iso_cuboid_3& bounding_box() const { return bbox_; }
-
-private:
-  /// The function which answers subdomain queries
-  const Function function_;
-  /// The bounding box
-  const Iso_cuboid_3 bbox_;
-  /// The functor that decides which sub-domain indices correspond to the
-  /// outside of the domain.
-  Null null;
-  /// The random number generator used by Construct_initial_points
-  CGAL::Random* p_rng_;
-  bool delete_rng_;
-  /// Error bound relative to sphere radius
-  FT squared_error_bound_;
-
+  const Iso_cuboid_3& bounding_box() const { return this->bbox_; }
 
 private:
   // Disabled copy constructor & assignment operator
@@ -562,103 +595,6 @@ private:
 //-------------------------------------------------------
 // Method implementation
 //-------------------------------------------------------
-template<class F, class BGT, class N, class Cstr_s_patch_index>
-Labeled_mesh_domain_3<F,BGT,N,Cstr_s_patch_index>::Labeled_mesh_domain_3(
-                       const F& f,
-                       const Sphere_3& bounding_sphere,
-                       const FT& error_bound,
-                       Null null /* = Null() */,
-                       CGAL::Random* p_rng)
-: function_(f)
-, bbox_(iso_cuboid(bounding_sphere.bbox()))
-, null(null)
-, p_rng_(p_rng == 0 ? new CGAL::Random(0) : p_rng)
-, delete_rng_(p_rng == 0)
-, squared_error_bound_(squared_error_bound(bounding_sphere,error_bound))
-{
-}
-
-template<class F, class BGT, class N, class Cstr_s_patch_index>
-Labeled_mesh_domain_3<F,BGT,N,Cstr_s_patch_index>::Labeled_mesh_domain_3(
-                       const F& f,
-                       const Bbox_3& bbox,
-                       const FT& error_bound,
-                       Null null /* = Null() */,
-                       CGAL::Random* p_rng)
-: function_(f)
-, bbox_(iso_cuboid(bbox))
-, null(null)
-, p_rng_(p_rng == 0 ? new CGAL::Random(0) : p_rng)
-, delete_rng_(p_rng == 0)
-, squared_error_bound_(squared_error_bound(bbox_,error_bound))
-{
-}
-
-template<class F, class BGT, class N, class Cstr_s_patch_index>
-Labeled_mesh_domain_3<F,BGT,N,Cstr_s_patch_index>::Labeled_mesh_domain_3(
-                       const F& f,
-                       const Iso_cuboid_3& bbox,
-                       const FT& error_bound,
-                       Null null /* = Null() */,
-                       CGAL::Random* p_rng)
-: function_(f)
-, bbox_(bbox)
-, null(null)
-, p_rng_(p_rng == 0 ? new CGAL::Random(0) : p_rng)
-, delete_rng_(p_rng == 0)
-, squared_error_bound_(squared_error_bound(bbox_,error_bound))
-{
-}
-
-
-
-
-template<class F, class BGT, class N, class Cstr_s_patch_index>
-Labeled_mesh_domain_3<F,BGT,N,Cstr_s_patch_index>::Labeled_mesh_domain_3(
-                       const F& f,
-                       const Sphere_3& bounding_sphere,
-                       const FT& error_bound,
-                       CGAL::Random* p_rng)
-: function_(f)
-, bbox_(iso_cuboid(bounding_sphere.bbox()))
-, null(Null())
-, p_rng_(p_rng == 0 ? new CGAL::Random(0) : p_rng)
-, delete_rng_(p_rng == 0)
-, squared_error_bound_(squared_error_bound(bounding_sphere,error_bound))
-{
-}
-
-template<class F, class BGT, class N, class Cstr_s_patch_index>
-Labeled_mesh_domain_3<F,BGT,N,Cstr_s_patch_index>::Labeled_mesh_domain_3(
-                       const F& f,
-                       const Bbox_3& bbox,
-                       const FT& error_bound,
-                       CGAL::Random* p_rng)
-: function_(f)
-, bbox_(iso_cuboid(bbox))
-, null(Null())
-, p_rng_(p_rng == 0 ? new CGAL::Random(0) : p_rng)
-, delete_rng_(p_rng == 0)
-, squared_error_bound_(squared_error_bound(bbox_,error_bound))
-{
-}
-
-template<class F, class BGT, class N, class Cstr_s_patch_index>
-Labeled_mesh_domain_3<F,BGT,N,Cstr_s_patch_index>::Labeled_mesh_domain_3(
-                       const F& f,
-                       const Iso_cuboid_3& bbox,
-                       const FT& error_bound,
-                       CGAL::Random* p_rng)
-: function_(f)
-, bbox_(bbox)
-, null(Null())
-, p_rng_(p_rng == 0 ? new CGAL::Random(0) : p_rng)
-, delete_rng_(p_rng == 0)
-, squared_error_bound_(squared_error_bound(bbox_,error_bound))
-{
-}
-
-
 template<class F, class BGT, class N, class Cstr_s_patch_index>
 template<class OutputIterator>
 OutputIterator
