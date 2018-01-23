@@ -317,7 +317,7 @@ struct Scene_c3t3_item_priv {
     intersection = NULL;
     spheres_are_shown = false;
     cnc_are_shown = false;
-    show_tetrahedra = false;
+    show_tetrahedra = true;
     is_aabb_tree_built = false;
     are_intersection_buffers_filled = false;
     is_grid_shown = true;
@@ -915,6 +915,7 @@ void Scene_c3t3_item::draw(CGAL::Three::Viewer_interface* viewer) const {
   vaos[Scene_c3t3_item_priv::Facets]->release();
 
   if(d->show_tetrahedra){
+    ncthis->show_intersection(true);
     if(!d->frame->isManipulated())
       d->intersection->setFast(false);
     else
@@ -925,6 +926,7 @@ void Scene_c3t3_item::draw(CGAL::Three::Viewer_interface* viewer) const {
       ncthis->d->computeIntersections();
       d->intersection->initialize_buffers(viewer);
       d->are_intersection_buffers_filled = true;
+      ncthis->show_intersection(true);
     }
   }
 
