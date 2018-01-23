@@ -771,16 +771,18 @@ Scene_surface_mesh_item::isEmpty() const
 
 QString Scene_surface_mesh_item::toolTip() const
 {
-  return QObject::tr("<p>Surface_mesh <b>%1</b> (mode: %5, color: %6)</p>"
-                     "<p>Number of vertices: %2<br />"
-                     "Number of edges: %3<br />"
-                     "Number of faces: %4</p>")
-    .arg(this->name())
-    .arg(num_vertices(*d->smesh_))
-    .arg(num_edges(*d->smesh_))
-    .arg(num_faces(*d->smesh_))
-    .arg(this->renderingModeName())
-    .arg(this->color().name());
+  QString str = QObject::tr("<p>Surface_mesh <b>%1</b> (mode: %5, color: %6)</p>"
+                            "<p>Number of vertices: %2<br />"
+                            "Number of edges: %3<br />"
+                            "Number of faces: %4</p>")
+      .arg(this->name())
+      .arg(num_vertices(*d->smesh_))
+      .arg(num_edges(*d->smesh_))
+      .arg(num_faces(*d->smesh_))
+      .arg(this->renderingModeName())
+      .arg(this->color().name());
+  str += QString("<br />Number of isolated vertices: %1<br />").arg(getNbIsolatedvertices());
+  return str;
 }
 
 void Scene_surface_mesh_item_priv::checkFloat()const

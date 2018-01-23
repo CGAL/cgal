@@ -5,6 +5,8 @@
 #include <QObject>
 #include <QAction>
 #include <QMainWindow>
+#include <QMessageBox>
+#include <QApplication>
 #include <QDebug>
 #include "Scene_surface_mesh_item.h"
 #include "Scene_polygon_soup_item.h"
@@ -70,6 +72,24 @@ public:
      }
      Scene_surface_mesh_item* item = new Scene_surface_mesh_item(surface_mesh);
      item->setName(fileinfo.completeBaseName());
+     std::size_t isolated_v = 0;
+     BOOST_FOREACH(vertex_descriptor v, vertices(*surface_mesh))
+     {
+       if(surface_mesh->is_isolated(v))
+       {
+         ++isolated_v;
+       }
+     }
+     if(isolated_v >0)
+     {
+       item->setNbIsolatedvertices(isolated_v);
+       //needs two restore, it's not a typo
+       QApplication::restoreOverrideCursor();
+       QMessageBox::warning((QWidget*)NULL,
+                      tr("Isolated vertices"),
+                      tr("%1 isolated vertices found")
+                      .arg(item->getNbIsolatedvertices()));
+     }
      return item;
      }
      else if(fileinfo.suffix().toLower() == "obj")
