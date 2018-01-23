@@ -146,6 +146,7 @@ Polyhedron_demo_off_plugin::load_obj(QFileInfo fileinfo) {
                                       std::move(faces),
                                       *(poly_item->polyhedron()));
     item = poly_item;
+    item->invalidateOpenGLBuffers();
   } else {
     Scene_polygon_soup_item* polygon_soup_item = new Scene_polygon_soup_item();
     polygon_soup_item->load(std::move(points), std::move(faces));
