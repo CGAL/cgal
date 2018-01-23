@@ -299,7 +299,6 @@ struct Scene_c3t3_item_priv {
     tree.clear();
     if(frame)
     {
-      static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->setManipulatedFrame(0);
       delete frame;
       frame = NULL;
       delete tet_Slider;
@@ -1830,7 +1829,7 @@ bool Scene_c3t3_item::keyPressEvent(QKeyEvent *event)
    d->tet_Slider->setValue(d->tet_Slider->value() -5);
    itemChanged();
  }
- return true;
+ return false;
 }
 
 QString Scene_c3t3_item::computeStats(int type)
