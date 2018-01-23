@@ -47,6 +47,7 @@ public :
   {
     setParent(parent);
   }
+  bool isFinite() const { return false; }
   void init_vectors(
       std::vector<float> *p_vertices,
       std::vector<float> *p_normals,
