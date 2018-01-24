@@ -82,7 +82,7 @@ namespace CGAL {
         /// reset index to be invalid (index=std::numeric_limits<size_type>::max())
         void reset() { idx_=(std::numeric_limits<size_type>::max)(); }
 
-        /// return whether the index is valid, i.e., the index is not equal to std::numeric_limits<size_type>::max().
+        /// return whether the index is valid, i.e., the index is not equal to `%std::numeric_limits<size_type>::max()`.
         bool is_valid() const { 
           size_type inf = (std::numeric_limits<size_type>::max)();
           return idx_ != inf;
@@ -1894,23 +1894,23 @@ private: //--------------------------------------------------- property handling
  /// \name Null Elements
     ///@{
 
-  /// returns `Vertex_index(std::numeric_limits<size_type>::max())`.
+  /// returns `Vertex_index(std::numeric_limits<size_type>::%max())`.
   static Vertex_index null_vertex()
   {
     return vertex_index((std::numeric_limits<size_type>::max)());
   }
 
-  /// returns `Edge_index(std::numeric_limits<size_type>::max())`.
+  /// returns `Edge_index(std::numeric_limits<size_type>::%max())`.
   static Edge_index null_edge()
   {
     return edge_index((std::numeric_limits<size_type>::max)());
   }
-  /// returns `Halfedge_index(std::numeric_limits<size_type>::max())`.
+  /// returns `Halfedge_index(std::numeric_limits<size_type>::%max())`.
   static Halfedge_index null_halfedge()
   {
     return halfedge_index((std::numeric_limits<size_type>::max)());
   }
-  /// returns `Face_index(std::numeric_limits<size_type>::max())`.
+  /// returns `Face_index(std::numeric_limits<size_type>::%max())`.
   static Face_index null_face()
   {
     return face_index((std::numeric_limits<size_type>::max)());
