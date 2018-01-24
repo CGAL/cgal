@@ -1569,7 +1569,7 @@ MATHJAX_FORMAT         = HTML-CSS
 # The default value is: https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/.
 # This tag requires that the tag USE_MATHJAX is set to YES.
 
-MATHJAX_RELPATH        = ${CGAL_DOC_MATHJAX_LOCATION}
+${CGAL_DOC_MATHJAX_LOCATION_FULL_OPTION_LINE}
 
 # The MATHJAX_EXTENSIONS tag can be used to specify one or more MathJax
 # extension names that should be enabled during MathJax rendering. For example
