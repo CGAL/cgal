@@ -84,14 +84,17 @@ protected:
     return squared_distance((bbox.min)(), (bbox.max)())*error*error/4;
   }
 
-  template <typename Function, typename Null>
+  template <typename Function, typename Null,
+            typename Construct_surface_patch_index>
   Labeled_mesh_domain_3_impl_details(const Function& f,
                                      const Iso_cuboid_3 bbox,
                                      const FT& error_bound,
+                                     Construct_surface_patch_index cstr_s_p_i,
                                      Null null,
                                      CGAL::Random* p_rng)
     : function_(f)
     , bbox_(bbox)
+    , cstr_s_p_index(cstr_s_p_i)
     , null(null)
     , p_rng_(p_rng == 0 ? new CGAL::Random(0) : p_rng)
     , delete_rng_(p_rng == 0)
@@ -210,7 +213,7 @@ public:
                         Null null = Null_subdomain_index(),
                         CGAL::Random* p_rng = NULL)
     : Impl_details(f, iso_cuboid(bounding_sphere.bbox()),
-                   error_bound, null, p_rng) {}
+                   error_bound, construct_pair(), null, p_rng) {}
 
   Labeled_mesh_domain_3(const Function& f,
                         const Bbox_3& bbox,
@@ -218,35 +221,36 @@ public:
                         Null null = Null_subdomain_index(),
                         CGAL::Random* p_rng = NULL)
     : Impl_details(f, iso_cuboid(bbox),
-                   error_bound, null, p_rng) {}
+                   error_bound, construct_pair(), null, p_rng) {}
 
   Labeled_mesh_domain_3(const Function& f,
                         const Iso_cuboid_3& bbox,
                         const FT& error_bound = FT(1e-3),
                         Null null = Null_subdomain_index(),
                         CGAL::Random* p_rng = NULL)
-    : Impl_details(f, bbox, error_bound, null, p_rng) {}
+    : Impl_details(f, bbox, error_bound, construct_pair(), null, p_rng) {}
 
   Labeled_mesh_domain_3(const Function& f,
                         const Sphere_3& bounding_sphere,
                         const FT& error_bound,
                         CGAL::Random* p_rng)
-    : Impl_details(f, iso_cuboid(bounding_sphere.bbox()),
-                   error_bound, Null_subdomain_index(), p_rng) {}
+    : Impl_details(f, iso_cuboid(bounding_sphere.bbox()), error_bound,
+                   construct_pair(), Null_subdomain_index(), p_rng) {}
 
 
   Labeled_mesh_domain_3(const Function& f,
                         const Bbox_3& bbox,
                         const FT& error_bound,
                         CGAL::Random* p_rng)
-    : Impl_details(f, iso_cuboid(bbox),
-                   error_bound, Null_subdomain_index(), p_rng) {}
+    : Impl_details(f, iso_cuboid(bbox), error_bound,
+                   construct_pair(), Null_subdomain_index(), p_rng) {}
 
   Labeled_mesh_domain_3(const Function& f,
                         const Iso_cuboid_3& bbox,
                         const FT& error_bound,
                         CGAL::Random* p_rng)
-    : Impl_details(f, bbox, error_bound, Null_subdomain_index(), p_rng) {}
+    : Impl_details(f, bbox, error_bound,
+                   construct_pair(), Null_subdomain_index(), p_rng) {}
 
   /**
    * Constructs  a set of \ccc{n} points on the surface, and output them to
@@ -573,14 +577,6 @@ private:
     else return Surface_patch_index(j,i);
   }
 
-  /// Returns squared error bound from \c sphere and \c error
-  FT squared_error_bound(const Sphere_3& sphere, const FT& error) const
-  {
-    typename BGT::Compute_squared_radius_3 squared_radius =
-                                    BGT().compute_squared_radius_3_object();
-    return squared_radius(sphere)*error*error;
-  }
-
   /// Returns the bounding sphere of an Iso_cuboid_3
   Sphere_3 bounding_sphere(const Iso_cuboid_3& bbox) const
   {
@@ -595,6 +591,11 @@ private:
     const Point_3 p_max(bbox.xmax(), bbox.ymax(), bbox.zmax());
 
     return Iso_cuboid_3(p_min,p_max);
+  }
+
+  Construct_pair_from_subdomain_indices<Subdomain_index>
+  construct_pair() const {
+    return Construct_pair_from_subdomain_indices<Subdomain_index>();
   }
 
 protected:
