@@ -27,6 +27,7 @@
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/basic.h>
+#include <CGAL/Random.h>
 #include <CGAL/tss.h>
 
 #include<set>
@@ -54,15 +55,16 @@ namespace CGAL {
       
       //! Constructor, getting the maximal absolute value of the shear factor
       Shear_controller()
-	: m_max(InitialMax)
+	:
+        #if CGAL_ACK_STATIC_SEED
+	  #warning Warning, uses static seed!
+        rng(0)
+#else
+        rng()
+#endif
+        , m_max(InitialMax)
         , pos_next_factor(0)  {
           CGAL_assertion(m_max>=1);
-#if CGAL_ACK_STATIC_SEED
-	  #warning Warning, uses static seed!
-          srand(CGAL_ACK_STATIC_SEED);
-#else
-          srand(time(NULL));
-#endif
 	}
 	
         //! Reports that the shear factor \c factor was bad.
@@ -89,13 +91,15 @@ namespace CGAL {
 	Int get_new_shear_factor() {
 	  CGAL_assertion(int(this->bad_shears.size())<m_max);
 	  while(true) {
-	    Int s = Int(rand()%m_max)+1;
+	    Int s = Int((rng.get_int(0,(std::numeric_limits<int>::max)())%m_max )+1);
 	    if(bad_shears.find(s)==bad_shears.end()) {
 	      return s;
 	    }
 	  }
 	}
 
+        Random rng;
+      
 	// Maximal absolute value
 	Int m_max;
 
