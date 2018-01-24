@@ -21,6 +21,9 @@
 
 #ifndef CGAL_FIXED_POLYNOMIAL_POLYNOMIAL_H_
 #define CGAL_FIXED_POLYNOMIAL_POLYNOMIAL_H_
+
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/Polynomial/basic.h>
 
 
@@ -72,4 +75,7 @@ public:
 };
 
 } } //namespace CGAL::POLYNOMIAL
+
+#include <CGAL/enable_warnings.h>
+
 #endif

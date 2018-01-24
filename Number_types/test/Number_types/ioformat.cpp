@@ -48,7 +48,7 @@ void test_it(const char* N, int value)
 {
   std::cout << "\nTesting ioformat: " << N
             << " with " << value << std::endl;
-  NT tmp2(0), tmp1(value);
+  NT tmp2(0), tmp1 = static_cast<NT>(value);
 
   std::ostringstream os;
   os << ::CGAL::oformat(tmp1);

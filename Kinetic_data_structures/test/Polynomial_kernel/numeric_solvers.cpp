@@ -13,6 +13,8 @@
 #include <CGAL/Polynomial/internal/GSL_numeric_solver.h>
 #endif
 
+#include <CGAL/disable_warnings.h>
+
 #include "Check_solver.h"
 bool verbose=true;
 typedef CGAL_POLYNOMIAL_NS::Polynomial<double> Pd;

@@ -124,7 +124,7 @@ public:
 	  int mult=1;
 	  //if (ie) mult=2;
 	  for (int k=0; k<mult; ++k) {
-	    int mm=-1;
+            std::ptrdiff_t mm=-1;
 	    double md=.5;
 	    for (It c= roots_b; c != roots_e; ++c) {
 	      if (std::abs(rd-*c) < md  && taken_maple[c-roots_b]==false) {

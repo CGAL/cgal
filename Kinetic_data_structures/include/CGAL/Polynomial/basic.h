@@ -22,6 +22,8 @@
 #ifndef CGAL_POLYNOMIAL_BASIC_H
 #define CGAL_POLYNOMIAL_BASIC_H
 
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/Polynomial/internal/config.h>
 #include <CGAL/Polynomial/internal/Statistics.h>
 #include <CGAL/assertions.h>
@@ -205,5 +207,7 @@ struct Bezier_tag {};
 */
 
 #include <limits>
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_POLYNOMIAL_BASIC_H

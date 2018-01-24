@@ -21,6 +21,9 @@
 
 #ifndef CGAL_POLYNOMIAL_NUMERIC_ROOT_STACK_H
 #define CGAL_POLYNOMIAL_NUMERIC_ROOT_STACK_H
+
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/Polynomial/basic.h>
 #include <CGAL/Polynomial/internal/numeric_solvers.h>
 #include <CGAL/Polynomial/Polynomial.h>
@@ -148,4 +151,7 @@ protected:
 };
 
 } } //namespace CGAL::POLYNOMIAL
+
+#include <CGAL/enable_warnings.h>
+
 #endif
