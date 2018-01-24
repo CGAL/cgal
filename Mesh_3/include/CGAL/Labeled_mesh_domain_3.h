@@ -43,7 +43,6 @@
 #include <CGAL/tuple.h>
 #include <CGAL/Origin.h>
 
-#include <CGAL/Default.h>
 #include <CGAL/result_of.h>
 #include <CGAL/function.h>
 
@@ -161,18 +160,12 @@ protected:
  */
 template<class BGT,
          class Subdomain_index_ = int,
-         class Surface_patch_index_ = Default>
+         class Surface_patch_index_ = std::pair<Subdomain_index_,
+                                                Subdomain_index_> >
 class Labeled_mesh_domain_3 :
-    protected Labeled_mesh_domain_3_impl_details
-<
-  BGT,
-  Subdomain_index_,
-  typename Default::Get< Surface_patch_index_,
-                         std::pair<Subdomain_index_,
-                                   Subdomain_index_>
-                         >::type
-  >
-
+    protected Labeled_mesh_domain_3_impl_details<BGT,
+                                                 Subdomain_index_,
+                                                 Surface_patch_index_>
 {
 public:
   //-------------------------------------------------------
@@ -183,11 +176,8 @@ public:
   typedef boost::optional<Subdomain_index>  Subdomain;
 
   /// Type of indexes for cells of the input complex
-  typedef typename Default::Get< Surface_patch_index_,
-                                 std::pair<Subdomain_index,
-                                           Subdomain_index>
-                                 >::type              Surface_patch_index;
-  typedef boost::optional<Surface_patch_index>        Surface_patch;
+  typedef Surface_patch_index_                  Surface_patch_index;
+  typedef boost::optional<Surface_patch_index>  Surface_patch;
 
   /// Type of indexes to characterize the lowest dimensional face of the input
   /// complex on which a vertex lie
