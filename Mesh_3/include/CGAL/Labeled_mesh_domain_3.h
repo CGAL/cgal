@@ -84,16 +84,39 @@ protected:
     return squared_distance((bbox.min)(), (bbox.max)())*error*error/4;
   }
 
-  template <typename Function, typename Null,
+  /// Returns and Iso_cuboid_3 from a Bbox_3
+  static Iso_cuboid_3 iso_cuboid(const Bbox_3& bbox)
+  {
+    const Point_3 p_min(bbox.xmin(), bbox.ymin(), bbox.zmin());
+    const Point_3 p_max(bbox.xmax(), bbox.ymax(), bbox.zmax());
+
+    return Iso_cuboid_3(p_min,p_max);
+  }
+
+  /// Returns and Iso_cuboid_3 from a Bbox_3
+  static Iso_cuboid_3 iso_cuboid(const typename Geom_traits::Sphere_3& sphere)
+  {
+    return iso_cuboid(sphere.bbox());
+  }
+
+  /// Returns and Iso_cuboid_3 from a Bbox_3
+  static Iso_cuboid_3 iso_cuboid(const typename Geom_traits::Iso_cuboid_3& c)
+  {
+    return c;
+  }
+
+  template <typename Function,
+            typename Bounding_object,
+            typename Null,
             typename Construct_surface_patch_index>
   Labeled_mesh_domain_3_impl_details(const Function& f,
-                                     const Iso_cuboid_3 bbox,
+                                     const Bounding_object& bounding,
                                      const FT& error_bound,
                                      Construct_surface_patch_index cstr_s_p_i,
                                      Null null,
                                      CGAL::Random* p_rng)
     : function_(f)
-    , bbox_(bbox)
+    , bbox_(iso_cuboid(bounding))
     , cstr_s_p_index(cstr_s_p_i)
     , null(null)
     , p_rng_(p_rng == 0 ? new CGAL::Random(0) : p_rng)
@@ -212,7 +235,7 @@ public:
                         const FT& error_bound = FT(1e-3),
                         Null null = Null_subdomain_index(),
                         CGAL::Random* p_rng = NULL)
-    : Impl_details(f, iso_cuboid(bounding_sphere.bbox()),
+    : Impl_details(f, bounding_sphere,
                    error_bound, construct_pair(), null, p_rng) {}
 
   Labeled_mesh_domain_3(const Function& f,
@@ -220,7 +243,7 @@ public:
                         const FT& error_bound = FT(1e-3),
                         Null null = Null_subdomain_index(),
                         CGAL::Random* p_rng = NULL)
-    : Impl_details(f, iso_cuboid(bbox),
+    : Impl_details(f, bbox,
                    error_bound, construct_pair(), null, p_rng) {}
 
   Labeled_mesh_domain_3(const Function& f,
@@ -234,7 +257,7 @@ public:
                         const Sphere_3& bounding_sphere,
                         const FT& error_bound,
                         CGAL::Random* p_rng)
-    : Impl_details(f, iso_cuboid(bounding_sphere.bbox()), error_bound,
+    : Impl_details(f, bounding_sphere, error_bound,
                    construct_pair(), Null_subdomain_index(), p_rng) {}
 
 
@@ -242,7 +265,7 @@ public:
                         const Bbox_3& bbox,
                         const FT& error_bound,
                         CGAL::Random* p_rng)
-    : Impl_details(f, iso_cuboid(bbox), error_bound,
+    : Impl_details(f, bbox, error_bound,
                    construct_pair(), Null_subdomain_index(), p_rng) {}
 
   Labeled_mesh_domain_3(const Function& f,
@@ -582,15 +605,6 @@ private:
   {
     typename BGT::Construct_sphere_3 sphere = BGT().construct_sphere_3_object();
     return sphere((bbox.min)(), (bbox.max)());
-  }
-
-  /// Returns and Iso_cuboid_3 from a Bbox_3
-  Iso_cuboid_3 iso_cuboid(const Bbox_3& bbox)
-  {
-    const Point_3 p_min(bbox.xmin(), bbox.ymin(), bbox.zmin());
-    const Point_3 p_max(bbox.xmax(), bbox.ymax(), bbox.zmax());
-
-    return Iso_cuboid_3(p_min,p_max);
   }
 
   Construct_pair_from_subdomain_indices<Subdomain_index>
