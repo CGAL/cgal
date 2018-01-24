@@ -21,7 +21,7 @@
 #define CGAL_BOOST_GRAPH_GRAPH_TRAITS_POLYMESH_ARRAYKERNELT_H
 
 // http://openmesh.org/Documentation/OpenMesh-Doc-Latest/classOpenMesh_1_1Concepts_1_1KernelT.html
-
+#include <OpenMesh/Core/IO/MeshIO.hh>
 #include <CGAL/boost/graph/properties_PolyMesh_ArrayKernelT.h>
 #include <OpenMesh/Core/Mesh/PolyMesh_ArrayKernelT.hh>
 

@@ -26,7 +26,6 @@
 
 #include <boost/iterator/transform_iterator.hpp>
 
-#include <OpenMesh/Core/IO/MeshIO.hh>
 #include <CGAL/boost/graph/internal/OM_iterator_from_circulator.h>
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/Iterator_range.h>
