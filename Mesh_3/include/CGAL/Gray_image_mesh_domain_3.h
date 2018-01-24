@@ -61,13 +61,7 @@ template<class Image,
          typename Transform = internal::Greater_than<double>,
          typename Subdomain_index = int>
 class Gray_image_mesh_domain_3
-  : public Labeled_mesh_domain_3<
-  Mesh_3::Image_to_labeled_function_wrapper<Image, BGT,
-                                            Image_word_type_,
-                                            Subdomain_index,
-                                            Transform,
-                                            false> ,
-  BGT>
+  : public Labeled_mesh_domain_3<BGT, Subdomain_index>
 {
 public:
   typedef Image_word_type_ Image_word_type;
@@ -77,7 +71,7 @@ public:
                                                     Transform,
                                                     false>           Wrapper;
 
-  typedef Labeled_mesh_domain_3<Wrapper, BGT>                        Base;
+  typedef Labeled_mesh_domain_3<BGT, Subdomain_index>                Base;
 
   typedef typename Base::Sphere_3 Sphere_3;
   typedef typename Base::FT FT;

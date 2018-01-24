@@ -52,16 +52,7 @@ template<class Image,
          class Null_subdomain_index = Default,
          class Wrapper_ = Default >
 class Labeled_image_mesh_domain_3
-: public Labeled_mesh_domain_3
-<typename Default::Get
-   <Wrapper_,
-    Mesh_3::Image_to_labeled_function_wrapper<Image, BGT,
-                                              Image_word_type_,
-                                              Subdomain_index>
-    >::type,
- BGT,
- Null_subdomain_index
- >
+  : public Labeled_mesh_domain_3<BGT, Subdomain_index>
 {
 public:
   typedef Image_word_type_ Image_word_type;
@@ -74,7 +65,7 @@ public:
   typedef typename Default::Get<Null_subdomain_index,
                                 CGAL::Null_subdomain_index>::type Null;
 
-  typedef Labeled_mesh_domain_3<Wrapper, BGT, Null_subdomain_index> Base;
+  typedef Labeled_mesh_domain_3<BGT, Subdomain_index> Base;
 
   typedef typename Base::Sphere_3 Sphere_3;
   typedef typename Base::FT FT;

@@ -61,7 +61,7 @@ typedef CGAL::Mesh_domain_with_polyline_features_3<Image_domain> Image_mesh_doma
 #endif
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
 typedef Wrapper<Kernel>                                              Function_wrapper;
-typedef CGAL::Labeled_mesh_domain_3<Function_wrapper, Kernel>        Function_domain;
+typedef CGAL::Labeled_mesh_domain_3<Kernel>                          Function_domain;
 typedef CGAL::Polyhedron_demo_labeled_mesh_domain_3<Function_domain> Function_mesh_domain;
 #endif
 

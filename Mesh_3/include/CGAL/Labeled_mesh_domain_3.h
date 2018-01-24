@@ -48,6 +48,7 @@
 #include <CGAL/function.h>
 
 #include <CGAL/internal/Mesh_3/Handle_IO_for_pair_of_int.h>
+#include <CGAL/internal/Mesh_3/indices_management.h>
 
 namespace CGAL {
 
@@ -66,9 +67,11 @@ struct Construct_pair_from_subdomain_indices {
 }; // end class template Construct_pair_from_subdomain_indices
 
 template <typename Geom_traits,
-          typename Subdomain_index>
+          typename Subdomain_index,
+          typename Surface_patch_index_>
 class Labeled_mesh_domain_3_impl_details {
 protected:
+  typedef Surface_patch_index_ Surface_patch_index;
   typedef typename Geom_traits::Point_3 Point_3;
   typedef typename Geom_traits::Iso_cuboid_3 Iso_cuboid_3;
   typedef typename Geom_traits::FT FT;
@@ -101,12 +104,16 @@ protected:
   }
 
   /// The function which answers subdomain queries
-  CGAL::cpp11::function<Subdomain_index(const Point_3&)> function_;
+  typedef CGAL::cpp11::function<Subdomain_index(const Point_3&)> Function;
+  Function function_;
   /// The bounding box
   const Iso_cuboid_3 bbox_;
+  CGAL::cpp11::function<Surface_patch_index(Subdomain_index,
+                                            Subdomain_index)> cstr_s_p_index;
   /// The functor that decides which sub-domain indices correspond to the
   /// outside of the domain.
-  CGAL::cpp11::function<bool(Subdomain_index)> null;
+  typedef CGAL::cpp11::function<bool(Subdomain_index)> Null;
+  Null null;
   /// The random number generator used by Construct_initial_points
   CGAL::Random* p_rng_;
   bool delete_rng_;
@@ -126,17 +133,49 @@ protected:
  *  tags of it's incident subdomain.
  *  Thus, a boundary facet of the domain is labelled <0,b>, where b!=0.
  */
-template<class Function, class BGT,
-         class Null_subdomain_index = Default,
-         class Construct_surface_patch_index = Default>
-class Labeled_mesh_domain_3
-  : protected Labeled_mesh_domain_3_impl_details<BGT,
-                                                 typename Function::return_type>
+template<class BGT,
+         class Subdomain_index_ = int,
+         class Surface_patch_index_ = Default>
+class Labeled_mesh_domain_3 :
+    protected Labeled_mesh_domain_3_impl_details
+<
+  BGT,
+  Subdomain_index_,
+  typename Default::Get< Surface_patch_index_,
+                         std::pair<Subdomain_index_,
+                                   Subdomain_index_>
+                         >::type
+  >
+
 {
+public:
+  //-------------------------------------------------------
+  // Index Types
+  //-------------------------------------------------------
+  /// Type of indexes for cells of the input complex
+  typedef Subdomain_index_                  Subdomain_index;
+  typedef boost::optional<Subdomain_index>  Subdomain;
+
+  /// Type of indexes for cells of the input complex
+  typedef typename Default::Get< Surface_patch_index_,
+                                 std::pair<Subdomain_index,
+                                           Subdomain_index>
+                                 >::type              Surface_patch_index;
+  typedef boost::optional<Surface_patch_index>        Surface_patch;
+
+  /// Type of indexes to characterize the lowest dimensional face of the input
+  /// complex on which a vertex lie
+  typedef typename CGAL::internal::Mesh_3::
+    Index_generator<Subdomain_index, Surface_patch_index>::Index Index;
+
+private:
   typedef Labeled_mesh_domain_3_impl_details<BGT,
-                                typename Function::return_type> Impl_details;
-  typedef typename Default::Get<Null_subdomain_index,
-                                CGAL::Null_subdomain_index>::type Null;
+                                             Subdomain_index,
+                                             Surface_patch_index
+                                             > Impl_details;
+  typedef typename Impl_details::Null     Null;
+  typedef typename Impl_details::Function Function;
+  
 public:
   /// Geometric object types
   typedef typename BGT::Point_3    Point_3;
@@ -156,27 +195,6 @@ public:
   // access Function type from inherited class
   typedef Function Fct;
 
-  //-------------------------------------------------------
-  // Index Types
-  //-------------------------------------------------------
-  /// Type of indexes for cells of the input complex
-  typedef typename Function::return_type Subdomain_index;
-  typedef boost::optional<Subdomain_index> Subdomain;
-
-  typedef typename Default::Get<Construct_surface_patch_index,
-                                Construct_pair_from_subdomain_indices<Subdomain_index>
-                                >::type Cstr_surface_patch_index;
-
-  /// Type of indexes for surface patch of the input complex
-  typedef typename CGAL::cpp11::result_of
-  <
-    Cstr_surface_patch_index(Subdomain_index)
-      >::type Surface_patch_index;
-  typedef boost::optional<Surface_patch_index> Surface_patch;
-  /// Type of indexes to characterize the lowest dimensional face of the input
-  /// complex on which a vertex lie
-  typedef typename CGAL::internal::Mesh_3::
-    Index_generator<Subdomain_index, Surface_patch_index>::Index Index;
   typedef CGAL::cpp11::tuple<Point_3,Index,int> Intersection;
 
 
@@ -189,7 +207,7 @@ public:
   Labeled_mesh_domain_3(const Function& f,
                         const Sphere_3& bounding_sphere,
                         const FT& error_bound = FT(1e-3),
-                        Null null = Null(),
+                        Null null = Null_subdomain_index(),
                         CGAL::Random* p_rng = NULL)
     : Impl_details(f, iso_cuboid(bounding_sphere.bbox()),
                    error_bound, null, p_rng) {}
@@ -197,14 +215,15 @@ public:
   Labeled_mesh_domain_3(const Function& f,
                         const Bbox_3& bbox,
                         const FT& error_bound = FT(1e-3),
-                        Null null = Null(),
+                        Null null = Null_subdomain_index(),
                         CGAL::Random* p_rng = NULL)
-    : Impl_details(f, iso_cuboid(bbox), error_bound, null, p_rng) {}
+    : Impl_details(f, iso_cuboid(bbox),
+                   error_bound, null, p_rng) {}
 
   Labeled_mesh_domain_3(const Function& f,
                         const Iso_cuboid_3& bbox,
                         const FT& error_bound = FT(1e-3),
-                        Null null = Null(),
+                        Null null = Null_subdomain_index(),
                         CGAL::Random* p_rng = NULL)
     : Impl_details(f, bbox, error_bound, null, p_rng) {}
 
@@ -213,20 +232,21 @@ public:
                         const FT& error_bound,
                         CGAL::Random* p_rng)
     : Impl_details(f, iso_cuboid(bounding_sphere.bbox()),
-                   error_bound, Null(), p_rng) {}
+                   error_bound, Null_subdomain_index(), p_rng) {}
 
 
   Labeled_mesh_domain_3(const Function& f,
                         const Bbox_3& bbox,
                         const FT& error_bound,
                         CGAL::Random* p_rng)
-    : Impl_details(f, iso_cuboid(bbox), error_bound, Null(), p_rng) {}
+    : Impl_details(f, iso_cuboid(bbox),
+                   error_bound, Null_subdomain_index(), p_rng) {}
 
   Labeled_mesh_domain_3(const Function& f,
                         const Iso_cuboid_3& bbox,
                         const FT& error_bound,
                         CGAL::Random* p_rng)
-    : Impl_details(f, bbox, error_bound, Null(), p_rng) {}
+    : Impl_details(f, bbox, error_bound, Null_subdomain_index(), p_rng) {}
 
   /**
    * Constructs  a set of \ccc{n} points on the surface, and output them to
@@ -595,10 +615,10 @@ private:
 //-------------------------------------------------------
 // Method implementation
 //-------------------------------------------------------
-template<class F, class BGT, class N, class Cstr_s_patch_index>
+template<class BGT, class Subdomain_index, class Surface_patch_index>
 template<class OutputIterator>
 OutputIterator
-Labeled_mesh_domain_3<F,BGT,N,Cstr_s_patch_index>::
+Labeled_mesh_domain_3<BGT, Subdomain_index, Surface_patch_index>::
 Construct_initial_points::operator()(OutputIterator pts,
                                      const int nb_points) const
 {
