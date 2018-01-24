@@ -40,6 +40,11 @@
 
 namespace CGAL {
   
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4003) // not enough actual parameters for macro
+#endif
+
 // see <CGAL/config.h>
 CGAL_PRAGMA_DIAG_PUSH
 // see <CGAL/Mesh_3/config.h>
@@ -65,6 +70,9 @@ BOOST_PARAMETER_FUNCTION(
 } 
 CGAL_PRAGMA_DIAG_POP
 
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
   
   
 template <typename C3T3, typename MeshDomain> 

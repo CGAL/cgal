@@ -229,6 +229,11 @@ namespace parameters {
 
   } // end namespace internal
 
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4003) // not enough actual parameters for macro
+#endif
+  
 // see <CGAL/config.h>
 CGAL_PRAGMA_DIAG_PUSH
 // see <CGAL/Mesh_3/config.h>
@@ -399,12 +404,18 @@ CGAL_MESH_3_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
 
 CGAL_PRAGMA_DIAG_POP
 
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
+
+
   // -----------------------------------
   // Reset_c3t3 (undocumented)
   // -----------------------------------
   CGAL_MESH_BOOLEAN_PARAMETER(Reset,reset_c3t3,no_reset_c3t3)
   // CGAL_MESH_BOOLEAN_PARAMETER defined in <CGAL/Mesh_3/global_parameters.h>
   
+
 // see <CGAL/config.h>
 CGAL_PRAGMA_DIAG_PUSH
 // see <CGAL/Mesh_3/config.h>
@@ -422,8 +433,16 @@ CGAL_MESH_3_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
   BOOST_PARAMETER_NAME( manifold_options_param )
 
 CGAL_PRAGMA_DIAG_POP
+
 } // end namespace parameters
+
+
   
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4003) // not enough actual parameters for macro
+#endif
+
 // see <CGAL/config.h>
 CGAL_PRAGMA_DIAG_PUSH
 // see <CGAL/Mesh_3/config.h>
@@ -463,6 +482,9 @@ BOOST_PARAMETER_FUNCTION(
 
 CGAL_PRAGMA_DIAG_POP
 
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
   
 /**
  * @brief This function refines the mesh c3t3 wrt domain & criteria

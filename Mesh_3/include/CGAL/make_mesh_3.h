@@ -119,7 +119,7 @@ namespace parameters {
   
   // -----------------------------------
   // Parameters
-  // -----------------------------------
+  //  
 
 // see <CGAL/config.h>
 CGAL_PRAGMA_DIAG_PUSH
@@ -129,6 +129,7 @@ CGAL_MESH_3_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
   BOOST_PARAMETER_NAME( features_param )
 
 CGAL_PRAGMA_DIAG_POP
+
   
 } // end namespace parameters::internal
 
@@ -395,6 +396,11 @@ C3T3 make_mesh_3(const MD& md, const MC& mc, const Arg1& a1, const Arg2& a2,
 }
 
 #endif  
+ 
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4003) // not enough actual parameters for macro
+#endif
   
 // see <CGAL/config.h>
 CGAL_PRAGMA_DIAG_PUSH
@@ -427,6 +433,11 @@ BOOST_PARAMETER_FUNCTION(
                    manifold_options_param);
 }
 CGAL_PRAGMA_DIAG_POP
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
+
 
 /**
  * @brief This function meshes the domain defined by mesh_traits
