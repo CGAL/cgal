@@ -56,9 +56,9 @@ namespace CGAL {
       //! Constructor, getting the maximal absolute value of the shear factor
       Shear_controller()
 	:
-        #if CGAL_ACK_STATIC_SEED
+#if CGAL_ACK_STATIC_SEED
 	  #warning Warning, uses static seed!
-        rng(0)
+        rng(CGAL_ACK_STATIC_SEED)
 #else
         rng()
 #endif
