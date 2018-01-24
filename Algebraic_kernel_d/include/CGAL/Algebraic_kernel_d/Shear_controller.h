@@ -24,6 +24,8 @@
 #ifndef CGAL_ACK_SHEAR_CONTROLLER
 #define CGAL_ACK_SHEAR_CONTROLLER 1
 
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/basic.h>
 #include <CGAL/tss.h>
 
@@ -111,5 +113,7 @@ namespace CGAL {
 
   } // namespace internal
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_ACK_SHEAR_CONTROLLER

@@ -388,7 +388,7 @@ public:
     : public CGAL::unary_function< Gmpz, long > {
     long operator()( const Gmpz& x ) const {
       CGAL_precondition(!CGAL::is_zero(x));
-      return mpz_sizeinbase(x.mpz(),2)-1;
+      return static_cast<long>(mpz_sizeinbase(x.mpz(),2)-1);
     }            
   };
         
@@ -396,7 +396,7 @@ public:
     : public CGAL::unary_function< Gmpz, long > {
     long operator()( const Gmpz& x ) const {
       long pos  = mpz_scan1(x.mpz(),0);
-      long size = mpz_sizeinbase(x.mpz(),2);
+      long size = static_cast<long>(mpz_sizeinbase(x.mpz(),2));
       if (pos == size-1) 
         return size-1;
       else 
