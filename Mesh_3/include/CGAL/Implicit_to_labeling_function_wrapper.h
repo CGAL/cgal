@@ -191,7 +191,7 @@ public:
       typename Bmask::size_type bit_index = 0;
       for (std::vector<Sign>::const_iterator iter = mask.begin(), endIter = mask.end(); iter != endIter; ++iter)
       {
-        std::string::value_type character = *iter;
+        std::string::value_type character = static_cast<char>(*iter);
         CGAL_assertion(character == POSITIVE || character == NEGATIVE);
 
         bmask[bit_index] = (character == POSITIVE);
