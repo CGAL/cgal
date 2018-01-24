@@ -590,7 +590,7 @@ public:
                                   poly.getCoeff(1),
                                   poly.getCoeff(0),
                                   buffer);
-      unsigned int  num_of_roots = std::distance(&buffer[0], end_buffer);
+      std::ptrdiff_t num_of_roots = std::distance(&buffer[0], end_buffer);
 
       for (i = 0; i < num_of_roots; ++i)
       {

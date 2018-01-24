@@ -26,6 +26,8 @@
 #ifndef CGAL_POLYGON_2_SIMPLICITY_H
 #define CGAL_POLYGON_2_SIMPLICITY_H
 
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/enum.h>
 #include <CGAL/Polygon_2/polygon_assertions.h>
 #include <set>
@@ -500,5 +502,7 @@ bool is_simple_polygon(Iterator points_begin, Iterator points_end,
 }
 
 } // end of namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif

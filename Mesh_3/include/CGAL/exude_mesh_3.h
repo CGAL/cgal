@@ -28,6 +28,7 @@
 
 #include <CGAL/license/Mesh_3.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Mesh_3/sliver_criteria.h>
 #include <CGAL/Mesh_3/Slivers_exuder.h>
@@ -84,5 +85,7 @@ exude_mesh_3_impl(C3T3& c3t3,
 
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_EXUDE_MESH_3_H
