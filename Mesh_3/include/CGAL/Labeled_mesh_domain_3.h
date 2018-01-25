@@ -115,18 +115,18 @@ protected:
 
   template <class ArgumentPack>
   Labeled_mesh_domain_3_impl_details(ArgumentPack const& args)
-    : function_(args[parameters::_function])
-    , bbox_(iso_cuboid(args[parameters::_bounding_object]))
-    , cstr_s_p_index(args[parameters::_construct_surface_patch_index |
+    : function_(args[parameters::function])
+    , bbox_(iso_cuboid(args[parameters::bounding_object]))
+    , cstr_s_p_index(args[parameters::construct_surface_patch_index |
                           construct_pair()])
-    , null(args[parameters::_null_subdomain_index | Null_subdomain_index()])
-    , p_rng_(args[parameters::_p_rng|0] == 0 ?
+    , null(args[parameters::null_subdomain_index | Null_subdomain_index()])
+    , p_rng_(args[parameters::p_rng|0] == 0 ?
              new CGAL::Random(0) :
-             args[parameters::_p_rng|(CGAL::Random*)(0)])
-    , delete_rng_(args[parameters::_p_rng|0] == 0)
+             args[parameters::p_rng|(CGAL::Random*)(0)])
+    , delete_rng_(args[parameters::p_rng|0] == 0)
     , squared_error_bound_
       ( squared_error_bound(bbox_,
-                            args[parameters::_relative_error_bound|FT(1e-3)]))
+                            args[parameters::relative_error_bound|FT(1e-3)]))
   {
   }
 
@@ -253,15 +253,15 @@ public:
                               (Impl_details),
                               parameters::tag,
                               (required
-                               (function,(Function))
-                               (bounding_object,*)
+                               (function_,(Function))
+                               (bounding_object_,*)
                                )
                               (optional
-                               (relative_error_bound, (const FT&))
-                               (null_subdomain_index,(Null))
-                               (construct_surface_patch_index,
+                               (relative_error_bound_, (const FT&))
+                               (p_rng_, (CGAL::Random*))
+                               (null_subdomain_index_,(Null))
+                               (construct_surface_patch_index_,
                                     (Construct_surface_patch_index))
-                               (p_rng, (CGAL::Random*))
                                )
                               )
   using Impl_details::construct_pair;
@@ -290,28 +290,6 @@ public:
                         Null null = Null_subdomain_index(),
                         CGAL::Random* p_rng = NULL)
     : Impl_details(f, bbox, error_bound, construct_pair(), null, p_rng) {}
-
-  Labeled_mesh_domain_3(const Function& f,
-                        const Sphere_3& bounding_sphere,
-                        const FT& error_bound,
-                        CGAL::Random* p_rng)
-    : Impl_details(f, bounding_sphere, error_bound,
-                   construct_pair(), Null_subdomain_index(), p_rng) {}
-
-
-  Labeled_mesh_domain_3(const Function& f,
-                        const Bbox_3& bbox,
-                        const FT& error_bound,
-                        CGAL::Random* p_rng)
-    : Impl_details(f, bbox, error_bound,
-                   construct_pair(), Null_subdomain_index(), p_rng) {}
-
-  Labeled_mesh_domain_3(const Function& f,
-                        const Iso_cuboid_3& bbox,
-                        const FT& error_bound,
-                        CGAL::Random* p_rng)
-    : Impl_details(f, bbox, error_bound,
-                   construct_pair(), Null_subdomain_index(), p_rng) {}
 
   /**
    * Constructs  a set of \ccc{n} points on the surface, and output them to

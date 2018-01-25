@@ -97,12 +97,12 @@ BOOST_PARAMETER_NAME( (maximal_number_of_vertices, tag ) maximal_number_of_verti
 BOOST_PARAMETER_NAME( (pointer_to_error_code, tag ) pointer_to_error_code_)
 
 // Used in <CGAL/Labeled_mesh_domain_3.h>
-BOOST_PARAMETER_NAME( function )
-BOOST_PARAMETER_NAME( bounding_object )
-BOOST_PARAMETER_NAME( relative_error_bound )
-BOOST_PARAMETER_NAME( p_rng )
-BOOST_PARAMETER_NAME( null_subdomain_index )
-BOOST_PARAMETER_NAME( construct_surface_patch_index )
+BOOST_PARAMETER_NAME( (function, tag ) function_)
+BOOST_PARAMETER_NAME( (bounding_object, tag ) bounding_object_)
+BOOST_PARAMETER_NAME( (relative_error_bound, tag ) relative_error_bound_)
+BOOST_PARAMETER_NAME( (p_rng, tag ) p_rng_)
+BOOST_PARAMETER_NAME( (null_subdomain_index, tag ) null_subdomain_index_)
+BOOST_PARAMETER_NAME( (construct_surface_patch_index, tag ) construct_surface_patch_index_)
 
 CGAL_PRAGMA_DIAG_POP
 } // end namespace parameters

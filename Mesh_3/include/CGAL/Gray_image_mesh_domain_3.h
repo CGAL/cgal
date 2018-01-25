@@ -89,7 +89,6 @@ public:
                    Transform(iso_value)(value_outside)),
            compute_bounding_box(image),
            error_bound,
-           Null_subdomain_index(),
            p_rng)
   {
     CGAL_assertion(Transform(iso_value)(value_outside) == 0);
@@ -103,7 +102,6 @@ public:
     : Base(Wrapper(image, transform, transform(value_outside)),
            compute_bounding_box(image),
            error_bound,
-           Null_subdomain_index(),
            p_rng)
   {
     CGAL_assertion(transform(value_outside) == 0);

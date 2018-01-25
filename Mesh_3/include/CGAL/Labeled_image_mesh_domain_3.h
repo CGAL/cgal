@@ -82,8 +82,8 @@ public:
     : Base(Wrapper(image, Identity(), value_outside),
            compute_bounding_box(image),
            error_bound,
-           null,
-           p_rng)
+           parameters::null_subdomain_index = null,
+           parameters::p_rng = p_rng)
   {}
 
   Labeled_image_mesh_domain_3(const Image& image,
@@ -95,8 +95,8 @@ public:
     : Base(Wrapper(image, Identity(), value_outside),
            bbox,
            error_bound,
-           null,
-           p_rng)
+           p_rng,
+           parameters::null_subdomain_index = null)
   {}
 
   Labeled_image_mesh_domain_3(const Image& image,
@@ -105,7 +105,6 @@ public:
     : Base(Wrapper(image),
            compute_bounding_box(image),
            error_bound,
-           Null(),
            p_rng)
   {}
 
@@ -116,7 +115,6 @@ public:
     : Base(Wrapper(image),
            bbox,
            error_bound,
-           Null(),
            p_rng)
   {}
 
