@@ -40,7 +40,7 @@
 #  define  BOOST_PARAMETER_MAX_ARITY 12
 #endif
 
-#include <boost/parameter.hpp>
+#include <boost/parameter/name.hpp>
 
 
 namespace CGAL {

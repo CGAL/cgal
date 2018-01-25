@@ -31,6 +31,7 @@
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/Mesh_3/global_parameters.h>
+#include <boost/parameter/preprocessor.hpp>
 #include <CGAL/Mesh_3/Mesh_global_optimizer.h>
 #include <CGAL/Mesh_3/Odt_move.h>
 #include <CGAL/Mesh_3/Mesh_sizing_field.h>

@@ -34,6 +34,7 @@
 #include <CGAL/Mesh_3/config.h>
 #include <CGAL/Mesh_3/Dump_c3t3.h>
 #include <CGAL/Mesh_3/global_parameters.h>
+#include <boost/parameter/preprocessor.hpp>
 #include <CGAL/Mesh_3/Mesher_3.h>
 #include <CGAL/Mesh_error_code.h>
 #include <CGAL/optimize_mesh_3.h>

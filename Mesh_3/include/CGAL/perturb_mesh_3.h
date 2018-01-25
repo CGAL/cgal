@@ -31,6 +31,7 @@
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/Mesh_3/global_parameters.h>
+#include <boost/parameter/preprocessor.hpp>
 #include <CGAL/Mesh_3/sliver_criteria.h>
 #include <CGAL/Mesh_3/Sliver_perturber.h>
 #include <CGAL/Mesh_optimization_return_code.h>

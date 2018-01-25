@@ -35,7 +35,7 @@
 #include <CGAL/Mesh_optimization_return_code.h>
 #include <CGAL/Mesh_3/parameters_defaults.h>
 #include <CGAL/Mesh_3/global_parameters.h>
-#include <boost/parameter.hpp>
+#include <boost/parameter/preprocessor.hpp>
 
 namespace CGAL {
 
