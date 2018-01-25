@@ -23,24 +23,24 @@ DOXYGEN_2=$($PATH_TO_1_8_13 --version)
 ## download and build doxygen_master ##
 #######################################
 echo "downloading and building master"
-  git clone https://github.com/doxygen/doxygen.git doxygen_master  1> /dev/null
-  cd doxygen_master
-  git pull  https://github.com/lrineau/doxygen.git 1> /dev/null
-  MASTER_DESCRIBE=$(git describe --tags)
-  mkdir -p build
-  cd build
-  cmake ..  1> /dev/null
-  make -j$NB_CORES 1> /dev/null
-  cd ../.. #scripts
-  PATH_TO_MASTER="$PWD/doxygen_master/build/bin/doxygen"
-  echo "done."
+git clone https://github.com/doxygen/doxygen.git doxygen_master  1> /dev/null
+cd doxygen_master
+git pull  https://github.com/lrineau/doxygen.git 1> /dev/null
+MASTER_DESCRIBE=$(git describe --tags)
+mkdir -p build
+cd build
+cmake ..  1> /dev/null
+make -j$NB_CORES 1> /dev/null
+cd ../.. #scripts
+PATH_TO_MASTER="$PWD/doxygen_master/build/bin/doxygen"
+echo "done."
 
 echo "comparing versions 1.8.4 and 1.8.13"
-bash test_doxygen_versions.sh $PATH_TO_1_8_4 $PATH_TO_1_8_13 $PWD/doc_1_8_4 $PWD/doc_1_8_13 $PUBLISH_DIR
+bash -$- test_doxygen_versions.sh $PATH_TO_1_8_4 $PATH_TO_1_8_13 $PWD/doc_1_8_4 $PWD/doc_1_8_13 $PUBLISH_DIR
 mv diff.txt diff1.txt
 
 echo "comparing versions 1.8.4 and master"
-bash test_doxygen_versions.sh $PATH_TO_1_8_4 $PATH_TO_MASTER $PWD/doc_1_8_4 $PWD/doc_master $PUBLISH_DIR
+bash -$- test_doxygen_versions.sh $PATH_TO_1_8_4 $PATH_TO_MASTER $PWD/doc_1_8_4 $PWD/doc_master $PUBLISH_DIR
 mv diff.txt diff2.txt
 
 #update overview

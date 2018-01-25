@@ -124,6 +124,7 @@ if [ "$HAS_REF" -ne "1" ]; then
     cd $ROOT/Documentation/doc/scripts
   else
     CGAL_NAME="$(cat $ROOT/VERSION)"
+    cd $ROOT/doc/scripts
   fi
   echo "$CGAL_NAME">cgal_version
 else
