@@ -139,7 +139,7 @@ Scene_polylines_item_private::computeElements() const
 
     }
     if(!computed_stats)
-      mean_length = mean/nb_edges;
+      mean_length = mean/double(nb_edges);
     computed_stats = true;
     QApplication::restoreOverrideCursor();
 }
@@ -211,7 +211,7 @@ Scene_polylines_item_private::computeSpheres()
           p_it != end; ++p_it)
       {
           const K::Point_3& center = p_it->first;
-          int colors[3];
+          unsigned char colors[3];
           switch(p_it->second) {
           case 1:
               colors[0] = 0; // black
@@ -388,7 +388,7 @@ Scene_polylines_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
         d->initializeBuffers(viewer);
     }
 
-    viewer->glLineWidth(d->line_Slider->value());
+    viewer->glLineWidth(GLfloat(d->line_Slider->value()));
     vaos[Scene_polylines_item_private::Edges]->bind();
     attribBuffers(viewer, PROGRAM_NO_SELECTION);
     QOpenGLShaderProgram *program = getShaderProgram(PROGRAM_NO_SELECTION);
