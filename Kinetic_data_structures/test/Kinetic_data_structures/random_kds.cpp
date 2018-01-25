@@ -22,7 +22,7 @@ P rp(CGAL::Random &rand, int deg) {
 
 int main(int, char *[]) {
 
-  CGAL::Random r(time(NULL));
+  CGAL::Random r;
 
   int which = r.get_int(0,4);
   double nump= r.get_int(25,50);

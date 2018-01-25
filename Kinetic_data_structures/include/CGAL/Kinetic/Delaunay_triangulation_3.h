@@ -22,6 +22,8 @@
 #ifndef CGAL_KINETIC_KINETIC_DELAUNAY_3_H
 #define CGAL_KINETIC_KINETIC_DELAUNAY_3_H
 
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/Kinetic/basic.h>
 
 #include <CGAL/Kinetic/internal/Delaunay_triangulation_base_3.h>
@@ -40,11 +42,6 @@
 #include <CGAL/Kinetic/Delaunay_triangulation_cell_base_3.h>
 #include <CGAL/Kinetic/listeners.h>
 #include <CGAL/Kinetic/Delaunay_triangulation_visitor_base_3.h>
-
-#if defined(BOOST_MSVC)
-#  pragma warning(push)
-#  pragma warning(disable:4355) // complaint about using 'this' to
-#endif                          // initialize a member
 
 namespace CGAL { namespace Kinetic { namespace internal {
 
@@ -222,8 +219,6 @@ public:
 
 } } //namespace CGAL::Kinetic
 
-#if defined(BOOST_MSVC)
-#  pragma warning(pop)
-#endif
+#include <CGAL/enable_warnings.h>
 
 #endif

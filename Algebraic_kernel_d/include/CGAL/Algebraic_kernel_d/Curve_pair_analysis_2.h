@@ -1126,10 +1126,10 @@ private:
         CGAL_assertion(n == new_info_container.size());
         //iterate through the vector and update 
         // (-1 stands for "multiplicity unknown")
-        for(size_type i=0;i<n;i++) {
+        for(std::size_t i=0;i<n;i++) {
           std::size_t m = old_info_container[i].size();
             CGAL_assertion(m == new_info_container[i].size());
-            for(size_type j=0;j<m;j++) {
+            for(std::size_t j=0;j<m;j++) {
                 old_info_container[i][j].mult
                   = (std::max)(new_info_container[i][j].mult,
                                old_info_container[i][j].mult);

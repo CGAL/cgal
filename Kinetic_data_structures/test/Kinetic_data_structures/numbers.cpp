@@ -6,6 +6,8 @@
 #include <limits>
 #include <CGAL/Kinetic/Exact_simulation_traits.h>
 
+#include <CGAL/disable_warnings.h>
+
 template <class NT>
 void check_nt(NT v) {
   NT zero(0);

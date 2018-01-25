@@ -11,6 +11,8 @@
 #include <algorithm>
 #include <iterator>
 
+#include <CGAL/disable_warnings.h>
+
 int main(int argc, char *argv[])
 {
   if (0) {
