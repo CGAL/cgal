@@ -37,6 +37,9 @@
 
 #include <CGAL/point_generators_3.h>
 
+#include <CGAL/Mesh_3/global_parameters.h>
+#include <boost/parameter/preprocessor.hpp>
+#include <boost/parameter/name.hpp>
 #include <boost/variant.hpp>
 #include <boost/format.hpp>
 #include <boost/optional.hpp>
@@ -104,6 +107,29 @@ protected:
     return c;
   }
 
+  static Construct_pair_from_subdomain_indices<Subdomain_index>
+  construct_pair() {
+    return Construct_pair_from_subdomain_indices<Subdomain_index>();
+  }
+
+
+  template <class ArgumentPack>
+  Labeled_mesh_domain_3_impl_details(ArgumentPack const& args)
+    : function_(args[parameters::_function])
+    , bbox_(iso_cuboid(args[parameters::_bounding_object]))
+    , cstr_s_p_index(args[parameters::_construct_surface_patch_index |
+                          construct_pair()])
+    , null(args[parameters::_null_subdomain_index | Null_subdomain_index()])
+    , p_rng_(args[parameters::_p_rng|0] == 0 ?
+             new CGAL::Random(0) :
+             args[parameters::_p_rng|(CGAL::Random*)(0)])
+    , delete_rng_(args[parameters::_p_rng|0] == 0)
+    , squared_error_bound_
+      ( squared_error_bound(bbox_,
+                            args[parameters::_relative_error_bound|FT(1e-3)]))
+  {
+  }
+
   template <typename Function,
             typename Bounding_object,
             typename Null,
@@ -133,8 +159,11 @@ protected:
   Function function_;
   /// The bounding box
   const Iso_cuboid_3 bbox_;
-  CGAL::cpp11::function<Surface_patch_index(Subdomain_index,
-                                            Subdomain_index)> cstr_s_p_index;
+
+  typedef CGAL::cpp11::function<
+    Surface_patch_index(Subdomain_index,
+                        Subdomain_index)> Construct_surface_patch_index;
+  Construct_surface_patch_index cstr_s_p_index;
   /// The functor that decides which sub-domain indices correspond to the
   /// outside of the domain.
   typedef CGAL::cpp11::function<bool(Subdomain_index)> Null;
@@ -190,6 +219,8 @@ private:
                                              Surface_patch_index
                                              > Impl_details;
   typedef typename Impl_details::Null     Null;
+  typedef typename Impl_details::Construct_surface_patch_index
+                                          Construct_surface_patch_index;
   typedef typename Impl_details::Function Function;
   
 public:
@@ -217,6 +248,23 @@ public:
   typedef typename BGT::FT FT;
   typedef BGT Geom_traits;
 
+  
+  BOOST_PARAMETER_CONSTRUCTOR(Labeled_mesh_domain_3,
+                              (Impl_details),
+                              parameters::tag,
+                              (required
+                               (function,(Function))
+                               (bounding_object,*)
+                               )
+                              (optional
+                               (relative_error_bound, (const FT&))
+                               (null_subdomain_index,(Null))
+                               (construct_surface_patch_index,
+                                    (Construct_surface_patch_index))
+                               (p_rng, (CGAL::Random*))
+                               )
+                              )
+  using Impl_details::construct_pair;
   /**
    * @brief Constructor
    */
@@ -595,11 +643,6 @@ private:
   {
     typename BGT::Construct_sphere_3 sphere = BGT().construct_sphere_3_object();
     return sphere((bbox.min)(), (bbox.max)());
-  }
-
-  Construct_pair_from_subdomain_indices<Subdomain_index>
-  construct_pair() const {
-    return Construct_pair_from_subdomain_indices<Subdomain_index>();
   }
 
 protected:
