@@ -30,6 +30,7 @@
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/Default_diagonalize_traits.h>
 #include <CGAL/centroid.h>
+#include <CGAL/squared_distance_3.h>
 
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/parallel_for.h>

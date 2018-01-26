@@ -1055,6 +1055,7 @@ You must disable CGAL_ENABLE_CHECK_HEADERS and CGAL_COMPUTE_DEPENDENCIES.")
     endif()
 
     message( "== Setting header checking ==" )
+    find_package(GMP REQUIRED)
     find_package(Doxygen REQUIRED)
     find_package(Eigen3 REQUIRED)
     find_package(Qt5 COMPONENTS Core Widgets Xml OpenGL REQUIRED)
@@ -1064,6 +1065,7 @@ You must disable CGAL_ENABLE_CHECK_HEADERS and CGAL_COMPUTE_DEPENDENCIES.")
     find_package(RS3)
     find_package(LEDA)
     find_package(OpenMesh)
+    find_package(OpenCV)
 
     set(compile_options "\
 ${CMAKE_CXX_FLAGS} -DCGAL_EIGEN3_ENABLED \
@@ -1133,8 +1135,10 @@ You must disable CGAL_ENABLE_CHECK_HEADERS and CGAL_COMPUTE_DEPENDENCIES.")
         ${VTK_INCLUDE_DIRS}
         ${LEDA_INCLUDE_DIR}
         ${OPENMESH_INCLUDE_DIR}
+        ${OpenCV_INCLUDE_DIRS}
         ${RS_INCLUDE_DIR}
         ${EIGEN3_INCLUDE_DIR}
+        ${GMP_INCLUDE_DIR}
         ${QGLVIEWER_INCLUDE_DIR} ${Qt5OpenGL_INCLUDE_DIRS}
         ${Qt5Widgets_INCLUDE_DIRS} ${Qt5Xml_INCLUDE_DIRS}
         ${CGAL_3RD_PARTY_INCLUDE_DIRS} ${CGAL_Qt5_3RD_PARTY_INCLUDE_DIRS}
@@ -1154,9 +1158,6 @@ You must disable CGAL_ENABLE_CHECK_HEADERS and CGAL_COMPUTE_DEPENDENCIES.")
 
   ##Get the list of the documented headers
 
-  #  include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/list_of_documented_headers.cmake
-  #    OPTIONAL RESULT_VARIABLE has_list_of_documented_headers)
-
   file(GLOB html_files RELATIVE "${DOC_DIR}/doc_output/" "${DOC_DIR}/doc_output/*/*.html")
   file(GLOB example_files RELATIVE "${CMAKE_SOURCE_DIR}/" "${CMAKE_SOURCE_DIR}/*/examples/*/*.cpp")
   find_program(AWK awk)
@@ -1165,26 +1166,31 @@ You must disable CGAL_ENABLE_CHECK_HEADERS and CGAL_COMPUTE_DEPENDENCIES.")
   message("listing headers from html files")
   foreach(f ${html_files})
     execute_process(COMMAND "${AWK}" "${arguments}" "${DOC_DIR}/doc_output/${f}"
-      OUTPUT_VARIABLE list_of_documented_headers)
-    if (NOT "${list_of_documented_headers}" STREQUAL "")
-      string(REPLACE "\n" ";" list_of_documented_headers ${list_of_documented_headers})
-      LIST( APPEND list_of_documented_headers_txt ${list_of_documented_headers})
+      OUTPUT_VARIABLE tmp_list)
+    if (NOT "${tmp_list}" STREQUAL "")
+      string(REPLACE "\n" ";" tmp_list ${tmp_list})
+      LIST( APPEND list_of_documented_headers ${tmp_list})
     endif()
   endforeach()
   message("listing headers from examples files")
   foreach(f ${example_files})
     execute_process(COMMAND "${AWK}" "${arguments}" "${CMAKE_SOURCE_DIR}/${f}"
-      OUTPUT_VARIABLE list_of_documented_headers)
-    if (NOT "${list_of_documented_headers}" STREQUAL "")
-      string(REPLACE "\n" ";" list_of_documented_headers ${list_of_documented_headers})
-      LIST( APPEND list_of_documented_headers_txt ${list_of_documented_headers})
+      OUTPUT_VARIABLE tmp_list)
+    if (NOT "${tmp_list}" STREQUAL "")
+      string(REPLACE "\n" ";" tmp_list ${tmp_list})
+      LIST( APPEND list_of_documented_headers ${tmp_list})
     endif()
   endforeach()
   message("removing duplicates:")
-  list(REMOVE_DUPLICATES list_of_documented_headers_txt)
+  list(REMOVE_DUPLICATES list_of_documented_headers)
   message("sorting:")
-  list(SORT list_of_documented_headers_txt)
-  string(REPLACE ";" " \n" list_of_documented_headers_txt "${list_of_documented_headers_txt}")
+  list(SORT list_of_documented_headers)
+  #string(REPLACE ";" " \n" list_of_documented_headers "${list_of_documented_headers}")
+  if (NOT "${list_of_documented_headers}" STREQUAL "")
+    set(has_list_of_documented_headers TRUE)
+  else()
+    set(has_list_of_documented_headers FALSE)
+  endif()
   include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/list_of_whitelisted_headers.cmake
       OPTIONAL RESULT_VARIABLE has_list_of_whitelisted_headers)
     message("list_of_whitelisted_headers: ${list_of_whitelisted_headers}")
@@ -1322,3 +1328,4 @@ if(NOT CGAL_BRANCH_BUILD AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/doc")
   # in a non-branch build this is the top-level CMakeLists.txt
   add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/doc")
 endif()
+

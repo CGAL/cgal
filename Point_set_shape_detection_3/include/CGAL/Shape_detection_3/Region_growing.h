@@ -34,8 +34,10 @@
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/function.h>
 
-#include <CGAL/boost/iterator/counting_iterator.hpp>
-#include <CGAL/boost/iterator/transform_iterator.hpp>
+#include <boost/iterator/counting_iterator.hpp>
+#include <boost/iterator/transform_iterator.hpp>
+#include <boost/iterator/filter_iterator.hpp>
+#include <boost/make_shared.hpp>
 
 namespace CGAL {
 namespace Shape_detection_3 {

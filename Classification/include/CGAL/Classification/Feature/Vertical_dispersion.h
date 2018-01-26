@@ -29,6 +29,9 @@
 #include <CGAL/Classification/Image.h>
 #include <CGAL/Classification/Planimetric_grid.h>
 #include <boost/algorithm/minmax_element.hpp>
+#include <CGAL/Classification/Feature_base.h>
+#include <CGAL/int.h>
+#include "boost/tuple/tuple.hpp"
 
 namespace CGAL {
 

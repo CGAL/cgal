@@ -5,6 +5,7 @@ set(list_of_whitelisted_headers_txt [=[
   CGAL/IO/write_las_points.h
   CGAL/IO/read_ply_points.h
   CGAL/IO/write_ply_points.h
+  CGAL/Surface_mesh_parameterization/internal/shortest_path.h
 ]=])
 
 separate_arguments(list_of_whitelisted_headers UNIX_COMMAND ${list_of_whitelisted_headers_txt})

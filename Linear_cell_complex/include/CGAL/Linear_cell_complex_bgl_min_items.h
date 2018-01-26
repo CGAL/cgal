@@ -23,6 +23,7 @@
 
 #include <CGAL/Cell_attribute_with_point_and_id.h>
 #include <CGAL/Cell_attribute_with_id.h>
+#include <CGAL/tuple.h>
 
 namespace CGAL {
 

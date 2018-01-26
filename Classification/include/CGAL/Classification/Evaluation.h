@@ -25,6 +25,7 @@
 
 #include <CGAL/Classification/Label.h>
 #include <CGAL/Classification/Label_set.h>
+#include <map>
 
 namespace CGAL {
 

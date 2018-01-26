@@ -26,7 +26,7 @@
 #include <boost/foreach.hpp>
 #include "boost/tuple/tuple.hpp"
 #include <boost/unordered_set.hpp>
-
+#include <boost/graph/graph_traits.hpp>
 #include <vector>
 
 namespace CGAL {

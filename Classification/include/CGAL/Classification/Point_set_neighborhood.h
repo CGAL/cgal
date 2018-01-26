@@ -33,8 +33,10 @@
 #include <CGAL/Default_diagonalize_traits.h>
 #include <CGAL/centroid.h>
 #include <CGAL/grid_simplify_point_set.h>
+#include <CGAL/squared_distance_3.h>
 
 #include <CGAL/Classification/Image.h>
+
 
 namespace CGAL {
 
