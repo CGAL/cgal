@@ -115,7 +115,7 @@ struct Curve_interval_arcno_cache {
         
         Curve_analysis_2 ca_2 = cv_line.curve_analysis_2();
         ///////////////////////////////// polynomial or curve id ?
-        int curve_id = ca_2.polynomial_2().id();
+        int curve_id = static_cast<int>(ca_2.polynomial_2().id());
         /////////////////////////////////
         if(_m_last_curve_id != curve_id) {
             typename Curve_to_interval_arcno_map::iterator it;
