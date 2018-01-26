@@ -80,15 +80,16 @@ body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
 <h1 id="maintitle">Doxygen Manual Results</h1>'''
     page_footer='''<table class="test-results">
 <tr>
-<th>Package Name in 1_8_4</th>
-<th>Package Name in 1_8_13</th>
-<th>Package Name in master</th>
-<th>Warnings 1.8.4</th>
-<th>Warnings 1.8.13</th>
-<th>Warnings master</th>
-<th>Errors 1.8.4</th>
-<th>Errors 1.8.13</th>
-<th>Errors master</th>
+<th>Package Name</th>
+<th>Logs for 1.8.4</th>
+<th>Warnings</th>
+<th>Errors</th>
+<th>Logs for 1.8.13</th>
+<th>Warnings</th>
+<th>Errors</th>
+<th>Logs for Master</th>
+<th>Warnings</th>
+<th>Errors</th>
 </tr>
 </table></body></html>'''
     
@@ -133,7 +134,6 @@ body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
         res=count_errors_and_warnings(log)
         err_war_sum2=tuple(map(operator.add, err_war_sum2, res))
         basename=os.path.basename(log)
-        pretty_name=basename[0:-4]
         result = [(basename, pretty_name, res)]
         results2.extend(result)
 
@@ -164,18 +164,19 @@ body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
 
 
         new_row='''<tr {status}>
-<td><a class="name1" href="logs1/{basename1}">{pretty_name1}</a></td>
-<td><a class="name2" href="logs2/{basename2}">{pretty_name2}</a></td>
-<td><a class="name_master" href="logs_master/{basename_master}">{pretty_name_master}</a></td>
+<td><a class="name" >{pretty_name}</a></td>
+<td><a class="logs1" href="logs1/{basename1}">Logs</a></td>
 <td class="warn-count1">{warn_count1}
-<td class="warn-count2">{warn_count2}
-<td class="warn-count_master">{warn_count_master}
 </td><td class="error-count1">{err_count1}</td>
+<td><a class="logs2" href="logs2/{basename2}">Logs</a></td>
+<td class="warn-count2">{warn_count2}
 </td><td class="error-count2">{err_count2}</td>
+<td><a class="logs_master" href="logs_master/{basename_master}">Logs</a></td>
+<td class="warn-count_master">{warn_count_master}
 </td><td class="error-count_master">{err_count_master}</td></tr>'''.format(
 status=status,
+pretty_name=results1[index][1],
 basename1=results1[index][0],basename2=results2[index][0],basename_master=results_master[index][0],
-pretty_name1=results1[index][1],pretty_name2=results2[index][1],pretty_name_master=results_master[index][1],
 warn_count1=str(results1[index][2][0]),warn_count2=str(results2[index][2][0]),warn_count_master=str(results_master[index][2][0]),
 err_count1=str(results1[index][2][1]),err_count2=str(results2[index][2][1]),err_count_master=str(results_master[index][2][1]))
 
