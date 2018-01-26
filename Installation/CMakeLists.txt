@@ -1204,6 +1204,8 @@ You must disable CGAL_ENABLE_CHECK_HEADERS and CGAL_COMPUTE_DEPENDENCIES.")
     if(POLICY CMP0057)
       cmake_policy(SET CMP0057 NEW)
     endif()
+    #get build dir for removal from deps
+    get_filename_component(BUILD_DIR ${CMAKE_BINARY_DIR} NAME)
     foreach (package ${CGAL_CONFIGURED_PACKAGES_NAMES})
       if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include)
         set(check_pkg_headers_depends "")
