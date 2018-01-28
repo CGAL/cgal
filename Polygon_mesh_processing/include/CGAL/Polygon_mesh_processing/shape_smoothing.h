@@ -23,7 +23,11 @@
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/property_map/property_map.hpp>
+#if defined(CGAL_EIGEN3_ENABLED)
 #include <Eigen/Sparse>
+#else
+#pragma message("Error: You must link CGAL with the Eigen library")
+#endif
 #include <CGAL/Polygon_mesh_processing/internal/Smoothing/curvature_flow_impl.h>
 #include <CGAL/Polygon_mesh_processing/internal/Smoothing/curvature_flow_explicit_impl.h>
 #include <CGAL/Polygon_mesh_processing/internal/Smoothing/constraints_map.h>
