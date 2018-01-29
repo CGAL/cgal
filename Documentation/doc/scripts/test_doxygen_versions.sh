@@ -98,10 +98,12 @@ make -j$NB_CORES doc_with_postprocessing  &> /dev/null
 echo "done."
 cd .. #scripts
 mv ./build_doc/* $BUILD_DIR_2
+rm $BUILD_DIR_2/CMakeCache.txt
+
 
 if [ "$HAS_REF" -ne "1" ]; then
   #######################################################################################################################
-  ## rebuild doc with Doxygen_1 to get the right doc_tags without GENERATE_XML because it ignores the EXCLUDE_SYMBOLS, ##
+  ## rebuild docs to get the right doc_tags without GENERATE_XML because it ignores the EXCLUDE_SYMBOLS, ##
   ## which disrupts the logs                                                                                           ##
   #######################################################################################################################
   rm -rf ./doc_dir
@@ -112,8 +114,6 @@ if [ "$HAS_REF" -ne "1" ]; then
   make -j$NB_CORES doc  &> /dev/null
   make -j$NB_CORES doc_with_postprocessing &> /dev/null
   echo "done."
-  cd .. #scripts
-  #get VERSION's content
   if [ $IS_RELEASE = 0 ]; then
     cd $ROOT
     mkdir -p ./build && cd ./build
@@ -124,12 +124,23 @@ if [ "$HAS_REF" -ne "1" ]; then
     cd $ROOT/Documentation/doc/scripts
   else
     CGAL_NAME="$(cat $ROOT/VERSION)"
+    cd $ROOT/doc/scripts
   fi
   echo "$CGAL_NAME">cgal_version
 else
   echo "There is already a reference. Not re-building."
   rm -rf ./first_doc_ref
 fi
+  cd $BUILD_DIR_2
+  cmake -DCGAL_DOC_RELEASE=ON -DCGAL_DOC_CREATE_LOGS="true" -DDOXYGEN_EXECUTABLE="$PATH_TO_2" ../..  1> /dev/null
+  echo "Building reference documentation with postprocessing..."
+  make -j$NB_CORES doc  &> /dev/null
+  make -j$NB_CORES doc  &> /dev/null
+  make -j$NB_CORES doc_with_postprocessing &> /dev/null
+  echo "done."
+  cd .. #scripts
+  #get VERSION's content
+
 
 echo "cleaning up"
 #clean-up
