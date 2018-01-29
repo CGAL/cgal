@@ -1,4 +1,4 @@
-foreach(n RANGE 5 ${CMAKE_ARGC})
+foreach(n RANGE 7 ${CMAKE_ARGC})
   list(APPEND INPUT_FILES ${CMAKE_ARGV${n}})
 endforeach()
 
@@ -43,7 +43,15 @@ if(OUTPUT_HEADERS_LIST)
 endif()
 if(OUTPUT_PACKAGES_LIST)
   file(WRITE ${OUTPUT_PACKAGES_LIST} "")
+  if (CGAL_COPY_DEPENDENCIES)
+    file(WRITE ${CGAL_COPY_PATH} "")
+  endif()
   foreach(pkg ${pkgs})
-    file(APPEND ${OUTPUT_PACKAGES_LIST} "${pkg}\n")
+    file(APPEND ${CGAL_COPY_PATH} "${pkg}\n")
+    if (CGAL_COPY_DEPENDENCIES)
+      file(APPEND package_path/dependencies "${pkg}\n")
+    endif()
   endforeach()
 endif()
+
+

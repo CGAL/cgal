@@ -1049,6 +1049,12 @@ Note that this option will modify the source directory!"
     ${CGAL_ENABLE_CHECK_HEADERS})
 
   if(CGAL_ENABLE_CHECK_HEADERS OR CGAL_COMPUTE_DEPENDENCIES)
+
+    option(CGAL_COPY_DEPENDENCIES
+      "Copy package dependencies in source directories.
+  Note that this option will modify the source directory!"
+      FALSE)
+
     if(NOT CMAKE_MAJOR_VERSION GREATER 2)
       message(FATAL_ERROR "Your version of CMake is too old.
 You must disable CGAL_ENABLE_CHECK_HEADERS and CGAL_COMPUTE_DEPENDENCIES.")
@@ -1302,6 +1308,8 @@ ${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/${header}"
           COMMENT "Compute dependencies of ${package}"
           COMMAND ${CMAKE_COMMAND}
             -DCGAL_PACKAGES_PREFIX=${CGAL_SOURCE_DIR}
+            -DCGAL_COPY_DEPENDENCIES=${CGAL_COPY_DEPENDENCIES}
+            -DCGAL_COPY_PATH=${CGAL_SOURCE_DIR}/${package}/dependencies
             -DOUTPUT_HEADERS_LIST=${CGAL_BINARY_DIR}/package_info/${package}/included_headers
             -DOUTPUT_PACKAGES_LIST=${CGAL_BINARY_DIR}/package_info/${package}/dependencies
             -P "${CGAL_MODULES_DIR}/process_dependencies.cmake"
@@ -1327,7 +1335,6 @@ ${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/${header}"
     - package_info/<package>/check_headers/ (error messages from \
 the headers checks)\n")
     message( "== Setting header checking (DONE) ==\n" )
-
   endif()
 endif( CGAL_BRANCH_BUILD )
 
