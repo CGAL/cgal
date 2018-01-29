@@ -185,8 +185,11 @@ function(configure_doxygen_package CGAL_PACKAGE_NAME)
 endfunction()
 
 # set up the directories and variables
-set(CGAL_DOC_MATHJAX_LOCATION "https://cdn.mathjax.org/mathjax/latest"
-    CACHE STRING "The location of MathJax to be used for the documentation.")
+if (CGAL_DOC_MATHJAX_LOCATION)
+  set(CGAL_DOC_MATHJAX_LOCATION_FULL_OPTION_LINE "MATHJAX_RELPATH = ${CGAL_DOC_MATHJAX_LOCATION}")
+else()
+  set(CGAL_DOC_MATHJAX_LOCATION "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2")
+endif()
 
 set(CGAL_DOC_OUTPUT_DIR "${CMAKE_BINARY_DIR}/doc_output")
 file(MAKE_DIRECTORY "${CGAL_DOC_OUTPUT_DIR}")
@@ -208,7 +211,7 @@ set(CGAL_DOC_DXY_DIR "${CMAKE_BINARY_DIR}/doc_dxy")
 file(MAKE_DIRECTORY "${CGAL_DOC_DXY_DIR}")
 
 #Setting the resource directory depending on the version of doxygen
-set(CGAL_DOC_RESOURCE_DIR_DEFAULT "${CMAKE_CURRENT_LIST_DIR}/resources/1.8.13")
+set(CGAL_DOC_RESOURCE_DIR_DEFAULT "${CMAKE_CURRENT_LIST_DIR}/resources/1.8.14")
 
 #  first look if resources for the specific doxygen version is available, fallback
 #  on the default otherwise
