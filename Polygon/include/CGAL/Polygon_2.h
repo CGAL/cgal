@@ -195,7 +195,7 @@ class Polygon_2 {
 
     /// Inserts the vertices in the range `[first, last)`
     /// before `i`.  The value type of points in the range
-    /// `[first,last)} must be \ccStyle{Point_2`.
+    /// `[first,last)` must be `Point_2`.
     template <class InputIterator>
     void insert(Vertex_iterator i,
                 InputIterator first,
