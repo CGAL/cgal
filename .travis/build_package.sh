@@ -55,6 +55,10 @@ for ARG in $(echo "$@")
 do
   if [ "$ARG" = "CHECK" ]
 	then
+    #test dependencies 
+    cd $ROOT
+    bash Scripts/developer_scripts/cgal_check_dependencies.sh /usr/bin/doxygen
+    cd .travis
     zsh $ROOT/Scripts/developer_scripts/test_merge_of_branch HEAD
     mkdir -p build-travis
     pushd build-travis

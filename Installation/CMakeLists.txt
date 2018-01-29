@@ -1071,7 +1071,7 @@ You must disable CGAL_ENABLE_CHECK_HEADERS and CGAL_COMPUTE_DEPENDENCIES.")
     find_package(RS3)
     find_package(LEDA)
     find_package(OpenMesh)
-    find_package(OpenCV)
+    find_package(OpenCV QUIET)
 
     set(compile_options "\
 ${CMAKE_CXX_FLAGS} -DCGAL_EIGEN3_ENABLED \
@@ -1158,16 +1158,16 @@ You must disable CGAL_ENABLE_CHECK_HEADERS and CGAL_COMPUTE_DEPENDENCIES.")
     endforeach()
     include_directories ( SYSTEM ${CGAL_3RD_PARTY_INCLUDE_DIRS} )
 
-    ## Build the doc
-  #  file(MAKE_DIRECTORY "${CMAKE_SOURCE_DIR}/build_doc")
+    # Build the doc
+    file(MAKE_DIRECTORY "${CMAKE_SOURCE_DIR}/build_doc")
     set(DOC_DIR "${CMAKE_SOURCE_DIR}/build_doc")
-  #  execute_process(COMMAND "${CMAKE_COMMAND}" -DDOXYGEN_EXECUTABLE=${DOXYGEN_EXECUTABLE} "${CMAKE_SOURCE_DIR}/Documentation/doc"
-  #      WORKING_DIRECTORY "${DOC_DIR}"
-  #      )
-  #  execute_process(COMMAND "${CMAKE_COMMAND}" --build . --target "doc"
-  #      WORKING_DIRECTORY "${DOC_DIR}" )
+    execute_process(COMMAND "${CMAKE_COMMAND}" -DDOXYGEN_EXECUTABLE=${DOXYGEN_EXECUTABLE} "${CMAKE_SOURCE_DIR}/Documentation/doc"
+        WORKING_DIRECTORY "${DOC_DIR}"
+        )
+    execute_process(COMMAND "${CMAKE_COMMAND}" --build . --target "doc"
+        WORKING_DIRECTORY "${DOC_DIR}" )
 
-  ##Get the list of the documented headers
+  #Get the list of the documented headers
 
   file(GLOB html_files RELATIVE "${DOC_DIR}/doc_output/" "${DOC_DIR}/doc_output/*/*.html")
   file(GLOB example_files RELATIVE "${CMAKE_SOURCE_DIR}/" "${CMAKE_SOURCE_DIR}/*/examples/*/*.cpp")

@@ -1,5 +1,5 @@
 #This script must be called from the CGAL root.
-
+set -e
 while test $# -gt 0
 do
     case "$1" in
@@ -22,7 +22,6 @@ mkdir -p dep_check_build && cd dep_check_build
 for pkg in ../*
 do
   if [ -f $pkg/dependencies ]; then
-    echo "$pkg"
     mv $pkg/dependencies $pkg/dependencies.old
   fi
 done
