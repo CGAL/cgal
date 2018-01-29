@@ -202,8 +202,8 @@ Error_code read_cones(const TriangleMesh& pm, const char* filename, ConeOutputIn
 ///                  parameters of the class CGAL::Seam_mesh).
 /// \tparam ConeInputBidirectionalIterator must be a model of `BidirectionalIterator`
 ///                  with value type `boost::graph_traits<SeamMesh::TriangleMesh>::%vertex_descriptor`.
-/// \tparam ConeMap must be a model of `AssociativeContainer` with
-///                 `boost::graph_traits<SeamMesh>::%vertex_descriptor` as key type and
+/// \tparam ConeMap must be a model of <a href="http://en.cppreference.com/w/cpp/concept/AssociativeContainer"><tt>AssociativeContainer</tt></a>
+///                 with `boost::graph_traits<SeamMesh>::%vertex_descriptor` as key type and
 ///                 \link PkgSurfaceParameterizationEnums Cone_type \endlink as value type.
 ///
 /// \param mesh the seam mesh
@@ -893,9 +893,9 @@ public:
   /// The mapping is piecewise linear (linear in each triangle).
   /// The result is the (u,v) pair image of each vertex of the 3D surface.
   ///
-  /// \tparam ConeMap must be a model of `AssociativeContainer` with key type
-  ///         `boost::graph_traits<Seam_mesh>::%vertex_descriptor` and
-  ///         \link PkgSurfaceParameterizationEnums Cone_type \endlink as value type.
+  /// \tparam ConeMap must be a model of <a href="http://en.cppreference.com/w/cpp/concept/AssociativeContainer"><tt>AssociativeContainer</tt></a>
+  ///                 with key type `boost::graph_traits<Seam_mesh>::%vertex_descriptor` and
+  ///                 \link PkgSurfaceParameterizationEnums Cone_type \endlink as value type.
   /// \tparam VertexUVmap must be a model of `ReadWritePropertyMap` with
   ///         `boost::graph_traits<Seam_mesh>::%vertex_descriptor` as key type and
   ///         %Point_2 (type deduced from `Seam_mesh` using `Kernel_traits`)

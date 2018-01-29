@@ -106,18 +106,19 @@ public:
 /// \ingroup PkgSurfaceParameterizationOrbifoldHelperFunctions
 ///
 /// Compute the shortest path between `source` and `target` over `mesh`, using
-/// a Dijkstra algorithm.
+/// <a href="http://www.boost.org/doc/libs/1_55_0/libs/graph/doc/dijkstra_shortest_paths.html">
+/// boost::dijkstra_shortest_paths()</a>.
 ///
 /// \tparam TriangleMesh A triangle mesh, model of `FaceListGraph` and `HalfedgeListGraph`.
 /// \tparam EdgeOutputIterator A model of `OutputIterator` with value type
-///                            `boost::graph_traits<TriangleMesh>::edge_descriptor`.
+///                            `boost::graph_traits<TriangleMesh>::%edge_descriptor`.
 ///
-/// \param tm the triangular mesh to be parameterized
+/// \param mesh the triangular mesh to be parameterized
 /// \param source, target the extremities of the path to be computed
 /// \param oi the output iterator
 ///
 /// \pre `source` and `target` are vertices of `mesh`.
-/// \pre `source != target`.
+/// \pre `source != target`
 template<typename TriangleMesh, typename EdgeOutputIterator>
 void compute_shortest_paths_between_two_cones(const TriangleMesh& mesh,
                                               typename boost::graph_traits<TriangleMesh>::vertex_descriptor source,
@@ -169,15 +170,15 @@ void compute_shortest_paths_between_two_cones(const TriangleMesh& mesh,
 ///
 /// \tparam TriangleMesh A triangle mesh, model of `FaceListGraph` and `HalfedgeListGraph`.
 /// \tparam InputConesForwardIterator A model of `ForwardIterator` with value type
-///                                   `boost::graph_traits<TriangleMesh>::vertex_descriptor`.
-/// \tparam SeamContainer A model of `SequenceContainer` with value type `boost::graph_traits<TriangleMesh>::edge_descriptor`.
+///                                   `boost::graph_traits<TriangleMesh>::%vertex_descriptor`.
+/// \tparam SeamContainer A model of <a href="http://en.cppreference.com/w/cpp/concept/SequenceContainer"><tt>SequenceContainer</tt></a>
+///                       with value type `boost::graph_traits<TriangleMesh>::%edge_descriptor`.
 ///
 /// \param mesh the triangular mesh on which paths are computed
-/// \param first, beyond the cones, which form the extremities of the path
+/// \param first, beyond a range of cones
 /// \param seams a container that will store the paths, as a sequence of edges of the mesh.
 ///
-/// \pre `source` and `target` are vertices of `mesh`.
-/// \pre `source != target`.
+/// \pre `std::distance(first,beyond) > 1`
 template<typename TriangleMesh, typename InputConesForwardIterator, typename SeamContainer>
 void compute_shortest_paths_between_cones(const TriangleMesh& mesh,
                                           InputConesForwardIterator first, InputConesForwardIterator beyond,

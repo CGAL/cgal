@@ -45,9 +45,9 @@ enum Weight_type
 /// A classification type for the cones used in Orbifold Tutte parameterization.
 enum Cone_type
 {
-  First_unique_cone = 0, ///< marker for the cone found at the beginning of the seam.
-  Second_unique_cone,    ///< marker for the cone found at the end of the seam.
-  Duplicated_cone        ///< marker for all the other cones. Cones are duplicated in the sense
+  First_unique_cone = 0, ///< Marker for the cone found at the beginning of the seam.
+  Second_unique_cone,    ///< Marker for the cone found at the end of the seam.
+  Duplicated_cone        ///< Marker for all the other cones. Cones are duplicated in the sense
                          /// that when the seam is "opened", the cone appears
                          /// at two different positions.
 };
