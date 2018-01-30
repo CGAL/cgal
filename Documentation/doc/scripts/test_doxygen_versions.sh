@@ -58,7 +58,7 @@ if [ "$HAS_REF" -ne "1" ]; then
   echo "Building reference documentation..."
   mkdir -p ./build_doc
   cd ./build_doc
-  cmake -DCGAL_DOC_RELEASE=ON -DCGAL_GENERATE_XML=ON -DDOXYGEN_EXECUTABLE="$PATH_TO_1" ../..  1> /dev/null
+  cmake -DCGAL_DOC_MATHJAX_LOCATION:STRING=../../MathJax -DCGAL_DOC_RELEASE=ON -DCGAL_GENERATE_XML=ON -DDOXYGEN_EXECUTABLE="$PATH_TO_1" ../..  1> /dev/null
   make -j$NB_CORES doc  &> /dev/null
   echo "done."
   cd ../ #scripts
@@ -78,7 +78,7 @@ fi
 echo "Building second documentation..."
 mkdir -p build_doc
 cd ./build_doc
-cmake -DCGAL_DOC_RELEASE=ON -DCGAL_GENERATE_XML=ON -DDOXYGEN_EXECUTABLE="$PATH_TO_2" ../..  1> /dev/null
+cmake -DCGAL_DOC_MATHJAX_LOCATION:STRING=../../MathJax -DCGAL_DOC_RELEASE=ON -DCGAL_GENERATE_XML=ON -DDOXYGEN_EXECUTABLE="$PATH_TO_2" ../..  1> /dev/null
 make -j$NB_CORES doc  &> /dev/null
 echo "done."
 cd ../ #scripts
@@ -108,7 +108,7 @@ if [ "$HAS_REF" -ne "1" ]; then
   #######################################################################################################################
   rm -rf ./doc_dir
   cd $BUILD_DIR_1
-  cmake -DCGAL_DOC_RELEASE=ON -DCGAL_DOC_CREATE_LOGS="true" -DDOXYGEN_EXECUTABLE="$PATH_TO_1" ../..  1> /dev/null
+  cmake -DCGAL_DOC_MATHJAX_LOCATION:STRING=../../MathJax -DCGAL_DOC_RELEASE=ON -DCGAL_DOC_CREATE_LOGS="true" -DDOXYGEN_EXECUTABLE="$PATH_TO_1" ../..  1> /dev/null
   echo "Building reference documentation with postprocessing..."
   make -j$NB_CORES doc  &> /dev/null
   make -j$NB_CORES doc  &> /dev/null
@@ -132,7 +132,7 @@ else
   rm -rf ./first_doc_ref
 fi
   cd $BUILD_DIR_2
-  cmake -DCGAL_DOC_RELEASE=ON -DCGAL_DOC_CREATE_LOGS="true" -DDOXYGEN_EXECUTABLE="$PATH_TO_2" ../..  1> /dev/null
+  cmake -DCGAL_DOC_MATHJAX_LOCATION:STRING=../../MathJax -DCGAL_DOC_RELEASE=ON -DCGAL_DOC_CREATE_LOGS="true" -DDOXYGEN_EXECUTABLE="$PATH_TO_2" ../..  1> /dev/null
   echo "Building reference documentation with postprocessing..."
   make -j$NB_CORES doc  &> /dev/null
   make -j$NB_CORES doc  &> /dev/null
