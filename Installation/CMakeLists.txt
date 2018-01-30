@@ -1234,7 +1234,7 @@ You must disable CGAL_ENABLE_CHECK_HEADERS and CGAL_COMPUTE_DEPENDENCIES.")
           if(POLICY CMP0057)
             if(has_list_of_documented_headers
                 AND NOT header IN_LIST list_of_documented_headers)
-              message(STATUS "Skip non-documented header \"${header}\".")
+#              message(STATUS "Skip non-documented header \"${header}\".")
               set(skip_hdr TRUE)
             endif()
           endif()

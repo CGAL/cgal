@@ -30,6 +30,7 @@
 #endif // CGAL_LINKED_WITH_TBB
 
 #include <vector>
+#include <utility>
 
 namespace CGAL {
 

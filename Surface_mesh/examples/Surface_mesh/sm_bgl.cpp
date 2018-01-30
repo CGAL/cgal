@@ -21,6 +21,15 @@ int main(int /* argc */, char* argv[])
   Mesh sm;
   std::ifstream in(argv[1]);
   in >> sm;
+
+  for (auto vertex_iterator : sm.vertices()) {
+          Point p(1,0,1);
+          sm.point(vertex_iterator) = p;
+        }
+  for (auto vertex_iterator : sm.vertices()) {
+          std::cout<<sm.point(vertex_iterator)<<std::endl;
+        }
+  return 0;
   Mesh::Property_map<vertex_descriptor,vertex_descriptor> predecessor;
   predecessor = sm.add_property_map<vertex_descriptor,vertex_descriptor>("v:predecessor").first;
 

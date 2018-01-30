@@ -31,6 +31,7 @@
 #include <CGAL/Default_diagonalize_traits.h>
 #include <CGAL/centroid.h>
 #include <CGAL/squared_distance_3.h>
+#include <CGAL/array.h>
 
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/parallel_for.h>
@@ -271,21 +272,21 @@ private:
       
     if (neighbor_points.size() == 0)
     {
-      Eigenvalues v = {{ 0.f, 0.f, 0.f }};
+      Eigenvalues v = make_array( 0.f, 0.f, 0.f );
       m_eigenvalues[index] = v;
-      m_centroids[index] = {{ float(query.x()), float(query.y()), float(query.z()) }};
-      m_smallest_eigenvectors[index] = {{ 0.f, 0.f, 1.f }};
+      m_centroids[index] = make_array(float(query.x()), float(query.y()), float(query.z()) );
+      m_smallest_eigenvectors[index] = make_array( 0.f, 0.f, 1.f );
 #ifdef CGAL_CLASSIFICATION_EIGEN_FULL_STORAGE
-      m_middle_eigenvectors[index] = {{ 0.f, 1.f, 0.f }}; 
-      m_largest_eigenvectors[index] = {{ 1.f, 0.f, 0.f }};
+      m_middle_eigenvectors[index] = make_array( 0.f, 1.f, 0.f );
+      m_largest_eigenvectors[index] = make_array( 1.f, 0.f, 0.f );
 #endif
       return;
     }
 
     Point centroid = CGAL::centroid (neighbor_points.begin(), neighbor_points.end());
-    m_centroids[index] = {{ float(centroid.x()), float(centroid.y()), float(centroid.z()) }};
+    m_centroids[index] = make_array( float(centroid.x()), float(centroid.y()), float(centroid.z()) );
     
-    CGAL::cpp11::array<float, 6> covariance = {{ 0.f, 0.f, 0.f, 0.f, 0.f, 0.f }};
+    CGAL::cpp11::array<float, 6> covariance = make_array( 0.f, 0.f, 0.f, 0.f, 0.f, 0.f );
       
     for (std::size_t i = 0; i < neighbor_points.size(); ++ i)
     {
@@ -298,10 +299,10 @@ private:
       covariance[5] += float(d.z () * d.z ());
     }
 
-    CGAL::cpp11::array<float, 3> evalues = {{ 0.f, 0.f, 0.f }};
-    CGAL::cpp11::array<float, 9> evectors = {{ 0.f, 0.f, 0.f,
+    CGAL::cpp11::array<float, 3> evalues = make_array( 0.f, 0.f, 0.f );
+    CGAL::cpp11::array<float, 9> evectors = make_array( 0.f, 0.f, 0.f,
                                                0.f, 0.f, 0.f,
-                                               0.f, 0.f, 0.f }};
+                                               0.f, 0.f, 0.f );
 
     DiagonalizeTraits::diagonalize_selfadjoint_covariance_matrix
       (covariance, evalues, evectors);
@@ -312,11 +313,11 @@ private:
       for (std::size_t i = 0; i < 3; ++ i)
         evalues[i] = evalues[i] / sum;
     m_sum_eigenvalues[index] = float(sum);
-    m_eigenvalues[index] = {{ float(evalues[0]), float(evalues[1]), float(evalues[2]) }};
-    m_smallest_eigenvectors[index] = {{ float(evectors[0]), float(evectors[1]), float(evectors[2]) }};
+    m_eigenvalues[index] = make_array( float(evalues[0]), float(evalues[1]), float(evalues[2]) );
+    m_smallest_eigenvectors[index] = make_array( float(evectors[0]), float(evectors[1]), float(evectors[2]) );
 #ifdef CGAL_CLASSIFICATION_EIGEN_FULL_STORAGE
-    m_middle_eigenvectors[index] = {{ float(evectors[3]), float(evectors[4]), float(evectors[5]) }};
-    m_largest_eigenvectors[index] = {{ float(evectors[6]), float(evectors[7]), float(evectors[8]) }};
+    m_middle_eigenvectors[index] = make_array( float(evectors[3]), float(evectors[4]), float(evectors[5]) );
+    m_largest_eigenvectors[index] = make_array( float(evectors[6]), float(evectors[7]), float(evectors[8]) );
 #endif
   }
 
