@@ -790,9 +790,11 @@ Scene_c3t3_item::build_histogram()
 
 
   // draw min value and max value
-  const int min_tr_width = static_cast<int>(2 * (std::floor(min_value)*cell_width + left_margin));
-  const int max_tr_width = static_cast<int>(
-    2 * ((histo_data.size() - std::floor(max_value))*cell_width + left_margin));
+  const int min_tr_width =
+    static_cast<int>(2 * (std::floor(min_value)*cell_width + left_margin));
+  const int max_tr_width =
+    static_cast<int>(2 * ((double(histo_data.size()) -
+                           std::floor(max_value))*cell_width + left_margin));
   const int tr_y = drawing_height + top_margin + text_margin;
 
   painter.setPen(get_histogram_color(min_value));

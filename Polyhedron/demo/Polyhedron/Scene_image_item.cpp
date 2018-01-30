@@ -77,12 +77,12 @@ Image_accessor::Image_accessor(const Image& im, int dx, int dy, int dz)
     }
   }
   
-  int i=0;
+  double i=0;
   const double starting_hue = 45./360.; // magenta
   for ( std::map<unsigned char, QColor>::iterator it = colors_.begin(),
-       end = colors_.end() ; it != end ; ++it, ++i )
+       end = colors_.end() ; it != end ; ++it, i += 1.)
   {
-    double hue =  starting_hue + 1./colors_.size() * i;
+    double hue =  starting_hue + 1./double(colors_.size()) * i;
     if ( hue > 1. ) { hue -= 1.; }
     it->second = QColor::fromHsvF(hue, .75, .75);
   }
@@ -202,9 +202,9 @@ add_to_normal(unsigned char v,
 {
   if ( 0 != v )
   {
-    x += dx;
-    y += dy;
-    z += dz;    
+    x += float(dx);
+    y += float(dy);
+    z += float(dz);
   }
 }
 
@@ -296,9 +296,9 @@ Vertex_buffer_helper::push_color(std::size_t i, std::size_t j, std::size_t k)
 {
   const QColor& color = data_.vertex_color(i,j,k);
   if ( ! color.isValid() ) { return; }
-  colors_.push_back(color.red()/255.f);
-  colors_.push_back(color.green()/255.f);
-  colors_.push_back(color.blue()/255.f);
+  colors_.push_back(float(color.red())/255.f);
+  colors_.push_back(float(color.green())/255.f);
+  colors_.push_back(float(color.blue())/255.f);
 }
 
 void
@@ -324,19 +324,19 @@ Vertex_buffer_helper::push_vertex(std::size_t i, std::size_t j, std::size_t k)
   indices_.insert(std::make_pair(compute_position(i,j,k),
                                  vertices_.size()/3)); 
   //resize the "border vertices"
-  double di(i),dj(j),dk(k);
+  double di = double(i),dj = double(j),dk = double(k);
   if (di == 0)
     di = 0.5;
   if (dj == 0)
     dj = 0.5;
   if (dk == 0)
     dk = 0.5;
-  if (di == data_.xdim())
-    di = data_.xdim()-0.5;
-  if (dj == data_.ydim())
-    dj = data_.ydim()-0.5;
-  if (dk == data_.zdim())
-    dk = data_.zdim()-0.5;
+  if (di == double(data_.xdim()))
+    di = double(data_.xdim())-0.5;
+  if (dj == double(data_.ydim()))
+    dj = double(data_.ydim())-0.5;
+  if (dk == double(data_.zdim()))
+    dk = double(data_.zdim())-0.5;
 
   vertices_.push_back( (di - 0.5) * data_.vx()+offset.x);
   vertices_.push_back( (dj - 0.5) * data_.vy()+offset.y);
@@ -678,9 +678,9 @@ Scene_image_item::compute_bbox() const
    _bbox = Bbox(0,
                 0,
                 0,
-              (m_image->xdim()-1) * m_image->vx(),
-              (m_image->ydim()-1) * m_image->vy(),
-              (m_image->zdim()-1) * m_image->vz());
+              (double(m_image->xdim()-1)) * m_image->vx(),
+              (double(m_image->ydim()-1)) * m_image->vy(),
+              (double(m_image->zdim()-1)) * m_image->vz());
 }
 
 void
@@ -809,9 +809,9 @@ Scene_image_item_priv::draw_gl(Viewer_interface* viewer) const
   {
     vao[0].bind();
     if(!is_ogl_4_3)
-      viewer->glDrawElements(GL_TRIANGLES, m_ibo->size()/sizeof(GLuint), GL_UNSIGNED_INT, 0);
+      viewer->glDrawElements(GL_TRIANGLES, GLsizei(m_ibo->size()/sizeof(GLuint)), GL_UNSIGNED_INT, 0);
     else
-      viewer->glDrawElements(GL_LINES_ADJACENCY, m_ibo->size()/sizeof(GLuint), GL_UNSIGNED_INT, 0);
+      viewer->glDrawElements(GL_LINES_ADJACENCY, GLsizei(m_ibo->size()/sizeof(GLuint)), GL_UNSIGNED_INT, 0);
     vao[0].release();
   }
   rendering_program.release();
@@ -833,7 +833,7 @@ Scene_image_item_priv::ibo_size() const
     GLint nb_elts = m_ibo->size();
     m_ibo->release();
 
-    return nb_elts/sizeof(GLuint);
+    return GLint(nb_elts/sizeof(GLuint));
 
   return 0;
 }

@@ -477,7 +477,7 @@ void Viewer::initializeGL()
       d->rendering_program.bind();
       d->vao[0].bind();
       d->buffers[0].bind();
-      d->buffers[0].allocate(d->v_Axis.data(), static_cast<int>(d->v_Axis.size()) * sizeof(float));
+      d->buffers[0].allocate(d->v_Axis.data(), static_cast<int>(d->v_Axis.size() * sizeof(float)));
       d->rendering_program.enableAttributeArray("vertex");
       d->rendering_program.setAttributeBuffer("vertex",GL_FLOAT,0,3);
       d->buffers[0].release();
@@ -1240,7 +1240,13 @@ void Viewer::drawVisualHints()
     glDisable(GL_DEPTH_TEST);
     d->painter->endNativePainting();
     //prints FPS
-    TextItem *fps_text = new TextItem(20, int(1.5*((QApplication::font().pixelSize()>0)?QApplication::font().pixelSize():QApplication::font().pointSize())),0,d->fpsString,false, QFont(), Qt::gray);
+    TextItem *fps_text =
+      new TextItem(20.f,
+                   float(1.5*((QApplication::font().pixelSize()>0)?
+                              QApplication::font().pixelSize():
+                              QApplication::font().pointSize())),
+                   0.f,
+                   d->fpsString,false, QFont(), Qt::gray);
     if(FPSIsDisplayed())
     {
       d->textRenderer->addText(fps_text);
@@ -1248,7 +1254,11 @@ void Viewer::drawVisualHints()
     //Prints the displayMessage
     QFont font = QFont();
     QFontMetrics fm(font);
-    TextItem *message_text = new TextItem(10 + fm.width(d->message)/2, height()-20, 0, d->message, false, QFont(), Qt::gray );
+    TextItem *message_text =
+      new TextItem(10.f + float(fm.width(d->message)/2),
+                   float(height())-20.f,
+                   0.f,
+                   d->message, false, QFont(), Qt::gray );
     if (d->_displayMessage)
     {
       d->textRenderer->addText(message_text);
