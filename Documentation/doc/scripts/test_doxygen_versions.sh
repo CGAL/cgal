@@ -42,7 +42,7 @@ cd $TEMP #scripts
 echo "Building reference documentation..."
 mkdir -p ./build_doc
 cd ./build_doc
-cmake -DCGAL_DOC_RELEASE=ON -DCGAL_GENERATE_XML=ON -DDOXYGEN_EXECUTABLE="$PATH_TO_1" ../..  1> /dev/null
+cmake -DCGAL_DOC_MATHJAX_LOCATION:STRING=../../MathJax -DCGAL_DOC_RELEASE=ON -DCGAL_GENERATE_XML=ON -DDOXYGEN_EXECUTABLE="$PATH_TO_1" ../..  1> /dev/null
 make -j$NB_CORES doc  &> /dev/null
 echo "done."
 cd ../ #scripts
@@ -76,7 +76,7 @@ mv ./build_doc ./doc_dir
 echo "Building second documentation..."
 mkdir -p build_doc
 cd ./build_doc
-cmake -DCGAL_DOC_RELEASE=ON -DCGAL_GENERATE_XML=ON -DDOXYGEN_EXECUTABLE="$PATH_TO_2" ../..  1> /dev/null
+cmake -DCGAL_DOC_MATHJAX_LOCATION:STRING=../../MathJax -DCGAL_DOC_RELEASE=ON -DCGAL_GENERATE_XML=ON -DDOXYGEN_EXECUTABLE="$PATH_TO_2" ../..  1> /dev/null
 make -j$NB_CORES doc  &> /dev/null
 echo "done."
 cd ../ #scripts
@@ -101,7 +101,7 @@ mv ./build_doc ./doc_master
 rm -rf ./doc_dir
 mkdir ./doc_dir
 cd ./doc_dir
-cmake -DCGAL_DOC_RELEASE=ON -DCGAL_DOC_CREATE_LOGS="true" -DDOXYGEN_EXECUTABLE="$PATH_TO_1" ../..  1> /dev/null
+cmake -DCGAL_DOC_MATHJAX_LOCATION:STRING=../../MathJax -DCGAL_DOC_RELEASE=ON -DCGAL_DOC_CREATE_LOGS="true" -DDOXYGEN_EXECUTABLE="$PATH_TO_1" ../..  1> /dev/null
 echo "Building reference documentation with postprocessing..."
 make -j$NB_CORES doc  &> /dev/null
 make -j$NB_CORES doc  &> /dev/null
