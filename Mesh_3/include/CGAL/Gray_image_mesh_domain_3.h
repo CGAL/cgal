@@ -65,10 +65,9 @@ class Gray_image_mesh_domain_3
 {
 public:
   typedef Image_word_type_ Image_word_type;
-  typedef Mesh_3::Image_to_labeled_function_wrapper<Image, BGT,
-                                                    Image_word_type,
+  typedef Mesh_3::Image_to_labeled_function_wrapper<Image_word_type,
+                                                    double,
                                                     Subdomain_index,
-                                                    Transform,
                                                     false>           Wrapper;
 
   typedef Labeled_mesh_domain_3<BGT, Subdomain_index>                Base;

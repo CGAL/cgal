@@ -58,8 +58,8 @@ public:
   typedef Image_word_type_ Image_word_type;
   typedef typename Default::Get
     <Wrapper_,
-     Mesh_3::Image_to_labeled_function_wrapper<Image, BGT,
-                                               Image_word_type,
+     Mesh_3::Image_to_labeled_function_wrapper<Image_word_type,
+                                               int,
                                                Subdomain_index>
      >::type Wrapper;
   typedef typename Default::Get<Null_subdomain_index,
