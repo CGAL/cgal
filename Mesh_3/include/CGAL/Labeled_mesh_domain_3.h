@@ -108,7 +108,7 @@ protected:
   }
 
   static Construct_pair_from_subdomain_indices<Subdomain_index>
-  construct_pair() {
+  construct_pair_functor() {
     return Construct_pair_from_subdomain_indices<Subdomain_index>();
   }
 
@@ -118,7 +118,7 @@ protected:
     : function_(args[parameters::function])
     , bbox_(iso_cuboid(args[parameters::bounding_object]))
     , cstr_s_p_index(args[parameters::construct_surface_patch_index |
-                          construct_pair()])
+                          construct_pair_functor()])
     , null(args[parameters::null_subdomain_index | Null_subdomain_index()])
     , p_rng_(args[parameters::p_rng|0] == 0 ?
              new CGAL::Random(0) :
@@ -264,7 +264,7 @@ public:
                                     (Construct_surface_patch_index))
                                )
                               )
-  using Impl_details::construct_pair;
+  using Impl_details::construct_pair_functor;
   /**
    * @brief Constructor
    */
@@ -274,7 +274,7 @@ public:
                         Null null = Null_subdomain_index(),
                         CGAL::Random* p_rng = NULL)
     : Impl_details(f, bounding_sphere,
-                   error_bound, construct_pair(), null, p_rng) {}
+                   error_bound, construct_pair_functor(), null, p_rng) {}
 
   Labeled_mesh_domain_3(const Function& f,
                         const Bbox_3& bbox,
@@ -282,14 +282,15 @@ public:
                         Null null = Null_subdomain_index(),
                         CGAL::Random* p_rng = NULL)
     : Impl_details(f, bbox,
-                   error_bound, construct_pair(), null, p_rng) {}
+                   error_bound, construct_pair_functor(), null, p_rng) {}
 
   Labeled_mesh_domain_3(const Function& f,
                         const Iso_cuboid_3& bbox,
                         const FT& error_bound = FT(1e-3),
                         Null null = Null_subdomain_index(),
                         CGAL::Random* p_rng = NULL)
-    : Impl_details(f, bbox, error_bound, construct_pair(), null, p_rng) {}
+    : Impl_details(f, bbox, error_bound, construct_pair_functor(), null, p_rng)
+  {}
 
   /**
    * Constructs  a set of \ccc{n} points on the surface, and output them to
