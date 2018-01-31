@@ -2,6 +2,7 @@
 #include <CGAL/Linear_cell_complex_for_generalized_map.h>
 #include <CGAL/Cell_attribute_with_point.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Random.h>
 
 #include <iostream>
 #include <fstream>
@@ -345,6 +346,7 @@ struct InitDartInfo
     for(typename Map::Dart_range::iterator it=map.darts().begin(),
         itend=map.darts().end(); it!=itend; ++it)
     {
+      nb=CGAL::get_default_random().get_int(0,20000);
       map.info(it)=Info(nb);
     }
   }
