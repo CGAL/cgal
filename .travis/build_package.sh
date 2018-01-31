@@ -60,11 +60,6 @@ do
     bash Scripts/developer_scripts/cgal_check_dependencies.sh /usr/bin/doxygen
     cd .travis
     zsh $ROOT/Scripts/developer_scripts/test_merge_of_branch HEAD
-    mkdir -p build-travis
-    pushd build-travis
-    cmake -DCGAL_ENABLE_CHECK_HEADERS=ON -DQt5_DIR="/opt/qt55/lib/cmake/Qt5 -std=c++11" ../..
-    make -j2 check_headers
-    popd
   	#parse current matrix and check that no package has been forgotten
 	  old_IFS=$IFS
 	  IFS=$'\n'
@@ -120,6 +115,7 @@ do
     cd ..
     exit 0
   fi
+    
 	EXAMPLES="$ARG/examples/$ARG"
 	TEST="$ARG/test/$ARG" 
 	DEMOS=$ROOT/$ARG/demo/*

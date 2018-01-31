@@ -27,7 +27,8 @@ do
 done
 
 cmake -DCGAL_ENABLE_CHECK_HEADERS=TRUE -DDOXYGEN_EXECUTABLE="$DOX_PATH" -DCGAL_COPY_DEPENDENCIES=TRUE -DCMAKE_CXX_FLAGS="-std=c++11" ..
-make -j$(nproc --all) packages_dependencies
+make -j$(nproc --all) check_headers
+echo " Checks finished"
 for pkg in ../*
 do
   if [ -f $pkg/dependencies ]; then
@@ -36,9 +37,12 @@ do
       HAS_DIFF=TRUE
       echo "Differences in $pkg: $PKG_DIFF"
       fi
-    rm $pkg/dependencies.old
+    if [ -f $pkg/dependencies.old ]; then
+      rm $pkg/dependencies.old
+    fi
   fi
 done
+echo " Checks finished"
 cd $CGAL_ROOT
 rm -r dep_check_build
 if [ -n "$HAS_DIFF" ]; then

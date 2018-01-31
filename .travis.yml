@@ -144,6 +144,7 @@ addons:
       - qt55svg
       - qt55tools
       - qt55graphicaleffects
+      - libopencv-dev
        
       - mesa-common-dev
       - libglu1-mesa-dev
