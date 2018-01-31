@@ -20,7 +20,6 @@ before_script:
 - sudo bash ./.travis/install_openmesh.sh
 script:
 - cd ./.travis
-- doxygen --version
 - bash -x -e ./build_package.sh $PACKAGE
 addons: 
   apt:

@@ -55,11 +55,11 @@ for ARG in $(echo "$@")
 do
   if [ "$ARG" = "CHECK" ]
 	then
+    zsh $ROOT/Scripts/developer_scripts/test_merge_of_branch HEAD
     #test dependencies 
     cd $ROOT
     bash Scripts/developer_scripts/cgal_check_dependencies.sh /usr/bin/doxygen
     cd .travis
-    zsh $ROOT/Scripts/developer_scripts/test_merge_of_branch HEAD
   	#parse current matrix and check that no package has been forgotten
 	  old_IFS=$IFS
 	  IFS=$'\n'
@@ -115,10 +115,19 @@ do
     cd ..
     exit 0
   fi
-    
-	EXAMPLES="$ARG/examples/$ARG"
-	TEST="$ARG/test/$ARG" 
-	DEMOS=$ROOT/$ARG/demo/*
+   
+  if [ -n "$TRAVIS_PULL_REQUEST" ]; then
+    DO_IGNORE=FALSE
+    . test_package.sh "$ROOT" "$ARG"
+    echo "DO_IGNORE is $DO_IGNORE"
+    if [ "$DO_IGNOE" = "TRUE" ]; then
+      exit 0
+    fi
+  fi
+  
+  EXAMPLES="$ARG/examples/$ARG"
+  TEST="$ARG/test/$ARG" 
+  DEMOS=$ROOT/$ARG/demo/*
   if [ "$ARG" = AABB_tree ] || [ "$ARG" = Alpha_shapes_3 ] ||\
      [ "$ARG" = Circular_kernel_3 ] || [ "$ARG" = Linear_cell_complex ] ||\
      [ "$ARG" = Periodic_3_triangulation_3 ] || [ "$ARG" = Principal_component_analysis ] ||\

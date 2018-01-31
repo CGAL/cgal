@@ -113,9 +113,8 @@ before_script:
 - sudo make install &>/dev/null
 - cd ..
 - sudo bash ./.travis/install_openmesh.sh
-script:
+script: 
 - cd ./.travis
-- doxygen --version
 - bash -x -e ./build_package.sh $PACKAGE
 addons: 
   apt:
@@ -144,8 +143,13 @@ addons:
       - qt55svg
       - qt55tools
       - qt55graphicaleffects
+<<<<<<< HEAD
+      - libopencv-dev       
+=======
       - libopencv-dev
+      - bibtex2html
        
+>>>>>>> ac52f483a8... finishing integration of dependencies check
       - mesa-common-dev
       - libglu1-mesa-dev
       # Not allowed (yet) 
