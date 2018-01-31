@@ -162,8 +162,6 @@ typedef unspecified_type Construct_ray_3;
 
 /// @} 
 
-
-
 /// \name Operations 
 /// The following functions give access to the predicate and construction objects:
 /// @{
