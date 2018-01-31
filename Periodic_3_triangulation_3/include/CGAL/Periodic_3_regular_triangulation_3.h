@@ -893,7 +893,7 @@ public:
     return true;
   }
 
-  bool is_Gabriel(const Facet& f)const
+  bool is_Gabriel(const Facet& f) const
   {
     return is_Gabriel(f.first, f.second);
   }
@@ -905,8 +905,20 @@ public:
 
   bool is_Gabriel(Vertex_handle v) const
   {
-    return nearest_power_vertex(
-             geom_traits().construct_point_3_object()(v->point()), v->cell()) == v;
+    typename Geom_traits::Power_side_of_bounded_power_sphere_3
+      side_of_bounded_orthogonal_sphere =
+      geom_traits().power_side_of_bounded_power_sphere_3_object();
+
+    const Bare_point& bp = geom_traits().construct_point_3_object()(v->point());
+
+    Vertex_handle nearest_v = nearest_power_vertex(bp, v->cell());
+
+    // Need to find the offset such that power distance v->point()
+    // to nearest_v->point() is minimum
+    Offset nearest_v_off = get_min_dist_offset_general(bp, nearest_v);
+
+    return (side_of_bounded_orthogonal_sphere(
+              v->point(), nearest_v->point(), Offset(), nearest_v_off) != CGAL::ON_BOUNDED_SIDE);
   }
 
   Offset get_min_dist_offset(const Bare_point& p, const Offset & o,
@@ -935,6 +947,36 @@ public:
       o,combine_offsets(mdo,min_off),combine_offsets(mdo,Offset(1,1,1)))
         == SMALLER ? min_off : Offset(1,1,1) );
     return combine_offsets(mdo,min_off);
+  }
+
+  // In this version, `p` must be in the domain, and we check all possible
+  // offsets to find the minimum
+  Offset get_min_dist_offset_general(const Bare_point& p, const Vertex_handle vh) const
+  {
+    CGAL_triangulation_precondition(p.x() < domain().xmax());
+    CGAL_triangulation_precondition(p.y() < domain().ymax());
+    CGAL_triangulation_precondition(p.z() < domain().zmax());
+    CGAL_triangulation_precondition(p.x() >= domain().xmin());
+    CGAL_triangulation_precondition(p.y() >= domain().ymin());
+    CGAL_triangulation_precondition(p.z() >= domain().zmin());
+
+    Offset min(0, 0, 0);
+
+    for(int i=-1; i<=1; ++i) {
+      for(int j=-1; j<=1; ++j) {
+        for(int k=-1; k<=1; ++k)
+        {
+          if(i==0 && j==0 && k==0)
+            continue;
+
+          Offset loc_off(i, j, k);
+          if(compare_distance(p, vh->point(), vh->point(), Offset(), min, loc_off) == LARGER)
+            min = loc_off;
+        }
+      }
+    }
+
+    return min;
   }
 
   Vertex_handle nearest_vertex_in_cell(const Cell_handle& c, const Bare_point& p,
