@@ -638,8 +638,8 @@ void Point_set_item_classification::train(int classifier, unsigned int nb_trials
       if (m_random_forest != NULL)
         delete m_random_forest;
       m_random_forest = new Random_forest (m_labels, m_features,
-                                           max_depth, 5, 15,
-                                           num_trees);
+                                           int(max_depth), 5, 15,
+                                           int(num_trees));
       m_random_forest->train (training);
       CGAL::Classification::classify<Concurrency_tag> (*(m_points->point_set()),
                                                        m_labels, *m_random_forest,
