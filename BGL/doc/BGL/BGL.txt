@@ -30,8 +30,8 @@ the ideas of \sc{Bgl} in a nutshell. Section \ref BGLHeader explains
 where to find header files and the chosen naming conventions, as we blend two
 different libraries. The four  following sections give examples for
 how the surface mesh, the polyhedron, the arrangement, and the 2D triangulation classes
-are adapted to \sc{Bgl}. Finally, Section \ref BGLExtensions introduces
-the `HalfedgeGraph` which is an extension to the graph concepts of the \sc{Bgl}.
+are adapted to \sc{Bgl}. Starting with Section \ref BGLExtensions, we introduce
+new concepts, classes, and functions that extend the functionalities of the \sc{Bgl}.
 
 \section BGLA A Short Introduction to the Boost Graph Library
 
@@ -379,23 +379,27 @@ accordingly:
 
 \cgalExample{BGL_arrangement_2/arrangement_dual.cpp}
 
+
 \section BGLExtensions Extensions of the BGL
 
 The previous sections introduced partial specializations
 and free functions so that several \cgal data structures are adapted as models of some
 of the \sc{Bgl} graph concepts.
-In this section we define a set of new concepts to extend the
-functionality of \sc{Bgl} in order to match \ref PkgHDSSummary  more
+In this section, we introduce new concepts, iterators, and property maps inspired
+by the functionalities of the BGL.
+
+\subsection BGLExtensionsGraphConcepts Graph concepts
+
+In this section, we define a set of new concepts to extend the
+functionality of \sc{Bgl} in order to match \ref PkgHDSSummary more
 closely and to enable writing generic algorithms, which operate on data structures that
 have faces and halfedges.
-
 
 `HalfedgeGraph` refines
 <a href="http://www.boost.org/libs/graph/doc/BidirectionalGraph.html">`Bidirectional Graph`</a> with operations to accommodate halfedge data structures.
 Given a halfedge, say `h`, the concept `HalfedgeGraph` requires the provision
 of the halfedge opposite to `h`, the halfedge that succeeds `h`,
 and the halfedge that precedes `h`.
-
 
 `MutableHalfedgeGraph` adds the requirement for operations to
 change the next/previous relation and to adjust the target of a halfedge.
@@ -411,22 +415,53 @@ The halfedge extensions are used by the surface simplification algorithms,
 which follow the design of \sc{Bgl} as sketched in Section \ref BGLA.
 
 
-
 \subsection BGLIteratorsAndCirculators Iterators and Circulators
 
-Starting at a halfedge `h` of a halfedge graph `g`, applying several times `next(h,g)` brings us back
-to the halfedge where we started. All halfedges traversed on the way are incident to the same face.
+By combining basic operations on graphs, we create various useful
+\link devman_iterators_and_circulators iterators and circulators\endlink
+to traverse specific types of elements. For example:
 
-Using the composition of the `next(h,g)` and `opposite(h,g)` functions results
+- Starting at a halfedge `h` of a halfedge graph `g`, applying several times `next(h,g)` brings us back
+to the halfedge where we started. All halfedges traversed on the way are incident to the same face.
+- Using the composition of the functions `next(h,g)` and `opposite(h,g)` results
 in another cycle, namely the cycle of halfedges which are incident to
 the same vertex.
 
 For convenience, two iterator and circulator types enable the traversal of all halfedges
 incident to a given face, and all halfedges having a given vertex as target.
-
-These types  are not part of the concept `HalfedgeGraph`, but they
+These types are not part of the concept `HalfedgeGraph`, but they
 are class templates that work for any model of this concept.
 
+A complete list of these traversal tools can be found in \link PkgBGLIterators the reference manual\endlink.
+
+\subsubsection BGLExampleIncidentVertices Example: Finding Incident Vertices in a HalfedgeGraph
+
+The following example shows several functions that enable navigating in a `HalfedgeGraph`.
+We have two implementations of the operation that finds the vertices adjacent to a vertex `v`.
+Let us have a look at the first version. Given a vertex descriptor `vd`,
+we first call `halfedge(vd,g)` to obtain the halfedge with `vd` as target.
+Applying `source()` then gives us an adjacent vertex. We then get to the next halfedge
+with `vd` as target, by first going to the next halfedge around the face, and then
+going to the opposite halfedge.
+
+The second version does the `%next()` and `%opposite()` jumping with an iterator.
+Note that when calling `source()` we have to dereference `hi`, as the function
+expects a halfedge descriptor and not a halfedge iterator.
+Also note that `halfedges_around_target()` expects a halfedge, and not a vertex.
+This provides the user with the ability to start the traversal at a specific
+halfedge incident to the input vertex (and not the arbitrary incident halfedge
+stored in the vertex record.)
+
+\cgalExample{BGL_polyhedron_3/incident_vertices.cpp}
+
+\subsubsection BGLExampleNormalHalfedgeGraph Example: Calculating Facet Normals using HalfedgeGraph
+
+The following example program shows a simple algorithm for calculating
+facet normals for a polyhedron using the \sc{Bgl} API. A
+<a href="http://www.boost.org/libs/property_map/doc/vector_property_map.html">boost::vector_property_map</a>
+is used to to store the calculated normals instead of changing the Polyhedron items class.
+
+\cgalExample{BGL_polyhedron_3/normals.cpp}
 
 \subsection BGLProperties Properties and Dynamic Properties
 
@@ -439,7 +474,6 @@ to add properties to vertices, halfedges, edges, and faces on the fly.
 The lifetime of a dynamic property is bound to the lifetime
 of the property map: reference counting is used to delete the property
 when no map refers to it.
-
 
 Dynamic property tags such as `dynamic_vertex_property_t` are a generalization of
 `boost::vertex_index_t`, as they have a template parameter for the
@@ -454,20 +488,31 @@ serves for retrieving a property map for a given graph and dynamic
 property tag, as well as for retrieving a value for a given key and
 property map.
 
+The following example shows how to attach a `string` property to vertices and
+a `double` value to the halfedges of a graph.
+
 \cgalExample{Property_map/dynamic_properties.cpp}
 
-
-\subsection BGLEulerOperations Euler Operations
+\section BGLEulerOperations Euler Operations
 
 There are two categories of mutating operations. The first category comprises
 low level operations that change incidences such as the target vertex of a
 halfedge.
 A halfedge graph might turn invalid by the application of inconsistent
-low lever operations.   The second category of operations
+low lever operations. The second category of operations
 are called <em>%Euler Operations</em>. These are high level operations such
 as adding a center vertex to a face, which means also adding halfedges
 and faces, and updating incidence information. The %Euler operations
 enable manipulating models of `MutableFaceGraph`.
+
+The complete list of Euler operations provided by this package can be found in
+\link PkgBGLEulerOperations the reference manual\endlink.
+
+\section BGLGraphAdaptors Graph Adaptors
+
+Graph adaptors are classes that build an interface over an existing graph to provide
+new functionalities. By operating almost entirely on the input graph, adaptors
+can avoid potentially expensive operations, both in term of time and memory.
 
 \subsection BGLDual The Dual Graph
 
@@ -559,40 +604,29 @@ Vertices of the seam mesh that are linked by a green dashed segment correspond
 to the same vertex in the underlying mesh.
 \cgalFigureEnd
 
-Seam meshes are for example used in Chapter \ref PkgSurfaceParameterizationSummary.
+Seam meshes are for example used in Chapter \ref PkgSurfaceParameterizationSummary
+to parameterize a topological sphere by first virtually cutting it into a topological
+disk.
 
-\subsection BGLExamples Examples
+\section PMPPartitioning Graph Partitioning
 
-\subsubsection BGLExampleIncidentVertices Example: Finding Incident Vertices in a HalfedgeGraph
+For algorithms that operate locally, partitioning is often an easy way to parallelize
+the algorithm at little cost.
+The functions `CGAL::METIS::partition_graph()` and `CGAL::METIS::partition_dual_graph()`
+provide wrappers to the graph partitioning library METIS \cgalCite{karypis1998fast},
+allowing to split triangular meshes that are models of the concept `FaceListGraph`
+into a given number of subdomains.
 
-The following example shows several functions that enable navigating in a `HalfedgeGraph`.
-We have two implementations of the operation that finds the vertices adjacent to a vertex `v`.
-Let us have a look at the first version. Given a vertex descriptor `vd`,
-we first call `halfedge(vd,g)` to obtain the halfedge with `vd` as target.
-Applying `source()` then gives us an adjacent vertex. We then get to the next halfedge
-with `vd` as target, by first going to the next halfedge around the face, and then
-going to the opposite halfedge.
+The following example shows how to read, partition, and write a mesh using
+`partition_dual_graph()`. The class template `CGAL::Face_filtered_graph`
+and the free function `copy_face_graph()` are used to create an independent mesh from one
+of the subdomains of the partition. Note that the copy is optional as writing
+can be done directly using `Face_filtered_graph`.
 
-The second version does the `%next()` and `%opposite()` jumping with an iterator.
-Note that when calling `source()` we have to dereference `hi`, as the function
-expects a halfedge descriptor and not a halfedge iterator.
-Also note that `halfedges_around_target()` expects a halfedge, and not a vertex.
-This provides the user with the ability to start the traversal at a specific
-halfedge incident to the input vertex (and not the arbitrary incident halfedge
-stored in the vertex record.)
+\cgalExample{BGL_surface_mesh/surface_mesh_partition.cpp}
 
-\cgalExample{BGL_polyhedron_3/incident_vertices.cpp}
-
-\subsubsection BGLExampleNormalHalfedgeGraph Example: Calculating Facet Normals using HalfedgeGraph
-
-The following example program shows a simple algorithm for calculating
-facet normals for a polyhedron using the \sc{Bgl} API. A
-<a href="http://www.boost.org/libs/property_map/doc/vector_property_map.html">boost::vector_property_map</a>
-is used to to store the calculated normals instead of changing the Polyhedron items class.
-
-\cgalExample{BGL_polyhedron_3/normals.cpp}
-
-
+Using \ref BGLNamedParameters some of the many options of METIS can be customized,
+as shown in \ref BGL_polyhedron_3/polyhedron_partition.cpp "this example".
 */
 } /* namespace CGAL */
 
