@@ -79,12 +79,12 @@ namespace Surface_mesh_parameterization {
 /// \tparam VertexIndexMap must be a model of `ReadablePropertyMap` with
 ///                        `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and
 ///                        a unique integer as value type.
-/// \tparam ConeOutputInserter a model of `OutputIterator` with value type
+/// \tparam ConeOutputIterator a model of `OutputIterator` with value type
 ///                            `boost::graph_traits<TriangleMesh>::%vertex_descriptor`.
 ///
 /// \param tm the triangular mesh to be parameterized
 /// \param in the input stream
-/// \param vpmap an initialized vertex - index map
+/// \param vpmap an initialized vertex index map
 /// \param out the output iterator
 ///
 /// \pre The number of cones must match the chosen \link PkgSurfaceParameterizationEnums Orbifold_type \endlink.
@@ -92,8 +92,8 @@ namespace Surface_mesh_parameterization {
 ///
 /// \return The corresponding vertex descriptors are output, in the same order as the input integers, in `out`.
 ///         The function checks if the input is valid (no duplicate, correct number of cones) and returns an `Error_code`.
-template<typename TriangleMesh, typename VertexIndexMap, typename ConeOutputInserter>
-Error_code read_cones(const TriangleMesh& tm, std::ifstream& in, VertexIndexMap vpmap, ConeOutputInserter out)
+template<typename TriangleMesh, typename VertexIndexMap, typename ConeOutputIterator>
+Error_code read_cones(const TriangleMesh& tm, std::ifstream& in, VertexIndexMap vpmap, ConeOutputIterator out)
 {
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor TM_vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::vertex_iterator   TM_vertex_iterator;
@@ -147,8 +147,8 @@ Error_code read_cones(const TriangleMesh& tm, std::ifstream& in, VertexIndexMap 
 /// Same as above, using the default indexation of the vertices of `tm`: vertices
 /// are numbered from `0` to `num_vertices(tm)-1`, in the order that they appear
 /// while calling `vertices(tm)`.
-template<typename TriangleMesh, typename ConeOutputInserter>
-Error_code read_cones(const TriangleMesh& tm, std::ifstream& in, ConeOutputInserter out)
+template<typename TriangleMesh, typename ConeOutputIterator>
+Error_code read_cones(const TriangleMesh& tm, std::ifstream& in, ConeOutputIterator out)
 {
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor TM_vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::vertex_iterator   TM_vertex_iterator;
@@ -170,8 +170,8 @@ Error_code read_cones(const TriangleMesh& tm, std::ifstream& in, ConeOutputInser
 /// \ingroup PkgSurfaceParameterizationOrbifoldHelperFunctions
 ///
 /// Same as above, but from a file instead of a stream.
-template<typename TriangleMesh, typename VertexIndexMap, typename ConeOutputInserter>
-Error_code read_cones(const TriangleMesh& pm, const char* filename, VertexIndexMap vpmap, ConeOutputInserter out)
+template<typename TriangleMesh, typename VertexIndexMap, typename ConeOutputIterator>
+Error_code read_cones(const TriangleMesh& pm, const char* filename, VertexIndexMap vpmap, ConeOutputIterator out)
 {
   std::ifstream in(filename);
   return read_cones(pm, in, vpmap, out);
@@ -182,8 +182,8 @@ Error_code read_cones(const TriangleMesh& pm, const char* filename, VertexIndexM
 /// Same as above, but from a file instead of a stream. The default indexation
 /// of the vertices of `tm` is used: vertices are numbered from `0` to `num_vertices(tm)-1`,
 /// in the order that they appear while calling `vertices(tm)`.
-template<typename TriangleMesh, typename ConeOutputInserter>
-Error_code read_cones(const TriangleMesh& pm, const char* filename, ConeOutputInserter out)
+template<typename TriangleMesh, typename ConeOutputIterator>
+Error_code read_cones(const TriangleMesh& pm, const char* filename, ConeOutputIterator out)
 {
   std::ifstream in(filename);
   return read_cones(pm, in, out);
