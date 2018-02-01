@@ -29,6 +29,7 @@
 #include <CGAL/Mesh_3/config.h>
 
 #include <CGAL/Random.h>
+#include <CGAL/Union_find.h>
 #include <CGAL/Polyhedral_mesh_domain_3.h>
 #include <CGAL/Mesh_domain_with_polyline_features_3.h>
 #include <CGAL/Mesh_polyhedron_3.h>
@@ -954,6 +955,15 @@ merge_duplicated_points(const PointSet& duplicated_points)
   if (duplicated_points.empty())
     return;
 
+  //collect ids to be modified
+  typedef CGAL::Union_find<Patch_id> Union_find_t;
+  Union_find_t union_find;
+  std::vector<typename Union_find_t::handle> handles;
+  handles.resize(this->nb_of_patch_plus_one());
+  for (std::size_t i = 0; i < this->nb_of_patch_plus_one(); ++i) {
+    handles[i] = union_find.make_set(Patch_id(i));
+  }
+
   Patch_multimap patches;
   BOOST_FOREACH(const Polyhedron_type& p, stored_polyhedra)
   {
@@ -978,11 +988,6 @@ merge_duplicated_points(const PointSet& duplicated_points)
     }
   }
 
-  //collect ids to be modified 
-  std::vector<Patch_id> new_ids(this->nb_of_patch_plus_one());
-  for (std::size_t i = 0; i < this->nb_of_patch_plus_one(); ++i)
-    new_ids[i] = Patch_id(i);
-
   for (Patch_iterator pit = patches.begin();
        pit != patches.end();
        /*pit = range_end inside loop*/)
@@ -994,23 +999,31 @@ merge_duplicated_points(const PointSet& duplicated_points)
     // loop will end with the first iterator when the point differs from
     // the point of the range).
     Patch_iterator it = range_begin;
-    CGAL_assertion(std::size_t(it->second) < new_ids.size());
-    Patch_id min_id_around_p = new_ids[it->second];
     ++it;
     for (; it != patches.end() && it->first == range_begin->first; ++it)
     {
-      CGAL_assertion(std::size_t(it->second) < new_ids.size());
-      min_id_around_p = (std::min)(min_id_around_p, new_ids[it->second]);
     }
     const Patch_iterator range_end = it;
-
+#if CGAL_MESH_3_VERBOSE > 10
+    std::cerr << "Point " << range_begin->first.first << " is duplicated, in "
+              << "the following patches:\n";
+#endif // CGAL_MESH_3_VERBOSE
+    typename Union_find_t::handle first_handle =
+      handles[range_begin->second];
     // In a second loop on the equal-range, update new_ids around p
-    for (it = range_begin; it != range_end; ++it)
+    for (it = boost::next(range_begin); it != range_end; ++it)
     {
-      CGAL_assertion(std::size_t(it->second) < new_ids.size());
-      new_ids[it->second] = min_id_around_p;
+#if CGAL_MESH_3_VERBOSE > 10
+      std::cerr << " - #" << it->second << "\n";
+#endif // CGAL_MESH_3_VERBOSE
+      union_find.unify_sets(first_handle,
+                            handles[it->second]);
     }
     pit = range_end;
+  }
+  std::vector<Patch_id> new_ids(this->nb_of_patch_plus_one());
+  for (std::size_t i = 0; i < this->nb_of_patch_plus_one(); ++i) {
+    new_ids[i] = *union_find.find(handles[i]);
   }
   reindex_patches(new_ids);
 }
@@ -1119,6 +1132,12 @@ void
 Polyhedral_complex_mesh_domain_3<GT_,P_,TA_>::
 reindex_patches(const std::vector<Surf_p_index>& map)
 {
+#if CGAL_MESH_3_VERBOSE > 10
+  for(Surf_p_index i = 0, end = Surf_p_index(map.size()); i < end; ++i) {
+    if(i != map[i])
+      std::cerr << "patch #" << i << " is reindexed to " << map[i] << "\n";
+  }
+#endif // CGAL_MESH_3_VERBOSE
   typedef typename boost::graph_traits<Polyhedron_type>::face_descriptor
     Face_descriptor;
   for(std::size_t i = 0, end = stored_polyhedra.size(); i < end; ++i) {
@@ -1128,7 +1147,15 @@ reindex_patches(const std::vector<Surf_p_index>& map)
       face_pid_pmap = get(face_patch_id_t<Patch_id>(), poly);
     BOOST_FOREACH(Face_descriptor fd, faces(poly))
     {
-      put(face_pid_pmap, fd, map[get(face_pid_pmap, fd)]);
+      const Surf_p_index id = get(face_pid_pmap, fd);
+      const Surf_p_index new_id = map[id];
+      put(face_pid_pmap, fd, new_id);
+#if CGAL_MESH_3_VERBOSE > 11
+      if(id != new_id) {
+        std::cerr << "On polyhedron #" << i << ", patch #" << id
+                  << " turned into patch #" << new_id << "\n";
+      }
+#endif // CGAL_MESH_3_VERBOSE
     }
   }
   BOOST_FOREACH(Surface_patch_index& id,
