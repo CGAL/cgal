@@ -69,10 +69,10 @@ namespace Surface_mesh_parameterization {
 /// \ingroup PkgSurfaceParameterizationOrbifoldHelperFunctions
 ///
 /// Read a serie of cones from an input stream. Cones are passed as an
-/// integer value that is the index of a vertex handle in the mesh `pm`, using
+/// integer value that is the index of a vertex handle in the mesh tm`, using
 /// the vertex index property map `vpmap` for correspondency.
 ///
-/// \attention The mesh is here `sm`, it is the base mesh of the CGAL::Seam_mesh
+/// \attention The mesh is here `tm`, it is the base mesh of the CGAL::Seam_mesh
 ///            that is passed in input, <i>not</i> the seam mesh itself.
 ///
 /// \tparam TriangleMesh A triangle mesh, model of `FaceListGraph` and `HalfedgeListGraph`.
@@ -119,7 +119,7 @@ Error_code read_cones(const TriangleMesh& tm, std::ifstream& in, VertexIndexMap 
     return ERROR_WRONG_PARAMETER;
   }
 
-  // Locate the cones in the underlying mesh 'pm'
+  // Locate the cones in the underlying mesh 'tm'
   std::vector<TM_vertex_descriptor> cone_vds_in_tm(cones.size()); // need this to keep the correct order
 
   // Since the cones are unique, we only need to loop all the vertices once
@@ -171,10 +171,10 @@ Error_code read_cones(const TriangleMesh& tm, std::ifstream& in, ConeOutputItera
 ///
 /// Same as above, but from a file instead of a stream.
 template<typename TriangleMesh, typename VertexIndexMap, typename ConeOutputIterator>
-Error_code read_cones(const TriangleMesh& pm, const char* filename, VertexIndexMap vpmap, ConeOutputIterator out)
+Error_code read_cones(const TriangleMesh& tm, const char* filename, VertexIndexMap vpmap, ConeOutputIterator out)
 {
   std::ifstream in(filename);
-  return read_cones(pm, in, vpmap, out);
+  return read_cones(tm, in, vpmap, out);
 }
 
 /// \ingroup PkgSurfaceParameterizationOrbifoldHelperFunctions
@@ -183,10 +183,10 @@ Error_code read_cones(const TriangleMesh& pm, const char* filename, VertexIndexM
 /// of the vertices of `tm` is used: vertices are numbered from `0` to `num_vertices(tm)-1`,
 /// in the order that they appear while calling `vertices(tm)`.
 template<typename TriangleMesh, typename ConeOutputIterator>
-Error_code read_cones(const TriangleMesh& pm, const char* filename, ConeOutputIterator out)
+Error_code read_cones(const TriangleMesh& tm, const char* filename, ConeOutputIterator out)
 {
   std::ifstream in(filename);
-  return read_cones(pm, in, out);
+  return read_cones(tm, in, out);
 }
 
 /// \ingroup PkgSurfaceParameterizationOrbifoldHelperFunctions
