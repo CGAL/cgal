@@ -734,6 +734,9 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
   
             candidates.resize(end);
           }
+        else if (!keep_searching)
+          ++ generated_candidates;
+        
         keep_searching = (stop_probability(m_options.min_points,
             m_num_available_points - num_invalid,
             generated_candidates, 
