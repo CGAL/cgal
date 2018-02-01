@@ -49,7 +49,7 @@ addons:
       - qt55tools
       - qt55graphicaleffects
       - libopencv-dev
-
+      - libmetis-dev
       - mesa-common-dev
       - libglu1-mesa-dev
       # Not allowed (yet) 

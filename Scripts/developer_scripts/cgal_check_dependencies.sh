@@ -20,28 +20,30 @@ done
 
 CGAL_ROOT=$PWD
 mkdir -p dep_check_build && cd dep_check_build
-for pkg in $CGAL_ROOT/*
+for pkg_path in $CGAL_ROOT/*
 do
-  if [ -f $pkg/dependencies ]; then
-    mv $pkg/dependencies $pkg/dependencies.old
+  pkg=$(basename $pkg_path)
+  if [ -f $pkg_path/package_info/$pkg/dependencies ]; then
+    mv $pkg_path/package_info/$pkg/dependencies $pkg_path/package_info/$pkg/dependencies.old
   fi
 done
 
 cmake -DCGAL_ENABLE_CHECK_HEADERS=TRUE -DDOXYGEN_EXECUTABLE="$DOX_PATH" -DCGAL_COPY_DEPENDENCIES=TRUE -DCMAKE_CXX_FLAGS="-std=c++11" ..
-make -j$(nproc --all) check_headers
+make -j$(nproc --all) packages_dependencies
 echo " Checks finished"
-for pkg in $CGAL_ROOT/*
+for pkg_path in $CGAL_ROOT/*
 do
-  if [ -f "$pkg/dependencies" ]; then
-    PKG_DIFF=$(diff -N -w  "$pkg/dependencies" "$pkg/dependencies.old")
+  pkg=$(basename $pkg_path)
+  if [ -f "$pkg_path/package_info/$pkg/dependencies" ]; then
+    PKG_DIFF=$(diff -N -w  "$pkg_path/package_info/$pkg/dependencies.old" "$pkg_path/package_info/$pkg/dependencies")
     if [ -n "$PKG_DIFF" ]; then
       HAS_DIFF=TRUE
       echo "Differences in $pkg: $PKG_DIFF"
     else
       echo "No differencies in $pkg dependencies."
     fi
-    if [ -f $pkg/dependencies.old ]; then
-      rm $pkg/dependencies.old
+    if [ -f $pkg_path/package_info/$pkg/dependencies.old ]; then
+      rm $pkg_path/package_info/$pkg/dependencies.old
     fi
   fi
 done

@@ -1309,7 +1309,7 @@ ${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/${header}"
           COMMAND ${CMAKE_COMMAND}
             -DCGAL_PACKAGES_PREFIX=${CGAL_SOURCE_DIR}
             -DCGAL_COPY_DEPENDENCIES=${CGAL_COPY_DEPENDENCIES}
-            -DCGAL_COPY_PATH=${CGAL_SOURCE_DIR}/${package}/dependencies
+            -DCGAL_COPY_PATH=${CGAL_SOURCE_DIR}/${package}/package_info/${package}/dependencies
             -DOUTPUT_HEADERS_LIST=${CGAL_BINARY_DIR}/package_info/${package}/included_headers
             -DOUTPUT_PACKAGES_LIST=${CGAL_BINARY_DIR}/package_info/${package}/dependencies
             -P "${CGAL_MODULES_DIR}/process_dependencies.cmake"

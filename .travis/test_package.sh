@@ -1,13 +1,13 @@
 #!/bin/bash
 
-#Will cd $1 and test packge named $2
+#Will cd $1 and test package named $2
 #to find out if it or one of its dependencies has changed in the current branch
 
 DO_IGNORE=FALSE
 cd $1
 
 LIST_OF_FILES=$(git diff --name-only origin/master |cut -d/ -f1 |uniq |sort)
-LIST_OF_DEPS=$(cat "$2/dependencies")
+LIST_OF_DEPS=$(cat "$2/package_info/$ARG/dependencies")
 echo "$LIST_OF_DEPS"
 for flie in $LIST_OF_DEPS
 do

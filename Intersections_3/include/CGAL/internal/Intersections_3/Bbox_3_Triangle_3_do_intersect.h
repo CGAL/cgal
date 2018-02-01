@@ -54,7 +54,8 @@ namespace internal {
         }
         else {
           if(p[i] <= r[i]) { // prq
-            if((bbox.max)(i) < p[i] || (bbox.min)(i) > q[i])
+            if(
+               (bbox.max)(i) < p[i] || (bbox.min)(i) > q[i])
               return false;
           }
           else { // rpq
