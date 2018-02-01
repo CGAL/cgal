@@ -751,11 +751,11 @@ _Bezier_cache<NtTraits>::_compute_resultant
   
   // Initialize it with copies of the two bivariate polynomials.
   for (i = 0; i < n; i++)
-    for (j = m; j >= 0; j--)
+    for (j = 0; j <= m; ++j)
       mat[i][i + j] = bp1[j];
   
   for (i = 0; i < m; i++)
-    for (j = n; j >= 0; j--)
+    for (j = 0; j <= n;++j)
       mat[n + i][i + j] = bp2[j];
   
   // Perform Gaussian elimination on the Sylvester matrix. The goal is to
@@ -850,7 +850,7 @@ _Bezier_cache<NtTraits>::_compute_resultant
   Polynomial       diag_prod = mat[dim - 1][dim - 1];
   
   CGAL_assertion (exp_fact [dim - 1] == 0);
-  for (i = dim - 2; i >= 0; i--)
+  for (i = 0; i+2 <= dim; ++i)
   {
     // Try to avoid unnecessary multiplications by ignoring the current
     // diagonal item if its exponent in the normalization factor is greater
