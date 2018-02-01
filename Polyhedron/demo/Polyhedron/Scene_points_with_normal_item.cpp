@@ -172,7 +172,7 @@ Scene_points_with_normal_item::Scene_points_with_normal_item(const Scene_points_
     d->point_Slider->setValue(5);
   else
     d->point_Slider->setValue(2);
-    invalidateOpenGLBuffers();
+  invalidateOpenGLBuffers();
 }
 
 // Converts polyhedron to point set

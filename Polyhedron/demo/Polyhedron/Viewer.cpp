@@ -1809,7 +1809,7 @@ void Viewer_impl::drawGrid(qreal size, int nbSubdivisions)
   rendering_program_dist.bind();
   vao[2].bind();
   buffers[4].bind();
-  buffers[4].allocate(v_Grid.data(),v_Grid.size()*sizeof(float));
+  buffers[4].allocate(v_Grid.data(),static_cast<int>(v_Grid.size()*sizeof(float)));
   rendering_program_dist.enableAttributeArray("vertex");
   rendering_program_dist.setAttributeBuffer("vertex",GL_FLOAT,0,3);
   buffers[4].release();
