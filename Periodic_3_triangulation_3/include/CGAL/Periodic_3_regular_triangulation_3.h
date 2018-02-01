@@ -960,7 +960,7 @@ public:
     CGAL_triangulation_precondition(p.y() >= domain().ymin());
     CGAL_triangulation_precondition(p.z() >= domain().zmin());
 
-    Offset min(0, 0, 0);
+    Offset min_off = Offset(0,0,0);
 
     for(int i=-1; i<=1; ++i) {
       for(int j=-1; j<=1; ++j) {
@@ -970,13 +970,13 @@ public:
             continue;
 
           Offset loc_off(i, j, k);
-          if(compare_distance(p, vh->point(), vh->point(), Offset(), min, loc_off) == LARGER)
-            min = loc_off;
+          if(compare_distance(p, vh->point(), vh->point(), Offset(), min_off, loc_off) == LARGER)
+            min_off = loc_off;
         }
       }
     }
 
-    return min;
+    return min_off;
   }
 
   Vertex_handle nearest_vertex_in_cell(const Cell_handle& c, const Bare_point& p,
